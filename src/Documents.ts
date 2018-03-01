@@ -43,13 +43,11 @@ import { Response } from "./HTTP/Response";
 import { JSONLDCompacter } from "./JSONLD/Compacter";
 import { JSONLDConverter } from "./JSONLD/Converter";
 import { JSONLDParser } from "./JSONLD/Parser";
-import {
-	DocumentMetadata,
-	ErrorResponse,
-	ResponseMetadata,
-} from "./LDP";
+import { ErrorResponse } from "./LDP";
 import { AddMemberAction } from "./LDP/AddMemberAction";
+import { DocumentMetadata } from "./LDP/DocumentMetadata";
 import { RemoveMemberAction } from "./LDP/RemoveMemberAction";
+import { ResponseMetadata } from "./LDP/ResponseMetadata";
 import * as LDPatch from "./LDPatch";
 import * as Messaging from "./Messaging";
 import {
@@ -81,7 +79,7 @@ import {
 	FinishSPARQLSelect,
 	SPARQLBuilder,
 } from "./SPARQL/Builder";
-import { QueryMetadata, } from "./SPARQL/QueryDocument";
+import { QueryMetadata } from "./SPARQL/QueryDocument";
 import { PartialMetadata } from "./SPARQL/QueryDocument/PartialMetadata";
 import { QueryContext } from "./SPARQL/QueryDocument/QueryContext";
 import { QueryContextBuilder } from "./SPARQL/QueryDocument/QueryContextBuilder";
@@ -1105,9 +1103,9 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 
 			freeResources
 				.getResources()
-				.filter( ResponseMetadata.Factory.is )
-				.map<DocumentMetadata.Class[] | DocumentMetadata.Class>( responseMetadata => responseMetadata.documentsMetadata || responseMetadata[ C.documentMetadata ] )
-				.map<DocumentMetadata.Class[]>( documentsMetadata => Array.isArray( documentsMetadata ) ? documentsMetadata : [ documentsMetadata ] )
+				.filter( ResponseMetadata.is )
+				.map<DocumentMetadata[] | DocumentMetadata>( responseMetadata => responseMetadata.documentsMetadata || responseMetadata[ C.documentMetadata ] )
+				.map<DocumentMetadata[]>( documentsMetadata => Array.isArray( documentsMetadata ) ? documentsMetadata : [ documentsMetadata ] )
 				.forEach( documentsMetadata => documentsMetadata.forEach( documentMetadata => {
 					if( ! documentMetadata ) return;
 
@@ -1402,7 +1400,7 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 	private applyNodeMap( freeNodes:RDF.Node.Class[] ):void {
 		if( ! freeNodes.length ) return;
 		const freeResources:FreeResources = this._getFreeResources( freeNodes );
-		const responseMetadata:ResponseMetadata.Class = <ResponseMetadata.Class> freeResources.getResources().find( ResponseMetadata.Factory.is );
+		const responseMetadata:ResponseMetadata = <ResponseMetadata> freeResources.getResources().find( ResponseMetadata.is );
 
 		for( const documentMetadata of responseMetadata.documentsMetadata ) {
 			const document:PersistedDocument = documentMetadata.relatedDocument as PersistedDocument;

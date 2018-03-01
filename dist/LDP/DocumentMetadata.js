@@ -7,11 +7,10 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 }
 Object.defineProperty(exports, "__esModule", { value: true });
+var Utils = __importStar(require("../Utils"));
 var C_1 = require("../Vocabularies/C");
 var XSD_1 = require("../Vocabularies/XSD");
-var Utils = __importStar(require("./../Utils"));
-var VolatileResource = __importStar(require("./VolatileResource"));
-exports.RDF_CLASS = C_1.C.DocumentMetadata;
+var VolatileResource_1 = require("./VolatileResource");
 exports.SCHEMA = {
     "relatedDocument": {
         "@id": C_1.C.relatedDocument,
@@ -26,19 +25,18 @@ exports.SCHEMA = {
         "@type": "@id",
     },
 };
-var Factory = (function () {
-    function Factory() {
-    }
-    Factory.hasClassProperties = function (object) {
+exports.DocumentMetadata = {
+    TYPE: C_1.C.DocumentMetadata,
+    SCHEMA: exports.SCHEMA,
+    isDecorated: function (object) {
         return Utils.hasPropertyDefined(object, "relatedDocument");
-    };
-    Factory.is = function (object) {
-        return VolatileResource.Factory.is(object)
-            && Factory.hasClassProperties(object)
-            && object.hasType(exports.RDF_CLASS);
-    };
-    return Factory;
-}());
-exports.Factory = Factory;
+    },
+    is: function (object) {
+        return VolatileResource_1.VolatileResource.is(object)
+            && object.hasType(exports.DocumentMetadata.TYPE)
+            && exports.DocumentMetadata.isDecorated(object);
+    },
+};
+exports.default = exports.DocumentMetadata;
 
 //# sourceMappingURL=DocumentMetadata.js.map

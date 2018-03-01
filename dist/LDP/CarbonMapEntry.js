@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var C_1 = require("../Vocabularies/C");
-exports.SCHEMA = {
+var SCHEMA = {
     "entryKey": {
         "@id": C_1.C.entryKey,
     },
@@ -9,5 +9,9 @@ exports.SCHEMA = {
         "@id": C_1.C.entryValue,
     },
 };
+exports.CarbonMapEntry = {
+    SCHEMA: SCHEMA,
+};
+exports.default = exports.CarbonMapEntry;
 
-//# sourceMappingURL=Entry.js.map
+//# sourceMappingURL=CarbonMapEntry.js.map

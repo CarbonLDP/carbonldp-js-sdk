@@ -2,7 +2,7 @@ import { C } from "../Vocabularies/C";
 import { XSD } from "../Vocabularies/XSD";
 import ObjectSchema from "./../ObjectSchema";
 import Resource from "./../Resource";
-import Map from "./Map";
+import Map from "./CarbonMap";
 
 export const RDF_CLASS:string = C.Error;
 

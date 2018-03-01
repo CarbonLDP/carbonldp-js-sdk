@@ -9,11 +9,11 @@ import {
 } from "../HTTP/Request";
 import { Response } from "../HTTP/Response";
 import { JSONLDParser } from "../JSONLD/Parser";
+import { ResponseMetadata } from "../LDP/ResponseMetadata";
+import { PersistedDocument } from "../PersistedDocument";
+import * as RDF from "../RDF";
 import { LDP } from "../Vocabularies/LDP";
 import Context from "./../Context";
-import { ResponseMetadata } from "../LDP";
-import { PersistedDocument } from "./../PersistedDocument";
-import * as RDF from "../RDF";
 import * as Utils from "./../Utils";
 import Authenticator from "./Authenticator";
 import BasicAuthenticator from "./BasicAuthenticator";
@@ -94,9 +94,9 @@ export class Class implements Authenticator<UsernameAndPasswordToken.Class, Toke
 			let userDocuments:RDF.Document.Class[] = RDF.Document.Util.getDocuments( expandedResult ).filter( rdfDocument => rdfDocument[ "@id" ] === token.user.id );
 			userDocuments.forEach( document => this.context.documents._getPersistedDocument( document, response ) );
 
-			const responseMetadata:ResponseMetadata.Class = <ResponseMetadata.Class> freeResources
+			const responseMetadata:ResponseMetadata = <ResponseMetadata> freeResources
 				.getResources()
-				.find( ResponseMetadata.Factory.is );
+				.find( ResponseMetadata.is );
 
 			if( responseMetadata ) responseMetadata
 				.documentsMetadata

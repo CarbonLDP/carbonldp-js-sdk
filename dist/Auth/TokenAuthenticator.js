@@ -15,9 +15,9 @@ var Errors_1 = require("../HTTP/Errors");
 var Header_1 = require("../HTTP/Header");
 var Request_1 = require("../HTTP/Request");
 var Parser_1 = require("../JSONLD/Parser");
-var LDP_1 = require("../Vocabularies/LDP");
-var LDP_2 = require("../LDP");
+var ResponseMetadata_1 = require("../LDP/ResponseMetadata");
 var RDF = __importStar(require("../RDF"));
+var LDP_1 = require("../Vocabularies/LDP");
 var Utils = __importStar(require("./../Utils"));
 var BasicAuthenticator_1 = __importDefault(require("./BasicAuthenticator"));
 var Token = __importStar(require("./Token"));
@@ -83,7 +83,7 @@ var Class = (function () {
             userDocuments.forEach(function (document) { return _this.context.documents._getPersistedDocument(document, response); });
             var responseMetadata = freeResources
                 .getResources()
-                .find(LDP_2.ResponseMetadata.Factory.is);
+                .find(ResponseMetadata_1.ResponseMetadata.is);
             if (responseMetadata)
                 responseMetadata
                     .documentsMetadata

@@ -1,12 +1,14 @@
-import * as ObjectSchema from "./../ObjectSchema";
-import * as DocumentMetadata from "./DocumentMetadata";
-import * as VolatileResource from "./VolatileResource";
-export declare const RDF_CLASS: string;
-export declare const SCHEMA: ObjectSchema.ObjectSchema;
-export interface Class extends VolatileResource.Class {
-    documentsMetadata?: DocumentMetadata.Class[];
+import { ModelFactory } from "../ModelFactory";
+import { ObjectSchema } from "../ObjectSchema";
+import { DocumentMetadata } from "./DocumentMetadata";
+import { VolatileResource } from "./VolatileResource";
+export interface ResponseMetadata extends VolatileResource {
+    documentsMetadata?: DocumentMetadata[];
 }
-export declare class Factory {
-    static is(object: object): object is Class;
+export interface ResponseMetadataFactory extends ModelFactory<ResponseMetadata> {
+    TYPE: string;
+    SCHEMA: ObjectSchema;
+    is(object: object): object is ResponseMetadata;
 }
-export default Class;
+export declare const ResponseMetadata: ResponseMetadataFactory;
+export default ResponseMetadata;

@@ -1,19 +1,25 @@
+import { ModelFactory } from "../ModelFactory";
+import { Resource } from "../Resource";
 import { C } from "../Vocabularies/C";
-import { Resource } from "./../Resource";
 
-export const RDF_CLASS:string = C.VolatileResource;
-
-export interface Class extends Resource {
-
+export interface VolatileResource extends Resource {
 }
 
-export class Factory {
 
-	static is( object:object ):object is Class {
+export interface VolatileResourceFactory extends ModelFactory<VolatileResource> {
+	TYPE:string;
+
+	is( object:object ):object is VolatileResource;
+}
+
+export const VolatileResource:VolatileResourceFactory = {
+	TYPE: C.VolatileResource,
+
+	is( object:object ):object is VolatileResource {
 		return Resource.is( object )
-			&& object.hasType( RDF_CLASS );
-	}
+			&& object.hasType( VolatileResource.TYPE );
+	},
 
-}
+};
 
-export default Class;
+export default VolatileResource;

@@ -1,6 +1,6 @@
 import { C } from "../Vocabularies/C";
 import { XSD } from "../Vocabularies/XSD";
-import * as VolatileResource from "./../LDP/VolatileResource";
+import { VolatileResource } from "./../LDP/VolatileResource";
 import {
 	extendsClass,
 	hasDefaultExport,
@@ -61,9 +61,9 @@ describe( module( "Carbon/System/PlatformMetadata" ), ():void => {
 		"Interface that represents a requested API description of the Carbon LDP Platform configured."
 	), ():void => {
 
-		it( extendsClass( "Carbon.LDP.VolatileResource.Class" ), ():void => {
+		it( extendsClass( "Carbon.LDP.VolatileResource.VolatileResource" ), ():void => {
 			const instanceMetadata:PlatformMetadata.Class = <any> {};
-			const volatileResource:VolatileResource.Class = instanceMetadata;
+			const volatileResource:VolatileResource = instanceMetadata;
 
 			expect( instanceMetadata ).toBeDefined();
 			expect( volatileResource ).toBeDefined();

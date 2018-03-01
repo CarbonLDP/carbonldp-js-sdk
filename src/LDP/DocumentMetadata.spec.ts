@@ -1,5 +1,5 @@
+import { Resource } from "../Resource";
 import {
-	clazz,
 	extendsClass,
 	hasDefaultExport,
 	hasMethod,
@@ -8,71 +8,23 @@ import {
 	isDefined,
 	module,
 	OBLIGATORY,
+	property,
 	STATIC
 } from "../test/JasmineExtender";
 import { C } from "../Vocabularies/C";
 import { XSD } from "../Vocabularies/XSD";
-import { Resource } from "./../Resource";
 import * as Utils from "./../Utils";
 
-import * as DocumentMetadata from "./DocumentMetadata";
-import DefaultExport from "./DocumentMetadata";
+import DefaultExport, { DocumentMetadata } from "./DocumentMetadata";
 
 describe( module( "Carbon/LDP/DocumentMetadata" ), ():void => {
 
-	it( isDefined(), ():void => {
-		expect( DocumentMetadata ).toBeDefined();
-		expect( Utils.isObject( DocumentMetadata ) ).toBe( true );
-	} );
-
-	it( hasProperty(
-		STATIC,
-		"RDF_CLASS",
-		"string"
-	), ():void => {
-		expect( DocumentMetadata.RDF_CLASS ).toBeDefined();
-		expect( Utils.isString( DocumentMetadata.RDF_CLASS ) ).toBe( true );
-
-		expect( DocumentMetadata.RDF_CLASS ).toBe( C.DocumentMetadata );
-	} );
-
-	it( hasProperty(
-		STATIC,
-		"SCHEMA",
-		"Carbon.ObjectSchema.ObjectSchema"
-	), ():void => {
-		expect( DocumentMetadata.SCHEMA ).toBeDefined();
-		expect( Utils.isObject( DocumentMetadata.SCHEMA ) ).toBe( true );
-
-		expect( DocumentMetadata.SCHEMA as { [key:string]:jasmine.Any } ).toEqual( {
-			relatedDocument: jasmine.any( Object ),
-			eTag: jasmine.any( Object ),
-			bNodesMap: jasmine.any( Object ),
-		} );
-
-		expect( DocumentMetadata.SCHEMA[ "relatedDocument" ] ).toEqual( {
-			"@id": C.relatedDocument,
-			"@type": "@id",
-		} );
-
-		expect( DocumentMetadata.SCHEMA[ "eTag" ] ).toEqual( {
-			"@id": C.eTag,
-			"@type": XSD.string,
-		} );
-
-		expect( DocumentMetadata.SCHEMA[ "bNodesMap" ] ).toEqual( {
-			"@id": C.bNodesMap,
-			"@type": "@id",
-		} );
-
-	} );
-
 	describe( interfaze(
-		"Carbon.LDP.DocumentMetadata.Class",
+		"Carbon.LDP.DocumentMetadata.DocumentMetadata",
 		"Interface that represents a free node resource that contains dynamic information about an specific resource."
 	), ():void => {
 
-		it( extendsClass( "Carbon.LDP.VolatileResource.Class" ), ():void => {} );
+		it( extendsClass( "Carbon.LDP.VolatileResource.VolatileResource" ), ():void => {} );
 
 
 		it( hasProperty(
@@ -92,71 +44,134 @@ describe( module( "Carbon/LDP/DocumentMetadata" ), ():void => {
 		it( hasProperty(
 			OBLIGATORY,
 			"bNodesMap",
-			"Carbon.LDP.Map.Class<Carbon.BlankNode.BlankNode, Carbon.BlankNode.BlankNode>",
+			"Carbon.LDP.CarbonMap.CarbonMap<Carbon.BlankNode.BlankNode, Carbon.BlankNode.BlankNode>",
 			"A `c:Map` object that contains the changes of persisted BNode IDs."
 		), ():void => {} );
 
 	} );
 
-	describe( clazz(
-		"Carbon.LDP.DocumentMetadata.Factory",
-		"Factory class for `Carbon.LDP.DocumentMetadata.Class` objects."
+
+	describe( interfaze(
+		"Carbon.LDP.DocumentMetadata.DocumentMetadataFactory",
+		"Interface with the factory, decorate and utils methods for `Carbon.LDP.DocumentMetadata.DocumentMetadata` objects."
+	), ():void => {
+
+		it( hasProperty(
+			OBLIGATORY,
+			"TYPE",
+			"string"
+		), ():void => {} );
+
+		it( hasProperty(
+			OBLIGATORY,
+			"SCHEMA",
+			"Carbon.ObjectSchema.ObjectSchema"
+		), ():void => {} );
+
+		it( hasMethod(
+			OBLIGATORY,
+			"isDecorated",
+			"Return true if the object provided has the properties of a `Carbon.LDP.DocumentMetadata.DocumentMetadata` object.", [
+				{ name: "object", type: "object", description: "Object to check." },
+			],
+			{ type: "object is Carbon.LDP.DocumentMetadata.DocumentMetadata" }
+		), ():void => {} );
+
+		it( hasMethod(
+			OBLIGATORY,
+			"is",
+			"Return true if the object provided is considered a `Carbon.LDP.DocumentMetadata.DocumentMetadata` object.", [
+				{ name: "object", type: "object", description: "Object to check." },
+			],
+			{ type: "object is Carbon.LDP.DocumentMetadata.DocumentMetadata" }
+		), ():void => {} );
+
+	} );
+
+	describe( property(
+		STATIC,
+		"DocumentMetadata",
+		"Carbon.LDP.DocumentMetadata.DocumentMetadataFactory"
 	), ():void => {
 
 		it( isDefined(), ():void => {
-			expect( DocumentMetadata.Factory ).toBeDefined();
-			expect( Utils.isFunction( DocumentMetadata.Factory ) ).toBe( true );
+			expect( DocumentMetadata ).toBeDefined();
+			expect( DocumentMetadata ).toEqual( jasmine.any( Object ) );
 		} );
 
-		it( hasMethod(
-			STATIC,
-			"hasClassProperties",
-			"Return true if the object provided has the properties of a `Carbon.LDP.DocumentMetadata.Class` object.", [
-				{ name: "object", type: "Object", description: "Object to check." },
-			],
-			{ type: "boolean" }
-		), ():void => {
-			expect( DocumentMetadata.Factory.hasClassProperties ).toBeDefined();
-			expect( Utils.isFunction( DocumentMetadata.Factory.hasClassProperties ) ).toBe( true );
+		// TODO: Separate in different tests
+		it( "DocumentMetadata.TYPE", ():void => {
+			expect( DocumentMetadata.TYPE ).toBeDefined();
+			expect( Utils.isString( DocumentMetadata.TYPE ) ).toBe( true );
 
-			let object:Partial<DocumentMetadata.Class> = void 0;
-			expect( DocumentMetadata.Factory.hasClassProperties( object ) ).toBe( false );
+			expect( DocumentMetadata.TYPE ).toBe( C.DocumentMetadata );
+		} );
+
+		// TODO: Separate in different tests
+		it( "DocumentMetadata.SCHEMA", ():void => {
+			expect( DocumentMetadata.SCHEMA ).toBeDefined();
+			expect( Utils.isObject( DocumentMetadata.SCHEMA ) ).toBe( true );
+
+			expect( DocumentMetadata.SCHEMA as { [key:string]:jasmine.Any } ).toEqual( {
+				relatedDocument: jasmine.any( Object ),
+				eTag: jasmine.any( Object ),
+				bNodesMap: jasmine.any( Object ),
+			} );
+
+			expect( DocumentMetadata.SCHEMA[ "relatedDocument" ] ).toEqual( {
+				"@id": C.relatedDocument,
+				"@type": "@id",
+			} );
+
+			expect( DocumentMetadata.SCHEMA[ "eTag" ] ).toEqual( {
+				"@id": C.eTag,
+				"@type": XSD.string,
+			} );
+
+			expect( DocumentMetadata.SCHEMA[ "bNodesMap" ] ).toEqual( {
+				"@id": C.bNodesMap,
+				"@type": "@id",
+			} );
+
+		} );
+
+		// TODO: Separate in different tests
+		it( "DocumentMetadata.isDecorated", ():void => {
+			expect( DocumentMetadata.isDecorated ).toBeDefined();
+			expect( Utils.isFunction( DocumentMetadata.isDecorated ) ).toBe( true );
+
+			let object:Partial<DocumentMetadata> = void 0;
+			expect( DocumentMetadata.isDecorated( object ) ).toBe( false );
 
 			object = {
 				relatedDocument: null,
 				eTag: null,
 				bNodesMap: null,
 			};
-			expect( DocumentMetadata.Factory.hasClassProperties( object ) ).toBe( true );
+			expect( DocumentMetadata.isDecorated( object ) ).toBe( true );
 
 			delete object.relatedDocument;
-			expect( DocumentMetadata.Factory.hasClassProperties( object ) ).toBe( false );
+			expect( DocumentMetadata.isDecorated( object ) ).toBe( false );
 			object.relatedDocument = null;
 
 			delete object.eTag;
-			expect( DocumentMetadata.Factory.hasClassProperties( object ) ).toBe( true );
+			expect( DocumentMetadata.isDecorated( object ) ).toBe( true );
 			object.eTag = null;
 
 			delete object.bNodesMap;
-			expect( DocumentMetadata.Factory.hasClassProperties( object ) ).toBe( true );
+			expect( DocumentMetadata.isDecorated( object ) ).toBe( true );
 			object.bNodesMap = null;
 		} );
 
-		it( hasMethod(
-			STATIC,
-			"is",
-			"Return true if the object provided is considered a `Carbon.LDP.DocumentMetadata.Class` object.", [
-				{ name: "object", type: "Object", description: "Object to check." },
-			],
-			{ type: "boolean" }
-		), ():void => {
-			expect( DocumentMetadata.Factory.is ).toBeDefined();
-			expect( Utils.isFunction( DocumentMetadata.Factory.is ) ).toBe( true );
+		// TODO: Separate in different tests
+		it( "DocumentMetadata.is", ():void => {
+			expect( DocumentMetadata.is ).toBeDefined();
+			expect( Utils.isFunction( DocumentMetadata.is ) ).toBe( true );
 
-			let object:DocumentMetadata.Class = void 0;
-			expect( DocumentMetadata.Factory.is( object ) ).toBe( false );
+			let object:DocumentMetadata = void 0;
+			expect( DocumentMetadata.is( object ) ).toBe( false );
 			object = null;
-			expect( DocumentMetadata.Factory.is( object ) ).toBe( false );
+			expect( DocumentMetadata.is( object ) ).toBe( false );
 
 			object = Resource.decorate( {
 				types: [
@@ -169,31 +184,31 @@ describe( module( "Carbon/LDP/DocumentMetadata" ), ():void => {
 			} );
 
 			delete object.relatedDocument;
-			expect( DocumentMetadata.Factory.is( object ) ).toBe( false );
+			expect( DocumentMetadata.is( object ) ).toBe( false );
 			object.relatedDocument = null;
 
 			delete object.eTag;
-			expect( DocumentMetadata.Factory.is( object ) ).toBe( true );
+			expect( DocumentMetadata.is( object ) ).toBe( true );
 			object.eTag = null;
 
 			delete object.bNodesMap;
-			expect( DocumentMetadata.Factory.is( object ) ).toBe( true );
+			expect( DocumentMetadata.is( object ) ).toBe( true );
 			object.bNodesMap = null;
 
 			object.removeType( C.VolatileResource );
-			expect( DocumentMetadata.Factory.is( object ) ).toBe( false );
+			expect( DocumentMetadata.is( object ) ).toBe( false );
 			object.hasType( C.VolatileResource );
 
 			object.removeType( C.DocumentMetadata );
-			expect( DocumentMetadata.Factory.is( object ) ).toBe( false );
+			expect( DocumentMetadata.is( object ) ).toBe( false );
 			object.addType( C.DocumentMetadata );
 		} );
 
 	} );
 
-	it( hasDefaultExport( "Carbon.LDP.DocumentMetadata.Class" ), ():void => {
+	it( hasDefaultExport( "Carbon.LDP.DocumentMetadata.DocumentMetadata" ), ():void => {
 		let defaultExport:DefaultExport = <any> {};
-		let defaultTarget:DocumentMetadata.Class;
+		let defaultTarget:DocumentMetadata;
 
 		defaultTarget = defaultExport;
 		expect( defaultTarget ).toEqual( jasmine.any( Object ) );

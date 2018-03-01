@@ -1,11 +1,23 @@
+import { ModelFactory } from "../ModelFactory";
+import { ObjectSchema } from "../ObjectSchema";
 import { C } from "../Vocabularies/C";
-import * as ObjectSchema from "./../ObjectSchema";
-import * as DocumentMetadata from "./DocumentMetadata";
-import * as VolatileResource from "./VolatileResource";
+import { DocumentMetadata } from "./DocumentMetadata";
+import { VolatileResource } from "./VolatileResource";
 
-export const RDF_CLASS:string = C.ResponseMetadata;
 
-export const SCHEMA:ObjectSchema.ObjectSchema = {
+export interface ResponseMetadata extends VolatileResource {
+	documentsMetadata?:DocumentMetadata[];
+}
+
+
+export interface ResponseMetadataFactory extends ModelFactory<ResponseMetadata> {
+	TYPE:string;
+	SCHEMA:ObjectSchema;
+
+	is( object:object ):object is ResponseMetadata;
+}
+
+const SCHEMA:ObjectSchema = {
 	"documentsMetadata": {
 		"@id": C.documentMetadata,
 		"@type": "@id",
@@ -13,17 +25,15 @@ export const SCHEMA:ObjectSchema.ObjectSchema = {
 	},
 };
 
-export interface Class extends VolatileResource.Class {
-	documentsMetadata?:DocumentMetadata.Class[];
-}
+export const ResponseMetadata:ResponseMetadataFactory = {
+	TYPE: C.ResponseMetadata,
+	SCHEMA,
 
-export class Factory {
+	is( object:object ):object is ResponseMetadata {
+		return VolatileResource.is( object )
+			&& object.hasType( ResponseMetadata.TYPE );
+	},
 
-	static is( object:object ):object is Class {
-		return VolatileResource.Factory.is( object )
-			&& object.hasType( RDF_CLASS );
-	}
+};
 
-}
-
-export default Class;
+export default ResponseMetadata;

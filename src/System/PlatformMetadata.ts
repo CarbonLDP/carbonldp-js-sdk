@@ -1,6 +1,6 @@
 import { C } from "../Vocabularies/C";
 import { XSD } from "../Vocabularies/XSD";
-import * as VolatileResource from "./../LDP/VolatileResource";
+import { VolatileResource } from "./../LDP/VolatileResource";
 import * as ObjectSchema from "./../ObjectSchema";
 import { PersistedDocument } from "./../PersistedDocument";
 
@@ -17,7 +17,7 @@ export const SCHEMA:ObjectSchema.ObjectSchema = {
 	},
 };
 
-export interface Class extends VolatileResource.Class, PersistedDocument {
+export interface Class extends VolatileResource, PersistedDocument {
 	version:string;
 	buildDate:Date;
 }

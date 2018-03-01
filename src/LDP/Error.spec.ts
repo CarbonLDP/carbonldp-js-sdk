@@ -84,7 +84,7 @@ describe( module( "Carbon/LDP/Error" ), ():void => {
 		it( hasProperty(
 			OBLIGATORY,
 			"errorParameters",
-			"Carbon.LDP.Map.Class<string, any>",
+			"Carbon.LDP.CarbonMap.CarbonMap<string, any>",
 			"Map that contains the specific elements that make the error been thrown."
 		), ():void => {} );
 

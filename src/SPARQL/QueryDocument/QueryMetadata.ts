@@ -1,4 +1,4 @@
-import * as VolatileResource from "../../LDP/VolatileResource";
+import { VolatileResource } from "../../LDP/VolatileResource";
 import * as ObjectSchema from "../../ObjectSchema";
 import { Pointer } from "../../Pointer";
 import { C } from "../../Vocabularies/C";
@@ -13,14 +13,14 @@ export const SCHEMA:ObjectSchema.ObjectSchema = {
 	},
 };
 
-export interface Class extends VolatileResource.Class {
+export interface Class extends VolatileResource {
 	target:Pointer;
 }
 
 export class Factory {
 
 	static is( object:object ):object is Class {
-		return VolatileResource.Factory.is( object )
+		return VolatileResource.is( object )
 			&& object.hasType( RDF_CLASS );
 	}
 

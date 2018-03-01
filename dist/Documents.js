@@ -26,6 +26,7 @@ var Parser_1 = require("./JSONLD/Parser");
 var LDP_1 = require("./LDP");
 var AddMemberAction_1 = require("./LDP/AddMemberAction");
 var RemoveMemberAction_1 = require("./LDP/RemoveMemberAction");
+var ResponseMetadata_1 = require("./LDP/ResponseMetadata");
 var LDPatch = __importStar(require("./LDPatch"));
 var Messaging = __importStar(require("./Messaging"));
 var Utils_1 = require("./Messaging/Utils");
@@ -883,7 +884,7 @@ var Documents = (function () {
                 targetDocument._eTag = void 0;
             freeResources
                 .getResources()
-                .filter(LDP_1.ResponseMetadata.Factory.is)
+                .filter(ResponseMetadata_1.ResponseMetadata.is)
                 .map(function (responseMetadata) { return responseMetadata.documentsMetadata || responseMetadata[C_1.C.documentMetadata]; })
                 .map(function (documentsMetadata) { return Array.isArray(documentsMetadata) ? documentsMetadata : [documentsMetadata]; })
                 .forEach(function (documentsMetadata) { return documentsMetadata.forEach(function (documentMetadata) {
@@ -1142,7 +1143,7 @@ var Documents = (function () {
         if (!freeNodes.length)
             return;
         var freeResources = this._getFreeResources(freeNodes);
-        var responseMetadata = freeResources.getResources().find(LDP_1.ResponseMetadata.Factory.is);
+        var responseMetadata = freeResources.getResources().find(ResponseMetadata_1.ResponseMetadata.is);
         for (var _i = 0, _a = responseMetadata.documentsMetadata; _i < _a.length; _i++) {
             var documentMetadata = _a[_i];
             var document_1 = documentMetadata.relatedDocument;

@@ -1,15 +1,31 @@
+import { BlankNode } from "../BlankNode";
+import { ObjectSchema } from "../ObjectSchema";
+import { PersistedDocument } from "../PersistedDocument";
+import * as Utils from "../Utils";
 import { C } from "../Vocabularies/C";
 import { XSD } from "../Vocabularies/XSD";
-import BlankNode from "./../BlankNode";
-import * as ObjectSchema from "./../ObjectSchema";
-import { PersistedDocument } from "./../PersistedDocument";
-import * as Utils from "./../Utils";
-import * as Map from "./Map";
-import * as VolatileResource from "./VolatileResource";
+import { CarbonMap } from "./CarbonMap";
+import { VolatileResource } from "./VolatileResource";
+import { ModelFactory } from "../ModelFactory";
+import { ModelDecorator } from "../ModelDecorator";
 
-export const RDF_CLASS:string = C.DocumentMetadata;
+export interface DocumentMetadata extends VolatileResource {
+	relatedDocument:PersistedDocument;
+	eTag?:string;
+	bNodesMap?:CarbonMap<BlankNode, BlankNode>;
+}
 
-export const SCHEMA:ObjectSchema.ObjectSchema = {
+
+export interface DocumentMetadataFactory extends ModelFactory<DocumentMetadata>, ModelDecorator<DocumentMetadata> {
+	TYPE:string;
+	SCHEMA:ObjectSchema;
+
+	isDecorated( object:object ):object is DocumentMetadata;
+
+	is( object:object ):object is DocumentMetadata;
+}
+
+export const SCHEMA:ObjectSchema = {
 	"relatedDocument": {
 		"@id": C.relatedDocument,
 		"@type": "@id",
@@ -24,24 +40,21 @@ export const SCHEMA:ObjectSchema.ObjectSchema = {
 	},
 };
 
-export interface Class extends VolatileResource.Class {
-	relatedDocument:PersistedDocument;
-	eTag?:string;
-	bNodesMap?:Map.Class<BlankNode, BlankNode>;
-}
+export const DocumentMetadata:DocumentMetadataFactory = {
+	TYPE: C.DocumentMetadata,
+	SCHEMA,
 
-export class Factory {
-
-	static hasClassProperties( object:Object ):boolean {
+	isDecorated( object:object ):object is DocumentMetadata {
 		return Utils.hasPropertyDefined( object, "relatedDocument" );
-	}
+	},
 
-	static is( object:Object ):boolean {
-		return VolatileResource.Factory.is( object )
-			&& Factory.hasClassProperties( object )
-			&& object.hasType( RDF_CLASS );
-	}
+	is( object:object ):object is DocumentMetadata {
+		return VolatileResource.is( object )
+			&& object.hasType( DocumentMetadata.TYPE )
+			&& DocumentMetadata.isDecorated( object )
+			;
+	},
 
-}
+};
 
-export default Class;
+export default DocumentMetadata;

@@ -1,4 +1,4 @@
-import * as VolatileResource from "../../LDP/VolatileResource";
+import { VolatileResource } from "../../LDP/VolatileResource";
 import { Pointer } from "../../Pointer";
 import { Resource } from "../../Resource";
 import {
@@ -99,7 +99,7 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryMetadata" ), ():void => {
 			} );
 
 			it( "should call to VolatileResource.Factory.is", ():void => {
-				const spy:jasmine.Spy = spyOn( VolatileResource.Factory, "is" );
+				const spy:jasmine.Spy = spyOn( VolatileResource, "is" );
 
 				const object:object = { the: "object" };
 				QueryMetadata.Factory.is( object );

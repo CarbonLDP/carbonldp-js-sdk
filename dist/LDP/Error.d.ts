@@ -1,6 +1,6 @@
 import ObjectSchema from "./../ObjectSchema";
 import Resource from "./../Resource";
-import Map from "./Map";
+import Map from "./CarbonMap";
 export declare const RDF_CLASS: string;
 export declare const SCHEMA: ObjectSchema;
 export interface Class extends Resource {

@@ -9,9 +9,9 @@ import {
 import * as Utils from "../Utils";
 
 import * as AddMemberAction from "./AddMemberAction";
-import * as Map from "./Map";
+import * as CarbonMap from "./CarbonMap";
 import * as DirectContainer from "./DirectContainer";
-import * as Entry from "./Entry";
+import * as CarbonMapEntry from "./CarbonMapEntry";
 import * as Error from "./Error";
 import * as RemoveMemberAction from "./RemoveMemberAction";
 import * as ErrorResponse from "./ErrorResponse";
@@ -39,11 +39,11 @@ describe( module( "Carbon/LDP" ), ():void => {
 
 	it( reexports(
 		STATIC,
-		"Map",
-		"Carbon/LDP/Map"
+		"CarbonMap",
+		"Carbon/LDP/CarbonMap"
 	), ():void => {
-		expect( LDP.Map ).toBeDefined();
-		expect( LDP.Map ).toBe( Map );
+		expect( LDP.CarbonMap ).toBeDefined();
+		expect( LDP.CarbonMap ).toBe( CarbonMap );
 	} );
 
 	it( reexports(
@@ -57,11 +57,11 @@ describe( module( "Carbon/LDP" ), ():void => {
 
 	it( reexports(
 		STATIC,
-		"Entry",
-		"Carbon/LDP/Entry"
+		"CarbonMapEntry",
+		"Carbon/LDP/CarbonMapEntry"
 	), ():void => {
-		expect( LDP.Entry ).toBeDefined();
-		expect( LDP.Entry ).toBe( Entry );
+		expect( LDP.CarbonMapEntry ).toBeDefined();
+		expect( LDP.CarbonMapEntry ).toBe( CarbonMapEntry );
 	} );
 
 	it( reexports(

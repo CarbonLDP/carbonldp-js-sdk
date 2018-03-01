@@ -1,9 +1,9 @@
-import * as VolatileResource from "../../LDP/VolatileResource";
+import { VolatileResource } from "../../LDP/VolatileResource";
 import * as ObjectSchema from "../../ObjectSchema";
 import { Pointer } from "../../Pointer";
 export declare const RDF_CLASS: string;
 export declare const SCHEMA: ObjectSchema.ObjectSchema;
-export interface Class extends VolatileResource.Class {
+export interface Class extends VolatileResource {
     target: Pointer;
 }
 export declare class Factory {
