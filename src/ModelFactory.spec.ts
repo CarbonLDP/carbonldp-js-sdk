@@ -1,11 +1,11 @@
 import { ModelFactory } from "./ModelFactory";
+
 import * as ObjectSchema from "./ObjectSchema";
 import {
 	hasMethod,
 	hasProperty,
 	interfaze,
 	module,
-	OBLIGATORY,
 	OPTIONAL
 } from "./test/JasmineExtender";
 
@@ -23,17 +23,17 @@ describe( module( "Carbon/ModelFactory" ), ():void => {
 			expect( target ).toBeDefined();
 		} );
 
-		it( hasMethod( OBLIGATORY, "is", [ { name: "object", type: "object" } ], { type: "object is T" } ), ():void => {
+		it( hasMethod( OPTIONAL, "is", [ { name: "object", type: "object" } ], { type: "object is T" } ), ():void => {
 			const target:ModelFactory<any>[ "is" ] = ( object ):object is any => false;
 			expect( target ).toBeDefined();
 		} );
 
-		it( hasMethod( OBLIGATORY, "create", [ { name: "...params", type: "any[]" } ], { type: "T" } ), ():void => {
+		it( hasMethod( OPTIONAL, "create", [ { name: "...params", type: "any[]" } ], { type: "T" } ), ():void => {
 			const target:ModelFactory<any>[ "create" ] = () => {};
 			expect( target ).toBeDefined();
 		} );
 
-		it( hasMethod( OBLIGATORY, "createFrom", [ "W extends object" ], [ { name: "object", type: "W" }, { name: "...params", type: "any[]" } ], { type: "W & T" } ), ():void => {
+		it( hasMethod( OPTIONAL, "createFrom", [ "W extends object" ], [ { name: "object", type: "W" }, { name: "...params", type: "any[]" } ], { type: "W & T" } ), ():void => {
 			const target:ModelFactory<any>[ "createFrom" ] = ( object ) => object;
 			expect( target ).toBeDefined();
 		} );

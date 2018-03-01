@@ -1,13 +1,12 @@
+import { ModelDecorator } from "./ModelDecorator";
+
 import {
 	hasMethod,
 	hasProperty,
 	interfaze,
 	module,
-	OBLIGATORY,
 	OPTIONAL
 } from "./test/JasmineExtender";
-
-import { ModelDecorator } from "./ModelDecorator";
 
 describe( module( "Carbon/ModelDecorator" ), ():void => {
 
@@ -23,7 +22,7 @@ describe( module( "Carbon/ModelDecorator" ), ():void => {
 			expect( target ).toBeDefined();
 		} );
 
-		it( hasMethod( OBLIGATORY, "decorate", [ "W extends object" ], [ { name: "object", type: "W" }, { name: "documents", type: "Carbon.Documents.Documents", optional: true } ], { type: "W & T" } ), ():void => {
+		it( hasMethod( OPTIONAL, "decorate", [ "W extends object" ], [ { name: "object", type: "W" }, { name: "documents", type: "Carbon.Documents.Documents", optional: true } ], { type: "W & T" } ), ():void => {
 			const target:ModelDecorator<any>[ "decorate" ] = ( object, context ) => object;
 			expect( target ).toBeDefined();
 		} );
