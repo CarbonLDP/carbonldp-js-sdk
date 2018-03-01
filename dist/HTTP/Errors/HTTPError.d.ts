@@ -1,6 +1,6 @@
 import { AbstractError } from "../../Errors";
 import { Response } from "../Response";
-import * as LDP from "./../../LDP";
+import * as LDP from "../../LDP";
 import { PersistedDocument } from "./../../PersistedDocument";
 export declare class HTTPError extends AbstractError implements LDP.ErrorResponse.Class {
     static readonly statusCode: number;

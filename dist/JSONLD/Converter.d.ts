@@ -1,6 +1,6 @@
 import { PointerLibrary } from "../Pointer";
 import * as ObjectSchema from "./../ObjectSchema";
-import * as RDF from "./../RDF";
+import * as RDF from "../RDF";
 export declare class JSONLDConverter {
     private _literalSerializers;
     readonly literalSerializers: Map<string, RDF.Literal.Serializer>;

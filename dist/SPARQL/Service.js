@@ -10,7 +10,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var Errors = __importStar(require("../Errors"));
 var Request_1 = require("../HTTP/Request");
 var StringParser_1 = require("../HTTP/StringParser");
-var RDF = __importStar(require("./../RDF"));
+var RDF = __importStar(require("../RDF"));
 var RawResultsParser_1 = require("./RawResultsParser");
 var SPARQLService = (function () {
     function SPARQLService() {

@@ -2,10 +2,10 @@ import {
 	INSTANCE,
 	module,
 	reexports
-} from "./test/JasmineExtender";
+} from "../test/JasmineExtender";
 
-import * as System from "./System";
-import * as PlatformMetadata from "./System/PlatformMetadata";
+import * as System from "./";
+import * as PlatformMetadata from "./PlatformMetadata";
 
 describe( module( "Carbon/System" ), () => {
 

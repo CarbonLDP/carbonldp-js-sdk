@@ -5,17 +5,17 @@ import {
 
 	isDefined,
 	reexports,
-} from "./test/JasmineExtender";
-import * as Utils from "./Utils";
+} from "../test/JasmineExtender";
+import * as Utils from "../Utils";
 
-import * as Literal from "./RDF/Literal";
-import * as Document from "./RDF/Document";
-import * as List from "./RDF/List";
-import * as Node from "./RDF/Node";
-import * as URI from "./RDF/URI";
-import * as Value from "./RDF/Value";
+import * as Literal from "./Literal";
+import * as Document from "./Document";
+import * as List from "./List";
+import * as Node from "./Node";
+import * as URI from "./URI";
+import * as Value from "./Value";
 
-import * as RDF from "./RDF";
+import * as RDF from "./";
 
 describe( module( "Carbon/RDF" ), ():void => {
 

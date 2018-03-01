@@ -7,7 +7,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 }
 Object.defineProperty(exports, "__esModule", { value: true });
-var PlatformMetadata = __importStar(require("./System/PlatformMetadata"));
+var PlatformMetadata = __importStar(require("./PlatformMetadata"));
 exports.PlatformMetadata = PlatformMetadata;
 
-//# sourceMappingURL=System.js.map
+//# sourceMappingURL=index.js.map

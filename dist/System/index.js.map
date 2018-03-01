@@ -1,0 +1,1 @@
+{"version":3,"sources":["System/index.ts"],"names":[],"mappings":";;;;;;;;;AAAA,mEAAuD;AAGtD,4CAAgB","file":"index.js","sourcesContent":["import * as PlatformMetadata from \"./PlatformMetadata\";\n\nexport {\n\tPlatformMetadata,\n};\n"]}

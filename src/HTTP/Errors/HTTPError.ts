@@ -1,7 +1,7 @@
 import { AbstractError } from "../../Errors";
 import { Resource } from "../../Resource";
 import { Response } from "../Response";
-import * as LDP from "./../../LDP";
+import * as LDP from "../../LDP";
 import { PersistedDocument } from "./../../PersistedDocument";
 
 export class HTTPError extends AbstractError implements LDP.ErrorResponse.Class {

@@ -7,7 +7,7 @@ import {
 import { Response } from "../HTTP/Response";
 import { StringParser } from "../HTTP/StringParser";
 import { PointerLibrary } from "../Pointer";
-import * as RDF from "./../RDF";
+import * as RDF from "../RDF";
 import {
 	SPARQLRawBindingObject,
 	SPARQLRawBindingProperty,

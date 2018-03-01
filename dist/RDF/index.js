@@ -7,17 +7,17 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 }
 Object.defineProperty(exports, "__esModule", { value: true });
-var Literal = __importStar(require("./RDF/Literal"));
-exports.Literal = Literal;
-var Document = __importStar(require("./RDF/Document"));
+var Document = __importStar(require("./Document"));
 exports.Document = Document;
-var List = __importStar(require("./RDF/List"));
+var List = __importStar(require("./List"));
 exports.List = List;
-var Node = __importStar(require("./RDF/Node"));
+var Literal = __importStar(require("./Literal"));
+exports.Literal = Literal;
+var Node = __importStar(require("./Node"));
 exports.Node = Node;
-var URI = __importStar(require("./RDF/URI"));
+var URI = __importStar(require("./URI"));
 exports.URI = URI;
-var Value = __importStar(require("./RDF/Value"));
+var Value = __importStar(require("./Value"));
 exports.Value = Value;
 
-//# sourceMappingURL=RDF.js.map
+//# sourceMappingURL=index.js.map

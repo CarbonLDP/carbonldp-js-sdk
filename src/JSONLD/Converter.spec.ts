@@ -16,7 +16,7 @@ import {
 import * as Utils from "../Utils";
 import { XSD } from "../Vocabularies/XSD";
 import * as ObjectSchema from "./../ObjectSchema";
-import * as RDF from "./../RDF";
+import * as RDF from "../RDF";
 
 import DefaultExport, { JSONLDConverter } from "./Converter";
 

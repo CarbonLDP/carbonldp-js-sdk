@@ -5,7 +5,7 @@ import {
 } from "../Pointer";
 import { XSD } from "../Vocabularies/XSD";
 import * as ObjectSchema from "./../ObjectSchema";
-import * as RDF from "./../RDF";
+import * as RDF from "../RDF";
 import * as Utils from "./../Utils";
 import { guessXSDType } from "./Utils";
 

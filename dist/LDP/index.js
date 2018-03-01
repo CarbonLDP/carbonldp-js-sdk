@@ -7,25 +7,25 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 }
 Object.defineProperty(exports, "__esModule", { value: true });
-var AddMemberAction = __importStar(require("./LDP/AddMemberAction"));
+var AddMemberAction = __importStar(require("./AddMemberAction"));
 exports.AddMemberAction = AddMemberAction;
-var DirectContainer = __importStar(require("./LDP/DirectContainer"));
+var DirectContainer = __importStar(require("./DirectContainer"));
 exports.DirectContainer = DirectContainer;
-var DocumentMetadata = __importStar(require("./LDP/DocumentMetadata"));
+var DocumentMetadata = __importStar(require("./DocumentMetadata"));
 exports.DocumentMetadata = DocumentMetadata;
-var Entry = __importStar(require("./LDP/Entry"));
+var Entry = __importStar(require("./Entry"));
 exports.Entry = Entry;
-var Error = __importStar(require("./LDP/Error"));
+var Error = __importStar(require("./Error"));
 exports.Error = Error;
-var ErrorResponse = __importStar(require("./LDP/ErrorResponse"));
+var ErrorResponse = __importStar(require("./ErrorResponse"));
 exports.ErrorResponse = ErrorResponse;
-var Map = __importStar(require("./LDP/Map"));
+var Map = __importStar(require("./Map"));
 exports.Map = Map;
-var RemoveMemberAction = __importStar(require("./LDP/RemoveMemberAction"));
+var RemoveMemberAction = __importStar(require("./RemoveMemberAction"));
 exports.RemoveMemberAction = RemoveMemberAction;
-var ResponseMetadata = __importStar(require("./LDP/ResponseMetadata"));
+var ResponseMetadata = __importStar(require("./ResponseMetadata"));
 exports.ResponseMetadata = ResponseMetadata;
-var ValidationError = __importStar(require("./LDP/ValidationError"));
+var ValidationError = __importStar(require("./ValidationError"));
 exports.ValidationError = ValidationError;
 
-//# sourceMappingURL=LDP.js.map
+//# sourceMappingURL=index.js.map

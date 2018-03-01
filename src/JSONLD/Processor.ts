@@ -11,7 +11,7 @@ import {
 } from "../HTTP/Request";
 import { Response } from "../HTTP/Response";
 import * as ObjectSchema from "./../ObjectSchema";
-import * as RDF from "./../RDF";
+import * as RDF from "../RDF";
 import * as Utils from "./../Utils";
 
 const MAX_CONTEXT_URLS:number = 10;

@@ -5,21 +5,21 @@ import {
 
 	isDefined,
 	reexports,
-} from "./test/JasmineExtender";
-import * as Utils from "./Utils";
+} from "../test/JasmineExtender";
+import * as Utils from "../Utils";
 
-import * as AddMemberAction from "./LDP/AddMemberAction";
-import * as Map from "./LDP/Map";
-import * as DirectContainer from "./LDP/DirectContainer";
-import * as Entry from "./LDP/Entry";
-import * as Error from "./LDP/Error";
-import * as RemoveMemberAction from "./LDP/RemoveMemberAction";
-import * as ErrorResponse from "./LDP/ErrorResponse";
-import * as ResponseMetadata from "./LDP/ResponseMetadata";
-import * as DocumentMetadata from "./LDP/DocumentMetadata";
-import * as ValidationError from "./LDP/ValidationError";
+import * as AddMemberAction from "./AddMemberAction";
+import * as Map from "./Map";
+import * as DirectContainer from "./DirectContainer";
+import * as Entry from "./Entry";
+import * as Error from "./Error";
+import * as RemoveMemberAction from "./RemoveMemberAction";
+import * as ErrorResponse from "./ErrorResponse";
+import * as ResponseMetadata from "./ResponseMetadata";
+import * as DocumentMetadata from "./DocumentMetadata";
+import * as ValidationError from "./ValidationError";
 
-import * as LDP from "./LDP";
+import * as LDP from "./index";
 
 describe( module( "Carbon/LDP" ), ():void => {
 
