@@ -9,6 +9,8 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var AddMemberAction = __importStar(require("./AddMemberAction"));
 exports.AddMemberAction = AddMemberAction;
+var CarbonError = __importStar(require("./CarbonError"));
+exports.CarbonError = CarbonError;
 var CarbonMap = __importStar(require("./CarbonMap"));
 exports.CarbonMap = CarbonMap;
 var CarbonMapEntry = __importStar(require("./CarbonMapEntry"));
@@ -17,8 +19,6 @@ var DirectContainer = __importStar(require("./DirectContainer"));
 exports.DirectContainer = DirectContainer;
 var DocumentMetadata = __importStar(require("./DocumentMetadata"));
 exports.DocumentMetadata = DocumentMetadata;
-var Error = __importStar(require("./Error"));
-exports.Error = Error;
 var ErrorResponse = __importStar(require("./ErrorResponse"));
 exports.ErrorResponse = ErrorResponse;
 var RemoveMemberAction = __importStar(require("./RemoveMemberAction"));

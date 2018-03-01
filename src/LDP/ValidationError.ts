@@ -1,19 +1,30 @@
+import { ModelFactory } from "../ModelFactory";
 import { C } from "../Vocabularies/C";
-import * as ObjectSchema from "./../ObjectSchema";
-import { Pointer } from "./../Pointer";
-import { Resource } from "./../Resource";
+import { ObjectSchema } from "../ObjectSchema";
+import { Pointer } from "../Pointer";
+import { Resource } from "../Resource";
 
-export const RDF_CLASS:string = C.ValidationError;
 
-export const SCHEMA:ObjectSchema.ObjectSchema = {
+export interface ValidationError extends Resource {
+	errorDetails:Pointer;
+}
+
+
+export interface ValidationErrorFactory extends ModelFactory<ValidationError> {
+	TYPE:string;
+	SCHEMA:ObjectSchema;
+}
+
+const SCHEMA:ObjectSchema = {
 	"errorDetails": {
 		"@id": C.errorDetails,
 		"@type": "@id",
 	},
 };
 
-export interface Class extends Resource {
-	errorDetails:Pointer;
-}
+export const ValidationError:ValidationErrorFactory = {
+	TYPE: C.ValidationError,
+	SCHEMA,
+};
 
-export default Class;
+export default ValidationError;

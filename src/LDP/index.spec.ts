@@ -1,25 +1,23 @@
 import {
-	STATIC,
-
-	module,
-
 	isDefined,
+	module,
 	reexports,
+	STATIC,
 } from "../test/JasmineExtender";
 import * as Utils from "../Utils";
 
-import * as AddMemberAction from "./AddMemberAction";
-import * as CarbonMap from "./CarbonMap";
-import * as DirectContainer from "./DirectContainer";
-import * as CarbonMapEntry from "./CarbonMapEntry";
-import * as Error from "./Error";
-import * as RemoveMemberAction from "./RemoveMemberAction";
-import * as ErrorResponse from "./ErrorResponse";
-import * as ResponseMetadata from "./ResponseMetadata";
-import * as DocumentMetadata from "./DocumentMetadata";
-import * as ValidationError from "./ValidationError";
+import * as LDP from "./";
 
-import * as LDP from "./index";
+import * as AddMemberAction from "./AddMemberAction";
+import * as CarbonError from "./CarbonError";
+import * as CarbonMap from "./CarbonMap";
+import * as CarbonMapEntry from "./CarbonMapEntry";
+import * as DirectContainer from "./DirectContainer";
+import * as DocumentMetadata from "./DocumentMetadata";
+import * as ErrorResponse from "./ErrorResponse";
+import * as RemoveMemberAction from "./RemoveMemberAction";
+import * as ResponseMetadata from "./ResponseMetadata";
+import * as ValidationError from "./ValidationError";
 
 describe( module( "Carbon/LDP" ), ():void => {
 
@@ -66,11 +64,11 @@ describe( module( "Carbon/LDP" ), ():void => {
 
 	it( reexports(
 		STATIC,
-		"Error",
-		"Carbon/LDP/Error"
+		"CarbonError",
+		"Carbon/LDP/CarbonError"
 	), ():void => {
-		expect( LDP.Error ).toBeDefined();
-		expect( LDP.Error ).toBe( Error );
+		expect( LDP.CarbonError ).toBeDefined();
+		expect( LDP.CarbonError ).toBe( CarbonError );
 	} );
 
 	it( reexports(

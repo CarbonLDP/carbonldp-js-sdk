@@ -5,13 +5,15 @@ import { Context } from "./Context";
 import { Document } from "./Document";
 import { Documents } from "./Documents";
 import * as Errors from "./Errors";
-import * as LDP from "./LDP";
 import { AddMemberAction } from "./LDP/AddMemberAction";
+import { CarbonError } from "./LDP/CarbonError";
 import { CarbonMap } from "./LDP/CarbonMap";
 import { CarbonMapEntry } from "./LDP/CarbonMapEntry";
 import { DocumentMetadata } from "./LDP/DocumentMetadata";
+import { ErrorResponse } from "./LDP/ErrorResponse";
 import { RemoveMemberAction } from "./LDP/RemoveMemberAction";
 import { ResponseMetadata } from "./LDP/ResponseMetadata";
+import { ValidationError } from "./LDP/ValidationError";
 import * as Messaging from "./Messaging";
 import * as ObjectSchema from "./ObjectSchema";
 import { ProtectedDocument } from "./ProtectedDocument";
@@ -196,14 +198,14 @@ export class SDKContext implements Context {
 		this.extendObjectSchema( System.PlatformMetadata.RDF_CLASS, System.PlatformMetadata.SCHEMA );
 
 		this.extendObjectSchema( AddMemberAction.TYPE, AddMemberAction.SCHEMA );
+		this.extendObjectSchema( CarbonError.TYPE, CarbonError.SCHEMA );
 		this.extendObjectSchema( CarbonMap.TYPE, CarbonMap.SCHEMA );
 		this.extendObjectSchema( CarbonMapEntry.SCHEMA );
 		this.extendObjectSchema( DocumentMetadata.TYPE, DocumentMetadata.SCHEMA );
+		this.extendObjectSchema( ErrorResponse.TYPE, ErrorResponse.SCHEMA );
 		this.extendObjectSchema( RemoveMemberAction.TYPE, RemoveMemberAction.SCHEMA );
 		this.extendObjectSchema( ResponseMetadata.TYPE, ResponseMetadata.SCHEMA );
-		this.extendObjectSchema( LDP.Error.RDF_CLASS, LDP.Error.SCHEMA );
-		this.extendObjectSchema( LDP.ErrorResponse.RDF_CLASS, LDP.ErrorResponse.SCHEMA );
-		this.extendObjectSchema( LDP.ValidationError.RDF_CLASS, LDP.ValidationError.SCHEMA );
+		this.extendObjectSchema( ValidationError.TYPE, ValidationError.SCHEMA );
 
 		this.extendObjectSchema( Auth.Role.RDF_CLASS, Auth.Role.SCHEMA );
 		this.extendObjectSchema( ACE.TYPE, ACE.SCHEMA );

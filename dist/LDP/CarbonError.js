@@ -2,8 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 var C_1 = require("../Vocabularies/C");
 var XSD_1 = require("../Vocabularies/XSD");
-exports.RDF_CLASS = C_1.C.Error;
-exports.SCHEMA = {
+var SCHEMA = {
     "errorCode": {
         "@id": C_1.C.errorCode,
         "@type": XSD_1.XSD.string,
@@ -17,5 +16,10 @@ exports.SCHEMA = {
         "@type": "@id",
     },
 };
+exports.CarbonError = {
+    TYPE: C_1.C.Error,
+    SCHEMA: SCHEMA,
+};
+exports.default = exports.CarbonError;
 
-//# sourceMappingURL=Error.js.map
+//# sourceMappingURL=CarbonError.js.map

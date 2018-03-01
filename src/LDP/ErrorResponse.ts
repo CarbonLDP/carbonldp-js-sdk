@@ -1,12 +1,26 @@
+import { ModelFactory } from "../ModelFactory";
+import { ObjectSchema } from "../ObjectSchema";
+import { Resource } from "../Resource";
 import { C } from "../Vocabularies/C";
 import { XSD } from "../Vocabularies/XSD";
-import ObjectSchema from "./../ObjectSchema";
-import Resource from "./../Resource";
-import Error from "./Error";
+import { CarbonError } from "./CarbonError";
 
-export const RDF_CLASS:string = C.ErrorResponse;
 
-export const SCHEMA:ObjectSchema = {
+export interface ErrorResponse extends Resource {
+	errors:CarbonError[];
+	requestID:string;
+	statusCode:number;
+}
+
+
+export interface ErrorResponseFactory extends ModelFactory<ErrorResponse> {
+	TYPE:string;
+	SCHEMA:ObjectSchema;
+
+	getMessage( errorResponse:ErrorResponse ):string;
+}
+
+const SCHEMA:ObjectSchema = {
 	"errors": {
 		"@id": C.error,
 		"@type": "@id",
@@ -22,19 +36,17 @@ export const SCHEMA:ObjectSchema = {
 	},
 };
 
-export interface Class extends Resource {
-	errors:Error[];
-	requestID:string;
-	statusCode:number;
-}
+export const ErrorResponse:ErrorResponseFactory = {
+	TYPE: C.ErrorResponse,
+	SCHEMA,
 
-export class Util {
-	static getMessage( errorResponse:Class ):string {
+	getMessage( errorResponse:ErrorResponse ):string {
 		return errorResponse
 			.errors
 			.map( error => error.errorMessage )
 			.join( ", " );
-	}
-}
+	},
 
-export default Class;
+};
+
+export default ErrorResponse;

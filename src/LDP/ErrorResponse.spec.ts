@@ -5,66 +5,19 @@ import {
 	hasMethod,
 	hasProperty,
 	interfaze,
-	isDefined,
 	module,
 	OBLIGATORY,
-	STATIC,
 } from "../test/JasmineExtender";
 import { C } from "../Vocabularies/C";
 import { XSD } from "../Vocabularies/XSD";
 import * as Utils from "./../Utils";
 
-import * as ErrorResponse from "./ErrorResponse";
-import DefaultExport from "./ErrorResponse";
+import DefaultExport, { ErrorResponse } from "./ErrorResponse";
 
 describe( module( "Carbon/LDP/ErrorResponse" ), ():void => {
 
-	it( isDefined(), ():void => {
-		expect( ErrorResponse ).toBeDefined();
-		expect( Utils.isObject( ErrorResponse ) ).toBe( true );
-	} );
-
-	it( hasProperty(
-		STATIC,
-		"RDF_CLASS",
-		"string"
-	), ():void => {
-		expect( ErrorResponse.RDF_CLASS ).toBeDefined();
-		expect( Utils.isString( ErrorResponse.RDF_CLASS ) ).toBe( true );
-
-		expect( ErrorResponse.RDF_CLASS ).toBe( C.ErrorResponse );
-	} );
-
-	it( hasProperty(
-		STATIC,
-		"SCHEMA",
-		"Carbon.ObjectSchema.ObjectSchema"
-	), ():void => {
-		expect( ErrorResponse.SCHEMA ).toBeDefined();
-		expect( Utils.isObject( ErrorResponse.SCHEMA ) ).toBe( true );
-
-		expect( Utils.hasProperty( ErrorResponse.SCHEMA, "errors" ) ).toBe( true );
-		expect( ErrorResponse.SCHEMA[ "errors" ] ).toEqual( {
-			"@id": C.error,
-			"@type": "@id",
-			"@container": "@set",
-		} );
-
-		expect( Utils.hasProperty( ErrorResponse.SCHEMA, "requestID" ) ).toBe( true );
-		expect( ErrorResponse.SCHEMA[ "requestID" ] ).toEqual( {
-			"@id": C.requestID,
-			"@type": XSD.string,
-		} );
-
-		expect( Utils.hasProperty( ErrorResponse.SCHEMA, "statusCode" ) ).toBe( true );
-		expect( ErrorResponse.SCHEMA[ "statusCode" ] ).toEqual( {
-			"@id": C.httpStatusCode,
-			"@type": XSD.int,
-		} );
-	} );
-
 	describe( interfaze(
-		"Carbon.LDP.ErrorResponse.Class",
+		"Carbon.LDP.ErrorResponse.ErrorResponse",
 		"Interface that its used to represents part of an error (or multiple of them) thrown by the server."
 	), ():void => {
 
@@ -73,7 +26,7 @@ describe( module( "Carbon/LDP/ErrorResponse" ), ():void => {
 		it( hasProperty(
 			OBLIGATORY,
 			"errors",
-			"Carbon.LDP.Error.Class[]",
+			"Carbon.LDP.CarbonError.CarbonError[]",
 			"Array that list the error occurred in the server."
 		), ():void => {} );
 
@@ -93,28 +46,83 @@ describe( module( "Carbon/LDP/ErrorResponse" ), ():void => {
 
 	} );
 
-	describe( clazz(
-		"Carbon.LDP.ErrorResponse.Util",
-		"Useful functions for managing `Carbon.LDP.ErrorResponse.Class` objects."
+	describe( interfaze(
+		"Carbon.LDP.ErrorResponse.ErrorResponseFactory",
+		"Interface with the factory, decorate and utils methods for `Carbon.LDP.ErrorResponse.ErrorResponse` objects."
 	), ():void => {
 
-		it( isDefined(), ():void => {
-			expect( ErrorResponse.Util ).toBeDefined();
-			expect( Utils.isFunction( ErrorResponse.Util ) ).toBe( true );
-		} );
+		it( hasProperty(
+			OBLIGATORY,
+			"TYPE",
+			"string"
+		), ():void => {} );
+
+		it( hasProperty(
+			OBLIGATORY,
+			"SCHEMA",
+			"Carbon.ObjectSchema.ObjectSchema"
+		), ():void => {} );
 
 		it( hasMethod(
-			STATIC,
+			OBLIGATORY,
 			"getMessage",
 			"Returns a string with the message of all the errors in the ErrorResponse.", [
-				{ name: "errorResponse", type: "Carbon.LDP.ErrorResponse.Class", description: "The ErrorResponse object to obtain the message from." },
+				{ name: "errorResponse", type: "Carbon.LDP.ErrorResponse.ErrorResponse", description: "The ErrorResponse object to obtain the message from." },
 			],
 			{ type: "string" }
-		), ():void => {
-			expect( ErrorResponse.Util.getMessage ).toBeDefined();
-			expect( Utils.isFunction( ErrorResponse.Util.getMessage ) ).toBe( true );
+		), ():void => {} );
 
-			let errorResponse:ErrorResponse.Class;
+	} );
+
+	describe( clazz(
+		"Carbon.LDP.ErrorResponse.ErrorResponseFactory",
+		"Useful functions for managing `Carbon.LDP.ErrorResponse.ErrorResponse` objects."
+	), ():void => {
+
+		it( "should exist", ():void => {
+			expect( ErrorResponse ).toBeDefined();
+			expect( ErrorResponse ).toEqual( jasmine.any( Object ) );
+		} );
+
+		// TODO: Separate in different tests
+		it( "ErrorResponse.TYPE", ():void => {
+			expect( ErrorResponse.TYPE ).toBeDefined();
+			expect( Utils.isString( ErrorResponse.TYPE ) ).toBe( true );
+
+			expect( ErrorResponse.TYPE ).toBe( C.ErrorResponse );
+		} );
+
+		// TODO: Separate in different tests
+		it( "ErrorResponse.SCHEMA", ():void => {
+			expect( ErrorResponse.SCHEMA ).toBeDefined();
+			expect( Utils.isObject( ErrorResponse.SCHEMA ) ).toBe( true );
+
+			expect( Utils.hasProperty( ErrorResponse.SCHEMA, "errors" ) ).toBe( true );
+			expect( ErrorResponse.SCHEMA[ "errors" ] ).toEqual( {
+				"@id": C.error,
+				"@type": "@id",
+				"@container": "@set",
+			} );
+
+			expect( Utils.hasProperty( ErrorResponse.SCHEMA, "requestID" ) ).toBe( true );
+			expect( ErrorResponse.SCHEMA[ "requestID" ] ).toEqual( {
+				"@id": C.requestID,
+				"@type": XSD.string,
+			} );
+
+			expect( Utils.hasProperty( ErrorResponse.SCHEMA, "statusCode" ) ).toBe( true );
+			expect( ErrorResponse.SCHEMA[ "statusCode" ] ).toEqual( {
+				"@id": C.httpStatusCode,
+				"@type": XSD.int,
+			} );
+		} );
+
+		// TODO: Separate in different tests
+		it( "ErrorResponse.getMessage", ():void => {
+			expect( ErrorResponse.getMessage ).toBeDefined();
+			expect( Utils.isFunction( ErrorResponse.getMessage ) ).toBe( true );
+
+			let errorResponse:ErrorResponse;
 			let message:string;
 
 			errorResponse = <any> {
@@ -126,7 +134,7 @@ describe( module( "Carbon/LDP/ErrorResponse" ), ():void => {
 					},
 				],
 			};
-			message = ErrorResponse.Util.getMessage( errorResponse );
+			message = ErrorResponse.getMessage( errorResponse );
 			expect( Utils.isString( message ) ).toBe( true );
 			expect( message ).toBe( "Message 01" );
 
@@ -143,16 +151,16 @@ describe( module( "Carbon/LDP/ErrorResponse" ), ():void => {
 					},
 				],
 			};
-			message = ErrorResponse.Util.getMessage( errorResponse );
+			message = ErrorResponse.getMessage( errorResponse );
 			expect( Utils.isString( message ) ).toBe( true );
 			expect( message ).toBe( "Message 01, Message 02" );
 		} );
 
 	} );
 
-	it( hasDefaultExport( "Carbon.LDP.ErrorResponse.Class" ), ():void => {
+	it( hasDefaultExport( "Carbon.LDP.ErrorResponse.ErrorResponse" ), ():void => {
 		let defaultExport:DefaultExport = <any> {};
-		let defaultTarget:ErrorResponse.Class;
+		let defaultTarget:ErrorResponse;
 
 		defaultTarget = defaultExport;
 		expect( defaultTarget ).toEqual( jasmine.any( Object ) );

@@ -43,9 +43,9 @@ import { Response } from "./HTTP/Response";
 import { JSONLDCompacter } from "./JSONLD/Compacter";
 import { JSONLDConverter } from "./JSONLD/Converter";
 import { JSONLDParser } from "./JSONLD/Parser";
-import { ErrorResponse } from "./LDP";
 import { AddMemberAction } from "./LDP/AddMemberAction";
 import { DocumentMetadata } from "./LDP/DocumentMetadata";
+import { ErrorResponse } from "./LDP/ErrorResponse";
 import { RemoveMemberAction } from "./LDP/RemoveMemberAction";
 import { ResponseMetadata } from "./LDP/ResponseMetadata";
 import * as LDPatch from "./LDPatch";
@@ -810,14 +810,14 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 
 		return new JSONLDParser().parse( response.data ).then( ( freeNodes:RDF.Node.Class[] ) => {
 			const freeResources:FreeResources = this._getFreeResources( freeNodes );
-			const errorResponses:ErrorResponse.Class[] = freeResources
+			const errorResponses:ErrorResponse[] = freeResources
 				.getResources()
-				.filter( ( resource ):resource is ErrorResponse.Class => resource.hasType( ErrorResponse.RDF_CLASS ) );
+				.filter( ( resource ):resource is ErrorResponse => resource.hasType( ErrorResponse.TYPE ) );
 			if( errorResponses.length === 0 ) return Promise.reject( new Errors.IllegalArgumentError( "The response string does not contains a c:ErrorResponse." ) );
 			if( errorResponses.length > 1 ) return Promise.reject( new Errors.IllegalArgumentError( "The response string contains multiple c:ErrorResponse." ) );
 
 			Object.assign( error, errorResponses[ 0 ] );
-			error.message = ErrorResponse.Util.getMessage( error );
+			error.message = ErrorResponse.getMessage( error );
 			return Promise.reject( error );
 		}, () => {
 			return Promise.reject( error );

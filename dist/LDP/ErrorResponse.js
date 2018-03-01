@@ -2,8 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 var C_1 = require("../Vocabularies/C");
 var XSD_1 = require("../Vocabularies/XSD");
-exports.RDF_CLASS = C_1.C.ErrorResponse;
-exports.SCHEMA = {
+var SCHEMA = {
     "errors": {
         "@id": C_1.C.error,
         "@type": "@id",
@@ -18,17 +17,16 @@ exports.SCHEMA = {
         "@type": XSD_1.XSD.int,
     },
 };
-var Util = (function () {
-    function Util() {
-    }
-    Util.getMessage = function (errorResponse) {
+exports.ErrorResponse = {
+    TYPE: C_1.C.ErrorResponse,
+    SCHEMA: SCHEMA,
+    getMessage: function (errorResponse) {
         return errorResponse
             .errors
             .map(function (error) { return error.errorMessage; })
             .join(", ");
-    };
-    return Util;
-}());
-exports.Util = Util;
+    },
+};
+exports.default = exports.ErrorResponse;
 
 //# sourceMappingURL=ErrorResponse.js.map
