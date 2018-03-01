@@ -7,7 +7,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 }
 Object.defineProperty(exports, "__esModule", { value: true });
-var PersistedProtectedDocument = __importStar(require("./../PersistedProtectedDocument"));
+var PersistedProtectedDocument_1 = require("../PersistedProtectedDocument");
 var Utils = __importStar(require("./../Utils"));
 var PersistedUser = __importStar(require("./PersistedUser"));
 var Factory = (function () {
@@ -22,7 +22,7 @@ var Factory = (function () {
         var persistedCredentials = persistedDocument;
         if (Factory.hasClassProperties(persistedDocument))
             return persistedCredentials;
-        PersistedProtectedDocument.Factory.decorate(persistedCredentials, documents);
+        PersistedProtectedDocument_1.PersistedProtectedDocument.decorate(persistedCredentials, documents);
         Object.defineProperties(persistedCredentials, {
             "enable": {
                 writable: false,

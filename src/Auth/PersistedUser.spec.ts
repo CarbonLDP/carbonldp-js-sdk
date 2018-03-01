@@ -1,7 +1,7 @@
 import AbstractContext from "../AbstractContext";
 import { Response } from "../HTTP/Response";
 import { PersistedDocument } from "./../PersistedDocument";
-import * as PersistedProtectedDocument from "./../PersistedProtectedDocument";
+import { PersistedProtectedDocument } from "./../PersistedProtectedDocument";
 import {
 	clazz,
 	decoratedObject,
@@ -42,7 +42,7 @@ describe( module( "Carbon/Auth/PersistedUser" ), ():void => {
 		"Interface that represents the base of a persisted User in any context."
 	), ():void => {
 
-		it( extendsClass( "Carbon.PersistedProtectedDocument.Class" ), ():void => {} );
+		it( extendsClass( "Carbon.PersistedProtectedDocument.PersistedProtectedDocument" ), ():void => {} );
 
 		it( hasProperty(
 			OBLIGATORY,
@@ -166,7 +166,7 @@ describe( module( "Carbon/Auth/PersistedUser" ), ():void => {
 			}, null );
 			expect( PersistedUser.Factory.is( object ) ).toBe( false );
 
-			object = PersistedProtectedDocument.Factory.decorate( {
+			object = PersistedProtectedDocument.decorate( {
 				name: null,
 				credentials: null,
 				enableCredentials: ():void => {},

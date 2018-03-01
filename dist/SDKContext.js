@@ -16,7 +16,7 @@ var Errors = __importStar(require("./Errors"));
 var LDP = __importStar(require("./LDP"));
 var Messaging = __importStar(require("./Messaging"));
 var ObjectSchema = __importStar(require("./ObjectSchema"));
-var ProtectedDocument = __importStar(require("./ProtectedDocument"));
+var ProtectedDocument_1 = require("./ProtectedDocument");
 var RDF = __importStar(require("./RDF"));
 var SHACL = __importStar(require("./SHACL"));
 var SPARQL = __importStar(require("./SPARQL"));
@@ -149,7 +149,7 @@ var SDKContext = (function () {
     };
     SDKContext.prototype.registerDefaultObjectSchemas = function () {
         this.extendObjectSchema(Document_1.Document.TYPE, Document_1.Document.SCHEMA);
-        this.extendObjectSchema(ProtectedDocument.RDF_CLASS, ProtectedDocument.SCHEMA);
+        this.extendObjectSchema(ProtectedDocument_1.ProtectedDocument.TYPE, ProtectedDocument_1.ProtectedDocument.SCHEMA);
         this.extendObjectSchema(System.PlatformMetadata.RDF_CLASS, System.PlatformMetadata.SCHEMA);
         this.extendObjectSchema(LDP.Entry.SCHEMA);
         this.extendObjectSchema(LDP.Error.RDF_CLASS, LDP.Error.SCHEMA);

@@ -30,10 +30,10 @@ var Utils_1 = require("./Messaging/Utils");
 var ObjectSchema_1 = require("./ObjectSchema");
 var PersistedDocument_1 = require("./PersistedDocument");
 var PersistedFragment_1 = require("./PersistedFragment");
-var PersistedProtectedDocument = __importStar(require("./PersistedProtectedDocument"));
+var PersistedProtectedDocument_1 = require("./PersistedProtectedDocument");
 var PersistedResource_1 = require("./PersistedResource");
 var Pointer_1 = require("./Pointer");
-var ProtectedDocument = __importStar(require("./ProtectedDocument"));
+var ProtectedDocument_1 = require("./ProtectedDocument");
 var RDF = __importStar(require("./RDF"));
 var Document_2 = require("./RDF/Document");
 var Builder_1 = require("./SPARQL/Builder");
@@ -69,7 +69,7 @@ var Documents = (function () {
                 decorators = this._documentDecorators = Utils.MapUtils.extend(decorators, parentDecorators);
         }
         else {
-            decorators.set(ProtectedDocument.RDF_CLASS, PersistedProtectedDocument.Factory.decorate);
+            decorators.set(ProtectedDocument_1.ProtectedDocument.TYPE, PersistedProtectedDocument_1.PersistedProtectedDocument.decorate);
             decorators.set(ACL_1.ACL.TYPE, PersistedACL_1.PersistedACL.decorate);
             decorators.set(Auth.User.RDF_CLASS, Auth.PersistedUser.Factory.decorate);
             decorators.set(Auth.Role.RDF_CLASS, Auth.PersistedRole.Factory.decorate);
@@ -968,7 +968,7 @@ var Documents = (function () {
                 throw new BadResponseError_1.BadResponseError("The response contains more than one Location header.", response);
             var localID = _this.getPointerID(locationHeader.values[0].toString());
             _this.pointers.set(localID, _this.createPointerFrom(document, localID));
-            var persistedDocument = PersistedProtectedDocument.Factory.decorate(document, _this);
+            var persistedDocument = PersistedProtectedDocument_1.PersistedProtectedDocument.decorate(document, _this);
             persistedDocument.getFragments().forEach(PersistedFragment_1.PersistedFragment.decorate);
             return _this.applyResponseData(persistedDocument, response);
         }, this._parseErrorResponse.bind(this)).catch(function (error) {

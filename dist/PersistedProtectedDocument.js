@@ -12,22 +12,20 @@ var Errors_1 = require("./HTTP/Errors");
 var PersistedDocument_1 = require("./PersistedDocument");
 var Utils = __importStar(require("./Utils"));
 var CS_1 = require("./Vocabularies/CS");
-var Factory = (function () {
-    function Factory() {
-    }
-    Factory.hasClassProperties = function (object) {
+exports.PersistedProtectedDocument = {
+    isDecorated: function (object) {
         return Utils.isObject(object)
             && Utils.hasFunction(object, "getACL");
-    };
-    Factory.is = function (object) {
-        return Factory.hasClassProperties(object)
+    },
+    is: function (object) {
+        return exports.PersistedProtectedDocument.isDecorated(object)
             && PersistedDocument_1.PersistedDocument.is(object);
-    };
-    Factory.decorate = function (document, documents) {
-        var persistedProtectedDocument = document;
-        if (Factory.hasClassProperties(document))
-            return persistedProtectedDocument;
-        PersistedDocument_1.PersistedDocument.decorate(document, documents);
+    },
+    decorate: function (object, documents) {
+        if (exports.PersistedProtectedDocument.isDecorated(object))
+            return object;
+        PersistedDocument_1.PersistedDocument.decorate(object, documents);
+        var persistedProtectedDocument = object;
         Object.defineProperties(persistedProtectedDocument, {
             "getACL": {
                 writable: false,
@@ -37,24 +35,22 @@ var Factory = (function () {
             },
         });
         return persistedProtectedDocument;
-    };
-    return Factory;
-}());
-exports.Factory = Factory;
+    },
+};
 function getACL(requestOptions) {
-    var protectedDocument = this;
+    var _this = this;
     var aclPromise;
-    if (protectedDocument.isResolved()) {
-        aclPromise = Promise.resolve(protectedDocument.accessControlList);
+    if (this.isResolved()) {
+        aclPromise = Promise.resolve(this.accessControlList);
     }
     else {
-        aclPromise = protectedDocument.executeSELECTQuery("SELECT ?acl WHERE {\n\t\t\t<" + protectedDocument.id + "> <" + CS_1.CS.accessControlList + "> ?acl.\n\t\t}").then(function (_a) {
+        aclPromise = this.executeSELECTQuery("SELECT ?acl WHERE {\n\t\t\t<" + this.id + "> <" + CS_1.CS.accessControlList + "> ?acl.\n\t\t}").then(function (_a) {
             var results = _a[0];
             return results.bindings[0].acl;
         });
     }
     return aclPromise.then(function (acl) {
-        return protectedDocument._documents.get(acl.id, requestOptions);
+        return _this._documents.get(acl.id, requestOptions);
     }).then(function (_a) {
         var acl = _a[0], response = _a[1];
         if (!acl.hasType(ACL_1.ACL.TYPE))
@@ -62,5 +58,6 @@ function getACL(requestOptions) {
         return [acl, response];
     });
 }
+exports.default = exports.PersistedProtectedDocument;
 
 //# sourceMappingURL=PersistedProtectedDocument.js.map

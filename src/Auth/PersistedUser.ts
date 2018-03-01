@@ -3,12 +3,12 @@ import { RequestOptions } from "../HTTP/Request";
 import { Response } from "../HTTP/Response";
 import { Pointer } from "../Pointer";
 import { CS } from "../Vocabularies/CS";
-import * as PersistedProtectedDocument from "./../PersistedProtectedDocument";
+import { PersistedProtectedDocument } from "./../PersistedProtectedDocument";
 import * as SELECTResults from "../SPARQL/SelectResults";
 import * as Utils from "./../Utils";
 import * as PersistedCredentials from "./PersistedCredentials";
 
-export interface Class extends PersistedProtectedDocument.Class {
+export interface Class extends PersistedProtectedDocument {
 	name?:string;
 	credentials?:PersistedCredentials.Class;
 
@@ -27,7 +27,7 @@ export class Factory {
 
 	static is( object:Object ):boolean {
 		return Factory.hasClassProperties( object )
-			&& PersistedProtectedDocument.Factory.is( object )
+			&& PersistedProtectedDocument.is( object )
 			;
 	}
 
@@ -35,7 +35,7 @@ export class Factory {
 		const persistedUser:T & Class = <any> object;
 
 		if( Factory.hasClassProperties( persistedUser ) ) return persistedUser;
-		if( ! PersistedProtectedDocument.Factory.hasClassProperties( persistedUser ) ) PersistedProtectedDocument.Factory.decorate( persistedUser, documents );
+		if( ! PersistedProtectedDocument.isDecorated( persistedUser ) ) PersistedProtectedDocument.decorate( persistedUser, documents );
 
 		Object.defineProperties( persistedUser, {
 			"enableCredentials": {

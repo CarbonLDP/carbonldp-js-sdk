@@ -46,7 +46,7 @@ describe( module( "Carbon/Auth/PersistedCredentials" ), ():void => {
 		"Interface that represents a persisted Credentials."
 	), ():void => {
 
-		it( extendsClass( "Carbon.PersistedProtectedDocument.Class" ), ():void => {} );
+		it( extendsClass( "Carbon.PersistedProtectedDocument.PersistedProtectedDocument" ), ():void => {} );
 		it( extendsClass( "Carbon.Auth.Credentials.Class" ), ():void => {} );
 
 		it( hasProperty(

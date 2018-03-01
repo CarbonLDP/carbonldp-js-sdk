@@ -1,11 +1,11 @@
 import { Documents } from "../Documents";
 import { RequestOptions } from "../HTTP/Request";
 import { Response } from "../HTTP/Response";
-import * as PersistedProtectedDocument from "./../PersistedProtectedDocument";
+import { PersistedProtectedDocument } from "../PersistedProtectedDocument";
 import * as Utils from "./../Utils";
 import * as PersistedUser from "./PersistedUser";
 
-export interface Class extends PersistedProtectedDocument.Class {
+export interface Class extends PersistedProtectedDocument {
 	email?:string;
 	password?:string;
 	enabled?:boolean;
@@ -28,7 +28,7 @@ export class Factory {
 		const persistedCredentials:T & Class = <T & Class> persistedDocument;
 		if( Factory.hasClassProperties( persistedDocument ) ) return persistedCredentials;
 
-		PersistedProtectedDocument.Factory.decorate( persistedCredentials, documents );
+		PersistedProtectedDocument.decorate( persistedCredentials, documents );
 
 		Object.defineProperties( persistedCredentials, {
 			"enable": {

@@ -1,18 +1,27 @@
 import { Document } from "./Document";
-import * as ObjectSchema from "./ObjectSchema";
+import { ObjectSchema } from "./ObjectSchema";
 import { CS } from "./Vocabularies/CS";
 
-export const RDF_CLASS:string = CS.ProtectedDocument;
+export interface ProtectedDocument extends Document {
+}
 
-export const SCHEMA:ObjectSchema.ObjectSchema = {
+
+export interface ProtectedDocumentFactory {
+	TYPE:string;
+	SCHEMA:ObjectSchema;
+}
+
+
+const SCHEMA:ObjectSchema = {
 	"accessControlList": {
 		"@id": CS.accessControlList,
 		"@type": "@id",
 	},
 };
 
-export interface Class extends Document {
+export const ProtectedDocument:ProtectedDocumentFactory = {
+	TYPE: CS.ProtectedDocument,
+	SCHEMA,
+};
 
-}
-
-export default Class;
+export default ProtectedDocument;

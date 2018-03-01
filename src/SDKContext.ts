@@ -8,7 +8,7 @@ import * as Errors from "./Errors";
 import * as LDP from "./LDP";
 import * as Messaging from "./Messaging";
 import * as ObjectSchema from "./ObjectSchema";
-import * as ProtectedDocument from "./ProtectedDocument";
+import { ProtectedDocument } from "./ProtectedDocument";
 import * as RDF from "./RDF";
 import * as Settings from "./Settings";
 import * as SHACL from "./SHACL";
@@ -185,7 +185,7 @@ export class SDKContext implements Context {
 
 	private registerDefaultObjectSchemas():void {
 		this.extendObjectSchema( Document.TYPE, Document.SCHEMA );
-		this.extendObjectSchema( ProtectedDocument.RDF_CLASS, ProtectedDocument.SCHEMA );
+		this.extendObjectSchema( ProtectedDocument.TYPE, ProtectedDocument.SCHEMA );
 
 		this.extendObjectSchema( System.PlatformMetadata.RDF_CLASS, System.PlatformMetadata.SCHEMA );
 

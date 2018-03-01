@@ -1,9 +1,9 @@
 import { Documents } from "../Documents";
 import { RequestOptions } from "../HTTP/Request";
 import { Response } from "../HTTP/Response";
-import * as PersistedProtectedDocument from "./../PersistedProtectedDocument";
+import { PersistedProtectedDocument } from "./../PersistedProtectedDocument";
 import * as PersistedCredentials from "./PersistedCredentials";
-export interface Class extends PersistedProtectedDocument.Class {
+export interface Class extends PersistedProtectedDocument {
     name?: string;
     credentials?: PersistedCredentials.Class;
     enableCredentials(requestOptions?: RequestOptions): Promise<[Class, Response[]]>;

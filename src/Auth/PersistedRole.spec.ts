@@ -21,7 +21,7 @@ import {
 	STATIC,
 } from "../test/JasmineExtender";
 import { PersistedDocument } from "./../PersistedDocument";
-import * as PersistedProtectedDocument from "./../PersistedProtectedDocument";
+import { PersistedProtectedDocument } from "./../PersistedProtectedDocument";
 import * as Utils from "./../Utils";
 
 import * as PersistedRole from "./PersistedRole";
@@ -269,7 +269,7 @@ describe( module( "Carbon/Auth/PersistedRole" ), ():void => {
 			object = PersistedDocument.decorate( object, new Documents() );
 			expect( PersistedRole.Factory.is( object ) ).toBe( false );
 
-			object = PersistedProtectedDocument.Factory.decorate( object, new Documents() );
+			object = PersistedProtectedDocument.decorate( object, new Documents() );
 			expect( PersistedRole.Factory.is( object ) ).toBe( true );
 		} );
 

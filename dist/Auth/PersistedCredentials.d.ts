@@ -1,9 +1,9 @@
 import { Documents } from "../Documents";
 import { RequestOptions } from "../HTTP/Request";
 import { Response } from "../HTTP/Response";
-import * as PersistedProtectedDocument from "./../PersistedProtectedDocument";
+import { PersistedProtectedDocument } from "../PersistedProtectedDocument";
 import * as PersistedUser from "./PersistedUser";
-export interface Class extends PersistedProtectedDocument.Class {
+export interface Class extends PersistedProtectedDocument {
     email?: string;
     password?: string;
     enabled?: boolean;

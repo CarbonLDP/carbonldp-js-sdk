@@ -1,7 +1,7 @@
 import { AccessPointBase } from "./AccessPoint";
-import * as PersistedProtectedDocument from "./PersistedProtectedDocument";
+import { PersistedProtectedDocument } from "./PersistedProtectedDocument";
 import { Pointer } from "./Pointer";
-export interface Class extends AccessPointBase, PersistedProtectedDocument.Class {
+export interface Class extends AccessPointBase, PersistedProtectedDocument {
     membershipResource: Pointer;
     hasMemberRelation: Pointer;
     isMemberOfRelation?: Pointer;

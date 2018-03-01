@@ -5559,22 +5559,20 @@ var Errors_1 = __webpack_require__(33);
 var PersistedDocument_1 = __webpack_require__(42);
 var Utils = __importStar(__webpack_require__(0));
 var CS_1 = __webpack_require__(16);
-var Factory = (function () {
-    function Factory() {
-    }
-    Factory.hasClassProperties = function (object) {
+exports.PersistedProtectedDocument = {
+    isDecorated: function (object) {
         return Utils.isObject(object)
             && Utils.hasFunction(object, "getACL");
-    };
-    Factory.is = function (object) {
-        return Factory.hasClassProperties(object)
+    },
+    is: function (object) {
+        return exports.PersistedProtectedDocument.isDecorated(object)
             && PersistedDocument_1.PersistedDocument.is(object);
-    };
-    Factory.decorate = function (document, documents) {
-        var persistedProtectedDocument = document;
-        if (Factory.hasClassProperties(document))
-            return persistedProtectedDocument;
-        PersistedDocument_1.PersistedDocument.decorate(document, documents);
+    },
+    decorate: function (object, documents) {
+        if (exports.PersistedProtectedDocument.isDecorated(object))
+            return object;
+        PersistedDocument_1.PersistedDocument.decorate(object, documents);
+        var persistedProtectedDocument = object;
         Object.defineProperties(persistedProtectedDocument, {
             "getACL": {
                 writable: false,
@@ -5584,24 +5582,22 @@ var Factory = (function () {
             },
         });
         return persistedProtectedDocument;
-    };
-    return Factory;
-}());
-exports.Factory = Factory;
+    },
+};
 function getACL(requestOptions) {
-    var protectedDocument = this;
+    var _this = this;
     var aclPromise;
-    if (protectedDocument.isResolved()) {
-        aclPromise = Promise.resolve(protectedDocument.accessControlList);
+    if (this.isResolved()) {
+        aclPromise = Promise.resolve(this.accessControlList);
     }
     else {
-        aclPromise = protectedDocument.executeSELECTQuery("SELECT ?acl WHERE {\n\t\t\t<" + protectedDocument.id + "> <" + CS_1.CS.accessControlList + "> ?acl.\n\t\t}").then(function (_a) {
+        aclPromise = this.executeSELECTQuery("SELECT ?acl WHERE {\n\t\t\t<" + this.id + "> <" + CS_1.CS.accessControlList + "> ?acl.\n\t\t}").then(function (_a) {
             var results = _a[0];
             return results.bindings[0].acl;
         });
     }
     return aclPromise.then(function (acl) {
-        return protectedDocument._documents.get(acl.id, requestOptions);
+        return _this._documents.get(acl.id, requestOptions);
     }).then(function (_a) {
         var acl = _a[0], response = _a[1];
         if (!acl.hasType(ACL_1.ACL.TYPE))
@@ -5609,6 +5605,7 @@ function getACL(requestOptions) {
         return [acl, response];
     });
 }
+exports.default = exports.PersistedProtectedDocument;
 
 
 /***/ }),
@@ -7096,7 +7093,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
 }
 Object.defineProperty(exports, "__esModule", { value: true });
 var CS_1 = __webpack_require__(16);
-var PersistedProtectedDocument = __importStar(__webpack_require__(54));
+var PersistedProtectedDocument_1 = __webpack_require__(54);
 var Utils = __importStar(__webpack_require__(0));
 var PersistedCredentials = __importStar(__webpack_require__(110));
 var Factory = (function () {
@@ -7109,14 +7106,14 @@ var Factory = (function () {
     };
     Factory.is = function (object) {
         return Factory.hasClassProperties(object)
-            && PersistedProtectedDocument.Factory.is(object);
+            && PersistedProtectedDocument_1.PersistedProtectedDocument.is(object);
     };
     Factory.decorate = function (object, documents) {
         var persistedUser = object;
         if (Factory.hasClassProperties(persistedUser))
             return persistedUser;
-        if (!PersistedProtectedDocument.Factory.hasClassProperties(persistedUser))
-            PersistedProtectedDocument.Factory.decorate(persistedUser, documents);
+        if (!PersistedProtectedDocument_1.PersistedProtectedDocument.isDecorated(persistedUser))
+            PersistedProtectedDocument_1.PersistedProtectedDocument.decorate(persistedUser, documents);
         Object.defineProperties(persistedUser, {
             "enableCredentials": {
                 writable: false,
@@ -8144,7 +8141,7 @@ var Errors = __importStar(__webpack_require__(3));
 var LDP = __importStar(__webpack_require__(55));
 var Messaging = __importStar(__webpack_require__(77));
 var ObjectSchema = __importStar(__webpack_require__(12));
-var ProtectedDocument = __importStar(__webpack_require__(138));
+var ProtectedDocument_1 = __webpack_require__(138);
 var RDF = __importStar(__webpack_require__(17));
 var SHACL = __importStar(__webpack_require__(161));
 var SPARQL = __importStar(__webpack_require__(162));
@@ -8277,7 +8274,7 @@ var SDKContext = (function () {
     };
     SDKContext.prototype.registerDefaultObjectSchemas = function () {
         this.extendObjectSchema(Document_1.Document.TYPE, Document_1.Document.SCHEMA);
-        this.extendObjectSchema(ProtectedDocument.RDF_CLASS, ProtectedDocument.SCHEMA);
+        this.extendObjectSchema(ProtectedDocument_1.ProtectedDocument.TYPE, ProtectedDocument_1.ProtectedDocument.SCHEMA);
         this.extendObjectSchema(System.PlatformMetadata.RDF_CLASS, System.PlatformMetadata.SCHEMA);
         this.extendObjectSchema(LDP.Entry.SCHEMA);
         this.extendObjectSchema(LDP.Error.RDF_CLASS, LDP.Error.SCHEMA);
@@ -9607,7 +9604,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 }
 Object.defineProperty(exports, "__esModule", { value: true });
-var PersistedProtectedDocument = __importStar(__webpack_require__(54));
+var PersistedProtectedDocument_1 = __webpack_require__(54);
 var Utils = __importStar(__webpack_require__(0));
 var PersistedUser = __importStar(__webpack_require__(72));
 var Factory = (function () {
@@ -9622,7 +9619,7 @@ var Factory = (function () {
         var persistedCredentials = persistedDocument;
         if (Factory.hasClassProperties(persistedDocument))
             return persistedCredentials;
-        PersistedProtectedDocument.Factory.decorate(persistedCredentials, documents);
+        PersistedProtectedDocument_1.PersistedProtectedDocument.decorate(persistedCredentials, documents);
         Object.defineProperties(persistedCredentials, {
             "enable": {
                 writable: false,
@@ -9680,7 +9677,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
 }
 Object.defineProperty(exports, "__esModule", { value: true });
 var Errors = __importStar(__webpack_require__(3));
-var PersistedProtectedDocument = __importStar(__webpack_require__(54));
+var PersistedProtectedDocument_1 = __webpack_require__(54);
 var Utils = __importStar(__webpack_require__(0));
 var Factory = (function () {
     function Factory() {
@@ -9696,13 +9693,13 @@ var Factory = (function () {
     };
     Factory.is = function (object) {
         return Factory.hasClassProperties(object)
-            && PersistedProtectedDocument.Factory.is(object);
+            && PersistedProtectedDocument_1.PersistedProtectedDocument.is(object);
     };
     Factory.decorate = function (object, documents) {
         var persistedRole = object;
         if (Factory.hasClassProperties(persistedRole))
             return persistedRole;
-        PersistedProtectedDocument.Factory.decorate(persistedRole, documents);
+        PersistedProtectedDocument_1.PersistedProtectedDocument.decorate(persistedRole, documents);
         Object.defineProperties(persistedRole, {
             "_roles": {
                 writable: false,
@@ -10121,10 +10118,10 @@ var Utils_1 = __webpack_require__(137);
 var ObjectSchema_1 = __webpack_require__(12);
 var PersistedDocument_1 = __webpack_require__(42);
 var PersistedFragment_1 = __webpack_require__(52);
-var PersistedProtectedDocument = __importStar(__webpack_require__(54));
+var PersistedProtectedDocument_1 = __webpack_require__(54);
 var PersistedResource_1 = __webpack_require__(53);
 var Pointer_1 = __webpack_require__(18);
-var ProtectedDocument = __importStar(__webpack_require__(138));
+var ProtectedDocument_1 = __webpack_require__(138);
 var RDF = __importStar(__webpack_require__(17));
 var Document_2 = __webpack_require__(50);
 var Builder_1 = __webpack_require__(139);
@@ -10160,7 +10157,7 @@ var Documents = (function () {
                 decorators = this._documentDecorators = Utils.MapUtils.extend(decorators, parentDecorators);
         }
         else {
-            decorators.set(ProtectedDocument.RDF_CLASS, PersistedProtectedDocument.Factory.decorate);
+            decorators.set(ProtectedDocument_1.ProtectedDocument.TYPE, PersistedProtectedDocument_1.PersistedProtectedDocument.decorate);
             decorators.set(ACL_1.ACL.TYPE, PersistedACL_1.PersistedACL.decorate);
             decorators.set(Auth.User.RDF_CLASS, Auth.PersistedUser.Factory.decorate);
             decorators.set(Auth.Role.RDF_CLASS, Auth.PersistedRole.Factory.decorate);
@@ -11059,7 +11056,7 @@ var Documents = (function () {
                 throw new BadResponseError_1.BadResponseError("The response contains more than one Location header.", response);
             var localID = _this.getPointerID(locationHeader.values[0].toString());
             _this.pointers.set(localID, _this.createPointerFrom(document, localID));
-            var persistedDocument = PersistedProtectedDocument.Factory.decorate(document, _this);
+            var persistedDocument = PersistedProtectedDocument_1.PersistedProtectedDocument.decorate(document, _this);
             persistedDocument.getFragments().forEach(PersistedFragment_1.PersistedFragment.decorate);
             return _this.applyResponseData(persistedDocument, response);
         }, this._parseErrorResponse.bind(this)).catch(function (error) {
@@ -12973,13 +12970,17 @@ exports.createDestination = createDestination;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var CS_1 = __webpack_require__(16);
-exports.RDF_CLASS = CS_1.CS.ProtectedDocument;
-exports.SCHEMA = {
+var SCHEMA = {
     "accessControlList": {
         "@id": CS_1.CS.accessControlList,
         "@type": "@id",
     },
 };
+exports.ProtectedDocument = {
+    TYPE: CS_1.CS.ProtectedDocument,
+    SCHEMA: SCHEMA,
+};
+exports.default = exports.ProtectedDocument;
 
 
 /***/ }),

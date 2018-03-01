@@ -26,7 +26,7 @@ describe( module( "Carbon/PersistedAccessPoint" ), ():void => {
 	), ():void => {
 
 		it( extendsClass( "Carbon.AccessPoint.AccessPoint" ), ():void => {} );
-		it( extendsClass( "Carbon.PersistedProtectedDocument.Class" ), ():void => {} );
+		it( extendsClass( "Carbon.PersistedProtectedDocument.PersistedProtectedDocument" ), ():void => {} );
 
 		it( hasProperty(
 			OBLIGATORY,

@@ -1,7 +1,10 @@
 import { Document } from "./Document";
-import * as ObjectSchema from "./ObjectSchema";
-export declare const RDF_CLASS: string;
-export declare const SCHEMA: ObjectSchema.ObjectSchema;
-export interface Class extends Document {
+import { ObjectSchema } from "./ObjectSchema";
+export interface ProtectedDocument extends Document {
 }
-export default Class;
+export interface ProtectedDocumentFactory {
+    TYPE: string;
+    SCHEMA: ObjectSchema;
+}
+export declare const ProtectedDocument: ProtectedDocumentFactory;
+export default ProtectedDocument;

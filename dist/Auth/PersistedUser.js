@@ -8,7 +8,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
 }
 Object.defineProperty(exports, "__esModule", { value: true });
 var CS_1 = require("../Vocabularies/CS");
-var PersistedProtectedDocument = __importStar(require("./../PersistedProtectedDocument"));
+var PersistedProtectedDocument_1 = require("./../PersistedProtectedDocument");
 var Utils = __importStar(require("./../Utils"));
 var PersistedCredentials = __importStar(require("./PersistedCredentials"));
 var Factory = (function () {
@@ -21,14 +21,14 @@ var Factory = (function () {
     };
     Factory.is = function (object) {
         return Factory.hasClassProperties(object)
-            && PersistedProtectedDocument.Factory.is(object);
+            && PersistedProtectedDocument_1.PersistedProtectedDocument.is(object);
     };
     Factory.decorate = function (object, documents) {
         var persistedUser = object;
         if (Factory.hasClassProperties(persistedUser))
             return persistedUser;
-        if (!PersistedProtectedDocument.Factory.hasClassProperties(persistedUser))
-            PersistedProtectedDocument.Factory.decorate(persistedUser, documents);
+        if (!PersistedProtectedDocument_1.PersistedProtectedDocument.isDecorated(persistedUser))
+            PersistedProtectedDocument_1.PersistedProtectedDocument.decorate(persistedUser, documents);
         Object.defineProperties(persistedUser, {
             "enableCredentials": {
                 writable: false,
