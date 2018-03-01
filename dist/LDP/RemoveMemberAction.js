@@ -7,10 +7,9 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 }
 Object.defineProperty(exports, "__esModule", { value: true });
+var Resource_1 = require("../Resource");
 var C_1 = require("../Vocabularies/C");
-var Resource_1 = require("./../Resource");
 var Utils = __importStar(require("./../Utils"));
-exports.RDF_CLASS = C_1.C.RemoveMemberAction;
 exports.SCHEMA = {
     "targetMembers": {
         "@id": C_1.C.targetMember,
@@ -18,20 +17,19 @@ exports.SCHEMA = {
         "@container": "@set",
     },
 };
-var Factory = (function () {
-    function Factory() {
-    }
-    Factory.hasClassProperties = function (object) {
+exports.RemoveMemberAction = {
+    TYPE: C_1.C.RemoveMemberAction,
+    SCHEMA: exports.SCHEMA,
+    isDecorated: function (object) {
         return Utils.hasPropertyDefined(object, "targetMembers");
-    };
-    Factory.create = function (targetMembers) {
+    },
+    create: function (targetMembers) {
         return Resource_1.Resource.createFrom({
-            types: [exports.RDF_CLASS],
+            types: [exports.RemoveMemberAction.TYPE],
             targetMembers: targetMembers,
         });
-    };
-    return Factory;
-}());
-exports.Factory = Factory;
+    },
+};
+exports.default = exports.RemoveMemberAction;
 
 //# sourceMappingURL=RemoveMemberAction.js.map

@@ -6,6 +6,8 @@ import { Document } from "./Document";
 import { Documents } from "./Documents";
 import * as Errors from "./Errors";
 import * as LDP from "./LDP";
+import { AddMemberAction } from "./LDP/AddMemberAction";
+import { RemoveMemberAction } from "./LDP/RemoveMemberAction";
 import * as Messaging from "./Messaging";
 import * as ObjectSchema from "./ObjectSchema";
 import { ProtectedDocument } from "./ProtectedDocument";
@@ -194,8 +196,8 @@ export class SDKContext implements Context {
 		this.extendObjectSchema( LDP.ErrorResponse.RDF_CLASS, LDP.ErrorResponse.SCHEMA );
 		this.extendObjectSchema( LDP.ResponseMetadata.RDF_CLASS, LDP.ResponseMetadata.SCHEMA );
 		this.extendObjectSchema( LDP.DocumentMetadata.RDF_CLASS, LDP.DocumentMetadata.SCHEMA );
-		this.extendObjectSchema( LDP.AddMemberAction.RDF_CLASS, LDP.AddMemberAction.SCHEMA );
-		this.extendObjectSchema( LDP.RemoveMemberAction.RDF_CLASS, LDP.RemoveMemberAction.SCHEMA );
+		this.extendObjectSchema( AddMemberAction.TYPE, AddMemberAction.SCHEMA );
+		this.extendObjectSchema( RemoveMemberAction.TYPE, RemoveMemberAction.SCHEMA );
 		this.extendObjectSchema( LDP.Map.RDF_CLASS, LDP.Map.SCHEMA );
 		this.extendObjectSchema( LDP.ValidationError.RDF_CLASS, LDP.ValidationError.SCHEMA );
 

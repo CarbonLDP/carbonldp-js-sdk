@@ -24,6 +24,8 @@ var Compacter_1 = require("./JSONLD/Compacter");
 var Converter_1 = require("./JSONLD/Converter");
 var Parser_1 = require("./JSONLD/Parser");
 var LDP_1 = require("./LDP");
+var AddMemberAction_1 = require("./LDP/AddMemberAction");
+var RemoveMemberAction_1 = require("./LDP/RemoveMemberAction");
 var LDPatch = __importStar(require("./LDPatch"));
 var Messaging = __importStar(require("./Messaging"));
 var Utils_1 = require("./Messaging/Utils");
@@ -333,7 +335,7 @@ var Documents = (function () {
             _this.setDefaultRequestOptions(requestOptions, LDP_2.LDP.Container);
             Request_1.RequestUtils.setContentTypeHeader("application/ld+json", requestOptions);
             var freeResources = FreeResources_1.FreeResources.create(_this);
-            freeResources.createResourceFrom(LDP_1.AddMemberAction.Factory.create(pointers));
+            freeResources.createResourceFrom(AddMemberAction_1.AddMemberAction.create(pointers));
             var body = JSON.stringify(freeResources);
             return _this.sendRequest(HTTPMethod_1.HTTPMethod.PUT, documentURI, requestOptions, body);
         });
@@ -356,7 +358,7 @@ var Documents = (function () {
             };
             Request_1.RequestUtils.setRetrievalPreferences(containerRetrievalPreferences, requestOptions, false);
             var freeResources = FreeResources_1.FreeResources.create(_this);
-            freeResources.createResourceFrom(LDP_1.RemoveMemberAction.Factory.create(pointers));
+            freeResources.createResourceFrom(RemoveMemberAction_1.RemoveMemberAction.create(pointers));
             var body = JSON.stringify(freeResources);
             return _this.sendRequest(HTTPMethod_1.HTTPMethod.DELETE, documentURI, requestOptions, body);
         });

@@ -1,12 +1,27 @@
+import { ModelDecorator } from "../ModelDecorator";
+import { ModelFactory } from "../ModelFactory";
+import { ObjectSchema } from "../ObjectSchema";
+import { Pointer } from "../Pointer";
+import { Resource } from "../Resource";
 import { C } from "../Vocabularies/C";
-import * as ObjectSchema from "./../ObjectSchema";
-import { Pointer } from "./../Pointer";
-import { Resource } from "./../Resource";
 import * as Utils from "./../Utils";
 
-export const RDF_CLASS:string = C.AddMemberAction;
 
-export const SCHEMA:ObjectSchema.ObjectSchema = {
+export interface AddMemberAction extends Resource {
+	targetMembers:Pointer[];
+}
+
+
+export interface AddMemberActionFactory extends ModelFactory<AddMemberAction>, ModelDecorator<AddMemberAction> {
+	TYPE:string;
+	SCHEMA:ObjectSchema;
+
+	isDecorated( object:object ):object is AddMemberAction;
+
+	create( targetMembers:Pointer[] ):AddMemberAction;
+}
+
+export const SCHEMA:ObjectSchema = {
 	"targetMembers": {
 		"@id": C.targetMember,
 		"@type": "@id",
@@ -14,21 +29,20 @@ export const SCHEMA:ObjectSchema.ObjectSchema = {
 	},
 };
 
-export interface Class extends Resource {
-	targetMembers:Pointer[];
-}
+export const AddMemberAction:AddMemberActionFactory = {
+	TYPE: C.AddMemberAction,
+	SCHEMA,
 
-export class Factory {
-	static hasClassProperties( object:Object ):boolean {
+	isDecorated( object:object ):object is AddMemberAction {
 		return Utils.hasPropertyDefined( object, "targetMembers" );
-	}
+	},
 
-	static create( targetMembers:Pointer[] ):Class {
+	create( targetMembers:Pointer[] ):AddMemberAction {
 		return Resource.createFrom( {
-			types: [ RDF_CLASS ],
+			types: [ AddMemberAction.TYPE ],
 			targetMembers,
 		} );
-	}
-}
+	},
+};
 
-export default Class;
+export default AddMemberAction;

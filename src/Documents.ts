@@ -44,12 +44,12 @@ import { JSONLDCompacter } from "./JSONLD/Compacter";
 import { JSONLDConverter } from "./JSONLD/Converter";
 import { JSONLDParser } from "./JSONLD/Parser";
 import {
-	AddMemberAction,
 	DocumentMetadata,
 	ErrorResponse,
-	RemoveMemberAction,
 	ResponseMetadata,
 } from "./LDP";
+import { AddMemberAction } from "./LDP/AddMemberAction";
+import { RemoveMemberAction } from "./LDP/RemoveMemberAction";
 import * as LDPatch from "./LDPatch";
 import * as Messaging from "./Messaging";
 import {
@@ -465,7 +465,7 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 			RequestUtils.setContentTypeHeader( "application/ld+json", requestOptions );
 
 			const freeResources:FreeResources = FreeResources.create( this );
-			freeResources.createResourceFrom( AddMemberAction.Factory.create( pointers ) );
+			freeResources.createResourceFrom( AddMemberAction.create( pointers ) );
 
 			const body:string = JSON.stringify( freeResources );
 
@@ -494,7 +494,7 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 			RequestUtils.setRetrievalPreferences( containerRetrievalPreferences, requestOptions, false );
 
 			const freeResources:FreeResources = FreeResources.create( this );
-			freeResources.createResourceFrom( RemoveMemberAction.Factory.create( pointers ) );
+			freeResources.createResourceFrom( RemoveMemberAction.create( pointers ) );
 
 			const body:string = JSON.stringify( freeResources );
 
