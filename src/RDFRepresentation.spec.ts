@@ -1,5 +1,5 @@
 import AbstractContext from "./AbstractContext";
-import * as PersistedDocument from "./PersistedDocument";
+import { PersistedDocument } from "./PersistedDocument";
 
 import * as RDFRepresentation from "./RDFRepresentation";
 import DefaultExport from "./RDFRepresentation";
@@ -161,7 +161,7 @@ describe( module( "Carbon/RDFRepresentation" ), ():void => {
 
 			let context:AbstractContext = new MockedContext();
 
-			object = PersistedDocument.Factory.create( "", context.documents );
+			object = PersistedDocument.create( context.documents, "" );
 			expect( RDFRepresentation.Factory.is( object ) ).toBe( false );
 			object.mediaType = "application/pdf";
 			expect( RDFRepresentation.Factory.is( object ) ).toBe( false );

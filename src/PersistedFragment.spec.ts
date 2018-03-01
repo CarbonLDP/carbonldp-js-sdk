@@ -1,6 +1,6 @@
 import { AbstractContext } from "./AbstractContext";
 import { Fragment } from "./Fragment";
-import * as PersistedDocument from "./PersistedDocument";
+import { PersistedDocument } from "./PersistedDocument";
 
 import DefaultExport, { PersistedFragment } from "./PersistedFragment";
 
@@ -32,7 +32,7 @@ describe( module( "Carbon/PersistedFragment" ), ():void => {
 		it( hasProperty(
 			OBLIGATORY,
 			"document",
-			"Carbon.PersistedDocument.Class",
+			"Carbon.PersistedDocument.PersistedDocument",
 			"A reference to the persisted document the current fragment belongs to."
 		), ():void => {} );
 
@@ -73,7 +73,7 @@ describe( module( "Carbon/PersistedFragment" ), ():void => {
 			OBLIGATORY,
 			"create",
 			[
-				{ name: "document", type: "Carbon.PersistedDocument.Class" },
+				{ name: "document", type: "Carbon.PersistedDocument.PersistedDocument" },
 				{ name: "id", type: "string", optional: true },
 			],
 			{ type: "Carbon.PersistedFragment.PersistedFragment" }
@@ -85,7 +85,7 @@ describe( module( "Carbon/PersistedFragment" ), ():void => {
 			[ "T extends object" ],
 			[
 				{ name: "object", type: "object" },
-				{ name: "document", type: "Carbon.PersistedDocument.Class" },
+				{ name: "document", type: "Carbon.PersistedDocument.PersistedDocument" },
 				{ name: "id", type: "string", optional: true },
 			],
 			{ type: "T & Carbon.PersistedFragment.PersistedFragment" }
@@ -155,7 +155,7 @@ describe( module( "Carbon/PersistedFragment" ), ():void => {
 
 				context.documents.getPointer( "http://example.com/in/documents/" );
 
-				let document:PersistedDocument.Class = PersistedDocument.Factory.create( "http://example.com/document/", context.documents );
+				let document:PersistedDocument = PersistedDocument.create( context.documents, "http://example.com/document/" );
 
 				let fragment:Fragment = Fragment.create( document );
 				persistedFragment = PersistedFragment.decorate( fragment );

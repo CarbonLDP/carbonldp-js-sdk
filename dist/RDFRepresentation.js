@@ -7,7 +7,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 }
 Object.defineProperty(exports, "__esModule", { value: true });
-var PersistedDocument = __importStar(require("./PersistedDocument"));
+var PersistedDocument_1 = require("./PersistedDocument");
 var Utils = __importStar(require("./Utils"));
 var C_1 = require("./Vocabularies/C");
 var XSD_1 = require("./Vocabularies/XSD");
@@ -31,7 +31,7 @@ var Factory = (function () {
     };
     Factory.is = function (object) {
         return Factory.hasClassProperties(object)
-            && PersistedDocument.Factory.is(object)
+            && PersistedDocument_1.PersistedDocument.is(object)
             && object.hasType(exports.RDF_CLASS);
     };
     return Factory;

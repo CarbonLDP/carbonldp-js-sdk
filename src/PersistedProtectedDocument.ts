@@ -3,13 +3,13 @@ import { Documents } from "./Documents";
 import { BadResponseError } from "./HTTP/Errors";
 import { RequestOptions } from "./HTTP/Request";
 import { Response } from "./HTTP/Response";
-import * as PersistedDocument from "./PersistedDocument";
+import { PersistedDocument } from "./PersistedDocument";
 import { Pointer } from "./Pointer";
 import SELECTResults from "./SPARQL/SelectResults";
 import * as Utils from "./Utils";
 import { CS } from "./Vocabularies/CS";
 
-export interface Class extends PersistedDocument.Class {
+export interface Class extends PersistedDocument {
 	accessControlList?:Pointer;
 
 	getACL( requestOptions?:RequestOptions ):Promise<[ Auth.PersistedACL.Class, Response ]>;
@@ -25,7 +25,7 @@ export class Factory {
 
 	static is( object:Object ):boolean {
 		return Factory.hasClassProperties( object )
-			&& PersistedDocument.Factory.is( object )
+			&& PersistedDocument.is( object )
 			;
 	}
 
@@ -33,7 +33,7 @@ export class Factory {
 		const persistedProtectedDocument:T & Class = document as T & Class;
 
 		if( Factory.hasClassProperties( document ) ) return persistedProtectedDocument;
-		PersistedDocument.Factory.decorate( document, documents );
+		PersistedDocument.decorate( document, documents );
 
 		Object.defineProperties( persistedProtectedDocument, {
 			"getACL": {

@@ -1,6 +1,6 @@
 import { AbstractContext } from "../../AbstractContext";
 import { ObjectSchemaDigester } from "../../ObjectSchema";
-import * as PersistedDocument from "../../PersistedDocument";
+import { PersistedDocument } from "../../PersistedDocument";
 import { PersistedFragment } from "../../PersistedFragment";
 import { clazz, constructor, extendsClass, hasDefaultExport, hasSignature, INSTANCE, method, module } from "../../test/JasmineExtender";
 import { PartialMetadata } from "./PartialMetadata";
@@ -29,16 +29,16 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryContextPartial" ), ():void =
 		} );
 
 		let context:AbstractContext;
-		let persistedDocument:PersistedDocument.Class;
+		let persistedDocument:PersistedDocument;
 		beforeEach( ():void => {
 			context = new class extends AbstractContext {
 				protected _baseURI:string = "https://example.com/";
 			};
 
-			persistedDocument = PersistedDocument.Factory.createFrom(
+			persistedDocument = PersistedDocument.createFrom(
 				context.documents.getPointer( "https://example.com/resource/" ),
-				"https://example.com/resource/",
-				context.documents
+				context.documents,
+				"https://example.com/resource/"
 			);
 			persistedDocument._partialMetadata = new PartialMetadata( ObjectSchemaDigester.digestSchema( {
 				"documentProperty": {
@@ -51,7 +51,7 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryContextPartial" ), ():void =
 
 			it( hasSignature(
 				[
-					{ name: "document", type: "Carbon.PersistedDocument.Class", description: "partial document from whom the query context is created for." },
+					{ name: "document", type: "Carbon.PersistedDocument.PersistedDocument", description: "partial document from whom the query context is created for." },
 					{ name: "context", type: "Carbon.Context.Context", optional: true, description: "The carbon context from where the query belongs to." },
 				]
 			), ():void => {

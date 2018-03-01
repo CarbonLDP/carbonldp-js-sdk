@@ -19,188 +19,10 @@ var RDF = __importStar(require("./RDF"));
 var URI = __importStar(require("./RDF/URI"));
 var ServiceAwareDocument_1 = require("./ServiceAwareDocument");
 var Utils = __importStar(require("./Utils"));
-function extendIsDirty(superFunction) {
-    return function () {
-        var isDirty = superFunction.call(this);
-        if (isDirty)
-            return true;
-        var document = this;
-        for (var _i = 0, _a = document.getFragments(); _i < _a.length; _i++) {
-            var fragment = _a[_i];
-            if (fragment.isDirty())
-                return true;
-        }
-        for (var _b = 0, _c = document._savedFragments; _b < _c.length; _b++) {
-            var fragment = _c[_b];
-            if (!document.hasFragment(fragment.id))
-                return true;
-        }
-        return false;
-    };
-}
-function isLocallyOutDated() {
-    return this._etag === null;
-}
-function extendRevert(superFunction) {
-    return function () {
-        var persistedDocument = this;
-        persistedDocument._fragmentsIndex.clear();
-        for (var _i = 0, _a = persistedDocument._savedFragments; _i < _a.length; _i++) {
-            var fragment = _a[_i];
-            var slug = "slug" in fragment ? fragment.slug : fragment.id;
-            fragment.revert();
-            persistedDocument._fragmentsIndex.set(slug, fragment);
-        }
-        superFunction.call(persistedDocument);
-    };
-}
-function syncSavedFragments() {
-    var document = this;
-    document._savedFragments = Utils.ArrayUtils.from(document._fragmentsIndex.values());
-}
-function resolveURI(uri) {
-    if (URI.Util.isAbsolute(uri))
-        return uri;
-    var schema = this._documents.getGeneralSchema();
-    return ObjectSchema.ObjectSchemaUtils.resolveURI(uri, schema, { vocab: true });
-}
-function extendAddType(superFunction) {
-    return function (type) {
-        type = resolveURI.call(this, type);
-        superFunction.call(this, type);
-    };
-}
-function extendHasType(superFunction) {
-    return function (type) {
-        type = resolveURI.call(this, type);
-        return superFunction.call(this, type);
-    };
-}
-function extendRemoveType(superFunction) {
-    return function (type) {
-        type = resolveURI.call(this, type);
-        superFunction.call(this, type);
-    };
-}
-function extendCreateFragment(superFunction) {
-    return function (slugOrObject, slug) {
-        var fragment = superFunction.call(this, slugOrObject, slug);
-        var id = fragment.id;
-        if (RDF.URI.Util.isBNodeID(id))
-            PersistedFragment_1.PersistedFragment.decorate(fragment);
-        return fragment;
-    };
-}
-function extendCreateNamedFragment(superFunction) {
-    return function (slugOrObject, slug) {
-        var fragment = superFunction.call(this, slugOrObject, slug);
-        return PersistedNamedFragment_1.PersistedNamedFragment.decorate(fragment);
-    };
-}
-function refresh() {
-    return this._documents.refresh(this);
-}
-function save(requestOptions) {
-    return this._documents.save(this, requestOptions);
-}
-function saveAndRefresh() {
-    return this._documents.saveAndRefresh(this);
-}
-function _delete() {
-    return this._documents.delete(this.id);
-}
-function getDownloadURL() {
-    return this._documents.getDownloadURL(this.id);
-}
-function addMember(memberOrUri) {
-    return this._documents.addMember(this.id, memberOrUri);
-}
-function addMembers(members) {
-    return this._documents.addMembers(this.id, members);
-}
-function createChild(objectOrSlugOrRequestOptions, slugOrRequestOptions, requestOptions) {
-    if (requestOptions === void 0) { requestOptions = {}; }
-    requestOptions = Request_1.RequestUtils.isOptions(objectOrSlugOrRequestOptions) ? objectOrSlugOrRequestOptions : Request_1.RequestUtils.isOptions(slugOrRequestOptions) ? slugOrRequestOptions : requestOptions;
-    var object = Utils.isString(objectOrSlugOrRequestOptions) || Request_1.RequestUtils.isOptions(objectOrSlugOrRequestOptions) || !objectOrSlugOrRequestOptions ? {} : objectOrSlugOrRequestOptions;
-    var slug = Utils.isString(objectOrSlugOrRequestOptions) ? objectOrSlugOrRequestOptions : Utils.isString(slugOrRequestOptions) ? slugOrRequestOptions : null;
-    return this._documents.createChild(this.id, object, slug, requestOptions);
-}
-function createChildren(objects, slugsOrRequestOptions, requestOptions) {
-    return this._documents.createChildren(this.id, objects, slugsOrRequestOptions, requestOptions);
-}
-function createChildAndRetrieve(objectOrSlugOrRequestOptions, slugOrRequestOptions, requestOptions) {
-    if (requestOptions === void 0) { requestOptions = {}; }
-    requestOptions = Request_1.RequestUtils.isOptions(objectOrSlugOrRequestOptions) ? objectOrSlugOrRequestOptions : Request_1.RequestUtils.isOptions(slugOrRequestOptions) ? slugOrRequestOptions : requestOptions;
-    var object = Utils.isString(objectOrSlugOrRequestOptions) || Request_1.RequestUtils.isOptions(objectOrSlugOrRequestOptions) || !objectOrSlugOrRequestOptions ? {} : objectOrSlugOrRequestOptions;
-    var slug = Utils.isString(objectOrSlugOrRequestOptions) ? objectOrSlugOrRequestOptions : Utils.isString(slugOrRequestOptions) ? slugOrRequestOptions : null;
-    return this._documents.createChildAndRetrieve(this.id, object, slug, requestOptions);
-}
-function createChildrenAndRetrieve(objects, slugsOrRequestOptions, requestOptions) {
-    return this._documents.createChildrenAndRetrieve(this.id, objects, slugsOrRequestOptions, requestOptions);
-}
-function createAccessPoint(accessPoint, slugOrRequestOptions, requestOptions) {
-    return this._documents.createAccessPoint(this.id, accessPoint, slugOrRequestOptions, requestOptions);
-}
-function createAccessPoints(accessPoints, slugsOrRequestOptions, requestOptions) {
-    return this._documents.createAccessPoints(this.id, accessPoints, slugsOrRequestOptions, requestOptions);
-}
-function listChildren(requestOptions) {
-    return this._documents.listChildren(this.id, requestOptions);
-}
-function getChildren(requestOptionsOrQueryBuilderFn, queryBuilderFn) {
-    return this._documents.getChildren(this.id, requestOptionsOrQueryBuilderFn, queryBuilderFn);
-}
-function listMembers(requestOptions) {
-    return this._documents.listMembers(this.id, requestOptions);
-}
-function getMembers(requestOptionsOrQueryBuilderFn, childrenQuery) {
-    return this._documents.getMembers(this.id, requestOptionsOrQueryBuilderFn, childrenQuery);
-}
-function removeMember(memberOrUri) {
-    return this._documents.removeMember(this.id, memberOrUri);
-}
-function removeMembers(members) {
-    return this._documents.removeMembers(this.id, members);
-}
-function removeAllMembers() {
-    return this._documents.removeAllMembers(this.id);
-}
-function executeRawASKQuery(askQuery, requestOptions) {
-    if (requestOptions === void 0) { requestOptions = {}; }
-    return this._documents.executeRawASKQuery(this.id, askQuery, requestOptions);
-}
-function executeASKQuery(askQuery, requestOptions) {
-    if (requestOptions === void 0) { requestOptions = {}; }
-    return this._documents.executeASKQuery(this.id, askQuery, requestOptions);
-}
-function executeRawSELECTQuery(selectQuery, requestOptions) {
-    if (requestOptions === void 0) { requestOptions = {}; }
-    return this._documents.executeRawSELECTQuery(this.id, selectQuery, requestOptions);
-}
-function executeSELECTQuery(selectQuery, requestOptions) {
-    if (requestOptions === void 0) { requestOptions = {}; }
-    return this._documents.executeSELECTQuery(this.id, selectQuery, requestOptions);
-}
-function executeRawCONSTRUCTQuery(constructQuery, requestOptions) {
-    if (requestOptions === void 0) { requestOptions = {}; }
-    return this._documents.executeRawCONSTRUCTQuery(this.id, constructQuery, requestOptions);
-}
-function executeRawDESCRIBEQuery(describeQuery, requestOptions) {
-    if (requestOptions === void 0) { requestOptions = {}; }
-    return this._documents.executeRawDESCRIBEQuery(this.id, describeQuery, requestOptions);
-}
-function executeUPDATE(updateQuery, requestOptions) {
-    if (requestOptions === void 0) { requestOptions = {}; }
-    return this._documents.executeUPDATE(this.id, updateQuery, requestOptions);
-}
-function sparql() {
-    return this._documents.sparql(this.id);
-}
-var Factory = (function () {
-    function Factory() {
-    }
-    Factory.hasClassProperties = function (object) {
-        return Utils.hasPropertyDefined(object, "_etag")
+var prototype_1 = require("./Document/prototype");
+exports.PersistedDocument = {
+    isDecorated: function (object) {
+        return Utils.hasPropertyDefined(object, "_eTag")
             && Utils.hasFunction(object, "isLocallyOutDated")
             && Utils.hasFunction(object, "refresh")
             && Utils.hasFunction(object, "save")
@@ -230,23 +52,23 @@ var Factory = (function () {
             && Utils.hasFunction(object, "executeRawCONSTRUCTQuery")
             && Utils.hasFunction(object, "executeUPDATE")
             && Utils.hasFunction(object, "sparql");
-    };
-    Factory.is = function (object) {
+    },
+    is: function (object) {
         return Document_1.Document.is(object)
-            && Factory.hasClassProperties(object)
-            && MessagingDocument.Factory.hasClassProperties(object);
-    };
-    Factory.create = function (uri, documents) {
-        return Factory.createFrom({}, uri, documents);
-    };
-    Factory.createFrom = function (object, uri, documents) {
-        var document = Factory.decorate(object, documents);
+            && MessagingDocument.Factory.hasClassProperties(object)
+            && exports.PersistedDocument.isDecorated(object);
+    },
+    create: function (documents, uri) {
+        return exports.PersistedDocument.createFrom({}, documents, uri);
+    },
+    createFrom: function (object, documents, uri) {
+        var document = exports.PersistedDocument.decorate(object, documents);
         document.id = uri;
-        document._normalize();
+        prototype_1.convertNestedObjects(document, document);
         return document;
-    };
-    Factory.decorate = function (object, documents) {
-        if (Factory.hasClassProperties(object))
+    },
+    decorate: function (object, documents) {
+        if (exports.PersistedDocument.isDecorated(object))
             return object;
         Document_1.Document.decorate(object);
         PersistedResource_1.PersistedResource.decorate(object);
@@ -254,7 +76,7 @@ var Factory = (function () {
         MessagingDocument.Factory.decorate(object);
         var persistedDocument = object;
         return Object.defineProperties(persistedDocument, {
-            "_etag": {
+            "_eTag": {
                 writable: true,
                 enumerable: false,
                 configurable: true,
@@ -532,9 +354,185 @@ var Factory = (function () {
                 value: extendRevert(persistedDocument.revert),
             },
         });
+    },
+};
+function extendIsDirty(superFunction) {
+    return function () {
+        var isDirty = superFunction.call(this);
+        if (isDirty)
+            return true;
+        var document = this;
+        for (var _i = 0, _a = document.getFragments(); _i < _a.length; _i++) {
+            var fragment = _a[_i];
+            if (fragment.isDirty())
+                return true;
+        }
+        for (var _b = 0, _c = document._savedFragments; _b < _c.length; _b++) {
+            var fragment = _c[_b];
+            if (!document.hasFragment(fragment.id))
+                return true;
+        }
+        return false;
     };
-    return Factory;
-}());
-exports.Factory = Factory;
+}
+function isLocallyOutDated() {
+    return this._eTag === null;
+}
+function extendRevert(superFunction) {
+    return function () {
+        var persistedDocument = this;
+        persistedDocument._fragmentsIndex.clear();
+        for (var _i = 0, _a = persistedDocument._savedFragments; _i < _a.length; _i++) {
+            var fragment = _a[_i];
+            var slug = "slug" in fragment ? fragment.slug : fragment.id;
+            fragment.revert();
+            persistedDocument._fragmentsIndex.set(slug, fragment);
+        }
+        superFunction.call(persistedDocument);
+    };
+}
+function syncSavedFragments() {
+    var document = this;
+    document._savedFragments = Utils.ArrayUtils.from(document._fragmentsIndex.values());
+}
+function resolveURI(uri) {
+    if (URI.Util.isAbsolute(uri))
+        return uri;
+    var schema = this._documents.getGeneralSchema();
+    return ObjectSchema.ObjectSchemaUtils.resolveURI(uri, schema, { vocab: true });
+}
+function extendAddType(superFunction) {
+    return function (type) {
+        type = resolveURI.call(this, type);
+        superFunction.call(this, type);
+    };
+}
+function extendHasType(superFunction) {
+    return function (type) {
+        type = resolveURI.call(this, type);
+        return superFunction.call(this, type);
+    };
+}
+function extendRemoveType(superFunction) {
+    return function (type) {
+        type = resolveURI.call(this, type);
+        superFunction.call(this, type);
+    };
+}
+function extendCreateFragment(superFunction) {
+    return function (slugOrObject, slug) {
+        var fragment = superFunction.call(this, slugOrObject, slug);
+        var id = fragment.id;
+        if (RDF.URI.Util.isBNodeID(id))
+            PersistedFragment_1.PersistedFragment.decorate(fragment);
+        return fragment;
+    };
+}
+function extendCreateNamedFragment(superFunction) {
+    return function (slugOrObject, slug) {
+        var fragment = superFunction.call(this, slugOrObject, slug);
+        return PersistedNamedFragment_1.PersistedNamedFragment.decorate(fragment);
+    };
+}
+function refresh() {
+    return this._documents.refresh(this);
+}
+function save(requestOptions) {
+    return this._documents.save(this, requestOptions);
+}
+function saveAndRefresh() {
+    return this._documents.saveAndRefresh(this);
+}
+function _delete() {
+    return this._documents.delete(this.id);
+}
+function getDownloadURL() {
+    return this._documents.getDownloadURL(this.id);
+}
+function addMember(memberOrUri) {
+    return this._documents.addMember(this.id, memberOrUri);
+}
+function addMembers(members) {
+    return this._documents.addMembers(this.id, members);
+}
+function createChild(objectOrSlugOrRequestOptions, slugOrRequestOptions, requestOptions) {
+    if (requestOptions === void 0) { requestOptions = {}; }
+    requestOptions = Request_1.RequestUtils.isOptions(objectOrSlugOrRequestOptions) ? objectOrSlugOrRequestOptions : Request_1.RequestUtils.isOptions(slugOrRequestOptions) ? slugOrRequestOptions : requestOptions;
+    var object = Utils.isString(objectOrSlugOrRequestOptions) || Request_1.RequestUtils.isOptions(objectOrSlugOrRequestOptions) || !objectOrSlugOrRequestOptions ? {} : objectOrSlugOrRequestOptions;
+    var slug = Utils.isString(objectOrSlugOrRequestOptions) ? objectOrSlugOrRequestOptions : Utils.isString(slugOrRequestOptions) ? slugOrRequestOptions : null;
+    return this._documents.createChild(this.id, object, slug, requestOptions);
+}
+function createChildren(objects, slugsOrRequestOptions, requestOptions) {
+    return this._documents.createChildren(this.id, objects, slugsOrRequestOptions, requestOptions);
+}
+function createChildAndRetrieve(objectOrSlugOrRequestOptions, slugOrRequestOptions, requestOptions) {
+    if (requestOptions === void 0) { requestOptions = {}; }
+    requestOptions = Request_1.RequestUtils.isOptions(objectOrSlugOrRequestOptions) ? objectOrSlugOrRequestOptions : Request_1.RequestUtils.isOptions(slugOrRequestOptions) ? slugOrRequestOptions : requestOptions;
+    var object = Utils.isString(objectOrSlugOrRequestOptions) || Request_1.RequestUtils.isOptions(objectOrSlugOrRequestOptions) || !objectOrSlugOrRequestOptions ? {} : objectOrSlugOrRequestOptions;
+    var slug = Utils.isString(objectOrSlugOrRequestOptions) ? objectOrSlugOrRequestOptions : Utils.isString(slugOrRequestOptions) ? slugOrRequestOptions : null;
+    return this._documents.createChildAndRetrieve(this.id, object, slug, requestOptions);
+}
+function createChildrenAndRetrieve(objects, slugsOrRequestOptions, requestOptions) {
+    return this._documents.createChildrenAndRetrieve(this.id, objects, slugsOrRequestOptions, requestOptions);
+}
+function createAccessPoint(accessPoint, slugOrRequestOptions, requestOptions) {
+    return this._documents.createAccessPoint(this.id, accessPoint, slugOrRequestOptions, requestOptions);
+}
+function createAccessPoints(accessPoints, slugsOrRequestOptions, requestOptions) {
+    return this._documents.createAccessPoints(this.id, accessPoints, slugsOrRequestOptions, requestOptions);
+}
+function listChildren(requestOptions) {
+    return this._documents.listChildren(this.id, requestOptions);
+}
+function getChildren(requestOptionsOrQueryBuilderFn, queryBuilderFn) {
+    return this._documents.getChildren(this.id, requestOptionsOrQueryBuilderFn, queryBuilderFn);
+}
+function listMembers(requestOptions) {
+    return this._documents.listMembers(this.id, requestOptions);
+}
+function getMembers(requestOptionsOrQueryBuilderFn, childrenQuery) {
+    return this._documents.getMembers(this.id, requestOptionsOrQueryBuilderFn, childrenQuery);
+}
+function removeMember(memberOrUri) {
+    return this._documents.removeMember(this.id, memberOrUri);
+}
+function removeMembers(members) {
+    return this._documents.removeMembers(this.id, members);
+}
+function removeAllMembers() {
+    return this._documents.removeAllMembers(this.id);
+}
+function executeRawASKQuery(askQuery, requestOptions) {
+    if (requestOptions === void 0) { requestOptions = {}; }
+    return this._documents.executeRawASKQuery(this.id, askQuery, requestOptions);
+}
+function executeASKQuery(askQuery, requestOptions) {
+    if (requestOptions === void 0) { requestOptions = {}; }
+    return this._documents.executeASKQuery(this.id, askQuery, requestOptions);
+}
+function executeRawSELECTQuery(selectQuery, requestOptions) {
+    if (requestOptions === void 0) { requestOptions = {}; }
+    return this._documents.executeRawSELECTQuery(this.id, selectQuery, requestOptions);
+}
+function executeSELECTQuery(selectQuery, requestOptions) {
+    if (requestOptions === void 0) { requestOptions = {}; }
+    return this._documents.executeSELECTQuery(this.id, selectQuery, requestOptions);
+}
+function executeRawCONSTRUCTQuery(constructQuery, requestOptions) {
+    if (requestOptions === void 0) { requestOptions = {}; }
+    return this._documents.executeRawCONSTRUCTQuery(this.id, constructQuery, requestOptions);
+}
+function executeRawDESCRIBEQuery(describeQuery, requestOptions) {
+    if (requestOptions === void 0) { requestOptions = {}; }
+    return this._documents.executeRawDESCRIBEQuery(this.id, describeQuery, requestOptions);
+}
+function executeUPDATE(updateQuery, requestOptions) {
+    if (requestOptions === void 0) { requestOptions = {}; }
+    return this._documents.executeUPDATE(this.id, updateQuery, requestOptions);
+}
+function sparql() {
+    return this._documents.sparql(this.id);
+}
+exports.default = exports.PersistedDocument;
 
 //# sourceMappingURL=PersistedDocument.js.map

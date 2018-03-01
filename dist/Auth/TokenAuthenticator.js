@@ -89,7 +89,7 @@ var Class = (function () {
                     .documentsMetadata
                     .forEach(function (documentMetadata) {
                     var document = documentMetadata.relatedDocument;
-                    document._etag = documentMetadata.eTag;
+                    document._eTag = documentMetadata.eTag;
                 });
             return [token, response];
         }, function (response) { return _this.context.documents._parseErrorResponse(response); });

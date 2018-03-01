@@ -7,7 +7,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 }
 Object.defineProperty(exports, "__esModule", { value: true });
-var PersistedDocument = __importStar(require("../PersistedDocument"));
+var PersistedDocument_1 = require("../PersistedDocument");
 var Pointer_1 = require("../Pointer");
 var RDFDocument = __importStar(require("../RDF/Document"));
 var URI_1 = require("../RDF/URI");
@@ -110,7 +110,7 @@ var JSONLDCompacter = (function () {
     JSONLDCompacter.prototype.getResource = function (node, containerLibrary, isDocument) {
         var resource = containerLibrary.getPointer(node["@id"]);
         if (isDocument)
-            containerLibrary = PersistedDocument.Factory.decorate(resource, this.documents);
+            containerLibrary = PersistedDocument_1.PersistedDocument.decorate(resource, this.documents);
         this.compactionMap.set(resource.id, { paths: [], node: node, resource: resource, containerLibrary: containerLibrary });
         return resource;
     };

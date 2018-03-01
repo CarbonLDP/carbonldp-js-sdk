@@ -19,7 +19,7 @@ import { CS } from "../Vocabularies/CS";
 import { Document } from "./../Document";
 import Documents from "./../Documents";
 import Fragment from "./../Fragment";
-import * as PersistedDocument from "./../PersistedDocument";
+import { PersistedDocument } from "./../PersistedDocument";
 import { Pointer } from "./../Pointer";
 import * as Utils from "./../Utils";
 
@@ -421,7 +421,7 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 			expect( ACL.Factory.decorate ).toBeDefined();
 			expect( Utils.isFunction( ACL.Factory.decorate ) ).toBe( true );
 
-			let document:PersistedDocument.Class = PersistedDocument.Factory.create( "http://example.com/resource/~acl/", new Documents() );
+			let document:PersistedDocument = PersistedDocument.create( new Documents(), "http://example.com/resource/~acl/" );
 			let acl:ACL.Class = ACL.Factory.decorate( document );
 			acl.accessTo = acl.getPointer( "http://example.com/resource/" );
 
@@ -439,7 +439,7 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 			}
 
 			beforeEach( ():void => {
-				let document:PersistedDocument.Class = PersistedDocument.Factory.create( "http://example.com/resource/~acl/", new Documents() );
+				let document:PersistedDocument = PersistedDocument.create( new Documents(), "http://example.com/resource/~acl/" );
 				acl = ACL.Factory.decorate( document );
 				acl.accessTo = acl.getPointer( "http://example.com/resource/" );
 			} );

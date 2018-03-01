@@ -1,6 +1,6 @@
 import { Documents } from "../Documents";
 import { ObjectSchemaDigester } from "../ObjectSchema";
-import * as PersistedDocument from "../PersistedDocument";
+import { PersistedDocument } from "../PersistedDocument";
 import * as RDFNode from "../RDF/Node";
 import { QueryContextBuilder } from "../SPARQL/QueryDocument/QueryContextBuilder";
 import { QueryPropertyType } from "../SPARQL/QueryDocument/QueryProperty";
@@ -399,7 +399,7 @@ describe( module( "Carbon/JSONLD/Compacter" ), ():void => {
 					};
 				}
 
-				const compacted:Expected[] = compacter.compactDocuments<Expected & PersistedDocument.Class>( [
+				const compacted:Expected[] = compacter.compactDocuments<Expected & PersistedDocument>( [
 					{
 						"@id": "https://example.com/resource-1/",
 						"@graph": [
@@ -448,7 +448,7 @@ describe( module( "Carbon/JSONLD/Compacter" ), ():void => {
 					};
 				}
 
-				const compacted:Expected[] = compacter.compactDocuments<Expected & PersistedDocument.Class>( [
+				const compacted:Expected[] = compacter.compactDocuments<Expected & PersistedDocument>( [
 					{
 						"@id": "https://example.com/resource-1/",
 						"@graph": [
@@ -703,7 +703,7 @@ describe( module( "Carbon/JSONLD/Compacter" ), ():void => {
 					pointer2:Expected;
 				}
 
-				const compacted:Expected[] = compacter.compactDocuments<Expected & PersistedDocument.Class>( [
+				const compacted:Expected[] = compacter.compactDocuments<Expected & PersistedDocument>( [
 					{
 						"@id": "https://example.com/resource-1/",
 						"@graph": [ {
@@ -778,7 +778,7 @@ describe( module( "Carbon/JSONLD/Compacter" ), ():void => {
 					pointer2:Expected;
 				}
 
-				const compacted:Expected[] = compacter.compactDocuments<Expected & PersistedDocument.Class>( [
+				const compacted:Expected[] = compacter.compactDocuments<Expected & PersistedDocument>( [
 					{
 						"@id": "https://example.com/resource-1/",
 						"@graph": [ {
@@ -849,7 +849,7 @@ describe( module( "Carbon/JSONLD/Compacter" ), ():void => {
 					} );
 
 				const compacter:JSONLDCompacter = new JSONLDCompacter( documents, "target", queryResolver );
-				const compacted:PersistedDocument.Class[] = compacter.compactDocuments( [
+				const compacted:PersistedDocument[] = compacter.compactDocuments( [
 					{
 						"@id": "https://example.com/resource-1/",
 						"@graph": [ {
@@ -936,7 +936,7 @@ describe( module( "Carbon/JSONLD/Compacter" ), ():void => {
 					};
 				}
 
-				const compacted:Expected[] = compacter.compactDocuments<Expected & PersistedDocument.Class>( [
+				const compacted:Expected[] = compacter.compactDocuments<Expected & PersistedDocument>( [
 					{
 						"@id": "https://example.com/resource-1/",
 						"@graph": [ {
@@ -983,7 +983,7 @@ describe( module( "Carbon/JSONLD/Compacter" ), ():void => {
 				] );
 
 				expect( compacted[ 0 ].pointer ).toBe( compacted[ 1 ].pointer );
-				expect( compacted[ 0 ].pointer as any as PersistedDocument.Class ).toEqual( jasmine.objectContaining( {
+				expect( compacted[ 0 ].pointer as any as PersistedDocument ).toEqual( jasmine.objectContaining( {
 					id: "https://example.com/shared-resource/",
 				} ) );
 			} );

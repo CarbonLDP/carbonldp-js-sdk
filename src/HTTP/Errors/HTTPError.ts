@@ -2,7 +2,7 @@ import { AbstractError } from "../../Errors";
 import { Resource } from "../../Resource";
 import { Response } from "../Response";
 import * as LDP from "./../../LDP";
-import * as PersistedDocument from "./../../PersistedDocument";
+import { PersistedDocument } from "./../../PersistedDocument";
 
 export class HTTPError extends AbstractError implements LDP.ErrorResponse.Class {
 	static get statusCode():number { return null; }
@@ -21,7 +21,7 @@ export class HTTPError extends AbstractError implements LDP.ErrorResponse.Class 
 
 	isResolved:() => boolean;
 
-	resolve:<T>() => Promise<[ T & PersistedDocument.Class, Response ]>;
+	resolve:<T>() => Promise<[ T & PersistedDocument, Response ]>;
 
 	addType:( type:string ) => void;
 	hasType:( type:string ) => boolean;

@@ -438,7 +438,7 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 					{ name: "requestOptions", type: "Carbon.HTTP.Request.RequestOptions", optional: true },
 				],
 				// TODO: Change to `PersistedUser`
-				{ type: "Promise<[ (T & Carbon.PersistedDocument.Class)[], Carbon.HTTP.Response.Response ]>" }
+				{ type: "Promise<[ (T & Carbon.PersistedDocument.PersistedDocument)[], Carbon.HTTP.Response.Response ]>" }
 			), ( done:{ ():void, fail:() => void } ):void => {
 				let spies:any = {
 					success: ( [ pointers, response ]:[ Pointer[], Response ] ):void => {

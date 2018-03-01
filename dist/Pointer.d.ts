@@ -1,13 +1,13 @@
 import { Response } from "./HTTP/Response";
 import { ModelDecorator } from "./ModelDecorator";
 import { ModelFactory } from "./ModelFactory";
-import * as PersistedDocument from "./PersistedDocument";
+import { PersistedDocument } from "./PersistedDocument";
 export interface Pointer {
     _id: string;
     _resolved: boolean;
     id: string;
     isResolved(): boolean;
-    resolve<T>(): Promise<[T & PersistedDocument.Class, Response]>;
+    resolve<T>(): Promise<[T & PersistedDocument, Response]>;
 }
 export interface PointerLibrary {
     hasPointer(id: string): boolean;
@@ -24,7 +24,7 @@ export interface PointerFactory extends ModelFactory<Pointer>, ModelDecorator<Po
     decorate<T extends object>(object: T): T & Pointer;
     areEqual(pointer1: Pointer, pointer2: Pointer): boolean;
     getIDs(pointers: Pointer[]): string[];
-    resolveAll<T extends object>(pointers: Pointer[]): Promise<[(T & PersistedDocument.Class)[], Response[]]>;
+    resolveAll<T extends object>(pointers: Pointer[]): Promise<[(T & PersistedDocument)[], Response[]]>;
 }
 export declare function isPointerResolved(this: Pointer): boolean;
 export declare function resolveStandalonePointer(this: Pointer): Promise<[Pointer, Response]>;

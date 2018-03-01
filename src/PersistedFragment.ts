@@ -5,7 +5,7 @@ import {
 	DigestedObjectSchema,
 	ObjectSchemaUtils,
 } from "./ObjectSchema";
-import * as PersistedDocument from "./PersistedDocument";
+import { PersistedDocument } from "./PersistedDocument";
 import { PersistedResource } from "./PersistedResource";
 import * as RDF from "./RDF";
 import {
@@ -16,7 +16,7 @@ import {
 import { isObject } from "./Utils";
 
 export interface PersistedFragment extends PersistedResource, Fragment {
-	_document:PersistedDocument.Class;
+	_document:PersistedDocument;
 
 	addType( type:string ):void;
 
@@ -34,9 +34,9 @@ export interface PersistedFragmentFactory extends ModelFactory<PersistedFragment
 
 	decorate<T extends object>( object:T ):T & PersistedFragment;
 
-	create( document:PersistedDocument.Class, id?:string ):PersistedFragment;
+	create( document:PersistedDocument, id?:string ):PersistedFragment;
 
-	createFrom<T extends object>( object:T, document:PersistedDocument.Class, id?:string ):T & PersistedFragment;
+	createFrom<T extends object>( object:T, document:PersistedDocument, id?:string ):T & PersistedFragment;
 }
 
 
@@ -110,11 +110,11 @@ export const PersistedFragment:PersistedFragmentFactory = {
 		return fragment;
 	},
 
-	create( document:PersistedDocument.Class, id?:string ):PersistedFragment {
+	create( document:PersistedDocument, id?:string ):PersistedFragment {
 		return PersistedFragment.createFrom( {}, document, id );
 	},
 
-	createFrom<T extends object>( object:T, document:PersistedDocument.Class, id?:string ):T & PersistedFragment {
+	createFrom<T extends object>( object:T, document:PersistedDocument, id?:string ):T & PersistedFragment {
 		const fragment:T & PersistedFragment = PersistedFragment.decorate( object );
 
 		fragment._document = document;

@@ -62,7 +62,7 @@ import {
 } from "./ObjectSchema";
 import * as PersistedAccessPoint from "./PersistedAccessPoint";
 import { PersistedBlankNode } from "./PersistedBlankNode";
-import * as PersistedDocument from "./PersistedDocument";
+import { PersistedDocument } from "./PersistedDocument";
 import { PersistedFragment } from "./PersistedFragment";
 import * as PersistedProtectedDocument from "./PersistedProtectedDocument";
 import { PersistedResource } from "./PersistedResource";
@@ -121,13 +121,13 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 	private pointers:Map<string, Pointer>;
 
 	// Tracks the documents that are being resolved to avoid triggering repeated requests
-	private documentsBeingResolved:Map<string, Promise<[ PersistedDocument.Class, Response ]>>;
+	private documentsBeingResolved:Map<string, Promise<[ PersistedDocument, Response ]>>;
 
 	constructor( context?:Context ) {
 		this.context = context;
 
 		this.pointers = new Map<string, Pointer>();
-		this.documentsBeingResolved = new Map<string, Promise<[ PersistedDocument.Class, Response ]>>();
+		this.documentsBeingResolved = new Map<string, Promise<[ PersistedDocument, Response ]>>();
 
 		if( ! ! this.context && ! ! this.context.parentContext ) {
 			let contextJSONLDConverter:JSONLDConverter = this.context.parentContext.documents.jsonldConverter;
@@ -211,9 +211,9 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 		return this.pointers.delete( localID );
 	}
 
-	get<T extends object>( uri:string, requestOptions?:GETOptions, queryBuilderFn?:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<[ T & PersistedDocument.Class, Response ]>;
-	get<T extends object>( uri:string, queryBuilderFn?:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<[ T & PersistedDocument.Class, Response ]>;
-	get<T extends object>( uri:string, optionsOrQueryBuilderFn:any, queryBuilderFn?:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<[ T & PersistedDocument.Class, Response ]> {
+	get<T extends object>( uri:string, requestOptions?:GETOptions, queryBuilderFn?:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<[ T & PersistedDocument, Response ]>;
+	get<T extends object>( uri:string, queryBuilderFn?:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<[ T & PersistedDocument, Response ]>;
+	get<T extends object>( uri:string, optionsOrQueryBuilderFn:any, queryBuilderFn?:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<[ T & PersistedDocument, Response ]> {
 		const requestOptions:RequestOptions = RequestUtils.isOptions( optionsOrQueryBuilderFn ) ? optionsOrQueryBuilderFn : {};
 		if( Utils.isFunction( optionsOrQueryBuilderFn ) ) queryBuilderFn = optionsOrQueryBuilderFn;
 
@@ -303,7 +303,7 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 	}
 
 
-	listChildren( parentURI:string, requestOptions?:RequestOptions ):Promise<[ PersistedDocument.Class[], Response ]> {
+	listChildren( parentURI:string, requestOptions?:RequestOptions ):Promise<[ PersistedDocument[], Response ]> {
 		return promiseMethod( () => {
 			parentURI = this.getRequestURI( parentURI );
 
@@ -321,9 +321,9 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 		} );
 	}
 
-	getChildren<T extends object>( parentURI:string, requestOptions:RequestOptions, queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder ) => QueryDocumentsBuilder ):Promise<[ (T & PersistedDocument.Class)[], Response ]>;
-	getChildren<T extends object>( parentURI:string, queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder ) => QueryDocumentsBuilder ):Promise<[ (T & PersistedDocument.Class)[], Response ]>;
-	getChildren<T extends object>( parentURI:string, requestOptionsOrQueryBuilderFn?:any, queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder ) => QueryDocumentsBuilder ):Promise<[ (T & PersistedDocument.Class)[], Response ]> {
+	getChildren<T extends object>( parentURI:string, requestOptions:RequestOptions, queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder ) => QueryDocumentsBuilder ):Promise<[ (T & PersistedDocument)[], Response ]>;
+	getChildren<T extends object>( parentURI:string, queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder ) => QueryDocumentsBuilder ):Promise<[ (T & PersistedDocument)[], Response ]>;
+	getChildren<T extends object>( parentURI:string, requestOptionsOrQueryBuilderFn?:any, queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder ) => QueryDocumentsBuilder ):Promise<[ (T & PersistedDocument)[], Response ]> {
 		const requestOptions:RequestOptions = RequestUtils.isOptions( requestOptionsOrQueryBuilderFn ) ? requestOptionsOrQueryBuilderFn : {};
 		queryBuilderFn = Utils.isFunction( requestOptionsOrQueryBuilderFn ) ? requestOptionsOrQueryBuilderFn : queryBuilderFn;
 
@@ -380,7 +380,7 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 		} ).then( mapTupleArray );
 	}
 
-	listMembers( uri:string, requestOptions?:RequestOptions ):Promise<[ PersistedDocument.Class[], Response ]> {
+	listMembers( uri:string, requestOptions?:RequestOptions ):Promise<[ PersistedDocument[], Response ]> {
 		return promiseMethod( () => {
 			uri = this.getRequestURI( uri );
 
@@ -409,9 +409,9 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 		} );
 	}
 
-	getMembers<T extends object>( uri:string, requestOptions:RequestOptions, queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder ) => QueryDocumentsBuilder ):Promise<[ (T & PersistedDocument.Class)[], Response ]>;
-	getMembers<T extends object>( uri:string, queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder ) => QueryDocumentsBuilder ):Promise<[ (T & PersistedDocument.Class)[], Response ]>;
-	getMembers<T extends object>( uri:string, requestOptionsOrQueryBuilderFn?:any, queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder ) => QueryDocumentsBuilder ):Promise<[ (T & PersistedDocument.Class)[], Response ]> {
+	getMembers<T extends object>( uri:string, requestOptions:RequestOptions, queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder ) => QueryDocumentsBuilder ):Promise<[ (T & PersistedDocument)[], Response ]>;
+	getMembers<T extends object>( uri:string, queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder ) => QueryDocumentsBuilder ):Promise<[ (T & PersistedDocument)[], Response ]>;
+	getMembers<T extends object>( uri:string, requestOptionsOrQueryBuilderFn?:any, queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder ) => QueryDocumentsBuilder ):Promise<[ (T & PersistedDocument)[], Response ]> {
 		const requestOptions:RequestOptions = RequestUtils.isOptions( requestOptionsOrQueryBuilderFn ) ? requestOptionsOrQueryBuilderFn : {};
 		queryBuilderFn = Utils.isFunction( requestOptionsOrQueryBuilderFn ) ? requestOptionsOrQueryBuilderFn : queryBuilderFn;
 
@@ -523,18 +523,18 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 	}
 
 
-	save<T extends object>( persistedDocument:T & PersistedDocument.Class, requestOptions:RequestOptions = {} ):Promise<[ T & PersistedDocument.Class, Response ]> {
+	save<T extends object>( persistedDocument:T & PersistedDocument, requestOptions:RequestOptions = {} ):Promise<[ T & PersistedDocument, Response ]> {
 		return promiseMethod( () => {
-			if( ! PersistedDocument.Factory.is( persistedDocument ) ) throw new Errors.IllegalArgumentError( "Provided element is not a valid persisted document." );
+			if( ! PersistedDocument.is( persistedDocument ) ) throw new Errors.IllegalArgumentError( "Provided element is not a valid persisted document." );
 
 			RequestUtils.setPreferredRetrieval( "minimal", requestOptions );
 			return this.patchDocument<T>( persistedDocument, requestOptions );
 		} );
 	}
 
-	refresh<T extends object>( persistedDocument:T & PersistedDocument.Class, requestOptions:RequestOptions = {} ):Promise<[ T & PersistedDocument.Class, Response ]> {
+	refresh<T extends object>( persistedDocument:T & PersistedDocument, requestOptions:RequestOptions = {} ):Promise<[ T & PersistedDocument, Response ]> {
 		return Utils.promiseMethod( () => {
-			if( ! PersistedDocument.Factory.is( persistedDocument ) ) throw new Errors.IllegalArgumentError( "Provided element is not a valid persisted document." );
+			if( ! PersistedDocument.is( persistedDocument ) ) throw new Errors.IllegalArgumentError( "Provided element is not a valid persisted document." );
 
 			return persistedDocument.isPartial() ?
 				this.refreshPartialDocument<T>( persistedDocument, requestOptions ) :
@@ -542,21 +542,21 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 		} );
 	}
 
-	saveAndRefresh<T extends object>( persistedDocument:T & PersistedDocument.Class, requestOptions:RequestOptions = {} ):Promise<[ T & PersistedDocument.Class, Response[] ]> {
+	saveAndRefresh<T extends object>( persistedDocument:T & PersistedDocument, requestOptions:RequestOptions = {} ):Promise<[ T & PersistedDocument, Response[] ]> {
 		const responses:Response[] = [];
 		return promiseMethod( () => {
-			if( ! PersistedDocument.Factory.is( persistedDocument ) ) throw new Errors.IllegalArgumentError( "Provided element is not a valid persisted document." );
+			if( ! PersistedDocument.is( persistedDocument ) ) throw new Errors.IllegalArgumentError( "Provided element is not a valid persisted document." );
 
 			const cloneOptions:RequestOptions = RequestUtils.cloneOptions( requestOptions );
 			RequestUtils.setPreferredRetrieval( persistedDocument.isPartial() ? "minimal" : "representation", cloneOptions );
 
 			return this.patchDocument<T>( persistedDocument, cloneOptions );
-		} ).then<[ T & PersistedDocument.Class, Response ]>( ( [ , response ] ) => {
+		} ).then<[ T & PersistedDocument, Response ]>( ( [ , response ] ) => {
 			if( ! persistedDocument.isPartial() ) return [ persistedDocument, response ];
 
 			responses.push( response );
 			return this.refreshPartialDocument<T>( persistedDocument, requestOptions );
-		} ).then<[ T & PersistedDocument.Class, Response[] ]>( ( [ , response ] ) => {
+		} ).then<[ T & PersistedDocument, Response[] ]>( ( [ , response ] ) => {
 			responses.push( response );
 			return [ persistedDocument, responses ];
 		} );
@@ -782,7 +782,7 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 	}
 
 
-	_getPersistedDocument<T extends object>( rdfDocument:RDF.Document.Class, response:Response ):T & PersistedDocument.Class {
+	_getPersistedDocument<T extends object>( rdfDocument:RDF.Document.Class, response:Response ):T & PersistedDocument {
 		const [ documentResources ] = RDF.Document.Util.getNodes( rdfDocument );
 		if( documentResources.length === 0 ) throw new BadResponseError( `The RDFDocument: ${ rdfDocument[ "@id" ] }, doesn't contain a document resource.`, response );
 		if( documentResources.length > 1 ) throw new BadResponseError( `The RDFDocument: ${ rdfDocument[ "@id" ] }, contains more than one document resource.`, response );
@@ -825,23 +825,23 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 	}
 
 
-	private getFullDocument<T extends object>( uri:string, requestOptions:GETOptions ):Promise<[ T & PersistedDocument.Class, Response ]> {
+	private getFullDocument<T extends object>( uri:string, requestOptions:GETOptions ):Promise<[ T & PersistedDocument, Response ]> {
 		if( this.hasPointer( uri ) ) {
 			const pointer:Pointer = this.getPointer( uri );
 			if( pointer.isResolved() ) {
-				const persistedDocument:T & PersistedDocument.Class = pointer as any;
+				const persistedDocument:T & PersistedDocument = pointer as any;
 				if( ! persistedDocument.isPartial() || ! requestOptions.ensureLatest )
-					return Promise.resolve<[ T & PersistedDocument.Class, Response ]>( [ persistedDocument, null ] );
+					return Promise.resolve<[ T & PersistedDocument, Response ]>( [ persistedDocument, null ] );
 			}
 		}
 
 		this.setDefaultRequestOptions( requestOptions, LDP.RDFSource );
 
 		if( this.documentsBeingResolved.has( uri ) )
-			return this.documentsBeingResolved.get( uri ) as Promise<[ T & PersistedDocument.Class, Response ]>;
+			return this.documentsBeingResolved.get( uri ) as Promise<[ T & PersistedDocument, Response ]>;
 
-		const promise:Promise<[ T & PersistedDocument.Class, Response ]> = this.sendRequest( HTTPMethod.GET, uri, requestOptions, null, new RDFDocumentParser() )
-			.then<[ T & PersistedDocument.Class, Response ]>( ( [ rdfDocuments, response ]:[ RDF.Document.Class[], Response ] ) => {
+		const promise:Promise<[ T & PersistedDocument, Response ]> = this.sendRequest( HTTPMethod.GET, uri, requestOptions, null, new RDFDocumentParser() )
+			.then<[ T & PersistedDocument, Response ]>( ( [ rdfDocuments, response ]:[ RDF.Document.Class[], Response ] ) => {
 				const eTag:string = response.getETag();
 				if( eTag === null ) throw new BadResponseError( "The response doesn't contain an ETag", response );
 
@@ -858,8 +858,8 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 				const rdfDocument:RDF.Document.Class = this.getRDFDocument( targetURI, rdfDocuments, response );
 				if( rdfDocument === null ) throw new BadResponseError( "No document was returned.", response );
 
-				let document:T & PersistedDocument.Class = this._getPersistedDocument<T>( rdfDocument, response );
-				document._etag = eTag;
+				let document:T & PersistedDocument = this._getPersistedDocument<T>( rdfDocument, response );
+				document._eTag = eTag;
 
 				this.documentsBeingResolved.delete( uri );
 				return [ document, response ];
@@ -872,7 +872,7 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 		return promise;
 	}
 
-	private getPartialDocument<T extends object>( uri:string, requestOptions:RequestOptions, queryBuilderFn?:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<[ T & PersistedDocument.Class, Response ]> {
+	private getPartialDocument<T extends object>( uri:string, requestOptions:RequestOptions, queryBuilderFn?:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<[ T & PersistedDocument, Response ]> {
 		const queryContext:QueryContextBuilder = new QueryContextBuilder( this.context );
 
 		const documentProperty:QueryProperty = queryContext
@@ -883,19 +883,19 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 		documentProperty.addPattern( propertyValue );
 
 		return this.executeQueryBuilder<T>( uri, requestOptions, queryContext, documentProperty, queryBuilderFn )
-			.then<[ T & PersistedDocument.Class, Response ]>( ( [ documents, response ] ) => [ documents[ 0 ], response ] );
+			.then<[ T & PersistedDocument, Response ]>( ( [ documents, response ] ) => [ documents[ 0 ], response ] );
 	}
 
 
-	private patchDocument<T extends object>( persistedDocument:T & PersistedDocument.Class, requestOptions:RequestOptions ):Promise<[ T & PersistedDocument.Class, Response ]> {
+	private patchDocument<T extends object>( persistedDocument:T & PersistedDocument, requestOptions:RequestOptions ):Promise<[ T & PersistedDocument, Response ]> {
 		const uri:string = this.getRequestURI( persistedDocument.id );
 
-		if( ! persistedDocument.isDirty() ) return Promise.resolve<[ T & PersistedDocument.Class, Response ]>( [ persistedDocument, null ] );
+		if( ! persistedDocument.isDirty() ) return Promise.resolve<[ T & PersistedDocument, Response ]>( [ persistedDocument, null ] );
 		if( persistedDocument.isLocallyOutDated() ) throw new Errors.IllegalStateError( "Cannot save an outdated document." );
 
 		this.setDefaultRequestOptions( requestOptions );
 		RequestUtils.setContentTypeHeader( "text/ldpatch", requestOptions );
-		RequestUtils.setIfMatchHeader( persistedDocument._etag, requestOptions );
+		RequestUtils.setIfMatchHeader( persistedDocument._eTag, requestOptions );
 
 		persistedDocument._normalize();
 		const deltaCreator:LDPatch.DeltaCreator.DeltaCreator = new LDPatch.DeltaCreator.DeltaCreator( this.jsonldConverter );
@@ -907,19 +907,19 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 		const body:string = deltaCreator.getPatch();
 
 		return this.sendRequest( HTTPMethod.PATCH, uri, requestOptions, body )
-			.then<[ T & PersistedDocument.Class, Response ]>( ( response:Response ) => {
+			.then<[ T & PersistedDocument, Response ]>( ( response:Response ) => {
 				return this.applyResponseData( persistedDocument, response );
 			} );
 	}
 
 
-	private refreshFullDocument<T extends object>( persistedDocument:T & PersistedDocument.Class, requestOptions:RequestOptions ):Promise<[ T & PersistedDocument.Class, Response ]> {
+	private refreshFullDocument<T extends object>( persistedDocument:T & PersistedDocument, requestOptions:RequestOptions ):Promise<[ T & PersistedDocument, Response ]> {
 		const uri:string = this.getRequestURI( persistedDocument.id );
 
 		this.setDefaultRequestOptions( requestOptions, LDP.RDFSource );
-		RequestUtils.setIfNoneMatchHeader( persistedDocument._etag, requestOptions );
+		RequestUtils.setIfNoneMatchHeader( persistedDocument._eTag, requestOptions );
 
-		return this.sendRequest( HTTPMethod.GET, uri, requestOptions, null, new RDFDocumentParser() ).then<[ T & PersistedDocument.Class, Response ]>( ( [ rdfDocuments, response ]:[ RDF.Document.Class[], Response ] ) => {
+		return this.sendRequest( HTTPMethod.GET, uri, requestOptions, null, new RDFDocumentParser() ).then<[ T & PersistedDocument, Response ]>( ( [ rdfDocuments, response ]:[ RDF.Document.Class[], Response ] ) => {
 			if( response === null ) return <any> [ rdfDocuments, response ];
 
 			let eTag:string = response.getETag();
@@ -928,17 +928,17 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 			let rdfDocument:RDF.Document.Class = this.getRDFDocument( uri, rdfDocuments, response );
 			if( rdfDocument === null ) throw new BadResponseError( "No document was returned.", response );
 
-			let updatedPersistedDocument:PersistedDocument.Class = this._getPersistedDocument( rdfDocument, response );
-			updatedPersistedDocument._etag = eTag;
+			let updatedPersistedDocument:PersistedDocument = this._getPersistedDocument( rdfDocument, response );
+			updatedPersistedDocument._eTag = eTag;
 
 			return [ updatedPersistedDocument, response ];
-		} ).catch<[ T & PersistedDocument.Class, Response ]>( ( error:HTTPError ) => {
+		} ).catch<[ T & PersistedDocument, Response ]>( ( error:HTTPError ) => {
 			if( error.statusCode === 304 ) return [ persistedDocument, null ];
 			return Promise.reject( error );
 		} );
 	}
 
-	private refreshPartialDocument<T extends object>( persistedDocument:T & PersistedDocument.Class, requestOptions:RequestOptions ):Promise<[ T & PersistedDocument.Class, Response ]> {
+	private refreshPartialDocument<T extends object>( persistedDocument:T & PersistedDocument, requestOptions:RequestOptions ):Promise<[ T & PersistedDocument, Response ]> {
 		const uri:string = this.getRequestURI( persistedDocument.id );
 		const queryContext:QueryContextPartial = new QueryContextPartial( persistedDocument, this.context );
 
@@ -980,11 +980,11 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 		})( constructPatterns, persistedDocument, targetName );
 
 		return this.executeConstructPatterns<T>( uri, requestOptions, queryContext, targetName, constructPatterns.patterns, persistedDocument )
-			.then<[ T & PersistedDocument.Class, Response ]>( ( [ documents, response ] ) => [ documents[ 0 ], response ] );
+			.then<[ T & PersistedDocument, Response ]>( ( [ documents, response ] ) => [ documents[ 0 ], response ] );
 	}
 
 
-	private executeQueryBuilder<T extends object>( uri:string, requestOptions:RequestOptions, queryContext:QueryContextBuilder, targetProperty:QueryProperty, queryBuilderFn?:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<[ (T & PersistedDocument.Class)[], Response ]> {
+	private executeQueryBuilder<T extends object>( uri:string, requestOptions:RequestOptions, queryContext:QueryContextBuilder, targetProperty:QueryProperty, queryBuilderFn?:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<[ (T & PersistedDocument)[], Response ]> {
 		type Builder = QueryDocumentBuilder | QueryDocumentBuilder;
 		// tslint:disable: variable-name
 		const Builder:typeof QueryDocumentBuilder = targetProperty.name === "document" ?
@@ -1055,7 +1055,7 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 			;
 	}
 
-	private executeConstructPatterns<T extends object>( uri:string, requestOptions:RequestOptions, queryContext:QueryContext, targetName:string, constructPatterns:PatternToken[], targetDocument?:T & PersistedDocument.Class ):Promise<[ (T & PersistedDocument.Class)[], Response ]> {
+	private executeConstructPatterns<T extends object>( uri:string, requestOptions:RequestOptions, queryContext:QueryContext, targetName:string, constructPatterns:PatternToken[], targetDocument?:T & PersistedDocument ):Promise<[ (T & PersistedDocument)[], Response ]> {
 		const metadataVar:VariableToken = queryContext.getVariable( "metadata" );
 		const construct:ConstructToken = new ConstructToken()
 			.addTriple( new SubjectToken( metadataVar )
@@ -1084,7 +1084,7 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 			response = _response;
 			return new JSONLDParser().parse( jsonldString );
 
-		} ).then<[ (T & PersistedDocument.Class)[], Response ]>( ( rdfNodes:RDF.Node.Class[] ) => {
+		} ).then<[ (T & PersistedDocument)[], Response ]>( ( rdfNodes:RDF.Node.Class[] ) => {
 			const freeResources:FreeResources = this._getFreeResources( rdfNodes
 				.filter( node => ! RDF.Document.Factory.is( node ) )
 			);
@@ -1098,8 +1098,8 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 				.map( x => x.id )
 			);
 
-			const targetETag:string = targetDocument && targetDocument._etag;
-			if( targetDocument ) targetDocument._etag = void 0;
+			const targetETag:string = targetDocument && targetDocument._eTag;
+			if( targetDocument ) targetDocument._eTag = void 0;
 
 			freeResources
 				.getResources()
@@ -1109,14 +1109,14 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 				.forEach( documentsMetadata => documentsMetadata.forEach( documentMetadata => {
 					if( ! documentMetadata ) return;
 
-					const relatedDocument:PersistedDocument.Class = documentMetadata.relatedDocument || documentMetadata[ C.relatedDocument ];
+					const relatedDocument:PersistedDocument = documentMetadata.relatedDocument || documentMetadata[ C.relatedDocument ];
 					const eTag:string = documentMetadata.eTag || documentMetadata[ C.eTag ];
 
-					if( relatedDocument._etag === void 0 ) relatedDocument._etag = eTag;
-					if( relatedDocument._etag !== eTag ) relatedDocument._etag = null;
+					if( relatedDocument._eTag === void 0 ) relatedDocument._eTag = eTag;
+					if( relatedDocument._eTag !== eTag ) relatedDocument._eTag = null;
 				} ) );
 
-			if( targetDocument && targetETag === targetDocument._etag )
+			if( targetDocument && targetETag === targetDocument._eTag )
 				return [ [ targetDocument ], null ];
 
 			const rdfDocuments:RDF.Document.Class[] = rdfNodes
@@ -1125,14 +1125,14 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 			const targetDocuments:RDF.Document.Class[] = rdfDocuments
 				.filter( x => targetSet.has( x[ "@id" ] ) );
 
-			const documents:(T & PersistedDocument.Class)[] = new JSONLDCompacter( this, targetName, queryContext )
+			const documents:(T & PersistedDocument)[] = new JSONLDCompacter( this, targetName, queryContext )
 				.compactDocuments( rdfDocuments, targetDocuments );
 
 			return [ documents, response ];
 		} );
 	}
 
-	private executeSelectPatterns( uri:string, requestOptions:RequestOptions, queryContext:QueryContext, targetName:string, selectPatterns:PatternToken[] ):Promise<[ PersistedDocument.Class[], Response ]> {
+	private executeSelectPatterns( uri:string, requestOptions:RequestOptions, queryContext:QueryContext, targetName:string, selectPatterns:PatternToken[] ):Promise<[ PersistedDocument[], Response ]> {
 		const targetVar:VariableToken = queryContext.getVariable( targetName );
 		const select:SelectToken = new SelectToken()
 			.addVariable( targetVar )
@@ -1144,12 +1144,12 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 
 		return this
 			.executeSELECTQuery( uri, query.toString(), requestOptions )
-			.then<[ PersistedDocument.Class[], Response ]>( ( [ results, response ] ) => {
+			.then<[ PersistedDocument[], Response ]>( ( [ results, response ] ) => {
 				const name:string = targetVar.toString().slice( 1 );
-				const documents:PersistedDocument.Class[] = results
+				const documents:PersistedDocument[] = results
 					.bindings
 					.map( x => x[ name ] as Pointer )
-					.map( x => PersistedDocument.Factory.decorate( x, this ) );
+					.map( x => PersistedDocument.decorate( x, this ) );
 
 				return [ documents, response ];
 			} );
@@ -1157,7 +1157,7 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 
 
 	private persistChildDocument<T extends object>( parentURI:string, childObject:T, slug:string, requestOptions:RequestOptions ):Promise<[ T & PersistedProtectedDocument.Class, Response ]> {
-		if( PersistedDocument.Factory.is( childObject ) ) throw new Errors.IllegalArgumentError( "The child provided has been already persisted." );
+		if( PersistedDocument.is( childObject ) ) throw new Errors.IllegalArgumentError( "The child provided has been already persisted." );
 		let childDocument:T & Document = Document.is( childObject ) ? <T & Document> childObject : Document.createFrom<T>( childObject );
 
 		this.setDefaultRequestOptions( requestOptions, LDP.Container );
@@ -1165,7 +1165,7 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 	}
 
 	private persistAccessPoint<T extends object>( documentURI:string, accessPoint:T & AccessPointBase, slug:string, requestOptions:RequestOptions ):Promise<[ T & PersistedAccessPoint.Class, Response ]> {
-		if( PersistedDocument.Factory.is( accessPoint ) ) throw new Errors.IllegalArgumentError( "The access-point provided has been already persisted." );
+		if( PersistedDocument.is( accessPoint ) ) throw new Errors.IllegalArgumentError( "The access-point provided has been already persisted." );
 
 		const accessPointDocument:T & AccessPoint = AccessPoint.is( accessPoint ) ?
 			accessPoint : AccessPoint.createFrom<T>( accessPoint, this.getPointer( documentURI ), accessPoint.hasMemberRelation, accessPoint.isMemberOfRelation );
@@ -1260,7 +1260,7 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 			writable: false,
 			enumerable: false,
 			configurable: true,
-			value: ():Promise<[ PersistedDocument.Class, Response ]> => {
+			value: ():Promise<[ PersistedDocument, Response ]> => {
 				return this.get( id );
 			},
 		} );
@@ -1360,7 +1360,7 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 		return requestOptions;
 	}
 
-	private updateFromPreferenceApplied<T extends object>( persistedDocument:T & PersistedDocument.Class, rdfDocuments:RDF.Document.Class[], response:Response ):[ T, Response ] {
+	private updateFromPreferenceApplied<T extends object>( persistedDocument:T & PersistedDocument, rdfDocuments:RDF.Document.Class[], response:Response ):[ T, Response ] {
 		let eTag:string = response.getETag();
 		if( eTag === null ) throw new BadResponseError( "The response doesn't contain an ETag", response );
 
@@ -1368,7 +1368,7 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 		if( rdfDocument === null ) throw new BadResponseError( "No document was returned.", response );
 
 		persistedDocument = this._getPersistedDocument<T>( rdfDocument, response );
-		persistedDocument._etag = eTag;
+		persistedDocument._eTag = eTag;
 
 		return [ persistedDocument, response ];
 	}
@@ -1382,7 +1382,7 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 		} );
 	}
 
-	private applyResponseData<T extends PersistedDocument.Class>( persistedProtectedDocument:T, response:Response ):[ T, Response ] | Promise<[ T, Response ]> {
+	private applyResponseData<T extends PersistedDocument>( persistedProtectedDocument:T, response:Response ):[ T, Response ] | Promise<[ T, Response ]> {
 		if( response.status === 204 || ! response.data ) return [ persistedProtectedDocument, response ];
 
 		return new JSONLDParser().parse( response.data ).then<[ T, Response ]>( ( expandedResult:object[] ) => {
@@ -1403,7 +1403,7 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 		const responseMetadata:ResponseMetadata.Class = <ResponseMetadata.Class> freeResources.getResources().find( ResponseMetadata.Factory.is );
 
 		for( const documentMetadata of responseMetadata.documentsMetadata ) {
-			const document:PersistedDocument.Class = documentMetadata.relatedDocument as PersistedDocument.Class;
+			const document:PersistedDocument = documentMetadata.relatedDocument as PersistedDocument;
 			for( const { entryKey, entryValue } of documentMetadata.bNodesMap.entries ) {
 				const originalBNode:PersistedBlankNode = document.getFragment( entryKey.id );
 				originalBNode.id = entryValue.id;

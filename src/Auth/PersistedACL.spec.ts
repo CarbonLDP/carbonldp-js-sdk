@@ -19,7 +19,7 @@ import {
 
 import * as ACL from "./ACL";
 import Documents from "../Documents";
-import * as PersistedDocument from "./../PersistedDocument";
+import { PersistedDocument } from "./../PersistedDocument";
 import * as Utils from "./../Utils";
 
 import * as PersistedACL from "./PersistedACL";
@@ -37,7 +37,7 @@ describe( module( "Carbon/Auth/PersistedACL" ), ():void => {
 		"Interface that represents a persisted Access Control List (ACL)."
 	), ():void => {
 
-		it( extendsClass( "Carbon.PersistedDocument.Class" ), ():void => {} );
+		it( extendsClass( "Carbon.PersistedDocument.PersistedDocument" ), ():void => {} );
 
 		it( hasProperty(
 			OBLIGATORY,
@@ -292,7 +292,7 @@ describe( module( "Carbon/Auth/PersistedACL" ), ():void => {
 		it( hasMethod(
 			STATIC,
 			"decorate",
-			[ "T extends Carbon.PersistedDocument.Class" ],
+			[ "T extends Carbon.PersistedDocument.PersistedDocument" ],
 			"Decorate the object with the properties and methods of a `Carbon.Auth.PersistedACL.Class` object.", [
 				{ name: "document", type: "T", description: "The persisted document to decorate." },
 			],
@@ -302,7 +302,7 @@ describe( module( "Carbon/Auth/PersistedACL" ), ():void => {
 			expect( Utils.isFunction( PersistedACL.Factory.decorate ) ).toBe( true );
 
 			let spy:jasmine.Spy = spyOn( ACL.Factory, "decorate" ).and.callThrough();
-			let document:PersistedDocument.Class = PersistedDocument.Factory.create( "http://example.com/some/acl/", new Documents() );
+			let document:PersistedDocument = PersistedDocument.create( new Documents(), "http://example.com/some/acl/" );
 			document[ "accessTo" ] = document.getPointer( "http://example.com/some/" );
 
 			let acl:PersistedACL.Class = PersistedACL.Factory.decorate( document );

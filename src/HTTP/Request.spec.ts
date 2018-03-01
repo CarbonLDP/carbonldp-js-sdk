@@ -1175,7 +1175,7 @@ describe( module( "Carbon/HTTP/Request" ), function():void {
 			STATIC,
 			"setIfMatchHeader",
 			"Set an If-Match header in an options object request.", [
-				{ name: "etag", type: "string" },
+				{ name: "eTag", type: "string" },
 				{ name: "requestOptions", type: "Carbon.HTTP.Request.RequestOptions" },
 			],
 			{ type: "Carbon.HTTP.Request.RequestOptions" }

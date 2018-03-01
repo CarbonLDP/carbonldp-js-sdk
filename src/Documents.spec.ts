@@ -43,7 +43,7 @@ import MessagingEvent from "./Messaging/Event";
 import * as MessagingUtils from "./Messaging/Utils";
 import * as ObjectSchema from "./ObjectSchema";
 import * as PersistedAccessPoint from "./PersistedAccessPoint";
-import * as PersistedDocument from "./PersistedDocument";
+import { PersistedDocument } from "./PersistedDocument";
 import { PersistedNamedFragment } from "./PersistedNamedFragment";
 import { PersistedResource } from "./PersistedResource";
 import { Pointer } from "./Pointer";
@@ -703,7 +703,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					{ name: "requestOptions", type: "Carbon.HTTP.Request.RequestOptions", optional: true, description: "Customizable options for the request." },
 					{ name: "queryBuilderFn", type: "( queryBuilder:Carbon.SPARQL.QueryDocument.QueryDocumentBuilder.QueryDocumentBuilder ) => Carbon.SPARQL.QueryDocument.QueryDocumentBuilder.QueryDocumentBuilder", optional: true, description: "Function that receives a the builder that helps you to construct the retrieval query.\nThe same builder must be returned." },
 				],
-				{ type: "Promise<[ T & Carbon.PersistedDocument.Class, HTTP.Response.Class ]>" }
+				{ type: "Promise<[ T & Carbon.PersistedDocument.PersistedDocument, HTTP.Response.Response ]>" }
 			), ():void => {} );
 
 			it( hasSignature(
@@ -712,7 +712,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					{ name: "uri", type: "string", description: "The URI of the document to retrieve." },
 					{ name: "queryBuilderFn", type: "( queryBuilder:Carbon.SPARQL.QueryDocument.QueryDocumentBuilder.QueryDocumentBuilder ) => Carbon.SPARQL.QueryDocument.QueryDocumentBuilder.QueryDocumentBuilder", optional: true, description: "Function that receives a the builder that helps you to construct the retrieval query.\nThe same builder must be returned." },
 				],
-				{ type: "Promise<[ T & Carbon.PersistedDocument.Class, HTTP.Response.Class ]>" }
+				{ type: "Promise<[ T & Carbon.PersistedDocument.PersistedDocument, HTTP.Response.Response ]>" }
 			), ():void => {} );
 
 			it( "should release cached request when failed", ( done:DoneFn ):void => {
@@ -908,7 +908,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 						},
 					} );
 
-					documents.get( "https://example.com/resource/" ).then( ( [ document, response ]:[ PersistedDocument.Class, Response ] ):void => {
+					documents.get( "https://example.com/resource/" ).then( ( [ document, response ]:[ PersistedDocument, Response ] ):void => {
 						expect( document ).toBeDefined();
 						expect( Utils.isObject( document ) ).toEqual( true );
 
@@ -1019,7 +1019,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 						},
 					} );
 
-					documents.get( "https://example.com/resource/" ).then( ( [ document, response ]:[ PersistedDocument.Class, Response ] ):void => {
+					documents.get( "https://example.com/resource/" ).then( ( [ document, response ]:[ PersistedDocument, Response ] ):void => {
 						expect( document ).toBeDefined();
 						expect( Utils.isObject( document ) ).toEqual( true );
 
@@ -1229,9 +1229,9 @@ describe( module( "Carbon/Documents" ), ():void => {
 					).then( ( [ document, response ] ) => {
 						expect( response ).toEqual( jasmine.any( Response ) );
 
-						expect( PersistedDocument.Factory.is( document ) ).toBe( true );
+						expect( PersistedDocument.is( document ) ).toBe( true );
 						expect( document ).toEqual( jasmine.objectContaining( {
-							"_etag": "\"1-12345\"",
+							"_eTag": "\"1-12345\"",
 							"property1": "value",
 							"property2": jasmine.objectContaining( {
 								"property2": 12345,
@@ -1357,14 +1357,14 @@ describe( module( "Carbon/Documents" ), ():void => {
 					).then( ( [ document, response ] ) => {
 						expect( response ).toEqual( jasmine.any( Response ) );
 
-						expect( PersistedDocument.Factory.is( document ) ).toBe( true );
-						expect( PersistedDocument.Factory.is( document.property2 ) ).toBe( true );
+						expect( PersistedDocument.is( document ) ).toBe( true );
+						expect( PersistedDocument.is( document.property2 ) ).toBe( true );
 
 						expect( document ).toEqual( jasmine.objectContaining( {
-							"_etag": "\"1-12345\"",
+							"_eTag": "\"1-12345\"",
 							"property1": "value",
 							"property2": jasmine.objectContaining( {
-								"_etag": "\"2-12345\"",
+								"_eTag": "\"2-12345\"",
 								"property2": 12345,
 								"property3": "another value",
 							} ),
@@ -1722,13 +1722,13 @@ describe( module( "Carbon/Documents" ), ():void => {
 						},
 					} );
 
-					const persistedDocument:PersistedDocument.Class & MyDocument = PersistedDocument.Factory.createFrom(
+					const persistedDocument:PersistedDocument & MyDocument = PersistedDocument.createFrom(
 						Object.assign(
 							documents.getPointer( "https://example.com/resource/" ),
 							{ property4: true, property1: "value", property2: null }
 						),
-						"https://example.com/resource/",
-						documents
+						documents,
+						"https://example.com/resource/"
 					);
 					persistedDocument._partialMetadata = createPartialMetadata( {
 						"@vocab": "https://example.com/ns#",
@@ -1782,7 +1782,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 							} )
 						);
 					} ).then( ( [ document ] ) => {
-						expect( PersistedDocument.Factory.is( document ) ).toBe( true );
+						expect( PersistedDocument.is( document ) ).toBe( true );
 						expect( document ).toEqual( jasmine.objectContaining( {
 							"property4": false,
 							"property1": "value",
@@ -2027,9 +2027,9 @@ describe( module( "Carbon/Documents" ), ():void => {
 					).then( ( [ document, response ] ) => {
 						expect( response ).toEqual( jasmine.any( Response ) );
 
-						expect( PersistedDocument.Factory.is( document ) ).toBe( true );
+						expect( PersistedDocument.is( document ) ).toBe( true );
 						expect( document ).toEqual( jasmine.objectContaining( {
-							"_etag": "\"1-12345\"",
+							"_eTag": "\"1-12345\"",
 							"property1": "value",
 							"property2": jasmine.objectContaining( {
 								"property2": 12345,
@@ -2149,14 +2149,14 @@ describe( module( "Carbon/Documents" ), ():void => {
 					).then( ( [ document, response ] ) => {
 						expect( response ).toEqual( jasmine.any( Response ) );
 
-						expect( PersistedDocument.Factory.is( document ) ).toBe( true );
-						expect( PersistedDocument.Factory.is( document.property2 ) ).toBe( true );
+						expect( PersistedDocument.is( document ) ).toBe( true );
+						expect( PersistedDocument.is( document.property2 ) ).toBe( true );
 
 						expect( document ).toEqual( jasmine.objectContaining( {
-							"_etag": "\"1-12345\"",
+							"_eTag": "\"1-12345\"",
 							"property1": "value",
 							"property2": jasmine.objectContaining( {
-								"_etag": "\"2-12345\"",
+								"_eTag": "\"2-12345\"",
 								"property2": 12345,
 								"property3": "another value",
 							} ),
@@ -2553,7 +2553,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				} );
 
 				it( "should reject if document is already persisted", ( done:DoneFn ):void => {
-					const childObject:PersistedDocument.Class = PersistedDocument.Factory.create( "https://example.com/some-resource/", documents );
+					const childObject:PersistedDocument = PersistedDocument.create( documents, "https://example.com/some-resource/" );
 					documents.createChild( "https://example.com/parent-resource/", childObject )
 						.then( () => {
 							done.fail( "Should not resolve" );
@@ -2575,12 +2575,12 @@ describe( module( "Carbon/Documents" ), ():void => {
 					} );
 
 					const childObject:object = {};
-					documents.createChild( "https://example.com/parent-resource/", childObject ).then( ( [ document, response ]:[ PersistedDocument.Class, Response ] ):void => {
+					documents.createChild( "https://example.com/parent-resource/", childObject ).then( ( [ document, response ]:[ PersistedDocument, Response ] ):void => {
 						expect( response ).toEqual( jasmine.any( Response ) );
 
 						expect( childObject ).toBe( document );
 
-						expect( PersistedDocument.Factory.is( document ) ).toBe( true );
+						expect( PersistedDocument.is( document ) ).toBe( true );
 						expect( document.id ).toBe( "https://example.com/parent-resource/new-resource/" );
 
 						expect( document.isResolved() ).toBe( false );
@@ -2611,10 +2611,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 							return documents.createChild( "https://example.com/parent-resource/", childObject );
 						} )
-						.then( ( [ document, response ]:[ PersistedDocument.Class, Response ] ):void => {
+						.then( ( [ document, response ]:[ PersistedDocument, Response ] ):void => {
 							expect( response ).toEqual( jasmine.any( Response ) );
 
-							expect( PersistedDocument.Factory.is( document ) ).toBe( true );
+							expect( PersistedDocument.is( document ) ).toBe( true );
 							expect( document.id ).toBe( "https://example.com/parent-resource/new-resource/" );
 
 							done();
@@ -2831,10 +2831,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 				} );
 
 				it( "should reject if any document is already persisted", ( done:DoneFn ):void => {
-					const childObjects:(PersistedDocument.Class | object)[] = [
+					const childObjects:(PersistedDocument | object)[] = [
 						{},
-						PersistedDocument.Factory.create( "https://example.com/some-resource-1/", documents ),
-						PersistedDocument.Factory.create( "https://example.com/some-resource-2/", documents ),
+						PersistedDocument.create( documents, "https://example.com/some-resource-1/" ),
+						PersistedDocument.create( documents, "https://example.com/some-resource-2/" ),
 					];
 					documents.createChildren( "https://example.com/parent-resource/", childObjects )
 						.then( () => {
@@ -2852,7 +2852,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					const childObjects:object[] = [ { index: 0 }, { index: 1 }, { index: 2 } ];
 
 					documents.createChildren( "https://example.com/parent-resource/", childObjects )
-						.then( ( [ persistedDocuments, responses ]:[ PersistedDocument.Class[], Response[] ] ):void => {
+						.then( ( [ persistedDocuments, responses ]:[ PersistedDocument[], Response[] ] ):void => {
 							expect( responses ).toEqual( new Array( 3 ).fill( jasmine.anything() ) );
 							responses.forEach( response => {
 								expect( response ).toEqual( jasmine.any( Response ) );
@@ -2862,7 +2862,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 							persistedDocuments.forEach( ( document, index ) => {
 								expect( childObjects[ index ] ).toBe( document );
 
-								expect( PersistedDocument.Factory.is( document ) ).toBe( true );
+								expect( PersistedDocument.is( document ) ).toBe( true );
 								expect( document ).toEqual( jasmine.objectContaining( {
 									_resolved: false,
 									id: `https://example.com/parent-resource/new-resource-${ index }/`,
@@ -3228,7 +3228,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				} );
 
 				it( "should reject if document is already persisted", ( done:DoneFn ):void => {
-					const childObject:PersistedDocument.Class = PersistedDocument.Factory.create( "https://example.com/some-resource/", documents );
+					const childObject:PersistedDocument = PersistedDocument.create( documents, "https://example.com/some-resource/" );
 					documents.createChildAndRetrieve( "https://example.com/parent-resource/", childObject )
 						.then( () => {
 							done.fail( "Should not resolve" );
@@ -3275,12 +3275,12 @@ describe( module( "Carbon/Documents" ), ():void => {
 					};
 
 					documents.createChildAndRetrieve( "https://example.com/parent-resource/", childObject )
-						.then( ( [ document, response ]:[ PersistedDocument.Class, Response ] ) => {
+						.then( ( [ document, response ]:[ PersistedDocument, Response ] ) => {
 							expect( response ).toEqual( jasmine.any( Response ) );
 
 							expect( childObject ).toBe( document );
 							expect( document ).toEqual( jasmine.objectContaining( {
-								_etag: "\"1-12345\"",
+								_eTag: "\"1-12345\"",
 								_resolved: true,
 								id: "https://example.com/parent-resource/new-resource/",
 								property: "my UPDATED property",
@@ -3333,11 +3333,11 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 							return documents.createChildAndRetrieve( "https://example.com/parent-resource/", childObject );
 						} )
-						.then( ( [ document, response ]:[ PersistedDocument.Class, Response ] ):void => {
+						.then( ( [ document, response ]:[ PersistedDocument, Response ] ):void => {
 							expect( response ).toEqual( jasmine.any( Response ) );
 
 							expect( childObject ).toEqual( jasmine.objectContaining( {
-								_etag: "\"1-12345\"",
+								_eTag: "\"1-12345\"",
 								id: "https://example.com/parent-resource/new-resource/",
 								property: "my UPDATED property",
 								namedFragment: jasmine.objectContaining( {
@@ -3559,10 +3559,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 				} );
 
 				it( "should reject if any document is already persisted", ( done:DoneFn ):void => {
-					const childObjects:(PersistedDocument.Class | object)[] = [
+					const childObjects:(PersistedDocument | object)[] = [
 						{},
-						PersistedDocument.Factory.create( "https://example.com/some-resource-1/", documents ),
-						PersistedDocument.Factory.create( "https://example.com/some-resource-2/", documents ),
+						PersistedDocument.create( documents, "https://example.com/some-resource-1/" ),
+						PersistedDocument.create( documents, "https://example.com/some-resource-2/" ),
 					];
 					documents.createChildrenAndRetrieve( "https://example.com/parent-resource/", childObjects )
 						.then( () => {
@@ -3580,7 +3580,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					const childObjects:object[] = [ { index: 0 }, { index: 1 }, { index: 2 } ];
 
 					documents.createChildrenAndRetrieve( "https://example.com/parent-resource/", childObjects )
-						.then( ( [ persistedDocuments, responses ]:[ PersistedDocument.Class[], Response[] ] ):void => {
+						.then( ( [ persistedDocuments, responses ]:[ PersistedDocument[], Response[] ] ):void => {
 							expect( responses ).toEqual( new Array( 3 ).fill( jasmine.anything() ) );
 							responses.forEach( response => {
 								expect( response ).toEqual( jasmine.any( Response ) );
@@ -3590,10 +3590,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 							persistedDocuments.forEach( ( document, index ) => {
 								expect( childObjects[ index ] ).toBe( document );
 
-								expect( PersistedDocument.Factory.is( document ) ).toBe( true );
+								expect( PersistedDocument.is( document ) ).toBe( true );
 								expect( document ).toEqual( jasmine.objectContaining( {
 									_resolved: true,
-									_etag: `"${ index }-12345"`,
+									_eTag: `"${ index }-12345"`,
 									id: `https://example.com/parent-resource/new-resource-${ index }/`,
 									index: `updated ${ index }`,
 									property: "my UPDATED property",
@@ -3794,7 +3794,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					{ name: "parentURI", type: "string", description: "URI of the document from where to look for its children." },
 					{ name: "requestOptions", type: "Carbon.HTTP.Request.RequestOptions", optional: true, description: "Customizable options for the request." },
 				],
-				{ type: "Promise<[ Carbon.PersistedDocument.Class[], Carbon.HTTP.Response.Response ]>" }
+				{ type: "Promise<[ Carbon.PersistedDocument.PersistedDocument[], Carbon.HTTP.Response.Response ]>" }
 			), () => {} );
 
 			it( isDefined(), () => {
@@ -3940,15 +3940,15 @@ describe( module( "Carbon/Documents" ), ():void => {
 							expect( myDocuments ).toEqual( jasmine.any( Array ) );
 							expect( myDocuments.length ).toBe( 2 );
 
-							expect( PersistedDocument.Factory.is( myDocuments[ 0 ] ) ).toBe( true );
+							expect( PersistedDocument.is( myDocuments[ 0 ] ) ).toBe( true );
 							expect( myDocuments[ 0 ] ).toEqual( jasmine.objectContaining( {
-								"_etag": void 0,
+								"_eTag": void 0,
 								"_resolved": false,
 							} ) );
 
-							expect( PersistedDocument.Factory.is( myDocuments[ 0 ] ) ).toBe( true );
+							expect( PersistedDocument.is( myDocuments[ 0 ] ) ).toBe( true );
 							expect( myDocuments[ 1 ] ).toEqual( jasmine.objectContaining( {
-								"_etag": void 0,
+								"_eTag": void 0,
 								"_resolved": false,
 							} ) );
 
@@ -4064,15 +4064,15 @@ describe( module( "Carbon/Documents" ), ():void => {
 							expect( myDocuments ).toEqual( jasmine.any( Array ) );
 							expect( myDocuments.length ).toBe( 2 );
 
-							expect( PersistedDocument.Factory.is( myDocuments[ 0 ] ) ).toBe( true );
+							expect( PersistedDocument.is( myDocuments[ 0 ] ) ).toBe( true );
 							expect( myDocuments[ 0 ] ).toEqual( jasmine.objectContaining( {
-								"_etag": void 0,
+								"_eTag": void 0,
 								"_resolved": false,
 							} ) );
 
-							expect( PersistedDocument.Factory.is( myDocuments[ 0 ] ) ).toBe( true );
+							expect( PersistedDocument.is( myDocuments[ 0 ] ) ).toBe( true );
 							expect( myDocuments[ 1 ] ).toEqual( jasmine.objectContaining( {
-								"_etag": void 0,
+								"_eTag": void 0,
 								"_resolved": false,
 							} ) );
 
@@ -4094,7 +4094,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					{ name: "requestOptions", type: "Carbon.HTTP.Request.RequestOptions", optional: true, description: "Customizable options for the request." },
 					{ name: "queryBuilderFn", type: "( queryBuilder:Carbon.SPARQL.QueryDocument.QueryDocumentsBuilder.QueryDocumentsBuilder ) => Carbon.SPARQL.QueryDocument.QueryDocumentsBuilder.QueryDocumentsBuilder", optional: true, description: "Function that receives a the builder that helps you to construct the children retrieval query.\nThe same builder must be returned." },
 				],
-				{ type: "Promise<[ (T & Carbon.PersistedDocument.Class)[], Carbon.HTTP.Response.Response ]>" }
+				{ type: "Promise<[ (T & Carbon.PersistedDocument.PersistedDocument)[], Carbon.HTTP.Response.Response ]>" }
 			), () => {} );
 
 			it( hasSignature(
@@ -4103,7 +4103,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					{ name: "parentURI", type: "string", description: "URI of the document from where to look for its children." },
 					{ name: "queryBuilderFn", type: "( queryBuilder:Carbon.SPARQL.QueryDocument.QueryDocumentsBuilder.QueryDocumentsBuilder ) => Carbon.SPARQL.QueryDocument.QueryDocumentsBuilder.QueryDocumentsBuilder", optional: true, description: "Function that receives a the builder that helps you to construct the children retrieval query.\nThe same builder must be returned." },
 				],
-				{ type: "Promise<[ (T & Carbon.PersistedDocument.Class)[], Carbon.HTTP.Response.Response ]>" }
+				{ type: "Promise<[ (T & Carbon.PersistedDocument.PersistedDocument)[], Carbon.HTTP.Response.Response ]>" }
 			), () => {} );
 
 			it( isDefined(), () => {
@@ -4930,12 +4930,12 @@ describe( module( "Carbon/Documents" ), ():void => {
 						expect( myDocuments ).toEqual( jasmine.any( Array ) );
 						expect( myDocuments.length ).toBe( 2 );
 						for( const document of myDocuments ) {
-							expect( PersistedDocument.Factory.is( document ) ).toBe( true );
+							expect( PersistedDocument.is( document ) ).toBe( true );
 							expect( document.isPartial() ).toBe( false );
 						}
 
 						expect( myDocuments[ 0 ] ).toEqual( jasmine.objectContaining( {
-							"_etag": "\"1-12345\"",
+							"_eTag": "\"1-12345\"",
 							"property1": "value 1",
 							"property2": jasmine.objectContaining( {
 								"property3": "another value 1",
@@ -4943,7 +4943,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 							} ) as any,
 						} ) );
 						expect( myDocuments[ 1 ] ).toEqual( jasmine.objectContaining( {
-							"_etag": "\"2-12345\"",
+							"_eTag": "\"2-12345\"",
 							"property1": "value 2",
 							"property2": jasmine.objectContaining( {
 								"property3": "another value 2",
@@ -5086,12 +5086,12 @@ describe( module( "Carbon/Documents" ), ():void => {
 							expect( myDocuments ).toEqual( jasmine.any( Array ) );
 							expect( myDocuments.length ).toBe( 2 );
 							for( const document of myDocuments ) {
-								expect( PersistedDocument.Factory.is( document ) ).toBe( true );
+								expect( PersistedDocument.is( document ) ).toBe( true );
 								expect( document.isPartial() ).toBe( true );
 							}
 
 							expect( myDocuments[ 0 ] ).toEqual( jasmine.objectContaining( {
-								"_etag": "\"1-12345\"",
+								"_eTag": "\"1-12345\"",
 								"property1": "value 1",
 								"property2": jasmine.any( Object ) as any,
 							} ) );
@@ -5101,7 +5101,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 							} ) as any );
 
 							expect( myDocuments[ 1 ] ).toEqual( jasmine.objectContaining( {
-								"_etag": "\"2-12345\"",
+								"_eTag": "\"2-12345\"",
 								"property1": "value 2",
 								"property2": jasmine.any( Object ) as any,
 							} ) );
@@ -5268,11 +5268,11 @@ describe( module( "Carbon/Documents" ), ():void => {
 						expect( myDocuments ).toEqual( jasmine.any( Array ) );
 						expect( myDocuments.length ).toBe( 2 );
 						for( const document of myDocuments ) {
-							expect( PersistedDocument.Factory.is( document ) ).toBe( true );
+							expect( PersistedDocument.is( document ) ).toBe( true );
 						}
 
 						expect( myDocuments[ 0 ] ).toEqual( jasmine.objectContaining( {
-							"_etag": "\"1-12345\"",
+							"_eTag": "\"1-12345\"",
 							"property1": "value 1",
 							"property2": jasmine.objectContaining( {
 								"property2": 12345,
@@ -5280,7 +5280,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 							} ),
 						} ) );
 						expect( myDocuments[ 1 ] ).toEqual( jasmine.objectContaining( {
-							"_etag": "\"2-12345\"",
+							"_eTag": "\"2-12345\"",
 							"property1": "value 2",
 							"property2": jasmine.objectContaining( {
 								"property2": 67890,
@@ -5478,23 +5478,23 @@ describe( module( "Carbon/Documents" ), ():void => {
 						expect( myDocuments ).toEqual( jasmine.any( Array ) );
 						expect( myDocuments.length ).toBe( 2 );
 						for( const document of myDocuments ) {
-							expect( PersistedDocument.Factory.is( document ) ).toBe( true );
+							expect( PersistedDocument.is( document ) ).toBe( true );
 						}
 
 						expect( myDocuments[ 0 ] ).toEqual( jasmine.objectContaining( {
-							"_etag": "\"1-12345\"",
+							"_eTag": "\"1-12345\"",
 							"property1": "value 1",
 							"property2": jasmine.objectContaining( {
-								"_etag": "\"3-12345\"",
+								"_eTag": "\"3-12345\"",
 								"property2": 12345,
 								"property3": "another value 1",
 							} ),
 						} ) );
 						expect( myDocuments[ 1 ] ).toEqual( jasmine.objectContaining( {
-							"_etag": "\"2-12345\"",
+							"_eTag": "\"2-12345\"",
 							"property1": "value 2",
 							"property2": jasmine.objectContaining( {
-								"_etag": "\"4-12345\"",
+								"_eTag": "\"4-12345\"",
 								"property2": 67890,
 								"property3": "another value 2",
 							} ),
@@ -5799,11 +5799,11 @@ describe( module( "Carbon/Documents" ), ():void => {
 						expect( myDocuments ).toEqual( jasmine.any( Array ) );
 						expect( myDocuments.length ).toBe( 2 );
 						for( const document of myDocuments ) {
-							expect( PersistedDocument.Factory.is( document ) ).toBe( true );
+							expect( PersistedDocument.is( document ) ).toBe( true );
 						}
 
 						expect( myDocuments[ 0 ] ).toEqual( jasmine.objectContaining( {
-							"_etag": "\"1-12345\"",
+							"_eTag": "\"1-12345\"",
 							"property1": "value 1",
 							"property2": jasmine.objectContaining( {
 								"property2": 12345,
@@ -5811,7 +5811,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 							} ),
 						} ) );
 						expect( myDocuments[ 1 ] ).toEqual( jasmine.objectContaining( {
-							"_etag": "\"2-12345\"",
+							"_eTag": "\"2-12345\"",
 							"property1": "value 2",
 							"property2": jasmine.objectContaining( {
 								"property2": 67890,
@@ -6000,23 +6000,23 @@ describe( module( "Carbon/Documents" ), ():void => {
 						expect( myDocuments ).toEqual( jasmine.any( Array ) );
 						expect( myDocuments.length ).toBe( 2 );
 						for( const document of myDocuments ) {
-							expect( PersistedDocument.Factory.is( document ) ).toBe( true );
+							expect( PersistedDocument.is( document ) ).toBe( true );
 						}
 
 						expect( myDocuments[ 0 ] ).toEqual( jasmine.objectContaining( {
-							"_etag": "\"1-12345\"",
+							"_eTag": "\"1-12345\"",
 							"property1": "value 1",
 							"property2": jasmine.objectContaining( {
-								"_etag": "\"3-12345\"",
+								"_eTag": "\"3-12345\"",
 								"property2": 12345,
 								"property3": "another value 1",
 							} ),
 						} ) );
 						expect( myDocuments[ 1 ] ).toEqual( jasmine.objectContaining( {
-							"_etag": "\"2-12345\"",
+							"_eTag": "\"2-12345\"",
 							"property1": "value 2",
 							"property2": jasmine.objectContaining( {
-								"_etag": "\"4-12345\"",
+								"_eTag": "\"4-12345\"",
 								"property2": 67890,
 								"property3": "another value 2",
 							} ),
@@ -6229,7 +6229,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				} );
 
 				it( "should reject if access-point is already persisted", ( done:DoneFn ):void => {
-					const accessPoint:AccessPointBase & PersistedDocument.Class = PersistedDocument.Factory.createFrom( { hasMemberRelation: "member-relation" }, "https://example.com/some-resource/", documents );
+					const accessPoint:AccessPointBase & PersistedDocument = PersistedDocument.createFrom( { hasMemberRelation: "member-relation" }, documents, "https://example.com/some-resource/" );
 					documents.createAccessPoint( "https://example.com/parent-resource/", accessPoint )
 						.then( () => {
 							done.fail( "Should not resolve" );
@@ -6271,7 +6271,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 						expect( accessPoint ).toBe( document );
 
-						expect( PersistedDocument.Factory.is( document ) ).toBe( true );
+						expect( PersistedDocument.is( document ) ).toBe( true );
 						expect( document ).toEqual( jasmine.objectContaining( {
 							_resolved: false,
 							id: "https://example.com/parent-resource/new-resource/",
@@ -6305,10 +6305,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 							return documents.createAccessPoint( "https://example.com/parent-resource/", accessPoint );
 						} )
-						.then( ( [ document, response ]:[ PersistedDocument.Class, Response ] ):void => {
+						.then( ( [ document, response ]:[ PersistedDocument, Response ] ):void => {
 							expect( response ).toEqual( jasmine.any( Response ) );
 
-							expect( PersistedDocument.Factory.is( document ) ).toBe( true );
+							expect( PersistedDocument.is( document ) ).toBe( true );
 							expect( document.id ).toBe( "https://example.com/parent-resource/new-resource/" );
 
 							done();
@@ -6535,10 +6535,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 				} );
 
 				it( "should reject if any access-point is already persisted", ( done:DoneFn ):void => {
-					const accessPoints:(AccessPointBase | AccessPointBase & PersistedDocument.Class)[] = [
+					const accessPoints:(AccessPointBase | AccessPointBase & PersistedDocument)[] = [
 						{ hasMemberRelation: "member-relation-0" },
-						PersistedDocument.Factory.createFrom( { hasMemberRelation: "member-relation-1" }, "https://example.com/some-resource-1/", documents ),
-						PersistedDocument.Factory.createFrom( { hasMemberRelation: "member-relation-2" }, "https://example.com/some-resource-2/", documents ),
+						PersistedDocument.createFrom( { hasMemberRelation: "member-relation-1" }, documents, "https://example.com/some-resource-1/" ),
+						PersistedDocument.createFrom( { hasMemberRelation: "member-relation-2" }, documents, "https://example.com/some-resource-2/" ),
 					];
 
 					documents.createAccessPoints( "https://example.com/parent-resource/", accessPoints )
@@ -6590,7 +6590,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 							persistedDocuments.forEach( ( document, index ) => {
 								expect( accessPoints[ index ] ).toBe( document );
 
-								expect( PersistedDocument.Factory.is( document ) ).toBe( true );
+								expect( PersistedDocument.is( document ) ).toBe( true );
 								expect( document ).toEqual( jasmine.objectContaining( {
 									_resolved: false,
 									id: `https://example.com/parent-resource/new-access-point-${ index }/`,
@@ -6748,7 +6748,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					{ name: "uri", type: "string", description: "URI of the document from where to look for its members." },
 					{ name: "requestOptions", type: "Carbon.HTTP.Request.RequestOptions", optional: true, description: "Customizable options for the request." },
 				],
-				{ type: "Promise<[ Carbon.PersistedDocument.Class[], Carbon.HTTP.Response.Response ]>" }
+				{ type: "Promise<[ Carbon.PersistedDocument.PersistedDocument[], Carbon.HTTP.Response.Response ]>" }
 			), () => {} );
 
 			it( isDefined(), () => {
@@ -6898,15 +6898,15 @@ describe( module( "Carbon/Documents" ), ():void => {
 							expect( myDocuments ).toEqual( jasmine.any( Array ) );
 							expect( myDocuments.length ).toBe( 2 );
 
-							expect( PersistedDocument.Factory.is( myDocuments[ 0 ] ) ).toBe( true );
+							expect( PersistedDocument.is( myDocuments[ 0 ] ) ).toBe( true );
 							expect( myDocuments[ 0 ] ).toEqual( jasmine.objectContaining( {
-								"_etag": void 0,
+								"_eTag": void 0,
 								"_resolved": false,
 							} ) );
 
-							expect( PersistedDocument.Factory.is( myDocuments[ 0 ] ) ).toBe( true );
+							expect( PersistedDocument.is( myDocuments[ 0 ] ) ).toBe( true );
 							expect( myDocuments[ 1 ] ).toEqual( jasmine.objectContaining( {
-								"_etag": void 0,
+								"_eTag": void 0,
 								"_resolved": false,
 							} ) );
 
@@ -7025,15 +7025,15 @@ describe( module( "Carbon/Documents" ), ():void => {
 							expect( myDocuments ).toEqual( jasmine.any( Array ) );
 							expect( myDocuments.length ).toBe( 2 );
 
-							expect( PersistedDocument.Factory.is( myDocuments[ 0 ] ) ).toBe( true );
+							expect( PersistedDocument.is( myDocuments[ 0 ] ) ).toBe( true );
 							expect( myDocuments[ 0 ] ).toEqual( jasmine.objectContaining( {
-								"_etag": void 0,
+								"_eTag": void 0,
 								"_resolved": false,
 							} ) );
 
-							expect( PersistedDocument.Factory.is( myDocuments[ 0 ] ) ).toBe( true );
+							expect( PersistedDocument.is( myDocuments[ 0 ] ) ).toBe( true );
 							expect( myDocuments[ 1 ] ).toEqual( jasmine.objectContaining( {
-								"_etag": void 0,
+								"_eTag": void 0,
 								"_resolved": false,
 							} ) );
 
@@ -7055,7 +7055,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					{ name: "requestOptions", type: "Carbon.HTTP.Request.RequestOptions", optional: true, description: "Customizable options for the request." },
 					{ name: "queryBuilderFn", type: "( queryBuilder:Carbon.SPARQL.QueryDocument.QueryDocumentsBuilder.QueryDocumentsBuilder ) => Carbon.SPARQL.QueryDocument.QueryDocumentsBuilder.QueryDocumentsBuilder", optional: true, description: "Function that receives a the builder that helps you to construct the member retrieval query.\nThe same builder must be returned." },
 				],
-				{ type: "Promise<[ (T & Carbon.PersistedDocument.Class)[], Carbon.HTTP.Response.Response ]>" }
+				{ type: "Promise<[ (T & Carbon.PersistedDocument.PersistedDocument)[], Carbon.HTTP.Response.Response ]>" }
 			), () => {} );
 
 			it( hasSignature(
@@ -7064,7 +7064,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					{ name: "uri", type: "string", description: "URI of the document from where to look for its members." },
 					{ name: "queryBuilderFn", type: "( queryBuilder:Carbon.SPARQL.QueryDocument.QueryDocumentsBuilder.QueryDocumentsBuilder ) => Carbon.SPARQL.QueryDocument.QueryDocumentsBuilder.QueryDocumentsBuilder", optional: true, description: "Function that receives a the builder that helps you to construct the member retrieval query.\nThe same builder must be returned." },
 				],
-				{ type: "Promise<[ (T & Carbon.PersistedDocument.Class)[], Carbon.HTTP.Response.Response ]>" }
+				{ type: "Promise<[ (T & Carbon.PersistedDocument.PersistedDocument)[], Carbon.HTTP.Response.Response ]>" }
 			), () => {} );
 
 			it( isDefined(), () => {
@@ -7734,11 +7734,11 @@ describe( module( "Carbon/Documents" ), ():void => {
 						expect( myDocuments ).toEqual( jasmine.any( Array ) );
 						expect( myDocuments.length ).toBe( 2 );
 						for( const document of myDocuments ) {
-							expect( PersistedDocument.Factory.is( document ) ).toBe( true );
+							expect( PersistedDocument.is( document ) ).toBe( true );
 						}
 
 						expect( myDocuments[ 0 ] ).toEqual( jasmine.objectContaining( {
-							"_etag": "\"1-12345\"",
+							"_eTag": "\"1-12345\"",
 							"property1": "value 1",
 							"property2": jasmine.objectContaining( {
 								"property2": 12345,
@@ -7746,7 +7746,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 							} ),
 						} ) );
 						expect( myDocuments[ 1 ] ).toEqual( jasmine.objectContaining( {
-							"_etag": "\"2-12345\"",
+							"_eTag": "\"2-12345\"",
 							"property1": "value 2",
 							"property2": jasmine.objectContaining( {
 								"property2": 67890,
@@ -7912,12 +7912,12 @@ describe( module( "Carbon/Documents" ), ():void => {
 						expect( myDocuments ).toEqual( jasmine.any( Array ) );
 						expect( myDocuments.length ).toBe( 2 );
 						for( const document of myDocuments ) {
-							expect( PersistedDocument.Factory.is( document ) ).toBe( true );
+							expect( PersistedDocument.is( document ) ).toBe( true );
 							expect( document.isPartial() ).toBe( false );
 						}
 
 						expect( myDocuments[ 0 ] ).toEqual( jasmine.objectContaining( {
-							"_etag": "\"1-12345\"",
+							"_eTag": "\"1-12345\"",
 							"property1": "value 1",
 							"property2": jasmine.objectContaining( {
 								"property3": "another value 1",
@@ -7925,7 +7925,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 							} ) as any,
 						} ) );
 						expect( myDocuments[ 1 ] ).toEqual( jasmine.objectContaining( {
-							"_etag": "\"2-12345\"",
+							"_eTag": "\"2-12345\"",
 							"property1": "value 2",
 							"property2": jasmine.objectContaining( {
 								"property3": "another value 2",
@@ -8068,12 +8068,12 @@ describe( module( "Carbon/Documents" ), ():void => {
 							expect( myDocuments ).toEqual( jasmine.any( Array ) );
 							expect( myDocuments.length ).toBe( 2 );
 							for( const document of myDocuments ) {
-								expect( PersistedDocument.Factory.is( document ) ).toBe( true );
+								expect( PersistedDocument.is( document ) ).toBe( true );
 								expect( document.isPartial() ).toBe( true );
 							}
 
 							expect( myDocuments[ 0 ] ).toEqual( jasmine.objectContaining( {
-								"_etag": "\"1-12345\"",
+								"_eTag": "\"1-12345\"",
 								"property1": "value 1",
 								"property2": jasmine.any( Object ) as any,
 							} ) );
@@ -8083,7 +8083,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 							} ) as any );
 
 							expect( myDocuments[ 1 ] ).toEqual( jasmine.objectContaining( {
-								"_etag": "\"2-12345\"",
+								"_eTag": "\"2-12345\"",
 								"property1": "value 2",
 								"property2": jasmine.any( Object ) as any,
 							} ) );
@@ -8453,23 +8453,23 @@ describe( module( "Carbon/Documents" ), ():void => {
 						expect( myDocuments ).toEqual( jasmine.any( Array ) );
 						expect( myDocuments.length ).toBe( 2 );
 						for( const document of myDocuments ) {
-							expect( PersistedDocument.Factory.is( document ) ).toBe( true );
+							expect( PersistedDocument.is( document ) ).toBe( true );
 						}
 
 						expect( myDocuments[ 0 ] ).toEqual( jasmine.objectContaining( {
-							"_etag": "\"1-12345\"",
+							"_eTag": "\"1-12345\"",
 							"property1": "value 1",
 							"property2": jasmine.objectContaining( {
-								"_etag": "\"3-12345\"",
+								"_eTag": "\"3-12345\"",
 								"property2": 12345,
 								"property3": "another value 1",
 							} ),
 						} ) );
 						expect( myDocuments[ 1 ] ).toEqual( jasmine.objectContaining( {
-							"_etag": "\"2-12345\"",
+							"_eTag": "\"2-12345\"",
 							"property1": "value 2",
 							"property2": jasmine.objectContaining( {
-								"_etag": "\"4-12345\"",
+								"_eTag": "\"4-12345\"",
 								"property2": 67890,
 								"property3": "another value 2",
 							} ),
@@ -8776,11 +8776,11 @@ describe( module( "Carbon/Documents" ), ():void => {
 						expect( myDocuments ).toEqual( jasmine.any( Array ) );
 						expect( myDocuments.length ).toBe( 2 );
 						for( const document of myDocuments ) {
-							expect( PersistedDocument.Factory.is( document ) ).toBe( true );
+							expect( PersistedDocument.is( document ) ).toBe( true );
 						}
 
 						expect( myDocuments[ 0 ] ).toEqual( jasmine.objectContaining( {
-							"_etag": "\"1-12345\"",
+							"_eTag": "\"1-12345\"",
 							"property1": "value 1",
 							"property2": jasmine.objectContaining( {
 								"property2": 12345,
@@ -8788,7 +8788,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 							} ),
 						} ) );
 						expect( myDocuments[ 1 ] ).toEqual( jasmine.objectContaining( {
-							"_etag": "\"2-12345\"",
+							"_eTag": "\"2-12345\"",
 							"property1": "value 2",
 							"property2": jasmine.objectContaining( {
 								"property2": 67890,
@@ -8977,23 +8977,23 @@ describe( module( "Carbon/Documents" ), ():void => {
 						expect( myDocuments ).toEqual( jasmine.any( Array ) );
 						expect( myDocuments.length ).toBe( 2 );
 						for( const document of myDocuments ) {
-							expect( PersistedDocument.Factory.is( document ) ).toBe( true );
+							expect( PersistedDocument.is( document ) ).toBe( true );
 						}
 
 						expect( myDocuments[ 0 ] ).toEqual( jasmine.objectContaining( {
-							"_etag": "\"1-12345\"",
+							"_eTag": "\"1-12345\"",
 							"property1": "value 1",
 							"property2": jasmine.objectContaining( {
-								"_etag": "\"3-12345\"",
+								"_eTag": "\"3-12345\"",
 								"property2": 12345,
 								"property3": "another value 1",
 							} ),
 						} ) );
 						expect( myDocuments[ 1 ] ).toEqual( jasmine.objectContaining( {
-							"_etag": "\"2-12345\"",
+							"_eTag": "\"2-12345\"",
 							"property1": "value 2",
 							"property2": jasmine.objectContaining( {
-								"_etag": "\"4-12345\"",
+								"_eTag": "\"4-12345\"",
 								"property2": 67890,
 								"property3": "another value 2",
 							} ),
@@ -9952,10 +9952,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 			it( hasSignature(
 				[ "T extends object" ],
 				"Update the data of the document provided in the server.", [
-					{ name: "persistedDocument", type: "T & Carbon.PersistedDocument.Class", description: "The persisted document with the data to update in the server." },
+					{ name: "persistedDocument", type: "T & Carbon.PersistedDocument.PersistedDocument", description: "The persisted document with the data to update in the server." },
 					{ name: "requestOptions", type: "Carbon.HTTP.Request.RequestOptions", optional: true, description: "Customisable options for the request." },
 				],
-				{ type: "Promise<[ T & Carbon.PersistedDocument.Class, Carbon.HTTP.Response.Response ]>" }
+				{ type: "Promise<[ T & Carbon.PersistedDocument.PersistedDocument, Carbon.HTTP.Response.Response ]>" }
 			), ():void => {} );
 
 			it( isDefined(), ():void => {
@@ -9986,7 +9986,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				} );
 
 				it( "should reject promise if URI is not in the context base", ( done:DoneFn ):void => {
-					const document:PersistedDocument.Class = PersistedDocument.Factory.create( "https://not-example.com", documents );
+					const document:PersistedDocument = PersistedDocument.create( documents, "https://not-example.com" );
 
 					documents.save( document )
 						.then( () => {
@@ -9998,7 +9998,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				} );
 
 				it( "should reject promise if prefixed URI cannot be resolved", ( done:DoneFn ):void => {
-					const document:PersistedDocument.Class = PersistedDocument.Factory.create( "prefix:the-uri", documents );
+					const document:PersistedDocument = PersistedDocument.create( documents, "prefix:the-uri" );
 
 					documents.save( document )
 						.then( () => {
@@ -10076,7 +10076,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 						blankNode2:RawBlankNode;
 					}
 
-					const rawDocument:PersistedDocument.Class & RawDocument = PersistedDocument.Factory.decorate( Object.assign(
+					const rawDocument:PersistedDocument & RawDocument = PersistedDocument.decorate( Object.assign(
 						documents.getPointer( "https://example.com/resource/" ), {
 							blankNode1: {
 								id: "_:1",
@@ -10121,7 +10121,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					const error:Error = new Error( "Error message" );
 					const spy:jasmine.Spy = spyOn( documents, "_parseErrorResponse" ).and.callFake( () => Promise.reject( error ) );
 
-					const document:PersistedDocument.Class = PersistedDocument.Factory.create( "https://example.com/", documents );
+					const document:PersistedDocument = PersistedDocument.create( documents, "https://example.com/" );
 					documents.save( document ).then( () => {
 						done.fail( "Should not resolve" );
 					} ).catch( _error => {
@@ -10136,12 +10136,12 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 
 				it( "should reject if document is outdated", ( done:DoneFn ):void => {
-					const document:PersistedDocument.Class = PersistedDocument.Factory.createFrom(
+					const document:PersistedDocument = PersistedDocument.createFrom(
 						Object.assign( documents.getPointer( "https://example.com/resource/" ), {
-							_etag: null,
+							_eTag: null,
 						} ),
-						"https://example.com/resource/",
-						documents
+						documents,
+						"https://example.com/resource/"
 					);
 
 					documents.save( document )
@@ -10186,7 +10186,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 						},
 					} );
 
-					const persistedDocument:PersistedDocument.Class = PersistedDocument.Factory.createFrom( {
+					const persistedDocument:PersistedDocument = PersistedDocument.createFrom( {
 						types: [ "https://example.com/ns#Document" ],
 						list: [ 1, 2, 3, 4, 5 ],
 						pointer: {
@@ -10200,7 +10200,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								number: 100,
 							} ],
 						},
-					}, "https://example.com/resource/", documents );
+					}, documents, "https://example.com/resource/" );
 					persistedDocument._syncSnapshot();
 					persistedDocument.getFragments().forEach( fragment => fragment._syncSnapshot() );
 
@@ -10210,7 +10210,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					persistedDocument[ "pointer" ][ "pointer" ][ 0 ][ "string" ] = [ "string 1", "string -1" ];
 					persistedDocument[ "pointer" ][ "pointer" ][ 0 ][ "number" ] = 100.001;
 
-					documents.save( persistedDocument ).then( ( [ _document, response ]:[ PersistedDocument.Class, Response ] ) => {
+					documents.save( persistedDocument ).then( ( [ _document, response ]:[ PersistedDocument, Response ] ) => {
 						expect( _document ).toBe( persistedDocument );
 						expect( response ).toEqual( jasmine.any( Response ) );
 
@@ -10244,7 +10244,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 						"xsd": XSD.namespace,
 					} );
 
-					const persistedDocument:PersistedDocument.Class = PersistedDocument.Factory.createFrom( {
+					const persistedDocument:PersistedDocument = PersistedDocument.createFrom( {
 						types: [ "https://example.com/ns#Document" ],
 						list: [ 1, 2, 3, 4, 5 ],
 						pointer: {
@@ -10287,7 +10287,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"@type": "@id",
 							},
 						} ),
-					}, "https://example.com/resource/", documents );
+					}, documents, "https://example.com/resource/" );
 					persistedDocument._syncSnapshot();
 					persistedDocument.getFragments().forEach( fragment => fragment._syncSnapshot() );
 
@@ -10297,7 +10297,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					persistedDocument[ "pointer" ][ "pointer" ][ 0 ][ "string" ] = [ "string 1", "string -1" ];
 					persistedDocument[ "pointer" ][ "pointer" ][ 0 ][ "number" ] = 100.001;
 
-					documents.save( persistedDocument ).then( ( [ _document, response ]:[ PersistedDocument.Class, Response ] ) => {
+					documents.save( persistedDocument ).then( ( [ _document, response ]:[ PersistedDocument, Response ] ) => {
 						expect( _document ).toBe( persistedDocument );
 						expect( response ).toEqual( jasmine.any( Response ) );
 
@@ -10328,12 +10328,12 @@ describe( module( "Carbon/Documents" ), ():void => {
 						responseText: `[]`,
 					} );
 
-					const document:PersistedDocument.Class = PersistedDocument.Factory.createFrom(
+					const document:PersistedDocument = PersistedDocument.createFrom(
 						Object.assign( documents.getPointer( "https://example.com/resource/" ), {
-							_etag: `"1-12345"`,
+							_eTag: `"1-12345"`,
 						} ),
-						"https://example.com/resource/",
-						documents
+						documents,
+						"https://example.com/resource/"
 					);
 
 					documents.save( document )
@@ -10363,7 +10363,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				} );
 
 				it( "should reject if URI is relative", ( done:DoneFn ):void => {
-					const document:PersistedDocument.Class = PersistedDocument.Factory.create( "relative-uri/", documents );
+					const document:PersistedDocument = PersistedDocument.create( documents, "relative-uri/" );
 
 					documents.save( document )
 						.then( () => {
@@ -10376,7 +10376,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				} );
 
 				it( "should reject if URI is prefixed", ( done:DoneFn ):void => {
-					const document:PersistedDocument.Class = PersistedDocument.Factory.create( "prefix:the-uri", documents );
+					const document:PersistedDocument = PersistedDocument.create( documents, "prefix:the-uri" );
 
 					documents.save( document )
 						.then( () => {
@@ -10397,7 +10397,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					const error:Error = new Error( "Error message" );
 					const spy:jasmine.Spy = spyOn( documents, "_parseErrorResponse" ).and.callFake( () => Promise.reject( error ) );
 
-					const document:PersistedDocument.Class = PersistedDocument.Factory.create( "https://example.com/", documents );
+					const document:PersistedDocument = PersistedDocument.create( documents, "https://example.com/" );
 					documents.save( document ).then( () => {
 						done.fail( "Should not resolve" );
 					} ).catch( _error => {
@@ -10419,10 +10419,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 			it( hasSignature(
 				[ "T extends object" ],
 				"Update the specified document with the data of the CarbonLDP server, if a newest version exists.", [
-					{ name: "persistedDocument", type: "T & Carbon.PersistedDocument.Class", description: "The persisted document to update." },
+					{ name: "persistedDocument", type: "T & Carbon.PersistedDocument.PersistedDocument", description: "The persisted document to update." },
 					{ name: "requestOptions", type: "Carbon.HTTP.Request.RequestOptions", optional: true, description: "Customizable options for the request." },
 				],
-				{ type: "Promise<[ T & Carbon.PersistedDocument.Class, Carbon.HTTP.Response.Response ]>" }
+				{ type: "Promise<[ T & Carbon.PersistedDocument.PersistedDocument, Carbon.HTTP.Response.Response ]>" }
 			), ():void => {} );
 
 			it( isDefined(), () => {
@@ -10453,7 +10453,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				} );
 
 				it( "should reject promise if URI is not in the context base", ( done:DoneFn ):void => {
-					const persistedDocument:PersistedDocument.Class = PersistedDocument.Factory.create( "http://not-example.com", documents );
+					const persistedDocument:PersistedDocument = PersistedDocument.create( documents, "http://not-example.com" );
 					const promise:Promise<any> = documents.refresh( persistedDocument );
 					promise.then( () => {
 						done.fail( "Should not resolve promise." );
@@ -10464,7 +10464,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				} );
 
 				it( "should reject promise if prefixed URI cannot be resolved", ( done:DoneFn ):void => {
-					const persistedDocument:PersistedDocument.Class = PersistedDocument.Factory.create( "prefix:the-uri", documents );
+					const persistedDocument:PersistedDocument = PersistedDocument.create( documents, "prefix:the-uri" );
 					const promise:Promise<any> = documents.refresh( persistedDocument );
 					promise.then( () => {
 						done.fail( "Should not resolve promise." );
@@ -10483,7 +10483,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					const error:Error = new Error( "Error message" );
 					const spy:jasmine.Spy = spyOn( documents, "_parseErrorResponse" ).and.callFake( () => Promise.reject( error ) );
 
-					const document:PersistedDocument.Class = PersistedDocument.Factory.create( "https://example.com/", documents );
+					const document:PersistedDocument = PersistedDocument.create( documents, "https://example.com/" );
 					documents.refresh( document ).then( () => {
 						done.fail( "Should not resolve" );
 					} ).catch( _error => {
@@ -10502,12 +10502,12 @@ describe( module( "Carbon/Documents" ), ():void => {
 						status: 304,
 					} );
 
-					const document:PersistedDocument.Class = PersistedDocument.Factory.createFrom(
+					const document:PersistedDocument = PersistedDocument.createFrom(
 						Object.assign( documents.getPointer( "https://example.com/resource/" ), {
-							_etag: `"1-12345"`,
+							_eTag: `"1-12345"`,
 						} ),
-						"https://example.com/resource/",
-						documents
+						documents,
+						"https://example.com/resource/"
 					);
 
 					documents.refresh( document )
@@ -10549,9 +10549,9 @@ describe( module( "Carbon/Documents" ), ():void => {
 						} ]`,
 					} );
 
-					const document:PersistedDocument.Class = PersistedDocument.Factory.createFrom(
+					const document:PersistedDocument = PersistedDocument.createFrom(
 						Object.assign( documents.getPointer( "https://example.com/resource/" ), {
-							_etag: `"1-12345"`,
+							_eTag: `"1-12345"`,
 							_resolved: true,
 							string: "Document Resource",
 							pointerSet: [
@@ -10563,8 +10563,8 @@ describe( module( "Carbon/Documents" ), ():void => {
 							],
 							"new-property": "A new property that will be erased at refresh",
 						} ),
-						"https://example.com/resource/",
-						documents
+						documents,
+						"https://example.com/resource/"
 					);
 					document._normalize();
 
@@ -10575,7 +10575,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 							expect( returnedDocument ).toBe( document );
 
 							expect( document ).toEqual( jasmine.objectContaining( {
-								_etag: `"1-67890"`,
+								_eTag: `"1-67890"`,
 								_resolved: true,
 								string: "Changed Document Resource",
 								pointerSet: [ jasmine.objectContaining( {
@@ -10587,7 +10587,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 							expect( document[ "pointerSet" ][ 0 ] ).toBe( fragment );
 
 							expect( document ).not.toEqual( jasmine.objectContaining( {
-								_etag: `"1-12345"`,
+								_eTag: `"1-12345"`,
 								"new-property": "A new property that will be erased at refresh",
 							} ) );
 
@@ -10659,13 +10659,13 @@ describe( module( "Carbon/Documents" ), ():void => {
 						"schema": "https://schema.org/",
 					} );
 
-					const persistedDocument:PersistedDocument.Class & MyDocument = PersistedDocument.Factory.createFrom(
+					const persistedDocument:PersistedDocument & MyDocument = PersistedDocument.createFrom(
 						Object.assign(
 							documents.getPointer( "https://example.com/resource/" ),
 							{ property4: true, property1: "value", property2: null }
 						),
-						"https://example.com/resource/",
-						documents
+						documents,
+						"https://example.com/resource/"
 					);
 					persistedDocument._partialMetadata = createPartialMetadata( {
 						"@vocab": "https://example.com/ns#",
@@ -10853,9 +10853,9 @@ describe( module( "Carbon/Documents" ), ():void => {
 						"schema": "https://schema.org/",
 					} );
 
-					const persistedDocument:PersistedDocument.Class & MyDocument = PersistedDocument.Factory.createFrom(
+					const persistedDocument:PersistedDocument & MyDocument = PersistedDocument.createFrom(
 						Object.assign( documents.getPointer( "https://example.com/resource/" ), {
-							_etag: "\"1-12345\"",
+							_eTag: "\"1-12345\"",
 							property4: true,
 							property1: "value",
 							property2: {
@@ -10865,8 +10865,8 @@ describe( module( "Carbon/Documents" ), ():void => {
 								property2: 12345,
 							},
 						} ),
-						"https://example.com/resource/",
-						documents
+						documents,
+						"https://example.com/resource/"
 					);
 					persistedDocument[ "_partialMetadata" ] = createPartialMetadata( {
 						"@vocab": "https://example.com/ns#",
@@ -11073,7 +11073,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 						"schema": "https://schema.org/",
 					} );
 
-					const persistedDocument:PersistedDocument.Class & MyDocument = PersistedDocument.Factory.createFrom(
+					const persistedDocument:PersistedDocument & MyDocument = PersistedDocument.createFrom(
 						Object.assign( documents.getPointer( "https://example.com/resource/" ), {
 							property1: "value",
 							property2: null,
@@ -11095,8 +11095,8 @@ describe( module( "Carbon/Documents" ), ():void => {
 								},
 							} ),
 						} ),
-						"https://example.com/resource/",
-						documents
+						documents,
+						"https://example.com/resource/"
 					);
 
 					persistedDocument.property2 = persistedDocument.createFragment(
@@ -11126,7 +11126,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					Utils.promiseMethod( () => {
 						return documents.refresh<MyDocument>( persistedDocument );
 					} ).then( ( [ document ] ) => {
-						expect( PersistedDocument.Factory.is( document ) ).toBe( true );
+						expect( PersistedDocument.is( document ) ).toBe( true );
 
 						// Data updates
 						expect( document ).toEqual( jasmine.objectContaining( {
@@ -11233,9 +11233,9 @@ describe( module( "Carbon/Documents" ), ():void => {
 						"schema": "https://schema.org/",
 					} );
 
-					const persistedDocument:PersistedDocument.Class & MyDocument = PersistedDocument.Factory.createFrom(
+					const persistedDocument:PersistedDocument & MyDocument = PersistedDocument.createFrom(
 						Object.assign( documents.getPointer( "https://example.com/resource/" ), {
-							_etag: "\"1-12345\"",
+							_eTag: "\"1-12345\"",
 							property1: "value",
 							property2: null,
 							property3: "non query-value",
@@ -11256,8 +11256,8 @@ describe( module( "Carbon/Documents" ), ():void => {
 								},
 							} ),
 						} ),
-						"https://example.com/resource/",
-						documents
+						documents,
+						"https://example.com/resource/"
 					);
 
 					persistedDocument.property2 = persistedDocument.createFragment(
@@ -11287,7 +11287,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					Utils.promiseMethod( () => {
 						return documents.refresh<MyDocument>( persistedDocument );
 					} ).then( ( [ document, response ] ) => {
-						expect( PersistedDocument.Factory.is( document ) ).toBe( true );
+						expect( PersistedDocument.is( document ) ).toBe( true );
 
 						// Data updates
 						expect( document ).toEqual( jasmine.objectContaining( {
@@ -11327,7 +11327,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				} );
 
 				it( "should reject if URI is relative", ( done:DoneFn ):void => {
-					const persistedDocument:PersistedDocument.Class = PersistedDocument.Factory.create( "relative-uri/", documents );
+					const persistedDocument:PersistedDocument = PersistedDocument.create( documents, "relative-uri/" );
 					const promise:Promise<any> = documents.refresh( persistedDocument );
 					promise.then( () => {
 						done.fail( "Should not resolve promise." );
@@ -11338,7 +11338,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				} );
 
 				it( "should reject if URI is prefixed", ( done:DoneFn ):void => {
-					const persistedDocument:PersistedDocument.Class = PersistedDocument.Factory.create( "prefix:the-uri", documents );
+					const persistedDocument:PersistedDocument = PersistedDocument.create( documents, "prefix:the-uri" );
 					const promise:Promise<any> = documents.refresh( persistedDocument );
 					promise.then( () => {
 						done.fail( "Should not resolve promise." );
@@ -11357,7 +11357,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					const error:Error = new Error( "Error message" );
 					const spy:jasmine.Spy = spyOn( documents, "_parseErrorResponse" ).and.callFake( () => Promise.reject( error ) );
 
-					const document:PersistedDocument.Class = PersistedDocument.Factory.create( "http://example.com/", documents );
+					const document:PersistedDocument = PersistedDocument.create( documents, "http://example.com/" );
 					documents.refresh( document ).then( () => {
 						done.fail( "Should not resolve" );
 					} ).catch( _error => {
@@ -11422,13 +11422,13 @@ describe( module( "Carbon/Documents" ), ():void => {
 						property2:PersistedResource;
 					}
 
-					const persistedDocument:PersistedDocument.Class & MyDocument = PersistedDocument.Factory.createFrom(
+					const persistedDocument:PersistedDocument & MyDocument = PersistedDocument.createFrom(
 						Object.assign(
 							documents.getPointer( "https://example.com/resource/" ),
 							{ property4: true, property1: "value", property2: null }
 						),
-						"https://example.com/resource/",
-						documents
+						documents,
+						"https://example.com/resource/"
 					);
 					persistedDocument._partialMetadata = createPartialMetadata( {
 						"@vocab": "https://example.com/ns#",
@@ -11608,10 +11608,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 				[ "T extends object" ],
 				"Save and refresh the PersistedDocument specified.\n" +
 				"If the documents is partial the refresh will be executed with another query.", [
-					{ name: "persistedDocument", type: "T & Carbon.PersistedDocument.Class", description: "The persistedDocument to save and refresh." },
+					{ name: "persistedDocument", type: "T & Carbon.PersistedDocument.PersistedDocument", description: "The persistedDocument to save and refresh." },
 					{ name: "requestOptions", type: "Carbon.HTTP.Request.RequestOptions", optional: true, description: "Customizable options for the request." },
 				],
-				{ type: "Promise<[ T & Carbon.PersistedDocument.Class, Carbon.HTTP.Response.Response[] ]>" }
+				{ type: "Promise<[ T & Carbon.PersistedDocument.PersistedDocument, Carbon.HTTP.Response.Response[] ]>" }
 			), ():void => {} );
 
 			it( isDefined(), () => {
@@ -11642,7 +11642,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				} );
 
 				it( "should reject promise if URI is not in the context base", ( done:DoneFn ):void => {
-					const document:PersistedDocument.Class = PersistedDocument.Factory.create( "https://not-example.com", documents );
+					const document:PersistedDocument = PersistedDocument.create( documents, "https://not-example.com" );
 
 					documents.saveAndRefresh( document )
 						.then( () => {
@@ -11654,7 +11654,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				} );
 
 				it( "should reject promise if prefixed URI cannot be resolved", ( done:DoneFn ):void => {
-					const document:PersistedDocument.Class = PersistedDocument.Factory.create( "prefix:the-uri", documents );
+					const document:PersistedDocument = PersistedDocument.create( documents, "prefix:the-uri" );
 
 					documents.saveAndRefresh( document )
 						.then( () => {
@@ -11759,7 +11759,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 						blankNode2:RawBlankNode;
 					}
 
-					const rawDocument:PersistedDocument.Class & RawDocument = PersistedDocument.Factory.decorate( Object.assign(
+					const rawDocument:PersistedDocument & RawDocument = PersistedDocument.decorate( Object.assign(
 						documents.getPointer( "https://example.com/resource/" ), {
 							blankNode1: {
 								id: "_:1",
@@ -11804,7 +11804,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					const error:Error = new Error( "Error message" );
 					const spy:jasmine.Spy = spyOn( documents, "_parseErrorResponse" ).and.callFake( () => Promise.reject( error ) );
 
-					const document:PersistedDocument.Class = PersistedDocument.Factory.create( "https://example.com/", documents );
+					const document:PersistedDocument = PersistedDocument.create( documents, "https://example.com/" );
 					documents.saveAndRefresh( document ).then( () => {
 						done.fail( "Should not resolve" );
 					} ).catch( _error => {
@@ -11819,12 +11819,12 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 
 				it( "should reject if document is outdated", ( done:DoneFn ):void => {
-					const document:PersistedDocument.Class = PersistedDocument.Factory.createFrom(
+					const document:PersistedDocument = PersistedDocument.createFrom(
 						Object.assign( documents.getPointer( "https://example.com/resource/" ), {
-							_etag: null,
+							_eTag: null,
 						} ),
-						"https://example.com/resource/",
-						documents
+						documents,
+						"https://example.com/resource/"
 					);
 
 					documents.saveAndRefresh( document )
@@ -11872,7 +11872,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 						},
 					} );
 
-					const persistedDocument:PersistedDocument.Class = PersistedDocument.Factory.createFrom( {
+					const persistedDocument:PersistedDocument = PersistedDocument.createFrom( {
 						types: [ "https://example.com/ns#Document" ],
 						list: [ 1, 2, 3, 4, 5 ],
 						pointer: {
@@ -11886,7 +11886,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								number: 100,
 							} ],
 						},
-					}, "https://example.com/resource/", documents );
+					}, documents, "https://example.com/resource/" );
 					persistedDocument._syncSnapshot();
 					persistedDocument.getFragments().forEach( fragment => fragment._syncSnapshot() );
 
@@ -11924,12 +11924,12 @@ describe( module( "Carbon/Documents" ), ():void => {
 						responseText: `[]`,
 					} );
 
-					const document:PersistedDocument.Class = PersistedDocument.Factory.createFrom(
+					const document:PersistedDocument = PersistedDocument.createFrom(
 						Object.assign( documents.getPointer( "https://example.com/resource/" ), {
-							_etag: `"1-12345"`,
+							_eTag: `"1-12345"`,
 						} ),
-						"https://example.com/resource/",
-						documents
+						documents,
+						"https://example.com/resource/"
 					);
 
 					documents.saveAndRefresh( document )
@@ -11978,9 +11978,9 @@ describe( module( "Carbon/Documents" ), ():void => {
 						} ]`,
 					} );
 
-					const document:PersistedDocument.Class = PersistedDocument.Factory.createFrom(
+					const document:PersistedDocument = PersistedDocument.createFrom(
 						Object.assign( documents.getPointer( "https://example.com/resource/" ), {
-							_etag: `"1-12345"`,
+							_eTag: `"1-12345"`,
 							_resolved: true,
 							string: "Document Resource",
 							pointerSet: [
@@ -11992,8 +11992,8 @@ describe( module( "Carbon/Documents" ), ():void => {
 							],
 							"new-property": "A new property that will be erased at refresh",
 						} ),
-						"https://example.com/resource/",
-						documents
+						documents,
+						"https://example.com/resource/"
 					);
 
 					const fragment:PersistedNamedFragment = document.getFragment( "#1" );
@@ -12006,7 +12006,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 							expect( returnedDocument ).toBe( document );
 
 							expect( document ).toEqual( jasmine.objectContaining( {
-								_etag: `"2-12345"`,
+								_eTag: `"2-12345"`,
 								_resolved: true,
 								string: "Changed Document Resource",
 								pointerSet: [ jasmine.objectContaining( {
@@ -12018,7 +12018,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 							expect( document[ "pointerSet" ][ 0 ] ).toBe( fragment );
 
 							expect( document ).not.toEqual( jasmine.objectContaining( {
-								_etag: `"1-12345"`,
+								_eTag: `"1-12345"`,
 								"new-property": "A new property that will be erased at refresh",
 							} ) );
 
@@ -12113,9 +12113,9 @@ describe( module( "Carbon/Documents" ), ():void => {
 						property4:boolean;
 					}
 
-					const persistedDocument:PersistedDocument.Class & MyDocument = PersistedDocument.Factory.createFrom(
+					const persistedDocument:PersistedDocument & MyDocument = PersistedDocument.createFrom(
 						Object.assign( documents.getPointer( `${ context.baseURI }resource/` ), {
-							_etag: `"1-12345"`,
+							_eTag: `"1-12345"`,
 							property1: "value",
 							property3: "non query-value",
 							property4: true,
@@ -12156,8 +12156,8 @@ describe( module( "Carbon/Documents" ), ():void => {
 								},
 							} ),
 						} ),
-						`${ context.baseURI }resource/`,
-						documents
+						documents,
+						`${ context.baseURI }resource/`
 					);
 
 					Utils.promiseMethod( () => {
@@ -12167,7 +12167,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 							jasmine.any( Response ) as any,
 							jasmine.any( Response ) as any,
 						] );
-						expect( PersistedDocument.Factory.is( document ) ).toBe( true );
+						expect( PersistedDocument.is( document ) ).toBe( true );
 
 						// Data updates
 						expect( document ).toEqual( jasmine.objectContaining( {
@@ -12203,7 +12203,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				} );
 
 				it( "should reject if URI is relative", ( done:DoneFn ):void => {
-					const document:PersistedDocument.Class = PersistedDocument.Factory.create( "relative-uri/", documents );
+					const document:PersistedDocument = PersistedDocument.create( documents, "relative-uri/" );
 
 					documents.saveAndRefresh( document )
 						.then( () => {
@@ -12216,7 +12216,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				} );
 
 				it( "should reject if URI is prefixed", ( done:DoneFn ):void => {
-					const document:PersistedDocument.Class = PersistedDocument.Factory.create( "prefix:the-uri", documents );
+					const document:PersistedDocument = PersistedDocument.create( documents, "prefix:the-uri" );
 
 					documents.saveAndRefresh( document )
 						.then( () => {
@@ -12237,7 +12237,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					const error:Error = new Error( "Error message" );
 					const spy:jasmine.Spy = spyOn( documents, "_parseErrorResponse" ).and.callFake( () => Promise.reject( error ) );
 
-					const document:PersistedDocument.Class = PersistedDocument.Factory.create( "https://example.com/", documents );
+					const document:PersistedDocument = PersistedDocument.create( documents, "https://example.com/" );
 					documents.saveAndRefresh( document ).then( () => {
 						done.fail( "Should not resolve" );
 					} ).catch( _error => {

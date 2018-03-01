@@ -1,10 +1,10 @@
 import * as ACL from "./ACL";
 import { PersistedACE } from "./PersistedACE";
-import * as PersistedDocument from "./../PersistedDocument";
+import { PersistedDocument } from "./../PersistedDocument";
 import { Pointer } from "./../Pointer";
 import * as Utils from "./../Utils";
 
-export interface Class extends PersistedDocument.Class {
+export interface Class extends PersistedDocument {
 	accessTo:Pointer;
 	entries?:PersistedACE[];
 	inheritableEntries?:PersistedACE[];
@@ -57,7 +57,7 @@ export class Factory {
 			;
 	}
 
-	static decorate<T extends PersistedDocument.Class>( document:T ):T & Class {
+	static decorate<T extends PersistedDocument>( document:T ):T & Class {
 		let acl:T & Class = <any> ACL.Factory.decorate( document );
 
 		Object.defineProperties( acl, {

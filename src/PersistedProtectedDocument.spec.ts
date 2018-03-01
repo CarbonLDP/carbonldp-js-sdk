@@ -21,7 +21,7 @@ import { Document } from "./Document";
 import { Documents } from "./Documents";
 import { Response } from "./HTTP/Response";
 import * as PersistedACL from "./Auth/PersistedACL";
-import * as PersistedDocument from "./PersistedDocument";
+import { PersistedDocument } from "./PersistedDocument";
 import * as Utils from "./Utils";
 
 import * as PersistedProtectedDocument from "./PersistedProtectedDocument";
@@ -39,7 +39,7 @@ describe( module( "Carbon/PersistedProtectedDocument" ), ():void => {
 		"Interface that represents a persisted protected document."
 	), ():void => {
 
-		it( extendsClass( "Carbon.PersistedDocument.Class" ), ():void => {} );
+		it( extendsClass( "Carbon.PersistedDocument.PersistedDocument" ), ():void => {} );
 
 		it( hasProperty(
 			OPTIONAL,
@@ -126,7 +126,7 @@ describe( module( "Carbon/PersistedProtectedDocument" ), ():void => {
 			};
 			expect( PersistedProtectedDocument.Factory.is( object ) ).toBe( false );
 
-			let document:PersistedDocument.Class = PersistedDocument.Factory.decorate( object, new Documents() );
+			let document:PersistedDocument = PersistedDocument.decorate( object, new Documents() );
 			expect( PersistedProtectedDocument.Factory.is( document ) ).toBe( true );
 		} );
 
@@ -142,7 +142,7 @@ describe( module( "Carbon/PersistedProtectedDocument" ), ():void => {
 			expect( PersistedACL.Factory.decorate ).toBeDefined();
 			expect( Utils.isFunction( PersistedACL.Factory.decorate ) ).toBe( true );
 
-			const persistedDocumentSpy:jasmine.Spy = spyOn( PersistedDocument.Factory, "decorate" ).and.callThrough();
+			const persistedDocumentSpy:jasmine.Spy = spyOn( PersistedDocument, "decorate" ).and.callThrough();
 
 			let fn:Function = ():void => {};
 			let document:object;

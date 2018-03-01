@@ -30,7 +30,7 @@ describe( module( "Carbon/PersistedNamedFragment" ), ():void => {
 		it( hasProperty(
 			OBLIGATORY,
 			"_document",
-			"Carbon.PersistedDocument.Class",
+			"Carbon.PersistedDocument.PersistedDocument",
 			"A reference to the persisted document the current named fragment belongs to."
 		), ():void => {} );
 

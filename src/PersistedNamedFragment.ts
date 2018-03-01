@@ -1,10 +1,11 @@
 import { ModelDecorator } from "./ModelDecorator";
 import { NamedFragment } from "./NamedFragment";
-import * as PersistedDocument from "./PersistedDocument";
+import { PersistedDocument } from "./PersistedDocument";
 import { PersistedFragment } from "./PersistedFragment";
 
+
 export interface PersistedNamedFragment extends PersistedFragment, NamedFragment {
-	_document:PersistedDocument.Class;
+	_document:PersistedDocument;
 }
 
 

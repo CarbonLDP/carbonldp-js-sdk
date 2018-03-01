@@ -2,7 +2,7 @@ import { C } from "../Vocabularies/C";
 import { XSD } from "../Vocabularies/XSD";
 import BlankNode from "./../BlankNode";
 import * as ObjectSchema from "./../ObjectSchema";
-import * as PersistedDocument from "./../PersistedDocument";
+import { PersistedDocument } from "./../PersistedDocument";
 import * as Utils from "./../Utils";
 import * as Map from "./Map";
 import * as VolatileResource from "./VolatileResource";
@@ -25,7 +25,7 @@ export const SCHEMA:ObjectSchema.ObjectSchema = {
 };
 
 export interface Class extends VolatileResource.Class {
-	relatedDocument:PersistedDocument.Class;
+	relatedDocument:PersistedDocument;
 	eTag?:string;
 	bNodesMap?:Map.Class<BlankNode, BlankNode>;
 }

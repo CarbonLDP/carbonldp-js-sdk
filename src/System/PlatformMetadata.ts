@@ -2,7 +2,7 @@ import { C } from "../Vocabularies/C";
 import { XSD } from "../Vocabularies/XSD";
 import * as VolatileResource from "./../LDP/VolatileResource";
 import * as ObjectSchema from "./../ObjectSchema";
-import * as PersistedDocument from "./../PersistedDocument";
+import { PersistedDocument } from "./../PersistedDocument";
 
 export const RDF_CLASS:string = C.Platform;
 
@@ -17,7 +17,7 @@ export const SCHEMA:ObjectSchema.ObjectSchema = {
 	},
 };
 
-export interface Class extends VolatileResource.Class, PersistedDocument.Class {
+export interface Class extends VolatileResource.Class, PersistedDocument {
 	version:string;
 	buildDate:Date;
 }

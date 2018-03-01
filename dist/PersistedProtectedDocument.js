@@ -9,7 +9,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var Auth = __importStar(require("./Auth"));
 var Errors_1 = require("./HTTP/Errors");
-var PersistedDocument = __importStar(require("./PersistedDocument"));
+var PersistedDocument_1 = require("./PersistedDocument");
 var Utils = __importStar(require("./Utils"));
 var CS_1 = require("./Vocabularies/CS");
 var Factory = (function () {
@@ -21,13 +21,13 @@ var Factory = (function () {
     };
     Factory.is = function (object) {
         return Factory.hasClassProperties(object)
-            && PersistedDocument.Factory.is(object);
+            && PersistedDocument_1.PersistedDocument.is(object);
     };
     Factory.decorate = function (document, documents) {
         var persistedProtectedDocument = document;
         if (Factory.hasClassProperties(document))
             return persistedProtectedDocument;
-        PersistedDocument.Factory.decorate(document, documents);
+        PersistedDocument_1.PersistedDocument.decorate(document, documents);
         Object.defineProperties(persistedProtectedDocument, {
             "getACL": {
                 writable: false,

@@ -6,7 +6,7 @@ import {
 } from "../HTTP/Request";
 import { Response } from "../HTTP/Response";
 import { Pointer } from "../Pointer";
-import * as PersistedDocument from "./../PersistedDocument";
+import { PersistedDocument } from "./../PersistedDocument";
 import * as URI from "./../RDF/URI";
 import * as SPARQL from "./../SPARQL";
 import * as Utils from "./../Utils";
@@ -43,7 +43,7 @@ export class Class {
 			if( ! exists ) throw new Errors.IllegalArgumentError( "The parent role provided doesn't exist." );
 			return this.context.documents.createChild<T>( containerURI, role, slug, requestOptions );
 
-		} ).then( ( [ newRole, response ]:[ T & PersistedDocument.Class, Response ] ) => {
+		} ).then( ( [ newRole, response ]:[ T & PersistedDocument, Response ] ) => {
 			responseCreated = response;
 			persistedRole = PersistedRole.Factory.decorate( newRole, this.context.documents );
 			return this.context.documents.addMember( parentURI, newRole );

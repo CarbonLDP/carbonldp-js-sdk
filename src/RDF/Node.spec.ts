@@ -1,6 +1,6 @@
 import { XSD } from "../Vocabularies/XSD";
 import AbstractContext from "./../AbstractContext";
-import * as PersistedDocument from "./../PersistedDocument";
+import { PersistedDocument } from "./../PersistedDocument";
 import {
 	Pointer,
 	PointerLibrary
@@ -204,7 +204,7 @@ describe( module( "Carbon/RDF/Node" ), ():void => {
 			context = new MockedContext();
 
 			documentResource = Document.Util.getDocumentResources( expandedObject )[ 0 ];
-			pointerLibrary = PersistedDocument.Factory.create( expandedObject[ "@id" ], context.documents );
+			pointerLibrary = PersistedDocument.create( context.documents, expandedObject[ "@id" ] );
 		} );
 
 		it( isDefined(), ():void => {

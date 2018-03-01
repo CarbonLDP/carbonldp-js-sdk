@@ -26,7 +26,7 @@ var LDPatch = __importStar(require("./LDPatch"));
 var Messaging = __importStar(require("./Messaging"));
 var Utils_1 = require("./Messaging/Utils");
 var ObjectSchema_1 = require("./ObjectSchema");
-var PersistedDocument = __importStar(require("./PersistedDocument"));
+var PersistedDocument_1 = require("./PersistedDocument");
 var PersistedFragment_1 = require("./PersistedFragment");
 var PersistedProtectedDocument = __importStar(require("./PersistedProtectedDocument"));
 var PersistedResource_1 = require("./PersistedResource");
@@ -384,7 +384,7 @@ var Documents = (function () {
         var _this = this;
         if (requestOptions === void 0) { requestOptions = {}; }
         return Utils_3.promiseMethod(function () {
-            if (!PersistedDocument.Factory.is(persistedDocument))
+            if (!PersistedDocument_1.PersistedDocument.is(persistedDocument))
                 throw new Errors.IllegalArgumentError("Provided element is not a valid persisted document.");
             Request_1.RequestUtils.setPreferredRetrieval("minimal", requestOptions);
             return _this.patchDocument(persistedDocument, requestOptions);
@@ -394,7 +394,7 @@ var Documents = (function () {
         var _this = this;
         if (requestOptions === void 0) { requestOptions = {}; }
         return Utils.promiseMethod(function () {
-            if (!PersistedDocument.Factory.is(persistedDocument))
+            if (!PersistedDocument_1.PersistedDocument.is(persistedDocument))
                 throw new Errors.IllegalArgumentError("Provided element is not a valid persisted document.");
             return persistedDocument.isPartial() ?
                 _this.refreshPartialDocument(persistedDocument, requestOptions) :
@@ -406,7 +406,7 @@ var Documents = (function () {
         if (requestOptions === void 0) { requestOptions = {}; }
         var responses = [];
         return Utils_3.promiseMethod(function () {
-            if (!PersistedDocument.Factory.is(persistedDocument))
+            if (!PersistedDocument_1.PersistedDocument.is(persistedDocument))
                 throw new Errors.IllegalArgumentError("Provided element is not a valid persisted document.");
             var cloneOptions = Request_1.RequestUtils.cloneOptions(requestOptions);
             Request_1.RequestUtils.setPreferredRetrieval(persistedDocument.isPartial() ? "minimal" : "representation", cloneOptions);
@@ -674,7 +674,7 @@ var Documents = (function () {
             if (rdfDocument === null)
                 throw new BadResponseError_1.BadResponseError("No document was returned.", response);
             var document = _this._getPersistedDocument(rdfDocument, response);
-            document._etag = eTag;
+            document._eTag = eTag;
             _this.documentsBeingResolved.delete(uri);
             return [document, response];
         }).catch(function (error) {
@@ -706,7 +706,7 @@ var Documents = (function () {
             throw new Errors.IllegalStateError("Cannot save an outdated document.");
         this.setDefaultRequestOptions(requestOptions);
         Request_1.RequestUtils.setContentTypeHeader("text/ldpatch", requestOptions);
-        Request_1.RequestUtils.setIfMatchHeader(persistedDocument._etag, requestOptions);
+        Request_1.RequestUtils.setIfMatchHeader(persistedDocument._eTag, requestOptions);
         persistedDocument._normalize();
         var deltaCreator = new LDPatch.DeltaCreator.DeltaCreator(this.jsonldConverter);
         [persistedDocument].concat(persistedDocument.getFragments()).forEach(function (resource) {
@@ -723,7 +723,7 @@ var Documents = (function () {
         var _this = this;
         var uri = this.getRequestURI(persistedDocument.id);
         this.setDefaultRequestOptions(requestOptions, LDP_2.LDP.RDFSource);
-        Request_1.RequestUtils.setIfNoneMatchHeader(persistedDocument._etag, requestOptions);
+        Request_1.RequestUtils.setIfNoneMatchHeader(persistedDocument._eTag, requestOptions);
         return this.sendRequest(HTTPMethod_1.HTTPMethod.GET, uri, requestOptions, null, new Document_2.RDFDocumentParser()).then(function (_a) {
             var rdfDocuments = _a[0], response = _a[1];
             if (response === null)
@@ -735,7 +735,7 @@ var Documents = (function () {
             if (rdfDocument === null)
                 throw new BadResponseError_1.BadResponseError("No document was returned.", response);
             var updatedPersistedDocument = _this._getPersistedDocument(rdfDocument, response);
-            updatedPersistedDocument._etag = eTag;
+            updatedPersistedDocument._eTag = eTag;
             return [updatedPersistedDocument, response];
         }).catch(function (error) {
             if (error.statusCode === 304)
@@ -874,9 +874,9 @@ var Documents = (function () {
                 .map(function (x) { return _this.context ? x.target : x[C_1.C.target]; })
                 .reduce(function (targets, currentTargets) { return targets.concat(currentTargets); }, [])
                 .map(function (x) { return x.id; }));
-            var targetETag = targetDocument && targetDocument._etag;
+            var targetETag = targetDocument && targetDocument._eTag;
             if (targetDocument)
-                targetDocument._etag = void 0;
+                targetDocument._eTag = void 0;
             freeResources
                 .getResources()
                 .filter(LDP_1.ResponseMetadata.Factory.is)
@@ -887,12 +887,12 @@ var Documents = (function () {
                     return;
                 var relatedDocument = documentMetadata.relatedDocument || documentMetadata[C_1.C.relatedDocument];
                 var eTag = documentMetadata.eTag || documentMetadata[C_1.C.eTag];
-                if (relatedDocument._etag === void 0)
-                    relatedDocument._etag = eTag;
-                if (relatedDocument._etag !== eTag)
-                    relatedDocument._etag = null;
+                if (relatedDocument._eTag === void 0)
+                    relatedDocument._eTag = eTag;
+                if (relatedDocument._eTag !== eTag)
+                    relatedDocument._eTag = null;
             }); });
-            if (targetDocument && targetETag === targetDocument._etag)
+            if (targetDocument && targetETag === targetDocument._eTag)
                 return [[targetDocument], null];
             var rdfDocuments = rdfNodes
                 .filter(RDF.Document.Factory.is);
@@ -918,20 +918,20 @@ var Documents = (function () {
             var documents = results
                 .bindings
                 .map(function (x) { return x[name]; })
-                .map(function (x) { return PersistedDocument.Factory.decorate(x, _this); });
+                .map(function (x) { return PersistedDocument_1.PersistedDocument.decorate(x, _this); });
             return [documents, response];
         });
         var _a, _b;
     };
     Documents.prototype.persistChildDocument = function (parentURI, childObject, slug, requestOptions) {
-        if (PersistedDocument.Factory.is(childObject))
+        if (PersistedDocument_1.PersistedDocument.is(childObject))
             throw new Errors.IllegalArgumentError("The child provided has been already persisted.");
         var childDocument = Document_1.Document.is(childObject) ? childObject : Document_1.Document.createFrom(childObject);
         this.setDefaultRequestOptions(requestOptions, LDP_2.LDP.Container);
         return this.persistDocument(parentURI, slug, childDocument, requestOptions);
     };
     Documents.prototype.persistAccessPoint = function (documentURI, accessPoint, slug, requestOptions) {
-        if (PersistedDocument.Factory.is(accessPoint))
+        if (PersistedDocument_1.PersistedDocument.is(accessPoint))
             throw new Errors.IllegalArgumentError("The access-point provided has been already persisted.");
         var accessPointDocument = AccessPoint_1.AccessPoint.is(accessPoint) ?
             accessPoint : AccessPoint_1.AccessPoint.createFrom(accessPoint, this.getPointer(documentURI), accessPoint.hasMemberRelation, accessPoint.isMemberOfRelation);
@@ -1107,7 +1107,7 @@ var Documents = (function () {
         if (rdfDocument === null)
             throw new BadResponseError_1.BadResponseError("No document was returned.", response);
         persistedDocument = this._getPersistedDocument(rdfDocument, response);
-        persistedDocument._etag = eTag;
+        persistedDocument._eTag = eTag;
         return [persistedDocument, response];
     };
     Documents.prototype._parseMembers = function (pointers) {

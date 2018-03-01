@@ -12,7 +12,7 @@ import { JSONLDParser } from "../JSONLD/Parser";
 import { LDP } from "../Vocabularies/LDP";
 import Context from "./../Context";
 import { ResponseMetadata } from "./../LDP";
-import * as PersistedDocument from "./../PersistedDocument";
+import { PersistedDocument } from "./../PersistedDocument";
 import * as RDF from "./../RDF";
 import * as Utils from "./../Utils";
 import Authenticator from "./Authenticator";
@@ -101,8 +101,8 @@ export class Class implements Authenticator<UsernameAndPasswordToken.Class, Toke
 			if( responseMetadata ) responseMetadata
 				.documentsMetadata
 				.forEach( documentMetadata => {
-					const document:PersistedDocument.Class = documentMetadata.relatedDocument as PersistedDocument.Class;
-					document._etag = documentMetadata.eTag;
+					const document:PersistedDocument = documentMetadata.relatedDocument as PersistedDocument;
+					document._eTag = documentMetadata.eTag;
 				} );
 
 			return [ token, response ];

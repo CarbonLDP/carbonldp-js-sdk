@@ -1,6 +1,6 @@
 import AbstractContext from "../AbstractContext";
 import { Response } from "../HTTP/Response";
-import * as PersistedDocument from "./../PersistedDocument";
+import { PersistedDocument } from "./../PersistedDocument";
 import * as PersistedProtectedDocument from "./../PersistedProtectedDocument";
 import {
 	clazz,
@@ -158,7 +158,7 @@ describe( module( "Carbon/Auth/PersistedUser" ), ():void => {
 			};
 			expect( PersistedUser.Factory.is( object ) ).toBe( false );
 
-			object = PersistedDocument.Factory.decorate<MockPersistedUser>( {
+			object = PersistedDocument.decorate<MockPersistedUser>( {
 				name: null,
 				credentials: null,
 				enableCredentials: ():void => {},

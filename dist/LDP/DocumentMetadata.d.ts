@@ -1,12 +1,12 @@
 import BlankNode from "./../BlankNode";
 import * as ObjectSchema from "./../ObjectSchema";
-import * as PersistedDocument from "./../PersistedDocument";
+import { PersistedDocument } from "./../PersistedDocument";
 import * as Map from "./Map";
 import * as VolatileResource from "./VolatileResource";
 export declare const RDF_CLASS: string;
 export declare const SCHEMA: ObjectSchema.ObjectSchema;
 export interface Class extends VolatileResource.Class {
-    relatedDocument: PersistedDocument.Class;
+    relatedDocument: PersistedDocument;
     eTag?: string;
     bNodesMap?: Map.Class<BlankNode, BlankNode>;
 }
