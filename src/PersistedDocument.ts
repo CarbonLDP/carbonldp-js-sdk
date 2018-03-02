@@ -9,7 +9,7 @@ import {
 	RequestUtils,
 } from "./HTTP/Request";
 import { Response } from "./HTTP/Response";
-import * as MessagingDocument from "./Messaging/Document";
+import { MessagingDocument } from "./Messaging/Document";
 import { NamedFragment } from "./NamedFragment";
 import * as ObjectSchema from "./ObjectSchema";
 import { PersistedAccessPoint } from "./PersistedAccessPoint";
@@ -29,7 +29,7 @@ import { ModelFactory } from "./ModelFactory";
 import { ModelDecorator } from "./ModelDecorator";
 import { convertNestedObjects } from "./Document/prototype";
 
-export interface PersistedDocument extends Document, PersistedResource, ServiceAwareDocument, MessagingDocument.Class {
+export interface PersistedDocument extends Document, PersistedResource, ServiceAwareDocument, MessagingDocument {
 	created?:Date;
 	modified?:Date;
 	defaultInteractionModel?:Pointer;
@@ -224,7 +224,7 @@ export const PersistedDocument:PersistedDocumentFactory = {
 
 	is( object:object ):object is PersistedDocument {
 		return Document.is( object )
-			&& MessagingDocument.Factory.hasClassProperties( object )
+			&& MessagingDocument.isDecorated( object )
 			&& PersistedDocument.isDecorated( object )
 			;
 	},
@@ -248,7 +248,7 @@ export const PersistedDocument:PersistedDocumentFactory = {
 		Document.decorate( object );
 		PersistedResource.decorate( object );
 		ServiceAwareDocument.decorate( object, documents );
-		MessagingDocument.Factory.decorate( <T & ServiceAwareDocument> object );
+		MessagingDocument.decorate( <T & ServiceAwareDocument> object );
 
 		const persistedDocument:T & PersistedDocument = <T & PersistedDocument> object;
 		return Object.defineProperties( persistedDocument, {

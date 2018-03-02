@@ -4125,7 +4125,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var Document_1 = __webpack_require__(21);
 var Request_1 = __webpack_require__(25);
-var MessagingDocument = __importStar(__webpack_require__(111));
+var Document_2 = __webpack_require__(111);
 var ObjectSchema = __importStar(__webpack_require__(12));
 var PersistedFragment_1 = __webpack_require__(52);
 var PersistedNamedFragment_1 = __webpack_require__(112);
@@ -4171,7 +4171,7 @@ exports.PersistedDocument = {
     },
     is: function (object) {
         return Document_1.Document.is(object)
-            && MessagingDocument.Factory.hasClassProperties(object)
+            && Document_2.MessagingDocument.isDecorated(object)
             && exports.PersistedDocument.isDecorated(object);
     },
     create: function (documents, uri) {
@@ -4189,7 +4189,7 @@ exports.PersistedDocument = {
         Document_1.Document.decorate(object);
         PersistedResource_1.PersistedResource.decorate(object);
         ServiceAwareDocument_1.ServiceAwareDocument.decorate(object, documents);
-        MessagingDocument.Factory.decorate(object);
+        Document_2.MessagingDocument.decorate(object);
         var persistedDocument = object;
         return Object.defineProperties(persistedDocument, {
             "_eTag": {
@@ -9580,10 +9580,8 @@ function onMemberAdded(onEvent, onError) {
 function onMemberRemoved(onEvent, onError) {
     return this._documents.onMemberRemoved(this.id, onEvent, onError);
 }
-var Factory = (function () {
-    function Factory() {
-    }
-    Factory.hasClassProperties = function (object) {
+exports.MessagingDocument = {
+    isDecorated: function (object) {
         return Utils_1.isObject(object)
             && Utils_1.hasFunction(object, "on")
             && Utils_1.hasFunction(object, "off")
@@ -9595,9 +9593,9 @@ var Factory = (function () {
             && Utils_1.hasFunction(object, "onDocumentDeleted")
             && Utils_1.hasFunction(object, "onMemberAdded")
             && Utils_1.hasFunction(object, "onMemberRemoved");
-    };
-    Factory.decorate = function (object) {
-        if (Factory.hasClassProperties(object))
+    },
+    decorate: function (object) {
+        if (exports.MessagingDocument.isDecorated(object))
             return object;
         return Object.defineProperties(object, {
             "on": {
@@ -9661,10 +9659,9 @@ var Factory = (function () {
                 value: onMemberRemoved,
             },
         });
-    };
-    return Factory;
-}());
-exports.Factory = Factory;
+    },
+};
+exports.default = exports.MessagingDocument;
 
 
 /***/ }),

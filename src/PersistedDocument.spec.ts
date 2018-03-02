@@ -40,7 +40,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 		it( extendsClass( "Carbon.Document.Document" ), ():void => {} );
 		it( extendsClass( "Carbon.PersistedResource.PersistedResource" ), ():void => {} );
 		it( extendsClass( "Carbon.ServiceAwareDocument.ServiceAwareDocument" ), ():void => {} );
-		it( extendsClass( "Carbon.Messaging.Document.Class" ), ():void => {} );
+		it( extendsClass( "Carbon.Messaging.Document.MessagingDocument" ), ():void => {} );
 
 		it( hasProperty(
 			OPTIONAL,

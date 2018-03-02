@@ -1,3 +1,4 @@
+import { ModelDecorator } from "../ModelDecorator";
 import { ServiceAwareDocument } from "../ServiceAwareDocument";
 import { AccessPointCreated } from "./AccessPointCreated";
 import { ChildCreated } from "./ChildCreated";
@@ -8,7 +9,7 @@ import { Event } from "./Event";
 import { EventMessage } from "./EventMessage";
 import { MemberAdded } from "./MemberAdded";
 import { MemberRemoved } from "./MemberRemoved";
-export interface Class extends ServiceAwareDocument {
+export interface MessagingDocument extends ServiceAwareDocument {
     on(event: Event.CHILD_CREATED, onEvent: (message: ChildCreated) => void, onError: (error: Error) => void): void;
     on(event: Event.ACCESS_POINT_CREATED, onEvent: (message: AccessPointCreated) => void, onError: (error: Error) => void): void;
     on(event: Event.DOCUMENT_CREATED, onEvent: (message: DocumentCreated) => void, onError: (error: Error) => void): void;
@@ -41,8 +42,9 @@ export interface Class extends ServiceAwareDocument {
     onMemberAdded(onEvent: (message: MemberAdded) => void, onError: (error: Error) => void): void;
     onMemberRemoved(onEvent: (message: MemberRemoved) => void, onError: (error: Error) => void): void;
 }
-export declare class Factory {
-    static hasClassProperties(object: object): object is Class;
-    static decorate<T extends ServiceAwareDocument>(object: T): T & Class;
+export interface MessagingDocumentFactory extends ModelDecorator<MessagingDocument, ServiceAwareDocument> {
+    isDecorated(object: object): object is MessagingDocument;
+    decorate<T extends ServiceAwareDocument>(object: T): T & MessagingDocument;
 }
-export default Class;
+export declare const MessagingDocument: MessagingDocumentFactory;
+export default MessagingDocument;

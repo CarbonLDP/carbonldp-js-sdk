@@ -1,3 +1,4 @@
+import { ModelDecorator } from "../ModelDecorator";
 import { ServiceAwareDocument } from "../ServiceAwareDocument";
 import {
 	hasFunction,
@@ -13,7 +14,7 @@ import { EventMessage } from "./EventMessage";
 import { MemberAdded } from "./MemberAdded";
 import { MemberRemoved } from "./MemberRemoved";
 
-export interface Class extends ServiceAwareDocument {
+export interface MessagingDocument extends ServiceAwareDocument {
 	on( event:Event.CHILD_CREATED, onEvent:( message:ChildCreated ) => void, onError:( error:Error ) => void ):void;
 
 	on( event:Event.ACCESS_POINT_CREATED, onEvent:( message:AccessPointCreated ) => void, onError:( error:Error ) => void ):void;
@@ -81,49 +82,55 @@ export interface Class extends ServiceAwareDocument {
 }
 
 
-function on<T extends EventMessage>( this:Class, event:Event | string, onEvent:( message:T ) => void, onError:( error:Error ) => void ):void {
+function on<T extends EventMessage>( this:MessagingDocument, event:Event | string, onEvent:( message:T ) => void, onError:( error:Error ) => void ):void {
 	return this._documents.on( event, this.id, onEvent, onError );
 }
 
-function off<T extends EventMessage>( this:Class, event:Event | string, onEvent:( message:T ) => void, onError:( error:Error ) => void ):void {
+function off<T extends EventMessage>( this:MessagingDocument, event:Event | string, onEvent:( message:T ) => void, onError:( error:Error ) => void ):void {
 	return this._documents.off( event, this.id, onEvent, onError );
 }
 
-function one<T extends EventMessage>( this:Class, event:Event | string, onEvent:( message:T ) => void, onError:( error:Error ) => void ):void {
+function one<T extends EventMessage>( this:MessagingDocument, event:Event | string, onEvent:( message:T ) => void, onError:( error:Error ) => void ):void {
 	return this._documents.one( event, this.id, onEvent, onError );
 }
 
-function onAccessPointCreated( this:Class, onEvent:( message:AccessPointCreated ) => void, onError:( error:Error ) => void ):void {
+function onAccessPointCreated( this:MessagingDocument, onEvent:( message:AccessPointCreated ) => void, onError:( error:Error ) => void ):void {
 	return this._documents.onAccessPointCreated( this.id, onEvent, onError );
 }
 
-function onChildCreated( this:Class, onEvent:( message:ChildCreated ) => void, onError:( error:Error ) => void ):void {
+function onChildCreated( this:MessagingDocument, onEvent:( message:ChildCreated ) => void, onError:( error:Error ) => void ):void {
 	return this._documents.onChildCreated( this.id, onEvent, onError );
 }
 
-function onDocumentCreated( this:Class, onEvent:( message:DocumentCreated ) => void, onError:( error:Error ) => void ):void {
+function onDocumentCreated( this:MessagingDocument, onEvent:( message:DocumentCreated ) => void, onError:( error:Error ) => void ):void {
 	return this._documents.onDocumentCreated( this.id, onEvent, onError );
 }
 
-function onDocumentModified( this:Class, onEvent:( message:DocumentModified ) => void, onError:( error:Error ) => void ):void {
+function onDocumentModified( this:MessagingDocument, onEvent:( message:DocumentModified ) => void, onError:( error:Error ) => void ):void {
 	return this._documents.onDocumentModified( this.id, onEvent, onError );
 }
 
-function onDocumentDeleted( this:Class, onEvent:( message:DocumentDeleted ) => void, onError:( error:Error ) => void ):void {
+function onDocumentDeleted( this:MessagingDocument, onEvent:( message:DocumentDeleted ) => void, onError:( error:Error ) => void ):void {
 	return this._documents.onDocumentDeleted( this.id, onEvent, onError );
 }
 
-function onMemberAdded( this:Class, onEvent:( message:MemberAdded ) => void, onError:( error:Error ) => void ):void {
+function onMemberAdded( this:MessagingDocument, onEvent:( message:MemberAdded ) => void, onError:( error:Error ) => void ):void {
 	return this._documents.onMemberAdded( this.id, onEvent, onError );
 }
 
-function onMemberRemoved( this:Class, onEvent:( message:MemberRemoved ) => void, onError:( error:Error ) => void ):void {
+function onMemberRemoved( this:MessagingDocument, onEvent:( message:MemberRemoved ) => void, onError:( error:Error ) => void ):void {
 	return this._documents.onMemberRemoved( this.id, onEvent, onError );
 }
 
-export class Factory {
+export interface MessagingDocumentFactory extends ModelDecorator<MessagingDocument, ServiceAwareDocument> {
+	isDecorated( object:object ):object is MessagingDocument;
 
-	static hasClassProperties( object:object ):object is Class {
+	decorate<T extends ServiceAwareDocument>( object:T ):T & MessagingDocument;
+}
+
+export const MessagingDocument:MessagingDocumentFactory = {
+
+	isDecorated( object:object ):object is MessagingDocument {
 		return isObject( object )
 			&& hasFunction( object, "on" )
 			&& hasFunction( object, "off" )
@@ -136,10 +143,10 @@ export class Factory {
 			&& hasFunction( object, "onMemberAdded" )
 			&& hasFunction( object, "onMemberRemoved" )
 			;
-	}
+	},
 
-	static decorate<T extends ServiceAwareDocument>( object:T ):T & Class {
-		if( Factory.hasClassProperties( object ) ) return object;
+	decorate<T extends ServiceAwareDocument>( object:T ):T & MessagingDocument {
+		if( MessagingDocument.isDecorated( object ) ) return object;
 
 		return Object.defineProperties( object, {
 			"on": {
@@ -203,8 +210,8 @@ export class Factory {
 				value: onMemberRemoved,
 			},
 		} );
-	}
+	},
 
-}
+};
 
-export default Class;
+export default MessagingDocument;

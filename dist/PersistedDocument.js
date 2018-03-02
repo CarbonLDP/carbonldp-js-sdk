@@ -9,7 +9,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var Document_1 = require("./Document");
 var Request_1 = require("./HTTP/Request");
-var MessagingDocument = __importStar(require("./Messaging/Document"));
+var Document_2 = require("./Messaging/Document");
 var ObjectSchema = __importStar(require("./ObjectSchema"));
 var PersistedFragment_1 = require("./PersistedFragment");
 var PersistedNamedFragment_1 = require("./PersistedNamedFragment");
@@ -55,7 +55,7 @@ exports.PersistedDocument = {
     },
     is: function (object) {
         return Document_1.Document.is(object)
-            && MessagingDocument.Factory.hasClassProperties(object)
+            && Document_2.MessagingDocument.isDecorated(object)
             && exports.PersistedDocument.isDecorated(object);
     },
     create: function (documents, uri) {
@@ -73,7 +73,7 @@ exports.PersistedDocument = {
         Document_1.Document.decorate(object);
         PersistedResource_1.PersistedResource.decorate(object);
         ServiceAwareDocument_1.ServiceAwareDocument.decorate(object, documents);
-        MessagingDocument.Factory.decorate(object);
+        Document_2.MessagingDocument.decorate(object);
         var persistedDocument = object;
         return Object.defineProperties(persistedDocument, {
             "_eTag": {

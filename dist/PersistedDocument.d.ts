@@ -4,7 +4,7 @@ import { Document } from "./Document";
 import { Documents } from "./Documents";
 import { RequestOptions } from "./HTTP/Request";
 import { Response } from "./HTTP/Response";
-import * as MessagingDocument from "./Messaging/Document";
+import { MessagingDocument } from "./Messaging/Document";
 import { PersistedAccessPoint } from "./PersistedAccessPoint";
 import { PersistedFragment } from "./PersistedFragment";
 import { PersistedNamedFragment } from "./PersistedNamedFragment";
@@ -17,7 +17,7 @@ import { FinishSPARQLSelect } from "./SPARQL/Builder";
 import { QueryDocumentsBuilder } from "./SPARQL/QueryDocument/QueryDocumentsBuilder";
 import { ModelFactory } from "./ModelFactory";
 import { ModelDecorator } from "./ModelDecorator";
-export interface PersistedDocument extends Document, PersistedResource, ServiceAwareDocument, MessagingDocument.Class {
+export interface PersistedDocument extends Document, PersistedResource, ServiceAwareDocument, MessagingDocument {
     created?: Date;
     modified?: Date;
     defaultInteractionModel?: Pointer;
