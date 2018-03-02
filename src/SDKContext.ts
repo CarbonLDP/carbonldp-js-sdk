@@ -20,7 +20,7 @@ import { ProtectedDocument } from "./ProtectedDocument";
 import * as RDF from "./RDF";
 import * as Settings from "./Settings";
 import * as SHACL from "./SHACL";
-import * as SPARQL from "./SPARQL";
+import { QueryMetadata } from "./SPARQL/QueryDocument/QueryMetadata";
 import { PlatformMetadata } from "./System/PlatformMetadata";
 import {
 	isObject,
@@ -218,7 +218,7 @@ export class SDKContext implements Context {
 		this.extendObjectSchema( SHACL.ValidationReport.RDF_CLASS, SHACL.ValidationReport.SCHEMA );
 		this.extendObjectSchema( SHACL.ValidationResult.RDF_CLASS, SHACL.ValidationResult.SCHEMA );
 
-		this.extendObjectSchema( SPARQL.QueryDocument.QueryMetadata.RDF_CLASS, SPARQL.QueryDocument.QueryMetadata.SCHEMA );
+		this.extendObjectSchema( QueryMetadata.TYPE, QueryMetadata.SCHEMA );
 
 		this.extendObjectSchema( Messaging.AccessPointCreated.RDF_CLASS, Messaging.AccessPointCreated.SCHEMA );
 		this.extendObjectSchema( Messaging.ChildCreated.RDF_CLASS, Messaging.ChildCreated.SCHEMA );

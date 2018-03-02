@@ -79,7 +79,7 @@ import {
 	FinishSPARQLSelect,
 	SPARQLBuilder,
 } from "./SPARQL/Builder";
-import { QueryMetadata } from "./SPARQL/QueryDocument";
+import { QueryMetadata } from "./SPARQL/QueryDocument/QueryMetadata";
 import { PartialMetadata } from "./SPARQL/QueryDocument/PartialMetadata";
 import { QueryContext } from "./SPARQL/QueryDocument/QueryContext";
 import { QueryContextBuilder } from "./SPARQL/QueryDocument/QueryContextBuilder";
@@ -1091,7 +1091,7 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 
 			const targetSet:Set<string> = new Set( freeResources
 				.getResources()
-				.filter( QueryMetadata.Factory.is )
+				.filter( QueryMetadata.is )
 				.map( x => this.context ? x.target : x[ C.target ] )
 				// Alternative to flatMap
 				.reduce( ( targets, currentTargets ) => targets.concat( currentTargets ), [] )

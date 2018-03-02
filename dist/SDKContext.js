@@ -27,7 +27,7 @@ var ObjectSchema = __importStar(require("./ObjectSchema"));
 var ProtectedDocument_1 = require("./ProtectedDocument");
 var RDF = __importStar(require("./RDF"));
 var SHACL = __importStar(require("./SHACL"));
-var SPARQL = __importStar(require("./SPARQL"));
+var QueryMetadata_1 = require("./SPARQL/QueryDocument/QueryMetadata");
 var PlatformMetadata_1 = require("./System/PlatformMetadata");
 var Utils_1 = require("./Utils");
 var SDKContext = (function () {
@@ -177,7 +177,7 @@ var SDKContext = (function () {
         this.extendObjectSchema(Auth.Token.RDF_CLASS, Auth.Token.SCHEMA);
         this.extendObjectSchema(SHACL.ValidationReport.RDF_CLASS, SHACL.ValidationReport.SCHEMA);
         this.extendObjectSchema(SHACL.ValidationResult.RDF_CLASS, SHACL.ValidationResult.SCHEMA);
-        this.extendObjectSchema(SPARQL.QueryDocument.QueryMetadata.RDF_CLASS, SPARQL.QueryDocument.QueryMetadata.SCHEMA);
+        this.extendObjectSchema(QueryMetadata_1.QueryMetadata.TYPE, QueryMetadata_1.QueryMetadata.SCHEMA);
         this.extendObjectSchema(Messaging.AccessPointCreated.RDF_CLASS, Messaging.AccessPointCreated.SCHEMA);
         this.extendObjectSchema(Messaging.ChildCreated.RDF_CLASS, Messaging.ChildCreated.SCHEMA);
         this.extendObjectSchema(Messaging.DocumentCreatedDetails.RDF_CLASS, Messaging.DocumentCreatedDetails.SCHEMA);

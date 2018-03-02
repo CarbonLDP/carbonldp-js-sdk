@@ -1,11 +1,23 @@
 import { VolatileResource } from "../../LDP/VolatileResource";
-import * as ObjectSchema from "../../ObjectSchema";
+import { ModelFactory } from "../../ModelFactory";
+import { ObjectSchema } from "../../ObjectSchema";
 import { Pointer } from "../../Pointer";
 import { C } from "../../Vocabularies/C";
 
-export const RDF_CLASS:string = C.QueryMetadata;
 
-export const SCHEMA:ObjectSchema.ObjectSchema = {
+export interface QueryMetadata extends VolatileResource {
+	target:Pointer;
+}
+
+
+export interface QueryMetadataFactory extends ModelFactory<QueryMetadata> {
+	TYPE:string;
+	SCHEMA:ObjectSchema;
+
+	is( object:object ):object is QueryMetadata;
+}
+
+const SCHEMA:ObjectSchema = {
 	"target": {
 		"@id": C.target,
 		"@type": "@id",
@@ -13,17 +25,15 @@ export const SCHEMA:ObjectSchema.ObjectSchema = {
 	},
 };
 
-export interface Class extends VolatileResource {
-	target:Pointer;
-}
+export const QueryMetadata:QueryMetadataFactory = {
+	TYPE: C.QueryMetadata,
+	SCHEMA,
 
-export class Factory {
-
-	static is( object:object ):object is Class {
+	is( object:object ):object is QueryMetadata {
 		return VolatileResource.is( object )
-			&& object.hasType( RDF_CLASS );
-	}
+			&& object.hasType( QueryMetadata.TYPE );
+	},
 
-}
+};
 
-export default Class;
+export default QueryMetadata;

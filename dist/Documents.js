@@ -40,7 +40,7 @@ var ProtectedDocument_1 = require("./ProtectedDocument");
 var RDF = __importStar(require("./RDF"));
 var Document_2 = require("./RDF/Document");
 var Builder_1 = require("./SPARQL/Builder");
-var QueryDocument_1 = require("./SPARQL/QueryDocument");
+var QueryMetadata_1 = require("./SPARQL/QueryDocument/QueryMetadata");
 var PartialMetadata_1 = require("./SPARQL/QueryDocument/PartialMetadata");
 var QueryContextBuilder_1 = require("./SPARQL/QueryDocument/QueryContextBuilder");
 var QueryContextPartial_1 = require("./SPARQL/QueryDocument/QueryContextPartial");
@@ -875,7 +875,7 @@ var Documents = (function () {
                 .filter(function (node) { return !RDF.Document.Factory.is(node); }));
             var targetSet = new Set(freeResources
                 .getResources()
-                .filter(QueryDocument_1.QueryMetadata.Factory.is)
+                .filter(QueryMetadata_1.QueryMetadata.is)
                 .map(function (x) { return _this.context ? x.target : x[C_1.C.target]; })
                 .reduce(function (targets, currentTargets) { return targets.concat(currentTargets); }, [])
                 .map(function (x) { return x.id; }));

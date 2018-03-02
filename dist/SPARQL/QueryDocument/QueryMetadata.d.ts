@@ -1,12 +1,14 @@
 import { VolatileResource } from "../../LDP/VolatileResource";
-import * as ObjectSchema from "../../ObjectSchema";
+import { ModelFactory } from "../../ModelFactory";
+import { ObjectSchema } from "../../ObjectSchema";
 import { Pointer } from "../../Pointer";
-export declare const RDF_CLASS: string;
-export declare const SCHEMA: ObjectSchema.ObjectSchema;
-export interface Class extends VolatileResource {
+export interface QueryMetadata extends VolatileResource {
     target: Pointer;
 }
-export declare class Factory {
-    static is(object: object): object is Class;
+export interface QueryMetadataFactory extends ModelFactory<QueryMetadata> {
+    TYPE: string;
+    SCHEMA: ObjectSchema;
+    is(object: object): object is QueryMetadata;
 }
-export default Class;
+export declare const QueryMetadata: QueryMetadataFactory;
+export default QueryMetadata;
