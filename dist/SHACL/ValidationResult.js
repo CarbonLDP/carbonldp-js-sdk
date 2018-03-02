@@ -2,8 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 var SHACL_1 = require("../Vocabularies/SHACL");
 var XSD_1 = require("../Vocabularies/XSD");
-exports.RDF_CLASS = SHACL_1.SHACL.ValidationResult;
-exports.SCHEMA = {
+var SCHEMA = {
     "focusNode": {
         "@id": SHACL_1.SHACL.focusNode,
         "@type": "@id",
@@ -36,5 +35,10 @@ exports.SCHEMA = {
         "@type": "@id",
     },
 };
+exports.ValidationResult = {
+    TYPE: SHACL_1.SHACL.ValidationResult,
+    SCHEMA: SCHEMA,
+};
+exports.default = exports.ValidationResult;
 
 //# sourceMappingURL=ValidationResult.js.map

@@ -1,9 +1,7 @@
-import * as ObjectSchema from "./../ObjectSchema";
-import { Pointer } from "./../Pointer";
-import { Resource } from "./../Resource";
-export declare const RDF_CLASS: string;
-export declare const SCHEMA: ObjectSchema.ObjectSchema;
-export interface Class extends Resource {
+import { ObjectSchema } from "../ObjectSchema";
+import { Pointer } from "../Pointer";
+import { Resource } from "../Resource";
+export interface ValidationResult extends Resource {
     focusNode: Pointer;
     resultPath?: Pointer;
     value?: any;
@@ -13,4 +11,9 @@ export interface Class extends Resource {
     resultMessage?: string;
     resultSeverity?: Pointer;
 }
-export default Class;
+export interface ValidationResultFactory {
+    TYPE: string;
+    SCHEMA: ObjectSchema;
+}
+export declare const ValidationResult: ValidationResultFactory;
+export default ValidationResult;

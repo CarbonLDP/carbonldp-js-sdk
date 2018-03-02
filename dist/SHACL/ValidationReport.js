@@ -2,8 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 var SHACL_1 = require("../Vocabularies/SHACL");
 var XSD_1 = require("../Vocabularies/XSD");
-exports.RDF_CLASS = SHACL_1.SHACL.ValidationReport;
-exports.SCHEMA = {
+var SCHEMA = {
     "conforms": {
         "@id": SHACL_1.SHACL.conforms,
         "@type": XSD_1.XSD.boolean,
@@ -18,5 +17,10 @@ exports.SCHEMA = {
         "@type": XSD_1.XSD.boolean,
     },
 };
+exports.ValidationReport = {
+    TYPE: SHACL_1.SHACL.ValidationReport,
+    SCHEMA: SCHEMA,
+};
+exports.default = exports.ValidationReport;
 
 //# sourceMappingURL=ValidationReport.js.map

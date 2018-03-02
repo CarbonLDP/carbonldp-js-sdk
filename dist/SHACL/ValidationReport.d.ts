@@ -1,10 +1,13 @@
-import * as ObjectSchema from "./../ObjectSchema";
-import * as ValidationResult from "./ValidationResult";
-export declare const RDF_CLASS: string;
-export declare const SCHEMA: ObjectSchema.ObjectSchema;
-export interface Class {
+import { ObjectSchema } from "../ObjectSchema";
+import { ValidationResult } from "./ValidationResult";
+export interface ValidationReport {
     conforms: boolean;
-    results?: ValidationResult.Class[];
+    results?: ValidationResult[];
     shapesGraphWellFormed?: boolean;
 }
-export default Class;
+export interface ValidationReportFactory {
+    TYPE: string;
+    SCHEMA: ObjectSchema;
+}
+export declare const ValidationReport: ValidationReportFactory;
+export default ValidationReport;

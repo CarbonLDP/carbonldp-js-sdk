@@ -1,12 +1,28 @@
+import { ObjectSchema } from "../ObjectSchema";
+import { Pointer } from "../Pointer";
+import { Resource } from "../Resource";
 import { SHACL } from "../Vocabularies/SHACL";
 import { XSD } from "../Vocabularies/XSD";
-import * as ObjectSchema from "./../ObjectSchema";
-import { Pointer } from "./../Pointer";
-import { Resource } from "./../Resource";
 
-export const RDF_CLASS:string = SHACL.ValidationResult;
 
-export const SCHEMA:ObjectSchema.ObjectSchema = {
+export interface ValidationResult extends Resource {
+	focusNode:Pointer;
+	resultPath?:Pointer;
+	value?:any;
+	sourceShape?:Pointer;
+	sourceConstraintComponent?:Pointer;
+	detail?:Pointer;
+	resultMessage?:string;
+	resultSeverity?:Pointer;
+}
+
+
+export interface ValidationResultFactory {
+	TYPE:string;
+	SCHEMA:ObjectSchema;
+}
+
+const SCHEMA:ObjectSchema = {
 	"focusNode": {
 		"@id": SHACL.focusNode,
 		"@type": "@id",
@@ -40,15 +56,9 @@ export const SCHEMA:ObjectSchema.ObjectSchema = {
 	},
 };
 
-export interface Class extends Resource {
-	focusNode:Pointer;
-	resultPath?:Pointer;
-	value?:any;
-	sourceShape?:Pointer;
-	sourceConstraintComponent?:Pointer;
-	detail?:Pointer;
-	resultMessage?:string;
-	resultSeverity?:Pointer;
-}
+export const ValidationResult:ValidationResultFactory = {
+	TYPE: SHACL.ValidationResult,
+	SCHEMA,
+};
 
-export default Class;
+export default ValidationResult;

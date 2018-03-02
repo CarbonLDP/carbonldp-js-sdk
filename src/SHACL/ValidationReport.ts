@@ -1,11 +1,22 @@
+import { ObjectSchema } from "../ObjectSchema";
 import { SHACL } from "../Vocabularies/SHACL";
 import { XSD } from "../Vocabularies/XSD";
-import * as ObjectSchema from "./../ObjectSchema";
-import * as ValidationResult from "./ValidationResult";
+import { ValidationResult } from "./ValidationResult";
 
-export const RDF_CLASS:string = SHACL.ValidationReport;
 
-export const SCHEMA:ObjectSchema.ObjectSchema = {
+export interface ValidationReport {
+	conforms:boolean;
+	results?:ValidationResult[];
+	shapesGraphWellFormed?:boolean;
+}
+
+
+export interface ValidationReportFactory {
+	TYPE:string;
+	SCHEMA:ObjectSchema;
+}
+
+const SCHEMA:ObjectSchema = {
 	"conforms": {
 		"@id": SHACL.conforms,
 		"@type": XSD.boolean,
@@ -21,10 +32,9 @@ export const SCHEMA:ObjectSchema.ObjectSchema = {
 	},
 };
 
-export interface Class {
-	conforms:boolean;
-	results?:ValidationResult.Class[];
-	shapesGraphWellFormed?:boolean;
-}
+export const ValidationReport:ValidationReportFactory = {
+	TYPE: SHACL.ValidationReport,
+	SCHEMA,
+};
 
-export default Class;
+export default ValidationReport;

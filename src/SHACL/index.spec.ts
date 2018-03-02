@@ -1,7 +1,7 @@
 import { module, reexports, STATIC } from "../test/JasmineExtender";
 import * as SHACL from "./index";
-import * as ValidationReport from "./ValidationReport";
-import * as ValidationResult from "./ValidationResult";
+import { ValidationReport } from "./ValidationReport";
+import { ValidationResult } from "./ValidationResult";
 
 describe( module( "Carbon/SHACL" ), ():void => {
 

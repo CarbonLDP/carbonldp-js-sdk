@@ -19,7 +19,8 @@ import * as ObjectSchema from "./ObjectSchema";
 import { ProtectedDocument } from "./ProtectedDocument";
 import * as RDF from "./RDF";
 import * as Settings from "./Settings";
-import * as SHACL from "./SHACL";
+import { ValidationReport } from "./SHACL/ValidationReport";
+import { ValidationResult } from "./SHACL/ValidationResult";
 import { QueryMetadata } from "./SPARQL/QueryDocument/QueryMetadata";
 import { PlatformMetadata } from "./System/PlatformMetadata";
 import {
@@ -215,8 +216,8 @@ export class SDKContext implements Context {
 		this.extendObjectSchema( Auth.Ticket.RDF_CLASS, Auth.Ticket.SCHEMA );
 		this.extendObjectSchema( Auth.Token.RDF_CLASS, Auth.Token.SCHEMA );
 
-		this.extendObjectSchema( SHACL.ValidationReport.RDF_CLASS, SHACL.ValidationReport.SCHEMA );
-		this.extendObjectSchema( SHACL.ValidationResult.RDF_CLASS, SHACL.ValidationResult.SCHEMA );
+		this.extendObjectSchema( ValidationReport.TYPE, ValidationReport.SCHEMA );
+		this.extendObjectSchema( ValidationResult.TYPE, ValidationResult.SCHEMA );
 
 		this.extendObjectSchema( QueryMetadata.TYPE, QueryMetadata.SCHEMA );
 
