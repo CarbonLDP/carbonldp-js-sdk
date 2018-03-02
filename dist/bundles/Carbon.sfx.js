@@ -8258,7 +8258,7 @@ var ProtectedDocument_1 = __webpack_require__(141);
 var RDF = __importStar(__webpack_require__(17));
 var SHACL = __importStar(__webpack_require__(169));
 var SPARQL = __importStar(__webpack_require__(170));
-var System = __importStar(__webpack_require__(171));
+var PlatformMetadata_1 = __webpack_require__(171);
 var Utils_1 = __webpack_require__(0);
 var SDKContext = (function () {
     function SDKContext() {
@@ -8388,7 +8388,7 @@ var SDKContext = (function () {
     SDKContext.prototype.registerDefaultObjectSchemas = function () {
         this.extendObjectSchema(Document_1.Document.TYPE, Document_1.Document.SCHEMA);
         this.extendObjectSchema(ProtectedDocument_1.ProtectedDocument.TYPE, ProtectedDocument_1.ProtectedDocument.SCHEMA);
-        this.extendObjectSchema(System.PlatformMetadata.RDF_CLASS, System.PlatformMetadata.SCHEMA);
+        this.extendObjectSchema(PlatformMetadata_1.PlatformMetadata.TYPE, PlatformMetadata_1.PlatformMetadata.SCHEMA);
         this.extendObjectSchema(AddMemberAction_1.AddMemberAction.TYPE, AddMemberAction_1.AddMemberAction.SCHEMA);
         this.extendObjectSchema(CarbonError_1.CarbonError.TYPE, CarbonError_1.CarbonError.SCHEMA);
         this.extendObjectSchema(CarbonMap_1.CarbonMap.TYPE, CarbonMap_1.CarbonMap.SCHEMA);
@@ -14522,16 +14522,24 @@ exports.Service = Service;
 
 "use strict";
 
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
-    result["default"] = mod;
-    return result;
-}
 Object.defineProperty(exports, "__esModule", { value: true });
-var PlatformMetadata = __importStar(__webpack_require__(299));
-exports.PlatformMetadata = PlatformMetadata;
+var C_1 = __webpack_require__(2);
+var XSD_1 = __webpack_require__(7);
+var SCHEMA = {
+    "version": {
+        "@id": C_1.C.version,
+        "@type": XSD_1.XSD.string,
+    },
+    "buildDate": {
+        "@id": C_1.C.buildDate,
+        "@type": XSD_1.XSD.dateTime,
+    },
+};
+exports.PlatformMetadata = {
+    TYPE: C_1.C.Platform,
+    SCHEMA: SCHEMA,
+};
+exports.default = exports.PlatformMetadata;
 
 
 /***/ }),
@@ -14580,12 +14588,12 @@ var Document = __importStar(__webpack_require__(21));
 var Documents = __importStar(__webpack_require__(118));
 var Errors = __importStar(__webpack_require__(3));
 var Fragment = __importStar(__webpack_require__(39));
-var HTTP = __importStar(__webpack_require__(300));
-var JSONLD = __importStar(__webpack_require__(303));
-var LDP = __importStar(__webpack_require__(304));
+var HTTP = __importStar(__webpack_require__(299));
+var JSONLD = __importStar(__webpack_require__(302));
+var LDP = __importStar(__webpack_require__(303));
 var LDPatch = __importStar(__webpack_require__(123));
 var Messaging = __importStar(__webpack_require__(80));
-var ModelFactory = __importStar(__webpack_require__(305));
+var ModelFactory = __importStar(__webpack_require__(304));
 var NamedFragment = __importStar(__webpack_require__(71));
 var ObjectSchema = __importStar(__webpack_require__(12));
 var PersistedDocument = __importStar(__webpack_require__(42));
@@ -14596,10 +14604,10 @@ var Pointer = __importStar(__webpack_require__(18));
 var RDF = __importStar(__webpack_require__(17));
 var Resource = __importStar(__webpack_require__(11));
 var SDKContext = __importStar(__webpack_require__(96));
-var Settings = __importStar(__webpack_require__(306));
+var Settings = __importStar(__webpack_require__(305));
 var SHACL = __importStar(__webpack_require__(169));
 var SPARQL = __importStar(__webpack_require__(170));
-var System = __importStar(__webpack_require__(171));
+var System = __importStar(__webpack_require__(306));
 var Utils = __importStar(__webpack_require__(0));
 var Vocabularies = __importStar(__webpack_require__(307));
 var Carbon = (function (_super) {
@@ -22259,28 +22267,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 
 "use strict";
 
-Object.defineProperty(exports, "__esModule", { value: true });
-var C_1 = __webpack_require__(2);
-var XSD_1 = __webpack_require__(7);
-exports.RDF_CLASS = C_1.C.Platform;
-exports.SCHEMA = {
-    "version": {
-        "@id": C_1.C.version,
-        "@type": XSD_1.XSD.string,
-    },
-    "buildDate": {
-        "@id": C_1.C.buildDate,
-        "@type": XSD_1.XSD.dateTime,
-    },
-};
-
-
-/***/ }),
-/* 300 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
 var __importStar = (this && this.__importStar) || function (mod) {
     if (mod && mod.__esModule) return mod;
     var result = {};
@@ -22300,20 +22286,20 @@ var HTTPMethod_1 = __webpack_require__(67);
 exports.HTTPMethod = HTTPMethod_1.HTTPMethod;
 var JSONParser = __importStar(__webpack_require__(51));
 exports.JSONParser = JSONParser;
-var Parser = __importStar(__webpack_require__(301));
+var Parser = __importStar(__webpack_require__(300));
 exports.Parser = Parser;
 var Request = __importStar(__webpack_require__(25));
 exports.Request = Request;
 var Response = __importStar(__webpack_require__(104));
 exports.Response = Response;
-var StatusCode_1 = __importDefault(__webpack_require__(302));
+var StatusCode_1 = __importDefault(__webpack_require__(301));
 exports.StatusCode = StatusCode_1.default;
 var StringParser = __importStar(__webpack_require__(162));
 exports.StringParser = StringParser;
 
 
 /***/ }),
-/* 301 */
+/* 300 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -22322,7 +22308,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 
 
 /***/ }),
-/* 302 */
+/* 301 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -22375,7 +22361,7 @@ exports.default = StatusCode;
 
 
 /***/ }),
-/* 303 */
+/* 302 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -22399,7 +22385,7 @@ exports.Processor = Processor;
 
 
 /***/ }),
-/* 304 */
+/* 303 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -22435,6 +22421,15 @@ exports.ValidationError = ValidationError;
 
 
 /***/ }),
+/* 304 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+
+
+/***/ }),
 /* 305 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -22449,7 +22444,16 @@ Object.defineProperty(exports, "__esModule", { value: true });
 
 "use strict";
 
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
+    result["default"] = mod;
+    return result;
+}
 Object.defineProperty(exports, "__esModule", { value: true });
+var PlatformMetadata = __importStar(__webpack_require__(171));
+exports.PlatformMetadata = PlatformMetadata;
 
 
 /***/ }),

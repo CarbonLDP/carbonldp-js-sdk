@@ -2,8 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 var C_1 = require("../Vocabularies/C");
 var XSD_1 = require("../Vocabularies/XSD");
-exports.RDF_CLASS = C_1.C.Platform;
-exports.SCHEMA = {
+var SCHEMA = {
     "version": {
         "@id": C_1.C.version,
         "@type": XSD_1.XSD.string,
@@ -13,5 +12,10 @@ exports.SCHEMA = {
         "@type": XSD_1.XSD.dateTime,
     },
 };
+exports.PlatformMetadata = {
+    TYPE: C_1.C.Platform,
+    SCHEMA: SCHEMA,
+};
+exports.default = exports.PlatformMetadata;
 
 //# sourceMappingURL=PlatformMetadata.js.map

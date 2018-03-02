@@ -14,7 +14,7 @@ describe( module( "Carbon/System" ), () => {
 		expect( System ).toEqual( jasmine.any( Object ) );
 	} );
 
-	it( reexports( INSTANCE, "Carbon.System.PlatformMetadata", "Carbon/System/PlatformMetadata" ), ():void => {
+	it( reexports( INSTANCE, "PlatformMetadata", "Carbon/System/PlatformMetadata" ), ():void => {
 		expect( System.PlatformMetadata ).toBeDefined();
 		expect( System.PlatformMetadata ).toBe( PlatformMetadata );
 	} );

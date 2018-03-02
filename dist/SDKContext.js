@@ -28,7 +28,7 @@ var ProtectedDocument_1 = require("./ProtectedDocument");
 var RDF = __importStar(require("./RDF"));
 var SHACL = __importStar(require("./SHACL"));
 var SPARQL = __importStar(require("./SPARQL"));
-var System = __importStar(require("./System"));
+var PlatformMetadata_1 = require("./System/PlatformMetadata");
 var Utils_1 = require("./Utils");
 var SDKContext = (function () {
     function SDKContext() {
@@ -158,7 +158,7 @@ var SDKContext = (function () {
     SDKContext.prototype.registerDefaultObjectSchemas = function () {
         this.extendObjectSchema(Document_1.Document.TYPE, Document_1.Document.SCHEMA);
         this.extendObjectSchema(ProtectedDocument_1.ProtectedDocument.TYPE, ProtectedDocument_1.ProtectedDocument.SCHEMA);
-        this.extendObjectSchema(System.PlatformMetadata.RDF_CLASS, System.PlatformMetadata.SCHEMA);
+        this.extendObjectSchema(PlatformMetadata_1.PlatformMetadata.TYPE, PlatformMetadata_1.PlatformMetadata.SCHEMA);
         this.extendObjectSchema(AddMemberAction_1.AddMemberAction.TYPE, AddMemberAction_1.AddMemberAction.SCHEMA);
         this.extendObjectSchema(CarbonError_1.CarbonError.TYPE, CarbonError_1.CarbonError.SCHEMA);
         this.extendObjectSchema(CarbonMap_1.CarbonMap.TYPE, CarbonMap_1.CarbonMap.SCHEMA);

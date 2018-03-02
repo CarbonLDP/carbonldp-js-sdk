@@ -21,7 +21,7 @@ import * as RDF from "./RDF";
 import * as Settings from "./Settings";
 import * as SHACL from "./SHACL";
 import * as SPARQL from "./SPARQL";
-import * as System from "./System";
+import { PlatformMetadata } from "./System/PlatformMetadata";
 import {
 	isObject,
 	isString,
@@ -195,7 +195,7 @@ export class SDKContext implements Context {
 		this.extendObjectSchema( Document.TYPE, Document.SCHEMA );
 		this.extendObjectSchema( ProtectedDocument.TYPE, ProtectedDocument.SCHEMA );
 
-		this.extendObjectSchema( System.PlatformMetadata.RDF_CLASS, System.PlatformMetadata.SCHEMA );
+		this.extendObjectSchema( PlatformMetadata.TYPE, PlatformMetadata.SCHEMA );
 
 		this.extendObjectSchema( AddMemberAction.TYPE, AddMemberAction.SCHEMA );
 		this.extendObjectSchema( CarbonError.TYPE, CarbonError.SCHEMA );

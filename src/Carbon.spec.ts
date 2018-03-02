@@ -610,7 +610,7 @@ describe( module( "Carbon" ), ():void => {
 
 			it( hasSignature(
 				"Retrieves the Metadata related to the CarbonLDP Platform.",
-				{ type: ":Promise<Carbon.System.PlatformMetadata.Class>" }
+				{ type: ":Promise<Carbon.System.PlatformMetadata.PlatformMetadata>" }
 			), ():void => {} );
 
 			it( "should exists", ():void => {
