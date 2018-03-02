@@ -1,7 +1,12 @@
-import * as ObjectSchema from "./../ObjectSchema";
-import * as Message from "./Message";
-export declare const RDF_CLASS: string;
-export declare const SCHEMA: ObjectSchema.ObjectSchema;
-export interface Class extends Message.Class {
+import { ObjectSchema } from "../ObjectSchema";
+import { EventMessage } from "./EventMessage";
+export interface DocumentModified extends EventMessage {
 }
-export default Class;
+export interface DocumentModifiedFactory {
+    TYPE: string;
+    SCHEMA: ObjectSchema;
+}
+export declare const TYPE: string;
+export declare const SCHEMA: ObjectSchema;
+export declare const DocumentModified: DocumentModifiedFactory;
+export default DocumentModified;

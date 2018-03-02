@@ -7,20 +7,18 @@ var __assign = (this && this.__assign) || Object.assign || function(t) {
     }
     return t;
 };
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
-    result["default"] = mod;
-    return result;
-}
 Object.defineProperty(exports, "__esModule", { value: true });
 var C_1 = require("../Vocabularies/C");
-var Message = __importStar(require("./Message"));
-exports.RDF_CLASS = C_1.C.MemberAdded;
-exports.SCHEMA = __assign({}, Message.SCHEMA, { "details": {
+var EventMessage_1 = require("./EventMessage");
+var TYPE = C_1.C.MemberAdded;
+var SCHEMA = __assign({}, EventMessage_1.EventMessage.SCHEMA, { "details": {
         "@id": C_1.C.details,
         "@type": "@id",
     } });
+exports.MemberAdded = {
+    TYPE: TYPE,
+    SCHEMA: SCHEMA,
+};
+exports.default = exports.MemberAdded;
 
 //# sourceMappingURL=MemberAdded.js.map

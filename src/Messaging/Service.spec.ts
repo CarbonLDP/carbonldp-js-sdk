@@ -15,7 +15,7 @@ import {
 	method,
 	module
 } from "../test/JasmineExtender";
-import * as Message from "./Message";
+import { EventMessage } from "./EventMessage";
 
 import * as MessagingService from "./Service";
 import DefaultExport from "./Service";
@@ -440,7 +440,7 @@ describe( module( "Carbon/Messaging/Service" ), ():void => {
 				"Subscribe to an event described by the destination provided.",
 				[
 					{ name: "destination", type: "string", description: "The destination of the event to subscribe for." },
-					{ name: "onEvent", type: "( message:Carbon.Messaging.Message.Class ) => void", optional: true, description: "Callback to be invoked in every notification event and will be provided with the data message of the event." },
+					{ name: "onEvent", type: "( message:Carbon.Messaging.EventMessage.EventMessage ) => void", optional: true, description: "Callback to be invoked in every notification event and will be provided with the data message of the event." },
 					{ name: "onError", type: "( error:Error ) => void", optional: true, description: "Callback to be invoked when a error has occurred in the subscription." },
 				]
 			), ():void => {} );
@@ -480,7 +480,7 @@ describe( module( "Carbon/Messaging/Service" ), ():void => {
 					} );
 				} );
 
-				service.subscribe( "destination/", ( message:Message.Class ) => {
+				service.subscribe( "destination/", ( message:EventMessage ) => {
 					expect( service[ "_client" ].connected ).toBe( true );
 
 					expect( message ).toEqual( {
@@ -531,7 +531,7 @@ describe( module( "Carbon/Messaging/Service" ), ():void => {
 				} );
 
 				function addSubscription( index:number ):void {
-					service.subscribe( `/topic/*.*.destination-${ index }/`, ( message:Message.Class ) => {
+					service.subscribe( `/topic/*.*.destination-${ index }/`, ( message:EventMessage ) => {
 						expect( service[ "_client" ].connected ).toBe( true );
 
 						expect( message ).toEqual( {
@@ -607,7 +607,7 @@ describe( module( "Carbon/Messaging/Service" ), ():void => {
 				"Remove the subscription set for the specific destination and onEvent callback.",
 				[
 					{ name: "destination", type: "string", description: "The destination of the subscription to be removed." },
-					{ name: "onEvent", type: "( message:Carbon.Messaging.Message.Class ) => void", optional: true, description: "Callback of the subscription to be be removed." },
+					{ name: "onEvent", type: "( message:Carbon.Messaging.EventMessage.EventMessage ) => void", optional: true, description: "Callback of the subscription to be be removed." },
 				]
 			), ():void => {} );
 
@@ -663,9 +663,9 @@ describe( module( "Carbon/Messaging/Service" ), ():void => {
 				let finishCallback:Function;
 				let responded:number = 0;
 
-				function addSubscription( index:number ):( message:Message.Class ) => void {
-					let callback:( message:Message.Class ) => void;
-					service.subscribe( `/topic/*.*.destination-${ index }/`, callback = ( message:Message.Class ) => {
+				function addSubscription( index:number ):( message:EventMessage ) => void {
+					let callback:( message:EventMessage ) => void;
+					service.subscribe( `/topic/*.*.destination-${ index }/`, callback = ( message:EventMessage ) => {
 						expect( service[ "_client" ].connected ).toBe( true );
 
 						expect( message ).toEqual( {
@@ -688,7 +688,7 @@ describe( module( "Carbon/Messaging/Service" ), ():void => {
 				}
 
 				addSubscription( 1 );
-				const secondCallback:( message:Message.Class ) => void = addSubscription( 2 );
+				const secondCallback:( message:EventMessage ) => void = addSubscription( 2 );
 				addSubscription( 3 );
 
 				finishCallback = () => {

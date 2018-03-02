@@ -1,18 +1,28 @@
+import { ObjectSchema } from "../ObjectSchema";
 import { C } from "../Vocabularies/C";
-import * as ObjectSchema from "./../ObjectSchema";
-import * as DocumentCreatedDetails from "./DocumentCreatedDetails";
-import * as Message from "./Message";
+import { DocumentCreatedDetails } from "./DocumentCreatedDetails";
+import { EventMessage } from "./EventMessage";
 
-export const SCHEMA:ObjectSchema.ObjectSchema = {
-	...Message.SCHEMA,
+
+export interface DocumentCreated extends EventMessage {
+	details:DocumentCreatedDetails;
+}
+
+
+export interface DocumentCreatedFactory {
+	SCHEMA:ObjectSchema;
+}
+
+const SCHEMA:ObjectSchema = {
+	...EventMessage.SCHEMA,
 	"details": {
 		"@id": C.details,
 		"@type": "@id",
 	},
 };
 
-export interface Class extends Message.Class {
-	details:DocumentCreatedDetails.Class;
-}
+export const DocumentCreated:DocumentCreatedFactory = {
+	SCHEMA,
+};
 
-export default Class;
+export default DocumentCreated;

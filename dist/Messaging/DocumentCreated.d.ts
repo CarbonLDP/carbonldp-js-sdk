@@ -1,8 +1,11 @@
-import * as ObjectSchema from "./../ObjectSchema";
-import * as DocumentCreatedDetails from "./DocumentCreatedDetails";
-import * as Message from "./Message";
-export declare const SCHEMA: ObjectSchema.ObjectSchema;
-export interface Class extends Message.Class {
-    details: DocumentCreatedDetails.Class;
+import { ObjectSchema } from "../ObjectSchema";
+import { DocumentCreatedDetails } from "./DocumentCreatedDetails";
+import { EventMessage } from "./EventMessage";
+export interface DocumentCreated extends EventMessage {
+    details: DocumentCreatedDetails;
 }
-export default Class;
+export interface DocumentCreatedFactory {
+    SCHEMA: ObjectSchema;
+}
+export declare const DocumentCreated: DocumentCreatedFactory;
+export default DocumentCreated;

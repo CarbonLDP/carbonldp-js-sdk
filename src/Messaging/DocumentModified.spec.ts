@@ -1,4 +1,3 @@
-import * as Messaging from "../Messaging";
 import { Pointer } from "../Pointer";
 import {
 	extendsClass,
@@ -8,60 +7,30 @@ import {
 	isDefined,
 	module,
 	OBLIGATORY,
+	property,
 	STATIC
 } from "../test/JasmineExtender";
 import { C } from "../Vocabularies/C";
-import * as DocumentModified from "./DocumentModified";
+
+import { DocumentModified } from "./DocumentModified";
 import DefaultExport from "./DocumentModified";
+
+import { EventMessage } from "./EventMessage";
 
 describe( module( "Carbon/Messaging/DocumentModified" ), ():void => {
 
-	it( isDefined(), ():void => {
-		expect( DocumentModified ).toBeDefined();
-		expect( DocumentModified ).toEqual( jasmine.any( Object ) );
-	} );
-
-	it( hasProperty(
-		STATIC,
-		"RDF_CLASS",
-		"string"
-	), ():void => {
-		expect( DocumentModified.RDF_CLASS ).toBeDefined();
-		expect( DocumentModified.RDF_CLASS ).toEqual( jasmine.any( String ) );
-
-		expect( DocumentModified.RDF_CLASS ).toBe( C.DocumentModified );
-	} );
-
-	it( hasProperty(
-		STATIC,
-		"SCHEMA",
-		"Carbon.ObjectSchema.ObjectSchema"
-	), ():void => {
-		expect( DocumentModified.SCHEMA ).toBeDefined();
-		expect( DocumentModified.SCHEMA ).toEqual( jasmine.any( Object ) );
-
-		expect( DocumentModified.SCHEMA as {} ).toEqual( {
-			"target": jasmine.any( Object ),
-		} );
-
-		expect( DocumentModified.SCHEMA[ "target" ] ).toEqual( {
-			"@id": C.target,
-			"@type": "@id",
-		} );
-	} );
-
 	describe( interfaze(
-		"Carbon.Messaging.DocumentModified.Class",
+		"Carbon.Messaging.DocumentModified.DocumentModified",
 		"Interface with the properties of the data received in a document modified event."
 	), ():void => {
 
 		it( isDefined(), ():void => {
-			const target:DocumentModified.Class = {} as any;
+			const target:DocumentModified = {} as any;
 			expect( target ).toBeDefined();
 		} );
 
-		it( extendsClass( "Carbon.Messaging.Message.Class" ), ():void => {
-			const target:Messaging.Message.Class = {} as DocumentModified.Class;
+		it( extendsClass( "Carbon.Messaging.EventMessage.EventMessage" ), ():void => {
+			const target:EventMessage = {} as DocumentModified;
 			expect( target ).toBeDefined();
 		} );
 
@@ -70,14 +39,69 @@ describe( module( "Carbon/Messaging/DocumentModified" ), ():void => {
 			"target",
 			"Carbon.Pointer.Pointer"
 		), ():void => {
-			const target:DocumentModified.Class[ "target" ] = {} as Pointer;
+			const target:DocumentModified[ "target" ] = {} as Pointer;
 			expect( target ).toBeDefined();
 		} );
 
 	} );
 
-	it( hasDefaultExport( "Carbon.Messaging.DocumentModified.Class" ), ():void => {
-		const target:DocumentModified.Class = {} as DefaultExport;
+	describe( interfaze(
+		"Carbon.Messaging.DocumentModified.DocumentModifiedFactory",
+		"Interface with the factory, decorate and utils for `Carbon.Messaging.DocumentModified.DocumentModified` objects."
+	), ():void => {
+
+		it( hasProperty(
+			OBLIGATORY,
+			"TYPE",
+			"string"
+		), ():void => {} );
+
+		it( hasProperty(
+			OBLIGATORY,
+			"SCHEMA",
+			"Carbon.ObjectSchema.ObjectSchema"
+		), ():void => {} );
+
+	} );
+
+	describe( property(
+		STATIC,
+		"DocumentModified",
+		"Carbon.Messaging.DocumentModified.DocumentModifiedFactory"
+	), ():void => {
+
+		it( isDefined(), ():void => {
+			expect( DocumentModified ).toBeDefined();
+			expect( DocumentModified ).toEqual( jasmine.any( Object ) );
+		} );
+
+		// TODO: Separate in different tests
+		it( "DocumentModified.TYPE", ():void => {
+			expect( DocumentModified.TYPE ).toBeDefined();
+			expect( DocumentModified.TYPE ).toEqual( jasmine.any( String ) );
+
+			expect( DocumentModified.TYPE ).toBe( C.DocumentModified );
+		} );
+
+		// TODO: Separate in different tests
+		it( "DocumentModified.SCHEMA", ():void => {
+			expect( DocumentModified.SCHEMA ).toBeDefined();
+			expect( DocumentModified.SCHEMA ).toEqual( jasmine.any( Object ) );
+
+			expect( DocumentModified.SCHEMA as {} ).toEqual( {
+				"target": jasmine.any( Object ),
+			} );
+
+			expect( DocumentModified.SCHEMA[ "target" ] ).toEqual( {
+				"@id": C.target,
+				"@type": "@id",
+			} );
+		} );
+
+	} );
+
+	it( hasDefaultExport( "Carbon.Messaging.DocumentModified.DocumentModified" ), ():void => {
+		const target:DocumentModified = {} as DefaultExport;
 		expect( target ).toBeDefined();
 	} );
 

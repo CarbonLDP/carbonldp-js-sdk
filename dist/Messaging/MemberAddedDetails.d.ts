@@ -1,7 +1,10 @@
-import * as ObjectSchema from "./../ObjectSchema";
-import * as MemberDetails from "./MemberDetails";
-export declare const RDF_CLASS: string;
-export declare const SCHEMA: ObjectSchema.ObjectSchema;
-export interface Class extends MemberDetails.Class {
+import { ObjectSchema } from "../ObjectSchema";
+import { MemberDetails } from "./MemberDetails";
+export interface MemberAddedDetails extends MemberDetails {
 }
-export default Class;
+export interface MemberAddedDetailsFactory {
+    TYPE: string;
+    SCHEMA: ObjectSchema;
+}
+export declare const MemberAddedDetails: MemberAddedDetailsFactory;
+export default MemberAddedDetails;

@@ -1,9 +1,19 @@
+import { ObjectSchema } from "../ObjectSchema";
+import { Pointer } from "../Pointer";
+import { Resource } from "../Resource";
 import { C } from "../Vocabularies/C";
-import * as ObjectSchema from "./../ObjectSchema";
-import { Pointer } from "./../Pointer";
-import { Resource } from "./../Resource";
 
-export const SCHEMA:ObjectSchema.ObjectSchema = {
+
+export interface MemberDetails extends Resource {
+	members:Pointer[];
+}
+
+
+export interface MemberDetailsFactory {
+	SCHEMA:ObjectSchema;
+}
+
+const SCHEMA:ObjectSchema = {
 	"members": {
 		"@id": C.member,
 		"@type": "@id",
@@ -11,8 +21,8 @@ export const SCHEMA:ObjectSchema.ObjectSchema = {
 	},
 };
 
-export interface Class extends Resource {
-	members:Pointer[];
-}
+export const MemberDetails:MemberDetailsFactory = {
+	SCHEMA,
+};
 
-export default Class;
+export default MemberDetails;

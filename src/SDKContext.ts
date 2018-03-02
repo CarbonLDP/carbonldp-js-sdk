@@ -14,7 +14,15 @@ import { ErrorResponse } from "./LDP/ErrorResponse";
 import { RemoveMemberAction } from "./LDP/RemoveMemberAction";
 import { ResponseMetadata } from "./LDP/ResponseMetadata";
 import { ValidationError } from "./LDP/ValidationError";
-import * as Messaging from "./Messaging";
+import { AccessPointCreated } from "./Messaging/AccessPointCreated";
+import { ChildCreated } from "./Messaging/ChildCreated";
+import { DocumentCreatedDetails } from "./Messaging/DocumentCreatedDetails";
+import { DocumentDeleted } from "./Messaging/DocumentDeleted";
+import { DocumentModified } from "./Messaging/DocumentModified";
+import { MemberAdded } from "./Messaging/MemberAdded";
+import { MemberAddedDetails } from "./Messaging/MemberAddedDetails";
+import { MemberRemoved } from "./Messaging/MemberRemoved";
+import { MemberRemovedDetails } from "./Messaging/MemberRemovedDetails";
 import * as ObjectSchema from "./ObjectSchema";
 import { ProtectedDocument } from "./ProtectedDocument";
 import * as RDF from "./RDF";
@@ -221,15 +229,15 @@ export class SDKContext implements Context {
 
 		this.extendObjectSchema( QueryMetadata.TYPE, QueryMetadata.SCHEMA );
 
-		this.extendObjectSchema( Messaging.AccessPointCreated.RDF_CLASS, Messaging.AccessPointCreated.SCHEMA );
-		this.extendObjectSchema( Messaging.ChildCreated.RDF_CLASS, Messaging.ChildCreated.SCHEMA );
-		this.extendObjectSchema( Messaging.DocumentCreatedDetails.RDF_CLASS, Messaging.DocumentCreatedDetails.SCHEMA );
-		this.extendObjectSchema( Messaging.DocumentDeleted.RDF_CLASS, Messaging.DocumentDeleted.SCHEMA );
-		this.extendObjectSchema( Messaging.DocumentModified.RDF_CLASS, Messaging.DocumentModified.SCHEMA );
-		this.extendObjectSchema( Messaging.MemberAdded.RDF_CLASS, Messaging.MemberAdded.SCHEMA );
-		this.extendObjectSchema( Messaging.MemberAddedDetails.RDF_CLASS, Messaging.MemberAddedDetails.SCHEMA );
-		this.extendObjectSchema( Messaging.MemberRemoved.RDF_CLASS, Messaging.MemberRemoved.SCHEMA );
-		this.extendObjectSchema( Messaging.MemberRemovedDetails.RDF_CLASS, Messaging.MemberRemovedDetails.SCHEMA );
+		this.extendObjectSchema( AccessPointCreated.TYPE, AccessPointCreated.SCHEMA );
+		this.extendObjectSchema( ChildCreated.TYPE, ChildCreated.SCHEMA );
+		this.extendObjectSchema( DocumentCreatedDetails.TYPE, DocumentCreatedDetails.SCHEMA );
+		this.extendObjectSchema( DocumentDeleted.TYPE, DocumentDeleted.SCHEMA );
+		this.extendObjectSchema( DocumentModified.TYPE, DocumentModified.SCHEMA );
+		this.extendObjectSchema( MemberAdded.TYPE, MemberAdded.SCHEMA );
+		this.extendObjectSchema( MemberAddedDetails.TYPE, MemberAddedDetails.SCHEMA );
+		this.extendObjectSchema( MemberRemoved.TYPE, MemberRemoved.SCHEMA );
+		this.extendObjectSchema( MemberRemovedDetails.TYPE, MemberRemovedDetails.SCHEMA );
 	}
 
 	private _resolveTypeURI( uri:string ):string {

@@ -1,4 +1,3 @@
-import * as Messaging from "../Messaging";
 import { Pointer } from "../Pointer";
 import {
 	extendsClass,
@@ -8,60 +7,29 @@ import {
 	isDefined,
 	module,
 	OBLIGATORY,
+	property,
 	STATIC
 } from "../test/JasmineExtender";
 import { C } from "../Vocabularies/C";
-import * as DocumentDeleted from "./DocumentDeleted";
-import DefaultExport from "./DocumentDeleted";
+
+import DefaultExport, { DocumentDeleted } from "./DocumentDeleted";
+
+import { EventMessage } from "./EventMessage";
 
 describe( module( "Carbon/Messaging/DocumentDeleted" ), ():void => {
 
-	it( isDefined(), ():void => {
-		expect( DocumentDeleted ).toBeDefined();
-		expect( DocumentDeleted ).toEqual( jasmine.any( Object ) );
-	} );
-
-	it( hasProperty(
-		STATIC,
-		"RDF_CLASS",
-		"string"
-	), ():void => {
-		expect( DocumentDeleted.RDF_CLASS ).toBeDefined();
-		expect( DocumentDeleted.RDF_CLASS ).toEqual( jasmine.any( String ) );
-
-		expect( DocumentDeleted.RDF_CLASS ).toBe( C.DocumentDeleted );
-	} );
-
-	it( hasProperty(
-		STATIC,
-		"SCHEMA",
-		"Carbon.ObjectSchema.ObjectSchema"
-	), ():void => {
-		expect( DocumentDeleted.SCHEMA ).toBeDefined();
-		expect( DocumentDeleted.SCHEMA ).toEqual( jasmine.any( Object ) );
-
-		expect( DocumentDeleted.SCHEMA as {} ).toEqual( {
-			"target": jasmine.any( Object ),
-		} );
-
-		expect( DocumentDeleted.SCHEMA[ "target" ] ).toEqual( {
-			"@id": C.target,
-			"@type": "@id",
-		} );
-	} );
-
 	describe( interfaze(
-		"Carbon.Messaging.DocumentDeleted.Class",
+		"Carbon.Messaging.DocumentDeleted.DocumentDeleted",
 		"Interface with the properties of the data received in a document deleted event."
 	), ():void => {
 
 		it( isDefined(), ():void => {
-			const target:DocumentDeleted.Class = {} as any;
+			const target:DocumentDeleted = {} as any;
 			expect( target ).toBeDefined();
 		} );
 
-		it( extendsClass( "Carbon.Messaging.Message.Class" ), ():void => {
-			const target:Messaging.Message.Class = {} as DocumentDeleted.Class;
+		it( extendsClass( "Carbon.Messaging.EventMessage.EventMessage" ), ():void => {
+			const target:EventMessage = {} as DocumentDeleted;
 			expect( target ).toBeDefined();
 		} );
 
@@ -70,14 +38,69 @@ describe( module( "Carbon/Messaging/DocumentDeleted" ), ():void => {
 			"target",
 			"Carbon.Pointer.Pointer"
 		), ():void => {
-			const target:DocumentDeleted.Class[ "target" ] = {} as Pointer;
+			const target:DocumentDeleted[ "target" ] = {} as Pointer;
 			expect( target ).toBeDefined();
 		} );
 
 	} );
 
-	it( hasDefaultExport( "Carbon.Messaging.DocumentDeleted.Class" ), ():void => {
-		const target:DocumentDeleted.Class = {} as DefaultExport;
+	describe( interfaze(
+		"Carbon.Messaging.DocumentDeleted.DocumentDeletedFactory",
+		"Interface with the factory, decorate and utils for `Carbon.Messaging.DocumentDeleted.DocumentDeleted` objects."
+	), ():void => {
+
+		it( hasProperty(
+			STATIC,
+			"TYPE",
+			"string"
+		), ():void => {} );
+
+		it( hasProperty(
+			STATIC,
+			"SCHEMA",
+			"Carbon.ObjectSchema.ObjectSchema"
+		), ():void => {} );
+
+	} );
+
+	describe( property(
+		STATIC,
+		"DocumentDeleted",
+		"Carbon.Messaging.DocumentDeleted.DocumentDeletedFactory"
+	), ():void => {
+
+		it( isDefined(), ():void => {
+			expect( DocumentDeleted ).toBeDefined();
+			expect( DocumentDeleted ).toEqual( jasmine.any( Object ) );
+		} );
+
+		// TODO: Separate in different tests
+		it( "DocumentDeleted.TYPE", ():void => {
+			expect( DocumentDeleted.TYPE ).toBeDefined();
+			expect( DocumentDeleted.TYPE ).toEqual( jasmine.any( String ) );
+
+			expect( DocumentDeleted.TYPE ).toBe( C.DocumentDeleted );
+		} );
+
+		// TODO: Separate in different tests
+		it( "DocumentDeleted.SCHEMA", ():void => {
+			expect( DocumentDeleted.SCHEMA ).toBeDefined();
+			expect( DocumentDeleted.SCHEMA ).toEqual( jasmine.any( Object ) );
+
+			expect( DocumentDeleted.SCHEMA as {} ).toEqual( {
+				"target": jasmine.any( Object ),
+			} );
+
+			expect( DocumentDeleted.SCHEMA[ "target" ] ).toEqual( {
+				"@id": C.target,
+				"@type": "@id",
+			} );
+		} );
+
+	} );
+
+	it( hasDefaultExport( "Carbon.Messaging.DocumentDeleted.DocumentDeleted" ), ():void => {
+		const target:DocumentDeleted = {} as DefaultExport;
 		expect( target ).toBeDefined();
 	} );
 

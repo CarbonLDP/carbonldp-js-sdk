@@ -1,8 +1,11 @@
-import * as ObjectSchema from "./../ObjectSchema";
-import { Pointer } from "./../Pointer";
-import { Resource } from "./../Resource";
-export declare const SCHEMA: ObjectSchema.ObjectSchema;
-export interface Class extends Resource {
+import { ObjectSchema } from "../ObjectSchema";
+import { Pointer } from "../Pointer";
+import { Resource } from "../Resource";
+export interface MemberDetails extends Resource {
     members: Pointer[];
 }
-export default Class;
+export interface MemberDetailsFactory {
+    SCHEMA: ObjectSchema;
+}
+export declare const MemberDetails: MemberDetailsFactory;
+export default MemberDetails;

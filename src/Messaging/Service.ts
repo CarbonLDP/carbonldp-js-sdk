@@ -8,7 +8,7 @@ import { FreeResources } from "../FreeResources";
 import { JSONLDParser } from "../JSONLD/Parser";
 import RDFNode from "../RDF/Node";
 import { UUIDUtils } from "../Utils";
-import * as Message from "./Message";
+import { EventMessage } from "./EventMessage";
 import { MessagingOptions } from "./Options";
 
 const DEFAULT_OPTIONS:Readonly<MessagingOptions> = {
@@ -27,7 +27,7 @@ export class MessagingService {
 	private _options:MessagingOptions;
 	private _attempts:number;
 	private _client?:Client;
-	private _subscriptionsMap:Map<string, Map<( data:Message.Class ) => void, Subscription>>;
+	private _subscriptionsMap:Map<string, Map<( data:EventMessage ) => void, Subscription>>;
 	private _subscriptionsQueue:Function[];
 
 	constructor( context:Carbon ) {
@@ -93,10 +93,10 @@ export class MessagingService {
 		} );
 	}
 
-	subscribe( destination:string, onEvent:( data:Message.Class ) => void, onError:( error:Error ) => void ):void {
+	subscribe( destination:string, onEvent:( data:EventMessage ) => void, onError:( error:Error ) => void ):void {
 		if( ! this._client ) this.connect();
 		if( ! this._subscriptionsMap.has( destination ) ) this._subscriptionsMap.set( destination, new Map() );
-		const callbacksMap:Map<( data:Message.Class ) => void, Subscription> = this._subscriptionsMap.get( destination );
+		const callbacksMap:Map<( data:EventMessage ) => void, Subscription> = this._subscriptionsMap.get( destination );
 
 		if( callbacksMap.has( onEvent ) ) return;
 		const subscriptionID:string = UUIDUtils.generate();
@@ -110,10 +110,10 @@ export class MessagingService {
 		this._subscriptionsQueue.push( subscribeTo );
 	}
 
-	unsubscribe( destination:string, onEvent:( data:Message.Class ) => void ):void {
+	unsubscribe( destination:string, onEvent:( data:EventMessage ) => void ):void {
 		if( ! this._client || ! this._subscriptionsMap || ! this._subscriptionsMap.has( destination ) ) return;
 
-		const callbackMap:Map<( data:Message.Class ) => void, Subscription> = this._subscriptionsMap.get( destination );
+		const callbackMap:Map<( data:EventMessage ) => void, Subscription> = this._subscriptionsMap.get( destination );
 		if( ! callbackMap.has( onEvent ) ) return;
 
 		const subscriptionID:string = callbackMap.get( onEvent ).id;
@@ -131,13 +131,13 @@ export class MessagingService {
 		} ) );
 	}
 
-	private makeSubscription( id:string, destination:string, eventCallback:( data:Message.Class ) => void, errorCallback:( error:Error ) => void ):() => void {
+	private makeSubscription( id:string, destination:string, eventCallback:( data:EventMessage ) => void, errorCallback:( error:Error ) => void ):() => void {
 		return () => this._client.subscribe( destination, message => {
 			new JSONLDParser()
 				.parse( message.body )
 				.then( ( data:RDFNode[] ) => {
 					const freeResources:FreeResources = this.context.documents._getFreeResources( data );
-					return freeResources.getResources().find( Message.Factory.hasClassProperties );
+					return freeResources.getResources().find( EventMessage.isDecorated );
 				} )
 				.then( eventCallback )
 				.catch( errorCallback );

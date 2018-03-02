@@ -1,4 +1,11 @@
-import { isDefined, module, reexports, STATIC } from "../test/JasmineExtender";
+import {
+	isDefined,
+	module,
+	reexports,
+	STATIC
+} from "../test/JasmineExtender";
+
+import * as Messaging from "./";
 
 import * as AccessPointCreated from "./AccessPointCreated";
 import * as ChildCreated from "./ChildCreated";
@@ -8,14 +15,13 @@ import * as DocumentCreatedDetails from "./DocumentCreatedDetails";
 import * as DocumentDeleted from "./DocumentDeleted";
 import * as DocumentModified from "./DocumentModified";
 import { Event } from "./Event";
-import * as Messaging from "./index";
+import * as EventMessage from "./EventMessage";
 import * as MemberAdded from "./MemberAdded";
 import * as MemberAddedDetails from "./MemberAddedDetails";
 import * as MemberDetails from "./MemberDetails";
 import * as MemberRemoved from "./MemberRemoved";
 import * as MemberRemovedDetails from "./MemberRemovedDetails";
-import * as Message from "./Message";
-import { MessagingOptions } from "./Options";
+import * as Options from "./Options";
 import * as Service from "./Service";
 import * as Utils from "./Utils";
 
@@ -102,7 +108,7 @@ describe( module( "Carbon/Messaging" ), ():void => {
 	it( reexports(
 		STATIC,
 		"MemberAdded",
-		"Carbon.Messaging.MemberAdded"
+		"Carbon/Messaging/MemberAdded"
 	), ():void => {
 		expect( Messaging.MemberAdded ).toBeDefined();
 		expect( Messaging.MemberAdded ).toBe( MemberAdded );
@@ -111,7 +117,7 @@ describe( module( "Carbon/Messaging" ), ():void => {
 	it( reexports(
 		STATIC,
 		"MemberAddedDetails",
-		"Carbon.Messaging.MemberAddedDetails"
+		"Carbon/Messaging/MemberAddedDetails"
 	), ():void => {
 		expect( Messaging.MemberAddedDetails ).toBeDefined();
 		expect( Messaging.MemberAddedDetails ).toBe( MemberAddedDetails );
@@ -120,7 +126,7 @@ describe( module( "Carbon/Messaging" ), ():void => {
 	it( reexports(
 		STATIC,
 		"MemberDetails",
-		"Carbon.Messaging.MemberDetails"
+		"Carbon/Messaging/MemberDetails"
 	), ():void => {
 		expect( Messaging.MemberDetails ).toBeDefined();
 		expect( Messaging.MemberDetails ).toBe( MemberDetails );
@@ -129,7 +135,7 @@ describe( module( "Carbon/Messaging" ), ():void => {
 	it( reexports(
 		STATIC,
 		"MemberRemoved",
-		"Carbon.Messaging.MemberRemoved"
+		"Carbon/Messaging/MemberRemoved"
 	), ():void => {
 		expect( Messaging.MemberRemoved ).toBeDefined();
 		expect( Messaging.MemberRemoved ).toBe( MemberRemoved );
@@ -138,7 +144,7 @@ describe( module( "Carbon/Messaging" ), ():void => {
 	it( reexports(
 		STATIC,
 		"MemberRemovedDetails",
-		"Carbon.Messaging.MemberRemovedDetails"
+		"Carbon/Messaging/MemberRemovedDetails"
 	), ():void => {
 		expect( Messaging.MemberRemovedDetails ).toBeDefined();
 		expect( Messaging.MemberRemovedDetails ).toBe( MemberRemovedDetails );
@@ -146,20 +152,20 @@ describe( module( "Carbon/Messaging" ), ():void => {
 
 	it( reexports(
 		STATIC,
-		"Message",
-		"Carbon.Messaging.Message"
+		"EventMessage",
+		"Carbon/Messaging/EventMessage"
 	), ():void => {
-		expect( Messaging.Message ).toBeDefined();
-		expect( Messaging.Message ).toBe( Message );
+		expect( Messaging.EventMessage ).toBeDefined();
+		expect( Messaging.EventMessage ).toBe( EventMessage );
 	} );
 
 	it( reexports(
 		STATIC,
 		"Options",
-		"Carbon.Messaging.MessagingOptions"
+		"Carbon/Messaging/Options"
 	), ():void => {
-		const target:Messaging.MessagingOptions = {} as MessagingOptions;
-		expect( target ).toBeDefined();
+		expect( Messaging.Options ).toBeDefined();
+		expect( Messaging.Options ).toBe( Options );
 	} );
 
 	it( reexports(

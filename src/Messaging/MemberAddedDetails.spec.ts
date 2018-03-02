@@ -1,4 +1,3 @@
-import * as Messaging from "../Messaging";
 import { Pointer } from "../Pointer";
 import {
 	extendsClass,
@@ -8,61 +7,29 @@ import {
 	isDefined,
 	module,
 	OBLIGATORY,
+	property,
 	STATIC
 } from "../test/JasmineExtender";
 import { C } from "../Vocabularies/C";
-import * as MemberAddedDetails from "./MemberAddedDetails";
-import DefaultExport from "./MemberAddedDetails";
+
+import DefaultExport, { MemberAddedDetails } from "./MemberAddedDetails";
+
+import { MemberDetails } from "./MemberDetails";
 
 describe( module( "Carbon/Messaging/MemberAddedDetails" ), ():void => {
 
-	it( isDefined(), ():void => {
-		expect( MemberAddedDetails ).toBeDefined();
-		expect( MemberAddedDetails ).toEqual( jasmine.any( Object ) );
-	} );
-
-	it( hasProperty(
-		STATIC,
-		"RDF_CLASS",
-		"string"
-	), ():void => {
-		expect( MemberAddedDetails.RDF_CLASS ).toBeDefined();
-		expect( MemberAddedDetails.RDF_CLASS ).toEqual( jasmine.any( String ) );
-
-		expect( MemberAddedDetails.RDF_CLASS ).toBe( C.MemberAddedDetails );
-	} );
-
-	it( hasProperty(
-		STATIC,
-		"SCHEMA",
-		"Carbon.ObjectSchema.ObjectSchema"
-	), ():void => {
-		expect( MemberAddedDetails.SCHEMA ).toBeDefined();
-		expect( MemberAddedDetails.SCHEMA ).toEqual( jasmine.any( Object ) );
-
-		expect( MemberAddedDetails.SCHEMA as {} ).toEqual( {
-			"members": jasmine.any( Object ),
-		} );
-
-		expect( MemberAddedDetails.SCHEMA[ "members" ] ).toEqual( {
-			"@id": C.member,
-			"@type": "@id",
-			"@container": "@set",
-		} );
-	} );
-
 	describe( interfaze(
-		"Carbon.Messaging.MemberAddedDetails.Class",
+		"Carbon.Messaging.MemberAddedDetails.MemberAddedDetails",
 		"Interface with the properties of the details in a member added event."
 	), ():void => {
 
 		it( isDefined(), ():void => {
-			const target:MemberAddedDetails.Class = {} as any;
+			const target:MemberAddedDetails = {} as any;
 			expect( target ).toBeDefined();
 		} );
 
-		it( extendsClass( "Carbon.Messaging.MemberDetails.Class" ), ():void => {
-			const target:Messaging.MemberDetails.Class = {} as MemberAddedDetails.Class;
+		it( extendsClass( "Carbon.Messaging.MemberDetails.MemberDetails" ), ():void => {
+			const target:MemberDetails = {} as MemberAddedDetails;
 			expect( target ).toBeDefined();
 		} );
 
@@ -71,14 +38,70 @@ describe( module( "Carbon/Messaging/MemberAddedDetails" ), ():void => {
 			"members",
 			"Carbon.Pointer.Pointer[]"
 		), ():void => {
-			const target:MemberAddedDetails.Class[ "members" ] = [] as Pointer[];
+			const target:MemberAddedDetails[ "members" ] = [] as Pointer[];
 			expect( target ).toBeDefined();
 		} );
 
 	} );
 
-	it( hasDefaultExport( "Carbon.Messaging.MemberAddedDetails.Class" ), ():void => {
-		const target:MemberAddedDetails.Class = {} as DefaultExport;
+	describe( interfaze(
+		"Carbon.Messaging.MemberAddedDetails.MemberAddedDetailsFactory",
+		"Interface with the factory, decorator and utils for `Carbon.Messaging.MemberAddedDetails.MemberAddedDetails` objects."
+	), ():void => {
+
+		it( hasProperty(
+			STATIC,
+			"TYPE",
+			"string"
+		), ():void => {} );
+
+		it( hasProperty(
+			STATIC,
+			"SCHEMA",
+			"Carbon.ObjectSchema.ObjectSchema"
+		), ():void => {} );
+
+	} );
+
+	describe( property(
+		STATIC,
+		"MemberAddedDetails",
+		"Carbon.Messaging.MemberAddedDetails.MemberAddedDetailsFactory"
+	), ():void => {
+
+		it( isDefined(), ():void => {
+			expect( MemberAddedDetails ).toBeDefined();
+			expect( MemberAddedDetails ).toEqual( jasmine.any( Object ) );
+		} );
+
+		// TODO: Separate in different tests
+		it( "MemberAddedDetails", ():void => {
+			expect( MemberAddedDetails.TYPE ).toBeDefined();
+			expect( MemberAddedDetails.TYPE ).toEqual( jasmine.any( String ) );
+
+			expect( MemberAddedDetails.TYPE ).toBe( C.MemberAddedDetails );
+		} );
+
+		// TODO: Separate in different tests
+		it( "MemberAddedDetails.SCHEMA", ():void => {
+			expect( MemberAddedDetails.SCHEMA ).toBeDefined();
+			expect( MemberAddedDetails.SCHEMA ).toEqual( jasmine.any( Object ) );
+
+			expect( MemberAddedDetails.SCHEMA as {} ).toEqual( {
+				"members": jasmine.any( Object ),
+			} );
+
+			expect( MemberAddedDetails.SCHEMA[ "members" ] ).toEqual( {
+				"@id": C.member,
+				"@type": "@id",
+				"@container": "@set",
+			} );
+		} );
+
+	} );
+
+	it( hasDefaultExport( "Carbon.Messaging.MemberAddedDetails.MemberAddedDetails" ), ():void => {
+		const target:MemberAddedDetails = {} as DefaultExport;
 		expect( target ).toBeDefined();
 	} );
 

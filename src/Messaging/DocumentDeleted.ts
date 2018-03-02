@@ -1,12 +1,24 @@
+import { ObjectSchema } from "../ObjectSchema";
 import { C } from "../Vocabularies/C";
-import * as ObjectSchema from "./../ObjectSchema";
-import * as Message from "./Message";
+import { EventMessage } from "./EventMessage";
 
-export const RDF_CLASS:string = C.DocumentDeleted;
 
-export const SCHEMA:ObjectSchema.ObjectSchema = Message.SCHEMA;
-
-export interface Class extends Message.Class {
+export interface DocumentDeleted extends EventMessage {
 }
 
-export default Class;
+
+export interface DocumentDeletedFactory {
+	TYPE:string;
+	SCHEMA:ObjectSchema;
+}
+
+const TYPE:string = C.DocumentDeleted;
+const SCHEMA:ObjectSchema = EventMessage.SCHEMA;
+
+export const DocumentDeleted:DocumentDeletedFactory = {
+	TYPE,
+	SCHEMA,
+};
+
+
+export default DocumentDeleted;

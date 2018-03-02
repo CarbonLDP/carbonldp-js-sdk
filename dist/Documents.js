@@ -28,7 +28,7 @@ var ErrorResponse_1 = require("./LDP/ErrorResponse");
 var RemoveMemberAction_1 = require("./LDP/RemoveMemberAction");
 var ResponseMetadata_1 = require("./LDP/ResponseMetadata");
 var LDPatch = __importStar(require("./LDPatch"));
-var Messaging = __importStar(require("./Messaging"));
+var Event_1 = require("./Messaging/Event");
 var Utils_1 = require("./Messaging/Utils");
 var ObjectSchema_1 = require("./ObjectSchema");
 var PersistedDocument_1 = require("./PersistedDocument");
@@ -40,12 +40,12 @@ var ProtectedDocument_1 = require("./ProtectedDocument");
 var RDF = __importStar(require("./RDF"));
 var Document_2 = require("./RDF/Document");
 var Builder_1 = require("./SPARQL/Builder");
-var QueryMetadata_1 = require("./SPARQL/QueryDocument/QueryMetadata");
 var PartialMetadata_1 = require("./SPARQL/QueryDocument/PartialMetadata");
 var QueryContextBuilder_1 = require("./SPARQL/QueryDocument/QueryContextBuilder");
 var QueryContextPartial_1 = require("./SPARQL/QueryDocument/QueryContextPartial");
 var QueryDocumentBuilder_1 = require("./SPARQL/QueryDocument/QueryDocumentBuilder");
 var QueryDocumentsBuilder_1 = require("./SPARQL/QueryDocument/QueryDocumentsBuilder");
+var QueryMetadata_1 = require("./SPARQL/QueryDocument/QueryMetadata");
 var QueryProperty_1 = require("./SPARQL/QueryDocument/QueryProperty");
 var Utils_2 = require("./SPARQL/QueryDocument/Utils");
 var Service_1 = require("./SPARQL/Service");
@@ -587,25 +587,25 @@ var Documents = (function () {
         }, onError);
     };
     Documents.prototype.onDocumentCreated = function (uriPattern, onEvent, onError) {
-        return this.on(Messaging.Event.DOCUMENT_CREATED, uriPattern, onEvent, onError);
+        return this.on(Event_1.Event.DOCUMENT_CREATED, uriPattern, onEvent, onError);
     };
     Documents.prototype.onChildCreated = function (uriPattern, onEvent, onError) {
-        return this.on(Messaging.Event.CHILD_CREATED, uriPattern, onEvent, onError);
+        return this.on(Event_1.Event.CHILD_CREATED, uriPattern, onEvent, onError);
     };
     Documents.prototype.onAccessPointCreated = function (uriPattern, onEvent, onError) {
-        return this.on(Messaging.Event.ACCESS_POINT_CREATED, uriPattern, onEvent, onError);
+        return this.on(Event_1.Event.ACCESS_POINT_CREATED, uriPattern, onEvent, onError);
     };
     Documents.prototype.onDocumentModified = function (uriPattern, onEvent, onError) {
-        return this.on(Messaging.Event.DOCUMENT_MODIFIED, uriPattern, onEvent, onError);
+        return this.on(Event_1.Event.DOCUMENT_MODIFIED, uriPattern, onEvent, onError);
     };
     Documents.prototype.onDocumentDeleted = function (uriPattern, onEvent, onError) {
-        return this.on(Messaging.Event.DOCUMENT_DELETED, uriPattern, onEvent, onError);
+        return this.on(Event_1.Event.DOCUMENT_DELETED, uriPattern, onEvent, onError);
     };
     Documents.prototype.onMemberAdded = function (uriPattern, onEvent, onError) {
-        return this.on(Messaging.Event.MEMBER_ADDED, uriPattern, onEvent, onError);
+        return this.on(Event_1.Event.MEMBER_ADDED, uriPattern, onEvent, onError);
     };
     Documents.prototype.onMemberRemoved = function (uriPattern, onEvent, onError) {
-        return this.on(Messaging.Event.MEMBER_REMOVED, uriPattern, onEvent, onError);
+        return this.on(Event_1.Event.MEMBER_REMOVED, uriPattern, onEvent, onError);
     };
     Documents.prototype._getPersistedDocument = function (rdfDocument, response) {
         var documentResources = RDF.Document.Util.getNodes(rdfDocument)[0];

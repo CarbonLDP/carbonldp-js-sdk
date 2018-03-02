@@ -1,11 +1,20 @@
+import { ObjectSchema } from "../ObjectSchema";
+import { Pointer } from "../Pointer";
+import { Resource } from "../Resource";
 import { C } from "../Vocabularies/C";
-import * as ObjectSchema from "./../ObjectSchema";
-import { Pointer } from "./../Pointer";
-import { Resource } from "./../Resource";
 
-export const RDF_CLASS:string = C.DocumentCreatedDetails;
 
-export const SCHEMA:ObjectSchema.ObjectSchema = {
+export interface DocumentCreatedDetails extends Resource {
+	createdDocuments:Pointer[];
+}
+
+
+export interface DocumentCreatedDetailsFactory {
+	TYPE:string;
+	SCHEMA:ObjectSchema;
+}
+
+const SCHEMA:ObjectSchema = {
 	"createdDocuments": {
 		"@id": C.createdDocument,
 		"@type": "@id",
@@ -13,8 +22,9 @@ export const SCHEMA:ObjectSchema.ObjectSchema = {
 	},
 };
 
-export interface Class extends Resource {
-	createdDocuments:Pointer[];
-}
+export const DocumentCreatedDetails:DocumentCreatedDetailsFactory = {
+	TYPE: C.DocumentCreatedDetails,
+	SCHEMA,
+};
 
-export default Class;
+export default DocumentCreatedDetails;

@@ -1,9 +1,12 @@
-import * as ObjectSchema from "./../ObjectSchema";
-import * as MemberRemovedDetails from "./MemberRemovedDetails";
-import * as Message from "./Message";
-export declare const RDF_CLASS: string;
-export declare const SCHEMA: ObjectSchema.ObjectSchema;
-export interface Class extends Message.Class {
-    details: MemberRemovedDetails.Class;
+import { ObjectSchema } from "../ObjectSchema";
+import { EventMessage } from "./EventMessage";
+import { MemberRemovedDetails } from "./MemberRemovedDetails";
+export interface MemberRemoved extends EventMessage {
+    details: MemberRemovedDetails;
 }
-export default Class;
+export interface MemberRemovedFactory {
+    TYPE: string;
+    SCHEMA: ObjectSchema;
+}
+export declare const MemberRemoved: MemberRemovedFactory;
+export default MemberRemoved;

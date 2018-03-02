@@ -8,14 +8,12 @@ exports.SCHEMA = {
         "@type": "@id",
     },
 };
-var Factory = (function () {
-    function Factory() {
-    }
-    Factory.hasClassProperties = function (object) {
+exports.EventMessage = {
+    SCHEMA: exports.SCHEMA,
+    isDecorated: function (object) {
         return Utils_1.hasProperty(object, "target");
-    };
-    return Factory;
-}());
-exports.Factory = Factory;
+    },
+};
+exports.default = exports.EventMessage;
 
-//# sourceMappingURL=Message.js.map
+//# sourceMappingURL=EventMessage.js.map

@@ -1,4 +1,3 @@
-import * as Messaging from "../Messaging";
 import { Pointer } from "../Pointer";
 import {
 	extendsClass,
@@ -8,66 +7,30 @@ import {
 	isDefined,
 	module,
 	OBLIGATORY,
+	property,
 	STATIC
 } from "../test/JasmineExtender";
 import { C } from "../Vocabularies/C";
-import * as ChildCreated from "./ChildCreated";
+
+import { ChildCreated } from "./ChildCreated";
 import DefaultExport from "./ChildCreated";
+
+import { DocumentCreated } from "./DocumentCreated";
 
 describe( module( "Carbon/Messaging/ChildCreated" ), ():void => {
 
-	it( isDefined(), ():void => {
-		expect( ChildCreated ).toBeDefined();
-		expect( ChildCreated ).toEqual( jasmine.any( Object ) );
-	} );
-
-	it( hasProperty(
-		STATIC,
-		"RDF_CLASS",
-		"string"
-	), ():void => {
-		expect( ChildCreated.RDF_CLASS ).toBeDefined();
-		expect( ChildCreated.RDF_CLASS ).toEqual( jasmine.any( String ) );
-
-		expect( ChildCreated.RDF_CLASS ).toBe( C.ChildCreated );
-	} );
-
-	it( hasProperty(
-		STATIC,
-		"SCHEMA",
-		"Carbon.ObjectSchema.ObjectSchema"
-	), ():void => {
-		expect( ChildCreated.SCHEMA ).toBeDefined();
-		expect( ChildCreated.SCHEMA ).toEqual( jasmine.any( Object ) );
-
-		expect( ChildCreated.SCHEMA as {} ).toEqual( {
-			"target": jasmine.any( Object ),
-			"details": jasmine.any( Object ),
-		} );
-
-		expect( ChildCreated.SCHEMA[ "target" ] ).toEqual( {
-			"@id": C.target,
-			"@type": "@id",
-		} );
-
-		expect( ChildCreated.SCHEMA[ "details" ] ).toEqual( {
-			"@id": C.details,
-			"@type": "@id",
-		} );
-	} );
-
 	describe( interfaze(
-		"Carbon.Messaging.ChildCreated.Class",
+		"Carbon.Messaging.ChildCreated.ChildCreated",
 		"Interface with the properties of the data received in a child created event."
 	), ():void => {
 
 		it( isDefined(), ():void => {
-			const target:ChildCreated.Class = {} as any;
+			const target:ChildCreated = {} as any;
 			expect( target ).toBeDefined();
 		} );
 
-		it( extendsClass( "Carbon.Messaging.DocumentCreated.Class" ), ():void => {
-			const target:Messaging.DocumentCreated.Class = {} as ChildCreated.Class;
+		it( extendsClass( "Carbon.Messaging.DocumentCreated.DocumentCreated" ), ():void => {
+			const target:DocumentCreated = {} as ChildCreated;
 			expect( target ).toBeDefined();
 		} );
 
@@ -76,14 +39,75 @@ describe( module( "Carbon/Messaging/ChildCreated" ), ():void => {
 			"target",
 			"Carbon.Pointer.Pointer"
 		), ():void => {
-			const target:ChildCreated.Class[ "target" ] = {} as Pointer;
+			const target:ChildCreated[ "target" ] = {} as Pointer;
 			expect( target ).toBeDefined();
 		} );
 
 	} );
 
-	it( hasDefaultExport( "Carbon.Messaging.ChildCreated.Class" ), ():void => {
-		const target:ChildCreated.Class = {} as DefaultExport;
+	describe( interfaze(
+		"Carbon.Messaging.ChildCreated.ChildCreatedFactory",
+		"Interface with the factory, decorate and utils for `Carbon.Messaging.ChildCreated.ChildCreated` objects."
+	), ():void => {
+
+		it( hasProperty(
+			OBLIGATORY,
+			"TYPE",
+			"string"
+		), ():void => {} );
+
+		it( hasProperty(
+			OBLIGATORY,
+			"SCHEMA",
+			"Carbon.ObjectSchema.ObjectSchema"
+		), ():void => {} );
+
+	} );
+
+	describe( property(
+		STATIC,
+		"ChildCreated",
+		"Carbon.Messaging.ChildCreated.ChildCreatedFactory"
+	), ():void => {
+
+		it( isDefined(), ():void => {
+			expect( ChildCreated ).toBeDefined();
+			expect( ChildCreated ).toEqual( jasmine.any( Object ) );
+		} );
+
+		// TODO: Separate in different tests
+		it( "ChildCreated.TYPE", ():void => {
+			expect( ChildCreated.TYPE ).toBeDefined();
+			expect( ChildCreated.TYPE ).toEqual( jasmine.any( String ) );
+
+			expect( ChildCreated.TYPE ).toBe( C.ChildCreated );
+		} );
+
+		// TODO: Separate in different tests
+		it( "ChildCreated.SCHEMA", ():void => {
+			expect( ChildCreated.SCHEMA ).toBeDefined();
+			expect( ChildCreated.SCHEMA ).toEqual( jasmine.any( Object ) );
+
+			expect( ChildCreated.SCHEMA as {} ).toEqual( {
+				"target": jasmine.any( Object ),
+				"details": jasmine.any( Object ),
+			} );
+
+			expect( ChildCreated.SCHEMA[ "target" ] ).toEqual( {
+				"@id": C.target,
+				"@type": "@id",
+			} );
+
+			expect( ChildCreated.SCHEMA[ "details" ] ).toEqual( {
+				"@id": C.details,
+				"@type": "@id",
+			} );
+		} );
+
+	} );
+
+	it( hasDefaultExport( "Carbon.Messaging.ChildCreated.ChildCreated" ), ():void => {
+		const target:ChildCreated = {} as DefaultExport;
 		expect( target ).toBeDefined();
 	} );
 

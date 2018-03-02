@@ -1,9 +1,12 @@
-import * as ObjectSchema from "./../ObjectSchema";
-import { Pointer } from "./../Pointer";
-import { Resource } from "./../Resource";
-export declare const RDF_CLASS: string;
-export declare const SCHEMA: ObjectSchema.ObjectSchema;
-export interface Class extends Resource {
+import { ObjectSchema } from "../ObjectSchema";
+import { Pointer } from "../Pointer";
+import { Resource } from "../Resource";
+export interface DocumentCreatedDetails extends Resource {
     createdDocuments: Pointer[];
 }
-export default Class;
+export interface DocumentCreatedDetailsFactory {
+    TYPE: string;
+    SCHEMA: ObjectSchema;
+}
+export declare const DocumentCreatedDetails: DocumentCreatedDetailsFactory;
+export default DocumentCreatedDetails;

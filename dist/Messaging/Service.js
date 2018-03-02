@@ -23,7 +23,7 @@ var webstomp = __importStar(require("webstomp-client"));
 var Errors_1 = require("../Errors");
 var Parser_1 = require("../JSONLD/Parser");
 var Utils_1 = require("../Utils");
-var Message = __importStar(require("./Message"));
+var EventMessage_1 = require("./EventMessage");
 var DEFAULT_OPTIONS = {
     maxReconnectAttempts: 10,
     reconnectDelay: 1000,
@@ -137,7 +137,7 @@ var MessagingService = (function () {
                 .parse(message.body)
                 .then(function (data) {
                 var freeResources = _this.context.documents._getFreeResources(data);
-                return freeResources.getResources().find(Message.Factory.hasClassProperties);
+                return freeResources.getResources().find(EventMessage_1.EventMessage.isDecorated);
             })
                 .then(eventCallback)
                 .catch(errorCallback);
