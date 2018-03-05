@@ -2,16 +2,33 @@ import * as Utils from "./../Utils";
 import { XSD } from "../Vocabularies/XSD" ;
 import * as Errors from "../Errors";
 
-import Serializer from "./Literal/Serializer";
+import * as Serializer from "./Literal/Serializer";
 import * as Serializers from "./Literal/Serializers";
 
-export interface Class {
+export interface RDFLiteral {
 	"@type"?:string;
 	"@value":string;
+	"@language"?:string;
 }
 
-export class Factory {
-	static from( value:any ):Class {
+
+export interface RDFLiteralFactory {
+	from( value:any ):RDFLiteral;
+
+
+	parse( value:string, type?:string ):any;
+
+	parse( literal:RDFLiteral ):any;
+
+
+	is( value:any ):value is RDFLiteral;
+
+
+	hasType( value:RDFLiteral, type:string ):boolean;
+}
+
+export const RDFLiteral:RDFLiteralFactory = {
+	from( value:any ):RDFLiteral {
 		if( Utils.isNull( value ) )
 			throw new Errors.IllegalArgumentError( "Null cannot be converted into a Literal" );
 		if( ! Utils.isDefined( value ) )
@@ -44,30 +61,28 @@ export class Factory {
 				break;
 		}
 
-		let literal:Class = {"@value": value.toString()};
+		let literal:RDFLiteral = { "@value": value.toString() };
 		if( type ) literal[ "@type" ] = type;
 
 		return literal;
-	}
+	},
 
-	static parse( literalValue:string, literalDataType?:string ):any;
-	static parse( literal:Class ):any;
-	static parse( literalValueOrLiteral:any, literalDataType:string = null ):any {
+	parse( valueOrLiteral:string | RDFLiteral, type?:string ):any {
 		let literalValue:string;
-		if( Utils.isString( literalValueOrLiteral ) ) {
-			literalValue = literalValueOrLiteral;
+		if( Utils.isString( valueOrLiteral ) ) {
+			literalValue = valueOrLiteral;
 		} else {
-			let literal:Class = literalValueOrLiteral;
+			let literal:RDFLiteral = valueOrLiteral;
 			if( ! literal ) return null;
 			if( ! Utils.hasProperty( literal, "@value" ) ) return null;
 
-			literalDataType = "@type" in literal ? literal[ "@type" ] : null;
+			type = "@type" in literal ? literal[ "@type" ] : null;
 			literalValue = literal[ "@value" ];
 		}
 
 		let value:any = literalValue;
 		let parts:string[];
-		switch( literalDataType ) {
+		switch( type ) {
 			// Dates
 			case XSD.date:
 			case XSD.dateTime:
@@ -124,20 +139,20 @@ export class Factory {
 		}
 
 		return value;
-	}
+	},
 
-	static is( value:any ):boolean {
+	is( value:any ):value is RDFLiteral {
 		return Utils.hasProperty( value, "@value" )
 			&& Utils.isString( value[ "@value" ] );
-	}
+	},
 
-	static hasType( value:Class, type:string ):boolean {
+	hasType( value:RDFLiteral, type:string ):boolean {
 		if( ! value[ "@type" ] && type === XSD.string ) return true;
 		return value[ "@type" ] === type;
-	}
-}
+	},
+};
 
-export default Class;
+export default RDFLiteral;
 
 export {
 	Serializer,

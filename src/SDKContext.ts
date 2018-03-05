@@ -25,7 +25,7 @@ import { MemberRemoved } from "./Messaging/MemberRemoved";
 import { MemberRemovedDetails } from "./Messaging/MemberRemovedDetails";
 import * as ObjectSchema from "./ObjectSchema";
 import { ProtectedDocument } from "./ProtectedDocument";
-import * as RDF from "./RDF";
+import { URI } from "./RDF/URI";
 import * as Settings from "./Settings";
 import { ValidationReport } from "./SHACL/ValidationReport";
 import { ValidationResult } from "./SHACL/ValidationResult";
@@ -60,7 +60,7 @@ export class SDKContext implements Context {
 	}
 
 	resolve( relativeURI:string ):string {
-		return RDF.URI.Util.resolve( this.baseURI, relativeURI );
+		return URI.resolve( this.baseURI, relativeURI );
 	}
 
 	/**
@@ -100,7 +100,7 @@ export class SDKContext implements Context {
 			const slug:string = isString( containerPath ) ? containerPath : containerPath.slug;
 			if( ! slug ) throw new Errors.IllegalStateError( `The path "${ currentSearchedPaths.join( "." ) }" doesn't have a slug set.` );
 
-			url = RDF.URI.Util.resolve( url, slug );
+			url = URI.resolve( url, slug );
 			documentPaths = isObject( containerPath ) ? containerPath.paths : null;
 		}
 

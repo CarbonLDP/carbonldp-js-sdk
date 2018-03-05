@@ -8,14 +8,11 @@ var __importStar = (this && this.__importStar) || function (mod) {
 }
 Object.defineProperty(exports, "__esModule", { value: true });
 var Utils = __importStar(require("./../Utils"));
-var Factory = (function () {
-    function Factory() {
-    }
-    Factory.is = function (value) {
+exports.RDFList = {
+    is: function (value) {
         return Utils.hasPropertyDefined(value, "@list");
-    };
-    return Factory;
-}());
-exports.Factory = Factory;
+    },
+};
+exports.default = exports.RDFList;
 
 //# sourceMappingURL=List.js.map

@@ -7,7 +7,7 @@ import {
 import { Response } from "../HTTP/Response";
 import { StringParser } from "../HTTP/StringParser";
 import { PointerLibrary } from "../Pointer";
-import * as RDF from "../RDF";
+import { RDFLiteral } from "../RDF/Literal";
 import {
 	SPARQLRawBindingObject,
 	SPARQLRawBindingProperty,
@@ -109,9 +109,9 @@ export class SPARQLService {
 				throw new Errors.NotImplementedError( "BNodes cannot be queried directly" );
 			case "literal":
 				if( "datatype" in rawBindingProperty ) {
-					return RDF.Literal.Factory.parse( rawBindingProperty.value, rawBindingProperty.datatype );
+					return RDFLiteral.parse( rawBindingProperty.value, rawBindingProperty.datatype );
 				} else {
-					return RDF.Literal.Factory.parse( rawBindingProperty.value );
+					return RDFLiteral.parse( rawBindingProperty.value );
 				}
 			default:
 				throw new Errors.IllegalArgumentError( "The bindingProperty has an unsupported type" );

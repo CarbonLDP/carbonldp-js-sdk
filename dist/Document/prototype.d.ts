@@ -3,7 +3,7 @@ import { JSONLDConverter } from "../JSONLD/Converter";
 import { NamedFragment } from "../NamedFragment";
 import * as ObjectSchema from "../ObjectSchema";
 import { Pointer } from "../Pointer";
-import * as RDF from "../RDF";
+import { RDFDocument } from "../RDF/Document";
 import { Document } from "./";
 export declare function hasPointer(this: Document, id: string): boolean;
 export declare function getPointer(this: Document, id: string): Pointer;
@@ -18,7 +18,7 @@ export declare function createNamedFragment<T extends Object>(object: T, slug: s
 export declare function createNamedFragment(slug: string): NamedFragment;
 export declare function removeFragment(this: Document, fragmentOrSlug: string | Fragment): void;
 export declare function removeNamedFragment(this: Document, fragmentOrSlug: NamedFragment | string): void;
-export declare function toJSON(this: Document, key: string): RDF.Document.Class;
-export declare function toJSON(this: Document, objectSchemaResolver?: ObjectSchema.ObjectSchemaResolver, jsonldConverter?: JSONLDConverter): RDF.Document.Class;
+export declare function toJSON(this: Document, key: string): RDFDocument;
+export declare function toJSON(this: Document, objectSchemaResolver?: ObjectSchema.ObjectSchemaResolver, jsonldConverter?: JSONLDConverter): RDFDocument;
 export declare function normalize(this: Document): void;
 export declare const convertNestedObjects: (parent: Document, actual: any, fragmentsTracker?: Set<string>) => void;

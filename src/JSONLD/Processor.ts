@@ -10,8 +10,9 @@ import {
 	RequestUtils,
 } from "../HTTP/Request";
 import { Response } from "../HTTP/Response";
+import { RDFList } from "../RDF/List";
+import { URI } from "../RDF/URI";
 import * as ObjectSchema from "./../ObjectSchema";
-import * as RDF from "../RDF";
 import * as Utils from "./../Utils";
 
 const MAX_CONTEXT_URLS:number = 10;
@@ -83,7 +84,7 @@ export class JSONLDProcessor {
 						if( ! Utils.isString( urlOrContext ) ) continue;
 
 						let url:string = <string> urlOrContext;
-						url = RDF.URI.Util.resolve( base, url );
+						url = URI.resolve( base, url );
 						if( replace ) {
 							if( Utils.isArray( contexts[ url ] ) ) {
 								Array.prototype.splice.apply( contextArray, [ index, 1 ].concat( <any> contexts[ url ] ) );
@@ -98,7 +99,7 @@ export class JSONLDProcessor {
 					}
 				} else if( Utils.isString( urlOrArrayOrContext ) ) {
 					let url:string = <string> urlOrArrayOrContext;
-					url = RDF.URI.Util.resolve( base, url );
+					url = URI.resolve( base, url );
 					if( replace ) {
 						input[ key ] = contexts[ url ];
 					} else if( ! ( url in contexts ) ) {
@@ -287,7 +288,7 @@ export class JSONLDProcessor {
 				let expandedItem:any = JSONLDProcessor.process( context, item, activeProperty );
 				if( expandedItem === null ) continue;
 
-				if( insideList && ( Utils.isArray( expandedItem ) || RDF.List.Factory.is( expandedItem ) ) ) throw new InvalidJSONLDSyntaxError( "Lists of lists are not permitted." );
+				if( insideList && ( Utils.isArray( expandedItem ) || RDFList.is( expandedItem ) ) ) throw new InvalidJSONLDSyntaxError( "Lists of lists are not permitted." );
 
 				if( ! Utils.isArray( expandedItem ) ) expandedItem = [ expandedItem ];
 				expanded.push( ...expandedItem );
@@ -311,7 +312,7 @@ export class JSONLDProcessor {
 			if( key === "@context" ) continue;
 
 			let uri:string = JSONLDProcessor.expandURI( context, key, { vocab: true } );
-			if( ! uri || ! ( RDF.URI.Util.isAbsolute( uri ) || RDF.URI.Util.isBNodeID( uri ) || JSONLDProcessor.isKeyword( uri ) ) ) continue;
+			if( ! uri || ! ( URI.isAbsolute( uri ) || URI.isBNodeID( uri ) || JSONLDProcessor.isKeyword( uri ) ) ) continue;
 
 			let value:any = element[ key ];
 
@@ -352,7 +353,7 @@ export class JSONLDProcessor {
 			// Drop null values if is not a "@value" property
 			if( expandedValue === null && uri !== "@value" ) continue;
 
-			if( uri !== "@list" && ! RDF.List.Factory.is( expandedValue ) && container === ObjectSchema.ContainerType.LIST ) {
+			if( uri !== "@list" && ! RDFList.is( expandedValue ) && container === ObjectSchema.ContainerType.LIST ) {
 				if( ! Utils.isArray( expandedValue ) ) expandedValue = [ expandedValue ];
 				expandedValue = { "@list": expandedValue };
 			}
@@ -422,7 +423,7 @@ export class JSONLDProcessor {
 	private static hasValue( element:Object, propertyName:string, value:any ):boolean {
 		if( JSONLDProcessor.hasProperty( element, propertyName ) ) {
 			let item:any = element[ propertyName ];
-			let isList:boolean = RDF.List.Factory.is( item );
+			let isList:boolean = RDFList.is( item );
 
 			if( isList || Utils.isArray( item ) ) {
 				let items:any[] = isList ? item[ "@list" ] : item;

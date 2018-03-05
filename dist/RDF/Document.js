@@ -19,124 +19,86 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var Parser_1 = require("../JSONLD/Parser");
 var Utils = __importStar(require("./../Utils"));
-var Node = __importStar(require("./Node"));
-var URI = __importStar(require("./URI"));
-var Factory = (function () {
-    function Factory() {
-    }
-    Factory.is = function (object) {
-        return Utils.hasProperty(object, "@graph")
-            && Utils.isArray(object["@graph"]);
-    };
-    Factory.create = function (resources, uri) {
-        var document = uri ? Node.Factory.create(uri) : {};
-        document["@graph"] = resources;
+var Node_1 = require("./Node");
+var URI_1 = require("./URI");
+exports.RDFDocument = {
+    is: function (value) {
+        return Utils.hasProperty(value, "@graph")
+            && Utils.isArray(value["@graph"]);
+    },
+    create: function (resources, uri) {
+        var document = {
+            "@graph": resources,
+        };
+        if (uri)
+            document["@id"] = uri;
         return document;
-    };
-    return Factory;
-}());
-exports.Factory = Factory;
-var Util = (function () {
-    function Util() {
-    }
-    Util.getDocuments = function (value) {
-        if (Utils.isArray(value)) {
-            var array = value;
-            return array.filter(function (element) { return Factory.is(element); });
-        }
-        else if (Utils.isObject(value)) {
-            if (Factory.is(value))
-                return [value];
-        }
+    },
+    getDocuments: function (objects) {
+        if (Utils.isArray(objects))
+            return objects
+                .filter(exports.RDFDocument.is);
+        if (exports.RDFDocument.is(objects))
+            return [objects];
         return [];
-    };
-    Util.getResources = function (value) {
-        var freeNodes = Node.Util.getFreeNodes(value);
-        var documents = Util.getDocuments(value);
-        var resources = [].concat(freeNodes);
-        for (var _i = 0, documents_1 = documents; _i < documents_1.length; _i++) {
-            var document_1 = documents_1[_i];
-            resources = resources.concat(document_1["@graph"]);
-        }
+    },
+    getResources: function (objects) {
+        var resources = Node_1.RDFNode.getFreeNodes(objects);
+        exports.RDFDocument
+            .getDocuments(objects)
+            .map(function (document) { return document["@graph"]; })
+            .forEach(function (nodes) { return resources.push.apply(resources, nodes); });
         return resources;
-    };
-    Util.getDocumentResources = function (document) {
-        var resources = Util.getResources(document);
-        var documentResources = [];
-        for (var i = 0, length_1 = resources.length; i < length_1; i++) {
-            var resource = resources[i];
-            var uri = resource["@id"];
-            if (!uri)
-                continue;
-            if (!URI.Util.hasFragment(uri) && !URI.Util.isBNodeID(uri))
-                documentResources.push(resource);
-        }
-        return documentResources;
-    };
-    Util.getFragmentResources = function (document, documentResource) {
-        var resources = Util.getResources(document);
-        var documentURIToMatch = null;
-        if (documentResource) {
-            if (Utils.isString(documentResource)) {
-                documentURIToMatch = documentResource;
-            }
-            else
-                documentURIToMatch = documentResource["@id"];
-        }
-        var fragmentResources = [];
-        for (var i = 0, length_2 = resources.length; i < length_2; i++) {
-            var resource = resources[i];
-            var uri = resource["@id"];
-            if (!uri)
-                continue;
-            if (!URI.Util.hasFragment(uri))
-                continue;
-            if (!documentURIToMatch) {
-                fragmentResources.push(resource);
-            }
-            else {
-                var documentURI = URI.Util.getDocumentURI(uri);
-                if (documentURI === documentURIToMatch)
-                    fragmentResources.push(resource);
-            }
-        }
-        return fragmentResources;
-    };
-    Util.getBNodeResources = function (document) {
-        var resources = Util.getResources(document);
-        var bnodes = [];
-        for (var i = 0, length_3 = resources.length; i < length_3; i++) {
-            var resource = resources[i];
-            if (!("@id" in resource) || URI.Util.isBNodeID(resource["@id"]))
-                bnodes.push(resource);
-        }
-        return bnodes;
-    };
-    Util.getNodes = function (rdfDocument) {
+    },
+    getDocumentResources: function (document) {
+        return exports.RDFDocument
+            .getResources(document)
+            .filter(function (node) { return !Node_1.RDFNode.isFragment(node); });
+    },
+    getNamedFragmentResources: function (document, documentResource) {
+        var uriToMatch = Utils.isObject(documentResource) ?
+            Node_1.RDFNode.getID(documentResource) :
+            documentResource;
+        return exports.RDFDocument
+            .getResources(document)
+            .filter(function (node) {
+            var id = Node_1.RDFNode.getID(node);
+            if (!URI_1.URI.hasFragment(id))
+                return;
+            if (!uriToMatch)
+                return true;
+            return URI_1.URI.getDocumentURI(id) === uriToMatch;
+        });
+    },
+    getBNodeResources: function (document) {
+        return exports.RDFDocument
+            .getResources(document)
+            .filter(function (node) {
+            var id = Node_1.RDFNode.getID(node);
+            return URI_1.URI.isBNodeID(id);
+        });
+    },
+    getNodes: function (rdfDocument) {
         var documentNodes = [];
         var fragmentNodes = [];
         for (var _i = 0, _a = rdfDocument["@graph"]; _i < _a.length; _i++) {
             var node = _a[_i];
-            (Util.isNodeFragment(node) ? fragmentNodes : documentNodes).push(node);
+            (Node_1.RDFNode.isFragment(node) ? fragmentNodes : documentNodes).push(node);
         }
         return [documentNodes, fragmentNodes];
-    };
-    Util.isNodeFragment = function (node) {
-        return URI.Util.hasFragment(node["@id"]) || URI.Util.isBNodeID(node["@id"]);
-    };
-    return Util;
-}());
-exports.Util = Util;
+    },
+};
 var RDFDocumentParser = (function (_super) {
     __extends(RDFDocumentParser, _super);
     function RDFDocumentParser() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
     RDFDocumentParser.prototype.parse = function (input) {
-        return _super.prototype.parse.call(this, input).then(Util.getDocuments);
+        return _super.prototype.parse.call(this, input).then(exports.RDFDocument.getDocuments);
     };
     return RDFDocumentParser;
 }(Parser_1.JSONLDParser));
 exports.RDFDocumentParser = RDFDocumentParser;
+exports.default = exports.RDFDocument;
 
 //# sourceMappingURL=Document.js.map

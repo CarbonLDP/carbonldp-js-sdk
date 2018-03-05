@@ -1,7 +1,7 @@
 import { Documents } from "../Documents";
 import { ObjectSchemaDigester } from "../ObjectSchema";
 import { PersistedDocument } from "../PersistedDocument";
-import * as RDFNode from "../RDF/Node";
+import { RDFNode } from "../RDF/Node";
 import { QueryContextBuilder } from "../SPARQL/QueryDocument/QueryContextBuilder";
 import { QueryPropertyType } from "../SPARQL/QueryDocument/QueryProperty";
 import {
@@ -138,7 +138,7 @@ describe( module( "Carbon/JSONLD/Compacter" ), ():void => {
 							"https://example.com/ns#pointer-1": [ {
 								"@id": "_:1",
 							} ],
-						} as RDFNode.Class, {
+						} as RDFNode, {
 							"@id": "_:1",
 						} ],
 					},
@@ -149,7 +149,7 @@ describe( module( "Carbon/JSONLD/Compacter" ), ():void => {
 							"https://example.com/ns#pointer-2": [ {
 								"@id": "_:2",
 							} ],
-						} as RDFNode.Class, {
+						} as RDFNode, {
 							"@id": "_:2",
 						} ],
 					},
@@ -200,7 +200,7 @@ describe( module( "Carbon/JSONLD/Compacter" ), ():void => {
 							"https://example.com/ns#pointer-1": [ {
 								"@id": "_:1",
 							} ],
-						} as RDFNode.Class, {
+						} as RDFNode, {
 							"@id": "_:1",
 						} ],
 					},
@@ -211,7 +211,7 @@ describe( module( "Carbon/JSONLD/Compacter" ), ():void => {
 							"https://example.com/ns#pointer-2": [ {
 								"@id": "_:2",
 							} ],
-						} as RDFNode.Class, {
+						} as RDFNode, {
 							"@id": "_:2",
 						} ],
 					},
@@ -263,7 +263,7 @@ describe( module( "Carbon/JSONLD/Compacter" ), ():void => {
 							"https://example.com/ns#pointer-1": [ {
 								"@id": "_:1",
 							} ],
-						} as RDFNode.Class, {
+						} as RDFNode, {
 							"@id": "_:1",
 						} ],
 					},
@@ -274,7 +274,7 @@ describe( module( "Carbon/JSONLD/Compacter" ), ():void => {
 							"https://example.com/ns#pointer-2": [ {
 								"@id": "_:2",
 							} ],
-						} as RDFNode.Class, {
+						} as RDFNode, {
 							"@id": "_:2",
 						} ],
 					},
@@ -332,7 +332,7 @@ describe( module( "Carbon/JSONLD/Compacter" ), ():void => {
 							"https://example.com/ns#pointer-1": [ {
 								"@id": "_:1",
 							} ],
-						} as RDFNode.Class, {
+						} as RDFNode, {
 							"@id": "_:1",
 						} ],
 					},
@@ -343,7 +343,7 @@ describe( module( "Carbon/JSONLD/Compacter" ), ():void => {
 							"https://example.com/ns#pointer-2": [ {
 								"@id": "_:2",
 							} ],
-						} as RDFNode.Class, {
+						} as RDFNode, {
 							"@id": "_:2",
 						} ],
 					},
@@ -408,13 +408,13 @@ describe( module( "Carbon/JSONLD/Compacter" ), ():void => {
 								"https://example.com/ns#pointer": [ {
 									"@id": "_:1",
 								} ],
-							} as RDFNode.Class,
+							} as RDFNode,
 							{
 								"@id": "_:1",
 								"https://example.com/ns#string": [ {
 									"@value": "string value",
 								} ],
-							} as RDFNode.Class,
+							} as RDFNode,
 						],
 					},
 				] );
@@ -457,13 +457,13 @@ describe( module( "Carbon/JSONLD/Compacter" ), ():void => {
 								"https://example.com/ns#pointer": [ {
 									"@id": "_:1",
 								} ],
-							} as RDFNode.Class,
+							} as RDFNode,
 							{
 								"@id": "_:1",
 								"https://example.com/ns#string": [ {
 									"@value": "string value",
 								} ],
-							} as RDFNode.Class,
+							} as RDFNode,
 						],
 					},
 				] );
@@ -502,7 +502,7 @@ describe( module( "Carbon/JSONLD/Compacter" ), ():void => {
 							"https://example.com/ns#pointer-2": [ {
 								"@id": "https://example.com/resource-2/",
 							} ],
-						} as RDFNode.Class ],
+						} as RDFNode ],
 					},
 					{
 						"@id": "https://example.com/resource-2/",
@@ -514,7 +514,7 @@ describe( module( "Carbon/JSONLD/Compacter" ), ():void => {
 							"https://example.com/ns#pointer-2": [ {
 								"@id": "https://example.com/resource-1/",
 							} ],
-						} as RDFNode.Class ],
+						} as RDFNode ],
 					},
 				] );
 
@@ -564,7 +564,7 @@ describe( module( "Carbon/JSONLD/Compacter" ), ():void => {
 							"https://example.com/ns#pointer-2": [ {
 								"@id": "https://example.com/resource-2/",
 							} ],
-						} as RDFNode.Class ],
+						} as RDFNode ],
 					},
 					{
 						"@id": "https://example.com/resource-2/",
@@ -576,7 +576,7 @@ describe( module( "Carbon/JSONLD/Compacter" ), ():void => {
 							"https://example.com/ns#pointer-2": [ {
 								"@id": "https://example.com/resource-1/",
 							} ],
-						} as RDFNode.Class ],
+						} as RDFNode ],
 					},
 				] );
 
@@ -630,7 +630,7 @@ describe( module( "Carbon/JSONLD/Compacter" ), ():void => {
 							"https://example.com/ns#pointer-2": [ {
 								"@id": "https://example.com/resource-2/",
 							} ],
-						} as RDFNode.Class ],
+						} as RDFNode ],
 					},
 					{
 						"@id": "https://example.com/resource-2/",
@@ -642,7 +642,7 @@ describe( module( "Carbon/JSONLD/Compacter" ), ():void => {
 							"https://example.com/ns#pointer-2": [ {
 								"@id": "https://example.com/resource-1/",
 							} ],
-						} as RDFNode.Class ],
+						} as RDFNode ],
 					},
 				] );
 
@@ -714,7 +714,7 @@ describe( module( "Carbon/JSONLD/Compacter" ), ():void => {
 							"https://example.com/ns#pointer-2": [ {
 								"@id": "https://example.com/resource-2/",
 							} ],
-						} as RDFNode.Class ],
+						} as RDFNode ],
 					},
 					{
 						"@id": "https://example.com/resource-2/",
@@ -726,7 +726,7 @@ describe( module( "Carbon/JSONLD/Compacter" ), ():void => {
 							"https://example.com/ns#pointer-2": [ {
 								"@id": "https://example.com/resource-1/",
 							} ],
-						} as RDFNode.Class ],
+						} as RDFNode ],
 					},
 				] );
 
@@ -789,7 +789,7 @@ describe( module( "Carbon/JSONLD/Compacter" ), ():void => {
 							"https://example.com/ns#pointer-2": [ {
 								"@id": "https://example.com/resource-2/",
 							} ],
-						} as RDFNode.Class ],
+						} as RDFNode ],
 					},
 					{
 						"@id": "https://example.com/resource-2/",
@@ -801,7 +801,7 @@ describe( module( "Carbon/JSONLD/Compacter" ), ():void => {
 							"https://example.com/ns#pointer-2": [ {
 								"@id": "https://example.com/resource-1/",
 							} ],
-						} as RDFNode.Class ],
+						} as RDFNode ],
 					},
 				] );
 
@@ -860,7 +860,7 @@ describe( module( "Carbon/JSONLD/Compacter" ), ():void => {
 							"https://example.com/ns#pointer-2": [ {
 								"@id": "https://example.com/resource-2/",
 							} ],
-						} as RDFNode.Class ],
+						} as RDFNode ],
 					},
 					{
 						"@id": "https://example.com/resource-2/",
@@ -872,7 +872,7 @@ describe( module( "Carbon/JSONLD/Compacter" ), ():void => {
 							"https://example.com/ns#pointer-2": [ {
 								"@id": "https://example.com/resource-1/",
 							} ],
-						} as RDFNode.Class ],
+						} as RDFNode ],
 					},
 				] );
 
@@ -944,7 +944,7 @@ describe( module( "Carbon/JSONLD/Compacter" ), ():void => {
 							"https://example.com/ns#pointer": [ {
 								"@id": "https://example.com/shared-resource/",
 							} ],
-						} as RDFNode.Class ],
+						} as RDFNode ],
 					},
 					{
 						"@id": "https://example.com/resource-2/",
@@ -953,7 +953,7 @@ describe( module( "Carbon/JSONLD/Compacter" ), ():void => {
 							"https://example.com/ns#pointer": [ {
 								"@id": "https://example.com/shared-resource/",
 							} ],
-						} as RDFNode.Class ],
+						} as RDFNode ],
 					},
 					{
 						"@id": "https://example.com/shared-resource/",
@@ -962,7 +962,7 @@ describe( module( "Carbon/JSONLD/Compacter" ), ():void => {
 							"https://example.com/ns#string": [ {
 								"@value": "shared value",
 							} ],
-						} as RDFNode.Class ],
+						} as RDFNode ],
 					},
 				], [
 					{ "@id": "https://example.com/resource-1/" } as any,

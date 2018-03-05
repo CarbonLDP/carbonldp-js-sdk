@@ -2,7 +2,7 @@ import { Document } from "./Document";
 import { Fragment } from "./Fragment";
 import { ModelDecorator } from "./ModelDecorator";
 import { ModelFactory } from "./ModelFactory";
-import * as URI from "./RDF/URI";
+import { URI } from "./RDF/URI";
 import { isObject } from "./Utils";
 
 export interface NamedFragment extends Fragment {
@@ -56,7 +56,7 @@ export const NamedFragment:NamedFragmentFactory = {
 				enumerable: false,
 				configurable: true,
 				get( this:NamedFragment ):string {
-					return URI.Util.getFragment( this.id );
+					return URI.getFragment( this.id );
 				},
 				set( this:NamedFragment, value:string ):void {
 					this.id = this._document.id + "#" + value;

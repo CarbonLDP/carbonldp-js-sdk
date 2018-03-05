@@ -19,7 +19,7 @@ import { PersistedProtectedDocument } from "./PersistedProtectedDocument";
 import { PersistedResource } from "./PersistedResource";
 import { Pointer } from "./Pointer";
 import * as RDF from "./RDF";
-import * as URI from "./RDF/URI";
+import { URI } from "./RDF/URI";
 import { ServiceAwareDocument } from "./ServiceAwareDocument";
 import * as SPARQL from "./SPARQL";
 import { FinishSPARQLSelect } from "./SPARQL/Builder";
@@ -306,7 +306,7 @@ export const PersistedDocument:PersistedDocumentFactory = {
 						id = ObjectSchema.ObjectSchemaUtils.resolveURI( id, this._documents.getGeneralSchema() );
 
 						if( superFunction.call( this, id ) ) return true;
-						return ! URI.Util.isBNodeID( id ) && this._documents.hasPointer( id );
+						return ! URI.isBNodeID( id ) && this._documents.hasPointer( id );
 					};
 				})(),
 			},
@@ -588,7 +588,7 @@ function syncSavedFragments():void {
 }
 
 function resolveURI( uri:string ):string {
-	if( URI.Util.isAbsolute( uri ) ) return uri;
+	if( URI.isAbsolute( uri ) ) return uri;
 
 	let schema:ObjectSchema.DigestedObjectSchema = this._documents.getGeneralSchema();
 	return ObjectSchema.ObjectSchemaUtils.resolveURI( uri, schema, { vocab: true } );
@@ -624,7 +624,7 @@ function extendCreateFragment( superFunction:( slugOrObject?:any, slug?:string )
 		let fragment:Fragment = superFunction.call( this, slugOrObject, slug );
 		let id:string = fragment.id;
 
-		if( RDF.URI.Util.isBNodeID( id ) ) PersistedFragment.decorate( fragment );
+		if( URI.isBNodeID( id ) ) PersistedFragment.decorate( fragment );
 		return fragment;
 	};
 }

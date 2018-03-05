@@ -1,20 +1,13 @@
 "use strict";
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
-    result["default"] = mod;
-    return result;
-}
 Object.defineProperty(exports, "__esModule", { value: true });
 var Fragment_1 = require("./Fragment");
 var ObjectSchema_1 = require("./ObjectSchema");
 var PersistedResource_1 = require("./PersistedResource");
-var RDF = __importStar(require("./RDF"));
+var URI_1 = require("./RDF/URI");
 var Resource_1 = require("./Resource");
 var Utils_1 = require("./Utils");
 function resolveURI(fragment, uri) {
-    if (RDF.URI.Util.isAbsolute(uri))
+    if (URI_1.URI.isAbsolute(uri))
         return uri;
     var schema = fragment._document._documents.getGeneralSchema();
     return ObjectSchema_1.ObjectSchemaUtils.resolveURI(uri, schema, { vocab: true });

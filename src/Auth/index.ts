@@ -29,7 +29,8 @@ import {
 import { Response } from "../HTTP/Response";
 import { JSONLDParser } from "../JSONLD/Parser";
 import * as ObjectSchema from "../ObjectSchema";
-import * as RDF from "../RDF";
+import { RDFNode } from "../RDF/Node";
+import { URI } from "../RDF/URI";
 import { Resource } from "../Resource";
 import * as Utils from "../Utils";
 import { LDP } from "../Vocabularies/LDP";
@@ -151,14 +152,14 @@ export class Class {
 				.catch( response => this.context.documents._parseErrorResponse( response ) );
 
 		} ).then<[ Ticket.Class, Response ]>( ( [ expandedResult, response ]:[ any, Response ] ) => {
-			let freeNodes:RDF.Node.Class[] = RDF.Node.Util.getFreeNodes( expandedResult );
+			let freeNodes:RDFNode[] = RDFNode.getFreeNodes( expandedResult );
 
-			let ticketNodes:RDF.Node.Class[] = freeNodes.filter( freeNode => RDF.Node.Util.hasType( freeNode, Ticket.RDF_CLASS ) );
+			let ticketNodes:RDFNode[] = freeNodes.filter( freeNode => RDFNode.hasType( freeNode, Ticket.RDF_CLASS ) );
 
 			if( ticketNodes.length === 0 ) throw new BadResponseError( `No ${ Ticket.RDF_CLASS } was returned.`, response );
 			if( ticketNodes.length > 1 ) throw new BadResponseError( `Multiple ${ Ticket.RDF_CLASS } were returned.`, response );
 
-			let expandedTicket:RDF.Node.Class = ticketNodes[ 0 ];
+			let expandedTicket:RDFNode = ticketNodes[ 0 ];
 			let ticket:Ticket.Class = <any> Resource.create();
 
 			let digestedSchema:ObjectSchema.DigestedObjectSchema = this.context.documents.getSchemaFor( expandedTicket );
@@ -173,7 +174,7 @@ export class Class {
 		let resourceURI:string = this.context.resolve( uri );
 
 		return this.createTicket( resourceURI, requestOptions ).then( ( [ ticket, response ]:[ Ticket.Class, Response ] ) => {
-			resourceURI += RDF.URI.Util.hasQuery( resourceURI ) ? "&" : "?";
+			resourceURI += URI.hasQuery( resourceURI ) ? "&" : "?";
 			resourceURI += `ticket=${ ticket.ticketKey }`;
 
 			return resourceURI;

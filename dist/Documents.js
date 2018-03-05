@@ -37,8 +37,9 @@ var PersistedProtectedDocument_1 = require("./PersistedProtectedDocument");
 var PersistedResource_1 = require("./PersistedResource");
 var Pointer_1 = require("./Pointer");
 var ProtectedDocument_1 = require("./ProtectedDocument");
-var RDF = __importStar(require("./RDF"));
 var Document_2 = require("./RDF/Document");
+var Node_1 = require("./RDF/Node");
+var URI_1 = require("./RDF/URI");
 var Builder_1 = require("./SPARQL/Builder");
 var PartialMetadata_1 = require("./SPARQL/QueryDocument/PartialMetadata");
 var QueryContextBuilder_1 = require("./SPARQL/QueryDocument/QueryContextBuilder");
@@ -92,22 +93,22 @@ var Documents = (function () {
     });
     Documents.prototype.inScope = function (idOrPointer) {
         var id = Pointer_1.Pointer.is(idOrPointer) ? idOrPointer.id : idOrPointer;
-        if (RDF.URI.Util.isBNodeID(id))
+        if (URI_1.URI.isBNodeID(id))
             return false;
         if (!!this.context) {
             id = ObjectSchema_1.ObjectSchemaUtils.resolveURI(id, this.context.getObjectSchema());
-            if (RDF.URI.Util.isRelative(id))
+            if (URI_1.URI.isRelative(id))
                 return true;
-            if (RDF.URI.Util.isBaseOf(this.context.baseURI, id))
+            if (URI_1.URI.isBaseOf(this.context.baseURI, id))
                 return true;
         }
         else {
-            if (RDF.URI.Util.isAbsolute(id))
+            if (URI_1.URI.isAbsolute(id))
                 return true;
         }
         if (!!this.context && !!this.context.parentContext)
             return this.context.parentContext.documents.inScope(id);
-        return RDF.URI.Util.isRelative(id);
+        return URI_1.URI.isRelative(id);
     };
     Documents.prototype.hasPointer = function (id) {
         id = this.getPointerID(id);
@@ -608,7 +609,7 @@ var Documents = (function () {
         return this.on(Event_1.Event.MEMBER_REMOVED, uriPattern, onEvent, onError);
     };
     Documents.prototype._getPersistedDocument = function (rdfDocument, response) {
-        var documentResources = RDF.Document.Util.getNodes(rdfDocument)[0];
+        var documentResources = Document_2.RDFDocument.getNodes(rdfDocument)[0];
         if (documentResources.length === 0)
             throw new BadResponseError_1.BadResponseError("The RDFDocument: " + rdfDocument["@id"] + ", doesn't contain a document resource.", response);
         if (documentResources.length > 1)
@@ -810,8 +811,8 @@ var Documents = (function () {
                         return inverter_1;
                     if (!Utils_2.areDifferentType(a, b)) {
                         if (Pointer_1.Pointer.is(a)) {
-                            var aIsBNode = RDF.URI.Util.isBNodeID(aValue);
-                            var bIsBNode = RDF.URI.Util.isBNodeID(bValue);
+                            var aIsBNode = URI_1.URI.isBNodeID(aValue);
+                            var bIsBNode = URI_1.URI.isBNodeID(bValue);
                             if (aIsBNode && !bIsBNode)
                                 return -1 * inverter_1;
                             if (bIsBNode && !aIsBNode)
@@ -872,7 +873,7 @@ var Documents = (function () {
             return new Parser_1.JSONLDParser().parse(jsonldString);
         }).then(function (rdfNodes) {
             var freeResources = _this._getFreeResources(rdfNodes
-                .filter(function (node) { return !RDF.Document.Factory.is(node); }));
+                .filter(function (node) { return !Document_2.RDFDocument.is(node); }));
             var targetSet = new Set(freeResources
                 .getResources()
                 .filter(QueryMetadata_1.QueryMetadata.is)
@@ -900,7 +901,7 @@ var Documents = (function () {
             if (targetDocument && targetETag === targetDocument._eTag)
                 return [[targetDocument], null];
             var rdfDocuments = rdfNodes
-                .filter(RDF.Document.Factory.is);
+                .filter(Document_2.RDFDocument.is);
             var targetDocuments = rdfDocuments
                 .filter(function (x) { return targetSet.has(x["@id"]); });
             var documents = new Compacter_1.JSONLDCompacter(_this, targetName, queryContext)
@@ -952,7 +953,7 @@ var Documents = (function () {
             var childURI = document.id;
             if (!!this.context)
                 childURI = this.context.resolve(childURI);
-            if (!RDF.URI.Util.isBaseOf(parentURI, childURI)) {
+            if (!URI_1.URI.isBaseOf(parentURI, childURI)) {
                 return Promise.reject(new Errors.IllegalArgumentError("The document's URI is not relative to the parentURI specified"));
             }
         }
@@ -986,13 +987,13 @@ var Documents = (function () {
         return rdfDocuments.length > 0 ? rdfDocuments[0] : null;
     };
     Documents.prototype.getPointerID = function (uri) {
-        if (RDF.URI.Util.isBNodeID(uri))
+        if (URI_1.URI.isBNodeID(uri))
             throw new Errors.IllegalArgumentError("BNodes cannot be fetched directly.");
         if (!!this.context) {
             uri = ObjectSchema_1.ObjectSchemaUtils.resolveURI(uri, this.getGeneralSchema());
-            if (!RDF.URI.Util.isRelative(uri)) {
+            if (!URI_1.URI.isRelative(uri)) {
                 var baseURI = this.context.baseURI;
-                if (!RDF.URI.Util.isBaseOf(baseURI, uri))
+                if (!URI_1.URI.isBaseOf(baseURI, uri))
                     return null;
                 return uri.substring(baseURI.length);
             }
@@ -1001,9 +1002,9 @@ var Documents = (function () {
             }
         }
         else {
-            if (RDF.URI.Util.isPrefixed(uri))
+            if (URI_1.URI.isPrefixed(uri))
                 throw new Errors.IllegalArgumentError("This Documents instance doesn't support prefixed URIs.");
-            if (RDF.URI.Util.isRelative(uri))
+            if (URI_1.URI.isRelative(uri))
                 throw new Errors.IllegalArgumentError("This Documents instance doesn't support relative URIs.");
             return uri;
         }
@@ -1042,7 +1043,7 @@ var Documents = (function () {
         return this.jsonldConverter.compact(expandedObject, targetObject, digestedSchema, pointerLibrary);
     };
     Documents.prototype.getDigestedObjectSchemaForExpandedObject = function (expandedObject) {
-        var types = RDF.Node.Util.getTypes(expandedObject);
+        var types = Node_1.RDFNode.getTypes(expandedObject);
         return this.getDigestedObjectSchema(types, expandedObject["@id"]);
     };
     Documents.prototype.getDigestedObjectSchemaForDocument = function (document) {
@@ -1060,8 +1061,8 @@ var Documents = (function () {
         if (!this.context)
             return new ObjectSchema_1.DigestedObjectSchema();
         if (Utils.isDefined(objectID) &&
-            !RDF.URI.Util.hasFragment(objectID) &&
-            !RDF.URI.Util.isBNodeID(objectID) &&
+            !URI_1.URI.hasFragment(objectID) &&
+            !URI_1.URI.isBNodeID(objectID) &&
             objectTypes.indexOf(Document_1.Document.TYPE) === -1)
             objectTypes = objectTypes.concat(Document_1.Document.TYPE);
         var schemas = objectTypes
@@ -1076,22 +1077,22 @@ var Documents = (function () {
             .combineDigestedObjectSchemas(objectSchemas);
     };
     Documents.prototype.getRequestURI = function (uri) {
-        if (RDF.URI.Util.isBNodeID(uri)) {
+        if (URI_1.URI.isBNodeID(uri)) {
             throw new Errors.IllegalArgumentError("BNodes cannot be fetched directly.");
         }
-        else if (RDF.URI.Util.isPrefixed(uri)) {
+        else if (URI_1.URI.isPrefixed(uri)) {
             if (!this.context)
                 throw new Errors.IllegalArgumentError("This Documents instance doesn't support prefixed URIs.");
             uri = ObjectSchema_1.ObjectSchemaUtils.resolveURI(uri, this.context.getObjectSchema());
-            if (RDF.URI.Util.isPrefixed(uri))
+            if (URI_1.URI.isPrefixed(uri))
                 throw new Errors.IllegalArgumentError("The prefixed URI \"" + uri + "\" could not be resolved.");
         }
-        else if (RDF.URI.Util.isRelative(uri)) {
+        else if (URI_1.URI.isRelative(uri)) {
             if (!this.context)
                 throw new Errors.IllegalArgumentError("This Documents instance doesn't support relative URIs.");
             uri = this.context.resolve(uri);
         }
-        else if (this.context && !RDF.URI.Util.isBaseOf(this.context.baseURI, uri)) {
+        else if (this.context && !URI_1.URI.isBaseOf(this.context.baseURI, uri)) {
             throw new Errors.IllegalArgumentError("\"" + uri + "\" isn't a valid URI for this Carbon instance.");
         }
         return uri;
@@ -1130,12 +1131,12 @@ var Documents = (function () {
         if (response.status === 204 || !response.data)
             return [persistedProtectedDocument, response];
         return new Parser_1.JSONLDParser().parse(response.data).then(function (expandedResult) {
-            var freeNodes = RDF.Node.Util.getFreeNodes(expandedResult);
+            var freeNodes = Node_1.RDFNode.getFreeNodes(expandedResult);
             _this.applyNodeMap(freeNodes);
             var preferenceHeader = response.getHeader("Preference-Applied");
             if (preferenceHeader === null || preferenceHeader.toString() !== "return=representation")
                 return [persistedProtectedDocument, response];
-            var rdfDocuments = RDF.Document.Util.getDocuments(expandedResult);
+            var rdfDocuments = Document_2.RDFDocument.getDocuments(expandedResult);
             return _this.updateFromPreferenceApplied(persistedProtectedDocument, rdfDocuments, response);
         });
     };

@@ -11,7 +11,8 @@ import { Response } from "../HTTP/Response";
 import { JSONLDParser } from "../JSONLD/Parser";
 import { ResponseMetadata } from "../LDP/ResponseMetadata";
 import { PersistedDocument } from "../PersistedDocument";
-import * as RDF from "../RDF";
+import { RDFDocument } from "../RDF/Document";
+import { RDFNode } from "../RDF/Node";
 import { LDP } from "../Vocabularies/LDP";
 import Context from "./../Context";
 import * as Utils from "./../Utils";
@@ -82,7 +83,7 @@ export class Class implements Authenticator<UsernameAndPasswordToken.Class, Toke
 			const tokensURI:string = this.context._resolvePath( "system" ) + TOKEN_CONTAINER;
 			return RequestService.post( tokensURI, null, requestOptions, new JSONLDParser() );
 		} ).then<[ Token.Class, Response ]>( ( [ expandedResult, response ]:[ any, Response ] ) => {
-			let freeNodes:RDF.Node.Class[] = RDF.Node.Util.getFreeNodes( expandedResult );
+			let freeNodes:RDFNode[] = RDFNode.getFreeNodes( expandedResult );
 
 			let freeResources:FreeResources = this.context.documents._getFreeResources( freeNodes );
 			let tokenResources:Token.Class[] = <Token.Class[]> freeResources.getResources().filter( resource => resource.hasType( Token.RDF_CLASS ) );
@@ -91,7 +92,7 @@ export class Class implements Authenticator<UsernameAndPasswordToken.Class, Toke
 			if( tokenResources.length > 1 ) throw new BadResponseError( "Multiple '" + Token.RDF_CLASS + "' were returned. ", response );
 			let token:Token.Class = tokenResources[ 0 ];
 
-			let userDocuments:RDF.Document.Class[] = RDF.Document.Util.getDocuments( expandedResult ).filter( rdfDocument => rdfDocument[ "@id" ] === token.user.id );
+			let userDocuments:RDFDocument[] = RDFDocument.getDocuments( expandedResult ).filter( rdfDocument => rdfDocument[ "@id" ] === token.user.id );
 			userDocuments.forEach( document => this.context.documents._getPersistedDocument( document, response ) );
 
 			const responseMetadata:ResponseMetadata = <ResponseMetadata> freeResources

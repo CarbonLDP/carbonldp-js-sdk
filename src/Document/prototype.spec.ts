@@ -9,9 +9,8 @@ import { JSONLDConverter } from "../JSONLD/Converter";
 import { NamedFragment } from "../NamedFragment";
 import * as ObjectSchema from "../ObjectSchema";
 import { Pointer } from "../Pointer";
-import * as RDFDocument from "../RDF/Document";
-import * as RDFNode from "../RDF/Node";
-import * as URI from "../RDF/URI";
+import { RDFDocument } from "../RDF/Document";
+import { URI } from "../RDF/URI";
 import { Resource } from "../Resource";
 
 import { createDocumentFrom } from "./factory";
@@ -184,7 +183,7 @@ describe( "Document methods", ():void => {
 
 			// TODO: Use `BlankNode.is`
 			expect( Resource.is( fragment ) ).toBe( true );
-			expect( URI.Util.isBNodeID( fragment.id ) ).toBe( true );
+			expect( URI.isBNodeID( fragment.id ) ).toBe( true );
 
 			expect( document._fragmentsIndex ).toEqual( new Map( [
 				[ "_:1", fragment ],
@@ -598,7 +597,7 @@ describe( "Document methods", ():void => {
 			// TODO: Use `isBlankNode`
 			expect( Resource.is( fragment ) ).toBe( true );
 			expect( Fragment.isDecorated( fragment ) ).toBe( true );
-			expect( URI.Util.isBNodeID( fragment.id ) ).toBe( true );
+			expect( URI.isBNodeID( fragment.id ) ).toBe( true );
 		} );
 
 		it( "should create `BlankNode` when object and blank node label provided", ():void => {
@@ -609,7 +608,7 @@ describe( "Document methods", ():void => {
 			// TODO: Use `isBlankNode`
 			expect( Resource.is( fragment ) ).toBe( true );
 			expect( Fragment.isDecorated( fragment ) ).toBe( true );
-			expect( URI.Util.isBNodeID( fragment.id ) ).toBe( true );
+			expect( URI.isBNodeID( fragment.id ) ).toBe( true );
 
 			expect( fragment as { string:string } ).toEqual( {
 				string: "a string",
@@ -623,7 +622,7 @@ describe( "Document methods", ():void => {
 			// TODO: Use `isBlankNode`
 			expect( Resource.is( fragment ) ).toBe( true );
 			expect( Fragment.isDecorated( fragment ) ).toBe( true );
-			expect( URI.Util.isBNodeID( fragment.id ) ).toBe( true );
+			expect( URI.isBNodeID( fragment.id ) ).toBe( true );
 		} );
 
 		it( "should call `convertNestedObjects` with the object provided", ():void => {
@@ -1011,19 +1010,39 @@ describe( "Document methods", ():void => {
 
 			const jsonldConverter:jasmine.SpyObj<JSONLDConverter> = jasmine.createSpyObj<JSONLDConverter>( "JSONLDConverter", [ "expand" ] );
 			jsonldConverter.expand.and.callFake( ( resource ) => {
-				if( resource === document ) return { the: "expanded document" };
-				if( resource === document.getFragment( "_:1" ) ) return { the: "expanded blank node" };
-				return { the: "expanded named fragment" };
+				if( resource === document ) return {
+					"@id": "https://example.com/document/",
+					the: "expanded document",
+				};
+
+				if( resource === document.getFragment( "_:1" ) ) return {
+					"@id": "_:1",
+					the: "expanded blank node",
+				};
+
+				return {
+					"@id": "https://example.com/document/#fragment",
+					the: "expanded named fragment",
+				};
 			} );
 
-			const expanded:RDFDocument.Class = toJSON.call( document, void 0, jsonldConverter );
+			const expanded:RDFDocument = toJSON.call( document, void 0, jsonldConverter );
 			expect( expanded ).toEqual( {
 				"@id": "https://example.com/document/",
 				"@graph": [
-					{ the: "expanded document" },
-					{ the: "expanded blank node" },
-					{ the: "expanded named fragment" },
-				] as any as RDFNode.Class[],
+					{
+						"@id": "https://example.com/document/",
+						the: "expanded document",
+					},
+					{
+						"@id": "_:1",
+						the: "expanded blank node",
+					},
+					{
+						"@id": "https://example.com/document/#fragment",
+						the: "expanded named fragment",
+					},
+				],
 			} );
 		} );
 
@@ -1175,7 +1194,7 @@ describe( "Document methods", ():void => {
 			expect( document.object ).toEqual( { string: "new object" } );
 
 			// TODO: Use `isBlankNode`
-			expect( URI.Util.isBNodeID( document.object[ "id" ] ) ).toBe( true );
+			expect( URI.isBNodeID( document.object[ "id" ] ) ).toBe( true );
 		} );
 
 		it( "should be a `BlankNode` when bnode label in id property", ():void => {
@@ -1186,7 +1205,7 @@ describe( "Document methods", ():void => {
 			convertNestedObjects( document, document );
 			expect( document.object ).toEqual( { string: "new object" } );
 			// TODO: Use `isBlankNode`
-			expect( URI.Util.isBNodeID( document.object[ "id" ] ) ).toBe( true );
+			expect( URI.isBNodeID( document.object[ "id" ] ) ).toBe( true );
 
 			expect( document.hasFragment( "_:1" ) ).toBe( true );
 			expect( document.object ).toBe( document.getFragment( "_:1" ) );

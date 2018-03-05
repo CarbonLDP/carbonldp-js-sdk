@@ -1,19 +1,17 @@
 import { Documents } from "./Documents";
-import {
-	IDAlreadyInUseError,
-	IllegalArgumentError,
-} from "./Errors";
+import { IDAlreadyInUseError } from "./Errors/IDAlreadyInUseError";
+import { IllegalArgumentError } from "./Errors/IllegalArgumentError";
 import { JSONLDConverter } from "./JSONLD/Converter";
 import { ModelDecorator } from "./ModelDecorator";
 import { ModelFactory } from "./ModelFactory";
-import * as ObjectSchema from "./ObjectSchema";
+import { DigestedObjectSchema } from "./ObjectSchema";
 import {
 	Pointer,
 	PointerLibrary,
 	PointerValidator,
 } from "./Pointer";
-import * as RDFNode from "./RDF/Node";
-import * as URI from "./RDF/URI";
+import { RDFNode } from "./RDF/Node";
+import { URI } from "./RDF/URI";
 import { Resource } from "./Resource";
 import * as Utils from "./Utils";
 
@@ -70,7 +68,7 @@ function getPointer( this:FreeResources, id:string ):Pointer {
 }
 
 function inLocalScope( id:string ):boolean {
-	return URI.Util.isBNodeID( id );
+	return URI.isBNodeID( id );
 }
 
 function inScope( this:FreeResources, idOrPointer:string | Pointer ):boolean {
@@ -100,7 +98,7 @@ function createResourceFrom<T extends object>( this:FreeResources, object:T, id?
 		if( ! inLocalScope( id ) ) throw new IllegalArgumentError( `The id "${ id }" is out of scope.` );
 		if( this._resourcesIndex.has( id ) ) throw new IDAlreadyInUseError( `The id "${ id }" is already in use by another resource.` );
 	} else {
-		id = URI.Util.generateBNodeID();
+		id = URI.generateBNodeID();
 	}
 
 	let resource:Resource & T = Resource.createFrom<T>( object, id );
@@ -109,14 +107,14 @@ function createResourceFrom<T extends object>( this:FreeResources, object:T, id?
 	return resource;
 }
 
-function toJSON( this:FreeResources, key?:string ):RDFNode.Class[] {
-	const generalSchema:ObjectSchema.DigestedObjectSchema = this._documents.getGeneralSchema();
+function toJSON( this:FreeResources, key?:string ):RDFNode[] {
+	const generalSchema:DigestedObjectSchema = this._documents.getGeneralSchema();
 	const jsonldConverter:JSONLDConverter = this._documents.jsonldConverter;
 
 	return this
 		.getResources()
 		.map( resource => {
-			const resourceSchema:ObjectSchema.DigestedObjectSchema = this._documents.getSchemaFor( resource );
+			const resourceSchema:DigestedObjectSchema = this._documents.getSchemaFor( resource );
 			return jsonldConverter.expand( resource, generalSchema, resourceSchema );
 		} )
 		;

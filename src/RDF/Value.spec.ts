@@ -1,35 +1,30 @@
-import AbstractContext from "./../AbstractContext";
-import { PersistedDocument } from "./../PersistedDocument";
+import { AbstractContext } from "../AbstractContext";
+import { PersistedDocument } from "../PersistedDocument";
 import {
 	Pointer,
-	PointerLibrary
-} from "./../Pointer";
-import * as RDFDocument from "./../RDF/Document";
+	PointerLibrary,
+} from "../Pointer";
 import {
-	clazz,
 	hasDefaultExport,
 	hasMethod,
 	hasProperty,
 	interfaze,
 	isDefined,
 	module,
+	OBLIGATORY,
 	OPTIONAL,
+	property,
 	STATIC,
-} from "./../test/JasmineExtender";
+} from "../test/JasmineExtender";
+import { RDFDocument } from "./../RDF/Document";
 import * as Utils from "./../Utils";
 
-import * as Value from "./Value";
-import DefaultExport from "./Value";
+import DefaultExport, { RDFValue } from "./Value";
 
 describe( module( "Carbon/RDF/Value" ), ():void => {
 
-	it( isDefined(), ():void => {
-		expect( Value ).toBeDefined();
-		expect( Utils.isObject( Value ) ).toBe( true );
-	} );
-
 	describe( interfaze(
-		"Carbon.RDF.Value.Class",
+		"Carbon.RDF.Value.RDFValue",
 		"Interface that represents an `rdf:Value`."
 	), ():void => {
 
@@ -56,24 +51,44 @@ describe( module( "Carbon/RDF/Value" ), ():void => {
 
 	} );
 
-	it( hasDefaultExport( "Carbon.RDF.Value.Class" ), ():void => {
+	it( hasDefaultExport( "Carbon.RDF.Value.RDFValue" ), ():void => {
 		let defaultExport:DefaultExport = <any> {};
-		let defaultTarget:Value.Class;
+		let defaultTarget:RDFValue;
 
 		defaultTarget = defaultExport;
 		expect( defaultTarget ).toEqual( jasmine.any( Object ) );
 	} );
 
-	describe( clazz(
-		"Carbon.RDF.Value.Util",
-		"Class with useful functions to manage `Carbon.RDF.Value.Class` objects."
+	describe( interfaze(
+		"Carbon.RDF.Value.RDFValueFactory",
+		"Interface with the utils for `Carbon.RDF.Value.RDFValue` objects."
 	), ():void => {
+
+		it( hasMethod(
+			OBLIGATORY,
+			"parse",
+			"Returns the parsed object from an Literal, Node, or List.\n" +
+			"Returns null if it cannot be parsed", [
+				{ name: "pointerLibrary", type: "Carbon.Pointer.PointerLibrary" },
+				{ name: "value", type: "Carbon.RDF.Literal.RDFLiteral | Carbon.RDF.Node.RDFNode | Carbon.RDF.List.RDFList | Carbon.RDF.Value.RDFValue | string" },
+			],
+			{ type: "any" }
+		), ():void => {} );
+
+	} );
+
+	describe( property(
+		STATIC,
+		"RDFValueFactory",
+		"Carbon.RDF.Value.RDFValueFactory",
+		"Class with useful functions to manage `Carbon.RDF.Value.RDFValue` objects."
+	), ():void => {
+
 		let expandedObject:any;
 		let documentResource:any;
 		let pointerLibrary:PointerLibrary;
 		let result:any;
 		let context:AbstractContext;
-
 		beforeEach( ():void => {
 			expandedObject = [ {
 				"@id": "http://example.com/resource/",
@@ -166,47 +181,39 @@ describe( module( "Carbon/RDF/Value" ), ():void => {
 
 			context = new MockedContext();
 
-			documentResource = RDFDocument.Util.getDocumentResources( expandedObject )[ 0 ];
+			documentResource = RDFDocument.getDocumentResources( expandedObject )[ 0 ];
 			pointerLibrary = PersistedDocument.create( context.documents, expandedObject[ "@id" ] );
 		} );
 
 		it( isDefined(), ():void => {
-			expect( Value.Util ).toBeDefined();
-			expect( Utils.isFunction( Value.Util ) ).toBe( true );
+			expect( RDFValue ).toBeDefined();
+			expect( RDFValue ).toEqual( jasmine.any( Object ) );
 		} );
 
-		it( hasMethod(
-			STATIC,
-			"parseValue",
-			"Returns the parsed object from an Literal, Node, or List.\n" +
-			"Returns null if it cannot be parsed", [
-				{ name: "propertyValue", type: "Carbon.RDF.Value.Class" },
-				{ name: "pointerLibrary", type: "Carbon.Pointer.PointerLibrary" },
-			],
-			{ type: "any" }
-		), ():void => {
-			expect( Value.Util.parseValue ).toBeDefined();
-			expect( Utils.isFunction( Value.Util.parseValue ) ).toBe( true );
+		// TODO: Separate in different tests
+		it( "RDFValue.parse", ():void => {
+			expect( RDFValue.parse ).toBeDefined();
+			expect( Utils.isFunction( RDFValue.parse ) ).toBe( true );
 
-			let property:Value.Class;
+			let value:RDFValue;
 
-			property = documentResource[ "http://example.com/ns#string" ][ 0 ];
-			result = Value.Util.parseValue( property, pointerLibrary );
+			value = documentResource[ "http://example.com/ns#string" ][ 0 ];
+			result = RDFValue.parse( pointerLibrary, value  );
 			expect( Utils.isString( result ) ).toBe( true );
 			expect( result ).toBe( "a string" );
 
-			property = documentResource[ "http://example.com/ns#date" ][ 0 ];
-			result = Value.Util.parseValue( property, pointerLibrary );
+			value = documentResource[ "http://example.com/ns#date" ][ 0 ];
+			result = RDFValue.parse( pointerLibrary, value  );
 			expect( Utils.isDate( result ) ).toBe( true );
 			expect( result ).toEqual( new Date( "2001-02-15T05:35:12.029Z" ) );
 
-			property = documentResource[ "http://example.com/ns#pointer" ][ 0 ];
-			result = Value.Util.parseValue( property, pointerLibrary );
+			value = documentResource[ "http://example.com/ns#pointer" ][ 0 ];
+			result = RDFValue.parse( pointerLibrary, value  );
 			expect( Pointer.is( result ) ).toBe( true );
 			expect( result.id ).toBe( "http://example.com/pointer/1" );
 
-			property = documentResource[ "http://example.com/ns#list" ][ 0 ];
-			result = Value.Util.parseValue( property, pointerLibrary );
+			value = documentResource[ "http://example.com/ns#list" ][ 0 ];
+			result = RDFValue.parse( pointerLibrary, value  );
 			expect( Utils.isArray( result ) ).toBe( true );
 			expect( result.length ).toBe( 3 );
 			expect( result[ 0 ] ).toBe( 100 );
@@ -214,8 +221,8 @@ describe( module( "Carbon/RDF/Value" ), ():void => {
 			expect( Pointer.is( result[ 2 ] ) ).toBe( true );
 			expect( result[ 2 ].id ).toBe( "http://example.com/pointer/1" );
 
-			property = documentResource[ "http://example.com/ns#empty-property" ][ 0 ];
-			result = Value.Util.parseValue( property, pointerLibrary );
+			value = documentResource[ "http://example.com/ns#empty-property" ][ 0 ];
+			result = RDFValue.parse( pointerLibrary, value  );
 			expect( result ).toBeNull();
 		} );
 

@@ -10,8 +10,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var Errors_1 = require("../Errors");
 var JSONParser_1 = require("../HTTP/JSONParser");
 var Request_1 = require("../HTTP/Request");
+var List_1 = require("../RDF/List");
+var URI_1 = require("../RDF/URI");
 var ObjectSchema = __importStar(require("./../ObjectSchema"));
-var RDF = __importStar(require("../RDF"));
 var Utils = __importStar(require("./../Utils"));
 var MAX_CONTEXT_URLS = 10;
 var LINK_HEADER_REL = "http://www.w3.org/ns/json-ld#context";
@@ -77,7 +78,7 @@ var JSONLDProcessor = (function () {
                         if (!Utils.isString(urlOrContext))
                             continue;
                         var url = urlOrContext;
-                        url = RDF.URI.Util.resolve(base, url);
+                        url = URI_1.URI.resolve(base, url);
                         if (replace) {
                             if (Utils.isArray(contexts[url])) {
                                 Array.prototype.splice.apply(contextArray, [index, 1].concat(contexts[url]));
@@ -95,7 +96,7 @@ var JSONLDProcessor = (function () {
                 }
                 else if (Utils.isString(urlOrArrayOrContext)) {
                     var url = urlOrArrayOrContext;
-                    url = RDF.URI.Util.resolve(base, url);
+                    url = URI_1.URI.resolve(base, url);
                     if (replace) {
                         input[key] = contexts[url];
                     }
@@ -280,7 +281,7 @@ var JSONLDProcessor = (function () {
                 var expandedItem = JSONLDProcessor.process(context, item, activeProperty);
                 if (expandedItem === null)
                     continue;
-                if (insideList && (Utils.isArray(expandedItem) || RDF.List.Factory.is(expandedItem)))
+                if (insideList && (Utils.isArray(expandedItem) || List_1.RDFList.is(expandedItem)))
                     throw new Errors_1.InvalidJSONLDSyntaxError("Lists of lists are not permitted.");
                 if (!Utils.isArray(expandedItem))
                     expandedItem = [expandedItem];
@@ -302,7 +303,7 @@ var JSONLDProcessor = (function () {
             if (key === "@context")
                 continue;
             var uri = JSONLDProcessor.expandURI(context, key, { vocab: true });
-            if (!uri || !(RDF.URI.Util.isAbsolute(uri) || RDF.URI.Util.isBNodeID(uri) || JSONLDProcessor.isKeyword(uri)))
+            if (!uri || !(URI_1.URI.isAbsolute(uri) || URI_1.URI.isBNodeID(uri) || JSONLDProcessor.isKeyword(uri)))
                 continue;
             var value = element[key];
             if (JSONLDProcessor.isKeyword(uri)) {
@@ -345,7 +346,7 @@ var JSONLDProcessor = (function () {
             }
             if (expandedValue === null && uri !== "@value")
                 continue;
-            if (uri !== "@list" && !RDF.List.Factory.is(expandedValue) && container === ObjectSchema.ContainerType.LIST) {
+            if (uri !== "@list" && !List_1.RDFList.is(expandedValue) && container === ObjectSchema.ContainerType.LIST) {
                 if (!Utils.isArray(expandedValue))
                     expandedValue = [expandedValue];
                 expandedValue = { "@list": expandedValue };
@@ -413,7 +414,7 @@ var JSONLDProcessor = (function () {
     JSONLDProcessor.hasValue = function (element, propertyName, value) {
         if (JSONLDProcessor.hasProperty(element, propertyName)) {
             var item = element[propertyName];
-            var isList = RDF.List.Factory.is(item);
+            var isList = List_1.RDFList.is(item);
             if (isList || Utils.isArray(item)) {
                 var items = isList ? item["@list"] : item;
                 for (var _i = 0, items_1 = items; _i < items_1.length; _i++) {

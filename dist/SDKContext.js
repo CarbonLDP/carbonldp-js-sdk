@@ -33,7 +33,7 @@ var MemberRemoved_1 = require("./Messaging/MemberRemoved");
 var MemberRemovedDetails_1 = require("./Messaging/MemberRemovedDetails");
 var ObjectSchema = __importStar(require("./ObjectSchema"));
 var ProtectedDocument_1 = require("./ProtectedDocument");
-var RDF = __importStar(require("./RDF"));
+var URI_1 = require("./RDF/URI");
 var ValidationReport_1 = require("./SHACL/ValidationReport");
 var ValidationResult_1 = require("./SHACL/ValidationResult");
 var QueryMetadata_1 = require("./SPARQL/QueryDocument/QueryMetadata");
@@ -58,7 +58,7 @@ var SDKContext = (function () {
         configurable: true
     });
     SDKContext.prototype.resolve = function (relativeURI) {
-        return RDF.URI.Util.resolve(this.baseURI, relativeURI);
+        return URI_1.URI.resolve(this.baseURI, relativeURI);
     };
     SDKContext.prototype._resolvePath = function (path) {
         var leftSearchedPaths = path.split(".");
@@ -74,7 +74,7 @@ var SDKContext = (function () {
             var slug = Utils_1.isString(containerPath) ? containerPath : containerPath.slug;
             if (!slug)
                 throw new Errors.IllegalStateError("The path \"" + currentSearchedPaths.join(".") + "\" doesn't have a slug set.");
-            url = RDF.URI.Util.resolve(url, slug);
+            url = URI_1.URI.resolve(url, slug);
             documentPaths = Utils_1.isObject(containerPath) ? containerPath.paths : null;
         }
         return this.resolve(url);

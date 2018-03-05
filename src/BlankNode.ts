@@ -2,7 +2,7 @@ import { Document } from "./Document";
 import { IllegalArgumentError } from "./Errors";
 import { Fragment } from "./Fragment";
 import { ModelFactory } from "./ModelFactory";
-import * as URI from "./RDF/URI";
+import { URI } from "./RDF/URI";
 
 export interface BlankNode extends Fragment {
 }
@@ -19,7 +19,7 @@ export interface BlankNodeFactory extends ModelFactory<BlankNode> {
 export const BlankNode:BlankNodeFactory = {
 	is( object:object ):object is BlankNode {
 		return Fragment.is( object ) &&
-			URI.Util.isBNodeID( object.id )
+			URI.isBNodeID( object.id )
 			;
 	},
 
@@ -29,8 +29,8 @@ export const BlankNode:BlankNodeFactory = {
 	},
 
 	createFrom<T extends object>( object:T, document:Document, id?:string ):T & BlankNode {
-		if( id && ! URI.Util.isBNodeID( id ) ) throw new IllegalArgumentError( `The id "${ id }" is not an blank node label` );
-		if( ! id ) id = URI.Util.generateBNodeID();
+		if( id && ! URI.isBNodeID( id ) ) throw new IllegalArgumentError( `The id "${ id }" is not an blank node label` );
+		if( ! id ) id = URI.generateBNodeID();
 
 		return Fragment.createFrom<T>( object, document, id );
 	},

@@ -3,7 +3,7 @@ import Documents from "./Documents";
 import * as Errors from "./Errors";
 import DefaultExport, { FreeResources } from "./FreeResources";
 import { Pointer } from "./Pointer";
-import * as URI from "./RDF/URI";
+import { URI } from "./RDF/URI";
 import { Resource } from "./Resource";
 import {
 	extendsClass,
@@ -100,7 +100,7 @@ describe( module( "Carbon/FreeResources" ), ():void => {
 			OBLIGATORY,
 			"toJSON",
 			"Converts the resources contained in the current `Carbon.FreeResources.FreeResources` object to a JSON object.",
-			{ type: "Carbon.RDF.Node.Class[]" }
+			{ type: "Carbon.RDF.Node.RDFNode[]" }
 		), ():void => {} );
 
 	} );
@@ -405,18 +405,18 @@ describe( module( "Carbon/FreeResources" ), ():void => {
 				let resource00:Resource;
 				resource00 = freeResources.createResource();
 				expect( resource00 ).toBeTruthy();
-				expect( URI.Util.isBNodeID( resource00.id ) ).toBe( true );
+				expect( URI.isBNodeID( resource00.id ) ).toBe( true );
 
 				let resource01:Resource;
 				resource01 = freeResources.createResource();
 				expect( resource01 ).toBeTruthy();
-				expect( URI.Util.isBNodeID( resource01.id ) ).toBe( true );
+				expect( URI.isBNodeID( resource01.id ) ).toBe( true );
 				expect( resource00.id ).not.toBe( resource01.id );
 
 				let resource02:Resource;
 				resource02 = freeResources.createResource( "_:some" );
 				expect( resource02 ).toBeTruthy();
-				expect( URI.Util.isBNodeID( resource02.id ) ).toBe( true );
+				expect( URI.isBNodeID( resource02.id ) ).toBe( true );
 				expect( resource02.id ).toBe( "_:some" );
 
 				expect( () => freeResources.createResource( "no-valid-id" ) ).toThrowError( Errors.IllegalArgumentError );
@@ -432,14 +432,14 @@ describe( module( "Carbon/FreeResources" ), ():void => {
 				let resource00:Resource;
 				resource00 = freeResources.createResourceFrom( resourceObject00 );
 				expect( resource00 ).toBeTruthy();
-				expect( URI.Util.isBNodeID( resource00.id ) ).toBe( true );
+				expect( URI.isBNodeID( resource00.id ) ).toBe( true );
 				expect( resource00 ).toEqual( resourceObject00 as Resource );
 
 				let resourceObject01:Object = {};
 				let resource01:Resource;
 				resource01 = freeResources.createResourceFrom( resourceObject01 );
 				expect( resource01 ).toBeTruthy();
-				expect( URI.Util.isBNodeID( resource01.id ) ).toBe( true );
+				expect( URI.isBNodeID( resource01.id ) ).toBe( true );
 				expect( resource00.id ).not.toBe( resource01.id );
 				expect( resource01 ).toEqual( resourceObject01 as Resource );
 
@@ -447,7 +447,7 @@ describe( module( "Carbon/FreeResources" ), ():void => {
 				let resource02:Resource;
 				resource02 = freeResources.createResourceFrom( resourceObject02, "_:some" );
 				expect( resource02 ).toBeTruthy();
-				expect( URI.Util.isBNodeID( resource02.id ) ).toBe( true );
+				expect( URI.isBNodeID( resource02.id ) ).toBe( true );
 				expect( resource02.id ).toBe( "_:some" );
 				expect( resource02 ).toEqual( resourceObject02 as Resource );
 

@@ -10,12 +10,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var Utils = __importStar(require("./../Utils"));
 var XSD_1 = require("../Vocabularies/XSD");
 var Errors = __importStar(require("../Errors"));
+var Serializer = __importStar(require("./Literal/Serializer"));
+exports.Serializer = Serializer;
 var Serializers = __importStar(require("./Literal/Serializers"));
 exports.Serializers = Serializers;
-var Factory = (function () {
-    function Factory() {
-    }
-    Factory.from = function (value) {
+exports.RDFLiteral = {
+    from: function (value) {
         if (Utils.isNull(value))
             throw new Errors.IllegalArgumentError("Null cannot be converted into a Literal");
         if (!Utils.isDefined(value))
@@ -49,25 +49,24 @@ var Factory = (function () {
         if (type)
             literal["@type"] = type;
         return literal;
-    };
-    Factory.parse = function (literalValueOrLiteral, literalDataType) {
-        if (literalDataType === void 0) { literalDataType = null; }
+    },
+    parse: function (valueOrLiteral, type) {
         var literalValue;
-        if (Utils.isString(literalValueOrLiteral)) {
-            literalValue = literalValueOrLiteral;
+        if (Utils.isString(valueOrLiteral)) {
+            literalValue = valueOrLiteral;
         }
         else {
-            var literal = literalValueOrLiteral;
+            var literal = valueOrLiteral;
             if (!literal)
                 return null;
             if (!Utils.hasProperty(literal, "@value"))
                 return null;
-            literalDataType = "@type" in literal ? literal["@type"] : null;
+            type = "@type" in literal ? literal["@type"] : null;
             literalValue = literal["@value"];
         }
         var value = literalValue;
         var parts;
-        switch (literalDataType) {
+        switch (type) {
             case XSD_1.XSD.date:
             case XSD_1.XSD.dateTime:
                 value = new Date(literalValue);
@@ -116,18 +115,17 @@ var Factory = (function () {
                 break;
         }
         return value;
-    };
-    Factory.is = function (value) {
+    },
+    is: function (value) {
         return Utils.hasProperty(value, "@value")
             && Utils.isString(value["@value"]);
-    };
-    Factory.hasType = function (value, type) {
+    },
+    hasType: function (value, type) {
         if (!value["@type"] && type === XSD_1.XSD.string)
             return true;
         return value["@type"] === type;
-    };
-    return Factory;
-}());
-exports.Factory = Factory;
+    },
+};
+exports.default = exports.RDFLiteral;
 
 //# sourceMappingURL=Literal.js.map

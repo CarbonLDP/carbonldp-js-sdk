@@ -1,14 +1,7 @@
 "use strict";
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
-    result["default"] = mod;
-    return result;
-}
 Object.defineProperty(exports, "__esModule", { value: true });
 var Fragment_1 = require("./Fragment");
-var URI = __importStar(require("./RDF/URI"));
+var URI_1 = require("./RDF/URI");
 var Utils_1 = require("./Utils");
 exports.NamedFragment = {
     isDecorated: function (object) {
@@ -36,7 +29,7 @@ exports.NamedFragment = {
                 enumerable: false,
                 configurable: true,
                 get: function () {
-                    return URI.Util.getFragment(this.id);
+                    return URI_1.URI.getFragment(this.id);
                 },
                 set: function (value) {
                     this.id = this._document.id + "#" + value;

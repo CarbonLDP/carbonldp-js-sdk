@@ -1,15 +1,17 @@
-import Serializer from "./Literal/Serializer";
+import * as Serializer from "./Literal/Serializer";
 import * as Serializers from "./Literal/Serializers";
-export interface Class {
+export interface RDFLiteral {
     "@type"?: string;
     "@value": string;
+    "@language"?: string;
 }
-export declare class Factory {
-    static from(value: any): Class;
-    static parse(literalValue: string, literalDataType?: string): any;
-    static parse(literal: Class): any;
-    static is(value: any): boolean;
-    static hasType(value: Class, type: string): boolean;
+export interface RDFLiteralFactory {
+    from(value: any): RDFLiteral;
+    parse(value: string, type?: string): any;
+    parse(literal: RDFLiteral): any;
+    is(value: any): value is RDFLiteral;
+    hasType(value: RDFLiteral, type: string): boolean;
 }
-export default Class;
+export declare const RDFLiteral: RDFLiteralFactory;
+export default RDFLiteral;
 export { Serializer, Serializers };

@@ -9,7 +9,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var Errors = __importStar(require("../Errors"));
 var Request_1 = require("../HTTP/Request");
-var URI = __importStar(require("./../RDF/URI"));
+var URI_1 = require("../RDF/URI");
 var Utils = __importStar(require("./../Utils"));
 var PersistedRole = __importStar(require("./PersistedRole"));
 var Class = (function () {
@@ -26,8 +26,8 @@ var Class = (function () {
         var responseCreated;
         return Utils.promiseMethod(function () {
             containerURI = _this.getContainerURI();
-            parentURI = URI.Util.resolve(containerURI, parentURI);
-            if (!URI.Util.isBaseOf(containerURI, parentURI))
+            parentURI = URI_1.URI.resolve(containerURI, parentURI);
+            if (!URI_1.URI.isBaseOf(containerURI, parentURI))
                 throw new Errors.IllegalArgumentError("The parent role provided is not a valid role.");
             return _this.context.documents.exists(parentURI);
         }).then(function (_a) {
@@ -73,7 +73,7 @@ var Class = (function () {
     };
     Class.prototype.resolveURI = function (relativeURI) {
         var rolesContainer = this.getContainerURI();
-        var absoluteRoleURI = URI.Util.resolve(rolesContainer, relativeURI);
+        var absoluteRoleURI = URI_1.URI.resolve(rolesContainer, relativeURI);
         if (!absoluteRoleURI.startsWith(rolesContainer))
             throw new Errors.IllegalArgumentError("The provided URI \"" + relativeURI + "\" isn't a valid Carbon LDP role.");
         return absoluteRoleURI;

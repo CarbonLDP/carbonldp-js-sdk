@@ -16,7 +16,8 @@ var Header_1 = require("../HTTP/Header");
 var Request_1 = require("../HTTP/Request");
 var Parser_1 = require("../JSONLD/Parser");
 var ResponseMetadata_1 = require("../LDP/ResponseMetadata");
-var RDF = __importStar(require("../RDF"));
+var Document_1 = require("../RDF/Document");
+var Node_1 = require("../RDF/Node");
 var LDP_1 = require("../Vocabularies/LDP");
 var Utils = __importStar(require("./../Utils"));
 var BasicAuthenticator_1 = __importDefault(require("./BasicAuthenticator"));
@@ -71,7 +72,7 @@ var Class = (function () {
             return Request_1.RequestService.post(tokensURI, null, requestOptions, new Parser_1.JSONLDParser());
         }).then(function (_a) {
             var expandedResult = _a[0], response = _a[1];
-            var freeNodes = RDF.Node.Util.getFreeNodes(expandedResult);
+            var freeNodes = Node_1.RDFNode.getFreeNodes(expandedResult);
             var freeResources = _this.context.documents._getFreeResources(freeNodes);
             var tokenResources = freeResources.getResources().filter(function (resource) { return resource.hasType(Token.RDF_CLASS); });
             if (tokenResources.length === 0)
@@ -79,7 +80,7 @@ var Class = (function () {
             if (tokenResources.length > 1)
                 throw new Errors_1.BadResponseError("Multiple '" + Token.RDF_CLASS + "' were returned. ", response);
             var token = tokenResources[0];
-            var userDocuments = RDF.Document.Util.getDocuments(expandedResult).filter(function (rdfDocument) { return rdfDocument["@id"] === token.user.id; });
+            var userDocuments = Document_1.RDFDocument.getDocuments(expandedResult).filter(function (rdfDocument) { return rdfDocument["@id"] === token.user.id; });
             userDocuments.forEach(function (document) { return _this.context.documents._getPersistedDocument(document, response); });
             var responseMetadata = freeResources
                 .getResources()

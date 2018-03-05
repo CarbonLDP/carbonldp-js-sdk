@@ -1,30 +1,22 @@
 import { Parser } from "../HTTP/Parser";
 import { JSONLDParser } from "../JSONLD/Parser";
-import * as Node from "./Node";
-export interface Class {
+import { RDFNode } from "./Node";
+export interface RDFDocument {
     "@id"?: string;
-    "@graph": Node.Class[];
+    "@graph": RDFNode[];
 }
-export declare class Factory {
-    static is(object: Object): object is Class;
-    static create(resources: Node.Class[], uri?: string): Class;
+export interface RDFDocumentFactory {
+    is(value: any): value is RDFDocument;
+    create(resources: RDFNode[], uri?: string): RDFDocument;
+    getDocuments(objects: object | object[]): RDFDocument[];
+    getResources(objects: object | object[]): RDFNode[];
+    getDocumentResources(document: RDFNode[] | RDFDocument): RDFNode[];
+    getNamedFragmentResources(document: RDFNode[] | RDFDocument, documentResource?: string | RDFNode): RDFNode[];
+    getBNodeResources(document: RDFDocument): RDFNode[];
+    getNodes(rdfDocument: RDFDocument): [RDFNode[], RDFNode[]];
 }
-export declare class Util {
-    static getDocuments(objects: Object[]): Class[];
-    static getDocuments(object: Object): Class[];
-    static getResources(objects: Object[]): Node.Class[];
-    static getResources(object: Object): Node.Class[];
-    static getDocumentResources(document: Node.Class[]): Node.Class[];
-    static getDocumentResources(document: Class): Node.Class[];
-    static getFragmentResources(document: Node.Class[], documentResource?: Node.Class): Node.Class[];
-    static getFragmentResources(document: Class, documentResource?: Node.Class): Node.Class[];
-    static getFragmentResources(document: Node.Class[], documentResourceURI?: string): Node.Class[];
-    static getFragmentResources(document: Class, documentResourceURI?: string): Node.Class[];
-    static getBNodeResources(document: Class): Node.Class[];
-    static getNodes(rdfDocument: Class): [Node.Class[], Node.Class[]];
-    private static isNodeFragment(node);
+export declare const RDFDocument: RDFDocumentFactory;
+export declare class RDFDocumentParser extends JSONLDParser implements Parser<RDFDocument[]> {
+    parse(input: string): Promise<RDFDocument[]>;
 }
-export declare class RDFDocumentParser extends JSONLDParser implements Parser<Class[]> {
-    parse(input: string): Promise<Class[]>;
-}
-export default Class;
+export default RDFDocument;

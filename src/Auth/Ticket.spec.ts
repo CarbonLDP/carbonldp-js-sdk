@@ -1,6 +1,6 @@
 import { CS } from "../Vocabularies/CS";
 import { XSD } from "../Vocabularies/XSD";
-import * as URI from "./../RDF/URI";
+import { URI } from "./../RDF/URI";
 import { Resource } from "./../Resource";
 import {
 	clazz,
@@ -122,7 +122,7 @@ describe( module( "Carbon/Auth/Ticket" ), ():void => {
 			expect( Utils.isFunction( Ticket.Factory.create ) ).toBe( true );
 
 			let ticket:Ticket.Class = Ticket.Factory.create( "http://example.com/resource/" );
-			expect( URI.Util.isBNodeID( ticket.id ) ).toBe( true );
+			expect( URI.isBNodeID( ticket.id ) ).toBe( true );
 			expect( ticket.forURI.id ).toBe( "http://example.com/resource/" );
 			expect( ticket.ticketKey ).toBeUndefined();
 			expect( ticket.expirationTime ).toBeUndefined();

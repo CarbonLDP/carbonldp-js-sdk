@@ -15,8 +15,7 @@ var PersistedFragment_1 = require("./PersistedFragment");
 var PersistedNamedFragment_1 = require("./PersistedNamedFragment");
 var PersistedResource_1 = require("./PersistedResource");
 var Pointer_1 = require("./Pointer");
-var RDF = __importStar(require("./RDF"));
-var URI = __importStar(require("./RDF/URI"));
+var URI_1 = require("./RDF/URI");
 var ServiceAwareDocument_1 = require("./ServiceAwareDocument");
 var Utils = __importStar(require("./Utils"));
 var prototype_1 = require("./Document/prototype");
@@ -127,7 +126,7 @@ exports.PersistedDocument = {
                         id = ObjectSchema.ObjectSchemaUtils.resolveURI(id, this._documents.getGeneralSchema());
                         if (superFunction.call(this, id))
                             return true;
-                        return !URI.Util.isBNodeID(id) && this._documents.hasPointer(id);
+                        return !URI_1.URI.isBNodeID(id) && this._documents.hasPointer(id);
                     };
                 })(),
             },
@@ -396,7 +395,7 @@ function syncSavedFragments() {
     document._savedFragments = Utils.ArrayUtils.from(document._fragmentsIndex.values());
 }
 function resolveURI(uri) {
-    if (URI.Util.isAbsolute(uri))
+    if (URI_1.URI.isAbsolute(uri))
         return uri;
     var schema = this._documents.getGeneralSchema();
     return ObjectSchema.ObjectSchemaUtils.resolveURI(uri, schema, { vocab: true });
@@ -423,7 +422,7 @@ function extendCreateFragment(superFunction) {
     return function (slugOrObject, slug) {
         var fragment = superFunction.call(this, slugOrObject, slug);
         var id = fragment.id;
-        if (RDF.URI.Util.isBNodeID(id))
+        if (URI_1.URI.isBNodeID(id))
             PersistedFragment_1.PersistedFragment.decorate(fragment);
         return fragment;
     };

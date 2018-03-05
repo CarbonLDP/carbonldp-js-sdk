@@ -9,7 +9,7 @@ import {
 	PointerLibrary,
 	PointerValidator,
 } from "../Pointer";
-import * as RDFDocument from "../RDF/Document";
+import { RDFDocument } from "../RDF/Document";
 import { Resource } from "../Resource";
 import { C } from "../Vocabularies/C";
 import { LDP } from "../Vocabularies/LDP";
@@ -60,7 +60,7 @@ export interface Document extends Resource, PointerLibrary, PointerValidator {
 	removeNamedFragment( slugOrFragment:string | NamedFragment ):void;
 
 
-	toJSON( objectSchemaResolver?:ObjectSchema.ObjectSchemaResolver, jsonldConverter?:JSONLDConverter ):RDFDocument.Class;
+	toJSON( objectSchemaResolver?:ObjectSchema.ObjectSchemaResolver, jsonldConverter?:JSONLDConverter ):RDFDocument;
 }
 
 export interface DocumentFactory extends ModelFactory<Document>, ModelDecorator<Document> {

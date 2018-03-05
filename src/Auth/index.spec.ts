@@ -3,7 +3,7 @@ import * as Errors from "../Errors";
 import { BadResponseError } from "../HTTP/Errors";
 import { RequestOptions } from "../HTTP/Request";
 import { Response } from "../HTTP/Response";
-import * as URI from "../RDF/URI";
+import { URI } from "../RDF/URI";
 import {
 	clazz,
 	enumeration,
@@ -1379,9 +1379,9 @@ describe( module( "Carbon/Auth" ), ():void => {
 			expect( promise instanceof Promise ).toBe( true );
 			promises.push( promise.then( ( uri:string ) => {
 				expect( Utils.isString( uri ) ).toBe( true );
-				expect( URI.Util.isBaseOf( "http://example.com/resource/", uri ) ).toBe( true );
+				expect( URI.isBaseOf( "http://example.com/resource/", uri ) ).toBe( true );
 
-				let query:Map<string, string | string[]> = URI.Util.getParameters( uri );
+				let query:Map<string, string | string[]> = URI.getParameters( uri );
 				expect( query.size ).toBe( 1 );
 				expect( query.get( "ticket" ) ).toBe( "1234123412341234" );
 			} ) );
@@ -1390,9 +1390,9 @@ describe( module( "Carbon/Auth" ), ():void => {
 			expect( promise instanceof Promise ).toBe( true );
 			promises.push( promise.then( ( uri:string ) => {
 				expect( Utils.isString( uri ) ).toBe( true );
-				expect( URI.Util.isBaseOf( "http://example.com/resource/", uri ) ).toBe( true );
+				expect( URI.isBaseOf( "http://example.com/resource/", uri ) ).toBe( true );
 
-				let query:Map<string, string | string[]> = URI.Util.getParameters( uri );
+				let query:Map<string, string | string[]> = URI.getParameters( uri );
 				expect( query.size ).toBe( 2 );
 				expect( query.get( "another" ) ).toBe( "yes" );
 				expect( query.get( "ticket" ) ).toBe( "1234123412341234" );

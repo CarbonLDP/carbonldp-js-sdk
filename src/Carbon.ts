@@ -96,7 +96,7 @@ export class Carbon extends AbstractContext.AbstractContext {
 		super();
 
 		if( Utils.isString( urlOrSettings ) ) {
-			if( ! RDF.URI.Util.hasProtocol( urlOrSettings ) ) throw new Errors.IllegalArgumentError( `The URL must contain a valid protocol: "http://", "https://".` );
+			if( ! RDF.URI.URI.hasProtocol( urlOrSettings ) ) throw new Errors.IllegalArgumentError( `The URL must contain a valid protocol: "http://", "https://".` );
 			this._baseURI = urlOrSettings;
 
 		} else {

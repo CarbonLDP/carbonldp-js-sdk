@@ -2,7 +2,7 @@ import { CS } from "../Vocabularies/CS";
 import { XSD } from "../Vocabularies/XSD";
 import * as ObjectSchema from "./../ObjectSchema";
 import { Pointer } from "./../Pointer";
-import * as URI from "./../RDF/URI";
+import { URI } from "./../RDF/URI";
 import { Resource } from "./../Resource";
 
 
@@ -34,7 +34,7 @@ export interface Class extends Resource {
 export class Factory {
 
 	static create( uri:string ):Class {
-		return Factory.createFrom( Resource.create( URI.Util.generateBNodeID() ), uri );
+		return Factory.createFrom( Resource.create( URI.generateBNodeID() ), uri );
 	}
 
 	static createFrom<T extends Resource>( object:T, uri:string ):Class & T {

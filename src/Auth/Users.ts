@@ -4,7 +4,7 @@ import { RequestOptions } from "../HTTP/Request";
 import { Response } from "../HTTP/Response";
 import { Pointer } from "../Pointer";
 import { promiseMethod } from "../Utils";
-import * as URI from "./../RDF/URI";
+import { URI } from "./../RDF/URI";
 import * as Credentials from "./Credentials";
 import * as PersistedCredentials from "./PersistedCredentials";
 import * as PersistedUser from "./PersistedUser";
@@ -60,7 +60,7 @@ export class Class {
 
 	private resolveURI( relativeURI:string ):string {
 		const usersContainer:string = this.getContainerURI();
-		const absoluteRoleURI:string = URI.Util.resolve( usersContainer, relativeURI );
+		const absoluteRoleURI:string = URI.resolve( usersContainer, relativeURI );
 		if( ! absoluteRoleURI.startsWith( usersContainer ) ) throw new Errors.IllegalArgumentError( `The provided URI "${ relativeURI }" isn't a valid Carbon LDP user.` );
 
 		return absoluteRoleURI;

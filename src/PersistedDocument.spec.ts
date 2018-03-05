@@ -12,7 +12,7 @@ import DefaultExport, { PersistedDocument } from "./PersistedDocument";
 import { PersistedFragment } from "./PersistedFragment";
 import { PersistedNamedFragment } from "./PersistedNamedFragment";
 import { Pointer } from "./Pointer";
-import * as URI from "./RDF/URI";
+import { URI } from "./RDF/URI";
 import {
 	extendsClass,
 	hasDefaultExport,
@@ -1357,7 +1357,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 					expect( fragment.myProperty ).toBe( "Fragment with nested object" );
 					expect( fragment.myPointer ).toBeDefined();
 					expect( Fragment.isDecorated( fragment.myPointer ) ).toBe( true );
-					expect( URI.Util.isBNodeID( (<Fragment> fragment.myPointer).id ) ).toBe( true );
+					expect( URI.isBNodeID( (<Fragment> fragment.myPointer).id ) ).toBe( true );
 					expect( fragment.myPointer.myProperty ).toBeDefined();
 					expect( fragment.myPointer.myProperty ).toBe( "The Nested object" );
 
@@ -1368,7 +1368,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 					expect( fragment.myProperty ).toBe( "Fragment with nested object" );
 					expect( fragment.myPointer ).toBeDefined();
 					expect( Fragment.isDecorated( fragment.myPointer ) ).toBe( true );
-					expect( URI.Util.isBNodeID( (<Fragment> fragment.myPointer).id ) ).toBe( true );
+					expect( URI.isBNodeID( (<Fragment> fragment.myPointer).id ) ).toBe( true );
 					expect( fragment.myPointer.myProperty ).toBeDefined();
 					expect( fragment.myPointer.myProperty ).toBe( "The Nested object" );
 
@@ -1394,23 +1394,23 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 					fragment = document.createFragment<MyInterface>( object );
 					expect( object ).toBe( fragment );
 					expect( Fragment.isDecorated( fragment ) ).toBe( true );
-					expect( URI.Util.isBNodeID( fragment.id ) ).toBe( true );
+					expect( URI.isBNodeID( fragment.id ) ).toBe( true );
 					expect( fragment.myProperty ).toBeUndefined();
 
 					object = { myProperty: "The property" };
 					fragment = document.createFragment<MyInterface>( object );
 					expect( Fragment.isDecorated( fragment ) ).toBe( true );
-					expect( URI.Util.isBNodeID( fragment.id ) ).toBe( true );
+					expect( URI.isBNodeID( fragment.id ) ).toBe( true );
 					expect( fragment.myProperty ).toBe( "The property" );
 
 					object = { myProperty: "Fragment with nested object", myPointer: { myProperty: "The Nested object" } };
 					fragment = document.createFragment<MyInterface>( object );
 					expect( Fragment.isDecorated( fragment ) ).toBe( true );
-					expect( URI.Util.isBNodeID( fragment.id ) ).toBe( true );
+					expect( URI.isBNodeID( fragment.id ) ).toBe( true );
 					expect( fragment.myProperty ).toBe( "Fragment with nested object" );
 					expect( fragment.myPointer ).toBeDefined();
 					expect( Fragment.isDecorated( fragment.myPointer ) ).toBe( true );
-					expect( URI.Util.isBNodeID( (<Fragment> fragment.myPointer).id ) ).toBe( true );
+					expect( URI.isBNodeID( (<Fragment> fragment.myPointer).id ) ).toBe( true );
 					expect( fragment.myPointer.myProperty ).toBeDefined();
 					expect( fragment.myPointer.myProperty ).toBe( "The Nested object" );
 				} );
@@ -1450,12 +1450,12 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 					fragment1 = document.createFragment();
 					expect( Fragment.isDecorated( fragment1 ) ).toBe( true );
 					expect( Utils.isString( fragment1.id ) ).toBe( true );
-					expect( URI.Util.isBNodeID( fragment1.id ) ).toBe( true );
+					expect( URI.isBNodeID( fragment1.id ) ).toBe( true );
 
 					fragment2 = document.createFragment();
 					expect( Fragment.isDecorated( fragment2 ) ).toBe( true );
 					expect( Utils.isString( fragment2.id ) ).toBe( true );
-					expect( URI.Util.isBNodeID( fragment2.id ) ).toBe( true );
+					expect( URI.isBNodeID( fragment2.id ) ).toBe( true );
 
 					expect( fragment1.id ).not.toBe( fragment2.id );
 				} );
@@ -1520,7 +1520,7 @@ describe( module( "Carbon/PersistedDocument" ), ():void => {
 					expect( fragment.myProperty ).toBe( "Fragment with nested object" );
 					expect( fragment.myPointer ).toBeDefined();
 					expect( Fragment.isDecorated( fragment.myPointer ) ).toBe( true );
-					expect( URI.Util.isBNodeID( (<Fragment> fragment.myPointer).id ) ).toBe( true );
+					expect( URI.isBNodeID( (<Fragment> fragment.myPointer).id ) ).toBe( true );
 					expect( fragment.myPointer.myProperty ).toBeDefined();
 					expect( fragment.myPointer.myProperty ).toBe( "The Nested object" );
 				} );

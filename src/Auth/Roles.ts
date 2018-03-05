@@ -5,9 +5,9 @@ import {
 	RequestUtils,
 } from "../HTTP/Request";
 import { Response } from "../HTTP/Response";
+import { PersistedDocument } from "../PersistedDocument";
 import { Pointer } from "../Pointer";
-import { PersistedDocument } from "./../PersistedDocument";
-import * as URI from "./../RDF/URI";
+import { URI } from "../RDF/URI";
 import * as SPARQL from "./../SPARQL";
 import * as Utils from "./../Utils";
 import * as PersistedRole from "./PersistedRole";
@@ -35,8 +35,8 @@ export class Class {
 		return Utils.promiseMethod( () => {
 			containerURI = this.getContainerURI();
 
-			parentURI = URI.Util.resolve( containerURI, parentURI );
-			if( ! URI.Util.isBaseOf( containerURI, parentURI ) ) throw new Errors.IllegalArgumentError( "The parent role provided is not a valid role." );
+			parentURI = URI.resolve( containerURI, parentURI );
+			if( ! URI.isBaseOf( containerURI, parentURI ) ) throw new Errors.IllegalArgumentError( "The parent role provided is not a valid role." );
 			return this.context.documents.exists( parentURI );
 
 		} ).then( ( [ exists, response ]:[ boolean, Response ] ) => {
@@ -87,7 +87,7 @@ export class Class {
 
 	private resolveURI( relativeURI:string ):string {
 		const rolesContainer:string = this.getContainerURI();
-		const absoluteRoleURI:string = URI.Util.resolve( rolesContainer, relativeURI );
+		const absoluteRoleURI:string = URI.resolve( rolesContainer, relativeURI );
 		if( ! absoluteRoleURI.startsWith( rolesContainer ) ) throw new Errors.IllegalArgumentError( `The provided URI "${ relativeURI }" isn't a valid Carbon LDP role.` );
 
 		return absoluteRoleURI;

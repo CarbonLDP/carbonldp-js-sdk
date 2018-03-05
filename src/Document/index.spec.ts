@@ -261,7 +261,7 @@ describe( module( "Carbon/Document" ), ():void => {
 					{ name: "objectSchemaResolver", type: "Carbon.ObjectSchema.ObjectSchemaResolver", optional:true },
 					{ name: "jsonLDConverter", type: "Carbon.JSONLDConverter.Class", optional: true },
 				],
-				{ type: "Carbon.RDF.Document.Class" }
+				{ type: "Carbon.RDF.Document.RDFDocument" }
 			), ():void => {} );
 
 		} );

@@ -49,7 +49,8 @@ var FreeResources_1 = require("../FreeResources");
 var Errors_1 = require("../HTTP/Errors");
 var Request_1 = require("../HTTP/Request");
 var Parser_1 = require("../JSONLD/Parser");
-var RDF = __importStar(require("../RDF"));
+var Node_1 = require("../RDF/Node");
+var URI_1 = require("../RDF/URI");
 var Resource_1 = require("../Resource");
 var Utils = __importStar(require("../Utils"));
 var LDP_1 = require("../Vocabularies/LDP");
@@ -133,8 +134,8 @@ var Class = (function () {
                 .catch(function (response) { return _this.context.documents._parseErrorResponse(response); });
         }).then(function (_a) {
             var expandedResult = _a[0], response = _a[1];
-            var freeNodes = RDF.Node.Util.getFreeNodes(expandedResult);
-            var ticketNodes = freeNodes.filter(function (freeNode) { return RDF.Node.Util.hasType(freeNode, Ticket.RDF_CLASS); });
+            var freeNodes = Node_1.RDFNode.getFreeNodes(expandedResult);
+            var ticketNodes = freeNodes.filter(function (freeNode) { return Node_1.RDFNode.hasType(freeNode, Ticket.RDF_CLASS); });
             if (ticketNodes.length === 0)
                 throw new Errors_1.BadResponseError("No " + Ticket.RDF_CLASS + " was returned.", response);
             if (ticketNodes.length > 1)
@@ -150,7 +151,7 @@ var Class = (function () {
         var resourceURI = this.context.resolve(uri);
         return this.createTicket(resourceURI, requestOptions).then(function (_a) {
             var ticket = _a[0], response = _a[1];
-            resourceURI += RDF.URI.Util.hasQuery(resourceURI) ? "&" : "?";
+            resourceURI += URI_1.URI.hasQuery(resourceURI) ? "&" : "?";
             resourceURI += "ticket=" + ticket.ticketKey;
             return resourceURI;
         });

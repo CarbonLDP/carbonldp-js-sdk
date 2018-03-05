@@ -7,8 +7,9 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 }
 Object.defineProperty(exports, "__esModule", { value: true });
-var Errors_1 = require("./Errors");
-var URI = __importStar(require("./RDF/URI"));
+var IDAlreadyInUseError_1 = require("./Errors/IDAlreadyInUseError");
+var IllegalArgumentError_1 = require("./Errors/IllegalArgumentError");
+var URI_1 = require("./RDF/URI");
 var Resource_1 = require("./Resource");
 var Utils = __importStar(require("./Utils"));
 function hasPointer(id) {
@@ -25,7 +26,7 @@ function getPointer(id) {
     return !resource ? this.createResource(id) : resource;
 }
 function inLocalScope(id) {
-    return URI.Util.isBNodeID(id);
+    return URI_1.URI.isBNodeID(id);
 }
 function inScope(idOrPointer) {
     var id = Utils.isString(idOrPointer) ? idOrPointer : idOrPointer.id;
@@ -46,12 +47,12 @@ function createResource(id) {
 function createResourceFrom(object, id) {
     if (id) {
         if (!inLocalScope(id))
-            throw new Errors_1.IllegalArgumentError("The id \"" + id + "\" is out of scope.");
+            throw new IllegalArgumentError_1.IllegalArgumentError("The id \"" + id + "\" is out of scope.");
         if (this._resourcesIndex.has(id))
-            throw new Errors_1.IDAlreadyInUseError("The id \"" + id + "\" is already in use by another resource.");
+            throw new IDAlreadyInUseError_1.IDAlreadyInUseError("The id \"" + id + "\" is already in use by another resource.");
     }
     else {
-        id = URI.Util.generateBNodeID();
+        id = URI_1.URI.generateBNodeID();
     }
     var resource = Resource_1.Resource.createFrom(object, id);
     this._resourcesIndex.set(id, resource);

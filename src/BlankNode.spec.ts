@@ -1,6 +1,6 @@
 import DefaultExport, { BlankNode } from "./BlankNode";
 import { Document } from "./Document";
-import * as URI from "./RDF/URI";
+import { URI } from "./RDF/URI";
 
 import {
 	clazz,
@@ -122,13 +122,13 @@ describe( module( "Carbon/BlankNode" ), ():void => {
 				blankNode = BlankNode.createFrom<MyFragment>( { property: "my property 3" }, document );
 				expect( blankNode ).toBeTruthy();
 				expect( blankNode._document ).toBe( document );
-				expect( URI.Util.isBNodeID( blankNode.id ) ).toBe( true );
+				expect( URI.isBNodeID( blankNode.id ) ).toBe( true );
 				expect( blankNode.property ).toBe( "my property 3" );
 
 				let anotherBlankNode:BlankNode = BlankNode.createFrom<{}>( {}, document );
 				expect( anotherBlankNode ).toBeTruthy();
 				expect( anotherBlankNode._document ).toBe( document );
-				expect( URI.Util.isBNodeID( anotherBlankNode.id ) ).toBe( true );
+				expect( URI.isBNodeID( anotherBlankNode.id ) ).toBe( true );
 				expect( anotherBlankNode[ "property" ] ).toBeUndefined();
 			} );
 

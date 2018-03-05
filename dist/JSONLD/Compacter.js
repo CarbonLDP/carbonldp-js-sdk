@@ -1,23 +1,12 @@
 "use strict";
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
-    result["default"] = mod;
-    return result;
-}
 Object.defineProperty(exports, "__esModule", { value: true });
 var PersistedDocument_1 = require("../PersistedDocument");
 var Pointer_1 = require("../Pointer");
-var RDFDocument = __importStar(require("../RDF/Document"));
-var URI_1 = require("../RDF/URI");
+var Document_1 = require("../RDF/Document");
+var Node_1 = require("../RDF/Node");
 var PartialMetadata_1 = require("../SPARQL/QueryDocument/PartialMetadata");
 var QueryContextBuilder_1 = require("../SPARQL/QueryDocument/QueryContextBuilder");
 var QueryProperty_1 = require("../SPARQL/QueryDocument/QueryProperty");
-function getRelativeID(node) {
-    var id = node["@id"];
-    return URI_1.Util.hasFragment(id) ? URI_1.Util.getFragment(id) : id;
-}
 var JSONLDCompacter = (function () {
     function JSONLDCompacter(documents, root, schemaResolver, jsonldConverter) {
         this.documents = documents;
@@ -34,11 +23,11 @@ var JSONLDCompacter = (function () {
         var _this = this;
         if (mainDocuments === void 0) { mainDocuments = rdfDocuments; }
         rdfDocuments.forEach(function (rdfDocument) {
-            var _a = RDFDocument.Util.getNodes(rdfDocument), documentNode = _a[0][0], fragmentNodes = _a[1];
+            var _a = Document_1.RDFDocument.getNodes(rdfDocument), documentNode = _a[0][0], fragmentNodes = _a[1];
             var targetDocument = _this.getResource(documentNode, _this.documents, true);
             var fragmentsSet = new Set(targetDocument._fragmentsIndex.keys());
             fragmentNodes.forEach(function (fragmentNode) {
-                var fragmentID = getRelativeID(fragmentNode);
+                var fragmentID = Node_1.RDFNode.getRelativeID(fragmentNode);
                 if (fragmentsSet.has(fragmentID))
                     fragmentsSet.delete(fragmentID);
                 _this.getResource(fragmentNode, targetDocument);

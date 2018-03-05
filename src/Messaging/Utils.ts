@@ -1,7 +1,7 @@
 import Carbon from "../Carbon";
 import { Context } from "../Context";
 import { IllegalArgumentError, IllegalStateError } from "../Errors";
-import { Util as URIUtils } from "../RDF/URI";
+import { URI } from "../RDF/URI";
 import Service from "./Service";
 
 export function validateEventContext( context:Context ):void {
@@ -14,10 +14,10 @@ export function validateEventType( event:string ):void {
 }
 
 export function parseURIPattern( uriPattern:string, baseURI:string ):string {
-	if( ! URIUtils.isBaseOf( baseURI, uriPattern ) ) throw new IllegalArgumentError( `Provided uriPattern "${ uriPattern }" is an invalid for your Carbon instance.` );
+	if( ! URI.isBaseOf( baseURI, uriPattern ) ) throw new IllegalArgumentError( `Provided uriPattern "${ uriPattern }" is an invalid for your Carbon instance.` );
 
 	if( uriPattern === "/" ) return "";
-	uriPattern = URIUtils.getRelativeURI( uriPattern, baseURI );
+	uriPattern = URI.getRelativeURI( uriPattern, baseURI );
 	uriPattern = uriPattern.substring( + uriPattern.startsWith( "/" ), uriPattern.length - + uriPattern.endsWith( "/" ) );
 
 	return uriPattern

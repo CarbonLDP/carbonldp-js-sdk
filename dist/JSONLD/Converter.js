@@ -9,9 +9,12 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var IllegalArgumentError_1 = require("../Errors/IllegalArgumentError");
 var Pointer_1 = require("../Pointer");
+var List_1 = require("../RDF/List");
+var XSDSerializers = __importStar(require("../RDF/Literal/Serializers/XSD"));
+var Node_1 = require("../RDF/Node");
+var URI_1 = require("../RDF/URI");
 var XSD_1 = require("../Vocabularies/XSD");
 var ObjectSchema = __importStar(require("./../ObjectSchema"));
-var RDF = __importStar(require("../RDF"));
 var Utils = __importStar(require("./../Utils"));
 var Utils_1 = require("./Utils");
 var JSONLDConverter = (function () {
@@ -25,18 +28,18 @@ var JSONLDConverter = (function () {
     });
     JSONLDConverter.getDefaultSerializers = function () {
         var literalSerializers = new Map();
-        literalSerializers.set(XSD_1.XSD.date, RDF.Literal.Serializers.XSD.dateSerializer);
-        literalSerializers.set(XSD_1.XSD.dateTime, RDF.Literal.Serializers.XSD.dateTimeSerializer);
-        literalSerializers.set(XSD_1.XSD.time, RDF.Literal.Serializers.XSD.timeSerializer);
-        literalSerializers.set(XSD_1.XSD.integer, RDF.Literal.Serializers.XSD.integerSerializer);
-        literalSerializers.set(XSD_1.XSD.int, RDF.Literal.Serializers.XSD.integerSerializer);
-        literalSerializers.set(XSD_1.XSD.unsignedInt, RDF.Literal.Serializers.XSD.unsignedIntegerSerializer);
-        literalSerializers.set(XSD_1.XSD.long, RDF.Literal.Serializers.XSD.longSerializer);
-        literalSerializers.set(XSD_1.XSD.unsignedLong, RDF.Literal.Serializers.XSD.unsignedLongSerializer);
-        literalSerializers.set(XSD_1.XSD.float, RDF.Literal.Serializers.XSD.floatSerializer);
-        literalSerializers.set(XSD_1.XSD.double, RDF.Literal.Serializers.XSD.floatSerializer);
-        literalSerializers.set(XSD_1.XSD.boolean, RDF.Literal.Serializers.XSD.booleanSerializer);
-        literalSerializers.set(XSD_1.XSD.string, RDF.Literal.Serializers.XSD.stringSerializer);
+        literalSerializers.set(XSD_1.XSD.date, XSDSerializers.dateSerializer);
+        literalSerializers.set(XSD_1.XSD.dateTime, XSDSerializers.dateTimeSerializer);
+        literalSerializers.set(XSD_1.XSD.time, XSDSerializers.timeSerializer);
+        literalSerializers.set(XSD_1.XSD.integer, XSDSerializers.integerSerializer);
+        literalSerializers.set(XSD_1.XSD.int, XSDSerializers.integerSerializer);
+        literalSerializers.set(XSD_1.XSD.unsignedInt, XSDSerializers.unsignedIntegerSerializer);
+        literalSerializers.set(XSD_1.XSD.long, XSDSerializers.longSerializer);
+        literalSerializers.set(XSD_1.XSD.unsignedLong, XSDSerializers.unsignedLongSerializer);
+        literalSerializers.set(XSD_1.XSD.float, XSDSerializers.floatSerializer);
+        literalSerializers.set(XSD_1.XSD.double, XSDSerializers.floatSerializer);
+        literalSerializers.set(XSD_1.XSD.boolean, XSDSerializers.booleanSerializer);
+        literalSerializers.set(XSD_1.XSD.string, XSDSerializers.stringSerializer);
         return literalSerializers;
     };
     JSONLDConverter.prototype.compact = function (expandedObjectOrObjects, targetObjectOrObjectsOrDigestedContext, digestedSchemaOrPointerLibrary, pointerLibrary, strict) {
@@ -71,7 +74,7 @@ var JSONLDConverter = (function () {
             if (propertyName === "types")
                 return;
             var expandedPropertyName = ObjectSchema.ObjectSchemaUtils.resolveURI(propertyName, digestedSchema, { vocab: true });
-            if (RDF.URI.Util.isRelative(expandedPropertyName))
+            if (URI_1.URI.isRelative(expandedPropertyName))
                 return;
             var expandedValue = _this.expandProperty(propertyName, value, digestedSchema, generalSchema);
             if (expandedPropertyName === null)
@@ -177,10 +180,10 @@ var JSONLDConverter = (function () {
             var propertyName = propertyURINameMap.has(propertyURI) ?
                 propertyURINameMap.get(propertyURI) :
                 digestedSchema.vocab !== null ?
-                    RDF.URI.Util.getRelativeURI(propertyURI, digestedSchema.vocab) :
+                    URI_1.URI.getRelativeURI(propertyURI, digestedSchema.vocab) :
                     propertyURI;
             var targetValue = _this.getPropertyValue(propertyName, propertyValues, digestedSchema, pointerLibrary);
-            if (targetValue === null)
+            if (targetValue === null || targetValue === void 0)
                 return;
             targetObject[propertyName] = targetValue;
         });
@@ -188,7 +191,7 @@ var JSONLDConverter = (function () {
     };
     JSONLDConverter.prototype.getPropertyContainerType = function (propertyValues) {
         if (propertyValues.length === 1) {
-            if (RDF.List.Factory.is(propertyValues[0]))
+            if (List_1.RDFList.is(propertyValues[0]))
                 return ObjectSchema.ContainerType.LIST;
         }
         else {
@@ -202,10 +205,10 @@ var JSONLDConverter = (function () {
             definition.containerType :
             this.getPropertyContainerType(propertyValues);
         if (propertyContainer === ObjectSchema.ContainerType.LANGUAGE)
-            return RDF.Node.Util.getPropertyLanguageMap(propertyValues);
+            return Node_1.RDFNode.getPropertyLanguageMap(propertyValues);
         if (propertyContainer === ObjectSchema.ContainerType.LIST) {
-            var list = RDF.Node.Util.getList(propertyValues);
-            if (!propertyValues)
+            var list = Node_1.RDFNode.getList(propertyValues);
+            if (!list)
                 return null;
             propertyValues = list["@list"];
         }
@@ -218,8 +221,10 @@ var JSONLDConverter = (function () {
         var compactedValues = propertyType === true ?
             this.compactPropertyLiteral(propertyValues, definition, digestedSchema) :
             propertyType === false ?
-                RDF.Node.Util.getPropertyPointers(propertyValues, pointerLibrary) :
-                RDF.Node.Util.getProperties(propertyValues, pointerLibrary);
+                Node_1.RDFNode.getPropertyPointers(propertyValues, pointerLibrary) :
+                Node_1.RDFNode.getProperties(propertyValues, pointerLibrary);
+        if (!compactedValues)
+            return null;
         var filteredValues = compactedValues.filter(function (value) { return value !== null; });
         if (!filteredValues.length)
             return null;
@@ -238,7 +243,7 @@ var JSONLDConverter = (function () {
     JSONLDConverter.prototype.compactPropertyLiteral = function (propertyValues, definition, digestedSchema) {
         var literalType = definition.literalType === null ?
             XSD_1.XSD.string : ObjectSchema.ObjectSchemaUtils.resolveURI(definition.literalType, digestedSchema, { vocab: true, base: true });
-        return RDF.Node.Util.getPropertyLiterals(propertyValues, literalType);
+        return Node_1.RDFNode.getPropertyLiterals(propertyValues, literalType);
     };
     return JSONLDConverter;
 }());

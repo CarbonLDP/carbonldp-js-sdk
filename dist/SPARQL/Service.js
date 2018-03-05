@@ -10,7 +10,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var Errors = __importStar(require("../Errors"));
 var Request_1 = require("../HTTP/Request");
 var StringParser_1 = require("../HTTP/StringParser");
-var RDF = __importStar(require("../RDF"));
+var Literal_1 = require("../RDF/Literal");
 var RawResultsParser_1 = require("./RawResultsParser");
 var SPARQLService = (function () {
     function SPARQLService() {
@@ -96,10 +96,10 @@ var SPARQLService = (function () {
                 throw new Errors.NotImplementedError("BNodes cannot be queried directly");
             case "literal":
                 if ("datatype" in rawBindingProperty) {
-                    return RDF.Literal.Factory.parse(rawBindingProperty.value, rawBindingProperty.datatype);
+                    return Literal_1.RDFLiteral.parse(rawBindingProperty.value, rawBindingProperty.datatype);
                 }
                 else {
-                    return RDF.Literal.Factory.parse(rawBindingProperty.value);
+                    return Literal_1.RDFLiteral.parse(rawBindingProperty.value);
                 }
             default:
                 throw new Errors.IllegalArgumentError("The bindingProperty has an unsupported type");

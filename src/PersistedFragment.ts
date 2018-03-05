@@ -7,7 +7,7 @@ import {
 } from "./ObjectSchema";
 import { PersistedDocument } from "./PersistedDocument";
 import { PersistedResource } from "./PersistedResource";
-import * as RDF from "./RDF";
+import { URI } from "./RDF/URI";
 import {
 	addTypeInResource,
 	hasTypeInResource,
@@ -41,7 +41,7 @@ export interface PersistedFragmentFactory extends ModelFactory<PersistedFragment
 
 
 function resolveURI( fragment:PersistedFragment, uri:string ):string {
-	if( RDF.URI.Util.isAbsolute( uri ) ) return uri;
+	if( URI.isAbsolute( uri ) ) return uri;
 
 	const schema:DigestedObjectSchema = fragment._document._documents.getGeneralSchema();
 	return ObjectSchemaUtils.resolveURI( uri, schema, { vocab: true } );

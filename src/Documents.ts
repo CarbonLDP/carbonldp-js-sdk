@@ -80,8 +80,12 @@ import {
 	PointerValidator,
 } from "./Pointer";
 import { ProtectedDocument } from "./ProtectedDocument";
-import * as RDF from "./RDF";
-import { RDFDocumentParser } from "./RDF/Document";
+import {
+	RDFDocument,
+	RDFDocumentParser,
+} from "./RDF/Document";
+import { RDFNode } from "./RDF/Node";
+import { URI } from "./RDF/URI";
 import { Resource } from "./Resource";
 import {
 	FinishSPARQLSelect,
@@ -164,20 +168,20 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 	inScope( idOrPointer:any ):boolean {
 		let id:string = Pointer.is( idOrPointer ) ? idOrPointer.id : idOrPointer;
 
-		if( RDF.URI.Util.isBNodeID( id ) ) return false;
+		if( URI.isBNodeID( id ) ) return false;
 
 		if( ! ! this.context ) {
 			id = ObjectSchemaUtils.resolveURI( id, this.context.getObjectSchema() );
 
-			if( RDF.URI.Util.isRelative( id ) ) return true;
-			if( RDF.URI.Util.isBaseOf( this.context.baseURI, id ) ) return true;
+			if( URI.isRelative( id ) ) return true;
+			if( URI.isBaseOf( this.context.baseURI, id ) ) return true;
 		} else {
-			if( RDF.URI.Util.isAbsolute( id ) ) return true;
+			if( URI.isAbsolute( id ) ) return true;
 		}
 
 		if( ! ! this.context && ! ! this.context.parentContext ) return this.context.parentContext.documents.inScope( id );
 
-		return RDF.URI.Util.isRelative( id );
+		return URI.isRelative( id );
 	}
 
 	hasPointer( id:string ):boolean {
@@ -790,15 +794,15 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 	}
 
 
-	_getPersistedDocument<T extends object>( rdfDocument:RDF.Document.Class, response:Response ):T & PersistedDocument {
-		const [ documentResources ] = RDF.Document.Util.getNodes( rdfDocument );
+	_getPersistedDocument<T extends object>( rdfDocument:RDFDocument, response:Response ):T & PersistedDocument {
+		const [ documentResources ] = RDFDocument.getNodes( rdfDocument );
 		if( documentResources.length === 0 ) throw new BadResponseError( `The RDFDocument: ${ rdfDocument[ "@id" ] }, doesn't contain a document resource.`, response );
 		if( documentResources.length > 1 ) throw new BadResponseError( `The RDFDocument: ${ rdfDocument[ "@id" ] }, contains more than one document resource.`, response );
 
 		return new JSONLDCompacter( this ).compactDocument( rdfDocument );
 	}
 
-	_getFreeResources( nodes:RDF.Node.Class[] ):FreeResources {
+	_getFreeResources( nodes:RDFNode[] ):FreeResources {
 		let freeResourcesDocument:FreeResources = FreeResources.create( this );
 
 		let resources:Resource[] = nodes.map( node => freeResourcesDocument.createResource( node[ "@id" ] ) );
@@ -816,7 +820,7 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 		const error:HTTPError = new (statusCodeMap.get( response.status ))( response.data, response );
 		if( ! response.data || ! this.context ) return Promise.reject( error );
 
-		return new JSONLDParser().parse( response.data ).then( ( freeNodes:RDF.Node.Class[] ) => {
+		return new JSONLDParser().parse( response.data ).then( ( freeNodes:RDFNode[] ) => {
 			const freeResources:FreeResources = this._getFreeResources( freeNodes );
 			const errorResponses:ErrorResponse[] = freeResources
 				.getResources()
@@ -849,7 +853,7 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 			return this.documentsBeingResolved.get( uri ) as Promise<[ T & PersistedDocument, Response ]>;
 
 		const promise:Promise<[ T & PersistedDocument, Response ]> = this.sendRequest( HTTPMethod.GET, uri, requestOptions, null, new RDFDocumentParser() )
-			.then<[ T & PersistedDocument, Response ]>( ( [ rdfDocuments, response ]:[ RDF.Document.Class[], Response ] ) => {
+			.then<[ T & PersistedDocument, Response ]>( ( [ rdfDocuments, response ]:[ RDFDocument[], Response ] ) => {
 				const eTag:string = response.getETag();
 				if( eTag === null ) throw new BadResponseError( "The response doesn't contain an ETag", response );
 
@@ -863,7 +867,7 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 					targetURI = locationString;
 				}
 
-				const rdfDocument:RDF.Document.Class = this.getRDFDocument( targetURI, rdfDocuments, response );
+				const rdfDocument:RDFDocument = this.getRDFDocument( targetURI, rdfDocuments, response );
 				if( rdfDocument === null ) throw new BadResponseError( "No document was returned.", response );
 
 				let document:T & PersistedDocument = this._getPersistedDocument<T>( rdfDocument, response );
@@ -927,13 +931,13 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 		this.setDefaultRequestOptions( requestOptions, LDP.RDFSource );
 		RequestUtils.setIfNoneMatchHeader( persistedDocument._eTag, requestOptions );
 
-		return this.sendRequest( HTTPMethod.GET, uri, requestOptions, null, new RDFDocumentParser() ).then<[ T & PersistedDocument, Response ]>( ( [ rdfDocuments, response ]:[ RDF.Document.Class[], Response ] ) => {
+		return this.sendRequest( HTTPMethod.GET, uri, requestOptions, null, new RDFDocumentParser() ).then<[ T & PersistedDocument, Response ]>( ( [ rdfDocuments, response ]:[ RDFDocument[], Response ] ) => {
 			if( response === null ) return <any> [ rdfDocuments, response ];
 
 			let eTag:string = response.getETag();
 			if( eTag === null ) throw new BadResponseError( "The response doesn't contain an ETag", response );
 
-			let rdfDocument:RDF.Document.Class = this.getRDFDocument( uri, rdfDocuments, response );
+			let rdfDocument:RDFDocument = this.getRDFDocument( uri, rdfDocuments, response );
 			if( rdfDocument === null ) throw new BadResponseError( "No document was returned.", response );
 
 			let updatedPersistedDocument:PersistedDocument = this._getPersistedDocument( rdfDocument, response );
@@ -1030,8 +1034,8 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 
 						if( ! areDifferentType( a, b ) ) {
 							if( Pointer.is( a ) ) {
-								const aIsBNode:boolean = RDF.URI.Util.isBNodeID( aValue );
-								const bIsBNode:boolean = RDF.URI.Util.isBNodeID( bValue );
+								const aIsBNode:boolean = URI.isBNodeID( aValue );
+								const bIsBNode:boolean = URI.isBNodeID( bValue );
 
 								if( aIsBNode && ! bIsBNode ) return - 1 * inverter;
 								if( bIsBNode && ! aIsBNode ) return inverter;
@@ -1092,9 +1096,9 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 			response = _response;
 			return new JSONLDParser().parse( jsonldString );
 
-		} ).then<[ (T & PersistedDocument)[], Response ]>( ( rdfNodes:RDF.Node.Class[] ) => {
+		} ).then<[ (T & PersistedDocument)[], Response ]>( ( rdfNodes:RDFNode[] ) => {
 			const freeResources:FreeResources = this._getFreeResources( rdfNodes
-				.filter( node => ! RDF.Document.Factory.is( node ) )
+				.filter( node => ! RDFDocument.is( node ) )
 			);
 
 			const targetSet:Set<string> = new Set( freeResources
@@ -1127,10 +1131,10 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 			if( targetDocument && targetETag === targetDocument._eTag )
 				return [ [ targetDocument ], null ];
 
-			const rdfDocuments:RDF.Document.Class[] = rdfNodes
-				.filter<any>( RDF.Document.Factory.is );
+			const rdfDocuments:RDFDocument[] = rdfNodes
+				.filter<any>( RDFDocument.is );
 
-			const targetDocuments:RDF.Document.Class[] = rdfDocuments
+			const targetDocuments:RDFDocument[] = rdfDocuments
 				.filter( x => targetSet.has( x[ "@id" ] ) );
 
 			const documents:(T & PersistedDocument)[] = new JSONLDCompacter( this, targetName, queryContext )
@@ -1190,7 +1194,7 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 		if( document.id ) {
 			let childURI:string = document.id;
 			if( ! ! this.context ) childURI = this.context.resolve( childURI );
-			if( ! RDF.URI.Util.isBaseOf( parentURI, childURI ) ) {
+			if( ! URI.isBaseOf( parentURI, childURI ) ) {
 				return Promise.reject( new Errors.IllegalArgumentError( "The document's URI is not relative to the parentURI specified" ) );
 			}
 		}
@@ -1223,8 +1227,8 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 	}
 
 
-	private getRDFDocument( requestURL:string, rdfDocuments:RDF.Document.Class[], response:Response ):RDF.Document.Class {
-		rdfDocuments = rdfDocuments.filter( ( rdfDocument:RDF.Document.Class ) => rdfDocument[ "@id" ] === requestURL );
+	private getRDFDocument( requestURL:string, rdfDocuments:RDFDocument[], response:Response ):RDFDocument {
+		rdfDocuments = rdfDocuments.filter( ( rdfDocument:RDFDocument ) => rdfDocument[ "@id" ] === requestURL );
 
 		if( rdfDocuments.length > 1 ) throw new BadResponseError( "Several documents share the same id.", response );
 
@@ -1233,26 +1237,26 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 
 
 	private getPointerID( uri:string ):string {
-		if( RDF.URI.Util.isBNodeID( uri ) ) throw new Errors.IllegalArgumentError( "BNodes cannot be fetched directly." );
+		if( URI.isBNodeID( uri ) ) throw new Errors.IllegalArgumentError( "BNodes cannot be fetched directly." );
 		// TODO: Make named fragments independently resolvable
 		/*
-			if( RDF.URI.Util.hasFragment( uri ) ) throw new Errors.IllegalArgumentError( "Fragment URI's cannot be fetched directly." );
+			if( URI.Util.hasFragment( uri ) ) throw new Errors.IllegalArgumentError( "Fragment URI's cannot be fetched directly." );
 		*/
 
 		if( ! ! this.context ) {
 			uri = ObjectSchemaUtils.resolveURI( uri, this.getGeneralSchema() );
 
-			if( ! RDF.URI.Util.isRelative( uri ) ) {
+			if( ! URI.isRelative( uri ) ) {
 				const baseURI:string = this.context.baseURI;
-				if( ! RDF.URI.Util.isBaseOf( baseURI, uri ) ) return null;
+				if( ! URI.isBaseOf( baseURI, uri ) ) return null;
 
 				return uri.substring( baseURI.length );
 			} else {
 				return uri[ 0 ] === "/" ? uri.substr( 1 ) : uri;
 			}
 		} else {
-			if( RDF.URI.Util.isPrefixed( uri ) ) throw new Errors.IllegalArgumentError( "This Documents instance doesn't support prefixed URIs." );
-			if( RDF.URI.Util.isRelative( uri ) ) throw new Errors.IllegalArgumentError( "This Documents instance doesn't support relative URIs." );
+			if( URI.isPrefixed( uri ) ) throw new Errors.IllegalArgumentError( "This Documents instance doesn't support prefixed URIs." );
+			if( URI.isRelative( uri ) ) throw new Errors.IllegalArgumentError( "This Documents instance doesn't support relative URIs." );
 			return uri;
 		}
 	}
@@ -1302,7 +1306,7 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 
 
 	private getDigestedObjectSchemaForExpandedObject( expandedObject:Object ):DigestedObjectSchema {
-		let types:string[] = RDF.Node.Util.getTypes( <any> expandedObject );
+		let types:string[] = RDFNode.getTypes( <any> expandedObject );
 
 		return this.getDigestedObjectSchema( types, expandedObject[ "@id" ] );
 	}
@@ -1322,8 +1326,8 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 
 		if(
 			Utils.isDefined( objectID ) &&
-			! RDF.URI.Util.hasFragment( objectID ) &&
-			! RDF.URI.Util.isBNodeID( objectID ) &&
+			! URI.hasFragment( objectID ) &&
+			! URI.isBNodeID( objectID ) &&
 			objectTypes.indexOf( Document.TYPE ) === - 1
 		)
 			objectTypes = objectTypes.concat( Document.TYPE );
@@ -1344,16 +1348,16 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 
 
 	private getRequestURI( uri:string ):string {
-		if( RDF.URI.Util.isBNodeID( uri ) ) {
+		if( URI.isBNodeID( uri ) ) {
 			throw new Errors.IllegalArgumentError( "BNodes cannot be fetched directly." );
-		} else if( RDF.URI.Util.isPrefixed( uri ) ) {
+		} else if( URI.isPrefixed( uri ) ) {
 			if( ! this.context ) throw new Errors.IllegalArgumentError( "This Documents instance doesn't support prefixed URIs." );
 			uri = ObjectSchemaUtils.resolveURI( uri, this.context.getObjectSchema() );
-			if( RDF.URI.Util.isPrefixed( uri ) ) throw new Errors.IllegalArgumentError( `The prefixed URI "${ uri }" could not be resolved.` );
-		} else if( RDF.URI.Util.isRelative( uri ) ) {
+			if( URI.isPrefixed( uri ) ) throw new Errors.IllegalArgumentError( `The prefixed URI "${ uri }" could not be resolved.` );
+		} else if( URI.isRelative( uri ) ) {
 			if( ! this.context ) throw new Errors.IllegalArgumentError( "This Documents instance doesn't support relative URIs." );
 			uri = this.context.resolve( uri );
-		} else if( this.context && ! RDF.URI.Util.isBaseOf( this.context.baseURI, uri ) ) {
+		} else if( this.context && ! URI.isBaseOf( this.context.baseURI, uri ) ) {
 			throw new Errors.IllegalArgumentError( `"${ uri }" isn't a valid URI for this Carbon instance.` );
 		}
 		return uri;
@@ -1368,11 +1372,11 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 		return requestOptions;
 	}
 
-	private updateFromPreferenceApplied<T extends object>( persistedDocument:T & PersistedDocument, rdfDocuments:RDF.Document.Class[], response:Response ):[ T, Response ] {
+	private updateFromPreferenceApplied<T extends object>( persistedDocument:T & PersistedDocument, rdfDocuments:RDFDocument[], response:Response ):[ T, Response ] {
 		let eTag:string = response.getETag();
 		if( eTag === null ) throw new BadResponseError( "The response doesn't contain an ETag", response );
 
-		let rdfDocument:RDF.Document.Class = this.getRDFDocument( persistedDocument.id, rdfDocuments, response );
+		let rdfDocument:RDFDocument = this.getRDFDocument( persistedDocument.id, rdfDocuments, response );
 		if( rdfDocument === null ) throw new BadResponseError( "No document was returned.", response );
 
 		persistedDocument = this._getPersistedDocument<T>( rdfDocument, response );
@@ -1394,18 +1398,18 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 		if( response.status === 204 || ! response.data ) return [ persistedProtectedDocument, response ];
 
 		return new JSONLDParser().parse( response.data ).then<[ T, Response ]>( ( expandedResult:object[] ) => {
-			const freeNodes:RDF.Node.Class[] = RDF.Node.Util.getFreeNodes( expandedResult );
+			const freeNodes:RDFNode[] = RDFNode.getFreeNodes( expandedResult );
 			this.applyNodeMap( freeNodes );
 
 			let preferenceHeader:Header = response.getHeader( "Preference-Applied" );
 			if( preferenceHeader === null || preferenceHeader.toString() !== "return=representation" ) return [ persistedProtectedDocument, response ];
 
-			const rdfDocuments:RDF.Document.Class[] = RDF.Document.Util.getDocuments( expandedResult );
+			const rdfDocuments:RDFDocument[] = RDFDocument.getDocuments( expandedResult );
 			return this.updateFromPreferenceApplied<T>( persistedProtectedDocument, rdfDocuments, response );
 		} );
 	}
 
-	private applyNodeMap( freeNodes:RDF.Node.Class[] ):void {
+	private applyNodeMap( freeNodes:RDFNode[] ):void {
 		if( ! freeNodes.length ) return;
 		const freeResources:FreeResources = this._getFreeResources( freeNodes );
 		const responseMetadata:ResponseMetadata = <ResponseMetadata> freeResources.getResources().find( ResponseMetadata.is );

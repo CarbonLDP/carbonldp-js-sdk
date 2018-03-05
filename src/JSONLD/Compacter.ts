@@ -9,22 +9,16 @@ import {
 	Pointer,
 	PointerLibrary,
 } from "../Pointer";
-import * as RDFDocument from "../RDF/Document";
-import * as RDFNode from "../RDF/Node";
-import { Util as URIUtils } from "../RDF/URI";
+import { RDFDocument } from "../RDF/Document";
+import { RDFNode } from "../RDF/Node";
 import { PartialMetadata } from "../SPARQL/QueryDocument/PartialMetadata";
 import { QueryContextBuilder } from "../SPARQL/QueryDocument/QueryContextBuilder";
 import { QueryPropertyType } from "../SPARQL/QueryDocument/QueryProperty";
 import { JSONLDConverter } from "./Converter";
 
-function getRelativeID( node:RDFNode.Class ):string {
-	const id:string = node[ "@id" ];
-	return URIUtils.hasFragment( id ) ? URIUtils.getFragment( id ) : id;
-}
-
 interface CompactionNode {
 	paths:string[];
-	node:RDFNode.Class;
+	node:RDFNode;
 	resource:PersistedResource;
 	containerLibrary:PointerLibrary;
 	processed?:boolean;
@@ -45,20 +39,20 @@ export class JSONLDCompacter {
 		this.compactionMap = new Map();
 	}
 
-	compactDocument<T extends PersistedDocument>( rdfDocument:RDFDocument.Class ):T {
-		const rdfDocuments:RDFDocument.Class[] = [ rdfDocument ];
+	compactDocument<T extends PersistedDocument>( rdfDocument:RDFDocument ):T {
+		const rdfDocuments:RDFDocument[] = [ rdfDocument ];
 		return this.compactDocuments<T>( rdfDocuments )[ 0 ];
 	}
 
-	compactDocuments<T extends PersistedDocument>( rdfDocuments:RDFDocument.Class[], mainDocuments:RDFDocument.Class[] = rdfDocuments ):T[] {
+	compactDocuments<T extends PersistedDocument>( rdfDocuments:RDFDocument[], mainDocuments:RDFDocument[] = rdfDocuments ):T[] {
 		rdfDocuments.forEach( rdfDocument => {
-			const [ [ documentNode ], fragmentNodes ] = RDFDocument.Util.getNodes( rdfDocument );
+			const [ [ documentNode ], fragmentNodes ] = RDFDocument.getNodes( rdfDocument );
 			const targetDocument:PersistedDocument = this.getResource( documentNode, this.documents, true );
 
 			const fragmentsSet:Set<string> = new Set( targetDocument._fragmentsIndex.keys() );
 
 			fragmentNodes.forEach( fragmentNode => {
-				const fragmentID:string = getRelativeID( fragmentNode );
+				const fragmentID:string = RDFNode.getRelativeID( fragmentNode );
 				if( fragmentsSet.has( fragmentID ) ) fragmentsSet.delete( fragmentID );
 
 				this.getResource( fragmentNode, targetDocument );
@@ -106,7 +100,7 @@ export class JSONLDCompacter {
 		return mainCompactedDocuments;
 	}
 
-	private compactNode( node:RDFNode.Class, resource:PersistedResource, containerLibrary:PointerLibrary, path:string ):string[] {
+	private compactNode( node:RDFNode, resource:PersistedResource, containerLibrary:PointerLibrary, path:string ):string[] {
 		const schema:DigestedObjectSchema = this.resolver.getSchemaFor( node, path );
 
 		if( this.resolver instanceof QueryContextBuilder ) {
@@ -151,7 +145,7 @@ export class JSONLDCompacter {
 			;
 	}
 
-	private getResource<T extends PersistedResource>( node:RDFNode.Class, containerLibrary:PointerLibrary, isDocument?:boolean ):T {
+	private getResource<T extends PersistedResource>( node:RDFNode, containerLibrary:PointerLibrary, isDocument?:boolean ):T {
 		const resource:T = containerLibrary.getPointer( node[ "@id" ] ) as any;
 
 		if( isDocument ) containerLibrary = PersistedDocument.decorate( resource, this.documents );

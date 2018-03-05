@@ -17,11 +17,11 @@ function validateEventType(event) {
 }
 exports.validateEventType = validateEventType;
 function parseURIPattern(uriPattern, baseURI) {
-    if (!URI_1.Util.isBaseOf(baseURI, uriPattern))
+    if (!URI_1.URI.isBaseOf(baseURI, uriPattern))
         throw new Errors_1.IllegalArgumentError("Provided uriPattern \"" + uriPattern + "\" is an invalid for your Carbon instance.");
     if (uriPattern === "/")
         return "";
-    uriPattern = URI_1.Util.getRelativeURI(uriPattern, baseURI);
+    uriPattern = URI_1.URI.getRelativeURI(uriPattern, baseURI);
     uriPattern = uriPattern.substring(+uriPattern.startsWith("/"), uriPattern.length - +uriPattern.endsWith("/"));
     return uriPattern
         .split("/")

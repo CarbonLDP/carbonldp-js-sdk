@@ -5,7 +5,9 @@ import { JSONLDConverter } from "../JSONLD/Converter";
 import { NamedFragment } from "../NamedFragment";
 import * as ObjectSchema from "../ObjectSchema";
 import { Pointer } from "../Pointer";
-import * as RDF from "../RDF";
+import { RDFDocument } from "../RDF/Document";
+import { RDFNode } from "../RDF/Node";
+import { URI } from "../RDF/URI";
 import * as Utils from "../Utils";
 
 import { Document } from "./";
@@ -30,15 +32,15 @@ export function inScope( this:Document, idOrPointer:string | Pointer ):boolean {
 	const id:string = Utils.isObject( idOrPointer ) ? idOrPointer.id : idOrPointer;
 
 	if( id === this.id ) return true;
-	if( RDF.URI.Util.isBNodeID( id ) ) return true;
-	if( RDF.URI.Util.isFragmentOf( id, this.id ) ) return true;
+	if( URI.isBNodeID( id ) ) return true;
+	if( URI.isFragmentOf( id, this.id ) ) return true;
 	return id.startsWith( "#" );
 }
 
 export function hasFragment( this:Document, id:string ):boolean {
-	if( RDF.URI.Util.isAbsolute( id ) ) {
-		if( ! RDF.URI.Util.isFragmentOf( id, this.id ) ) return false;
-		id = RDF.URI.Util.hasFragment( id ) ? RDF.URI.Util.getFragment( id ) : id;
+	if( URI.isAbsolute( id ) ) {
+		if( ! URI.isFragmentOf( id, this.id ) ) return false;
+		id = URI.hasFragment( id ) ? URI.getFragment( id ) : id;
 	} else if( Utils.StringUtils.startsWith( id, "#" ) ) {
 		id = id.substring( 1 );
 	}
@@ -47,15 +49,15 @@ export function hasFragment( this:Document, id:string ):boolean {
 }
 
 export function getFragment( this:Document, id:string ):Fragment {
-	if( ! RDF.URI.Util.isBNodeID( id ) ) return this.getNamedFragment( id );
+	if( ! URI.isBNodeID( id ) ) return this.getNamedFragment( id );
 	return this._fragmentsIndex.get( id ) || null;
 }
 
 export function getNamedFragment( this:Document, id:string ):NamedFragment {
-	if( RDF.URI.Util.isBNodeID( id ) ) throw new Errors.IllegalArgumentError( "Named fragments can't have a id that starts with '_:'." );
-	if( RDF.URI.Util.isAbsolute( id ) ) {
-		if( ! RDF.URI.Util.isFragmentOf( id, this.id ) ) throw new Errors.IllegalArgumentError( "The id is out of scope." );
-		id = RDF.URI.Util.hasFragment( id ) ? RDF.URI.Util.getFragment( id ) : id;
+	if( URI.isBNodeID( id ) ) throw new Errors.IllegalArgumentError( "Named fragments can't have a id that starts with '_:'." );
+	if( URI.isAbsolute( id ) ) {
+		if( ! URI.isFragmentOf( id, this.id ) ) throw new Errors.IllegalArgumentError( "The id is out of scope." );
+		id = URI.hasFragment( id ) ? URI.getFragment( id ) : id;
 	} else if( Utils.StringUtils.startsWith( id, "#" ) ) {
 		id = id.substring( 1 );
 	}
@@ -74,7 +76,7 @@ export function createFragment<T extends object>( this:Document, slugOrObject?:a
 	const object:T = ! Utils.isString( slugOrObject ) && ! ! slugOrObject ? slugOrObject : <T> {};
 
 	if( slug ) {
-		if( ! RDF.URI.Util.isBNodeID( slug ) ) return this.createNamedFragment<T>( object, slug );
+		if( ! URI.isBNodeID( slug ) ) return this.createNamedFragment<T>( object, slug );
 		if( this._fragmentsIndex.has( slug ) ) throw new Errors.IDAlreadyInUseError( "The slug provided is already being used by a fragment." );
 	}
 
@@ -91,11 +93,11 @@ export function createNamedFragment<T extends Object>( this:Document, slugOrObje
 	slug = Utils.isString( slugOrObject ) ? slugOrObject : slug;
 	const object:T = ! Utils.isString( slugOrObject ) && ! ! slugOrObject ? slugOrObject : <T> {};
 
-	if( RDF.URI.Util.isBNodeID( slug ) ) throw new Errors.IllegalArgumentError( "Named fragments can't have a slug that starts with '_:'." );
+	if( URI.isBNodeID( slug ) ) throw new Errors.IllegalArgumentError( "Named fragments can't have a slug that starts with '_:'." );
 
-	if( RDF.URI.Util.isAbsolute( slug ) ) {
-		if( ! RDF.URI.Util.isFragmentOf( slug, this.id ) ) throw new Errors.IllegalArgumentError( "The slug is out of scope." );
-		slug = RDF.URI.Util.hasFragment( slug ) ? RDF.URI.Util.getFragment( slug ) : slug;
+	if( URI.isAbsolute( slug ) ) {
+		if( ! URI.isFragmentOf( slug, this.id ) ) throw new Errors.IllegalArgumentError( "The slug is out of scope." );
+		slug = URI.hasFragment( slug ) ? URI.getFragment( slug ) : slug;
 	} else if( Utils.StringUtils.startsWith( slug, "#" ) ) slug = slug.substring( 1 );
 
 	if( this._fragmentsIndex.has( slug ) ) throw new Errors.IDAlreadyInUseError( "The slug provided is already being used by a fragment." );
@@ -110,9 +112,9 @@ export function createNamedFragment<T extends Object>( this:Document, slugOrObje
 export function removeFragment( this:Document, fragmentOrSlug:string | Fragment ):void {
 	let id:string = Utils.isString( fragmentOrSlug ) ? fragmentOrSlug : fragmentOrSlug.id;
 
-	if( RDF.URI.Util.isAbsolute( id ) ) {
-		if( ! RDF.URI.Util.isFragmentOf( id, this.id ) ) return;
-		id = RDF.URI.Util.hasFragment( id ) ? RDF.URI.Util.getFragment( id ) : id;
+	if( URI.isAbsolute( id ) ) {
+		if( ! URI.isFragmentOf( id, this.id ) ) return;
+		id = URI.hasFragment( id ) ? URI.getFragment( id ) : id;
 	} else if( Utils.StringUtils.startsWith( id, "#" ) ) {
 		id = id.substring( 1 );
 	}
@@ -123,19 +125,19 @@ export function removeFragment( this:Document, fragmentOrSlug:string | Fragment 
 export function removeNamedFragment( this:Document, fragmentOrSlug:NamedFragment | string ):void {
 	const id:string = Utils.isString( fragmentOrSlug ) ? fragmentOrSlug : fragmentOrSlug.id;
 
-	if( RDF.URI.Util.isBNodeID( id ) ) throw new Errors.IllegalArgumentError( "You can only remove NamedFragments." );
+	if( URI.isBNodeID( id ) ) throw new Errors.IllegalArgumentError( "You can only remove NamedFragments." );
 	this._removeFragment( id );
 }
 
-export function toJSON( this:Document, key:string ):RDF.Document.Class;
-export function toJSON( this:Document, objectSchemaResolver?:ObjectSchema.ObjectSchemaResolver, jsonldConverter?:JSONLDConverter ):RDF.Document.Class;
-export function toJSON( this:Document, keyOrObjectSchemaResolver?:string | ObjectSchema.ObjectSchemaResolver, jsonldConverter:JSONLDConverter = new JSONLDConverter() ):RDF.Document.Class {
+export function toJSON( this:Document, key:string ):RDFDocument;
+export function toJSON( this:Document, objectSchemaResolver?:ObjectSchema.ObjectSchemaResolver, jsonldConverter?:JSONLDConverter ):RDFDocument;
+export function toJSON( this:Document, keyOrObjectSchemaResolver?:string | ObjectSchema.ObjectSchemaResolver, jsonldConverter:JSONLDConverter = new JSONLDConverter() ):RDFDocument {
 	const objectSchemaResolver:ObjectSchema.ObjectSchemaResolver = Utils.isObject( keyOrObjectSchemaResolver ) ? keyOrObjectSchemaResolver : null;
 	const generalSchema:ObjectSchema.DigestedObjectSchema = objectSchemaResolver ?
 		objectSchemaResolver.getGeneralSchema() : new ObjectSchema.DigestedObjectSchema();
 
 	const resources:object[] = [ this, ...this.getFragments() ];
-	const expandedResources:RDF.Node.Class[] = resources.map( resource => {
+	const expandedResources:RDFNode[] = resources.map( resource => {
 		const resourceSchema:ObjectSchema.DigestedObjectSchema = objectSchemaResolver ? objectSchemaResolver.getSchemaFor( resource ) : new ObjectSchema.DigestedObjectSchema();
 		return jsonldConverter.expand( resource, generalSchema, resourceSchema );
 	} );
@@ -148,7 +150,7 @@ export function toJSON( this:Document, keyOrObjectSchemaResolver?:string | Objec
 
 export function normalize( this:Document ):void {
 	const currentFragments:Fragment[] = this.getFragments()
-		.filter( fragment => RDF.URI.Util.isBNodeID( fragment.id ) );
+		.filter( fragment => URI.isBNodeID( fragment.id ) );
 	const usedFragmentsIDs:Set<string> = new Set();
 
 	convertNestedObjects( this, this, usedFragmentsIDs );
@@ -181,7 +183,7 @@ export const convertNestedObjects:( parent:Document, actual:any, fragmentsTracke
 			continue;
 		}
 
-		idOrSlug = ( "id" in next ) ? next.id : ( ( "slug" in next ) ? RDF.URI.Util.hasFragment( next.slug ) ? next.slug : "#" + next.slug : "" );
+		idOrSlug = ( "id" in next ) ? next.id : ( ( "slug" in next ) ? URI.hasFragment( next.slug ) ? next.slug : "#" + next.slug : "" );
 		if( ! ! idOrSlug && ! parent.inScope( idOrSlug ) ) continue;
 
 		let parentFragment:Fragment = parent.getFragment( idOrSlug );

@@ -2,6 +2,11 @@ import {
 	Pointer,
 	PointerLibrary,
 } from "../Pointer";
+import { RDFList } from "../RDF/List";
+import { RDFLiteral } from "../RDF/Literal";
+import { Serializer } from "../RDF/Literal/Serializer";
+import { RDFNode } from "../RDF/Node";
+import { RDFValue } from "../RDF/Value";
 import {
 	clazz,
 	hasConstructor,
@@ -16,7 +21,6 @@ import {
 import * as Utils from "../Utils";
 import { XSD } from "../Vocabularies/XSD";
 import * as ObjectSchema from "./../ObjectSchema";
-import * as RDF from "../RDF";
 
 import DefaultExport, { JSONLDConverter } from "./Converter";
 
@@ -39,7 +43,7 @@ describe( module( "Carbon/JSONLD/Converter" ), ():void => {
 			expect( jsonldConverter ).toBeTruthy();
 			expect( jsonldConverter instanceof JSONLDConverter ).toBe( true );
 
-			let customSerializers:Map<string, RDF.Literal.Serializer> = new Map();
+			let customSerializers:Map<string, Serializer> = new Map();
 			customSerializers.set( "http://example.com/ns#my-custom-type", <any> {} );
 
 			jsonldConverter = new JSONLDConverter( customSerializers );
@@ -55,13 +59,13 @@ describe( module( "Carbon/JSONLD/Converter" ), ():void => {
 			"A Map object with data-type/serializer pairs for stringify the data of a SDK Resource when expanding it."
 		), ():void => {
 			let jsonldConverter:JSONLDConverter;
-			let serializers:Map<string, RDF.Literal.Serializer>;
+			let serializers:Map<string, Serializer>;
 
 			jsonldConverter = new JSONLDConverter();
 			serializers = jsonldConverter.literalSerializers;
 			expect( serializers.size ).toBeGreaterThan( 1 );
 
-			let customSerializers:Map<string, RDF.Literal.Serializer> = new Map();
+			let customSerializers:Map<string, Serializer> = new Map();
 			customSerializers.set( "http://example.com/ns#my-custom-type", <any> {} );
 
 			jsonldConverter = new JSONLDConverter( customSerializers );
@@ -424,112 +428,113 @@ describe( module( "Carbon/JSONLD/Converter" ), ():void => {
 				expect( expandedObject[ "@type" ] ).toContain( "another:Another-Namespace-Type" );
 				expect( expandedObject[ "@type" ] ).toContain( "http://example.com/my-vocabulary#Another-Another-Type" );
 
-				let property:RDF.Literal.Class[] | RDF.Node.Class[] | [ RDF.List.Class ];
-				let literal:RDF.Literal.Class;
-				let node:RDF.Node.Class;
-				let list:RDF.List.Class;
+				let property:RDFLiteral[] | RDFNode[] | [ RDFList ];
+				let literal:RDFLiteral;
+				let node:RDFNode;
+				let list:RDFList;
+				let value:RDFValue;
 
 				property = expandedObject[ "http://example.com/ns#string" ];
 				expect( Utils.isArray( property ) ).toBe( true );
 				expect( property.length ).toBe( 1 );
-				literal = <RDF.Literal.Class> property[ 0 ];
-				expect( RDF.Literal.Factory.is( literal ) ).toBe( true );
-				expect( RDF.Literal.Factory.hasType( literal, XSD.string ) ).toBe( true );
+				literal = <RDFLiteral> property[ 0 ];
+				expect( RDFLiteral.is( literal ) ).toBe( true );
+				expect( RDFLiteral.hasType( literal, XSD.string ) ).toBe( true );
 				expect( literal[ "@value" ] ).toBe( "Some string" );
 
 				property = expandedObject[ "http://example.com/ns#date" ];
 				expect( Utils.isArray( property ) ).toBe( true );
 				expect( property.length ).toBe( 1 );
-				literal = <RDF.Literal.Class> property[ 0 ];
-				expect( RDF.Literal.Factory.is( literal ) ).toBe( true );
-				expect( RDF.Literal.Factory.hasType( literal, XSD.dateTime ) ).toBe( true );
+				literal = <RDFLiteral> property[ 0 ];
+				expect( RDFLiteral.is( literal ) ).toBe( true );
+				expect( RDFLiteral.hasType( literal, XSD.dateTime ) ).toBe( true );
 				expect( literal[ "@value" ] ).toBe( "2015-12-04T23:06:57.920Z" );
 
 				property = expandedObject[ "http://example.com/ns#languageMap" ];
 				expect( Utils.isArray( property ) ).toBe( true );
 				expect( property.length ).toBe( 3 );
-				literal = <RDF.Literal.Class> property[ 0 ];
-				expect( RDF.Literal.Factory.is( literal ) ).toBe( true );
-				expect( RDF.Literal.Factory.hasType( literal, XSD.string ) ).toBe( true );
+				literal = <RDFLiteral> property[ 0 ];
+				expect( RDFLiteral.is( literal ) ).toBe( true );
+				expect( RDFLiteral.hasType( literal, XSD.string ) ).toBe( true );
 				expect( literal[ "@language" ] ).toBe( "es" );
 				expect( literal[ "@value" ] ).toBe( "español" );
-				literal = <RDF.Literal.Class> property[ 1 ];
-				expect( RDF.Literal.Factory.is( literal ) ).toBe( true );
-				expect( RDF.Literal.Factory.hasType( literal, XSD.string ) ).toBe( true );
+				literal = <RDFLiteral> property[ 1 ];
+				expect( RDFLiteral.is( literal ) ).toBe( true );
+				expect( RDFLiteral.hasType( literal, XSD.string ) ).toBe( true );
 				expect( literal[ "@language" ] ).toBe( "en" );
 				expect( literal[ "@value" ] ).toBe( "english" );
-				literal = <RDF.Literal.Class> property[ 2 ];
-				expect( RDF.Literal.Factory.is( literal ) ).toBe( true );
-				expect( RDF.Literal.Factory.hasType( literal, XSD.string ) ).toBe( true );
+				literal = <RDFLiteral> property[ 2 ];
+				expect( RDFLiteral.is( literal ) ).toBe( true );
+				expect( RDFLiteral.hasType( literal, XSD.string ) ).toBe( true );
 				expect( literal[ "@language" ] ).toBe( "ja" );
 				expect( literal[ "@value" ] ).toBe( "日本語" );
 
 				property = expandedObject[ "http://example.com/ns#pointer" ];
 				expect( Utils.isArray( property ) ).toBe( true );
 				expect( property.length ).toBe( 1 );
-				node = <RDF.Node.Class> property[ 0 ];
-				expect( RDF.Node.Factory.is( node ) ).toBe( true );
+				node = <RDFNode> property[ 0 ];
+				expect( RDFNode.is( node ) ).toBe( true );
 				expect( node[ "@id" ] ).toBe( "http://example.com/pointer/" );
 
 				property = expandedObject[ "http://example.com/ns#pointerList" ];
 				expect( Utils.isArray( property ) ).toBe( true );
 				expect( property.length ).toBe( 1 );
-				list = <RDF.List.Class> property[ 0 ];
-				expect( RDF.List.Factory.is( list ) ).toBe( true );
+				list = <RDFList> property[ 0 ];
+				expect( RDFList.is( list ) ).toBe( true );
 				expect( list[ "@list" ].length ).toBe( 3 );
-				node = <RDF.Node.Class> list[ "@list" ][ 0 ];
-				expect( node[ "@id" ] ).toBe( "http://example.com/pointer-1/" );
-				node = <RDF.Node.Class> list[ "@list" ][ 1 ];
-				expect( node[ "@id" ] ).toBe( "http://example.com/pointer-2/" );
-				node = <RDF.Node.Class> list[ "@list" ][ 2 ];
-				expect( node[ "@id" ] ).toBe( "http://example.com/pointer-3/" );
+				value = list[ "@list" ][ 0 ];
+				expect( value[ "@id" ] ).toBe( "http://example.com/pointer-1/" );
+				value = list[ "@list" ][ 1 ];
+				expect( value[ "@id" ] ).toBe( "http://example.com/pointer-2/" );
+				value = list[ "@list" ][ 2 ];
+				expect( value[ "@id" ] ).toBe( "http://example.com/pointer-3/" );
 
 				property = expandedObject[ "http://example.com/ns#pointerSet" ];
 				expect( Utils.isArray( property ) ).toBe( true );
 				expect( property.length ).toBe( 3 );
-				node = <RDF.Node.Class> property[ 0 ];
+				node = <RDFNode> property[ 0 ];
 				expect( node[ "@id" ] ).toBe( "http://example.com/pointer-1/" );
-				node = <RDF.Node.Class> property[ 1 ];
+				node = <RDFNode> property[ 1 ];
 				expect( node[ "@id" ] ).toBe( "http://example.com/pointer-2/" );
-				node = <RDF.Node.Class> property[ 2 ];
+				node = <RDFNode> property[ 2 ];
 				expect( node[ "@id" ] ).toBe( "http://example.com/pointer-3/" );
 
 				property = expandedObject[ "http://example.com/ns#unknownTypeLiteral" ];
 				expect( Utils.isArray( property ) ).toBe( true );
 				expect( property.length ).toBe( 1 );
-				literal = <RDF.Literal.Class> property[ 0 ];
-				expect( RDF.Literal.Factory.is( literal ) ).toBe( true );
-				expect( RDF.Literal.Factory.hasType( literal, XSD.float ) ).toBe( true );
+				literal = <RDFLiteral> property[ 0 ];
+				expect( RDFLiteral.is( literal ) ).toBe( true );
+				expect( RDFLiteral.hasType( literal, XSD.float ) ).toBe( true );
 				expect( literal[ "@value" ] ).toBe( "1" );
 
 				property = expandedObject[ "http://example.com/ns#unknownTypeArray" ];
 				expect( Utils.isArray( property ) ).toBe( true );
 				expect( property.length ).toBe( 5 );
-				literal = <RDF.Literal.Class> property[ 0 ];
-				expect( RDF.Literal.Factory.is( literal ) ).toBe( true );
-				expect( RDF.Literal.Factory.hasType( literal, XSD.float ) ).toBe( true );
+				literal = <RDFLiteral> property[ 0 ];
+				expect( RDFLiteral.is( literal ) ).toBe( true );
+				expect( RDFLiteral.hasType( literal, XSD.float ) ).toBe( true );
 				expect( literal[ "@value" ] ).toBe( "1.12" );
-				literal = <RDF.Literal.Class> property[ 1 ];
-				expect( RDF.Literal.Factory.is( literal ) ).toBe( true );
-				expect( RDF.Literal.Factory.hasType( literal, XSD.boolean ) ).toBe( true );
+				literal = <RDFLiteral> property[ 1 ];
+				expect( RDFLiteral.is( literal ) ).toBe( true );
+				expect( RDFLiteral.hasType( literal, XSD.boolean ) ).toBe( true );
 				expect( literal[ "@value" ] ).toBe( "false" );
-				literal = <RDF.Literal.Class> property[ 2 ];
-				expect( RDF.Literal.Factory.is( literal ) ).toBe( true );
-				expect( RDF.Literal.Factory.hasType( literal, XSD.dateTime ) ).toBe( true );
+				literal = <RDFLiteral> property[ 2 ];
+				expect( RDFLiteral.is( literal ) ).toBe( true );
+				expect( RDFLiteral.hasType( literal, XSD.dateTime ) ).toBe( true );
 				expect( literal[ "@value" ] ).toBe( "2015-12-04T23:06:57.920Z" );
-				literal = <RDF.Literal.Class> property[ 3 ];
-				expect( RDF.Literal.Factory.is( literal ) ).toBe( true );
-				expect( RDF.Literal.Factory.hasType( literal, XSD.string ) ).toBe( true );
+				literal = <RDFLiteral> property[ 3 ];
+				expect( RDFLiteral.is( literal ) ).toBe( true );
+				expect( RDFLiteral.hasType( literal, XSD.string ) ).toBe( true );
 				expect( literal[ "@value" ] ).toBe( "Some string" );
-				node = <RDF.Node.Class> property[ 4 ];
-				expect( RDF.Node.Factory.is( node ) ).toBe( true );
+				node = <RDFNode> property[ 4 ];
+				expect( RDFNode.is( node ) ).toBe( true );
 				expect( node[ "@id" ] ).toBe( "http://example.com/pointer/" );
 
 				property = expandedObject[ "http://example.com/ns#unknownTypePointer" ];
 				expect( Utils.isArray( property ) ).toBe( true );
 				expect( property.length ).toBe( 1 );
-				node = <RDF.Node.Class> property[ 0 ];
-				expect( RDF.Node.Factory.is( node ) ).toBe( true );
+				node = <RDFNode> property[ 0 ];
+				expect( RDFNode.is( node ) ).toBe( true );
 				expect( node[ "@id" ] ).toBe( "http://example.com/pointer/" );
 
 				expect( expandedObject[ "http://example.com/ns#another-prefixed-pointer" ] ).toBeDefined();
@@ -567,18 +572,18 @@ describe( module( "Carbon/JSONLD/Converter" ), ():void => {
 				property = expandedObject[ "http://example.com/my-vocabulary#elementWithoutID" ];
 				expect( property ).toEqual( jasmine.any( Array ) );
 				expect( property.length ).toBe( 1 );
-				literal = <RDF.Literal.Class> property[ 0 ];
-				expect( RDF.Literal.Factory.is( literal ) ).toBe( true );
-				expect( RDF.Literal.Factory.hasType( literal, XSD.string ) ).toBe( true );
+				literal = <RDFLiteral> property[ 0 ];
+				expect( RDFLiteral.is( literal ) ).toBe( true );
+				expect( RDFLiteral.hasType( literal, XSD.string ) ).toBe( true );
 				expect( literal[ "@value" ] ).toBe( "This element will be converted into a set" );
 
 				expect( expandedObject[ "http://example.com/my-vocabulary#relative-at-id" ] ).toBeDefined();
 				property = expandedObject[ "http://example.com/my-vocabulary#relative-at-id" ];
 				expect( property ).toEqual( jasmine.any( Array ) );
 				expect( property.length ).toBe( 1 );
-				literal = <RDF.Literal.Class> property[ 0 ];
-				expect( RDF.Literal.Factory.is( literal ) ).toBe( true );
-				expect( RDF.Literal.Factory.hasType( literal, XSD.string ) ).toBe( true );
+				literal = <RDFLiteral> property[ 0 ];
+				expect( RDFLiteral.is( literal ) ).toBe( true );
+				expect( RDFLiteral.hasType( literal, XSD.string ) ).toBe( true );
 				expect( literal[ "@value" ] ).toBe( "Property with a relative @id" );
 			} );
 

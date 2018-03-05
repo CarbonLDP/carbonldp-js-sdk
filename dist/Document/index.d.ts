@@ -5,7 +5,7 @@ import { ModelFactory } from "../ModelFactory";
 import { NamedFragment } from "../NamedFragment";
 import * as ObjectSchema from "../ObjectSchema";
 import { Pointer, PointerLibrary, PointerValidator } from "../Pointer";
-import * as RDFDocument from "../RDF/Document";
+import { RDFDocument } from "../RDF/Document";
 import { Resource } from "../Resource";
 export interface Document extends Resource, PointerLibrary, PointerValidator {
     defaultInteractionModel?: Pointer;
@@ -23,7 +23,7 @@ export interface Document extends Resource, PointerLibrary, PointerValidator {
     createNamedFragment<T>(object: T, slug: string): T & NamedFragment;
     createNamedFragment(slug: string): NamedFragment;
     removeNamedFragment(slugOrFragment: string | NamedFragment): void;
-    toJSON(objectSchemaResolver?: ObjectSchema.ObjectSchemaResolver, jsonldConverter?: JSONLDConverter): RDFDocument.Class;
+    toJSON(objectSchemaResolver?: ObjectSchema.ObjectSchemaResolver, jsonldConverter?: JSONLDConverter): RDFDocument;
 }
 export interface DocumentFactory extends ModelFactory<Document>, ModelDecorator<Document> {
     TYPE: string;

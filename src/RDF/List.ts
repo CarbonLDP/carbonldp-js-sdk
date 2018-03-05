@@ -1,14 +1,21 @@
-import Value from "./Value";
 import * as Utils from "./../Utils";
+import { RDFValue } from "./Value";
 
-export interface Class {
-	"@list":Array<Value>;
+
+export interface RDFList {
+	"@list":RDFValue[];
 }
 
-export class Factory {
-	static is( value:any ):boolean {
+
+export interface RDFListFactory {
+	is( value:any ):value is RDFList;
+}
+
+export const RDFList:RDFListFactory = {
+	is( value:any ):value is RDFList {
 		return Utils.hasPropertyDefined( value, "@list" );
-	}
-}
+	},
+};
 
-export default Class;
+
+export default RDFList;

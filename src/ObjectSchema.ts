@@ -2,7 +2,7 @@ import {
 	IllegalArgumentError,
 	InvalidJSONLDSyntaxError,
 } from "./Errors";
-import * as URI from "./RDF/URI";
+import { URI } from "./RDF/URI";
 import * as Utils from "./Utils";
 import { XSD } from "./Vocabularies/XSD";
 
@@ -87,7 +87,7 @@ export class ObjectSchemaDigester {
 		if( "@id" in definition ) {
 			const uri:any = definition[ "@id" ];
 
-			if( URI.Util.isPrefixed( name ) ) throw new IllegalArgumentError( "A prefixed property cannot have assigned another URI." );
+			if( URI.isPrefixed( name ) ) throw new IllegalArgumentError( "A prefixed property cannot have assigned another URI." );
 			if( ! Utils.isString( uri ) ) throw new IllegalArgumentError( "@id needs to point to a string" );
 
 			digestedDefinition.uri = uri;
@@ -104,7 +104,7 @@ export class ObjectSchemaDigester {
 				digestedDefinition.pointerType = type === "@id" ? PointerType.ID : PointerType.VOCAB;
 
 			} else {
-				if( URI.Util.isRelative( type ) && type in XSD ) type = XSD[ type ];
+				if( URI.isRelative( type ) && type in XSD ) type = XSD[ type ];
 
 				digestedDefinition.literal = true;
 				digestedDefinition.literalType = type;
@@ -159,7 +159,7 @@ export class ObjectSchemaDigester {
 			const value:string = schema[ propertyName ];
 
 			if( value !== null && ! Utils.isString( value ) ) throw new IllegalArgumentError( `The value of '${ propertyName }' must be a string or null.` );
-			if( ( propertyName === "@vocab" && value === "" ) || ! URI.Util.isAbsolute( value ) && ! URI.Util.isBNodeID( value ) ) throw new IllegalArgumentError( `The value of '${ propertyName }' must be an absolute URI${ propertyName === "@base" ? " or an empty string" : "" }.` );
+			if( ( propertyName === "@vocab" && value === "" ) || ! URI.isAbsolute( value ) && ! URI.isBNodeID( value ) ) throw new IllegalArgumentError( `The value of '${ propertyName }' must be an absolute URI${ propertyName === "@base" ? " or an empty string" : "" }.` );
 
 			digestedSchema[ propertyName.substr( 1 ) ] = value;
 		}
@@ -183,7 +183,7 @@ export class ObjectSchemaDigester {
 			let propertyValue:( string | ObjectSchemaProperty ) = schema[ propertyName ];
 
 			if( Utils.isString( propertyValue ) ) {
-				if( URI.Util.isPrefixed( propertyName ) ) throw new IllegalArgumentError( "A prefixed property cannot be equal to another URI." );
+				if( URI.isPrefixed( propertyName ) ) throw new IllegalArgumentError( "A prefixed property cannot be equal to another URI." );
 				digestedSchema.prefixes.set( propertyName, propertyValue );
 
 			} else if( ! ! propertyValue && Utils.isObject( propertyValue ) ) {
@@ -218,7 +218,7 @@ export class ObjectSchemaDigester {
 export class ObjectSchemaUtils {
 
 	static resolveURI( uri:string, schema:DigestedObjectSchema, relativeTo:{ vocab?:boolean, base?:boolean } = {} ):string {
-		if( uri === null || URI.Util.isAbsolute( uri ) || URI.Util.isBNodeID( uri ) ) return uri;
+		if( uri === null || URI.isAbsolute( uri ) || URI.isBNodeID( uri ) ) return uri;
 
 		const [ prefix, localName = "" ]:[ string, string ] = uri.split( ":" ) as [ string, string ];
 
@@ -233,7 +233,7 @@ export class ObjectSchemaUtils {
 		if( localName ) return uri;
 
 		if( relativeTo.vocab && schema.vocab !== null ) return schema.vocab + uri;
-		if( relativeTo.base ) return URI.Util.resolve( schema.base, uri );
+		if( relativeTo.base ) return URI.resolve( schema.base, uri );
 
 		return uri;
 	}
