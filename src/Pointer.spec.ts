@@ -126,7 +126,7 @@ describe( module( "Carbon/Pointer" ), ():void => {
 	} );
 
 	describe( interfaze(
-		"Carbon.Pointer.PointerFactory",
+		"Carbon.Pointer.PointerConstant",
 		"Interface with the factory, decorate, and utils methods of a `Carbon.Pointer.Pointer` object."
 	), ():void => {
 
@@ -209,7 +209,7 @@ describe( module( "Carbon/Pointer" ), ():void => {
 
 	} );
 
-	describe( property( STATIC, "Pointer", "Carbon.Pointer.PointerFactory", "Constant that implements the `Carbon.Pointer.PointerFactory` interface." ), ():void => {
+	describe( property( STATIC, "Pointer", "Carbon.Pointer.PointerConstant", "Constant that implements the `Carbon.Pointer.PointerConstant` interface." ), ():void => {
 
 		it( "should exist", ():void => {
 			expect( Pointer ).toBeDefined();

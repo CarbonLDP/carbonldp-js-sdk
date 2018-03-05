@@ -21,7 +21,7 @@ export interface PersistedResource extends Resource {
 }
 
 
-export interface PersistedResourceFactory extends ModelDecorator<PersistedResource> {
+export interface PersistedResourceConstant extends ModelDecorator<PersistedResource> {
 	isDecorated( object:object ):object is PersistedResource;
 
 
@@ -58,7 +58,7 @@ function isPartial( this:PersistedResource ):boolean {
 	return ! ! this._partialMetadata;
 }
 
-export const PersistedResource:PersistedResourceFactory = {
+export const PersistedResource:PersistedResourceConstant = {
 	isDecorated( object:object ):object is PersistedResource {
 		return (
 			Utils.hasPropertyDefined( object, "_snapshot" )

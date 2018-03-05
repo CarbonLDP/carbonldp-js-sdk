@@ -36,7 +36,7 @@ describe( module( "Carbon/LDP/CarbonMap" ), ():void => {
 	} );
 
 	describe( interfaze(
-		"Carbon.LDP.CarbonMap.CarbonMapFactory",
+		"Carbon.LDP.CarbonMap.CarbonMapConstant",
 		"Interface with the factory, decorate and utils methods for `Carbon.LDP.CarbonMap.CarbonMap` objects."
 	), ():void => {
 
@@ -65,8 +65,8 @@ describe( module( "Carbon/LDP/CarbonMap" ), ():void => {
 
 	describe( property(
 		STATIC,
-		"CarbonMapFactory",
-		"Carbon.LDP.CarbonMapFactory"
+		"CarbonMap",
+		"Carbon.LDP.CarbonMap.CarbonMapConstant"
 	), ():void => {
 
 		it( isDefined(), ():void => {

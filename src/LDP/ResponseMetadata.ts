@@ -10,7 +10,7 @@ export interface ResponseMetadata extends VolatileResource {
 }
 
 
-export interface ResponseMetadataFactory extends ModelFactory<ResponseMetadata> {
+export interface ResponseMetadataConstant extends ModelFactory<ResponseMetadata> {
 	TYPE:string;
 	SCHEMA:ObjectSchema;
 
@@ -25,7 +25,7 @@ const SCHEMA:ObjectSchema = {
 	},
 };
 
-export const ResponseMetadata:ResponseMetadataFactory = {
+export const ResponseMetadata:ResponseMetadataConstant = {
 	TYPE: C.ResponseMetadata,
 	SCHEMA,
 

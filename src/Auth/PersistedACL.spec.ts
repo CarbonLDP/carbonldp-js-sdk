@@ -1,6 +1,5 @@
 import { Documents } from "../Documents";
 import {
-	clazz,
 	extendsClass,
 	hasDefaultExport,
 	hasMethod,
@@ -12,6 +11,8 @@ import {
 	module,
 	OBLIGATORY,
 	OPTIONAL,
+	property,
+	STATIC,
 } from "../test/JasmineExtender";
 import * as Utils from "./../Utils";
 
@@ -238,7 +239,7 @@ describe( module( "Carbon/Auth/PersistedACL" ), ():void => {
 	} );
 
 	describe( interfaze(
-		"Carbon.Auth.PersistedACL.PersistedACLFactory",
+		"Carbon.Auth.PersistedACL.PersistedACLConstant",
 		"Interface with factory, decorate and utils methods for `Carbon.Auth.PersistedACL.PersistedACL` objects."
 	), ():void => {
 
@@ -263,7 +264,12 @@ describe( module( "Carbon/Auth/PersistedACL" ), ():void => {
 
 	} );
 
-	describe( clazz( "Carbon.Auth.PersistedACL.Factory", "Factory class for `Carbon.Auth.PersistedACL.PersistedACL` objects." ), ():void => {
+	describe( property(
+		STATIC,
+		"PersistedACL",
+		"Carbon.Auth.PersistedACL.PersistedACLConstant",
+		"Constant that implements the `Carbon.Auth.PersistedACL.PersistedACLConstant` interface."
+	), ():void => {
 
 		it( isDefined(), ():void => {
 			expect( PersistedACL ).toBeDefined();

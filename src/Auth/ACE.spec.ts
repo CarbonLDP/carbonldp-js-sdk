@@ -97,7 +97,7 @@ describe( module( "Carbon/Auth/ACE" ), ():void => {
 	} );
 
 	describe( interfaze(
-		"Carbon.Auth.ACE.ACEFactory",
+		"Carbon.Auth.ACE.ACEConstant",
 		"Interface with the factory, decorate and utils methods of a `Carbon.Auth.ACE.ACE` object"
 	), ():void => {
 
@@ -153,8 +153,8 @@ describe( module( "Carbon/Auth/ACE" ), ():void => {
 	describe( property(
 		STATIC,
 		"ACE",
-		"Carbon.Auth.ACEFactory",
-		"Constant that implements the `Carbon.Auth.ACE.ACEFactory` interface."
+		"Carbon.Auth.ACE.ACEConstant",
+		"Constant that implements the `Carbon.Auth.ACE.ACEConstant` interface."
 	), ():void => {
 
 		it( isDefined(), ():void => {

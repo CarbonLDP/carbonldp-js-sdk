@@ -16,7 +16,7 @@ export interface PointerLibrary {
 export interface PointerValidator {
     inScope(idOrPointer: string | Pointer): boolean;
 }
-export interface PointerFactory extends ModelFactory<Pointer>, ModelDecorator<Pointer> {
+export interface PointerConstant extends ModelFactory<Pointer>, ModelDecorator<Pointer> {
     isDecorated(object: object): object is Pointer;
     is(object: object): object is Pointer;
     create(id?: string): Pointer;
@@ -28,5 +28,5 @@ export interface PointerFactory extends ModelFactory<Pointer>, ModelDecorator<Po
 }
 export declare function isPointerResolved(this: Pointer): boolean;
 export declare function resolveStandalonePointer(this: Pointer): Promise<[Pointer, Response]>;
-export declare const Pointer: PointerFactory;
+export declare const Pointer: PointerConstant;
 export default Pointer;

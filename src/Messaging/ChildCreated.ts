@@ -7,7 +7,7 @@ export interface ChildCreated extends DocumentCreated {
 }
 
 
-export interface ChildCreatedFactory {
+export interface ChildCreatedConstant {
 	TYPE:string;
 	SCHEMA:ObjectSchema;
 }
@@ -15,7 +15,7 @@ export interface ChildCreatedFactory {
 const TYPE:string = C.ChildCreated;
 const SCHEMA:ObjectSchema = DocumentCreated.SCHEMA;
 
-export const ChildCreated:ChildCreatedFactory = {
+export const ChildCreated:ChildCreatedConstant = {
 	TYPE,
 	SCHEMA,
 };

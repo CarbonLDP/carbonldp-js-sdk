@@ -25,7 +25,7 @@ export interface Document extends Resource, PointerLibrary, PointerValidator {
     removeNamedFragment(slugOrFragment: string | NamedFragment): void;
     toJSON(objectSchemaResolver?: ObjectSchema.ObjectSchemaResolver, jsonldConverter?: JSONLDConverter): RDFDocument;
 }
-export interface DocumentFactory extends ModelFactory<Document>, ModelDecorator<Document> {
+export interface DocumentConstant extends ModelFactory<Document>, ModelDecorator<Document> {
     TYPE: string;
     SCHEMA: ObjectSchema.ObjectSchema;
     is(object: object): object is Document;
@@ -34,5 +34,5 @@ export interface DocumentFactory extends ModelFactory<Document>, ModelDecorator<
     createFrom<T extends object>(object: T): T & Document;
     decorate<T extends object>(object: T): T & Document;
 }
-export declare const Document: DocumentFactory;
+export declare const Document: DocumentConstant;
 export default Document;

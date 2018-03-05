@@ -17,7 +17,7 @@ export interface RDFNode {
 }
 
 
-export interface RDFNodeFactory {
+export interface RDFNodeConstant {
 	is( value:any ):value is RDFNode;
 
 	create( uri:string ):RDFNode;
@@ -48,7 +48,7 @@ export interface RDFNodeFactory {
 	getPropertyLanguageMap( propertyValues:RDFNodePropertyValue[] ):object | undefined;
 }
 
-export const RDFNode:RDFNodeFactory = {
+export const RDFNode:RDFNodeConstant = {
 	is( value:any ):value is RDFNode {
 		return Utils.hasProperty( value, "@id" )
 			&& Utils.isString( value[ "@id" ] );

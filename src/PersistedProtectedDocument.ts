@@ -18,7 +18,7 @@ export interface PersistedProtectedDocument extends PersistedDocument {
 }
 
 
-export interface PersistedProtectedDocumentFactory extends ModelDecorator<PersistedProtectedDocument> {
+export interface PersistedProtectedDocumentConstant extends ModelDecorator<PersistedProtectedDocument> {
 	isDecorated( object:object ):object is PersistedProtectedDocument;
 
 	is( object:object ):object is PersistedProtectedDocument;
@@ -26,7 +26,7 @@ export interface PersistedProtectedDocumentFactory extends ModelDecorator<Persis
 	decorate<T extends object>( object:T, documents:Documents ):T & PersistedProtectedDocument;
 }
 
-export const PersistedProtectedDocument:PersistedProtectedDocumentFactory = {
+export const PersistedProtectedDocument:PersistedProtectedDocumentConstant = {
 	isDecorated( object:object ):object is PersistedProtectedDocument {
 		return Utils.isObject( object )
 			&& Utils.hasFunction( object, "getACL" )

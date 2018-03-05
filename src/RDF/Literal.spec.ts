@@ -53,7 +53,7 @@ describe( module( "Carbon/RDF/Literal" ), ():void => {
 	} );
 
 	describe( interfaze(
-		"Carbon.RDF.Literal.RDFLiteralFactory",
+		"Carbon.RDF.Literal.RDFLiteralConstant",
 		"Interface with the factory and utils for `Carbon.RDF.Literal.RDFLiteral` objects."
 	), ():void => {
 
@@ -98,7 +98,7 @@ describe( module( "Carbon/RDF/Literal" ), ():void => {
 	describe( property(
 		STATIC,
 		"RDFLiteral",
-		"Carbon.RDF.Literal.RDFLiteralFactory"
+		"Carbon.RDF.Literal.RDFLiteralConstant"
 	), ():void => {
 
 		it( isDefined(), ():void => {

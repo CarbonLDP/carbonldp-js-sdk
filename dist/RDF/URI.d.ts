@@ -1,5 +1,5 @@
 import { DigestedObjectSchema } from "../ObjectSchema";
-export interface URIFactory {
+export interface URIConstant {
     hasFragment(uri: string): boolean;
     hasQuery(uri: string): boolean;
     hasProtocol(uri: string): boolean;
@@ -20,5 +20,5 @@ export interface URIFactory {
     prefix(uri: string, prefix: string, prefixURI: string): string;
     prefix(uri: string, objectSchema: DigestedObjectSchema): string;
 }
-export declare const URI: URIFactory;
+export declare const URI: URIConstant;
 export default URI;

@@ -7,7 +7,7 @@ export interface Resource extends Pointer {
     hasType(type: string): boolean;
     removeType(type: string): void;
 }
-export interface ResourceFactory extends ModelFactory<Resource>, ModelDecorator<Resource> {
+export interface ResourceConstant extends ModelFactory<Resource>, ModelDecorator<Resource> {
     isDecorated(object: object): object is Resource;
     is(object: object): object is Resource;
     create(id?: string, types?: string[]): Resource;
@@ -17,5 +17,5 @@ export interface ResourceFactory extends ModelFactory<Resource>, ModelDecorator<
 export declare function addTypeInResource(this: Resource, type: string): void;
 export declare function hasTypeInResource(this: Resource, type: string): boolean;
 export declare function removeTypeInResource(this: Resource, type: string): void;
-export declare const Resource: ResourceFactory;
+export declare const Resource: ResourceConstant;
 export default Resource;

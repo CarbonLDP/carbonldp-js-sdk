@@ -13,7 +13,7 @@ export interface ErrorResponse extends Resource {
 }
 
 
-export interface ErrorResponseFactory extends ModelFactory<ErrorResponse> {
+export interface ErrorResponseConstant extends ModelFactory<ErrorResponse> {
 	TYPE:string;
 	SCHEMA:ObjectSchema;
 
@@ -36,7 +36,7 @@ const SCHEMA:ObjectSchema = {
 	},
 };
 
-export const ErrorResponse:ErrorResponseFactory = {
+export const ErrorResponse:ErrorResponseConstant = {
 	TYPE: C.ErrorResponse,
 	SCHEMA,
 

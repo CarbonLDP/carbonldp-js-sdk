@@ -10,7 +10,7 @@ export interface RDFDocument {
 }
 
 
-export interface RDFDocumentFactory {
+export interface RDFDocumentConstant {
 	is( value:any ):value is RDFDocument;
 
 	create( resources:RDFNode[], uri?:string ):RDFDocument;
@@ -29,7 +29,7 @@ export interface RDFDocumentFactory {
 	getNodes( rdfDocument:RDFDocument ):[ RDFNode[], RDFNode[] ];
 }
 
-export const RDFDocument:RDFDocumentFactory = {
+export const RDFDocument:RDFDocumentConstant = {
 	is( value:any ):value is RDFDocument {
 		return Utils.hasProperty( value, "@graph" )
 			&& Utils.isArray( value[ "@graph" ] );

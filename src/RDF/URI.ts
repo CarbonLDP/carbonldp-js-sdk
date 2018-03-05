@@ -6,7 +6,7 @@ import {
 	UUIDUtils,
 } from "../Utils";
 
-export interface URIFactory {
+export interface URIConstant {
 	hasFragment( uri:string ):boolean;
 
 
@@ -63,7 +63,7 @@ export interface URIFactory {
 	prefix( uri:string, objectSchema:DigestedObjectSchema ):string;
 }
 
-export const URI:URIFactory = {
+export const URI:URIConstant = {
 	hasFragment( uri:string ):boolean {
 		return uri.indexOf( "#" ) !== - 1;
 	},

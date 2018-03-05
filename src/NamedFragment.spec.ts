@@ -33,7 +33,7 @@ describe( module( "Carbon/NamedFragment" ), ():void => {
 	} );
 
 	describe( interfaze(
-		"Carbon.NamedFragment.NamedFragmentFactory",
+		"Carbon.NamedFragment.NamedFragmentConstant",
 		"Interface with the factory, decorate and utils methods of a `Carbon.NamedFragment.NamedFragment` object."
 	), ():void => {
 
@@ -97,7 +97,7 @@ describe( module( "Carbon/NamedFragment" ), ():void => {
 		expect( defaultTarget ).toEqual( jasmine.any( Object ) );
 	} );
 
-	describe( property( STATIC, "NamedFragment", "Carbon.NamedFragmentFactory", "Constant that implements the `Carbon.NamedFragment.NamedFragment`, interface" ), ():void => {
+	describe( property( STATIC, "NamedFragment", "Carbon.NamedFragment.NamedFragmentConstant", "Constant that implements the `Carbon.NamedFragment.NamedFragment`, interface" ), ():void => {
 
 		it( isDefined(), ():void => {
 			expect( NamedFragment ).toBeDefined();

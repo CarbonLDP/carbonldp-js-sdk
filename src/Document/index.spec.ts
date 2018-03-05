@@ -269,7 +269,7 @@ describe( module( "Carbon/Document" ), ():void => {
 	} );
 
 	describe( interfaze(
-		"Carbon.Document.DocumentFactory",
+		"Carbon.Document.DocumentConstant",
 		"Interface with the factory and decorate properties and methods for an Carbon LDP Document"
 	), ():void => {
 
@@ -278,7 +278,7 @@ describe( module( "Carbon/Document" ), ():void => {
 
 	} );
 
-	describe( property( STATIC, "Document", "Carbon.Document.DocumentFactory", "Constant that implements the `Carbon.Document.DocumentFactory` interface." ), ():void => {
+	describe( property( STATIC, "Document", "Carbon.Document.DocumentConstant", "Constant that implements the `Carbon.Document.DocumentConstant` interface." ), ():void => {
 
 		describe( "Document.TYPE", ():void => {
 

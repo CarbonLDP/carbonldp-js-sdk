@@ -17,7 +17,7 @@ export interface AccessPoint extends DirectContainer {
 }
 
 
-export interface AccessPointFactory extends ModelFactory<AccessPoint> {
+export interface AccessPointConstant extends ModelFactory<AccessPoint> {
 	TYPE:string;
 
 	is( object:object ):object is AccessPoint;
@@ -28,7 +28,7 @@ export interface AccessPointFactory extends ModelFactory<AccessPoint> {
 	createFrom<T extends object>( object:T, membershipResource:Pointer, hasMemberRelation:string | Pointer, isMemberOfRelation?:string | Pointer ):T & AccessPoint;
 }
 
-export const AccessPoint:AccessPointFactory = {
+export const AccessPoint:AccessPointConstant = {
 	TYPE: C.AccessPoint,
 
 	is( object:object ):object is AccessPoint {

@@ -5,12 +5,12 @@ import { ModelFactory } from "./ModelFactory";
 export interface NamedFragment extends Fragment {
     slug: string;
 }
-export interface NamedFragmentFactory extends ModelFactory<NamedFragment>, ModelDecorator<NamedFragment> {
+export interface NamedFragmentConstant extends ModelFactory<NamedFragment>, ModelDecorator<NamedFragment> {
     isDecorated(object: object): object is NamedFragment;
     is(object: object): object is NamedFragment;
     create(document: Document, slug: string): NamedFragment;
     createFrom<T extends object>(object: T, document: Document, slug: string): T & NamedFragment;
     decorate<T extends object>(object: T): T & NamedFragment;
 }
-export declare const NamedFragment: NamedFragmentFactory;
+export declare const NamedFragment: NamedFragmentConstant;
 export default NamedFragment;

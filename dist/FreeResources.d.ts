@@ -14,12 +14,12 @@ export interface FreeResources extends PointerLibrary, PointerValidator {
     createResourceFrom<T>(object: T, id?: string): Resource & T;
     toJSON(): object;
 }
-export interface FreeResourcesFactory extends ModelFactory<FreeResources>, ModelDecorator<FreeResources> {
+export interface FreeResourcesConstant extends ModelFactory<FreeResources>, ModelDecorator<FreeResources> {
     is(object: object): object is FreeResources;
     isDecorated(object: object): object is FreeResources;
     create(documents: Documents): FreeResources;
     createFrom<T extends object>(object: T, documents: Documents): T & FreeResources;
     decorate<T extends object>(object: T, documents: Documents): T & FreeResources;
 }
-export declare const FreeResources: FreeResourcesFactory;
+export declare const FreeResources: FreeResourcesConstant;
 export default FreeResources;

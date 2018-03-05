@@ -16,7 +16,7 @@ export interface DocumentMetadata extends VolatileResource {
 }
 
 
-export interface DocumentMetadataFactory extends ModelFactory<DocumentMetadata>, ModelDecorator<DocumentMetadata> {
+export interface DocumentMetadataConstant extends ModelFactory<DocumentMetadata>, ModelDecorator<DocumentMetadata> {
 	TYPE:string;
 	SCHEMA:ObjectSchema;
 
@@ -40,7 +40,7 @@ export const SCHEMA:ObjectSchema = {
 	},
 };
 
-export const DocumentMetadata:DocumentMetadataFactory = {
+export const DocumentMetadata:DocumentMetadataConstant = {
 	TYPE: C.DocumentMetadata,
 	SCHEMA,
 

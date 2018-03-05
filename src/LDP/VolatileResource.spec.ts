@@ -28,7 +28,7 @@ describe( module( "Carbon/LDP/VolatileResource" ), ():void => {
 	} );
 
 	describe( interfaze(
-		"Carbon.LDP.VolatileResource.VolatileResourceFactory",
+		"Carbon.LDP.VolatileResource.VolatileResourceConstant",
 		"Interface with the factory, decorate an utils methods for `Carbon.LDP.VolatileResource.VolatileResource` objects."
 	), ():void => {
 
@@ -52,8 +52,8 @@ describe( module( "Carbon/LDP/VolatileResource" ), ():void => {
 	describe( property(
 		STATIC,
 		"VolatileResource",
-		"Carbon.LDP.VolatileResourceFactory",
-		"Constant that implements the `Carbon.LDP.VolatileResource.VolatileResourceFactory` interface."
+		"Carbon.LDP.VolatileResource.VolatileResourceConstant",
+		"Constant that implements the `Carbon.LDP.VolatileResource.VolatileResourceConstant` interface."
 	), ():void => {
 
 		it( isDefined(), ():void => {

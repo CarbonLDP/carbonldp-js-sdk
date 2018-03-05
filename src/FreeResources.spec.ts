@@ -106,7 +106,7 @@ describe( module( "Carbon/FreeResources" ), ():void => {
 	} );
 
 	describe( interfaze(
-		"Carbon.FreeResources.FreeResourcesFactory",
+		"Carbon.FreeResources.FreeResourcesConstant",
 		"Interfaces with the factory, decorate and utils methods of a `Carbon.FreeResources.FreeResources` object."
 	), ():void => {
 
@@ -160,7 +160,7 @@ describe( module( "Carbon/FreeResources" ), ():void => {
 
 	} );
 
-	describe( property( STATIC, "FreeResources", "Carbon.FreeResources.FreeResourcesFactory", "Constant that implements the `Carbon.FreeResources.FreeResourcesFactory` interface." ), ():void => {
+	describe( property( STATIC, "FreeResources", "Carbon.FreeResources.FreeResourcesConstant", "Constant that implements the `Carbon.FreeResources.FreeResourcesConstant` interface." ), ():void => {
 
 		it( isDefined(), ():void => {
 			expect( FreeResources ).toBeDefined();

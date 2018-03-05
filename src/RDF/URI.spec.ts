@@ -4,7 +4,6 @@ import {
 	ObjectSchemaDigester,
 } from "../ObjectSchema";
 import {
-	clazz,
 	hasDefaultExport,
 	hasMethod,
 	hasSignature,
@@ -13,6 +12,8 @@ import {
 	method,
 	module,
 	OBLIGATORY,
+	property,
+	STATIC,
 } from "../test/JasmineExtender";
 import * as Utils from "./../Utils";
 
@@ -22,7 +23,7 @@ import DefaultExport from "./URI";
 describe( module( "Carbon/RDF/URI" ), ():void => {
 
 	describe( interfaze(
-		"Carbon.RDF.URI.URIFactory",
+		"Carbon.RDF.URI.URIConstant",
 		"Interface with the utils for URI strings."
 	), ():void => {
 
@@ -202,7 +203,12 @@ describe( module( "Carbon/RDF/URI" ), ():void => {
 
 	} );
 
-	describe( clazz( "Carbon.RDF.URI.URIFactory", "Class with useful functions to manage URI strings." ), ():void => {
+	describe( property(
+		STATIC,
+		"URI",
+		"Carbon.RDF.URI.URIConstant",
+		"Constant that implements the `Carbon.RDF.URI.URIConstant` interface."
+	), ():void => {
 
 		it( isDefined(), ():void => {
 			expect( URI ).toBeDefined();

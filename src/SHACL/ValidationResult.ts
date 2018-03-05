@@ -17,7 +17,7 @@ export interface ValidationResult extends Resource {
 }
 
 
-export interface ValidationResultFactory {
+export interface ValidationResultConstant {
 	TYPE:string;
 	SCHEMA:ObjectSchema;
 }
@@ -56,7 +56,7 @@ const SCHEMA:ObjectSchema = {
 	},
 };
 
-export const ValidationResult:ValidationResultFactory = {
+export const ValidationResult:ValidationResultConstant = {
 	TYPE: SHACL.ValidationResult,
 	SCHEMA,
 };

@@ -40,7 +40,7 @@ describe( module( "Carbon/LDP/ResponseMetadata" ), ():void => {
 	} );
 
 	describe( interfaze(
-		"Carbon.LDP.ResponseMetadata.ResponseMetadataFactory",
+		"Carbon.LDP.ResponseMetadata.ResponseMetadataConstant",
 		"Interface with the factory, decorate and utils methods for `Carbon.LDP.ResponseMetadata.ResponseMetadata` objects."
 	), ():void => {
 
@@ -70,7 +70,7 @@ describe( module( "Carbon/LDP/ResponseMetadata" ), ():void => {
 	describe( property(
 		STATIC,
 		"ResponseMetadata",
-		"Carbon.LDP.ResponseMetadata.Factory"
+		"Carbon.LDP.ResponseMetadata.ResponseMetadataConstant"
 	), ():void => {
 
 		it( "should exist", ():void => {

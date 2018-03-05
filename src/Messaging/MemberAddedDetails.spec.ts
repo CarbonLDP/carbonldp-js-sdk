@@ -45,7 +45,7 @@ describe( module( "Carbon/Messaging/MemberAddedDetails" ), ():void => {
 	} );
 
 	describe( interfaze(
-		"Carbon.Messaging.MemberAddedDetails.MemberAddedDetailsFactory",
+		"Carbon.Messaging.MemberAddedDetails.MemberAddedDetailsConstant",
 		"Interface with the factory, decorator and utils for `Carbon.Messaging.MemberAddedDetails.MemberAddedDetails` objects."
 	), ():void => {
 
@@ -66,7 +66,7 @@ describe( module( "Carbon/Messaging/MemberAddedDetails" ), ():void => {
 	describe( property(
 		STATIC,
 		"MemberAddedDetails",
-		"Carbon.Messaging.MemberAddedDetails.MemberAddedDetailsFactory"
+		"Carbon.Messaging.MemberAddedDetails.MemberAddedDetailsConstant"
 	), ():void => {
 
 		it( isDefined(), ():void => {

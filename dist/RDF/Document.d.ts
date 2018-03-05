@@ -5,7 +5,7 @@ export interface RDFDocument {
     "@id"?: string;
     "@graph": RDFNode[];
 }
-export interface RDFDocumentFactory {
+export interface RDFDocumentConstant {
     is(value: any): value is RDFDocument;
     create(resources: RDFNode[], uri?: string): RDFDocument;
     getDocuments(objects: object | object[]): RDFDocument[];
@@ -15,7 +15,7 @@ export interface RDFDocumentFactory {
     getBNodeResources(document: RDFDocument): RDFNode[];
     getNodes(rdfDocument: RDFDocument): [RDFNode[], RDFNode[]];
 }
-export declare const RDFDocument: RDFDocumentFactory;
+export declare const RDFDocument: RDFDocumentConstant;
 export declare class RDFDocumentParser extends JSONLDParser implements Parser<RDFDocument[]> {
     parse(input: string): Promise<RDFDocument[]>;
 }

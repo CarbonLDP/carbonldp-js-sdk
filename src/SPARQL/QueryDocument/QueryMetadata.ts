@@ -10,7 +10,7 @@ export interface QueryMetadata extends VolatileResource {
 }
 
 
-export interface QueryMetadataFactory extends ModelFactory<QueryMetadata> {
+export interface QueryMetadataConstant extends ModelFactory<QueryMetadata> {
 	TYPE:string;
 	SCHEMA:ObjectSchema;
 
@@ -25,7 +25,7 @@ const SCHEMA:ObjectSchema = {
 	},
 };
 
-export const QueryMetadata:QueryMetadataFactory = {
+export const QueryMetadata:QueryMetadataConstant = {
 	TYPE: C.QueryMetadata,
 	SCHEMA,
 

@@ -44,7 +44,7 @@ describe( module( "Carbon/Messaging/AccessPointCreated" ), ():void => {
 	} );
 
 	describe( interfaze(
-		"Carbon.Messaging.AccessPointCreated.AccessPointCreatedFactory",
+		"Carbon.Messaging.AccessPointCreated.AccessPointCreatedConstant",
 		"Interface with the factory, decorate and utils for `Carbon.Messaging.AccessPointCreated.AccessPointCreated` objects."
 	), ():void => {
 
@@ -65,7 +65,7 @@ describe( module( "Carbon/Messaging/AccessPointCreated" ), ():void => {
 	describe( property(
 		STATIC,
 		"AccessPointCreated",
-		"Carbon.Messaging.AccessPointCreated.AccessPointCreatedFactory"
+		"Carbon.Messaging.AccessPointCreated.AccessPointCreatedConstant"
 	), ():void => {
 
 		it( isDefined(), ():void => {

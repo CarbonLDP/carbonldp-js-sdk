@@ -6,9 +6,9 @@ export interface CarbonError extends Resource {
     errorMessage: string;
     errorParameters: CarbonMap<string, any>;
 }
-export interface CarbonErrorFactory {
+export interface CarbonErrorConstant {
     TYPE: string;
     SCHEMA: ObjectSchema;
 }
-export declare const CarbonError: CarbonErrorFactory;
+export declare const CarbonError: CarbonErrorConstant;
 export default CarbonError;

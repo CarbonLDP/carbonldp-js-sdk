@@ -10,7 +10,7 @@ export interface Fragment extends Resource {
 }
 
 
-export interface FragmentFactory extends ModelFactory<Fragment>, ModelDecorator<Fragment> {
+export interface FragmentConstant extends ModelFactory<Fragment>, ModelDecorator<Fragment> {
 	isDecorated( object:object ):object is Fragment;
 
 	is( object:object ):object is Fragment;
@@ -23,7 +23,7 @@ export interface FragmentFactory extends ModelFactory<Fragment>, ModelDecorator<
 	decorate<T extends object>( object:T ):T & Fragment;
 }
 
-export const Fragment:FragmentFactory = {
+export const Fragment:FragmentConstant = {
 	isDecorated( object:object ):object is Fragment {
 		return isObject( object ) &&
 			object.hasOwnProperty( "_document" )

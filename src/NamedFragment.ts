@@ -10,7 +10,7 @@ export interface NamedFragment extends Fragment {
 }
 
 
-export interface NamedFragmentFactory extends ModelFactory<NamedFragment>, ModelDecorator<NamedFragment> {
+export interface NamedFragmentConstant extends ModelFactory<NamedFragment>, ModelDecorator<NamedFragment> {
 	isDecorated( object:object ):object is NamedFragment;
 
 	is( object:object ):object is NamedFragment;
@@ -23,7 +23,7 @@ export interface NamedFragmentFactory extends ModelFactory<NamedFragment>, Model
 	decorate<T extends object>( object:T ):T & NamedFragment;
 }
 
-export const NamedFragment:NamedFragmentFactory = {
+export const NamedFragment:NamedFragmentConstant = {
 	isDecorated( object:object ):object is NamedFragment {
 		return isObject( object ) &&
 			object.hasOwnProperty( "slug" ) && ! object.propertyIsEnumerable( "slug" )

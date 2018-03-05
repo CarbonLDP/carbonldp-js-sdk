@@ -37,7 +37,7 @@ describe( module( "Carbon/PersistedNamedFragment" ), ():void => {
 	} );
 
 	describe( interfaze(
-		"Carbon.PersistedNamedFragment.PersistedNamedFragmentFactory",
+		"Carbon.PersistedNamedFragment.PersistedNamedFragmentConstant",
 		"Interface with the factory, decorate and utils methods of a `Carbon.PersistedNamedFragment.PersistedNamedFragment` object."
 	), ():void => {
 
@@ -71,7 +71,7 @@ describe( module( "Carbon/PersistedNamedFragment" ), ():void => {
 	} );
 
 
-	describe( property( STATIC, "PersistedNamedFragment", "Carbon.PersistedNamedFragment.PersistedNamedFragmentFactory", "Constant that implements the `Carbon.PersistedNamedFragment.PersistedNamedFragmentFactory` interface." ), ():void => {
+	describe( property( STATIC, "PersistedNamedFragment", "Carbon.PersistedNamedFragment.PersistedNamedFragmentConstant", "Constant that implements the `Carbon.PersistedNamedFragment.PersistedNamedFragmentConstant` interface." ), ():void => {
 
 		it( isDefined(), ():void => {
 			expect( PersistedNamedFragment ).toBeDefined();

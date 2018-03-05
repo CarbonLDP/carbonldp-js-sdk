@@ -29,14 +29,14 @@ describe( module( "Carbon/Fragment" ), ():void => {
 	} );
 
 	describe( interfaze(
-		"Carbon.Fragment.FragmentFactory",
-		"Interface with the factory, decorate and utils methods of a `Carbon.FragmentFragment` object."
+		"Carbon.Fragment.FragmentConstant",
+		"Interface with the factory, decorate and utils methods of a `Carbon.Fragment.Fragment` object."
 	), ():void => {
 
 		it( hasMethod(
 			OBLIGATORY,
 			"isDecorated",
-			"Returns true if the object provided has the properties and methods of a `Carbon.Fragment.Class` object.", [
+			"Returns true if the object provided has the properties and methods of a `Carbon.Fragment.Fragment` object.", [
 				{ name: "object", type: "object" },
 			],
 			{ type: "object is Carbon.Fragment.Fragment" }
@@ -45,7 +45,7 @@ describe( module( "Carbon/Fragment" ), ():void => {
 		it( hasMethod(
 			OBLIGATORY,
 			"is",
-			"Returns true if the object provided is considered a `Carbon.Fragment.Class` object.", [
+			"Returns true if the object provided is considered a `Carbon.Fragment.Fragment` object.", [
 				{ name: "object", type: "object" },
 			],
 			{ type: "object is Carbon.Fragment.Fragment" }
@@ -93,7 +93,7 @@ describe( module( "Carbon/Fragment" ), ():void => {
 		expect( defaultTarget ).toEqual( jasmine.any( Object ) );
 	} );
 
-	describe( hasProperty( STATIC, "Fragment", "Carbon.Fragment.FragmentFactory", "Constant that implements the `Carbon.Fragment.FragmentFactory` interface" ), ():void => {
+	describe( hasProperty( STATIC, "Fragment", "Carbon.Fragment.FragmentConstant", "Constant that implements the `Carbon.Fragment.FragmentConstant` interface" ), ():void => {
 
 		it( "should exist", ():void => {
 			expect( Fragment ).toBeDefined();

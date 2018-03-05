@@ -15,7 +15,7 @@ export interface DirectContainer extends Document {
 }
 
 
-export interface DirectContainerFactory extends ModelFactory<DirectContainer> {
+export interface DirectContainerConstant extends ModelFactory<DirectContainer> {
 	TYPE:string;
 
 	is( object:object ):object is DirectContainer;
@@ -26,7 +26,7 @@ export interface DirectContainerFactory extends ModelFactory<DirectContainer> {
 	createFrom<T extends object>( object:T, membershipResource:Pointer, hasMemberRelation:string | Pointer, isMemberOfRelation?:string | Pointer ):T & DirectContainer;
 }
 
-export const DirectContainer:DirectContainerFactory = {
+export const DirectContainer:DirectContainerConstant = {
 	TYPE: LDP.DirectContainer,
 
 	is( object:object ):object is DirectContainer {

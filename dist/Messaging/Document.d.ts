@@ -42,9 +42,9 @@ export interface MessagingDocument extends ServiceAwareDocument {
     onMemberAdded(onEvent: (message: MemberAdded) => void, onError: (error: Error) => void): void;
     onMemberRemoved(onEvent: (message: MemberRemoved) => void, onError: (error: Error) => void): void;
 }
-export interface MessagingDocumentFactory extends ModelDecorator<MessagingDocument, ServiceAwareDocument> {
+export interface MessagingDocumentConstant extends ModelDecorator<MessagingDocument, ServiceAwareDocument> {
     isDecorated(object: object): object is MessagingDocument;
     decorate<T extends ServiceAwareDocument>(object: T): T & MessagingDocument;
 }
-export declare const MessagingDocument: MessagingDocumentFactory;
+export declare const MessagingDocument: MessagingDocumentConstant;
 export default MessagingDocument;

@@ -7,7 +7,7 @@ export interface DocumentDeleted extends EventMessage {
 }
 
 
-export interface DocumentDeletedFactory {
+export interface DocumentDeletedConstant {
 	TYPE:string;
 	SCHEMA:ObjectSchema;
 }
@@ -15,7 +15,7 @@ export interface DocumentDeletedFactory {
 const TYPE:string = C.DocumentDeleted;
 const SCHEMA:ObjectSchema = EventMessage.SCHEMA;
 
-export const DocumentDeleted:DocumentDeletedFactory = {
+export const DocumentDeleted:DocumentDeletedConstant = {
 	TYPE,
 	SCHEMA,
 };

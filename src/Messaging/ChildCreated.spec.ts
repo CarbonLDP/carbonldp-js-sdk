@@ -46,7 +46,7 @@ describe( module( "Carbon/Messaging/ChildCreated" ), ():void => {
 	} );
 
 	describe( interfaze(
-		"Carbon.Messaging.ChildCreated.ChildCreatedFactory",
+		"Carbon.Messaging.ChildCreated.ChildCreatedConstant",
 		"Interface with the factory, decorate and utils for `Carbon.Messaging.ChildCreated.ChildCreated` objects."
 	), ():void => {
 
@@ -67,7 +67,7 @@ describe( module( "Carbon/Messaging/ChildCreated" ), ():void => {
 	describe( property(
 		STATIC,
 		"ChildCreated",
-		"Carbon.Messaging.ChildCreated.ChildCreatedFactory"
+		"Carbon.Messaging.ChildCreated.ChildCreatedConstant"
 	), ():void => {
 
 		it( isDefined(), ():void => {

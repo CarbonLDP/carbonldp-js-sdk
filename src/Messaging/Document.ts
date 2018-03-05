@@ -122,13 +122,13 @@ function onMemberRemoved( this:MessagingDocument, onEvent:( message:MemberRemove
 	return this._documents.onMemberRemoved( this.id, onEvent, onError );
 }
 
-export interface MessagingDocumentFactory extends ModelDecorator<MessagingDocument, ServiceAwareDocument> {
+export interface MessagingDocumentConstant extends ModelDecorator<MessagingDocument, ServiceAwareDocument> {
 	isDecorated( object:object ):object is MessagingDocument;
 
 	decorate<T extends ServiceAwareDocument>( object:T ):T & MessagingDocument;
 }
 
-export const MessagingDocument:MessagingDocumentFactory = {
+export const MessagingDocument:MessagingDocumentConstant = {
 
 	isDecorated( object:object ):object is MessagingDocument {
 		return isObject( object )

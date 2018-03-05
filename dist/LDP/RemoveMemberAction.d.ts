@@ -6,12 +6,12 @@ import { Resource } from "../Resource";
 export interface RemoveMemberAction extends Resource {
     targetMembers: Pointer[];
 }
-export interface RemoveMemberActionFactory extends ModelDecorator<RemoveMemberAction>, ModelFactory<RemoveMemberAction> {
+export interface RemoveMemberActionConstant extends ModelDecorator<RemoveMemberAction>, ModelFactory<RemoveMemberAction> {
     TYPE: string;
     SCHEMA: ObjectSchema;
     isDecorated(object: object): object is RemoveMemberAction;
     create(targetMembers: Pointer[]): RemoveMemberAction;
 }
 export declare const SCHEMA: ObjectSchema;
-export declare const RemoveMemberAction: RemoveMemberActionFactory;
+export declare const RemoveMemberAction: RemoveMemberActionConstant;
 export default RemoveMemberAction;

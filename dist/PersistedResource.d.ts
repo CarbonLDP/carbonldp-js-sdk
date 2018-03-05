@@ -9,9 +9,9 @@ export interface PersistedResource extends Resource {
     revert(): void;
     isPartial(): boolean;
 }
-export interface PersistedResourceFactory extends ModelDecorator<PersistedResource> {
+export interface PersistedResourceConstant extends ModelDecorator<PersistedResource> {
     isDecorated(object: object): object is PersistedResource;
     decorate<T extends object>(object: T): T & PersistedResource;
 }
-export declare const PersistedResource: PersistedResourceFactory;
+export declare const PersistedResource: PersistedResourceConstant;
 export default PersistedResource;

@@ -9,13 +9,13 @@ export interface ServiceAwareDocument extends Document {
 }
 
 
-export interface ServiceAwareDocumentFactory extends ModelDecorator<ServiceAwareDocument> {
+export interface ServiceAwareDocumentConstant extends ModelDecorator<ServiceAwareDocument> {
 	isDecorated( object:object ):object is ServiceAwareDocument;
 
 	decorate<T extends object>( object:T, documents:Documents ):T & ServiceAwareDocument;
 }
 
-export const ServiceAwareDocument:ServiceAwareDocumentFactory = {
+export const ServiceAwareDocument:ServiceAwareDocumentConstant = {
 	isDecorated( object:object ):object is ServiceAwareDocument {
 		return isObject( object )
 			&& object.hasOwnProperty( "_documents" )

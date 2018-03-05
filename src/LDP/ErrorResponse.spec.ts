@@ -47,7 +47,7 @@ describe( module( "Carbon/LDP/ErrorResponse" ), ():void => {
 	} );
 
 	describe( interfaze(
-		"Carbon.LDP.ErrorResponse.ErrorResponseFactory",
+		"Carbon.LDP.ErrorResponse.ErrorResponseConstant",
 		"Interface with the factory, decorate and utils methods for `Carbon.LDP.ErrorResponse.ErrorResponse` objects."
 	), ():void => {
 
@@ -75,7 +75,7 @@ describe( module( "Carbon/LDP/ErrorResponse" ), ():void => {
 	} );
 
 	describe( clazz(
-		"Carbon.LDP.ErrorResponse.ErrorResponseFactory",
+		"Carbon.LDP.ErrorResponse.ErrorResponseConstant",
 		"Useful functions for managing `Carbon.LDP.ErrorResponse.ErrorResponse` objects."
 	), ():void => {
 

@@ -5,9 +5,9 @@ import { PersistedFragment } from "./PersistedFragment";
 export interface PersistedNamedFragment extends PersistedFragment, NamedFragment {
     _document: PersistedDocument;
 }
-export interface PersistedNamedFragmentFactory extends ModelDecorator<PersistedNamedFragment> {
+export interface PersistedNamedFragmentConstant extends ModelDecorator<PersistedNamedFragment> {
     isDecorated(object: object): object is PersistedNamedFragment;
     decorate<T extends object>(object: T): T & PersistedNamedFragment;
 }
-export declare const PersistedNamedFragment: PersistedNamedFragmentFactory;
+export declare const PersistedNamedFragment: PersistedNamedFragmentConstant;
 export default PersistedNamedFragment;

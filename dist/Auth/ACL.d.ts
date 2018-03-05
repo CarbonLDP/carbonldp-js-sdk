@@ -28,11 +28,11 @@ export interface ACL extends Document {
     removeChildInheritance(subject: string | Pointer, permission: string | Pointer): void;
     removeChildInheritance(subject: string | Pointer, permissions: (string | Pointer)[]): void;
 }
-export interface ACLFactory extends ModelDecorator<ACL> {
+export interface ACLConstant extends ModelDecorator<ACL> {
     TYPE: string;
     SCHEMA: ObjectSchema;
     isDecorated(object: object): object is ACL;
     decorate<T extends object>(object: T): T & ACL;
 }
-export declare const ACL: ACLFactory;
+export declare const ACL: ACLConstant;
 export default ACL;

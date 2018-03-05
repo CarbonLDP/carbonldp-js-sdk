@@ -26,7 +26,7 @@ export interface PersistedFragment extends PersistedResource, Fragment {
 }
 
 
-export interface PersistedFragmentFactory extends ModelFactory<PersistedFragment>, ModelDecorator<PersistedFragment> {
+export interface PersistedFragmentConstant extends ModelFactory<PersistedFragment>, ModelDecorator<PersistedFragment> {
 	isDecorated( object:object ):object is PersistedFragment;
 
 	is( object:object ):object is PersistedFragment;
@@ -62,7 +62,7 @@ function removeTypeInPersistedFragment( this:PersistedFragment, type:string ):vo
 	return removeTypeInResource.call( this, type );
 }
 
-export const PersistedFragment:PersistedFragmentFactory = {
+export const PersistedFragment:PersistedFragmentConstant = {
 	isDecorated( object:object ):object is PersistedFragment {
 		return isObject( object ) &&
 			object[ "addType" ] === addTypeInPersistedFragment &&

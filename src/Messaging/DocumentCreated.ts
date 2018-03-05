@@ -9,7 +9,7 @@ export interface DocumentCreated extends EventMessage {
 }
 
 
-export interface DocumentCreatedFactory {
+export interface DocumentCreatedConstant {
 	SCHEMA:ObjectSchema;
 }
 
@@ -21,7 +21,7 @@ const SCHEMA:ObjectSchema = {
 	},
 };
 
-export const DocumentCreated:DocumentCreatedFactory = {
+export const DocumentCreated:DocumentCreatedConstant = {
 	SCHEMA,
 };
 

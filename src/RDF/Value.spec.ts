@@ -60,7 +60,7 @@ describe( module( "Carbon/RDF/Value" ), ():void => {
 	} );
 
 	describe( interfaze(
-		"Carbon.RDF.Value.RDFValueFactory",
+		"Carbon.RDF.Value.RDFValueConstant",
 		"Interface with the utils for `Carbon.RDF.Value.RDFValue` objects."
 	), ():void => {
 
@@ -79,8 +79,8 @@ describe( module( "Carbon/RDF/Value" ), ():void => {
 
 	describe( property(
 		STATIC,
-		"RDFValueFactory",
-		"Carbon.RDF.Value.RDFValueFactory",
+		"RDFValue",
+		"Carbon.RDF.Value.RDFValueConstant",
 		"Class with useful functions to manage `Carbon.RDF.Value.RDFValue` objects."
 	), ():void => {
 

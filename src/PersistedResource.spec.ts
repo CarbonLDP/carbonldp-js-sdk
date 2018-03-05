@@ -73,7 +73,7 @@ describe( module( "Carbon/PersistedResource" ), ():void => {
 	} );
 
 	describe( interfaze(
-		"Carbon.PersistedResource.PersistedResourceFactory",
+		"Carbon.PersistedResource.PersistedResourceConstant",
 		"Interface with the factory, decorate and utils methods of a `Carbon.PersistedResource.PersistedResource` object"
 	), ():void => {
 
@@ -105,7 +105,7 @@ describe( module( "Carbon/PersistedResource" ), ():void => {
 		expect( defaultTarget ).toEqual( jasmine.any( Object ) );
 	} );
 
-	describe( property( STATIC, "PersistedResource", "Carbon.PersistedResource.PersistedResourceFactory", "Constant that implements the `Carbon.PersistedResource.PersistedResourceFactory` interface." ), ():void => {
+	describe( property( STATIC, "PersistedResource", "Carbon.PersistedResource.PersistedResourceConstant", "Constant that implements the `Carbon.PersistedResource.PersistedResourceConstant` interface." ), ():void => {
 
 		it( isDefined(), ():void => {
 			expect( PersistedResource ).toBeDefined();

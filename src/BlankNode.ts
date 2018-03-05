@@ -7,7 +7,7 @@ import { URI } from "./RDF/URI";
 export interface BlankNode extends Fragment {
 }
 
-export interface BlankNodeFactory extends ModelFactory<BlankNode> {
+export interface BlankNodeConstant extends ModelFactory<BlankNode> {
 	is( object:object ):object is BlankNode;
 
 
@@ -16,7 +16,7 @@ export interface BlankNodeFactory extends ModelFactory<BlankNode> {
 	createFrom<T extends object>( object:T, document:Document, id?:string ):T & BlankNode;
 }
 
-export const BlankNode:BlankNodeFactory = {
+export const BlankNode:BlankNodeConstant = {
 	is( object:object ):object is BlankNode {
 		return Fragment.is( object ) &&
 			URI.isBNodeID( object.id )

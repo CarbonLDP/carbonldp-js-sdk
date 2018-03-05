@@ -11,9 +11,9 @@ export interface ValidationResult extends Resource {
     resultMessage?: string;
     resultSeverity?: Pointer;
 }
-export interface ValidationResultFactory {
+export interface ValidationResultConstant {
     TYPE: string;
     SCHEMA: ObjectSchema;
 }
-export declare const ValidationResult: ValidationResultFactory;
+export declare const ValidationResult: ValidationResultConstant;
 export default ValidationResult;

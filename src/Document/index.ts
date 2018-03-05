@@ -63,7 +63,7 @@ export interface Document extends Resource, PointerLibrary, PointerValidator {
 	toJSON( objectSchemaResolver?:ObjectSchema.ObjectSchemaResolver, jsonldConverter?:JSONLDConverter ):RDFDocument;
 }
 
-export interface DocumentFactory extends ModelFactory<Document>, ModelDecorator<Document> {
+export interface DocumentConstant extends ModelFactory<Document>, ModelDecorator<Document> {
 	TYPE:string;
 	SCHEMA:ObjectSchema.ObjectSchema;
 
@@ -80,7 +80,7 @@ export interface DocumentFactory extends ModelFactory<Document>, ModelDecorator<
 	decorate<T extends object>( object:T ):T & Document;
 }
 
-export const Document:DocumentFactory = {
+export const Document:DocumentConstant = {
 	TYPE: C.Document,
 	SCHEMA: {
 		"contains": {

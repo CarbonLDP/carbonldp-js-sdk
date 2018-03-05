@@ -9,7 +9,7 @@ export interface DocumentCreatedDetails extends Resource {
 }
 
 
-export interface DocumentCreatedDetailsFactory {
+export interface DocumentCreatedDetailsConstant {
 	TYPE:string;
 	SCHEMA:ObjectSchema;
 }
@@ -22,7 +22,7 @@ const SCHEMA:ObjectSchema = {
 	},
 };
 
-export const DocumentCreatedDetails:DocumentCreatedDetailsFactory = {
+export const DocumentCreatedDetails:DocumentCreatedDetailsConstant = {
 	TYPE: C.DocumentCreatedDetails,
 	SCHEMA,
 };

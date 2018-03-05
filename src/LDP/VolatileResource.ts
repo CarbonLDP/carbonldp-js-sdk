@@ -6,13 +6,13 @@ export interface VolatileResource extends Resource {
 }
 
 
-export interface VolatileResourceFactory extends ModelFactory<VolatileResource> {
+export interface VolatileResourceConstant extends ModelFactory<VolatileResource> {
 	TYPE:string;
 
 	is( object:object ):object is VolatileResource;
 }
 
-export const VolatileResource:VolatileResourceFactory = {
+export const VolatileResource:VolatileResourceConstant = {
 	TYPE: C.VolatileResource,
 
 	is( object:object ):object is VolatileResource {

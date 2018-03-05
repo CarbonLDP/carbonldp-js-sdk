@@ -9,7 +9,7 @@ export interface MemberRemoved extends EventMessage {
 }
 
 
-export interface MemberRemovedFactory {
+export interface MemberRemovedConstant {
 	TYPE:string;
 	SCHEMA:ObjectSchema;
 }
@@ -23,7 +23,7 @@ const SCHEMA:ObjectSchema = {
 	},
 };
 
-export const MemberRemoved:MemberRemovedFactory = {
+export const MemberRemoved:MemberRemovedConstant = {
 	TYPE,
 	SCHEMA,
 };

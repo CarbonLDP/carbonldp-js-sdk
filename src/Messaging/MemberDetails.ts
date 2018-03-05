@@ -9,7 +9,7 @@ export interface MemberDetails extends Resource {
 }
 
 
-export interface MemberDetailsFactory {
+export interface MemberDetailsConstant {
 	SCHEMA:ObjectSchema;
 }
 
@@ -21,7 +21,7 @@ const SCHEMA:ObjectSchema = {
 	},
 };
 
-export const MemberDetails:MemberDetailsFactory = {
+export const MemberDetails:MemberDetailsConstant = {
 	SCHEMA,
 };
 

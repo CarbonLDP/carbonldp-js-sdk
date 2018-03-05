@@ -6,7 +6,7 @@ export interface ProtectedDocument extends Document {
 }
 
 
-export interface ProtectedDocumentFactory {
+export interface ProtectedDocumentConstant {
 	TYPE:string;
 	SCHEMA:ObjectSchema;
 }
@@ -19,7 +19,7 @@ const SCHEMA:ObjectSchema = {
 	},
 };
 
-export const ProtectedDocument:ProtectedDocumentFactory = {
+export const ProtectedDocument:ProtectedDocumentConstant = {
 	TYPE: CS.ProtectedDocument,
 	SCHEMA,
 };

@@ -5,9 +5,9 @@ export interface ValidationReport {
     results?: ValidationResult[];
     shapesGraphWellFormed?: boolean;
 }
-export interface ValidationReportFactory {
+export interface ValidationReportConstant {
     TYPE: string;
     SCHEMA: ObjectSchema;
 }
-export declare const ValidationReport: ValidationReportFactory;
+export declare const ValidationReport: ValidationReportConstant;
 export default ValidationReport;

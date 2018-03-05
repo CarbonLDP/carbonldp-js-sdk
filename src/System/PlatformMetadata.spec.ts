@@ -47,7 +47,7 @@ describe( module( "Carbon/System/PlatformMetadata" ), ():void => {
 	} );
 
 	describe( interfaze(
-		"Carbon.System.PlatformMetadata.PlatformMetadataFactory",
+		"Carbon.System.PlatformMetadata.PlatformMetadataConstant",
 		"Interface with the factory, decorate and utils elements for `Carbon.System.PlatformMetadata.PlatformMetadata` objects."
 	), ():void => {
 
@@ -68,7 +68,7 @@ describe( module( "Carbon/System/PlatformMetadata" ), ():void => {
 	describe( property(
 		STATIC,
 		"PlatformMetadata",
-		"Carbon.System.PlatformMetadata.PlatformMetadataFactory"
+		"Carbon.System.PlatformMetadata.PlatformMetadataConstant"
 	), ():void => {
 
 		it( "should exist", ():void => {

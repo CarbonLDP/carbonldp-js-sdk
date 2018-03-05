@@ -8,8 +8,8 @@ export interface RDFValue {
     "@value"?: string;
     "@language"?: string;
 }
-export interface RDFValueFactory {
+export interface RDFValueConstant {
     parse(pointerLibrary: PointerLibrary, value: RDFLiteral | RDFNode | RDFList | RDFValue | string): any;
 }
-export declare const RDFValue: RDFValueFactory;
+export declare const RDFValue: RDFValueConstant;
 export default RDFValue;

@@ -4,8 +4,8 @@ export interface CarbonMapEntry<K, V> extends BlankNode {
     entryKey: K;
     entryValue: V;
 }
-export interface CarbonMapEntryFactory {
+export interface CarbonMapEntryConstant {
     SCHEMA: ObjectSchema;
 }
-export declare const CarbonMapEntry: CarbonMapEntryFactory;
+export declare const CarbonMapEntry: CarbonMapEntryConstant;
 export default CarbonMapEntry;

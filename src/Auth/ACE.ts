@@ -13,7 +13,7 @@ export interface ACE extends Fragment {
 }
 
 
-export interface ACEFactory extends ModelFactory<ACE> {
+export interface ACEConstant extends ModelFactory<ACE> {
 	TYPE:string;
 	SCHEMA:ObjectSchema;
 
@@ -47,7 +47,7 @@ const SCHEMA:ObjectSchema = {
 	},
 };
 
-export const ACE:ACEFactory = {
+export const ACE:ACEConstant = {
 	TYPE: CS.AccessControlEntry,
 	SCHEMA,
 

@@ -36,7 +36,7 @@ describe( module( "Carbon/LDP/RemoveMemberAction" ), ():void => {
 	} );
 
 	describe( interfaze(
-		"Carbon.LDP.RemoveMemberAction.RemoveMemberActionFactory",
+		"Carbon.LDP.RemoveMemberAction.RemoveMemberActionConstant",
 		"Interface with the factory, decorate and utils methods for `Carbon.LDP.RemoveMemberAction.RemoveMemberAction`"
 	), ():void => {
 
@@ -75,8 +75,8 @@ describe( module( "Carbon/LDP/RemoveMemberAction" ), ():void => {
 	describe( property(
 		STATIC,
 		"RemoveMemberAction",
-		"Carbon.LDP.RemoveMemberAction.RemoveMemberActionFactory",
-		"Constant that implements the `Carbon.LDP.RemoveMemberAction.RemoveMemberActionFactory` interface."
+		"Carbon.LDP.RemoveMemberAction.RemoveMemberActionConstant",
+		"Constant that implements the `Carbon.LDP.RemoveMemberAction.RemoveMemberActionConstant` interface."
 	), ():void => {
 
 		it( isDefined(), ():void => {

@@ -8,7 +8,7 @@ export interface RDFNode {
     "@type"?: string[];
     [propertyURI: string]: string | RDFNodePropertyValue[];
 }
-export interface RDFNodeFactory {
+export interface RDFNodeConstant {
     is(value: any): value is RDFNode;
     create(uri: string): RDFNode;
     getID(node: RDFNode): string;
@@ -24,5 +24,5 @@ export interface RDFNodeFactory {
     getPropertyLiterals(propertyValues: RDFNodePropertyValue[], literalType: string): any[] | undefined;
     getPropertyLanguageMap(propertyValues: RDFNodePropertyValue[]): object | undefined;
 }
-export declare const RDFNode: RDFNodeFactory;
+export declare const RDFNode: RDFNodeConstant;
 export default RDFNode;

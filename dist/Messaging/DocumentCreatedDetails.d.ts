@@ -4,9 +4,9 @@ import { Resource } from "../Resource";
 export interface DocumentCreatedDetails extends Resource {
     createdDocuments: Pointer[];
 }
-export interface DocumentCreatedDetailsFactory {
+export interface DocumentCreatedDetailsConstant {
     TYPE: string;
     SCHEMA: ObjectSchema;
 }
-export declare const DocumentCreatedDetails: DocumentCreatedDetailsFactory;
+export declare const DocumentCreatedDetails: DocumentCreatedDetailsConstant;
 export default DocumentCreatedDetails;

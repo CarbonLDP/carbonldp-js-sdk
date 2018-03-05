@@ -36,7 +36,7 @@ describe( module( "Carbon/LDP/AddMemberAction" ), ():void => {
 	} );
 
 	describe( interfaze(
-		"Carbon.LDP.AddMemberAction.AddMemberActionFactory",
+		"Carbon.LDP.AddMemberAction.AddMemberActionConstant",
 		"Interface with the factory, decorate and utils methods of `Carbon.LDP.AddMemberAction.AddMemberAction` objects"
 	), ():void => {
 
@@ -75,8 +75,8 @@ describe( module( "Carbon/LDP/AddMemberAction" ), ():void => {
 	describe( property(
 		STATIC,
 		"AddMemberAction",
-		"Carbon.LDP.AddMemberAction.AddMemberActionFactory",
-		"Constant that implements the `Carbon.LDP.AddMemberAction.AddMemberActionFactory` instance."
+		"Carbon.LDP.AddMemberAction.AddMemberActionConstant",
+		"Constant that implements the `Carbon.LDP.AddMemberAction.AddMemberActionConstant` instance."
 	), ():void => {
 
 		it( isDefined(), ():void => {
