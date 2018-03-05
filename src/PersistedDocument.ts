@@ -18,7 +18,6 @@ import { PersistedNamedFragment } from "./PersistedNamedFragment";
 import { PersistedProtectedDocument } from "./PersistedProtectedDocument";
 import { PersistedResource } from "./PersistedResource";
 import { Pointer } from "./Pointer";
-import * as RDF from "./RDF";
 import { URI } from "./RDF/URI";
 import { ServiceAwareDocument } from "./ServiceAwareDocument";
 import * as SPARQL from "./SPARQL";
@@ -27,7 +26,6 @@ import { QueryDocumentsBuilder } from "./SPARQL/QueryDocument/QueryDocumentsBuil
 import * as Utils from "./Utils";
 import { ModelFactory } from "./ModelFactory";
 import { ModelDecorator } from "./ModelDecorator";
-import { convertNestedObjects } from "./Document/prototype";
 
 export interface PersistedDocument extends Document, PersistedResource, ServiceAwareDocument, MessagingDocument {
 	created?:Date;
@@ -237,7 +235,7 @@ export const PersistedDocument:PersistedDocumentConstant = {
 		const document:T & PersistedDocument = PersistedDocument.decorate<T>( object, documents );
 
 		document.id = uri;
-		convertNestedObjects( document, document );
+		Document._convertNestedObjects( document, document );
 
 		return document;
 	},

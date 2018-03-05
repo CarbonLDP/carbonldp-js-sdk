@@ -18,7 +18,6 @@ var Pointer_1 = require("./Pointer");
 var URI_1 = require("./RDF/URI");
 var ServiceAwareDocument_1 = require("./ServiceAwareDocument");
 var Utils = __importStar(require("./Utils"));
-var prototype_1 = require("./Document/prototype");
 exports.PersistedDocument = {
     isDecorated: function (object) {
         return Utils.hasPropertyDefined(object, "_eTag")
@@ -63,7 +62,7 @@ exports.PersistedDocument = {
     createFrom: function (object, documents, uri) {
         var document = exports.PersistedDocument.decorate(object, documents);
         document.id = uri;
-        prototype_1.convertNestedObjects(document, document);
+        Document_1.Document._convertNestedObjects(document, document);
         return document;
     },
     decorate: function (object, documents) {
