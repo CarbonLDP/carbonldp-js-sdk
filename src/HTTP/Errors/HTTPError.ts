@@ -22,7 +22,7 @@ export class HTTPError extends AbstractError implements ErrorResponse {
 
 	isResolved:() => boolean;
 
-	resolve:<T>() => Promise<[ T & PersistedDocument, Response ]>;
+	resolve:<T>() => Promise<T & PersistedDocument>;
 
 	addType:( type:string ) => void;
 	hasType:( type:string ) => boolean;
