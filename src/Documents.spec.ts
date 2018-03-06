@@ -74,7 +74,7 @@ function createPartialMetadata( schema:ObjectSchema.ObjectSchema ):PartialMetada
 	return new PartialMetadata( digestedSchema );
 }
 
-fdescribe( module( "carbonldp/Documents" ), ():void => {
+describe( module( "carbonldp/Documents" ), ():void => {
 
 	describe( clazz(
 		"CarbonLDP.Documents.Documents",

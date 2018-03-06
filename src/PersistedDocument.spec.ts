@@ -30,7 +30,7 @@ import {
 } from "./test/JasmineExtender";
 import * as Utils from "./Utils";
 
-describe( module( "carbonldp/PersistedDocument" ), ():void => {
+fdescribe( module( "carbonldp/PersistedDocument" ), ():void => {
 
 	describe( interfaze(
 		"CarbonLDP.PersistedDocument.PersistedDocument",
@@ -1534,7 +1534,7 @@ describe( module( "carbonldp/PersistedDocument" ), ():void => {
 
 				let spy:jasmine.Spy = spyOn( context.documents, "refresh" );
 				document.refresh();
-				expect( spy ).toHaveBeenCalledWith( document );
+				expect( spy ).toHaveBeenCalledWith( document, void 0 );
 			} );
 
 			// TODO: Separate in different tests
@@ -1558,7 +1558,7 @@ describe( module( "carbonldp/PersistedDocument" ), ():void => {
 
 				let spy:jasmine.Spy = spyOn( context.documents, "saveAndRefresh" );
 				document.saveAndRefresh();
-				expect( spy ).toHaveBeenCalledWith( document );
+				expect( spy ).toHaveBeenCalledWith( document, void 0 );
 			} );
 
 			// TODO: Separate in different tests
@@ -1568,7 +1568,7 @@ describe( module( "carbonldp/PersistedDocument" ), ():void => {
 
 				let spy:jasmine.Spy = spyOn( context.documents, "delete" );
 				document.delete();
-				expect( spy ).toHaveBeenCalledWith( document.id );
+				expect( spy ).toHaveBeenCalledWith( document.id, void 0 );
 			} );
 
 			// TODO: Separate in different tests
@@ -1578,7 +1578,7 @@ describe( module( "carbonldp/PersistedDocument" ), ():void => {
 
 				let spy:jasmine.Spy = spyOn( context.documents, "getDownloadURL" );
 				document.getDownloadURL();
-				expect( spy ).toHaveBeenCalledWith( document.id );
+				expect( spy ).toHaveBeenCalledWith( document.id, void 0 );
 			} );
 
 			describe( "PersistedDocument.addMember", ():void => {
@@ -1593,7 +1593,7 @@ describe( module( "carbonldp/PersistedDocument" ), ():void => {
 					let pointer:Pointer = context.documents.getPointer( "new-member/" );
 					document.addMember( pointer );
 
-					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", pointer );
+					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", pointer, void 0 );
 				} );
 
 				// TODO: Separate in different tests
@@ -1605,7 +1605,7 @@ describe( module( "carbonldp/PersistedDocument" ), ():void => {
 
 					document.addMember( "new-member/" );
 
-					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", "new-member/" );
+					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", "new-member/", void 0 );
 				} );
 
 			} );
@@ -1621,7 +1621,7 @@ describe( module( "carbonldp/PersistedDocument" ), ():void => {
 				pointers.push( context.documents.getPointer( "new-member/" ) );
 				document.addMembers( pointers );
 
-				expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", pointers );
+				expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", pointers, void 0 );
 			} );
 
 			describe( "PersistedDocument.createChild", ():void => {
@@ -2041,7 +2041,7 @@ describe( module( "carbonldp/PersistedDocument" ), ():void => {
 					let pointer:Pointer = context.documents.getPointer( "remove-member/" );
 					document.removeMember( pointer );
 
-					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", pointer );
+					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", pointer, void 0 );
 				} );
 
 				// TODO: Separate in different tests
@@ -2053,7 +2053,7 @@ describe( module( "carbonldp/PersistedDocument" ), ():void => {
 
 					document.removeMember( "remove-member/" );
 
-					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", "remove-member/" );
+					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", "remove-member/", void 0 );
 				} );
 
 			} );
@@ -2069,7 +2069,7 @@ describe( module( "carbonldp/PersistedDocument" ), ():void => {
 				pointers.push( context.documents.getPointer( "remove-member/" ) );
 				document.removeMembers( pointers );
 
-				expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", pointers );
+				expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", pointers, void 0 );
 			} );
 
 			// TODO: Separate in different tests
@@ -2081,7 +2081,7 @@ describe( module( "carbonldp/PersistedDocument" ), ():void => {
 
 				document.removeAllMembers();
 
-				expect( spy ).toHaveBeenCalledWith( "http://example.com/document/" );
+				expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", void 0 );
 			} );
 
 			// TODO: Separate in different tests
@@ -2091,7 +2091,7 @@ describe( module( "carbonldp/PersistedDocument" ), ():void => {
 
 				let spy:jasmine.Spy = spyOn( context.documents, "executeRawASKQuery" );
 				document.executeRawASKQuery( "ASK { ?subject, ?predicate, ?object }" );
-				expect( spy ).toHaveBeenCalledWith( document.id, "ASK { ?subject, ?predicate, ?object }", {} );
+				expect( spy ).toHaveBeenCalledWith( document.id, "ASK { ?subject, ?predicate, ?object }", void 0 );
 			} );
 
 			// TODO: Separate in different tests
@@ -2101,7 +2101,7 @@ describe( module( "carbonldp/PersistedDocument" ), ():void => {
 
 				let spy:jasmine.Spy = spyOn( context.documents, "executeASKQuery" );
 				document.executeASKQuery( "ASK { ?subject, ?predicate, ?object }" );
-				expect( spy ).toHaveBeenCalledWith( document.id, "ASK { ?subject, ?predicate, ?object }", {} );
+				expect( spy ).toHaveBeenCalledWith( document.id, "ASK { ?subject, ?predicate, ?object }", void 0 );
 			} );
 
 			// TODO: Separate in different tests
@@ -2111,7 +2111,7 @@ describe( module( "carbonldp/PersistedDocument" ), ():void => {
 
 				let spy:jasmine.Spy = spyOn( context.documents, "executeRawSELECTQuery" );
 				document.executeRawSELECTQuery( "SELECT ?book ?title WHERE { <http://example.com/some-document/> ?book ?title }" );
-				expect( spy ).toHaveBeenCalledWith( document.id, "SELECT ?book ?title WHERE { <http://example.com/some-document/> ?book ?title }", {} );
+				expect( spy ).toHaveBeenCalledWith( document.id, "SELECT ?book ?title WHERE { <http://example.com/some-document/> ?book ?title }", void 0 );
 			} );
 
 			// TODO: Separate in different tests
@@ -2121,7 +2121,7 @@ describe( module( "carbonldp/PersistedDocument" ), ():void => {
 
 				let spy:jasmine.Spy = spyOn( context.documents, "executeSELECTQuery" );
 				document.executeSELECTQuery( "SELECT ?book ?title WHERE { <http://example.com/some-document/> ?book ?title }" );
-				expect( spy ).toHaveBeenCalledWith( document.id, "SELECT ?book ?title WHERE { <http://example.com/some-document/> ?book ?title }", {} );
+				expect( spy ).toHaveBeenCalledWith( document.id, "SELECT ?book ?title WHERE { <http://example.com/some-document/> ?book ?title }", void 0 );
 			} );
 
 			// TODO: Separate in different tests
@@ -2131,7 +2131,7 @@ describe( module( "carbonldp/PersistedDocument" ), ():void => {
 
 				let spy:jasmine.Spy = spyOn( context.documents, "executeRawCONSTRUCTQuery" );
 				document.executeRawCONSTRUCTQuery( "CONSTRUCT { ?subject ?predicate ?object } WHERE { ?subject ?predicate ?object }" );
-				expect( spy ).toHaveBeenCalledWith( document.id, "CONSTRUCT { ?subject ?predicate ?object } WHERE { ?subject ?predicate ?object }", {} );
+				expect( spy ).toHaveBeenCalledWith( document.id, "CONSTRUCT { ?subject ?predicate ?object } WHERE { ?subject ?predicate ?object }", void 0 );
 			} );
 
 			// TODO: Separate in different tests
@@ -2141,7 +2141,7 @@ describe( module( "carbonldp/PersistedDocument" ), ():void => {
 
 				let spy:jasmine.Spy = spyOn( context.documents, "executeRawDESCRIBEQuery" );
 				document.executeRawDESCRIBEQuery( "DESCRIBE { ?subject ?predicate ?object } WHERE { ?subject ?predicate ?object }" );
-				expect( spy ).toHaveBeenCalledWith( document.id, "DESCRIBE { ?subject ?predicate ?object } WHERE { ?subject ?predicate ?object }", {} );
+				expect( spy ).toHaveBeenCalledWith( document.id, "DESCRIBE { ?subject ?predicate ?object } WHERE { ?subject ?predicate ?object }", void 0 );
 			} );
 
 			// TODO: Separate in different tests
@@ -2151,7 +2151,7 @@ describe( module( "carbonldp/PersistedDocument" ), ():void => {
 
 				let spy:jasmine.Spy = spyOn( context.documents, "executeUPDATE" );
 				document.executeUPDATE( `INSERT DATA { GRAPH <http://example.com/some-document/> { <http://example.com/some-document/> <http://example.com/ns#propertyString> "Property Value" } }` );
-				expect( spy ).toHaveBeenCalledWith( document.id, `INSERT DATA { GRAPH <http://example.com/some-document/> { <http://example.com/some-document/> <http://example.com/ns#propertyString> "Property Value" } }`, {} );
+				expect( spy ).toHaveBeenCalledWith( document.id, `INSERT DATA { GRAPH <http://example.com/some-document/> { <http://example.com/some-document/> <http://example.com/ns#propertyString> "Property Value" } }`, void 0 );
 			} );
 
 			// TODO: Separate in different tests
