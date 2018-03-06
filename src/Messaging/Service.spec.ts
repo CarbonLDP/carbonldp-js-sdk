@@ -1,7 +1,7 @@
 import { Server } from "mock-socket";
 import Frame from "webstomp-client/src/frame.js";
 
-import Carbon from "../CarbonLDP";
+import { CarbonLDP } from "../CarbonLDP";
 import { IllegalStateError } from "../Errors";
 import { Pointer } from "../Pointer";
 import { Resource } from "../Resource";
@@ -39,7 +39,7 @@ describe( module( "carbonldp/Messaging/Service" ), ():void => {
 
 		let service:MessagingService.MessagingService;
 		beforeEach( () => {
-			const carbon:Carbon = new Carbon( "https://example.com" );
+			const carbon:CarbonLDP = new CarbonLDP( "https://example.com" );
 			service = new MessagingService.MessagingService( carbon );
 		} );
 
@@ -47,7 +47,7 @@ describe( module( "carbonldp/Messaging/Service" ), ():void => {
 
 			it( hasSignature(
 				[
-					{ name: "context", type: "Carbon" },
+					{ name: "context", type: "CarbonLDP" },
 				]
 			), ():void => {
 				expect( service ).toEqual( jasmine.any( MessagingService.MessagingService ) );

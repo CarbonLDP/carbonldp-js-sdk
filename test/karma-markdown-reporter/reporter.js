@@ -18,7 +18,7 @@ swag.registerHelpers( Handlebars );
 		return str.replace( /\t/g, "" );
 	} );
 
-	const classRegex = /CarbonLDP[./][./#a-zA-Z0-9]*/gm;
+	const classRegex = /CarbonLDP([./][./#a-zA-Z0-9]*)?/gmi;
 
 	Handlebars.registerHelper( "urlify", function( str, isHTML, noParagraph, options ) {
 		if( typeof str !== "string" ) throw new Error( "urlify: An string was expected but received: " + str );
@@ -129,7 +129,7 @@ swag.registerHelpers( Handlebars );
 	function toURL( str ) {
 		if( typeof str !== "string" ) throw new Error( "toURL: An string was expected but received: " + str );
 
-		if( str.startsWith( "CarbonLDP/" ) ) str = "Module/" + str;
+		if( str.startsWith( "carbonldp/" ) ) str = "Module/" + str;
 
 		return str
 			.replace( /\./g, "-" )

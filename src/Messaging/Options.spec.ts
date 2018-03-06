@@ -9,7 +9,7 @@ import {
 
 import DefaultExport, { MessagingOptions } from "./Options";
 
-describe( module( "CarbonLDP.Messaging.MessagingOptions" ), ():void => {
+describe( module( "carbonldp/Messaging/Options" ), ():void => {
 
 	describe( interfaze(
 		"CarbonLDP.Messaging.MessagingOptions",

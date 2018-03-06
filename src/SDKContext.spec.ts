@@ -2,10 +2,12 @@ import * as Auth from "./Auth";
 import { Documents } from "./Documents";
 import { IllegalStateError } from "./Errors";
 import * as ObjectSchema from "./ObjectSchema";
+
 import DefaultExport, {
 	globalContext,
 	SDKContext,
 } from "./SDKContext";
+
 import { ContextSettings } from "./Settings";
 
 import {
@@ -778,7 +780,7 @@ describe( module( "carbonldp/SDKContext" ), ():void => {
 
 	it( hasProperty(
 		STATIC,
-		"instance",
+		"globalContext",
 		"CarbonLDP.SDKContext.SDKContext",
 		"Instance of `CarbonLDP.SDKContext.SDKContext` that is used as the root parent in every context."
 	), ():void => {
@@ -787,7 +789,7 @@ describe( module( "carbonldp/SDKContext" ), ():void => {
 	} );
 
 	it( hasDefaultExport(
-		"CarbonLDP.SDKContext#globalContext"
+		"carbonldp/SDKContext#globalContext"
 	), ():void => {
 		expect( DefaultExport ).toBeDefined();
 		expect( DefaultExport ).toBe( globalContext );

@@ -1,4 +1,4 @@
-import Carbon from "../CarbonLDP";
+import { CarbonLDP } from "../CarbonLDP";
 import { IllegalArgumentError, IllegalStateError } from "../Errors";
 import { hasSignature, method, module, STATIC } from "../test/JasmineExtender";
 import * as MessagingUtils from "./Utils";
@@ -32,13 +32,13 @@ describe( module( "carbonldp/Messaging/Utils" ), ():void => {
 			expect( () => MessagingUtils.validateEventContext( null ) ).toThrowError( IllegalStateError, "This instance does not support messaging subscriptions." );
 		} );
 
-		it( "should accept Carbon contexts", ():void => {
-			const carbon:Carbon = new Carbon( "http://example.com" );
+		it( "should accept CarbonLDP contexts", ():void => {
+			const carbon:CarbonLDP = new CarbonLDP( "http://example.com" );
 			expect( () => MessagingUtils.validateEventContext( carbon ) ).not.toThrowError();
 		} );
 
 		it( "should throw error if messaging service does not exists in the context", ():void => {
-			const carbon:Carbon = new Carbon( "http://example.com" );
+			const carbon:CarbonLDP = new CarbonLDP( "http://example.com" );
 
 			delete carbon.messaging;
 			expect( () => MessagingUtils.validateEventContext( carbon ) ).toThrowError( IllegalStateError, "This instance does not support messaging subscriptions." );
@@ -150,8 +150,8 @@ describe( module( "carbonldp/Messaging/Utils" ), ():void => {
 		} );
 
 		it( "should throw error when uriPattern does not resolves to the baseURI provided", ():void => {
-			expect( () => MessagingUtils.parseURIPattern( "http://not-example.com/resource/", "http://example.com" ) ).toThrowError( IllegalArgumentError, "Provided uriPattern \"http://not-example.com/resource/\" is an invalid for your Carbon instance." );
-			expect( () => MessagingUtils.parseURIPattern( "http://not-example.com/resource/", "http://example.com" ) ).toThrowError( IllegalArgumentError, "Provided uriPattern \"http://not-example.com/resource/\" is an invalid for your Carbon instance." );
+			expect( () => MessagingUtils.parseURIPattern( "http://not-example.com/resource/", "http://example.com" ) ).toThrowError( IllegalArgumentError, "Provided uriPattern \"http://not-example.com/resource/\" is an invalid for your Carbon LDP instance." );
+			expect( () => MessagingUtils.parseURIPattern( "http://not-example.com/resource/", "http://example.com" ) ).toThrowError( IllegalArgumentError, "Provided uriPattern \"http://not-example.com/resource/\" is an invalid for your Carbon LDP instance." );
 		} );
 
 		it( "should not throw error when parameters are relative", ():void => {

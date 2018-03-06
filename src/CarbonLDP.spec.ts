@@ -571,7 +571,7 @@ describe( module( "carbonldp/CarbonLDP" ), ():void => {
 		describe( method( INSTANCE, "resolve" ), ():void => {
 
 			it( hasSignature(
-				"Resolve the URI provided in the scope your CarbonLDP Platform instance.", [
+				"Resolve the URI provided in the scope your Carbon LDP Platform instance.", [
 					{ name: "relativeURI", type: "string", description: "Relative URI to be resolved." },
 				],
 				{ type: "string", description: "The absolute URI that has been resolved." }
@@ -609,7 +609,7 @@ describe( module( "carbonldp/CarbonLDP" ), ():void => {
 			} );
 
 			it( hasSignature(
-				"Retrieves the Metadata related to the CarbonLDP Platform.",
+				"Retrieves the Metadata related to the Carbon LDP Platform.",
 				{ type: ":Promise<CarbonLDP.System.PlatformMetadata.PlatformMetadata>" }
 			), ():void => {} );
 
@@ -689,7 +689,7 @@ describe( module( "carbonldp/CarbonLDP" ), ():void => {
 
 	} );
 
-	it( hasDefaultExport( "CarbonLDP.Carbon" ), () => {
+	it( hasDefaultExport( "CarbonLDP" ), () => {
 		expect( CarbonLDP.default ).toBeDefined();
 		expect( CarbonLDP.default ).toBe( CarbonLDP.CarbonLDP );
 	} );

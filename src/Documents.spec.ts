@@ -78,7 +78,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 
 	describe( clazz(
 		"CarbonLDP.Documents.Documents",
-		"Class that contains methods for retrieving, saving and updating documents from the CarbonLDP server.", [
+		"Class that contains methods for retrieving, saving and updating documents from the Carbon LDP server.", [
 			"CarbonLDP.Pointer.PointerLibrary",
 			"CarbonLDP.Pointer.PointerValidator",
 			"CarbonLDP.ObjectSchema.ObjectSchemaResolver",
@@ -2175,7 +2175,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 		), ():void => {
 
 			it( hasSignature(
-				"Retrieves a boolean indicating if the resource exists or not in the CarbonLDP server.", [
+				"Retrieves a boolean indicating if the resource exists or not in the Carbon LDP server.", [
 					{ name: "documentURI", type: "string", description: "The URI to verify if it exists." },
 					{ name: "requestOptions", type: "CarbonLDP.HTTP.Request.RequestOptions", optional: true, description: "Customizable options for the request." },
 				],
@@ -10418,7 +10418,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 
 			it( hasSignature(
 				[ "T extends object" ],
-				"Update the specified document with the data of the CarbonLDP server, if a newest version exists.", [
+				"Update the specified document with the data of the Carbon LDP server, if a newest version exists.", [
 					{ name: "persistedDocument", type: "T & CarbonLDP.PersistedDocument.PersistedDocument", description: "The persisted document to update." },
 					{ name: "requestOptions", type: "CarbonLDP.HTTP.Request.RequestOptions", optional: true, description: "Customizable options for the request." },
 				],
@@ -12261,8 +12261,8 @@ describe( module( "carbonldp/Documents" ), ():void => {
 		), ():void => {
 
 			it( hasSignature(
-				"Delete the resource from the CarbonLDP server referred by the URI provided.", [
-					{ name: "documentURI", type: "string", description: "The resource to delete from the CarbonLDP server." },
+				"Delete the resource from the Carbon LDP server referred by the URI provided.", [
+					{ name: "documentURI", type: "string", description: "The resource to delete from the Carbon LDP server." },
 					{ name: "requestOptions", type: "CarbonLDP.HTTP.Request.RequestOptions", optional: true, description: "Customizable options for the request." },
 				],
 				{ type: "Promise<CarbonLDP.HTTP.Response.Response>" }
