@@ -19,7 +19,7 @@ import { Header } from "./Header";
 
 import DefaultExport, { Response } from "./Response";
 
-describe( module( "Carbon/HTTP/Response" ), ():void => {
+describe( module( "CarbonLDP/HTTP/Response" ), ():void => {
 
 	let rawResponse:JasmineAjaxRequestStubReturnOptions = {
 		"status": 200,
@@ -33,7 +33,7 @@ describe( module( "Carbon/HTTP/Response" ), ():void => {
 	let inXMLHttpRequest:boolean = ( typeof XMLHttpRequest !== "undefined" );
 
 	describe( clazz(
-		"Carbon.HTTP.Response.Response",
+		"CarbonLDP.HTTP.Response.Response",
 		"Class that represents an HTTP Response."
 	), ():void => {
 
@@ -126,7 +126,7 @@ describe( module( "Carbon/HTTP/Response" ), ():void => {
 		it( hasProperty(
 			INSTANCE,
 			"headers",
-			"Map<string, Carbon.HTTP.Header.Header>",
+			"Map<string, CarbonLDP.HTTP.Header.Header>",
 			"A map object containing the headers returned by the request."
 		), ( done:DoneFn ):void => {
 
@@ -175,7 +175,7 @@ describe( module( "Carbon/HTTP/Response" ), ():void => {
 			"Return the Header object referred by the name specified.", [
 				{ name: "name", type: "string" },
 			],
-			{ type: "Carbon.HTTP.Header.Header" }
+			{ type: "CarbonLDP.HTTP.Header.Header" }
 		), ( done:DoneFn ):void => {
 
 			createResponse().then( ( [ response, request ]:[ Response, XMLHttpRequest | ClientRequest ] ) => {
@@ -195,7 +195,7 @@ describe( module( "Carbon/HTTP/Response" ), ():void => {
 		it( hasMethod(
 			INSTANCE,
 			"getETag",
-			"Return the ETag header of a `Carbon.HTTP.Response.Response` object. Returns null if no ETag exists.",
+			"Return the ETag header of a `CarbonLDP.HTTP.Response.Response` object. Returns null if no ETag exists.",
 			{ type: "string" }
 		), ( done:DoneFn ):void => {
 			createResponse()
@@ -254,7 +254,7 @@ describe( module( "Carbon/HTTP/Response" ), ():void => {
 	}
 
 	it( hasDefaultExport(
-		"Carbon.HTTP.Response.Response"
+		"CarbonLDP.HTTP.Response.Response"
 	), ():void => {
 		expect( DefaultExport ).toBe( Response );
 	} );

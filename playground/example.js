@@ -5,9 +5,9 @@
 		};
 	}
 
-	const carbon1 = new Carbon( "localhost:8083", false );
-	const carbon2 = new Carbon( "localhost:8083", false );
-	const carbon3 = new Carbon( "localhost:8083", false );
+	const carbon1 = new CarbonLDP( "localhost:8083", false );
+	const carbon2 = new CarbonLDP( "localhost:8083", false );
+	const carbon3 = new CarbonLDP( "localhost:8083", false );
 
 	const prefixes = {
 		"acl": "http://www.w3.org/ns/auth/acl#",

@@ -17,7 +17,7 @@ import * as Utils from "./../../../Utils";
 import * as ForbiddenError from "./ForbiddenError";
 import DefaultExport from "./ForbiddenError";
 
-describe( module( "Carbon/HTTP/Errors/ClientErrors/ForbiddenError" ), ():void => {
+describe( module( "CarbonLDP/HTTP/Errors/ClientErrors/ForbiddenError" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( ForbiddenError ).toBeDefined();
@@ -25,7 +25,7 @@ describe( module( "Carbon/HTTP/Errors/ClientErrors/ForbiddenError" ), ():void =>
 	} );
 
 	describe( clazz(
-		"Carbon.HTTP.Errors.ForbiddenError",
+		"CarbonLDP.HTTP.Errors.ForbiddenError",
 		"Error class to indicate that the current user doesn't have permissions to fulfill the request."
 	), ():void => {
 
@@ -55,7 +55,7 @@ describe( module( "Carbon/HTTP/Errors/ClientErrors/ForbiddenError" ), ():void =>
 		} );
 
 		it( extendsClass(
-			"Carbon.HTTP.Errors.HTTPError"
+			"CarbonLDP.HTTP.Errors.HTTPError"
 		), ():void => {
 			let error:ForbiddenError.ForbiddenError = new ForbiddenError.ForbiddenError( "Message of the error", response );
 
@@ -101,7 +101,7 @@ describe( module( "Carbon/HTTP/Errors/ClientErrors/ForbiddenError" ), ():void =>
 
 	} );
 
-	it( hasDefaultExport( "Carbon.HTTP.Errors.ForbiddenError" ), ():void => {
+	it( hasDefaultExport( "CarbonLDP.HTTP.Errors.ForbiddenError" ), ():void => {
 		expect( DefaultExport ).toBeDefined();
 		expect( DefaultExport ).toBe( ForbiddenError.ForbiddenError );
 	} );

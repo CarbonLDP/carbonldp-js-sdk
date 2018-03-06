@@ -16,7 +16,7 @@ import * as Utils from "./../Utils";
 
 import DefaultExport, { ResponseMetadata } from "./ResponseMetadata";
 
-describe( module( "Carbon/LDP/ResponseMetadata" ), ():void => {
+describe( module( "CarbonLDP/LDP/ResponseMetadata" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( ResponseMetadata ).toBeDefined();
@@ -24,24 +24,24 @@ describe( module( "Carbon/LDP/ResponseMetadata" ), ():void => {
 	} );
 
 	describe( interfaze(
-		"Carbon.LDP.ResponseMetadata.ResponseMetadata",
+		"CarbonLDP.LDP.ResponseMetadata.ResponseMetadata",
 		"Interface that represents the main resource of a set of metadata resources, which references everyone resource related to an specific dynamic response of tha server."
 	), ():void => {
 
-		it( extendsClass( "Carbon.LDP.VolatileResource.VolatileResource" ), ():void => {} );
+		it( extendsClass( "CarbonLDP.LDP.VolatileResource.VolatileResource" ), ():void => {} );
 
 		it( hasProperty(
 			OBLIGATORY,
 			"documentsMetadata",
-			"Carbon.LDP.DocumentMetadata.DocumentMetadata[]",
+			"CarbonLDP.LDP.DocumentMetadata.DocumentMetadata[]",
 			"An array with all the metadata resources of the dynamic response."
 		), ():void => {} );
 
 	} );
 
 	describe( interfaze(
-		"Carbon.LDP.ResponseMetadata.ResponseMetadataFactory",
-		"Interface with the factory, decorate and utils methods for `Carbon.LDP.ResponseMetadata.ResponseMetadata` objects."
+		"CarbonLDP.LDP.ResponseMetadata.ResponseMetadataFactory",
+		"Interface with the factory, decorate and utils methods for `CarbonLDP.LDP.ResponseMetadata.ResponseMetadata` objects."
 	), ():void => {
 
 		it( hasProperty(
@@ -53,16 +53,16 @@ describe( module( "Carbon/LDP/ResponseMetadata" ), ():void => {
 		it( hasProperty(
 			OBLIGATORY,
 			"SCHEMA",
-			"Carbon.ObjectSchema.ObjectSchema"
+			"CarbonLDP.ObjectSchema.ObjectSchema"
 		), ():void => {} );
 
 		it( hasMethod(
 			OBLIGATORY,
 			"is",
-			"Return true if the object provided is considered a `Carbon.LDP.ResponseMetadata.ResponseMetadata` object.", [
+			"Return true if the object provided is considered a `CarbonLDP.LDP.ResponseMetadata.ResponseMetadata` object.", [
 				{ name: "object", type: "object", description: "Object to check" },
 			],
-			{ type: "object is Carbon.LDP.ResponseMetadata.ResponseMetadata" }
+			{ type: "object is CarbonLDP.LDP.ResponseMetadata.ResponseMetadata" }
 		), ():void => {} );
 
 	} );
@@ -70,7 +70,7 @@ describe( module( "Carbon/LDP/ResponseMetadata" ), ():void => {
 	describe( property(
 		STATIC,
 		"ResponseMetadata",
-		"Carbon.LDP.ResponseMetadata.ResponseMetadataFactory"
+		"CarbonLDP.LDP.ResponseMetadata.ResponseMetadataFactory"
 	), ():void => {
 
 		it( "should exist", ():void => {
@@ -139,7 +139,7 @@ describe( module( "Carbon/LDP/ResponseMetadata" ), ():void => {
 
 	} );
 
-	it( hasDefaultExport( "Carbon.LDP.ResponseMetadata.ResponseMetadata" ), ():void => {
+	it( hasDefaultExport( "CarbonLDP.LDP.ResponseMetadata.ResponseMetadata" ), ():void => {
 		let defaultExport:DefaultExport = <any> {};
 		let defaultTarget:ResponseMetadata;
 

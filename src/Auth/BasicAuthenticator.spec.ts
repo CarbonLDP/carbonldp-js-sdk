@@ -18,7 +18,7 @@ import DefaultExport from "./BasicAuthenticator";
 import * as UsernameAndPasswordCredentials from "./UsernameAndPasswordCredentials";
 import UsernameAndPasswordToken from "./UsernameAndPasswordToken";
 
-describe( module( "Carbon/Auth/BasicAuthenticator" ), ():void => {
+describe( module( "CarbonLDP/Auth/BasicAuthenticator" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( BasicAuthenticator ).toBeDefined();
@@ -26,9 +26,9 @@ describe( module( "Carbon/Auth/BasicAuthenticator" ), ():void => {
 	} );
 
 	describe( clazz(
-		"Carbon.Auth.BasicAuthenticator.Class",
+		"CarbonLDP.Auth.BasicAuthenticator.Class",
 		"Authenticates requests using HTTP Basic Authentication.", [
-			"Carbon.Auth.Authenticator.Class<Carbon.Auth.UsernameAndPasswordToken.Class>",
+			"CarbonLDP.Auth.Authenticator.Class<CarbonLDP.Auth.UsernameAndPasswordToken.Class>",
 		]
 	), ():void => {
 
@@ -72,9 +72,9 @@ describe( module( "Carbon/Auth/BasicAuthenticator" ), ():void => {
 			INSTANCE,
 			"authenticate",
 			"Stores credentials to authenticate future requests.", [
-				{ name: "authenticationToken", type: "Carbon.Auth.UsernameAndPasswordToken" },
+				{ name: "authenticationToken", type: "CarbonLDP.Auth.UsernameAndPasswordToken" },
 			],
-			{ type: "Promise< Carbon.Auth.UsernameAndPasswordCredentials.Class >" }
+			{ type: "Promise< CarbonLDP.Auth.UsernameAndPasswordCredentials.Class >" }
 		), ( done:{ ():void; fail:( error:any ) => void } ):void => {
 
 			// Property Integrity
@@ -137,10 +137,10 @@ describe( module( "Carbon/Auth/BasicAuthenticator" ), ():void => {
 			INSTANCE,
 			"addAuthentication",
 			"Adds the Basic authentication header to the passed request options object.\n" +
-			"The `Carbon.HTTP.Request.RequestOptions` provided is returned without modifications if it already has an authentication header.", [
-				{ name: "requestOptions", type: "Carbon.HTTP.Request.RequestOptions", description: "Request options object to add Authentication headers." },
+			"The `CarbonLDP.HTTP.Request.RequestOptions` provided is returned without modifications if it already has an authentication header.", [
+				{ name: "requestOptions", type: "CarbonLDP.HTTP.Request.RequestOptions", description: "Request options object to add Authentication headers." },
 			],
-			{ type: "Carbon.HTTP.Request.RequestOptions", description: "The request options with the added authentication headers." }
+			{ type: "CarbonLDP.HTTP.Request.RequestOptions", description: "The request options with the added authentication headers." }
 		), ( done:{ ():void; fail:( error:any ) => void } ):void => {
 			let promises:Promise<void>[] = [];
 			let authenticator:BasicAuthenticator.Class = new BasicAuthenticator.Class();
@@ -321,7 +321,7 @@ describe( module( "Carbon/Auth/BasicAuthenticator" ), ():void => {
 
 	} );
 
-	it( hasDefaultExport( "Carbon.Auth.BasicAuthenticator.Class" ), ():void => {
+	it( hasDefaultExport( "CarbonLDP.Auth.BasicAuthenticator.Class" ), ():void => {
 		expect( DefaultExport ).toBeDefined();
 		expect( BasicAuthenticator.Class ).toBe( DefaultExport );
 	} );

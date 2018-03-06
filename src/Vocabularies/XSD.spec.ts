@@ -7,9 +7,9 @@ import {
 
 import { XSD } from "./XSD";
 
-describe( module( "Carbon/Vocabularies/XSD" ), ():void => {
+describe( module( "CarbonLDP/Vocabularies/XSD" ), ():void => {
 
-	describe( namespaze( "Carbon.Vocabularies.XSD", "Vocabulary that contains data-types defined in the XML Schema Definition Language (XSD)." ), ():void => {
+	describe( namespaze( "CarbonLDP.Vocabularies.XSD", "Vocabulary that contains data-types defined in the XML Schema Definition Language (XSD)." ), ():void => {
 
 		it( "should exists", ():void => {
 			expect( XSD ).toBeDefined();

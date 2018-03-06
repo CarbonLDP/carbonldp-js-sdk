@@ -1123,7 +1123,7 @@ var Documents = (function () {
                 return _this.getPointer(pointer);
             if (Pointer_1.Pointer.is(pointer))
                 return pointer;
-            throw new Errors.IllegalArgumentError("No Carbon.Pointer or URI provided.");
+            throw new Errors.IllegalArgumentError("No CarbonLDP.Pointer or URI provided.");
         });
     };
     Documents.prototype.applyResponseData = function (persistedProtectedDocument, response) {

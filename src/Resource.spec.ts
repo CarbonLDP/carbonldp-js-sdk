@@ -18,7 +18,7 @@ import {
 import { LDP } from "./Vocabularies/LDP";
 
 
-describe( module( "Carbon/Resource" ), ():void => {
+describe( module( "CarbonLDP/Resource" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( Module ).toBeDefined();
@@ -26,11 +26,11 @@ describe( module( "Carbon/Resource" ), ():void => {
 	} );
 
 	describe( interfaze(
-		"Carbon.Resource.Resource",
+		"CarbonLDP.Resource.Resource",
 		"Interface that represents a persisted blank node of a persisted document."
 	), ():void => {
 
-		it( extendsClass( "Carbon.Pointer.Pointer" ), ():void => {} );
+		it( extendsClass( "CarbonLDP.Pointer.Pointer" ), ():void => {} );
 
 		it( hasProperty(
 			OBLIGATORY,
@@ -66,26 +66,26 @@ describe( module( "Carbon/Resource" ), ():void => {
 	} );
 
 	describe( interfaze(
-		"Carbon.Resource.ResourceFactory",
-		"Interface with the factory, decorate and utils methods of a `Carbon.Resource.Resource` object."
+		"CarbonLDP.Resource.ResourceFactory",
+		"Interface with the factory, decorate and utils methods of a `CarbonLDP.Resource.Resource` object."
 	), ():void => {
 
 		it( hasMethod(
 			OBLIGATORY,
 			"isDecorated",
-			"Returns true if the object provided has the properties of a `Carbon.Resource.Resource` object.", [
+			"Returns true if the object provided has the properties of a `CarbonLDP.Resource.Resource` object.", [
 				{ name: "object", type: "object" },
 			],
-			{ type: "object is Carbon.Resource.Resource" }
+			{ type: "object is CarbonLDP.Resource.Resource" }
 		), ():void => {} );
 
 		it( hasMethod(
 			OBLIGATORY,
 			"is",
-			"Returns true if the object provided is considered a `Carbon.Resource.Resource` object.", [
+			"Returns true if the object provided is considered a `CarbonLDP.Resource.Resource` object.", [
 				{ name: "object", type: "object" },
 			],
-			{ type: "object is Carbon.Resource.Resource" }
+			{ type: "object is CarbonLDP.Resource.Resource" }
 		), ():void => {} );
 
 		it( hasMethod(
@@ -95,7 +95,7 @@ describe( module( "Carbon/Resource" ), ():void => {
 				{ name: "id", type: "string", optional: true },
 				{ name: "types", type: "string[]", optional: true },
 			],
-			{ type: "Carbon.Resource.Resource" }
+			{ type: "CarbonLDP.Resource.Resource" }
 		), ():void => {} );
 
 		it( hasMethod(
@@ -107,22 +107,22 @@ describe( module( "Carbon/Resource" ), ():void => {
 				{ name: "id", type: "string", optional: true },
 				{ name: "types", type: "string[]", optional: true },
 			],
-			{ type: "T & Carbon.Resource.Resource" }
+			{ type: "T & CarbonLDP.Resource.Resource" }
 		), ():void => {} );
 
 		it( hasMethod(
 			OBLIGATORY,
 			"decorate",
 			[ "T extends object" ],
-			"Decorates the object provided with the properties and methods of a `Carbon.Resource.Resource` object.", [
+			"Decorates the object provided with the properties and methods of a `CarbonLDP.Resource.Resource` object.", [
 				{ name: "object", type: "T" },
 			],
-			{ type: "T & Carbon.Resource.Resource" }
+			{ type: "T & CarbonLDP.Resource.Resource" }
 		), ():void => {} );
 
 	} );
 
-	it( hasDefaultExport( "Carbon.Resource.Resource" ), ():void => {
+	it( hasDefaultExport( "CarbonLDP.Resource.Resource" ), ():void => {
 		let defaultExport:DefaultExport = <any> {};
 		let defaultTarget:Resource;
 
@@ -130,7 +130,7 @@ describe( module( "Carbon/Resource" ), ():void => {
 		expect( defaultTarget ).toEqual( jasmine.any( Object ) );
 	} );
 
-	describe( property( STATIC, "Resource", "Carbon.Resource.ResourceFactory", "Constant that implements the `Carbon.Resource.ResourceFactory` interface." ), ():void => {
+	describe( property( STATIC, "Resource", "CarbonLDP.Resource.ResourceFactory", "Constant that implements the `CarbonLDP.Resource.ResourceFactory` interface." ), ():void => {
 
 		it( isDefined(), ():void => {
 			expect( Resource ).toBeDefined();

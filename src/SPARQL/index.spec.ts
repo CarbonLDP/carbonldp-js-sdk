@@ -15,7 +15,7 @@ import * as RawResultsParser from "./RawResultsParser";
 import * as SELECTResults from "./SelectResults";
 import * as Service from "./Service";
 
-describe( module( "Carbon/SPARQL" ), ():void => {
+describe( module( "CarbonLDP/SPARQL" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( SPARQL ).toBeDefined();
@@ -25,7 +25,7 @@ describe( module( "Carbon/SPARQL" ), ():void => {
 	it( reexports(
 		STATIC,
 		"Builder",
-		"Carbon/SPARQL/Builder"
+		"CarbonLDP/SPARQL/Builder"
 	), ():void => {
 		expect( SPARQL.Builder ).toBeDefined();
 		expect( SPARQL.Builder ).toBe( Builder );
@@ -35,7 +35,7 @@ describe( module( "Carbon/SPARQL" ), ():void => {
 	it( reexports(
 		STATIC,
 		"QueryDocument",
-		"Carbon/SPARQL/QueryDocument"
+		"CarbonLDP/SPARQL/QueryDocument"
 	), ():void => {
 		expect( SPARQL.QueryDocument ).toBeDefined();
 		expect( SPARQL.QueryDocument ).toBe( QueryDocument );
@@ -44,7 +44,7 @@ describe( module( "Carbon/SPARQL" ), ():void => {
 	it( reexports(
 		STATIC,
 		"RawResults",
-		"Carbon/SPARQL/RawResults"
+		"CarbonLDP/SPARQL/RawResults"
 	), ():void => {
 		expect( SPARQL.RawResults ).toBeDefined();
 		expect( SPARQL.RawResults ).toBe( RawResults );
@@ -53,7 +53,7 @@ describe( module( "Carbon/SPARQL" ), ():void => {
 	it( reexports(
 		STATIC,
 		"RawResultsParser",
-		"Carbon/SPARQL/RawResultsParser"
+		"CarbonLDP/SPARQL/RawResultsParser"
 	), ():void => {
 		expect( SPARQL.RawResultsParser ).toBeDefined();
 		expect( SPARQL.RawResultsParser ).toBe( RawResultsParser );
@@ -62,7 +62,7 @@ describe( module( "Carbon/SPARQL" ), ():void => {
 	it( reexports(
 		STATIC,
 		"SelectResults",
-		"Carbon/SPARQL/SelectResults"
+		"CarbonLDP/SPARQL/SelectResults"
 	), ():void => {
 		expect( SPARQL.SelectResults ).toBeDefined();
 		expect( SPARQL.SelectResults ).toBe( SELECTResults );
@@ -71,7 +71,7 @@ describe( module( "Carbon/SPARQL" ), ():void => {
 	it( reexports(
 		STATIC,
 		"Service",
-		"Carbon/SPARQL/Service"
+		"CarbonLDP/SPARQL/Service"
 	), ():void => {
 		expect( SPARQL.Service ).toBeDefined();
 		expect( SPARQL.Service ).toBe( Service );

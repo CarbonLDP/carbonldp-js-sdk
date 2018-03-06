@@ -15,7 +15,7 @@ import * as IllegalArgumentError from "./IllegalArgumentError";
 import DefaultExport from "./IllegalArgumentError";
 
 // TODO: Refactor tests
-describe( module( "Carbon/Errors/IllegalArgumentError" ), ():void => {
+describe( module( "CarbonLDP/Errors/IllegalArgumentError" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( IllegalArgumentError ).toBeDefined();
@@ -23,7 +23,7 @@ describe( module( "Carbon/Errors/IllegalArgumentError" ), ():void => {
 	} );
 
 	describe( clazz(
-		"Carbon.Errors.IllegalArgumentError.IllegalArgumentError",
+		"CarbonLDP.Errors.IllegalArgumentError.IllegalArgumentError",
 		"Error class to indicate that a different argument than the expected was provided."
 	), ():void => {
 
@@ -36,7 +36,7 @@ describe( module( "Carbon/Errors/IllegalArgumentError" ), ():void => {
 		} );
 
 		it( extendsClass(
-			"Carbon.Errors.AbstractError.AbstractError"
+			"CarbonLDP.Errors.AbstractError.AbstractError"
 		), ():void => {
 			let error:IllegalArgumentError.IllegalArgumentError = new IllegalArgumentError.IllegalArgumentError( "Message of the error" );
 
@@ -58,7 +58,7 @@ describe( module( "Carbon/Errors/IllegalArgumentError" ), ():void => {
 
 	} );
 
-	it( hasDefaultExport( "Carbon.Errors.IllegalArgumentError.IllegalArgumentError" ), ():void => {
+	it( hasDefaultExport( "CarbonLDP.Errors.IllegalArgumentError.IllegalArgumentError" ), ():void => {
 		expect( DefaultExport ).toBeDefined();
 		expect( DefaultExport ).toBe( IllegalArgumentError.IllegalArgumentError );
 	} );

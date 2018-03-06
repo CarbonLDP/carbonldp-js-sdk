@@ -7,14 +7,14 @@ import {
 import * as System from "./";
 import * as PlatformMetadata from "./PlatformMetadata";
 
-describe( module( "Carbon/System" ), () => {
+describe( module( "CarbonLDP/System" ), () => {
 
 	it( "should exists", ():void => {
 		expect( System ).toBeDefined();
 		expect( System ).toEqual( jasmine.any( Object ) );
 	} );
 
-	it( reexports( INSTANCE, "PlatformMetadata", "Carbon/System/PlatformMetadata" ), ():void => {
+	it( reexports( INSTANCE, "PlatformMetadata", "CarbonLDP/System/PlatformMetadata" ), ():void => {
 		expect( System.PlatformMetadata ).toBeDefined();
 		expect( System.PlatformMetadata ).toBe( PlatformMetadata );
 	} );

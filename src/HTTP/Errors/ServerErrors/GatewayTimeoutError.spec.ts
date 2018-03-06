@@ -17,7 +17,7 @@ import * as Utils from "./../../../Utils";
 import * as GatewayTimeoutError from "./GatewayTimeoutError";
 import DefaultExport from "./GatewayTimeoutError";
 
-describe( module( "Carbon/HTTP/Errors/ServerErrors/GatewayTimeoutError" ), ():void => {
+describe( module( "CarbonLDP/HTTP/Errors/ServerErrors/GatewayTimeoutError" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( GatewayTimeoutError ).toBeDefined();
@@ -25,7 +25,7 @@ describe( module( "Carbon/HTTP/Errors/ServerErrors/GatewayTimeoutError" ), ():vo
 	} );
 
 	describe( clazz(
-		"Carbon.HTTP.Errors.GatewayTimeoutError",
+		"CarbonLDP.HTTP.Errors.GatewayTimeoutError",
 		"Error class to indicate that the server, while acting as a gateway or proxy, did not receive a timely response from the upstream server."
 	), ():void => {
 
@@ -55,7 +55,7 @@ describe( module( "Carbon/HTTP/Errors/ServerErrors/GatewayTimeoutError" ), ():vo
 		} );
 
 		it( extendsClass(
-			"Carbon.HTTP.Errors.HTTPError"
+			"CarbonLDP.HTTP.Errors.HTTPError"
 		), ():void => {
 			let error:GatewayTimeoutError.GatewayTimeoutError = new GatewayTimeoutError.GatewayTimeoutError( "Message of the error", response );
 
@@ -101,7 +101,7 @@ describe( module( "Carbon/HTTP/Errors/ServerErrors/GatewayTimeoutError" ), ():vo
 
 	} );
 
-	it( hasDefaultExport( "Carbon.HTTP.Errors.GatewayTimeoutError" ), ():void => {
+	it( hasDefaultExport( "CarbonLDP.HTTP.Errors.GatewayTimeoutError" ), ():void => {
 		expect( DefaultExport ).toBeDefined();
 		expect( DefaultExport ).toBe( GatewayTimeoutError.GatewayTimeoutError );
 	} );

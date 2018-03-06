@@ -7,9 +7,9 @@ import {
 
 import { VCARD } from "./VCARD";
 
-describe( module( "Carbon/Vocabularies/VCARD" ), ():void => {
+describe( module( "CarbonLDP/Vocabularies/VCARD" ), ():void => {
 
-	describe( namespaze( "Carbon.Vocabularies.VCARD", "Vocabulary that contains some predicates defined in the vCard Ontology Specification." ), ():void => {
+	describe( namespaze( "CarbonLDP.Vocabularies.VCARD", "Vocabulary that contains some predicates defined in the vCard Ontology Specification." ), ():void => {
 
 		it( "should exists", ():void => {
 			expect( VCARD ).toBeDefined();

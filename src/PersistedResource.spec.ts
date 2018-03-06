@@ -15,7 +15,7 @@ import {
 } from "./test/JasmineExtender";
 import * as Utils from "./Utils";
 
-describe( module( "Carbon/PersistedResource" ), ():void => {
+describe( module( "CarbonLDP/PersistedResource" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( PersistedResource ).toBeDefined();
@@ -23,11 +23,11 @@ describe( module( "Carbon/PersistedResource" ), ():void => {
 	} );
 
 	describe( interfaze(
-		"Carbon.PersistedResource.PersistedResource",
+		"CarbonLDP.PersistedResource.PersistedResource",
 		"Interface that represents any persisted resource in the SDK."
 	), ():void => {
 
-		it( extendsClass( "Carbon.Resource.Resource" ), ():void => {
+		it( extendsClass( "CarbonLDP.Resource.Resource" ), ():void => {
 			const target:Resource = {} as PersistedResource;
 			expect( target ).toBeDefined();
 		} );
@@ -48,7 +48,7 @@ describe( module( "Carbon/PersistedResource" ), ():void => {
 		it( hasProperty(
 			OBLIGATORY,
 			"_partialMetadata",
-			"Carbon.SPARQL.QueryDocument.PartialMetadata.PartialMetadata",
+			"CarbonLDP.SPARQL.QueryDocument.PartialMetadata.PartialMetadata",
 			"Metadata for documents that are partial documents."
 		), ():void => {} );
 
@@ -73,31 +73,31 @@ describe( module( "Carbon/PersistedResource" ), ():void => {
 	} );
 
 	describe( interfaze(
-		"Carbon.PersistedResource.PersistedResourceFactory",
-		"Interface with the factory, decorate and utils methods of a `Carbon.PersistedResource.PersistedResource` object"
+		"CarbonLDP.PersistedResource.PersistedResourceFactory",
+		"Interface with the factory, decorate and utils methods of a `CarbonLDP.PersistedResource.PersistedResource` object"
 	), ():void => {
 
 		it( hasMethod(
 			OBLIGATORY,
 			"isDecorated",
-			"Returns true if the object provided has the properties and methods of a `Carbon.PersistedResource.PersistedResource` object.", [
+			"Returns true if the object provided has the properties and methods of a `CarbonLDP.PersistedResource.PersistedResource` object.", [
 				{ name: "object", type: "object" },
 			],
-			{ type: "object is Carbon.PersistedResource.PersistedResource" }
+			{ type: "object is CarbonLDP.PersistedResource.PersistedResource" }
 		), ():void => {} );
 
 		it( hasMethod(
 			OBLIGATORY,
 			"decorate",
 			[ "T extends object" ],
-			"Decorates the object provided with the properties and methods of a `Carbon.PersistedResource.PersistedResource` object.", [
+			"Decorates the object provided with the properties and methods of a `CarbonLDP.PersistedResource.PersistedResource` object.", [
 				{ name: "object", type: "T", description: "The object to convert into a persisted resource one." },
 			]
 		), ():void => {} );
 
 	} );
 
-	it( hasDefaultExport( "Carbon.PersistedResource.PersistedResource" ), ():void => {
+	it( hasDefaultExport( "CarbonLDP.PersistedResource.PersistedResource" ), ():void => {
 		let defaultExport:DefaultExport = <any> {};
 		let defaultTarget:PersistedResource;
 
@@ -105,7 +105,7 @@ describe( module( "Carbon/PersistedResource" ), ():void => {
 		expect( defaultTarget ).toEqual( jasmine.any( Object ) );
 	} );
 
-	describe( property( STATIC, "PersistedResource", "Carbon.PersistedResource.PersistedResourceFactory", "Constant that implements the `Carbon.PersistedResource.PersistedResourceFactory` interface." ), ():void => {
+	describe( property( STATIC, "PersistedResource", "CarbonLDP.PersistedResource.PersistedResourceFactory", "Constant that implements the `CarbonLDP.PersistedResource.PersistedResourceFactory` interface." ), ():void => {
 
 		it( isDefined(), ():void => {
 			expect( PersistedResource ).toBeDefined();

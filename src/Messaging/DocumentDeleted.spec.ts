@@ -16,10 +16,10 @@ import DefaultExport, { DocumentDeleted } from "./DocumentDeleted";
 
 import { EventMessage } from "./EventMessage";
 
-describe( module( "Carbon/Messaging/DocumentDeleted" ), ():void => {
+describe( module( "CarbonLDP/Messaging/DocumentDeleted" ), ():void => {
 
 	describe( interfaze(
-		"Carbon.Messaging.DocumentDeleted.DocumentDeleted",
+		"CarbonLDP.Messaging.DocumentDeleted.DocumentDeleted",
 		"Interface with the properties of the data received in a document deleted event."
 	), ():void => {
 
@@ -28,7 +28,7 @@ describe( module( "Carbon/Messaging/DocumentDeleted" ), ():void => {
 			expect( target ).toBeDefined();
 		} );
 
-		it( extendsClass( "Carbon.Messaging.EventMessage.EventMessage" ), ():void => {
+		it( extendsClass( "CarbonLDP.Messaging.EventMessage.EventMessage" ), ():void => {
 			const target:EventMessage = {} as DocumentDeleted;
 			expect( target ).toBeDefined();
 		} );
@@ -36,7 +36,7 @@ describe( module( "Carbon/Messaging/DocumentDeleted" ), ():void => {
 		it( hasProperty(
 			OBLIGATORY,
 			"target",
-			"Carbon.Pointer.Pointer"
+			"CarbonLDP.Pointer.Pointer"
 		), ():void => {
 			const target:DocumentDeleted[ "target" ] = {} as Pointer;
 			expect( target ).toBeDefined();
@@ -45,8 +45,8 @@ describe( module( "Carbon/Messaging/DocumentDeleted" ), ():void => {
 	} );
 
 	describe( interfaze(
-		"Carbon.Messaging.DocumentDeleted.DocumentDeletedFactory",
-		"Interface with the factory, decorate and utils for `Carbon.Messaging.DocumentDeleted.DocumentDeleted` objects."
+		"CarbonLDP.Messaging.DocumentDeleted.DocumentDeletedFactory",
+		"Interface with the factory, decorate and utils for `CarbonLDP.Messaging.DocumentDeleted.DocumentDeleted` objects."
 	), ():void => {
 
 		it( hasProperty(
@@ -58,7 +58,7 @@ describe( module( "Carbon/Messaging/DocumentDeleted" ), ():void => {
 		it( hasProperty(
 			STATIC,
 			"SCHEMA",
-			"Carbon.ObjectSchema.ObjectSchema"
+			"CarbonLDP.ObjectSchema.ObjectSchema"
 		), ():void => {} );
 
 	} );
@@ -66,7 +66,7 @@ describe( module( "Carbon/Messaging/DocumentDeleted" ), ():void => {
 	describe( property(
 		STATIC,
 		"DocumentDeleted",
-		"Carbon.Messaging.DocumentDeleted.DocumentDeletedFactory"
+		"CarbonLDP.Messaging.DocumentDeleted.DocumentDeletedFactory"
 	), ():void => {
 
 		it( isDefined(), ():void => {
@@ -99,7 +99,7 @@ describe( module( "Carbon/Messaging/DocumentDeleted" ), ():void => {
 
 	} );
 
-	it( hasDefaultExport( "Carbon.Messaging.DocumentDeleted.DocumentDeleted" ), ():void => {
+	it( hasDefaultExport( "CarbonLDP.Messaging.DocumentDeleted.DocumentDeleted" ), ():void => {
 		const target:DocumentDeleted = {} as DefaultExport;
 		expect( target ).toBeDefined();
 	} );

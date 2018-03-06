@@ -15,9 +15,9 @@ import {
 	module,
 } from "./test/JasmineExtender";
 
-describe( module( "Carbon/AbstractContext" ), ():void => {
+describe( module( "CarbonLDP/AbstractContext" ), ():void => {
 
-	describe( clazz( "Carbon.AbstractContext.AbstractContext", "Abstract class for defining contexts." ), ():void => {
+	describe( clazz( "CarbonLDP.AbstractContext.AbstractContext", "Abstract class for defining contexts." ), ():void => {
 
 		it( "should exists", ():void => {
 			expect( AbstractContext ).toBeDefined();
@@ -36,7 +36,7 @@ describe( module( "Carbon/AbstractContext" ), ():void => {
 			expect( context ).toEqual( jasmine.any( AbstractContext ) );
 		} );
 
-		it( extendsClass( "Carbon.SDKContext.SDKContext" ), ():void => {
+		it( extendsClass( "CarbonLDP.SDKContext.SDKContext" ), ():void => {
 			expect( context ).toEqual( jasmine.any( SDKContext ) );
 		} );
 
@@ -57,9 +57,9 @@ describe( module( "Carbon/AbstractContext" ), ():void => {
 		it( hasProperty(
 			INSTANCE,
 			"parentContext",
-			"Carbon.Context.Context",
+			"CarbonLDP.Context.Context",
 			"The parent context provided in the constructor. " +
-			"If no context was provided, this property will be the singleton `Carbon.SDKContext#globalContext` of the class `Carbon.SDKContext.SDKContext`."
+			"If no context was provided, this property will be the singleton `CarbonLDP.SDKContext#globalContext` of the class `CarbonLDP.SDKContext.SDKContext`."
 		), ():void => {
 			expect( context.parentContext ).toBeDefined();
 
@@ -73,7 +73,7 @@ describe( module( "Carbon/AbstractContext" ), ():void => {
 
 	} );
 
-	it( hasDefaultExport( "Carbon.AbstractContext.AbstractContext" ), ():void => {
+	it( hasDefaultExport( "CarbonLDP.AbstractContext.AbstractContext" ), ():void => {
 		expect( DefaultExport ).toBeDefined();
 		expect( DefaultExport ).toBe( AbstractContext );
 	} );

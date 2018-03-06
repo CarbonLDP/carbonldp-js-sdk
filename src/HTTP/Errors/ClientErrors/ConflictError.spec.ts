@@ -17,7 +17,7 @@ import * as Utils from "./../../../Utils";
 import * as ConflictError from "./ConflictError";
 import DefaultExport from "./ConflictError";
 
-describe( module( "Carbon/HTTP/Errors/ClientErrors/ConflictError" ), ():void => {
+describe( module( "CarbonLDP/HTTP/Errors/ClientErrors/ConflictError" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( ConflictError ).toBeDefined();
@@ -25,7 +25,7 @@ describe( module( "Carbon/HTTP/Errors/ClientErrors/ConflictError" ), ():void => 
 	} );
 
 	describe( clazz(
-		"Carbon.HTTP.Errors.ConflictError",
+		"CarbonLDP.HTTP.Errors.ConflictError",
 		"Error class to indicate that the request could not be processed because of a conflict, such as an ID conflict."
 	), ():void => {
 
@@ -54,7 +54,7 @@ describe( module( "Carbon/HTTP/Errors/ClientErrors/ConflictError" ), ():void => 
 		} );
 
 		it( extendsClass(
-			"Carbon.HTTP.Errors.HTTPError"
+			"CarbonLDP.HTTP.Errors.HTTPError"
 		), ():void => {
 			let error:ConflictError.ConflictError = new ConflictError.ConflictError( "Message of the error", response );
 
@@ -99,7 +99,7 @@ describe( module( "Carbon/HTTP/Errors/ClientErrors/ConflictError" ), ():void => 
 
 	} );
 
-	it( hasDefaultExport( "Carbon.HTTP.Errors.ConflictError" ), ():void => {
+	it( hasDefaultExport( "CarbonLDP.HTTP.Errors.ConflictError" ), ():void => {
 		expect( DefaultExport ).toBeDefined();
 		expect( DefaultExport ).toBe( ConflictError.ConflictError );
 	} );

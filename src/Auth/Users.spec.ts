@@ -22,7 +22,7 @@ import * as PersistedUser from "./PersistedUser";
 import * as Users from "./Users";
 import DefaultExport from "./Users";
 
-describe( module( "Carbon/Auth/Users" ), ():void => {
+describe( module( "CarbonLDP/Auth/Users" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( Users ).toBeDefined();
@@ -30,7 +30,7 @@ describe( module( "Carbon/Auth/Users" ), ():void => {
 	} );
 
 	describe( clazz(
-		"Carbon.Auth.Users.Class",
+		"CarbonLDP.Auth.Users.Class",
 		"Abstract class for manage Users of a determined context."
 	), ():void => {
 
@@ -40,7 +40,7 @@ describe( module( "Carbon/Auth/Users" ), ():void => {
 		} );
 
 		it( hasConstructor( [
-			{ name: "context", type: "Carbon.Context.Context", description: "The context where to manage its Users." },
+			{ name: "context", type: "CarbonLDP.Context.Context", description: "The context where to manage its Users." },
 		] ), ():void => {
 			const context:AbstractContext = new class extends AbstractContext {
 				protected _baseURI:string;
@@ -60,7 +60,7 @@ describe( module( "Carbon/Auth/Users" ), ():void => {
 					{ name: "email", type: "string" },
 					{ name: "password", type: "string" },
 				],
-				{ type: "Promise<[ Carbon.Auth.PersistedUser.Class, Carbon.HTTP.Response.Response ]>" }
+				{ type: "Promise<[ CarbonLDP.Auth.PersistedUser.Class, CarbonLDP.HTTP.Response.Response ]>" }
 			), ():void => {} );
 
 			it( "should exists", ():void => {
@@ -182,9 +182,9 @@ describe( module( "Carbon/Auth/Users" ), ():void => {
 			"get",
 			"Retrieves the user specified from the current context.", [
 				{ name: "userURI", type: "string", description: "The URI of the user to retrieve." },
-				{ name: "requestOptions", type: "Carbon.HTTP.Request.RequestOptions", optional: true },
+				{ name: "requestOptions", type: "CarbonLDP.HTTP.Request.RequestOptions", optional: true },
 			],
-			{ type: "Promise<[ Carbon.Auth.PersistedUser.Class, Carbon.HTTP.Response.Response ]>" }
+			{ type: "Promise<[ CarbonLDP.Auth.PersistedUser.Class, CarbonLDP.HTTP.Response.Response ]>" }
 		), ( done:{ ():void, fail:() => void } ) => {
 			let users:Users.Class;
 			let context:AbstractContext;
@@ -335,9 +335,9 @@ describe( module( "Carbon/Auth/Users" ), ():void => {
 			"disableCredentials",
 			"Activate the account of the user specified.", [
 				{ name: "userURI", type: "string", description: "The URI of the user to deactivate its credentials." },
-				{ name: "requestOptions", type: "Carbon.HTTP.Request.RequestOptions", optional: true },
+				{ name: "requestOptions", type: "CarbonLDP.HTTP.Request.RequestOptions", optional: true },
 			],
-			{ type: "Promise<[ Carbon.Auth.PersistedUser.Class, Carbon.HTTP.Response.Response[] ]>" }
+			{ type: "Promise<[ CarbonLDP.Auth.PersistedUser.Class, CarbonLDP.HTTP.Response.Response[] ]>" }
 		), () => {} );
 
 		describe( "disableCredentials", ():void => {
@@ -437,9 +437,9 @@ describe( module( "Carbon/Auth/Users" ), ():void => {
 			"disableCredentials",
 			"Deactivate the account of the user specified.", [
 				{ name: "userURI", type: "string", description: "The URI of the user to activate its credentials." },
-				{ name: "requestOptions", type: "Carbon.HTTP.Request.RequestOptions", optional: true },
+				{ name: "requestOptions", type: "CarbonLDP.HTTP.Request.RequestOptions", optional: true },
 			],
-			{ type: "Promise<[ Carbon.Auth.PersistedUser.Class, [ Carbon.HTTP.Response.Response, Carbon.HTTP.Response.Response ] ]>" }
+			{ type: "Promise<[ CarbonLDP.Auth.PersistedUser.Class, [ CarbonLDP.HTTP.Response.Response, CarbonLDP.HTTP.Response.Response ] ]>" }
 		), () => {} );
 
 		it( hasMethod(
@@ -447,9 +447,9 @@ describe( module( "Carbon/Auth/Users" ), ():void => {
 			"delete",
 			"Deletes the user specified.", [
 				{ name: "userURI", type: "string", description: "The URI of the user to be deleted." },
-				{ name: "requestOptions", type: "Carbon.HTTP.Request.RequestOptions", optional: true },
+				{ name: "requestOptions", type: "CarbonLDP.HTTP.Request.RequestOptions", optional: true },
 			],
-			{ type: "Promise<[ Carbon.Auth.PersistedUser.Class, Carbon.HTTP.Response.Response ]>" }
+			{ type: "Promise<[ CarbonLDP.Auth.PersistedUser.Class, CarbonLDP.HTTP.Response.Response ]>" }
 		), ( done:{ ():void, fail:() => void } ) => {
 			let users:Users.Class;
 			let context:AbstractContext;
@@ -505,7 +505,7 @@ describe( module( "Carbon/Auth/Users" ), ():void => {
 	} );
 
 	it( hasDefaultExport(
-		"Carbon.Auth.Users.Class"
+		"CarbonLDP.Auth.Users.Class"
 	), ():void => {
 		expect( DefaultExport ).toBeDefined();
 		expect( DefaultExport ).toBe( Users.Class );

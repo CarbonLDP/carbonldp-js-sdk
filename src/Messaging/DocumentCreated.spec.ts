@@ -17,10 +17,10 @@ import DefaultExport, { DocumentCreated } from "./DocumentCreated";
 import { DocumentCreatedDetails } from "./DocumentCreatedDetails";
 import { EventMessage } from "./EventMessage";
 
-describe( module( "Carbon/Messaging/DocumentCreated" ), ():void => {
+describe( module( "CarbonLDP/Messaging/DocumentCreated" ), ():void => {
 
 	describe( interfaze(
-		"Carbon.Messaging.DocumentCreated.DocumentCreated",
+		"CarbonLDP.Messaging.DocumentCreated.DocumentCreated",
 		"Interface with the base properties of the data received in any document created event."
 	), ():void => {
 
@@ -29,7 +29,7 @@ describe( module( "Carbon/Messaging/DocumentCreated" ), ():void => {
 			expect( target ).toBeDefined();
 		} );
 
-		it( extendsClass( "Carbon.Messaging.EventMessage.EventMessage" ), ():void => {
+		it( extendsClass( "CarbonLDP.Messaging.EventMessage.EventMessage" ), ():void => {
 			const target:EventMessage = {} as DocumentCreated;
 			expect( target ).toBeDefined();
 		} );
@@ -37,7 +37,7 @@ describe( module( "Carbon/Messaging/DocumentCreated" ), ():void => {
 		it( hasProperty(
 			OBLIGATORY,
 			"target",
-			"Carbon.Pointer.Pointer"
+			"CarbonLDP.Pointer.Pointer"
 		), ():void => {
 			const target:DocumentCreated[ "target" ] = {} as Pointer;
 			expect( target ).toBeDefined();
@@ -46,7 +46,7 @@ describe( module( "Carbon/Messaging/DocumentCreated" ), ():void => {
 		it( hasProperty(
 			OBLIGATORY,
 			"details",
-			"Carbon.Messaging.DocumentCreatedDetails.DocumentCreatedDetails"
+			"CarbonLDP.Messaging.DocumentCreatedDetails.DocumentCreatedDetails"
 		), ():void => {
 			const target:DocumentCreated[ "details" ] = {} as DocumentCreatedDetails;
 			expect( target ).toBeDefined();
@@ -55,14 +55,14 @@ describe( module( "Carbon/Messaging/DocumentCreated" ), ():void => {
 	} );
 
 	describe( interfaze(
-		"Carbon.Messaging.DocumentCreated.DocumentCreatedFactory",
-		"Interface with the factory, decorate and utils elements for `Carbon.Messaging.DocumentCreated.DocumentCreated` objects."
+		"CarbonLDP.Messaging.DocumentCreated.DocumentCreatedFactory",
+		"Interface with the factory, decorate and utils elements for `CarbonLDP.Messaging.DocumentCreated.DocumentCreated` objects."
 	), ():void => {
 
 		it( hasProperty(
 			OBLIGATORY,
 			"SCHEMA",
-			"Carbon.ObjectSchema.ObjectSchema"
+			"CarbonLDP.ObjectSchema.ObjectSchema"
 		), ():void => {} );
 
 	} );
@@ -70,7 +70,7 @@ describe( module( "Carbon/Messaging/DocumentCreated" ), ():void => {
 	describe( property(
 		STATIC,
 		"DocumentCreated",
-		"Carbon.Messaging.DocumentCreated.DocumentCreatedFactory"
+		"CarbonLDP.Messaging.DocumentCreated.DocumentCreatedFactory"
 	), ():void => {
 
 		it( isDefined(), ():void => {
@@ -101,7 +101,7 @@ describe( module( "Carbon/Messaging/DocumentCreated" ), ():void => {
 
 	} );
 
-	it( hasDefaultExport( "Carbon.Messaging.DocumentCreated.DocumentCreated" ), ():void => {
+	it( hasDefaultExport( "CarbonLDP.Messaging.DocumentCreated.DocumentCreated" ), ():void => {
 		const target:DocumentCreated = {} as DefaultExport;
 		expect( target ).toBeDefined();
 	} );

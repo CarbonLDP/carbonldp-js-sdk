@@ -14,19 +14,19 @@ import {
 import * as Module from "./QueryVariable";
 import DefaultExport, { QueryVariable } from "./QueryVariable";
 
-describe( module( "Carbon/SPARQL/QueryDocument/QueryVariable" ), ():void => {
+describe( module( "CarbonLDP/SPARQL/QueryDocument/QueryVariable" ), ():void => {
 
 	it( "should exists", ():void => {
 		expect( Module ).toBeDefined();
 		expect( Module ).toEqual( jasmine.any( Object ) );
 	} );
 
-	it( hasDefaultExport( "Carbon.SPARQL.QueryDocument.QueryVariable.QueryVariable" ), ():void => {
+	it( hasDefaultExport( "CarbonLDP.SPARQL.QueryDocument.QueryVariable.QueryVariable" ), ():void => {
 		expect( DefaultExport ).toBeDefined();
 		expect( DefaultExport ).toBe( QueryVariable );
 	} );
 
-	describe( clazz( "Carbon.SPARQL.QueryDocument.QueryVariable.QueryVariable", "Class that represents a property in the query" ), ():void => {
+	describe( clazz( "CarbonLDP.SPARQL.QueryDocument.QueryVariable.QueryVariable", "Class that represents a property in the query" ), ():void => {
 
 		it( "should exists", ():void => {
 			expect( QueryVariable ).toBeDefined();

@@ -16,28 +16,28 @@ import * as Utils from "./../Utils";
 
 import DefaultExport, { CarbonMap } from "./CarbonMap";
 
-describe( module( "Carbon/LDP/CarbonMap" ), ():void => {
+describe( module( "CarbonLDP/LDP/CarbonMap" ), ():void => {
 
 	describe( interfaze(
-		"Carbon.LDP.CarbonMap.CarbonMap",
+		"CarbonLDP.LDP.CarbonMap.CarbonMap",
 		[ "K", "V" ],
 		"Interface that contains a set entries with a close relation in the form of a key/value pair."
 	), ():void => {
 
-		it( extendsClass( "Carbon.Resource.Resource" ), ():void => {} );
+		it( extendsClass( "CarbonLDP.Resource.Resource" ), ():void => {} );
 
 		it( hasProperty(
 			OBLIGATORY,
 			"entries",
-			"Carbon.LDP.CarbonMapEntry.CarbonMapEntry<K,V>[]",
+			"CarbonLDP.LDP.CarbonMapEntry.CarbonMapEntry<K,V>[]",
 			"An array of entries' pair relations."
 		), ():void => {} );
 
 	} );
 
 	describe( interfaze(
-		"Carbon.LDP.CarbonMap.CarbonMapFactory",
-		"Interface with the factory, decorate and utils methods for `Carbon.LDP.CarbonMap.CarbonMap` objects."
+		"CarbonLDP.LDP.CarbonMap.CarbonMapFactory",
+		"Interface with the factory, decorate and utils methods for `CarbonLDP.LDP.CarbonMap.CarbonMap` objects."
 	), ():void => {
 
 		it( hasProperty(
@@ -49,16 +49,16 @@ describe( module( "Carbon/LDP/CarbonMap" ), ():void => {
 		it( hasProperty(
 			OBLIGATORY,
 			"SCHEMA",
-			"Carbon.ObjectSchema.ObjectSchema"
+			"CarbonLDP.ObjectSchema.ObjectSchema"
 		), ():void => {} );
 
 		it( hasMethod(
 			OBLIGATORY,
 			"is",
-			"Return true if the object provided is considered a `Carbon.LDP.CarbonMap.CarbonMap` object.", [
+			"Return true if the object provided is considered a `CarbonLDP.LDP.CarbonMap.CarbonMap` object.", [
 				{ name: "object", type: "object", description: "Object to check" },
 			],
-			{ type: "object is Carbon.LDP.CarbonMap.CarbonMap<any, any>" }
+			{ type: "object is CarbonLDP.LDP.CarbonMap.CarbonMap<any, any>" }
 		), ():void => {} );
 
 	} );
@@ -66,7 +66,7 @@ describe( module( "Carbon/LDP/CarbonMap" ), ():void => {
 	describe( property(
 		STATIC,
 		"CarbonMap",
-		"Carbon.LDP.CarbonMap.CarbonMapFactory"
+		"CarbonLDP.LDP.CarbonMap.CarbonMapFactory"
 	), ():void => {
 
 		it( isDefined(), ():void => {
@@ -126,7 +126,7 @@ describe( module( "Carbon/LDP/CarbonMap" ), ():void => {
 
 	} );
 
-	it( hasDefaultExport( "Carbon.LDP.CarbonMap.CarbonMap" ), ():void => {
+	it( hasDefaultExport( "CarbonLDP.LDP.CarbonMap.CarbonMap" ), ():void => {
 		let defaultExport:DefaultExport<any, any> = <any> {};
 		let defaultTarget:CarbonMap<any, any>;
 

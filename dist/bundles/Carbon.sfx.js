@@ -11272,7 +11272,7 @@ var Documents = (function () {
                 return _this.getPointer(pointer);
             if (Pointer_1.Pointer.is(pointer))
                 return pointer;
-            throw new Errors.IllegalArgumentError("No Carbon.Pointer or URI provided.");
+            throw new Errors.IllegalArgumentError("No CarbonLDP.Pointer or URI provided.");
         });
     };
     Documents.prototype.applyResponseData = function (persistedProtectedDocument, response) {
@@ -14728,8 +14728,8 @@ exports.default = exports.PlatformMetadata;
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 }
-var Carbon_1 = __importDefault(__webpack_require__(182));
-module.exports = Carbon_1.default;
+var CarbonLDP_1 = __importDefault(__webpack_require__(182));
+module.exports = CarbonLDP_1.default;
 
 
 /***/ }),
@@ -14787,9 +14787,9 @@ var SPARQL = __importStar(__webpack_require__(300));
 var System = __importStar(__webpack_require__(306));
 var Utils = __importStar(__webpack_require__(0));
 var Vocabularies = __importStar(__webpack_require__(307));
-var Carbon = (function (_super) {
-    __extends(Carbon, _super);
-    function Carbon(urlOrSettings) {
+var CarbonLDP = (function (_super) {
+    __extends(CarbonLDP, _super);
+    function CarbonLDP(urlOrSettings) {
         var _this = _super.call(this) || this;
         _this.settings = {
             vocabulary: "vocabulary/#",
@@ -14831,57 +14831,57 @@ var Carbon = (function (_super) {
         _this.messaging = new Messaging.Service.MessagingService(_this);
         return _this;
     }
-    Object.defineProperty(Carbon, "version", {
+    Object.defineProperty(CarbonLDP, "version", {
         get: function () { return "1.0.0-alpha.11"; },
         enumerable: true,
         configurable: true
     });
-    Object.defineProperty(Carbon.prototype, "version", {
-        get: function () { return Carbon.version; },
+    Object.defineProperty(CarbonLDP.prototype, "version", {
+        get: function () { return CarbonLDP.version; },
         enumerable: true,
         configurable: true
     });
-    Carbon.prototype.getPlatformMetadata = function () {
+    CarbonLDP.prototype.getPlatformMetadata = function () {
         var _this = this;
         return Utils.promiseMethod(function () {
             var uri = _this._resolvePath("system.platform");
             return _this.documents.get(uri);
         });
     };
-    Carbon.AbstractContext = AbstractContext;
-    Carbon.AccessPoint = AccessPoint;
-    Carbon.Auth = Auth;
-    Carbon.BlankNode = BlankNode;
-    Carbon.Document = Document;
-    Carbon.Documents = Documents;
-    Carbon.Errors = Errors;
-    Carbon.Fragment = Fragment;
-    Carbon.HTTP = HTTP;
-    Carbon.JSONLD = JSONLD;
-    Carbon.LDP = LDP;
-    Carbon.LDPatch = LDPatch;
-    Carbon.Messaging = Messaging;
-    Carbon.ModelFactory = ModelFactory;
-    Carbon.NamedFragment = NamedFragment;
-    Carbon.Vocabularies = Vocabularies;
-    Carbon.ObjectSchema = ObjectSchema;
-    Carbon.PersistedDocument = PersistedDocument;
-    Carbon.PersistedFragment = PersistedFragment;
-    Carbon.PersistedNamedFragment = PersistedNamedFragment;
-    Carbon.PersistedResource = PersistedResource;
-    Carbon.Pointer = Pointer;
-    Carbon.RDF = RDF;
-    Carbon.Resource = Resource;
-    Carbon.SDKContext = SDKContext;
-    Carbon.Settings = Settings;
-    Carbon.SHACL = SHACL;
-    Carbon.SPARQL = SPARQL;
-    Carbon.System = System;
-    Carbon.Utils = Utils;
-    return Carbon;
+    CarbonLDP.AbstractContext = AbstractContext;
+    CarbonLDP.AccessPoint = AccessPoint;
+    CarbonLDP.Auth = Auth;
+    CarbonLDP.BlankNode = BlankNode;
+    CarbonLDP.Document = Document;
+    CarbonLDP.Documents = Documents;
+    CarbonLDP.Errors = Errors;
+    CarbonLDP.Fragment = Fragment;
+    CarbonLDP.HTTP = HTTP;
+    CarbonLDP.JSONLD = JSONLD;
+    CarbonLDP.LDP = LDP;
+    CarbonLDP.LDPatch = LDPatch;
+    CarbonLDP.Messaging = Messaging;
+    CarbonLDP.ModelFactory = ModelFactory;
+    CarbonLDP.NamedFragment = NamedFragment;
+    CarbonLDP.Vocabularies = Vocabularies;
+    CarbonLDP.ObjectSchema = ObjectSchema;
+    CarbonLDP.PersistedDocument = PersistedDocument;
+    CarbonLDP.PersistedFragment = PersistedFragment;
+    CarbonLDP.PersistedNamedFragment = PersistedNamedFragment;
+    CarbonLDP.PersistedResource = PersistedResource;
+    CarbonLDP.Pointer = Pointer;
+    CarbonLDP.RDF = RDF;
+    CarbonLDP.Resource = Resource;
+    CarbonLDP.SDKContext = SDKContext;
+    CarbonLDP.Settings = Settings;
+    CarbonLDP.SHACL = SHACL;
+    CarbonLDP.SPARQL = SPARQL;
+    CarbonLDP.System = System;
+    CarbonLDP.Utils = Utils;
+    return CarbonLDP;
 }(AbstractContext.AbstractContext));
-exports.Carbon = Carbon;
-exports.default = Carbon;
+exports.CarbonLDP = CarbonLDP;
+exports.default = CarbonLDP;
 
 
 /***/ }),

@@ -15,7 +15,7 @@ import IllegalStateError from "./IllegalStateError";
 import InvalidJSONLDSyntaxError from "./InvalidJSONLDSyntaxError";
 import NotImplementedError from "./NotImplementedError";
 
-describe( module( "Carbon/Errors" ), ():void => {
+describe( module( "CarbonLDP/Errors" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( Errors ).toBeDefined();
@@ -25,7 +25,7 @@ describe( module( "Carbon/Errors" ), ():void => {
 	it( reexports(
 		STATIC,
 		"AbstractError",
-		"Carbon.Errors.AbstractError.AbstractError"
+		"CarbonLDP.Errors.AbstractError.AbstractError"
 	), ():void => {
 		expect( Errors.AbstractError ).toBeDefined();
 		expect( Errors.AbstractError ).toBe( AbstractError );
@@ -34,7 +34,7 @@ describe( module( "Carbon/Errors" ), ():void => {
 	it( reexports(
 		STATIC,
 		"IDAlreadyInUseError",
-		"Carbon.Errors.IDAlreadyInUseError.IDAlreadyInUseError"
+		"CarbonLDP.Errors.IDAlreadyInUseError.IDAlreadyInUseError"
 	), ():void => {
 		expect( Errors.IDAlreadyInUseError ).toBeDefined();
 		expect( Errors.IDAlreadyInUseError ).toBe( IDAlreadyInUseError );
@@ -43,7 +43,7 @@ describe( module( "Carbon/Errors" ), ():void => {
 	it( reexports(
 		STATIC,
 		"IllegalActionError",
-		"Carbon.Errors.IllegalActionError.IllegalActionError"
+		"CarbonLDP.Errors.IllegalActionError.IllegalActionError"
 	), ():void => {
 		expect( Errors.IllegalActionError ).toBeDefined();
 		expect( Errors.IllegalActionError ).toBe( IllegalActionError );
@@ -52,7 +52,7 @@ describe( module( "Carbon/Errors" ), ():void => {
 	it( reexports(
 		STATIC,
 		"IllegalArgumentError",
-		"Carbon.Errors.IllegalArgumentError.IllegalArgumentError"
+		"CarbonLDP.Errors.IllegalArgumentError.IllegalArgumentError"
 	), ():void => {
 		expect( Errors.IllegalArgumentError ).toBeDefined();
 		expect( Errors.IllegalArgumentError ).toBe( IllegalArgumentError );
@@ -61,7 +61,7 @@ describe( module( "Carbon/Errors" ), ():void => {
 	it( reexports(
 		STATIC,
 		"IllegalStateError",
-		"Carbon.Errors.IllegalStateError.IllegalStateError"
+		"CarbonLDP.Errors.IllegalStateError.IllegalStateError"
 	), ():void => {
 		expect( Errors.IllegalStateError ).toBeDefined();
 		expect( Errors.IllegalStateError ).toBe( IllegalStateError );
@@ -70,7 +70,7 @@ describe( module( "Carbon/Errors" ), ():void => {
 	it( reexports(
 		STATIC,
 		"InvalidJSONLDSyntaxError",
-		"Carbon.Errors.InvalidJSONLDSyntaxError.InvalidJSONLDSyntaxError"
+		"CarbonLDP.Errors.InvalidJSONLDSyntaxError.InvalidJSONLDSyntaxError"
 	), ():void => {
 		expect( Errors.InvalidJSONLDSyntaxError ).toBeDefined();
 		expect( Errors.InvalidJSONLDSyntaxError ).toBe( InvalidJSONLDSyntaxError );
@@ -79,7 +79,7 @@ describe( module( "Carbon/Errors" ), ():void => {
 	it( reexports(
 		STATIC,
 		"NotImplementedError",
-		"Carbon.Errors.NotImplementedError.NotImplementedError"
+		"CarbonLDP.Errors.NotImplementedError.NotImplementedError"
 	), ():void => {
 		expect( Errors.NotImplementedError ).toBeDefined();
 		expect( Errors.NotImplementedError ).toBe( NotImplementedError );

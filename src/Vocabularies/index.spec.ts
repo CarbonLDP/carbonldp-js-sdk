@@ -15,7 +15,7 @@ import { SHACL } from "./SHACL";
 import { VCARD } from "./VCARD";
 import { XSD } from "./XSD";
 
-describe( module( "Carbon/Vocabularies" ), ():void => {
+describe( module( "CarbonLDP/Vocabularies" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( Vocabularies ).toBeDefined();
@@ -25,7 +25,7 @@ describe( module( "Carbon/Vocabularies" ), ():void => {
 	it( reexports(
 		STATIC,
 		"C",
-		"Carbon.Vocabularies.C"
+		"CarbonLDP.Vocabularies.C"
 	), ():void => {
 		expect( Vocabularies.C ).toBeDefined();
 		expect( Vocabularies.C ).toBe( C );
@@ -34,7 +34,7 @@ describe( module( "Carbon/Vocabularies" ), ():void => {
 	it( reexports(
 		STATIC,
 		"CS",
-		"Carbon.Vocabularies.CS"
+		"CarbonLDP.Vocabularies.CS"
 	), ():void => {
 		expect( Vocabularies.CS ).toBeDefined();
 		expect( Vocabularies.CS ).toBe( CS );
@@ -43,7 +43,7 @@ describe( module( "Carbon/Vocabularies" ), ():void => {
 	it( reexports(
 		STATIC,
 		"LDP",
-		"Carbon.Vocabularies.LDP"
+		"CarbonLDP.Vocabularies.LDP"
 	), ():void => {
 		expect( Vocabularies.LDP ).toBeDefined();
 		expect( Vocabularies.LDP ).toBe( LDP );
@@ -52,7 +52,7 @@ describe( module( "Carbon/Vocabularies" ), ():void => {
 	it( reexports(
 		STATIC,
 		"RDF",
-		"Carbon.Vocabularies.RDF"
+		"CarbonLDP.Vocabularies.RDF"
 	), ():void => {
 		expect( Vocabularies.RDF ).toBeDefined();
 		expect( Vocabularies.RDF ).toBe( RDF );
@@ -61,7 +61,7 @@ describe( module( "Carbon/Vocabularies" ), ():void => {
 	it( reexports(
 		STATIC,
 		"SHACL",
-		"Carbon.Vocabularies.SHACL"
+		"CarbonLDP.Vocabularies.SHACL"
 	), ():void => {
 		expect( Vocabularies.SHACL ).toBeDefined();
 		expect( Vocabularies.SHACL ).toBe( SHACL );
@@ -70,7 +70,7 @@ describe( module( "Carbon/Vocabularies" ), ():void => {
 	it( reexports(
 		STATIC,
 		"VCARD",
-		"Carbon.Vocabularies.VCARD"
+		"CarbonLDP.Vocabularies.VCARD"
 	), ():void => {
 		expect( Vocabularies.VCARD ).toBeDefined();
 		expect( Vocabularies.VCARD ).toBe( VCARD );
@@ -79,7 +79,7 @@ describe( module( "Carbon/Vocabularies" ), ():void => {
 	it( reexports(
 		STATIC,
 		"XSD",
-		"Carbon.Vocabularies.XSD"
+		"CarbonLDP.Vocabularies.XSD"
 	), ():void => {
 		expect( Vocabularies.XSD ).toBeDefined();
 		expect( Vocabularies.XSD ).toBe( XSD );

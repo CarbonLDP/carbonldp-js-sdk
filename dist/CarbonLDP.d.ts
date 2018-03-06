@@ -28,7 +28,7 @@ import * as SPARQL from "./SPARQL";
 import * as System from "./System";
 import * as Utils from "./Utils";
 import * as Vocabularies from "./Vocabularies";
-export declare class Carbon extends AbstractContext.AbstractContext {
+export declare class CarbonLDP extends AbstractContext.AbstractContext {
     static AbstractContext: typeof AbstractContext;
     static AccessPoint: typeof AccessPoint;
     static Auth: typeof Auth;
@@ -68,4 +68,4 @@ export declare class Carbon extends AbstractContext.AbstractContext {
     constructor(settings: Settings.CarbonSettings);
     getPlatformMetadata(): Promise<[System.PlatformMetadata.PlatformMetadata, HTTP.Response.Response]>;
 }
-export default Carbon;
+export default CarbonLDP;

@@ -3,7 +3,7 @@ import * as SHACL from "./index";
 import { ValidationReport } from "./ValidationReport";
 import { ValidationResult } from "./ValidationResult";
 
-describe( module( "Carbon/SHACL" ), ():void => {
+describe( module( "CarbonLDP/SHACL" ), ():void => {
 
 	it( "should exists", ():void => {
 		expect( SHACL ).toBeDefined();
@@ -13,7 +13,7 @@ describe( module( "Carbon/SHACL" ), ():void => {
 	it( reexports(
 		STATIC,
 		"ValidationReport",
-		"Carbon/SHACL/ValidationReport"
+		"CarbonLDP/SHACL/ValidationReport"
 	), ():void => {
 		expect( SHACL.ValidationReport ).toBe( ValidationReport );
 	} );
@@ -21,7 +21,7 @@ describe( module( "Carbon/SHACL" ), ():void => {
 	it( reexports(
 		STATIC,
 		"ValidationResult",
-		"Carbon/SHACL/ValidationResult"
+		"CarbonLDP/SHACL/ValidationResult"
 	), ():void => {
 		expect( SHACL.ValidationResult ).toBe( ValidationResult );
 	} );

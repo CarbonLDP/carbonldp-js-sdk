@@ -17,7 +17,7 @@ import * as Utils from "./../../../Utils";
 import * as UnauthorizedError from "./UnauthorizedError";
 import DefaultExport from "./UnauthorizedError";
 
-describe( module( "Carbon/HTTP/Errors/ClientErrors/UnauthorizedError" ), ():void => {
+describe( module( "CarbonLDP/HTTP/Errors/ClientErrors/UnauthorizedError" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( UnauthorizedError ).toBeDefined();
@@ -25,7 +25,7 @@ describe( module( "Carbon/HTTP/Errors/ClientErrors/UnauthorizedError" ), ():void
 	} );
 
 	describe( clazz(
-		"Carbon.HTTP.Errors.UnauthorizedError",
+		"CarbonLDP.HTTP.Errors.UnauthorizedError",
 		"Error class to indicate that authentication is required or has failed."
 	), ():void => {
 
@@ -55,7 +55,7 @@ describe( module( "Carbon/HTTP/Errors/ClientErrors/UnauthorizedError" ), ():void
 		} );
 
 		it( extendsClass(
-			"Carbon.HTTP.Errors.HTTPError"
+			"CarbonLDP.HTTP.Errors.HTTPError"
 		), ():void => {
 			let error:UnauthorizedError.UnauthorizedError = new UnauthorizedError.UnauthorizedError( "Message of the error", response );
 
@@ -101,7 +101,7 @@ describe( module( "Carbon/HTTP/Errors/ClientErrors/UnauthorizedError" ), ():void
 
 	} );
 
-	it( hasDefaultExport( "Carbon.HTTP.Errors.UnauthorizedError" ), ():void => {
+	it( hasDefaultExport( "CarbonLDP.HTTP.Errors.UnauthorizedError" ), ():void => {
 		expect( DefaultExport ).toBeDefined();
 		expect( DefaultExport ).toBe( UnauthorizedError.UnauthorizedError );
 	} );

@@ -16,19 +16,19 @@ import { C } from "../../Vocabularies/C";
 
 import DefaultExport, { QueryMetadata } from "./QueryMetadata";
 
-describe( module( "Carbon/SPARQL/QueryDocument/QueryMetadata" ), ():void => {
+describe( module( "CarbonLDP/SPARQL/QueryDocument/QueryMetadata" ), ():void => {
 
 	it( "should exists", ():void => {
 		expect( QueryMetadata ).toBeDefined();
 		expect( QueryMetadata ).toEqual( jasmine.any( Object ) );
 	} );
 
-	it( hasDefaultExport( "Carbon.SPARQL.QueryDocument.QueryMetadata.QueryMetadata" ), ():void => {
+	it( hasDefaultExport( "CarbonLDP.SPARQL.QueryDocument.QueryMetadata.QueryMetadata" ), ():void => {
 		const target:DefaultExport = {} as QueryMetadata;
 		expect( target ).toBeDefined();
 	} );
 
-	describe( interfaze( "Carbon.SPARQL.QueryDocument.QueryMetadata.QueryMetadata", "Interface of the volatile resource created by the SDK in the partial query request." ), ():void => {
+	describe( interfaze( "CarbonLDP.SPARQL.QueryDocument.QueryMetadata.QueryMetadata", "Interface of the volatile resource created by the SDK in the partial query request." ), ():void => {
 
 		it( "should exists", ():void => {
 			const target:QueryMetadata = {} as QueryMetadata;
@@ -38,7 +38,7 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryMetadata" ), ():void => {
 		it( hasProperty(
 			OBLIGATORY,
 			"target",
-			"Carbon.Pointer.Pointer",
+			"CarbonLDP.Pointer.Pointer",
 			"The pointer to one of the targeted resources requested in the partial query."
 		), ():void => {
 			const target:QueryMetadata[ "target" ] = {} as Pointer;
@@ -48,8 +48,8 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryMetadata" ), ():void => {
 	} );
 
 	describe( interfaze(
-		"Carbon.SPARQL.QueryDocument.QueryMetadataFactory",
-		"Interface with the factory, decorate and utils methods for `Carbon.SPARQL.QueryDocument.QueryMetadata.QueryMetadata` objects."
+		"CarbonLDP.SPARQL.QueryDocument.QueryMetadataFactory",
+		"Interface with the factory, decorate and utils methods for `CarbonLDP.SPARQL.QueryDocument.QueryMetadata.QueryMetadata` objects."
 	), ():void => {
 
 		it( hasProperty(
@@ -61,7 +61,7 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryMetadata" ), ():void => {
 		it( hasProperty(
 			OBLIGATORY,
 			"SCHEMA",
-			"Carbon.ObjectSchema.ObjectSchema"
+			"CarbonLDP.ObjectSchema.ObjectSchema"
 		), ():void => {} );
 
 		describe( method( OBLIGATORY, "is" ), ():void => {
@@ -71,7 +71,7 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryMetadata" ), ():void => {
 				[
 					{ name: "object", type: "object", description: "The object to check." },
 				],
-				{ type: "object is Carbon.SPARQL.QueryDocument.QueryMetadata.QueryMetadata" }
+				{ type: "object is CarbonLDP.SPARQL.QueryDocument.QueryMetadata.QueryMetadata" }
 			), ():void => {} );
 
 		} );
@@ -81,7 +81,7 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryMetadata" ), ():void => {
 	describe( property(
 		STATIC,
 		"QueryMetadata",
-		"Carbon.SPARQL.QueryDocument.QueryMetadataFactory"
+		"CarbonLDP.SPARQL.QueryDocument.QueryMetadataFactory"
 	), ():void => {
 
 		it( "should exist", ():void => {

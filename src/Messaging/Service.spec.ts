@@ -1,7 +1,7 @@
 import { Server } from "mock-socket";
 import Frame from "webstomp-client/src/frame.js";
 
-import Carbon from "../Carbon";
+import Carbon from "../CarbonLDP";
 import { IllegalStateError } from "../Errors";
 import { Pointer } from "../Pointer";
 import { Resource } from "../Resource";
@@ -20,7 +20,7 @@ import { EventMessage } from "./EventMessage";
 import * as MessagingService from "./Service";
 import DefaultExport from "./Service";
 
-describe( module( "Carbon/Messaging/Service" ), ():void => {
+describe( module( "CarbonLDP/Messaging/Service" ), ():void => {
 
 	it( "should exists", ():void => {
 		expect( MessagingService ).toBeDefined();
@@ -28,7 +28,7 @@ describe( module( "Carbon/Messaging/Service" ), ():void => {
 	} );
 
 	describe( clazz(
-		"Carbon.Messaging.Service.MessagingService",
+		"CarbonLDP.Messaging.Service.MessagingService",
 		"Class that manages the messaging client, connecting and subscriptions."
 	), ():void => {
 
@@ -76,7 +76,7 @@ describe( module( "Carbon/Messaging/Service" ), ():void => {
 			it( hasSignature(
 				"Update the messaging service options. If any property is no defined the default is used:\n\n```typescript\n{\n\tmaxReconnectAttempts: 10,\n\treconnectDelay: 1000\n}\n```.",
 				[
-					{ name: "options", type: "Carbon.Messaging.MessagingOptions", description: "The options to be updated" },
+					{ name: "options", type: "CarbonLDP.Messaging.MessagingOptions", description: "The options to be updated" },
 				]
 			), ():void => {} );
 
@@ -440,7 +440,7 @@ describe( module( "Carbon/Messaging/Service" ), ():void => {
 				"Subscribe to an event described by the destination provided.",
 				[
 					{ name: "destination", type: "string", description: "The destination of the event to subscribe for." },
-					{ name: "onEvent", type: "( message:Carbon.Messaging.EventMessage.EventMessage ) => void", optional: true, description: "Callback to be invoked in every notification event and will be provided with the data message of the event." },
+					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.EventMessage.EventMessage ) => void", optional: true, description: "Callback to be invoked in every notification event and will be provided with the data message of the event." },
 					{ name: "onError", type: "( error:Error ) => void", optional: true, description: "Callback to be invoked when a error has occurred in the subscription." },
 				]
 			), ():void => {} );
@@ -607,7 +607,7 @@ describe( module( "Carbon/Messaging/Service" ), ():void => {
 				"Remove the subscription set for the specific destination and onEvent callback.",
 				[
 					{ name: "destination", type: "string", description: "The destination of the subscription to be removed." },
-					{ name: "onEvent", type: "( message:Carbon.Messaging.EventMessage.EventMessage ) => void", optional: true, description: "Callback of the subscription to be be removed." },
+					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.EventMessage.EventMessage ) => void", optional: true, description: "Callback of the subscription to be be removed." },
 				]
 			), ():void => {} );
 
@@ -700,7 +700,7 @@ describe( module( "Carbon/Messaging/Service" ), ():void => {
 
 	} );
 
-	it( hasDefaultExport( "Carbon.Messaging.Service.MessagingService" ), ():void => {
+	it( hasDefaultExport( "CarbonLDP.Messaging.Service.MessagingService" ), ():void => {
 		expect( DefaultExport ).toBeDefined();
 		expect( MessagingService.MessagingService ).toBe( DefaultExport );
 	} );

@@ -13,52 +13,52 @@ import {
 	STATIC,
 } from "./test/JasmineExtender";
 
-describe( module( "Carbon/BlankNode" ), ():void => {
+describe( module( "CarbonLDP/BlankNode" ), ():void => {
 
 	describe( interfaze(
-		"Carbon.BlankNode.BlankNode",
+		"CarbonLDP.BlankNode.BlankNode",
 		"Interface that represents the basic data of a blank node."
 	), ():void => {} );
 
 	describe( interfaze(
-		"Carbon.BlankNode.BlankNodeFactory",
-		"Interface with the factory, decorate and utils methods id a `Carbon.BlankNode.BlankNode` object."
+		"CarbonLDP.BlankNode.BlankNodeFactory",
+		"Interface with the factory, decorate and utils methods id a `CarbonLDP.BlankNode.BlankNode` object."
 	), ():void => {
 
 		it( hasMethod(
 			OBLIGATORY,
 			"is",
-			"Returns true if the object provided is considered a `Carbon.BlankNode.BlankNode`.", [
+			"Returns true if the object provided is considered a `CarbonLDP.BlankNode.BlankNode`.", [
 				{ name: "object", type: "object" },
 			],
-			{ type: "object is Carbon.BlankNode.BlankNode" }
+			{ type: "object is CarbonLDP.BlankNode.BlankNode" }
 		), ():void => {} );
 
 		it( hasMethod(
 			OBLIGATORY,
 			"create",
-			"Creates a `Carbon.BlankNode.BlankNode` object from the parameters specified.", [
-				{ name: "document", type: "Carbon.Document.Document", description: "The `Carbon.Document.Document` object where the fragment is part of." },
+			"Creates a `CarbonLDP.BlankNode.BlankNode` object from the parameters specified.", [
+				{ name: "document", type: "CarbonLDP.Document.Document", description: "The `CarbonLDP.Document.Document` object where the fragment is part of." },
 				{ name: "id", type: "string", optional: true, description: "The ID of the of the BlankNode to create. If no ID is provided, one will be created." },
 			],
-			{ type: "T & Carbon.BlankNode.BlankNode" }
+			{ type: "T & CarbonLDP.BlankNode.BlankNode" }
 		), ():void => {} );
 
 		it( hasMethod(
 			OBLIGATORY,
 			"createFrom",
 			[ "T extends object" ],
-			"Creates a `Carbon.BlankNode.BlankNode` object from the object and parameters specified.", [
-				{ name: "object", type: "T", description: "Object to be converted into a `Carbon.BlankNode.BlankNode`." },
-				{ name: "document", type: "Carbon.Document.Document", description: "The `Carbon.Document.Document` object where the fragment is part of." },
+			"Creates a `CarbonLDP.BlankNode.BlankNode` object from the object and parameters specified.", [
+				{ name: "object", type: "T", description: "Object to be converted into a `CarbonLDP.BlankNode.BlankNode`." },
+				{ name: "document", type: "CarbonLDP.Document.Document", description: "The `CarbonLDP.Document.Document` object where the fragment is part of." },
 				{ name: "id", type: "string", optional: true, description: "The ID of the of the BlankNode to create. If no ID is provided, one will be created." },
 			],
-			{ type: "T & Carbon.BlankNode.BlankNode" }
+			{ type: "T & CarbonLDP.BlankNode.BlankNode" }
 		), ():void => {} );
 
 	} );
 
-	it( hasDefaultExport( "Carbon.BlankNode.BlankNode" ), ():void => {
+	it( hasDefaultExport( "CarbonLDP.BlankNode.BlankNode" ), ():void => {
 		let defaultExport:DefaultExport = <any> {};
 		let defaultTarget:BlankNode;
 
@@ -66,7 +66,7 @@ describe( module( "Carbon/BlankNode" ), ():void => {
 		expect( defaultTarget ).toEqual( jasmine.any( Object ) );
 	} );
 
-	describe( property( STATIC, "BlankNode", "Carbon.BlankNode.BlankNodeFactory", "Constant that implements the `Carbon.BlankNode.BlankNodeFactory` interface." ), ():void => {
+	describe( property( STATIC, "BlankNode", "CarbonLDP.BlankNode.BlankNodeFactory", "Constant that implements the `CarbonLDP.BlankNode.BlankNodeFactory` interface." ), ():void => {
 
 		it( isDefined(), ():void => {
 			expect( BlankNode ).toBeDefined();

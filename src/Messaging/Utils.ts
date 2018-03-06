@@ -1,4 +1,4 @@
-import Carbon from "../Carbon";
+import Carbon from "../CarbonLDP";
 import { Context } from "../Context";
 import { IllegalArgumentError, IllegalStateError } from "../Errors";
 import { URI } from "../RDF/URI";

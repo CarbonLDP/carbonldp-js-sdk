@@ -27,7 +27,7 @@ import DefaultExport from "./TokenAuthenticator";
 
 import UsernameAndPasswordToken from "./UsernameAndPasswordToken";
 
-describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
+describe( module( "CarbonLDP/Auth/TokenAuthenticator" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( TokenAuthenticator ).toBeDefined();
@@ -40,9 +40,9 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 	} );
 
 	describe( clazz(
-		"Carbon.Auth.TokenAuthenticator.Class",
+		"CarbonLDP.Auth.TokenAuthenticator.Class",
 		"Authenticates requests using JSON Web Token (JWT) Authentication.", [
-			"Carbon.Auth.Authenticator.Class<Carbon.Auth.UsernameAndPasswordToken.Class>",
+			"CarbonLDP.Auth.Authenticator.Class<CarbonLDP.Auth.UsernameAndPasswordToken.Class>",
 		]
 	), ():void => {
 
@@ -60,7 +60,7 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 		} );
 
 		it( hasConstructor( [
-			{ name: "context", type: "Carbon.Context.Context", description: "The context where to authenticate the user." },
+			{ name: "context", type: "CarbonLDP.Context.Context", description: "The context where to authenticate the user." },
 		] ), ():void => {
 			class MockedContext extends AbstractContext {
 				protected _baseURI:string;
@@ -131,9 +131,9 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 
 			it( hasSignature(
 				"Stores credentials to authenticate future requests.", [
-					{ name: "authenticationToken", type: "Carbon.Auth.UsernameAndPasswordToken" },
+					{ name: "authenticationToken", type: "CarbonLDP.Auth.UsernameAndPasswordToken" },
 				],
-				{ type: "Promise<Carbon.Auth.Token.Class>" }
+				{ type: "Promise<CarbonLDP.Auth.Token.Class>" }
 			), ( done:{ ():void, fail:( error:Error ) => void } ):void => {
 
 				// Property Integrity
@@ -280,9 +280,9 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 
 			it( hasSignature(
 				"Stores credentials to authenticate future requests.", [
-					{ name: "token", type: "Carbon.Auth.Token.Class" },
+					{ name: "token", type: "CarbonLDP.Auth.Token.Class" },
 				],
-				{ type: "Promise<Carbon.Auth.Token.Class>" }
+				{ type: "Promise<CarbonLDP.Auth.Token.Class>" }
 			), ( done:{ ():void, fail:( error:Error ) => void } ):void => {
 
 				class MockedContext extends AbstractContext {
@@ -383,10 +383,10 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 			INSTANCE,
 			"addAuthentication",
 			"Adds the Token Authentication header to the passed request options object.\n" +
-			"The `Carbon.HTTP.Request.RequestOptions` provided is returned without modifications if it already has an authentication header.", [
-				{ name: "requestOptions", type: "Carbon.HTTP.Request.RequestOptions", description: "Request options object to add Authentication headers." },
+			"The `CarbonLDP.HTTP.Request.RequestOptions` provided is returned without modifications if it already has an authentication header.", [
+				{ name: "requestOptions", type: "CarbonLDP.HTTP.Request.RequestOptions", description: "Request options object to add Authentication headers." },
 			],
-			{ type: "Carbon.HTTP.Request.RequestOptions", description: "The request options with the added authentication headers." }
+			{ type: "CarbonLDP.HTTP.Request.RequestOptions", description: "The request options with the added authentication headers." }
 		), ():void => {
 
 			// Property Integrity
@@ -755,7 +755,7 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 
 	} );
 
-	it( hasDefaultExport( "Carbon.Auth.TokenAuthenticator.Class" ), ():void => {
+	it( hasDefaultExport( "CarbonLDP.Auth.TokenAuthenticator.Class" ), ():void => {
 		expect( DefaultExport ).toBeDefined();
 		expect( DefaultExport ).toBe( TokenAuthenticator.Class );
 	} );

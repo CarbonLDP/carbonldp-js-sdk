@@ -11,7 +11,7 @@ import * as MethodModule from "./HTTPMethod";
 import DefaultExport from "./HTTPMethod";
 
 describe( module(
-	"Carbon/HTTP/HTTPMethod"
+	"CarbonLDP/HTTP/HTTPMethod"
 ), ():void => {
 
 	it( isDefined(), ():void => {
@@ -20,7 +20,7 @@ describe( module(
 	} );
 
 	describe( enumeration(
-		"Carbon.HTTP.HTTPMethod.HTTPMethod",
+		"CarbonLDP.HTTP.HTTPMethod.HTTPMethod",
 		"Enum with the HTTP/1.1 methods."
 	), ():void => {
 
@@ -80,7 +80,7 @@ describe( module(
 
 	} );
 
-	it( hasDefaultExport( "Carbon.HTTP.HTTPMethod.HTTPMethod" ), ():void => {
+	it( hasDefaultExport( "CarbonLDP.HTTP.HTTPMethod.HTTPMethod" ), ():void => {
 		expect( DefaultExport ).toBeDefined();
 		expect( DefaultExport ).toBe( MethodModule.HTTPMethod );
 	} );

@@ -20,7 +20,7 @@ import * as Utils from "./../Utils";
 import { ACE } from "./ACE";
 import DefaultExport from "./ACE";
 
-describe( module( "Carbon/Auth/ACE" ), ():void => {
+describe( module( "CarbonLDP/Auth/ACE" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( ACE ).toBeDefined();
@@ -28,11 +28,11 @@ describe( module( "Carbon/Auth/ACE" ), ():void => {
 	} );
 
 	describe( interfaze(
-		"Carbon.Auth.ACE.ACE",
+		"CarbonLDP.Auth.ACE.ACE",
 		"Interface that represents an Access Control Entry (ACE) of an Access Control List (ACL)."
 	), ():void => {
 
-		it( extendsClass( "Carbon.Fragment.Fragment" ), ():void => {
+		it( extendsClass( "CarbonLDP.Fragment.Fragment" ), ():void => {
 			let ace:ACE = <any> {};
 			let fragment:Fragment;
 
@@ -56,7 +56,7 @@ describe( module( "Carbon/Auth/ACE" ), ():void => {
 		it( hasProperty(
 			OBLIGATORY,
 			"permissions",
-			"Carbon.Pointer.Pointer[]",
+			"CarbonLDP.Pointer.Pointer[]",
 			"An array with all the permissions to grant or deny."
 		), ():void => {
 			let permissions:Pointer[] = [ Pointer.create() ];
@@ -70,7 +70,7 @@ describe( module( "Carbon/Auth/ACE" ), ():void => {
 		it( hasProperty(
 			OBLIGATORY,
 			"subjects",
-			"Carbon.Pointer.Pointer[]",
+			"CarbonLDP.Pointer.Pointer[]",
 			"An array with all the subjects to grant or deny its permissions."
 		), ():void => {
 			let subjects:Pointer[] = [ Pointer.create() ];
@@ -84,7 +84,7 @@ describe( module( "Carbon/Auth/ACE" ), ():void => {
 		it( hasProperty(
 			OBLIGATORY,
 			"subjectsClass",
-			"Carbon.Pointer.Pointer",
+			"CarbonLDP.Pointer.Pointer",
 			"An pointer that contains the URI of the type that all the subject in the ace are.."
 		), ():void => {
 			let subjectsClass:Pointer = Pointer.create();
@@ -97,8 +97,8 @@ describe( module( "Carbon/Auth/ACE" ), ():void => {
 	} );
 
 	describe( interfaze(
-		"Carbon.Auth.ACE.ACEFactory",
-		"Interface with the factory, decorate and utils methods of a `Carbon.Auth.ACE.ACE` object"
+		"CarbonLDP.Auth.ACE.ACEFactory",
+		"Interface with the factory, decorate and utils methods of a `CarbonLDP.Auth.ACE.ACE` object"
 	), ():void => {
 
 		it( hasProperty(
@@ -110,42 +110,42 @@ describe( module( "Carbon/Auth/ACE" ), ():void => {
 		it( hasProperty(
 			OBLIGATORY,
 			"SCHEMA",
-			"Carbon.ObjectSchema.ObjectSchema"
+			"CarbonLDP.ObjectSchema.ObjectSchema"
 		), ():void => {} );
 
 		it( hasMethod(
 			OBLIGATORY,
 			"is",
-			"Returns true if the object is considered a `Carbon.Auth.ACE.ACE` object.", [
+			"Returns true if the object is considered a `CarbonLDP.Auth.ACE.ACE` object.", [
 				{ name: "object", type: "object", description: "The object to evaluate." },
 			],
-			{ type: "object is Carbon.Auth.ACE.ACE" }
+			{ type: "object is CarbonLDP.Auth.ACE.ACE" }
 		), ():void => {} );
 
 		it( hasMethod(
 			OBLIGATORY,
 			"create",
-			"Creates a `Carbon.Auth.ACE.ACE` object with the parameters specified.", [
+			"Creates a `CarbonLDP.Auth.ACE.ACE` object with the parameters specified.", [
 				{ name: "granting", type: "boolean", description: "Indicates if the ACE is a granting or denying permissions." },
-				{ name: "subjects", type: "Carbon.Pointer.Pointer[]", description: "Subjects that will have the permissions specified." },
-				{ name: "subjectClass", type: "Carbon.Pointer.Pointer", description: "The type of the subjects provided." },
-				{ name: "permissions", type: "Carbon.Pointer.Pointer[]", description: "The permissions that will be granted or denied." },
+				{ name: "subjects", type: "CarbonLDP.Pointer.Pointer[]", description: "Subjects that will have the permissions specified." },
+				{ name: "subjectClass", type: "CarbonLDP.Pointer.Pointer", description: "The type of the subjects provided." },
+				{ name: "permissions", type: "CarbonLDP.Pointer.Pointer[]", description: "The permissions that will be granted or denied." },
 			],
-			{ type: "Carbon.Auth.ACE.ACE" }
+			{ type: "CarbonLDP.Auth.ACE.ACE" }
 		), ():void => {} );
 
 		it( hasMethod(
 			OBLIGATORY,
 			"createFrom",
 			[ "T extends object" ],
-			"Creates a `Carbon.Auth.ACE.ACE` object with the parameters specified.", [
-				{ name: "object", type: "T", description: "The object that will be converted into a `Carbon.Auth.ACE.ACE`" },
+			"Creates a `CarbonLDP.Auth.ACE.ACE` object with the parameters specified.", [
+				{ name: "object", type: "T", description: "The object that will be converted into a `CarbonLDP.Auth.ACE.ACE`" },
 				{ name: "granting", type: "boolean", description: "Indicates if the ACE is a granting or denying permissions." },
-				{ name: "subjects", type: "Carbon.Pointer.Pointer[]", description: "Subjects that will have the permissions specified." },
-				{ name: "subjectClass", type: "Carbon.Pointer.Pointer", description: "The type of the subjects provided." },
-				{ name: "permissions", type: "Carbon.Pointer.Pointer[]", description: "The permissions that will be granted or denied." },
+				{ name: "subjects", type: "CarbonLDP.Pointer.Pointer[]", description: "Subjects that will have the permissions specified." },
+				{ name: "subjectClass", type: "CarbonLDP.Pointer.Pointer", description: "The type of the subjects provided." },
+				{ name: "permissions", type: "CarbonLDP.Pointer.Pointer[]", description: "The permissions that will be granted or denied." },
 			],
-			{ type: "T & Carbon.Auth.ACE.ACE" }
+			{ type: "T & CarbonLDP.Auth.ACE.ACE" }
 		), ():void => {} );
 
 	} );
@@ -153,8 +153,8 @@ describe( module( "Carbon/Auth/ACE" ), ():void => {
 	describe( property(
 		STATIC,
 		"ACE",
-		"Carbon.Auth.ACE.ACEFactory",
-		"Constant that implements the `Carbon.Auth.ACE.ACEFactory` interface."
+		"CarbonLDP.Auth.ACE.ACEFactory",
+		"Constant that implements the `CarbonLDP.Auth.ACE.ACEFactory` interface."
 	), ():void => {
 
 		it( isDefined(), ():void => {
@@ -266,7 +266,7 @@ describe( module( "Carbon/Auth/ACE" ), ():void => {
 
 	} );
 
-	it( hasDefaultExport( "Carbon.Auth.ACE.ACE" ), ():void => {
+	it( hasDefaultExport( "CarbonLDP.Auth.ACE.ACE" ), ():void => {
 		let defaultExport:DefaultExport = <any> {};
 		let ace:ACE;
 

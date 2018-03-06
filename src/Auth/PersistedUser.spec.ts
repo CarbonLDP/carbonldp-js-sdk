@@ -30,7 +30,7 @@ interface MockPersistedUser {
 	disableCredentials:Function;
 }
 
-describe( module( "Carbon/Auth/PersistedUser" ), ():void => {
+describe( module( "CarbonLDP/Auth/PersistedUser" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( PersistedUser ).toBeDefined();
@@ -38,11 +38,11 @@ describe( module( "Carbon/Auth/PersistedUser" ), ():void => {
 	} );
 
 	describe( interfaze(
-		"Carbon.Auth.PersistedUser.Class",
+		"CarbonLDP.Auth.PersistedUser.Class",
 		"Interface that represents the base of a persisted User in any context."
 	), ():void => {
 
-		it( extendsClass( "Carbon.PersistedProtectedDocument.PersistedProtectedDocument" ), ():void => {} );
+		it( extendsClass( "CarbonLDP.PersistedProtectedDocument.PersistedProtectedDocument" ), ():void => {} );
 
 		it( hasProperty(
 			OBLIGATORY,
@@ -76,21 +76,21 @@ describe( module( "Carbon/Auth/PersistedUser" ), ():void => {
 			OBLIGATORY,
 			"enableCredentials",
 			"Activate the account credentials of the user.",
-			{ type: "Promise<[ Carbon.Auth.PersistedUser.Class, Carbon.HTTP.Response.Response ]>" }
+			{ type: "Promise<[ CarbonLDP.Auth.PersistedUser.Class, CarbonLDP.HTTP.Response.Response ]>" }
 		), ():void => {} );
 
 		it( hasMethod(
 			OBLIGATORY,
 			"disableCredentials",
 			"Deactivate the account credentials of the user.",
-			{ type: "Promise<[ Carbon.Auth.PersistedUser.Class, Carbon.HTTP.Response.Response ]>" }
+			{ type: "Promise<[ CarbonLDP.Auth.PersistedUser.Class, CarbonLDP.HTTP.Response.Response ]>" }
 		), ():void => {} );
 
 	} );
 
 	describe( clazz(
-		"Carbon.Auth.PersistedUser.Factory",
-		"Factory class for `Carbon.Auth.PersistedUser.Class` objects."
+		"CarbonLDP.Auth.PersistedUser.Factory",
+		"Factory class for `CarbonLDP.Auth.PersistedUser.Class` objects."
 	), ():void => {
 
 		it( isDefined(), ():void => {
@@ -101,7 +101,7 @@ describe( module( "Carbon/Auth/PersistedUser" ), ():void => {
 		it( hasMethod(
 			STATIC,
 			"hasClassProperties",
-			"Returns true if the object provided has the properties of a `Carbon.Auth.PersistedUser.Class` object.", [
+			"Returns true if the object provided has the properties of a `CarbonLDP.Auth.PersistedUser.Class` object.", [
 				{ name: "object", type: "object" },
 			],
 			{ type: "boolean" }
@@ -140,7 +140,7 @@ describe( module( "Carbon/Auth/PersistedUser" ), ():void => {
 		it( hasMethod(
 			STATIC,
 			"is",
-			"Returns true if the object provided is considered a `Carbon.Auth.PersistedUser.Class` object.", [
+			"Returns true if the object provided is considered a `CarbonLDP.Auth.PersistedUser.Class` object.", [
 				{ name: "object", type: "object" },
 			],
 			{ type: "boolean" }
@@ -179,10 +179,10 @@ describe( module( "Carbon/Auth/PersistedUser" ), ():void => {
 			STATIC,
 			"decorate",
 			[ "T extends object" ],
-			"Decorates the object provided with the properties and methods of a `Carbon.Auth.PersistedUser.Class` object.", [
+			"Decorates the object provided with the properties and methods of a `CarbonLDP.Auth.PersistedUser.Class` object.", [
 				{ name: "object", type: "T", description: "The object to decorate." },
 			],
-			{ type: "T & Carbon.Auth.PersistedUser.Class" }
+			{ type: "T & CarbonLDP.Auth.PersistedUser.Class" }
 		), ():void => {
 			expect( PersistedUser.Factory.decorate ).toBeDefined();
 			expect( Utils.isFunction( PersistedUser.Factory.decorate ) ).toBe( true );
@@ -220,8 +220,8 @@ describe( module( "Carbon/Auth/PersistedUser" ), ():void => {
 			expect( object.disableCredentials ).not.toBe( fn );
 		} );
 
-		describe( decoratedObject( "Object decorated by the `Carbon.Auth.PersistedUser.Factory.decorate()` function.", [
-			"Carbon.Auth.PersistedUser.Class",
+		describe( decoratedObject( "Object decorated by the `CarbonLDP.Auth.PersistedUser.Factory.decorate()` function.", [
+			"CarbonLDP.Auth.PersistedUser.Class",
 		] ), ():void => {
 			let context:AbstractContext;
 
@@ -242,7 +242,7 @@ describe( module( "Carbon/Auth/PersistedUser" ), ():void => {
 				INSTANCE,
 				"enableCredentials",
 				"Activate the account of the user.",
-				{ type: "Promise<[ Carbon.Auth.PersistedUser.Class, Carbon.HTTP.Response.Response[] ]>" }
+				{ type: "Promise<[ CarbonLDP.Auth.PersistedUser.Class, CarbonLDP.HTTP.Response.Response[] ]>" }
 			), ( done:DoneFn ):void => {
 				const mockedResponse:Response = new Response( {} as any, "response-data" );
 				const promises:Promise<void>[] = [];
@@ -304,7 +304,7 @@ describe( module( "Carbon/Auth/PersistedUser" ), ():void => {
 				INSTANCE,
 				"disableCredentials",
 				"Deactivate the account of the user.",
-				{ type: "Promise<[ Carbon.Auth.PersistedUser.Class, Carbon.HTTP.Response.Response[] ]>" }
+				{ type: "Promise<[ CarbonLDP.Auth.PersistedUser.Class, CarbonLDP.HTTP.Response.Response[] ]>" }
 			), ( done:DoneFn ):void => {
 				const mockedResponse:Response = new Response( {} as any, "response-data" );
 				const promises:Promise<void>[] = [];
@@ -364,7 +364,7 @@ describe( module( "Carbon/Auth/PersistedUser" ), ():void => {
 
 	} );
 
-	it( hasDefaultExport( "Carbon.Auth.PersistedUser.Class" ), ():void => {
+	it( hasDefaultExport( "CarbonLDP.Auth.PersistedUser.Class" ), ():void => {
 		let defaultExport:DefaultExport = <any> {};
 		let defaultTarget:PersistedUser.Class;
 

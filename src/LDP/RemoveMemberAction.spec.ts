@@ -17,27 +17,27 @@ import * as Utils from "./../Utils";
 
 import DefaultExport, { RemoveMemberAction } from "./RemoveMemberAction";
 
-describe( module( "Carbon/LDP/RemoveMemberAction" ), ():void => {
+describe( module( "CarbonLDP/LDP/RemoveMemberAction" ), ():void => {
 
 	describe( interfaze(
-		"Carbon.LDP.RemoveMemberAction.RemoveMemberAction",
+		"CarbonLDP.LDP.RemoveMemberAction.RemoveMemberAction",
 		"Interface that represents an object to be sent in a request that removes specific members to a container."
 	), ():void => {
 
-		it( extendsClass( "Carbon.Resource.Resource" ), ():void => {} );
+		it( extendsClass( "CarbonLDP.Resource.Resource" ), ():void => {} );
 
 		it( hasProperty(
 			OBLIGATORY,
 			"targetMembers",
-			"Carbon.Pointer.Pointer[]",
+			"CarbonLDP.Pointer.Pointer[]",
 			"Array with the members to be removed from the container."
 		), ():void => {} );
 
 	} );
 
 	describe( interfaze(
-		"Carbon.LDP.RemoveMemberAction.RemoveMemberActionFactory",
-		"Interface with the factory, decorate and utils methods for `Carbon.LDP.RemoveMemberAction.RemoveMemberAction`"
+		"CarbonLDP.LDP.RemoveMemberAction.RemoveMemberActionFactory",
+		"Interface with the factory, decorate and utils methods for `CarbonLDP.LDP.RemoveMemberAction.RemoveMemberAction`"
 	), ():void => {
 
 		it( hasProperty(
@@ -49,25 +49,25 @@ describe( module( "Carbon/LDP/RemoveMemberAction" ), ():void => {
 		it( hasProperty(
 			STATIC,
 			"SCHEMA",
-			"Carbon.ObjectSchema.ObjectSchema"
+			"CarbonLDP.ObjectSchema.ObjectSchema"
 		), ():void => {} );
 
 		it( hasMethod(
 			STATIC,
 			"isDecorated",
-			"Returns true if the object has the properties of a `Carbon.LDP.RemoveMemberAction.RemoveMemberAction` object.", [
+			"Returns true if the object has the properties of a `CarbonLDP.LDP.RemoveMemberAction.RemoveMemberAction` object.", [
 				{ name: "object", type: "object" },
 			],
-			{ type: "object is Carbon.LDP.RemoveMemberAction.RemoveMemberAction" }
+			{ type: "object is CarbonLDP.LDP.RemoveMemberAction.RemoveMemberAction" }
 		), ():void => {} );
 
 		it( hasMethod(
 			STATIC,
 			"create",
-			"Creates a `Carbon.LDP.RemoveMemberAction.RemoveMemberAction` resource for the specified targetMembers.", [
-				{ name: "targetMembers", type: "Carbon.Pointer.Pointer", description: "The target members of the remove action." },
+			"Creates a `CarbonLDP.LDP.RemoveMemberAction.RemoveMemberAction` resource for the specified targetMembers.", [
+				{ name: "targetMembers", type: "CarbonLDP.Pointer.Pointer", description: "The target members of the remove action." },
 			],
-			{ type: "Carbon.LDP.RemoveMemberAction.RemoveMemberAction" }
+			{ type: "CarbonLDP.LDP.RemoveMemberAction.RemoveMemberAction" }
 		), ():void => {} );
 
 	} );
@@ -75,8 +75,8 @@ describe( module( "Carbon/LDP/RemoveMemberAction" ), ():void => {
 	describe( property(
 		STATIC,
 		"RemoveMemberAction",
-		"Carbon.LDP.RemoveMemberAction.RemoveMemberActionFactory",
-		"Constant that implements the `Carbon.LDP.RemoveMemberAction.RemoveMemberActionFactory` interface."
+		"CarbonLDP.LDP.RemoveMemberAction.RemoveMemberActionFactory",
+		"Constant that implements the `CarbonLDP.LDP.RemoveMemberAction.RemoveMemberActionFactory` interface."
 	), ():void => {
 
 		it( isDefined(), ():void => {
@@ -142,7 +142,7 @@ describe( module( "Carbon/LDP/RemoveMemberAction" ), ():void => {
 
 	} );
 
-	it( hasDefaultExport( "Carbon.LDP.RemoveMemberAction.RemoveMemberAction" ), ():void => {
+	it( hasDefaultExport( "CarbonLDP.LDP.RemoveMemberAction.RemoveMemberAction" ), ():void => {
 		let defaultExport:DefaultExport = <any> {};
 		let defaultTarget:RemoveMemberAction;
 

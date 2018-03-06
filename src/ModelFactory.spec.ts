@@ -9,16 +9,16 @@ import {
 	OPTIONAL
 } from "./test/JasmineExtender";
 
-describe( module( "Carbon/ModelFactory" ), ():void => {
+describe( module( "CarbonLDP/ModelFactory" ), ():void => {
 
-	describe( interfaze( "Carbon.ModelFactory.ModelFactory", [ "T extends object" ], "Interface with the standard methods for the models factories." ), ():void => {
+	describe( interfaze( "CarbonLDP.ModelFactory.ModelFactory", [ "T extends object" ], "Interface with the standard methods for the models factories." ), ():void => {
 
 		it( hasProperty( OPTIONAL, "TYPE", "string", "The type the document interface is related to." ), ():void => {
 			const target:ModelFactory<any>[ "TYPE" ] = "" as string;
 			expect( target ).toBeDefined();
 		} );
 
-		it( hasProperty( OPTIONAL, "SCHEMA", "Carbon.ObjectSchema.ObjectSchema", "The schema the document interface is related to." ), ():void => {
+		it( hasProperty( OPTIONAL, "SCHEMA", "CarbonLDP.ObjectSchema.ObjectSchema", "The schema the document interface is related to." ), ():void => {
 			const target:ModelFactory<any>[ "SCHEMA" ] = {} as ObjectSchema.ObjectSchema;
 			expect( target ).toBeDefined();
 		} );

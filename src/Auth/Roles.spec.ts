@@ -24,7 +24,7 @@ import * as Role from "./Role";
 import * as Roles from "./Roles";
 import DefaultExport from "./Roles";
 
-describe( module( "Carbon/Auth/Roles" ), ():void => {
+describe( module( "CarbonLDP/Auth/Roles" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( Roles ).toBeDefined();
@@ -32,7 +32,7 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 	} );
 
 	describe( clazz(
-		"Carbon.Auth.Roles.Class",
+		"CarbonLDP.Auth.Roles.Class",
 		"Class that manage the roles of a Carbon LDP."
 	), ():void => {
 		let roles:Roles.Class;
@@ -72,7 +72,7 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 		} );
 
 		it( hasConstructor( [
-			{ name: "context", type: "Carbon.Context.Context" },
+			{ name: "context", type: "CarbonLDP.Context.Context" },
 		] ), ():void => {
 			expect( roles ).toBeTruthy();
 			expect( roles instanceof Roles.Class ).toBe( true );
@@ -84,15 +84,15 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 		), ():void => {
 
 			it( hasSignature(
-				[ "T extends Carbon.Auth.Roles.Class" ],
+				[ "T extends CarbonLDP.Auth.Roles.Class" ],
 				"Persists the Role provided with the slug, if specified, as a childRole of the parentRole specified.\n" +
 				"Returns a Promise with a Pointer for the stored role; and a tuple of two responses, the first one is the response of the creation, and the second one is the response of the creation of the relation parent-child of the roles.", [
-					{ name: "parentRole", type: "string | Carbon.Pointer.Pointer", description: "The role that will be assigned as the parent of the role that wants to persist." },
+					{ name: "parentRole", type: "string | CarbonLDP.Pointer.Pointer", description: "The role that will be assigned as the parent of the role that wants to persist." },
 					{ name: "role", type: "T", description: "The appRole that wants to persist." },
 					{ name: "slug", type: "string", optional: true, description: "The slug where the role will be persisted." },
-					{ name: "requestOptions", type: "Carbon.HTTP.Request.RequestOptions", optional: true, description: "The slug where the role will be persisted." },
+					{ name: "requestOptions", type: "CarbonLDP.HTTP.Request.RequestOptions", optional: true, description: "The slug where the role will be persisted." },
 				],
-				{ type: "Promise<[ T & Carbon.Auth.PersistedRole.Class, Carbon.HTTP.Response.Response ]>" }
+				{ type: "Promise<[ T & CarbonLDP.Auth.PersistedRole.Class, CarbonLDP.HTTP.Response.Response ]>" }
 			), ( done:{ ():void, fail:() => void } ):void => {
 				expect( roles.createChild ).toBeDefined();
 				expect( Utils.isFunction( roles.createChild ) ).toBe( true );
@@ -154,14 +154,14 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 			} );
 
 			it( hasSignature(
-				[ "T extends Carbon.Auth.Roles.Class" ],
+				[ "T extends CarbonLDP.Auth.Roles.Class" ],
 				"Persists the Role provided as a childRole of the parentRole specified.\n" +
 				"Returns a Promise with a Pointer for the stored role; and a tuple of two responses, the first one is the response of the creation, and the second one is the response of the creation of the relation parent-child of the roles.", [
-					{ name: "parentRole", type: "string | Carbon.Pointer.Pointer", description: "The role that will be assigned as the parent of the role that wants to persist." },
+					{ name: "parentRole", type: "string | CarbonLDP.Pointer.Pointer", description: "The role that will be assigned as the parent of the role that wants to persist." },
 					{ name: "role", type: "T", description: "The appRole that wants to persist." },
-					{ name: "requestOptions", type: "Carbon.HTTP.Request.RequestOptions", optional: true, description: "The slug where the role will be persisted." },
+					{ name: "requestOptions", type: "CarbonLDP.HTTP.Request.RequestOptions", optional: true, description: "The slug where the role will be persisted." },
 				],
-				{ type: "Promise<[ T & Carbon.Auth.PersistedRole.Class, Carbon.HTTP.Response.Response ]>" }
+				{ type: "Promise<[ T & CarbonLDP.Auth.PersistedRole.Class, CarbonLDP.HTTP.Response.Response ]>" }
 			), ( done:{ ():void, fail:() => void } ):void => {
 				expect( roles.createChild ).toBeDefined();
 				expect( Utils.isFunction( roles.createChild ) ).toBe( true );
@@ -232,9 +232,9 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 			[ "T" ],
 			"Retrieves a role from the current context.", [
 				{ name: "roleURI", type: "string", description: "The URI of the role to retrieve." },
-				{ name: "requestOptions", type: "Carbon.HTTP.Request.RequestOptions", optional: true },
+				{ name: "requestOptions", type: "CarbonLDP.HTTP.Request.RequestOptions", optional: true },
 			],
-			{ type: "Promise<[ T & Carbon.PersistedRole.Class, Carbon.HTTP.Response.Response ]>" }
+			{ type: "Promise<[ T & CarbonLDP.PersistedRole.Class, CarbonLDP.HTTP.Response.Response ]>" }
 		), ( done:{ ():void, fail:() => void } ):void => {
 			expect( roles.get ).toBeDefined();
 			expect( Utils.isFunction( roles.get ) );
@@ -435,10 +435,10 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 				[ "T" ],
 				"Retrieves an array of resolved pointers for all the users of the specified role.", [
 					{ name: "roleURI", type: "string", description: "The URI of the role to look for its users." },
-					{ name: "requestOptions", type: "Carbon.HTTP.Request.RequestOptions", optional: true },
+					{ name: "requestOptions", type: "CarbonLDP.HTTP.Request.RequestOptions", optional: true },
 				],
 				// TODO: Change to `PersistedUser`
-				{ type: "Promise<[ (T & Carbon.PersistedDocument.PersistedDocument)[], Carbon.HTTP.Response.Response ]>" }
+				{ type: "Promise<[ (T & CarbonLDP.PersistedDocument.PersistedDocument)[], CarbonLDP.HTTP.Response.Response ]>" }
 			), ( done:{ ():void, fail:() => void } ):void => {
 				let spies:any = {
 					success: ( [ pointers, response ]:[ Pointer[], Response ] ):void => {
@@ -496,10 +496,10 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 			"addUser",
 			"Makes a relation in the role specified towards the user provided.", [
 				{ name: "roleURI", type: "string", description: "The URI of the role where to add the user." },
-				{ name: "user", type: "string | Carbon.Pointer.Pointer", description: "The user that wants to add to the role." },
-				{ name: "requestOptions", type: "Carbon.HTTP.Request.RequestOptions", optional: true },
+				{ name: "user", type: "string | CarbonLDP.Pointer.Pointer", description: "The user that wants to add to the role." },
+				{ name: "requestOptions", type: "CarbonLDP.HTTP.Request.RequestOptions", optional: true },
 			],
-			{ type: "Promise<Carbon.HTTP.Response.Response>" }
+			{ type: "Promise<CarbonLDP.HTTP.Response.Response>" }
 		), ():void => {
 			expect( roles.addUser ).toBeDefined();
 			expect( Utils.isFunction( roles.addUser ) );
@@ -522,10 +522,10 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 			"addUsers",
 			"Makes a relation in the role specified towards the users specified.", [
 				{ name: "roleURI", type: "string", description: "The URI of the role where to add users." },
-				{ name: "users", type: "(string | Carbon.Pointer.Pointer)[]", description: "An array with strings or Pointers that refers to the users that wants to add to the role." },
-				{ name: "requestOptions", type: "Carbon.HTTP.Request.RequestOptions", optional: true },
+				{ name: "users", type: "(string | CarbonLDP.Pointer.Pointer)[]", description: "An array with strings or Pointers that refers to the users that wants to add to the role." },
+				{ name: "requestOptions", type: "CarbonLDP.HTTP.Request.RequestOptions", optional: true },
 			],
-			{ type: "Promise<Carbon.HTTP.Response.Response>" }
+			{ type: "Promise<CarbonLDP.HTTP.Response.Response>" }
 		), ( done:{ ():void, fail:() => void } ):void => {
 			expect( roles.addUsers ).toBeDefined();
 			expect( Utils.isFunction( roles.addUsers ) );
@@ -597,10 +597,10 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 			"removeUser",
 			"Removes the relation in the role specified towards the user provided.", [
 				{ name: "roleURI", type: "string", description: "The URI of the role from where to remove the user." },
-				{ name: "user", type: "string | Carbon.Pointer.Pointer", description: "The user that wants to be removed from the role." },
-				{ name: "requestOptions", type: "Carbon.HTTP.Request.RequestOptions", optional: true },
+				{ name: "user", type: "string | CarbonLDP.Pointer.Pointer", description: "The user that wants to be removed from the role." },
+				{ name: "requestOptions", type: "CarbonLDP.HTTP.Request.RequestOptions", optional: true },
 			],
-			{ type: "Promise<Carbon.HTTP.Response.Response>" }
+			{ type: "Promise<CarbonLDP.HTTP.Response.Response>" }
 		), ():void => {
 			expect( roles.removeUser ).toBeDefined();
 			expect( Utils.isFunction( roles.removeUser ) );
@@ -623,10 +623,10 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 			"removeUsers",
 			"Remove the relation in the role specified towards the users specified.", [
 				{ name: "roleURI", type: "string", description: "The URI of the role from where to remove the users." },
-				{ name: "users", type: "(string | Carbon.Pointer.Pointer)[]", description: "An array with strings or Pointers that refers to the users to be removed from the role." },
-				{ name: "requestOptions", type: "Carbon.HTTP.Request.RequestOptions", optional: true },
+				{ name: "users", type: "(string | CarbonLDP.Pointer.Pointer)[]", description: "An array with strings or Pointers that refers to the users to be removed from the role." },
+				{ name: "requestOptions", type: "CarbonLDP.HTTP.Request.RequestOptions", optional: true },
 			],
-			{ type: "Promise<Carbon.HTTP.Response.Response>" }
+			{ type: "Promise<CarbonLDP.HTTP.Response.Response>" }
 		), ( done:{ ():void, fail:() => void } ):void => {
 			expect( roles.removeUsers ).toBeDefined();
 			expect( Utils.isFunction( roles.removeUsers ) );
@@ -694,7 +694,7 @@ describe( module( "Carbon/Auth/Roles" ), ():void => {
 	} );
 
 	it( hasDefaultExport(
-		"Carbon.Auth.Roles.Class"
+		"CarbonLDP.Auth.Roles.Class"
 	), ():void => {
 		expect( DefaultExport ).toBeDefined();
 		expect( DefaultExport ).toBe( Roles.Class );

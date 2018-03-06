@@ -19,7 +19,7 @@ import * as Utils from "./../Utils";
 import * as Ticket from "./Ticket";
 import DefaultExport from "./Ticket";
 
-describe( module( "Carbon/Auth/Ticket" ), ():void => {
+describe( module( "CarbonLDP/Auth/Ticket" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( Ticket ).toBeDefined();
@@ -40,7 +40,7 @@ describe( module( "Carbon/Auth/Ticket" ), ():void => {
 	it( hasProperty(
 		STATIC,
 		"SCHEMA",
-		"Carbon.ObjectSchema.ObjectSchema"
+		"CarbonLDP.ObjectSchema.ObjectSchema"
 	), ():void => {
 		expect( Ticket.SCHEMA ).toBeDefined();
 		expect( Utils.isObject( Ticket.SCHEMA ) ).toBe( true );
@@ -65,11 +65,11 @@ describe( module( "Carbon/Auth/Ticket" ), ():void => {
 	} );
 
 	describe( interfaze(
-		"Carbon.Auth.Ticket.Class",
+		"CarbonLDP.Auth.Ticket.Class",
 		"Interface that represents an authentication ticket."
 	), ():void => {
 
-		it( extendsClass( "Carbon.Resource.Resource" ), ():void => {
+		it( extendsClass( "CarbonLDP.Resource.Resource" ), ():void => {
 			let ticket:Ticket.Class = <any> {};
 			let resource:Resource;
 
@@ -80,7 +80,7 @@ describe( module( "Carbon/Auth/Ticket" ), ():void => {
 		it( hasProperty(
 			OBLIGATORY,
 			"forURI",
-			"Carbon.Pointer.Pointer",
+			"CarbonLDP.Pointer.Pointer",
 			"Pointer that relates the document that the authentication ticket only works for."
 		), ():void => {} );
 
@@ -101,8 +101,8 @@ describe( module( "Carbon/Auth/Ticket" ), ():void => {
 	} );
 
 	describe( clazz(
-		"Carbon.Auth.Ticket.Factory",
-		"Factory class for `Carbon.Auth.Ticket.Class` objects."
+		"CarbonLDP.Auth.Ticket.Factory",
+		"Factory class for `CarbonLDP.Auth.Ticket.Class` objects."
 	), ():void => {
 
 		it( isDefined(), ():void => {
@@ -113,10 +113,10 @@ describe( module( "Carbon/Auth/Ticket" ), ():void => {
 		it( hasMethod(
 			STATIC,
 			"create",
-			"Creates and returns a `Carbon.Auth.Ticket.Class` object for the specified URI.", [
+			"Creates and returns a `CarbonLDP.Auth.Ticket.Class` object for the specified URI.", [
 				{ name: "uri", type: "string", description: "The URI to get an authentication ticket for." },
 			],
-			{ type: "Carbon.Auth.Ticket.Class" }
+			{ type: "CarbonLDP.Auth.Ticket.Class" }
 		), ():void => {
 			expect( Ticket.Factory.create ).toBeDefined();
 			expect( Utils.isFunction( Ticket.Factory.create ) ).toBe( true );
@@ -131,7 +131,7 @@ describe( module( "Carbon/Auth/Ticket" ), ():void => {
 
 	} );
 
-	it( hasDefaultExport( "Carbon.Auth.Ticket.Class" ), ():void => {
+	it( hasDefaultExport( "CarbonLDP.Auth.Ticket.Class" ), ():void => {
 		let defaultExport:DefaultExport = <any> {};
 		let defaultTarget:Ticket.Class;
 

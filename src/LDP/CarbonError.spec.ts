@@ -14,14 +14,14 @@ import * as Utils from "./../Utils";
 
 import DefaultExport, { CarbonError } from "./CarbonError";
 
-describe( module( "Carbon/LDP/Error" ), ():void => {
+describe( module( "CarbonLDP/LDP/Error" ), ():void => {
 
 	describe( interfaze(
-		"Carbon.LDP.CarbonError.CarbonError",
+		"CarbonLDP.LDP.CarbonError.CarbonError",
 		"Interface that represents an error occurred in the server."
 	), ():void => {
 
-		it( extendsClass( "Carbon.Resource.Resource" ), ():void => {} );
+		it( extendsClass( "CarbonLDP.Resource.Resource" ), ():void => {} );
 
 		it( hasProperty(
 			OBLIGATORY,
@@ -40,15 +40,15 @@ describe( module( "Carbon/LDP/Error" ), ():void => {
 		it( hasProperty(
 			OBLIGATORY,
 			"errorParameters",
-			"Carbon.LDP.CarbonMap.CarbonMap<string, any>",
+			"CarbonLDP.LDP.CarbonMap.CarbonMap<string, any>",
 			"Map that contains the specific elements that make the error been thrown."
 		), ():void => {} );
 
 	} );
 
 	describe( interfaze(
-		"Carbon.LDP.CarbonError.CarbonErrorFactory",
-		"Interface with the factory, decorate and utils function for `Carbon.LDP.CarbonError.CarbonError` objects."
+		"CarbonLDP.LDP.CarbonError.CarbonErrorFactory",
+		"Interface with the factory, decorate and utils function for `CarbonLDP.LDP.CarbonError.CarbonError` objects."
 	), ():void => {
 
 		it( hasProperty(
@@ -60,7 +60,7 @@ describe( module( "Carbon/LDP/Error" ), ():void => {
 		it( hasProperty(
 			OBLIGATORY,
 			"SCHEMA",
-			"Carbon.ObjectSchema.ObjectSchema"
+			"CarbonLDP.ObjectSchema.ObjectSchema"
 		), ():void => {} );
 
 	} );
@@ -68,7 +68,7 @@ describe( module( "Carbon/LDP/Error" ), ():void => {
 	describe( property(
 		STATIC,
 		"CarbonError",
-		"Carbon.LDP.CarbonError.CarbonErrorFactory"
+		"CarbonLDP.LDP.CarbonError.CarbonErrorFactory"
 	), ():void => {
 
 		it( "should exist", ():void => {
@@ -110,7 +110,7 @@ describe( module( "Carbon/LDP/Error" ), ():void => {
 
 	} );
 
-	it( hasDefaultExport( "Carbon.LDP.CarbonError.CarbonError" ), ():void => {
+	it( hasDefaultExport( "CarbonLDP.LDP.CarbonError.CarbonError" ), ():void => {
 		let defaultExport:DefaultExport = <any> {};
 		let defaultTarget:CarbonError;
 

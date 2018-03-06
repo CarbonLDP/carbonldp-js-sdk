@@ -9,10 +9,10 @@ import {
 
 import DefaultExport, { MessagingOptions } from "./Options";
 
-describe( module( "Carbon.Messaging.MessagingOptions" ), ():void => {
+describe( module( "CarbonLDP.Messaging.MessagingOptions" ), ():void => {
 
 	describe( interfaze(
-		"Carbon.Messaging.MessagingOptions",
+		"CarbonLDP.Messaging.MessagingOptions",
 		"Options to configure the messaging service"
 	), ():void => {
 
@@ -43,7 +43,7 @@ describe( module( "Carbon.Messaging.MessagingOptions" ), ():void => {
 
 	} );
 
-	it( hasDefaultExport( "Carbon.Messaging.MessagingOptions" ), ():void => {
+	it( hasDefaultExport( "CarbonLDP.Messaging.MessagingOptions" ), ():void => {
 		const target:MessagingOptions = {} as DefaultExport;
 		expect( target ).toBeDefined();
 	} );

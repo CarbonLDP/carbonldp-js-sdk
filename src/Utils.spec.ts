@@ -15,7 +15,7 @@ interface Dummy {
 	doSomething?():void;
 }
 
-describe( module( "Carbon/Utils", "Class with useful functions used in the SDK." ), ():void => {
+describe( module( "CarbonLDP/Utils", "Class with useful functions used in the SDK." ), ():void => {
 
 	it( isDefined(), function():void {
 		expect( Utils ).toBeDefined();
@@ -334,7 +334,7 @@ describe( module( "Carbon/Utils", "Class with useful functions used in the SDK."
 		expect( anotherPost.three ).toBe( 3 );
 	} );
 
-	describe( clazz( "Carbon.Utils.ObjectUtils", "Utility functions related to objects." ), ():void => {
+	describe( clazz( "CarbonLDP.Utils.ObjectUtils", "Utility functions related to objects." ), ():void => {
 
 		it( isDefined(), ():void => {
 			expect( Utils.ObjectUtils ).toBeDefined();
@@ -861,7 +861,7 @@ describe( module( "Carbon/Utils", "Class with useful functions used in the SDK."
 
 	} );
 
-	describe( clazz( "Carbon.Utils.StringUtils", "Utility functions related to strings." ), ():void => {
+	describe( clazz( "CarbonLDP.Utils.StringUtils", "Utility functions related to strings." ), ():void => {
 
 		it( isDefined(), ():void => {
 			expect( Utils.StringUtils ).toBeDefined();
@@ -929,7 +929,7 @@ describe( module( "Carbon/Utils", "Class with useful functions used in the SDK."
 
 	} );
 
-	describe( clazz( "Carbon.Utils.ArrayUtils", "Utility functions related to Arrays." ), ():void => {
+	describe( clazz( "CarbonLDP.Utils.ArrayUtils", "Utility functions related to Arrays." ), ():void => {
 
 		it( isDefined(), ():void => {
 			expect( Utils.ArrayUtils ).toBeDefined();
@@ -1064,7 +1064,7 @@ describe( module( "Carbon/Utils", "Class with useful functions used in the SDK."
 
 	} );
 
-	describe( clazz( "Carbon.Utils.MapUtils", "Utility functions related to ES6 Maps." ), ():void => {
+	describe( clazz( "CarbonLDP.Utils.MapUtils", "Utility functions related to ES6 Maps." ), ():void => {
 
 		it( isDefined(), ():void => {
 			expect( Utils.MapUtils ).toBeDefined();
@@ -1163,7 +1163,7 @@ describe( module( "Carbon/Utils", "Class with useful functions used in the SDK."
 
 	} );
 
-	describe( clazz( "Carbon.Utils.UUIDUtils", "Utility functions related to UUIDs." ), ():void => {
+	describe( clazz( "CarbonLDP.Utils.UUIDUtils", "Utility functions related to UUIDs." ), ():void => {
 
 		it( isDefined(), ():void => {
 			expect( Utils.UUIDUtils ).toBeDefined();

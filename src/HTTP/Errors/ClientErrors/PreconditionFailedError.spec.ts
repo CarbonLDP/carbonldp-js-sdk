@@ -17,7 +17,7 @@ import * as Utils from "./../../../Utils";
 import * as PreconditionFailedError from "./PreconditionFailedError";
 import DefaultExport from "./PreconditionFailedError";
 
-describe( module( "Carbon/HTTP/Errors/ClientErrors/PreconditionFailedError" ), ():void => {
+describe( module( "CarbonLDP/HTTP/Errors/ClientErrors/PreconditionFailedError" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( PreconditionFailedError ).toBeDefined();
@@ -25,7 +25,7 @@ describe( module( "Carbon/HTTP/Errors/ClientErrors/PreconditionFailedError" ), (
 	} );
 
 	describe( clazz(
-		"Carbon.HTTP.Errors.PreconditionFailedError",
+		"CarbonLDP.HTTP.Errors.PreconditionFailedError",
 		"Error class to indicate that the precondition header was resolved to false."
 	), ():void => {
 
@@ -55,7 +55,7 @@ describe( module( "Carbon/HTTP/Errors/ClientErrors/PreconditionFailedError" ), (
 		} );
 
 		it( extendsClass(
-			"Carbon.HTTP.Errors.HTTPError"
+			"CarbonLDP.HTTP.Errors.HTTPError"
 		), ():void => {
 			let error:PreconditionFailedError.PreconditionFailedError = new PreconditionFailedError.PreconditionFailedError( "Message of the error", response );
 
@@ -101,7 +101,7 @@ describe( module( "Carbon/HTTP/Errors/ClientErrors/PreconditionFailedError" ), (
 
 	} );
 
-	it( hasDefaultExport( "Carbon.HTTP.Errors.PreconditionFailedError" ), ():void => {
+	it( hasDefaultExport( "CarbonLDP.HTTP.Errors.PreconditionFailedError" ), ():void => {
 		expect( DefaultExport ).toBeDefined();
 		expect( DefaultExport ).toBe( PreconditionFailedError.PreconditionFailedError );
 	} );

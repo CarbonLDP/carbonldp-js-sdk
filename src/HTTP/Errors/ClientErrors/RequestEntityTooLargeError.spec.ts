@@ -17,7 +17,7 @@ import * as Utils from "./../../../Utils";
 import * as RequestEntityTooLargeError from "./RequestEntityTooLargeError";
 import DefaultExport from "./RequestEntityTooLargeError";
 
-describe( module( "Carbon/HTTP/Errors/ClientErrors/RequestEntityTooLargeError" ), ():void => {
+describe( module( "CarbonLDP/HTTP/Errors/ClientErrors/RequestEntityTooLargeError" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( RequestEntityTooLargeError ).toBeDefined();
@@ -25,7 +25,7 @@ describe( module( "Carbon/HTTP/Errors/ClientErrors/RequestEntityTooLargeError" )
 	} );
 
 	describe( clazz(
-		"Carbon.HTTP.Errors.RequestEntityTooLargeError",
+		"CarbonLDP.HTTP.Errors.RequestEntityTooLargeError",
 		"Error class to indicate that the request entity is larger than the server is able to process."
 	), ():void => {
 
@@ -55,7 +55,7 @@ describe( module( "Carbon/HTTP/Errors/ClientErrors/RequestEntityTooLargeError" )
 		} );
 
 		it( extendsClass(
-			"Carbon.HTTP.Errors.HTTPError"
+			"CarbonLDP.HTTP.Errors.HTTPError"
 		), ():void => {
 			let error:RequestEntityTooLargeError.RequestEntityTooLargeError = new RequestEntityTooLargeError.RequestEntityTooLargeError( "Message of the error", response );
 
@@ -101,7 +101,7 @@ describe( module( "Carbon/HTTP/Errors/ClientErrors/RequestEntityTooLargeError" )
 
 	} );
 
-	it( hasDefaultExport( "Carbon.HTTP.Errors.RequestEntityTooLargeError" ), ():void => {
+	it( hasDefaultExport( "CarbonLDP.HTTP.Errors.RequestEntityTooLargeError" ), ():void => {
 		expect( DefaultExport ).toBeDefined();
 		expect( DefaultExport ).toBe( RequestEntityTooLargeError.RequestEntityTooLargeError );
 	} );

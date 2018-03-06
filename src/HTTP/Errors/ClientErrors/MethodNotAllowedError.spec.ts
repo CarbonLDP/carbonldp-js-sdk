@@ -17,7 +17,7 @@ import * as Utils from "./../../../Utils";
 import * as MethodNotAllowedError from "./MethodNotAllowedError";
 import DefaultExport from "./MethodNotAllowedError";
 
-describe( module( "Carbon/HTTP/Errors/ClientErrors/MethodNotAllowedError" ), ():void => {
+describe( module( "CarbonLDP/HTTP/Errors/ClientErrors/MethodNotAllowedError" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( MethodNotAllowedError ).toBeDefined();
@@ -25,7 +25,7 @@ describe( module( "Carbon/HTTP/Errors/ClientErrors/MethodNotAllowedError" ), ():
 	} );
 
 	describe( clazz(
-		"Carbon.HTTP.Errors.MethodNotAllowedError",
+		"CarbonLDP.HTTP.Errors.MethodNotAllowedError",
 		"Error class to indicate that the method used in the request is not allowed for that URI."
 	), ():void => {
 
@@ -55,7 +55,7 @@ describe( module( "Carbon/HTTP/Errors/ClientErrors/MethodNotAllowedError" ), ():
 		} );
 
 		it( extendsClass(
-			"Carbon.HTTP.Errors.HTTPError"
+			"CarbonLDP.HTTP.Errors.HTTPError"
 		), ():void => {
 			let error:MethodNotAllowedError.MethodNotAllowedError = new MethodNotAllowedError.MethodNotAllowedError( "Message of the error", response );
 
@@ -101,7 +101,7 @@ describe( module( "Carbon/HTTP/Errors/ClientErrors/MethodNotAllowedError" ), ():
 
 	} );
 
-	it( hasDefaultExport( "Carbon.HTTP.Errors.MethodNotAllowedError" ), ():void => {
+	it( hasDefaultExport( "CarbonLDP.HTTP.Errors.MethodNotAllowedError" ), ():void => {
 		expect( DefaultExport ).toBeDefined();
 		expect( DefaultExport ).toBe( MethodNotAllowedError.MethodNotAllowedError );
 	} );

@@ -1,9 +1,9 @@
-import Carbon from "../Carbon";
+import Carbon from "../CarbonLDP";
 import { IllegalArgumentError, IllegalStateError } from "../Errors";
 import { hasSignature, method, module, STATIC } from "../test/JasmineExtender";
 import * as MessagingUtils from "./Utils";
 
-describe( module( "Carbon/Messaging/Utils" ), ():void => {
+describe( module( "CarbonLDP/Messaging/Utils" ), ():void => {
 
 	it( "should exists", ():void => {
 		expect( MessagingUtils ).toBeDefined();
@@ -16,9 +16,9 @@ describe( module( "Carbon/Messaging/Utils" ), ():void => {
 	), ():void => {
 
 		it( hasSignature(
-			"Test if the provided context has a valid `Carbon.Messaging.Service.MessagingService` instance. If don't an error will be thrown.",
+			"Test if the provided context has a valid `CarbonLDP.Messaging.Service.MessagingService` instance. If don't an error will be thrown.",
 			[
-				{ name: "context", type: "Carbon.Context.Context", description: "The context to be evaluated." },
+				{ name: "context", type: "CarbonLDP.Context.Context", description: "The context to be evaluated." },
 			] ), ():void => {
 		} );
 
@@ -204,7 +204,7 @@ describe( module( "Carbon/Messaging/Utils" ), ():void => {
 	), ():void => {
 
 		it( hasSignature(
-			"Create a 'topic' destination using the event and the URI pattern provided. This pattern is parsed with the `Carbon/Messaging/Utils#parseURIPattern` method.\nIf invalid event of URI is given an error will be thrown.",
+			"Create a 'topic' destination using the event and the URI pattern provided. This pattern is parsed with the `CarbonLDP/Messaging/Utils#parseURIPattern` method.\nIf invalid event of URI is given an error will be thrown.",
 			[
 				{ name: "event", type: "string", description: "The event of the destination messaging notification." },
 				{ name: "uriPattern", type: "string", description: "The URI pattern of the destination messaging notification." },

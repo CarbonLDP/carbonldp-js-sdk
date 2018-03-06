@@ -8,9 +8,9 @@ import {
 	OPTIONAL
 } from "./test/JasmineExtender";
 
-describe( module( "Carbon/ModelDecorator" ), ():void => {
+describe( module( "CarbonLDP/ModelDecorator" ), ():void => {
 
-	describe( interfaze( "Carbon.ModelDecorator.ModelDecorator", [ "T extends object" ], "Interface with the standard methods of a model decorator" ), ():void => {
+	describe( interfaze( "CarbonLDP.ModelDecorator.ModelDecorator", [ "T extends object" ], "Interface with the standard methods of a model decorator" ), ():void => {
 
 		it( hasProperty( OPTIONAL, "TYPE", "string", "The type the decorator interface is for." ), ():void => {
 			const target:ModelDecorator<any>[ "TYPE" ] = "" as string;
@@ -22,7 +22,7 @@ describe( module( "Carbon/ModelDecorator" ), ():void => {
 			expect( target ).toBeDefined();
 		} );
 
-		it( hasMethod( OPTIONAL, "decorate", [ "W extends object" ], [ { name: "object", type: "W" }, { name: "documents", type: "Carbon.Documents.Documents", optional: true } ], { type: "W & T" } ), ():void => {
+		it( hasMethod( OPTIONAL, "decorate", [ "W extends object" ], [ { name: "object", type: "W" }, { name: "documents", type: "CarbonLDP.Documents.Documents", optional: true } ], { type: "W & T" } ), ():void => {
 			const target:ModelDecorator<any>[ "decorate" ] = ( object, context ) => object;
 			expect( target ).toBeDefined();
 		} );

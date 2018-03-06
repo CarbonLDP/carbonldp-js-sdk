@@ -13,20 +13,20 @@ import {
 import * as Utils from "./Utils";
 import { CS } from "./Vocabularies/CS";
 
-describe( module( "Carbon/ProtectedDocument" ), ():void => {
+describe( module( "CarbonLDP/ProtectedDocument" ), ():void => {
 
 	describe( interfaze(
-		"Carbon.ProtectedDocument.ProtectedDocument",
+		"CarbonLDP.ProtectedDocument.ProtectedDocument",
 		"Interface that represents a persisted blank node of a persisted document."
 	), ():void => {
 
-		it( extendsClass( "Carbon.Document.Document" ), ():void => {} );
+		it( extendsClass( "CarbonLDP.Document.Document" ), ():void => {} );
 
 	} );
 
 	describe( interfaze(
-		"Carbon.ProtectedDocument.ProtectedDocumentFactory",
-		"Interface with the factory, decorate and utils for `Carbon.ProtectedDocument.ProtectedDocument` objects."
+		"CarbonLDP.ProtectedDocument.ProtectedDocumentFactory",
+		"Interface with the factory, decorate and utils for `CarbonLDP.ProtectedDocument.ProtectedDocument` objects."
 	), ():void => {
 
 		it( hasProperty(
@@ -38,7 +38,7 @@ describe( module( "Carbon/ProtectedDocument" ), ():void => {
 		it( hasProperty(
 			OBLIGATORY,
 			"SCHEMA",
-			"Carbon.ObjectSchema.ObjectSchema"
+			"CarbonLDP.ObjectSchema.ObjectSchema"
 		), ():void => {} );
 
 	} );
@@ -46,8 +46,8 @@ describe( module( "Carbon/ProtectedDocument" ), ():void => {
 	describe( property(
 		STATIC,
 		"ProtectedDocument",
-		"Carbon.ProtectedDocument.ProtectedDocumentFactory",
-		"Constant that implements the `Carbon.ProtectedDocument.ProtectedDocumentFactory` interface."
+		"CarbonLDP.ProtectedDocument.ProtectedDocumentFactory",
+		"Constant that implements the `CarbonLDP.ProtectedDocument.ProtectedDocumentFactory` interface."
 	), ():void => {
 
 		it( "should exist", ():void => {
@@ -78,7 +78,7 @@ describe( module( "Carbon/ProtectedDocument" ), ():void => {
 
 	} );
 
-	it( hasDefaultExport( "Carbon.ProtectedDocument.ProtectedDocument" ), ():void => {
+	it( hasDefaultExport( "CarbonLDP.ProtectedDocument.ProtectedDocument" ), ():void => {
 		let defaultExport:DefaultExport = <any> {};
 		let defaultTarget:ProtectedDocument;
 

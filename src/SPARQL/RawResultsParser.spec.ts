@@ -12,7 +12,7 @@ import { SPARQLRawResults } from "./RawResults";
 import * as RawResultsParser from "./RawResultsParser";
 import DefaultExport from "./RawResultsParser";
 
-describe( module( "Carbon/SPARQL/RawResultsParser" ), ():void => {
+describe( module( "CarbonLDP/SPARQL/RawResultsParser" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( RawResultsParser ).toBeDefined();
@@ -20,9 +20,9 @@ describe( module( "Carbon/SPARQL/RawResultsParser" ), ():void => {
 	} );
 
 	describe( clazz(
-		"Carbon.SPARQL.RawResultsParser",
-		"Class to parse SPARQL Query result to a `Carbon.SPARQL.RawResults.SPARQLRawResults` object.", [
-			"Carbon.HTTP.Parser.Parser<Carbon.SPARQL.RawResults.SPARQLRawResults>",
+		"CarbonLDP.SPARQL.RawResultsParser",
+		"Class to parse SPARQL Query result to a `CarbonLDP.SPARQL.RawResults.SPARQLRawResults` object.", [
+			"CarbonLDP.HTTP.Parser.Parser<CarbonLDP.SPARQL.RawResults.SPARQLRawResults>",
 		]
 	), ():void => {
 
@@ -40,10 +40,10 @@ describe( module( "Carbon/SPARQL/RawResultsParser" ), ():void => {
 		it( hasMethod(
 			INSTANCE,
 			"parse",
-			"Parse the SPARQL Query string result to a `Carbon.SPARQL.RawResults.SPARQLRawResults` object.", [
+			"Parse the SPARQL Query string result to a `CarbonLDP.SPARQL.RawResults.SPARQLRawResults` object.", [
 				{ name: "input", type: "string" },
 			],
-			{ type: "Promise<Carbon.SPARQL.RawResults.SPARQLRawResults>" }
+			{ type: "Promise<CarbonLDP.SPARQL.RawResults.SPARQLRawResults>" }
 		), ( done:{ ():void, fail:() => void } ):void => {
 			let parser:RawResultsParser.SPARQLRawResultsParser = new RawResultsParser.SPARQLRawResultsParser();
 
@@ -147,7 +147,7 @@ describe( module( "Carbon/SPARQL/RawResultsParser" ), ():void => {
 
 	} );
 
-	it( hasDefaultExport( "Carbon.SPARQL.RawResultParser.Class" ), ():void => {
+	it( hasDefaultExport( "CarbonLDP.SPARQL.RawResultParser.Class" ), ():void => {
 		expect( DefaultExport ).toBeDefined();
 		expect( DefaultExport ).toBe( RawResultsParser.SPARQLRawResultsParser );
 	} );

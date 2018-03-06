@@ -1,2 +1,2 @@
-import Carbon from "./../src/Carbon";
+import Carbon from "../src/CarbonLDP";
 export = Carbon;

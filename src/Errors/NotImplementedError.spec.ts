@@ -16,7 +16,7 @@ import * as NotImplementedError from "./NotImplementedError";
 import DefaultExport from "./NotImplementedError";
 
 // TODO: Refactor tests
-describe( module( "Carbon/Errors/NotImplementedError" ), ():void => {
+describe( module( "CarbonLDP/Errors/NotImplementedError" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( NotImplementedError ).toBeDefined();
@@ -24,7 +24,7 @@ describe( module( "Carbon/Errors/NotImplementedError" ), ():void => {
 	} );
 
 	describe( clazz(
-		"Carbon.Errors.NotImplementedError.NotImplementedError",
+		"CarbonLDP.Errors.NotImplementedError.NotImplementedError",
 		"Error class to indicate that an action is not yet implemented."
 	), ():void => {
 
@@ -34,7 +34,7 @@ describe( module( "Carbon/Errors/NotImplementedError" ), ():void => {
 		} );
 
 		it( extendsClass(
-			"Carbon.Errors.AbstractError.AbstractError"
+			"CarbonLDP.Errors.AbstractError.AbstractError"
 		), ():void => {
 			let error:NotImplementedError.NotImplementedError = new NotImplementedError.NotImplementedError( "Message of the error" );
 
@@ -70,7 +70,7 @@ describe( module( "Carbon/Errors/NotImplementedError" ), ():void => {
 
 	} );
 
-	it( hasDefaultExport( "Carbon.Errors.NotImplementedError.NotImplementedError" ), ():void => {
+	it( hasDefaultExport( "CarbonLDP.Errors.NotImplementedError.NotImplementedError" ), ():void => {
 		expect( DefaultExport ).toBeDefined();
 		expect( DefaultExport ).toBe( NotImplementedError.NotImplementedError );
 	} );

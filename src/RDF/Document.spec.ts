@@ -21,10 +21,10 @@ import DefaultExport, {
 
 import { RDFNode } from "./Node";
 
-describe( module( "Carbon/RDF/Document" ), ():void => {
+describe( module( "CarbonLDP/RDF/Document" ), ():void => {
 
 	describe( interfaze(
-		"Carbon.RDF.Document.RDFDocument",
+		"CarbonLDP.RDF.Document.RDFDocument",
 		"Interface that represents an `rdf:Document`."
 	), ():void => {
 
@@ -38,34 +38,34 @@ describe( module( "Carbon/RDF/Document" ), ():void => {
 		it( hasProperty(
 			OBLIGATORY,
 			"@graph",
-			"Carbon.RDF.Node.RDFNode[]",
+			"CarbonLDP.RDF.Node.RDFNode[]",
 			"The graph content of the current document."
 		), ():void => {} );
 
 	} );
 
 	describe( interfaze(
-		"Carbon.RDF.Document.RDFDocumentFactory",
-		"Interface with the factory and utils for `Carbon.RDF.Document.RDFDocument` objects."
+		"CarbonLDP.RDF.Document.RDFDocumentFactory",
+		"Interface with the factory and utils for `CarbonLDP.RDF.Document.RDFDocument` objects."
 	), ():void => {
 
 		it( hasMethod(
 			OBLIGATORY,
 			"is",
-			"Returns true if the object is a `Carbon.RDF.Document.RDFDocument` object.", [
+			"Returns true if the object is a `CarbonLDP.RDF.Document.RDFDocument` object.", [
 				{ name: "value", type: "any" },
 			],
-			{ type: "value is Carbon.RDF.Document.RDFDocument" }
+			{ type: "value is CarbonLDP.RDF.Document.RDFDocument" }
 		), ():void => {} );
 
 		it( hasMethod(
 			OBLIGATORY,
 			"create",
-			"Returns a `Carbon.RDF.Document.RDFDocument` object created with the parameters provided.", [
-				{ name: "resources", type: "Carbon.RDF.Node.RDFNode[]" },
+			"Returns a `CarbonLDP.RDF.Document.RDFDocument` object created with the parameters provided.", [
+				{ name: "resources", type: "CarbonLDP.RDF.Node.RDFNode[]" },
 				{ name: "uri", type: "string", optional: true },
 			],
-			{ type: "Carbon.RDF.Document.RDFDocument" }
+			{ type: "CarbonLDP.RDF.Document.RDFDocument" }
 		), ():void => {} );
 
 		it( hasMethod(
@@ -74,7 +74,7 @@ describe( module( "Carbon/RDF/Document" ), ():void => {
 			"Returns the objects that represents an RDF Document of an array of RDF like objects.", [
 				{ name: "objects", type: "object | object[]" },
 			],
-			{ type: "Carbon.RDF.Document.RDFDocument[]" }
+			{ type: "CarbonLDP.RDF.Document.RDFDocument[]" }
 		), ():void => {} );
 
 		it( hasMethod(
@@ -83,16 +83,16 @@ describe( module( "Carbon/RDF/Document" ), ():void => {
 			"Returns all the resources that not are RDF Documents from the array of RDF like objects provided.", [
 				{ name: "objects", type: "object | object[]" },
 			],
-			{ type: "Carbon.RDF.Node.RDFNode" }
+			{ type: "CarbonLDP.RDF.Node.RDFNode" }
 		), ():void => {} );
 
 		it( hasMethod(
 			OBLIGATORY,
 			"getDocumentResources",
 			"Returns all the resources that are the document resource from an RDF document or an array of RDF nodes.", [
-				{ name: "document", type: "Carbon.RDF.Document.RDFDocument | Carbon.RDF.Node.RDFNode[]" },
+				{ name: "document", type: "CarbonLDP.RDF.Document.RDFDocument | CarbonLDP.RDF.Node.RDFNode[]" },
 			],
-			{ type: "Carbon.RDF.Node.RDFNode[]" }
+			{ type: "CarbonLDP.RDF.Node.RDFNode[]" }
 		), ():void => {
 		} );
 
@@ -101,24 +101,24 @@ describe( module( "Carbon/RDF/Document" ), ():void => {
 			"getNamedFragmentResources",
 			"Returns all the resources that refers to named fragments from a RDF document or an array of RDF nodes. " +
 			"If documentResource is provided, it will return the fragments of the specified document resource.", [
-				{ name: "document", type: "Carbon.RDF.Document.RDFDocument | Carbon.RDF.Node.RDFNode[]" },
-				{ name: "documentResource", type: "string | Carbon.RDF.Node.RDFNode", optional: true },
+				{ name: "document", type: "CarbonLDP.RDF.Document.RDFDocument | CarbonLDP.RDF.Node.RDFNode[]" },
+				{ name: "documentResource", type: "string | CarbonLDP.RDF.Node.RDFNode", optional: true },
 			],
-			{ type: "Carbon.RDF.Node.RDFNode[]" }
+			{ type: "CarbonLDP.RDF.Node.RDFNode[]" }
 		), ():void => {} );
 
 		it( hasMethod(
 			STATIC,
 			"getBNodeResources",
 			"Returns all the resources that refers to the blank nodes from an RDF document or an array of RDF nodes.", [
-				{ name: "document", type: "Carbon.RDF.Document.RDFDocument | Carbon.RDF.Node.RDFNode[]" },
+				{ name: "document", type: "CarbonLDP.RDF.Document.RDFDocument | CarbonLDP.RDF.Node.RDFNode[]" },
 			],
-			{ type: "Carbon.RDF.Node.RDFNode[]" }
+			{ type: "CarbonLDP.RDF.Node.RDFNode[]" }
 		), ():void => {} );
 
 	} );
 
-	it( hasDefaultExport( "Carbon.RDF.Document.RDFDocument" ), ():void => {
+	it( hasDefaultExport( "CarbonLDP.RDF.Document.RDFDocument" ), ():void => {
 		let defaultExport:DefaultExport = <any> {};
 		let defaultTarget:RDFDocument;
 
@@ -129,7 +129,7 @@ describe( module( "Carbon/RDF/Document" ), ():void => {
 	describe( property(
 		STATIC,
 		"RDFDocument",
-		"Carbon.RDF.Document.RDFDocumentFactory"
+		"CarbonLDP.RDF.Document.RDFDocumentFactory"
 	), ():void => {
 
 		it( isDefined(), ():void => {
@@ -562,7 +562,7 @@ describe( module( "Carbon/RDF/Document" ), ():void => {
 	} );
 
 	describe( clazz(
-		"Carbon.RDF.Document.RDFDocumentParser",
+		"CarbonLDP.RDF.Document.RDFDocumentParser",
 		"Class to parse a JSON-LD string to an array of RDFDocuments."
 	), ():void => {
 		let compactedObject:any = {
@@ -651,7 +651,7 @@ describe( module( "Carbon/RDF/Document" ), ():void => {
 			"Parse the a JSON-LD string to an array of RDFDocuments.", [
 				{ name: "input", type: "string" },
 			],
-			{ type: "Promise<Carbon.RDF.Document.RDFDocument>" }
+			{ type: "Promise<CarbonLDP.RDF.Document.RDFDocument>" }
 		), ( done ):void => {
 			let parser:RDFDocumentParser = new RDFDocumentParser();
 			let input:string;

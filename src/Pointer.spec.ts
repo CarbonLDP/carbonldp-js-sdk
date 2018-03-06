@@ -22,7 +22,7 @@ import {
 	STATIC,
 } from "./test/JasmineExtender";
 
-describe( module( "Carbon/Pointer" ), ():void => {
+describe( module( "CarbonLDP/Pointer" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( Module ).toBeDefined();
@@ -30,7 +30,7 @@ describe( module( "Carbon/Pointer" ), ():void => {
 	} );
 
 	describe( interfaze(
-		"Carbon.Pointer.Pointer",
+		"CarbonLDP.Pointer.Pointer",
 		"Interface that represents any element that can be referenced by an URI."
 	), ():void => {
 
@@ -67,13 +67,13 @@ describe( module( "Carbon/Pointer" ), ():void => {
 			"resolve",
 			[ "T" ],
 			"Resolves the pointer. This function throw an Error if it has no been configured by another decorator.",
-			{ type: "Promise<[ T & Carbon.PersistedDocument.PersistedDocument, Carbon.HTTP.Response.Response ]>" }
+			{ type: "Promise<[ T & CarbonLDP.PersistedDocument.PersistedDocument, CarbonLDP.HTTP.Response.Response ]>" }
 		), ():void => {} );
 
 	} );
 
 	describe( interfaze(
-		"Carbon.Pointer.PointerLibrary",
+		"CarbonLDP.Pointer.PointerLibrary",
 		"Interface that represents resources that can manage pointers."
 	), ():void => {
 
@@ -98,7 +98,7 @@ describe( module( "Carbon/Pointer" ), ():void => {
 	} );
 
 	describe( interfaze(
-		"Carbon.Pointer.PointerValidator",
+		"CarbonLDP.Pointer.PointerValidator",
 		"Interface that represents resources that can validate pointers."
 	), ():void => {
 
@@ -109,7 +109,7 @@ describe( module( "Carbon/Pointer" ), ():void => {
 
 			it( hasSignature(
 				"Returns true if the pointer provided is in the scope of the object that implements this interface.", [
-					{ name: "pointer", type: "Carbon.Pointer.Pointer" },
+					{ name: "pointer", type: "CarbonLDP.Pointer.Pointer" },
 				],
 				{ type: "boolean" }
 			), ():void => {} );
@@ -126,23 +126,23 @@ describe( module( "Carbon/Pointer" ), ():void => {
 	} );
 
 	describe( interfaze(
-		"Carbon.Pointer.PointerFactory",
-		"Interface with the factory, decorate, and utils methods of a `Carbon.Pointer.Pointer` object."
+		"CarbonLDP.Pointer.PointerFactory",
+		"Interface with the factory, decorate, and utils methods of a `CarbonLDP.Pointer.Pointer` object."
 	), ():void => {
 
 		it( hasMethod(
 			OBLIGATORY,
 			"isDecorated",
-			"Returns true if the object provided has the properties and methods of a `Carbon.Pointer.Pointer` object.", [
+			"Returns true if the object provided has the properties and methods of a `CarbonLDP.Pointer.Pointer` object.", [
 				{ name: "object", type: "object" },
 			],
-			{ type: "object is Carbon.Pointer.Pointer" }
+			{ type: "object is CarbonLDP.Pointer.Pointer" }
 		), ():void => {} );
 
 		it( hasMethod(
 			OBLIGATORY,
 			"is",
-			"Returns true if the value provided is considered a `Carbon.Pointer.Pointer` object.", [
+			"Returns true if the value provided is considered a `CarbonLDP.Pointer.Pointer` object.", [
 				{ name: "object", type: "object" },
 			],
 			{ type: "object" }
@@ -154,7 +154,7 @@ describe( module( "Carbon/Pointer" ), ():void => {
 			"Creates a Pointer object with the ID provided.", [
 				{ name: "id", type: "string", optional: true },
 			],
-			{ type: "Carbon.Pointer.Pointer" }
+			{ type: "CarbonLDP.Pointer.Pointer" }
 		), ():void => {} );
 
 		it( hasMethod(
@@ -165,25 +165,25 @@ describe( module( "Carbon/Pointer" ), ():void => {
 				{ name: "object", type: "T" },
 				{ name: "id", type: "string", optional: true },
 			],
-			{ type: "T & Carbon.Pointer.Pointer" }
+			{ type: "T & CarbonLDP.Pointer.Pointer" }
 		), ():void => {} );
 
 		it( hasMethod(
 			OBLIGATORY,
 			"decorate",
 			[ "T extends object" ],
-			"Decorates the object provided with the properties and methods of a `Carbon.Pointer.Pointer` object.", [
+			"Decorates the object provided with the properties and methods of a `CarbonLDP.Pointer.Pointer` object.", [
 				{ name: "object", type: "T" },
 			],
-			{ type: "T & Carbon.Pointer.Pointer" }
+			{ type: "T & CarbonLDP.Pointer.Pointer" }
 		), ():void => {} );
 
 		it( hasMethod(
 			OBLIGATORY,
 			"areEqual",
 			"Check of the objects refer to the same resource by its ID.", [
-				{ name: "pointer1", type: "Carbon.Pointer.Pointer" },
-				{ name: "pointer2", type: "Carbon.Pointer.Pointer" },
+				{ name: "pointer1", type: "CarbonLDP.Pointer.Pointer" },
+				{ name: "pointer2", type: "CarbonLDP.Pointer.Pointer" },
 			],
 			{ type: "boolean" }
 		), ():void => {} );
@@ -192,7 +192,7 @@ describe( module( "Carbon/Pointer" ), ():void => {
 			OBLIGATORY,
 			"getIDs",
 			"Extracts the IDs of all the pointers provided.", [
-				{ name: "pointers", type: "Carbon.Pointer.Pointer[]", description: "The array of Pointers to obtain their IDs." },
+				{ name: "pointers", type: "CarbonLDP.Pointer.Pointer[]", description: "The array of Pointers to obtain their IDs." },
 			],
 			{ type: "string[]" }
 		), ():void => {} );
@@ -202,14 +202,14 @@ describe( module( "Carbon/Pointer" ), ():void => {
 			"resolveAll",
 			[ "T extends object" ],
 			"Calls the `resolve()` method of every pointer, and returns a single Promise with the results of every call.", [
-				{ name: "pointers", type: "Carbon.Pointer.Pointer[]", description: "The array of Pointers to resolve." },
+				{ name: "pointers", type: "CarbonLDP.Pointer.Pointer[]", description: "The array of Pointers to resolve." },
 			],
-			{ type: "Promise<[ (T & Carbon.PersistedDocument.PersistedDocument)[], Carbon.HTTP.Response.Response[] ]>" }
+			{ type: "Promise<[ (T & CarbonLDP.PersistedDocument.PersistedDocument)[], CarbonLDP.HTTP.Response.Response[] ]>" }
 		), ():void => {} );
 
 	} );
 
-	describe( property( STATIC, "Pointer", "Carbon.Pointer.PointerFactory", "Constant that implements the `Carbon.Pointer.PointerFactory` interface." ), ():void => {
+	describe( property( STATIC, "Pointer", "CarbonLDP.Pointer.PointerFactory", "Constant that implements the `CarbonLDP.Pointer.PointerFactory` interface." ), ():void => {
 
 		it( "should exist", ():void => {
 			expect( Pointer ).toBeDefined();
@@ -507,7 +507,7 @@ describe( module( "Carbon/Pointer" ), ():void => {
 
 	} );
 
-	it( hasDefaultExport( "Carbon.Pointer.Pointer" ), ():void => {
+	it( hasDefaultExport( "CarbonLDP.Pointer.Pointer" ), ():void => {
 		let defaultExport:DefaultExport = <any> {};
 		let defaultTarget:Pointer;
 

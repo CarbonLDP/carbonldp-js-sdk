@@ -19,7 +19,7 @@ import * as UnknownError from "./UnknownError";
 import DefaultExport from "./UnknownError";
 
 describe( module(
-	"Carbon/HTTP/Errors/UnknownError"
+	"CarbonLDP/HTTP/Errors/UnknownError"
 ), ():void => {
 
 	it( isDefined(), ():void => {
@@ -28,7 +28,7 @@ describe( module(
 	} );
 
 	describe( clazz(
-		"Carbon.HTTP.Errors.UnknownError",
+		"CarbonLDP.HTTP.Errors.UnknownError",
 		"Error class that defines any error that could not be identified."
 	), ():void => {
 
@@ -58,7 +58,7 @@ describe( module(
 		} );
 
 		it( extendsClass(
-			"Carbon.HTTP.Errors.HTTPError"
+			"CarbonLDP.HTTP.Errors.HTTPError"
 		), ():void => {
 			let error:UnknownError.UnknownError = new UnknownError.UnknownError( "Message of the error", response );
 
@@ -103,7 +103,7 @@ describe( module(
 
 	} );
 
-	it( hasDefaultExport( "Carbon.HTTP.Errors.UnknownError" ), ():void => {
+	it( hasDefaultExport( "CarbonLDP.HTTP.Errors.UnknownError" ), ():void => {
 		expect( DefaultExport ).toBeDefined();
 		expect( DefaultExport ).toBe( UnknownError.UnknownError );
 	} );

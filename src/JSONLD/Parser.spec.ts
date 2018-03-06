@@ -11,13 +11,13 @@ import * as Utils from "../Utils";
 import DefaultExport, { JSONLDParser } from "./Parser";
 
 describe( module(
-	"Carbon/JSONLD/Parser"
+	"CarbonLDP/JSONLD/Parser"
 ), ():void => {
 
 	describe( clazz(
-		"Carbon.JSONLD.Parser.JSONLDParser",
+		"CarbonLDP.JSONLD.Parser.JSONLDParser",
 		"Class to parse strings to valid JSONLD objects.", [
-			"Carbon.HTTP.Parser.Parser<object[]>",
+			"CarbonLDP.HTTP.Parser.Parser<object[]>",
 		]
 	), ():void => {
 
@@ -43,10 +43,10 @@ describe( module(
 		it( hasMethod(
 			INSTANCE,
 			"parse",
-			"Parse the string provided using the `Carbon.JSONLD.Processor.JSONLDProcessor#expand()` method.", [
+			"Parse the string provided using the `CarbonLDP.JSONLD.Processor.JSONLDProcessor#expand()` method.", [
 				{ name: "body", type: "string", description: "A JSON-LD string to parse." },
 			],
-			{ type: "Promise<object[]>", description: "Promise that contains the parsed JSONLD object. If error occurs a `Carbon.Errors.InvalidJSONLDSyntaxError` will be thrown." }
+			{ type: "Promise<object[]>", description: "Promise that contains the parsed JSONLD object. If error occurs a `CarbonLDP.Errors.InvalidJSONLDSyntaxError` will be thrown." }
 		), ( done ):void => {
 			jasmine.Ajax.stubRequest( /Should be error context/ ).andReturn( {
 				status: 404,
@@ -184,7 +184,7 @@ describe( module(
 	} );
 
 	it( hasDefaultExport(
-		"Carbon.JSONLD.Parser.JSONLDParser"
+		"CarbonLDP.JSONLD.Parser.JSONLDParser"
 	), ():void => {
 		expect( DefaultExport ).toBeDefined();
 		expect( DefaultExport ).toBe( JSONLDParser );

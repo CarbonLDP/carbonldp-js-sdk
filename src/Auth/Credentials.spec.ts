@@ -19,7 +19,7 @@ import * as Utils from "./../Utils";
 import * as Credentials from "./Credentials";
 import DefaultExport from "./Credentials";
 
-describe( module( "Carbon/Auth/Credentials" ), ():void => {
+describe( module( "CarbonLDP/Auth/Credentials" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( Credentials ).toBeDefined();
@@ -40,7 +40,7 @@ describe( module( "Carbon/Auth/Credentials" ), ():void => {
 	it( hasProperty(
 		STATIC,
 		"SCHEMA",
-		"Carbon.ObjectSchema.ObjectSchema"
+		"CarbonLDP.ObjectSchema.ObjectSchema"
 	), ():void => {
 		expect( Credentials.SCHEMA ).toBeDefined();
 		expect( Utils.isObject( Credentials.SCHEMA ) ).toBe( true );
@@ -65,11 +65,11 @@ describe( module( "Carbon/Auth/Credentials" ), ():void => {
 	} );
 
 	describe( interfaze(
-		"Carbon.Auth.Credentials.Class",
+		"CarbonLDP.Auth.Credentials.Class",
 		"Interface that represents an in-memory Credentials of a user."
 	), ():void => {
 
-		it( extendsClass( "Carbon.Document.Document" ), ():void => {
+		it( extendsClass( "CarbonLDP.Document.Document" ), ():void => {
 			const user:Credentials.Class = <any> {};
 			let document:Document;
 
@@ -119,8 +119,8 @@ describe( module( "Carbon/Auth/Credentials" ), ():void => {
 	} );
 
 	describe( clazz(
-		"Carbon.Auth.Credentials.Factory",
-		"Factory class for `Carbon.Auth.Credentials.Class` objects."
+		"CarbonLDP.Auth.Credentials.Factory",
+		"Factory class for `CarbonLDP.Auth.Credentials.Class` objects."
 	), ():void => {
 
 		it( isDefined(), ():void => {
@@ -131,11 +131,11 @@ describe( module( "Carbon/Auth/Credentials" ), ():void => {
 		it( hasMethod(
 			STATIC,
 			"create",
-			"Creates a `Carbon.Auth.Credentials.Class` object with the email and password specified.", [
+			"Creates a `CarbonLDP.Auth.Credentials.Class` object with the email and password specified.", [
 				{ name: "email", type: "string", description: "Email of the user to be created." },
 				{ name: "password", type: "string", description: "Password of the user to be created." },
 			],
-			{ type: "Carbon.Auth.Credentials.Class" }
+			{ type: "CarbonLDP.Auth.Credentials.Class" }
 		), ():void => {
 			expect( Credentials.Factory.create ).toBeDefined();
 			expect( Utils.isFunction( Credentials.Factory.create ) ).toBe( true );
@@ -156,12 +156,12 @@ describe( module( "Carbon/Auth/Credentials" ), ():void => {
 			STATIC,
 			"createFrom",
 			[ "T extends Object" ],
-			"Creates a `Carbon.Auth.Credentials.Class` object from the object and parameters specified.", [
+			"Creates a `CarbonLDP.Auth.Credentials.Class` object from the object and parameters specified.", [
 				{ name: "object", type: "T", description: "Object that will be converted into an Credentials." },
 				{ name: "email", type: "string", description: "Email of the user to be created." },
 				{ name: "password", type: "string", description: "Password of the user to be created." },
 			],
-			{ type: "T & Carbon.Auth.Credentials.Class" }
+			{ type: "T & CarbonLDP.Auth.Credentials.Class" }
 		), ():void => {
 			expect( Credentials.Factory.createFrom ).toBeDefined();
 			expect( Utils.isFunction( Credentials.Factory.createFrom ) ).toBe( true );
@@ -193,7 +193,7 @@ describe( module( "Carbon/Auth/Credentials" ), ():void => {
 
 	} );
 
-	it( hasDefaultExport( "Carbon.Auth.Credentials.Class" ), ():void => {
+	it( hasDefaultExport( "CarbonLDP.Auth.Credentials.Class" ), ():void => {
 		let defaultExport:DefaultExport = <any> {};
 		let user:Credentials.Class;
 

@@ -13,15 +13,15 @@ import * as Utils from "./../Utils";
 
 import DefaultExport, { CarbonMapEntry } from "./CarbonMapEntry";
 
-describe( module( "Carbon/LDP/CarbonMapEntry" ), ():void => {
+describe( module( "CarbonLDP/LDP/CarbonMapEntry" ), ():void => {
 
 	describe( interfaze(
-		"Carbon.LDP.CarbonMapEntry.CarbonMapEntry",
+		"CarbonLDP.LDP.CarbonMapEntry.CarbonMapEntry",
 		[ "K", "V" ],
-		"Entries of the `Carbon.LDP.CarbonMap.CarbonMap` with the key/value pair."
+		"Entries of the `CarbonLDP.LDP.CarbonMap.CarbonMap` with the key/value pair."
 	), ():void => {
 
-		it( extendsClass( "Carbon.BlankNode.BlankNode" ), ():void => {} );
+		it( extendsClass( "CarbonLDP.BlankNode.BlankNode" ), ():void => {} );
 
 		it( hasProperty(
 			OBLIGATORY,
@@ -40,14 +40,14 @@ describe( module( "Carbon/LDP/CarbonMapEntry" ), ():void => {
 	} );
 
 	describe( interfaze(
-		"Carbon.LDP.CarbonMapEntry.CarbonMapEntryFactory",
-		"Interface with the factory, decorate and utils methods for `Carbon.LDP.CarbonMapEntry.CarbonMapEntry` objects"
+		"CarbonLDP.LDP.CarbonMapEntry.CarbonMapEntryFactory",
+		"Interface with the factory, decorate and utils methods for `CarbonLDP.LDP.CarbonMapEntry.CarbonMapEntry` objects"
 	), ():void => {
 
 		it( hasProperty(
 			OBLIGATORY,
 			"SCHEMA",
-			"Carbon.ObjectSchema.ObjectSchema"
+			"CarbonLDP.ObjectSchema.ObjectSchema"
 		), ():void => {} );
 
 	} );
@@ -55,7 +55,7 @@ describe( module( "Carbon/LDP/CarbonMapEntry" ), ():void => {
 	describe( property(
 		STATIC,
 		"CarbonMapEntry",
-		"Carbon.LDP.CarbonMapEntry.CarbonMapEntryFactory"
+		"CarbonLDP.LDP.CarbonMapEntry.CarbonMapEntryFactory"
 	), ():void => {
 
 		it( "should exist", ():void => {
@@ -85,7 +85,7 @@ describe( module( "Carbon/LDP/CarbonMapEntry" ), ():void => {
 
 	} );
 
-	it( hasDefaultExport( "Carbon.LDP.CarbonMapEntry.CarbonMapEntry" ), ():void => {
+	it( hasDefaultExport( "CarbonLDP.LDP.CarbonMapEntry.CarbonMapEntry" ), ():void => {
 		let defaultExport:DefaultExport<any, any> = <any> {};
 		let defaultTarget:CarbonMapEntry<any, any>;
 

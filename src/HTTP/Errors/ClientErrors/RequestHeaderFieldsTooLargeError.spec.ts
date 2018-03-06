@@ -17,7 +17,7 @@ import * as Utils from "./../../../Utils";
 import * as RequestHeaderFieldsTooLargeError from "./RequestHeaderFieldsTooLargeError";
 import DefaultExport from "./RequestHeaderFieldsTooLargeError";
 
-describe( module( "Carbon/HTTP/Errors/ClientErrors/RequestHeaderFieldsTooLargeError" ), ():void => {
+describe( module( "CarbonLDP/HTTP/Errors/ClientErrors/RequestHeaderFieldsTooLargeError" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( RequestHeaderFieldsTooLargeError ).toBeDefined();
@@ -25,7 +25,7 @@ describe( module( "Carbon/HTTP/Errors/ClientErrors/RequestHeaderFieldsTooLargeEr
 	} );
 
 	describe( clazz(
-		"Carbon.HTTP.Errors.RequestHeaderFieldsTooLargeError",
+		"CarbonLDP.HTTP.Errors.RequestHeaderFieldsTooLargeError",
 		"Error class to indicate that the server is not able to process the request because its header fields are too large."
 	), ():void => {
 
@@ -55,7 +55,7 @@ describe( module( "Carbon/HTTP/Errors/ClientErrors/RequestHeaderFieldsTooLargeEr
 		} );
 
 		it( extendsClass(
-			"Carbon.HTTP.Errors.HTTPError"
+			"CarbonLDP.HTTP.Errors.HTTPError"
 		), ():void => {
 			let error:RequestHeaderFieldsTooLargeError.RequestHeaderFieldsTooLargeError = new RequestHeaderFieldsTooLargeError.RequestHeaderFieldsTooLargeError( "Message of the error", response );
 
@@ -101,7 +101,7 @@ describe( module( "Carbon/HTTP/Errors/ClientErrors/RequestHeaderFieldsTooLargeEr
 
 	} );
 
-	it( hasDefaultExport( "Carbon.HTTP.Errors.RequestHeaderFieldsTooLargeError" ), ():void => {
+	it( hasDefaultExport( "CarbonLDP.HTTP.Errors.RequestHeaderFieldsTooLargeError" ), ():void => {
 		expect( DefaultExport ).toBeDefined();
 		expect( DefaultExport ).toBe( RequestHeaderFieldsTooLargeError.RequestHeaderFieldsTooLargeError );
 	} );

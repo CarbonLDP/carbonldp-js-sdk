@@ -19,7 +19,7 @@ import * as HTTPError from "./HTTPError";
 import DefaultExport from "./HTTPError";
 
 describe( module(
-	"Carbon/HTTP/Errors/HTTPError"
+	"CarbonLDP/HTTP/Errors/HTTPError"
 ), ():void => {
 
 	it( isDefined(), ():void => {
@@ -28,7 +28,7 @@ describe( module(
 	} );
 
 	describe( clazz(
-		"Carbon.HTTP.Errors.HTTPError",
+		"CarbonLDP.HTTP.Errors.HTTPError",
 		"Generic error class that defines any type of HTTP Error used in the SDK."
 	), ():void => {
 
@@ -58,7 +58,7 @@ describe( module(
 		} );
 
 		it( extendsClass(
-			"Carbon.Errors.AbstractError.AbstractError"
+			"CarbonLDP.Errors.AbstractError.AbstractError"
 		), ():void => {
 			let error:HTTPError.HTTPError = new HTTPError.HTTPError( "Message of the error", response );
 
@@ -67,7 +67,7 @@ describe( module(
 
 		it( hasConstructor( [
 			{ name: "message", type: "string" },
-			{ name: "response", type: "Carbon.HTTP.Response.Response" },
+			{ name: "response", type: "CarbonLDP.HTTP.Response.Response" },
 		] ), ():void => {
 			let error:HTTPError.HTTPError = new HTTPError.HTTPError( "Message of the error", response );
 
@@ -126,7 +126,7 @@ describe( module(
 		it( hasProperty(
 			INSTANCE,
 			"errors",
-			"Carbon.LDP.Error[]"
+			"CarbonLDP.LDP.Error[]"
 		), ():void => {
 			let error:HTTPError.HTTPError = new HTTPError.HTTPError( "Message of the error", response );
 
@@ -147,7 +147,7 @@ describe( module(
 
 	} );
 
-	it( hasDefaultExport( "Carbon.HTTP.Errors.HTTPError" ), ():void => {
+	it( hasDefaultExport( "CarbonLDP.HTTP.Errors.HTTPError" ), ():void => {
 		expect( DefaultExport ).toBeDefined();
 		expect( DefaultExport ).toBe( HTTPError.HTTPError );
 	} );

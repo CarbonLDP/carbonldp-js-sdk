@@ -7,9 +7,9 @@ import {
 
 import { C } from "./C";
 
-describe( module( "Carbon/Vocabularies/C" ), ():void => {
+describe( module( "CarbonLDP/Vocabularies/C" ), ():void => {
 
-	describe( namespaze( "Carbon.Vocabularies.C", "The vocabulary of Carbon LDP." ), ():void => {
+	describe( namespaze( "CarbonLDP.Vocabularies.C", "The vocabulary of Carbon LDP." ), ():void => {
 
 		it( "should exists", ():void => {
 			expect( C ).toEqual( jasmine.any( Object ) );

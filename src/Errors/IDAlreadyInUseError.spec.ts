@@ -15,7 +15,7 @@ import * as IDAlreadyInUseError from "./IDAlreadyInUseError";
 import DefaultExport from "./IDAlreadyInUseError";
 
 // TODO: Refactor tests
-describe( module( "Carbon/Errors/IDAlreadyInUseError" ), ():void => {
+describe( module( "CarbonLDP/Errors/IDAlreadyInUseError" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( IDAlreadyInUseError ).toBeDefined();
@@ -23,7 +23,7 @@ describe( module( "Carbon/Errors/IDAlreadyInUseError" ), ():void => {
 	} );
 
 	describe( clazz(
-		"Carbon.Errors.IDAlreadyInUseError.IDAlreadyInUseError",
+		"CarbonLDP.Errors.IDAlreadyInUseError.IDAlreadyInUseError",
 		"Error class to indicate that an identifier (ID) is already in use."
 	), ():void => {
 
@@ -36,7 +36,7 @@ describe( module( "Carbon/Errors/IDAlreadyInUseError" ), ():void => {
 		} );
 
 		it( extendsClass(
-			"Carbon.Errors.AbstractError.AbstractError"
+			"CarbonLDP.Errors.AbstractError.AbstractError"
 		), ():void => {
 			let error:IDAlreadyInUseError.IDAlreadyInUseError = new IDAlreadyInUseError.IDAlreadyInUseError( "Message of the error" );
 
@@ -58,7 +58,7 @@ describe( module( "Carbon/Errors/IDAlreadyInUseError" ), ():void => {
 
 	} );
 
-	it( hasDefaultExport( "Carbon.Errors.IDAlreadyInUseError.IDAlreadyInUseError" ), ():void => {
+	it( hasDefaultExport( "CarbonLDP.Errors.IDAlreadyInUseError.IDAlreadyInUseError" ), ():void => {
 		expect( DefaultExport ).toBeDefined();
 		expect( DefaultExport ).toBe( IDAlreadyInUseError.IDAlreadyInUseError );
 	} );

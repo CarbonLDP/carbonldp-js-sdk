@@ -2,7 +2,7 @@ import SockJS from "sockjs-client";
 import * as webstomp from "webstomp-client";
 import { Client, Frame } from "webstomp-client";
 
-import { Carbon } from "../Carbon";
+import { CarbonLDP } from "../CarbonLDP";
 import { IllegalStateError } from "../Errors";
 import { FreeResources } from "../FreeResources";
 import { JSONLDParser } from "../JSONLD/Parser";
@@ -22,7 +22,7 @@ interface Subscription {
 }
 
 export class MessagingService {
-	private context:Carbon;
+	private context:CarbonLDP;
 
 	private _options:MessagingOptions;
 	private _attempts:number;
@@ -30,7 +30,7 @@ export class MessagingService {
 	private _subscriptionsMap:Map<string, Map<( data:EventMessage ) => void, Subscription>>;
 	private _subscriptionsQueue:Function[];
 
-	constructor( context:Carbon ) {
+	constructor( context:CarbonLDP ) {
 		this.context = context;
 		this._subscriptionsQueue = [];
 		this._options = DEFAULT_OPTIONS;

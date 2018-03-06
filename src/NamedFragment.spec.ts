@@ -14,14 +14,14 @@ import {
 	STATIC,
 } from "./test/JasmineExtender";
 
-describe( module( "Carbon/NamedFragment" ), ():void => {
+describe( module( "CarbonLDP/NamedFragment" ), ():void => {
 
 	describe( interfaze(
-		"Carbon.NamedFragment.NamedFragment",
+		"CarbonLDP.NamedFragment.NamedFragment",
 		"Interface that represents an in-memory named fragment from a Carbon LDP document."
 	), ():void => {
 
-		it( extendsClass( "Carbon.Fragment.Fragment" ), ():void => {} );
+		it( extendsClass( "CarbonLDP.Fragment.Fragment" ), ():void => {} );
 
 		it( hasProperty(
 			OBLIGATORY,
@@ -33,36 +33,36 @@ describe( module( "Carbon/NamedFragment" ), ():void => {
 	} );
 
 	describe( interfaze(
-		"Carbon.NamedFragment.NamedFragmentFactory",
-		"Interface with the factory, decorate and utils methods of a `Carbon.NamedFragment.NamedFragment` object."
+		"CarbonLDP.NamedFragment.NamedFragmentFactory",
+		"Interface with the factory, decorate and utils methods of a `CarbonLDP.NamedFragment.NamedFragment` object."
 	), ():void => {
 
 		it( hasMethod(
 			OBLIGATORY,
 			"isDecorated",
-			"Returns true if the object provided has the properties and methods of a `Carbon.NamedFragment.NamedFragment` object.", [
+			"Returns true if the object provided has the properties and methods of a `CarbonLDP.NamedFragment.NamedFragment` object.", [
 				{ name: "object", type: "object" },
 			],
-			{ type: "object is Carbon.NamedFragment.NamedFragment" }
+			{ type: "object is CarbonLDP.NamedFragment.NamedFragment" }
 		), ():void => {} );
 
 		it( hasMethod(
 			OBLIGATORY,
 			"isDecorated",
-			"Returns true if the object provided is considered a `Carbon.NamedFragment.NamedFragment` object.", [
+			"Returns true if the object provided is considered a `CarbonLDP.NamedFragment.NamedFragment` object.", [
 				{ name: "object", type: "object" },
 			],
-			{ type: "object is Carbon.NamedFragment.NamedFragment" }
+			{ type: "object is CarbonLDP.NamedFragment.NamedFragment" }
 		), ():void => {} );
 
 		it( hasMethod(
 			OBLIGATORY,
 			"create",
 			"Creates a NamedFragment with the slug provided", [
-				{ name: "document", type: "Carbon.Document.Document", description: "The document that the NamedFragment will be part of." },
+				{ name: "document", type: "CarbonLDP.Document.Document", description: "The document that the NamedFragment will be part of." },
 				{ name: "slug", type: "string", description: "The slug that will identify the NamedFragment." },
 			],
-			{ type: "Carbon.NamedFragment.Class" }
+			{ type: "CarbonLDP.NamedFragment.Class" }
 		), ():void => {} );
 
 		it( hasMethod(
@@ -71,25 +71,25 @@ describe( module( "Carbon/NamedFragment" ), ():void => {
 			[ "T extends object" ],
 			"Creates a NamedFragment from an Object with the slug provided.", [
 				{ name: "object", type: "T", description: "Object that will be converted to a NamedFragment." },
-				{ name: "document", type: "Carbon.Document.Document", description: "The document that the NamedFragment will be part of." },
+				{ name: "document", type: "CarbonLDP.Document.Document", description: "The document that the NamedFragment will be part of." },
 				{ name: "slug", type: "string", description: "The slug that will identify the NamedFragment." },
 			],
-			{ type: "T & Carbon.NamedFragment.NamedFragment" }
+			{ type: "T & CarbonLDP.NamedFragment.NamedFragment" }
 		), ():void => {} );
 
 		it( hasMethod(
 			STATIC,
 			"decorate",
 			[ "T extends object" ],
-			"Decorates the object provided with the properties and methods of a `Carbon.Named.Fragment.NamedFragment` object.", [
+			"Decorates the object provided with the properties and methods of a `CarbonLDP.Named.Fragment.NamedFragment` object.", [
 				{ name: "object", type: "T", description: "Object to be decorated." },
 			],
-			{ type: "T & Carbon.NamedFragment.NamedFragment" }
+			{ type: "T & CarbonLDP.NamedFragment.NamedFragment" }
 		), ():void => {} );
 
 	} );
 
-	it( hasDefaultExport( "Carbon.NamedFragment.NamedFragment" ), ():void => {
+	it( hasDefaultExport( "CarbonLDP.NamedFragment.NamedFragment" ), ():void => {
 		let defaultExport:DefaultExport = <any> {};
 		let defaultTarget:NamedFragment;
 
@@ -97,7 +97,7 @@ describe( module( "Carbon/NamedFragment" ), ():void => {
 		expect( defaultTarget ).toEqual( jasmine.any( Object ) );
 	} );
 
-	describe( property( STATIC, "NamedFragment", "Carbon.NamedFragment.NamedFragmentFactory", "Constant that implements the `Carbon.NamedFragment.NamedFragment`, interface" ), ():void => {
+	describe( property( STATIC, "NamedFragment", "CarbonLDP.NamedFragment.NamedFragmentFactory", "Constant that implements the `CarbonLDP.NamedFragment.NamedFragment`, interface" ), ():void => {
 
 		it( isDefined(), ():void => {
 			expect( NamedFragment ).toBeDefined();

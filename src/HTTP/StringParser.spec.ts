@@ -11,7 +11,7 @@ import * as Utils from "./../Utils";
 import * as StringParser from "./StringParser";
 import DefaultExport from "./StringParser";
 
-describe( module( "Carbon/HTTP/StringParser" ), ():void => {
+describe( module( "CarbonLDP/HTTP/StringParser" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( StringParser ).toBeDefined();
@@ -19,9 +19,9 @@ describe( module( "Carbon/HTTP/StringParser" ), ():void => {
 	} );
 
 	describe( clazz(
-		"Carbon.HTTP.StringParser.StringParser",
-		"Parses a `Carbon.HTTP.Response.Response` and returns a string.", [
-			"Carbon.HTTP.Parser.Parser<string>",
+		"CarbonLDP.HTTP.StringParser.StringParser",
+		"Parses a `CarbonLDP.HTTP.Response.Response` and returns a string.", [
+			"CarbonLDP.HTTP.Parser.Parser<string>",
 		]
 	), ():void => {
 
@@ -30,7 +30,7 @@ describe( module( "Carbon/HTTP/StringParser" ), ():void => {
 			INSTANCE,
 			"parse",
 			"Gets a string and returns a Promise with the same string.", [
-				{ name: "body", type: "Carbon.HTTP.Response.Response" },
+				{ name: "body", type: "CarbonLDP.HTTP.Response.Response" },
 			],
 			{ type: "Promise<string>" }
 		), ( done:DoneFn ):void => {
@@ -66,7 +66,7 @@ describe( module( "Carbon/HTTP/StringParser" ), ():void => {
 
 	} );
 
-	it( hasDefaultExport( "Carbon.HTTP.StringParser.StringParser" ), ():void => {
+	it( hasDefaultExport( "CarbonLDP.HTTP.StringParser.StringParser" ), ():void => {
 		expect( DefaultExport ).toBeDefined();
 		expect( DefaultExport ).toEqual( StringParser.StringParser );
 	} );

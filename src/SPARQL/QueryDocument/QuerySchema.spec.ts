@@ -2,14 +2,14 @@ import { hasDefaultExport, hasProperty, interfaze, module, OBLIGATORY } from "..
 
 import DefaultExport, { QuerySchema } from "./QuerySchema";
 
-describe( module( "Carbon/SPARQL/QueryDocument/QuerySchema" ), ():void => {
+describe( module( "CarbonLDP/SPARQL/QueryDocument/QuerySchema" ), ():void => {
 
-	it( hasDefaultExport( "Carbon.SPARQL.QueryDocument.QuerySchema.QuerySchema" ), ():void => {
+	it( hasDefaultExport( "CarbonLDP.SPARQL.QueryDocument.QuerySchema.QuerySchema" ), ():void => {
 		const target:DefaultExport = {} as QuerySchema;
 		expect( target ).toBeDefined();
 	} );
 
-	describe( interfaze( "Carbon.SPARQL.QueryDocument.QuerySchema.QuerySchema", "Interface that describes an object that contains the data to to use in a partial query creation." ), ():void => {
+	describe( interfaze( "CarbonLDP.SPARQL.QueryDocument.QuerySchema.QuerySchema", "Interface that describes an object that contains the data to to use in a partial query creation." ), ():void => {
 
 		it( "should exists", ():void => {
 			const target:QuerySchema = {} as any;
@@ -19,7 +19,7 @@ describe( module( "Carbon/SPARQL/QueryDocument/QuerySchema" ), ():void => {
 		it( hasProperty(
 			OBLIGATORY,
 			"[ propertyName:string ]",
-			"Carbon.SPARQL.QueryDocument.QuerySchemaProperty.QuerySchemaProperty | string",
+			"CarbonLDP.SPARQL.QueryDocument.QuerySchemaProperty.QuerySchemaProperty | string",
 			"An entry that describes a property to retrieve with the name specified and the assigned property schema.\n" +
 			"If a string is provided this will be interpreted as the URI of the property."
 		), ():void => {} );

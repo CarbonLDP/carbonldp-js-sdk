@@ -17,7 +17,7 @@ import * as Utils from "./../../../Utils";
 import * as NotFoundError from "./NotFoundError";
 import DefaultExport from "./NotFoundError";
 
-describe( module( "Carbon/HTTP/Errors/ClientErrors/NotFoundError" ), ():void => {
+describe( module( "CarbonLDP/HTTP/Errors/ClientErrors/NotFoundError" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( NotFoundError ).toBeDefined();
@@ -25,7 +25,7 @@ describe( module( "Carbon/HTTP/Errors/ClientErrors/NotFoundError" ), ():void => 
 	} );
 
 	describe( clazz(
-		"Carbon.HTTP.Errors.NotFoundError",
+		"CarbonLDP.HTTP.Errors.NotFoundError",
 		"Error class to indicate that the resource was not found."
 	), ():void => {
 
@@ -55,7 +55,7 @@ describe( module( "Carbon/HTTP/Errors/ClientErrors/NotFoundError" ), ():void => 
 		} );
 
 		it( extendsClass(
-			"Carbon.HTTP.Errors.HTTPError"
+			"CarbonLDP.HTTP.Errors.HTTPError"
 		), ():void => {
 			let error:NotFoundError.NotFoundError = new NotFoundError.NotFoundError( "Message of the error", response );
 
@@ -101,7 +101,7 @@ describe( module( "Carbon/HTTP/Errors/ClientErrors/NotFoundError" ), ():void => 
 
 	} );
 
-	it( hasDefaultExport( "Carbon.HTTP.Errors.NotFoundError" ), ():void => {
+	it( hasDefaultExport( "CarbonLDP.HTTP.Errors.NotFoundError" ), ():void => {
 		expect( DefaultExport ).toBeDefined();
 		expect( DefaultExport ).toBe( NotFoundError.NotFoundError );
 	} );

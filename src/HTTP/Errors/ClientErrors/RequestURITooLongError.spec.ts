@@ -17,7 +17,7 @@ import * as Utils from "./../../../Utils";
 import * as RequestURITooLongError from "./RequestURITooLongError";
 import DefaultExport from "./RequestURITooLongError";
 
-describe( module( "Carbon/HTTP/Errors/ClientErrors/RequestURITooLongError" ), ():void => {
+describe( module( "CarbonLDP/HTTP/Errors/ClientErrors/RequestURITooLongError" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( RequestURITooLongError ).toBeDefined();
@@ -25,7 +25,7 @@ describe( module( "Carbon/HTTP/Errors/ClientErrors/RequestURITooLongError" ), ()
 	} );
 
 	describe( clazz(
-		"Carbon.HTTP.Errors.RequestURITooLongError",
+		"CarbonLDP.HTTP.Errors.RequestURITooLongError",
 		"Error class to indicate that the server is not able to process the request because the URI is too long."
 	), ():void => {
 
@@ -55,7 +55,7 @@ describe( module( "Carbon/HTTP/Errors/ClientErrors/RequestURITooLongError" ), ()
 		} );
 
 		it( extendsClass(
-			"Carbon.HTTP.Errors.HTTPError"
+			"CarbonLDP.HTTP.Errors.HTTPError"
 		), ():void => {
 			let error:RequestURITooLongError.RequestURITooLongError = new RequestURITooLongError.RequestURITooLongError( "Message of the error", response );
 
@@ -101,7 +101,7 @@ describe( module( "Carbon/HTTP/Errors/ClientErrors/RequestURITooLongError" ), ()
 
 	} );
 
-	it( hasDefaultExport( "Carbon.HTTP.Errors.RequestURITooLongError" ), ():void => {
+	it( hasDefaultExport( "CarbonLDP.HTTP.Errors.RequestURITooLongError" ), ():void => {
 		expect( DefaultExport ).toBeDefined();
 		expect( DefaultExport ).toBe( RequestURITooLongError.RequestURITooLongError );
 	} );

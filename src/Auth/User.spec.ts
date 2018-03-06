@@ -22,7 +22,7 @@ interface MockedUser {
 	name:string;
 }
 
-describe( module( "Carbon/Auth/User" ), ():void => {
+describe( module( "CarbonLDP/Auth/User" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( User ).toBeDefined();
@@ -43,7 +43,7 @@ describe( module( "Carbon/Auth/User" ), ():void => {
 	it( hasProperty(
 		STATIC,
 		"SCHEMA",
-		"Carbon.ObjectSchema.ObjectSchema"
+		"CarbonLDP.ObjectSchema.ObjectSchema"
 	), ():void => {
 		expect( User.SCHEMA ).toBeDefined();
 		expect( Utils.isObject( User.SCHEMA ) ).toBe( true );
@@ -56,11 +56,11 @@ describe( module( "Carbon/Auth/User" ), ():void => {
 	} );
 
 	describe( interfaze(
-		"Carbon.Auth.User.Class",
+		"CarbonLDP.Auth.User.Class",
 		"Interface that represents an in-memory User of any Context."
 	), ():void => {
 
-		it( extendsClass( "Carbon.Document.Document" ), ():void => {
+		it( extendsClass( "CarbonLDP.Document.Document" ), ():void => {
 			let user:User.Class = <any> {};
 			let document:Document;
 
@@ -84,8 +84,8 @@ describe( module( "Carbon/Auth/User" ), ():void => {
 	} );
 
 	describe( clazz(
-		"Carbon.Auth.User.Factory",
-		"Factory class for `Carbon.Auth.User.Class` objects."
+		"CarbonLDP.Auth.User.Factory",
+		"Factory class for `CarbonLDP.Auth.User.Class` objects."
 	), ():void => {
 
 		it( isDefined(), ():void => {
@@ -96,7 +96,7 @@ describe( module( "Carbon/Auth/User" ), ():void => {
 		it( hasMethod(
 			STATIC,
 			"hasClassProperties",
-			"Returns true if the object provided has the properties that defines a `Carbon.Auth.User.Class` object.", [
+			"Returns true if the object provided has the properties that defines a `CarbonLDP.Auth.User.Class` object.", [
 				{ name: "object", type: "object" },
 			],
 			{ type: "boolean" }
@@ -119,7 +119,7 @@ describe( module( "Carbon/Auth/User" ), ():void => {
 
 	} );
 
-	it( hasDefaultExport( "Carbon.Auth.User.Class" ), ():void => {
+	it( hasDefaultExport( "CarbonLDP.Auth.User.Class" ), ():void => {
 		let defaultExport:DefaultExport = <any> {};
 		let user:User.Class;
 

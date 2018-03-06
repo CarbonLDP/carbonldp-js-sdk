@@ -13,23 +13,23 @@ import * as Utils from "./../Utils";
 
 import DefaultExport, { RDFList } from "./List";
 
-describe( module( "Carbon/RDF/List" ), ():void => {
+describe( module( "CarbonLDP/RDF/List" ), ():void => {
 
 	describe( interfaze(
-		"Carbon.RDF.List.RDFList",
+		"CarbonLDP.RDF.List.RDFList",
 		"Interface that represents an `rdf:List`."
 	), ():void => {
 
 		it( hasProperty(
 			OBLIGATORY,
 			"@list",
-			"Carbon.RDF.Value.RDFValue[]",
+			"CarbonLDP.RDF.Value.RDFValue[]",
 			"Array if the elements in the list."
 		), ():void => {} );
 
 	} );
 
-	it( hasDefaultExport( "Carbon.RDF.List.RDFList" ), ():void => {
+	it( hasDefaultExport( "CarbonLDP.RDF.List.RDFList" ), ():void => {
 		let defaultExport:DefaultExport = <any> {};
 		let defaultTarget:RDFList;
 
@@ -38,17 +38,17 @@ describe( module( "Carbon/RDF/List" ), ():void => {
 	} );
 
 	describe( interfaze(
-		"Carbon.RDF.List.RDFListFactory",
-		"Interface with the factory and utils for `Carbon.RDF.List.RDFList` objects."
+		"CarbonLDP.RDF.List.RDFListFactory",
+		"Interface with the factory and utils for `CarbonLDP.RDF.List.RDFList` objects."
 	), ():void => {
 
 		it( hasMethod(
 			OBLIGATORY,
 			"is",
-			"Returns true if the object provided is considered a `Carbon.RDF.List.RDFList` object.", [
+			"Returns true if the object provided is considered a `CarbonLDP.RDF.List.RDFList` object.", [
 				{ name: "value", type: "any" },
 			],
-			{ type: "value is Carbon.RDF.List.RDFList" }
+			{ type: "value is CarbonLDP.RDF.List.RDFList" }
 		), ():void => {} );
 
 	} );
@@ -56,7 +56,7 @@ describe( module( "Carbon/RDF/List" ), ():void => {
 	describe( property(
 		STATIC,
 		"RDFList",
-		"Carbon.RDF.List.RDFListFactory"
+		"CarbonLDP.RDF.List.RDFListFactory"
 	), ():void => {
 
 		it( isDefined(), ():void => {

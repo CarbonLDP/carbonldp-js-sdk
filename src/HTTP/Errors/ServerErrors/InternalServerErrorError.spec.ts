@@ -17,7 +17,7 @@ import * as Utils from "./../../../Utils";
 import * as InternalServerErrorError from "./InternalServerErrorError";
 import DefaultExport from "./InternalServerErrorError";
 
-describe( module( "Carbon/HTTP/Errors/ServerErrors/InternalServerErrorError" ), ():void => {
+describe( module( "CarbonLDP/HTTP/Errors/ServerErrors/InternalServerErrorError" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( InternalServerErrorError ).toBeDefined();
@@ -25,7 +25,7 @@ describe( module( "Carbon/HTTP/Errors/ServerErrors/InternalServerErrorError" ), 
 	} );
 
 	describe( clazz(
-		"Carbon.HTTP.Errors.InternalServerErrorError",
+		"CarbonLDP.HTTP.Errors.InternalServerErrorError",
 		"Error class to indicate that the server encountered an unexpected condition. This generic error is given when no other specific error is suitable."
 	), ():void => {
 
@@ -55,7 +55,7 @@ describe( module( "Carbon/HTTP/Errors/ServerErrors/InternalServerErrorError" ), 
 		} );
 
 		it( extendsClass(
-			"Carbon.HTTP.Errors.HTTPError"
+			"CarbonLDP.HTTP.Errors.HTTPError"
 		), ():void => {
 			let error:InternalServerErrorError.InternalServerErrorError = new InternalServerErrorError.InternalServerErrorError( "Message of the error", response );
 
@@ -101,7 +101,7 @@ describe( module( "Carbon/HTTP/Errors/ServerErrors/InternalServerErrorError" ), 
 
 	} );
 
-	it( hasDefaultExport( "Carbon.HTTP.Errors.InternalServerErrorError" ), ():void => {
+	it( hasDefaultExport( "CarbonLDP.HTTP.Errors.InternalServerErrorError" ), ():void => {
 		expect( DefaultExport ).toBeDefined();
 		expect( DefaultExport ).toBe( InternalServerErrorError.InternalServerErrorError );
 	} );

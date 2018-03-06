@@ -11,7 +11,7 @@ import * as Utils from "./../Utils";
 import * as JSONParser from "./JSONParser";
 import DefaultExport from "./JSONParser";
 
-describe( module( "Carbon/HTTP/JSONParser" ), ():void => {
+describe( module( "CarbonLDP/HTTP/JSONParser" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( JSONParser ).toBeDefined();
@@ -19,9 +19,9 @@ describe( module( "Carbon/HTTP/JSONParser" ), ():void => {
 	} );
 
 	describe( clazz(
-		"Carbon.HTTP.JSONParser.JSONParser",
+		"CarbonLDP.HTTP.JSONParser.JSONParser",
 		"Wrapper class for the native `JSON.parse()` function using the `Promise` pattern.", [
-			"Carbon.HTTP.Parser.Parser<object>",
+			"CarbonLDP.HTTP.Parser.Parser<object>",
 		]
 	), ():void => {
 
@@ -126,7 +126,7 @@ describe( module( "Carbon/HTTP/JSONParser" ), ():void => {
 	} );
 
 	it( hasDefaultExport(
-		"Carbon.HTTP.JSONParser.JSONParser"
+		"CarbonLDP.HTTP.JSONParser.JSONParser"
 	), ():void => {
 		expect( DefaultExport ).toBeDefined();
 		expect( DefaultExport ).toBe( JSONParser.JSONParser );

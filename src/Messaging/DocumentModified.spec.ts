@@ -17,10 +17,10 @@ import DefaultExport from "./DocumentModified";
 
 import { EventMessage } from "./EventMessage";
 
-describe( module( "Carbon/Messaging/DocumentModified" ), ():void => {
+describe( module( "CarbonLDP/Messaging/DocumentModified" ), ():void => {
 
 	describe( interfaze(
-		"Carbon.Messaging.DocumentModified.DocumentModified",
+		"CarbonLDP.Messaging.DocumentModified.DocumentModified",
 		"Interface with the properties of the data received in a document modified event."
 	), ():void => {
 
@@ -29,7 +29,7 @@ describe( module( "Carbon/Messaging/DocumentModified" ), ():void => {
 			expect( target ).toBeDefined();
 		} );
 
-		it( extendsClass( "Carbon.Messaging.EventMessage.EventMessage" ), ():void => {
+		it( extendsClass( "CarbonLDP.Messaging.EventMessage.EventMessage" ), ():void => {
 			const target:EventMessage = {} as DocumentModified;
 			expect( target ).toBeDefined();
 		} );
@@ -37,7 +37,7 @@ describe( module( "Carbon/Messaging/DocumentModified" ), ():void => {
 		it( hasProperty(
 			OBLIGATORY,
 			"target",
-			"Carbon.Pointer.Pointer"
+			"CarbonLDP.Pointer.Pointer"
 		), ():void => {
 			const target:DocumentModified[ "target" ] = {} as Pointer;
 			expect( target ).toBeDefined();
@@ -46,8 +46,8 @@ describe( module( "Carbon/Messaging/DocumentModified" ), ():void => {
 	} );
 
 	describe( interfaze(
-		"Carbon.Messaging.DocumentModified.DocumentModifiedFactory",
-		"Interface with the factory, decorate and utils for `Carbon.Messaging.DocumentModified.DocumentModified` objects."
+		"CarbonLDP.Messaging.DocumentModified.DocumentModifiedFactory",
+		"Interface with the factory, decorate and utils for `CarbonLDP.Messaging.DocumentModified.DocumentModified` objects."
 	), ():void => {
 
 		it( hasProperty(
@@ -59,7 +59,7 @@ describe( module( "Carbon/Messaging/DocumentModified" ), ():void => {
 		it( hasProperty(
 			OBLIGATORY,
 			"SCHEMA",
-			"Carbon.ObjectSchema.ObjectSchema"
+			"CarbonLDP.ObjectSchema.ObjectSchema"
 		), ():void => {} );
 
 	} );
@@ -67,7 +67,7 @@ describe( module( "Carbon/Messaging/DocumentModified" ), ():void => {
 	describe( property(
 		STATIC,
 		"DocumentModified",
-		"Carbon.Messaging.DocumentModified.DocumentModifiedFactory"
+		"CarbonLDP.Messaging.DocumentModified.DocumentModifiedFactory"
 	), ():void => {
 
 		it( isDefined(), ():void => {
@@ -100,7 +100,7 @@ describe( module( "Carbon/Messaging/DocumentModified" ), ():void => {
 
 	} );
 
-	it( hasDefaultExport( "Carbon.Messaging.DocumentModified.DocumentModified" ), ():void => {
+	it( hasDefaultExport( "CarbonLDP.Messaging.DocumentModified.DocumentModified" ), ():void => {
 		const target:DocumentModified = {} as DefaultExport;
 		expect( target ).toBeDefined();
 	} );

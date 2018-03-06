@@ -11,9 +11,9 @@ import * as Utils from "./../Utils";
 
 import DefaultExport, { JSONLDProcessor } from "./Processor";
 
-describe( module( "Carbon/JSONLD/Processor" ), ():void => {
+describe( module( "CarbonLDP/JSONLD/Processor" ), ():void => {
 
-	describe( clazz( "Carbon.JSONLD.Processor.JSONLDProcessor", "Class that contains methods that can process JSON-LD objects." ), ():void => {
+	describe( clazz( "CarbonLDP.JSONLD.Processor.JSONLDProcessor", "Class that contains methods that can process JSON-LD objects." ), ():void => {
 
 		it( isDefined(), ():void => {
 			expect( JSONLDProcessor ).toBeDefined();
@@ -691,7 +691,7 @@ describe( module( "Carbon/JSONLD/Processor" ), ():void => {
 
 	} );
 
-	it( hasDefaultExport( "Carbon.JSONLD.Processor.JSONLDProcessor" ), ():void => {
+	it( hasDefaultExport( "CarbonLDP.JSONLD.Processor.JSONLDProcessor" ), ():void => {
 		expect( DefaultExport ).toBeDefined();
 		expect( DefaultExport ).toBe( JSONLDProcessor );
 	} );

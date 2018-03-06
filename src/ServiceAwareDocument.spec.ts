@@ -16,19 +16,19 @@ import {
 	STATIC
 } from "./test/JasmineExtender";
 
-describe( module( "Carbon/ServiceAwareDocument" ), ():void => {
+describe( module( "CarbonLDP/ServiceAwareDocument" ), ():void => {
 
 	describe( interfaze(
-		"Carbon.ServiceAwareDocument.ServiceAwareDocument",
-		"Interface that has a reference to its `Carbon.Documents.Documents`."
+		"CarbonLDP.ServiceAwareDocument.ServiceAwareDocument",
+		"Interface that has a reference to its `CarbonLDP.Documents.Documents`."
 	), ():void => {
 
-		it( extendsClass( "Carbon.Document.Document" ), ():void => {} );
+		it( extendsClass( "CarbonLDP.Document.Document" ), ():void => {} );
 
 		it( hasProperty(
 			OBLIGATORY,
 			"_documents",
-			"Carbon.Documents.Documents",
+			"CarbonLDP.Documents.Documents",
 			"Reference to the Documents instance where this documents belongs to."
 		), ():void => {
 			const target:ServiceAwareDocument[ "_documents" ] = {} as Documents;
@@ -38,30 +38,30 @@ describe( module( "Carbon/ServiceAwareDocument" ), ():void => {
 	} );
 
 	describe( interfaze(
-		"Carbon.ServiceAwareDocument.ServiceAwareDocumentFactory",
-		"Interface with the factory, decorate adn utils methods od a `Carbon.ServiceAwareDocument.ServiceAwareDocument`"
+		"CarbonLDP.ServiceAwareDocument.ServiceAwareDocumentFactory",
+		"Interface with the factory, decorate adn utils methods od a `CarbonLDP.ServiceAwareDocument.ServiceAwareDocument`"
 	), ():void => {
 
 		it( hasMethod(
 			OBLIGATORY,
 			"isDecorated",
-			"Returns true if the object has the specific properties of the `Carbon.ServiceAwareDocument.ServiceAwareDocument` interface.",
+			"Returns true if the object has the specific properties of the `CarbonLDP.ServiceAwareDocument.ServiceAwareDocument` interface.",
 			[
 				{ name: "object", type: "object", description: "The object to be tested." },
 			],
-			{ type: "object is Carbon.ServiceAwareDocument.ServiceAwareDocument" }
+			{ type: "object is CarbonLDP.ServiceAwareDocument.ServiceAwareDocument" }
 		), ():void => {} );
 
 		it( hasMethod(
 			OBLIGATORY,
 			"decorate",
-			[ "T extends Carbon.Document.Document" ],
-			"Decorates the provided document with the properties of the `Carbon.ServiceAwareDocument.ServiceAwareDocument` interface.",
+			[ "T extends CarbonLDP.Document.Document" ],
+			"Decorates the provided document with the properties of the `CarbonLDP.ServiceAwareDocument.ServiceAwareDocument` interface.",
 			[
 				{ name: "document", type: "T", description: "Document object to decorate." },
-				{ name: "documents", type: "Carbon.Documents.Documents", description: "Documents instance where the provided document will belong to." },
+				{ name: "documents", type: "CarbonLDP.Documents.Documents", description: "Documents instance where the provided document will belong to." },
 			],
-			{ type: "T & Carbon.ServiceAwareDocument.ServiceAwareDocument" }
+			{ type: "T & CarbonLDP.ServiceAwareDocument.ServiceAwareDocument" }
 		), ():void => {} );
 
 	} );
@@ -69,8 +69,8 @@ describe( module( "Carbon/ServiceAwareDocument" ), ():void => {
 	describe( property(
 		STATIC,
 		"ServiceAwareDocument",
-		"Carbon.ServiceAwareDocument.ServiceAwareDocumentFactory",
-		"Constant that implements the `Carbon.ServiceAwareDocument.ServiceAwareDocumentFactory` interface."
+		"CarbonLDP.ServiceAwareDocument.ServiceAwareDocumentFactory",
+		"Constant that implements the `CarbonLDP.ServiceAwareDocument.ServiceAwareDocumentFactory` interface."
 	), ():void => {
 
 		it( "should exist", ():void => {
@@ -141,7 +141,7 @@ describe( module( "Carbon/ServiceAwareDocument" ), ():void => {
 
 	} );
 
-	it( hasDefaultExport( "Carbon.ServiceAwareDocument.ServiceAwareDocument" ), ():void => {
+	it( hasDefaultExport( "CarbonLDP.ServiceAwareDocument.ServiceAwareDocument" ), ():void => {
 		const defaultTarget:ServiceAwareDocument = <DefaultExport> {};
 		expect( defaultTarget ).toBeDefined();
 	} );

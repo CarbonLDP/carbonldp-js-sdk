@@ -17,7 +17,7 @@ import * as Utils from "./../../../Utils";
 import * as UnsupportedMediaTypeError from "./UnsupportedMediaTypeError";
 import DefaultExport from "./UnsupportedMediaTypeError";
 
-describe( module( "Carbon/HTTP/Errors/ClientErrors/UnsupportedMediaTypeError" ), ():void => {
+describe( module( "CarbonLDP/HTTP/Errors/ClientErrors/UnsupportedMediaTypeError" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( UnsupportedMediaTypeError ).toBeDefined();
@@ -25,7 +25,7 @@ describe( module( "Carbon/HTTP/Errors/ClientErrors/UnsupportedMediaTypeError" ),
 	} );
 
 	describe( clazz(
-		"Carbon.HTTP.Errors.UnsupportedMediaTypeError",
+		"CarbonLDP.HTTP.Errors.UnsupportedMediaTypeError",
 		"Error class to indicate that the request has a media-type not supported by the server."
 	), ():void => {
 
@@ -55,7 +55,7 @@ describe( module( "Carbon/HTTP/Errors/ClientErrors/UnsupportedMediaTypeError" ),
 		} );
 
 		it( extendsClass(
-			"Carbon.HTTP.Errors.HTTPError"
+			"CarbonLDP.HTTP.Errors.HTTPError"
 		), ():void => {
 			let error:UnsupportedMediaTypeError.UnsupportedMediaTypeError = new UnsupportedMediaTypeError.UnsupportedMediaTypeError( "Message of the error", response );
 
@@ -101,7 +101,7 @@ describe( module( "Carbon/HTTP/Errors/ClientErrors/UnsupportedMediaTypeError" ),
 
 	} );
 
-	it( hasDefaultExport( "Carbon.HTTP.Errors.UnsupportedMediaTypeError" ), ():void => {
+	it( hasDefaultExport( "CarbonLDP.HTTP.Errors.UnsupportedMediaTypeError" ), ():void => {
 		expect( DefaultExport ).toBeDefined();
 		expect( DefaultExport ).toBe( UnsupportedMediaTypeError.UnsupportedMediaTypeError );
 	} );

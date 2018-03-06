@@ -10,7 +10,7 @@ import {
 } from "./test/JasmineExtender";
 import * as Utils from "./Utils";
 
-describe( module( "Carbon/LDP/PersistedBlankNode" ), ():void => {
+describe( module( "CarbonLDP/LDP/PersistedBlankNode" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( PersistedBlankNode ).toBeDefined();
@@ -18,15 +18,15 @@ describe( module( "Carbon/LDP/PersistedBlankNode" ), ():void => {
 	} );
 
 	describe( interfaze(
-		"Carbon.PersistedBlankNode.PersistedBlankNode",
+		"CarbonLDP.PersistedBlankNode.PersistedBlankNode",
 		"Interface that represents a persisted blank node of a persisted document."
 	), ():void => {
 
-		it( extendsClass( "Carbon.PersistedFragment.PersistedFragment" ), ():void => {} );
+		it( extendsClass( "CarbonLDP.PersistedFragment.PersistedFragment" ), ():void => {} );
 
 	} );
 
-	it( hasDefaultExport( "Carbon.PersistedBlankNode.PersistedBlankNode" ), ():void => {
+	it( hasDefaultExport( "CarbonLDP.PersistedBlankNode.PersistedBlankNode" ), ():void => {
 		let defaultExport:DefaultExport = <any> {};
 		let defaultTarget:PersistedBlankNode.PersistedBlankNode;
 

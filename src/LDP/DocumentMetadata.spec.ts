@@ -17,20 +17,20 @@ import * as Utils from "./../Utils";
 
 import DefaultExport, { DocumentMetadata } from "./DocumentMetadata";
 
-describe( module( "Carbon/LDP/DocumentMetadata" ), ():void => {
+describe( module( "CarbonLDP/LDP/DocumentMetadata" ), ():void => {
 
 	describe( interfaze(
-		"Carbon.LDP.DocumentMetadata.DocumentMetadata",
+		"CarbonLDP.LDP.DocumentMetadata.DocumentMetadata",
 		"Interface that represents a free node resource that contains dynamic information about an specific resource."
 	), ():void => {
 
-		it( extendsClass( "Carbon.LDP.VolatileResource.VolatileResource" ), ():void => {} );
+		it( extendsClass( "CarbonLDP.LDP.VolatileResource.VolatileResource" ), ():void => {} );
 
 
 		it( hasProperty(
 			OBLIGATORY,
 			"relatedDocument",
-			"Carbon.Pointer.Pointer",
+			"CarbonLDP.Pointer.Pointer",
 			"Reference to the resource the metadata information refers to."
 		), ():void => {} );
 
@@ -44,7 +44,7 @@ describe( module( "Carbon/LDP/DocumentMetadata" ), ():void => {
 		it( hasProperty(
 			OBLIGATORY,
 			"bNodesMap",
-			"Carbon.LDP.CarbonMap.CarbonMap<Carbon.BlankNode.BlankNode, Carbon.BlankNode.BlankNode>",
+			"CarbonLDP.LDP.CarbonMap.CarbonMap<CarbonLDP.BlankNode.BlankNode, CarbonLDP.BlankNode.BlankNode>",
 			"A `c:Map` object that contains the changes of persisted BNode IDs."
 		), ():void => {} );
 
@@ -52,8 +52,8 @@ describe( module( "Carbon/LDP/DocumentMetadata" ), ():void => {
 
 
 	describe( interfaze(
-		"Carbon.LDP.DocumentMetadata.DocumentMetadataFactory",
-		"Interface with the factory, decorate and utils methods for `Carbon.LDP.DocumentMetadata.DocumentMetadata` objects."
+		"CarbonLDP.LDP.DocumentMetadata.DocumentMetadataFactory",
+		"Interface with the factory, decorate and utils methods for `CarbonLDP.LDP.DocumentMetadata.DocumentMetadata` objects."
 	), ():void => {
 
 		it( hasProperty(
@@ -65,25 +65,25 @@ describe( module( "Carbon/LDP/DocumentMetadata" ), ():void => {
 		it( hasProperty(
 			OBLIGATORY,
 			"SCHEMA",
-			"Carbon.ObjectSchema.ObjectSchema"
+			"CarbonLDP.ObjectSchema.ObjectSchema"
 		), ():void => {} );
 
 		it( hasMethod(
 			OBLIGATORY,
 			"isDecorated",
-			"Return true if the object provided has the properties of a `Carbon.LDP.DocumentMetadata.DocumentMetadata` object.", [
+			"Return true if the object provided has the properties of a `CarbonLDP.LDP.DocumentMetadata.DocumentMetadata` object.", [
 				{ name: "object", type: "object", description: "Object to check." },
 			],
-			{ type: "object is Carbon.LDP.DocumentMetadata.DocumentMetadata" }
+			{ type: "object is CarbonLDP.LDP.DocumentMetadata.DocumentMetadata" }
 		), ():void => {} );
 
 		it( hasMethod(
 			OBLIGATORY,
 			"is",
-			"Return true if the object provided is considered a `Carbon.LDP.DocumentMetadata.DocumentMetadata` object.", [
+			"Return true if the object provided is considered a `CarbonLDP.LDP.DocumentMetadata.DocumentMetadata` object.", [
 				{ name: "object", type: "object", description: "Object to check." },
 			],
-			{ type: "object is Carbon.LDP.DocumentMetadata.DocumentMetadata" }
+			{ type: "object is CarbonLDP.LDP.DocumentMetadata.DocumentMetadata" }
 		), ():void => {} );
 
 	} );
@@ -91,7 +91,7 @@ describe( module( "Carbon/LDP/DocumentMetadata" ), ():void => {
 	describe( property(
 		STATIC,
 		"DocumentMetadata",
-		"Carbon.LDP.DocumentMetadata.DocumentMetadataFactory"
+		"CarbonLDP.LDP.DocumentMetadata.DocumentMetadataFactory"
 	), ():void => {
 
 		it( isDefined(), ():void => {
@@ -206,7 +206,7 @@ describe( module( "Carbon/LDP/DocumentMetadata" ), ():void => {
 
 	} );
 
-	it( hasDefaultExport( "Carbon.LDP.DocumentMetadata.DocumentMetadata" ), ():void => {
+	it( hasDefaultExport( "CarbonLDP.LDP.DocumentMetadata.DocumentMetadata" ), ():void => {
 		let defaultExport:DefaultExport = <any> {};
 		let defaultTarget:DocumentMetadata;
 

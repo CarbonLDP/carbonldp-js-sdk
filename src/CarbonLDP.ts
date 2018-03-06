@@ -31,7 +31,7 @@ import * as System from "./System";
 import * as Utils from "./Utils";
 import * as Vocabularies from "./Vocabularies";
 
-export class Carbon extends AbstractContext.AbstractContext {
+export class CarbonLDP extends AbstractContext.AbstractContext {
 
 	/* tslint:disable: variable-name */
 	static AbstractContext:typeof AbstractContext = AbstractContext;
@@ -70,7 +70,7 @@ export class Carbon extends AbstractContext.AbstractContext {
 	static get version():string { return "1.0.0-alpha.11"; }
 
 	// noinspection JSMethodCanBeStatic
-	get version():string { return Carbon.version; }
+	get version():string { return CarbonLDP.version; }
 
 	protected _baseURI:string;
 	protected settings:Settings.ContextSettings = {
@@ -132,4 +132,4 @@ export class Carbon extends AbstractContext.AbstractContext {
 
 }
 
-export default Carbon;
+export default CarbonLDP;

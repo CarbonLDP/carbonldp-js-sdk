@@ -17,7 +17,7 @@ import * as Utils from "./../../../Utils";
 import * as NotAcceptableError from "./NotAcceptableError";
 import DefaultExport from "./NotAcceptableError";
 
-describe( module( "Carbon/HTTP/Errors/ClientErrors/NotAcceptableError" ), ():void => {
+describe( module( "CarbonLDP/HTTP/Errors/ClientErrors/NotAcceptableError" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( NotAcceptableError ).toBeDefined();
@@ -25,7 +25,7 @@ describe( module( "Carbon/HTTP/Errors/ClientErrors/NotAcceptableError" ), ():voi
 	} );
 
 	describe( clazz(
-		"Carbon.HTTP.Errors.NotAcceptableError",
+		"CarbonLDP.HTTP.Errors.NotAcceptableError",
 		"Error class to indicate that the server cannot respond with the data type specified by the accept header of the request."
 	), ():void => {
 
@@ -55,7 +55,7 @@ describe( module( "Carbon/HTTP/Errors/ClientErrors/NotAcceptableError" ), ():voi
 		} );
 
 		it( extendsClass(
-			"Carbon.HTTP.Errors.HTTPError"
+			"CarbonLDP.HTTP.Errors.HTTPError"
 		), ():void => {
 			let error:NotAcceptableError.NotAcceptableError = new NotAcceptableError.NotAcceptableError( "Message of the error", response );
 
@@ -101,7 +101,7 @@ describe( module( "Carbon/HTTP/Errors/ClientErrors/NotAcceptableError" ), ():voi
 
 	} );
 
-	it( hasDefaultExport( "Carbon.HTTP.Errors.NotAcceptableError" ), ():void => {
+	it( hasDefaultExport( "CarbonLDP.HTTP.Errors.NotAcceptableError" ), ():void => {
 		expect( DefaultExport ).toBeDefined();
 		expect( DefaultExport ).toBe( NotAcceptableError.NotAcceptableError );
 	} );

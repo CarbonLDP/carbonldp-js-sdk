@@ -16,7 +16,7 @@ import * as IllegalStateError from "./IllegalStateError";
 import DefaultExport from "./IllegalStateError";
 
 // TODO: Refactor tests
-describe( module( "Carbon/Errors/IllegalStateError" ), function():void {
+describe( module( "CarbonLDP/Errors/IllegalStateError" ), function():void {
 
 	it( isDefined(), ():void => {
 		expect( IllegalStateError ).toBeDefined();
@@ -24,7 +24,7 @@ describe( module( "Carbon/Errors/IllegalStateError" ), function():void {
 	} );
 
 	describe( clazz(
-		"Carbon.Errors.IllegalStateError.IllegalStateError",
+		"CarbonLDP.Errors.IllegalStateError.IllegalStateError",
 		"Error class to indicate that a task can't be completed because of the lack of pre-required configuration or execution of previous tasks."
 	), function():void {
 
@@ -34,7 +34,7 @@ describe( module( "Carbon/Errors/IllegalStateError" ), function():void {
 			expect( Utils.isFunction( IllegalStateError.IllegalStateError ) ).toBe( true );
 		} );
 
-		it( extendsClass( "Carbon.Errors.AbstractError.AbstractError" ), function():void {
+		it( extendsClass( "CarbonLDP.Errors.AbstractError.AbstractError" ), function():void {
 			let illegalStateError:IllegalStateError.IllegalStateError = new IllegalStateError.IllegalStateError( "This is the message" );
 			expect( illegalStateError instanceof AbstractError ).toBe( true );
 		} );
@@ -68,7 +68,7 @@ describe( module( "Carbon/Errors/IllegalStateError" ), function():void {
 
 	} );
 
-	it( hasDefaultExport( "Carbon.Errors.IllegalStateError.IllegalStateError" ), ():void => {
+	it( hasDefaultExport( "CarbonLDP.Errors.IllegalStateError.IllegalStateError" ), ():void => {
 		expect( DefaultExport ).toBeDefined();
 		expect( DefaultExport ).toBe( IllegalStateError.IllegalStateError );
 	} );

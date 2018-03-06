@@ -14,7 +14,7 @@ import * as Utils from "./../Utils";
 import * as UsernameAndPasswordToken from "./UsernameAndPasswordToken";
 import DefaultExport from "./UsernameAndPasswordToken";
 
-describe( module( "Carbon/Auth/UsernameAndPasswordToken" ), ():void => {
+describe( module( "CarbonLDP/Auth/UsernameAndPasswordToken" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( UsernameAndPasswordToken ).toBeDefined();
@@ -22,9 +22,9 @@ describe( module( "Carbon/Auth/UsernameAndPasswordToken" ), ():void => {
 	} );
 
 	describe( clazz(
-		"Carbon.Auth.UsernameAndPasswordToken.Class",
+		"CarbonLDP.Auth.UsernameAndPasswordToken.Class",
 		"Wrapper to manage an Authentication Token in form of Username/Password.", [
-			"Carbon.Auth.AuthenticationToken.Class",
+			"CarbonLDP.Auth.AuthenticationToken.Class",
 		]
 	), ():void => {
 
@@ -71,7 +71,7 @@ describe( module( "Carbon/Auth/UsernameAndPasswordToken" ), ():void => {
 
 	} );
 
-	it( hasDefaultExport( "Carbon.Auth.UsernameAndPasswordToken.Class" ), ():void => {
+	it( hasDefaultExport( "CarbonLDP.Auth.UsernameAndPasswordToken.Class" ), ():void => {
 		expect( DefaultExport ).toBeDefined();
 		expect( DefaultExport ).toBe( UsernameAndPasswordToken.Class );
 	} );

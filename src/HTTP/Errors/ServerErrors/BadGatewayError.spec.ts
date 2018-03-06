@@ -17,7 +17,7 @@ import * as Utils from "./../../../Utils";
 import * as BadGatewayError from "./BadGatewayError";
 import DefaultExport from "./BadGatewayError";
 
-describe( module( "Carbon/HTTP/Errors/ServerErrors/BadGatewayError" ), ():void => {
+describe( module( "CarbonLDP/HTTP/Errors/ServerErrors/BadGatewayError" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( BadGatewayError ).toBeDefined();
@@ -25,7 +25,7 @@ describe( module( "Carbon/HTTP/Errors/ServerErrors/BadGatewayError" ), ():void =
 	} );
 
 	describe( clazz(
-		"Carbon.HTTP.Errors.BadGatewayError",
+		"CarbonLDP.HTTP.Errors.BadGatewayError",
 		"Error class to indicate that the server was acting as a gateway or proxy and received an invalid response from the upstream server."
 	), ():void => {
 
@@ -55,7 +55,7 @@ describe( module( "Carbon/HTTP/Errors/ServerErrors/BadGatewayError" ), ():void =
 		} );
 
 		it( extendsClass(
-			"Carbon.HTTP.Errors.HTTPError"
+			"CarbonLDP.HTTP.Errors.HTTPError"
 		), ():void => {
 			let error:BadGatewayError.BadGatewayError = new BadGatewayError.BadGatewayError( "Message of the error", response );
 
@@ -101,7 +101,7 @@ describe( module( "Carbon/HTTP/Errors/ServerErrors/BadGatewayError" ), ():void =
 
 	} );
 
-	it( hasDefaultExport( "Carbon.HTTP.Errors.BadGatewayError" ), ():void => {
+	it( hasDefaultExport( "CarbonLDP.HTTP.Errors.BadGatewayError" ), ():void => {
 		expect( DefaultExport ).toBeDefined();
 		expect( DefaultExport ).toBe( BadGatewayError.BadGatewayError );
 	} );

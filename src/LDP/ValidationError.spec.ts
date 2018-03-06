@@ -13,7 +13,7 @@ import { C } from "../Vocabularies/C";
 
 import DefaultExport, { ValidationError } from "./ValidationError";
 
-describe( module( "Carbon/LDP/ValidationError" ), ():void => {
+describe( module( "CarbonLDP/LDP/ValidationError" ), ():void => {
 
 	it( "should exists", ():void => {
 		expect( ValidationError ).toBeDefined();
@@ -21,11 +21,11 @@ describe( module( "Carbon/LDP/ValidationError" ), ():void => {
 	} );
 
 	describe( interfaze(
-		"Carbon.LDP.ValidationError.ValidationError",
+		"CarbonLDP.LDP.ValidationError.ValidationError",
 		"Interface that contains the properties that describe how the validation failed."
 	), ():void => {
 
-		it( extendsClass( "Carbon.Resource.Resource" ), ():void => {
+		it( extendsClass( "CarbonLDP.Resource.Resource" ), ():void => {
 			const target:Resource = {} as ValidationError;
 			expect( target ).toBeDefined();
 		} );
@@ -38,7 +38,7 @@ describe( module( "Carbon/LDP/ValidationError" ), ():void => {
 		it( hasProperty(
 			OBLIGATORY,
 			"errorDetails",
-			"Carbon.Pointer.Pointer",
+			"CarbonLDP.Pointer.Pointer",
 			"Pointer with the error details of how the validation failed."
 		), ():void => {
 			const target:ValidationError = { errorDetails: true } as any;
@@ -48,8 +48,8 @@ describe( module( "Carbon/LDP/ValidationError" ), ():void => {
 	} );
 
 	describe( interfaze(
-		"Carbon.LDP.ValidationError.ValidationErrorFactory",
-		"Interface with the factory, decorate and utils methods for `Carbon.LDP.ValidationError.ValidationError` objects."
+		"CarbonLDP.LDP.ValidationError.ValidationErrorFactory",
+		"Interface with the factory, decorate and utils methods for `CarbonLDP.LDP.ValidationError.ValidationError` objects."
 	), ():void => {
 
 		it( hasProperty(
@@ -61,7 +61,7 @@ describe( module( "Carbon/LDP/ValidationError" ), ():void => {
 		it( hasProperty(
 			OBLIGATORY,
 			"SCHEMA",
-			"Carbon.ObjectSchema.ObjectSchema"
+			"CarbonLDP.ObjectSchema.ObjectSchema"
 		), ():void => {} );
 
 	} );
@@ -69,7 +69,7 @@ describe( module( "Carbon/LDP/ValidationError" ), ():void => {
 	describe( property(
 		STATIC,
 		"ValidationError",
-		"Carbon.LDP.ValidationError.ValidationErrorFactory"
+		"CarbonLDP.LDP.ValidationError.ValidationErrorFactory"
 	), ():void => {
 
 		it( "should exist", ():void => {
@@ -102,7 +102,7 @@ describe( module( "Carbon/LDP/ValidationError" ), ():void => {
 
 	} );
 
-	it( hasDefaultExport( "Carbon.LDP.ValidationError.ValidationError" ), ():void => {
+	it( hasDefaultExport( "CarbonLDP.LDP.ValidationError.ValidationError" ), ():void => {
 		const target:ValidationError = {} as DefaultExport;
 		expect( target ).toBeDefined();
 	} );

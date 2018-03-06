@@ -13,7 +13,7 @@ import * as AbstractError from "./AbstractError";
 import DefaultExport from "./AbstractError";
 
 // TODO: Refactor tests
-describe( module( "Carbon/Errors/AbstractError" ), function():void {
+describe( module( "CarbonLDP/Errors/AbstractError" ), function():void {
 
 	it( isDefined(), ():void => {
 		expect( AbstractError ).toBeDefined();
@@ -21,7 +21,7 @@ describe( module( "Carbon/Errors/AbstractError" ), function():void {
 	} );
 
 	describe( clazz(
-		"Carbon.Errors.AbstractError.AbstractError",
+		"CarbonLDP.Errors.AbstractError.AbstractError",
 		"Class that works as template for the custom errors in the SDK."
 	), function():void {
 
@@ -59,7 +59,7 @@ describe( module( "Carbon/Errors/AbstractError" ), function():void {
 
 	} );
 
-	it( hasDefaultExport( "Carbon.Errors.AbstractError.AbstractError" ), ():void => {
+	it( hasDefaultExport( "CarbonLDP.Errors.AbstractError.AbstractError" ), ():void => {
 		expect( DefaultExport ).toBeDefined();
 		expect( DefaultExport ).toBe( AbstractError.AbstractError );
 	} );

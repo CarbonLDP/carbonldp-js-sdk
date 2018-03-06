@@ -12,7 +12,7 @@ import * as Utils from "./../Utils";
 import * as RawResults from "./RawResults";
 import DefaultExport from "./RawResults";
 
-describe( module( "Carbon/SPARQL/RawResults" ), ():void => {
+describe( module( "CarbonLDP/SPARQL/RawResults" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( RawResults ).toBeDefined();
@@ -20,7 +20,7 @@ describe( module( "Carbon/SPARQL/RawResults" ), ():void => {
 	} );
 
 	describe( interfaze(
-		"Carbon.SPARQL.RawResults.SPARQLRawResults",
+		"CarbonLDP.SPARQL.RawResults.SPARQLRawResults",
 		"Interface that represents the raw response of a SPARQL query."
 	), ():void => {
 
@@ -34,7 +34,7 @@ describe( module( "Carbon/SPARQL/RawResults" ), ():void => {
 		it( hasProperty(
 			OPTIONAL,
 			"results",
-			`{ "bindings":Carbon.SPARQL.RawResults.SPARQLRawBindingObject[] }`,
+			`{ "bindings":CarbonLDP.SPARQL.RawResults.SPARQLRawBindingObject[] }`,
 			"The results of a `SELECT` query."
 		), ():void => {} );
 
@@ -48,22 +48,22 @@ describe( module( "Carbon/SPARQL/RawResults" ), ():void => {
 	} );
 
 	describe( interfaze(
-		"Carbon.SPARQL.RawResults.SPARQLRawBindingObject",
+		"CarbonLDP.SPARQL.RawResults.SPARQLRawBindingObject",
 		"Interface that represents the raw response of a SPARQL query."
 	), ():void => {
 
 		it( hasProperty(
 			OBLIGATORY,
 			"[ name:string ]",
-			"Carbon.SPARQL.RawResults.SPARQLRawBindingProperty",
+			"CarbonLDP.SPARQL.RawResults.SPARQLRawBindingProperty",
 			"An entry of every `vars` requested as the `name` variable, containing the binding property with its value."
 		), ():void => {} );
 
 	} );
 
 	describe( interfaze(
-		"Carbon.SPARQL.RawResults.SPARQLRawBindingProperty",
-		"Interface that represents every entry of a `Carbon.SPARQL.RawResults.SPARQLRawBindingObject`."
+		"CarbonLDP.SPARQL.RawResults.SPARQLRawBindingProperty",
+		"Interface that represents every entry of a `CarbonLDP.SPARQL.RawResults.SPARQLRawBindingObject`."
 	), ():void => {
 
 		it( hasProperty(
@@ -96,7 +96,7 @@ describe( module( "Carbon/SPARQL/RawResults" ), ():void => {
 
 	} );
 
-	it( hasDefaultExport( "Carbon.SPARQL.RawResults.SPARQLRawResults" ), ():void => {
+	it( hasDefaultExport( "CarbonLDP.SPARQL.RawResults.SPARQLRawResults" ), ():void => {
 		let defaultExport:DefaultExport = <any> {};
 		let defaultTarget:RawResults.SPARQLRawResults;
 

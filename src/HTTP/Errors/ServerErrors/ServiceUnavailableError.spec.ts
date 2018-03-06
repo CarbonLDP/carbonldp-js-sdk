@@ -17,7 +17,7 @@ import * as Utils from "./../../../Utils";
 import * as ServiceUnavailableError from "./ServiceUnavailableError";
 import DefaultExport from "./ServiceUnavailableError";
 
-describe( module( "Carbon/HTTP/Errors/ServerErrors/ServiceUnavailableError" ), ():void => {
+describe( module( "CarbonLDP/HTTP/Errors/ServerErrors/ServiceUnavailableError" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( ServiceUnavailableError ).toBeDefined();
@@ -25,7 +25,7 @@ describe( module( "Carbon/HTTP/Errors/ServerErrors/ServiceUnavailableError" ), (
 	} );
 
 	describe( clazz(
-		"Carbon.HTTP.Errors.ServiceUnavailableError",
+		"CarbonLDP.HTTP.Errors.ServiceUnavailableError",
 		"Error class to indicate that the server is currently unavailable (because it's overloaded or down for maintenance)."
 	), ():void => {
 
@@ -55,7 +55,7 @@ describe( module( "Carbon/HTTP/Errors/ServerErrors/ServiceUnavailableError" ), (
 		} );
 
 		it( extendsClass(
-			"Carbon.HTTP.Errors.HTTPError"
+			"CarbonLDP.HTTP.Errors.HTTPError"
 		), ():void => {
 			let error:ServiceUnavailableError.ServiceUnavailableError = new ServiceUnavailableError.ServiceUnavailableError( "Message of the error", response );
 
@@ -101,7 +101,7 @@ describe( module( "Carbon/HTTP/Errors/ServerErrors/ServiceUnavailableError" ), (
 
 	} );
 
-	it( hasDefaultExport( "Carbon.HTTP.Errors.ServiceUnavailableError" ), ():void => {
+	it( hasDefaultExport( "CarbonLDP.HTTP.Errors.ServiceUnavailableError" ), ():void => {
 		expect( DefaultExport ).toBeDefined();
 		expect( DefaultExport ).toBe( ServiceUnavailableError.ServiceUnavailableError );
 	} );

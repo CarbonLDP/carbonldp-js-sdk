@@ -15,9 +15,9 @@ import * as Utils from "./../Utils";
 import { Header } from "./Header";
 import DefaultExport from "./Header";
 
-describe( module( "Carbon/HTTP/Header" ), ():void => {
+describe( module( "CarbonLDP/HTTP/Header" ), ():void => {
 
-	describe( clazz( "Carbon.HTTP.Header.Header", "Class to manage the values in an HTTP header." ), ():void => {
+	describe( clazz( "CarbonLDP.HTTP.Header.Header", "Class to manage the values in an HTTP header." ), ():void => {
 
 		// Mock data
 		let valuesArray:string[] = [
@@ -112,10 +112,10 @@ describe( module( "Carbon/HTTP/Header" ), ():void => {
 		it( hasMethod(
 			STATIC,
 			"parseHeaders",
-			"Returns a Map object which relates all header names with a `Carbon.HTTP.Header.Header` object containing their values.", [
+			"Returns a Map object which relates all header names with a `CarbonLDP.HTTP.Header.Header` object containing their values.", [
 				{ name: "headersString", type: "string" },
 			],
-			{ type: "Map <string, Carbon.HTTP.Header.Header>" }
+			{ type: "Map <string, CarbonLDP.HTTP.Header.Header>" }
 		), ():void => {
 			expect( Header.parseHeaders ).toBeDefined();
 			expect( Utils.isFunction( Header.parseHeaders ) ).toBe( true );
@@ -139,7 +139,7 @@ describe( module( "Carbon/HTTP/Header" ), ():void => {
 	} );
 
 	it( hasDefaultExport(
-		"Carbon.HTTP.Header.Header"
+		"CarbonLDP.HTTP.Header.Header"
 	), ():void => {
 		expect( DefaultExport ).toBeDefined();
 		expect( DefaultExport ).toBe( Header );

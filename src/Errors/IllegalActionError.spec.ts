@@ -15,7 +15,7 @@ import * as IllegalActionError from "./IllegalActionError";
 import DefaultExport from "./IllegalActionError";
 
 // TODO: Refactor tests
-describe( module( "Carbon/Errors/IllegalActionError" ), ():void => {
+describe( module( "CarbonLDP/Errors/IllegalActionError" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( IllegalActionError ).toBeDefined();
@@ -23,7 +23,7 @@ describe( module( "Carbon/Errors/IllegalActionError" ), ():void => {
 	} );
 
 	describe( clazz(
-		"Carbon.Errors.IllegalActionError.IllegalActionError",
+		"CarbonLDP.Errors.IllegalActionError.IllegalActionError",
 		"Error class to indicate that an action not allowed was attempted."
 	), ():void => {
 
@@ -36,7 +36,7 @@ describe( module( "Carbon/Errors/IllegalActionError" ), ():void => {
 		} );
 
 		it( extendsClass(
-			"Carbon.Errors.AbstractError.AbstractError"
+			"CarbonLDP.Errors.AbstractError.AbstractError"
 		), ():void => {
 			let error:IllegalActionError.IllegalActionError = new IllegalActionError.IllegalActionError( "Message of the error" );
 
@@ -58,7 +58,7 @@ describe( module( "Carbon/Errors/IllegalActionError" ), ():void => {
 
 	} );
 
-	it( hasDefaultExport( "Carbon.Errors.IllegalActionError.IllegalActionError" ), ():void => {
+	it( hasDefaultExport( "CarbonLDP.Errors.IllegalActionError.IllegalActionError" ), ():void => {
 		expect( DefaultExport ).toBeDefined();
 		expect( DefaultExport ).toBe( IllegalActionError.IllegalActionError );
 	} );

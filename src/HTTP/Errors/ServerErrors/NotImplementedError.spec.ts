@@ -17,7 +17,7 @@ import * as Utils from "./../../../Utils";
 import * as NotImplementedError from "./NotImplementedError";
 import DefaultExport from "./NotImplementedError";
 
-describe( module( "Carbon/HTTP/Errors/ServerErrors/NotImplementedError" ), ():void => {
+describe( module( "CarbonLDP/HTTP/Errors/ServerErrors/NotImplementedError" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( NotImplementedError ).toBeDefined();
@@ -25,7 +25,7 @@ describe( module( "Carbon/HTTP/Errors/ServerErrors/NotImplementedError" ), ():vo
 	} );
 
 	describe( clazz(
-		"Carbon.HTTP.Errors.NotImplementedError",
+		"CarbonLDP.HTTP.Errors.NotImplementedError",
 		"Error class to indicate that the server doesn't have the ability to fulfill the request yet."
 	), ():void => {
 
@@ -55,7 +55,7 @@ describe( module( "Carbon/HTTP/Errors/ServerErrors/NotImplementedError" ), ():vo
 		} );
 
 		it( extendsClass(
-			"Carbon.HTTP.Errors.HTTPError"
+			"CarbonLDP.HTTP.Errors.HTTPError"
 		), ():void => {
 			let error:NotImplementedError.NotImplementedError = new NotImplementedError.NotImplementedError( "Message of the error", response );
 
@@ -101,7 +101,7 @@ describe( module( "Carbon/HTTP/Errors/ServerErrors/NotImplementedError" ), ():vo
 
 	} );
 
-	it( hasDefaultExport( "Carbon.HTTP.Errors.NotImplementedError" ), ():void => {
+	it( hasDefaultExport( "CarbonLDP.HTTP.Errors.NotImplementedError" ), ():void => {
 		expect( DefaultExport ).toBeDefined();
 		expect( DefaultExport ).toBe( NotImplementedError.NotImplementedError );
 	} );

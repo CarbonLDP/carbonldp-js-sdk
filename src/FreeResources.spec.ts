@@ -18,28 +18,28 @@ import {
 	STATIC,
 } from "./test/JasmineExtender";
 
-describe( module( "Carbon/FreeResources" ), ():void => {
+describe( module( "CarbonLDP/FreeResources" ), ():void => {
 
 	describe( interfaze(
-		"Carbon.FreeResources.FreeResources",
+		"CarbonLDP.FreeResources.FreeResources",
 		"Interface that represents a set of free resources."
 	), ():void => {
 
-		it( extendsClass( "Carbon.Pointer.PointerLibrary" ), ():void => {} );
-		it( extendsClass( "Carbon.Pointer.PointerValidator" ), ():void => {} );
+		it( extendsClass( "CarbonLDP.Pointer.PointerLibrary" ), ():void => {} );
+		it( extendsClass( "CarbonLDP.Pointer.PointerValidator" ), ():void => {} );
 
 		it( hasProperty(
 			OBLIGATORY,
 			"_documents",
 			"Private property that contains the Documents class where the object scope is in.",
-			"Carbon.Documents.Documents"
+			"CarbonLDP.Documents.Documents"
 		), ():void => {} );
 
 		it( hasProperty(
 			OBLIGATORY,
 			"_resourcesIndex",
 			"Private property that contains the references of every free resource in a map form.",
-			"Map<string, Carbon.Resource.Resource>"
+			"Map<string, CarbonLDP.Resource.Resource>"
 		), ():void => {} );
 
 		it( hasMethod(
@@ -57,14 +57,14 @@ describe( module( "Carbon/FreeResources" ), ():void => {
 			"Returns the resource referred by the ID provided. If no resource exists with the ID specified, `null` is returned.", [
 				{ name: "id", type: "string", description: "The ID of the resource to sought for." },
 			],
-			{ type: "Carbon.Resource.Resource" }
+			{ type: "CarbonLDP.Resource.Resource" }
 		), ():void => {} );
 
 		it( hasMethod(
 			OBLIGATORY,
 			"getResources",
 			"Returns an array with all the resources inside the FreeResources object.",
-			{ type: "Carbon.Resource.Resource[]" }
+			{ type: "CarbonLDP.Resource.Resource[]" }
 		), ():void => {} );
 
 		it( hasMethod(
@@ -73,7 +73,7 @@ describe( module( "Carbon/FreeResources" ), ():void => {
 			"Creates and returns a new free resource. Throw an Error if no valid ID if provided or if it's already in use.", [
 				{ name: "id", type: "string", optional: true, description: "The ID of the resource to create. It should be an ID as a BlankNode." },
 			],
-			{ type: "Carbon.Resource.Resource" }
+			{ type: "CarbonLDP.Resource.Resource" }
 		), ():void => {} );
 
 		it( hasMethod(
@@ -84,7 +84,7 @@ describe( module( "Carbon/FreeResources" ), ():void => {
 				{ name: "object", type: "T", description: "The object to be used as the new resource." },
 				{ name: "id", type: "string", optional: true, description: "The ID of the resource to create. It should be an ID as a BlankNode." },
 			],
-			{ type: "Carbon.Resource.Resource" }
+			{ type: "CarbonLDP.Resource.Resource" }
 		), ():void => {} );
 
 		it( hasMethod(
@@ -93,74 +93,74 @@ describe( module( "Carbon/FreeResources" ), ():void => {
 			"Returns the pointer referred by the ID specified, or creates one if no pointer exists in the scope.", [
 				{ name: "id", type: "string", description: "The ID of the pointer sought for or the one to create." },
 			],
-			{ type: "Carbon.Pointer.Pointer" }
+			{ type: "CarbonLDP.Pointer.Pointer" }
 		), ():void => {} );
 
 		it( hasMethod(
 			OBLIGATORY,
 			"toJSON",
-			"Converts the resources contained in the current `Carbon.FreeResources.FreeResources` object to a JSON object.",
-			{ type: "Carbon.RDF.Node.RDFNode[]" }
+			"Converts the resources contained in the current `CarbonLDP.FreeResources.FreeResources` object to a JSON object.",
+			{ type: "CarbonLDP.RDF.Node.RDFNode[]" }
 		), ():void => {} );
 
 	} );
 
 	describe( interfaze(
-		"Carbon.FreeResources.FreeResourcesFactory",
-		"Interfaces with the factory, decorate and utils methods of a `Carbon.FreeResources.FreeResources` object."
+		"CarbonLDP.FreeResources.FreeResourcesFactory",
+		"Interfaces with the factory, decorate and utils methods of a `CarbonLDP.FreeResources.FreeResources` object."
 	), ():void => {
 
 		it( hasMethod(
 			OBLIGATORY,
 			"isDecorated",
-			"Returns true if the object provided has the properties and methods of a `Carbon.FreeResources.FreeResources` object.", [
+			"Returns true if the object provided has the properties and methods of a `CarbonLDP.FreeResources.FreeResources` object.", [
 				{ name: "object", type: "object", description: "Object to evaluate." },
 			],
-			{ type: "object is Carbon.FreeResources.FreeResources" }
+			{ type: "object is CarbonLDP.FreeResources.FreeResources" }
 		), ():void => {} );
 
 		it( hasMethod(
 			OBLIGATORY,
 			"is",
-			"Returns true if the object is considered a `Carbon.FreeResources.FreeResources` object.", [
+			"Returns true if the object is considered a `CarbonLDP.FreeResources.FreeResources` object.", [
 				{ name: "object", type: "object", description: "Object to evaluate." },
 			],
-			{ type: "object is Carbon.FreeResources.FreeResources" }
+			{ type: "object is CarbonLDP.FreeResources.FreeResources" }
 		), ():void => {} );
 
 		it( hasMethod(
 			OBLIGATORY,
 			"create",
-			"Creates a empty `Carbon.FreeResources.FreeResources` object.", [
-				{ name: "documents", type: "Carbon.Documents.Documents", description: "A `Carbon.Documents.Documents` object where the FreeResources scope is in." },
+			"Creates a empty `CarbonLDP.FreeResources.FreeResources` object.", [
+				{ name: "documents", type: "CarbonLDP.Documents.Documents", description: "A `CarbonLDP.Documents.Documents` object where the FreeResources scope is in." },
 			],
-			{ type: "Carbon.FreeResources.FreeResources" }
+			{ type: "CarbonLDP.FreeResources.FreeResources" }
 		), ():void => {} );
 
 		it( hasMethod(
 			OBLIGATORY,
 			"createFrom",
 			[ "T extends object" ],
-			"Creates a `Carbon.FreeResources.FreeResources` object from the plain object provided.", [
-				{ name: "object", type: "T", description: "The object that wants be converted in a `Carbon.FreeResources.FreeResources`." },
-				{ name: "documents", type: "Carbon.Documents.Documents", description: "A `Carbon.Documents.Documents` object where the FreeResources scope is in." },
+			"Creates a `CarbonLDP.FreeResources.FreeResources` object from the plain object provided.", [
+				{ name: "object", type: "T", description: "The object that wants be converted in a `CarbonLDP.FreeResources.FreeResources`." },
+				{ name: "documents", type: "CarbonLDP.Documents.Documents", description: "A `CarbonLDP.Documents.Documents` object where the FreeResources scope is in." },
 			],
-			{ type: "T & Carbon.FreeResources.FreeResources" }
+			{ type: "T & CarbonLDP.FreeResources.FreeResources" }
 		), ():void => {} );
 
 		it( hasMethod(
 			OBLIGATORY,
 			"decorate",
 			[ "T extends object" ],
-			"Decorates the object provided with the properties and methods of a `Carbon.FreeResources.FreeResources` object.", [
+			"Decorates the object provided with the properties and methods of a `CarbonLDP.FreeResources.FreeResources` object.", [
 				{ name: "object", type: "T" },
 			],
-			{ type: "T & Carbon.FreeResources.FreeResources" }
+			{ type: "T & CarbonLDP.FreeResources.FreeResources" }
 		), ():void => {} );
 
 	} );
 
-	describe( property( STATIC, "FreeResources", "Carbon.FreeResources.FreeResourcesFactory", "Constant that implements the `Carbon.FreeResources.FreeResourcesFactory` interface." ), ():void => {
+	describe( property( STATIC, "FreeResources", "CarbonLDP.FreeResources.FreeResourcesFactory", "Constant that implements the `CarbonLDP.FreeResources.FreeResourcesFactory` interface." ), ():void => {
 
 		it( isDefined(), ():void => {
 			expect( FreeResources ).toBeDefined();
@@ -567,7 +567,7 @@ describe( module( "Carbon/FreeResources" ), ():void => {
 
 	} );
 
-	it( hasDefaultExport( "Carbon.FreeResources.FreeResources" ), ():void => {
+	it( hasDefaultExport( "CarbonLDP.FreeResources.FreeResources" ), ():void => {
 		let defaultExport:DefaultExport = <any> {};
 		let defaultTarget:FreeResources;
 

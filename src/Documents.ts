@@ -20,7 +20,7 @@ import {
 import * as Auth from "./Auth";
 import { ACL } from "./Auth/ACL";
 import { PersistedACL } from "./Auth/PersistedACL";
-import { Carbon } from "./Carbon";
+import { CarbonLDP } from "./CarbonLDP";
 import { Context } from "./Context";
 import { Document } from "./Document";
 import * as Errors from "./Errors";
@@ -723,7 +723,7 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 		try {
 			validateEventContext( this.context );
 			const destination:string = createDestination( event, uriPattern, this.context.baseURI );
-			(this.context as Carbon).messaging.subscribe( destination, onEvent, onError );
+			(this.context as CarbonLDP).messaging.subscribe( destination, onEvent, onError );
 		} catch( error ) {
 			if( ! onError ) throw error;
 			onError( error );
@@ -742,7 +742,7 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 		try {
 			validateEventContext( this.context );
 			const destination:string = createDestination( event, uriPattern, this.context.baseURI );
-			(this.context as Carbon).messaging.unsubscribe( destination, onEvent );
+			(this.context as CarbonLDP).messaging.unsubscribe( destination, onEvent );
 		} catch( error ) {
 			if( ! onError ) throw error;
 			onError( error );
@@ -1390,7 +1390,7 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 			if( Utils.isString( pointer ) ) return this.getPointer( pointer );
 			if( Pointer.is( pointer ) ) return pointer;
 
-			throw new Errors.IllegalArgumentError( "No Carbon.Pointer or URI provided." );
+			throw new Errors.IllegalArgumentError( "No CarbonLDP.Pointer or URI provided." );
 		} );
 	}
 

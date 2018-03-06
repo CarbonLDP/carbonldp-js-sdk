@@ -17,7 +17,7 @@ import * as Utils from "./../../../Utils";
 import * as BadResponseError from "./BadResponseError";
 import DefaultExport from "./BadResponseError";
 
-describe( module( "Carbon/HTTP/Errors/ServerErrors/BadResponseError" ), ():void => {
+describe( module( "CarbonLDP/HTTP/Errors/ServerErrors/BadResponseError" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( BadResponseError ).toBeDefined();
@@ -25,7 +25,7 @@ describe( module( "Carbon/HTTP/Errors/ServerErrors/BadResponseError" ), ():void 
 	} );
 
 	describe( clazz(
-		"Carbon.HTTP.Errors.BadResponseError",
+		"CarbonLDP.HTTP.Errors.BadResponseError",
 		"Error class to indicate that the response obtained isn't the expected or can't be interpreted."
 	), ():void => {
 
@@ -55,7 +55,7 @@ describe( module( "Carbon/HTTP/Errors/ServerErrors/BadResponseError" ), ():void 
 		} );
 
 		it( extendsClass(
-			"Carbon.HTTP.Errors.HTTPError"
+			"CarbonLDP.HTTP.Errors.HTTPError"
 		), ():void => {
 			let error:BadResponseError.BadResponseError = new BadResponseError.BadResponseError( "Message of the error", response );
 
@@ -101,7 +101,7 @@ describe( module( "Carbon/HTTP/Errors/ServerErrors/BadResponseError" ), ():void 
 
 	} );
 
-	it( hasDefaultExport( "Carbon.HTTP.Errors.BadResponseError" ), ():void => {
+	it( hasDefaultExport( "CarbonLDP.HTTP.Errors.BadResponseError" ), ():void => {
 		expect( DefaultExport ).toBeDefined();
 		expect( DefaultExport ).toBe( BadResponseError.BadResponseError );
 	} );

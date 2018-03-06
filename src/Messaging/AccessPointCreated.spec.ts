@@ -15,10 +15,10 @@ import { C } from "../Vocabularies/C";
 import DefaultExport, { AccessPointCreated } from "./AccessPointCreated";
 import { DocumentCreated } from "./DocumentCreated";
 
-describe( module( "Carbon/Messaging/AccessPointCreated" ), ():void => {
+describe( module( "CarbonLDP/Messaging/AccessPointCreated" ), ():void => {
 
 	describe( interfaze(
-		"Carbon.Messaging.AccessPointCreated.AccessPointCreated",
+		"CarbonLDP.Messaging.AccessPointCreated.AccessPointCreated",
 		"Interface with the properties of the data received in a access point created event."
 	), ():void => {
 
@@ -27,7 +27,7 @@ describe( module( "Carbon/Messaging/AccessPointCreated" ), ():void => {
 			expect( target ).toBeDefined();
 		} );
 
-		it( extendsClass( "Carbon.Messaging.DocumentCreated.DocumentCreated" ), ():void => {
+		it( extendsClass( "CarbonLDP.Messaging.DocumentCreated.DocumentCreated" ), ():void => {
 			const target:DocumentCreated = {} as AccessPointCreated;
 			expect( target ).toBeDefined();
 		} );
@@ -35,7 +35,7 @@ describe( module( "Carbon/Messaging/AccessPointCreated" ), ():void => {
 		it( hasProperty(
 			OBLIGATORY,
 			"target",
-			"Carbon.Pointer.Pointer"
+			"CarbonLDP.Pointer.Pointer"
 		), ():void => {
 			const target:AccessPointCreated[ "target" ] = {} as Pointer;
 			expect( target ).toBeDefined();
@@ -44,8 +44,8 @@ describe( module( "Carbon/Messaging/AccessPointCreated" ), ():void => {
 	} );
 
 	describe( interfaze(
-		"Carbon.Messaging.AccessPointCreated.AccessPointCreatedFactory",
-		"Interface with the factory, decorate and utils for `Carbon.Messaging.AccessPointCreated.AccessPointCreated` objects."
+		"CarbonLDP.Messaging.AccessPointCreated.AccessPointCreatedFactory",
+		"Interface with the factory, decorate and utils for `CarbonLDP.Messaging.AccessPointCreated.AccessPointCreated` objects."
 	), ():void => {
 
 		it( hasProperty(
@@ -57,7 +57,7 @@ describe( module( "Carbon/Messaging/AccessPointCreated" ), ():void => {
 		it( hasProperty(
 			OBLIGATORY,
 			"SCHEMA",
-			"Carbon.ObjectSchema.ObjectSchema"
+			"CarbonLDP.ObjectSchema.ObjectSchema"
 		), ():void => {} );
 
 	} );
@@ -65,7 +65,7 @@ describe( module( "Carbon/Messaging/AccessPointCreated" ), ():void => {
 	describe( property(
 		STATIC,
 		"AccessPointCreated",
-		"Carbon.Messaging.AccessPointCreated.AccessPointCreatedFactory"
+		"CarbonLDP.Messaging.AccessPointCreated.AccessPointCreatedFactory"
 	), ():void => {
 
 		it( isDefined(), ():void => {
@@ -104,7 +104,7 @@ describe( module( "Carbon/Messaging/AccessPointCreated" ), ():void => {
 
 	} );
 
-	it( hasDefaultExport( "Carbon.Messaging.AccessPointCreated.AccessPointCreated" ), ():void => {
+	it( hasDefaultExport( "CarbonLDP.Messaging.AccessPointCreated.AccessPointCreated" ), ():void => {
 		const target:AccessPointCreated = {} as DefaultExport;
 		expect( target ).toBeDefined();
 	} );

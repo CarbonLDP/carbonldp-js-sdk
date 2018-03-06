@@ -24,9 +24,9 @@ import * as ObjectSchema from "./../ObjectSchema";
 
 import DefaultExport, { JSONLDConverter } from "./Converter";
 
-describe( module( "Carbon/JSONLD/Converter" ), ():void => {
+describe( module( "CarbonLDP/JSONLD/Converter" ), ():void => {
 
-	describe( clazz( "Carbon.JSONLD.Converter.JSONLDConverter", "Class that have methods for convert expanded JSON-LD objects to compacted Carbon SDK Resources and vice versa." ), ():void => {
+	describe( clazz( "CarbonLDP.JSONLD.Converter.JSONLDConverter", "Class that have methods for convert expanded JSON-LD objects to compacted Carbon SDK Resources and vice versa." ), ():void => {
 
 		it( isDefined(), ():void => {
 			expect( JSONLDConverter ).toBeDefined();
@@ -35,7 +35,7 @@ describe( module( "Carbon/JSONLD/Converter" ), ():void => {
 
 		// TODO: Separate in different tests
 		it( hasConstructor( [
-			{ name: "literalSerializers", type: "Map<string, Carbon.RDF.Literal.Serializer>", optional: true, description: "A Map object with the data type serializers that the converter will only be able to handle." },
+			{ name: "literalSerializers", type: "Map<string, CarbonLDP.RDF.Literal.Serializer>", optional: true, description: "A Map object with the data type serializers that the converter will only be able to handle." },
 		] ), ():void => {
 			let jsonldConverter:JSONLDConverter;
 
@@ -55,7 +55,7 @@ describe( module( "Carbon/JSONLD/Converter" ), ():void => {
 		it( hasProperty(
 			INSTANCE,
 			"literalSerializers",
-			"Map<string, Carbon.RDF.Literal.Serializer>",
+			"Map<string, CarbonLDP.RDF.Literal.Serializer>",
 			"A Map object with data-type/serializer pairs for stringify the data of a SDK Resource when expanding it."
 		), ():void => {
 			let jsonldConverter:JSONLDConverter;
@@ -80,8 +80,8 @@ describe( module( "Carbon/JSONLD/Converter" ), ():void => {
 				"Assign the data of the expanded JSON-LD object, to the target object in a friendly mode, ie. without the JSON-LD Syntax Tokens and parsed values, in accordance to the schema provided.", [
 					{ name: "expandedObject", type: "Object", description: "The JSON-LD object to compact." },
 					{ name: "targetObject", type: "Object", description: "The target object where will be added the data of the expanded object." },
-					{ name: "digestedSchema", type: "Carbon.ObjectSchema.DigestedObjectSchema", description: "The schema that describes how compact the expanded object." },
-					{ name: "pointerLibrary", type: "Carbon.Pointer.PointerLibrary", description: "An object from where one can obtain pointers to SDK Resources." },
+					{ name: "digestedSchema", type: "CarbonLDP.ObjectSchema.DigestedObjectSchema", description: "The schema that describes how compact the expanded object." },
+					{ name: "pointerLibrary", type: "CarbonLDP.Pointer.PointerLibrary", description: "An object from where one can obtain pointers to SDK Resources." },
 				],
 				{ type: "Object", description: "The compacted target object." }
 			), ():void => {
@@ -264,7 +264,7 @@ describe( module( "Carbon/JSONLD/Converter" ), ():void => {
 			it( hasSignature(
 				"Creates a expanded JSON-LD object from the compacted object in accordance to the schema provided.", [
 					{ name: "compactedObject", type: "Object", description: "The compacted object to generate its expanded JSON-LD object." },
-					{ name: "digestedSchema", type: "Carbon.ObjectSchema.DigestedObjectSchema", description: "The schema that describes how construct the expanded object." },
+					{ name: "digestedSchema", type: "CarbonLDP.ObjectSchema.DigestedObjectSchema", description: "The schema that describes how construct the expanded object." },
 				],
 				{ type: "Object", description: "The expanded JSON-LD object generated." }
 			), ():void => {
@@ -591,7 +591,7 @@ describe( module( "Carbon/JSONLD/Converter" ), ():void => {
 
 	} );
 
-	it( hasDefaultExport( "Carbon.JSONLD.Converter.JSONLDConverter" ), () => {
+	it( hasDefaultExport( "CarbonLDP.JSONLD.Converter.JSONLDConverter" ), () => {
 		expect( DefaultExport ).toBeDefined();
 		expect( JSONLDConverter ).toBe( DefaultExport );
 	} );

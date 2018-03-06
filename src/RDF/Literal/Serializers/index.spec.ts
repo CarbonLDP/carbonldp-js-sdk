@@ -11,7 +11,7 @@ import * as Serializers from "./";
 import * as XSD from "./XSD";
 
 describe( module(
-	"Carbon/RDF/Literal/Serializers"
+	"CarbonLDP/RDF/Literal/Serializers"
 ), ():void => {
 
 	it( isDefined(), ():void => {
@@ -22,7 +22,7 @@ describe( module(
 	it( reexports(
 		STATIC,
 		"XSD",
-		"Carbon/RDF/Literal/Serializers/XSD"
+		"CarbonLDP/RDF/Literal/Serializers/XSD"
 	), ():void => {
 		expect( Serializers.XSD ).toBeDefined();
 		expect( Serializers.XSD ).toBe( XSD );

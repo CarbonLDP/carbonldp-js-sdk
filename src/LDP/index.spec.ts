@@ -19,7 +19,7 @@ import * as RemoveMemberAction from "./RemoveMemberAction";
 import * as ResponseMetadata from "./ResponseMetadata";
 import * as ValidationError from "./ValidationError";
 
-describe( module( "Carbon/LDP" ), ():void => {
+describe( module( "CarbonLDP/LDP" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( LDP ).toBeDefined();
@@ -29,7 +29,7 @@ describe( module( "Carbon/LDP" ), ():void => {
 	it( reexports(
 		STATIC,
 		"AddMemberAction",
-		"Carbon/LDP/AddMemberAction"
+		"CarbonLDP/LDP/AddMemberAction"
 	), ():void => {
 		expect( LDP.AddMemberAction ).toBeDefined();
 		expect( LDP.AddMemberAction ).toBe( AddMemberAction );
@@ -38,7 +38,7 @@ describe( module( "Carbon/LDP" ), ():void => {
 	it( reexports(
 		STATIC,
 		"CarbonMap",
-		"Carbon/LDP/CarbonMap"
+		"CarbonLDP/LDP/CarbonMap"
 	), ():void => {
 		expect( LDP.CarbonMap ).toBeDefined();
 		expect( LDP.CarbonMap ).toBe( CarbonMap );
@@ -47,7 +47,7 @@ describe( module( "Carbon/LDP" ), ():void => {
 	it( reexports(
 		STATIC,
 		"DirectContainer",
-		"Carbon/LDP/DirectContainer"
+		"CarbonLDP/LDP/DirectContainer"
 	), ():void => {
 		expect( LDP.DirectContainer ).toBeDefined();
 		expect( LDP.DirectContainer ).toBe( DirectContainer );
@@ -56,7 +56,7 @@ describe( module( "Carbon/LDP" ), ():void => {
 	it( reexports(
 		STATIC,
 		"CarbonMapEntry",
-		"Carbon/LDP/CarbonMapEntry"
+		"CarbonLDP/LDP/CarbonMapEntry"
 	), ():void => {
 		expect( LDP.CarbonMapEntry ).toBeDefined();
 		expect( LDP.CarbonMapEntry ).toBe( CarbonMapEntry );
@@ -65,7 +65,7 @@ describe( module( "Carbon/LDP" ), ():void => {
 	it( reexports(
 		STATIC,
 		"CarbonError",
-		"Carbon/LDP/CarbonError"
+		"CarbonLDP/LDP/CarbonError"
 	), ():void => {
 		expect( LDP.CarbonError ).toBeDefined();
 		expect( LDP.CarbonError ).toBe( CarbonError );
@@ -74,7 +74,7 @@ describe( module( "Carbon/LDP" ), ():void => {
 	it( reexports(
 		STATIC,
 		"RemoveMemberAction",
-		"Carbon/LDP/RemoveMemberAction"
+		"CarbonLDP/LDP/RemoveMemberAction"
 	), ():void => {
 		expect( LDP.RemoveMemberAction ).toBeDefined();
 		expect( LDP.RemoveMemberAction ).toBe( RemoveMemberAction );
@@ -83,7 +83,7 @@ describe( module( "Carbon/LDP" ), ():void => {
 	it( reexports(
 		STATIC,
 		"ErrorResponse",
-		"Carbon/LDP/ErrorResponse"
+		"CarbonLDP/LDP/ErrorResponse"
 	), ():void => {
 		expect( LDP.ErrorResponse ).toBeDefined();
 		expect( LDP.ErrorResponse ).toBe( ErrorResponse );
@@ -92,7 +92,7 @@ describe( module( "Carbon/LDP" ), ():void => {
 	it( reexports(
 		STATIC,
 		"ResponseMetadata",
-		"Carbon/LDP/ResponseMetadata"
+		"CarbonLDP/LDP/ResponseMetadata"
 	), ():void => {
 		expect( LDP.ResponseMetadata ).toBeDefined();
 		expect( LDP.ResponseMetadata ).toBe( ResponseMetadata );
@@ -101,7 +101,7 @@ describe( module( "Carbon/LDP" ), ():void => {
 	it( reexports(
 		STATIC,
 		"DocumentMetadata",
-		"Carbon/LDP/DocumentMetadata"
+		"CarbonLDP/LDP/DocumentMetadata"
 	), ():void => {
 		expect( LDP.DocumentMetadata ).toBeDefined();
 		expect( LDP.DocumentMetadata ).toBe( DocumentMetadata );
@@ -110,7 +110,7 @@ describe( module( "Carbon/LDP" ), ():void => {
 	it( reexports(
 		STATIC,
 		"ValidationError",
-		"Carbon/LDP/ValidationError"
+		"CarbonLDP/LDP/ValidationError"
 	), ():void => {
 		expect( LDP.ValidationError ).toBeDefined();
 		expect( LDP.ValidationError ).toBe( ValidationError );

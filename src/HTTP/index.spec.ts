@@ -17,7 +17,7 @@ import * as Response from "./Response";
 import StatusCode from "./StatusCode";
 import * as StringParser from "./StringParser";
 
-describe( module( "Carbon/HTTP" ), ():void => {
+describe( module( "CarbonLDP/HTTP" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( HTTP ).toBeDefined();
@@ -27,7 +27,7 @@ describe( module( "Carbon/HTTP" ), ():void => {
 	it( reexports(
 		STATIC,
 		"Errors",
-		"Carbon/HTTP/Errors"
+		"CarbonLDP/HTTP/Errors"
 	), ():void => {
 		expect( HTTP.Errors ).toBeDefined();
 		expect( HTTP.Errors ).toBe( Errors );
@@ -36,7 +36,7 @@ describe( module( "Carbon/HTTP" ), ():void => {
 	it( reexports(
 		STATIC,
 		"Header",
-		"Carbon/HTTP/Header"
+		"CarbonLDP/HTTP/Header"
 	), ():void => {
 		expect( HTTP.Header ).toBeDefined();
 		expect( HTTP.Header ).toBe( Header );
@@ -45,7 +45,7 @@ describe( module( "Carbon/HTTP" ), ():void => {
 	it( reexports(
 		STATIC,
 		"JSONParser",
-		"Carbon/HTTP/JSONParser"
+		"CarbonLDP/HTTP/JSONParser"
 	), ():void => {
 		expect( HTTP.JSONParser ).toBeDefined();
 		expect( HTTP.JSONParser ).toBe( JSONParser );
@@ -54,7 +54,7 @@ describe( module( "Carbon/HTTP" ), ():void => {
 	it( reexports(
 		STATIC,
 		"HTTPMethod",
-		"Carbon.HTTP.HTTPMethod.HTTPMethod"
+		"CarbonLDP.HTTP.HTTPMethod.HTTPMethod"
 	), ():void => {
 		expect( HTTP.HTTPMethod ).toBeDefined();
 		expect( HTTP.HTTPMethod ).toBe( HTTPMethod );
@@ -63,7 +63,7 @@ describe( module( "Carbon/HTTP" ), ():void => {
 	it( reexports(
 		STATIC,
 		"Parser",
-		"Carbon/HTTP/Parser"
+		"CarbonLDP/HTTP/Parser"
 	), ():void => {
 		expect( HTTP.Parser ).toBeDefined();
 		expect( HTTP.Parser ).toBe( Parser );
@@ -72,7 +72,7 @@ describe( module( "Carbon/HTTP" ), ():void => {
 	it( reexports(
 		STATIC,
 		"Request",
-		"Carbon/HTTP/Request"
+		"CarbonLDP/HTTP/Request"
 	), ():void => {
 		expect( HTTP.Request ).toBeDefined();
 		expect( HTTP.Request ).toBe( Request );
@@ -81,7 +81,7 @@ describe( module( "Carbon/HTTP" ), ():void => {
 	it( reexports(
 		STATIC,
 		"Response",
-		"Carbon/HTTP/Response"
+		"CarbonLDP/HTTP/Response"
 	), ():void => {
 		expect( Response ).toBeDefined();
 		expect( Response ).toBe( Response );
@@ -90,7 +90,7 @@ describe( module( "Carbon/HTTP" ), ():void => {
 	it( reexports(
 		STATIC,
 		"StatusCode",
-		"Carbon.HTTP.StatusCode.StatusCode"
+		"CarbonLDP.HTTP.StatusCode.StatusCode"
 	), ():void => {
 		expect( HTTP.StatusCode ).toBeDefined();
 		expect( HTTP.StatusCode ).toBe( StatusCode );
@@ -99,7 +99,7 @@ describe( module( "Carbon/HTTP" ), ():void => {
 	it( reexports(
 		STATIC,
 		"StringParser",
-		"Carbon/HTTP/StringParser"
+		"CarbonLDP/HTTP/StringParser"
 	), ():void => {
 		expect( HTTP.StringParser ).toBeDefined();
 		expect( HTTP.StringParser ).toBe( StringParser );

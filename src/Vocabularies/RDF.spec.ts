@@ -7,9 +7,9 @@ import {
 
 import { RDF } from "./RDF";
 
-describe( module( "Carbon/Vocabularies/RDF" ), ():void => {
+describe( module( "CarbonLDP/Vocabularies/RDF" ), ():void => {
 
-	describe( namespaze( "Carbon.Vocabularies.RDF", "Vocabulary defined in the RDF Syntax Specification." ), ():void => {
+	describe( namespaze( "CarbonLDP.Vocabularies.RDF", "Vocabulary defined in the RDF Syntax Specification." ), ():void => {
 
 		it( "should exists", ():void => {
 			expect( RDF ).toBeDefined();

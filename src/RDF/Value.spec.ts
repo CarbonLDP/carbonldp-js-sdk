@@ -21,10 +21,10 @@ import * as Utils from "./../Utils";
 
 import DefaultExport, { RDFValue } from "./Value";
 
-describe( module( "Carbon/RDF/Value" ), ():void => {
+describe( module( "CarbonLDP/RDF/Value" ), ():void => {
 
 	describe( interfaze(
-		"Carbon.RDF.Value.RDFValue",
+		"CarbonLDP.RDF.Value.RDFValue",
 		"Interface that represents an `rdf:Value`."
 	), ():void => {
 
@@ -51,7 +51,7 @@ describe( module( "Carbon/RDF/Value" ), ():void => {
 
 	} );
 
-	it( hasDefaultExport( "Carbon.RDF.Value.RDFValue" ), ():void => {
+	it( hasDefaultExport( "CarbonLDP.RDF.Value.RDFValue" ), ():void => {
 		let defaultExport:DefaultExport = <any> {};
 		let defaultTarget:RDFValue;
 
@@ -60,8 +60,8 @@ describe( module( "Carbon/RDF/Value" ), ():void => {
 	} );
 
 	describe( interfaze(
-		"Carbon.RDF.Value.RDFValueFactory",
-		"Interface with the utils for `Carbon.RDF.Value.RDFValue` objects."
+		"CarbonLDP.RDF.Value.RDFValueFactory",
+		"Interface with the utils for `CarbonLDP.RDF.Value.RDFValue` objects."
 	), ():void => {
 
 		it( hasMethod(
@@ -69,8 +69,8 @@ describe( module( "Carbon/RDF/Value" ), ():void => {
 			"parse",
 			"Returns the parsed object from an Literal, Node, or List.\n" +
 			"Returns null if it cannot be parsed", [
-				{ name: "pointerLibrary", type: "Carbon.Pointer.PointerLibrary" },
-				{ name: "value", type: "Carbon.RDF.Literal.RDFLiteral | Carbon.RDF.Node.RDFNode | Carbon.RDF.List.RDFList | Carbon.RDF.Value.RDFValue | string" },
+				{ name: "pointerLibrary", type: "CarbonLDP.Pointer.PointerLibrary" },
+				{ name: "value", type: "CarbonLDP.RDF.Literal.RDFLiteral | CarbonLDP.RDF.Node.RDFNode | CarbonLDP.RDF.List.RDFList | CarbonLDP.RDF.Value.RDFValue | string" },
 			],
 			{ type: "any" }
 		), ():void => {} );
@@ -80,8 +80,8 @@ describe( module( "Carbon/RDF/Value" ), ():void => {
 	describe( property(
 		STATIC,
 		"RDFValue",
-		"Carbon.RDF.Value.RDFValueFactory",
-		"Class with useful functions to manage `Carbon.RDF.Value.RDFValue` objects."
+		"CarbonLDP.RDF.Value.RDFValueFactory",
+		"Class with useful functions to manage `CarbonLDP.RDF.Value.RDFValue` objects."
 	), ():void => {
 
 		let expandedObject:any;

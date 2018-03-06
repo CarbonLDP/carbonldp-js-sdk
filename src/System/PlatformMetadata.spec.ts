@@ -15,14 +15,14 @@ import * as Utils from "./../Utils";
 
 import DefaultExport, { PlatformMetadata } from "./PlatformMetadata";
 
-describe( module( "Carbon/System/PlatformMetadata" ), ():void => {
+describe( module( "CarbonLDP/System/PlatformMetadata" ), ():void => {
 
 	describe( interfaze(
-		"Carbon.System.PlatformMetadata.PlatformMetadata",
+		"CarbonLDP.System.PlatformMetadata.PlatformMetadata",
 		"Interface that represents a requested API description of the Carbon LDP Platform configured."
 	), ():void => {
 
-		it( extendsClass( "Carbon.LDP.VolatileResource.VolatileResource" ), ():void => {
+		it( extendsClass( "CarbonLDP.LDP.VolatileResource.VolatileResource" ), ():void => {
 			const instanceMetadata:PlatformMetadata = <any> {};
 			const volatileResource:VolatileResource = instanceMetadata;
 
@@ -47,8 +47,8 @@ describe( module( "Carbon/System/PlatformMetadata" ), ():void => {
 	} );
 
 	describe( interfaze(
-		"Carbon.System.PlatformMetadata.PlatformMetadataFactory",
-		"Interface with the factory, decorate and utils elements for `Carbon.System.PlatformMetadata.PlatformMetadata` objects."
+		"CarbonLDP.System.PlatformMetadata.PlatformMetadataFactory",
+		"Interface with the factory, decorate and utils elements for `CarbonLDP.System.PlatformMetadata.PlatformMetadata` objects."
 	), ():void => {
 
 		it( hasProperty(
@@ -60,7 +60,7 @@ describe( module( "Carbon/System/PlatformMetadata" ), ():void => {
 		it( hasProperty(
 			OBLIGATORY,
 			"SCHEMA",
-			"Carbon.ObjectSchema.ObjectSchema"
+			"CarbonLDP.ObjectSchema.ObjectSchema"
 		), ():void => {} );
 
 	} );
@@ -68,7 +68,7 @@ describe( module( "Carbon/System/PlatformMetadata" ), ():void => {
 	describe( property(
 		STATIC,
 		"PlatformMetadata",
-		"Carbon.System.PlatformMetadata.PlatformMetadataFactory"
+		"CarbonLDP.System.PlatformMetadata.PlatformMetadataFactory"
 	), ():void => {
 
 		it( "should exist", ():void => {
@@ -106,7 +106,7 @@ describe( module( "Carbon/System/PlatformMetadata" ), ():void => {
 
 	} );
 
-	it( hasDefaultExport( "Carbon.System.PlatformMetadata.PlatformMetadata" ), ():void => {
+	it( hasDefaultExport( "CarbonLDP.System.PlatformMetadata.PlatformMetadata" ), ():void => {
 		let defaultExport:DefaultExport = <any> {};
 		let defaultTarget:PlatformMetadata;
 

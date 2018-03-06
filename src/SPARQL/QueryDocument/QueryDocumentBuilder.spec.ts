@@ -42,19 +42,19 @@ import * as QueryValueModule from "./QueryValue";
 import { QueryValue } from "./QueryValue";
 import { QueryVariable } from "./QueryVariable";
 
-describe( module( "Carbon/SPARQL/QueryDocument/QueryDocumentBuilder" ), ():void => {
+describe( module( "CarbonLDP/SPARQL/QueryDocument/QueryDocumentBuilder" ), ():void => {
 
 	it( "should exists", ():void => {
 		expect( Module ).toBeDefined();
 		expect( Module ).toEqual( jasmine.any( Object ) );
 	} );
 
-	it( hasDefaultExport( "Carbon.SPARQL.QueryDocument.QueryDocumentBuilder.QueryDocumentBuilder" ), ():void => {
+	it( hasDefaultExport( "CarbonLDP.SPARQL.QueryDocument.QueryDocumentBuilder.QueryDocumentBuilder" ), ():void => {
 		expect( DefaultExport ).toBeDefined();
 		expect( DefaultExport ).toBe( QueryDocumentBuilder );
 	} );
 
-	describe( clazz( "Carbon.SPARQL.QueryDocument.QueryDocumentBuilder.QueryDocumentBuilder", "Class with the helpers and properties for construct a query document" ), ():void => {
+	describe( clazz( "CarbonLDP.SPARQL.QueryDocument.QueryDocumentBuilder.QueryDocumentBuilder", "Class with the helpers and properties for construct a query document" ), ():void => {
 
 		it( "should exists", ():void => {
 			expect( QueryDocumentBuilder ).toBeDefined();
@@ -166,7 +166,7 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryDocumentBuilder" ), ():void 
 				[
 					{ name: "name", type: "string", optional: true, description: "Optional name of the property to look for." },
 				],
-				{ type: "Carbon.SPARQL.QueryDocument.QueryProperty.QueryProperty" }
+				{ type: "CarbonLDP.SPARQL.QueryDocument.QueryProperty.QueryProperty" }
 			), ():void => {
 			} );
 
@@ -227,7 +227,7 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryDocumentBuilder" ), ():void 
 				[
 					{ name: "value", type: "string | number | boolean | Date", description: "Value to be converted in a safe to use in query object." },
 				],
-				{ type: "Carbon.SPARQL.QueryDocument.QueryValue.QueryValue" }
+				{ type: "CarbonLDP.SPARQL.QueryDocument.QueryValue.QueryValue" }
 			), ():void => {
 			} );
 
@@ -269,9 +269,9 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryDocumentBuilder" ), ():void 
 			it( hasSignature(
 				"Wraps a pointer or URi to be used correctly in the query filters and values.",
 				[
-					{ name: "value", type: "Carbon.Pointer.Pointer | string", description: "Pointer or URI to be converted in a safe to use in query object." },
+					{ name: "value", type: "CarbonLDP.Pointer.Pointer | string", description: "Pointer or URI to be converted in a safe to use in query object." },
 				],
-				{ type: "Carbon.SPARQL.QueryDocument.QueryObject.QueryObject" }
+				{ type: "CarbonLDP.SPARQL.QueryDocument.QueryObject.QueryObject" }
 			), ():void => {
 			} );
 
@@ -413,7 +413,7 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryDocumentBuilder" ), ():void 
 			it( hasSignature(
 				"Method that allows to specify the property to be retrieved the the target document",
 				[
-					{ name: "propertiesSchema", type: "Carbon.SPARQL.QueryDocument.QuerySchema.QuerySchema", description: "Similar as an schema object, but this specifies the properties to be retrieved." },
+					{ name: "propertiesSchema", type: "CarbonLDP.SPARQL.QueryDocument.QuerySchema.QuerySchema", description: "Similar as an schema object, but this specifies the properties to be retrieved." },
 				],
 				{ type: "this" }
 			), ():void => {
@@ -586,7 +586,7 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryDocumentBuilder" ), ():void 
 				"Adds a filter to the specific values of the property where the query is been applied.\n" +
 				"NOTE: Using this function makes all the properties in the path of the one's applied, will be obligatory to exists.",
 				[
-					{ name: "...values", type: "(Carbon.SPARQL.QueryDocument.QueryValue.QueryValue | Carbon.SPARQL.QueryDocument.QueryObject.QueryObject)[]", description: "Values the property must have so that the document would be returned." },
+					{ name: "...values", type: "(CarbonLDP.SPARQL.QueryDocument.QueryValue.QueryValue | CarbonLDP.SPARQL.QueryDocument.QueryObject.QueryObject)[]", description: "Values the property must have so that the document would be returned." },
 				],
 				{ type: "this" }
 			), ():void => {

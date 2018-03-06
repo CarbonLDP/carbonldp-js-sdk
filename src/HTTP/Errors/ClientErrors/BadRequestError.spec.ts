@@ -19,7 +19,7 @@ import { HTTPError } from "./../HTTPError";
 import * as BadRequestError from "./BadRequestError";
 import DefaultExport from "./BadRequestError";
 
-describe( module( "Carbon/HTTP/Errors/ClientErrors/BadRequestError" ), ():void => {
+describe( module( "CarbonLDP/HTTP/Errors/ClientErrors/BadRequestError" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( BadRequestError ).toBeDefined();
@@ -27,7 +27,7 @@ describe( module( "Carbon/HTTP/Errors/ClientErrors/BadRequestError" ), ():void =
 	} );
 
 	describe( clazz(
-		"Carbon.HTTP.Errors.BadRequestError",
+		"CarbonLDP.HTTP.Errors.BadRequestError",
 		"Error class to indicate that a malformed request has been sent."
 	), ():void => {
 
@@ -57,7 +57,7 @@ describe( module( "Carbon/HTTP/Errors/ClientErrors/BadRequestError" ), ():void =
 		} );
 
 		it( extendsClass(
-			"Carbon.HTTP.Errors.HTTPError"
+			"CarbonLDP.HTTP.Errors.HTTPError"
 		), ():void => {
 			let error:BadRequestError.BadRequestError = new BadRequestError.BadRequestError( "Message of the error", response );
 
@@ -102,7 +102,7 @@ describe( module( "Carbon/HTTP/Errors/ClientErrors/BadRequestError" ), ():void =
 
 	} );
 
-	it( hasDefaultExport( "Carbon.HTTP.Errors.BadRequestError" ), ():void => {
+	it( hasDefaultExport( "CarbonLDP.HTTP.Errors.BadRequestError" ), ():void => {
 		expect( DefaultExport ).toBeDefined();
 		expect( DefaultExport ).toBe( BadRequestError.BadRequestError );
 	} );

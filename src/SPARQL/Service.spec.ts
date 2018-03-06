@@ -25,13 +25,13 @@ import { SPARQLSelectResults } from "./SelectResults";
 import * as Service from "./Service";
 import DefaultExport from "./Service";
 
-describe( module( "Carbon/SPARQL/Service" ), ():void => {
+describe( module( "CarbonLDP/SPARQL/Service" ), ():void => {
 	it( isDefined(), ():void => {
 		expect( Service ).toBeDefined();
 		expect( Utils.isObject( Service ) ).toEqual( true );
 	} );
 
-	describe( clazz( "Carbon.SPARQL.Service.SPARQLService", "Executes SPARQL queries and updates." ), ():void => {
+	describe( clazz( "CarbonLDP.SPARQL.Service.SPARQLService", "Executes SPARQL queries and updates." ), ():void => {
 
 		beforeEach( function():void {
 			jasmine.Ajax.install();
@@ -49,8 +49,8 @@ describe( module( "Carbon/SPARQL/Service" ), ():void => {
 		it( hasMethod( STATIC, "executeRawASKQuery", "Executes an ASK Query and returns a raw application/sparql-results+json object.", [
 			{ name: "url", type: "string" },
 			{ name: "askQuery", type: "string" },
-			{ name: "requestOptions", type: "Carbon.HTTP.Request.RequestOptions", optional: true },
-		], { type: "Promise<[ Carbon.SPARQL.RawResults.SPARQLRawResults, Carbon.HTTP.Response.Response ]>" } ), ( done:{ ():void; fail:( error:any ) => void } ):void => {
+			{ name: "requestOptions", type: "CarbonLDP.HTTP.Request.RequestOptions", optional: true },
+		], { type: "Promise<[ CarbonLDP.SPARQL.RawResults.SPARQLRawResults, CarbonLDP.HTTP.Response.Response ]>" } ), ( done:{ ():void; fail:( error:any ) => void } ):void => {
 			// Property Integrity
 			(() => {
 				expect( "executeRawASKQuery" in Service.SPARQLService ).toEqual( true );
@@ -99,8 +99,8 @@ describe( module( "Carbon/SPARQL/Service" ), ():void => {
 		it( hasMethod( STATIC, "executeASKQuery", "Executes an ASK Query and returns a boolean.", [
 			{ name: "url", type: "string" },
 			{ name: "askQuery", type: "string" },
-			{ name: "requestOptions", type: "Carbon.HTTP.Request.RequestOptions", optional: true },
-		], { type: "Promise<[ boolean, Carbon.HTTP.Response.Response ]>" } ), ( done:{ ():void; fail:( error:any ) => void } ):void => {
+			{ name: "requestOptions", type: "CarbonLDP.HTTP.Request.RequestOptions", optional: true },
+		], { type: "Promise<[ boolean, CarbonLDP.HTTP.Response.Response ]>" } ), ( done:{ ():void; fail:( error:any ) => void } ):void => {
 			// Property Integrity
 			(() => {
 				expect( "executeASKQuery" in Service.SPARQLService ).toEqual( true );
@@ -146,10 +146,10 @@ describe( module( "Carbon/SPARQL/Service" ), ():void => {
 			"Executes a SELECT Query and parses the results.", [
 				{ name: "url", type: "string" },
 				{ name: "selectQuery", type: "string" },
-				{ name: "pointerLibrary", type: "Carbon.Pointer.PointerLibrary" },
-				{ name: "requestOptions", type: "Carbon.HTTP.Request.RequestOptions", optional: true },
+				{ name: "pointerLibrary", type: "CarbonLDP.Pointer.PointerLibrary" },
+				{ name: "requestOptions", type: "CarbonLDP.HTTP.Request.RequestOptions", optional: true },
 			],
-			{ type: "Promise<[ Carbon.SPARQL.SelectResults.SPARQLSelectResults<T>, Carbon.HTTP.Response.Response ]>" }
+			{ type: "Promise<[ CarbonLDP.SPARQL.SelectResults.SPARQLSelectResults<T>, CarbonLDP.HTTP.Response.Response ]>" }
 		), ( done:{ ():void; fail:( error:any ) => void } ):void => {
 			// Property Integrity
 			(() => {
@@ -324,8 +324,8 @@ describe( module( "Carbon/SPARQL/Service" ), ():void => {
 		it( hasMethod( STATIC, "executeRawSELECTQuery", "Executes a SELECT Query and returns a raw application/sparql-results+json object.", [
 			{ name: "url", type: "string" },
 			{ name: "selectQuery", type: "string" },
-			{ name: "requestOptions", type: "Carbon.HTTP.Request.RequestOptions", optional: true },
-		], { type: "Promise<[ Carbon.SPARQL.RawResults.SPARQLRawResults, Carbon.HTTP.Response.Response ]>" } ), ( done:{ ():void; fail:( error:any ) => void } ):void => {
+			{ name: "requestOptions", type: "CarbonLDP.HTTP.Request.RequestOptions", optional: true },
+		], { type: "Promise<[ CarbonLDP.SPARQL.RawResults.SPARQLRawResults, CarbonLDP.HTTP.Response.Response ]>" } ), ( done:{ ():void; fail:( error:any ) => void } ):void => {
 			// Property Integrity
 			(() => {
 				expect( "executeRawSELECTQuery" in Service.SPARQLService ).toEqual( true );
@@ -471,8 +471,8 @@ describe( module( "Carbon/SPARQL/Service" ), ():void => {
 		it( hasMethod( STATIC, "executeRawCONSTRUCTQuery", "Executes a CONSTRUCT Query and returns a string with the resulting model.", [
 			{ name: "url", type: "string" },
 			{ name: "constructQuery", type: "string" },
-			{ name: "requestOptions", type: "Carbon.HTTP.Request.RequestOptions", optional: true },
-		], { type: "Promise<[ string, Carbon.HTTP.Response.Response ]>" } ), ( done:{ ():void; fail:( error:any ) => void } ):void => {
+			{ name: "requestOptions", type: "CarbonLDP.HTTP.Request.RequestOptions", optional: true },
+		], { type: "Promise<[ string, CarbonLDP.HTTP.Response.Response ]>" } ), ( done:{ ():void; fail:( error:any ) => void } ):void => {
 			// Property Integrity
 			(() => {
 				expect( "executeRawCONSTRUCTQuery" in Service.SPARQLService ).toEqual( true );
@@ -568,8 +568,8 @@ describe( module( "Carbon/SPARQL/Service" ), ():void => {
 		it( hasMethod( STATIC, "executeRawDESCRIBEQuery", "Executes a DESCRIBE Query and returns a string with the resulting model.", [
 			{ name: "url", type: "string" },
 			{ name: "describeQuery", type: "string" },
-			{ name: "requestOptions", type: "Carbon.HTTP.Request.RequestOptions", optional: true },
-		], { type: "Promise<[ string, Carbon.HTTP.Response.Response ]>" } ), ( done:{ ():void; fail:( error:any ) => void } ):void => {
+			{ name: "requestOptions", type: "CarbonLDP.HTTP.Request.RequestOptions", optional: true },
+		], { type: "Promise<[ string, CarbonLDP.HTTP.Response.Response ]>" } ), ( done:{ ():void; fail:( error:any ) => void } ):void => {
 			// Property Integrity
 			(() => {
 				expect( "executeRawDESCRIBEQuery" in Service.SPARQLService ).toEqual( true );
@@ -667,9 +667,9 @@ describe( module( "Carbon/SPARQL/Service" ), ():void => {
 			"executeUPDATE", "Executes an UPDATE query.", [
 				{ name: "url", type: "string" },
 				{ name: "update", type: "string" },
-				{ name: "requestOptions", type: "Carbon.HTTP.Request.RequestOptions", optional: true },
+				{ name: "requestOptions", type: "CarbonLDP.HTTP.Request.RequestOptions", optional: true },
 			],
-			{ type: "Promise<Carbon.HTTP.Response.Response>" }
+			{ type: "Promise<CarbonLDP.HTTP.Response.Response>" }
 		), ( done:{ ():void; fail:( error:any ) => void } ):void => {
 			// Property Integrity
 			(() => {
@@ -741,7 +741,7 @@ describe( module( "Carbon/SPARQL/Service" ), ():void => {
 
 	} );
 
-	it( hasDefaultExport( "Carbon.SPARQL.Service.SPARQLService" ), ():void => {
+	it( hasDefaultExport( "CarbonLDP.SPARQL.Service.SPARQLService" ), ():void => {
 		expect( DefaultExport ).toBeDefined();
 		expect( DefaultExport ).toBe( Service.SPARQLService );
 	} );

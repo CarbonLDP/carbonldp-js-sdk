@@ -31,7 +31,7 @@ function createProperty( values:Partial<ObjectSchema.DigestedObjectSchemaPropert
 }
 
 
-describe( module( "Carbon/ObjectSchema" ), ():void => {
+describe( module( "CarbonLDP/ObjectSchema" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( ObjectSchema ).toBeDefined();
@@ -39,7 +39,7 @@ describe( module( "Carbon/ObjectSchema" ), ():void => {
 	} );
 
 	describe( interfaze(
-		"Carbon.ObjectSchema.ObjectSchema",
+		"CarbonLDP.ObjectSchema.ObjectSchema",
 		"Interface that represents an schema based in the [JSONLD contexts](https://www.w3.org/TR/json-ld/#the-context). This is used to convert from the JSONLD stored in the server to the Documents used in the SDK and vice versa."
 	), ():void => {
 
@@ -81,14 +81,14 @@ describe( module( "Carbon/ObjectSchema" ), ():void => {
 		it( hasProperty(
 			OBLIGATORY,
 			"[ name:string ]",
-			"(string | Carbon.ObjectSchema.ObjectSchemaProperty)",
-			"This index can be interpreted in two forms:\n- As a prefix: When the value is as string. The name is taken a a prefix and the string value must be an absolute URI.\n- As a property: When the value is of type `Carbon.ObjectSchema.ObjectSchemaProperty`. The name is taken as the name of the property."
+			"(string | CarbonLDP.ObjectSchema.ObjectSchemaProperty)",
+			"This index can be interpreted in two forms:\n- As a prefix: When the value is as string. The name is taken a a prefix and the string value must be an absolute URI.\n- As a property: When the value is of type `CarbonLDP.ObjectSchema.ObjectSchemaProperty`. The name is taken as the name of the property."
 		), ():void => {} );
 
 	} );
 
 	describe( interfaze(
-		"Carbon.ObjectSchema.ObjectSchemaProperty",
+		"CarbonLDP.ObjectSchema.ObjectSchemaProperty",
 		"Interface that defines the property of a schema."
 	), ():void => {
 
@@ -123,7 +123,7 @@ describe( module( "Carbon/ObjectSchema" ), ():void => {
 	} );
 
 	describe( interfaze(
-		"Carbon.ObjectSchema.ObjectSchemaResolver",
+		"CarbonLDP.ObjectSchema.ObjectSchemaResolver",
 		"Interface that defines the methods needed for an element that can provide object schemas."
 	), ():void => {
 
@@ -131,7 +131,7 @@ describe( module( "Carbon/ObjectSchema" ), ():void => {
 			OPTIONAL,
 			"getGeneralSchema",
 			"Returns the general object schema that applies to all the objects.",
-			{ type: "Carbon.ObjectSchema.DigestedObjectSchema" }
+			{ type: "CarbonLDP.ObjectSchema.DigestedObjectSchema" }
 		), ():void => {} );
 
 		it( hasMethod(
@@ -140,13 +140,13 @@ describe( module( "Carbon/ObjectSchema" ), ():void => {
 			"Returns the specific object schema that applies to the object provided.", [
 				{ name: "object", type: "object", description: "The object to look for its schema." },
 			],
-			{ type: "Carbon.ObjectSchema.DigestedObjectSchema" }
+			{ type: "CarbonLDP.ObjectSchema.DigestedObjectSchema" }
 		), ():void => {} );
 
 	} );
 
 	describe( enumeration(
-		"Carbon.ObjectSchema.ContainerType",
+		"CarbonLDP.ObjectSchema.ContainerType",
 		"Enum for the types that a container can be."
 	), ():void => {
 
@@ -175,7 +175,7 @@ describe( module( "Carbon/ObjectSchema" ), ():void => {
 
 	} );
 
-	describe( clazz( "Carbon.ObjectSchema.DigestedObjectSchema", "Class of a standardized Schema that is used for the SDK for compact and expand JSON-LD objects and Carbon Resources." ), ():void => {
+	describe( clazz( "CarbonLDP.ObjectSchema.DigestedObjectSchema", "Class of a standardized Schema that is used for the SDK for compact and expand JSON-LD objects and Carbon Resources." ), ():void => {
 
 		it( "should exists", ():void => {
 			expect( ObjectSchema.DigestedObjectSchema ).toBeDefined();
@@ -238,7 +238,7 @@ describe( module( "Carbon/ObjectSchema" ), ():void => {
 		it( hasProperty(
 			INSTANCE,
 			"properties",
-			"Map<string, Carbon.ObjectSchema.DigestedObjectSchemaProperty>",
+			"Map<string, CarbonLDP.ObjectSchema.DigestedObjectSchemaProperty>",
 			"Map that contains the definitions of the properties in the schema."
 		), ():void => {
 			const digestedSchema:ObjectSchema.DigestedObjectSchema = createSchema();
@@ -249,7 +249,7 @@ describe( module( "Carbon/ObjectSchema" ), ():void => {
 
 	} );
 
-	describe( clazz( "Carbon.ObjectSchema.DigestedObjectSchemaProperty", "Class for standardized object properties of a schema." ), ():void => {
+	describe( clazz( "CarbonLDP.ObjectSchema.DigestedObjectSchemaProperty", "Class for standardized object properties of a schema." ), ():void => {
 
 		it( isDefined(), ():void => {
 			expect( ObjectSchema.DigestedObjectSchemaProperty ).toBeDefined();
@@ -310,7 +310,7 @@ describe( module( "Carbon/ObjectSchema" ), ():void => {
 		it( hasProperty(
 			INSTANCE,
 			"containerType",
-			"Carbon.ObjectSchema.ContainerType",
+			"CarbonLDP.ObjectSchema.ContainerType",
 			"The type of container the property is. It's `null` if the property is no container type."
 		), ():void => {
 			expect( digestedProperty.containerType ).toBeDefined();
@@ -319,22 +319,22 @@ describe( module( "Carbon/ObjectSchema" ), ():void => {
 
 	} );
 
-	describe( clazz( "Carbon.ObjectSchema.ObjectSchemaDigester", "Class with functions to standardize a JSON-LD Context Schema." ), ():void => {
+	describe( clazz( "CarbonLDP.ObjectSchema.ObjectSchemaDigester", "Class with functions to standardize a JSON-LD Context Schema." ), ():void => {
 
 		describe( method( STATIC, "digestSchema" ), ():void => {
 
 			it( hasSignature(
 				"Processes a schema to standardize it before using it.", [
-					{ name: "schema", type: "Carbon.ObjectSchema.ObjectSchema" },
+					{ name: "schema", type: "CarbonLDP.ObjectSchema.ObjectSchema" },
 				],
-				{ type: "Carbon.ObjectSchema.DigestedObjectSchema" }
+				{ type: "CarbonLDP.ObjectSchema.DigestedObjectSchema" }
 			), ():void => {} );
 
 			it( hasSignature(
 				"Processes several schemas to standardize and combine them before using them.", [
-					{ name: "schemas", type: "Array<Carbon.ObjectSchema.ObjectSchema>" },
+					{ name: "schemas", type: "Array<CarbonLDP.ObjectSchema.ObjectSchema>" },
 				],
-				{ type: "Carbon.ObjectSchema.DigestedObjectSchema" }
+				{ type: "CarbonLDP.ObjectSchema.DigestedObjectSchema" }
 			), ():void => {} );
 
 			it( "should exists", ():void => {
@@ -507,9 +507,9 @@ describe( module( "Carbon/ObjectSchema" ), ():void => {
 			it( hasSignature(
 				"Process an schema property definition before using it.", [
 					{ name: "name", type: "string" },
-					{ name: "definition", type: "Carbon.ObjectSchema.ObjectSchemaProperty" },
+					{ name: "definition", type: "CarbonLDP.ObjectSchema.ObjectSchemaProperty" },
 				],
-				{ type: "Carbon.ObjectSchema.DigestedObjectSchemaProperty" }
+				{ type: "CarbonLDP.ObjectSchema.DigestedObjectSchemaProperty" }
 			), ():void => {} );
 
 			it( "should exists", ():void => {
@@ -615,9 +615,9 @@ describe( module( "Carbon/ObjectSchema" ), ():void => {
 
 			it( hasSignature(
 				"Combine several standardized schemas into one.", [
-					{ name: "digestedSchemas", type: "Carbon.ObjectSchema.DigestedObjectSchema[]" },
+					{ name: "digestedSchemas", type: "CarbonLDP.ObjectSchema.DigestedObjectSchema[]" },
 				],
-				{ type: "Carbon.ObjectSchema.DigestedObjectSchema" }
+				{ type: "CarbonLDP.ObjectSchema.DigestedObjectSchema" }
 			), ():void => {} );
 
 			it( "should exists", ():void => {
@@ -723,7 +723,7 @@ describe( module( "Carbon/ObjectSchema" ), ():void => {
 
 	} );
 
-	describe( clazz( "Carbon.ObjectSchema.ObjectSchemaUtils", "Class with useful functions that use schemas." ), ():void => {
+	describe( clazz( "CarbonLDP.ObjectSchema.ObjectSchemaUtils", "Class with useful functions that use schemas." ), ():void => {
 
 		it( isDefined(), ():void => {
 			expect( ObjectSchema.ObjectSchemaUtils ).toBeDefined();
@@ -735,7 +735,7 @@ describe( module( "Carbon/ObjectSchema" ), ():void => {
 			it( hasSignature(
 				"Tries to resolve a non absolute URI using the schema and the configuration provided.", [
 					{ name: "uri", type: "string", description: "The URI to ve resolved." },
-					{ name: "schema", type: "Carbon.ObjectSchema.DigestedObjectSchema", description: "The schema where to find the prefixes or the default vocabulary to utilize." },
+					{ name: "schema", type: "CarbonLDP.ObjectSchema.DigestedObjectSchema", description: "The schema where to find the prefixes or the default vocabulary to utilize." },
 					{ name: "relativeTo", type: "{ vocab?:boolean, base?:boolean }", optional: true, description: "An additional configuration object to specify the resolution mode of a relative URI, where the vocab takes priority before the base." },
 				],
 				{ type: "string", description: "The resolved absolute URI." } ), ():void => {
@@ -860,7 +860,7 @@ describe( module( "Carbon/ObjectSchema" ), ():void => {
 
 	} );
 
-	it( hasDefaultExport( "Carbon.ObjectSchema.ObjectSchema" ), ():void => {
+	it( hasDefaultExport( "CarbonLDP.ObjectSchema.ObjectSchema" ), ():void => {
 		let defaultExport:DefaultExport = <any> {};
 		let defaultTarget:ObjectSchema.ObjectSchema;
 

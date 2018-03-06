@@ -38,7 +38,7 @@ import { UnknownError } from "./UnknownError";
 
 
 describe( module(
-	"Carbon/HTTP/Errors"
+	"CarbonLDP/HTTP/Errors"
 ), ():void => {
 
 	it( isDefined(), ():void => {
@@ -49,7 +49,7 @@ describe( module(
 	it( reexports(
 		STATIC,
 		"HTTPError",
-		"Carbon.HTTP.Errors.HTTPError"
+		"CarbonLDP.HTTP.Errors.HTTPError"
 	), ():void => {
 		expect( Errors.HTTPError ).toBeDefined();
 		expect( Errors.HTTPError ).toBe( HTTPError );
@@ -58,7 +58,7 @@ describe( module(
 	it( reexports(
 		STATIC,
 		"BadRequestError",
-		"Carbon.HTTP.Errors.BadRequestError"
+		"CarbonLDP.HTTP.Errors.BadRequestError"
 	), ():void => {
 		expect( Errors.BadRequestError ).toBeDefined();
 		expect( Errors.BadRequestError ).toBe( BadRequestError );
@@ -67,7 +67,7 @@ describe( module(
 	it( reexports(
 		STATIC,
 		"ConflictError",
-		"Carbon.HTTP.Errors.ConflictError"
+		"CarbonLDP.HTTP.Errors.ConflictError"
 	), ():void => {
 		expect( Errors.ConflictError ).toBeDefined();
 		expect( Errors.ConflictError ).toBe( ConflictError );
@@ -76,7 +76,7 @@ describe( module(
 	it( reexports(
 		STATIC,
 		"ForbiddenError",
-		"Carbon.HTTP.Errors.ForbiddenError"
+		"CarbonLDP.HTTP.Errors.ForbiddenError"
 	), ():void => {
 		expect( Errors.ForbiddenError ).toBeDefined();
 		expect( Errors.ForbiddenError ).toBe( ForbiddenError );
@@ -85,7 +85,7 @@ describe( module(
 	it( reexports(
 		STATIC,
 		"MethodNotAllowedError",
-		"Carbon.HTTP.Errors.MethodNotAllowedError"
+		"CarbonLDP.HTTP.Errors.MethodNotAllowedError"
 	), ():void => {
 		expect( Errors.MethodNotAllowedError ).toBeDefined();
 		expect( Errors.MethodNotAllowedError ).toBe( MethodNotAllowedError );
@@ -94,7 +94,7 @@ describe( module(
 	it( reexports(
 		STATIC,
 		"NotAcceptableError",
-		"Carbon.HTTP.Errors.NotAcceptableError"
+		"CarbonLDP.HTTP.Errors.NotAcceptableError"
 	), ():void => {
 		expect( Errors.NotAcceptableError ).toBeDefined();
 		expect( Errors.NotAcceptableError ).toBe( NotAcceptableError );
@@ -103,7 +103,7 @@ describe( module(
 	it( reexports(
 		STATIC,
 		"NotFoundError",
-		"Carbon.HTTP.Errors.NotFoundError"
+		"CarbonLDP.HTTP.Errors.NotFoundError"
 	), ():void => {
 		expect( Errors.NotFoundError ).toBeDefined();
 		expect( Errors.NotFoundError ).toBe( NotFoundError );
@@ -112,7 +112,7 @@ describe( module(
 	it( reexports(
 		STATIC,
 		"PreconditionFailedError",
-		"Carbon.HTTP.Errors.PreconditionFailedError"
+		"CarbonLDP.HTTP.Errors.PreconditionFailedError"
 	), ():void => {
 		expect( Errors.PreconditionFailedError ).toBeDefined();
 		expect( Errors.PreconditionFailedError ).toBe( PreconditionFailedError );
@@ -121,7 +121,7 @@ describe( module(
 	it( reexports(
 		STATIC,
 		"PreconditionRequiredError",
-		"Carbon.HTTP.Errors.PreconditionRequiredError"
+		"CarbonLDP.HTTP.Errors.PreconditionRequiredError"
 	), ():void => {
 		expect( Errors.PreconditionRequiredError ).toBeDefined();
 		expect( Errors.PreconditionRequiredError ).toBe( PreconditionRequiredError );
@@ -130,7 +130,7 @@ describe( module(
 	it( reexports(
 		STATIC,
 		"RequestEntityTooLargeError",
-		"Carbon.HTTP.Errors.RequestEntityTooLargeError"
+		"CarbonLDP.HTTP.Errors.RequestEntityTooLargeError"
 	), ():void => {
 		expect( Errors.RequestEntityTooLargeError ).toBeDefined();
 		expect( Errors.RequestEntityTooLargeError ).toBe( RequestEntityTooLargeError );
@@ -139,7 +139,7 @@ describe( module(
 	it( reexports(
 		STATIC,
 		"RequestHeaderFieldsTooLargeError",
-		"Carbon.HTTP.Errors.RequestHeaderFieldsTooLargeError"
+		"CarbonLDP.HTTP.Errors.RequestHeaderFieldsTooLargeError"
 	), ():void => {
 		expect( Errors.RequestHeaderFieldsTooLargeError ).toBeDefined();
 		expect( Errors.RequestHeaderFieldsTooLargeError ).toBe( RequestHeaderFieldsTooLargeError );
@@ -148,7 +148,7 @@ describe( module(
 	it( reexports(
 		STATIC,
 		"RequestURITooLongError",
-		"Carbon.HTTP.Errors.RequestURITooLongError"
+		"CarbonLDP.HTTP.Errors.RequestURITooLongError"
 	), ():void => {
 		expect( Errors.RequestURITooLongError ).toBeDefined();
 		expect( Errors.RequestURITooLongError ).toBe( RequestURITooLongError );
@@ -157,7 +157,7 @@ describe( module(
 	it( reexports(
 		STATIC,
 		"TooManyRequestsError",
-		"Carbon.HTTP.Errors.TooManyRequestsError"
+		"CarbonLDP.HTTP.Errors.TooManyRequestsError"
 	), ():void => {
 		expect( Errors.TooManyRequestsError ).toBeDefined();
 		expect( Errors.TooManyRequestsError ).toBe( TooManyRequestsError );
@@ -166,7 +166,7 @@ describe( module(
 	it( reexports(
 		STATIC,
 		"UnauthorizedError",
-		"Carbon.HTTP.Errors.UnauthorizedError"
+		"CarbonLDP.HTTP.Errors.UnauthorizedError"
 	), ():void => {
 		expect( Errors.UnauthorizedError ).toBeDefined();
 		expect( Errors.UnauthorizedError ).toBe( UnauthorizedError );
@@ -175,7 +175,7 @@ describe( module(
 	it( reexports(
 		STATIC,
 		"UnsupportedMediaTypeError",
-		"Carbon.HTTP.Errors.UnsupportedMediaTypeError"
+		"CarbonLDP.HTTP.Errors.UnsupportedMediaTypeError"
 	), ():void => {
 		expect( Errors.UnsupportedMediaTypeError ).toBeDefined();
 		expect( Errors.UnsupportedMediaTypeError ).toBe( UnsupportedMediaTypeError );
@@ -184,7 +184,7 @@ describe( module(
 	it( reexports(
 		STATIC,
 		"BadResponseError",
-		"Carbon.HTTP.Errors.BadResponseError"
+		"CarbonLDP.HTTP.Errors.BadResponseError"
 	), ():void => {
 		expect( Errors.BadResponseError ).toBeDefined();
 		expect( Errors.BadResponseError ).toBe( BadResponseError );
@@ -193,7 +193,7 @@ describe( module(
 	it( reexports(
 		STATIC,
 		"BadGatewayError",
-		"Carbon.HTTP.Errors.BadGatewayError"
+		"CarbonLDP.HTTP.Errors.BadGatewayError"
 	), ():void => {
 		expect( Errors.BadGatewayError ).toBeDefined();
 		expect( Errors.BadGatewayError ).toBe( BadGatewayError );
@@ -202,7 +202,7 @@ describe( module(
 	it( reexports(
 		STATIC,
 		"GatewayTimeoutError",
-		"Carbon.HTTP.Errors.GatewayTimeoutError"
+		"CarbonLDP.HTTP.Errors.GatewayTimeoutError"
 	), ():void => {
 		expect( Errors.GatewayTimeoutError ).toBeDefined();
 		expect( Errors.GatewayTimeoutError ).toBe( GatewayTimeoutError );
@@ -211,7 +211,7 @@ describe( module(
 	it( reexports(
 		STATIC,
 		"HTTPVersionNotSupportedError",
-		"Carbon.HTTP.Errors.HTTPVersionNotSupportedError"
+		"CarbonLDP.HTTP.Errors.HTTPVersionNotSupportedError"
 	), ():void => {
 		expect( Errors.HTTPVersionNotSupportedError ).toBeDefined();
 		expect( Errors.HTTPVersionNotSupportedError ).toBe( HTTPVersionNotSupportedError );
@@ -220,7 +220,7 @@ describe( module(
 	it( reexports(
 		STATIC,
 		"InternalServerErrorError",
-		"Carbon.HTTP.Errors.InternalServerErrorError"
+		"CarbonLDP.HTTP.Errors.InternalServerErrorError"
 	), ():void => {
 		expect( Errors.InternalServerErrorError ).toBeDefined();
 		expect( Errors.InternalServerErrorError ).toBe( InternalServerErrorError );
@@ -229,7 +229,7 @@ describe( module(
 	it( reexports(
 		STATIC,
 		"NotImplementedError",
-		"Carbon.HTTP.Errors.NotImplementedError"
+		"CarbonLDP.HTTP.Errors.NotImplementedError"
 	), ():void => {
 		expect( Errors.NotImplementedError ).toBeDefined();
 		expect( Errors.NotImplementedError ).toBe( NotImplementedError );
@@ -238,7 +238,7 @@ describe( module(
 	it( reexports(
 		STATIC,
 		"ServiceUnavailableError",
-		"Carbon.HTTP.Errors.ServiceUnavailableError"
+		"CarbonLDP.HTTP.Errors.ServiceUnavailableError"
 	), ():void => {
 		expect( Errors.ServiceUnavailableError ).toBeDefined();
 		expect( Errors.ServiceUnavailableError ).toBe( ServiceUnavailableError );
@@ -247,7 +247,7 @@ describe( module(
 	it( reexports(
 		STATIC,
 		"UnknownError",
-		"Carbon.HTTP.Errors.UnknownError"
+		"CarbonLDP.HTTP.Errors.UnknownError"
 	), ():void => {
 		expect( Errors.UnknownError ).toBeDefined();
 		expect( Errors.UnknownError ).toBe( UnknownError );
@@ -256,7 +256,7 @@ describe( module(
 	it( hasProperty(
 		STATIC,
 		"statusCodeMap",
-		"Map<number, typeof Carbon.HTTP.Errors.HTTPError>",
+		"Map<number, typeof CarbonLDP.HTTP.Errors.HTTPError>",
 		"Map where all the HTTP Status Codes used in the SDK are assigned to their specific error class."
 	), ():void => {
 		expect( Errors.statusCodeMap ).toBeDefined();

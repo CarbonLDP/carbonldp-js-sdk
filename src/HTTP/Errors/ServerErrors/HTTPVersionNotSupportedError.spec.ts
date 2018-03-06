@@ -17,7 +17,7 @@ import * as Utils from "./../../../Utils";
 import * as HTTPVersionNotSupportedError from "./HTTPVersionNotSupportedError";
 import DefaultExport from "./HTTPVersionNotSupportedError";
 
-describe( module( "Carbon/HTTP/Errors/ServerErrors/HTTPVersionNotSupportedError" ), ():void => {
+describe( module( "CarbonLDP/HTTP/Errors/ServerErrors/HTTPVersionNotSupportedError" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( HTTPVersionNotSupportedError ).toBeDefined();
@@ -25,7 +25,7 @@ describe( module( "Carbon/HTTP/Errors/ServerErrors/HTTPVersionNotSupportedError"
 	} );
 
 	describe( clazz(
-		"Carbon.HTTP.Errors.HTTPVersionNotSupportedError",
+		"CarbonLDP.HTTP.Errors.HTTPVersionNotSupportedError",
 		"Error class to indicate that the server doesn't support the HTTP protocol version used in the request."
 	), ():void => {
 
@@ -55,7 +55,7 @@ describe( module( "Carbon/HTTP/Errors/ServerErrors/HTTPVersionNotSupportedError"
 		} );
 
 		it( extendsClass(
-			"Carbon.HTTP.Errors.HTTPError"
+			"CarbonLDP.HTTP.Errors.HTTPError"
 		), ():void => {
 			let error:HTTPVersionNotSupportedError.HTTPVersionNotSupportedError = new HTTPVersionNotSupportedError.HTTPVersionNotSupportedError( "Message of the error", response );
 
@@ -101,7 +101,7 @@ describe( module( "Carbon/HTTP/Errors/ServerErrors/HTTPVersionNotSupportedError"
 
 	} );
 
-	it( hasDefaultExport( "Carbon.HTTP.Errors.HTTPVersionNotSupportedError" ), ():void => {
+	it( hasDefaultExport( "CarbonLDP.HTTP.Errors.HTTPVersionNotSupportedError" ), ():void => {
 		expect( DefaultExport ).toBeDefined();
 		expect( DefaultExport ).toBe( HTTPVersionNotSupportedError.HTTPVersionNotSupportedError );
 	} );

@@ -14,10 +14,10 @@ import DefaultExport, { ValidationReport } from "./ValidationReport";
 
 import { ValidationResult } from "./ValidationResult";
 
-describe( module( "Carbon/SHACL/ValidationReport" ), ():void => {
+describe( module( "CarbonLDP/SHACL/ValidationReport" ), ():void => {
 
 	describe( interfaze(
-		"Carbon.SHACL.ValidationReport.ValidationReport",
+		"CarbonLDP.SHACL.ValidationReport.ValidationReport",
 		"Interface that represents the results of a validation process."
 	), ():void => {
 
@@ -39,7 +39,7 @@ describe( module( "Carbon/SHACL/ValidationReport" ), ():void => {
 		it( hasProperty(
 			OBLIGATORY,
 			"results",
-			"Carbon.SHACL.ValidationResult.ValidationResult[]",
+			"CarbonLDP.SHACL.ValidationResult.ValidationResult[]",
 			"The results of a failure validation process."
 		), ():void => {
 			const target:ValidationReport[ "results" ] = [] as ValidationResult[];
@@ -49,7 +49,7 @@ describe( module( "Carbon/SHACL/ValidationReport" ), ():void => {
 		it( hasProperty(
 			OBLIGATORY,
 			"shapesGraphWellFormed",
-			"Carbon.SHACL.ValidationResult.ValidationResult",
+			"CarbonLDP.SHACL.ValidationResult.ValidationResult",
 			"The shapesGraphWellFormed of a failure validation process."
 		), ():void => {
 			const target:ValidationReport[ "shapesGraphWellFormed" ] = true;
@@ -59,8 +59,8 @@ describe( module( "Carbon/SHACL/ValidationReport" ), ():void => {
 	} );
 
 	describe( interfaze(
-		"Carbon.SHACL.ValidationReport.ValidationReportFactory",
-		"Interface with the factory, decorate and utils methods for `Carbon.SHACL.ValidationReport.ValidationReport` objects."
+		"CarbonLDP.SHACL.ValidationReport.ValidationReportFactory",
+		"Interface with the factory, decorate and utils methods for `CarbonLDP.SHACL.ValidationReport.ValidationReport` objects."
 	), ():void => {
 
 		it( hasProperty(
@@ -72,7 +72,7 @@ describe( module( "Carbon/SHACL/ValidationReport" ), ():void => {
 		it( hasProperty(
 			OBLIGATORY,
 			"SCHEMA",
-			"Carbon.ObjectSchema.ObjectSchema"
+			"CarbonLDP.ObjectSchema.ObjectSchema"
 		), ():void => {} );
 
 	} );
@@ -80,7 +80,7 @@ describe( module( "Carbon/SHACL/ValidationReport" ), ():void => {
 	describe( property(
 		STATIC,
 		"ValidationReport",
-		"Carbon.SHACL.ValidationReport.ValidationReportFactory"
+		"CarbonLDP.SHACL.ValidationReport.ValidationReportFactory"
 	), ():void => {
 
 		it( "should exist", ():void => {
@@ -126,7 +126,7 @@ describe( module( "Carbon/SHACL/ValidationReport" ), ():void => {
 
 	} );
 
-	it( hasDefaultExport( "Carbon.SHACL.ValidationReport.ValidationReport" ), ():void => {
+	it( hasDefaultExport( "CarbonLDP.SHACL.ValidationReport.ValidationReport" ), ():void => {
 		const target:ValidationReport = {} as DefaultExport;
 		expect( target ).toBeDefined();
 	} );

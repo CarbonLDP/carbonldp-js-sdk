@@ -9,19 +9,19 @@ import { QueryContext }  from "./QueryContext";
 import * as Module from "./QueryContextPartial";
 import DefaultExport, { QueryContextPartial } from "./QueryContextPartial";
 
-describe( module( "Carbon/SPARQL/QueryDocument/QueryContextPartial" ), ():void => {
+describe( module( "CarbonLDP/SPARQL/QueryDocument/QueryContextPartial" ), ():void => {
 
 	it( "should exists", ():void => {
 		expect( Module ).toBeDefined();
 		expect( Module ).toEqual( jasmine.any( Object ) );
 	} );
 
-	it( hasDefaultExport( "Carbon.SPARQL.QueryDocument.QueryContextPartial.QueryContextPartial" ), ():void => {
+	it( hasDefaultExport( "CarbonLDP.SPARQL.QueryDocument.QueryContextPartial.QueryContextPartial" ), ():void => {
 		expect( DefaultExport ).toBeDefined();
 		expect( DefaultExport ).toBe( QueryContextPartial );
 	} );
 
-	describe( clazz( "Carbon.SPARQL.QueryDocument.QueryContextPartial.QueryContextPartial", "Class with the shared status and data of the query." ), ():void => {
+	describe( clazz( "CarbonLDP.SPARQL.QueryDocument.QueryContextPartial.QueryContextPartial", "Class with the shared status and data of the query." ), ():void => {
 
 		it( "should exists", ():void => {
 			expect( QueryContextPartial ).toBeDefined();
@@ -51,8 +51,8 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryContextPartial" ), ():void =
 
 			it( hasSignature(
 				[
-					{ name: "document", type: "Carbon.PersistedDocument.PersistedDocument", description: "partial document from whom the query context is created for." },
-					{ name: "context", type: "Carbon.Context.Context", optional: true, description: "The carbon context from where the query belongs to." },
+					{ name: "document", type: "CarbonLDP.PersistedDocument.PersistedDocument", description: "partial document from whom the query context is created for." },
+					{ name: "context", type: "CarbonLDP.Context.Context", optional: true, description: "The carbon context from where the query belongs to." },
 				]
 			), ():void => {
 			} );
@@ -70,7 +70,7 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryContextPartial" ), ():void =
 
 		} );
 
-		it( extendsClass( "Carbon.SPARQL.QueryDocument.QueryContext.QueryContext" ), ():void => {
+		it( extendsClass( "CarbonLDP.SPARQL.QueryDocument.QueryContext.QueryContext" ), ():void => {
 			const queryContext:QueryContextPartial = new QueryContextPartial( persistedDocument, context );
 			expect( queryContext ).toEqual( jasmine.any( QueryContext ) );
 		} );
@@ -84,7 +84,7 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryContextPartial" ), ():void =
 					{ name: "object", type: "object", description: "The object to look for its corresponding schema.\nNOTE: Property is ignored when a path is specified." },
 					{ name: "path", type: "string", description: "An optional path that describes where the resource appears in the partial document." },
 				],
-				{ type: "Carbon.ObjectSchema.DigestedObjectSchema" }
+				{ type: "CarbonLDP.ObjectSchema.DigestedObjectSchema" }
 			), ():void => {
 			} );
 

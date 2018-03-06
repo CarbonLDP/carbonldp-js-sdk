@@ -1,4 +1,4 @@
-import { Carbon } from "../Carbon";
+import { CarbonLDP } from "../CarbonLDP";
 import { EventMessage } from "./EventMessage";
 import { MessagingOptions } from "./Options";
 export declare class MessagingService {
@@ -8,7 +8,7 @@ export declare class MessagingService {
     private _client?;
     private _subscriptionsMap;
     private _subscriptionsQueue;
-    constructor(context: Carbon);
+    constructor(context: CarbonLDP);
     setOptions(options: MessagingOptions): void;
     connect(onConnect?: () => void, onError?: (error: Error) => void): void;
     reconnect(onConnect?: () => void, onError?: (error: Error) => void): void;

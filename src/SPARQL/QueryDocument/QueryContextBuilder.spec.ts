@@ -26,19 +26,19 @@ import {
 	QueryPropertyType,
 } from "./QueryProperty";
 
-describe( module( "Carbon/SPARQL/QueryDocument/QueryContextBuilder" ), ():void => {
+describe( module( "CarbonLDP/SPARQL/QueryDocument/QueryContextBuilder" ), ():void => {
 
 	it( "should exists", ():void => {
 		expect( Module ).toBeDefined();
 		expect( Module ).toEqual( jasmine.any( Object ) );
 	} );
 
-	it( hasDefaultExport( "Carbon.SPARQL.QueryDocument.QueryContextBuilder.QueryContextBuilder" ), ():void => {
+	it( hasDefaultExport( "CarbonLDP.SPARQL.QueryDocument.QueryContextBuilder.QueryContextBuilder" ), ():void => {
 		expect( DefaultExport ).toBeDefined();
 		expect( DefaultExport ).toBe( QueryContextBuilder );
 	} );
 
-	describe( clazz( "Carbon.SPARQL.QueryDocument.QueryContextBuilder.QueryContextBuilder", "Class with the shared status and data of the query." ), ():void => {
+	describe( clazz( "CarbonLDP.SPARQL.QueryDocument.QueryContextBuilder.QueryContextBuilder", "Class with the shared status and data of the query." ), ():void => {
 
 		it( "should exists", ():void => {
 			expect( QueryContextBuilder ).toBeDefined();
@@ -56,7 +56,7 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryContextBuilder" ), ():void =
 
 			it( hasSignature(
 				[
-					{ name: "context", type: "Carbon.Context.Context", optional: true, description: "The carbon context from where the query belongs to." },
+					{ name: "context", type: "CarbonLDP.Context.Context", optional: true, description: "The carbon context from where the query belongs to." },
 				]
 			), ():void => {
 			} );
@@ -74,7 +74,7 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryContextBuilder" ), ():void =
 
 		} );
 
-		it( extendsClass( "Carbon.SPARQL.QueryDocument.QueryContext.QueryContext" ), ():void => {
+		it( extendsClass( "CarbonLDP.SPARQL.QueryDocument.QueryContext.QueryContext" ), ():void => {
 			const queryContext:QueryContextBuilder = new QueryContextBuilder( context );
 			expect( queryContext ).toEqual( jasmine.any( QueryContext ) );
 		} );
@@ -157,7 +157,7 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryContextBuilder" ), ():void =
 				[
 					{ name: "name", type: "string", description: "Name of the property to look for." },
 				],
-				{ type: "Carbon.SPARQL.QueryDocument.QueryProperty.QueryProperty" }
+				{ type: "CarbonLDP.SPARQL.QueryDocument.QueryProperty.QueryProperty" }
 			), ():void => {
 			} );
 
@@ -190,7 +190,7 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryContextBuilder" ), ():void =
 				[
 					{ name: "name", type: "string", description: "Name of the property to look for its children properties." },
 				],
-				{ type: "Carbon.SPARQL.QueryDocument.QueryProperty.QueryProperty[]" }
+				{ type: "CarbonLDP.SPARQL.QueryDocument.QueryProperty.QueryProperty[]" }
 			), ():void => {
 			} );
 
@@ -238,7 +238,7 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryContextBuilder" ), ():void =
 				[
 					{ name: "name", type: "string", description: "Name that the property will have." },
 				],
-				{ type: "Carbon.SPARQL.QueryDocument.QueryProperty.QueryProperty" }
+				{ type: "CarbonLDP.SPARQL.QueryDocument.QueryProperty.QueryProperty" }
 			), ():void => {} );
 
 			it( "should exists", ():void => {
@@ -269,11 +269,11 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryContextBuilder" ), ():void =
 			it( hasSignature(
 				"Search for a property definition defined by the parameters provided.",
 				[
-					{ name: "existingSchema", type: "Carbon.ObjectSchema.DigestedObjectSchema", description: "Specific schema where to look for first.\nIf not in there it will be searched in all the schemas available in the carbon context." },
+					{ name: "existingSchema", type: "CarbonLDP.ObjectSchema.DigestedObjectSchema", description: "Specific schema where to look for first.\nIf not in there it will be searched in all the schemas available in the carbon context." },
 					{ name: "propertyName", type: "string", description: "Name of the property definition to find for." },
 					{ name: "propertyURI", type: "string", optional: true, description: "If specified, it will only retrieve the property with the same name and URI." },
 				],
-				{ type: "Carbon.ObjectSchema.DigestedObjectSchema" }
+				{ type: "CarbonLDP.ObjectSchema.DigestedObjectSchema" }
 			), ():void => {
 			} );
 
@@ -396,7 +396,7 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryContextBuilder" ), ():void =
 					{ name: "object", type: "object", description: "The object to look for its corresponding schema.\nNOTE: Property is ignored when a path is specified." },
 					{ name: "path", type: "string", description: "An optional path that describes where the resource appears in the query." },
 				],
-				{ type: "Carbon.ObjectSchema.DigestedObjectSchema" }
+				{ type: "CarbonLDP.ObjectSchema.DigestedObjectSchema" }
 			), ():void => {
 			} );
 

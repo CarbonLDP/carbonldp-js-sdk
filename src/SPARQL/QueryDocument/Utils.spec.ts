@@ -7,7 +7,7 @@ import {
 
 import * as Utils from "./Utils";
 
-describe( module( "Carbon/SPARQL/QueryDocument/Utils" ), ():void => {
+describe( module( "CarbonLDP/SPARQL/QueryDocument/Utils" ), ():void => {
 
 	it( "should exists", ():void => {
 		expect( Utils ).toBeDefined();
@@ -58,10 +58,10 @@ describe( module( "Carbon/SPARQL/QueryDocument/Utils" ), ():void => {
 		it( hasSignature(
 			"Creates the base patterns for a query property.",
 			[
-				{ name: "context", type: "Carbon.SPARQL.QueryDocument.QueryContext.QueryContext", description: "The context of the query where to obtains the information for the patterns." },
+				{ name: "context", type: "CarbonLDP.SPARQL.QueryDocument.QueryContext.QueryContext", description: "The context of the query where to obtains the information for the patterns." },
 				{ name: "resourcePath", type: "string", description: "Path of the parent property/resource where the property belongs to." },
 				{ name: "propertyPath", type: "string", description: "Path of the property to create its patterns." },
-				{ name: "propertyDefinition", type: "Carbon.ObjectSchema.DigestedObjectSchemaProperty", description: "Schema definition of the property." },
+				{ name: "propertyDefinition", type: "CarbonLDP.ObjectSchema.DigestedObjectSchemaProperty", description: "Schema definition of the property." },
 			],
 			{ type: "SPARQL/tokens/PatternToken[]" }
 		), ():void => {
@@ -81,7 +81,7 @@ describe( module( "Carbon/SPARQL/QueryDocument/Utils" ), ():void => {
 		it( hasSignature(
 			"Creates the pattern to query the types of a property/resource",
 			[
-				{ name: "context", type: "Carbon.SPARQL.QueryDocument.QueryContext.QueryContext", description: "The context of the query where to obtains the information for the patterns." },
+				{ name: "context", type: "CarbonLDP.SPARQL.QueryDocument.QueryContext.QueryContext", description: "The context of the query where to obtains the information for the patterns." },
 				{ name: "resourcePath", type: "string", description: "Path of the parent property/resource to query its types." },
 			],
 			{ type: "SPARQL/tokens/PatternToken" }
@@ -102,7 +102,7 @@ describe( module( "Carbon/SPARQL/QueryDocument/Utils" ), ():void => {
 		it( hasSignature(
 			"Creates the graph pattern of a complete query.",
 			[
-				{ name: "context", type: "Carbon.SPARQL.QueryDocument.QueryContext.QueryContext", description: "The context of the query where to obtains the information for the patterns." },
+				{ name: "context", type: "CarbonLDP.SPARQL.QueryDocument.QueryContext.QueryContext", description: "The context of the query where to obtains the information for the patterns." },
 				{ name: "resourcePath", type: "string", description: "Path of the parent property/resource to create graph pattern." },
 			],
 			{ type: "SPARQL/tokens/PatternToken" }

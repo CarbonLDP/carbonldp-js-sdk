@@ -18,7 +18,7 @@ import * as Utils from "./../Utils";
 import * as Token from "./Token";
 import DefaultExport from "./Token";
 
-describe( module( "Carbon/Auth/Token" ), ():void => {
+describe( module( "CarbonLDP/Auth/Token" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( Token ).toBeDefined();
@@ -39,7 +39,7 @@ describe( module( "Carbon/Auth/Token" ), ():void => {
 	it( hasProperty(
 		STATIC,
 		"SCHEMA",
-		"Carbon.ObjectSchema.ObjectSchema"
+		"CarbonLDP.ObjectSchema.ObjectSchema"
 	), ():void => {
 		expect( Token.SCHEMA ).toBeDefined();
 		expect( Utils.isObject( Token.SCHEMA ) ).toBe( true );
@@ -59,16 +59,16 @@ describe( module( "Carbon/Auth/Token" ), ():void => {
 	} );
 
 	describe( interfaze(
-		"Carbon.Auth.Token.Class",
+		"CarbonLDP.Auth.Token.Class",
 		"Interface that represents an authentication token for every context."
 	), ():void => {
 
-		it( extendsClass( "Carbon.Resource.Resource" ), ():void => {} );
+		it( extendsClass( "CarbonLDP.Resource.Resource" ), ():void => {} );
 
 		it( hasProperty(
 			OBLIGATORY,
 			"user",
-			"Carbon.Auth.PersistedUser.Class",
+			"CarbonLDP.Auth.PersistedUser.Class",
 			"User that has been requested the token, and which authentication the token represents."
 		), ():void => {} );
 
@@ -88,7 +88,7 @@ describe( module( "Carbon/Auth/Token" ), ():void => {
 
 	} );
 
-	describe( clazz( "Carbon.Auth.Token.Factory", "Factory class for `Carbon.Auth.Token.Class` objects." ), ():void => {
+	describe( clazz( "CarbonLDP.Auth.Token.Factory", "Factory class for `CarbonLDP.Auth.Token.Class` objects." ), ():void => {
 
 		it( isDefined(), ():void => {
 			expect( Token.Factory ).toBeDefined();
@@ -98,7 +98,7 @@ describe( module( "Carbon/Auth/Token" ), ():void => {
 		it( hasProperty(
 			STATIC,
 			"SCHEMA",
-			"Carbon.ObjectSchema.ObjectSchema"
+			"CarbonLDP.ObjectSchema.ObjectSchema"
 		), ():void => {
 			expect( Token.SCHEMA ).toBeDefined();
 			expect( Utils.isObject( Token.SCHEMA ) ).toBe( true );
@@ -124,7 +124,7 @@ describe( module( "Carbon/Auth/Token" ), ():void => {
 		} );
 
 		it( hasMethod( STATIC, "is",
-			"Returns true if the object provided is considered a `Carbon.Auth.Token.Class` object.", [
+			"Returns true if the object provided is considered a `CarbonLDP.Auth.Token.Class` object.", [
 				{ name: "value", type: "any" },
 			],
 			{ type: "boolean" }
@@ -157,7 +157,7 @@ describe( module( "Carbon/Auth/Token" ), ():void => {
 		} );
 
 		it( hasMethod( STATIC, "hasClassProperties",
-			"Returns true if the object provided has the properties of a `Carbon.Auth.Token.Class` object.", [
+			"Returns true if the object provided has the properties of a `CarbonLDP.Auth.Token.Class` object.", [
 				{ name: "object", type: "object" },
 			],
 			{ type: "boolean" }
@@ -196,10 +196,10 @@ describe( module( "Carbon/Auth/Token" ), ():void => {
 			STATIC,
 			"decorate",
 			[ "T extends Object" ],
-			"Decorates the object provided with the properties and methods of a `Carbon.Auth.Token.Class` object.", [
+			"Decorates the object provided with the properties and methods of a `CarbonLDP.Auth.Token.Class` object.", [
 				{ name: "object", type: "T" },
 			],
-			{ type: "T & Carbon.Auth.Token.Class" }
+			{ type: "T & CarbonLDP.Auth.Token.Class" }
 		), ():void => {
 			expect( "decorate" in Token.Factory ).toBe( true );
 			expect( Utils.isFunction( Token.Factory.decorate ) ).toBe( true );
@@ -220,7 +220,7 @@ describe( module( "Carbon/Auth/Token" ), ():void => {
 
 	} );
 
-	it( hasDefaultExport( "Carbon.Auth.Ticket.Class" ), ():void => {
+	it( hasDefaultExport( "CarbonLDP.Auth.Ticket.Class" ), ():void => {
 		let defaultExport:DefaultExport = <any> {};
 		let defaultTarget:Token.Class;
 

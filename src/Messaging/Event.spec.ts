@@ -2,14 +2,14 @@ import { enumeration, hasDefaultExport, hasEnumeral, isDefined, module } from ".
 import * as MessagingEvent from "./Event";
 import DefaultExport from "./Event";
 
-describe( module( "Carbon/Messaging/Event" ), ():void => {
+describe( module( "CarbonLDP/Messaging/Event" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( MessagingEvent ).toBeDefined();
 		expect( MessagingEvent ).toEqual( jasmine.any( Object ) );
 	} );
 
-	describe( enumeration( "Carbon.Messaging.Event" ), ():void => {
+	describe( enumeration( "CarbonLDP.Messaging.Event" ), ():void => {
 
 		it( isDefined(), ():void => {
 			expect( MessagingEvent.Event ).toBeDefined();
@@ -53,7 +53,7 @@ describe( module( "Carbon/Messaging/Event" ), ():void => {
 
 	} );
 
-	it( hasDefaultExport( "Carbon.Messaging.Event" ), ():void => {
+	it( hasDefaultExport( "CarbonLDP.Messaging.Event" ), ():void => {
 		expect( DefaultExport ).toBeDefined();
 		expect( DefaultExport ).toBe( MessagingEvent.Event );
 	} );

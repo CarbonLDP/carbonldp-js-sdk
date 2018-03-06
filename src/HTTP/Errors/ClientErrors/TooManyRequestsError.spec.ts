@@ -17,7 +17,7 @@ import * as Utils from "./../../../Utils";
 import * as TooManyRequestsError from "./TooManyRequestsError";
 import DefaultExport from "./TooManyRequestsError";
 
-describe( module( "Carbon/HTTP/Errors/ClientErrors/TooManyRequestsError" ), ():void => {
+describe( module( "CarbonLDP/HTTP/Errors/ClientErrors/TooManyRequestsError" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( TooManyRequestsError ).toBeDefined();
@@ -25,7 +25,7 @@ describe( module( "Carbon/HTTP/Errors/ClientErrors/TooManyRequestsError" ), ():v
 	} );
 
 	describe( clazz(
-		"Carbon.HTTP.Errors.TooManyRequestsError",
+		"CarbonLDP.HTTP.Errors.TooManyRequestsError",
 		"Error class to indicate that the current user has sent too many request in a given amount of time."
 	), ():void => {
 
@@ -55,7 +55,7 @@ describe( module( "Carbon/HTTP/Errors/ClientErrors/TooManyRequestsError" ), ():v
 		} );
 
 		it( extendsClass(
-			"Carbon.HTTP.Errors.HTTPError"
+			"CarbonLDP.HTTP.Errors.HTTPError"
 		), ():void => {
 			let error:TooManyRequestsError.TooManyRequestsError = new TooManyRequestsError.TooManyRequestsError( "Message of the error", response );
 
@@ -101,7 +101,7 @@ describe( module( "Carbon/HTTP/Errors/ClientErrors/TooManyRequestsError" ), ():v
 
 	} );
 
-	it( hasDefaultExport( "Carbon.HTTP.Errors.TooManyRequestsError" ), ():void => {
+	it( hasDefaultExport( "CarbonLDP.HTTP.Errors.TooManyRequestsError" ), ():void => {
 		expect( DefaultExport ).toBeDefined();
 		expect( DefaultExport ).toBe( TooManyRequestsError.TooManyRequestsError );
 	} );

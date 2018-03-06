@@ -14,14 +14,14 @@ import {
 
 import DefaultExport, { JSONLDCompacter } from "./Compacter";
 
-describe( module( "Carbon/JSONLD/Compacter" ), ():void => {
+describe( module( "CarbonLDP/JSONLD/Compacter" ), ():void => {
 
-	it( hasDefaultExport( "Carbon.JSONLD.Compacter.JSONLDCompacter" ), ():void => {
+	it( hasDefaultExport( "CarbonLDP.JSONLD.Compacter.JSONLDCompacter" ), ():void => {
 		expect( DefaultExport ).toBeDefined();
 		expect( DefaultExport ).toBe( JSONLDCompacter );
 	} );
 
-	describe( clazz( "Carbon.JSONLD.Compacter.JSONLDCompacter", "Class for compacting a set of RDF resources in level of relations" ), ():void => {
+	describe( clazz( "CarbonLDP.JSONLD.Compacter.JSONLDCompacter", "Class for compacting a set of RDF resources in level of relations" ), ():void => {
 
 		it( "should exists", ():void => {
 			expect( JSONLDCompacter ).toBeDefined();

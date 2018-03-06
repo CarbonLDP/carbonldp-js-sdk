@@ -28,22 +28,22 @@ import {
 	UpdateListToken,
 } from "./Tokens";
 
-describe( module( "Carbon/LDPatch/Tokens" ), ():void => {
+describe( module( "CarbonLDP/LDPatch/Tokens" ), ():void => {
 
 	it( "should exists", ():void => {
 		expect( Module ).toBeDefined();
 		expect( Module ).toEqual( jasmine.any( Object ) );
 	} );
 
-	describe( clazz( "Carbon.LDPatch.Tokens.LDPatchToken", "An LD Patch expression.", [ "sparqler/tokens/TokenNode" ] ), ():void => {
+	describe( clazz( "CarbonLDP.LDPatch.Tokens.LDPatchToken", "An LD Patch expression.", [ "sparqler/tokens/TokenNode" ] ), ():void => {
 
 		it( hasProperty( INSTANCE, "token", "ldpatch" ), ():void => {
 		} );
 
-		it( hasProperty( INSTANCE, "prologues", "Carbon.LDPatch.Tokens.PrefixToken[]" ), ():void => {
+		it( hasProperty( INSTANCE, "prologues", "CarbonLDP.LDPatch.Tokens.PrefixToken[]" ), ():void => {
 		} );
 
-		it( hasProperty( INSTANCE, "statements", "Carbon.LDPatch.Tokens.StatementToken[]" ), ():void => {
+		it( hasProperty( INSTANCE, "statements", "CarbonLDP.LDPatch.Tokens.StatementToken[]" ), ():void => {
 		} );
 
 
@@ -141,7 +141,7 @@ describe( module( "Carbon/LDPatch/Tokens" ), ():void => {
 
 	} );
 
-	describe( clazz( "Carbon.LDPatch.Tokens.PrefixToken", "LD Patch add action.", [ "sparqler/tokens/TokenNode" ] ), ():void => {
+	describe( clazz( "CarbonLDP.LDPatch.Tokens.PrefixToken", "LD Patch add action.", [ "sparqler/tokens/TokenNode" ] ), ():void => {
 
 		it( hasProperty( INSTANCE, "token", "prefix" ), ():void => {
 		} );
@@ -216,7 +216,7 @@ describe( module( "Carbon/LDPatch/Tokens" ), ():void => {
 
 	} );
 
-	describe( clazz( "Carbon.LDPatch.Tokens.AddToken", "LD Patch add action.", [ "sparqler/tokens/TokenNode" ] ), ():void => {
+	describe( clazz( "CarbonLDP.LDPatch.Tokens.AddToken", "LD Patch add action.", [ "sparqler/tokens/TokenNode" ] ), ():void => {
 
 		it( hasProperty( INSTANCE, "token", "add" ), ():void => {
 		} );
@@ -293,7 +293,7 @@ describe( module( "Carbon/LDPatch/Tokens" ), ():void => {
 
 	} );
 
-	describe( clazz( "Carbon.LDPatch.Tokens.DeleteToken", "LD Patch delete action.", [ "sparqler/tokens/TokenNode" ] ), ():void => {
+	describe( clazz( "CarbonLDP.LDPatch.Tokens.DeleteToken", "LD Patch delete action.", [ "sparqler/tokens/TokenNode" ] ), ():void => {
 
 		it( hasProperty( INSTANCE, "token", "delete" ), ():void => {
 		} );
@@ -370,7 +370,7 @@ describe( module( "Carbon/LDPatch/Tokens" ), ():void => {
 
 	} );
 
-	describe( clazz( "Carbon.LDPatch.Tokens.UpdateListToken", "LD Patch update list action.", [ "sparqler/tokens/TokenNode" ] ), ():void => {
+	describe( clazz( "CarbonLDP.LDPatch.Tokens.UpdateListToken", "LD Patch update list action.", [ "sparqler/tokens/TokenNode" ] ), ():void => {
 
 		it( hasProperty( INSTANCE, "token", "updateList" ), ():void => {
 		} );
@@ -381,7 +381,7 @@ describe( module( "Carbon/LDPatch/Tokens" ), ():void => {
 		it( hasProperty( INSTANCE, "predicate", "SPARQLER/tokens/IRIToken | SPARQLER/tokens/PrefixedNameToken" ), ():void => {
 		} );
 
-		it( hasProperty( INSTANCE, "slice", "Carbon.LDPatch.Tokens.SliceToken" ), ():void => {
+		it( hasProperty( INSTANCE, "slice", "CarbonLDP.LDPatch.Tokens.SliceToken" ), ():void => {
 		} );
 
 		it( hasProperty( INSTANCE, "collection", "SPARQLER/tokens/CollectionToken" ), ():void => {
@@ -399,7 +399,7 @@ describe( module( "Carbon/LDPatch/Tokens" ), ():void => {
 				[
 					{ name: "subject", type: "SPARQLER/tokens/VariableORIRI | SPARQLER/tokens/BlankNodeToken", description: "The subject that contains the list to update." },
 					{ name: "predicate", type: "SPARQLER/tokens/IRIToken | SPARQLER/tokens/PrefixedNameToken", description: "The predicate relation to the list to update." },
-					{ name: "slice", type: "Carbon.LDPatch.Tokens.SliceToken", description: "The slice that specifies the index of the elements in the list that will be replaced." },
+					{ name: "slice", type: "CarbonLDP.LDPatch.Tokens.SliceToken", description: "The slice that specifies the index of the elements in the list that will be replaced." },
 					{ name: "collection", type: "SPARQLER/tokens/CollectionToken", description: "The collection to replace the selected elements by the slice token." },
 				]
 			), ():void => {
@@ -444,7 +444,7 @@ describe( module( "Carbon/LDPatch/Tokens" ), ():void => {
 
 	} );
 
-	describe( clazz( "Carbon.LDPatch.Tokens.SliceToken", "LD Patch list slice expression token.", [ "sparqler/tokens/TokenNode" ] ), ():void => {
+	describe( clazz( "CarbonLDP.LDPatch.Tokens.SliceToken", "LD Patch list slice expression token.", [ "sparqler/tokens/TokenNode" ] ), ():void => {
 
 		it( hasProperty( INSTANCE, "token", "slice" ), ():void => {
 		} );
