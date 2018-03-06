@@ -12,7 +12,7 @@ export interface Pointer {
 
 	id:string;
 
-	isResolved():boolean;
+	isResolved():this is this & PersistedDocument;
 
 	resolve<T>():Promise<[ T & PersistedDocument, Response ]>;
 }

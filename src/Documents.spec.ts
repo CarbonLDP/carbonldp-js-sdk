@@ -74,7 +74,7 @@ function createPartialMetadata( schema:ObjectSchema.ObjectSchema ):PartialMetada
 	return new PartialMetadata( digestedSchema );
 }
 
-describe( module( "carbonldp/Documents" ), ():void => {
+fdescribe( module( "carbonldp/Documents" ), ():void => {
 
 	describe( clazz(
 		"CarbonLDP.Documents.Documents",
@@ -908,12 +908,9 @@ describe( module( "carbonldp/Documents" ), ():void => {
 						},
 					} );
 
-					documents.get( "https://example.com/resource/" ).then( ( [ document, response ]:[ PersistedDocument, Response ] ):void => {
+					documents.get( "https://example.com/resource/" ).then( ( document:PersistedDocument ):void => {
 						expect( document ).toBeDefined();
 						expect( Utils.isObject( document ) ).toEqual( true );
-
-						expect( response ).toBeDefined();
-						expect( Utils.isObject( response ) ).toEqual( true );
 
 						expect( document[ "string" ] ).toBe( "Document Resource" );
 
@@ -1019,12 +1016,9 @@ describe( module( "carbonldp/Documents" ), ():void => {
 						},
 					} );
 
-					documents.get( "https://example.com/resource/" ).then( ( [ document, response ]:[ PersistedDocument, Response ] ):void => {
+					documents.get( "https://example.com/resource/" ).then( ( document:PersistedDocument ):void => {
 						expect( document ).toBeDefined();
 						expect( Utils.isObject( document ) ).toEqual( true );
-
-						expect( response ).toBeDefined();
-						expect( Utils.isObject( response ) ).toEqual( true );
 
 						expect( document.id ).toBe( "https://example.com/another-resource/" );
 						expect( document[ "string" ] ).toBe( "Document Resource" );
@@ -1226,9 +1220,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 								} ),
 							},
 						} )
-					).then( ( [ document, response ] ) => {
-						expect( response ).toEqual( jasmine.any( Response ) );
-
+					).then( ( document ) => {
 						expect( PersistedDocument.is( document ) ).toBe( true );
 						expect( document ).toEqual( jasmine.objectContaining( {
 							"_eTag": "\"1-12345\"",
@@ -1354,9 +1346,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 								} ),
 							},
 						} )
-					).then( ( [ document, response ] ) => {
-						expect( response ).toEqual( jasmine.any( Response ) );
-
+					).then( ( document ) => {
 						expect( PersistedDocument.is( document ) ).toBe( true );
 						expect( PersistedDocument.is( document.property2 ) ).toBe( true );
 
@@ -1447,7 +1437,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 								} ),
 							},
 						} )
-					).then( ( [ document ] ) => {
+					).then( ( document ) => {
 						expect( document._partialMetadata ).toEqual( jasmine.any( PartialMetadata ) );
 						expect( document._partialMetadata.schema ).toEqual( ObjectSchema.ObjectSchemaDigester.digestSchema( {
 							"property1": {
@@ -1615,7 +1605,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 								},
 							} )
 						);
-					} ).then( ( [ document ] ) => {
+					} ).then( ( document ) => {
 						expect( document._partialMetadata ).toEqual( jasmine.any( PartialMetadata ) );
 						expect( document._partialMetadata.schema ).toEqual( ObjectSchema.ObjectSchemaDigester.digestSchema( {
 							"property4": {
@@ -1781,7 +1771,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 								},
 							} )
 						);
-					} ).then( ( [ document ] ) => {
+					} ).then( ( document ) => {
 						expect( PersistedDocument.is( document ) ).toBe( true );
 						expect( document ).toEqual( jasmine.objectContaining( {
 							"property4": false,
@@ -2024,9 +2014,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 								} ),
 							},
 						} )
-					).then( ( [ document, response ] ) => {
-						expect( response ).toEqual( jasmine.any( Response ) );
-
+					).then( ( document ) => {
 						expect( PersistedDocument.is( document ) ).toBe( true );
 						expect( document ).toEqual( jasmine.objectContaining( {
 							"_eTag": "\"1-12345\"",
@@ -2146,9 +2134,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 								} ),
 							},
 						} )
-					).then( ( [ document, response ] ) => {
-						expect( response ).toEqual( jasmine.any( Response ) );
-
+					).then( ( document ) => {
 						expect( PersistedDocument.is( document ) ).toBe( true );
 						expect( PersistedDocument.is( document.property2 ) ).toBe( true );
 
@@ -2495,7 +2481,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					};
 
 					try {
-						const [ document ] = await documents.createChild<RawDocument>( "/", rawDocument );
+						const document:PersistedDocument & RawDocument = await documents.createChild<RawDocument>( "/", rawDocument );
 
 						expect( document.blankNode1 ).toBe( rawDocument.blankNode1 );
 						expect( document.blankNode1.id ).toBe( "_:new-1" );
@@ -2575,9 +2561,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					} );
 
 					const childObject:object = {};
-					documents.createChild( "https://example.com/parent-resource/", childObject ).then( ( [ document, response ]:[ PersistedDocument, Response ] ):void => {
-						expect( response ).toEqual( jasmine.any( Response ) );
-
+					documents.createChild( "https://example.com/parent-resource/", childObject ).then( ( document:PersistedDocument ):void => {
 						expect( childObject ).toBe( document );
 
 						expect( PersistedDocument.is( document ) ).toBe( true );
@@ -2611,9 +2595,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 
 							return documents.createChild( "https://example.com/parent-resource/", childObject );
 						} )
-						.then( ( [ document, response ]:[ PersistedDocument, Response ] ):void => {
-							expect( response ).toEqual( jasmine.any( Response ) );
-
+						.then( ( document:PersistedDocument ):void => {
 							expect( PersistedDocument.is( document ) ).toBe( true );
 							expect( document.id ).toBe( "https://example.com/parent-resource/new-resource/" );
 
@@ -2852,12 +2834,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					const childObjects:object[] = [ { index: 0 }, { index: 1 }, { index: 2 } ];
 
 					documents.createChildren( "https://example.com/parent-resource/", childObjects )
-						.then( ( [ persistedDocuments, responses ]:[ PersistedDocument[], Response[] ] ):void => {
-							expect( responses ).toEqual( new Array( 3 ).fill( jasmine.anything() ) );
-							responses.forEach( response => {
-								expect( response ).toEqual( jasmine.any( Response ) );
-							} );
-
+						.then( ( persistedDocuments:PersistedDocument[] ):void => {
 							expect( persistedDocuments ).toEqual( new Array( 3 ).fill( jasmine.anything() ) );
 							persistedDocuments.forEach( ( document, index ) => {
 								expect( childObjects[ index ] ).toBe( document );
@@ -3168,7 +3145,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					};
 
 					try {
-						const [ document ] = await documents.createChildAndRetrieve<RawDocument>( "/", rawDocument );
+						const document:PersistedDocument & RawDocument = await documents.createChildAndRetrieve<RawDocument>( "/", rawDocument );
 
 						expect( document.getFragments().length ).toBe( 2 );
 
@@ -3275,9 +3252,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					};
 
 					documents.createChildAndRetrieve( "https://example.com/parent-resource/", childObject )
-						.then( ( [ document, response ]:[ PersistedDocument, Response ] ) => {
-							expect( response ).toEqual( jasmine.any( Response ) );
-
+						.then( ( document:PersistedDocument ) => {
 							expect( childObject ).toBe( document );
 							expect( document ).toEqual( jasmine.objectContaining( {
 								_eTag: "\"1-12345\"",
@@ -3333,10 +3308,8 @@ describe( module( "carbonldp/Documents" ), ():void => {
 
 							return documents.createChildAndRetrieve( "https://example.com/parent-resource/", childObject );
 						} )
-						.then( ( [ document, response ]:[ PersistedDocument, Response ] ):void => {
-							expect( response ).toEqual( jasmine.any( Response ) );
-
-							expect( childObject ).toEqual( jasmine.objectContaining( {
+						.then( ( document:PersistedDocument ):void => {
+							expect( document ).toEqual( jasmine.objectContaining( {
 								_eTag: "\"1-12345\"",
 								id: "https://example.com/parent-resource/new-resource/",
 								property: "my UPDATED property",
@@ -3580,12 +3553,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					const childObjects:object[] = [ { index: 0 }, { index: 1 }, { index: 2 } ];
 
 					documents.createChildrenAndRetrieve( "https://example.com/parent-resource/", childObjects )
-						.then( ( [ persistedDocuments, responses ]:[ PersistedDocument[], Response[] ] ):void => {
-							expect( responses ).toEqual( new Array( 3 ).fill( jasmine.anything() ) );
-							responses.forEach( response => {
-								expect( response ).toEqual( jasmine.any( Response ) );
-							} );
-
+						.then( ( persistedDocuments:PersistedDocument[] ):void => {
 							expect( persistedDocuments ).toEqual( new Array( 3 ).fill( jasmine.anything() ) );
 							persistedDocuments.forEach( ( document, index ) => {
 								expect( childObjects[ index ] ).toBe( document );
@@ -3934,9 +3902,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 
 					documents
 						.listChildren( "https://example.com/resource/" )
-						.then( ( [ myDocuments, response ] ) => {
-							expect( response ).toEqual( jasmine.any( Response ) );
-
+						.then( ( myDocuments ) => {
 							expect( myDocuments ).toEqual( jasmine.any( Array ) );
 							expect( myDocuments.length ).toBe( 2 );
 
@@ -4058,9 +4024,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 
 					documents
 						.listChildren( "https://example.com/resource/" )
-						.then( ( [ myDocuments, response ] ) => {
-							expect( response ).toEqual( jasmine.any( Response ) );
-
+						.then( ( myDocuments ) => {
 							expect( myDocuments ).toEqual( jasmine.any( Array ) );
 							expect( myDocuments.length ).toBe( 2 );
 
@@ -4757,9 +4721,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 							},
 						} )
 						.orderBy( "property2.property2", "DESC" )
-					).then( ( [ myDocuments, response ] ) => {
-						expect( response ).toEqual( jasmine.any( Response ) );
-
+					).then( ( myDocuments ) => {
 						expect( myDocuments[ 0 ] ).toEqual( jasmine.objectContaining( {
 							"property2": jasmine.objectContaining( {
 								"property2": 67890,
@@ -4924,9 +4886,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 						},
 					} );
 
-					documents.getChildren<MyDocument>( "https://example.com/resource/" ).then( ( [ myDocuments, response ] ) => {
-						expect( response ).toEqual( jasmine.any( Response ) );
-
+					documents.getChildren<MyDocument>( "https://example.com/resource/" ).then( ( myDocuments ) => {
 						expect( myDocuments ).toEqual( jasmine.any( Array ) );
 						expect( myDocuments.length ).toBe( 2 );
 						for( const document of myDocuments ) {
@@ -5080,9 +5040,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					} );
 
 					documents.getChildren<MyDocument>( "https://example.com/resource/", _ => _.properties( _.all ) )
-						.then( ( [ myDocuments, response ] ) => {
-							expect( response ).toEqual( jasmine.any( Response ) );
-
+						.then( ( myDocuments ) => {
 							expect( myDocuments ).toEqual( jasmine.any( Array ) );
 							expect( myDocuments.length ).toBe( 2 );
 							for( const document of myDocuments ) {
@@ -5262,9 +5220,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 								} ),
 							},
 						} )
-					).then( ( [ myDocuments, response ] ) => {
-						expect( response ).toEqual( jasmine.any( Response ) );
-
+					).then( ( myDocuments ) => {
 						expect( myDocuments ).toEqual( jasmine.any( Array ) );
 						expect( myDocuments.length ).toBe( 2 );
 						for( const document of myDocuments ) {
@@ -5472,9 +5428,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 								} ),
 							},
 						} )
-					).then( ( [ myDocuments, response ] ) => {
-						expect( response ).toEqual( jasmine.any( Response ) );
-
+					).then( ( myDocuments ) => {
 						expect( myDocuments ).toEqual( jasmine.any( Array ) );
 						expect( myDocuments.length ).toBe( 2 );
 						for( const document of myDocuments ) {
@@ -5793,9 +5747,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 								} ),
 							},
 						} )
-					).then( ( [ myDocuments, response ] ) => {
-						expect( response ).toEqual( jasmine.any( Response ) );
-
+					).then( ( myDocuments ) => {
 						expect( myDocuments ).toEqual( jasmine.any( Array ) );
 						expect( myDocuments.length ).toBe( 2 );
 						for( const document of myDocuments ) {
@@ -5994,9 +5946,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 								} ),
 							},
 						} )
-					).then( ( [ myDocuments, response ] ) => {
-						expect( response ).toEqual( jasmine.any( Response ) );
-
+					).then( ( myDocuments ) => {
 						expect( myDocuments ).toEqual( jasmine.any( Array ) );
 						expect( myDocuments.length ).toBe( 2 );
 						for( const document of myDocuments ) {
@@ -6172,7 +6122,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					};
 
 					documents.createAccessPoint<RawDocument>( "/", rawAccessPoint )
-						.then( ( [ document ] ) => {
+						.then( ( document ) => {
 
 							expect( document.blankNode1 ).toBe( rawAccessPoint.blankNode1 );
 							expect( document.blankNode1.id ).toBe( "_:new-1" );
@@ -6266,9 +6216,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					} );
 
 					const accessPoint:AccessPointBase = { hasMemberRelation: "member-relation" };
-					documents.createAccessPoint( "https://example.com/parent-resource/", accessPoint ).then( ( [ document, response ]:[ PersistedAccessPoint, Response ] ):void => {
-						expect( response ).toEqual( jasmine.any( Response ) );
-
+					documents.createAccessPoint( "https://example.com/parent-resource/", accessPoint ).then( ( document:PersistedAccessPoint ):void => {
 						expect( accessPoint ).toBe( document );
 
 						expect( PersistedDocument.is( document ) ).toBe( true );
@@ -6305,9 +6253,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 
 							return documents.createAccessPoint( "https://example.com/parent-resource/", accessPoint );
 						} )
-						.then( ( [ document, response ]:[ PersistedDocument, Response ] ):void => {
-							expect( response ).toEqual( jasmine.any( Response ) );
-
+						.then( ( document:PersistedDocument ):void => {
 							expect( PersistedDocument.is( document ) ).toBe( true );
 							expect( document.id ).toBe( "https://example.com/parent-resource/new-resource/" );
 
@@ -6580,12 +6526,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					];
 
 					documents.createAccessPoints( "https://example.com/parent-resource/", accessPoints )
-						.then( ( [ persistedDocuments, responses ]:[ PersistedAccessPoint[], Response[] ] ):void => {
-							expect( responses ).toEqual( new Array( 3 ).fill( jasmine.anything() ) );
-							responses.forEach( response => {
-								expect( response ).toEqual( jasmine.any( Response ) );
-							} );
-
+						.then( ( persistedDocuments:PersistedAccessPoint[] ):void => {
 							expect( persistedDocuments ).toEqual( new Array( 3 ).fill( jasmine.anything() ) );
 							persistedDocuments.forEach( ( document, index ) => {
 								expect( accessPoints[ index ] ).toBe( document );
@@ -6892,9 +6833,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 
 					documents
 						.listMembers( "https://example.com/resource/" )
-						.then( ( [ myDocuments, response ] ) => {
-							expect( response ).toEqual( jasmine.any( Response ) );
-
+						.then( ( myDocuments ) => {
 							expect( myDocuments ).toEqual( jasmine.any( Array ) );
 							expect( myDocuments.length ).toBe( 2 );
 
@@ -7019,9 +6958,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 
 					documents
 						.listMembers( "https://example.com/resource/" )
-						.then( ( [ myDocuments, response ] ) => {
-							expect( response ).toEqual( jasmine.any( Response ) );
-
+						.then( ( myDocuments ) => {
 							expect( myDocuments ).toEqual( jasmine.any( Array ) );
 							expect( myDocuments.length ).toBe( 2 );
 
@@ -7728,9 +7665,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 								} ),
 							},
 						} )
-					).then( ( [ myDocuments, response ] ) => {
-						expect( response ).toEqual( jasmine.any( Response ) );
-
+					).then( ( myDocuments ) => {
 						expect( myDocuments ).toEqual( jasmine.any( Array ) );
 						expect( myDocuments.length ).toBe( 2 );
 						for( const document of myDocuments ) {
@@ -7906,9 +7841,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 						},
 					} );
 
-					documents.getMembers<MyDocument>( "https://example.com/resource/" ).then( ( [ myDocuments, response ] ) => {
-						expect( response ).toEqual( jasmine.any( Response ) );
-
+					documents.getMembers<MyDocument>( "https://example.com/resource/" ).then( ( myDocuments ) => {
 						expect( myDocuments ).toEqual( jasmine.any( Array ) );
 						expect( myDocuments.length ).toBe( 2 );
 						for( const document of myDocuments ) {
@@ -8062,9 +7995,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					} );
 
 					documents.getMembers<MyDocument>( "https://example.com/resource/", _ => _.properties( _.all ) )
-						.then( ( [ myDocuments, response ] ) => {
-							expect( response ).toEqual( jasmine.any( Response ) );
-
+						.then( ( myDocuments ) => {
 							expect( myDocuments ).toEqual( jasmine.any( Array ) );
 							expect( myDocuments.length ).toBe( 2 );
 							for( const document of myDocuments ) {
@@ -8248,9 +8179,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 							},
 						} )
 						.orderBy( "property2.property2", "DESC" )
-					).then( ( [ myDocuments, response ] ) => {
-						expect( response ).toEqual( jasmine.any( Response ) );
-
+					).then( ( myDocuments ) => {
 						expect( myDocuments[ 0 ] ).toEqual( jasmine.objectContaining( {
 							"property2": jasmine.objectContaining( {
 								"property2": 67890,
@@ -8447,9 +8376,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 								} ),
 							},
 						} )
-					).then( ( [ myDocuments, response ] ) => {
-						expect( response ).toEqual( jasmine.any( Response ) );
-
+					).then( ( myDocuments ) => {
 						expect( myDocuments ).toEqual( jasmine.any( Array ) );
 						expect( myDocuments.length ).toBe( 2 );
 						for( const document of myDocuments ) {
@@ -8770,9 +8697,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 								} ),
 							},
 						} )
-					).then( ( [ myDocuments, response ] ) => {
-						expect( response ).toEqual( jasmine.any( Response ) );
-
+					).then( ( myDocuments ) => {
 						expect( myDocuments ).toEqual( jasmine.any( Array ) );
 						expect( myDocuments.length ).toBe( 2 );
 						for( const document of myDocuments ) {
@@ -8971,9 +8896,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 								} ),
 							},
 						} )
-					).then( ( [ myDocuments, response ] ) => {
-						expect( response ).toEqual( jasmine.any( Response ) );
-
+					).then( ( myDocuments ) => {
 						expect( myDocuments ).toEqual( jasmine.any( Array ) );
 						expect( myDocuments.length ).toBe( 2 );
 						for( const document of myDocuments ) {
@@ -10090,7 +10013,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					), documents );
 
 					try {
-						const [ document ] = await documents.save<RawDocument>( rawDocument );
+						const document:PersistedDocument & RawDocument = await documents.save<RawDocument>( rawDocument );
 
 						expect( document.getFragments().length ).toBe( 2 );
 
@@ -10210,9 +10133,8 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					persistedDocument[ "pointer" ][ "pointer" ][ 0 ][ "string" ] = [ "string 1", "string -1" ];
 					persistedDocument[ "pointer" ][ "pointer" ][ 0 ][ "number" ] = 100.001;
 
-					documents.save( persistedDocument ).then( ( [ _document, response ]:[ PersistedDocument, Response ] ) => {
+					documents.save( persistedDocument ).then( ( _document:PersistedDocument ) => {
 						expect( _document ).toBe( persistedDocument );
-						expect( response ).toEqual( jasmine.any( Response ) );
 
 						const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
 						expect( request.params ).toBe( "" +
@@ -10297,9 +10219,8 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					persistedDocument[ "pointer" ][ "pointer" ][ 0 ][ "string" ] = [ "string 1", "string -1" ];
 					persistedDocument[ "pointer" ][ "pointer" ][ 0 ][ "number" ] = 100.001;
 
-					documents.save( persistedDocument ).then( ( [ _document, response ]:[ PersistedDocument, Response ] ) => {
+					documents.save( persistedDocument ).then( ( _document:PersistedDocument ) => {
 						expect( _document ).toBe( persistedDocument );
-						expect( response ).toEqual( jasmine.any( Response ) );
 
 						const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
 						expect( request.params ).toBe( "" +
@@ -10511,11 +10432,8 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					);
 
 					documents.refresh( document )
-						.then( ( [ returnedDocument, response ] ) => {
+						.then( ( returnedDocument ) => {
 							expect( document ).toBe( returnedDocument );
-
-							expect( response ).toBeNull();
-
 							done();
 						} )
 						.catch( done.fail );
@@ -10571,7 +10489,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					const fragment:PersistedNamedFragment = document.getFragment( "#1" );
 
 					documents.refresh( document )
-						.then( ( [ returnedDocument, response ] ) => {
+						.then( ( returnedDocument ) => {
 							expect( returnedDocument ).toBe( document );
 
 							expect( document ).toEqual( jasmine.objectContaining( {
@@ -10595,8 +10513,6 @@ describe( module( "carbonldp/Documents" ), ():void => {
 								id: "https://example.com/resource/#3",
 								string: "NamedFragment 3",
 							} ) );
-
-							expect( response ).toEqual( jasmine.any( Response ) );
 
 							done();
 						} )
@@ -11125,7 +11041,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 
 					Utils.promiseMethod( () => {
 						return documents.refresh<MyDocument>( persistedDocument );
-					} ).then( ( [ document ] ) => {
+					} ).then( ( document ) => {
 						expect( PersistedDocument.is( document ) ).toBe( true );
 
 						// Data updates
@@ -11286,7 +11202,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 
 					Utils.promiseMethod( () => {
 						return documents.refresh<MyDocument>( persistedDocument );
-					} ).then( ( [ document, response ] ) => {
+					} ).then( ( document ) => {
 						expect( PersistedDocument.is( document ) ).toBe( true );
 
 						// Data updates
@@ -11300,8 +11216,6 @@ describe( module( "carbonldp/Documents" ), ():void => {
 							} ) as any,
 							"property3": "non query-value",
 						} ) );
-
-						expect( response ).toBeNull();
 
 						done();
 					} ).catch( done.fail );
@@ -11773,7 +11687,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					), documents );
 
 					try {
-						const [ document ] = await documents.saveAndRefresh<RawDocument>( rawDocument );
+						const document:PersistedDocument & RawDocument = await documents.saveAndRefresh<RawDocument>( rawDocument );
 
 						expect( document.getFragments().length ).toBe( 2 );
 
@@ -11999,10 +11913,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					const fragment:PersistedNamedFragment = document.getFragment( "#1" );
 
 					documents.saveAndRefresh( document )
-						.then( ( [ returnedDocument, responses ] ) => {
-							expect( responses ).toEqual( [
-								jasmine.any( Response ) as any,
-							] );
+						.then( ( returnedDocument ) => {
 							expect( returnedDocument ).toBe( document );
 
 							expect( document ).toEqual( jasmine.objectContaining( {
@@ -12162,11 +12073,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 
 					Utils.promiseMethod( () => {
 						return documents.saveAndRefresh<MyDocument>( persistedDocument );
-					} ).then( ( [ document, responses ] ) => {
-						expect( responses ).toEqual( [
-							jasmine.any( Response ) as any,
-							jasmine.any( Response ) as any,
-						] );
+					} ).then( ( document ) => {
 						expect( PersistedDocument.is( document ) ).toBe( true );
 
 						// Data updates
