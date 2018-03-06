@@ -702,24 +702,21 @@ exports.FILTER = new tokens_1.Identifier("FILTER");
 
 "use strict";
 
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-}
 Object.defineProperty(exports, "__esModule", { value: true });
-var AbstractError_1 = __importDefault(__webpack_require__(27));
-exports.AbstractError = AbstractError_1.default;
-var IDAlreadyInUseError_1 = __importDefault(__webpack_require__(67));
-exports.IDAlreadyInUseError = IDAlreadyInUseError_1.default;
-var IllegalActionError_1 = __importDefault(__webpack_require__(204));
-exports.IllegalActionError = IllegalActionError_1.default;
-var IllegalArgumentError_1 = __importDefault(__webpack_require__(14));
-exports.IllegalArgumentError = IllegalArgumentError_1.default;
-var IllegalStateError_1 = __importDefault(__webpack_require__(68));
-exports.IllegalStateError = IllegalStateError_1.default;
-var InvalidJSONLDSyntaxError_1 = __importDefault(__webpack_require__(205));
-exports.InvalidJSONLDSyntaxError = InvalidJSONLDSyntaxError_1.default;
-var NotImplementedError_1 = __importDefault(__webpack_require__(206));
-exports.NotImplementedError = NotImplementedError_1.default;
+var AbstractError_1 = __webpack_require__(27);
+exports.AbstractError = AbstractError_1.AbstractError;
+var IDAlreadyInUseError_1 = __webpack_require__(67);
+exports.IDAlreadyInUseError = IDAlreadyInUseError_1.IDAlreadyInUseError;
+var IllegalActionError_1 = __webpack_require__(204);
+exports.IllegalActionError = IllegalActionError_1.IllegalActionError;
+var IllegalArgumentError_1 = __webpack_require__(14);
+exports.IllegalArgumentError = IllegalArgumentError_1.IllegalArgumentError;
+var IllegalStateError_1 = __webpack_require__(68);
+exports.IllegalStateError = IllegalStateError_1.IllegalStateError;
+var InvalidJSONLDSyntaxError_1 = __webpack_require__(205);
+exports.InvalidJSONLDSyntaxError = InvalidJSONLDSyntaxError_1.InvalidJSONLDSyntaxError;
+var NotImplementedError_1 = __webpack_require__(206);
+exports.NotImplementedError = NotImplementedError_1.NotImplementedError;
 
 
 /***/ }),

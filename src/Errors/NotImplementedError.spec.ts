@@ -24,7 +24,7 @@ describe( module( "carbonldp/Errors/NotImplementedError" ), ():void => {
 	} );
 
 	describe( clazz(
-		"CarbonLDP.Errors.NotImplementedError.NotImplementedError",
+		"CarbonLDP.Errors.NotImplementedError",
 		"Error class to indicate that an action is not yet implemented."
 	), ():void => {
 
@@ -70,7 +70,7 @@ describe( module( "carbonldp/Errors/NotImplementedError" ), ():void => {
 
 	} );
 
-	it( hasDefaultExport( "CarbonLDP.Errors.NotImplementedError.NotImplementedError" ), ():void => {
+	it( hasDefaultExport( "CarbonLDP.Errors.NotImplementedError" ), ():void => {
 		expect( DefaultExport ).toBeDefined();
 		expect( DefaultExport ).toBe( NotImplementedError.NotImplementedError );
 	} );

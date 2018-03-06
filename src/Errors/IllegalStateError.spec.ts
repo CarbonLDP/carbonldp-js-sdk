@@ -24,7 +24,7 @@ describe( module( "carbonldp/Errors/IllegalStateError" ), function():void {
 	} );
 
 	describe( clazz(
-		"CarbonLDP.Errors.IllegalStateError.IllegalStateError",
+		"CarbonLDP.Errors.IllegalStateError",
 		"Error class to indicate that a task can't be completed because of the lack of pre-required configuration or execution of previous tasks."
 	), function():void {
 
@@ -68,7 +68,7 @@ describe( module( "carbonldp/Errors/IllegalStateError" ), function():void {
 
 	} );
 
-	it( hasDefaultExport( "CarbonLDP.Errors.IllegalStateError.IllegalStateError" ), ():void => {
+	it( hasDefaultExport( "CarbonLDP.Errors.IllegalStateError" ), ():void => {
 		expect( DefaultExport ).toBeDefined();
 		expect( DefaultExport ).toBe( IllegalStateError.IllegalStateError );
 	} );

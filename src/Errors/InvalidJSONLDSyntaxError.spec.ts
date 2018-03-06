@@ -23,7 +23,7 @@ describe( module( "carbonldp/Errors/InvalidJSONLDSyntaxError" ), ():void => {
 	} );
 
 	describe( clazz(
-		"CarbonLDP.Errors.InvalidJSONLDSyntaxError.InvalidJSONLDSyntaxError",
+		"CarbonLDP.Errors.InvalidJSONLDSyntaxError",
 		"Error class to indicate that there an invalid syntax in a JSON-LD object."
 	), ():void => {
 
@@ -58,7 +58,7 @@ describe( module( "carbonldp/Errors/InvalidJSONLDSyntaxError" ), ():void => {
 
 	} );
 
-	it( hasDefaultExport( "CarbonLDP.Errors.InvalidJSONLDSyntaxError.InvalidJSONLDSyntaxError" ), ():void => {
+	it( hasDefaultExport( "CarbonLDP.Errors.InvalidJSONLDSyntaxError" ), ():void => {
 		expect( DefaultExport ).toBeDefined();
 		expect( DefaultExport ).toBe( InvalidJSONLDSyntaxError.InvalidJSONLDSyntaxError );
 	} );

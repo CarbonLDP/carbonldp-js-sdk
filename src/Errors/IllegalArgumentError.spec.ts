@@ -23,7 +23,7 @@ describe( module( "carbonldp/Errors/IllegalArgumentError" ), ():void => {
 	} );
 
 	describe( clazz(
-		"CarbonLDP.Errors.IllegalArgumentError.IllegalArgumentError",
+		"CarbonLDP.Errors.IllegalArgumentError",
 		"Error class to indicate that a different argument than the expected was provided."
 	), ():void => {
 
@@ -58,7 +58,7 @@ describe( module( "carbonldp/Errors/IllegalArgumentError" ), ():void => {
 
 	} );
 
-	it( hasDefaultExport( "CarbonLDP.Errors.IllegalArgumentError.IllegalArgumentError" ), ():void => {
+	it( hasDefaultExport( "CarbonLDP.Errors.IllegalArgumentError" ), ():void => {
 		expect( DefaultExport ).toBeDefined();
 		expect( DefaultExport ).toBe( IllegalArgumentError.IllegalArgumentError );
 	} );

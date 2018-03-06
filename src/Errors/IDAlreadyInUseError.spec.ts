@@ -23,7 +23,7 @@ describe( module( "carbonldp/Errors/IDAlreadyInUseError" ), ():void => {
 	} );
 
 	describe( clazz(
-		"CarbonLDP.Errors.IDAlreadyInUseError.IDAlreadyInUseError",
+		"CarbonLDP.Errors.IDAlreadyInUseError",
 		"Error class to indicate that an identifier (ID) is already in use."
 	), ():void => {
 
@@ -58,7 +58,7 @@ describe( module( "carbonldp/Errors/IDAlreadyInUseError" ), ():void => {
 
 	} );
 
-	it( hasDefaultExport( "CarbonLDP.Errors.IDAlreadyInUseError.IDAlreadyInUseError" ), ():void => {
+	it( hasDefaultExport( "CarbonLDP.Errors.IDAlreadyInUseError" ), ():void => {
 		expect( DefaultExport ).toBeDefined();
 		expect( DefaultExport ).toBe( IDAlreadyInUseError.IDAlreadyInUseError );
 	} );

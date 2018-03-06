@@ -23,7 +23,7 @@ describe( module( "carbonldp/Errors/IllegalActionError" ), ():void => {
 	} );
 
 	describe( clazz(
-		"CarbonLDP.Errors.IllegalActionError.IllegalActionError",
+		"CarbonLDP.Errors.IllegalActionError",
 		"Error class to indicate that an action not allowed was attempted."
 	), ():void => {
 
@@ -58,7 +58,7 @@ describe( module( "carbonldp/Errors/IllegalActionError" ), ():void => {
 
 	} );
 
-	it( hasDefaultExport( "CarbonLDP.Errors.IllegalActionError.IllegalActionError" ), ():void => {
+	it( hasDefaultExport( "CarbonLDP.Errors.IllegalActionError" ), ():void => {
 		expect( DefaultExport ).toBeDefined();
 		expect( DefaultExport ).toBe( IllegalActionError.IllegalActionError );
 	} );

@@ -21,7 +21,7 @@ describe( module( "carbonldp/Errors/AbstractError" ), function():void {
 	} );
 
 	describe( clazz(
-		"CarbonLDP.Errors.AbstractError.AbstractError",
+		"CarbonLDP.Errors.AbstractError",
 		"Class that works as template for the custom errors in the SDK."
 	), function():void {
 
@@ -59,7 +59,7 @@ describe( module( "carbonldp/Errors/AbstractError" ), function():void {
 
 	} );
 
-	it( hasDefaultExport( "CarbonLDP.Errors.AbstractError.AbstractError" ), ():void => {
+	it( hasDefaultExport( "CarbonLDP.Errors.AbstractError" ), ():void => {
 		expect( DefaultExport ).toBeDefined();
 		expect( DefaultExport ).toBe( AbstractError.AbstractError );
 	} );
