@@ -1,4 +1,4 @@
-import { IllegalStateError } from "./Errors";
+import { IllegalStateError } from "./Errors/IllegalStateError";
 import { Response } from "./HTTP/Response";
 import { ModelDecorator } from "./ModelDecorator";
 import { ModelFactory } from "./ModelFactory";
@@ -14,7 +14,7 @@ export interface Pointer {
 
 	isResolved():this is this & PersistedDocument;
 
-	resolve<T>():Promise<[ T & PersistedDocument, Response ]>;
+	resolve<T>():Promise<T & PersistedDocument>;
 }
 
 
@@ -46,8 +46,6 @@ export interface PointerFactory extends ModelFactory<Pointer>, ModelDecorator<Po
 	areEqual( pointer1:Pointer, pointer2:Pointer ):boolean;
 
 	getIDs( pointers:Pointer[] ):string[];
-
-	resolveAll<T extends object>( pointers:Pointer[] ):Promise<[ (T & PersistedDocument)[], Response[] ]>;
 }
 
 
@@ -140,18 +138,6 @@ export const Pointer:PointerFactory = {
 		return pointers
 			.map( pointer => pointer.id )
 			;
-	},
-
-	resolveAll<T extends object>( pointers:Pointer[] ):Promise<[ (T & PersistedDocument)[], Response[] ]> {
-		const promises:Promise<[ T & PersistedDocument, Response ]>[] = pointers.map( ( pointer:Pointer ) => pointer.resolve<T>() );
-		return Promise
-			.all<[ T & PersistedDocument, Response ]>( promises )
-			.then<[ (T & PersistedDocument)[], Response[] ]>( ( results:[ T & PersistedDocument, Response ][] ) => {
-				let resolvedPointers:(T & PersistedDocument)[] = results.map( ( result:[ T & PersistedDocument, Response ] ) => result[ 0 ] );
-				let responses:Response[] = results.map( ( result:[ T & PersistedDocument, Response ] ) => result[ 1 ] );
-
-				return [ resolvedPointers, responses ];
-			} );
 	},
 };
 
