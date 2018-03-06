@@ -15,7 +15,7 @@ import * as IllegalActionError from "./IllegalActionError";
 import DefaultExport from "./IllegalActionError";
 
 // TODO: Refactor tests
-describe( module( "CarbonLDP/Errors/IllegalActionError" ), ():void => {
+describe( module( "carbonldp/Errors/IllegalActionError" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( IllegalActionError ).toBeDefined();

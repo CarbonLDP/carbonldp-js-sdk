@@ -16,7 +16,7 @@ import * as NotImplementedError from "./NotImplementedError";
 import DefaultExport from "./NotImplementedError";
 
 // TODO: Refactor tests
-describe( module( "CarbonLDP/Errors/NotImplementedError" ), ():void => {
+describe( module( "carbonldp/Errors/NotImplementedError" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( NotImplementedError ).toBeDefined();

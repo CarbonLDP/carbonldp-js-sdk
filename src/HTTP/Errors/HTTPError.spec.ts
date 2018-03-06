@@ -19,7 +19,7 @@ import * as HTTPError from "./HTTPError";
 import DefaultExport from "./HTTPError";
 
 describe( module(
-	"CarbonLDP/HTTP/Errors/HTTPError"
+	"carbonldp/HTTP/Errors/HTTPError"
 ), ():void => {
 
 	it( isDefined(), ():void => {

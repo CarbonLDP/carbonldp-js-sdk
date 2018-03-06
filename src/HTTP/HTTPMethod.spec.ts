@@ -11,7 +11,7 @@ import * as MethodModule from "./HTTPMethod";
 import DefaultExport from "./HTTPMethod";
 
 describe( module(
-	"CarbonLDP/HTTP/HTTPMethod"
+	"carbonldp/HTTP/HTTPMethod"
 ), ():void => {
 
 	it( isDefined(), ():void => {

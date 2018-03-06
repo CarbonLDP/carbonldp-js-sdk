@@ -14,7 +14,7 @@ import {
 import * as Module from "./QueryVariable";
 import DefaultExport, { QueryVariable } from "./QueryVariable";
 
-describe( module( "CarbonLDP/SPARQL/QueryDocument/QueryVariable" ), ():void => {
+describe( module( "carbonldp/SPARQL/QueryDocument/QueryVariable" ), ():void => {
 
 	it( "should exists", ():void => {
 		expect( Module ).toBeDefined();

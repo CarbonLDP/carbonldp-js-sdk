@@ -9,7 +9,7 @@ import {
 import * as Builder from "./Builder";
 import DefaultExport from "./Builder";
 
-describe( module( "CarbonLDP/SPARQL/Builder", "Module that reexports the customized SPARQLER class." ), ():void => {
+describe( module( "carbonldp/SPARQL/Builder", "Module that reexports the customized SPARQLER class." ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( Builder ).toBeDefined();

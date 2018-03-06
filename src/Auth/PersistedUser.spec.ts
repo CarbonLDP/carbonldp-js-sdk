@@ -30,7 +30,7 @@ interface MockPersistedUser {
 	disableCredentials:Function;
 }
 
-describe( module( "CarbonLDP/Auth/PersistedUser" ), ():void => {
+describe( module( "carbonldp/Auth/PersistedUser" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( PersistedUser ).toBeDefined();

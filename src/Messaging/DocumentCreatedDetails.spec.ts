@@ -16,7 +16,7 @@ import { C } from "../Vocabularies/C";
 import { DocumentCreatedDetails } from "./DocumentCreatedDetails";
 import DefaultExport from "./DocumentCreatedDetails";
 
-describe( module( "CarbonLDP/Messaging/DocumentCreatedDetails" ), ():void => {
+describe( module( "carbonldp/Messaging/DocumentCreatedDetails" ), ():void => {
 
 	describe( interfaze(
 		"CarbonLDP.Messaging.DocumentCreatedDetails.DocumentCreatedDetails",

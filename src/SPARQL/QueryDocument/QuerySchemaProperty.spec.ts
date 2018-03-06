@@ -9,7 +9,7 @@ import { QueryDocumentBuilder } from "./QueryDocumentBuilder";
 
 import DefaultExport, { QuerySchemaProperty } from "./QuerySchemaProperty";
 
-describe( module( "CarbonLDP/SPARQL/QueryDocument/QueryPropertySchema" ), ():void => {
+describe( module( "carbonldp/SPARQL/QueryDocument/QueryPropertySchema" ), ():void => {
 
 	it( hasDefaultExport( "CarbonLDP.SPARQL.QueryDocument.QuerySchemaProperty.QuerySchemaProperty" ), ():void => {
 		const target:DefaultExport = {} as QuerySchemaProperty;

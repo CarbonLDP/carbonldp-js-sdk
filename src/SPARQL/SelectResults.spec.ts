@@ -11,7 +11,7 @@ import * as Utils from "./../Utils";
 import * as SELECTResults from "./SelectResults";
 import DefaultExport from "./SelectResults";
 
-describe( module( "CarbonLDP/SPARQL/SelectResults" ), ():void => {
+describe( module( "carbonldp/SPARQL/SelectResults" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( SELECTResults ).toBeDefined();

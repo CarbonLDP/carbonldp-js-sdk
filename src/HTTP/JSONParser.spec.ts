@@ -11,7 +11,7 @@ import * as Utils from "./../Utils";
 import * as JSONParser from "./JSONParser";
 import DefaultExport from "./JSONParser";
 
-describe( module( "CarbonLDP/HTTP/JSONParser" ), ():void => {
+describe( module( "carbonldp/HTTP/JSONParser" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( JSONParser ).toBeDefined();

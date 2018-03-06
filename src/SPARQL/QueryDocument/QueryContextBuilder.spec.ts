@@ -26,7 +26,7 @@ import {
 	QueryPropertyType,
 } from "./QueryProperty";
 
-describe( module( "CarbonLDP/SPARQL/QueryDocument/QueryContextBuilder" ), ():void => {
+describe( module( "carbonldp/SPARQL/QueryDocument/QueryContextBuilder" ), ():void => {
 
 	it( "should exists", ():void => {
 		expect( Module ).toBeDefined();

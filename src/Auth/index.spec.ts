@@ -48,7 +48,7 @@ import UsernameAndPasswordCredentials from "./UsernameAndPasswordCredentials";
 import UsernameAndPasswordToken from "./UsernameAndPasswordToken";
 import * as Users from "./Users";
 
-describe( module( "CarbonLDP/Auth" ), ():void => {
+describe( module( "carbonldp/Auth" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( Auth ).toBeDefined();

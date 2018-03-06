@@ -46,7 +46,7 @@ import {
 import * as Utils from "./Utils";
 import * as Vocabularies from "./Vocabularies/index";
 
-describe( module( "CarbonLDP/CarbonLDP" ), ():void => {
+describe( module( "carbonldp/CarbonLDP" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( CarbonLDP ).toBeDefined();
@@ -80,7 +80,7 @@ describe( module( "CarbonLDP/CarbonLDP" ), ():void => {
 		it( reexports(
 			STATIC,
 			"AbstractContext",
-			"CarbonLDP/AbstractContext"
+			"carbonldp/AbstractContext"
 		), ():void => {
 			expect( CarbonLDP.CarbonLDP.AbstractContext ).toBeDefined();
 			expect( CarbonLDP.CarbonLDP.AbstractContext ).toBe( AbstractContext );
@@ -89,7 +89,7 @@ describe( module( "CarbonLDP/CarbonLDP" ), ():void => {
 		it( reexports(
 			STATIC,
 			"AccessPoint",
-			"CarbonLDP/AccessPoint"
+			"carbonldp/AccessPoint"
 		), ():void => {
 			expect( CarbonLDP.CarbonLDP.AccessPoint ).toBeDefined();
 			expect( CarbonLDP.CarbonLDP.AccessPoint ).toBe( AccessPoint );
@@ -98,7 +98,7 @@ describe( module( "CarbonLDP/CarbonLDP" ), ():void => {
 		it( reexports(
 			STATIC,
 			"Auth",
-			"CarbonLDP/Auth"
+			"carbonldp/Auth"
 		), ():void => {
 			expect( CarbonLDP.CarbonLDP.Auth ).toBeDefined();
 			expect( CarbonLDP.CarbonLDP.Auth ).toBe( Auth );
@@ -107,7 +107,7 @@ describe( module( "CarbonLDP/CarbonLDP" ), ():void => {
 		it( reexports(
 			STATIC,
 			"BlankNode",
-			"CarbonLDP/BlankNode"
+			"carbonldp/BlankNode"
 		), ():void => {
 			expect( CarbonLDP.CarbonLDP.BlankNode ).toBeDefined();
 			expect( CarbonLDP.CarbonLDP.BlankNode ).toBe( BlankNode );
@@ -116,7 +116,7 @@ describe( module( "CarbonLDP/CarbonLDP" ), ():void => {
 		it( reexports(
 			STATIC,
 			"Document",
-			"CarbonLDP/Document"
+			"carbonldp/Document"
 		), ():void => {
 			expect( CarbonLDP.CarbonLDP.Document ).toBeDefined();
 			expect( CarbonLDP.CarbonLDP.Document ).toBe( Document );
@@ -125,7 +125,7 @@ describe( module( "CarbonLDP/CarbonLDP" ), ():void => {
 		it( reexports(
 			STATIC,
 			"Documents",
-			"CarbonLDP/Documents"
+			"carbonldp/Documents"
 		), ():void => {
 			expect( CarbonLDP.CarbonLDP.Documents ).toBeDefined();
 			expect( CarbonLDP.CarbonLDP.Documents ).toBe( Documents );
@@ -134,7 +134,7 @@ describe( module( "CarbonLDP/CarbonLDP" ), ():void => {
 		it( reexports(
 			STATIC,
 			"Errors",
-			"CarbonLDP/Errors"
+			"carbonldp/Errors"
 		), ():void => {
 			expect( CarbonLDP.CarbonLDP.Errors ).toBeDefined();
 			expect( CarbonLDP.CarbonLDP.Errors ).toBe( Errors );
@@ -143,7 +143,7 @@ describe( module( "CarbonLDP/CarbonLDP" ), ():void => {
 		it( reexports(
 			STATIC,
 			"Fragment",
-			"CarbonLDP/Fragment"
+			"carbonldp/Fragment"
 		), ():void => {
 			expect( CarbonLDP.CarbonLDP.Fragment ).toBeDefined();
 			expect( CarbonLDP.CarbonLDP.Fragment ).toBe( Fragment );
@@ -152,7 +152,7 @@ describe( module( "CarbonLDP/CarbonLDP" ), ():void => {
 		it( reexports(
 			STATIC,
 			"HTTP",
-			"CarbonLDP/HTTP"
+			"carbonldp/HTTP"
 		), ():void => {
 			expect( CarbonLDP.CarbonLDP.HTTP ).toBeDefined();
 			expect( CarbonLDP.CarbonLDP.HTTP ).toBe( HTTP );
@@ -161,7 +161,7 @@ describe( module( "CarbonLDP/CarbonLDP" ), ():void => {
 		it( reexports(
 			STATIC,
 			"JSONLD",
-			"CarbonLDP/JSONLD"
+			"carbonldp/JSONLD"
 		), ():void => {
 			expect( CarbonLDP.CarbonLDP.JSONLD ).toBeDefined();
 			expect( CarbonLDP.CarbonLDP.JSONLD ).toBe( JSONLD );
@@ -170,7 +170,7 @@ describe( module( "CarbonLDP/CarbonLDP" ), ():void => {
 		it( reexports(
 			STATIC,
 			"LDP",
-			"CarbonLDP/LDP"
+			"carbonldp/LDP"
 		), ():void => {
 			expect( CarbonLDP.CarbonLDP.LDP ).toBeDefined();
 			expect( CarbonLDP.CarbonLDP.LDP ).toBe( LDP );
@@ -179,7 +179,7 @@ describe( module( "CarbonLDP/CarbonLDP" ), ():void => {
 		it( reexports(
 			STATIC,
 			"LDPatch",
-			"CarbonLDP/LDPatch"
+			"carbonldp/LDPatch"
 		), ():void => {
 			expect( CarbonLDP.CarbonLDP.LDPatch ).toBeDefined();
 			expect( CarbonLDP.CarbonLDP.LDPatch ).toBe( LDPatch );
@@ -188,7 +188,7 @@ describe( module( "CarbonLDP/CarbonLDP" ), ():void => {
 		it( reexports(
 			STATIC,
 			"Messaging",
-			"CarbonLDP/Messaging"
+			"carbonldp/Messaging"
 		), ():void => {
 			expect( CarbonLDP.CarbonLDP.Messaging ).toBeDefined();
 			expect( CarbonLDP.CarbonLDP.Messaging ).toBe( Messaging );
@@ -197,7 +197,7 @@ describe( module( "CarbonLDP/CarbonLDP" ), ():void => {
 		it( reexports(
 			STATIC,
 			"ModelFactory",
-			"CarbonLDP/ModelFactory"
+			"carbonldp/ModelFactory"
 		), ():void => {
 			expect( CarbonLDP.CarbonLDP.ModelFactory ).toBeDefined();
 			expect( CarbonLDP.CarbonLDP.ModelFactory ).toBe( ModelFactory );
@@ -206,7 +206,7 @@ describe( module( "CarbonLDP/CarbonLDP" ), ():void => {
 		it( reexports(
 			STATIC,
 			"NamedFragment",
-			"CarbonLDP/NamedFragment"
+			"carbonldp/NamedFragment"
 		), ():void => {
 			expect( CarbonLDP.CarbonLDP.NamedFragment ).toBeDefined();
 			expect( CarbonLDP.CarbonLDP.NamedFragment ).toBe( NamedFragment );
@@ -215,7 +215,7 @@ describe( module( "CarbonLDP/CarbonLDP" ), ():void => {
 		it( reexports(
 			STATIC,
 			"Vocabularies",
-			"CarbonLDP/Vocabularies"
+			"carbonldp/Vocabularies"
 		), ():void => {
 			expect( CarbonLDP.CarbonLDP.Vocabularies ).toBeDefined();
 			expect( CarbonLDP.CarbonLDP.Vocabularies ).toBe( Vocabularies );
@@ -224,7 +224,7 @@ describe( module( "CarbonLDP/CarbonLDP" ), ():void => {
 		it( reexports(
 			STATIC,
 			"ObjectSchema",
-			"CarbonLDP/ObjectSchema"
+			"carbonldp/ObjectSchema"
 		), ():void => {
 			expect( CarbonLDP.CarbonLDP.ObjectSchema ).toBeDefined();
 			expect( CarbonLDP.CarbonLDP.ObjectSchema ).toBe( ObjectSchema );
@@ -233,7 +233,7 @@ describe( module( "CarbonLDP/CarbonLDP" ), ():void => {
 		it( reexports(
 			STATIC,
 			"PersistedDocument",
-			"CarbonLDP/PersistedDocument"
+			"carbonldp/PersistedDocument"
 		), ():void => {
 			expect( CarbonLDP.CarbonLDP.PersistedDocument ).toBeDefined();
 			expect( CarbonLDP.CarbonLDP.PersistedDocument ).toBe( PersistedDocument );
@@ -242,7 +242,7 @@ describe( module( "CarbonLDP/CarbonLDP" ), ():void => {
 		it( reexports(
 			STATIC,
 			"PersistedFragment",
-			"CarbonLDP/PersistedFragment"
+			"carbonldp/PersistedFragment"
 		), ():void => {
 			expect( CarbonLDP.CarbonLDP.PersistedFragment ).toBeDefined();
 			expect( CarbonLDP.CarbonLDP.PersistedFragment ).toBe( PersistedFragment );
@@ -251,7 +251,7 @@ describe( module( "CarbonLDP/CarbonLDP" ), ():void => {
 		it( reexports(
 			STATIC,
 			"PersistedNamedFragment",
-			"CarbonLDP/PersistedNamedFragment"
+			"carbonldp/PersistedNamedFragment"
 		), ():void => {
 			expect( CarbonLDP.CarbonLDP.PersistedNamedFragment ).toBeDefined();
 			expect( CarbonLDP.CarbonLDP.PersistedNamedFragment ).toBe( PersistedNamedFragment );
@@ -260,7 +260,7 @@ describe( module( "CarbonLDP/CarbonLDP" ), ():void => {
 		it( reexports(
 			STATIC,
 			"PersistedResource",
-			"CarbonLDP/PersistedResource"
+			"carbonldp/PersistedResource"
 		), ():void => {
 			expect( CarbonLDP.CarbonLDP.PersistedResource ).toBeDefined();
 			expect( CarbonLDP.CarbonLDP.PersistedResource ).toBe( PersistedResource );
@@ -269,7 +269,7 @@ describe( module( "CarbonLDP/CarbonLDP" ), ():void => {
 		it( reexports(
 			STATIC,
 			"Pointer",
-			"CarbonLDP/Pointer"
+			"carbonldp/Pointer"
 		), ():void => {
 			expect( CarbonLDP.CarbonLDP.Pointer ).toBeDefined();
 			expect( CarbonLDP.CarbonLDP.Pointer ).toBe( Pointer );
@@ -278,7 +278,7 @@ describe( module( "CarbonLDP/CarbonLDP" ), ():void => {
 		it( reexports(
 			STATIC,
 			"RDF",
-			"CarbonLDP/RDF"
+			"carbonldp/RDF"
 		), ():void => {
 			expect( CarbonLDP.CarbonLDP.RDF ).toBeDefined();
 			expect( CarbonLDP.CarbonLDP.RDF ).toBe( RDF );
@@ -287,7 +287,7 @@ describe( module( "CarbonLDP/CarbonLDP" ), ():void => {
 		it( reexports(
 			STATIC,
 			"Resource",
-			"CarbonLDP/Resource"
+			"carbonldp/Resource"
 		), ():void => {
 			expect( CarbonLDP.CarbonLDP.Resource ).toBeDefined();
 			expect( CarbonLDP.CarbonLDP.Resource ).toBe( Resource );
@@ -296,7 +296,7 @@ describe( module( "CarbonLDP/CarbonLDP" ), ():void => {
 		it( reexports(
 			STATIC,
 			"SDKContext",
-			"CarbonLDP/SDKContext"
+			"carbonldp/SDKContext"
 		), ():void => {
 			expect( CarbonLDP.CarbonLDP.SDKContext ).toBeDefined();
 			expect( CarbonLDP.CarbonLDP.SDKContext ).toBe( SDKContext );
@@ -305,7 +305,7 @@ describe( module( "CarbonLDP/CarbonLDP" ), ():void => {
 		it( reexports(
 			STATIC,
 			"Settings",
-			"CarbonLDP/Settings"
+			"carbonldp/Settings"
 		), ():void => {
 			expect( CarbonLDP.CarbonLDP.Settings ).toBeDefined();
 			expect( CarbonLDP.CarbonLDP.Settings ).toBe( Settings );
@@ -314,7 +314,7 @@ describe( module( "CarbonLDP/CarbonLDP" ), ():void => {
 		it( reexports(
 			STATIC,
 			"SHACL",
-			"CarbonLDP/SHACL"
+			"carbonldp/SHACL"
 		), ():void => {
 			expect( CarbonLDP.CarbonLDP.SHACL ).toBeDefined();
 			expect( CarbonLDP.CarbonLDP.SHACL ).toBe( SHACL );
@@ -323,7 +323,7 @@ describe( module( "CarbonLDP/CarbonLDP" ), ():void => {
 		it( reexports(
 			STATIC,
 			"SPARQL",
-			"CarbonLDP/SPARQL"
+			"carbonldp/SPARQL"
 		), ():void => {
 			expect( CarbonLDP.CarbonLDP.SPARQL ).toBeDefined();
 			expect( CarbonLDP.CarbonLDP.SPARQL ).toBe( SPARQL );
@@ -332,7 +332,7 @@ describe( module( "CarbonLDP/CarbonLDP" ), ():void => {
 		it( reexports(
 			STATIC,
 			"System",
-			"CarbonLDP/System"
+			"carbonldp/System"
 		), ():void => {
 			expect( CarbonLDP.CarbonLDP.System ).toBeDefined();
 			expect( CarbonLDP.CarbonLDP.System ).toBe( System );
@@ -341,7 +341,7 @@ describe( module( "CarbonLDP/CarbonLDP" ), ():void => {
 		it( reexports(
 			STATIC,
 			"Utils",
-			"CarbonLDP/Utils"
+			"carbonldp/Utils"
 		), ():void => {
 			expect( CarbonLDP.CarbonLDP.Utils ).toBeDefined();
 			expect( CarbonLDP.CarbonLDP.Utils ).toBe( Utils );

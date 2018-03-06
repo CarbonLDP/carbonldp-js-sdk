@@ -30,7 +30,7 @@ import {
 } from "./test/JasmineExtender";
 import * as Utils from "./Utils";
 
-describe( module( "CarbonLDP/PersistedDocument" ), ():void => {
+describe( module( "carbonldp/PersistedDocument" ), ():void => {
 
 	describe( interfaze(
 		"CarbonLDP.PersistedDocument.PersistedDocument",

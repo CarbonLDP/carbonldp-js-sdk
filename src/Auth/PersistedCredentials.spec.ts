@@ -34,7 +34,7 @@ interface MockCredentials {
 	disable:Function;
 }
 
-describe( module( "CarbonLDP/Auth/PersistedCredentials" ), ():void => {
+describe( module( "carbonldp/Auth/PersistedCredentials" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( PersistedCredentials ).toBeDefined();

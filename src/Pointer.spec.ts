@@ -22,7 +22,7 @@ import {
 	STATIC,
 } from "./test/JasmineExtender";
 
-describe( module( "CarbonLDP/Pointer" ), ():void => {
+describe( module( "carbonldp/Pointer" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( Module ).toBeDefined();

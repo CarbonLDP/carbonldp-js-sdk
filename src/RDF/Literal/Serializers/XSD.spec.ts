@@ -13,7 +13,7 @@ import * as Utils from "./../../../Utils";
 import * as XSD from "./XSD";
 
 describe( module(
-	"CarbonLDP/RDF/Literal/Serializers/XSD"
+	"carbonldp/RDF/Literal/Serializers/XSD"
 ), ():void => {
 
 	it( isDefined(), ():void => {

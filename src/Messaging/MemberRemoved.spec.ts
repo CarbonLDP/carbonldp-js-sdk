@@ -17,7 +17,7 @@ import DefaultExport, { MemberRemoved } from "./MemberRemoved";
 
 import { MemberRemovedDetails } from "./MemberRemovedDetails";
 
-describe( module( "CarbonLDP/Messaging/MemberRemoved" ), ():void => {
+describe( module( "carbonldp/Messaging/MemberRemoved" ), ():void => {
 
 	describe( interfaze(
 		"CarbonLDP.Messaging.MemberRemoved.MemberRemoved",

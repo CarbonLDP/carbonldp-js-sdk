@@ -2,7 +2,7 @@ import { hasDefaultExport, hasProperty, interfaze, module, OBLIGATORY } from "..
 
 import DefaultExport, { QuerySchema } from "./QuerySchema";
 
-describe( module( "CarbonLDP/SPARQL/QueryDocument/QuerySchema" ), ():void => {
+describe( module( "carbonldp/SPARQL/QueryDocument/QuerySchema" ), ():void => {
 
 	it( hasDefaultExport( "CarbonLDP.SPARQL.QueryDocument.QuerySchema.QuerySchema" ), ():void => {
 		const target:DefaultExport = {} as QuerySchema;

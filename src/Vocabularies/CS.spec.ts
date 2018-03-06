@@ -7,7 +7,7 @@ import {
 
 import { CS } from "./CS";
 
-describe( module( "CarbonLDP/Vocabularies/CS" ), ():void => {
+describe( module( "carbonldp/Vocabularies/CS" ), ():void => {
 
 	describe( namespaze( "CarbonLDP.Vocabularies.CS", "Vocabulary for the security system of Carbon LDP." ), ():void => {
 

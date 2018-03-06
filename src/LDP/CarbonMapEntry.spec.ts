@@ -13,7 +13,7 @@ import * as Utils from "./../Utils";
 
 import DefaultExport, { CarbonMapEntry } from "./CarbonMapEntry";
 
-describe( module( "CarbonLDP/LDP/CarbonMapEntry" ), ():void => {
+describe( module( "carbonldp/LDP/CarbonMapEntry" ), ():void => {
 
 	describe( interfaze(
 		"CarbonLDP.LDP.CarbonMapEntry.CarbonMapEntry",

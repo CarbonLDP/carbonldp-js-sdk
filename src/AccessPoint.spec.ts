@@ -17,7 +17,7 @@ import {
 } from "./test/JasmineExtender";
 import { C } from "./Vocabularies/C";
 
-describe( module( "CarbonLDP/AccessPoint" ), ():void => {
+describe( module( "carbonldp/AccessPoint" ), ():void => {
 
 	describe( interfaze(
 		"CarbonLDP.AccessPoint.AccessPointBase",

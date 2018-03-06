@@ -12,7 +12,7 @@ import {
 } from "./test/JasmineExtender";
 
 
-describe( module( "CarbonLDP/Fragment" ), ():void => {
+describe( module( "carbonldp/Fragment" ), ():void => {
 
 	describe( interfaze(
 		"CarbonLDP.Fragment.Fragment",

@@ -16,7 +16,7 @@ import * as Utils from "./../Utils";
 
 import DefaultExport, { ResponseMetadata } from "./ResponseMetadata";
 
-describe( module( "CarbonLDP/LDP/ResponseMetadata" ), ():void => {
+describe( module( "carbonldp/LDP/ResponseMetadata" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( ResponseMetadata ).toBeDefined();

@@ -13,7 +13,7 @@ import * as Utils from "./../Utils";
 import * as Parser from "./Parser";
 import DefaultExport from "./Parser";
 
-describe( module( "CarbonLDP/HTTP/Parser" ), ():void => {
+describe( module( "carbonldp/HTTP/Parser" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( Parser ).toBeDefined();

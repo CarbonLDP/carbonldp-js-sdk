@@ -17,7 +17,7 @@ import * as Utils from "./../../../Utils";
 import * as NotAcceptableError from "./NotAcceptableError";
 import DefaultExport from "./NotAcceptableError";
 
-describe( module( "CarbonLDP/HTTP/Errors/ClientErrors/NotAcceptableError" ), ():void => {
+describe( module( "carbonldp/HTTP/Errors/ClientErrors/NotAcceptableError" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( NotAcceptableError ).toBeDefined();

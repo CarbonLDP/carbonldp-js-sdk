@@ -17,7 +17,7 @@ import * as Utils from "./../../../Utils";
 import * as MethodNotAllowedError from "./MethodNotAllowedError";
 import DefaultExport from "./MethodNotAllowedError";
 
-describe( module( "CarbonLDP/HTTP/Errors/ClientErrors/MethodNotAllowedError" ), ():void => {
+describe( module( "carbonldp/HTTP/Errors/ClientErrors/MethodNotAllowedError" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( MethodNotAllowedError ).toBeDefined();

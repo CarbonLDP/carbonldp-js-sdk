@@ -21,7 +21,7 @@ import * as Utils from "./../Utils";
 
 import DefaultExport, { RDFValue } from "./Value";
 
-describe( module( "CarbonLDP/RDF/Value" ), ():void => {
+describe( module( "carbonldp/RDF/Value" ), ():void => {
 
 	describe( interfaze(
 		"CarbonLDP.RDF.Value.RDFValue",

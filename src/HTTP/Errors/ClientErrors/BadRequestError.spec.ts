@@ -19,7 +19,7 @@ import { HTTPError } from "./../HTTPError";
 import * as BadRequestError from "./BadRequestError";
 import DefaultExport from "./BadRequestError";
 
-describe( module( "CarbonLDP/HTTP/Errors/ClientErrors/BadRequestError" ), ():void => {
+describe( module( "carbonldp/HTTP/Errors/ClientErrors/BadRequestError" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( BadRequestError ).toBeDefined();

@@ -17,7 +17,7 @@ import DefaultExport from "./ChildCreated";
 
 import { DocumentCreated } from "./DocumentCreated";
 
-describe( module( "CarbonLDP/Messaging/ChildCreated" ), ():void => {
+describe( module( "carbonldp/Messaging/ChildCreated" ), ():void => {
 
 	describe( interfaze(
 		"CarbonLDP.Messaging.ChildCreated.ChildCreated",

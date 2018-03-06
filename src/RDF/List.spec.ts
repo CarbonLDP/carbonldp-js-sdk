@@ -13,7 +13,7 @@ import * as Utils from "./../Utils";
 
 import DefaultExport, { RDFList } from "./List";
 
-describe( module( "CarbonLDP/RDF/List" ), ():void => {
+describe( module( "carbonldp/RDF/List" ), ():void => {
 
 	describe( interfaze(
 		"CarbonLDP.RDF.List.RDFList",

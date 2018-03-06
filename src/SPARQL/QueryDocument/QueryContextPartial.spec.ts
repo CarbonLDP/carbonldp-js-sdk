@@ -9,7 +9,7 @@ import { QueryContext }  from "./QueryContext";
 import * as Module from "./QueryContextPartial";
 import DefaultExport, { QueryContextPartial } from "./QueryContextPartial";
 
-describe( module( "CarbonLDP/SPARQL/QueryDocument/QueryContextPartial" ), ():void => {
+describe( module( "carbonldp/SPARQL/QueryDocument/QueryContextPartial" ), ():void => {
 
 	it( "should exists", ():void => {
 		expect( Module ).toBeDefined();

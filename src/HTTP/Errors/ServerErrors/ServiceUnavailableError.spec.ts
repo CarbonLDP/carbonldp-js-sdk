@@ -17,7 +17,7 @@ import * as Utils from "./../../../Utils";
 import * as ServiceUnavailableError from "./ServiceUnavailableError";
 import DefaultExport from "./ServiceUnavailableError";
 
-describe( module( "CarbonLDP/HTTP/Errors/ServerErrors/ServiceUnavailableError" ), ():void => {
+describe( module( "carbonldp/HTTP/Errors/ServerErrors/ServiceUnavailableError" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( ServiceUnavailableError ).toBeDefined();

@@ -12,7 +12,7 @@ import * as StatusCodeModule from "./StatusCode";
 import DefaultExport from "./StatusCode";
 
 describe( module(
-	"CarbonLDP/HTTP/StatusCode"
+	"carbonldp/HTTP/StatusCode"
 ), ():void => {
 
 	it( isDefined(), ():void => {

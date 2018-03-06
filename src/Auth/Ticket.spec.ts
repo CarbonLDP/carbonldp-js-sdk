@@ -19,7 +19,7 @@ import * as Utils from "./../Utils";
 import * as Ticket from "./Ticket";
 import DefaultExport from "./Ticket";
 
-describe( module( "CarbonLDP/Auth/Ticket" ), ():void => {
+describe( module( "carbonldp/Auth/Ticket" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( Ticket ).toBeDefined();

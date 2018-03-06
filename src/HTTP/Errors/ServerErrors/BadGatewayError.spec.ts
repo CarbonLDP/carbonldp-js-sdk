@@ -17,7 +17,7 @@ import * as Utils from "./../../../Utils";
 import * as BadGatewayError from "./BadGatewayError";
 import DefaultExport from "./BadGatewayError";
 
-describe( module( "CarbonLDP/HTTP/Errors/ServerErrors/BadGatewayError" ), ():void => {
+describe( module( "carbonldp/HTTP/Errors/ServerErrors/BadGatewayError" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( BadGatewayError ).toBeDefined();

@@ -2,7 +2,7 @@ import { enumeration, hasDefaultExport, hasEnumeral, isDefined, module } from ".
 import * as MessagingEvent from "./Event";
 import DefaultExport from "./Event";
 
-describe( module( "CarbonLDP/Messaging/Event" ), ():void => {
+describe( module( "carbonldp/Messaging/Event" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( MessagingEvent ).toBeDefined();

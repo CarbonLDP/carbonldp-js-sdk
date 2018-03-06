@@ -18,7 +18,7 @@ import * as Utils from "./../Utils";
 import * as Token from "./Token";
 import DefaultExport from "./Token";
 
-describe( module( "CarbonLDP/Auth/Token" ), ():void => {
+describe( module( "carbonldp/Auth/Token" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( Token ).toBeDefined();

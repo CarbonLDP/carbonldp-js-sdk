@@ -22,7 +22,7 @@ import {
 } from "./test/JasmineExtender";
 
 
-describe( module( "CarbonLDP/SDKContext" ), ():void => {
+describe( module( "carbonldp/SDKContext" ), ():void => {
 
 	describe( clazz( "CarbonLDP.SDKContext.SDKContext", "Base class of every Context in the SDK.", [ "CarbonLDP.Context.Context" ] ), ():void => {
 

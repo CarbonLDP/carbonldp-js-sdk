@@ -22,7 +22,7 @@ import * as PersistedUser from "./PersistedUser";
 import * as Users from "./Users";
 import DefaultExport from "./Users";
 
-describe( module( "CarbonLDP/Auth/Users" ), ():void => {
+describe( module( "carbonldp/Auth/Users" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( Users ).toBeDefined();

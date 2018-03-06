@@ -24,7 +24,7 @@ import {
 } from "./Request";
 import { Response } from "./Response";
 
-describe( module( "CarbonLDP/HTTP/Request" ), function():void {
+describe( module( "carbonldp/HTTP/Request" ), function():void {
 
 	describe( interfaze(
 		"CarbonLDP.HTTP.Request.RequestOptions",

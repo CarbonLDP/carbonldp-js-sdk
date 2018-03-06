@@ -9,7 +9,7 @@ import {
 
 import DefaultExport, { PersistedACE } from "./PersistedACE";
 
-describe( module( "CarbonLDP/Auth/ACE" ), ():void => {
+describe( module( "carbonldp/Auth/ACE" ), ():void => {
 
 	describe( interfaze(
 		"CarbonLDP.Auth.PersistedACE.PersistedACE",

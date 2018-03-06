@@ -10,7 +10,7 @@ import {
 	OPTIONAL,
 } from "./test/JasmineExtender";
 
-describe( module( "CarbonLDP/Settings" ), ():void => {
+describe( module( "carbonldp/Settings" ), ():void => {
 
 	it( "should exists", ():void => {
 		expect( Settings ).toBeDefined();

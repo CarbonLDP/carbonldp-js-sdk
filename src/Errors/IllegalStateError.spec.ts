@@ -16,7 +16,7 @@ import * as IllegalStateError from "./IllegalStateError";
 import DefaultExport from "./IllegalStateError";
 
 // TODO: Refactor tests
-describe( module( "CarbonLDP/Errors/IllegalStateError" ), function():void {
+describe( module( "carbonldp/Errors/IllegalStateError" ), function():void {
 
 	it( isDefined(), ():void => {
 		expect( IllegalStateError ).toBeDefined();

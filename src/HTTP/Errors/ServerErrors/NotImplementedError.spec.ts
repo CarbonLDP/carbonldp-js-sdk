@@ -17,7 +17,7 @@ import * as Utils from "./../../../Utils";
 import * as NotImplementedError from "./NotImplementedError";
 import DefaultExport from "./NotImplementedError";
 
-describe( module( "CarbonLDP/HTTP/Errors/ServerErrors/NotImplementedError" ), ():void => {
+describe( module( "carbonldp/HTTP/Errors/ServerErrors/NotImplementedError" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( NotImplementedError ).toBeDefined();

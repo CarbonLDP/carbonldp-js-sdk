@@ -15,7 +15,7 @@ import { SHACL } from "./SHACL";
 import { VCARD } from "./VCARD";
 import { XSD } from "./XSD";
 
-describe( module( "CarbonLDP/Vocabularies" ), ():void => {
+describe( module( "carbonldp/Vocabularies" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( Vocabularies ).toBeDefined();

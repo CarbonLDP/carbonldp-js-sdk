@@ -7,7 +7,7 @@ import {
 
 import { SHACL } from "./SHACL";
 
-describe( module( "CarbonLDP/Vocabularies/SHACL" ), ():void => {
+describe( module( "carbonldp/Vocabularies/SHACL" ), ():void => {
 
 	describe( namespaze( "CarbonLDP.Vocabularies.SHACL", "Vocabulary of the Shapes Constraint Language (SHACL) specification." ), ():void => {
 

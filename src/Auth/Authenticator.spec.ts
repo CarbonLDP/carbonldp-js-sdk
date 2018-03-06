@@ -13,7 +13,7 @@ import * as Utils from "./../Utils";
 import * as Authenticator from "./Authenticator";
 import DefaultExport from "./Authenticator";
 
-describe( module( "CarbonLDP/Auth/Authenticator" ), ():void => {
+describe( module( "carbonldp/Auth/Authenticator" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( Authenticator ).toBeDefined();

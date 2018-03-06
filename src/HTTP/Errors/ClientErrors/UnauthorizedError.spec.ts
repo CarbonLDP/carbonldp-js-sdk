@@ -17,7 +17,7 @@ import * as Utils from "./../../../Utils";
 import * as UnauthorizedError from "./UnauthorizedError";
 import DefaultExport from "./UnauthorizedError";
 
-describe( module( "CarbonLDP/HTTP/Errors/ClientErrors/UnauthorizedError" ), ():void => {
+describe( module( "carbonldp/HTTP/Errors/ClientErrors/UnauthorizedError" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( UnauthorizedError ).toBeDefined();

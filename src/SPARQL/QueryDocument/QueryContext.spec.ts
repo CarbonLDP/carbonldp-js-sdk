@@ -21,7 +21,7 @@ import DefaultExport, { QueryContext } from "./QueryContext";
 
 import { QueryVariable } from "./QueryVariable";
 
-describe( module( "CarbonLDP/SPARQL/QueryDocument/QueryContext" ), ():void => {
+describe( module( "carbonldp/SPARQL/QueryDocument/QueryContext" ), ():void => {
 
 	it( "should exists", ():void => {
 		expect( Module ).toBeDefined();

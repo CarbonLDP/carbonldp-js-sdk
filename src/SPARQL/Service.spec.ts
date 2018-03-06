@@ -25,7 +25,7 @@ import { SPARQLSelectResults } from "./SelectResults";
 import * as Service from "./Service";
 import DefaultExport from "./Service";
 
-describe( module( "CarbonLDP/SPARQL/Service" ), ():void => {
+describe( module( "carbonldp/SPARQL/Service" ), ():void => {
 	it( isDefined(), ():void => {
 		expect( Service ).toBeDefined();
 		expect( Utils.isObject( Service ) ).toEqual( true );

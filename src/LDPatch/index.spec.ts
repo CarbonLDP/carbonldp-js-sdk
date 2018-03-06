@@ -8,19 +8,19 @@ import * as DeltaCreator from "./DeltaCreator";
 import * as Module from "./index";
 import * as Tokens from "./Tokens";
 
-describe( module( "CarbonLDP/LDPatch" ), ():void => {
+describe( module( "carbonldp/LDPatch" ), ():void => {
 
 	it( "should exists", ():void => {
 		expect( Module ).toBeDefined();
 		expect( Module ).toEqual( jasmine.any( Object ) );
 	} );
 
-	it( reexports( INSTANCE, "Tokens", "CarbonLDP/LDPatch/Tokens" ), ():void => {
+	it( reexports( INSTANCE, "Tokens", "carbonldp/LDPatch/Tokens" ), ():void => {
 		expect( Module.Tokens ).toBeDefined();
 		expect( Module.Tokens ).toBe( Tokens );
 	} );
 
-	it( reexports( INSTANCE, "DeltaCreator", "CarbonLDP/LDPatch/DeltaCreator" ), ():void => {
+	it( reexports( INSTANCE, "DeltaCreator", "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 		expect( Module.DeltaCreator ).toBeDefined();
 		expect( Module.DeltaCreator ).toBe( DeltaCreator );
 	} );

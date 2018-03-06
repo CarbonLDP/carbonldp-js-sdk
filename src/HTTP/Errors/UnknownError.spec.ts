@@ -19,7 +19,7 @@ import * as UnknownError from "./UnknownError";
 import DefaultExport from "./UnknownError";
 
 describe( module(
-	"CarbonLDP/HTTP/Errors/UnknownError"
+	"carbonldp/HTTP/Errors/UnknownError"
 ), ():void => {
 
 	it( isDefined(), ():void => {

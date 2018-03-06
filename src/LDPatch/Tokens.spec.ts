@@ -28,7 +28,7 @@ import {
 	UpdateListToken,
 } from "./Tokens";
 
-describe( module( "CarbonLDP/LDPatch/Tokens" ), ():void => {
+describe( module( "carbonldp/LDPatch/Tokens" ), ():void => {
 
 	it( "should exists", ():void => {
 		expect( Module ).toBeDefined();

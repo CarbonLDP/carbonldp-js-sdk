@@ -17,7 +17,7 @@ import * as Utils from "./../../../Utils";
 import * as TooManyRequestsError from "./TooManyRequestsError";
 import DefaultExport from "./TooManyRequestsError";
 
-describe( module( "CarbonLDP/HTTP/Errors/ClientErrors/TooManyRequestsError" ), ():void => {
+describe( module( "carbonldp/HTTP/Errors/ClientErrors/TooManyRequestsError" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( TooManyRequestsError ).toBeDefined();

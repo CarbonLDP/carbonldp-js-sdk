@@ -31,7 +31,7 @@ function createProperty( values:Partial<ObjectSchema.DigestedObjectSchemaPropert
 }
 
 
-describe( module( "CarbonLDP/ObjectSchema" ), ():void => {
+describe( module( "carbonldp/ObjectSchema" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( ObjectSchema ).toBeDefined();

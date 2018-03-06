@@ -15,7 +15,7 @@ import * as IDAlreadyInUseError from "./IDAlreadyInUseError";
 import DefaultExport from "./IDAlreadyInUseError";
 
 // TODO: Refactor tests
-describe( module( "CarbonLDP/Errors/IDAlreadyInUseError" ), ():void => {
+describe( module( "carbonldp/Errors/IDAlreadyInUseError" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( IDAlreadyInUseError ).toBeDefined();

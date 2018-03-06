@@ -15,7 +15,7 @@ import {
 	module,
 } from "./test/JasmineExtender";
 
-describe( module( "CarbonLDP/AbstractContext" ), ():void => {
+describe( module( "carbonldp/AbstractContext" ), ():void => {
 
 	describe( clazz( "CarbonLDP.AbstractContext.AbstractContext", "Abstract class for defining contexts." ), ():void => {
 

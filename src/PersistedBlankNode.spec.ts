@@ -10,7 +10,7 @@ import {
 } from "./test/JasmineExtender";
 import * as Utils from "./Utils";
 
-describe( module( "CarbonLDP/LDP/PersistedBlankNode" ), ():void => {
+describe( module( "carbonldp/LDP/PersistedBlankNode" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( PersistedBlankNode ).toBeDefined();

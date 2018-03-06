@@ -21,7 +21,7 @@ import DefaultExport, {
 
 import { RDFNode } from "./Node";
 
-describe( module( "CarbonLDP/RDF/Document" ), ():void => {
+describe( module( "carbonldp/RDF/Document" ), ():void => {
 
 	describe( interfaze(
 		"CarbonLDP.RDF.Document.RDFDocument",

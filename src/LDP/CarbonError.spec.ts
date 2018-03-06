@@ -14,7 +14,7 @@ import * as Utils from "./../Utils";
 
 import DefaultExport, { CarbonError } from "./CarbonError";
 
-describe( module( "CarbonLDP/LDP/Error" ), ():void => {
+describe( module( "carbonldp/LDP/Error" ), ():void => {
 
 	describe( interfaze(
 		"CarbonLDP.LDP.CarbonError.CarbonError",

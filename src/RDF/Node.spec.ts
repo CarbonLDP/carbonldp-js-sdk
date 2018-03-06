@@ -22,7 +22,7 @@ import { RDFList } from "./List";
 
 import DefaultExport, { RDFNode } from "./Node";
 
-describe( module( "CarbonLDP/RDF/Node" ), ():void => {
+describe( module( "carbonldp/RDF/Node" ), ():void => {
 
 	describe( interfaze(
 		"CarbonLDP.RDF.Node.RDFNode",

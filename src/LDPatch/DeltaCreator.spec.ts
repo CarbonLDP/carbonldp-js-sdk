@@ -37,7 +37,7 @@ import {
 	UpdateListToken,
 } from "./Tokens";
 
-describe( module( "CarbonLDP/LDPatch/DeltaCreator" ), ():void => {
+describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 
 	it( "should exists", ():void => {
 		expect( Module ).toBeDefined();

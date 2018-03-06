@@ -13,7 +13,7 @@ import {
 import * as Utils from "./Utils";
 import { CS } from "./Vocabularies/CS";
 
-describe( module( "CarbonLDP/ProtectedDocument" ), ():void => {
+describe( module( "carbonldp/ProtectedDocument" ), ():void => {
 
 	describe( interfaze(
 		"CarbonLDP.ProtectedDocument.ProtectedDocument",

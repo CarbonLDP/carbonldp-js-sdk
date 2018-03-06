@@ -25,7 +25,7 @@ import { QueryContext } from "./QueryContext";
 import * as Module from "./QueryProperty";
 import DefaultExports, { QueryProperty } from "./QueryProperty";
 
-describe( module( "CarbonLDP/SPARQL/QueryDocument/QueryProperty" ), ():void => {
+describe( module( "carbonldp/SPARQL/QueryDocument/QueryProperty" ), ():void => {
 
 	it( "should exists", ():void => {
 		expect( Module ).toBeDefined();

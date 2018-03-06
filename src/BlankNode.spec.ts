@@ -13,7 +13,7 @@ import {
 	STATIC,
 } from "./test/JasmineExtender";
 
-describe( module( "CarbonLDP/BlankNode" ), ():void => {
+describe( module( "carbonldp/BlankNode" ), ():void => {
 
 	describe( interfaze(
 		"CarbonLDP.BlankNode.BlankNode",

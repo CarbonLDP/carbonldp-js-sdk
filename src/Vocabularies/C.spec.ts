@@ -7,7 +7,7 @@ import {
 
 import { C } from "./C";
 
-describe( module( "CarbonLDP/Vocabularies/C" ), ():void => {
+describe( module( "carbonldp/Vocabularies/C" ), ():void => {
 
 	describe( namespaze( "CarbonLDP.Vocabularies.C", "The vocabulary of Carbon LDP." ), ():void => {
 

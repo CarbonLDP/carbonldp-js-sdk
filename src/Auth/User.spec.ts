@@ -22,7 +22,7 @@ interface MockedUser {
 	name:string;
 }
 
-describe( module( "CarbonLDP/Auth/User" ), ():void => {
+describe( module( "carbonldp/Auth/User" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( User ).toBeDefined();

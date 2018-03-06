@@ -18,7 +18,7 @@ import {
 import { LDP } from "./Vocabularies/LDP";
 
 
-describe( module( "CarbonLDP/Resource" ), ():void => {
+describe( module( "carbonldp/Resource" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( Module ).toBeDefined();

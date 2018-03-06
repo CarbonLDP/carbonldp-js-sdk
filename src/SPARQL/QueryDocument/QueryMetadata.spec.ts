@@ -16,7 +16,7 @@ import { C } from "../../Vocabularies/C";
 
 import DefaultExport, { QueryMetadata } from "./QueryMetadata";
 
-describe( module( "CarbonLDP/SPARQL/QueryDocument/QueryMetadata" ), ():void => {
+describe( module( "carbonldp/SPARQL/QueryDocument/QueryMetadata" ), ():void => {
 
 	it( "should exists", ():void => {
 		expect( QueryMetadata ).toBeDefined();

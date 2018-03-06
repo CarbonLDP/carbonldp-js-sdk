@@ -18,7 +18,7 @@ import { Document } from "./../Document";
 
 import DefaultExport, { DirectContainer } from "./DirectContainer";
 
-describe( module( "CarbonLDP/LDP/DirectContainer" ), ():void => {
+describe( module( "carbonldp/LDP/DirectContainer" ), ():void => {
 
 	describe( interfaze(
 		"CarbonLDP.LDP.DirectContainer.DirectContainer",

@@ -20,7 +20,7 @@ import { ACL } from "./ACL";
 
 import DefaultExport, { PersistedACL } from "./PersistedACL";
 
-describe( module( "CarbonLDP/Auth/PersistedACL" ), ():void => {
+describe( module( "carbonldp/Auth/PersistedACL" ), ():void => {
 
 	describe( interfaze(
 		"CarbonLDP.Auth.PersistedACL.PersistedACL",

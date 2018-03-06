@@ -11,7 +11,7 @@ import * as Utils from "./../Utils";
 
 import DefaultExport, { JSONLDProcessor } from "./Processor";
 
-describe( module( "CarbonLDP/JSONLD/Processor" ), ():void => {
+describe( module( "carbonldp/JSONLD/Processor" ), ():void => {
 
 	describe( clazz( "CarbonLDP.JSONLD.Processor.JSONLDProcessor", "Class that contains methods that can process JSON-LD objects." ), ():void => {
 

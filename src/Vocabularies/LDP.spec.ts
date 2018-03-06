@@ -7,7 +7,7 @@ import {
 
 import { LDP } from "./LDP";
 
-describe( module( "CarbonLDP/Vocabularies/LDP" ), ():void => {
+describe( module( "carbonldp/Vocabularies/LDP" ), ():void => {
 
 	describe( namespaze( "CarbonLDP.Vocabularies.LDP", "Vocabulary defined for the W3C Linked Data Platform (LDP)" ), ():void => {
 

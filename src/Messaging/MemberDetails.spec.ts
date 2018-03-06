@@ -16,7 +16,7 @@ import { C } from "../Vocabularies/C";
 import { MemberDetails } from "./MemberDetails";
 import DefaultExport from "./MemberDetails";
 
-describe( module( "CarbonLDP/Messaging/MemberDetails" ), ():void => {
+describe( module( "carbonldp/Messaging/MemberDetails" ), ():void => {
 
 	describe( interfaze(
 		"CarbonLDP.Messaging.MemberDetails.MemberDetails",

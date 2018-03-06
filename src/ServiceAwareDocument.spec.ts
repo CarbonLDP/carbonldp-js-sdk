@@ -16,7 +16,7 @@ import {
 	STATIC
 } from "./test/JasmineExtender";
 
-describe( module( "CarbonLDP/ServiceAwareDocument" ), ():void => {
+describe( module( "carbonldp/ServiceAwareDocument" ), ():void => {
 
 	describe( interfaze(
 		"CarbonLDP.ServiceAwareDocument.ServiceAwareDocument",

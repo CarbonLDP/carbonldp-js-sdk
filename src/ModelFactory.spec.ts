@@ -9,7 +9,7 @@ import {
 	OPTIONAL
 } from "./test/JasmineExtender";
 
-describe( module( "CarbonLDP/ModelFactory" ), ():void => {
+describe( module( "carbonldp/ModelFactory" ), ():void => {
 
 	describe( interfaze( "CarbonLDP.ModelFactory.ModelFactory", [ "T extends object" ], "Interface with the standard methods for the models factories." ), ():void => {
 

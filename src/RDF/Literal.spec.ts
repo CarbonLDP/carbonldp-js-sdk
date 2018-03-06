@@ -21,7 +21,7 @@ import DefaultExport, { RDFLiteral } from "./Literal";
 import * as Serializer from "./Literal/Serializer";
 import * as Serializers from "./Literal/Serializers";
 
-describe( module( "CarbonLDP/RDF/Literal" ), ():void => {
+describe( module( "carbonldp/RDF/Literal" ), ():void => {
 
 	describe( interfaze(
 		"CarbonLDP.RDF.Literal.RDFLiteral",
@@ -441,7 +441,7 @@ describe( module( "CarbonLDP/RDF/Literal" ), ():void => {
 	it( reexports(
 		STATIC,
 		"Serializers",
-		"CarbonLDP/RDF/Literal/Serializers"
+		"carbonldp/RDF/Literal/Serializers"
 	), ():void => {
 		expect( Module.Serializers ).toBeDefined();
 		expect( Module.Serializers ).toBe( Serializers );
@@ -450,7 +450,7 @@ describe( module( "CarbonLDP/RDF/Literal" ), ():void => {
 	it( reexports(
 		STATIC,
 		"Serializer",
-		"CarbonLDP/RDF/Literal/Serializer"
+		"carbonldp/RDF/Literal/Serializer"
 	), ():void => {
 		expect( Module.Serializer ).toBeDefined();
 		expect( Module.Serializer ).toBe( Serializer );

@@ -15,7 +15,7 @@ import * as IllegalArgumentError from "./IllegalArgumentError";
 import DefaultExport from "./IllegalArgumentError";
 
 // TODO: Refactor tests
-describe( module( "CarbonLDP/Errors/IllegalArgumentError" ), ():void => {
+describe( module( "carbonldp/Errors/IllegalArgumentError" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( IllegalArgumentError ).toBeDefined();

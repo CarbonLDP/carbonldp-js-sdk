@@ -17,7 +17,7 @@ import { C } from "../Vocabularies/C";
 
 import DefaultExport, { EventMessage } from "./EventMessage";
 
-describe( module( "CarbonLDP/Messaging/Message" ), ():void => {
+describe( module( "carbonldp/Messaging/Message" ), ():void => {
 
 
 	describe( interfaze(

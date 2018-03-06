@@ -17,7 +17,7 @@ import * as Utils from "./../../../Utils";
 import * as RequestHeaderFieldsTooLargeError from "./RequestHeaderFieldsTooLargeError";
 import DefaultExport from "./RequestHeaderFieldsTooLargeError";
 
-describe( module( "CarbonLDP/HTTP/Errors/ClientErrors/RequestHeaderFieldsTooLargeError" ), ():void => {
+describe( module( "carbonldp/HTTP/Errors/ClientErrors/RequestHeaderFieldsTooLargeError" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( RequestHeaderFieldsTooLargeError ).toBeDefined();

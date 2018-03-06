@@ -13,7 +13,7 @@ import { C } from "../Vocabularies/C";
 
 import DefaultExport, { ValidationError } from "./ValidationError";
 
-describe( module( "CarbonLDP/LDP/ValidationError" ), ():void => {
+describe( module( "carbonldp/LDP/ValidationError" ), ():void => {
 
 	it( "should exists", ():void => {
 		expect( ValidationError ).toBeDefined();

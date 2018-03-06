@@ -17,7 +17,7 @@ import * as Utils from "./../../../Utils";
 import * as PreconditionFailedError from "./PreconditionFailedError";
 import DefaultExport from "./PreconditionFailedError";
 
-describe( module( "CarbonLDP/HTTP/Errors/ClientErrors/PreconditionFailedError" ), ():void => {
+describe( module( "carbonldp/HTTP/Errors/ClientErrors/PreconditionFailedError" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( PreconditionFailedError ).toBeDefined();

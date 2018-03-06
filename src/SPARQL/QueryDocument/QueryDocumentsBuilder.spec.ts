@@ -33,7 +33,7 @@ import DefaultExport, { QueryDocumentsBuilder } from "./QueryDocumentsBuilder";
 
 import { QueryProperty } from "./QueryProperty";
 
-describe( module( "CarbonLDP/SPARQL/QueryDocument/QueryDocumentsBuilder" ), ():void => {
+describe( module( "carbonldp/SPARQL/QueryDocument/QueryDocumentsBuilder" ), ():void => {
 
 	it( "should exists", ():void => {
 		expect( Module ).toBeDefined();

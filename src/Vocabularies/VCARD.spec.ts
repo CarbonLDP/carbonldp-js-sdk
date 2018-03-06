@@ -7,7 +7,7 @@ import {
 
 import { VCARD } from "./VCARD";
 
-describe( module( "CarbonLDP/Vocabularies/VCARD" ), ():void => {
+describe( module( "carbonldp/Vocabularies/VCARD" ), ():void => {
 
 	describe( namespaze( "CarbonLDP.Vocabularies.VCARD", "Vocabulary that contains some predicates defined in the vCard Ontology Specification." ), ():void => {
 

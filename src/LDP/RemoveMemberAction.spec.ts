@@ -17,7 +17,7 @@ import * as Utils from "./../Utils";
 
 import DefaultExport, { RemoveMemberAction } from "./RemoveMemberAction";
 
-describe( module( "CarbonLDP/LDP/RemoveMemberAction" ), ():void => {
+describe( module( "carbonldp/LDP/RemoveMemberAction" ), ():void => {
 
 	describe( interfaze(
 		"CarbonLDP.LDP.RemoveMemberAction.RemoveMemberAction",

@@ -14,7 +14,7 @@ import {
 	STATIC,
 } from "./test/JasmineExtender";
 
-describe( module( "CarbonLDP/NamedFragment" ), ():void => {
+describe( module( "carbonldp/NamedFragment" ), ():void => {
 
 	describe( interfaze(
 		"CarbonLDP.NamedFragment.NamedFragment",

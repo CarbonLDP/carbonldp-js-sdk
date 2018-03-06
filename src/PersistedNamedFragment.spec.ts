@@ -17,7 +17,7 @@ import {
 } from "./test/JasmineExtender";
 import * as Utils from "./Utils";
 
-describe( module( "CarbonLDP/PersistedNamedFragment" ), ():void => {
+describe( module( "carbonldp/PersistedNamedFragment" ), ():void => {
 
 	describe( interfaze(
 		"CarbonLDP.PersistedNamedFragment.PersistedNamedFragment",

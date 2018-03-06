@@ -24,7 +24,7 @@ import * as ObjectSchema from "./../ObjectSchema";
 
 import DefaultExport, { JSONLDConverter } from "./Converter";
 
-describe( module( "CarbonLDP/JSONLD/Converter" ), ():void => {
+describe( module( "carbonldp/JSONLD/Converter" ), ():void => {
 
 	describe( clazz( "CarbonLDP.JSONLD.Converter.JSONLDConverter", "Class that have methods for convert expanded JSON-LD objects to compacted Carbon SDK Resources and vice versa." ), ():void => {
 

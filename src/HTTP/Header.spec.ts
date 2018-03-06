@@ -15,7 +15,7 @@ import * as Utils from "./../Utils";
 import { Header } from "./Header";
 import DefaultExport from "./Header";
 
-describe( module( "CarbonLDP/HTTP/Header" ), ():void => {
+describe( module( "carbonldp/HTTP/Header" ), ():void => {
 
 	describe( clazz( "CarbonLDP.HTTP.Header.Header", "Class to manage the values in an HTTP header." ), ():void => {
 

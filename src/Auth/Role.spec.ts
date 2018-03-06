@@ -19,7 +19,7 @@ import * as Utils from "./../Utils";
 import * as Role from "./Role";
 import DefaultExport from "./Role";
 
-describe( module( "CarbonLDP/Auth/Role" ), ():void => {
+describe( module( "carbonldp/Auth/Role" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( Role ).toBeDefined();

@@ -12,7 +12,7 @@ import * as Converter from "./Converter";
 import * as Parser from "./Parser";
 import * as Processor from "./Processor";
 
-describe( module( "CarbonLDP/JSONLD" ), ():void => {
+describe( module( "carbonldp/JSONLD" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( JSONLD ).toBeDefined();
@@ -22,7 +22,7 @@ describe( module( "CarbonLDP/JSONLD" ), ():void => {
 	it( reexports(
 		STATIC,
 		"Converter",
-		"CarbonLDP/JSONLD/Converter"
+		"carbonldp/JSONLD/Converter"
 	), ():void => {
 		expect( JSONLD.Converter ).toBeDefined();
 		expect( JSONLD.Converter ).toBe( Converter );
@@ -31,7 +31,7 @@ describe( module( "CarbonLDP/JSONLD" ), ():void => {
 	it( reexports(
 		STATIC,
 		"Parser",
-		"CarbonLDP/JSONLD/Parser"
+		"carbonldp/JSONLD/Parser"
 	), ():void => {
 		expect( JSONLD.Parser ).toBeDefined();
 		expect( JSONLD.Parser ).toBe( Parser );
@@ -40,7 +40,7 @@ describe( module( "CarbonLDP/JSONLD" ), ():void => {
 	it( reexports(
 		STATIC,
 		"Processor",
-		"CarbonLDP/JSONLD/Processor"
+		"carbonldp/JSONLD/Processor"
 	), ():void => {
 		expect( JSONLD.Processor ).toBeDefined();
 		expect( JSONLD.Processor ).toBe( Processor );

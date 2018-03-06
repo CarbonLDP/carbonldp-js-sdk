@@ -17,7 +17,7 @@ import * as Utils from "./../../../Utils";
 import * as HTTPVersionNotSupportedError from "./HTTPVersionNotSupportedError";
 import DefaultExport from "./HTTPVersionNotSupportedError";
 
-describe( module( "CarbonLDP/HTTP/Errors/ServerErrors/HTTPVersionNotSupportedError" ), ():void => {
+describe( module( "carbonldp/HTTP/Errors/ServerErrors/HTTPVersionNotSupportedError" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( HTTPVersionNotSupportedError ).toBeDefined();

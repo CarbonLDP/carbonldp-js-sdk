@@ -16,7 +16,7 @@ import * as Utils from "./../Utils";
 
 import DefaultExport, { CarbonMap } from "./CarbonMap";
 
-describe( module( "CarbonLDP/LDP/CarbonMap" ), ():void => {
+describe( module( "carbonldp/LDP/CarbonMap" ), ():void => {
 
 	describe( interfaze(
 		"CarbonLDP.LDP.CarbonMap.CarbonMap",

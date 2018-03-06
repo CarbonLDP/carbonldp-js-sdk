@@ -16,7 +16,7 @@ import DefaultExport, { DocumentDeleted } from "./DocumentDeleted";
 
 import { EventMessage } from "./EventMessage";
 
-describe( module( "CarbonLDP/Messaging/DocumentDeleted" ), ():void => {
+describe( module( "carbonldp/Messaging/DocumentDeleted" ), ():void => {
 
 	describe( interfaze(
 		"CarbonLDP.Messaging.DocumentDeleted.DocumentDeleted",

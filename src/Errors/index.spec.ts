@@ -15,7 +15,7 @@ import IllegalStateError from "./IllegalStateError";
 import InvalidJSONLDSyntaxError from "./InvalidJSONLDSyntaxError";
 import NotImplementedError from "./NotImplementedError";
 
-describe( module( "CarbonLDP/Errors" ), ():void => {
+describe( module( "carbonldp/Errors" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( Errors ).toBeDefined();

@@ -20,7 +20,7 @@ import * as Utils from "./../Utils";
 import { URI } from "./URI";
 import DefaultExport from "./URI";
 
-describe( module( "CarbonLDP/RDF/URI" ), ():void => {
+describe( module( "carbonldp/RDF/URI" ), ():void => {
 
 	describe( interfaze(
 		"CarbonLDP.RDF.URI.URIFactory",

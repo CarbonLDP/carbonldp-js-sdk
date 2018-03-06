@@ -13,7 +13,7 @@ import * as AbstractError from "./AbstractError";
 import DefaultExport from "./AbstractError";
 
 // TODO: Refactor tests
-describe( module( "CarbonLDP/Errors/AbstractError" ), function():void {
+describe( module( "carbonldp/Errors/AbstractError" ), function():void {
 
 	it( isDefined(), ():void => {
 		expect( AbstractError ).toBeDefined();

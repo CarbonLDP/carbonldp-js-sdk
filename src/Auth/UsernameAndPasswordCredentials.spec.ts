@@ -14,7 +14,7 @@ import * as Utils from "./../Utils";
 import * as UsernameAndPasswordCredentials from "./UsernameAndPasswordCredentials";
 import DefaultExport from "./UsernameAndPasswordCredentials";
 
-describe( module( "CarbonLDP/Auth/UsernameAndPasswordCredentials" ), ():void => {
+describe( module( "carbonldp/Auth/UsernameAndPasswordCredentials" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( UsernameAndPasswordCredentials ).toBeDefined();

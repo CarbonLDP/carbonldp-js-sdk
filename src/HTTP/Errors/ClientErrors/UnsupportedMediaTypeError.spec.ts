@@ -17,7 +17,7 @@ import * as Utils from "./../../../Utils";
 import * as UnsupportedMediaTypeError from "./UnsupportedMediaTypeError";
 import DefaultExport from "./UnsupportedMediaTypeError";
 
-describe( module( "CarbonLDP/HTTP/Errors/ClientErrors/UnsupportedMediaTypeError" ), ():void => {
+describe( module( "carbonldp/HTTP/Errors/ClientErrors/UnsupportedMediaTypeError" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( UnsupportedMediaTypeError ).toBeDefined();

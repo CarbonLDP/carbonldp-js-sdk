@@ -15,7 +15,7 @@ import {
 } from "./test/JasmineExtender";
 import * as Utils from "./Utils";
 
-describe( module( "CarbonLDP/PersistedResource" ), ():void => {
+describe( module( "carbonldp/PersistedResource" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( PersistedResource ).toBeDefined();

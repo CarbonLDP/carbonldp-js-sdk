@@ -20,7 +20,7 @@ import * as Utils from "./../Utils";
 import { ACE } from "./ACE";
 import DefaultExport from "./ACE";
 
-describe( module( "CarbonLDP/Auth/ACE" ), ():void => {
+describe( module( "carbonldp/Auth/ACE" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( ACE ).toBeDefined();

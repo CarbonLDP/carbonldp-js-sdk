@@ -17,7 +17,7 @@ import * as Utils from "./../../../Utils";
 import * as InternalServerErrorError from "./InternalServerErrorError";
 import DefaultExport from "./InternalServerErrorError";
 
-describe( module( "CarbonLDP/HTTP/Errors/ServerErrors/InternalServerErrorError" ), ():void => {
+describe( module( "carbonldp/HTTP/Errors/ServerErrors/InternalServerErrorError" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( InternalServerErrorError ).toBeDefined();

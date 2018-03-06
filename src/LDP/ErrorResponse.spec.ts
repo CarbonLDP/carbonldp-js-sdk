@@ -14,7 +14,7 @@ import * as Utils from "./../Utils";
 
 import DefaultExport, { ErrorResponse } from "./ErrorResponse";
 
-describe( module( "CarbonLDP/LDP/ErrorResponse" ), ():void => {
+describe( module( "carbonldp/LDP/ErrorResponse" ), ():void => {
 
 	describe( interfaze(
 		"CarbonLDP.LDP.ErrorResponse.ErrorResponse",

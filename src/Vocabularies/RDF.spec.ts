@@ -7,7 +7,7 @@ import {
 
 import { RDF } from "./RDF";
 
-describe( module( "CarbonLDP/Vocabularies/RDF" ), ():void => {
+describe( module( "carbonldp/Vocabularies/RDF" ), ():void => {
 
 	describe( namespaze( "CarbonLDP.Vocabularies.RDF", "Vocabulary defined in the RDF Syntax Specification." ), ():void => {
 

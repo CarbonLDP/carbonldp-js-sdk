@@ -38,7 +38,7 @@ import { UnknownError } from "./UnknownError";
 
 
 describe( module(
-	"CarbonLDP/HTTP/Errors"
+	"carbonldp/HTTP/Errors"
 ), ():void => {
 
 	it( isDefined(), ():void => {

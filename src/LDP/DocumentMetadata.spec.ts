@@ -17,7 +17,7 @@ import * as Utils from "./../Utils";
 
 import DefaultExport, { DocumentMetadata } from "./DocumentMetadata";
 
-describe( module( "CarbonLDP/LDP/DocumentMetadata" ), ():void => {
+describe( module( "carbonldp/LDP/DocumentMetadata" ), ():void => {
 
 	describe( interfaze(
 		"CarbonLDP.LDP.DocumentMetadata.DocumentMetadata",

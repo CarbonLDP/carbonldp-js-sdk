@@ -17,7 +17,7 @@ import * as Utils from "./../../../Utils";
 import * as ConflictError from "./ConflictError";
 import DefaultExport from "./ConflictError";
 
-describe( module( "CarbonLDP/HTTP/Errors/ClientErrors/ConflictError" ), ():void => {
+describe( module( "carbonldp/HTTP/Errors/ClientErrors/ConflictError" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( ConflictError ).toBeDefined();

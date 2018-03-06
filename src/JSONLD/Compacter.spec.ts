@@ -14,7 +14,7 @@ import {
 
 import DefaultExport, { JSONLDCompacter } from "./Compacter";
 
-describe( module( "CarbonLDP/JSONLD/Compacter" ), ():void => {
+describe( module( "carbonldp/JSONLD/Compacter" ), ():void => {
 
 	it( hasDefaultExport( "CarbonLDP.JSONLD.Compacter.JSONLDCompacter" ), ():void => {
 		expect( DefaultExport ).toBeDefined();

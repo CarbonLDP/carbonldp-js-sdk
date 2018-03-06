@@ -16,7 +16,7 @@ import { XSD } from "../Vocabularies/XSD";
 
 import DefaultExport, { ValidationResult } from "./ValidationResult";
 
-describe( module( "CarbonLDP/SHACL/ValidationResult" ), ():void => {
+describe( module( "carbonldp/SHACL/ValidationResult" ), ():void => {
 
 	describe( interfaze(
 		"CarbonLDP.SHACL.ValidationResult.ValidationResult",

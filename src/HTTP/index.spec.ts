@@ -17,7 +17,7 @@ import * as Response from "./Response";
 import StatusCode from "./StatusCode";
 import * as StringParser from "./StringParser";
 
-describe( module( "CarbonLDP/HTTP" ), ():void => {
+describe( module( "carbonldp/HTTP" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( HTTP ).toBeDefined();
@@ -27,7 +27,7 @@ describe( module( "CarbonLDP/HTTP" ), ():void => {
 	it( reexports(
 		STATIC,
 		"Errors",
-		"CarbonLDP/HTTP/Errors"
+		"carbonldp/HTTP/Errors"
 	), ():void => {
 		expect( HTTP.Errors ).toBeDefined();
 		expect( HTTP.Errors ).toBe( Errors );
@@ -36,7 +36,7 @@ describe( module( "CarbonLDP/HTTP" ), ():void => {
 	it( reexports(
 		STATIC,
 		"Header",
-		"CarbonLDP/HTTP/Header"
+		"carbonldp/HTTP/Header"
 	), ():void => {
 		expect( HTTP.Header ).toBeDefined();
 		expect( HTTP.Header ).toBe( Header );
@@ -45,7 +45,7 @@ describe( module( "CarbonLDP/HTTP" ), ():void => {
 	it( reexports(
 		STATIC,
 		"JSONParser",
-		"CarbonLDP/HTTP/JSONParser"
+		"carbonldp/HTTP/JSONParser"
 	), ():void => {
 		expect( HTTP.JSONParser ).toBeDefined();
 		expect( HTTP.JSONParser ).toBe( JSONParser );
@@ -63,7 +63,7 @@ describe( module( "CarbonLDP/HTTP" ), ():void => {
 	it( reexports(
 		STATIC,
 		"Parser",
-		"CarbonLDP/HTTP/Parser"
+		"carbonldp/HTTP/Parser"
 	), ():void => {
 		expect( HTTP.Parser ).toBeDefined();
 		expect( HTTP.Parser ).toBe( Parser );
@@ -72,7 +72,7 @@ describe( module( "CarbonLDP/HTTP" ), ():void => {
 	it( reexports(
 		STATIC,
 		"Request",
-		"CarbonLDP/HTTP/Request"
+		"carbonldp/HTTP/Request"
 	), ():void => {
 		expect( HTTP.Request ).toBeDefined();
 		expect( HTTP.Request ).toBe( Request );
@@ -81,7 +81,7 @@ describe( module( "CarbonLDP/HTTP" ), ():void => {
 	it( reexports(
 		STATIC,
 		"Response",
-		"CarbonLDP/HTTP/Response"
+		"carbonldp/HTTP/Response"
 	), ():void => {
 		expect( Response ).toBeDefined();
 		expect( Response ).toBe( Response );
@@ -99,7 +99,7 @@ describe( module( "CarbonLDP/HTTP" ), ():void => {
 	it( reexports(
 		STATIC,
 		"StringParser",
-		"CarbonLDP/HTTP/StringParser"
+		"carbonldp/HTTP/StringParser"
 	), ():void => {
 		expect( HTTP.StringParser ).toBeDefined();
 		expect( HTTP.StringParser ).toBe( StringParser );

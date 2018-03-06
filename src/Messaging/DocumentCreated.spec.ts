@@ -17,7 +17,7 @@ import DefaultExport, { DocumentCreated } from "./DocumentCreated";
 import { DocumentCreatedDetails } from "./DocumentCreatedDetails";
 import { EventMessage } from "./EventMessage";
 
-describe( module( "CarbonLDP/Messaging/DocumentCreated" ), ():void => {
+describe( module( "carbonldp/Messaging/DocumentCreated" ), ():void => {
 
 	describe( interfaze(
 		"CarbonLDP.Messaging.DocumentCreated.DocumentCreated",

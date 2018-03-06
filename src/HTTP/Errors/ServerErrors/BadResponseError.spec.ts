@@ -17,7 +17,7 @@ import * as Utils from "./../../../Utils";
 import * as BadResponseError from "./BadResponseError";
 import DefaultExport from "./BadResponseError";
 
-describe( module( "CarbonLDP/HTTP/Errors/ServerErrors/BadResponseError" ), ():void => {
+describe( module( "carbonldp/HTTP/Errors/ServerErrors/BadResponseError" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( BadResponseError ).toBeDefined();

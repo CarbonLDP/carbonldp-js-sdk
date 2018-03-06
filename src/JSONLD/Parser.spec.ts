@@ -11,7 +11,7 @@ import * as Utils from "../Utils";
 import DefaultExport, { JSONLDParser } from "./Parser";
 
 describe( module(
-	"CarbonLDP/JSONLD/Parser"
+	"carbonldp/JSONLD/Parser"
 ), ():void => {
 
 	describe( clazz(

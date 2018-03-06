@@ -70,7 +70,7 @@ function createMockDocument<T extends {}>( origin:T = {} as T ):T & Document {
 }
 
 
-describe( module( "CarbonLDP/Document" ), ():void => {
+describe( module( "carbonldp/Document" ), ():void => {
 
 	describe( interfaze(
 		"CarbonLDP.Document.Document",

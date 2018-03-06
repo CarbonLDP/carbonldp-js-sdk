@@ -17,7 +17,7 @@ import * as Utils from "./../../../Utils";
 import * as ForbiddenError from "./ForbiddenError";
 import DefaultExport from "./ForbiddenError";
 
-describe( module( "CarbonLDP/HTTP/Errors/ClientErrors/ForbiddenError" ), ():void => {
+describe( module( "carbonldp/HTTP/Errors/ClientErrors/ForbiddenError" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( ForbiddenError ).toBeDefined();

@@ -13,7 +13,7 @@ import {
 } from "./test/JasmineExtender";
 import * as Utils from "./Utils";
 
-describe( module( "CarbonLDP/Context" ), ():void => {
+describe( module( "carbonldp/Context" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( Context ).toBeDefined();

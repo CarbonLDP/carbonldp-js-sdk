@@ -15,7 +15,7 @@ interface Dummy {
 	doSomething?():void;
 }
 
-describe( module( "CarbonLDP/Utils", "Class with useful functions used in the SDK." ), ():void => {
+describe( module( "carbonldp/Utils", "Class with useful functions used in the SDK." ), ():void => {
 
 	it( isDefined(), function():void {
 		expect( Utils ).toBeDefined();

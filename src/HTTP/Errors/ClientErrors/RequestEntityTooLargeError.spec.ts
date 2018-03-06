@@ -17,7 +17,7 @@ import * as Utils from "./../../../Utils";
 import * as RequestEntityTooLargeError from "./RequestEntityTooLargeError";
 import DefaultExport from "./RequestEntityTooLargeError";
 
-describe( module( "CarbonLDP/HTTP/Errors/ClientErrors/RequestEntityTooLargeError" ), ():void => {
+describe( module( "carbonldp/HTTP/Errors/ClientErrors/RequestEntityTooLargeError" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( RequestEntityTooLargeError ).toBeDefined();

@@ -10,7 +10,7 @@ import {
 import * as Module from "./PartialMetadata";
 import DefaultExport, { PartialMetadata } from "./PartialMetadata";
 
-describe( module( "CarbonLDP/SPARQL/QueryDocument/PartialMetadata" ), ():void => {
+describe( module( "carbonldp/SPARQL/QueryDocument/PartialMetadata" ), ():void => {
 
 	it( "should exists", ():void => {
 		expect( Module ).toBeDefined();

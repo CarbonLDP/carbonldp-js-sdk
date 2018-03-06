@@ -17,7 +17,7 @@ import DefaultExport from "./DocumentModified";
 
 import { EventMessage } from "./EventMessage";
 
-describe( module( "CarbonLDP/Messaging/DocumentModified" ), ():void => {
+describe( module( "carbonldp/Messaging/DocumentModified" ), ():void => {
 
 	describe( interfaze(
 		"CarbonLDP.Messaging.DocumentModified.DocumentModified",

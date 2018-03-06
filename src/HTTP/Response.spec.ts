@@ -19,7 +19,7 @@ import { Header } from "./Header";
 
 import DefaultExport, { Response } from "./Response";
 
-describe( module( "CarbonLDP/HTTP/Response" ), ():void => {
+describe( module( "carbonldp/HTTP/Response" ), ():void => {
 
 	let rawResponse:JasmineAjaxRequestStubReturnOptions = {
 		"status": 200,

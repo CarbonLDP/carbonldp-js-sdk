@@ -15,7 +15,7 @@ import * as Utils from "./../Utils";
 
 import DefaultExport, { PlatformMetadata } from "./PlatformMetadata";
 
-describe( module( "CarbonLDP/System/PlatformMetadata" ), ():void => {
+describe( module( "carbonldp/System/PlatformMetadata" ), ():void => {
 
 	describe( interfaze(
 		"CarbonLDP.System.PlatformMetadata.PlatformMetadata",

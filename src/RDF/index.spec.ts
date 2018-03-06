@@ -17,7 +17,7 @@ import * as Value from "./Value";
 
 import * as RDF from "./";
 
-describe( module( "CarbonLDP/RDF" ), ():void => {
+describe( module( "carbonldp/RDF" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( RDF ).toBeDefined();
@@ -27,7 +27,7 @@ describe( module( "CarbonLDP/RDF" ), ():void => {
 	it( reexports(
 		STATIC,
 		"Literal",
-		"CarbonLDP/RDF/Literal"
+		"carbonldp/RDF/Literal"
 	), ():void => {
 		expect( RDF.Literal ).toBeDefined();
 		expect( RDF.Literal ).toBe( Literal );
@@ -36,7 +36,7 @@ describe( module( "CarbonLDP/RDF" ), ():void => {
 	it( reexports(
 		STATIC,
 		"Document",
-		"CarbonLDP/RDF/Document"
+		"carbonldp/RDF/Document"
 	), ():void => {
 		expect( RDF.Document ).toBeDefined();
 		expect( RDF.Document ).toBe( Document );
@@ -45,7 +45,7 @@ describe( module( "CarbonLDP/RDF" ), ():void => {
 	it( reexports(
 		STATIC,
 		"List",
-		"CarbonLDP/RDF/List"
+		"carbonldp/RDF/List"
 	), ():void => {
 		expect( RDF.List ).toBeDefined();
 		expect( RDF.List ).toBe( List );
@@ -54,7 +54,7 @@ describe( module( "CarbonLDP/RDF" ), ():void => {
 	it( reexports(
 		STATIC,
 		"Node",
-		"CarbonLDP/RDF/Node"
+		"carbonldp/RDF/Node"
 	), ():void => {
 		expect( RDF.Node ).toBeDefined();
 		expect( RDF.Node ).toBe( Node );
@@ -63,7 +63,7 @@ describe( module( "CarbonLDP/RDF" ), ():void => {
 	it( reexports(
 		STATIC,
 		"URI",
-		"CarbonLDP/RDF/URI"
+		"carbonldp/RDF/URI"
 	), ():void => {
 		expect( RDF.URI ).toBeDefined();
 		expect( RDF.URI ).toBe( URI );
@@ -72,7 +72,7 @@ describe( module( "CarbonLDP/RDF" ), ():void => {
 	it( reexports(
 		STATIC,
 		"Value",
-		"CarbonLDP/RDF/Value"
+		"carbonldp/RDF/Value"
 	), ():void => {
 		expect( RDF.Value ).toBeDefined();
 		expect( RDF.Value ).toBe( Value );

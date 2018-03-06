@@ -18,7 +18,7 @@ import DefaultExport from "./MemberAdded";
 
 import { MemberAddedDetails } from "./MemberAddedDetails";
 
-describe( module( "CarbonLDP/Messaging/MemberAdded" ), ():void => {
+describe( module( "carbonldp/Messaging/MemberAdded" ), ():void => {
 
 	describe( interfaze(
 		"CarbonLDP.Messaging.MemberAdded.MemberAdded",

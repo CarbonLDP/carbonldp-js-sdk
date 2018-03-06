@@ -18,7 +18,7 @@ import DefaultExport from "./BasicAuthenticator";
 import * as UsernameAndPasswordCredentials from "./UsernameAndPasswordCredentials";
 import UsernameAndPasswordToken from "./UsernameAndPasswordToken";
 
-describe( module( "CarbonLDP/Auth/BasicAuthenticator" ), ():void => {
+describe( module( "carbonldp/Auth/BasicAuthenticator" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( BasicAuthenticator ).toBeDefined();

@@ -17,7 +17,7 @@ import * as Utils from "./../../../Utils";
 import * as GatewayTimeoutError from "./GatewayTimeoutError";
 import DefaultExport from "./GatewayTimeoutError";
 
-describe( module( "CarbonLDP/HTTP/Errors/ServerErrors/GatewayTimeoutError" ), ():void => {
+describe( module( "carbonldp/HTTP/Errors/ServerErrors/GatewayTimeoutError" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( GatewayTimeoutError ).toBeDefined();

@@ -15,7 +15,7 @@ import * as Serializer from "./Serializer";
 import DefaultExport from "./Serializer";
 
 describe( module(
-	"CarbonLDP/RDF/Literal/Serializer"
+	"carbonldp/RDF/Literal/Serializer"
 ), ():void => {
 
 	it( isDefined(), ():void => {

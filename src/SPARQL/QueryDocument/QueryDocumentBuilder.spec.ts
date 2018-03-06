@@ -42,7 +42,7 @@ import * as QueryValueModule from "./QueryValue";
 import { QueryValue } from "./QueryValue";
 import { QueryVariable } from "./QueryVariable";
 
-describe( module( "CarbonLDP/SPARQL/QueryDocument/QueryDocumentBuilder" ), ():void => {
+describe( module( "carbonldp/SPARQL/QueryDocument/QueryDocumentBuilder" ), ():void => {
 
 	it( "should exists", ():void => {
 		expect( Module ).toBeDefined();

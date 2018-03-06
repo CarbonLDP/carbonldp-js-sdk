@@ -18,7 +18,7 @@ import {
 	STATIC,
 } from "./test/JasmineExtender";
 
-describe( module( "CarbonLDP/FreeResources" ), ():void => {
+describe( module( "carbonldp/FreeResources" ), ():void => {
 
 	describe( interfaze(
 		"CarbonLDP.FreeResources.FreeResources",

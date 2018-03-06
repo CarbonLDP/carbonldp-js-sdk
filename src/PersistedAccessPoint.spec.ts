@@ -9,7 +9,7 @@ import {
 	OBLIGATORY,
 } from "./test/JasmineExtender";
 
-describe( module( "CarbonLDP/PersistedAccessPoint" ), ():void => {
+describe( module( "carbonldp/PersistedAccessPoint" ), ():void => {
 
 	describe( interfaze(
 		"CarbonLDP.PersistedAccessPoint.PersistedAccessPoint",

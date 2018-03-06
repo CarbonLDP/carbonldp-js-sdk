@@ -15,7 +15,7 @@ import * as InvalidJSONLDSyntaxError from "./InvalidJSONLDSyntaxError";
 import DefaultExport from "./InvalidJSONLDSyntaxError";
 
 // TODO: Refactor tests
-describe( module( "CarbonLDP/Errors/InvalidJSONLDSyntaxError" ), ():void => {
+describe( module( "carbonldp/Errors/InvalidJSONLDSyntaxError" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( InvalidJSONLDSyntaxError ).toBeDefined();

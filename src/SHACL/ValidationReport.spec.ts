@@ -14,7 +14,7 @@ import DefaultExport, { ValidationReport } from "./ValidationReport";
 
 import { ValidationResult } from "./ValidationResult";
 
-describe( module( "CarbonLDP/SHACL/ValidationReport" ), ():void => {
+describe( module( "carbonldp/SHACL/ValidationReport" ), ():void => {
 
 	describe( interfaze(
 		"CarbonLDP.SHACL.ValidationReport.ValidationReport",

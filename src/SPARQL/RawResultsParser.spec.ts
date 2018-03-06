@@ -12,7 +12,7 @@ import { SPARQLRawResults } from "./RawResults";
 import * as RawResultsParser from "./RawResultsParser";
 import DefaultExport from "./RawResultsParser";
 
-describe( module( "CarbonLDP/SPARQL/RawResultsParser" ), ():void => {
+describe( module( "carbonldp/SPARQL/RawResultsParser" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( RawResultsParser ).toBeDefined();

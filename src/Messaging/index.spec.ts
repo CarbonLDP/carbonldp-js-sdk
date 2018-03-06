@@ -26,7 +26,7 @@ import * as Service from "./Service";
 import * as Utils from "./Utils";
 
 
-describe( module( "CarbonLDP/Messaging" ), ():void => {
+describe( module( "carbonldp/Messaging" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( Messaging ).toBeDefined();
@@ -36,7 +36,7 @@ describe( module( "CarbonLDP/Messaging" ), ():void => {
 	it( reexports(
 		STATIC,
 		"AccessPointCreated",
-		"CarbonLDP/Messaging/AccessPointCreated"
+		"carbonldp/Messaging/AccessPointCreated"
 	), ():void => {
 		expect( Messaging.AccessPointCreated ).toBeDefined();
 		expect( Messaging.AccessPointCreated ).toBe( AccessPointCreated );
@@ -45,7 +45,7 @@ describe( module( "CarbonLDP/Messaging" ), ():void => {
 	it( reexports(
 		STATIC,
 		"ChildCreated",
-		"CarbonLDP/Messaging/ChildCreated"
+		"carbonldp/Messaging/ChildCreated"
 	), ():void => {
 		expect( Messaging.ChildCreated ).toBeDefined();
 		expect( Messaging.ChildCreated ).toBe( ChildCreated );
@@ -54,7 +54,7 @@ describe( module( "CarbonLDP/Messaging" ), ():void => {
 	it( reexports(
 		STATIC,
 		"Document",
-		"CarbonLDP/Messaging/Document"
+		"carbonldp/Messaging/Document"
 	), ():void => {
 		expect( Messaging.Document ).toBeDefined();
 		expect( Messaging.Document ).toBe( Document );
@@ -63,7 +63,7 @@ describe( module( "CarbonLDP/Messaging" ), ():void => {
 	it( reexports(
 		STATIC,
 		"DocumentCreated",
-		"CarbonLDP/Messaging/DocumentCreated"
+		"carbonldp/Messaging/DocumentCreated"
 	), ():void => {
 		expect( Messaging.DocumentCreated ).toBeDefined();
 		expect( Messaging.DocumentCreated ).toBe( DocumentCreated );
@@ -72,7 +72,7 @@ describe( module( "CarbonLDP/Messaging" ), ():void => {
 	it( reexports(
 		STATIC,
 		"DocumentCreatedDetails",
-		"CarbonLDP/Messaging/DocumentCreatedDetails"
+		"carbonldp/Messaging/DocumentCreatedDetails"
 	), ():void => {
 		expect( Messaging.DocumentCreatedDetails ).toBeDefined();
 		expect( Messaging.DocumentCreatedDetails ).toBe( DocumentCreatedDetails );
@@ -81,7 +81,7 @@ describe( module( "CarbonLDP/Messaging" ), ():void => {
 	it( reexports(
 		STATIC,
 		"DocumentDeleted",
-		"CarbonLDP/Messaging/DocumentDeleted"
+		"carbonldp/Messaging/DocumentDeleted"
 	), ():void => {
 		expect( Messaging.DocumentDeleted ).toBeDefined();
 		expect( Messaging.DocumentDeleted ).toBe( DocumentDeleted );
@@ -90,7 +90,7 @@ describe( module( "CarbonLDP/Messaging" ), ():void => {
 	it( reexports(
 		STATIC,
 		"DocumentModified",
-		"CarbonLDP/Messaging/DocumentModified"
+		"carbonldp/Messaging/DocumentModified"
 	), ():void => {
 		expect( Messaging.DocumentModified ).toBeDefined();
 		expect( Messaging.DocumentModified ).toBe( DocumentModified );
@@ -108,7 +108,7 @@ describe( module( "CarbonLDP/Messaging" ), ():void => {
 	it( reexports(
 		STATIC,
 		"MemberAdded",
-		"CarbonLDP/Messaging/MemberAdded"
+		"carbonldp/Messaging/MemberAdded"
 	), ():void => {
 		expect( Messaging.MemberAdded ).toBeDefined();
 		expect( Messaging.MemberAdded ).toBe( MemberAdded );
@@ -117,7 +117,7 @@ describe( module( "CarbonLDP/Messaging" ), ():void => {
 	it( reexports(
 		STATIC,
 		"MemberAddedDetails",
-		"CarbonLDP/Messaging/MemberAddedDetails"
+		"carbonldp/Messaging/MemberAddedDetails"
 	), ():void => {
 		expect( Messaging.MemberAddedDetails ).toBeDefined();
 		expect( Messaging.MemberAddedDetails ).toBe( MemberAddedDetails );
@@ -126,7 +126,7 @@ describe( module( "CarbonLDP/Messaging" ), ():void => {
 	it( reexports(
 		STATIC,
 		"MemberDetails",
-		"CarbonLDP/Messaging/MemberDetails"
+		"carbonldp/Messaging/MemberDetails"
 	), ():void => {
 		expect( Messaging.MemberDetails ).toBeDefined();
 		expect( Messaging.MemberDetails ).toBe( MemberDetails );
@@ -135,7 +135,7 @@ describe( module( "CarbonLDP/Messaging" ), ():void => {
 	it( reexports(
 		STATIC,
 		"MemberRemoved",
-		"CarbonLDP/Messaging/MemberRemoved"
+		"carbonldp/Messaging/MemberRemoved"
 	), ():void => {
 		expect( Messaging.MemberRemoved ).toBeDefined();
 		expect( Messaging.MemberRemoved ).toBe( MemberRemoved );
@@ -144,7 +144,7 @@ describe( module( "CarbonLDP/Messaging" ), ():void => {
 	it( reexports(
 		STATIC,
 		"MemberRemovedDetails",
-		"CarbonLDP/Messaging/MemberRemovedDetails"
+		"carbonldp/Messaging/MemberRemovedDetails"
 	), ():void => {
 		expect( Messaging.MemberRemovedDetails ).toBeDefined();
 		expect( Messaging.MemberRemovedDetails ).toBe( MemberRemovedDetails );
@@ -153,7 +153,7 @@ describe( module( "CarbonLDP/Messaging" ), ():void => {
 	it( reexports(
 		STATIC,
 		"EventMessage",
-		"CarbonLDP/Messaging/EventMessage"
+		"carbonldp/Messaging/EventMessage"
 	), ():void => {
 		expect( Messaging.EventMessage ).toBeDefined();
 		expect( Messaging.EventMessage ).toBe( EventMessage );
@@ -162,7 +162,7 @@ describe( module( "CarbonLDP/Messaging" ), ():void => {
 	it( reexports(
 		STATIC,
 		"Options",
-		"CarbonLDP/Messaging/Options"
+		"carbonldp/Messaging/Options"
 	), ():void => {
 		expect( Messaging.Options ).toBeDefined();
 		expect( Messaging.Options ).toBe( Options );
@@ -171,7 +171,7 @@ describe( module( "CarbonLDP/Messaging" ), ():void => {
 	it( reexports(
 		STATIC,
 		"Service",
-		"CarbonLDP/Messaging/Service"
+		"carbonldp/Messaging/Service"
 	), ():void => {
 		expect( Messaging.Service ).toBeDefined();
 		expect( Messaging.Service ).toBe( Service );
@@ -180,7 +180,7 @@ describe( module( "CarbonLDP/Messaging" ), ():void => {
 	it( reexports(
 		STATIC,
 		"Utils",
-		"CarbonLDP/Messaging/Utils"
+		"carbonldp/Messaging/Utils"
 	), ():void => {
 		expect( Messaging.Utils ).toBeDefined();
 		expect( Messaging.Utils ).toBe( Utils );

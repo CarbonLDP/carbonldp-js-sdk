@@ -7,7 +7,7 @@ import {
 
 import * as Utils from "./Utils";
 
-describe( module( "CarbonLDP/SPARQL/QueryDocument/Utils" ), ():void => {
+describe( module( "carbonldp/SPARQL/QueryDocument/Utils" ), ():void => {
 
 	it( "should exists", ():void => {
 		expect( Utils ).toBeDefined();

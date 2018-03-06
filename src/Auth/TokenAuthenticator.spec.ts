@@ -27,7 +27,7 @@ import DefaultExport from "./TokenAuthenticator";
 
 import UsernameAndPasswordToken from "./UsernameAndPasswordToken";
 
-describe( module( "CarbonLDP/Auth/TokenAuthenticator" ), ():void => {
+describe( module( "carbonldp/Auth/TokenAuthenticator" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( TokenAuthenticator ).toBeDefined();

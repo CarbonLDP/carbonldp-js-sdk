@@ -17,7 +17,7 @@ import {
 
 import DefaultExport, { MessagingDocument } from "./Document";
 
-describe( module( "CarbonLDP/Messaging/Document" ), ():void => {
+describe( module( "carbonldp/Messaging/Document" ), ():void => {
 
 	describe( interfaze(
 		"CarbonLDP.Messaging.Document.MessagingDocument",

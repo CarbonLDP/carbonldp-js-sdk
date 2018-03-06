@@ -17,7 +17,7 @@ import * as Utils from "./../Utils";
 
 import DefaultExport, { AddMemberAction } from "./AddMemberAction";
 
-describe( module( "CarbonLDP/LDP/AddMemberAction" ), ():void => {
+describe( module( "carbonldp/LDP/AddMemberAction" ), ():void => {
 
 	describe( interfaze(
 		"CarbonLDP.LDP.AddMemberAction.AddMemberAction",

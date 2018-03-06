@@ -8,7 +8,7 @@ import {
 	OPTIONAL
 } from "./test/JasmineExtender";
 
-describe( module( "CarbonLDP/ModelDecorator" ), ():void => {
+describe( module( "carbonldp/ModelDecorator" ), ():void => {
 
 	describe( interfaze( "CarbonLDP.ModelDecorator.ModelDecorator", [ "T extends object" ], "Interface with the standard methods of a model decorator" ), ():void => {
 

@@ -17,7 +17,7 @@ import * as Utils from "./../../../Utils";
 import * as NotFoundError from "./NotFoundError";
 import DefaultExport from "./NotFoundError";
 
-describe( module( "CarbonLDP/HTTP/Errors/ClientErrors/NotFoundError" ), ():void => {
+describe( module( "carbonldp/HTTP/Errors/ClientErrors/NotFoundError" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( NotFoundError ).toBeDefined();

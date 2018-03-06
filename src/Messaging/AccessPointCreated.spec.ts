@@ -15,7 +15,7 @@ import { C } from "../Vocabularies/C";
 import DefaultExport, { AccessPointCreated } from "./AccessPointCreated";
 import { DocumentCreated } from "./DocumentCreated";
 
-describe( module( "CarbonLDP/Messaging/AccessPointCreated" ), ():void => {
+describe( module( "carbonldp/Messaging/AccessPointCreated" ), ():void => {
 
 	describe( interfaze(
 		"CarbonLDP.Messaging.AccessPointCreated.AccessPointCreated",

@@ -29,7 +29,7 @@ import { ACE } from "./ACE";
 import { ACL } from "./ACL";
 import DefaultExport from "./ACL";
 
-describe( module( "CarbonLDP/Auth/ACL" ), ():void => {
+describe( module( "carbonldp/Auth/ACL" ), ():void => {
 
 	describe( interfaze(
 		"CarbonLDP.Auth.ACL.ACL",

@@ -16,7 +16,7 @@ import * as Utils from "./../Utils";
 
 import DefaultExport, { VolatileResource } from "./VolatileResource";
 
-describe( module( "CarbonLDP/LDP/VolatileResource" ), ():void => {
+describe( module( "carbonldp/LDP/VolatileResource" ), ():void => {
 
 	describe( interfaze(
 		"CarbonLDP.LDP.VolatileResource.VolatileResource",

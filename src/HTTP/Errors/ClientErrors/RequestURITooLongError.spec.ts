@@ -17,7 +17,7 @@ import * as Utils from "./../../../Utils";
 import * as RequestURITooLongError from "./RequestURITooLongError";
 import DefaultExport from "./RequestURITooLongError";
 
-describe( module( "CarbonLDP/HTTP/Errors/ClientErrors/RequestURITooLongError" ), ():void => {
+describe( module( "carbonldp/HTTP/Errors/ClientErrors/RequestURITooLongError" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( RequestURITooLongError ).toBeDefined();
