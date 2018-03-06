@@ -28,9 +28,9 @@ export interface PersistedACL extends PersistedDocument {
     removeChildInheritance(subject: string | Pointer, permission: string | Pointer): void;
     removeChildInheritance(subject: string | Pointer, permissions: (string | Pointer)[]): void;
 }
-export interface PersistedACLConstant extends ModelDecorator<PersistedACL> {
+export interface PersistedACLFactory extends ModelDecorator<PersistedACL> {
     isDecorated(object: object): object is PersistedACL;
     decorate<T extends object>(object: T, documents: Documents): T & PersistedACL;
 }
-export declare const PersistedACL: PersistedACLConstant;
+export declare const PersistedACL: PersistedACLFactory;
 export default PersistedACL;

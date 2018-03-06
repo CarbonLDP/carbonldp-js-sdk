@@ -40,7 +40,7 @@ describe( module( "Carbon/LDP/CarbonMapEntry" ), ():void => {
 	} );
 
 	describe( interfaze(
-		"Carbon.LDP.CarbonMapEntry.CarbonMapEntryConstant",
+		"Carbon.LDP.CarbonMapEntry.CarbonMapEntryFactory",
 		"Interface with the factory, decorate and utils methods for `Carbon.LDP.CarbonMapEntry.CarbonMapEntry` objects"
 	), ():void => {
 
@@ -55,7 +55,7 @@ describe( module( "Carbon/LDP/CarbonMapEntry" ), ():void => {
 	describe( property(
 		STATIC,
 		"CarbonMapEntry",
-		"Carbon.LDP.CarbonMapEntry.CarbonMapEntryConstant"
+		"Carbon.LDP.CarbonMapEntry.CarbonMapEntryFactory"
 	), ():void => {
 
 		it( "should exist", ():void => {

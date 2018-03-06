@@ -9,13 +9,13 @@ export interface PersistedNamedFragment extends PersistedFragment, NamedFragment
 }
 
 
-export interface PersistedNamedFragmentConstant extends ModelDecorator<PersistedNamedFragment> {
+export interface PersistedNamedFragmentFactory extends ModelDecorator<PersistedNamedFragment> {
 	isDecorated( object:object ):object is PersistedNamedFragment;
 
 	decorate<T extends object>( object:T ):T & PersistedNamedFragment;
 }
 
-export const PersistedNamedFragment:PersistedNamedFragmentConstant = {
+export const PersistedNamedFragment:PersistedNamedFragmentFactory = {
 	isDecorated( object:object ):object is PersistedNamedFragment {
 		// Fallback to `PersistedFragment.isDecorated` since it has not own properties
 		return PersistedFragment.isDecorated( object );

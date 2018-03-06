@@ -3,10 +3,10 @@ import { Fragment } from "./Fragment";
 import { ModelFactory } from "./ModelFactory";
 export interface BlankNode extends Fragment {
 }
-export interface BlankNodeConstant extends ModelFactory<BlankNode> {
+export interface BlankNodeFactory extends ModelFactory<BlankNode> {
     is(object: object): object is BlankNode;
     create(document: Document, id?: string): BlankNode;
     createFrom<T extends object>(object: T, document: Document, id?: string): T & BlankNode;
 }
-export declare const BlankNode: BlankNodeConstant;
+export declare const BlankNode: BlankNodeFactory;
 export default BlankNode;

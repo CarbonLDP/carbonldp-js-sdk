@@ -7,11 +7,11 @@ export interface RDFList {
 }
 
 
-export interface RDFListConstant {
+export interface RDFListFactory {
 	is( value:any ):value is RDFList;
 }
 
-export const RDFList:RDFListConstant = {
+export const RDFList:RDFListFactory = {
 	is( value:any ):value is RDFList {
 		return Utils.hasPropertyDefined( value, "@list" );
 	},

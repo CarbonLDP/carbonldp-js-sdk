@@ -12,11 +12,11 @@ export interface RDFValue {
 }
 
 
-export interface RDFValueConstant {
+export interface RDFValueFactory {
 	parse( pointerLibrary:PointerLibrary, value:RDFLiteral | RDFNode | RDFList | RDFValue | string, ):any;
 }
 
-export const RDFValue:RDFValueConstant = {
+export const RDFValue:RDFValueFactory = {
 
 	parse( pointerLibrary:PointerLibrary, value:RDFLiteral | RDFNode | RDFList | RDFValue | string ):any {
 		if( isString( value ) ) return value;

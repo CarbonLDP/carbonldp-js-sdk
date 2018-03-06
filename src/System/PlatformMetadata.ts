@@ -11,7 +11,7 @@ export interface PlatformMetadata extends VolatileResource, PersistedDocument {
 }
 
 
-export interface PlatformMetadataConstant {
+export interface PlatformMetadataFactory {
 	TYPE:string;
 	SCHEMA:ObjectSchema;
 }
@@ -27,7 +27,7 @@ const SCHEMA:ObjectSchema = {
 	},
 };
 
-export const PlatformMetadata:PlatformMetadataConstant = {
+export const PlatformMetadata:PlatformMetadataFactory = {
 	TYPE: C.Platform,
 	SCHEMA,
 };

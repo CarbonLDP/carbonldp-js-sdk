@@ -50,7 +50,7 @@ describe( module( "Carbon/PersistedProtectedDocument" ), ():void => {
 	} );
 
 	describe( interfaze(
-		"Carbon.PersistedProtectedDocument.PersistedProtectedDocumentConstant",
+		"Carbon.PersistedProtectedDocument.PersistedProtectedDocumentFactory",
 		"Interface with the factory, decorate and utils methods for `Carbon.PersistedProtectedDocument.PersistedProtectedDocument` objects."
 	), ():void => {
 
@@ -87,8 +87,8 @@ describe( module( "Carbon/PersistedProtectedDocument" ), ():void => {
 	describe( property(
 		STATIC,
 		"PersistedProtectedDocument",
-		"Carbon.PersistedProtectedDocument.PersistedProtectedDocumentConstant",
-		"Constant that implements the `Carbon.PersistedProtectedDocument.PersistedProtectedDocumentConstant` interface."
+		"Carbon.PersistedProtectedDocument.PersistedProtectedDocumentFactory",
+		"Constant that implements the `Carbon.PersistedProtectedDocument.PersistedProtectedDocumentFactory` interface."
 	), ():void => {
 
 		it( isDefined(), ():void => {

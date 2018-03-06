@@ -78,7 +78,7 @@ describe( module( "Carbon/AccessPoint" ), ():void => {
 	} );
 
 	describe( interfaze(
-		"Carbon.AccessPoint.AccessPointConstant",
+		"Carbon.AccessPoint.AccessPointFactory",
 		"Interface with the factory, decorate and utils methods of a `Carbon.AccessPoint.AccessPoint` object."
 	), ():void => {
 
@@ -123,7 +123,7 @@ describe( module( "Carbon/AccessPoint" ), ():void => {
 
 	} );
 
-	describe( property( STATIC, "AccessPoint", "Carbon.AccessPoint.AccessPointConstant", "Constant that implements the `Carbon.AccessPoint.AccessPoint` interface." ), ():void => {
+	describe( property( STATIC, "AccessPoint", "Carbon.AccessPoint.AccessPointFactory", "Constant that implements the `Carbon.AccessPoint.AccessPoint` interface." ), ():void => {
 
 		it( isDefined(), ():void => {
 			expect( AccessPoint ).toBeDefined();

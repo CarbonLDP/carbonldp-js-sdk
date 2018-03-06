@@ -39,7 +39,7 @@ describe( module( "Carbon/PersistedFragment" ), ():void => {
 	} );
 
 	describe( interfaze(
-		"Carbon.PersistedFragment.PersistedFragmentConstant",
+		"Carbon.PersistedFragment.PersistedFragmentFactory",
 		"Interface with the factory, decorate and utils methods of a `Carbon.PersistedFragment.PersistedFragment` object."
 	), ():void => {
 
@@ -101,7 +101,7 @@ describe( module( "Carbon/PersistedFragment" ), ():void => {
 		expect( defaultTarget ).toEqual( jasmine.any( Object ) );
 	} );
 
-	describe( property( STATIC, "PersistedFragment", "Carbon.PersistedFragment.PersistedFragmentConstant", "Constant that implements the `Carbon.PersistedFragment.PersistedFragmentConstant` interface." ), ():void => {
+	describe( property( STATIC, "PersistedFragment", "Carbon.PersistedFragment.PersistedFragmentFactory", "Constant that implements the `Carbon.PersistedFragment.PersistedFragmentFactory` interface." ), ():void => {
 
 		it( isDefined(), ():void => {
 			expect( PersistedFragment ).toBeDefined();

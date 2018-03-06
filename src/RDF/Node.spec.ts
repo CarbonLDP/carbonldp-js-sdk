@@ -39,7 +39,7 @@ describe( module( "Carbon/RDF/Node" ), ():void => {
 	} );
 
 	describe( interfaze(
-		"Carbon.RDF.Node.RDFNodeConstant",
+		"Carbon.RDF.Node.RDFNodeFactory",
 		"Interface with the factory and utils for `Carbon.RDF.Node.RDFNode` objects."
 	), ():void => {
 
@@ -196,7 +196,7 @@ describe( module( "Carbon/RDF/Node" ), ():void => {
 	describe( property(
 		STATIC,
 		"RDFNode",
-		"Carbon.RDF.Node.RDFNodeConstant"
+		"Carbon.RDF.Node.RDFNodeFactory"
 	), ():void => {
 
 		it( isDefined(), ():void => {

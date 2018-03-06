@@ -7,14 +7,14 @@ export interface AccessPointCreated extends DocumentCreated {
 }
 
 
-export interface AccessPointCreatedConstant {
+export interface AccessPointCreatedFactory {
 	TYPE:string;
 	SCHEMA:ObjectSchema;
 }
 
 const SCHEMA:ObjectSchema = DocumentCreated.SCHEMA;
 
-export const AccessPointCreated:AccessPointCreatedConstant = {
+export const AccessPointCreated:AccessPointCreatedFactory = {
 	TYPE: C.AccessPointCreated,
 	SCHEMA,
 };

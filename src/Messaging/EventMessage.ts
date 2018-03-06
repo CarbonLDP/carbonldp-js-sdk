@@ -11,7 +11,7 @@ export interface EventMessage extends Resource {
 }
 
 
-export interface EventMessageConstant extends ModelFactory<EventMessage> {
+export interface EventMessageFactory extends ModelFactory<EventMessage> {
 	SCHEMA:ObjectSchema;
 
 	isDecorated( object:object ):object is EventMessage;
@@ -24,7 +24,7 @@ export const SCHEMA:ObjectSchema = {
 	},
 };
 
-export const EventMessage:EventMessageConstant = {
+export const EventMessage:EventMessageFactory = {
 	SCHEMA,
 
 	isDecorated( object:object ):object is EventMessage {

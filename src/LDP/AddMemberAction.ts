@@ -12,7 +12,7 @@ export interface AddMemberAction extends Resource {
 }
 
 
-export interface AddMemberActionConstant extends ModelFactory<AddMemberAction>, ModelDecorator<AddMemberAction> {
+export interface AddMemberActionFactory extends ModelFactory<AddMemberAction>, ModelDecorator<AddMemberAction> {
 	TYPE:string;
 	SCHEMA:ObjectSchema;
 
@@ -29,7 +29,7 @@ export const SCHEMA:ObjectSchema = {
 	},
 };
 
-export const AddMemberAction:AddMemberActionConstant = {
+export const AddMemberAction:AddMemberActionFactory = {
 	TYPE: C.AddMemberAction,
 	SCHEMA,
 

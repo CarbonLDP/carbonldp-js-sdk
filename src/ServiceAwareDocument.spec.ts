@@ -38,7 +38,7 @@ describe( module( "Carbon/ServiceAwareDocument" ), ():void => {
 	} );
 
 	describe( interfaze(
-		"Carbon.ServiceAwareDocument.ServiceAwareDocumentConstant",
+		"Carbon.ServiceAwareDocument.ServiceAwareDocumentFactory",
 		"Interface with the factory, decorate adn utils methods od a `Carbon.ServiceAwareDocument.ServiceAwareDocument`"
 	), ():void => {
 
@@ -69,8 +69,8 @@ describe( module( "Carbon/ServiceAwareDocument" ), ():void => {
 	describe( property(
 		STATIC,
 		"ServiceAwareDocument",
-		"Carbon.ServiceAwareDocument.ServiceAwareDocumentConstant",
-		"Constant that implements the `Carbon.ServiceAwareDocument.ServiceAwareDocumentConstant` interface."
+		"Carbon.ServiceAwareDocument.ServiceAwareDocumentFactory",
+		"Constant that implements the `Carbon.ServiceAwareDocument.ServiceAwareDocumentFactory` interface."
 	), ():void => {
 
 		it( "should exist", ():void => {

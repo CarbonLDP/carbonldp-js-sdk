@@ -4,8 +4,8 @@ import { Resource } from "../Resource";
 export interface MemberDetails extends Resource {
     members: Pointer[];
 }
-export interface MemberDetailsConstant {
+export interface MemberDetailsFactory {
     SCHEMA: ObjectSchema;
 }
-export declare const MemberDetails: MemberDetailsConstant;
+export declare const MemberDetails: MemberDetailsFactory;
 export default MemberDetails;

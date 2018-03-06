@@ -44,7 +44,7 @@ describe( module( "Carbon/LDP/DirectContainer" ), ():void => {
 	} );
 
 	describe( interfaze(
-		"Carbon.LDP.DirectContainer.DirectContainerConstant",
+		"Carbon.LDP.DirectContainer.DirectContainerFactory",
 		"Interface with the factory, decorate and utils methods of a `Carbon.LDP.DirectContainer.DirectContainer`"
 	), ():void => {
 
@@ -89,7 +89,7 @@ describe( module( "Carbon/LDP/DirectContainer" ), ():void => {
 
 	} );
 
-	describe( property( STATIC, "DirectContainer", "Carbon.LDP.DirectContainer.DirectContainerConstant", "Constant that implements the `Carbon.LDP.DirectContainer.DirectContainerConstant` interface." ), ():void => {
+	describe( property( STATIC, "DirectContainer", "Carbon.LDP.DirectContainer.DirectContainerFactory", "Constant that implements the `Carbon.LDP.DirectContainer.DirectContainerFactory` interface." ), ():void => {
 
 		it( isDefined(), ():void => {
 			expect( DirectContainer ).toBeDefined();

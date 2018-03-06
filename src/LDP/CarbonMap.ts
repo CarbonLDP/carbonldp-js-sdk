@@ -10,7 +10,7 @@ export interface CarbonMap<K, V> extends Resource {
 }
 
 
-export interface CarbonMapConstant extends ModelFactory<CarbonMap<any, any>> {
+export interface CarbonMapFactory extends ModelFactory<CarbonMap<any, any>> {
 	TYPE:string;
 	SCHEMA:ObjectSchema;
 
@@ -25,7 +25,7 @@ const SCHEMA:ObjectSchema = {
 	},
 };
 
-export const CarbonMap:CarbonMapConstant = {
+export const CarbonMap:CarbonMapFactory = {
 	TYPE: C.Map,
 	SCHEMA,
 

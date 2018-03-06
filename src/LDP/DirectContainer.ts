@@ -1,8 +1,8 @@
-import { IllegalArgumentError } from "../Errors";
+import { Document } from "../Document";
+import { IllegalArgumentError } from "../Errors/IllegalArgumentError";
 import { ModelFactory } from "../ModelFactory";
 import { Pointer } from "../Pointer";
 import { LDP } from "../Vocabularies/LDP";
-import { Document } from "./../Document";
 
 interface DirectContainerBase {
 	membershipResource:Pointer;
@@ -15,7 +15,7 @@ export interface DirectContainer extends Document {
 }
 
 
-export interface DirectContainerConstant extends ModelFactory<DirectContainer> {
+export interface DirectContainerFactory extends ModelFactory<DirectContainer> {
 	TYPE:string;
 
 	is( object:object ):object is DirectContainer;
@@ -26,7 +26,7 @@ export interface DirectContainerConstant extends ModelFactory<DirectContainer> {
 	createFrom<T extends object>( object:T, membershipResource:Pointer, hasMemberRelation:string | Pointer, isMemberOfRelation?:string | Pointer ):T & DirectContainer;
 }
 
-export const DirectContainer:DirectContainerConstant = {
+export const DirectContainer:DirectContainerFactory = {
 	TYPE: LDP.DirectContainer,
 
 	is( object:object ):object is DirectContainer {
@@ -63,5 +63,6 @@ export const DirectContainer:DirectContainerConstant = {
 		return container;
 	},
 };
+
 
 export default DirectContainer;

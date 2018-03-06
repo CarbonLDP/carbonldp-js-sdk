@@ -239,7 +239,7 @@ describe( module( "Carbon/Auth/PersistedACL" ), ():void => {
 	} );
 
 	describe( interfaze(
-		"Carbon.Auth.PersistedACL.PersistedACLConstant",
+		"Carbon.Auth.PersistedACL.PersistedACLFactory",
 		"Interface with factory, decorate and utils methods for `Carbon.Auth.PersistedACL.PersistedACL` objects."
 	), ():void => {
 
@@ -267,8 +267,8 @@ describe( module( "Carbon/Auth/PersistedACL" ), ():void => {
 	describe( property(
 		STATIC,
 		"PersistedACL",
-		"Carbon.Auth.PersistedACL.PersistedACLConstant",
-		"Constant that implements the `Carbon.Auth.PersistedACL.PersistedACLConstant` interface."
+		"Carbon.Auth.PersistedACL.PersistedACLFactory",
+		"Constant that implements the `Carbon.Auth.PersistedACL.PersistedACLFactory` interface."
 	), ():void => {
 
 		it( isDefined(), ():void => {

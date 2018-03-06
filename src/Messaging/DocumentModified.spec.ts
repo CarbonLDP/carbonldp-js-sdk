@@ -46,7 +46,7 @@ describe( module( "Carbon/Messaging/DocumentModified" ), ():void => {
 	} );
 
 	describe( interfaze(
-		"Carbon.Messaging.DocumentModified.DocumentModifiedConstant",
+		"Carbon.Messaging.DocumentModified.DocumentModifiedFactory",
 		"Interface with the factory, decorate and utils for `Carbon.Messaging.DocumentModified.DocumentModified` objects."
 	), ():void => {
 
@@ -67,7 +67,7 @@ describe( module( "Carbon/Messaging/DocumentModified" ), ():void => {
 	describe( property(
 		STATIC,
 		"DocumentModified",
-		"Carbon.Messaging.DocumentModified.DocumentModifiedConstant"
+		"Carbon.Messaging.DocumentModified.DocumentModifiedFactory"
 	), ():void => {
 
 		it( isDefined(), ():void => {

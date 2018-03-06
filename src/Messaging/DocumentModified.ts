@@ -7,7 +7,7 @@ export interface DocumentModified extends EventMessage {
 }
 
 
-export interface DocumentModifiedConstant {
+export interface DocumentModifiedFactory {
 	TYPE:string;
 	SCHEMA:ObjectSchema;
 }
@@ -15,7 +15,7 @@ export interface DocumentModifiedConstant {
 export const TYPE:string = C.DocumentModified;
 export const SCHEMA:ObjectSchema = EventMessage.SCHEMA;
 
-export const DocumentModified:DocumentModifiedConstant = {
+export const DocumentModified:DocumentModifiedFactory = {
 	TYPE,
 	SCHEMA,
 };

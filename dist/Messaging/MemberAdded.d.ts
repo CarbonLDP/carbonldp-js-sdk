@@ -4,9 +4,9 @@ import { MemberAddedDetails } from "./MemberAddedDetails";
 export interface MemberAdded extends EventMessage {
     details: MemberAddedDetails;
 }
-export interface MemberAddedConstant {
+export interface MemberAddedFactory {
     TYPE: string;
     SCHEMA: ObjectSchema;
 }
-export declare const MemberAdded: MemberAddedConstant;
+export declare const MemberAdded: MemberAddedFactory;
 export default MemberAdded;

@@ -59,7 +59,7 @@ describe( module( "Carbon/SHACL/ValidationReport" ), ():void => {
 	} );
 
 	describe( interfaze(
-		"Carbon.SHACL.ValidationReport.ValidationReportConstant",
+		"Carbon.SHACL.ValidationReport.ValidationReportFactory",
 		"Interface with the factory, decorate and utils methods for `Carbon.SHACL.ValidationReport.ValidationReport` objects."
 	), ():void => {
 
@@ -80,7 +80,7 @@ describe( module( "Carbon/SHACL/ValidationReport" ), ():void => {
 	describe( property(
 		STATIC,
 		"ValidationReport",
-		"Carbon.SHACL.ValidationReport.ValidationReportConstant"
+		"Carbon.SHACL.ValidationReport.ValidationReportFactory"
 	), ():void => {
 
 		it( "should exist", ():void => {

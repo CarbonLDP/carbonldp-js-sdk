@@ -7,10 +7,10 @@ export interface ErrorResponse extends Resource {
     requestID: string;
     statusCode: number;
 }
-export interface ErrorResponseConstant extends ModelFactory<ErrorResponse> {
+export interface ErrorResponseFactory extends ModelFactory<ErrorResponse> {
     TYPE: string;
     SCHEMA: ObjectSchema;
     getMessage(errorResponse: ErrorResponse): string;
 }
-export declare const ErrorResponse: ErrorResponseConstant;
+export declare const ErrorResponse: ErrorResponseFactory;
 export default ErrorResponse;

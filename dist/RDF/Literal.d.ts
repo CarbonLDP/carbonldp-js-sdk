@@ -5,13 +5,13 @@ export interface RDFLiteral {
     "@value": string;
     "@language"?: string;
 }
-export interface RDFLiteralConstant {
+export interface RDFLiteralFactory {
     from(value: any): RDFLiteral;
     parse(value: string, type?: string): any;
     parse(literal: RDFLiteral): any;
     is(value: any): value is RDFLiteral;
     hasType(value: RDFLiteral, type: string): boolean;
 }
-export declare const RDFLiteral: RDFLiteralConstant;
+export declare const RDFLiteral: RDFLiteralFactory;
 export default RDFLiteral;
 export { Serializer, Serializers };

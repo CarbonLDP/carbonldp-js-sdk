@@ -47,7 +47,7 @@ describe( module( "Carbon/Messaging/Message" ), ():void => {
 	} );
 
 	describe( interfaze(
-		"Carbon.Messaging.EventMessage.EventMessageConstant",
+		"Carbon.Messaging.EventMessage.EventMessageFactory",
 		"Interface with the factory, decorate and utils elements for `Carbon.Messaging.EventMessage.EventMessage` objects."
 	), ():void => {
 
@@ -78,7 +78,7 @@ describe( module( "Carbon/Messaging/Message" ), ():void => {
 	describe( property(
 		STATIC,
 		"EventMessage",
-		"Carbon.Messaging.EventMessage.EventMessageConstant"
+		"Carbon.Messaging.EventMessage.EventMessageFactory"
 	), ():void => {
 
 		it( "should exist", ():void => {

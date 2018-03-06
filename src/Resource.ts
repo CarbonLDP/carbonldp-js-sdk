@@ -15,7 +15,7 @@ export interface Resource extends Pointer {
 	removeType( type:string ):void;
 }
 
-export interface ResourceConstant extends ModelFactory<Resource>, ModelDecorator<Resource> {
+export interface ResourceFactory extends ModelFactory<Resource>, ModelDecorator<Resource> {
 	isDecorated( object:object ):object is Resource;
 
 	is( object:object ):object is Resource;
@@ -42,7 +42,7 @@ export function removeTypeInResource( this:Resource, type:string ):void {
 	if( index !== - 1 ) this.types.splice( index, 1 );
 }
 
-export const Resource:ResourceConstant = {
+export const Resource:ResourceFactory = {
 	isDecorated( object:object ):object is Resource {
 		return (
 			Utils.hasPropertyDefined( object, "types" )

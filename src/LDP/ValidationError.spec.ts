@@ -48,7 +48,7 @@ describe( module( "Carbon/LDP/ValidationError" ), ():void => {
 	} );
 
 	describe( interfaze(
-		"Carbon.LDP.ValidationError.ValidationErrorConstant",
+		"Carbon.LDP.ValidationError.ValidationErrorFactory",
 		"Interface with the factory, decorate and utils methods for `Carbon.LDP.ValidationError.ValidationError` objects."
 	), ():void => {
 
@@ -69,7 +69,7 @@ describe( module( "Carbon/LDP/ValidationError" ), ():void => {
 	describe( property(
 		STATIC,
 		"ValidationError",
-		"Carbon.LDP.ValidationError.ValidationErrorConstant"
+		"Carbon.LDP.ValidationError.ValidationErrorFactory"
 	), ():void => {
 
 		it( "should exist", ():void => {

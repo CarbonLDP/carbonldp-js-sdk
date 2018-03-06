@@ -11,7 +11,7 @@ export interface ValidationReport {
 }
 
 
-export interface ValidationReportConstant {
+export interface ValidationReportFactory {
 	TYPE:string;
 	SCHEMA:ObjectSchema;
 }
@@ -32,7 +32,7 @@ const SCHEMA:ObjectSchema = {
 	},
 };
 
-export const ValidationReport:ValidationReportConstant = {
+export const ValidationReport:ValidationReportFactory = {
 	TYPE: SHACL.ValidationReport,
 	SCHEMA,
 };

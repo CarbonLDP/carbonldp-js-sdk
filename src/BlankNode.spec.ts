@@ -21,7 +21,7 @@ describe( module( "Carbon/BlankNode" ), ():void => {
 	), ():void => {} );
 
 	describe( interfaze(
-		"Carbon.BlankNode.BlankNodeConstant",
+		"Carbon.BlankNode.BlankNodeFactory",
 		"Interface with the factory, decorate and utils methods id a `Carbon.BlankNode.BlankNode` object."
 	), ():void => {
 
@@ -66,7 +66,7 @@ describe( module( "Carbon/BlankNode" ), ():void => {
 		expect( defaultTarget ).toEqual( jasmine.any( Object ) );
 	} );
 
-	describe( property( STATIC, "BlankNode", "Carbon.BlankNode.BlankNodeConstant", "Constant that implements the `Carbon.BlankNode.BlankNodeConstant` interface." ), ():void => {
+	describe( property( STATIC, "BlankNode", "Carbon.BlankNode.BlankNodeFactory", "Constant that implements the `Carbon.BlankNode.BlankNodeFactory` interface." ), ():void => {
 
 		it( isDefined(), ():void => {
 			expect( BlankNode ).toBeDefined();

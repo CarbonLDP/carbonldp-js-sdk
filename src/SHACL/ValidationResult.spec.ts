@@ -106,7 +106,7 @@ describe( module( "Carbon/SHACL/ValidationResult" ), ():void => {
 	} );
 
 	describe( interfaze(
-		"Carbon.SHACL.ValidationResult.ValidationResultConstant",
+		"Carbon.SHACL.ValidationResult.ValidationResultFactory",
 		"Interface with the factory, decorate and utils elements for `Carbon.SHACL.ValidationResult.ValidationResult` objects."
 	), ():void => {
 
@@ -127,7 +127,7 @@ describe( module( "Carbon/SHACL/ValidationResult" ), ():void => {
 	describe( property(
 		STATIC,
 		"ValidationResult",
-		"Carbon.SHACL.ValidationResult.ValidationResultConstant"
+		"Carbon.SHACL.ValidationResult.ValidationResultFactory"
 	), ():void => {
 
 		it( "should exist", ():void => {

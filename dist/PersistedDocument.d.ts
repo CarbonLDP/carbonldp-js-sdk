@@ -81,12 +81,12 @@ export interface PersistedDocument extends Document, PersistedResource, ServiceA
     executeUPDATE(updateQuery: string, requestOptions?: RequestOptions): Promise<Response>;
     sparql(): QueryClause<FinishSPARQLSelect>;
 }
-export interface PersistedDocumentConstant extends ModelFactory<PersistedDocument>, ModelDecorator<PersistedDocument> {
+export interface PersistedDocumentFactory extends ModelFactory<PersistedDocument>, ModelDecorator<PersistedDocument> {
     is(object: object): object is PersistedDocument;
     isDecorated(object: object): object is PersistedDocument;
     create(documents: Documents, uri: string): PersistedDocument;
     createFrom<T extends object>(object: T, documents: Documents, uri: string): T & PersistedDocument;
     decorate<T extends object>(object: T, documents: Documents): T & PersistedDocument;
 }
-export declare const PersistedDocument: PersistedDocumentConstant;
+export declare const PersistedDocument: PersistedDocumentFactory;
 export default PersistedDocument;

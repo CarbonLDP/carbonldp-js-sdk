@@ -38,7 +38,7 @@ describe( module( "Carbon/RDF/List" ), ():void => {
 	} );
 
 	describe( interfaze(
-		"Carbon.RDF.List.RDFListConstant",
+		"Carbon.RDF.List.RDFListFactory",
 		"Interface with the factory and utils for `Carbon.RDF.List.RDFList` objects."
 	), ():void => {
 
@@ -56,7 +56,7 @@ describe( module( "Carbon/RDF/List" ), ():void => {
 	describe( property(
 		STATIC,
 		"RDFList",
-		"Carbon.RDF.List.RDFListConstant"
+		"Carbon.RDF.List.RDFListFactory"
 	), ():void => {
 
 		it( isDefined(), ():void => {

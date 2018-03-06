@@ -1,8 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var Errors_1 = require("../Errors");
+var Document_1 = require("../Document");
+var IllegalArgumentError_1 = require("../Errors/IllegalArgumentError");
 var LDP_1 = require("../Vocabularies/LDP");
-var Document_1 = require("./../Document");
 exports.DirectContainer = {
     TYPE: LDP_1.LDP.DirectContainer,
     is: function (object) {
@@ -15,11 +15,11 @@ exports.DirectContainer = {
     },
     createFrom: function (object, membershipResource, hasMemberRelation, isMemberOfRelation) {
         if (exports.DirectContainer.is(object))
-            throw new Errors_1.IllegalArgumentError("The base object is already a DirectContainer.");
+            throw new IllegalArgumentError_1.IllegalArgumentError("The base object is already a DirectContainer.");
         if (!membershipResource)
-            throw new Errors_1.IllegalArgumentError("The property membershipResource is required.");
+            throw new IllegalArgumentError_1.IllegalArgumentError("The property membershipResource is required.");
         if (!hasMemberRelation)
-            throw new Errors_1.IllegalArgumentError("The property hasMemberRelation is required.");
+            throw new IllegalArgumentError_1.IllegalArgumentError("The property hasMemberRelation is required.");
         var containerBase = Object.assign(object, {
             membershipResource: membershipResource,
             hasMemberRelation: hasMemberRelation,

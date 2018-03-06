@@ -12,7 +12,7 @@ export interface CarbonError extends Resource {
 }
 
 
-export interface CarbonErrorConstant {
+export interface CarbonErrorFactory {
 	TYPE:string;
 	SCHEMA:ObjectSchema;
 }
@@ -32,7 +32,7 @@ const SCHEMA:ObjectSchema = {
 	},
 };
 
-export const CarbonError:CarbonErrorConstant = {
+export const CarbonError:CarbonErrorFactory = {
 	TYPE:C.Error,
 	SCHEMA,
 };

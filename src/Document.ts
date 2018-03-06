@@ -73,7 +73,7 @@ export interface Document extends Resource, PointerLibrary, PointerValidator {
 }
 
 
-export interface DocumentConstant extends ModelFactory<Document>, ModelDecorator<Document> {
+export interface DocumentFactory extends ModelFactory<Document>, ModelDecorator<Document> {
 	TYPE:string;
 	SCHEMA:ObjectSchema;
 
@@ -140,7 +140,7 @@ const SCHEMA:ObjectSchema = {
 	},
 };
 
-export const Document:DocumentConstant = {
+export const Document:DocumentFactory = {
 	TYPE: C.Document,
 	SCHEMA,
 

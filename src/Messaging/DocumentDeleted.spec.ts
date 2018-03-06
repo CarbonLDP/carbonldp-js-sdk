@@ -45,7 +45,7 @@ describe( module( "Carbon/Messaging/DocumentDeleted" ), ():void => {
 	} );
 
 	describe( interfaze(
-		"Carbon.Messaging.DocumentDeleted.DocumentDeletedConstant",
+		"Carbon.Messaging.DocumentDeleted.DocumentDeletedFactory",
 		"Interface with the factory, decorate and utils for `Carbon.Messaging.DocumentDeleted.DocumentDeleted` objects."
 	), ():void => {
 
@@ -66,7 +66,7 @@ describe( module( "Carbon/Messaging/DocumentDeleted" ), ():void => {
 	describe( property(
 		STATIC,
 		"DocumentDeleted",
-		"Carbon.Messaging.DocumentDeleted.DocumentDeletedConstant"
+		"Carbon.Messaging.DocumentDeleted.DocumentDeletedFactory"
 	), ():void => {
 
 		it( isDefined(), ():void => {

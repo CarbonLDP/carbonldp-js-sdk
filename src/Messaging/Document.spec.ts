@@ -371,7 +371,7 @@ describe( module( "Carbon/Messaging/Document" ), ():void => {
 	} );
 
 	describe( interfaze(
-		"Carbon.Messaging.Document.MessagingDocumentConstant",
+		"Carbon.Messaging.Document.MessagingDocumentFactory",
 		"Interface with the factory, decorate and utils for `Carbon.Messaging.Document.MessagingDocument` objects."
 	), ():void => {
 
@@ -401,7 +401,7 @@ describe( module( "Carbon/Messaging/Document" ), ():void => {
 	describe( property(
 		STATIC,
 		"MessagingDocument",
-		"Carbon.Messaging.Document.MessagingDocumentConstant"
+		"Carbon.Messaging.Document.MessagingDocumentFactory"
 	), ():void => {
 
 		it( "should exist", ():void => {

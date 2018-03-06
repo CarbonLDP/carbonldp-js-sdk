@@ -2,9 +2,9 @@ import { ObjectSchema } from "../ObjectSchema";
 import { EventMessage } from "./EventMessage";
 export interface DocumentDeleted extends EventMessage {
 }
-export interface DocumentDeletedConstant {
+export interface DocumentDeletedFactory {
     TYPE: string;
     SCHEMA: ObjectSchema;
 }
-export declare const DocumentDeleted: DocumentDeletedConstant;
+export declare const DocumentDeleted: DocumentDeletedFactory;
 export default DocumentDeleted;

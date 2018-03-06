@@ -5,9 +5,9 @@ import { Resource } from "../Resource";
 export interface ValidationError extends Resource {
     errorDetails: Pointer;
 }
-export interface ValidationErrorConstant extends ModelFactory<ValidationError> {
+export interface ValidationErrorFactory extends ModelFactory<ValidationError> {
     TYPE: string;
     SCHEMA: ObjectSchema;
 }
-export declare const ValidationError: ValidationErrorConstant;
+export declare const ValidationError: ValidationErrorFactory;
 export default ValidationError;

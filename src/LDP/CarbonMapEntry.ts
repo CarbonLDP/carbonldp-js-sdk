@@ -18,11 +18,11 @@ const SCHEMA:ObjectSchema = {
 	},
 };
 
-export interface CarbonMapEntryConstant {
+export interface CarbonMapEntryFactory {
 	SCHEMA:ObjectSchema;
 }
 
-export const CarbonMapEntry:CarbonMapEntryConstant = {
+export const CarbonMapEntry:CarbonMapEntryFactory = {
 	SCHEMA,
 };
 

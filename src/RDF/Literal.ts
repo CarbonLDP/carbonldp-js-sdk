@@ -12,7 +12,7 @@ export interface RDFLiteral {
 }
 
 
-export interface RDFLiteralConstant {
+export interface RDFLiteralFactory {
 	from( value:any ):RDFLiteral;
 
 
@@ -27,7 +27,7 @@ export interface RDFLiteralConstant {
 	hasType( value:RDFLiteral, type:string ):boolean;
 }
 
-export const RDFLiteral:RDFLiteralConstant = {
+export const RDFLiteral:RDFLiteralFactory = {
 	from( value:any ):RDFLiteral {
 		if( Utils.isNull( value ) )
 			throw new Errors.IllegalArgumentError( "Null cannot be converted into a Literal" );

@@ -1,5 +1,5 @@
 import { Document } from "./Document";
-import { Documents as Documents } from "./Documents";
+import { Documents } from "./Documents";
 import { ModelDecorator } from "./ModelDecorator";
 import { isObject } from "./Utils";
 
@@ -9,13 +9,13 @@ export interface ServiceAwareDocument extends Document {
 }
 
 
-export interface ServiceAwareDocumentConstant extends ModelDecorator<ServiceAwareDocument> {
+export interface ServiceAwareDocumentFactory extends ModelDecorator<ServiceAwareDocument> {
 	isDecorated( object:object ):object is ServiceAwareDocument;
 
 	decorate<T extends object>( object:T, documents:Documents ):T & ServiceAwareDocument;
 }
 
-export const ServiceAwareDocument:ServiceAwareDocumentConstant = {
+export const ServiceAwareDocument:ServiceAwareDocumentFactory = {
 	isDecorated( object:object ):object is ServiceAwareDocument {
 		return isObject( object )
 			&& object.hasOwnProperty( "_documents" )

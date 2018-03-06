@@ -5,10 +5,10 @@ import { VolatileResource } from "./VolatileResource";
 export interface ResponseMetadata extends VolatileResource {
     documentsMetadata?: DocumentMetadata[];
 }
-export interface ResponseMetadataConstant extends ModelFactory<ResponseMetadata> {
+export interface ResponseMetadataFactory extends ModelFactory<ResponseMetadata> {
     TYPE: string;
     SCHEMA: ObjectSchema;
     is(object: object): object is ResponseMetadata;
 }
-export declare const ResponseMetadata: ResponseMetadataConstant;
+export declare const ResponseMetadata: ResponseMetadataFactory;
 export default ResponseMetadata;

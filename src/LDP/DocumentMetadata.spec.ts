@@ -52,7 +52,7 @@ describe( module( "Carbon/LDP/DocumentMetadata" ), ():void => {
 
 
 	describe( interfaze(
-		"Carbon.LDP.DocumentMetadata.DocumentMetadataConstant",
+		"Carbon.LDP.DocumentMetadata.DocumentMetadataFactory",
 		"Interface with the factory, decorate and utils methods for `Carbon.LDP.DocumentMetadata.DocumentMetadata` objects."
 	), ():void => {
 
@@ -91,7 +91,7 @@ describe( module( "Carbon/LDP/DocumentMetadata" ), ():void => {
 	describe( property(
 		STATIC,
 		"DocumentMetadata",
-		"Carbon.LDP.DocumentMetadata.DocumentMetadataConstant"
+		"Carbon.LDP.DocumentMetadata.DocumentMetadataFactory"
 	), ():void => {
 
 		it( isDefined(), ():void => {

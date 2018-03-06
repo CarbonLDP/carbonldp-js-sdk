@@ -9,12 +9,12 @@ export interface PersistedFragment extends PersistedResource, Fragment {
     hasType(type: string): boolean;
     removeType(type: string): void;
 }
-export interface PersistedFragmentConstant extends ModelFactory<PersistedFragment>, ModelDecorator<PersistedFragment> {
+export interface PersistedFragmentFactory extends ModelFactory<PersistedFragment>, ModelDecorator<PersistedFragment> {
     isDecorated(object: object): object is PersistedFragment;
     is(object: object): object is PersistedFragment;
     decorate<T extends object>(object: T): T & PersistedFragment;
     create(document: PersistedDocument, id?: string): PersistedFragment;
     createFrom<T extends object>(object: T, document: PersistedDocument, id?: string): T & PersistedFragment;
 }
-export declare const PersistedFragment: PersistedFragmentConstant;
+export declare const PersistedFragment: PersistedFragmentFactory;
 export default PersistedFragment;

@@ -9,7 +9,7 @@ export interface MemberAdded extends EventMessage {
 }
 
 
-export interface MemberAddedConstant {
+export interface MemberAddedFactory {
 	TYPE:string;
 	SCHEMA:ObjectSchema;
 }
@@ -23,7 +23,7 @@ const SCHEMA:ObjectSchema = {
 	},
 };
 
-export const MemberAdded:MemberAddedConstant = {
+export const MemberAdded:MemberAddedFactory = {
 	TYPE,
 	SCHEMA,
 };

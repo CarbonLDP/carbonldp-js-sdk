@@ -25,7 +25,7 @@ describe( module( "Carbon/ProtectedDocument" ), ():void => {
 	} );
 
 	describe( interfaze(
-		"Carbon.ProtectedDocument.ProtectedDocumentConstant",
+		"Carbon.ProtectedDocument.ProtectedDocumentFactory",
 		"Interface with the factory, decorate and utils for `Carbon.ProtectedDocument.ProtectedDocument` objects."
 	), ():void => {
 
@@ -46,8 +46,8 @@ describe( module( "Carbon/ProtectedDocument" ), ():void => {
 	describe( property(
 		STATIC,
 		"ProtectedDocument",
-		"Carbon.ProtectedDocument.ProtectedDocumentConstant",
-		"Constant that implements the `Carbon.ProtectedDocument.ProtectedDocumentConstant` interface."
+		"Carbon.ProtectedDocument.ProtectedDocumentFactory",
+		"Constant that implements the `Carbon.ProtectedDocument.ProtectedDocumentFactory` interface."
 	), ():void => {
 
 		it( "should exist", ():void => {

@@ -48,7 +48,7 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryMetadata" ), ():void => {
 	} );
 
 	describe( interfaze(
-		"Carbon.SPARQL.QueryDocument.QueryMetadataConstant",
+		"Carbon.SPARQL.QueryDocument.QueryMetadataFactory",
 		"Interface with the factory, decorate and utils methods for `Carbon.SPARQL.QueryDocument.QueryMetadata.QueryMetadata` objects."
 	), ():void => {
 
@@ -81,7 +81,7 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryMetadata" ), ():void => {
 	describe( property(
 		STATIC,
 		"QueryMetadata",
-		"Carbon.SPARQL.QueryDocument.QueryMetadataConstant"
+		"Carbon.SPARQL.QueryDocument.QueryMetadataFactory"
 	), ():void => {
 
 		it( "should exist", ():void => {

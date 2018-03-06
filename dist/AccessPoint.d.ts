@@ -11,11 +11,11 @@ export interface AccessPoint extends DirectContainer {
     isMemberOfRelation?: Pointer;
     insertedContentRelation?: Pointer;
 }
-export interface AccessPointConstant extends ModelFactory<AccessPoint> {
+export interface AccessPointFactory extends ModelFactory<AccessPoint> {
     TYPE: string;
     is(object: object): object is AccessPoint;
     create(membershipResource: Pointer, hasMemberRelation: string | Pointer, isMemberOfRelation?: string | Pointer): AccessPoint;
     createFrom<T extends object>(object: T, membershipResource: Pointer, hasMemberRelation: string | Pointer, isMemberOfRelation?: string | Pointer): T & AccessPoint;
 }
-export declare const AccessPoint: AccessPointConstant;
+export declare const AccessPoint: AccessPointFactory;
 export default AccessPoint;

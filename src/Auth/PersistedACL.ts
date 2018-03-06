@@ -53,7 +53,7 @@ export interface PersistedACL extends PersistedDocument {
 }
 
 
-export interface PersistedACLConstant extends ModelDecorator<PersistedACL> {
+export interface PersistedACLFactory extends ModelDecorator<PersistedACL> {
 	isDecorated( object:object ):object is PersistedACL;
 
 
@@ -61,7 +61,7 @@ export interface PersistedACLConstant extends ModelDecorator<PersistedACL> {
 }
 
 
-export const PersistedACL:PersistedACLConstant = {
+export const PersistedACL:PersistedACLFactory = {
 	isDecorated( object:object ):object is PersistedACL {
 		return Utils.hasPropertyDefined( object, "accessTo" )
 			&& object[ "_parsePointer" ] === parsePointer

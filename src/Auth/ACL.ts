@@ -53,7 +53,7 @@ export interface ACL extends Document {
 }
 
 
-export interface ACLConstant extends ModelDecorator<ACL> {
+export interface ACLFactory extends ModelDecorator<ACL> {
 	TYPE:string;
 	SCHEMA:ObjectSchema;
 
@@ -81,7 +81,7 @@ const SCHEMA:ObjectSchema = {
 	},
 };
 
-export const ACL:ACLConstant = {
+export const ACL:ACLFactory = {
 	TYPE: CS.AccessControlList,
 	SCHEMA,
 

@@ -280,7 +280,7 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 	} );
 
 	describe( interfaze(
-		"Carbon.Auth.ACL.ACLConstant",
+		"Carbon.Auth.ACL.ACLFactory",
 		"Interface with factory, decorate and utils methods for `Carbon.Auth.ACL.ACL` objects."
 	), ():void => {
 
@@ -320,8 +320,8 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 	describe( property(
 		STATIC,
 		"ACL",
-		"Carbon.Auth.ACL.ACLConstant",
-		"Constant that implements the `Carbon.Auth.ACL.ACLConstant` interface."
+		"Carbon.Auth.ACL.ACLFactory",
+		"Constant that implements the `Carbon.Auth.ACL.ACLFactory` interface."
 	), ():void => {
 
 		it( isDefined(), ():void => {

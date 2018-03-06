@@ -30,7 +30,7 @@ export interface PointerValidator {
 }
 
 
-export interface PointerConstant extends ModelFactory<Pointer>, ModelDecorator<Pointer> {
+export interface PointerFactory extends ModelFactory<Pointer>, ModelDecorator<Pointer> {
 	isDecorated( object:object ):object is Pointer;
 
 	is( object:object ):object is Pointer;
@@ -59,7 +59,7 @@ export function resolveStandalonePointer( this:Pointer ):Promise<[ Pointer, Resp
 	return Promise.reject( new IllegalStateError( "The pointer has not been assigned to a context." ) );
 }
 
-export const Pointer:PointerConstant = {
+export const Pointer:PointerFactory = {
 	isDecorated( object:object ):object is Pointer {
 		return (
 			Utils.hasPropertyDefined( object, "_id" ) &&

@@ -166,7 +166,7 @@ export interface PersistedDocument extends Document, PersistedResource, ServiceA
 }
 
 
-export interface PersistedDocumentConstant extends ModelFactory<PersistedDocument>, ModelDecorator<PersistedDocument> {
+export interface PersistedDocumentFactory extends ModelFactory<PersistedDocument>, ModelDecorator<PersistedDocument> {
 	is( object:object ):object is PersistedDocument;
 
 	isDecorated( object:object ):object is PersistedDocument;
@@ -180,7 +180,7 @@ export interface PersistedDocumentConstant extends ModelFactory<PersistedDocumen
 }
 
 
-export const PersistedDocument:PersistedDocumentConstant = {
+export const PersistedDocument:PersistedDocumentFactory = {
 	isDecorated( object:object ):object is PersistedDocument {
 		return Utils.hasPropertyDefined( object, "_eTag" )
 			&& Utils.hasFunction( object, "isLocallyOutDated" )

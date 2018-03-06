@@ -10,7 +10,7 @@ export interface ValidationError extends Resource {
 }
 
 
-export interface ValidationErrorConstant extends ModelFactory<ValidationError> {
+export interface ValidationErrorFactory extends ModelFactory<ValidationError> {
 	TYPE:string;
 	SCHEMA:ObjectSchema;
 }
@@ -22,7 +22,7 @@ const SCHEMA:ObjectSchema = {
 	},
 };
 
-export const ValidationError:ValidationErrorConstant = {
+export const ValidationError:ValidationErrorFactory = {
 	TYPE: C.ValidationError,
 	SCHEMA,
 };

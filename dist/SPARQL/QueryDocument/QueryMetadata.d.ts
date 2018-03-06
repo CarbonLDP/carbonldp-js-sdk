@@ -5,10 +5,10 @@ import { Pointer } from "../../Pointer";
 export interface QueryMetadata extends VolatileResource {
     target: Pointer;
 }
-export interface QueryMetadataConstant extends ModelFactory<QueryMetadata> {
+export interface QueryMetadataFactory extends ModelFactory<QueryMetadata> {
     TYPE: string;
     SCHEMA: ObjectSchema;
     is(object: object): object is QueryMetadata;
 }
-export declare const QueryMetadata: QueryMetadataConstant;
+export declare const QueryMetadata: QueryMetadataFactory;
 export default QueryMetadata;

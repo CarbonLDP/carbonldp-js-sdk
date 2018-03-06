@@ -2,8 +2,8 @@ import { RDFValue } from "./Value";
 export interface RDFList {
     "@list": RDFValue[];
 }
-export interface RDFListConstant {
+export interface RDFListFactory {
     is(value: any): value is RDFList;
 }
-export declare const RDFList: RDFListConstant;
+export declare const RDFList: RDFListFactory;
 export default RDFList;

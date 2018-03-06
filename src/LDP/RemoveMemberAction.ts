@@ -12,7 +12,7 @@ export interface RemoveMemberAction extends Resource {
 }
 
 
-export interface RemoveMemberActionConstant extends ModelDecorator<RemoveMemberAction>, ModelFactory<RemoveMemberAction> {
+export interface RemoveMemberActionFactory extends ModelDecorator<RemoveMemberAction>, ModelFactory<RemoveMemberAction> {
 	TYPE:string;
 	SCHEMA:ObjectSchema;
 
@@ -29,7 +29,7 @@ export const SCHEMA:ObjectSchema = {
 	},
 };
 
-export const RemoveMemberAction:RemoveMemberActionConstant = {
+export const RemoveMemberAction:RemoveMemberActionFactory = {
 	TYPE: C.RemoveMemberAction,
 	SCHEMA,
 

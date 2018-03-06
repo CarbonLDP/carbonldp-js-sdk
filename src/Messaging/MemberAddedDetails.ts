@@ -7,7 +7,7 @@ export interface MemberAddedDetails extends MemberDetails {
 }
 
 
-export interface MemberAddedDetailsConstant {
+export interface MemberAddedDetailsFactory {
 	TYPE:string;
 	SCHEMA:ObjectSchema;
 }
@@ -15,7 +15,7 @@ export interface MemberAddedDetailsConstant {
 const TYPE:string = C.MemberAddedDetails;
 const SCHEMA:ObjectSchema = MemberDetails.SCHEMA;
 
-export const MemberAddedDetails:MemberAddedDetailsConstant = {
+export const MemberAddedDetails:MemberAddedDetailsFactory = {
 	TYPE,
 	SCHEMA,
 };

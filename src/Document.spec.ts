@@ -308,7 +308,7 @@ describe( module( "Carbon/Document" ), ():void => {
 	} );
 
 	describe( interfaze(
-		"Carbon.Document.DocumentConstant",
+		"Carbon.Document.DocumentFactory",
 		"Interface with the factory, decorate and utils for `Carbon.Document.Document` objects."
 	), ():void => {
 
@@ -320,8 +320,8 @@ describe( module( "Carbon/Document" ), ():void => {
 	describe( property(
 		STATIC,
 		"Document",
-		"Carbon.Document.DocumentConstant",
-		"Constant that implements the `Carbon.Document.DocumentConstant` interface."
+		"Carbon.Document.DocumentFactory",
+		"Constant that implements the `Carbon.Document.DocumentFactory` interface."
 	), ():void => {
 
 		describe( "Document.TYPE", ():void => {

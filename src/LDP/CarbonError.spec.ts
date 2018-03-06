@@ -47,7 +47,7 @@ describe( module( "Carbon/LDP/Error" ), ():void => {
 	} );
 
 	describe( interfaze(
-		"Carbon.LDP.CarbonError.CarbonErrorConstant",
+		"Carbon.LDP.CarbonError.CarbonErrorFactory",
 		"Interface with the factory, decorate and utils function for `Carbon.LDP.CarbonError.CarbonError` objects."
 	), ():void => {
 
@@ -68,7 +68,7 @@ describe( module( "Carbon/LDP/Error" ), ():void => {
 	describe( property(
 		STATIC,
 		"CarbonError",
-		"Carbon.LDP.CarbonError.CarbonErrorConstant"
+		"Carbon.LDP.CarbonError.CarbonErrorFactory"
 	), ():void => {
 
 		it( "should exist", ():void => {

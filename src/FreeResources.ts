@@ -35,7 +35,7 @@ export interface FreeResources extends PointerLibrary, PointerValidator {
 }
 
 
-export interface FreeResourcesConstant extends ModelFactory<FreeResources>, ModelDecorator<FreeResources> {
+export interface FreeResourcesFactory extends ModelFactory<FreeResources>, ModelDecorator<FreeResources> {
 	is( object:object ):object is FreeResources;
 
 	isDecorated( object:object ):object is FreeResources;
@@ -120,7 +120,7 @@ function toJSON( this:FreeResources, key?:string ):RDFNode[] {
 		;
 }
 
-export const FreeResources:FreeResourcesConstant = {
+export const FreeResources:FreeResourcesFactory = {
 	is( object:object ):object is FreeResources {
 		return FreeResources.isDecorated( object )
 			;

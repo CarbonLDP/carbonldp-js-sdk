@@ -4,8 +4,8 @@ import { EventMessage } from "./EventMessage";
 export interface DocumentCreated extends EventMessage {
     details: DocumentCreatedDetails;
 }
-export interface DocumentCreatedConstant {
+export interface DocumentCreatedFactory {
     SCHEMA: ObjectSchema;
 }
-export declare const DocumentCreated: DocumentCreatedConstant;
+export declare const DocumentCreated: DocumentCreatedFactory;
 export default DocumentCreated;
