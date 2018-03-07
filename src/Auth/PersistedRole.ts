@@ -1,9 +1,8 @@
 import { Documents } from "../Documents";
 import * as Errors from "../Errors";
 import { RequestOptions } from "../HTTP/Request";
-import { Response } from "../HTTP/Response";
+import { PersistedProtectedDocument } from "../PersistedProtectedDocument";
 import { Pointer } from "../Pointer";
-import { PersistedProtectedDocument } from "./../PersistedProtectedDocument";
 import * as Utils from "./../Utils";
 import * as Role from "./Role";
 import * as Roles from "./Roles";
@@ -19,19 +18,19 @@ export interface Class extends PersistedProtectedDocument {
 
 	users?:Pointer[];
 
-	createChild<T extends object>( role:T & Role.Class, requestOptions?:RequestOptions ):Promise<[ T & Class, Response ]>;
+	createChild<T extends object>( role:T & Role.Class, requestOptions?:RequestOptions ):Promise<T & Class>;
 
-	createChild<T extends object>( role:T & Role.Class, slug?:string, requestOptions?:RequestOptions ):Promise<[ T & Class, Response ]>;
+	createChild<T extends object>( role:T & Role.Class, slug?:string, requestOptions?:RequestOptions ):Promise<T & Class>;
 
-	getUsers<T>( requestOptions?:RequestOptions ):Promise<[ (T & PersistedProtectedDocument)[], Response ]>;
+	getUsers<T>( requestOptions?:RequestOptions ):Promise<(T & PersistedProtectedDocument)[]>;
 
-	addUser( user:Pointer | string, requestOptions?:RequestOptions ):Promise<Response>;
+	addUser( user:Pointer | string, requestOptions?:RequestOptions ):Promise<void>;
 
-	addUsers( users:(Pointer | string)[], requestOptions?:RequestOptions ):Promise<Response>;
+	addUsers( users:(Pointer | string)[], requestOptions?:RequestOptions ):Promise<void>;
 
-	removeUser( user:Pointer | string, requestOptions?:RequestOptions ):Promise<Response>;
+	removeUser( user:Pointer | string, requestOptions?:RequestOptions ):Promise<void>;
 
-	removeUsers( users:(Pointer | string)[], requestOptions?:RequestOptions ):Promise<Response>;
+	removeUsers( users:(Pointer | string)[], requestOptions?:RequestOptions ):Promise<void>;
 }
 
 export class Factory {
@@ -108,35 +107,35 @@ export class Factory {
 
 }
 
-function createChild<T extends object>( role:T & Role.Class, requestOptions?:RequestOptions ):Promise<[ T & Class, Response ]>;
-function createChild<T extends object>( role:T & Role.Class, slug?:string, requestOptions?:RequestOptions ):Promise<[ T & Class, Response ]>;
-function createChild<T extends object>( this:Class, role:T & Role.Class, slugOrRequestOptions?:any, requestOptions?:RequestOptions ):Promise<[ T & Class, Response ]> {
+function createChild<T extends object>( role:T & Role.Class, requestOptions?:RequestOptions ):Promise<T & Class>;
+function createChild<T extends object>( role:T & Role.Class, slug?:string, requestOptions?:RequestOptions ):Promise<T & Class>;
+function createChild<T extends object>( this:Class, role:T & Role.Class, slugOrRequestOptions?:any, requestOptions?:RequestOptions ):Promise<T & Class> {
 	checkState( this );
 	return this._roles.createChild( this.id, role, slugOrRequestOptions, requestOptions );
 }
 
-function getUsers<T>( requestOptions?:RequestOptions ):Promise<[ (T & PersistedProtectedDocument)[], Response ]>;
-function getUsers<T>( this:Class, requestOptions?:RequestOptions ):Promise<[ (T & PersistedProtectedDocument)[], Response ]> {
+function getUsers<T>( requestOptions?:RequestOptions ):Promise<(T & PersistedProtectedDocument)[]>;
+function getUsers<T>( this:Class, requestOptions?:RequestOptions ):Promise<(T & PersistedProtectedDocument)[]> {
 	checkState( this );
 	return this._roles.getUsers( this.id, requestOptions );
 }
 
-function addUser( this:Class, user:Pointer | string, requestOptions?:RequestOptions ):Promise<Response> {
+function addUser( this:Class, user:Pointer | string, requestOptions?:RequestOptions ):Promise<void> {
 	checkState( this );
 	return this._roles.addUsers( this.id, [ user ], requestOptions );
 }
 
-function addUsers( this:Class, users:(Pointer | string)[], requestOptions?:RequestOptions ):Promise<Response> {
+function addUsers( this:Class, users:(Pointer | string)[], requestOptions?:RequestOptions ):Promise<void> {
 	checkState( this );
 	return this._roles.addUsers( this.id, users, requestOptions );
 }
 
-function removeUser( this:Class, user:Pointer | string, requestOptions?:RequestOptions ):Promise<Response> {
+function removeUser( this:Class, user:Pointer | string, requestOptions?:RequestOptions ):Promise<void> {
 	checkState( this );
 	return this._roles.removeUsers( this.id, [ user ], requestOptions );
 }
 
-function removeUsers( this:Class, users:(Pointer | string)[], requestOptions?:RequestOptions ):Promise<Response> {
+function removeUsers( this:Class, users:(Pointer | string)[], requestOptions?:RequestOptions ):Promise<void> {
 	checkState( this );
 	return this._roles.removeUsers( this.id, users, requestOptions );
 }

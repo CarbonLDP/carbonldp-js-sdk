@@ -231,12 +231,10 @@ export class Class {
 	}
 
 	private getAuthenticatedUser( authenticator:Authenticator<Object, Object> ):Promise<PersistedUser.Class> {
-		let requestOptions:RequestOptions = {};
+		const requestOptions:RequestOptions = {};
 		authenticator.addAuthentication( requestOptions );
 
-		return this.context.documents.get<PersistedUser.Class>( "users/me/", requestOptions ).then(
-			( [ userDocument, response ]:[ PersistedUser.Class, Response ] ) => userDocument
-		);
+		return this.context.documents.get<PersistedUser.Class>( "users/me/", requestOptions );
 	}
 
 }
