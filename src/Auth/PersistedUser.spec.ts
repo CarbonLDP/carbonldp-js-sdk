@@ -272,7 +272,7 @@ describe( module( "carbonldp/Auth/PersistedUser" ), ():void => {
 					}, context.documents );
 					const promise:Promise<PersistedUser.Class> = user.enableCredentials();
 					expect( promise ).toEqual( jasmine.any( Promise ) );
-					promises.push( promise.then( checkResponse.bind( null, user, 2 ) ).then( () => {
+					promises.push( promise.then( checkResponse.bind( null, user ) ).then( () => {
 						expect( selectSPARQLSpy ).toHaveBeenCalledTimes( 1 );
 						expect( enableSpy ).toHaveBeenCalledTimes( 1 );
 					} ) );
@@ -289,7 +289,7 @@ describe( module( "carbonldp/Auth/PersistedUser" ), ():void => {
 					}, context.documents );
 					const promise:Promise<PersistedUser.Class> = user.enableCredentials();
 					expect( promise ).toEqual( jasmine.any( Promise ) );
-					promises.push( promise.then( checkResponse.bind( null, user, 1 ) ).then( () => {
+					promises.push( promise.then( checkResponse.bind( null, user ) ).then( () => {
 						expect( enableSpy ).toHaveBeenCalledTimes( 1 );
 					} ) );
 				})();
@@ -330,7 +330,7 @@ describe( module( "carbonldp/Auth/PersistedUser" ), ():void => {
 
 					const promise:Promise<PersistedUser.Class> = user.disableCredentials();
 					expect( promise ).toEqual( jasmine.any( Promise ) );
-					promises.push( promise.then( checkResponse.bind( null, user, 2 ) ).then( () => {
+					promises.push( promise.then( checkResponse.bind( null, user ) ).then( () => {
 						expect( selectSPARQLSpy ).toHaveBeenCalledTimes( 1 );
 						expect( enableSpy ).toHaveBeenCalledTimes( 1 );
 					} ) );
@@ -346,7 +346,7 @@ describe( module( "carbonldp/Auth/PersistedUser" ), ():void => {
 
 					const promise:Promise<PersistedUser.Class> = user.disableCredentials();
 					expect( promise ).toEqual( jasmine.any( Promise ) );
-					promises.push( promise.then( checkResponse.bind( null, user, 1 ) ).then( () => {
+					promises.push( promise.then( checkResponse.bind( null, user ) ).then( () => {
 						expect( enableSpy ).toHaveBeenCalledTimes( 1 );
 					} ) );
 				})();

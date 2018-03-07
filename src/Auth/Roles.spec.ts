@@ -1,3 +1,4 @@
+import { anyThatMatches } from "../../test/helpers/jasmine-equalities";
 import * as Errors from "../Errors";
 import { RequestOptions } from "../HTTP/Request";
 import { Response } from "../HTTP/Response";
@@ -107,22 +108,8 @@ describe( module( "carbonldp/Auth/Roles" ), ():void => {
 					},
 				} );
 
-				let spies:any = {
-					success: ( [ pointer, response ]:[ Pointer, Response ] ):void => {
-						expect( pointer ).toBeTruthy();
-						expect( Pointer.is( pointer ) ).toBe( true );
-						expect( pointer.id ).toBe( "http://example.com/.system/roles/new-role/" );
-
-						expect( response ).toBeTruthy();
-						expect( response instanceof Response ).toBe( true );
-					},
-					error: function( error:Error ):void {
-						expect( error instanceof Errors.IllegalArgumentError );
-					},
-				};
-
-				let spyError:jasmine.Spy = spyOn( spies, "error" ).and.callThrough();
-				let spySuccess:jasmine.Spy = spyOn( spies, "success" ).and.callThrough();
+				let spyError:jasmine.Spy = jasmine.createSpy( "error" );
+				let spySuccess:jasmine.Spy = jasmine.createSpy( "success" );
 
 
 				let promises:Promise<any>[] = [];
@@ -130,15 +117,15 @@ describe( module( "carbonldp/Auth/Roles" ), ():void => {
 
 				promise = roles.createChild( "parent/", Role.Factory.create( "Role name" ), "new-role" );
 				expect( promise instanceof Promise ).toBe( true );
-				promises.push( promise.then( spies.success ) );
+				promises.push( promise.then( spySuccess ) );
 
 				promise = roles.createChild( "http://example.com/.system/roles/parent/", Role.Factory.create( "Role name" ) );
 				expect( promise instanceof Promise ).toBe( true );
-				promises.push( promise.then( spies.success ) );
+				promises.push( promise.then( spySuccess ) );
 
 				promise = roles.createChild( "role-not-found/", Role.Factory.create( "Role name" ), "new-role" );
 				expect( promise instanceof Promise ).toBe( true );
-				promises.push( promise.catch( spies.error ) );
+				promises.push( promise.catch( spyError ) );
 
 				Promise.all( promises ).then( ():void => {
 					let requests:JasmineAjaxRequest[] = jasmine.Ajax.requests.filter( /roles\/$/ );
@@ -147,7 +134,14 @@ describe( module( "carbonldp/Auth/Roles" ), ():void => {
 					expect( requests[ 1 ].requestHeaders[ "slug" ] ).toBeUndefined();
 
 					expect( spySuccess ).toHaveBeenCalledTimes( 2 );
+					expect( spySuccess ).toHaveBeenCalledWith( anyThatMatches( PersistedRole.Factory.is, "isPersistedRole" ) );
+					expect( spySuccess ).toHaveBeenCalledWith( jasmine.objectContaining( {
+						id: "http://example.com/.system/roles/new-role/",
+					} ) );
+
 					expect( spyError ).toHaveBeenCalledTimes( 1 );
+					expect( spyError ).toHaveBeenCalledWith( jasmine.any( Errors.IllegalArgumentError ) );
+
 					done();
 				} ).catch( done.fail );
 
@@ -176,22 +170,8 @@ describe( module( "carbonldp/Auth/Roles" ), ():void => {
 					},
 				} );
 
-				let spies:any = {
-					success: ( [ pointer, response ]:[ Pointer, Response ] ):void => {
-						expect( pointer ).toBeTruthy();
-						expect( Pointer.is( pointer ) ).toBe( true );
-						expect( pointer.id ).toBe( "http://example.com/.system/roles/new-role/" );
-
-						expect( response ).toBeTruthy();
-						expect( response instanceof Response ).toBe( true );
-					},
-					error: function( error:Error ):void {
-						expect( error instanceof Errors.IllegalArgumentError );
-					},
-				};
-
-				let spyError:jasmine.Spy = spyOn( spies, "error" ).and.callThrough();
-				let spySuccess:jasmine.Spy = spyOn( spies, "success" ).and.callThrough();
+				let spyError:jasmine.Spy = jasmine.createSpy( "error" );
+				let spySuccess:jasmine.Spy = jasmine.createSpy( "success" );
 				let spyCreate:jasmine.Spy = spyOn( context.documents, "createChild" ).and.callThrough();
 
 				let promises:Promise<any>[] = [];
@@ -202,19 +182,25 @@ describe( module( "carbonldp/Auth/Roles" ), ():void => {
 
 				promise = roles.createChild( "parent/", Role.Factory.create( "Role name" ), options );
 				expect( promise instanceof Promise ).toBe( true );
-				promises.push( promise.then( spies.success ) );
+				promises.push( promise.then( spySuccess ) );
 
 				promise = roles.createChild( "http://example.com/.system/roles/parent/", Role.Factory.create( "Role name" ) );
 				expect( promise instanceof Promise ).toBe( true );
-				promises.push( promise.then( spies.success ) );
+				promises.push( promise.then( spySuccess ) );
 
 				promise = roles.createChild( "role-not-found/", Role.Factory.create( "Role name" ), options );
 				expect( promise instanceof Promise ).toBe( true );
-				promises.push( promise.catch( spies.error ) );
+				promises.push( promise.catch( spyError ) );
 
 				Promise.all( promises ).then( ():void => {
 					expect( spySuccess ).toHaveBeenCalledTimes( 2 );
+					expect( spySuccess ).toHaveBeenCalledWith( anyThatMatches( PersistedRole.Factory.is, "isPersistedRole" ) );
+					expect( spySuccess ).toHaveBeenCalledWith( jasmine.objectContaining( {
+						id: "http://example.com/.system/roles/new-role/",
+					} ) );
+
 					expect( spyError ).toHaveBeenCalledTimes( 1 );
+					expect( spyError ).toHaveBeenCalledWith( jasmine.any( Errors.IllegalArgumentError ) );
 
 					expect( spyCreate ).toHaveBeenCalledTimes( 2 );
 					expect( spyCreate ).toHaveBeenCalledWith( "http://example.com/.system/roles/", jasmine.anything(), null, options );
@@ -267,22 +253,9 @@ describe( module( "carbonldp/Auth/Roles" ), ():void => {
 			} );
 			context.documents.documentDecorators.set( "http://example.com/ns#Role", PersistedRole.Factory.decorate );
 
-			let spies:any = {
-				success: ( [ pointer, response ]:[ PersistedRole.Class, Response ] ):void => {
-					expect( pointer ).toBeTruthy();
-					expect( PersistedRole.Factory.is( pointer ) ).toBe( true );
-					expect( pointer.id ).toBe( "http://example.com/.system/roles/a-role/" );
 
-					expect( response ).toBeTruthy();
-					expect( response instanceof Response ).toBe( true );
-				},
-				error: function( error:Error ):void {
-					expect( error instanceof Errors.IllegalArgumentError );
-				},
-			};
-
-			let spySuccess:jasmine.Spy = spyOn( spies, "success" ).and.callThrough();
-			let spyError:jasmine.Spy = spyOn( spies, "error" ).and.callThrough();
+			let spyError:jasmine.Spy = jasmine.createSpy( "error" );
+			let spySuccess:jasmine.Spy = jasmine.createSpy( "success" );
 
 
 			let promises:Promise<any>[] = [];
@@ -290,19 +263,26 @@ describe( module( "carbonldp/Auth/Roles" ), ():void => {
 
 			promise = roles.get( "http://example.com/.system/roles/a-role/" );
 			expect( promise instanceof Promise ).toBe( true );
-			promises.push( promise.then( spies.success ) );
+			promises.push( promise.then( spySuccess ) );
 
 			promise = roles.get( "a-role/" );
 			expect( promise instanceof Promise ).toBe( true );
-			promises.push( promise.then( spies.success ) );
+			promises.push( promise.then( spySuccess ) );
 
 			promise = roles.get( "http://example.com/wrong-path/roles/a-role/" );
 			expect( promise instanceof Promise ).toBe( true );
-			promises.push( promise.catch( spies.error ) );
+			promises.push( promise.catch( spyError ) );
 
 			Promise.all( promises ).then( ():void => {
 				expect( spySuccess ).toHaveBeenCalledTimes( 2 );
+				expect( spySuccess ).toHaveBeenCalledWith( anyThatMatches( PersistedRole.Factory.is, "isPersistedRole" ) );
+				expect( spySuccess ).toHaveBeenCalledWith( jasmine.objectContaining( {
+					id: "http://example.com/.system/roles/a-role/",
+				} ) );
+
 				expect( spyError ).toHaveBeenCalledTimes( 1 );
+				expect( spyError ).toHaveBeenCalledWith( jasmine.any( Errors.IllegalArgumentError ) );
+
 				done();
 			} ).catch( done.fail );
 

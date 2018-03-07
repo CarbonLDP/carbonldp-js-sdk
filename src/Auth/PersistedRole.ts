@@ -46,7 +46,7 @@ export class Factory {
 			;
 	}
 
-	static is( object:Object ):boolean {
+	static is( object:Object ):object is Class {
 		return Factory.hasClassProperties( object )
 			&& PersistedProtectedDocument.is( object );
 	}
