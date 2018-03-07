@@ -54,6 +54,7 @@ var C;
     C.errorParameters = C.namespace + "errorParameters";
     C.eTag = C.namespace + "eTag";
     C.httpStatusCode = C.namespace + "httpStatusCode";
+    C.instance = C.namespace + "instance";
     C.mediaType = C.namespace + "mediaType";
     C.member = C.namespace + "member";
     C.modified = C.namespace + "modified";

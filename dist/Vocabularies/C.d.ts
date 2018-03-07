@@ -51,6 +51,7 @@ export declare namespace C {
     const errorParameters: string;
     const eTag: string;
     const httpStatusCode: string;
+    const instance: string;
     const mediaType: string;
     const member: string;
     const modified: string;

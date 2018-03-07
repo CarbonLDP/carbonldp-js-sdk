@@ -530,6 +530,7 @@ var C;
     C.errorParameters = C.namespace + "errorParameters";
     C.eTag = C.namespace + "eTag";
     C.httpStatusCode = C.namespace + "httpStatusCode";
+    C.instance = C.namespace + "instance";
     C.mediaType = C.namespace + "mediaType";
     C.member = C.namespace + "member";
     C.modified = C.namespace + "modified";
@@ -14699,15 +14700,10 @@ exports.default = exports.ValidationResult;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var C_1 = __webpack_require__(2);
-var XSD_1 = __webpack_require__(6);
 var SCHEMA = {
-    "version": {
-        "@id": C_1.C.version,
-        "@type": XSD_1.XSD.string,
-    },
-    "buildDate": {
-        "@id": C_1.C.buildDate,
-        "@type": XSD_1.XSD.dateTime,
+    "instance": {
+        "@id": C_1.C.instance,
+        "@type": "@id",
     },
 };
 exports.PlatformMetadata = {
