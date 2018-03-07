@@ -16,7 +16,7 @@ describe( module( "carbonldp/Vocabularies/C" ), ():void => {
 		} );
 
 		it( "should test all exported IRIs", ():void => {
-			expect( Object.keys( C ).length ).toBe( 60 );
+			expect( Object.keys( C ).length ).toBe( 61 );
 		} );
 
 		it( hasProperty(
@@ -197,6 +197,15 @@ describe( module( "carbonldp/Vocabularies/C" ), ():void => {
 		), ():void => {
 			expect( C.Platform ).toEqual( jasmine.any( String ) );
 			expect( C.Platform ).toBe( "https://carbonldp.com/ns/v1/platform#Platform" );
+		} );
+
+		it( hasProperty(
+			INSTANCE,
+			"PlatformInstance",
+			"string"
+		), ():void => {
+			expect( C.PlatformInstance ).toEqual( jasmine.any( String ) );
+			expect( C.PlatformInstance ).toBe( "https://carbonldp.com/ns/v1/platform#PlatformInstance" );
 		} );
 
 		it( hasProperty(

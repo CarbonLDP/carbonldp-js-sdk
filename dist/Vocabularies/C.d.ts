@@ -19,6 +19,7 @@ export declare namespace C {
     const MemberRemovedDetails: string;
     const NonReadableMembershipResourceTriples: string;
     const Platform: string;
+    const PlatformInstance: string;
     const PreferContainer: string;
     const PreferContainmentResources: string;
     const PreferContainmentTriples: string;

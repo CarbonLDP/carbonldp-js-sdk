@@ -22,6 +22,7 @@ var C;
     C.MemberRemovedDetails = C.namespace + "MemberRemovedEventDetails";
     C.NonReadableMembershipResourceTriples = C.namespace + "NonReadableMembershipResourceTriples";
     C.Platform = C.namespace + "Platform";
+    C.PlatformInstance = C.namespace + "PlatformInstance";
     C.PreferContainer = C.namespace + "PreferContainer";
     C.PreferContainmentResources = C.namespace + "PreferContainmentResources";
     C.PreferContainmentTriples = C.namespace + "PreferContainmentTriples";

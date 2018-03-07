@@ -20,6 +20,7 @@ export namespace C {
 	export const MemberRemovedDetails:string = namespace + "MemberRemovedEventDetails";
 	export const NonReadableMembershipResourceTriples:string = namespace + "NonReadableMembershipResourceTriples";
 	export const Platform:string = namespace + "Platform";
+	export const PlatformInstance:string = namespace + "PlatformInstance";
 	export const PreferContainer:string = namespace + "PreferContainer";
 	export const PreferContainmentResources:string = namespace + "PreferContainmentResources";
 	export const PreferContainmentTriples:string = namespace + "PreferContainmentTriples";
