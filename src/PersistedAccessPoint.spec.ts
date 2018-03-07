@@ -1,8 +1,5 @@
-import DefaultExport, { PersistedAccessPoint } from "./PersistedAccessPoint";
-
 import {
 	extendsClass,
-	hasDefaultExport,
 	hasProperty,
 	interfaze,
 	module,
@@ -47,14 +44,6 @@ describe( module( "carbonldp/PersistedAccessPoint" ), ():void => {
 			"The inserted content relation of the access point."
 		), ():void => {} );
 
-	} );
-
-	it( hasDefaultExport( "CarbonLDP.PersistedAccessPoint.PersistedAccessPoint" ), ():void => {
-		let defaultExport:DefaultExport = <any> {};
-		let defaultTarget:PersistedAccessPoint;
-
-		defaultTarget = defaultExport;
-		expect( defaultTarget ).toEqual( jasmine.any( Object ) );
 	} );
 
 } );

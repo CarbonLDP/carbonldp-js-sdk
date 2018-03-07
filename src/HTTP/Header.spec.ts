@@ -1,7 +1,6 @@
 import {
 	clazz,
 	constructor,
-	hasDefaultExport,
 	hasMethod,
 	hasProperty,
 	hasSignature,
@@ -13,7 +12,6 @@ import {
 import * as Utils from "./../Utils";
 
 import { Header } from "./Header";
-import DefaultExport from "./Header";
 
 describe( module( "carbonldp/HTTP/Header" ), ():void => {
 
@@ -136,13 +134,6 @@ describe( module( "carbonldp/HTTP/Header" ), ():void => {
 			expect( headersMap.get( "accept" ) ).toEqual( new Header( "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8" ) );
 		} );
 
-	} );
-
-	it( hasDefaultExport(
-		"CarbonLDP.HTTP.Header.Header"
-	), ():void => {
-		expect( DefaultExport ).toBeDefined();
-		expect( DefaultExport ).toBe( Header );
 	} );
 
 } );

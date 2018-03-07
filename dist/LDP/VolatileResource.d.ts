@@ -7,4 +7,3 @@ export interface VolatileResourceFactory extends ModelFactory<VolatileResource> 
     is(object: object): object is VolatileResource;
 }
 export declare const VolatileResource: VolatileResourceFactory;
-export default VolatileResource;

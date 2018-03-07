@@ -124,5 +124,3 @@ export const PersistedFragment:PersistedFragmentFactory = {
 	},
 
 };
-
-export default PersistedFragment;

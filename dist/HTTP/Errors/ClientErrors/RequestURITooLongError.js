@@ -31,6 +31,5 @@ var RequestURITooLongError = (function (_super) {
     return RequestURITooLongError;
 }(HTTPError_1.HTTPError));
 exports.RequestURITooLongError = RequestURITooLongError;
-exports.default = RequestURITooLongError;
 
 //# sourceMappingURL=RequestURITooLongError.js.map

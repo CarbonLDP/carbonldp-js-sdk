@@ -38,5 +38,3 @@ export const ServiceAwareDocument:ServiceAwareDocumentFactory = {
 	},
 };
 
-
-export default ServiceAwareDocument;

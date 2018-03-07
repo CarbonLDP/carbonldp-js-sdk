@@ -35,5 +35,3 @@ export const QueryMetadata:QueryMetadataFactory = {
 	},
 
 };
-
-export default QueryMetadata;

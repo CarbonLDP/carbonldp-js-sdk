@@ -94,6 +94,5 @@ exports.Pointer = {
         });
     },
 };
-exports.default = exports.Pointer;
 
 //# sourceMappingURL=Pointer.js.map

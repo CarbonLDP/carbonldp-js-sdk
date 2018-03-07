@@ -2,7 +2,6 @@ import * as Settings from "./Settings";
 
 import {
 	extendsClass,
-	hasDefaultExport,
 	hasProperty,
 	interfaze,
 	module,
@@ -123,11 +122,6 @@ describe( module( "carbonldp/Settings" ), ():void => {
 			expect( target ).toBeDefined();
 		} );
 
-	} );
-
-	it( hasDefaultExport( "CarbonLDP.SettingsCarbonSettings" ), ():void => {
-		const target:Settings.default = {} as Settings.CarbonSettings;
-		expect( target ).toBeDefined();
 	} );
 
 } );

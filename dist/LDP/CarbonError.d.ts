@@ -11,4 +11,3 @@ export interface CarbonErrorFactory {
     SCHEMA: ObjectSchema;
 }
 export declare const CarbonError: CarbonErrorFactory;
-export default CarbonError;

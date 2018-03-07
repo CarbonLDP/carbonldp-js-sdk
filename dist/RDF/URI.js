@@ -156,6 +156,5 @@ function prefixWithObjectSchema(uri, objectSchema) {
         return exports.URI.prefix(uri, prefix, prefixURI);
     }
 }
-exports.default = exports.URI;
 
 //# sourceMappingURL=URI.js.map

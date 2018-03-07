@@ -9,4 +9,3 @@ export declare class QueryDocumentsBuilder extends QueryDocumentBuilder {
     limit(limit: number): this;
     offset(offset: number): this;
 }
-export default QueryDocumentsBuilder;

@@ -1,21 +1,19 @@
-import { RequestService } from "../../Request";
-import { Response } from "../../Response";
-import { HTTPError } from "../HTTPError";
 import {
 	clazz,
 	extendsClass,
-	hasDefaultExport,
 	hasMethod,
 	hasProperty,
 	INSTANCE,
 	isDefined,
 	module,
 	STATIC,
-} from "./../../../test/JasmineExtender";
+} from "../../../test/JasmineExtender";
+import { RequestService } from "../../Request";
+import { Response } from "../../Response";
+import { HTTPError } from "../HTTPError";
 import * as Utils from "./../../../Utils";
 
 import * as PreconditionFailedError from "./PreconditionFailedError";
-import DefaultExport from "./PreconditionFailedError";
 
 describe( module( "carbonldp/HTTP/Errors/ClientErrors/PreconditionFailedError" ), ():void => {
 
@@ -99,11 +97,6 @@ describe( module( "carbonldp/HTTP/Errors/ClientErrors/PreconditionFailedError" )
 			expect( PreconditionFailedError.PreconditionFailedError.statusCode ).toBe( 412 );
 		} );
 
-	} );
-
-	it( hasDefaultExport( "CarbonLDP.HTTP.Errors.PreconditionFailedError" ), ():void => {
-		expect( DefaultExport ).toBeDefined();
-		expect( DefaultExport ).toBe( PreconditionFailedError.PreconditionFailedError );
 	} );
 
 } );

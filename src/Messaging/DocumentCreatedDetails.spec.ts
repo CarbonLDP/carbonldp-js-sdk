@@ -2,7 +2,6 @@ import { Pointer } from "../Pointer";
 import { Resource } from "../Resource";
 import {
 	extendsClass,
-	hasDefaultExport,
 	hasProperty,
 	interfaze,
 	isDefined,
@@ -13,8 +12,7 @@ import {
 } from "../test/JasmineExtender";
 import { C } from "../Vocabularies/C";
 
-import { DocumentCreatedDetails } from "./DocumentCreatedDetails";
-import DefaultExport from "./DocumentCreatedDetails";
+import { DocumentCreatedDetails } from "./DocumentCreatedDetails";
 
 describe( module( "carbonldp/Messaging/DocumentCreatedDetails" ), ():void => {
 
@@ -98,11 +96,6 @@ describe( module( "carbonldp/Messaging/DocumentCreatedDetails" ), ():void => {
 			} );
 		} );
 
-	} );
-
-	it( hasDefaultExport( "CarbonLDP.Messaging.DocumentCreatedDetails.DocumentCreatedDetails" ), ():void => {
-		const target:DocumentCreatedDetails = {} as DefaultExport;
-		expect( target ).toBeDefined();
 	} );
 
 } );

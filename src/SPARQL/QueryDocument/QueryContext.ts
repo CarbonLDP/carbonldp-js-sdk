@@ -95,5 +95,3 @@ export class QueryContext implements ObjectSchemaResolver {
 	}
 
 }
-
-export default QueryContext;

@@ -8,6 +8,5 @@ exports.MemberAddedDetails = {
     TYPE: TYPE,
     SCHEMA: SCHEMA,
 };
-exports.default = exports.MemberAddedDetails;
 
 //# sourceMappingURL=MemberAddedDetails.js.map

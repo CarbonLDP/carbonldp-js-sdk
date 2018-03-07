@@ -1,7 +1,6 @@
 import { Pointer } from "../Pointer";
 import {
 	extendsClass,
-	hasDefaultExport,
 	hasProperty,
 	interfaze,
 	isDefined,
@@ -12,7 +11,7 @@ import {
 } from "../test/JasmineExtender";
 import { C } from "../Vocabularies/C";
 
-import DefaultExport, { AccessPointCreated } from "./AccessPointCreated";
+import { AccessPointCreated } from "./AccessPointCreated";
 import { DocumentCreated } from "./DocumentCreated";
 
 describe( module( "carbonldp/Messaging/AccessPointCreated" ), ():void => {
@@ -102,11 +101,6 @@ describe( module( "carbonldp/Messaging/AccessPointCreated" ), ():void => {
 			} );
 		} );
 
-	} );
-
-	it( hasDefaultExport( "CarbonLDP.Messaging.AccessPointCreated.AccessPointCreated" ), ():void => {
-		const target:AccessPointCreated = {} as DefaultExport;
-		expect( target ).toBeDefined();
 	} );
 
 } );

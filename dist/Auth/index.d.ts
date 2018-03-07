@@ -17,7 +17,7 @@ import * as User from "./User";
 import UsernameAndPasswordCredentials from "./UsernameAndPasswordCredentials";
 import UsernameAndPasswordToken from "./UsernameAndPasswordToken";
 import * as Users from "./Users";
-import Context from "../Context";
+import { Context } from "../Context";
 import { RequestOptions } from "../HTTP/Request";
 import { Response } from "../HTTP/Response";
 export { ACE, ACL, User, Users, Authenticator, BasicAuthenticator, Credentials, PersistedACE, PersistedACL, PersistedCredentials, PersistedRole, PersistedUser, Role, Roles, Ticket, Token, TokenAuthenticator, UsernameAndPasswordToken };

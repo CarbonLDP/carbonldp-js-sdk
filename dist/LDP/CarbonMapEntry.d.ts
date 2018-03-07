@@ -8,4 +8,3 @@ export interface CarbonMapEntryFactory {
     SCHEMA: ObjectSchema;
 }
 export declare const CarbonMapEntry: CarbonMapEntryFactory;
-export default CarbonMapEntry;

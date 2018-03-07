@@ -19,4 +19,3 @@ export declare class DeltaCreator {
     private compactIRI(schema, iri);
     private addPrefixFrom(object, schema);
 }
-export default DeltaCreator;

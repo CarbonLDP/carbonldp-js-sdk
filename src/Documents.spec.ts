@@ -20,7 +20,7 @@ import {
 	VariableToken
 } from "sparqler/tokens";
 
-import AbstractContext from "./AbstractContext";
+import { AbstractContext } from "./AbstractContext";
 import {
 	AccessPoint,
 	AccessPointBase,
@@ -30,7 +30,7 @@ import { BlankNode } from "./BlankNode";
 import { CarbonLDP } from "./CarbonLDP";
 import { Document } from "./Document";
 
-import DefaultExport, { Documents } from "./Documents";
+import { Documents } from "./Documents";
 
 import * as Errors from "./Errors";
 import { Fragment } from "./Fragment";
@@ -39,7 +39,7 @@ import { Header } from "./HTTP/Header";
 import { RequestService } from "./HTTP/Request";
 import { Response } from "./HTTP/Response";
 import { JSONLDConverter } from "./JSONLD/Converter";
-import MessagingEvent from "./Messaging/Event";
+import { Event } from "./Messaging/Event";
 import * as MessagingUtils from "./Messaging/Utils";
 import * as ObjectSchema from "./ObjectSchema";
 import { PersistedAccessPoint } from "./PersistedAccessPoint";
@@ -53,7 +53,6 @@ import { PartialMetadata } from "./SPARQL/QueryDocument/PartialMetadata";
 import {
 	clazz,
 	hasConstructor,
-	hasDefaultExport,
 	hasMethod,
 	hasProperty,
 	hasSignature,
@@ -14229,7 +14228,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				const uriPattern:string = "resource/*";
 				carbon.documents.onDocumentCreated( uriPattern, onEvent, onError );
 
-				expect( onSpy ).toHaveBeenCalledWith( MessagingEvent.DOCUMENT_CREATED, uriPattern, onEvent, onError );
+				expect( onSpy ).toHaveBeenCalledWith( Event.DOCUMENT_CREATED, uriPattern, onEvent, onError );
 				done();
 			} );
 
@@ -14270,7 +14269,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				const uriPattern:string = "resource/*";
 				carbon.documents.onChildCreated( uriPattern, onEvent, onError );
 
-				expect( onSpy ).toHaveBeenCalledWith( MessagingEvent.CHILD_CREATED, uriPattern, onEvent, onError );
+				expect( onSpy ).toHaveBeenCalledWith( Event.CHILD_CREATED, uriPattern, onEvent, onError );
 				done();
 			} );
 
@@ -14311,7 +14310,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				const uriPattern:string = "resource/*";
 				carbon.documents.onAccessPointCreated( uriPattern, onEvent, onError );
 
-				expect( onSpy ).toHaveBeenCalledWith( MessagingEvent.ACCESS_POINT_CREATED, uriPattern, onEvent, onError );
+				expect( onSpy ).toHaveBeenCalledWith( Event.ACCESS_POINT_CREATED, uriPattern, onEvent, onError );
 				done();
 			} );
 
@@ -14352,7 +14351,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				const uriPattern:string = "resource/*";
 				carbon.documents.onDocumentModified( uriPattern, onEvent, onError );
 
-				expect( onSpy ).toHaveBeenCalledWith( MessagingEvent.DOCUMENT_MODIFIED, uriPattern, onEvent, onError );
+				expect( onSpy ).toHaveBeenCalledWith( Event.DOCUMENT_MODIFIED, uriPattern, onEvent, onError );
 				done();
 			} );
 
@@ -14393,7 +14392,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				const uriPattern:string = "resource/*";
 				carbon.documents.onDocumentDeleted( uriPattern, onEvent, onError );
 
-				expect( onSpy ).toHaveBeenCalledWith( MessagingEvent.DOCUMENT_DELETED, uriPattern, onEvent, onError );
+				expect( onSpy ).toHaveBeenCalledWith( Event.DOCUMENT_DELETED, uriPattern, onEvent, onError );
 				done();
 			} );
 
@@ -14434,7 +14433,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				const uriPattern:string = "resource/*";
 				carbon.documents.onMemberAdded( uriPattern, onEvent, onError );
 
-				expect( onSpy ).toHaveBeenCalledWith( MessagingEvent.MEMBER_ADDED, uriPattern, onEvent, onError );
+				expect( onSpy ).toHaveBeenCalledWith( Event.MEMBER_ADDED, uriPattern, onEvent, onError );
 				done();
 			} );
 
@@ -14475,7 +14474,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				const uriPattern:string = "resource/*";
 				carbon.documents.onMemberRemoved( uriPattern, onEvent, onError );
 
-				expect( onSpy ).toHaveBeenCalledWith( MessagingEvent.MEMBER_REMOVED, uriPattern, onEvent, onError );
+				expect( onSpy ).toHaveBeenCalledWith( Event.MEMBER_REMOVED, uriPattern, onEvent, onError );
 				done();
 			} );
 
@@ -14483,11 +14482,4 @@ describe( module( "carbonldp/Documents" ), ():void => {
 
 	} );
 
-	it( hasDefaultExport( "CarbonLDP.Documents.Documents" ), ():void => {
-		expect( DefaultExport ).toBeDefined();
-		expect( DefaultExport ).toBe( Documents );
-	} );
-
-} )
-;
-
+} );

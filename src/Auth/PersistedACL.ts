@@ -101,5 +101,3 @@ export const PersistedACL:PersistedACLFactory = {
 function parsePointer( this:PersistedACL, element:string | Pointer ):Pointer {
 	return Utils.isObject( element ) ? element : this.getPointer( element );
 }
-
-export default PersistedACL;

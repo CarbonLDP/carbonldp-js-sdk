@@ -16,4 +16,3 @@ export declare class JSONLDCompacter {
     private getResource<T>(node, containerLibrary, isDocument?);
     private processCompactionQueue(compactionQueue);
 }
-export default JSONLDCompacter;

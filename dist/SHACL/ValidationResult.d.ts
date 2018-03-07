@@ -16,4 +16,3 @@ export interface ValidationResultFactory {
     SCHEMA: ObjectSchema;
 }
 export declare const ValidationResult: ValidationResultFactory;
-export default ValidationResult;

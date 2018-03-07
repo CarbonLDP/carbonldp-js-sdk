@@ -155,5 +155,3 @@ export const Pointer:PointerFactory = {
 	},
 };
 
-
-export default Pointer;

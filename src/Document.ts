@@ -447,5 +447,3 @@ function normalize( this:Document ):void {
 }
 
 
-export default Document;
-

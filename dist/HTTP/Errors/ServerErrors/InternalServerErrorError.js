@@ -31,6 +31,5 @@ var InternalServerErrorError = (function (_super) {
     return InternalServerErrorError;
 }(HTTPError_1.HTTPError));
 exports.InternalServerErrorError = InternalServerErrorError;
-exports.default = InternalServerErrorError;
 
 //# sourceMappingURL=InternalServerErrorError.js.map

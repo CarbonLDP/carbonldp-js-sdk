@@ -9,7 +9,6 @@ import { IllegalArgumentError } from "../../Errors/IllegalArgumentError";
 import {
 	clazz,
 	constructor,
-	hasDefaultExport,
 	hasSignature,
 	INSTANCE,
 	method,
@@ -17,7 +16,7 @@ import {
 } from "../../test/JasmineExtender";
 
 import * as Module from "./QueryContext";
-import DefaultExport, { QueryContext } from "./QueryContext";
+import { QueryContext } from "./QueryContext";
 
 import { QueryVariable } from "./QueryVariable";
 
@@ -26,11 +25,6 @@ describe( module( "carbonldp/SPARQL/QueryDocument/QueryContext" ), ():void => {
 	it( "should exists", ():void => {
 		expect( Module ).toBeDefined();
 		expect( Module ).toEqual( jasmine.any( Object ) );
-	} );
-
-	it( hasDefaultExport( "CarbonLDP.SPARQL.QueryDocument.QueryContext.QueryContext" ), ():void => {
-		expect( DefaultExport ).toBeDefined();
-		expect( DefaultExport ).toBe( QueryContext );
 	} );
 
 	describe( clazz( "CarbonLDP.SPARQL.QueryDocument.QueryContext.QueryContext", "Class with the shared status and data of the query." ), ():void => {

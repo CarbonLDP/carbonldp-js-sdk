@@ -1,6 +1,10 @@
-import { enumeration, hasDefaultExport, hasEnumeral, isDefined, module } from "../test/JasmineExtender";
+import {
+	enumeration,
+	hasEnumeral,
+	isDefined,
+	module
+} from "../test/JasmineExtender";
 import * as MessagingEvent from "./Event";
-import DefaultExport from "./Event";
 
 describe( module( "carbonldp/Messaging/Event" ), ():void => {
 
@@ -51,11 +55,6 @@ describe( module( "carbonldp/Messaging/Event" ), ():void => {
 			expect( MessagingEvent.Event.MEMBER_REMOVED ).toBe( "member.removed" );
 		} );
 
-	} );
-
-	it( hasDefaultExport( "CarbonLDP.Messaging.Event" ), ():void => {
-		expect( DefaultExport ).toBeDefined();
-		expect( DefaultExport ).toBe( MessagingEvent.Event );
 	} );
 
 } );

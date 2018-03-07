@@ -1,7 +1,6 @@
 import { Resource } from "../Resource";
 import {
 	extendsClass,
-	hasDefaultExport,
 	hasMethod,
 	hasProperty,
 	interfaze,
@@ -14,7 +13,7 @@ import {
 import { C } from "../Vocabularies/C";
 import * as Utils from "./../Utils";
 
-import DefaultExport, { ResponseMetadata } from "./ResponseMetadata";
+import { ResponseMetadata } from "./ResponseMetadata";
 
 describe( module( "carbonldp/LDP/ResponseMetadata" ), ():void => {
 
@@ -137,14 +136,6 @@ describe( module( "carbonldp/LDP/ResponseMetadata" ), ():void => {
 			object.documentsMetadata = null;
 		} );
 
-	} );
-
-	it( hasDefaultExport( "CarbonLDP.LDP.ResponseMetadata.ResponseMetadata" ), ():void => {
-		let defaultExport:DefaultExport = <any> {};
-		let defaultTarget:ResponseMetadata;
-
-		defaultTarget = defaultExport;
-		expect( defaultTarget ).toEqual( jasmine.any( Object ) );
 	} );
 
 } );

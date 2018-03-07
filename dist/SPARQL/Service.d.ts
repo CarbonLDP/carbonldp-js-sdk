@@ -16,4 +16,3 @@ export declare class SPARQLService {
     static executeUPDATE(url: string, updateQuery: string, options?: RequestOptions): Promise<Response>;
     private static parseRawBindingProperty(rawBindingProperty, pointerLibrary);
 }
-export default SPARQLService;

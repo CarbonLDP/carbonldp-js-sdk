@@ -9,4 +9,3 @@ export interface MemberRemovedFactory {
     SCHEMA: ObjectSchema;
 }
 export declare const MemberRemoved: MemberRemovedFactory;
-export default MemberRemoved;

@@ -231,5 +231,3 @@ function prefixWithObjectSchema( uri:string, objectSchema:DigestedObjectSchema )
 		return URI.prefix( uri, prefix, prefixURI );
 	}
 }
-
-export default URI;

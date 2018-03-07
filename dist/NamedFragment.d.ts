@@ -13,4 +13,3 @@ export interface NamedFragmentFactory extends ModelFactory<NamedFragment>, Model
     decorate<T extends object>(object: T): T & NamedFragment;
 }
 export declare const NamedFragment: NamedFragmentFactory;
-export default NamedFragment;

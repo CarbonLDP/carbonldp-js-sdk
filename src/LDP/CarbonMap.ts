@@ -36,5 +36,3 @@ export const CarbonMap:CarbonMapFactory = {
 	},
 
 };
-
-export default CarbonMap;

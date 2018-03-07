@@ -329,6 +329,5 @@ function normalize() {
         _this._fragmentsIndex.delete(fragment.id);
     });
 }
-exports.default = exports.Document;
 
 //# sourceMappingURL=Document.js.map

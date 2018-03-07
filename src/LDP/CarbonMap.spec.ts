@@ -1,7 +1,6 @@
 import { Resource } from "../Resource";
 import {
 	extendsClass,
-	hasDefaultExport,
 	hasMethod,
 	hasProperty,
 	interfaze,
@@ -14,7 +13,7 @@ import {
 import { C } from "../Vocabularies/C";
 import * as Utils from "./../Utils";
 
-import DefaultExport, { CarbonMap } from "./CarbonMap";
+import { CarbonMap } from "./CarbonMap";
 
 describe( module( "carbonldp/LDP/CarbonMap" ), ():void => {
 
@@ -124,14 +123,6 @@ describe( module( "carbonldp/LDP/CarbonMap" ), ():void => {
 			object.entries = null;
 		} );
 
-	} );
-
-	it( hasDefaultExport( "CarbonLDP.LDP.CarbonMap.CarbonMap" ), ():void => {
-		let defaultExport:DefaultExport<any, any> = <any> {};
-		let defaultTarget:CarbonMap<any, any>;
-
-		defaultTarget = defaultExport;
-		expect( defaultTarget ).toEqual( jasmine.any( Object ) );
 	} );
 
 } );

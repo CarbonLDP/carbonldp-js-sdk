@@ -1,10 +1,10 @@
+import { AbstractContext } from "../AbstractContext";
 import * as Errors from "../Errors";
 import { RequestOptions } from "../HTTP/Request";
 import { Response } from "../HTTP/Response";
 import { Pointer } from "../Pointer";
 import { C } from "../Vocabularies/C";
 import { CS } from "../Vocabularies/CS";
-import AbstractContext from "./../AbstractContext";
 import {
 	clazz,
 	hasConstructor,

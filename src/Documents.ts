@@ -1434,5 +1434,3 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 			.catch( this._parseErrorResponse.bind( this ) );
 	}
 }
-
-export default Documents;

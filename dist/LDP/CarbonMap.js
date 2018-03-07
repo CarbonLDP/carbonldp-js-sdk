@@ -18,6 +18,5 @@ exports.CarbonMap = {
             && object.hasOwnProperty("entries");
     },
 };
-exports.default = exports.CarbonMap;
 
 //# sourceMappingURL=CarbonMap.js.map

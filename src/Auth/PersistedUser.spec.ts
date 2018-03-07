@@ -1,4 +1,4 @@
-import AbstractContext from "../AbstractContext";
+import { AbstractContext } from "../AbstractContext";
 import { Response } from "../HTTP/Response";
 import { PersistedDocument } from "./../PersistedDocument";
 import { PersistedProtectedDocument } from "./../PersistedProtectedDocument";

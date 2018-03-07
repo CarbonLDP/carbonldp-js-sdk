@@ -1,10 +1,9 @@
-import DefaultExport, { AccessPoint } from "./AccessPoint";
+import { AccessPoint } from "./AccessPoint";
 
 import { DirectContainer } from "./LDP/DirectContainer";
 import { Pointer } from "./Pointer";
 import {
 	extendsClass,
-	hasDefaultExport,
 	hasMethod,
 	hasProperty,
 	interfaze,
@@ -188,14 +187,6 @@ describe( module( "carbonldp/AccessPoint" ), ():void => {
 			expect( spy ).toHaveBeenCalledWith( {}, pointer, pointer, pointer );
 		} );
 
-	} );
-
-	it( hasDefaultExport( "CarbonLDP.AccessPoint.AccessPoint" ), ():void => {
-		let defaultExport:DefaultExport = <any> {};
-		let defaultTarget:AccessPoint;
-
-		defaultTarget = defaultExport;
-		expect( defaultTarget ).toEqual( jasmine.any( Object ) );
 	} );
 
 } );

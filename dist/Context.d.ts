@@ -1,5 +1,5 @@
 import Auth from "./Auth";
-import Documents from "./Documents";
+import { Documents } from "./Documents";
 import * as ObjectSchema from "./ObjectSchema";
 export interface Context {
     auth: Auth;
@@ -14,4 +14,3 @@ export interface Context {
     extendObjectSchema(objectSchema: ObjectSchema.ObjectSchema): void;
     clearObjectSchema(type?: string): void;
 }
-export default Context;

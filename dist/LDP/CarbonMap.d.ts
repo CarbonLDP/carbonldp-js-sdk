@@ -11,4 +11,3 @@ export interface CarbonMapFactory extends ModelFactory<CarbonMap<any, any>> {
     is(object: object): object is CarbonMap<any, any>;
 }
 export declare const CarbonMap: CarbonMapFactory;
-export default CarbonMap;

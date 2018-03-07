@@ -1,8 +1,7 @@
-import DefaultExport, { ProtectedDocument } from "./ProtectedDocument";
+import { ProtectedDocument } from "./ProtectedDocument";
 
 import {
 	extendsClass,
-	hasDefaultExport,
 	hasProperty,
 	interfaze,
 	module,
@@ -76,14 +75,6 @@ describe( module( "carbonldp/ProtectedDocument" ), ():void => {
 
 		} );
 
-	} );
-
-	it( hasDefaultExport( "CarbonLDP.ProtectedDocument.ProtectedDocument" ), ():void => {
-		let defaultExport:DefaultExport = <any> {};
-		let defaultTarget:ProtectedDocument;
-
-		defaultTarget = defaultExport;
-		expect( defaultTarget ).toEqual( jasmine.any( Object ) );
 	} );
 
 } );

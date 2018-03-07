@@ -12,7 +12,6 @@ import {
 } from "../Pointer";
 import {
 	clazz,
-	hasDefaultExport,
 	hasMethod,
 	isDefined,
 	module,
@@ -23,7 +22,6 @@ import { SPARQLRawResults } from "./RawResults";
 import { SPARQLSelectResults } from "./SelectResults";
 
 import * as Service from "./Service";
-import DefaultExport from "./Service";
 
 describe( module( "carbonldp/SPARQL/Service" ), ():void => {
 	it( isDefined(), ():void => {
@@ -739,11 +737,6 @@ describe( module( "carbonldp/SPARQL/Service" ), ():void => {
 			Promise.all( promises ).then( done, done.fail );
 		} );
 
-	} );
-
-	it( hasDefaultExport( "CarbonLDP.SPARQL.Service.SPARQLService" ), ():void => {
-		expect( DefaultExport ).toBeDefined();
-		expect( DefaultExport ).toBe( Service.SPARQLService );
 	} );
 
 } );

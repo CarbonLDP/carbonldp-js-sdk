@@ -8,5 +8,3 @@ export class RequestEntityTooLargeError extends HTTPError {
 
 	get name():string { return name; }
 }
-
-export default RequestEntityTooLargeError;

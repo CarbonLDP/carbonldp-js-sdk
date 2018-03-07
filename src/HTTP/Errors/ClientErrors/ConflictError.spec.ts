@@ -1,21 +1,19 @@
-import { RequestService } from "../../Request";
-import { Response } from "../../Response";
-import { HTTPError } from "../HTTPError";
 import {
 	clazz,
 	extendsClass,
-	hasDefaultExport,
 	hasMethod,
 	hasProperty,
 	INSTANCE,
 	isDefined,
 	module,
 	STATIC,
-} from "./../../../test/JasmineExtender";
+} from "../../../test/JasmineExtender";
+import { RequestService } from "../../Request";
+import { Response } from "../../Response";
+import { HTTPError } from "../HTTPError";
 import * as Utils from "./../../../Utils";
 
 import * as ConflictError from "./ConflictError";
-import DefaultExport from "./ConflictError";
 
 describe( module( "carbonldp/HTTP/Errors/ClientErrors/ConflictError" ), ():void => {
 
@@ -97,11 +95,6 @@ describe( module( "carbonldp/HTTP/Errors/ClientErrors/ConflictError" ), ():void 
 			expect( ConflictError.ConflictError.statusCode ).toBe( 409 );
 		} );
 
-	} );
-
-	it( hasDefaultExport( "CarbonLDP.HTTP.Errors.ConflictError" ), ():void => {
-		expect( DefaultExport ).toBeDefined();
-		expect( DefaultExport ).toBe( ConflictError.ConflictError );
 	} );
 
 } );

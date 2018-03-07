@@ -10,4 +10,3 @@ export interface ValidationReportFactory {
     SCHEMA: ObjectSchema;
 }
 export declare const ValidationReport: ValidationReportFactory;
-export default ValidationReport;

@@ -1,8 +1,8 @@
+import { Document } from "../Document";
 import * as Errors from "../Errors";
 import { Pointer } from "../Pointer";
 import {
 	extendsClass,
-	hasDefaultExport,
 	hasMethod,
 	hasProperty,
 	interfaze,
@@ -12,11 +12,9 @@ import {
 	property,
 	STATIC,
 } from "../test/JasmineExtender";
-
 import { LDP } from "../Vocabularies/LDP";
-import { Document } from "./../Document";
 
-import DefaultExport, { DirectContainer } from "./DirectContainer";
+import { DirectContainer } from "./DirectContainer";
 
 describe( module( "carbonldp/LDP/DirectContainer" ), ():void => {
 
@@ -256,14 +254,6 @@ describe( module( "carbonldp/LDP/DirectContainer" ), ():void => {
 			expect( () => DirectContainer.createFrom( {}, null, hasMemberRelation ) ).toThrowError( Errors.IllegalArgumentError );
 		} );
 
-	} );
-
-	it( hasDefaultExport( "CarbonLDP.LDP.DirectContainer.DirectContainer" ), ():void => {
-		let defaultExport:DefaultExport = <any> {};
-		let defaultTarget:DirectContainer;
-
-		defaultTarget = defaultExport;
-		expect( defaultTarget ).toEqual( jasmine.any( Object ) );
 	} );
 
 } );

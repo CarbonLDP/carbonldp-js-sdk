@@ -126,6 +126,5 @@ exports.RDFLiteral = {
         return value["@type"] === type;
     },
 };
-exports.default = exports.RDFLiteral;
 
 //# sourceMappingURL=Literal.js.map

@@ -278,6 +278,5 @@ function getListDelta(oldValues, newValues) {
 function isValidValue(value) {
     return value !== null && value !== void 0;
 }
-exports.default = DeltaCreator;
 
 //# sourceMappingURL=DeltaCreator.js.map

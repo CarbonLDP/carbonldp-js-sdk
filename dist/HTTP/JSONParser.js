@@ -9,6 +9,5 @@ var JSONParser = (function () {
     return JSONParser;
 }());
 exports.JSONParser = JSONParser;
-exports.default = JSONParser;
 
 //# sourceMappingURL=JSONParser.js.map

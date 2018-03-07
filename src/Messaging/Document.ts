@@ -213,5 +213,3 @@ export const MessagingDocument:MessagingDocumentFactory = {
 	},
 
 };
-
-export default MessagingDocument;

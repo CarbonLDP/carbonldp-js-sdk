@@ -1,21 +1,19 @@
-import { RequestService } from "../../Request";
-import { Response } from "../../Response";
-import { HTTPError } from "../HTTPError";
 import {
 	clazz,
 	extendsClass,
-	hasDefaultExport,
 	hasMethod,
 	hasProperty,
 	INSTANCE,
 	isDefined,
 	module,
 	STATIC,
-} from "./../../../test/JasmineExtender";
+} from "../../../test/JasmineExtender";
+import { RequestService } from "../../Request";
+import { Response } from "../../Response";
+import { HTTPError } from "../HTTPError";
 import * as Utils from "./../../../Utils";
 
 import * as RequestHeaderFieldsTooLargeError from "./RequestHeaderFieldsTooLargeError";
-import DefaultExport from "./RequestHeaderFieldsTooLargeError";
 
 describe( module( "carbonldp/HTTP/Errors/ClientErrors/RequestHeaderFieldsTooLargeError" ), ():void => {
 
@@ -99,11 +97,6 @@ describe( module( "carbonldp/HTTP/Errors/ClientErrors/RequestHeaderFieldsTooLarg
 			expect( RequestHeaderFieldsTooLargeError.RequestHeaderFieldsTooLargeError.statusCode ).toBe( 431 );
 		} );
 
-	} );
-
-	it( hasDefaultExport( "CarbonLDP.HTTP.Errors.RequestHeaderFieldsTooLargeError" ), ():void => {
-		expect( DefaultExport ).toBeDefined();
-		expect( DefaultExport ).toBe( RequestHeaderFieldsTooLargeError.RequestHeaderFieldsTooLargeError );
 	} );
 
 } );

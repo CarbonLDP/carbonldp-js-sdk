@@ -7,5 +7,3 @@ export class SPARQLRawResultsParser extends JSONParser implements Parser<SPARQLR
 		return super.parse( input ).then( object => object as SPARQLRawResults );
 	}
 }
-
-export default SPARQLRawResultsParser;

@@ -4,7 +4,6 @@ import { HTTPError } from "../HTTPError";
 import {
 	clazz,
 	extendsClass,
-	hasDefaultExport,
 	hasMethod,
 	hasProperty,
 	INSTANCE,
@@ -15,7 +14,6 @@ import {
 import * as Utils from "./../../../Utils";
 
 import * as GatewayTimeoutError from "./GatewayTimeoutError";
-import DefaultExport from "./GatewayTimeoutError";
 
 describe( module( "carbonldp/HTTP/Errors/ServerErrors/GatewayTimeoutError" ), ():void => {
 
@@ -99,11 +97,6 @@ describe( module( "carbonldp/HTTP/Errors/ServerErrors/GatewayTimeoutError" ), ()
 			expect( GatewayTimeoutError.GatewayTimeoutError.statusCode ).toBe( 504 );
 		} );
 
-	} );
-
-	it( hasDefaultExport( "CarbonLDP.HTTP.Errors.GatewayTimeoutError" ), ():void => {
-		expect( DefaultExport ).toBeDefined();
-		expect( DefaultExport ).toBe( GatewayTimeoutError.GatewayTimeoutError );
 	} );
 
 } );

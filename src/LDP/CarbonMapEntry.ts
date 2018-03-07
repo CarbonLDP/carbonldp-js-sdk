@@ -25,5 +25,3 @@ export interface CarbonMapEntryFactory {
 export const CarbonMapEntry:CarbonMapEntryFactory = {
 	SCHEMA,
 };
-
-export default CarbonMapEntry;

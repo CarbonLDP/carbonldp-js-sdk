@@ -8,5 +8,3 @@ export class RequestHeaderFieldsTooLargeError extends HTTPError {
 
 	get name():string { return name; }
 }
-
-export default RequestHeaderFieldsTooLargeError;

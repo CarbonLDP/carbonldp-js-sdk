@@ -631,7 +631,6 @@ var HTTPError = (function (_super) {
     return HTTPError;
 }(Errors_1.AbstractError));
 exports.HTTPError = HTTPError;
-exports.default = HTTPError;
 
 
 /***/ }),
@@ -1142,7 +1141,6 @@ function prefixWithObjectSchema(uri, objectSchema) {
         return exports.URI.prefix(uri, prefix, prefixURI);
     }
 }
-exports.default = exports.URI;
 
 
 /***/ }),
@@ -1295,7 +1293,6 @@ exports.Resource = {
         return resource;
     },
 };
-exports.default = exports.Resource;
 
 
 /***/ }),
@@ -1543,11 +1540,8 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-}
 Object.defineProperty(exports, "__esModule", { value: true });
-var AbstractError_1 = __importDefault(__webpack_require__(27));
+var AbstractError_1 = __webpack_require__(27);
 var IllegalArgumentError = (function (_super) {
     __extends(IllegalArgumentError, _super);
     function IllegalArgumentError() {
@@ -1559,9 +1553,8 @@ var IllegalArgumentError = (function (_super) {
         configurable: true
     });
     return IllegalArgumentError;
-}(AbstractError_1.default));
+}(AbstractError_1.AbstractError));
 exports.IllegalArgumentError = IllegalArgumentError;
-exports.default = IllegalArgumentError;
 
 
 /***/ }),
@@ -1811,7 +1804,6 @@ exports.Pointer = {
         });
     },
 };
-exports.default = exports.Pointer;
 
 
 /***/ }),
@@ -2193,7 +2185,6 @@ function normalize() {
         _this._fragmentsIndex.delete(fragment.id);
     });
 }
-exports.default = exports.Document;
 
 
 /***/ }),
@@ -3256,7 +3247,6 @@ exports.RDFNode = {
         return propertyLanguageMap;
     },
 };
-exports.default = exports.RDFNode;
 
 
 /***/ }),
@@ -3705,7 +3695,6 @@ var AbstractError = (function (_super) {
     return AbstractError;
 }(Error));
 exports.AbstractError = AbstractError;
-exports.default = AbstractError;
 
 
 /***/ }),
@@ -3729,7 +3718,6 @@ exports.EventMessage = {
         return Utils_1.hasProperty(object, "target");
     },
 };
-exports.default = exports.EventMessage;
 
 
 /***/ }),
@@ -3822,7 +3810,6 @@ var JSONLDParser = (function (_super) {
     return JSONLDParser;
 }(JSONParser_1.JSONParser));
 exports.JSONLDParser = JSONLDParser;
-exports.default = JSONLDParser;
 
 
 /***/ }),
@@ -4144,7 +4131,6 @@ exports.Fragment = {
         return fragment;
     },
 };
-exports.default = exports.Fragment;
 
 
 /***/ }),
@@ -4382,7 +4368,6 @@ function removeChildInheritance(subject, permissions) {
     var acl = this;
     removePermissions.call(this, subject, permissions, acl.inheritableEntries);
 }
-exports.default = exports.ACL;
 
 
 /***/ }),
@@ -4405,7 +4390,6 @@ exports.RDFList = {
         return Utils.hasPropertyDefined(value, "@list");
     },
 };
-exports.default = exports.RDFList;
 
 
 /***/ }),
@@ -4514,7 +4498,6 @@ var RDFDocumentParser = (function (_super) {
     return RDFDocumentParser;
 }(Parser_1.JSONLDParser));
 exports.RDFDocumentParser = RDFDocumentParser;
-exports.default = exports.RDFDocument;
 
 
 /***/ }),
@@ -4567,7 +4550,6 @@ var Header = (function () {
     return Header;
 }());
 exports.Header = Header;
-exports.default = Header;
 
 
 /***/ }),
@@ -5108,7 +5090,6 @@ function executeUPDATE(updateQuery, requestOptions) {
 function sparql() {
     return this._documents.sparql(this.id);
 }
-exports.default = exports.PersistedDocument;
 
 
 /***/ }),
@@ -5188,7 +5169,6 @@ var QueryProperty = (function () {
     return QueryProperty;
 }());
 exports.QueryProperty = QueryProperty;
-exports.default = QueryProperty;
 
 
 /***/ }),
@@ -5657,11 +5637,8 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-}
 Object.defineProperty(exports, "__esModule", { value: true });
-var AbstractError_1 = __importDefault(__webpack_require__(27));
+var AbstractError_1 = __webpack_require__(27);
 var IllegalStateError = (function (_super) {
     __extends(IllegalStateError, _super);
     function IllegalStateError(message) {
@@ -5673,9 +5650,8 @@ var IllegalStateError = (function (_super) {
         configurable: true
     });
     return IllegalStateError;
-}(AbstractError_1.default));
+}(AbstractError_1.AbstractError));
 exports.IllegalStateError = IllegalStateError;
-exports.default = IllegalStateError;
 
 
 /***/ }),
@@ -5694,7 +5670,6 @@ var JSONParser = (function () {
     return JSONParser;
 }());
 exports.JSONParser = JSONParser;
-exports.default = JSONParser;
 
 
 /***/ }),
@@ -5830,7 +5805,6 @@ exports.RDFLiteral = {
         return value["@type"] === type;
     },
 };
-exports.default = exports.RDFLiteral;
 
 
 /***/ }),
@@ -5915,7 +5889,6 @@ exports.PersistedFragment = {
         return fragment;
     },
 };
-exports.default = exports.PersistedFragment;
 
 
 /***/ }),
@@ -6013,7 +5986,6 @@ exports.PersistedResource = {
         return persistedResource;
     },
 };
-exports.default = exports.PersistedResource;
 
 
 /***/ }),
@@ -6081,7 +6053,6 @@ function getACL(requestOptions) {
         return [acl, response];
     });
 }
-exports.default = exports.PersistedProtectedDocument;
 
 
 /***/ }),
@@ -6108,7 +6079,6 @@ exports.ResponseMetadata = {
             && object.hasType(exports.ResponseMetadata.TYPE);
     },
 };
-exports.default = exports.ResponseMetadata;
 
 
 /***/ }),
@@ -6774,7 +6744,6 @@ exports.ACE = {
         return ace;
     },
 };
-exports.default = exports.ACE;
 
 
 /***/ }),
@@ -6793,11 +6762,8 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-}
 Object.defineProperty(exports, "__esModule", { value: true });
-var AbstractError_1 = __importDefault(__webpack_require__(27));
+var AbstractError_1 = __webpack_require__(27);
 var IDAlreadyInUseError = (function (_super) {
     __extends(IDAlreadyInUseError, _super);
     function IDAlreadyInUseError() {
@@ -6809,9 +6775,8 @@ var IDAlreadyInUseError = (function (_super) {
         configurable: true
     });
     return IDAlreadyInUseError;
-}(AbstractError_1.default));
+}(AbstractError_1.AbstractError));
 exports.IDAlreadyInUseError = IDAlreadyInUseError;
-exports.default = IDAlreadyInUseError;
 
 
 /***/ }),
@@ -7069,7 +7034,6 @@ var JSONLDConverter = (function () {
     return JSONLDConverter;
 }());
 exports.JSONLDConverter = JSONLDConverter;
-exports.default = JSONLDConverter;
 
 
 /***/ }),
@@ -7089,7 +7053,6 @@ var HTTPMethod;
     HTTPMethod[HTTPMethod["PATCH"] = 5] = "PATCH";
     HTTPMethod[HTTPMethod["DELETE"] = 6] = "DELETE";
 })(HTTPMethod = exports.HTTPMethod || (exports.HTTPMethod = {}));
-exports.default = HTTPMethod;
 
 
 /***/ }),
@@ -7138,7 +7101,6 @@ exports.NamedFragment = {
         return namedFragment;
     },
 };
-exports.default = exports.NamedFragment;
 
 
 /***/ }),
@@ -7242,7 +7204,6 @@ exports.VolatileResource = {
             && object.hasType(exports.VolatileResource.TYPE);
     },
 };
-exports.default = exports.VolatileResource;
 
 
 /***/ }),
@@ -7286,7 +7247,6 @@ var PartialMetadata = (function () {
     return PartialMetadata;
 }());
 exports.PartialMetadata = PartialMetadata;
-exports.default = PartialMetadata;
 
 
 /***/ }),
@@ -7404,7 +7364,6 @@ var QueryContextBuilder = (function (_super) {
     return QueryContextBuilder;
 }(QueryContext_1.QueryContext));
 exports.QueryContextBuilder = QueryContextBuilder;
-exports.default = QueryContextBuilder;
 
 
 /***/ }),
@@ -7490,7 +7449,6 @@ var QueryContext = (function () {
     return QueryContext;
 }());
 exports.QueryContext = QueryContext;
-exports.default = QueryContext;
 
 
 /***/ }),
@@ -7530,7 +7488,6 @@ exports.AddMemberAction = {
         });
     },
 };
-exports.default = exports.AddMemberAction;
 
 
 /***/ }),
@@ -7567,7 +7524,6 @@ exports.ErrorResponse = {
             .join(", ");
     },
 };
-exports.default = exports.ErrorResponse;
 
 
 /***/ }),
@@ -7607,7 +7563,6 @@ exports.RemoveMemberAction = {
         });
     },
 };
-exports.default = exports.RemoveMemberAction;
 
 
 /***/ }),
@@ -7972,7 +7927,6 @@ var QueryDocumentBuilder = (function () {
     return QueryDocumentBuilder;
 }());
 exports.QueryDocumentBuilder = QueryDocumentBuilder;
-exports.default = QueryDocumentBuilder;
 
 
 /***/ }),
@@ -7999,7 +7953,6 @@ exports.QueryMetadata = {
             && object.hasType(exports.QueryMetadata.TYPE);
     },
 };
-exports.default = exports.QueryMetadata;
 
 
 /***/ }),
@@ -8026,7 +7979,6 @@ var SCHEMA = __assign({}, EventMessage_1.EventMessage.SCHEMA, { "details": {
 exports.DocumentCreated = {
     SCHEMA: SCHEMA,
 };
-exports.default = exports.DocumentCreated;
 
 
 /***/ }),
@@ -8047,7 +7999,6 @@ var SCHEMA = {
 exports.MemberDetails = {
     SCHEMA: SCHEMA,
 };
-exports.default = exports.MemberDetails;
 
 
 /***/ }),
@@ -8486,7 +8437,6 @@ var SDKContext = (function () {
 }());
 exports.SDKContext = SDKContext;
 exports.globalContext = new SDKContext();
-exports.default = exports.globalContext;
 
 
 /***/ }),
@@ -8515,7 +8465,6 @@ exports.BlankNode = {
         return Fragment_1.Fragment.createFrom(object, document, id);
     },
 };
-exports.default = exports.BlankNode;
 
 
 /***/ }),
@@ -9124,7 +9073,6 @@ var Util = (function () {
     return Util;
 }());
 exports.Util = Util;
-exports.default = JSONLDProcessor;
 
 
 /***/ }),
@@ -9225,7 +9173,6 @@ var BadResponseError = (function (_super) {
     return BadResponseError;
 }(HTTPError_1.HTTPError));
 exports.BadResponseError = BadResponseError;
-exports.default = BadResponseError;
 
 
 /***/ }),
@@ -9260,7 +9207,6 @@ var UnknownError = (function (_super) {
     return UnknownError;
 }(HTTPError_1.HTTPError));
 exports.UnknownError = UnknownError;
-exports.default = UnknownError;
 
 
 /***/ }),
@@ -9304,7 +9250,6 @@ var Response = (function () {
     return Response;
 }());
 exports.Response = Response;
-exports.default = Response;
 
 
 /***/ }),
@@ -9332,7 +9277,6 @@ exports.RDFValue = {
         return null;
     },
 };
-exports.default = exports.RDFValue;
 
 
 /***/ }),
@@ -9541,7 +9485,6 @@ exports.PersistedACL = {
 function parsePointer(element) {
     return Utils.isObject(element) ? element : this.getPointer(element);
 }
-exports.default = exports.PersistedACL;
 
 
 /***/ }),
@@ -9663,7 +9606,6 @@ exports.MessagingDocument = {
         });
     },
 };
-exports.default = exports.MessagingDocument;
 
 
 /***/ }),
@@ -9686,7 +9628,6 @@ exports.PersistedNamedFragment = {
         return PersistedFragment_1.PersistedFragment.decorate(fragment);
     },
 };
-exports.default = exports.PersistedNamedFragment;
 
 
 /***/ }),
@@ -10136,7 +10077,6 @@ exports.FreeResources = {
         return object;
     },
 };
-exports.default = exports.FreeResources;
 
 
 /***/ }),
@@ -11311,7 +11251,6 @@ var Documents = (function () {
     return Documents;
 }());
 exports.Documents = Documents;
-exports.default = Documents;
 
 
 /***/ }),
@@ -11335,7 +11274,6 @@ exports.AccessPoint = {
         return DirectContainer_1.DirectContainer.createFrom(object, membershipResource, hasMemberRelation, isMemberOfRelation);
     },
 };
-exports.default = exports.AccessPoint;
 
 
 /***/ }),
@@ -11377,7 +11315,6 @@ exports.DirectContainer = {
         return container;
     },
 };
-exports.default = exports.DirectContainer;
 
 
 /***/ }),
@@ -11526,7 +11463,6 @@ var JSONLDCompacter = (function () {
     return JSONLDCompacter;
 }());
 exports.JSONLDCompacter = JSONLDCompacter;
-exports.default = JSONLDCompacter;
 
 
 /***/ }),
@@ -11564,7 +11500,6 @@ var QueryVariable = (function (_super) {
     return QueryVariable;
 }(tokens_1.VariableToken));
 exports.QueryVariable = QueryVariable;
-exports.default = QueryVariable;
 
 
 /***/ }),
@@ -11695,7 +11630,6 @@ var Event;
     Event["MEMBER_ADDED"] = "member.added";
     Event["MEMBER_REMOVED"] = "member.removed";
 })(Event = exports.Event || (exports.Event = {}));
-exports.default = Event;
 
 
 /***/ }),
@@ -11906,7 +11840,6 @@ var MessagingService = (function () {
     return MessagingService;
 }());
 exports.MessagingService = MessagingService;
-exports.default = MessagingService;
 
 
 /***/ }),
@@ -13091,7 +13024,6 @@ exports.ProtectedDocument = {
     TYPE: CS_1.CS.ProtectedDocument,
     SCHEMA: SCHEMA,
 };
-exports.default = exports.ProtectedDocument;
 
 
 /***/ }),
@@ -13131,7 +13063,6 @@ var SPARQLBuilder = (function (_super) {
     return SPARQLBuilder;
 }(sparqler_1.SPARQLER));
 exports.SPARQLBuilder = SPARQLBuilder;
-exports.default = SPARQLBuilder;
 
 
 /***/ }),
@@ -13912,7 +13843,6 @@ var QueryContextPartial = (function (_super) {
     return QueryContextPartial;
 }(QueryContext_1.QueryContext));
 exports.QueryContextPartial = QueryContextPartial;
-exports.default = QueryContextPartial;
 
 
 /***/ }),
@@ -13940,7 +13870,6 @@ var QueryObject = (function () {
     return QueryObject;
 }());
 exports.QueryObject = QueryObject;
-exports.default = QueryObject;
 
 
 /***/ }),
@@ -13991,7 +13920,6 @@ var QueryValue = (function () {
     return QueryValue;
 }());
 exports.QueryValue = QueryValue;
-exports.default = QueryValue;
 
 
 /***/ }),
@@ -14098,7 +14026,6 @@ function parseFlowString(flow) {
             throw new IllegalArgumentError_1.IllegalArgumentError("Invalid flow order.");
     }
 }
-exports.default = QueryDocumentsBuilder;
 
 
 /***/ }),
@@ -14219,7 +14146,6 @@ var SPARQLService = (function () {
     return SPARQLService;
 }());
 exports.SPARQLService = SPARQLService;
-exports.default = SPARQLService;
 
 
 /***/ }),
@@ -14238,7 +14164,6 @@ var StringParser = (function () {
     return StringParser;
 }());
 exports.StringParser = StringParser;
-exports.default = StringParser;
 
 
 /***/ }),
@@ -14270,7 +14195,6 @@ var SPARQLRawResultsParser = (function (_super) {
     return SPARQLRawResultsParser;
 }(JSONParser_1.JSONParser));
 exports.SPARQLRawResultsParser = SPARQLRawResultsParser;
-exports.default = SPARQLRawResultsParser;
 
 
 /***/ }),
@@ -14300,7 +14224,6 @@ exports.CarbonError = {
     TYPE: C_1.C.Error,
     SCHEMA: SCHEMA,
 };
-exports.default = exports.CarbonError;
 
 
 /***/ }),
@@ -14328,7 +14251,6 @@ exports.CarbonMap = {
             && object.hasOwnProperty("entries");
     },
 };
-exports.default = exports.CarbonMap;
 
 
 /***/ }),
@@ -14350,7 +14272,6 @@ var SCHEMA = {
 exports.CarbonMapEntry = {
     SCHEMA: SCHEMA,
 };
-exports.default = exports.CarbonMapEntry;
 
 
 /***/ }),
@@ -14397,7 +14318,6 @@ exports.DocumentMetadata = {
             && exports.DocumentMetadata.isDecorated(object);
     },
 };
-exports.default = exports.DocumentMetadata;
 
 
 /***/ }),
@@ -14418,7 +14338,6 @@ exports.ValidationError = {
     TYPE: C_1.C.ValidationError,
     SCHEMA: SCHEMA,
 };
-exports.default = exports.ValidationError;
 
 
 /***/ }),
@@ -14435,7 +14354,6 @@ exports.AccessPointCreated = {
     TYPE: C_1.C.AccessPointCreated,
     SCHEMA: SCHEMA,
 };
-exports.default = exports.AccessPointCreated;
 
 
 /***/ }),
@@ -14453,7 +14371,6 @@ exports.ChildCreated = {
     TYPE: TYPE,
     SCHEMA: SCHEMA,
 };
-exports.default = exports.ChildCreated;
 
 
 /***/ }),
@@ -14475,7 +14392,6 @@ exports.DocumentCreatedDetails = {
     TYPE: C_1.C.DocumentCreatedDetails,
     SCHEMA: SCHEMA,
 };
-exports.default = exports.DocumentCreatedDetails;
 
 
 /***/ }),
@@ -14493,7 +14409,6 @@ exports.DocumentDeleted = {
     TYPE: TYPE,
     SCHEMA: SCHEMA,
 };
-exports.default = exports.DocumentDeleted;
 
 
 /***/ }),
@@ -14511,7 +14426,6 @@ exports.DocumentModified = {
     TYPE: exports.TYPE,
     SCHEMA: exports.SCHEMA,
 };
-exports.default = exports.DocumentModified;
 
 
 /***/ }),
@@ -14540,7 +14454,6 @@ exports.MemberAdded = {
     TYPE: TYPE,
     SCHEMA: SCHEMA,
 };
-exports.default = exports.MemberAdded;
 
 
 /***/ }),
@@ -14558,7 +14471,6 @@ exports.MemberAddedDetails = {
     TYPE: TYPE,
     SCHEMA: SCHEMA,
 };
-exports.default = exports.MemberAddedDetails;
 
 
 /***/ }),
@@ -14587,7 +14499,6 @@ exports.MemberRemoved = {
     TYPE: TYPE,
     SCHEMA: SCHEMA,
 };
-exports.default = exports.MemberRemoved;
 
 
 /***/ }),
@@ -14605,7 +14516,6 @@ exports.MemberRemovedDetails = {
     TYPE: exports.TYPE,
     SCHEMA: exports.SCHEMA,
 };
-exports.default = exports.MemberRemovedDetails;
 
 
 /***/ }),
@@ -14636,7 +14546,6 @@ exports.ValidationReport = {
     TYPE: SHACL_1.SHACL.ValidationReport,
     SCHEMA: SCHEMA,
 };
-exports.default = exports.ValidationReport;
 
 
 /***/ }),
@@ -14685,7 +14594,6 @@ exports.ValidationResult = {
     TYPE: SHACL_1.SHACL.ValidationResult,
     SCHEMA: SCHEMA,
 };
-exports.default = exports.ValidationResult;
 
 
 /***/ }),
@@ -14711,7 +14619,6 @@ exports.PlatformMetadata = {
     TYPE: C_1.C.Platform,
     SCHEMA: SCHEMA,
 };
-exports.default = exports.PlatformMetadata;
 
 
 /***/ }),
@@ -14873,7 +14780,6 @@ var CarbonLDP = (function (_super) {
     return CarbonLDP;
 }(AbstractContext.AbstractContext));
 exports.CarbonLDP = CarbonLDP;
-exports.default = CarbonLDP;
 
 
 /***/ }),
@@ -15567,7 +15473,6 @@ var AbstractContext = (function (_super) {
     return AbstractContext;
 }(SDKContext_1.SDKContext));
 exports.AbstractContext = AbstractContext;
-exports.default = AbstractContext;
 
 
 /***/ }),
@@ -15586,11 +15491,8 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-}
 Object.defineProperty(exports, "__esModule", { value: true });
-var AbstractError_1 = __importDefault(__webpack_require__(27));
+var AbstractError_1 = __webpack_require__(27);
 var IllegalActionError = (function (_super) {
     __extends(IllegalActionError, _super);
     function IllegalActionError() {
@@ -15602,9 +15504,8 @@ var IllegalActionError = (function (_super) {
         configurable: true
     });
     return IllegalActionError;
-}(AbstractError_1.default));
+}(AbstractError_1.AbstractError));
 exports.IllegalActionError = IllegalActionError;
-exports.default = IllegalActionError;
 
 
 /***/ }),
@@ -15623,11 +15524,8 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-}
 Object.defineProperty(exports, "__esModule", { value: true });
-var AbstractError_1 = __importDefault(__webpack_require__(27));
+var AbstractError_1 = __webpack_require__(27);
 var InvalidJSONLDSyntaxError = (function (_super) {
     __extends(InvalidJSONLDSyntaxError, _super);
     function InvalidJSONLDSyntaxError() {
@@ -15639,9 +15537,8 @@ var InvalidJSONLDSyntaxError = (function (_super) {
         configurable: true
     });
     return InvalidJSONLDSyntaxError;
-}(AbstractError_1.default));
+}(AbstractError_1.AbstractError));
 exports.InvalidJSONLDSyntaxError = InvalidJSONLDSyntaxError;
-exports.default = InvalidJSONLDSyntaxError;
 
 
 /***/ }),
@@ -15660,11 +15557,8 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-}
 Object.defineProperty(exports, "__esModule", { value: true });
-var AbstractError_1 = __importDefault(__webpack_require__(27));
+var AbstractError_1 = __webpack_require__(27);
 var NotImplementedError = (function (_super) {
     __extends(NotImplementedError, _super);
     function NotImplementedError(message) {
@@ -15676,9 +15570,8 @@ var NotImplementedError = (function (_super) {
         configurable: true
     });
     return NotImplementedError;
-}(AbstractError_1.default));
+}(AbstractError_1.AbstractError));
 exports.NotImplementedError = NotImplementedError;
-exports.default = NotImplementedError;
 
 
 /***/ }),
@@ -15737,7 +15630,6 @@ var BadRequestError = (function (_super) {
     return BadRequestError;
 }(HTTPError_1.HTTPError));
 exports.BadRequestError = BadRequestError;
-exports.default = BadRequestError;
 
 
 /***/ }),
@@ -15778,7 +15670,6 @@ var ConflictError = (function (_super) {
     return ConflictError;
 }(HTTPError_1.HTTPError));
 exports.ConflictError = ConflictError;
-exports.default = ConflictError;
 
 
 /***/ }),
@@ -15819,7 +15710,6 @@ var ForbiddenError = (function (_super) {
     return ForbiddenError;
 }(HTTPError_1.HTTPError));
 exports.ForbiddenError = ForbiddenError;
-exports.default = ForbiddenError;
 
 
 /***/ }),
@@ -15860,7 +15750,6 @@ var MethodNotAllowedError = (function (_super) {
     return MethodNotAllowedError;
 }(HTTPError_1.HTTPError));
 exports.MethodNotAllowedError = MethodNotAllowedError;
-exports.default = MethodNotAllowedError;
 
 
 /***/ }),
@@ -15901,7 +15790,6 @@ var NotAcceptableError = (function (_super) {
     return NotAcceptableError;
 }(HTTPError_1.HTTPError));
 exports.NotAcceptableError = NotAcceptableError;
-exports.default = NotAcceptableError;
 
 
 /***/ }),
@@ -15942,7 +15830,6 @@ var NotFoundError = (function (_super) {
     return NotFoundError;
 }(HTTPError_1.HTTPError));
 exports.NotFoundError = NotFoundError;
-exports.default = NotFoundError;
 
 
 /***/ }),
@@ -15983,7 +15870,6 @@ var PreconditionFailedError = (function (_super) {
     return PreconditionFailedError;
 }(HTTPError_1.HTTPError));
 exports.PreconditionFailedError = PreconditionFailedError;
-exports.default = PreconditionFailedError;
 
 
 /***/ }),
@@ -16024,7 +15910,6 @@ var PreconditionRequiredError = (function (_super) {
     return PreconditionRequiredError;
 }(HTTPError_1.HTTPError));
 exports.PreconditionRequiredError = PreconditionRequiredError;
-exports.default = PreconditionRequiredError;
 
 
 /***/ }),
@@ -16065,7 +15950,6 @@ var RequestEntityTooLargeError = (function (_super) {
     return RequestEntityTooLargeError;
 }(HTTPError_1.HTTPError));
 exports.RequestEntityTooLargeError = RequestEntityTooLargeError;
-exports.default = RequestEntityTooLargeError;
 
 
 /***/ }),
@@ -16106,7 +15990,6 @@ var RequestHeaderFieldsTooLargeError = (function (_super) {
     return RequestHeaderFieldsTooLargeError;
 }(HTTPError_1.HTTPError));
 exports.RequestHeaderFieldsTooLargeError = RequestHeaderFieldsTooLargeError;
-exports.default = RequestHeaderFieldsTooLargeError;
 
 
 /***/ }),
@@ -16147,7 +16030,6 @@ var RequestURITooLongError = (function (_super) {
     return RequestURITooLongError;
 }(HTTPError_1.HTTPError));
 exports.RequestURITooLongError = RequestURITooLongError;
-exports.default = RequestURITooLongError;
 
 
 /***/ }),
@@ -16188,7 +16070,6 @@ var TooManyRequestsError = (function (_super) {
     return TooManyRequestsError;
 }(HTTPError_1.HTTPError));
 exports.TooManyRequestsError = TooManyRequestsError;
-exports.default = TooManyRequestsError;
 
 
 /***/ }),
@@ -16229,7 +16110,6 @@ var UnauthorizedError = (function (_super) {
     return UnauthorizedError;
 }(HTTPError_1.HTTPError));
 exports.UnauthorizedError = UnauthorizedError;
-exports.default = UnauthorizedError;
 
 
 /***/ }),
@@ -16270,7 +16150,6 @@ var UnsupportedMediaTypeError = (function (_super) {
     return UnsupportedMediaTypeError;
 }(HTTPError_1.HTTPError));
 exports.UnsupportedMediaTypeError = UnsupportedMediaTypeError;
-exports.default = UnsupportedMediaTypeError;
 
 
 /***/ }),
@@ -16311,7 +16190,6 @@ var BadGatewayError = (function (_super) {
     return BadGatewayError;
 }(HTTPError_1.HTTPError));
 exports.BadGatewayError = BadGatewayError;
-exports.default = BadGatewayError;
 
 
 /***/ }),
@@ -16352,7 +16230,6 @@ var GatewayTimeoutError = (function (_super) {
     return GatewayTimeoutError;
 }(HTTPError_1.HTTPError));
 exports.GatewayTimeoutError = GatewayTimeoutError;
-exports.default = GatewayTimeoutError;
 
 
 /***/ }),
@@ -16393,7 +16270,6 @@ var HTTPVersionNotSupportedError = (function (_super) {
     return HTTPVersionNotSupportedError;
 }(HTTPError_1.HTTPError));
 exports.HTTPVersionNotSupportedError = HTTPVersionNotSupportedError;
-exports.default = HTTPVersionNotSupportedError;
 
 
 /***/ }),
@@ -16434,7 +16310,6 @@ var InternalServerErrorError = (function (_super) {
     return InternalServerErrorError;
 }(HTTPError_1.HTTPError));
 exports.InternalServerErrorError = InternalServerErrorError;
-exports.default = InternalServerErrorError;
 
 
 /***/ }),
@@ -16475,7 +16350,6 @@ var NotImplementedError = (function (_super) {
     return NotImplementedError;
 }(HTTPError_1.HTTPError));
 exports.NotImplementedError = NotImplementedError;
-exports.default = NotImplementedError;
 
 
 /***/ }),
@@ -16516,7 +16390,6 @@ var ServiceUnavailableError = (function (_super) {
     return ServiceUnavailableError;
 }(HTTPError_1.HTTPError));
 exports.ServiceUnavailableError = ServiceUnavailableError;
-exports.default = ServiceUnavailableError;
 
 
 /***/ }),
@@ -16611,7 +16484,6 @@ exports.ServiceAwareDocument = {
         });
     },
 };
-exports.default = exports.ServiceAwareDocument;
 
 
 /***/ }),
@@ -16620,9 +16492,6 @@ exports.default = exports.ServiceAwareDocument;
 
 "use strict";
 
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-}
 var __importStar = (this && this.__importStar) || function (mod) {
     if (mod && mod.__esModule) return mod;
     var result = {};
@@ -16631,10 +16500,10 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 }
 Object.defineProperty(exports, "__esModule", { value: true });
+var Document_1 = __webpack_require__(21);
+var IllegalArgumentError_1 = __webpack_require__(14);
 var CS_1 = __webpack_require__(17);
 var XSD_1 = __webpack_require__(6);
-var Document_1 = __webpack_require__(21);
-var IllegalArgumentError_1 = __importDefault(__webpack_require__(14));
 var Utils = __importStar(__webpack_require__(0));
 exports.RDF_CLASS = CS_1.CS.Role;
 exports.SCHEMA = {
@@ -16678,7 +16547,7 @@ var Factory = (function () {
         if (!Document_1.Document.isDecorated(object))
             object = Document_1.Document.createFrom(object);
         if (!name)
-            throw new IllegalArgumentError_1.default("The name cannot be empty.");
+            throw new IllegalArgumentError_1.IllegalArgumentError("The name cannot be empty.");
         var role = object;
         role.name = name;
         role.description = description;
@@ -17361,7 +17230,6 @@ function getListDelta(oldValues, newValues) {
 function isValidValue(value) {
     return value !== null && value !== void 0;
 }
-exports.default = DeltaCreator;
 
 
 /***/ }),
@@ -21783,9 +21651,6 @@ var __importStar = (this && this.__importStar) || function (mod) {
     result["default"] = mod;
     return result;
 }
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-}
 Object.defineProperty(exports, "__esModule", { value: true });
 var Errors = __importStar(__webpack_require__(32));
 exports.Errors = Errors;
@@ -21801,8 +21666,8 @@ var Request = __importStar(__webpack_require__(25));
 exports.Request = Request;
 var Response = __importStar(__webpack_require__(104));
 exports.Response = Response;
-var StatusCode_1 = __importDefault(__webpack_require__(291));
-exports.StatusCode = StatusCode_1.default;
+var StatusCode_1 = __webpack_require__(291);
+exports.StatusCode = StatusCode_1.StatusCode;
 var StringParser = __importStar(__webpack_require__(162));
 exports.StringParser = StringParser;
 
@@ -21866,7 +21731,6 @@ var StatusCode;
     StatusCode[StatusCode["GATEWAY_TIME_OUT"] = 504] = "GATEWAY_TIME_OUT";
     StatusCode[StatusCode["HTTP_VERSION_NOT_SUPPORTED"] = 505] = "HTTP_VERSION_NOT_SUPPORTED";
 })(StatusCode = exports.StatusCode || (exports.StatusCode = {}));
-exports.default = StatusCode;
 
 
 /***/ }),

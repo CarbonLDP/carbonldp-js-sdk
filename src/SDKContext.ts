@@ -246,5 +246,3 @@ export class SDKContext implements Context {
 }
 
 export const globalContext:SDKContext = new SDKContext();
-
-export default globalContext;

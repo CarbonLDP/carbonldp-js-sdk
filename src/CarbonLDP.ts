@@ -131,5 +131,3 @@ export class CarbonLDP extends AbstractContext.AbstractContext {
 	}
 
 }
-
-export default CarbonLDP;

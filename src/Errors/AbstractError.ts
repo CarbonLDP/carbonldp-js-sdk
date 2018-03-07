@@ -11,5 +11,3 @@ export abstract class AbstractError extends Error {
 	}
 
 }
-
-export default AbstractError;

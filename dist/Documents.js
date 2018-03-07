@@ -1165,6 +1165,5 @@ var Documents = (function () {
     return Documents;
 }());
 exports.Documents = Documents;
-exports.default = Documents;
 
 //# sourceMappingURL=Documents.js.map

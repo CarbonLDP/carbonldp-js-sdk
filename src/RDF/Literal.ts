@@ -152,8 +152,6 @@ export const RDFLiteral:RDFLiteralFactory = {
 	},
 };
 
-export default RDFLiteral;
-
 export {
 	Serializer,
 	Serializers

@@ -2,7 +2,6 @@ import { Pointer } from "../Pointer";
 import { Resource } from "../Resource";
 import {
 	extendsClass,
-	hasDefaultExport,
 	hasProperty,
 	hasSignature,
 	interfaze,
@@ -15,10 +14,9 @@ import {
 } from "../test/JasmineExtender";
 import { C } from "../Vocabularies/C";
 
-import DefaultExport, { EventMessage } from "./EventMessage";
+import { EventMessage } from "./EventMessage";
 
 describe( module( "carbonldp/Messaging/Message" ), ():void => {
-
 
 	describe( interfaze(
 		"CarbonLDP.Messaging.EventMessage.EventMessage",
@@ -127,11 +125,6 @@ describe( module( "carbonldp/Messaging/Message" ), ():void => {
 
 		} );
 
-	} );
-
-	it( hasDefaultExport( "CarbonLDP.Messaging.EventMessage.EventMessage" ), ():void => {
-		const target:EventMessage = {} as DefaultExport;
-		expect( target ).toBeDefined();
 	} );
 
 } );

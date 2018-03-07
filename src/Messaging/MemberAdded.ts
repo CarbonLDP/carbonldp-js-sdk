@@ -27,5 +27,3 @@ export const MemberAdded:MemberAddedFactory = {
 	TYPE,
 	SCHEMA,
 };
-
-export default MemberAdded;

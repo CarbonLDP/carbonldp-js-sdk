@@ -11,6 +11,5 @@ exports.ProtectedDocument = {
     TYPE: CS_1.CS.ProtectedDocument,
     SCHEMA: SCHEMA,
 };
-exports.default = exports.ProtectedDocument;
 
 //# sourceMappingURL=ProtectedDocument.js.map

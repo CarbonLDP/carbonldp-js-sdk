@@ -4,7 +4,6 @@ import { HTTPError } from "../HTTPError";
 import {
 	clazz,
 	extendsClass,
-	hasDefaultExport,
 	hasMethod,
 	hasProperty,
 	INSTANCE,
@@ -15,7 +14,6 @@ import {
 import * as Utils from "./../../../Utils";
 
 import * as RequestURITooLongError from "./RequestURITooLongError";
-import DefaultExport from "./RequestURITooLongError";
 
 describe( module( "carbonldp/HTTP/Errors/ClientErrors/RequestURITooLongError" ), ():void => {
 
@@ -99,11 +97,6 @@ describe( module( "carbonldp/HTTP/Errors/ClientErrors/RequestURITooLongError" ),
 			expect( RequestURITooLongError.RequestURITooLongError.statusCode ).toBe( 414 );
 		} );
 
-	} );
-
-	it( hasDefaultExport( "CarbonLDP.HTTP.Errors.RequestURITooLongError" ), ():void => {
-		expect( DefaultExport ).toBeDefined();
-		expect( DefaultExport ).toBe( RequestURITooLongError.RequestURITooLongError );
 	} );
 
 } );

@@ -30,5 +30,3 @@ export class QueryContextPartial extends QueryContext {
 		return schemaLibrary._partialMetadata.schema;
 	}
 }
-
-export default QueryContextPartial;

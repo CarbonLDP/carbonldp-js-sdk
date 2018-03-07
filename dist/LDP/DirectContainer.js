@@ -32,6 +32,5 @@ exports.DirectContainer = {
         return container;
     },
 };
-exports.default = exports.DirectContainer;
 
 //# sourceMappingURL=DirectContainer.js.map

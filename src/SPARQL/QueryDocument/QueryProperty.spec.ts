@@ -13,7 +13,6 @@ import { ContextSettings } from "../../Settings";
 import {
 	clazz,
 	constructor,
-	hasDefaultExport,
 	hasProperty,
 	hasSignature,
 	INSTANCE,
@@ -23,18 +22,13 @@ import {
 import { QueryContext } from "./QueryContext";
 
 import * as Module from "./QueryProperty";
-import DefaultExports, { QueryProperty } from "./QueryProperty";
+import { QueryProperty } from "./QueryProperty";
 
 describe( module( "carbonldp/SPARQL/QueryDocument/QueryProperty" ), ():void => {
 
 	it( "should exists", ():void => {
 		expect( Module ).toBeDefined();
 		expect( Module ).toEqual( jasmine.any( Object ) );
-	} );
-
-	it( hasDefaultExport( "CarbonLDP.SPARQL.QueryDocument.QueryProperty.QueryProperty" ), ():void => {
-		expect( DefaultExports ).toBeDefined();
-		expect( DefaultExports ).toBe( QueryProperty );
 	} );
 
 	// TODO: To document `QueryPropertyType`

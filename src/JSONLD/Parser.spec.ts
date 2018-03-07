@@ -1,6 +1,5 @@
 import {
 	clazz,
-	hasDefaultExport,
 	hasMethod,
 	INSTANCE,
 	isDefined,
@@ -8,7 +7,7 @@ import {
 } from "../test/JasmineExtender";
 import * as Utils from "../Utils";
 
-import DefaultExport, { JSONLDParser } from "./Parser";
+import { JSONLDParser } from "./Parser";
 
 describe( module(
 	"carbonldp/JSONLD/Parser"
@@ -181,13 +180,6 @@ describe( module(
 			}, done.fail );
 		} );
 
-	} );
-
-	it( hasDefaultExport(
-		"CarbonLDP.JSONLD.Parser.JSONLDParser"
-	), ():void => {
-		expect( DefaultExport ).toBeDefined();
-		expect( DefaultExport ).toBe( JSONLDParser );
 	} );
 
 } );

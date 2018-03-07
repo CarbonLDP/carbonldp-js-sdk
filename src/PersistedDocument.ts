@@ -781,5 +781,3 @@ function executeUPDATE( updateQuery:string, requestOptions:RequestOptions = {} )
 function sparql( this:PersistedDocument ):QueryClause<FinishSPARQLSelect> {
 	return this._documents.sparql( this.id );
 }
-
-export default PersistedDocument;

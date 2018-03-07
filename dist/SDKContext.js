@@ -204,6 +204,5 @@ var SDKContext = (function () {
 }());
 exports.SDKContext = SDKContext;
 exports.globalContext = new SDKContext();
-exports.default = exports.globalContext;
 
 //# sourceMappingURL=SDKContext.js.map

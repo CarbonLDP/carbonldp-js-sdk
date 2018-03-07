@@ -3,5 +3,3 @@ export interface MessagingOptions {
 	reconnectDelay?:number;
 }
 
-export default MessagingOptions;
-

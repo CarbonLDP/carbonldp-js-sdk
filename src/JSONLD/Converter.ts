@@ -284,5 +284,3 @@ export class JSONLDConverter {
 	}
 
 }
-
-export default JSONLDConverter;

@@ -25,4 +25,3 @@ export declare class QueryDocumentBuilder {
     _addProperty(propertyName: string, propertyDefinition: QuerySchemaProperty): QueryProperty;
     private addPropertyDefinition(propertyName, propertyDefinition);
 }
-export default QueryDocumentBuilder;

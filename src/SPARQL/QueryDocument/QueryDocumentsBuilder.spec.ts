@@ -10,7 +10,7 @@ import {
 	VariableToken
 } from "sparqler/tokens";
 
-import AbstractContext from "../../AbstractContext";
+import { AbstractContext } from "../../AbstractContext";
 import {
 	IllegalArgumentError,
 	IllegalStateError
@@ -19,7 +19,6 @@ import { ContextSettings } from "../../Settings";
 import {
 	clazz,
 	extendsClass,
-	hasDefaultExport,
 	hasSignature,
 	INSTANCE,
 	method,
@@ -29,7 +28,7 @@ import { QueryContextBuilder } from "./QueryContextBuilder";
 import { QueryDocumentBuilder } from "./QueryDocumentBuilder";
 
 import * as Module from "./QueryDocumentsBuilder";
-import DefaultExport, { QueryDocumentsBuilder } from "./QueryDocumentsBuilder";
+import { QueryDocumentsBuilder } from "./QueryDocumentsBuilder";
 
 import { QueryProperty } from "./QueryProperty";
 
@@ -41,11 +40,6 @@ describe( module( "carbonldp/SPARQL/QueryDocument/QueryDocumentsBuilder" ), ():v
 	} );
 
 	// TODO: To document `QueryDocumentsBuilderOrderData`
-
-	it( hasDefaultExport( "CarbonLDP.SPARQL.QueryDocument.QueryDocumentsBuilder.QueryDocumentsBuilder" ), ():void => {
-		expect( DefaultExport ).toBeDefined();
-		expect( DefaultExport ).toBe( QueryDocumentsBuilder );
-	} );
 
 	describe( clazz( "CarbonLDP.SPARQL.QueryDocument.QueryDocumentsBuilder.QueryDocumentsBuilder", "Class with the helpers and properties for construct a query document" ), ():void => {
 

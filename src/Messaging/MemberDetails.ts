@@ -24,5 +24,3 @@ const SCHEMA:ObjectSchema = {
 export const MemberDetails:MemberDetailsFactory = {
 	SCHEMA,
 };
-
-export default MemberDetails;

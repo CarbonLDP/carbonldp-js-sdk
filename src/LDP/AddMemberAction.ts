@@ -44,5 +44,3 @@ export const AddMemberAction:AddMemberActionFactory = {
 		} );
 	},
 };
-
-export default AddMemberAction;

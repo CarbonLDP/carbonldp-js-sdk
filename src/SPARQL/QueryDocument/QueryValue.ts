@@ -51,7 +51,5 @@ export class QueryValue {
 	}
 }
 
-export default QueryValue;
-
 
 

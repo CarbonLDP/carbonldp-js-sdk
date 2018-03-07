@@ -16,4 +16,3 @@ export declare class QueryContextBuilder extends QueryContext {
     getSchemaFor(object: object, path?: string): DigestedObjectSchema;
     private _getTypeSchemas();
 }
-export default QueryContextBuilder;

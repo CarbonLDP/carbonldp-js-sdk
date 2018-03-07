@@ -14,7 +14,7 @@ import {
 } from "../test/JasmineExtender";
 import { CS } from "../Vocabularies/CS";
 import { VCARD } from "../Vocabularies/VCARD";
-import AbstractContext from "./../AbstractContext";
+import { AbstractContext } from "./../AbstractContext";
 import * as Utils from "./../Utils";
 import * as PersistedCredentials from "./PersistedCredentials";
 import * as PersistedUser from "./PersistedUser";

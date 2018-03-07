@@ -10,7 +10,6 @@ import {
 	clazz,
 	constructor,
 	extendsClass,
-	hasDefaultExport,
 	hasSignature,
 	INSTANCE,
 	method,
@@ -19,7 +18,7 @@ import {
 import { QueryContext } from "./QueryContext";
 
 import * as Module from "./QueryContextBuilder";
-import DefaultExport, { QueryContextBuilder } from "./QueryContextBuilder";
+import { QueryContextBuilder } from "./QueryContextBuilder";
 
 import {
 	QueryProperty,
@@ -31,11 +30,6 @@ describe( module( "carbonldp/SPARQL/QueryDocument/QueryContextBuilder" ), ():voi
 	it( "should exists", ():void => {
 		expect( Module ).toBeDefined();
 		expect( Module ).toEqual( jasmine.any( Object ) );
-	} );
-
-	it( hasDefaultExport( "CarbonLDP.SPARQL.QueryDocument.QueryContextBuilder.QueryContextBuilder" ), ():void => {
-		expect( DefaultExport ).toBeDefined();
-		expect( DefaultExport ).toBe( QueryContextBuilder );
 	} );
 
 	describe( clazz( "CarbonLDP.SPARQL.QueryDocument.QueryContextBuilder.QueryContextBuilder", "Class with the shared status and data of the query." ), ():void => {

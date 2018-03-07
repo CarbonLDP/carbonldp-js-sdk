@@ -1,21 +1,19 @@
-import { RequestService } from "../../Request";
-import { Response } from "../../Response";
-import { HTTPError } from "../HTTPError";
 import {
 	clazz,
 	extendsClass,
-	hasDefaultExport,
 	hasMethod,
 	hasProperty,
 	INSTANCE,
 	isDefined,
 	module,
 	STATIC,
-} from "./../../../test/JasmineExtender";
+} from "../../../test/JasmineExtender";
+import { RequestService } from "../../Request";
+import { Response } from "../../Response";
+import { HTTPError } from "../HTTPError";
 import * as Utils from "./../../../Utils";
 
 import * as ForbiddenError from "./ForbiddenError";
-import DefaultExport from "./ForbiddenError";
 
 describe( module( "carbonldp/HTTP/Errors/ClientErrors/ForbiddenError" ), ():void => {
 
@@ -99,11 +97,6 @@ describe( module( "carbonldp/HTTP/Errors/ClientErrors/ForbiddenError" ), ():void
 			expect( ForbiddenError.ForbiddenError.statusCode ).toBe( 403 );
 		} );
 
-	} );
-
-	it( hasDefaultExport( "CarbonLDP.HTTP.Errors.ForbiddenError" ), ():void => {
-		expect( DefaultExport ).toBeDefined();
-		expect( DefaultExport ).toBe( ForbiddenError.ForbiddenError );
 	} );
 
 } );

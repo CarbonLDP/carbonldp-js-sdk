@@ -119,5 +119,3 @@ export const PersistedResource:PersistedResourceFactory = {
 		return persistedResource;
 	},
 };
-
-export default PersistedResource;

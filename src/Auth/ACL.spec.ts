@@ -1,12 +1,13 @@
+import { Document } from "../Document";
+import { Documents } from "../Documents";
+import { Fragment } from "../Fragment";
+import { PersistedDocument } from "../PersistedDocument";
+import { Pointer } from "../Pointer";
 import {
-	clazz,
-	decoratedObject,
 	extendsClass,
-	hasDefaultExport,
 	hasMethod,
 	hasProperty,
 	hasSignature,
-	INSTANCE,
 	interfaze,
 	isDefined,
 	method,
@@ -17,17 +18,10 @@ import {
 	STATIC,
 } from "../test/JasmineExtender";
 import { CS } from "../Vocabularies/CS";
-import { Document } from "./../Document";
-import { Documents } from "../Documents";
-import { Fragment } from "../Fragment";
-import { PersistedDocument } from "../PersistedDocument";
-import { Pointer } from "../Pointer";
 import * as Utils from "./../Utils";
-
 import { ACE } from "./ACE";
 
 import { ACL } from "./ACL";
-import DefaultExport from "./ACL";
 
 describe( module( "carbonldp/Auth/ACL" ), ():void => {
 
@@ -2822,14 +2816,6 @@ describe( module( "carbonldp/Auth/ACL" ), ():void => {
 
 		} );
 
-	} );
-
-	it( hasDefaultExport( "CarbonLDP.Auth.ACL.ACL" ), ():void => {
-		let defaultExport:DefaultExport = <any> {};
-		let ace:ACL;
-
-		ace = defaultExport;
-		expect( ace ).toEqual( jasmine.any( Object ) );
 	} );
 
 } );

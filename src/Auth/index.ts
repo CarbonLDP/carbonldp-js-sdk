@@ -17,7 +17,7 @@ import * as User from "./User";
 import UsernameAndPasswordCredentials from "./UsernameAndPasswordCredentials";
 import UsernameAndPasswordToken from "./UsernameAndPasswordToken";
 import * as Users from "./Users";
-import Context from "../Context";
+import { Context } from "../Context";
 import * as Errors from "../Errors";
 import { FreeResources } from "../FreeResources";
 import { BadResponseError } from "../HTTP/Errors";

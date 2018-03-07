@@ -19,5 +19,3 @@ export const MemberRemovedDetails:MemberRemovedDetailsFactory = {
 	TYPE,
 	SCHEMA,
 };
-
-export default MemberRemovedDetails;

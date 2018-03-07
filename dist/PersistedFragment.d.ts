@@ -17,4 +17,3 @@ export interface PersistedFragmentFactory extends ModelFactory<PersistedFragment
     createFrom<T extends object>(object: T, document: PersistedDocument, id?: string): T & PersistedFragment;
 }
 export declare const PersistedFragment: PersistedFragmentFactory;
-export default PersistedFragment;

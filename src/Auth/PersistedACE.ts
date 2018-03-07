@@ -5,5 +5,3 @@ import { PersistedACL } from "./PersistedACL";
 export interface PersistedACE extends ACE, PersistedFragment {
 	_document:PersistedACL;
 }
-
-export default PersistedACE;

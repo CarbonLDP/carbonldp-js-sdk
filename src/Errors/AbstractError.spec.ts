@@ -1,7 +1,6 @@
 import {
 	clazz,
 	hasConstructor,
-	hasDefaultExport,
 	hasProperty,
 	INSTANCE,
 	isDefined,
@@ -10,7 +9,6 @@ import {
 import * as Utils from "./../Utils";
 
 import * as AbstractError from "./AbstractError";
-import DefaultExport from "./AbstractError";
 
 // TODO: Refactor tests
 describe( module( "carbonldp/Errors/AbstractError" ), function():void {
@@ -57,11 +55,6 @@ describe( module( "carbonldp/Errors/AbstractError" ), function():void {
 			expect( exception.message ).toEqual( "This is the message" );
 		} );
 
-	} );
-
-	it( hasDefaultExport( "CarbonLDP.Errors.AbstractError" ), ():void => {
-		expect( DefaultExport ).toBeDefined();
-		expect( DefaultExport ).toBe( AbstractError.AbstractError );
 	} );
 
 } );

@@ -1,14 +1,13 @@
-import DefaultExport, { AbstractContext } from "./AbstractContext";
+import { AbstractContext } from "./AbstractContext";
+
 import {
 	globalContext,
 	SDKContext
 } from "./SDKContext";
-
 import {
 	clazz,
 	extendsClass,
 	hasConstructor,
-	hasDefaultExport,
 	hasMethod,
 	hasProperty,
 	INSTANCE,
@@ -71,11 +70,6 @@ describe( module( "carbonldp/AbstractContext" ), ():void => {
 			expect( newContext.parentContext ).toBe( context );
 		} );
 
-	} );
-
-	it( hasDefaultExport( "CarbonLDP.AbstractContext.AbstractContext" ), ():void => {
-		expect( DefaultExport ).toBeDefined();
-		expect( DefaultExport ).toBe( AbstractContext );
 	} );
 
 } );

@@ -13,4 +13,3 @@ export interface ErrorResponseFactory extends ModelFactory<ErrorResponse> {
     getMessage(errorResponse: ErrorResponse): string;
 }
 export declare const ErrorResponse: ErrorResponseFactory;
-export default ErrorResponse;

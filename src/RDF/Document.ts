@@ -121,5 +121,3 @@ export class RDFDocumentParser extends JSONLDParser implements Parser<RDFDocumen
 		return super.parse( input ).then( RDFDocument.getDocuments );
 	}
 }
-
-export default RDFDocument;

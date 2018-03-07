@@ -7,4 +7,3 @@ export declare class QueryContextPartial extends QueryContext {
     constructor(document: PersistedDocument, context?: Context);
     getSchemaFor(object: object, path?: string): DigestedObjectSchema;
 }
-export default QueryContextPartial;

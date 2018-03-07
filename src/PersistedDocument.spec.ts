@@ -7,7 +7,7 @@ import { Fragment } from "./Fragment";
 import { RequestOptions } from "./HTTP/Request";
 import { NamedFragment } from "./NamedFragment";
 
-import DefaultExport, { PersistedDocument } from "./PersistedDocument";
+import { PersistedDocument } from "./PersistedDocument";
 
 import { PersistedFragment } from "./PersistedFragment";
 import { PersistedNamedFragment } from "./PersistedNamedFragment";
@@ -15,7 +15,6 @@ import { Pointer } from "./Pointer";
 import { URI } from "./RDF/URI";
 import {
 	extendsClass,
-	hasDefaultExport,
 	hasMethod,
 	hasProperty,
 	hasSignature,
@@ -675,14 +674,6 @@ describe( module( "carbonldp/PersistedDocument" ), ():void => {
 			{ type: "T & CarbonLDP.PersistedDocument.PersistedDocument" }
 		), ():void => {} );
 
-	} );
-
-	it( hasDefaultExport( "CarbonLDP.PersistedDocument.PersistedDocument" ), ():void => {
-		let defaultExport:DefaultExport = <any> {};
-		let defaultTarget:PersistedDocument;
-
-		defaultTarget = defaultExport;
-		expect( defaultTarget ).toEqual( jasmine.any( Object ) );
 	} );
 
 	describe( property(

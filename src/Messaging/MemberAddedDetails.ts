@@ -20,5 +20,3 @@ export const MemberAddedDetails:MemberAddedDetailsFactory = {
 	SCHEMA,
 };
 
-
-export default MemberAddedDetails;

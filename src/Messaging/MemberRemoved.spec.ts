@@ -1,7 +1,6 @@
 import { Pointer } from "../Pointer";
 import {
 	extendsClass,
-	hasDefaultExport,
 	hasProperty,
 	interfaze,
 	isDefined,
@@ -13,7 +12,7 @@ import {
 import { C } from "../Vocabularies/C";
 import { EventMessage } from "./EventMessage";
 
-import DefaultExport, { MemberRemoved } from "./MemberRemoved";
+import { MemberRemoved } from "./MemberRemoved";
 
 import { MemberRemovedDetails } from "./MemberRemovedDetails";
 
@@ -113,11 +112,6 @@ describe( module( "carbonldp/Messaging/MemberRemoved" ), ():void => {
 			} );
 		} );
 
-	} );
-
-	it( hasDefaultExport( "CarbonLDP.Messaging.MemberRemoved.MemberRemoved" ), ():void => {
-		const target:MemberRemoved = {} as DefaultExport;
-		expect( target ).toBeDefined();
 	} );
 
 } );

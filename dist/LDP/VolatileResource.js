@@ -9,6 +9,5 @@ exports.VolatileResource = {
             && object.hasType(exports.VolatileResource.TYPE);
     },
 };
-exports.default = exports.VolatileResource;
 
 //# sourceMappingURL=VolatileResource.js.map

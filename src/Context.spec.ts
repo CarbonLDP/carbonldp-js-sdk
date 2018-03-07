@@ -1,7 +1,5 @@
 import * as Context from "./Context";
-import DefaultExport from "./Context";
 import {
-	hasDefaultExport,
 	hasMethod,
 	hasProperty,
 	hasSignature,
@@ -117,14 +115,6 @@ describe( module( "carbonldp/Context" ), ():void => {
 			]
 		), ():void => {} );
 
-	} );
-
-	it( hasDefaultExport( "CarbonLDP.Context.Context" ), ():void => {
-		let defaultExport:DefaultExport = <any> {};
-		let defaultTarget:Context.Context;
-
-		defaultTarget = defaultExport;
-		expect( defaultTarget ).toEqual( jasmine.any( Object ) );
 	} );
 
 } );

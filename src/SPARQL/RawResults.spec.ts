@@ -1,5 +1,4 @@
 import {
-	hasDefaultExport,
 	hasProperty,
 	interfaze,
 	isDefined,
@@ -10,7 +9,6 @@ import {
 import * as Utils from "./../Utils";
 
 import * as RawResults from "./RawResults";
-import DefaultExport from "./RawResults";
 
 describe( module( "carbonldp/SPARQL/RawResults" ), ():void => {
 
@@ -94,14 +92,6 @@ describe( module( "carbonldp/SPARQL/RawResults" ), ():void => {
 			"If the property is a `literal` and of data type `xsd:string`, this property indicates if it has an specific language."
 		), ():void => {} );
 
-	} );
-
-	it( hasDefaultExport( "CarbonLDP.SPARQL.RawResults.SPARQLRawResults" ), ():void => {
-		let defaultExport:DefaultExport = <any> {};
-		let defaultTarget:RawResults.SPARQLRawResults;
-
-		defaultTarget = defaultExport;
-		expect( defaultTarget ).toEqual( jasmine.any( Object ) );
 	} );
 
 } );

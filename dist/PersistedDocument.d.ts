@@ -89,4 +89,3 @@ export interface PersistedDocumentFactory extends ModelFactory<PersistedDocument
     decorate<T extends object>(object: T, documents: Documents): T & PersistedDocument;
 }
 export declare const PersistedDocument: PersistedDocumentFactory;
-export default PersistedDocument;

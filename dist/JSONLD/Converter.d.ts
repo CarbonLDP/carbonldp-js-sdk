@@ -28,4 +28,3 @@ export declare class JSONLDConverter {
     private getPropertyURINameMap(digestedSchema);
     private compactPropertyLiteral(propertyValues, definition, digestedSchema);
 }
-export default JSONLDConverter;

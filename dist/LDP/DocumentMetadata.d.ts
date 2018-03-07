@@ -18,4 +18,3 @@ export interface DocumentMetadataFactory extends ModelFactory<DocumentMetadata>,
 }
 export declare const SCHEMA: ObjectSchema;
 export declare const DocumentMetadata: DocumentMetadataFactory;
-export default DocumentMetadata;

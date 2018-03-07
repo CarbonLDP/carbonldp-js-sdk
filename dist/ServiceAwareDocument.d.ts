@@ -9,4 +9,3 @@ export interface ServiceAwareDocumentFactory extends ModelDecorator<ServiceAware
     decorate<T extends object>(object: T, documents: Documents): T & ServiceAwareDocument;
 }
 export declare const ServiceAwareDocument: ServiceAwareDocumentFactory;
-export default ServiceAwareDocument;

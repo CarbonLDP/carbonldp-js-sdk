@@ -26,5 +26,3 @@ export const ValidationError:ValidationErrorFactory = {
 	TYPE: C.ValidationError,
 	SCHEMA,
 };
-
-export default ValidationError;

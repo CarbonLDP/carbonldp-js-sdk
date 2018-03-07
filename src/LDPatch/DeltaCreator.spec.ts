@@ -18,7 +18,6 @@ import { Resource } from "../Resource";
 import {
 	clazz,
 	constructor,
-	hasDefaultExport,
 	hasSignature,
 	INSTANCE,
 	method,
@@ -42,11 +41,6 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 	it( "should exists", ():void => {
 		expect( Module ).toBeDefined();
 		expect( Module ).toEqual( jasmine.any( Object ) );
-	} );
-
-	it( hasDefaultExport( "CarbonLDP.LDPatch.DeltaCreator.DeltaCreator" ), ():void => {
-		expect( Module.default ).toBeDefined();
-		expect( Module.default ).toBe( DeltaCreator );
 	} );
 
 	describe( clazz( "CarbonLDP.LDPatch.DeltaCreator.DeltaCreator", "Creator of LDPatch deltas" ), ():void => {

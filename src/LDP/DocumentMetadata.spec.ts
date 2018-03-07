@@ -1,7 +1,6 @@
 import { Resource } from "../Resource";
 import {
 	extendsClass,
-	hasDefaultExport,
 	hasMethod,
 	hasProperty,
 	interfaze,
@@ -15,7 +14,7 @@ import { C } from "../Vocabularies/C";
 import { XSD } from "../Vocabularies/XSD";
 import * as Utils from "./../Utils";
 
-import DefaultExport, { DocumentMetadata } from "./DocumentMetadata";
+import { DocumentMetadata } from "./DocumentMetadata";
 
 describe( module( "carbonldp/LDP/DocumentMetadata" ), ():void => {
 
@@ -204,14 +203,6 @@ describe( module( "carbonldp/LDP/DocumentMetadata" ), ():void => {
 			object.addType( C.DocumentMetadata );
 		} );
 
-	} );
-
-	it( hasDefaultExport( "CarbonLDP.LDP.DocumentMetadata.DocumentMetadata" ), ():void => {
-		let defaultExport:DefaultExport = <any> {};
-		let defaultTarget:DocumentMetadata;
-
-		defaultTarget = defaultExport;
-		expect( defaultTarget ).toEqual( jasmine.any( Object ) );
 	} );
 
 } );

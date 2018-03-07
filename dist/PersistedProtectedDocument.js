@@ -58,6 +58,5 @@ function getACL(requestOptions) {
         return [acl, response];
     });
 }
-exports.default = exports.PersistedProtectedDocument;
 
 //# sourceMappingURL=PersistedProtectedDocument.js.map

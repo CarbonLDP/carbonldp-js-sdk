@@ -47,6 +47,5 @@ exports.ACE = {
         return ace;
     },
 };
-exports.default = exports.ACE;
 
 //# sourceMappingURL=ACE.js.map

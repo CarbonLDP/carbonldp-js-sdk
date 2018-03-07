@@ -12,6 +12,5 @@ var SCHEMA = {
 exports.CarbonMapEntry = {
     SCHEMA: SCHEMA,
 };
-exports.default = exports.CarbonMapEntry;
 
 //# sourceMappingURL=CarbonMapEntry.js.map

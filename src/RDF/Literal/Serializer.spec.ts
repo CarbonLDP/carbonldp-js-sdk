@@ -1,18 +1,14 @@
 import {
-	OBLIGATORY,
-
-	module,
-	interfaze,
-
-	isDefined,
-	hasMethod,
 	extendsClass,
-	hasDefaultExport,
-} from "./../../test/JasmineExtender";
+	hasMethod,
+	interfaze,
+	isDefined,
+	module,
+	OBLIGATORY,
+} from "../../test/JasmineExtender";
 import * as Utils from "./../../Utils";
 
 import * as Serializer from "./Serializer";
-import DefaultExport from "./Serializer";
 
 describe( module(
 	"carbonldp/RDF/Literal/Serializer"
@@ -38,14 +34,6 @@ describe( module(
 			],
 			{ type: "string", description: "The string value of the provided element. This value is the one to be saved in the server, when a document contains a property with its type related to this serializer; view the `CarbonLDP.JSONLD.Converter.literalSerializers` property." }
 		), ():void => {} );
-	} );
-
-	it( hasDefaultExport( "CarbonLDP.RDF.Literal.Serializer.Serializer" ), ():void => {
-		let defaultExport:DefaultExport = <any> {};
-		let defaultTarget:Serializer.Serializer;
-
-		defaultTarget = defaultExport;
-		expect( defaultTarget ).toEqual( jasmine.any( Object ) );
 	} );
 
 } );

@@ -19,5 +19,3 @@ export const ChildCreated:ChildCreatedFactory = {
 	TYPE,
 	SCHEMA,
 };
-
-export default ChildCreated;

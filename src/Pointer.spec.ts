@@ -1,15 +1,14 @@
-import Documents from "./Documents";
+import { Documents } from "./Documents";
 import { IllegalStateError } from "./Errors";
 
 import * as Module from "./Pointer";
-import DefaultExport, {
+import {
 	isPointerResolved,
 	Pointer,
 	resolveStandalonePointer
 } from "./Pointer";
 
 import {
-	hasDefaultExport,
 	hasMethod,
 	hasProperty,
 	hasSignature,
@@ -505,14 +504,6 @@ describe( module( "carbonldp/Pointer" ), ():void => {
 
 		} );
 
-	} );
-
-	it( hasDefaultExport( "CarbonLDP.Pointer.Pointer" ), ():void => {
-		let defaultExport:DefaultExport = <any> {};
-		let defaultTarget:Pointer;
-
-		defaultTarget = defaultExport;
-		expect( defaultTarget ).toEqual( jasmine.any( Object ) );
 	} );
 
 

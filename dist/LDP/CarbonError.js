@@ -20,6 +20,5 @@ exports.CarbonError = {
     TYPE: C_1.C.Error,
     SCHEMA: SCHEMA,
 };
-exports.default = exports.CarbonError;
 
 //# sourceMappingURL=CarbonError.js.map

@@ -75,6 +75,5 @@ exports.PersistedFragment = {
         return fragment;
     },
 };
-exports.default = exports.PersistedFragment;
 
 //# sourceMappingURL=PersistedFragment.js.map

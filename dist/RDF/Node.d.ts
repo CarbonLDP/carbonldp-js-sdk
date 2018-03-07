@@ -25,4 +25,3 @@ export interface RDFNodeFactory {
     getPropertyLanguageMap(propertyValues: RDFNodePropertyValue[]): object | undefined;
 }
 export declare const RDFNode: RDFNodeFactory;
-export default RDFNode;

@@ -1,18 +1,15 @@
 import {
-	INSTANCE,
-
-	module,
 	clazz,
-
-	isDefined,
+	extendsClass,
 	hasProperty,
-	extendsClass, hasDefaultExport,
+	INSTANCE,
+	isDefined,
+	module,
 } from "../test/JasmineExtender";
-import AbstractError from "./AbstractError";
 import * as Utils from "../Utils";
+import { AbstractError } from "./AbstractError";
 
 import * as InvalidJSONLDSyntaxError from "./InvalidJSONLDSyntaxError";
-import DefaultExport from "./InvalidJSONLDSyntaxError";
 
 // TODO: Refactor tests
 describe( module( "carbonldp/Errors/InvalidJSONLDSyntaxError" ), ():void => {
@@ -56,11 +53,6 @@ describe( module( "carbonldp/Errors/InvalidJSONLDSyntaxError" ), ():void => {
 			expect( error.name ).toBe( "InvalidJSONLDSyntaxError" );
 		} );
 
-	} );
-
-	it( hasDefaultExport( "CarbonLDP.Errors.InvalidJSONLDSyntaxError" ), ():void => {
-		expect( DefaultExport ).toBeDefined();
-		expect( DefaultExport ).toBe( InvalidJSONLDSyntaxError.InvalidJSONLDSyntaxError );
 	} );
 
 } );

@@ -1,11 +1,10 @@
 import { NamedFragment } from "./NamedFragment";
 import { PersistedFragment } from "./PersistedFragment";
 
-import DefaultExport, { PersistedNamedFragment } from "./PersistedNamedFragment";
+import { PersistedNamedFragment } from "./PersistedNamedFragment";
 
 import {
 	extendsClass,
-	hasDefaultExport,
 	hasMethod,
 	hasProperty,
 	interfaze,
@@ -61,15 +60,6 @@ describe( module( "carbonldp/PersistedNamedFragment" ), ():void => {
 		), ():void => {} );
 
 	} );
-
-	it( hasDefaultExport( "CarbonLDP.PersistedNamedFragment.PersistedNamedFragment" ), ():void => {
-		let defaultExport:DefaultExport = <any> {};
-		let defaultTarget:PersistedNamedFragment;
-
-		defaultTarget = defaultExport;
-		expect( defaultTarget ).toEqual( jasmine.any( Object ) );
-	} );
-
 
 	describe( property( STATIC, "PersistedNamedFragment", "CarbonLDP.PersistedNamedFragment.PersistedNamedFragmentFactory", "Constant that implements the `CarbonLDP.PersistedNamedFragment.PersistedNamedFragmentFactory` interface." ), ():void => {
 

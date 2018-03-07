@@ -7,4 +7,3 @@ export interface DocumentDeletedFactory {
     SCHEMA: ObjectSchema;
 }
 export declare const DocumentDeleted: DocumentDeletedFactory;
-export default DocumentDeleted;

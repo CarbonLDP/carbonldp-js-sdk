@@ -36,5 +36,3 @@ export const ValidationReport:ValidationReportFactory = {
 	TYPE: SHACL.ValidationReport,
 	SCHEMA,
 };
-
-export default ValidationReport;

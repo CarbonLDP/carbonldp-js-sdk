@@ -1,7 +1,6 @@
 import { VolatileResource } from "../LDP/VolatileResource";
 import {
 	extendsClass,
-	hasDefaultExport,
 	hasProperty,
 	interfaze,
 	module,
@@ -13,7 +12,7 @@ import { C } from "../Vocabularies/C";
 import { XSD } from "../Vocabularies/XSD";
 import * as Utils from "./../Utils";
 
-import DefaultExport, { PlatformMetadata } from "./PlatformMetadata";
+import { PlatformMetadata } from "./PlatformMetadata";
 
 describe( module( "carbonldp/System/PlatformMetadata" ), ():void => {
 
@@ -104,14 +103,6 @@ describe( module( "carbonldp/System/PlatformMetadata" ), ():void => {
 		} );
 
 
-	} );
-
-	it( hasDefaultExport( "CarbonLDP.System.PlatformMetadata.PlatformMetadata" ), ():void => {
-		let defaultExport:DefaultExport = <any> {};
-		let defaultTarget:PlatformMetadata;
-
-		defaultTarget = defaultExport;
-		expect( defaultTarget ).toEqual( jasmine.any( Object ) );
 	} );
 
 } );

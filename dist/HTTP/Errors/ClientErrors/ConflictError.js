@@ -31,6 +31,5 @@ var ConflictError = (function (_super) {
     return ConflictError;
 }(HTTPError_1.HTTPError));
 exports.ConflictError = ConflictError;
-exports.default = ConflictError;
 
 //# sourceMappingURL=ConflictError.js.map

@@ -8,5 +8,3 @@ export class ForbiddenError extends HTTPError {
 
 	get name():string { return name; }
 }
-
-export default ForbiddenError;

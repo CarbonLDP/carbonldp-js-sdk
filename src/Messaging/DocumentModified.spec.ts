@@ -1,7 +1,6 @@
 import { Pointer } from "../Pointer";
 import {
 	extendsClass,
-	hasDefaultExport,
 	hasProperty,
 	interfaze,
 	isDefined,
@@ -13,7 +12,6 @@ import {
 import { C } from "../Vocabularies/C";
 
 import { DocumentModified } from "./DocumentModified";
-import DefaultExport from "./DocumentModified";
 
 import { EventMessage } from "./EventMessage";
 
@@ -98,11 +96,6 @@ describe( module( "carbonldp/Messaging/DocumentModified" ), ():void => {
 			} );
 		} );
 
-	} );
-
-	it( hasDefaultExport( "CarbonLDP.Messaging.DocumentModified.DocumentModified" ), ():void => {
-		const target:DocumentModified = {} as DefaultExport;
-		expect( target ).toBeDefined();
 	} );
 
 } );

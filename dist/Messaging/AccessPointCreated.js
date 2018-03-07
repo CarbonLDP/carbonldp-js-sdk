@@ -7,6 +7,5 @@ exports.AccessPointCreated = {
     TYPE: C_1.C.AccessPointCreated,
     SCHEMA: SCHEMA,
 };
-exports.default = exports.AccessPointCreated;
 
 //# sourceMappingURL=AccessPointCreated.js.map

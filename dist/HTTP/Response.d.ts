@@ -11,4 +11,3 @@ export declare class Response {
     getHeader(name: string): Header;
     getETag(): string;
 }
-export default Response;

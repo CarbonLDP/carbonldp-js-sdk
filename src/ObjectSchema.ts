@@ -254,5 +254,3 @@ export class ObjectSchemaUtils {
 		return definition;
 	}
 }
-
-export default ObjectSchema;

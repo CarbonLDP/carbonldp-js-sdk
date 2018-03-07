@@ -4,7 +4,6 @@ import { HTTPError } from "../HTTPError";
 import {
 	clazz,
 	extendsClass,
-	hasDefaultExport,
 	hasMethod,
 	hasProperty,
 	INSTANCE,
@@ -15,7 +14,6 @@ import {
 import * as Utils from "./../../../Utils";
 
 import * as NotImplementedError from "./NotImplementedError";
-import DefaultExport from "./NotImplementedError";
 
 describe( module( "carbonldp/HTTP/Errors/ServerErrors/NotImplementedError" ), ():void => {
 
@@ -99,11 +97,6 @@ describe( module( "carbonldp/HTTP/Errors/ServerErrors/NotImplementedError" ), ()
 			expect( NotImplementedError.NotImplementedError.statusCode ).toBe( 501 );
 		} );
 
-	} );
-
-	it( hasDefaultExport( "CarbonLDP.HTTP.Errors.NotImplementedError" ), ():void => {
-		expect( DefaultExport ).toBeDefined();
-		expect( DefaultExport ).toBe( NotImplementedError.NotImplementedError );
 	} );
 
 } );

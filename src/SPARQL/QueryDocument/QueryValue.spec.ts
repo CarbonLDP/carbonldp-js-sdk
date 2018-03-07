@@ -8,7 +8,6 @@ import { IllegalArgumentError } from "../../Errors";
 import {
 	clazz,
 	constructor,
-	hasDefaultExport,
 	hasSignature,
 	INSTANCE,
 	method,
@@ -18,18 +17,13 @@ import { XSD } from "../../Vocabularies/XSD";
 import { QueryContext } from "./QueryContext";
 
 import * as Module from "./QueryValue";
-import DefaultValue, { QueryValue } from "./QueryValue";
+import { QueryValue } from "./QueryValue";
 
 describe( module( "carbonldp/SPARQL/QueryDocument/QueryValue" ), ():void => {
 
 	it( "should exists", ():void => {
 		expect( Module ).toBeDefined();
 		expect( Module ).toEqual( jasmine.any( Object ) );
-	} );
-
-	it( hasDefaultExport( "CarbonLDP.SPARQL.QueryDocument.QueryValue.QueryValue" ), ():void => {
-		expect( DefaultValue ).toBeDefined();
-		expect( DefaultValue ).toBe( QueryValue );
 	} );
 
 	describe( clazz( "CarbonLDP.SPARQL.QueryDocument.QueryValue.QueryValue", "Class that represents a property in the query" ), ():void => {

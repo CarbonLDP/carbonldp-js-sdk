@@ -33,4 +33,3 @@ export interface PersistedACLFactory extends ModelDecorator<PersistedACL> {
     decorate<T extends object>(object: T, documents: Documents): T & PersistedACL;
 }
 export declare const PersistedACL: PersistedACLFactory;
-export default PersistedACL;

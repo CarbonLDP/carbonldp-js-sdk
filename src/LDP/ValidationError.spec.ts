@@ -1,7 +1,6 @@
 import { Resource } from "../Resource";
 import {
 	extendsClass,
-	hasDefaultExport,
 	hasProperty,
 	interfaze,
 	module,
@@ -11,7 +10,7 @@ import {
 } from "../test/JasmineExtender";
 import { C } from "../Vocabularies/C";
 
-import DefaultExport, { ValidationError } from "./ValidationError";
+import { ValidationError } from "./ValidationError";
 
 describe( module( "carbonldp/LDP/ValidationError" ), ():void => {
 
@@ -100,11 +99,6 @@ describe( module( "carbonldp/LDP/ValidationError" ), ():void => {
 			} );
 		} );
 
-	} );
-
-	it( hasDefaultExport( "CarbonLDP.LDP.ValidationError.ValidationError" ), ():void => {
-		const target:ValidationError = {} as DefaultExport;
-		expect( target ).toBeDefined();
 	} );
 
 } );

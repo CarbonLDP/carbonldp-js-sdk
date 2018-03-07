@@ -16,8 +16,8 @@ import {
 	hasProperty,
 	hasDefaultExport,
 } from "./../test/JasmineExtender";
-import AbstractContext from "../AbstractContext";
-import { Documents } from "./../Documents";
+import { AbstractContext } from "../AbstractContext";
+import { Documents } from "../Documents";
 import { Response } from "../HTTP/Response";
 import * as Utils from "./../Utils";
 import * as PersistedUser from "./PersistedUser";

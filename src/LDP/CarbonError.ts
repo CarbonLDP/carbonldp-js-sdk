@@ -37,5 +37,3 @@ export const CarbonError:CarbonErrorFactory = {
 	SCHEMA,
 };
 
-
-export default CarbonError;

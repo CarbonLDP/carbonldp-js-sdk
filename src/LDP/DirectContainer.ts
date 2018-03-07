@@ -64,5 +64,3 @@ export const DirectContainer:DirectContainerFactory = {
 	},
 };
 
-
-export default DirectContainer;

@@ -2,7 +2,6 @@ import {
 	clazz,
 	extendsClass,
 	hasConstructor,
-	hasDefaultExport,
 	hasProperty,
 	INSTANCE,
 	isDefined,
@@ -10,10 +9,9 @@ import {
 } from "./../test/JasmineExtender";
 
 import * as Utils from "./../Utils";
-import AbstractError from "./AbstractError";
+import { AbstractError } from "./AbstractError";
 
 import * as IllegalStateError from "./IllegalStateError";
-import DefaultExport from "./IllegalStateError";
 
 // TODO: Refactor tests
 describe( module( "carbonldp/Errors/IllegalStateError" ), function():void {
@@ -66,11 +64,6 @@ describe( module( "carbonldp/Errors/IllegalStateError" ), function():void {
 			expect( error.name ).toBe( "IllegalStateError" );
 		} );
 
-	} );
-
-	it( hasDefaultExport( "CarbonLDP.Errors.IllegalStateError" ), ():void => {
-		expect( DefaultExport ).toBeDefined();
-		expect( DefaultExport ).toBe( IllegalStateError.IllegalStateError );
 	} );
 
 } );

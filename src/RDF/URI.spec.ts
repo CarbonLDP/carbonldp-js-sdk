@@ -4,7 +4,6 @@ import {
 	ObjectSchemaDigester,
 } from "../ObjectSchema";
 import {
-	hasDefaultExport,
 	hasMethod,
 	hasSignature,
 	interfaze,
@@ -18,7 +17,6 @@ import {
 import * as Utils from "./../Utils";
 
 import { URI } from "./URI";
-import DefaultExport from "./URI";
 
 describe( module( "carbonldp/RDF/URI" ), ():void => {
 
@@ -636,11 +634,6 @@ describe( module( "carbonldp/RDF/URI" ), ():void => {
 
 		} );
 
-	} );
-
-	it( hasDefaultExport( "CarbonLDP.RDF.URI.Class" ), ():void => {
-		expect( DefaultExport ).toBeDefined();
-		expect( DefaultExport ).toBe( URI );
 	} );
 
 } );

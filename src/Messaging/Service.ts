@@ -6,7 +6,7 @@ import { CarbonLDP } from "../CarbonLDP";
 import { IllegalStateError } from "../Errors";
 import { FreeResources } from "../FreeResources";
 import { JSONLDParser } from "../JSONLD/Parser";
-import RDFNode from "../RDF/Node";
+import { RDFNode } from "../RDF/Node";
 import { UUIDUtils } from "../Utils";
 import { EventMessage } from "./EventMessage";
 import { MessagingOptions } from "./Options";
@@ -153,5 +153,3 @@ export class MessagingService {
 	}
 
 }
-
-export default MessagingService;

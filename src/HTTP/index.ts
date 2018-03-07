@@ -5,7 +5,7 @@ import * as JSONParser from "./JSONParser";
 import * as Parser from "./Parser";
 import * as Request from "./Request";
 import * as Response from "./Response";
-import StatusCode from "./StatusCode";
+import { StatusCode } from "./StatusCode";
 import * as StringParser from "./StringParser";
 
 export {

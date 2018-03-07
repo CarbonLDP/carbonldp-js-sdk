@@ -10,4 +10,3 @@ export declare class QueryValue {
     getToken(): LiteralToken;
     toString(): string;
 }
-export default QueryValue;

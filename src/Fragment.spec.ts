@@ -1,8 +1,7 @@
 import { Document } from "./Document";
-import DefaultExport, { Fragment } from "./Fragment";
+import { Fragment } from "./Fragment";
 
 import {
-	hasDefaultExport,
 	hasMethod,
 	hasProperty,
 	interfaze,
@@ -83,14 +82,6 @@ describe( module( "carbonldp/Fragment" ), ():void => {
 			{ type: "T & CarbonLDP.Fragment.Fragment" }
 		), ():void => {} );
 
-	} );
-
-	it( hasDefaultExport( "CarbonLDP.Fragment.Fragment" ), ():void => {
-		let defaultExport:DefaultExport = <any> {};
-		let defaultTarget:Fragment;
-
-		defaultTarget = defaultExport;
-		expect( defaultTarget ).toEqual( jasmine.any( Object ) );
 	} );
 
 	describe( hasProperty( STATIC, "Fragment", "CarbonLDP.Fragment.FragmentFactory", "Constant that implements the `CarbonLDP.Fragment.FragmentFactory` interface" ), ():void => {

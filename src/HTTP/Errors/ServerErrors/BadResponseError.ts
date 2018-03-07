@@ -8,5 +8,3 @@ export class BadResponseError extends HTTPError {
 
 	get name():string { return name; }
 }
-
-export default BadResponseError;

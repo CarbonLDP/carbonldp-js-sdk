@@ -32,5 +32,3 @@ export const PlatformMetadata:PlatformMetadataFactory = {
 	SCHEMA,
 };
 
-
-export default PlatformMetadata;
