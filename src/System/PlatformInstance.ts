@@ -1,10 +1,11 @@
 import { VolatileResource } from "../LDP/VolatileResource";
 import { ObjectSchema } from "../ObjectSchema";
+import { PersistedFragment } from "../PersistedFragment";
 import { C } from "../Vocabularies/C";
 import { XSD } from "../Vocabularies/XSD";
 
 
-export interface PlatformInstance extends VolatileResource {
+export interface PlatformInstance extends VolatileResource, PersistedFragment {
 	buildDate:Date;
 	version:string;
 }

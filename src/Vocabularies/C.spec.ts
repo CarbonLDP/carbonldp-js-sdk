@@ -16,7 +16,7 @@ describe( module( "carbonldp/Vocabularies/C" ), ():void => {
 		} );
 
 		it( "should test all exported IRIs", ():void => {
-			expect( Object.keys( C ).length ).toBe( 61 );
+			expect( Object.keys( C ).length ).toBe( 62 );
 		} );
 
 		it( hasProperty(
@@ -497,6 +497,15 @@ describe( module( "carbonldp/Vocabularies/C" ), ():void => {
 		), ():void => {
 			expect( C.httpStatusCode ).toEqual( jasmine.any( String ) );
 			expect( C.httpStatusCode ).toBe( "https://carbonldp.com/ns/v1/platform#httpStatusCode" );
+		} );
+
+		it( hasProperty(
+			INSTANCE,
+			"instance",
+			"string"
+		), ():void => {
+			expect( C.instance ).toEqual( jasmine.any( String ) );
+			expect( C.instance ).toBe( "https://carbonldp.com/ns/v1/platform#instance" );
 		} );
 
 		it( hasProperty(

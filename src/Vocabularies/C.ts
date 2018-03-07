@@ -53,6 +53,7 @@ export namespace C {
 	export const errorParameters:string = namespace + "errorParameters";
 	export const eTag:string = namespace + "eTag";
 	export const httpStatusCode:string = namespace + "httpStatusCode";
+	export const instance:string = namespace + "instance";
 	export const mediaType:string = namespace + "mediaType";
 	export const member:string = namespace + "member";
 	export const modified:string = namespace + "modified";
