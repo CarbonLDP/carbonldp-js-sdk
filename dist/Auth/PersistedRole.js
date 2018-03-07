@@ -8,7 +8,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
 }
 Object.defineProperty(exports, "__esModule", { value: true });
 var Errors = __importStar(require("../Errors"));
-var PersistedProtectedDocument_1 = require("./../PersistedProtectedDocument");
+var PersistedProtectedDocument_1 = require("../PersistedProtectedDocument");
 var Utils = __importStar(require("./../Utils"));
 var Factory = (function () {
     function Factory() {
