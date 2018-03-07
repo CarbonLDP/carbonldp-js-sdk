@@ -133,7 +133,7 @@ export class Class {
 		this._authenticatedUser = null;
 	}
 
-	createTicket( uri:string, requestOptions:RequestOptions = {} ):Promise<[ Ticket.Class, Response ]> {
+	createTicket( uri:string, requestOptions:RequestOptions = {} ):Promise<Ticket.Class> {
 		let resourceURI:string = this.context.resolve( uri );
 
 		let freeResources:FreeResources = FreeResources.create( this.context.documents );
@@ -151,7 +151,7 @@ export class Class {
 			return RequestService.post( containerURI, body, requestOptions, new JSONLDParser() )
 				.catch( response => this.context.documents._parseErrorResponse( response ) );
 
-		} ).then<[ Ticket.Class, Response ]>( ( [ expandedResult, response ]:[ any, Response ] ) => {
+		} ).then( ( [ expandedResult, response ]:[ any, Response ] ) => {
 			let freeNodes:RDFNode[] = RDFNode.getFreeNodes( expandedResult );
 
 			let ticketNodes:RDFNode[] = freeNodes.filter( freeNode => RDFNode.hasType( freeNode, Ticket.RDF_CLASS ) );
@@ -166,14 +166,14 @@ export class Class {
 
 			this.context.documents.jsonldConverter.compact( expandedTicket, ticket, digestedSchema, this.context.documents );
 
-			return [ ticket, response ];
+			return ticket;
 		} );
 	}
 
 	getAuthenticatedURL( uri:string, requestOptions?:RequestOptions ):Promise<string> {
 		let resourceURI:string = this.context.resolve( uri );
 
-		return this.createTicket( resourceURI, requestOptions ).then( ( [ ticket, response ]:[ Ticket.Class, Response ] ) => {
+		return this.createTicket( resourceURI, requestOptions ).then( ( ticket:Ticket.Class ) => {
 			resourceURI += URI.hasQuery( resourceURI ) ? "&" : "?";
 			resourceURI += `ticket=${ ticket.ticketKey }`;
 

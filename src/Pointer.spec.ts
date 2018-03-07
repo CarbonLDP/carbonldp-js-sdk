@@ -66,7 +66,7 @@ describe( module( "carbonldp/Pointer" ), ():void => {
 			"resolve",
 			[ "T" ],
 			"Resolves the pointer. This function throw an Error if it has no been configured by another decorator.",
-			{ type: "Promise<[ T & CarbonLDP.PersistedDocument.PersistedDocument, CarbonLDP.HTTP.Response.Response ]>" }
+			{ type: "Promise<T & CarbonLDP.PersistedDocument.PersistedDocument>" }
 		), ():void => {} );
 
 	} );

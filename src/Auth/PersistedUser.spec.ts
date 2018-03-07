@@ -75,14 +75,14 @@ describe( module( "carbonldp/Auth/PersistedUser" ), ():void => {
 			OBLIGATORY,
 			"enableCredentials",
 			"Activate the account credentials of the user.",
-			{ type: "Promise<[ CarbonLDP.Auth.PersistedUser.Class, CarbonLDP.HTTP.Response.Response ]>" }
+			{ type: "Promise<CarbonLDP.Auth.PersistedUser.Class>" }
 		), ():void => {} );
 
 		it( hasMethod(
 			OBLIGATORY,
 			"disableCredentials",
 			"Deactivate the account credentials of the user.",
-			{ type: "Promise<[ CarbonLDP.Auth.PersistedUser.Class, CarbonLDP.HTTP.Response.Response ]>" }
+			{ type: "Promise<CarbonLDP.Auth.PersistedUser.Class>" }
 		), ():void => {} );
 
 	} );
@@ -242,7 +242,7 @@ describe( module( "carbonldp/Auth/PersistedUser" ), ():void => {
 				INSTANCE,
 				"enableCredentials",
 				"Activate the account of the user.",
-				{ type: "Promise<[ CarbonLDP.Auth.PersistedUser.Class, CarbonLDP.HTTP.Response.Response[] ]>" }
+				{ type: "Promise<CarbonLDP.Auth.PersistedUser.Class>" }
 			), ( done:DoneFn ):void => {
 				const promises:Promise<void>[] = [];
 
@@ -301,7 +301,7 @@ describe( module( "carbonldp/Auth/PersistedUser" ), ():void => {
 				INSTANCE,
 				"disableCredentials",
 				"Deactivate the account of the user.",
-				{ type: "Promise<[ CarbonLDP.Auth.PersistedUser.Class, CarbonLDP.HTTP.Response.Response[] ]>" }
+				{ type: "Promise<CarbonLDP.Auth.PersistedUser.Class>" }
 			), ( done:DoneFn ):void => {
 				const promises:Promise<void>[] = [];
 

@@ -93,7 +93,7 @@ describe( module( "carbonldp/Auth/Roles" ), ():void => {
 					{ name: "slug", type: "string", optional: true, description: "The slug where the role will be persisted." },
 					{ name: "requestOptions", type: "CarbonLDP.HTTP.Request.RequestOptions", optional: true, description: "The slug where the role will be persisted." },
 				],
-				{ type: "Promise<[ T & CarbonLDP.Auth.PersistedRole.Class, CarbonLDP.HTTP.Response.Response ]>" }
+				{ type: "Promise<T & CarbonLDP.Auth.PersistedRole.Class>" }
 			), ( done:{ ():void, fail:() => void } ):void => {
 				expect( roles.createChild ).toBeDefined();
 				expect( Utils.isFunction( roles.createChild ) ).toBe( true );
@@ -155,7 +155,7 @@ describe( module( "carbonldp/Auth/Roles" ), ():void => {
 					{ name: "role", type: "T", description: "The appRole that wants to persist." },
 					{ name: "requestOptions", type: "CarbonLDP.HTTP.Request.RequestOptions", optional: true, description: "The slug where the role will be persisted." },
 				],
-				{ type: "Promise<[ T & CarbonLDP.Auth.PersistedRole.Class, CarbonLDP.HTTP.Response.Response ]>" }
+				{ type: "Promise<T & CarbonLDP.Auth.PersistedRole.Class>" }
 			), ( done:{ ():void, fail:() => void } ):void => {
 				expect( roles.createChild ).toBeDefined();
 				expect( Utils.isFunction( roles.createChild ) ).toBe( true );
@@ -220,7 +220,7 @@ describe( module( "carbonldp/Auth/Roles" ), ():void => {
 				{ name: "roleURI", type: "string", description: "The URI of the role to retrieve." },
 				{ name: "requestOptions", type: "CarbonLDP.HTTP.Request.RequestOptions", optional: true },
 			],
-			{ type: "Promise<[ T & CarbonLDP.PersistedRole.Class, CarbonLDP.HTTP.Response.Response ]>" }
+			{ type: "Promise<T & CarbonLDP.PersistedRole.Class>" }
 		), ( done:{ ():void, fail:() => void } ):void => {
 			expect( roles.get ).toBeDefined();
 			expect( Utils.isFunction( roles.get ) );
@@ -417,8 +417,7 @@ describe( module( "carbonldp/Auth/Roles" ), ():void => {
 					{ name: "roleURI", type: "string", description: "The URI of the role to look for its users." },
 					{ name: "requestOptions", type: "CarbonLDP.HTTP.Request.RequestOptions", optional: true },
 				],
-				// TODO: Change to `PersistedUser`
-				{ type: "Promise<[ (T & CarbonLDP.PersistedDocument.PersistedDocument)[], CarbonLDP.HTTP.Response.Response ]>" }
+				{ type: "Promise<(T & CarbonLDP.Auth.PersistedUser.Class)[]>" }
 			), ( done:{ ():void, fail:() => void } ):void => {
 				let spies:any = {
 					success: ( [ pointers, response ]:[ Pointer[], Response ] ):void => {
@@ -479,7 +478,7 @@ describe( module( "carbonldp/Auth/Roles" ), ():void => {
 				{ name: "user", type: "string | CarbonLDP.Pointer.Pointer", description: "The user that wants to add to the role." },
 				{ name: "requestOptions", type: "CarbonLDP.HTTP.Request.RequestOptions", optional: true },
 			],
-			{ type: "Promise<CarbonLDP.HTTP.Response.Response>" }
+			{ type: "Promise<void>" }
 		), ():void => {
 			expect( roles.addUser ).toBeDefined();
 			expect( Utils.isFunction( roles.addUser ) );
@@ -505,7 +504,7 @@ describe( module( "carbonldp/Auth/Roles" ), ():void => {
 				{ name: "users", type: "(string | CarbonLDP.Pointer.Pointer)[]", description: "An array with strings or Pointers that refers to the users that wants to add to the role." },
 				{ name: "requestOptions", type: "CarbonLDP.HTTP.Request.RequestOptions", optional: true },
 			],
-			{ type: "Promise<CarbonLDP.HTTP.Response.Response>" }
+			{ type: "Promise<void>" }
 		), ( done:{ ():void, fail:() => void } ):void => {
 			expect( roles.addUsers ).toBeDefined();
 			expect( Utils.isFunction( roles.addUsers ) );
@@ -580,7 +579,7 @@ describe( module( "carbonldp/Auth/Roles" ), ():void => {
 				{ name: "user", type: "string | CarbonLDP.Pointer.Pointer", description: "The user that wants to be removed from the role." },
 				{ name: "requestOptions", type: "CarbonLDP.HTTP.Request.RequestOptions", optional: true },
 			],
-			{ type: "Promise<CarbonLDP.HTTP.Response.Response>" }
+			{ type: "Promise<void>" }
 		), ():void => {
 			expect( roles.removeUser ).toBeDefined();
 			expect( Utils.isFunction( roles.removeUser ) );
@@ -606,7 +605,7 @@ describe( module( "carbonldp/Auth/Roles" ), ():void => {
 				{ name: "users", type: "(string | CarbonLDP.Pointer.Pointer)[]", description: "An array with strings or Pointers that refers to the users to be removed from the role." },
 				{ name: "requestOptions", type: "CarbonLDP.HTTP.Request.RequestOptions", optional: true },
 			],
-			{ type: "Promise<CarbonLDP.HTTP.Response.Response>" }
+			{ type: "Promise<void>" }
 		), ( done:{ ():void, fail:() => void } ):void => {
 			expect( roles.removeUsers ).toBeDefined();
 			expect( Utils.isFunction( roles.removeUsers ) );
