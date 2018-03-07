@@ -3895,7 +3895,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 							expect( sendSpy ).toHaveBeenCalledWith(
 								"https://example.com/resource/",
-								"SELECT ?child WHERE { " +
+								"SELECT DISTINCT ?child WHERE { " +
 								"" + "<https://example.com/resource/> <http://www.w3.org/ns/ldp#contains> ?child " +
 								"}",
 
@@ -4033,7 +4033,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 							expect( sendSpy ).toHaveBeenCalledWith(
 								"https://example.com/resource/",
-								"SELECT ?child WHERE { " +
+								"SELECT DISTINCT ?child WHERE { " +
 								"" + "<https://example.com/resource/> <http://www.w3.org/ns/ldp#contains> ?child " +
 								"}",
 
@@ -4244,7 +4244,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 							" BIND(BNODE() AS ?metadata)." +
 
 							" {" +
-							"" + " SELECT ?child WHERE {" +
+							"" + " SELECT DISTINCT ?child WHERE {" +
 							"" + "" + " <https://example.com/resource/> <http://www.w3.org/ns/ldp#contains> ?child." +
 							"" + "" + " OPTIONAL { ?child schema:property-2 ?child__property2 }" +
 							"" + " }" +
@@ -4331,7 +4331,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								" BIND(BNODE() AS ?metadata)." +
 
 								" {" +
-								"" + " SELECT ?child WHERE {" +
+								"" + " SELECT DISTINCT ?child WHERE {" +
 								"" + "" + " <https://example.com/resource/> <http://www.w3.org/ns/ldp#contains> ?child" +
 								"" + " }" +
 								" }." +
@@ -4402,7 +4402,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								" BIND(BNODE() AS ?metadata)." +
 
 								" {" +
-								"" + " SELECT ?child WHERE {" +
+								"" + " SELECT DISTINCT ?child WHERE {" +
 								"" + "" + " <https://example.com/resource/> <http://www.w3.org/ns/ldp#contains> ?child." +
 								"" + "" + " OPTIONAL { ?child schema:property-2 ?child__property2 }" +
 								"" + " }" +
@@ -4536,7 +4536,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								)
 
 								.addPattern( new BindToken( "BNODE()", variableHelper( "metadata" ) ) )
-								.addPattern( new SelectToken()
+								.addPattern( new SelectToken( "DISTINCT" )
 									.addVariable( variableHelper( "child" ) )
 									.addPattern( new SubjectToken( new IRIToken( "https://example.com/resource/" ) )
 										.addPredicate( new PredicateToken( new IRIToken( NS.LDP.Predicate.contains ) )
@@ -5623,7 +5623,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 							" BIND(BNODE() AS ?metadata)." +
 
 							" {" +
-							"" + " SELECT ?child WHERE {" +
+							"" + " SELECT DISTINCT ?child WHERE {" +
 							"" + "" + " <https://example.com/resource/> <http://www.w3.org/ns/ldp#contains> ?child." +
 							"" + "" + " OPTIONAL { ?child <https://schema.org/property-2> ?child__property2 }" +
 							"" + " }" +
@@ -6850,7 +6850,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 							expect( sendSpy ).toHaveBeenCalledWith(
 								"https://example.com/resource/",
 
-								"SELECT ?member WHERE { " +
+								"SELECT DISTINCT ?member WHERE { " +
 								"" + "<https://example.com/resource/> <http://www.w3.org/ns/ldp#membershipResource> ?membershipResource; " +
 								"" + "" + "<http://www.w3.org/ns/ldp#hasMemberRelation> ?hasMemberRelation. " +
 								"" + "?membershipResource ?hasMemberRelation ?member " +
@@ -6992,7 +6992,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 							expect( sendSpy ).toHaveBeenCalledWith(
 								"https://example.com/resource/",
 
-								"SELECT ?member WHERE { " +
+								"SELECT DISTINCT ?member WHERE { " +
 								"" + "<https://example.com/resource/> <http://www.w3.org/ns/ldp#membershipResource> ?membershipResource; " +
 								"" + "" + "<http://www.w3.org/ns/ldp#hasMemberRelation> ?hasMemberRelation. " +
 								"" + "?membershipResource ?hasMemberRelation ?member " +
@@ -7205,7 +7205,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 							" BIND(BNODE() AS ?metadata)." +
 
 							" {" +
-							"" + " SELECT ?member WHERE {" +
+							"" + " SELECT DISTINCT ?member WHERE {" +
 							"" + "" + " <https://example.com/resource/> <http://www.w3.org/ns/ldp#membershipResource> ?membershipResource;" +
 							"" + "" + "" + " <http://www.w3.org/ns/ldp#hasMemberRelation> ?hasMemberRelation." +
 							"" + "" + " ?membershipResource ?hasMemberRelation ?member." +
@@ -7294,7 +7294,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								" BIND(BNODE() AS ?metadata)." +
 
 								" {" +
-								"" + " SELECT ?member WHERE {" +
+								"" + " SELECT DISTINCT ?member WHERE {" +
 								"" + "" + " <https://example.com/resource/> <http://www.w3.org/ns/ldp#membershipResource> ?membershipResource;" +
 								"" + "" + "" + " <http://www.w3.org/ns/ldp#hasMemberRelation> ?hasMemberRelation." +
 								"" + "" + " ?membershipResource ?hasMemberRelation ?member" +
@@ -7367,7 +7367,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								" BIND(BNODE() AS ?metadata)." +
 
 								" {" +
-								"" + " SELECT ?member WHERE {" +
+								"" + " SELECT DISTINCT ?member WHERE {" +
 								"" + "" + " <https://example.com/resource/> <http://www.w3.org/ns/ldp#membershipResource> ?membershipResource;" +
 								"" + "" + "" + " <http://www.w3.org/ns/ldp#hasMemberRelation> ?hasMemberRelation." +
 								"" + "" + " ?membershipResource ?hasMemberRelation ?member." +
@@ -7503,7 +7503,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								)
 
 								.addPattern( new BindToken( "BNODE()", variableHelper( "metadata" ) ) )
-								.addPattern( new SelectToken()
+								.addPattern( new SelectToken( "DISTINCT" )
 									.addVariable( variableHelper( "member" ) )
 									.addPattern( new SubjectToken( new IRIToken( "https://example.com/resource/" ) )
 										.addPredicate( new PredicateToken( new IRIToken( NS.LDP.Predicate.membershipResource ) )
@@ -8598,7 +8598,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 							" BIND(BNODE() AS ?metadata)." +
 
 							" {" +
-							"" + " SELECT ?member WHERE {" +
+							"" + " SELECT DISTINCT ?member WHERE {" +
 							"" + "" + " <https://example.com/resource/> <http://www.w3.org/ns/ldp#membershipResource> ?membershipResource;" +
 							"" + "" + "" + " <http://www.w3.org/ns/ldp#hasMemberRelation> ?hasMemberRelation." +
 							"" + "" + " ?membershipResource ?hasMemberRelation ?member." +

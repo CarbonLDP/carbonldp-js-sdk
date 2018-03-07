@@ -291,7 +291,7 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 				.addProperty( "child" )
 				.setOptional( false );
 
-			const selectChildren:SelectToken = new SelectToken()
+			const selectChildren:SelectToken = new SelectToken( "DISTINCT" )
 				.addVariable( childrenProperty.variable )
 				.addPattern( new SubjectToken( queryContext.compactIRI( parentURI ) )
 					.addPredicate( new PredicateToken( queryContext.compactIRI( NS.LDP.Predicate.contains ) )
@@ -381,7 +381,7 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 
 			const membershipResource:VariableToken = queryContext.getVariable( "membershipResource" );
 			const hasMemberRelation:VariableToken = queryContext.getVariable( "hasMemberRelation" );
-			const selectMembers:SelectToken = new SelectToken()
+			const selectMembers:SelectToken = new SelectToken( "DISTINCT" )
 				.addVariable( membersProperty.variable )
 				.addPattern( new SubjectToken( queryContext.compactIRI( uri ) )
 					.addPredicate( new PredicateToken( queryContext.compactIRI( NS.LDP.Predicate.membershipResource ) )
@@ -1087,7 +1087,7 @@ export class Class implements Pointer.Library, Pointer.Validator, ObjectSchema.R
 
 	private executeSelectPatterns( uri:string, requestOptions:HTTP.Request.Options, queryContext:QueryContext.Class, targetName:string, selectPatterns:PatternToken[] ):Promise<[ PersistedDocument.Class[], HTTP.Response.Class ]> {
 		const targetVar:VariableToken = queryContext.getVariable( targetName );
-		const select:SelectToken = new SelectToken()
+		const select:SelectToken = new SelectToken( "DISTINCT" )
 			.addVariable( targetVar )
 			.addPattern( ...selectPatterns )
 		;
