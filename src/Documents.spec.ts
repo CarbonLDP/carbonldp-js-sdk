@@ -734,10 +734,12 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				// First failed request
 				spySend.and.returnValue( Promise.reject( new Response( {} as any, "A error in the GET request." ) ) );
 				documents.get( "resource/" )
-					.then( () => {
+					.then<PersistedDocument>( () => {
 						done.fail( "Should not have been resolved." );
+
+						return null;
 					} )
-					.catch( ( error:Error ) => {
+					.catch<PersistedDocument>( ( error:Error ) => {
 						expect( error ).toEqual( new Error( "A error in the GET request." ) );
 
 						// Second correct request
@@ -750,12 +752,13 @@ describe( module( "carbonldp/Documents" ), ():void => {
 								},
 							} ),
 						] ) );
+
 						return documents.get( "resource/" );
 					} )
-					.then( ( responseData ) => {
-						expect( responseData ).toBeDefined();
-						expect( responseData[ 0 ] ).toBeDefined();
-						expect( responseData[ 0 ][ "id" ] ).toBe( "http://example.com/resource/" );
+					.then( ( document ) => {
+						expect( document ).toBeDefined();
+						expect( document.id ).toBe( "http://example.com/resource/" );
+
 						done();
 					} )
 					.catch( error => {
@@ -2182,22 +2185,9 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				let context:MockedContext = new MockedContext();
 				let documents:Documents = context.documents;
 
-				let spies:any = {
-					exists: ( [ exists, response ]:[ boolean, Response ] ):void => {
-						expect( exists ).toBe( true );
-						expect( response instanceof Response ).toBe( true );
-					},
-					notExists: ( [ exists, response ]:[ boolean, Response ] ):void => {
-						expect( exists ).toBe( false );
-						expect( response instanceof Response ).toBe( true );
-					},
-					fail: ( error:HTTPError ):void => {
-						expect( error instanceof HTTPError ).toBe( true );
-					},
-				};
-				let spyExists:jasmine.Spy = spyOn( spies, "exists" ).and.callThrough();
-				let spyNotExists:jasmine.Spy = spyOn( spies, "notExists" ).and.callThrough();
-				let spyFail:jasmine.Spy = spyOn( spies, "fail" ).and.callThrough();
+				let spyExists:jasmine.Spy = jasmine.createSpy( "exists" );
+				let spyNotExists:jasmine.Spy = jasmine.createSpy( "notExists" );
+				let spyFail:jasmine.Spy = jasmine.createSpy( "fail" );
 
 				jasmine.Ajax.stubRequest( "http://example.com/resource/exists/", null, "HEAD" ).andReturn( {
 					status: 200,
@@ -2213,20 +2203,26 @@ describe( module( "carbonldp/Documents" ), ():void => {
 
 				promise = documents.exists( "http://example.com/resource/exists/" );
 				expect( promise instanceof Promise ).toBe( true );
-				promises.push( promise.then( spies.exists ) );
+				promises.push( promise.then( spyExists ) );
 
 				promise = documents.exists( "http://example.com/resource/not-exists/" );
 				expect( promise instanceof Promise ).toBe( true );
-				promises.push( promise.then( spies.notExists ) );
+				promises.push( promise.then( spyNotExists ) );
 
 				promise = documents.exists( "http://example.com/resource/error/" );
 				expect( promise instanceof Promise ).toBe( true );
-				promises.push( promise.catch( spies.fail ) );
+				promises.push( promise.catch( spyFail ) );
 
 				Promise.all( promises ).then( ():void => {
 					expect( spyExists ).toHaveBeenCalledTimes( 1 );
+					expect( spyExists ).toHaveBeenCalledWith( true );
+
 					expect( spyNotExists ).toHaveBeenCalledTimes( 1 );
+					expect( spyNotExists ).toHaveBeenCalledWith( false );
+
 					expect( spyFail ).toHaveBeenCalledTimes( 1 );
+					expect( spyFail ).toHaveBeenCalledWith( jasmine.any( HTTPError ) );
+
 					done();
 				}, done.fail );
 			} );
@@ -2525,7 +2521,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 
 				it( "should convert plain object into document before request", ( done:DoneFn ):void => {
 					const spy:jasmine.Spy = spyOn( Document, "createFrom" );
-					spyOn( documents, "persistDocument" as any ).and.returnValue( Promise.resolve( [] ) );
+					spyOn( documents, "_persistDocument" as any ).and.returnValue( Promise.resolve( [] ) );
 
 					const childObject:object = {};
 					documents
@@ -2797,7 +2793,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 
 				it( "should convert plain objects into documents before requests", ( done:DoneFn ):void => {
 					const spy:jasmine.Spy = spyOn( Document, "createFrom" );
-					spyOn( documents, "persistDocument" as any ).and.returnValue( Promise.resolve( [] ) );
+					spyOn( documents, "_persistDocument" as any ).and.returnValue( Promise.resolve( [] ) );
 
 					const childObjects:object[] = [ { index: 1 }, { index: 2 }, { index: 3 } ];
 					documents
@@ -3191,7 +3187,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 
 				it( "should convert plain object into document before request", ( done:DoneFn ):void => {
 					const spy:jasmine.Spy = spyOn( Document, "createFrom" );
-					spyOn( documents, "persistDocument" as any ).and.returnValue( Promise.resolve( [] ) );
+					spyOn( documents, "_persistDocument" as any ).and.returnValue( Promise.resolve( [] ) );
 
 					const childObject:object = {};
 					documents
@@ -3516,7 +3512,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 
 				it( "should convert plain objects into documents before requests", ( done:DoneFn ):void => {
 					const spy:jasmine.Spy = spyOn( Document, "createFrom" );
-					spyOn( documents, "persistDocument" as any ).and.returnValue( Promise.resolve( [] ) );
+					spyOn( documents, "_persistDocument" as any ).and.returnValue( Promise.resolve( [] ) );
 
 					const childObjects:object[] = [ { index: 1 }, { index: 2 }, { index: 3 } ];
 					documents
@@ -6165,7 +6161,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 
 				it( "should convert plain access-point into a document access-point before request", ( done:DoneFn ):void => {
 					const spy:jasmine.Spy = spyOn( AccessPoint, "createFrom" ).and.callThrough();
-					spyOn( documents, "persistDocument" as any ).and.returnValue( Promise.resolve( [] ) );
+					spyOn( documents, "_persistDocument" as any ).and.returnValue( Promise.resolve( [] ) );
 
 					const accessPoint:AccessPointBase = { hasMemberRelation: "member-relation" };
 					documents.createAccessPoint( "https://example.com/parent-resource/", accessPoint )
@@ -6459,7 +6455,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 
 				it( "should convert plain access-point into document access-point before requests", ( done:DoneFn ):void => {
 					const spy:jasmine.Spy = spyOn( AccessPoint, "createFrom" ).and.callThrough();
-					spyOn( documents, "persistDocument" as any ).and.returnValue( Promise.resolve( [] ) );
+					spyOn( documents, "_persistDocument" as any ).and.returnValue( Promise.resolve() );
 
 					const accessPoints:AccessPointBase[] = [
 						{ hasMemberRelation: "member-relation-0" },
@@ -9151,18 +9147,8 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					status: 200,
 				} );
 
-				let spies:any = {
-					success: ( response:any ):void => {
-						expect( response ).toBeDefined();
-						expect( response instanceof Response ).toBe( true );
-					},
-					fail: ( error:Error ):void => {
-						expect( error ).toBeDefined();
-						expect( error instanceof Errors.IllegalArgumentError );
-					},
-				};
-				let spySuccess:jasmine.Spy = spyOn( spies, "success" ).and.callThrough();
-				let spyFail:jasmine.Spy = spyOn( spies, "fail" ).and.callThrough();
+				let spySuccess:jasmine.Spy = jasmine.createSpy( "success" );
+				let spyFail:jasmine.Spy = jasmine.createSpy( "fail" );
 
 				let promises:Promise<any>[] = [];
 				let promise:Promise<any>;
@@ -9171,16 +9157,19 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				members = [ documents.getPointer( "new-member-01/" ), "new-member-02/" ];
 				promise = documents.addMembers( "resource/", members );
 				expect( promise instanceof Promise ).toBe( true );
-				promises.push( promise.then( spies.success ) );
+				promises.push( promise.then( spySuccess, spyFail ) );
 
 				members = [ documents.getPointer( "new-member-01/" ), "new-member-02/", <any> { "something": "nor string or Pointer" } ];
 				promise = documents.addMembers( "resource/", members );
 				expect( promise instanceof Promise ).toBe( true );
-				promises.push( promise.catch( spies.fail ) );
+				promises.push( promise.then( spySuccess, spyFail ) );
 
 				Promise.all( promises ).then( ():void => {
 					expect( spySuccess ).toHaveBeenCalledTimes( 1 );
+					expect( spySuccess ).toHaveBeenCalledWith( void 0 );
+
 					expect( spyFail ).toHaveBeenCalledTimes( 1 );
+					expect( spyFail ).toHaveBeenCalledWith( jasmine.any( Errors.IllegalArgumentError ) );
 					done();
 				}, done.fail );
 			} );
@@ -9536,18 +9525,8 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					status: 200,
 				} );
 
-				let spies:any = {
-					success: ( response:any ):void => {
-						expect( response ).toBeDefined();
-						expect( response instanceof Response ).toBe( true );
-					},
-					fail: ( error:Error ):void => {
-						expect( error ).toBeDefined();
-						expect( error instanceof Errors.IllegalArgumentError ).toBe( true );
-					},
-				};
-				let spySuccess:jasmine.Spy = spyOn( spies, "success" ).and.callThrough();
-				let spyFail:jasmine.Spy = spyOn( spies, "fail" ).and.callThrough();
+				let spySuccess:jasmine.Spy = jasmine.createSpy( "success" );
+				let spyFail:jasmine.Spy = jasmine.createSpy( "fail" );
 
 				let promises:Promise<any>[] = [];
 				let promise:Promise<any>;
@@ -9556,16 +9535,19 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				members = [ documents.getPointer( "remove-member-01/" ), "remove-member-02/" ];
 				promise = documents.removeMembers( "resource/", members );
 				expect( promise instanceof Promise ).toBe( true );
-				promises.push( promise.then( spies.success ) );
+				promises.push( promise.then( spySuccess, spyFail ) );
 
 				members = [ documents.getPointer( "remove-member-01/" ), "remove-member-02/", <any> { "something": "nor string or Pointer" } ];
 				promise = documents.removeMembers( "resource/", members );
 				expect( promise instanceof Promise ).toBe( true );
-				promises.push( promise.catch( spies.fail ) );
+				promises.push( promise.then( spySuccess, spyFail ) );
 
 				Promise.all( promises ).then( ():void => {
 					expect( spySuccess ).toHaveBeenCalledTimes( 1 );
+					expect( spySuccess ).toHaveBeenCalledWith( void 0 );
+
 					expect( spyFail ).toHaveBeenCalledTimes( 1 );
+					expect( spyFail ).toHaveBeenCalledWith( jasmine.any( Errors.IllegalArgumentError ) );
 					done();
 				}, done.fail );
 			} );
@@ -9732,28 +9714,20 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					status: 200,
 				} );
 
-				let spies:any = {
-					success: ( response:any ):void => {
-						expect( response ).toBeDefined();
-						expect( response instanceof Response ).toBe( true );
-					},
-					fail: ( error:Error ):void => {
-						expect( error ).toBeDefined();
-						expect( error instanceof Errors.IllegalArgumentError ).toBe( true );
-					},
-				};
-				let spySuccess:jasmine.Spy = spyOn( spies, "success" ).and.callThrough();
-				let spyFail:jasmine.Spy = spyOn( spies, "fail" ).and.callThrough();
+				let spySuccess:jasmine.Spy = jasmine.createSpy( "success" );
+				let spyFail:jasmine.Spy = jasmine.createSpy( "fail" );
 
 				let promises:Promise<any>[] = [];
 				let promise:Promise<any>;
 
 				promise = documents.removeAllMembers( "resource/" );
 				expect( promise instanceof Promise ).toBe( true );
-				promises.push( promise.then( spies.success ) );
+				promises.push( promise.then( spySuccess, spyFail ) );
 
 				Promise.all( promises ).then( ():void => {
 					expect( spySuccess ).toHaveBeenCalledTimes( 1 );
+					expect( spySuccess ).toHaveBeenCalledWith( void 0 );
+
 					expect( spyFail ).not.toHaveBeenCalled();
 					done();
 				} ).catch( done.fail );
@@ -12197,13 +12171,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					status: 200,
 				} );
 
-				let spies:any = {
-					success: ( response:any ):void => {
-						expect( response ).toBeDefined();
-						expect( response instanceof Response ).toBe( true );
-					},
-				};
-				let spySuccess:jasmine.Spy = spyOn( spies, "success" ).and.callThrough();
+				let spySuccess:jasmine.Spy = jasmine.createSpy( "success" );
 
 				let promises:Promise<any>[] = [];
 				let promise:Promise<any>;
@@ -12211,21 +12179,23 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				// Proper execution
 				promise = documents.delete( "http://example.com/resource/" );
 				expect( promise ).toEqual( jasmine.any( Promise ) );
-				promises.push( promise.then( spies.success ) );
+				promises.push( promise.then( spySuccess ) );
 
 				// Relative URI
 				promise = documents.delete( "resource/" );
 				expect( promise ).toEqual( jasmine.any( Promise ) );
-				promises.push( promise.then( spies.success ) );
+				promises.push( promise.then( spySuccess ) );
 
 				// Remove pointer from cache
 				documents.getPointer( "http://example.com/a-document/" );
 				promise = documents.delete( "http://example.com/a-document/" );
 				expect( promise ).toEqual( jasmine.any( Promise ) );
-				promises.push( promise.then( spies.success ) );
+				promises.push( promise.then( spySuccess ) );
 
 				Promise.all( promises ).then( ():void => {
 					expect( spySuccess ).toHaveBeenCalledTimes( 3 );
+					expect( spySuccess ).toHaveBeenCalledWith( void 0 );
+
 					expect( documents.hasPointer( "http://example.com/a-document/" ) ).toBe( false );
 					done();
 				}, done.fail );

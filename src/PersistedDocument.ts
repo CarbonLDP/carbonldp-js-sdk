@@ -65,11 +65,11 @@ export interface PersistedDocument extends Document, PersistedResource, ServiceA
 	createNamedFragment<T extends object>( object:T, slug:string ):PersistedNamedFragment & T;
 
 
-	refresh<T extends object>( requestOptions?:RequestOptions ):Promise<T & PersistedDocument>;
+	refresh<T extends object>( requestOptions?:RequestOptions ):Promise<T & this>;
 
-	save<T extends object>( requestOptions?:RequestOptions ):Promise<T & PersistedDocument>;
+	save<T extends object>( requestOptions?:RequestOptions ):Promise<T & this>;
 
-	saveAndRefresh<T extends object>( requestOptions?:RequestOptions ):Promise<T & PersistedDocument>;
+	saveAndRefresh<T extends object>( requestOptions?:RequestOptions ):Promise<T & this>;
 
 
 	delete( requestOptions?:RequestOptions ):Promise<void>;

@@ -1119,7 +1119,7 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 				return new JSONLDParser().parse( jsonldString );
 
 			} ).then<(T & PersistedDocument)[]>( ( rdfNodes:RDFNode[] ) => {
-				const freeNodes:RDFNode[] = rdfNodes.filter( RDFNode.getFreeNodes );
+				const freeNodes:RDFNode[] = RDFNode.getFreeNodes( rdfNodes );
 				const freeResources:FreeResources = this._getFreeResources( freeNodes );
 
 				const targetSet:Set<string> = new Set( freeResources
