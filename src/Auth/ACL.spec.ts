@@ -26,7 +26,7 @@ import { ACL } from "./ACL";
 describe( module( "carbonldp/Auth/ACL" ), ():void => {
 
 	describe( interfaze(
-		"CarbonLDP.Auth.ACL.ACL",
+		"CarbonLDP.Auth.ACL",
 		"Interface that represents an in-memory Access Control List (ACL)."
 	), ():void => {
 
@@ -54,7 +54,7 @@ describe( module( "carbonldp/Auth/ACL" ), ():void => {
 		it( hasProperty(
 			OPTIONAL,
 			"entries",
-			"CarbonLDP.Auth.ACE.ACE[]",
+			"CarbonLDP.Auth.ACE[]",
 			"Array of ACEs that only grants or denies permissions of the document the ACL belongs."
 		), ():void => {
 			let entries:ACE[] = [ <any> {} ];
@@ -68,7 +68,7 @@ describe( module( "carbonldp/Auth/ACL" ), ():void => {
 		it( hasProperty(
 			OPTIONAL,
 			"inheritableEntries",
-			"CarbonLDP.Auth.ACE.ACE[]",
+			"CarbonLDP.Auth.ACE[]",
 			"Array of ACEs that grants or denies permissions of the document's children the ACL belongs."
 		), ():void => {
 			let inheritableEntries:ACE[] = [ <any> {} ];
@@ -274,8 +274,8 @@ describe( module( "carbonldp/Auth/ACL" ), ():void => {
 	} );
 
 	describe( interfaze(
-		"CarbonLDP.Auth.ACL.ACLFactory",
-		"Interface with factory, decorate and utils methods for `CarbonLDP.Auth.ACL.ACL` objects."
+		"CarbonLDP.Auth.ACLFactory",
+		"Interface with factory, decorate and utils methods for `CarbonLDP.Auth.ACL` objects."
 	), ():void => {
 
 		it( hasProperty(
@@ -293,17 +293,17 @@ describe( module( "carbonldp/Auth/ACL" ), ():void => {
 		it( hasMethod(
 			OBLIGATORY,
 			"isDecorated",
-			"Return true if the object provided has the properties and methods of a `CarbonLDP.Auth.ACL.ACL` object.", [
+			"Return true if the object provided has the properties and methods of a `CarbonLDP.Auth.ACL` object.", [
 				{ name: "object", type: "object", description: "The object to analise." },
 			],
-			{ type: "object is CarbonLDP.Auth.ACL.ACL" }
+			{ type: "object is CarbonLDP.Auth.ACL" }
 		), ():void => {} );
 
 		it( hasMethod(
 			OBLIGATORY,
 			"decorate",
 			[ "T extends object" ],
-			"Decorate the object with the methods o a `CarbonLDP.Auth.ACL.ACL` object.", [
+			"Decorate the object with the methods o a `CarbonLDP.Auth.ACL` object.", [
 				{ name: "object", type: "T", description: "The object to decorate." },
 			],
 			{ type: "T & CarbonLDP.Auth.ACl.Class" }
@@ -314,8 +314,8 @@ describe( module( "carbonldp/Auth/ACL" ), ():void => {
 	describe( property(
 		STATIC,
 		"ACL",
-		"CarbonLDP.Auth.ACL.ACLFactory",
-		"Constant that implements the `CarbonLDP.Auth.ACL.ACLFactory` interface."
+		"CarbonLDP.Auth.ACLFactory",
+		"Constant that implements the `CarbonLDP.Auth.ACLFactory` interface."
 	), ():void => {
 
 		it( isDefined(), ():void => {

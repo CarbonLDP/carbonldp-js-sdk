@@ -25,7 +25,7 @@ describe( module( "carbonldp/Auth/ACE" ), ():void => {
 	} );
 
 	describe( interfaze(
-		"CarbonLDP.Auth.ACE.ACE",
+		"CarbonLDP.Auth.ACE",
 		"Interface that represents an Access Control Entry (ACE) of an Access Control List (ACL)."
 	), ():void => {
 
@@ -94,8 +94,8 @@ describe( module( "carbonldp/Auth/ACE" ), ():void => {
 	} );
 
 	describe( interfaze(
-		"CarbonLDP.Auth.ACE.ACEFactory",
-		"Interface with the factory, decorate and utils methods of a `CarbonLDP.Auth.ACE.ACE` object"
+		"CarbonLDP.Auth.ACEFactory",
+		"Interface with the factory, decorate and utils methods of a `CarbonLDP.Auth.ACE` object"
 	), ():void => {
 
 		it( hasProperty(
@@ -113,36 +113,36 @@ describe( module( "carbonldp/Auth/ACE" ), ():void => {
 		it( hasMethod(
 			OBLIGATORY,
 			"is",
-			"Returns true if the object is considered a `CarbonLDP.Auth.ACE.ACE` object.", [
+			"Returns true if the object is considered a `CarbonLDP.Auth.ACE` object.", [
 				{ name: "object", type: "object", description: "The object to evaluate." },
 			],
-			{ type: "object is CarbonLDP.Auth.ACE.ACE" }
+			{ type: "object is CarbonLDP.Auth.ACE" }
 		), ():void => {} );
 
 		it( hasMethod(
 			OBLIGATORY,
 			"create",
-			"Creates a `CarbonLDP.Auth.ACE.ACE` object with the parameters specified.", [
+			"Creates a `CarbonLDP.Auth.ACE` object with the parameters specified.", [
 				{ name: "granting", type: "boolean", description: "Indicates if the ACE is a granting or denying permissions." },
 				{ name: "subjects", type: "CarbonLDP.Pointer[]", description: "Subjects that will have the permissions specified." },
 				{ name: "subjectClass", type: "CarbonLDP.Pointer", description: "The type of the subjects provided." },
 				{ name: "permissions", type: "CarbonLDP.Pointer[]", description: "The permissions that will be granted or denied." },
 			],
-			{ type: "CarbonLDP.Auth.ACE.ACE" }
+			{ type: "CarbonLDP.Auth.ACE" }
 		), ():void => {} );
 
 		it( hasMethod(
 			OBLIGATORY,
 			"createFrom",
 			[ "T extends object" ],
-			"Creates a `CarbonLDP.Auth.ACE.ACE` object with the parameters specified.", [
-				{ name: "object", type: "T", description: "The object that will be converted into a `CarbonLDP.Auth.ACE.ACE`" },
+			"Creates a `CarbonLDP.Auth.ACE` object with the parameters specified.", [
+				{ name: "object", type: "T", description: "The object that will be converted into a `CarbonLDP.Auth.ACE`" },
 				{ name: "granting", type: "boolean", description: "Indicates if the ACE is a granting or denying permissions." },
 				{ name: "subjects", type: "CarbonLDP.Pointer[]", description: "Subjects that will have the permissions specified." },
 				{ name: "subjectClass", type: "CarbonLDP.Pointer", description: "The type of the subjects provided." },
 				{ name: "permissions", type: "CarbonLDP.Pointer[]", description: "The permissions that will be granted or denied." },
 			],
-			{ type: "T & CarbonLDP.Auth.ACE.ACE" }
+			{ type: "T & CarbonLDP.Auth.ACE" }
 		), ():void => {} );
 
 	} );
@@ -150,8 +150,8 @@ describe( module( "carbonldp/Auth/ACE" ), ():void => {
 	describe( property(
 		STATIC,
 		"ACE",
-		"CarbonLDP.Auth.ACE.ACEFactory",
-		"Constant that implements the `CarbonLDP.Auth.ACE.ACEFactory` interface."
+		"CarbonLDP.Auth.ACEFactory",
+		"Constant that implements the `CarbonLDP.Auth.ACEFactory` interface."
 	), ():void => {
 
 		it( isDefined(), ():void => {

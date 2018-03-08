@@ -1,10 +1,10 @@
-import * as ACE from "./ACE";
-import * as ACL from "./ACL";
+import { ACE } from "./ACE";
+import { ACL } from "./ACL";
 import Authenticator from "./Authenticator";
 import BasicAuthenticator from "./BasicAuthenticator";
 import * as Credentials from "./Credentials";
-import * as PersistedACE from "./PersistedACE";
-import * as PersistedACL from "./PersistedACL";
+import { PersistedACE } from "./PersistedACE";
+import { PersistedACL } from "./PersistedACL";
 import * as PersistedCredentials from "./PersistedCredentials";
 import * as PersistedRole from "./PersistedRole";
 import * as PersistedUser from "./PersistedUser";

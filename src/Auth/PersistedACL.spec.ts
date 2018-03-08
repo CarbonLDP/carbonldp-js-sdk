@@ -22,7 +22,7 @@ import { PersistedACL } from "./PersistedACL";
 describe( module( "carbonldp/Auth/PersistedACL" ), ():void => {
 
 	describe( interfaze(
-		"CarbonLDP.Auth.PersistedACL.PersistedACL",
+		"CarbonLDP.Auth.PersistedACL",
 		"Interface that represents a persisted Access Control List (ACL)."
 	), ():void => {
 
@@ -38,14 +38,14 @@ describe( module( "carbonldp/Auth/PersistedACL" ), ():void => {
 		it( hasProperty(
 			OPTIONAL,
 			"entries",
-			"CarbonLDP.Auth.PersistedACE.PersistedACE[]",
+			"CarbonLDP.Auth.PersistedACE[]",
 			"Array of persisted ACEs that only grants or denies permissions of the document the ACL belongs."
 		), ():void => {} );
 
 		it( hasProperty(
 			OPTIONAL,
 			"inheritableEntries",
-			"CarbonLDP.Auth.PersistedACE.PersistedACE[]",
+			"CarbonLDP.Auth.PersistedACE[]",
 			"Array of persisted ACEs that grants or denies permissions of the document's children the ACL belongs."
 		), ():void => {} );
 
@@ -238,27 +238,27 @@ describe( module( "carbonldp/Auth/PersistedACL" ), ():void => {
 	} );
 
 	describe( interfaze(
-		"CarbonLDP.Auth.PersistedACL.PersistedACLFactory",
-		"Interface with factory, decorate and utils methods for `CarbonLDP.Auth.PersistedACL.PersistedACL` objects."
+		"CarbonLDP.Auth.PersistedACLFactory",
+		"Interface with factory, decorate and utils methods for `CarbonLDP.Auth.PersistedACL` objects."
 	), ():void => {
 
 		it( hasMethod(
 			OBLIGATORY,
 			"isDecorated",
-			"Return true if the object provided has the properties and methods of a `CarbonLDP.Auth.PersistedACL.PersistedACL` object.", [
+			"Return true if the object provided has the properties and methods of a `CarbonLDP.Auth.PersistedACL` object.", [
 				{ name: "object", type: "object", description: "The object to analise." },
 			],
-			{ type: "object is CarbonLDP.Auth.PersistedACL.PersistedACL" }
+			{ type: "object is CarbonLDP.Auth.PersistedACL" }
 		), ():void => {} );
 
 		it( hasMethod(
 			OBLIGATORY,
 			"decorate",
 			[ "T extends object" ],
-			"Decorate the object with the properties and methods of a `CarbonLDP.Auth.PersistedACL.PersistedACL` object.", [
+			"Decorate the object with the properties and methods of a `CarbonLDP.Auth.PersistedACL` object.", [
 				{ name: "object", type: "T", description: "The object to decorate." },
 			],
-			{ type: "T & CarbonLDP.Auth.PersistedACL.PersistedACL" }
+			{ type: "T & CarbonLDP.Auth.PersistedACL" }
 		), ():void => {} );
 
 	} );
@@ -266,8 +266,8 @@ describe( module( "carbonldp/Auth/PersistedACL" ), ():void => {
 	describe( property(
 		STATIC,
 		"PersistedACL",
-		"CarbonLDP.Auth.PersistedACL.PersistedACLFactory",
-		"Constant that implements the `CarbonLDP.Auth.PersistedACL.PersistedACLFactory` interface."
+		"CarbonLDP.Auth.PersistedACLFactory",
+		"Constant that implements the `CarbonLDP.Auth.PersistedACLFactory` interface."
 	), ():void => {
 
 		it( isDefined(), ():void => {
