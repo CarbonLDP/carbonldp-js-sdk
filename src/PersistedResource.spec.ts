@@ -47,7 +47,7 @@ describe( module( "carbonldp/PersistedResource" ), ():void => {
 		it( hasProperty(
 			OBLIGATORY,
 			"_partialMetadata",
-			"CarbonLDP.SPARQL.QueryDocument.PartialMetadata.PartialMetadata",
+			"CarbonLDP.SPARQL.QueryDocument.PartialMetadata",
 			"Metadata for documents that are partial documents."
 		), ():void => {} );
 

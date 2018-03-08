@@ -18,7 +18,7 @@ describe( module( "carbonldp/SPARQL/RawResults" ), ():void => {
 	} );
 
 	describe( interfaze(
-		"CarbonLDP.SPARQL.RawResults.SPARQLRawResults",
+		"CarbonLDP.SPARQL.SPARQLRawResults",
 		"Interface that represents the raw response of a SPARQL query."
 	), ():void => {
 
@@ -32,7 +32,7 @@ describe( module( "carbonldp/SPARQL/RawResults" ), ():void => {
 		it( hasProperty(
 			OPTIONAL,
 			"results",
-			`{ "bindings":CarbonLDP.SPARQL.RawResults.SPARQLRawBindingObject[] }`,
+			`{ "bindings":CarbonLDP.SPARQL.SPARQLRawBindingObject[] }`,
 			"The results of a `SELECT` query."
 		), ():void => {} );
 
@@ -46,22 +46,22 @@ describe( module( "carbonldp/SPARQL/RawResults" ), ():void => {
 	} );
 
 	describe( interfaze(
-		"CarbonLDP.SPARQL.RawResults.SPARQLRawBindingObject",
+		"CarbonLDP.SPARQL.SPARQLRawBindingObject",
 		"Interface that represents the raw response of a SPARQL query."
 	), ():void => {
 
 		it( hasProperty(
 			OBLIGATORY,
 			"[ name:string ]",
-			"CarbonLDP.SPARQL.RawResults.SPARQLRawBindingProperty",
+			"CarbonLDP.SPARQL.SPARQLRawBindingProperty",
 			"An entry of every `vars` requested as the `name` variable, containing the binding property with its value."
 		), ():void => {} );
 
 	} );
 
 	describe( interfaze(
-		"CarbonLDP.SPARQL.RawResults.SPARQLRawBindingProperty",
-		"Interface that represents every entry of a `CarbonLDP.SPARQL.RawResults.SPARQLRawBindingObject`."
+		"CarbonLDP.SPARQL.SPARQLRawBindingProperty",
+		"Interface that represents every entry of a `CarbonLDP.SPARQL.SPARQLRawBindingObject`."
 	), ():void => {
 
 		it( hasProperty(

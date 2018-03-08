@@ -32,7 +32,7 @@ describe( module( "carbonldp/SPARQL/QueryDocument/QueryContextBuilder" ), ():voi
 		expect( Module ).toEqual( jasmine.any( Object ) );
 	} );
 
-	describe( clazz( "CarbonLDP.SPARQL.QueryDocument.QueryContextBuilder.QueryContextBuilder", "Class with the shared status and data of the query." ), ():void => {
+	describe( clazz( "CarbonLDP.SPARQL.QueryDocument.QueryContextBuilder", "Class with the shared status and data of the query." ), ():void => {
 
 		it( "should exists", ():void => {
 			expect( QueryContextBuilder ).toBeDefined();
@@ -68,7 +68,7 @@ describe( module( "carbonldp/SPARQL/QueryDocument/QueryContextBuilder" ), ():voi
 
 		} );
 
-		it( extendsClass( "CarbonLDP.SPARQL.QueryDocument.QueryContext.QueryContext" ), ():void => {
+		it( extendsClass( "CarbonLDP.SPARQL.QueryDocument.QueryContext" ), ():void => {
 			const queryContext:QueryContextBuilder = new QueryContextBuilder( context );
 			expect( queryContext ).toEqual( jasmine.any( QueryContext ) );
 		} );
@@ -151,7 +151,7 @@ describe( module( "carbonldp/SPARQL/QueryDocument/QueryContextBuilder" ), ():voi
 				[
 					{ name: "name", type: "string", description: "Name of the property to look for." },
 				],
-				{ type: "CarbonLDP.SPARQL.QueryDocument.QueryProperty.QueryProperty" }
+				{ type: "CarbonLDP.SPARQL.QueryDocument.QueryProperty" }
 			), ():void => {
 			} );
 
@@ -184,7 +184,7 @@ describe( module( "carbonldp/SPARQL/QueryDocument/QueryContextBuilder" ), ():voi
 				[
 					{ name: "name", type: "string", description: "Name of the property to look for its children properties." },
 				],
-				{ type: "CarbonLDP.SPARQL.QueryDocument.QueryProperty.QueryProperty[]" }
+				{ type: "CarbonLDP.SPARQL.QueryDocument.QueryProperty[]" }
 			), ():void => {
 			} );
 
@@ -232,7 +232,7 @@ describe( module( "carbonldp/SPARQL/QueryDocument/QueryContextBuilder" ), ():voi
 				[
 					{ name: "name", type: "string", description: "Name that the property will have." },
 				],
-				{ type: "CarbonLDP.SPARQL.QueryDocument.QueryProperty.QueryProperty" }
+				{ type: "CarbonLDP.SPARQL.QueryDocument.QueryProperty" }
 			), ():void => {} );
 
 			it( "should exists", ():void => {

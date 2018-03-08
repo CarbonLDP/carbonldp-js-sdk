@@ -700,7 +700,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				"Retrieves the entire document referred by the URI specified when no query function si provided.\nIf the function builder es provided the query is able to specify the properties of the document to be retrieved and the sub-documents' properties and on and on.", [
 					{ name: "uri", type: "string", description: "The URI of the document to retrieve/query." },
 					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for the request." },
-					{ name: "queryBuilderFn", type: "( queryBuilder:CarbonLDP.SPARQL.QueryDocument.QueryDocumentBuilder.QueryDocumentBuilder ) => CarbonLDP.SPARQL.QueryDocument.QueryDocumentBuilder.QueryDocumentBuilder", optional: true, description: "Function that receives a the builder that helps you to construct the retrieval query.\nThe same builder must be returned." },
+					{ name: "queryBuilderFn", type: "( queryBuilder:CarbonLDP.SPARQL.QueryDocument.QueryDocumentBuilder ) => CarbonLDP.SPARQL.QueryDocument.QueryDocumentBuilder", optional: true, description: "Function that receives a the builder that helps you to construct the retrieval query.\nThe same builder must be returned." },
 				],
 				{ type: "Promise<[ T & CarbonLDP.PersistedDocument.PersistedDocument, HTTP.Response.Response ]>" }
 			), ():void => {} );
@@ -709,7 +709,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				[ "T extends object" ],
 				"Retrieves the entire document referred by the URI specified when no query function si provided.\nIf the function builder es provided the query is able to specify the properties of the document to be retrieved and the sub-documents' properties and on and on.", [
 					{ name: "uri", type: "string", description: "The URI of the document to retrieve." },
-					{ name: "queryBuilderFn", type: "( queryBuilder:CarbonLDP.SPARQL.QueryDocument.QueryDocumentBuilder.QueryDocumentBuilder ) => CarbonLDP.SPARQL.QueryDocument.QueryDocumentBuilder.QueryDocumentBuilder", optional: true, description: "Function that receives a the builder that helps you to construct the retrieval query.\nThe same builder must be returned." },
+					{ name: "queryBuilderFn", type: "( queryBuilder:CarbonLDP.SPARQL.QueryDocument.QueryDocumentBuilder ) => CarbonLDP.SPARQL.QueryDocument.QueryDocumentBuilder", optional: true, description: "Function that receives a the builder that helps you to construct the retrieval query.\nThe same builder must be returned." },
 				],
 				{ type: "Promise<[ T & CarbonLDP.PersistedDocument.PersistedDocument, HTTP.Response.Response ]>" }
 			), ():void => {} );
@@ -4091,7 +4091,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				"Retrieves the children of a document, building a query on which one is able to specify the properties to be retrieve and sub-documents' properties and on and on.", [
 					{ name: "parentURI", type: "string", description: "URI of the document from where to look for its children." },
 					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for the request." },
-					{ name: "queryBuilderFn", type: "( queryBuilder:CarbonLDP.SPARQL.QueryDocument.QueryDocumentsBuilder.QueryDocumentsBuilder ) => CarbonLDP.SPARQL.QueryDocument.QueryDocumentsBuilder.QueryDocumentsBuilder", optional: true, description: "Function that receives a the builder that helps you to construct the children retrieval query.\nThe same builder must be returned." },
+					{ name: "queryBuilderFn", type: "( queryBuilder:CarbonLDP.SPARQL.QueryDocument.QueryDocumentsBuilder ) => CarbonLDP.SPARQL.QueryDocument.QueryDocumentsBuilder", optional: true, description: "Function that receives a the builder that helps you to construct the children retrieval query.\nThe same builder must be returned." },
 				],
 				{ type: "Promise<[ (T & CarbonLDP.PersistedDocument.PersistedDocument)[], CarbonLDP.HTTP.Response ]>" }
 			), () => {} );
@@ -4100,7 +4100,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				[ "T extends object" ],
 				"Retrieves the children of a document, building a query on which one is able to specify the properties to be retrieve and sub-documents' properties and on and on.", [
 					{ name: "parentURI", type: "string", description: "URI of the document from where to look for its children." },
-					{ name: "queryBuilderFn", type: "( queryBuilder:CarbonLDP.SPARQL.QueryDocument.QueryDocumentsBuilder.QueryDocumentsBuilder ) => CarbonLDP.SPARQL.QueryDocument.QueryDocumentsBuilder.QueryDocumentsBuilder", optional: true, description: "Function that receives a the builder that helps you to construct the children retrieval query.\nThe same builder must be returned." },
+					{ name: "queryBuilderFn", type: "( queryBuilder:CarbonLDP.SPARQL.QueryDocument.QueryDocumentsBuilder ) => CarbonLDP.SPARQL.QueryDocument.QueryDocumentsBuilder", optional: true, description: "Function that receives a the builder that helps you to construct the children retrieval query.\nThe same builder must be returned." },
 				],
 				{ type: "Promise<[ (T & CarbonLDP.PersistedDocument.PersistedDocument)[], CarbonLDP.HTTP.Response ]>" }
 			), () => {} );
@@ -7052,7 +7052,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				"Retrieves the members of a document, building a query on which one is able to specify the properties to be retrieve and sub-documents' properties and on and on.", [
 					{ name: "uri", type: "string", description: "URI of the document from where to look for its members." },
 					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for the request." },
-					{ name: "queryBuilderFn", type: "( queryBuilder:CarbonLDP.SPARQL.QueryDocument.QueryDocumentsBuilder.QueryDocumentsBuilder ) => CarbonLDP.SPARQL.QueryDocument.QueryDocumentsBuilder.QueryDocumentsBuilder", optional: true, description: "Function that receives a the builder that helps you to construct the member retrieval query.\nThe same builder must be returned." },
+					{ name: "queryBuilderFn", type: "( queryBuilder:CarbonLDP.SPARQL.QueryDocument.QueryDocumentsBuilder ) => CarbonLDP.SPARQL.QueryDocument.QueryDocumentsBuilder", optional: true, description: "Function that receives a the builder that helps you to construct the member retrieval query.\nThe same builder must be returned." },
 				],
 				{ type: "Promise<[ (T & CarbonLDP.PersistedDocument.PersistedDocument)[], CarbonLDP.HTTP.Response ]>" }
 			), () => {} );
@@ -7061,7 +7061,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				[ "T extends object" ],
 				"Retrieves the members of a document, building a query on which one is able to specify the properties to be retrieve and sub-documents' properties and on and on.", [
 					{ name: "uri", type: "string", description: "URI of the document from where to look for its members." },
-					{ name: "queryBuilderFn", type: "( queryBuilder:CarbonLDP.SPARQL.QueryDocument.QueryDocumentsBuilder.QueryDocumentsBuilder ) => CarbonLDP.SPARQL.QueryDocument.QueryDocumentsBuilder.QueryDocumentsBuilder", optional: true, description: "Function that receives a the builder that helps you to construct the member retrieval query.\nThe same builder must be returned." },
+					{ name: "queryBuilderFn", type: "( queryBuilder:CarbonLDP.SPARQL.QueryDocument.QueryDocumentsBuilder ) => CarbonLDP.SPARQL.QueryDocument.QueryDocumentsBuilder", optional: true, description: "Function that receives a the builder that helps you to construct the member retrieval query.\nThe same builder must be returned." },
 				],
 				{ type: "Promise<[ (T & CarbonLDP.PersistedDocument.PersistedDocument)[], CarbonLDP.HTTP.Response ]>" }
 			), () => {} );
@@ -12564,7 +12564,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					{ name: "documentURI", type: "string", description: "URI of the document that works as a SPARQL endpoint where to execute the SPARQL query." },
 					{ name: "askQuery", type: "string", description: "ASK query to execute in the selected endpoint." },
 					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for the request." },
-				], { type: "Promise<[ CarbonLDP.SPARQL.RawResults.SPARQLRawResults, CarbonLDP.HTTP.Response ]>" }
+				], { type: "Promise<[ CarbonLDP.SPARQL.SPARQLRawResults, CarbonLDP.HTTP.Response ]>" }
 			), ():void => {} );
 
 			it( "should exists", ():void => {
@@ -12589,7 +12589,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				} );
 
 				it( "should use SPARQL service", ():void => {
-					const spyService:jasmine.Spy = spyOn( SPARQL.Service.SPARQLService, "executeRawASKQuery" ).and.returnValue( new Promise( () => {} ) );
+					const spyService:jasmine.Spy = spyOn( SPARQL.SPARQLService, "executeRawASKQuery" ).and.returnValue( new Promise( () => {} ) );
 
 					// noinspection JSIgnoredPromiseFromCall
 					documents.executeRawASKQuery( "http://example.com/document/", "ASK { ?subject, ?predicate, ?object }" );
@@ -12598,7 +12598,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				} );
 
 				it( "should resolve relative URIs", ():void => {
-					const spyService:jasmine.Spy = spyOn( SPARQL.Service.SPARQLService, "executeRawASKQuery" ).and.returnValue( new Promise( () => {} ) );
+					const spyService:jasmine.Spy = spyOn( SPARQL.SPARQLService, "executeRawASKQuery" ).and.returnValue( new Promise( () => {} ) );
 
 					// noinspection JSIgnoredPromiseFromCall
 					documents.executeRawASKQuery( "document/", "ASK { ?subject, ?predicate, ?object }" );
@@ -12657,7 +12657,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				} );
 
 				it( "should use SPARQL service", ():void => {
-					const spyService:jasmine.Spy = spyOn( SPARQL.Service.SPARQLService, "executeRawASKQuery" ).and.returnValue( new Promise( () => {} ) );
+					const spyService:jasmine.Spy = spyOn( SPARQL.SPARQLService, "executeRawASKQuery" ).and.returnValue( new Promise( () => {} ) );
 
 					// noinspection JSIgnoredPromiseFromCall
 					documents.executeRawASKQuery( "http://example.com/document/", "ASK { ?subject, ?predicate, ?object }" );
@@ -12745,7 +12745,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				} );
 
 				it( "should use SPARQL service", ():void => {
-					const spyService:jasmine.Spy = spyOn( SPARQL.Service.SPARQLService, "executeASKQuery" ).and.returnValue( new Promise( () => {} ) );
+					const spyService:jasmine.Spy = spyOn( SPARQL.SPARQLService, "executeASKQuery" ).and.returnValue( new Promise( () => {} ) );
 
 					// noinspection JSIgnoredPromiseFromCall
 					documents.executeASKQuery( "http://example.com/document/", "ASK { ?subject, ?predicate, ?object }" );
@@ -12754,7 +12754,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				} );
 
 				it( "should resolve relative URIs", ():void => {
-					const spyService:jasmine.Spy = spyOn( SPARQL.Service.SPARQLService, "executeASKQuery" ).and.returnValue( new Promise( () => {} ) );
+					const spyService:jasmine.Spy = spyOn( SPARQL.SPARQLService, "executeASKQuery" ).and.returnValue( new Promise( () => {} ) );
 
 					// noinspection JSIgnoredPromiseFromCall
 					documents.executeASKQuery( "document/", "ASK { ?subject, ?predicate, ?object }" );
@@ -12813,7 +12813,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				} );
 
 				it( "should use SPARQL service", ():void => {
-					const spyService:jasmine.Spy = spyOn( SPARQL.Service.SPARQLService, "executeASKQuery" ).and.returnValue( new Promise( () => {} ) );
+					const spyService:jasmine.Spy = spyOn( SPARQL.SPARQLService, "executeASKQuery" ).and.returnValue( new Promise( () => {} ) );
 
 					// noinspection JSIgnoredPromiseFromCall
 					documents.executeASKQuery( "http://example.com/document/", "ASK { ?subject, ?predicate, ?object }" );
@@ -12876,7 +12876,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					{ name: "documentURI", type: "string", description: "URI of the document that works as a SPARQL endpoint where to execute the SPARQL query." },
 					{ name: "selectQuery", type: "string", description: "SELECT query to execute in the selected endpoint." },
 					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for the request." },
-				], { type: "Promise<[ CarbonLDP.SPARQL.RawResults.SPARQLRawResults, CarbonLDP.HTTP.Response ]>" }
+				], { type: "Promise<[ CarbonLDP.SPARQL.SPARQLRawResults, CarbonLDP.HTTP.Response ]>" }
 			), ():void => {} );
 
 			it( "should exists", ():void => {
@@ -12901,7 +12901,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				} );
 
 				it( "should use SPARQL service", ():void => {
-					const spyService:jasmine.Spy = spyOn( SPARQL.Service.SPARQLService, "executeRawSELECTQuery" ).and.returnValue( new Promise( () => {} ) );
+					const spyService:jasmine.Spy = spyOn( SPARQL.SPARQLService, "executeRawSELECTQuery" ).and.returnValue( new Promise( () => {} ) );
 
 					// noinspection JSIgnoredPromiseFromCall
 					documents.executeRawSELECTQuery( "http://example.com/document/", "SELECT ?book ?title WHERE { <http://example.com/some-document/> ?book ?title }" );
@@ -12910,7 +12910,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				} );
 
 				it( "should resolve relative URIs", ():void => {
-					const spyService:jasmine.Spy = spyOn( SPARQL.Service.SPARQLService, "executeRawSELECTQuery" ).and.returnValue( new Promise( () => {} ) );
+					const spyService:jasmine.Spy = spyOn( SPARQL.SPARQLService, "executeRawSELECTQuery" ).and.returnValue( new Promise( () => {} ) );
 
 					// noinspection JSIgnoredPromiseFromCall
 					documents.executeRawSELECTQuery( "http://example.com/document/", "SELECT ?book ?title WHERE { <http://example.com/some-document/> ?book ?title }" );
@@ -12969,7 +12969,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				} );
 
 				it( "should use SPARQL service", ():void => {
-					const spyService:jasmine.Spy = spyOn( SPARQL.Service.SPARQLService, "executeRawSELECTQuery" ).and.returnValue( new Promise( () => {} ) );
+					const spyService:jasmine.Spy = spyOn( SPARQL.SPARQLService, "executeRawSELECTQuery" ).and.returnValue( new Promise( () => {} ) );
 
 					// noinspection JSIgnoredPromiseFromCall
 					documents.executeRawSELECTQuery( "http://example.com/document/", "SELECT ?book ?title WHERE { <http://example.com/some-document/> ?book ?title }" );
@@ -13033,7 +13033,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					{ name: "documentURI", type: "string", description: "URI of the document that works as a SPARQL endpoint where to execute the SPARQL query." },
 					{ name: "selectQuery", type: "string", description: "SELECT query to execute in the selected endpoint." },
 					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for the request." },
-				], { type: "Promise<[ CarbonLDP.SPARQL.SelectResults.SPARQLSelectResults<T>, CarbonLDP.HTTP.Response ]>" }
+				], { type: "Promise<[ CarbonLDP.SPARQL.SPARQLSelectResults<T>, CarbonLDP.HTTP.Response ]>" }
 			), ():void => {} );
 
 			it( "should exists", ():void => {
@@ -13058,7 +13058,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				} );
 
 				it( "should use SPARQL service", ():void => {
-					const spyService:jasmine.Spy = spyOn( SPARQL.Service.SPARQLService, "executeSELECTQuery" ).and.returnValue( new Promise( () => {} ) );
+					const spyService:jasmine.Spy = spyOn( SPARQL.SPARQLService, "executeSELECTQuery" ).and.returnValue( new Promise( () => {} ) );
 
 					// noinspection JSIgnoredPromiseFromCall
 					documents.executeSELECTQuery( "http://example.com/document/", "SELECT ?book ?title WHERE { <http://example.com/some-document/> ?book ?title }" );
@@ -13067,7 +13067,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				} );
 
 				it( "should resolve relative URIs", ():void => {
-					const spyService:jasmine.Spy = spyOn( SPARQL.Service.SPARQLService, "executeSELECTQuery" ).and.returnValue( new Promise( () => {} ) );
+					const spyService:jasmine.Spy = spyOn( SPARQL.SPARQLService, "executeSELECTQuery" ).and.returnValue( new Promise( () => {} ) );
 
 					// noinspection JSIgnoredPromiseFromCall
 					documents.executeSELECTQuery( "document/", "SELECT ?book ?title WHERE { <http://example.com/some-document/> ?book ?title }" );
@@ -13126,7 +13126,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				} );
 
 				it( "should use SPARQL service", ():void => {
-					const spyService:jasmine.Spy = spyOn( SPARQL.Service.SPARQLService, "executeSELECTQuery" ).and.returnValue( new Promise( () => {} ) );
+					const spyService:jasmine.Spy = spyOn( SPARQL.SPARQLService, "executeSELECTQuery" ).and.returnValue( new Promise( () => {} ) );
 
 					// noinspection JSIgnoredPromiseFromCall
 					documents.executeSELECTQuery( "http://example.com/document/", "SELECT ?book ?title WHERE { <http://example.com/some-document/> ?book ?title }" );
@@ -13214,7 +13214,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				} );
 
 				it( "should use SPARQL service", ():void => {
-					const spyService:jasmine.Spy = spyOn( SPARQL.Service.SPARQLService, "executeRawCONSTRUCTQuery" ).and.returnValue( new Promise( () => {} ) );
+					const spyService:jasmine.Spy = spyOn( SPARQL.SPARQLService, "executeRawCONSTRUCTQuery" ).and.returnValue( new Promise( () => {} ) );
 
 					// noinspection JSIgnoredPromiseFromCall
 					documents.executeRawCONSTRUCTQuery( "http://example.com/document/", "CONSTRUCT { ?subject ?predicate ?object } WHERE { ?subject ?predicate ?object }" );
@@ -13223,7 +13223,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				} );
 
 				it( "should resolve relative URIs", ():void => {
-					const spyService:jasmine.Spy = spyOn( SPARQL.Service.SPARQLService, "executeRawCONSTRUCTQuery" ).and.returnValue( new Promise( () => {} ) );
+					const spyService:jasmine.Spy = spyOn( SPARQL.SPARQLService, "executeRawCONSTRUCTQuery" ).and.returnValue( new Promise( () => {} ) );
 
 					// noinspection JSIgnoredPromiseFromCall
 					documents.executeRawCONSTRUCTQuery( "document/", "CONSTRUCT { ?subject ?predicate ?object } WHERE { ?subject ?predicate ?object }" );
@@ -13282,7 +13282,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				} );
 
 				it( "should use SPARQL service", ():void => {
-					const spyService:jasmine.Spy = spyOn( SPARQL.Service.SPARQLService, "executeRawCONSTRUCTQuery" ).and.returnValue( new Promise( () => {} ) );
+					const spyService:jasmine.Spy = spyOn( SPARQL.SPARQLService, "executeRawCONSTRUCTQuery" ).and.returnValue( new Promise( () => {} ) );
 
 					// noinspection JSIgnoredPromiseFromCall
 					documents.executeRawCONSTRUCTQuery( "http://example.com/document/", "CONSTRUCT { ?subject ?predicate ?object } WHERE { ?subject ?predicate ?object }" );
@@ -13370,7 +13370,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				} );
 
 				it( "should use SPARQL service", ():void => {
-					const spyService:jasmine.Spy = spyOn( SPARQL.Service.SPARQLService, "executeRawDESCRIBEQuery" ).and.returnValue( new Promise( () => {} ) );
+					const spyService:jasmine.Spy = spyOn( SPARQL.SPARQLService, "executeRawDESCRIBEQuery" ).and.returnValue( new Promise( () => {} ) );
 
 					// noinspection JSIgnoredPromiseFromCall
 					documents.executeRawDESCRIBEQuery( "http://example.com/document/", "DESCRIBE { ?subject ?predicate ?object } WHERE { ?subject ?predicate ?object }" );
@@ -13379,7 +13379,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				} );
 
 				it( "should resolve relative URIs", ():void => {
-					const spyService:jasmine.Spy = spyOn( SPARQL.Service.SPARQLService, "executeRawDESCRIBEQuery" ).and.returnValue( new Promise( () => {} ) );
+					const spyService:jasmine.Spy = spyOn( SPARQL.SPARQLService, "executeRawDESCRIBEQuery" ).and.returnValue( new Promise( () => {} ) );
 
 					// noinspection JSIgnoredPromiseFromCall
 					documents.executeRawDESCRIBEQuery( "document/", "DESCRIBE { ?subject ?predicate ?object } WHERE { ?subject ?predicate ?object }" );
@@ -13438,7 +13438,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				} );
 
 				it( "should use SPARQL service", ():void => {
-					const spyService:jasmine.Spy = spyOn( SPARQL.Service.SPARQLService, "executeRawDESCRIBEQuery" ).and.returnValue( new Promise( () => {} ) );
+					const spyService:jasmine.Spy = spyOn( SPARQL.SPARQLService, "executeRawDESCRIBEQuery" ).and.returnValue( new Promise( () => {} ) );
 
 					// noinspection JSIgnoredPromiseFromCall
 					documents.executeRawDESCRIBEQuery( "http://example.com/document/", "DESCRIBE { ?subject ?predicate ?object } WHERE { ?subject ?predicate ?object }" );
@@ -13526,7 +13526,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				} );
 
 				it( "should use SPARQL service", ():void => {
-					const spyService:jasmine.Spy = spyOn( SPARQL.Service.SPARQLService, "executeUPDATE" ).and.returnValue( new Promise( () => {} ) );
+					const spyService:jasmine.Spy = spyOn( SPARQL.SPARQLService, "executeUPDATE" ).and.returnValue( new Promise( () => {} ) );
 
 					// noinspection JSIgnoredPromiseFromCall
 					documents.executeUPDATE( "http://example.com/document/", `INSERT DATA { GRAPH <http://example.com/some-document/> { <http://example.com/some-document/> <http://example.com/ns#propertyString> "Property Value" } }` );
@@ -13535,7 +13535,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				} );
 
 				it( "should resolve relative URIs", ():void => {
-					const spyService:jasmine.Spy = spyOn( SPARQL.Service.SPARQLService, "executeUPDATE" ).and.returnValue( new Promise( () => {} ) );
+					const spyService:jasmine.Spy = spyOn( SPARQL.SPARQLService, "executeUPDATE" ).and.returnValue( new Promise( () => {} ) );
 
 					// noinspection JSIgnoredPromiseFromCall
 					documents.executeUPDATE( "document/", `INSERT DATA { GRAPH <http://example.com/some-document/> { <http://example.com/some-document/> <http://example.com/ns#propertyString> "Property Value" } }` );
@@ -13594,7 +13594,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				} );
 
 				it( "should use SPARQL service", ():void => {
-					const spyService:jasmine.Spy = spyOn( SPARQL.Service.SPARQLService, "executeUPDATE" ).and.returnValue( new Promise( () => {} ) );
+					const spyService:jasmine.Spy = spyOn( SPARQL.SPARQLService, "executeUPDATE" ).and.returnValue( new Promise( () => {} ) );
 
 					// noinspection JSIgnoredPromiseFromCall
 					documents.executeUPDATE( "http://example.com/document/", `INSERT DATA { GRAPH <http://example.com/some-document/> { <http://example.com/some-document/> <http://example.com/ns#propertyString> "Property Value" } }` );
@@ -13689,7 +13689,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					"ex": "http://example.com/",
 				} );
 
-				let queryBuilder:SPARQL.Builder.FinishSPARQLSelect = documents
+				let queryBuilder:SPARQL.FinishSPARQLSelect = documents
 					.sparql( "http://example.com/resource/" )
 					.select( "a" )
 					.where( _ =>

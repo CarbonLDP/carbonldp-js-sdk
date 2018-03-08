@@ -41,7 +41,7 @@ describe( module( "carbonldp/SPARQL/QueryDocument/QueryDocumentsBuilder" ), ():v
 
 	// TODO: To document `QueryDocumentsBuilderOrderData`
 
-	describe( clazz( "CarbonLDP.SPARQL.QueryDocument.QueryDocumentsBuilder.QueryDocumentsBuilder", "Class with the helpers and properties for construct a query document" ), ():void => {
+	describe( clazz( "CarbonLDP.SPARQL.QueryDocument.QueryDocumentsBuilder", "Class with the helpers and properties for construct a query document" ), ():void => {
 
 		it( "should exists", ():void => {
 			expect( QueryDocumentsBuilder ).toBeDefined();

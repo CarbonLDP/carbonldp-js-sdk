@@ -17,8 +17,8 @@ describe( module( "carbonldp/SPARQL/SelectResults" ), ():void => {
 	} );
 
 	describe( interfaze(
-		"CarbonLDP.SPARQL.SelectResults.SPARQLSelectResults",
-		[ "T = CarbonLDP.SPARQL.SelectResults.SPARQLBindingObject" ],
+		"CarbonLDP.SPARQL.SPARQLSelectResults",
+		[ "T = CarbonLDP.SPARQL.SPARQLBindingObject" ],
 		"Interface that represents a parsed response of a SELECT SPARQL query."
 	), ():void => {
 
@@ -39,7 +39,7 @@ describe( module( "carbonldp/SPARQL/SelectResults" ), ():void => {
 	} );
 
 	describe( interfaze(
-		"CarbonLDP.SPARQL.SelectResults.SPARQLBindingObject",
+		"CarbonLDP.SPARQL.SPARQLBindingObject",
 		"Interface that represents an entry of a element asked for in the SELECT query."
 	), ():void => {
 

@@ -452,7 +452,7 @@ describe( module( "carbonldp/PersistedDocument" ), ():void => {
 				[ "T extends object" ],
 				"Retrieves the children of the document, building a query on which one is able to specify the properties to be retrieve and sub-documents' properties and on and on.", [
 					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for the request." },
-					{ name: "queryBuilderFn", type: "( queryBuilder:CarbonLDP.SPARQL.QueryDocument.QueryDocumentsBuilder.QueryDocumentsBuilder ) => CarbonLDP.SPARQL.QueryDocument.QueryDocumentsBuilder.QueryDocumentsBuilder", optional: true, description: "Function that receives a the builder that helps you to construct the children retrieval query.\nThe same builder must be returned." },
+					{ name: "queryBuilderFn", type: "( queryBuilder:CarbonLDP.SPARQL.QueryDocument.QueryDocumentsBuilder ) => CarbonLDP.SPARQL.QueryDocument.QueryDocumentsBuilder", optional: true, description: "Function that receives a the builder that helps you to construct the children retrieval query.\nThe same builder must be returned." },
 				],
 				{ type: "Promise<[ (T & CarbonLDP.PersistedDocument.PersistedDocument)[], CarbonLDP.HTTP.Response ]>" }
 			), ():void => {} );
@@ -460,7 +460,7 @@ describe( module( "carbonldp/PersistedDocument" ), ():void => {
 			it( hasSignature(
 				[ "T extends object" ],
 				"Retrieves the children of the document, building a query on which one is able to specify the properties to be retrieve and sub-documents' properties and on and on.", [
-					{ name: "queryBuilderFn", type: "( queryBuilder:CarbonLDP.SPARQL.QueryDocument.QueryDocumentsBuilder.QueryDocumentsBuilder ) => CarbonLDP.SPARQL.QueryDocument.QueryDocumentsBuilder.QueryDocumentsBuilder", optional: true, description: "Function that receives a the builder that helps you to construct the children retrieval query.\nThe same builder must be returned." },
+					{ name: "queryBuilderFn", type: "( queryBuilder:CarbonLDP.SPARQL.QueryDocument.QueryDocumentsBuilder ) => CarbonLDP.SPARQL.QueryDocument.QueryDocumentsBuilder", optional: true, description: "Function that receives a the builder that helps you to construct the children retrieval query.\nThe same builder must be returned." },
 				],
 				{ type: "Promise<[ (T & CarbonLDP.PersistedDocument.PersistedDocument)[], CarbonLDP.HTTP.Response ]>" }
 			), ():void => {} );
@@ -485,7 +485,7 @@ describe( module( "carbonldp/PersistedDocument" ), ():void => {
 				[ "T extends object" ],
 				"Retrieves the members of the document, building a query on which one is able to specify the properties to be retrieve and sub-documents' properties and on and on.", [
 					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for the request." },
-					{ name: "queryBuilderFn", type: "( queryBuilder:CarbonLDP.SPARQL.QueryDocument.QueryDocumentsBuilder.QueryDocumentsBuilder ) => CarbonLDP.SPARQL.QueryDocument.QueryDocumentsBuilder.QueryDocumentsBuilder", optional: true, description: "Function that receives a the builder that helps you to construct the members retrieval query.\nThe same builder must be returned." },
+					{ name: "queryBuilderFn", type: "( queryBuilder:CarbonLDP.SPARQL.QueryDocument.QueryDocumentsBuilder ) => CarbonLDP.SPARQL.QueryDocument.QueryDocumentsBuilder", optional: true, description: "Function that receives a the builder that helps you to construct the members retrieval query.\nThe same builder must be returned." },
 				],
 				{ type: "Promise<[ (T & CarbonLDP.PersistedDocument.PersistedDocument)[], CarbonLDP.HTTP.Response ]>" }
 			), ():void => {} );
@@ -493,7 +493,7 @@ describe( module( "carbonldp/PersistedDocument" ), ():void => {
 			it( hasSignature(
 				[ "T extends object" ],
 				"Retrieves the members of the document, building a query on which one is able to specify the properties to be retrieve and sub-documents' properties and on and on.", [
-					{ name: "queryBuilderFn", type: "( queryBuilder:CarbonLDP.SPARQL.QueryDocument.QueryDocumentsBuilder.QueryDocumentsBuilder ) => CarbonLDP.SPARQL.QueryDocument.QueryDocumentsBuilder.QueryDocumentsBuilder", optional: true, description: "Function that receives a the builder that helps you to construct the members retrieval query.\nThe same builder must be returned." },
+					{ name: "queryBuilderFn", type: "( queryBuilder:CarbonLDP.SPARQL.QueryDocument.QueryDocumentsBuilder ) => CarbonLDP.SPARQL.QueryDocument.QueryDocumentsBuilder", optional: true, description: "Function that receives a the builder that helps you to construct the members retrieval query.\nThe same builder must be returned." },
 				],
 				{ type: "Promise<[ (T & CarbonLDP.PersistedDocument.PersistedDocument)[], CarbonLDP.HTTP.Response ]>" }
 			), ():void => {} );
@@ -545,7 +545,7 @@ describe( module( "carbonldp/PersistedDocument" ), ():void => {
 				{ name: "askQuery", type: "string" },
 				{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for the request." },
 			],
-			{ type: "Promise<[ CarbonLDP.SPARQL.RawResults.SPARQLRawResults, CarbonLDP.HTTP.Response ]>" }
+			{ type: "Promise<[ CarbonLDP.SPARQL.SPARQLRawResults, CarbonLDP.HTTP.Response ]>" }
 		), ():void => {} );
 
 		it( hasMethod(
@@ -565,18 +565,18 @@ describe( module( "carbonldp/PersistedDocument" ), ():void => {
 				{ name: "selectQuery", type: "string" },
 				{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for the request." },
 			],
-			{ type: "Promise<[ CarbonLDP.SPARQL.RawResults.SPARQLRawResults, CarbonLDP.HTTP.Response ]>" }
+			{ type: "Promise<[ CarbonLDP.SPARQL.SPARQLRawResults, CarbonLDP.HTTP.Response ]>" }
 		), ():void => {} );
 
 		it( hasMethod(
 			OBLIGATORY,
 			"executeSELECTQuery",
 			[ "T extends object" ],
-			"Executes a SELECT query in the document and returns the results as a `CarbonLDP.SPARQL.SelectResults.SPARQLSelectResults` object.", [
+			"Executes a SELECT query in the document and returns the results as a `CarbonLDP.SPARQL.SPARQLSelectResults` object.", [
 				{ name: "selectQuery", type: "string" },
 				{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for the request." },
 			],
-			{ type: "Promise<[ CarbonLDP.SPARQL.SelectResults.SPARQLSelectResults<T>, CarbonLDP.HTTP.Response ]>" }
+			{ type: "Promise<[ CarbonLDP.SPARQL.SPARQLSelectResults<T>, CarbonLDP.HTTP.Response ]>" }
 		), ():void => {} );
 
 		it( hasMethod(

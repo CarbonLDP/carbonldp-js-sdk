@@ -33,7 +33,7 @@ describe( module( "carbonldp/SPARQL/QueryDocument/QueryProperty" ), ():void => {
 
 	// TODO: To document `QueryPropertyType`
 
-	describe( clazz( "CarbonLDP.SPARQL.QueryDocument.QueryProperty.QueryProperty", "Class that represents a property in the query" ), ():void => {
+	describe( clazz( "CarbonLDP.SPARQL.QueryDocument.QueryProperty", "Class that represents a property in the query" ), ():void => {
 
 		it( "should exists", ():void => {
 			expect( QueryProperty ).toBeDefined();
@@ -57,7 +57,7 @@ describe( module( "carbonldp/SPARQL/QueryDocument/QueryProperty" ), ():void => {
 				"Creates a query property for the specified name.\n" +
 				"By default the property will be optional, i.e. the patterns returned will be wrapped by an optional token.",
 				[
-					{ name: "context", type: "CarbonLDP.SPARQL.QueryDocument.QueryContext.QueryContext", description: "The context of the query where the property is been used." },
+					{ name: "context", type: "CarbonLDP.SPARQL.QueryDocument.QueryContext", description: "The context of the query where the property is been used." },
 					{ name: "name", type: "string", description: "The name of the property." },
 				]
 			), ():void => {
@@ -91,7 +91,7 @@ describe( module( "carbonldp/SPARQL/QueryDocument/QueryProperty" ), ():void => {
 		it( hasProperty(
 			INSTANCE,
 			"variable",
-			"CarbonLDP.SPARQL.QueryDocument.QueryVariable.QueryVariable",
+			"CarbonLDP.SPARQL.QueryDocument.QueryVariable",
 			"The variable that represents the property in the query."
 		), ():void => {
 		} );

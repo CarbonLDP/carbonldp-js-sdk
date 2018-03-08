@@ -24,7 +24,7 @@ describe( module( "carbonldp/SPARQL/QueryDocument/QueryContextPartial" ), ():voi
 		expect( Module ).toEqual( jasmine.any( Object ) );
 	} );
 
-	describe( clazz( "CarbonLDP.SPARQL.QueryDocument.QueryContextPartial.QueryContextPartial", "Class with the shared status and data of the query." ), ():void => {
+	describe( clazz( "CarbonLDP.SPARQL.QueryDocument.QueryContextPartial", "Class with the shared status and data of the query." ), ():void => {
 
 		it( "should exists", ():void => {
 			expect( QueryContextPartial ).toBeDefined();
@@ -73,7 +73,7 @@ describe( module( "carbonldp/SPARQL/QueryDocument/QueryContextPartial" ), ():voi
 
 		} );
 
-		it( extendsClass( "CarbonLDP.SPARQL.QueryDocument.QueryContext.QueryContext" ), ():void => {
+		it( extendsClass( "CarbonLDP.SPARQL.QueryDocument.QueryContext" ), ():void => {
 			const queryContext:QueryContextPartial = new QueryContextPartial( persistedDocument, context );
 			expect( queryContext ).toEqual( jasmine.any( QueryContext ) );
 		} );

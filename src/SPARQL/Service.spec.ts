@@ -29,7 +29,7 @@ describe( module( "carbonldp/SPARQL/Service" ), ():void => {
 		expect( Utils.isObject( Service ) ).toEqual( true );
 	} );
 
-	describe( clazz( "CarbonLDP.SPARQL.Service.SPARQLService", "Executes SPARQL queries and updates." ), ():void => {
+	describe( clazz( "CarbonLDP.SPARQL.SPARQLService", "Executes SPARQL queries and updates." ), ():void => {
 
 		beforeEach( function():void {
 			jasmine.Ajax.install();
@@ -48,7 +48,7 @@ describe( module( "carbonldp/SPARQL/Service" ), ():void => {
 			{ name: "url", type: "string" },
 			{ name: "askQuery", type: "string" },
 			{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true },
-		], { type: "Promise<[ CarbonLDP.SPARQL.RawResults.SPARQLRawResults, CarbonLDP.HTTP.Response ]>" } ), ( done:{ ():void; fail:( error:any ) => void } ):void => {
+		], { type: "Promise<[ CarbonLDP.SPARQL.SPARQLRawResults, CarbonLDP.HTTP.Response ]>" } ), ( done:{ ():void; fail:( error:any ) => void } ):void => {
 			// Property Integrity
 			(() => {
 				expect( "executeRawASKQuery" in Service.SPARQLService ).toEqual( true );
@@ -147,7 +147,7 @@ describe( module( "carbonldp/SPARQL/Service" ), ():void => {
 				{ name: "pointerLibrary", type: "CarbonLDP.Pointer.PointerLibrary" },
 				{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true },
 			],
-			{ type: "Promise<[ CarbonLDP.SPARQL.SelectResults.SPARQLSelectResults<T>, CarbonLDP.HTTP.Response ]>" }
+			{ type: "Promise<[ CarbonLDP.SPARQL.SPARQLSelectResults<T>, CarbonLDP.HTTP.Response ]>" }
 		), ( done:{ ():void; fail:( error:any ) => void } ):void => {
 			// Property Integrity
 			(() => {
@@ -323,7 +323,7 @@ describe( module( "carbonldp/SPARQL/Service" ), ():void => {
 			{ name: "url", type: "string" },
 			{ name: "selectQuery", type: "string" },
 			{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true },
-		], { type: "Promise<[ CarbonLDP.SPARQL.RawResults.SPARQLRawResults, CarbonLDP.HTTP.Response ]>" } ), ( done:{ ():void; fail:( error:any ) => void } ):void => {
+		], { type: "Promise<[ CarbonLDP.SPARQL.SPARQLRawResults, CarbonLDP.HTTP.Response ]>" } ), ( done:{ ():void; fail:( error:any ) => void } ):void => {
 			// Property Integrity
 			(() => {
 				expect( "executeRawSELECTQuery" in Service.SPARQLService ).toEqual( true );

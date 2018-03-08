@@ -27,7 +27,7 @@ describe( module( "carbonldp/SPARQL/QueryDocument/QueryContext" ), ():void => {
 		expect( Module ).toEqual( jasmine.any( Object ) );
 	} );
 
-	describe( clazz( "CarbonLDP.SPARQL.QueryDocument.QueryContext.QueryContext", "Class with the shared status and data of the query." ), ():void => {
+	describe( clazz( "CarbonLDP.SPARQL.QueryDocument.QueryContext", "Class with the shared status and data of the query." ), ():void => {
 
 		it( "should exists", ():void => {
 			expect( QueryContext ).toBeDefined();
@@ -76,7 +76,7 @@ describe( module( "carbonldp/SPARQL/QueryDocument/QueryContext" ), ():void => {
 				[
 					{ name: "name", type: "string" },
 				],
-				{ type: "CarbonLDP.SPARQL.QueryDocument.QueryVariable.QueryVariable" }
+				{ type: "CarbonLDP.SPARQL.QueryDocument.QueryVariable" }
 			), ():void => {
 			} );
 

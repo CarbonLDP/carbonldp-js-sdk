@@ -14920,9 +14920,9 @@ var SDKContext = __importStar(__webpack_require__(96));
 var Settings = __importStar(__webpack_require__(295));
 var SHACL = __importStar(__webpack_require__(296));
 var SPARQL = __importStar(__webpack_require__(297));
-var System = __importStar(__webpack_require__(301));
+var System = __importStar(__webpack_require__(299));
 var Utils = __importStar(__webpack_require__(0));
-var Vocabularies = __importStar(__webpack_require__(302));
+var Vocabularies = __importStar(__webpack_require__(300));
 var CarbonLDP = (function (_super) {
     __extends(CarbonLDP, _super);
     function CarbonLDP(urlOrSettings) {
@@ -21791,6 +21791,9 @@ __export(__webpack_require__(179));
 
 "use strict";
 
+function __export(m) {
+    for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
+}
 var __importStar = (this && this.__importStar) || function (mod) {
     if (mod && mod.__esModule) return mod;
     var result = {};
@@ -21799,18 +21802,11 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 }
 Object.defineProperty(exports, "__esModule", { value: true });
-var Builder = __importStar(__webpack_require__(143));
-exports.Builder = Builder;
 var QueryDocument = __importStar(__webpack_require__(298));
 exports.QueryDocument = QueryDocument;
-var RawResults = __importStar(__webpack_require__(299));
-exports.RawResults = RawResults;
-var RawResultsParser = __importStar(__webpack_require__(163));
-exports.RawResultsParser = RawResultsParser;
-var SelectResults = __importStar(__webpack_require__(300));
-exports.SelectResults = SelectResults;
-var Service = __importStar(__webpack_require__(161));
-exports.Service = Service;
+__export(__webpack_require__(143));
+__export(__webpack_require__(163));
+__export(__webpack_require__(161));
 
 
 /***/ }),
@@ -21842,24 +21838,6 @@ __export(__webpack_require__(122));
 
 "use strict";
 
-Object.defineProperty(exports, "__esModule", { value: true });
-
-
-/***/ }),
-/* 300 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-
-
-/***/ }),
-/* 301 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
 var __importStar = (this && this.__importStar) || function (mod) {
     if (mod && mod.__esModule) return mod;
     var result = {};
@@ -21873,7 +21851,7 @@ exports.PlatformMetadata = PlatformMetadata;
 
 
 /***/ }),
-/* 302 */
+/* 300 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21885,14 +21863,14 @@ Object.defineProperty(exports, "__esModule", { value: true });
 __export(__webpack_require__(2));
 __export(__webpack_require__(17));
 __export(__webpack_require__(33));
-__export(__webpack_require__(303));
+__export(__webpack_require__(301));
 __export(__webpack_require__(88));
 __export(__webpack_require__(109));
 __export(__webpack_require__(6));
 
 
 /***/ }),
-/* 303 */
+/* 301 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
