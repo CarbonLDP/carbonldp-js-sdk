@@ -14920,9 +14920,9 @@ var SDKContext = __importStar(__webpack_require__(96));
 var Settings = __importStar(__webpack_require__(295));
 var SHACL = __importStar(__webpack_require__(296));
 var SPARQL = __importStar(__webpack_require__(297));
-var System = __importStar(__webpack_require__(303));
+var System = __importStar(__webpack_require__(301));
 var Utils = __importStar(__webpack_require__(0));
-var Vocabularies = __importStar(__webpack_require__(304));
+var Vocabularies = __importStar(__webpack_require__(302));
 var CarbonLDP = (function (_super) {
     __extends(CarbonLDP, _super);
     function CarbonLDP(urlOrSettings) {
@@ -21803,11 +21803,11 @@ var Builder = __importStar(__webpack_require__(143));
 exports.Builder = Builder;
 var QueryDocument = __importStar(__webpack_require__(298));
 exports.QueryDocument = QueryDocument;
-var RawResults = __importStar(__webpack_require__(301));
+var RawResults = __importStar(__webpack_require__(299));
 exports.RawResults = RawResults;
 var RawResultsParser = __importStar(__webpack_require__(163));
 exports.RawResultsParser = RawResultsParser;
-var SelectResults = __importStar(__webpack_require__(302));
+var SelectResults = __importStar(__webpack_require__(300));
 exports.SelectResults = SelectResults;
 var Service = __importStar(__webpack_require__(161));
 exports.Service = Service;
@@ -21819,40 +21819,21 @@ exports.Service = Service;
 
 "use strict";
 
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
-    result["default"] = mod;
-    return result;
+function __export(m) {
+    for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
 }
 Object.defineProperty(exports, "__esModule", { value: true });
-var PartialMetadata = __importStar(__webpack_require__(74));
-exports.PartialMetadata = PartialMetadata;
-var QueryContext = __importStar(__webpack_require__(76));
-exports.QueryContext = QueryContext;
-var QueryContextBuilder = __importStar(__webpack_require__(75));
-exports.QueryContextBuilder = QueryContextBuilder;
-var QueryContextPartial = __importStar(__webpack_require__(157));
-exports.QueryContextPartial = QueryContextPartial;
-var QueryDocumentBuilder = __importStar(__webpack_require__(84));
-exports.QueryDocumentBuilder = QueryDocumentBuilder;
-var QueryDocumentsBuilder = __importStar(__webpack_require__(160));
-exports.QueryDocumentsBuilder = QueryDocumentsBuilder;
-var QueryMetadata = __importStar(__webpack_require__(85));
-exports.QueryMetadata = QueryMetadata;
-var QueryObject = __importStar(__webpack_require__(158));
-exports.QueryObject = QueryObject;
-var QueryProperty = __importStar(__webpack_require__(45));
-exports.QueryProperty = QueryProperty;
-var QuerySchema = __importStar(__webpack_require__(299));
-exports.QuerySchema = QuerySchema;
-var QuerySchemaProperty = __importStar(__webpack_require__(300));
-exports.QuerySchemaProperty = QuerySchemaProperty;
-var QueryValue = __importStar(__webpack_require__(159));
-exports.QueryValue = QueryValue;
-var QueryVariable = __importStar(__webpack_require__(122));
-exports.QueryVariable = QueryVariable;
+__export(__webpack_require__(74));
+__export(__webpack_require__(76));
+__export(__webpack_require__(75));
+__export(__webpack_require__(157));
+__export(__webpack_require__(84));
+__export(__webpack_require__(160));
+__export(__webpack_require__(85));
+__export(__webpack_require__(158));
+__export(__webpack_require__(45));
+__export(__webpack_require__(159));
+__export(__webpack_require__(122));
 
 
 /***/ }),
@@ -21879,24 +21860,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 
 "use strict";
 
-Object.defineProperty(exports, "__esModule", { value: true });
-
-
-/***/ }),
-/* 302 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-
-
-/***/ }),
-/* 303 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
 var __importStar = (this && this.__importStar) || function (mod) {
     if (mod && mod.__esModule) return mod;
     var result = {};
@@ -21910,7 +21873,7 @@ exports.PlatformMetadata = PlatformMetadata;
 
 
 /***/ }),
-/* 304 */
+/* 302 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21922,14 +21885,14 @@ Object.defineProperty(exports, "__esModule", { value: true });
 __export(__webpack_require__(2));
 __export(__webpack_require__(17));
 __export(__webpack_require__(33));
-__export(__webpack_require__(305));
+__export(__webpack_require__(303));
 __export(__webpack_require__(88));
 __export(__webpack_require__(109));
 __export(__webpack_require__(6));
 
 
 /***/ }),
-/* 305 */
+/* 303 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
