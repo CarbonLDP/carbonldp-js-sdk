@@ -299,7 +299,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 					{ name: "objectSchemaResolver", type: "CarbonLDP.ObjectSchema.ObjectSchemaResolver", optional: true },
 					{ name: "jsonLDConverter", type: "CarbonLDP.JSONLDConverter.Class", optional: true },
 				],
-				{ type: "CarbonLDP.RDF.Document.RDFDocument" }
+				{ type: "CarbonLDP.RDF.RDFDocument" }
 			), ():void => {} );
 
 		} );

@@ -67,7 +67,7 @@ var CarbonLDP = (function (_super) {
             },
         };
         if (Utils.isString(urlOrSettings)) {
-            if (!RDF.URI.URI.hasProtocol(urlOrSettings))
+            if (!RDF.URI.hasProtocol(urlOrSettings))
                 throw new Errors.IllegalArgumentError("The URL must contain a valid protocol: \"http://\", \"https://\".");
             _this._baseURI = urlOrSettings;
         }

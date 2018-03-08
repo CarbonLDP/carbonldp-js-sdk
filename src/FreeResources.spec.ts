@@ -101,7 +101,7 @@ describe( module( "carbonldp/FreeResources" ), ():void => {
 			OBLIGATORY,
 			"toJSON",
 			"Converts the resources contained in the current `CarbonLDP.FreeResources.FreeResources` object to a JSON object.",
-			{ type: "CarbonLDP.RDF.Node.RDFNode[]" }
+			{ type: "CarbonLDP.RDF.RDFNode[]" }
 		), ():void => {} );
 
 	} );

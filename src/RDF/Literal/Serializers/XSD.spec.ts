@@ -7,7 +7,7 @@ import {
 	isDefined,
 	module,
 	STATIC,
-} from "./../../../test/JasmineExtender";
+} from "../../../test/JasmineExtender";
 import * as Utils from "./../../../Utils";
 
 import * as XSD from "./XSD";
@@ -22,9 +22,9 @@ describe( module(
 	} );
 
 	describe( clazz(
-		"CarbonLDP.RDF.Literal.Serializes.XSD.DateSerializer",
+		"CarbonLDP.RDF.Literal.Serializers.DateSerializer",
 		"Class that can serialize a Date object into a string literal with format `YYYY-MM-DD`.\n" +
-		"Instead of instantiating this class, use the already exposed instance `CarbonLDP.RDF.Literal.Serializes.XSD.dateSerializer`."
+		"Instead of instantiating this class, use the already exposed instance `carbonldp/RDF/Literal/Serializes/XSD#dateSerializer`."
 	), ():void => {
 
 		// TODO: Separate in different tests
@@ -66,17 +66,17 @@ describe( module(
 	it( hasProperty(
 		STATIC,
 		"dateSerializer",
-		"CarbonLDP.RDF.Literal.Serializes.XSD.DateSerializer",
-		"The already exposed instance of the class `CarbonLDP.RDF.Literal.Serializes.XSD.DateSerializer`."
+		"CarbonLDP.RDF.Literal.Serializers.DateSerializer",
+		"The already exposed instance of the class `CarbonLDP.RDF.Literal.Serializers.DateSerializer`."
 	), ():void => {
 		expect( XSD.dateSerializer ).toBeDefined();
 		expect( XSD.dateSerializer instanceof XSD.DateSerializer ).toBe( true );
 	} );
 
 	describe( clazz(
-		"CarbonLDP.RDF.Literal.Serializes.XSD.DateTimeSerializer",
+		"CarbonLDP.RDF.Literal.Serializers.DateTimeSerializer",
 		"Class that can serialize a Date object into a string ISO literal.\n" +
-		"Instead of instantiating this class, use the already exposed instance `CarbonLDP.RDF.Literal.Serializes.XSD.dateTimeSerializer`."
+		"Instead of instantiating this class, use the already exposed instance `carbonldp/RDF/Literal/Serializes/XSD#dateTimeSerializer`."
 	), ():void => {
 
 		// TODO: Separate in different tests
@@ -118,17 +118,17 @@ describe( module(
 	it( hasProperty(
 		STATIC,
 		"dateTimeSerializer",
-		"CarbonLDP.RDF.Literal.Serializes.XSD.DateTimeSerializer",
-		"The already exposed instance of the class `CarbonLDP.RDF.Literal.Serializes.XSD.DateTimeSerializer`."
+		"CarbonLDP.RDF.Literal.Serializers.DateTimeSerializer",
+		"The already exposed instance of the class `CarbonLDP.RDF.Literal.Serializers.DateTimeSerializer`."
 	), ():void => {
 		expect( XSD.dateTimeSerializer ).toBeDefined();
 		expect( XSD.dateTimeSerializer instanceof XSD.DateTimeSerializer ).toBe( true );
 	} );
 
 	describe( clazz(
-		"CarbonLDP.RDF.Literal.Serializes.XSD.TimeSerializer",
+		"CarbonLDP.RDF.Literal.Serializers.TimeSerializer",
 		"Class that can serialize a Date object into a literal string with format `HH:mm:ss.sssZ`.\n" +
-		"Instead of instantiating this class, use the already exposed instance `CarbonLDP.RDF.Literal.Serializes.XSD.timeSerializer`."
+		"Instead of instantiating this class, use the already exposed instance `carbonldp/RDF/Literal/Serializes/XSD#timeSerializer`."
 	), ():void => {
 
 		// TODO: Separate in different tests
@@ -170,17 +170,17 @@ describe( module(
 	it( hasProperty(
 		STATIC,
 		"timeSerializer",
-		"CarbonLDP.RDF.Literal.Serializes.XSD.TimeSerializer",
-		"The already exposed instance of the class `CarbonLDP.RDF.Literal.Serializes.XSD.TimeSerializer`."
+		"CarbonLDP.RDF.Literal.Serializers.TimeSerializer",
+		"The already exposed instance of the class `CarbonLDP.RDF.Literal.Serializers.TimeSerializer`."
 	), ():void => {
 		expect( XSD.timeSerializer ).toBeDefined();
 		expect( XSD.timeSerializer instanceof XSD.TimeSerializer ).toBe( true );
 	} );
 
 	describe( clazz(
-		"CarbonLDP.RDF.Literal.Serializes.XSD.IntegerSerializer",
+		"CarbonLDP.RDF.Literal.Serializers.IntegerSerializer",
 		"Class that can serialize any Number value to a string literal of an integer.\n" +
-		"Instead of instantiating this class, use the already exposed instance `CarbonLDP.RDF.Literal.Serializes.XSD.integerSerializer`."
+		"Instead of instantiating this class, use the already exposed instance `carbonldp/RDF/Literal/Serializes/XSD#integerSerializer`."
 	), ():void => {
 
 		// TODO: Separate in different tests
@@ -235,17 +235,17 @@ describe( module(
 	it( hasProperty(
 		STATIC,
 		"integerSerializer",
-		"CarbonLDP.RDF.Literal.Serializes.XSD.IntegerSerializer",
-		"The already exposed instance of the class `CarbonLDP.RDF.Literal.Serializes.XSD.IntegerSerializer`."
+		"CarbonLDP.RDF.Literal.Serializers.IntegerSerializer",
+		"The already exposed instance of the class `CarbonLDP.RDF.Literal.Serializers.IntegerSerializer`."
 	), ():void => {
 		expect( XSD.integerSerializer ).toBeDefined();
 		expect( XSD.integerSerializer instanceof XSD.IntegerSerializer ).toBe( true );
 	} );
 
 	describe( clazz(
-		"CarbonLDP.RDF.Literal.Serializes.XSD.UnsignedIntegerSerializer",
+		"CarbonLDP.RDF.Literal.Serializers.UnsignedIntegerSerializer",
 		"Class that can serialize any Number value to a string literal of an unsigned integer.\n" +
-		"Instead of instantiating this class, use the already exposed instance `CarbonLDP.RDF.Literal.Serializes.XSD.unsignedIntegerSerializer`."
+		"Instead of instantiating this class, use the already exposed instance `carbonldp/RDF/Literal/Serializes/XSD#unsignedIntegerSerializer`."
 	), ():void => {
 
 		// TODO: Separate in different tests
@@ -340,17 +340,17 @@ describe( module(
 	it( hasProperty(
 		STATIC,
 		"unsignedIntegerSerializer",
-		"CarbonLDP.RDF.Literal.Serializes.XSD.UnsignedIntegerSerializer",
-		"The already exposed instance of the class `CarbonLDP.RDF.Literal.Serializes.XSD.UnsignedIntegerSerializer`."
+		"CarbonLDP.RDF.Literal.Serializers.UnsignedIntegerSerializer",
+		"The already exposed instance of the class `CarbonLDP.RDF.Literal.Serializers.UnsignedIntegerSerializer`."
 	), ():void => {
 		expect( XSD.unsignedIntegerSerializer ).toBeDefined();
 		expect( XSD.unsignedIntegerSerializer instanceof XSD.UnsignedIntegerSerializer ).toBe( true );
 	} );
 
 	describe( clazz(
-		"CarbonLDP.RDF.Literal.Serializes.XSD.FloatSerializer",
+		"CarbonLDP.RDF.Literal.Serializers.FloatSerializer",
 		"Class that can serialize any Number value to a string literal of float.\n" +
-		"Instead of instantiating this class, use the already exposed instance `CarbonLDP.RDF.Literal.Serializes.XSD.floatSerializer`."
+		"Instead of instantiating this class, use the already exposed instance `carbonldp/RDF/Literal/Serializes/XSD#floatSerializer`."
 	), ():void => {
 
 		// TODO: Separate in different tests
@@ -399,17 +399,17 @@ describe( module(
 	it( hasProperty(
 		STATIC,
 		"floatSerializer",
-		"CarbonLDP.RDF.Literal.Serializes.XSD.FloatSerializer",
-		"The already exposed instance of the class `CarbonLDP.RDF.Literal.Serializes.XSD.FloatSerializer`."
+		"CarbonLDP.RDF.Literal.Serializers.FloatSerializer",
+		"The already exposed instance of the class `CarbonLDP.RDF.Literal.Serializers.FloatSerializer`."
 	), ():void => {
 		expect( XSD.floatSerializer ).toBeDefined();
 		expect( XSD.floatSerializer instanceof XSD.FloatSerializer ).toBe( true );
 	} );
 
 	describe( clazz(
-		"CarbonLDP.RDF.Literal.Serializes.XSD.BooleanSerializer",
+		"CarbonLDP.RDF.Literal.Serializers.BooleanSerializer",
 		"Class that can serialize any variable to a string literal representation its truth value.\n" +
-		"Instead of instantiating this class, use the already exposed instance `CarbonLDP.RDF.Literal.Serializes.XSD.booleanSerializer`."
+		"Instead of instantiating this class, use the already exposed instance `carbonldp/RDF/Literal/Serializes/XSD#booleanSerializer`."
 	), ():void => {
 
 		// TODO: Separate in different tests
@@ -465,17 +465,17 @@ describe( module(
 	it( hasProperty(
 		STATIC,
 		"booleanSerializer",
-		"CarbonLDP.RDF.Literal.Serializes.XSD.BooleanSerializer",
-		"The already exposed instance of the class `CarbonLDP.RDF.Literal.Serializes.XSD.BooleanSerializer`"
+		"CarbonLDP.RDF.Literal.Serializers.BooleanSerializer",
+		"The already exposed instance of the class `CarbonLDP.RDF.Literal.Serializers.BooleanSerializer`"
 	), ():void => {
 		expect( XSD.booleanSerializer ).toBeDefined();
 		expect( XSD.booleanSerializer instanceof XSD.BooleanSerializer ).toBe( true );
 	} );
 
 	describe( clazz(
-		"CarbonLDP.RDF.Literal.Serializes.XSD.StringSerializer",
+		"CarbonLDP.RDF.Literal.Serializers.StringSerializer",
 		"Class that can serialize any variable to a string literal representation its truth value.\n" +
-		"Instead of instantiating this class, use the already exposed instance `CarbonLDP.RDF.Literal.Serializes.XSD.stringSerializer`."
+		"Instead of instantiating this class, use the already exposed instance `carbonldp/RDF/Literal/Serializes/XSD#stringSerializer`."
 	), ():void => {
 
 		// TODO: Separate in different tests
@@ -528,8 +528,8 @@ describe( module(
 	it( hasProperty(
 		STATIC,
 		"stringSerializer",
-		"CarbonLDP.RDF.Literal.Serializes.XSD.StringSerializer",
-		"The already exposed instance of the class `CarbonLDP.RDF.Literal.Serializes.XSD.StringSerializer`."
+		"CarbonLDP.RDF.Literal.Serializers.StringSerializer",
+		"The already exposed instance of the class `CarbonLDP.RDF.Literal.Serializers.StringSerializer`."
 	), ():void => {
 		expect( XSD.stringSerializer ).toBeDefined();
 		expect( XSD.stringSerializer instanceof XSD.StringSerializer ).toBe( true );

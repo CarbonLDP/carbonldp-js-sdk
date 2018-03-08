@@ -15,7 +15,7 @@ import {
 	property,
 	STATIC,
 } from "../test/JasmineExtender";
-import { RDFDocument } from "./../RDF/Document";
+import { RDFDocument } from "./Document";
 import * as Utils from "./../Utils";
 
 import { RDFValue } from "./Value";
@@ -23,8 +23,8 @@ import { RDFValue } from "./Value";
 describe( module( "carbonldp/RDF/Value" ), ():void => {
 
 	describe( interfaze(
-		"CarbonLDP.RDF.Value.RDFValue",
-		"Interface that represents an `rdf:Value`."
+		"CarbonLDP.RDF.RDFValue",
+		"Interface that represents an RDF Value."
 	), ():void => {
 
 		it( hasProperty(
@@ -51,8 +51,8 @@ describe( module( "carbonldp/RDF/Value" ), ():void => {
 	} );
 
 	describe( interfaze(
-		"CarbonLDP.RDF.Value.RDFValueFactory",
-		"Interface with the utils for `CarbonLDP.RDF.Value.RDFValue` objects."
+		"CarbonLDP.RDF.RDFValueFactory",
+		"Interface with the utils for `CarbonLDP.RDF.RDFValue` objects."
 	), ():void => {
 
 		it( hasMethod(
@@ -61,7 +61,7 @@ describe( module( "carbonldp/RDF/Value" ), ():void => {
 			"Returns the parsed object from an Literal, Node, or List.\n" +
 			"Returns null if it cannot be parsed", [
 				{ name: "pointerLibrary", type: "CarbonLDP.Pointer.PointerLibrary" },
-				{ name: "value", type: "CarbonLDP.RDF.Literal.RDFLiteral | CarbonLDP.RDF.Node.RDFNode | CarbonLDP.RDF.List.RDFList | CarbonLDP.RDF.Value.RDFValue | string" },
+				{ name: "value", type: "CarbonLDP.RDF.RDFLiteral | CarbonLDP.RDF.RDFNode | CarbonLDP.RDF.RDFList | CarbonLDP.RDF.RDFValue | string" },
 			],
 			{ type: "any" }
 		), ():void => {} );
@@ -71,8 +71,8 @@ describe( module( "carbonldp/RDF/Value" ), ():void => {
 	describe( property(
 		STATIC,
 		"RDFValue",
-		"CarbonLDP.RDF.Value.RDFValueFactory",
-		"Class with useful functions to manage `CarbonLDP.RDF.Value.RDFValue` objects."
+		"CarbonLDP.RDF.RDFValueFactory",
+		"Class with useful functions to manage `CarbonLDP.RDF.RDFValue` objects."
 	), ():void => {
 
 		let expandedObject:any;

@@ -20,7 +20,7 @@ describe( module(
 	} );
 
 	describe( interfaze(
-		"CarbonLDP.RDF.Literal.Serializer.Serializer",
+		"CarbonLDP.RDF.Literal.Serializer",
 		"Interface that serializer classes must implement."
 	), ():void => {
 

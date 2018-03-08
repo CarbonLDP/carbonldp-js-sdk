@@ -96,7 +96,7 @@ export class CarbonLDP extends AbstractContext.AbstractContext {
 		super();
 
 		if( Utils.isString( urlOrSettings ) ) {
-			if( ! RDF.URI.URI.hasProtocol( urlOrSettings ) ) throw new Errors.IllegalArgumentError( `The URL must contain a valid protocol: "http://", "https://".` );
+			if( ! RDF.URI.hasProtocol( urlOrSettings ) ) throw new Errors.IllegalArgumentError( `The URL must contain a valid protocol: "http://", "https://".` );
 			this._baseURI = urlOrSettings;
 
 		} else {
