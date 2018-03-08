@@ -18,7 +18,7 @@ import { VolatileResource } from "./VolatileResource";
 describe( module( "carbonldp/LDP/VolatileResource" ), ():void => {
 
 	describe( interfaze(
-		"CarbonLDP.LDP.VolatileResource.VolatileResource",
+		"CarbonLDP.LDP.VolatileResource",
 		"Interface that represents a free resource, i.e. a dynamic generated resource that does not have a persisted form."
 	), ():void => {
 
@@ -27,8 +27,8 @@ describe( module( "carbonldp/LDP/VolatileResource" ), ():void => {
 	} );
 
 	describe( interfaze(
-		"CarbonLDP.LDP.VolatileResource.VolatileResourceFactory",
-		"Interface with the factory, decorate an utils methods for `CarbonLDP.LDP.VolatileResource.VolatileResource` objects."
+		"CarbonLDP.LDP.VolatileResourceFactory",
+		"Interface with the factory, decorate an utils methods for `CarbonLDP.LDP.VolatileResource` objects."
 	), ():void => {
 
 		it( hasProperty(
@@ -40,10 +40,10 @@ describe( module( "carbonldp/LDP/VolatileResource" ), ():void => {
 		it( hasMethod(
 			OBLIGATORY,
 			"is",
-			"Return true if the object provided is considered a `CarbonLDP.LDP.VolatileResource.VolatileResource` object.", [
+			"Return true if the object provided is considered a `CarbonLDP.LDP.VolatileResource` object.", [
 				{ name: "object", type: "object", description: "Object to check." },
 			],
-			{ type: "object is CarbonLDP.LDP.VolatileResource.VolatileResource" }
+			{ type: "object is CarbonLDP.LDP.VolatileResource" }
 		), ():void => {} );
 
 	} );
@@ -51,8 +51,8 @@ describe( module( "carbonldp/LDP/VolatileResource" ), ():void => {
 	describe( property(
 		STATIC,
 		"VolatileResource",
-		"CarbonLDP.LDP.VolatileResource.VolatileResourceFactory",
-		"Constant that implements the `CarbonLDP.LDP.VolatileResource.VolatileResourceFactory` interface."
+		"CarbonLDP.LDP.VolatileResourceFactory",
+		"Constant that implements the `CarbonLDP.LDP.VolatileResourceFactory` interface."
 	), ():void => {
 
 		it( isDefined(), ():void => {

@@ -15,9 +15,9 @@ import { CarbonMapEntry } from "./CarbonMapEntry";
 describe( module( "carbonldp/LDP/CarbonMapEntry" ), ():void => {
 
 	describe( interfaze(
-		"CarbonLDP.LDP.CarbonMapEntry.CarbonMapEntry",
+		"CarbonLDP.LDP.CarbonMapEntry",
 		[ "K", "V" ],
-		"Entries of the `CarbonLDP.LDP.CarbonMap.CarbonMap` with the key/value pair."
+		"Entries of the `CarbonLDP.LDP.CarbonMap` with the key/value pair."
 	), ():void => {
 
 		it( extendsClass( "CarbonLDP.BlankNode.BlankNode" ), ():void => {} );
@@ -39,8 +39,8 @@ describe( module( "carbonldp/LDP/CarbonMapEntry" ), ():void => {
 	} );
 
 	describe( interfaze(
-		"CarbonLDP.LDP.CarbonMapEntry.CarbonMapEntryFactory",
-		"Interface with the factory, decorate and utils methods for `CarbonLDP.LDP.CarbonMapEntry.CarbonMapEntry` objects"
+		"CarbonLDP.LDP.CarbonMapEntryFactory",
+		"Interface with the factory, decorate and utils methods for `CarbonLDP.LDP.CarbonMapEntry` objects"
 	), ():void => {
 
 		it( hasProperty(
@@ -54,7 +54,7 @@ describe( module( "carbonldp/LDP/CarbonMapEntry" ), ():void => {
 	describe( property(
 		STATIC,
 		"CarbonMapEntry",
-		"CarbonLDP.LDP.CarbonMapEntry.CarbonMapEntryFactory"
+		"CarbonLDP.LDP.CarbonMapEntryFactory"
 	), ():void => {
 
 		it( "should exist", ():void => {

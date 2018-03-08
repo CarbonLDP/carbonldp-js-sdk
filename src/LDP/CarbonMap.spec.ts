@@ -18,7 +18,7 @@ import { CarbonMap } from "./CarbonMap";
 describe( module( "carbonldp/LDP/CarbonMap" ), ():void => {
 
 	describe( interfaze(
-		"CarbonLDP.LDP.CarbonMap.CarbonMap",
+		"CarbonLDP.LDP.CarbonMap",
 		[ "K", "V" ],
 		"Interface that contains a set entries with a close relation in the form of a key/value pair."
 	), ():void => {
@@ -28,15 +28,15 @@ describe( module( "carbonldp/LDP/CarbonMap" ), ():void => {
 		it( hasProperty(
 			OBLIGATORY,
 			"entries",
-			"CarbonLDP.LDP.CarbonMapEntry.CarbonMapEntry<K,V>[]",
+			"CarbonLDP.LDP.CarbonMapEntry<K,V>[]",
 			"An array of entries' pair relations."
 		), ():void => {} );
 
 	} );
 
 	describe( interfaze(
-		"CarbonLDP.LDP.CarbonMap.CarbonMapFactory",
-		"Interface with the factory, decorate and utils methods for `CarbonLDP.LDP.CarbonMap.CarbonMap` objects."
+		"CarbonLDP.LDP.CarbonMapFactory",
+		"Interface with the factory, decorate and utils methods for `CarbonLDP.LDP.CarbonMap` objects."
 	), ():void => {
 
 		it( hasProperty(
@@ -54,10 +54,10 @@ describe( module( "carbonldp/LDP/CarbonMap" ), ():void => {
 		it( hasMethod(
 			OBLIGATORY,
 			"is",
-			"Return true if the object provided is considered a `CarbonLDP.LDP.CarbonMap.CarbonMap` object.", [
+			"Return true if the object provided is considered a `CarbonLDP.LDP.CarbonMap` object.", [
 				{ name: "object", type: "object", description: "Object to check" },
 			],
-			{ type: "object is CarbonLDP.LDP.CarbonMap.CarbonMap<any, any>" }
+			{ type: "object is CarbonLDP.LDP.CarbonMap<any, any>" }
 		), ():void => {} );
 
 	} );
@@ -65,7 +65,7 @@ describe( module( "carbonldp/LDP/CarbonMap" ), ():void => {
 	describe( property(
 		STATIC,
 		"CarbonMap",
-		"CarbonLDP.LDP.CarbonMap.CarbonMapFactory"
+		"CarbonLDP.LDP.CarbonMapFactory"
 	), ():void => {
 
 		it( isDefined(), ():void => {

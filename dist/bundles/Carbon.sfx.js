@@ -553,10 +553,10 @@ function __export(m) {
 Object.defineProperty(exports, "__esModule", { value: true });
 __export(__webpack_require__(37));
 __export(__webpack_require__(89));
-__export(__webpack_require__(64));
+__export(__webpack_require__(65));
 __export(__webpack_require__(183));
 __export(__webpack_require__(51));
-__export(__webpack_require__(65));
+__export(__webpack_require__(66));
 __export(__webpack_require__(36));
 __export(__webpack_require__(23));
 __export(__webpack_require__(184));
@@ -966,7 +966,7 @@ function __export(m) {
 }
 Object.defineProperty(exports, "__esModule", { value: true });
 __export(__webpack_require__(27));
-__export(__webpack_require__(68));
+__export(__webpack_require__(69));
 __export(__webpack_require__(204));
 __export(__webpack_require__(14));
 __export(__webpack_require__(52));
@@ -1853,10 +1853,10 @@ __export(__webpack_require__(288));
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var BlankNode_1 = __webpack_require__(97);
-var IDAlreadyInUseError_1 = __webpack_require__(68);
+var IDAlreadyInUseError_1 = __webpack_require__(69);
 var IllegalArgumentError_1 = __webpack_require__(14);
-var Converter_1 = __webpack_require__(69);
-var NamedFragment_1 = __webpack_require__(71);
+var Converter_1 = __webpack_require__(70);
+var NamedFragment_1 = __webpack_require__(72);
 var ObjectSchema_1 = __webpack_require__(13);
 var Pointer_1 = __webpack_require__(18);
 var URI_1 = __webpack_require__(10);
@@ -3276,7 +3276,7 @@ var url_1 = __importDefault(__webpack_require__(209));
 var Utils = __importStar(__webpack_require__(0));
 var Errors_1 = __webpack_require__(32);
 var Header_1 = __webpack_require__(43);
-var HTTPMethod_1 = __webpack_require__(70);
+var HTTPMethod_1 = __webpack_require__(71);
 var Response_1 = __webpack_require__(104);
 function forEachHeaders(headers, setHeader) {
     var namesIterator = headers.keys();
@@ -3727,7 +3727,7 @@ function __export(m) {
 }
 Object.defineProperty(exports, "__esModule", { value: true });
 __export(__webpack_require__(30));
-__export(__webpack_require__(63));
+__export(__webpack_require__(64));
 
 //# sourceMappingURL=index.js.map
 
@@ -3739,7 +3739,7 @@ __export(__webpack_require__(63));
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var utils_1 = __webpack_require__(63);
+var utils_1 = __webpack_require__(64);
 var tokens_1 = __webpack_require__(5);
 var tokens_2 = __webpack_require__(3);
 var IRIResolver = (function () {
@@ -3990,9 +3990,9 @@ var __extends = (this && this.__extends) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 var Identifier_1 = __webpack_require__(37);
-var NewLineSymbol_1 = __webpack_require__(64);
+var NewLineSymbol_1 = __webpack_require__(65);
 var Operator_1 = __webpack_require__(51);
-var RightSymbol_1 = __webpack_require__(65);
+var RightSymbol_1 = __webpack_require__(66);
 var Token_1 = __webpack_require__(23);
 var StringLiteral = (function (_super) {
     __extends(StringLiteral, _super);
@@ -4144,7 +4144,7 @@ var Pointer_1 = __webpack_require__(18);
 var Utils = __importStar(__webpack_require__(0));
 var CS_1 = __webpack_require__(17);
 var Document_1 = __webpack_require__(21);
-var ACE_1 = __webpack_require__(67);
+var ACE_1 = __webpack_require__(68);
 var SCHEMA = {
     "entries": {
         "@id": CS_1.CS.accessControlEntry,
@@ -6056,7 +6056,7 @@ function getACL(requestOptions) {
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var C_1 = __webpack_require__(2);
-var VolatileResource_1 = __webpack_require__(73);
+var VolatileResource_1 = __webpack_require__(59);
 var SCHEMA = {
     "documentsMetadata": {
         "@id": C_1.C.documentMetadata,
@@ -6076,6 +6076,24 @@ exports.ResponseMetadata = {
 
 /***/ }),
 /* 59 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var Resource_1 = __webpack_require__(12);
+var C_1 = __webpack_require__(2);
+exports.VolatileResource = {
+    TYPE: C_1.C.VolatileResource,
+    is: function (object) {
+        return Resource_1.Resource.is(object)
+            && object.hasType(exports.VolatileResource.TYPE);
+    },
+};
+
+
+/***/ }),
+/* 60 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6152,7 +6170,7 @@ module.exports = XhrReceiver;
 
 
 /***/ }),
-/* 60 */
+/* 61 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6174,7 +6192,7 @@ module.exports = XHRCorsObject;
 
 
 /***/ }),
-/* 61 */
+/* 62 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6266,7 +6284,7 @@ exports.default = TriplesPattern;
 
 
 /***/ }),
-/* 62 */
+/* 63 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6282,7 +6300,7 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-var TriplesPattern_1 = __webpack_require__(61);
+var TriplesPattern_1 = __webpack_require__(62);
 var TriplesSubject = (function (_super) {
     __extends(TriplesSubject, _super);
     function TriplesSubject() {
@@ -6306,7 +6324,7 @@ exports.default = TriplesSubject;
 
 
 /***/ }),
-/* 63 */
+/* 64 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6369,7 +6387,7 @@ exports.resolve = resolve;
 
 
 /***/ }),
-/* 64 */
+/* 65 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6410,7 +6428,7 @@ exports.default = NewLineSymbol;
 
 
 /***/ }),
-/* 65 */
+/* 66 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6428,7 +6446,7 @@ var __extends = (this && this.__extends) || (function () {
 Object.defineProperty(exports, "__esModule", { value: true });
 var Identifier_1 = __webpack_require__(37);
 var LeftSymbol_1 = __webpack_require__(89);
-var NewLineSymbol_1 = __webpack_require__(64);
+var NewLineSymbol_1 = __webpack_require__(65);
 var Operator_1 = __webpack_require__(51);
 var Token_1 = __webpack_require__(23);
 var RightSymbol = (function (_super) {
@@ -6464,7 +6482,7 @@ exports.default = RightSymbol;
 
 
 /***/ }),
-/* 66 */
+/* 67 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6480,7 +6498,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 }
 Object.defineProperty(exports, "__esModule", { value: true });
-var ACE = __importStar(__webpack_require__(67));
+var ACE = __importStar(__webpack_require__(68));
 exports.ACE = ACE;
 var ACL = __importStar(__webpack_require__(40));
 exports.ACL = ACL;
@@ -6496,7 +6514,7 @@ var PersistedCredentials = __importStar(__webpack_require__(113));
 exports.PersistedCredentials = PersistedCredentials;
 var PersistedRole = __importStar(__webpack_require__(114));
 exports.PersistedRole = PersistedRole;
-var PersistedUser = __importStar(__webpack_require__(72));
+var PersistedUser = __importStar(__webpack_require__(73));
 exports.PersistedUser = PersistedUser;
 var Role = __importStar(__webpack_require__(235));
 exports.Role = Role;
@@ -6684,7 +6702,7 @@ exports.default = Class;
 
 
 /***/ }),
-/* 67 */
+/* 68 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6740,7 +6758,7 @@ exports.ACE = {
 
 
 /***/ }),
-/* 68 */
+/* 69 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6773,7 +6791,7 @@ exports.IDAlreadyInUseError = IDAlreadyInUseError;
 
 
 /***/ }),
-/* 69 */
+/* 70 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7030,7 +7048,7 @@ exports.JSONLDConverter = JSONLDConverter;
 
 
 /***/ }),
-/* 70 */
+/* 71 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7049,7 +7067,7 @@ var HTTPMethod;
 
 
 /***/ }),
-/* 71 */
+/* 72 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7097,7 +7115,7 @@ exports.NamedFragment = {
 
 
 /***/ }),
-/* 72 */
+/* 73 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7179,24 +7197,6 @@ function obtainCredentials(user) {
         return response;
     });
 }
-
-
-/***/ }),
-/* 73 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-var Resource_1 = __webpack_require__(12);
-var C_1 = __webpack_require__(2);
-exports.VolatileResource = {
-    TYPE: C_1.C.VolatileResource,
-    is: function (object) {
-        return Resource_1.Resource.is(object)
-            && object.hasType(exports.VolatileResource.TYPE);
-    },
-};
 
 
 /***/ }),
@@ -7461,7 +7461,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var Resource_1 = __webpack_require__(12);
 var C_1 = __webpack_require__(2);
 var Utils = __importStar(__webpack_require__(0));
-exports.SCHEMA = {
+var SCHEMA = {
     "targetMembers": {
         "@id": C_1.C.targetMember,
         "@type": "@id",
@@ -7470,7 +7470,7 @@ exports.SCHEMA = {
 };
 exports.AddMemberAction = {
     TYPE: C_1.C.AddMemberAction,
-    SCHEMA: exports.SCHEMA,
+    SCHEMA: SCHEMA,
     isDecorated: function (object) {
         return Utils.hasPropertyDefined(object, "targetMembers");
     },
@@ -7536,7 +7536,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var Resource_1 = __webpack_require__(12);
 var C_1 = __webpack_require__(2);
 var Utils = __importStar(__webpack_require__(0));
-exports.SCHEMA = {
+var SCHEMA = {
     "targetMembers": {
         "@id": C_1.C.targetMember,
         "@type": "@id",
@@ -7545,7 +7545,7 @@ exports.SCHEMA = {
 };
 exports.RemoveMemberAction = {
     TYPE: C_1.C.RemoveMemberAction,
-    SCHEMA: exports.SCHEMA,
+    SCHEMA: SCHEMA,
     isDecorated: function (object) {
         return Utils.hasPropertyDefined(object, "targetMembers");
     },
@@ -7929,7 +7929,7 @@ exports.QueryDocumentBuilder = QueryDocumentBuilder;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var VolatileResource_1 = __webpack_require__(73);
+var VolatileResource_1 = __webpack_require__(59);
 var C_1 = __webpack_require__(2);
 var SCHEMA = {
     "target": {
@@ -8089,7 +8089,7 @@ exports.IRIToken = IRIToken;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var utils_1 = __webpack_require__(63);
+var utils_1 = __webpack_require__(64);
 var NAMESPACE_REGEX = /^([A-Za-z](([A-Za-z_\-0-9]|\.)*[A-Za-z_\-0-9])?)?$/;
 var PrefixedNameToken = (function () {
     function PrefixedNameToken(prefixedOrNamespace, localName) {
@@ -8233,8 +8233,8 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 }
 Object.defineProperty(exports, "__esModule", { value: true });
-var Auth = __importStar(__webpack_require__(66));
-var ACE_1 = __webpack_require__(67);
+var Auth = __importStar(__webpack_require__(67));
+var ACE_1 = __webpack_require__(68);
 var ACL_1 = __webpack_require__(40);
 var Document_1 = __webpack_require__(21);
 var Documents_1 = __webpack_require__(118);
@@ -9587,7 +9587,7 @@ exports.MessagingDocument = {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var NamedFragment_1 = __webpack_require__(71);
+var NamedFragment_1 = __webpack_require__(72);
 var PersistedFragment_1 = __webpack_require__(55);
 exports.PersistedNamedFragment = {
     isDecorated: function (object) {
@@ -9618,7 +9618,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var PersistedProtectedDocument_1 = __webpack_require__(57);
 var Utils = __importStar(__webpack_require__(0));
-var PersistedUser = __importStar(__webpack_require__(72));
+var PersistedUser = __importStar(__webpack_require__(73));
 var Factory = (function () {
     function Factory() {
     }
@@ -9892,7 +9892,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 }
 Object.defineProperty(exports, "__esModule", { value: true });
-var IDAlreadyInUseError_1 = __webpack_require__(68);
+var IDAlreadyInUseError_1 = __webpack_require__(69);
 var IllegalArgumentError_1 = __webpack_require__(14);
 var URI_1 = __webpack_require__(10);
 var Resource_1 = __webpack_require__(12);
@@ -10067,7 +10067,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var tokens_1 = __webpack_require__(3);
 var AccessPoint_1 = __webpack_require__(119);
-var Auth = __importStar(__webpack_require__(66));
+var Auth = __importStar(__webpack_require__(67));
 var ACL_1 = __webpack_require__(40);
 var PersistedACL_1 = __webpack_require__(110);
 var Document_1 = __webpack_require__(21);
@@ -10076,10 +10076,10 @@ var FreeResources_1 = __webpack_require__(117);
 var Errors_1 = __webpack_require__(32);
 var BadResponseError_1 = __webpack_require__(102);
 var UnknownError_1 = __webpack_require__(103);
-var HTTPMethod_1 = __webpack_require__(70);
+var HTTPMethod_1 = __webpack_require__(71);
 var Request_1 = __webpack_require__(25);
 var Compacter_1 = __webpack_require__(121);
-var Converter_1 = __webpack_require__(69);
+var Converter_1 = __webpack_require__(70);
 var Parser_1 = __webpack_require__(31);
 var AddMemberAction_1 = __webpack_require__(77);
 var ErrorResponse_1 = __webpack_require__(78);
@@ -12565,7 +12565,7 @@ module.exports = AbstractXHRObject;
 
 var inherits = __webpack_require__(1)
   , AjaxBasedTransport = __webpack_require__(35)
-  , XhrReceiver = __webpack_require__(59)
+  , XhrReceiver = __webpack_require__(60)
   , XDRObject = __webpack_require__(80)
   ;
 
@@ -12605,7 +12605,7 @@ module.exports = XdrStreamingTransport;
 var inherits = __webpack_require__(1)
   , AjaxBasedTransport = __webpack_require__(35)
   , EventSourceReceiver = __webpack_require__(255)
-  , XHRCorsObject = __webpack_require__(60)
+  , XHRCorsObject = __webpack_require__(61)
   , EventSourceDriver = __webpack_require__(134)
   ;
 
@@ -12833,8 +12833,8 @@ module.exports = HtmlFileTransport;
 
 var inherits = __webpack_require__(1)
   , AjaxBasedTransport = __webpack_require__(35)
-  , XhrReceiver = __webpack_require__(59)
-  , XHRCorsObject = __webpack_require__(60)
+  , XhrReceiver = __webpack_require__(60)
+  , XHRCorsObject = __webpack_require__(61)
   , XHRLocalObject = __webpack_require__(47)
   ;
 
@@ -13494,7 +13494,7 @@ var __extends = (this && this.__extends) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 var tokens_1 = __webpack_require__(5);
-var TriplesPattern_1 = __webpack_require__(61);
+var TriplesPattern_1 = __webpack_require__(62);
 var BlankNode = (function (_super) {
     __extends(BlankNode, _super);
     function BlankNode() {
@@ -13541,7 +13541,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var tokens_1 = __webpack_require__(5);
 var tokens_2 = __webpack_require__(3);
 var ObjectPattern_1 = __webpack_require__(50);
-var TriplesPattern_1 = __webpack_require__(61);
+var TriplesPattern_1 = __webpack_require__(62);
 var Collection = (function (_super) {
     __extends(Collection, _super);
     function Collection(resolver, values) {
@@ -13599,7 +13599,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var tokens_1 = __webpack_require__(5);
 var tokens_2 = __webpack_require__(3);
 var ObjectPattern_1 = __webpack_require__(50);
-var TriplesSubject_1 = __webpack_require__(62);
+var TriplesSubject_1 = __webpack_require__(63);
 var Literal = (function (_super) {
     __extends(Literal, _super);
     function Literal(resolver, value) {
@@ -13672,7 +13672,7 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-var TriplesSubject_1 = __webpack_require__(62);
+var TriplesSubject_1 = __webpack_require__(63);
 var Resource = (function (_super) {
     __extends(Resource, _super);
     function Resource(resolver, iri) {
@@ -13707,7 +13707,7 @@ var __extends = (this && this.__extends) || (function () {
 Object.defineProperty(exports, "__esModule", { value: true });
 var tokens_1 = __webpack_require__(5);
 var tokens_2 = __webpack_require__(3);
-var TriplesSubject_1 = __webpack_require__(62);
+var TriplesSubject_1 = __webpack_require__(63);
 var nameRegex = /^((?:[0-9A-Z_a-z\xC0-\xD6\xD8-\xF6\xF8-\u02FF\u0370-\u037D\u037F-\u1FFF\u200C\u200D\u2070-\u218F\u2C00-\u2FEF\u3001-\uD7FF\uF900-\uFDCF\uFDF0-\uFFFD]|[\uD800-\uDB7F][\uDC00-\uDFFF]))((?:[0-9A-Z_a-z\xB7\xC0-\xD6\xD8-\xF6\xF8-\u037D\u037F-\u1FFF\u200C\u200D\u203F\u2040\u2070-\u218F\u2C00-\u2FEF\u3001-\uD7FF\uF900-\uFDCF\uFDF0-\uFFFD]|[\uD800-\uDB7F][\uDC00-\uDFFF]))*$/;
 var Variable = (function (_super) {
     __extends(Variable, _super);
@@ -14263,8 +14263,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var Utils = __importStar(__webpack_require__(0));
 var C_1 = __webpack_require__(2);
 var XSD_1 = __webpack_require__(6);
-var VolatileResource_1 = __webpack_require__(73);
-exports.SCHEMA = {
+var VolatileResource_1 = __webpack_require__(59);
+var SCHEMA = {
     "relatedDocument": {
         "@id": C_1.C.relatedDocument,
         "@type": "@id",
@@ -14280,7 +14280,7 @@ exports.SCHEMA = {
 };
 exports.DocumentMetadata = {
     TYPE: C_1.C.DocumentMetadata,
-    SCHEMA: exports.SCHEMA,
+    SCHEMA: SCHEMA,
     isDecorated: function (object) {
         return Utils.hasPropertyDefined(object, "relatedDocument");
     },
@@ -14630,7 +14630,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var iri_1 = __webpack_require__(29);
 var AbstractContext = __importStar(__webpack_require__(203));
 var AccessPoint = __importStar(__webpack_require__(119));
-var Auth = __importStar(__webpack_require__(66));
+var Auth = __importStar(__webpack_require__(67));
 var BlankNode = __importStar(__webpack_require__(97));
 var Document = __importStar(__webpack_require__(21));
 var Documents = __importStar(__webpack_require__(118));
@@ -14642,7 +14642,7 @@ var LDP = __importStar(__webpack_require__(292));
 var LDPatch = __importStar(__webpack_require__(123));
 var Messaging = __importStar(__webpack_require__(293));
 var ModelFactory = __importStar(__webpack_require__(295));
-var NamedFragment = __importStar(__webpack_require__(71));
+var NamedFragment = __importStar(__webpack_require__(72));
 var ObjectSchema = __importStar(__webpack_require__(13));
 var PersistedDocument = __importStar(__webpack_require__(44));
 var PersistedFragment = __importStar(__webpack_require__(55));
@@ -14773,7 +14773,7 @@ var __extends = (this && this.__extends) || (function () {
 Object.defineProperty(exports, "__esModule", { value: true });
 var Identifier_1 = __webpack_require__(37);
 var Operator_1 = __webpack_require__(51);
-var RightSymbol_1 = __webpack_require__(65);
+var RightSymbol_1 = __webpack_require__(66);
 var Token_1 = __webpack_require__(23);
 var NumberLiteral = (function (_super) {
     __extends(NumberLiteral, _super);
@@ -16852,7 +16852,7 @@ var Errors = __importStar(__webpack_require__(9));
 var Utils_1 = __webpack_require__(0);
 var URI_1 = __webpack_require__(10);
 var Credentials = __importStar(__webpack_require__(108));
-var PersistedUser = __importStar(__webpack_require__(72));
+var PersistedUser = __importStar(__webpack_require__(73));
 var Class = (function () {
     function Class(context) {
         this.context = context;
@@ -18085,8 +18085,8 @@ if (Driver) {
 
 var inherits = __webpack_require__(1)
   , AjaxBasedTransport = __webpack_require__(35)
-  , XhrReceiver = __webpack_require__(59)
-  , XHRCorsObject = __webpack_require__(60)
+  , XhrReceiver = __webpack_require__(60)
+  , XHRCorsObject = __webpack_require__(61)
   , XHRLocalObject = __webpack_require__(47)
   , browser = __webpack_require__(48)
   ;
@@ -18495,7 +18495,7 @@ module.exports = HtmlfileReceiver;
 var inherits = __webpack_require__(1)
   , AjaxBasedTransport = __webpack_require__(35)
   , XdrStreamingTransport = __webpack_require__(132)
-  , XhrReceiver = __webpack_require__(59)
+  , XhrReceiver = __webpack_require__(60)
   , XDRObject = __webpack_require__(80)
   ;
 
@@ -19900,7 +19900,7 @@ var EventEmitter = __webpack_require__(11).EventEmitter
   , inherits = __webpack_require__(1)
   , urlUtils = __webpack_require__(15)
   , XDR = __webpack_require__(80)
-  , XHRCors = __webpack_require__(60)
+  , XHRCors = __webpack_require__(61)
   , XHRLocal = __webpack_require__(47)
   , XHRFake = __webpack_require__(271)
   , InfoIframe = __webpack_require__(272)
@@ -21428,8 +21428,8 @@ __export(__webpack_require__(151));
 __export(__webpack_require__(152));
 __export(__webpack_require__(153));
 __export(__webpack_require__(154));
-__export(__webpack_require__(61));
 __export(__webpack_require__(62));
+__export(__webpack_require__(63));
 __export(__webpack_require__(155));
 
 //# sourceMappingURL=index.js.map
@@ -21630,7 +21630,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var Errors = __importStar(__webpack_require__(32));
 exports.Errors = Errors;
 __export(__webpack_require__(43));
-__export(__webpack_require__(70));
+__export(__webpack_require__(71));
 __export(__webpack_require__(53));
 __export(__webpack_require__(25));
 __export(__webpack_require__(104));
@@ -21701,7 +21701,7 @@ function __export(m) {
 }
 Object.defineProperty(exports, "__esModule", { value: true });
 __export(__webpack_require__(121));
-__export(__webpack_require__(69));
+__export(__webpack_require__(70));
 __export(__webpack_require__(31));
 __export(__webpack_require__(99));
 
@@ -21712,34 +21712,21 @@ __export(__webpack_require__(99));
 
 "use strict";
 
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
-    result["default"] = mod;
-    return result;
+function __export(m) {
+    for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
 }
 Object.defineProperty(exports, "__esModule", { value: true });
-var AddMemberAction = __importStar(__webpack_require__(77));
-exports.AddMemberAction = AddMemberAction;
-var CarbonError = __importStar(__webpack_require__(164));
-exports.CarbonError = CarbonError;
-var CarbonMap = __importStar(__webpack_require__(165));
-exports.CarbonMap = CarbonMap;
-var CarbonMapEntry = __importStar(__webpack_require__(166));
-exports.CarbonMapEntry = CarbonMapEntry;
-var DirectContainer = __importStar(__webpack_require__(120));
-exports.DirectContainer = DirectContainer;
-var DocumentMetadata = __importStar(__webpack_require__(167));
-exports.DocumentMetadata = DocumentMetadata;
-var ErrorResponse = __importStar(__webpack_require__(78));
-exports.ErrorResponse = ErrorResponse;
-var RemoveMemberAction = __importStar(__webpack_require__(79));
-exports.RemoveMemberAction = RemoveMemberAction;
-var ResponseMetadata = __importStar(__webpack_require__(58));
-exports.ResponseMetadata = ResponseMetadata;
-var ValidationError = __importStar(__webpack_require__(168));
-exports.ValidationError = ValidationError;
+__export(__webpack_require__(77));
+__export(__webpack_require__(164));
+__export(__webpack_require__(165));
+__export(__webpack_require__(166));
+__export(__webpack_require__(120));
+__export(__webpack_require__(167));
+__export(__webpack_require__(78));
+__export(__webpack_require__(79));
+__export(__webpack_require__(58));
+__export(__webpack_require__(168));
+__export(__webpack_require__(59));
 
 
 /***/ }),

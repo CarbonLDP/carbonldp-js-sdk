@@ -20,7 +20,7 @@ describe( module( "carbonldp/LDP/ValidationError" ), ():void => {
 	} );
 
 	describe( interfaze(
-		"CarbonLDP.LDP.ValidationError.ValidationError",
+		"CarbonLDP.LDP.ValidationError",
 		"Interface that contains the properties that describe how the validation failed."
 	), ():void => {
 
@@ -47,8 +47,8 @@ describe( module( "carbonldp/LDP/ValidationError" ), ():void => {
 	} );
 
 	describe( interfaze(
-		"CarbonLDP.LDP.ValidationError.ValidationErrorFactory",
-		"Interface with the factory, decorate and utils methods for `CarbonLDP.LDP.ValidationError.ValidationError` objects."
+		"CarbonLDP.LDP.ValidationErrorFactory",
+		"Interface with the factory, decorate and utils methods for `CarbonLDP.LDP.ValidationError` objects."
 	), ():void => {
 
 		it( hasProperty(
@@ -68,7 +68,7 @@ describe( module( "carbonldp/LDP/ValidationError" ), ():void => {
 	describe( property(
 		STATIC,
 		"ValidationError",
-		"CarbonLDP.LDP.ValidationError.ValidationErrorFactory"
+		"CarbonLDP.LDP.ValidationErrorFactory"
 	), ():void => {
 
 		it( "should exist", ():void => {

@@ -10,7 +10,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var Resource_1 = require("../Resource");
 var C_1 = require("../Vocabularies/C");
 var Utils = __importStar(require("./../Utils"));
-exports.SCHEMA = {
+var SCHEMA = {
     "targetMembers": {
         "@id": C_1.C.targetMember,
         "@type": "@id",
@@ -19,7 +19,7 @@ exports.SCHEMA = {
 };
 exports.RemoveMemberAction = {
     TYPE: C_1.C.RemoveMemberAction,
-    SCHEMA: exports.SCHEMA,
+    SCHEMA: SCHEMA,
     isDecorated: function (object) {
         return Utils.hasPropertyDefined(object, "targetMembers");
     },

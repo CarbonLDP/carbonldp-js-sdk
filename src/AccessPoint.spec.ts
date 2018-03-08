@@ -51,7 +51,7 @@ describe( module( "carbonldp/AccessPoint" ), ():void => {
 		"Interface that represents the document of an in-memory access point."
 	), ():void => {
 
-		it( extendsClass( "CarbonLDP.LDP.DirectContainer.DirectContainer" ), ():void => {} );
+		it( extendsClass( "CarbonLDP.LDP.DirectContainer" ), ():void => {} );
 
 		it( hasProperty(
 			OBLIGATORY,

@@ -19,7 +19,7 @@ import { DirectContainer } from "./DirectContainer";
 describe( module( "carbonldp/LDP/DirectContainer" ), ():void => {
 
 	describe( interfaze(
-		"CarbonLDP.LDP.DirectContainer.DirectContainer",
+		"CarbonLDP.LDP.DirectContainer",
 		"Interface that represents an `ldp:DirectContainer`."
 	), ():void => {
 
@@ -42,8 +42,8 @@ describe( module( "carbonldp/LDP/DirectContainer" ), ():void => {
 	} );
 
 	describe( interfaze(
-		"CarbonLDP.LDP.DirectContainer.DirectContainerFactory",
-		"Interface with the factory, decorate and utils methods of a `CarbonLDP.LDP.DirectContainer.DirectContainer`"
+		"CarbonLDP.LDP.DirectContainerFactory",
+		"Interface with the factory, decorate and utils methods of a `CarbonLDP.LDP.DirectContainer`"
 	), ():void => {
 
 		it( hasProperty(
@@ -55,39 +55,39 @@ describe( module( "carbonldp/LDP/DirectContainer" ), ():void => {
 		it( hasMethod(
 			OBLIGATORY,
 			"is",
-			"Returns true if the object provided is considered a `CarbonLDP.LDP.DirectContainer.DirectContainer` object.", [
+			"Returns true if the object provided is considered a `CarbonLDP.LDP.DirectContainer` object.", [
 				{ name: "object", type: "object" },
 			],
-			{ type: "object is CarbonLDP.LDP.DirectContainer.DirectContainer" }
+			{ type: "object is CarbonLDP.LDP.DirectContainer" }
 		), ():void => {} );
 
 		it( hasMethod(
 			OBLIGATORY,
 			"create",
-			"Creates a `CarbonLDP.LDP.DirectContainer.DirectContainer` object with the parameters specified.", [
+			"Creates a `CarbonLDP.LDP.DirectContainer` object with the parameters specified.", [
 				{ name: "membershipResource", type: "CarbonLDP.Pointer.Pointer" },
 				{ name: "hasMemberRelation", type: "string | CarbonLDP.Pointer.Pointer" },
 				{ name: "isMemberOfRelation", type: "string | CarbonLDP.Pointer.Pointer", optional: true },
 			],
-			{ type: "CarbonLDP.LDP.DirectContainer.DirectContainer" }
+			{ type: "CarbonLDP.LDP.DirectContainer" }
 		), ():void => {} );
 
 		it( hasMethod(
 			OBLIGATORY,
 			"createFrom",
 			[ "T extends object" ],
-			"Creates a `CarbonLDP.LDP.DirectContainer.DirectContainer` object with the object provided and the parameters specified.", [
+			"Creates a `CarbonLDP.LDP.DirectContainer` object with the object provided and the parameters specified.", [
 				{ name: "object", type: "T" },
 				{ name: "membershipResource", type: "CarbonLDP.Pointer.Pointer" },
 				{ name: "hasMemberRelation", type: "string | CarbonLDP.Pointer.Pointer" },
 				{ name: "isMemberOfRelation", type: "string | CarbonLDP.Pointer.Pointer", optional: true },
 			],
-			{ type: "T & CarbonLDP.LDP.DirectContainer.DirectContainer" }
+			{ type: "T & CarbonLDP.LDP.DirectContainer" }
 		), ():void => {} );
 
 	} );
 
-	describe( property( STATIC, "DirectContainer", "CarbonLDP.LDP.DirectContainer.DirectContainerFactory", "Constant that implements the `CarbonLDP.LDP.DirectContainer.DirectContainerFactory` interface." ), ():void => {
+	describe( property( STATIC, "DirectContainer", "CarbonLDP.LDP.DirectContainerFactory", "Constant that implements the `CarbonLDP.LDP.DirectContainerFactory` interface." ), ():void => {
 
 		it( isDefined(), ():void => {
 			expect( DirectContainer ).toBeDefined();

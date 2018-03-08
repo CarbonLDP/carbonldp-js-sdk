@@ -21,7 +21,7 @@ describe( module( "carbonldp/System/PlatformMetadata" ), ():void => {
 		"Interface that represents a requested API description of the Carbon LDP Platform configured."
 	), ():void => {
 
-		it( extendsClass( "CarbonLDP.LDP.VolatileResource.VolatileResource" ), ():void => {
+		it( extendsClass( "CarbonLDP.LDP.VolatileResource" ), ():void => {
 			const instanceMetadata:PlatformMetadata = <any> {};
 			const volatileResource:VolatileResource = instanceMetadata;
 
