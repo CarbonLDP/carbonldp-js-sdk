@@ -19,7 +19,7 @@ import { EventMessage } from "./EventMessage";
 describe( module( "carbonldp/Messaging/Message" ), ():void => {
 
 	describe( interfaze(
-		"CarbonLDP.Messaging.EventMessage.EventMessage",
+		"CarbonLDP.Messaging.EventMessage",
 		"Interface with the base properties of the data received in a subscription event."
 	), ():void => {
 
@@ -45,8 +45,8 @@ describe( module( "carbonldp/Messaging/Message" ), ():void => {
 	} );
 
 	describe( interfaze(
-		"CarbonLDP.Messaging.EventMessage.EventMessageFactory",
-		"Interface with the factory, decorate and utils elements for `CarbonLDP.Messaging.EventMessage.EventMessage` objects."
+		"CarbonLDP.Messaging.EventMessageFactory",
+		"Interface with the factory, decorate and utils elements for `CarbonLDP.Messaging.EventMessage` objects."
 	), ():void => {
 
 		it( hasProperty(
@@ -62,11 +62,11 @@ describe( module( "carbonldp/Messaging/Message" ), ():void => {
 		), ():void => {
 
 			it( hasSignature(
-				"Returns true if the object provided has the specific properties of the `CarbonLDP.Messaging.EventMessage.EventMessage` interface.",
+				"Returns true if the object provided has the specific properties of the `CarbonLDP.Messaging.EventMessage` interface.",
 				[
 					{ name: "object", type: "object", description: "The object to be tested." },
 				],
-				{ type: "object is CarbonLDP.Messaging.EventMessage.EventMessage" }
+				{ type: "object is CarbonLDP.Messaging.EventMessage" }
 			), ():void => {} );
 
 		} );
@@ -76,7 +76,7 @@ describe( module( "carbonldp/Messaging/Message" ), ():void => {
 	describe( property(
 		STATIC,
 		"EventMessage",
-		"CarbonLDP.Messaging.EventMessage.EventMessageFactory"
+		"CarbonLDP.Messaging.EventMessageFactory"
 	), ():void => {
 
 		it( "should exist", ():void => {

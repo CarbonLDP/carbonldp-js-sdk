@@ -17,7 +17,7 @@ import { MemberDetails } from "./MemberDetails";
 describe( module( "carbonldp/Messaging/MemberDetails" ), ():void => {
 
 	describe( interfaze(
-		"CarbonLDP.Messaging.MemberDetails.MemberDetails",
+		"CarbonLDP.Messaging.MemberDetails",
 		"Interface with the base properties of the details in a member related event."
 	), ():void => {
 
@@ -43,8 +43,8 @@ describe( module( "carbonldp/Messaging/MemberDetails" ), ():void => {
 	} );
 
 	describe( interfaze(
-		"CarbonLDP.Messaging.MemberDetails.MemberDetailsFactory",
-		"Interface with the factory, decorate and utils for `CarbonLDP.Messaging.MemberDetails.MemberDetails` objects."
+		"CarbonLDP.Messaging.MemberDetailsFactory",
+		"Interface with the factory, decorate and utils for `CarbonLDP.Messaging.MemberDetails` objects."
 	), ():void => {
 
 		it( hasProperty(
@@ -58,7 +58,7 @@ describe( module( "carbonldp/Messaging/MemberDetails" ), ():void => {
 	describe( property(
 		STATIC,
 		"MemberDetails",
-		"CarbonLDP.Messaging.MemberDetails.MemberDetailsFactory"
+		"CarbonLDP.Messaging.MemberDetailsFactory"
 	), ():void => {
 
 		it( isDefined(), ():void => {

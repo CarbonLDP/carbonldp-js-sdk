@@ -18,7 +18,7 @@ import { EventMessage } from "./EventMessage";
 describe( module( "carbonldp/Messaging/DocumentModified" ), ():void => {
 
 	describe( interfaze(
-		"CarbonLDP.Messaging.DocumentModified.DocumentModified",
+		"CarbonLDP.Messaging.DocumentModified",
 		"Interface with the properties of the data received in a document modified event."
 	), ():void => {
 
@@ -27,7 +27,7 @@ describe( module( "carbonldp/Messaging/DocumentModified" ), ():void => {
 			expect( target ).toBeDefined();
 		} );
 
-		it( extendsClass( "CarbonLDP.Messaging.EventMessage.EventMessage" ), ():void => {
+		it( extendsClass( "CarbonLDP.Messaging.EventMessage" ), ():void => {
 			const target:EventMessage = {} as DocumentModified;
 			expect( target ).toBeDefined();
 		} );
@@ -44,8 +44,8 @@ describe( module( "carbonldp/Messaging/DocumentModified" ), ():void => {
 	} );
 
 	describe( interfaze(
-		"CarbonLDP.Messaging.DocumentModified.DocumentModifiedFactory",
-		"Interface with the factory, decorate and utils for `CarbonLDP.Messaging.DocumentModified.DocumentModified` objects."
+		"CarbonLDP.Messaging.DocumentModifiedFactory",
+		"Interface with the factory, decorate and utils for `CarbonLDP.Messaging.DocumentModified` objects."
 	), ():void => {
 
 		it( hasProperty(
@@ -65,7 +65,7 @@ describe( module( "carbonldp/Messaging/DocumentModified" ), ():void => {
 	describe( property(
 		STATIC,
 		"DocumentModified",
-		"CarbonLDP.Messaging.DocumentModified.DocumentModifiedFactory"
+		"CarbonLDP.Messaging.DocumentModifiedFactory"
 	), ():void => {
 
 		it( isDefined(), ():void => {

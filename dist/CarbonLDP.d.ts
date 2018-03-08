@@ -63,7 +63,7 @@ export declare class CarbonLDP extends AbstractContext.AbstractContext {
     readonly version: string;
     protected _baseURI: string;
     protected settings: Settings.ContextSettings;
-    messaging: Messaging.Service.MessagingService;
+    messaging: Messaging.MessagingService;
     constructor(url: string);
     constructor(settings: Settings.CarbonSettings);
     getPlatformMetadata(): Promise<[System.PlatformMetadata.PlatformMetadata, HTTP.Response]>;

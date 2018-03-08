@@ -39,7 +39,7 @@ describe( module( "carbonldp/PersistedDocument" ), ():void => {
 		it( extendsClass( "CarbonLDP.Document.Document" ), ():void => {} );
 		it( extendsClass( "CarbonLDP.PersistedResource.PersistedResource" ), ():void => {} );
 		it( extendsClass( "CarbonLDP.ServiceAwareDocument.ServiceAwareDocument" ), ():void => {} );
-		it( extendsClass( "CarbonLDP.Messaging.Document.MessagingDocument" ), ():void => {} );
+		it( extendsClass( "CarbonLDP.Messaging.MessagingDocument" ), ():void => {} );
 
 		it( hasProperty(
 			OPTIONAL,

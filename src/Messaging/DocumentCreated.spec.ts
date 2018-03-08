@@ -19,7 +19,7 @@ import { EventMessage } from "./EventMessage";
 describe( module( "carbonldp/Messaging/DocumentCreated" ), ():void => {
 
 	describe( interfaze(
-		"CarbonLDP.Messaging.DocumentCreated.DocumentCreated",
+		"CarbonLDP.Messaging.DocumentCreated",
 		"Interface with the base properties of the data received in any document created event."
 	), ():void => {
 
@@ -28,7 +28,7 @@ describe( module( "carbonldp/Messaging/DocumentCreated" ), ():void => {
 			expect( target ).toBeDefined();
 		} );
 
-		it( extendsClass( "CarbonLDP.Messaging.EventMessage.EventMessage" ), ():void => {
+		it( extendsClass( "CarbonLDP.Messaging.EventMessage" ), ():void => {
 			const target:EventMessage = {} as DocumentCreated;
 			expect( target ).toBeDefined();
 		} );
@@ -45,7 +45,7 @@ describe( module( "carbonldp/Messaging/DocumentCreated" ), ():void => {
 		it( hasProperty(
 			OBLIGATORY,
 			"details",
-			"CarbonLDP.Messaging.DocumentCreatedDetails.DocumentCreatedDetails"
+			"CarbonLDP.Messaging.DocumentCreatedDetails"
 		), ():void => {
 			const target:DocumentCreated[ "details" ] = {} as DocumentCreatedDetails;
 			expect( target ).toBeDefined();
@@ -54,8 +54,8 @@ describe( module( "carbonldp/Messaging/DocumentCreated" ), ():void => {
 	} );
 
 	describe( interfaze(
-		"CarbonLDP.Messaging.DocumentCreated.DocumentCreatedFactory",
-		"Interface with the factory, decorate and utils elements for `CarbonLDP.Messaging.DocumentCreated.DocumentCreated` objects."
+		"CarbonLDP.Messaging.DocumentCreatedFactory",
+		"Interface with the factory, decorate and utils elements for `CarbonLDP.Messaging.DocumentCreated` objects."
 	), ():void => {
 
 		it( hasProperty(
@@ -69,7 +69,7 @@ describe( module( "carbonldp/Messaging/DocumentCreated" ), ():void => {
 	describe( property(
 		STATIC,
 		"DocumentCreated",
-		"CarbonLDP.Messaging.DocumentCreated.DocumentCreatedFactory"
+		"CarbonLDP.Messaging.DocumentCreatedFactory"
 	), ():void => {
 
 		it( isDefined(), ():void => {

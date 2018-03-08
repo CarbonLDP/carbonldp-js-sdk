@@ -17,7 +17,7 @@ import { DocumentCreated } from "./DocumentCreated";
 describe( module( "carbonldp/Messaging/AccessPointCreated" ), ():void => {
 
 	describe( interfaze(
-		"CarbonLDP.Messaging.AccessPointCreated.AccessPointCreated",
+		"CarbonLDP.Messaging.AccessPointCreated",
 		"Interface with the properties of the data received in a access point created event."
 	), ():void => {
 
@@ -26,7 +26,7 @@ describe( module( "carbonldp/Messaging/AccessPointCreated" ), ():void => {
 			expect( target ).toBeDefined();
 		} );
 
-		it( extendsClass( "CarbonLDP.Messaging.DocumentCreated.DocumentCreated" ), ():void => {
+		it( extendsClass( "CarbonLDP.Messaging.DocumentCreated" ), ():void => {
 			const target:DocumentCreated = {} as AccessPointCreated;
 			expect( target ).toBeDefined();
 		} );
@@ -43,8 +43,8 @@ describe( module( "carbonldp/Messaging/AccessPointCreated" ), ():void => {
 	} );
 
 	describe( interfaze(
-		"CarbonLDP.Messaging.AccessPointCreated.AccessPointCreatedFactory",
-		"Interface with the factory, decorate and utils for `CarbonLDP.Messaging.AccessPointCreated.AccessPointCreated` objects."
+		"CarbonLDP.Messaging.AccessPointCreatedFactory",
+		"Interface with the factory, decorate and utils for `CarbonLDP.Messaging.AccessPointCreated` objects."
 	), ():void => {
 
 		it( hasProperty(
@@ -64,7 +64,7 @@ describe( module( "carbonldp/Messaging/AccessPointCreated" ), ():void => {
 	describe( property(
 		STATIC,
 		"AccessPointCreated",
-		"CarbonLDP.Messaging.AccessPointCreated.AccessPointCreatedFactory"
+		"CarbonLDP.Messaging.AccessPointCreatedFactory"
 	), ():void => {
 
 		it( isDefined(), ():void => {

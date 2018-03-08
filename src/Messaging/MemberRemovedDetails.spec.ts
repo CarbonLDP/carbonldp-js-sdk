@@ -17,7 +17,7 @@ import { MemberRemovedDetails } from "./MemberRemovedDetails";
 describe( module( "carbonldp/Messaging/MemberRemovedDetails" ), ():void => {
 
 	describe( interfaze(
-		"CarbonLDP.Messaging.MemberRemovedDetails.MemberRemovedDetails",
+		"CarbonLDP.Messaging.MemberRemovedDetails",
 		"Interface with the properties of the details in a member removed event."
 	), ():void => {
 
@@ -26,7 +26,7 @@ describe( module( "carbonldp/Messaging/MemberRemovedDetails" ), ():void => {
 			expect( target ).toBeDefined();
 		} );
 
-		it( extendsClass( "CarbonLDP.Messaging.MemberDetails.MemberDetails" ), ():void => {
+		it( extendsClass( "CarbonLDP.Messaging.MemberDetails" ), ():void => {
 			const target:MemberDetails = {} as MemberRemovedDetails;
 			expect( target ).toBeDefined();
 		} );
@@ -43,8 +43,8 @@ describe( module( "carbonldp/Messaging/MemberRemovedDetails" ), ():void => {
 	} );
 
 	describe( interfaze(
-		"CarbonLDP.Messaging.MemberRemovedDetails.MemberRemovedDetailsFactory",
-		"Interface with the factory, decorate and utils for `CarbonLDP.Messaging.MemberRemovedDetails.MemberRemovedDetails` objects."
+		"CarbonLDP.Messaging.MemberRemovedDetailsFactory",
+		"Interface with the factory, decorate and utils for `CarbonLDP.Messaging.MemberRemovedDetails` objects."
 	), ():void => {
 
 		it( hasProperty(
@@ -64,7 +64,7 @@ describe( module( "carbonldp/Messaging/MemberRemovedDetails" ), ():void => {
 	describe( property(
 		STATIC,
 		"MemberRemovedDetails",
-		"CarbonLDP.Messaging.MemberRemovedDetails.MemberRemovedDetailsFactory"
+		"CarbonLDP.Messaging.MemberRemovedDetailsFactory"
 	), ():void => {
 
 		it( isDefined(), ():void => {

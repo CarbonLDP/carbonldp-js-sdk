@@ -19,7 +19,7 @@ import { MemberAddedDetails } from "./MemberAddedDetails";
 describe( module( "carbonldp/Messaging/MemberAdded" ), ():void => {
 
 	describe( interfaze(
-		"CarbonLDP.Messaging.MemberAdded.MemberAdded",
+		"CarbonLDP.Messaging.MemberAdded",
 		"Interface with the properties of the data received in a member added event."
 	), ():void => {
 
@@ -28,7 +28,7 @@ describe( module( "carbonldp/Messaging/MemberAdded" ), ():void => {
 			expect( target ).toBeDefined();
 		} );
 
-		it( extendsClass( "CarbonLDP.Messaging.EventMessage.EventMessage" ), ():void => {
+		it( extendsClass( "CarbonLDP.Messaging.EventMessage" ), ():void => {
 			const target:EventMessage = {} as MemberAdded;
 			expect( target ).toBeDefined();
 		} );
@@ -45,7 +45,7 @@ describe( module( "carbonldp/Messaging/MemberAdded" ), ():void => {
 		it( hasProperty(
 			OBLIGATORY,
 			"details",
-			"CarbonLDP.Messaging.MemberAddedDetails.MemberAddedDetails"
+			"CarbonLDP.Messaging.MemberAddedDetails"
 		), ():void => {
 			const target:MemberAdded[ "details" ] = {} as MemberAddedDetails;
 			expect( target ).toBeDefined();
@@ -54,8 +54,8 @@ describe( module( "carbonldp/Messaging/MemberAdded" ), ():void => {
 	} );
 
 	describe( interfaze(
-		"CarbonLDP.Messaging.MemberAdded.MemberAddedFactory",
-		"Interface with the factory, decorator and utils for `CarbonLDP.Messaging.MemberAdded.MemberAdded` objects."
+		"CarbonLDP.Messaging.MemberAddedFactory",
+		"Interface with the factory, decorator and utils for `CarbonLDP.Messaging.MemberAdded` objects."
 	), ():void => {
 
 		it( hasProperty(
@@ -75,7 +75,7 @@ describe( module( "carbonldp/Messaging/MemberAdded" ), ():void => {
 	describe( property(
 		STATIC,
 		"MemberAdded",
-		"CarbonLDP.Messaging.MemberAdded.MemberAddedFactory"
+		"CarbonLDP.Messaging.MemberAddedFactory"
 	), ():void => {
 
 		it( isDefined(), ():void => {

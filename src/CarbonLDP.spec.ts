@@ -541,7 +541,7 @@ describe( module( "carbonldp/CarbonLDP" ), ():void => {
 
 			it( "should instantiate the messaging service when url", ():void => {
 				const carbon:CarbonLDP.CarbonLDP = new CarbonLDP.CarbonLDP( "https://example.com" );
-				expect( carbon.messaging ).toEqual( jasmine.any( Messaging.Service.MessagingService ) );
+				expect( carbon.messaging ).toEqual( jasmine.any( Messaging.MessagingService ) );
 			} );
 
 		} );
@@ -563,7 +563,7 @@ describe( module( "carbonldp/CarbonLDP" ), ():void => {
 		it( hasProperty(
 			INSTANCE,
 			"messaging",
-			"CarbonLDP.Messaging.Service.MessagingService",
+			"CarbonLDP.Messaging.MessagingService",
 			"Service that contains the RAW methods to manage the messaging/real-time features."
 		), ():void => {} );
 
