@@ -172,7 +172,7 @@ describe( module( "carbonldp/SPARQL/QueryDocument/QueryProperty" ), ():void => {
 
 			it( hasSignature(
 				"Returns the specific schema for the property objects that was created query definition.",
-				{ type: "CarbonLDP.ObjectSchema.DigestedObjectSchema" }
+				{ type: "CarbonLDP.DigestedObjectSchema" }
 			), ():void => {} );
 
 			it( "should exists", ():void => {

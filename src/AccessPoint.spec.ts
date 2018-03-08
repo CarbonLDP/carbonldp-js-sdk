@@ -19,35 +19,35 @@ import { C } from "./Vocabularies/C";
 describe( module( "carbonldp/AccessPoint" ), ():void => {
 
 	describe( interfaze(
-		"CarbonLDP.AccessPoint.AccessPointBase",
-		"Interface that represents the basic properties to construct a `CarbonLDP.AccessPoint.AccessPoint`."
+		"CarbonLDP.AccessPointBase",
+		"Interface that represents the basic properties to construct a `CarbonLDP.AccessPoint`."
 	), ():void => {
 
 		it( hasProperty(
 			OBLIGATORY,
 			"hasMemberRelation",
-			"string | CarbonLDP.Pointer.Pointer",
+			"string | CarbonLDP.Pointer",
 			"The string URI or pointer URI that represents the member relation that the access point will manage."
 		), ():void => {} );
 
 		it( hasProperty(
 			OPTIONAL,
 			"isMemberOfRelation",
-			"string | CarbonLDP.Pointer.Pointer",
+			"string | CarbonLDP.Pointer",
 			"The string URI or pointer URI that represents the inverted relation that the access point will create."
 		), ():void => {} );
 
 		it( hasProperty(
 			OPTIONAL,
 			"insertedContentRelation",
-			"string | CarbonLDP.Pointer.Pointer",
+			"string | CarbonLDP.Pointer",
 			"The string URI or pointer URI that represents the inserted content relation of the access point."
 		), ():void => {} );
 
 	} );
 
 	describe( interfaze(
-		"CarbonLDP.AccessPoint.AccessPoint",
+		"CarbonLDP.AccessPoint",
 		"Interface that represents the document of an in-memory access point."
 	), ():void => {
 
@@ -56,29 +56,29 @@ describe( module( "carbonldp/AccessPoint" ), ():void => {
 		it( hasProperty(
 			OBLIGATORY,
 			"hasMemberRelation",
-			"CarbonLDP.Pointer.Pointer",
+			"CarbonLDP.Pointer",
 			"Pointer that represents the member relation that the access point will manage."
 		), ():void => {} );
 
 		it( hasProperty(
 			OPTIONAL,
 			"isMemberOfRelation",
-			"CarbonLDP.Pointer.Pointer",
+			"CarbonLDP.Pointer",
 			"Pointer that represents the inverted relation that the access point will create."
 		), ():void => {} );
 
 		it( hasProperty(
 			OPTIONAL,
 			"insertedContentRelation",
-			"CarbonLDP.Pointer.Pointer",
+			"CarbonLDP.Pointer",
 			"Pointer that represents the inserted content relation of the access point."
 		), ():void => {} );
 
 	} );
 
 	describe( interfaze(
-		"CarbonLDP.AccessPoint.AccessPointFactory",
-		"Interface with the factory, decorate and utils methods of a `CarbonLDP.AccessPoint.AccessPoint` object."
+		"CarbonLDP.AccessPointFactory",
+		"Interface with the factory, decorate and utils methods of a `CarbonLDP.AccessPointFactory` object."
 	), ():void => {
 
 		it( hasProperty(
@@ -90,39 +90,39 @@ describe( module( "carbonldp/AccessPoint" ), ():void => {
 		it( hasMethod(
 			OBLIGATORY,
 			"is",
-			"Returns true if the object provided is considered a `CarbonLDP.AccessPoint.AccessPoint` object", [
+			"Returns true if the object provided is considered a `CarbonLDP.AccessPoint` object", [
 				{ name: "object", type: "object" },
 			],
-			{ type: "object is CarbonLDP.AccessPoint.AccessPoint" }
+			{ type: "object is CarbonLDP.AccessPoint" }
 		), ():void => {} );
 
 		it( hasMethod(
 			OBLIGATORY,
 			"create",
-			"Creates a `CarbonLDP.AccessPoint.AccessPoint` object with the parameters specified.", [
-				{ name: "membershipResource", type: "CarbonLDP.Pointer.Pointer", description: "A Pointer to the parent of the AccessPoint." },
-				{ name: "hasMemberRelation", type: "string | CarbonLDP.Pointer.Pointer", description: "A URI or Pointer to the property in the parent resource managed by the AccessPoint." },
-				{ name: "isMemberOfRelation", type: "string | CarbonLDP.Pointer.Pointer", optional: true, description: "A URI or Pointer to the property managed in the members added by the AccessPoint." },
+			"Creates a `CarbonLDP.AccessPoint` object with the parameters specified.", [
+				{ name: "membershipResource", type: "CarbonLDP.Pointer", description: "A Pointer to the parent of the AccessPoint." },
+				{ name: "hasMemberRelation", type: "string | CarbonLDP.Pointer", description: "A URI or Pointer to the property in the parent resource managed by the AccessPoint." },
+				{ name: "isMemberOfRelation", type: "string | CarbonLDP.Pointer", optional: true, description: "A URI or Pointer to the property managed in the members added by the AccessPoint." },
 			],
-			{ type: "CarbonLDP.AccessPoint.AccessPoint" }
+			{ type: "CarbonLDP.AccessPoint" }
 		), ():void => {} );
 
 		it( hasMethod(
 			OBLIGATORY,
 			"createFrom",
 			[ "T extends object" ],
-			"Creates a `CarbonLDP.AccessPoint.AccessPoint` object from the object and parameters specified.", [
+			"Creates a `CarbonLDP.AccessPoint` object from the object and parameters specified.", [
 				{ name: "object", type: "T", description: "Object that will be converted into an AccessPoint." },
-				{ name: "membershipResource", type: "CarbonLDP.Pointer.Pointer", description: "A Pointer to the parent of the AccessPoint." },
-				{ name: "hasMemberRelation", type: "string | CarbonLDP.Pointer.Pointer", description: "A URI or Pointer to the property in the parent resource managed by the AccessPoint." },
-				{ name: "isMemberOfRelation", type: "string | CarbonLDP.Pointer.Pointer", optional: true, description: "A URI or Pointer to the property managed in the members added by the AccessPoint." },
+				{ name: "membershipResource", type: "CarbonLDP.Pointer", description: "A Pointer to the parent of the AccessPoint." },
+				{ name: "hasMemberRelation", type: "string | CarbonLDP.Pointer", description: "A URI or Pointer to the property in the parent resource managed by the AccessPoint." },
+				{ name: "isMemberOfRelation", type: "string | CarbonLDP.Pointer", optional: true, description: "A URI or Pointer to the property managed in the members added by the AccessPoint." },
 			],
-			{ type: "T & CarbonLDP.AccessPoint.AccessPoint" }
+			{ type: "T & CarbonLDP.AccessPoint" }
 		), ():void => {} );
 
 	} );
 
-	describe( property( STATIC, "AccessPoint", "CarbonLDP.AccessPoint.AccessPointFactory", "Constant that implements the `CarbonLDP.AccessPoint.AccessPoint` interface." ), ():void => {
+	describe( property( STATIC, "AccessPoint", "CarbonLDP.AccessPointFactory", "Constant that implements the `CarbonLDP.AccessPoint` interface." ), ():void => {
 
 		it( isDefined(), ():void => {
 			expect( AccessPoint ).toBeDefined();

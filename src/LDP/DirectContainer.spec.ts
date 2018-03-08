@@ -23,19 +23,19 @@ describe( module( "carbonldp/LDP/DirectContainer" ), ():void => {
 		"Interface that represents an `ldp:DirectContainer`."
 	), ():void => {
 
-		it( extendsClass( "CarbonLDP.Document.Document" ), ():void => {} );
+		it( extendsClass( "CarbonLDP.Document" ), ():void => {} );
 
 		it( hasProperty(
 			OBLIGATORY,
 			"membershipResource",
-			"CarbonLDP.Pointer.Pointer",
+			"CarbonLDP.Pointer",
 			"Pointer that references the document that the direct container belongs to."
 		), ():void => {} );
 
 		it( hasProperty(
 			OBLIGATORY,
 			"hasMembershipRelation",
-			"CarbonLDP.Pointer.Pointer",
+			"CarbonLDP.Pointer",
 			"Pointer that reference to the property the direct container manages."
 		), ():void => {} );
 
@@ -65,9 +65,9 @@ describe( module( "carbonldp/LDP/DirectContainer" ), ():void => {
 			OBLIGATORY,
 			"create",
 			"Creates a `CarbonLDP.LDP.DirectContainer` object with the parameters specified.", [
-				{ name: "membershipResource", type: "CarbonLDP.Pointer.Pointer" },
-				{ name: "hasMemberRelation", type: "string | CarbonLDP.Pointer.Pointer" },
-				{ name: "isMemberOfRelation", type: "string | CarbonLDP.Pointer.Pointer", optional: true },
+				{ name: "membershipResource", type: "CarbonLDP.Pointer" },
+				{ name: "hasMemberRelation", type: "string | CarbonLDP.Pointer" },
+				{ name: "isMemberOfRelation", type: "string | CarbonLDP.Pointer", optional: true },
 			],
 			{ type: "CarbonLDP.LDP.DirectContainer" }
 		), ():void => {} );
@@ -78,9 +78,9 @@ describe( module( "carbonldp/LDP/DirectContainer" ), ():void => {
 			[ "T extends object" ],
 			"Creates a `CarbonLDP.LDP.DirectContainer` object with the object provided and the parameters specified.", [
 				{ name: "object", type: "T" },
-				{ name: "membershipResource", type: "CarbonLDP.Pointer.Pointer" },
-				{ name: "hasMemberRelation", type: "string | CarbonLDP.Pointer.Pointer" },
-				{ name: "isMemberOfRelation", type: "string | CarbonLDP.Pointer.Pointer", optional: true },
+				{ name: "membershipResource", type: "CarbonLDP.Pointer" },
+				{ name: "hasMemberRelation", type: "string | CarbonLDP.Pointer" },
+				{ name: "isMemberOfRelation", type: "string | CarbonLDP.Pointer", optional: true },
 			],
 			{ type: "T & CarbonLDP.LDP.DirectContainer" }
 		), ():void => {} );

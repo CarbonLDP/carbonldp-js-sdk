@@ -1,39 +1,54 @@
 import { hasProtocol } from "sparqler/iri";
 
-import * as AbstractContext from "./AbstractContext";
-import * as AccessPoint from "./AccessPoint";
+import { AbstractContext } from "./AbstractContext";
+import { AccessPoint } from "./AccessPoint";
 import * as Auth from "./Auth";
-import * as BlankNode from "./BlankNode";
-import * as Document from "./Document";
-import * as Documents from "./Documents";
+import { BlankNode } from "./BlankNode";
+import { Document } from "./Document";
+import { Documents } from "./Documents";
 import * as Errors from "./Errors";
-import * as Fragment from "./Fragment";
+import { Fragment } from "./Fragment";
+import { FreeResources } from "./FreeResources";
+import { PersistedProtectedDocument } from "./PersistedProtectedDocument";
+import { ProtectedDocument } from "./ProtectedDocument";
+import { ServiceAwareDocument } from "./ServiceAwareDocument";
 import * as HTTP from "./HTTP";
 import * as JSONLD from "./JSONLD";
 import * as LDP from "./LDP";
 import * as LDPatch from "./LDPatch";
 import * as Messaging from "./Messaging";
-import * as ModelFactory from "./ModelFactory";
-import * as NamedFragment from "./NamedFragment";
-import * as ObjectSchema from "./ObjectSchema";
-import * as PersistedDocument from "./PersistedDocument";
-import * as PersistedFragment from "./PersistedFragment";
-import * as PersistedNamedFragment from "./PersistedNamedFragment";
-import * as PersistedResource from "./PersistedResource";
-import * as Pointer from "./Pointer";
+import { NamedFragment } from "./NamedFragment";
+import {
+	ContainerType,
+	DigestedObjectSchema,
+	DigestedObjectSchemaProperty,
+	ObjectSchemaDigester,
+	ObjectSchemaUtils,
+	PointerType,
+} from "./ObjectSchema";
+import { PersistedDocument } from "./PersistedDocument";
+import { PersistedFragment } from "./PersistedFragment";
+import { PersistedNamedFragment } from "./PersistedNamedFragment";
+import { PersistedResource } from "./PersistedResource";
+import { Pointer } from "./Pointer";
 import * as RDF from "./RDF";
-import * as Resource from "./Resource";
-import * as SDKContext from "./SDKContext";
-import * as Settings from "./Settings";
+import { Resource } from "./Resource";
+import {
+	globalContext,
+	SDKContext,
+} from "./SDKContext";
+import {
+	CarbonSettings,
+	ContextSettings,
+} from "./Settings";
 import * as SHACL from "./SHACL";
 import * as SPARQL from "./SPARQL";
 import * as System from "./System";
 import * as Utils from "./Utils";
 import * as Vocabularies from "./Vocabularies";
 
-export class CarbonLDP extends AbstractContext.AbstractContext {
+export class CarbonLDP extends AbstractContext {
 
-	/* tslint:disable: variable-name */
 	static AbstractContext:typeof AbstractContext = AbstractContext;
 	static AccessPoint:typeof AccessPoint = AccessPoint;
 	static Auth:typeof Auth = Auth;
@@ -42,30 +57,37 @@ export class CarbonLDP extends AbstractContext.AbstractContext {
 	static Documents:typeof Documents = Documents;
 	static Errors:typeof Errors = Errors;
 	static Fragment:typeof Fragment = Fragment;
+	static FreeResources:typeof FreeResources = FreeResources;
 	static HTTP:typeof HTTP = HTTP;
 	static JSONLD:typeof JSONLD = JSONLD;
 	static LDP:typeof LDP = LDP;
 	static LDPatch:typeof LDPatch = LDPatch;
 	static Messaging:typeof Messaging = Messaging;
-	static ModelFactory:typeof ModelFactory = ModelFactory;
 	static NamedFragment:typeof NamedFragment = NamedFragment;
 	static Vocabularies:typeof Vocabularies = Vocabularies;
-	static ObjectSchema:typeof ObjectSchema = ObjectSchema;
+	static ObjectSchemaUtils:typeof ObjectSchemaUtils = ObjectSchemaUtils;
+	static ObjectSchemaDigester:typeof ObjectSchemaDigester = ObjectSchemaDigester;
+	static DigestedObjectSchemaProperty:typeof DigestedObjectSchemaProperty = DigestedObjectSchemaProperty;
+	static PointerType:typeof PointerType = PointerType;
+	static ContainerType:typeof ContainerType = ContainerType;
+	static DigestedObjectSchema:typeof DigestedObjectSchema = DigestedObjectSchema;
 	static PersistedDocument:typeof PersistedDocument = PersistedDocument;
 	static PersistedFragment:typeof PersistedFragment = PersistedFragment;
 	static PersistedNamedFragment:typeof PersistedNamedFragment = PersistedNamedFragment;
+	static PersistedProtectedDocument:typeof PersistedProtectedDocument = PersistedProtectedDocument;
 	static PersistedResource:typeof PersistedResource = PersistedResource;
 	static Pointer:typeof Pointer = Pointer;
+	static ProtectedDocument:typeof ProtectedDocument = ProtectedDocument;
 	static RDF:typeof RDF = RDF;
 	static Resource:typeof Resource = Resource;
 	static SDKContext:typeof SDKContext = SDKContext;
-	static Settings:typeof Settings = Settings;
+	static globalContext:typeof globalContext = globalContext;
+	static ServiceAwareDocument:typeof ServiceAwareDocument = ServiceAwareDocument;
 	static SHACL:typeof SHACL = SHACL;
 	static SPARQL:typeof SPARQL = SPARQL;
 	static System:typeof System = System;
 	static Utils:typeof Utils = Utils;
 
-	/* tslint:enable: variable-name */
 
 	static get version():string { return "1.0.0-alpha.11"; }
 
@@ -73,7 +95,7 @@ export class CarbonLDP extends AbstractContext.AbstractContext {
 	get version():string { return CarbonLDP.version; }
 
 	protected _baseURI:string;
-	protected settings:Settings.ContextSettings = {
+	protected settings:ContextSettings = {
 		vocabulary: "vocabulary/#",
 		paths: {
 			system: {
@@ -91,8 +113,8 @@ export class CarbonLDP extends AbstractContext.AbstractContext {
 	messaging:Messaging.MessagingService;
 
 	constructor( url:string );
-	constructor( settings:Settings.CarbonSettings );
-	constructor( urlOrSettings:string | Settings.CarbonSettings ) {
+	constructor( settings:CarbonSettings );
+	constructor( urlOrSettings:string | CarbonSettings ) {
 		super();
 
 		if( Utils.isString( urlOrSettings ) ) {

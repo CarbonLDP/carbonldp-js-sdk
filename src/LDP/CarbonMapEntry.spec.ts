@@ -20,7 +20,7 @@ describe( module( "carbonldp/LDP/CarbonMapEntry" ), ():void => {
 		"Entries of the `CarbonLDP.LDP.CarbonMap` with the key/value pair."
 	), ():void => {
 
-		it( extendsClass( "CarbonLDP.BlankNode.BlankNode" ), ():void => {} );
+		it( extendsClass( "CarbonLDP.BlankNode" ), ():void => {} );
 
 		it( hasProperty(
 			OBLIGATORY,
@@ -46,7 +46,7 @@ describe( module( "carbonldp/LDP/CarbonMapEntry" ), ():void => {
 		it( hasProperty(
 			OBLIGATORY,
 			"SCHEMA",
-			"CarbonLDP.ObjectSchema.ObjectSchema"
+			"CarbonLDP.ObjectSchema"
 		), ():void => {} );
 
 	} );

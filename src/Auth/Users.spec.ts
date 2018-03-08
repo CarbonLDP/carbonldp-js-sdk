@@ -40,7 +40,7 @@ describe( module( "carbonldp/Auth/Users" ), ():void => {
 		} );
 
 		it( hasConstructor( [
-			{ name: "context", type: "CarbonLDP.Context.Context", description: "The context where to manage its Users." },
+			{ name: "context", type: "CarbonLDP.Context", description: "The context where to manage its Users." },
 		] ), ():void => {
 			const context:AbstractContext = new class extends AbstractContext {
 				protected _baseURI:string;

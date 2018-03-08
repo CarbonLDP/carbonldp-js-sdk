@@ -32,7 +32,7 @@ describe( module( "carbonldp/SPARQL/QueryDocument/QueryMetadata" ), ():void => {
 		it( hasProperty(
 			OBLIGATORY,
 			"target",
-			"CarbonLDP.Pointer.Pointer",
+			"CarbonLDP.Pointer",
 			"The pointer to one of the targeted resources requested in the partial query."
 		), ():void => {
 			const target:QueryMetadata[ "target" ] = {} as Pointer;
@@ -55,7 +55,7 @@ describe( module( "carbonldp/SPARQL/QueryDocument/QueryMetadata" ), ():void => {
 		it( hasProperty(
 			OBLIGATORY,
 			"SCHEMA",
-			"CarbonLDP.ObjectSchema.ObjectSchema"
+			"CarbonLDP.ObjectSchema"
 		), ():void => {} );
 
 		describe( method( OBLIGATORY, "is" ), ():void => {

@@ -14,7 +14,7 @@ describe( module( "carbonldp/Auth/ACE" ), ():void => {
 	), ():void => {
 
 		it( extendsClass( "CarbonLDP.Auth.ACE.ACE" ), ():void => {} );
-		it( extendsClass( "CarbonLDP.PersistedFragment.PersistedFragment" ), ():void => {} );
+		it( extendsClass( "CarbonLDP.PersistedFragment" ), ():void => {} );
 
 		it( hasProperty(
 			OBLIGATORY,

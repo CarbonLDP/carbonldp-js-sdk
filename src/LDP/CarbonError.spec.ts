@@ -20,7 +20,7 @@ describe( module( "carbonldp/LDP/Error" ), ():void => {
 		"Interface that represents an error occurred in the server."
 	), ():void => {
 
-		it( extendsClass( "CarbonLDP.Resource.Resource" ), ():void => {} );
+		it( extendsClass( "CarbonLDP.Resource" ), ():void => {} );
 
 		it( hasProperty(
 			OBLIGATORY,
@@ -59,7 +59,7 @@ describe( module( "carbonldp/LDP/Error" ), ():void => {
 		it( hasProperty(
 			OBLIGATORY,
 			"SCHEMA",
-			"CarbonLDP.ObjectSchema.ObjectSchema"
+			"CarbonLDP.ObjectSchema"
 		), ():void => {} );
 
 	} );

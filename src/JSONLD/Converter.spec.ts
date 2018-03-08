@@ -79,8 +79,8 @@ describe( module( "carbonldp/JSONLD/Converter" ), ():void => {
 				"Assign the data of the expanded JSON-LD object, to the target object in a friendly mode, ie. without the JSON-LD Syntax Tokens and parsed values, in accordance to the schema provided.", [
 					{ name: "expandedObject", type: "Object", description: "The JSON-LD object to compact." },
 					{ name: "targetObject", type: "Object", description: "The target object where will be added the data of the expanded object." },
-					{ name: "digestedSchema", type: "CarbonLDP.ObjectSchema.DigestedObjectSchema", description: "The schema that describes how compact the expanded object." },
-					{ name: "pointerLibrary", type: "CarbonLDP.Pointer.PointerLibrary", description: "An object from where one can obtain pointers to SDK Resources." },
+					{ name: "digestedSchema", type: "CarbonLDP.DigestedObjectSchema", description: "The schema that describes how compact the expanded object." },
+					{ name: "pointerLibrary", type: "CarbonLDP.PointerLibrary", description: "An object from where one can obtain pointers to SDK Resources." },
 				],
 				{ type: "Object", description: "The compacted target object." }
 			), ():void => {
@@ -263,7 +263,7 @@ describe( module( "carbonldp/JSONLD/Converter" ), ():void => {
 			it( hasSignature(
 				"Creates a expanded JSON-LD object from the compacted object in accordance to the schema provided.", [
 					{ name: "compactedObject", type: "Object", description: "The compacted object to generate its expanded JSON-LD object." },
-					{ name: "digestedSchema", type: "CarbonLDP.ObjectSchema.DigestedObjectSchema", description: "The schema that describes how construct the expanded object." },
+					{ name: "digestedSchema", type: "CarbonLDP.DigestedObjectSchema", description: "The schema that describes how construct the expanded object." },
 				],
 				{ type: "Object", description: "The expanded JSON-LD object generated." }
 			), ():void => {

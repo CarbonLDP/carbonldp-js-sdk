@@ -144,7 +144,7 @@ describe( module( "carbonldp/SPARQL/Service" ), ():void => {
 			"Executes a SELECT Query and parses the results.", [
 				{ name: "url", type: "string" },
 				{ name: "selectQuery", type: "string" },
-				{ name: "pointerLibrary", type: "CarbonLDP.Pointer.PointerLibrary" },
+				{ name: "pointerLibrary", type: "CarbonLDP.PointerLibrary" },
 				{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true },
 			],
 			{ type: "Promise<[ CarbonLDP.SPARQL.SPARQLSelectResults<T>, CarbonLDP.HTTP.Response ]>" }

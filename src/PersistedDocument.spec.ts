@@ -32,13 +32,13 @@ import * as Utils from "./Utils";
 describe( module( "carbonldp/PersistedDocument" ), ():void => {
 
 	describe( interfaze(
-		"CarbonLDP.PersistedDocument.PersistedDocument",
+		"CarbonLDP.PersistedDocument",
 		"Interface that represents a persisted blank node of a persisted document."
 	), ():void => {
 
-		it( extendsClass( "CarbonLDP.Document.Document" ), ():void => {} );
-		it( extendsClass( "CarbonLDP.PersistedResource.PersistedResource" ), ():void => {} );
-		it( extendsClass( "CarbonLDP.ServiceAwareDocument.ServiceAwareDocument" ), ():void => {} );
+		it( extendsClass( "CarbonLDP.Document" ), ():void => {} );
+		it( extendsClass( "CarbonLDP.PersistedResource" ), ():void => {} );
+		it( extendsClass( "CarbonLDP.ServiceAwareDocument" ), ():void => {} );
 		it( extendsClass( "CarbonLDP.Messaging.MessagingDocument" ), ():void => {} );
 
 		it( hasProperty(
@@ -58,35 +58,35 @@ describe( module( "carbonldp/PersistedDocument" ), ():void => {
 		it( hasProperty(
 			OPTIONAL,
 			"defaultInteractionModel",
-			"CarbonLDP.Pointer.Pointer",
+			"CarbonLDP.Pointer",
 			"A Pointer representing the default interaction model of the document."
 		), ():void => {} );
 
 		it( hasProperty(
 			OPTIONAL,
 			"isMemberOfRelation",
-			"CarbonLDP.Pointer.Pointer",
+			"CarbonLDP.Pointer",
 			"A Pointer with the member of relation of the document."
 		), ():void => {} );
 
 		it( hasProperty(
 			OPTIONAL,
 			"hasMemberRelation",
-			"CarbonLDP.Pointer.Pointer",
+			"CarbonLDP.Pointer",
 			"A Pointer with the inverted relation the document."
 		), ():void => {} );
 
 		it( hasProperty(
 			OPTIONAL,
 			"accessPoints",
-			"CarbonLDP.Pointer.Pointer[]",
+			"CarbonLDP.Pointer[]",
 			"Array with the access points of the document."
 		), ():void => {} );
 
 		it( hasProperty(
 			OPTIONAL,
 			"contains",
-			"CarbonLDP.Pointer.Pointer",
+			"CarbonLDP.Pointer",
 			"Array with the children of the document."
 		), ():void => {} );
 
@@ -100,14 +100,14 @@ describe( module( "carbonldp/PersistedDocument" ), ():void => {
 		it( hasProperty(
 			OBLIGATORY,
 			"_fragmentsIndex",
-			"Map<string, CarbonLDP.PersistedFragment.PersistedFragment>",
+			"Map<string, CarbonLDP.PersistedFragment>",
 			"Map that stores the persisted fragments (named fragments and blank nodes) of the document."
 		), ():void => {} );
 
 		it( hasProperty(
 			OBLIGATORY,
 			"_savedFragments",
-			"CarbonLDP.PersistedFragment.PersistedFragment[]",
+			"CarbonLDP.PersistedFragment[]",
 			"Array with a copy of every fragment that that is currently persisted in the server."
 		), ():void => {} );
 
@@ -134,7 +134,7 @@ describe( module( "carbonldp/PersistedDocument" ), ():void => {
 					{ name: "object", type: "T" },
 					{ name: "slug", type: "string" },
 				],
-				{ type: "T & CarbonLDP.PersistedFragment.PersistedFragment" }
+				{ type: "T & CarbonLDP.PersistedFragment" }
 			), ():void => {} );
 
 			it( hasSignature(
@@ -142,19 +142,19 @@ describe( module( "carbonldp/PersistedDocument" ), ():void => {
 				"Creates a PersistedBlankNode from the object provided, sing no slug was specified.", [
 					{ name: "object", type: "T" },
 				],
-				{ type: "T & CarbonLDP.PersistedFragment.PersistedFragment" }
+				{ type: "T & CarbonLDP.PersistedFragment" }
 			), ():void => {} );
 
 			it( hasSignature(
 				"Creates a PersistedFragment with the slug provided.", [
 					{ name: "slug", type: "string" },
 				],
-				{ type: "CarbonLDP.PersistedFragment.PersistedFragment" }
+				{ type: "CarbonLDP.PersistedFragment" }
 			), ():void => {} );
 
 			it( hasSignature(
 				"Creates a PersistedBlankNode, since no slug is provided",
-				{ type: "CarbonLDP.PersistedFragment.PersistedFragment" }
+				{ type: "CarbonLDP.PersistedFragment" }
 			), ():void => {} );
 
 		} );
@@ -168,7 +168,7 @@ describe( module( "carbonldp/PersistedDocument" ), ():void => {
 				"Creates a PersistedNamedFragment with the slug provided", [
 					{ name: "slug", type: "string" },
 				],
-				{ type: "CarbonLDP.PersistedNamedFragment.PersistedNamedFragment" }
+				{ type: "CarbonLDP.PersistedNamedFragment" }
 			), ():void => {} );
 
 			it( hasSignature(
@@ -177,7 +177,7 @@ describe( module( "carbonldp/PersistedDocument" ), ():void => {
 					{ name: "object", type: "T" },
 					{ name: "slug", type: "string" },
 				],
-				{ type: "T & CarbonLDP.PersistedNamedFragment.PersistedNamedFragment" }
+				{ type: "T & CarbonLDP.PersistedNamedFragment" }
 			), ():void => {} );
 
 		} );
@@ -187,7 +187,7 @@ describe( module( "carbonldp/PersistedDocument" ), ():void => {
 			"refresh",
 			[ "T extends object" ],
 			"Sync the persisted document with the data in the server.",
-			{ type: "Promise<[ T & CarbonLDP.PersistedDocument.PersistedDocument, CarbonLDP.HTTP.Response ]>" }
+			{ type: "Promise<[ T & CarbonLDP.PersistedDocument, CarbonLDP.HTTP.Response ]>" }
 		), ():void => {} );
 
 		it( hasMethod(
@@ -197,7 +197,7 @@ describe( module( "carbonldp/PersistedDocument" ), ():void => {
 			"Save the persisted document to the server.", [
 				{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for the request." },
 			],
-			{ type: "Promise<[ T & CarbonLDP.PersistedDocument.PersistedDocument, CarbonLDP.HTTP.Response ]>" }
+			{ type: "Promise<[ T & CarbonLDP.PersistedDocument, CarbonLDP.HTTP.Response ]>" }
 		), ():void => {} );
 
 		it( hasMethod(
@@ -205,7 +205,7 @@ describe( module( "carbonldp/PersistedDocument" ), ():void => {
 			"saveAndRefresh",
 			[ "T extends object" ],
 			"Save and refresh the persisted document.",
-			{ type: "Promise<[ T & CarbonLDP.PersistedDocument.PersistedDocument, CarbonLDP.HTTP.Response[] ]>" }
+			{ type: "Promise<[ T & CarbonLDP.PersistedDocument, CarbonLDP.HTTP.Response[] ]>" }
 		), ():void => {} );
 
 		it( hasMethod(
@@ -229,7 +229,7 @@ describe( module( "carbonldp/PersistedDocument" ), ():void => {
 
 			it( hasSignature(
 				"Adds the specified resource Pointer as a member of the document.", [
-					{ name: "member", type: "CarbonLDP.Pointer.Pointer", description: "Pointer object that references the resource to add as a member." },
+					{ name: "member", type: "CarbonLDP.Pointer", description: "Pointer object that references the resource to add as a member." },
 				],
 				{ type: "Promise<CarbonLDP.HTTP.Response>" }
 			), ():void => {} );
@@ -247,7 +247,7 @@ describe( module( "carbonldp/PersistedDocument" ), ():void => {
 			OBLIGATORY,
 			"addMembers",
 			"Adds the specified resources as members of the document.", [
-				{ name: "members", type: "(CarbonLDP.Pointer.Pointer | string)[]", description: "Array of URIs or Pointers to add as members." },
+				{ name: "members", type: "(CarbonLDP.Pointer | string)[]", description: "Array of URIs or Pointers to add as members." },
 			],
 			{ type: "Promise<CarbonLDP.HTTP.Response>" }
 		), ():void => {} );
@@ -260,20 +260,20 @@ describe( module( "carbonldp/PersistedDocument" ), ():void => {
 			it( hasSignature(
 				[ "T extends object" ],
 				"Persists a document with the slug specified as a child of the current document.", [
-					{ name: "object", type: "T", description: "The object from where create the child. If it's a non `CarbonLDP.Document.Document` object, it's transformed into one." },
+					{ name: "object", type: "T", description: "The object from where create the child. If it's a non `CarbonLDP.Document` object, it's transformed into one." },
 					{ name: "slug", type: "string", description: "The slug that will be used in the child URI." },
 					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for the request." },
 				],
-				{ type: "Promise<[ T & CarbonLDP.PersistedProtectedDocument.PersistedProtectedDocument, CarbonLDP.HTTP.Response ]>" }
+				{ type: "Promise<[ T & CarbonLDP.PersistedProtectedDocument, CarbonLDP.HTTP.Response ]>" }
 			), ():void => {} );
 
 			it( hasSignature(
 				[ "T extends object" ],
 				"Persists a document as a child of the current document.", [
-					{ name: "object", type: "T", description: "The object from where create the child. If it's a non `CarbonLDP.Document.Document` object, it's transformed into one." },
+					{ name: "object", type: "T", description: "The object from where create the child. If it's a non `CarbonLDP.Document` object, it's transformed into one." },
 					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for the request." },
 				],
-				{ type: "Promise<[ T & CarbonLDP.PersistedProtectedDocument.PersistedProtectedDocument, CarbonLDP.HTTP.Response ]>" }
+				{ type: "Promise<[ T & CarbonLDP.PersistedProtectedDocument, CarbonLDP.HTTP.Response ]>" }
 			), ():void => {} );
 
 			it( hasSignature(
@@ -281,14 +281,14 @@ describe( module( "carbonldp/PersistedDocument" ), ():void => {
 					{ name: "slug", type: "string", description: "The slug that will be used in the child URI." },
 					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for the request." },
 				],
-				{ type: "Promise<[ CarbonLDP.PersistedProtectedDocument.PersistedProtectedDocument, CarbonLDP.HTTP.Response ]>" }
+				{ type: "Promise<[ CarbonLDP.PersistedProtectedDocument, CarbonLDP.HTTP.Response ]>" }
 			), ():void => {} );
 
 			it( hasSignature(
 				"Creates and persists an empty child fot he current document.", [
 					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for the request." },
 				],
-				{ type: "Promise<[ CarbonLDP.PersistedProtectedDocument.PersistedProtectedDocument, CarbonLDP.HTTP.Response ]>" }
+				{ type: "Promise<[ CarbonLDP.PersistedProtectedDocument, CarbonLDP.HTTP.Response ]>" }
 			), ():void => {} );
 
 		} );
@@ -305,7 +305,7 @@ describe( module( "carbonldp/PersistedDocument" ), ():void => {
 					{ name: "slugs", type: "string[]", description: "Array with the slugs that corresponds to each object in `object` parameter, in the order in which they were defined. If an element in the array is undefined or null, the slug will be generated by the platform." },
 					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for every the request." },
 				],
-				{ type: "Promise<[ (T & CarbonLDP.PersistedProtectedDocument.PersistedProtectedDocument)[], CarbonLDP.HTTP.Response[] ]>", description: "Promise that contains a tuple with an array of the new UNRESOLVED persisted children, and another array with the response class of every request." }
+				{ type: "Promise<[ (T & CarbonLDP.PersistedProtectedDocument)[], CarbonLDP.HTTP.Response[] ]>", description: "Promise that contains a tuple with an array of the new UNRESOLVED persisted children, and another array with the response class of every request." }
 			), ():void => {} );
 
 			it( hasSignature(
@@ -314,7 +314,7 @@ describe( module( "carbonldp/PersistedDocument" ), ():void => {
 					{ name: "objects", type: "T[]", description: "An array with the objects to be persisted as the new children." },
 					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for every the request." },
 				],
-				{ type: "Promise<[ (T & CarbonLDP.PersistedProtectedDocument.PersistedProtectedDocument)[], CarbonLDP.HTTP.Response[] ]>", description: "Promise that contains a tuple with an array of the new UNRESOLVED persisted children, and another array with the response class of every request." }
+				{ type: "Promise<[ (T & CarbonLDP.PersistedProtectedDocument)[], CarbonLDP.HTTP.Response[] ]>", description: "Promise that contains a tuple with an array of the new UNRESOLVED persisted children, and another array with the response class of every request." }
 			), ():void => {} );
 
 		} );
@@ -327,32 +327,32 @@ describe( module( "carbonldp/PersistedDocument" ), ():void => {
 
 			it( hasSignature(
 				[ "T extends object" ], [
-					{ name: "object", type: "T", description: "The object from where create the child. If it's a non `CarbonLDP.Document.Document` object, it is transformed into one." },
+					{ name: "object", type: "T", description: "The object from where create the child. If it's a non `CarbonLDP.Document` object, it is transformed into one." },
 					{ name: "slug", type: "string", description: "The slug name for the children URI." },
 					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for the request." },
 				],
-				{ type: "Promise<[ T & CarbonLDP.PersistedProtectedDocument.PersistedProtectedDocument, CarbonLDP.HTTP.Response ]>" }
+				{ type: "Promise<[ T & CarbonLDP.PersistedProtectedDocument, CarbonLDP.HTTP.Response ]>" }
 			), ():void => {} );
 
 			it( hasSignature(
 				[ "T extends object" ], [
-					{ name: "object", type: "T", description: "The object from where create the child. If it's a non `CarbonLDP.Document.Document` object, it is transformed into one." },
+					{ name: "object", type: "T", description: "The object from where create the child. If it's a non `CarbonLDP.Document` object, it is transformed into one." },
 					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for the request." },
 				],
-				{ type: "Promise<[ T & CarbonLDP.PersistedProtectedDocument.PersistedProtectedDocument, CarbonLDP.HTTP.Response ]>" }
+				{ type: "Promise<[ T & CarbonLDP.PersistedProtectedDocument, CarbonLDP.HTTP.Response ]>" }
 			), ():void => {} );
 
 			it( hasSignature( [
 					{ name: "slug", type: "string", description: "The slug name for the children URI." },
 					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for the request." },
 				],
-				{ type: "Promise<[ CarbonLDP.PersistedProtectedDocument.PersistedProtectedDocument, CarbonLDP.HTTP.Response ]>" }
+				{ type: "Promise<[ CarbonLDP.PersistedProtectedDocument, CarbonLDP.HTTP.Response ]>" }
 			), ():void => {} );
 
 			it( hasSignature( [
 					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for the request." },
 				],
-				{ type: "Promise<[ CarbonLDP.PersistedProtectedDocument.PersistedProtectedDocument, CarbonLDP.HTTP.Response ]>" }
+				{ type: "Promise<[ CarbonLDP.PersistedProtectedDocument, CarbonLDP.HTTP.Response ]>" }
 			), ():void => {} );
 
 		} );
@@ -369,7 +369,7 @@ describe( module( "carbonldp/PersistedDocument" ), ():void => {
 					{ name: "slugs", type: "string[]", description: "Array with the slugs that corresponds to each object in `object` parameter, in the order in which they were defined. If an element in the array is undefined or null, the slug will be generated by the platform." },
 					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for every the request." },
 				],
-				{ type: "Promise<[ (T & CarbonLDP.PersistedProtectedDocument.PersistedProtectedDocument)[], CarbonLDP.HTTP.Response[] ]>", description: "Promise that contains a tuple with an array of the new resolved persisted children, and another array with the response class of every request." }
+				{ type: "Promise<[ (T & CarbonLDP.PersistedProtectedDocument)[], CarbonLDP.HTTP.Response[] ]>", description: "Promise that contains a tuple with an array of the new resolved persisted children, and another array with the response class of every request." }
 			), ():void => {} );
 
 			it( hasSignature(
@@ -378,7 +378,7 @@ describe( module( "carbonldp/PersistedDocument" ), ():void => {
 					{ name: "objects", type: "T[]", description: "An array with the objects to be persisted as the new children." },
 					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for every the request." },
 				],
-				{ type: "Promise<[ (T & CarbonLDP.PersistedProtectedDocument.PersistedProtectedDocument)[], CarbonLDP.HTTP.Response[] ]>", description: "Promise that contains a tuple with an array of the new resolved persisted children, and another array with the response class of every request." }
+				{ type: "Promise<[ (T & CarbonLDP.PersistedProtectedDocument)[], CarbonLDP.HTTP.Response[] ]>", description: "Promise that contains a tuple with an array of the new resolved persisted children, and another array with the response class of every request." }
 			), ():void => {} );
 
 		} );
@@ -391,20 +391,20 @@ describe( module( "carbonldp/PersistedDocument" ), ():void => {
 			it( hasSignature(
 				[ "T extends object" ],
 				"Create an AccessPoint for the document with the slug specified.", [
-					{ name: "accessPoint", type: "T & CarbonLDP.AccessPoint.AccessPointBase", description: "AccessPoint Document to persist." },
+					{ name: "accessPoint", type: "T & CarbonLDP.AccessPointBase", description: "AccessPoint Document to persist." },
 					{ name: "slug", type: "string", optional: true, description: "Slug that will be used for the URI of the new access point." },
 					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customisable options for the request." },
 				],
-				{ type: "Promise<[ T & CarbonLDP.PersistedAccessPoint.PersistedAccessPoint, CarbonLDP.HTTP.Response ]>" }
+				{ type: "Promise<[ T & CarbonLDP.PersistedAccessPoint, CarbonLDP.HTTP.Response ]>" }
 			), ():void => {} );
 
 			it( hasSignature(
 				[ "T extends object" ],
 				"Create an AccessPoint for the document.", [
-					{ name: "accessPoint", type: "T & CarbonLDP.AccessPoint.AccessPointBase", description: "AccessPoint Document to persist." },
+					{ name: "accessPoint", type: "T & CarbonLDP.AccessPointBase", description: "AccessPoint Document to persist." },
 					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for the request." },
 				],
-				{ type: "Promise<[ T & CarbonLDP.PersistedAccessPoint.PersistedAccessPoint, CarbonLDP.HTTP.Response ]>" }
+				{ type: "Promise<[ T & CarbonLDP.PersistedAccessPoint, CarbonLDP.HTTP.Response ]>" }
 			), ():void => {} );
 
 		} );
@@ -417,20 +417,20 @@ describe( module( "carbonldp/PersistedDocument" ), ():void => {
 			it( hasSignature(
 				[ "T extends object" ],
 				"Create multiple access points for the current document with the slug specified.", [
-					{ name: "accessPoints", type: "(T & CarbonLDP.AccessPoint.AccessPointBase)[]", description: "The access points to persist." },
+					{ name: "accessPoints", type: "(T & CarbonLDP.AccessPointBase)[]", description: "The access points to persist." },
 					{ name: "slugs", type: "string[]", description: "Array with the slugs that corresponds to each object in `accessPoints` parameter, in the order in which they were defined. If an element in the array is undefined or null, the slug will be generated by the platform." },
 					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customisable options for the request." },
 				],
-				{ type: "Promise<[ (T & CarbonLDP.PersistedAccessPoint.PersistedAccessPoint)[], CarbonLDP.HTTP.Response[] ]>", description: "Promise that contains a tuple with an array of the new and UNRESOLVED persisted access points, and the array containing the response classes of every request." }
+				{ type: "Promise<[ (T & CarbonLDP.PersistedAccessPoint)[], CarbonLDP.HTTP.Response[] ]>", description: "Promise that contains a tuple with an array of the new and UNRESOLVED persisted access points, and the array containing the response classes of every request." }
 			), ():void => {} );
 
 			it( hasSignature(
 				[ "T extends object" ],
 				"Create multiple access points for the current document.", [
-					{ name: "accessPoints", type: "(T & CarbonLDP.AccessPoint.AccessPointBase)[]", description: "The access points to persist." },
+					{ name: "accessPoints", type: "(T & CarbonLDP.AccessPointBase)[]", description: "The access points to persist." },
 					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for the request." },
 				],
-				{ type: "Promise<[ (T & CarbonLDP.PersistedAccessPoint.PersistedAccessPoint)[], CarbonLDP.HTTP.Response[] ]>", description: "Promise that contains a tuple with an array of the new and UNRESOLVED persisted access points, and the array containing the response classes of every request." }
+				{ type: "Promise<[ (T & CarbonLDP.PersistedAccessPoint)[], CarbonLDP.HTTP.Response[] ]>", description: "Promise that contains a tuple with an array of the new and UNRESOLVED persisted access points, and the array containing the response classes of every request." }
 			), ():void => {} );
 
 		} );
@@ -441,7 +441,7 @@ describe( module( "carbonldp/PersistedDocument" ), ():void => {
 				"Retrieves the empty children of the document.", [
 					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for the request." },
 				],
-				{ type: "Promise<[ CarbonLDP.PersistedDocument.PersistedDocument[], CarbonLDP.HTTP.Response ]>" }
+				{ type: "Promise<[ CarbonLDP.PersistedDocument[], CarbonLDP.HTTP.Response ]>" }
 			), ():void => {} );
 
 		} );
@@ -454,7 +454,7 @@ describe( module( "carbonldp/PersistedDocument" ), ():void => {
 					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for the request." },
 					{ name: "queryBuilderFn", type: "( queryBuilder:CarbonLDP.SPARQL.QueryDocument.QueryDocumentsBuilder ) => CarbonLDP.SPARQL.QueryDocument.QueryDocumentsBuilder", optional: true, description: "Function that receives a the builder that helps you to construct the children retrieval query.\nThe same builder must be returned." },
 				],
-				{ type: "Promise<[ (T & CarbonLDP.PersistedDocument.PersistedDocument)[], CarbonLDP.HTTP.Response ]>" }
+				{ type: "Promise<[ (T & CarbonLDP.PersistedDocument)[], CarbonLDP.HTTP.Response ]>" }
 			), ():void => {} );
 
 			it( hasSignature(
@@ -462,7 +462,7 @@ describe( module( "carbonldp/PersistedDocument" ), ():void => {
 				"Retrieves the children of the document, building a query on which one is able to specify the properties to be retrieve and sub-documents' properties and on and on.", [
 					{ name: "queryBuilderFn", type: "( queryBuilder:CarbonLDP.SPARQL.QueryDocument.QueryDocumentsBuilder ) => CarbonLDP.SPARQL.QueryDocument.QueryDocumentsBuilder", optional: true, description: "Function that receives a the builder that helps you to construct the children retrieval query.\nThe same builder must be returned." },
 				],
-				{ type: "Promise<[ (T & CarbonLDP.PersistedDocument.PersistedDocument)[], CarbonLDP.HTTP.Response ]>" }
+				{ type: "Promise<[ (T & CarbonLDP.PersistedDocument)[], CarbonLDP.HTTP.Response ]>" }
 			), ():void => {} );
 
 		} );
@@ -474,7 +474,7 @@ describe( module( "carbonldp/PersistedDocument" ), ():void => {
 				"Retrieves the empty members of the document.", [
 					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for the request." },
 				],
-				{ type: "Promise<[ CarbonLDP.PersistedDocument.PersistedDocument[], CarbonLDP.HTTP.Response ]>" }
+				{ type: "Promise<[ CarbonLDP.PersistedDocument[], CarbonLDP.HTTP.Response ]>" }
 			), ():void => {} );
 
 		} );
@@ -487,7 +487,7 @@ describe( module( "carbonldp/PersistedDocument" ), ():void => {
 					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for the request." },
 					{ name: "queryBuilderFn", type: "( queryBuilder:CarbonLDP.SPARQL.QueryDocument.QueryDocumentsBuilder ) => CarbonLDP.SPARQL.QueryDocument.QueryDocumentsBuilder", optional: true, description: "Function that receives a the builder that helps you to construct the members retrieval query.\nThe same builder must be returned." },
 				],
-				{ type: "Promise<[ (T & CarbonLDP.PersistedDocument.PersistedDocument)[], CarbonLDP.HTTP.Response ]>" }
+				{ type: "Promise<[ (T & CarbonLDP.PersistedDocument)[], CarbonLDP.HTTP.Response ]>" }
 			), ():void => {} );
 
 			it( hasSignature(
@@ -495,7 +495,7 @@ describe( module( "carbonldp/PersistedDocument" ), ():void => {
 				"Retrieves the members of the document, building a query on which one is able to specify the properties to be retrieve and sub-documents' properties and on and on.", [
 					{ name: "queryBuilderFn", type: "( queryBuilder:CarbonLDP.SPARQL.QueryDocument.QueryDocumentsBuilder ) => CarbonLDP.SPARQL.QueryDocument.QueryDocumentsBuilder", optional: true, description: "Function that receives a the builder that helps you to construct the members retrieval query.\nThe same builder must be returned." },
 				],
-				{ type: "Promise<[ (T & CarbonLDP.PersistedDocument.PersistedDocument)[], CarbonLDP.HTTP.Response ]>" }
+				{ type: "Promise<[ (T & CarbonLDP.PersistedDocument)[], CarbonLDP.HTTP.Response ]>" }
 			), ():void => {} );
 
 		} );
@@ -508,7 +508,7 @@ describe( module( "carbonldp/PersistedDocument" ), ():void => {
 
 			it( hasSignature(
 				"Remove the specified resource Pointer as a member of the current document.", [
-					{ name: "member", type: "CarbonLDP.Pointer.Pointer", description: "Pointer object that references the resource to remove as a member." },
+					{ name: "member", type: "CarbonLDP.Pointer", description: "Pointer object that references the resource to remove as a member." },
 				],
 				{ type: "Promise<CarbonLDP.HTTP.Response>" }
 			), ():void => {} );
@@ -526,7 +526,7 @@ describe( module( "carbonldp/PersistedDocument" ), ():void => {
 			OBLIGATORY,
 			"removeMembers",
 			"Remove the specified resources URI or Pointers as members of the current document.", [
-				{ name: "members", type: "(CarbonLDP.Pointer.Pointer | string)[]", description: "Array of URIs or Pointers to remove as members" },
+				{ name: "members", type: "(CarbonLDP.Pointer | string)[]", description: "Array of URIs or Pointers to remove as members" },
 			],
 			{ type: "Promise<CarbonLDP.HTTP.Response>" }
 		), ():void => {} );
@@ -619,36 +619,36 @@ describe( module( "carbonldp/PersistedDocument" ), ():void => {
 	} );
 
 	describe( interfaze(
-		"CarbonLDP.PersistedDocument.PersistedDocumentFactory",
-		"Interface with factory, decorate and utils methods for `CarbonLDP.PersistedDocument.PersistedDocument` objects."
+		"CarbonLDP.PersistedDocumentFactory",
+		"Interface with factory, decorate and utils methods for `CarbonLDP.PersistedDocument` objects."
 	), ():void => {
 
 		it( hasMethod(
 			OBLIGATORY,
 			"isDecorated",
-			"Returns true if the Document provided has the properties and methods of a `CarbonLDP.PersistedDocument.PersistedDocument` object.", [
+			"Returns true if the Document provided has the properties and methods of a `CarbonLDP.PersistedDocument` object.", [
 				{ name: "object", type: "object" },
 			],
-			{ type: "object is CarbonLDP.PersistedDocument.PersistedDocument" }
+			{ type: "object is CarbonLDP.PersistedDocument" }
 		), ():void => {} );
 
 		it( hasMethod(
 			OBLIGATORY,
 			"is",
-			"Returns true if the element provided is considered a `CarbonLDP.PersistedDocument.PersistedDocument` object.", [
+			"Returns true if the element provided is considered a `CarbonLDP.PersistedDocument` object.", [
 				{ name: "object", type: "object" },
 			],
-			{ type: "object is CarbonLDP.PersistedDocument.PersistedDocument" }
+			{ type: "object is CarbonLDP.PersistedDocument" }
 		), ():void => {} );
 
 		it( hasMethod(
 			OBLIGATORY,
 			"create",
-			"Creates an empty `CarbonLDP.PersistedDocument.PersistedDocument` object with the URI provided.", [
-				{ name: "documents", type: "CarbonLDP.Documents.Documents", description: "The Documents instance to which the persisted document belongs." },
+			"Creates an empty `CarbonLDP.PersistedDocument` object with the URI provided.", [
+				{ name: "documents", type: "CarbonLDP.Documents", description: "The Documents instance to which the persisted document belongs." },
 				{ name: "uri", type: "string" },
 			],
-			{ type: "CarbonLDP.PersistedDocument.PersistedDocument" }
+			{ type: "CarbonLDP.PersistedDocument" }
 		), ():void => {} );
 
 		it( hasMethod(
@@ -657,21 +657,21 @@ describe( module( "carbonldp/PersistedDocument" ), ():void => {
 			[ "T extends object" ],
 			"Creates a PersistedDocument object from the object and URI provided.", [
 				{ name: "object", type: "T" },
-				{ name: "documents", type: "CarbonLDP.Documents.Documents", description: "The Documents instance to which the persisted document belongs." },
+				{ name: "documents", type: "CarbonLDP.Documents", description: "The Documents instance to which the persisted document belongs." },
 				{ name: "uri", type: "string" },
 			],
-			{ type: "T & CarbonLDP.PersistedDocument.PersistedDocument" }
+			{ type: "T & CarbonLDP.PersistedDocument" }
 		), ():void => {} );
 
 		it( hasMethod(
 			OBLIGATORY,
 			"decorate",
 			[ "T extends object" ],
-			"Decorates the object provided with the properties and methods of a `CarbonLDP.PersistedDocument.PersistedDocument` object.", [
+			"Decorates the object provided with the properties and methods of a `CarbonLDP.PersistedDocument` object.", [
 				{ name: "object", type: "T" },
-				{ name: "documents", type: "CarbonLDP.Documents.Documents", description: "The Documents instance to which the persisted document belongs." },
+				{ name: "documents", type: "CarbonLDP.Documents", description: "The Documents instance to which the persisted document belongs." },
 			],
-			{ type: "T & CarbonLDP.PersistedDocument.PersistedDocument" }
+			{ type: "T & CarbonLDP.PersistedDocument" }
 		), ():void => {} );
 
 	} );
@@ -679,8 +679,8 @@ describe( module( "carbonldp/PersistedDocument" ), ():void => {
 	describe( property(
 		STATIC,
 		"PersistedDocument",
-		"CarbonLDP.PersistedDocument.PersistedDocumentFactory",
-		"Constant that implements the `CarbonLDP.PersistedDocument.PersistedDocumentFactory` interface."
+		"CarbonLDP.PersistedDocumentFactory",
+		"Constant that implements the `CarbonLDP.PersistedDocumentFactory` interface."
 	), ():void => {
 
 		let context:AbstractContext;

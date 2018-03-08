@@ -34,7 +34,7 @@ describe( module( "carbonldp/Messaging/AccessPointCreated" ), ():void => {
 		it( hasProperty(
 			OBLIGATORY,
 			"target",
-			"CarbonLDP.Pointer.Pointer"
+			"CarbonLDP.Pointer"
 		), ():void => {
 			const target:AccessPointCreated[ "target" ] = {} as Pointer;
 			expect( target ).toBeDefined();
@@ -56,7 +56,7 @@ describe( module( "carbonldp/Messaging/AccessPointCreated" ), ():void => {
 		it( hasProperty(
 			OBLIGATORY,
 			"SCHEMA",
-			"CarbonLDP.ObjectSchema.ObjectSchema"
+			"CarbonLDP.ObjectSchema"
 		), ():void => {} );
 
 	} );

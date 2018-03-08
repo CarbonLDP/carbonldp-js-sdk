@@ -192,7 +192,7 @@ describe( module( "carbonldp/RDF/URI" ), ():void => {
 			it( hasSignature(
 				"Replace the base of a URI with a prefix in accordance with the ObjectSchema provided. If the prefix can not be resolved, the URI provided will be returned.", [
 					{ name: "uri", type: "string" },
-					{ name: "objectSchema", type: "CarbonLDP.ObjectSchema.DigestedObjectSchema" },
+					{ name: "objectSchema", type: "CarbonLDP.DigestedObjectSchema" },
 				],
 				{ type: "string" }
 			), ():void => {} );

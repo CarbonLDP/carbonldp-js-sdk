@@ -61,7 +61,7 @@ describe( module( "carbonldp/SPARQL/QueryDocument/Utils" ), ():void => {
 				{ name: "context", type: "CarbonLDP.SPARQL.QueryDocument.QueryContext", description: "The context of the query where to obtains the information for the patterns." },
 				{ name: "resourcePath", type: "string", description: "Path of the parent property/resource where the property belongs to." },
 				{ name: "propertyPath", type: "string", description: "Path of the property to create its patterns." },
-				{ name: "propertyDefinition", type: "CarbonLDP.ObjectSchema.DigestedObjectSchemaProperty", description: "Schema definition of the property." },
+				{ name: "propertyDefinition", type: "CarbonLDP.DigestedObjectSchemaProperty", description: "Schema definition of the property." },
 			],
 			{ type: "SPARQL/tokens/PatternToken[]" }
 		), ():void => {

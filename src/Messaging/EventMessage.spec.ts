@@ -28,7 +28,7 @@ describe( module( "carbonldp/Messaging/Message" ), ():void => {
 			expect( target ).toBeDefined();
 		} );
 
-		it( extendsClass( "CarbonLDP.Resource.Resource" ), ():void => {
+		it( extendsClass( "CarbonLDP.Resource" ), ():void => {
 			const target:Resource = {} as EventMessage;
 			expect( target ).toBeDefined();
 		} );
@@ -36,7 +36,7 @@ describe( module( "carbonldp/Messaging/Message" ), ():void => {
 		it( hasProperty(
 			OBLIGATORY,
 			"target",
-			"CarbonLDP.Pointer.Pointer"
+			"CarbonLDP.Pointer"
 		), ():void => {
 			const target:EventMessage[ "target" ] = {} as Pointer;
 			expect( target ).toBeDefined();
@@ -52,7 +52,7 @@ describe( module( "carbonldp/Messaging/Message" ), ():void => {
 		it( hasProperty(
 			OBLIGATORY,
 			"SCHEMA",
-			"CarbonLDP.ObjectSchema.ObjectSchema"
+			"CarbonLDP.ObjectSchema"
 		), ():void => {} );
 
 

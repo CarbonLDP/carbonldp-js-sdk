@@ -36,7 +36,7 @@ describe( module( "carbonldp/Messaging/MemberRemoved" ), ():void => {
 		it( hasProperty(
 			OBLIGATORY,
 			"target",
-			"CarbonLDP.Pointer.Pointer"
+			"CarbonLDP.Pointer"
 		), ():void => {
 			const target:MemberRemoved[ "target" ] = {} as Pointer;
 			expect( target ).toBeDefined();
@@ -67,7 +67,7 @@ describe( module( "carbonldp/Messaging/MemberRemoved" ), ():void => {
 		it( hasProperty(
 			OBLIGATORY,
 			"SCHEMA",
-			"CarbonLDP.ObjectSchema.ObjectSchema"
+			"CarbonLDP.ObjectSchema"
 		), ():void => {} );
 
 	} );

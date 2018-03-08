@@ -26,7 +26,7 @@ describe( module( "carbonldp/Messaging/DocumentCreatedDetails" ), ():void => {
 			expect( target ).toBeDefined();
 		} );
 
-		it( extendsClass( "CarbonLDP.Resource.Resource" ), ():void => {
+		it( extendsClass( "CarbonLDP.Resource" ), ():void => {
 			const target:Resource = {} as DocumentCreatedDetails;
 			expect( target ).toBeDefined();
 		} );
@@ -34,7 +34,7 @@ describe( module( "carbonldp/Messaging/DocumentCreatedDetails" ), ():void => {
 		it( hasProperty(
 			OBLIGATORY,
 			"createdDocuments",
-			"CarbonLDP.Pointer.Pointer[]"
+			"CarbonLDP.Pointer[]"
 		), ():void => {
 			const target:DocumentCreatedDetails[ "createdDocuments" ] = [] as Pointer[];
 			expect( target ).toBeDefined();
@@ -56,7 +56,7 @@ describe( module( "carbonldp/Messaging/DocumentCreatedDetails" ), ():void => {
 		it( hasProperty(
 			OBLIGATORY,
 			"SCHEMA",
-			"CarbonLDP.ObjectSchema.ObjectSchema"
+			"CarbonLDP.ObjectSchema"
 		), ():void => {} );
 
 	} );

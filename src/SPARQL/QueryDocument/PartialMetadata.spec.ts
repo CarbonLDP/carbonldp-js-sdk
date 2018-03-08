@@ -27,7 +27,7 @@ describe( module( "carbonldp/SPARQL/QueryDocument/PartialMetadata" ), ():void =>
 
 			it( hasSignature(
 				[
-					{ name: "schema", type: "CarbonLDP.ObjectSchema.DigestedObjectSchema", description: "The schema with the information of the partial properties of the partial resource." },
+					{ name: "schema", type: "CarbonLDP.DigestedObjectSchema", description: "The schema with the information of the partial properties of the partial resource." },
 					{ name: "previousPartial", type: "CarbonLDP.SPARQL.QueryDocument.PartialMetadata", optional: true, description: "The previous partial metadata to merge with the new partial schema." },
 				]
 			), ():void => {} );

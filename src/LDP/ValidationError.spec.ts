@@ -24,7 +24,7 @@ describe( module( "carbonldp/LDP/ValidationError" ), ():void => {
 		"Interface that contains the properties that describe how the validation failed."
 	), ():void => {
 
-		it( extendsClass( "CarbonLDP.Resource.Resource" ), ():void => {
+		it( extendsClass( "CarbonLDP.Resource" ), ():void => {
 			const target:Resource = {} as ValidationError;
 			expect( target ).toBeDefined();
 		} );
@@ -37,7 +37,7 @@ describe( module( "carbonldp/LDP/ValidationError" ), ():void => {
 		it( hasProperty(
 			OBLIGATORY,
 			"errorDetails",
-			"CarbonLDP.Pointer.Pointer",
+			"CarbonLDP.Pointer",
 			"Pointer with the error details of how the validation failed."
 		), ():void => {
 			const target:ValidationError = { errorDetails: true } as any;
@@ -60,7 +60,7 @@ describe( module( "carbonldp/LDP/ValidationError" ), ():void => {
 		it( hasProperty(
 			OBLIGATORY,
 			"SCHEMA",
-			"CarbonLDP.ObjectSchema.ObjectSchema"
+			"CarbonLDP.ObjectSchema"
 		), ():void => {} );
 
 	} );

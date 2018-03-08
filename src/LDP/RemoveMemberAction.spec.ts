@@ -23,12 +23,12 @@ describe( module( "carbonldp/LDP/RemoveMemberAction" ), ():void => {
 		"Interface that represents an object to be sent in a request that removes specific members to a container."
 	), ():void => {
 
-		it( extendsClass( "CarbonLDP.Resource.Resource" ), ():void => {} );
+		it( extendsClass( "CarbonLDP.Resource" ), ():void => {} );
 
 		it( hasProperty(
 			OBLIGATORY,
 			"targetMembers",
-			"CarbonLDP.Pointer.Pointer[]",
+			"CarbonLDP.Pointer[]",
 			"Array with the members to be removed from the container."
 		), ():void => {} );
 
@@ -48,7 +48,7 @@ describe( module( "carbonldp/LDP/RemoveMemberAction" ), ():void => {
 		it( hasProperty(
 			STATIC,
 			"SCHEMA",
-			"CarbonLDP.ObjectSchema.ObjectSchema"
+			"CarbonLDP.ObjectSchema"
 		), ():void => {} );
 
 		it( hasMethod(
@@ -64,7 +64,7 @@ describe( module( "carbonldp/LDP/RemoveMemberAction" ), ():void => {
 			STATIC,
 			"create",
 			"Creates a `CarbonLDP.LDP.RemoveMemberAction` resource for the specified targetMembers.", [
-				{ name: "targetMembers", type: "CarbonLDP.Pointer.Pointer", description: "The target members of the remove action." },
+				{ name: "targetMembers", type: "CarbonLDP.Pointer", description: "The target members of the remove action." },
 			],
 			{ type: "CarbonLDP.LDP.RemoveMemberAction" }
 		), ():void => {} );

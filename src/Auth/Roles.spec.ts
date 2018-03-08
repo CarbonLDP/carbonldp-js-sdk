@@ -72,7 +72,7 @@ describe( module( "carbonldp/Auth/Roles" ), ():void => {
 		} );
 
 		it( hasConstructor( [
-			{ name: "context", type: "CarbonLDP.Context.Context" },
+			{ name: "context", type: "CarbonLDP.Context" },
 		] ), ():void => {
 			expect( roles ).toBeTruthy();
 			expect( roles instanceof Roles.Class ).toBe( true );
@@ -87,7 +87,7 @@ describe( module( "carbonldp/Auth/Roles" ), ():void => {
 				[ "T extends CarbonLDP.Auth.Roles.Class" ],
 				"Persists the Role provided with the slug, if specified, as a childRole of the parentRole specified.\n" +
 				"Returns a Promise with a Pointer for the stored role; and a tuple of two responses, the first one is the response of the creation, and the second one is the response of the creation of the relation parent-child of the roles.", [
-					{ name: "parentRole", type: "string | CarbonLDP.Pointer.Pointer", description: "The role that will be assigned as the parent of the role that wants to persist." },
+					{ name: "parentRole", type: "string | CarbonLDP.Pointer", description: "The role that will be assigned as the parent of the role that wants to persist." },
 					{ name: "role", type: "T", description: "The appRole that wants to persist." },
 					{ name: "slug", type: "string", optional: true, description: "The slug where the role will be persisted." },
 					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "The slug where the role will be persisted." },
@@ -157,7 +157,7 @@ describe( module( "carbonldp/Auth/Roles" ), ():void => {
 				[ "T extends CarbonLDP.Auth.Roles.Class" ],
 				"Persists the Role provided as a childRole of the parentRole specified.\n" +
 				"Returns a Promise with a Pointer for the stored role; and a tuple of two responses, the first one is the response of the creation, and the second one is the response of the creation of the relation parent-child of the roles.", [
-					{ name: "parentRole", type: "string | CarbonLDP.Pointer.Pointer", description: "The role that will be assigned as the parent of the role that wants to persist." },
+					{ name: "parentRole", type: "string | CarbonLDP.Pointer", description: "The role that will be assigned as the parent of the role that wants to persist." },
 					{ name: "role", type: "T", description: "The appRole that wants to persist." },
 					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "The slug where the role will be persisted." },
 				],
@@ -438,7 +438,7 @@ describe( module( "carbonldp/Auth/Roles" ), ():void => {
 					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true },
 				],
 				// TODO: Change to `PersistedUser`
-				{ type: "Promise<[ (T & CarbonLDP.PersistedDocument.PersistedDocument)[], CarbonLDP.HTTP.Response ]>" }
+				{ type: "Promise<[ (T & CarbonLDP.PersistedDocument)[], CarbonLDP.HTTP.Response ]>" }
 			), ( done:{ ():void, fail:() => void } ):void => {
 				let spies:any = {
 					success: ( [ pointers, response ]:[ Pointer[], Response ] ):void => {
@@ -496,7 +496,7 @@ describe( module( "carbonldp/Auth/Roles" ), ():void => {
 			"addUser",
 			"Makes a relation in the role specified towards the user provided.", [
 				{ name: "roleURI", type: "string", description: "The URI of the role where to add the user." },
-				{ name: "user", type: "string | CarbonLDP.Pointer.Pointer", description: "The user that wants to add to the role." },
+				{ name: "user", type: "string | CarbonLDP.Pointer", description: "The user that wants to add to the role." },
 				{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true },
 			],
 			{ type: "Promise<CarbonLDP.HTTP.Response>" }
@@ -522,7 +522,7 @@ describe( module( "carbonldp/Auth/Roles" ), ():void => {
 			"addUsers",
 			"Makes a relation in the role specified towards the users specified.", [
 				{ name: "roleURI", type: "string", description: "The URI of the role where to add users." },
-				{ name: "users", type: "(string | CarbonLDP.Pointer.Pointer)[]", description: "An array with strings or Pointers that refers to the users that wants to add to the role." },
+				{ name: "users", type: "(string | CarbonLDP.Pointer)[]", description: "An array with strings or Pointers that refers to the users that wants to add to the role." },
 				{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true },
 			],
 			{ type: "Promise<CarbonLDP.HTTP.Response>" }
@@ -597,7 +597,7 @@ describe( module( "carbonldp/Auth/Roles" ), ():void => {
 			"removeUser",
 			"Removes the relation in the role specified towards the user provided.", [
 				{ name: "roleURI", type: "string", description: "The URI of the role from where to remove the user." },
-				{ name: "user", type: "string | CarbonLDP.Pointer.Pointer", description: "The user that wants to be removed from the role." },
+				{ name: "user", type: "string | CarbonLDP.Pointer", description: "The user that wants to be removed from the role." },
 				{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true },
 			],
 			{ type: "Promise<CarbonLDP.HTTP.Response>" }
@@ -623,7 +623,7 @@ describe( module( "carbonldp/Auth/Roles" ), ():void => {
 			"removeUsers",
 			"Remove the relation in the role specified towards the users specified.", [
 				{ name: "roleURI", type: "string", description: "The URI of the role from where to remove the users." },
-				{ name: "users", type: "(string | CarbonLDP.Pointer.Pointer)[]", description: "An array with strings or Pointers that refers to the users to be removed from the role." },
+				{ name: "users", type: "(string | CarbonLDP.Pointer)[]", description: "An array with strings or Pointers that refers to the users to be removed from the role." },
 				{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true },
 			],
 			{ type: "Promise<CarbonLDP.HTTP.Response>" }

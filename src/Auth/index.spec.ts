@@ -260,7 +260,7 @@ describe( module( "carbonldp/Auth" ), ():void => {
 		} );
 
 		it( hasConstructor( [
-			{ name: "context", type: "CarbonLDP.Context.Context" },
+			{ name: "context", type: "CarbonLDP.Context" },
 		] ), ():void => {
 			let auth:Auth.Class = new Auth.Class( new class extends AbstractContext {
 				protected _baseURI:string;

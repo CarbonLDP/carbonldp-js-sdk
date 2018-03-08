@@ -23,12 +23,12 @@ describe( module( "carbonldp/LDP/AddMemberAction" ), ():void => {
 		"Interface that represents an object to be sent in a request that add members to a container."
 	), ():void => {
 
-		it( extendsClass( "CarbonLDP.Resource.Resource" ), ():void => {} );
+		it( extendsClass( "CarbonLDP.Resource" ), ():void => {} );
 
 		it( hasProperty(
 			OBLIGATORY,
 			"targetMembers",
-			"CarbonLDP.Pointer.Pointer[]",
+			"CarbonLDP.Pointer[]",
 			"Array with the members to be added to the container."
 		), ():void => {} );
 
@@ -48,7 +48,7 @@ describe( module( "carbonldp/LDP/AddMemberAction" ), ():void => {
 		it( hasProperty(
 			OBLIGATORY,
 			"SCHEMA",
-			"CarbonLDP.ObjectSchema.ObjectSchema"
+			"CarbonLDP.ObjectSchema"
 		), ():void => {} );
 
 		it( hasMethod(
@@ -64,7 +64,7 @@ describe( module( "carbonldp/LDP/AddMemberAction" ), ():void => {
 			STATIC,
 			"create",
 			"Creates `CarbonLDP.LDP.AddMemberAction` resource for the specified targetMembers.", [
-				{ name: "targetMembers", type: "CarbonLDP.Pointer.Pointer[]", description: "The target members to add in a `addMember` request." },
+				{ name: "targetMembers", type: "CarbonLDP.Pointer[]", description: "The target members to add in a `addMember` request." },
 			],
 			{ type: "CarbonLDP.LDP.AddMemberAction" }
 		), ():void => {} );

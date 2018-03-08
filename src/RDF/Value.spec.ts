@@ -60,7 +60,7 @@ describe( module( "carbonldp/RDF/Value" ), ():void => {
 			"parse",
 			"Returns the parsed object from an Literal, Node, or List.\n" +
 			"Returns null if it cannot be parsed", [
-				{ name: "pointerLibrary", type: "CarbonLDP.Pointer.PointerLibrary" },
+				{ name: "pointerLibrary", type: "CarbonLDP.PointerLibrary" },
 				{ name: "value", type: "CarbonLDP.RDF.RDFLiteral | CarbonLDP.RDF.RDFNode | CarbonLDP.RDF.RDFList | CarbonLDP.RDF.RDFValue | string" },
 			],
 			{ type: "any" }

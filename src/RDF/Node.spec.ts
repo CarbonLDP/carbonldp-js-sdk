@@ -143,7 +143,7 @@ describe( module( "carbonldp/RDF/Node" ), ():void => {
 			"Returns the property array with the parsed Literal, Pointer or List.\n" +
 			"Returns `undefined` if it cannot be parsed.", [
 				{ name: "expandedValues", type: "string | (string | CarbonLDP.RDF.RDFNode | CarbonLDP.RDF.RDFList | CarbonLDP.RDF.RDFValue | CarbonLDP.RDF.RDFLiteral)[]" },
-				{ name: "pointerLibrary", type: "CarbonLDP.Pointer.PointerLibrary" },
+				{ name: "pointerLibrary", type: "CarbonLDP.PointerLibrary" },
 			],
 			{ type: "any[]" }
 		), ():void => {} );
@@ -154,7 +154,7 @@ describe( module( "carbonldp/RDF/Node" ), ():void => {
 			"Returns the property array with the parsed Pointers values.\n" +
 			"Returns `undefined` if the property cannot be parsed as a pointer.", [
 				{ name: "expandedValues", type: "string | (string | CarbonLDP.RDF.RDFNode | CarbonLDP.RDF.RDFList | CarbonLDP.RDF.RDFValue | CarbonLDP.RDF.RDFLiteral)[]" },
-				{ name: "pointerLibrary", type: "CarbonLDP.Pointer.PointerLibrary" },
+				{ name: "pointerLibrary", type: "CarbonLDP.PointerLibrary" },
 			],
 			{ type: "any[]" }
 		), ():void => {} );
@@ -177,7 +177,7 @@ describe( module( "carbonldp/RDF/Node" ), ():void => {
 			"Returns an object associating the language with the parsed string literal.\n" +
 			"Returns an empty object if it is not a property with language.", [
 				{ name: "expandedValues", type: "string | (string | CarbonLDP.RDF.RDFNode | CarbonLDP.RDF.RDFList | CarbonLDP.RDF.RDFValue | CarbonLDP.RDF.RDFLiteral)[]" },
-				{ name: "pointerLibrary", type: "CarbonLDP.Pointer.PointerLibrary" },
+				{ name: "pointerLibrary", type: "CarbonLDP.PointerLibrary" },
 			],
 			{ type: "object" }
 		), ():void => {} );

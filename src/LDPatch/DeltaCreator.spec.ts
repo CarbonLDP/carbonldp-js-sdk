@@ -97,9 +97,9 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 			it( hasSignature(
 				"Creates and adds the delta to the patch, of the provided old and new resource.",
 				[
-					{ name: "schema", type: "CarbonLDP.ObjectSchema.DigestedObjectSchema", description: "The schema of the resource to create its delta." },
-					{ name: "oldResource", type: "CarbonLDP.Resource.Resource", description: "The old representation of the resource to create the delta." },
-					{ name: "newResource", type: "CarbonLDP.Resource.Resource", description: "The current representation of the resource to create the delta." },
+					{ name: "schema", type: "CarbonLDP.DigestedObjectSchema", description: "The schema of the resource to create its delta." },
+					{ name: "oldResource", type: "CarbonLDP.Resource", description: "The old representation of the resource to create the delta." },
+					{ name: "newResource", type: "CarbonLDP.Resource", description: "The current representation of the resource to create the delta." },
 				]
 			), ():void => {
 			} );

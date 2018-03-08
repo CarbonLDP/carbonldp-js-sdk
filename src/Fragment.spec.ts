@@ -14,50 +14,50 @@ import {
 describe( module( "carbonldp/Fragment" ), ():void => {
 
 	describe( interfaze(
-		"CarbonLDP.Fragment.Fragment",
+		"CarbonLDP.Fragment",
 		"Interface of an in-memory fragment of a document."
 	), ():void => {
 
 		it( hasProperty(
 			OBLIGATORY,
 			"_document",
-			"CarbonLDP.Document.Document",
+			"CarbonLDP.Document",
 			"The document the fragment belongs to."
 		), ():void => {} );
 
 	} );
 
 	describe( interfaze(
-		"CarbonLDP.Fragment.FragmentFactory",
-		"Interface with the factory, decorate and utils methods of a `CarbonLDP.Fragment.Fragment` object."
+		"CarbonLDP.FragmentFactory",
+		"Interface with the factory, decorate and utils methods of a `CarbonLDP.Fragment` object."
 	), ():void => {
 
 		it( hasMethod(
 			OBLIGATORY,
 			"isDecorated",
-			"Returns true if the object provided has the properties and methods of a `CarbonLDP.Fragment.Fragment` object.", [
+			"Returns true if the object provided has the properties and methods of a `CarbonLDP.Fragment` object.", [
 				{ name: "object", type: "object" },
 			],
-			{ type: "object is CarbonLDP.Fragment.Fragment" }
+			{ type: "object is CarbonLDP.Fragment" }
 		), ():void => {} );
 
 		it( hasMethod(
 			OBLIGATORY,
 			"is",
-			"Returns true if the object provided is considered a `CarbonLDP.Fragment.Fragment` object.", [
+			"Returns true if the object provided is considered a `CarbonLDP.Fragment` object.", [
 				{ name: "object", type: "object" },
 			],
-			{ type: "object is CarbonLDP.Fragment.Fragment" }
+			{ type: "object is CarbonLDP.Fragment" }
 		), ():void => {} );
 
 		it( hasMethod(
 			OBLIGATORY,
 			"create",
 			"Creates a Fragment with the ID if provided.", [
-				{ name: "document", type: "CarbonLDP.Document.Document", description: "The document that the fragment will be part of." },
+				{ name: "document", type: "CarbonLDP.Document", description: "The document that the fragment will be part of." },
 				{ name: "id", type: "string", optional: true, description: "The ID of the fragment to create." },
 			],
-			{ type: "CarbonLDP.Fragment.Fragment" }
+			{ type: "CarbonLDP.Fragment" }
 		), ():void => {} );
 
 		it( hasMethod(
@@ -66,25 +66,25 @@ describe( module( "carbonldp/Fragment" ), ():void => {
 			[ "T extends object" ],
 			"Creates a Fragment from an object with the ID if provided.", [
 				{ name: "object", type: "T", description: "Object that will be converted to a fragment." },
-				{ name: "document", type: "CarbonLDP.Document.Document", description: "The document that the fragment will be part of." },
+				{ name: "document", type: "CarbonLDP.Document", description: "The document that the fragment will be part of." },
 				{ name: "id", type: "string", optional: true, description: "The ID that will be assigned to the fragment." },
 			],
-			{ type: "T & CarbonLDP.Fragment.Fragment" }
+			{ type: "T & CarbonLDP.Fragment" }
 		), ():void => {} );
 
 		it( hasMethod(
 			OBLIGATORY,
 			"decorate",
 			[ "T extends object" ],
-			"Decorates the object with the required `CarbonLDP.Fragment.Fragment` properties and methods.", [
+			"Decorates the object with the required `CarbonLDP.Fragment` properties and methods.", [
 				{ name: "object", type: "T", description: "Object that will be converted to a fragment." },
 			],
-			{ type: "T & CarbonLDP.Fragment.Fragment" }
+			{ type: "T & CarbonLDP.Fragment" }
 		), ():void => {} );
 
 	} );
 
-	describe( hasProperty( STATIC, "Fragment", "CarbonLDP.Fragment.FragmentFactory", "Constant that implements the `CarbonLDP.Fragment.FragmentFactory` interface" ), ():void => {
+	describe( hasProperty( STATIC, "Fragment", "CarbonLDP.FragmentFactory", "Constant that implements the `CarbonLDP.FragmentFactory` interface" ), ():void => {
 
 		it( "should exist", ():void => {
 			expect( Fragment ).toBeDefined();

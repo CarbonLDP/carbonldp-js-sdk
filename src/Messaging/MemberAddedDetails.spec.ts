@@ -35,7 +35,7 @@ describe( module( "carbonldp/Messaging/MemberAddedDetails" ), ():void => {
 		it( hasProperty(
 			OBLIGATORY,
 			"members",
-			"CarbonLDP.Pointer.Pointer[]"
+			"CarbonLDP.Pointer[]"
 		), ():void => {
 			const target:MemberAddedDetails[ "members" ] = [] as Pointer[];
 			expect( target ).toBeDefined();
@@ -57,7 +57,7 @@ describe( module( "carbonldp/Messaging/MemberAddedDetails" ), ():void => {
 		it( hasProperty(
 			STATIC,
 			"SCHEMA",
-			"CarbonLDP.ObjectSchema.ObjectSchema"
+			"CarbonLDP.ObjectSchema"
 		), ():void => {} );
 
 	} );

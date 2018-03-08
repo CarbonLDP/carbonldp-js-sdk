@@ -51,7 +51,7 @@ describe( module( "carbonldp/SPARQL/QueryDocument/QueryObject" ), ():void => {
 				"Creates an object for the specified object resource.",
 				[
 					{ name: "context", type: "CarbonLDP.SPARQL.QueryDocument.QueryContext", description: "The context of the query where the object is been used." },
-					{ name: "object", type: "CarbonLDP.Pointer.Pointer | string", description: "The object to be converted in a safe to use in query object resource." },
+					{ name: "object", type: "CarbonLDP.Pointer | string", description: "The object to be converted in a safe to use in query object resource." },
 				]
 			), ():void => {
 			} );

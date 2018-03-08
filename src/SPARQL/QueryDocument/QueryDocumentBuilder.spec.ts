@@ -263,7 +263,7 @@ describe( module( "carbonldp/SPARQL/QueryDocument/QueryDocumentBuilder" ), ():vo
 			it( hasSignature(
 				"Wraps a pointer or URi to be used correctly in the query filters and values.",
 				[
-					{ name: "value", type: "CarbonLDP.Pointer.Pointer | string", description: "Pointer or URI to be converted in a safe to use in query object." },
+					{ name: "value", type: "CarbonLDP.Pointer | string", description: "Pointer or URI to be converted in a safe to use in query object." },
 				],
 				{ type: "CarbonLDP.SPARQL.QueryDocument.QueryObject" }
 			), ():void => {

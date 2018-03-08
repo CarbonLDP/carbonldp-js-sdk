@@ -24,16 +24,16 @@ import * as Utils from "./Utils";
 describe( module( "carbonldp/PersistedProtectedDocument" ), ():void => {
 
 	describe( interfaze(
-		"CarbonLDP.PersistedProtectedDocument.PersistedProtectedDocument",
+		"CarbonLDP.PersistedProtectedDocument",
 		"Interface that represents a persisted protected document."
 	), ():void => {
 
-		it( extendsClass( "CarbonLDP.PersistedDocument.PersistedDocument" ), ():void => {} );
+		it( extendsClass( "CarbonLDP.PersistedDocument" ), ():void => {} );
 
 		it( hasProperty(
 			OPTIONAL,
 			"accessControlList",
-			"CarbonLDP.Pointer.Pointer",
+			"CarbonLDP.Pointer",
 			"A reference to the ACL of the document."
 		), ():void => {} );
 
@@ -49,36 +49,36 @@ describe( module( "carbonldp/PersistedProtectedDocument" ), ():void => {
 	} );
 
 	describe( interfaze(
-		"CarbonLDP.PersistedProtectedDocument.PersistedProtectedDocumentFactory",
-		"Interface with the factory, decorate and utils methods for `CarbonLDP.PersistedProtectedDocument.PersistedProtectedDocument` objects."
+		"CarbonLDP.PersistedProtectedDocumentFactory",
+		"Interface with the factory, decorate and utils methods for `CarbonLDP.PersistedProtectedDocument` objects."
 	), ():void => {
 
 		it( hasMethod(
 			STATIC,
 			"isDecorated",
-			"Returns true if the object provided contains the properties and methods of a `CarbonLDP.PersistedProtectedDocument.PersistedProtectedDocument` object.", [
+			"Returns true if the object provided contains the properties and methods of a `CarbonLDP.PersistedProtectedDocument` object.", [
 				{ name: "object", type: "object", description: "The object to check." },
 			],
-			{ type: "object is CarbonLDP.PersistedProtectedDocument.PersistedProtectedDocument" }
+			{ type: "object is CarbonLDP.PersistedProtectedDocument" }
 		), ():void => {} );
 
 		it( hasMethod(
 			STATIC,
 			"is",
-			"Returns true if the object provided is considered a `CarbonLDP.PersistedProtectedDocument.PersistedProtectedDocument` object.", [
+			"Returns true if the object provided is considered a `CarbonLDP.PersistedProtectedDocument` object.", [
 				{ name: "object", type: "object", description: "The object to check." },
 			],
-			{ type: "object is CarbonLDP.PersistedProtectedDocument.PersistedProtectedDocument" }
+			{ type: "object is CarbonLDP.PersistedProtectedDocument" }
 		), ():void => {} );
 
 		it( hasMethod(
 			STATIC,
 			"decorate",
 			[ "T extends object" ],
-			"Decorate the object with the properties and methods of a `CarbonLDP.PersistedProtectedDocument.PersistedProtectedDocument` object.", [
+			"Decorate the object with the properties and methods of a `CarbonLDP.PersistedProtectedDocument` object.", [
 				{ name: "object", type: "T", description: "The object to decorate." },
 			],
-			{ type: "T & CarbonLDP.PersistedProtectedDocument.PersistedProtectedDocument" }
+			{ type: "T & CarbonLDP.PersistedProtectedDocument" }
 		), ():void => {} );
 
 	} );
@@ -86,8 +86,8 @@ describe( module( "carbonldp/PersistedProtectedDocument" ), ():void => {
 	describe( property(
 		STATIC,
 		"PersistedProtectedDocument",
-		"CarbonLDP.PersistedProtectedDocument.PersistedProtectedDocumentFactory",
-		"Constant that implements the `CarbonLDP.PersistedProtectedDocument.PersistedProtectedDocumentFactory` interface."
+		"CarbonLDP.PersistedProtectedDocumentFactory",
+		"Constant that implements the `CarbonLDP.PersistedProtectedDocumentFactory` interface."
 	), ():void => {
 
 		it( isDefined(), ():void => {

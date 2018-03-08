@@ -1,28 +1,43 @@
-import * as AbstractContext from "./AbstractContext";
-import * as AccessPoint from "./AccessPoint";
+import { AbstractContext } from "./AbstractContext";
+import { AccessPoint } from "./AccessPoint";
 import * as Auth from "./Auth";
-import * as BlankNode from "./BlankNode";
+import { BlankNode } from "./BlankNode";
+
 import * as CarbonLDP from "./CarbonLDP";
-import * as Document from "./Document";
-import * as Documents from "./Documents";
+
+import { Document } from "./Document";
+import { Documents } from "./Documents";
 import * as Errors from "./Errors";
-import * as Fragment from "./Fragment";
+import { Fragment } from "./Fragment";
+import { FreeResources } from "./FreeResources";
 import * as HTTP from "./HTTP";
 import * as JSONLD from "./JSONLD";
 import * as LDP from "./LDP";
 import * as LDPatch from "./LDPatch";
 import * as Messaging from "./Messaging";
-import * as ModelFactory from "./ModelFactory";
-import * as NamedFragment from "./NamedFragment";
-import * as ObjectSchema from "./ObjectSchema";
-import * as PersistedDocument from "./PersistedDocument";
-import * as PersistedFragment from "./PersistedFragment";
-import * as PersistedNamedFragment from "./PersistedNamedFragment";
-import * as PersistedResource from "./PersistedResource";
-import * as Pointer from "./Pointer";
+import { NamedFragment } from "./NamedFragment";
+import {
+	ContainerType,
+	DigestedObjectSchema,
+	DigestedObjectSchemaProperty,
+	ObjectSchemaDigester,
+	ObjectSchemaUtils,
+	PointerType,
+} from "./ObjectSchema";
+import { PersistedDocument } from "./PersistedDocument";
+import { PersistedFragment } from "./PersistedFragment";
+import { PersistedNamedFragment } from "./PersistedNamedFragment";
+import { PersistedProtectedDocument } from "./PersistedProtectedDocument";
+import { PersistedResource } from "./PersistedResource";
+import { Pointer } from "./Pointer";
+import { ProtectedDocument } from "./ProtectedDocument";
 import * as RDF from "./RDF";
-import * as Resource from "./Resource";
-import * as SDKContext from "./SDKContext";
+import { Resource } from "./Resource";
+import {
+	globalContext,
+	SDKContext,
+} from "./SDKContext";
+import { ServiceAwareDocument } from "./ServiceAwareDocument";
 import * as Settings from "./Settings";
 import * as SHACL from "./SHACL";
 import * as SPARQL from "./SPARQL";
@@ -43,7 +58,7 @@ import {
 } from "./test/JasmineExtender";
 
 import * as Utils from "./Utils";
-import * as Vocabularies from "./Vocabularies/index";
+import * as Vocabularies from "./Vocabularies";
 
 describe( module( "carbonldp/CarbonLDP" ), ():void => {
 
@@ -59,9 +74,9 @@ describe( module( "carbonldp/CarbonLDP" ), ():void => {
 			expect( CarbonLDP.CarbonLDP ).toEqual( jasmine.any( Function ) );
 		} );
 
-		it( extendsClass( "CarbonLDP.AbstractContext.AbstractContext" ), ():void => {
+		it( extendsClass( "CarbonLDP.AbstractContext" ), ():void => {
 			const carbon:CarbonLDP.CarbonLDP = new CarbonLDP.CarbonLDP( "https://example.com" );
-			expect( carbon ).toEqual( jasmine.any( AbstractContext.AbstractContext ) );
+			expect( carbon ).toEqual( jasmine.any( AbstractContext ) );
 		} );
 
 		it( hasProperty(
@@ -79,7 +94,7 @@ describe( module( "carbonldp/CarbonLDP" ), ():void => {
 		it( reexports(
 			STATIC,
 			"AbstractContext",
-			"carbonldp/AbstractContext"
+			"CarbonLDP.AbstractContext"
 		), ():void => {
 			expect( CarbonLDP.CarbonLDP.AbstractContext ).toBeDefined();
 			expect( CarbonLDP.CarbonLDP.AbstractContext ).toBe( AbstractContext );
@@ -88,7 +103,7 @@ describe( module( "carbonldp/CarbonLDP" ), ():void => {
 		it( reexports(
 			STATIC,
 			"AccessPoint",
-			"carbonldp/AccessPoint"
+			"carbonldp/AccessPoint#AccessPoint"
 		), ():void => {
 			expect( CarbonLDP.CarbonLDP.AccessPoint ).toBeDefined();
 			expect( CarbonLDP.CarbonLDP.AccessPoint ).toBe( AccessPoint );
@@ -106,7 +121,7 @@ describe( module( "carbonldp/CarbonLDP" ), ():void => {
 		it( reexports(
 			STATIC,
 			"BlankNode",
-			"carbonldp/BlankNode"
+			"carbonldp/BlankNode#BlankNode"
 		), ():void => {
 			expect( CarbonLDP.CarbonLDP.BlankNode ).toBeDefined();
 			expect( CarbonLDP.CarbonLDP.BlankNode ).toBe( BlankNode );
@@ -115,7 +130,7 @@ describe( module( "carbonldp/CarbonLDP" ), ():void => {
 		it( reexports(
 			STATIC,
 			"Document",
-			"carbonldp/Document"
+			"carbonldp/Document#Document"
 		), ():void => {
 			expect( CarbonLDP.CarbonLDP.Document ).toBeDefined();
 			expect( CarbonLDP.CarbonLDP.Document ).toBe( Document );
@@ -124,7 +139,7 @@ describe( module( "carbonldp/CarbonLDP" ), ():void => {
 		it( reexports(
 			STATIC,
 			"Documents",
-			"carbonldp/Documents"
+			"CarbonLDP.Documents"
 		), ():void => {
 			expect( CarbonLDP.CarbonLDP.Documents ).toBeDefined();
 			expect( CarbonLDP.CarbonLDP.Documents ).toBe( Documents );
@@ -142,10 +157,19 @@ describe( module( "carbonldp/CarbonLDP" ), ():void => {
 		it( reexports(
 			STATIC,
 			"Fragment",
-			"carbonldp/Fragment"
+			"carbonldp/Fragment#Fragment"
 		), ():void => {
 			expect( CarbonLDP.CarbonLDP.Fragment ).toBeDefined();
 			expect( CarbonLDP.CarbonLDP.Fragment ).toBe( Fragment );
+		} );
+
+		it( reexports(
+			STATIC,
+			"FreeResources",
+			"carbonldp/FreeResources#FreeResources"
+		), ():void => {
+			expect( CarbonLDP.CarbonLDP.FreeResources ).toBeDefined();
+			expect( CarbonLDP.CarbonLDP.FreeResources ).toBe( FreeResources );
 		} );
 
 		it( reexports(
@@ -195,17 +219,8 @@ describe( module( "carbonldp/CarbonLDP" ), ():void => {
 
 		it( reexports(
 			STATIC,
-			"ModelFactory",
-			"carbonldp/ModelFactory"
-		), ():void => {
-			expect( CarbonLDP.CarbonLDP.ModelFactory ).toBeDefined();
-			expect( CarbonLDP.CarbonLDP.ModelFactory ).toBe( ModelFactory );
-		} );
-
-		it( reexports(
-			STATIC,
 			"NamedFragment",
-			"carbonldp/NamedFragment"
+			"carbonldp/NamedFragment#NamedFragment"
 		), ():void => {
 			expect( CarbonLDP.CarbonLDP.NamedFragment ).toBeDefined();
 			expect( CarbonLDP.CarbonLDP.NamedFragment ).toBe( NamedFragment );
@@ -222,17 +237,62 @@ describe( module( "carbonldp/CarbonLDP" ), ():void => {
 
 		it( reexports(
 			STATIC,
-			"ObjectSchema",
-			"carbonldp/ObjectSchema"
+			"DigestedObjectSchema",
+			"CarbonLDP.DigestedObjectSchema"
 		), ():void => {
-			expect( CarbonLDP.CarbonLDP.ObjectSchema ).toBeDefined();
-			expect( CarbonLDP.CarbonLDP.ObjectSchema ).toBe( ObjectSchema );
+			expect( CarbonLDP.CarbonLDP.DigestedObjectSchema ).toBeDefined();
+			expect( CarbonLDP.CarbonLDP.DigestedObjectSchema ).toBe( DigestedObjectSchema );
+		} );
+
+		it( reexports(
+			STATIC,
+			"ContainerType",
+			"CarbonLDP.ContainerType"
+		), ():void => {
+			expect( CarbonLDP.CarbonLDP.ContainerType ).toBeDefined();
+			expect( CarbonLDP.CarbonLDP.ContainerType ).toBe( ContainerType );
+		} );
+
+		it( reexports(
+			STATIC,
+			"PointerType",
+			"CarbonLDP.PointerType"
+		), ():void => {
+			expect( CarbonLDP.CarbonLDP.PointerType ).toBeDefined();
+			expect( CarbonLDP.CarbonLDP.PointerType ).toBe( PointerType );
+		} );
+
+		it( reexports(
+			STATIC,
+			"ObjectSchemaDigester",
+			"CarbonLDP.ObjectSchemaDigester"
+		), ():void => {
+			expect( CarbonLDP.CarbonLDP.ObjectSchemaDigester ).toBeDefined();
+			expect( CarbonLDP.CarbonLDP.ObjectSchemaDigester ).toBe( ObjectSchemaDigester );
+		} );
+
+		it( reexports(
+			STATIC,
+			"ObjectSchemaUtils",
+			"CarbonLDP.ObjectSchemaUtils"
+		), ():void => {
+			expect( CarbonLDP.CarbonLDP.ObjectSchemaUtils ).toBeDefined();
+			expect( CarbonLDP.CarbonLDP.ObjectSchemaUtils ).toBe( ObjectSchemaUtils );
+		} );
+
+		it( reexports(
+			STATIC,
+			"DigestedObjectSchemaProperty",
+			"CarbonLDP.DigestedObjectSchemaProperty"
+		), ():void => {
+			expect( CarbonLDP.CarbonLDP.DigestedObjectSchemaProperty ).toBeDefined();
+			expect( CarbonLDP.CarbonLDP.DigestedObjectSchemaProperty ).toBe( DigestedObjectSchemaProperty );
 		} );
 
 		it( reexports(
 			STATIC,
 			"PersistedDocument",
-			"carbonldp/PersistedDocument"
+			"carbonldp/PersistedDocument#PersistedDocument"
 		), ():void => {
 			expect( CarbonLDP.CarbonLDP.PersistedDocument ).toBeDefined();
 			expect( CarbonLDP.CarbonLDP.PersistedDocument ).toBe( PersistedDocument );
@@ -241,7 +301,7 @@ describe( module( "carbonldp/CarbonLDP" ), ():void => {
 		it( reexports(
 			STATIC,
 			"PersistedFragment",
-			"carbonldp/PersistedFragment"
+			"carbonldp/PersistedFragment#PersistedFragment"
 		), ():void => {
 			expect( CarbonLDP.CarbonLDP.PersistedFragment ).toBeDefined();
 			expect( CarbonLDP.CarbonLDP.PersistedFragment ).toBe( PersistedFragment );
@@ -250,7 +310,7 @@ describe( module( "carbonldp/CarbonLDP" ), ():void => {
 		it( reexports(
 			STATIC,
 			"PersistedNamedFragment",
-			"carbonldp/PersistedNamedFragment"
+			"carbonldp/PersistedNamedFragment#PersistedNamedFragment"
 		), ():void => {
 			expect( CarbonLDP.CarbonLDP.PersistedNamedFragment ).toBeDefined();
 			expect( CarbonLDP.CarbonLDP.PersistedNamedFragment ).toBe( PersistedNamedFragment );
@@ -258,8 +318,17 @@ describe( module( "carbonldp/CarbonLDP" ), ():void => {
 
 		it( reexports(
 			STATIC,
+			"PersistedProtectedDocument",
+			"carbonldp/PersistedProtectedDocument#PersistedProtectedDocument"
+		), ():void => {
+			expect( CarbonLDP.CarbonLDP.PersistedProtectedDocument ).toBeDefined();
+			expect( CarbonLDP.CarbonLDP.PersistedProtectedDocument ).toBe( PersistedProtectedDocument );
+		} );
+
+		it( reexports(
+			STATIC,
 			"PersistedResource",
-			"carbonldp/PersistedResource"
+			"carbonldp/PersistedResource#PersistedResource"
 		), ():void => {
 			expect( CarbonLDP.CarbonLDP.PersistedResource ).toBeDefined();
 			expect( CarbonLDP.CarbonLDP.PersistedResource ).toBe( PersistedResource );
@@ -268,10 +337,19 @@ describe( module( "carbonldp/CarbonLDP" ), ():void => {
 		it( reexports(
 			STATIC,
 			"Pointer",
-			"carbonldp/Pointer"
+			"carbonldp/Pointer#Pointer"
 		), ():void => {
 			expect( CarbonLDP.CarbonLDP.Pointer ).toBeDefined();
 			expect( CarbonLDP.CarbonLDP.Pointer ).toBe( Pointer );
+		} );
+
+		it( reexports(
+			STATIC,
+			"ProtectedDocument",
+			"carbonldp/ProtectedDocument#ProtectedDocument"
+		), ():void => {
+			expect( CarbonLDP.CarbonLDP.ProtectedDocument ).toBeDefined();
+			expect( CarbonLDP.CarbonLDP.ProtectedDocument ).toBe( ProtectedDocument );
 		} );
 
 		it( reexports(
@@ -286,7 +364,7 @@ describe( module( "carbonldp/CarbonLDP" ), ():void => {
 		it( reexports(
 			STATIC,
 			"Resource",
-			"carbonldp/Resource"
+			"carbonldp/Resource#Resource"
 		), ():void => {
 			expect( CarbonLDP.CarbonLDP.Resource ).toBeDefined();
 			expect( CarbonLDP.CarbonLDP.Resource ).toBe( Resource );
@@ -295,7 +373,7 @@ describe( module( "carbonldp/CarbonLDP" ), ():void => {
 		it( reexports(
 			STATIC,
 			"SDKContext",
-			"carbonldp/SDKContext"
+			"CarbonLDP.SDKContext"
 		), ():void => {
 			expect( CarbonLDP.CarbonLDP.SDKContext ).toBeDefined();
 			expect( CarbonLDP.CarbonLDP.SDKContext ).toBe( SDKContext );
@@ -303,11 +381,20 @@ describe( module( "carbonldp/CarbonLDP" ), ():void => {
 
 		it( reexports(
 			STATIC,
-			"Settings",
-			"carbonldp/Settings"
+			"globalContext",
+			"carbonldp/SDKContext#globalContext"
 		), ():void => {
-			expect( CarbonLDP.CarbonLDP.Settings ).toBeDefined();
-			expect( CarbonLDP.CarbonLDP.Settings ).toBe( Settings );
+			expect( CarbonLDP.CarbonLDP.globalContext ).toBeDefined();
+			expect( CarbonLDP.CarbonLDP.globalContext ).toBe( globalContext );
+		} );
+
+		it( reexports(
+			STATIC,
+			"ServiceAwareDocument",
+			"carbonldp/ServiceAwareDocument#ServiceAwareDocument"
+		), ():void => {
+			expect( CarbonLDP.CarbonLDP.ServiceAwareDocument ).toBeDefined();
+			expect( CarbonLDP.CarbonLDP.ServiceAwareDocument ).toBe( ServiceAwareDocument );
 		} );
 
 		it( reexports(

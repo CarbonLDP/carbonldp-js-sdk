@@ -35,7 +35,7 @@ describe( module( "carbonldp/Messaging/DocumentModified" ), ():void => {
 		it( hasProperty(
 			OBLIGATORY,
 			"target",
-			"CarbonLDP.Pointer.Pointer"
+			"CarbonLDP.Pointer"
 		), ():void => {
 			const target:DocumentModified[ "target" ] = {} as Pointer;
 			expect( target ).toBeDefined();
@@ -57,7 +57,7 @@ describe( module( "carbonldp/Messaging/DocumentModified" ), ():void => {
 		it( hasProperty(
 			OBLIGATORY,
 			"SCHEMA",
-			"CarbonLDP.ObjectSchema.ObjectSchema"
+			"CarbonLDP.ObjectSchema"
 		), ():void => {} );
 
 	} );

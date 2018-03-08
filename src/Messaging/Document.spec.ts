@@ -28,7 +28,7 @@ describe( module( "carbonldp/Messaging/Document" ), ():void => {
 			expect( target ).toBeDefined();
 		} );
 
-		it( extendsClass( "CarbonLDP.ServiceAwareDocument.ServiceAwareDocument" ), ():void => {
+		it( extendsClass( "CarbonLDP.ServiceAwareDocument" ), ():void => {
 			const target:ServiceAwareDocument = {} as MessagingDocument;
 			expect( target ).toBeDefined();
 		} );
@@ -387,7 +387,7 @@ describe( module( "carbonldp/Messaging/Document" ), ():void => {
 		it( hasMethod(
 			OBLIGATORY,
 			"decorate",
-			[ "T extends CarbonLDP.ServiceAwareDocument.ServiceAwareDocument" ],
+			[ "T extends CarbonLDP.ServiceAwareDocument" ],
 			"Decorates the provided document with the properties od the `CarbonLDP.Messaging.MessagingDocument` interface",
 			[
 				{ name: "object", type: "T", description: "Object to be decorated" },
