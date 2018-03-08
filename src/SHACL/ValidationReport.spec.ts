@@ -16,7 +16,7 @@ import { ValidationResult } from "./ValidationResult";
 describe( module( "carbonldp/SHACL/ValidationReport" ), ():void => {
 
 	describe( interfaze(
-		"CarbonLDP.SHACL.ValidationReport.ValidationReport",
+		"CarbonLDP.SHACL.ValidationReport",
 		"Interface that represents the results of a validation process."
 	), ():void => {
 
@@ -38,7 +38,7 @@ describe( module( "carbonldp/SHACL/ValidationReport" ), ():void => {
 		it( hasProperty(
 			OBLIGATORY,
 			"results",
-			"CarbonLDP.SHACL.ValidationResult.ValidationResult[]",
+			"CarbonLDP.SHACL.ValidationResult[]",
 			"The results of a failure validation process."
 		), ():void => {
 			const target:ValidationReport[ "results" ] = [] as ValidationResult[];
@@ -48,7 +48,7 @@ describe( module( "carbonldp/SHACL/ValidationReport" ), ():void => {
 		it( hasProperty(
 			OBLIGATORY,
 			"shapesGraphWellFormed",
-			"CarbonLDP.SHACL.ValidationResult.ValidationResult",
+			"CarbonLDP.SHACL.ValidationResult",
 			"The shapesGraphWellFormed of a failure validation process."
 		), ():void => {
 			const target:ValidationReport[ "shapesGraphWellFormed" ] = true;
@@ -59,7 +59,7 @@ describe( module( "carbonldp/SHACL/ValidationReport" ), ():void => {
 
 	describe( interfaze(
 		"CarbonLDP.SHACL.ValidationReport.ValidationReportFactory",
-		"Interface with the factory, decorate and utils methods for `CarbonLDP.SHACL.ValidationReport.ValidationReport` objects."
+		"Interface with the factory, decorate and utils methods for `CarbonLDP.SHACL.ValidationReport` objects."
 	), ():void => {
 
 		it( hasProperty(

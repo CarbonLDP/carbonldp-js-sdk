@@ -1,1 +1,1 @@
-{"version":3,"sources":["SHACL/index.ts"],"names":[],"mappings":";;AAAA,uDAAsD;AAIrD,2BAJQ,mCAAgB,CAIR;AAHjB,uDAAsD;AAIrD,2BAJQ,mCAAgB,CAIR","file":"index.js","sourcesContent":["import { ValidationReport } from \"./ValidationReport\";\nimport { ValidationResult } from \"./ValidationResult\";\n\nexport {\n\tValidationReport,\n\tValidationResult,\n};\n"]}
+{"version":3,"sources":["SHACL/index.ts"],"names":[],"mappings":";;;;;AAAA,wCAAmC;AACnC,wCAAmC","file":"index.js","sourcesContent":["export * from \"./ValidationReport\";\nexport * from \"./ValidationResult\";\n"]}

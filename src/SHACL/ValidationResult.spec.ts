@@ -18,7 +18,7 @@ import { ValidationResult } from "./ValidationResult";
 describe( module( "carbonldp/SHACL/ValidationResult" ), ():void => {
 
 	describe( interfaze(
-		"CarbonLDP.SHACL.ValidationResult.ValidationResult",
+		"CarbonLDP.SHACL.ValidationResult",
 		"Interface of a result that reports individual SHACL validation failure."
 	), ():void => {
 
@@ -106,7 +106,7 @@ describe( module( "carbonldp/SHACL/ValidationResult" ), ():void => {
 
 	describe( interfaze(
 		"CarbonLDP.SHACL.ValidationResult.ValidationResultFactory",
-		"Interface with the factory, decorate and utils elements for `CarbonLDP.SHACL.ValidationResult.ValidationResult` objects."
+		"Interface with the factory, decorate and utils elements for `CarbonLDP.SHACL.ValidationResult` objects."
 	), ():void => {
 
 		it( hasProperty(

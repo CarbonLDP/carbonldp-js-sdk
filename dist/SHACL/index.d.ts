@@ -1,3 +1,2 @@
-import { ValidationReport } from "./ValidationReport";
-import { ValidationResult } from "./ValidationResult";
-export { ValidationReport, ValidationResult };
+export * from "./ValidationReport";
+export * from "./ValidationResult";

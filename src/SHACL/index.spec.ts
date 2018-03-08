@@ -1,7 +1,19 @@
-import { module, reexports, STATIC } from "../test/JasmineExtender";
-import * as SHACL from "./index";
-import { ValidationReport } from "./ValidationReport";
-import { ValidationResult } from "./ValidationResult";
+import {
+	module,
+	reexports,
+	STATIC
+} from "../test/JasmineExtender";
+
+import * as SHACL from "./";
+
+import {
+	ValidationReport,
+	ValidationReportFactory,
+} from "./ValidationReport";
+import {
+	ValidationResult,
+	ValidationResultFactory,
+} from "./ValidationResult";
 
 describe( module( "carbonldp/SHACL" ), ():void => {
 
@@ -20,10 +32,28 @@ describe( module( "carbonldp/SHACL" ), ():void => {
 
 	it( reexports(
 		STATIC,
+		"ValidationReportFactory",
+		"carbonldp/SHACL/ValidationReportFactory"
+	), ():void => {
+		const target:SHACL.ValidationReportFactory = {} as ValidationReportFactory;
+		expect( target ).toBeDefined();
+	} );
+
+	it( reexports(
+		STATIC,
 		"ValidationResult",
 		"carbonldp/SHACL/ValidationResult"
 	), ():void => {
 		expect( SHACL.ValidationResult ).toBe( ValidationResult );
+	} );
+
+	it( reexports(
+		STATIC,
+		"ValidationResultFactory",
+		"carbonldp/SHACL/ValidationResultFactory"
+	), ():void => {
+		const target:SHACL.ValidationResultFactory = {} as ValidationResultFactory;
+		expect( target ).toBeDefined();
 	} );
 
 } );
