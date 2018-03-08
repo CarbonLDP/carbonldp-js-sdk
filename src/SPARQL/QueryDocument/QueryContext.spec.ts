@@ -150,7 +150,7 @@ describe( module( "carbonldp/SPARQL/QueryDocument/QueryContext" ), ():void => {
 				[
 					{ name: "iri", type: "string", description: "The iri to be compacted and tokenized" },
 				],
-				{ type: "SPARQLER/tokens/IRIToken | SPARQLER/tokens/PrefixedNameToken" }
+				{ type: "sparqler/tokens/IRIToken | sparqler/tokens/PrefixedNameToken" }
 			), ():void => {
 			} );
 

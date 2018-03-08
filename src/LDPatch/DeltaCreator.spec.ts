@@ -43,7 +43,7 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 		expect( Module ).toEqual( jasmine.any( Object ) );
 	} );
 
-	describe( clazz( "CarbonLDP.LDPatch.DeltaCreator.DeltaCreator", "Creator of LDPatch deltas" ), ():void => {
+	describe( clazz( "CarbonLDP.LDPatch.DeltaCreator", "Creator of LDPatch deltas" ), ():void => {
 
 		it( "should exists", ():void => {
 			expect( DeltaCreator ).toBeDefined();

@@ -27,7 +27,7 @@ var AddMemberAction_1 = require("./LDP/AddMemberAction");
 var ErrorResponse_1 = require("./LDP/ErrorResponse");
 var RemoveMemberAction_1 = require("./LDP/RemoveMemberAction");
 var ResponseMetadata_1 = require("./LDP/ResponseMetadata");
-var LDPatch = __importStar(require("./LDPatch"));
+var DeltaCreator_1 = require("./LDPatch/DeltaCreator");
 var Event_1 = require("./Messaging/Event");
 var Utils_1 = require("./Messaging/Utils");
 var ObjectSchema_1 = require("./ObjectSchema");
@@ -714,7 +714,7 @@ var Documents = (function () {
         Request_1.RequestUtils.setContentTypeHeader("text/ldpatch", requestOptions);
         Request_1.RequestUtils.setIfMatchHeader(persistedDocument._eTag, requestOptions);
         persistedDocument._normalize();
-        var deltaCreator = new LDPatch.DeltaCreator.DeltaCreator(this.jsonldConverter);
+        var deltaCreator = new DeltaCreator_1.DeltaCreator(this.jsonldConverter);
         [persistedDocument].concat(persistedDocument.getFragments()).forEach(function (resource) {
             var schema = _this.getSchemaFor(resource);
             deltaCreator.addResource(schema, resource._snapshot, resource);

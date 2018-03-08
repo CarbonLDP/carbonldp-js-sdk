@@ -48,7 +48,7 @@ import { DocumentMetadata } from "./LDP/DocumentMetadata";
 import { ErrorResponse } from "./LDP/ErrorResponse";
 import { RemoveMemberAction } from "./LDP/RemoveMemberAction";
 import { ResponseMetadata } from "./LDP/ResponseMetadata";
-import * as LDPatch from "./LDPatch";
+import { DeltaCreator } from "./LDPatch/DeltaCreator";
 import { AccessPointCreated } from "./Messaging/AccessPointCreated";
 import { ChildCreated } from "./Messaging/ChildCreated";
 import { DocumentCreated } from "./Messaging/DocumentCreated";
@@ -910,7 +910,7 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 		RequestUtils.setIfMatchHeader( persistedDocument._eTag, requestOptions );
 
 		persistedDocument._normalize();
-		const deltaCreator:LDPatch.DeltaCreator.DeltaCreator = new LDPatch.DeltaCreator.DeltaCreator( this.jsonldConverter );
+		const deltaCreator:DeltaCreator = new DeltaCreator( this.jsonldConverter );
 		[ persistedDocument, ...persistedDocument.getFragments() ].forEach( ( resource:PersistedResource ) => {
 			const schema:DigestedObjectSchema = this.getSchemaFor( resource );
 			deltaCreator.addResource( schema, resource._snapshot, resource );

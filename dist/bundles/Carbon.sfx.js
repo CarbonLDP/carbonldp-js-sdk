@@ -773,7 +773,7 @@ module.exports = g;
  * Expose `debug()` as the module.
  */
 
-exports = module.exports = __webpack_require__(249);
+exports = module.exports = __webpack_require__(248);
 exports.log = log;
 exports.formatArgs = formatArgs;
 exports.save = save;
@@ -953,7 +953,7 @@ function localstorage() {
   } catch (e) {}
 }
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(248)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(247)))
 
 /***/ }),
 /* 9 */
@@ -1832,15 +1832,15 @@ function __export(m) {
 }
 Object.defineProperty(exports, "__esModule", { value: true });
 __export(__webpack_require__(144));
-__export(__webpack_require__(277));
+__export(__webpack_require__(276));
 __export(__webpack_require__(146));
+__export(__webpack_require__(277));
 __export(__webpack_require__(278));
 __export(__webpack_require__(279));
-__export(__webpack_require__(280));
+__export(__webpack_require__(284));
 __export(__webpack_require__(285));
 __export(__webpack_require__(286));
 __export(__webpack_require__(287));
-__export(__webpack_require__(288));
 
 //# sourceMappingURL=index.js.map
 
@@ -2191,7 +2191,7 @@ function normalize() {
 ;(function () {
   // Detect the `define` function exposed by asynchronous module loaders. The
   // strict `define` check is necessary for compatibility with `r.js`.
-  var isLoader = "function" === "function" && __webpack_require__(257);
+  var isLoader = "function" === "function" && __webpack_require__(256);
 
   // A set of types used to distinguish objects from primitives.
   var objectTypes = {
@@ -3091,7 +3091,7 @@ function normalize() {
   }
 }).call(this);
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(256)(module), __webpack_require__(7)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(255)(module), __webpack_require__(7)))
 
 /***/ }),
 /* 23 */
@@ -3888,7 +3888,7 @@ var LDP;
 
 
 /* global crypto:true */
-var crypto = __webpack_require__(245);
+var crypto = __webpack_require__(244);
 
 // This string has length 32, a power of 2, so the modulus doesn't introduce a
 // bias.
@@ -5545,7 +5545,7 @@ if (global.document) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var XSD = __webpack_require__(283);
+var XSD = __webpack_require__(282);
 var StringLiteral_1 = __webpack_require__(36);
 var tokens_1 = __webpack_require__(5);
 var PatternBuilder_1 = __webpack_require__(148);
@@ -10085,7 +10085,7 @@ var AddMemberAction_1 = __webpack_require__(77);
 var ErrorResponse_1 = __webpack_require__(78);
 var RemoveMemberAction_1 = __webpack_require__(79);
 var ResponseMetadata_1 = __webpack_require__(58);
-var LDPatch = __importStar(__webpack_require__(123));
+var DeltaCreator_1 = __webpack_require__(123);
 var Event_1 = __webpack_require__(125);
 var Utils_1 = __webpack_require__(126);
 var ObjectSchema_1 = __webpack_require__(13);
@@ -10772,7 +10772,7 @@ var Documents = (function () {
         Request_1.RequestUtils.setContentTypeHeader("text/ldpatch", requestOptions);
         Request_1.RequestUtils.setIfMatchHeader(persistedDocument._eTag, requestOptions);
         persistedDocument._normalize();
-        var deltaCreator = new LDPatch.DeltaCreator.DeltaCreator(this.jsonldConverter);
+        var deltaCreator = new DeltaCreator_1.DeltaCreator(this.jsonldConverter);
         [persistedDocument].concat(persistedDocument.getFragments()).forEach(function (resource) {
             var schema = _this.getSchemaFor(resource);
             deltaCreator.addResource(schema, resource._snapshot, resource);
@@ -11480,18 +11480,285 @@ exports.QueryVariable = QueryVariable;
 
 "use strict";
 
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
-    result["default"] = mod;
-    return result;
-}
+var __assign = (this && this.__assign) || Object.assign || function(t) {
+    for (var s, i = 1, n = arguments.length; i < n; i++) {
+        s = arguments[i];
+        for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+            t[p] = s[p];
+    }
+    return t;
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-var DeltaCreator = __importStar(__webpack_require__(241));
+var iri_1 = __webpack_require__(29);
+var tokens_1 = __webpack_require__(3);
+var Utils_1 = __webpack_require__(106);
+var ObjectSchema_1 = __webpack_require__(13);
+var Pointer_1 = __webpack_require__(18);
+var Utils_2 = __webpack_require__(0);
+var XSD_1 = __webpack_require__(6);
+var Tokens_1 = __webpack_require__(124);
+var typesDefinition = new ObjectSchema_1.DigestedObjectSchemaProperty();
+typesDefinition.literal = false;
+typesDefinition.pointerType = ObjectSchema_1.PointerType.ID;
+typesDefinition.containerType = ObjectSchema_1.ContainerType.SET;
+var DeltaCreator = (function () {
+    function DeltaCreator(jsonldConverter) {
+        this.prefixesMap = new Map();
+        this.jsonldConverter = jsonldConverter;
+        this.addToken = new Tokens_1.AddToken();
+        this.deleteToken = new Tokens_1.DeleteToken();
+        this.updateLists = [];
+    }
+    DeltaCreator.prototype.getPatch = function () {
+        var patch = new Tokens_1.LDPatchToken();
+        this.prefixesMap.forEach(function (prefix) { return patch.prologues.push(prefix); });
+        (_a = patch.statements).push.apply(_a, this.updateLists);
+        if (this.addToken.triples.length)
+            patch.statements.push(this.addToken);
+        if (this.deleteToken.triples.length)
+            patch.statements.push(this.deleteToken);
+        return "" + patch;
+        var _a;
+    };
+    DeltaCreator.prototype.addResource = function (schema, oldResource, newResource) {
+        var _this = this;
+        var id = newResource.id;
+        var resource = iri_1.isBNodeLabel(id) ?
+            new tokens_1.BlankNodeToken(id) : this.compactIRI(schema, id);
+        var updateLists = [];
+        var addTriples = new tokens_1.SubjectToken(resource);
+        var deleteTriples = new tokens_1.SubjectToken(resource);
+        new Set([
+            "types"
+        ].concat(Object.keys(oldResource), Object.keys(newResource))).forEach(function (propertyName) {
+            if (propertyName === "id")
+                return;
+            var predicateURI = propertyName === "types" ?
+                "a" : _this.getPropertyIRI(schema, propertyName);
+            var definition = predicateURI === "a" ?
+                typesDefinition : schema.properties.get(propertyName);
+            var oldValue = oldResource[propertyName];
+            var newValue = newResource[propertyName];
+            if (definition && definition.containerType === ObjectSchema_1.ContainerType.LIST && isValidValue(oldValue)) {
+                var listUpdates = [];
+                if (!isValidValue(newValue)) {
+                    deleteTriples.addPredicate(new tokens_1.PredicateToken(predicateURI).addObject(new tokens_1.CollectionToken()));
+                    listUpdates.push({ slice: [0, void 0], objects: [] });
+                }
+                else {
+                    var tempDefinition = __assign({}, definition, { containerType: ObjectSchema_1.ContainerType.SET });
+                    listUpdates.push.apply(listUpdates, getListDelta(_this.getObjects(oldValue, schema, tempDefinition), _this.getObjects(newValue, schema, tempDefinition)));
+                }
+                if (!listUpdates.length)
+                    return;
+                _this.addPrefixFrom(predicateURI, schema);
+                listUpdates.forEach(function (updateDelta) {
+                    var collection = new tokens_1.CollectionToken();
+                    updateDelta.objects.forEach(function (object) {
+                        collection.addObject(object);
+                        _this.addPrefixFrom(object, schema);
+                    });
+                    updateLists.push(new Tokens_1.UpdateListToken(resource, predicateURI, updateDelta.objects.length ?
+                        new Tokens_1.SliceToken(updateDelta.slice[0], updateDelta.slice[0]) : new (Tokens_1.SliceToken.bind.apply(Tokens_1.SliceToken, [void 0].concat(updateDelta.slice)))(), collection));
+                });
+            }
+            else {
+                var oldObjects = _this.getObjects(oldValue, schema, definition);
+                var newObjects = _this.getObjects(newValue, schema, definition);
+                var setDelta = getArrayDelta(oldObjects, newObjects);
+                var addValues = function (objects, triple) {
+                    if (!objects.length)
+                        return;
+                    var predicate = new tokens_1.PredicateToken(predicateURI);
+                    objects.forEach(function (object) {
+                        predicate.addObject(object);
+                        _this.addPrefixFrom(object, schema);
+                    });
+                    triple.addPredicate(predicate);
+                };
+                addValues(setDelta.toAdd, addTriples);
+                addValues(setDelta.toDelete, deleteTriples);
+            }
+        });
+        (_a = this.updateLists).push.apply(_a, updateLists);
+        if (addTriples.predicates.length)
+            this.addToken.triples.push(addTriples);
+        if (deleteTriples.predicates.length)
+            this.deleteToken.triples.push(deleteTriples);
+        var predicates = updateLists.concat(addTriples.predicates, deleteTriples.predicates);
+        if (!predicates.length)
+            return;
+        this.addPrefixFrom(resource, schema);
+        predicates.forEach(function (x) { return _this.addPrefixFrom(x.predicate, schema); });
+        var _a;
+    };
+    DeltaCreator.prototype.getPropertyIRI = function (schema, propertyName) {
+        var propertyDefinition = schema.properties.get(propertyName);
+        var uri = propertyDefinition && propertyDefinition.uri ?
+            propertyDefinition.uri :
+            propertyName;
+        return this.compactIRI(schema, uri);
+    };
+    DeltaCreator.prototype.getObjects = function (value, schema, definition) {
+        var values = (Array.isArray(value) ?
+            !definition || definition.containerType !== null ? value : value.slice(0, 1) :
+            [value]).filter(isValidValue);
+        if (definition && definition.containerType === ObjectSchema_1.ContainerType.LIST) {
+            if (!isValidValue(value))
+                return [];
+            var collection = new tokens_1.CollectionToken();
+            (_a = collection.objects).push.apply(_a, this.expandValues(values, schema, definition));
+            return [collection];
+        }
+        if (definition && definition.containerType === ObjectSchema_1.ContainerType.LANGUAGE) {
+            return this.expandLanguageMap(values, schema);
+        }
+        return this.expandValues(values, schema, definition);
+        var _a;
+    };
+    DeltaCreator.prototype.expandValues = function (values, schema, definition) {
+        var _this = this;
+        var areDefinedLiteral = definition && definition.literal !== null ? definition.literal : null;
+        return values.map(function (value) {
+            var isLiteral = areDefinedLiteral !== null ? areDefinedLiteral : !Pointer_1.Pointer.is(value);
+            if (isLiteral)
+                return _this.expandLiteral(value, schema, definition);
+            return _this.expandPointer(value, schema);
+        }).filter(isValidValue);
+    };
+    DeltaCreator.prototype.expandLanguageMap = function (values, schema) {
+        var _this = this;
+        if (!values.length)
+            return [];
+        var languageMap = values[0];
+        return Object.keys(languageMap).map(function (key) {
+            var value = languageMap[key];
+            var tempDefinition = new ObjectSchema_1.DigestedObjectSchemaProperty();
+            tempDefinition.language = key;
+            tempDefinition.literalType = XSD_1.XSD.string;
+            return _this.expandLiteral(value, schema, tempDefinition);
+        }).filter(isValidValue);
+    };
+    DeltaCreator.prototype.expandPointer = function (value, schema) {
+        var id = Pointer_1.Pointer.is(value) ? value.id : value;
+        if (!Utils_2.isString(id))
+            return null;
+        return iri_1.isBNodeLabel(id) ?
+            new tokens_1.BlankNodeToken(id) :
+            this.compactIRI(schema, id);
+    };
+    DeltaCreator.prototype.expandLiteral = function (value, schema, definition) {
+        var type = definition && definition.literalType ?
+            definition.literalType :
+            Utils_1.guessXSDType(value);
+        if (!this.jsonldConverter.literalSerializers.has(type))
+            return null;
+        value = this.jsonldConverter.literalSerializers.get(type).serialize(value);
+        var literal = new tokens_1.LiteralToken(value);
+        if (type !== XSD_1.XSD.string)
+            literal.setType(this.compactIRI(schema, type));
+        if (definition && definition.language !== void 0)
+            literal.setLanguage(definition.language);
+        return literal;
+    };
+    DeltaCreator.prototype.compactIRI = function (schema, iri) {
+        if (iri_1.isRelative(iri) && schema.vocab)
+            iri = schema.vocab + iri;
+        var matchPrefix = Array.from(schema.prefixes.entries())
+            .find(function (_a) {
+            var prefixURI = _a[1];
+            return iri.startsWith(prefixURI);
+        });
+        if (!matchPrefix)
+            return new tokens_1.IRIToken(iri);
+        return new tokens_1.PrefixedNameToken(matchPrefix[0], iri.substr(matchPrefix[1].length));
+    };
+    DeltaCreator.prototype.addPrefixFrom = function (object, schema) {
+        var _this = this;
+        if (object instanceof tokens_1.CollectionToken)
+            return object.objects.forEach(function (collectionObject) {
+                _this.addPrefixFrom(collectionObject, schema);
+            });
+        if (object instanceof tokens_1.LiteralToken)
+            return this.addPrefixFrom(object.type, schema);
+        if (!(object instanceof tokens_1.PrefixedNameToken))
+            return;
+        var namespace = object.namespace;
+        if (this.prefixesMap.has(namespace))
+            return;
+        var iri = schema.prefixes.get(namespace);
+        this.prefixesMap.set(namespace, new Tokens_1.PrefixToken(namespace, new tokens_1.IRIToken(iri)));
+    };
+    return DeltaCreator;
+}());
 exports.DeltaCreator = DeltaCreator;
-var Tokens = __importStar(__webpack_require__(124));
-exports.Tokens = Tokens;
+function getArrayDelta(oldValues, newValues) {
+    var objectMapper = function (object) { return ["" + object, object]; };
+    var toAdd = new Map(newValues.map(objectMapper));
+    var toDelete = new Map(oldValues.map(objectMapper));
+    toAdd.forEach(function (value, identifier) {
+        if (!toDelete.has(identifier))
+            return;
+        toDelete.delete(identifier);
+        toAdd.delete(identifier);
+    });
+    return {
+        toAdd: Array.from(toAdd.values()),
+        toDelete: Array.from(toDelete.values()),
+    };
+}
+function getListDelta(oldValues, newValues) {
+    var nodeMapper = function (object, index) { return ({
+        identifier: "" + object,
+        object: object,
+        index: index,
+    }); };
+    var oldPositions = oldValues.map(nodeMapper);
+    var newPositions = newValues.map(nodeMapper);
+    var addsSet = new Set(newPositions);
+    var deletes = [];
+    var offset = 0;
+    var remnants = newPositions;
+    oldPositions.forEach(function (oldNode) {
+        var currentIndex = remnants.findIndex(function (newNode) { return newNode.identifier === oldNode.identifier; });
+        if (currentIndex === -1) {
+            oldNode.index -= offset++;
+            deletes.push(oldNode);
+        }
+        else {
+            addsSet.delete(remnants[currentIndex]);
+            remnants = remnants.slice(currentIndex + 1);
+        }
+    });
+    var updates = [];
+    var last;
+    deletes.forEach(function (node) {
+        if (last && last.slice[0] === node.index) {
+            last.slice = [last.slice[0], last.slice[1] + 1];
+            return;
+        }
+        updates.push(last = {
+            slice: [node.index, node.index + 1],
+            objects: [],
+        });
+    });
+    last = void 0;
+    addsSet.forEach(function (node) {
+        if (last && last.slice[1] === node.index) {
+            last.slice = [last.slice[0], node.index + 1];
+            last.objects.push(node.object);
+            return;
+        }
+        updates.push(last = {
+            slice: [node.index, node.index + 1],
+            objects: [node.object],
+        });
+    });
+    return updates;
+}
+function isValidValue(value) {
+    return value !== null && value !== void 0;
+}
 
 
 /***/ }),
@@ -11675,8 +11942,8 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 }
 Object.defineProperty(exports, "__esModule", { value: true });
-var sockjs_client_1 = __importDefault(__webpack_require__(242));
-var webstomp = __importStar(__webpack_require__(275));
+var sockjs_client_1 = __importDefault(__webpack_require__(241));
+var webstomp = __importStar(__webpack_require__(274));
 var Errors_1 = __webpack_require__(9);
 var Parser_1 = __webpack_require__(31);
 var Utils_1 = __webpack_require__(0);
@@ -11821,8 +12088,8 @@ exports.MessagingService = MessagingService;
 "use strict";
 /* WEBPACK VAR INJECTION */(function(global) {
 
-var required = __webpack_require__(246)
-  , qs = __webpack_require__(247)
+var required = __webpack_require__(245)
+  , qs = __webpack_require__(246)
   , protocolre = /^([a-z][a-z0-9.+-]*:)?(\/\/)?([\S\s]*)/i
   , slashes = /^[A-Za-z][A-Za-z0-9+-.]*:\/\//;
 
@@ -12312,8 +12579,8 @@ module.exports = EventTarget;
 
 var inherits = __webpack_require__(1)
   , urlUtils = __webpack_require__(15)
-  , BufferedSender = __webpack_require__(253)
-  , Polling = __webpack_require__(254)
+  , BufferedSender = __webpack_require__(252)
+  , Polling = __webpack_require__(253)
   ;
 
 var debug = function() {};
@@ -12604,7 +12871,7 @@ module.exports = XdrStreamingTransport;
 
 var inherits = __webpack_require__(1)
   , AjaxBasedTransport = __webpack_require__(35)
-  , EventSourceReceiver = __webpack_require__(255)
+  , EventSourceReceiver = __webpack_require__(254)
   , XHRCorsObject = __webpack_require__(61)
   , EventSourceDriver = __webpack_require__(134)
   ;
@@ -12800,7 +13067,7 @@ module.exports = '1.1.4';
 
 
 var inherits = __webpack_require__(1)
-  , HtmlfileReceiver = __webpack_require__(258)
+  , HtmlfileReceiver = __webpack_require__(257)
   , XHRLocalObject = __webpack_require__(47)
   , AjaxBasedTransport = __webpack_require__(35)
   ;
@@ -13015,7 +13282,7 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-var sparqler_1 = __webpack_require__(276);
+var sparqler_1 = __webpack_require__(275);
 var decorators_1 = __webpack_require__(20);
 var SPARQLBuilder = (function (_super) {
     __extends(SPARQLBuilder, _super);
@@ -13404,7 +13671,7 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-var _1 = __webpack_require__(282);
+var _1 = __webpack_require__(281);
 var tokens_1 = __webpack_require__(5);
 var ObjectPattern_1 = __webpack_require__(50);
 var ValuesPattern = (function (_super) {
@@ -14636,10 +14903,10 @@ var Document = __importStar(__webpack_require__(21));
 var Documents = __importStar(__webpack_require__(118));
 var Errors = __importStar(__webpack_require__(9));
 var Fragment = __importStar(__webpack_require__(39));
-var HTTP = __importStar(__webpack_require__(289));
-var JSONLD = __importStar(__webpack_require__(291));
-var LDP = __importStar(__webpack_require__(292));
-var LDPatch = __importStar(__webpack_require__(123));
+var HTTP = __importStar(__webpack_require__(288));
+var JSONLD = __importStar(__webpack_require__(290));
+var LDP = __importStar(__webpack_require__(291));
+var LDPatch = __importStar(__webpack_require__(292));
 var Messaging = __importStar(__webpack_require__(293));
 var ModelFactory = __importStar(__webpack_require__(295));
 var NamedFragment = __importStar(__webpack_require__(72));
@@ -16922,298 +17189,11 @@ exports.default = Class;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-
-var __assign = (this && this.__assign) || Object.assign || function(t) {
-    for (var s, i = 1, n = arguments.length; i < n; i++) {
-        s = arguments[i];
-        for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
-            t[p] = s[p];
-    }
-    return t;
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-var iri_1 = __webpack_require__(29);
-var tokens_1 = __webpack_require__(3);
-var Utils_1 = __webpack_require__(106);
-var ObjectSchema_1 = __webpack_require__(13);
-var Pointer_1 = __webpack_require__(18);
-var Utils_2 = __webpack_require__(0);
-var XSD_1 = __webpack_require__(6);
-var Tokens_1 = __webpack_require__(124);
-var typesDefinition = new ObjectSchema_1.DigestedObjectSchemaProperty();
-typesDefinition.literal = false;
-typesDefinition.pointerType = ObjectSchema_1.PointerType.ID;
-typesDefinition.containerType = ObjectSchema_1.ContainerType.SET;
-var DeltaCreator = (function () {
-    function DeltaCreator(jsonldConverter) {
-        this.prefixesMap = new Map();
-        this.jsonldConverter = jsonldConverter;
-        this.addToken = new Tokens_1.AddToken();
-        this.deleteToken = new Tokens_1.DeleteToken();
-        this.updateLists = [];
-    }
-    DeltaCreator.prototype.getPatch = function () {
-        var patch = new Tokens_1.LDPatchToken();
-        this.prefixesMap.forEach(function (prefix) { return patch.prologues.push(prefix); });
-        (_a = patch.statements).push.apply(_a, this.updateLists);
-        if (this.addToken.triples.length)
-            patch.statements.push(this.addToken);
-        if (this.deleteToken.triples.length)
-            patch.statements.push(this.deleteToken);
-        return "" + patch;
-        var _a;
-    };
-    DeltaCreator.prototype.addResource = function (schema, oldResource, newResource) {
-        var _this = this;
-        var id = newResource.id;
-        var resource = iri_1.isBNodeLabel(id) ?
-            new tokens_1.BlankNodeToken(id) : this.compactIRI(schema, id);
-        var updateLists = [];
-        var addTriples = new tokens_1.SubjectToken(resource);
-        var deleteTriples = new tokens_1.SubjectToken(resource);
-        new Set([
-            "types"
-        ].concat(Object.keys(oldResource), Object.keys(newResource))).forEach(function (propertyName) {
-            if (propertyName === "id")
-                return;
-            var predicateURI = propertyName === "types" ?
-                "a" : _this.getPropertyIRI(schema, propertyName);
-            var definition = predicateURI === "a" ?
-                typesDefinition : schema.properties.get(propertyName);
-            var oldValue = oldResource[propertyName];
-            var newValue = newResource[propertyName];
-            if (definition && definition.containerType === ObjectSchema_1.ContainerType.LIST && isValidValue(oldValue)) {
-                var listUpdates = [];
-                if (!isValidValue(newValue)) {
-                    deleteTriples.addPredicate(new tokens_1.PredicateToken(predicateURI).addObject(new tokens_1.CollectionToken()));
-                    listUpdates.push({ slice: [0, void 0], objects: [] });
-                }
-                else {
-                    var tempDefinition = __assign({}, definition, { containerType: ObjectSchema_1.ContainerType.SET });
-                    listUpdates.push.apply(listUpdates, getListDelta(_this.getObjects(oldValue, schema, tempDefinition), _this.getObjects(newValue, schema, tempDefinition)));
-                }
-                if (!listUpdates.length)
-                    return;
-                _this.addPrefixFrom(predicateURI, schema);
-                listUpdates.forEach(function (updateDelta) {
-                    var collection = new tokens_1.CollectionToken();
-                    updateDelta.objects.forEach(function (object) {
-                        collection.addObject(object);
-                        _this.addPrefixFrom(object, schema);
-                    });
-                    updateLists.push(new Tokens_1.UpdateListToken(resource, predicateURI, updateDelta.objects.length ?
-                        new Tokens_1.SliceToken(updateDelta.slice[0], updateDelta.slice[0]) : new (Tokens_1.SliceToken.bind.apply(Tokens_1.SliceToken, [void 0].concat(updateDelta.slice)))(), collection));
-                });
-            }
-            else {
-                var oldObjects = _this.getObjects(oldValue, schema, definition);
-                var newObjects = _this.getObjects(newValue, schema, definition);
-                var setDelta = getArrayDelta(oldObjects, newObjects);
-                var addValues = function (objects, triple) {
-                    if (!objects.length)
-                        return;
-                    var predicate = new tokens_1.PredicateToken(predicateURI);
-                    objects.forEach(function (object) {
-                        predicate.addObject(object);
-                        _this.addPrefixFrom(object, schema);
-                    });
-                    triple.addPredicate(predicate);
-                };
-                addValues(setDelta.toAdd, addTriples);
-                addValues(setDelta.toDelete, deleteTriples);
-            }
-        });
-        (_a = this.updateLists).push.apply(_a, updateLists);
-        if (addTriples.predicates.length)
-            this.addToken.triples.push(addTriples);
-        if (deleteTriples.predicates.length)
-            this.deleteToken.triples.push(deleteTriples);
-        var predicates = updateLists.concat(addTriples.predicates, deleteTriples.predicates);
-        if (!predicates.length)
-            return;
-        this.addPrefixFrom(resource, schema);
-        predicates.forEach(function (x) { return _this.addPrefixFrom(x.predicate, schema); });
-        var _a;
-    };
-    DeltaCreator.prototype.getPropertyIRI = function (schema, propertyName) {
-        var propertyDefinition = schema.properties.get(propertyName);
-        var uri = propertyDefinition && propertyDefinition.uri ?
-            propertyDefinition.uri :
-            propertyName;
-        return this.compactIRI(schema, uri);
-    };
-    DeltaCreator.prototype.getObjects = function (value, schema, definition) {
-        var values = (Array.isArray(value) ?
-            !definition || definition.containerType !== null ? value : value.slice(0, 1) :
-            [value]).filter(isValidValue);
-        if (definition && definition.containerType === ObjectSchema_1.ContainerType.LIST) {
-            if (!isValidValue(value))
-                return [];
-            var collection = new tokens_1.CollectionToken();
-            (_a = collection.objects).push.apply(_a, this.expandValues(values, schema, definition));
-            return [collection];
-        }
-        if (definition && definition.containerType === ObjectSchema_1.ContainerType.LANGUAGE) {
-            return this.expandLanguageMap(values, schema);
-        }
-        return this.expandValues(values, schema, definition);
-        var _a;
-    };
-    DeltaCreator.prototype.expandValues = function (values, schema, definition) {
-        var _this = this;
-        var areDefinedLiteral = definition && definition.literal !== null ? definition.literal : null;
-        return values.map(function (value) {
-            var isLiteral = areDefinedLiteral !== null ? areDefinedLiteral : !Pointer_1.Pointer.is(value);
-            if (isLiteral)
-                return _this.expandLiteral(value, schema, definition);
-            return _this.expandPointer(value, schema);
-        }).filter(isValidValue);
-    };
-    DeltaCreator.prototype.expandLanguageMap = function (values, schema) {
-        var _this = this;
-        if (!values.length)
-            return [];
-        var languageMap = values[0];
-        return Object.keys(languageMap).map(function (key) {
-            var value = languageMap[key];
-            var tempDefinition = new ObjectSchema_1.DigestedObjectSchemaProperty();
-            tempDefinition.language = key;
-            tempDefinition.literalType = XSD_1.XSD.string;
-            return _this.expandLiteral(value, schema, tempDefinition);
-        }).filter(isValidValue);
-    };
-    DeltaCreator.prototype.expandPointer = function (value, schema) {
-        var id = Pointer_1.Pointer.is(value) ? value.id : value;
-        if (!Utils_2.isString(id))
-            return null;
-        return iri_1.isBNodeLabel(id) ?
-            new tokens_1.BlankNodeToken(id) :
-            this.compactIRI(schema, id);
-    };
-    DeltaCreator.prototype.expandLiteral = function (value, schema, definition) {
-        var type = definition && definition.literalType ?
-            definition.literalType :
-            Utils_1.guessXSDType(value);
-        if (!this.jsonldConverter.literalSerializers.has(type))
-            return null;
-        value = this.jsonldConverter.literalSerializers.get(type).serialize(value);
-        var literal = new tokens_1.LiteralToken(value);
-        if (type !== XSD_1.XSD.string)
-            literal.setType(this.compactIRI(schema, type));
-        if (definition && definition.language !== void 0)
-            literal.setLanguage(definition.language);
-        return literal;
-    };
-    DeltaCreator.prototype.compactIRI = function (schema, iri) {
-        if (iri_1.isRelative(iri) && schema.vocab)
-            iri = schema.vocab + iri;
-        var matchPrefix = Array.from(schema.prefixes.entries())
-            .find(function (_a) {
-            var prefixURI = _a[1];
-            return iri.startsWith(prefixURI);
-        });
-        if (!matchPrefix)
-            return new tokens_1.IRIToken(iri);
-        return new tokens_1.PrefixedNameToken(matchPrefix[0], iri.substr(matchPrefix[1].length));
-    };
-    DeltaCreator.prototype.addPrefixFrom = function (object, schema) {
-        var _this = this;
-        if (object instanceof tokens_1.CollectionToken)
-            return object.objects.forEach(function (collectionObject) {
-                _this.addPrefixFrom(collectionObject, schema);
-            });
-        if (object instanceof tokens_1.LiteralToken)
-            return this.addPrefixFrom(object.type, schema);
-        if (!(object instanceof tokens_1.PrefixedNameToken))
-            return;
-        var namespace = object.namespace;
-        if (this.prefixesMap.has(namespace))
-            return;
-        var iri = schema.prefixes.get(namespace);
-        this.prefixesMap.set(namespace, new Tokens_1.PrefixToken(namespace, new tokens_1.IRIToken(iri)));
-    };
-    return DeltaCreator;
-}());
-exports.DeltaCreator = DeltaCreator;
-function getArrayDelta(oldValues, newValues) {
-    var objectMapper = function (object) { return ["" + object, object]; };
-    var toAdd = new Map(newValues.map(objectMapper));
-    var toDelete = new Map(oldValues.map(objectMapper));
-    toAdd.forEach(function (value, identifier) {
-        if (!toDelete.has(identifier))
-            return;
-        toDelete.delete(identifier);
-        toAdd.delete(identifier);
-    });
-    return {
-        toAdd: Array.from(toAdd.values()),
-        toDelete: Array.from(toDelete.values()),
-    };
-}
-function getListDelta(oldValues, newValues) {
-    var nodeMapper = function (object, index) { return ({
-        identifier: "" + object,
-        object: object,
-        index: index,
-    }); };
-    var oldPositions = oldValues.map(nodeMapper);
-    var newPositions = newValues.map(nodeMapper);
-    var addsSet = new Set(newPositions);
-    var deletes = [];
-    var offset = 0;
-    var remnants = newPositions;
-    oldPositions.forEach(function (oldNode) {
-        var currentIndex = remnants.findIndex(function (newNode) { return newNode.identifier === oldNode.identifier; });
-        if (currentIndex === -1) {
-            oldNode.index -= offset++;
-            deletes.push(oldNode);
-        }
-        else {
-            addsSet.delete(remnants[currentIndex]);
-            remnants = remnants.slice(currentIndex + 1);
-        }
-    });
-    var updates = [];
-    var last;
-    deletes.forEach(function (node) {
-        if (last && last.slice[0] === node.index) {
-            last.slice = [last.slice[0], last.slice[1] + 1];
-            return;
-        }
-        updates.push(last = {
-            slice: [node.index, node.index + 1],
-            objects: [],
-        });
-    });
-    last = void 0;
-    addsSet.forEach(function (node) {
-        if (last && last.slice[1] === node.index) {
-            last.slice = [last.slice[0], node.index + 1];
-            last.objects.push(node.object);
-            return;
-        }
-        updates.push(last = {
-            slice: [node.index, node.index + 1],
-            objects: [node.object],
-        });
-    });
-    return updates;
-}
-function isValidValue(value) {
-    return value !== null && value !== void 0;
-}
-
-
-/***/ }),
-/* 242 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
 /* WEBPACK VAR INJECTION */(function(global) {
 
-var transportList = __webpack_require__(243);
+var transportList = __webpack_require__(242);
 
-module.exports = __webpack_require__(263)(transportList);
+module.exports = __webpack_require__(262)(transportList);
 
 // TODO can't get rid of this until all servers do
 if ('_sockjs_onload' in global) {
@@ -17223,7 +17203,7 @@ if ('_sockjs_onload' in global) {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(7)))
 
 /***/ }),
-/* 243 */
+/* 242 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17231,8 +17211,8 @@ if ('_sockjs_onload' in global) {
 
 module.exports = [
   // streaming transports
-  __webpack_require__(244)
-, __webpack_require__(252)
+  __webpack_require__(243)
+, __webpack_require__(251)
 , __webpack_require__(132)
 , __webpack_require__(133)
 , __webpack_require__(81)(__webpack_require__(133))
@@ -17241,14 +17221,14 @@ module.exports = [
 , __webpack_require__(137)
 , __webpack_require__(81)(__webpack_require__(137))
 , __webpack_require__(138)
-, __webpack_require__(259)
+, __webpack_require__(258)
 , __webpack_require__(81)(__webpack_require__(138))
-, __webpack_require__(260)
+, __webpack_require__(259)
 ];
 
 
 /***/ }),
-/* 244 */
+/* 243 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17258,7 +17238,7 @@ var utils = __webpack_require__(26)
   , urlUtils = __webpack_require__(15)
   , inherits = __webpack_require__(1)
   , EventEmitter = __webpack_require__(11).EventEmitter
-  , WebsocketDriver = __webpack_require__(251)
+  , WebsocketDriver = __webpack_require__(250)
   ;
 
 var debug = function() {};
@@ -17354,7 +17334,7 @@ module.exports = WebSocketTransport;
 
 
 /***/ }),
-/* 245 */
+/* 244 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17379,7 +17359,7 @@ if (global.crypto && global.crypto.getRandomValues) {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(7)))
 
 /***/ }),
-/* 246 */
+/* 245 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17424,7 +17404,7 @@ module.exports = function required(port, protocol) {
 
 
 /***/ }),
-/* 247 */
+/* 246 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17503,7 +17483,7 @@ exports.parse = querystring;
 
 
 /***/ }),
-/* 248 */
+/* 247 */
 /***/ (function(module, exports) {
 
 // shim for using process in browser
@@ -17693,7 +17673,7 @@ process.umask = function() { return 0; };
 
 
 /***/ }),
-/* 249 */
+/* 248 */
 /***/ (function(module, exports, __webpack_require__) {
 
 
@@ -17709,7 +17689,7 @@ exports.coerce = coerce;
 exports.disable = disable;
 exports.enable = enable;
 exports.enabled = enabled;
-exports.humanize = __webpack_require__(250);
+exports.humanize = __webpack_require__(249);
 
 /**
  * The currently active debug mode names, and names to skip.
@@ -17901,7 +17881,7 @@ function coerce(val) {
 
 
 /***/ }),
-/* 250 */
+/* 249 */
 /***/ (function(module, exports) {
 
 /**
@@ -18059,7 +18039,7 @@ function plural(ms, n, name) {
 
 
 /***/ }),
-/* 251 */
+/* 250 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18077,7 +18057,7 @@ if (Driver) {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(7)))
 
 /***/ }),
-/* 252 */
+/* 251 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18126,7 +18106,7 @@ module.exports = XhrStreamingTransport;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(7)))
 
 /***/ }),
-/* 253 */
+/* 252 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18220,7 +18200,7 @@ module.exports = BufferedSender;
 
 
 /***/ }),
-/* 254 */
+/* 253 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18284,7 +18264,7 @@ module.exports = Polling;
 
 
 /***/ }),
-/* 255 */
+/* 254 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18354,7 +18334,7 @@ module.exports = EventSourceReceiver;
 
 
 /***/ }),
-/* 256 */
+/* 255 */
 /***/ (function(module, exports) {
 
 module.exports = function(module) {
@@ -18382,7 +18362,7 @@ module.exports = function(module) {
 
 
 /***/ }),
-/* 257 */
+/* 256 */
 /***/ (function(module, exports) {
 
 /* WEBPACK VAR INJECTION */(function(__webpack_amd_options__) {/* globals __webpack_amd_options__ */
@@ -18391,7 +18371,7 @@ module.exports = __webpack_amd_options__;
 /* WEBPACK VAR INJECTION */}.call(exports, {}))
 
 /***/ }),
-/* 258 */
+/* 257 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18486,7 +18466,7 @@ module.exports = HtmlfileReceiver;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(7)))
 
 /***/ }),
-/* 259 */
+/* 258 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18516,7 +18496,7 @@ module.exports = XdrPollingTransport;
 
 
 /***/ }),
-/* 260 */
+/* 259 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18532,8 +18512,8 @@ module.exports = XdrPollingTransport;
 
 var inherits = __webpack_require__(1)
   , SenderReceiver = __webpack_require__(130)
-  , JsonpReceiver = __webpack_require__(261)
-  , jsonpSender = __webpack_require__(262)
+  , JsonpReceiver = __webpack_require__(260)
+  , jsonpSender = __webpack_require__(261)
   ;
 
 function JsonPTransport(transUrl) {
@@ -18558,7 +18538,7 @@ module.exports = JsonPTransport;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(7)))
 
 /***/ }),
-/* 261 */
+/* 260 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18749,7 +18729,7 @@ module.exports = JsonpReceiver;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(7)))
 
 /***/ }),
-/* 262 */
+/* 261 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18856,31 +18836,31 @@ module.exports = function(url, payload, callback) {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(7)))
 
 /***/ }),
-/* 263 */
+/* 262 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(global) {
 
-__webpack_require__(264);
+__webpack_require__(263);
 
 var URL = __webpack_require__(128)
   , inherits = __webpack_require__(1)
   , JSON3 = __webpack_require__(22)
   , random = __webpack_require__(34)
-  , escape = __webpack_require__(265)
+  , escape = __webpack_require__(264)
   , urlUtils = __webpack_require__(15)
   , eventUtils = __webpack_require__(26)
-  , transport = __webpack_require__(266)
+  , transport = __webpack_require__(265)
   , objectUtils = __webpack_require__(82)
   , browser = __webpack_require__(48)
-  , log = __webpack_require__(267)
+  , log = __webpack_require__(266)
   , Event = __webpack_require__(83)
   , EventTarget = __webpack_require__(129)
   , loc = __webpack_require__(139)
-  , CloseEvent = __webpack_require__(268)
-  , TransportMessageEvent = __webpack_require__(269)
-  , InfoReceiver = __webpack_require__(270)
+  , CloseEvent = __webpack_require__(267)
+  , TransportMessageEvent = __webpack_require__(268)
+  , InfoReceiver = __webpack_require__(269)
   ;
 
 var debug = function() {};
@@ -19238,14 +19218,14 @@ SockJS.prototype.countRTO = function(rtt) {
 
 module.exports = function(availableTransports) {
   transports = transport(availableTransports);
-  __webpack_require__(273)(SockJS, availableTransports);
+  __webpack_require__(272)(SockJS, availableTransports);
   return SockJS;
 };
 
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(7)))
 
 /***/ }),
-/* 264 */
+/* 263 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19704,7 +19684,7 @@ defineProperties(StringPrototype, {
 
 
 /***/ }),
-/* 265 */
+/* 264 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19761,7 +19741,7 @@ module.exports = {
 
 
 /***/ }),
-/* 266 */
+/* 265 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19818,7 +19798,7 @@ module.exports = function(availableTransports) {
 
 
 /***/ }),
-/* 267 */
+/* 266 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19844,7 +19824,7 @@ module.exports = logObject;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(7)))
 
 /***/ }),
-/* 268 */
+/* 267 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19868,7 +19848,7 @@ module.exports = CloseEvent;
 
 
 /***/ }),
-/* 269 */
+/* 268 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19890,7 +19870,7 @@ module.exports = TransportMessageEvent;
 
 
 /***/ }),
-/* 270 */
+/* 269 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19902,8 +19882,8 @@ var EventEmitter = __webpack_require__(11).EventEmitter
   , XDR = __webpack_require__(80)
   , XHRCors = __webpack_require__(61)
   , XHRLocal = __webpack_require__(47)
-  , XHRFake = __webpack_require__(271)
-  , InfoIframe = __webpack_require__(272)
+  , XHRFake = __webpack_require__(270)
+  , InfoIframe = __webpack_require__(271)
   , InfoAjax = __webpack_require__(141)
   ;
 
@@ -19986,7 +19966,7 @@ module.exports = InfoReceiver;
 
 
 /***/ }),
-/* 271 */
+/* 270 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -20017,7 +19997,7 @@ module.exports = XHRFake;
 
 
 /***/ }),
-/* 272 */
+/* 271 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -20094,7 +20074,7 @@ module.exports = InfoIframe;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(7)))
 
 /***/ }),
-/* 273 */
+/* 272 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -20103,7 +20083,7 @@ module.exports = InfoIframe;
 var urlUtils = __webpack_require__(15)
   , eventUtils = __webpack_require__(26)
   , JSON3 = __webpack_require__(22)
-  , FacadeJS = __webpack_require__(274)
+  , FacadeJS = __webpack_require__(273)
   , InfoIframeReceiver = __webpack_require__(140)
   , iframeUtils = __webpack_require__(49)
   , loc = __webpack_require__(139)
@@ -20203,7 +20183,7 @@ module.exports = function(SockJS, availableTransports) {
 
 
 /***/ }),
-/* 274 */
+/* 273 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -20237,7 +20217,7 @@ module.exports = FacadeJS;
 
 
 /***/ }),
-/* 275 */
+/* 274 */
 /***/ (function(module, exports, __webpack_require__) {
 
 (function webpackUniversalModuleDefinition(root, factory) {
@@ -21143,7 +21123,7 @@ module.exports = exports['default'];
 });
 
 /***/ }),
-/* 276 */
+/* 275 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21165,7 +21145,7 @@ exports.default = SPARQLER;
 
 
 /***/ }),
-/* 277 */
+/* 276 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21197,7 +21177,7 @@ exports.fromDecorator = fromDecorator;
 
 
 /***/ }),
-/* 278 */
+/* 277 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21222,7 +21202,7 @@ exports.groupDecorator = groupDecorator;
 
 
 /***/ }),
-/* 279 */
+/* 278 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21247,7 +21227,7 @@ exports.havingDecorator = havingDecorator;
 
 
 /***/ }),
-/* 280 */
+/* 279 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21264,7 +21244,7 @@ var __extends = (this && this.__extends) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 var Container_1 = __webpack_require__(16);
-var values_1 = __webpack_require__(281);
+var values_1 = __webpack_require__(280);
 var utils_1 = __webpack_require__(19);
 var tokens_1 = __webpack_require__(5);
 var tokens_2 = __webpack_require__(3);
@@ -21325,7 +21305,7 @@ exports.limitOffsetDecorator = limitOffsetDecorator;
 
 
 /***/ }),
-/* 281 */
+/* 280 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21336,7 +21316,7 @@ var Container_1 = __webpack_require__(16);
 var IRIResolver_1 = __webpack_require__(30);
 var patterns_1 = __webpack_require__(147);
 var tokens_1 = __webpack_require__(5);
-var triples_1 = __webpack_require__(284);
+var triples_1 = __webpack_require__(283);
 var ObjectPattern_1 = __webpack_require__(50);
 function values(variableOrVariables, valuesOrBuilder) {
     var isSingle = !Array.isArray(variableOrVariables);
@@ -21382,7 +21362,7 @@ exports.valuesDecorator = valuesDecorator;
 
 
 /***/ }),
-/* 282 */
+/* 281 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21398,7 +21378,7 @@ __export(__webpack_require__(150));
 
 
 /***/ }),
-/* 283 */
+/* 282 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21415,7 +21395,7 @@ exports.string = exports.NAMESPACE + "string";
 
 
 /***/ }),
-/* 284 */
+/* 283 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21436,7 +21416,7 @@ __export(__webpack_require__(155));
 
 
 /***/ }),
-/* 285 */
+/* 284 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21462,7 +21442,7 @@ exports.orderDecorator = orderDecorator;
 
 
 /***/ }),
-/* 286 */
+/* 285 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21506,7 +21486,7 @@ exports.queryDecorator = queryDecorator;
 
 
 /***/ }),
-/* 287 */
+/* 286 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21573,7 +21553,7 @@ exports.selectDecorator = selectDecorator;
 
 
 /***/ }),
-/* 288 */
+/* 287 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21611,7 +21591,7 @@ exports.subWhereDecorator = subWhereDecorator;
 
 
 /***/ }),
-/* 289 */
+/* 288 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21634,12 +21614,12 @@ __export(__webpack_require__(71));
 __export(__webpack_require__(53));
 __export(__webpack_require__(25));
 __export(__webpack_require__(104));
-__export(__webpack_require__(290));
+__export(__webpack_require__(289));
 __export(__webpack_require__(162));
 
 
 /***/ }),
-/* 290 */
+/* 289 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21691,7 +21671,7 @@ var StatusCode;
 
 
 /***/ }),
-/* 291 */
+/* 290 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21707,7 +21687,7 @@ __export(__webpack_require__(99));
 
 
 /***/ }),
-/* 292 */
+/* 291 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21727,6 +21707,20 @@ __export(__webpack_require__(79));
 __export(__webpack_require__(58));
 __export(__webpack_require__(168));
 __export(__webpack_require__(59));
+
+
+/***/ }),
+/* 292 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+function __export(m) {
+    for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
+}
+Object.defineProperty(exports, "__esModule", { value: true });
+__export(__webpack_require__(123));
+__export(__webpack_require__(124));
 
 
 /***/ }),
