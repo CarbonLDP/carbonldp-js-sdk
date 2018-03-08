@@ -17,7 +17,7 @@ import { PlatformMetadata } from "./PlatformMetadata";
 describe( module( "carbonldp/System/PlatformMetadata" ), ():void => {
 
 	describe( interfaze(
-		"CarbonLDP.System.PlatformMetadata.PlatformMetadata",
+		"CarbonLDP.System.PlatformMetadata",
 		"Interface that represents a requested API description of the Carbon LDP Platform configured."
 	), ():void => {
 
@@ -46,8 +46,8 @@ describe( module( "carbonldp/System/PlatformMetadata" ), ():void => {
 	} );
 
 	describe( interfaze(
-		"CarbonLDP.System.PlatformMetadata.PlatformMetadataFactory",
-		"Interface with the factory, decorate and utils elements for `CarbonLDP.System.PlatformMetadata.PlatformMetadata` objects."
+		"CarbonLDP.System.PlatformMetadataFactory",
+		"Interface with the factory, decorate and utils elements for `CarbonLDP.System.PlatformMetadata` objects."
 	), ():void => {
 
 		it( hasProperty(
@@ -67,7 +67,7 @@ describe( module( "carbonldp/System/PlatformMetadata" ), ():void => {
 	describe( property(
 		STATIC,
 		"PlatformMetadata",
-		"CarbonLDP.System.PlatformMetadata.PlatformMetadataFactory"
+		"CarbonLDP.System.PlatformMetadataFactory"
 	), ():void => {
 
 		it( "should exist", ():void => {
