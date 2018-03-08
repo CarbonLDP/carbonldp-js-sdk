@@ -15,7 +15,7 @@ import { Header } from "./Header";
 
 describe( module( "carbonldp/HTTP/Header" ), ():void => {
 
-	describe( clazz( "CarbonLDP.HTTP.Header.Header", "Class to manage the values in an HTTP header." ), ():void => {
+	describe( clazz( "CarbonLDP.HTTP.Header", "Class to manage the values in an HTTP header." ), ():void => {
 
 		// Mock data
 		let valuesArray:string[] = [
@@ -110,10 +110,10 @@ describe( module( "carbonldp/HTTP/Header" ), ():void => {
 		it( hasMethod(
 			STATIC,
 			"parseHeaders",
-			"Returns a Map object which relates all header names with a `CarbonLDP.HTTP.Header.Header` object containing their values.", [
+			"Returns a Map object which relates all header names with a `CarbonLDP.HTTP.Header` object containing their values.", [
 				{ name: "headersString", type: "string" },
 			],
-			{ type: "Map <string, CarbonLDP.HTTP.Header.Header>" }
+			{ type: "Map <string, CarbonLDP.HTTP.Header>" }
 		), ():void => {
 			expect( Header.parseHeaders ).toBeDefined();
 			expect( Utils.isFunction( Header.parseHeaders ) ).toBe( true );

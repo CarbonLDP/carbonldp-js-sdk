@@ -60,7 +60,7 @@ describe( module( "carbonldp/Auth/Users" ), ():void => {
 					{ name: "email", type: "string" },
 					{ name: "password", type: "string" },
 				],
-				{ type: "Promise<[ CarbonLDP.Auth.PersistedUser.Class, CarbonLDP.HTTP.Response.Response ]>" }
+				{ type: "Promise<[ CarbonLDP.Auth.PersistedUser.Class, CarbonLDP.HTTP.Response ]>" }
 			), ():void => {} );
 
 			it( "should exists", ():void => {
@@ -182,9 +182,9 @@ describe( module( "carbonldp/Auth/Users" ), ():void => {
 			"get",
 			"Retrieves the user specified from the current context.", [
 				{ name: "userURI", type: "string", description: "The URI of the user to retrieve." },
-				{ name: "requestOptions", type: "CarbonLDP.HTTP.Request.RequestOptions", optional: true },
+				{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true },
 			],
-			{ type: "Promise<[ CarbonLDP.Auth.PersistedUser.Class, CarbonLDP.HTTP.Response.Response ]>" }
+			{ type: "Promise<[ CarbonLDP.Auth.PersistedUser.Class, CarbonLDP.HTTP.Response ]>" }
 		), ( done:{ ():void, fail:() => void } ) => {
 			let users:Users.Class;
 			let context:AbstractContext;
@@ -335,9 +335,9 @@ describe( module( "carbonldp/Auth/Users" ), ():void => {
 			"disableCredentials",
 			"Activate the account of the user specified.", [
 				{ name: "userURI", type: "string", description: "The URI of the user to deactivate its credentials." },
-				{ name: "requestOptions", type: "CarbonLDP.HTTP.Request.RequestOptions", optional: true },
+				{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true },
 			],
-			{ type: "Promise<[ CarbonLDP.Auth.PersistedUser.Class, CarbonLDP.HTTP.Response.Response[] ]>" }
+			{ type: "Promise<[ CarbonLDP.Auth.PersistedUser.Class, CarbonLDP.HTTP.Response[] ]>" }
 		), () => {} );
 
 		describe( "disableCredentials", ():void => {
@@ -437,9 +437,9 @@ describe( module( "carbonldp/Auth/Users" ), ():void => {
 			"disableCredentials",
 			"Deactivate the account of the user specified.", [
 				{ name: "userURI", type: "string", description: "The URI of the user to activate its credentials." },
-				{ name: "requestOptions", type: "CarbonLDP.HTTP.Request.RequestOptions", optional: true },
+				{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true },
 			],
-			{ type: "Promise<[ CarbonLDP.Auth.PersistedUser.Class, [ CarbonLDP.HTTP.Response.Response, CarbonLDP.HTTP.Response.Response ] ]>" }
+			{ type: "Promise<[ CarbonLDP.Auth.PersistedUser.Class, [ CarbonLDP.HTTP.Response, CarbonLDP.HTTP.Response ] ]>" }
 		), () => {} );
 
 		it( hasMethod(
@@ -447,9 +447,9 @@ describe( module( "carbonldp/Auth/Users" ), ():void => {
 			"delete",
 			"Deletes the user specified.", [
 				{ name: "userURI", type: "string", description: "The URI of the user to be deleted." },
-				{ name: "requestOptions", type: "CarbonLDP.HTTP.Request.RequestOptions", optional: true },
+				{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true },
 			],
-			{ type: "Promise<[ CarbonLDP.Auth.PersistedUser.Class, CarbonLDP.HTTP.Response.Response ]>" }
+			{ type: "Promise<[ CarbonLDP.Auth.PersistedUser.Class, CarbonLDP.HTTP.Response ]>" }
 		), ( done:{ ():void, fail:() => void } ) => {
 			let users:Users.Class;
 			let context:AbstractContext;

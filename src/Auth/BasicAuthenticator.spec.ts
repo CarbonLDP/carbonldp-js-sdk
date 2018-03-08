@@ -137,10 +137,10 @@ describe( module( "carbonldp/Auth/BasicAuthenticator" ), ():void => {
 			INSTANCE,
 			"addAuthentication",
 			"Adds the Basic authentication header to the passed request options object.\n" +
-			"The `CarbonLDP.HTTP.Request.RequestOptions` provided is returned without modifications if it already has an authentication header.", [
-				{ name: "requestOptions", type: "CarbonLDP.HTTP.Request.RequestOptions", description: "Request options object to add Authentication headers." },
+			"The `CarbonLDP.HTTP.RequestOptions` provided is returned without modifications if it already has an authentication header.", [
+				{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", description: "Request options object to add Authentication headers." },
 			],
-			{ type: "CarbonLDP.HTTP.Request.RequestOptions", description: "The request options with the added authentication headers." }
+			{ type: "CarbonLDP.HTTP.RequestOptions", description: "The request options with the added authentication headers." }
 		), ( done:{ ():void; fail:( error:any ) => void } ):void => {
 			let promises:Promise<void>[] = [];
 			let authenticator:BasicAuthenticator.Class = new BasicAuthenticator.Class();

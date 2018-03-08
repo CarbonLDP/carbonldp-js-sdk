@@ -666,7 +666,7 @@ describe( module( "carbonldp/CarbonLDP" ), ():void => {
 				carbon
 					.getPlatformMetadata()
 					.then( ( [ platformMetadata, response ] ):void => {
-						expect( response ).toEqual( jasmine.any( HTTP.Response.Response ) );
+						expect( response ).toEqual( jasmine.any( HTTP.Response ) );
 
 						expect( platformMetadata ).toBeTruthy();
 						expect( Object.keys( platformMetadata ).length ).toBe( 2 );

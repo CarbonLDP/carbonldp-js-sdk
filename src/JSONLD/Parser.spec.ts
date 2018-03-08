@@ -16,7 +16,7 @@ describe( module(
 	describe( clazz(
 		"CarbonLDP.JSONLD.Parser.JSONLDParser",
 		"Class to parse strings to valid JSONLD objects.", [
-			"CarbonLDP.HTTP.Parser.Parser<object[]>",
+			"CarbonLDP.HTTP.Parser<object[]>",
 		]
 	), ():void => {
 

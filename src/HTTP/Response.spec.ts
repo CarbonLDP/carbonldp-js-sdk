@@ -32,7 +32,7 @@ describe( module( "carbonldp/HTTP/Response" ), ():void => {
 	let inXMLHttpRequest:boolean = ( typeof XMLHttpRequest !== "undefined" );
 
 	describe( clazz(
-		"CarbonLDP.HTTP.Response.Response",
+		"CarbonLDP.HTTP.Response",
 		"Class that represents an HTTP Response."
 	), ():void => {
 
@@ -125,7 +125,7 @@ describe( module( "carbonldp/HTTP/Response" ), ():void => {
 		it( hasProperty(
 			INSTANCE,
 			"headers",
-			"Map<string, CarbonLDP.HTTP.Header.Header>",
+			"Map<string, CarbonLDP.HTTP.Header>",
 			"A map object containing the headers returned by the request."
 		), ( done:DoneFn ):void => {
 
@@ -174,7 +174,7 @@ describe( module( "carbonldp/HTTP/Response" ), ():void => {
 			"Return the Header object referred by the name specified.", [
 				{ name: "name", type: "string" },
 			],
-			{ type: "CarbonLDP.HTTP.Header.Header" }
+			{ type: "CarbonLDP.HTTP.Header" }
 		), ( done:DoneFn ):void => {
 
 			createResponse().then( ( [ response, request ]:[ Response, XMLHttpRequest | ClientRequest ] ) => {
@@ -194,7 +194,7 @@ describe( module( "carbonldp/HTTP/Response" ), ():void => {
 		it( hasMethod(
 			INSTANCE,
 			"getETag",
-			"Return the ETag header of a `CarbonLDP.HTTP.Response.Response` object. Returns null if no ETag exists.",
+			"Return the ETag header of a `CarbonLDP.HTTP.Response` object. Returns null if no ETag exists.",
 			{ type: "string" }
 		), ( done:DoneFn ):void => {
 			createResponse()

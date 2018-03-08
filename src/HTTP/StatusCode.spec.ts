@@ -18,7 +18,7 @@ describe( module(
 	} );
 
 	describe( enumeration(
-		"CarbonLDP.HTTP.StatusCode.StatusCode",
+		"CarbonLDP.HTTP.StatusCode",
 		"Enum with the HTTP/1.1 status codes."
 	), ():void => {
 

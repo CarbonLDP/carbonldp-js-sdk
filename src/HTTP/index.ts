@@ -1,21 +1,15 @@
 import * as Errors from "./Errors";
-import * as Header from "./Header";
-import { HTTPMethod } from "./HTTPMethod";
-import * as JSONParser from "./JSONParser";
-import * as Parser from "./Parser";
-import * as Request from "./Request";
-import * as Response from "./Response";
-import { StatusCode } from "./StatusCode";
-import * as StringParser from "./StringParser";
+
+
+export * from "./Header";
+export * from "./HTTPMethod";
+export * from "./JSONParser";
+export * from "./Parser";
+export * from "./Request";
+export * from "./Response";
+export * from "./StatusCode";
+export * from "./StringParser";
 
 export {
-	Errors,
-	Header,
-	JSONParser,
-	HTTPMethod,
-	Parser,
-	Request,
-	Response,
-	StatusCode,
-	StringParser
+	Errors
 };

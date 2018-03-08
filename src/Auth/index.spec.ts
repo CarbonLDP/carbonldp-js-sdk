@@ -980,8 +980,8 @@ describe( module( "carbonldp/Auth" ), ():void => {
 		it( hasMethod(
 			INSTANCE,
 			"addAuthentication",
-			"Adds the authentication header to a `CarbonLDP.HTTP.Request.RequestOptions` object.", [
-				{ name: "options", type: "CarbonLDP.HTTP.Request.RequestOptions" },
+			"Adds the authentication header to a `CarbonLDP.HTTP.RequestOptions` object.", [
+				{ name: "options", type: "CarbonLDP.HTTP.RequestOptions" },
 			]
 		), ():void => {
 
@@ -1202,9 +1202,9 @@ describe( module( "carbonldp/Auth" ), ():void => {
 			"createTicket",
 			"Retrieves an authentication ticket for the URI specified.", [
 				{ name: "uri", type: "string", description: "The URI to get an authentication ticket for." },
-				{ name: "requestOptions", type: "CarbonLDP.HTTP.Request.RequestOptions", optional: true },
+				{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true },
 			],
-			{ type: "Promise<[ CarbonLDP.Auth.Ticket.Class, CarbonLDP.HTTP.Response.Response ]>" }
+			{ type: "Promise<[ CarbonLDP.Auth.Ticket.Class, CarbonLDP.HTTP.Response ]>" }
 		), ( done:{ ():void, fail:() => void } ):void => {
 			class MockedContext extends AbstractContext {
 				protected _baseURI:string;
@@ -1344,7 +1344,7 @@ describe( module( "carbonldp/Auth" ), ():void => {
 			"getAuthenticatedURL",
 			"Returns a Promise with a one time use only authenticated URI.", [
 				{ name: "uri", type: "string", description: "The URI to generate an authenticated URI for." },
-				{ name: "requestOptions", type: "CarbonLDP.HTTP.Request.RequestOptions", optional: true },
+				{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true },
 			],
 			{ type: "Promise<string>" }
 		), ( done:{ ():void, fail:() => void } ) => {

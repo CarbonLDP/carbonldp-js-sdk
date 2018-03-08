@@ -20,7 +20,7 @@ describe( module( "carbonldp/SPARQL/RawResultsParser" ), ():void => {
 	describe( clazz(
 		"CarbonLDP.SPARQL.RawResultsParser",
 		"Class to parse SPARQL Query result to a `CarbonLDP.SPARQL.RawResults.SPARQLRawResults` object.", [
-			"CarbonLDP.HTTP.Parser.Parser<CarbonLDP.SPARQL.RawResults.SPARQLRawResults>",
+			"CarbonLDP.HTTP.Parser<CarbonLDP.SPARQL.RawResults.SPARQLRawResults>",
 		]
 	), ():void => {
 

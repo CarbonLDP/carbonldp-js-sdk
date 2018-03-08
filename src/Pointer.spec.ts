@@ -66,7 +66,7 @@ describe( module( "carbonldp/Pointer" ), ():void => {
 			"resolve",
 			[ "T" ],
 			"Resolves the pointer. This function throw an Error if it has no been configured by another decorator.",
-			{ type: "Promise<[ T & CarbonLDP.PersistedDocument.PersistedDocument, CarbonLDP.HTTP.Response.Response ]>" }
+			{ type: "Promise<[ T & CarbonLDP.PersistedDocument.PersistedDocument, CarbonLDP.HTTP.Response ]>" }
 		), ():void => {} );
 
 	} );
@@ -203,7 +203,7 @@ describe( module( "carbonldp/Pointer" ), ():void => {
 			"Calls the `resolve()` method of every pointer, and returns a single Promise with the results of every call.", [
 				{ name: "pointers", type: "CarbonLDP.Pointer.Pointer[]", description: "The array of Pointers to resolve." },
 			],
-			{ type: "Promise<[ (T & CarbonLDP.PersistedDocument.PersistedDocument)[], CarbonLDP.HTTP.Response.Response[] ]>" }
+			{ type: "Promise<[ (T & CarbonLDP.PersistedDocument.PersistedDocument)[], CarbonLDP.HTTP.Response[] ]>" }
 		), ():void => {} );
 
 	} );

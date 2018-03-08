@@ -41,9 +41,9 @@ describe( module( "carbonldp/PersistedProtectedDocument" ), ():void => {
 			OBLIGATORY,
 			"getACL",
 			"Obtains and resolve the ACL of the actual document.", [
-				{ name: "requestOptions", type: "CarbonLDP.HTTP.Request.RequestOptions", optional: true, description: " Customizable options for the request." },
+				{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: " Customizable options for the request." },
 			],
-			{ type: "Promise<[ CarbonLDP.Auth.PersistedACL.PersistedACL, CarbonLDP.HTTP.Response.Response ]>" }
+			{ type: "Promise<[ CarbonLDP.Auth.PersistedACL.PersistedACL, CarbonLDP.HTTP.Response ]>" }
 		), ():void => {} );
 
 	} );
