@@ -59,7 +59,7 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 
 			it( hasSignature(
 				[
-					{ name: "jsonldConverter", type: "CarbonLDP.JSONLD.Converter.JSONLDConverter", description: "The converted of JSON-LD to Javascript and viceversa to use." },
+					{ name: "jsonldConverter", type: "CarbonLDP.JSONLD.JSONLDConverter", description: "The converted of JSON-LD to Javascript and viceversa to use." },
 				]
 			), ():void => {
 			} );

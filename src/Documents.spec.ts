@@ -124,8 +124,8 @@ describe( module( "carbonldp/Documents" ), ():void => {
 		it( hasProperty(
 			INSTANCE,
 			"jsonldConverter",
-			"CarbonLDP.JSONLD.Converter.JSONLDConverter",
-			"Instance of `CarbonLDP.JSONLD.Converter.JSONLDConverter` that is used to compact retrieved documents and to expand documents to persist. This property is not writable."
+			"CarbonLDP.JSONLD.JSONLDConverter",
+			"Instance of `CarbonLDP.JSONLD.JSONLDConverter` that is used to compact retrieved documents and to expand documents to persist. This property is not writable."
 		), ():void => {
 			class MockedContext extends AbstractContext {
 				protected _baseURI:string;

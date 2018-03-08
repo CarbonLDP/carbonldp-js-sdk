@@ -12,7 +12,7 @@ import { JSONLDProcessor } from "./Processor";
 
 describe( module( "carbonldp/JSONLD/Processor" ), ():void => {
 
-	describe( clazz( "CarbonLDP.JSONLD.Processor.JSONLDProcessor", "Class that contains methods that can process JSON-LD objects." ), ():void => {
+	describe( clazz( "CarbonLDP.JSONLD.JSONLDProcessor", "Class that contains methods that can process JSON-LD objects." ), ():void => {
 
 		it( isDefined(), ():void => {
 			expect( JSONLDProcessor ).toBeDefined();

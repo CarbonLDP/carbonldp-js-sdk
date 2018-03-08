@@ -25,7 +25,7 @@ import { JSONLDConverter } from "./Converter";
 
 describe( module( "carbonldp/JSONLD/Converter" ), ():void => {
 
-	describe( clazz( "CarbonLDP.JSONLD.Converter.JSONLDConverter", "Class that have methods for convert expanded JSON-LD objects to compacted Carbon SDK Resources and vice versa." ), ():void => {
+	describe( clazz( "CarbonLDP.JSONLD.JSONLDConverter", "Class that have methods for convert expanded JSON-LD objects to compacted Carbon SDK Resources and vice versa." ), ():void => {
 
 		it( isDefined(), ():void => {
 			expect( JSONLDConverter ).toBeDefined();

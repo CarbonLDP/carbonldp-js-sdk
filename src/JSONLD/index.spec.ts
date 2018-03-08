@@ -8,9 +8,10 @@ import * as Utils from "../Utils";
 
 import * as JSONLD from "./";
 
-import * as Converter from "./Converter";
-import * as Parser from "./Parser";
-import * as Processor from "./Processor";
+import { JSONLDCompacter } from "./Compacter";
+import { JSONLDConverter } from "./Converter";
+import { JSONLDParser } from "./Parser";
+import { JSONLDProcessor } from "./Processor";
 
 describe( module( "carbonldp/JSONLD" ), ():void => {
 
@@ -21,29 +22,38 @@ describe( module( "carbonldp/JSONLD" ), ():void => {
 
 	it( reexports(
 		STATIC,
-		"Converter",
-		"carbonldp/JSONLD/Converter"
+		"JSONLDCompacter",
+		"CarbonLDP.JSONLD.JSONLDCompacter"
 	), ():void => {
-		expect( JSONLD.Converter ).toBeDefined();
-		expect( JSONLD.Converter ).toBe( Converter );
+		expect( JSONLD.JSONLDCompacter ).toBeDefined();
+		expect( JSONLD.JSONLDCompacter ).toBe( JSONLDCompacter );
 	} );
 
 	it( reexports(
 		STATIC,
-		"Parser",
-		"carbonldp/JSONLD/Parser"
+		"JSONLDConverter",
+		"CarbonLDP.JSONLD.JSONLDConverter"
 	), ():void => {
-		expect( JSONLD.Parser ).toBeDefined();
-		expect( JSONLD.Parser ).toBe( Parser );
+		expect( JSONLD.JSONLDConverter ).toBeDefined();
+		expect( JSONLD.JSONLDConverter ).toBe( JSONLDConverter );
 	} );
 
 	it( reexports(
 		STATIC,
-		"Processor",
-		"carbonldp/JSONLD/Processor"
+		"JSONLDParser",
+		"CarbonLDP.JSONLD.JSONLDParser"
 	), ():void => {
-		expect( JSONLD.Processor ).toBeDefined();
-		expect( JSONLD.Processor ).toBe( Processor );
+		expect( JSONLD.JSONLDParser ).toBeDefined();
+		expect( JSONLD.JSONLDParser ).toBe( JSONLDParser );
+	} );
+
+	it( reexports(
+		STATIC,
+		"JSONLDProcessor",
+		"CarbonLDP.JSONLD.JSONLDProcessor"
+	), ():void => {
+		expect( JSONLD.JSONLDProcessor ).toBeDefined();
+		expect( JSONLD.JSONLDProcessor ).toBe( JSONLDProcessor );
 	} );
 
 } );

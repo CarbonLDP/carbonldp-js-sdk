@@ -15,5 +15,3 @@ export declare class JSONLDProcessor {
     private static compareValues(value1, value2);
     private static hasValue(element, propertyName, value);
 }
-export declare class Util {
-}

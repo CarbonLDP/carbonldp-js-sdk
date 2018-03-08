@@ -9060,12 +9060,6 @@ var JSONLDProcessor = (function () {
     return JSONLDProcessor;
 }());
 exports.JSONLDProcessor = JSONLDProcessor;
-var Util = (function () {
-    function Util() {
-    }
-    return Util;
-}());
-exports.Util = Util;
 
 
 /***/ }),
@@ -16941,10 +16935,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var iri_1 = __webpack_require__(29);
 var tokens_1 = __webpack_require__(3);
 var Utils_1 = __webpack_require__(106);
-var XSD_1 = __webpack_require__(6);
 var ObjectSchema_1 = __webpack_require__(13);
 var Pointer_1 = __webpack_require__(18);
 var Utils_2 = __webpack_require__(0);
+var XSD_1 = __webpack_require__(6);
 var Tokens_1 = __webpack_require__(124);
 var typesDefinition = new ObjectSchema_1.DigestedObjectSchemaProperty();
 typesDefinition.literal = false;
@@ -21702,22 +21696,14 @@ var StatusCode;
 
 "use strict";
 
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
-    result["default"] = mod;
-    return result;
+function __export(m) {
+    for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
 }
 Object.defineProperty(exports, "__esModule", { value: true });
-var Compacter = __importStar(__webpack_require__(121));
-exports.Compacter = Compacter;
-var Converter = __importStar(__webpack_require__(69));
-exports.Converter = Converter;
-var Parser = __importStar(__webpack_require__(31));
-exports.Parser = Parser;
-var Processor = __importStar(__webpack_require__(99));
-exports.Processor = Processor;
+__export(__webpack_require__(121));
+__export(__webpack_require__(69));
+__export(__webpack_require__(31));
+__export(__webpack_require__(99));
 
 
 /***/ }),
