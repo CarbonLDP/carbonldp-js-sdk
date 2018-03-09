@@ -1,21 +1,20 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var SHACL;
-(function (SHACL) {
-    SHACL.namespace = "http://www.w3.org/ns/shacl#";
-    SHACL.ValidationReport = SHACL.namespace + "ValidationReport";
-    SHACL.ValidationResult = SHACL.namespace + "ValidationResult";
-    SHACL.conforms = SHACL.namespace + "conforms";
-    SHACL.detail = SHACL.namespace + "detail";
-    SHACL.focusNode = SHACL.namespace + "focusNode";
-    SHACL.result = SHACL.namespace + "result";
-    SHACL.resultMessage = SHACL.namespace + "resultMessage";
-    SHACL.resultPath = SHACL.namespace + "resultPath";
-    SHACL.resultSeverity = SHACL.namespace + "resultSeverity";
-    SHACL.shapesGraphWellFormed = SHACL.namespace + "shapesGraphWellFormed";
-    SHACL.sourceConstraintComponent = SHACL.namespace + "sourceConstraintComponent";
-    SHACL.sourceShape = SHACL.namespace + "sourceShape";
-    SHACL.value = SHACL.namespace + "value";
-})(SHACL = exports.SHACL || (exports.SHACL = {}));
+exports.SHACL = {
+    namespace: "http://www.w3.org/ns/shacl#",
+    ValidationReport: "http://www.w3.org/ns/shacl#ValidationReport",
+    ValidationResult: "http://www.w3.org/ns/shacl#ValidationResult",
+    conforms: "http://www.w3.org/ns/shacl#conforms",
+    detail: "http://www.w3.org/ns/shacl#detail",
+    focusNode: "http://www.w3.org/ns/shacl#focusNode",
+    result: "http://www.w3.org/ns/shacl#result",
+    resultMessage: "http://www.w3.org/ns/shacl#resultMessage",
+    resultPath: "http://www.w3.org/ns/shacl#resultPath",
+    resultSeverity: "http://www.w3.org/ns/shacl#resultSeverity",
+    shapesGraphWellFormed: "http://www.w3.org/ns/shacl#shapesGraphWellFormed",
+    sourceConstraintComponent: "http://www.w3.org/ns/shacl#sourceConstraintComponent",
+    sourceShape: "http://www.w3.org/ns/shacl#sourceShape",
+    value: "http://www.w3.org/ns/shacl#value",
+};
 
 //# sourceMappingURL=SHACL.js.map

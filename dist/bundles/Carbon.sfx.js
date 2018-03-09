@@ -476,69 +476,68 @@ if (typeof Object.create === 'function') {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var C;
-(function (C) {
-    C.namespace = "https://carbonldp.com/ns/v1/platform#";
-    C.AccessPoint = C.namespace + "AccessPoint";
-    C.AccessPointCreated = C.namespace + "AccessPointCreated";
-    C.AddMemberAction = C.namespace + "AddMemberAction";
-    C.ChildCreated = C.namespace + "ChildCreatedEvent";
-    C.Document = C.namespace + "Document";
-    C.DocumentCreatedDetails = C.namespace + "DocumentCreatedEventDetails";
-    C.DocumentDeleted = C.namespace + "DocumentDeleted";
-    C.DocumentMetadata = C.namespace + "DocumentMetadata";
-    C.DocumentModified = C.namespace + "DocumentModified";
-    C.ErrorResponse = C.namespace + "ErrorResponse";
-    C.Error = C.namespace + "Error";
-    C.Instance = C.namespace + "Instance";
-    C.Map = C.namespace + "Map";
-    C.MemberAdded = C.namespace + "MemberAddedEvent";
-    C.MemberAddedDetails = C.namespace + "MemberAddedEventDetails";
-    C.MemberRemoved = C.namespace + "MemberRemovedEvent";
-    C.MemberRemovedDetails = C.namespace + "MemberRemovedEventDetails";
-    C.NonReadableMembershipResourceTriples = C.namespace + "NonReadableMembershipResourceTriples";
-    C.Platform = C.namespace + "Platform";
-    C.PreferContainer = C.namespace + "PreferContainer";
-    C.PreferContainmentResources = C.namespace + "PreferContainmentResources";
-    C.PreferContainmentTriples = C.namespace + "PreferContainmentTriples";
-    C.PreferDocumentETags = C.namespace + "PreferDocumentETags";
-    C.PreferMembershipResources = C.namespace + "PreferMembershipResources";
-    C.PreferMembershipTriples = C.namespace + "PreferMembershipTriples";
-    C.PreferResultsContext = C.namespace + "PreferResultsContext";
-    C.PreferSelectedMembershipTriples = C.namespace + "PreferSelectedMembershipTriples";
-    C.QueryMetadata = C.namespace + "QueryMetadata";
-    C.RemoveMemberAction = C.namespace + "RemoveMemberAction";
-    C.ResponseMetadata = C.namespace + "ResponseMetadata";
-    C.ValidationError = C.namespace + "ValidationError";
-    C.VolatileResource = C.namespace + "VolatileResource";
-    C.accessPoint = C.namespace + "accessPoint";
-    C.bNodesMap = C.namespace + "bNodesMap";
-    C.buildDate = C.namespace + "buildDate";
-    C.created = C.namespace + "created";
-    C.createdDocument = C.namespace + "createdDocument";
-    C.details = C.namespace + "details";
-    C.defaultInteractionModel = C.namespace + "defaultInteractionModel";
-    C.documentMetadata = C.namespace + "documentMetadata";
-    C.entry = C.namespace + "entry";
-    C.entryKey = C.namespace + "key";
-    C.entryValue = C.namespace + "value";
-    C.error = C.namespace + "error";
-    C.errorCode = C.namespace + "errorCode";
-    C.errorDetails = C.namespace + "errorDetails";
-    C.errorMessage = C.namespace + "errorMessage";
-    C.errorParameters = C.namespace + "errorParameters";
-    C.eTag = C.namespace + "eTag";
-    C.httpStatusCode = C.namespace + "httpStatusCode";
-    C.mediaType = C.namespace + "mediaType";
-    C.member = C.namespace + "member";
-    C.modified = C.namespace + "modified";
-    C.requestID = C.namespace + "requestID";
-    C.relatedDocument = C.namespace + "relatedDocument";
-    C.size = C.namespace + "size";
-    C.target = C.namespace + "target";
-    C.targetMember = C.namespace + "targetMember";
-    C.version = C.namespace + "version";
-})(C = exports.C || (exports.C = {}));
+exports.C = {
+    namespace: "https://carbonldp.com/ns/v1/platform#",
+    AccessPoint: "https://carbonldp.com/ns/v1/platform#AccessPoint",
+    AccessPointCreated: "https://carbonldp.com/ns/v1/platform#AccessPointCreated",
+    AddMemberAction: "https://carbonldp.com/ns/v1/platform#AddMemberAction",
+    ChildCreated: "https://carbonldp.com/ns/v1/platform#ChildCreatedEvent",
+    Document: "https://carbonldp.com/ns/v1/platform#Document",
+    DocumentCreatedDetails: "https://carbonldp.com/ns/v1/platform#DocumentCreatedEventDetails",
+    DocumentDeleted: "https://carbonldp.com/ns/v1/platform#DocumentDeleted",
+    DocumentMetadata: "https://carbonldp.com/ns/v1/platform#DocumentMetadata",
+    DocumentModified: "https://carbonldp.com/ns/v1/platform#DocumentModified",
+    ErrorResponse: "https://carbonldp.com/ns/v1/platform#ErrorResponse",
+    Error: "https://carbonldp.com/ns/v1/platform#Error",
+    Instance: "https://carbonldp.com/ns/v1/platform#Instance",
+    Map: "https://carbonldp.com/ns/v1/platform#Map",
+    MemberAdded: "https://carbonldp.com/ns/v1/platform#MemberAddedEvent",
+    MemberAddedDetails: "https://carbonldp.com/ns/v1/platform#MemberAddedEventDetails",
+    MemberRemoved: "https://carbonldp.com/ns/v1/platform#MemberRemovedEvent",
+    MemberRemovedDetails: "https://carbonldp.com/ns/v1/platform#MemberRemovedEventDetails",
+    NonReadableMembershipResourceTriples: "https://carbonldp.com/ns/v1/platform#NonReadableMembershipResourceTriples",
+    Platform: "https://carbonldp.com/ns/v1/platform#Platform",
+    PreferContainer: "https://carbonldp.com/ns/v1/platform#PreferContainer",
+    PreferContainmentResources: "https://carbonldp.com/ns/v1/platform#PreferContainmentResources",
+    PreferContainmentTriples: "https://carbonldp.com/ns/v1/platform#PreferContainmentTriples",
+    PreferDocumentETags: "https://carbonldp.com/ns/v1/platform#PreferDocumentETags",
+    PreferMembershipResources: "https://carbonldp.com/ns/v1/platform#PreferMembershipResources",
+    PreferMembershipTriples: "https://carbonldp.com/ns/v1/platform#PreferMembershipTriples",
+    PreferResultsContext: "https://carbonldp.com/ns/v1/platform#PreferResultsContext",
+    PreferSelectedMembershipTriples: "https://carbonldp.com/ns/v1/platform#PreferSelectedMembershipTriples",
+    QueryMetadata: "https://carbonldp.com/ns/v1/platform#QueryMetadata",
+    RemoveMemberAction: "https://carbonldp.com/ns/v1/platform#RemoveMemberAction",
+    ResponseMetadata: "https://carbonldp.com/ns/v1/platform#ResponseMetadata",
+    ValidationError: "https://carbonldp.com/ns/v1/platform#ValidationError",
+    VolatileResource: "https://carbonldp.com/ns/v1/platform#VolatileResource",
+    accessPoint: "https://carbonldp.com/ns/v1/platform#accessPoint",
+    bNodesMap: "https://carbonldp.com/ns/v1/platform#bNodesMap",
+    buildDate: "https://carbonldp.com/ns/v1/platform#buildDate",
+    created: "https://carbonldp.com/ns/v1/platform#created",
+    createdDocument: "https://carbonldp.com/ns/v1/platform#createdDocument",
+    details: "https://carbonldp.com/ns/v1/platform#details",
+    defaultInteractionModel: "https://carbonldp.com/ns/v1/platform#defaultInteractionModel",
+    documentMetadata: "https://carbonldp.com/ns/v1/platform#documentMetadata",
+    entry: "https://carbonldp.com/ns/v1/platform#entry",
+    entryKey: "https://carbonldp.com/ns/v1/platform#key",
+    entryValue: "https://carbonldp.com/ns/v1/platform#value",
+    error: "https://carbonldp.com/ns/v1/platform#error",
+    errorCode: "https://carbonldp.com/ns/v1/platform#errorCode",
+    errorDetails: "https://carbonldp.com/ns/v1/platform#errorDetails",
+    errorMessage: "https://carbonldp.com/ns/v1/platform#errorMessage",
+    errorParameters: "https://carbonldp.com/ns/v1/platform#errorParameters",
+    eTag: "https://carbonldp.com/ns/v1/platform#eTag",
+    httpStatusCode: "https://carbonldp.com/ns/v1/platform#httpStatusCode",
+    mediaType: "https://carbonldp.com/ns/v1/platform#mediaType",
+    member: "https://carbonldp.com/ns/v1/platform#member",
+    modified: "https://carbonldp.com/ns/v1/platform#modified",
+    requestID: "https://carbonldp.com/ns/v1/platform#requestID",
+    relatedDocument: "https://carbonldp.com/ns/v1/platform#relatedDocument",
+    size: "https://carbonldp.com/ns/v1/platform#size",
+    target: "https://carbonldp.com/ns/v1/platform#target",
+    targetMember: "https://carbonldp.com/ns/v1/platform#targetMember",
+    version: "https://carbonldp.com/ns/v1/platform#version",
+};
 
 
 /***/ }),
@@ -703,38 +702,37 @@ exports.FILTER = new tokens_1.Identifier("FILTER");
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var XSD;
-(function (XSD) {
-    XSD.namespace = "http://www.w3.org/2001/XMLSchema#";
-    XSD.boolean = XSD.namespace + "boolean";
-    XSD.byte = XSD.namespace + "byte";
-    XSD.date = XSD.namespace + "date";
-    XSD.dateTime = XSD.namespace + "dateTime";
-    XSD.decimal = XSD.namespace + "decimal";
-    XSD.double = XSD.namespace + "double";
-    XSD.duration = XSD.namespace + "duration";
-    XSD.float = XSD.namespace + "float";
-    XSD.gDay = XSD.namespace + "gDay";
-    XSD.gMonth = XSD.namespace + "gMonth";
-    XSD.gMonthDay = XSD.namespace + "gMonthDay";
-    XSD.gYear = XSD.namespace + "gYear";
-    XSD.gYearMonth = XSD.namespace + "gYearMonth";
-    XSD.int = XSD.namespace + "int";
-    XSD.integer = XSD.namespace + "integer";
-    XSD.long = XSD.namespace + "long";
-    XSD.negativeInteger = XSD.namespace + "negativeInteger";
-    XSD.nonNegativeInteger = XSD.namespace + "nonNegativeInteger";
-    XSD.nonPositiveInteger = XSD.namespace + "nonPositiveInteger";
-    XSD.object = XSD.namespace + "object";
-    XSD.positiveInteger = XSD.namespace + "positiveInteger";
-    XSD.short = XSD.namespace + "short";
-    XSD.string = XSD.namespace + "string";
-    XSD.time = XSD.namespace + "time";
-    XSD.unsignedByte = XSD.namespace + "unsignedByte";
-    XSD.unsignedInt = XSD.namespace + "unsignedInt";
-    XSD.unsignedLong = XSD.namespace + "unsignedLong";
-    XSD.unsignedShort = XSD.namespace + "unsignedShort";
-})(XSD = exports.XSD || (exports.XSD = {}));
+exports.XSD = {
+    namespace: "http://www.w3.org/2001/XMLSchema#",
+    boolean: "http://www.w3.org/2001/XMLSchema#boolean",
+    byte: "http://www.w3.org/2001/XMLSchema#byte",
+    date: "http://www.w3.org/2001/XMLSchema#date",
+    dateTime: "http://www.w3.org/2001/XMLSchema#dateTime",
+    decimal: "http://www.w3.org/2001/XMLSchema#decimal",
+    double: "http://www.w3.org/2001/XMLSchema#double",
+    duration: "http://www.w3.org/2001/XMLSchema#duration",
+    float: "http://www.w3.org/2001/XMLSchema#float",
+    gDay: "http://www.w3.org/2001/XMLSchema#gDay",
+    gMonth: "http://www.w3.org/2001/XMLSchema#gMonth",
+    gMonthDay: "http://www.w3.org/2001/XMLSchema#gMonthDay",
+    gYear: "http://www.w3.org/2001/XMLSchema#gYear",
+    gYearMonth: "http://www.w3.org/2001/XMLSchema#gYearMonth",
+    int: "http://www.w3.org/2001/XMLSchema#int",
+    integer: "http://www.w3.org/2001/XMLSchema#integer",
+    long: "http://www.w3.org/2001/XMLSchema#long",
+    negativeInteger: "http://www.w3.org/2001/XMLSchema#negativeInteger",
+    nonNegativeInteger: "http://www.w3.org/2001/XMLSchema#nonNegativeInteger",
+    nonPositiveInteger: "http://www.w3.org/2001/XMLSchema#nonPositiveInteger",
+    object: "http://www.w3.org/2001/XMLSchema#object",
+    positiveInteger: "http://www.w3.org/2001/XMLSchema#positiveInteger",
+    short: "http://www.w3.org/2001/XMLSchema#short",
+    string: "http://www.w3.org/2001/XMLSchema#string",
+    time: "http://www.w3.org/2001/XMLSchema#time",
+    unsignedByte: "http://www.w3.org/2001/XMLSchema#unsignedByte",
+    unsignedInt: "http://www.w3.org/2001/XMLSchema#unsignedInt",
+    unsignedLong: "http://www.w3.org/2001/XMLSchema#unsignedLong",
+    unsignedShort: "http://www.w3.org/2001/XMLSchema#unsignedShort",
+};
 
 
 /***/ }),
@@ -1662,52 +1660,51 @@ exports.default = Container;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var CS;
-(function (CS) {
-    CS.namespace = "https://carbonldp.com/ns/v1/security#";
-    CS.AccessControlEntry = CS.namespace + "AccessControlEntry";
-    CS.AccessControlList = CS.namespace + "AccessControlList";
-    CS.AllOrigins = CS.namespace + "AllOrigins";
-    CS.CreateAccessPoint = CS.namespace + "CreateAccessPoint";
-    CS.CreateChild = CS.namespace + "CreateChild";
-    CS.Credentials = CS.namespace + "Credentials";
-    CS.Delete = CS.namespace + "Delete";
-    CS.Download = CS.namespace + "Download";
-    CS.Extend = CS.namespace + "Extend";
-    CS.ManageSecurity = CS.namespace + "ManageSecurity";
-    CS.ProtectedDocument = CS.namespace + "ProtectedDocument";
-    CS.Read = CS.namespace + "Read";
-    CS.RemoveMember = CS.namespace + "RemoveMember";
-    CS.Role = CS.namespace + "Role";
-    CS.Ticket = CS.namespace + "Ticket";
-    CS.Token = CS.namespace + "Token";
-    CS.Update = CS.namespace + "Update";
-    CS.Upload = CS.namespace + "Upload";
-    CS.User = CS.namespace + "User";
-    CS.accessControlEntry = CS.namespace + "accessControlEntry";
-    CS.accessControlList = CS.namespace + "accessControlList";
-    CS.accessTo = CS.namespace + "accessTo";
-    CS.allowsOrigin = CS.namespace + "allowsOrigin";
-    CS.childRole = CS.namespace + "childRole";
-    CS.credentials = CS.namespace + "credentials";
-    CS.credentialsOf = CS.namespace + "credentialsOf";
-    CS.description = CS.namespace + "description";
-    CS.enabled = CS.namespace + "enabled";
-    CS.expirationTime = CS.namespace + "expirationTime";
-    CS.forIRI = CS.namespace + "forIRI";
-    CS.granting = CS.namespace + "granting";
-    CS.inheritableEntry = CS.namespace + "inheritableEntry";
-    CS.name = CS.namespace + "name";
-    CS.parentRole = CS.namespace + "parentRole";
-    CS.password = CS.namespace + "password";
-    CS.permission = CS.namespace + "permission";
-    CS.rootContainer = CS.namespace + "rootContainer";
-    CS.subject = CS.namespace + "subject";
-    CS.subjectClass = CS.namespace + "subjectClass";
-    CS.ticketKey = CS.namespace + "ticketKey";
-    CS.tokenKey = CS.namespace + "tokenKey";
-    CS.user = CS.namespace + "user";
-})(CS = exports.CS || (exports.CS = {}));
+exports.CS = {
+    namespace: "https://carbonldp.com/ns/v1/security#",
+    AccessControlEntry: "https://carbonldp.com/ns/v1/security#AccessControlEntry",
+    AccessControlList: "https://carbonldp.com/ns/v1/security#AccessControlList",
+    AllOrigins: "https://carbonldp.com/ns/v1/security#AllOrigins",
+    CreateAccessPoint: "https://carbonldp.com/ns/v1/security#CreateAccessPoint",
+    CreateChild: "https://carbonldp.com/ns/v1/security#CreateChild",
+    Credentials: "https://carbonldp.com/ns/v1/security#Credentials",
+    Delete: "https://carbonldp.com/ns/v1/security#Delete",
+    Download: "https://carbonldp.com/ns/v1/security#Download",
+    Extend: "https://carbonldp.com/ns/v1/security#Extend",
+    ManageSecurity: "https://carbonldp.com/ns/v1/security#ManageSecurity",
+    ProtectedDocument: "https://carbonldp.com/ns/v1/security#ProtectedDocument",
+    Read: "https://carbonldp.com/ns/v1/security#Read",
+    RemoveMember: "https://carbonldp.com/ns/v1/security#RemoveMember",
+    Role: "https://carbonldp.com/ns/v1/security#Role",
+    Ticket: "https://carbonldp.com/ns/v1/security#Ticket",
+    Token: "https://carbonldp.com/ns/v1/security#Token",
+    Update: "https://carbonldp.com/ns/v1/security#Update",
+    Upload: "https://carbonldp.com/ns/v1/security#Upload",
+    User: "https://carbonldp.com/ns/v1/security#User",
+    accessControlEntry: "https://carbonldp.com/ns/v1/security#accessControlEntry",
+    accessControlList: "https://carbonldp.com/ns/v1/security#accessControlList",
+    accessTo: "https://carbonldp.com/ns/v1/security#accessTo",
+    allowsOrigin: "https://carbonldp.com/ns/v1/security#allowsOrigin",
+    childRole: "https://carbonldp.com/ns/v1/security#childRole",
+    credentials: "https://carbonldp.com/ns/v1/security#credentials",
+    credentialsOf: "https://carbonldp.com/ns/v1/security#credentialsOf",
+    description: "https://carbonldp.com/ns/v1/security#description",
+    enabled: "https://carbonldp.com/ns/v1/security#enabled",
+    expirationTime: "https://carbonldp.com/ns/v1/security#expirationTime",
+    forIRI: "https://carbonldp.com/ns/v1/security#forIRI",
+    granting: "https://carbonldp.com/ns/v1/security#granting",
+    inheritableEntry: "https://carbonldp.com/ns/v1/security#inheritableEntry",
+    name: "https://carbonldp.com/ns/v1/security#name",
+    parentRole: "https://carbonldp.com/ns/v1/security#parentRole",
+    password: "https://carbonldp.com/ns/v1/security#password",
+    permission: "https://carbonldp.com/ns/v1/security#permission",
+    rootContainer: "https://carbonldp.com/ns/v1/security#rootContainer",
+    subject: "https://carbonldp.com/ns/v1/security#subject",
+    subjectClass: "https://carbonldp.com/ns/v1/security#subjectClass",
+    ticketKey: "https://carbonldp.com/ns/v1/security#ticketKey",
+    tokenKey: "https://carbonldp.com/ns/v1/security#tokenKey",
+    user: "https://carbonldp.com/ns/v1/security#user",
+};
 
 
 /***/ }),
@@ -3867,37 +3864,36 @@ addErrors(ServerErrors);
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var LDP;
-(function (LDP) {
-    LDP.namespace = "http://www.w3.org/ns/ldp#";
-    LDP.Ascending = LDP.namespace + "Ascending";
-    LDP.BasicContainer = LDP.namespace + "BasicContainer";
-    LDP.Container = LDP.namespace + "Container";
-    LDP.Descending = LDP.namespace + "Descending";
-    LDP.DirectContainer = LDP.namespace + "DirectContainer";
-    LDP.IndirectContainer = LDP.namespace + "IndirectContainer";
-    LDP.RDFSource = LDP.namespace + "RDFSource";
-    LDP.Resource = LDP.namespace + "Resource";
-    LDP.MemberSubject = LDP.namespace + "MemberSubject";
-    LDP.NonRDFSource = LDP.namespace + "NonRDFSource";
-    LDP.Page = LDP.namespace + "Page";
-    LDP.PageSortCriterion = LDP.namespace + "PageSortCriterion";
-    LDP.PreferContainment = LDP.namespace + "PreferContainment";
-    LDP.PreferEmptyContainer = LDP.namespace + "PreferEmptyContainer";
-    LDP.PreferMembership = LDP.namespace + "PreferMembership";
-    LDP.PreferMinimalContainer = LDP.namespace + "PreferMinimalContainer";
-    LDP.constrainedBy = LDP.namespace + "constrainedBy";
-    LDP.contains = LDP.namespace + "contains";
-    LDP.hasMemberRelation = LDP.namespace + "hasMemberRelation";
-    LDP.insertedContentRelation = LDP.namespace + "insertedContentRelation";
-    LDP.isMemberOfRelation = LDP.namespace + "isMemberOfRelation";
-    LDP.member = LDP.namespace + "member";
-    LDP.membershipResource = LDP.namespace + "membershipResource";
-    LDP.pageSequence = LDP.namespace + "pageSequence";
-    LDP.pageSortCollation = LDP.namespace + "pageSortCollation";
-    LDP.pageSortCriteria = LDP.namespace + "pageSortCriteria";
-    LDP.pageSortOrder = LDP.namespace + "pageSortOrder";
-})(LDP = exports.LDP || (exports.LDP = {}));
+exports.LDP = {
+    namespace: "http://www.w3.org/ns/ldp#",
+    Ascending: "http://www.w3.org/ns/ldp#Ascending",
+    BasicContainer: "http://www.w3.org/ns/ldp#BasicContainer",
+    Container: "http://www.w3.org/ns/ldp#Container",
+    Descending: "http://www.w3.org/ns/ldp#Descending",
+    DirectContainer: "http://www.w3.org/ns/ldp#DirectContainer",
+    IndirectContainer: "http://www.w3.org/ns/ldp#IndirectContainer",
+    RDFSource: "http://www.w3.org/ns/ldp#RDFSource",
+    Resource: "http://www.w3.org/ns/ldp#Resource",
+    MemberSubject: "http://www.w3.org/ns/ldp#MemberSubject",
+    NonRDFSource: "http://www.w3.org/ns/ldp#NonRDFSource",
+    Page: "http://www.w3.org/ns/ldp#Page",
+    PageSortCriterion: "http://www.w3.org/ns/ldp#PageSortCriterion",
+    PreferContainment: "http://www.w3.org/ns/ldp#PreferContainment",
+    PreferEmptyContainer: "http://www.w3.org/ns/ldp#PreferEmptyContainer",
+    PreferMembership: "http://www.w3.org/ns/ldp#PreferMembership",
+    PreferMinimalContainer: "http://www.w3.org/ns/ldp#PreferMinimalContainer",
+    constrainedBy: "http://www.w3.org/ns/ldp#constrainedBy",
+    contains: "http://www.w3.org/ns/ldp#contains",
+    hasMemberRelation: "http://www.w3.org/ns/ldp#hasMemberRelation",
+    insertedContentRelation: "http://www.w3.org/ns/ldp#insertedContentRelation",
+    isMemberOfRelation: "http://www.w3.org/ns/ldp#isMemberOfRelation",
+    member: "http://www.w3.org/ns/ldp#member",
+    membershipResource: "http://www.w3.org/ns/ldp#membershipResource",
+    pageSequence: "http://www.w3.org/ns/ldp#pageSequence",
+    pageSortCollation: "http://www.w3.org/ns/ldp#pageSortCollation",
+    pageSortCriteria: "http://www.w3.org/ns/ldp#pageSortCriteria",
+    pageSortOrder: "http://www.w3.org/ns/ldp#pageSortOrder",
+};
 
 
 /***/ }),
@@ -8057,23 +8053,22 @@ exports.default = exports.MemberDetails;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var SHACL;
-(function (SHACL) {
-    SHACL.namespace = "http://www.w3.org/ns/shacl#";
-    SHACL.ValidationReport = SHACL.namespace + "ValidationReport";
-    SHACL.ValidationResult = SHACL.namespace + "ValidationResult";
-    SHACL.conforms = SHACL.namespace + "conforms";
-    SHACL.detail = SHACL.namespace + "detail";
-    SHACL.focusNode = SHACL.namespace + "focusNode";
-    SHACL.result = SHACL.namespace + "result";
-    SHACL.resultMessage = SHACL.namespace + "resultMessage";
-    SHACL.resultPath = SHACL.namespace + "resultPath";
-    SHACL.resultSeverity = SHACL.namespace + "resultSeverity";
-    SHACL.shapesGraphWellFormed = SHACL.namespace + "shapesGraphWellFormed";
-    SHACL.sourceConstraintComponent = SHACL.namespace + "sourceConstraintComponent";
-    SHACL.sourceShape = SHACL.namespace + "sourceShape";
-    SHACL.value = SHACL.namespace + "value";
-})(SHACL = exports.SHACL || (exports.SHACL = {}));
+exports.SHACL = {
+    namespace: "http://www.w3.org/ns/shacl#",
+    ValidationReport: "http://www.w3.org/ns/shacl#ValidationReport",
+    ValidationResult: "http://www.w3.org/ns/shacl#ValidationResult",
+    conforms: "http://www.w3.org/ns/shacl#conforms",
+    detail: "http://www.w3.org/ns/shacl#detail",
+    focusNode: "http://www.w3.org/ns/shacl#focusNode",
+    result: "http://www.w3.org/ns/shacl#result",
+    resultMessage: "http://www.w3.org/ns/shacl#resultMessage",
+    resultPath: "http://www.w3.org/ns/shacl#resultPath",
+    resultSeverity: "http://www.w3.org/ns/shacl#resultSeverity",
+    shapesGraphWellFormed: "http://www.w3.org/ns/shacl#shapesGraphWellFormed",
+    sourceConstraintComponent: "http://www.w3.org/ns/shacl#sourceConstraintComponent",
+    sourceShape: "http://www.w3.org/ns/shacl#sourceShape",
+    value: "http://www.w3.org/ns/shacl#value",
+};
 
 
 /***/ }),
@@ -9483,11 +9478,10 @@ exports.Factory = Factory;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var VCARD;
-(function (VCARD) {
-    VCARD.namespace = "http://www.w3.org/2001/vcard-rdf/3.0#";
-    VCARD.email = VCARD.namespace + "email";
-})(VCARD = exports.VCARD || (exports.VCARD = {}));
+exports.VCARD = {
+    namespace: "http://www.w3.org/2001/vcard-rdf/3.0#",
+    email: "http://www.w3.org/2001/vcard-rdf/3.0#email",
+};
 
 
 /***/ }),
@@ -22197,11 +22191,10 @@ __export(__webpack_require__(6));
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var RDF;
-(function (RDF) {
-    RDF.namespace = "http://www.w3.org/1999/02/22-rdf-syntax-ns#";
-    RDF.type = RDF.namespace + "type";
-})(RDF = exports.RDF || (exports.RDF = {}));
+exports.RDF = {
+    namespace: "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+    type: "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+};
 
 
 /***/ })
