@@ -4,7 +4,7 @@ import { PersistedDocument } from "../PersistedDocument";
 import * as Utils from "../Utils";
 import { C } from "../Vocabularies/C";
 import { XSD } from "../Vocabularies/XSD";
-import { CarbonMap } from "./CarbonMap";
+import { Map } from "./Map";
 import { VolatileResource } from "./VolatileResource";
 import { ModelFactory } from "../ModelFactory";
 import { ModelDecorator } from "../ModelDecorator";
@@ -12,7 +12,7 @@ import { ModelDecorator } from "../ModelDecorator";
 export interface DocumentMetadata extends VolatileResource {
 	relatedDocument:PersistedDocument;
 	eTag?:string;
-	bNodesMap?:CarbonMap<BlankNode, BlankNode>;
+	bNodesMap?:Map<BlankNode, BlankNode>;
 }
 
 

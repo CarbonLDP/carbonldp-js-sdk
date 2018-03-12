@@ -3,11 +3,11 @@ import { ObjectSchema } from "../ObjectSchema";
 import { Resource } from "../Resource";
 import { C } from "../Vocabularies/C";
 import { XSD } from "../Vocabularies/XSD";
-import { CarbonError } from "./CarbonError";
+import { Error } from "./Error";
 
 
 export interface ErrorResponse extends Resource {
-	errors:CarbonError[];
+	errors:Error[];
 	requestID:string;
 	statusCode:number;
 }

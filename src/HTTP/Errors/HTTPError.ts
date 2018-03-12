@@ -1,5 +1,5 @@
 import { AbstractError } from "../../Errors";
-import { CarbonError } from "../../LDP/CarbonError";
+import { Error } from "../../LDP/Error";
 import { ErrorResponse } from "../../LDP/ErrorResponse";
 import { PersistedDocument } from "../../PersistedDocument";
 import { Resource } from "../../Resource";
@@ -14,7 +14,7 @@ export class HTTPError extends AbstractError implements ErrorResponse {
 	_resolved:boolean;
 
 	id:string;
-	errors:CarbonError[];
+	errors:Error[];
 	requestID:string;
 	response:Response;
 	statusCode:number;

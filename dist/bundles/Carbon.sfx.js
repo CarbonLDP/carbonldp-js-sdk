@@ -8291,9 +8291,9 @@ var Document_1 = __webpack_require__(21);
 var Documents_1 = __webpack_require__(118);
 var Errors = __importStar(__webpack_require__(9));
 var AddMemberAction_1 = __webpack_require__(77);
-var CarbonError_1 = __webpack_require__(164);
-var CarbonMap_1 = __webpack_require__(165);
-var CarbonMapEntry_1 = __webpack_require__(166);
+var Error_1 = __webpack_require__(164);
+var Map_1 = __webpack_require__(165);
+var MapEntry_1 = __webpack_require__(166);
 var DocumentMetadata_1 = __webpack_require__(167);
 var ErrorResponse_1 = __webpack_require__(78);
 var RemoveMemberAction_1 = __webpack_require__(79);
@@ -8446,9 +8446,9 @@ var SDKContext = (function () {
         this.extendObjectSchema(ProtectedDocument_1.ProtectedDocument.TYPE, ProtectedDocument_1.ProtectedDocument.SCHEMA);
         this.extendObjectSchema(PlatformMetadata_1.PlatformMetadata.TYPE, PlatformMetadata_1.PlatformMetadata.SCHEMA);
         this.extendObjectSchema(AddMemberAction_1.AddMemberAction.TYPE, AddMemberAction_1.AddMemberAction.SCHEMA);
-        this.extendObjectSchema(CarbonError_1.CarbonError.TYPE, CarbonError_1.CarbonError.SCHEMA);
-        this.extendObjectSchema(CarbonMap_1.CarbonMap.TYPE, CarbonMap_1.CarbonMap.SCHEMA);
-        this.extendObjectSchema(CarbonMapEntry_1.CarbonMapEntry.SCHEMA);
+        this.extendObjectSchema(Error_1.Error.TYPE, Error_1.Error.SCHEMA);
+        this.extendObjectSchema(Map_1.Map.TYPE, Map_1.Map.SCHEMA);
+        this.extendObjectSchema(MapEntry_1.MapEntry.SCHEMA);
         this.extendObjectSchema(DocumentMetadata_1.DocumentMetadata.TYPE, DocumentMetadata_1.DocumentMetadata.SCHEMA);
         this.extendObjectSchema(ErrorResponse_1.ErrorResponse.TYPE, ErrorResponse_1.ErrorResponse.SCHEMA);
         this.extendObjectSchema(RemoveMemberAction_1.RemoveMemberAction.TYPE, RemoveMemberAction_1.RemoveMemberAction.SCHEMA);
@@ -14290,11 +14290,11 @@ var SCHEMA = {
         "@type": "@id",
     },
 };
-exports.CarbonError = {
+exports.Error = {
     TYPE: C_1.C.Error,
     SCHEMA: SCHEMA,
 };
-exports.default = exports.CarbonError;
+exports.default = exports.Error;
 
 
 /***/ }),
@@ -14313,16 +14313,16 @@ var SCHEMA = {
         "@container": "@set",
     },
 };
-exports.CarbonMap = {
+exports.Map = {
     TYPE: C_1.C.Map,
     SCHEMA: SCHEMA,
     is: function (object) {
         return Resource_1.Resource.is(object)
-            && object.hasType(exports.CarbonMap.TYPE)
+            && object.hasType(exports.Map.TYPE)
             && object.hasOwnProperty("entries");
     },
 };
-exports.default = exports.CarbonMap;
+exports.default = exports.Map;
 
 
 /***/ }),
@@ -14341,10 +14341,10 @@ var SCHEMA = {
         "@id": C_1.C.entryValue,
     },
 };
-exports.CarbonMapEntry = {
+exports.MapEntry = {
     SCHEMA: SCHEMA,
 };
-exports.default = exports.CarbonMapEntry;
+exports.default = exports.MapEntry;
 
 
 /***/ }),
