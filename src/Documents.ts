@@ -223,6 +223,36 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 		return this.pointers.delete( localID );
 	}
 
+	register<T extends object>( rdfDocument:RDFDocument ):T & PersistedDocument;
+	register<T extends object>( id:string, types?:string[] ):T & PersistedDocument;
+	register<T extends object>( rdfDocumentOrID:RDFDocument | string, types?:string[] ):T & PersistedDocument {
+		let id:string = Utils.isString( rdfDocumentOrID ) ? rdfDocumentOrID : void 0;
+		const rdfDocument:RDFDocument = RDFDocument.is( rdfDocumentOrID ) ? rdfDocumentOrID : void 0;
+
+		if( rdfDocument ) {
+			const [ documentResource ] = RDFDocument.getDocumentResources( rdfDocument );
+			if( ! documentResource ) throw new Errors.IllegalArgumentError( "The RDF Document must contain a valid document resource." );
+
+			id = RDFNode.getID( documentResource );
+			types = RDFNode.getTypes( documentResource );
+		}
+
+		const pointerID:string = this.getPointerID( id );
+		if( ! pointerID ) throw new Errors.IllegalArgumentError( `Cannot register a document outside the scope of this documents instance.` );
+
+		const persistedDocument:PersistedDocument = rdfDocument ?
+			new JSONLDCompacter( this ).compactDocument( rdfDocument ) :
+			PersistedDocument.decorate( this.getPointer( pointerID ), this )
+		;
+
+		if( types ) types
+			.map( type => this.documentDecorators.get( type ) )
+			.forEach( decorator => decorator && decorator.call( void 0, persistedDocument, this ) );
+
+		return persistedDocument as T & PersistedDocument;
+	}
+
+
 	get<T extends object>( uri:string, requestOptions?:GETOptions, queryBuilderFn?:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<[ T & PersistedDocument, Response ]>;
 	get<T extends object>( uri:string, queryBuilderFn?:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<[ T & PersistedDocument, Response ]>;
 	get<T extends object>( uri:string, optionsOrQueryBuilderFn:any, queryBuilderFn?:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<[ T & PersistedDocument, Response ]> {

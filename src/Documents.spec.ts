@@ -47,6 +47,7 @@ import { PersistedDocument } from "./PersistedDocument";
 import { PersistedNamedFragment } from "./PersistedNamedFragment";
 import { PersistedResource } from "./PersistedResource";
 import { Pointer } from "./Pointer";
+import { RDFDocument } from "./RDF/Document";
 import { ContextSettings } from "./Settings";
 import * as SPARQL from "./SPARQL";
 import { PartialMetadata } from "./SPARQL/QueryDocument/PartialMetadata";
@@ -693,6 +694,331 @@ describe( module( "carbonldp/Documents" ), ():void => {
 			} );
 
 		} );
+
+
+		describe( method( INSTANCE, "register" ), ():void => {
+
+			it( hasSignature(
+				[ "T extends object" ],
+				"Register and converts the RDF Document data into a PersistedDocument.",
+				[
+					{ name: "rdfDocument", type: "CarbonLDP.RDF.RDFDocument" },
+				],
+				{ type: "T & CarbonLDP.PersistedDocument" }
+			), ():void => {} );
+
+			it( hasSignature(
+				[ "T extends object" ],
+				"Register an empty PersistedDocument with the provided id and decorate it with the types provided.",
+				[
+					{ name: "id", type: "string" },
+					{ name: "types", type: "string[]", optional: true },
+				],
+				{ type: "T & CarbonLDP.PersistedDocument" }
+			), ():void => {} );
+
+			let context:AbstractContext;
+			beforeEach( ():void => {
+				context = new class extends AbstractContext {
+					protected _baseURI:string = "https://example.com/";
+				};
+			} );
+
+			it( "should exist", ():void => {
+				expect( Documents.prototype.register ).toBeDefined();
+				expect( Documents.prototype.register ).toEqual( jasmine.any( Function ) );
+			} );
+
+
+			it( "should throw error when id is out scope", ():void => {
+				const documents:Documents = new Documents( context );
+
+				expect( () => documents.register( "https://not-example.com/document/" ) ).toThrowError( Errors.IllegalArgumentError, "Cannot register a document outside the scope of this documents instance." );
+			} );
+
+			it( "should throw error when @id of RDFDocument is out scope", ():void => {
+				const documents:Documents = new Documents( context );
+
+				const rdfDocument:RDFDocument = {
+					"@id": "https://not-example.com/document/",
+					"@graph": [ { "@id": "https://not-example.com/document/" } ],
+				};
+				expect( () => documents.register( rdfDocument ) ).toThrowError( Errors.IllegalArgumentError, "Cannot register a document outside the scope of this documents instance." );
+			} );
+
+			it( "should throw error when no document resource in RDFDocument", ():void => {
+				const documents:Documents = new Documents( context );
+
+				const rdfDocument:RDFDocument = {
+					"@id": "https://example.com/document/",
+					"@graph": [],
+				};
+				expect( () => documents.register( rdfDocument ) ).toThrowError( Errors.IllegalArgumentError, "The RDF Document must contain a valid document resource." );
+			} );
+
+
+			it( "should return empty PersistedDocument when only id string", ():void => {
+				const documents:Documents = new Documents( context );
+
+				const returned:PersistedDocument = documents.register( "https://example.com/document/" );
+
+				expect( PersistedDocument.is( returned ) ).toBe( true );
+				expect( returned ).toEqual( jasmine.objectContaining( {
+					id: "https://example.com/document/",
+				} ) );
+
+				expect( returned as Partial<PersistedDocument> ).toEqual( {} );
+			} );
+
+			it( "should return empty PersistedDocument when id string and a type", ():void => {
+				const documents:Documents = new Documents( context );
+
+				interface TestDocument {
+					decorated:boolean;
+
+					aFunction():void;
+				}
+
+				documents.documentDecorators.set( "https://example.com/ns#TestDocument", ( object ):TestDocument => {
+					return Object.assign( object, {
+						decorated: true,
+						aFunction():void {},
+					} );
+				} );
+
+				const returned:TestDocument & PersistedDocument = documents
+					.register<TestDocument>( "https://example.com/document/", [ "https://example.com/ns#TestDocument" ] );
+
+				expect( PersistedDocument.is( returned ) ).toBe( true );
+				expect( returned ).toEqual( jasmine.objectContaining( {
+					id: "https://example.com/document/",
+				} ) );
+
+				expect( returned as TestDocument ).toEqual( {
+					decorated: true,
+					aFunction: jasmine.any( Function ),
+				} );
+			} );
+
+			it( "should return existing PersistedDocument when id string and decorated with the type", ():void => {
+				const documents:Documents = new Documents( context );
+
+				interface ExistingDocument {
+					alreadyExists:boolean;
+
+					alreadyFunction():void;
+				}
+
+				const existingDoc:ExistingDocument = Object.assign(
+					documents.getPointer( "https://example.com/document/" ), {
+						alreadyExists: true,
+						alreadyFunction():void {},
+					}
+				);
+
+
+				interface TestDocument {
+					decorated:boolean;
+
+					aFunction():void;
+				}
+
+				type ExistingTestDocument = ExistingDocument & TestDocument;
+
+				documents.documentDecorators.set( "https://example.com/ns#TestDocument", ( object ):TestDocument => {
+					return Object.assign( object, {
+						decorated: true,
+						aFunction():void {},
+					} );
+				} );
+
+				const returned:ExistingTestDocument & PersistedDocument = documents
+					.register<ExistingTestDocument>( "https://example.com/document/", [ "https://example.com/ns#TestDocument" ] );
+
+				expect( PersistedDocument.is( returned ) ).toBe( true );
+				expect( returned ).toEqual( jasmine.objectContaining( {
+					id: "https://example.com/document/",
+				} ) );
+
+				expect( returned as ExistingTestDocument ).toEqual( {
+					alreadyExists: true,
+					alreadyFunction: jasmine.any( Function ),
+
+					decorated: true,
+					aFunction: jasmine.any( Function ),
+				} );
+
+				expect( existingDoc ).toBe( returned );
+			} );
+
+
+			it( "should return filled PersistedDocument when RDFDocument", ():void => {
+				context.extendObjectSchema( "https://example.com/ns#TestDocument", {
+					"isTestDocument": {
+						"@id": "https://example.com/ns#isTestDocument",
+						"@type": "boolean",
+					},
+				} );
+
+				interface TestDocument {
+					isTestDocument:true;
+				}
+
+				const documents:Documents = new Documents( context );
+
+				const returned:TestDocument & PersistedDocument = documents.register<TestDocument>( {
+					"@id": "https://example.com/document/",
+					"@graph": [
+						{
+							"@id": "https://example.com/document/",
+							"@type": [ "https://example.com/ns#TestDocument" ],
+							"https://example.com/ns#isTestDocument": [ {
+								"@value": "true",
+								"@type": XSD.boolean,
+							} ],
+						},
+					],
+				} );
+
+				expect( PersistedDocument.is( returned ) ).toBe( true );
+				expect( returned ).toEqual( jasmine.objectContaining( {
+					id: "https://example.com/document/",
+				} ) );
+
+				expect( returned as TestDocument ).toEqual( {
+					isTestDocument: true,
+				} );
+			} );
+
+			it( "should return filled and decorated PersistedDocument when RDFDocument", ():void => {
+				context.extendObjectSchema( "https://example.com/ns#TestDocument", {
+					"isTestDocument": {
+						"@id": "https://example.com/ns#isTestDocument",
+						"@type": "boolean",
+					},
+				} );
+
+				interface TestDocument {
+					isTestDocument?:true;
+					decorated:boolean;
+
+					aFunction():void;
+				}
+
+				const documents:Documents = new Documents( context );
+
+				documents.documentDecorators.set( "https://example.com/ns#TestDocument", ( object ):TestDocument => {
+					return Object.assign( object, {
+						decorated: true,
+						aFunction():void {},
+					} );
+				} );
+
+
+				const returned:TestDocument & PersistedDocument = documents.register<TestDocument>( {
+					"@id": "https://example.com/document/",
+					"@graph": [
+						{
+							"@id": "https://example.com/document/",
+							"@type": [ "https://example.com/ns#TestDocument" ],
+							"https://example.com/ns#isTestDocument": [ {
+								"@value": "true",
+								"@type": XSD.boolean,
+							} ],
+						},
+					],
+				} );
+
+
+				expect( PersistedDocument.is( returned ) ).toBe( true );
+				expect( returned ).toEqual( jasmine.objectContaining( {
+					id: "https://example.com/document/",
+				} ) );
+
+				expect( returned as TestDocument ).toEqual( {
+					isTestDocument: true,
+					decorated: true,
+					aFunction: jasmine.any( Function ),
+				} );
+			} );
+
+			it( "should return existing PersistedDocument with extra data when RDFDocument", ():void => {
+				context.extendObjectSchema( "https://example.com/ns#TestDocument", {
+					"isTestDocument": {
+						"@id": "https://example.com/ns#isTestDocument",
+						"@type": "boolean",
+					},
+				} );
+
+				interface TestDocument {
+					isTestDocument?:true;
+					decorated:boolean;
+
+					aFunction():void;
+				}
+
+				const documents:Documents = new Documents( context );
+
+
+				interface ExistingDocument {
+					alreadyExists:boolean;
+
+					alreadyFunction():void;
+				}
+
+				const existingDoc:ExistingDocument = Object.assign(
+					documents.getPointer( "https://example.com/document/" ), {
+						_partialMetadata: {} as any,
+						alreadyExists: true,
+						alreadyFunction():void {},
+					}
+				);
+
+				documents.documentDecorators.set( "https://example.com/ns#TestDocument", ( object ):TestDocument => {
+					return Object.assign( object, {
+						decorated: true,
+						aFunction():void {},
+					} );
+				} );
+
+
+				type ExistingTestDocument = ExistingDocument & TestDocument;
+
+				const returned:ExistingTestDocument & PersistedDocument = documents.register<ExistingTestDocument>( {
+					"@id": "https://example.com/document/",
+					"@graph": [
+						{
+							"@id": "https://example.com/document/",
+							"@type": [ "https://example.com/ns#TestDocument" ],
+							"https://example.com/ns#isTestDocument": [ {
+								"@value": "true",
+								"@type": XSD.boolean,
+							} ],
+						},
+					],
+				} );
+
+
+				expect( PersistedDocument.is( returned ) ).toBe( true );
+				expect( returned ).toEqual( jasmine.objectContaining( {
+					id: "https://example.com/document/",
+				} ) );
+
+				expect( returned as ExistingTestDocument ).toEqual( {
+					alreadyExists: true,
+					alreadyFunction: jasmine.any( Function ),
+
+					isTestDocument: true,
+
+					decorated: true,
+					aFunction: jasmine.any( Function ),
+				} );
+
+				expect( existingDoc ).toBe( returned );
+			} );
+
+		} );
+
 
 		describe( method( INSTANCE, "get" ), ():void => {
 
