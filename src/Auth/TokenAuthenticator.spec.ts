@@ -25,7 +25,7 @@ import * as TokenAuthenticator from "./TokenAuthenticator";
 import DefaultExport from "./TokenAuthenticator";
 
 import * as TokenCredentials from "./TokenCredentials";
-import UsernameAndPasswordToken from "./UsernameAndPasswordToken";
+import { UsernameAndPasswordToken } from "./UsernameAndPasswordToken";
 
 describe( module( "carbonldp/Auth/TokenAuthenticator" ), ():void => {
 
@@ -43,7 +43,7 @@ describe( module( "carbonldp/Auth/TokenAuthenticator" ), ():void => {
 		"CarbonLDP.Auth.TokenAuthenticator.Class",
 		"Authenticates requests using JSON Web TokenCredentials (JWT) Authentication.",
 		[
-			"CarbonLDP.Auth.Authenticator.Class<CarbonLDP.Auth.UsernameAndPasswordToken.Class, CarbonLDP.Auth.TokenCredentials.Class>",
+			"CarbonLDP.Auth.Authenticator<CarbonLDP.Auth.UsernameAndPasswordToken, CarbonLDP.Auth.TokenCredentials.Class>",
 		]
 	), ():void => {
 

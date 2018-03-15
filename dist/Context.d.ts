@@ -1,8 +1,8 @@
-import Auth from "./Auth";
+import { AuthService } from "./Auth/Service";
 import { Documents } from "./Documents";
 import * as ObjectSchema from "./ObjectSchema";
 export interface Context {
-    auth: Auth;
+    auth: AuthService;
     documents: Documents;
     readonly baseURI: string;
     readonly parentContext: Context;

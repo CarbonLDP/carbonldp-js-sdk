@@ -2,7 +2,7 @@ import { IllegalStateError } from "../Errors";
 import { Header } from "../HTTP/Header";
 import { RequestOptions } from "../HTTP/Request";
 
-export abstract class Class<T extends object, W extends object> {
+export abstract class Authenticator<T extends object, W extends object> {
 
 	protected abstract credentials:W;
 
@@ -24,15 +24,11 @@ export abstract class Class<T extends object, W extends object> {
 
 		if( headers.has( "authorization" ) ) return requestOptions;
 
-		const header:Header = new Header();
-		headers.set( "authorization", header );
-
-		header.values.push( this.getHeaderValue() );
+		const strAuthHeader:string = this.getHeaderValue();
+		headers.set( "authorization", new Header( [ strAuthHeader ] ) );
 
 		return requestOptions;
 	}
 
 	protected abstract getHeaderValue():string;
 }
-
-export default Class;

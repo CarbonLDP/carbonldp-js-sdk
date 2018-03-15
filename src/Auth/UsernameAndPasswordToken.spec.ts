@@ -1,46 +1,35 @@
 import {
-	INSTANCE,
-
-	module,
 	clazz,
-
-	isDefined,
 	hasConstructor,
 	hasProperty,
-	hasDefaultExport,
-} from "./../test/JasmineExtender";
+	INSTANCE,
+	isDefined,
+	module,
+} from "../test/JasmineExtender";
 import * as Utils from "./../Utils";
 
-import * as UsernameAndPasswordToken from "./UsernameAndPasswordToken";
-import DefaultExport from "./UsernameAndPasswordToken";
+import { UsernameAndPasswordToken } from "./UsernameAndPasswordToken";
 
 describe( module( "carbonldp/Auth/UsernameAndPasswordToken" ), ():void => {
 
-	it( isDefined(), ():void => {
-		expect( UsernameAndPasswordToken ).toBeDefined();
-		expect( Utils.isObject( UsernameAndPasswordToken ) ).toBe( true );
-	} );
-
 	describe( clazz(
-		"CarbonLDP.Auth.UsernameAndPasswordToken.Class",
-		"Wrapper to manage an Authentication Token in form of Username/Password.", [
-			"CarbonLDP.Auth.AuthenticationToken.Class",
-		]
+		"CarbonLDP.Auth.UsernameAndPasswordToken",
+		"Wrapper to manage an Authentication Token in form of Username/Password."
 	), ():void => {
 
 		it( isDefined(), ():void => {
-			expect( UsernameAndPasswordToken.Class ).toBeDefined();
-			expect( Utils.isFunction( UsernameAndPasswordToken.Class ) ).toBe( true );
+			expect( UsernameAndPasswordToken ).toBeDefined();
+			expect( UsernameAndPasswordToken ).toEqual( jasmine.any( Function ) );
 		} );
 
 		it( hasConstructor( [
-			{name: "username", type: "string"},
-			{name: "password", type: "string"},
+			{ name: "username", type: "string" },
+			{ name: "password", type: "string" },
 		] ), ():void => {
-			let token:UsernameAndPasswordToken.Class = new UsernameAndPasswordToken.Class( "myUserName", "myPassword" );
+			let token:UsernameAndPasswordToken = new UsernameAndPasswordToken( "myUserName", "myPassword" );
 
 			expect( token ).toBeTruthy();
-			expect( token instanceof UsernameAndPasswordToken.Class ).toBe( true );
+			expect( token instanceof UsernameAndPasswordToken ).toBe( true );
 		} );
 
 		it( hasProperty(
@@ -48,7 +37,7 @@ describe( module( "carbonldp/Auth/UsernameAndPasswordToken" ), ():void => {
 			"username",
 			"string"
 		), ():void => {
-			let token:UsernameAndPasswordToken.Class = new UsernameAndPasswordToken.Class( "myUserName", "myPassword" );
+			let token:UsernameAndPasswordToken = new UsernameAndPasswordToken( "myUserName", "myPassword" );
 
 			expect( token.username ).toBeDefined();
 			expect( Utils.isString( token.username ) ).toBe( true );
@@ -61,7 +50,7 @@ describe( module( "carbonldp/Auth/UsernameAndPasswordToken" ), ():void => {
 			"password",
 			"string"
 		), ():void => {
-			let token:UsernameAndPasswordToken.Class = new UsernameAndPasswordToken.Class( "myUserName", "myPassword" );
+			let token:UsernameAndPasswordToken = new UsernameAndPasswordToken( "myUserName", "myPassword" );
 
 			expect( token.password ).toBeDefined();
 			expect( Utils.isString( token.password ) ).toBe( true );
@@ -69,11 +58,6 @@ describe( module( "carbonldp/Auth/UsernameAndPasswordToken" ), ():void => {
 			expect( token.password ).toBe( "myPassword" );
 		} );
 
-	} );
-
-	it( hasDefaultExport( "CarbonLDP.Auth.UsernameAndPasswordToken.Class" ), ():void => {
-		expect( DefaultExport ).toBeDefined();
-		expect( DefaultExport ).toBe( UsernameAndPasswordToken.Class );
 	} );
 
 } );

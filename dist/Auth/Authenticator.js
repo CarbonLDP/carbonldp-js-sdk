@@ -2,30 +2,28 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 var Errors_1 = require("../Errors");
 var Header_1 = require("../HTTP/Header");
-var Class = (function () {
-    function Class() {
+var Authenticator = (function () {
+    function Authenticator() {
     }
-    Class.prototype.isAuthenticated = function () {
+    Authenticator.prototype.isAuthenticated = function () {
         return !!this.credentials;
     };
-    Class.prototype.clearAuthentication = function () {
+    Authenticator.prototype.clearAuthentication = function () {
         this.credentials = null;
     };
-    Class.prototype.addAuthentication = function (requestOptions) {
+    Authenticator.prototype.addAuthentication = function (requestOptions) {
         if (!this.isAuthenticated())
             throw new Errors_1.IllegalStateError("The authenticator isn't authenticated.");
         var headers = requestOptions.headers ?
             requestOptions.headers : requestOptions.headers = new Map();
         if (headers.has("authorization"))
             return requestOptions;
-        var header = new Header_1.Header();
-        headers.set("authorization", header);
-        header.values.push(this.getHeaderValue());
+        var strAuthHeader = this.getHeaderValue();
+        headers.set("authorization", new Header_1.Header([strAuthHeader]));
         return requestOptions;
     };
-    return Class;
+    return Authenticator;
 }());
-exports.Class = Class;
-exports.default = Class;
+exports.Authenticator = Authenticator;
 
 //# sourceMappingURL=Authenticator.js.map

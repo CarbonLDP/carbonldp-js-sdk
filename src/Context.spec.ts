@@ -26,7 +26,7 @@ describe( module( "carbonldp/Context" ), ():void => {
 		it( hasProperty(
 			OBLIGATORY,
 			"auth",
-			"CarbonLDP.Auth.Class",
+			"CarbonLDP.Auth.AuthService",
 			"The authentication and authorization class of the context."
 		), ():void => {} );
 

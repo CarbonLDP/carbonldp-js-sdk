@@ -37,7 +37,7 @@ import {
 } from "./Utils";
 
 export class SDKContext implements Context {
-	auth:Auth.Class;
+	auth:Auth.AuthService;
 	documents:Documents;
 
 	get baseURI():string { return ""; }
@@ -53,7 +53,7 @@ export class SDKContext implements Context {
 		this.generalObjectSchema = new ObjectSchema.DigestedObjectSchema();
 		this.typeObjectSchemaMap = new Map<string, ObjectSchema.DigestedObjectSchema>();
 
-		this.auth = new Auth.Class( this );
+		this.auth = new Auth.AuthService( this );
 		this.documents = new Documents( this );
 
 		this.registerDefaultObjectSchemas();

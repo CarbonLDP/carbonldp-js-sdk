@@ -7,7 +7,6 @@ import {
 import {
 	clazz,
 	constructor,
-	hasDefaultExport,
 	hasSignature,
 	INSTANCE,
 	isDefined,
@@ -16,7 +15,6 @@ import {
 } from "../test/JasmineExtender";
 
 import * as Authenticator from "./Authenticator";
-import DefaultExport from "./Authenticator";
 
 describe( module( "carbonldp/Auth/Authenticator" ), ():void => {
 
@@ -26,7 +24,7 @@ describe( module( "carbonldp/Auth/Authenticator" ), ():void => {
 	} );
 
 	describe( clazz(
-		"CarbonLDP.Auth.Authenticator.Class", [
+		"CarbonLDP.Auth.Authenticator", [
 			"T extends object",
 			"W extends object",
 		],
@@ -34,13 +32,13 @@ describe( module( "carbonldp/Auth/Authenticator" ), ():void => {
 	), ():void => {
 
 		it( "should exists", ():void => {
-			expect( Authenticator.Class ).toBeDefined();
-			expect( Authenticator.Class ).toEqual( jasmine.any( Function ) );
+			expect( Authenticator.Authenticator ).toBeDefined();
+			expect( Authenticator.Authenticator ).toEqual( jasmine.any( Function ) );
 		} );
 
 
-		function createAuthenticatorWith( credentials?:object, header?:string ):Authenticator.Class<object, object> {
-			return new class extends Authenticator.Class<object, object> {
+		function createAuthenticatorWith( credentials?:object, header?:string ):Authenticator.Authenticator<object, object> {
+			return new class extends Authenticator.Authenticator<object, object> {
 
 				protected credentials:object = credentials;
 
@@ -57,10 +55,10 @@ describe( module( "carbonldp/Auth/Authenticator" ), ():void => {
 		describe( constructor(), ():void => {
 
 			it( "should be extensible", ():void => {
-				const authenticator:Authenticator.Class<object, object> = createAuthenticatorWith();
+				const authenticator:Authenticator.Authenticator<object, object> = createAuthenticatorWith();
 
 				expect( authenticator ).toBeDefined();
-				expect( authenticator ).toEqual( jasmine.any( Authenticator.Class ) );
+				expect( authenticator ).toEqual( jasmine.any( Authenticator.Authenticator ) );
 			} );
 
 		} );
@@ -73,22 +71,22 @@ describe( module( "carbonldp/Auth/Authenticator" ), ():void => {
 			), ():void => {} );
 
 			it( "should exists", ():void => {
-				expect( Authenticator.Class.prototype.isAuthenticated ).toBeDefined();
-				expect( Authenticator.Class.prototype.isAuthenticated ).toEqual( jasmine.any( Function ) );
+				expect( Authenticator.Authenticator.prototype.isAuthenticated ).toBeDefined();
+				expect( Authenticator.Authenticator.prototype.isAuthenticated ).toEqual( jasmine.any( Function ) );
 			} );
 
 			it( "should return false when no credentials", ():void => {
-				const authenticator:Authenticator.Class<object, object> = createAuthenticatorWith();
+				const authenticator:Authenticator.Authenticator<object, object> = createAuthenticatorWith();
 				expect( authenticator.isAuthenticated() ).toBe( false );
 			} );
 
 			it( "should return false when null credentials", ():void => {
-				const authenticator:Authenticator.Class<object, object> = createAuthenticatorWith( null );
+				const authenticator:Authenticator.Authenticator<object, object> = createAuthenticatorWith( null );
 				expect( authenticator.isAuthenticated() ).toBe( false );
 			} );
 
 			it( "should return true when credentials an object", ():void => {
-				const authenticator:Authenticator.Class<object, object> = createAuthenticatorWith( {} );
+				const authenticator:Authenticator.Authenticator<object, object> = createAuthenticatorWith( {} );
 				expect( authenticator.isAuthenticated() ).toBe( true );
 			} );
 
@@ -112,19 +110,19 @@ describe( module( "carbonldp/Auth/Authenticator" ), ():void => {
 			), ():void => {} );
 
 			it( "should exists", ():void => {
-				expect( Authenticator.Class.prototype.clearAuthentication ).toBeDefined();
-				expect( Authenticator.Class.prototype.clearAuthentication ).toEqual( jasmine.any( Function ) );
+				expect( Authenticator.Authenticator.prototype.clearAuthentication ).toBeDefined();
+				expect( Authenticator.Authenticator.prototype.clearAuthentication ).toEqual( jasmine.any( Function ) );
 			} );
 
 			it( "should clear when existing", ():void => {
-				const authenticator:Authenticator.Class<object, object> = createAuthenticatorWith( {} );
+				const authenticator:Authenticator.Authenticator<object, object> = createAuthenticatorWith( {} );
 
 				authenticator.clearAuthentication();
 				expect( authenticator.isAuthenticated() ).toBe( false );
 			} );
 
 			it( "should clear when non existing", ():void => {
-				const authenticator:Authenticator.Class<object, object> = createAuthenticatorWith();
+				const authenticator:Authenticator.Authenticator<object, object> = createAuthenticatorWith();
 
 				authenticator.clearAuthentication();
 				expect( authenticator.isAuthenticated() ).toBe( false );
@@ -142,17 +140,17 @@ describe( module( "carbonldp/Auth/Authenticator" ), ():void => {
 			), ():void => {} );
 
 			it( "should exists", ():void => {
-				expect( Authenticator.Class.prototype.addAuthentication ).toBeDefined();
-				expect( Authenticator.Class.prototype.addAuthentication ).toEqual( jasmine.any( Function ) );
+				expect( Authenticator.Authenticator.prototype.addAuthentication ).toBeDefined();
+				expect( Authenticator.Authenticator.prototype.addAuthentication ).toEqual( jasmine.any( Function ) );
 			} );
 
 			it( "should throw error if no authenticated", ():void => {
-				const authenticator:Authenticator.Class<object, object> = createAuthenticatorWith();
+				const authenticator:Authenticator.Authenticator<object, object> = createAuthenticatorWith();
 				expect( () => authenticator.addAuthentication( {} ) ).toThrowError( IllegalStateError, "The authenticator isn't authenticated." );
 			} );
 
 			it( "should options provided must be the same returned", ():void => {
-				const authenticator:Authenticator.Class<object, object> = createAuthenticatorWith( {} );
+				const authenticator:Authenticator.Authenticator<object, object> = createAuthenticatorWith( {} );
 
 				const options:RequestOptions = {};
 				const returned:RequestOptions = authenticator.addAuthentication( options );
@@ -161,7 +159,7 @@ describe( module( "carbonldp/Auth/Authenticator" ), ():void => {
 			} );
 
 			it( "should create headers map if not defined", ():void => {
-				const authenticator:Authenticator.Class<object, object> = createAuthenticatorWith( {} );
+				const authenticator:Authenticator.Authenticator<object, object> = createAuthenticatorWith( {} );
 
 				const options:RequestOptions = {};
 				authenticator.addAuthentication( options );
@@ -170,7 +168,7 @@ describe( module( "carbonldp/Auth/Authenticator" ), ():void => {
 			} );
 
 			it( "should create not replace headers map if defined", ():void => {
-				const authenticator:Authenticator.Class<object, object> = createAuthenticatorWith( {} );
+				const authenticator:Authenticator.Authenticator<object, object> = createAuthenticatorWith( {} );
 
 				const headers:RequestOptions[ "headers" ] = new Map();
 				const options:RequestOptions = { headers };
@@ -180,7 +178,7 @@ describe( module( "carbonldp/Auth/Authenticator" ), ():void => {
 			} );
 
 			it( "should not alter if authorization header exists", ():void => {
-				const authenticator:Authenticator.Class<object, object> = createAuthenticatorWith( {} );
+				const authenticator:Authenticator.Authenticator<object, object> = createAuthenticatorWith( {} );
 
 				const headers:RequestOptions[ "headers" ] = new Map( [
 					[ "authorization", new Header() ],
@@ -195,7 +193,7 @@ describe( module( "carbonldp/Auth/Authenticator" ), ():void => {
 			} );
 
 			it( "should call and add the header value `createHeaderValue`", ():void => {
-				const authenticator:Authenticator.Class<object, object> = createAuthenticatorWith( {} );
+				const authenticator:Authenticator.Authenticator<object, object> = createAuthenticatorWith( {} );
 
 				const spy:jasmine.Spy = spyOn( authenticator, "getHeaderValue" as any )
 					.and.returnValue( "value" );
@@ -211,11 +209,6 @@ describe( module( "carbonldp/Auth/Authenticator" ), ():void => {
 
 		} );
 
-	} );
-
-	it( hasDefaultExport( "CarbonLDP.Auth.Authenticator.Class" ), ():void => {
-		expect( DefaultExport ).toBeDefined();
-		expect( DefaultExport ).toBe( Authenticator.Class );
 	} );
 
 } );

@@ -16,9 +16,6 @@ var __importStar = (this && this.__importStar) || function (mod) {
     result["default"] = mod;
     return result;
 }
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-}
 Object.defineProperty(exports, "__esModule", { value: true });
 var Errors = __importStar(require("../Errors"));
 var Errors_1 = require("../HTTP/Errors");
@@ -29,8 +26,8 @@ var Document_1 = require("../RDF/Document");
 var Node_1 = require("../RDF/Node");
 var LDP_1 = require("../Vocabularies/LDP");
 var Utils = __importStar(require("./../Utils"));
-var Authenticator_1 = __importDefault(require("./Authenticator"));
-var BasicAuthenticator_1 = __importDefault(require("./BasicAuthenticator"));
+var Authenticator_1 = require("./Authenticator");
+var BasicAuthenticator_1 = require("./BasicAuthenticator");
 var TokenCredentials = __importStar(require("./TokenCredentials"));
 exports.TOKEN_CONTAINER = "auth-tokens/";
 var Class = (function (_super) {
@@ -62,7 +59,7 @@ var Class = (function (_super) {
         var _this = this;
         if (TokenCredentials.Factory.hasClassProperties(tokenOrCredentials))
             return Promise.resolve(tokenOrCredentials);
-        var basicAuthenticator = new BasicAuthenticator_1.default();
+        var basicAuthenticator = new BasicAuthenticator_1.BasicAuthenticator();
         return basicAuthenticator
             .authenticate(tokenOrCredentials)
             .then(function () {
@@ -100,7 +97,7 @@ var Class = (function (_super) {
             .catch(function (error) { return _this.context.documents._parseErrorResponse(error); });
     };
     return Class;
-}(Authenticator_1.default));
+}(Authenticator_1.Authenticator));
 exports.Class = Class;
 exports.default = Class;
 

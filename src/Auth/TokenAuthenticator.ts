@@ -15,14 +15,14 @@ import { RDFDocument } from "../RDF/Document";
 import { RDFNode } from "../RDF/Node";
 import { LDP } from "../Vocabularies/LDP";
 import * as Utils from "./../Utils";
-import Authenticator from "./Authenticator";
-import BasicAuthenticator from "./BasicAuthenticator";
+import { Authenticator } from "./Authenticator";
+import { BasicAuthenticator } from "./BasicAuthenticator";
 import * as TokenCredentials from "./TokenCredentials";
-import * as UsernameAndPasswordToken from "./UsernameAndPasswordToken";
+import { UsernameAndPasswordToken } from "./UsernameAndPasswordToken";
 
 export const TOKEN_CONTAINER:string = "auth-tokens/";
 
-export class Class extends Authenticator<UsernameAndPasswordToken.Class, TokenCredentials.Class> {
+export class Class extends Authenticator<UsernameAndPasswordToken, TokenCredentials.Class> {
 
 	protected context:Context;
 	protected credentials:TokenCredentials.Class;
@@ -36,7 +36,7 @@ export class Class extends Authenticator<UsernameAndPasswordToken.Class, TokenCr
 		return super.isAuthenticated() && this.credentials.expirationTime > new Date();
 	}
 
-	authenticate( tokenOrCredentials:UsernameAndPasswordToken.Class | TokenCredentials.Class ):Promise<TokenCredentials.Class> {
+	authenticate( tokenOrCredentials:UsernameAndPasswordToken | TokenCredentials.Class ):Promise<TokenCredentials.Class> {
 		return this
 			.getCredentials( tokenOrCredentials )
 			.then( ( credentials:TokenCredentials.Class ) => {
@@ -51,7 +51,7 @@ export class Class extends Authenticator<UsernameAndPasswordToken.Class, TokenCr
 		return "Token " + this.credentials.key;
 	}
 
-	private getCredentials( tokenOrCredentials:UsernameAndPasswordToken.Class | TokenCredentials.Class ):Promise<TokenCredentials.Class> {
+	private getCredentials( tokenOrCredentials:UsernameAndPasswordToken | TokenCredentials.Class ):Promise<TokenCredentials.Class> {
 		if( TokenCredentials.Factory.hasClassProperties( tokenOrCredentials ) ) return Promise.resolve( tokenOrCredentials );
 
 		const basicAuthenticator:BasicAuthenticator = new BasicAuthenticator();

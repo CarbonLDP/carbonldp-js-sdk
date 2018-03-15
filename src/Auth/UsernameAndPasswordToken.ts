@@ -1,4 +1,4 @@
-export class Class {
+export class UsernameAndPasswordToken {
 	private _username:string;
 	private _password:string;
 
@@ -11,5 +11,3 @@ export class Class {
 
 	get password():string { return this._password; }
 }
-
-export default Class;

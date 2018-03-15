@@ -12445,7 +12445,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				],
 				{ type: "Promise<CarbonLDP.HTTP.Response>" }
 			), ( done:DoneFn ):void => {
-				class MockedAuth extends Auth.Class {}
+				class MockedAuth extends Auth.AuthService {}
 
 				class MockedContext extends AbstractContext {
 					protected _baseURI:string;
@@ -12477,7 +12477,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 
 				beforeEach( () => {
 					const context:AbstractContext = new class extends AbstractContext {
-						auth:Auth.Class = new Auth.Class( this );
+						auth:Auth.AuthService = new Auth.AuthService( this );
 
 						protected _baseURI:string;
 
