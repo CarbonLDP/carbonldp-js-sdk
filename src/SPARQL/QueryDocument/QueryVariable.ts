@@ -1,6 +1,6 @@
 import { VariableToken } from "sparqler/tokens";
 
-export class Class extends VariableToken {
+export class QueryVariable extends VariableToken {
 	readonly name:string;
 	private readonly index:number;
 
@@ -17,5 +17,3 @@ export class Class extends VariableToken {
 		return super.toString();
 	}
 }
-
-export default Class;

@@ -82,6 +82,7 @@ function toJSON( descriptor:any ):string {
 }
 
 export const MODULE:string = "module";
+export const NAMESPACE:string = "namespace";
 export const CLASS:string = "class";
 export const INTERFACE:string = "interface";
 
@@ -106,6 +107,16 @@ export function module( name:string, description:string = null ):string {
 		suiteType: MODULE,
 		name: name,
 		description: description,
+	};
+
+	return toJSON( descriptor );
+}
+
+export function namespaze( name:string, description?:string ):string {
+	const descriptor:SuiteDescriptor = {
+		suiteType: NAMESPACE,
+		name,
+		description,
 	};
 
 	return toJSON( descriptor );

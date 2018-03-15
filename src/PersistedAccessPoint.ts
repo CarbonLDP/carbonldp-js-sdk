@@ -1,12 +1,10 @@
-import * as AccessPoint from "./AccessPoint";
-import * as PersistedProtectedDocument from "./PersistedProtectedDocument";
-import * as Pointer from "./Pointer";
+import { AccessPointBase } from "./AccessPoint";
+import { PersistedProtectedDocument } from "./PersistedProtectedDocument";
+import { Pointer } from "./Pointer";
 
-export interface Class extends AccessPoint.Class, PersistedProtectedDocument.Class {
-	membershipResource:Pointer.Class;
-	hasMemberRelation:Pointer.Class;
-	isMemberOfRelation?:Pointer.Class;
-	insertedContentRelation?: Pointer.Class;
+export interface PersistedAccessPoint extends AccessPointBase, PersistedProtectedDocument {
+	membershipResource:Pointer;
+	hasMemberRelation:Pointer;
+	isMemberOfRelation?:Pointer;
+	insertedContentRelation?:Pointer;
 }
-
-export default Class;

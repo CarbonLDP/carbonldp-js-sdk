@@ -1,3 +1,4 @@
+import { Resource } from "../Resource";
 import {
 	clazz,
 	extendsClass,
@@ -10,9 +11,10 @@ import {
 	OBLIGATORY,
 	STATIC,
 } from "../test/JasmineExtender";
-
-import * as NS from "./../NS";
-import * as Resource from "./../Resource";
+import {
+	CS,
+	XSD,
+} from "../Vocabularies";
 import * as Utils from "./../Utils";
 
 import * as TokenCredentials from "./TokenCredentials";
@@ -33,7 +35,7 @@ describe( module( "Carbon/Auth/TokenCredentials" ), ():void => {
 		expect( TokenCredentials.RDF_CLASS ).toBeDefined();
 		expect( Utils.isString( TokenCredentials.RDF_CLASS ) ).toBe( true );
 
-		expect( TokenCredentials.RDF_CLASS ).toBe( NS.CS.Class.Token );
+		expect( TokenCredentials.RDF_CLASS ).toBe( CS.Token );
 	} );
 
 	it( hasProperty(
@@ -46,26 +48,26 @@ describe( module( "Carbon/Auth/TokenCredentials" ), ():void => {
 
 		expect( Utils.hasProperty( TokenCredentials.SCHEMA, "key" ) ).toBe( true );
 		expect( TokenCredentials.SCHEMA[ "key" ] ).toEqual( {
-			"@id": NS.CS.Predicate.tokenKey,
-			"@type": NS.XSD.DataType.string,
+			"@id": CS.tokenKey,
+			"@type": XSD.string,
 		} );
 
 		expect( Utils.hasProperty( TokenCredentials.SCHEMA, "expirationTime" ) ).toBe( true );
 		expect( TokenCredentials.SCHEMA[ "expirationTime" ] ).toEqual( {
-			"@id": NS.CS.Predicate.expirationTime,
-			"@type": NS.XSD.DataType.dateTime,
+			"@id": CS.expirationTime,
+			"@type": XSD.dateTime,
 		} );
 
 		expect( Utils.hasProperty( TokenCredentials.SCHEMA, "user" ) ).toBe( true );
 		expect( TokenCredentials.SCHEMA[ "user" ] ).toEqual( {
-			"@id": NS.CS.Predicate.credentialsOf,
+			"@id": CS.credentialsOf,
 			"@type": "@id",
 		} );
 
 	} );
 
 	describe( interfaze(
-		"Carbon.Auth.TokenCredentials.Class",
+		"CarbonLDP.Auth.TokenCredentials.Class",
 		"Interface that represents an authentication token for every context."
 	), ():void => {
 
@@ -74,7 +76,7 @@ describe( module( "Carbon/Auth/TokenCredentials" ), ():void => {
 		it( hasProperty(
 			OBLIGATORY,
 			"user",
-			"Carbon.Auth.PersistedUser.Class",
+			"CarbonLDP.Auth.PersistedUser.Class",
 			"User that has been requested the token, and which authentication the token represents."
 		), ():void => {} );
 
@@ -94,7 +96,7 @@ describe( module( "Carbon/Auth/TokenCredentials" ), ():void => {
 
 	} );
 
-	describe( clazz( "Carbon.Auth.TokenCredentials.Factory", "Factory class for `Carbon.Auth.TokenCredentials.Class` objects." ), ():void => {
+	describe( clazz( "CarbonLDP.Auth.TokenCredentials.Factory", "Factory class for `CarbonLDP.Auth.TokenCredentials.Class` objects." ), ():void => {
 
 		it( isDefined(), ():void => {
 			expect( TokenCredentials.Factory ).toBeDefined();
@@ -102,7 +104,7 @@ describe( module( "Carbon/Auth/TokenCredentials" ), ():void => {
 		} );
 
 		it( hasMethod( STATIC, "is",
-			"Returns true if the object provided is considered a `Carbon.Auth.TokenCredentials.Class` object.", [
+			"Returns true if the object provided is considered a `CarbonLDP.Auth.TokenCredentials.Class` object.", [
 				{ name: "object", type: "object" },
 			],
 			{ type: "boolean" }
@@ -112,7 +114,7 @@ describe( module( "Carbon/Auth/TokenCredentials" ), ():void => {
 
 			expect( TokenCredentials.Factory.is( {} ) ).toBe( false );
 
-			let object:any = Resource.Factory.createFrom( {
+			let object:any = Resource.createFrom( {
 				key: null,
 				expirationTime: null,
 				user: null,
@@ -134,7 +136,7 @@ describe( module( "Carbon/Auth/TokenCredentials" ), ():void => {
 		} );
 
 		it( hasMethod( STATIC, "hasClassProperties",
-			"Returns true if the object provided has the properties of a `Carbon.Auth.TokenCredentials.Class` object.", [
+			"Returns true if the object provided has the properties of a `CarbonLDP.Auth.TokenCredentials.Class` object.", [
 				{ name: "object", type: "object" },
 			],
 			{ type: "boolean" }
@@ -171,7 +173,7 @@ describe( module( "Carbon/Auth/TokenCredentials" ), ():void => {
 
 	} );
 
-	it( hasDefaultExport( "Carbon.Auth.Ticket.Class" ), ():void => {
+	it( hasDefaultExport( "CarbonLDP.Auth.Ticket.Class" ), ():void => {
 		let defaultExport:DefaultExport = <any> {};
 		let defaultTarget:TokenCredentials.Class;
 

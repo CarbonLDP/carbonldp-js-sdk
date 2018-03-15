@@ -1,6 +1,6 @@
 {
   "name": "carbonldp",
-  "version": "1.0.0-alpha.5",
+  "version": "1.0.0-alpha.11",
   "description": "JavaScript/TypeScript SDK for Carbon LDP",
   "homepage": "https://github.com/CarbonLDP/carbonldp-js-sdk",
   "contributors": [
@@ -21,18 +21,18 @@
     "https": false
   },
   "dependencies": {
+    "@types/node": ">=6",
     "file-type": "^6.1.0",
     "sockjs-client": "^1.1.4",
-    "sparqler": "0.2.0",
+    "sparqler": "0.3.1",
     "webstomp-client": "^1.2.0"
   },
   "devDependencies": {
     "@types/jasmine": "^2.6.3",
     "@types/jasmine-ajax": "^3.1.36",
     "@types/nock": "^8.2.1",
-    "@types/node": "^8.0.31",
-    "@types/sockjs-client": "^1.0.32",
-    "@types/webpack": "^3.0.12",
+    "@types/sockjs-client": "1.0.32",
+    "@types/webpack": "^3.8.8",
     "@types/webpack-env": "^1.13.1",
     "awesome-typescript-loader": "^3.0.4-rc.0",
     "del": "^3.0.0",
@@ -66,10 +66,8 @@
     "source-map-loader": "^0.2.1",
     "source-map-support": "^0.5.0",
     "tslint": "^5.7.0",
-    "typescript": "^2.6.2",
-    "typings": "^2.1.1",
+    "typescript": "^2.7.2",
     "vinyl-named": "^1.1.0",
-    "wallaby-webpack": "0.0.45",
     "webpack": "^3.6.0",
     "webpack-merge": "^4.1.0",
     "webpack-stream": "^4.0.0"
@@ -77,7 +75,7 @@
   "scripts": {
     "start": "./node_modules/.bin/gulp build",
     "lint": "./node_modules/.bin/gulp lint",
-    "prepare": "node scripts/copy-hooks.js && ./node_modules/.bin/typings install",
+    "prepare": "node scripts/copy-hooks.js",
     "test": "./node_modules/.bin/gulp test"
   },
   "private": true

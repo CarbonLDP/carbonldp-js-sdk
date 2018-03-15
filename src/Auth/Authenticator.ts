@@ -1,5 +1,6 @@
-import * as Errors from "../Errors";
-import * as HTTP from "../HTTP";
+import { IllegalStateError } from "../Errors";
+import { Header } from "../HTTP/Header";
+import { RequestOptions } from "../HTTP/Request";
 
 export abstract class Class<T extends object, W extends object> {
 
@@ -15,15 +16,15 @@ export abstract class Class<T extends object, W extends object> {
 		this.credentials = null;
 	}
 
-	addAuthentication( requestOptions:HTTP.Request.Options ):HTTP.Request.Options {
-		if( ! this.isAuthenticated() ) throw new Errors.IllegalStateError( "The authenticator isn't authenticated." );
+	addAuthentication( requestOptions:RequestOptions ):RequestOptions {
+		if( ! this.isAuthenticated() ) throw new IllegalStateError( "The authenticator isn't authenticated." );
 
-		const headers:Map<string, HTTP.Header.Class> = requestOptions.headers ?
-			requestOptions.headers : requestOptions.headers = new Map<string, HTTP.Header.Class>();
+		const headers:Map<string, Header> = requestOptions.headers ?
+			requestOptions.headers : requestOptions.headers = new Map<string, Header>();
 
 		if( headers.has( "authorization" ) ) return requestOptions;
 
-		const header:HTTP.Header.Class = new HTTP.Header.Class();
+		const header:Header = new Header();
 		headers.set( "authorization", header );
 
 		header.values.push( this.getHeaderValue() );
@@ -31,7 +32,7 @@ export abstract class Class<T extends object, W extends object> {
 		return requestOptions;
 	}
 
-	protected abstract getHeaderValue():HTTP.Header.Value;
+	protected abstract getHeaderValue():string;
 }
 
 export default Class;

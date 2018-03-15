@@ -1,10 +1,10 @@
-import * as HTTP from "../HTTP";
+import { RequestOptions } from "../HTTP/Request";
 export declare abstract class Class<T extends object, W extends object> {
     protected abstract credentials: W;
     isAuthenticated(): boolean;
     abstract authenticate(authenticationToken: T): Promise<W>;
     clearAuthentication(): void;
-    addAuthentication(requestOptions: HTTP.Request.Options): HTTP.Request.Options;
-    protected abstract getHeaderValue(): HTTP.Header.Value;
+    addAuthentication(requestOptions: RequestOptions): RequestOptions;
+    protected abstract getHeaderValue(): string;
 }
 export default Class;

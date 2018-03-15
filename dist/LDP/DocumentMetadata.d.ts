@@ -1,17 +1,19 @@
-import * as ObjectSchema from "./../ObjectSchema";
-import * as PersistedDocument from "./../PersistedDocument";
-import * as VolatileResource from "./VolatileResource";
-import * as Map from "./Map";
-import BlankNode from "./../BlankNode";
-export declare const RDF_CLASS: string;
-export declare const SCHEMA: ObjectSchema.Class;
-export interface Class extends VolatileResource.Class {
-    relatedDocument: PersistedDocument.Class;
+import { BlankNode } from "../BlankNode";
+import { ObjectSchema } from "../ObjectSchema";
+import { PersistedDocument } from "../PersistedDocument";
+import { CarbonMap } from "./CarbonMap";
+import { VolatileResource } from "./VolatileResource";
+import { ModelFactory } from "../ModelFactory";
+import { ModelDecorator } from "../ModelDecorator";
+export interface DocumentMetadata extends VolatileResource {
+    relatedDocument: PersistedDocument;
     eTag?: string;
-    bNodesMap?: Map.Class<BlankNode, BlankNode>;
+    bNodesMap?: CarbonMap<BlankNode, BlankNode>;
 }
-export declare class Factory {
-    static hasClassProperties(object: Object): boolean;
-    static is(object: Object): boolean;
+export interface DocumentMetadataFactory extends ModelFactory<DocumentMetadata>, ModelDecorator<DocumentMetadata> {
+    TYPE: string;
+    SCHEMA: ObjectSchema;
+    isDecorated(object: object): object is DocumentMetadata;
+    is(object: object): object is DocumentMetadata;
 }
-export default Class;
+export declare const DocumentMetadata: DocumentMetadataFactory;

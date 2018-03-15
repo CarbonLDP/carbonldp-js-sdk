@@ -1,31 +1,32 @@
-import * as NS from "./../NS";
+import { CS } from "../Vocabularies/CS";
+import { XSD } from "../Vocabularies/XSD";
 import * as ObjectSchema from "./../ObjectSchema";
-import * as Pointer from "./../Pointer";
-import * as Resource from "./../Resource";
-import * as URI from "./../RDF/URI";
+import { Pointer } from "./../Pointer";
+import { URI } from "./../RDF/URI";
+import { Resource } from "./../Resource";
 
 
 export const TICKETS_CONTAINER:string = "auth-tickets/";
 
-export const RDF_CLASS:string = NS.CS.Class.Ticket;
+export const RDF_CLASS:string = CS.Ticket;
 
-export const SCHEMA:ObjectSchema.Class = {
+export const SCHEMA:ObjectSchema.ObjectSchema = {
 	"forURI": {
-		"@id": NS.CS.Predicate.forIRI,
+		"@id": CS.forIRI,
 		"@type": "@id",
 	},
 	"expirationTime": {
-		"@id": NS.CS.Predicate.expirationTime,
-		"@type": NS.XSD.DataType.dateTime,
+		"@id": CS.expirationTime,
+		"@type": XSD.dateTime,
 	},
 	"ticketKey": {
-		"@id": NS.CS.Predicate.ticketKey,
-		"@type": NS.XSD.DataType.string,
+		"@id": CS.ticketKey,
+		"@type": XSD.string,
 	},
 };
 
-export interface Class extends Resource.Class {
-	forURI:Pointer.Class;
+export interface Class extends Resource {
+	forURI:Pointer;
 	expirationTime:Date;
 	ticketKey:string;
 }
@@ -33,12 +34,12 @@ export interface Class extends Resource.Class {
 export class Factory {
 
 	static create( uri:string ):Class {
-		return Factory.createFrom( Resource.Factory.create( URI.Util.generateBNodeID() ), uri );
+		return Factory.createFrom( Resource.create( URI.generateBNodeID() ), uri );
 	}
 
-	static createFrom<T extends Resource.Class>( object:T, uri:string ):Class & T {
+	static createFrom<T extends Resource>( object:T, uri:string ):Class & T {
 		let ticket:Class & T = <any> object;
-		ticket.forURI = Pointer.Factory.create( uri );
+		ticket.forURI = Pointer.create( uri );
 		ticket.types.push( RDF_CLASS );
 
 		return ticket;

@@ -1,14 +1,13 @@
 import { SPARQLER } from "sparqler";
 import { FinishClause } from "sparqler/clauses";
-import Documents from "./../Documents";
-import HTTPResponse from "./../HTTP/Response";
-import RawResults from "./RawResults";
-import SELECTResults from "./SELECTResults";
-export interface ExecuteSelect extends FinishClause {
-    execute<T extends object>(): Promise<[SELECTResults<T>, HTTPResponse]>;
-    executeRaw(): Promise<[RawResults, HTTPResponse]>;
+import { Documents } from "../Documents";
+import { Response } from "../HTTP/Response";
+import { SPARQLRawResults } from "./RawResults";
+import { SPARQLSelectResults } from "./SelectResults";
+export interface FinishSPARQLSelect extends FinishClause {
+    execute<T extends object>(): Promise<[SPARQLSelectResults<T>, Response]>;
+    executeRaw(): Promise<[SPARQLRawResults, Response]>;
 }
-export declare class Class extends SPARQLER<ExecuteSelect> {
+export declare class SPARQLBuilder extends SPARQLER<FinishSPARQLSelect> {
     constructor(documents: Documents, entryPoint: string);
 }
-export default Class;

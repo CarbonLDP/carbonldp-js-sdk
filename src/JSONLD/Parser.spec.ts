@@ -1,31 +1,22 @@
 import {
-	INSTANCE,
-
-	module,
 	clazz,
-
-	isDefined,
 	hasMethod,
-	hasDefaultExport,
+	INSTANCE,
+	isDefined,
+	module,
 } from "../test/JasmineExtender";
 import * as Utils from "../Utils";
 
-import * as JSONLDParser from "./Parser";
-import DefaultExport from "./Parser";
+import { JSONLDParser } from "./Parser";
 
 describe( module(
-	"Carbon/JSONLD/Parser"
+	"carbonldp/JSONLD/Parser"
 ), ():void => {
 
-	it( isDefined(), ():void => {
-		expect( JSONLDParser ).toBeDefined();
-		expect( Utils.isObject( JSONLDParser ) ).toBe( true );
-	} );
-
 	describe( clazz(
-		"Carbon.JSONLD.Parser.Class",
+		"CarbonLDP.JSONLD.JSONLDParser",
 		"Class to parse strings to valid JSONLD objects.", [
-			"Carbon.HTTP.Parser.Class<Object[]>",
+			"CarbonLDP.HTTP.Parser<object[]>",
 		]
 	), ():void => {
 
@@ -37,22 +28,24 @@ describe( module(
 			jasmine.Ajax.uninstall();
 		} );
 
+		// TODO: Separate in different tests
 		it( isDefined(), ():void => {
-			expect( JSONLDParser.Class ).toBeDefined();
-			expect( Utils.isFunction( JSONLDParser.Class ) ).toBe( true );
-			let value:JSONLDParser.Class = new JSONLDParser.Class();
+			expect( JSONLDParser ).toBeDefined();
+			expect( Utils.isFunction( JSONLDParser ) ).toBe( true );
+			let value:JSONLDParser = new JSONLDParser();
 
 			expect( value ).toBeTruthy();
-			expect( value instanceof JSONLDParser.Class ).toBe( true );
+			expect( value instanceof JSONLDParser ).toBe( true );
 		} );
 
+		// TODO: Separate in different tests
 		it( hasMethod(
 			INSTANCE,
 			"parse",
-			"Parse the string provided using the `Carbon.JSONLD.Processor.Class#expand()` method.", [
+			"Parse the string provided using the `CarbonLDP.JSONLD.JSONLDProcessor#expand()` method.", [
 				{ name: "body", type: "string", description: "A JSON-LD string to parse." },
 			],
-			{ type: "Promise<Object[]>", description: "Promise that contains the parsed JSONLD object. If error occurs a `Carbon.Errors.InvalidJSONLDSyntaxError` will be thrown." }
+			{ type: "Promise<object[]>", description: "Promise that contains the parsed JSONLD object. If error occurs a `CarbonLDP.Errors.InvalidJSONLDSyntaxError` will be thrown." }
 		), ( done ):void => {
 			jasmine.Ajax.stubRequest( /Should be error context/ ).andReturn( {
 				status: 404,
@@ -158,7 +151,7 @@ describe( module(
 				],
 			};
 			let errorString:string = JSON.stringify( errorObject );
-			let parser:JSONLDParser.Class = new JSONLDParser.Class();
+			let parser:JSONLDParser = new JSONLDParser();
 
 			expect( parser.parse ).toBeDefined();
 			expect( Utils.isFunction( parser.parse ) ).toBe( true );
@@ -187,13 +180,6 @@ describe( module(
 			}, done.fail );
 		} );
 
-	} );
-
-	it( hasDefaultExport(
-		"Carbon.JSONLD.Parser.Class"
-	), ():void => {
-		expect( DefaultExport ).toBeDefined();
-		expect( DefaultExport ).toBe( JSONLDParser.Class );
 	} );
 
 } );

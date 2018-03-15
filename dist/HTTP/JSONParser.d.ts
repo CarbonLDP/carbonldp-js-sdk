@@ -1,5 +1,4 @@
-import Parser from "./Parser";
-export declare class Class implements Parser<Object> {
-    parse(body: string): Promise<Object>;
+import { Parser } from "./Parser";
+export declare class JSONParser implements Parser<object> {
+    parse(body: string): Promise<object>;
 }
-export default Class;

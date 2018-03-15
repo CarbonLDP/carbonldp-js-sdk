@@ -11,21 +11,18 @@ var __extends = (this && this.__extends) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 var AbstractError_1 = require("./AbstractError");
-var Class = (function (_super) {
-    __extends(Class, _super);
-    function Class(message) {
-        var _this = _super.call(this, message) || this;
-        Object.setPrototypeOf(_this, Class.prototype);
-        return _this;
+var InvalidJSONLDSyntaxError = (function (_super) {
+    __extends(InvalidJSONLDSyntaxError, _super);
+    function InvalidJSONLDSyntaxError() {
+        return _super !== null && _super.apply(this, arguments) || this;
     }
-    Object.defineProperty(Class.prototype, "name", {
+    Object.defineProperty(InvalidJSONLDSyntaxError.prototype, "name", {
         get: function () { return "InvalidJSONLDSyntaxError"; },
         enumerable: true,
         configurable: true
     });
-    return Class;
-}(AbstractError_1.default));
-exports.Class = Class;
-exports.default = Class;
+    return InvalidJSONLDSyntaxError;
+}(AbstractError_1.AbstractError));
+exports.InvalidJSONLDSyntaxError = InvalidJSONLDSyntaxError;
 
 //# sourceMappingURL=InvalidJSONLDSyntaxError.js.map

@@ -1,16 +1,8 @@
-import Parser from "./Parser";
+import { Parser } from "./Parser";
 
-export class Class implements Parser<Object> {
-	parse( body:string ):Promise<Object> {
-		return new Promise<Object>( ( resolve:( result:string ) => void, reject:( error:Error ) => void ) => {
-			try {
-				resolve( JSON.parse( body ) );
-			} catch( error ) {
-				// TODO: Handle SyntaxError
-				reject( error );
-			}
-		} );
+export class JSONParser implements Parser<object> {
+	parse( body:string ):Promise<object> {
+		// TODO: Handle SyntaxError
+		return new Promise<object>( resolve => resolve( JSON.parse( body ) ) );
 	}
 }
-
-export default Class;

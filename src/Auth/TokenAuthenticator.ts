@@ -1,13 +1,19 @@
-import * as Context from "../Context";
-import * as Errors from "./../Errors";
-import * as FreeResources from "./../FreeResources";
-import * as HTTP from "./../HTTP";
-import * as JSONLD from "./../JSONLD";
-import * as LDP from "./../LDP";
-import * as NS from "./../NS";
-import * as PersistedDocument from "./../PersistedDocument";
-import * as RDF from "./../RDF";
-import * as Resource from "./../Resource";
+import { Context } from "../Context";
+import * as Errors from "../Errors";
+import { FreeResources } from "../FreeResources";
+import { BadResponseError } from "../HTTP/Errors";
+import {
+	RequestOptions,
+	RequestService,
+	RequestUtils,
+} from "../HTTP/Request";
+import { Response } from "../HTTP/Response";
+import { JSONLDParser } from "../JSONLD";
+import { ResponseMetadata } from "../LDP/ResponseMetadata";
+import { PersistedDocument } from "../PersistedDocument";
+import { RDFDocument } from "../RDF/Document";
+import { RDFNode } from "../RDF/Node";
+import { LDP } from "../Vocabularies/LDP";
 import * as Utils from "./../Utils";
 import Authenticator from "./Authenticator";
 import BasicAuthenticator from "./BasicAuthenticator";
@@ -18,10 +24,10 @@ export const TOKEN_CONTAINER:string = "auth-tokens/";
 
 export class Class extends Authenticator<UsernameAndPasswordToken.Class, TokenCredentials.Class> {
 
-	protected context:Context.Class;
+	protected context:Context;
 	protected credentials:TokenCredentials.Class;
 
-	constructor( context:Context.Class ) {
+	constructor( context:Context ) {
 		super();
 		this.context = context;
 	}
@@ -41,8 +47,8 @@ export class Class extends Authenticator<UsernameAndPasswordToken.Class, TokenCr
 			} );
 	}
 
-	protected getHeaderValue():HTTP.Header.Value {
-		return new HTTP.Header.Value( "Token " + this.credentials.key );
+	protected getHeaderValue():string {
+		return "Token " + this.credentials.key;
 	}
 
 	private getCredentials( tokenOrCredentials:UsernameAndPasswordToken.Class | TokenCredentials.Class ):Promise<TokenCredentials.Class> {
@@ -52,36 +58,36 @@ export class Class extends Authenticator<UsernameAndPasswordToken.Class, TokenCr
 		return basicAuthenticator
 			.authenticate( tokenOrCredentials )
 			.then( () => {
-				const requestOptions:HTTP.Request.Options = {};
+				const requestOptions:RequestOptions = {};
 				basicAuthenticator.addAuthentication( requestOptions );
-				HTTP.Request.Util.setAcceptHeader( "application/ld+json", requestOptions );
-				HTTP.Request.Util.setPreferredInteractionModel( NS.LDP.Class.RDFSource, requestOptions );
+				RequestUtils.setAcceptHeader( "application/ld+json", requestOptions );
+				RequestUtils.setPreferredInteractionModel( LDP.RDFSource, requestOptions );
 
-				const tokensURI:string = this.context.auth._resolveSecurityURL( TOKEN_CONTAINER );
-				return HTTP.Request.Service.post( tokensURI, null, requestOptions, new JSONLD.Parser.Class() );
+				const tokensURI:string = this.context._resolvePath( "system.security" ) + TOKEN_CONTAINER;
+				return RequestService.post( tokensURI, null, requestOptions, new JSONLDParser() );
 			} )
-			.then( ( [ expandedResult, response ]:[ any, HTTP.Response.Class ] ) => {
-				const freeNodes:RDF.Node.Class[] = RDF.Node.Util.getFreeNodes( expandedResult );
+			.then( ( [ expandedResult, response ]:[ any, Response ] ) => {
+				const freeNodes:RDFNode[] = RDFNode.getFreeNodes( expandedResult );
 
-				const freeResources:FreeResources.Class = this.context.documents._getFreeResources( freeNodes );
-				const tokenResources:TokenCredentials.Class[] = <TokenCredentials.Class[]> freeResources.getResources().filter( resource => Resource.Util.hasType( resource, TokenCredentials.RDF_CLASS ) );
+				const freeResources:FreeResources = this.context.documents._getFreeResources( freeNodes );
+				const tokenResources:TokenCredentials.Class[] = <TokenCredentials.Class[]> freeResources.getResources().filter( resource => resource.hasType( TokenCredentials.RDF_CLASS ) );
 
-				if( tokenResources.length === 0 ) throw new HTTP.Errors.BadResponseError( "No '" + TokenCredentials.RDF_CLASS + "' was returned.", response );
-				if( tokenResources.length > 1 ) throw new HTTP.Errors.BadResponseError( "Multiple '" + TokenCredentials.RDF_CLASS + "' were returned. ", response );
+				if( tokenResources.length === 0 ) throw new BadResponseError( "No '" + TokenCredentials.RDF_CLASS + "' was returned.", response );
+				if( tokenResources.length > 1 ) throw new BadResponseError( "Multiple '" + TokenCredentials.RDF_CLASS + "' were returned. ", response );
 				const token:TokenCredentials.Class = tokenResources[ 0 ];
 
-				const userDocuments:RDF.Document.Class[] = RDF.Document.Util.getDocuments( expandedResult ).filter( rdfDocument => rdfDocument[ "@id" ] === token.user.id );
+				const userDocuments:RDFDocument[] = RDFDocument.getDocuments( expandedResult ).filter( rdfDocument => rdfDocument[ "@id" ] === token.user.id );
 				userDocuments.forEach( document => this.context.documents._getPersistedDocument( document, response ) );
 
-				const responseMetadata:LDP.ResponseMetadata.Class = <LDP.ResponseMetadata.Class> freeResources
+				const responseMetadata:ResponseMetadata = <ResponseMetadata> freeResources
 					.getResources()
-					.find( LDP.ResponseMetadata.Factory.is );
+					.find( ResponseMetadata.is );
 
 				if( responseMetadata ) responseMetadata
 					.documentsMetadata
 					.forEach( documentMetadata => {
-						const document:PersistedDocument.Class = documentMetadata.relatedDocument as PersistedDocument.Class;
-						document._etag = documentMetadata.eTag;
+						const document:PersistedDocument = documentMetadata.relatedDocument as PersistedDocument;
+						document._eTag = documentMetadata.eTag;
 					} );
 
 				return token;

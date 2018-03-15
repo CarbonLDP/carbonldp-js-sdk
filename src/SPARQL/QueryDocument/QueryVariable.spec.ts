@@ -1,21 +1,26 @@
 import { VariableToken } from "sparqler/tokens";
-import { clazz, constructor, extendsClass, hasDefaultExport, hasSignature, INSTANCE, method, module } from "../../test/JasmineExtender";
-import * as Module from "./QueryVariable";
-import { Class as QueryVariable } from "./QueryVariable";
 
-describe( module( "Carbon/SPARQL/QueryDocument/QueryVariable" ), ():void => {
+import {
+	clazz,
+	constructor,
+	extendsClass,
+	hasSignature,
+	INSTANCE,
+	method,
+	module
+} from "../../test/JasmineExtender";
+
+import * as Module from "./QueryVariable";
+import { QueryVariable } from "./QueryVariable";
+
+describe( module( "carbonldp/SPARQL/QueryDocument/QueryVariable" ), ():void => {
 
 	it( "should exists", ():void => {
 		expect( Module ).toBeDefined();
 		expect( Module ).toEqual( jasmine.any( Object ) );
 	} );
 
-	it( hasDefaultExport( "Carbon.SPARQL.QueryDocument.QueryVariable.Class" ), ():void => {
-		expect( Module.default ).toBeDefined();
-		expect( Module.default ).toBe( QueryVariable );
-	} );
-
-	describe( clazz( "Carbon.SPARQL.QueryDocument.QueryVariable.Class", "Class that represents a property in the query" ), ():void => {
+	describe( clazz( "CarbonLDP.SPARQL.QueryDocument.QueryVariable", "Class that represents a property in the query" ), ():void => {
 
 		it( "should exists", ():void => {
 			expect( QueryVariable ).toBeDefined();

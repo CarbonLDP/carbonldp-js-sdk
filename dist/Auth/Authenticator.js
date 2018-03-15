@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var Errors = require("../Errors");
-var HTTP = require("../HTTP");
+var Errors_1 = require("../Errors");
+var Header_1 = require("../HTTP/Header");
 var Class = (function () {
     function Class() {
     }
@@ -13,12 +13,12 @@ var Class = (function () {
     };
     Class.prototype.addAuthentication = function (requestOptions) {
         if (!this.isAuthenticated())
-            throw new Errors.IllegalStateError("The authenticator isn't authenticated.");
+            throw new Errors_1.IllegalStateError("The authenticator isn't authenticated.");
         var headers = requestOptions.headers ?
             requestOptions.headers : requestOptions.headers = new Map();
         if (headers.has("authorization"))
             return requestOptions;
-        var header = new HTTP.Header.Class();
+        var header = new Header_1.Header();
         headers.set("authorization", header);
         header.values.push(this.getHeaderValue());
         return requestOptions;

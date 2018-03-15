@@ -9,12 +9,21 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+}
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
+    result["default"] = mod;
+    return result;
+}
 Object.defineProperty(exports, "__esModule", { value: true });
+var Errors_1 = require("../Errors");
 var Utils_1 = require("../Utils");
-var Errors = require("./../Errors");
-var HTTP = require("./../HTTP");
-var Authenticator_1 = require("./Authenticator");
-var UsernameAndPasswordCredentials = require("./UsernameAndPasswordCredentials");
+var Authenticator_1 = __importDefault(require("./Authenticator"));
+var UsernameAndPasswordCredentials = __importStar(require("./UsernameAndPasswordCredentials"));
 var Class = (function (_super) {
     __extends(Class, _super);
     function Class() {
@@ -24,18 +33,17 @@ var Class = (function (_super) {
         var _this = this;
         return Utils_1.promiseMethod(function () {
             if (authenticationToken === null)
-                throw new Errors.IllegalArgumentError("The authenticationToken cannot be null.");
+                throw new Errors_1.IllegalArgumentError("The authenticationToken cannot be null.");
             if (!authenticationToken.username)
-                throw new Errors.IllegalArgumentError("The username cannot be empty.");
+                throw new Errors_1.IllegalArgumentError("The username cannot be empty.");
             if (!authenticationToken.password)
-                throw new Errors.IllegalArgumentError("The password cannot be empty.");
+                throw new Errors_1.IllegalArgumentError("The password cannot be empty.");
             _this.credentials = new UsernameAndPasswordCredentials.Class(authenticationToken.username, authenticationToken.password);
             return _this.credentials;
         });
     };
     Class.prototype.getHeaderValue = function () {
-        var authorization = "Basic " + toB64(this.credentials.username + ":" + this.credentials.password);
-        return new HTTP.Header.Value(authorization);
+        return "Basic " + toB64(this.credentials.username + ":" + this.credentials.password);
     };
     return Class;
 }(Authenticator_1.default));

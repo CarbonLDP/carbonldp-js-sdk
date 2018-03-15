@@ -1,39 +1,46 @@
 "use strict";
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
+    result["default"] = mod;
+    return result;
+}
 Object.defineProperty(exports, "__esModule", { value: true });
-var Errors = require("./../Errors");
-var HTTP = require("./../HTTP");
-var RDF = require("./../RDF");
-var Utils = require("./../Utils");
+var Errors = __importStar(require("../Errors"));
+var Request_1 = require("../HTTP/Request");
+var StringParser_1 = require("../HTTP/StringParser");
+var Literal_1 = require("../RDF/Literal");
 var RawResultsParser_1 = require("./RawResultsParser");
-var Class = (function () {
-    function Class() {
+var SPARQLService = (function () {
+    function SPARQLService() {
     }
-    Class.executeRawASKQuery = function (url, askQuery, options) {
+    SPARQLService.executeRawASKQuery = function (url, askQuery, options) {
         if (options === void 0) { options = {}; }
-        options = Utils.extend(options, Class.defaultOptions);
-        HTTP.Request.Util.setAcceptHeader("application/sparql-results+json", options);
-        HTTP.Request.Util.setContentTypeHeader("application/sparql-query", options);
-        return HTTP.Request.Service.post(url, askQuery, options, Class.resultsParser);
+        options = Object.assign(options, SPARQLService.DEFAULT_OPTIONS);
+        Request_1.RequestUtils.setAcceptHeader("application/sparql-results+json", options);
+        Request_1.RequestUtils.setContentTypeHeader("application/sparql-query", options);
+        return Request_1.RequestService.post(url, askQuery, options, SPARQLService.RESULTS_PARSER);
     };
-    Class.executeASKQuery = function (url, askQuery, options) {
+    SPARQLService.executeASKQuery = function (url, askQuery, options) {
         if (options === void 0) { options = {}; }
-        return Class
+        return SPARQLService
             .executeRawASKQuery(url, askQuery, options)
             .then(function (_a) {
             var rawResults = _a[0], response = _a[1];
             return [rawResults.boolean, response];
         });
     };
-    Class.executeRawSELECTQuery = function (url, selectQuery, options) {
+    SPARQLService.executeRawSELECTQuery = function (url, selectQuery, options) {
         if (options === void 0) { options = {}; }
-        options = Utils.extend(options, Class.defaultOptions);
-        HTTP.Request.Util.setAcceptHeader("application/sparql-results+json", options);
-        HTTP.Request.Util.setContentTypeHeader("application/sparql-query", options);
-        return HTTP.Request.Service.post(url, selectQuery, options, Class.resultsParser);
+        options = Object.assign(options, SPARQLService.DEFAULT_OPTIONS);
+        Request_1.RequestUtils.setAcceptHeader("application/sparql-results+json", options);
+        Request_1.RequestUtils.setContentTypeHeader("application/sparql-query", options);
+        return Request_1.RequestService.post(url, selectQuery, options, SPARQLService.RESULTS_PARSER);
     };
-    Class.executeSELECTQuery = function (url, selectQuery, pointerLibrary, options) {
+    SPARQLService.executeSELECTQuery = function (url, selectQuery, pointerLibrary, options) {
         if (options === void 0) { options = {}; }
-        return Class
+        return SPARQLService
             .executeRawSELECTQuery(url, selectQuery, options)
             .then(function (_a) {
             var rawResults = _a[0], response = _a[1];
@@ -46,7 +53,7 @@ var Class = (function () {
                     if (!bindingColumn.hasOwnProperty(bindingRow))
                         continue;
                     var bindingCell = bindingColumn[bindingRow];
-                    binding[bindingRow] = Class.parseRawBindingProperty(bindingCell, pointerLibrary);
+                    binding[bindingRow] = SPARQLService.parseRawBindingProperty(bindingCell, pointerLibrary);
                 }
                 bindings.push(binding);
             }
@@ -57,31 +64,31 @@ var Class = (function () {
             return [results, response];
         });
     };
-    Class.executeRawCONSTRUCTQuery = function (url, constructQuery, options) {
+    SPARQLService.executeRawCONSTRUCTQuery = function (url, constructQuery, options) {
         if (options === void 0) { options = {}; }
-        options = Utils.extend(options, Class.defaultOptions);
-        if (HTTP.Request.Util.getHeader("Accept", options) === undefined)
-            HTTP.Request.Util.setAcceptHeader("application/ld+json", options);
-        HTTP.Request.Util.setContentTypeHeader("application/sparql-query", options);
-        return HTTP.Request.Service.post(url, constructQuery, options, Class.stringParser);
+        options = Object.assign(options, SPARQLService.DEFAULT_OPTIONS);
+        if (Request_1.RequestUtils.getHeader("Accept", options) === undefined)
+            Request_1.RequestUtils.setAcceptHeader("application/ld+json", options);
+        Request_1.RequestUtils.setContentTypeHeader("application/sparql-query", options);
+        return Request_1.RequestService.post(url, constructQuery, options, SPARQLService.STRING_PARSER);
     };
-    Class.executeRawDESCRIBEQuery = function (url, describeQuery, options) {
+    SPARQLService.executeRawDESCRIBEQuery = function (url, describeQuery, options) {
         if (options === void 0) { options = {}; }
-        options = Utils.extend(options, Class.defaultOptions);
-        if (HTTP.Request.Util.getHeader("Accept", options) === undefined)
-            HTTP.Request.Util.setAcceptHeader("application/ld+json", options);
-        HTTP.Request.Util.setContentTypeHeader("application/sparql-query", options);
-        return HTTP.Request.Service.post(url, describeQuery, options, Class.stringParser);
+        options = Object.assign(options, SPARQLService.DEFAULT_OPTIONS);
+        if (Request_1.RequestUtils.getHeader("Accept", options) === undefined)
+            Request_1.RequestUtils.setAcceptHeader("application/ld+json", options);
+        Request_1.RequestUtils.setContentTypeHeader("application/sparql-query", options);
+        return Request_1.RequestService.post(url, describeQuery, options, SPARQLService.STRING_PARSER);
     };
-    Class.executeUPDATE = function (url, updateQuery, options) {
+    SPARQLService.executeUPDATE = function (url, updateQuery, options) {
         if (options === void 0) { options = {}; }
-        options = Utils.extend(options, Class.defaultOptions);
-        if (HTTP.Request.Util.getHeader("Accept", options) === undefined)
-            HTTP.Request.Util.setAcceptHeader("application/ld+json", options);
-        HTTP.Request.Util.setContentTypeHeader("application/sparql-update", options);
-        return HTTP.Request.Service.post(url, updateQuery, options);
+        options = Object.assign(options, SPARQLService.DEFAULT_OPTIONS);
+        if (Request_1.RequestUtils.getHeader("Accept", options) === undefined)
+            Request_1.RequestUtils.setAcceptHeader("application/ld+json", options);
+        Request_1.RequestUtils.setContentTypeHeader("application/sparql-update", options);
+        return Request_1.RequestService.post(url, updateQuery, options);
     };
-    Class.parseRawBindingProperty = function (rawBindingProperty, pointerLibrary) {
+    SPARQLService.parseRawBindingProperty = function (rawBindingProperty, pointerLibrary) {
         switch (rawBindingProperty.type) {
             case "uri":
                 return pointerLibrary.getPointer(rawBindingProperty.value);
@@ -89,21 +96,20 @@ var Class = (function () {
                 throw new Errors.NotImplementedError("BNodes cannot be queried directly");
             case "literal":
                 if ("datatype" in rawBindingProperty) {
-                    return RDF.Literal.Factory.parse(rawBindingProperty.value, rawBindingProperty.datatype);
+                    return Literal_1.RDFLiteral.parse(rawBindingProperty.value, rawBindingProperty.datatype);
                 }
                 else {
-                    return RDF.Literal.Factory.parse(rawBindingProperty.value);
+                    return Literal_1.RDFLiteral.parse(rawBindingProperty.value);
                 }
             default:
                 throw new Errors.IllegalArgumentError("The bindingProperty has an unsupported type");
         }
     };
-    Class.defaultOptions = {};
-    Class.resultsParser = new RawResultsParser_1.default();
-    Class.stringParser = new HTTP.StringParser.Class();
-    return Class;
+    SPARQLService.DEFAULT_OPTIONS = {};
+    SPARQLService.RESULTS_PARSER = new RawResultsParser_1.SPARQLRawResultsParser();
+    SPARQLService.STRING_PARSER = new StringParser_1.StringParser();
+    return SPARQLService;
 }());
-exports.Class = Class;
-exports.default = Class;
+exports.SPARQLService = SPARQLService;
 
 //# sourceMappingURL=Service.js.map

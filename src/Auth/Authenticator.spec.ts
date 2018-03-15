@@ -1,7 +1,7 @@
 import { IllegalStateError } from "../Errors";
 import {
 	Header,
-	Request
+	RequestOptions,
 } from "../HTTP";
 
 import {
@@ -18,7 +18,7 @@ import {
 import * as Authenticator from "./Authenticator";
 import DefaultExport from "./Authenticator";
 
-describe( module( "Carbon/Auth/Authenticator" ), ():void => {
+describe( module( "carbonldp/Auth/Authenticator" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( Authenticator ).toBeDefined();
@@ -26,7 +26,7 @@ describe( module( "Carbon/Auth/Authenticator" ), ():void => {
 	} );
 
 	describe( clazz(
-		"Carbon.Auth.Authenticator.Class", [
+		"CarbonLDP.Auth.Authenticator.Class", [
 			"T extends object",
 			"W extends object",
 		],
@@ -48,7 +48,7 @@ describe( module( "Carbon/Auth/Authenticator" ), ():void => {
 					throw new Error( "Method not implemented." );
 				}
 
-				protected getHeaderValue():Header.Value {
+				protected getHeaderValue():string {
 					return null;
 				}
 			};
@@ -136,9 +136,9 @@ describe( module( "Carbon/Auth/Authenticator" ), ():void => {
 
 			it( hasSignature(
 				"If the authenticator is authenticated, it adds an authentication header in the request options object provided.", [
-					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", description: "The request options object where to add the authentication header." },
+					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", description: "The request options object where to add the authentication header." },
 				],
-				{ type: "Carbon.HTTP.Request.Options", description: "The request options object provided after adding the authentication header." }
+				{ type: "CarbonLDP.HTTP.RequestOptions", description: "The request options object provided after adding the authentication header." }
 			), ():void => {} );
 
 			it( "should exists", ():void => {
@@ -154,8 +154,8 @@ describe( module( "Carbon/Auth/Authenticator" ), ():void => {
 			it( "should options provided must be the same returned", ():void => {
 				const authenticator:Authenticator.Class<object, object> = createAuthenticatorWith( {} );
 
-				const options:Request.Options = {};
-				const returned:Request.Options = authenticator.addAuthentication( options );
+				const options:RequestOptions = {};
+				const returned:RequestOptions = authenticator.addAuthentication( options );
 
 				expect( returned ).toBe( options );
 			} );
@@ -163,7 +163,7 @@ describe( module( "Carbon/Auth/Authenticator" ), ():void => {
 			it( "should create headers map if not defined", ():void => {
 				const authenticator:Authenticator.Class<object, object> = createAuthenticatorWith( {} );
 
-				const options:Request.Options = {};
+				const options:RequestOptions = {};
 				authenticator.addAuthentication( options );
 
 				expect( options.headers ).toEqual( jasmine.any( Map ) );
@@ -172,8 +172,8 @@ describe( module( "Carbon/Auth/Authenticator" ), ():void => {
 			it( "should create not replace headers map if defined", ():void => {
 				const authenticator:Authenticator.Class<object, object> = createAuthenticatorWith( {} );
 
-				const headers:Request.Options[ "headers" ] = new Map();
-				const options:Request.Options = { headers };
+				const headers:RequestOptions[ "headers" ] = new Map();
+				const options:RequestOptions = { headers };
 				authenticator.addAuthentication( options );
 
 				expect( options.headers ).toBe( headers );
@@ -182,31 +182,30 @@ describe( module( "Carbon/Auth/Authenticator" ), ():void => {
 			it( "should not alter if authorization header exists", ():void => {
 				const authenticator:Authenticator.Class<object, object> = createAuthenticatorWith( {} );
 
-				const headers:Request.Options[ "headers" ] = new Map( [
-					[ "authorization", new Header.Class() ],
+				const headers:RequestOptions[ "headers" ] = new Map( [
+					[ "authorization", new Header() ],
 				] );
 
-				const options:Request.Options = { headers };
+				const options:RequestOptions = { headers };
 				authenticator.addAuthentication( options );
 
 				expect( options.headers ).toEqual( new Map( [
-					[ "authorization", new Header.Class() ],
+					[ "authorization", new Header() ],
 				] ) );
 			} );
 
 			it( "should call and add the header value `createHeaderValue`", ():void => {
 				const authenticator:Authenticator.Class<object, object> = createAuthenticatorWith( {} );
 
-				const value:Header.Value = new Header.Value( "value" );
 				const spy:jasmine.Spy = spyOn( authenticator, "getHeaderValue" as any )
-					.and.returnValue( value );
+					.and.returnValue( "value" );
 
-				const options:Request.Options = {};
+				const options:RequestOptions = {};
 				authenticator.addAuthentication( options );
 
 				expect( spy ).toHaveBeenCalled();
 				expect( options.headers ).toEqual( new Map( [
-					[ "authorization", new Header.Class( [ value ] ) ],
+					[ "authorization", new Header( [ "value" ] ) ],
 				] ) );
 			} );
 
@@ -214,7 +213,7 @@ describe( module( "Carbon/Auth/Authenticator" ), ():void => {
 
 	} );
 
-	it( hasDefaultExport( "Carbon.Auth.Authenticator.Class" ), ():void => {
+	it( hasDefaultExport( "CarbonLDP.Auth.Authenticator.Class" ), ():void => {
 		expect( DefaultExport ).toBeDefined();
 		expect( DefaultExport ).toBe( Authenticator.Class );
 	} );

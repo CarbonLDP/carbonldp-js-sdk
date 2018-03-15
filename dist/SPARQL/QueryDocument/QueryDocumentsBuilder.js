@@ -11,74 +11,91 @@ var __extends = (this && this.__extends) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 var tokens_1 = require("sparqler/tokens");
-var Errors_1 = require("./../../Errors");
-var QueryDocumentBuilder = require("./QueryDocumentBuilder");
-var Class = (function (_super) {
-    __extends(Class, _super);
-    function Class() {
+var IllegalArgumentError_1 = require("../../Errors/IllegalArgumentError");
+var IllegalStateError_1 = require("../../Errors/IllegalStateError");
+var QueryDocumentBuilder_1 = require("./QueryDocumentBuilder");
+var Utils_1 = require("./Utils");
+var QueryDocumentsBuilder = (function (_super) {
+    __extends(QueryDocumentsBuilder, _super);
+    function QueryDocumentsBuilder() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
-    Class.prototype.orderBy = function (property) {
-        return this._orderBy(property);
-    };
-    Class.prototype.orderAscendantBy = function (property) {
-        return this._orderBy(property, "ASC");
-    };
-    Class.prototype.orderDescendantBy = function (property) {
-        return this._orderBy(property, "DESC");
-    };
-    Class.prototype.limit = function (limit) {
+    QueryDocumentsBuilder.prototype.orderBy = function (property, flow) {
+        var propertyObj = this.property(property);
         var select = this._document.getPatterns().find(function (pattern) { return pattern.token === "select"; });
         if (!select)
-            throw new Errors_1.IllegalStateError("A sub-select token has not been defined.");
-        var limitIndex = select.modifiers.findIndex(function (pattern) { return pattern.token === "limit"; });
-        if (limitIndex !== -1)
-            select.modifiers.splice(limitIndex, 1);
-        select.modifiers.push(new tokens_1.LimitToken(limit));
-        return this;
-    };
-    Class.prototype.offset = function (offset) {
-        var select = this._document.getPatterns().find(function (pattern) { return pattern.token === "select"; });
-        if (!select)
-            throw new Errors_1.IllegalStateError("A sub-select token has not been defined.");
-        var offsetIndex = select.modifiers.findIndex(function (pattern) { return pattern.token === "offset"; });
-        if (offsetIndex !== -1)
-            select.modifiers.splice(offsetIndex, 1);
-        select.modifiers.push(new tokens_1.OffsetToken(offset));
-        return this;
-    };
-    Class.prototype._orderBy = function (property, flow) {
-        var select = this._document.getPatterns().find(function (pattern) { return pattern.token === "select"; });
-        if (!select)
-            throw new Errors_1.IllegalStateError("A sub-select token has not been defined.");
+            throw new IllegalStateError_1.IllegalStateError("A sub-select token has not been defined.");
+        this._orderData = void 0;
         var orderIndex = select.modifiers.findIndex(function (pattern) { return pattern.token === "order"; });
         if (orderIndex !== -1) {
             select.modifiers.splice(orderIndex, 1);
             var optionalIndex = select.patterns.findIndex(function (pattern) { return pattern.token === "optional"; });
             select.patterns.splice(optionalIndex, 1);
         }
-        select.modifiers.unshift(new tokens_1.OrderToken(property.variable, flow));
+        var validatedFlow = parseFlowString(flow);
+        select.modifiers.unshift(new tokens_1.OrderToken(propertyObj.variable, validatedFlow));
+        var orderData = {
+            path: propertyObj.name
+                .split(".")
+                .slice(1)
+                .join("."),
+            flow: validatedFlow,
+        };
         var propertyPatternsPath;
-        while (property !== this._document) {
-            var propertyTriple = property && property.getTriple();
+        while (propertyObj !== this._document) {
+            var propertyTriple = propertyObj && propertyObj.getTriple();
             if (!propertyTriple)
-                throw new Errors_1.IllegalArgumentError("The property \"" + property.name + "\" is not a valid property defined by the builder.");
+                throw new IllegalArgumentError_1.IllegalArgumentError("The property \"" + propertyObj.name + "\" is not a valid property defined by the builder.");
             var propertyPattern = new tokens_1.OptionalToken()
                 .addPattern(propertyTriple);
             if (propertyPatternsPath)
                 propertyPattern.addPattern(propertyPatternsPath);
             propertyPatternsPath = propertyPattern;
-            property = this._context.getProperty(property.name
-                .split(".")
-                .slice(0, -1)
-                .join("."));
+            propertyObj = this._context.getProperty(Utils_1.getParentPath(propertyObj.name));
         }
+        this._orderData = orderData;
         select.addPattern(propertyPatternsPath);
         return this;
     };
-    return Class;
-}(QueryDocumentBuilder.Class));
-exports.Class = Class;
-exports.default = Class;
+    QueryDocumentsBuilder.prototype.limit = function (limit) {
+        var select = this._document.getPatterns().find(function (pattern) { return pattern.token === "select"; });
+        if (!select)
+            throw new IllegalStateError_1.IllegalStateError("A sub-select token has not been defined.");
+        var limitIndex = select.modifiers.findIndex(function (pattern) { return pattern.token === "limit"; });
+        if (limitIndex !== -1)
+            select.modifiers.splice(limitIndex, 1);
+        select.modifiers.push(new tokens_1.LimitToken(limit));
+        return this;
+    };
+    QueryDocumentsBuilder.prototype.offset = function (offset) {
+        var select = this._document.getPatterns().find(function (pattern) { return pattern.token === "select"; });
+        if (!select)
+            throw new IllegalStateError_1.IllegalStateError("A sub-select token has not been defined.");
+        var offsetIndex = select.modifiers.findIndex(function (pattern) { return pattern.token === "offset"; });
+        if (offsetIndex !== -1)
+            select.modifiers.splice(offsetIndex, 1);
+        select.modifiers.push(new tokens_1.OffsetToken(offset));
+        return this;
+    };
+    return QueryDocumentsBuilder;
+}(QueryDocumentBuilder_1.QueryDocumentBuilder));
+exports.QueryDocumentsBuilder = QueryDocumentsBuilder;
+function parseFlowString(flow) {
+    if (flow === void 0)
+        return void 0;
+    var upperCase = flow
+        .toUpperCase();
+    switch (upperCase) {
+        case "ASC":
+        case "DESC":
+            return upperCase;
+        case "ASCENDING":
+        case "DESCENDING":
+            return upperCase
+                .slice(0, -6);
+        default:
+            throw new IllegalArgumentError_1.IllegalArgumentError("Invalid flow order.");
+    }
+}
 
 //# sourceMappingURL=QueryDocumentsBuilder.js.map

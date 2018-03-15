@@ -7,5 +7,3 @@ export enum Event {
 	MEMBER_ADDED = "member.added",
 	MEMBER_REMOVED = "member.removed",
 }
-
-export default Event;

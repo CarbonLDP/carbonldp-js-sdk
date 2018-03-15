@@ -1,37 +1,45 @@
-import { IllegalArgumentError } from "../../Errors";
-import { DigestedObjectSchema, DigestedPropertyDefinition } from "../../ObjectSchema";
-import * as URI from "../../RDF/URI";
+import { IllegalArgumentError } from "../../Errors/IllegalArgumentError";
+import {
+	DigestedObjectSchema,
+	DigestedObjectSchemaProperty,
+	ObjectSchemaUtils,
+} from "../../ObjectSchema";
 
-export class Class {
+
+export class PartialMetadata {
+
+	static readonly ALL:Readonly<DigestedObjectSchema> = Object.freeze( new DigestedObjectSchema() );
+
 	readonly schema:DigestedObjectSchema;
 
-	constructor( schema:DigestedObjectSchema, previousPartial?:Class ) {
-		this.schema = previousPartial ? this.mergeSchemas( previousPartial.schema, schema ) : schema;
+	constructor( schema:DigestedObjectSchema, previousPartial?:PartialMetadata ) {
+		this.schema = this.mergeSchemas( previousPartial ? previousPartial.schema : new DigestedObjectSchema(), schema );
 	}
 
 	private mergeSchemas( oldSchema:DigestedObjectSchema, newSchema:DigestedObjectSchema ):DigestedObjectSchema {
-		oldSchema.prefixes.forEach( ( oldURI, namespace ) => {
-			if( ! newSchema.prefixes.has( namespace ) ) return newSchema.prefixes.set( namespace, oldURI );
+		if( newSchema === PartialMetadata.ALL || oldSchema === PartialMetadata.ALL ) return PartialMetadata.ALL;
 
-			const newURI:URI.Class = newSchema.prefixes.get( namespace );
-			if( newURI.stringValue !== oldURI.stringValue ) throw new IllegalArgumentError( `Prefix "${ namespace }" has different values: "${ oldURI.stringValue }", "${ newURI.stringValue }"` );
+		newSchema.prefixes.forEach( ( newURI, namespace ) => {
+			newURI = ObjectSchemaUtils.resolveURI( newURI, newSchema );
+			if( ! oldSchema.prefixes.has( namespace ) ) return oldSchema.prefixes.set( namespace, newURI );
+
+			const oldURI:string = oldSchema.prefixes.get( namespace );
+			if( oldURI !== newURI ) throw new IllegalArgumentError( `Prefix "${ namespace }" has different values: "${ oldURI }", "${ newURI }"` );
 		} );
 
-		oldSchema.properties.forEach( ( oldDefinition, propertyName ) => {
-			if( ! newSchema.properties.has( propertyName ) ) return newSchema.properties.set( propertyName, oldDefinition );
+		newSchema.properties.forEach( ( newDefinition, propertyName ) => {
+			if( ! oldSchema.properties.has( propertyName ) ) return oldSchema.properties.set( propertyName, newDefinition );
 
-			const newDefinition:DigestedPropertyDefinition = newSchema.properties.get( propertyName );
+			const oldDefinition:DigestedObjectSchemaProperty = oldSchema.properties.get( propertyName );
 			for( const key in newDefinition ) {
-				const newValue:any = newDefinition[ key ] instanceof URI.Class ? newDefinition[ key ].stringValue : newDefinition[ key ];
-				const oldValue:any = oldDefinition[ key ] instanceof URI.Class ? oldDefinition[ key ].stringValue : oldDefinition[ key ];
+				const newValue:any = newDefinition[ key ];
+				const oldValue:any = oldDefinition[ key ];
 
 				if( newValue !== oldValue ) throw new IllegalArgumentError( `Property "${ propertyName }" has different "${ key }": "${ oldValue }", "${ newValue }"` );
 			}
 		} );
 
-		return newSchema;
+		return oldSchema;
 	}
 
 }
-
-export default Class;
