@@ -193,6 +193,9 @@ export class AuthService {
 		const requestOptions:RequestOptions = {};
 		authenticator.addAuthentication( requestOptions );
 
+		// TODO: Missing implementation in platform (Remove, and enable tests)
+		return Promise.resolve( null );
+
 		return this.context.documents
 			.get<PersistedUser.Class>( "users/me/", requestOptions )
 			.then( ( [ persistedUser ]:[ PersistedUser.Class, Response ] ) => persistedUser );

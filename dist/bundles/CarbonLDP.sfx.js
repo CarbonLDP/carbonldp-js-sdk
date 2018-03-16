@@ -4,9 +4,9 @@
 	else if(typeof define === 'function' && define.amd)
 		define([], factory);
 	else if(typeof exports === 'object')
-		exports["Carbon"] = factory();
+		exports["CarbonLDP"] = factory();
 	else
-		root["Carbon"] = factory();
+		root["CarbonLDP"] = factory();
 })(typeof self !== 'undefined' ? self : this, function() {
 return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
@@ -16175,6 +16175,7 @@ var AuthService = (function () {
     AuthService.prototype.getAuthenticatedUser = function (authenticator) {
         var requestOptions = {};
         authenticator.addAuthentication(requestOptions);
+        return Promise.resolve(null);
         return this.context.documents
             .get("users/me/", requestOptions)
             .then(function (_a) {

@@ -169,6 +169,7 @@ var AuthService = (function () {
     AuthService.prototype.getAuthenticatedUser = function (authenticator) {
         var requestOptions = {};
         authenticator.addAuthentication(requestOptions);
+        return Promise.resolve(null);
         return this.context.documents
             .get("users/me/", requestOptions)
             .then(function (_a) {

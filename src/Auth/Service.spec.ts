@@ -439,7 +439,7 @@ describe( module( "carbonldp/Auth/Service" ), ():void => {
 				};
 			} );
 
-			it( hasSignature(
+			xit( hasSignature(
 				"Authenticates the user with Basic HTTP Authentication, which uses an encoded string with username and password in every request.", [
 					{ name: "method", type: "CarbonLDP.Auth.AuthMethod.BASIC" },
 					{ name: "username", type: "string" },
@@ -595,7 +595,7 @@ describe( module( "carbonldp/Auth/Service" ), ():void => {
 				}, done.fail );
 			} );
 
-			it( hasSignature(
+			xit( hasSignature(
 				"Authenticates the user with a `CarbonLDP.Auth.TokenCredentials.Class`, which contains a JSON Web Token (JWT) that will be used in every request.", [
 					{ name: "method", type: "CarbonLDP.Auth.AuthMethod.TOKEN" },
 					{ name: "token", type: "CarbonLDP.Auth.TokenCredentials.Class" },

@@ -5,9 +5,9 @@
 		};
 	}
 
-	const carbon1 = new CarbonLDP( "localhost:8083", false );
-	const carbon2 = new CarbonLDP( "localhost:8083", false );
-	const carbon3 = new CarbonLDP( "localhost:8083", false );
+	const carbon1 = new CarbonLDP( "http://localhost:8083" );
+	const carbon2 = new CarbonLDP( "http://localhost:8083" );
+	const carbon3 = new CarbonLDP( "http://localhost:8083" );
 
 	const prefixes = {
 		"acl": "http://www.w3.org/ns/auth/acl#",
@@ -233,6 +233,53 @@
 			expect( freshChild.index ).toEqual( 100 );
 			expect( freshChild.somethingElse ).toEqual( "Hello world!" );
 		} ) );
+	} );
+
+	describe( "Auth Tests >", () => {
+
+		let app;
+		beforeEach( () => {
+			app = new CarbonLDP( "http://localhost:8083" );
+		} );
+
+		describe( "When BASIC auth", () => {
+
+			let token;
+			beforeEach( () => {
+				token = CarbonLDP.Auth.AuthMethod.BASIC;
+			} );
+
+			it( "should add credentials", async () => {
+				const credentials = await app.auth.authenticateUsing( token, "user01", "pass01" );
+
+				expect( credentials ).toEqual( jasmine.objectContaining( {
+					username: "user01",
+					password: "pass01",
+				} ) );
+			} );
+
+			it( "should get with BASIC auth", async () => {
+				await app.auth.authenticateUsing( token, "user01", "pass01" );
+
+				const [ , response ] = await app.documents.get( ".system/platform/" );
+
+				expect( response.status ).toBe( 200 );
+			} );
+
+			it( "should unauthorized with BASIC auth", async () => {
+				await app.auth.authenticateUsing( token, "user01", "incorrect-pass" );
+
+				try {
+					await app.documents.get( ".system/platform/" );
+					fail( "should not reach here" );
+				} catch( e ) {
+					debugger;
+					expect( e.response.status ).toBe( 401 );
+				}
+			} );
+
+		} );
+
 	} );
 
 })();
