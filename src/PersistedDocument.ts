@@ -5,11 +5,14 @@ import { Document } from "./Document";
 import { Documents } from "./Documents";
 import { Fragment } from "./Fragment";
 import {
+	GETOptions,
 	RequestOptions,
 	RequestUtils,
 } from "./HTTP/Request";
 import { Response } from "./HTTP/Response";
 import { MessagingDocument } from "./Messaging/Document";
+import { ModelDecorator } from "./ModelDecorator";
+import { ModelFactory } from "./ModelFactory";
 import { NamedFragment } from "./NamedFragment";
 import * as ObjectSchema from "./ObjectSchema";
 import { PersistedAccessPoint } from "./PersistedAccessPoint";
@@ -20,12 +23,12 @@ import { PersistedResource } from "./PersistedResource";
 import { Pointer } from "./Pointer";
 import { URI } from "./RDF/URI";
 import { ServiceAwareDocument } from "./ServiceAwareDocument";
-import * as SPARQL from "./SPARQL";
 import { FinishSPARQLSelect } from "./SPARQL/Builder";
+import { QueryDocumentBuilder } from "./SPARQL/QueryDocument/QueryDocumentBuilder";
 import { QueryDocumentsBuilder } from "./SPARQL/QueryDocument/QueryDocumentsBuilder";
+import { SPARQLRawResults } from "./SPARQL/RawResults";
+import { SPARQLSelectResults } from "./SPARQL/SelectResults";
 import * as Utils from "./Utils";
-import { ModelFactory } from "./ModelFactory";
-import { ModelDecorator } from "./ModelDecorator";
 
 export interface PersistedDocument extends Document, PersistedResource, ServiceAwareDocument, MessagingDocument {
 	created?:Date;
@@ -82,6 +85,11 @@ export interface PersistedDocument extends Document, PersistedResource, ServiceA
 	addMember( memberURI:string ):Promise<Response>;
 
 	addMembers( members:(Pointer | string)[] ):Promise<Response>;
+
+
+	get<T extends object>( relativeURI:string, requestOptions?:GETOptions, queryBuilderFn?:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<T & PersistedDocument>;
+
+	get<T extends object>( relativeURI:string, queryBuilderFn?:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<T & PersistedDocument>;
 
 
 	createChild<T extends object>( object:T, slug:string, requestOptions?:RequestOptions ):Promise<[ T & PersistedProtectedDocument, Response ]>;
@@ -147,13 +155,13 @@ export interface PersistedDocument extends Document, PersistedResource, ServiceA
 	removeAllMembers():Promise<Response>;
 
 
-	executeRawASKQuery( askQuery:string, requestOptions?:RequestOptions ):Promise<[ SPARQL.RawResults.SPARQLRawResults, Response ]>;
+	executeRawASKQuery( askQuery:string, requestOptions?:RequestOptions ):Promise<[ SPARQLRawResults, Response ]>;
 
 	executeASKQuery( askQuery:string, requestOptions?:RequestOptions ):Promise<[ boolean, Response ]>;
 
-	executeRawSELECTQuery( selectQuery:string, requestOptions?:RequestOptions ):Promise<[ SPARQL.RawResults.SPARQLRawResults, Response ]>;
+	executeRawSELECTQuery( selectQuery:string, requestOptions?:RequestOptions ):Promise<[ SPARQLRawResults, Response ]>;
 
-	executeSELECTQuery<T extends object>( selectQuery:string, requestOptions?:RequestOptions ):Promise<[ SPARQL.SelectResults.SPARQLSelectResults<T>, Response ]>;
+	executeSELECTQuery<T extends object>( selectQuery:string, requestOptions?:RequestOptions ):Promise<[ SPARQLSelectResults<T>, Response ]>;
 
 	executeRawCONSTRUCTQuery( constructQuery:string, requestOptions?:RequestOptions ):Promise<[ string, Response ]>;
 
@@ -184,6 +192,8 @@ export const PersistedDocument:PersistedDocumentFactory = {
 	isDecorated( object:object ):object is PersistedDocument {
 		return Utils.hasPropertyDefined( object, "_eTag" )
 			&& Utils.hasFunction( object, "isLocallyOutDated" )
+
+			&& Utils.hasFunction( object, "get" )
 
 			&& Utils.hasFunction( object, "refresh" )
 			&& Utils.hasFunction( object, "save" )
@@ -382,6 +392,14 @@ export const PersistedDocument:PersistedDocumentFactory = {
 				configurable: true,
 				value: addMembers,
 			},
+
+			"get": {
+				writable: false,
+				enumerable: false,
+				configurable: true,
+				value: get,
+			},
+
 			"createChild": {
 				writable: false,
 				enumerable: false,
@@ -666,6 +684,16 @@ function addMembers( members:(Pointer | string)[] ):Promise<Response> {
 	return this._documents.addMembers( this.id, members );
 }
 
+function get<T extends object>( relativeURI:string, requestOptions?:GETOptions, queryBuilderFn?:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<T & PersistedDocument>;
+function get<T extends object>( relativeURI:string, queryBuilderFn?:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<T & PersistedDocument>;
+function get<T extends object>( this:PersistedDocument, relativeURI:string, optionsOrQueryBuilderFn:any, queryBuilderFn?:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<T & PersistedDocument> {
+	const uri:string = URI.resolve( this.id, relativeURI );
+	return this._documents
+		.get<T>( uri, optionsOrQueryBuilderFn, queryBuilderFn )
+		.then( data => data[ 0 ] )
+		;
+}
+
 function createChild<T extends object>( object:T, slug:string, requestOptions?:RequestOptions ):Promise<[ T & PersistedProtectedDocument, Response ]>;
 function createChild<T extends object>( object:T, requestOptions?:RequestOptions ):Promise<[ T & PersistedProtectedDocument, Response ]>;
 function createChild( slug:string, requestOptions?:RequestOptions ):Promise<[ PersistedProtectedDocument, Response ]>;
@@ -750,7 +778,7 @@ function removeAllMembers():Promise<Response> {
 	return this._documents.removeAllMembers( this.id );
 }
 
-function executeRawASKQuery( askQuery:string, requestOptions:RequestOptions = {} ):Promise<[ SPARQL.RawResults.SPARQLRawResults, Response ]> {
+function executeRawASKQuery( askQuery:string, requestOptions:RequestOptions = {} ):Promise<[ SPARQLRawResults, Response ]> {
 	return this._documents.executeRawASKQuery( this.id, askQuery, requestOptions );
 }
 
@@ -758,11 +786,11 @@ function executeASKQuery( askQuery:string, requestOptions:RequestOptions = {} ):
 	return this._documents.executeASKQuery( this.id, askQuery, requestOptions );
 }
 
-function executeRawSELECTQuery( selectQuery:string, requestOptions:RequestOptions = {} ):Promise<[ SPARQL.RawResults.SPARQLRawResults, Response ]> {
+function executeRawSELECTQuery( selectQuery:string, requestOptions:RequestOptions = {} ):Promise<[ SPARQLRawResults, Response ]> {
 	return this._documents.executeRawSELECTQuery( this.id, selectQuery, requestOptions );
 }
 
-function executeSELECTQuery<T extends object>( this:PersistedDocument, selectQuery:string, requestOptions:RequestOptions = {} ):Promise<[ SPARQL.SelectResults.SPARQLSelectResults<T>, Response ]> {
+function executeSELECTQuery<T extends object>( this:PersistedDocument, selectQuery:string, requestOptions:RequestOptions = {} ):Promise<[ SPARQLSelectResults<T>, Response ]> {
 	return this._documents.executeSELECTQuery<T>( this.id, selectQuery, requestOptions );
 }
 

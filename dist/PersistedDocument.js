@@ -22,6 +22,7 @@ exports.PersistedDocument = {
     isDecorated: function (object) {
         return Utils.hasPropertyDefined(object, "_eTag")
             && Utils.hasFunction(object, "isLocallyOutDated")
+            && Utils.hasFunction(object, "get")
             && Utils.hasFunction(object, "refresh")
             && Utils.hasFunction(object, "save")
             && Utils.hasFunction(object, "saveAndRefresh")
@@ -200,6 +201,12 @@ exports.PersistedDocument = {
                 enumerable: false,
                 configurable: true,
                 value: addMembers,
+            },
+            "get": {
+                writable: false,
+                enumerable: false,
+                configurable: true,
+                value: get,
             },
             "createChild": {
                 writable: false,
@@ -452,6 +459,12 @@ function addMember(memberOrUri) {
 }
 function addMembers(members) {
     return this._documents.addMembers(this.id, members);
+}
+function get(relativeURI, optionsOrQueryBuilderFn, queryBuilderFn) {
+    var uri = URI_1.URI.resolve(this.id, relativeURI);
+    return this._documents
+        .get(uri, optionsOrQueryBuilderFn, queryBuilderFn)
+        .then(function (data) { return data[0]; });
 }
 function createChild(objectOrSlugOrRequestOptions, slugOrRequestOptions, requestOptions) {
     if (requestOptions === void 0) { requestOptions = {}; }
