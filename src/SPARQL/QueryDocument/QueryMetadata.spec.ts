@@ -1,111 +1,140 @@
-import * as VolatileResource from "../../LDP/VolatileResource";
-import * as NS from "../../NS";
-import * as Pointer from "../../Pointer";
-import * as Resource from "../../Resource";
-import { clazz, hasDefaultExport, hasProperty, hasSignature, interfaze, method, module, OBLIGATORY, STATIC } from "../../test/JasmineExtender";
+import { VolatileResource } from "../../LDP/VolatileResource";
+import { Pointer } from "../../Pointer";
+import { Resource } from "../../Resource";
+import {
+	hasDefaultExport,
+	hasProperty,
+	hasSignature,
+	interfaze,
+	method,
+	module,
+	OBLIGATORY,
+	property,
+	STATIC
+} from "../../test/JasmineExtender";
+import { C } from "../../Vocabularies/C";
 
-import * as QueryMetadata from "./QueryMetadata";
+import DefaultExport, { QueryMetadata } from "./QueryMetadata";
 
-describe( module( "Carbon/SPARQL/QueryDocument/QueryMetadata" ), ():void => {
+describe( module( "carbonldp/SPARQL/QueryDocument/QueryMetadata" ), ():void => {
 
 	it( "should exists", ():void => {
 		expect( QueryMetadata ).toBeDefined();
 		expect( QueryMetadata ).toEqual( jasmine.any( Object ) );
 	} );
 
-	it( hasDefaultExport( "Carbon.SPARQL.QueryDocument.QueryMetadata.Class" ), ():void => {
-		const target:QueryMetadata.Class = {} as QueryMetadata.default;
+	it( hasDefaultExport( "CarbonLDP.SPARQL.QueryDocument.QueryMetadata.QueryMetadata" ), ():void => {
+		const target:DefaultExport = {} as QueryMetadata;
 		expect( target ).toBeDefined();
 	} );
 
-	it( hasProperty(
-		STATIC,
-		"RDF_CLASS",
-		"string"
-	), ():void => {
-		expect( QueryMetadata.RDF_CLASS ).toBeDefined();
-		expect( QueryMetadata.RDF_CLASS ).toBe( NS.C.Class.QueryMetadata );
-	} );
-
-	it( hasProperty(
-		STATIC,
-		"SCHEMA",
-		"Carbon.ObjectSchema.Class"
-	), ():void => {
-		expect( QueryMetadata.SCHEMA ).toBeDefined();
-		expect( QueryMetadata.SCHEMA ).toEqual( jasmine.any( Object ) );
-
-		expect( QueryMetadata.SCHEMA as {} ).toEqual( {
-			"target": jasmine.any( Object ),
-		} );
-
-		expect( QueryMetadata.SCHEMA[ "target" ] ).toEqual( {
-			"@id": NS.C.Predicate.target,
-			"@type": "@id",
-			"@container": "@set",
-		} );
-	} );
-
-	describe( interfaze( "Carbon.SPARQL.QueryDocument.QueryMetadata.Class", "Interface of the volatile resource created by the SDK in the partial query request." ), ():void => {
+	describe( interfaze( "CarbonLDP.SPARQL.QueryDocument.QueryMetadata.QueryMetadata", "Interface of the volatile resource created by the SDK in the partial query request." ), ():void => {
 
 		it( "should exists", ():void => {
-			const target:QueryMetadata.Class = {} as QueryMetadata.Class;
+			const target:QueryMetadata = {} as QueryMetadata;
 			expect( target ).toBeDefined();
 		} );
 
 		it( hasProperty(
 			OBLIGATORY,
 			"target",
-			"Carbon.Pointer.Class",
+			"CarbonLDP.Pointer.Pointer",
 			"The pointer to one of the targeted resources requested in the partial query."
 		), ():void => {
-			const target:QueryMetadata.Class[ "target" ] = {} as Pointer.Class;
+			const target:QueryMetadata[ "target" ] = {} as Pointer;
 			expect( target ).toBeDefined();
 		} );
 
 	} );
 
-	describe( clazz( "Carbon.SPARQL.QueryDocument.QueryMetadata.Factory", "Util function for `Carbon.SPARQL.QueryDocument.QueryMetadata.Class` objects" ), ():void => {
+	describe( interfaze(
+		"CarbonLDP.SPARQL.QueryDocument.QueryMetadataFactory",
+		"Interface with the factory, decorate and utils methods for `CarbonLDP.SPARQL.QueryDocument.QueryMetadata.QueryMetadata` objects."
+	), ():void => {
 
-		it( "should exists", ():void => {
-			expect( QueryMetadata.Factory ).toBeDefined();
-			expect( QueryMetadata.Factory ).toEqual( jasmine.any( Function ) );
-		} );
+		it( hasProperty(
+			OBLIGATORY,
+			"TYPE",
+			"string"
+		), ():void => {} );
 
-		describe( method( STATIC, "is" ), ():void => {
+		it( hasProperty(
+			OBLIGATORY,
+			"SCHEMA",
+			"CarbonLDP.ObjectSchema.ObjectSchema"
+		), ():void => {} );
+
+		describe( method( OBLIGATORY, "is" ), ():void => {
 
 			it( hasSignature(
 				"Asserts if the provided object can be defined as a QueryMetadata resource.",
 				[
 					{ name: "object", type: "object", description: "The object to check." },
 				],
-				{ type: "object is Carbon.SPARQL.QueryDocument.QueryMetadata.Class" }
-			), ():void => {
+				{ type: "object is CarbonLDP.SPARQL.QueryDocument.QueryMetadata.QueryMetadata" }
+			), ():void => {} );
+
+		} );
+
+	} );
+
+	describe( property(
+		STATIC,
+		"QueryMetadata",
+		"CarbonLDP.SPARQL.QueryDocument.QueryMetadataFactory"
+	), ():void => {
+
+		it( "should exist", ():void => {
+			expect( QueryMetadata ).toBeDefined();
+			expect( QueryMetadata ).toEqual( jasmine.any( Object ) );
+		} );
+
+		it( "QueryMetadata.TYPE", ():void => {
+			expect( QueryMetadata.TYPE ).toBeDefined();
+			expect( QueryMetadata.TYPE ).toBe( C.QueryMetadata );
+		} );
+
+		// TODO: Separate in different tests
+		it( "QueryMetadata.SCHEMA", ():void => {
+			expect( QueryMetadata.SCHEMA ).toBeDefined();
+			expect( QueryMetadata.SCHEMA ).toEqual( jasmine.any( Object ) );
+
+			expect( QueryMetadata.SCHEMA as {} ).toEqual( {
+				"target": jasmine.any( Object ),
 			} );
+
+			expect( QueryMetadata.SCHEMA[ "target" ] ).toEqual( {
+				"@id": C.target,
+				"@type": "@id",
+				"@container": "@set",
+			} );
+		} );
+
+		describe( "QueryMetadata.is", ():void => {
 
 			it( "should exists", ():void => {
-				expect( QueryMetadata.Factory.is ).toBeDefined();
-				expect( QueryMetadata.Factory.is ).toEqual( jasmine.any( Function ) );
+				expect( QueryMetadata.is ).toBeDefined();
+				expect( QueryMetadata.is ).toEqual( jasmine.any( Function ) );
 			} );
 
-			it( "should call to VolatileResource.Factory.is", ():void => {
-				const spy:jasmine.Spy = spyOn( VolatileResource.Factory, "is" );
+			it( "should call to VolatileResource.is", ():void => {
+				const spy:jasmine.Spy = spyOn( VolatileResource, "is" );
 
 				const object:object = { the: "object" };
-				QueryMetadata.Factory.is( object );
+				QueryMetadata.is( object );
 				expect( spy ).toHaveBeenCalledWith( object );
 			} );
 
-			it( "should verify the resource RDF_CLASS", ():void => {
-				const target:QueryMetadata.Class = Resource.Factory.createFrom( {
-					types: [ NS.C.Class.VolatileResource, NS.C.Class.QueryMetadata ],
+			it( "should verify the resource TYPE", ():void => {
+				const target:QueryMetadata = Resource.createFrom( {
+					types: [ C.VolatileResource, C.QueryMetadata ],
 					"target": null,
 				} );
 
-				expect( QueryMetadata.Factory.is( target ) ).toBe( true );
+				expect( QueryMetadata.is( target ) ).toBe( true );
 
-				target.removeType( QueryMetadata.RDF_CLASS );
-				expect( QueryMetadata.Factory.is( target ) ).toBe( false );
+				target.removeType( QueryMetadata.TYPE );
+				expect( QueryMetadata.is( target ) ).toBe( false );
 			} );
 
 		} );

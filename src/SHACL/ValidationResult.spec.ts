@@ -1,119 +1,55 @@
-import { hasDefaultExport, module, hasProperty, STATIC, interfaze, OBLIGATORY, OPTIONAL, extendsClass } from "../test/JasmineExtender";
-import * as ValidationResult from "./ValidationResult";
-import DefaultExport from "./ValidationResult";
-import * as NS from "./../NS";
-import * as Pointer from "./../Pointer";
-import * as Resource from "./../Resource";
+import { Pointer } from "../Pointer";
+import { Resource } from "../Resource";
+import {
+	extendsClass,
+	hasDefaultExport,
+	hasProperty,
+	interfaze,
+	module,
+	OBLIGATORY,
+	OPTIONAL,
+	property,
+	STATIC
+} from "../test/JasmineExtender";
+import { SHACL } from "../Vocabularies/SHACL";
+import { XSD } from "../Vocabularies/XSD";
 
-describe( module( "Carbon/SHACL/ValidationResult" ), ():void => {
+import DefaultExport, { ValidationResult } from "./ValidationResult";
 
-	it( "should exists", ():void => {
-		expect( ValidationResult ).toBeDefined();
-		expect( ValidationResult ).toEqual( jasmine.any( Object ) );
-	} );
-
-	it( hasProperty(
-		STATIC,
-		"RDF_CLASS",
-		"string"
-	), ():void => {
-		expect( ValidationResult.RDF_CLASS ).toBeDefined();
-		expect( ValidationResult.RDF_CLASS ).toEqual( jasmine.any( String ) );
-
-		expect( ValidationResult.RDF_CLASS ).toBe( NS.SHACL.Class.ValidationResult );
-	} );
-
-	it( hasProperty(
-		STATIC,
-		"SCHEMA",
-		"Carbon.ObjectSchema.Class"
-	), ():void => {
-		expect( ValidationResult.SCHEMA ).toBeDefined();
-		expect( ValidationResult.SCHEMA ).toEqual( jasmine.any( Object ) );
-
-		expect( ValidationResult.SCHEMA as {} ).toEqual( {
-			"focusNode": jasmine.any( Object ),
-			"resultPath": jasmine.any( Object ),
-			"value": jasmine.any( Object ),
-			"sourceShape": jasmine.any( Object ),
-			"sourceConstraintComponent": jasmine.any( Object ),
-			"detail": jasmine.any( Object ),
-			"resultMessage": jasmine.any( Object ),
-			"resultSeverity": jasmine.any( Object ),
-		} );
-
-		expect( ValidationResult.SCHEMA[ "focusNode" ] ).toEqual( {
-			"@id": NS.SHACL.Predicate.focusNode,
-			"@type": "@id",
-		} );
-
-		expect( ValidationResult.SCHEMA[ "resultPath" ] ).toEqual( {
-			"@id": NS.SHACL.Predicate.resultPath,
-			"@type": "@id",
-		} );
-
-		expect( ValidationResult.SCHEMA[ "value" ] ).toEqual( {
-			"@id": NS.SHACL.Predicate.value,
-		} );
-
-		expect( ValidationResult.SCHEMA[ "sourceShape" ] ).toEqual( {
-			"@id": NS.SHACL.Predicate.sourceShape,
-			"@type": "@id",
-		} );
-
-		expect( ValidationResult.SCHEMA[ "sourceConstraintComponent" ] ).toEqual( {
-			"@id": NS.SHACL.Predicate.sourceConstraintComponent,
-			"@type": "@id",
-		} );
-
-		expect( ValidationResult.SCHEMA[ "detail" ] ).toEqual( {
-			"@id": NS.SHACL.Predicate.detail,
-			"@type": "@id",
-		} );
-
-		expect( ValidationResult.SCHEMA[ "resultMessage" ] ).toEqual( {
-			"@id": NS.SHACL.Predicate.resultMessage,
-			"@type": NS.XSD.DataType.string,
-		} );
-
-		expect( ValidationResult.SCHEMA[ "resultSeverity" ] ).toEqual( {
-			"@id": NS.SHACL.Predicate.resultSeverity,
-			"@type": "@id",
-		} );
-	} );
+describe( module( "carbonldp/SHACL/ValidationResult" ), ():void => {
 
 	describe( interfaze(
-		"Carbon.SHACL.ValidationResult.Class",
+		"CarbonLDP.SHACL.ValidationResult.ValidationResult",
 		"Interface of a result that reports individual SHACL validation failure."
 	), ():void => {
 
 		it( "should exists", ():void => {
-			const target:ValidationResult.Class = {} as any;
+			const target:ValidationResult = {} as any;
 			expect( target ).toBeDefined();
 		} );
 
-		it( extendsClass( "Carbon.Resource.Class" ), ():void => {
-			const target:Resource.Class = {} as ValidationResult.Class;
+		it( extendsClass( "CarbonLDP.Resource.Resource" ), ():void => {
+			const target:Resource = {} as ValidationResult;
 			expect( target ).toBeDefined();
 		} );
 
 		it( hasProperty(
 			OBLIGATORY,
 			"focusNode",
-			"Carbon.Pointer.Class",
+			"CarbonLDP.Pointer.Pointer",
 			"The focus node that has caused the result."
 		), ():void => {
-			const target:ValidationResult.Class[ "focusNode" ] = {} as Pointer.Class;
+			const target:ValidationResult[ "focusNode" ] = {} as Pointer;
 			expect( target ).toBeDefined();
 		} );
 
 		it( hasProperty(
 			OPTIONAL,
 			"resultPath",
-			"Carbon.Pointer.Class",
+			"CarbonLDP.Pointer.Pointer",
 			"The SHACL shape property path that where tested."
 		), ():void => {
-			const target:ValidationResult.Class[ "resultPath" ] = {} as Pointer.Class;
+			const target:ValidationResult[ "resultPath" ] = {} as Pointer;
 			expect( target ).toBeDefined();
 		} );
 
@@ -123,27 +59,27 @@ describe( module( "Carbon/SHACL/ValidationResult" ), ():void => {
 			"any",
 			"The value of the previous SHACL property path that raised the validation violation."
 		), ():void => {
-			const target:ValidationResult.Class[ "value" ] = null as any;
+			const target:ValidationResult[ "value" ] = null as any;
 			expect( target ).toBeDefined();
 		} );
 
 		it( hasProperty(
 			OPTIONAL,
 			"sourceShape",
-			"Carbon.Pointer.Class",
+			"CarbonLDP.Pointer.Pointer",
 			"Pointer to the source SHACL shape used in the validation."
 		), ():void => {
-			const target:ValidationResult.Class[ "sourceShape" ] = {} as Pointer.Class;
+			const target:ValidationResult[ "sourceShape" ] = {} as Pointer;
 			expect( target ).toBeDefined();
 		} );
 
 		it( hasProperty(
 			OPTIONAL,
 			"detail",
-			"Carbon.Pointer.Class",
+			"CarbonLDP.Pointer.Pointer",
 			"Pointer to the possible parent wih one or more SHACL results."
 		), ():void => {
-			const target:ValidationResult.Class[ "detail" ] = {} as Pointer.Class;
+			const target:ValidationResult[ "detail" ] = {} as Pointer;
 			expect( target ).toBeDefined();
 		} );
 
@@ -153,25 +89,120 @@ describe( module( "Carbon/SHACL/ValidationResult" ), ():void => {
 			"string",
 			"The message string taken from the SHACL shape message property."
 		), ():void => {
-			const target:ValidationResult.Class[ "resultMessage" ] = "" as string;
+			const target:ValidationResult[ "resultMessage" ] = "" as string;
 			expect( target ).toBeDefined();
 		} );
 
 		it( hasProperty(
 			OPTIONAL,
 			"resultSeverity",
-			"Carbon.Pointer.Class",
+			"CarbonLDP.Pointer.Pointer",
 			"The severity described by the SHACL shape severity property."
 		), ():void => {
-			const target:ValidationResult.Class[ "resultSeverity" ] = {} as Pointer.Class;
+			const target:ValidationResult[ "resultSeverity" ] = {} as Pointer;
 			expect( target ).toBeDefined();
 		} );
 
 	} );
 
+	describe( interfaze(
+		"CarbonLDP.SHACL.ValidationResult.ValidationResultFactory",
+		"Interface with the factory, decorate and utils elements for `CarbonLDP.SHACL.ValidationResult.ValidationResult` objects."
+	), ():void => {
 
-	it( hasDefaultExport( "Carbon.SHACL.ValidationResult.Class" ), ():void => {
-		const target:ValidationResult.Class = {} as DefaultExport;
+		it( hasProperty(
+			OBLIGATORY,
+			"TYPE",
+			"string"
+		), ():void => {} );
+
+		it( hasProperty(
+			OBLIGATORY,
+			"SCHEMA",
+			"CarbonLDP.ObjectSchema.ObjectSchema"
+		), ():void => {} );
+
+	} );
+
+	describe( property(
+		STATIC,
+		"ValidationResult",
+		"CarbonLDP.SHACL.ValidationResult.ValidationResultFactory"
+	), ():void => {
+
+		it( "should exist", ():void => {
+			expect( ValidationResult ).toBeDefined();
+			expect( ValidationResult ).toEqual( jasmine.any( Object ) );
+		} );
+
+		// TODO: Separate in different tests
+		it( "ValidationResult.TYPE", ():void => {
+			expect( ValidationResult.TYPE ).toBeDefined();
+			expect( ValidationResult.TYPE ).toEqual( jasmine.any( String ) );
+
+			expect( ValidationResult.TYPE ).toBe( SHACL.ValidationResult );
+		} );
+
+		// TODO: Separate in different tests
+		it( "ValidationResult.SCHEMA", ():void => {
+			expect( ValidationResult.SCHEMA ).toBeDefined();
+			expect( ValidationResult.SCHEMA ).toEqual( jasmine.any( Object ) );
+
+			expect( ValidationResult.SCHEMA as {} ).toEqual( {
+				"focusNode": jasmine.any( Object ),
+				"resultPath": jasmine.any( Object ),
+				"value": jasmine.any( Object ),
+				"sourceShape": jasmine.any( Object ),
+				"sourceConstraintComponent": jasmine.any( Object ),
+				"detail": jasmine.any( Object ),
+				"resultMessage": jasmine.any( Object ),
+				"resultSeverity": jasmine.any( Object ),
+			} );
+
+			expect( ValidationResult.SCHEMA[ "focusNode" ] ).toEqual( {
+				"@id": SHACL.focusNode,
+				"@type": "@id",
+			} );
+
+			expect( ValidationResult.SCHEMA[ "resultPath" ] ).toEqual( {
+				"@id": SHACL.resultPath,
+				"@type": "@id",
+			} );
+
+			expect( ValidationResult.SCHEMA[ "value" ] ).toEqual( {
+				"@id": SHACL.value,
+			} );
+
+			expect( ValidationResult.SCHEMA[ "sourceShape" ] ).toEqual( {
+				"@id": SHACL.sourceShape,
+				"@type": "@id",
+			} );
+
+			expect( ValidationResult.SCHEMA[ "sourceConstraintComponent" ] ).toEqual( {
+				"@id": SHACL.sourceConstraintComponent,
+				"@type": "@id",
+			} );
+
+			expect( ValidationResult.SCHEMA[ "detail" ] ).toEqual( {
+				"@id": SHACL.detail,
+				"@type": "@id",
+			} );
+
+			expect( ValidationResult.SCHEMA[ "resultMessage" ] ).toEqual( {
+				"@id": SHACL.resultMessage,
+				"@type": XSD.string,
+			} );
+
+			expect( ValidationResult.SCHEMA[ "resultSeverity" ] ).toEqual( {
+				"@id": SHACL.resultSeverity,
+				"@type": "@id",
+			} );
+		} );
+
+	} );
+
+	it( hasDefaultExport( "CarbonLDP.SHACL.ValidationResult.ValidationResult" ), ():void => {
+		const target:ValidationResult = {} as DefaultExport;
 		expect( target ).toBeDefined();
 	} );
 

@@ -1,17 +1,32 @@
-import * as NamedFragment from "./NamedFragment";
-import * as PersistedDocument from "./PersistedDocument";
-import * as PersistedFragment from "./PersistedFragment";
+import { ModelDecorator } from "./ModelDecorator";
+import { NamedFragment } from "./NamedFragment";
+import { PersistedDocument } from "./PersistedDocument";
+import { PersistedFragment } from "./PersistedFragment";
 
-export interface Class extends PersistedFragment.Class, NamedFragment.Class {
-	document:PersistedDocument.Class;
+
+export interface PersistedNamedFragment extends PersistedFragment, NamedFragment {
+	_document:PersistedDocument;
 }
 
-export class Factory {
-	static decorate<T extends NamedFragment.Class>( fragment:T ):T & Class {
-		PersistedFragment.Factory.decorate( fragment );
 
-		return <any> fragment;
-	}
+export interface PersistedNamedFragmentFactory extends ModelDecorator<PersistedNamedFragment> {
+	isDecorated( object:object ):object is PersistedNamedFragment;
+
+	decorate<T extends object>( object:T ):T & PersistedNamedFragment;
 }
 
-export default Class;
+export const PersistedNamedFragment:PersistedNamedFragmentFactory = {
+	isDecorated( object:object ):object is PersistedNamedFragment {
+		// Fallback to `PersistedFragment.isDecorated` since it has not own properties
+		return PersistedFragment.isDecorated( object );
+	},
+
+	decorate<T extends object>( object:T ):T & PersistedNamedFragment {
+		if( PersistedNamedFragment.isDecorated( object ) ) return object;
+
+		const fragment:T & NamedFragment = NamedFragment.decorate( object );
+		return PersistedFragment.decorate( fragment );
+	},
+};
+
+export default PersistedNamedFragment;

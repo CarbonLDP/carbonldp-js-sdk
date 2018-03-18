@@ -1,4 +1,4 @@
-import Serializer from "./../Serializer";
+import { Serializer } from "./../Serializer";
 export declare class DateSerializer implements Serializer {
     serialize(value: any): string;
 }

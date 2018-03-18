@@ -1,20 +1,31 @@
-import * as NS from "./../NS";
-import * as ObjectSchema from "./../ObjectSchema";
-import * as MemberRemovedDetails from "./MemberRemovedDetails";
-import * as Message from "./Message";
+import { ObjectSchema } from "../ObjectSchema";
+import { C } from "../Vocabularies/C";
+import { EventMessage } from "./EventMessage";
+import { MemberRemovedDetails } from "./MemberRemovedDetails";
 
-export const RDF_CLASS:string = NS.C.Class.MemberRemoved;
 
-export const SCHEMA:ObjectSchema.Class = {
-	...Message.SCHEMA,
+export interface MemberRemoved extends EventMessage {
+	details:MemberRemovedDetails;
+}
+
+
+export interface MemberRemovedFactory {
+	TYPE:string;
+	SCHEMA:ObjectSchema;
+}
+
+const TYPE:string = C.MemberRemoved;
+const SCHEMA:ObjectSchema = {
+	...EventMessage.SCHEMA,
 	"details": {
-		"@id": NS.C.Predicate.details,
+		"@id": C.details,
 		"@type": "@id",
 	},
 };
 
-export interface Class extends Message.Class {
-	details:MemberRemovedDetails.Class;
-}
+export const MemberRemoved:MemberRemovedFactory = {
+	TYPE,
+	SCHEMA,
+};
 
-export default Class;
+export default MemberRemoved;

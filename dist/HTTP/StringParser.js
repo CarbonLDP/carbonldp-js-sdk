@@ -1,16 +1,14 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var Class = (function () {
-    function Class() {
+var StringParser = (function () {
+    function StringParser() {
     }
-    Class.prototype.parse = function (body) {
-        return new Promise(function (resolve, reject) {
-            resolve(body);
-        });
+    StringParser.prototype.parse = function (body) {
+        return new Promise(function (resolve) { return resolve(body); });
     };
-    return Class;
+    return StringParser;
 }());
-exports.Class = Class;
-exports.default = Class;
+exports.StringParser = StringParser;
+exports.default = StringParser;
 
 //# sourceMappingURL=StringParser.js.map

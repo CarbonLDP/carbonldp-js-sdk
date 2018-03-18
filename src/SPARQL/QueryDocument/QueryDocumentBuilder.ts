@@ -9,25 +9,26 @@ import {
 	ValuesToken,
 } from "sparqler/tokens";
 
+import { IllegalArgumentError } from "../../Errors/IllegalArgumentError";
+import { IllegalStateError } from "../../Errors/IllegalStateError";
 import {
 	DigestedObjectSchema,
-	DigestedPropertyDefinition,
-	Digester,
-	PropertyDefinition,
-	Util as SchemaUtils,
+	DigestedObjectSchemaProperty,
+	ObjectSchemaDigester,
+	ObjectSchemaProperty,
+	ObjectSchemaUtils,
 } from "../../ObjectSchema";
+import { Pointer } from "../../Pointer";
 import { isObject } from "../../Utils";
+import { QueryContextBuilder } from "./QueryContextBuilder";
+import { QueryObject } from "./QueryObject";
 import {
-	IllegalArgumentError,
-	IllegalStateError,
-} from "./../../Errors";
-import * as Pointer from "./../../Pointer";
-import * as QueryContextBuilder from "./QueryContextBuilder";
-import * as QueryObject from "./QueryObject";
-import * as QueryPropertiesSchema from "./QueryPropertiesSchema";
-import * as QueryProperty from "./QueryProperty";
-import * as QueryPropertySchema from "./QueryPropertySchema";
-import * as QueryValue from "./QueryValue";
+	QueryProperty,
+	QueryPropertyType,
+} from "./QueryProperty";
+import { QuerySchema } from "./QuerySchema";
+import { QuerySchemaProperty } from "./QuerySchemaProperty";
+import { QueryValue } from "./QueryValue";
 import {
 	createPropertyPatterns,
 	getParentPath,
@@ -35,22 +36,22 @@ import {
 
 const INHERIT:Readonly<{}> = Object.freeze( {} );
 
-export const ALL:Readonly<{}> = Object.freeze( {} );
+export class QueryDocumentBuilder {
+	static readonly ALL:Readonly<{}> = Object.freeze( {} );
 
-export class Class {
 	inherit:Readonly<{}> = INHERIT;
-	all:Readonly<{}> = ALL;
+	all:Readonly<{}> = QueryDocumentBuilder.ALL;
 
-	readonly _context:QueryContextBuilder.Class;
+	readonly _context:QueryContextBuilder;
 
-	protected _document:QueryProperty.Class;
+	protected _document:QueryProperty;
 
 	private _typesTriple:SubjectToken;
 	private _values:ValuesToken;
 
 	private _schema:DigestedObjectSchema;
 
-	constructor( queryContext:QueryContextBuilder.Class, property:QueryProperty.Class ) {
+	constructor( queryContext:QueryContextBuilder, property:QueryProperty ) {
 		this._context = queryContext;
 
 		property._builder = this;
@@ -62,7 +63,7 @@ export class Class {
 		this._schema = this._context.getSchemaFor( { id: "" } );
 	}
 
-	property( name?:string ):QueryProperty.Class {
+	property( name?:string ):QueryProperty {
 		if( name === void 0 ) return this._document;
 
 		let parent:string = this._document.name;
@@ -73,9 +74,9 @@ export class Class {
 
 			const directPath:string = getParentPath( fullPath );
 			if( this._context.hasProperty( directPath ) ) {
-				const direct:QueryProperty.Class = this._context.getProperty( directPath );
-				const directType:QueryProperty.PropertyType = direct.getType();
-				if( directType === QueryProperty.PropertyType.FULL || directType === QueryProperty.PropertyType.ALL ) {
+				const direct:QueryProperty = this._context.getProperty( directPath );
+				const directType:QueryPropertyType = direct.getType();
+				if( directType === QueryPropertyType.FULL || directType === QueryPropertyType.ALL ) {
 					const propertyName:string = fullPath.substr( directPath.length + 1 );
 					return direct._builder._addProperty( propertyName, INHERIT );
 				}
@@ -87,18 +88,18 @@ export class Class {
 		throw new IllegalArgumentError( `The "${ name }" property was not declared.` );
 	}
 
-	value( value:string | number | boolean | Date ):QueryValue.Class {
-		return new QueryValue.Class( this._context, value );
+	value( value:string | number | boolean | Date ):QueryValue {
+		return new QueryValue( this._context, value );
 	}
 
-	object( object:Pointer.Class | string ):QueryObject.Class {
-		return new QueryObject.Class( this._context, object );
+	object( object:Pointer | string ):QueryObject {
+		return new QueryObject( this._context, object );
 	}
 
 	withType( type:string ):this {
 		if( this._context.hasProperties( this._document.name ) ) throw new IllegalStateError( "Types must be specified before the properties." );
 
-		type = SchemaUtils.resolveURI( type, this._schema, { vocab: true, base: true } );
+		type = ObjectSchemaUtils.resolveURI( type, this._schema, { vocab: true, base: true } );
 		if( ! this._typesTriple.predicates[ 0 ].objects.length )
 			this._document.addPattern( this._typesTriple );
 
@@ -108,21 +109,21 @@ export class Class {
 
 		const schema:DigestedObjectSchema = this._context.context.getObjectSchema( type );
 		if( schema ) {
-			this._schema = Digester.combineDigestedObjectSchemas( [ this._schema, schema ] );
+			this._schema = ObjectSchemaDigester.combineDigestedObjectSchemas( [ this._schema, schema ] );
 		}
 
 		return this;
 	}
 
-	properties( propertiesSchema:QueryPropertiesSchema.Class ):this {
-		if( propertiesSchema === ALL ) {
-			this._document.setType( QueryProperty.PropertyType.ALL );
+	properties( propertiesSchema:QuerySchema ):this {
+		if( propertiesSchema === QueryDocumentBuilder.ALL ) {
+			this._document.setType( QueryPropertyType.ALL );
 			return this;
 		}
 
 		for( const propertyName in propertiesSchema ) {
-			const queryPropertySchema:QueryPropertySchema.Class | string = propertiesSchema[ propertyName ];
-			const propertyDefinition:QueryPropertySchema.Class = isObject( queryPropertySchema ) ? queryPropertySchema : { "@id": queryPropertySchema };
+			const queryPropertySchema:QuerySchemaProperty | string = propertiesSchema[ propertyName ];
+			const propertyDefinition:QuerySchemaProperty = isObject( queryPropertySchema ) ? queryPropertySchema : { "@id": queryPropertySchema };
 
 			this._addProperty( propertyName, propertyDefinition );
 		}
@@ -139,7 +140,7 @@ export class Class {
 		return this;
 	}
 
-	values( ...values:( QueryValue.Class | QueryObject.Class )[] ):this {
+	values( ...values:( QueryValue | QueryObject )[] ):this {
 		const termTokens:( LiteralToken | IRIToken | PrefixedNameToken )[] = values.map( value => {
 			const token:TermToken = value.getToken();
 			if( token.token === "blankNode" ) throw new IllegalArgumentError( `Blank node "${ token.label }" is not a valid value.` );
@@ -150,7 +151,7 @@ export class Class {
 		if( ! this._values.values[ 0 ].length ) this._document.addPattern( this._values );
 		this._values.values[ 0 ].push( ...termTokens );
 
-		let property:QueryProperty.Class = this._document;
+		let property:QueryProperty = this._document;
 		while( property.isOptional() ) {
 			property.setOptional( false );
 
@@ -161,11 +162,11 @@ export class Class {
 		return this;
 	}
 
-	_addProperty( propertyName:string, propertyDefinition:QueryPropertySchema.Class ):QueryProperty.Class {
-		const digestedDefinition:DigestedPropertyDefinition = this.addPropertyDefinition( propertyName, propertyDefinition );
+	_addProperty( propertyName:string, propertyDefinition:QuerySchemaProperty ):QueryProperty {
+		const digestedDefinition:DigestedObjectSchemaProperty = this.addPropertyDefinition( propertyName, propertyDefinition );
 		const name:string = `${ this._document.name }.${ propertyName }`;
 
-		const property:QueryProperty.Class = this._context
+		const property:QueryProperty = this._context
 			.addProperty( name )
 			.addPattern( ...createPropertyPatterns(
 				this._context,
@@ -176,10 +177,10 @@ export class Class {
 
 		if( "query" in propertyDefinition ) {
 			if( digestedDefinition.literal === false ) {
-				property.setType( QueryProperty.PropertyType.PARTIAL );
+				property.setType( QueryPropertyType.PARTIAL );
 			}
 
-			const builder:Class = new Class( this._context, property );
+			const builder:QueryDocumentBuilder = new QueryDocumentBuilder( this._context, property );
 			if( builder !== propertyDefinition[ "query" ].call( void 0, builder ) )
 				throw new IllegalArgumentError( "The provided query builder was not returned" );
 		}
@@ -189,11 +190,11 @@ export class Class {
 		return property;
 	}
 
-	private addPropertyDefinition( propertyName:string, propertyDefinition:PropertyDefinition ):DigestedPropertyDefinition {
-		const digestedDefinition:DigestedPropertyDefinition = Digester.digestProperty( propertyName, propertyDefinition, this._schema );
+	private addPropertyDefinition( propertyName:string, propertyDefinition:ObjectSchemaProperty ):DigestedObjectSchemaProperty {
+		const digestedDefinition:DigestedObjectSchemaProperty = ObjectSchemaDigester.digestProperty( propertyName, propertyDefinition, this._schema );
 
 		const uri:string = "@id" in propertyDefinition ? digestedDefinition.uri : void 0;
-		const inheritDefinition:DigestedPropertyDefinition = this._context.getInheritTypeDefinition( this._schema, propertyName, uri );
+		const inheritDefinition:DigestedObjectSchemaProperty = this._context.getInheritTypeDefinition( this._schema, propertyName, uri );
 		if( inheritDefinition ) {
 			for( const key in inheritDefinition ) {
 				if( digestedDefinition[ key ] !== null && key !== "uri" ) continue;
@@ -210,4 +211,4 @@ export class Class {
 
 }
 
-export default Class;
+export default QueryDocumentBuilder;

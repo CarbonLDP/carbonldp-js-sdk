@@ -1,27 +1,25 @@
+import { CS } from "../Vocabularies/CS";
+import { XSD } from "../Vocabularies/XSD";
+import { URI } from "./../RDF/URI";
+import { Resource } from "./../Resource";
 import {
-	STATIC,
-
-	OBLIGATORY,
-
-	module,
 	clazz,
-	interfaze,
-
-	isDefined,
-	hasProperty,
-	hasMethod,
 	extendsClass,
 	hasDefaultExport,
+	hasMethod,
+	hasProperty,
+	interfaze,
+	isDefined,
+	module,
+	OBLIGATORY,
+	STATIC,
 } from "./../test/JasmineExtender";
-import * as NS from "./../NS";
-import * as Resource from "./../Resource";
-import * as URI from "./../RDF/URI";
 import * as Utils from "./../Utils";
 
 import * as Ticket from "./Ticket";
 import DefaultExport from "./Ticket";
 
-describe( module( "Carbon/Auth/Ticket" ), ():void => {
+describe( module( "carbonldp/Auth/Ticket" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( Ticket ).toBeDefined();
@@ -36,44 +34,44 @@ describe( module( "Carbon/Auth/Ticket" ), ():void => {
 		expect( Ticket.RDF_CLASS ).toBeDefined();
 		expect( Utils.isString( Ticket.RDF_CLASS ) ).toBe( true );
 
-		expect( Ticket.RDF_CLASS ).toBe( NS.CS.Class.Ticket );
+		expect( Ticket.RDF_CLASS ).toBe( CS.Ticket );
 	} );
 
 	it( hasProperty(
 		STATIC,
 		"SCHEMA",
-		"Carbon.ObjectSchema.Class"
+		"CarbonLDP.ObjectSchema.ObjectSchema"
 	), ():void => {
 		expect( Ticket.SCHEMA ).toBeDefined();
 		expect( Utils.isObject( Ticket.SCHEMA ) ).toBe( true );
 
 		expect( Utils.hasProperty( Ticket.SCHEMA, "forURI" ) ).toBe( true );
 		expect( Ticket.SCHEMA[ "forURI" ] ).toEqual( {
-			"@id": NS.CS.Predicate.forIRI,
+			"@id": CS.forIRI,
 			"@type": "@id",
 		} );
 
 		expect( Utils.hasProperty( Ticket.SCHEMA, "expirationTime" ) ).toBe( true );
 		expect( Ticket.SCHEMA[ "expirationTime" ] ).toEqual( {
-			"@id": NS.CS.Predicate.expirationTime,
-			"@type": NS.XSD.DataType.dateTime,
+			"@id": CS.expirationTime,
+			"@type": XSD.dateTime,
 		} );
 
 		expect( Utils.hasProperty( Ticket.SCHEMA, "ticketKey" ) ).toBe( true );
 		expect( Ticket.SCHEMA[ "ticketKey" ] ).toEqual( {
-			"@id": NS.CS.Predicate.ticketKey,
-			"@type": NS.XSD.DataType.string,
+			"@id": CS.ticketKey,
+			"@type": XSD.string,
 		} );
 	} );
 
 	describe( interfaze(
-		"Carbon.Auth.Ticket.Class",
+		"CarbonLDP.Auth.Ticket.Class",
 		"Interface that represents an authentication ticket."
 	), ():void => {
 
-		it( extendsClass( "Carbon.Resource.Class" ), ():void => {
+		it( extendsClass( "CarbonLDP.Resource.Resource" ), ():void => {
 			let ticket:Ticket.Class = <any> {};
-			let resource:Resource.Class;
+			let resource:Resource;
 
 			resource = ticket;
 			expect( resource ).toEqual( jasmine.any( Object ) );
@@ -82,7 +80,7 @@ describe( module( "Carbon/Auth/Ticket" ), ():void => {
 		it( hasProperty(
 			OBLIGATORY,
 			"forURI",
-			"Carbon.Pointer.Class",
+			"CarbonLDP.Pointer.Pointer",
 			"Pointer that relates the document that the authentication ticket only works for."
 		), ():void => {} );
 
@@ -103,8 +101,8 @@ describe( module( "Carbon/Auth/Ticket" ), ():void => {
 	} );
 
 	describe( clazz(
-		"Carbon.Auth.Ticket.Factory",
-		"Factory class for `Carbon.Auth.Ticket.Class` objects."
+		"CarbonLDP.Auth.Ticket.Factory",
+		"Factory class for `CarbonLDP.Auth.Ticket.Class` objects."
 	), ():void => {
 
 		it( isDefined(), ():void => {
@@ -115,16 +113,16 @@ describe( module( "Carbon/Auth/Ticket" ), ():void => {
 		it( hasMethod(
 			STATIC,
 			"create",
-			"Creates and returns a `Carbon.Auth.Ticket.Class` object for the specified URI.", [
-				{ name: "uri", type: "string", description: "The URI to get an authentication ticket for." }
+			"Creates and returns a `CarbonLDP.Auth.Ticket.Class` object for the specified URI.", [
+				{ name: "uri", type: "string", description: "The URI to get an authentication ticket for." },
 			],
-			{ type: "Carbon.Auth.Ticket.Class" }
+			{ type: "CarbonLDP.Auth.Ticket.Class" }
 		), ():void => {
 			expect( Ticket.Factory.create ).toBeDefined();
 			expect( Utils.isFunction( Ticket.Factory.create ) ).toBe( true );
 
 			let ticket:Ticket.Class = Ticket.Factory.create( "http://example.com/resource/" );
-			expect( URI.Util.isBNodeID( ticket.id ) ).toBe( true );
+			expect( URI.isBNodeID( ticket.id ) ).toBe( true );
 			expect( ticket.forURI.id ).toBe( "http://example.com/resource/" );
 			expect( ticket.ticketKey ).toBeUndefined();
 			expect( ticket.expirationTime ).toBeUndefined();
@@ -133,7 +131,7 @@ describe( module( "Carbon/Auth/Ticket" ), ():void => {
 
 	} );
 
-	it( hasDefaultExport( "Carbon.Auth.Ticket.Class" ), ():void => {
+	it( hasDefaultExport( "CarbonLDP.Auth.Ticket.Class" ), ():void => {
 		let defaultExport:DefaultExport = <any> {};
 		let defaultTarget:Ticket.Class;
 

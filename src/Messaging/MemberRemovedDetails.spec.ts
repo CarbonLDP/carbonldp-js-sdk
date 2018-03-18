@@ -1,76 +1,106 @@
-import * as Messaging from "../Messaging";
-import * as NS from "../NS";
-import * as Pointer from "../Pointer";
-import { extendsClass, hasDefaultExport, hasProperty, interfaze, isDefined, module, OBLIGATORY, STATIC } from "../test/JasmineExtender";
+import { Pointer } from "../Pointer";
+import {
+	extendsClass,
+	hasDefaultExport,
+	hasProperty,
+	interfaze,
+	isDefined,
+	module,
+	OBLIGATORY,
+	property,
+	STATIC
+} from "../test/JasmineExtender";
+import { C } from "../Vocabularies/C";
+import { MemberDetails } from "./MemberDetails";
 
-import * as MemberRemovedDetails from "./MemberRemovedDetails";
-import DefaultExport from "./MemberRemovedDetails";
+import DefaultExport, { MemberRemovedDetails } from "./MemberRemovedDetails";
 
-describe( module( "Carbon/Messaging/MemberRemovedDetails" ), ():void => {
-
-	it( isDefined(), ():void => {
-		expect( MemberRemovedDetails ).toBeDefined();
-		expect( MemberRemovedDetails ).toEqual( jasmine.any( Object ) );
-	} );
-
-	it( hasProperty(
-		STATIC,
-		"RDF_CLASS",
-		"string"
-	), ():void => {
-		expect( MemberRemovedDetails.RDF_CLASS ).toBeDefined();
-		expect( MemberRemovedDetails.RDF_CLASS ).toEqual( jasmine.any( String ) );
-
-		expect( MemberRemovedDetails.RDF_CLASS ).toBe( NS.C.Class.MemberRemovedDetails );
-	} );
-
-	it( hasProperty(
-		STATIC,
-		"SCHEMA",
-		"Carbon.ObjectSchema.Class"
-	), ():void => {
-		expect( MemberRemovedDetails.SCHEMA ).toBeDefined();
-		expect( MemberRemovedDetails.SCHEMA ).toEqual( jasmine.any( Object ) );
-
-		expect( MemberRemovedDetails.SCHEMA as {} ).toEqual( {
-			"members": jasmine.any( Object ),
-		} );
-
-		expect( MemberRemovedDetails.SCHEMA[ "members" ] ).toEqual( {
-			"@id": NS.C.Predicate.member,
-			"@type": "@id",
-			"@container": "@set",
-		} );
-	} );
+describe( module( "carbonldp/Messaging/MemberRemovedDetails" ), ():void => {
 
 	describe( interfaze(
-		"Carbon.Messaging.MemberRemovedDetails.Class",
+		"CarbonLDP.Messaging.MemberRemovedDetails.MemberRemovedDetails",
 		"Interface with the properties of the details in a member removed event."
 	), ():void => {
 
 		it( isDefined(), ():void => {
-			const target:MemberRemovedDetails.Class = {} as any;
+			const target:MemberRemovedDetails = {} as any;
 			expect( target ).toBeDefined();
 		} );
 
-		it( extendsClass( "Carbon.Messaging.MemberDetails.Class" ), ():void => {
-			const target:Messaging.MemberDetails.Class = {} as MemberRemovedDetails.Class;
+		it( extendsClass( "CarbonLDP.Messaging.MemberDetails.MemberDetails" ), ():void => {
+			const target:MemberDetails = {} as MemberRemovedDetails;
 			expect( target ).toBeDefined();
 		} );
 
 		it( hasProperty(
 			OBLIGATORY,
 			"members",
-			"Carbon.Pointer.Class[]"
+			"CarbonLDP.Pointer.Pointer[]"
 		), ():void => {
-			const target:MemberRemovedDetails.Class[ "members" ] = [] as Pointer.Class[];
+			const target:MemberRemovedDetails[ "members" ] = [] as Pointer[];
 			expect( target ).toBeDefined();
 		} );
 
 	} );
 
-	it( hasDefaultExport( "Carbon.Messaging.MemberRemovedDetails.Class" ), ():void => {
-		const target:MemberRemovedDetails.Class = {} as DefaultExport;
+	describe( interfaze(
+		"CarbonLDP.Messaging.MemberRemovedDetails.MemberRemovedDetailsFactory",
+		"Interface with the factory, decorate and utils for `CarbonLDP.Messaging.MemberRemovedDetails.MemberRemovedDetails` objects."
+	), ():void => {
+
+		it( hasProperty(
+			OBLIGATORY,
+			"TYPE",
+			"string"
+		), ():void => {} );
+
+		it( hasProperty(
+			OBLIGATORY,
+			"SCHEMA",
+			"CarbonLDP.ObjectSchema.ObjectSchema"
+		), ():void => {} );
+
+	} );
+
+	describe( property(
+		STATIC,
+		"MemberRemovedDetails",
+		"CarbonLDP.Messaging.MemberRemovedDetails.MemberRemovedDetailsFactory"
+	), ():void => {
+
+		it( isDefined(), ():void => {
+			expect( MemberRemovedDetails ).toBeDefined();
+			expect( MemberRemovedDetails ).toEqual( jasmine.any( Object ) );
+		} );
+
+		// TODO: Separate in different tests
+		it( "MemberRemovedDetails.TYPE", ():void => {
+			expect( MemberRemovedDetails.TYPE ).toBeDefined();
+			expect( MemberRemovedDetails.TYPE ).toEqual( jasmine.any( String ) );
+
+			expect( MemberRemovedDetails.TYPE ).toBe( C.MemberRemovedDetails );
+		} );
+
+		// TODO: Separate in different tests
+		it( "MemberRemovedDetails.SCHEMA", ():void => {
+			expect( MemberRemovedDetails.SCHEMA ).toBeDefined();
+			expect( MemberRemovedDetails.SCHEMA ).toEqual( jasmine.any( Object ) );
+
+			expect( MemberRemovedDetails.SCHEMA as {} ).toEqual( {
+				"members": jasmine.any( Object ),
+			} );
+
+			expect( MemberRemovedDetails.SCHEMA[ "members" ] ).toEqual( {
+				"@id": C.member,
+				"@type": "@id",
+				"@container": "@set",
+			} );
+		} );
+
+	} );
+
+	it( hasDefaultExport( "CarbonLDP.Messaging.MemberRemovedDetails.MemberRemovedDetails" ), ():void => {
+		const target:MemberRemovedDetails = {} as DefaultExport;
 		expect( target ).toBeDefined();
 	} );
 

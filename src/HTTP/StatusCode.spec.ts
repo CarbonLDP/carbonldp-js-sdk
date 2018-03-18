@@ -12,7 +12,7 @@ import * as StatusCodeModule from "./StatusCode";
 import DefaultExport from "./StatusCode";
 
 describe( module(
-	"Carbon/HTTP/StatusCode"
+	"carbonldp/HTTP/StatusCode"
 ), ():void => {
 
 	it( isDefined(), ():void => {
@@ -21,7 +21,7 @@ describe( module(
 	} );
 
 	describe( enumeration(
-		"Carbon.HTTP.StatusCode.StatusCode",
+		"CarbonLDP.HTTP.StatusCode.StatusCode",
 		"Enum with the HTTP/1.1 status codes."
 	), ():void => {
 
@@ -357,7 +357,7 @@ describe( module(
 
 	} );
 
-	it( hasDefaultExport( "Carbon.HTTP.StatusCode.StatusCode" ), ():void => {
+	it( hasDefaultExport( "CarbonLDP.HTTP.StatusCode.StatusCode" ), ():void => {
 		expect( DefaultExport ).toBeDefined();
 		expect( DefaultExport ).toBe( StatusCodeModule.StatusCode );
 	} );

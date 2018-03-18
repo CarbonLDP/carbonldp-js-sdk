@@ -1,76 +1,107 @@
-import * as Resource from "../Resource";
-import * as NS from "../NS";
-import * as Pointer from "../Pointer";
-import { extendsClass, hasDefaultExport, hasProperty, interfaze, isDefined, module, OBLIGATORY, STATIC } from "../test/JasmineExtender";
+import { Pointer } from "../Pointer";
+import { Resource } from "../Resource";
+import {
+	extendsClass,
+	hasDefaultExport,
+	hasProperty,
+	interfaze,
+	isDefined,
+	module,
+	OBLIGATORY,
+	property,
+	STATIC
+} from "../test/JasmineExtender";
+import { C } from "../Vocabularies/C";
 
-import * as DocumentCreatedDetails from "./DocumentCreatedDetails";
+import { DocumentCreatedDetails } from "./DocumentCreatedDetails";
 import DefaultExport from "./DocumentCreatedDetails";
 
-describe( module( "Carbon/Messaging/DocumentCreatedDetails" ), ():void => {
-
-	it( isDefined(), ():void => {
-		expect( DocumentCreatedDetails ).toBeDefined();
-		expect( DocumentCreatedDetails ).toEqual( jasmine.any( Object ) );
-	} );
-
-	it( hasProperty(
-		STATIC,
-		"RDF_CLASS",
-		"string"
-	), ():void => {
-		expect( DocumentCreatedDetails.RDF_CLASS ).toBeDefined();
-		expect( DocumentCreatedDetails.RDF_CLASS ).toEqual( jasmine.any( String ) );
-
-		expect( DocumentCreatedDetails.RDF_CLASS ).toBe( NS.C.Class.DocumentCreatedDetails );
-	} );
-
-	it( hasProperty(
-		STATIC,
-		"SCHEMA",
-		"Carbon.ObjectSchema.Class"
-	), ():void => {
-		expect( DocumentCreatedDetails.SCHEMA ).toBeDefined();
-		expect( DocumentCreatedDetails.SCHEMA ).toEqual( jasmine.any( Object ) );
-
-		expect( DocumentCreatedDetails.SCHEMA as {} ).toEqual( {
-			"createdDocuments": jasmine.any( Object ),
-		} );
-
-		expect( DocumentCreatedDetails.SCHEMA[ "createdDocuments" ] ).toEqual( {
-			"@id": NS.C.Predicate.createdDocument,
-			"@type": "@id",
-			"@container": "@set",
-		} );
-	} );
+describe( module( "carbonldp/Messaging/DocumentCreatedDetails" ), ():void => {
 
 	describe( interfaze(
-		"Carbon.Messaging.DocumentCreatedDetails.Class",
+		"CarbonLDP.Messaging.DocumentCreatedDetails.DocumentCreatedDetails",
 		"Interface with the properties of the details in a document created event."
 	), ():void => {
 
 		it( isDefined(), ():void => {
-			const target:DocumentCreatedDetails.Class = {} as any;
+			const target:DocumentCreatedDetails = {} as any;
 			expect( target ).toBeDefined();
 		} );
 
-		it( extendsClass( "Carbon.Resource.Class" ), ():void => {
-			const target:Resource.Class = {} as DocumentCreatedDetails.Class;
+		it( extendsClass( "CarbonLDP.Resource.Resource" ), ():void => {
+			const target:Resource = {} as DocumentCreatedDetails;
 			expect( target ).toBeDefined();
 		} );
 
 		it( hasProperty(
 			OBLIGATORY,
 			"createdDocuments",
-			"Carbon.Pointer.Class[]"
+			"CarbonLDP.Pointer.Pointer[]"
 		), ():void => {
-			const target:DocumentCreatedDetails.Class[ "createdDocuments" ] = [] as Pointer.Class[];
+			const target:DocumentCreatedDetails[ "createdDocuments" ] = [] as Pointer[];
 			expect( target ).toBeDefined();
 		} );
 
 	} );
 
-	it( hasDefaultExport( "Carbon.Messaging.DocumentCreatedDetails.Class" ), ():void => {
-		const target:DocumentCreatedDetails.Class = {} as DefaultExport;
+	describe( interfaze(
+		"CarbonLDP.Messaging.DocumentCreatedDetails.DocumentCreatedDetailsFactory",
+		"Interface with the factory, decorate and utils for `CarbonLDP.Messaging.DocumentCreatedDetails.DocumentCreatedDetails` objects."
+	), ():void => {
+
+		it( hasProperty(
+			OBLIGATORY,
+			"TYPE",
+			"string"
+		), ():void => {} );
+
+		it( hasProperty(
+			OBLIGATORY,
+			"SCHEMA",
+			"CarbonLDP.ObjectSchema.ObjectSchema"
+		), ():void => {} );
+
+	} );
+
+	describe( property(
+		STATIC,
+		"DocumentCreatedDetails",
+		"CarbonLDP.Messaging.DocumentCreatedDetails.DocumentCreatedDetailsFactory"
+	), ():void => {
+
+		it( isDefined(), ():void => {
+			expect( DocumentCreatedDetails ).toBeDefined();
+			expect( DocumentCreatedDetails ).toEqual( jasmine.any( Object ) );
+		} );
+
+		// TODO: Separate in different tests
+		it( "DocumentCreatedDetails.TYPE", ():void => {
+			expect( DocumentCreatedDetails.TYPE ).toBeDefined();
+			expect( DocumentCreatedDetails.TYPE ).toEqual( jasmine.any( String ) );
+
+			expect( DocumentCreatedDetails.TYPE ).toBe( C.DocumentCreatedDetails );
+		} );
+
+		// TODO: Separate in different tests
+		it( "DocumentCreatedDetails.SCHEMA", ():void => {
+			expect( DocumentCreatedDetails.SCHEMA ).toBeDefined();
+			expect( DocumentCreatedDetails.SCHEMA ).toEqual( jasmine.any( Object ) );
+
+			expect( DocumentCreatedDetails.SCHEMA as {} ).toEqual( {
+				"createdDocuments": jasmine.any( Object ),
+			} );
+
+			expect( DocumentCreatedDetails.SCHEMA[ "createdDocuments" ] ).toEqual( {
+				"@id": C.createdDocument,
+				"@type": "@id",
+				"@container": "@set",
+			} );
+		} );
+
+	} );
+
+	it( hasDefaultExport( "CarbonLDP.Messaging.DocumentCreatedDetails.DocumentCreatedDetails" ), ():void => {
+		const target:DocumentCreatedDetails = {} as DefaultExport;
 		expect( target ).toBeDefined();
 	} );
 

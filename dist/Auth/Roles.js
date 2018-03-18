@@ -1,10 +1,17 @@
 "use strict";
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
+    result["default"] = mod;
+    return result;
+}
 Object.defineProperty(exports, "__esModule", { value: true });
-var Errors = require("./../Errors");
-var HTTP = require("./../HTTP");
-var URI = require("./../RDF/URI");
-var PersistedRole = require("./PersistedRole");
-var Utils = require("./../Utils");
+var Errors = __importStar(require("../Errors"));
+var Request_1 = require("../HTTP/Request");
+var URI_1 = require("../RDF/URI");
+var Utils = __importStar(require("./../Utils"));
+var PersistedRole = __importStar(require("./PersistedRole"));
 var Class = (function () {
     function Class(context) {
         this.context = context;
@@ -13,14 +20,14 @@ var Class = (function () {
         var _this = this;
         var parentURI = Utils.isString(parentRole) ? parentRole : parentRole.id;
         var slug = Utils.isString(slugOrRequestOptions) ? slugOrRequestOptions : null;
-        requestOptions = HTTP.Request.Util.isOptions(slugOrRequestOptions) ? slugOrRequestOptions : requestOptions;
+        requestOptions = Request_1.RequestUtils.isOptions(slugOrRequestOptions) ? slugOrRequestOptions : requestOptions;
         var containerURI;
         var persistedRole;
         var responseCreated;
         return Utils.promiseMethod(function () {
             containerURI = _this.getContainerURI();
-            parentURI = URI.Util.resolve(containerURI, parentURI);
-            if (!URI.Util.isBaseOf(containerURI, parentURI))
+            parentURI = URI_1.URI.resolve(containerURI, parentURI);
+            if (!URI_1.URI.isBaseOf(containerURI, parentURI))
                 throw new Errors.IllegalArgumentError("The parent role provided is not a valid role.");
             return _this.context.documents.exists(parentURI);
         }).then(function (_a) {
@@ -66,7 +73,7 @@ var Class = (function () {
     };
     Class.prototype.resolveURI = function (relativeURI) {
         var rolesContainer = this.getContainerURI();
-        var absoluteRoleURI = URI.Util.resolve(rolesContainer, relativeURI);
+        var absoluteRoleURI = URI_1.URI.resolve(rolesContainer, relativeURI);
         if (!absoluteRoleURI.startsWith(rolesContainer))
             throw new Errors.IllegalArgumentError("The provided URI \"" + relativeURI + "\" isn't a valid Carbon LDP role.");
         return absoluteRoleURI;

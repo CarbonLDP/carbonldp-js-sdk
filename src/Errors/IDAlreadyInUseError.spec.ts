@@ -1,13 +1,11 @@
 import {
-	INSTANCE,
-
-	module,
 	clazz,
-
-	isDefined,
-	hasProperty,
 	extendsClass,
 	hasDefaultExport,
+	hasProperty,
+	INSTANCE,
+	isDefined,
+	module,
 } from "./../test/JasmineExtender";
 import * as Utils from "./../Utils";
 
@@ -16,7 +14,8 @@ import AbstractError from "./AbstractError";
 import * as IDAlreadyInUseError from "./IDAlreadyInUseError";
 import DefaultExport from "./IDAlreadyInUseError";
 
-describe( module( "Carbon/Errors/IDAlreadyInUseError" ), ():void => {
+// TODO: Refactor tests
+describe( module( "carbonldp/Errors/IDAlreadyInUseError" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( IDAlreadyInUseError ).toBeDefined();
@@ -24,22 +23,22 @@ describe( module( "Carbon/Errors/IDAlreadyInUseError" ), ():void => {
 	} );
 
 	describe( clazz(
-		"Carbon.Errors.IDAlreadyInUseError.Class",
+		"CarbonLDP.Errors.IDAlreadyInUseError",
 		"Error class to indicate that an identifier (ID) is already in use."
 	), ():void => {
 
 		it( isDefined(), ():void => {
-			expect( IDAlreadyInUseError.Class ).toBeDefined();
-			expect( Utils.isFunction( IDAlreadyInUseError.Class ) ).toBe( true );
+			expect( IDAlreadyInUseError.IDAlreadyInUseError ).toBeDefined();
+			expect( Utils.isFunction( IDAlreadyInUseError.IDAlreadyInUseError ) ).toBe( true );
 
-			let error:IDAlreadyInUseError.Class = new IDAlreadyInUseError.Class( "Message of the error" );
-			expect( error instanceof IDAlreadyInUseError.Class ).toBe( true );
+			let error:IDAlreadyInUseError.IDAlreadyInUseError = new IDAlreadyInUseError.IDAlreadyInUseError( "Message of the error" );
+			expect( error instanceof IDAlreadyInUseError.IDAlreadyInUseError ).toBe( true );
 		} );
 
 		it( extendsClass(
-			"Carbon.Errors.AbstractError"
+			"CarbonLDP.Errors.AbstractError.AbstractError"
 		), ():void => {
-			let error:IDAlreadyInUseError.Class = new IDAlreadyInUseError.Class( "Message of the error" );
+			let error:IDAlreadyInUseError.IDAlreadyInUseError = new IDAlreadyInUseError.IDAlreadyInUseError( "Message of the error" );
 
 			expect( error instanceof AbstractError ).toBe( true );
 		} );
@@ -49,7 +48,7 @@ describe( module( "Carbon/Errors/IDAlreadyInUseError" ), ():void => {
 			"name",
 			"string"
 		), ():void => {
-			let error:IDAlreadyInUseError.Class = new IDAlreadyInUseError.Class( "Message of the error" );
+			let error:IDAlreadyInUseError.IDAlreadyInUseError = new IDAlreadyInUseError.IDAlreadyInUseError( "Message of the error" );
 
 			expect( error.name ).toBeDefined();
 			expect( Utils.isString( error.name ) ).toBe( true );
@@ -59,9 +58,9 @@ describe( module( "Carbon/Errors/IDAlreadyInUseError" ), ():void => {
 
 	} );
 
-	it( hasDefaultExport( "Carbon.Errors.IDAlreadyInUseError.Class" ), ():void => {
+	it( hasDefaultExport( "CarbonLDP.Errors.IDAlreadyInUseError" ), ():void => {
 		expect( DefaultExport ).toBeDefined();
-		expect( DefaultExport ).toBe( IDAlreadyInUseError.Class );
+		expect( DefaultExport ).toBe( IDAlreadyInUseError.IDAlreadyInUseError );
 	} );
 
 } );

@@ -1,30 +1,32 @@
-import * as HTTP from "./HTTP";
-import * as PersistedDocument from "./PersistedDocument";
-export interface Class {
+import { Response } from "./HTTP/Response";
+import { ModelDecorator } from "./ModelDecorator";
+import { ModelFactory } from "./ModelFactory";
+import { PersistedDocument } from "./PersistedDocument";
+export interface Pointer {
     _id: string;
     _resolved: boolean;
     id: string;
     isResolved(): boolean;
-    resolve<T>(): Promise<[T & PersistedDocument.Class, HTTP.Response.Class]>;
+    resolve<T>(): Promise<[T & PersistedDocument, Response]>;
 }
-export interface Library {
+export interface PointerLibrary {
     hasPointer(id: string): boolean;
-    getPointer(id: string): Class;
+    getPointer(id: string): Pointer;
 }
-export declare class Factory {
-    static hasClassProperties(object: Object): boolean;
-    static is(value: any): value is Class;
-    static create(id?: string): Class;
-    static createFrom<T extends Object>(object: T, id?: string): T & Class;
-    static decorate<T extends Object>(object: T): T & Class;
+export interface PointerValidator {
+    inScope(idOrPointer: string | Pointer): boolean;
 }
-export declare class Util {
-    static areEqual(pointer1: Class, pointer2: Class): boolean;
-    static getIDs(pointers: Class[]): string[];
-    static resolveAll<T>(pointers: Class[]): Promise<[(T & PersistedDocument.Class)[], HTTP.Response.Class[]]>;
+export interface PointerFactory extends ModelFactory<Pointer>, ModelDecorator<Pointer> {
+    isDecorated(object: object): object is Pointer;
+    is(object: object): object is Pointer;
+    create(id?: string): Pointer;
+    createFrom<T extends object>(object: T, id?: string): T & Pointer;
+    decorate<T extends object>(object: T): T & Pointer;
+    areEqual(pointer1: Pointer, pointer2: Pointer): boolean;
+    getIDs(pointers: Pointer[]): string[];
+    resolveAll<T extends object>(pointers: Pointer[]): Promise<[(T & PersistedDocument)[], Response[]]>;
 }
-export interface Validator {
-    inScope(id: string): boolean;
-    inScope(pointer: Class): boolean;
-}
-export default Class;
+export declare function isPointerResolved(this: Pointer): boolean;
+export declare function resolveStandalonePointer(this: Pointer): Promise<[Pointer, Response]>;
+export declare const Pointer: PointerFactory;
+export default Pointer;

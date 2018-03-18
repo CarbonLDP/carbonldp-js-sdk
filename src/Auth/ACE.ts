@@ -1,63 +1,83 @@
-import * as Fragment from "./../Fragment";
-import * as NS from "./../NS";
-import * as ObjectSchema from "./../ObjectSchema";
-import * as Pointer from "./../Pointer";
-import * as Utils from "./../Utils";
+import { Fragment } from "../Fragment";
+import { ModelFactory } from "../ModelFactory";
+import { ObjectSchema } from "../ObjectSchema";
+import { Pointer } from "../Pointer";
+import { CS } from "../Vocabularies/CS";
+import { XSD } from "../Vocabularies/XSD";
 
-export const RDF_CLASS:string = NS.CS.Class.AccessControlEntry;
+export interface ACE extends Fragment {
+	granting:boolean;
+	permissions:Pointer[];
+	subjects:Pointer[];
+	subjectsClass:Pointer;
+}
 
-export const SCHEMA:ObjectSchema.Class = {
+
+export interface ACEFactory extends ModelFactory<ACE> {
+	TYPE:string;
+	SCHEMA:ObjectSchema;
+
+	is( object:object ):object is ACE;
+
+
+	create( granting:boolean, subjects:Pointer[], subjectClass:Pointer, permissions:Pointer[] ):ACE;
+
+	createFrom<T extends object>( object:T, granting:boolean, subjects:Pointer[], subjectClass:Pointer, permissions:Pointer[] ):T & ACE;
+}
+
+
+const SCHEMA:ObjectSchema = {
 	"granting": {
-		"@id": NS.CS.Predicate.granting,
-		"@type": NS.XSD.DataType.boolean,
+		"@id": CS.granting,
+		"@type": XSD.boolean,
 	},
 	"permissions": {
-		"@id": NS.CS.Predicate.permission,
+		"@id": CS.permission,
 		"@type": "@id",
 		"@container": "@set",
 	},
 	"subjects": {
-		"@id": NS.CS.Predicate.subject,
+		"@id": CS.subject,
 		"@type": "@id",
 		"@container": "@set",
 	},
 	"subjectsClass": {
-		"@id": NS.CS.Predicate.subjectClass,
+		"@id": CS.subjectClass,
 		"@type": "@id",
 	},
 };
 
-export interface Class extends Fragment.Class {
-	granting:boolean;
-	permissions:Pointer.Class[];
-	subjects:Pointer.Class[];
-	subjectsClass:Pointer.Class;
-}
+export const ACE:ACEFactory = {
+	TYPE: CS.AccessControlEntry,
+	SCHEMA,
 
-export class Factory {
-
-	static hasClassProperties( object:Object ):boolean {
-		return Utils.hasPropertyDefined( object, "granting" )
-			&& Utils.hasPropertyDefined( object, "permissions" )
-			&& Utils.hasPropertyDefined( object, "subjects" )
-			&& Utils.hasPropertyDefined( object, "subjectsClass" )
+	is( object:object ):object is ACE {
+		return Fragment.is( object )
+			&& object.hasOwnProperty( "granting" )
+			&& object.hasOwnProperty( "permissions" )
+			&& object.hasOwnProperty( "subjects" )
+			&& object.hasOwnProperty( "subjectsClass" )
 			;
-	}
+	},
 
-	static createFrom<T extends Object>( object:T, granting:boolean, subjects:Pointer.Class[], subjectClass:Pointer.Class, permissions:Pointer.Class[] ):T & Class {
-		let ace:T & Class = <any> object;
+	create( granting:boolean, subjects:Pointer[], subjectClass:Pointer, permissions:Pointer[] ):ACE {
+		return ACE.createFrom( {}, granting, subjects, subjectClass, permissions );
+	},
 
-		if( ! ace.types ) ace.types = [];
-		ace.types.push( RDF_CLASS );
+	createFrom<T extends object>( object:T, granting:boolean, subjects:Pointer[], subjectClass:Pointer, permissions:Pointer[] ):T & ACE {
+		const ace:T & ACE = object as T & ACE;
 
+		Fragment.decorate( ace );
+
+		ace.addType( ACE.TYPE );
 		ace.granting = granting;
 		ace.subjects = subjects;
 		ace.subjectsClass = subjectClass;
 		ace.permissions = permissions;
 
 		return ace;
-	}
+	},
 
-}
+};
 
-export default Class;
+export default ACE;

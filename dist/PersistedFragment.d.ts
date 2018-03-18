@@ -1,11 +1,20 @@
-import * as Fragment from "./Fragment";
-import * as PersistedDocument from "./PersistedDocument";
-import * as PersistedResource from "./PersistedResource";
-export interface Class extends PersistedResource.Class, Fragment.Class {
-    document: PersistedDocument.Class;
+import { Fragment } from "./Fragment";
+import { ModelDecorator } from "./ModelDecorator";
+import { ModelFactory } from "./ModelFactory";
+import { PersistedDocument } from "./PersistedDocument";
+import { PersistedResource } from "./PersistedResource";
+export interface PersistedFragment extends PersistedResource, Fragment {
+    _document: PersistedDocument;
+    addType(type: string): void;
+    hasType(type: string): boolean;
+    removeType(type: string): void;
 }
-export declare class Factory {
-    static is(object: object): object is Class;
-    static decorate<T extends Fragment.Class>(fragment: T): T & Class;
+export interface PersistedFragmentFactory extends ModelFactory<PersistedFragment>, ModelDecorator<PersistedFragment> {
+    isDecorated(object: object): object is PersistedFragment;
+    is(object: object): object is PersistedFragment;
+    decorate<T extends object>(object: T): T & PersistedFragment;
+    create(document: PersistedDocument, id?: string): PersistedFragment;
+    createFrom<T extends object>(object: T, document: PersistedDocument, id?: string): T & PersistedFragment;
 }
-export default Class;
+export declare const PersistedFragment: PersistedFragmentFactory;
+export default PersistedFragment;

@@ -1,15 +1,12 @@
 import {
-	INSTANCE,
-
-	module,
 	clazz,
-
-	isDefined,
-	hasProperty,
 	extendsClass,
 	hasConstructor,
-	hasMethod,
 	hasDefaultExport,
+	hasProperty,
+	INSTANCE,
+	isDefined,
+	module,
 } from "./../test/JasmineExtender";
 import * as Utils from "./../Utils";
 
@@ -18,7 +15,8 @@ import AbstractError from "./AbstractError";
 import * as NotImplementedError from "./NotImplementedError";
 import DefaultExport from "./NotImplementedError";
 
-describe( module( "Carbon/Errors/NotImplementedError" ), ():void => {
+// TODO: Refactor tests
+describe( module( "carbonldp/Errors/NotImplementedError" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( NotImplementedError ).toBeDefined();
@@ -26,51 +24,35 @@ describe( module( "Carbon/Errors/NotImplementedError" ), ():void => {
 	} );
 
 	describe( clazz(
-		"Carbon.Errors.NotImplementedError.Class",
+		"CarbonLDP.Errors.NotImplementedError",
 		"Error class to indicate that an action is not yet implemented."
 	), ():void => {
 
 		it( isDefined(), ():void => {
-			expect( NotImplementedError.Class ).toBeDefined();
-			expect( Utils.isFunction( NotImplementedError.Class ) ).toBe( true );
+			expect( NotImplementedError.NotImplementedError ).toBeDefined();
+			expect( Utils.isFunction( NotImplementedError.NotImplementedError ) ).toBe( true );
 		} );
 
 		it( extendsClass(
-			"Carbon.Errors.AbstractError"
+			"CarbonLDP.Errors.AbstractError.AbstractError"
 		), ():void => {
-			let error:NotImplementedError.Class = new NotImplementedError.Class( "Message of the error" );
+			let error:NotImplementedError.NotImplementedError = new NotImplementedError.NotImplementedError( "Message of the error" );
 
 			expect( error instanceof AbstractError ).toBe( true );
 		} );
 
 		it( hasConstructor( [
-			{ name: "message", type: "string", optional: true, defaultValue: "" },
+			{ name: "message", type: "string", optional: true },
 		] ), ():void => {
-			let error:NotImplementedError.Class = new NotImplementedError.Class( "Message of the error" );
+			let error:NotImplementedError.NotImplementedError = new NotImplementedError.NotImplementedError( "Message of the error" );
 
 			expect( error ).toBeTruthy();
-			expect( error instanceof NotImplementedError.Class ).toBe( true );
+			expect( error instanceof NotImplementedError.NotImplementedError ).toBe( true );
 
-			error = new NotImplementedError.Class();
+			error = new NotImplementedError.NotImplementedError();
 
 			expect( error ).toBeTruthy();
-			expect( error instanceof NotImplementedError.Class ).toBe( true );
-		} );
-
-		it( hasMethod(
-			INSTANCE,
-			"toString",
-			{ type: "string" }
-		), ():void => {
-			let error:NotImplementedError.Class = new NotImplementedError.Class( "Message of the error" );
-
-			expect( error.toString ).toBeDefined();
-			expect( Utils.isFunction( error.toString ) );
-
-			expect( error.toString() ).toBe( "NotImplementedError: Message of the error" );
-
-			error = new NotImplementedError.Class();
-			expect( error.toString() ).toBe( "NotImplementedError: " );
+			expect( error instanceof NotImplementedError.NotImplementedError ).toBe( true );
 		} );
 
 		it( hasProperty(
@@ -78,7 +60,7 @@ describe( module( "Carbon/Errors/NotImplementedError" ), ():void => {
 			"name",
 			"string"
 		), ():void => {
-			let error:NotImplementedError.Class = new NotImplementedError.Class( "Message of the error" );
+			let error:NotImplementedError.NotImplementedError = new NotImplementedError.NotImplementedError( "Message of the error" );
 
 			expect( error.name ).toBeDefined();
 			expect( Utils.isString( error.name ) ).toBe( true );
@@ -88,9 +70,9 @@ describe( module( "Carbon/Errors/NotImplementedError" ), ():void => {
 
 	} );
 
-	it( hasDefaultExport( "Carbon.Errors.NotImplementedError.Class" ), ():void => {
+	it( hasDefaultExport( "CarbonLDP.Errors.NotImplementedError" ), ():void => {
 		expect( DefaultExport ).toBeDefined();
-		expect( DefaultExport ).toBe( NotImplementedError.Class );
+		expect( DefaultExport ).toBe( NotImplementedError.NotImplementedError );
 	} );
 
 } );

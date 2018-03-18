@@ -13,7 +13,7 @@ import * as Utils from "./../Utils";
 import * as Parser from "./Parser";
 import DefaultExport from "./Parser";
 
-describe( module( "Carbon/HTTP/Parser" ), ():void => {
+describe( module( "carbonldp/HTTP/Parser" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( Parser ).toBeDefined();
@@ -21,7 +21,8 @@ describe( module( "Carbon/HTTP/Parser" ), ():void => {
 	} );
 
 	describe( interfaze(
-		"Carbon.HTTP.Parser.Class",
+		"CarbonLDP.HTTP.Parser.Parser",
+		[ "T" ],
 		"Interface that represents a what a parser must contains to be used when converting the response of a request."
 	), ():void => {
 
@@ -37,9 +38,9 @@ describe( module( "Carbon/HTTP/Parser" ), ():void => {
 	} );
 
 
-	it( hasDefaultExport( "Carbon.HTTP.Parser.Class" ), ():void => {
+	it( hasDefaultExport( "CarbonLDP.HTTP.Parser.Parser" ), ():void => {
 		let defaultExport:DefaultExport<any> = <any> {};
-		let defaultTarget:Parser.Class<any>;
+		let defaultTarget:Parser.Parser<any>;
 
 		defaultTarget = defaultExport;
 		expect( defaultTarget ).toEqual( jasmine.any( Object ) );

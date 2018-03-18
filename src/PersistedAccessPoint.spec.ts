@@ -1,66 +1,57 @@
+import DefaultExport, { PersistedAccessPoint } from "./PersistedAccessPoint";
+
 import {
-	OBLIGATORY,
-
-	module,
-	interfaze,
-
-	isDefined,
+	extendsClass,
+	hasDefaultExport,
 	hasProperty,
-	hasDefaultExport, extendsClass,
+	interfaze,
+	module,
+	OBLIGATORY,
 } from "./test/JasmineExtender";
-import * as Utils from "./Utils";
 
-import * as PersistedAccessPoint from "./PersistedAccessPoint";
-import DefaultExport from "./PersistedAccessPoint";
-
-describe( module( "Carbon/PersistedAccessPoint" ), ():void => {
-
-	it( isDefined(), ():void => {
-		expect( PersistedAccessPoint ).toBeDefined();
-		expect( Utils.isObject( PersistedAccessPoint ) ).toBe( true );
-	} );
+describe( module( "carbonldp/PersistedAccessPoint" ), ():void => {
 
 	describe( interfaze(
-		"Carbon.PersistedAccessPoint.Class",
+		"CarbonLDP.PersistedAccessPoint.PersistedAccessPoint",
 		"Interface that represents a persisted Carbon LDP AccessPoint."
 	), ():void => {
 
-		it( extendsClass( "Carbon.AccessPoint.Class" ), ():void => {} );
-		it( extendsClass( "Carbon.PersistedProtectedDocument.Class" ), ():void => {} );
+		it( extendsClass( "CarbonLDP.AccessPoint.AccessPoint" ), ():void => {} );
+		it( extendsClass( "CarbonLDP.PersistedProtectedDocument.PersistedProtectedDocument" ), ():void => {} );
 
 		it( hasProperty(
 			OBLIGATORY,
 			"membershipResource",
-			"Carbon.Pointer.Class",
+			"CarbonLDP.Pointer.Pointer",
 			"The membership resource the access point belongs to."
 		), ():void => {} );
 
 		it( hasProperty(
 			OBLIGATORY,
 			"hasMemberRelation",
-			"Carbon.Pointer.Class",
+			"CarbonLDP.Pointer.Pointer",
 			"The member relation of the access point manages."
 		), ():void => {} );
 
 		it( hasProperty(
 			OBLIGATORY,
 			"isMemberOfRelation",
-			"Carbon.Pointer.Class",
+			"CarbonLDP.Pointer.Pointer",
 			"The inverted relation of the access point."
 		), ():void => {} );
 
 		it( hasProperty(
 			OBLIGATORY,
 			"insertedContentRelation",
-			"Carbon.Pointer.Class",
+			"CarbonLDP.Pointer.Pointer",
 			"The inserted content relation of the access point."
 		), ():void => {} );
 
 	} );
 
-	it( hasDefaultExport( "Carbon.PersistedAccessPoint.Class" ), ():void => {
+	it( hasDefaultExport( "CarbonLDP.PersistedAccessPoint.PersistedAccessPoint" ), ():void => {
 		let defaultExport:DefaultExport = <any> {};
-		let defaultTarget:PersistedAccessPoint.Class;
+		let defaultTarget:PersistedAccessPoint;
 
 		defaultTarget = defaultExport;
 		expect( defaultTarget ).toEqual( jasmine.any( Object ) );

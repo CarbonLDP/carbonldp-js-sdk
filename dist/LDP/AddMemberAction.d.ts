@@ -1,13 +1,17 @@
-import * as ObjectSchema from "./../ObjectSchema";
-import * as Pointer from "./../Pointer";
-import * as Resource from "./../Resource";
-export declare const RDF_CLASS: string;
-export declare const SCHEMA: ObjectSchema.Class;
-export interface Class extends Resource.Class {
-    targetMembers: Pointer.Class[];
+import { ModelDecorator } from "../ModelDecorator";
+import { ModelFactory } from "../ModelFactory";
+import { ObjectSchema } from "../ObjectSchema";
+import { Pointer } from "../Pointer";
+import { Resource } from "../Resource";
+export interface AddMemberAction extends Resource {
+    targetMembers: Pointer[];
 }
-export declare class Factory {
-    static hasClassProperties(object: Object): boolean;
-    static create(targetMembers: Pointer.Class[]): Class;
+export interface AddMemberActionFactory extends ModelFactory<AddMemberAction>, ModelDecorator<AddMemberAction> {
+    TYPE: string;
+    SCHEMA: ObjectSchema;
+    isDecorated(object: object): object is AddMemberAction;
+    create(targetMembers: Pointer[]): AddMemberAction;
 }
-export default Class;
+export declare const SCHEMA: ObjectSchema;
+export declare const AddMemberAction: AddMemberActionFactory;
+export default AddMemberAction;

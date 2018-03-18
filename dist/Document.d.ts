@@ -1,40 +1,39 @@
-import * as Fragment from "./Fragment";
-import JSONLDConverter from "./JSONLD/Converter";
-import * as NamedFragment from "./NamedFragment";
-import * as ObjectSchema from "./ObjectSchema";
-import * as Pointer from "./Pointer";
-import * as Resource from "./Resource";
-export declare const RDF_CLASS: string;
-export declare const SCHEMA: ObjectSchema.Class;
-export interface Class extends Resource.Class, Pointer.Library, Pointer.Validator {
-    defaultInteractionModel?: Pointer.Class;
-    isMemberOfRelation?: Pointer.Class;
-    hasMemberRelation?: Pointer.Class;
-    _fragmentsIndex: Map<string, Fragment.Class>;
+import { Fragment } from "./Fragment";
+import { JSONLDConverter } from "./JSONLD/Converter";
+import { ModelDecorator } from "./ModelDecorator";
+import { ModelFactory } from "./ModelFactory";
+import { NamedFragment } from "./NamedFragment";
+import { ObjectSchema, ObjectSchemaResolver } from "./ObjectSchema";
+import { Pointer, PointerLibrary, PointerValidator } from "./Pointer";
+import { RDFDocument } from "./RDF/Document";
+import { Resource } from "./Resource";
+export interface Document extends Resource, PointerLibrary, PointerValidator {
+    defaultInteractionModel?: Pointer;
+    isMemberOfRelation?: Pointer;
+    hasMemberRelation?: Pointer;
+    _fragmentsIndex: Map<string, Fragment>;
     _normalize(): void;
-    _removeFragment(fragment: Fragment.Class): void;
-    _removeFragment(slug: string): void;
+    _removeFragment(slugOrFragment: string | Fragment): void;
     hasFragment(slug: string): boolean;
-    getFragment<T>(slug: string): T & Fragment.Class;
-    getNamedFragment<T>(slug: string): T & NamedFragment.Class;
-    getFragments(): Fragment.Class[];
-    createFragment<T>(object: T, slug: string): T & Fragment.Class;
-    createFragment<T>(object: T): T & Fragment.Class;
-    createFragment(slug: string): Fragment.Class;
-    createFragment(): Fragment.Class;
-    createNamedFragment<T>(object: T, slug: string): T & NamedFragment.Class;
-    createNamedFragment(slug: string): NamedFragment.Class;
-    removeNamedFragment(fragment: NamedFragment.Class): void;
-    removeNamedFragment(slug: string): void;
-    toJSON(objectSchemaResolver: ObjectSchema.Resolver, jsonldConverter: JSONLDConverter): string;
-    toJSON(objectSchemaResolver: ObjectSchema.Resolver): string;
-    toJSON(): string;
+    getFragment<T>(slug: string): T & Fragment;
+    getNamedFragment<T>(slug: string): T & NamedFragment;
+    getFragments(): Fragment[];
+    createFragment<T>(object: T, slug?: string): T & Fragment;
+    createFragment(slug?: string): Fragment;
+    createNamedFragment<T>(object: T, slug: string): T & NamedFragment;
+    createNamedFragment(slug: string): NamedFragment;
+    removeNamedFragment(slugOrFragment: string | NamedFragment): void;
+    toJSON(objectSchemaResolver?: ObjectSchemaResolver, jsonldConverter?: JSONLDConverter): RDFDocument;
 }
-export declare class Factory {
-    static hasClassProperties(documentResource: object): boolean;
-    static is(object: object): object is Class;
-    static create(): Class;
-    static createFrom<T extends object>(object: T): T & Class;
-    static decorate<T extends object>(object: T): T & Class;
+export interface DocumentFactory extends ModelFactory<Document>, ModelDecorator<Document> {
+    TYPE: string;
+    SCHEMA: ObjectSchema;
+    is(object: object): object is Document;
+    isDecorated(object: object): object is Document;
+    create(): Document;
+    createFrom<T extends object>(object: T): T & Document;
+    decorate<T extends object>(object: T): T & Document;
+    _convertNestedObjects(parent: Document, actual: any, fragmentsTracker?: Set<string>): void;
 }
-export default Class;
+export declare const Document: DocumentFactory;
+export default Document;

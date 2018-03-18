@@ -1,12 +1,16 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var NS = require("./NS");
-exports.RDF_CLASS = NS.CS.Class.ProtectedDocument;
-exports.SCHEMA = {
+var CS_1 = require("./Vocabularies/CS");
+var SCHEMA = {
     "accessControlList": {
-        "@id": NS.CS.Predicate.accessControlList,
+        "@id": CS_1.CS.accessControlList,
         "@type": "@id",
     },
 };
+exports.ProtectedDocument = {
+    TYPE: CS_1.CS.ProtectedDocument,
+    SCHEMA: SCHEMA,
+};
+exports.default = exports.ProtectedDocument;
 
 //# sourceMappingURL=ProtectedDocument.js.map

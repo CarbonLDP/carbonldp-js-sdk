@@ -1,39 +1,44 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var NS = require("./../NS");
-exports.RDF_CLASS = NS.SHACL.Class.ValidationResult;
-exports.SCHEMA = {
+var SHACL_1 = require("../Vocabularies/SHACL");
+var XSD_1 = require("../Vocabularies/XSD");
+var SCHEMA = {
     "focusNode": {
-        "@id": NS.SHACL.Predicate.focusNode,
+        "@id": SHACL_1.SHACL.focusNode,
         "@type": "@id",
     },
     "resultPath": {
-        "@id": NS.SHACL.Predicate.resultPath,
+        "@id": SHACL_1.SHACL.resultPath,
         "@type": "@id",
     },
     "value": {
-        "@id": NS.SHACL.Predicate.value,
+        "@id": SHACL_1.SHACL.value,
     },
     "sourceShape": {
-        "@id": NS.SHACL.Predicate.sourceShape,
+        "@id": SHACL_1.SHACL.sourceShape,
         "@type": "@id",
     },
     "sourceConstraintComponent": {
-        "@id": NS.SHACL.Predicate.sourceConstraintComponent,
+        "@id": SHACL_1.SHACL.sourceConstraintComponent,
         "@type": "@id",
     },
     "detail": {
-        "@id": NS.SHACL.Predicate.detail,
+        "@id": SHACL_1.SHACL.detail,
         "@type": "@id",
     },
     "resultMessage": {
-        "@id": NS.SHACL.Predicate.resultMessage,
-        "@type": NS.XSD.DataType.string,
+        "@id": SHACL_1.SHACL.resultMessage,
+        "@type": XSD_1.XSD.string,
     },
     "resultSeverity": {
-        "@id": NS.SHACL.Predicate.resultSeverity,
+        "@id": SHACL_1.SHACL.resultSeverity,
         "@type": "@id",
     },
 };
+exports.ValidationResult = {
+    TYPE: SHACL_1.SHACL.ValidationResult,
+    SCHEMA: SCHEMA,
+};
+exports.default = exports.ValidationResult;
 
 //# sourceMappingURL=ValidationResult.js.map

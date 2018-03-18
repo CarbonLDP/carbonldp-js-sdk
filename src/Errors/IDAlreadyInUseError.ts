@@ -1,13 +1,7 @@
 import AbstractError from "./AbstractError";
 
-export class Class extends AbstractError {
-
+export class IDAlreadyInUseError extends AbstractError {
 	get name():string { return "IDAlreadyInUseError"; }
-
-	constructor( message:string ) {
-		super( message );
-		Object.setPrototypeOf( this, Class.prototype );
-	}
 }
 
-export default Class;
+export default IDAlreadyInUseError;

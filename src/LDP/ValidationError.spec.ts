@@ -1,75 +1,109 @@
-import { extendsClass, hasDefaultExport, hasProperty, interfaze, module, OBLIGATORY, STATIC } from "../test/JasmineExtender";
-import * as NS from "./../NS";
-import * as Resource from "./../Resource";
+import { Resource } from "../Resource";
+import {
+	extendsClass,
+	hasDefaultExport,
+	hasProperty,
+	interfaze,
+	module,
+	OBLIGATORY,
+	property,
+	STATIC
+} from "../test/JasmineExtender";
+import { C } from "../Vocabularies/C";
 
-import * as ValidationError from "./ValidationError";
-import DefaultExport from "./ValidationError";
+import DefaultExport, { ValidationError } from "./ValidationError";
 
-describe( module( "Carbon/LDP/ValidationError" ), ():void => {
+describe( module( "carbonldp/LDP/ValidationError" ), ():void => {
 
 	it( "should exists", ():void => {
 		expect( ValidationError ).toBeDefined();
 		expect( ValidationError ).toEqual( jasmine.any( Object ) );
 	} );
 
-	it( hasProperty(
-		STATIC,
-		"RDF_CLASS",
-		"string"
-	), ():void => {
-		expect( ValidationError.RDF_CLASS ).toBeDefined();
-		expect( ValidationError.RDF_CLASS ).toEqual( jasmine.any( String ) );
-
-		expect( ValidationError.RDF_CLASS ).toBe( NS.C.Class.ValidationError );
-	} );
-
-	it( hasProperty(
-		STATIC,
-		"SCHEMA",
-		"Carbon.ObjectSchema.Class"
-	), ():void => {
-		expect( ValidationError.SCHEMA ).toBeDefined();
-		expect( ValidationError.SCHEMA ).toEqual( jasmine.any( Object ) );
-
-		expect( ValidationError.SCHEMA as {} ).toEqual( {
-			"errorDetails": jasmine.any( Object ),
-		} );
-
-		expect( ValidationError.SCHEMA[ "errorDetails" ] ).toEqual( {
-			"@id": NS.C.Predicate.errorDetails,
-			"@type": "@id",
-		} );
-	} );
-
 	describe( interfaze(
-		"Carbon.LDP.ValidationError.Class",
+		"CarbonLDP.LDP.ValidationError.ValidationError",
 		"Interface that contains the properties that describe how the validation failed."
 	), ():void => {
 
-		it( extendsClass( "Carbon.Resource.Class" ), ():void => {
-			const target:Resource.Class = {} as ValidationError.Class;
+		it( extendsClass( "CarbonLDP.Resource.Resource" ), ():void => {
+			const target:Resource = {} as ValidationError;
 			expect( target ).toBeDefined();
 		} );
 
 		it( "should exists", ():void => {
-			const target:ValidationError.Class = {} as any;
+			const target:ValidationError = {} as any;
 			expect( target ).toBeDefined();
 		} );
 
 		it( hasProperty(
 			OBLIGATORY,
 			"errorDetails",
-			"Carbon.Pointer.Class",
+			"CarbonLDP.Pointer.Pointer",
 			"Pointer with the error details of how the validation failed."
 		), ():void => {
-			const target:ValidationError.Class = { errorDetails: true } as any;
+			const target:ValidationError = { errorDetails: true } as any;
 			expect( target.errorDetails ).toBeDefined();
 		} );
 
 	} );
 
-	it( hasDefaultExport( "Carbon.LDP.ValidationError.Class" ), ():void => {
-		const target:ValidationError.Class = {} as DefaultExport;
+	describe( interfaze(
+		"CarbonLDP.LDP.ValidationError.ValidationErrorFactory",
+		"Interface with the factory, decorate and utils methods for `CarbonLDP.LDP.ValidationError.ValidationError` objects."
+	), ():void => {
+
+		it( hasProperty(
+			OBLIGATORY,
+			"TYPE",
+			"string"
+		), ():void => {} );
+
+		it( hasProperty(
+			OBLIGATORY,
+			"SCHEMA",
+			"CarbonLDP.ObjectSchema.ObjectSchema"
+		), ():void => {} );
+
+	} );
+
+	describe( property(
+		STATIC,
+		"ValidationError",
+		"CarbonLDP.LDP.ValidationError.ValidationErrorFactory"
+	), ():void => {
+
+		it( "should exist", ():void => {
+			expect( ValidationError ).toBeDefined();
+			expect( ValidationError ).toEqual( jasmine.any( Object ) );
+		} );
+
+		// TODO: Separate in different tests
+		it( "ValidationError.TYPE", ():void => {
+			expect( ValidationError.TYPE ).toBeDefined();
+			expect( ValidationError.TYPE ).toEqual( jasmine.any( String ) );
+
+			expect( ValidationError.TYPE ).toBe( C.ValidationError );
+		} );
+
+		// TODO: Separate in different tests
+		it( "ValidationError.SCHEMA", ():void => {
+			expect( ValidationError.SCHEMA ).toBeDefined();
+			expect( ValidationError.SCHEMA ).toEqual( jasmine.any( Object ) );
+
+			expect( ValidationError.SCHEMA as {} ).toEqual( {
+				"errorDetails": jasmine.any( Object ),
+			} );
+
+			expect( ValidationError.SCHEMA[ "errorDetails" ] ).toEqual( {
+				"@id": C.errorDetails,
+				"@type": "@id",
+			} );
+		} );
+
+	} );
+
+	it( hasDefaultExport( "CarbonLDP.LDP.ValidationError.ValidationError" ), ():void => {
+		const target:ValidationError = {} as DefaultExport;
 		expect( target ).toBeDefined();
 	} );
 

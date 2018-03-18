@@ -1,27 +1,28 @@
-import * as NS from "./../NS";
+import { CS } from "../Vocabularies/CS";
+import { XSD } from "../Vocabularies/XSD";
 import * as ObjectSchema from "./../ObjectSchema";
-import * as Resource from "./../Resource";
+import { Resource } from "./../Resource";
 import * as Utils from "./../Utils";
 import * as PersistedUser from "./PersistedUser";
 
-export const RDF_CLASS:string = NS.CS.Class.Token;
+export const RDF_CLASS:string = CS.Token;
 
-export const SCHEMA:ObjectSchema.Class = {
+export const SCHEMA:ObjectSchema.ObjectSchema = {
 	"key": {
-		"@id": NS.CS.Predicate.tokenKey,
-		"@type": NS.XSD.DataType.string,
+		"@id": CS.tokenKey,
+		"@type": XSD.string,
 	},
 	"expirationTime": {
-		"@id": NS.CS.Predicate.expirationTime,
-		"@type": NS.XSD.DataType.dateTime,
+		"@id": CS.expirationTime,
+		"@type": XSD.dateTime,
 	},
 	"user": {
-		"@id": NS.CS.Predicate.credentialsOf,
+		"@id": CS.credentialsOf,
 		"@type": "@id",
 	},
 };
 
-export interface Class extends Resource.Class {
+export interface Class extends Resource {
 	key:string;
 	expirationTime:Date;
 	user:PersistedUser.Class;
@@ -30,7 +31,7 @@ export interface Class extends Resource.Class {
 export class Factory {
 	static is( value:any ):boolean {
 		return (
-			Resource.Factory.is( value )
+			Resource.is( value )
 			&& Factory.hasClassProperties( value )
 		);
 	}

@@ -1,60 +1,60 @@
-function hasFunction( object:Object, functionName:string ):boolean {
+export function hasFunction( object:Object, functionName:string ):boolean {
 	return typeof object[ functionName ] === "function";
 }
 
-function hasProperty( object:Object, property:string ):boolean {
+export function hasProperty( object:Object, property:string ):boolean {
 	if( ! object ) return false;
 	return isDefined( object[ property ] );
 }
 
-function hasPropertyDefined( object:Object, property:string ):boolean {
+export function hasPropertyDefined( object:Object, property:string ):boolean {
 	if( ! object ) return false;
 	return ! ! Object.getOwnPropertyDescriptor( object, property );
 }
 
-function isDefined( value:any ):boolean {
+export function isDefined( value:any ):boolean {
 	return void 0 !== value;
 }
 
-function isNull( value:any ):boolean {
+export function isNull( value:any ):boolean {
 	return value === null;
 }
 
-function isArray( object:any ):object is Array<any> {
+export function isArray( object:any ):object is Array<any> {
 	return Array.isArray( object );
 }
 
-function isString( value:any ):value is string {
+export function isString( value:any ):value is string {
 	return typeof value === "string" || value instanceof String;
 }
 
-function isBoolean( value:any ):value is boolean {
+export function isBoolean( value:any ):value is boolean {
 	return typeof value === "boolean";
 }
 
-function isNumber( value:any ):value is number {
+export function isNumber( value:any ):value is number {
 	return typeof value === "number" || value instanceof Number;
 }
 
-function isInteger( value:any ):boolean {
+export function isInteger( value:any ):boolean {
 	if( ! isNumber( value ) ) return false;
 	return value % 1 === 0;
 }
 
-function isDouble( value:any ):boolean {
+export function isDouble( value:any ):boolean {
 	if( ! isNumber( value ) ) return false;
 	return value % 1 !== 0;
 }
 
-function isDate( date:any ):date is Date {
+export function isDate( date:any ):date is Date {
 	return date instanceof Date || ( typeof date === "object" && Object.prototype.toString.call( date ) === "[object Date]" );
 }
 
-function isObject( object:any ):object is object {
+export function isObject( object:any ):object is object {
 	return typeof object === "object" && ( ! ! object );
 }
 
-function isPlainObject( object:Object ):boolean {
+export function isPlainObject( object:Object ):boolean {
 	return isObject( object )
 		&& ! isArray( object )
 		&& ! isDate( object )
@@ -63,11 +63,11 @@ function isPlainObject( object:Object ):boolean {
 		&& ! ( Object.prototype.toString.call( object ) === "[object Set]" );
 }
 
-function isFunction( value:any ):value is Function {
+export function isFunction( value:any ):value is Function {
 	return typeof value === "function";
 }
 
-function isMap( value:any ):boolean {
+export function isMap( value:any ):boolean {
 	return (
 		isObject( value ) &&
 
@@ -86,7 +86,7 @@ function isMap( value:any ):boolean {
 	);
 }
 
-function parseBoolean( value:string ):boolean {
+export function parseBoolean( value:string ):boolean {
 	if( ! isString( value ) ) return false;
 
 	/* tslint:disable: no-switch-case-fall-through */
@@ -106,20 +106,7 @@ function parseBoolean( value:string ):boolean {
 	/* tslint:enable: no-switch-case-fall-through */
 }
 
-function extend( target:Object, ...objects:Object[] ):Object {
-	for( let toMerge of objects ) {
-		if( ! toMerge ) continue;
-
-		for( let name in toMerge ) {
-			if( toMerge.hasOwnProperty( name ) ) {
-				target[ name ] = toMerge[ name ];
-			}
-		}
-	}
-	return target;
-}
-
-function forEachOwnProperty( object:Object, action:( name:string, value:any ) => ( boolean | void ) ):void {
+export function forEachOwnProperty( object:Object, action:( name:string, value:any ) => ( boolean | void ) ):void {
 	if( ! ( isObject( object ) || isFunction( object ) ) ) throw new Error( "IllegalArgument" );
 	for( let name in object ) {
 		if( object.hasOwnProperty( name ) ) {
@@ -144,7 +131,7 @@ export function mapTupleArray<T, W>( tuples:[ T, W ][] ):[ T[], W[] ] {
 	return [ firsts, seconds ];
 }
 
-class A {
+export class ArrayUtils {
 	static from<T>( iterator:Iterator<T> ):Array<T> {
 		let array:Array<T> = [];
 		let next:IteratorResult<T> = iterator.next();
@@ -177,7 +164,7 @@ class A {
 	}
 }
 
-class O {
+export class ObjectUtils {
 
 	static extend<T extends object, W extends object>( target:T, source:W, config:{ arrays?:boolean, objects?:boolean } = { arrays: false, objects: false } ):T & W {
 		if( ! isArray( source ) && ! isPlainObject( source ) || ! isArray( target ) && ! isPlainObject( target ) ) return null;
@@ -193,8 +180,8 @@ class O {
 					property = property.__CarbonSDK_circularReferenceFlag;
 				} else {
 					property = ! ( key in target ) || target[ key ].constructor !== property.constructor ?
-						O.clone( property, config ) :
-						O.extend( target[ key ], property, config );
+						ObjectUtils.clone( property, config ) :
+						ObjectUtils.extend( target[ key ], property, config );
 				}
 			}
 
@@ -215,7 +202,7 @@ class O {
 		if( ! isAnArray && ! isPlainObject( object ) ) return null;
 
 		let clone:T = <T> ( isAnArray ? [] : Object.create( Object.getPrototypeOf( object ) ) );
-		return O.extend<T, T>( clone, object, config );
+		return ObjectUtils.extend<T, T>( clone, object, config );
 	}
 
 	static areEqual( object1:Object, object2:Object, config:{ arrays?:boolean, objects?:boolean } = { arrays: false, objects: false }, ignore:{ [ key:string ]:boolean } = {} ):boolean {
@@ -252,7 +239,7 @@ function internalAreEqual( object1:Object, object2:Object, config:{ arrays?:bool
 
 	if( isDate( object1 ) ) return (<Date> object1).getTime() === (<Date> object2).getTime();
 
-	let keys:string[] = A.joinWithoutDuplicates( Object.keys( object1 ), Object.keys( object2 ) );
+	let keys:string[] = ArrayUtils.joinWithoutDuplicates( Object.keys( object1 ), Object.keys( object2 ) );
 	for( let key of keys ) {
 		if( ! ( key in object1 ) || ! ( key in object2 ) ) return false;
 		if( typeof object1 !== typeof object2 ) return false;
@@ -289,7 +276,7 @@ function internalAreEqual( object1:Object, object2:Object, config:{ arrays?:bool
 	return true;
 }
 
-class S {
+export class StringUtils {
 	static startsWith( str:string, substring:string ):boolean {
 		return str.lastIndexOf( substring, 0 ) === 0;
 	}
@@ -303,7 +290,7 @@ class S {
 	}
 }
 
-class M {
+export class MapUtils {
 	static from<V>( object:Object ):Map<string, V> {
 		let map:Map<string, V> = new Map<string, V>();
 		forEachOwnProperty( object, ( name:string, value:any ) => {
@@ -331,11 +318,11 @@ class M {
 	}
 }
 
-class UUID {
+export class UUIDUtils {
 	private static regExp:RegExp = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
 	public static is( uuid:string ):boolean {
-		return UUID.regExp.test( uuid );
+		return UUIDUtils.regExp.test( uuid );
 	}
 
 	public static generate():string {
@@ -346,30 +333,3 @@ class UUID {
 		} );
 	}
 }
-
-export {
-	hasFunction,
-	hasProperty,
-	hasPropertyDefined,
-	isDefined,
-	isNull,
-	isArray,
-	isString,
-	isBoolean,
-	isNumber,
-	isInteger,
-	isDouble,
-	isDate,
-	isObject,
-	isPlainObject,
-	isFunction,
-	isMap,
-	parseBoolean,
-	extend,
-	forEachOwnProperty,
-	O,
-	S,
-	A,
-	M,
-	UUID
-};

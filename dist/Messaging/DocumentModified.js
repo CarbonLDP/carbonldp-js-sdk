@@ -1,8 +1,13 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var NS = require("./../NS");
-var Message = require("./Message");
-exports.RDF_CLASS = NS.C.Class.DocumentModified;
-exports.SCHEMA = Message.SCHEMA;
+var C_1 = require("../Vocabularies/C");
+var EventMessage_1 = require("./EventMessage");
+exports.TYPE = C_1.C.DocumentModified;
+exports.SCHEMA = EventMessage_1.EventMessage.SCHEMA;
+exports.DocumentModified = {
+    TYPE: exports.TYPE,
+    SCHEMA: exports.SCHEMA,
+};
+exports.default = exports.DocumentModified;
 
 //# sourceMappingURL=DocumentModified.js.map

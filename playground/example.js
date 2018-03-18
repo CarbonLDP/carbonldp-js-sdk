@@ -5,10 +5,9 @@
 		};
 	}
 
-	const carbon1 = new Carbon( "http://carbonldp.webtraining.zone:8083/", false );
-	// const carbon1 = new Carbon( "localhost:8083", false );
-	const carbon2 = new Carbon( "localhost:8083", false );
-	const carbon3 = new Carbon( "localhost:8083", false );
+	const carbon1 = new CarbonLDP( "localhost:8083", false );
+	const carbon2 = new CarbonLDP( "localhost:8083", false );
+	const carbon3 = new CarbonLDP( "localhost:8083", false );
 
 	const prefixes = {
 		"acl": "http://www.w3.org/ns/auth/acl#",
@@ -52,22 +51,6 @@
 	};
 
 	carbon1.extendObjectSchema( prefixes );
-	carbon1.extendObjectSchema( {
-		"tms": "https://tms.base22.com/ns#",
-		"name": {
-			"@id": "https://schema.org/name",
-			"@type": "string"
-		},
-		"description": {
-			"@id": "https://schema.org/description",
-			"@type": "string"
-		},
-		"skillLevels": {
-			"@id": "tms:skillLevel",
-			"@type": "@id",
-			"@container": "@set"
-		}
-	} );
 	carbon1.extendObjectSchema( "ex:Child", {
 		"index": {
 			"@id": "ex:index",
@@ -93,38 +76,6 @@
 			"@id": "ex:index",
 			"@type": "xsd:integer",
 		}
-	} );
-
-	describe( "Temp", () => {
-
-		it( "test", async () => {
-			const documents = carbon1.documents;
-			await documents.getMembers( "/skills/", _ => _
-				.properties( {
-					"name": _.inherit,
-					"skillLevels": {
-						"query": _ => _
-							.withType( "https://tms.base22.com/ns#SkillLevel" )
-							.properties( {
-								"name": _.inherit,
-							} )
-					}
-				} ) ).then( ( [ results, response ] ) => {
-				this.skills = results;
-			} );
-
-			console.log( this.skills );
-
-			await documents.getMembers( "/skills/", _ => _
-				.properties( {
-					"description": _.inherit,
-				} ) ).then( ( [ results, response ] ) => {
-				this.skills = results;
-			} );
-
-			console.log( this.skills );
-		} )
-
 	} );
 
 	xdescribe( "Tests >", () => {
@@ -283,4 +234,5 @@
 			expect( freshChild.somethingElse ).toEqual( "Hello world!" );
 		} ) );
 	} );
+
 })();

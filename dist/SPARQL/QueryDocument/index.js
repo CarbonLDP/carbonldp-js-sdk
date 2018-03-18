@@ -1,30 +1,37 @@
 "use strict";
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
+    result["default"] = mod;
+    return result;
+}
 Object.defineProperty(exports, "__esModule", { value: true });
-var PartialMetadata = require("./PartialMetadata");
+var PartialMetadata = __importStar(require("./PartialMetadata"));
 exports.PartialMetadata = PartialMetadata;
-var QueryContext = require("./QueryContext");
+var QueryContext = __importStar(require("./QueryContext"));
 exports.QueryContext = QueryContext;
-var QueryContextBuilder = require("./QueryContextBuilder");
+var QueryContextBuilder = __importStar(require("./QueryContextBuilder"));
 exports.QueryContextBuilder = QueryContextBuilder;
-var QueryContextPartial = require("./QueryContextPartial");
+var QueryContextPartial = __importStar(require("./QueryContextPartial"));
 exports.QueryContextPartial = QueryContextPartial;
-var QueryDocumentBuilder = require("./QueryDocumentBuilder");
+var QueryDocumentBuilder = __importStar(require("./QueryDocumentBuilder"));
 exports.QueryDocumentBuilder = QueryDocumentBuilder;
-var QueryDocumentsBuilder = require("./QueryDocumentsBuilder");
+var QueryDocumentsBuilder = __importStar(require("./QueryDocumentsBuilder"));
 exports.QueryDocumentsBuilder = QueryDocumentsBuilder;
-var QueryMetadata = require("./QueryMetadata");
+var QueryMetadata = __importStar(require("./QueryMetadata"));
 exports.QueryMetadata = QueryMetadata;
-var QueryObject = require("./QueryObject");
+var QueryObject = __importStar(require("./QueryObject"));
 exports.QueryObject = QueryObject;
-var QueryPropertiesSchema = require("./QueryPropertiesSchema");
-exports.QueryPropertiesSchema = QueryPropertiesSchema;
-var QueryProperty = require("./QueryProperty");
+var QueryProperty = __importStar(require("./QueryProperty"));
 exports.QueryProperty = QueryProperty;
-var QueryPropertySchema = require("./QueryPropertySchema");
-exports.QueryPropertySchema = QueryPropertySchema;
-var QueryValue = require("./QueryValue");
+var QuerySchema = __importStar(require("./QuerySchema"));
+exports.QuerySchema = QuerySchema;
+var QuerySchemaProperty = __importStar(require("./QuerySchemaProperty"));
+exports.QuerySchemaProperty = QuerySchemaProperty;
+var QueryValue = __importStar(require("./QueryValue"));
 exports.QueryValue = QueryValue;
-var QueryVariable = require("./QueryVariable");
+var QueryVariable = __importStar(require("./QueryVariable"));
 exports.QueryVariable = QueryVariable;
 
 //# sourceMappingURL=index.js.map

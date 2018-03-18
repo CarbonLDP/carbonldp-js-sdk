@@ -1,91 +1,44 @@
 import {
-	STATIC,
-	INSTANCE,
-
-	OBLIGATORY,
-
-	module,
 	clazz,
-	method,
-	OPTIONAL,
-	interfaze,
-
-	isDefined,
-	hasProperty,
-	hasMethod,
-	hasSignature,
 	decoratedObject,
 	extendsClass,
 	hasDefaultExport,
+	hasMethod,
+	hasProperty,
+	hasSignature,
+	INSTANCE,
+	interfaze,
+	isDefined,
+	method,
+	module,
+	OBLIGATORY,
+	OPTIONAL,
+	property,
+	STATIC,
 } from "../test/JasmineExtender";
-
-import * as ACE from "./ACE";
-import * as Document from "./../Document";
-import Documents from "./../Documents";
-import Fragment from "./../Fragment";
-import * as NS from "./../NS";
-import * as PersistedDocument from "./../PersistedDocument";
-import * as Pointer from "./../Pointer";
+import { CS } from "../Vocabularies/CS";
+import { Document } from "./../Document";
+import { Documents } from "../Documents";
+import { Fragment } from "../Fragment";
+import { PersistedDocument } from "../PersistedDocument";
+import { Pointer } from "../Pointer";
 import * as Utils from "./../Utils";
 
-import * as ACL from "./ACL";
+import { ACE } from "./ACE";
+
+import { ACL } from "./ACL";
 import DefaultExport from "./ACL";
 
-describe( module( "Carbon/Auth/ACL" ), ():void => {
-
-	it( isDefined(), ():void => {
-		expect( ACL ).toBeDefined();
-		expect( Utils.isObject( ACL ) ).toBe( true );
-	} );
-
-	it( hasProperty(
-		STATIC,
-		"RDF_Class",
-		"string"
-	), ():void => {
-		expect( ACL.RDF_CLASS ).toBeDefined();
-		expect( Utils.isString( ACL.RDF_CLASS ) ).toBe( true );
-
-		expect( ACL.RDF_CLASS ).toBe( NS.CS.Class.AccessControlList );
-	} );
-
-	it( hasProperty(
-		STATIC,
-		"SCHEMA",
-		"Carbon.ObjectSchema.Class"
-	), ():void => {
-		expect( ACL.SCHEMA ).toBeDefined();
-		expect( Utils.isObject( ACL.SCHEMA ) ).toBe( true );
-
-		expect( Utils.hasProperty( ACL.SCHEMA, "entries" ) ).toBe( true );
-		expect( ACL.SCHEMA[ "entries" ] ).toEqual( {
-			"@id": NS.CS.Predicate.accessControlEntry,
-			"@type": "@id",
-			"@container": "@set",
-		} );
-
-		expect( Utils.hasProperty( ACL.SCHEMA, "accessTo" ) ).toBe( true );
-		expect( ACL.SCHEMA[ "accessTo" ] ).toEqual( {
-			"@id": NS.CS.Predicate.accessTo,
-			"@type": "@id",
-		} );
-
-		expect( Utils.hasProperty( ACL.SCHEMA, "inheritableEntries" ) ).toBe( true );
-		expect( ACL.SCHEMA[ "inheritableEntries" ] ).toEqual( {
-			"@id": NS.CS.Predicate.inheritableEntry,
-			"@type": "@id",
-			"@container": "@set",
-		} );
-	} );
+describe( module( "carbonldp/Auth/ACL" ), ():void => {
 
 	describe( interfaze(
-		"Carbon.Auth.ACL.Class",
+		"CarbonLDP.Auth.ACL.ACL",
 		"Interface that represents an in-memory Access Control List (ACL)."
 	), ():void => {
 
-		it( extendsClass( "Carbon.Document.Class" ), ():void => {
-			let acl:ACL.Class = <any> {};
-			let fragment:Document.Class;
+		it( extendsClass( "CarbonLDP.Document.Document" ), ():void => {
+			let acl:ACL = <any> {};
+			let fragment:Document;
 
 			fragment = acl;
 			expect( fragment ).toEqual( jasmine.any( Object ) );
@@ -94,24 +47,24 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 		it( hasProperty(
 			OBLIGATORY,
 			"accessTo",
-			"Carbon.Pointer.Class",
+			"CarbonLDP.Pointer.Pointer",
 			"Reference to the document the ACL belongs."
 		), ():void => {
-			let document:Pointer.Class = Pointer.Factory.create();
-			let acl:ACL.Class = <any> {};
+			let document:Pointer = Pointer.create();
+			let acl:ACL = <any> {};
 
 			acl.accessTo = document;
-			expect( Pointer.Factory.is( acl.accessTo ) ).toBe( true );
+			expect( Pointer.is( acl.accessTo ) ).toBe( true );
 		} );
 
 		it( hasProperty(
 			OPTIONAL,
 			"entries",
-			"Carbon.Auth.ACE.Class[]",
+			"CarbonLDP.Auth.ACE.ACE[]",
 			"Array of ACEs that only grants or denies permissions of the document the ACL belongs."
 		), ():void => {
-			let entries:ACE.Class[] = [ <any> {} ];
-			let acl:ACL.Class = <any> {};
+			let entries:ACE[] = [ <any> {} ];
+			let acl:ACL = <any> {};
 
 			acl.entries = entries;
 			expect( acl.entries ).toEqual( jasmine.any( Array ) );
@@ -121,11 +74,11 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 		it( hasProperty(
 			OPTIONAL,
 			"inheritableEntries",
-			"Carbon.Auth.ACE.Class[]",
+			"CarbonLDP.Auth.ACE.ACE[]",
 			"Array of ACEs that grants or denies permissions of the document's children the ACL belongs."
 		), ():void => {
-			let inheritableEntries:ACE.Class[] = [ <any> {} ];
-			let acl:ACL.Class = <any> {};
+			let inheritableEntries:ACE[] = [ <any> {} ];
+			let acl:ACL = <any> {};
 
 			acl.inheritableEntries = inheritableEntries;
 			expect( acl.inheritableEntries ).toEqual( jasmine.any( Array ) );
@@ -136,12 +89,12 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 			OBLIGATORY,
 			"_parsePointer",
 			"(Internal) Function that parse string URIs to pointers.", [
-				{ name: "element", type: "string | Carbon.Pointer.Class", description: "The URI string o pointer to convert into pointer." },
+				{ name: "element", type: "string | CarbonLDP.Pointer.Pointer", description: "The URI string o pointer to convert into pointer." },
 			],
-			{ type: "Carbon.Pointer.Class" }
+			{ type: "CarbonLDP.Pointer.Pointer" }
 		), ():void => {
-			let parsePointer:( element:string | Pointer.Class ) => Pointer.Class = <any> new Function();
-			let acl:ACL.Class = <any> {};
+			let parsePointer:( element:string | Pointer ) => Pointer = <any> new Function();
+			let acl:ACL = <any> {};
 
 			acl._parsePointer = parsePointer;
 			expect( acl._parsePointer ).toEqual( jasmine.any( Function ) );
@@ -151,33 +104,33 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 
 			it( hasSignature(
 				"Grant the permission specified to the subject provided for the document related to the ACL.", [
-					{ name: "subject", type: "string | Carbon.Pointer.Class", description: "The subject which will be assigned the permission specified." },
-					{ name: "subjectClass", type: "string | Carbon.Pointer.Class", description: "The type of subject provided." },
-					{ name: "permission", type: "string | Carbon.Pointer.Class", description: "The permission that will be granted to the subject specified." },
+					{ name: "subject", type: "string | CarbonLDP.Pointer.Pointer", description: "The subject which will be assigned the permission specified." },
+					{ name: "subjectClass", type: "string | CarbonLDP.Pointer.Pointer", description: "The type of subject provided." },
+					{ name: "permission", type: "string | CarbonLDP.Pointer.Pointer", description: "The permission that will be granted to the subject specified." },
 				]
 			), ():void => {} );
 
 			it( hasSignature(
 				"Grant several permissions to the subject provided for the document related to the ACL.", [
-					{ name: "subject", type: "string | Carbon.Pointer.Class", description: "The subject which will be assigned the permission specified." },
-					{ name: "subjectClass", type: "string | Carbon.Pointer.Class", description: "The type of subject provided." },
-					{ name: "permissions", type: "(string | Carbon.Pointer.Class)[]", description: "The permissions that will be granted to the subject specified." },
+					{ name: "subject", type: "string | CarbonLDP.Pointer.Pointer", description: "The subject which will be assigned the permission specified." },
+					{ name: "subjectClass", type: "string | CarbonLDP.Pointer.Pointer", description: "The type of subject provided." },
+					{ name: "permissions", type: "(string | CarbonLDP.Pointer.Pointer)[]", description: "The permissions that will be granted to the subject specified." },
 				]
 			), ():void => {} );
 
 			it( hasSignature(
 				"Grant the permission specified to the every subject provided for the document related to the ACL.", [
-					{ name: "subjects", type: "(string | Carbon.Pointer.Class)[]", description: "The subjects which will be assigned the every permissions specified." },
-					{ name: "subjectClass", type: "string | Carbon.Pointer.Class", description: "The type of subjects provided." },
-					{ name: "permission", type: "string | Carbon.Pointer.Class", description: "The permission that will be granted to the every subject." },
+					{ name: "subjects", type: "(string | CarbonLDP.Pointer.Pointer)[]", description: "The subjects which will be assigned the every permissions specified." },
+					{ name: "subjectClass", type: "string | CarbonLDP.Pointer.Pointer", description: "The type of subjects provided." },
+					{ name: "permission", type: "string | CarbonLDP.Pointer.Pointer", description: "The permission that will be granted to the every subject." },
 				]
 			), ():void => {} );
 
 			it( hasSignature(
 				"Grant several permissions to the every subject provided for the document related to the ACL.", [
-					{ name: "subjects", type: "(string | Carbon.Pointer.Class)[]", description: "The subjects which will be assigned the every permissions specified." },
-					{ name: "subjectClass", type: "string | Carbon.Pointer.Class", description: "The type of subjects provided." },
-					{ name: "permissions", type: "(string | Carbon.Pointer.Class)[]", description: "The permissions that will be granted to the every subject." },
+					{ name: "subjects", type: "(string | CarbonLDP.Pointer.Pointer)[]", description: "The subjects which will be assigned the every permissions specified." },
+					{ name: "subjectClass", type: "string | CarbonLDP.Pointer.Pointer", description: "The type of subjects provided." },
+					{ name: "permissions", type: "(string | CarbonLDP.Pointer.Pointer)[]", description: "The permissions that will be granted to the every subject." },
 				]
 			), ():void => {} );
 
@@ -187,33 +140,33 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 
 			it( hasSignature(
 				"Grant the permission specified to the subject provided for the document related to the ACL.", [
-					{ name: "subject", type: "string | Carbon.Pointer.Class", description: "The subject which will be assigned the permission specified." },
-					{ name: "subjectClass", type: "string | Carbon.Pointer.Class", description: "The type of subject provided." },
-					{ name: "permission", type: "string | Carbon.Pointer.Class", description: "The permission that will be granted to the subject specified." },
+					{ name: "subject", type: "string | CarbonLDP.Pointer.Pointer", description: "The subject which will be assigned the permission specified." },
+					{ name: "subjectClass", type: "string | CarbonLDP.Pointer.Pointer", description: "The type of subject provided." },
+					{ name: "permission", type: "string | CarbonLDP.Pointer.Pointer", description: "The permission that will be granted to the subject specified." },
 				]
 			), ():void => {} );
 
 			it( hasSignature(
 				"Grant several permissions to the subject provided for the document related to the ACL.", [
-					{ name: "subject", type: "string | Carbon.Pointer.Class", description: "The subject which will be assigned the permission specified." },
-					{ name: "subjectClass", type: "string | Carbon.Pointer.Class", description: "The type of subject provided." },
-					{ name: "permissions", type: "(string | Carbon.Pointer.Class)[]", description: "The permissions that will be granted to the subject specified." },
+					{ name: "subject", type: "string | CarbonLDP.Pointer.Pointer", description: "The subject which will be assigned the permission specified." },
+					{ name: "subjectClass", type: "string | CarbonLDP.Pointer.Pointer", description: "The type of subject provided." },
+					{ name: "permissions", type: "(string | CarbonLDP.Pointer.Pointer)[]", description: "The permissions that will be granted to the subject specified." },
 				]
 			), ():void => {} );
 
 			it( hasSignature(
 				"Grant the permission specified to the every subject provided for the document related to the ACL.", [
-					{ name: "subjects", type: "(string | Carbon.Pointer.Class)[]", description: "The subjects which will be assigned the every permissions specified." },
-					{ name: "subjectClass", type: "string | Carbon.Pointer.Class", description: "The type of subjects provided." },
-					{ name: "permission", type: "string | Carbon.Pointer.Class", description: "The permission that will be granted to the every subject." },
+					{ name: "subjects", type: "(string | CarbonLDP.Pointer.Pointer)[]", description: "The subjects which will be assigned the every permissions specified." },
+					{ name: "subjectClass", type: "string | CarbonLDP.Pointer.Pointer", description: "The type of subjects provided." },
+					{ name: "permission", type: "string | CarbonLDP.Pointer.Pointer", description: "The permission that will be granted to the every subject." },
 				]
 			), ():void => {} );
 
 			it( hasSignature(
 				"Grant several permissions to the every subject provided for the document related to the ACL.", [
-					{ name: "subjects", type: "(string | Carbon.Pointer.Class)[]", description: "The subjects which will be assigned the every permissions specified." },
-					{ name: "subjectClass", type: "string | Carbon.Pointer.Class", description: "The type of subjects provided." },
-					{ name: "permissions", type: "(string | Carbon.Pointer.Class)[]", description: "The permissions that will be granted to the every subject." },
+					{ name: "subjects", type: "(string | CarbonLDP.Pointer.Pointer)[]", description: "The subjects which will be assigned the every permissions specified." },
+					{ name: "subjectClass", type: "string | CarbonLDP.Pointer.Pointer", description: "The type of subjects provided." },
+					{ name: "permissions", type: "(string | CarbonLDP.Pointer.Pointer)[]", description: "The permissions that will be granted to the every subject." },
 				]
 			), ():void => {} );
 
@@ -224,36 +177,36 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 			it( hasSignature(
 				"Configures the permission specified to the subject provided either granting or denying it for the children of the document related to the ACL.", [
 					{ name: "granting", type: "boolean", description: "Boolean to indicate if the permission will be granted o denied." },
-					{ name: "subject", type: "string | Carbon.Pointer.Class", description: "The subject which will be assigned the permission specified." },
-					{ name: "subjectClass", type: "string | Carbon.Pointer.Class", description: "The type of subject provided." },
-					{ name: "permission", type: "string | Carbon.Pointer.Class", description: "The permission that will be granted to the subject specified." },
+					{ name: "subject", type: "string | CarbonLDP.Pointer.Pointer", description: "The subject which will be assigned the permission specified." },
+					{ name: "subjectClass", type: "string | CarbonLDP.Pointer.Pointer", description: "The type of subject provided." },
+					{ name: "permission", type: "string | CarbonLDP.Pointer.Pointer", description: "The permission that will be granted to the subject specified." },
 				]
 			), ():void => {} );
 
 			it( hasSignature(
 				"Configure several permissions to the subject provided either granting or denying them for the children of the document related to the ACL.", [
 					{ name: "granting", type: "boolean", description: "Boolean to indicate if the permission will be granted o denied." },
-					{ name: "subject", type: "string | Carbon.Pointer.Class", description: "The subject which will be assigned the permission specified." },
-					{ name: "subjectClass", type: "string | Carbon.Pointer.Class", description: "The type of subject provided." },
-					{ name: "permissions", type: "(string | Carbon.Pointer.Class)[]", description: "The permissions that will be granted to the subject specified." },
+					{ name: "subject", type: "string | CarbonLDP.Pointer.Pointer", description: "The subject which will be assigned the permission specified." },
+					{ name: "subjectClass", type: "string | CarbonLDP.Pointer.Pointer", description: "The type of subject provided." },
+					{ name: "permissions", type: "(string | CarbonLDP.Pointer.Pointer)[]", description: "The permissions that will be granted to the subject specified." },
 				]
 			), ():void => {} );
 
 			it( hasSignature(
 				"Configure the permission specified to the every subject provided either granting or denying it for the children of the document related to the ACL.", [
 					{ name: "granting", type: "boolean", description: "Boolean to indicate if the permission will be granted o denied." },
-					{ name: "subjects", type: "(string | Carbon.Pointer.Class)[]", description: "The subjects which will be assigned the every permissions specified." },
-					{ name: "subjectClass", type: "string | Carbon.Pointer.Class", description: "The type of subjects provided." },
-					{ name: "permission", type: "string | Carbon.Pointer.Class", description: "The permission that will be granted to the every subject." },
+					{ name: "subjects", type: "(string | CarbonLDP.Pointer.Pointer)[]", description: "The subjects which will be assigned the every permissions specified." },
+					{ name: "subjectClass", type: "string | CarbonLDP.Pointer.Pointer", description: "The type of subjects provided." },
+					{ name: "permission", type: "string | CarbonLDP.Pointer.Pointer", description: "The permission that will be granted to the every subject." },
 				]
 			), ():void => {} );
 
 			it( hasSignature(
 				"Configure several permissions to the every subject provided either granting or denying them for the children of the document related to the ACL.", [
 					{ name: "granting", type: "boolean", description: "Boolean to indicate if the permission will be granted o denied." },
-					{ name: "subjects", type: "(string | Carbon.Pointer.Class)[]", description: "The subjects which will be assigned the every permissions specified." },
-					{ name: "subjectClass", type: "string | Carbon.Pointer.Class", description: "The type of subjects provided." },
-					{ name: "permissions", type: "(string | Carbon.Pointer.Class)[]", description: "The permissions that will be granted to the every subject." },
+					{ name: "subjects", type: "(string | CarbonLDP.Pointer.Pointer)[]", description: "The subjects which will be assigned the every permissions specified." },
+					{ name: "subjectClass", type: "string | CarbonLDP.Pointer.Pointer", description: "The type of subjects provided." },
+					{ name: "permissions", type: "(string | CarbonLDP.Pointer.Pointer)[]", description: "The permissions that will be granted to the every subject." },
 				]
 			), ():void => {} );
 
@@ -263,8 +216,8 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 			OBLIGATORY,
 			"grants",
 			"Returns true if the subject has a configuration where it grants the permission specified for the document related to de ACL.\nReturns `null` if no configuration of the subject and permission exists in the ACL.", [
-				{ name: "subject", type: "string | Carbon.Pointer.Class", description: "The subject to look for its configuration." },
-				{ name: "permission", type: "string | Carbon.Pointer.Class", description: "The permission to check if it has a granting configuration." },
+				{ name: "subject", type: "string | CarbonLDP.Pointer.Pointer", description: "The subject to look for its configuration." },
+				{ name: "permission", type: "string | CarbonLDP.Pointer.Pointer", description: "The permission to check if it has a granting configuration." },
 			],
 			{ type: "boolean" }
 		), ():void => {} );
@@ -273,8 +226,8 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 			OBLIGATORY,
 			"denies",
 			"Returns true if the subject has a configuration where it denies the permission specified for the document related to de ACL.\nReturns `null` if no configuration of the subject and permission exists in the ACL.", [
-				{ name: "subject", type: "string | Carbon.Pointer.Class", description: "The subject to look for its configuration." },
-				{ name: "permission", type: "string | Carbon.Pointer.Class", description: "The permission to check if it has a granting configuration." },
+				{ name: "subject", type: "string | CarbonLDP.Pointer.Pointer", description: "The subject to look for its configuration." },
+				{ name: "permission", type: "string | CarbonLDP.Pointer.Pointer", description: "The permission to check if it has a granting configuration." },
 			],
 			{ type: "boolean" }
 		), ():void => {} );
@@ -283,8 +236,8 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 			OBLIGATORY,
 			"getChildInheritance",
 			"Returns if grants or denies a configuration of the subject and the permission specified for the children of document related to de ACL.\nReturns `null` if no configuration of the subject and permission exists in the ACL.", [
-				{ name: "subject", type: "string | Carbon.Pointer.Class", description: "The subject to look for its configuration." },
-				{ name: "permission", type: "string | Carbon.Pointer.Class", description: "The permission to check if it has a granting configuration." },
+				{ name: "subject", type: "string | CarbonLDP.Pointer.Pointer", description: "The subject to look for its configuration." },
+				{ name: "permission", type: "string | CarbonLDP.Pointer.Pointer", description: "The permission to check if it has a granting configuration." },
 			],
 			{ type: "boolean" }
 		), ():void => {} );
@@ -296,15 +249,15 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 
 			it( hasSignature(
 				"Remove the configuration of a permission from a subject for the document related to the ACL.", [
-					{ name: "subject", type: "string | Carbon.Pointer.Class", description: "The subject from will be removed the permission." },
-					{ name: "permission", type: "string | Carbon.Pointer.Class", description: "The permission to remove from the subject configuration." },
+					{ name: "subject", type: "string | CarbonLDP.Pointer.Pointer", description: "The subject from will be removed the permission." },
+					{ name: "permission", type: "string | CarbonLDP.Pointer.Pointer", description: "The permission to remove from the subject configuration." },
 				]
 			), ():void => {} );
 
 			it( hasSignature(
 				"Remove the configuration of several permissions from a subject for the document related to the ACL.", [
-					{ name: "subject", type: "string | Carbon.Pointer.Class", description: "The subject from will removed the permission." },
-					{ name: "permissions", type: "(string | Carbon.Pointer.Class)[]", description: "The permissions to remove from the subject configuration." },
+					{ name: "subject", type: "string | CarbonLDP.Pointer.Pointer", description: "The subject from will removed the permission." },
+					{ name: "permissions", type: "(string | CarbonLDP.Pointer.Pointer)[]", description: "The permissions to remove from the subject configuration." },
 				]
 			), ():void => {} );
 
@@ -317,8 +270,8 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 
 			it( hasSignature(
 				"Remove the configuration of a permission from a subject for the children of the document related to the ACL.", [
-					{ name: "subject", type: "string | Carbon.Pointer.Class", description: "The subject from will be removed the permission." },
-					{ name: "permission", type: "string | Carbon.Pointer.Class", description: "The permission to remove from the subject configuration." },
+					{ name: "subject", type: "string | CarbonLDP.Pointer.Pointer", description: "The subject from will be removed the permission." },
+					{ name: "permission", type: "string | CarbonLDP.Pointer.Pointer", description: "The permission to remove from the subject configuration." },
 				]
 			), ():void => {} );
 
@@ -326,26 +279,97 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 
 	} );
 
-	describe( clazz( "Carbon.Auth.ACL.Factory", "Factory class for `Carbon.Auth.ACL.Class` objects." ), ():void => {
+	describe( interfaze(
+		"CarbonLDP.Auth.ACL.ACLFactory",
+		"Interface with factory, decorate and utils methods for `CarbonLDP.Auth.ACL.ACL` objects."
+	), ():void => {
 
-		it( isDefined(), ():void => {
-			expect( ACL.Factory ).toBeDefined();
-			expect( Utils.isFunction( ACL.Factory ) ).toBe( true );
-		} );
+		it( hasProperty(
+			OBLIGATORY,
+			"TYPE",
+			"string"
+		), ():void => {} );
+
+		it( hasProperty(
+			OBLIGATORY,
+			"SCHEMA",
+			"CarbonLDP.ObjectSchema.ObjectSchema"
+		), ():void => {} );
 
 		it( hasMethod(
-			STATIC,
-			"hasClassProperties",
-			"Return true if the object provided has the properties and methods of a `Carbon.Auth.ACL.Class` object.", [
-				{ name: "object", type: "Object", description: "The object to analise." },
+			OBLIGATORY,
+			"isDecorated",
+			"Return true if the object provided has the properties and methods of a `CarbonLDP.Auth.ACL.ACL` object.", [
+				{ name: "object", type: "object", description: "The object to analise." },
 			],
-			{ type: "boolean" }
-		), ():void => {
-			expect( ACL.Factory.hasClassProperties ).toBeDefined();
-			expect( Utils.isFunction( ACL.Factory.hasClassProperties ) ).toBe( true );
+			{ type: "object is CarbonLDP.Auth.ACL.ACL" }
+		), ():void => {} );
+
+		it( hasMethod(
+			OBLIGATORY,
+			"decorate",
+			[ "T extends object" ],
+			"Decorate the object with the methods o a `CarbonLDP.Auth.ACL.ACL` object.", [
+				{ name: "object", type: "T", description: "The object to decorate." },
+			],
+			{ type: "T & CarbonLDP.Auth.ACl.Class" }
+		), ():void => {} );
+
+	} );
+
+	describe( property(
+		STATIC,
+		"ACL",
+		"CarbonLDP.Auth.ACL.ACLFactory",
+		"Constant that implements the `CarbonLDP.Auth.ACL.ACLFactory` interface."
+	), ():void => {
+
+		it( isDefined(), ():void => {
+			expect( ACL ).toBeDefined();
+			expect( ACL ).toEqual( jasmine.any( Object ) );
+		} );
+
+		// TODO: Separate in different tests
+		it( "ACL.TYPE", ():void => {
+			expect( ACL.TYPE ).toBeDefined();
+			expect( Utils.isString( ACL.TYPE ) ).toBe( true );
+
+			expect( ACL.TYPE ).toBe( CS.AccessControlList );
+		} );
+
+		// TODO: Separate in different tests
+		it( "ACL.SCHEMA", ():void => {
+			expect( ACL.SCHEMA ).toBeDefined();
+			expect( Utils.isObject( ACL.SCHEMA ) ).toBe( true );
+
+			expect( Utils.hasProperty( ACL.SCHEMA, "entries" ) ).toBe( true );
+			expect( ACL.SCHEMA[ "entries" ] ).toEqual( {
+				"@id": CS.accessControlEntry,
+				"@type": "@id",
+				"@container": "@set",
+			} );
+
+			expect( Utils.hasProperty( ACL.SCHEMA, "accessTo" ) ).toBe( true );
+			expect( ACL.SCHEMA[ "accessTo" ] ).toEqual( {
+				"@id": CS.accessTo,
+				"@type": "@id",
+			} );
+
+			expect( Utils.hasProperty( ACL.SCHEMA, "inheritableEntries" ) ).toBe( true );
+			expect( ACL.SCHEMA[ "inheritableEntries" ] ).toEqual( {
+				"@id": CS.inheritableEntry,
+				"@type": "@id",
+				"@container": "@set",
+			} );
+		} );
+
+		// TODO: Separate in different tests
+		it( "ACL.isDecorated", ():void => {
+			expect( ACL.isDecorated ).toBeDefined();
+			expect( Utils.isFunction( ACL.isDecorated ) ).toBe( true );
 
 			let object:any = void 0;
-			expect( ACL.Factory.hasClassProperties( object ) ).toBe( false );
+			expect( ACL.isDecorated( object ) ).toBe( false );
 
 			object = {
 				entries: null,
@@ -361,127 +385,115 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 				remove: ():void => {},
 				removeChildInheritance: ():void => {},
 			};
-			expect( ACL.Factory.hasClassProperties( object ) ).toBe( true );
+			expect( ACL.isDecorated( object ) ).toBe( true );
 
 			delete object.accessTo;
-			expect( ACL.Factory.hasClassProperties( object ) ).toBe( false );
+			expect( ACL.isDecorated( object ) ).toBe( false );
 			object.accessTo = null;
 
 			delete object.entries;
-			expect( ACL.Factory.hasClassProperties( object ) ).toBe( true );
+			expect( ACL.isDecorated( object ) ).toBe( true );
 			object.entries = null;
 
 			delete object.inheritableEntries;
-			expect( ACL.Factory.hasClassProperties( object ) ).toBe( true );
+			expect( ACL.isDecorated( object ) ).toBe( true );
 			object.inheritableEntries = null;
 
 			delete object._parsePointer;
-			expect( ACL.Factory.hasClassProperties( object ) ).toBe( false );
+			expect( ACL.isDecorated( object ) ).toBe( false );
 			object._parsePointer = ():void => {};
 
 			delete object.grant;
-			expect( ACL.Factory.hasClassProperties( object ) ).toBe( false );
+			expect( ACL.isDecorated( object ) ).toBe( false );
 			object.grant = ():void => {};
 
 			delete object.deny;
-			expect( ACL.Factory.hasClassProperties( object ) ).toBe( false );
+			expect( ACL.isDecorated( object ) ).toBe( false );
 			object.deny = ():void => {};
 
 			delete object.configureChildInheritance;
-			expect( ACL.Factory.hasClassProperties( object ) ).toBe( false );
+			expect( ACL.isDecorated( object ) ).toBe( false );
 			object.configureChildInheritance = ():void => {};
 
 			delete object.grants;
-			expect( ACL.Factory.hasClassProperties( object ) ).toBe( false );
+			expect( ACL.isDecorated( object ) ).toBe( false );
 			object.grants = ():void => {};
 
 			delete object.denies;
-			expect( ACL.Factory.hasClassProperties( object ) ).toBe( false );
+			expect( ACL.isDecorated( object ) ).toBe( false );
 			object.denies = ():void => {};
 
 			delete object.getChildInheritance;
-			expect( ACL.Factory.hasClassProperties( object ) ).toBe( false );
+			expect( ACL.isDecorated( object ) ).toBe( false );
 			object.getChildInheritance = ():void => {};
 
 			delete object.remove;
-			expect( ACL.Factory.hasClassProperties( object ) ).toBe( false );
+			expect( ACL.isDecorated( object ) ).toBe( false );
 			object.remove = ():void => {};
 
 			delete object.removeChildInheritance;
-			expect( ACL.Factory.hasClassProperties( object ) ).toBe( false );
+			expect( ACL.isDecorated( object ) ).toBe( false );
 			object.removeChildInheritance = ():void => {};
 		} );
 
-		it( hasMethod(
-			STATIC,
-			"decorate",
-			[ "T extends Object" ],
-			"Decorate the object with the methods o a `Carbon.Auth.ACL.Class` object.", [
-				{ name: "object", type: "T", description: "The object to decorate." },
-			],
-			{ type: "T & Carbon.Auth.ACl.Class" }
-		), ():void => {
-			expect( ACL.Factory.decorate ).toBeDefined();
-			expect( Utils.isFunction( ACL.Factory.decorate ) ).toBe( true );
+		// TODO: Separate in different tests
+		it( "ACL.decorate", ():void => {
+			expect( ACL.decorate ).toBeDefined();
+			expect( Utils.isFunction( ACL.decorate ) ).toBe( true );
 
-			let document:PersistedDocument.Class = PersistedDocument.Factory.create( "http://example.com/resource/~acl/", new Documents() );
-			let acl:ACL.Class = ACL.Factory.decorate( document );
+			let document:PersistedDocument = PersistedDocument.create( new Documents(), "http://example.com/resource/~acl/" );
+			let acl:ACL = ACL.decorate( document );
 			acl.accessTo = acl.getPointer( "http://example.com/resource/" );
 
-			expect( ACL.Factory.hasClassProperties( acl ) );
+			expect( ACL.isDecorated( acl ) );
 		} );
 
-		describe( decoratedObject( "Object decorated for the Carbon.Auth.ACL.Factory.decorate method.", [ "Carbon.Auth.ACL.Class" ] ), ():void => {
-			let acl:ACL.Class;
+		describe( "ACL instance", ():void => {
+			let acl:ACL;
 
-			function getACEsOf( subject:string, fragments:Fragment[] ):ACE.Class[] {
-				return <ACE.Class[]> fragments.filter( fragment => {
-					let ids:string[] = Pointer.Util.getIDs( (<ACE.Class> fragment).subjects );
+			function getACEsOf( subject:string, fragments:Fragment[] ):ACE[] {
+				return <ACE[]> fragments.filter( fragment => {
+					let ids:string[] = Pointer.getIDs( (<ACE> fragment).subjects );
 					return ids.indexOf( subject ) !== - 1;
 				} );
 			}
 
 			beforeEach( ():void => {
-				let document:PersistedDocument.Class = PersistedDocument.Factory.create( "http://example.com/resource/~acl/", new Documents() );
-				acl = ACL.Factory.decorate( document );
+				let document:PersistedDocument = PersistedDocument.create( new Documents(), "http://example.com/resource/~acl/" );
+				acl = ACL.decorate( document );
 				acl.accessTo = acl.getPointer( "http://example.com/resource/" );
 			} );
 
 			it( isDefined(), ():void => {
 				expect( acl ).toBeTruthy();
-				expect( ACL.Factory.hasClassProperties( acl ) ).toBe( true );
+				expect( ACL.isDecorated( acl ) ).toBe( true );
 			} );
 
-			describe( method( INSTANCE, "grant" ), ():void => {
+			describe( "ACL.grant", ():void => {
 
 				it( isDefined(), ():void => {
 					expect( acl.grant ).toBeDefined();
 					expect( Utils.isFunction( acl.grant ) ).toBe( true );
 				} );
 
-				it( hasSignature(
-					"Grant the permission specified to the subject provided for the document related to the ACL.", [
-						{ name: "subject", type: "string | Carbon.Pointer.Class", description: "The subject which will be assigned the permission specified." },
-						{ name: "subjectClass", type: "string | Carbon.Pointer.Class", description: "The type of subject provided." },
-						{ name: "permission", type: "string | Carbon.Pointer.Class", description: "The permission that will be granted to the subject specified." },
-					]
-				), ():void => {
+				// TODO: Separate in different tests
+				it( "should test when subject, subjectClass and a permission", ():void => {
 					let fragments:Fragment[];
-					let aces:ACE.Class[];
-					let ace:ACE.Class;
+					let aces:ACE[];
+					let ace:ACE;
 
 					acl.grant( "http://example.com/ns#Subject", "http://example.com/ns#SubjetClass", "http://example.com/ns#READ" );
 					fragments = acl.getFragments();
 					expect( fragments.length ).toBe( 1 );
 					aces = getACEsOf( "http://example.com/ns#Subject", fragments );
 					expect( aces.length ).toBe( 1 );
-					ace = <ACE.Class> aces[ 0 ];
-					expect( Pointer.Util.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject" );
-					expect( ace.types ).toContain( ACE.RDF_CLASS );
+					ace = <ACE> aces[ 0 ];
+					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject" );
+					expect( ace.types ).toContain( ACE.TYPE );
 					expect( ace.granting ).toBe( true );
 					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 1 );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#READ" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#READ" );
 					expect( acl.entries ).toContain( ace );
 
 					acl.grant( acl.getPointer( "http://example.com/ns#Subject" ), "http://example.com/ns#SubjetClass", "http://example.com/ns#WRITE" );
@@ -489,13 +501,13 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 					expect( fragments.length ).toBe( 1 );
 					aces = getACEsOf( "http://example.com/ns#Subject", fragments );
 					expect( aces.length ).toBe( 1 );
-					ace = <ACE.Class> aces[ 0 ];
-					expect( Pointer.Util.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject" );
-					expect( ace.types ).toContain( ACE.RDF_CLASS );
+					ace = <ACE> aces[ 0 ];
+					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject" );
+					expect( ace.types ).toContain( ACE.TYPE );
 					expect( ace.granting ).toBe( true );
 					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 2 );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#WRITE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#WRITE" );
 					expect( acl.entries ).toContain( ace );
 
 					acl.grant( acl.getPointer( "http://example.com/ns#Subject-2" ), acl.getPointer( "http://example.com/ns#SubjetClass" ), "http://example.com/ns#UPDATE" );
@@ -503,13 +515,13 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 					expect( fragments.length ).toBe( 2 );
 					aces = getACEsOf( "http://example.com/ns#Subject-2", fragments );
 					expect( aces.length ).toBe( 1 );
-					ace = <ACE.Class> aces[ 0 ];
-					expect( Pointer.Util.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-2" );
-					expect( ace.types ).toContain( ACE.RDF_CLASS );
+					ace = <ACE> aces[ 0 ];
+					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-2" );
+					expect( ace.types ).toContain( ACE.TYPE );
 					expect( ace.granting ).toBe( true );
 					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 1 );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
 					expect( acl.entries ).toContain( ace );
 
 					acl.grant( acl.getPointer( "http://example.com/ns#Subject-2" ), acl.getPointer( "http://example.com/ns#SubjetClass" ), acl.getPointer( "http://example.com/ns#DELETE" ) );
@@ -517,39 +529,34 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 					expect( fragments.length ).toBe( 2 );
 					aces = getACEsOf( "http://example.com/ns#Subject-2", fragments );
 					expect( aces.length ).toBe( 1 );
-					ace = <ACE.Class> aces[ 0 ];
-					expect( Pointer.Util.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-2" );
-					expect( ace.types ).toContain( ACE.RDF_CLASS );
+					ace = <ACE> aces[ 0 ];
+					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-2" );
+					expect( ace.types ).toContain( ACE.TYPE );
 					expect( ace.granting ).toBe( true );
 					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 2 );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#DELETE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#DELETE" );
 					expect( acl.entries ).toContain( ace );
 				} );
 
-				it( hasSignature(
-					"Grant several permissions to the subject provided for the document related to the ACL.", [
-						{ name: "subject", type: "string | Carbon.Pointer.Class", description: "The subject which will be assigned the permission specified." },
-						{ name: "subjectClass", type: "string | Carbon.Pointer.Class", description: "The type of subject provided." },
-						{ name: "permissions", type: "(string | Carbon.Pointer.Class)[]", description: "The permissions that will be granted to the subject specified." },
-					]
-				), ():void => {
+				// TODO: Separate in different tests
+				it( "should test when subject, subjectClass and permissions", ():void => {
 					let fragments:Fragment[];
-					let aces:ACE.Class[];
-					let ace:ACE.Class;
+					let aces:ACE[];
+					let ace:ACE;
 
 					acl.grant( "http://example.com/ns#Subject", "http://example.com/ns#SubjetClass", [ "http://example.com/ns#READ" ] );
 					fragments = acl.getFragments();
 					expect( fragments.length ).toBe( 1 );
 					aces = getACEsOf( "http://example.com/ns#Subject", fragments );
 					expect( aces.length ).toBe( 1 );
-					ace = <ACE.Class> aces[ 0 ];
-					expect( Pointer.Util.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject" );
-					expect( ace.types ).toContain( ACE.RDF_CLASS );
+					ace = <ACE> aces[ 0 ];
+					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject" );
+					expect( ace.types ).toContain( ACE.TYPE );
 					expect( ace.granting ).toBe( true );
 					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 1 );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#READ" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#READ" );
 					expect( acl.entries ).toContain( ace );
 
 					acl.grant( acl.getPointer( "http://example.com/ns#Subject" ), "http://example.com/ns#SubjetClass", [ "http://example.com/ns#WRITE", "http://example.com/ns#UPDATE" ] );
@@ -557,15 +564,15 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 					expect( fragments.length ).toBe( 1 );
 					aces = getACEsOf( "http://example.com/ns#Subject", fragments );
 					expect( aces.length ).toBe( 1 );
-					ace = <ACE.Class> aces[ 0 ];
-					expect( Pointer.Util.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject" );
-					expect( ace.types ).toContain( ACE.RDF_CLASS );
+					ace = <ACE> aces[ 0 ];
+					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject" );
+					expect( ace.types ).toContain( ACE.TYPE );
 					expect( ace.granting ).toBe( true );
 					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 3 );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#READ" );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#WRITE" );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#READ" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#WRITE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
 					expect( acl.entries ).toContain( ace );
 
 					acl.grant( acl.getPointer( "http://example.com/ns#Subject-2" ), acl.getPointer( "http://example.com/ns#SubjetClass" ), [ "http://example.com/ns#UPDATE" ] );
@@ -573,13 +580,13 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 					expect( fragments.length ).toBe( 2 );
 					aces = getACEsOf( "http://example.com/ns#Subject-2", fragments );
 					expect( aces.length ).toBe( 1 );
-					ace = <ACE.Class> aces[ 0 ];
-					expect( Pointer.Util.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-2" );
-					expect( ace.types ).toContain( ACE.RDF_CLASS );
+					ace = <ACE> aces[ 0 ];
+					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-2" );
+					expect( ace.types ).toContain( ACE.TYPE );
 					expect( ace.granting ).toBe( true );
 					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 1 );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
 					expect( acl.entries ).toContain( ace );
 
 					acl.grant( acl.getPointer( "http://example.com/ns#Subject-2" ), acl.getPointer( "http://example.com/ns#SubjetClass" ), [ acl.getPointer( "http://example.com/ns#DELETE" ) ] );
@@ -587,14 +594,14 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 					expect( fragments.length ).toBe( 2 );
 					aces = getACEsOf( "http://example.com/ns#Subject-2", fragments );
 					expect( aces.length ).toBe( 1 );
-					ace = <ACE.Class> aces[ 0 ];
-					expect( Pointer.Util.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-2" );
-					expect( ace.types ).toContain( ACE.RDF_CLASS );
+					ace = <ACE> aces[ 0 ];
+					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-2" );
+					expect( ace.types ).toContain( ACE.TYPE );
 					expect( ace.granting ).toBe( true );
 					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 2 );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#DELETE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#DELETE" );
 					expect( acl.entries ).toContain( ace );
 
 					acl.grant( acl.getPointer( "http://example.com/ns#Subject-2" ), acl.getPointer( "http://example.com/ns#SubjetClass" ), [ "http://example.com/ns#UPDATE", acl.getPointer( "http://example.com/ns#DELETE" ), "http://example.com/ns#WRITE" ] );
@@ -602,41 +609,36 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 					expect( fragments.length ).toBe( 2 );
 					aces = getACEsOf( "http://example.com/ns#Subject-2", fragments );
 					expect( aces.length ).toBe( 1 );
-					ace = <ACE.Class> aces[ 0 ];
-					expect( Pointer.Util.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-2" );
-					expect( ace.types ).toContain( ACE.RDF_CLASS );
+					ace = <ACE> aces[ 0 ];
+					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-2" );
+					expect( ace.types ).toContain( ACE.TYPE );
 					expect( ace.granting ).toBe( true );
 					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 3 );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#DELETE" );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#WRITE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#DELETE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#WRITE" );
 					expect( acl.entries ).toContain( ace );
 				} );
 
-				it( hasSignature(
-					"Grant the permission specified to the every subject provided for the document related to the ACL.", [
-						{ name: "subjects", type: "(string | Carbon.Pointer.Class)[]", description: "The subjects which will be assigned the every permissions specified." },
-						{ name: "subjectClass", type: "string | Carbon.Pointer.Class", description: "The type of subjects provided." },
-						{ name: "permission", type: "string | Carbon.Pointer.Class", description: "The permission that will be granted to the every subject." },
-					]
-				), ():void => {
+				// TODO: Separate in different tests
+				it( "should test when subjects, subjectClass and a permission", ():void => {
 					let fragments:Fragment[];
-					let aces:ACE.Class[];
-					let ace:ACE.Class;
+					let aces:ACE[];
+					let ace:ACE;
 
 					acl.grant( [ "http://example.com/ns#Subject" ], "http://example.com/ns#SubjetClass", "http://example.com/ns#READ" );
 					fragments = acl.getFragments();
 					expect( fragments.length ).toBe( 1 );
 					aces = getACEsOf( "http://example.com/ns#Subject", fragments );
 					expect( aces.length ).toBe( 1 );
-					ace = <ACE.Class> aces[ 0 ];
-					expect( Pointer.Util.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject" );
-					expect( ace.types ).toContain( ACE.RDF_CLASS );
+					ace = <ACE> aces[ 0 ];
+					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject" );
+					expect( ace.types ).toContain( ACE.TYPE );
 					expect( ace.granting ).toBe( true );
 					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 1 );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#READ" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#READ" );
 					expect( acl.entries ).toContain( ace );
 
 					acl.grant( [ acl.getPointer( "http://example.com/ns#Subject" ) ], "http://example.com/ns#SubjetClass", "http://example.com/ns#WRITE" );
@@ -644,14 +646,14 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 					expect( fragments.length ).toBe( 1 );
 					aces = getACEsOf( "http://example.com/ns#Subject", fragments );
 					expect( aces.length ).toBe( 1 );
-					ace = <ACE.Class> aces[ 0 ];
-					expect( Pointer.Util.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject" );
-					expect( ace.types ).toContain( ACE.RDF_CLASS );
+					ace = <ACE> aces[ 0 ];
+					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject" );
+					expect( ace.types ).toContain( ACE.TYPE );
 					expect( ace.granting ).toBe( true );
 					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 2 );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#READ" );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#WRITE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#READ" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#WRITE" );
 					expect( acl.entries ).toContain( ace );
 
 					acl.grant( [ acl.getPointer( "http://example.com/ns#Subject" ), acl.getPointer( "http://example.com/ns#Subject-2" ) ], acl.getPointer( "http://example.com/ns#SubjetClass" ), "http://example.com/ns#UPDATE" );
@@ -659,25 +661,25 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 					expect( fragments.length ).toBe( 2 );
 					aces = getACEsOf( "http://example.com/ns#Subject-2", fragments );
 					expect( aces.length ).toBe( 1 );
-					ace = <ACE.Class> aces[ 0 ];
-					expect( Pointer.Util.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-2" );
-					expect( ace.types ).toContain( ACE.RDF_CLASS );
+					ace = <ACE> aces[ 0 ];
+					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-2" );
+					expect( ace.types ).toContain( ACE.TYPE );
 					expect( ace.granting ).toBe( true );
 					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 1 );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
 					expect( acl.entries ).toContain( ace );
 					aces = getACEsOf( "http://example.com/ns#Subject", fragments );
 					expect( aces.length ).toBe( 1 );
-					ace = <ACE.Class> aces[ 0 ];
-					expect( Pointer.Util.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject" );
-					expect( ace.types ).toContain( ACE.RDF_CLASS );
+					ace = <ACE> aces[ 0 ];
+					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject" );
+					expect( ace.types ).toContain( ACE.TYPE );
 					expect( ace.granting ).toBe( true );
 					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 3 );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#READ" );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#WRITE" );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#READ" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#WRITE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
 					expect( acl.entries ).toContain( ace );
 
 					acl.grant( [ acl.getPointer( "http://example.com/ns#Subject" ), acl.getPointer( "http://example.com/ns#Subject-2" ), acl.getPointer( "http://example.com/ns#Subject-3" ) ], acl.getPointer( "http://example.com/ns#SubjetClass" ), acl.getPointer( "http://example.com/ns#DELETE" ) );
@@ -685,63 +687,58 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 					expect( fragments.length ).toBe( 3 );
 					aces = getACEsOf( "http://example.com/ns#Subject", fragments );
 					expect( aces.length ).toBe( 1 );
-					ace = <ACE.Class> aces[ 0 ];
-					expect( Pointer.Util.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject" );
-					expect( ace.types ).toContain( ACE.RDF_CLASS );
+					ace = <ACE> aces[ 0 ];
+					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject" );
+					expect( ace.types ).toContain( ACE.TYPE );
 					expect( ace.granting ).toBe( true );
 					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 4 );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#READ" );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#WRITE" );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#DELETE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#READ" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#WRITE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#DELETE" );
 					expect( acl.entries ).toContain( ace );
 					aces = getACEsOf( "http://example.com/ns#Subject-2", fragments );
 					expect( aces.length ).toBe( 1 );
-					ace = <ACE.Class> aces[ 0 ];
-					expect( Pointer.Util.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-2" );
-					expect( ace.types ).toContain( ACE.RDF_CLASS );
+					ace = <ACE> aces[ 0 ];
+					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-2" );
+					expect( ace.types ).toContain( ACE.TYPE );
 					expect( ace.granting ).toBe( true );
 					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 2 );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#DELETE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#DELETE" );
 					expect( acl.entries ).toContain( ace );
 					aces = getACEsOf( "http://example.com/ns#Subject-3", fragments );
 					expect( aces.length ).toBe( 1 );
-					ace = <ACE.Class> aces[ 0 ];
-					expect( Pointer.Util.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-3" );
-					expect( ace.types ).toContain( ACE.RDF_CLASS );
+					ace = <ACE> aces[ 0 ];
+					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-3" );
+					expect( ace.types ).toContain( ACE.TYPE );
 					expect( ace.granting ).toBe( true );
 					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 1 );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#DELETE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#DELETE" );
 					expect( acl.entries ).toContain( ace );
 				} );
 
-				it( hasSignature(
-					"Grant several permissions to the every subject provided for the document related to the ACL.", [
-						{ name: "subjects", type: "(string | Carbon.Pointer.Class)[]", description: "The subjects which will be assigned the every permissions specified." },
-						{ name: "subjectClass", type: "string | Carbon.Pointer.Class", description: "The type of subjects provided." },
-						{ name: "permissions", type: "(string | Carbon.Pointer.Class)[]", description: "The permissions that will be granted to the every subject." },
-					]
-				), ():void => {
+				// TODO: Separate in different tests
+				it( "should test when subject, subjectClass and permissions", ():void => {
 					let fragments:Fragment[];
-					let aces:ACE.Class[];
-					let ace:ACE.Class;
+					let aces:ACE[];
+					let ace:ACE;
 
 					acl.grant( [ "http://example.com/ns#Subject" ], "http://example.com/ns#SubjetClass", [ "http://example.com/ns#READ" ] );
 					fragments = acl.getFragments();
 					expect( fragments.length ).toBe( 1 );
 					aces = getACEsOf( "http://example.com/ns#Subject", fragments );
 					expect( aces.length ).toBe( 1 );
-					ace = <ACE.Class> aces[ 0 ];
-					expect( Pointer.Util.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject" );
-					expect( ace.types ).toContain( ACE.RDF_CLASS );
+					ace = <ACE> aces[ 0 ];
+					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject" );
+					expect( ace.types ).toContain( ACE.TYPE );
 					expect( ace.granting ).toBe( true );
 					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 1 );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#READ" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#READ" );
 					expect( acl.entries ).toContain( ace );
 
 					acl.grant( [ acl.getPointer( "http://example.com/ns#Subject" ) ], "http://example.com/ns#SubjetClass", [ "http://example.com/ns#WRITE", "http://example.com/ns#UPDATE" ] );
@@ -749,15 +746,15 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 					expect( fragments.length ).toBe( 1 );
 					aces = getACEsOf( "http://example.com/ns#Subject", fragments );
 					expect( aces.length ).toBe( 1 );
-					ace = <ACE.Class> aces[ 0 ];
-					expect( Pointer.Util.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject" );
-					expect( ace.types ).toContain( ACE.RDF_CLASS );
+					ace = <ACE> aces[ 0 ];
+					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject" );
+					expect( ace.types ).toContain( ACE.TYPE );
 					expect( ace.granting ).toBe( true );
 					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 3 );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#READ" );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#WRITE" );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#READ" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#WRITE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
 					expect( acl.entries ).toContain( ace );
 
 					acl.grant( [ acl.getPointer( "http://example.com/ns#Subject" ), acl.getPointer( "http://example.com/ns#Subject-2" ) ], acl.getPointer( "http://example.com/ns#SubjetClass" ), [ "http://example.com/ns#UPDATE" ] );
@@ -765,25 +762,25 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 					expect( fragments.length ).toBe( 2 );
 					aces = getACEsOf( "http://example.com/ns#Subject-2", fragments );
 					expect( aces.length ).toBe( 1 );
-					ace = <ACE.Class> aces[ 0 ];
-					expect( Pointer.Util.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-2" );
-					expect( ace.types ).toContain( ACE.RDF_CLASS );
+					ace = <ACE> aces[ 0 ];
+					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-2" );
+					expect( ace.types ).toContain( ACE.TYPE );
 					expect( ace.granting ).toBe( true );
 					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 1 );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
 					expect( acl.entries ).toContain( ace );
 					aces = getACEsOf( "http://example.com/ns#Subject", fragments );
 					expect( aces.length ).toBe( 1 );
-					ace = <ACE.Class> aces[ 0 ];
-					expect( Pointer.Util.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject" );
-					expect( ace.types ).toContain( ACE.RDF_CLASS );
+					ace = <ACE> aces[ 0 ];
+					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject" );
+					expect( ace.types ).toContain( ACE.TYPE );
 					expect( ace.granting ).toBe( true );
 					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 3 );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#READ" );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#WRITE" );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#READ" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#WRITE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
 					expect( acl.entries ).toContain( ace );
 
 					acl.grant( [ acl.getPointer( "http://example.com/ns#Subject" ), acl.getPointer( "http://example.com/ns#Subject-2" ) ], acl.getPointer( "http://example.com/ns#SubjetClass" ), [ acl.getPointer( "http://example.com/ns#DELETE" ) ] );
@@ -791,27 +788,27 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 					expect( fragments.length ).toBe( 2 );
 					aces = getACEsOf( "http://example.com/ns#Subject-2", fragments );
 					expect( aces.length ).toBe( 1 );
-					ace = <ACE.Class> aces[ 0 ];
-					expect( Pointer.Util.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-2" );
-					expect( ace.types ).toContain( ACE.RDF_CLASS );
+					ace = <ACE> aces[ 0 ];
+					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-2" );
+					expect( ace.types ).toContain( ACE.TYPE );
 					expect( ace.granting ).toBe( true );
 					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 2 );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#DELETE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#DELETE" );
 					expect( acl.entries ).toContain( ace );
 					aces = getACEsOf( "http://example.com/ns#Subject", fragments );
 					expect( aces.length ).toBe( 1 );
-					ace = <ACE.Class> aces[ 0 ];
-					expect( Pointer.Util.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject" );
-					expect( ace.types ).toContain( ACE.RDF_CLASS );
+					ace = <ACE> aces[ 0 ];
+					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject" );
+					expect( ace.types ).toContain( ACE.TYPE );
 					expect( ace.granting ).toBe( true );
 					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 4 );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#READ" );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#WRITE" );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#DELETE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#READ" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#WRITE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#DELETE" );
 					expect( acl.entries ).toContain( ace );
 
 					acl.grant( [ acl.getPointer( "http://example.com/ns#Subject" ), acl.getPointer( "http://example.com/ns#Subject-2" ), acl.getPointer( "http://example.com/ns#Subject-3" ) ], acl.getPointer( "http://example.com/ns#SubjetClass" ), [ "http://example.com/ns#UPDATE", acl.getPointer( "http://example.com/ns#CREATE" ), "http://example.com/ns#WRITE" ] );
@@ -819,49 +816,49 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 					expect( fragments.length ).toBe( 3 );
 					aces = getACEsOf( "http://example.com/ns#Subject", fragments );
 					expect( aces.length ).toBe( 1 );
-					ace = <ACE.Class> aces[ 0 ];
-					expect( Pointer.Util.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject" );
-					expect( ace.types ).toContain( ACE.RDF_CLASS );
+					ace = <ACE> aces[ 0 ];
+					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject" );
+					expect( ace.types ).toContain( ACE.TYPE );
 					expect( ace.granting ).toBe( true );
 					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 5 );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#READ" );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#WRITE" );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#DELETE" );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#CREATE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#READ" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#WRITE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#DELETE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#CREATE" );
 					expect( acl.entries ).toContain( ace );
 					aces = getACEsOf( "http://example.com/ns#Subject-2", fragments );
 					expect( aces.length ).toBe( 1 );
-					ace = <ACE.Class> aces[ 0 ];
-					expect( Pointer.Util.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-2" );
-					expect( ace.types ).toContain( ACE.RDF_CLASS );
+					ace = <ACE> aces[ 0 ];
+					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-2" );
+					expect( ace.types ).toContain( ACE.TYPE );
 					expect( ace.granting ).toBe( true );
 					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 4 );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#DELETE" );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#WRITE" );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#CREATE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#DELETE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#WRITE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#CREATE" );
 					expect( acl.entries ).toContain( ace );
 					aces = getACEsOf( "http://example.com/ns#Subject-3", fragments );
 					expect( aces.length ).toBe( 1 );
-					ace = <ACE.Class> aces[ 0 ];
-					expect( Pointer.Util.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-3" );
-					expect( ace.types ).toContain( ACE.RDF_CLASS );
+					ace = <ACE> aces[ 0 ];
+					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-3" );
+					expect( ace.types ).toContain( ACE.TYPE );
 					expect( ace.granting ).toBe( true );
 					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 3 );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#WRITE" );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#CREATE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#WRITE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#CREATE" );
 					expect( acl.entries ).toContain( ace );
 
 
 					acl.entries.forEach( forEachACE => acl._removeFragment( forEachACE.id ) );
 					acl.entries = [];
 
-					ace = ACE.Factory.createFrom(
+					ace = ACE.createFrom(
 						acl.createFragment(),
 						false,
 						[ acl.getPointer( "http://example.com/ns#Subject" ), acl.getPointer( "http://example.com/ns#Subject-2" ) ],
@@ -870,7 +867,7 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 					);
 					acl.entries.push( ace );
 
-					ace = ACE.Factory.createFrom(
+					ace = ACE.createFrom(
 						acl.createFragment(),
 						true,
 						[ acl.getPointer( "http://example.com/ns#Subject-2" ), acl.getPointer( "http://example.com/ns#Subject-3" ) ],
@@ -885,65 +882,65 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 					aces = getACEsOf( "http://example.com/ns#Subject", fragments );
 					expect( aces.length ).toBe( 2 );
 					aces.sort( ( a, b ) => a.granting ? - 1 : 1 );
-					ace = <ACE.Class> aces[ 0 ];
-					expect( Pointer.Util.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject" );
-					expect( ace.types ).toContain( ACE.RDF_CLASS );
+					ace = <ACE> aces[ 0 ];
+					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject" );
+					expect( ace.types ).toContain( ACE.TYPE );
 					expect( ace.granting ).toBe( true );
 					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 3 );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#CREATE" );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#READ" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#CREATE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#READ" );
 					expect( acl.entries ).toContain( ace );
-					ace = <ACE.Class> aces[ 1 ];
-					expect( Pointer.Util.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject" );
-					expect( ace.types ).toContain( ACE.RDF_CLASS );
+					ace = <ACE> aces[ 1 ];
+					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject" );
+					expect( ace.types ).toContain( ACE.TYPE );
 					expect( ace.granting ).toBe( false );
 					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 1 );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#DELETE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#DELETE" );
 					expect( acl.entries ).toContain( ace );
 					aces = getACEsOf( "http://example.com/ns#Subject-2", fragments );
 					expect( aces.length ).toBe( 2 );
 					aces.sort( ( a, b ) => a.granting ? - 1 : 1 );
-					ace = <ACE.Class> aces[ 0 ];
-					expect( Pointer.Util.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-2" );
-					expect( ace.types ).toContain( ACE.RDF_CLASS );
+					ace = <ACE> aces[ 0 ];
+					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-2" );
+					expect( ace.types ).toContain( ACE.TYPE );
 					expect( ace.granting ).toBe( true );
 					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 4 );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#READ" );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#WRITE" );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#CREATE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#READ" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#WRITE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#CREATE" );
 					expect( acl.entries ).toContain( ace );
-					ace = <ACE.Class> aces[ 1 ];
-					expect( Pointer.Util.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-2" );
-					expect( ace.types ).toContain( ACE.RDF_CLASS );
+					ace = <ACE> aces[ 1 ];
+					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-2" );
+					expect( ace.types ).toContain( ACE.TYPE );
 					expect( ace.granting ).toBe( false );
 					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 1 );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#DELETE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#DELETE" );
 					expect( acl.entries ).toContain( ace );
 					aces = getACEsOf( "http://example.com/ns#Subject-3", fragments );
 					expect( aces.length ).toBe( 1 );
-					ace = <ACE.Class> aces[ 0 ];
-					expect( Pointer.Util.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-3" );
-					expect( ace.types ).toContain( ACE.RDF_CLASS );
+					ace = <ACE> aces[ 0 ];
+					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-3" );
+					expect( ace.types ).toContain( ACE.TYPE );
 					expect( ace.granting ).toBe( true );
 					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 4 );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#READ" );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#WRITE" );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#CREATE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#READ" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#WRITE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#CREATE" );
 					expect( acl.entries ).toContain( ace );
 
 					acl.entries.forEach( forEachACE => acl._removeFragment( forEachACE.id ) );
 					acl.entries = [];
 					acl.inheritableEntries = [];
 
-					ace = ACE.Factory.createFrom(
+					ace = ACE.createFrom(
 						acl.createFragment(),
 						true,
 						[ acl.getPointer( "http://example.com/ns#Subject" ) ],
@@ -983,36 +980,31 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 
 			} );
 
-			describe( method( INSTANCE, "deny" ), ():void => {
+			describe( "ACL.deny", ():void => {
 
 				it( isDefined(), ():void => {
 					expect( acl.deny ).toBeDefined();
 					expect( Utils.isFunction( acl.deny ) ).toBe( true );
 				} );
 
-				it( hasSignature(
-					"Grant the permission specified to the subject provided for the document related to the ACL.", [
-						{ name: "subject", type: "string | Carbon.Pointer.Class", description: "The subject which will be assigned the permission specified." },
-						{ name: "subjectClass", type: "string | Carbon.Pointer.Class", description: "The type of subject provided." },
-						{ name: "permission", type: "string | Carbon.Pointer.Class", description: "The permission that will be granted to the subject specified." },
-					]
-				), ():void => {
+				// TODO: Separate in different tests
+				it( "should test when subject, subjectClass and a permission", ():void => {
 					let fragments:Fragment[];
-					let aces:ACE.Class[];
-					let ace:ACE.Class;
+					let aces:ACE[];
+					let ace:ACE;
 
 					acl.deny( "http://example.com/ns#Subject", "http://example.com/ns#SubjetClass", "http://example.com/ns#READ" );
 					fragments = acl.getFragments();
 					expect( fragments.length ).toBe( 1 );
 					aces = getACEsOf( "http://example.com/ns#Subject", fragments );
 					expect( aces.length ).toBe( 1 );
-					ace = <ACE.Class> aces[ 0 ];
-					expect( Pointer.Util.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject" );
-					expect( ace.types ).toContain( ACE.RDF_CLASS );
+					ace = <ACE> aces[ 0 ];
+					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject" );
+					expect( ace.types ).toContain( ACE.TYPE );
 					expect( ace.granting ).toBe( false );
 					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 1 );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#READ" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#READ" );
 					expect( acl.entries ).toContain( ace );
 
 					acl.deny( acl.getPointer( "http://example.com/ns#Subject" ), "http://example.com/ns#SubjetClass", "http://example.com/ns#WRITE" );
@@ -1020,13 +1012,13 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 					expect( fragments.length ).toBe( 1 );
 					aces = getACEsOf( "http://example.com/ns#Subject", fragments );
 					expect( aces.length ).toBe( 1 );
-					ace = <ACE.Class> aces[ 0 ];
-					expect( Pointer.Util.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject" );
-					expect( ace.types ).toContain( ACE.RDF_CLASS );
+					ace = <ACE> aces[ 0 ];
+					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject" );
+					expect( ace.types ).toContain( ACE.TYPE );
 					expect( ace.granting ).toBe( false );
 					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 2 );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#WRITE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#WRITE" );
 					expect( acl.entries ).toContain( ace );
 
 					acl.deny( acl.getPointer( "http://example.com/ns#Subject-2" ), acl.getPointer( "http://example.com/ns#SubjetClass" ), "http://example.com/ns#UPDATE" );
@@ -1034,13 +1026,13 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 					expect( fragments.length ).toBe( 2 );
 					aces = getACEsOf( "http://example.com/ns#Subject-2", fragments );
 					expect( aces.length ).toBe( 1 );
-					ace = <ACE.Class> aces[ 0 ];
-					expect( Pointer.Util.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-2" );
-					expect( ace.types ).toContain( ACE.RDF_CLASS );
+					ace = <ACE> aces[ 0 ];
+					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-2" );
+					expect( ace.types ).toContain( ACE.TYPE );
 					expect( ace.granting ).toBe( false );
 					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 1 );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
 					expect( acl.entries ).toContain( ace );
 
 					acl.deny( acl.getPointer( "http://example.com/ns#Subject-2" ), acl.getPointer( "http://example.com/ns#SubjetClass" ), acl.getPointer( "http://example.com/ns#DELETE" ) );
@@ -1048,39 +1040,34 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 					expect( fragments.length ).toBe( 2 );
 					aces = getACEsOf( "http://example.com/ns#Subject-2", fragments );
 					expect( aces.length ).toBe( 1 );
-					ace = <ACE.Class> aces[ 0 ];
-					expect( Pointer.Util.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-2" );
-					expect( ace.types ).toContain( ACE.RDF_CLASS );
+					ace = <ACE> aces[ 0 ];
+					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-2" );
+					expect( ace.types ).toContain( ACE.TYPE );
 					expect( ace.granting ).toBe( false );
 					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 2 );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#DELETE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#DELETE" );
 					expect( acl.entries ).toContain( ace );
 				} );
 
-				it( hasSignature(
-					"Grant several permissions to the subject provided for the document related to the ACL.", [
-						{ name: "subject", type: "string | Carbon.Pointer.Class", description: "The subject which will be assigned the permission specified." },
-						{ name: "subjectClass", type: "string | Carbon.Pointer.Class", description: "The type of subject provided." },
-						{ name: "permissions", type: "(string | Carbon.Pointer.Class)[]", description: "The permissions that will be granted to the subject specified." },
-					]
-				), ():void => {
+				// TODO: Separate in different tests
+				it( "should test when subject, subjectClass and permissions", ():void => {
 					let fragments:Fragment[];
-					let aces:ACE.Class[];
-					let ace:ACE.Class;
+					let aces:ACE[];
+					let ace:ACE;
 
 					acl.deny( "http://example.com/ns#Subject", "http://example.com/ns#SubjetClass", [ "http://example.com/ns#READ" ] );
 					fragments = acl.getFragments();
 					expect( fragments.length ).toBe( 1 );
 					aces = getACEsOf( "http://example.com/ns#Subject", fragments );
 					expect( aces.length ).toBe( 1 );
-					ace = <ACE.Class> aces[ 0 ];
-					expect( Pointer.Util.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject" );
-					expect( ace.types ).toContain( ACE.RDF_CLASS );
+					ace = <ACE> aces[ 0 ];
+					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject" );
+					expect( ace.types ).toContain( ACE.TYPE );
 					expect( ace.granting ).toBe( false );
 					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 1 );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#READ" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#READ" );
 					expect( acl.entries ).toContain( ace );
 
 					acl.deny( acl.getPointer( "http://example.com/ns#Subject" ), "http://example.com/ns#SubjetClass", [ "http://example.com/ns#WRITE", "http://example.com/ns#UPDATE" ] );
@@ -1088,15 +1075,15 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 					expect( fragments.length ).toBe( 1 );
 					aces = getACEsOf( "http://example.com/ns#Subject", fragments );
 					expect( aces.length ).toBe( 1 );
-					ace = <ACE.Class> aces[ 0 ];
-					expect( Pointer.Util.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject" );
-					expect( ace.types ).toContain( ACE.RDF_CLASS );
+					ace = <ACE> aces[ 0 ];
+					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject" );
+					expect( ace.types ).toContain( ACE.TYPE );
 					expect( ace.granting ).toBe( false );
 					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 3 );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#READ" );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#WRITE" );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#READ" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#WRITE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
 					expect( acl.entries ).toContain( ace );
 
 					acl.deny( acl.getPointer( "http://example.com/ns#Subject-2" ), acl.getPointer( "http://example.com/ns#SubjetClass" ), [ "http://example.com/ns#UPDATE" ] );
@@ -1104,13 +1091,13 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 					expect( fragments.length ).toBe( 2 );
 					aces = getACEsOf( "http://example.com/ns#Subject-2", fragments );
 					expect( aces.length ).toBe( 1 );
-					ace = <ACE.Class> aces[ 0 ];
-					expect( Pointer.Util.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-2" );
-					expect( ace.types ).toContain( ACE.RDF_CLASS );
+					ace = <ACE> aces[ 0 ];
+					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-2" );
+					expect( ace.types ).toContain( ACE.TYPE );
 					expect( ace.granting ).toBe( false );
 					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 1 );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
 					expect( acl.entries ).toContain( ace );
 
 					acl.deny( acl.getPointer( "http://example.com/ns#Subject-2" ), acl.getPointer( "http://example.com/ns#SubjetClass" ), [ acl.getPointer( "http://example.com/ns#DELETE" ) ] );
@@ -1118,14 +1105,14 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 					expect( fragments.length ).toBe( 2 );
 					aces = getACEsOf( "http://example.com/ns#Subject-2", fragments );
 					expect( aces.length ).toBe( 1 );
-					ace = <ACE.Class> aces[ 0 ];
-					expect( Pointer.Util.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-2" );
-					expect( ace.types ).toContain( ACE.RDF_CLASS );
+					ace = <ACE> aces[ 0 ];
+					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-2" );
+					expect( ace.types ).toContain( ACE.TYPE );
 					expect( ace.granting ).toBe( false );
 					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 2 );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#DELETE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#DELETE" );
 					expect( acl.entries ).toContain( ace );
 
 					acl.deny( acl.getPointer( "http://example.com/ns#Subject-2" ), acl.getPointer( "http://example.com/ns#SubjetClass" ), [ "http://example.com/ns#UPDATE", acl.getPointer( "http://example.com/ns#DELETE" ), "http://example.com/ns#WRITE" ] );
@@ -1133,41 +1120,36 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 					expect( fragments.length ).toBe( 2 );
 					aces = getACEsOf( "http://example.com/ns#Subject-2", fragments );
 					expect( aces.length ).toBe( 1 );
-					ace = <ACE.Class> aces[ 0 ];
-					expect( Pointer.Util.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-2" );
-					expect( ace.types ).toContain( ACE.RDF_CLASS );
+					ace = <ACE> aces[ 0 ];
+					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-2" );
+					expect( ace.types ).toContain( ACE.TYPE );
 					expect( ace.granting ).toBe( false );
 					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 3 );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#DELETE" );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#WRITE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#DELETE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#WRITE" );
 					expect( acl.entries ).toContain( ace );
 				} );
 
-				it( hasSignature(
-					"Grant the permission specified to the every subject provided for the document related to the ACL.", [
-						{ name: "subjects", type: "(string | Carbon.Pointer.Class)[]", description: "The subjects which will be assigned the every permissions specified." },
-						{ name: "subjectClass", type: "string | Carbon.Pointer.Class", description: "The type of subjects provided." },
-						{ name: "permission", type: "string | Carbon.Pointer.Class", description: "The permission that will be granted to the every subject." },
-					]
-				), ():void => {
+				// TODO: Separate in different tests
+				it( "should test when subjects, subjectClass and a permission", ():void => {
 					let fragments:Fragment[];
-					let aces:ACE.Class[];
-					let ace:ACE.Class;
+					let aces:ACE[];
+					let ace:ACE;
 
 					acl.deny( [ "http://example.com/ns#Subject" ], "http://example.com/ns#SubjetClass", "http://example.com/ns#READ" );
 					fragments = acl.getFragments();
 					expect( fragments.length ).toBe( 1 );
 					aces = getACEsOf( "http://example.com/ns#Subject", fragments );
 					expect( aces.length ).toBe( 1 );
-					ace = <ACE.Class> aces[ 0 ];
-					expect( Pointer.Util.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject" );
-					expect( ace.types ).toContain( ACE.RDF_CLASS );
+					ace = <ACE> aces[ 0 ];
+					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject" );
+					expect( ace.types ).toContain( ACE.TYPE );
 					expect( ace.granting ).toBe( false );
 					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 1 );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#READ" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#READ" );
 					expect( acl.entries ).toContain( ace );
 
 					acl.deny( [ acl.getPointer( "http://example.com/ns#Subject" ) ], "http://example.com/ns#SubjetClass", "http://example.com/ns#WRITE" );
@@ -1175,14 +1157,14 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 					expect( fragments.length ).toBe( 1 );
 					aces = getACEsOf( "http://example.com/ns#Subject", fragments );
 					expect( aces.length ).toBe( 1 );
-					ace = <ACE.Class> aces[ 0 ];
-					expect( Pointer.Util.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject" );
-					expect( ace.types ).toContain( ACE.RDF_CLASS );
+					ace = <ACE> aces[ 0 ];
+					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject" );
+					expect( ace.types ).toContain( ACE.TYPE );
 					expect( ace.granting ).toBe( false );
 					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 2 );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#READ" );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#WRITE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#READ" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#WRITE" );
 					expect( acl.entries ).toContain( ace );
 
 					acl.deny( [ acl.getPointer( "http://example.com/ns#Subject" ), acl.getPointer( "http://example.com/ns#Subject-2" ) ], acl.getPointer( "http://example.com/ns#SubjetClass" ), "http://example.com/ns#UPDATE" );
@@ -1190,25 +1172,25 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 					expect( fragments.length ).toBe( 2 );
 					aces = getACEsOf( "http://example.com/ns#Subject-2", fragments );
 					expect( aces.length ).toBe( 1 );
-					ace = <ACE.Class> aces[ 0 ];
-					expect( Pointer.Util.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-2" );
-					expect( ace.types ).toContain( ACE.RDF_CLASS );
+					ace = <ACE> aces[ 0 ];
+					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-2" );
+					expect( ace.types ).toContain( ACE.TYPE );
 					expect( ace.granting ).toBe( false );
 					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 1 );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
 					expect( acl.entries ).toContain( ace );
 					aces = getACEsOf( "http://example.com/ns#Subject", fragments );
 					expect( aces.length ).toBe( 1 );
-					ace = <ACE.Class> aces[ 0 ];
-					expect( Pointer.Util.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject" );
-					expect( ace.types ).toContain( ACE.RDF_CLASS );
+					ace = <ACE> aces[ 0 ];
+					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject" );
+					expect( ace.types ).toContain( ACE.TYPE );
 					expect( ace.granting ).toBe( false );
 					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 3 );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#READ" );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#WRITE" );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#READ" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#WRITE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
 					expect( acl.entries ).toContain( ace );
 
 					acl.deny( [ acl.getPointer( "http://example.com/ns#Subject" ), acl.getPointer( "http://example.com/ns#Subject-2" ), acl.getPointer( "http://example.com/ns#Subject-3" ) ], acl.getPointer( "http://example.com/ns#SubjetClass" ), acl.getPointer( "http://example.com/ns#DELETE" ) );
@@ -1216,63 +1198,58 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 					expect( fragments.length ).toBe( 3 );
 					aces = getACEsOf( "http://example.com/ns#Subject", fragments );
 					expect( aces.length ).toBe( 1 );
-					ace = <ACE.Class> aces[ 0 ];
-					expect( Pointer.Util.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject" );
-					expect( ace.types ).toContain( ACE.RDF_CLASS );
+					ace = <ACE> aces[ 0 ];
+					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject" );
+					expect( ace.types ).toContain( ACE.TYPE );
 					expect( ace.granting ).toBe( false );
 					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 4 );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#READ" );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#WRITE" );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#DELETE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#READ" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#WRITE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#DELETE" );
 					expect( acl.entries ).toContain( ace );
 					aces = getACEsOf( "http://example.com/ns#Subject-2", fragments );
 					expect( aces.length ).toBe( 1 );
-					ace = <ACE.Class> aces[ 0 ];
-					expect( Pointer.Util.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-2" );
-					expect( ace.types ).toContain( ACE.RDF_CLASS );
+					ace = <ACE> aces[ 0 ];
+					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-2" );
+					expect( ace.types ).toContain( ACE.TYPE );
 					expect( ace.granting ).toBe( false );
 					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 2 );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#DELETE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#DELETE" );
 					expect( acl.entries ).toContain( ace );
 					aces = getACEsOf( "http://example.com/ns#Subject-3", fragments );
 					expect( aces.length ).toBe( 1 );
-					ace = <ACE.Class> aces[ 0 ];
-					expect( Pointer.Util.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-3" );
-					expect( ace.types ).toContain( ACE.RDF_CLASS );
+					ace = <ACE> aces[ 0 ];
+					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-3" );
+					expect( ace.types ).toContain( ACE.TYPE );
 					expect( ace.granting ).toBe( false );
 					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 1 );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#DELETE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#DELETE" );
 					expect( acl.entries ).toContain( ace );
 				} );
 
-				it( hasSignature(
-					"Grant several permissions to the every subject provided for the document related to the ACL.", [
-						{ name: "subjects", type: "(string | Carbon.Pointer.Class)[]", description: "The subjects which will be assigned the every permissions specified." },
-						{ name: "subjectClass", type: "string | Carbon.Pointer.Class", description: "The type of subjects provided." },
-						{ name: "permissions", type: "(string | Carbon.Pointer.Class)[]", description: "The permissions that will be granted to the every subject." },
-					]
-				), ():void => {
+				// TODO: Separate in different tests
+				it( "should test when subjects, subjectClass and permissions", ():void => {
 					let fragments:Fragment[];
-					let aces:ACE.Class[];
-					let ace:ACE.Class;
+					let aces:ACE[];
+					let ace:ACE;
 
 					acl.deny( [ "http://example.com/ns#Subject" ], "http://example.com/ns#SubjetClass", [ "http://example.com/ns#READ" ] );
 					fragments = acl.getFragments();
 					expect( fragments.length ).toBe( 1 );
 					aces = getACEsOf( "http://example.com/ns#Subject", fragments );
 					expect( aces.length ).toBe( 1 );
-					ace = <ACE.Class> aces[ 0 ];
-					expect( Pointer.Util.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject" );
-					expect( ace.types ).toContain( ACE.RDF_CLASS );
+					ace = <ACE> aces[ 0 ];
+					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject" );
+					expect( ace.types ).toContain( ACE.TYPE );
 					expect( ace.granting ).toBe( false );
 					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 1 );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#READ" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#READ" );
 					expect( acl.entries ).toContain( ace );
 
 					acl.deny( [ acl.getPointer( "http://example.com/ns#Subject" ) ], "http://example.com/ns#SubjetClass", [ "http://example.com/ns#WRITE", "http://example.com/ns#UPDATE" ] );
@@ -1280,15 +1257,15 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 					expect( fragments.length ).toBe( 1 );
 					aces = getACEsOf( "http://example.com/ns#Subject", fragments );
 					expect( aces.length ).toBe( 1 );
-					ace = <ACE.Class> aces[ 0 ];
-					expect( Pointer.Util.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject" );
-					expect( ace.types ).toContain( ACE.RDF_CLASS );
+					ace = <ACE> aces[ 0 ];
+					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject" );
+					expect( ace.types ).toContain( ACE.TYPE );
 					expect( ace.granting ).toBe( false );
 					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 3 );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#READ" );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#WRITE" );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#READ" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#WRITE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
 					expect( acl.entries ).toContain( ace );
 
 					acl.deny( [ acl.getPointer( "http://example.com/ns#Subject" ), acl.getPointer( "http://example.com/ns#Subject-2" ) ], acl.getPointer( "http://example.com/ns#SubjetClass" ), [ "http://example.com/ns#UPDATE" ] );
@@ -1296,25 +1273,25 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 					expect( fragments.length ).toBe( 2 );
 					aces = getACEsOf( "http://example.com/ns#Subject-2", fragments );
 					expect( aces.length ).toBe( 1 );
-					ace = <ACE.Class> aces[ 0 ];
-					expect( Pointer.Util.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-2" );
-					expect( ace.types ).toContain( ACE.RDF_CLASS );
+					ace = <ACE> aces[ 0 ];
+					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-2" );
+					expect( ace.types ).toContain( ACE.TYPE );
 					expect( ace.granting ).toBe( false );
 					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 1 );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
 					expect( acl.entries ).toContain( ace );
 					aces = getACEsOf( "http://example.com/ns#Subject", fragments );
 					expect( aces.length ).toBe( 1 );
-					ace = <ACE.Class> aces[ 0 ];
-					expect( Pointer.Util.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject" );
-					expect( ace.types ).toContain( ACE.RDF_CLASS );
+					ace = <ACE> aces[ 0 ];
+					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject" );
+					expect( ace.types ).toContain( ACE.TYPE );
 					expect( ace.granting ).toBe( false );
 					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 3 );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#READ" );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#WRITE" );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#READ" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#WRITE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
 					expect( acl.entries ).toContain( ace );
 
 					acl.deny( [ acl.getPointer( "http://example.com/ns#Subject" ), acl.getPointer( "http://example.com/ns#Subject-2" ) ], acl.getPointer( "http://example.com/ns#SubjetClass" ), [ acl.getPointer( "http://example.com/ns#DELETE" ) ] );
@@ -1322,27 +1299,27 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 					expect( fragments.length ).toBe( 2 );
 					aces = getACEsOf( "http://example.com/ns#Subject-2", fragments );
 					expect( aces.length ).toBe( 1 );
-					ace = <ACE.Class> aces[ 0 ];
-					expect( Pointer.Util.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-2" );
-					expect( ace.types ).toContain( ACE.RDF_CLASS );
+					ace = <ACE> aces[ 0 ];
+					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-2" );
+					expect( ace.types ).toContain( ACE.TYPE );
 					expect( ace.granting ).toBe( false );
 					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 2 );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#DELETE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#DELETE" );
 					expect( acl.entries ).toContain( ace );
 					aces = getACEsOf( "http://example.com/ns#Subject", fragments );
 					expect( aces.length ).toBe( 1 );
-					ace = <ACE.Class> aces[ 0 ];
-					expect( Pointer.Util.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject" );
-					expect( ace.types ).toContain( ACE.RDF_CLASS );
+					ace = <ACE> aces[ 0 ];
+					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject" );
+					expect( ace.types ).toContain( ACE.TYPE );
 					expect( ace.granting ).toBe( false );
 					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 4 );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#READ" );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#WRITE" );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#DELETE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#READ" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#WRITE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#DELETE" );
 					expect( acl.entries ).toContain( ace );
 
 					acl.deny( [ acl.getPointer( "http://example.com/ns#Subject" ), acl.getPointer( "http://example.com/ns#Subject-2" ), acl.getPointer( "http://example.com/ns#Subject-3" ) ], acl.getPointer( "http://example.com/ns#SubjetClass" ), [ "http://example.com/ns#UPDATE", acl.getPointer( "http://example.com/ns#CREATE" ), "http://example.com/ns#WRITE" ] );
@@ -1350,48 +1327,48 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 					expect( fragments.length ).toBe( 3 );
 					aces = getACEsOf( "http://example.com/ns#Subject", fragments );
 					expect( aces.length ).toBe( 1 );
-					ace = <ACE.Class> aces[ 0 ];
-					expect( Pointer.Util.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject" );
-					expect( ace.types ).toContain( ACE.RDF_CLASS );
+					ace = <ACE> aces[ 0 ];
+					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject" );
+					expect( ace.types ).toContain( ACE.TYPE );
 					expect( ace.granting ).toBe( false );
 					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 5 );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#READ" );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#WRITE" );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#DELETE" );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#CREATE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#READ" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#WRITE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#DELETE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#CREATE" );
 					expect( acl.entries ).toContain( ace );
 					aces = getACEsOf( "http://example.com/ns#Subject-2", fragments );
 					expect( aces.length ).toBe( 1 );
-					ace = <ACE.Class> aces[ 0 ];
-					expect( Pointer.Util.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-2" );
-					expect( ace.types ).toContain( ACE.RDF_CLASS );
+					ace = <ACE> aces[ 0 ];
+					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-2" );
+					expect( ace.types ).toContain( ACE.TYPE );
 					expect( ace.granting ).toBe( false );
 					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 4 );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#DELETE" );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#WRITE" );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#CREATE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#DELETE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#WRITE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#CREATE" );
 					expect( acl.entries ).toContain( ace );
 					aces = getACEsOf( "http://example.com/ns#Subject-3", fragments );
 					expect( aces.length ).toBe( 1 );
-					ace = <ACE.Class> aces[ 0 ];
-					expect( Pointer.Util.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-3" );
-					expect( ace.types ).toContain( ACE.RDF_CLASS );
+					ace = <ACE> aces[ 0 ];
+					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-3" );
+					expect( ace.types ).toContain( ACE.TYPE );
 					expect( ace.granting ).toBe( false );
 					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 3 );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#WRITE" );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#CREATE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#WRITE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#CREATE" );
 					expect( acl.entries ).toContain( ace );
 
 
 					acl.entries.forEach( forEachACE => acl._removeFragment( forEachACE.id ) );
 					acl.entries = [];
-					ace = ACE.Factory.createFrom(
+					ace = ACE.createFrom(
 						acl.createFragment(),
 						false,
 						[ acl.getPointer( "http://example.com/ns#Subject" ), acl.getPointer( "http://example.com/ns#Subject-2" ) ],
@@ -1399,7 +1376,7 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 						[ acl.getPointer( "http://example.com/ns#CREATE" ), acl.getPointer( "http://example.com/ns#DELETE" ) ]
 					);
 					acl.entries.push( ace );
-					ace = ACE.Factory.createFrom(
+					ace = ACE.createFrom(
 						acl.createFragment(),
 						true,
 						[ acl.getPointer( "http://example.com/ns#Subject-2" ), acl.getPointer( "http://example.com/ns#Subject-3" ) ],
@@ -1413,61 +1390,61 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 					expect( fragments.length ).toBe( 5 );
 					aces = getACEsOf( "http://example.com/ns#Subject", fragments );
 					expect( aces.length ).toBe( 1 );
-					ace = <ACE.Class> aces[ 0 ];
-					expect( Pointer.Util.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject" );
-					expect( ace.types ).toContain( ACE.RDF_CLASS );
+					ace = <ACE> aces[ 0 ];
+					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject" );
+					expect( ace.types ).toContain( ACE.TYPE );
 					expect( ace.granting ).toBe( false );
 					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 4 );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#CREATE" );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#DELETE" );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#READ" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#CREATE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#DELETE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#READ" );
 					expect( acl.entries ).toContain( ace );
 
 					aces = getACEsOf( "http://example.com/ns#Subject-2", fragments );
 					expect( aces.length ).toBe( 2 );
 					aces.sort( ( a, b ) => a.granting ? 1 : - 1 );
-					ace = <ACE.Class> aces[ 0 ];
-					expect( Pointer.Util.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-2" );
-					expect( ace.types ).toContain( ACE.RDF_CLASS );
+					ace = <ACE> aces[ 0 ];
+					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-2" );
+					expect( ace.types ).toContain( ACE.TYPE );
 					expect( ace.granting ).toBe( false );
 					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 4 );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#CREATE" );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#DELETE" );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#READ" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#CREATE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#DELETE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#READ" );
 					expect( acl.entries ).toContain( ace );
-					ace = <ACE.Class> aces[ 1 ];
-					expect( Pointer.Util.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-2" );
-					expect( ace.types ).toContain( ACE.RDF_CLASS );
+					ace = <ACE> aces[ 1 ];
+					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-2" );
+					expect( ace.types ).toContain( ACE.TYPE );
 					expect( ace.granting ).toBe( true );
 					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 1 );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#WRITE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#WRITE" );
 					expect( acl.entries ).toContain( ace );
 
 					aces = getACEsOf( "http://example.com/ns#Subject-3", fragments );
 					expect( aces.length ).toBe( 2 );
 					aces.sort( ( a, b ) => a.granting ? 1 : - 1 );
-					ace = <ACE.Class> aces[ 0 ];
-					expect( Pointer.Util.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-3" );
-					expect( ace.types ).toContain( ACE.RDF_CLASS );
+					ace = <ACE> aces[ 0 ];
+					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-3" );
+					expect( ace.types ).toContain( ACE.TYPE );
 					expect( ace.granting ).toBe( false );
 					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 3 );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#CREATE" );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#READ" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#CREATE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#READ" );
 					expect( acl.entries ).toContain( ace );
-					ace = <ACE.Class> aces[ 1 ];
-					expect( Pointer.Util.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-3" );
-					expect( ace.types ).toContain( ACE.RDF_CLASS );
+					ace = <ACE> aces[ 1 ];
+					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-3" );
+					expect( ace.types ).toContain( ACE.TYPE );
 					expect( ace.granting ).toBe( true );
 					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 1 );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#WRITE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#WRITE" );
 					expect( acl.entries ).toContain( ace );
 
 
@@ -1475,7 +1452,7 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 					acl.entries = [];
 					acl.inheritableEntries = [];
 
-					ace = ACE.Factory.createFrom(
+					ace = ACE.createFrom(
 						acl.createFragment(),
 						false,
 						[ acl.getPointer( "http://example.com/ns#Subject" ) ],
@@ -1515,37 +1492,31 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 
 			} );
 
-			describe( method( INSTANCE, "configureChildInheritance" ), ():void => {
+			describe( "ACL.configureChildInheritance", ():void => {
 
 				it( isDefined(), ():void => {
 					expect( acl.configureChildInheritance ).toBeDefined();
 					expect( Utils.isFunction( acl.configureChildInheritance ) ).toBe( true );
 				} );
 
-				it( hasSignature(
-					"Configures the permission specified to the subject provided either granting or denying it for the children of the document related to the ACL.", [
-						{ name: "granting", type: "boolean", description: "Boolean to indicate if the permission will be granted o denied." },
-						{ name: "subject", type: "string | Carbon.Pointer.Class", description: "The subject which will be assigned the permission specified." },
-						{ name: "subjectClass", type: "string | Carbon.Pointer.Class", description: "The type of subject provided." },
-						{ name: "permission", type: "string | Carbon.Pointer.Class", description: "The permission that will be granted to the subject specified." },
-					]
-				), ():void => {
+				// TODO: Separate in different tests
+				it( "should test when granting, subject, subjectClass and a permission", ():void => {
 					let fragments:Fragment[];
-					let aces:ACE.Class[];
-					let ace:ACE.Class;
+					let aces:ACE[];
+					let ace:ACE;
 
 					acl.configureChildInheritance( true, "http://example.com/ns#Subject-01", "http://example.com/ns#SubjetClass", "http://example.com/ns#READ" );
 					fragments = acl.getFragments();
 					expect( fragments.length ).toBe( 1 );
 					aces = getACEsOf( "http://example.com/ns#Subject-01", fragments );
 					expect( aces.length ).toBe( 1 );
-					ace = <ACE.Class> aces[ 0 ];
-					expect( Pointer.Util.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-01" );
-					expect( ace.types ).toContain( ACE.RDF_CLASS );
+					ace = <ACE> aces[ 0 ];
+					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-01" );
+					expect( ace.types ).toContain( ACE.TYPE );
 					expect( ace.granting ).toBe( true );
 					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 1 );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#READ" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#READ" );
 					expect( acl.inheritableEntries ).toContain( ace );
 
 					acl.configureChildInheritance( true, acl.getPointer( "http://example.com/ns#Subject-01" ), "http://example.com/ns#SubjetClass", "http://example.com/ns#WRITE" );
@@ -1553,13 +1524,13 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 					expect( fragments.length ).toBe( 1 );
 					aces = getACEsOf( "http://example.com/ns#Subject-01", fragments );
 					expect( aces.length ).toBe( 1 );
-					ace = <ACE.Class> aces[ 0 ];
-					expect( Pointer.Util.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-01" );
-					expect( ace.types ).toContain( ACE.RDF_CLASS );
+					ace = <ACE> aces[ 0 ];
+					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-01" );
+					expect( ace.types ).toContain( ACE.TYPE );
 					expect( ace.granting ).toBe( true );
 					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 2 );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#WRITE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#WRITE" );
 					expect( acl.inheritableEntries ).toContain( ace );
 
 					acl.configureChildInheritance( true, acl.getPointer( "http://example.com/ns#Subject-11" ), acl.getPointer( "http://example.com/ns#SubjetClass" ), "http://example.com/ns#UPDATE" );
@@ -1567,13 +1538,13 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 					expect( fragments.length ).toBe( 2 );
 					aces = getACEsOf( "http://example.com/ns#Subject-11", fragments );
 					expect( aces.length ).toBe( 1 );
-					ace = <ACE.Class> aces[ 0 ];
-					expect( Pointer.Util.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-11" );
-					expect( ace.types ).toContain( ACE.RDF_CLASS );
+					ace = <ACE> aces[ 0 ];
+					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-11" );
+					expect( ace.types ).toContain( ACE.TYPE );
 					expect( ace.granting ).toBe( true );
 					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 1 );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
 					expect( acl.inheritableEntries ).toContain( ace );
 
 					acl.configureChildInheritance( true, acl.getPointer( "http://example.com/ns#Subject-11" ), acl.getPointer( "http://example.com/ns#SubjetClass" ), acl.getPointer( "http://example.com/ns#DELETE" ) );
@@ -1581,13 +1552,13 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 					expect( fragments.length ).toBe( 2 );
 					aces = getACEsOf( "http://example.com/ns#Subject-11", fragments );
 					expect( aces.length ).toBe( 1 );
-					ace = <ACE.Class> aces[ 0 ];
-					expect( Pointer.Util.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-11" );
-					expect( ace.types ).toContain( ACE.RDF_CLASS );
+					ace = <ACE> aces[ 0 ];
+					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-11" );
+					expect( ace.types ).toContain( ACE.TYPE );
 					expect( ace.granting ).toBe( true );
 					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 2 );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#DELETE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#DELETE" );
 					expect( acl.inheritableEntries ).toContain( ace );
 
 					acl.inheritableEntries.forEach( forEachACE => acl._removeFragment( forEachACE.id ) );
@@ -1598,13 +1569,13 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 					expect( fragments.length ).toBe( 1 );
 					aces = getACEsOf( "http://example.com/ns#Subject-02", fragments );
 					expect( aces.length ).toBe( 1 );
-					ace = <ACE.Class> aces[ 0 ];
-					expect( Pointer.Util.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-02" );
-					expect( ace.types ).toContain( ACE.RDF_CLASS );
+					ace = <ACE> aces[ 0 ];
+					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-02" );
+					expect( ace.types ).toContain( ACE.TYPE );
 					expect( ace.granting ).toBe( false );
 					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 1 );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#READ" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#READ" );
 					expect( acl.inheritableEntries ).toContain( ace );
 
 					acl.configureChildInheritance( false, acl.getPointer( "http://example.com/ns#Subject-02" ), "http://example.com/ns#SubjetClass", "http://example.com/ns#WRITE" );
@@ -1612,13 +1583,13 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 					expect( fragments.length ).toBe( 1 );
 					aces = getACEsOf( "http://example.com/ns#Subject-02", fragments );
 					expect( aces.length ).toBe( 1 );
-					ace = <ACE.Class> aces[ 0 ];
-					expect( Pointer.Util.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-02" );
-					expect( ace.types ).toContain( ACE.RDF_CLASS );
+					ace = <ACE> aces[ 0 ];
+					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-02" );
+					expect( ace.types ).toContain( ACE.TYPE );
 					expect( ace.granting ).toBe( false );
 					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 2 );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#WRITE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#WRITE" );
 					expect( acl.inheritableEntries ).toContain( ace );
 
 					acl.configureChildInheritance( false, acl.getPointer( "http://example.com/ns#Subject-12" ), acl.getPointer( "http://example.com/ns#SubjetClass" ), "http://example.com/ns#UPDATE" );
@@ -1626,13 +1597,13 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 					expect( fragments.length ).toBe( 2 );
 					aces = getACEsOf( "http://example.com/ns#Subject-12", fragments );
 					expect( aces.length ).toBe( 1 );
-					ace = <ACE.Class> aces[ 0 ];
-					expect( Pointer.Util.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-12" );
-					expect( ace.types ).toContain( ACE.RDF_CLASS );
+					ace = <ACE> aces[ 0 ];
+					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-12" );
+					expect( ace.types ).toContain( ACE.TYPE );
 					expect( ace.granting ).toBe( false );
 					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 1 );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
 					expect( acl.inheritableEntries ).toContain( ace );
 
 					acl.configureChildInheritance( false, acl.getPointer( "http://example.com/ns#Subject-12" ), acl.getPointer( "http://example.com/ns#SubjetClass" ), acl.getPointer( "http://example.com/ns#DELETE" ) );
@@ -1640,40 +1611,34 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 					expect( fragments.length ).toBe( 2 );
 					aces = getACEsOf( "http://example.com/ns#Subject-12", fragments );
 					expect( aces.length ).toBe( 1 );
-					ace = <ACE.Class> aces[ 0 ];
-					expect( Pointer.Util.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-12" );
-					expect( ace.types ).toContain( ACE.RDF_CLASS );
+					ace = <ACE> aces[ 0 ];
+					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-12" );
+					expect( ace.types ).toContain( ACE.TYPE );
 					expect( ace.granting ).toBe( false );
 					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 2 );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#DELETE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#DELETE" );
 					expect( acl.inheritableEntries ).toContain( ace );
 				} );
 
-				it( hasSignature(
-					"Configure several permissions to the subject provided either granting or denying them for the children of the document related to the ACL.", [
-						{ name: "granting", type: "boolean", description: "Boolean to indicate if the permission will be granted o denied." },
-						{ name: "subject", type: "string | Carbon.Pointer.Class", description: "The subject which will be assigned the permission specified." },
-						{ name: "subjectClass", type: "string | Carbon.Pointer.Class", description: "The type of subject provided." },
-						{ name: "permissions", type: "(string | Carbon.Pointer.Class)[]", description: "The permissions that will be granted to the subject specified." },
-					]
-				), ():void => {
+				// TODO: Separate in different tests
+				it( "should test when granting, subject, subjectClass and permissions", ():void => {
 					let fragments:Fragment[];
-					let aces:ACE.Class[];
-					let ace:ACE.Class;
+					let aces:ACE[];
+					let ace:ACE;
 
 					acl.configureChildInheritance( true, "http://example.com/ns#Subject", "http://example.com/ns#SubjetClass", [ "http://example.com/ns#READ" ] );
 					fragments = acl.getFragments();
 					expect( fragments.length ).toBe( 1 );
 					aces = getACEsOf( "http://example.com/ns#Subject", fragments );
 					expect( aces.length ).toBe( 1 );
-					ace = <ACE.Class> aces[ 0 ];
-					expect( Pointer.Util.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject" );
-					expect( ace.types ).toContain( ACE.RDF_CLASS );
+					ace = <ACE> aces[ 0 ];
+					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject" );
+					expect( ace.types ).toContain( ACE.TYPE );
 					expect( ace.granting ).toBe( true );
 					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 1 );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#READ" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#READ" );
 					expect( acl.inheritableEntries ).toContain( ace );
 
 					acl.configureChildInheritance( true, acl.getPointer( "http://example.com/ns#Subject" ), "http://example.com/ns#SubjetClass", [ "http://example.com/ns#WRITE", "http://example.com/ns#UPDATE" ] );
@@ -1681,15 +1646,15 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 					expect( fragments.length ).toBe( 1 );
 					aces = getACEsOf( "http://example.com/ns#Subject", fragments );
 					expect( aces.length ).toBe( 1 );
-					ace = <ACE.Class> aces[ 0 ];
-					expect( Pointer.Util.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject" );
-					expect( ace.types ).toContain( ACE.RDF_CLASS );
+					ace = <ACE> aces[ 0 ];
+					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject" );
+					expect( ace.types ).toContain( ACE.TYPE );
 					expect( ace.granting ).toBe( true );
 					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 3 );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#READ" );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#WRITE" );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#READ" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#WRITE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
 					expect( acl.inheritableEntries ).toContain( ace );
 
 					acl.configureChildInheritance( true, acl.getPointer( "http://example.com/ns#Subject-2" ), acl.getPointer( "http://example.com/ns#SubjetClass" ), [ "http://example.com/ns#UPDATE" ] );
@@ -1697,13 +1662,13 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 					expect( fragments.length ).toBe( 2 );
 					aces = getACEsOf( "http://example.com/ns#Subject-2", fragments );
 					expect( aces.length ).toBe( 1 );
-					ace = <ACE.Class> aces[ 0 ];
-					expect( Pointer.Util.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-2" );
-					expect( ace.types ).toContain( ACE.RDF_CLASS );
+					ace = <ACE> aces[ 0 ];
+					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-2" );
+					expect( ace.types ).toContain( ACE.TYPE );
 					expect( ace.granting ).toBe( true );
 					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 1 );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
 					expect( acl.inheritableEntries ).toContain( ace );
 
 					acl.configureChildInheritance( true, acl.getPointer( "http://example.com/ns#Subject-2" ), acl.getPointer( "http://example.com/ns#SubjetClass" ), [ acl.getPointer( "http://example.com/ns#DELETE" ) ] );
@@ -1711,14 +1676,14 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 					expect( fragments.length ).toBe( 2 );
 					aces = getACEsOf( "http://example.com/ns#Subject-2", fragments );
 					expect( aces.length ).toBe( 1 );
-					ace = <ACE.Class> aces[ 0 ];
-					expect( Pointer.Util.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-2" );
-					expect( ace.types ).toContain( ACE.RDF_CLASS );
+					ace = <ACE> aces[ 0 ];
+					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-2" );
+					expect( ace.types ).toContain( ACE.TYPE );
 					expect( ace.granting ).toBe( true );
 					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 2 );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#DELETE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#DELETE" );
 					expect( acl.inheritableEntries ).toContain( ace );
 
 					acl.configureChildInheritance( true, acl.getPointer( "http://example.com/ns#Subject-2" ), acl.getPointer( "http://example.com/ns#SubjetClass" ), [ "http://example.com/ns#UPDATE", acl.getPointer( "http://example.com/ns#DELETE" ), "http://example.com/ns#WRITE" ] );
@@ -1726,15 +1691,15 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 					expect( fragments.length ).toBe( 2 );
 					aces = getACEsOf( "http://example.com/ns#Subject-2", fragments );
 					expect( aces.length ).toBe( 1 );
-					ace = <ACE.Class> aces[ 0 ];
-					expect( Pointer.Util.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-2" );
-					expect( ace.types ).toContain( ACE.RDF_CLASS );
+					ace = <ACE> aces[ 0 ];
+					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-2" );
+					expect( ace.types ).toContain( ACE.TYPE );
 					expect( ace.granting ).toBe( true );
 					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 3 );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#DELETE" );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#WRITE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#DELETE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#WRITE" );
 					expect( acl.inheritableEntries ).toContain( ace );
 
 					acl.inheritableEntries.forEach( forEachACE => acl._removeFragment( forEachACE.id ) );
@@ -1745,13 +1710,13 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 					expect( fragments.length ).toBe( 1 );
 					aces = getACEsOf( "http://example.com/ns#Subject", fragments );
 					expect( aces.length ).toBe( 1 );
-					ace = <ACE.Class> aces[ 0 ];
-					expect( Pointer.Util.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject" );
-					expect( ace.types ).toContain( ACE.RDF_CLASS );
+					ace = <ACE> aces[ 0 ];
+					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject" );
+					expect( ace.types ).toContain( ACE.TYPE );
 					expect( ace.granting ).toBe( false );
 					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 1 );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#READ" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#READ" );
 					expect( acl.inheritableEntries ).toContain( ace );
 
 					acl.configureChildInheritance( false, acl.getPointer( "http://example.com/ns#Subject" ), "http://example.com/ns#SubjetClass", [ "http://example.com/ns#WRITE", "http://example.com/ns#UPDATE" ] );
@@ -1759,15 +1724,15 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 					expect( fragments.length ).toBe( 1 );
 					aces = getACEsOf( "http://example.com/ns#Subject", fragments );
 					expect( aces.length ).toBe( 1 );
-					ace = <ACE.Class> aces[ 0 ];
-					expect( Pointer.Util.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject" );
-					expect( ace.types ).toContain( ACE.RDF_CLASS );
+					ace = <ACE> aces[ 0 ];
+					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject" );
+					expect( ace.types ).toContain( ACE.TYPE );
 					expect( ace.granting ).toBe( false );
 					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 3 );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#READ" );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#WRITE" );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#READ" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#WRITE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
 					expect( acl.inheritableEntries ).toContain( ace );
 
 					acl.configureChildInheritance( false, acl.getPointer( "http://example.com/ns#Subject-2" ), acl.getPointer( "http://example.com/ns#SubjetClass" ), [ "http://example.com/ns#UPDATE" ] );
@@ -1775,13 +1740,13 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 					expect( fragments.length ).toBe( 2 );
 					aces = getACEsOf( "http://example.com/ns#Subject-2", fragments );
 					expect( aces.length ).toBe( 1 );
-					ace = <ACE.Class> aces[ 0 ];
-					expect( Pointer.Util.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-2" );
-					expect( ace.types ).toContain( ACE.RDF_CLASS );
+					ace = <ACE> aces[ 0 ];
+					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-2" );
+					expect( ace.types ).toContain( ACE.TYPE );
 					expect( ace.granting ).toBe( false );
 					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 1 );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
 					expect( acl.inheritableEntries ).toContain( ace );
 
 					acl.configureChildInheritance( false, acl.getPointer( "http://example.com/ns#Subject-2" ), acl.getPointer( "http://example.com/ns#SubjetClass" ), [ acl.getPointer( "http://example.com/ns#DELETE" ) ] );
@@ -1789,14 +1754,14 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 					expect( fragments.length ).toBe( 2 );
 					aces = getACEsOf( "http://example.com/ns#Subject-2", fragments );
 					expect( aces.length ).toBe( 1 );
-					ace = <ACE.Class> aces[ 0 ];
-					expect( Pointer.Util.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-2" );
-					expect( ace.types ).toContain( ACE.RDF_CLASS );
+					ace = <ACE> aces[ 0 ];
+					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-2" );
+					expect( ace.types ).toContain( ACE.TYPE );
 					expect( ace.granting ).toBe( false );
 					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 2 );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#DELETE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#DELETE" );
 					expect( acl.inheritableEntries ).toContain( ace );
 
 					acl.configureChildInheritance( false, acl.getPointer( "http://example.com/ns#Subject-2" ), acl.getPointer( "http://example.com/ns#SubjetClass" ), [ "http://example.com/ns#UPDATE", acl.getPointer( "http://example.com/ns#DELETE" ), "http://example.com/ns#WRITE" ] );
@@ -1804,42 +1769,36 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 					expect( fragments.length ).toBe( 2 );
 					aces = getACEsOf( "http://example.com/ns#Subject-2", fragments );
 					expect( aces.length ).toBe( 1 );
-					ace = <ACE.Class> aces[ 0 ];
-					expect( Pointer.Util.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-2" );
-					expect( ace.types ).toContain( ACE.RDF_CLASS );
+					ace = <ACE> aces[ 0 ];
+					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-2" );
+					expect( ace.types ).toContain( ACE.TYPE );
 					expect( ace.granting ).toBe( false );
 					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 3 );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#DELETE" );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#WRITE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#DELETE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#WRITE" );
 					expect( acl.inheritableEntries ).toContain( ace );
 				} );
 
-				it( hasSignature(
-					"Configure the permission specified to the every subject provided either granting or denying it for the children of the document related to the ACL.", [
-						{ name: "granting", type: "boolean", description: "Boolean to indicate if the permission will be granted o denied." },
-						{ name: "subjects", type: "(string | Carbon.Pointer.Class)[]", description: "The subjects which will be assigned the every permissions specified." },
-						{ name: "subjectClass", type: "string | Carbon.Pointer.Class", description: "The type of subjects provided." },
-						{ name: "permission", type: "string | Carbon.Pointer.Class", description: "The permission that will be granted to the every subject." },
-					]
-				), ():void => {
+				// TODO: Separate in different tests
+				it( "should test when granting, subjects, subjectClass and a permission", ():void => {
 					let fragments:Fragment[];
-					let aces:ACE.Class[];
-					let ace:ACE.Class;
+					let aces:ACE[];
+					let ace:ACE;
 
 					acl.configureChildInheritance( true, [ "http://example.com/ns#Subject" ], "http://example.com/ns#SubjetClass", "http://example.com/ns#READ" );
 					fragments = acl.getFragments();
 					expect( fragments.length ).toBe( 1 );
 					aces = getACEsOf( "http://example.com/ns#Subject", fragments );
 					expect( aces.length ).toBe( 1 );
-					ace = <ACE.Class> aces[ 0 ];
-					expect( Pointer.Util.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject" );
-					expect( ace.types ).toContain( ACE.RDF_CLASS );
+					ace = <ACE> aces[ 0 ];
+					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject" );
+					expect( ace.types ).toContain( ACE.TYPE );
 					expect( ace.granting ).toBe( true );
 					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 1 );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#READ" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#READ" );
 					expect( acl.inheritableEntries ).toContain( ace );
 
 					acl.configureChildInheritance( true, [ acl.getPointer( "http://example.com/ns#Subject" ) ], "http://example.com/ns#SubjetClass", "http://example.com/ns#WRITE" );
@@ -1847,14 +1806,14 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 					expect( fragments.length ).toBe( 1 );
 					aces = getACEsOf( "http://example.com/ns#Subject", fragments );
 					expect( aces.length ).toBe( 1 );
-					ace = <ACE.Class> aces[ 0 ];
-					expect( Pointer.Util.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject" );
-					expect( ace.types ).toContain( ACE.RDF_CLASS );
+					ace = <ACE> aces[ 0 ];
+					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject" );
+					expect( ace.types ).toContain( ACE.TYPE );
 					expect( ace.granting ).toBe( true );
 					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 2 );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#READ" );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#WRITE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#READ" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#WRITE" );
 					expect( acl.inheritableEntries ).toContain( ace );
 
 					acl.configureChildInheritance( true, [ acl.getPointer( "http://example.com/ns#Subject" ), acl.getPointer( "http://example.com/ns#Subject-2" ) ], acl.getPointer( "http://example.com/ns#SubjetClass" ), "http://example.com/ns#UPDATE" );
@@ -1862,25 +1821,25 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 					expect( fragments.length ).toBe( 2 );
 					aces = getACEsOf( "http://example.com/ns#Subject-2", fragments );
 					expect( aces.length ).toBe( 1 );
-					ace = <ACE.Class> aces[ 0 ];
-					expect( Pointer.Util.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-2" );
-					expect( ace.types ).toContain( ACE.RDF_CLASS );
+					ace = <ACE> aces[ 0 ];
+					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-2" );
+					expect( ace.types ).toContain( ACE.TYPE );
 					expect( ace.granting ).toBe( true );
 					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 1 );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
 					expect( acl.inheritableEntries ).toContain( ace );
 					aces = getACEsOf( "http://example.com/ns#Subject", fragments );
 					expect( aces.length ).toBe( 1 );
-					ace = <ACE.Class> aces[ 0 ];
-					expect( Pointer.Util.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject" );
-					expect( ace.types ).toContain( ACE.RDF_CLASS );
+					ace = <ACE> aces[ 0 ];
+					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject" );
+					expect( ace.types ).toContain( ACE.TYPE );
 					expect( ace.granting ).toBe( true );
 					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 3 );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#READ" );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#WRITE" );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#READ" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#WRITE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
 					expect( acl.inheritableEntries ).toContain( ace );
 
 					acl.configureChildInheritance( true, [ acl.getPointer( "http://example.com/ns#Subject" ), acl.getPointer( "http://example.com/ns#Subject-2" ), acl.getPointer( "http://example.com/ns#Subject-3" ) ], acl.getPointer( "http://example.com/ns#SubjetClass" ), acl.getPointer( "http://example.com/ns#DELETE" ) );
@@ -1888,37 +1847,37 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 					expect( fragments.length ).toBe( 3 );
 					aces = getACEsOf( "http://example.com/ns#Subject", fragments );
 					expect( aces.length ).toBe( 1 );
-					ace = <ACE.Class> aces[ 0 ];
-					expect( Pointer.Util.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject" );
-					expect( ace.types ).toContain( ACE.RDF_CLASS );
+					ace = <ACE> aces[ 0 ];
+					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject" );
+					expect( ace.types ).toContain( ACE.TYPE );
 					expect( ace.granting ).toBe( true );
 					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 4 );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#READ" );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#WRITE" );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#DELETE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#READ" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#WRITE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#DELETE" );
 					expect( acl.inheritableEntries ).toContain( ace );
 					aces = getACEsOf( "http://example.com/ns#Subject-2", fragments );
 					expect( aces.length ).toBe( 1 );
-					ace = <ACE.Class> aces[ 0 ];
-					expect( Pointer.Util.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-2" );
-					expect( ace.types ).toContain( ACE.RDF_CLASS );
+					ace = <ACE> aces[ 0 ];
+					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-2" );
+					expect( ace.types ).toContain( ACE.TYPE );
 					expect( ace.granting ).toBe( true );
 					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 2 );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#DELETE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#DELETE" );
 					expect( acl.inheritableEntries ).toContain( ace );
 					aces = getACEsOf( "http://example.com/ns#Subject-3", fragments );
 					expect( aces.length ).toBe( 1 );
-					ace = <ACE.Class> aces[ 0 ];
-					expect( Pointer.Util.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-3" );
-					expect( ace.types ).toContain( ACE.RDF_CLASS );
+					ace = <ACE> aces[ 0 ];
+					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-3" );
+					expect( ace.types ).toContain( ACE.TYPE );
 					expect( ace.granting ).toBe( true );
 					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 1 );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#DELETE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#DELETE" );
 					expect( acl.inheritableEntries ).toContain( ace );
 
 					acl.inheritableEntries.forEach( forEachACE => acl._removeFragment( forEachACE.id ) );
@@ -1929,13 +1888,13 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 					expect( fragments.length ).toBe( 1 );
 					aces = getACEsOf( "http://example.com/ns#Subject", fragments );
 					expect( aces.length ).toBe( 1 );
-					ace = <ACE.Class> aces[ 0 ];
-					expect( Pointer.Util.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject" );
-					expect( ace.types ).toContain( ACE.RDF_CLASS );
+					ace = <ACE> aces[ 0 ];
+					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject" );
+					expect( ace.types ).toContain( ACE.TYPE );
 					expect( ace.granting ).toBe( false );
 					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 1 );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#READ" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#READ" );
 					expect( acl.inheritableEntries ).toContain( ace );
 
 					acl.configureChildInheritance( false, [ acl.getPointer( "http://example.com/ns#Subject" ) ], "http://example.com/ns#SubjetClass", "http://example.com/ns#WRITE" );
@@ -1943,14 +1902,14 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 					expect( fragments.length ).toBe( 1 );
 					aces = getACEsOf( "http://example.com/ns#Subject", fragments );
 					expect( aces.length ).toBe( 1 );
-					ace = <ACE.Class> aces[ 0 ];
-					expect( Pointer.Util.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject" );
-					expect( ace.types ).toContain( ACE.RDF_CLASS );
+					ace = <ACE> aces[ 0 ];
+					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject" );
+					expect( ace.types ).toContain( ACE.TYPE );
 					expect( ace.granting ).toBe( false );
 					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 2 );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#READ" );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#WRITE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#READ" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#WRITE" );
 					expect( acl.inheritableEntries ).toContain( ace );
 
 					acl.configureChildInheritance( false, [ acl.getPointer( "http://example.com/ns#Subject" ), acl.getPointer( "http://example.com/ns#Subject-2" ) ], acl.getPointer( "http://example.com/ns#SubjetClass" ), "http://example.com/ns#UPDATE" );
@@ -1958,25 +1917,25 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 					expect( fragments.length ).toBe( 2 );
 					aces = getACEsOf( "http://example.com/ns#Subject-2", fragments );
 					expect( aces.length ).toBe( 1 );
-					ace = <ACE.Class> aces[ 0 ];
-					expect( Pointer.Util.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-2" );
-					expect( ace.types ).toContain( ACE.RDF_CLASS );
+					ace = <ACE> aces[ 0 ];
+					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-2" );
+					expect( ace.types ).toContain( ACE.TYPE );
 					expect( ace.granting ).toBe( false );
 					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 1 );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
 					expect( acl.inheritableEntries ).toContain( ace );
 					aces = getACEsOf( "http://example.com/ns#Subject", fragments );
 					expect( aces.length ).toBe( 1 );
-					ace = <ACE.Class> aces[ 0 ];
-					expect( Pointer.Util.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject" );
-					expect( ace.types ).toContain( ACE.RDF_CLASS );
+					ace = <ACE> aces[ 0 ];
+					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject" );
+					expect( ace.types ).toContain( ACE.TYPE );
 					expect( ace.granting ).toBe( false );
 					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 3 );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#READ" );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#WRITE" );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#READ" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#WRITE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
 					expect( acl.inheritableEntries ).toContain( ace );
 
 					acl.configureChildInheritance( false, [ acl.getPointer( "http://example.com/ns#Subject" ), acl.getPointer( "http://example.com/ns#Subject-2" ), acl.getPointer( "http://example.com/ns#Subject-3" ) ], acl.getPointer( "http://example.com/ns#SubjetClass" ), acl.getPointer( "http://example.com/ns#DELETE" ) );
@@ -1984,64 +1943,58 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 					expect( fragments.length ).toBe( 3 );
 					aces = getACEsOf( "http://example.com/ns#Subject", fragments );
 					expect( aces.length ).toBe( 1 );
-					ace = <ACE.Class> aces[ 0 ];
-					expect( Pointer.Util.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject" );
-					expect( ace.types ).toContain( ACE.RDF_CLASS );
+					ace = <ACE> aces[ 0 ];
+					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject" );
+					expect( ace.types ).toContain( ACE.TYPE );
 					expect( ace.granting ).toBe( false );
 					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 4 );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#READ" );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#WRITE" );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#DELETE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#READ" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#WRITE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#DELETE" );
 					expect( acl.inheritableEntries ).toContain( ace );
 					aces = getACEsOf( "http://example.com/ns#Subject-2", fragments );
 					expect( aces.length ).toBe( 1 );
-					ace = <ACE.Class> aces[ 0 ];
-					expect( Pointer.Util.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-2" );
-					expect( ace.types ).toContain( ACE.RDF_CLASS );
+					ace = <ACE> aces[ 0 ];
+					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-2" );
+					expect( ace.types ).toContain( ACE.TYPE );
 					expect( ace.granting ).toBe( false );
 					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 2 );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#DELETE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#DELETE" );
 					expect( acl.inheritableEntries ).toContain( ace );
 					aces = getACEsOf( "http://example.com/ns#Subject-3", fragments );
 					expect( aces.length ).toBe( 1 );
-					ace = <ACE.Class> aces[ 0 ];
-					expect( Pointer.Util.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-3" );
-					expect( ace.types ).toContain( ACE.RDF_CLASS );
+					ace = <ACE> aces[ 0 ];
+					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-3" );
+					expect( ace.types ).toContain( ACE.TYPE );
 					expect( ace.granting ).toBe( false );
 					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 1 );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#DELETE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#DELETE" );
 					expect( acl.inheritableEntries ).toContain( ace );
 				} );
 
-				it( hasSignature(
-					"Configure several permissions to the every subject provided either granting or denying them for the children of the document related to the ACL.", [
-						{ name: "granting", type: "boolean", description: "Boolean to indicate if the permission will be granted o denied." },
-						{ name: "subjects", type: "(string | Carbon.Pointer.Class)[]", description: "The subjects which will be assigned the every permissions specified." },
-						{ name: "subjectClass", type: "string | Carbon.Pointer.Class", description: "The type of subjects provided." },
-						{ name: "permissions", type: "(string | Carbon.Pointer.Class)[]", description: "The permissions that will be granted to the every subject." },
-					]
-				), ():void => {
+				// TODO: Separate in different tests
+				it( "should test when granting, subjects, subjectClass and permissions", ():void => {
 					let fragments:Fragment[];
-					let aces:ACE.Class[];
-					let ace:ACE.Class;
+					let aces:ACE[];
+					let ace:ACE;
 
 					acl.configureChildInheritance( true, [ "http://example.com/ns#Subject" ], "http://example.com/ns#SubjetClass", [ "http://example.com/ns#READ" ] );
 					fragments = acl.getFragments();
 					expect( fragments.length ).toBe( 1 );
 					aces = getACEsOf( "http://example.com/ns#Subject", fragments );
 					expect( aces.length ).toBe( 1 );
-					ace = <ACE.Class> aces[ 0 ];
-					expect( Pointer.Util.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject" );
-					expect( ace.types ).toContain( ACE.RDF_CLASS );
+					ace = <ACE> aces[ 0 ];
+					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject" );
+					expect( ace.types ).toContain( ACE.TYPE );
 					expect( ace.granting ).toBe( true );
 					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 1 );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#READ" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#READ" );
 					expect( acl.inheritableEntries ).toContain( ace );
 
 					acl.configureChildInheritance( true, [ acl.getPointer( "http://example.com/ns#Subject" ) ], "http://example.com/ns#SubjetClass", [ "http://example.com/ns#WRITE", "http://example.com/ns#UPDATE" ] );
@@ -2049,15 +2002,15 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 					expect( fragments.length ).toBe( 1 );
 					aces = getACEsOf( "http://example.com/ns#Subject", fragments );
 					expect( aces.length ).toBe( 1 );
-					ace = <ACE.Class> aces[ 0 ];
-					expect( Pointer.Util.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject" );
-					expect( ace.types ).toContain( ACE.RDF_CLASS );
+					ace = <ACE> aces[ 0 ];
+					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject" );
+					expect( ace.types ).toContain( ACE.TYPE );
 					expect( ace.granting ).toBe( true );
 					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 3 );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#READ" );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#WRITE" );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#READ" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#WRITE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
 					expect( acl.inheritableEntries ).toContain( ace );
 
 					acl.configureChildInheritance( true, [ acl.getPointer( "http://example.com/ns#Subject" ), acl.getPointer( "http://example.com/ns#Subject-2" ) ], acl.getPointer( "http://example.com/ns#SubjetClass" ), [ "http://example.com/ns#UPDATE" ] );
@@ -2065,25 +2018,25 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 					expect( fragments.length ).toBe( 2 );
 					aces = getACEsOf( "http://example.com/ns#Subject-2", fragments );
 					expect( aces.length ).toBe( 1 );
-					ace = <ACE.Class> aces[ 0 ];
-					expect( Pointer.Util.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-2" );
-					expect( ace.types ).toContain( ACE.RDF_CLASS );
+					ace = <ACE> aces[ 0 ];
+					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-2" );
+					expect( ace.types ).toContain( ACE.TYPE );
 					expect( ace.granting ).toBe( true );
 					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 1 );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
 					expect( acl.inheritableEntries ).toContain( ace );
 					aces = getACEsOf( "http://example.com/ns#Subject", fragments );
 					expect( aces.length ).toBe( 1 );
-					ace = <ACE.Class> aces[ 0 ];
-					expect( Pointer.Util.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject" );
-					expect( ace.types ).toContain( ACE.RDF_CLASS );
+					ace = <ACE> aces[ 0 ];
+					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject" );
+					expect( ace.types ).toContain( ACE.TYPE );
 					expect( ace.granting ).toBe( true );
 					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 3 );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#READ" );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#WRITE" );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#READ" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#WRITE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
 					expect( acl.inheritableEntries ).toContain( ace );
 
 					acl.configureChildInheritance( true, [ acl.getPointer( "http://example.com/ns#Subject" ), acl.getPointer( "http://example.com/ns#Subject-2" ) ], acl.getPointer( "http://example.com/ns#SubjetClass" ), [ acl.getPointer( "http://example.com/ns#DELETE" ) ] );
@@ -2091,27 +2044,27 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 					expect( fragments.length ).toBe( 2 );
 					aces = getACEsOf( "http://example.com/ns#Subject-2", fragments );
 					expect( aces.length ).toBe( 1 );
-					ace = <ACE.Class> aces[ 0 ];
-					expect( Pointer.Util.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-2" );
-					expect( ace.types ).toContain( ACE.RDF_CLASS );
+					ace = <ACE> aces[ 0 ];
+					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-2" );
+					expect( ace.types ).toContain( ACE.TYPE );
 					expect( ace.granting ).toBe( true );
 					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 2 );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#DELETE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#DELETE" );
 					expect( acl.inheritableEntries ).toContain( ace );
 					aces = getACEsOf( "http://example.com/ns#Subject", fragments );
 					expect( aces.length ).toBe( 1 );
-					ace = <ACE.Class> aces[ 0 ];
-					expect( Pointer.Util.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject" );
-					expect( ace.types ).toContain( ACE.RDF_CLASS );
+					ace = <ACE> aces[ 0 ];
+					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject" );
+					expect( ace.types ).toContain( ACE.TYPE );
 					expect( ace.granting ).toBe( true );
 					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 4 );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#READ" );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#WRITE" );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#DELETE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#READ" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#WRITE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#DELETE" );
 					expect( acl.inheritableEntries ).toContain( ace );
 
 					acl.configureChildInheritance( true, [ acl.getPointer( "http://example.com/ns#Subject" ), acl.getPointer( "http://example.com/ns#Subject-2" ), acl.getPointer( "http://example.com/ns#Subject-3" ) ], acl.getPointer( "http://example.com/ns#SubjetClass" ), [ "http://example.com/ns#UPDATE", acl.getPointer( "http://example.com/ns#CREATE" ), "http://example.com/ns#WRITE" ] );
@@ -2119,42 +2072,42 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 					expect( fragments.length ).toBe( 3 );
 					aces = getACEsOf( "http://example.com/ns#Subject", fragments );
 					expect( aces.length ).toBe( 1 );
-					ace = <ACE.Class> aces[ 0 ];
-					expect( Pointer.Util.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject" );
-					expect( ace.types ).toContain( ACE.RDF_CLASS );
+					ace = <ACE> aces[ 0 ];
+					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject" );
+					expect( ace.types ).toContain( ACE.TYPE );
 					expect( ace.granting ).toBe( true );
 					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 5 );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#READ" );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#WRITE" );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#DELETE" );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#CREATE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#READ" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#WRITE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#DELETE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#CREATE" );
 					expect( acl.inheritableEntries ).toContain( ace );
 					aces = getACEsOf( "http://example.com/ns#Subject-2", fragments );
 					expect( aces.length ).toBe( 1 );
-					ace = <ACE.Class> aces[ 0 ];
-					expect( Pointer.Util.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-2" );
-					expect( ace.types ).toContain( ACE.RDF_CLASS );
+					ace = <ACE> aces[ 0 ];
+					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-2" );
+					expect( ace.types ).toContain( ACE.TYPE );
 					expect( ace.granting ).toBe( true );
 					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 4 );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#DELETE" );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#WRITE" );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#CREATE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#DELETE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#WRITE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#CREATE" );
 					expect( acl.inheritableEntries ).toContain( ace );
 					aces = getACEsOf( "http://example.com/ns#Subject-3", fragments );
 					expect( aces.length ).toBe( 1 );
-					ace = <ACE.Class> aces[ 0 ];
-					expect( Pointer.Util.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-3" );
-					expect( ace.types ).toContain( ACE.RDF_CLASS );
+					ace = <ACE> aces[ 0 ];
+					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-3" );
+					expect( ace.types ).toContain( ACE.TYPE );
 					expect( ace.granting ).toBe( true );
 					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 3 );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#WRITE" );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#CREATE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#WRITE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#CREATE" );
 					expect( acl.inheritableEntries ).toContain( ace );
 
 					acl.inheritableEntries.forEach( forEachACE => acl._removeFragment( forEachACE.id ) );
@@ -2165,13 +2118,13 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 					expect( fragments.length ).toBe( 1 );
 					aces = getACEsOf( "http://example.com/ns#Subject", fragments );
 					expect( aces.length ).toBe( 1 );
-					ace = <ACE.Class> aces[ 0 ];
-					expect( Pointer.Util.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject" );
-					expect( ace.types ).toContain( ACE.RDF_CLASS );
+					ace = <ACE> aces[ 0 ];
+					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject" );
+					expect( ace.types ).toContain( ACE.TYPE );
 					expect( ace.granting ).toBe( false );
 					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 1 );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#READ" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#READ" );
 					expect( acl.inheritableEntries ).toContain( ace );
 
 					acl.configureChildInheritance( false, [ acl.getPointer( "http://example.com/ns#Subject" ) ], "http://example.com/ns#SubjetClass", [ "http://example.com/ns#WRITE", "http://example.com/ns#UPDATE" ] );
@@ -2179,15 +2132,15 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 					expect( fragments.length ).toBe( 1 );
 					aces = getACEsOf( "http://example.com/ns#Subject", fragments );
 					expect( aces.length ).toBe( 1 );
-					ace = <ACE.Class> aces[ 0 ];
-					expect( Pointer.Util.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject" );
-					expect( ace.types ).toContain( ACE.RDF_CLASS );
+					ace = <ACE> aces[ 0 ];
+					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject" );
+					expect( ace.types ).toContain( ACE.TYPE );
 					expect( ace.granting ).toBe( false );
 					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 3 );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#READ" );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#WRITE" );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#READ" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#WRITE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
 					expect( acl.inheritableEntries ).toContain( ace );
 
 					acl.configureChildInheritance( false, [ acl.getPointer( "http://example.com/ns#Subject" ), acl.getPointer( "http://example.com/ns#Subject-2" ) ], acl.getPointer( "http://example.com/ns#SubjetClass" ), [ "http://example.com/ns#UPDATE" ] );
@@ -2195,25 +2148,25 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 					expect( fragments.length ).toBe( 2 );
 					aces = getACEsOf( "http://example.com/ns#Subject-2", fragments );
 					expect( aces.length ).toBe( 1 );
-					ace = <ACE.Class> aces[ 0 ];
-					expect( Pointer.Util.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-2" );
-					expect( ace.types ).toContain( ACE.RDF_CLASS );
+					ace = <ACE> aces[ 0 ];
+					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-2" );
+					expect( ace.types ).toContain( ACE.TYPE );
 					expect( ace.granting ).toBe( false );
 					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 1 );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
 					expect( acl.inheritableEntries ).toContain( ace );
 					aces = getACEsOf( "http://example.com/ns#Subject", fragments );
 					expect( aces.length ).toBe( 1 );
-					ace = <ACE.Class> aces[ 0 ];
-					expect( Pointer.Util.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject" );
-					expect( ace.types ).toContain( ACE.RDF_CLASS );
+					ace = <ACE> aces[ 0 ];
+					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject" );
+					expect( ace.types ).toContain( ACE.TYPE );
 					expect( ace.granting ).toBe( false );
 					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 3 );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#READ" );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#WRITE" );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#READ" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#WRITE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
 					expect( acl.inheritableEntries ).toContain( ace );
 
 					acl.configureChildInheritance( false, [ acl.getPointer( "http://example.com/ns#Subject" ), acl.getPointer( "http://example.com/ns#Subject-2" ) ], acl.getPointer( "http://example.com/ns#SubjetClass" ), [ acl.getPointer( "http://example.com/ns#DELETE" ) ] );
@@ -2221,27 +2174,27 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 					expect( fragments.length ).toBe( 2 );
 					aces = getACEsOf( "http://example.com/ns#Subject-2", fragments );
 					expect( aces.length ).toBe( 1 );
-					ace = <ACE.Class> aces[ 0 ];
-					expect( Pointer.Util.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-2" );
-					expect( ace.types ).toContain( ACE.RDF_CLASS );
+					ace = <ACE> aces[ 0 ];
+					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-2" );
+					expect( ace.types ).toContain( ACE.TYPE );
 					expect( ace.granting ).toBe( false );
 					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 2 );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#DELETE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#DELETE" );
 					expect( acl.inheritableEntries ).toContain( ace );
 					aces = getACEsOf( "http://example.com/ns#Subject", fragments );
 					expect( aces.length ).toBe( 1 );
-					ace = <ACE.Class> aces[ 0 ];
-					expect( Pointer.Util.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject" );
-					expect( ace.types ).toContain( ACE.RDF_CLASS );
+					ace = <ACE> aces[ 0 ];
+					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject" );
+					expect( ace.types ).toContain( ACE.TYPE );
 					expect( ace.granting ).toBe( false );
 					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 4 );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#READ" );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#WRITE" );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#DELETE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#READ" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#WRITE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#DELETE" );
 					expect( acl.inheritableEntries ).toContain( ace );
 
 					acl.configureChildInheritance( false, [ acl.getPointer( "http://example.com/ns#Subject" ), acl.getPointer( "http://example.com/ns#Subject-2" ), acl.getPointer( "http://example.com/ns#Subject-3" ) ], acl.getPointer( "http://example.com/ns#SubjetClass" ), [ "http://example.com/ns#UPDATE", acl.getPointer( "http://example.com/ns#CREATE" ), "http://example.com/ns#WRITE" ] );
@@ -2249,48 +2202,48 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 					expect( fragments.length ).toBe( 3 );
 					aces = getACEsOf( "http://example.com/ns#Subject", fragments );
 					expect( aces.length ).toBe( 1 );
-					ace = <ACE.Class> aces[ 0 ];
-					expect( Pointer.Util.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject" );
-					expect( ace.types ).toContain( ACE.RDF_CLASS );
+					ace = <ACE> aces[ 0 ];
+					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject" );
+					expect( ace.types ).toContain( ACE.TYPE );
 					expect( ace.granting ).toBe( false );
 					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 5 );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#READ" );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#WRITE" );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#DELETE" );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#CREATE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#READ" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#WRITE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#DELETE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#CREATE" );
 					expect( acl.inheritableEntries ).toContain( ace );
 					aces = getACEsOf( "http://example.com/ns#Subject-2", fragments );
 					expect( aces.length ).toBe( 1 );
-					ace = <ACE.Class> aces[ 0 ];
-					expect( Pointer.Util.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-2" );
-					expect( ace.types ).toContain( ACE.RDF_CLASS );
+					ace = <ACE> aces[ 0 ];
+					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-2" );
+					expect( ace.types ).toContain( ACE.TYPE );
 					expect( ace.granting ).toBe( false );
 					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 4 );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#DELETE" );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#WRITE" );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#CREATE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#DELETE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#WRITE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#CREATE" );
 					expect( acl.inheritableEntries ).toContain( ace );
 					aces = getACEsOf( "http://example.com/ns#Subject-3", fragments );
 					expect( aces.length ).toBe( 1 );
-					ace = <ACE.Class> aces[ 0 ];
-					expect( Pointer.Util.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-3" );
-					expect( ace.types ).toContain( ACE.RDF_CLASS );
+					ace = <ACE> aces[ 0 ];
+					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-3" );
+					expect( ace.types ).toContain( ACE.TYPE );
 					expect( ace.granting ).toBe( false );
 					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 3 );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#WRITE" );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#CREATE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#WRITE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#CREATE" );
 					expect( acl.inheritableEntries ).toContain( ace );
 
 					acl.inheritableEntries.forEach( forEachACE => acl._removeFragment( forEachACE.id ) );
 					acl.inheritableEntries = [];
 
-					ace = ACE.Factory.createFrom(
+					ace = ACE.createFrom(
 						acl.createFragment(),
 						false,
 						[ acl.getPointer( "http://example.com/ns#Subject" ), acl.getPointer( "http://example.com/ns#Subject-2" ) ],
@@ -2298,7 +2251,7 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 						[ acl.getPointer( "http://example.com/ns#CREATE" ), acl.getPointer( "http://example.com/ns#DELETE" ) ]
 					);
 					acl.inheritableEntries.push( ace );
-					ace = ACE.Factory.createFrom(
+					ace = ACE.createFrom(
 						acl.createFragment(),
 						true,
 						[ acl.getPointer( "http://example.com/ns#Subject-2" ), acl.getPointer( "http://example.com/ns#Subject-3" ) ],
@@ -2313,64 +2266,64 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 					aces = getACEsOf( "http://example.com/ns#Subject", fragments );
 					expect( aces.length ).toBe( 2 );
 					aces.sort( ( a, b ) => a.granting ? - 1 : 1 );
-					ace = <ACE.Class> aces[ 0 ];
-					expect( Pointer.Util.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject" );
-					expect( ace.types ).toContain( ACE.RDF_CLASS );
+					ace = <ACE> aces[ 0 ];
+					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject" );
+					expect( ace.types ).toContain( ACE.TYPE );
 					expect( ace.granting ).toBe( true );
 					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 3 );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#CREATE" );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#READ" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#CREATE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#READ" );
 					expect( acl.inheritableEntries ).toContain( ace );
-					ace = <ACE.Class> aces[ 1 ];
-					expect( Pointer.Util.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject" );
-					expect( ace.types ).toContain( ACE.RDF_CLASS );
+					ace = <ACE> aces[ 1 ];
+					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject" );
+					expect( ace.types ).toContain( ACE.TYPE );
 					expect( ace.granting ).toBe( false );
 					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 1 );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#DELETE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#DELETE" );
 					expect( acl.inheritableEntries ).toContain( ace );
 					aces = getACEsOf( "http://example.com/ns#Subject-2", fragments );
 					expect( aces.length ).toBe( 2 );
 					aces.sort( ( a, b ) => a.granting ? - 1 : 1 );
-					ace = <ACE.Class> aces[ 0 ];
-					expect( Pointer.Util.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-2" );
-					expect( ace.types ).toContain( ACE.RDF_CLASS );
+					ace = <ACE> aces[ 0 ];
+					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-2" );
+					expect( ace.types ).toContain( ACE.TYPE );
 					expect( ace.granting ).toBe( true );
 					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 4 );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#READ" );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#WRITE" );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#CREATE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#READ" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#WRITE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#CREATE" );
 					expect( acl.inheritableEntries ).toContain( ace );
-					ace = <ACE.Class> aces[ 1 ];
-					expect( Pointer.Util.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-2" );
-					expect( ace.types ).toContain( ACE.RDF_CLASS );
+					ace = <ACE> aces[ 1 ];
+					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-2" );
+					expect( ace.types ).toContain( ACE.TYPE );
 					expect( ace.granting ).toBe( false );
 					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 1 );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#DELETE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#DELETE" );
 					expect( acl.inheritableEntries ).toContain( ace );
 					aces = getACEsOf( "http://example.com/ns#Subject-3", fragments );
 					expect( aces.length ).toBe( 1 );
-					ace = <ACE.Class> aces[ 0 ];
-					expect( Pointer.Util.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-3" );
-					expect( ace.types ).toContain( ACE.RDF_CLASS );
+					ace = <ACE> aces[ 0 ];
+					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-3" );
+					expect( ace.types ).toContain( ACE.TYPE );
 					expect( ace.granting ).toBe( true );
 					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 4 );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#READ" );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#WRITE" );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#CREATE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#READ" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#WRITE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#CREATE" );
 					expect( acl.inheritableEntries ).toContain( ace );
 
 					acl.inheritableEntries.forEach( forEachACE => acl._removeFragment( forEachACE.id ) );
 					acl.inheritableEntries = [];
 
-					ace = ACE.Factory.createFrom(
+					ace = ACE.createFrom(
 						acl.createFragment(),
 						false,
 						[ acl.getPointer( "http://example.com/ns#Subject" ), acl.getPointer( "http://example.com/ns#Subject-2" ) ],
@@ -2378,7 +2331,7 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 						[ acl.getPointer( "http://example.com/ns#CREATE" ), acl.getPointer( "http://example.com/ns#DELETE" ) ]
 					);
 					acl.inheritableEntries.push( ace );
-					ace = ACE.Factory.createFrom(
+					ace = ACE.createFrom(
 						acl.createFragment(),
 						true,
 						[ acl.getPointer( "http://example.com/ns#Subject-2" ), acl.getPointer( "http://example.com/ns#Subject-3" ) ],
@@ -2392,68 +2345,68 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 					expect( fragments.length ).toBe( 5 );
 					aces = getACEsOf( "http://example.com/ns#Subject", fragments );
 					expect( aces.length ).toBe( 1 );
-					ace = <ACE.Class> aces[ 0 ];
-					expect( Pointer.Util.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject" );
-					expect( ace.types ).toContain( ACE.RDF_CLASS );
+					ace = <ACE> aces[ 0 ];
+					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject" );
+					expect( ace.types ).toContain( ACE.TYPE );
 					expect( ace.granting ).toBe( false );
 					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 4 );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#CREATE" );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#DELETE" );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#READ" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#CREATE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#DELETE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#READ" );
 					expect( acl.inheritableEntries ).toContain( ace );
 
 					aces = getACEsOf( "http://example.com/ns#Subject-2", fragments );
 					expect( aces.length ).toBe( 2 );
 					aces.sort( ( a, b ) => a.granting ? 1 : - 1 );
-					ace = <ACE.Class> aces[ 0 ];
-					expect( Pointer.Util.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-2" );
-					expect( ace.types ).toContain( ACE.RDF_CLASS );
+					ace = <ACE> aces[ 0 ];
+					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-2" );
+					expect( ace.types ).toContain( ACE.TYPE );
 					expect( ace.granting ).toBe( false );
 					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 4 );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#CREATE" );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#DELETE" );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#READ" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#CREATE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#DELETE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#READ" );
 					expect( acl.inheritableEntries ).toContain( ace );
-					ace = <ACE.Class> aces[ 1 ];
-					expect( Pointer.Util.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-2" );
-					expect( ace.types ).toContain( ACE.RDF_CLASS );
+					ace = <ACE> aces[ 1 ];
+					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-2" );
+					expect( ace.types ).toContain( ACE.TYPE );
 					expect( ace.granting ).toBe( true );
 					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 1 );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#WRITE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#WRITE" );
 					expect( acl.inheritableEntries ).toContain( ace );
 
 					aces = getACEsOf( "http://example.com/ns#Subject-3", fragments );
 					expect( aces.length ).toBe( 2 );
 					aces.sort( ( a, b ) => a.granting ? 1 : - 1 );
-					ace = <ACE.Class> aces[ 0 ];
-					expect( Pointer.Util.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-3" );
-					expect( ace.types ).toContain( ACE.RDF_CLASS );
+					ace = <ACE> aces[ 0 ];
+					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-3" );
+					expect( ace.types ).toContain( ACE.TYPE );
 					expect( ace.granting ).toBe( false );
 					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 3 );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#CREATE" );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#READ" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#CREATE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#READ" );
 					expect( acl.inheritableEntries ).toContain( ace );
-					ace = <ACE.Class> aces[ 1 ];
-					expect( Pointer.Util.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-3" );
-					expect( ace.types ).toContain( ACE.RDF_CLASS );
+					ace = <ACE> aces[ 1 ];
+					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-3" );
+					expect( ace.types ).toContain( ACE.TYPE );
 					expect( ace.granting ).toBe( true );
 					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 1 );
-					expect( Pointer.Util.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#WRITE" );
+					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#WRITE" );
 					expect( acl.inheritableEntries ).toContain( ace );
 
 					acl.inheritableEntries.forEach( forEachACE => acl._removeFragment( forEachACE.id ) );
 					acl.inheritableEntries = [];
 					acl.entries = [];
 
-					ace = ACE.Factory.createFrom(
+					ace = ACE.createFrom(
 						acl.createFragment(),
 						true,
 						[ acl.getPointer( "http://example.com/ns#Subject" ) ],
@@ -2493,24 +2446,17 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 
 			} );
 
-			it( hasMethod(
-				INSTANCE,
-				"grants",
-				"Returns true if the subject has a configuration where it grants the permission specified for the document related to de ACL.\nReturns `null` if no configuration of the subject and permission exists in the ACL.", [
-					{ name: "subject", type: "string | Carbon.Pointer.Class", description: "The subject to look for its configuration." },
-					{ name: "permission", type: "string | Carbon.Pointer.Class", description: "The permission to check if it has a granting configuration." },
-				],
-				{ type: "boolean" }
-			), ():void => {
+			// TODO: Separate in different tests
+			it( "ACl.grants", ():void => {
 				expect( acl.grants ).toBeDefined();
 				expect( Utils.isFunction( acl.grants ) ).toBe( true );
 
 				expect( acl.grants( acl.getPointer( "http://example.com/ns#Subject" ), acl.getPointer( "http://example.com/ns#READ" ) ) ).toBeNull();
 				expect( acl.grants( acl.getPointer( "http://example.com/ns#Subject" ), acl.getPointer( "http://example.com/ns#CREATE" ) ) ).toBeNull();
 
-				let ace:ACE.Class;
+				let ace:ACE;
 
-				ace = ACE.Factory.createFrom(
+				ace = ACE.createFrom(
 					acl.createFragment(),
 					true,
 					[ acl.getPointer( "http://example.com/ns#Subject" ) ],
@@ -2525,7 +2471,7 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 				expect( acl.grants( acl.getPointer( "http://example.com/ns#Subject" ), acl.getPointer( "http://example.com/ns#ANOTHER" ) ) ).toBeNull();
 				expect( acl.grants( acl.getPointer( "http://example.com/ns#Subject-02" ), acl.getPointer( "http://example.com/ns#READ" ) ) ).toBeNull();
 
-				ace = ACE.Factory.createFrom(
+				ace = ACE.createFrom(
 					acl.createFragment(),
 					false,
 					[ acl.getPointer( "http://example.com/ns#Subject" ) ],
@@ -2544,24 +2490,17 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 				expect( acl.grants( acl.getPointer( "http://example.com/ns#Subject-02" ), acl.getPointer( "http://example.com/ns#READ" ) ) ).toBeNull();
 			} );
 
-			it( hasMethod(
-				INSTANCE,
-				"denies",
-				"Returns true if the subject has a configuration where it denies the permission specified for the document related to de ACL.\nReturns `null` if no configuration of the subject and permission exists in the ACL.", [
-					{ name: "subject", type: "string | Carbon.Pointer.Class", description: "The subject to look for its configuration." },
-					{ name: "permission", type: "string | Carbon.Pointer.Class", description: "The permission to check if it has a granting configuration." },
-				],
-				{ type: "boolean" }
-			), ():void => {
+			// TODO: Separate in different tests
+			it( "ACL.denies", ():void => {
 				expect( acl.denies ).toBeDefined();
 				expect( Utils.isFunction( acl.denies ) ).toBe( true );
 
 				expect( acl.denies( acl.getPointer( "http://example.com/ns#Subject" ), acl.getPointer( "http://example.com/ns#READ" ) ) ).toBeNull();
 				expect( acl.denies( acl.getPointer( "http://example.com/ns#Subject" ), acl.getPointer( "http://example.com/ns#CREATE" ) ) ).toBeNull();
 
-				let ace:ACE.Class;
+				let ace:ACE;
 
-				ace = ACE.Factory.createFrom(
+				ace = ACE.createFrom(
 					acl.createFragment(),
 					false,
 					[ acl.getPointer( "http://example.com/ns#Subject" ) ],
@@ -2576,7 +2515,7 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 				expect( acl.denies( acl.getPointer( "http://example.com/ns#Subject" ), acl.getPointer( "http://example.com/ns#ANOTHER" ) ) ).toBeNull();
 				expect( acl.denies( acl.getPointer( "http://example.com/ns#Subject-02" ), acl.getPointer( "http://example.com/ns#READ" ) ) ).toBeNull();
 
-				ace = ACE.Factory.createFrom(
+				ace = ACE.createFrom(
 					acl.createFragment(),
 					true,
 					[ acl.getPointer( "http://example.com/ns#Subject" ) ],
@@ -2595,24 +2534,17 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 				expect( acl.denies( acl.getPointer( "http://example.com/ns#Subject-02" ), acl.getPointer( "http://example.com/ns#READ" ) ) ).toBeNull();
 			} );
 
-			it( hasMethod(
-				INSTANCE,
-				"getChildInheritance",
-				"Returns if grants or denies a configuration of the subject and the permission specified for the children of document related to de ACL.\nReturns `null` if no configuration of the subject and permission exists in the ACL.", [
-					{ name: "subject", type: "string | Carbon.Pointer.Class", description: "The subject to look for its configuration." },
-					{ name: "permission", type: "string | Carbon.Pointer.Class", description: "The permission to check if it has a granting configuration." },
-				],
-				{ type: "boolean" }
-			), ():void => {
+			// TODO: Separate in different tests
+			it( "ACL.getChildInheritance", ():void => {
 				expect( acl.getChildInheritance ).toBeDefined();
 				expect( Utils.isFunction( acl.getChildInheritance ) ).toBe( true );
 
 				expect( acl.getChildInheritance( acl.getPointer( "http://example.com/ns#Subject" ), acl.getPointer( "http://example.com/ns#READ" ) ) ).toBeNull();
 				expect( acl.getChildInheritance( acl.getPointer( "http://example.com/ns#Subject" ), acl.getPointer( "http://example.com/ns#CREATE" ) ) ).toBeNull();
 
-				let ace:ACE.Class;
+				let ace:ACE;
 
-				ace = ACE.Factory.createFrom(
+				ace = ACE.createFrom(
 					acl.createFragment(),
 					true,
 					[ acl.getPointer( "http://example.com/ns#Subject" ) ],
@@ -2627,7 +2559,7 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 				expect( acl.getChildInheritance( acl.getPointer( "http://example.com/ns#Subject" ), acl.getPointer( "http://example.com/ns#ANOTHER" ) ) ).toBeNull();
 				expect( acl.getChildInheritance( acl.getPointer( "http://example.com/ns#Subject-02" ), acl.getPointer( "http://example.com/ns#READ" ) ) ).toBeNull();
 
-				ace = ACE.Factory.createFrom(
+				ace = ACE.createFrom(
 					acl.createFragment(),
 					false,
 					[ acl.getPointer( "http://example.com/ns#Subject" ) ],
@@ -2646,28 +2578,21 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 				expect( acl.getChildInheritance( acl.getPointer( "http://example.com/ns#Subject-02" ), acl.getPointer( "http://example.com/ns#READ" ) ) ).toBeNull();
 			} );
 
-			describe( method(
-				INSTANCE,
-				"remove"
-			), ():void => {
+			describe( "ACL.remove", ():void => {
 
 				it( isDefined(), ():void => {
 					expect( acl.remove ).toBeDefined();
 					expect( Utils.isFunction( acl.remove ) ).toBe( true );
 				} );
 
-				it( hasSignature(
-					"Remove the configuration of a permission from a subject for the document related to the ACL.", [
-						{ name: "subject", type: "string | Carbon.Pointer.Class", description: "The subject from will be removed the permission." },
-						{ name: "permission", type: "string | Carbon.Pointer.Class", description: "The permission to remove from the subject configuration." },
-					]
-				), ():void => {
+				// TODO: Separate in different tests
+				it( "should test when subject and a permission", ():void => {
 					acl.remove( acl.getPointer( "http://example.com/ns#Subject" ), acl.getPointer( "http://example.com/ns#READ" ) );
 					acl.remove( acl.getPointer( "http://example.com/ns#Subject" ), acl.getPointer( "http://example.com/ns#CREATE" ) );
 
-					let ace:ACE.Class;
+					let ace:ACE;
 
-					ace = ACE.Factory.createFrom(
+					ace = ACE.createFrom(
 						acl.createFragment(),
 						true,
 						[ acl.getPointer( "http://example.com/ns#Subject" ) ],
@@ -2697,7 +2622,7 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 
 					expect( acl.entries.length ).toBe( 0 );
 
-					ace = ACE.Factory.createFrom(
+					ace = ACE.createFrom(
 						acl.createFragment(),
 						true,
 						[ acl.getPointer( "http://example.com/ns#Subject" ) ],
@@ -2716,18 +2641,14 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 					expect( acl.getChildInheritance( acl.getPointer( "http://example.com/ns#Subject" ), acl.getPointer( "http://example.com/ns#WRITE" ) ) ).toBe( true );
 				} );
 
-				it( hasSignature(
-					"Remove the configuration of several permissions from a subject for the document related to the ACL.", [
-						{ name: "subject", type: "string | Carbon.Pointer.Class", description: "The subject from will removed the permission." },
-						{ name: "permissions", type: "(string | Carbon.Pointer.Class)[]", description: "The permissions to remove from the subject configuration." },
-					]
-				), ():void => {
+				// TODO: Separate in different tests
+				it( "should test when subject and permissions", ():void => {
 					acl.remove( acl.getPointer( "http://example.com/ns#Subject" ), [ acl.getPointer( "http://example.com/ns#READ" ) ] );
 					acl.remove( acl.getPointer( "http://example.com/ns#Subject" ), [ acl.getPointer( "http://example.com/ns#READ" ), acl.getPointer( "http://example.com/ns#CREATE" ) ] );
 
-					let ace:ACE.Class;
+					let ace:ACE;
 
-					ace = ACE.Factory.createFrom(
+					ace = ACE.createFrom(
 						acl.createFragment(),
 						true,
 						[ acl.getPointer( "http://example.com/ns#Subject" ) ],
@@ -2755,7 +2676,7 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 
 					expect( acl.entries.length ).toBe( 0 );
 
-					ace = ACE.Factory.createFrom(
+					ace = ACE.createFrom(
 						acl.createFragment(),
 						true,
 						[ acl.getPointer( "http://example.com/ns#Subject" ) ],
@@ -2778,28 +2699,21 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 
 			} );
 
-			describe( method(
-				INSTANCE,
-				"removeChildInheritance"
-			), ():void => {
+			describe( "ACL.removeChildInheritance", ():void => {
 
 				it( isDefined(), ():void => {
 					expect( acl.removeChildInheritance ).toBeDefined();
 					expect( Utils.isFunction( acl.removeChildInheritance ) ).toBe( true );
 				} );
 
-				it( hasSignature(
-					"Remove the configuration of a permission from a subject for the children of the document related to the ACL.", [
-						{ name: "subject", type: "string | Carbon.Pointer.Class", description: "The subject from will be removed the permission." },
-						{ name: "permission", type: "string | Carbon.Pointer.Class", description: "The permission to remove from the subject configuration." },
-					]
-				), ():void => {
+				// TODO: Separate in different tests
+				it( "should test when subject and a permission", ():void => {
 					acl.removeChildInheritance( acl.getPointer( "http://example.com/ns#Subject" ), acl.getPointer( "http://example.com/ns#READ" ) );
 					acl.removeChildInheritance( acl.getPointer( "http://example.com/ns#Subject" ), acl.getPointer( "http://example.com/ns#CREATE" ) );
 
-					let ace:ACE.Class;
+					let ace:ACE;
 
-					ace = ACE.Factory.createFrom(
+					ace = ACE.createFrom(
 						acl.createFragment(),
 						true,
 						[ acl.getPointer( "http://example.com/ns#Subject" ) ],
@@ -2829,7 +2743,7 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 
 					expect( acl.inheritableEntries.length ).toBe( 0 );
 
-					ace = ACE.Factory.createFrom(
+					ace = ACE.createFrom(
 						acl.createFragment(),
 						true,
 						[ acl.getPointer( "http://example.com/ns#Subject" ) ],
@@ -2848,18 +2762,14 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 					expect( acl.grants( acl.getPointer( "http://example.com/ns#Subject" ), acl.getPointer( "http://example.com/ns#WRITE" ) ) ).toBe( true );
 				} );
 
-				it( hasSignature(
-					"Remove the configuration of several permissions from a subject for the children of the document related to the ACL.", [
-						{ name: "subject", type: "string | Carbon.Pointer.Class", description: "The subject from will removed the permission." },
-						{ name: "permissions", type: "(string | Carbon.Pointer.Class)[]", description: "The permissions to remove from the subject configuration." },
-					]
-				), ():void => {
+				// TODO: Separate in different tests
+				it( "should test when subject and permissions", ():void => {
 					acl.removeChildInheritance( acl.getPointer( "http://example.com/ns#Subject" ), [ acl.getPointer( "http://example.com/ns#READ" ) ] );
 					acl.removeChildInheritance( acl.getPointer( "http://example.com/ns#Subject" ), [ acl.getPointer( "http://example.com/ns#READ" ), acl.getPointer( "http://example.com/ns#CREATE" ) ] );
 
-					let ace:ACE.Class;
+					let ace:ACE;
 
-					ace = ACE.Factory.createFrom(
+					ace = ACE.createFrom(
 						acl.createFragment(),
 						true,
 						[ acl.getPointer( "http://example.com/ns#Subject" ) ],
@@ -2887,7 +2797,7 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 
 					expect( acl.inheritableEntries.length ).toBe( 0 );
 
-					ace = ACE.Factory.createFrom(
+					ace = ACE.createFrom(
 						acl.createFragment(),
 						true,
 						[ acl.getPointer( "http://example.com/ns#Subject" ) ],
@@ -2914,9 +2824,9 @@ describe( module( "Carbon/Auth/ACL" ), ():void => {
 
 	} );
 
-	it( hasDefaultExport( "Carbon.Auth.ACL.Class" ), ():void => {
+	it( hasDefaultExport( "CarbonLDP.Auth.ACL.ACL" ), ():void => {
 		let defaultExport:DefaultExport = <any> {};
-		let ace:ACL.Class;
+		let ace:ACL;
 
 		ace = defaultExport;
 		expect( ace ).toEqual( jasmine.any( Object ) );

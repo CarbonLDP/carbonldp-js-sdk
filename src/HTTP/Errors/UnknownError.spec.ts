@@ -1,29 +1,25 @@
+import { RequestService } from "../Request";
+import { Response } from "../Response";
 import {
-	INSTANCE,
-	STATIC,
-
-	module,
 	clazz,
-
-	isDefined,
 	extendsClass,
 	hasConstructor,
-	hasProperty,
-	hasMethod,
 	hasDefaultExport,
+	hasMethod,
+	hasProperty,
+	INSTANCE,
+	isDefined,
+	module,
+	STATIC,
 } from "./../../test/JasmineExtender";
 import * as Utils from "./../../Utils";
-
-import Response from "./../Response";
-
-import HTTPError from "./HTTPError";
-import { Service } from "../Request";
+import { HTTPError } from "./HTTPError";
 
 import * as UnknownError from "./UnknownError";
 import DefaultExport from "./UnknownError";
 
 describe( module(
-	"Carbon/HTTP/Errors/UnknownError"
+	"carbonldp/HTTP/Errors/UnknownError"
 ), ():void => {
 
 	it( isDefined(), ():void => {
@@ -32,7 +28,7 @@ describe( module(
 	} );
 
 	describe( clazz(
-		"Carbon.HTTP.Errors.UnknownError",
+		"CarbonLDP.HTTP.Errors.UnknownError",
 		"Error class that defines any error that could not be identified."
 	), ():void => {
 
@@ -45,7 +41,7 @@ describe( module(
 				"responseText": "A response",
 			} );
 
-			Service.send( "GET", "http://example.com/request/" ).then( ( _response ) => {
+			RequestService.send( "GET", "http://example.com/request/" ).then( ( _response ) => {
 				response = _response;
 				done();
 			} ).catch( done.fail );
@@ -57,26 +53,16 @@ describe( module(
 		} );
 
 		it( isDefined(), ():void => {
-			expect( UnknownError.Class ).toBeDefined();
-			expect( Utils.isFunction( UnknownError.Class ) ).toBe( true );
+			expect( UnknownError.UnknownError ).toBeDefined();
+			expect( Utils.isFunction( UnknownError.UnknownError ) ).toBe( true );
 		} );
 
 		it( extendsClass(
-			"Carbon.Errors.HTTPError"
+			"CarbonLDP.HTTP.Errors.HTTPError"
 		), ():void => {
-			let error:UnknownError.Class = new UnknownError.Class( "Message of the error", response );
+			let error:UnknownError.UnknownError = new UnknownError.UnknownError( "Message of the error", response );
 
 			expect( error instanceof HTTPError ).toBe( true );
-		} );
-
-		it( hasConstructor( [
-			{ name: "message", type: "string" },
-			{ name: "response", type: "Carbon.HTTP.Response.Class" },
-		] ), ():void => {
-			let error:UnknownError.Class = new UnknownError.Class( "Message of the error", response );
-
-			expect( error ).toBeTruthy();
-			expect( error instanceof UnknownError.Class ).toBe( true );
 		} );
 
 		it( hasMethod(
@@ -84,7 +70,7 @@ describe( module(
 			"toString",
 			{ type: "string" }
 		), ():void => {
-			let error:UnknownError.Class = new UnknownError.Class( "Message of the error", response );
+			let error:UnknownError.UnknownError = new UnknownError.UnknownError( "Message of the error", response );
 
 			expect( error.toString ).toBeDefined();
 			expect( Utils.isFunction( error.toString ) );
@@ -97,7 +83,7 @@ describe( module(
 			"name",
 			"string"
 		), ():void => {
-			let error:UnknownError.Class = new UnknownError.Class( "Message of the error", response );
+			let error:UnknownError.UnknownError = new UnknownError.UnknownError( "Message of the error", response );
 
 			expect( error.name ).toBeDefined();
 			expect( Utils.isString( error.name ) ).toBe( true );
@@ -110,16 +96,16 @@ describe( module(
 			"statusCode",
 			"number"
 		), ():void => {
-			expect( UnknownError.Class.statusCode ).toBeDefined();
-			expect( Utils.isNumber( UnknownError.Class.statusCode ) );
-			expect( UnknownError.Class.statusCode ).toBeNull();
+			expect( UnknownError.UnknownError.statusCode ).toBeDefined();
+			expect( Utils.isNumber( UnknownError.UnknownError.statusCode ) );
+			expect( UnknownError.UnknownError.statusCode ).toBeNull();
 		} );
 
 	} );
 
-	it( hasDefaultExport( "Carbon.HTTP.Errors.UnknownError.Class" ), ():void => {
+	it( hasDefaultExport( "CarbonLDP.HTTP.Errors.UnknownError" ), ():void => {
 		expect( DefaultExport ).toBeDefined();
-		expect( DefaultExport ).toBe( UnknownError.Class );
+		expect( DefaultExport ).toBe( UnknownError.UnknownError );
 	} );
 
 } );

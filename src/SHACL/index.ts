@@ -1,5 +1,5 @@
-import * as ValidationReport from "./ValidationReport";
-import * as ValidationResult from "./ValidationResult";
+import { ValidationReport } from "./ValidationReport";
+import { ValidationResult } from "./ValidationResult";
 
 export {
 	ValidationReport,

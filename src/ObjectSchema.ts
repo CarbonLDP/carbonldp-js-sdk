@@ -1,23 +1,26 @@
-import * as Errors from "./Errors";
-import * as NS from "./NS";
-import * as RDF from "./RDF";
+import {
+	IllegalArgumentError,
+	InvalidJSONLDSyntaxError,
+} from "./Errors";
+import { URI } from "./RDF/URI";
 import * as Utils from "./Utils";
+import { XSD } from "./Vocabularies/XSD";
 
-export interface PropertyDefinition {
+export interface ObjectSchemaProperty {
 	"@id"?:string;
 	"@type"?:string;
 	"@language"?:string;
 	"@container"?:string;
 }
 
-export interface Class {
+export interface ObjectSchema {
 	"@base"?:string;
 	"@vocab"?:string;
 	"@index"?:object;
 	"@language"?:string;
 	"@reverse"?:object;
 
-	[ name:string ]:(string | PropertyDefinition);
+	[ name:string ]:(string | ObjectSchemaProperty);
 }
 
 export enum ContainerType {
@@ -31,7 +34,7 @@ export enum PointerType {
 	VOCAB,
 }
 
-export class DigestedPropertyDefinition {
+export class DigestedObjectSchemaProperty {
 	uri:string = null;
 	literal:boolean = null;
 	literalType:string = null;
@@ -45,32 +48,19 @@ export class DigestedObjectSchema {
 	language:string;
 	vocab:string;
 	prefixes:Map<string, string>;
-	properties:Map<string, DigestedPropertyDefinition>;
+	properties:Map<string, DigestedObjectSchemaProperty>;
 
 	constructor() {
 		this.base = "";
 		this.vocab = null;
 		this.language = null;
 		this.prefixes = new Map<string, string>();
-		this.properties = new Map<string, DigestedPropertyDefinition>();
+		this.properties = new Map<string, DigestedObjectSchemaProperty>();
 	}
-
-	/*_resolve():this {
-		this.prefixes.forEach( ( uri, namespace, map ) => {
-			if( RDF.URI.Util.isAbsolute( uri ) ) return;
-			map.set( namespace, Util.resolveURI( uri, this ) );
-		} );
-		this.properties.forEach( ( definition, name, map ) => {
-			const resolved:DigestedPropertyDefinition = Util.resolveProperty( this, definition );
-			if( definition !== resolved ) map.set( name, resolved );
-		} );
-
-		return this;
-	}*/
 
 }
 
-export interface Resolver {
+export interface ObjectSchemaResolver {
 	getGeneralSchema():DigestedObjectSchema;
 
 	hasSchemaFor( object:object, path?:string ):boolean;
@@ -78,27 +68,27 @@ export interface Resolver {
 	getSchemaFor( object:object, path?:string ):DigestedObjectSchema;
 }
 
-export class Digester {
+export class ObjectSchemaDigester {
 
-	static digestSchema( schema:Class ):DigestedObjectSchema;
-	static digestSchema( schemas:Class[] ):DigestedObjectSchema;
-	static digestSchema( schemas:Class | Class[] ):DigestedObjectSchema {
-		if( ! Array.isArray( schemas ) ) return Digester._digestSchema( schemas );
+	static digestSchema( schema:ObjectSchema ):DigestedObjectSchema;
+	static digestSchema( schemas:ObjectSchema[] ):DigestedObjectSchema;
+	static digestSchema( schemas:ObjectSchema | ObjectSchema[] ):DigestedObjectSchema {
+		if( ! Array.isArray( schemas ) ) return ObjectSchemaDigester._digestSchema( schemas );
 
 		const digestedSchemas:DigestedObjectSchema[] = schemas
-			.map( schema => Digester._digestSchema( schema ) );
+			.map( schema => ObjectSchemaDigester._digestSchema( schema ) );
 
-		return Digester._combineSchemas( digestedSchemas );
+		return ObjectSchemaDigester._combineSchemas( digestedSchemas );
 	}
 
-	static digestProperty( name:string, definition:PropertyDefinition, digestedSchema?:DigestedObjectSchema ):DigestedPropertyDefinition {
-		const digestedDefinition:DigestedPropertyDefinition = new DigestedPropertyDefinition();
+	static digestProperty( name:string, definition:ObjectSchemaProperty, digestedSchema?:DigestedObjectSchema ):DigestedObjectSchemaProperty {
+		const digestedDefinition:DigestedObjectSchemaProperty = new DigestedObjectSchemaProperty();
 
 		if( "@id" in definition ) {
 			const uri:any = definition[ "@id" ];
 
-			if( RDF.URI.Util.isPrefixed( name ) ) throw new Errors.IllegalArgumentError( "A prefixed property cannot have assigned another URI." );
-			if( ! Utils.isString( uri ) ) throw new Errors.IllegalArgumentError( "@id needs to point to a string" );
+			if( URI.isPrefixed( name ) ) throw new IllegalArgumentError( "A prefixed property cannot have assigned another URI." );
+			if( ! Utils.isString( uri ) ) throw new IllegalArgumentError( "@id needs to point to a string" );
 
 			digestedDefinition.uri = uri;
 		} else {
@@ -107,14 +97,14 @@ export class Digester {
 
 		if( "@type" in definition ) {
 			let type:any = definition[ "@type" ];
-			if( ! Utils.isString( type ) ) throw new Errors.IllegalArgumentError( "@type needs to point to a string" );
+			if( ! Utils.isString( type ) ) throw new IllegalArgumentError( "@type needs to point to a string" );
 
 			if( type === "@id" || type === "@vocab" ) {
 				digestedDefinition.literal = false;
 				digestedDefinition.pointerType = type === "@id" ? PointerType.ID : PointerType.VOCAB;
 
 			} else {
-				if( RDF.URI.Util.isRelative( type ) && type in NS.XSD.DataType ) type = NS.XSD.DataType[ type ];
+				if( URI.isRelative( type ) && type in XSD ) type = XSD[ type ];
 
 				digestedDefinition.literal = true;
 				digestedDefinition.literalType = type;
@@ -123,7 +113,7 @@ export class Digester {
 
 		if( "@language" in definition ) {
 			const language:string = definition[ "@language" ];
-			if( language !== null && ! Utils.isString( language ) ) throw new Errors.IllegalArgumentError( "@language needs to point to a string or null." );
+			if( language !== null && ! Utils.isString( language ) ) throw new IllegalArgumentError( "@language needs to point to a string or null." );
 
 			digestedDefinition.literal = true;
 			digestedDefinition.language = language;
@@ -140,36 +130,36 @@ export class Digester {
 					break;
 
 				case "@language":
-					if( Utils.isString( digestedDefinition.language ) ) throw new Errors.IllegalArgumentError( "@container cannot be set to @language when the property definition already contains an @language tag." );
+					if( Utils.isString( digestedDefinition.language ) ) throw new IllegalArgumentError( "@container cannot be set to @language when the property definition already contains an @language tag." );
 					digestedDefinition.containerType = ContainerType.LANGUAGE;
 					break;
 
 				default:
-					throw new Errors.IllegalArgumentError( "@container needs to be equal to '@list', '@set', or '@language'" );
+					throw new IllegalArgumentError( "@container needs to be equal to '@list', '@set', or '@language'" );
 			}
 		}
 
 		return digestedSchema ?
-			Util.resolveProperty( digestedSchema, digestedDefinition, true ) :
+			ObjectSchemaUtils.resolveProperty( digestedSchema, digestedDefinition, true ) :
 			digestedDefinition;
 	}
 
 	static combineDigestedObjectSchemas( digestedSchemas:DigestedObjectSchema[] ):DigestedObjectSchema {
-		if( digestedSchemas.length === 0 ) throw new Errors.IllegalArgumentError( "At least one DigestedObjectSchema needs to be specified." );
+		if( digestedSchemas.length === 0 ) throw new IllegalArgumentError( "At least one DigestedObjectSchema needs to be specified." );
 
 		digestedSchemas.unshift( new DigestedObjectSchema() );
-		return Digester._combineSchemas( digestedSchemas );
+		return ObjectSchemaDigester._combineSchemas( digestedSchemas );
 	}
 
-	private static _digestSchema( schema:Class ):DigestedObjectSchema {
+	private static _digestSchema( schema:ObjectSchema ):DigestedObjectSchema {
 		const digestedSchema:DigestedObjectSchema = new DigestedObjectSchema();
 
 		for( const propertyName of [ "@base", "@vocab" ] as [ "@base", "@vocab" ] ) {
 			if( ! ( propertyName in schema ) ) continue;
 			const value:string = schema[ propertyName ];
 
-			if( value !== null && ! Utils.isString( value ) ) throw new Errors.IllegalArgumentError( `The value of '${ propertyName }' must be a string or null.` );
-			if( ( propertyName === "@vocab" && value === "" ) || ! RDF.URI.Util.isAbsolute( value ) && ! RDF.URI.Util.isBNodeID( value ) ) throw new Errors.IllegalArgumentError( `The value of '${ propertyName }' must be an absolute URI${ propertyName === "@base" ? " or an empty string" : "" }.` );
+			if( value !== null && ! Utils.isString( value ) ) throw new IllegalArgumentError( `The value of '${ propertyName }' must be a string or null.` );
+			if( ( propertyName === "@vocab" && value === "" ) || ! URI.isAbsolute( value ) && ! URI.isBNodeID( value ) ) throw new IllegalArgumentError( `The value of '${ propertyName }' must be an absolute URI${ propertyName === "@base" ? " or an empty string" : "" }.` );
 
 			digestedSchema[ propertyName.substr( 1 ) ] = value;
 		}
@@ -177,7 +167,7 @@ export class Digester {
 
 		if( "@language" in schema ) {
 			const value:string = schema[ "@language" ];
-			if( value !== null && ! Utils.isString( value ) ) throw new Errors.InvalidJSONLDSyntaxError( `The value of '@language' must be a string or null.` );
+			if( value !== null && ! Utils.isString( value ) ) throw new InvalidJSONLDSyntaxError( `The value of '@language' must be a string or null.` );
 			digestedSchema.language = value;
 		}
 
@@ -190,18 +180,18 @@ export class Digester {
 			if( propertyName === "@vocab" ) continue;
 			if( propertyName === "@language" ) continue;
 
-			let propertyValue:( string | PropertyDefinition ) = schema[ propertyName ];
+			let propertyValue:( string | ObjectSchemaProperty ) = schema[ propertyName ];
 
 			if( Utils.isString( propertyValue ) ) {
-				if( RDF.URI.Util.isPrefixed( propertyName ) ) throw new Errors.IllegalArgumentError( "A prefixed property cannot be equal to another URI." );
+				if( URI.isPrefixed( propertyName ) ) throw new IllegalArgumentError( "A prefixed property cannot be equal to another URI." );
 				digestedSchema.prefixes.set( propertyName, propertyValue );
 
 			} else if( ! ! propertyValue && Utils.isObject( propertyValue ) ) {
-				const definition:DigestedPropertyDefinition = Digester.digestProperty( propertyName, propertyValue );
+				const definition:DigestedObjectSchemaProperty = ObjectSchemaDigester.digestProperty( propertyName, propertyValue );
 				digestedSchema.properties.set( propertyName, definition );
 
 			} else {
-				throw new Errors.IllegalArgumentError( "ObjectSchema Properties can only have string values or object values." );
+				throw new IllegalArgumentError( "ObjectSchema Properties can only have string values or object values." );
 			}
 		}
 
@@ -216,8 +206,8 @@ export class Digester {
 			if( schema.base !== "" ) targetSchema.base = schema.base;
 			if( schema.language !== null ) targetSchema.language = schema.language;
 
-			Utils.M.extend( targetSchema.prefixes, schema.prefixes );
-			Utils.M.extend( targetSchema.properties, schema.properties );
+			Utils.MapUtils.extend( targetSchema.prefixes, schema.prefixes );
+			Utils.MapUtils.extend( targetSchema.properties, schema.properties );
 		} );
 
 		return targetSchema;
@@ -225,10 +215,10 @@ export class Digester {
 
 }
 
-export class Util {
+export class ObjectSchemaUtils {
 
 	static resolveURI( uri:string, schema:DigestedObjectSchema, relativeTo:{ vocab?:boolean, base?:boolean } = {} ):string {
-		if( uri === null || RDF.URI.Util.isAbsolute( uri ) || RDF.URI.Util.isBNodeID( uri ) ) return uri;
+		if( uri === null || URI.isAbsolute( uri ) || URI.isBNodeID( uri ) ) return uri;
 
 		const [ prefix, localName = "" ]:[ string, string ] = uri.split( ":" ) as [ string, string ];
 
@@ -237,26 +227,26 @@ export class Util {
 				schema.properties.get( prefix ).uri
 				: null;
 		if( definedReference !== null && definedReference !== prefix ) {
-			return Util.resolveURI( definedReference + localName, schema, { vocab: true } );
+			return ObjectSchemaUtils.resolveURI( definedReference + localName, schema, { vocab: true } );
 		}
 
 		if( localName ) return uri;
 
 		if( relativeTo.vocab && schema.vocab !== null ) return schema.vocab + uri;
-		if( relativeTo.base ) return RDF.URI.Util.resolve( schema.base, uri );
+		if( relativeTo.base ) return URI.resolve( schema.base, uri );
 
 		return uri;
 	}
 
-	static resolveProperty( schema:DigestedObjectSchema, definition:DigestedPropertyDefinition, inSame?:boolean ):DigestedPropertyDefinition {
+	static resolveProperty( schema:DigestedObjectSchema, definition:DigestedObjectSchemaProperty, inSame?:boolean ):DigestedObjectSchemaProperty {
 		const uri:string = definition.uri;
 		const type:string = definition.literalType;
 
-		const resolvedURI:string = Util.resolveURI( uri, schema, { vocab: true } );
-		const resolvedType:string = Util.resolveURI( type, schema, { vocab: true, base: true } );
+		const resolvedURI:string = ObjectSchemaUtils.resolveURI( uri, schema, { vocab: true } );
+		const resolvedType:string = ObjectSchemaUtils.resolveURI( type, schema, { vocab: true, base: true } );
 
 		if( resolvedURI !== uri || resolvedType !== type ) {
-			definition = inSame ? definition : Utils.O.clone( definition );
+			definition = inSame ? definition : Utils.ObjectUtils.clone( definition );
 			definition.uri = resolvedURI;
 			definition.literalType = resolvedType;
 		}
@@ -265,4 +255,4 @@ export class Util {
 	}
 }
 
-export default Class;
+export default ObjectSchema;

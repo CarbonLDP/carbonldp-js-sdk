@@ -1,25 +1,38 @@
-import { BlankNodeToken, IRIToken, PrefixedNameToken } from "sparqler/tokens";
+import {
+	BlankNodeToken,
+	IRIToken,
+	PrefixedNameToken
+} from "sparqler/tokens";
 
-import AbstractContext from "../../AbstractContext";
-import { clazz, constructor, hasDefaultExport, hasSignature, INSTANCE, method, module } from "../../test/JasmineExtender";
-import * as Pointer from "./../../Pointer";
-import QueryContext from "./QueryContext";
+import { AbstractContext } from "../../AbstractContext";
+import { Pointer } from "../../Pointer";
+import {
+	clazz,
+	constructor,
+	hasDefaultExport,
+	hasSignature,
+	INSTANCE,
+	method,
+	module
+} from "../../test/JasmineExtender";
+import { QueryContext } from "./QueryContext";
+
 import * as Module from "./QueryObject";
-import { Class as QueryObject } from "./QueryObject";
+import DefaultExport, { QueryObject } from "./QueryObject";
 
-describe( module( "Carbon/SPARQL/QueryDocument/QueryObject" ), ():void => {
+describe( module( "carbonldp/SPARQL/QueryDocument/QueryObject" ), ():void => {
 
 	it( "should exists", ():void => {
 		expect( Module ).toBeDefined();
 		expect( Module ).toEqual( jasmine.any( Object ) );
 	} );
 
-	it( hasDefaultExport( "Carbon.SPARQL.QueryDocument.QueryObject.Class" ), ():void => {
-		expect( Module.default ).toBeDefined();
-		expect( Module.default ).toBe( QueryObject );
+	it( hasDefaultExport( "CarbonLDP.SPARQL.QueryDocument.QueryObject.QueryObject" ), ():void => {
+		expect( DefaultExport ).toBeDefined();
+		expect( DefaultExport ).toBe( QueryObject );
 	} );
 
-	describe( clazz( "Carbon.SPARQL.QueryDocument.QueryObject.Class", "Class that represents any resource." ), ():void => {
+	describe( clazz( "CarbonLDP.SPARQL.QueryDocument.QueryObject.QueryObject", "Class that represents any resource." ), ():void => {
 
 		it( "should exists", ():void => {
 			expect( QueryObject ).toBeDefined();
@@ -43,8 +56,8 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryObject" ), ():void => {
 			it( hasSignature(
 				"Creates an object for the specified object resource.",
 				[
-					{ name: "context", type: "Carbon.SPARQL.QueryDocument.QueryContext.Class", description: "The context of the query where the object is been used." },
-					{ name: "object", type: "Carbon.Pointer.Class | string", description: "The object to be converted in a safe to use in query object resource." },
+					{ name: "context", type: "CarbonLDP.SPARQL.QueryDocument.QueryContext.QueryContext", description: "The context of the query where the object is been used." },
+					{ name: "object", type: "CarbonLDP.Pointer.Pointer | string", description: "The object to be converted in a safe to use in query object resource." },
 				]
 			), ():void => {
 			} );
@@ -108,7 +121,7 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryObject" ), ():void => {
 			} );
 
 			it( "should return the token created", ():void => {
-				const helper:( object:string | Pointer.Class ) => void = object => {
+				const helper:( object:string | Pointer ) => void = object => {
 					const queryObject:QueryObject = new QueryObject( queryContext, object );
 					expect( queryObject.getToken() ).toBe( queryObject[ "_resource" ] );
 				};
@@ -117,9 +130,9 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryObject" ), ():void => {
 				helper( "ex:resource" );
 				helper( "_:blank-node" );
 
-				helper( Pointer.Factory.create( "http://example.com/" ) );
-				helper( Pointer.Factory.create( "ex:resource" ) );
-				helper( Pointer.Factory.create( "_:blank-node" ) );
+				helper( Pointer.create( "http://example.com/" ) );
+				helper( Pointer.create( "ex:resource" ) );
+				helper( Pointer.create( "_:blank-node" ) );
 			} );
 
 		} );

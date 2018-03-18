@@ -1,10 +1,17 @@
 "use strict";
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
+    result["default"] = mod;
+    return result;
+}
 Object.defineProperty(exports, "__esModule", { value: true });
-var Errors = require("./../Errors");
-var URI = require("./../RDF/URI");
-var Credentials = require("./Credentials");
-var PersistedUser = require("./PersistedUser");
+var Errors = __importStar(require("../Errors"));
 var Utils_1 = require("../Utils");
+var URI_1 = require("./../RDF/URI");
+var Credentials = __importStar(require("./Credentials"));
+var PersistedUser = __importStar(require("./PersistedUser"));
 var Class = (function () {
     function Class(context) {
         this.context = context;
@@ -52,7 +59,7 @@ var Class = (function () {
     };
     Class.prototype.resolveURI = function (relativeURI) {
         var usersContainer = this.getContainerURI();
-        var absoluteRoleURI = URI.Util.resolve(usersContainer, relativeURI);
+        var absoluteRoleURI = URI_1.URI.resolve(usersContainer, relativeURI);
         if (!absoluteRoleURI.startsWith(usersContainer))
             throw new Errors.IllegalArgumentError("The provided URI \"" + relativeURI + "\" isn't a valid Carbon LDP user.");
         return absoluteRoleURI;

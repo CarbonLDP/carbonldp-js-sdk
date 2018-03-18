@@ -1,19 +1,30 @@
-import * as NS from "./../NS";
-import * as Resource from "./../Resource";
-import * as ObjectSchema from "./../ObjectSchema";
-import * as Pointer from "./../Pointer";
+import { ModelFactory } from "../ModelFactory";
+import { C } from "../Vocabularies/C";
+import { ObjectSchema } from "../ObjectSchema";
+import { Pointer } from "../Pointer";
+import { Resource } from "../Resource";
 
-export const RDF_CLASS:string = NS.C.Class.ValidationError;
 
-export const SCHEMA:ObjectSchema.Class = {
+export interface ValidationError extends Resource {
+	errorDetails:Pointer;
+}
+
+
+export interface ValidationErrorFactory extends ModelFactory<ValidationError> {
+	TYPE:string;
+	SCHEMA:ObjectSchema;
+}
+
+const SCHEMA:ObjectSchema = {
 	"errorDetails": {
-		"@id": NS.C.Predicate.errorDetails,
+		"@id": C.errorDetails,
 		"@type": "@id",
 	},
 };
 
-export interface Class extends Resource.Class {
-	errorDetails:Pointer.Class;
-}
+export const ValidationError:ValidationErrorFactory = {
+	TYPE: C.ValidationError,
+	SCHEMA,
+};
 
-export default Class;
+export default ValidationError;

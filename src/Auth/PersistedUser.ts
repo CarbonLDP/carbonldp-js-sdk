@@ -1,19 +1,20 @@
-import * as Documents from "./../Documents";
-import * as HTTP from "./../HTTP";
-import * as NS from "./../NS";
-import * as PersistedProtectedDocument from "./../PersistedProtectedDocument";
-import * as Pointer from "./../Pointer";
-import * as SELECTResults from "./../SPARQL/SELECTResults";
+import { Documents } from "../Documents";
+import { RequestOptions } from "../HTTP/Request";
+import { Response } from "../HTTP/Response";
+import { Pointer } from "../Pointer";
+import { CS } from "../Vocabularies/CS";
+import { PersistedProtectedDocument } from "./../PersistedProtectedDocument";
+import * as SELECTResults from "../SPARQL/SelectResults";
 import * as Utils from "./../Utils";
 import * as PersistedCredentials from "./PersistedCredentials";
 
-export interface Class extends PersistedProtectedDocument.Class {
+export interface Class extends PersistedProtectedDocument {
 	name?:string;
 	credentials?:PersistedCredentials.Class;
 
-	enableCredentials( requestOptions?:HTTP.Request.Options ):Promise<[ Class, HTTP.Response.Class[] ]>;
+	enableCredentials( requestOptions?:RequestOptions ):Promise<[ Class, Response[] ]>;
 
-	disableCredentials( requestOptions?:HTTP.Request.Options ):Promise<[ Class, HTTP.Response.Class[] ]>;
+	disableCredentials( requestOptions?:RequestOptions ):Promise<[ Class, Response[] ]>;
 }
 
 export class Factory {
@@ -26,15 +27,15 @@ export class Factory {
 
 	static is( object:Object ):boolean {
 		return Factory.hasClassProperties( object )
-			&& PersistedProtectedDocument.Factory.is( object )
+			&& PersistedProtectedDocument.is( object )
 			;
 	}
 
-	static decorate<T extends object>( object:T, documents:Documents.Class ):Class & T {
+	static decorate<T extends object>( object:T, documents:Documents ):Class & T {
 		const persistedUser:T & Class = <any> object;
 
 		if( Factory.hasClassProperties( persistedUser ) ) return persistedUser;
-		if( ! PersistedProtectedDocument.Factory.hasClassProperties( persistedUser ) ) PersistedProtectedDocument.Factory.decorate( persistedUser, documents );
+		if( ! PersistedProtectedDocument.isDecorated( persistedUser ) ) PersistedProtectedDocument.decorate( persistedUser, documents );
 
 		Object.defineProperties( persistedUser, {
 			"enableCredentials": {
@@ -57,27 +58,27 @@ export class Factory {
 
 }
 
-function changeEnabledCredentials( this:Class, enabled:boolean, requestOptions?:HTTP.Request.Options ):Promise<[ Class, HTTP.Response.Class[] ]> {
-	const promise:Promise<void | HTTP.Response.Class> = "credentials" in this ?
+function changeEnabledCredentials( this:Class, enabled:boolean, requestOptions?:RequestOptions ):Promise<[ Class, Response[] ]> {
+	const promise:Promise<void | Response> = "credentials" in this ?
 		Promise.resolve() : obtainCredentials( this );
 
-	let responses:HTTP.Response.Class[] = [];
+	let responses:Response[] = [];
 	return promise.then( ( response ) => {
 		if( response ) responses.push( response );
 
 		if( enabled ) return this.credentials.enable( requestOptions );
 		return this.credentials.disable( requestOptions );
-	} ).then<[ Class, HTTP.Response.Class[] ]>( ( [ _credentials, credentialsResponses ]:[ PersistedCredentials.Class, HTTP.Response.Class[] ] ) => {
+	} ).then<[ Class, Response[] ]>( ( [ _credentials, credentialsResponses ]:[ PersistedCredentials.Class, Response[] ] ) => {
 		responses.push( ...credentialsResponses );
 
 		return [ this, responses ];
 	} );
 }
 
-function obtainCredentials( user:Class ):Promise<HTTP.Response.Class> {
+function obtainCredentials( user:Class ):Promise<Response> {
 	return user
-		.executeSELECTQuery( `BASE<${ user.id }>SELECT?c FROM<>WHERE{GRAPH<>{<><${ NS.CS.Predicate.credentials}>?c}}` )
-		.then( ( [ { bindings: [ credentialsBinding ] }, response ]:[ SELECTResults.Class<{ credentials:Pointer.Class }>, HTTP.Response.Class ] ) => {
+		.executeSELECTQuery( `BASE<${ user.id }>SELECT?c FROM<>WHERE{GRAPH<>{<><${ CS.credentials }>?c}}` )
+		.then( ( [ { bindings: [ credentialsBinding ] }, response ]:[ SELECTResults.SPARQLSelectResults<{ credentials:Pointer }>, Response ] ) => {
 			user.credentials = PersistedCredentials.Factory.decorate( credentialsBinding.credentials, user._documents );
 			return response;
 		} );

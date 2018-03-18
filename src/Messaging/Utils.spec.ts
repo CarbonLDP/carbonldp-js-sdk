@@ -1,9 +1,9 @@
-import Carbon from "../Carbon";
+import { CarbonLDP } from "../CarbonLDP";
 import { IllegalArgumentError, IllegalStateError } from "../Errors";
 import { hasSignature, method, module, STATIC } from "../test/JasmineExtender";
 import * as MessagingUtils from "./Utils";
 
-describe( module( "Carbon/Messaging/Utils" ), ():void => {
+describe( module( "carbonldp/Messaging/Utils" ), ():void => {
 
 	it( "should exists", ():void => {
 		expect( MessagingUtils ).toBeDefined();
@@ -16,9 +16,9 @@ describe( module( "Carbon/Messaging/Utils" ), ():void => {
 	), ():void => {
 
 		it( hasSignature(
-			"Test if the provided context has a valid `Carbon.Messaging.Service.Class` instance. If don't an error will be thrown.",
+			"Test if the provided context has a valid `CarbonLDP.Messaging.Service.MessagingService` instance. If don't an error will be thrown.",
 			[
-				{ name: "context", type: "Carbon.Context.Class", description: "The context to be evaluated." },
+				{ name: "context", type: "CarbonLDP.Context.Context", description: "The context to be evaluated." },
 			] ), ():void => {
 		} );
 
@@ -32,13 +32,13 @@ describe( module( "Carbon/Messaging/Utils" ), ():void => {
 			expect( () => MessagingUtils.validateEventContext( null ) ).toThrowError( IllegalStateError, "This instance does not support messaging subscriptions." );
 		} );
 
-		it( "should accept Carbon contexts", ():void => {
-			const carbon:Carbon = new Carbon( "http://example.com" );
+		it( "should accept CarbonLDP contexts", ():void => {
+			const carbon:CarbonLDP = new CarbonLDP( "http://example.com" );
 			expect( () => MessagingUtils.validateEventContext( carbon ) ).not.toThrowError();
 		} );
 
 		it( "should throw error if messaging service does not exists in the context", ():void => {
-			const carbon:Carbon = new Carbon( "http://example.com" );
+			const carbon:CarbonLDP = new CarbonLDP( "http://example.com" );
 
 			delete carbon.messaging;
 			expect( () => MessagingUtils.validateEventContext( carbon ) ).toThrowError( IllegalStateError, "This instance does not support messaging subscriptions." );
@@ -150,8 +150,8 @@ describe( module( "Carbon/Messaging/Utils" ), ():void => {
 		} );
 
 		it( "should throw error when uriPattern does not resolves to the baseURI provided", ():void => {
-			expect( () => MessagingUtils.parseURIPattern( "http://not-example.com/resource/", "http://example.com" ) ).toThrowError( IllegalArgumentError, "Provided uriPattern \"http://not-example.com/resource/\" is an invalid for your Carbon instance." );
-			expect( () => MessagingUtils.parseURIPattern( "http://not-example.com/resource/", "http://example.com" ) ).toThrowError( IllegalArgumentError, "Provided uriPattern \"http://not-example.com/resource/\" is an invalid for your Carbon instance." );
+			expect( () => MessagingUtils.parseURIPattern( "http://not-example.com/resource/", "http://example.com" ) ).toThrowError( IllegalArgumentError, "Provided uriPattern \"http://not-example.com/resource/\" is an invalid for your Carbon LDP instance." );
+			expect( () => MessagingUtils.parseURIPattern( "http://not-example.com/resource/", "http://example.com" ) ).toThrowError( IllegalArgumentError, "Provided uriPattern \"http://not-example.com/resource/\" is an invalid for your Carbon LDP instance." );
 		} );
 
 		it( "should not throw error when parameters are relative", ():void => {
@@ -204,7 +204,7 @@ describe( module( "Carbon/Messaging/Utils" ), ():void => {
 	), ():void => {
 
 		it( hasSignature(
-			"Create a 'topic' destination using the event and the URI pattern provided. This pattern is parsed with the `Carbon/Messaging/Utils#parseURIPattern` method.\nIf invalid event of URI is given an error will be thrown.",
+			"Create a 'topic' destination using the event and the URI pattern provided. This pattern is parsed with the `carbonldp/Messaging/Utils#parseURIPattern` method.\nIf invalid event of URI is given an error will be thrown.",
 			[
 				{ name: "event", type: "string", description: "The event of the destination messaging notification." },
 				{ name: "uriPattern", type: "string", description: "The URI pattern of the destination messaging notification." },

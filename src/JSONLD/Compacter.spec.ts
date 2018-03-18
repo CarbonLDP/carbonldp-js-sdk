@@ -1,9 +1,9 @@
-import * as Documents from "../Documents";
-import { Digester } from "../ObjectSchema";
-import * as PersistedDocument from "../PersistedDocument";
-import * as RDFNode from "../RDF/Node";
-import * as QueryContextBuilder from "../SPARQL/QueryDocument/QueryContextBuilder";
-import * as QueryProperty from "../SPARQL/QueryDocument/QueryProperty";
+import { Documents } from "../Documents";
+import { ObjectSchemaDigester } from "../ObjectSchema";
+import { PersistedDocument } from "../PersistedDocument";
+import { RDFNode } from "../RDF/Node";
+import { QueryContextBuilder } from "../SPARQL/QueryDocument/QueryContextBuilder";
+import { QueryPropertyType } from "../SPARQL/QueryDocument/QueryProperty";
 import {
 	clazz,
 	hasDefaultExport,
@@ -12,40 +12,39 @@ import {
 	module
 } from "../test/JasmineExtender";
 
-import * as Compacter from "./Compacter";
+import DefaultExport, { JSONLDCompacter } from "./Compacter";
 
-describe( module( "Carbon/JSONLD/Compacter" ), ():void => {
+describe( module( "carbonldp/JSONLD/Compacter" ), ():void => {
 
-	it( "should exists", ():void => {
-		expect( Compacter ).toBeDefined();
-		expect( Compacter ).toEqual( jasmine.any( Object ) );
+	it( hasDefaultExport( "CarbonLDP.JSONLD.Compacter.JSONLDCompacter" ), ():void => {
+		expect( DefaultExport ).toBeDefined();
+		expect( DefaultExport ).toBe( JSONLDCompacter );
 	} );
 
-	it( hasDefaultExport( "Carbon.JSONLD.Compacter.Class" ), ():void => {
-		expect( Compacter.default ).toBeDefined();
-		expect( Compacter.default ).toBe( Compacter.Class );
-	} );
-
-	describe( clazz( "Carbon.JSONLD.Compacter.Class", "Class for compacting a set of RDF resources in level of relations" ), ():void => {
+	describe( clazz( "CarbonLDP.JSONLD.Compacter.JSONLDCompacter", "Class for compacting a set of RDF resources in level of relations" ), ():void => {
 
 		it( "should exists", ():void => {
-			expect( Compacter.Class ).toBeDefined();
-			expect( Compacter.Class ).toEqual( jasmine.any( Function ) );
+			expect( JSONLDCompacter ).toBeDefined();
+			expect( JSONLDCompacter ).toEqual( jasmine.any( Function ) );
 		} );
+
+		// TODO: Tests `JSONLDCompacter.constructor`
+
+		// TODO: Test `JSONLDCompacter.compactDocument`
 
 		describe( method( INSTANCE, "compactDocuments" ), ():void => {
 
 			it( "should exists", ():void => {
-				expect( Compacter.Class.prototype.compactDocuments ).toBeDefined();
-				expect( Compacter.Class.prototype.compactDocuments ).toEqual( jasmine.any( Function ) );
+				expect( JSONLDCompacter.prototype.compactDocuments ).toBeDefined();
+				expect( JSONLDCompacter.prototype.compactDocuments ).toEqual( jasmine.any( Function ) );
 			} );
 
 			it( "should send root path when one level resources", ():void => {
-				const documents:Documents.Class = new Documents.Class();
+				const documents:Documents = new Documents();
 				const spy:jasmine.Spy = spyOn( documents, "getSchemaFor" ).and
-					.returnValue( Digester.digestSchema( {} ) );
+					.returnValue( ObjectSchemaDigester.digestSchema( {} ) );
 
-				const compacter:Compacter.Class = new Compacter.Class( documents, "target" );
+				const compacter:JSONLDCompacter = new JSONLDCompacter( documents, "target" );
 				compacter.compactDocuments( [
 					{
 						"@id": "https://example.com/resource-1/",
@@ -73,11 +72,11 @@ describe( module( "Carbon/JSONLD/Compacter" ), ():void => {
 			} );
 
 			it( "should send root path for only main documents", ():void => {
-				const documents:Documents.Class = new Documents.Class();
+				const documents:Documents = new Documents();
 				const spy:jasmine.Spy = spyOn( documents, "getSchemaFor" ).and
-					.returnValue( Digester.digestSchema( {} ) );
+					.returnValue( ObjectSchemaDigester.digestSchema( {} ) );
 
-				const compacter:Compacter.Class = new Compacter.Class( documents, "target" );
+				const compacter:JSONLDCompacter = new JSONLDCompacter( documents, "target" );
 				compacter.compactDocuments( [
 					{
 						"@id": "https://example.com/resource-1/",
@@ -114,11 +113,11 @@ describe( module( "Carbon/JSONLD/Compacter" ), ():void => {
 			} );
 
 			it( "should send path of second level resources when schema is available", ():void => {
-				const documents:Documents.Class = new Documents.Class();
+				const documents:Documents = new Documents();
 				spyOn( documents, "hasSchemaFor" ).and
 					.returnValue( true );
 				const spy:jasmine.Spy = spyOn( documents, "getSchemaFor" ).and
-					.returnValue( Digester.digestSchema( {
+					.returnValue( ObjectSchemaDigester.digestSchema( {
 						"@vocab": "https://example.com/ns#",
 						"pointer1": {
 							"@id": "pointer-1",
@@ -130,7 +129,7 @@ describe( module( "Carbon/JSONLD/Compacter" ), ():void => {
 						},
 					} ) );
 
-				const compacter:Compacter.Class = new Compacter.Class( documents, "target" );
+				const compacter:JSONLDCompacter = new JSONLDCompacter( documents, "target" );
 				compacter.compactDocuments( [
 					{
 						"@id": "https://example.com/resource-1/",
@@ -139,7 +138,7 @@ describe( module( "Carbon/JSONLD/Compacter" ), ():void => {
 							"https://example.com/ns#pointer-1": [ {
 								"@id": "_:1",
 							} ],
-						} as RDFNode.Class, {
+						} as RDFNode, {
 							"@id": "_:1",
 						} ],
 					},
@@ -150,7 +149,7 @@ describe( module( "Carbon/JSONLD/Compacter" ), ():void => {
 							"https://example.com/ns#pointer-2": [ {
 								"@id": "_:2",
 							} ],
-						} as RDFNode.Class, {
+						} as RDFNode, {
 							"@id": "_:2",
 						} ],
 					},
@@ -178,9 +177,9 @@ describe( module( "Carbon/JSONLD/Compacter" ), ():void => {
 			} );
 
 			it( "should not send path of second level resources when schema is unavailable", ():void => {
-				const documents:Documents.Class = new Documents.Class();
+				const documents:Documents = new Documents();
 				const spy:jasmine.Spy = spyOn( documents, "getSchemaFor" ).and
-					.returnValue( Digester.digestSchema( {
+					.returnValue( ObjectSchemaDigester.digestSchema( {
 						"@vocab": "https://example.com/ns#",
 						"pointer1": {
 							"@id": "pointer-1",
@@ -192,7 +191,7 @@ describe( module( "Carbon/JSONLD/Compacter" ), ():void => {
 						},
 					} ) );
 
-				const compacter:Compacter.Class = new Compacter.Class( documents, "target" );
+				const compacter:JSONLDCompacter = new JSONLDCompacter( documents, "target" );
 				compacter.compactDocuments( [
 					{
 						"@id": "https://example.com/resource-1/",
@@ -201,7 +200,7 @@ describe( module( "Carbon/JSONLD/Compacter" ), ():void => {
 							"https://example.com/ns#pointer-1": [ {
 								"@id": "_:1",
 							} ],
-						} as RDFNode.Class, {
+						} as RDFNode, {
 							"@id": "_:1",
 						} ],
 					},
@@ -212,7 +211,7 @@ describe( module( "Carbon/JSONLD/Compacter" ), ():void => {
 							"https://example.com/ns#pointer-2": [ {
 								"@id": "_:2",
 							} ],
-						} as RDFNode.Class, {
+						} as RDFNode, {
 							"@id": "_:2",
 						} ],
 					},
@@ -239,11 +238,11 @@ describe( module( "Carbon/JSONLD/Compacter" ), ():void => {
 			} );
 
 			it( "should send path of second level of main documents when schema is available", ():void => {
-				const documents:Documents.Class = new Documents.Class();
+				const documents:Documents = new Documents();
 				spyOn( documents, "hasSchemaFor" ).and
 					.returnValue( true );
 				const spy:jasmine.Spy = spyOn( documents, "getSchemaFor" ).and
-					.returnValue( Digester.digestSchema( {
+					.returnValue( ObjectSchemaDigester.digestSchema( {
 						"@vocab": "https://example.com/ns#",
 						"pointer1": {
 							"@id": "pointer-1",
@@ -255,7 +254,7 @@ describe( module( "Carbon/JSONLD/Compacter" ), ():void => {
 						},
 					} ) );
 
-				const compacter:Compacter.Class = new Compacter.Class( documents, "target" );
+				const compacter:JSONLDCompacter = new JSONLDCompacter( documents, "target" );
 				compacter.compactDocuments( [
 					{
 						"@id": "https://example.com/resource-1/",
@@ -264,7 +263,7 @@ describe( module( "Carbon/JSONLD/Compacter" ), ():void => {
 							"https://example.com/ns#pointer-1": [ {
 								"@id": "_:1",
 							} ],
-						} as RDFNode.Class, {
+						} as RDFNode, {
 							"@id": "_:1",
 						} ],
 					},
@@ -275,7 +274,7 @@ describe( module( "Carbon/JSONLD/Compacter" ), ():void => {
 							"https://example.com/ns#pointer-2": [ {
 								"@id": "_:2",
 							} ],
-						} as RDFNode.Class, {
+						} as RDFNode, {
 							"@id": "_:2",
 						} ],
 					},
@@ -310,9 +309,9 @@ describe( module( "Carbon/JSONLD/Compacter" ), ():void => {
 			} );
 
 			it( "should not send path of second level of main documents when schema is unavailable", ():void => {
-				const documents:Documents.Class = new Documents.Class();
+				const documents:Documents = new Documents();
 				const spy:jasmine.Spy = spyOn( documents, "getSchemaFor" ).and
-					.returnValue( Digester.digestSchema( {
+					.returnValue( ObjectSchemaDigester.digestSchema( {
 						"@vocab": "https://example.com/ns#",
 						"pointer1": {
 							"@id": "pointer-1",
@@ -324,7 +323,7 @@ describe( module( "Carbon/JSONLD/Compacter" ), ():void => {
 						},
 					} ) );
 
-				const compacter:Compacter.Class = new Compacter.Class( documents, "target" );
+				const compacter:JSONLDCompacter = new JSONLDCompacter( documents, "target" );
 				compacter.compactDocuments( [
 					{
 						"@id": "https://example.com/resource-1/",
@@ -333,7 +332,7 @@ describe( module( "Carbon/JSONLD/Compacter" ), ():void => {
 							"https://example.com/ns#pointer-1": [ {
 								"@id": "_:1",
 							} ],
-						} as RDFNode.Class, {
+						} as RDFNode, {
 							"@id": "_:1",
 						} ],
 					},
@@ -344,7 +343,7 @@ describe( module( "Carbon/JSONLD/Compacter" ), ():void => {
 							"https://example.com/ns#pointer-2": [ {
 								"@id": "_:2",
 							} ],
-						} as RDFNode.Class, {
+						} as RDFNode, {
 							"@id": "_:2",
 						} ],
 					},
@@ -379,9 +378,9 @@ describe( module( "Carbon/JSONLD/Compacter" ), ():void => {
 			} );
 
 			it( "should compact a resource with a fragment with path", ():void => {
-				const documents:Documents.Class = new Documents.Class();
+				const documents:Documents = new Documents();
 				spyOn( documents, "getSchemaFor" ).and
-					.returnValue( Digester.digestSchema( {
+					.returnValue( ObjectSchemaDigester.digestSchema( {
 						"pointer": {
 							"@id": "https://example.com/ns#pointer",
 							"@type": "@id",
@@ -392,7 +391,7 @@ describe( module( "Carbon/JSONLD/Compacter" ), ():void => {
 						},
 					} ) );
 
-				const compacter:Compacter.Class = new Compacter.Class( documents, "target" );
+				const compacter:JSONLDCompacter = new JSONLDCompacter( documents, "target" );
 
 				interface Expected {
 					pointer:{
@@ -400,7 +399,7 @@ describe( module( "Carbon/JSONLD/Compacter" ), ():void => {
 					};
 				}
 
-				const compacted:Expected[] = compacter.compactDocuments<Expected & PersistedDocument.Class>( [
+				const compacted:Expected[] = compacter.compactDocuments<Expected & PersistedDocument>( [
 					{
 						"@id": "https://example.com/resource-1/",
 						"@graph": [
@@ -409,13 +408,13 @@ describe( module( "Carbon/JSONLD/Compacter" ), ():void => {
 								"https://example.com/ns#pointer": [ {
 									"@id": "_:1",
 								} ],
-							} as RDFNode.Class,
+							} as RDFNode,
 							{
 								"@id": "_:1",
 								"https://example.com/ns#string": [ {
 									"@value": "string value",
 								} ],
-							} as RDFNode.Class,
+							} as RDFNode,
 						],
 					},
 				] );
@@ -428,9 +427,9 @@ describe( module( "Carbon/JSONLD/Compacter" ), ():void => {
 			} );
 
 			it( "should compact a resource with a fragment with no path", ():void => {
-				const documents:Documents.Class = new Documents.Class();
+				const documents:Documents = new Documents();
 				spyOn( documents, "getSchemaFor" ).and
-					.returnValue( Digester.digestSchema( {
+					.returnValue( ObjectSchemaDigester.digestSchema( {
 						"pointer": {
 							"@id": "https://example.com/ns#pointer",
 							"@type": "@id",
@@ -441,7 +440,7 @@ describe( module( "Carbon/JSONLD/Compacter" ), ():void => {
 						},
 					} ) );
 
-				const compacter:Compacter.Class = new Compacter.Class( documents );
+				const compacter:JSONLDCompacter = new JSONLDCompacter( documents );
 
 				interface Expected {
 					pointer:{
@@ -449,7 +448,7 @@ describe( module( "Carbon/JSONLD/Compacter" ), ():void => {
 					};
 				}
 
-				const compacted:Expected[] = compacter.compactDocuments<Expected & PersistedDocument.Class>( [
+				const compacted:Expected[] = compacter.compactDocuments<Expected & PersistedDocument>( [
 					{
 						"@id": "https://example.com/resource-1/",
 						"@graph": [
@@ -458,13 +457,13 @@ describe( module( "Carbon/JSONLD/Compacter" ), ():void => {
 								"https://example.com/ns#pointer": [ {
 									"@id": "_:1",
 								} ],
-							} as RDFNode.Class,
+							} as RDFNode,
 							{
 								"@id": "_:1",
 								"https://example.com/ns#string": [ {
 									"@value": "string value",
 								} ],
-							} as RDFNode.Class,
+							} as RDFNode,
 						],
 					},
 				] );
@@ -477,9 +476,9 @@ describe( module( "Carbon/JSONLD/Compacter" ), ():void => {
 			} );
 
 			it( "should send path of only fist level when related to each other when documents resolver", ():void => {
-				const documents:Documents.Class = new Documents.Class();
+				const documents:Documents = new Documents();
 				const spy:jasmine.Spy = spyOn( documents, "getSchemaFor" ).and
-					.returnValue( Digester.digestSchema( {
+					.returnValue( ObjectSchemaDigester.digestSchema( {
 						"@vocab": "https://example.com/ns#",
 						"pointer1": {
 							"@id": "pointer-1",
@@ -491,7 +490,7 @@ describe( module( "Carbon/JSONLD/Compacter" ), ():void => {
 						},
 					} ) );
 
-				const compacter:Compacter.Class = new Compacter.Class( documents, "target" );
+				const compacter:JSONLDCompacter = new JSONLDCompacter( documents, "target" );
 				compacter.compactDocuments( [
 					{
 						"@id": "https://example.com/resource-1/",
@@ -503,7 +502,7 @@ describe( module( "Carbon/JSONLD/Compacter" ), ():void => {
 							"https://example.com/ns#pointer-2": [ {
 								"@id": "https://example.com/resource-2/",
 							} ],
-						} as RDFNode.Class ],
+						} as RDFNode ],
 					},
 					{
 						"@id": "https://example.com/resource-2/",
@@ -515,7 +514,7 @@ describe( module( "Carbon/JSONLD/Compacter" ), ():void => {
 							"https://example.com/ns#pointer-2": [ {
 								"@id": "https://example.com/resource-1/",
 							} ],
-						} as RDFNode.Class ],
+						} as RDFNode ],
 					},
 				] );
 
@@ -533,15 +532,15 @@ describe( module( "Carbon/JSONLD/Compacter" ), ():void => {
 			} );
 
 			it( "should send path of only fist level when related to each other when query resolver", ():void => {
-				const documents:Documents.Class = new Documents.Class();
-				const queryResolver:QueryContextBuilder.Class = new QueryContextBuilder.Class();
+				const documents:Documents = new Documents();
+				const queryResolver:QueryContextBuilder = new QueryContextBuilder();
 				queryResolver
 					.addProperty( "target" )
-					.setType( QueryProperty.PropertyType.PARTIAL )
+					.setType( QueryPropertyType.PARTIAL )
 				;
 
 				const spy:jasmine.Spy = spyOn( queryResolver, "getSchemaFor" ).and
-					.returnValue( Digester.digestSchema( {
+					.returnValue( ObjectSchemaDigester.digestSchema( {
 						"@vocab": "https://example.com/ns#",
 						"pointer1": {
 							"@id": "pointer-1",
@@ -553,7 +552,7 @@ describe( module( "Carbon/JSONLD/Compacter" ), ():void => {
 						},
 					} ) );
 
-				const compacter:Compacter.Class = new Compacter.Class( documents, "target", queryResolver );
+				const compacter:JSONLDCompacter = new JSONLDCompacter( documents, "target", queryResolver );
 				compacter.compactDocuments( [
 					{
 						"@id": "https://example.com/resource-1/",
@@ -565,7 +564,7 @@ describe( module( "Carbon/JSONLD/Compacter" ), ():void => {
 							"https://example.com/ns#pointer-2": [ {
 								"@id": "https://example.com/resource-2/",
 							} ],
-						} as RDFNode.Class ],
+						} as RDFNode ],
 					},
 					{
 						"@id": "https://example.com/resource-2/",
@@ -577,7 +576,7 @@ describe( module( "Carbon/JSONLD/Compacter" ), ():void => {
 							"https://example.com/ns#pointer-2": [ {
 								"@id": "https://example.com/resource-1/",
 							} ],
-						} as RDFNode.Class ],
+						} as RDFNode ],
 					},
 				] );
 
@@ -595,19 +594,19 @@ describe( module( "Carbon/JSONLD/Compacter" ), ():void => {
 			} );
 
 			it( "should send path of only second level when related to each other by partial property when query resolver", ():void => {
-				const documents:Documents.Class = new Documents.Class();
-				const queryResolver:QueryContextBuilder.Class = new QueryContextBuilder.Class();
+				const documents:Documents = new Documents();
+				const queryResolver:QueryContextBuilder = new QueryContextBuilder();
 				queryResolver
 					.addProperty( "target" )
-					.setType( QueryProperty.PropertyType.PARTIAL )
+					.setType( QueryPropertyType.PARTIAL )
 				;
 				queryResolver
 					.addProperty( "target.pointer1" )
-					.setType( QueryProperty.PropertyType.PARTIAL )
+					.setType( QueryPropertyType.PARTIAL )
 				;
 
 				const spy:jasmine.Spy = spyOn( queryResolver, "getSchemaFor" ).and
-					.returnValue( Digester.digestSchema( {
+					.returnValue( ObjectSchemaDigester.digestSchema( {
 						"@vocab": "https://example.com/ns#",
 						"pointer1": {
 							"@id": "pointer-1",
@@ -619,7 +618,7 @@ describe( module( "Carbon/JSONLD/Compacter" ), ():void => {
 						},
 					} ) );
 
-				const compacter:Compacter.Class = new Compacter.Class( documents, "target", queryResolver );
+				const compacter:JSONLDCompacter = new JSONLDCompacter( documents, "target", queryResolver );
 				compacter.compactDocuments( [
 					{
 						"@id": "https://example.com/resource-1/",
@@ -631,7 +630,7 @@ describe( module( "Carbon/JSONLD/Compacter" ), ():void => {
 							"https://example.com/ns#pointer-2": [ {
 								"@id": "https://example.com/resource-2/",
 							} ],
-						} as RDFNode.Class ],
+						} as RDFNode ],
 					},
 					{
 						"@id": "https://example.com/resource-2/",
@@ -643,7 +642,7 @@ describe( module( "Carbon/JSONLD/Compacter" ), ():void => {
 							"https://example.com/ns#pointer-2": [ {
 								"@id": "https://example.com/resource-1/",
 							} ],
-						} as RDFNode.Class ],
+						} as RDFNode ],
 					},
 				] );
 
@@ -669,27 +668,27 @@ describe( module( "Carbon/JSONLD/Compacter" ), ():void => {
 			} );
 
 			it( "should compact every level from related to each other by partial property when query resolver", ():void => {
-				const documents:Documents.Class = new Documents.Class();
-				const queryResolver:QueryContextBuilder.Class = new QueryContextBuilder.Class();
+				const documents:Documents = new Documents();
+				const queryResolver:QueryContextBuilder = new QueryContextBuilder();
 				queryResolver
 					.addProperty( "target" )
-					.setType( QueryProperty.PropertyType.PARTIAL )
+					.setType( QueryPropertyType.PARTIAL )
 				;
 				queryResolver
 					.addProperty( "target.pointer1" )
-					.setType( QueryProperty.PropertyType.PARTIAL )
+					.setType( QueryPropertyType.PARTIAL )
 				;
 
 				spyOn( queryResolver, "getSchemaFor" ).and
 					.callFake( ( _object, path ) => {
 						return path === "target" ?
-							Digester.digestSchema( {
+							ObjectSchemaDigester.digestSchema( {
 								"pointer1": {
 									"@id": "https://example.com/ns#pointer-1",
 									"@type": "@id",
 								},
 							} ) :
-							Digester.digestSchema( {
+							ObjectSchemaDigester.digestSchema( {
 								"pointer2": {
 									"@id": "https://example.com/ns#pointer-2",
 									"@type": "@id",
@@ -697,14 +696,14 @@ describe( module( "Carbon/JSONLD/Compacter" ), ():void => {
 							} );
 					} );
 
-				const compacter:Compacter.Class = new Compacter.Class( documents, "target", queryResolver );
+				const compacter:JSONLDCompacter = new JSONLDCompacter( documents, "target", queryResolver );
 
 				interface Expected {
 					pointer1:Expected;
 					pointer2:Expected;
 				}
 
-				const compacted:Expected[] = compacter.compactDocuments<Expected & PersistedDocument.Class>( [
+				const compacted:Expected[] = compacter.compactDocuments<Expected & PersistedDocument>( [
 					{
 						"@id": "https://example.com/resource-1/",
 						"@graph": [ {
@@ -715,7 +714,7 @@ describe( module( "Carbon/JSONLD/Compacter" ), ():void => {
 							"https://example.com/ns#pointer-2": [ {
 								"@id": "https://example.com/resource-2/",
 							} ],
-						} as RDFNode.Class ],
+						} as RDFNode ],
 					},
 					{
 						"@id": "https://example.com/resource-2/",
@@ -727,7 +726,7 @@ describe( module( "Carbon/JSONLD/Compacter" ), ():void => {
 							"https://example.com/ns#pointer-2": [ {
 								"@id": "https://example.com/resource-1/",
 							} ],
-						} as RDFNode.Class ],
+						} as RDFNode ],
 					},
 				] );
 
@@ -744,27 +743,27 @@ describe( module( "Carbon/JSONLD/Compacter" ), ():void => {
 			} );
 
 			it( "should compact every level from related to each other by partial property when query resolver", ():void => {
-				const documents:Documents.Class = new Documents.Class();
-				const queryResolver:QueryContextBuilder.Class = new QueryContextBuilder.Class();
+				const documents:Documents = new Documents();
+				const queryResolver:QueryContextBuilder = new QueryContextBuilder();
 				queryResolver
 					.addProperty( "target" )
-					.setType( QueryProperty.PropertyType.PARTIAL )
+					.setType( QueryPropertyType.PARTIAL )
 				;
 				queryResolver
 					.addProperty( "target.pointer1" )
-					.setType( QueryProperty.PropertyType.PARTIAL )
+					.setType( QueryPropertyType.PARTIAL )
 				;
 
 				spyOn( queryResolver, "getSchemaFor" ).and
 					.callFake( ( _object, path ) => {
 						return path === "target" ?
-							Digester.digestSchema( {
+							ObjectSchemaDigester.digestSchema( {
 								"pointer1": {
 									"@id": "https://example.com/ns#pointer-1",
 									"@type": "@id",
 								},
 							} ) :
-							Digester.digestSchema( {
+							ObjectSchemaDigester.digestSchema( {
 								"pointer2": {
 									"@id": "https://example.com/ns#pointer-2",
 									"@type": "@id",
@@ -772,14 +771,14 @@ describe( module( "Carbon/JSONLD/Compacter" ), ():void => {
 							} );
 					} );
 
-				const compacter:Compacter.Class = new Compacter.Class( documents, "target", queryResolver );
+				const compacter:JSONLDCompacter = new JSONLDCompacter( documents, "target", queryResolver );
 
 				interface Expected {
 					pointer1:Expected;
 					pointer2:Expected;
 				}
 
-				const compacted:Expected[] = compacter.compactDocuments<Expected & PersistedDocument.Class>( [
+				const compacted:Expected[] = compacter.compactDocuments<Expected & PersistedDocument>( [
 					{
 						"@id": "https://example.com/resource-1/",
 						"@graph": [ {
@@ -790,7 +789,7 @@ describe( module( "Carbon/JSONLD/Compacter" ), ():void => {
 							"https://example.com/ns#pointer-2": [ {
 								"@id": "https://example.com/resource-2/",
 							} ],
-						} as RDFNode.Class ],
+						} as RDFNode ],
 					},
 					{
 						"@id": "https://example.com/resource-2/",
@@ -802,7 +801,7 @@ describe( module( "Carbon/JSONLD/Compacter" ), ():void => {
 							"https://example.com/ns#pointer-2": [ {
 								"@id": "https://example.com/resource-1/",
 							} ],
-						} as RDFNode.Class ],
+						} as RDFNode ],
 					},
 				] );
 
@@ -819,28 +818,28 @@ describe( module( "Carbon/JSONLD/Compacter" ), ():void => {
 			} );
 
 			it( "should merge every level schema from related to each other by partial property when query resolver", ():void => {
-				const documents:Documents.Class = new Documents.Class();
-				const queryResolver:QueryContextBuilder.Class = new QueryContextBuilder.Class();
+				const documents:Documents = new Documents();
+				const queryResolver:QueryContextBuilder = new QueryContextBuilder();
 				queryResolver
 					.addProperty( "target" )
-					.setType( QueryProperty.PropertyType.PARTIAL )
+					.setType( QueryPropertyType.PARTIAL )
 				;
 				queryResolver
 					.addProperty( "target.pointer1" )
-					.setType( QueryProperty.PropertyType.PARTIAL )
+					.setType( QueryPropertyType.PARTIAL )
 				;
 
 				spyOn( queryResolver, "getSchemaFor" ).and
 					.callFake( ( _object, path ) => {
 						return path === "target" ?
-							Digester.digestSchema( {
+							ObjectSchemaDigester.digestSchema( {
 								"@vocab": "https://example.com/ns#",
 								"pointer1": {
 									"@id": "https://example.com/ns#pointer-1",
 									"@type": "@id",
 								},
 							} ) :
-							Digester.digestSchema( {
+							ObjectSchemaDigester.digestSchema( {
 								"@vocab": "https://example.com/ns#",
 								"pointer2": {
 									"@id": "https://example.com/ns#pointer-2",
@@ -849,8 +848,8 @@ describe( module( "Carbon/JSONLD/Compacter" ), ():void => {
 							} );
 					} );
 
-				const compacter:Compacter.Class = new Compacter.Class( documents, "target", queryResolver );
-				const compacted:PersistedDocument.Class[] = compacter.compactDocuments( [
+				const compacter:JSONLDCompacter = new JSONLDCompacter( documents, "target", queryResolver );
+				const compacted:PersistedDocument[] = compacter.compactDocuments( [
 					{
 						"@id": "https://example.com/resource-1/",
 						"@graph": [ {
@@ -861,7 +860,7 @@ describe( module( "Carbon/JSONLD/Compacter" ), ():void => {
 							"https://example.com/ns#pointer-2": [ {
 								"@id": "https://example.com/resource-2/",
 							} ],
-						} as RDFNode.Class ],
+						} as RDFNode ],
 					},
 					{
 						"@id": "https://example.com/resource-2/",
@@ -873,11 +872,11 @@ describe( module( "Carbon/JSONLD/Compacter" ), ():void => {
 							"https://example.com/ns#pointer-2": [ {
 								"@id": "https://example.com/resource-1/",
 							} ],
-						} as RDFNode.Class ],
+						} as RDFNode ],
 					},
 				] );
 
-				expect( compacted[ 0 ]._partialMetadata.schema ).toEqual( Digester.digestSchema( {
+				expect( compacted[ 0 ]._partialMetadata.schema ).toEqual( ObjectSchemaDigester.digestSchema( {
 					"pointer1": {
 						"@id": "https://example.com/ns#pointer-1",
 						"@type": "@id",
@@ -888,7 +887,7 @@ describe( module( "Carbon/JSONLD/Compacter" ), ():void => {
 					},
 				} ) );
 
-				expect( compacted[ 1 ]._partialMetadata.schema ).toEqual( Digester.digestSchema( {
+				expect( compacted[ 1 ]._partialMetadata.schema ).toEqual( ObjectSchemaDigester.digestSchema( {
 					"pointer1": {
 						"@id": "https://example.com/ns#pointer-1",
 						"@type": "@id",
@@ -901,27 +900,27 @@ describe( module( "Carbon/JSONLD/Compacter" ), ():void => {
 			} );
 
 			it( "should compact same related document by partial property when query resolver", ():void => {
-				const documents:Documents.Class = new Documents.Class();
-				const queryResolver:QueryContextBuilder.Class = new QueryContextBuilder.Class();
+				const documents:Documents = new Documents();
+				const queryResolver:QueryContextBuilder = new QueryContextBuilder();
 				queryResolver
 					.addProperty( "target" )
-					.setType( QueryProperty.PropertyType.PARTIAL )
+					.setType( QueryPropertyType.PARTIAL )
 				;
 				queryResolver
 					.addProperty( "target.pointer" )
-					.setType( QueryProperty.PropertyType.PARTIAL )
+					.setType( QueryPropertyType.PARTIAL )
 				;
 
 				spyOn( queryResolver, "getSchemaFor" ).and
 					.callFake( ( _object, path ) => {
 						return path === "target" ?
-							Digester.digestSchema( {
+							ObjectSchemaDigester.digestSchema( {
 								"pointer": {
 									"@id": "https://example.com/ns#pointer",
 									"@type": "@id",
 								},
 							} ) :
-							Digester.digestSchema( {
+							ObjectSchemaDigester.digestSchema( {
 								"string": {
 									"@id": "https://example.com/ns#string",
 									"@type": "string",
@@ -929,7 +928,7 @@ describe( module( "Carbon/JSONLD/Compacter" ), ():void => {
 							} );
 					} );
 
-				const compacter:Compacter.Class = new Compacter.Class( documents, "target", queryResolver );
+				const compacter:JSONLDCompacter = new JSONLDCompacter( documents, "target", queryResolver );
 
 				interface Expected {
 					pointer:{
@@ -937,7 +936,7 @@ describe( module( "Carbon/JSONLD/Compacter" ), ():void => {
 					};
 				}
 
-				const compacted:Expected[] = compacter.compactDocuments<Expected & PersistedDocument.Class>( [
+				const compacted:Expected[] = compacter.compactDocuments<Expected & PersistedDocument>( [
 					{
 						"@id": "https://example.com/resource-1/",
 						"@graph": [ {
@@ -945,7 +944,7 @@ describe( module( "Carbon/JSONLD/Compacter" ), ():void => {
 							"https://example.com/ns#pointer": [ {
 								"@id": "https://example.com/shared-resource/",
 							} ],
-						} as RDFNode.Class ],
+						} as RDFNode ],
 					},
 					{
 						"@id": "https://example.com/resource-2/",
@@ -954,7 +953,7 @@ describe( module( "Carbon/JSONLD/Compacter" ), ():void => {
 							"https://example.com/ns#pointer": [ {
 								"@id": "https://example.com/shared-resource/",
 							} ],
-						} as RDFNode.Class ],
+						} as RDFNode ],
 					},
 					{
 						"@id": "https://example.com/shared-resource/",
@@ -963,7 +962,7 @@ describe( module( "Carbon/JSONLD/Compacter" ), ():void => {
 							"https://example.com/ns#string": [ {
 								"@value": "shared value",
 							} ],
-						} as RDFNode.Class ],
+						} as RDFNode ],
 					},
 				], [
 					{ "@id": "https://example.com/resource-1/" } as any,
@@ -984,7 +983,7 @@ describe( module( "Carbon/JSONLD/Compacter" ), ():void => {
 				] );
 
 				expect( compacted[ 0 ].pointer ).toBe( compacted[ 1 ].pointer );
-				expect( compacted[ 0 ].pointer as any as PersistedDocument.Class ).toEqual( jasmine.objectContaining( {
+				expect( compacted[ 0 ].pointer as any as PersistedDocument ).toEqual( jasmine.objectContaining( {
 					id: "https://example.com/shared-resource/",
 				} ) );
 			} );

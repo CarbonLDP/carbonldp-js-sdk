@@ -1,12 +1,23 @@
-import * as NS from "./../NS";
-import * as ObjectSchema from "./../ObjectSchema";
-import * as MemberDetails from "./MemberDetails";
+import { ObjectSchema } from "../ObjectSchema";
+import { C } from "../Vocabularies/C";
+import { MemberDetails } from "./MemberDetails";
 
-export const RDF_CLASS:string = NS.C.Class.MemberRemovedDetails;
 
-export const SCHEMA:ObjectSchema.Class = MemberDetails.SCHEMA;
-
-export interface Class extends MemberDetails.Class {
+export interface MemberRemovedDetails extends MemberDetails {
 }
 
-export default Class;
+
+export interface MemberRemovedDetailsFactory {
+	TYPE:string;
+	SCHEMA:ObjectSchema;
+}
+
+export const TYPE:string = C.MemberRemovedDetails;
+export const SCHEMA:ObjectSchema = MemberDetails.SCHEMA;
+
+export const MemberRemovedDetails:MemberRemovedDetailsFactory = {
+	TYPE,
+	SCHEMA,
+};
+
+export default MemberRemovedDetails;

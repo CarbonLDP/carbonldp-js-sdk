@@ -1,16 +1,19 @@
-import * as ObjectSchema from "./../ObjectSchema";
-import * as Resource from "./../Resource";
-import * as Pointer from "./../Pointer";
-export declare const RDF_CLASS: string;
-export declare const SCHEMA: ObjectSchema.Class;
-export interface Class extends Resource.Class {
-    focusNode: Pointer.Class;
-    resultPath?: Pointer.Class;
+import { ObjectSchema } from "../ObjectSchema";
+import { Pointer } from "../Pointer";
+import { Resource } from "../Resource";
+export interface ValidationResult extends Resource {
+    focusNode: Pointer;
+    resultPath?: Pointer;
     value?: any;
-    sourceShape?: Pointer.Class;
-    sourceConstraintComponent?: Pointer.Class;
-    detail?: Pointer.Class;
+    sourceShape?: Pointer;
+    sourceConstraintComponent?: Pointer;
+    detail?: Pointer;
     resultMessage?: string;
-    resultSeverity?: Pointer.Class;
+    resultSeverity?: Pointer;
 }
-export default Class;
+export interface ValidationResultFactory {
+    TYPE: string;
+    SCHEMA: ObjectSchema;
+}
+export declare const ValidationResult: ValidationResultFactory;
+export default ValidationResult;

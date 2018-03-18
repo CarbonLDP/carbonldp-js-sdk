@@ -1,30 +1,48 @@
 import * as Auth from "./Auth";
-import * as Context from "./Context";
-import * as Document from "./Document";
-import * as Documents from "./Documents";
+import { ACE } from "./Auth/ACE";
+import { ACL } from "./Auth/ACL";
+import { Context } from "./Context";
+import { Document } from "./Document";
+import { Documents } from "./Documents";
 import * as Errors from "./Errors";
-import * as LDP from "./LDP";
-import * as Messaging from "./Messaging";
+import { AddMemberAction } from "./LDP/AddMemberAction";
+import { Error } from "./LDP/Error";
+import { Map as CarbonMap } from "./LDP/Map";
+import { MapEntry } from "./LDP/MapEntry";
+import { DocumentMetadata } from "./LDP/DocumentMetadata";
+import { ErrorResponse } from "./LDP/ErrorResponse";
+import { RemoveMemberAction } from "./LDP/RemoveMemberAction";
+import { ResponseMetadata } from "./LDP/ResponseMetadata";
+import { ValidationError } from "./LDP/ValidationError";
+import { AccessPointCreated } from "./Messaging/AccessPointCreated";
+import { ChildCreated } from "./Messaging/ChildCreated";
+import { DocumentCreatedDetails } from "./Messaging/DocumentCreatedDetails";
+import { DocumentDeleted } from "./Messaging/DocumentDeleted";
+import { DocumentModified } from "./Messaging/DocumentModified";
+import { MemberAdded } from "./Messaging/MemberAdded";
+import { MemberAddedDetails } from "./Messaging/MemberAddedDetails";
+import { MemberRemoved } from "./Messaging/MemberRemoved";
+import { MemberRemovedDetails } from "./Messaging/MemberRemovedDetails";
 import * as ObjectSchema from "./ObjectSchema";
-import * as ProtectedDocument from "./ProtectedDocument";
-import * as RDF from "./RDF";
-import * as RDFRepresentation from "./RDFRepresentation";
+import { ProtectedDocument } from "./ProtectedDocument";
+import { URI } from "./RDF/URI";
 import * as Settings from "./Settings";
-import * as SHACL from "./SHACL";
-import * as SPARQL from "./SPARQL";
-import * as System from "./System";
+import { ValidationReport } from "./SHACL/ValidationReport";
+import { ValidationResult } from "./SHACL/ValidationResult";
+import { QueryMetadata } from "./SPARQL/QueryDocument/QueryMetadata";
+import { PlatformMetadata } from "./System/PlatformMetadata";
 import {
 	isObject,
 	isString,
 } from "./Utils";
 
-export class Class implements Context.Class {
+export class SDKContext implements Context {
 	auth:Auth.Class;
-	documents:Documents.Class;
+	documents:Documents;
 
 	get baseURI():string { return ""; }
 
-	get parentContext():Context.Class { return null; }
+	get parentContext():Context { return null; }
 
 	protected settings:Settings.ContextSettings;
 
@@ -36,13 +54,13 @@ export class Class implements Context.Class {
 		this.typeObjectSchemaMap = new Map<string, ObjectSchema.DigestedObjectSchema>();
 
 		this.auth = new Auth.Class( this );
-		this.documents = new Documents.Class( this );
+		this.documents = new Documents( this );
 
 		this.registerDefaultObjectSchemas();
 	}
 
 	resolve( relativeURI:string ):string {
-		return RDF.URI.Util.resolve( this.baseURI, relativeURI );
+		return URI.resolve( this.baseURI, relativeURI );
 	}
 
 	/**
@@ -82,7 +100,7 @@ export class Class implements Context.Class {
 			const slug:string = isString( containerPath ) ? containerPath : containerPath.slug;
 			if( ! slug ) throw new Errors.IllegalStateError( `The path "${ currentSearchedPaths.join( "." ) }" doesn't have a slug set.` );
 
-			url = RDF.URI.Util.resolve( url, slug );
+			url = URI.resolve( url, slug );
 			documentPaths = isObject( containerPath ) ? containerPath.paths : null;
 		}
 
@@ -109,7 +127,7 @@ export class Class implements Context.Class {
 				throw new Errors.IllegalStateError();
 
 			const generalSchema:ObjectSchema.DigestedObjectSchema = this.generalObjectSchema || this.parentContext.getObjectSchema();
-			const clonedSchema:ObjectSchema.DigestedObjectSchema = ObjectSchema.Digester
+			const clonedSchema:ObjectSchema.DigestedObjectSchema = ObjectSchema.ObjectSchemaDigester
 				.combineDigestedObjectSchemas( [ generalSchema ] );
 
 			if( clonedSchema.vocab === null && this.settings && this.settings.vocabulary )
@@ -122,13 +140,13 @@ export class Class implements Context.Class {
 		}
 	}
 
-	extendObjectSchema( type:string, objectSchema:ObjectSchema.Class ):void;
-	extendObjectSchema( objectSchema:ObjectSchema.Class ):void;
-	extendObjectSchema( typeOrObjectSchema:any, objectSchema:ObjectSchema.Class = null ):void {
+	extendObjectSchema( type:string, objectSchema:ObjectSchema.ObjectSchema ):void;
+	extendObjectSchema( objectSchema:ObjectSchema.ObjectSchema ):void;
+	extendObjectSchema( typeOrObjectSchema:any, objectSchema:ObjectSchema.ObjectSchema = null ):void {
 		const type:string = objectSchema ? typeOrObjectSchema : null;
 		objectSchema = ! ! objectSchema ? objectSchema : typeOrObjectSchema;
 
-		const digestedSchema:ObjectSchema.DigestedObjectSchema = ObjectSchema.Digester.digestSchema( objectSchema );
+		const digestedSchema:ObjectSchema.DigestedObjectSchema = ObjectSchema.ObjectSchemaDigester.digestSchema( objectSchema );
 
 		if( ! type ) {
 			this.extendGeneralObjectSchema( digestedSchema );
@@ -156,7 +174,7 @@ export class Class implements Context.Class {
 			digestedSchemaToExtend = new ObjectSchema.DigestedObjectSchema();
 		}
 
-		this.generalObjectSchema = ObjectSchema.Digester.combineDigestedObjectSchemas( [
+		this.generalObjectSchema = ObjectSchema.ObjectSchemaDigester.combineDigestedObjectSchemas( [
 			digestedSchemaToExtend,
 			digestedSchema,
 		] );
@@ -174,7 +192,7 @@ export class Class implements Context.Class {
 			digestedSchemaToExtend = new ObjectSchema.DigestedObjectSchema();
 		}
 
-		let extendedDigestedSchema:ObjectSchema.DigestedObjectSchema = ObjectSchema.Digester.combineDigestedObjectSchemas( [
+		let extendedDigestedSchema:ObjectSchema.DigestedObjectSchema = ObjectSchema.ObjectSchemaDigester.combineDigestedObjectSchemas( [
 			digestedSchemaToExtend,
 			digestedSchema,
 		] );
@@ -183,52 +201,50 @@ export class Class implements Context.Class {
 	}
 
 	private registerDefaultObjectSchemas():void {
-		this.extendObjectSchema( Document.RDF_CLASS, Document.SCHEMA );
-		this.extendObjectSchema( ProtectedDocument.RDF_CLASS, ProtectedDocument.SCHEMA );
+		this.extendObjectSchema( Document.TYPE, Document.SCHEMA );
+		this.extendObjectSchema( ProtectedDocument.TYPE, ProtectedDocument.SCHEMA );
 
-		this.extendObjectSchema( System.PlatformMetadata.RDF_CLASS, System.PlatformMetadata.SCHEMA );
+		this.extendObjectSchema( PlatformMetadata.TYPE, PlatformMetadata.SCHEMA );
 
-		this.extendObjectSchema( RDFRepresentation.RDF_CLASS, RDFRepresentation.SCHEMA );
-
-		this.extendObjectSchema( LDP.Entry.SCHEMA );
-		this.extendObjectSchema( LDP.Error.RDF_CLASS, LDP.Error.SCHEMA );
-		this.extendObjectSchema( LDP.ErrorResponse.RDF_CLASS, LDP.ErrorResponse.SCHEMA );
-		this.extendObjectSchema( LDP.ResponseMetadata.RDF_CLASS, LDP.ResponseMetadata.SCHEMA );
-		this.extendObjectSchema( LDP.DocumentMetadata.RDF_CLASS, LDP.DocumentMetadata.SCHEMA );
-		this.extendObjectSchema( LDP.AddMemberAction.RDF_CLASS, LDP.AddMemberAction.SCHEMA );
-		this.extendObjectSchema( LDP.RemoveMemberAction.RDF_CLASS, LDP.RemoveMemberAction.SCHEMA );
-		this.extendObjectSchema( LDP.Map.RDF_CLASS, LDP.Map.SCHEMA );
-		this.extendObjectSchema( LDP.ValidationError.RDF_CLASS, LDP.ValidationError.SCHEMA );
+		this.extendObjectSchema( AddMemberAction.TYPE, AddMemberAction.SCHEMA );
+		this.extendObjectSchema( Error.TYPE, Error.SCHEMA );
+		this.extendObjectSchema( CarbonMap.TYPE, CarbonMap.SCHEMA );
+		this.extendObjectSchema( MapEntry.SCHEMA );
+		this.extendObjectSchema( DocumentMetadata.TYPE, DocumentMetadata.SCHEMA );
+		this.extendObjectSchema( ErrorResponse.TYPE, ErrorResponse.SCHEMA );
+		this.extendObjectSchema( RemoveMemberAction.TYPE, RemoveMemberAction.SCHEMA );
+		this.extendObjectSchema( ResponseMetadata.TYPE, ResponseMetadata.SCHEMA );
+		this.extendObjectSchema( ValidationError.TYPE, ValidationError.SCHEMA );
 
 		this.extendObjectSchema( Auth.Role.RDF_CLASS, Auth.Role.SCHEMA );
-		this.extendObjectSchema( Auth.ACE.RDF_CLASS, Auth.ACE.SCHEMA );
-		this.extendObjectSchema( Auth.ACL.RDF_CLASS, Auth.ACL.SCHEMA );
+		this.extendObjectSchema( ACE.TYPE, ACE.SCHEMA );
+		this.extendObjectSchema( ACL.TYPE, ACL.SCHEMA );
 		this.extendObjectSchema( Auth.User.RDF_CLASS, Auth.User.SCHEMA );
 		this.extendObjectSchema( Auth.Credentials.RDF_CLASS, Auth.Credentials.SCHEMA );
 		this.extendObjectSchema( Auth.Ticket.RDF_CLASS, Auth.Ticket.SCHEMA );
 		this.extendObjectSchema( Auth.Token.RDF_CLASS, Auth.Token.SCHEMA );
 
-		this.extendObjectSchema( SHACL.ValidationReport.RDF_CLASS, SHACL.ValidationReport.SCHEMA );
-		this.extendObjectSchema( SHACL.ValidationResult.RDF_CLASS, SHACL.ValidationResult.SCHEMA );
+		this.extendObjectSchema( ValidationReport.TYPE, ValidationReport.SCHEMA );
+		this.extendObjectSchema( ValidationResult.TYPE, ValidationResult.SCHEMA );
 
-		this.extendObjectSchema( SPARQL.QueryDocument.QueryMetadata.RDF_CLASS, SPARQL.QueryDocument.QueryMetadata.SCHEMA );
+		this.extendObjectSchema( QueryMetadata.TYPE, QueryMetadata.SCHEMA );
 
-		this.extendObjectSchema( Messaging.AccessPointCreated.RDF_CLASS, Messaging.AccessPointCreated.SCHEMA );
-		this.extendObjectSchema( Messaging.ChildCreated.RDF_CLASS, Messaging.ChildCreated.SCHEMA );
-		this.extendObjectSchema( Messaging.DocumentCreatedDetails.RDF_CLASS, Messaging.DocumentCreatedDetails.SCHEMA );
-		this.extendObjectSchema( Messaging.DocumentDeleted.RDF_CLASS, Messaging.DocumentDeleted.SCHEMA );
-		this.extendObjectSchema( Messaging.DocumentModified.RDF_CLASS, Messaging.DocumentModified.SCHEMA );
-		this.extendObjectSchema( Messaging.MemberAdded.RDF_CLASS, Messaging.MemberAdded.SCHEMA );
-		this.extendObjectSchema( Messaging.MemberAddedDetails.RDF_CLASS, Messaging.MemberAddedDetails.SCHEMA );
-		this.extendObjectSchema( Messaging.MemberRemoved.RDF_CLASS, Messaging.MemberRemoved.SCHEMA );
-		this.extendObjectSchema( Messaging.MemberRemovedDetails.RDF_CLASS, Messaging.MemberRemovedDetails.SCHEMA );
+		this.extendObjectSchema( AccessPointCreated.TYPE, AccessPointCreated.SCHEMA );
+		this.extendObjectSchema( ChildCreated.TYPE, ChildCreated.SCHEMA );
+		this.extendObjectSchema( DocumentCreatedDetails.TYPE, DocumentCreatedDetails.SCHEMA );
+		this.extendObjectSchema( DocumentDeleted.TYPE, DocumentDeleted.SCHEMA );
+		this.extendObjectSchema( DocumentModified.TYPE, DocumentModified.SCHEMA );
+		this.extendObjectSchema( MemberAdded.TYPE, MemberAdded.SCHEMA );
+		this.extendObjectSchema( MemberAddedDetails.TYPE, MemberAddedDetails.SCHEMA );
+		this.extendObjectSchema( MemberRemoved.TYPE, MemberRemoved.SCHEMA );
+		this.extendObjectSchema( MemberRemovedDetails.TYPE, MemberRemovedDetails.SCHEMA );
 	}
 
 	private _resolveTypeURI( uri:string ):string {
-		return ObjectSchema.Util.resolveURI( uri, this.getObjectSchema(), { vocab: true } );
+		return ObjectSchema.ObjectSchemaUtils.resolveURI( uri, this.getObjectSchema(), { vocab: true } );
 	}
 }
 
-export const instance:Class = new Class();
+export const globalContext:SDKContext = new SDKContext();
 
-export default instance;
+export default globalContext;

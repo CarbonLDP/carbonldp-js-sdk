@@ -1,20 +1,18 @@
+import { CS } from "../Vocabularies/CS";
+import { XSD } from "../Vocabularies/XSD";
+import { Document } from "./../Document";
 import {
-	STATIC,
-
-	OBLIGATORY,
-
-	module,
 	clazz,
-	interfaze,
-
-	isDefined,
-	hasMethod,
-	hasProperty,
 	extendsClass,
 	hasDefaultExport,
+	hasMethod,
+	hasProperty,
+	interfaze,
+	isDefined,
+	module,
+	OBLIGATORY,
+	STATIC,
 } from "./../test/JasmineExtender";
-import * as Document from "./../Document";
-import * as NS from "./../NS";
 import * as Utils from "./../Utils";
 
 import * as User from "./User";
@@ -24,7 +22,7 @@ interface MockedUser {
 	name:string;
 }
 
-describe( module( "Carbon/Auth/User" ), ():void => {
+describe( module( "carbonldp/Auth/User" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( User ).toBeDefined();
@@ -39,32 +37,32 @@ describe( module( "Carbon/Auth/User" ), ():void => {
 		expect( User.RDF_CLASS ).toBeDefined();
 		expect( Utils.isString( User.RDF_CLASS ) ).toBe( true );
 
-		expect( User.RDF_CLASS ).toBe( NS.CS.Class.User );
+		expect( User.RDF_CLASS ).toBe( CS.User );
 	} );
 
 	it( hasProperty(
 		STATIC,
 		"SCHEMA",
-		"Carbon.ObjectSchema.Class"
+		"CarbonLDP.ObjectSchema.ObjectSchema"
 	), ():void => {
 		expect( User.SCHEMA ).toBeDefined();
 		expect( Utils.isObject( User.SCHEMA ) ).toBe( true );
 
 		expect( Utils.hasProperty( User.SCHEMA, "name" ) ).toBe( true );
 		expect( User.SCHEMA[ "name" ] ).toEqual( {
-			"@id": NS.CS.Predicate.namae,
-			"@type": NS.XSD.DataType.string,
+			"@id": CS.name,
+			"@type": XSD.string,
 		} );
 	} );
 
 	describe( interfaze(
-		"Carbon.Auth.User.Class",
+		"CarbonLDP.Auth.User.Class",
 		"Interface that represents an in-memory User of any Context."
 	), ():void => {
 
-		it( extendsClass( "Carbon.Document.Class" ), ():void => {
+		it( extendsClass( "CarbonLDP.Document.Document" ), ():void => {
 			let user:User.Class = <any> {};
-			let document:Document.Class;
+			let document:Document;
 
 			document = user;
 			expect( document ).toEqual( jasmine.any( Object ) );
@@ -86,8 +84,8 @@ describe( module( "Carbon/Auth/User" ), ():void => {
 	} );
 
 	describe( clazz(
-		"Carbon.Auth.User.Factory",
-		"Factory class for `Carbon.Auth.User.Class` objects."
+		"CarbonLDP.Auth.User.Factory",
+		"Factory class for `CarbonLDP.Auth.User.Class` objects."
 	), ():void => {
 
 		it( isDefined(), ():void => {
@@ -98,7 +96,7 @@ describe( module( "Carbon/Auth/User" ), ():void => {
 		it( hasMethod(
 			STATIC,
 			"hasClassProperties",
-			"Returns true if the object provided has the properties that defines a `Carbon.Auth.User.Class` object.", [
+			"Returns true if the object provided has the properties that defines a `CarbonLDP.Auth.User.Class` object.", [
 				{ name: "object", type: "object" },
 			],
 			{ type: "boolean" }
@@ -121,7 +119,7 @@ describe( module( "Carbon/Auth/User" ), ():void => {
 
 	} );
 
-	it( hasDefaultExport( "Carbon.Auth.User.Class" ), ():void => {
+	it( hasDefaultExport( "CarbonLDP.Auth.User.Class" ), ():void => {
 		let defaultExport:DefaultExport = <any> {};
 		let user:User.Class;
 

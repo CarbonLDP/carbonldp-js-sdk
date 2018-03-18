@@ -1,41 +1,66 @@
 "use strict";
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
+    result["default"] = mod;
+    return result;
+}
 Object.defineProperty(exports, "__esModule", { value: true });
-var Auth = require("./Auth");
-var Document = require("./Document");
-var Documents = require("./Documents");
-var Errors = require("./Errors");
-var LDP = require("./LDP");
-var Messaging = require("./Messaging");
-var ObjectSchema = require("./ObjectSchema");
-var ProtectedDocument = require("./ProtectedDocument");
-var RDF = require("./RDF");
-var RDFRepresentation = require("./RDFRepresentation");
-var SHACL = require("./SHACL");
-var SPARQL = require("./SPARQL");
-var System = require("./System");
+var Auth = __importStar(require("./Auth"));
+var ACE_1 = require("./Auth/ACE");
+var ACL_1 = require("./Auth/ACL");
+var Document_1 = require("./Document");
+var Documents_1 = require("./Documents");
+var Errors = __importStar(require("./Errors"));
+var AddMemberAction_1 = require("./LDP/AddMemberAction");
+var Error_1 = require("./LDP/Error");
+var Map_1 = require("./LDP/Map");
+var MapEntry_1 = require("./LDP/MapEntry");
+var DocumentMetadata_1 = require("./LDP/DocumentMetadata");
+var ErrorResponse_1 = require("./LDP/ErrorResponse");
+var RemoveMemberAction_1 = require("./LDP/RemoveMemberAction");
+var ResponseMetadata_1 = require("./LDP/ResponseMetadata");
+var ValidationError_1 = require("./LDP/ValidationError");
+var AccessPointCreated_1 = require("./Messaging/AccessPointCreated");
+var ChildCreated_1 = require("./Messaging/ChildCreated");
+var DocumentCreatedDetails_1 = require("./Messaging/DocumentCreatedDetails");
+var DocumentDeleted_1 = require("./Messaging/DocumentDeleted");
+var DocumentModified_1 = require("./Messaging/DocumentModified");
+var MemberAdded_1 = require("./Messaging/MemberAdded");
+var MemberAddedDetails_1 = require("./Messaging/MemberAddedDetails");
+var MemberRemoved_1 = require("./Messaging/MemberRemoved");
+var MemberRemovedDetails_1 = require("./Messaging/MemberRemovedDetails");
+var ObjectSchema = __importStar(require("./ObjectSchema"));
+var ProtectedDocument_1 = require("./ProtectedDocument");
+var URI_1 = require("./RDF/URI");
+var ValidationReport_1 = require("./SHACL/ValidationReport");
+var ValidationResult_1 = require("./SHACL/ValidationResult");
+var QueryMetadata_1 = require("./SPARQL/QueryDocument/QueryMetadata");
+var PlatformMetadata_1 = require("./System/PlatformMetadata");
 var Utils_1 = require("./Utils");
-var Class = (function () {
-    function Class() {
+var SDKContext = (function () {
+    function SDKContext() {
         this.generalObjectSchema = new ObjectSchema.DigestedObjectSchema();
         this.typeObjectSchemaMap = new Map();
         this.auth = new Auth.Class(this);
-        this.documents = new Documents.Class(this);
+        this.documents = new Documents_1.Documents(this);
         this.registerDefaultObjectSchemas();
     }
-    Object.defineProperty(Class.prototype, "baseURI", {
+    Object.defineProperty(SDKContext.prototype, "baseURI", {
         get: function () { return ""; },
         enumerable: true,
         configurable: true
     });
-    Object.defineProperty(Class.prototype, "parentContext", {
+    Object.defineProperty(SDKContext.prototype, "parentContext", {
         get: function () { return null; },
         enumerable: true,
         configurable: true
     });
-    Class.prototype.resolve = function (relativeURI) {
-        return RDF.URI.Util.resolve(this.baseURI, relativeURI);
+    SDKContext.prototype.resolve = function (relativeURI) {
+        return URI_1.URI.resolve(this.baseURI, relativeURI);
     };
-    Class.prototype._resolvePath = function (path) {
+    SDKContext.prototype._resolvePath = function (path) {
         var leftSearchedPaths = path.split(".");
         var currentSearchedPaths = [];
         var url = "";
@@ -49,18 +74,18 @@ var Class = (function () {
             var slug = Utils_1.isString(containerPath) ? containerPath : containerPath.slug;
             if (!slug)
                 throw new Errors.IllegalStateError("The path \"" + currentSearchedPaths.join(".") + "\" doesn't have a slug set.");
-            url = RDF.URI.Util.resolve(url, slug);
+            url = URI_1.URI.resolve(url, slug);
             documentPaths = Utils_1.isObject(containerPath) ? containerPath.paths : null;
         }
         return this.resolve(url);
     };
-    Class.prototype.hasObjectSchema = function (type) {
+    SDKContext.prototype.hasObjectSchema = function (type) {
         type = this._resolveTypeURI(type);
         if (this.typeObjectSchemaMap.has(type))
             return true;
         return !!this.parentContext && this.parentContext.hasObjectSchema(type);
     };
-    Class.prototype.getObjectSchema = function (type) {
+    SDKContext.prototype.getObjectSchema = function (type) {
         if (type === void 0) { type = null; }
         if (!!type) {
             type = this._resolveTypeURI(type);
@@ -74,7 +99,7 @@ var Class = (function () {
             if (!this.generalObjectSchema && !this.parentContext)
                 throw new Errors.IllegalStateError();
             var generalSchema = this.generalObjectSchema || this.parentContext.getObjectSchema();
-            var clonedSchema = ObjectSchema.Digester
+            var clonedSchema = ObjectSchema.ObjectSchemaDigester
                 .combineDigestedObjectSchemas([generalSchema]);
             if (clonedSchema.vocab === null && this.settings && this.settings.vocabulary)
                 clonedSchema.vocab = this.resolve(this.settings.vocabulary);
@@ -83,11 +108,11 @@ var Class = (function () {
             return clonedSchema;
         }
     };
-    Class.prototype.extendObjectSchema = function (typeOrObjectSchema, objectSchema) {
+    SDKContext.prototype.extendObjectSchema = function (typeOrObjectSchema, objectSchema) {
         if (objectSchema === void 0) { objectSchema = null; }
         var type = objectSchema ? typeOrObjectSchema : null;
         objectSchema = !!objectSchema ? objectSchema : typeOrObjectSchema;
-        var digestedSchema = ObjectSchema.Digester.digestSchema(objectSchema);
+        var digestedSchema = ObjectSchema.ObjectSchemaDigester.digestSchema(objectSchema);
         if (!type) {
             this.extendGeneralObjectSchema(digestedSchema);
         }
@@ -95,7 +120,7 @@ var Class = (function () {
             this.extendTypeObjectSchema(digestedSchema, type);
         }
     };
-    Class.prototype.clearObjectSchema = function (type) {
+    SDKContext.prototype.clearObjectSchema = function (type) {
         if (type === void 0) { type = null; }
         if (!type) {
             this.generalObjectSchema = !!this.parentContext ? null : new ObjectSchema.DigestedObjectSchema();
@@ -105,7 +130,7 @@ var Class = (function () {
             this.typeObjectSchemaMap.delete(type);
         }
     };
-    Class.prototype.extendGeneralObjectSchema = function (digestedSchema) {
+    SDKContext.prototype.extendGeneralObjectSchema = function (digestedSchema) {
         var digestedSchemaToExtend;
         if (!!this.generalObjectSchema) {
             digestedSchemaToExtend = this.generalObjectSchema;
@@ -116,12 +141,12 @@ var Class = (function () {
         else {
             digestedSchemaToExtend = new ObjectSchema.DigestedObjectSchema();
         }
-        this.generalObjectSchema = ObjectSchema.Digester.combineDigestedObjectSchemas([
+        this.generalObjectSchema = ObjectSchema.ObjectSchemaDigester.combineDigestedObjectSchemas([
             digestedSchemaToExtend,
             digestedSchema,
         ]);
     };
-    Class.prototype.extendTypeObjectSchema = function (digestedSchema, type) {
+    SDKContext.prototype.extendTypeObjectSchema = function (digestedSchema, type) {
         type = this._resolveTypeURI(type);
         var digestedSchemaToExtend;
         if (this.typeObjectSchemaMap.has(type)) {
@@ -133,53 +158,52 @@ var Class = (function () {
         else {
             digestedSchemaToExtend = new ObjectSchema.DigestedObjectSchema();
         }
-        var extendedDigestedSchema = ObjectSchema.Digester.combineDigestedObjectSchemas([
+        var extendedDigestedSchema = ObjectSchema.ObjectSchemaDigester.combineDigestedObjectSchemas([
             digestedSchemaToExtend,
             digestedSchema,
         ]);
         this.typeObjectSchemaMap.set(type, extendedDigestedSchema);
     };
-    Class.prototype.registerDefaultObjectSchemas = function () {
-        this.extendObjectSchema(Document.RDF_CLASS, Document.SCHEMA);
-        this.extendObjectSchema(ProtectedDocument.RDF_CLASS, ProtectedDocument.SCHEMA);
-        this.extendObjectSchema(System.PlatformMetadata.RDF_CLASS, System.PlatformMetadata.SCHEMA);
-        this.extendObjectSchema(RDFRepresentation.RDF_CLASS, RDFRepresentation.SCHEMA);
-        this.extendObjectSchema(LDP.Entry.SCHEMA);
-        this.extendObjectSchema(LDP.Error.RDF_CLASS, LDP.Error.SCHEMA);
-        this.extendObjectSchema(LDP.ErrorResponse.RDF_CLASS, LDP.ErrorResponse.SCHEMA);
-        this.extendObjectSchema(LDP.ResponseMetadata.RDF_CLASS, LDP.ResponseMetadata.SCHEMA);
-        this.extendObjectSchema(LDP.DocumentMetadata.RDF_CLASS, LDP.DocumentMetadata.SCHEMA);
-        this.extendObjectSchema(LDP.AddMemberAction.RDF_CLASS, LDP.AddMemberAction.SCHEMA);
-        this.extendObjectSchema(LDP.RemoveMemberAction.RDF_CLASS, LDP.RemoveMemberAction.SCHEMA);
-        this.extendObjectSchema(LDP.Map.RDF_CLASS, LDP.Map.SCHEMA);
-        this.extendObjectSchema(LDP.ValidationError.RDF_CLASS, LDP.ValidationError.SCHEMA);
+    SDKContext.prototype.registerDefaultObjectSchemas = function () {
+        this.extendObjectSchema(Document_1.Document.TYPE, Document_1.Document.SCHEMA);
+        this.extendObjectSchema(ProtectedDocument_1.ProtectedDocument.TYPE, ProtectedDocument_1.ProtectedDocument.SCHEMA);
+        this.extendObjectSchema(PlatformMetadata_1.PlatformMetadata.TYPE, PlatformMetadata_1.PlatformMetadata.SCHEMA);
+        this.extendObjectSchema(AddMemberAction_1.AddMemberAction.TYPE, AddMemberAction_1.AddMemberAction.SCHEMA);
+        this.extendObjectSchema(Error_1.Error.TYPE, Error_1.Error.SCHEMA);
+        this.extendObjectSchema(Map_1.Map.TYPE, Map_1.Map.SCHEMA);
+        this.extendObjectSchema(MapEntry_1.MapEntry.SCHEMA);
+        this.extendObjectSchema(DocumentMetadata_1.DocumentMetadata.TYPE, DocumentMetadata_1.DocumentMetadata.SCHEMA);
+        this.extendObjectSchema(ErrorResponse_1.ErrorResponse.TYPE, ErrorResponse_1.ErrorResponse.SCHEMA);
+        this.extendObjectSchema(RemoveMemberAction_1.RemoveMemberAction.TYPE, RemoveMemberAction_1.RemoveMemberAction.SCHEMA);
+        this.extendObjectSchema(ResponseMetadata_1.ResponseMetadata.TYPE, ResponseMetadata_1.ResponseMetadata.SCHEMA);
+        this.extendObjectSchema(ValidationError_1.ValidationError.TYPE, ValidationError_1.ValidationError.SCHEMA);
         this.extendObjectSchema(Auth.Role.RDF_CLASS, Auth.Role.SCHEMA);
-        this.extendObjectSchema(Auth.ACE.RDF_CLASS, Auth.ACE.SCHEMA);
-        this.extendObjectSchema(Auth.ACL.RDF_CLASS, Auth.ACL.SCHEMA);
+        this.extendObjectSchema(ACE_1.ACE.TYPE, ACE_1.ACE.SCHEMA);
+        this.extendObjectSchema(ACL_1.ACL.TYPE, ACL_1.ACL.SCHEMA);
         this.extendObjectSchema(Auth.User.RDF_CLASS, Auth.User.SCHEMA);
         this.extendObjectSchema(Auth.Credentials.RDF_CLASS, Auth.Credentials.SCHEMA);
         this.extendObjectSchema(Auth.Ticket.RDF_CLASS, Auth.Ticket.SCHEMA);
         this.extendObjectSchema(Auth.Token.RDF_CLASS, Auth.Token.SCHEMA);
-        this.extendObjectSchema(SHACL.ValidationReport.RDF_CLASS, SHACL.ValidationReport.SCHEMA);
-        this.extendObjectSchema(SHACL.ValidationResult.RDF_CLASS, SHACL.ValidationResult.SCHEMA);
-        this.extendObjectSchema(SPARQL.QueryDocument.QueryMetadata.RDF_CLASS, SPARQL.QueryDocument.QueryMetadata.SCHEMA);
-        this.extendObjectSchema(Messaging.AccessPointCreated.RDF_CLASS, Messaging.AccessPointCreated.SCHEMA);
-        this.extendObjectSchema(Messaging.ChildCreated.RDF_CLASS, Messaging.ChildCreated.SCHEMA);
-        this.extendObjectSchema(Messaging.DocumentCreatedDetails.RDF_CLASS, Messaging.DocumentCreatedDetails.SCHEMA);
-        this.extendObjectSchema(Messaging.DocumentDeleted.RDF_CLASS, Messaging.DocumentDeleted.SCHEMA);
-        this.extendObjectSchema(Messaging.DocumentModified.RDF_CLASS, Messaging.DocumentModified.SCHEMA);
-        this.extendObjectSchema(Messaging.MemberAdded.RDF_CLASS, Messaging.MemberAdded.SCHEMA);
-        this.extendObjectSchema(Messaging.MemberAddedDetails.RDF_CLASS, Messaging.MemberAddedDetails.SCHEMA);
-        this.extendObjectSchema(Messaging.MemberRemoved.RDF_CLASS, Messaging.MemberRemoved.SCHEMA);
-        this.extendObjectSchema(Messaging.MemberRemovedDetails.RDF_CLASS, Messaging.MemberRemovedDetails.SCHEMA);
+        this.extendObjectSchema(ValidationReport_1.ValidationReport.TYPE, ValidationReport_1.ValidationReport.SCHEMA);
+        this.extendObjectSchema(ValidationResult_1.ValidationResult.TYPE, ValidationResult_1.ValidationResult.SCHEMA);
+        this.extendObjectSchema(QueryMetadata_1.QueryMetadata.TYPE, QueryMetadata_1.QueryMetadata.SCHEMA);
+        this.extendObjectSchema(AccessPointCreated_1.AccessPointCreated.TYPE, AccessPointCreated_1.AccessPointCreated.SCHEMA);
+        this.extendObjectSchema(ChildCreated_1.ChildCreated.TYPE, ChildCreated_1.ChildCreated.SCHEMA);
+        this.extendObjectSchema(DocumentCreatedDetails_1.DocumentCreatedDetails.TYPE, DocumentCreatedDetails_1.DocumentCreatedDetails.SCHEMA);
+        this.extendObjectSchema(DocumentDeleted_1.DocumentDeleted.TYPE, DocumentDeleted_1.DocumentDeleted.SCHEMA);
+        this.extendObjectSchema(DocumentModified_1.DocumentModified.TYPE, DocumentModified_1.DocumentModified.SCHEMA);
+        this.extendObjectSchema(MemberAdded_1.MemberAdded.TYPE, MemberAdded_1.MemberAdded.SCHEMA);
+        this.extendObjectSchema(MemberAddedDetails_1.MemberAddedDetails.TYPE, MemberAddedDetails_1.MemberAddedDetails.SCHEMA);
+        this.extendObjectSchema(MemberRemoved_1.MemberRemoved.TYPE, MemberRemoved_1.MemberRemoved.SCHEMA);
+        this.extendObjectSchema(MemberRemovedDetails_1.MemberRemovedDetails.TYPE, MemberRemovedDetails_1.MemberRemovedDetails.SCHEMA);
     };
-    Class.prototype._resolveTypeURI = function (uri) {
-        return ObjectSchema.Util.resolveURI(uri, this.getObjectSchema(), { vocab: true });
+    SDKContext.prototype._resolveTypeURI = function (uri) {
+        return ObjectSchema.ObjectSchemaUtils.resolveURI(uri, this.getObjectSchema(), { vocab: true });
     };
-    return Class;
+    return SDKContext;
 }());
-exports.Class = Class;
-exports.instance = new Class();
-exports.default = exports.instance;
+exports.SDKContext = SDKContext;
+exports.globalContext = new SDKContext();
+exports.default = exports.globalContext;
 
 //# sourceMappingURL=SDKContext.js.map

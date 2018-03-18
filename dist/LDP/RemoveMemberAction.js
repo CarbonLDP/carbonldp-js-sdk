@@ -1,30 +1,35 @@
 "use strict";
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
+    result["default"] = mod;
+    return result;
+}
 Object.defineProperty(exports, "__esModule", { value: true });
-var NS = require("./../NS");
-var Resource = require("./../Resource");
-var Utils = require("./../Utils");
-exports.RDF_CLASS = NS.C.Class.RemoveMemberAction;
+var Resource_1 = require("../Resource");
+var C_1 = require("../Vocabularies/C");
+var Utils = __importStar(require("./../Utils"));
 exports.SCHEMA = {
     "targetMembers": {
-        "@id": NS.C.Predicate.targetMember,
+        "@id": C_1.C.targetMember,
         "@type": "@id",
         "@container": "@set",
     },
 };
-var Factory = (function () {
-    function Factory() {
-    }
-    Factory.hasClassProperties = function (object) {
+exports.RemoveMemberAction = {
+    TYPE: C_1.C.RemoveMemberAction,
+    SCHEMA: exports.SCHEMA,
+    isDecorated: function (object) {
         return Utils.hasPropertyDefined(object, "targetMembers");
-    };
-    Factory.create = function (targetMembers) {
-        return Resource.Factory.createFrom({
-            types: [exports.RDF_CLASS],
+    },
+    create: function (targetMembers) {
+        return Resource_1.Resource.createFrom({
+            types: [exports.RemoveMemberAction.TYPE],
             targetMembers: targetMembers,
         });
-    };
-    return Factory;
-}());
-exports.Factory = Factory;
+    },
+};
+exports.default = exports.RemoveMemberAction;
 
 //# sourceMappingURL=RemoveMemberAction.js.map

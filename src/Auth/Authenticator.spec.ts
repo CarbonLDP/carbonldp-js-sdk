@@ -13,7 +13,7 @@ import * as Utils from "./../Utils";
 import * as Authenticator from "./Authenticator";
 import DefaultExport from "./Authenticator";
 
-describe( module( "Carbon/Auth/Authenticator" ), ():void => {
+describe( module( "carbonldp/Auth/Authenticator" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( Authenticator ).toBeDefined();
@@ -21,8 +21,8 @@ describe( module( "Carbon/Auth/Authenticator" ), ():void => {
 	} );
 
 	describe( interfaze(
-		"Carbon.Auth.Authenticator.Class", [
-			"T extends Carbon.Auth.AuthenticationToken.Class",
+		"CarbonLDP.Auth.Authenticator.Class", [
+			"T extends CarbonLDP.Auth.AuthenticationToken.Class",
 		],
 		"Interface that represents the base of an authentication token."
 	), ():void => {
@@ -54,14 +54,14 @@ describe( module( "Carbon/Auth/Authenticator" ), ():void => {
 			OBLIGATORY,
 			"addAuthentication",
 			"If the authenticator is authenticated, it adds an authentication header in the request options object provided.", [
-				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", description: "The request options object where to add the authentication header." },
+				{ name: "requestOptions", type: "CarbonLDP.HTTP.Request.RequestOptions", description: "The request options object where to add the authentication header." },
 			],
-			{ type: "Carbon.HTTP.Request.Options", description: "The request options object provided after adding the authentication header." }
+			{ type: "CarbonLDP.HTTP.Request.RequestOptions", description: "The request options object provided after adding the authentication header." }
 		), ():void => {} );
 
 	} );
 
-	it( hasDefaultExport( "Carbon.Auth.Authenticator.Class" ), ():void => {
+	it( hasDefaultExport( "CarbonLDP.Auth.Authenticator.Class" ), ():void => {
 		let defaultExport:DefaultExport<Object, Object> = <any> {};
 		let module:Authenticator.Class<Object, Object>;
 

@@ -1,8 +1,9 @@
-import Value from "./Value";
-export interface Class {
-    "@list": Array<Value>;
+import { RDFValue } from "./Value";
+export interface RDFList {
+    "@list": RDFValue[];
 }
-export declare class Factory {
-    static is(value: any): boolean;
+export interface RDFListFactory {
+    is(value: any): value is RDFList;
 }
-export default Class;
+export declare const RDFList: RDFListFactory;
+export default RDFList;

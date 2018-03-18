@@ -1,16 +1,26 @@
 "use strict";
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
+    result["default"] = mod;
+    return result;
+}
 Object.defineProperty(exports, "__esModule", { value: true });
-var ACL = require("./ACL");
-var Pointer = require("./../Pointer");
-var Utils = require("./../Utils");
-var Factory = (function () {
-    function Factory() {
-    }
-    Factory.hasClassProperties = function (object) {
-        return Utils.hasPropertyDefined(object, "accessTo");
-    };
-    Factory.decorate = function (document) {
-        var acl = ACL.Factory.decorate(document);
+var PersistedDocument_1 = require("../PersistedDocument");
+var Utils = __importStar(require("../Utils"));
+var ACL_1 = require("./ACL");
+exports.PersistedACL = {
+    isDecorated: function (object) {
+        return Utils.hasPropertyDefined(object, "accessTo")
+            && object["_parsePointer"] === parsePointer;
+    },
+    decorate: function (object, documents) {
+        if (exports.PersistedACL.isDecorated(object))
+            return object;
+        ACL_1.ACL.decorate(object);
+        PersistedDocument_1.PersistedDocument.decorate(object, documents);
+        var acl = object;
         Object.defineProperties(acl, {
             "_parsePointer": {
                 writable: true,
@@ -29,12 +39,11 @@ var Factory = (function () {
         if (acl.inheritableEntries)
             acl.inheritableEntries = acl.inheritableEntries.filter(removeInvalidACE);
         return acl;
-    };
-    return Factory;
-}());
-exports.Factory = Factory;
+    },
+};
 function parsePointer(element) {
-    return Pointer.Factory.is(element) ? element : this.getPointer(element);
+    return Utils.isObject(element) ? element : this.getPointer(element);
 }
+exports.default = exports.PersistedACL;
 
 //# sourceMappingURL=PersistedACL.js.map

@@ -1,10 +1,12 @@
-import { Class as Document } from "./Document";
-import { Class as Documents } from "./Documents";
-export interface Class extends Document {
+import { Document } from "./Document";
+import { Documents } from "./Documents";
+import { ModelDecorator } from "./ModelDecorator";
+export interface ServiceAwareDocument extends Document {
     _documents: Documents;
 }
-export declare class Factory {
-    static hasClassProperties(object: object): object is Class;
-    static decorate<T extends Document>(document: T, documents: Documents): T & Class;
+export interface ServiceAwareDocumentFactory extends ModelDecorator<ServiceAwareDocument> {
+    isDecorated(object: object): object is ServiceAwareDocument;
+    decorate<T extends object>(object: T, documents: Documents): T & ServiceAwareDocument;
 }
-export default Class;
+export declare const ServiceAwareDocument: ServiceAwareDocumentFactory;
+export default ServiceAwareDocument;

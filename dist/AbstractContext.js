@@ -10,30 +10,29 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-var SDKContext = require("./SDKContext");
-var Class = (function (_super) {
-    __extends(Class, _super);
-    function Class(parentContext) {
-        if (parentContext === void 0) { parentContext = null; }
+var SDKContext_1 = require("./SDKContext");
+var AbstractContext = (function (_super) {
+    __extends(AbstractContext, _super);
+    function AbstractContext(parentContext) {
         var _this = _super.call(this) || this;
-        _this._parentContext = !!parentContext ? parentContext : SDKContext.instance;
+        _this._parentContext = parentContext ? parentContext : SDKContext_1.globalContext;
         _this.generalObjectSchema = null;
         _this.typeObjectSchemaMap = new Map();
         return _this;
     }
-    Object.defineProperty(Class.prototype, "baseURI", {
+    Object.defineProperty(AbstractContext.prototype, "baseURI", {
         get: function () { return this._baseURI; },
         enumerable: true,
         configurable: true
     });
-    Object.defineProperty(Class.prototype, "parentContext", {
+    Object.defineProperty(AbstractContext.prototype, "parentContext", {
         get: function () { return this._parentContext; },
         enumerable: true,
         configurable: true
     });
-    return Class;
-}(SDKContext.Class));
-exports.Class = Class;
-exports.default = Class;
+    return AbstractContext;
+}(SDKContext_1.SDKContext));
+exports.AbstractContext = AbstractContext;
+exports.default = AbstractContext;
 
 //# sourceMappingURL=AbstractContext.js.map

@@ -1,21 +1,16 @@
-import {
-	module,
-
-	OBLIGATORY,
-
-	interfaze,
-
-	isDefined,
-	hasProperty,
-	extendsClass,
-	hasDefaultExport,
-} from "./test/JasmineExtender";
-import * as Utils from "./Utils";
-
 import * as PersistedBlankNode from "./PersistedBlankNode";
 import DefaultExport from "./PersistedBlankNode";
 
-describe( module( "Carbon/LDP/PersistedBlankNode" ), ():void => {
+import {
+	extendsClass,
+	hasDefaultExport,
+	interfaze,
+	isDefined,
+	module,
+} from "./test/JasmineExtender";
+import * as Utils from "./Utils";
+
+describe( module( "carbonldp/LDP/PersistedBlankNode" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( PersistedBlankNode ).toBeDefined();
@@ -23,17 +18,17 @@ describe( module( "Carbon/LDP/PersistedBlankNode" ), ():void => {
 	} );
 
 	describe( interfaze(
-		"Carbon.PersistedBlankNode.Class",
+		"CarbonLDP.PersistedBlankNode.PersistedBlankNode",
 		"Interface that represents a persisted blank node of a persisted document."
 	), ():void => {
 
-		it( extendsClass( "Carbon.PersistedFragment.Class" ), ():void => {} );
+		it( extendsClass( "CarbonLDP.PersistedFragment.PersistedFragment" ), ():void => {} );
 
 	} );
 
-	it( hasDefaultExport( "Carbon.PersistedBlankNode.Class" ), ():void => {
+	it( hasDefaultExport( "CarbonLDP.PersistedBlankNode.PersistedBlankNode" ), ():void => {
 		let defaultExport:DefaultExport = <any> {};
-		let defaultTarget:PersistedBlankNode.Class;
+		let defaultTarget:PersistedBlankNode.PersistedBlankNode;
 
 		defaultTarget = defaultExport;
 		expect( defaultTarget ).toEqual( jasmine.any( Object ) );

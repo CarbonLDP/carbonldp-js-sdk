@@ -1,9 +1,16 @@
 "use strict";
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
+    result["default"] = mod;
+    return result;
+}
 Object.defineProperty(exports, "__esModule", { value: true });
-var NS = require("./../NS");
-var PersistedProtectedDocument = require("./../PersistedProtectedDocument");
-var Utils = require("./../Utils");
-var PersistedCredentials = require("./PersistedCredentials");
+var CS_1 = require("../Vocabularies/CS");
+var PersistedProtectedDocument_1 = require("./../PersistedProtectedDocument");
+var Utils = __importStar(require("./../Utils"));
+var PersistedCredentials = __importStar(require("./PersistedCredentials"));
 var Factory = (function () {
     function Factory() {
     }
@@ -14,14 +21,14 @@ var Factory = (function () {
     };
     Factory.is = function (object) {
         return Factory.hasClassProperties(object)
-            && PersistedProtectedDocument.Factory.is(object);
+            && PersistedProtectedDocument_1.PersistedProtectedDocument.is(object);
     };
     Factory.decorate = function (object, documents) {
         var persistedUser = object;
         if (Factory.hasClassProperties(persistedUser))
             return persistedUser;
-        if (!PersistedProtectedDocument.Factory.hasClassProperties(persistedUser))
-            PersistedProtectedDocument.Factory.decorate(persistedUser, documents);
+        if (!PersistedProtectedDocument_1.PersistedProtectedDocument.isDecorated(persistedUser))
+            PersistedProtectedDocument_1.PersistedProtectedDocument.decorate(persistedUser, documents);
         Object.defineProperties(persistedUser, {
             "enableCredentials": {
                 writable: false,
@@ -62,7 +69,7 @@ function changeEnabledCredentials(enabled, requestOptions) {
 }
 function obtainCredentials(user) {
     return user
-        .executeSELECTQuery("BASE<" + user.id + ">SELECT?c FROM<>WHERE{GRAPH<>{<><" + NS.CS.Predicate.credentials + ">?c}}")
+        .executeSELECTQuery("BASE<" + user.id + ">SELECT?c FROM<>WHERE{GRAPH<>{<><" + CS_1.CS.credentials + ">?c}}")
         .then(function (_a) {
         var credentialsBinding = _a[0].bindings[0], response = _a[1];
         user.credentials = PersistedCredentials.Factory.decorate(credentialsBinding.credentials, user._documents);

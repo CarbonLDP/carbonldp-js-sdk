@@ -1,7 +1,7 @@
-import * as Errors from "./../../../Errors";
+import * as Errors from "../../../Errors";
 import * as Utils from "./../../../Utils";
 
-import Serializer from "./../Serializer";
+import { Serializer } from "./../Serializer";
 
 function pad( value:number ):string {
 	let paddedValue:string = String( value );
@@ -70,7 +70,7 @@ export class UnsignedIntegerSerializer extends IntegerSerializer {
 	serialize( value:any ):string {
 		let stringValue:string = super.serialize( value );
 
-		stringValue = Utils.S.startsWith( stringValue, "-" ) ? stringValue.substring( 1 ) : stringValue;
+		stringValue = Utils.StringUtils.startsWith( stringValue, "-" ) ? stringValue.substring( 1 ) : stringValue;
 
 		return stringValue;
 	}

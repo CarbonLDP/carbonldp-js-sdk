@@ -1,30 +1,32 @@
-import * as Document from "./../Document";
-import * as NS from "./../NS";
+import { CS } from "../Vocabularies/CS";
+import { VCARD } from "../Vocabularies/VCARD";
+import { XSD } from "../Vocabularies/XSD";
+import { Document } from "./../Document";
+import { IllegalArgumentError } from "../Errors";
 import * as ObjectSchema from "./../ObjectSchema";
-import { IllegalArgumentError } from "./../Errors";
 
-export const RDF_CLASS:string = NS.CS.Class.Credentials;
+export const RDF_CLASS:string = CS.Credentials;
 
-export const SCHEMA:ObjectSchema.Class = {
+export const SCHEMA:ObjectSchema.ObjectSchema = {
 	"email": {
-		"@id": NS.VCARD.Predicate.email,
-		"@type": NS.XSD.DataType.string,
+		"@id": VCARD.email,
+		"@type": XSD.string,
 	},
 	"password": {
-		"@id": NS.CS.Predicate.password,
-		"@type": NS.XSD.DataType.string,
+		"@id": CS.password,
+		"@type": XSD.string,
 	},
 	"enabled": {
-		"@id": NS.CS.Predicate.enabled,
-		"@type": NS.XSD.DataType.boolean,
+		"@id": CS.enabled,
+		"@type": XSD.boolean,
 	},
 	"user": {
-		"@id": NS.CS.Predicate.credentialsOf,
+		"@id": CS.credentialsOf,
 		"@type": "@id",
 	},
 };
 
-export interface Class extends Document.Class {
+export interface Class extends Document {
 	email:string;
 	password:string;
 	enabled?:boolean;
@@ -36,7 +38,7 @@ export class Factory {
 	}
 
 	static createFrom<T extends Object>( object:T, email:string, password:string ):T & Class {
-		const credentials:T & Class = <T & Class> Document.Factory.createFrom<T>( object );
+		const credentials:T & Class = <T & Class> Document.createFrom<T>( object );
 
 		if( ! email ) throw new IllegalArgumentError( "The email cannot be empty." );
 		if( ! password ) throw new IllegalArgumentError( "The password cannot be empty." );

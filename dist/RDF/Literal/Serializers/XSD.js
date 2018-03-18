@@ -9,9 +9,16 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
+    result["default"] = mod;
+    return result;
+}
 Object.defineProperty(exports, "__esModule", { value: true });
-var Errors = require("./../../../Errors");
-var Utils = require("./../../../Utils");
+var Errors = __importStar(require("../../../Errors"));
+var Utils = __importStar(require("./../../../Utils"));
 function pad(value) {
     var paddedValue = String(value);
     if (paddedValue.length === 1)
@@ -90,7 +97,7 @@ var UnsignedIntegerSerializer = (function (_super) {
     }
     UnsignedIntegerSerializer.prototype.serialize = function (value) {
         var stringValue = _super.prototype.serialize.call(this, value);
-        stringValue = Utils.S.startsWith(stringValue, "-") ? stringValue.substring(1) : stringValue;
+        stringValue = Utils.StringUtils.startsWith(stringValue, "-") ? stringValue.substring(1) : stringValue;
         return stringValue;
     };
     return UnsignedIntegerSerializer;

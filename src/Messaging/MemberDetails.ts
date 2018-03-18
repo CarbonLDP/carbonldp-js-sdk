@@ -1,18 +1,28 @@
-import * as NS from "./../NS";
-import * as ObjectSchema from "./../ObjectSchema";
-import * as Pointer from "./../Pointer";
-import * as Resource from "./../Resource";
+import { ObjectSchema } from "../ObjectSchema";
+import { Pointer } from "../Pointer";
+import { Resource } from "../Resource";
+import { C } from "../Vocabularies/C";
 
-export const SCHEMA:ObjectSchema.Class = {
+
+export interface MemberDetails extends Resource {
+	members:Pointer[];
+}
+
+
+export interface MemberDetailsFactory {
+	SCHEMA:ObjectSchema;
+}
+
+const SCHEMA:ObjectSchema = {
 	"members": {
-		"@id": NS.C.Predicate.member,
+		"@id": C.member,
 		"@type": "@id",
 		"@container": "@set",
 	},
 };
 
-export interface Class extends Resource.Class {
-	members:Pointer.Class[];
-}
+export const MemberDetails:MemberDetailsFactory = {
+	SCHEMA,
+};
 
-export default Class;
+export default MemberDetails;

@@ -1,17 +1,19 @@
-import * as HTTP from "./../HTTP";
-import * as Documents from "./../Documents";
-import * as PersistedProtectedDocument from "./../PersistedProtectedDocument";
+import { Documents } from "../Documents";
+import { RequestOptions } from "../HTTP/Request";
+import { Response } from "../HTTP/Response";
+import { PersistedProtectedDocument } from "../PersistedProtectedDocument";
 import * as Utils from "./../Utils";
 import * as PersistedUser from "./PersistedUser";
 
-export interface Class extends PersistedProtectedDocument.Class {
+export interface Class extends PersistedProtectedDocument {
 	email?:string;
 	password?:string;
 	enabled?:boolean;
 	user?:PersistedUser.Class;
 
-	enable( requestOptions?:HTTP.Request.Options ):Promise<[ Class, HTTP.Response.Class[] ]>;
-	disable( requestOptions?:HTTP.Request.Options ):Promise<[ Class, HTTP.Response.Class[] ]>;
+	enable( requestOptions?:RequestOptions ):Promise<[ Class, Response[] ]>;
+
+	disable( requestOptions?:RequestOptions ):Promise<[ Class, Response[] ]>;
 }
 
 export class Factory {
@@ -22,11 +24,11 @@ export class Factory {
 			;
 	}
 
-	static decorate<T extends object>( persistedDocument:T, documents:Documents.Class ):T & Class {
+	static decorate<T extends object>( persistedDocument:T, documents:Documents ):T & Class {
 		const persistedCredentials:T & Class = <T & Class> persistedDocument;
 		if( Factory.hasClassProperties( persistedDocument ) ) return persistedCredentials;
 
-		PersistedProtectedDocument.Factory.decorate( persistedCredentials, documents );
+		PersistedProtectedDocument.decorate( persistedCredentials, documents );
 
 		Object.defineProperties( persistedCredentials, {
 			"enable": {
@@ -52,15 +54,15 @@ export class Factory {
 	}
 }
 
-function changeEnabled( this:Class, enabled:boolean, requestOptions?:HTTP.Request.Options ):Promise<[ Class, HTTP.Response.Class[] ]> {
-	const responses:HTTP.Response.Class[] = [];
-	const promise:Promise<[ Class, HTTP.Response.Class ]> = this.isResolved() ? Promise.resolve<any>( [] ) : this.resolve();
+function changeEnabled( this:Class, enabled:boolean, requestOptions?:RequestOptions ):Promise<[ Class, Response[] ]> {
+	const responses:Response[] = [];
+	const promise:Promise<[ Class, Response ]> = this.isResolved() ? Promise.resolve<any>( [] ) : this.resolve();
 	return promise.then( ( [ _credentials, response ] ) => {
 		if( response ) responses.push( response );
 
 		this.enabled = enabled;
 		return this.save( requestOptions );
-	} ).then<[ Class, HTTP.Response.Class[] ]>( ( [ _credentials, response ] ) => {
+	} ).then<[ Class, Response[] ]>( ( [ _credentials, response ] ) => {
 		if( response ) responses.push( response );
 
 		return [ this, responses ];

@@ -1,12 +1,11 @@
 import AbstractError from "./AbstractError";
 
-export class Class extends AbstractError {
+export class IllegalStateError extends AbstractError {
 	get name():string { return "IllegalStateError"; }
 
-	constructor( message:string = "" ) {
+	constructor( message?:string ) {
 		super( message );
-		Object.setPrototypeOf( this, Class.prototype );
 	}
 }
 
-export default Class;
+export default IllegalStateError;

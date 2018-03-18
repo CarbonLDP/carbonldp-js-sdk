@@ -1,75 +1,128 @@
-import * as Fragment from "./Fragment";
-import * as ObjectSchema from "./ObjectSchema";
-import * as PersistedDocument from "./PersistedDocument";
-import * as PersistedResource from "./PersistedResource";
-import * as RDF from "./RDF";
+import { Fragment } from "./Fragment";
+import { ModelDecorator } from "./ModelDecorator";
+import { ModelFactory } from "./ModelFactory";
+import {
+	DigestedObjectSchema,
+	ObjectSchemaUtils,
+} from "./ObjectSchema";
+import { PersistedDocument } from "./PersistedDocument";
+import { PersistedResource } from "./PersistedResource";
+import { URI } from "./RDF/URI";
+import {
+	addTypeInResource,
+	hasTypeInResource,
+	removeTypeInResource,
+} from "./Resource";
+import { isObject } from "./Utils";
 
-export interface Class extends PersistedResource.Class, Fragment.Class {
-	document:PersistedDocument.Class;
+export interface PersistedFragment extends PersistedResource, Fragment {
+	_document:PersistedDocument;
+
+	addType( type:string ):void;
+
+	hasType( type:string ):boolean;
+
+	removeType( type:string ):void;
 }
 
-function resolveURI( this:Class, uri:string ):string {
-	if( RDF.URI.Util.isAbsolute( uri ) ) return uri;
 
-	let schema:ObjectSchema.DigestedObjectSchema = this.document._documents.getGeneralSchema();
-	return ObjectSchema.Util.resolveURI( uri, schema, { vocab: true } );
+export interface PersistedFragmentFactory extends ModelFactory<PersistedFragment>, ModelDecorator<PersistedFragment> {
+	isDecorated( object:object ):object is PersistedFragment;
+
+	is( object:object ):object is PersistedFragment;
+
+
+	decorate<T extends object>( object:T ):T & PersistedFragment;
+
+	create( document:PersistedDocument, id?:string ):PersistedFragment;
+
+	createFrom<T extends object>( object:T, document:PersistedDocument, id?:string ):T & PersistedFragment;
 }
 
-function extendAddType( superFunction:( type:string ) => void ):( type:string ) => void {
-	return function( type:string ):void {
-		type = resolveURI.call( this, type );
-		superFunction.call( this, type );
-	};
+
+function resolveURI( fragment:PersistedFragment, uri:string ):string {
+	if( URI.isAbsolute( uri ) ) return uri;
+
+	const schema:DigestedObjectSchema = fragment._document._documents.getGeneralSchema();
+	return ObjectSchemaUtils.resolveURI( uri, schema, { vocab: true } );
 }
 
-function extendHasType( superFunction:( type:string ) => boolean ):( type:string ) => boolean {
-	return function( type:string ):boolean {
-		type = resolveURI.call( this, type );
-		return superFunction.call( this, type );
-	};
+function addTypeInPersistedFragment( this:PersistedFragment, type:string ):void {
+	type = resolveURI( this, type );
+	return addTypeInResource.call( this, type );
 }
 
-function extendRemoveType( superFunction:( type:string ) => void ):( type:string ) => void {
-	return function( type:string ):void {
-		type = resolveURI.call( this, type );
-		superFunction.call( this, type );
-	};
+function hasTypeInPersistedFragment( this:PersistedFragment, type:string ):void {
+	type = resolveURI( this, type );
+	return hasTypeInResource.call( this, type );
 }
 
-export class Factory {
+function removeTypeInPersistedFragment( this:PersistedFragment, type:string ):void {
+	type = resolveURI( this, type );
+	return removeTypeInResource.call( this, type );
+}
 
-	static is( object:object ):object is Class {
-		return PersistedResource.Factory.hasClassProperties( object )
-			&& Fragment.Factory.hasClassProperties( object )
+export const PersistedFragment:PersistedFragmentFactory = {
+	isDecorated( object:object ):object is PersistedFragment {
+		return isObject( object ) &&
+			object[ "addType" ] === addTypeInPersistedFragment &&
+			object[ "hasType" ] === hasTypeInPersistedFragment &&
+			object[ "removeType" ] === removeTypeInPersistedFragment
 			;
-	}
+	},
 
-	static decorate<T extends Fragment.Class>( fragment:T ):T & Class {
-		PersistedResource.Factory.decorate( fragment );
+	is( object:object ):object is PersistedFragment {
+		return Fragment.is( object ) &&
+			PersistedResource.isDecorated( object ) &&
+			PersistedFragment.isDecorated( object )
+			;
+	},
 
-		Object.defineProperties( fragment, {
+
+	decorate<T extends object>( object:T ):T & PersistedFragment {
+		if( PersistedFragment.isDecorated( object ) ) return object;
+
+		Fragment.decorate( object );
+		PersistedResource.decorate( object );
+
+		const fragment:T & PersistedFragment = object as T & PersistedFragment;
+		Object.defineProperties( object, {
 			"addType": {
 				writable: false,
 				enumerable: false,
 				configurable: true,
-				value: extendAddType( fragment.addType ),
+				value: addTypeInPersistedFragment,
 			},
 			"hasType": {
 				writable: false,
 				enumerable: false,
 				configurable: true,
-				value: extendHasType( fragment.hasType ),
+				value: hasTypeInPersistedFragment,
 			},
 			"removeType": {
 				writable: false,
 				enumerable: false,
 				configurable: true,
-				value: extendRemoveType( fragment.removeType ),
+				value: removeTypeInPersistedFragment,
 			},
 		} );
 
-		return <any> fragment;
-	}
-}
+		return fragment;
+	},
 
-export default Class;
+	create( document:PersistedDocument, id?:string ):PersistedFragment {
+		return PersistedFragment.createFrom( {}, document, id );
+	},
+
+	createFrom<T extends object>( object:T, document:PersistedDocument, id?:string ):T & PersistedFragment {
+		const fragment:T & PersistedFragment = PersistedFragment.decorate( object );
+
+		fragment._document = document;
+		if( id ) fragment.id = id;
+
+		return fragment;
+	},
+
+};
+
+export default PersistedFragment;

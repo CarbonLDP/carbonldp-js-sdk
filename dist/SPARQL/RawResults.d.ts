@@ -1,29 +1,20 @@
-export declare class ValueTypes {
-    static readonly URI: string;
-    static readonly LITERAL: string;
-    static readonly BNODE: string;
-}
-export interface BindingObject {
-    [name: string]: BindingProperty;
-}
-export interface BindingProperty {
+export interface SPARQLRawBindingProperty {
     "type": string;
     "value": string;
     "datatype"?: string;
     "xml:lang"?: string;
 }
-export interface Class {
+export interface SPARQLRawBindingObject {
+    [name: string]: SPARQLRawBindingProperty;
+}
+export interface SPARQLRawResults {
     "head": {
         "vars"?: string[];
         "links"?: string[];
     };
     "results"?: {
-        "bindings": BindingObject[];
+        "bindings": SPARQLRawBindingObject[];
     };
     "boolean"?: boolean;
 }
-export declare class Factory {
-    static hasClassProperties(value: Object): boolean;
-    static is(value: any): boolean;
-}
-export default Class;
+export default SPARQLRawResults;

@@ -1,45 +1,71 @@
-import * as Document from "./Document";
-import * as Fragment from "./Fragment";
-import * as RDF from "./RDF";
-import * as Utils from "./Utils";
+import { Document } from "./Document";
+import { Fragment } from "./Fragment";
+import { ModelDecorator } from "./ModelDecorator";
+import { ModelFactory } from "./ModelFactory";
+import { URI } from "./RDF/URI";
+import { isObject } from "./Utils";
 
-export interface Class extends Fragment.Class {
+export interface NamedFragment extends Fragment {
 	slug:string;
 }
 
-export class Factory {
-	static hasClassProperties( resource:Fragment.Class ):boolean {
-		return (
-			Utils.hasPropertyDefined( resource, "slug" )
-		);
-	}
 
-	static create( slug:string, document:Document.Class ):Class {
-		return this.createFrom( {}, slug, document );
-	}
+export interface NamedFragmentFactory extends ModelFactory<NamedFragment>, ModelDecorator<NamedFragment> {
+	isDecorated( object:object ):object is NamedFragment;
 
-	static createFrom<T extends Object>( object:T, slug:string, document:Document.Class ):T & Class {
-		let uri:string = document.id + "#" + slug;
+	is( object:object ):object is NamedFragment;
 
-		let fragment:Fragment.Class = Fragment.Factory.createFrom( object, uri, document );
 
-		if( this.hasClassProperties( fragment ) ) return <any> fragment;
+	create( document:Document, slug:string ):NamedFragment;
 
-		Object.defineProperties( fragment, {
+	createFrom<T extends object>( object:T, document:Document, slug:string ):T & NamedFragment;
+
+	decorate<T extends object>( object:T ):T & NamedFragment;
+}
+
+export const NamedFragment:NamedFragmentFactory = {
+	isDecorated( object:object ):object is NamedFragment {
+		return isObject( object ) &&
+			object.hasOwnProperty( "slug" ) && ! object.propertyIsEnumerable( "slug" )
+			;
+	},
+
+	is( object:object ):object is NamedFragment {
+		return Fragment.is( object )
+			&& NamedFragment.isDecorated( object )
+			;
+	},
+
+	create( document:Document, slug:string ):NamedFragment {
+		return this.createFrom( {}, document, slug );
+	},
+
+	createFrom<T extends object>( object:T, document:Document, slug:string ):T & NamedFragment {
+		const id:string = document.id + "#" + slug;
+		const fragment:T & Fragment = Fragment.createFrom( object, document, id );
+
+		return NamedFragment.decorate( fragment );
+	},
+
+	decorate<T extends object>( object:T ):T & NamedFragment {
+		if( NamedFragment.isDecorated( object ) ) return object;
+
+		const namedFragment:T & NamedFragment = object as T & NamedFragment;
+		Object.defineProperties( namedFragment, {
 			"slug": {
 				enumerable: false,
 				configurable: true,
-				get: function():string {
-					return RDF.URI.Util.getFragment( fragment.id );
+				get( this:NamedFragment ):string {
+					return URI.getFragment( this.id );
 				},
-				set: function( value:string ):void {
-					this.id = this.document.id + "#" + value;
+				set( this:NamedFragment, value:string ):void {
+					this.id = this._document.id + "#" + value;
 				},
 			},
 		} );
 
-		return <any>fragment;
-	}
-}
+		return namedFragment;
+	},
+};
 
-export default Class;
+export default NamedFragment;

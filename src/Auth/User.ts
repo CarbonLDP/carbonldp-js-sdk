@@ -1,22 +1,23 @@
-import * as Document from "./../Document";
-import * as NS from "./../NS";
+import { CS } from "../Vocabularies/CS";
+import { XSD } from "../Vocabularies/XSD";
+import { Document } from "./../Document";
 import * as ObjectSchema from "./../ObjectSchema";
 import * as Utils from "./../Utils";
 
-export const RDF_CLASS:string = NS.CS.Class.User;
+export const RDF_CLASS:string = CS.User;
 
-export const SCHEMA:ObjectSchema.Class = {
+export const SCHEMA:ObjectSchema.ObjectSchema = {
 	"name": {
-		"@id": NS.CS.Predicate.namae,
-		"@type": NS.XSD.DataType.string,
+		"@id": CS.name,
+		"@type": XSD.string,
 	},
 	"credentials": {
-		"@id": NS.CS.Predicate.credentials,
+		"@id": CS.credentials,
 		"@type": "@id",
 	},
 };
 
-export interface Class extends Document.Class {
+export interface Class extends Document {
 	name:string;
 }
 

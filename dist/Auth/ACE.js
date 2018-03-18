@@ -1,50 +1,52 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var NS = require("./../NS");
-var Utils = require("./../Utils");
-exports.RDF_CLASS = NS.CS.Class.AccessControlEntry;
-exports.SCHEMA = {
+var Fragment_1 = require("../Fragment");
+var CS_1 = require("../Vocabularies/CS");
+var XSD_1 = require("../Vocabularies/XSD");
+var SCHEMA = {
     "granting": {
-        "@id": NS.CS.Predicate.granting,
-        "@type": NS.XSD.DataType.boolean,
+        "@id": CS_1.CS.granting,
+        "@type": XSD_1.XSD.boolean,
     },
     "permissions": {
-        "@id": NS.CS.Predicate.permission,
+        "@id": CS_1.CS.permission,
         "@type": "@id",
         "@container": "@set",
     },
     "subjects": {
-        "@id": NS.CS.Predicate.subject,
+        "@id": CS_1.CS.subject,
         "@type": "@id",
         "@container": "@set",
     },
     "subjectsClass": {
-        "@id": NS.CS.Predicate.subjectClass,
+        "@id": CS_1.CS.subjectClass,
         "@type": "@id",
     },
 };
-var Factory = (function () {
-    function Factory() {
-    }
-    Factory.hasClassProperties = function (object) {
-        return Utils.hasPropertyDefined(object, "granting")
-            && Utils.hasPropertyDefined(object, "permissions")
-            && Utils.hasPropertyDefined(object, "subjects")
-            && Utils.hasPropertyDefined(object, "subjectsClass");
-    };
-    Factory.createFrom = function (object, granting, subjects, subjectClass, permissions) {
+exports.ACE = {
+    TYPE: CS_1.CS.AccessControlEntry,
+    SCHEMA: SCHEMA,
+    is: function (object) {
+        return Fragment_1.Fragment.is(object)
+            && object.hasOwnProperty("granting")
+            && object.hasOwnProperty("permissions")
+            && object.hasOwnProperty("subjects")
+            && object.hasOwnProperty("subjectsClass");
+    },
+    create: function (granting, subjects, subjectClass, permissions) {
+        return exports.ACE.createFrom({}, granting, subjects, subjectClass, permissions);
+    },
+    createFrom: function (object, granting, subjects, subjectClass, permissions) {
         var ace = object;
-        if (!ace.types)
-            ace.types = [];
-        ace.types.push(exports.RDF_CLASS);
+        Fragment_1.Fragment.decorate(ace);
+        ace.addType(exports.ACE.TYPE);
         ace.granting = granting;
         ace.subjects = subjects;
         ace.subjectsClass = subjectClass;
         ace.permissions = permissions;
         return ace;
-    };
-    return Factory;
-}());
-exports.Factory = Factory;
+    },
+};
+exports.default = exports.ACE;
 
 //# sourceMappingURL=ACE.js.map

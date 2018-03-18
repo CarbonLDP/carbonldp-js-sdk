@@ -1,76 +1,64 @@
 import { Server } from "mock-socket";
 import Frame from "webstomp-client/src/frame.js";
 
-import Carbon from "../Carbon";
+import { CarbonLDP } from "../CarbonLDP";
 import { IllegalStateError } from "../Errors";
+import { Pointer } from "../Pointer";
+import { Resource } from "../Resource";
 import {
 	clazz,
 	constructor,
 	hasDefaultExport,
-	hasProperty,
 	hasSignature,
 	INSTANCE,
 	isDefined,
 	method,
-	module,
-	STATIC
+	module
 } from "../test/JasmineExtender";
-import * as Pointer from "./../Pointer";
-import * as Resource from "./../Resource";
-import * as Message from "./Message";
+import { EventMessage } from "./EventMessage";
 
 import * as MessagingService from "./Service";
 import DefaultExport from "./Service";
 
-describe( module( "Carbon/Messaging/Service" ), ():void => {
+describe( module( "carbonldp/Messaging/Service" ), ():void => {
 
 	it( "should exists", ():void => {
 		expect( MessagingService ).toBeDefined();
 		expect( MessagingService ).toEqual( jasmine.any( Object ) );
 	} );
 
-	it( hasProperty(
-		STATIC,
-		"DEFAULT_OPTIONS",
-		"Carbon.Messaging.Options",
-		"Object with the default messaging options: ```typescript\n{\n\tmaxReconnectAttempts: 10,\n\treconnectDelay: 1000\n}\n```"
-	), ():void => {
-		expect( MessagingService.DEFAULT_OPTIONS ).toBeDefined();
-		expect( MessagingService.DEFAULT_OPTIONS ).toEqual( {
-			maxReconnectAttempts: 10,
-			reconnectDelay: 1000,
-		} );
-	} );
-
 	describe( clazz(
-		"Carbon.Messaging.Service.Class",
+		"CarbonLDP.Messaging.Service.MessagingService",
 		"Class that manages the messaging client, connecting and subscriptions."
 	), ():void => {
 
 		it( isDefined(), ():void => {
-			expect( MessagingService.Class ).toBeDefined();
-			expect( MessagingService.Class ).toEqual( jasmine.any( Function ) );
+			expect( MessagingService.MessagingService ).toBeDefined();
+			expect( MessagingService.MessagingService ).toEqual( jasmine.any( Function ) );
 		} );
 
-		let service:MessagingService.Class;
+		let service:MessagingService.MessagingService;
 		beforeEach( () => {
-			const carbon:Carbon = new Carbon( "https://example.com" );
-			service = new MessagingService.Class( carbon );
+			const carbon:CarbonLDP = new CarbonLDP( "https://example.com" );
+			service = new MessagingService.MessagingService( carbon );
 		} );
 
 		describe( constructor(), ():void => {
 
 			it( hasSignature(
 				[
-					{ name: "context", type: "Carbon.Class" },
+					{ name: "context", type: "CarbonLDP" },
 				]
 			), ():void => {
-				expect( service ).toEqual( jasmine.any( MessagingService.Class ) );
+				expect( service ).toEqual( jasmine.any( MessagingService.MessagingService ) );
 			} );
 
 			it( "should initialize options with the default options", ():void => {
 				expect( service[ "_options" ] ).toBeDefined();
-				expect( service[ "_options" ] ).toBe( MessagingService.DEFAULT_OPTIONS );
+				expect( service[ "_options" ] ).toEqual( {
+					maxReconnectAttempts: 10,
+					reconnectDelay: 1000,
+				} );
 			} );
 
 			it( "should initialize subscriptions queue", ():void => {
@@ -86,9 +74,9 @@ describe( module( "Carbon/Messaging/Service" ), ():void => {
 		), ():void => {
 
 			it( hasSignature(
-				"Update the messaging service options. If any property is no defined the default is used; see `Carbon.Messaging.Service.DEFAULT_OPTIONS`.",
+				"Update the messaging service options. If any property is no defined the default is used:\n\n```typescript\n{\n\tmaxReconnectAttempts: 10,\n\treconnectDelay: 1000\n}\n```.",
 				[
-					{ name: "options", type: "Carbon.Messaging.Options", description: "The options to be updated" },
+					{ name: "options", type: "CarbonLDP.Messaging.MessagingOptions", description: "The options to be updated" },
 				]
 			), ():void => {} );
 
@@ -349,7 +337,7 @@ describe( module( "Carbon/Messaging/Service" ), ():void => {
 						expect( service[ "_client" ].connected ).toBe( false );
 					}
 
-					MessagingService.Class.prototype.reconnect.call( service, ...args );
+					MessagingService.MessagingService.prototype.reconnect.call( service, ...args );
 				} );
 
 				service.reconnect( () => {
@@ -393,7 +381,7 @@ describe( module( "Carbon/Messaging/Service" ), ():void => {
 						expect( service[ "_client" ].connected ).toBe( false );
 					}
 
-					MessagingService.Class.prototype.reconnect.call( service, ...args );
+					MessagingService.MessagingService.prototype.reconnect.call( service, ...args );
 				} );
 
 				let reconnected:boolean = false;
@@ -452,7 +440,7 @@ describe( module( "Carbon/Messaging/Service" ), ():void => {
 				"Subscribe to an event described by the destination provided.",
 				[
 					{ name: "destination", type: "string", description: "The destination of the event to subscribe for." },
-					{ name: "onEvent", type: "( message:Carbon.Messaging.Message.Class ) => void", optional: true, description: "Callback to be invoked in every notification event and will be provided with the data message of the event." },
+					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.EventMessage.EventMessage ) => void", optional: true, description: "Callback to be invoked in every notification event and will be provided with the data message of the event." },
 					{ name: "onError", type: "( error:Error ) => void", optional: true, description: "Callback to be invoked when a error has occurred in the subscription." },
 				]
 			), ():void => {} );
@@ -492,18 +480,18 @@ describe( module( "Carbon/Messaging/Service" ), ():void => {
 					} );
 				} );
 
-				service.subscribe( "destination/", ( message:Message.Class ) => {
+				service.subscribe( "destination/", ( message:EventMessage ) => {
 					expect( service[ "_client" ].connected ).toBe( true );
 
 					expect( message ).toEqual( {
 						target: jasmine.any( Object ),
 					} as any );
 
-					expect( Resource.Factory.is( message ) ).toBe( true );
+					expect( Resource.is( message ) ).toBe( true );
 					expect( message.id ).toBe( "_:1" );
 					expect( message.hasType( "https://carbonldp.com/ns/v1/platform#ChildCreatedEvent" ) ).toBe( true );
 
-					expect( Pointer.Factory.is( message.target ) ).toBe( true );
+					expect( Pointer.is( message.target ) ).toBe( true );
 					expect( message.target.id ).toBe( "https://example.com/created-child/" );
 
 					mockServer.stop( done );
@@ -543,18 +531,18 @@ describe( module( "Carbon/Messaging/Service" ), ():void => {
 				} );
 
 				function addSubscription( index:number ):void {
-					service.subscribe( `/topic/*.*.destination-${ index }/`, ( message:Message.Class ) => {
+					service.subscribe( `/topic/*.*.destination-${ index }/`, ( message:EventMessage ) => {
 						expect( service[ "_client" ].connected ).toBe( true );
 
 						expect( message ).toEqual( {
 							target: jasmine.any( Object ),
 						} as any );
 
-						expect( Resource.Factory.is( message ) ).toBe( true );
+						expect( Resource.is( message ) ).toBe( true );
 						expect( message.id ).toBe( "_:1" );
 						expect( message.hasType( "https://carbonldp.com/ns/v1/platform#ChildCreatedEvent" ) ).toBe( true );
 
-						expect( Pointer.Factory.is( message.target ) ).toBe( true );
+						expect( Pointer.is( message.target ) ).toBe( true );
 						expect( message.target.id ).toBe( `https://example.com/created-child-${ index }/` );
 
 						if( ++ receivedData === 2 ) mockServer.stop( done );
@@ -619,7 +607,7 @@ describe( module( "Carbon/Messaging/Service" ), ():void => {
 				"Remove the subscription set for the specific destination and onEvent callback.",
 				[
 					{ name: "destination", type: "string", description: "The destination of the subscription to be removed." },
-					{ name: "onEvent", type: "( message:Carbon.Messaging.Message.Class ) => void", optional: true, description: "Callback of the subscription to be be removed." },
+					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.EventMessage.EventMessage ) => void", optional: true, description: "Callback of the subscription to be be removed." },
 				]
 			), ():void => {} );
 
@@ -675,20 +663,20 @@ describe( module( "Carbon/Messaging/Service" ), ():void => {
 				let finishCallback:Function;
 				let responded:number = 0;
 
-				function addSubscription( index:number ):( message:Message.Class ) => void {
-					let callback:( message:Message.Class ) => void;
-					service.subscribe( `/topic/*.*.destination-${ index }/`, callback = ( message:Message.Class ) => {
+				function addSubscription( index:number ):( message:EventMessage ) => void {
+					let callback:( message:EventMessage ) => void;
+					service.subscribe( `/topic/*.*.destination-${ index }/`, callback = ( message:EventMessage ) => {
 						expect( service[ "_client" ].connected ).toBe( true );
 
 						expect( message ).toEqual( {
 							target: jasmine.any( Object ),
 						} as any );
 
-						expect( Resource.Factory.is( message ) ).toBe( true );
+						expect( Resource.is( message ) ).toBe( true );
 						expect( message.id ).toBe( "_:1" );
 						expect( message.hasType( "https://carbonldp.com/ns/v1/platform#ChildCreatedEvent" ) ).toBe( true );
 
-						expect( Pointer.Factory.is( message.target ) ).toBe( true );
+						expect( Pointer.is( message.target ) ).toBe( true );
 						expect( message.target.id ).toBe( `https://example.com/created-child-${ index }/` );
 
 						if( ++ responded === 3 ) finishCallback();
@@ -700,7 +688,7 @@ describe( module( "Carbon/Messaging/Service" ), ():void => {
 				}
 
 				addSubscription( 1 );
-				const secondCallback:( message:Message.Class ) => void = addSubscription( 2 );
+				const secondCallback:( message:EventMessage ) => void = addSubscription( 2 );
 				addSubscription( 3 );
 
 				finishCallback = () => {
@@ -712,9 +700,9 @@ describe( module( "Carbon/Messaging/Service" ), ():void => {
 
 	} );
 
-	it( hasDefaultExport( "Carbon.Messaging.Service.Class" ), ():void => {
+	it( hasDefaultExport( "CarbonLDP.Messaging.Service.MessagingService" ), ():void => {
 		expect( DefaultExport ).toBeDefined();
-		expect( MessagingService.Class ).toBe( DefaultExport );
+		expect( MessagingService.MessagingService ).toBe( DefaultExport );
 	} );
 
 } );

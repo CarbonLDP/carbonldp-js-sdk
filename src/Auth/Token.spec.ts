@@ -1,26 +1,24 @@
+import { CS } from "../Vocabularies/CS";
+import { XSD } from "../Vocabularies/XSD";
+import { Resource } from "./../Resource";
 import {
-	STATIC,
-
-	OBLIGATORY,
-
-	module,
 	clazz,
-	interfaze,
-
-	isDefined,
+	extendsClass,
+	hasDefaultExport,
 	hasMethod,
 	hasProperty,
-	hasDefaultExport,
-	extendsClass,
+	interfaze,
+	isDefined,
+	module,
+	OBLIGATORY,
+	STATIC,
 } from "./../test/JasmineExtender";
-import * as NS from "./../NS";
-import * as Resource from "./../Resource";
 import * as Utils from "./../Utils";
 
 import * as Token from "./Token";
 import DefaultExport from "./Token";
 
-describe( module( "Carbon/Auth/Token" ), ():void => {
+describe( module( "carbonldp/Auth/Token" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( Token ).toBeDefined();
@@ -35,42 +33,42 @@ describe( module( "Carbon/Auth/Token" ), ():void => {
 		expect( Token.RDF_CLASS ).toBeDefined();
 		expect( Utils.isString( Token.RDF_CLASS ) ).toBe( true );
 
-		expect( Token.RDF_CLASS ).toBe( NS.CS.Class.Token );
+		expect( Token.RDF_CLASS ).toBe( CS.Token );
 	} );
 
 	it( hasProperty(
 		STATIC,
 		"SCHEMA",
-		"Carbon.ObjectSchema.Class"
+		"CarbonLDP.ObjectSchema.ObjectSchema"
 	), ():void => {
 		expect( Token.SCHEMA ).toBeDefined();
 		expect( Utils.isObject( Token.SCHEMA ) ).toBe( true );
 
 		expect( Utils.hasProperty( Token.SCHEMA, "key" ) ).toBe( true );
 		expect( Token.SCHEMA[ "key" ] ).toEqual( {
-			"@id": NS.CS.Predicate.tokenKey,
-			"@type": NS.XSD.DataType.string,
+			"@id": CS.tokenKey,
+			"@type": XSD.string,
 		} );
 
 		expect( Utils.hasProperty( Token.SCHEMA, "expirationTime" ) ).toBe( true );
 		expect( Token.SCHEMA[ "expirationTime" ] ).toEqual( {
-			"@id": NS.CS.Predicate.expirationTime,
-			"@type": NS.XSD.DataType.dateTime,
+			"@id": CS.expirationTime,
+			"@type": XSD.dateTime,
 		} );
 
 	} );
 
 	describe( interfaze(
-		"Carbon.Auth.Token.Class",
+		"CarbonLDP.Auth.Token.Class",
 		"Interface that represents an authentication token for every context."
 	), ():void => {
 
-		it( extendsClass( "Carbon.Resource.Class" ), ():void => {} );
+		it( extendsClass( "CarbonLDP.Resource.Resource" ), ():void => {} );
 
 		it( hasProperty(
 			OBLIGATORY,
 			"user",
-			"Carbon.Auth.PersistedUser.Class",
+			"CarbonLDP.Auth.PersistedUser.Class",
 			"User that has been requested the token, and which authentication the token represents."
 		), ():void => {} );
 
@@ -90,7 +88,7 @@ describe( module( "Carbon/Auth/Token" ), ():void => {
 
 	} );
 
-	describe( clazz( "Carbon.Auth.Token.Factory", "Factory class for `Carbon.Auth.Token.Class` objects." ), ():void => {
+	describe( clazz( "CarbonLDP.Auth.Token.Factory", "Factory class for `CarbonLDP.Auth.Token.Class` objects." ), ():void => {
 
 		it( isDefined(), ():void => {
 			expect( Token.Factory ).toBeDefined();
@@ -100,33 +98,33 @@ describe( module( "Carbon/Auth/Token" ), ():void => {
 		it( hasProperty(
 			STATIC,
 			"SCHEMA",
-			"Carbon.ObjectSchema.Class"
+			"CarbonLDP.ObjectSchema.ObjectSchema"
 		), ():void => {
 			expect( Token.SCHEMA ).toBeDefined();
 			expect( Utils.isObject( Token.SCHEMA ) ).toBe( true );
 
 			expect( Utils.hasProperty( Token.SCHEMA, "key" ) ).toBe( true );
 			expect( Token.SCHEMA[ "key" ] ).toEqual( {
-				"@id": NS.CS.Predicate.tokenKey,
-				"@type": NS.XSD.DataType.string,
+				"@id": CS.tokenKey,
+				"@type": XSD.string,
 			} );
 
 			expect( Utils.hasProperty( Token.SCHEMA, "expirationTime" ) ).toBe( true );
 			expect( Token.SCHEMA[ "expirationTime" ] ).toEqual( {
-				"@id": NS.CS.Predicate.expirationTime,
-				"@type": NS.XSD.DataType.dateTime,
+				"@id": CS.expirationTime,
+				"@type": XSD.dateTime,
 			} );
 
 			expect( Utils.hasProperty( Token.SCHEMA, "user" ) ).toBe( true );
 			expect( Token.SCHEMA[ "user" ] ).toEqual( {
-				"@id": NS.CS.Predicate.credentialsOf,
+				"@id": CS.credentialsOf,
 				"@type": "@id",
 			} );
 
 		} );
 
 		it( hasMethod( STATIC, "is",
-			"Returns true if the object provided is considered a `Carbon.Auth.Token.Class` object.", [
+			"Returns true if the object provided is considered a `CarbonLDP.Auth.Token.Class` object.", [
 				{ name: "value", type: "any" },
 			],
 			{ type: "boolean" }
@@ -137,7 +135,7 @@ describe( module( "Carbon/Auth/Token" ), ():void => {
 			expect( Token.Factory.is( false ) ).toBe( false );
 			expect( Token.Factory.is( {} ) ).toBe( false );
 
-			let object:any = Resource.Factory.createFrom( {
+			let object:any = Resource.createFrom( {
 				key: null,
 				expirationTime: null,
 				user: null,
@@ -159,7 +157,7 @@ describe( module( "Carbon/Auth/Token" ), ():void => {
 		} );
 
 		it( hasMethod( STATIC, "hasClassProperties",
-			"Returns true if the object provided has the properties of a `Carbon.Auth.Token.Class` object.", [
+			"Returns true if the object provided has the properties of a `CarbonLDP.Auth.Token.Class` object.", [
 				{ name: "object", type: "object" },
 			],
 			{ type: "boolean" }
@@ -198,10 +196,10 @@ describe( module( "Carbon/Auth/Token" ), ():void => {
 			STATIC,
 			"decorate",
 			[ "T extends Object" ],
-			"Decorates the object provided with the properties and methods of a `Carbon.Auth.Token.Class` object.", [
+			"Decorates the object provided with the properties and methods of a `CarbonLDP.Auth.Token.Class` object.", [
 				{ name: "object", type: "T" },
 			],
-			{ type: "T & Carbon.Auth.Token.Class" }
+			{ type: "T & CarbonLDP.Auth.Token.Class" }
 		), ():void => {
 			expect( "decorate" in Token.Factory ).toBe( true );
 			expect( Utils.isFunction( Token.Factory.decorate ) ).toBe( true );
@@ -222,7 +220,7 @@ describe( module( "Carbon/Auth/Token" ), ():void => {
 
 	} );
 
-	it( hasDefaultExport( "Carbon.Auth.Ticket.Class" ), ():void => {
+	it( hasDefaultExport( "CarbonLDP.Auth.Ticket.Class" ), ():void => {
 		let defaultExport:DefaultExport = <any> {};
 		let defaultTarget:Token.Class;
 

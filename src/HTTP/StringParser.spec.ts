@@ -1,43 +1,40 @@
 import {
-	INSTANCE,
-
-	module,
-
-
 	clazz,
-
-	isDefined,
 	hasDefaultExport,
 	hasMethod,
-} from "./../test/JasmineExtender";
-
+	INSTANCE,
+	isDefined,
+	module,
+} from "../test/JasmineExtender";
 import * as Utils from "./../Utils";
 
 import * as StringParser from "./StringParser";
 import DefaultExport from "./StringParser";
 
-describe( module( "Carbon/HTTP/StringParser" ), ():void => {
+describe( module( "carbonldp/HTTP/StringParser" ), ():void => {
+
 	it( isDefined(), ():void => {
 		expect( StringParser ).toBeDefined();
 		expect( Utils.isObject( StringParser ) ).toEqual( true );
 	} );
 
 	describe( clazz(
-		"Carbon.HTTP.StringParser.Class",
-		"Parses a `Carbon.HTTP.Response.Class` and returns a string.", [
-			"Carbon.HTTP.Parser.Class<string>",
+		"CarbonLDP.HTTP.StringParser.StringParser",
+		"Parses a `CarbonLDP.HTTP.Response.Response` and returns a string.", [
+			"CarbonLDP.HTTP.Parser.Parser<string>",
 		]
 	), ():void => {
 
+		// TODO: Separate in different tests
 		it( hasMethod(
 			INSTANCE,
 			"parse",
 			"Gets a string and returns a Promise with the same string.", [
-				{name: "body", type: "Carbon.HTTP.Response.Class"},
+				{ name: "body", type: "CarbonLDP.HTTP.Response.Response" },
 			],
-			{type: "Promise<string>"}
-		), ( done:{ ():void; fail:( error:any ) => void } ):void => {
-			let stringParser:StringParser.Class = new StringParser.Class();
+			{ type: "Promise<string>" }
+		), ( done:DoneFn ):void => {
+			let stringParser:StringParser.StringParser = new StringParser.StringParser();
 
 			// Property Integrity
 			(() => {
@@ -66,10 +63,11 @@ describe( module( "Carbon/HTTP/StringParser" ), ():void => {
 				done.fail( error );
 			} );
 		} );
+
 	} );
 
-	it( hasDefaultExport( "Carbon.HTTP.StringParser.Class" ), ():void => {
+	it( hasDefaultExport( "CarbonLDP.HTTP.StringParser.StringParser" ), ():void => {
 		expect( DefaultExport ).toBeDefined();
-		expect( DefaultExport ).toEqual( StringParser.Class );
+		expect( DefaultExport ).toEqual( StringParser.StringParser );
 	} );
 } );

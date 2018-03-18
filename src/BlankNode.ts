@@ -1,21 +1,39 @@
-import * as Document from "./Document";
-import * as Fragment from "./Fragment";
-import * as RDF from "./RDF";
-import * as Utils from "./Utils";
+import { Document } from "./Document";
+import { IllegalArgumentError } from "./Errors";
+import { Fragment } from "./Fragment";
+import { ModelFactory } from "./ModelFactory";
+import { URI } from "./RDF/URI";
 
-export interface Class extends Fragment.Class {
+export interface BlankNode extends Fragment {
 }
 
-export class Factory {
+export interface BlankNodeFactory extends ModelFactory<BlankNode> {
+	is( object:object ):object is BlankNode;
 
-	static createFrom<T extends Object>( object:T, document:Document.Class ):T & Class;
-	static createFrom<T extends Object>( object:T, id:string, document:Document.Class ):T & Class;
-	static createFrom<T extends Object>( object:T, idOrDocument:any, document?:Document.Class ):T & Class {
-		let id:string = ! ! idOrDocument && Utils.isString( idOrDocument ) ? idOrDocument : RDF.URI.Util.generateBNodeID();
-		document = document || idOrDocument;
-		return Fragment.Factory.createFrom<T>( object, id, document );
-	}
 
+	create( document:Document, id?:string ):BlankNode;
+
+	createFrom<T extends object>( object:T, document:Document, id?:string ):T & BlankNode;
 }
 
-export default Class;
+export const BlankNode:BlankNodeFactory = {
+	is( object:object ):object is BlankNode {
+		return Fragment.is( object ) &&
+			URI.isBNodeID( object.id )
+			;
+	},
+
+
+	create( document:Document, id?:string ):BlankNode {
+		return BlankNode.createFrom( {}, document, id );
+	},
+
+	createFrom<T extends object>( object:T, document:Document, id?:string ):T & BlankNode {
+		if( id && ! URI.isBNodeID( id ) ) throw new IllegalArgumentError( `The id "${ id }" is not an blank node label` );
+		if( ! id ) id = URI.generateBNodeID();
+
+		return Fragment.createFrom<T>( object, document, id );
+	},
+};
+
+export default BlankNode;

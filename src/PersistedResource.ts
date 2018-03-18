@@ -1,12 +1,16 @@
-import * as Resource from "./Resource";
-import * as PartialMetadata from "./SPARQL/QueryDocument/PartialMetadata";
+import { ModelDecorator } from "./ModelDecorator";
+import { Resource } from "./Resource";
+import { PartialMetadata } from "./SPARQL/QueryDocument/PartialMetadata";
 import * as Utils from "./Utils";
 
-export interface Class extends Resource.Class {
-	_partialMetadata?:PartialMetadata.Class;
+export interface PersistedResource extends Resource {
+	_snapshot:Resource;
 
-	_snapshot:Resource.Class;
-	_syncSnapshot:() => void;
+	_partialMetadata?:PartialMetadata;
+
+
+	_syncSnapshot():void;
+
 
 	isDirty():boolean;
 
@@ -16,41 +20,46 @@ export interface Class extends Resource.Class {
 	isPartial():boolean;
 }
 
-function syncSnapshot( this:Class ):void {
-	this._snapshot = Utils.O.clone( this, { arrays: true } );
+
+export interface PersistedResourceFactory extends ModelDecorator<PersistedResource> {
+	isDecorated( object:object ):object is PersistedResource;
+
+
+	decorate<T extends object>( object:T ):T & PersistedResource;
+}
+
+
+function syncSnapshot( this:PersistedResource ):void {
+	this._snapshot = Utils.ObjectUtils.clone( this, { arrays: true } );
 
 	this._snapshot.id = this.id;
 	this._snapshot.types = this.types.slice();
 }
 
-function isDirty():boolean {
-	let resource:Class & Resource.Class = this;
-
-	if( ! Utils.O.areEqual( resource, resource._snapshot, { arrays: true } ) ) return true;
+function isDirty( this:PersistedResource ):boolean {
+	if( ! Utils.ObjectUtils.areEqual( this, this._snapshot, { arrays: true } ) ) return true;
 
 	let response:boolean = false;
-	if( "id" in resource ) response = response || (resource._snapshot as Resource.Class).id !== resource.id;
-	if( "types" in resource ) response = response || ! Utils.O.areEqual( (resource._snapshot as Resource.Class).types, resource.types );
+	if( "id" in this ) response = response || (this._snapshot as Resource).id !== this.id;
+	if( "types" in this ) response = response || ! Utils.ObjectUtils.areEqual( (this._snapshot as Resource).types, this.types );
 
 	return response;
 }
 
-function revert():void {
-	let resource:Class & Resource.Class = this;
-
-	for( let key of Object.keys( resource ) ) {
-		if( ! ( key in resource._snapshot ) ) delete resource[ key ];
+function revert( this:PersistedResource ):void {
+	for( let key of Object.keys( this ) ) {
+		if( ! ( key in this._snapshot ) ) delete this[ key ];
 	}
 
-	Utils.O.extend( resource, resource._snapshot, { arrays: true } );
+	Utils.ObjectUtils.extend( this, this._snapshot, { arrays: true } );
 }
 
-function isPartial( this:Class ):boolean {
+function isPartial( this:PersistedResource ):boolean {
 	return ! ! this._partialMetadata;
 }
 
-export class Factory {
-	static hasClassProperties( object:object ):object is Class {
+export const PersistedResource:PersistedResourceFactory = {
+	isDecorated( object:object ):object is PersistedResource {
 		return (
 			Utils.hasPropertyDefined( object, "_snapshot" )
 			&& Utils.hasFunction( object, "_syncSnapshot" )
@@ -58,13 +67,14 @@ export class Factory {
 			&& Utils.hasFunction( object, "isPartial" )
 			&& Utils.hasFunction( object, "revert" )
 		);
-	}
+	},
 
-	static decorate<T extends Resource.Class>( object:T ):T & Class {
-		if( Factory.hasClassProperties( object ) ) return object;
+	decorate<T extends object>( object:T ):T & PersistedResource {
+		if( PersistedResource.isDecorated( object ) ) return object;
 
-		let persistedResource:T & Class = <any> object;
+		Resource.decorate( object );
 
+		const persistedResource:T & PersistedResource = object as T & PersistedResource;
 		Object.defineProperties( persistedResource, {
 			"_snapshot": {
 				writable: true,
@@ -107,7 +117,7 @@ export class Factory {
 		} );
 
 		return persistedResource;
-	}
-}
+	},
+};
 
-export default Class;
+export default PersistedResource;

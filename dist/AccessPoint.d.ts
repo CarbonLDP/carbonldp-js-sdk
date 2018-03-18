@@ -1,19 +1,21 @@
-import * as LDP from "./LDP";
-import * as Pointer from "./Pointer";
-export declare const RDF_CLASS: string;
-export interface Class {
-    hasMemberRelation: string | Pointer.Class;
-    isMemberOfRelation?: string | Pointer.Class;
-    insertedContentRelation?: string | Pointer.Class;
+import { DirectContainer } from "./LDP/DirectContainer";
+import { ModelFactory } from "./ModelFactory";
+import { Pointer } from "./Pointer";
+export interface AccessPointBase {
+    hasMemberRelation: string | Pointer;
+    isMemberOfRelation?: string | Pointer;
+    insertedContentRelation?: string | Pointer;
 }
-export interface DocumentClass extends LDP.DirectContainer.Class {
-    hasMemberRelation: Pointer.Class;
-    isMemberOfRelation?: Pointer.Class;
-    insertedContentRelation?: Pointer.Class;
+export interface AccessPoint extends DirectContainer {
+    hasMemberRelation: Pointer;
+    isMemberOfRelation?: Pointer;
+    insertedContentRelation?: Pointer;
 }
-export declare class Factory {
-    static is(object: object): object is DocumentClass;
-    static create(membershipResource: Pointer.Class, hasMemberRelation: string | Pointer.Class, isMemberOfRelation?: string | Pointer.Class): DocumentClass;
-    static createFrom<T extends object>(object: T, membershipResource: Pointer.Class, hasMemberRelation: string | Pointer.Class, isMemberOfRelation?: string | Pointer.Class): T & DocumentClass;
+export interface AccessPointFactory extends ModelFactory<AccessPoint> {
+    TYPE: string;
+    is(object: object): object is AccessPoint;
+    create(membershipResource: Pointer, hasMemberRelation: string | Pointer, isMemberOfRelation?: string | Pointer): AccessPoint;
+    createFrom<T extends object>(object: T, membershipResource: Pointer, hasMemberRelation: string | Pointer, isMemberOfRelation?: string | Pointer): T & AccessPoint;
 }
-export default Class;
+export declare const AccessPoint: AccessPointFactory;
+export default AccessPoint;

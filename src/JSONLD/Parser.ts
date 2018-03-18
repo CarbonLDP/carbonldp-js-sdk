@@ -1,14 +1,11 @@
-import JSONParser from "./../HTTP/JSONParser";
-import Parser from "./../HTTP/Parser";
-import Processor from "./Processor";
+import { JSONParser } from "../HTTP/JSONParser";
+import { Parser } from "../HTTP/Parser";
+import { JSONLDProcessor } from "./Processor";
 
-export class Class implements Parser<Object[]> {
-	parse( input:string ):Promise<Object[]> {
-		let jsonParser:JSONParser = new JSONParser();
-		return jsonParser.parse( input ).then( ( parsedObject:Object ) => {
-			return Processor.expand( parsedObject );
-		} );
+export class JSONLDParser extends JSONParser implements Parser<object[]> {
+	parse( input:string ):Promise<object[]> {
+		return super.parse( input ).then( JSONLDProcessor.expand );
 	}
 }
 
-export default Class;
+export default JSONLDParser;

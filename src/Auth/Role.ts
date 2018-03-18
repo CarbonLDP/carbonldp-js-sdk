@@ -1,37 +1,38 @@
-import * as Document from "./../Document";
+import { CS } from "../Vocabularies/CS";
+import { XSD } from "../Vocabularies/XSD";
+import { Document } from "./../Document";
 import IllegalArgumentError from "./../Errors/IllegalArgumentError";
-import * as NS from "./../NS";
 import * as ObjectSchema from "./../ObjectSchema";
 import * as Utils from "./../Utils";
 
-export const RDF_CLASS:string = NS.CS.Class.Role;
+export const RDF_CLASS:string = CS.Role;
 
-export const SCHEMA:ObjectSchema.Class = {
+export const SCHEMA:ObjectSchema.ObjectSchema = {
 	"name": {
-		"@id": NS.CS.Predicate.namae,
-		"@type": NS.XSD.DataType.string,
+		"@id": CS.name,
+		"@type": XSD.string,
 	},
 	"description": {
-		"@id": NS.CS.Predicate.description,
-		"@type": NS.XSD.DataType.string,
+		"@id": CS.description,
+		"@type": XSD.string,
 	},
 	"parentRole": {
-		"@id": NS.CS.Predicate.parentRole,
+		"@id": CS.parentRole,
 		"@type": "@id",
 	},
 	"childRoles": {
-		"@id": NS.CS.Predicate.childRole,
+		"@id": CS.childRole,
 		"@type": "@id",
 		"@container": "@set",
 	},
 	"users": {
-		"@id": NS.CS.Predicate.user,
+		"@id": CS.user,
 		"@type": "@id",
 		"@container": "@set",
 	},
 };
 
-export interface Class extends Document.Class {
+export interface Class extends Document {
 	name:string;
 	description?:string;
 }
@@ -43,7 +44,7 @@ export class Factory {
 
 	static is( object:Object ):boolean {
 		return Factory.hasClassProperties( object )
-			&& Document.Factory.is( object )
+			&& Document.is( object )
 			;
 	}
 
@@ -52,8 +53,7 @@ export class Factory {
 	}
 
 	static createFrom<T extends Object>( object:T, name:string, description?:string ):T & Class {
-		if( ! Document.Factory.hasClassProperties( object ) )
-			object = Document.Factory.createFrom( object );
+		if( ! Document.isDecorated( object ) ) object = Document.createFrom( object );
 
 		if( ! name ) throw new IllegalArgumentError( "The name cannot be empty." );
 

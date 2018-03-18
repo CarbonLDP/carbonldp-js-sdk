@@ -10,15 +10,15 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-var QueryContext = require("./QueryContext");
-var Class = (function (_super) {
-    __extends(Class, _super);
-    function Class(document, context) {
+var QueryContext_1 = require("./QueryContext");
+var QueryContextPartial = (function (_super) {
+    __extends(QueryContextPartial, _super);
+    function QueryContextPartial(document, context) {
         var _this = _super.call(this, context) || this;
         _this._document = document;
         return _this;
     }
-    Class.prototype.getSchemaFor = function (object, path) {
+    QueryContextPartial.prototype.getSchemaFor = function (object, path) {
         if (path === void 0)
             return _super.prototype.getSchemaFor.call(this, object);
         var parts = path.split(/\./g).slice(1);
@@ -33,9 +33,9 @@ var Class = (function (_super) {
         }
         return schemaLibrary._partialMetadata.schema;
     };
-    return Class;
-}(QueryContext.Class));
-exports.Class = Class;
-exports.default = Class;
+    return QueryContextPartial;
+}(QueryContext_1.QueryContext));
+exports.QueryContextPartial = QueryContextPartial;
+exports.default = QueryContextPartial;
 
 //# sourceMappingURL=QueryContextPartial.js.map

@@ -1,20 +1,28 @@
 "use strict";
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
+    result["default"] = mod;
+    return result;
+}
 Object.defineProperty(exports, "__esModule", { value: true });
-var NS = require("./../NS");
-var Resource = require("./../Resource");
-var Utils = require("./../Utils");
-exports.RDF_CLASS = NS.CS.Class.Token;
+var CS_1 = require("../Vocabularies/CS");
+var XSD_1 = require("../Vocabularies/XSD");
+var Resource_1 = require("./../Resource");
+var Utils = __importStar(require("./../Utils"));
+exports.RDF_CLASS = CS_1.CS.Token;
 exports.SCHEMA = {
     "key": {
-        "@id": NS.CS.Predicate.tokenKey,
-        "@type": NS.XSD.DataType.string,
+        "@id": CS_1.CS.tokenKey,
+        "@type": XSD_1.XSD.string,
     },
     "expirationTime": {
-        "@id": NS.CS.Predicate.expirationTime,
-        "@type": NS.XSD.DataType.dateTime,
+        "@id": CS_1.CS.expirationTime,
+        "@type": XSD_1.XSD.dateTime,
     },
     "user": {
-        "@id": NS.CS.Predicate.credentialsOf,
+        "@id": CS_1.CS.credentialsOf,
         "@type": "@id",
     },
 };
@@ -22,7 +30,7 @@ var Factory = (function () {
     function Factory() {
     }
     Factory.is = function (value) {
-        return (Resource.Factory.is(value)
+        return (Resource_1.Resource.is(value)
             && Factory.hasClassProperties(value));
     };
     Factory.hasClassProperties = function (object) {

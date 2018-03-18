@@ -1,20 +1,25 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var NS = require("./../NS");
-exports.RDF_CLASS = NS.C.Class.Error;
-exports.SCHEMA = {
+var C_1 = require("../Vocabularies/C");
+var XSD_1 = require("../Vocabularies/XSD");
+var SCHEMA = {
     "errorCode": {
-        "@id": NS.C.Predicate.errorCode,
-        "@type": NS.XSD.DataType.string,
+        "@id": C_1.C.errorCode,
+        "@type": XSD_1.XSD.string,
     },
     "errorMessage": {
-        "@id": NS.C.Predicate.errorMessage,
+        "@id": C_1.C.errorMessage,
         "@language": "en",
     },
     "errorParameters": {
-        "@id": NS.C.Predicate.errorParameters,
+        "@id": C_1.C.errorParameters,
         "@type": "@id",
     },
 };
+exports.Error = {
+    TYPE: C_1.C.Error,
+    SCHEMA: SCHEMA,
+};
+exports.default = exports.Error;
 
 //# sourceMappingURL=Error.js.map

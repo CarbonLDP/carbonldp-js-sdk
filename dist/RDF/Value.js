@@ -1,33 +1,23 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var List = require("./List");
-var Literal = require("./Literal");
-var RDFNode = require("./Node");
-var Util = (function () {
-    function Util() {
-    }
-    Util.parseValue = function (propertyValue, pointerLibrary) {
-        if (Literal.Factory.is(propertyValue)) {
-            return Literal.Factory.parse(propertyValue);
-        }
-        else if (RDFNode.Factory.is(propertyValue)) {
-            return pointerLibrary.getPointer(propertyValue["@id"]);
-        }
-        else if (List.Factory.is(propertyValue)) {
-            var parsedValue = [];
-            var listValues = propertyValue["@list"];
-            for (var _i = 0, listValues_1 = listValues; _i < listValues_1.length; _i++) {
-                var listValue = listValues_1[_i];
-                parsedValue.push(Util.parseValue(listValue, pointerLibrary));
-            }
-            return parsedValue;
-        }
-        else {
-        }
+var List_1 = require("./List");
+var Literal_1 = require("./Literal");
+var Node_1 = require("./Node");
+var Utils_1 = require("../Utils");
+exports.RDFValue = {
+    parse: function (pointerLibrary, value) {
+        if (Utils_1.isString(value))
+            return value;
+        if (Literal_1.RDFLiteral.is(value))
+            return Literal_1.RDFLiteral.parse(value);
+        if (Node_1.RDFNode.is(value))
+            return pointerLibrary.getPointer(value["@id"]);
+        if (List_1.RDFList.is(value))
+            return value["@list"]
+                .map(exports.RDFValue.parse.bind(null, pointerLibrary));
         return null;
-    };
-    return Util;
-}());
-exports.Util = Util;
+    },
+};
+exports.default = exports.RDFValue;
 
 //# sourceMappingURL=Value.js.map

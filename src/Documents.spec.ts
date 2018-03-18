@@ -17,32 +17,39 @@ import {
 	SelectToken,
 	SubjectToken,
 	ValuesToken,
-	VariableToken,
+	VariableToken
 } from "sparqler/tokens";
 
 import AbstractContext from "./AbstractContext";
-import * as AccessPoint from "./AccessPoint";
+import {
+	AccessPoint,
+	AccessPointBase,
+} from "./AccessPoint";
 import * as Auth from "./Auth";
-import * as BlankNode from "./BlankNode";
-import Carbon from "./Carbon";
-import * as Document from "./Document";
-import * as Documents from "./Documents";
-import DefaultExport from "./Documents";
+import { BlankNode } from "./BlankNode";
+import { CarbonLDP } from "./CarbonLDP";
+import { Document } from "./Document";
+
+import DefaultExport, { Documents } from "./Documents";
+
 import * as Errors from "./Errors";
-import * as Fragment from "./Fragment";
-import * as HTTP from "./HTTP";
-import * as JSONLD from "./JSONLD";
+import { Fragment } from "./Fragment";
+import { HTTPError } from "./HTTP/Errors";
+import { Header } from "./HTTP/Header";
+import { RequestService } from "./HTTP/Request";
+import { Response } from "./HTTP/Response";
+import { JSONLDConverter } from "./JSONLD/Converter";
 import MessagingEvent from "./Messaging/Event";
 import * as MessagingUtils from "./Messaging/Utils";
-import * as NS from "./NS";
 import * as ObjectSchema from "./ObjectSchema";
-import * as PersistedAccessPoint from "./PersistedAccessPoint";
-import * as PersistedDocument from "./PersistedDocument";
-import * as PersistedNamedFragment from "./PersistedNamedFragment";
-import * as PersistedResource from "./PersistedResource";
-import * as Pointer from "./Pointer";
+import { PersistedAccessPoint } from "./PersistedAccessPoint";
+import { PersistedDocument } from "./PersistedDocument";
+import { PersistedNamedFragment } from "./PersistedNamedFragment";
+import { PersistedResource } from "./PersistedResource";
+import { Pointer } from "./Pointer";
 import { ContextSettings } from "./Settings";
 import * as SPARQL from "./SPARQL";
+import { PartialMetadata } from "./SPARQL/QueryDocument/PartialMetadata";
 import {
 	clazz,
 	hasConstructor,
@@ -51,52 +58,30 @@ import {
 	hasProperty,
 	hasSignature,
 	INSTANCE,
-	interfaze,
 	isDefined,
 	method,
 	module,
-	OBLIGATORY,
-	OPTIONAL,
 } from "./test/JasmineExtender";
 import * as Utils from "./Utils";
+import { C } from "./Vocabularies/C";
+import { CS } from "./Vocabularies/CS";
+import { LDP } from "./Vocabularies/LDP";
+import { XSD } from "./Vocabularies/XSD";
 
-function createPartialMetadata( schema:ObjectSchema.Class ):SPARQL.QueryDocument.PartialMetadata.Class {
-	const digestedSchema:ObjectSchema.DigestedObjectSchema = ObjectSchema.Digester.digestSchema( schema );
-	digestedSchema.properties.forEach( definition => ObjectSchema.Util.resolveProperty( digestedSchema, definition, true ) );
-	return new SPARQL.QueryDocument.PartialMetadata.Class( digestedSchema );
+function createPartialMetadata( schema:ObjectSchema.ObjectSchema ):PartialMetadata {
+	const digestedSchema:ObjectSchema.DigestedObjectSchema = ObjectSchema.ObjectSchemaDigester.digestSchema( schema );
+	digestedSchema.properties.forEach( definition => ObjectSchema.ObjectSchemaUtils.resolveProperty( digestedSchema, definition, true ) );
+	return new PartialMetadata( digestedSchema );
 }
 
-describe( module( "Carbon/Documents" ), ():void => {
-
-	it( isDefined(), ():void => {
-		expect( Documents ).toBeDefined();
-		expect( Documents ).toEqual( jasmine.any( Object ) );
-	} );
-
-	describe( interfaze( "Carbon.Documents.DocumentDecorator", "Interface that describes the properties needed to decorate a document when requested" ), ():void => {
-
-		it( hasProperty(
-			OBLIGATORY,
-			"decorator",
-			"( object:Object, ...parameters:any[] ) => Object",
-			"Function that is called when a specific document will be decorated.\n\nThe function must accept the document to decorate as the first parameter, continued by optional parameters that where specified in the `parameters` property of this interface.\n\nThe function must return the same object provided."
-		), ():void => {} );
-
-		it( hasProperty(
-			OPTIONAL,
-			"parameters",
-			"any[]",
-			"Optional parameters that will be provided to the decorator function when called."
-		), ():void => {} );
-
-	} );
+describe( module( "carbonldp/Documents" ), ():void => {
 
 	describe( clazz(
-		"Carbon.Documents.Class",
-		"Class that contains methods for retrieving, saving and updating documents from the CarbonLDP server.", [
-			"Carbon.Pointer.Library",
-			"Carbon.Pointer.Validator",
-			"Carbon.ObjectSchema.Resolver",
+		"CarbonLDP.Documents.Documents",
+		"Class that contains methods for retrieving, saving and updating documents from the Carbon LDP server.", [
+			"CarbonLDP.Pointer.PointerLibrary",
+			"CarbonLDP.Pointer.PointerValidator",
+			"CarbonLDP.ObjectSchema.ObjectSchemaResolver",
 		]
 	), ():void => {
 
@@ -109,12 +94,12 @@ describe( module( "Carbon/Documents" ), ():void => {
 		} );
 
 		it( isDefined(), ():void => {
-			expect( Documents.Class ).toBeDefined();
-			expect( Utils.isFunction( Documents.Class ) ).toBe( true );
+			expect( Documents ).toBeDefined();
+			expect( Utils.isFunction( Documents ) ).toBe( true );
 		} );
 
 		it( hasConstructor( [
-			{ name: "context", type: "Carbon.Context.Class", optional: true, description: "The context where the documents instance will live. If no context is provided, calling its methods with relative URIs will throw an error, since there will be no form to resolve them." },
+			{ name: "context", type: "CarbonLDP.Context.Context", optional: true, description: "The context where the documents instance will live. If no context is provided, calling its methods with relative URIs will throw an error, since there will be no form to resolve them." },
 		] ), ():void => {
 			class MockedContext extends AbstractContext {
 				protected _baseURI:string;
@@ -128,20 +113,20 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 			let context:MockedContext = new MockedContext();
 
-			let documents:Documents.Class = new Documents.Class( context );
+			let documents:Documents = new Documents( context );
 			expect( documents ).toBeTruthy();
-			expect( documents instanceof Documents.Class ).toBe( true );
+			expect( documents instanceof Documents ).toBe( true );
 
-			documents = new Documents.Class();
+			documents = new Documents();
 			expect( documents ).toBeTruthy();
-			expect( documents instanceof Documents.Class ).toBe( true );
+			expect( documents instanceof Documents ).toBe( true );
 		} );
 
 		it( hasProperty(
 			INSTANCE,
 			"jsonldConverter",
-			"Carbon.JSONLD.Converter.Class",
-			"Instance of `Carbon.JSONLD.Converter.Class` that is used to compact retrieved documents and to expand documents to persist. This property is not writable."
+			"CarbonLDP.JSONLD.Converter.JSONLDConverter",
+			"Instance of `CarbonLDP.JSONLD.Converter.JSONLDConverter` that is used to compact retrieved documents and to expand documents to persist. This property is not writable."
 		), ():void => {
 			class MockedContext extends AbstractContext {
 				protected _baseURI:string;
@@ -154,16 +139,16 @@ describe( module( "Carbon/Documents" ), ():void => {
 			}
 
 			let context:MockedContext = new MockedContext();
-			let documents:Documents.Class = context.documents;
+			let documents:Documents = context.documents;
 
 			expect( documents.jsonldConverter ).toBeDefined();
-			expect( documents.jsonldConverter instanceof JSONLD.Converter.Class ).toBe( true );
+			expect( documents.jsonldConverter instanceof JSONLDConverter ).toBe( true );
 		} );
 
 		it( hasProperty(
 			INSTANCE,
 			"documentDecorators",
-			"Map<string, Carbon.Documents.DocumentDecorator>",
+			"Map<string, CarbonLDP.Documents.DocumentDecorator>",
 			"A map that specifies a type and a tuple with a function decorator and its parameters which will be called when a document with the specified type has been resolved or refreshed.\n\nThe decorator function must at least accept the object to decorate and optional parameters declared in the tuple."
 		), ():void => {
 			class MockedContext extends AbstractContext {
@@ -177,18 +162,18 @@ describe( module( "Carbon/Documents" ), ():void => {
 			}
 
 			let context:MockedContext = new MockedContext();
-			let documents:Documents.Class = context.documents;
+			let documents:Documents = context.documents;
 
 			expect( documents.documentDecorators ).toBeDefined();
 			expect( documents.documentDecorators ).toEqual( jasmine.any( Map ) );
 
 			// Has default decorators
 			expect( documents.documentDecorators.size ).toBe( 5 );
-			expect( documents.documentDecorators.has( NS.CS.Class.ProtectedDocument ) ).toBe( true );
-			expect( documents.documentDecorators.has( NS.CS.Class.AccessControlList ) ).toBe( true );
-			expect( documents.documentDecorators.has( NS.CS.Class.User ) ).toBe( true );
-			expect( documents.documentDecorators.has( NS.CS.Class.Role ) ).toBe( true );
-			expect( documents.documentDecorators.has( NS.CS.Class.Credentials ) ).toBe( true );
+			expect( documents.documentDecorators.has( CS.ProtectedDocument ) ).toBe( true );
+			expect( documents.documentDecorators.has( CS.AccessControlList ) ).toBe( true );
+			expect( documents.documentDecorators.has( CS.User ) ).toBe( true );
+			expect( documents.documentDecorators.has( CS.Role ) ).toBe( true );
+			expect( documents.documentDecorators.has( CS.Credentials ) ).toBe( true );
 		} );
 
 		describe( method(
@@ -208,7 +193,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				}
 
 				let context:MockedContext = new MockedContext();
-				let documents:Documents.Class = context.documents;
+				let documents:Documents = context.documents;
 
 				expect( documents.inScope ).toBeDefined();
 				expect( Utils.isFunction( documents.inScope ) ).toBe( true );
@@ -216,7 +201,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 			it( hasSignature(
 				"Returns true if the pointer provided is inside the scope of the Documents instance.", [
-					{ name: "pointer", type: "Carbon.Pointer.Class", description: "Pointer to evaluate." },
+					{ name: "pointer", type: "CarbonLDP.Pointer.Pointer", description: "Pointer to evaluate." },
 				],
 				{ type: "boolean" }
 			), ():void => {
@@ -231,29 +216,29 @@ describe( module( "Carbon/Documents" ), ():void => {
 				}
 
 				let context:MockedContext = new MockedContext();
-				let documents:Documents.Class = context.documents;
+				let documents:Documents = context.documents;
 
-				let pointer:Pointer.Class;
+				let pointer:Pointer;
 
-				pointer = Pointer.Factory.create( "http://example.com/document/child/" );
+				pointer = Pointer.create( "http://example.com/document/child/" );
 				expect( documents.inScope( pointer ) ).toBe( true );
-				pointer = Pointer.Factory.create( "http://example.com/another-document/" );
+				pointer = Pointer.create( "http://example.com/another-document/" );
 				expect( documents.inScope( pointer ) ).toBe( true );
-				pointer = Pointer.Factory.create( "http://example.com/document/" );
+				pointer = Pointer.create( "http://example.com/document/" );
 				expect( documents.inScope( pointer ) ).toBe( true );
-				pointer = Pointer.Factory.create( "a-relative-document/" );
-				expect( documents.inScope( pointer ) ).toBe( true );
-
-				pointer = Pointer.Factory.create( "http://example.com/document/#fragment" );
-				expect( documents.inScope( pointer ) ).toBe( true );
-				pointer = Pointer.Factory.create( "http://example.com/document/#another-fragment" );
+				pointer = Pointer.create( "a-relative-document/" );
 				expect( documents.inScope( pointer ) ).toBe( true );
 
-				pointer = Pointer.Factory.create( "_:BlankNode" );
+				pointer = Pointer.create( "http://example.com/document/#fragment" );
+				expect( documents.inScope( pointer ) ).toBe( true );
+				pointer = Pointer.create( "http://example.com/document/#another-fragment" );
+				expect( documents.inScope( pointer ) ).toBe( true );
+
+				pointer = Pointer.create( "_:BlankNode" );
 				expect( documents.inScope( pointer ) ).toBe( false );
 
 				// Asks to context.parentContext.documents
-				pointer = Pointer.Factory.create( "http://example.org/document/" );
+				pointer = Pointer.create( "http://example.org/document/" );
 				expect( documents.inScope( pointer ) ).toBe( true );
 			} );
 
@@ -274,7 +259,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				}
 
 				let context:MockedContext = new MockedContext();
-				let documents:Documents.Class = context.documents;
+				let documents:Documents = context.documents;
 
 				expect( documents.inScope( "http://example.com/document/" ) ).toBe( true );
 				expect( documents.inScope( "http://example.com/document/child/" ) ).toBe( true );
@@ -301,7 +286,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 			{ type: "boolean" }
 		), ():void => {
 			let context:MockedContext;
-			let documents:Documents.Class;
+			let documents:Documents;
 
 			class MockedContext extends AbstractContext {
 				protected _baseURI:string;
@@ -328,15 +313,15 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 			context = new MockedContext();
 			documents = context.documents;
-			(<any> documents).pointers.set( "document/", Pointer.Factory.create( "http://example.com/document/" ) );
+			(<any> documents).pointers.set( "document/", Pointer.create( "http://example.com/document/" ) );
 			expect( documents.hasPointer( "http://example.com/document/" ) ).toBe( true );
 			expect( documents.hasPointer( "http://example.com/document/#fragment" ) ).toBe( false );
 			expect( documents.hasPointer( "document/" ) ).toBe( true );
 
 			expect( documents.hasPointer( "http://example.com/another-document/" ) ).toBe( false );
 
-			(<any> documents).pointers.set( "document/", Pointer.Factory.create( "http://example.com/document/" ) );
-			(<any> documents).pointers.set( "another-document/", Pointer.Factory.create( "http://example.com/another-document/" ) );
+			(<any> documents).pointers.set( "document/", Pointer.create( "http://example.com/document/" ) );
+			(<any> documents).pointers.set( "another-document/", Pointer.create( "http://example.com/another-document/" ) );
 			expect( documents.hasPointer( "http://example.com/document/" ) ).toBe( true );
 			expect( documents.hasPointer( "document/" ) ).toBe( true );
 			expect( documents.hasPointer( "http://example.com/another-document/" ) ).toBe( true );
@@ -352,7 +337,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 			{ type: "boolean" }
 		), ():void => {
 			let context:MockedContext;
-			let documents:Documents.Class;
+			let documents:Documents;
 
 			class MockedContext extends AbstractContext {
 				protected _baseURI:string;
@@ -370,32 +355,32 @@ describe( module( "Carbon/Documents" ), ():void => {
 			expect( documents.getPointer ).toBeDefined();
 			expect( Utils.isFunction( documents.getPointer ) ).toBe( true );
 
-			let pointer:Pointer.Class;
+			let pointer:Pointer;
 
 			pointer = documents.getPointer( "http://example.com/document/" );
-			expect( Pointer.Factory.is( pointer ) ).toBe( true );
+			expect( Pointer.is( pointer ) ).toBe( true );
 			expect( pointer.id ).toBe( "http://example.com/document/" );
 
 			pointer = documents.getPointer( "document/" );
-			expect( Pointer.Factory.is( pointer ) ).toBe( true );
+			expect( Pointer.is( pointer ) ).toBe( true );
 			expect( pointer.id ).toBe( "http://example.com/document/" );
 
 			pointer = documents.getPointer( "http://example.com/document/#fragment" );
-			expect( Pointer.Factory.is( pointer ) ).toBe( true );
+			expect( Pointer.is( pointer ) ).toBe( true );
 			expect( pointer.id ).toBe( "http://example.com/document/#fragment" );
 
 			pointer = documents.getPointer( "http://example.com/another-document/" );
-			expect( Pointer.Factory.is( pointer ) ).toBe( true );
+			expect( Pointer.is( pointer ) ).toBe( true );
 			expect( pointer.id ).toBe( "http://example.com/another-document/" );
 
 			// Asks to context.parentContext.documents
 			pointer = documents.getPointer( "http://example.org/document/" );
-			expect( Pointer.Factory.is( pointer ) ).toBe( true );
+			expect( Pointer.is( pointer ) ).toBe( true );
 			expect( pointer.id ).toBe( "http://example.org/document/" );
 
 			expect( () => documents.getPointer( "_:BlankNode" ) ).toThrowError( Errors.IllegalArgumentError );
 
-			let anotherPointer:Pointer.Class = Pointer.Factory.create( "http://example.com/document/" );
+			let anotherPointer:Pointer = Pointer.create( "http://example.com/document/" );
 			context = new MockedContext();
 			documents = context.documents;
 			(<any> documents).pointers.set( "document/", anotherPointer );
@@ -409,7 +394,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 			INSTANCE,
 			"_parseErrorResponse"
 		), ():void => {
-			let documents:Documents.Class;
+			let documents:Documents;
 
 			describe( "When Documents has a specified context", ():void => {
 
@@ -425,70 +410,70 @@ describe( module( "Carbon/Documents" ), ():void => {
 						status: 500,
 						responseText: `[ {
 							"@id": "_:1",
-							"@type": [ "${ NS.C.Class.ErrorResponse }" ],
-							"${ NS.C.Predicate.error }": [ {
+							"@type": [ "${ C.ErrorResponse }" ],
+							"${ C.error }": [ {
 								"@id": "_:2"
 							}, {
 								"@id": "_:3"
 							} ],
-							"${ NS.C.Predicate.httpStatusCode }": [ {
-								"@type": "${ NS.XSD.DataType.int }",
+							"${ C.httpStatusCode }": [ {
+								"@type": "${ XSD.int }",
 								"@value": "500"
 							} ]
 						}, {
 							"@id": "_:2",
-							"@type": [ "${ NS.C.Class.Error }" ],
-							"${ NS.C.Predicate.errorCode }": [ {
+							"@type": [ "${ C.Error }" ],
+							"${ C.errorCode }": [ {
 								"@language": "en",
 								"@value": "code-01"
 							} ],
-							"${ NS.C.Predicate.errorMessage }": [ {
+							"${ C.errorMessage }": [ {
 								"@language": "en",
 								"@value": "Message 01"
 							} ],
-							"${ NS.C.Predicate.errorParameters }": [ {
+							"${ C.errorParameters }": [ {
 								"@id": "_:4"
 							} ]
 						}, {
 							"@id": "_:3",
-							"@type": [ "${ NS.C.Class.Error }" ],
-							"${ NS.C.Predicate.errorCode }": [ {
+							"@type": [ "${ C.Error }" ],
+							"${ C.errorCode }": [ {
 								"@language": "en",
 								"@value": "code-02"
 							} ],
-							"${ NS.C.Predicate.errorMessage }": [ {
+							"${ C.errorMessage }": [ {
 								"@language": "en",
 								"@value": "Message 02"
 							} ],
-							"${ NS.C.Predicate.errorParameters }": [ {
+							"${ C.errorParameters }": [ {
 								"@id": "_:6"
 							} ]
 						}, {
 							"@id": "_:4",
-							"@type": [ "${ NS.C.Class.Map }" ],
-							"${ NS.C.Predicate.entry }": [ {
+							"@type": [ "${ C.Map }" ],
+							"${ C.entry }": [ {
 								"@id": "_:5"
 							} ]
 						}, {
 							"@id": "_:5",
-							"${ NS.C.Predicate.entryKey }": [ {
+							"${ C.entryKey }": [ {
 								"@value": "document"
 							} ],
-							"${ NS.C.Predicate.entryValue }": [ {
+							"${ C.entryValue }": [ {
 								"@id": "https://example.com/target-document/"
 							} ]
 						}, {
 							"@id": "_:6",
-							"@type": [ "${ NS.C.Class.Map }" ],
-							"${ NS.C.Predicate.entry }": [ {
+							"@type": [ "${ C.Map }" ],
+							"${ C.entry }": [ {
 								"@id": "_:7"
 							} ]
 						}, {
 							"@id": "_:7",
-							"${ NS.C.Predicate.entryKey }": [ {
+							"${ C.entryKey }": [ {
 								"@value": "document"
 							} ],
-							"${ NS.C.Predicate.entryValue }": [ {
+							"${ C.entryValue }": [ {
 								"@id": "https://example.com/target-document/"
 							} ]
 						} ]`,
@@ -496,9 +481,9 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 					documents.get( "http://example.com/" ).then( () => {
 						done.fail( "Should not resolve" );
-					} ).catch( ( error:HTTP.Errors.Error ) => {
+					} ).catch( ( error:HTTPError ) => {
 						expect( error ).toBeDefined();
-						expect( error ).toEqual( jasmine.any( HTTP.Errors.Error ) );
+						expect( error ).toEqual( jasmine.any( HTTPError ) );
 
 						expect( error.message ).toBe( "Message 01, Message 02" );
 						expect( error.statusCode ).toBe( 500 );
@@ -523,17 +508,17 @@ describe( module( "Carbon/Documents" ), ():void => {
 						status: 500,
 						responseText: `[ {
 							"@id": "_:1",
-							"@type": [ "${ NS.C.Class.ErrorResponse }" ],
-							"${ NS.C.Predicate.error }": [],
-							"${ NS.C.Predicate.httpStatusCode }": [ {
+							"@type": [ "${ C.ErrorResponse }" ],
+							"${ C.error }": [],
+							"${ C.httpStatusCode }": [ {
 								"@type": "http://www.w3.org/2001/XMLSchema#int",
 								"@value": "1234567890"
 							} ]
 						}, {
 							"@id": "_:2",
-							"@type": [ "${ NS.C.Class.ErrorResponse }" ],
-							"${ NS.C.Predicate.error }": [],
-							"${ NS.C.Predicate.httpStatusCode }": [ {
+							"@type": [ "${ C.ErrorResponse }" ],
+							"${ C.error }": [],
+							"${ C.httpStatusCode }": [ {
 								"@type": "http://www.w3.org/2001/XMLSchema#int",
 								"@value": "0987654321"
 							} ]
@@ -554,30 +539,30 @@ describe( module( "Carbon/Documents" ), ():void => {
 						status: 500,
 						responseText: `[ {
 							"@id": "_:3",
-							"@type": [ "${ NS.C.Class.Error }" ],
-							"${ NS.C.Predicate.errorCode }": [ {
+							"@type": [ "${ C.Error }" ],
+							"${ C.errorCode }": [ {
 								"@language": "en",
 								"@value": "code-02"
 							} ],
-							"${ NS.C.Predicate.errorMessage }": [ {
+							"${ C.errorMessage }": [ {
 								"@language": "en",
 								"@value": "Message 02"
 							} ],
-							"${ NS.C.Predicate.errorParameters }": [ {
+							"${ C.errorParameters }": [ {
 								"@id": "_:4"
 							} ]
 						}, {
 							"@id": "_:4",
-							"@type": [ "${ NS.C.Class.Map }" ],
-							"${ NS.C.Predicate.entry }": [ {
+							"@type": [ "${ C.Map }" ],
+							"${ C.entry }": [ {
 								"@id": "_:5"
 							} ]
 						}, {
 							"@id": "_:5",
-							"${ NS.C.Predicate.entryKey }": [ {
+							"${ C.entryKey }": [ {
 								"@value": "document"
 							} ],
-							"${ NS.C.Predicate.entryValue }": [ {
+							"${ C.entryValue }": [ {
 								"@id": "https://example.com/target-document/"
 							} ]
 						} ]`,
@@ -601,7 +586,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					documents.get( "http://example.com/" ).then( () => {
 						done.fail( "Should not resolve" );
 					} ).catch( ( error:Error ) => {
-						expect( error ).toEqual( jasmine.any( HTTP.Errors.Error ) );
+						expect( error ).toEqual( jasmine.any( HTTPError ) );
 						expect( error.message ).toBe( "An error message." );
 						done();
 					} );
@@ -612,76 +597,76 @@ describe( module( "Carbon/Documents" ), ():void => {
 			describe( "When Documents does not have a context", ():void => {
 
 				beforeEach( () => {
-					documents = new Documents.Class();
+					documents = new Documents();
 				} );
 
 				it( "should generate an HTTP error with empty ErrorResponse properties", ( done:DoneFn ):void => {
 					const responseText:string = `[ {
 							"@id": "_:1",
-							"@type": [ "${ NS.C.Class.ErrorResponse }" ],
-							"${ NS.C.Predicate.error }": [ {
+							"@type": [ "${ C.ErrorResponse }" ],
+							"${ C.error }": [ {
 								"@id": "_:2"
 							}, {
 								"@id": "_:3"
 							} ],
-							"${ NS.C.Predicate.httpStatusCode }": [ {
-								"@type": "${ NS.XSD.DataType.int }",
+							"${ C.httpStatusCode }": [ {
+								"@type": "${ XSD.int }",
 								"@value": "500"
 							} ]
 						}, {
 							"@id": "_:2",
-							"@type": [ "${ NS.C.Class.Error }" ],
-							"${ NS.C.Predicate.errorCode }": [ {
+							"@type": [ "${ C.Error }" ],
+							"${ C.errorCode }": [ {
 								"@language": "en",
 								"@value": "code-01"
 							} ],
-							"${ NS.C.Predicate.errorMessage }": [ {
+							"${ C.errorMessage }": [ {
 								"@language": "en",
 								"@value": "Message 01"
 							} ],
-							"${ NS.C.Predicate.errorParameters }": [ {
+							"${ C.errorParameters }": [ {
 								"@id": "_:4"
 							} ]
 						}, {
 							"@id": "_:3",
-							"@type": [ "${ NS.C.Class.Error }" ],
-							"${ NS.C.Predicate.errorCode }": [ {
+							"@type": [ "${ C.Error }" ],
+							"${ C.errorCode }": [ {
 								"@language": "en",
 								"@value": "code-02"
 							} ],
-							"${ NS.C.Predicate.errorMessage }": [ {
+							"${ C.errorMessage }": [ {
 								"@language": "en",
 								"@value": "Message 02"
 							} ],
-							"${ NS.C.Predicate.errorParameters }": [ {
+							"${ C.errorParameters }": [ {
 									"@id": "_:6"
 							} ]
 						}, {
 							"@id": "_:4",
-							"@type": [ "${ NS.C.Class.Map }" ],
-							"${ NS.C.Predicate.entry }": [ {
+							"@type": [ "${ C.Map }" ],
+							"${ C.entry }": [ {
 								"@id": "_:5"
 							} ]
 						}, {
 							"@id": "_:5",
-							"${ NS.C.Predicate.entryKey }": [ {
+							"${ C.entryKey }": [ {
 								"@value": "document"
 							} ],
-							"${ NS.C.Predicate.entryValue }": [ {
+							"${ C.entryValue }": [ {
 								"@id": "https://example.com/target-document/"
 							} ]
 						}, {
 							"@id": "_:6",
-							"@type": [ "${ NS.C.Class.Map }" ],
-							"${ NS.C.Predicate.entry }": [ {
+							"@type": [ "${ C.Map }" ],
+							"${ C.entry }": [ {
 								"@id": "_:7"
 							} ]
 						}, {
 							"@id": "_:7",
-							"${ NS.C.Predicate.entryKey }": [ {
+							"${ C.entryKey }": [ {
 								"@value": "document"
 							} ],
-							"${ NS.C.Predicate.entryValue }": [ {
+							"${ C.entryValue }": [ {
 								"@id": "https://example.com/target-document/"
 							} ]
 						} ]`;
@@ -692,9 +677,9 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 					documents.get( "http://example.com/" ).then( () => {
 						done.fail( "Should not resolve" );
-					} ).catch( ( error:HTTP.Errors.Error ) => {
+					} ).catch( ( error:HTTPError ) => {
 						expect( error ).toBeDefined();
-						expect( error ).toEqual( jasmine.any( HTTP.Errors.Error ) );
+						expect( error ).toEqual( jasmine.any( HTTPError ) );
 						expect( error.message ).toBe( responseText );
 
 						expect( error.statusCode ).toBe( 500 );
@@ -715,19 +700,19 @@ describe( module( "Carbon/Documents" ), ():void => {
 				[ "T extends object" ],
 				"Retrieves the entire document referred by the URI specified when no query function si provided.\nIf the function builder es provided the query is able to specify the properties of the document to be retrieved and the sub-documents' properties and on and on.", [
 					{ name: "uri", type: "string", description: "The URI of the document to retrieve/query." },
-					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request." },
-					{ name: "queryBuilderFn", type: "( queryBuilder:Carbon.SPARQL.QueryDocument.QueryDocumentBuilder.Class ) => Carbon.SPARQL.QueryDocument.QueryDocumentBuilder.Class", optional: true, description: "Function that receives a the builder that helps you to construct the retrieval query.\nThe same builder must be returned." },
+					{ name: "requestOptions", type: "CarbonLDP.HTTP.Request.RequestOptions", optional: true, description: "Customizable options for the request." },
+					{ name: "queryBuilderFn", type: "( queryBuilder:CarbonLDP.SPARQL.QueryDocument.QueryDocumentBuilder.QueryDocumentBuilder ) => CarbonLDP.SPARQL.QueryDocument.QueryDocumentBuilder.QueryDocumentBuilder", optional: true, description: "Function that receives a the builder that helps you to construct the retrieval query.\nThe same builder must be returned." },
 				],
-				{ type: "Promise<[ T & Carbon.PersistedDocument.Class, HTTP.Response.Class ]>" }
+				{ type: "Promise<[ T & CarbonLDP.PersistedDocument.PersistedDocument, HTTP.Response.Response ]>" }
 			), ():void => {} );
 
 			it( hasSignature(
 				[ "T extends object" ],
 				"Retrieves the entire document referred by the URI specified when no query function si provided.\nIf the function builder es provided the query is able to specify the properties of the document to be retrieved and the sub-documents' properties and on and on.", [
 					{ name: "uri", type: "string", description: "The URI of the document to retrieve." },
-					{ name: "queryBuilderFn", type: "( queryBuilder:Carbon.SPARQL.QueryDocument.QueryDocumentBuilder.Class ) => Carbon.SPARQL.QueryDocument.QueryDocumentBuilder.Class", optional: true, description: "Function that receives a the builder that helps you to construct the retrieval query.\nThe same builder must be returned." },
+					{ name: "queryBuilderFn", type: "( queryBuilder:CarbonLDP.SPARQL.QueryDocument.QueryDocumentBuilder.QueryDocumentBuilder ) => CarbonLDP.SPARQL.QueryDocument.QueryDocumentBuilder.QueryDocumentBuilder", optional: true, description: "Function that receives a the builder that helps you to construct the retrieval query.\nThe same builder must be returned." },
 				],
-				{ type: "Promise<[ T & Carbon.PersistedDocument.Class, HTTP.Response.Class ]>" }
+				{ type: "Promise<[ T & CarbonLDP.PersistedDocument.PersistedDocument, HTTP.Response.Response ]>" }
 			), ():void => {} );
 
 			it( "should release cached request when failed", ( done:DoneFn ):void => {
@@ -742,12 +727,12 @@ describe( module( "Carbon/Documents" ), ():void => {
 				}
 
 				const context:MockedContext = new MockedContext();
-				const documents:Documents.Class = context.documents;
+				const documents:Documents = context.documents;
 
-				const spySend:jasmine.Spy = spyOn( HTTP.Request.Service, "send" );
+				const spySend:jasmine.Spy = spyOn( RequestService, "send" );
 
 				// First failed request
-				spySend.and.returnValue( Promise.reject( new HTTP.Response.Class( {} as any, "A error in the GET request." ) ) );
+				spySend.and.returnValue( Promise.reject( new Response( {} as any, "A error in the GET request." ) ) );
 				documents.get( "resource/" )
 					.then( () => {
 						done.fail( "Should not have been resolved." );
@@ -758,7 +743,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 						// Second correct request
 						spySend.and.returnValue( Promise.resolve( [
 							[ { "@id": "http://example.com/resource/", "@graph": [ { "@id": "http://example.com/resource/" } ] } ],
-							new HTTP.Response.Class( <any> null, "", <any> {
+							new Response( <any> null, "", <any> {
 								headers: {
 									"ETag": "123456",
 									"Content-Location": "http://example.com/resource/",
@@ -781,7 +766,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 			} );
 
 			it( "should reject promise if URI is a BNode", ( done:DoneFn ):void => {
-				let promise:Promise<any> = new Documents.Class().get( "_:a-blank-node" );
+				let promise:Promise<any> = new Documents().get( "_:a-blank-node" );
 				promise.then( () => {
 					done.fail( "Should not resolve promise." );
 				} ).catch( error => {
@@ -793,7 +778,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 			describe( "When Documents has a specified context", ():void => {
 
 				let context:AbstractContext;
-				let documents:Documents.Class;
+				let documents:Documents;
 				beforeEach( ():void => {
 					context = new class extends AbstractContext {
 						_baseURI:string = "https://example.com/";
@@ -923,7 +908,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 						},
 					} );
 
-					documents.get( "https://example.com/resource/" ).then( ( [ document, response ]:[ PersistedDocument.Class, HTTP.Response.Class ] ):void => {
+					documents.get( "https://example.com/resource/" ).then( ( [ document, response ]:[ PersistedDocument, Response ] ):void => {
 						expect( document ).toBeDefined();
 						expect( Utils.isObject( document ) ).toEqual( true );
 
@@ -934,15 +919,15 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 						(function documentResource():void {
 							expect( document[ "pointerSet" ].length ).toBe( 4 );
-							expect( Pointer.Util.getIDs( document[ "pointerSet" ] ) ).toContain( "_:1" );
-							expect( Pointer.Util.getIDs( document[ "pointerSet" ] ) ).toContain( "_:2" );
-							expect( Pointer.Util.getIDs( document[ "pointerSet" ] ) ).toContain( "https://example.com/resource/#1" );
-							expect( Pointer.Util.getIDs( document[ "pointerSet" ] ) ).toContain( "https://example.com/external-resource/" );
+							expect( Pointer.getIDs( document[ "pointerSet" ] ) ).toContain( "_:1" );
+							expect( Pointer.getIDs( document[ "pointerSet" ] ) ).toContain( "_:2" );
+							expect( Pointer.getIDs( document[ "pointerSet" ] ) ).toContain( "https://example.com/resource/#1" );
+							expect( Pointer.getIDs( document[ "pointerSet" ] ) ).toContain( "https://example.com/external-resource/" );
 						})();
 
 						(function documentFragments():void {
 
-							let fragment:Fragment.Class;
+							let fragment:Fragment;
 							expect( document.getFragments().length ).toBe( 4 );
 
 							(function documentBlankNode_1():void {
@@ -950,8 +935,8 @@ describe( module( "Carbon/Documents" ), ():void => {
 								expect( fragment ).toBeTruthy();
 								expect( fragment[ "string" ] ).toBe( "Fragment 1" );
 								expect( fragment[ "pointerSet" ].length ).toBe( 2 );
-								expect( Pointer.Util.getIDs( fragment[ "pointerSet" ] ) ).toContain( "https://example.com/resource/" );
-								expect( Pointer.Util.getIDs( fragment[ "pointerSet" ] ) ).toContain( "https://example.com/resource/#1" );
+								expect( Pointer.getIDs( fragment[ "pointerSet" ] ) ).toContain( "https://example.com/resource/" );
+								expect( Pointer.getIDs( fragment[ "pointerSet" ] ) ).toContain( "https://example.com/resource/#1" );
 								expect( fragment[ "pointerSet" ].find( pointer => pointer.id === "https://example.com/resource/" ) ).toBe( document );
 								expect( fragment[ "pointerSet" ].find( pointer => pointer.id === "https://example.com/resource/#1" ) ).toBe( document.getFragment( "1" ) );
 							})();
@@ -1034,7 +1019,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 						},
 					} );
 
-					documents.get( "https://example.com/resource/" ).then( ( [ document, response ]:[ PersistedDocument.Class, HTTP.Response.Class ] ):void => {
+					documents.get( "https://example.com/resource/" ).then( ( [ document, response ]:[ PersistedDocument, Response ] ):void => {
 						expect( document ).toBeDefined();
 						expect( Utils.isObject( document ) ).toEqual( true );
 
@@ -1061,15 +1046,15 @@ describe( module( "Carbon/Documents" ), ():void => {
 					context.extendObjectSchema( "Resource", {
 						"property1": {
 							"@id": "property-1",
-							"@type": NS.XSD.DataType.string,
+							"@type": XSD.string,
 						},
 						"property2": {
 							"@id": "property-2",
-							"@type": NS.XSD.DataType.integer,
+							"@type": XSD.integer,
 						},
 						"property3": {
 							"@id": "https://schema.org/property-3",
-							"@type": NS.XSD.DataType.string,
+							"@type": XSD.string,
 						},
 					} );
 
@@ -1093,8 +1078,8 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"https://example.com/resource/",
 							"PREFIX schema: <https://schema.org/> " +
 							"CONSTRUCT {" +
-							` ?metadata a <${ NS.C.Class.VolatileResource }>, <${ NS.C.Class.QueryMetadata }>;` +
-							"" + ` <${ NS.C.Predicate.target }> ?document.` +
+							` ?metadata a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
+							"" + ` <${ C.target }> ?document.` +
 
 							" ?document a ?document__types;" +
 							"" + " <https://example.com/ns#property-1> ?document__property1;" +
@@ -1135,9 +1120,9 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 							jasmine.objectContaining( {
 								headers: new Map( [
-									[ "prefer", new HTTP.Header.Class( [
-										`include="${ NS.C.Class.PreferResultsContext }"`,
-										`include="${ NS.C.Class.PreferDocumentETags }"`,
+									[ "prefer", new Header( [
+										`include="${ C.PreferResultsContext }"`,
+										`include="${ C.PreferDocumentETags }"`,
 									] ) ],
 								] ),
 							} )
@@ -1152,31 +1137,31 @@ describe( module( "Carbon/Documents" ), ():void => {
 						responseText: `[ {
 							"@id":"_:1",
 							"@type": [
-								"${ NS.C.Class.VolatileResource }",
-								"${ NS.C.Class.QueryMetadata }"
+								"${ C.VolatileResource }",
+								"${ C.QueryMetadata }"
 							],
-							"${ NS.C.Predicate.target }": [ {
+							"${ C.target }": [ {
 								"@id":"${ context.baseURI }resource/"
 							} ]
 						}, {
 							"@id": "_:2",
 							"@type": [
-								"${ NS.C.Class.ResponseMetadata }",
-								"${ NS.C.Class.VolatileResource }"
+								"${ C.ResponseMetadata }",
+								"${ C.VolatileResource }"
 							],
-							"${ NS.C.Predicate.documentMetadata }": [ {
+							"${ C.documentMetadata }": [ {
 								"@id": "_:3"
 							} ]
 						}, {
 							"@id": "_:3",
 							"@type": [
-								"${ NS.C.Class.DocumentMetadata }",
-								"${ NS.C.Class.VolatileResource }"
+								"${ C.DocumentMetadata }",
+								"${ C.VolatileResource }"
 							],
-							"${ NS.C.Predicate.eTag }": [ {
+							"${ C.eTag }": [ {
 								"@value": "\\"1-12345\\""
 							} ],
-							"${ NS.C.Predicate.relatedDocument }": [ {
+							"${ C.relatedDocument }": [ {
 								"@id": "https://example.com/resource/"
 							} ]
 						}, {
@@ -1184,10 +1169,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"@graph": [ {
 								"@id": "${ context.baseURI }resource/",
 								"@type": [
-									"${ NS.C.Class.Document }",
+									"${ C.Document }",
 									"https://example.com/ns#Resource",
-									"${ NS.LDP.Class.BasicContainer }",
-									"${ NS.LDP.Class.RDFSource }"
+									"${ LDP.BasicContainer }",
+									"${ LDP.RDFSource }"
 								],
 								"https://example.com/ns#property-1": [ {
 									"@value": "value"
@@ -1199,7 +1184,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"@id": "_:1",
 								"https://example.com/ns#property-2": [ {
 									"@value": "12345",
-									"@type": "${ NS.XSD.DataType.integer }"
+									"@type": "${ XSD.integer }"
 								} ],
 								"https://schema.org/property-3": [ {
 									"@value": "another value"
@@ -1216,15 +1201,15 @@ describe( module( "Carbon/Documents" ), ():void => {
 					context.extendObjectSchema( "Resource", {
 						"property1": {
 							"@id": "property-1",
-							"@type": NS.XSD.DataType.string,
+							"@type": XSD.string,
 						},
 						"property2": {
 							"@id": "property-2",
-							"@type": NS.XSD.DataType.integer,
+							"@type": XSD.integer,
 						},
 						"property3": {
 							"@id": "https://schema.org/property-3",
-							"@type": NS.XSD.DataType.string,
+							"@type": XSD.string,
 						},
 					} );
 
@@ -1242,11 +1227,11 @@ describe( module( "Carbon/Documents" ), ():void => {
 							},
 						} )
 					).then( ( [ document, response ] ) => {
-						expect( response ).toEqual( jasmine.any( HTTP.Response.Class ) );
+						expect( response ).toEqual( jasmine.any( Response ) );
 
-						expect( PersistedDocument.Factory.is( document ) ).toBe( true );
+						expect( PersistedDocument.is( document ) ).toBe( true );
 						expect( document ).toEqual( jasmine.objectContaining( {
-							"_etag": "\"1-12345\"",
+							"_eTag": "\"1-12345\"",
 							"property1": "value",
 							"property2": jasmine.objectContaining( {
 								"property2": 12345,
@@ -1263,19 +1248,19 @@ describe( module( "Carbon/Documents" ), ():void => {
 						responseText: `[ {
 							"@id":"_:1",
 							"@type": [
-								"${ NS.C.Class.VolatileResource }",
-								"${ NS.C.Class.QueryMetadata }"
+								"${ C.VolatileResource }",
+								"${ C.QueryMetadata }"
 							],
-							"${ NS.C.Predicate.target }": [ {
+							"${ C.target }": [ {
 								"@id":"${ context.baseURI }resource/"
 							} ]
 						}, {
 							"@id": "_:3",
 							"@type": [
-								"${ NS.C.Class.ResponseMetadata }",
-								"${ NS.C.Class.VolatileResource }"
+								"${ C.ResponseMetadata }",
+								"${ C.VolatileResource }"
 							],
-							"${ NS.C.Predicate.documentMetadata }": [ {
+							"${ C.documentMetadata }": [ {
 								"@id": "_:4"
 							}, {
 								"@id": "_:5"
@@ -1283,25 +1268,25 @@ describe( module( "Carbon/Documents" ), ():void => {
 						}, {
 							"@id": "_:4",
 							"@type": [
-								"${ NS.C.Class.DocumentMetadata }",
-								"${ NS.C.Class.VolatileResource }"
+								"${ C.DocumentMetadata }",
+								"${ C.VolatileResource }"
 							],
-							"${ NS.C.Predicate.eTag }": [ {
+							"${ C.eTag }": [ {
 								"@value": "\\"1-12345\\""
 							} ],
-							"${ NS.C.Predicate.relatedDocument }": [ {
+							"${ C.relatedDocument }": [ {
 								"@id": "https://example.com/resource/"
 							} ]
 						}, {
 							"@id": "_:5",
 							"@type": [
-								"${ NS.C.Class.DocumentMetadata }",
-								"${ NS.C.Class.VolatileResource }"
+								"${ C.DocumentMetadata }",
+								"${ C.VolatileResource }"
 							],
-							"${ NS.C.Predicate.eTag }": [ {
+							"${ C.eTag }": [ {
 								"@value": "\\"2-12345\\""
 							} ],
-							"${ NS.C.Predicate.relatedDocument }": [ {
+							"${ C.relatedDocument }": [ {
 								"@id": "https://example.com/another-resource/"
 							} ]
 						}, {
@@ -1309,10 +1294,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"@graph": [ {
 								"@id": "${ context.baseURI }resource/",
 								"@type": [
-									"${ NS.C.Class.Document }",
+									"${ C.Document }",
 									"https://example.com/ns#Resource",
-									"${ NS.LDP.Class.BasicContainer }",
-									"${ NS.LDP.Class.RDFSource }"
+									"${ LDP.BasicContainer }",
+									"${ LDP.RDFSource }"
 								],
 								"https://example.com/ns#property-1": [ {
 									"@value": "value"
@@ -1327,7 +1312,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"@id": "${ context.baseURI }another-resource/",
 								"https://example.com/ns#property-2": [ {
 									"@value": "12345",
-									"@type": "${ NS.XSD.DataType.integer }"
+									"@type": "${ XSD.integer }"
 								} ],
 								"https://schema.org/property-3": [ {
 									"@value": "another value"
@@ -1344,15 +1329,15 @@ describe( module( "Carbon/Documents" ), ():void => {
 					context.extendObjectSchema( "Resource", {
 						"property1": {
 							"@id": "property-1",
-							"@type": NS.XSD.DataType.string,
+							"@type": XSD.string,
 						},
 						"property2": {
 							"@id": "property-2",
-							"@type": NS.XSD.DataType.integer,
+							"@type": XSD.integer,
 						},
 						"property3": {
 							"@id": "https://schema.org/property-3",
-							"@type": NS.XSD.DataType.string,
+							"@type": XSD.string,
 						},
 					} );
 
@@ -1370,16 +1355,16 @@ describe( module( "Carbon/Documents" ), ():void => {
 							},
 						} )
 					).then( ( [ document, response ] ) => {
-						expect( response ).toEqual( jasmine.any( HTTP.Response.Class ) );
+						expect( response ).toEqual( jasmine.any( Response ) );
 
-						expect( PersistedDocument.Factory.is( document ) ).toBe( true );
-						expect( PersistedDocument.Factory.is( document.property2 ) ).toBe( true );
+						expect( PersistedDocument.is( document ) ).toBe( true );
+						expect( PersistedDocument.is( document.property2 ) ).toBe( true );
 
 						expect( document ).toEqual( jasmine.objectContaining( {
-							"_etag": "\"1-12345\"",
+							"_eTag": "\"1-12345\"",
 							"property1": "value",
 							"property2": jasmine.objectContaining( {
-								"_etag": "\"2-12345\"",
+								"_eTag": "\"2-12345\"",
 								"property2": 12345,
 								"property3": "another value",
 							} ),
@@ -1394,10 +1379,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 						responseText: `[ {
 							"@id":"_:1",
 							"@type": [
-								"${ NS.C.Class.VolatileResource }",
-								"${ NS.C.Class.QueryMetadata }"
+								"${ C.VolatileResource }",
+								"${ C.QueryMetadata }"
 							],
-							"${ NS.C.Predicate.target }": [ {
+							"${ C.target }": [ {
 								"@id":"${ context.baseURI }resource/"
 							} ]
 						}, {
@@ -1405,10 +1390,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"@graph": [ {
 								"@id": "${ context.baseURI }resource/",
 								"@type": [
-									"${ NS.C.Class.Document }",
+									"${ C.Document }",
 									"https://example.com/ns#Resource",
-									"${ NS.LDP.Class.BasicContainer }",
-									"${ NS.LDP.Class.RDFSource }"
+									"${ LDP.BasicContainer }",
+									"${ LDP.RDFSource }"
 								],
 								"https://example.com/ns#property-1": [ {
 									"@value": "value"
@@ -1420,7 +1405,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"@id": "_:1",
 								"https://example.com/ns#property-2": [ {
 									"@value": "12345",
-									"@type": "${ NS.XSD.DataType.integer }"
+									"@type": "${ XSD.integer }"
 								} ],
 								"https://schema.org/property-3": [ {
 									"@value": "another value"
@@ -1431,21 +1416,21 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 					interface MyDocument {
 						property1:string;
-						property2:PersistedResource.Class;
+						property2:PersistedResource;
 					}
 
 					context.extendObjectSchema( "Resource", {
 						"property1": {
 							"@id": "property-1",
-							"@type": NS.XSD.DataType.string,
+							"@type": XSD.string,
 						},
 						"property2": {
 							"@id": "property-2",
-							"@type": NS.XSD.DataType.integer,
+							"@type": XSD.integer,
 						},
 						"property3": {
 							"@id": "https://schema.org/property-3",
-							"@type": NS.XSD.DataType.string,
+							"@type": XSD.string,
 						},
 					} );
 
@@ -1463,11 +1448,11 @@ describe( module( "Carbon/Documents" ), ():void => {
 							},
 						} )
 					).then( ( [ document ] ) => {
-						expect( document._partialMetadata ).toEqual( jasmine.any( SPARQL.QueryDocument.PartialMetadata.Class ) );
-						expect( document._partialMetadata.schema ).toEqual( ObjectSchema.Digester.digestSchema( {
+						expect( document._partialMetadata ).toEqual( jasmine.any( PartialMetadata ) );
+						expect( document._partialMetadata.schema ).toEqual( ObjectSchema.ObjectSchemaDigester.digestSchema( {
 							"property1": {
 								"@id": "https://example.com/ns#property-1",
-								"@type": NS.XSD.DataType.string,
+								"@type": XSD.string,
 							},
 							"property2": {
 								"@id": "https://schema.org/property-2",
@@ -1475,15 +1460,15 @@ describe( module( "Carbon/Documents" ), ():void => {
 							},
 						} ) );
 
-						expect( document.property2._partialMetadata ).toEqual( jasmine.any( SPARQL.QueryDocument.PartialMetadata.Class ) );
-						expect( document.property2._partialMetadata.schema ).toEqual( ObjectSchema.Digester.digestSchema( {
+						expect( document.property2._partialMetadata ).toEqual( jasmine.any( PartialMetadata ) );
+						expect( document.property2._partialMetadata.schema ).toEqual( ObjectSchema.ObjectSchemaDigester.digestSchema( {
 							"property2": {
 								"@id": "https://example.com/ns#property-2",
-								"@type": NS.XSD.DataType.integer,
+								"@type": XSD.integer,
 							},
 							"property3": {
 								"@id": "https://schema.org/property-3",
-								"@type": NS.XSD.DataType.string,
+								"@type": XSD.string,
 							},
 						} ) );
 						done();
@@ -1493,29 +1478,29 @@ describe( module( "Carbon/Documents" ), ():void => {
 				it( "should merge partial metadata of a partial document", ( done:DoneFn ):void => {
 					interface MyDocument {
 						property1:string;
-						property2:PersistedResource.Class;
+						property2:PersistedResource;
 					}
 
 					context.extendObjectSchema( "Resource", {
 						"property1": {
 							"@id": "property-1",
-							"@type": NS.XSD.DataType.string,
+							"@type": XSD.string,
 						},
 						"property2": {
 							"@id": "property-2",
-							"@type": NS.XSD.DataType.integer,
+							"@type": XSD.integer,
 						},
 						"property3": {
 							"@id": "https://schema.org/property-3",
-							"@type": NS.XSD.DataType.string,
+							"@type": XSD.string,
 						},
 						"property4": {
 							"@id": "property-4",
-							"@type": NS.XSD.DataType.boolean,
+							"@type": XSD.boolean,
 						},
 						"property5": {
 							"@id": "https://schema.org/property-5",
-							"@type": NS.XSD.DataType.dateTime,
+							"@type": XSD.dateTime,
 						},
 					} );
 
@@ -1525,10 +1510,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 							responseText: `[ {
 							"@id":"_:1",
 							"@type": [
-								"${ NS.C.Class.VolatileResource }",
-								"${ NS.C.Class.QueryMetadata }"
+								"${ C.VolatileResource }",
+								"${ C.QueryMetadata }"
 							],
-							"${ NS.C.Predicate.target }": [ {
+							"${ C.target }": [ {
 								"@id":"${ context.baseURI }resource/"
 							} ]
 						}, {
@@ -1536,10 +1521,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"@graph": [ {
 								"@id": "${ context.baseURI }resource/",
 								"@type": [
-									"${ NS.C.Class.Document }",
+									"${ C.Document }",
 									"https://example.com/ns#Resource",
-									"${ NS.LDP.Class.BasicContainer }",
-									"${ NS.LDP.Class.RDFSource }"
+									"${ LDP.BasicContainer }",
+									"${ LDP.RDFSource }"
 								],
 								"https://example.com/ns#property-1": [ {
 									"@value": "value"
@@ -1551,7 +1536,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"@id": "_:1",
 								"https://example.com/ns#property-2": [ {
 									"@value": "12345",
-									"@type": "${ NS.XSD.DataType.integer }"
+									"@type": "${ XSD.integer }"
 								} ],
 								"https://schema.org/property-3": [ {
 									"@value": "another value"
@@ -1580,10 +1565,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 							responseText: `[ {
 							"@id":"_:1",
 							"@type": [
-								"${ NS.C.Class.VolatileResource }",
-								"${ NS.C.Class.QueryMetadata }"
+								"${ C.VolatileResource }",
+								"${ C.QueryMetadata }"
 							],
-							"${ NS.C.Predicate.target }": [ {
+							"${ C.target }": [ {
 								"@id":"${ context.baseURI }resource/"
 							} ]
 						}, {
@@ -1591,14 +1576,14 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"@graph": [ {
 								"@id": "${ context.baseURI }resource/",
 								"@type": [
-									"${ NS.C.Class.Document }",
+									"${ C.Document }",
 									"https://example.com/ns#Resource",
-									"${ NS.LDP.Class.BasicContainer }",
-									"${ NS.LDP.Class.RDFSource }"
+									"${ LDP.BasicContainer }",
+									"${ LDP.RDFSource }"
 								],
 								"https://example.com/ns#property-4": [ {
 									"@value": "true",
-									"@type": "${ NS.XSD.DataType.boolean }"
+									"@type": "${ XSD.boolean }"
 								} ],
 								"https://schema.org/property-2": [ {
 									"@id": "_:1"
@@ -1610,7 +1595,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								} ],
 								"https://schema.org/property-5": [ {
 									"@value": "2000-01-01",
-									"@type": "${ NS.XSD.DataType.dateTime }"
+									"@type": "${ XSD.dateTime }"
 								} ]
 							} ]
 						} ]`,
@@ -1631,11 +1616,11 @@ describe( module( "Carbon/Documents" ), ():void => {
 							} )
 						);
 					} ).then( ( [ document ] ) => {
-						expect( document._partialMetadata ).toEqual( jasmine.any( SPARQL.QueryDocument.PartialMetadata.Class ) );
-						expect( document._partialMetadata.schema ).toEqual( ObjectSchema.Digester.digestSchema( {
+						expect( document._partialMetadata ).toEqual( jasmine.any( PartialMetadata ) );
+						expect( document._partialMetadata.schema ).toEqual( ObjectSchema.ObjectSchemaDigester.digestSchema( {
 							"property4": {
 								"@id": "https://example.com/ns#property-4",
-								"@type": NS.XSD.DataType.boolean,
+								"@type": XSD.boolean,
 							},
 							"property2": {
 								"@id": "https://schema.org/property-2",
@@ -1643,23 +1628,23 @@ describe( module( "Carbon/Documents" ), ():void => {
 							},
 							"property1": {
 								"@id": "https://example.com/ns#property-1",
-								"@type": NS.XSD.DataType.string,
+								"@type": XSD.string,
 							},
 						} ) );
 
-						expect( document.property2._partialMetadata ).toEqual( jasmine.any( SPARQL.QueryDocument.PartialMetadata.Class ) );
-						expect( document.property2._partialMetadata.schema ).toEqual( ObjectSchema.Digester.digestSchema( {
+						expect( document.property2._partialMetadata ).toEqual( jasmine.any( PartialMetadata ) );
+						expect( document.property2._partialMetadata.schema ).toEqual( ObjectSchema.ObjectSchemaDigester.digestSchema( {
 							"property3": {
 								"@id": "https://schema.org/property-3",
-								"@type": NS.XSD.DataType.string,
+								"@type": XSD.string,
 							},
 							"property5": {
 								"@id": "https://schema.org/property-5",
-								"@type": NS.XSD.DataType.dateTime,
+								"@type": XSD.dateTime,
 							},
 							"property2": {
 								"@id": "https://example.com/ns#property-2",
-								"@type": NS.XSD.DataType.integer,
+								"@type": XSD.integer,
 							},
 						} ) );
 						done();
@@ -1672,10 +1657,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 						responseText: `[ {
 							"@id":"_:1",
 							"@type": [
-								"${ NS.C.Class.VolatileResource }",
-								"${ NS.C.Class.QueryMetadata }"
+								"${ C.VolatileResource }",
+								"${ C.QueryMetadata }"
 							],
-							"${ NS.C.Predicate.target }": [ {
+							"${ C.target }": [ {
 								"@id":"${ context.baseURI }resource/"
 							} ]
 						}, {
@@ -1683,14 +1668,14 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"@graph": [ {
 								"@id": "${ context.baseURI }resource/",
 								"@type": [
-									"${ NS.C.Class.Document }",
+									"${ C.Document }",
 									"https://example.com/ns#Resource",
-									"${ NS.LDP.Class.BasicContainer }",
-									"${ NS.LDP.Class.RDFSource }"
+									"${ LDP.BasicContainer }",
+									"${ LDP.RDFSource }"
 								],
 								"https://example.com/ns#property-4": [ {
 									"@value": "false",
-									"@type": "${ NS.XSD.DataType.boolean }"
+									"@type": "${ XSD.boolean }"
 								} ],
 								"https://schema.org/property-2": [ {
 									"@id": "_:1"
@@ -1702,7 +1687,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								} ],
 								"https://schema.org/property-5": [ {
 									"@value": "2010-01-01",
-									"@type": "${ NS.XSD.DataType.dateTime }"
+									"@type": "${ XSD.dateTime }"
 								} ]
 							} ]
 						} ]`,
@@ -1711,45 +1696,45 @@ describe( module( "Carbon/Documents" ), ():void => {
 					interface MyDocument {
 						property4:boolean;
 						property1:string;
-						property2:PersistedResource.Class;
+						property2:PersistedResource;
 					}
 
 					context.extendObjectSchema( "Resource", {
 						"property1": {
 							"@id": "property-1",
-							"@type": NS.XSD.DataType.string,
+							"@type": XSD.string,
 						},
 						"property2": {
 							"@id": "property-2",
-							"@type": NS.XSD.DataType.integer,
+							"@type": XSD.integer,
 						},
 						"property3": {
 							"@id": "https://schema.org/property-3",
-							"@type": NS.XSD.DataType.string,
+							"@type": XSD.string,
 						},
 						"property4": {
 							"@id": "property-4",
-							"@type": NS.XSD.DataType.boolean,
+							"@type": XSD.boolean,
 						},
 						"property5": {
 							"@id": "https://schema.org/property-5",
-							"@type": NS.XSD.DataType.dateTime,
+							"@type": XSD.dateTime,
 						},
 					} );
 
-					const persistedDocument:PersistedDocument.Class & MyDocument = PersistedDocument.Factory.createFrom(
+					const persistedDocument:PersistedDocument & MyDocument = PersistedDocument.createFrom(
 						Object.assign(
 							documents.getPointer( "https://example.com/resource/" ),
 							{ property4: true, property1: "value", property2: null }
 						),
-						"https://example.com/resource/",
-						documents
+						documents,
+						"https://example.com/resource/"
 					);
 					persistedDocument._partialMetadata = createPartialMetadata( {
 						"@vocab": "https://example.com/ns#",
 						"property4": {
 							"@id": "property-4",
-							"@type": NS.XSD.DataType.boolean,
+							"@type": XSD.boolean,
 						},
 						"property2": {
 							"@id": "https://schema.org/property-2",
@@ -1757,7 +1742,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 						},
 						"property1": {
 							"@id": "property-1",
-							"@type": NS.XSD.DataType.string,
+							"@type": XSD.string,
 						},
 					} );
 
@@ -1769,15 +1754,15 @@ describe( module( "Carbon/Documents" ), ():void => {
 						"@vocab": "https://example.com/ns#",
 						"property3": {
 							"@id": "https://schema.org/property-3",
-							"@type": NS.XSD.DataType.string,
+							"@type": XSD.string,
 						},
 						"property5": {
 							"@id": "https://schema.org/property-5",
-							"@type": NS.XSD.DataType.dateTime,
+							"@type": XSD.dateTime,
 						},
 						"property2": {
 							"@id": "property-2",
-							"@type": NS.XSD.DataType.integer,
+							"@type": XSD.integer,
 						},
 					} );
 
@@ -1797,7 +1782,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 							} )
 						);
 					} ).then( ( [ document ] ) => {
-						expect( PersistedDocument.Factory.is( document ) ).toBe( true );
+						expect( PersistedDocument.is( document ) ).toBe( true );
 						expect( document ).toEqual( jasmine.objectContaining( {
 							"property4": false,
 							"property1": "value",
@@ -1815,9 +1800,9 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 			describe( "When Documents does not have a context", ():void => {
 
-				let documents:Documents.Class;
+				let documents:Documents;
 				beforeEach( () => {
-					documents = new Documents.Class();
+					documents = new Documents();
 				} );
 
 				it( "should reject if URI is relative", ( done:DoneFn ):void => {
@@ -1875,7 +1860,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 						.properties( {
 							"property1": {
 								"@id": "https://example.com/ns#property-1",
-								"@type": NS.XSD.DataType.string,
+								"@type": XSD.string,
 							},
 							"property2": {
 								"@id": "https://schema.org/property-2",
@@ -1883,11 +1868,11 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"query": __ => __.properties( {
 									"property2": {
 										"@id": "https://example.com/ns#property-2",
-										"@type": NS.XSD.DataType.integer,
+										"@type": XSD.integer,
 									},
 									"property3": {
 										"@id": "https://schema.org/property-3",
-										"@type": NS.XSD.DataType.string,
+										"@type": XSD.string,
 									},
 								} ),
 							},
@@ -1898,8 +1883,8 @@ describe( module( "Carbon/Documents" ), ():void => {
 						expect( sendSpy ).toHaveBeenCalledWith(
 							"https://example.com/resource/", "" +
 							"CONSTRUCT {" +
-							` ?metadata a <${ NS.C.Class.VolatileResource }>, <${ NS.C.Class.QueryMetadata }>;` +
-							"" + ` <${ NS.C.Predicate.target }> ?document.` +
+							` ?metadata a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
+							"" + ` <${ C.target }> ?document.` +
 
 							" ?document a ?document__types;" +
 							"" + " <https://example.com/ns#property-1> ?document__property1;" +
@@ -1940,9 +1925,9 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 							jasmine.objectContaining( {
 								headers: new Map( [
-									[ "prefer", new HTTP.Header.Class( [
-										`include="${ NS.C.Class.PreferResultsContext }"`,
-										`include="${ NS.C.Class.PreferDocumentETags }"`,
+									[ "prefer", new Header( [
+										`include="${ C.PreferResultsContext }"`,
+										`include="${ C.PreferDocumentETags }"`,
 									] ) ],
 								] ),
 							} )
@@ -1957,31 +1942,31 @@ describe( module( "Carbon/Documents" ), ():void => {
 						responseText: `[ {
 							"@id":"_:1",
 							"@type": [
-								"${ NS.C.Class.VolatileResource }",
-								"${ NS.C.Class.QueryMetadata }"
+								"${ C.VolatileResource }",
+								"${ C.QueryMetadata }"
 							],
-							"${ NS.C.Predicate.target }": [ {
+							"${ C.target }": [ {
 								"@id":"https://example.com/resource/"
 							} ]
 						}, {
 							"@id": "_:2",
 							"@type": [
-								"${ NS.C.Class.ResponseMetadata }",
-								"${ NS.C.Class.VolatileResource }"
+								"${ C.ResponseMetadata }",
+								"${ C.VolatileResource }"
 							],
-							"${ NS.C.Predicate.documentMetadata }": [ {
+							"${ C.documentMetadata }": [ {
 								"@id": "_:3"
 							} ]
 						}, {
 							"@id": "_:3",
 							"@type": [
-								"${ NS.C.Class.DocumentMetadata }",
-								"${ NS.C.Class.VolatileResource }"
+								"${ C.DocumentMetadata }",
+								"${ C.VolatileResource }"
 							],
-							"${ NS.C.Predicate.eTag }": [ {
+							"${ C.eTag }": [ {
 								"@value": "\\"1-12345\\""
 							} ],
-							"${ NS.C.Predicate.relatedDocument }": [ {
+							"${ C.relatedDocument }": [ {
 								"@id": "https://example.com/resource/"
 							} ]
 						}, {
@@ -1989,10 +1974,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"@graph": [ {
 								"@id": "https://example.com/resource/",
 								"@type": [
-									"${ NS.C.Class.Document }",
+									"${ C.Document }",
 									"https://example.com/ns#Resource",
-									"${ NS.LDP.Class.BasicContainer }",
-									"${ NS.LDP.Class.RDFSource }"
+									"${ LDP.BasicContainer }",
+									"${ LDP.RDFSource }"
 								],
 								"https://example.com/ns#property-1": [ {
 									"@value": "value"
@@ -2004,7 +1989,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"@id": "_:1",
 								"https://example.com/ns#property-2": [ {
 									"@value": "12345",
-									"@type": "${ NS.XSD.DataType.integer }"
+									"@type": "${ XSD.integer }"
 								} ],
 								"https://schema.org/property-3": [ {
 									"@value": "another value"
@@ -2022,7 +2007,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 						.withType( "https://example.com/ns#Resource" ).properties( {
 							"property1": {
 								"@id": "https://example.com/ns#property-1",
-								"@type": NS.XSD.DataType.string,
+								"@type": XSD.string,
 							},
 							"property2": {
 								"@id": "https://schema.org/property-2",
@@ -2030,21 +2015,21 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"query": __ => __.properties( {
 									"property2": {
 										"@id": "https://example.com/ns#property-2",
-										"@type": NS.XSD.DataType.integer,
+										"@type": XSD.integer,
 									},
 									"property3": {
 										"@id": "https://schema.org/property-3",
-										"@type": NS.XSD.DataType.string,
+										"@type": XSD.string,
 									},
 								} ),
 							},
 						} )
 					).then( ( [ document, response ] ) => {
-						expect( response ).toEqual( jasmine.any( HTTP.Response.Class ) );
+						expect( response ).toEqual( jasmine.any( Response ) );
 
-						expect( PersistedDocument.Factory.is( document ) ).toBe( true );
+						expect( PersistedDocument.is( document ) ).toBe( true );
 						expect( document ).toEqual( jasmine.objectContaining( {
-							"_etag": "\"1-12345\"",
+							"_eTag": "\"1-12345\"",
 							"property1": "value",
 							"property2": jasmine.objectContaining( {
 								"property2": 12345,
@@ -2061,19 +2046,19 @@ describe( module( "Carbon/Documents" ), ():void => {
 						responseText: `[ {
 							"@id":"_:1",
 							"@type": [
-								"${ NS.C.Class.VolatileResource }",
-								"${ NS.C.Class.QueryMetadata }"
+								"${ C.VolatileResource }",
+								"${ C.QueryMetadata }"
 							],
-							"${ NS.C.Predicate.target }": [ {
+							"${ C.target }": [ {
 								"@id":"https://example.com/resource/"
 							} ]
 						}, {
 							"@id": "_:3",
 							"@type": [
-								"${ NS.C.Class.ResponseMetadata }",
-								"${ NS.C.Class.VolatileResource }"
+								"${ C.ResponseMetadata }",
+								"${ C.VolatileResource }"
 							],
-							"${ NS.C.Predicate.documentMetadata }": [ {
+							"${ C.documentMetadata }": [ {
 								"@id": "_:4"
 							}, {
 								"@id": "_:5"
@@ -2081,25 +2066,25 @@ describe( module( "Carbon/Documents" ), ():void => {
 						}, {
 							"@id": "_:4",
 							"@type": [
-								"${ NS.C.Class.DocumentMetadata }",
-								"${ NS.C.Class.VolatileResource }"
+								"${ C.DocumentMetadata }",
+								"${ C.VolatileResource }"
 							],
-							"${ NS.C.Predicate.eTag }": [ {
+							"${ C.eTag }": [ {
 								"@value": "\\"1-12345\\""
 							} ],
-							"${ NS.C.Predicate.relatedDocument }": [ {
+							"${ C.relatedDocument }": [ {
 								"@id": "https://example.com/resource/"
 							} ]
 						}, {
 							"@id": "_:5",
 							"@type": [
-								"${ NS.C.Class.DocumentMetadata }",
-								"${ NS.C.Class.VolatileResource }"
+								"${ C.DocumentMetadata }",
+								"${ C.VolatileResource }"
 							],
-							"${ NS.C.Predicate.eTag }": [ {
+							"${ C.eTag }": [ {
 								"@value": "\\"2-12345\\""
 							} ],
-							"${ NS.C.Predicate.relatedDocument }": [ {
+							"${ C.relatedDocument }": [ {
 								"@id": "https://example.com/another-resource/"
 							} ]
 						}, {
@@ -2107,10 +2092,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"@graph": [ {
 								"@id": "https://example.com/resource/",
 								"@type": [
-									"${ NS.C.Class.Document }",
+									"${ C.Document }",
 									"https://example.com/ns#Resource",
-									"${ NS.LDP.Class.BasicContainer }",
-									"${ NS.LDP.Class.RDFSource }"
+									"${ LDP.BasicContainer }",
+									"${ LDP.RDFSource }"
 								],
 								"https://example.com/ns#property-1": [ {
 									"@value": "value"
@@ -2125,7 +2110,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"@id": "https://example.com/another-resource/",
 								"https://example.com/ns#property-2": [ {
 									"@value": "12345",
-									"@type": "${ NS.XSD.DataType.integer }"
+									"@type": "${ XSD.integer }"
 								} ],
 								"https://schema.org/property-3": [ {
 									"@value": "another value"
@@ -2144,7 +2129,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 						.properties( {
 							"property1": {
 								"@id": "https://example.com/ns#property-1",
-								"@type": NS.XSD.DataType.string,
+								"@type": XSD.string,
 							},
 							"property2": {
 								"@id": "https://schema.org/property-2",
@@ -2152,26 +2137,26 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"query": __ => __.properties( {
 									"property2": {
 										"@id": "https://example.com/ns#property-2",
-										"@type": NS.XSD.DataType.integer,
+										"@type": XSD.integer,
 									},
 									"property3": {
 										"@id": "https://schema.org/property-3",
-										"@type": NS.XSD.DataType.string,
+										"@type": XSD.string,
 									},
 								} ),
 							},
 						} )
 					).then( ( [ document, response ] ) => {
-						expect( response ).toEqual( jasmine.any( HTTP.Response.Class ) );
+						expect( response ).toEqual( jasmine.any( Response ) );
 
-						expect( PersistedDocument.Factory.is( document ) ).toBe( true );
-						expect( PersistedDocument.Factory.is( document.property2 ) ).toBe( true );
+						expect( PersistedDocument.is( document ) ).toBe( true );
+						expect( PersistedDocument.is( document.property2 ) ).toBe( true );
 
 						expect( document ).toEqual( jasmine.objectContaining( {
-							"_etag": "\"1-12345\"",
+							"_eTag": "\"1-12345\"",
 							"property1": "value",
 							"property2": jasmine.objectContaining( {
-								"_etag": "\"2-12345\"",
+								"_eTag": "\"2-12345\"",
 								"property2": 12345,
 								"property3": "another value",
 							} ),
@@ -2190,11 +2175,11 @@ describe( module( "Carbon/Documents" ), ():void => {
 		), ():void => {
 
 			it( hasSignature(
-				"Retrieves a boolean indicating if the resource exists or not in the CarbonLDP server.", [
+				"Retrieves a boolean indicating if the resource exists or not in the Carbon LDP server.", [
 					{ name: "documentURI", type: "string", description: "The URI to verify if it exists." },
-					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request." },
+					{ name: "requestOptions", type: "CarbonLDP.HTTP.Request.RequestOptions", optional: true, description: "Customizable options for the request." },
 				],
-				{ type: "Promise<[ boolean, Carbon.HTTP.Response.Class ]>" }
+				{ type: "Promise<[ boolean, CarbonLDP.HTTP.Response.Response ]>" }
 			), ( done:DoneFn ):void => {
 				let promises:Promise<any>[] = [];
 
@@ -2209,19 +2194,19 @@ describe( module( "Carbon/Documents" ), ():void => {
 				}
 
 				let context:MockedContext = new MockedContext();
-				let documents:Documents.Class = context.documents;
+				let documents:Documents = context.documents;
 
 				let spies:any = {
-					exists: ( [ exists, response ]:[ boolean, HTTP.Response.Class ] ):void => {
+					exists: ( [ exists, response ]:[ boolean, Response ] ):void => {
 						expect( exists ).toBe( true );
-						expect( response instanceof HTTP.Response.Class ).toBe( true );
+						expect( response instanceof Response ).toBe( true );
 					},
-					notExists: ( [ exists, response ]:[ boolean, HTTP.Response.Class ] ):void => {
+					notExists: ( [ exists, response ]:[ boolean, Response ] ):void => {
 						expect( exists ).toBe( false );
-						expect( response instanceof HTTP.Response.Class ).toBe( true );
+						expect( response instanceof Response ).toBe( true );
 					},
-					fail: ( error:HTTP.Errors.Error ):void => {
-						expect( error instanceof HTTP.Errors.Error ).toBe( true );
+					fail: ( error:HTTPError ):void => {
+						expect( error instanceof HTTPError ).toBe( true );
 					},
 				};
 				let spyExists:jasmine.Spy = spyOn( spies, "exists" ).and.callThrough();
@@ -2261,7 +2246,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 			} );
 
 			describe( "When Documents has a specified context", ():void => {
-				let documents:Documents.Class;
+				let documents:Documents;
 
 				beforeEach( () => {
 					const context:AbstractContext = new class extends AbstractContext {
@@ -2319,10 +2304,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 			} );
 
 			describe( "When Documents does not have a context", ():void => {
-				let documents:Documents.Class;
+				let documents:Documents;
 
 				beforeEach( () => {
-					documents = new Documents.Class();
+					documents = new Documents();
 				} );
 
 				it( "should reject if URI is relative", ( done:DoneFn ):void => {
@@ -2378,9 +2363,9 @@ describe( module( "Carbon/Documents" ), ():void => {
 				"Persists JavaScript object as a child document for the respective parent source.", [
 					{ name: "parentURI", type: "string", description: "URI of the document where to create a new child." },
 					{ name: "childObject", type: "T", description: "A normal JavaScript object that will be converted and persisted as a new child document." },
-					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request." },
+					{ name: "requestOptions", type: "CarbonLDP.HTTP.Request.RequestOptions", optional: true, description: "Customizable options for the request." },
 				],
-				{ type: "Promise<[ T & Carbon.PersistedProtectedDocument.Class, Carbon.HTTP.Response.Class ]>" }
+				{ type: "Promise<[ T & CarbonLDP.PersistedProtectedDocument.PersistedProtectedDocument, CarbonLDP.HTTP.Response.Response ]>" }
 			), ():void => {} );
 
 			it( hasSignature(
@@ -2389,20 +2374,20 @@ describe( module( "Carbon/Documents" ), ():void => {
 					{ name: "parentURI", type: "string", description: "URI of the document where to create a new child." },
 					{ name: "childObject", type: "T", description: "A normal JavaScript object that will be converted and persisted as a new child document." },
 					{ name: "slug", type: "string", optional: true, description: "Slug that will be used for the URI of the new child." },
-					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request." },
+					{ name: "requestOptions", type: "CarbonLDP.HTTP.Request.RequestOptions", optional: true, description: "Customizable options for the request." },
 				],
-				{ type: "Promise<[ T & Carbon.PersistedProtectedDocument.Class, Carbon.HTTP.Response.Class ]>" }
+				{ type: "Promise<[ T & CarbonLDP.PersistedProtectedDocument.PersistedProtectedDocument, CarbonLDP.HTTP.Response.Response ]>" }
 			), ():void => {} );
 
 			it( isDefined(), ():void => {
-				expect( Documents.Class.prototype.createChild ).toBeDefined();
-				expect( Documents.Class.prototype.createChild ).toEqual( jasmine.any( Function ) );
+				expect( Documents.prototype.createChild ).toBeDefined();
+				expect( Documents.prototype.createChild ).toEqual( jasmine.any( Function ) );
 			} );
 
 			describe( "When Documents has a specified context", ():void => {
 
 				let context:AbstractContext;
-				let documents:Documents.Class;
+				let documents:Documents;
 				beforeEach( ():void => {
 					context = new class extends AbstractContext {
 						_baseURI:string = "https://example.com/";
@@ -2442,56 +2427,56 @@ describe( module( "Carbon/Documents" ), ():void => {
 							{
 								"@id": "_:responseMetadata",
 								"@type": [
-							        "${ NS.C.Class.VolatileResource }",
-						            "${ NS.C.Class.ResponseMetadata }"
+							        "${ C.VolatileResource }",
+						            "${ C.ResponseMetadata }"
 								],
-								"${ NS.C.Predicate.documentMetadata }": [ {
+								"${ C.documentMetadata }": [ {
 									"@id": "_:documentMetadata"
 								} ]
 							},
 							{
 								"@id": "_:documentMetadata",
 								"@type": [
-						            "${ NS.C.Class.VolatileResource }",
-						            "${ NS.C.Class.DocumentMetadata }"
+						            "${ C.VolatileResource }",
+						            "${ C.DocumentMetadata }"
 								],
-								"${ NS.C.Predicate.relatedDocument }": [ {
+								"${ C.relatedDocument }": [ {
 									"@id": "https://example.com/new-resource/"
 								} ],
-								"${ NS.C.Predicate.bNodesMap }": [ {
+								"${ C.bNodesMap }": [ {
 									"@id": "_:map"
 								} ]
 							},
 							{
 								"@id": "_:map",
-								"@type": [ "${ NS.C.Class.Map }" ],
-								"${ NS.C.Predicate.entry }": [
+								"@type": [ "${ C.Map }" ],
+								"${ C.entry }": [
 									{ "@id": "_:entry-1" },
 									{ "@id": "_:entry-2" }
 								]
 							},
 							{
 								"@id": "_:entry-1",
-								"${ NS.C.Predicate.entryKey }": [ {
+								"${ C.entryKey }": [ {
 								    "@id": "_:1"
 							    } ],
-								"${ NS.C.Predicate.entryValue }": [ {
+								"${ C.entryValue }": [ {
 									"@id": "_:new-1"
 								} ]
 							},
 							{
 								"@id": "_:entry-2",
-								"${ NS.C.Predicate.entryKey }": [ {
+								"${ C.entryKey }": [ {
 									"@id": "_:2"
 								} ],
-								"${ NS.C.Predicate.entryValue }": [ {
+								"${ C.entryValue }": [ {
 									"@id": "_:new-2"
 								} ]
 							}
 						]`,
 					} );
 
-					type RawBlankNode = Partial<BlankNode.Class> & { value:string };
+					type RawBlankNode = Partial<BlankNode> & { value:string };
 
 					interface RawDocument {
 						blankNode1:RawBlankNode;
@@ -2553,7 +2538,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 
 				it( "should convert plain object into document before request", ( done:DoneFn ):void => {
-					const spy:jasmine.Spy = spyOn( Document.Factory, "createFrom" );
+					const spy:jasmine.Spy = spyOn( Document, "createFrom" );
 					spyOn( documents, "persistDocument" as any ).and.returnValue( Promise.resolve( [] ) );
 
 					const childObject:object = {};
@@ -2568,7 +2553,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				} );
 
 				it( "should reject if document is already persisted", ( done:DoneFn ):void => {
-					const childObject:PersistedDocument.Class = PersistedDocument.Factory.create( "https://example.com/some-resource/", documents );
+					const childObject:PersistedDocument = PersistedDocument.create( documents, "https://example.com/some-resource/" );
 					documents.createChild( "https://example.com/parent-resource/", childObject )
 						.then( () => {
 							done.fail( "Should not resolve" );
@@ -2590,12 +2575,12 @@ describe( module( "Carbon/Documents" ), ():void => {
 					} );
 
 					const childObject:object = {};
-					documents.createChild( "https://example.com/parent-resource/", childObject ).then( ( [ document, response ]:[ PersistedDocument.Class, HTTP.Response.Class ] ):void => {
-						expect( response ).toEqual( jasmine.any( HTTP.Response.Class ) );
+					documents.createChild( "https://example.com/parent-resource/", childObject ).then( ( [ document, response ]:[ PersistedDocument, Response ] ):void => {
+						expect( response ).toEqual( jasmine.any( Response ) );
 
 						expect( childObject ).toBe( document );
 
-						expect( PersistedDocument.Factory.is( document ) ).toBe( true );
+						expect( PersistedDocument.is( document ) ).toBe( true );
 						expect( document.id ).toBe( "https://example.com/parent-resource/new-resource/" );
 
 						expect( document.isResolved() ).toBe( false );
@@ -2626,10 +2611,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 							return documents.createChild( "https://example.com/parent-resource/", childObject );
 						} )
-						.then( ( [ document, response ]:[ PersistedDocument.Class, HTTP.Response.Class ] ):void => {
-							expect( response ).toEqual( jasmine.any( HTTP.Response.Class ) );
+						.then( ( [ document, response ]:[ PersistedDocument, Response ] ):void => {
+							expect( response ).toEqual( jasmine.any( Response ) );
 
-							expect( PersistedDocument.Factory.is( document ) ).toBe( true );
+							expect( PersistedDocument.is( document ) ).toBe( true );
 							expect( document.id ).toBe( "https://example.com/parent-resource/new-resource/" );
 
 							done();
@@ -2655,7 +2640,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"accept": "application/ld+json",
 								"prefer": [
 									`return=minimal`,
-									`${ NS.LDP.Class.Container }; rel=interaction-model`,
+									`${ LDP.Container }; rel=interaction-model`,
 								].join( ", " ),
 							} );
 
@@ -2682,7 +2667,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"accept": "application/ld+json",
 								"prefer": [
 									`return=minimal`,
-									`${ NS.LDP.Class.Container }; rel=interaction-model`,
+									`${ LDP.Container }; rel=interaction-model`,
 								].join( ", " ),
 								"slug": "child-slug",
 							} );
@@ -2695,10 +2680,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 			} );
 
 			describe( "When Documents does not have a context", ():void => {
-				let documents:Documents.Class;
+				let documents:Documents;
 
 				beforeEach( () => {
-					documents = new Documents.Class();
+					documents = new Documents();
 				} );
 
 				it( "should reject if URI is relative", ( done:DoneFn ):void => {
@@ -2753,9 +2738,9 @@ describe( module( "Carbon/Documents" ), ():void => {
 				"Persists multiple JavaScript objects as children of the parent document.", [
 					{ name: "parentURI", type: "string", description: "URI of the document where to create a new child." },
 					{ name: "childrenObjects", type: "T[]", description: "An array with the objects to be converted and persisted as new children of the parent document." },
-					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for every the request." },
+					{ name: "requestOptions", type: "CarbonLDP.HTTP.Request.RequestOptions", optional: true, description: "Customizable options for every the request." },
 				],
-				{ type: "Promise<[ (T & Carbon.PersistedProtectedDocument.Class)[], Carbon.HTTP.Response.Class[] ]>", description: "Promise that contains a tuple with an array of the new UNRESOLVED persisted children, and another array with the response class of every request." }
+				{ type: "Promise<[ (T & CarbonLDP.PersistedProtectedDocument.PersistedProtectedDocument)[], CarbonLDP.HTTP.Response.Response[] ]>", description: "Promise that contains a tuple with an array of the new UNRESOLVED persisted children, and another array with the response class of every request." }
 			), ():void => {} );
 
 			it( hasSignature(
@@ -2764,20 +2749,20 @@ describe( module( "Carbon/Documents" ), ():void => {
 					{ name: "parentURI", type: "string", description: "URI of the document where to create a new child." },
 					{ name: "childrenObjects", type: "T[]", description: "An array with the objects to be converted and persisted as new children of the parent document." },
 					{ name: "slugs", type: "string[]", optional: true, description: "Array with the slugs that corresponds to each object in `childrenObjects`, in the order in which they were defined. If an element in the array is undefined or null, the slug will be generated by the platform." },
-					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for every the request." },
+					{ name: "requestOptions", type: "CarbonLDP.HTTP.Request.RequestOptions", optional: true, description: "Customizable options for every the request." },
 				],
-				{ type: "Promise<[ (T & Carbon.PersistedProtectedDocument.Class)[], Carbon.HTTP.Response.Class[] ]>", description: "Promise that contains a tuple with an array of the new UNRESOLVED persisted children, and another array with the response class of every request." }
+				{ type: "Promise<[ (T & CarbonLDP.PersistedProtectedDocument.PersistedProtectedDocument)[], CarbonLDP.HTTP.Response.Response[] ]>", description: "Promise that contains a tuple with an array of the new UNRESOLVED persisted children, and another array with the response class of every request." }
 			), ():void => {} );
 
 			it( isDefined(), ():void => {
-				expect( Documents.Class.prototype.createChildren ).toBeDefined();
-				expect( Documents.Class.prototype.createChildren ).toEqual( jasmine.any( Function ) );
+				expect( Documents.prototype.createChildren ).toBeDefined();
+				expect( Documents.prototype.createChildren ).toEqual( jasmine.any( Function ) );
 			} );
 
 			describe( "When Documents has a specified context", ():void => {
 
 				let context:AbstractContext;
-				let documents:Documents.Class;
+				let documents:Documents;
 				beforeEach( ():void => {
 					context = new class extends AbstractContext {
 						_baseURI:string = "https://example.com/";
@@ -2829,7 +2814,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 
 				it( "should convert plain objects into documents before requests", ( done:DoneFn ):void => {
-					const spy:jasmine.Spy = spyOn( Document.Factory, "createFrom" );
+					const spy:jasmine.Spy = spyOn( Document, "createFrom" );
 					spyOn( documents, "persistDocument" as any ).and.returnValue( Promise.resolve( [] ) );
 
 					const childObjects:object[] = [ { index: 1 }, { index: 2 }, { index: 3 } ];
@@ -2846,10 +2831,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 				} );
 
 				it( "should reject if any document is already persisted", ( done:DoneFn ):void => {
-					const childObjects:(PersistedDocument.Class | object)[] = [
+					const childObjects:(PersistedDocument | object)[] = [
 						{},
-						PersistedDocument.Factory.create( "https://example.com/some-resource-1/", documents ),
-						PersistedDocument.Factory.create( "https://example.com/some-resource-2/", documents ),
+						PersistedDocument.create( documents, "https://example.com/some-resource-1/" ),
+						PersistedDocument.create( documents, "https://example.com/some-resource-2/" ),
 					];
 					documents.createChildren( "https://example.com/parent-resource/", childObjects )
 						.then( () => {
@@ -2867,17 +2852,17 @@ describe( module( "Carbon/Documents" ), ():void => {
 					const childObjects:object[] = [ { index: 0 }, { index: 1 }, { index: 2 } ];
 
 					documents.createChildren( "https://example.com/parent-resource/", childObjects )
-						.then( ( [ persistedDocuments, responses ]:[ PersistedDocument.Class[], HTTP.Response.Class[] ] ):void => {
+						.then( ( [ persistedDocuments, responses ]:[ PersistedDocument[], Response[] ] ):void => {
 							expect( responses ).toEqual( new Array( 3 ).fill( jasmine.anything() ) );
 							responses.forEach( response => {
-								expect( response ).toEqual( jasmine.any( HTTP.Response.Class ) );
+								expect( response ).toEqual( jasmine.any( Response ) );
 							} );
 
 							expect( persistedDocuments ).toEqual( new Array( 3 ).fill( jasmine.anything() ) );
 							persistedDocuments.forEach( ( document, index ) => {
 								expect( childObjects[ index ] ).toBe( document );
 
-								expect( PersistedDocument.Factory.is( document ) ).toBe( true );
+								expect( PersistedDocument.is( document ) ).toBe( true );
 								expect( document ).toEqual( jasmine.objectContaining( {
 									_resolved: false,
 									id: `https://example.com/parent-resource/new-resource-${ index }/`,
@@ -2911,7 +2896,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 									"accept": "application/ld+json",
 									"prefer": [
 										`return=minimal`,
-										`${ NS.LDP.Class.Container }; rel=interaction-model`,
+										`${ LDP.Container }; rel=interaction-model`,
 									].join( ", " ),
 								} );
 							} );
@@ -2943,7 +2928,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 									"accept": "application/ld+json",
 									"prefer": [
 										`return=minimal`,
-										`${ NS.LDP.Class.Container }; rel=interaction-model`,
+										`${ LDP.Container }; rel=interaction-model`,
 									].join( ", " ),
 									...slugs[ index ] ? { slug: slugs[ index ] } : {},
 								} );
@@ -2966,10 +2951,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 			} );
 
 			describe( "When Documents does not have a context", ():void => {
-				let documents:Documents.Class;
+				let documents:Documents;
 
 				beforeEach( () => {
-					documents = new Documents.Class();
+					documents = new Documents();
 				} );
 
 				it( "should reject if URI is relative", ( done:DoneFn ):void => {
@@ -3024,9 +3009,9 @@ describe( module( "Carbon/Documents" ), ():void => {
 				"Persists JavaScript object as a child document for the respective parent source and retrieves the updated data from the server.", [
 					{ name: "parentURI", type: "string", description: "URI of the document where to create a new child." },
 					{ name: "childObject", type: "T", description: " A normal JavaScript object that will be converted and persisted as a new child document." },
-					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request." },
+					{ name: "requestOptions", type: "CarbonLDP.HTTP.Request.RequestOptions", optional: true, description: "Customizable options for the request." },
 				],
-				{ type: "Promise<[ T & Carbon.PersistedProtectedDocument.Class, Carbon.HTTP.Response.Class[] ]>" }
+				{ type: "Promise<[ T & CarbonLDP.PersistedProtectedDocument.PersistedProtectedDocument, CarbonLDP.HTTP.Response.Response[] ]>" }
 			), ():void => {} );
 
 			it( hasSignature(
@@ -3035,20 +3020,20 @@ describe( module( "Carbon/Documents" ), ():void => {
 					{ name: "parentURI", type: "string", description: "URI of the document where to create a new child." },
 					{ name: "childObject", type: "T", description: " A normal JavaScript object that will be converted and persisted as a new child document." },
 					{ name: "slug", type: "string", optional: true, description: "Slug that will be used for the URI of the new child." },
-					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request." },
+					{ name: "requestOptions", type: "CarbonLDP.HTTP.Request.RequestOptions", optional: true, description: "Customizable options for the request." },
 				],
-				{ type: "Promise<[ T & Carbon.PersistedProtectedDocument.Class, Carbon.HTTP.Response.Class[] ]>" }
+				{ type: "Promise<[ T & CarbonLDP.PersistedProtectedDocument.PersistedProtectedDocument, CarbonLDP.HTTP.Response.Response[] ]>" }
 			), ():void => {} );
 
 			it( isDefined(), ():void => {
-				expect( Documents.Class.prototype.createChildAndRetrieve ).toBeDefined();
-				expect( Documents.Class.prototype.createChildAndRetrieve ).toEqual( jasmine.any( Function ) );
+				expect( Documents.prototype.createChildAndRetrieve ).toBeDefined();
+				expect( Documents.prototype.createChildAndRetrieve ).toEqual( jasmine.any( Function ) );
 			} );
 
 			describe( "When Documents has a specified context", ():void => {
 
 				let context:AbstractContext;
-				let documents:Documents.Class;
+				let documents:Documents;
 				beforeEach( ():void => {
 					context = new class extends AbstractContext {
 						_baseURI:string = "https://example.com/";
@@ -3089,49 +3074,49 @@ describe( module( "Carbon/Documents" ), ():void => {
 							{
 								"@id": "_:responseMetadata",
 								"@type": [
-						            "${ NS.C.Class.VolatileResource }",
-						            "${ NS.C.Class.ResponseMetadata }"
+						            "${ C.VolatileResource }",
+						            "${ C.ResponseMetadata }"
 								],
-								"${ NS.C.Predicate.documentMetadata }": [ {
+								"${ C.documentMetadata }": [ {
 									"@id": "_:documentMetadata"
 								} ]
 							},
 							{
 								"@id": "_:documentMetadata",
 								"@type": [
-						            "${ NS.C.Class.VolatileResource }",
-						            "${ NS.C.Class.DocumentMetadata }"
+						            "${ C.VolatileResource }",
+						            "${ C.DocumentMetadata }"
 								],
-								"${ NS.C.Predicate.relatedDocument }": [ {
+								"${ C.relatedDocument }": [ {
 									"@id": "https://example.com/new-resource/"
 								} ],
-								"${ NS.C.Predicate.bNodesMap }": [ {
+								"${ C.bNodesMap }": [ {
 									"@id": "_:map"
 								} ]
 							},
 							{
 								"@id": "_:map",
-								"@type": [ "${ NS.C.Class.Map }" ],
-								"${ NS.C.Predicate.entry }": [
+								"@type": [ "${ C.Map }" ],
+								"${ C.entry }": [
 									{ "@id": "_:entry-1" },
 									{ "@id": "_:entry-2" }
 								]
 							},
 							{
 								"@id": "_:entry-1",
-								"${ NS.C.Predicate.entryKey }": [ {
+								"${ C.entryKey }": [ {
 								    "@id": "_:1"
 							    } ],
-								"${ NS.C.Predicate.entryValue }": [ {
+								"${ C.entryValue }": [ {
 									"@id": "_:new-1"
 								} ]
 							},
 							{
 								"@id": "_:entry-2",
-								"${ NS.C.Predicate.entryKey }": [ {
+								"${ C.entryKey }": [ {
 									"@id": "_:2"
 								} ],
-								"${ NS.C.Predicate.entryValue }": [ {
+								"${ C.entryValue }": [ {
 									"@id": "_:new-2"
 								} ]
 							},
@@ -3164,7 +3149,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 						]`,
 					} );
 
-					type RawBlankNode = Partial<BlankNode.Class> & { value:string };
+					type RawBlankNode = Partial<BlankNode> & { value:string };
 
 					interface RawDocument {
 						blankNode1:RawBlankNode;
@@ -3228,7 +3213,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 
 				it( "should convert plain object into document before request", ( done:DoneFn ):void => {
-					const spy:jasmine.Spy = spyOn( Document.Factory, "createFrom" );
+					const spy:jasmine.Spy = spyOn( Document, "createFrom" );
 					spyOn( documents, "persistDocument" as any ).and.returnValue( Promise.resolve( [] ) );
 
 					const childObject:object = {};
@@ -3243,7 +3228,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				} );
 
 				it( "should reject if document is already persisted", ( done:DoneFn ):void => {
-					const childObject:PersistedDocument.Class = PersistedDocument.Factory.create( "https://example.com/some-resource/", documents );
+					const childObject:PersistedDocument = PersistedDocument.create( documents, "https://example.com/some-resource/" );
 					documents.createChildAndRetrieve( "https://example.com/parent-resource/", childObject )
 						.then( () => {
 							done.fail( "Should not resolve" );
@@ -3290,12 +3275,12 @@ describe( module( "Carbon/Documents" ), ():void => {
 					};
 
 					documents.createChildAndRetrieve( "https://example.com/parent-resource/", childObject )
-						.then( ( [ document, response ]:[ PersistedDocument.Class, HTTP.Response.Class ] ) => {
-							expect( response ).toEqual( jasmine.any( HTTP.Response.Class ) );
+						.then( ( [ document, response ]:[ PersistedDocument, Response ] ) => {
+							expect( response ).toEqual( jasmine.any( Response ) );
 
 							expect( childObject ).toBe( document );
 							expect( document ).toEqual( jasmine.objectContaining( {
-								_etag: "\"1-12345\"",
+								_eTag: "\"1-12345\"",
 								_resolved: true,
 								id: "https://example.com/parent-resource/new-resource/",
 								property: "my UPDATED property",
@@ -3348,11 +3333,11 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 							return documents.createChildAndRetrieve( "https://example.com/parent-resource/", childObject );
 						} )
-						.then( ( [ document, response ]:[ PersistedDocument.Class, HTTP.Response.Class ] ):void => {
-							expect( response ).toEqual( jasmine.any( HTTP.Response.Class ) );
+						.then( ( [ document, response ]:[ PersistedDocument, Response ] ):void => {
+							expect( response ).toEqual( jasmine.any( Response ) );
 
 							expect( childObject ).toEqual( jasmine.objectContaining( {
-								_etag: "\"1-12345\"",
+								_eTag: "\"1-12345\"",
 								id: "https://example.com/parent-resource/new-resource/",
 								property: "my UPDATED property",
 								namedFragment: jasmine.objectContaining( {
@@ -3383,7 +3368,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"accept": "application/ld+json",
 								"prefer": [
 									`return=representation`,
-									`${ NS.LDP.Class.Container }; rel=interaction-model`,
+									`${ LDP.Container }; rel=interaction-model`,
 								].join( ", " ),
 							} );
 
@@ -3410,7 +3395,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"accept": "application/ld+json",
 								"prefer": [
 									`return=representation`,
-									`${ NS.LDP.Class.Container }; rel=interaction-model`,
+									`${ LDP.Container }; rel=interaction-model`,
 								].join( ", " ),
 								"slug": "child-slug",
 							} );
@@ -3423,10 +3408,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 			} );
 
 			describe( "When Documents does not have a context", ():void => {
-				let documents:Documents.Class;
+				let documents:Documents;
 
 				beforeEach( () => {
-					documents = new Documents.Class();
+					documents = new Documents();
 				} );
 
 				it( "should reject if URI is relative", ( done:DoneFn ):void => {
@@ -3481,9 +3466,9 @@ describe( module( "Carbon/Documents" ), ():void => {
 				"Persists multiple JavaScript objects as children of the parent document and retrieves the updated data from the server.", [
 					{ name: "parentURI", type: "string", description: "URI of the document where to create a new child." },
 					{ name: "childrenObjects", type: "T[]", description: "An array with the objects to be converted and persisted as new children of the parent document." },
-					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for every the request." },
+					{ name: "requestOptions", type: "CarbonLDP.HTTP.Request.RequestOptions", optional: true, description: "Customizable options for every the request." },
 				],
-				{ type: "Promise<[ (T & Carbon.PersistedProtectedDocument.Class)[], [ Carbon.HTTP.Response.Class[], Carbon.HTTP.Response.Class[] ] ]>", description: "Promise that contains a tuple with an array of the new and resolved persisted children, and another tuple with two arrays containing the response class of every request." }
+				{ type: "Promise<[ (T & CarbonLDP.PersistedProtectedDocument.PersistedProtectedDocument)[], [ CarbonLDP.HTTP.Response.Response[], CarbonLDP.HTTP.Response.Response[] ] ]>", description: "Promise that contains a tuple with an array of the new and resolved persisted children, and another tuple with two arrays containing the response class of every request." }
 			), ():void => {} );
 
 			it( hasSignature(
@@ -3492,20 +3477,20 @@ describe( module( "Carbon/Documents" ), ():void => {
 					{ name: "parentURI", type: "string", description: "URI of the document where to create a new child." },
 					{ name: "childrenObjects", type: "T[]", description: "An array with the objects to be converted and persisted as new children of the parent document." },
 					{ name: "slugs", type: "string[]", optional: true, description: "Array with the slugs that corresponds to each object in `childrenObjects`, in the order in which they were defined. If an element in the array is undefined or null, the slug will be generated by the platform." },
-					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for every the request." },
+					{ name: "requestOptions", type: "CarbonLDP.HTTP.Request.RequestOptions", optional: true, description: "Customizable options for every the request." },
 				],
-				{ type: "Promise<[ (T & Carbon.PersistedProtectedDocument.Class)[], [ Carbon.HTTP.Response.Class[], Carbon.HTTP.Response.Class[] ] ]>", description: "Promise that contains a tuple with an array of the new and resolved persisted children, and another tuple with two arrays containing the response class of every request." }
+				{ type: "Promise<[ (T & CarbonLDP.PersistedProtectedDocument.PersistedProtectedDocument)[], [ CarbonLDP.HTTP.Response.Response[], CarbonLDP.HTTP.Response.Response[] ] ]>", description: "Promise that contains a tuple with an array of the new and resolved persisted children, and another tuple with two arrays containing the response class of every request." }
 			), ():void => {} );
 
 			it( isDefined(), ():void => {
-				expect( Documents.Class.prototype.createChildrenAndRetrieve ).toBeDefined();
-				expect( Documents.Class.prototype.createChildrenAndRetrieve ).toEqual( jasmine.any( Function ) );
+				expect( Documents.prototype.createChildrenAndRetrieve ).toBeDefined();
+				expect( Documents.prototype.createChildrenAndRetrieve ).toEqual( jasmine.any( Function ) );
 			} );
 
 			describe( "When Documents has a specified context", ():void => {
 
 				let context:AbstractContext;
-				let documents:Documents.Class;
+				let documents:Documents;
 				beforeEach( ():void => {
 					context = new class extends AbstractContext {
 						_baseURI:string = "https://example.com/";
@@ -3557,7 +3542,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 
 				it( "should convert plain objects into documents before requests", ( done:DoneFn ):void => {
-					const spy:jasmine.Spy = spyOn( Document.Factory, "createFrom" );
+					const spy:jasmine.Spy = spyOn( Document, "createFrom" );
 					spyOn( documents, "persistDocument" as any ).and.returnValue( Promise.resolve( [] ) );
 
 					const childObjects:object[] = [ { index: 1 }, { index: 2 }, { index: 3 } ];
@@ -3574,10 +3559,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 				} );
 
 				it( "should reject if any document is already persisted", ( done:DoneFn ):void => {
-					const childObjects:(PersistedDocument.Class | object)[] = [
+					const childObjects:(PersistedDocument | object)[] = [
 						{},
-						PersistedDocument.Factory.create( "https://example.com/some-resource-1/", documents ),
-						PersistedDocument.Factory.create( "https://example.com/some-resource-2/", documents ),
+						PersistedDocument.create( documents, "https://example.com/some-resource-1/" ),
+						PersistedDocument.create( documents, "https://example.com/some-resource-2/" ),
 					];
 					documents.createChildrenAndRetrieve( "https://example.com/parent-resource/", childObjects )
 						.then( () => {
@@ -3595,20 +3580,20 @@ describe( module( "Carbon/Documents" ), ():void => {
 					const childObjects:object[] = [ { index: 0 }, { index: 1 }, { index: 2 } ];
 
 					documents.createChildrenAndRetrieve( "https://example.com/parent-resource/", childObjects )
-						.then( ( [ persistedDocuments, responses ]:[ PersistedDocument.Class[], HTTP.Response.Class[] ] ):void => {
+						.then( ( [ persistedDocuments, responses ]:[ PersistedDocument[], Response[] ] ):void => {
 							expect( responses ).toEqual( new Array( 3 ).fill( jasmine.anything() ) );
 							responses.forEach( response => {
-								expect( response ).toEqual( jasmine.any( HTTP.Response.Class ) );
+								expect( response ).toEqual( jasmine.any( Response ) );
 							} );
 
 							expect( persistedDocuments ).toEqual( new Array( 3 ).fill( jasmine.anything() ) );
 							persistedDocuments.forEach( ( document, index ) => {
 								expect( childObjects[ index ] ).toBe( document );
 
-								expect( PersistedDocument.Factory.is( document ) ).toBe( true );
+								expect( PersistedDocument.is( document ) ).toBe( true );
 								expect( document ).toEqual( jasmine.objectContaining( {
 									_resolved: true,
-									_etag: `"${ index }-12345"`,
+									_eTag: `"${ index }-12345"`,
 									id: `https://example.com/parent-resource/new-resource-${ index }/`,
 									index: `updated ${ index }`,
 									property: "my UPDATED property",
@@ -3661,7 +3646,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 									"accept": "application/ld+json",
 									"prefer": [
 										`return=representation`,
-										`${ NS.LDP.Class.Container }; rel=interaction-model`,
+										`${ LDP.Container }; rel=interaction-model`,
 									].join( ", " ),
 								} );
 							} );
@@ -3710,7 +3695,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 									"accept": "application/ld+json",
 									"prefer": [
 										`return=representation`,
-										`${ NS.LDP.Class.Container }; rel=interaction-model`,
+										`${ LDP.Container }; rel=interaction-model`,
 									].join( ", " ),
 									...slugs[ index ] ? { slug: slugs[ index ] } : {},
 								} );
@@ -3750,10 +3735,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 			} );
 
 			describe( "When Documents does not have a context", ():void => {
-				let documents:Documents.Class;
+				let documents:Documents;
 
 				beforeEach( () => {
-					documents = new Documents.Class();
+					documents = new Documents();
 				} );
 
 				it( "should reject if URI is relative", ( done:DoneFn ):void => {
@@ -3807,20 +3792,20 @@ describe( module( "Carbon/Documents" ), ():void => {
 			it( hasSignature(
 				"Retrieves the empty children of a document.", [
 					{ name: "parentURI", type: "string", description: "URI of the document from where to look for its children." },
-					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request." },
+					{ name: "requestOptions", type: "CarbonLDP.HTTP.Request.RequestOptions", optional: true, description: "Customizable options for the request." },
 				],
-				{ type: "Promise<[ Carbon.PersistedDocument.Class[], Carbon.HTTP.Response.Class ]>" }
+				{ type: "Promise<[ CarbonLDP.PersistedDocument.PersistedDocument[], CarbonLDP.HTTP.Response.Response ]>" }
 			), () => {} );
 
 			it( isDefined(), () => {
-				expect( Documents.Class.prototype.listChildren ).toBeDefined();
-				expect( Documents.Class.prototype.listChildren ).toEqual( jasmine.any( Function ) );
+				expect( Documents.prototype.listChildren ).toBeDefined();
+				expect( Documents.prototype.listChildren ).toEqual( jasmine.any( Function ) );
 			} );
 
 			describe( "When Documents has a specified context", ():void => {
 
 				let context:AbstractContext;
-				let documents:Documents.Class;
+				let documents:Documents;
 				beforeEach( () => {
 					context = new class extends AbstractContext {
 						_baseURI:string = "https://example.com/";
@@ -3878,7 +3863,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					context.extendObjectSchema( "Resource", {
 						"property1": {
 							"@id": "https://schema.org/property-1",
-							"@type": NS.XSD.DataType.string,
+							"@type": XSD.string,
 						},
 						"property2": {
 							"@id": "https://schema.org/property-2",
@@ -3939,7 +3924,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					context.extendObjectSchema( "schema:Resource", {
 						"property1": {
 							"@id": "https://schema.org/property-1",
-							"@type": NS.XSD.DataType.string,
+							"@type": XSD.string,
 						},
 						"property2": {
 							"@id": "https://schema.org/property-2",
@@ -3950,20 +3935,20 @@ describe( module( "Carbon/Documents" ), ():void => {
 					documents
 						.listChildren( "https://example.com/resource/" )
 						.then( ( [ myDocuments, response ] ) => {
-							expect( response ).toEqual( jasmine.any( HTTP.Response.Class ) );
+							expect( response ).toEqual( jasmine.any( Response ) );
 
 							expect( myDocuments ).toEqual( jasmine.any( Array ) );
 							expect( myDocuments.length ).toBe( 2 );
 
-							expect( PersistedDocument.Factory.is( myDocuments[ 0 ] ) ).toBe( true );
+							expect( PersistedDocument.is( myDocuments[ 0 ] ) ).toBe( true );
 							expect( myDocuments[ 0 ] ).toEqual( jasmine.objectContaining( {
-								"_etag": void 0,
+								"_eTag": void 0,
 								"_resolved": false,
 							} ) );
 
-							expect( PersistedDocument.Factory.is( myDocuments[ 0 ] ) ).toBe( true );
+							expect( PersistedDocument.is( myDocuments[ 0 ] ) ).toBe( true );
 							expect( myDocuments[ 1 ] ).toEqual( jasmine.objectContaining( {
-								"_etag": void 0,
+								"_eTag": void 0,
 								"_resolved": false,
 							} ) );
 
@@ -3976,9 +3961,9 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 			describe( "When Documents does not have a context", ():void => {
 
-				let documents:Documents.Class;
+				let documents:Documents;
 				beforeEach( () => {
-					documents = new Documents.Class();
+					documents = new Documents();
 				} );
 
 				it( "should reject if URI is relative", ( done:DoneFn ):void => {
@@ -4074,20 +4059,20 @@ describe( module( "Carbon/Documents" ), ():void => {
 					documents
 						.listChildren( "https://example.com/resource/" )
 						.then( ( [ myDocuments, response ] ) => {
-							expect( response ).toEqual( jasmine.any( HTTP.Response.Class ) );
+							expect( response ).toEqual( jasmine.any( Response ) );
 
 							expect( myDocuments ).toEqual( jasmine.any( Array ) );
 							expect( myDocuments.length ).toBe( 2 );
 
-							expect( PersistedDocument.Factory.is( myDocuments[ 0 ] ) ).toBe( true );
+							expect( PersistedDocument.is( myDocuments[ 0 ] ) ).toBe( true );
 							expect( myDocuments[ 0 ] ).toEqual( jasmine.objectContaining( {
-								"_etag": void 0,
+								"_eTag": void 0,
 								"_resolved": false,
 							} ) );
 
-							expect( PersistedDocument.Factory.is( myDocuments[ 0 ] ) ).toBe( true );
+							expect( PersistedDocument.is( myDocuments[ 0 ] ) ).toBe( true );
 							expect( myDocuments[ 1 ] ).toEqual( jasmine.objectContaining( {
-								"_etag": void 0,
+								"_eTag": void 0,
 								"_resolved": false,
 							} ) );
 
@@ -4106,30 +4091,30 @@ describe( module( "Carbon/Documents" ), ():void => {
 				[ "T extends object" ],
 				"Retrieves the children of a document, building a query on which one is able to specify the properties to be retrieve and sub-documents' properties and on and on.", [
 					{ name: "parentURI", type: "string", description: "URI of the document from where to look for its children." },
-					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request." },
-					{ name: "queryBuilderFn", type: "( queryBuilder:Carbon.SPARQL.QueryDocument.QueryDocumentsBuilder.Class ) => Carbon.SPARQL.QueryDocument.QueryDocumentsBuilder.Class", optional: true, description: "Function that receives a the builder that helps you to construct the children retrieval query.\nThe same builder must be returned." },
+					{ name: "requestOptions", type: "CarbonLDP.HTTP.Request.RequestOptions", optional: true, description: "Customizable options for the request." },
+					{ name: "queryBuilderFn", type: "( queryBuilder:CarbonLDP.SPARQL.QueryDocument.QueryDocumentsBuilder.QueryDocumentsBuilder ) => CarbonLDP.SPARQL.QueryDocument.QueryDocumentsBuilder.QueryDocumentsBuilder", optional: true, description: "Function that receives a the builder that helps you to construct the children retrieval query.\nThe same builder must be returned." },
 				],
-				{ type: "Promise<[ (T & Carbon.PersistedDocument.Class)[], Carbon.HTTP.Response.Class ]>" }
+				{ type: "Promise<[ (T & CarbonLDP.PersistedDocument.PersistedDocument)[], CarbonLDP.HTTP.Response.Response ]>" }
 			), () => {} );
 
 			it( hasSignature(
 				[ "T extends object" ],
 				"Retrieves the children of a document, building a query on which one is able to specify the properties to be retrieve and sub-documents' properties and on and on.", [
 					{ name: "parentURI", type: "string", description: "URI of the document from where to look for its children." },
-					{ name: "queryBuilderFn", type: "( queryBuilder:Carbon.SPARQL.QueryDocument.QueryDocumentsBuilder.Class ) => Carbon.SPARQL.QueryDocument.QueryDocumentsBuilder.Class", optional: true, description: "Function that receives a the builder that helps you to construct the children retrieval query.\nThe same builder must be returned." },
+					{ name: "queryBuilderFn", type: "( queryBuilder:CarbonLDP.SPARQL.QueryDocument.QueryDocumentsBuilder.QueryDocumentsBuilder ) => CarbonLDP.SPARQL.QueryDocument.QueryDocumentsBuilder.QueryDocumentsBuilder", optional: true, description: "Function that receives a the builder that helps you to construct the children retrieval query.\nThe same builder must be returned." },
 				],
-				{ type: "Promise<[ (T & Carbon.PersistedDocument.Class)[], Carbon.HTTP.Response.Class ]>" }
+				{ type: "Promise<[ (T & CarbonLDP.PersistedDocument.PersistedDocument)[], CarbonLDP.HTTP.Response.Response ]>" }
 			), () => {} );
 
 			it( isDefined(), () => {
-				expect( Documents.Class.prototype.getChildren ).toBeDefined();
-				expect( Documents.Class.prototype.getChildren ).toEqual( jasmine.any( Function ) );
+				expect( Documents.prototype.getChildren ).toBeDefined();
+				expect( Documents.prototype.getChildren ).toEqual( jasmine.any( Function ) );
 			} );
 
 			describe( "When Documents has a specified context", ():void => {
 
 				let context:AbstractContext;
-				let documents:Documents.Class;
+				let documents:Documents;
 				beforeEach( () => {
 					context = new class extends AbstractContext {
 						_baseURI:string = "https://example.com/";
@@ -4192,15 +4177,15 @@ describe( module( "Carbon/Documents" ), ():void => {
 					context.extendObjectSchema( "Resource", {
 						"property1": {
 							"@id": "property-1",
-							"@type": NS.XSD.DataType.string,
+							"@type": XSD.string,
 						},
 						"property2": {
 							"@id": "property-2",
-							"@type": NS.XSD.DataType.integer,
+							"@type": XSD.integer,
 						},
 						"property3": {
 							"@id": "https://schema.org/property-3",
-							"@type": NS.XSD.DataType.string,
+							"@type": XSD.string,
 						},
 					} );
 
@@ -4229,8 +4214,8 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"https://example.com/resource/",
 							"PREFIX schema: <https://schema.org/> " +
 							"CONSTRUCT {" +
-							` ?metadata a <${ NS.C.Class.VolatileResource }>, <${ NS.C.Class.QueryMetadata }>;` +
-							"" + ` <${ NS.C.Predicate.target }> ?child.` +
+							` ?metadata a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
+							"" + ` <${ C.target }> ?child.` +
 
 							" ?child a ?child__types;" +
 							"" + " <https://example.com/ns#property-1> ?child__property1;" +
@@ -4280,9 +4265,9 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 							jasmine.objectContaining( {
 								headers: new Map( [
-									[ "prefer", new HTTP.Header.Class( [
-										`include="${ NS.C.Class.PreferResultsContext }"`,
-										`include="${ NS.C.Class.PreferDocumentETags }"`,
+									[ "prefer", new Header( [
+										`include="${ C.PreferResultsContext }"`,
+										`include="${ C.PreferDocumentETags }"`,
 									] ) ],
 								] ),
 							} )
@@ -4300,15 +4285,15 @@ describe( module( "Carbon/Documents" ), ():void => {
 					context.extendObjectSchema( "Resource", {
 						"property1": {
 							"@id": "property-1",
-							"@type": NS.XSD.DataType.string,
+							"@type": XSD.string,
 						},
 						"property2": {
 							"@id": "property-2",
-							"@type": NS.XSD.DataType.integer,
+							"@type": XSD.integer,
 						},
 						"property3": {
 							"@id": "https://schema.org/property-3",
-							"@type": NS.XSD.DataType.string,
+							"@type": XSD.string,
 						},
 					} );
 
@@ -4322,8 +4307,8 @@ describe( module( "Carbon/Documents" ), ():void => {
 							expect( sendSpy ).toHaveBeenCalledWith(
 								"https://example.com/resource/",
 								"CONSTRUCT {" +
-								` ?metadata a <${ NS.C.Class.VolatileResource }>, <${ NS.C.Class.QueryMetadata }>;` +
-								"" + ` <${ NS.C.Predicate.target }> ?child.` +
+								` ?metadata a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
+								"" + ` <${ C.target }> ?child.` +
 
 								" ?child___subject ?child___predicate ?child___object " +
 
@@ -4344,9 +4329,9 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 								jasmine.objectContaining( {
 									headers: new Map( [
-										[ "prefer", new HTTP.Header.Class( [
-											`include="${ NS.C.Class.PreferResultsContext }"`,
-											`include="${ NS.C.Class.PreferDocumentETags }"`,
+										[ "prefer", new Header( [
+											`include="${ C.PreferResultsContext }"`,
+											`include="${ C.PreferDocumentETags }"`,
 										] ) ],
 									] ),
 								} )
@@ -4367,11 +4352,11 @@ describe( module( "Carbon/Documents" ), ():void => {
 					context.extendObjectSchema( "Resource", {
 						"property1": {
 							"@id": "https://schema.org/property-1",
-							"@type": NS.XSD.DataType.string,
+							"@type": XSD.string,
 						},
 						"property2": {
 							"@id": "https://schema.org/property-2",
-							"@type": NS.XSD.DataType.integer,
+							"@type": XSD.integer,
 						},
 					} );
 
@@ -4393,8 +4378,8 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"https://example.com/resource/",
 								"PREFIX schema: <https://schema.org/> " +
 								"CONSTRUCT {" +
-								` ?metadata a <${ NS.C.Class.VolatileResource }>, <${ NS.C.Class.QueryMetadata }>;` +
-								"" + ` <${ NS.C.Predicate.target }> ?child.` +
+								` ?metadata a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
+								"" + ` <${ C.target }> ?child.` +
 
 								" ?child ?child___predicate ?child___object " +
 
@@ -4423,9 +4408,9 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 								jasmine.objectContaining( {
 									headers: new Map( [
-										[ "prefer", new HTTP.Header.Class( [
-											`include="${ NS.C.Class.PreferResultsContext }"`,
-											`include="${ NS.C.Class.PreferDocumentETags }"`,
+										[ "prefer", new Header( [
+											`include="${ C.PreferResultsContext }"`,
+											`include="${ C.PreferDocumentETags }"`,
 										] ) ],
 									] ),
 								} )
@@ -4443,20 +4428,20 @@ describe( module( "Carbon/Documents" ), ():void => {
 					context.extendObjectSchema( {
 						"schema": "https://schema.org/",
 						"ex": "https://example.com/ns#",
-						"xsd": NS.XSD.namespace,
+						"xsd": XSD.namespace,
 					} );
 					context.extendObjectSchema( "Resource", {
 						"property1": {
 							"@id": "property-1",
-							"@type": NS.XSD.DataType.string,
+							"@type": XSD.string,
 						},
 						"property2": {
 							"@id": "property-2",
-							"@type": NS.XSD.DataType.integer,
+							"@type": XSD.integer,
 						},
 						"property3": {
 							"@id": "https://schema.org/property-3",
-							"@type": NS.XSD.DataType.string,
+							"@type": XSD.string,
 						},
 					} );
 
@@ -4505,10 +4490,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 							new ConstructToken()
 								.addTriple( new SubjectToken( variableHelper( "metadata" ) )
 									.addPredicate( new PredicateToken( "a" )
-										.addObject( new IRIToken( NS.C.Class.VolatileResource ) )
-										.addObject( new IRIToken( NS.C.Class.QueryMetadata ) )
+										.addObject( new IRIToken( C.VolatileResource ) )
+										.addObject( new IRIToken( C.QueryMetadata ) )
 									)
-									.addPredicate( new PredicateToken( new IRIToken( NS.C.Predicate.target ) )
+									.addPredicate( new PredicateToken( new IRIToken( C.target ) )
 										.addObject( variableHelper( "child" ) )
 									)
 								)
@@ -4539,7 +4524,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								.addPattern( new SelectToken()
 									.addVariable( variableHelper( "child" ) )
 									.addPattern( new SubjectToken( new IRIToken( "https://example.com/resource/" ) )
-										.addPredicate( new PredicateToken( new IRIToken( NS.LDP.Predicate.contains ) )
+										.addPredicate( new PredicateToken( new IRIToken( LDP.contains ) )
 											.addObject( variableHelper( "child" ) )
 										)
 									)
@@ -4613,7 +4598,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 							)
 
 								.addPrologues( new PrefixToken( "ex", new IRIToken( "https://example.com/ns#" ) ) )
-								.addPrologues( new PrefixToken( "xsd", new IRIToken( NS.XSD.namespace ) ) )
+								.addPrologues( new PrefixToken( "xsd", new IRIToken( XSD.namespace ) ) )
 								.addPrologues( new PrefixToken( "schema", new IRIToken( "https://schema.org/" ) ) )
 						);
 
@@ -4627,28 +4612,28 @@ describe( module( "Carbon/Documents" ), ():void => {
 						responseText: `[ {
 							"@id":"_:1",
 							"@type": [
-								"${ NS.C.Class.VolatileResource }",
-								"${ NS.C.Class.QueryMetadata }"
+								"${ C.VolatileResource }",
+								"${ C.QueryMetadata }"
 							],
-							"${ NS.C.Predicate.target }": [ {
+							"${ C.target }": [ {
 								"@id":"${ context.baseURI }resource/child1/"
 							} ]
 						}, {
 							"@id":"_:2",
 							"@type": [
-								"${ NS.C.Class.VolatileResource }",
-								"${ NS.C.Class.QueryMetadata }"
+								"${ C.VolatileResource }",
+								"${ C.QueryMetadata }"
 							],
-							"${ NS.C.Predicate.target }": [ {
+							"${ C.target }": [ {
 								"@id":"${ context.baseURI }resource/child2/"
 							} ]
 						}, {
 							"@id": "_:3",
 							"@type": [
-								"${ NS.C.Class.ResponseMetadata }",
-								"${ NS.C.Class.VolatileResource }"
+								"${ C.ResponseMetadata }",
+								"${ C.VolatileResource }"
 							],
-							"${ NS.C.Predicate.documentMetadata }": [ {
+							"${ C.documentMetadata }": [ {
 								"@id": "_:4"
 							}, {
 								"@id": "_:5"
@@ -4656,25 +4641,25 @@ describe( module( "Carbon/Documents" ), ():void => {
 						}, {
 							"@id": "_:4",
 							"@type": [
-								"${ NS.C.Class.DocumentMetadata }",
-								"${ NS.C.Class.VolatileResource }"
+								"${ C.DocumentMetadata }",
+								"${ C.VolatileResource }"
 							],
-							"${ NS.C.Predicate.eTag }": [ {
+							"${ C.eTag }": [ {
 								"@value": "\\"1-12345\\""
 							} ],
-							"${ NS.C.Predicate.relatedDocument }": [ {
+							"${ C.relatedDocument }": [ {
 								"@id": "https://example.com/resource/child1/"
 							} ]
 						}, {
 							"@id": "_:5",
 							"@type": [
-								"${ NS.C.Class.DocumentMetadata }",
-								"${ NS.C.Class.VolatileResource }"
+								"${ C.DocumentMetadata }",
+								"${ C.VolatileResource }"
 							],
-							"${ NS.C.Predicate.eTag }": [ {
+							"${ C.eTag }": [ {
 								"@value": "\\"2-12345\\""
 							} ],
-							"${ NS.C.Predicate.relatedDocument }": [ {
+							"${ C.relatedDocument }": [ {
 								"@id": "https://example.com/resource/child2/"
 							} ]
 						}, {
@@ -4682,10 +4667,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"@graph": [ {
 								"@id": "${ context.baseURI }resource/child1/",
 								"@type": [
-									"${ NS.C.Class.Document }",
+									"${ C.Document }",
 									"https://example.com/ns#Resource",
-									"${ NS.LDP.Class.BasicContainer }",
-									"${ NS.LDP.Class.RDFSource }"
+									"${ LDP.BasicContainer }",
+									"${ LDP.RDFSource }"
 								],
 								"https://example.com/ns#property-1": [ {
 									"@value": "value 1"
@@ -4697,7 +4682,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"@id": "_:1",
 								"https://example.com/ns#property-2": [ {
 									"@value": "12345",
-									"@type": "${ NS.XSD.DataType.integer }"
+									"@type": "${ XSD.integer }"
 								} ],
 								"https://schema.org/property-3": [ {
 									"@value": "another value 1"
@@ -4708,10 +4693,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"@graph": [ {
 								"@id": "${ context.baseURI }resource/child2/",
 								"@type": [
-									"${ NS.C.Class.Document }",
+									"${ C.Document }",
 									"https://example.com/ns#Resource",
-									"${ NS.LDP.Class.BasicContainer }",
-									"${ NS.LDP.Class.RDFSource }"
+									"${ LDP.BasicContainer }",
+									"${ LDP.RDFSource }"
 								],
 								"https://example.com/ns#property-1": [ {
 									"@value": "value 2"
@@ -4723,7 +4708,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"@id": "_:2",
 								"https://example.com/ns#property-2": [ {
 									"@value": "67890",
-									"@type": "${ NS.XSD.DataType.integer }"
+									"@type": "${ XSD.integer }"
 								} ],
 								"https://schema.org/property-3": [ {
 									"@value": "another value 2"
@@ -4746,15 +4731,15 @@ describe( module( "Carbon/Documents" ), ():void => {
 					context.extendObjectSchema( "Resource", {
 						"property1": {
 							"@id": "property-1",
-							"@type": NS.XSD.DataType.string,
+							"@type": XSD.string,
 						},
 						"property2": {
 							"@id": "property-2",
-							"@type": NS.XSD.DataType.integer,
+							"@type": XSD.integer,
 						},
 						"property3": {
 							"@id": "https://schema.org/property-3",
-							"@type": NS.XSD.DataType.string,
+							"@type": XSD.string,
 						},
 					} );
 
@@ -4773,7 +4758,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 						} )
 						.orderBy( "property2.property2", "DESC" )
 					).then( ( [ myDocuments, response ] ) => {
-						expect( response ).toEqual( jasmine.any( HTTP.Response.Class ) );
+						expect( response ).toEqual( jasmine.any( Response ) );
 
 						expect( myDocuments[ 0 ] ).toEqual( jasmine.objectContaining( {
 							"property2": jasmine.objectContaining( {
@@ -4796,28 +4781,28 @@ describe( module( "Carbon/Documents" ), ():void => {
 						responseText: `[ {
 							"@id":"_:1",
 							"@type": [
-								"${ NS.C.Class.VolatileResource }",
-								"${ NS.C.Class.QueryMetadata }"
+								"${ C.VolatileResource }",
+								"${ C.QueryMetadata }"
 							],
-							"${ NS.C.Predicate.target }": [ {
+							"${ C.target }": [ {
 								"@id":"${ context.baseURI }resource/child1/"
 							} ]
 						}, {
 							"@id":"_:2",
 							"@type": [
-								"${ NS.C.Class.VolatileResource }",
-								"${ NS.C.Class.QueryMetadata }"
+								"${ C.VolatileResource }",
+								"${ C.QueryMetadata }"
 							],
-							"${ NS.C.Predicate.target }": [ {
+							"${ C.target }": [ {
 								"@id":"${ context.baseURI }resource/child2/"
 							} ]
 						}, {
 							"@id": "_:3",
 							"@type": [
-								"${ NS.C.Class.ResponseMetadata }",
-								"${ NS.C.Class.VolatileResource }"
+								"${ C.ResponseMetadata }",
+								"${ C.VolatileResource }"
 							],
-							"${ NS.C.Predicate.documentMetadata }": [ {
+							"${ C.documentMetadata }": [ {
 								"@id": "_:4"
 							}, {
 								"@id": "_:5"
@@ -4825,25 +4810,25 @@ describe( module( "Carbon/Documents" ), ():void => {
 						}, {
 							"@id": "_:4",
 							"@type": [
-								"${ NS.C.Class.DocumentMetadata }",
-								"${ NS.C.Class.VolatileResource }"
+								"${ C.DocumentMetadata }",
+								"${ C.VolatileResource }"
 							],
-							"${ NS.C.Predicate.eTag }": [ {
+							"${ C.eTag }": [ {
 								"@value": "\\"1-12345\\""
 							} ],
-							"${ NS.C.Predicate.relatedDocument }": [ {
+							"${ C.relatedDocument }": [ {
 								"@id": "https://example.com/resource/child1/"
 							} ]
 						}, {
 							"@id": "_:5",
 							"@type": [
-								"${ NS.C.Class.DocumentMetadata }",
-								"${ NS.C.Class.VolatileResource }"
+								"${ C.DocumentMetadata }",
+								"${ C.VolatileResource }"
 							],
-							"${ NS.C.Predicate.eTag }": [ {
+							"${ C.eTag }": [ {
 								"@value": "\\"2-12345\\""
 							} ],
-							"${ NS.C.Predicate.relatedDocument }": [ {
+							"${ C.relatedDocument }": [ {
 								"@id": "https://example.com/resource/child2/"
 							} ]
 						}, {
@@ -4851,10 +4836,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"@graph": [ {
 								"@id": "${ context.baseURI }resource/child1/",
 								"@type": [
-									"${ NS.C.Class.Document }",
+									"${ C.Document }",
 									"https://schema.org/Resource",
-									"${ NS.LDP.Class.BasicContainer }",
-									"${ NS.LDP.Class.RDFSource }"
+									"${ LDP.BasicContainer }",
+									"${ LDP.RDFSource }"
 								],
 								"https://schema.org/property-1": [ {
 									"@value": "value 1"
@@ -4872,7 +4857,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								} ],
 								"https://schema.org/property-4": [ {
 									"@value": "12345",
-									"@type": "${ NS.XSD.DataType.integer }"
+									"@type": "${ XSD.integer }"
 								} ]
 							} ]
 						}, {
@@ -4880,10 +4865,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"@graph": [ {
 								"@id": "${ context.baseURI }resource/child2/",
 								"@type": [
-									"${ NS.C.Class.Document }",
+									"${ C.Document }",
 									"https://schema.org/Resource",
-									"${ NS.LDP.Class.BasicContainer }",
-									"${ NS.LDP.Class.RDFSource }"
+									"${ LDP.BasicContainer }",
+									"${ LDP.RDFSource }"
 								],
 								"https://schema.org/property-1": [ {
 									"@value": "value 2"
@@ -4901,7 +4886,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								} ],
 								"https://schema.org/property-4": [ {
 									"@value": "67890",
-									"@type": "${ NS.XSD.DataType.integer }"
+									"@type": "${ XSD.integer }"
 								} ]
 							} ]
 						} ]`,
@@ -4921,7 +4906,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					context.extendObjectSchema( "schema:Resource", {
 						"property1": {
 							"@id": "https://schema.org/property-1",
-							"@type": NS.XSD.DataType.string,
+							"@type": XSD.string,
 						},
 						"property2": {
 							"@id": "https://schema.org/property-2",
@@ -4931,26 +4916,26 @@ describe( module( "Carbon/Documents" ), ():void => {
 					context.extendObjectSchema( "schema:Fragment", {
 						"property3": {
 							"@id": "https://schema.org/property-3",
-							"@type": NS.XSD.DataType.string,
+							"@type": XSD.string,
 						},
 						"property4": {
 							"@id": "https://schema.org/property-4",
-							"@type": NS.XSD.DataType.integer,
+							"@type": XSD.integer,
 						},
 					} );
 
 					documents.getChildren<MyDocument>( "https://example.com/resource/" ).then( ( [ myDocuments, response ] ) => {
-						expect( response ).toEqual( jasmine.any( HTTP.Response.Class ) );
+						expect( response ).toEqual( jasmine.any( Response ) );
 
 						expect( myDocuments ).toEqual( jasmine.any( Array ) );
 						expect( myDocuments.length ).toBe( 2 );
 						for( const document of myDocuments ) {
-							expect( PersistedDocument.Factory.is( document ) ).toBe( true );
+							expect( PersistedDocument.is( document ) ).toBe( true );
 							expect( document.isPartial() ).toBe( false );
 						}
 
 						expect( myDocuments[ 0 ] ).toEqual( jasmine.objectContaining( {
-							"_etag": "\"1-12345\"",
+							"_eTag": "\"1-12345\"",
 							"property1": "value 1",
 							"property2": jasmine.objectContaining( {
 								"property3": "another value 1",
@@ -4958,7 +4943,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 							} ) as any,
 						} ) );
 						expect( myDocuments[ 1 ] ).toEqual( jasmine.objectContaining( {
-							"_etag": "\"2-12345\"",
+							"_eTag": "\"2-12345\"",
 							"property1": "value 2",
 							"property2": jasmine.objectContaining( {
 								"property3": "another value 2",
@@ -4975,28 +4960,28 @@ describe( module( "Carbon/Documents" ), ():void => {
 						responseText: `[ {
 							"@id":"_:1",
 							"@type": [
-								"${ NS.C.Class.VolatileResource }",
-								"${ NS.C.Class.QueryMetadata }"
+								"${ C.VolatileResource }",
+								"${ C.QueryMetadata }"
 							],
-							"${ NS.C.Predicate.target }": [ {
+							"${ C.target }": [ {
 								"@id":"${ context.baseURI }resource/child1/"
 							} ]
 						}, {
 							"@id":"_:2",
 							"@type": [
-								"${ NS.C.Class.VolatileResource }",
-								"${ NS.C.Class.QueryMetadata }"
+								"${ C.VolatileResource }",
+								"${ C.QueryMetadata }"
 							],
-							"${ NS.C.Predicate.target }": [ {
+							"${ C.target }": [ {
 								"@id":"${ context.baseURI }resource/child2/"
 							} ]
 						}, {
 							"@id": "_:3",
 							"@type": [
-								"${ NS.C.Class.ResponseMetadata }",
-								"${ NS.C.Class.VolatileResource }"
+								"${ C.ResponseMetadata }",
+								"${ C.VolatileResource }"
 							],
-							"${ NS.C.Predicate.documentMetadata }": [ {
+							"${ C.documentMetadata }": [ {
 								"@id": "_:4"
 							}, {
 								"@id": "_:5"
@@ -5004,25 +4989,25 @@ describe( module( "Carbon/Documents" ), ():void => {
 						}, {
 							"@id": "_:4",
 							"@type": [
-								"${ NS.C.Class.DocumentMetadata }",
-								"${ NS.C.Class.VolatileResource }"
+								"${ C.DocumentMetadata }",
+								"${ C.VolatileResource }"
 							],
-							"${ NS.C.Predicate.eTag }": [ {
+							"${ C.eTag }": [ {
 								"@value": "\\"1-12345\\""
 							} ],
-							"${ NS.C.Predicate.relatedDocument }": [ {
+							"${ C.relatedDocument }": [ {
 								"@id": "https://example.com/resource/child1/"
 							} ]
 						}, {
 							"@id": "_:5",
 							"@type": [
-								"${ NS.C.Class.DocumentMetadata }",
-								"${ NS.C.Class.VolatileResource }"
+								"${ C.DocumentMetadata }",
+								"${ C.VolatileResource }"
 							],
-							"${ NS.C.Predicate.eTag }": [ {
+							"${ C.eTag }": [ {
 								"@value": "\\"2-12345\\""
 							} ],
-							"${ NS.C.Predicate.relatedDocument }": [ {
+							"${ C.relatedDocument }": [ {
 								"@id": "https://example.com/resource/child2/"
 							} ]
 						}, {
@@ -5030,10 +5015,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"@graph": [ {
 								"@id": "${ context.baseURI }resource/child1/",
 								"@type": [
-									"${ NS.C.Class.Document }",
+									"${ C.Document }",
 									"https://schema.org/Resource",
-									"${ NS.LDP.Class.BasicContainer }",
-									"${ NS.LDP.Class.RDFSource }"
+									"${ LDP.BasicContainer }",
+									"${ LDP.RDFSource }"
 								],
 								"https://schema.org/property-1": [ {
 									"@value": "value 1"
@@ -5047,10 +5032,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"@graph": [ {
 								"@id": "${ context.baseURI }resource/child2/",
 								"@type": [
-									"${ NS.C.Class.Document }",
+									"${ C.Document }",
 									"https://schema.org/Resource",
-									"${ NS.LDP.Class.BasicContainer }",
-									"${ NS.LDP.Class.RDFSource }"
+									"${ LDP.BasicContainer }",
+									"${ LDP.RDFSource }"
 								],
 								"https://schema.org/property-1": [ {
 									"@value": "value 2"
@@ -5076,7 +5061,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					context.extendObjectSchema( "schema:Resource", {
 						"property1": {
 							"@id": "https://schema.org/property-1",
-							"@type": NS.XSD.DataType.string,
+							"@type": XSD.string,
 						},
 						"property2": {
 							"@id": "https://schema.org/property-2",
@@ -5086,27 +5071,27 @@ describe( module( "Carbon/Documents" ), ():void => {
 					context.extendObjectSchema( "schema:Fragment", {
 						"property3": {
 							"@id": "https://schema.org/property-3",
-							"@type": NS.XSD.DataType.string,
+							"@type": XSD.string,
 						},
 						"property4": {
 							"@id": "https://schema.org/property-4",
-							"@type": NS.XSD.DataType.integer,
+							"@type": XSD.integer,
 						},
 					} );
 
 					documents.getChildren<MyDocument>( "https://example.com/resource/", _ => _.properties( _.all ) )
 						.then( ( [ myDocuments, response ] ) => {
-							expect( response ).toEqual( jasmine.any( HTTP.Response.Class ) );
+							expect( response ).toEqual( jasmine.any( Response ) );
 
 							expect( myDocuments ).toEqual( jasmine.any( Array ) );
 							expect( myDocuments.length ).toBe( 2 );
 							for( const document of myDocuments ) {
-								expect( PersistedDocument.Factory.is( document ) ).toBe( true );
+								expect( PersistedDocument.is( document ) ).toBe( true );
 								expect( document.isPartial() ).toBe( true );
 							}
 
 							expect( myDocuments[ 0 ] ).toEqual( jasmine.objectContaining( {
-								"_etag": "\"1-12345\"",
+								"_eTag": "\"1-12345\"",
 								"property1": "value 1",
 								"property2": jasmine.any( Object ) as any,
 							} ) );
@@ -5116,7 +5101,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 							} ) as any );
 
 							expect( myDocuments[ 1 ] ).toEqual( jasmine.objectContaining( {
-								"_etag": "\"2-12345\"",
+								"_eTag": "\"2-12345\"",
 								"property1": "value 2",
 								"property2": jasmine.any( Object ) as any,
 							} ) );
@@ -5136,28 +5121,28 @@ describe( module( "Carbon/Documents" ), ():void => {
 						responseText: `[ {
 							"@id":"_:1",
 							"@type": [
-								"${ NS.C.Class.VolatileResource }",
-								"${ NS.C.Class.QueryMetadata }"
+								"${ C.VolatileResource }",
+								"${ C.QueryMetadata }"
 							],
-							"${ NS.C.Predicate.target }": [ {
+							"${ C.target }": [ {
 								"@id":"${ context.baseURI }resource/child1/"
 							} ]
 						}, {
 							"@id":"_:2",
 							"@type": [
-								"${ NS.C.Class.VolatileResource }",
-								"${ NS.C.Class.QueryMetadata }"
+								"${ C.VolatileResource }",
+								"${ C.QueryMetadata }"
 							],
-							"${ NS.C.Predicate.target }": [ {
+							"${ C.target }": [ {
 								"@id":"${ context.baseURI }resource/child2/"
 							} ]
 						}, {
 							"@id": "_:3",
 							"@type": [
-								"${ NS.C.Class.ResponseMetadata }",
-								"${ NS.C.Class.VolatileResource }"
+								"${ C.ResponseMetadata }",
+								"${ C.VolatileResource }"
 							],
-							"${ NS.C.Predicate.documentMetadata }": [ {
+							"${ C.documentMetadata }": [ {
 								"@id": "_:4"
 							}, {
 								"@id": "_:5"
@@ -5165,25 +5150,25 @@ describe( module( "Carbon/Documents" ), ():void => {
 						}, {
 							"@id": "_:4",
 							"@type": [
-								"${ NS.C.Class.DocumentMetadata }",
-								"${ NS.C.Class.VolatileResource }"
+								"${ C.DocumentMetadata }",
+								"${ C.VolatileResource }"
 							],
-							"${ NS.C.Predicate.eTag }": [ {
+							"${ C.eTag }": [ {
 								"@value": "\\"1-12345\\""
 							} ],
-							"${ NS.C.Predicate.relatedDocument }": [ {
+							"${ C.relatedDocument }": [ {
 								"@id": "https://example.com/resource/child1/"
 							} ]
 						}, {
 							"@id": "_:5",
 							"@type": [
-								"${ NS.C.Class.DocumentMetadata }",
-								"${ NS.C.Class.VolatileResource }"
+								"${ C.DocumentMetadata }",
+								"${ C.VolatileResource }"
 							],
-							"${ NS.C.Predicate.eTag }": [ {
+							"${ C.eTag }": [ {
 								"@value": "\\"2-12345\\""
 							} ],
-							"${ NS.C.Predicate.relatedDocument }": [ {
+							"${ C.relatedDocument }": [ {
 								"@id": "https://example.com/resource/child2/"
 							} ]
 						}, {
@@ -5191,10 +5176,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"@graph": [ {
 								"@id": "${ context.baseURI }resource/child1/",
 								"@type": [
-									"${ NS.C.Class.Document }",
+									"${ C.Document }",
 									"https://example.com/ns#Resource",
-									"${ NS.LDP.Class.BasicContainer }",
-									"${ NS.LDP.Class.RDFSource }"
+									"${ LDP.BasicContainer }",
+									"${ LDP.RDFSource }"
 								],
 								"https://example.com/ns#property-1": [ {
 									"@value": "value 1"
@@ -5206,7 +5191,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"@id": "_:1",
 								"https://example.com/ns#property-2": [ {
 									"@value": "12345",
-									"@type": "${ NS.XSD.DataType.integer }"
+									"@type": "${ XSD.integer }"
 								} ],
 								"https://schema.org/property-3": [ {
 									"@value": "another value 1"
@@ -5217,10 +5202,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"@graph": [ {
 								"@id": "${ context.baseURI }resource/child2/",
 								"@type": [
-									"${ NS.C.Class.Document }",
+									"${ C.Document }",
 									"https://example.com/ns#Resource",
-									"${ NS.LDP.Class.BasicContainer }",
-									"${ NS.LDP.Class.RDFSource }"
+									"${ LDP.BasicContainer }",
+									"${ LDP.RDFSource }"
 								],
 								"https://example.com/ns#property-1": [ {
 									"@value": "value 2"
@@ -5232,7 +5217,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"@id": "_:2",
 								"https://example.com/ns#property-2": [ {
 									"@value": "67890",
-									"@type": "${ NS.XSD.DataType.integer }"
+									"@type": "${ XSD.integer }"
 								} ],
 								"https://schema.org/property-3": [ {
 									"@value": "another value 2"
@@ -5252,15 +5237,15 @@ describe( module( "Carbon/Documents" ), ():void => {
 					context.extendObjectSchema( "Resource", {
 						"property1": {
 							"@id": "property-1",
-							"@type": NS.XSD.DataType.string,
+							"@type": XSD.string,
 						},
 						"property2": {
 							"@id": "property-2",
-							"@type": NS.XSD.DataType.integer,
+							"@type": XSD.integer,
 						},
 						"property3": {
 							"@id": "https://schema.org/property-3",
-							"@type": NS.XSD.DataType.string,
+							"@type": XSD.string,
 						},
 					} );
 
@@ -5278,16 +5263,16 @@ describe( module( "Carbon/Documents" ), ():void => {
 							},
 						} )
 					).then( ( [ myDocuments, response ] ) => {
-						expect( response ).toEqual( jasmine.any( HTTP.Response.Class ) );
+						expect( response ).toEqual( jasmine.any( Response ) );
 
 						expect( myDocuments ).toEqual( jasmine.any( Array ) );
 						expect( myDocuments.length ).toBe( 2 );
 						for( const document of myDocuments ) {
-							expect( PersistedDocument.Factory.is( document ) ).toBe( true );
+							expect( PersistedDocument.is( document ) ).toBe( true );
 						}
 
 						expect( myDocuments[ 0 ] ).toEqual( jasmine.objectContaining( {
-							"_etag": "\"1-12345\"",
+							"_eTag": "\"1-12345\"",
 							"property1": "value 1",
 							"property2": jasmine.objectContaining( {
 								"property2": 12345,
@@ -5295,7 +5280,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 							} ),
 						} ) );
 						expect( myDocuments[ 1 ] ).toEqual( jasmine.objectContaining( {
-							"_etag": "\"2-12345\"",
+							"_eTag": "\"2-12345\"",
 							"property1": "value 2",
 							"property2": jasmine.objectContaining( {
 								"property2": 67890,
@@ -5312,28 +5297,28 @@ describe( module( "Carbon/Documents" ), ():void => {
 						responseText: `[ {
 							"@id":"_:1",
 							"@type": [
-								"${ NS.C.Class.VolatileResource }",
-								"${ NS.C.Class.QueryMetadata }"
+								"${ C.VolatileResource }",
+								"${ C.QueryMetadata }"
 							],
-							"${ NS.C.Predicate.target }": [ {
+							"${ C.target }": [ {
 								"@id":"${ context.baseURI }resource/child1/"
 							} ]
 						}, {
 							"@id":"_:2",
 							"@type": [
-								"${ NS.C.Class.VolatileResource }",
-								"${ NS.C.Class.QueryMetadata }"
+								"${ C.VolatileResource }",
+								"${ C.QueryMetadata }"
 							],
-							"${ NS.C.Predicate.target }": [ {
+							"${ C.target }": [ {
 								"@id":"${ context.baseURI }resource/child2/"
 							} ]
 						}, {
 							"@id": "_:3",
 							"@type": [
-								"${ NS.C.Class.ResponseMetadata }",
-								"${ NS.C.Class.VolatileResource }"
+								"${ C.ResponseMetadata }",
+								"${ C.VolatileResource }"
 							],
-							"${ NS.C.Predicate.documentMetadata }": [ {
+							"${ C.documentMetadata }": [ {
 								"@id": "_:4"
 							}, {
 								"@id": "_:5"
@@ -5345,49 +5330,49 @@ describe( module( "Carbon/Documents" ), ():void => {
 						}, {
 							"@id": "_:4",
 							"@type": [
-								"${ NS.C.Class.DocumentMetadata }",
-								"${ NS.C.Class.VolatileResource }"
+								"${ C.DocumentMetadata }",
+								"${ C.VolatileResource }"
 							],
-							"${ NS.C.Predicate.eTag }": [ {
+							"${ C.eTag }": [ {
 								"@value": "\\"1-12345\\""
 							} ],
-							"${ NS.C.Predicate.relatedDocument }": [ {
+							"${ C.relatedDocument }": [ {
 								"@id": "https://example.com/resource/child1/"
 							} ]
 						}, {
 							"@id": "_:5",
 							"@type": [
-								"${ NS.C.Class.DocumentMetadata }",
-								"${ NS.C.Class.VolatileResource }"
+								"${ C.DocumentMetadata }",
+								"${ C.VolatileResource }"
 							],
-							"${ NS.C.Predicate.eTag }": [ {
+							"${ C.eTag }": [ {
 								"@value": "\\"2-12345\\""
 							} ],
-							"${ NS.C.Predicate.relatedDocument }": [ {
+							"${ C.relatedDocument }": [ {
 								"@id": "https://example.com/resource/child2/"
 							} ]
 						}, {
 							"@id": "_:6",
 							"@type": [
-								"${ NS.C.Class.DocumentMetadata }",
-								"${ NS.C.Class.VolatileResource }"
+								"${ C.DocumentMetadata }",
+								"${ C.VolatileResource }"
 							],
-							"${ NS.C.Predicate.eTag }": [ {
+							"${ C.eTag }": [ {
 								"@value": "\\"3-12345\\""
 							} ],
-							"${ NS.C.Predicate.relatedDocument }": [ {
+							"${ C.relatedDocument }": [ {
 								"@id": "https://example.com/sub-documents/sub-document1/"
 							} ]
 						}, {
 							"@id": "_:7",
 							"@type": [
-								"${ NS.C.Class.DocumentMetadata }",
-								"${ NS.C.Class.VolatileResource }"
+								"${ C.DocumentMetadata }",
+								"${ C.VolatileResource }"
 							],
-							"${ NS.C.Predicate.eTag }": [ {
+							"${ C.eTag }": [ {
 								"@value": "\\"4-12345\\""
 							} ],
-							"${ NS.C.Predicate.relatedDocument }": [ {
+							"${ C.relatedDocument }": [ {
 								"@id": "https://example.com/sub-documents/sub-document2/"
 							} ]
 						}, {
@@ -5395,10 +5380,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"@graph": [ {
 								"@id": "${ context.baseURI }resource/child1/",
 								"@type": [
-									"${ NS.C.Class.Document }",
+									"${ C.Document }",
 									"https://example.com/ns#Resource",
-									"${ NS.LDP.Class.BasicContainer }",
-									"${ NS.LDP.Class.RDFSource }"
+									"${ LDP.BasicContainer }",
+									"${ LDP.RDFSource }"
 								],
 								"https://example.com/ns#property-1": [ {
 									"@value": "value 1"
@@ -5413,7 +5398,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"@id": "${ context.baseURI }sub-documents/sub-document1/",
 								"https://example.com/ns#property-2": [ {
 									"@value": "12345",
-									"@type": "${ NS.XSD.DataType.integer }"
+									"@type": "${ XSD.integer }"
 								} ],
 								"https://schema.org/property-3": [ {
 									"@value": "another value 1"
@@ -5424,10 +5409,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"@graph": [ {
 								"@id": "${ context.baseURI }resource/child2/",
 								"@type": [
-									"${ NS.C.Class.Document }",
+									"${ C.Document }",
 									"https://example.com/ns#Resource",
-									"${ NS.LDP.Class.BasicContainer }",
-									"${ NS.LDP.Class.RDFSource }"
+									"${ LDP.BasicContainer }",
+									"${ LDP.RDFSource }"
 								],
 								"https://example.com/ns#property-1": [ {
 									"@value": "value 2"
@@ -5442,7 +5427,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"@id": "${ context.baseURI }sub-documents/sub-document2/",
 								"https://example.com/ns#property-2": [ {
 									"@value": "67890",
-									"@type": "${ NS.XSD.DataType.integer }"
+									"@type": "${ XSD.integer }"
 								} ],
 								"https://schema.org/property-3": [ {
 									"@value": "another value 2"
@@ -5462,15 +5447,15 @@ describe( module( "Carbon/Documents" ), ():void => {
 					context.extendObjectSchema( "Resource", {
 						"property1": {
 							"@id": "property-1",
-							"@type": NS.XSD.DataType.string,
+							"@type": XSD.string,
 						},
 						"property2": {
 							"@id": "property-2",
-							"@type": NS.XSD.DataType.integer,
+							"@type": XSD.integer,
 						},
 						"property3": {
 							"@id": "https://schema.org/property-3",
-							"@type": NS.XSD.DataType.string,
+							"@type": XSD.string,
 						},
 					} );
 
@@ -5488,28 +5473,28 @@ describe( module( "Carbon/Documents" ), ():void => {
 							},
 						} )
 					).then( ( [ myDocuments, response ] ) => {
-						expect( response ).toEqual( jasmine.any( HTTP.Response.Class ) );
+						expect( response ).toEqual( jasmine.any( Response ) );
 
 						expect( myDocuments ).toEqual( jasmine.any( Array ) );
 						expect( myDocuments.length ).toBe( 2 );
 						for( const document of myDocuments ) {
-							expect( PersistedDocument.Factory.is( document ) ).toBe( true );
+							expect( PersistedDocument.is( document ) ).toBe( true );
 						}
 
 						expect( myDocuments[ 0 ] ).toEqual( jasmine.objectContaining( {
-							"_etag": "\"1-12345\"",
+							"_eTag": "\"1-12345\"",
 							"property1": "value 1",
 							"property2": jasmine.objectContaining( {
-								"_etag": "\"3-12345\"",
+								"_eTag": "\"3-12345\"",
 								"property2": 12345,
 								"property3": "another value 1",
 							} ),
 						} ) );
 						expect( myDocuments[ 1 ] ).toEqual( jasmine.objectContaining( {
-							"_etag": "\"2-12345\"",
+							"_eTag": "\"2-12345\"",
 							"property1": "value 2",
 							"property2": jasmine.objectContaining( {
-								"_etag": "\"4-12345\"",
+								"_eTag": "\"4-12345\"",
 								"property2": 67890,
 								"property3": "another value 2",
 							} ),
@@ -5522,9 +5507,9 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 			describe( "When Documents does not have a context", ():void => {
 
-				let documents:Documents.Class;
+				let documents:Documents;
 				beforeEach( () => {
-					documents = new Documents.Class();
+					documents = new Documents();
 				} );
 
 				it( "should reject if URI is relative", ( done:DoneFn ):void => {
@@ -5582,7 +5567,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 						.properties( {
 							"property1": {
 								"@id": "https://example.com/ns#property-1",
-								"@type": NS.XSD.DataType.string,
+								"@type": XSD.string,
 							},
 							"property2": {
 								"@id": "https://schema.org/property-2",
@@ -5590,11 +5575,11 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"query": __ => __.properties( {
 									"property2": {
 										"@id": "https://example.com/ns#property-2",
-										"@type": NS.XSD.DataType.integer,
+										"@type": XSD.integer,
 									},
 									"property3": {
 										"@id": "https://schema.org/property-3",
-										"@type": NS.XSD.DataType.string,
+										"@type": XSD.string,
 									},
 								} ),
 							},
@@ -5608,8 +5593,8 @@ describe( module( "Carbon/Documents" ), ():void => {
 						expect( sendSpy ).toHaveBeenCalledWith(
 							"https://example.com/resource/", "" +
 							"CONSTRUCT {" +
-							` ?metadata a <${ NS.C.Class.VolatileResource }>, <${ NS.C.Class.QueryMetadata }>;` +
-							"" + ` <${ NS.C.Predicate.target }> ?child.` +
+							` ?metadata a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
+							"" + ` <${ C.target }> ?child.` +
 
 							" ?child a ?child__types;" +
 							"" + " <https://example.com/ns#property-1> ?child__property1;" +
@@ -5659,9 +5644,9 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 							jasmine.objectContaining( {
 								headers: new Map( [
-									[ "prefer", new HTTP.Header.Class( [
-										`include="${ NS.C.Class.PreferResultsContext }"`,
-										`include="${ NS.C.Class.PreferDocumentETags }"`,
+									[ "prefer", new Header( [
+										`include="${ C.PreferResultsContext }"`,
+										`include="${ C.PreferDocumentETags }"`,
 									] ) ],
 								] ),
 							} )
@@ -5676,28 +5661,28 @@ describe( module( "Carbon/Documents" ), ():void => {
 						responseText: `[ {
 							"@id":"_:1",
 							"@type": [
-								"${ NS.C.Class.VolatileResource }",
-								"${ NS.C.Class.QueryMetadata }"
+								"${ C.VolatileResource }",
+								"${ C.QueryMetadata }"
 							],
-							"${ NS.C.Predicate.target }": [ {
+							"${ C.target }": [ {
 								"@id":"https://example.com/resource/child1/"
 							} ]
 						}, {
 							"@id":"_:2",
 							"@type": [
-								"${ NS.C.Class.VolatileResource }",
-								"${ NS.C.Class.QueryMetadata }"
+								"${ C.VolatileResource }",
+								"${ C.QueryMetadata }"
 							],
-							"${ NS.C.Predicate.target }": [ {
+							"${ C.target }": [ {
 								"@id":"https://example.com/resource/child2/"
 							} ]
 						}, {
 							"@id": "_:3",
 							"@type": [
-								"${ NS.C.Class.ResponseMetadata }",
-								"${ NS.C.Class.VolatileResource }"
+								"${ C.ResponseMetadata }",
+								"${ C.VolatileResource }"
 							],
-							"${ NS.C.Predicate.documentMetadata }": [ {
+							"${ C.documentMetadata }": [ {
 								"@id": "_:4"
 							}, {
 								"@id": "_:5"
@@ -5705,25 +5690,25 @@ describe( module( "Carbon/Documents" ), ():void => {
 						}, {
 							"@id": "_:4",
 							"@type": [
-								"${ NS.C.Class.DocumentMetadata }",
-								"${ NS.C.Class.VolatileResource }"
+								"${ C.DocumentMetadata }",
+								"${ C.VolatileResource }"
 							],
-							"${ NS.C.Predicate.eTag }": [ {
+							"${ C.eTag }": [ {
 								"@value": "\\"1-12345\\""
 							} ],
-							"${ NS.C.Predicate.relatedDocument }": [ {
+							"${ C.relatedDocument }": [ {
 								"@id": "https://example.com/resource/child1/"
 							} ]
 						}, {
 							"@id": "_:5",
 							"@type": [
-								"${ NS.C.Class.DocumentMetadata }",
-								"${ NS.C.Class.VolatileResource }"
+								"${ C.DocumentMetadata }",
+								"${ C.VolatileResource }"
 							],
-							"${ NS.C.Predicate.eTag }": [ {
+							"${ C.eTag }": [ {
 								"@value": "\\"2-12345\\""
 							} ],
-							"${ NS.C.Predicate.relatedDocument }": [ {
+							"${ C.relatedDocument }": [ {
 								"@id": "https://example.com/resource/child2/"
 							} ]
 						}, {
@@ -5731,10 +5716,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"@graph": [ {
 								"@id": "https://example.com/resource/child1/",
 								"@type": [
-									"${ NS.C.Class.Document }",
+									"${ C.Document }",
 									"https://example.com/ns#Resource",
-									"${ NS.LDP.Class.BasicContainer }",
-									"${ NS.LDP.Class.RDFSource }"
+									"${ LDP.BasicContainer }",
+									"${ LDP.RDFSource }"
 								],
 								"https://example.com/ns#property-1": [ {
 									"@value": "value 1"
@@ -5746,7 +5731,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"@id": "_:1",
 								"https://example.com/ns#property-2": [ {
 									"@value": "12345",
-									"@type": "${ NS.XSD.DataType.integer }"
+									"@type": "${ XSD.integer }"
 								} ],
 								"https://schema.org/property-3": [ {
 									"@value": "another value 1"
@@ -5757,10 +5742,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"@graph": [ {
 								"@id": "https://example.com/resource/child2/",
 								"@type": [
-									"${ NS.C.Class.Document }",
+									"${ C.Document }",
 									"https://example.com/ns#Resource",
-									"${ NS.LDP.Class.BasicContainer }",
-									"${ NS.LDP.Class.RDFSource }"
+									"${ LDP.BasicContainer }",
+									"${ LDP.RDFSource }"
 								],
 								"https://example.com/ns#property-1": [ {
 									"@value": "value 2"
@@ -5772,7 +5757,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"@id": "_:2",
 								"https://example.com/ns#property-2": [ {
 									"@value": "67890",
-									"@type": "${ NS.XSD.DataType.integer }"
+									"@type": "${ XSD.integer }"
 								} ],
 								"https://schema.org/property-3": [ {
 									"@value": "another value 2"
@@ -5791,7 +5776,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 						.properties( {
 							"property1": {
 								"@id": "https://example.com/ns#property-1",
-								"@type": NS.XSD.DataType.string,
+								"@type": XSD.string,
 							},
 							"property2": {
 								"@id": "https://schema.org/property-2",
@@ -5799,26 +5784,26 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"query": __ => __.properties( {
 									"property2": {
 										"@id": "https://example.com/ns#property-2",
-										"@type": NS.XSD.DataType.integer,
+										"@type": XSD.integer,
 									},
 									"property3": {
 										"@id": "https://schema.org/property-3",
-										"@type": NS.XSD.DataType.string,
+										"@type": XSD.string,
 									},
 								} ),
 							},
 						} )
 					).then( ( [ myDocuments, response ] ) => {
-						expect( response ).toEqual( jasmine.any( HTTP.Response.Class ) );
+						expect( response ).toEqual( jasmine.any( Response ) );
 
 						expect( myDocuments ).toEqual( jasmine.any( Array ) );
 						expect( myDocuments.length ).toBe( 2 );
 						for( const document of myDocuments ) {
-							expect( PersistedDocument.Factory.is( document ) ).toBe( true );
+							expect( PersistedDocument.is( document ) ).toBe( true );
 						}
 
 						expect( myDocuments[ 0 ] ).toEqual( jasmine.objectContaining( {
-							"_etag": "\"1-12345\"",
+							"_eTag": "\"1-12345\"",
 							"property1": "value 1",
 							"property2": jasmine.objectContaining( {
 								"property2": 12345,
@@ -5826,7 +5811,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 							} ),
 						} ) );
 						expect( myDocuments[ 1 ] ).toEqual( jasmine.objectContaining( {
-							"_etag": "\"2-12345\"",
+							"_eTag": "\"2-12345\"",
 							"property1": "value 2",
 							"property2": jasmine.objectContaining( {
 								"property2": 67890,
@@ -5843,28 +5828,28 @@ describe( module( "Carbon/Documents" ), ():void => {
 						responseText: `[ {
 							"@id":"_:1",
 							"@type": [
-								"${ NS.C.Class.VolatileResource }",
-								"${ NS.C.Class.QueryMetadata }"
+								"${ C.VolatileResource }",
+								"${ C.QueryMetadata }"
 							],
-							"${ NS.C.Predicate.target }": [ {
+							"${ C.target }": [ {
 								"@id":"https://example.com/resource/child1/"
 							} ]
 						}, {
 							"@id":"_:2",
 							"@type": [
-								"${ NS.C.Class.VolatileResource }",
-								"${ NS.C.Class.QueryMetadata }"
+								"${ C.VolatileResource }",
+								"${ C.QueryMetadata }"
 							],
-							"${ NS.C.Predicate.target }": [ {
+							"${ C.target }": [ {
 								"@id":"https://example.com/resource/child2/"
 							} ]
 						}, {
 							"@id": "_:3",
 							"@type": [
-								"${ NS.C.Class.ResponseMetadata }",
-								"${ NS.C.Class.VolatileResource }"
+								"${ C.ResponseMetadata }",
+								"${ C.VolatileResource }"
 							],
-							"${ NS.C.Predicate.documentMetadata }": [ {
+							"${ C.documentMetadata }": [ {
 								"@id": "_:4"
 							}, {
 								"@id": "_:5"
@@ -5876,49 +5861,49 @@ describe( module( "Carbon/Documents" ), ():void => {
 						}, {
 							"@id": "_:4",
 							"@type": [
-								"${ NS.C.Class.DocumentMetadata }",
-								"${ NS.C.Class.VolatileResource }"
+								"${ C.DocumentMetadata }",
+								"${ C.VolatileResource }"
 							],
-							"${ NS.C.Predicate.eTag }": [ {
+							"${ C.eTag }": [ {
 								"@value": "\\"1-12345\\""
 							} ],
-							"${ NS.C.Predicate.relatedDocument }": [ {
+							"${ C.relatedDocument }": [ {
 								"@id": "https://example.com/resource/child1/"
 							} ]
 						}, {
 							"@id": "_:5",
 							"@type": [
-								"${ NS.C.Class.DocumentMetadata }",
-								"${ NS.C.Class.VolatileResource }"
+								"${ C.DocumentMetadata }",
+								"${ C.VolatileResource }"
 							],
-							"${ NS.C.Predicate.eTag }": [ {
+							"${ C.eTag }": [ {
 								"@value": "\\"2-12345\\""
 							} ],
-							"${ NS.C.Predicate.relatedDocument }": [ {
+							"${ C.relatedDocument }": [ {
 								"@id": "https://example.com/resource/child2/"
 							} ]
 						}, {
 							"@id": "_:6",
 							"@type": [
-								"${ NS.C.Class.DocumentMetadata }",
-								"${ NS.C.Class.VolatileResource }"
+								"${ C.DocumentMetadata }",
+								"${ C.VolatileResource }"
 							],
-							"${ NS.C.Predicate.eTag }": [ {
+							"${ C.eTag }": [ {
 								"@value": "\\"3-12345\\""
 							} ],
-							"${ NS.C.Predicate.relatedDocument }": [ {
+							"${ C.relatedDocument }": [ {
 								"@id": "https://example.com/sub-documents/sub-document1/"
 							} ]
 						}, {
 							"@id": "_:7",
 							"@type": [
-								"${ NS.C.Class.DocumentMetadata }",
-								"${ NS.C.Class.VolatileResource }"
+								"${ C.DocumentMetadata }",
+								"${ C.VolatileResource }"
 							],
-							"${ NS.C.Predicate.eTag }": [ {
+							"${ C.eTag }": [ {
 								"@value": "\\"4-12345\\""
 							} ],
-							"${ NS.C.Predicate.relatedDocument }": [ {
+							"${ C.relatedDocument }": [ {
 								"@id": "https://example.com/sub-documents/sub-document2/"
 							} ]
 						}, {
@@ -5926,10 +5911,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"@graph": [ {
 								"@id": "https://example.com/resource/child1/",
 								"@type": [
-									"${ NS.C.Class.Document }",
+									"${ C.Document }",
 									"https://example.com/ns#Resource",
-									"${ NS.LDP.Class.BasicContainer }",
-									"${ NS.LDP.Class.RDFSource }"
+									"${ LDP.BasicContainer }",
+									"${ LDP.RDFSource }"
 								],
 								"https://example.com/ns#property-1": [ {
 									"@value": "value 1"
@@ -5944,7 +5929,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"@id": "https://example.com/sub-documents/sub-document1/",
 								"https://example.com/ns#property-2": [ {
 									"@value": "12345",
-									"@type": "${ NS.XSD.DataType.integer }"
+									"@type": "${ XSD.integer }"
 								} ],
 								"https://schema.org/property-3": [ {
 									"@value": "another value 1"
@@ -5955,10 +5940,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"@graph": [ {
 								"@id": "https://example.com/resource/child2/",
 								"@type": [
-									"${ NS.C.Class.Document }",
+									"${ C.Document }",
 									"https://example.com/ns#Resource",
-									"${ NS.LDP.Class.BasicContainer }",
-									"${ NS.LDP.Class.RDFSource }"
+									"${ LDP.BasicContainer }",
+									"${ LDP.RDFSource }"
 								],
 								"https://example.com/ns#property-1": [ {
 									"@value": "value 2"
@@ -5973,7 +5958,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"@id": "https://example.com/sub-documents/sub-document2/",
 								"https://example.com/ns#property-2": [ {
 									"@value": "67890",
-									"@type": "${ NS.XSD.DataType.integer }"
+									"@type": "${ XSD.integer }"
 								} ],
 								"https://schema.org/property-3": [ {
 									"@value": "another value 2"
@@ -5992,7 +5977,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 						.properties( {
 							"property1": {
 								"@id": "https://example.com/ns#property-1",
-								"@type": NS.XSD.DataType.string,
+								"@type": XSD.string,
 							},
 							"property2": {
 								"@id": "https://schema.org/property-2",
@@ -6000,38 +5985,38 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"query": __ => __.properties( {
 									"property2": {
 										"@id": "https://example.com/ns#property-2",
-										"@type": NS.XSD.DataType.integer,
+										"@type": XSD.integer,
 									},
 									"property3": {
 										"@id": "https://schema.org/property-3",
-										"@type": NS.XSD.DataType.string,
+										"@type": XSD.string,
 									},
 								} ),
 							},
 						} )
 					).then( ( [ myDocuments, response ] ) => {
-						expect( response ).toEqual( jasmine.any( HTTP.Response.Class ) );
+						expect( response ).toEqual( jasmine.any( Response ) );
 
 						expect( myDocuments ).toEqual( jasmine.any( Array ) );
 						expect( myDocuments.length ).toBe( 2 );
 						for( const document of myDocuments ) {
-							expect( PersistedDocument.Factory.is( document ) ).toBe( true );
+							expect( PersistedDocument.is( document ) ).toBe( true );
 						}
 
 						expect( myDocuments[ 0 ] ).toEqual( jasmine.objectContaining( {
-							"_etag": "\"1-12345\"",
+							"_eTag": "\"1-12345\"",
 							"property1": "value 1",
 							"property2": jasmine.objectContaining( {
-								"_etag": "\"3-12345\"",
+								"_eTag": "\"3-12345\"",
 								"property2": 12345,
 								"property3": "another value 1",
 							} ),
 						} ) );
 						expect( myDocuments[ 1 ] ).toEqual( jasmine.objectContaining( {
-							"_etag": "\"2-12345\"",
+							"_eTag": "\"2-12345\"",
 							"property1": "value 2",
 							"property2": jasmine.objectContaining( {
-								"_etag": "\"4-12345\"",
+								"_eTag": "\"4-12345\"",
 								"property2": 67890,
 								"property3": "another value 2",
 							} ),
@@ -6051,32 +6036,32 @@ describe( module( "Carbon/Documents" ), ():void => {
 				[ "T extends object" ],
 				"Persists an AccessPoint in the document specified.", [
 					{ name: "documentURI", type: "string", description: "URI of the document where to create a new access point." },
-					{ name: "accessPoint", type: "T & Carbon.AccessPoint.Class", description: "AccessPoint Document to persist." },
+					{ name: "accessPoint", type: "T & CarbonLDP.AccessPoint.AccessPointBase", description: "AccessPoint Document to persist." },
 					{ name: "slug", type: "string", optional: true, description: "Slug that will be used for the URI of the new access point." },
-					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request." },
+					{ name: "requestOptions", type: "CarbonLDP.HTTP.Request.RequestOptions", optional: true, description: "Customizable options for the request." },
 				],
-				{ type: "Promise<[ T & Carbon.PersistedAccessPoint.Class, Carbon.HTTP.Response.Class ]>" }
+				{ type: "Promise<[ T & CarbonLDP.PersistedAccessPoint.PersistedAccessPoint, CarbonLDP.HTTP.Response.Response ]>" }
 			), ():void => {} );
 
 			it( hasSignature(
 				[ "T extends object" ],
 				"Persists an AccessPoint in the document specified.", [
 					{ name: "documentURI", type: "string", description: "URI of the document where to create a new access point." },
-					{ name: "accessPoint", type: "T & Carbon.AccessPoint.Class", description: "AccessPoint Document to persist." },
-					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request." },
+					{ name: "accessPoint", type: "T & CarbonLDP.AccessPoint.AccessPointBase", description: "AccessPoint Document to persist." },
+					{ name: "requestOptions", type: "CarbonLDP.HTTP.Request.RequestOptions", optional: true, description: "Customizable options for the request." },
 				],
-				{ type: "Promise<[ T & Carbon.PersistedAccessPoint.Class, Carbon.HTTP.Response.Class ]>" }
+				{ type: "Promise<[ T & CarbonLDP.PersistedAccessPoint.PersistedAccessPoint, CarbonLDP.HTTP.Response.Response ]>" }
 			), ():void => {} );
 
 			it( isDefined(), () => {
-				expect( Documents.Class.prototype.createAccessPoint ).toBeDefined();
-				expect( Documents.Class.prototype.createAccessPoint ).toEqual( jasmine.any( Function ) );
+				expect( Documents.prototype.createAccessPoint ).toBeDefined();
+				expect( Documents.prototype.createAccessPoint ).toEqual( jasmine.any( Function ) );
 			} );
 
 			describe( "When Documents has a specified context", ():void => {
 
 				let context:AbstractContext;
-				let documents:Documents.Class;
+				let documents:Documents;
 				beforeEach( ():void => {
 					context = new class extends AbstractContext {
 						_baseURI:string = "https://example.com/";
@@ -6086,7 +6071,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				} );
 
 				it( "should reject promise if URI is not in the context base", ( done:DoneFn ):void => {
-					const accessPoint:AccessPoint.Class = { hasMemberRelation: "member-relation" };
+					const accessPoint:AccessPointBase = { hasMemberRelation: "member-relation" };
 					const promise:Promise<any> = documents.createAccessPoint( "https://not-example.com", accessPoint );
 					promise.then( () => {
 						done.fail( "Should not resolve promise." );
@@ -6097,7 +6082,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				} );
 
 				it( "should reject promise if prefixed URI cannot be resolved", ( done:DoneFn ):void => {
-					const accessPoint:AccessPoint.Class = { hasMemberRelation: "member-relation" };
+					const accessPoint:AccessPointBase = { hasMemberRelation: "member-relation" };
 					const promise:Promise<any> = documents.createAccessPoint( "prefix:the-uri", accessPoint );
 					promise.then( () => {
 						done.fail( "Should not resolve promise." );
@@ -6118,63 +6103,63 @@ describe( module( "Carbon/Documents" ), ():void => {
 							{
 								"@id": "_:responseMetadata",
 								"@type": [
-							        "${ NS.C.Class.VolatileResource }",
-						            "${ NS.C.Class.ResponseMetadata }"
+							        "${ C.VolatileResource }",
+						            "${ C.ResponseMetadata }"
 								],
-								"${ NS.C.Predicate.documentMetadata }": [ {
+								"${ C.documentMetadata }": [ {
 									"@id": "_:documentMetadata"
 								} ]
 							},
 							{
 								"@id": "_:documentMetadata",
 								"@type": [
-						            "${ NS.C.Class.VolatileResource }",
-						            "${ NS.C.Class.DocumentMetadata }"
+						            "${ C.VolatileResource }",
+						            "${ C.DocumentMetadata }"
 								],
-								"${ NS.C.Predicate.relatedDocument }": [ {
+								"${ C.relatedDocument }": [ {
 									"@id": "https://example.com/new-access-point/"
 								} ],
-								"${ NS.C.Predicate.bNodesMap }": [ {
+								"${ C.bNodesMap }": [ {
 									"@id": "_:map"
 								} ]
 							},
 							{
 								"@id": "_:map",
-								"@type": [ "${ NS.C.Class.Map }" ],
-								"${ NS.C.Predicate.entry }": [
+								"@type": [ "${ C.Map }" ],
+								"${ C.entry }": [
 									{ "@id": "_:entry-1" },
 									{ "@id": "_:entry-2" }
 								]
 							},
 							{
 								"@id": "_:entry-1",
-								"${ NS.C.Predicate.entryKey }": [ {
+								"${ C.entryKey }": [ {
 								    "@id": "_:1"
 							    } ],
-								"${ NS.C.Predicate.entryValue }": [ {
+								"${ C.entryValue }": [ {
 									"@id": "_:new-1"
 								} ]
 							},
 							{
 								"@id": "_:entry-2",
-								"${ NS.C.Predicate.entryKey }": [ {
+								"${ C.entryKey }": [ {
 									"@id": "_:2"
 								} ],
-								"${ NS.C.Predicate.entryValue }": [ {
+								"${ C.entryValue }": [ {
 									"@id": "_:new-2"
 								} ]
 							}
 						]`,
 					} );
 
-					type RawBlankNode = Partial<BlankNode.Class> & { value:string };
+					type RawBlankNode = Partial<BlankNode> & { value:string };
 
 					interface RawDocument {
 						blankNode1:RawBlankNode;
 						blankNode2:RawBlankNode;
 					}
 
-					const rawAccessPoint:RawDocument & AccessPoint.Class = {
+					const rawAccessPoint:RawDocument & AccessPointBase = {
 						blankNode1: {
 							id: "_:1",
 							value: "a value 1",
@@ -6229,10 +6214,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 
 				it( "should convert plain access-point into a document access-point before request", ( done:DoneFn ):void => {
-					const spy:jasmine.Spy = spyOn( AccessPoint.Factory, "createFrom" ).and.callThrough();
+					const spy:jasmine.Spy = spyOn( AccessPoint, "createFrom" ).and.callThrough();
 					spyOn( documents, "persistDocument" as any ).and.returnValue( Promise.resolve( [] ) );
 
-					const accessPoint:AccessPoint.Class = { hasMemberRelation: "member-relation" };
+					const accessPoint:AccessPointBase = { hasMemberRelation: "member-relation" };
 					documents.createAccessPoint( "https://example.com/parent-resource/", accessPoint )
 						.then( () => {
 							expect( spy ).toHaveBeenCalledWith( accessPoint, documents.getPointer( "parent-resource/" ), "member-relation", void 0 );
@@ -6244,7 +6229,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				} );
 
 				it( "should reject if access-point is already persisted", ( done:DoneFn ):void => {
-					const accessPoint:AccessPoint.Class & PersistedDocument.Class = PersistedDocument.Factory.createFrom( { hasMemberRelation: "member-relation" }, "https://example.com/some-resource/", documents );
+					const accessPoint:AccessPointBase & PersistedDocument = PersistedDocument.createFrom( { hasMemberRelation: "member-relation" }, documents, "https://example.com/some-resource/" );
 					documents.createAccessPoint( "https://example.com/parent-resource/", accessPoint )
 						.then( () => {
 							done.fail( "Should not resolve" );
@@ -6258,7 +6243,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				} );
 
 				it( "should reject if access-point has incorrect membershipResource", ( done:DoneFn ):void => {
-					const accessPoint:AccessPoint.Class = AccessPoint.Factory.create( documents.getPointer( "NOT-parent-resource/" ), "member-relation" );
+					const accessPoint:AccessPointBase = AccessPoint.create( documents.getPointer( "NOT-parent-resource/" ), "member-relation" );
 
 					documents.createAccessPoint( "https://example.com/parent-resource/", accessPoint )
 						.then( () => {
@@ -6280,17 +6265,17 @@ describe( module( "Carbon/Documents" ), ():void => {
 						},
 					} );
 
-					const accessPoint:AccessPoint.Class = { hasMemberRelation: "member-relation" };
-					documents.createAccessPoint( "https://example.com/parent-resource/", accessPoint ).then( ( [ document, response ]:[ PersistedAccessPoint.Class, HTTP.Response.Class ] ):void => {
-						expect( response ).toEqual( jasmine.any( HTTP.Response.Class ) );
+					const accessPoint:AccessPointBase = { hasMemberRelation: "member-relation" };
+					documents.createAccessPoint( "https://example.com/parent-resource/", accessPoint ).then( ( [ document, response ]:[ PersistedAccessPoint, Response ] ):void => {
+						expect( response ).toEqual( jasmine.any( Response ) );
 
 						expect( accessPoint ).toBe( document );
 
-						expect( PersistedDocument.Factory.is( document ) ).toBe( true );
+						expect( PersistedDocument.is( document ) ).toBe( true );
 						expect( document ).toEqual( jasmine.objectContaining( {
 							_resolved: false,
 							id: "https://example.com/parent-resource/new-resource/",
-							membershipResource: Pointer.Factory.create( "https://example.com/parent-resource/" ),
+							membershipResource: Pointer.create( "https://example.com/parent-resource/" ),
 							hasMemberRelation: "member-relation" as any,
 						} ) );
 
@@ -6305,7 +6290,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 						status: 500,
 					} );
 
-					const accessPoint:AccessPoint.Class = { hasMemberRelation: "member-relation" };
+					const accessPoint:AccessPointBase = { hasMemberRelation: "member-relation" };
 
 					documents.createAccessPoint( "https://example.com/parent-resource/", accessPoint )
 						.catch( error => {
@@ -6320,10 +6305,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 							return documents.createAccessPoint( "https://example.com/parent-resource/", accessPoint );
 						} )
-						.then( ( [ document, response ]:[ PersistedDocument.Class, HTTP.Response.Class ] ):void => {
-							expect( response ).toEqual( jasmine.any( HTTP.Response.Class ) );
+						.then( ( [ document, response ]:[ PersistedDocument, Response ] ):void => {
+							expect( response ).toEqual( jasmine.any( Response ) );
 
-							expect( PersistedDocument.Factory.is( document ) ).toBe( true );
+							expect( PersistedDocument.is( document ) ).toBe( true );
 							expect( document.id ).toBe( "https://example.com/parent-resource/new-resource/" );
 
 							done();
@@ -6339,7 +6324,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 						},
 					} );
 
-					const accessPoint:AccessPoint.Class = { hasMemberRelation: "member-relation" };
+					const accessPoint:AccessPointBase = { hasMemberRelation: "member-relation" };
 
 					documents.createAccessPoint( "https://example.com/parent-resource/", accessPoint )
 						.then( ():void => {
@@ -6349,7 +6334,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"accept": "application/ld+json",
 								"prefer": [
 									`return=minimal`,
-									`${ NS.LDP.Class.RDFSource }; rel=interaction-model`,
+									`${ LDP.RDFSource }; rel=interaction-model`,
 								].join( ", " ),
 							} );
 
@@ -6366,7 +6351,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 						},
 					} );
 
-					const accessPoint:AccessPoint.Class = { hasMemberRelation: "member-relation" };
+					const accessPoint:AccessPointBase = { hasMemberRelation: "member-relation" };
 
 					documents.createAccessPoint( "https://example.com/parent-resource/", accessPoint, "child-slug" )
 						.then( ():void => {
@@ -6376,7 +6361,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"accept": "application/ld+json",
 								"prefer": [
 									`return=minimal`,
-									`${ NS.LDP.Class.RDFSource }; rel=interaction-model`,
+									`${ LDP.RDFSource }; rel=interaction-model`,
 								].join( ", " ),
 								"slug": "child-slug",
 							} );
@@ -6389,14 +6374,14 @@ describe( module( "Carbon/Documents" ), ():void => {
 			} );
 
 			describe( "When Documents does not have a context", ():void => {
-				let documents:Documents.Class;
+				let documents:Documents;
 
 				beforeEach( () => {
-					documents = new Documents.Class();
+					documents = new Documents();
 				} );
 
 				it( "should reject if URI is relative", ( done:DoneFn ):void => {
-					const accessPoint:AccessPoint.Class = { hasMemberRelation: "member-relation" };
+					const accessPoint:AccessPointBase = { hasMemberRelation: "member-relation" };
 					const promise:Promise<any> = documents.createAccessPoint( "relative-uri/", accessPoint );
 					promise.then( () => {
 						done.fail( "Should not resolve promise." );
@@ -6407,7 +6392,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				} );
 
 				it( "should reject if URI is prefixed", ( done:DoneFn ):void => {
-					const accessPoint:AccessPoint.Class = { hasMemberRelation: "member-relation" };
+					const accessPoint:AccessPointBase = { hasMemberRelation: "member-relation" };
 					const promise:Promise<any> = documents.createAccessPoint( "prefix:the-uri", accessPoint );
 					promise.then( () => {
 						done.fail( "Should not resolve promise." );
@@ -6448,32 +6433,32 @@ describe( module( "Carbon/Documents" ), ():void => {
 				[ "T extends object" ],
 				"Persists multiple access points objects for the specified document.", [
 					{ name: "documentURI", type: "string", description: "URI of the document where to create the new access points." },
-					{ name: "accessPoints", type: "T & Carbon.AccessPoint.Class", description: "Array with the access points to persist." },
+					{ name: "accessPoints", type: "T & CarbonLDP.AccessPoint.AccessPointBase", description: "Array with the access points to persist." },
 					{ name: "slugs", type: "string[]", optional: true, description: "Array with the slugs that corresponds to each object in `accessPoints` parameter, in the order in which they were defined. If an element in the array is undefined or null, the slug will be generated by the platform." },
-					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request." },
+					{ name: "requestOptions", type: "CarbonLDP.HTTP.Request.RequestOptions", optional: true, description: "Customizable options for the request." },
 				],
-				{ type: "Promise<[ (T & Carbon.PersistedAccessPoint.Class)[], Carbon.HTTP.Response.Class[] ]>", description: "Promise that contains a tuple with an array of the new and UNRESOLVED persisted access points, and the array containing the response classes of every request." }
+				{ type: "Promise<[ (T & CarbonLDP.PersistedAccessPoint.PersistedAccessPoint)[], CarbonLDP.HTTP.Response.Response[] ]>", description: "Promise that contains a tuple with an array of the new and UNRESOLVED persisted access points, and the array containing the response classes of every request." }
 			), ():void => {} );
 
 			it( hasSignature(
 				[ "T extends object" ],
 				"Persists multiple access points objects for the specified document.", [
 					{ name: "documentURI", type: "string", description: "URI of the document where to create the new access points." },
-					{ name: "accessPoints", type: "T & Carbon.AccessPoint.Class", description: "Array with the access points to persist." },
-					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request." },
+					{ name: "accessPoints", type: "T & CarbonLDP.AccessPoint.AccessPointBase", description: "Array with the access points to persist." },
+					{ name: "requestOptions", type: "CarbonLDP.HTTP.Request.RequestOptions", optional: true, description: "Customizable options for the request." },
 				],
-				{ type: "Promise<[ (T & Carbon.PersistedAccessPoint.Class)[], Carbon.HTTP.Response.Class[] ]>", description: "Promise that contains a tuple with an array of the new and UNRESOLVED persisted access points, and the array containing the response classes of every request." }
+				{ type: "Promise<[ (T & CarbonLDP.PersistedAccessPoint.PersistedAccessPoint)[], CarbonLDP.HTTP.Response.Response[] ]>", description: "Promise that contains a tuple with an array of the new and UNRESOLVED persisted access points, and the array containing the response classes of every request." }
 			), ():void => {} );
 
 			it( isDefined(), () => {
-				expect( Documents.Class.prototype.createAccessPoints ).toBeDefined();
-				expect( Documents.Class.prototype.createAccessPoints ).toEqual( jasmine.any( Function ) );
+				expect( Documents.prototype.createAccessPoints ).toBeDefined();
+				expect( Documents.prototype.createAccessPoints ).toEqual( jasmine.any( Function ) );
 			} );
 
 			describe( "When Documents has a specified context", ():void => {
 
 				let context:AbstractContext;
-				let documents:Documents.Class;
+				let documents:Documents;
 				beforeEach( ():void => {
 					context = new class extends AbstractContext {
 						_baseURI:string = "https://example.com/";
@@ -6483,7 +6468,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				} );
 
 				it( "should reject promise if URI is not in the context base", ( done:DoneFn ):void => {
-					const accessPoint:AccessPoint.Class = { hasMemberRelation: "member-relation" };
+					const accessPoint:AccessPointBase = { hasMemberRelation: "member-relation" };
 					const promise:Promise<any> = documents.createAccessPoints( "https://not-example.com", [ accessPoint ] );
 					promise.then( () => {
 						done.fail( "Should not resolve promise." );
@@ -6494,7 +6479,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				} );
 
 				it( "should reject promise if prefixed URI cannot be resolved", ( done:DoneFn ):void => {
-					const accessPoint:AccessPoint.Class = { hasMemberRelation: "member-relation" };
+					const accessPoint:AccessPointBase = { hasMemberRelation: "member-relation" };
 					const promise:Promise<any> = documents.createAccessPoints( "prefix:the-uri", [ accessPoint ] );
 					promise.then( () => {
 						done.fail( "Should not resolve promise." );
@@ -6527,10 +6512,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 
 				it( "should convert plain access-point into document access-point before requests", ( done:DoneFn ):void => {
-					const spy:jasmine.Spy = spyOn( AccessPoint.Factory, "createFrom" ).and.callThrough();
+					const spy:jasmine.Spy = spyOn( AccessPoint, "createFrom" ).and.callThrough();
 					spyOn( documents, "persistDocument" as any ).and.returnValue( Promise.resolve( [] ) );
 
-					const accessPoints:AccessPoint.Class[] = [
+					const accessPoints:AccessPointBase[] = [
 						{ hasMemberRelation: "member-relation-0" },
 						{ hasMemberRelation: "member-relation-1" },
 						{ hasMemberRelation: "member-relation-2" },
@@ -6539,7 +6524,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					documents
 						.createAccessPoints( "https://example.com/parent-resource/", accessPoints )
 						.then( () => {
-							const parentPointer:Pointer.Class = documents.getPointer( "https://example.com/parent-resource/" );
+							const parentPointer:Pointer = documents.getPointer( "https://example.com/parent-resource/" );
 							expect( spy ).toHaveBeenCalledWith( accessPoints[ 0 ], parentPointer, accessPoints[ 0 ].hasMemberRelation, void 0 );
 							expect( spy ).toHaveBeenCalledWith( accessPoints[ 1 ], parentPointer, accessPoints[ 1 ].hasMemberRelation, void 0 );
 							expect( spy ).toHaveBeenCalledWith( accessPoints[ 2 ], parentPointer, accessPoints[ 2 ].hasMemberRelation, void 0 );
@@ -6550,10 +6535,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 				} );
 
 				it( "should reject if any access-point is already persisted", ( done:DoneFn ):void => {
-					const accessPoints:(AccessPoint.Class | AccessPoint.Class & PersistedDocument.Class)[] = [
+					const accessPoints:(AccessPointBase | AccessPointBase & PersistedDocument)[] = [
 						{ hasMemberRelation: "member-relation-0" },
-						PersistedDocument.Factory.createFrom( { hasMemberRelation: "member-relation-1" }, "https://example.com/some-resource-1/", documents ),
-						PersistedDocument.Factory.createFrom( { hasMemberRelation: "member-relation-2" }, "https://example.com/some-resource-2/", documents ),
+						PersistedDocument.createFrom( { hasMemberRelation: "member-relation-1" }, documents, "https://example.com/some-resource-1/" ),
+						PersistedDocument.createFrom( { hasMemberRelation: "member-relation-2" }, documents, "https://example.com/some-resource-2/" ),
 					];
 
 					documents.createAccessPoints( "https://example.com/parent-resource/", accessPoints )
@@ -6569,10 +6554,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 				} );
 
 				it( "should reject if access-point has incorrect membershipResource", ( done:DoneFn ):void => {
-					const accessPoints:AccessPoint.Class[] = [
-						AccessPoint.Factory.create( documents.getPointer( "parent-resource/" ), "member-relation-0" ),
-						AccessPoint.Factory.create( documents.getPointer( "NOT-parent-resource/" ), "member-relation-1" ),
-						AccessPoint.Factory.create( documents.getPointer( "NOT-parent-resource/" ), "member-relation-2" ),
+					const accessPoints:AccessPointBase[] = [
+						AccessPoint.create( documents.getPointer( "parent-resource/" ), "member-relation-0" ),
+						AccessPoint.create( documents.getPointer( "NOT-parent-resource/" ), "member-relation-1" ),
+						AccessPoint.create( documents.getPointer( "NOT-parent-resource/" ), "member-relation-2" ),
 					];
 
 					documents.createAccessPoints( "https://example.com/parent-resource/", accessPoints )
@@ -6588,24 +6573,24 @@ describe( module( "Carbon/Documents" ), ():void => {
 				} );
 
 				it( "should process the access-points into a valid persisted access-points", ( done:DoneFn ):void => {
-					const accessPoints:AccessPoint.Class[] = [
+					const accessPoints:AccessPointBase[] = [
 						{ hasMemberRelation: "member-relation-0" },
 						{ hasMemberRelation: "member-relation-1" },
 						{ hasMemberRelation: "member-relation-2" },
 					];
 
 					documents.createAccessPoints( "https://example.com/parent-resource/", accessPoints )
-						.then( ( [ persistedDocuments, responses ]:[ PersistedAccessPoint.Class[], HTTP.Response.Class[] ] ):void => {
+						.then( ( [ persistedDocuments, responses ]:[ PersistedAccessPoint[], Response[] ] ):void => {
 							expect( responses ).toEqual( new Array( 3 ).fill( jasmine.anything() ) );
 							responses.forEach( response => {
-								expect( response ).toEqual( jasmine.any( HTTP.Response.Class ) );
+								expect( response ).toEqual( jasmine.any( Response ) );
 							} );
 
 							expect( persistedDocuments ).toEqual( new Array( 3 ).fill( jasmine.anything() ) );
 							persistedDocuments.forEach( ( document, index ) => {
 								expect( accessPoints[ index ] ).toBe( document );
 
-								expect( PersistedDocument.Factory.is( document ) ).toBe( true );
+								expect( PersistedDocument.is( document ) ).toBe( true );
 								expect( document ).toEqual( jasmine.objectContaining( {
 									_resolved: false,
 									id: `https://example.com/parent-resource/new-access-point-${ index }/`,
@@ -6628,7 +6613,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				} );
 
 				it( "should send expected headers", ( done:DoneFn ):void => {
-					const accessPoints:AccessPoint.Class[] = [
+					const accessPoints:AccessPointBase[] = [
 						{ hasMemberRelation: "member-relation-0" },
 						{ hasMemberRelation: "member-relation-1" },
 						{ hasMemberRelation: "member-relation-2" },
@@ -6643,7 +6628,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 									"accept": "application/ld+json",
 									"prefer": [
 										`return=minimal`,
-										`${ NS.LDP.Class.RDFSource }; rel=interaction-model`,
+										`${ LDP.RDFSource }; rel=interaction-model`,
 									].join( ", " ),
 								} );
 							} );
@@ -6663,7 +6648,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				} );
 
 				it( "should send expected headers with slug", ( done:DoneFn ):void => {
-					const accessPoints:AccessPoint.Class[] = [
+					const accessPoints:AccessPointBase[] = [
 						{ hasMemberRelation: "member-relation-0" },
 						{ hasMemberRelation: "member-relation-1" },
 						{ hasMemberRelation: "member-relation-2" },
@@ -6679,7 +6664,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 									"accept": "application/ld+json",
 									"prefer": [
 										`return=minimal`,
-										`${ NS.LDP.Class.RDFSource }; rel=interaction-model`,
+										`${ LDP.RDFSource }; rel=interaction-model`,
 									].join( ", " ),
 									...slugs[ index ] ? { slug: slugs[ index ] } : {},
 								} );
@@ -6702,14 +6687,14 @@ describe( module( "Carbon/Documents" ), ():void => {
 			} );
 
 			describe( "When Documents does not have a context", ():void => {
-				let documents:Documents.Class;
+				let documents:Documents;
 
 				beforeEach( () => {
-					documents = new Documents.Class();
+					documents = new Documents();
 				} );
 
 				it( "should reject if URI is relative", ( done:DoneFn ):void => {
-					const accessPoint:AccessPoint.Class = { hasMemberRelation: "member-relation" };
+					const accessPoint:AccessPointBase = { hasMemberRelation: "member-relation" };
 					const promise:Promise<any> = documents.createAccessPoints( "relative-uri/", [ accessPoint ] );
 					promise.then( () => {
 						done.fail( "Should not resolve promise." );
@@ -6720,7 +6705,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				} );
 
 				it( "should reject if URI is prefixed", ( done:DoneFn ):void => {
-					const accessPoint:AccessPoint.Class = { hasMemberRelation: "member-relation" };
+					const accessPoint:AccessPointBase = { hasMemberRelation: "member-relation" };
 					const promise:Promise<any> = documents.createAccessPoints( "prefix:the-uri", [ accessPoint ] );
 					promise.then( () => {
 						done.fail( "Should not resolve promise." );
@@ -6761,20 +6746,20 @@ describe( module( "Carbon/Documents" ), ():void => {
 			it( hasSignature(
 				"Retrieves the empty members of a document.", [
 					{ name: "uri", type: "string", description: "URI of the document from where to look for its members." },
-					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request." },
+					{ name: "requestOptions", type: "CarbonLDP.HTTP.Request.RequestOptions", optional: true, description: "Customizable options for the request." },
 				],
-				{ type: "Promise<[ Carbon.PersistedDocument.Class[], Carbon.HTTP.Response.Class ]>" }
+				{ type: "Promise<[ CarbonLDP.PersistedDocument.PersistedDocument[], CarbonLDP.HTTP.Response.Response ]>" }
 			), () => {} );
 
 			it( isDefined(), () => {
-				expect( Documents.Class.prototype.listMembers ).toBeDefined();
-				expect( Documents.Class.prototype.listMembers ).toEqual( jasmine.any( Function ) );
+				expect( Documents.prototype.listMembers ).toBeDefined();
+				expect( Documents.prototype.listMembers ).toEqual( jasmine.any( Function ) );
 			} );
 
 			describe( "When Documents has a specified context", ():void => {
 
 				let context:AbstractContext;
-				let documents:Documents.Class;
+				let documents:Documents;
 				beforeEach( () => {
 					context = new class extends AbstractContext {
 						_baseURI:string = "https://example.com/";
@@ -6832,7 +6817,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					context.extendObjectSchema( "Resource", {
 						"property1": {
 							"@id": "https://schema.org/property-1",
-							"@type": NS.XSD.DataType.string,
+							"@type": XSD.string,
 						},
 						"property2": {
 							"@id": "https://schema.org/property-2",
@@ -6897,7 +6882,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					context.extendObjectSchema( "schema:Resource", {
 						"property1": {
 							"@id": "https://schema.org/property-1",
-							"@type": NS.XSD.DataType.string,
+							"@type": XSD.string,
 						},
 						"property2": {
 							"@id": "https://schema.org/property-2",
@@ -6908,20 +6893,20 @@ describe( module( "Carbon/Documents" ), ():void => {
 					documents
 						.listMembers( "https://example.com/resource/" )
 						.then( ( [ myDocuments, response ] ) => {
-							expect( response ).toEqual( jasmine.any( HTTP.Response.Class ) );
+							expect( response ).toEqual( jasmine.any( Response ) );
 
 							expect( myDocuments ).toEqual( jasmine.any( Array ) );
 							expect( myDocuments.length ).toBe( 2 );
 
-							expect( PersistedDocument.Factory.is( myDocuments[ 0 ] ) ).toBe( true );
+							expect( PersistedDocument.is( myDocuments[ 0 ] ) ).toBe( true );
 							expect( myDocuments[ 0 ] ).toEqual( jasmine.objectContaining( {
-								"_etag": void 0,
+								"_eTag": void 0,
 								"_resolved": false,
 							} ) );
 
-							expect( PersistedDocument.Factory.is( myDocuments[ 0 ] ) ).toBe( true );
+							expect( PersistedDocument.is( myDocuments[ 0 ] ) ).toBe( true );
 							expect( myDocuments[ 1 ] ).toEqual( jasmine.objectContaining( {
-								"_etag": void 0,
+								"_eTag": void 0,
 								"_resolved": false,
 							} ) );
 
@@ -6934,9 +6919,9 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 			describe( "When Documents does not have a context", ():void => {
 
-				let documents:Documents.Class;
+				let documents:Documents;
 				beforeEach( () => {
-					documents = new Documents.Class();
+					documents = new Documents();
 				} );
 
 				it( "should reject if URI is relative", ( done:DoneFn ):void => {
@@ -7035,20 +7020,20 @@ describe( module( "Carbon/Documents" ), ():void => {
 					documents
 						.listMembers( "https://example.com/resource/" )
 						.then( ( [ myDocuments, response ] ) => {
-							expect( response ).toEqual( jasmine.any( HTTP.Response.Class ) );
+							expect( response ).toEqual( jasmine.any( Response ) );
 
 							expect( myDocuments ).toEqual( jasmine.any( Array ) );
 							expect( myDocuments.length ).toBe( 2 );
 
-							expect( PersistedDocument.Factory.is( myDocuments[ 0 ] ) ).toBe( true );
+							expect( PersistedDocument.is( myDocuments[ 0 ] ) ).toBe( true );
 							expect( myDocuments[ 0 ] ).toEqual( jasmine.objectContaining( {
-								"_etag": void 0,
+								"_eTag": void 0,
 								"_resolved": false,
 							} ) );
 
-							expect( PersistedDocument.Factory.is( myDocuments[ 0 ] ) ).toBe( true );
+							expect( PersistedDocument.is( myDocuments[ 0 ] ) ).toBe( true );
 							expect( myDocuments[ 1 ] ).toEqual( jasmine.objectContaining( {
-								"_etag": void 0,
+								"_eTag": void 0,
 								"_resolved": false,
 							} ) );
 
@@ -7067,30 +7052,30 @@ describe( module( "Carbon/Documents" ), ():void => {
 				[ "T extends object" ],
 				"Retrieves the members of a document, building a query on which one is able to specify the properties to be retrieve and sub-documents' properties and on and on.", [
 					{ name: "uri", type: "string", description: "URI of the document from where to look for its members." },
-					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request." },
-					{ name: "queryBuilderFn", type: "( queryBuilder:Carbon.SPARQL.QueryDocument.QueryDocumentsBuilder.Class ) => Carbon.SPARQL.QueryDocument.QueryDocumentsBuilder.Class", optional: true, description: "Function that receives a the builder that helps you to construct the member retrieval query.\nThe same builder must be returned." },
+					{ name: "requestOptions", type: "CarbonLDP.HTTP.Request.RequestOptions", optional: true, description: "Customizable options for the request." },
+					{ name: "queryBuilderFn", type: "( queryBuilder:CarbonLDP.SPARQL.QueryDocument.QueryDocumentsBuilder.QueryDocumentsBuilder ) => CarbonLDP.SPARQL.QueryDocument.QueryDocumentsBuilder.QueryDocumentsBuilder", optional: true, description: "Function that receives a the builder that helps you to construct the member retrieval query.\nThe same builder must be returned." },
 				],
-				{ type: "Promise<[ (T & Carbon.PersistedDocument.Class)[], Carbon.HTTP.Response.Class ]>" }
+				{ type: "Promise<[ (T & CarbonLDP.PersistedDocument.PersistedDocument)[], CarbonLDP.HTTP.Response.Response ]>" }
 			), () => {} );
 
 			it( hasSignature(
 				[ "T extends object" ],
 				"Retrieves the members of a document, building a query on which one is able to specify the properties to be retrieve and sub-documents' properties and on and on.", [
 					{ name: "uri", type: "string", description: "URI of the document from where to look for its members." },
-					{ name: "queryBuilderFn", type: "( queryBuilder:Carbon.SPARQL.QueryDocument.QueryDocumentsBuilder.Class ) => Carbon.SPARQL.QueryDocument.QueryDocumentsBuilder.Class", optional: true, description: "Function that receives a the builder that helps you to construct the member retrieval query.\nThe same builder must be returned." },
+					{ name: "queryBuilderFn", type: "( queryBuilder:CarbonLDP.SPARQL.QueryDocument.QueryDocumentsBuilder.QueryDocumentsBuilder ) => CarbonLDP.SPARQL.QueryDocument.QueryDocumentsBuilder.QueryDocumentsBuilder", optional: true, description: "Function that receives a the builder that helps you to construct the member retrieval query.\nThe same builder must be returned." },
 				],
-				{ type: "Promise<[ (T & Carbon.PersistedDocument.Class)[], Carbon.HTTP.Response.Class ]>" }
+				{ type: "Promise<[ (T & CarbonLDP.PersistedDocument.PersistedDocument)[], CarbonLDP.HTTP.Response.Response ]>" }
 			), () => {} );
 
 			it( isDefined(), () => {
-				expect( Documents.Class.prototype.getMembers ).toBeDefined();
-				expect( Documents.Class.prototype.getMembers ).toEqual( jasmine.any( Function ) );
+				expect( Documents.prototype.getMembers ).toBeDefined();
+				expect( Documents.prototype.getMembers ).toEqual( jasmine.any( Function ) );
 			} );
 
 			describe( "When Documents has a specified context", ():void => {
 
 				let context:AbstractContext;
-				let documents:Documents.Class;
+				let documents:Documents;
 				beforeEach( () => {
 					context = new class extends AbstractContext {
 						_baseURI:string = "https://example.com/";
@@ -7153,15 +7138,15 @@ describe( module( "Carbon/Documents" ), ():void => {
 					context.extendObjectSchema( "Resource", {
 						"property1": {
 							"@id": "property-1",
-							"@type": NS.XSD.DataType.string,
+							"@type": XSD.string,
 						},
 						"property2": {
 							"@id": "property-2",
-							"@type": NS.XSD.DataType.integer,
+							"@type": XSD.integer,
 						},
 						"property3": {
 							"@id": "https://schema.org/property-3",
-							"@type": NS.XSD.DataType.string,
+							"@type": XSD.string,
 						},
 					} );
 
@@ -7190,8 +7175,8 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"https://example.com/resource/",
 							"PREFIX schema: <https://schema.org/> " +
 							"CONSTRUCT {" +
-							` ?metadata a <${ NS.C.Class.VolatileResource }>, <${ NS.C.Class.QueryMetadata }>;` +
-							"" + ` <${ NS.C.Predicate.target }> ?member.` +
+							` ?metadata a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
+							"" + ` <${ C.target }> ?member.` +
 
 							" ?member a ?member__types;" +
 							"" + " <https://example.com/ns#property-1> ?member__property1;" +
@@ -7243,9 +7228,9 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 							jasmine.objectContaining( {
 								headers: new Map( [
-									[ "prefer", new HTTP.Header.Class( [
-										`include="${ NS.C.Class.PreferResultsContext }"`,
-										`include="${ NS.C.Class.PreferDocumentETags }"`,
+									[ "prefer", new Header( [
+										`include="${ C.PreferResultsContext }"`,
+										`include="${ C.PreferDocumentETags }"`,
 									] ) ],
 								] ),
 							} )
@@ -7263,15 +7248,15 @@ describe( module( "Carbon/Documents" ), ():void => {
 					context.extendObjectSchema( "Resource", {
 						"property1": {
 							"@id": "property-1",
-							"@type": NS.XSD.DataType.string,
+							"@type": XSD.string,
 						},
 						"property2": {
 							"@id": "property-2",
-							"@type": NS.XSD.DataType.integer,
+							"@type": XSD.integer,
 						},
 						"property3": {
 							"@id": "https://schema.org/property-3",
-							"@type": NS.XSD.DataType.string,
+							"@type": XSD.string,
 						},
 					} );
 
@@ -7285,8 +7270,8 @@ describe( module( "Carbon/Documents" ), ():void => {
 							expect( sendSpy ).toHaveBeenCalledWith(
 								"https://example.com/resource/",
 								"CONSTRUCT {" +
-								` ?metadata a <${ NS.C.Class.VolatileResource }>, <${ NS.C.Class.QueryMetadata }>;` +
-								"" + ` <${ NS.C.Predicate.target }> ?member.` +
+								` ?metadata a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
+								"" + ` <${ C.target }> ?member.` +
 
 								" ?member___subject ?member___predicate ?member___object " +
 
@@ -7309,9 +7294,9 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 								jasmine.objectContaining( {
 									headers: new Map( [
-										[ "prefer", new HTTP.Header.Class( [
-											`include="${ NS.C.Class.PreferResultsContext }"`,
-											`include="${ NS.C.Class.PreferDocumentETags }"`,
+										[ "prefer", new Header( [
+											`include="${ C.PreferResultsContext }"`,
+											`include="${ C.PreferDocumentETags }"`,
 										] ) ],
 									] ),
 								} )
@@ -7332,11 +7317,11 @@ describe( module( "Carbon/Documents" ), ():void => {
 					context.extendObjectSchema( "Resource", {
 						"property1": {
 							"@id": "https://schema.org/property-1",
-							"@type": NS.XSD.DataType.string,
+							"@type": XSD.string,
 						},
 						"property2": {
 							"@id": "https://schema.org/property-2",
-							"@type": NS.XSD.DataType.integer,
+							"@type": XSD.integer,
 						},
 					} );
 
@@ -7358,8 +7343,8 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"https://example.com/resource/",
 								"PREFIX schema: <https://schema.org/> " +
 								"CONSTRUCT {" +
-								` ?metadata a <${ NS.C.Class.VolatileResource }>, <${ NS.C.Class.QueryMetadata }>;` +
-								"" + ` <${ NS.C.Predicate.target }> ?member.` +
+								` ?metadata a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
+								"" + ` <${ C.target }> ?member.` +
 
 								" ?member ?member___predicate ?member___object " +
 
@@ -7390,9 +7375,9 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 								jasmine.objectContaining( {
 									headers: new Map( [
-										[ "prefer", new HTTP.Header.Class( [
-											`include="${ NS.C.Class.PreferResultsContext }"`,
-											`include="${ NS.C.Class.PreferDocumentETags }"`,
+										[ "prefer", new Header( [
+											`include="${ C.PreferResultsContext }"`,
+											`include="${ C.PreferDocumentETags }"`,
 										] ) ],
 									] ),
 								} )
@@ -7410,20 +7395,20 @@ describe( module( "Carbon/Documents" ), ():void => {
 					context.extendObjectSchema( {
 						"schema": "https://schema.org/",
 						"ex": "https://example.com/ns#",
-						"xsd": NS.XSD.namespace,
+						"xsd": XSD.namespace,
 					} );
 					context.extendObjectSchema( "Resource", {
 						"property1": {
 							"@id": "property-1",
-							"@type": NS.XSD.DataType.string,
+							"@type": XSD.string,
 						},
 						"property2": {
 							"@id": "property-2",
-							"@type": NS.XSD.DataType.integer,
+							"@type": XSD.integer,
 						},
 						"property3": {
 							"@id": "https://schema.org/property-3",
-							"@type": NS.XSD.DataType.string,
+							"@type": XSD.string,
 						},
 					} );
 
@@ -7472,10 +7457,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 							new ConstructToken()
 								.addTriple( new SubjectToken( variableHelper( "metadata" ) )
 									.addPredicate( new PredicateToken( "a" )
-										.addObject( new IRIToken( NS.C.Class.VolatileResource ) )
-										.addObject( new IRIToken( NS.C.Class.QueryMetadata ) )
+										.addObject( new IRIToken( C.VolatileResource ) )
+										.addObject( new IRIToken( C.QueryMetadata ) )
 									)
-									.addPredicate( new PredicateToken( new IRIToken( NS.C.Predicate.target ) )
+									.addPredicate( new PredicateToken( new IRIToken( C.target ) )
 										.addObject( variableHelper( "member" ) )
 									)
 								)
@@ -7506,10 +7491,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 								.addPattern( new SelectToken()
 									.addVariable( variableHelper( "member" ) )
 									.addPattern( new SubjectToken( new IRIToken( "https://example.com/resource/" ) )
-										.addPredicate( new PredicateToken( new IRIToken( NS.LDP.Predicate.membershipResource ) )
+										.addPredicate( new PredicateToken( new IRIToken( LDP.membershipResource ) )
 											.addObject( variableHelper( "membershipResource" ) )
 										)
-										.addPredicate( new PredicateToken( new IRIToken( NS.LDP.Predicate.hasMemberRelation ) )
+										.addPredicate( new PredicateToken( new IRIToken( LDP.hasMemberRelation ) )
 											.addObject( variableHelper( "hasMemberRelation" ) )
 										)
 									)
@@ -7588,7 +7573,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 							)
 
 								.addPrologues( new PrefixToken( "ex", new IRIToken( "https://example.com/ns#" ) ) )
-								.addPrologues( new PrefixToken( "xsd", new IRIToken( NS.XSD.namespace ) ) )
+								.addPrologues( new PrefixToken( "xsd", new IRIToken( XSD.namespace ) ) )
 								.addPrologues( new PrefixToken( "schema", new IRIToken( "https://schema.org/" ) ) )
 						);
 
@@ -7602,28 +7587,28 @@ describe( module( "Carbon/Documents" ), ():void => {
 						responseText: `[ {
 							"@id":"_:1",
 							"@type": [
-								"${ NS.C.Class.VolatileResource }",
-								"${ NS.C.Class.QueryMetadata }"
+								"${ C.VolatileResource }",
+								"${ C.QueryMetadata }"
 							],
-							"${ NS.C.Predicate.target }": [ {
+							"${ C.target }": [ {
 								"@id":"${ context.baseURI }resource/member1/"
 							} ]
 						}, {
 							"@id":"_:2",
 							"@type": [
-								"${ NS.C.Class.VolatileResource }",
-								"${ NS.C.Class.QueryMetadata }"
+								"${ C.VolatileResource }",
+								"${ C.QueryMetadata }"
 							],
-							"${ NS.C.Predicate.target }": [ {
+							"${ C.target }": [ {
 								"@id":"${ context.baseURI }resource/member2/"
 							} ]
 						}, {
 							"@id": "_:3",
 							"@type": [
-								"${ NS.C.Class.ResponseMetadata }",
-								"${ NS.C.Class.VolatileResource }"
+								"${ C.ResponseMetadata }",
+								"${ C.VolatileResource }"
 							],
-							"${ NS.C.Predicate.documentMetadata }": [ {
+							"${ C.documentMetadata }": [ {
 								"@id": "_:4"
 							}, {
 								"@id": "_:5"
@@ -7631,25 +7616,25 @@ describe( module( "Carbon/Documents" ), ():void => {
 						}, {
 							"@id": "_:4",
 							"@type": [
-								"${ NS.C.Class.DocumentMetadata }",
-								"${ NS.C.Class.VolatileResource }"
+								"${ C.DocumentMetadata }",
+								"${ C.VolatileResource }"
 							],
-							"${ NS.C.Predicate.eTag }": [ {
+							"${ C.eTag }": [ {
 								"@value": "\\"1-12345\\""
 							} ],
-							"${ NS.C.Predicate.relatedDocument }": [ {
+							"${ C.relatedDocument }": [ {
 								"@id": "https://example.com/resource/member1/"
 							} ]
 						}, {
 							"@id": "_:5",
 							"@type": [
-								"${ NS.C.Class.DocumentMetadata }",
-								"${ NS.C.Class.VolatileResource }"
+								"${ C.DocumentMetadata }",
+								"${ C.VolatileResource }"
 							],
-							"${ NS.C.Predicate.eTag }": [ {
+							"${ C.eTag }": [ {
 								"@value": "\\"2-12345\\""
 							} ],
-							"${ NS.C.Predicate.relatedDocument }": [ {
+							"${ C.relatedDocument }": [ {
 								"@id": "https://example.com/resource/member2/"
 							} ]
 						}, {
@@ -7657,10 +7642,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"@graph": [ {
 								"@id": "${ context.baseURI }resource/member1/",
 								"@type": [
-									"${ NS.C.Class.Document }",
+									"${ C.Document }",
 									"https://example.com/ns#Resource",
-									"${ NS.LDP.Class.BasicContainer }",
-									"${ NS.LDP.Class.RDFSource }"
+									"${ LDP.BasicContainer }",
+									"${ LDP.RDFSource }"
 								],
 								"https://example.com/ns#property-1": [ {
 									"@value": "value 1"
@@ -7672,7 +7657,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"@id": "_:1",
 								"https://example.com/ns#property-2": [ {
 									"@value": "12345",
-									"@type": "${ NS.XSD.DataType.integer }"
+									"@type": "${ XSD.integer }"
 								} ],
 								"https://schema.org/property-3": [ {
 									"@value": "another value 1"
@@ -7683,10 +7668,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"@graph": [ {
 								"@id": "${ context.baseURI }resource/member2/",
 								"@type": [
-									"${ NS.C.Class.Document }",
+									"${ C.Document }",
 									"https://example.com/ns#Resource",
-									"${ NS.LDP.Class.BasicContainer }",
-									"${ NS.LDP.Class.RDFSource }"
+									"${ LDP.BasicContainer }",
+									"${ LDP.RDFSource }"
 								],
 								"https://example.com/ns#property-1": [ {
 									"@value": "value 2"
@@ -7698,7 +7683,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"@id": "_:2",
 								"https://example.com/ns#property-2": [ {
 									"@value": "67890",
-									"@type": "${ NS.XSD.DataType.integer }"
+									"@type": "${ XSD.integer }"
 								} ],
 								"https://schema.org/property-3": [ {
 									"@value": "another value 2"
@@ -7718,15 +7703,15 @@ describe( module( "Carbon/Documents" ), ():void => {
 					context.extendObjectSchema( "Resource", {
 						"property1": {
 							"@id": "property-1",
-							"@type": NS.XSD.DataType.string,
+							"@type": XSD.string,
 						},
 						"property2": {
 							"@id": "property-2",
-							"@type": NS.XSD.DataType.integer,
+							"@type": XSD.integer,
 						},
 						"property3": {
 							"@id": "https://schema.org/property-3",
-							"@type": NS.XSD.DataType.string,
+							"@type": XSD.string,
 						},
 					} );
 
@@ -7744,16 +7729,16 @@ describe( module( "Carbon/Documents" ), ():void => {
 							},
 						} )
 					).then( ( [ myDocuments, response ] ) => {
-						expect( response ).toEqual( jasmine.any( HTTP.Response.Class ) );
+						expect( response ).toEqual( jasmine.any( Response ) );
 
 						expect( myDocuments ).toEqual( jasmine.any( Array ) );
 						expect( myDocuments.length ).toBe( 2 );
 						for( const document of myDocuments ) {
-							expect( PersistedDocument.Factory.is( document ) ).toBe( true );
+							expect( PersistedDocument.is( document ) ).toBe( true );
 						}
 
 						expect( myDocuments[ 0 ] ).toEqual( jasmine.objectContaining( {
-							"_etag": "\"1-12345\"",
+							"_eTag": "\"1-12345\"",
 							"property1": "value 1",
 							"property2": jasmine.objectContaining( {
 								"property2": 12345,
@@ -7761,7 +7746,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 							} ),
 						} ) );
 						expect( myDocuments[ 1 ] ).toEqual( jasmine.objectContaining( {
-							"_etag": "\"2-12345\"",
+							"_eTag": "\"2-12345\"",
 							"property1": "value 2",
 							"property2": jasmine.objectContaining( {
 								"property2": 67890,
@@ -7778,28 +7763,28 @@ describe( module( "Carbon/Documents" ), ():void => {
 						responseText: `[ {
 							"@id":"_:1",
 							"@type": [
-								"${ NS.C.Class.VolatileResource }",
-								"${ NS.C.Class.QueryMetadata }"
+								"${ C.VolatileResource }",
+								"${ C.QueryMetadata }"
 							],
-							"${ NS.C.Predicate.target }": [ {
+							"${ C.target }": [ {
 								"@id":"${ context.baseURI }resource/member1/"
 							} ]
 						}, {
 							"@id":"_:2",
 							"@type": [
-								"${ NS.C.Class.VolatileResource }",
-								"${ NS.C.Class.QueryMetadata }"
+								"${ C.VolatileResource }",
+								"${ C.QueryMetadata }"
 							],
-							"${ NS.C.Predicate.target }": [ {
+							"${ C.target }": [ {
 								"@id":"${ context.baseURI }resource/member2/"
 							} ]
 						}, {
 							"@id": "_:3",
 							"@type": [
-								"${ NS.C.Class.ResponseMetadata }",
-								"${ NS.C.Class.VolatileResource }"
+								"${ C.ResponseMetadata }",
+								"${ C.VolatileResource }"
 							],
-							"${ NS.C.Predicate.documentMetadata }": [ {
+							"${ C.documentMetadata }": [ {
 								"@id": "_:4"
 							}, {
 								"@id": "_:5"
@@ -7807,25 +7792,25 @@ describe( module( "Carbon/Documents" ), ():void => {
 						}, {
 							"@id": "_:4",
 							"@type": [
-								"${ NS.C.Class.DocumentMetadata }",
-								"${ NS.C.Class.VolatileResource }"
+								"${ C.DocumentMetadata }",
+								"${ C.VolatileResource }"
 							],
-							"${ NS.C.Predicate.eTag }": [ {
+							"${ C.eTag }": [ {
 								"@value": "\\"1-12345\\""
 							} ],
-							"${ NS.C.Predicate.relatedDocument }": [ {
+							"${ C.relatedDocument }": [ {
 								"@id": "https://example.com/resource/member1/"
 							} ]
 						}, {
 							"@id": "_:5",
 							"@type": [
-								"${ NS.C.Class.DocumentMetadata }",
-								"${ NS.C.Class.VolatileResource }"
+								"${ C.DocumentMetadata }",
+								"${ C.VolatileResource }"
 							],
-							"${ NS.C.Predicate.eTag }": [ {
+							"${ C.eTag }": [ {
 								"@value": "\\"2-12345\\""
 							} ],
-							"${ NS.C.Predicate.relatedDocument }": [ {
+							"${ C.relatedDocument }": [ {
 								"@id": "https://example.com/resource/member2/"
 							} ]
 						}, {
@@ -7833,10 +7818,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"@graph": [ {
 								"@id": "${ context.baseURI }resource/member1/",
 								"@type": [
-									"${ NS.C.Class.Document }",
+									"${ C.Document }",
 									"https://schema.org/Resource",
-									"${ NS.LDP.Class.BasicContainer }",
-									"${ NS.LDP.Class.RDFSource }"
+									"${ LDP.BasicContainer }",
+									"${ LDP.RDFSource }"
 								],
 								"https://schema.org/property-1": [ {
 									"@value": "value 1"
@@ -7854,7 +7839,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								} ],
 								"https://schema.org/property-4": [ {
 									"@value": "12345",
-									"@type": "${ NS.XSD.DataType.integer }"
+									"@type": "${ XSD.integer }"
 								} ]
 							} ]
 						}, {
@@ -7862,10 +7847,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"@graph": [ {
 								"@id": "${ context.baseURI }resource/member2/",
 								"@type": [
-									"${ NS.C.Class.Document }",
+									"${ C.Document }",
 									"https://schema.org/Resource",
-									"${ NS.LDP.Class.BasicContainer }",
-									"${ NS.LDP.Class.RDFSource }"
+									"${ LDP.BasicContainer }",
+									"${ LDP.RDFSource }"
 								],
 								"https://schema.org/property-1": [ {
 									"@value": "value 2"
@@ -7883,7 +7868,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								} ],
 								"https://schema.org/property-4": [ {
 									"@value": "67890",
-									"@type": "${ NS.XSD.DataType.integer }"
+									"@type": "${ XSD.integer }"
 								} ]
 							} ]
 						} ]`,
@@ -7903,7 +7888,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					context.extendObjectSchema( "schema:Resource", {
 						"property1": {
 							"@id": "https://schema.org/property-1",
-							"@type": NS.XSD.DataType.string,
+							"@type": XSD.string,
 						},
 						"property2": {
 							"@id": "https://schema.org/property-2",
@@ -7913,26 +7898,26 @@ describe( module( "Carbon/Documents" ), ():void => {
 					context.extendObjectSchema( "schema:Fragment", {
 						"property3": {
 							"@id": "https://schema.org/property-3",
-							"@type": NS.XSD.DataType.string,
+							"@type": XSD.string,
 						},
 						"property4": {
 							"@id": "https://schema.org/property-4",
-							"@type": NS.XSD.DataType.integer,
+							"@type": XSD.integer,
 						},
 					} );
 
 					documents.getMembers<MyDocument>( "https://example.com/resource/" ).then( ( [ myDocuments, response ] ) => {
-						expect( response ).toEqual( jasmine.any( HTTP.Response.Class ) );
+						expect( response ).toEqual( jasmine.any( Response ) );
 
 						expect( myDocuments ).toEqual( jasmine.any( Array ) );
 						expect( myDocuments.length ).toBe( 2 );
 						for( const document of myDocuments ) {
-							expect( PersistedDocument.Factory.is( document ) ).toBe( true );
+							expect( PersistedDocument.is( document ) ).toBe( true );
 							expect( document.isPartial() ).toBe( false );
 						}
 
 						expect( myDocuments[ 0 ] ).toEqual( jasmine.objectContaining( {
-							"_etag": "\"1-12345\"",
+							"_eTag": "\"1-12345\"",
 							"property1": "value 1",
 							"property2": jasmine.objectContaining( {
 								"property3": "another value 1",
@@ -7940,7 +7925,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 							} ) as any,
 						} ) );
 						expect( myDocuments[ 1 ] ).toEqual( jasmine.objectContaining( {
-							"_etag": "\"2-12345\"",
+							"_eTag": "\"2-12345\"",
 							"property1": "value 2",
 							"property2": jasmine.objectContaining( {
 								"property3": "another value 2",
@@ -7957,28 +7942,28 @@ describe( module( "Carbon/Documents" ), ():void => {
 						responseText: `[ {
 							"@id":"_:1",
 							"@type": [
-								"${ NS.C.Class.VolatileResource }",
-								"${ NS.C.Class.QueryMetadata }"
+								"${ C.VolatileResource }",
+								"${ C.QueryMetadata }"
 							],
-							"${ NS.C.Predicate.target }": [ {
+							"${ C.target }": [ {
 								"@id":"${ context.baseURI }resource/child1/"
 							} ]
 						}, {
 							"@id":"_:2",
 							"@type": [
-								"${ NS.C.Class.VolatileResource }",
-								"${ NS.C.Class.QueryMetadata }"
+								"${ C.VolatileResource }",
+								"${ C.QueryMetadata }"
 							],
-							"${ NS.C.Predicate.target }": [ {
+							"${ C.target }": [ {
 								"@id":"${ context.baseURI }resource/child2/"
 							} ]
 						}, {
 							"@id": "_:3",
 							"@type": [
-								"${ NS.C.Class.ResponseMetadata }",
-								"${ NS.C.Class.VolatileResource }"
+								"${ C.ResponseMetadata }",
+								"${ C.VolatileResource }"
 							],
-							"${ NS.C.Predicate.documentMetadata }": [ {
+							"${ C.documentMetadata }": [ {
 								"@id": "_:4"
 							}, {
 								"@id": "_:5"
@@ -7986,25 +7971,25 @@ describe( module( "Carbon/Documents" ), ():void => {
 						}, {
 							"@id": "_:4",
 							"@type": [
-								"${ NS.C.Class.DocumentMetadata }",
-								"${ NS.C.Class.VolatileResource }"
+								"${ C.DocumentMetadata }",
+								"${ C.VolatileResource }"
 							],
-							"${ NS.C.Predicate.eTag }": [ {
+							"${ C.eTag }": [ {
 								"@value": "\\"1-12345\\""
 							} ],
-							"${ NS.C.Predicate.relatedDocument }": [ {
+							"${ C.relatedDocument }": [ {
 								"@id": "https://example.com/resource/child1/"
 							} ]
 						}, {
 							"@id": "_:5",
 							"@type": [
-								"${ NS.C.Class.DocumentMetadata }",
-								"${ NS.C.Class.VolatileResource }"
+								"${ C.DocumentMetadata }",
+								"${ C.VolatileResource }"
 							],
-							"${ NS.C.Predicate.eTag }": [ {
+							"${ C.eTag }": [ {
 								"@value": "\\"2-12345\\""
 							} ],
-							"${ NS.C.Predicate.relatedDocument }": [ {
+							"${ C.relatedDocument }": [ {
 								"@id": "https://example.com/resource/child2/"
 							} ]
 						}, {
@@ -8012,10 +7997,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"@graph": [ {
 								"@id": "${ context.baseURI }resource/child1/",
 								"@type": [
-									"${ NS.C.Class.Document }",
+									"${ C.Document }",
 									"https://schema.org/Resource",
-									"${ NS.LDP.Class.BasicContainer }",
-									"${ NS.LDP.Class.RDFSource }"
+									"${ LDP.BasicContainer }",
+									"${ LDP.RDFSource }"
 								],
 								"https://schema.org/property-1": [ {
 									"@value": "value 1"
@@ -8029,10 +8014,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"@graph": [ {
 								"@id": "${ context.baseURI }resource/child2/",
 								"@type": [
-									"${ NS.C.Class.Document }",
+									"${ C.Document }",
 									"https://schema.org/Resource",
-									"${ NS.LDP.Class.BasicContainer }",
-									"${ NS.LDP.Class.RDFSource }"
+									"${ LDP.BasicContainer }",
+									"${ LDP.RDFSource }"
 								],
 								"https://schema.org/property-1": [ {
 									"@value": "value 2"
@@ -8058,7 +8043,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					context.extendObjectSchema( "schema:Resource", {
 						"property1": {
 							"@id": "https://schema.org/property-1",
-							"@type": NS.XSD.DataType.string,
+							"@type": XSD.string,
 						},
 						"property2": {
 							"@id": "https://schema.org/property-2",
@@ -8068,27 +8053,27 @@ describe( module( "Carbon/Documents" ), ():void => {
 					context.extendObjectSchema( "schema:Fragment", {
 						"property3": {
 							"@id": "https://schema.org/property-3",
-							"@type": NS.XSD.DataType.string,
+							"@type": XSD.string,
 						},
 						"property4": {
 							"@id": "https://schema.org/property-4",
-							"@type": NS.XSD.DataType.integer,
+							"@type": XSD.integer,
 						},
 					} );
 
 					documents.getMembers<MyDocument>( "https://example.com/resource/", _ => _.properties( _.all ) )
 						.then( ( [ myDocuments, response ] ) => {
-							expect( response ).toEqual( jasmine.any( HTTP.Response.Class ) );
+							expect( response ).toEqual( jasmine.any( Response ) );
 
 							expect( myDocuments ).toEqual( jasmine.any( Array ) );
 							expect( myDocuments.length ).toBe( 2 );
 							for( const document of myDocuments ) {
-								expect( PersistedDocument.Factory.is( document ) ).toBe( true );
+								expect( PersistedDocument.is( document ) ).toBe( true );
 								expect( document.isPartial() ).toBe( true );
 							}
 
 							expect( myDocuments[ 0 ] ).toEqual( jasmine.objectContaining( {
-								"_etag": "\"1-12345\"",
+								"_eTag": "\"1-12345\"",
 								"property1": "value 1",
 								"property2": jasmine.any( Object ) as any,
 							} ) );
@@ -8098,7 +8083,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 							} ) as any );
 
 							expect( myDocuments[ 1 ] ).toEqual( jasmine.objectContaining( {
-								"_etag": "\"2-12345\"",
+								"_eTag": "\"2-12345\"",
 								"property1": "value 2",
 								"property2": jasmine.any( Object ) as any,
 							} ) );
@@ -8118,28 +8103,28 @@ describe( module( "Carbon/Documents" ), ():void => {
 						responseText: `[ {
 							"@id":"_:1",
 							"@type": [
-								"${ NS.C.Class.VolatileResource }",
-								"${ NS.C.Class.QueryMetadata }"
+								"${ C.VolatileResource }",
+								"${ C.QueryMetadata }"
 							],
-							"${ NS.C.Predicate.target }": [ {
+							"${ C.target }": [ {
 								"@id":"${ context.baseURI }resource/child1/"
 							} ]
 						}, {
 							"@id":"_:2",
 							"@type": [
-								"${ NS.C.Class.VolatileResource }",
-								"${ NS.C.Class.QueryMetadata }"
+								"${ C.VolatileResource }",
+								"${ C.QueryMetadata }"
 							],
-							"${ NS.C.Predicate.target }": [ {
+							"${ C.target }": [ {
 								"@id":"${ context.baseURI }resource/child2/"
 							} ]
 						}, {
 							"@id": "_:3",
 							"@type": [
-								"${ NS.C.Class.ResponseMetadata }",
-								"${ NS.C.Class.VolatileResource }"
+								"${ C.ResponseMetadata }",
+								"${ C.VolatileResource }"
 							],
-							"${ NS.C.Predicate.documentMetadata }": [ {
+							"${ C.documentMetadata }": [ {
 								"@id": "_:4"
 							}, {
 								"@id": "_:5"
@@ -8147,25 +8132,25 @@ describe( module( "Carbon/Documents" ), ():void => {
 						}, {
 							"@id": "_:4",
 							"@type": [
-								"${ NS.C.Class.DocumentMetadata }",
-								"${ NS.C.Class.VolatileResource }"
+								"${ C.DocumentMetadata }",
+								"${ C.VolatileResource }"
 							],
-							"${ NS.C.Predicate.eTag }": [ {
+							"${ C.eTag }": [ {
 								"@value": "\\"1-12345\\""
 							} ],
-							"${ NS.C.Predicate.relatedDocument }": [ {
+							"${ C.relatedDocument }": [ {
 								"@id": "https://example.com/resource/child1/"
 							} ]
 						}, {
 							"@id": "_:5",
 							"@type": [
-								"${ NS.C.Class.DocumentMetadata }",
-								"${ NS.C.Class.VolatileResource }"
+								"${ C.DocumentMetadata }",
+								"${ C.VolatileResource }"
 							],
-							"${ NS.C.Predicate.eTag }": [ {
+							"${ C.eTag }": [ {
 								"@value": "\\"2-12345\\""
 							} ],
-							"${ NS.C.Predicate.relatedDocument }": [ {
+							"${ C.relatedDocument }": [ {
 								"@id": "https://example.com/resource/child2/"
 							} ]
 						}, {
@@ -8173,10 +8158,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"@graph": [ {
 								"@id": "${ context.baseURI }resource/child1/",
 								"@type": [
-									"${ NS.C.Class.Document }",
+									"${ C.Document }",
 									"https://example.com/ns#Resource",
-									"${ NS.LDP.Class.BasicContainer }",
-									"${ NS.LDP.Class.RDFSource }"
+									"${ LDP.BasicContainer }",
+									"${ LDP.RDFSource }"
 								],
 								"https://example.com/ns#property-1": [ {
 									"@value": "value 1"
@@ -8188,7 +8173,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"@id": "_:1",
 								"https://example.com/ns#property-2": [ {
 									"@value": "12345",
-									"@type": "${ NS.XSD.DataType.integer }"
+									"@type": "${ XSD.integer }"
 								} ],
 								"https://schema.org/property-3": [ {
 									"@value": "another value 1"
@@ -8199,10 +8184,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"@graph": [ {
 								"@id": "${ context.baseURI }resource/child2/",
 								"@type": [
-									"${ NS.C.Class.Document }",
+									"${ C.Document }",
 									"https://example.com/ns#Resource",
-									"${ NS.LDP.Class.BasicContainer }",
-									"${ NS.LDP.Class.RDFSource }"
+									"${ LDP.BasicContainer }",
+									"${ LDP.RDFSource }"
 								],
 								"https://example.com/ns#property-1": [ {
 									"@value": "value 2"
@@ -8214,7 +8199,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"@id": "_:2",
 								"https://example.com/ns#property-2": [ {
 									"@value": "67890",
-									"@type": "${ NS.XSD.DataType.integer }"
+									"@type": "${ XSD.integer }"
 								} ],
 								"https://schema.org/property-3": [ {
 									"@value": "another value 2"
@@ -8237,15 +8222,15 @@ describe( module( "Carbon/Documents" ), ():void => {
 					context.extendObjectSchema( "Resource", {
 						"property1": {
 							"@id": "property-1",
-							"@type": NS.XSD.DataType.string,
+							"@type": XSD.string,
 						},
 						"property2": {
 							"@id": "property-2",
-							"@type": NS.XSD.DataType.integer,
+							"@type": XSD.integer,
 						},
 						"property3": {
 							"@id": "https://schema.org/property-3",
-							"@type": NS.XSD.DataType.string,
+							"@type": XSD.string,
 						},
 					} );
 
@@ -8264,7 +8249,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 						} )
 						.orderBy( "property2.property2", "DESC" )
 					).then( ( [ myDocuments, response ] ) => {
-						expect( response ).toEqual( jasmine.any( HTTP.Response.Class ) );
+						expect( response ).toEqual( jasmine.any( Response ) );
 
 						expect( myDocuments[ 0 ] ).toEqual( jasmine.objectContaining( {
 							"property2": jasmine.objectContaining( {
@@ -8287,28 +8272,28 @@ describe( module( "Carbon/Documents" ), ():void => {
 						responseText: `[ {
 							"@id":"_:1",
 							"@type": [
-								"${ NS.C.Class.VolatileResource }",
-								"${ NS.C.Class.QueryMetadata }"
+								"${ C.VolatileResource }",
+								"${ C.QueryMetadata }"
 							],
-							"${ NS.C.Predicate.target }": [ {
+							"${ C.target }": [ {
 								"@id":"${ context.baseURI }resource/member1/"
 							} ]
 						}, {
 							"@id":"_:2",
 							"@type": [
-								"${ NS.C.Class.VolatileResource }",
-								"${ NS.C.Class.QueryMetadata }"
+								"${ C.VolatileResource }",
+								"${ C.QueryMetadata }"
 							],
-							"${ NS.C.Predicate.target }": [ {
+							"${ C.target }": [ {
 								"@id":"${ context.baseURI }resource/member2/"
 							} ]
 						}, {
 							"@id": "_:3",
 							"@type": [
-								"${ NS.C.Class.ResponseMetadata }",
-								"${ NS.C.Class.VolatileResource }"
+								"${ C.ResponseMetadata }",
+								"${ C.VolatileResource }"
 							],
-							"${ NS.C.Predicate.documentMetadata }": [ {
+							"${ C.documentMetadata }": [ {
 								"@id": "_:4"
 							}, {
 								"@id": "_:5"
@@ -8320,49 +8305,49 @@ describe( module( "Carbon/Documents" ), ():void => {
 						}, {
 							"@id": "_:4",
 							"@type": [
-								"${ NS.C.Class.DocumentMetadata }",
-								"${ NS.C.Class.VolatileResource }"
+								"${ C.DocumentMetadata }",
+								"${ C.VolatileResource }"
 							],
-							"${ NS.C.Predicate.eTag }": [ {
+							"${ C.eTag }": [ {
 								"@value": "\\"1-12345\\""
 							} ],
-							"${ NS.C.Predicate.relatedDocument }": [ {
+							"${ C.relatedDocument }": [ {
 								"@id": "https://example.com/resource/member1/"
 							} ]
 						}, {
 							"@id": "_:5",
 							"@type": [
-								"${ NS.C.Class.DocumentMetadata }",
-								"${ NS.C.Class.VolatileResource }"
+								"${ C.DocumentMetadata }",
+								"${ C.VolatileResource }"
 							],
-							"${ NS.C.Predicate.eTag }": [ {
+							"${ C.eTag }": [ {
 								"@value": "\\"2-12345\\""
 							} ],
-							"${ NS.C.Predicate.relatedDocument }": [ {
+							"${ C.relatedDocument }": [ {
 								"@id": "https://example.com/resource/member2/"
 							} ]
 						}, {
 							"@id": "_:6",
 							"@type": [
-								"${ NS.C.Class.DocumentMetadata }",
-								"${ NS.C.Class.VolatileResource }"
+								"${ C.DocumentMetadata }",
+								"${ C.VolatileResource }"
 							],
-							"${ NS.C.Predicate.eTag }": [ {
+							"${ C.eTag }": [ {
 								"@value": "\\"3-12345\\""
 							} ],
-							"${ NS.C.Predicate.relatedDocument }": [ {
+							"${ C.relatedDocument }": [ {
 								"@id": "https://example.com/sub-documents/sub-document1/"
 							} ]
 						}, {
 							"@id": "_:7",
 							"@type": [
-								"${ NS.C.Class.DocumentMetadata }",
-								"${ NS.C.Class.VolatileResource }"
+								"${ C.DocumentMetadata }",
+								"${ C.VolatileResource }"
 							],
-							"${ NS.C.Predicate.eTag }": [ {
+							"${ C.eTag }": [ {
 								"@value": "\\"4-12345\\""
 							} ],
-							"${ NS.C.Predicate.relatedDocument }": [ {
+							"${ C.relatedDocument }": [ {
 								"@id": "https://example.com/sub-documents/sub-document2/"
 							} ]
 						}, {
@@ -8370,10 +8355,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"@graph": [ {
 								"@id": "${ context.baseURI }resource/member1/",
 								"@type": [
-									"${ NS.C.Class.Document }",
+									"${ C.Document }",
 									"https://example.com/ns#Resource",
-									"${ NS.LDP.Class.BasicContainer }",
-									"${ NS.LDP.Class.RDFSource }"
+									"${ LDP.BasicContainer }",
+									"${ LDP.RDFSource }"
 								],
 								"https://example.com/ns#property-1": [ {
 									"@value": "value 1"
@@ -8388,7 +8373,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"@id": "${ context.baseURI }sub-documents/sub-document1/",
 								"https://example.com/ns#property-2": [ {
 									"@value": "12345",
-									"@type": "${ NS.XSD.DataType.integer }"
+									"@type": "${ XSD.integer }"
 								} ],
 								"https://schema.org/property-3": [ {
 									"@value": "another value 1"
@@ -8399,10 +8384,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"@graph": [ {
 								"@id": "${ context.baseURI }resource/member2/",
 								"@type": [
-									"${ NS.C.Class.Document }",
+									"${ C.Document }",
 									"https://example.com/ns#Resource",
-									"${ NS.LDP.Class.BasicContainer }",
-									"${ NS.LDP.Class.RDFSource }"
+									"${ LDP.BasicContainer }",
+									"${ LDP.RDFSource }"
 								],
 								"https://example.com/ns#property-1": [ {
 									"@value": "value 2"
@@ -8417,7 +8402,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"@id": "${ context.baseURI }sub-documents/sub-document2/",
 								"https://example.com/ns#property-2": [ {
 									"@value": "67890",
-									"@type": "${ NS.XSD.DataType.integer }"
+									"@type": "${ XSD.integer }"
 								} ],
 								"https://schema.org/property-3": [ {
 									"@value": "another value 2"
@@ -8437,15 +8422,15 @@ describe( module( "Carbon/Documents" ), ():void => {
 					context.extendObjectSchema( "Resource", {
 						"property1": {
 							"@id": "property-1",
-							"@type": NS.XSD.DataType.string,
+							"@type": XSD.string,
 						},
 						"property2": {
 							"@id": "property-2",
-							"@type": NS.XSD.DataType.integer,
+							"@type": XSD.integer,
 						},
 						"property3": {
 							"@id": "https://schema.org/property-3",
-							"@type": NS.XSD.DataType.string,
+							"@type": XSD.string,
 						},
 					} );
 
@@ -8463,28 +8448,28 @@ describe( module( "Carbon/Documents" ), ():void => {
 							},
 						} )
 					).then( ( [ myDocuments, response ] ) => {
-						expect( response ).toEqual( jasmine.any( HTTP.Response.Class ) );
+						expect( response ).toEqual( jasmine.any( Response ) );
 
 						expect( myDocuments ).toEqual( jasmine.any( Array ) );
 						expect( myDocuments.length ).toBe( 2 );
 						for( const document of myDocuments ) {
-							expect( PersistedDocument.Factory.is( document ) ).toBe( true );
+							expect( PersistedDocument.is( document ) ).toBe( true );
 						}
 
 						expect( myDocuments[ 0 ] ).toEqual( jasmine.objectContaining( {
-							"_etag": "\"1-12345\"",
+							"_eTag": "\"1-12345\"",
 							"property1": "value 1",
 							"property2": jasmine.objectContaining( {
-								"_etag": "\"3-12345\"",
+								"_eTag": "\"3-12345\"",
 								"property2": 12345,
 								"property3": "another value 1",
 							} ),
 						} ) );
 						expect( myDocuments[ 1 ] ).toEqual( jasmine.objectContaining( {
-							"_etag": "\"2-12345\"",
+							"_eTag": "\"2-12345\"",
 							"property1": "value 2",
 							"property2": jasmine.objectContaining( {
-								"_etag": "\"4-12345\"",
+								"_eTag": "\"4-12345\"",
 								"property2": 67890,
 								"property3": "another value 2",
 							} ),
@@ -8497,9 +8482,9 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 			describe( "When Documents does not have a context", ():void => {
 
-				let documents:Documents.Class;
+				let documents:Documents;
 				beforeEach( () => {
-					documents = new Documents.Class();
+					documents = new Documents();
 				} );
 
 				it( "should reject if URI is relative", ( done:DoneFn ):void => {
@@ -8557,7 +8542,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 						.properties( {
 							"property1": {
 								"@id": "https://example.com/ns#property-1",
-								"@type": NS.XSD.DataType.string,
+								"@type": XSD.string,
 							},
 							"property2": {
 								"@id": "https://schema.org/property-2",
@@ -8565,11 +8550,11 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"query": __ => __.properties( {
 									"property2": {
 										"@id": "https://example.com/ns#property-2",
-										"@type": NS.XSD.DataType.integer,
+										"@type": XSD.integer,
 									},
 									"property3": {
 										"@id": "https://schema.org/property-3",
-										"@type": NS.XSD.DataType.string,
+										"@type": XSD.string,
 									},
 								} ),
 							},
@@ -8583,8 +8568,8 @@ describe( module( "Carbon/Documents" ), ():void => {
 						expect( sendSpy ).toHaveBeenCalledWith(
 							"https://example.com/resource/", "" +
 							"CONSTRUCT {" +
-							` ?metadata a <${ NS.C.Class.VolatileResource }>, <${ NS.C.Class.QueryMetadata }>;` +
-							"" + ` <${ NS.C.Predicate.target }> ?member.` +
+							` ?metadata a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
+							"" + ` <${ C.target }> ?member.` +
 
 							" ?member a ?member__types;" +
 							"" + " <https://example.com/ns#property-1> ?member__property1;" +
@@ -8636,9 +8621,9 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 							jasmine.objectContaining( {
 								headers: new Map( [
-									[ "prefer", new HTTP.Header.Class( [
-										`include="${ NS.C.Class.PreferResultsContext }"`,
-										`include="${ NS.C.Class.PreferDocumentETags }"`,
+									[ "prefer", new Header( [
+										`include="${ C.PreferResultsContext }"`,
+										`include="${ C.PreferDocumentETags }"`,
 									] ) ],
 								] ),
 							} )
@@ -8653,28 +8638,28 @@ describe( module( "Carbon/Documents" ), ():void => {
 						responseText: `[ {
 							"@id":"_:1",
 							"@type": [
-								"${ NS.C.Class.VolatileResource }",
-								"${ NS.C.Class.QueryMetadata }"
+								"${ C.VolatileResource }",
+								"${ C.QueryMetadata }"
 							],
-							"${ NS.C.Predicate.target }": [ {
+							"${ C.target }": [ {
 								"@id":"https://example.com/resource/member1/"
 							} ]
 						}, {
 							"@id":"_:2",
 							"@type": [
-								"${ NS.C.Class.VolatileResource }",
-								"${ NS.C.Class.QueryMetadata }"
+								"${ C.VolatileResource }",
+								"${ C.QueryMetadata }"
 							],
-							"${ NS.C.Predicate.target }": [ {
+							"${ C.target }": [ {
 								"@id":"https://example.com/resource/member2/"
 							} ]
 						}, {
 							"@id": "_:3",
 							"@type": [
-								"${ NS.C.Class.ResponseMetadata }",
-								"${ NS.C.Class.VolatileResource }"
+								"${ C.ResponseMetadata }",
+								"${ C.VolatileResource }"
 							],
-							"${ NS.C.Predicate.documentMetadata }": [ {
+							"${ C.documentMetadata }": [ {
 								"@id": "_:4"
 							}, {
 								"@id": "_:5"
@@ -8682,25 +8667,25 @@ describe( module( "Carbon/Documents" ), ():void => {
 						}, {
 							"@id": "_:4",
 							"@type": [
-								"${ NS.C.Class.DocumentMetadata }",
-								"${ NS.C.Class.VolatileResource }"
+								"${ C.DocumentMetadata }",
+								"${ C.VolatileResource }"
 							],
-							"${ NS.C.Predicate.eTag }": [ {
+							"${ C.eTag }": [ {
 								"@value": "\\"1-12345\\""
 							} ],
-							"${ NS.C.Predicate.relatedDocument }": [ {
+							"${ C.relatedDocument }": [ {
 								"@id": "https://example.com/resource/member1/"
 							} ]
 						}, {
 							"@id": "_:5",
 							"@type": [
-								"${ NS.C.Class.DocumentMetadata }",
-								"${ NS.C.Class.VolatileResource }"
+								"${ C.DocumentMetadata }",
+								"${ C.VolatileResource }"
 							],
-							"${ NS.C.Predicate.eTag }": [ {
+							"${ C.eTag }": [ {
 								"@value": "\\"2-12345\\""
 							} ],
-							"${ NS.C.Predicate.relatedDocument }": [ {
+							"${ C.relatedDocument }": [ {
 								"@id": "https://example.com/resource/member2/"
 							} ]
 						}, {
@@ -8708,10 +8693,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"@graph": [ {
 								"@id": "https://example.com/resource/member1/",
 								"@type": [
-									"${ NS.C.Class.Document }",
+									"${ C.Document }",
 									"https://example.com/ns#Resource",
-									"${ NS.LDP.Class.BasicContainer }",
-									"${ NS.LDP.Class.RDFSource }"
+									"${ LDP.BasicContainer }",
+									"${ LDP.RDFSource }"
 								],
 								"https://example.com/ns#property-1": [ {
 									"@value": "value 1"
@@ -8723,7 +8708,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"@id": "_:1",
 								"https://example.com/ns#property-2": [ {
 									"@value": "12345",
-									"@type": "${ NS.XSD.DataType.integer }"
+									"@type": "${ XSD.integer }"
 								} ],
 								"https://schema.org/property-3": [ {
 									"@value": "another value 1"
@@ -8734,10 +8719,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"@graph": [ {
 								"@id": "https://example.com/resource/member2/",
 								"@type": [
-									"${ NS.C.Class.Document }",
+									"${ C.Document }",
 									"https://example.com/ns#Resource",
-									"${ NS.LDP.Class.BasicContainer }",
-									"${ NS.LDP.Class.RDFSource }"
+									"${ LDP.BasicContainer }",
+									"${ LDP.RDFSource }"
 								],
 								"https://example.com/ns#property-1": [ {
 									"@value": "value 2"
@@ -8749,7 +8734,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"@id": "_:2",
 								"https://example.com/ns#property-2": [ {
 									"@value": "67890",
-									"@type": "${ NS.XSD.DataType.integer }"
+									"@type": "${ XSD.integer }"
 								} ],
 								"https://schema.org/property-3": [ {
 									"@value": "another value 2"
@@ -8768,7 +8753,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 						.properties( {
 							"property1": {
 								"@id": "https://example.com/ns#property-1",
-								"@type": NS.XSD.DataType.string,
+								"@type": XSD.string,
 							},
 							"property2": {
 								"@id": "https://schema.org/property-2",
@@ -8776,26 +8761,26 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"query": __ => __.properties( {
 									"property2": {
 										"@id": "https://example.com/ns#property-2",
-										"@type": NS.XSD.DataType.integer,
+										"@type": XSD.integer,
 									},
 									"property3": {
 										"@id": "https://schema.org/property-3",
-										"@type": NS.XSD.DataType.string,
+										"@type": XSD.string,
 									},
 								} ),
 							},
 						} )
 					).then( ( [ myDocuments, response ] ) => {
-						expect( response ).toEqual( jasmine.any( HTTP.Response.Class ) );
+						expect( response ).toEqual( jasmine.any( Response ) );
 
 						expect( myDocuments ).toEqual( jasmine.any( Array ) );
 						expect( myDocuments.length ).toBe( 2 );
 						for( const document of myDocuments ) {
-							expect( PersistedDocument.Factory.is( document ) ).toBe( true );
+							expect( PersistedDocument.is( document ) ).toBe( true );
 						}
 
 						expect( myDocuments[ 0 ] ).toEqual( jasmine.objectContaining( {
-							"_etag": "\"1-12345\"",
+							"_eTag": "\"1-12345\"",
 							"property1": "value 1",
 							"property2": jasmine.objectContaining( {
 								"property2": 12345,
@@ -8803,7 +8788,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 							} ),
 						} ) );
 						expect( myDocuments[ 1 ] ).toEqual( jasmine.objectContaining( {
-							"_etag": "\"2-12345\"",
+							"_eTag": "\"2-12345\"",
 							"property1": "value 2",
 							"property2": jasmine.objectContaining( {
 								"property2": 67890,
@@ -8820,28 +8805,28 @@ describe( module( "Carbon/Documents" ), ():void => {
 						responseText: `[ {
 							"@id":"_:1",
 							"@type": [
-								"${ NS.C.Class.VolatileResource }",
-								"${ NS.C.Class.QueryMetadata }"
+								"${ C.VolatileResource }",
+								"${ C.QueryMetadata }"
 							],
-							"${ NS.C.Predicate.target }": [ {
+							"${ C.target }": [ {
 								"@id":"https://example.com/resource/member1/"
 							} ]
 						}, {
 							"@id":"_:2",
 							"@type": [
-								"${ NS.C.Class.VolatileResource }",
-								"${ NS.C.Class.QueryMetadata }"
+								"${ C.VolatileResource }",
+								"${ C.QueryMetadata }"
 							],
-							"${ NS.C.Predicate.target }": [ {
+							"${ C.target }": [ {
 								"@id":"https://example.com/resource/member2/"
 							} ]
 						}, {
 							"@id": "_:3",
 							"@type": [
-								"${ NS.C.Class.ResponseMetadata }",
-								"${ NS.C.Class.VolatileResource }"
+								"${ C.ResponseMetadata }",
+								"${ C.VolatileResource }"
 							],
-							"${ NS.C.Predicate.documentMetadata }": [ {
+							"${ C.documentMetadata }": [ {
 								"@id": "_:4"
 							}, {
 								"@id": "_:5"
@@ -8853,49 +8838,49 @@ describe( module( "Carbon/Documents" ), ():void => {
 						}, {
 							"@id": "_:4",
 							"@type": [
-								"${ NS.C.Class.DocumentMetadata }",
-								"${ NS.C.Class.VolatileResource }"
+								"${ C.DocumentMetadata }",
+								"${ C.VolatileResource }"
 							],
-							"${ NS.C.Predicate.eTag }": [ {
+							"${ C.eTag }": [ {
 								"@value": "\\"1-12345\\""
 							} ],
-							"${ NS.C.Predicate.relatedDocument }": [ {
+							"${ C.relatedDocument }": [ {
 								"@id": "https://example.com/resource/member1/"
 							} ]
 						}, {
 							"@id": "_:5",
 							"@type": [
-								"${ NS.C.Class.DocumentMetadata }",
-								"${ NS.C.Class.VolatileResource }"
+								"${ C.DocumentMetadata }",
+								"${ C.VolatileResource }"
 							],
-							"${ NS.C.Predicate.eTag }": [ {
+							"${ C.eTag }": [ {
 								"@value": "\\"2-12345\\""
 							} ],
-							"${ NS.C.Predicate.relatedDocument }": [ {
+							"${ C.relatedDocument }": [ {
 								"@id": "https://example.com/resource/member2/"
 							} ]
 						}, {
 							"@id": "_:6",
 							"@type": [
-								"${ NS.C.Class.DocumentMetadata }",
-								"${ NS.C.Class.VolatileResource }"
+								"${ C.DocumentMetadata }",
+								"${ C.VolatileResource }"
 							],
-							"${ NS.C.Predicate.eTag }": [ {
+							"${ C.eTag }": [ {
 								"@value": "\\"3-12345\\""
 							} ],
-							"${ NS.C.Predicate.relatedDocument }": [ {
+							"${ C.relatedDocument }": [ {
 								"@id": "https://example.com/sub-documents/sub-document1/"
 							} ]
 						}, {
 							"@id": "_:7",
 							"@type": [
-								"${ NS.C.Class.DocumentMetadata }",
-								"${ NS.C.Class.VolatileResource }"
+								"${ C.DocumentMetadata }",
+								"${ C.VolatileResource }"
 							],
-							"${ NS.C.Predicate.eTag }": [ {
+							"${ C.eTag }": [ {
 								"@value": "\\"4-12345\\""
 							} ],
-							"${ NS.C.Predicate.relatedDocument }": [ {
+							"${ C.relatedDocument }": [ {
 								"@id": "https://example.com/sub-documents/sub-document2/"
 							} ]
 						}, {
@@ -8903,10 +8888,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"@graph": [ {
 								"@id": "https://example.com/resource/member1/",
 								"@type": [
-									"${ NS.C.Class.Document }",
+									"${ C.Document }",
 									"https://example.com/ns#Resource",
-									"${ NS.LDP.Class.BasicContainer }",
-									"${ NS.LDP.Class.RDFSource }"
+									"${ LDP.BasicContainer }",
+									"${ LDP.RDFSource }"
 								],
 								"https://example.com/ns#property-1": [ {
 									"@value": "value 1"
@@ -8921,7 +8906,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"@id": "https://example.com/sub-documents/sub-document1/",
 								"https://example.com/ns#property-2": [ {
 									"@value": "12345",
-									"@type": "${ NS.XSD.DataType.integer }"
+									"@type": "${ XSD.integer }"
 								} ],
 								"https://schema.org/property-3": [ {
 									"@value": "another value 1"
@@ -8932,10 +8917,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"@graph": [ {
 								"@id": "https://example.com/resource/member2/",
 								"@type": [
-									"${ NS.C.Class.Document }",
+									"${ C.Document }",
 									"https://example.com/ns#Resource",
-									"${ NS.LDP.Class.BasicContainer }",
-									"${ NS.LDP.Class.RDFSource }"
+									"${ LDP.BasicContainer }",
+									"${ LDP.RDFSource }"
 								],
 								"https://example.com/ns#property-1": [ {
 									"@value": "value 2"
@@ -8950,7 +8935,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"@id": "https://example.com/sub-documents/sub-document2/",
 								"https://example.com/ns#property-2": [ {
 									"@value": "67890",
-									"@type": "${ NS.XSD.DataType.integer }"
+									"@type": "${ XSD.integer }"
 								} ],
 								"https://schema.org/property-3": [ {
 									"@value": "another value 2"
@@ -8969,7 +8954,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 						.properties( {
 							"property1": {
 								"@id": "https://example.com/ns#property-1",
-								"@type": NS.XSD.DataType.string,
+								"@type": XSD.string,
 							},
 							"property2": {
 								"@id": "https://schema.org/property-2",
@@ -8977,38 +8962,38 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"query": __ => __.properties( {
 									"property2": {
 										"@id": "https://example.com/ns#property-2",
-										"@type": NS.XSD.DataType.integer,
+										"@type": XSD.integer,
 									},
 									"property3": {
 										"@id": "https://schema.org/property-3",
-										"@type": NS.XSD.DataType.string,
+										"@type": XSD.string,
 									},
 								} ),
 							},
 						} )
 					).then( ( [ myDocuments, response ] ) => {
-						expect( response ).toEqual( jasmine.any( HTTP.Response.Class ) );
+						expect( response ).toEqual( jasmine.any( Response ) );
 
 						expect( myDocuments ).toEqual( jasmine.any( Array ) );
 						expect( myDocuments.length ).toBe( 2 );
 						for( const document of myDocuments ) {
-							expect( PersistedDocument.Factory.is( document ) ).toBe( true );
+							expect( PersistedDocument.is( document ) ).toBe( true );
 						}
 
 						expect( myDocuments[ 0 ] ).toEqual( jasmine.objectContaining( {
-							"_etag": "\"1-12345\"",
+							"_eTag": "\"1-12345\"",
 							"property1": "value 1",
 							"property2": jasmine.objectContaining( {
-								"_etag": "\"3-12345\"",
+								"_eTag": "\"3-12345\"",
 								"property2": 12345,
 								"property3": "another value 1",
 							} ),
 						} ) );
 						expect( myDocuments[ 1 ] ).toEqual( jasmine.objectContaining( {
-							"_etag": "\"2-12345\"",
+							"_eTag": "\"2-12345\"",
 							"property1": "value 2",
 							"property2": jasmine.objectContaining( {
-								"_etag": "\"4-12345\"",
+								"_eTag": "\"4-12345\"",
 								"property2": 67890,
 								"property3": "another value 2",
 							} ),
@@ -9038,7 +9023,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 			}
 
 			let context:AbstractContext;
-			let documents:Documents.Class;
+			let documents:Documents;
 
 			beforeEach( ():void => {
 				context = new MockedContext();
@@ -9048,17 +9033,17 @@ describe( module( "Carbon/Documents" ), ():void => {
 			it( hasSignature(
 				"Add a member relation to the resource Pointer in the document container specified.", [
 					{ name: "documentURI", type: "string", description: "URI of the document container where the member will be added." },
-					{ name: "member", type: "Carbon.Pointer.Class", description: "Pointer object that references the resource to add as a member." },
-					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request." },
+					{ name: "member", type: "CarbonLDP.Pointer.Pointer", description: "Pointer object that references the resource to add as a member." },
+					{ name: "requestOptions", type: "CarbonLDP.HTTP.Request.RequestOptions", optional: true, description: "Customizable options for the request." },
 				],
-				{ type: "Promise<Carbon.HTTP.Response.Class>" }
+				{ type: "Promise<CarbonLDP.HTTP.Response.Response>" }
 			), ():void => {
 				expect( documents.addMember ).toBeDefined();
 				expect( Utils.isFunction( documents.addMember ) ).toBe( true );
 
 				let spy:jasmine.Spy = spyOn( documents, "addMembers" );
 
-				let pointer:Pointer.Class = documents.getPointer( "new-member/" );
+				let pointer:Pointer = documents.getPointer( "new-member/" );
 				// noinspection JSIgnoredPromiseFromCall
 				documents.addMember( "resource/", pointer );
 				expect( spy ).toHaveBeenCalledWith( "resource/", [ pointer ], {} );
@@ -9068,9 +9053,9 @@ describe( module( "Carbon/Documents" ), ():void => {
 				"Add a member relation to the resource URI in the document container specified.", [
 					{ name: "documentURI", type: "string", description: "URI of the document container where the member will be added." },
 					{ name: "memberURI", type: "string", description: "URI of the resource to add as a member." },
-					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request." },
+					{ name: "requestOptions", type: "CarbonLDP.HTTP.Request.RequestOptions", optional: true, description: "Customizable options for the request." },
 				],
-				{ type: "Promise<Carbon.HTTP.Response.Class>" }
+				{ type: "Promise<CarbonLDP.HTTP.Response.Response>" }
 			), ():void => {
 				expect( documents.addMember ).toBeDefined();
 				expect( Utils.isFunction( documents.addMember ) ).toBe( true );
@@ -9142,7 +9127,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 			describe( "When Documents does not have a context", ():void => {
 
 				beforeEach( () => {
-					documents = new Documents.Class();
+					documents = new Documents();
 				} );
 
 				it( "should reject if URI is relative", ( done:DoneFn ):void => {
@@ -9218,10 +9203,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 			it( hasSignature(
 				"Add a member relation to every resource URI or Pointer provided in the document container specified.", [
 					{ name: "documentURI", type: "string", description: "URI of the document container where the members will be added." },
-					{ name: "members", type: "(Carbon.Pointer.Class | string)[]", description: "Array of URIs or Pointers to add as members." },
-					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request." },
+					{ name: "members", type: "(CarbonLDP.Pointer.Pointer | string)[]", description: "Array of URIs or Pointers to add as members." },
+					{ name: "requestOptions", type: "CarbonLDP.HTTP.Request.RequestOptions", optional: true, description: "Customizable options for the request." },
 				],
-				{ type: "Promise<Carbon.HTTP.Response.Class>" }
+				{ type: "Promise<CarbonLDP.HTTP.Response.Response>" }
 			), ( done:DoneFn ):void => {
 				class MockedContext extends AbstractContext {
 					protected _baseURI:string;
@@ -9234,7 +9219,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				}
 
 				let context:MockedContext = new MockedContext();
-				let documents:Documents.Class = context.documents;
+				let documents:Documents = context.documents;
 
 				expect( documents.addMembers ).toBeDefined();
 				expect( Utils.isFunction( documents.addMembers ) ).toBe( true );
@@ -9246,7 +9231,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				let spies:any = {
 					success: ( response:any ):void => {
 						expect( response ).toBeDefined();
-						expect( response instanceof HTTP.Response.Class ).toBe( true );
+						expect( response instanceof Response ).toBe( true );
 					},
 					fail: ( error:Error ):void => {
 						expect( error ).toBeDefined();
@@ -9258,7 +9243,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 				let promises:Promise<any>[] = [];
 				let promise:Promise<any>;
-				let members:(Pointer.Class | string)[];
+				let members:(Pointer | string)[];
 
 				members = [ documents.getPointer( "new-member-01/" ), "new-member-02/" ];
 				promise = documents.addMembers( "resource/", members );
@@ -9278,7 +9263,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 			} );
 
 			describe( "When Documents has a specified context", ():void => {
-				let documents:Documents.Class;
+				let documents:Documents;
 
 				beforeEach( () => {
 					const context:AbstractContext = new class extends AbstractContext {
@@ -9336,10 +9321,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 			} );
 
 			describe( "When Documents does not have a context", ():void => {
-				let documents:Documents.Class;
+				let documents:Documents;
 
 				beforeEach( () => {
-					documents = new Documents.Class();
+					documents = new Documents();
 				} );
 
 				it( "should reject if URI is relative", ( done:DoneFn ):void => {
@@ -9423,7 +9408,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 			}
 
 			let context:AbstractContext;
-			let documents:Documents.Class;
+			let documents:Documents;
 
 			beforeEach( ():void => {
 				context = new MockedContext();
@@ -9433,17 +9418,17 @@ describe( module( "Carbon/Documents" ), ():void => {
 			it( hasSignature(
 				"Remove the member relation between the Pointer and the resource container specified.", [
 					{ name: "documentURI", type: "string", description: "URI of the resource container from where the member will be removed." },
-					{ name: "member", type: "Carbon.Pointer.Class", description: "Pointer object that references the resource to remove as a member." },
-					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request." },
+					{ name: "member", type: "CarbonLDP.Pointer.Pointer", description: "Pointer object that references the resource to remove as a member." },
+					{ name: "requestOptions", type: "CarbonLDP.HTTP.Request.RequestOptions", optional: true, description: "Customizable options for the request." },
 				],
-				{ type: "Promise<Carbon.HTTP.Response.Class>" }
+				{ type: "Promise<CarbonLDP.HTTP.Response.Response>" }
 			), ():void => {
 				expect( documents.removeMember ).toBeDefined();
 				expect( Utils.isFunction( documents.removeMember ) ).toBe( true );
 
 				let spy:jasmine.Spy = spyOn( documents, "removeMembers" );
 
-				let pointer:Pointer.Class = documents.getPointer( "remove-member/" );
+				let pointer:Pointer = documents.getPointer( "remove-member/" );
 				// noinspection JSIgnoredPromiseFromCall
 				documents.removeMember( "resource/", pointer );
 				expect( spy ).toHaveBeenCalledWith( "resource/", [ pointer ], {} );
@@ -9453,9 +9438,9 @@ describe( module( "Carbon/Documents" ), ():void => {
 				"Remove the member relation between the resource URI and the resource container specified.", [
 					{ name: "documentURI", type: "string", description: "URI of the resource container from where the member will be removed." },
 					{ name: "memberURI", type: "string", description: "URI of the resource to remove as a member." },
-					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request." },
+					{ name: "requestOptions", type: "CarbonLDP.HTTP.Request.RequestOptions", optional: true, description: "Customizable options for the request." },
 				],
-				{ type: "Promise<Carbon.HTTP.Response.Class>" }
+				{ type: "Promise<CarbonLDP.HTTP.Response.Response>" }
 			), ():void => {
 				expect( documents.removeMember ).toBeDefined();
 				expect( Utils.isFunction( documents.removeMember ) ).toBe( true );
@@ -9527,7 +9512,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 			describe( "When Documents does not have a context", ():void => {
 
 				beforeEach( () => {
-					documents = new Documents.Class();
+					documents = new Documents();
 				} );
 
 				it( "should reject if URI is relative", ( done:DoneFn ):void => {
@@ -9603,10 +9588,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 			it( hasSignature(
 				"Remove the member relation to every specified resource URI or Pointer form the document container specified.", [
 					{ name: "documentURI", type: "string", description: "URI of the document container where the members will be removed." },
-					{ name: "members", type: "(Carbon.Pointer.Class | string)[]", description: "Array of URIs or Pointers to remove as members" },
-					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request." },
+					{ name: "members", type: "(CarbonLDP.Pointer.Pointer | string)[]", description: "Array of URIs or Pointers to remove as members" },
+					{ name: "requestOptions", type: "CarbonLDP.HTTP.Request.RequestOptions", optional: true, description: "Customizable options for the request." },
 				],
-				{ type: "Promise<Carbon.HTTP.Response.Class>" }
+				{ type: "Promise<CarbonLDP.HTTP.Response.Response>" }
 			), ( done:DoneFn ):void => {
 				class MockedContext extends AbstractContext {
 					protected _baseURI:string;
@@ -9619,7 +9604,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				}
 
 				let context:MockedContext = new MockedContext();
-				let documents:Documents.Class = context.documents;
+				let documents:Documents = context.documents;
 
 				expect( documents.removeMembers ).toBeDefined();
 				expect( Utils.isFunction( documents.removeMembers ) ).toBe( true );
@@ -9631,7 +9616,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				let spies:any = {
 					success: ( response:any ):void => {
 						expect( response ).toBeDefined();
-						expect( response instanceof HTTP.Response.Class ).toBe( true );
+						expect( response instanceof Response ).toBe( true );
 					},
 					fail: ( error:Error ):void => {
 						expect( error ).toBeDefined();
@@ -9643,7 +9628,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 				let promises:Promise<any>[] = [];
 				let promise:Promise<any>;
-				let members:(Pointer.Class | string)[];
+				let members:(Pointer | string)[];
 
 				members = [ documents.getPointer( "remove-member-01/" ), "remove-member-02/" ];
 				promise = documents.removeMembers( "resource/", members );
@@ -9663,7 +9648,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 			} );
 
 			describe( "When Documents has a specified context", ():void => {
-				let documents:Documents.Class;
+				let documents:Documents;
 
 				beforeEach( () => {
 					const context:AbstractContext = new class extends AbstractContext {
@@ -9721,10 +9706,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 			} );
 
 			describe( "When Documents does not have a context", ():void => {
-				let documents:Documents.Class;
+				let documents:Documents;
 
 				beforeEach( () => {
-					documents = new Documents.Class();
+					documents = new Documents();
 				} );
 
 				it( "should reject if URI is relative", ( done:DoneFn ):void => {
@@ -9800,9 +9785,9 @@ describe( module( "Carbon/Documents" ), ():void => {
 			it( hasSignature(
 				"Remove all the member relations from the document container specified.", [
 					{ name: "documentURI", type: "string", description: "URI of the document container where the members will be removed." },
-					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request." },
+					{ name: "requestOptions", type: "CarbonLDP.HTTP.Request.RequestOptions", optional: true, description: "Customizable options for the request." },
 				],
-				{ type: "Promise<Carbon.HTTP.Response.Class>" }
+				{ type: "Promise<CarbonLDP.HTTP.Response.Response>" }
 			), ( done:DoneFn ):void => {
 				class MockedContext extends AbstractContext {
 					protected _baseURI:string;
@@ -9815,7 +9800,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				}
 
 				let context:MockedContext = new MockedContext();
-				let documents:Documents.Class = context.documents;
+				let documents:Documents = context.documents;
 
 				expect( documents.removeAllMembers ).toBeDefined();
 				expect( Utils.isFunction( documents.removeAllMembers ) ).toBe( true );
@@ -9827,7 +9812,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				let spies:any = {
 					success: ( response:any ):void => {
 						expect( response ).toBeDefined();
-						expect( response instanceof HTTP.Response.Class ).toBe( true );
+						expect( response instanceof Response ).toBe( true );
 					},
 					fail: ( error:Error ):void => {
 						expect( error ).toBeDefined();
@@ -9852,7 +9837,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 			} );
 
 			describe( "When Documents has a specified context", ():void => {
-				let documents:Documents.Class;
+				let documents:Documents;
 
 				beforeEach( () => {
 					const context:AbstractContext = new class extends AbstractContext {
@@ -9910,10 +9895,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 			} );
 
 			describe( "When Documents does not have a context", ():void => {
-				let documents:Documents.Class;
+				let documents:Documents;
 
 				beforeEach( () => {
-					documents = new Documents.Class();
+					documents = new Documents();
 				} );
 
 				it( "should reject if URI is relative", ( done:DoneFn ):void => {
@@ -9967,21 +9952,21 @@ describe( module( "Carbon/Documents" ), ():void => {
 			it( hasSignature(
 				[ "T extends object" ],
 				"Update the data of the document provided in the server.", [
-					{ name: "persistedDocument", type: "T & Carbon.PersistedDocument.Class", description: "The persisted document with the data to update in the server." },
-					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customisable options for the request." },
+					{ name: "persistedDocument", type: "T & CarbonLDP.PersistedDocument.PersistedDocument", description: "The persisted document with the data to update in the server." },
+					{ name: "requestOptions", type: "CarbonLDP.HTTP.Request.RequestOptions", optional: true, description: "Customisable options for the request." },
 				],
-				{ type: "Promise<[ T & Carbon.PersistedDocument.Class, Carbon.HTTP.Response.Class ]>" }
+				{ type: "Promise<[ T & CarbonLDP.PersistedDocument.PersistedDocument, CarbonLDP.HTTP.Response.Response ]>" }
 			), ():void => {} );
 
 			it( isDefined(), ():void => {
-				expect( Documents.Class.prototype.save ).toBeDefined();
-				expect( Documents.Class.prototype.save ).toEqual( jasmine.any( Function ) );
+				expect( Documents.prototype.save ).toBeDefined();
+				expect( Documents.prototype.save ).toEqual( jasmine.any( Function ) );
 			} );
 
 			describe( "When Documents has a specified context", ():void => {
 
 				let context:AbstractContext;
-				let documents:Documents.Class;
+				let documents:Documents;
 				beforeEach( () => {
 					context = new class extends AbstractContext {
 						_baseURI:string = "https://example.com/";
@@ -10001,7 +9986,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				} );
 
 				it( "should reject promise if URI is not in the context base", ( done:DoneFn ):void => {
-					const document:PersistedDocument.Class = PersistedDocument.Factory.create( "https://not-example.com", documents );
+					const document:PersistedDocument = PersistedDocument.create( documents, "https://not-example.com" );
 
 					documents.save( document )
 						.then( () => {
@@ -10013,7 +9998,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				} );
 
 				it( "should reject promise if prefixed URI cannot be resolved", ( done:DoneFn ):void => {
-					const document:PersistedDocument.Class = PersistedDocument.Factory.create( "prefix:the-uri", documents );
+					const document:PersistedDocument = PersistedDocument.create( documents, "prefix:the-uri" );
 
 					documents.save( document )
 						.then( () => {
@@ -10035,63 +10020,63 @@ describe( module( "Carbon/Documents" ), ():void => {
 							{
 								"@id": "_:responseMetadata",
 								"@type": [
-						            "${ NS.C.Class.VolatileResource }",
-						            "${ NS.C.Class.ResponseMetadata }"
+						            "${ C.VolatileResource }",
+						            "${ C.ResponseMetadata }"
 								],
-								"${ NS.C.Predicate.documentMetadata }": [ {
+								"${ C.documentMetadata }": [ {
 									"@id": "_:documentMetadata"
 								} ]
 							},
 							{
 								"@id": "_:documentMetadata",
 								"@type": [
-						            "${ NS.C.Class.VolatileResource }",
-						            "${ NS.C.Class.DocumentMetadata }"
+						            "${ C.VolatileResource }",
+						            "${ C.DocumentMetadata }"
 								],
-								"${ NS.C.Predicate.relatedDocument }": [ {
+								"${ C.relatedDocument }": [ {
 									"@id": "https://example.com/resource/"
 								} ],
-								"${ NS.C.Predicate.bNodesMap }": [ {
+								"${ C.bNodesMap }": [ {
 									"@id": "_:map"
 								} ]
 							},
 							{
 								"@id": "_:map",
-								"@type": [ "${ NS.C.Class.Map }" ],
-								"${ NS.C.Predicate.entry }": [
+								"@type": [ "${ C.Map }" ],
+								"${ C.entry }": [
 									{ "@id": "_:entry-1" },
 									{ "@id": "_:entry-2" }
 								]
 							},
 							{
 								"@id": "_:entry-1",
-								"${ NS.C.Predicate.entryKey }": [ {
+								"${ C.entryKey }": [ {
 								    "@id": "_:1"
 							    } ],
-								"${ NS.C.Predicate.entryValue }": [ {
+								"${ C.entryValue }": [ {
 									"@id": "_:new-1"
 								} ]
 							},
 							{
 								"@id": "_:entry-2",
-								"${ NS.C.Predicate.entryKey }": [ {
+								"${ C.entryKey }": [ {
 									"@id": "_:2"
 								} ],
-								"${ NS.C.Predicate.entryValue }": [ {
+								"${ C.entryValue }": [ {
 									"@id": "_:new-2"
 								} ]
 							}
 						]`,
 					} );
 
-					type RawBlankNode = Partial<BlankNode.Class> & { value:string };
+					type RawBlankNode = Partial<BlankNode> & { value:string };
 
 					interface RawDocument {
 						blankNode1:RawBlankNode;
 						blankNode2:RawBlankNode;
 					}
 
-					const rawDocument:PersistedDocument.Class & RawDocument = PersistedDocument.Factory.decorate( Object.assign(
+					const rawDocument:PersistedDocument & RawDocument = PersistedDocument.decorate( Object.assign(
 						documents.getPointer( "https://example.com/resource/" ), {
 							blankNode1: {
 								id: "_:1",
@@ -10136,7 +10121,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					const error:Error = new Error( "Error message" );
 					const spy:jasmine.Spy = spyOn( documents, "_parseErrorResponse" ).and.callFake( () => Promise.reject( error ) );
 
-					const document:PersistedDocument.Class = PersistedDocument.Factory.create( "https://example.com/", documents );
+					const document:PersistedDocument = PersistedDocument.create( documents, "https://example.com/" );
 					documents.save( document ).then( () => {
 						done.fail( "Should not resolve" );
 					} ).catch( _error => {
@@ -10151,12 +10136,12 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 
 				it( "should reject if document is outdated", ( done:DoneFn ):void => {
-					const document:PersistedDocument.Class = PersistedDocument.Factory.createFrom(
+					const document:PersistedDocument = PersistedDocument.createFrom(
 						Object.assign( documents.getPointer( "https://example.com/resource/" ), {
-							_etag: null,
+							_eTag: null,
 						} ),
-						"https://example.com/resource/",
-						documents
+						documents,
+						"https://example.com/resource/"
 					);
 
 					documents.save( document )
@@ -10176,7 +10161,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					} );
 
 					context.extendObjectSchema( {
-						"xsd": NS.XSD.namespace,
+						"xsd": XSD.namespace,
 					} );
 					context.extendObjectSchema( "https://example.com/ns#Document", {
 						"list": {
@@ -10188,7 +10173,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					} );
 					context.extendObjectSchema( "https://example.com/ns#Fragment", {
 						"string": {
-							"@type": NS.XSD.DataType.string,
+							"@type": XSD.string,
 							"@container": "@set",
 						},
 						"pointer": {
@@ -10197,11 +10182,11 @@ describe( module( "Carbon/Documents" ), ():void => {
 					} );
 					context.extendObjectSchema( "https://example.com/ns#BlankNode", {
 						"number": {
-							"@type": NS.XSD.DataType.integer,
+							"@type": XSD.integer,
 						},
 					} );
 
-					const persistedDocument:PersistedDocument.Class = PersistedDocument.Factory.createFrom( {
+					const persistedDocument:PersistedDocument = PersistedDocument.createFrom( {
 						types: [ "https://example.com/ns#Document" ],
 						list: [ 1, 2, 3, 4, 5 ],
 						pointer: {
@@ -10215,7 +10200,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								number: 100,
 							} ],
 						},
-					}, "https://example.com/resource/", documents );
+					}, documents, "https://example.com/resource/" );
 					persistedDocument._syncSnapshot();
 					persistedDocument.getFragments().forEach( fragment => fragment._syncSnapshot() );
 
@@ -10225,13 +10210,13 @@ describe( module( "Carbon/Documents" ), ():void => {
 					persistedDocument[ "pointer" ][ "pointer" ][ 0 ][ "string" ] = [ "string 1", "string -1" ];
 					persistedDocument[ "pointer" ][ "pointer" ][ 0 ][ "number" ] = 100.001;
 
-					documents.save( persistedDocument ).then( ( [ _document, response ]:[ PersistedDocument.Class, HTTP.Response.Class ] ) => {
+					documents.save( persistedDocument ).then( ( [ _document, response ]:[ PersistedDocument, Response ] ) => {
 						expect( _document ).toBe( persistedDocument );
-						expect( response ).toEqual( jasmine.any( HTTP.Response.Class ) );
+						expect( response ).toEqual( jasmine.any( Response ) );
 
 						const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
 						expect( request.params ).toBe( "" +
-							`@prefix xsd: <${ NS.XSD.namespace }>. ` +
+							`@prefix xsd: <${ XSD.namespace }>. ` +
 							`UpdateList <https://example.com/resource/> <https://example.com/ns#list> 3..5 (). ` +
 							`UpdateList <https://example.com/resource/> <https://example.com/ns#list> 0..0 ( "4"^^xsd:float ). ` +
 							`UpdateList <https://example.com/resource/> <https://example.com/ns#list> 3..3 ( "s-1" "s-2" "s-3" ). ` +
@@ -10256,10 +10241,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 					} );
 
 					context.extendObjectSchema( {
-						"xsd": NS.XSD.namespace,
+						"xsd": XSD.namespace,
 					} );
 
-					const persistedDocument:PersistedDocument.Class = PersistedDocument.Factory.createFrom( {
+					const persistedDocument:PersistedDocument = PersistedDocument.createFrom( {
 						types: [ "https://example.com/ns#Document" ],
 						list: [ 1, 2, 3, 4, 5 ],
 						pointer: {
@@ -10273,20 +10258,20 @@ describe( module( "Carbon/Documents" ), ():void => {
 								number: 100,
 								_partialMetadata: createPartialMetadata( {
 									"string": {
-										"@type": NS.XSD.DataType.string,
+										"@type": XSD.string,
 										"@container": "@set",
 									},
 									"pointer": {
 										"@type": "@id",
 									},
 									"number": {
-										"@type": NS.XSD.DataType.integer,
+										"@type": XSD.integer,
 									},
 								} ),
 							} ],
 							_partialMetadata: createPartialMetadata( {
 								"string": {
-									"@type": NS.XSD.DataType.string,
+									"@type": XSD.string,
 									"@container": "@set",
 								},
 								"pointer": {
@@ -10302,7 +10287,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"@type": "@id",
 							},
 						} ),
-					}, "https://example.com/resource/", documents );
+					}, documents, "https://example.com/resource/" );
 					persistedDocument._syncSnapshot();
 					persistedDocument.getFragments().forEach( fragment => fragment._syncSnapshot() );
 
@@ -10312,13 +10297,13 @@ describe( module( "Carbon/Documents" ), ():void => {
 					persistedDocument[ "pointer" ][ "pointer" ][ 0 ][ "string" ] = [ "string 1", "string -1" ];
 					persistedDocument[ "pointer" ][ "pointer" ][ 0 ][ "number" ] = 100.001;
 
-					documents.save( persistedDocument ).then( ( [ _document, response ]:[ PersistedDocument.Class, HTTP.Response.Class ] ) => {
+					documents.save( persistedDocument ).then( ( [ _document, response ]:[ PersistedDocument, Response ] ) => {
 						expect( _document ).toBe( persistedDocument );
-						expect( response ).toEqual( jasmine.any( HTTP.Response.Class ) );
+						expect( response ).toEqual( jasmine.any( Response ) );
 
 						const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
 						expect( request.params ).toBe( "" +
-							`@prefix xsd: <${ NS.XSD.namespace }>. ` +
+							`@prefix xsd: <${ XSD.namespace }>. ` +
 							`UpdateList <https://example.com/resource/> <https://example.com/ns#list> 3..5 (). ` +
 							`UpdateList <https://example.com/resource/> <https://example.com/ns#list> 0..0 ( "4"^^xsd:float ). ` +
 							`UpdateList <https://example.com/resource/> <https://example.com/ns#list> 3..3 ( "s-1" "s-2" "s-3" ). ` +
@@ -10343,12 +10328,12 @@ describe( module( "Carbon/Documents" ), ():void => {
 						responseText: `[]`,
 					} );
 
-					const document:PersistedDocument.Class = PersistedDocument.Factory.createFrom(
+					const document:PersistedDocument = PersistedDocument.createFrom(
 						Object.assign( documents.getPointer( "https://example.com/resource/" ), {
-							_etag: `"1-12345"`,
+							_eTag: `"1-12345"`,
 						} ),
-						"https://example.com/resource/",
-						documents
+						documents,
+						"https://example.com/resource/"
 					);
 
 					documents.save( document )
@@ -10372,13 +10357,13 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 			describe( "When Documents does not have a context", ():void => {
 
-				let documents:Documents.Class;
+				let documents:Documents;
 				beforeEach( () => {
-					documents = new Documents.Class();
+					documents = new Documents();
 				} );
 
 				it( "should reject if URI is relative", ( done:DoneFn ):void => {
-					const document:PersistedDocument.Class = PersistedDocument.Factory.create( "relative-uri/", documents );
+					const document:PersistedDocument = PersistedDocument.create( documents, "relative-uri/" );
 
 					documents.save( document )
 						.then( () => {
@@ -10391,7 +10376,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				} );
 
 				it( "should reject if URI is prefixed", ( done:DoneFn ):void => {
-					const document:PersistedDocument.Class = PersistedDocument.Factory.create( "prefix:the-uri", documents );
+					const document:PersistedDocument = PersistedDocument.create( documents, "prefix:the-uri" );
 
 					documents.save( document )
 						.then( () => {
@@ -10412,7 +10397,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					const error:Error = new Error( "Error message" );
 					const spy:jasmine.Spy = spyOn( documents, "_parseErrorResponse" ).and.callFake( () => Promise.reject( error ) );
 
-					const document:PersistedDocument.Class = PersistedDocument.Factory.create( "https://example.com/", documents );
+					const document:PersistedDocument = PersistedDocument.create( documents, "https://example.com/" );
 					documents.save( document ).then( () => {
 						done.fail( "Should not resolve" );
 					} ).catch( _error => {
@@ -10433,22 +10418,22 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 			it( hasSignature(
 				[ "T extends object" ],
-				"Update the specified document with the data of the CarbonLDP server, if a newest version exists.", [
-					{ name: "persistedDocument", type: "T & Carbon.PersistedDocument.Class", description: "The persisted document to update." },
-					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request." },
+				"Update the specified document with the data of the Carbon LDP server, if a newest version exists.", [
+					{ name: "persistedDocument", type: "T & CarbonLDP.PersistedDocument.PersistedDocument", description: "The persisted document to update." },
+					{ name: "requestOptions", type: "CarbonLDP.HTTP.Request.RequestOptions", optional: true, description: "Customizable options for the request." },
 				],
-				{ type: "Promise<[ T & Carbon.PersistedDocument.Class, Carbon.HTTP.Response.Class ]>" }
+				{ type: "Promise<[ T & CarbonLDP.PersistedDocument.PersistedDocument, CarbonLDP.HTTP.Response.Response ]>" }
 			), ():void => {} );
 
 			it( isDefined(), () => {
-				expect( Documents.Class.prototype.refresh ).toBeDefined();
-				expect( Documents.Class.prototype.refresh ).toEqual( jasmine.any( Function ) );
+				expect( Documents.prototype.refresh ).toBeDefined();
+				expect( Documents.prototype.refresh ).toEqual( jasmine.any( Function ) );
 			} );
 
 			describe( "When Documents has a specified context", ():void => {
 
 				let context:AbstractContext;
-				let documents:Documents.Class;
+				let documents:Documents;
 				beforeEach( ():void => {
 					context = new class extends AbstractContext {
 						_baseURI:string = "https://example.com/";
@@ -10468,7 +10453,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				} );
 
 				it( "should reject promise if URI is not in the context base", ( done:DoneFn ):void => {
-					const persistedDocument:PersistedDocument.Class = PersistedDocument.Factory.create( "http://not-example.com", documents );
+					const persistedDocument:PersistedDocument = PersistedDocument.create( documents, "http://not-example.com" );
 					const promise:Promise<any> = documents.refresh( persistedDocument );
 					promise.then( () => {
 						done.fail( "Should not resolve promise." );
@@ -10479,7 +10464,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				} );
 
 				it( "should reject promise if prefixed URI cannot be resolved", ( done:DoneFn ):void => {
-					const persistedDocument:PersistedDocument.Class = PersistedDocument.Factory.create( "prefix:the-uri", documents );
+					const persistedDocument:PersistedDocument = PersistedDocument.create( documents, "prefix:the-uri" );
 					const promise:Promise<any> = documents.refresh( persistedDocument );
 					promise.then( () => {
 						done.fail( "Should not resolve promise." );
@@ -10498,7 +10483,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					const error:Error = new Error( "Error message" );
 					const spy:jasmine.Spy = spyOn( documents, "_parseErrorResponse" ).and.callFake( () => Promise.reject( error ) );
 
-					const document:PersistedDocument.Class = PersistedDocument.Factory.create( "https://example.com/", documents );
+					const document:PersistedDocument = PersistedDocument.create( documents, "https://example.com/" );
 					documents.refresh( document ).then( () => {
 						done.fail( "Should not resolve" );
 					} ).catch( _error => {
@@ -10517,12 +10502,12 @@ describe( module( "Carbon/Documents" ), ():void => {
 						status: 304,
 					} );
 
-					const document:PersistedDocument.Class = PersistedDocument.Factory.createFrom(
+					const document:PersistedDocument = PersistedDocument.createFrom(
 						Object.assign( documents.getPointer( "https://example.com/resource/" ), {
-							_etag: `"1-12345"`,
+							_eTag: `"1-12345"`,
 						} ),
-						"https://example.com/resource/",
-						documents
+						documents,
+						"https://example.com/resource/"
 					);
 
 					documents.refresh( document )
@@ -10564,9 +10549,9 @@ describe( module( "Carbon/Documents" ), ():void => {
 						} ]`,
 					} );
 
-					const document:PersistedDocument.Class = PersistedDocument.Factory.createFrom(
+					const document:PersistedDocument = PersistedDocument.createFrom(
 						Object.assign( documents.getPointer( "https://example.com/resource/" ), {
-							_etag: `"1-12345"`,
+							_eTag: `"1-12345"`,
 							_resolved: true,
 							string: "Document Resource",
 							pointerSet: [
@@ -10578,19 +10563,19 @@ describe( module( "Carbon/Documents" ), ():void => {
 							],
 							"new-property": "A new property that will be erased at refresh",
 						} ),
-						"https://example.com/resource/",
-						documents
+						documents,
+						"https://example.com/resource/"
 					);
 					document._normalize();
 
-					const fragment:PersistedNamedFragment.Class = document.getFragment( "#1" );
+					const fragment:PersistedNamedFragment = document.getFragment( "#1" );
 
 					documents.refresh( document )
 						.then( ( [ returnedDocument, response ] ) => {
 							expect( returnedDocument ).toBe( document );
 
 							expect( document ).toEqual( jasmine.objectContaining( {
-								_etag: `"1-67890"`,
+								_eTag: `"1-67890"`,
 								_resolved: true,
 								string: "Changed Document Resource",
 								pointerSet: [ jasmine.objectContaining( {
@@ -10602,7 +10587,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 							expect( document[ "pointerSet" ][ 0 ] ).toBe( fragment );
 
 							expect( document ).not.toEqual( jasmine.objectContaining( {
-								_etag: `"1-12345"`,
+								_eTag: `"1-12345"`,
 								"new-property": "A new property that will be erased at refresh",
 							} ) );
 
@@ -10611,7 +10596,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								string: "NamedFragment 3",
 							} ) );
 
-							expect( response ).toEqual( jasmine.any( HTTP.Response.Class ) );
+							expect( response ).toEqual( jasmine.any( Response ) );
 
 							done();
 						} )
@@ -10625,10 +10610,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 						responseText: `[ {
 							"@id":"_:1",
 							"@type": [
-								"${ NS.C.Class.VolatileResource }",
-								"${ NS.C.Class.QueryMetadata }"
+								"${ C.VolatileResource }",
+								"${ C.QueryMetadata }"
 							],
-							"${ NS.C.Predicate.target }": [ {
+							"${ C.target }": [ {
 								"@id":"${ context.baseURI }resource/"
 							} ]
 						}, {
@@ -10636,17 +10621,17 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"@graph": [ {
 								"@id": "${ context.baseURI }resource/",
 								"@type": [
-									"${ NS.C.Class.Document }",
+									"${ C.Document }",
 									"https://example.com/ns#Resource",
-									"${ NS.LDP.Class.BasicContainer }",
-									"${ NS.LDP.Class.RDFSource }"
+									"${ LDP.BasicContainer }",
+									"${ LDP.RDFSource }"
 								],
 								"https://example.com/ns#property-1": [ {
 									"@value": "updated value"
 								} ],
 								"https://example.com/ns#property-4": [ {
 									"@value": "false",
-									"@type": "${ NS.XSD.DataType.boolean }"
+									"@type": "${ XSD.boolean }"
 								} ],
 								"https://schema.org/property-2": [ {
 									"@id": "_:1"
@@ -10658,7 +10643,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								} ],
 								"https://schema.org/property-5": [ {
 									"@value": "2010-01-01",
-									"@type": "${ NS.XSD.DataType.dateTime }"
+									"@type": "${ XSD.dateTime }"
 								} ]
 							} ]
 						} ]`,
@@ -10667,26 +10652,26 @@ describe( module( "Carbon/Documents" ), ():void => {
 					interface MyDocument {
 						property4:boolean;
 						property1:string;
-						property2:PersistedResource.Class;
+						property2:PersistedResource;
 					}
 
 					context.extendObjectSchema( {
 						"schema": "https://schema.org/",
 					} );
 
-					const persistedDocument:PersistedDocument.Class & MyDocument = PersistedDocument.Factory.createFrom(
+					const persistedDocument:PersistedDocument & MyDocument = PersistedDocument.createFrom(
 						Object.assign(
 							documents.getPointer( "https://example.com/resource/" ),
 							{ property4: true, property1: "value", property2: null }
 						),
-						"https://example.com/resource/",
-						documents
+						documents,
+						"https://example.com/resource/"
 					);
 					persistedDocument._partialMetadata = createPartialMetadata( {
 						"@vocab": "https://example.com/ns#",
 						"property4": {
 							"@id": "https://example.com/ns#property-4",
-							"@type": NS.XSD.DataType.boolean,
+							"@type": XSD.boolean,
 						},
 						"property2": {
 							"@id": "https://schema.org/property-2",
@@ -10694,7 +10679,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 						},
 						"property1": {
 							"@id": "https://example.com/ns#property-1",
-							"@type": NS.XSD.DataType.string,
+							"@type": XSD.string,
 						},
 					} );
 
@@ -10706,15 +10691,15 @@ describe( module( "Carbon/Documents" ), ():void => {
 						"@vocab": "https://example.com/ns#",
 						"property3": {
 							"@id": "https://schema.org/property-3",
-							"@type": NS.XSD.DataType.string,
+							"@type": XSD.string,
 						},
 						"property5": {
 							"@id": "https://schema.org/property-5",
-							"@type": NS.XSD.DataType.dateTime,
+							"@type": XSD.dateTime,
 						},
 						"property2": {
 							"@id": "https://example.com/ns#property-2",
-							"@type": NS.XSD.DataType.integer,
+							"@type": XSD.integer,
 						},
 					} );
 
@@ -10738,10 +10723,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 							new ConstructToken()
 								.addTriple( new SubjectToken( variableHelper( "metadata" ) )
 									.addPredicate( new PredicateToken( "a" )
-										.addObject( new IRIToken( NS.C.Class.VolatileResource ) )
-										.addObject( new IRIToken( NS.C.Class.QueryMetadata ) )
+										.addObject( new IRIToken( C.VolatileResource ) )
+										.addObject( new IRIToken( C.QueryMetadata ) )
 									)
-									.addPredicate( new PredicateToken( new IRIToken( NS.C.Predicate.target ) )
+									.addPredicate( new PredicateToken( new IRIToken( C.target ) )
 										.addObject( variableHelper( "document" ) )
 									)
 								)
@@ -10868,9 +10853,9 @@ describe( module( "Carbon/Documents" ), ():void => {
 						"schema": "https://schema.org/",
 					} );
 
-					const persistedDocument:PersistedDocument.Class & MyDocument = PersistedDocument.Factory.createFrom(
+					const persistedDocument:PersistedDocument & MyDocument = PersistedDocument.createFrom(
 						Object.assign( documents.getPointer( "https://example.com/resource/" ), {
-							_etag: "\"1-12345\"",
+							_eTag: "\"1-12345\"",
 							property4: true,
 							property1: "value",
 							property2: {
@@ -10880,14 +10865,14 @@ describe( module( "Carbon/Documents" ), ():void => {
 								property2: 12345,
 							},
 						} ),
-						"https://example.com/resource/",
-						documents
+						documents,
+						"https://example.com/resource/"
 					);
 					persistedDocument[ "_partialMetadata" ] = createPartialMetadata( {
 						"@vocab": "https://example.com/ns#",
 						"property4": {
 							"@id": "property-4",
-							"@type": NS.XSD.DataType.boolean,
+							"@type": XSD.boolean,
 						},
 						"property2": {
 							"@id": "https://schema.org/property-2",
@@ -10895,10 +10880,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 						},
 						"property1": {
 							"@id": "property-1",
-							"@type": NS.XSD.DataType.string,
+							"@type": XSD.string,
 						},
 					} );
-					persistedDocument.property2[ "_partialMetadata" ] = new SPARQL.QueryDocument.PartialMetadata.Class( SPARQL.QueryDocument.PartialMetadata.ALL );
+					persistedDocument.property2[ "_partialMetadata" ] = new PartialMetadata( PartialMetadata.ALL );
 
 					const queryTokenClass:{ new( ...args:any[] ) } = QueryToken;
 					let query:QueryToken;
@@ -10927,10 +10912,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 								new ConstructToken()
 									.addTriple( new SubjectToken( variableHelper( "metadata" ) )
 										.addPredicate( new PredicateToken( "a" )
-											.addObject( new IRIToken( NS.C.Class.VolatileResource ) )
-											.addObject( new IRIToken( NS.C.Class.QueryMetadata ) )
+											.addObject( new IRIToken( C.VolatileResource ) )
+											.addObject( new IRIToken( C.QueryMetadata ) )
 										)
-										.addPredicate( new PredicateToken( new IRIToken( NS.C.Predicate.target ) )
+										.addPredicate( new PredicateToken( new IRIToken( C.target ) )
 											.addObject( variableHelper( "document" ) )
 										)
 									)
@@ -11013,31 +10998,31 @@ describe( module( "Carbon/Documents" ), ():void => {
 						responseText: `[ {
 							"@id":"_:1",
 							"@type": [
-								"${ NS.C.Class.VolatileResource }",
-								"${ NS.C.Class.QueryMetadata }"
+								"${ C.VolatileResource }",
+								"${ C.QueryMetadata }"
 							],
-							"${ NS.C.Predicate.target }": [ {
+							"${ C.target }": [ {
 								"@id":"${ context.baseURI }resource/"
 							} ]
 						}, {
 							"@id": "_:2",
 							"@type": [
-								"${ NS.C.Class.ResponseMetadata }",
-								"${ NS.C.Class.VolatileResource }"
+								"${ C.ResponseMetadata }",
+								"${ C.VolatileResource }"
 							],
-							"${ NS.C.Predicate.documentMetadata }": [ {
+							"${ C.documentMetadata }": [ {
 								"@id": "_:3"
 							} ]
 						}, {
 							"@id": "_:3",
 							"@type": [
-								"${ NS.C.Class.DocumentMetadata }",
-								"${ NS.C.Class.VolatileResource }"
+								"${ C.DocumentMetadata }",
+								"${ C.VolatileResource }"
 							],
-							"${ NS.C.Predicate.eTag }": [ {
+							"${ C.eTag }": [ {
 								"@value": "\\"1-12345\\""
 							} ],
-							"${ NS.C.Predicate.relatedDocument }": [ {
+							"${ C.relatedDocument }": [ {
 								"@id": "https://example.com/resource/"
 							} ]
 						}, {
@@ -11045,10 +11030,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"@graph": [ {
 								"@id": "${ context.baseURI }resource/",
 								"@type": [
-									"${ NS.C.Class.Document }",
+									"${ C.Document }",
 									"https://example.com/ns#Resource",
-									"${ NS.LDP.Class.BasicContainer }",
-									"${ NS.LDP.Class.RDFSource }"
+									"${ LDP.BasicContainer }",
+									"${ LDP.RDFSource }"
 								],
 								"https://example.com/ns#property-1": [ {
 									"@value": "updated value"
@@ -11058,7 +11043,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								} ],
 								"https://example.com/ns#property-4": [ {
 									"@value": "false",
-									"@type": "${ NS.XSD.DataType.boolean }"
+									"@type": "${ XSD.boolean }"
 								} ]
 							}, {
 								"@id": "_:1",
@@ -11067,7 +11052,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								} ],
 								"https://schema.org/property-5": [ {
 									"@value": "2010-01-01",
-									"@type": "${ NS.XSD.DataType.dateTime }"
+									"@type": "${ XSD.dateTime }"
 								} ]
 							} ]
 						} ]`,
@@ -11075,7 +11060,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 					interface MyDocument {
 						property1:string;
-						property2:PersistedResource.Class & {
+						property2:PersistedResource & {
 							property2:number;
 							property3:string;
 							property5:Date;
@@ -11088,7 +11073,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 						"schema": "https://schema.org/",
 					} );
 
-					const persistedDocument:PersistedDocument.Class & MyDocument = PersistedDocument.Factory.createFrom(
+					const persistedDocument:PersistedDocument & MyDocument = PersistedDocument.createFrom(
 						Object.assign( documents.getPointer( "https://example.com/resource/" ), {
 							property1: "value",
 							property2: null,
@@ -11098,7 +11083,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"@vocab": "https://example.com/ns#",
 								"property1": {
 									"@id": "https://example.com/ns#property-1",
-									"@type": NS.XSD.DataType.string,
+									"@type": XSD.string,
 								},
 								"property2": {
 									"@id": "https://schema.org/property-2",
@@ -11106,12 +11091,12 @@ describe( module( "Carbon/Documents" ), ():void => {
 								},
 								"property4": {
 									"@id": "https://example.com/ns#property-4",
-									"@type": NS.XSD.DataType.boolean,
+									"@type": XSD.boolean,
 								},
 							} ),
 						} ),
-						"https://example.com/resource/",
-						documents
+						documents,
+						"https://example.com/resource/"
 					);
 
 					persistedDocument.property2 = persistedDocument.createFragment(
@@ -11123,15 +11108,15 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"@vocab": "https://example.com/ns#",
 								"property2": {
 									"@id": "https://example.com/ns#property-2",
-									"@type": NS.XSD.DataType.integer,
+									"@type": XSD.integer,
 								},
 								"property3": {
 									"@id": "https://schema.org/property-3",
-									"@type": NS.XSD.DataType.string,
+									"@type": XSD.string,
 								},
 								"property5": {
 									"@id": "https://schema.org/property-5",
-									"@type": NS.XSD.DataType.dateTime,
+									"@type": XSD.dateTime,
 								},
 							} ),
 						},
@@ -11141,7 +11126,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					Utils.promiseMethod( () => {
 						return documents.refresh<MyDocument>( persistedDocument );
 					} ).then( ( [ document ] ) => {
-						expect( PersistedDocument.Factory.is( document ) ).toBe( true );
+						expect( PersistedDocument.is( document ) ).toBe( true );
 
 						// Data updates
 						expect( document ).toEqual( jasmine.objectContaining( {
@@ -11173,31 +11158,31 @@ describe( module( "Carbon/Documents" ), ():void => {
 						responseText: `[ {
 							"@id":"_:1",
 							"@type": [
-								"${ NS.C.Class.VolatileResource }",
-								"${ NS.C.Class.QueryMetadata }"
+								"${ C.VolatileResource }",
+								"${ C.QueryMetadata }"
 							],
-							"${ NS.C.Predicate.target }": [ {
+							"${ C.target }": [ {
 								"@id":"${ context.baseURI }resource/"
 							} ]
 						}, {
 							"@id": "_:2",
 							"@type": [
-								"${ NS.C.Class.ResponseMetadata }",
-								"${ NS.C.Class.VolatileResource }"
+								"${ C.ResponseMetadata }",
+								"${ C.VolatileResource }"
 							],
-							"${ NS.C.Predicate.documentMetadata }": [ {
+							"${ C.documentMetadata }": [ {
 								"@id": "_:3"
 							} ]
 						}, {
 							"@id": "_:3",
 							"@type": [
-								"${ NS.C.Class.DocumentMetadata }",
-								"${ NS.C.Class.VolatileResource }"
+								"${ C.DocumentMetadata }",
+								"${ C.VolatileResource }"
 							],
-							"${ NS.C.Predicate.eTag }": [ {
+							"${ C.eTag }": [ {
 								"@value": "\\"1-12345\\""
 							} ],
-							"${ NS.C.Predicate.relatedDocument }": [ {
+							"${ C.relatedDocument }": [ {
 								"@id": "https://example.com/resource/"
 							} ]
 						}, {
@@ -11205,10 +11190,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"@graph": [ {
 								"@id": "${ context.baseURI }resource/",
 								"@type": [
-									"${ NS.C.Class.Document }",
+									"${ C.Document }",
 									"https://example.com/ns#Resource",
-									"${ NS.LDP.Class.BasicContainer }",
-									"${ NS.LDP.Class.RDFSource }"
+									"${ LDP.BasicContainer }",
+									"${ LDP.RDFSource }"
 								],
 								"https://example.com/ns#property-1": [ {
 									"@value": "updated value"
@@ -11218,7 +11203,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								} ],
 								"https://example.com/ns#property-4": [ {
 									"@value": "false",
-									"@type": "${ NS.XSD.DataType.boolean }"
+									"@type": "${ XSD.boolean }"
 								} ]
 							}, {
 								"@id": "_:1",
@@ -11227,7 +11212,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								} ],
 								"https://schema.org/property-5": [ {
 									"@value": "2010-01-01",
-									"@type": "${ NS.XSD.DataType.dateTime }"
+									"@type": "${ XSD.dateTime }"
 								} ]
 							} ]
 						} ]`,
@@ -11235,7 +11220,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 					interface MyDocument {
 						property1:string;
-						property2:PersistedResource.Class & {
+						property2:PersistedResource & {
 							property2:number;
 							property3:string;
 							property5:Date;
@@ -11248,9 +11233,9 @@ describe( module( "Carbon/Documents" ), ():void => {
 						"schema": "https://schema.org/",
 					} );
 
-					const persistedDocument:PersistedDocument.Class & MyDocument = PersistedDocument.Factory.createFrom(
+					const persistedDocument:PersistedDocument & MyDocument = PersistedDocument.createFrom(
 						Object.assign( documents.getPointer( "https://example.com/resource/" ), {
-							_etag: "\"1-12345\"",
+							_eTag: "\"1-12345\"",
 							property1: "value",
 							property2: null,
 							property3: "non query-value",
@@ -11259,7 +11244,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"@vocab": "https://example.com/ns#",
 								"property1": {
 									"@id": "property-1",
-									"@type": NS.XSD.DataType.string,
+									"@type": XSD.string,
 								},
 								"property2": {
 									"@id": "https://schema.org/property-2",
@@ -11267,12 +11252,12 @@ describe( module( "Carbon/Documents" ), ():void => {
 								},
 								"property4": {
 									"@id": "property-4",
-									"@type": NS.XSD.DataType.boolean,
+									"@type": XSD.boolean,
 								},
 							} ),
 						} ),
-						"https://example.com/resource/",
-						documents
+						documents,
+						"https://example.com/resource/"
 					);
 
 					persistedDocument.property2 = persistedDocument.createFragment(
@@ -11284,15 +11269,15 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"@vocab": "https://example.com/ns#",
 								"property2": {
 									"@id": "property-2",
-									"@type": NS.XSD.DataType.integer,
+									"@type": XSD.integer,
 								},
 								"property3": {
 									"@id": "https://schema.org/property-3",
-									"@type": NS.XSD.DataType.string,
+									"@type": XSD.string,
 								},
 								"property5": {
 									"@id": "https://schema.org/property-5",
-									"@type": NS.XSD.DataType.dateTime,
+									"@type": XSD.dateTime,
 								},
 							} ),
 						},
@@ -11302,7 +11287,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					Utils.promiseMethod( () => {
 						return documents.refresh<MyDocument>( persistedDocument );
 					} ).then( ( [ document, response ] ) => {
-						expect( PersistedDocument.Factory.is( document ) ).toBe( true );
+						expect( PersistedDocument.is( document ) ).toBe( true );
 
 						// Data updates
 						expect( document ).toEqual( jasmine.objectContaining( {
@@ -11325,10 +11310,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 			} );
 
 			describe( "When Documents does not have a context", ():void => {
-				let documents:Documents.Class;
+				let documents:Documents;
 
 				beforeEach( () => {
-					documents = new Documents.Class();
+					documents = new Documents();
 				} );
 
 				it( "should reject promise if not a persisted document", ( done:DoneFn ):void => {
@@ -11342,7 +11327,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				} );
 
 				it( "should reject if URI is relative", ( done:DoneFn ):void => {
-					const persistedDocument:PersistedDocument.Class = PersistedDocument.Factory.create( "relative-uri/", documents );
+					const persistedDocument:PersistedDocument = PersistedDocument.create( documents, "relative-uri/" );
 					const promise:Promise<any> = documents.refresh( persistedDocument );
 					promise.then( () => {
 						done.fail( "Should not resolve promise." );
@@ -11353,7 +11338,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				} );
 
 				it( "should reject if URI is prefixed", ( done:DoneFn ):void => {
-					const persistedDocument:PersistedDocument.Class = PersistedDocument.Factory.create( "prefix:the-uri", documents );
+					const persistedDocument:PersistedDocument = PersistedDocument.create( documents, "prefix:the-uri" );
 					const promise:Promise<any> = documents.refresh( persistedDocument );
 					promise.then( () => {
 						done.fail( "Should not resolve promise." );
@@ -11372,7 +11357,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					const error:Error = new Error( "Error message" );
 					const spy:jasmine.Spy = spyOn( documents, "_parseErrorResponse" ).and.callFake( () => Promise.reject( error ) );
 
-					const document:PersistedDocument.Class = PersistedDocument.Factory.create( "http://example.com/", documents );
+					const document:PersistedDocument = PersistedDocument.create( documents, "http://example.com/" );
 					documents.refresh( document ).then( () => {
 						done.fail( "Should not resolve" );
 					} ).catch( _error => {
@@ -11392,10 +11377,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 						responseText: `[ {
 							"@id":"_:1",
 							"@type": [
-								"${ NS.C.Class.VolatileResource }",
-								"${ NS.C.Class.QueryMetadata }"
+								"${ C.VolatileResource }",
+								"${ C.QueryMetadata }"
 							],
-							"${ NS.C.Predicate.target }": [ {
+							"${ C.target }": [ {
 								"@id":"https://example.com/resource/"
 							} ]
 						}, {
@@ -11403,17 +11388,17 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"@graph": [ {
 								"@id": "https://example.com/resource/",
 								"@type": [
-									"${ NS.C.Class.Document }",
+									"${ C.Document }",
 									"https://example.com/ns#Resource",
-									"${ NS.LDP.Class.BasicContainer }",
-									"${ NS.LDP.Class.RDFSource }"
+									"${ LDP.BasicContainer }",
+									"${ LDP.RDFSource }"
 								],
 								"https://example.com/ns#property-1": [ {
 									"@value": "updated value"
 								} ],
 								"https://example.com/ns#property-4": [ {
 									"@value": "false",
-									"@type": "${ NS.XSD.DataType.boolean }"
+									"@type": "${ XSD.boolean }"
 								} ],
 								"https://schema.org/property-2": [ {
 									"@id": "_:1"
@@ -11425,7 +11410,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								} ],
 								"https://schema.org/property-5": [ {
 									"@value": "2010-01-01",
-									"@type": "${ NS.XSD.DataType.dateTime }"
+									"@type": "${ XSD.dateTime }"
 								} ]
 							} ]
 						} ]`,
@@ -11434,22 +11419,22 @@ describe( module( "Carbon/Documents" ), ():void => {
 					interface MyDocument {
 						property4:boolean;
 						property1:string;
-						property2:PersistedResource.Class;
+						property2:PersistedResource;
 					}
 
-					const persistedDocument:PersistedDocument.Class & MyDocument = PersistedDocument.Factory.createFrom(
+					const persistedDocument:PersistedDocument & MyDocument = PersistedDocument.createFrom(
 						Object.assign(
 							documents.getPointer( "https://example.com/resource/" ),
 							{ property4: true, property1: "value", property2: null }
 						),
-						"https://example.com/resource/",
-						documents
+						documents,
+						"https://example.com/resource/"
 					);
 					persistedDocument._partialMetadata = createPartialMetadata( {
 						"@vocab": "https://example.com/ns#",
 						"property4": {
 							"@id": "https://example.com/ns#property-4",
-							"@type": NS.XSD.DataType.boolean,
+							"@type": XSD.boolean,
 						},
 						"property2": {
 							"@id": "https://schema.org/property-2",
@@ -11457,7 +11442,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 						},
 						"property1": {
 							"@id": "https://example.com/ns#property-1",
-							"@type": NS.XSD.DataType.string,
+							"@type": XSD.string,
 						},
 					} );
 
@@ -11469,15 +11454,15 @@ describe( module( "Carbon/Documents" ), ():void => {
 						"@vocab": "https://example.com/ns#",
 						"property3": {
 							"@id": "https://schema.org/property-3",
-							"@type": NS.XSD.DataType.string,
+							"@type": XSD.string,
 						},
 						"property5": {
 							"@id": "https://schema.org/property-5",
-							"@type": NS.XSD.DataType.dateTime,
+							"@type": XSD.dateTime,
 						},
 						"property2": {
 							"@id": "https://example.com/ns#property-2",
-							"@type": NS.XSD.DataType.integer,
+							"@type": XSD.integer,
 						},
 					} );
 
@@ -11501,10 +11486,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 							new ConstructToken()
 								.addTriple( new SubjectToken( variableHelper( "metadata" ) )
 									.addPredicate( new PredicateToken( "a" )
-										.addObject( new IRIToken( NS.C.Class.VolatileResource ) )
-										.addObject( new IRIToken( NS.C.Class.QueryMetadata ) )
+										.addObject( new IRIToken( C.VolatileResource ) )
+										.addObject( new IRIToken( C.QueryMetadata ) )
 									)
-									.addPredicate( new PredicateToken( new IRIToken( NS.C.Predicate.target ) )
+									.addPredicate( new PredicateToken( new IRIToken( C.target ) )
 										.addObject( variableHelper( "document" ) )
 									)
 								)
@@ -11623,21 +11608,21 @@ describe( module( "Carbon/Documents" ), ():void => {
 				[ "T extends object" ],
 				"Save and refresh the PersistedDocument specified.\n" +
 				"If the documents is partial the refresh will be executed with another query.", [
-					{ name: "persistedDocument", type: "T & Carbon.PersistedDocument.Class", description: "The persistedDocument to save and refresh." },
-					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request." },
+					{ name: "persistedDocument", type: "T & CarbonLDP.PersistedDocument.PersistedDocument", description: "The persistedDocument to save and refresh." },
+					{ name: "requestOptions", type: "CarbonLDP.HTTP.Request.RequestOptions", optional: true, description: "Customizable options for the request." },
 				],
-				{ type: "Promise<[ T & Carbon.PersistedDocument.Class, Carbon.HTTP.Response.Class[] ]>" }
+				{ type: "Promise<[ T & CarbonLDP.PersistedDocument.PersistedDocument, CarbonLDP.HTTP.Response.Response[] ]>" }
 			), ():void => {} );
 
 			it( isDefined(), () => {
-				expect( Documents.Class.prototype.saveAndRefresh ).toBeDefined();
-				expect( Documents.Class.prototype.saveAndRefresh ).toEqual( jasmine.any( Function ) );
+				expect( Documents.prototype.saveAndRefresh ).toBeDefined();
+				expect( Documents.prototype.saveAndRefresh ).toEqual( jasmine.any( Function ) );
 			} );
 
 			describe( "When Documents has a specified context", ():void => {
 
 				let context:AbstractContext;
-				let documents:Documents.Class;
+				let documents:Documents;
 				beforeEach( ():void => {
 					context = new class extends AbstractContext {
 						_baseURI:string = "https://example.com/";
@@ -11657,7 +11642,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				} );
 
 				it( "should reject promise if URI is not in the context base", ( done:DoneFn ):void => {
-					const document:PersistedDocument.Class = PersistedDocument.Factory.create( "https://not-example.com", documents );
+					const document:PersistedDocument = PersistedDocument.create( documents, "https://not-example.com" );
 
 					documents.saveAndRefresh( document )
 						.then( () => {
@@ -11669,7 +11654,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				} );
 
 				it( "should reject promise if prefixed URI cannot be resolved", ( done:DoneFn ):void => {
-					const document:PersistedDocument.Class = PersistedDocument.Factory.create( "prefix:the-uri", documents );
+					const document:PersistedDocument = PersistedDocument.create( documents, "prefix:the-uri" );
 
 					documents.saveAndRefresh( document )
 						.then( () => {
@@ -11692,49 +11677,49 @@ describe( module( "Carbon/Documents" ), ():void => {
 							{
 								"@id": "_:responseMetadata",
 								"@type": [
-						            "${ NS.C.Class.VolatileResource }",
-						            "${ NS.C.Class.ResponseMetadata }"
+						            "${ C.VolatileResource }",
+						            "${ C.ResponseMetadata }"
 								],
-								"${ NS.C.Predicate.documentMetadata }": [ {
+								"${ C.documentMetadata }": [ {
 									"@id": "_:documentMetadata"
 								} ]
 							},
 							{
 								"@id": "_:documentMetadata",
 								"@type": [
-						            "${ NS.C.Class.VolatileResource }",
-						            "${ NS.C.Class.DocumentMetadata }"
+						            "${ C.VolatileResource }",
+						            "${ C.DocumentMetadata }"
 								],
-								"${ NS.C.Predicate.relatedDocument }": [ {
+								"${ C.relatedDocument }": [ {
 									"@id": "https://example.com/resource/"
 								} ],
-								"${ NS.C.Predicate.bNodesMap }": [ {
+								"${ C.bNodesMap }": [ {
 									"@id": "_:map"
 								} ]
 							},
 							{
 								"@id": "_:map",
-								"@type": [ "${ NS.C.Class.Map }" ],
-								"${ NS.C.Predicate.entry }": [
+								"@type": [ "${ C.Map }" ],
+								"${ C.entry }": [
 									{ "@id": "_:entry-1" },
 									{ "@id": "_:entry-2" }
 								]
 							},
 							{
 								"@id": "_:entry-1",
-								"${ NS.C.Predicate.entryKey }": [ {
+								"${ C.entryKey }": [ {
 								    "@id": "_:1"
 							    } ],
-								"${ NS.C.Predicate.entryValue }": [ {
+								"${ C.entryValue }": [ {
 									"@id": "_:new-1"
 								} ]
 							},
 							{
 								"@id": "_:entry-2",
-								"${ NS.C.Predicate.entryKey }": [ {
+								"${ C.entryKey }": [ {
 									"@id": "_:2"
 								} ],
-								"${ NS.C.Predicate.entryValue }": [ {
+								"${ C.entryValue }": [ {
 									"@id": "_:new-2"
 								} ]
 							},
@@ -11767,14 +11752,14 @@ describe( module( "Carbon/Documents" ), ():void => {
 						]`,
 					} );
 
-					type RawBlankNode = Partial<BlankNode.Class> & { value:string };
+					type RawBlankNode = Partial<BlankNode> & { value:string };
 
 					interface RawDocument {
 						blankNode1:RawBlankNode;
 						blankNode2:RawBlankNode;
 					}
 
-					const rawDocument:PersistedDocument.Class & RawDocument = PersistedDocument.Factory.decorate( Object.assign(
+					const rawDocument:PersistedDocument & RawDocument = PersistedDocument.decorate( Object.assign(
 						documents.getPointer( "https://example.com/resource/" ), {
 							blankNode1: {
 								id: "_:1",
@@ -11819,7 +11804,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					const error:Error = new Error( "Error message" );
 					const spy:jasmine.Spy = spyOn( documents, "_parseErrorResponse" ).and.callFake( () => Promise.reject( error ) );
 
-					const document:PersistedDocument.Class = PersistedDocument.Factory.create( "https://example.com/", documents );
+					const document:PersistedDocument = PersistedDocument.create( documents, "https://example.com/" );
 					documents.saveAndRefresh( document ).then( () => {
 						done.fail( "Should not resolve" );
 					} ).catch( _error => {
@@ -11834,12 +11819,12 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 
 				it( "should reject if document is outdated", ( done:DoneFn ):void => {
-					const document:PersistedDocument.Class = PersistedDocument.Factory.createFrom(
+					const document:PersistedDocument = PersistedDocument.createFrom(
 						Object.assign( documents.getPointer( "https://example.com/resource/" ), {
-							_etag: null,
+							_eTag: null,
 						} ),
-						"https://example.com/resource/",
-						documents
+						documents,
+						"https://example.com/resource/"
 					);
 
 					documents.saveAndRefresh( document )
@@ -11862,7 +11847,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					} );
 
 					context.extendObjectSchema( {
-						"xsd": NS.XSD.namespace,
+						"xsd": XSD.namespace,
 					} );
 					context.extendObjectSchema( "https://example.com/ns#Document", {
 						"list": {
@@ -11874,7 +11859,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					} );
 					context.extendObjectSchema( "https://example.com/ns#Fragment", {
 						"string": {
-							"@type": NS.XSD.DataType.string,
+							"@type": XSD.string,
 							"@container": "@set",
 						},
 						"pointer": {
@@ -11883,11 +11868,11 @@ describe( module( "Carbon/Documents" ), ():void => {
 					} );
 					context.extendObjectSchema( "https://example.com/ns#BlankNode", {
 						"number": {
-							"@type": NS.XSD.DataType.integer,
+							"@type": XSD.integer,
 						},
 					} );
 
-					const persistedDocument:PersistedDocument.Class = PersistedDocument.Factory.createFrom( {
+					const persistedDocument:PersistedDocument = PersistedDocument.createFrom( {
 						types: [ "https://example.com/ns#Document" ],
 						list: [ 1, 2, 3, 4, 5 ],
 						pointer: {
@@ -11901,7 +11886,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								number: 100,
 							} ],
 						},
-					}, "https://example.com/resource/", documents );
+					}, documents, "https://example.com/resource/" );
 					persistedDocument._syncSnapshot();
 					persistedDocument.getFragments().forEach( fragment => fragment._syncSnapshot() );
 
@@ -11914,7 +11899,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					documents.saveAndRefresh( persistedDocument ).then( () => {
 						const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
 						expect( request.params ).toBe( "" +
-							`@prefix xsd: <${ NS.XSD.namespace }>. ` +
+							`@prefix xsd: <${ XSD.namespace }>. ` +
 							`UpdateList <https://example.com/resource/> <https://example.com/ns#list> 3..5 (). ` +
 							`UpdateList <https://example.com/resource/> <https://example.com/ns#list> 0..0 ( "4"^^xsd:float ). ` +
 							`UpdateList <https://example.com/resource/> <https://example.com/ns#list> 3..3 ( "s-1" "s-2" "s-3" ). ` +
@@ -11939,12 +11924,12 @@ describe( module( "Carbon/Documents" ), ():void => {
 						responseText: `[]`,
 					} );
 
-					const document:PersistedDocument.Class = PersistedDocument.Factory.createFrom(
+					const document:PersistedDocument = PersistedDocument.createFrom(
 						Object.assign( documents.getPointer( "https://example.com/resource/" ), {
-							_etag: `"1-12345"`,
+							_eTag: `"1-12345"`,
 						} ),
-						"https://example.com/resource/",
-						documents
+						documents,
+						"https://example.com/resource/"
 					);
 
 					documents.saveAndRefresh( document )
@@ -11993,9 +11978,9 @@ describe( module( "Carbon/Documents" ), ():void => {
 						} ]`,
 					} );
 
-					const document:PersistedDocument.Class = PersistedDocument.Factory.createFrom(
+					const document:PersistedDocument = PersistedDocument.createFrom(
 						Object.assign( documents.getPointer( "https://example.com/resource/" ), {
-							_etag: `"1-12345"`,
+							_eTag: `"1-12345"`,
 							_resolved: true,
 							string: "Document Resource",
 							pointerSet: [
@@ -12007,21 +11992,21 @@ describe( module( "Carbon/Documents" ), ():void => {
 							],
 							"new-property": "A new property that will be erased at refresh",
 						} ),
-						"https://example.com/resource/",
-						documents
+						documents,
+						"https://example.com/resource/"
 					);
 
-					const fragment:PersistedNamedFragment.Class = document.getFragment( "#1" );
+					const fragment:PersistedNamedFragment = document.getFragment( "#1" );
 
 					documents.saveAndRefresh( document )
 						.then( ( [ returnedDocument, responses ] ) => {
 							expect( responses ).toEqual( [
-								jasmine.any( HTTP.Response.Class ) as any,
+								jasmine.any( Response ) as any,
 							] );
 							expect( returnedDocument ).toBe( document );
 
 							expect( document ).toEqual( jasmine.objectContaining( {
-								_etag: `"2-12345"`,
+								_eTag: `"2-12345"`,
 								_resolved: true,
 								string: "Changed Document Resource",
 								pointerSet: [ jasmine.objectContaining( {
@@ -12033,7 +12018,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 							expect( document[ "pointerSet" ][ 0 ] ).toBe( fragment );
 
 							expect( document ).not.toEqual( jasmine.objectContaining( {
-								_etag: `"1-12345"`,
+								_eTag: `"1-12345"`,
 								"new-property": "A new property that will be erased at refresh",
 							} ) );
 
@@ -12057,31 +12042,31 @@ describe( module( "Carbon/Documents" ), ():void => {
 						responseText: `[ {
 							"@id":"_:1",
 							"@type": [
-								"${ NS.C.Class.VolatileResource }",
-								"${ NS.C.Class.QueryMetadata }"
+								"${ C.VolatileResource }",
+								"${ C.QueryMetadata }"
 							],
-							"${ NS.C.Predicate.target }": [ {
+							"${ C.target }": [ {
 								"@id":"${ context.baseURI }resource/"
 							} ]
 						}, {
 							"@id": "_:2",
 							"@type": [
-								"${ NS.C.Class.ResponseMetadata }",
-								"${ NS.C.Class.VolatileResource }"
+								"${ C.ResponseMetadata }",
+								"${ C.VolatileResource }"
 							],
-							"${ NS.C.Predicate.documentMetadata }": [ {
+							"${ C.documentMetadata }": [ {
 								"@id": "_:3"
 							} ]
 						}, {
 							"@id": "_:3",
 							"@type": [
-								"${ NS.C.Class.DocumentMetadata }",
-								"${ NS.C.Class.VolatileResource }"
+								"${ C.DocumentMetadata }",
+								"${ C.VolatileResource }"
 							],
-							"${ NS.C.Predicate.eTag }": [ {
+							"${ C.eTag }": [ {
 								"@value": "\\"2-12345\\""
 							} ],
-							"${ NS.C.Predicate.relatedDocument }": [ {
+							"${ C.relatedDocument }": [ {
 								"@id": "${ context.baseURI }resource/"
 							} ]
 						}, {
@@ -12089,10 +12074,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 							"@graph": [ {
 								"@id": "${ context.baseURI }resource/",
 								"@type": [
-									"${ NS.C.Class.Document }",
+									"${ C.Document }",
 									"https://example.com/ns#Resource",
-									"${ NS.LDP.Class.BasicContainer }",
-									"${ NS.LDP.Class.RDFSource }"
+									"${ LDP.BasicContainer }",
+									"${ LDP.RDFSource }"
 								],
 								"https://example.com/ns#property-1": [ {
 									"@value": "updated value"
@@ -12102,7 +12087,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								} ],
 								"https://example.com/ns#property-4": [ {
 									"@value": "false",
-									"@type": "${ NS.XSD.DataType.boolean }"
+									"@type": "${ XSD.boolean }"
 								} ]
 							}, {
 								"@id": "_:1",
@@ -12111,7 +12096,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								} ],
 								"https://schema.org/property-5": [ {
 									"@value": "2010-01-01",
-									"@type": "${ NS.XSD.DataType.dateTime }"
+									"@type": "${ XSD.dateTime }"
 								} ]
 							} ]
 						} ]`,
@@ -12128,9 +12113,9 @@ describe( module( "Carbon/Documents" ), ():void => {
 						property4:boolean;
 					}
 
-					const persistedDocument:PersistedDocument.Class & MyDocument = PersistedDocument.Factory.createFrom(
+					const persistedDocument:PersistedDocument & MyDocument = PersistedDocument.createFrom(
 						Object.assign( documents.getPointer( `${ context.baseURI }resource/` ), {
-							_etag: `"1-12345"`,
+							_eTag: `"1-12345"`,
 							property1: "value",
 							property3: "non query-value",
 							property4: true,
@@ -12143,15 +12128,15 @@ describe( module( "Carbon/Documents" ), ():void => {
 									"@vocab": "https://example.com/ns#",
 									"property2": {
 										"@id": "https://example.com/ns#property-2",
-										"@type": NS.XSD.DataType.integer,
+										"@type": XSD.integer,
 									},
 									"property3": {
 										"@id": "https://schema.org/property-3",
-										"@type": NS.XSD.DataType.string,
+										"@type": XSD.string,
 									},
 									"property5": {
 										"@id": "https://schema.org/property-5",
-										"@type": NS.XSD.DataType.dateTime,
+										"@type": XSD.dateTime,
 									},
 								} ),
 							},
@@ -12159,7 +12144,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 								"@vocab": "https://example.com/ns#",
 								"property1": {
 									"@id": "https://example.com/ns#property-1",
-									"@type": NS.XSD.DataType.string,
+									"@type": XSD.string,
 								},
 								"property2": {
 									"@id": "https://schema.org/property-2",
@@ -12167,22 +12152,22 @@ describe( module( "Carbon/Documents" ), ():void => {
 								},
 								"property4": {
 									"@id": "https://example.com/ns#property-4",
-									"@type": NS.XSD.DataType.boolean,
+									"@type": XSD.boolean,
 								},
 							} ),
 						} ),
-						`${ context.baseURI }resource/`,
-						documents
+						documents,
+						`${ context.baseURI }resource/`
 					);
 
 					Utils.promiseMethod( () => {
 						return documents.saveAndRefresh<MyDocument>( persistedDocument );
 					} ).then( ( [ document, responses ] ) => {
 						expect( responses ).toEqual( [
-							jasmine.any( HTTP.Response.Class ) as any,
-							jasmine.any( HTTP.Response.Class ) as any,
+							jasmine.any( Response ) as any,
+							jasmine.any( Response ) as any,
 						] );
-						expect( PersistedDocument.Factory.is( document ) ).toBe( true );
+						expect( PersistedDocument.is( document ) ).toBe( true );
 
 						// Data updates
 						expect( document ).toEqual( jasmine.objectContaining( {
@@ -12212,13 +12197,13 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 			describe( "When Documents does not have a context", ():void => {
 
-				let documents:Documents.Class;
+				let documents:Documents;
 				beforeEach( () => {
-					documents = new Documents.Class();
+					documents = new Documents();
 				} );
 
 				it( "should reject if URI is relative", ( done:DoneFn ):void => {
-					const document:PersistedDocument.Class = PersistedDocument.Factory.create( "relative-uri/", documents );
+					const document:PersistedDocument = PersistedDocument.create( documents, "relative-uri/" );
 
 					documents.saveAndRefresh( document )
 						.then( () => {
@@ -12231,7 +12216,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				} );
 
 				it( "should reject if URI is prefixed", ( done:DoneFn ):void => {
-					const document:PersistedDocument.Class = PersistedDocument.Factory.create( "prefix:the-uri", documents );
+					const document:PersistedDocument = PersistedDocument.create( documents, "prefix:the-uri" );
 
 					documents.saveAndRefresh( document )
 						.then( () => {
@@ -12252,7 +12237,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					const error:Error = new Error( "Error message" );
 					const spy:jasmine.Spy = spyOn( documents, "_parseErrorResponse" ).and.callFake( () => Promise.reject( error ) );
 
-					const document:PersistedDocument.Class = PersistedDocument.Factory.create( "https://example.com/", documents );
+					const document:PersistedDocument = PersistedDocument.create( documents, "https://example.com/" );
 					documents.saveAndRefresh( document ).then( () => {
 						done.fail( "Should not resolve" );
 					} ).catch( _error => {
@@ -12276,11 +12261,11 @@ describe( module( "Carbon/Documents" ), ():void => {
 		), ():void => {
 
 			it( hasSignature(
-				"Delete the resource from the CarbonLDP server referred by the URI provided.", [
-					{ name: "documentURI", type: "string", description: "The resource to delete from the CarbonLDP server." },
-					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request." },
+				"Delete the resource from the Carbon LDP server referred by the URI provided.", [
+					{ name: "documentURI", type: "string", description: "The resource to delete from the Carbon LDP server." },
+					{ name: "requestOptions", type: "CarbonLDP.HTTP.Request.RequestOptions", optional: true, description: "Customizable options for the request." },
 				],
-				{ type: "Promise<Carbon.HTTP.Response.Class>" }
+				{ type: "Promise<CarbonLDP.HTTP.Response.Response>" }
 			), ( done:DoneFn ):void => {
 				class MockedContext extends AbstractContext {
 					protected _baseURI:string;
@@ -12293,7 +12278,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				}
 
 				let context:MockedContext = new MockedContext();
-				let documents:Documents.Class = context.documents;
+				let documents:Documents = context.documents;
 
 				expect( documents.delete ).toBeDefined();
 				expect( Utils.isFunction( documents.delete ) ).toBe( true );
@@ -12308,7 +12293,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				let spies:any = {
 					success: ( response:any ):void => {
 						expect( response ).toBeDefined();
-						expect( response instanceof HTTP.Response.Class ).toBe( true );
+						expect( response instanceof Response ).toBe( true );
 					},
 				};
 				let spySuccess:jasmine.Spy = spyOn( spies, "success" ).and.callThrough();
@@ -12340,7 +12325,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 			} );
 
 			describe( "When Documents has a specified context", ():void => {
-				let documents:Documents.Class;
+				let documents:Documents;
 
 				beforeEach( () => {
 					let context:AbstractContext = new class extends AbstractContext {
@@ -12398,10 +12383,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 			} );
 
 			describe( "When Documents does not have a context", ():void => {
-				let documents:Documents.Class;
+				let documents:Documents;
 
 				beforeEach( () => {
-					documents = new Documents.Class();
+					documents = new Documents();
 				} );
 
 				it( "should reject if URI is relative", ( done:DoneFn ):void => {
@@ -12457,9 +12442,9 @@ describe( module( "Carbon/Documents" ), ():void => {
 			it( hasSignature(
 				"Add to the URI provided the necessary properties for a single download request.", [
 					{ name: "documentURI", type: "string", description: "The URI of the document that will be converted in a single download request." },
-					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
+					{ name: "requestOptions", type: "CarbonLDP.HTTP.Request.RequestOptions", optional: true },
 				],
-				{ type: "Promise<Carbon.HTTP.Response.Class>" }
+				{ type: "Promise<CarbonLDP.HTTP.Response.Response>" }
 			), ( done:DoneFn ):void => {
 				class MockedAuth extends Auth.Class {}
 
@@ -12475,7 +12460,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				}
 
 				let context:MockedContext = new MockedContext();
-				let documents:Documents.Class = context.documents;
+				let documents:Documents = context.documents;
 
 				expect( documents.getDownloadURL ).toBeDefined();
 				expect( Utils.isFunction( documents.getDownloadURL ) ).toBe( true );
@@ -12489,7 +12474,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 			} );
 
 			describe( "When Documents has a specified context", ():void => {
-				let documents:Documents.Class;
+				let documents:Documents;
 
 				beforeEach( () => {
 					const context:AbstractContext = new class extends AbstractContext {
@@ -12550,10 +12535,10 @@ describe( module( "Carbon/Documents" ), ():void => {
 			} );
 
 			describe( "When Documents does not have a context", ():void => {
-				let documents:Documents.Class;
+				let documents:Documents;
 
 				beforeEach( () => {
-					documents = new Documents.Class();
+					documents = new Documents();
 				} );
 
 				it( "should reject any request", ( done:DoneFn ):void => {
@@ -12579,18 +12564,18 @@ describe( module( "Carbon/Documents" ), ():void => {
 				"Executes an ASK query on a document and returns a raw application/sparql-results+json object.", [
 					{ name: "documentURI", type: "string", description: "URI of the document that works as a SPARQL endpoint where to execute the SPARQL query." },
 					{ name: "askQuery", type: "string", description: "ASK query to execute in the selected endpoint." },
-					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request." },
-				], { type: "Promise<[ Carbon.SPARQL.RawResults.Class, Carbon.HTTP.Response.Class ]>" }
+					{ name: "requestOptions", type: "CarbonLDP.HTTP.Request.RequestOptions", optional: true, description: "Customizable options for the request." },
+				], { type: "Promise<[ CarbonLDP.SPARQL.RawResults.SPARQLRawResults, CarbonLDP.HTTP.Response.Response ]>" }
 			), ():void => {} );
 
 			it( "should exists", ():void => {
-				const documents:Documents.Class = new Documents.Class();
+				const documents:Documents = new Documents();
 				expect( documents.executeRawASKQuery ).toBeDefined();
 				expect( documents.executeRawASKQuery ).toEqual( jasmine.any( Function ) );
 			} );
 
 			describe( "When Documents has a specified context", ():void => {
-				let documents:Documents.Class;
+				let documents:Documents;
 
 				beforeEach( () => {
 					const context:AbstractContext = new class extends AbstractContext {
@@ -12605,7 +12590,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				} );
 
 				it( "should use SPARQL service", ():void => {
-					const spyService:jasmine.Spy = spyOn( SPARQL.Service, "executeRawASKQuery" ).and.returnValue( new Promise( () => {} ) );
+					const spyService:jasmine.Spy = spyOn( SPARQL.Service.SPARQLService, "executeRawASKQuery" ).and.returnValue( new Promise( () => {} ) );
 
 					// noinspection JSIgnoredPromiseFromCall
 					documents.executeRawASKQuery( "http://example.com/document/", "ASK { ?subject, ?predicate, ?object }" );
@@ -12614,7 +12599,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				} );
 
 				it( "should resolve relative URIs", ():void => {
-					const spyService:jasmine.Spy = spyOn( SPARQL.Service, "executeRawASKQuery" ).and.returnValue( new Promise( () => {} ) );
+					const spyService:jasmine.Spy = spyOn( SPARQL.Service.SPARQLService, "executeRawASKQuery" ).and.returnValue( new Promise( () => {} ) );
 
 					// noinspection JSIgnoredPromiseFromCall
 					documents.executeRawASKQuery( "document/", "ASK { ?subject, ?predicate, ?object }" );
@@ -12666,14 +12651,14 @@ describe( module( "Carbon/Documents" ), ():void => {
 			} );
 
 			describe( "When Documents does not have a context", ():void => {
-				let documents:Documents.Class;
+				let documents:Documents;
 
 				beforeEach( () => {
-					documents = new Documents.Class();
+					documents = new Documents();
 				} );
 
 				it( "should use SPARQL service", ():void => {
-					const spyService:jasmine.Spy = spyOn( SPARQL.Service, "executeRawASKQuery" ).and.returnValue( new Promise( () => {} ) );
+					const spyService:jasmine.Spy = spyOn( SPARQL.Service.SPARQLService, "executeRawASKQuery" ).and.returnValue( new Promise( () => {} ) );
 
 					// noinspection JSIgnoredPromiseFromCall
 					documents.executeRawASKQuery( "http://example.com/document/", "ASK { ?subject, ?predicate, ?object }" );
@@ -12735,18 +12720,18 @@ describe( module( "Carbon/Documents" ), ():void => {
 				"Executes an ASK query on a document and returns the response of the query in form of a boolean.", [
 					{ name: "documentURI", type: "string", description: "URI of the document that works as a SPARQL endpoint where to execute the SPARQL query." },
 					{ name: "askQuery", type: "string", description: "ASK query to execute in the selected endpoint." },
-					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request." },
-				], { type: "Promise<[ boolean, Carbon.HTTP.Response.Class ]>" }
+					{ name: "requestOptions", type: "CarbonLDP.HTTP.Request.RequestOptions", optional: true, description: "Customizable options for the request." },
+				], { type: "Promise<[ boolean, CarbonLDP.HTTP.Response.Response ]>" }
 			), ():void => {} );
 
 			it( "should exists", ():void => {
-				const documents:Documents.Class = new Documents.Class();
+				const documents:Documents = new Documents();
 				expect( documents.executeASKQuery ).toBeDefined();
 				expect( documents.executeASKQuery ).toEqual( jasmine.any( Function ) );
 			} );
 
 			describe( "When Documents has a specified context", ():void => {
-				let documents:Documents.Class;
+				let documents:Documents;
 
 				beforeEach( () => {
 					let context:AbstractContext = new class extends AbstractContext {
@@ -12761,7 +12746,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				} );
 
 				it( "should use SPARQL service", ():void => {
-					const spyService:jasmine.Spy = spyOn( SPARQL.Service, "executeASKQuery" ).and.returnValue( new Promise( () => {} ) );
+					const spyService:jasmine.Spy = spyOn( SPARQL.Service.SPARQLService, "executeASKQuery" ).and.returnValue( new Promise( () => {} ) );
 
 					// noinspection JSIgnoredPromiseFromCall
 					documents.executeASKQuery( "http://example.com/document/", "ASK { ?subject, ?predicate, ?object }" );
@@ -12770,7 +12755,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				} );
 
 				it( "should resolve relative URIs", ():void => {
-					const spyService:jasmine.Spy = spyOn( SPARQL.Service, "executeASKQuery" ).and.returnValue( new Promise( () => {} ) );
+					const spyService:jasmine.Spy = spyOn( SPARQL.Service.SPARQLService, "executeASKQuery" ).and.returnValue( new Promise( () => {} ) );
 
 					// noinspection JSIgnoredPromiseFromCall
 					documents.executeASKQuery( "document/", "ASK { ?subject, ?predicate, ?object }" );
@@ -12822,14 +12807,14 @@ describe( module( "Carbon/Documents" ), ():void => {
 			} );
 
 			describe( "When Documents does not have a context", ():void => {
-				let documents:Documents.Class;
+				let documents:Documents;
 
 				beforeEach( () => {
-					documents = new Documents.Class();
+					documents = new Documents();
 				} );
 
 				it( "should use SPARQL service", ():void => {
-					const spyService:jasmine.Spy = spyOn( SPARQL.Service, "executeASKQuery" ).and.returnValue( new Promise( () => {} ) );
+					const spyService:jasmine.Spy = spyOn( SPARQL.Service.SPARQLService, "executeASKQuery" ).and.returnValue( new Promise( () => {} ) );
 
 					// noinspection JSIgnoredPromiseFromCall
 					documents.executeASKQuery( "http://example.com/document/", "ASK { ?subject, ?predicate, ?object }" );
@@ -12891,18 +12876,18 @@ describe( module( "Carbon/Documents" ), ():void => {
 				"Executes a SELECT query on a document and returns a raw application/sparql-results+json object.", [
 					{ name: "documentURI", type: "string", description: "URI of the document that works as a SPARQL endpoint where to execute the SPARQL query." },
 					{ name: "selectQuery", type: "string", description: "SELECT query to execute in the selected endpoint." },
-					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request." },
-				], { type: "Promise<[ Carbon.SPARQL.RawResults.Class, Carbon.HTTP.Response.Class ]>" }
+					{ name: "requestOptions", type: "CarbonLDP.HTTP.Request.RequestOptions", optional: true, description: "Customizable options for the request." },
+				], { type: "Promise<[ CarbonLDP.SPARQL.RawResults.SPARQLRawResults, CarbonLDP.HTTP.Response.Response ]>" }
 			), ():void => {} );
 
 			it( "should exists", ():void => {
-				const documents:Documents.Class = new Documents.Class();
+				const documents:Documents = new Documents();
 				expect( documents.executeRawSELECTQuery ).toBeDefined();
 				expect( documents.executeRawSELECTQuery ).toEqual( jasmine.any( Function ) );
 			} );
 
 			describe( "When Documents has a specified context", ():void => {
-				let documents:Documents.Class;
+				let documents:Documents;
 
 				beforeEach( () => {
 					const context:AbstractContext = new class extends AbstractContext {
@@ -12917,7 +12902,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				} );
 
 				it( "should use SPARQL service", ():void => {
-					const spyService:jasmine.Spy = spyOn( SPARQL.Service, "executeRawSELECTQuery" ).and.returnValue( new Promise( () => {} ) );
+					const spyService:jasmine.Spy = spyOn( SPARQL.Service.SPARQLService, "executeRawSELECTQuery" ).and.returnValue( new Promise( () => {} ) );
 
 					// noinspection JSIgnoredPromiseFromCall
 					documents.executeRawSELECTQuery( "http://example.com/document/", "SELECT ?book ?title WHERE { <http://example.com/some-document/> ?book ?title }" );
@@ -12926,7 +12911,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				} );
 
 				it( "should resolve relative URIs", ():void => {
-					const spyService:jasmine.Spy = spyOn( SPARQL.Service, "executeRawSELECTQuery" ).and.returnValue( new Promise( () => {} ) );
+					const spyService:jasmine.Spy = spyOn( SPARQL.Service.SPARQLService, "executeRawSELECTQuery" ).and.returnValue( new Promise( () => {} ) );
 
 					// noinspection JSIgnoredPromiseFromCall
 					documents.executeRawSELECTQuery( "http://example.com/document/", "SELECT ?book ?title WHERE { <http://example.com/some-document/> ?book ?title }" );
@@ -12978,14 +12963,14 @@ describe( module( "Carbon/Documents" ), ():void => {
 			} );
 
 			describe( "When Documents does not have a context", ():void => {
-				let documents:Documents.Class;
+				let documents:Documents;
 
 				beforeEach( () => {
-					documents = new Documents.Class();
+					documents = new Documents();
 				} );
 
 				it( "should use SPARQL service", ():void => {
-					const spyService:jasmine.Spy = spyOn( SPARQL.Service, "executeRawSELECTQuery" ).and.returnValue( new Promise( () => {} ) );
+					const spyService:jasmine.Spy = spyOn( SPARQL.Service.SPARQLService, "executeRawSELECTQuery" ).and.returnValue( new Promise( () => {} ) );
 
 					// noinspection JSIgnoredPromiseFromCall
 					documents.executeRawSELECTQuery( "http://example.com/document/", "SELECT ?book ?title WHERE { <http://example.com/some-document/> ?book ?title }" );
@@ -13048,18 +13033,18 @@ describe( module( "Carbon/Documents" ), ():void => {
 				"Executes a SELECT query on a document and returns a parsed response object.", [
 					{ name: "documentURI", type: "string", description: "URI of the document that works as a SPARQL endpoint where to execute the SPARQL query." },
 					{ name: "selectQuery", type: "string", description: "SELECT query to execute in the selected endpoint." },
-					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request." },
-				], { type: "Promise<[ Carbon.SPARQL.SELECTResults.Class<T>, Carbon.HTTP.Response.Class ]>" }
+					{ name: "requestOptions", type: "CarbonLDP.HTTP.Request.RequestOptions", optional: true, description: "Customizable options for the request." },
+				], { type: "Promise<[ CarbonLDP.SPARQL.SelectResults.SPARQLSelectResults<T>, CarbonLDP.HTTP.Response.Response ]>" }
 			), ():void => {} );
 
 			it( "should exists", ():void => {
-				const documents:Documents.Class = new Documents.Class();
+				const documents:Documents = new Documents();
 				expect( documents.executeSELECTQuery ).toBeDefined();
 				expect( documents.executeSELECTQuery ).toEqual( jasmine.any( Function ) );
 			} );
 
 			describe( "When Documents has a specified context", ():void => {
-				let documents:Documents.Class;
+				let documents:Documents;
 
 				beforeEach( () => {
 					const context:AbstractContext = new class extends AbstractContext {
@@ -13074,7 +13059,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				} );
 
 				it( "should use SPARQL service", ():void => {
-					const spyService:jasmine.Spy = spyOn( SPARQL.Service, "executeSELECTQuery" ).and.returnValue( new Promise( () => {} ) );
+					const spyService:jasmine.Spy = spyOn( SPARQL.Service.SPARQLService, "executeSELECTQuery" ).and.returnValue( new Promise( () => {} ) );
 
 					// noinspection JSIgnoredPromiseFromCall
 					documents.executeSELECTQuery( "http://example.com/document/", "SELECT ?book ?title WHERE { <http://example.com/some-document/> ?book ?title }" );
@@ -13083,7 +13068,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				} );
 
 				it( "should resolve relative URIs", ():void => {
-					const spyService:jasmine.Spy = spyOn( SPARQL.Service, "executeSELECTQuery" ).and.returnValue( new Promise( () => {} ) );
+					const spyService:jasmine.Spy = spyOn( SPARQL.Service.SPARQLService, "executeSELECTQuery" ).and.returnValue( new Promise( () => {} ) );
 
 					// noinspection JSIgnoredPromiseFromCall
 					documents.executeSELECTQuery( "document/", "SELECT ?book ?title WHERE { <http://example.com/some-document/> ?book ?title }" );
@@ -13135,14 +13120,14 @@ describe( module( "Carbon/Documents" ), ():void => {
 			} );
 
 			describe( "When Documents does not have a context", ():void => {
-				let documents:Documents.Class;
+				let documents:Documents;
 
 				beforeEach( () => {
-					documents = new Documents.Class();
+					documents = new Documents();
 				} );
 
 				it( "should use SPARQL service", ():void => {
-					const spyService:jasmine.Spy = spyOn( SPARQL.Service, "executeSELECTQuery" ).and.returnValue( new Promise( () => {} ) );
+					const spyService:jasmine.Spy = spyOn( SPARQL.Service.SPARQLService, "executeSELECTQuery" ).and.returnValue( new Promise( () => {} ) );
 
 					// noinspection JSIgnoredPromiseFromCall
 					documents.executeSELECTQuery( "http://example.com/document/", "SELECT ?book ?title WHERE { <http://example.com/some-document/> ?book ?title }" );
@@ -13204,18 +13189,18 @@ describe( module( "Carbon/Documents" ), ():void => {
 				"Executes a CONSTRUCT query on a document and returns a string with the resulting model.", [
 					{ name: "documentURI", type: "string", description: "URI of the document that works as a SPARQL endpoint where to execute the SPARQL query." },
 					{ name: "constructQuery", type: "string", description: "CONSTRUCT query to execute in the selected endpoint." },
-					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request." },
-				], { type: "Promise<[ string, Carbon.HTTP.Response.Class ]>" }
+					{ name: "requestOptions", type: "CarbonLDP.HTTP.Request.RequestOptions", optional: true, description: "Customizable options for the request." },
+				], { type: "Promise<[ string, CarbonLDP.HTTP.Response.Response ]>" }
 			), ():void => {} );
 
 			it( "should exists", ():void => {
-				const documents:Documents.Class = new Documents.Class();
+				const documents:Documents = new Documents();
 				expect( documents.executeRawCONSTRUCTQuery ).toBeDefined();
 				expect( documents.executeRawCONSTRUCTQuery ).toEqual( jasmine.any( Function ) );
 			} );
 
 			describe( "When Documents has a specified context", ():void => {
-				let documents:Documents.Class;
+				let documents:Documents;
 
 				beforeEach( () => {
 					const context:AbstractContext = new class extends AbstractContext {
@@ -13230,7 +13215,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				} );
 
 				it( "should use SPARQL service", ():void => {
-					const spyService:jasmine.Spy = spyOn( SPARQL.Service, "executeRawCONSTRUCTQuery" ).and.returnValue( new Promise( () => {} ) );
+					const spyService:jasmine.Spy = spyOn( SPARQL.Service.SPARQLService, "executeRawCONSTRUCTQuery" ).and.returnValue( new Promise( () => {} ) );
 
 					// noinspection JSIgnoredPromiseFromCall
 					documents.executeRawCONSTRUCTQuery( "http://example.com/document/", "CONSTRUCT { ?subject ?predicate ?object } WHERE { ?subject ?predicate ?object }" );
@@ -13239,7 +13224,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				} );
 
 				it( "should resolve relative URIs", ():void => {
-					const spyService:jasmine.Spy = spyOn( SPARQL.Service, "executeRawCONSTRUCTQuery" ).and.returnValue( new Promise( () => {} ) );
+					const spyService:jasmine.Spy = spyOn( SPARQL.Service.SPARQLService, "executeRawCONSTRUCTQuery" ).and.returnValue( new Promise( () => {} ) );
 
 					// noinspection JSIgnoredPromiseFromCall
 					documents.executeRawCONSTRUCTQuery( "document/", "CONSTRUCT { ?subject ?predicate ?object } WHERE { ?subject ?predicate ?object }" );
@@ -13291,14 +13276,14 @@ describe( module( "Carbon/Documents" ), ():void => {
 			} );
 
 			describe( "When Documents does not have a context", ():void => {
-				let documents:Documents.Class;
+				let documents:Documents;
 
 				beforeEach( () => {
-					documents = new Documents.Class();
+					documents = new Documents();
 				} );
 
 				it( "should use SPARQL service", ():void => {
-					const spyService:jasmine.Spy = spyOn( SPARQL.Service, "executeRawCONSTRUCTQuery" ).and.returnValue( new Promise( () => {} ) );
+					const spyService:jasmine.Spy = spyOn( SPARQL.Service.SPARQLService, "executeRawCONSTRUCTQuery" ).and.returnValue( new Promise( () => {} ) );
 
 					// noinspection JSIgnoredPromiseFromCall
 					documents.executeRawCONSTRUCTQuery( "http://example.com/document/", "CONSTRUCT { ?subject ?predicate ?object } WHERE { ?subject ?predicate ?object }" );
@@ -13360,18 +13345,18 @@ describe( module( "Carbon/Documents" ), ():void => {
 				"Executes a DESCRIBE query and returns a string with the resulting model.", [
 					{ name: "documentURI", type: "string", description: "URI of the document that works as a SPARQL endpoint where to execute the SPARQL query." },
 					{ name: "describeQuery", type: "string", description: "DESCRIBE query to execute in the selected endpoint." },
-					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request." },
-				], { type: "Promise<[ string, Carbon.HTTP.Response.Class ]>" }
+					{ name: "requestOptions", type: "CarbonLDP.HTTP.Request.RequestOptions", optional: true, description: "Customizable options for the request." },
+				], { type: "Promise<[ string, CarbonLDP.HTTP.Response.Response ]>" }
 			), ():void => {} );
 
 			it( "should exists", ():void => {
-				const documents:Documents.Class = new Documents.Class();
+				const documents:Documents = new Documents();
 				expect( documents.executeRawDESCRIBEQuery ).toBeDefined();
 				expect( documents.executeRawDESCRIBEQuery ).toEqual( jasmine.any( Function ) );
 			} );
 
 			describe( "When Documents has a specified context", ():void => {
-				let documents:Documents.Class;
+				let documents:Documents;
 
 				beforeEach( () => {
 					const context:AbstractContext = new class extends AbstractContext {
@@ -13386,7 +13371,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				} );
 
 				it( "should use SPARQL service", ():void => {
-					const spyService:jasmine.Spy = spyOn( SPARQL.Service, "executeRawDESCRIBEQuery" ).and.returnValue( new Promise( () => {} ) );
+					const spyService:jasmine.Spy = spyOn( SPARQL.Service.SPARQLService, "executeRawDESCRIBEQuery" ).and.returnValue( new Promise( () => {} ) );
 
 					// noinspection JSIgnoredPromiseFromCall
 					documents.executeRawDESCRIBEQuery( "http://example.com/document/", "DESCRIBE { ?subject ?predicate ?object } WHERE { ?subject ?predicate ?object }" );
@@ -13395,7 +13380,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				} );
 
 				it( "should resolve relative URIs", ():void => {
-					const spyService:jasmine.Spy = spyOn( SPARQL.Service, "executeRawDESCRIBEQuery" ).and.returnValue( new Promise( () => {} ) );
+					const spyService:jasmine.Spy = spyOn( SPARQL.Service.SPARQLService, "executeRawDESCRIBEQuery" ).and.returnValue( new Promise( () => {} ) );
 
 					// noinspection JSIgnoredPromiseFromCall
 					documents.executeRawDESCRIBEQuery( "document/", "DESCRIBE { ?subject ?predicate ?object } WHERE { ?subject ?predicate ?object }" );
@@ -13447,14 +13432,14 @@ describe( module( "Carbon/Documents" ), ():void => {
 			} );
 
 			describe( "When Documents does not have a context", ():void => {
-				let documents:Documents.Class;
+				let documents:Documents;
 
 				beforeEach( () => {
-					documents = new Documents.Class();
+					documents = new Documents();
 				} );
 
 				it( "should use SPARQL service", ():void => {
-					const spyService:jasmine.Spy = spyOn( SPARQL.Service, "executeRawDESCRIBEQuery" ).and.returnValue( new Promise( () => {} ) );
+					const spyService:jasmine.Spy = spyOn( SPARQL.Service.SPARQLService, "executeRawDESCRIBEQuery" ).and.returnValue( new Promise( () => {} ) );
 
 					// noinspection JSIgnoredPromiseFromCall
 					documents.executeRawDESCRIBEQuery( "http://example.com/document/", "DESCRIBE { ?subject ?predicate ?object } WHERE { ?subject ?predicate ?object }" );
@@ -13516,18 +13501,18 @@ describe( module( "Carbon/Documents" ), ():void => {
 				"Executes a DESCRIBE query and returns a string with the resulting model.", [
 					{ name: "documentURI", type: "string", description: "URI of the document that works as a SPARQL endpoint where to execute the SPARQL query." },
 					{ name: "update", type: "string", description: "UPDATE query to execute in the selected endpoint." },
-					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request." },
-				], { type: "Promise<Carbon.HTTP.Response.Class>" }
+					{ name: "requestOptions", type: "CarbonLDP.HTTP.Request.RequestOptions", optional: true, description: "Customizable options for the request." },
+				], { type: "Promise<CarbonLDP.HTTP.Response.Response>" }
 			), ():void => {} );
 
 			it( "should exists", ():void => {
-				const documents:Documents.Class = new Documents.Class();
+				const documents:Documents = new Documents();
 				expect( documents.executeUPDATE ).toBeDefined();
 				expect( documents.executeUPDATE ).toEqual( jasmine.any( Function ) );
 			} );
 
 			describe( "When Documents has a specified context", ():void => {
-				let documents:Documents.Class;
+				let documents:Documents;
 
 				beforeEach( () => {
 					const context:AbstractContext = new class extends AbstractContext {
@@ -13542,7 +13527,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				} );
 
 				it( "should use SPARQL service", ():void => {
-					const spyService:jasmine.Spy = spyOn( SPARQL.Service, "executeUPDATE" ).and.returnValue( new Promise( () => {} ) );
+					const spyService:jasmine.Spy = spyOn( SPARQL.Service.SPARQLService, "executeUPDATE" ).and.returnValue( new Promise( () => {} ) );
 
 					// noinspection JSIgnoredPromiseFromCall
 					documents.executeUPDATE( "http://example.com/document/", `INSERT DATA { GRAPH <http://example.com/some-document/> { <http://example.com/some-document/> <http://example.com/ns#propertyString> "Property Value" } }` );
@@ -13551,7 +13536,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				} );
 
 				it( "should resolve relative URIs", ():void => {
-					const spyService:jasmine.Spy = spyOn( SPARQL.Service, "executeUPDATE" ).and.returnValue( new Promise( () => {} ) );
+					const spyService:jasmine.Spy = spyOn( SPARQL.Service.SPARQLService, "executeUPDATE" ).and.returnValue( new Promise( () => {} ) );
 
 					// noinspection JSIgnoredPromiseFromCall
 					documents.executeUPDATE( "document/", `INSERT DATA { GRAPH <http://example.com/some-document/> { <http://example.com/some-document/> <http://example.com/ns#propertyString> "Property Value" } }` );
@@ -13603,14 +13588,14 @@ describe( module( "Carbon/Documents" ), ():void => {
 			} );
 
 			describe( "When Documents does not have a context", ():void => {
-				let documents:Documents.Class;
+				let documents:Documents;
 
 				beforeEach( () => {
-					documents = new Documents.Class();
+					documents = new Documents();
 				} );
 
 				it( "should use SPARQL service", ():void => {
-					const spyService:jasmine.Spy = spyOn( SPARQL.Service, "executeUPDATE" ).and.returnValue( new Promise( () => {} ) );
+					const spyService:jasmine.Spy = spyOn( SPARQL.Service.SPARQLService, "executeUPDATE" ).and.returnValue( new Promise( () => {} ) );
 
 					// noinspection JSIgnoredPromiseFromCall
 					documents.executeUPDATE( "http://example.com/document/", `INSERT DATA { GRAPH <http://example.com/some-document/> { <http://example.com/some-document/> <http://example.com/ns#propertyString> "Property Value" } }` );
@@ -13669,7 +13654,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 			"Method that creates an instance of SPARQLER for the provided document end-point.", [
 				{ name: "documentURI", type: "string", description: "URI of the document where to execute the SPARQL query." },
 			],
-			{ type: "SPARQLER/Clauses/QueryClause" }
+			{ type: "SPARQLER/Clauses/QueryClause<CarbonLDP.SPARQL.Builder.FinishSPARQLSelect>" }
 		), ():void => {
 			class MockedContext extends AbstractContext {
 				protected _baseURI:string;
@@ -13682,7 +13667,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 			}
 
 			let context:MockedContext = new MockedContext();
-			let documents:Documents.Class = context.documents;
+			let documents:Documents = context.documents;
 
 			// Property Integrity
 			(() => {
@@ -13705,7 +13690,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 					"ex": "http://example.com/",
 				} );
 
-				let queryBuilder:SPARQL.Builder.ExecuteSelect = documents
+				let queryBuilder:SPARQL.Builder.FinishSPARQLSelect = documents
 					.sparql( "http://example.com/resource/" )
 					.select( "a" )
 					.where( _ =>
@@ -13738,84 +13723,84 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 			it( hasSignature(
 				[
-					{ name: "event", type: "Carbon.Messaging.Event.CHILD_CREATED", description: "The event to subscribe for its notifications." },
+					{ name: "event", type: "CarbonLDP.Messaging.Event.CHILD_CREATED", description: "The event to subscribe for its notifications." },
 					{ name: "uriPattern", type: "string", description: "URI and/or pattern of the resource(s) to subscribe for the event specified." },
-					{ name: "onEvent", type: "( message:Carbon.Messaging.ChildCreated.Class ) => void", description: "Callback that receives the data message from the notification event." },
+					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.ChildCreated.ChildCreated ) => void", description: "Callback that receives the data message from the notification event." },
 					{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the errors thrown by the subscription." },
 				]
 			), ():void => {} );
 
 			it( hasSignature(
 				[
-					{ name: "event", type: "Carbon.Messaging.Event.ACCESS_POINT_CREATED", description: "The event to subscribe for its notifications." },
+					{ name: "event", type: "CarbonLDP.Messaging.Event.ACCESS_POINT_CREATED", description: "The event to subscribe for its notifications." },
 					{ name: "uriPattern", type: "string", description: "URI and/or pattern of the resource(s) to subscribe for the event specified." },
-					{ name: "onEvent", type: "( message:Carbon.Messaging.AccessPointCreated.Class ) => void", description: "Callback that receives the data message from the notification event." },
+					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.AccessPointCreated.AccessPointCreated ) => void", description: "Callback that receives the data message from the notification event." },
 					{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the errors thrown by the subscription." },
 				]
 			), ():void => {} );
 
 			it( hasSignature(
 				[
-					{ name: "event", type: "Carbon.Messaging.Event.DOCUMENT_CREATED", description: "The event to subscribe for its notifications." },
+					{ name: "event", type: "CarbonLDP.Messaging.Event.DOCUMENT_CREATED", description: "The event to subscribe for its notifications." },
 					{ name: "uriPattern", type: "string", description: "URI and/or pattern of the resource(s) to subscribe for the event specified." },
-					{ name: "onEvent", type: "( message:Carbon.Messaging.DocumentCreated.Class ) => void", description: "Callback that receives the data message from the notification event." },
+					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.DocumentCreated.DocumentCreated ) => void", description: "Callback that receives the data message from the notification event." },
 					{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the errors thrown by the subscription." },
 				]
 			), ():void => {} );
 
 			it( hasSignature(
 				[
-					{ name: "event", type: "Carbon.Messaging.Event.DOCUMENT_MODIFIED", description: "The event to subscribe for its notifications." },
+					{ name: "event", type: "CarbonLDP.Messaging.Event.DOCUMENT_MODIFIED", description: "The event to subscribe for its notifications." },
 					{ name: "uriPattern", type: "string", description: "URI and/or pattern of the resource(s) to subscribe for the event specified." },
-					{ name: "onEvent", type: "( message:Carbon.Messaging.DocumentModified.Class ) => void", description: "Callback that receives the data message from the notification event." },
+					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.DocumentModified.DocumentModified ) => void", description: "Callback that receives the data message from the notification event." },
 					{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the errors thrown by the subscription." },
 				]
 			), ():void => {} );
 
 			it( hasSignature(
 				[
-					{ name: "event", type: "Carbon.Messaging.Event.DOCUMENT_DELETED", description: "The event to subscribe for its notifications." },
+					{ name: "event", type: "CarbonLDP.Messaging.Event.DOCUMENT_DELETED", description: "The event to subscribe for its notifications." },
 					{ name: "uriPattern", type: "string", description: "URI and/or pattern of the resource(s) to subscribe for the event specified." },
-					{ name: "onEvent", type: "( message:Carbon.Messaging.DocumentDeleted.Class ) => void", description: "Callback that receives the data message from the notification event." },
+					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.DocumentDeleted.DocumentDeleted ) => void", description: "Callback that receives the data message from the notification event." },
 					{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the errors thrown by the subscription." },
 				]
 			), ():void => {} );
 
 			it( hasSignature(
 				[
-					{ name: "event", type: "Carbon.Messaging.Event.MEMBER_ADDED", description: "The event to subscribe for its notifications." },
+					{ name: "event", type: "CarbonLDP.Messaging.Event.MEMBER_ADDED", description: "The event to subscribe for its notifications." },
 					{ name: "uriPattern", type: "string", description: "URI and/or pattern of the resource(s) to subscribe for the event specified." },
-					{ name: "onEvent", type: "( message:Carbon.Messaging.MemberAdded.Class ) => void", description: "Callback that receives the data message from the notification event." },
+					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.MemberAdded.MemberAdded ) => void", description: "Callback that receives the data message from the notification event." },
 					{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the errors thrown by the subscription." },
 				]
 			), ():void => {} );
 
 			it( hasSignature(
 				[
-					{ name: "event", type: "Carbon.Messaging.Event.MEMBER_REMOVED", description: "The event to subscribe for its notifications." },
+					{ name: "event", type: "CarbonLDP.Messaging.Event.MEMBER_REMOVED", description: "The event to subscribe for its notifications." },
 					{ name: "uriPattern", type: "string", description: "URI and/or pattern of the resource(s) to subscribe for the event specified." },
-					{ name: "onEvent", type: "( message:Carbon.Messaging.MemberRemoved.Class ) => void", description: "Callback that receives the data message from the notification event." },
+					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.MemberRemoved.MemberRemoved ) => void", description: "Callback that receives the data message from the notification event." },
 					{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the errors thrown by the subscription." },
 				]
 			), ():void => {} );
 
 			it( hasSignature(
 				[
-					{ name: "event", type: "Carbon.Messaging.Event | string", description: "The event to subscribe for its notifications." },
+					{ name: "event", type: "CarbonLDP.Messaging.Event | string", description: "The event to subscribe for its notifications." },
 					{ name: "uriPattern", type: "string", description: "URI and/or pattern of the resource(s) to subscribe for the event specified." },
-					{ name: "onEvent", type: "( message:Carbon.Messaging.Message.Class ) => void", description: "Callback that receives the data message from the notification event." },
+					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.EventMessage.EventMessage ) => void", description: "Callback that receives the data message from the notification event." },
 					{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the errors thrown by the subscription." },
 				]
 			), ():void => {} );
 
 			it( "should exists", ():void => {
-				const documents:Documents.Class = new Documents.Class();
+				const documents:Documents = new Documents();
 				expect( documents.on ).toBeDefined();
 				expect( documents.on ).toEqual( jasmine.any( Function ) );
 			} );
 
 			it( "should return error when does not have context", ( done:DoneFn ):void => {
-				const documents:Documents.Class = new Documents.Class();
+				const documents:Documents = new Documents();
 				documents.on( "*.*", "resource/", () => {
 					done.fail( "Should not enter here" );
 				}, ( error:Error ) => {
@@ -13826,14 +13811,14 @@ describe( module( "Carbon/Documents" ), ():void => {
 			} );
 
 			it( "should throw error when does not have context and no valid onError is provided", ( done:DoneFn ):void => {
-				const documents:Documents.Class = new Documents.Class();
+				const documents:Documents = new Documents();
 				expect( () => documents.on( "*.*", "resource/", () => done.fail( "Should not enter here" ), null ) )
 					.toThrowError( Errors.IllegalStateError, "This instance does not support messaging subscriptions." );
 				done();
 			} );
 
 			it( "should return error when context is no a Carbon instance", ( done:DoneFn ):void => {
-				const documents:Documents.Class = new Documents.Class( new class extends AbstractContext {
+				const documents:Documents = new Documents( new class extends AbstractContext {
 					_baseURI:string = "https://example.com";
 				} );
 
@@ -13847,7 +13832,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 			} );
 
 			it( "should return error when context is no a Carbon instance and no valid onError is provided", ( done:DoneFn ):void => {
-				const documents:Documents.Class = new Documents.Class( new class extends AbstractContext {
+				const documents:Documents = new Documents( new class extends AbstractContext {
 					_baseURI:string = "https://example.com";
 				} );
 
@@ -13857,7 +13842,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 			} );
 
 			it( "should call the createDestination from the messaging utils", ( done:DoneFn ):void => {
-				const carbon:Carbon = new Carbon( "https://example.com" );
+				const carbon:CarbonLDP = new CarbonLDP( "https://example.com" );
 				spyOn( carbon.messaging, "subscribe" );
 
 				const createDestinationSpy:jasmine.Spy = spyOn( MessagingUtils, "createDestination" );
@@ -13878,7 +13863,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				const destinationString:string = "destination/*";
 				spyOn( MessagingUtils, "createDestination" ).and.returnValue( destinationString );
 
-				const carbon:Carbon = new Carbon( "https://example.com" );
+				const carbon:CarbonLDP = new CarbonLDP( "https://example.com" );
 
 				const subscribeSpy:jasmine.Spy = spyOn( carbon.messaging, "subscribe" );
 
@@ -13904,84 +13889,84 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 			it( hasSignature(
 				[
-					{ name: "event", type: "Carbon.Messaging.Event.CHILD_CREATED", description: "The event of the subscription to remove." },
+					{ name: "event", type: "CarbonLDP.Messaging.Event.CHILD_CREATED", description: "The event of the subscription to remove." },
 					{ name: "uriPattern", type: "string", description: "URI and/or pattern of the resource(s) of the subscription to remove." },
-					{ name: "onEvent", type: "( message:Carbon.Messaging.ChildCreated.Class ) => void", description: "The onEvent callback of the subscription to be removed.\nIt must be the same call back provided in the `on` methods." },
+					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.ChildCreated.ChildCreated ) => void", description: "The onEvent callback of the subscription to be removed.\nIt must be the same call back provided in the `on` methods." },
 					{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the error thrown trying to remove the subscription." },
 				]
 			), ():void => {} );
 
 			it( hasSignature(
 				[
-					{ name: "event", type: "Carbon.Messaging.Event.ACCESS_POINT_CREATED", description: "The event of the subscription to remove." },
+					{ name: "event", type: "CarbonLDP.Messaging.Event.ACCESS_POINT_CREATED", description: "The event of the subscription to remove." },
 					{ name: "uriPattern", type: "string", description: "URI and/or pattern of the resource(s) of the subscription to remove." },
-					{ name: "onEvent", type: "( message:Carbon.Messaging.AccessPointCreated.Class ) => void", description: "The onEvent callback of the subscription to be removed.\nIt must be the same call back provided in the `on` methods." },
+					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.AccessPointCreated.AccessPointCreated ) => void", description: "The onEvent callback of the subscription to be removed.\nIt must be the same call back provided in the `on` methods." },
 					{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the error thrown trying to remove the subscription." },
 				]
 			), ():void => {} );
 
 			it( hasSignature(
 				[
-					{ name: "event", type: "Carbon.Messaging.Event.DOCUMENT_CREATED", description: "The event of the subscription to remove." },
+					{ name: "event", type: "CarbonLDP.Messaging.Event.DOCUMENT_CREATED", description: "The event of the subscription to remove." },
 					{ name: "uriPattern", type: "string", description: "URI and/or pattern of the resource(s) of the subscription to remove." },
-					{ name: "onEvent", type: "( message:Carbon.Messaging.DocumentCreated.Class ) => void", description: "The onEvent callback of the subscription to be removed.\nIt must be the same call back provided in the `on` methods." },
+					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.DocumentCreated.DocumentCreated ) => void", description: "The onEvent callback of the subscription to be removed.\nIt must be the same call back provided in the `on` methods." },
 					{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the error thrown trying to remove the subscription." },
 				]
 			), ():void => {} );
 
 			it( hasSignature(
 				[
-					{ name: "event", type: "Carbon.Messaging.Event.DOCUMENT_MODIFIED", description: "The event of the subscription to remove." },
+					{ name: "event", type: "CarbonLDP.Messaging.Event.DOCUMENT_MODIFIED", description: "The event of the subscription to remove." },
 					{ name: "uriPattern", type: "string", description: "URI and/or pattern of the resource(s) of the subscription to remove." },
-					{ name: "onEvent", type: "( message:Carbon.Messaging.DocumentModified.Class ) => void", description: "The onEvent callback of the subscription to be removed.\nIt must be the same call back provided in the `on` methods." },
+					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.DocumentModified.DocumentModified ) => void", description: "The onEvent callback of the subscription to be removed.\nIt must be the same call back provided in the `on` methods." },
 					{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the error thrown trying to remove the subscription." },
 				]
 			), ():void => {} );
 
 			it( hasSignature(
 				[
-					{ name: "event", type: "Carbon.Messaging.Event.DOCUMENT_DELETED", description: "The event of the subscription to remove." },
+					{ name: "event", type: "CarbonLDP.Messaging.Event.DOCUMENT_DELETED", description: "The event of the subscription to remove." },
 					{ name: "uriPattern", type: "string", description: "URI and/or pattern of the resource(s) of the subscription to remove." },
-					{ name: "onEvent", type: "( message:Carbon.Messaging.DocumentDeleted.Class ) => void", description: "The onEvent callback of the subscription to be removed.\nIt must be the same call back provided in the `on` methods." },
+					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.DocumentDeleted.DocumentDeleted ) => void", description: "The onEvent callback of the subscription to be removed.\nIt must be the same call back provided in the `on` methods." },
 					{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the error thrown trying to remove the subscription." },
 				]
 			), ():void => {} );
 
 			it( hasSignature(
 				[
-					{ name: "event", type: "Carbon.Messaging.Event.MEMBER_ADDED", description: "The event of the subscription to remove." },
+					{ name: "event", type: "CarbonLDP.Messaging.Event.MEMBER_ADDED", description: "The event of the subscription to remove." },
 					{ name: "uriPattern", type: "string", description: "URI and/or pattern of the resource(s) of the subscription to remove." },
-					{ name: "onEvent", type: "( message:Carbon.Messaging.MemberAdded.Class ) => void", description: "The onEvent callback of the subscription to be removed.\nIt must be the same call back provided in the `on` methods." },
+					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.MemberAdded.MemberAdded ) => void", description: "The onEvent callback of the subscription to be removed.\nIt must be the same call back provided in the `on` methods." },
 					{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the error thrown trying to remove the subscription." },
 				]
 			), ():void => {} );
 
 			it( hasSignature(
 				[
-					{ name: "event", type: "Carbon.Messaging.Event.MEMBER_REMOVED", description: "The event of the subscription to remove." },
+					{ name: "event", type: "CarbonLDP.Messaging.Event.MEMBER_REMOVED", description: "The event of the subscription to remove." },
 					{ name: "uriPattern", type: "string", description: "URI and/or pattern of the resource(s) of the subscription to remove." },
-					{ name: "onEvent", type: "( message:Carbon.Messaging.MemberRemoved.Class ) => void", description: "The onEvent callback of the subscription to be removed.\nIt must be the same call back provided in the `on` methods." },
+					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.MemberRemoved.MemberRemoved ) => void", description: "The onEvent callback of the subscription to be removed.\nIt must be the same call back provided in the `on` methods." },
 					{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the error thrown trying to remove the subscription." },
 				]
 			), ():void => {} );
 
 			it( hasSignature(
 				[
-					{ name: "event", type: "Carbon.Messaging.Event | string", description: "The event of the subscription to remove." },
+					{ name: "event", type: "CarbonLDP.Messaging.Event | string", description: "The event of the subscription to remove." },
 					{ name: "uriPattern", type: "string", description: "URI and/or pattern of the resource(s) of the subscription to remove." },
-					{ name: "onEvent", type: "( message:Carbon.Messaging.Message.Class ) => void", description: "The onEvent callback of the subscription to be removed.\nIt must be the same call back provided in the `on` methods." },
+					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.EventMessage.EventMessage ) => void", description: "The onEvent callback of the subscription to be removed.\nIt must be the same call back provided in the `on` methods." },
 					{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the error thrown trying to remove the subscription." },
 				]
 			), ():void => {} );
 
 			it( "should exists", ():void => {
-				const documents:Documents.Class = new Documents.Class();
+				const documents:Documents = new Documents();
 				expect( documents.off ).toBeDefined();
 				expect( documents.off ).toEqual( jasmine.any( Function ) );
 			} );
 
 			it( "should return error when does not have context", ( done:DoneFn ):void => {
-				const documents:Documents.Class = new Documents.Class();
+				const documents:Documents = new Documents();
 				documents.off( "*.*", "resource/", () => {
 					done.fail( "Should not enter here" );
 				}, ( error:Error ) => {
@@ -13992,14 +13977,14 @@ describe( module( "Carbon/Documents" ), ():void => {
 			} );
 
 			it( "should throw error when does not have context and no valid onError is provided", ( done:DoneFn ):void => {
-				const documents:Documents.Class = new Documents.Class();
+				const documents:Documents = new Documents();
 				expect( () => documents.off( "*.*", "resource/", () => done.fail( "Should not enter here" ), null ) )
 					.toThrowError( Errors.IllegalStateError, "This instance does not support messaging subscriptions." );
 				done();
 			} );
 
 			it( "should return error when context is no a Carbon instance", ( done:DoneFn ):void => {
-				const documents:Documents.Class = new Documents.Class( new class extends AbstractContext {
+				const documents:Documents = new Documents( new class extends AbstractContext {
 					_baseURI:string = "https://example.com";
 				} );
 
@@ -14013,7 +13998,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 			} );
 
 			it( "should return error when context is no a Carbon instance and no valid onError is provided", ( done:DoneFn ):void => {
-				const documents:Documents.Class = new Documents.Class( new class extends AbstractContext {
+				const documents:Documents = new Documents( new class extends AbstractContext {
 					_baseURI:string = "https://example.com";
 				} );
 
@@ -14023,7 +14008,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 			} );
 
 			it( "should call the createDestination from the messaging utils", ( done:DoneFn ):void => {
-				const carbon:Carbon = new Carbon( "https://example.com" );
+				const carbon:CarbonLDP = new CarbonLDP( "https://example.com" );
 				spyOn( carbon.messaging, "subscribe" );
 
 				const createDestinationSpy:jasmine.Spy = spyOn( MessagingUtils, "createDestination" );
@@ -14044,7 +14029,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 				const destinationString:string = "destination/*";
 				spyOn( MessagingUtils, "createDestination" ).and.returnValue( destinationString );
 
-				const carbon:Carbon = new Carbon( "https://example.com" );
+				const carbon:CarbonLDP = new CarbonLDP( "https://example.com" );
 
 				const unsubscribeSpy:jasmine.Spy = spyOn( carbon.messaging, "unsubscribe" );
 
@@ -14070,84 +14055,84 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 			it( hasSignature(
 				[
-					{ name: "event", type: "Carbon.Messaging.Event.CHILD_CREATED", description: "The event to subscribe for the notification." },
+					{ name: "event", type: "CarbonLDP.Messaging.Event.CHILD_CREATED", description: "The event to subscribe for the notification." },
 					{ name: "uriPattern", type: "string", description: "URI and/or pattern of the resource(s) to subscribe for the event specified." },
-					{ name: "onEvent", type: "( message:Carbon.Messaging.ChildCreated.Class ) => void", description: "Callback that receives the data message from the notification event." },
+					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.ChildCreated.ChildCreated ) => void", description: "Callback that receives the data message from the notification event." },
 					{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the errors thrown by the subscription." },
 				]
 			), ():void => {} );
 
 			it( hasSignature(
 				[
-					{ name: "event", type: "Carbon.Messaging.Event.ACCESS_POINT_CREATED", description: "The event to subscribe for the notification." },
+					{ name: "event", type: "CarbonLDP.Messaging.Event.ACCESS_POINT_CREATED", description: "The event to subscribe for the notification." },
 					{ name: "uriPattern", type: "string", description: "URI and/or pattern of the resource(s) to subscribe for the event specified." },
-					{ name: "onEvent", type: "( message:Carbon.Messaging.AccessPointCreated.Class ) => void", description: "Callback that receives the data message from the notification event." },
+					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.AccessPointCreated.AccessPointCreated ) => void", description: "Callback that receives the data message from the notification event." },
 					{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the errors thrown by the subscription." },
 				]
 			), ():void => {} );
 
 			it( hasSignature(
 				[
-					{ name: "event", type: "Carbon.Messaging.Event.DOCUMENT_CREATED", description: "The event to subscribe for the notification." },
+					{ name: "event", type: "CarbonLDP.Messaging.Event.DOCUMENT_CREATED", description: "The event to subscribe for the notification." },
 					{ name: "uriPattern", type: "string", description: "URI and/or pattern of the resource(s) to subscribe for the event specified." },
-					{ name: "onEvent", type: "( message:Carbon.Messaging.DocumentCreated.Class ) => void", description: "Callback that receives the data message from the notification event." },
+					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.DocumentCreated.DocumentCreated ) => void", description: "Callback that receives the data message from the notification event." },
 					{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the errors thrown by the subscription." },
 				]
 			), ():void => {} );
 
 			it( hasSignature(
 				[
-					{ name: "event", type: "Carbon.Messaging.Event.DOCUMENT_MODIFIED", description: "The event to subscribe for the notification." },
+					{ name: "event", type: "CarbonLDP.Messaging.Event.DOCUMENT_MODIFIED", description: "The event to subscribe for the notification." },
 					{ name: "uriPattern", type: "string", description: "URI and/or pattern of the resource(s) to subscribe for the event specified." },
-					{ name: "onEvent", type: "( message:Carbon.Messaging.DocumentModified.Class ) => void", description: "Callback that receives the data message from the notification event." },
+					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.DocumentModified.DocumentModified ) => void", description: "Callback that receives the data message from the notification event." },
 					{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the errors thrown by the subscription." },
 				]
 			), ():void => {} );
 
 			it( hasSignature(
 				[
-					{ name: "event", type: "Carbon.Messaging.Event.DOCUMENT_DELETED", description: "The event to subscribe for the notification." },
+					{ name: "event", type: "CarbonLDP.Messaging.Event.DOCUMENT_DELETED", description: "The event to subscribe for the notification." },
 					{ name: "uriPattern", type: "string", description: "URI and/or pattern of the resource(s) to subscribe for the event specified." },
-					{ name: "onEvent", type: "( message:Carbon.Messaging.DocumentDeleted.Class ) => void", description: "Callback that receives the data message from the notification event." },
+					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.DocumentDeleted.DocumentDeleted ) => void", description: "Callback that receives the data message from the notification event." },
 					{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the errors thrown by the subscription." },
 				]
 			), ():void => {} );
 
 			it( hasSignature(
 				[
-					{ name: "event", type: "Carbon.Messaging.Event.MEMBER_ADDED", description: "The event to subscribe for the notification." },
+					{ name: "event", type: "CarbonLDP.Messaging.Event.MEMBER_ADDED", description: "The event to subscribe for the notification." },
 					{ name: "uriPattern", type: "string", description: "URI and/or pattern of the resource(s) to subscribe for the event specified." },
-					{ name: "onEvent", type: "( message:Carbon.Messaging.MemberAdded.Class ) => void", description: "Callback that receives the data message from the notification event." },
+					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.MemberAdded.MemberAdded ) => void", description: "Callback that receives the data message from the notification event." },
 					{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the errors thrown by the subscription." },
 				]
 			), ():void => {} );
 
 			it( hasSignature(
 				[
-					{ name: "event", type: "Carbon.Messaging.Event.MEMBER_REMOVED", description: "The event to subscribe for the notification." },
+					{ name: "event", type: "CarbonLDP.Messaging.Event.MEMBER_REMOVED", description: "The event to subscribe for the notification." },
 					{ name: "uriPattern", type: "string", description: "URI and/or pattern of the resource(s) to subscribe for the event specified." },
-					{ name: "onEvent", type: "( message:Carbon.Messaging.MemberRemoved.Class ) => void", description: "Callback that receives the data message from the notification event." },
+					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.MemberRemoved.MemberRemoved ) => void", description: "Callback that receives the data message from the notification event." },
 					{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the errors thrown by the subscription." },
 				]
 			), ():void => {} );
 
 			it( hasSignature(
 				[
-					{ name: "event", type: "Carbon.Messaging.Event | string", description: "The event to subscribe for the notification." },
+					{ name: "event", type: "CarbonLDP.Messaging.Event | string", description: "The event to subscribe for the notification." },
 					{ name: "uriPattern", type: "string", description: "URI and/or pattern of the resource(s) to subscribe for the event specified." },
-					{ name: "onEvent", type: "( message:Carbon.Messaging.Message.Class ) => void", description: "Callback that receives the data message from the notification event." },
+					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.EventMessage.EventMessage ) => void", description: "Callback that receives the data message from the notification event." },
 					{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the errors thrown by the subscription." },
 				]
 			), ():void => {} );
 
 			it( "should exists", ():void => {
-				const documents:Documents.Class = new Documents.Class();
+				const documents:Documents = new Documents();
 				expect( documents.one ).toBeDefined();
 				expect( documents.one ).toEqual( jasmine.any( Function ) );
 			} );
 
 			it( "should call the `on` method", ( done:DoneFn ):void => {
-				const carbon:Carbon = new Carbon( "https://example.com" );
+				const carbon:CarbonLDP = new CarbonLDP( "https://example.com" );
 
 				const onSpy:jasmine.Spy = spyOn( carbon.documents, "on" );
 
@@ -14167,7 +14152,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 			} );
 
 			it( "should call the `off` method when the notification has been resolved", ( done:DoneFn ):void => {
-				const carbon:Carbon = new Carbon( "https://example.com" );
+				const carbon:CarbonLDP = new CarbonLDP( "https://example.com" );
 
 				const offSpy:jasmine.Spy = spyOn( carbon.documents, "off" );
 				const onSpy:jasmine.Spy = spyOn( carbon.documents, "on" )
@@ -14191,7 +14176,7 @@ describe( module( "Carbon/Documents" ), ():void => {
 			} );
 
 			it( "should subscribe and unsubscribe with the same destination and function", ( done:DoneFn ):void => {
-				const carbon:Carbon = new Carbon( "https://example.com" );
+				const carbon:CarbonLDP = new CarbonLDP( "https://example.com" );
 
 				const subscribeSpy:jasmine.Spy = spyOn( carbon.messaging, "subscribe" )
 					.and.callFake( ( destination:string, onEvent:() => void ) => onEvent() );
@@ -14215,22 +14200,22 @@ describe( module( "Carbon/Documents" ), ():void => {
 		), ():void => {
 
 			it( hasSignature(
-				"Subscribe to the `Carbon.Messaging.Event.DOCUMENT_CREATED` event notifications for the specified URI pattern.",
+				"Subscribe to the `CarbonLDP.Messaging.Event.DOCUMENT_CREATED` event notifications for the specified URI pattern.",
 				[
 					{ name: "uriPattern", type: "string", description: "URI and/or pattern of the resource(s) to subscribe for." },
-					{ name: "onEvent", type: "( message:Carbon.Messaging.DocumentCreated.Class ) => void", description: "Callback that receives the data message from the notifications event." },
+					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.DocumentCreated.DocumentCreated ) => void", description: "Callback that receives the data message from the notifications event." },
 					{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the errors thrown by the subscription." },
 				]
 			), ():void => {} );
 
 			it( "should exists", ():void => {
-				const documents:Documents.Class = new Documents.Class();
+				const documents:Documents = new Documents();
 				expect( documents.onDocumentCreated ).toBeDefined();
 				expect( documents.onDocumentCreated ).toEqual( jasmine.any( Function ) );
 			} );
 
 			it( "should call the `on` method", ( done:DoneFn ):void => {
-				const carbon:Carbon = new Carbon( "https://example.com" );
+				const carbon:CarbonLDP = new CarbonLDP( "https://example.com" );
 
 				const onSpy:jasmine.Spy = spyOn( carbon.documents, "on" );
 
@@ -14256,22 +14241,22 @@ describe( module( "Carbon/Documents" ), ():void => {
 		), ():void => {
 
 			it( hasSignature(
-				"Subscribe to the `Carbon.Messaging.Event.CHILD_CREATED` event notifications for the specified URI pattern.",
+				"Subscribe to the `CarbonLDP.Messaging.Event.CHILD_CREATED` event notifications for the specified URI pattern.",
 				[
 					{ name: "uriPattern", type: "string", description: "URI and/or pattern of the resource(s) to subscribe for." },
-					{ name: "onEvent", type: "( message:Carbon.Messaging.ChildCreated.Class ) => void", description: "Callback that receives the data message from the notifications event." },
+					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.ChildCreated.ChildCreated ) => void", description: "Callback that receives the data message from the notifications event." },
 					{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the errors thrown by the subscription." },
 				]
 			), ():void => {} );
 
 			it( "should exists", ():void => {
-				const documents:Documents.Class = new Documents.Class();
+				const documents:Documents = new Documents();
 				expect( documents.onChildCreated ).toBeDefined();
 				expect( documents.onChildCreated ).toEqual( jasmine.any( Function ) );
 			} );
 
 			it( "should call the `on` method", ( done:DoneFn ):void => {
-				const carbon:Carbon = new Carbon( "https://example.com" );
+				const carbon:CarbonLDP = new CarbonLDP( "https://example.com" );
 
 				const onSpy:jasmine.Spy = spyOn( carbon.documents, "on" );
 
@@ -14297,22 +14282,22 @@ describe( module( "Carbon/Documents" ), ():void => {
 		), ():void => {
 
 			it( hasSignature(
-				"Subscribe to the `Carbon.Messaging.Event.ACCESS_POINT_CREATED` event notifications for the specified URI pattern.",
+				"Subscribe to the `CarbonLDP.Messaging.Event.ACCESS_POINT_CREATED` event notifications for the specified URI pattern.",
 				[
 					{ name: "uriPattern", type: "string", description: "URI and/or pattern of the resource(s) to subscribe for." },
-					{ name: "onEvent", type: "( message:Carbon.Messaging.AccessPointCreated.Class ) => void", description: "Callback that receives the data message from the notifications event." },
+					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.AccessPointCreated.AccessPointCreated ) => void", description: "Callback that receives the data message from the notifications event." },
 					{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the errors thrown by the subscription." },
 				]
 			), ():void => {} );
 
 			it( "should exists", ():void => {
-				const documents:Documents.Class = new Documents.Class();
+				const documents:Documents = new Documents();
 				expect( documents.onAccessPointCreated ).toBeDefined();
 				expect( documents.onAccessPointCreated ).toEqual( jasmine.any( Function ) );
 			} );
 
 			it( "should call the `on` method", ( done:DoneFn ):void => {
-				const carbon:Carbon = new Carbon( "https://example.com" );
+				const carbon:CarbonLDP = new CarbonLDP( "https://example.com" );
 
 				const onSpy:jasmine.Spy = spyOn( carbon.documents, "on" );
 
@@ -14338,22 +14323,22 @@ describe( module( "Carbon/Documents" ), ():void => {
 		), ():void => {
 
 			it( hasSignature(
-				"Subscribe to the `Carbon.Messaging.Event.DOCUMENT_MODIFIED` event notifications for the specified URI pattern.",
+				"Subscribe to the `CarbonLDP.Messaging.Event.DOCUMENT_MODIFIED` event notifications for the specified URI pattern.",
 				[
 					{ name: "uriPattern", type: "string", description: "URI and/or pattern of the resource(s) to subscribe for." },
-					{ name: "onEvent", type: "( message:Carbon.Messaging.DocumentModified.Class ) => void", description: "Callback that receives the data message from the notifications event." },
+					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.DocumentModified.DocumentModified ) => void", description: "Callback that receives the data message from the notifications event." },
 					{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the errors thrown by the subscription." },
 				]
 			), ():void => {} );
 
 			it( "should exists", ():void => {
-				const documents:Documents.Class = new Documents.Class();
+				const documents:Documents = new Documents();
 				expect( documents.onDocumentModified ).toBeDefined();
 				expect( documents.onDocumentModified ).toEqual( jasmine.any( Function ) );
 			} );
 
 			it( "should call the `on` method", ( done:DoneFn ):void => {
-				const carbon:Carbon = new Carbon( "https://example.com" );
+				const carbon:CarbonLDP = new CarbonLDP( "https://example.com" );
 
 				const onSpy:jasmine.Spy = spyOn( carbon.documents, "on" );
 
@@ -14379,22 +14364,22 @@ describe( module( "Carbon/Documents" ), ():void => {
 		), ():void => {
 
 			it( hasSignature(
-				"Subscribe to the `Carbon.Messaging.Event.DOCUMENT_DELETED` event notifications for the specified URI pattern.",
+				"Subscribe to the `CarbonLDP.Messaging.Event.DOCUMENT_DELETED` event notifications for the specified URI pattern.",
 				[
 					{ name: "uriPattern", type: "string", description: "URI and/or pattern of the resource(s) to subscribe for." },
-					{ name: "onEvent", type: "( message:Carbon.Messaging.DocumentDeleted.Class ) => void", description: "Callback that receives the data message from the notifications event." },
+					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.DocumentDeleted.DocumentDeleted ) => void", description: "Callback that receives the data message from the notifications event." },
 					{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the errors thrown by the subscription." },
 				]
 			), ():void => {} );
 
 			it( "should exists", ():void => {
-				const documents:Documents.Class = new Documents.Class();
+				const documents:Documents = new Documents();
 				expect( documents.onDocumentDeleted ).toBeDefined();
 				expect( documents.onDocumentDeleted ).toEqual( jasmine.any( Function ) );
 			} );
 
 			it( "should call the `on` method", ( done:DoneFn ):void => {
-				const carbon:Carbon = new Carbon( "https://example.com" );
+				const carbon:CarbonLDP = new CarbonLDP( "https://example.com" );
 
 				const onSpy:jasmine.Spy = spyOn( carbon.documents, "on" );
 
@@ -14420,22 +14405,22 @@ describe( module( "Carbon/Documents" ), ():void => {
 		), ():void => {
 
 			it( hasSignature(
-				"Subscribe to the `Carbon.Messaging.Event.MEMBER_ADDED` event notifications for the specified URI pattern.",
+				"Subscribe to the `CarbonLDP.Messaging.Event.MEMBER_ADDED` event notifications for the specified URI pattern.",
 				[
 					{ name: "uriPattern", type: "string", description: "URI and/or pattern of the resource(s) to subscribe for." },
-					{ name: "onEvent", type: "( message:Carbon.Messaging.MemberAdded.Class ) => void", description: "Callback that receives the data message from the notifications event." },
+					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.MemberAdded.MemberAdded ) => void", description: "Callback that receives the data message from the notifications event." },
 					{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the errors thrown by the subscription." },
 				]
 			), ():void => {} );
 
 			it( "should exists", ():void => {
-				const documents:Documents.Class = new Documents.Class();
+				const documents:Documents = new Documents();
 				expect( documents.onMemberAdded ).toBeDefined();
 				expect( documents.onMemberAdded ).toEqual( jasmine.any( Function ) );
 			} );
 
 			it( "should call the `on` method", ( done:DoneFn ):void => {
-				const carbon:Carbon = new Carbon( "https://example.com" );
+				const carbon:CarbonLDP = new CarbonLDP( "https://example.com" );
 
 				const onSpy:jasmine.Spy = spyOn( carbon.documents, "on" );
 
@@ -14461,22 +14446,22 @@ describe( module( "Carbon/Documents" ), ():void => {
 		), ():void => {
 
 			it( hasSignature(
-				"Subscribe to the `Carbon.Messaging.Event.MEMBER_REMOVED` event notifications for the specified URI pattern.",
+				"Subscribe to the `CarbonLDP.Messaging.Event.MEMBER_REMOVED` event notifications for the specified URI pattern.",
 				[
 					{ name: "uriPattern", type: "string", description: "URI and/or pattern of the resource(s) to subscribe for." },
-					{ name: "onEvent", type: "( message:Carbon.Messaging.MemberRemoved.Class ) => void", description: "Callback that receives the data message from the notifications event." },
+					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.MemberRemoved.MemberRemoved ) => void", description: "Callback that receives the data message from the notifications event." },
 					{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the errors thrown by the subscription." },
 				]
 			), ():void => {} );
 
 			it( "should exists", ():void => {
-				const documents:Documents.Class = new Documents.Class();
+				const documents:Documents = new Documents();
 				expect( documents.onMemberRemoved ).toBeDefined();
 				expect( documents.onMemberRemoved ).toEqual( jasmine.any( Function ) );
 			} );
 
 			it( "should call the `on` method", ( done:DoneFn ):void => {
-				const carbon:Carbon = new Carbon( "https://example.com" );
+				const carbon:CarbonLDP = new CarbonLDP( "https://example.com" );
 
 				const onSpy:jasmine.Spy = spyOn( carbon.documents, "on" );
 
@@ -14498,9 +14483,9 @@ describe( module( "Carbon/Documents" ), ():void => {
 
 	} );
 
-	it( hasDefaultExport( "Carbon.Documents.Class" ), ():void => {
+	it( hasDefaultExport( "CarbonLDP.Documents.Documents" ), ():void => {
 		expect( DefaultExport ).toBeDefined();
-		expect( DefaultExport ).toBe( Documents.Class );
+		expect( DefaultExport ).toBe( Documents );
 	} );
 
 } )

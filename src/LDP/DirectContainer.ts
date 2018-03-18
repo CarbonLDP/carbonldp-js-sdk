@@ -1,52 +1,68 @@
-import * as Document from "./../Document";
-import * as Errors from "./../Errors";
-import * as NS from "./../NS";
-import * as Pointer from "./../Pointer";
-import * as Utils from "./../Utils";
+import { Document } from "../Document";
+import { IllegalArgumentError } from "../Errors/IllegalArgumentError";
+import { ModelFactory } from "../ModelFactory";
+import { Pointer } from "../Pointer";
+import { LDP } from "../Vocabularies/LDP";
 
-export const RDF_CLASS:string = NS.LDP.Class.DirectContainer;
-
-export interface Class extends Document.Class {
-	membershipResource:Pointer.Class;
+interface DirectContainerBase {
+	membershipResource:Pointer;
+	hasMemberRelation:Pointer;
 }
 
-export class Factory {
-	static hasClassProperties( resource:object ):boolean {
-		return Utils.hasPropertyDefined( resource, "membershipResource" )
+export interface DirectContainer extends Document {
+	membershipResource:Pointer;
+	hasMemberRelation:Pointer;
+}
+
+
+export interface DirectContainerFactory extends ModelFactory<DirectContainer> {
+	TYPE:string;
+
+	is( object:object ):object is DirectContainer;
+
+
+	create( membershipResource:Pointer, hasMemberRelation:string | Pointer, isMemberOfRelation?:string | Pointer ):DirectContainer;
+
+	createFrom<T extends object>( object:T, membershipResource:Pointer, hasMemberRelation:string | Pointer, isMemberOfRelation?:string | Pointer ):T & DirectContainer;
+}
+
+export const DirectContainer:DirectContainerFactory = {
+	TYPE: LDP.DirectContainer,
+
+	is( object:object ):object is DirectContainer {
+		return Document.is( object )
+			&& object.hasType( DirectContainer.TYPE )
+			&& object.hasOwnProperty( "membershipResource" )
 			;
-	}
+	},
 
-	static is( object:object ):object is Class {
-		return Document.Factory.is( object )
-			&& object.hasType( RDF_CLASS )
-			&& Factory.hasClassProperties( object )
-			;
-	}
+	create( membershipResource:Pointer, hasMemberRelation:string | Pointer, isMemberOfRelation?:string | Pointer ):DirectContainer {
+		return DirectContainer.createFrom( {}, membershipResource, hasMemberRelation, isMemberOfRelation );
+	},
 
-	static create( membershipResource:Pointer.Class, hasMemberRelation:string | Pointer.Class, isMemberOfRelation?:string | Pointer.Class ):Class {
-		return Factory.createFrom( {}, membershipResource, hasMemberRelation, isMemberOfRelation );
-	}
+	createFrom<T extends object>( object:T, membershipResource:Pointer, hasMemberRelation:string | Pointer, isMemberOfRelation?:string | Pointer ):T & DirectContainer {
+		if( DirectContainer.is( object ) ) throw new IllegalArgumentError( "The base object is already a DirectContainer." );
 
-	static createFrom<T extends object>( object:T, membershipResource:Pointer.Class, hasMemberRelation:string | Pointer.Class, isMemberOfRelation?:string | Pointer.Class ):T & Class {
-		if( Factory.is( object ) ) throw new Errors.IllegalArgumentError( "The base object is already a DirectContainer." );
-		if( ! membershipResource ) throw new Errors.IllegalArgumentError( "The property membershipResource cannot be null." );
-		if( ! hasMemberRelation ) throw new Errors.IllegalArgumentError( "The property hasMemberRelation cannot be empty." );
-		if( ! isMemberOfRelation && Utils.isDefined( isMemberOfRelation ) ) throw new Errors.IllegalArgumentError( "The property isMemberOfRelation cannot be empty." );
+		if( ! membershipResource ) throw new IllegalArgumentError( "The property membershipResource is required." );
+		if( ! hasMemberRelation ) throw new IllegalArgumentError( "The property hasMemberRelation is required." );
 
-		let container:T & Class = <any> object;
-		if( ! Document.Factory.is( object ) ) container = <any> Document.Factory.createFrom( object );
+		const containerBase:T & DirectContainerBase = Object.assign( object, {
+			membershipResource,
+			// TODO: Handle properties correctly and validate them
+			hasMemberRelation: <Pointer> hasMemberRelation,
+		} );
 
-		container.types.push( NS.LDP.Class.Container );
-		container.types.push( NS.LDP.Class.DirectContainer );
+		const container:T & DirectContainer = Document.is( containerBase ) ?
+			containerBase : Document.createFrom( containerBase );
 
-		container.membershipResource = membershipResource;
+		container.addType( DirectContainer.TYPE );
 
 		// TODO: Handle properties correctly and validate them
-		container.hasMemberRelation = <Pointer.Class> hasMemberRelation;
-		container.isMemberOfRelation = <Pointer.Class> isMemberOfRelation;
+		if( isMemberOfRelation ) container.isMemberOfRelation = <Pointer> isMemberOfRelation;
 
 		return container;
-	}
-}
+	},
+};
 
-export default Class;
+
+export default DirectContainer;
