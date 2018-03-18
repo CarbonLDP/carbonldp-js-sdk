@@ -703,7 +703,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					{ name: "requestOptions", type: "CarbonLDP.HTTP.Request.RequestOptions", optional: true, description: "Customizable options for the request." },
 					{ name: "queryBuilderFn", type: "( queryBuilder:CarbonLDP.SPARQL.QueryDocument.QueryDocumentBuilder.QueryDocumentBuilder ) => CarbonLDP.SPARQL.QueryDocument.QueryDocumentBuilder.QueryDocumentBuilder", optional: true, description: "Function that receives a the builder that helps you to construct the retrieval query.\nThe same builder must be returned." },
 				],
-				{ type: "Promise<[ T & CarbonLDP.PersistedDocument.PersistedDocument, HTTP.Response.Response ]>" }
+				{ type: "Promise<T & CarbonLDP.PersistedDocument.PersistedDocument>" }
 			), ():void => {} );
 
 			it( hasSignature(
@@ -712,7 +712,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					{ name: "uri", type: "string", description: "The URI of the document to retrieve." },
 					{ name: "queryBuilderFn", type: "( queryBuilder:CarbonLDP.SPARQL.QueryDocument.QueryDocumentBuilder.QueryDocumentBuilder ) => CarbonLDP.SPARQL.QueryDocument.QueryDocumentBuilder.QueryDocumentBuilder", optional: true, description: "Function that receives a the builder that helps you to construct the retrieval query.\nThe same builder must be returned." },
 				],
-				{ type: "Promise<[ T & CarbonLDP.PersistedDocument.PersistedDocument, HTTP.Response.Response ]>" }
+				{ type: "Promise<T & CarbonLDP.PersistedDocument.PersistedDocument>" }
 			), ():void => {} );
 
 			it( "should release cached request when failed", ( done:DoneFn ):void => {
@@ -734,10 +734,12 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				// First failed request
 				spySend.and.returnValue( Promise.reject( new Response( {} as any, "A error in the GET request." ) ) );
 				documents.get( "resource/" )
-					.then( () => {
+					.then<PersistedDocument>( () => {
 						done.fail( "Should not have been resolved." );
+
+						return null;
 					} )
-					.catch( ( error:Error ) => {
+					.catch<PersistedDocument>( ( error:Error ) => {
 						expect( error ).toEqual( new Error( "A error in the GET request." ) );
 
 						// Second correct request
@@ -750,12 +752,13 @@ describe( module( "carbonldp/Documents" ), ():void => {
 								},
 							} ),
 						] ) );
+
 						return documents.get( "resource/" );
 					} )
-					.then( ( responseData ) => {
-						expect( responseData ).toBeDefined();
-						expect( responseData[ 0 ] ).toBeDefined();
-						expect( responseData[ 0 ][ "id" ] ).toBe( "http://example.com/resource/" );
+					.then( ( document ) => {
+						expect( document ).toBeDefined();
+						expect( document.id ).toBe( "http://example.com/resource/" );
+
 						done();
 					} )
 					.catch( error => {
@@ -908,12 +911,9 @@ describe( module( "carbonldp/Documents" ), ():void => {
 						},
 					} );
 
-					documents.get( "https://example.com/resource/" ).then( ( [ document, response ]:[ PersistedDocument, Response ] ):void => {
+					documents.get( "https://example.com/resource/" ).then( ( document:PersistedDocument ):void => {
 						expect( document ).toBeDefined();
 						expect( Utils.isObject( document ) ).toEqual( true );
-
-						expect( response ).toBeDefined();
-						expect( Utils.isObject( response ) ).toEqual( true );
 
 						expect( document[ "string" ] ).toBe( "Document Resource" );
 
@@ -1019,12 +1019,9 @@ describe( module( "carbonldp/Documents" ), ():void => {
 						},
 					} );
 
-					documents.get( "https://example.com/resource/" ).then( ( [ document, response ]:[ PersistedDocument, Response ] ):void => {
+					documents.get( "https://example.com/resource/" ).then( ( document:PersistedDocument ):void => {
 						expect( document ).toBeDefined();
 						expect( Utils.isObject( document ) ).toEqual( true );
-
-						expect( response ).toBeDefined();
-						expect( Utils.isObject( response ) ).toEqual( true );
 
 						expect( document.id ).toBe( "https://example.com/another-resource/" );
 						expect( document[ "string" ] ).toBe( "Document Resource" );
@@ -1226,9 +1223,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 								} ),
 							},
 						} )
-					).then( ( [ document, response ] ) => {
-						expect( response ).toEqual( jasmine.any( Response ) );
-
+					).then( ( document ) => {
 						expect( PersistedDocument.is( document ) ).toBe( true );
 						expect( document ).toEqual( jasmine.objectContaining( {
 							"_eTag": "\"1-12345\"",
@@ -1354,9 +1349,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 								} ),
 							},
 						} )
-					).then( ( [ document, response ] ) => {
-						expect( response ).toEqual( jasmine.any( Response ) );
-
+					).then( ( document ) => {
 						expect( PersistedDocument.is( document ) ).toBe( true );
 						expect( PersistedDocument.is( document.property2 ) ).toBe( true );
 
@@ -1447,7 +1440,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 								} ),
 							},
 						} )
-					).then( ( [ document ] ) => {
+					).then( ( document ) => {
 						expect( document._partialMetadata ).toEqual( jasmine.any( PartialMetadata ) );
 						expect( document._partialMetadata.schema ).toEqual( ObjectSchema.ObjectSchemaDigester.digestSchema( {
 							"property1": {
@@ -1615,7 +1608,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 								},
 							} )
 						);
-					} ).then( ( [ document ] ) => {
+					} ).then( ( document ) => {
 						expect( document._partialMetadata ).toEqual( jasmine.any( PartialMetadata ) );
 						expect( document._partialMetadata.schema ).toEqual( ObjectSchema.ObjectSchemaDigester.digestSchema( {
 							"property4": {
@@ -1781,7 +1774,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 								},
 							} )
 						);
-					} ).then( ( [ document ] ) => {
+					} ).then( ( document ) => {
 						expect( PersistedDocument.is( document ) ).toBe( true );
 						expect( document ).toEqual( jasmine.objectContaining( {
 							"property4": false,
@@ -2024,9 +2017,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 								} ),
 							},
 						} )
-					).then( ( [ document, response ] ) => {
-						expect( response ).toEqual( jasmine.any( Response ) );
-
+					).then( ( document ) => {
 						expect( PersistedDocument.is( document ) ).toBe( true );
 						expect( document ).toEqual( jasmine.objectContaining( {
 							"_eTag": "\"1-12345\"",
@@ -2146,9 +2137,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 								} ),
 							},
 						} )
-					).then( ( [ document, response ] ) => {
-						expect( response ).toEqual( jasmine.any( Response ) );
-
+					).then( ( document ) => {
 						expect( PersistedDocument.is( document ) ).toBe( true );
 						expect( PersistedDocument.is( document.property2 ) ).toBe( true );
 
@@ -2179,7 +2168,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					{ name: "documentURI", type: "string", description: "The URI to verify if it exists." },
 					{ name: "requestOptions", type: "CarbonLDP.HTTP.Request.RequestOptions", optional: true, description: "Customizable options for the request." },
 				],
-				{ type: "Promise<[ boolean, CarbonLDP.HTTP.Response.Response ]>" }
+				{ type: "Promise<boolean>" }
 			), ( done:DoneFn ):void => {
 				let promises:Promise<any>[] = [];
 
@@ -2196,22 +2185,9 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				let context:MockedContext = new MockedContext();
 				let documents:Documents = context.documents;
 
-				let spies:any = {
-					exists: ( [ exists, response ]:[ boolean, Response ] ):void => {
-						expect( exists ).toBe( true );
-						expect( response instanceof Response ).toBe( true );
-					},
-					notExists: ( [ exists, response ]:[ boolean, Response ] ):void => {
-						expect( exists ).toBe( false );
-						expect( response instanceof Response ).toBe( true );
-					},
-					fail: ( error:HTTPError ):void => {
-						expect( error instanceof HTTPError ).toBe( true );
-					},
-				};
-				let spyExists:jasmine.Spy = spyOn( spies, "exists" ).and.callThrough();
-				let spyNotExists:jasmine.Spy = spyOn( spies, "notExists" ).and.callThrough();
-				let spyFail:jasmine.Spy = spyOn( spies, "fail" ).and.callThrough();
+				let spyExists:jasmine.Spy = jasmine.createSpy( "exists" );
+				let spyNotExists:jasmine.Spy = jasmine.createSpy( "notExists" );
+				let spyFail:jasmine.Spy = jasmine.createSpy( "fail" );
 
 				jasmine.Ajax.stubRequest( "http://example.com/resource/exists/", null, "HEAD" ).andReturn( {
 					status: 200,
@@ -2227,20 +2203,26 @@ describe( module( "carbonldp/Documents" ), ():void => {
 
 				promise = documents.exists( "http://example.com/resource/exists/" );
 				expect( promise instanceof Promise ).toBe( true );
-				promises.push( promise.then( spies.exists ) );
+				promises.push( promise.then( spyExists ) );
 
 				promise = documents.exists( "http://example.com/resource/not-exists/" );
 				expect( promise instanceof Promise ).toBe( true );
-				promises.push( promise.then( spies.notExists ) );
+				promises.push( promise.then( spyNotExists ) );
 
 				promise = documents.exists( "http://example.com/resource/error/" );
 				expect( promise instanceof Promise ).toBe( true );
-				promises.push( promise.catch( spies.fail ) );
+				promises.push( promise.catch( spyFail ) );
 
 				Promise.all( promises ).then( ():void => {
 					expect( spyExists ).toHaveBeenCalledTimes( 1 );
+					expect( spyExists ).toHaveBeenCalledWith( true );
+
 					expect( spyNotExists ).toHaveBeenCalledTimes( 1 );
+					expect( spyNotExists ).toHaveBeenCalledWith( false );
+
 					expect( spyFail ).toHaveBeenCalledTimes( 1 );
+					expect( spyFail ).toHaveBeenCalledWith( jasmine.any( HTTPError ) );
+
 					done();
 				}, done.fail );
 			} );
@@ -2365,7 +2347,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					{ name: "childObject", type: "T", description: "A normal JavaScript object that will be converted and persisted as a new child document." },
 					{ name: "requestOptions", type: "CarbonLDP.HTTP.Request.RequestOptions", optional: true, description: "Customizable options for the request." },
 				],
-				{ type: "Promise<[ T & CarbonLDP.PersistedProtectedDocument.PersistedProtectedDocument, CarbonLDP.HTTP.Response.Response ]>" }
+				{ type: "Promise<T & CarbonLDP.PersistedProtectedDocument.PersistedProtectedDocument>" }
 			), ():void => {} );
 
 			it( hasSignature(
@@ -2376,7 +2358,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					{ name: "slug", type: "string", optional: true, description: "Slug that will be used for the URI of the new child." },
 					{ name: "requestOptions", type: "CarbonLDP.HTTP.Request.RequestOptions", optional: true, description: "Customizable options for the request." },
 				],
-				{ type: "Promise<[ T & CarbonLDP.PersistedProtectedDocument.PersistedProtectedDocument, CarbonLDP.HTTP.Response.Response ]>" }
+				{ type: "Promise<T & CarbonLDP.PersistedProtectedDocument.PersistedProtectedDocument>" }
 			), ():void => {} );
 
 			it( isDefined(), ():void => {
@@ -2495,7 +2477,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					};
 
 					try {
-						const [ document ] = await documents.createChild<RawDocument>( "/", rawDocument );
+						const document:PersistedDocument & RawDocument = await documents.createChild<RawDocument>( "/", rawDocument );
 
 						expect( document.blankNode1 ).toBe( rawDocument.blankNode1 );
 						expect( document.blankNode1.id ).toBe( "_:new-1" );
@@ -2539,7 +2521,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 
 				it( "should convert plain object into document before request", ( done:DoneFn ):void => {
 					const spy:jasmine.Spy = spyOn( Document, "createFrom" );
-					spyOn( documents, "persistDocument" as any ).and.returnValue( Promise.resolve( [] ) );
+					spyOn( documents, "_persistDocument" as any ).and.returnValue( Promise.resolve( [] ) );
 
 					const childObject:object = {};
 					documents
@@ -2575,9 +2557,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					} );
 
 					const childObject:object = {};
-					documents.createChild( "https://example.com/parent-resource/", childObject ).then( ( [ document, response ]:[ PersistedDocument, Response ] ):void => {
-						expect( response ).toEqual( jasmine.any( Response ) );
-
+					documents.createChild( "https://example.com/parent-resource/", childObject ).then( ( document:PersistedDocument ):void => {
 						expect( childObject ).toBe( document );
 
 						expect( PersistedDocument.is( document ) ).toBe( true );
@@ -2611,9 +2591,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 
 							return documents.createChild( "https://example.com/parent-resource/", childObject );
 						} )
-						.then( ( [ document, response ]:[ PersistedDocument, Response ] ):void => {
-							expect( response ).toEqual( jasmine.any( Response ) );
-
+						.then( ( document:PersistedDocument ):void => {
 							expect( PersistedDocument.is( document ) ).toBe( true );
 							expect( document.id ).toBe( "https://example.com/parent-resource/new-resource/" );
 
@@ -2740,7 +2718,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					{ name: "childrenObjects", type: "T[]", description: "An array with the objects to be converted and persisted as new children of the parent document." },
 					{ name: "requestOptions", type: "CarbonLDP.HTTP.Request.RequestOptions", optional: true, description: "Customizable options for every the request." },
 				],
-				{ type: "Promise<[ (T & CarbonLDP.PersistedProtectedDocument.PersistedProtectedDocument)[], CarbonLDP.HTTP.Response.Response[] ]>", description: "Promise that contains a tuple with an array of the new UNRESOLVED persisted children, and another array with the response class of every request." }
+				{ type: "Promise<(T & CarbonLDP.PersistedProtectedDocument.PersistedProtectedDocument)[]>", description: "Promise that contains the new UNRESOLVED persisted children." }
 			), ():void => {} );
 
 			it( hasSignature(
@@ -2751,7 +2729,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					{ name: "slugs", type: "string[]", optional: true, description: "Array with the slugs that corresponds to each object in `childrenObjects`, in the order in which they were defined. If an element in the array is undefined or null, the slug will be generated by the platform." },
 					{ name: "requestOptions", type: "CarbonLDP.HTTP.Request.RequestOptions", optional: true, description: "Customizable options for every the request." },
 				],
-				{ type: "Promise<[ (T & CarbonLDP.PersistedProtectedDocument.PersistedProtectedDocument)[], CarbonLDP.HTTP.Response.Response[] ]>", description: "Promise that contains a tuple with an array of the new UNRESOLVED persisted children, and another array with the response class of every request." }
+				{ type: "Promise<(T & CarbonLDP.PersistedProtectedDocument.PersistedProtectedDocument)[]>", description: "Promise that contains the new UNRESOLVED persisted children." }
 			), ():void => {} );
 
 			it( isDefined(), ():void => {
@@ -2815,7 +2793,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 
 				it( "should convert plain objects into documents before requests", ( done:DoneFn ):void => {
 					const spy:jasmine.Spy = spyOn( Document, "createFrom" );
-					spyOn( documents, "persistDocument" as any ).and.returnValue( Promise.resolve( [] ) );
+					spyOn( documents, "_persistDocument" as any ).and.returnValue( Promise.resolve( [] ) );
 
 					const childObjects:object[] = [ { index: 1 }, { index: 2 }, { index: 3 } ];
 					documents
@@ -2852,12 +2830,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					const childObjects:object[] = [ { index: 0 }, { index: 1 }, { index: 2 } ];
 
 					documents.createChildren( "https://example.com/parent-resource/", childObjects )
-						.then( ( [ persistedDocuments, responses ]:[ PersistedDocument[], Response[] ] ):void => {
-							expect( responses ).toEqual( new Array( 3 ).fill( jasmine.anything() ) );
-							responses.forEach( response => {
-								expect( response ).toEqual( jasmine.any( Response ) );
-							} );
-
+						.then( ( persistedDocuments:PersistedDocument[] ):void => {
 							expect( persistedDocuments ).toEqual( new Array( 3 ).fill( jasmine.anything() ) );
 							persistedDocuments.forEach( ( document, index ) => {
 								expect( childObjects[ index ] ).toBe( document );
@@ -3011,7 +2984,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					{ name: "childObject", type: "T", description: " A normal JavaScript object that will be converted and persisted as a new child document." },
 					{ name: "requestOptions", type: "CarbonLDP.HTTP.Request.RequestOptions", optional: true, description: "Customizable options for the request." },
 				],
-				{ type: "Promise<[ T & CarbonLDP.PersistedProtectedDocument.PersistedProtectedDocument, CarbonLDP.HTTP.Response.Response[] ]>" }
+				{ type: "Promise<T & CarbonLDP.PersistedProtectedDocument.PersistedProtectedDocument>" }
 			), ():void => {} );
 
 			it( hasSignature(
@@ -3022,7 +2995,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					{ name: "slug", type: "string", optional: true, description: "Slug that will be used for the URI of the new child." },
 					{ name: "requestOptions", type: "CarbonLDP.HTTP.Request.RequestOptions", optional: true, description: "Customizable options for the request." },
 				],
-				{ type: "Promise<[ T & CarbonLDP.PersistedProtectedDocument.PersistedProtectedDocument, CarbonLDP.HTTP.Response.Response[] ]>" }
+				{ type: "Promise<T & CarbonLDP.PersistedProtectedDocument.PersistedProtectedDocument>" }
 			), ():void => {} );
 
 			it( isDefined(), ():void => {
@@ -3168,7 +3141,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					};
 
 					try {
-						const [ document ] = await documents.createChildAndRetrieve<RawDocument>( "/", rawDocument );
+						const document:PersistedDocument & RawDocument = await documents.createChildAndRetrieve<RawDocument>( "/", rawDocument );
 
 						expect( document.getFragments().length ).toBe( 2 );
 
@@ -3214,7 +3187,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 
 				it( "should convert plain object into document before request", ( done:DoneFn ):void => {
 					const spy:jasmine.Spy = spyOn( Document, "createFrom" );
-					spyOn( documents, "persistDocument" as any ).and.returnValue( Promise.resolve( [] ) );
+					spyOn( documents, "_persistDocument" as any ).and.returnValue( Promise.resolve( [] ) );
 
 					const childObject:object = {};
 					documents
@@ -3275,9 +3248,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					};
 
 					documents.createChildAndRetrieve( "https://example.com/parent-resource/", childObject )
-						.then( ( [ document, response ]:[ PersistedDocument, Response ] ) => {
-							expect( response ).toEqual( jasmine.any( Response ) );
-
+						.then( ( document:PersistedDocument ) => {
 							expect( childObject ).toBe( document );
 							expect( document ).toEqual( jasmine.objectContaining( {
 								_eTag: "\"1-12345\"",
@@ -3333,10 +3304,8 @@ describe( module( "carbonldp/Documents" ), ():void => {
 
 							return documents.createChildAndRetrieve( "https://example.com/parent-resource/", childObject );
 						} )
-						.then( ( [ document, response ]:[ PersistedDocument, Response ] ):void => {
-							expect( response ).toEqual( jasmine.any( Response ) );
-
-							expect( childObject ).toEqual( jasmine.objectContaining( {
+						.then( ( document:PersistedDocument ):void => {
+							expect( document ).toEqual( jasmine.objectContaining( {
 								_eTag: "\"1-12345\"",
 								id: "https://example.com/parent-resource/new-resource/",
 								property: "my UPDATED property",
@@ -3468,7 +3437,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					{ name: "childrenObjects", type: "T[]", description: "An array with the objects to be converted and persisted as new children of the parent document." },
 					{ name: "requestOptions", type: "CarbonLDP.HTTP.Request.RequestOptions", optional: true, description: "Customizable options for every the request." },
 				],
-				{ type: "Promise<[ (T & CarbonLDP.PersistedProtectedDocument.PersistedProtectedDocument)[], [ CarbonLDP.HTTP.Response.Response[], CarbonLDP.HTTP.Response.Response[] ] ]>", description: "Promise that contains a tuple with an array of the new and resolved persisted children, and another tuple with two arrays containing the response class of every request." }
+				{ type: "Promise<(T & CarbonLDP.PersistedProtectedDocument.PersistedProtectedDocument)[]>", description: "Promise that contains the new and resolved persisted children." }
 			), ():void => {} );
 
 			it( hasSignature(
@@ -3479,7 +3448,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					{ name: "slugs", type: "string[]", optional: true, description: "Array with the slugs that corresponds to each object in `childrenObjects`, in the order in which they were defined. If an element in the array is undefined or null, the slug will be generated by the platform." },
 					{ name: "requestOptions", type: "CarbonLDP.HTTP.Request.RequestOptions", optional: true, description: "Customizable options for every the request." },
 				],
-				{ type: "Promise<[ (T & CarbonLDP.PersistedProtectedDocument.PersistedProtectedDocument)[], [ CarbonLDP.HTTP.Response.Response[], CarbonLDP.HTTP.Response.Response[] ] ]>", description: "Promise that contains a tuple with an array of the new and resolved persisted children, and another tuple with two arrays containing the response class of every request." }
+				{ type: "Promise<(T & CarbonLDP.PersistedProtectedDocument.PersistedProtectedDocument)[]>", description: "Promise that contains the new and resolved persisted children." }
 			), ():void => {} );
 
 			it( isDefined(), ():void => {
@@ -3543,7 +3512,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 
 				it( "should convert plain objects into documents before requests", ( done:DoneFn ):void => {
 					const spy:jasmine.Spy = spyOn( Document, "createFrom" );
-					spyOn( documents, "persistDocument" as any ).and.returnValue( Promise.resolve( [] ) );
+					spyOn( documents, "_persistDocument" as any ).and.returnValue( Promise.resolve( [] ) );
 
 					const childObjects:object[] = [ { index: 1 }, { index: 2 }, { index: 3 } ];
 					documents
@@ -3580,12 +3549,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					const childObjects:object[] = [ { index: 0 }, { index: 1 }, { index: 2 } ];
 
 					documents.createChildrenAndRetrieve( "https://example.com/parent-resource/", childObjects )
-						.then( ( [ persistedDocuments, responses ]:[ PersistedDocument[], Response[] ] ):void => {
-							expect( responses ).toEqual( new Array( 3 ).fill( jasmine.anything() ) );
-							responses.forEach( response => {
-								expect( response ).toEqual( jasmine.any( Response ) );
-							} );
-
+						.then( ( persistedDocuments:PersistedDocument[] ):void => {
 							expect( persistedDocuments ).toEqual( new Array( 3 ).fill( jasmine.anything() ) );
 							persistedDocuments.forEach( ( document, index ) => {
 								expect( childObjects[ index ] ).toBe( document );
@@ -3794,7 +3758,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					{ name: "parentURI", type: "string", description: "URI of the document from where to look for its children." },
 					{ name: "requestOptions", type: "CarbonLDP.HTTP.Request.RequestOptions", optional: true, description: "Customizable options for the request." },
 				],
-				{ type: "Promise<[ CarbonLDP.PersistedDocument.PersistedDocument[], CarbonLDP.HTTP.Response.Response ]>" }
+				{ type: "Promise<CarbonLDP.PersistedDocument.PersistedDocument[]>" }
 			), () => {} );
 
 			it( isDefined(), () => {
@@ -3934,9 +3898,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 
 					documents
 						.listChildren( "https://example.com/resource/" )
-						.then( ( [ myDocuments, response ] ) => {
-							expect( response ).toEqual( jasmine.any( Response ) );
-
+						.then( ( myDocuments ) => {
 							expect( myDocuments ).toEqual( jasmine.any( Array ) );
 							expect( myDocuments.length ).toBe( 2 );
 
@@ -4058,9 +4020,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 
 					documents
 						.listChildren( "https://example.com/resource/" )
-						.then( ( [ myDocuments, response ] ) => {
-							expect( response ).toEqual( jasmine.any( Response ) );
-
+						.then( ( myDocuments ) => {
 							expect( myDocuments ).toEqual( jasmine.any( Array ) );
 							expect( myDocuments.length ).toBe( 2 );
 
@@ -4094,7 +4054,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					{ name: "requestOptions", type: "CarbonLDP.HTTP.Request.RequestOptions", optional: true, description: "Customizable options for the request." },
 					{ name: "queryBuilderFn", type: "( queryBuilder:CarbonLDP.SPARQL.QueryDocument.QueryDocumentsBuilder.QueryDocumentsBuilder ) => CarbonLDP.SPARQL.QueryDocument.QueryDocumentsBuilder.QueryDocumentsBuilder", optional: true, description: "Function that receives a the builder that helps you to construct the children retrieval query.\nThe same builder must be returned." },
 				],
-				{ type: "Promise<[ (T & CarbonLDP.PersistedDocument.PersistedDocument)[], CarbonLDP.HTTP.Response.Response ]>" }
+				{ type: "Promise<(T & CarbonLDP.PersistedDocument.PersistedDocument)[]>" }
 			), () => {} );
 
 			it( hasSignature(
@@ -4103,7 +4063,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					{ name: "parentURI", type: "string", description: "URI of the document from where to look for its children." },
 					{ name: "queryBuilderFn", type: "( queryBuilder:CarbonLDP.SPARQL.QueryDocument.QueryDocumentsBuilder.QueryDocumentsBuilder ) => CarbonLDP.SPARQL.QueryDocument.QueryDocumentsBuilder.QueryDocumentsBuilder", optional: true, description: "Function that receives a the builder that helps you to construct the children retrieval query.\nThe same builder must be returned." },
 				],
-				{ type: "Promise<[ (T & CarbonLDP.PersistedDocument.PersistedDocument)[], CarbonLDP.HTTP.Response.Response ]>" }
+				{ type: "Promise<(T & CarbonLDP.PersistedDocument.PersistedDocument)[]>" }
 			), () => {} );
 
 			it( isDefined(), () => {
@@ -4757,9 +4717,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 							},
 						} )
 						.orderBy( "property2.property2", "DESC" )
-					).then( ( [ myDocuments, response ] ) => {
-						expect( response ).toEqual( jasmine.any( Response ) );
-
+					).then( ( myDocuments ) => {
 						expect( myDocuments[ 0 ] ).toEqual( jasmine.objectContaining( {
 							"property2": jasmine.objectContaining( {
 								"property2": 67890,
@@ -4924,9 +4882,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 						},
 					} );
 
-					documents.getChildren<MyDocument>( "https://example.com/resource/" ).then( ( [ myDocuments, response ] ) => {
-						expect( response ).toEqual( jasmine.any( Response ) );
-
+					documents.getChildren<MyDocument>( "https://example.com/resource/" ).then( ( myDocuments ) => {
 						expect( myDocuments ).toEqual( jasmine.any( Array ) );
 						expect( myDocuments.length ).toBe( 2 );
 						for( const document of myDocuments ) {
@@ -5080,9 +5036,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					} );
 
 					documents.getChildren<MyDocument>( "https://example.com/resource/", _ => _.properties( _.all ) )
-						.then( ( [ myDocuments, response ] ) => {
-							expect( response ).toEqual( jasmine.any( Response ) );
-
+						.then( ( myDocuments ) => {
 							expect( myDocuments ).toEqual( jasmine.any( Array ) );
 							expect( myDocuments.length ).toBe( 2 );
 							for( const document of myDocuments ) {
@@ -5262,9 +5216,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 								} ),
 							},
 						} )
-					).then( ( [ myDocuments, response ] ) => {
-						expect( response ).toEqual( jasmine.any( Response ) );
-
+					).then( ( myDocuments ) => {
 						expect( myDocuments ).toEqual( jasmine.any( Array ) );
 						expect( myDocuments.length ).toBe( 2 );
 						for( const document of myDocuments ) {
@@ -5472,9 +5424,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 								} ),
 							},
 						} )
-					).then( ( [ myDocuments, response ] ) => {
-						expect( response ).toEqual( jasmine.any( Response ) );
-
+					).then( ( myDocuments ) => {
 						expect( myDocuments ).toEqual( jasmine.any( Array ) );
 						expect( myDocuments.length ).toBe( 2 );
 						for( const document of myDocuments ) {
@@ -5793,9 +5743,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 								} ),
 							},
 						} )
-					).then( ( [ myDocuments, response ] ) => {
-						expect( response ).toEqual( jasmine.any( Response ) );
-
+					).then( ( myDocuments ) => {
 						expect( myDocuments ).toEqual( jasmine.any( Array ) );
 						expect( myDocuments.length ).toBe( 2 );
 						for( const document of myDocuments ) {
@@ -5994,9 +5942,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 								} ),
 							},
 						} )
-					).then( ( [ myDocuments, response ] ) => {
-						expect( response ).toEqual( jasmine.any( Response ) );
-
+					).then( ( myDocuments ) => {
 						expect( myDocuments ).toEqual( jasmine.any( Array ) );
 						expect( myDocuments.length ).toBe( 2 );
 						for( const document of myDocuments ) {
@@ -6040,7 +5986,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					{ name: "slug", type: "string", optional: true, description: "Slug that will be used for the URI of the new access point." },
 					{ name: "requestOptions", type: "CarbonLDP.HTTP.Request.RequestOptions", optional: true, description: "Customizable options for the request." },
 				],
-				{ type: "Promise<[ T & CarbonLDP.PersistedAccessPoint.PersistedAccessPoint, CarbonLDP.HTTP.Response.Response ]>" }
+				{ type: "Promise<T & CarbonLDP.PersistedAccessPoint.PersistedAccessPoint>" }
 			), ():void => {} );
 
 			it( hasSignature(
@@ -6050,7 +5996,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					{ name: "accessPoint", type: "T & CarbonLDP.AccessPoint.AccessPointBase", description: "AccessPoint Document to persist." },
 					{ name: "requestOptions", type: "CarbonLDP.HTTP.Request.RequestOptions", optional: true, description: "Customizable options for the request." },
 				],
-				{ type: "Promise<[ T & CarbonLDP.PersistedAccessPoint.PersistedAccessPoint, CarbonLDP.HTTP.Response.Response ]>" }
+				{ type: "Promise<T & CarbonLDP.PersistedAccessPoint.PersistedAccessPoint>" }
 			), ():void => {} );
 
 			it( isDefined(), () => {
@@ -6172,7 +6118,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					};
 
 					documents.createAccessPoint<RawDocument>( "/", rawAccessPoint )
-						.then( ( [ document ] ) => {
+						.then( ( document ) => {
 
 							expect( document.blankNode1 ).toBe( rawAccessPoint.blankNode1 );
 							expect( document.blankNode1.id ).toBe( "_:new-1" );
@@ -6215,7 +6161,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 
 				it( "should convert plain access-point into a document access-point before request", ( done:DoneFn ):void => {
 					const spy:jasmine.Spy = spyOn( AccessPoint, "createFrom" ).and.callThrough();
-					spyOn( documents, "persistDocument" as any ).and.returnValue( Promise.resolve( [] ) );
+					spyOn( documents, "_persistDocument" as any ).and.returnValue( Promise.resolve( [] ) );
 
 					const accessPoint:AccessPointBase = { hasMemberRelation: "member-relation" };
 					documents.createAccessPoint( "https://example.com/parent-resource/", accessPoint )
@@ -6266,9 +6212,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					} );
 
 					const accessPoint:AccessPointBase = { hasMemberRelation: "member-relation" };
-					documents.createAccessPoint( "https://example.com/parent-resource/", accessPoint ).then( ( [ document, response ]:[ PersistedAccessPoint, Response ] ):void => {
-						expect( response ).toEqual( jasmine.any( Response ) );
-
+					documents.createAccessPoint( "https://example.com/parent-resource/", accessPoint ).then( ( document:PersistedAccessPoint ):void => {
 						expect( accessPoint ).toBe( document );
 
 						expect( PersistedDocument.is( document ) ).toBe( true );
@@ -6305,9 +6249,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 
 							return documents.createAccessPoint( "https://example.com/parent-resource/", accessPoint );
 						} )
-						.then( ( [ document, response ]:[ PersistedDocument, Response ] ):void => {
-							expect( response ).toEqual( jasmine.any( Response ) );
-
+						.then( ( document:PersistedDocument ):void => {
 							expect( PersistedDocument.is( document ) ).toBe( true );
 							expect( document.id ).toBe( "https://example.com/parent-resource/new-resource/" );
 
@@ -6437,7 +6379,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					{ name: "slugs", type: "string[]", optional: true, description: "Array with the slugs that corresponds to each object in `accessPoints` parameter, in the order in which they were defined. If an element in the array is undefined or null, the slug will be generated by the platform." },
 					{ name: "requestOptions", type: "CarbonLDP.HTTP.Request.RequestOptions", optional: true, description: "Customizable options for the request." },
 				],
-				{ type: "Promise<[ (T & CarbonLDP.PersistedAccessPoint.PersistedAccessPoint)[], CarbonLDP.HTTP.Response.Response[] ]>", description: "Promise that contains a tuple with an array of the new and UNRESOLVED persisted access points, and the array containing the response classes of every request." }
+				{ type: "Promise<(T & CarbonLDP.PersistedAccessPoint.PersistedAccessPoint)[]>", description: "Promise that contains the new and UNRESOLVED persisted access points." }
 			), ():void => {} );
 
 			it( hasSignature(
@@ -6447,7 +6389,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					{ name: "accessPoints", type: "T & CarbonLDP.AccessPoint.AccessPointBase", description: "Array with the access points to persist." },
 					{ name: "requestOptions", type: "CarbonLDP.HTTP.Request.RequestOptions", optional: true, description: "Customizable options for the request." },
 				],
-				{ type: "Promise<[ (T & CarbonLDP.PersistedAccessPoint.PersistedAccessPoint)[], CarbonLDP.HTTP.Response.Response[] ]>", description: "Promise that contains a tuple with an array of the new and UNRESOLVED persisted access points, and the array containing the response classes of every request." }
+				{ type: "Promise<(T & CarbonLDP.PersistedAccessPoint.PersistedAccessPoint)[]>", description: "Promise that contains the new and UNRESOLVED persisted access points." }
 			), ():void => {} );
 
 			it( isDefined(), () => {
@@ -6513,7 +6455,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 
 				it( "should convert plain access-point into document access-point before requests", ( done:DoneFn ):void => {
 					const spy:jasmine.Spy = spyOn( AccessPoint, "createFrom" ).and.callThrough();
-					spyOn( documents, "persistDocument" as any ).and.returnValue( Promise.resolve( [] ) );
+					spyOn( documents, "_persistDocument" as any ).and.returnValue( Promise.resolve() );
 
 					const accessPoints:AccessPointBase[] = [
 						{ hasMemberRelation: "member-relation-0" },
@@ -6580,12 +6522,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					];
 
 					documents.createAccessPoints( "https://example.com/parent-resource/", accessPoints )
-						.then( ( [ persistedDocuments, responses ]:[ PersistedAccessPoint[], Response[] ] ):void => {
-							expect( responses ).toEqual( new Array( 3 ).fill( jasmine.anything() ) );
-							responses.forEach( response => {
-								expect( response ).toEqual( jasmine.any( Response ) );
-							} );
-
+						.then( ( persistedDocuments:PersistedAccessPoint[] ):void => {
 							expect( persistedDocuments ).toEqual( new Array( 3 ).fill( jasmine.anything() ) );
 							persistedDocuments.forEach( ( document, index ) => {
 								expect( accessPoints[ index ] ).toBe( document );
@@ -6748,7 +6685,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					{ name: "uri", type: "string", description: "URI of the document from where to look for its members." },
 					{ name: "requestOptions", type: "CarbonLDP.HTTP.Request.RequestOptions", optional: true, description: "Customizable options for the request." },
 				],
-				{ type: "Promise<[ CarbonLDP.PersistedDocument.PersistedDocument[], CarbonLDP.HTTP.Response.Response ]>" }
+				{ type: "Promise<CarbonLDP.PersistedDocument.PersistedDocument[]>" }
 			), () => {} );
 
 			it( isDefined(), () => {
@@ -6892,9 +6829,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 
 					documents
 						.listMembers( "https://example.com/resource/" )
-						.then( ( [ myDocuments, response ] ) => {
-							expect( response ).toEqual( jasmine.any( Response ) );
-
+						.then( ( myDocuments ) => {
 							expect( myDocuments ).toEqual( jasmine.any( Array ) );
 							expect( myDocuments.length ).toBe( 2 );
 
@@ -7019,9 +6954,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 
 					documents
 						.listMembers( "https://example.com/resource/" )
-						.then( ( [ myDocuments, response ] ) => {
-							expect( response ).toEqual( jasmine.any( Response ) );
-
+						.then( ( myDocuments ) => {
 							expect( myDocuments ).toEqual( jasmine.any( Array ) );
 							expect( myDocuments.length ).toBe( 2 );
 
@@ -7055,7 +6988,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					{ name: "requestOptions", type: "CarbonLDP.HTTP.Request.RequestOptions", optional: true, description: "Customizable options for the request." },
 					{ name: "queryBuilderFn", type: "( queryBuilder:CarbonLDP.SPARQL.QueryDocument.QueryDocumentsBuilder.QueryDocumentsBuilder ) => CarbonLDP.SPARQL.QueryDocument.QueryDocumentsBuilder.QueryDocumentsBuilder", optional: true, description: "Function that receives a the builder that helps you to construct the member retrieval query.\nThe same builder must be returned." },
 				],
-				{ type: "Promise<[ (T & CarbonLDP.PersistedDocument.PersistedDocument)[], CarbonLDP.HTTP.Response.Response ]>" }
+				{ type: "Promise<(T & CarbonLDP.PersistedDocument.PersistedDocument)[]>" }
 			), () => {} );
 
 			it( hasSignature(
@@ -7064,7 +6997,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					{ name: "uri", type: "string", description: "URI of the document from where to look for its members." },
 					{ name: "queryBuilderFn", type: "( queryBuilder:CarbonLDP.SPARQL.QueryDocument.QueryDocumentsBuilder.QueryDocumentsBuilder ) => CarbonLDP.SPARQL.QueryDocument.QueryDocumentsBuilder.QueryDocumentsBuilder", optional: true, description: "Function that receives a the builder that helps you to construct the member retrieval query.\nThe same builder must be returned." },
 				],
-				{ type: "Promise<[ (T & CarbonLDP.PersistedDocument.PersistedDocument)[], CarbonLDP.HTTP.Response.Response ]>" }
+				{ type: "Promise<(T & CarbonLDP.PersistedDocument.PersistedDocument)[]>" }
 			), () => {} );
 
 			it( isDefined(), () => {
@@ -7728,9 +7661,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 								} ),
 							},
 						} )
-					).then( ( [ myDocuments, response ] ) => {
-						expect( response ).toEqual( jasmine.any( Response ) );
-
+					).then( ( myDocuments ) => {
 						expect( myDocuments ).toEqual( jasmine.any( Array ) );
 						expect( myDocuments.length ).toBe( 2 );
 						for( const document of myDocuments ) {
@@ -7906,9 +7837,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 						},
 					} );
 
-					documents.getMembers<MyDocument>( "https://example.com/resource/" ).then( ( [ myDocuments, response ] ) => {
-						expect( response ).toEqual( jasmine.any( Response ) );
-
+					documents.getMembers<MyDocument>( "https://example.com/resource/" ).then( ( myDocuments ) => {
 						expect( myDocuments ).toEqual( jasmine.any( Array ) );
 						expect( myDocuments.length ).toBe( 2 );
 						for( const document of myDocuments ) {
@@ -8062,9 +7991,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					} );
 
 					documents.getMembers<MyDocument>( "https://example.com/resource/", _ => _.properties( _.all ) )
-						.then( ( [ myDocuments, response ] ) => {
-							expect( response ).toEqual( jasmine.any( Response ) );
-
+						.then( ( myDocuments ) => {
 							expect( myDocuments ).toEqual( jasmine.any( Array ) );
 							expect( myDocuments.length ).toBe( 2 );
 							for( const document of myDocuments ) {
@@ -8248,9 +8175,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 							},
 						} )
 						.orderBy( "property2.property2", "DESC" )
-					).then( ( [ myDocuments, response ] ) => {
-						expect( response ).toEqual( jasmine.any( Response ) );
-
+					).then( ( myDocuments ) => {
 						expect( myDocuments[ 0 ] ).toEqual( jasmine.objectContaining( {
 							"property2": jasmine.objectContaining( {
 								"property2": 67890,
@@ -8447,9 +8372,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 								} ),
 							},
 						} )
-					).then( ( [ myDocuments, response ] ) => {
-						expect( response ).toEqual( jasmine.any( Response ) );
-
+					).then( ( myDocuments ) => {
 						expect( myDocuments ).toEqual( jasmine.any( Array ) );
 						expect( myDocuments.length ).toBe( 2 );
 						for( const document of myDocuments ) {
@@ -8770,9 +8693,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 								} ),
 							},
 						} )
-					).then( ( [ myDocuments, response ] ) => {
-						expect( response ).toEqual( jasmine.any( Response ) );
-
+					).then( ( myDocuments ) => {
 						expect( myDocuments ).toEqual( jasmine.any( Array ) );
 						expect( myDocuments.length ).toBe( 2 );
 						for( const document of myDocuments ) {
@@ -8971,9 +8892,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 								} ),
 							},
 						} )
-					).then( ( [ myDocuments, response ] ) => {
-						expect( response ).toEqual( jasmine.any( Response ) );
-
+					).then( ( myDocuments ) => {
 						expect( myDocuments ).toEqual( jasmine.any( Array ) );
 						expect( myDocuments.length ).toBe( 2 );
 						for( const document of myDocuments ) {
@@ -9036,7 +8955,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					{ name: "member", type: "CarbonLDP.Pointer.Pointer", description: "Pointer object that references the resource to add as a member." },
 					{ name: "requestOptions", type: "CarbonLDP.HTTP.Request.RequestOptions", optional: true, description: "Customizable options for the request." },
 				],
-				{ type: "Promise<CarbonLDP.HTTP.Response.Response>" }
+				{ type: "Promise<void>" }
 			), ():void => {
 				expect( documents.addMember ).toBeDefined();
 				expect( Utils.isFunction( documents.addMember ) ).toBe( true );
@@ -9055,7 +8974,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					{ name: "memberURI", type: "string", description: "URI of the resource to add as a member." },
 					{ name: "requestOptions", type: "CarbonLDP.HTTP.Request.RequestOptions", optional: true, description: "Customizable options for the request." },
 				],
-				{ type: "Promise<CarbonLDP.HTTP.Response.Response>" }
+				{ type: "Promise<void>" }
 			), ():void => {
 				expect( documents.addMember ).toBeDefined();
 				expect( Utils.isFunction( documents.addMember ) ).toBe( true );
@@ -9206,7 +9125,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					{ name: "members", type: "(CarbonLDP.Pointer.Pointer | string)[]", description: "Array of URIs or Pointers to add as members." },
 					{ name: "requestOptions", type: "CarbonLDP.HTTP.Request.RequestOptions", optional: true, description: "Customizable options for the request." },
 				],
-				{ type: "Promise<CarbonLDP.HTTP.Response.Response>" }
+				{ type: "Promise<void>" }
 			), ( done:DoneFn ):void => {
 				class MockedContext extends AbstractContext {
 					protected _baseURI:string;
@@ -9228,18 +9147,8 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					status: 200,
 				} );
 
-				let spies:any = {
-					success: ( response:any ):void => {
-						expect( response ).toBeDefined();
-						expect( response instanceof Response ).toBe( true );
-					},
-					fail: ( error:Error ):void => {
-						expect( error ).toBeDefined();
-						expect( error instanceof Errors.IllegalArgumentError );
-					},
-				};
-				let spySuccess:jasmine.Spy = spyOn( spies, "success" ).and.callThrough();
-				let spyFail:jasmine.Spy = spyOn( spies, "fail" ).and.callThrough();
+				let spySuccess:jasmine.Spy = jasmine.createSpy( "success" );
+				let spyFail:jasmine.Spy = jasmine.createSpy( "fail" );
 
 				let promises:Promise<any>[] = [];
 				let promise:Promise<any>;
@@ -9248,16 +9157,19 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				members = [ documents.getPointer( "new-member-01/" ), "new-member-02/" ];
 				promise = documents.addMembers( "resource/", members );
 				expect( promise instanceof Promise ).toBe( true );
-				promises.push( promise.then( spies.success ) );
+				promises.push( promise.then( spySuccess, spyFail ) );
 
 				members = [ documents.getPointer( "new-member-01/" ), "new-member-02/", <any> { "something": "nor string or Pointer" } ];
 				promise = documents.addMembers( "resource/", members );
 				expect( promise instanceof Promise ).toBe( true );
-				promises.push( promise.catch( spies.fail ) );
+				promises.push( promise.then( spySuccess, spyFail ) );
 
 				Promise.all( promises ).then( ():void => {
 					expect( spySuccess ).toHaveBeenCalledTimes( 1 );
+					expect( spySuccess ).toHaveBeenCalledWith( void 0 );
+
 					expect( spyFail ).toHaveBeenCalledTimes( 1 );
+					expect( spyFail ).toHaveBeenCalledWith( jasmine.any( Errors.IllegalArgumentError ) );
 					done();
 				}, done.fail );
 			} );
@@ -9421,7 +9333,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					{ name: "member", type: "CarbonLDP.Pointer.Pointer", description: "Pointer object that references the resource to remove as a member." },
 					{ name: "requestOptions", type: "CarbonLDP.HTTP.Request.RequestOptions", optional: true, description: "Customizable options for the request." },
 				],
-				{ type: "Promise<CarbonLDP.HTTP.Response.Response>" }
+				{ type: "Promise<void>" }
 			), ():void => {
 				expect( documents.removeMember ).toBeDefined();
 				expect( Utils.isFunction( documents.removeMember ) ).toBe( true );
@@ -9440,7 +9352,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					{ name: "memberURI", type: "string", description: "URI of the resource to remove as a member." },
 					{ name: "requestOptions", type: "CarbonLDP.HTTP.Request.RequestOptions", optional: true, description: "Customizable options for the request." },
 				],
-				{ type: "Promise<CarbonLDP.HTTP.Response.Response>" }
+				{ type: "Promise<void>" }
 			), ():void => {
 				expect( documents.removeMember ).toBeDefined();
 				expect( Utils.isFunction( documents.removeMember ) ).toBe( true );
@@ -9591,7 +9503,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					{ name: "members", type: "(CarbonLDP.Pointer.Pointer | string)[]", description: "Array of URIs or Pointers to remove as members" },
 					{ name: "requestOptions", type: "CarbonLDP.HTTP.Request.RequestOptions", optional: true, description: "Customizable options for the request." },
 				],
-				{ type: "Promise<CarbonLDP.HTTP.Response.Response>" }
+				{ type: "Promise<void>" }
 			), ( done:DoneFn ):void => {
 				class MockedContext extends AbstractContext {
 					protected _baseURI:string;
@@ -9613,18 +9525,8 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					status: 200,
 				} );
 
-				let spies:any = {
-					success: ( response:any ):void => {
-						expect( response ).toBeDefined();
-						expect( response instanceof Response ).toBe( true );
-					},
-					fail: ( error:Error ):void => {
-						expect( error ).toBeDefined();
-						expect( error instanceof Errors.IllegalArgumentError ).toBe( true );
-					},
-				};
-				let spySuccess:jasmine.Spy = spyOn( spies, "success" ).and.callThrough();
-				let spyFail:jasmine.Spy = spyOn( spies, "fail" ).and.callThrough();
+				let spySuccess:jasmine.Spy = jasmine.createSpy( "success" );
+				let spyFail:jasmine.Spy = jasmine.createSpy( "fail" );
 
 				let promises:Promise<any>[] = [];
 				let promise:Promise<any>;
@@ -9633,16 +9535,19 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				members = [ documents.getPointer( "remove-member-01/" ), "remove-member-02/" ];
 				promise = documents.removeMembers( "resource/", members );
 				expect( promise instanceof Promise ).toBe( true );
-				promises.push( promise.then( spies.success ) );
+				promises.push( promise.then( spySuccess, spyFail ) );
 
 				members = [ documents.getPointer( "remove-member-01/" ), "remove-member-02/", <any> { "something": "nor string or Pointer" } ];
 				promise = documents.removeMembers( "resource/", members );
 				expect( promise instanceof Promise ).toBe( true );
-				promises.push( promise.catch( spies.fail ) );
+				promises.push( promise.then( spySuccess, spyFail ) );
 
 				Promise.all( promises ).then( ():void => {
 					expect( spySuccess ).toHaveBeenCalledTimes( 1 );
+					expect( spySuccess ).toHaveBeenCalledWith( void 0 );
+
 					expect( spyFail ).toHaveBeenCalledTimes( 1 );
+					expect( spyFail ).toHaveBeenCalledWith( jasmine.any( Errors.IllegalArgumentError ) );
 					done();
 				}, done.fail );
 			} );
@@ -9787,7 +9692,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					{ name: "documentURI", type: "string", description: "URI of the document container where the members will be removed." },
 					{ name: "requestOptions", type: "CarbonLDP.HTTP.Request.RequestOptions", optional: true, description: "Customizable options for the request." },
 				],
-				{ type: "Promise<CarbonLDP.HTTP.Response.Response>" }
+				{ type: "Promise<void>" }
 			), ( done:DoneFn ):void => {
 				class MockedContext extends AbstractContext {
 					protected _baseURI:string;
@@ -9809,28 +9714,20 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					status: 200,
 				} );
 
-				let spies:any = {
-					success: ( response:any ):void => {
-						expect( response ).toBeDefined();
-						expect( response instanceof Response ).toBe( true );
-					},
-					fail: ( error:Error ):void => {
-						expect( error ).toBeDefined();
-						expect( error instanceof Errors.IllegalArgumentError ).toBe( true );
-					},
-				};
-				let spySuccess:jasmine.Spy = spyOn( spies, "success" ).and.callThrough();
-				let spyFail:jasmine.Spy = spyOn( spies, "fail" ).and.callThrough();
+				let spySuccess:jasmine.Spy = jasmine.createSpy( "success" );
+				let spyFail:jasmine.Spy = jasmine.createSpy( "fail" );
 
 				let promises:Promise<any>[] = [];
 				let promise:Promise<any>;
 
 				promise = documents.removeAllMembers( "resource/" );
 				expect( promise instanceof Promise ).toBe( true );
-				promises.push( promise.then( spies.success ) );
+				promises.push( promise.then( spySuccess, spyFail ) );
 
 				Promise.all( promises ).then( ():void => {
 					expect( spySuccess ).toHaveBeenCalledTimes( 1 );
+					expect( spySuccess ).toHaveBeenCalledWith( void 0 );
+
 					expect( spyFail ).not.toHaveBeenCalled();
 					done();
 				} ).catch( done.fail );
@@ -9955,7 +9852,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					{ name: "persistedDocument", type: "T & CarbonLDP.PersistedDocument.PersistedDocument", description: "The persisted document with the data to update in the server." },
 					{ name: "requestOptions", type: "CarbonLDP.HTTP.Request.RequestOptions", optional: true, description: "Customisable options for the request." },
 				],
-				{ type: "Promise<[ T & CarbonLDP.PersistedDocument.PersistedDocument, CarbonLDP.HTTP.Response.Response ]>" }
+				{ type: "Promise<T & CarbonLDP.PersistedDocument.PersistedDocument>" }
 			), ():void => {} );
 
 			it( isDefined(), ():void => {
@@ -10090,7 +9987,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					), documents );
 
 					try {
-						const [ document ] = await documents.save<RawDocument>( rawDocument );
+						const document:PersistedDocument & RawDocument = await documents.save<RawDocument>( rawDocument );
 
 						expect( document.getFragments().length ).toBe( 2 );
 
@@ -10210,9 +10107,8 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					persistedDocument[ "pointer" ][ "pointer" ][ 0 ][ "string" ] = [ "string 1", "string -1" ];
 					persistedDocument[ "pointer" ][ "pointer" ][ 0 ][ "number" ] = 100.001;
 
-					documents.save( persistedDocument ).then( ( [ _document, response ]:[ PersistedDocument, Response ] ) => {
+					documents.save( persistedDocument ).then( ( _document:PersistedDocument ) => {
 						expect( _document ).toBe( persistedDocument );
-						expect( response ).toEqual( jasmine.any( Response ) );
 
 						const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
 						expect( request.params ).toBe( "" +
@@ -10297,9 +10193,8 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					persistedDocument[ "pointer" ][ "pointer" ][ 0 ][ "string" ] = [ "string 1", "string -1" ];
 					persistedDocument[ "pointer" ][ "pointer" ][ 0 ][ "number" ] = 100.001;
 
-					documents.save( persistedDocument ).then( ( [ _document, response ]:[ PersistedDocument, Response ] ) => {
+					documents.save( persistedDocument ).then( ( _document:PersistedDocument ) => {
 						expect( _document ).toBe( persistedDocument );
-						expect( response ).toEqual( jasmine.any( Response ) );
 
 						const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
 						expect( request.params ).toBe( "" +
@@ -10422,7 +10317,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					{ name: "persistedDocument", type: "T & CarbonLDP.PersistedDocument.PersistedDocument", description: "The persisted document to update." },
 					{ name: "requestOptions", type: "CarbonLDP.HTTP.Request.RequestOptions", optional: true, description: "Customizable options for the request." },
 				],
-				{ type: "Promise<[ T & CarbonLDP.PersistedDocument.PersistedDocument, CarbonLDP.HTTP.Response.Response ]>" }
+				{ type: "Promise<T & CarbonLDP.PersistedDocument.PersistedDocument>" }
 			), ():void => {} );
 
 			it( isDefined(), () => {
@@ -10511,11 +10406,8 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					);
 
 					documents.refresh( document )
-						.then( ( [ returnedDocument, response ] ) => {
+						.then( ( returnedDocument ) => {
 							expect( document ).toBe( returnedDocument );
-
-							expect( response ).toBeNull();
-
 							done();
 						} )
 						.catch( done.fail );
@@ -10571,7 +10463,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					const fragment:PersistedNamedFragment = document.getFragment( "#1" );
 
 					documents.refresh( document )
-						.then( ( [ returnedDocument, response ] ) => {
+						.then( ( returnedDocument ) => {
 							expect( returnedDocument ).toBe( document );
 
 							expect( document ).toEqual( jasmine.objectContaining( {
@@ -10595,8 +10487,6 @@ describe( module( "carbonldp/Documents" ), ():void => {
 								id: "https://example.com/resource/#3",
 								string: "NamedFragment 3",
 							} ) );
-
-							expect( response ).toEqual( jasmine.any( Response ) );
 
 							done();
 						} )
@@ -11125,7 +11015,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 
 					Utils.promiseMethod( () => {
 						return documents.refresh<MyDocument>( persistedDocument );
-					} ).then( ( [ document ] ) => {
+					} ).then( ( document ) => {
 						expect( PersistedDocument.is( document ) ).toBe( true );
 
 						// Data updates
@@ -11286,7 +11176,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 
 					Utils.promiseMethod( () => {
 						return documents.refresh<MyDocument>( persistedDocument );
-					} ).then( ( [ document, response ] ) => {
+					} ).then( ( document ) => {
 						expect( PersistedDocument.is( document ) ).toBe( true );
 
 						// Data updates
@@ -11300,8 +11190,6 @@ describe( module( "carbonldp/Documents" ), ():void => {
 							} ) as any,
 							"property3": "non query-value",
 						} ) );
-
-						expect( response ).toBeNull();
 
 						done();
 					} ).catch( done.fail );
@@ -11611,7 +11499,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					{ name: "persistedDocument", type: "T & CarbonLDP.PersistedDocument.PersistedDocument", description: "The persistedDocument to save and refresh." },
 					{ name: "requestOptions", type: "CarbonLDP.HTTP.Request.RequestOptions", optional: true, description: "Customizable options for the request." },
 				],
-				{ type: "Promise<[ T & CarbonLDP.PersistedDocument.PersistedDocument, CarbonLDP.HTTP.Response.Response[] ]>" }
+				{ type: "Promise<T & CarbonLDP.PersistedDocument.PersistedDocument>" }
 			), ():void => {} );
 
 			it( isDefined(), () => {
@@ -11773,7 +11661,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					), documents );
 
 					try {
-						const [ document ] = await documents.saveAndRefresh<RawDocument>( rawDocument );
+						const document:PersistedDocument & RawDocument = await documents.saveAndRefresh<RawDocument>( rawDocument );
 
 						expect( document.getFragments().length ).toBe( 2 );
 
@@ -11999,10 +11887,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					const fragment:PersistedNamedFragment = document.getFragment( "#1" );
 
 					documents.saveAndRefresh( document )
-						.then( ( [ returnedDocument, responses ] ) => {
-							expect( responses ).toEqual( [
-								jasmine.any( Response ) as any,
-							] );
+						.then( ( returnedDocument ) => {
 							expect( returnedDocument ).toBe( document );
 
 							expect( document ).toEqual( jasmine.objectContaining( {
@@ -12162,11 +12047,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 
 					Utils.promiseMethod( () => {
 						return documents.saveAndRefresh<MyDocument>( persistedDocument );
-					} ).then( ( [ document, responses ] ) => {
-						expect( responses ).toEqual( [
-							jasmine.any( Response ) as any,
-							jasmine.any( Response ) as any,
-						] );
+					} ).then( ( document ) => {
 						expect( PersistedDocument.is( document ) ).toBe( true );
 
 						// Data updates
@@ -12265,7 +12146,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					{ name: "documentURI", type: "string", description: "The resource to delete from the Carbon LDP server." },
 					{ name: "requestOptions", type: "CarbonLDP.HTTP.Request.RequestOptions", optional: true, description: "Customizable options for the request." },
 				],
-				{ type: "Promise<CarbonLDP.HTTP.Response.Response>" }
+				{ type: "Promise<void>" }
 			), ( done:DoneFn ):void => {
 				class MockedContext extends AbstractContext {
 					protected _baseURI:string;
@@ -12290,13 +12171,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					status: 200,
 				} );
 
-				let spies:any = {
-					success: ( response:any ):void => {
-						expect( response ).toBeDefined();
-						expect( response instanceof Response ).toBe( true );
-					},
-				};
-				let spySuccess:jasmine.Spy = spyOn( spies, "success" ).and.callThrough();
+				let spySuccess:jasmine.Spy = jasmine.createSpy( "success" );
 
 				let promises:Promise<any>[] = [];
 				let promise:Promise<any>;
@@ -12304,21 +12179,23 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				// Proper execution
 				promise = documents.delete( "http://example.com/resource/" );
 				expect( promise ).toEqual( jasmine.any( Promise ) );
-				promises.push( promise.then( spies.success ) );
+				promises.push( promise.then( spySuccess ) );
 
 				// Relative URI
 				promise = documents.delete( "resource/" );
 				expect( promise ).toEqual( jasmine.any( Promise ) );
-				promises.push( promise.then( spies.success ) );
+				promises.push( promise.then( spySuccess ) );
 
 				// Remove pointer from cache
 				documents.getPointer( "http://example.com/a-document/" );
 				promise = documents.delete( "http://example.com/a-document/" );
 				expect( promise ).toEqual( jasmine.any( Promise ) );
-				promises.push( promise.then( spies.success ) );
+				promises.push( promise.then( spySuccess ) );
 
 				Promise.all( promises ).then( ():void => {
 					expect( spySuccess ).toHaveBeenCalledTimes( 3 );
+					expect( spySuccess ).toHaveBeenCalledWith( void 0 );
+
 					expect( documents.hasPointer( "http://example.com/a-document/" ) ).toBe( false );
 					done();
 				}, done.fail );
@@ -12444,7 +12321,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					{ name: "documentURI", type: "string", description: "The URI of the document that will be converted in a single download request." },
 					{ name: "requestOptions", type: "CarbonLDP.HTTP.Request.RequestOptions", optional: true },
 				],
-				{ type: "Promise<CarbonLDP.HTTP.Response.Response>" }
+				{ type: "Promise<string>" }
 			), ( done:DoneFn ):void => {
 				class MockedAuth extends Auth.Class {}
 
@@ -12565,7 +12442,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					{ name: "documentURI", type: "string", description: "URI of the document that works as a SPARQL endpoint where to execute the SPARQL query." },
 					{ name: "askQuery", type: "string", description: "ASK query to execute in the selected endpoint." },
 					{ name: "requestOptions", type: "CarbonLDP.HTTP.Request.RequestOptions", optional: true, description: "Customizable options for the request." },
-				], { type: "Promise<[ CarbonLDP.SPARQL.RawResults.SPARQLRawResults, CarbonLDP.HTTP.Response.Response ]>" }
+				], { type: "Promise<CarbonLDP.SPARQL.RawResults.SPARQLRawResults>" }
 			), ():void => {} );
 
 			it( "should exists", ():void => {
@@ -12721,7 +12598,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					{ name: "documentURI", type: "string", description: "URI of the document that works as a SPARQL endpoint where to execute the SPARQL query." },
 					{ name: "askQuery", type: "string", description: "ASK query to execute in the selected endpoint." },
 					{ name: "requestOptions", type: "CarbonLDP.HTTP.Request.RequestOptions", optional: true, description: "Customizable options for the request." },
-				], { type: "Promise<[ boolean, CarbonLDP.HTTP.Response.Response ]>" }
+				], { type: "Promise<boolean>" }
 			), ():void => {} );
 
 			it( "should exists", ():void => {
@@ -12877,7 +12754,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					{ name: "documentURI", type: "string", description: "URI of the document that works as a SPARQL endpoint where to execute the SPARQL query." },
 					{ name: "selectQuery", type: "string", description: "SELECT query to execute in the selected endpoint." },
 					{ name: "requestOptions", type: "CarbonLDP.HTTP.Request.RequestOptions", optional: true, description: "Customizable options for the request." },
-				], { type: "Promise<[ CarbonLDP.SPARQL.RawResults.SPARQLRawResults, CarbonLDP.HTTP.Response.Response ]>" }
+				], { type: "Promise<CarbonLDP.SPARQL.RawResults.SPARQLRawResults>" }
 			), ():void => {} );
 
 			it( "should exists", ():void => {
@@ -13034,7 +12911,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					{ name: "documentURI", type: "string", description: "URI of the document that works as a SPARQL endpoint where to execute the SPARQL query." },
 					{ name: "selectQuery", type: "string", description: "SELECT query to execute in the selected endpoint." },
 					{ name: "requestOptions", type: "CarbonLDP.HTTP.Request.RequestOptions", optional: true, description: "Customizable options for the request." },
-				], { type: "Promise<[ CarbonLDP.SPARQL.SelectResults.SPARQLSelectResults<T>, CarbonLDP.HTTP.Response.Response ]>" }
+				], { type: "Promise<CarbonLDP.SPARQL.SelectResults.SPARQLSelectResults<T>>" }
 			), ():void => {} );
 
 			it( "should exists", ():void => {
@@ -13190,7 +13067,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					{ name: "documentURI", type: "string", description: "URI of the document that works as a SPARQL endpoint where to execute the SPARQL query." },
 					{ name: "constructQuery", type: "string", description: "CONSTRUCT query to execute in the selected endpoint." },
 					{ name: "requestOptions", type: "CarbonLDP.HTTP.Request.RequestOptions", optional: true, description: "Customizable options for the request." },
-				], { type: "Promise<[ string, CarbonLDP.HTTP.Response.Response ]>" }
+				], { type: "Promise<string>" }
 			), ():void => {} );
 
 			it( "should exists", ():void => {
@@ -13346,7 +13223,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					{ name: "documentURI", type: "string", description: "URI of the document that works as a SPARQL endpoint where to execute the SPARQL query." },
 					{ name: "describeQuery", type: "string", description: "DESCRIBE query to execute in the selected endpoint." },
 					{ name: "requestOptions", type: "CarbonLDP.HTTP.Request.RequestOptions", optional: true, description: "Customizable options for the request." },
-				], { type: "Promise<[ string, CarbonLDP.HTTP.Response.Response ]>" }
+				], { type: "Promise<string>" }
 			), ():void => {} );
 
 			it( "should exists", ():void => {
@@ -13502,7 +13379,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					{ name: "documentURI", type: "string", description: "URI of the document that works as a SPARQL endpoint where to execute the SPARQL query." },
 					{ name: "update", type: "string", description: "UPDATE query to execute in the selected endpoint." },
 					{ name: "requestOptions", type: "CarbonLDP.HTTP.Request.RequestOptions", optional: true, description: "Customizable options for the request." },
-				], { type: "Promise<CarbonLDP.HTTP.Response.Response>" }
+				], { type: "Promise<void>" }
 			), ():void => {} );
 
 			it( "should exists", ():void => {
@@ -14488,6 +14365,4 @@ describe( module( "carbonldp/Documents" ), ():void => {
 		expect( DefaultExport ).toBe( Documents );
 	} );
 
-} )
-;
-
+} );

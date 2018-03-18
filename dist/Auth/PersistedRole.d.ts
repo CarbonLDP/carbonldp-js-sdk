@@ -1,8 +1,7 @@
 import { Documents } from "../Documents";
 import { RequestOptions } from "../HTTP/Request";
-import { Response } from "../HTTP/Response";
+import { PersistedProtectedDocument } from "../PersistedProtectedDocument";
 import { Pointer } from "../Pointer";
-import { PersistedProtectedDocument } from "./../PersistedProtectedDocument";
 import * as Role from "./Role";
 import * as Roles from "./Roles";
 export interface Class extends PersistedProtectedDocument {
@@ -12,17 +11,17 @@ export interface Class extends PersistedProtectedDocument {
     parentRole?: Pointer;
     childRoles?: Pointer[];
     users?: Pointer[];
-    createChild<T extends object>(role: T & Role.Class, requestOptions?: RequestOptions): Promise<[T & Class, Response]>;
-    createChild<T extends object>(role: T & Role.Class, slug?: string, requestOptions?: RequestOptions): Promise<[T & Class, Response]>;
-    getUsers<T>(requestOptions?: RequestOptions): Promise<[(T & PersistedProtectedDocument)[], Response]>;
-    addUser(user: Pointer | string, requestOptions?: RequestOptions): Promise<Response>;
-    addUsers(users: (Pointer | string)[], requestOptions?: RequestOptions): Promise<Response>;
-    removeUser(user: Pointer | string, requestOptions?: RequestOptions): Promise<Response>;
-    removeUsers(users: (Pointer | string)[], requestOptions?: RequestOptions): Promise<Response>;
+    createChild<T extends object>(role: T & Role.Class, requestOptions?: RequestOptions): Promise<T & Class>;
+    createChild<T extends object>(role: T & Role.Class, slug?: string, requestOptions?: RequestOptions): Promise<T & Class>;
+    getUsers<T>(requestOptions?: RequestOptions): Promise<(T & PersistedProtectedDocument)[]>;
+    addUser(user: Pointer | string, requestOptions?: RequestOptions): Promise<void>;
+    addUsers(users: (Pointer | string)[], requestOptions?: RequestOptions): Promise<void>;
+    removeUser(user: Pointer | string, requestOptions?: RequestOptions): Promise<void>;
+    removeUsers(users: (Pointer | string)[], requestOptions?: RequestOptions): Promise<void>;
 }
 export declare class Factory {
     static hasClassProperties(object: Object): boolean;
-    static is(object: Object): boolean;
+    static is(object: Object): object is Class;
     static decorate<T extends object>(object: T, documents: Documents): T & Class;
 }
 export default Class;

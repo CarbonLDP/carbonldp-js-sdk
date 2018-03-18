@@ -45,7 +45,7 @@ export class Class implements Authenticator<UsernameAndPasswordToken.Class, Toke
 	authenticate( authenticationOrCredentials:UsernameAndPasswordToken.Class | Token.Class ):Promise<Token.Class> {
 		if( authenticationOrCredentials instanceof UsernameAndPasswordToken.Class ) return this.basicAuthenticator.authenticate( authenticationOrCredentials ).then( () => {
 			return this.createToken();
-		} ).then( ( [ token, response ]:[ Token.Class, Response ] ):Token.Class => {
+		} ).then( ( token:Token.Class ):Token.Class => {
 			this.basicAuthenticator.clearAuthentication();
 			this._credentials = token;
 			return token;
@@ -71,7 +71,7 @@ export class Class implements Authenticator<UsernameAndPasswordToken.Class, Toke
 		this._credentials = null;
 	}
 
-	private createToken():Promise<[ Token.Class, Response ]> {
+	private createToken():Promise<Token.Class> {
 		let requestOptions:RequestOptions = {};
 
 		this.basicAuthenticator.addAuthentication( requestOptions );
@@ -82,7 +82,7 @@ export class Class implements Authenticator<UsernameAndPasswordToken.Class, Toke
 		return Promise.resolve().then( () => {
 			const tokensURI:string = this.context._resolvePath( "system" ) + TOKEN_CONTAINER;
 			return RequestService.post( tokensURI, null, requestOptions, new JSONLDParser() );
-		} ).then<[ Token.Class, Response ]>( ( [ expandedResult, response ]:[ any, Response ] ) => {
+		} ).then( ( [ expandedResult, response ]:[ any, Response ] ) => {
 			let freeNodes:RDFNode[] = RDFNode.getFreeNodes( expandedResult );
 
 			let freeResources:FreeResources = this.context.documents._getFreeResources( freeNodes );
@@ -106,7 +106,7 @@ export class Class implements Authenticator<UsernameAndPasswordToken.Class, Toke
 					document._eTag = documentMetadata.eTag;
 				} );
 
-			return [ token, response ];
+			return token;
 		}, response => this.context.documents._parseErrorResponse( response ) );
 	}
 

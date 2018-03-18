@@ -39,8 +39,7 @@ var Class = (function () {
         if (authenticationOrCredentials instanceof UsernameAndPasswordToken.Class)
             return this.basicAuthenticator.authenticate(authenticationOrCredentials).then(function () {
                 return _this.createToken();
-            }).then(function (_a) {
-                var token = _a[0], response = _a[1];
+            }).then(function (token) {
                 _this.basicAuthenticator.clearAuthentication();
                 _this._credentials = token;
                 return token;
@@ -92,7 +91,7 @@ var Class = (function () {
                     var document = documentMetadata.relatedDocument;
                     document._eTag = documentMetadata.eTag;
                 });
-            return [token, response];
+            return token;
         }, function (response) { return _this.context.documents._parseErrorResponse(response); });
     };
     Class.prototype.addTokenAuthenticationHeader = function (headers) {

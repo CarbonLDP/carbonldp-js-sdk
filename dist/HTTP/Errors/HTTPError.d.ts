@@ -15,7 +15,7 @@ export declare class HTTPError extends AbstractError implements ErrorResponse {
     statusCode: number;
     types: string[];
     isResolved: () => boolean;
-    resolve: <T>() => Promise<[T & PersistedDocument, Response]>;
+    resolve: <T>() => Promise<T & PersistedDocument>;
     addType: (type: string) => void;
     hasType: (type: string) => boolean;
     removeType: (type: string) => void;

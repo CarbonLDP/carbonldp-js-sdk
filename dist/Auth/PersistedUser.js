@@ -7,8 +7,8 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 }
 Object.defineProperty(exports, "__esModule", { value: true });
+var PersistedProtectedDocument_1 = require("../PersistedProtectedDocument");
 var CS_1 = require("../Vocabularies/CS");
-var PersistedProtectedDocument_1 = require("./../PersistedProtectedDocument");
 var Utils = __importStar(require("./../Utils"));
 var PersistedCredentials = __importStar(require("./PersistedCredentials"));
 var Factory = (function () {
@@ -52,28 +52,23 @@ var Factory = (function () {
 exports.Factory = Factory;
 function changeEnabledCredentials(enabled, requestOptions) {
     var _this = this;
-    var promise = "credentials" in this ?
-        Promise.resolve() : obtainCredentials(this);
-    var responses = [];
-    return promise.then(function (response) {
-        if (response)
-            responses.push(response);
+    return ensureCredentials(this)
+        .then(function () {
         if (enabled)
             return _this.credentials.enable(requestOptions);
         return _this.credentials.disable(requestOptions);
-    }).then(function (_a) {
-        var _credentials = _a[0], credentialsResponses = _a[1];
-        responses.push.apply(responses, credentialsResponses);
-        return [_this, responses];
+    }).then(function () {
+        return _this;
     });
 }
-function obtainCredentials(user) {
+function ensureCredentials(user) {
+    if (PersistedCredentials.Factory.hasClassProperties(user.credentials))
+        return Promise.resolve();
     return user
         .executeSELECTQuery("BASE<" + user.id + ">SELECT?c FROM<>WHERE{GRAPH<>{<><" + CS_1.CS.credentials + ">?c}}")
         .then(function (_a) {
-        var credentialsBinding = _a[0].bindings[0], response = _a[1];
+        var credentialsBinding = _a.bindings[0];
         user.credentials = PersistedCredentials.Factory.decorate(credentialsBinding.credentials, user._documents);
-        return response;
     });
 }
 

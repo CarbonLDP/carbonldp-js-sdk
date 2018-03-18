@@ -1,13 +1,12 @@
 import { PersistedACL } from "./Auth/PersistedACL";
 import { Documents } from "./Documents";
 import { RequestOptions } from "./HTTP/Request";
-import { Response } from "./HTTP/Response";
 import { ModelDecorator } from "./ModelDecorator";
 import { PersistedDocument } from "./PersistedDocument";
 import { Pointer } from "./Pointer";
 export interface PersistedProtectedDocument extends PersistedDocument {
     accessControlList?: Pointer;
-    getACL(requestOptions?: RequestOptions): Promise<[PersistedACL, Response]>;
+    getACL(requestOptions?: RequestOptions): Promise<PersistedACL>;
 }
 export interface PersistedProtectedDocumentFactory extends ModelDecorator<PersistedProtectedDocument> {
     isDecorated(object: object): object is PersistedProtectedDocument;
