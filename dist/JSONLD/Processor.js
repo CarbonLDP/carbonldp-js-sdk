@@ -1,19 +1,12 @@
 "use strict";
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
-    result["default"] = mod;
-    return result;
-}
 Object.defineProperty(exports, "__esModule", { value: true });
 var Errors_1 = require("../Errors");
 var JSONParser_1 = require("../HTTP/JSONParser");
 var Request_1 = require("../HTTP/Request");
 var List_1 = require("../RDF/List");
 var URI_1 = require("../RDF/URI");
-var ObjectSchema = __importStar(require("./../ObjectSchema"));
-var Utils = __importStar(require("./../Utils"));
+var ObjectSchema = require("./../ObjectSchema");
+var Utils = require("./../Utils");
 var MAX_CONTEXT_URLS = 10;
 var LINK_HEADER_REL = "http://www.w3.org/ns/json-ld#context";
 var JSONLDProcessor = (function () {

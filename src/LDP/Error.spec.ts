@@ -12,12 +12,12 @@ import { C } from "../Vocabularies/C";
 import { XSD } from "../Vocabularies/XSD";
 import * as Utils from "./../Utils";
 
-import DefaultExport, { CarbonError } from "./CarbonError";
+import DefaultExport, { Error } from "./Error";
 
 describe( module( "carbonldp/LDP/Error" ), ():void => {
 
 	describe( interfaze(
-		"CarbonLDP.LDP.CarbonError.CarbonError",
+		"CarbonLDP.LDP.Error.Error",
 		"Interface that represents an error occurred in the server."
 	), ():void => {
 
@@ -40,15 +40,15 @@ describe( module( "carbonldp/LDP/Error" ), ():void => {
 		it( hasProperty(
 			OBLIGATORY,
 			"errorParameters",
-			"CarbonLDP.LDP.CarbonMap.CarbonMap<string, any>",
+			"CarbonLDP.LDP.Map.Map<string, any>",
 			"Map that contains the specific elements that make the error been thrown."
 		), ():void => {} );
 
 	} );
 
 	describe( interfaze(
-		"CarbonLDP.LDP.CarbonError.CarbonErrorFactory",
-		"Interface with the factory, decorate and utils function for `CarbonLDP.LDP.CarbonError.CarbonError` objects."
+		"CarbonLDP.LDP.Error.ErrorFactory",
+		"Interface with the factory, decorate and utils function for `CarbonLDP.LDP.Error.Error` objects."
 	), ():void => {
 
 		it( hasProperty(
@@ -68,41 +68,41 @@ describe( module( "carbonldp/LDP/Error" ), ():void => {
 	describe( property(
 		STATIC,
 		"CarbonError",
-		"CarbonLDP.LDP.CarbonError.CarbonErrorFactory"
+		"CarbonLDP.LDP.Error.ErrorFactory"
 	), ():void => {
 
 		it( "should exist", ():void => {
-			expect( CarbonError ).toBeDefined();
-			expect( CarbonError ).toEqual( jasmine.any( Object ) );
+			expect( Error ).toBeDefined();
+			expect( Error ).toEqual( jasmine.any( Object ) );
 		} );
 
 		// TODO: Separate in different tests
 		it( "CarbonError.TYPE", ():void => {
-			expect( CarbonError.TYPE ).toBeDefined();
-			expect( Utils.isString( CarbonError.TYPE ) ).toBe( true );
+			expect( Error.TYPE ).toBeDefined();
+			expect( Utils.isString( Error.TYPE ) ).toBe( true );
 
-			expect( CarbonError.TYPE ).toBe( C.Error );
+			expect( Error.TYPE ).toBe( C.Error );
 		} );
 
 		// TODO: Separate in different tests
 		it( "CarbonError.SCHEMA", ():void => {
-			expect( CarbonError.SCHEMA ).toBeDefined();
-			expect( Utils.isObject( CarbonError.SCHEMA ) ).toBe( true );
+			expect( Error.SCHEMA ).toBeDefined();
+			expect( Utils.isObject( Error.SCHEMA ) ).toBe( true );
 
-			expect( Utils.hasProperty( CarbonError.SCHEMA, "errorCode" ) ).toBe( true );
-			expect( CarbonError.SCHEMA[ "errorCode" ] ).toEqual( {
+			expect( Utils.hasProperty( Error.SCHEMA, "errorCode" ) ).toBe( true );
+			expect( Error.SCHEMA[ "errorCode" ] ).toEqual( {
 				"@id": C.errorCode,
 				"@type": XSD.string,
 			} );
 
-			expect( Utils.hasProperty( CarbonError.SCHEMA, "errorMessage" ) ).toBe( true );
-			expect( CarbonError.SCHEMA[ "errorMessage" ] ).toEqual( {
+			expect( Utils.hasProperty( Error.SCHEMA, "errorMessage" ) ).toBe( true );
+			expect( Error.SCHEMA[ "errorMessage" ] ).toEqual( {
 				"@id": C.errorMessage,
 				"@language": "en",
 			} );
 
-			expect( Utils.hasProperty( CarbonError.SCHEMA, "errorParameters" ) ).toBe( true );
-			expect( CarbonError.SCHEMA[ "errorParameters" ] ).toEqual( {
+			expect( Utils.hasProperty( Error.SCHEMA, "errorParameters" ) ).toBe( true );
+			expect( Error.SCHEMA[ "errorParameters" ] ).toEqual( {
 				"@id": C.errorParameters,
 				"@type": "@id",
 			} );
@@ -110,9 +110,9 @@ describe( module( "carbonldp/LDP/Error" ), ():void => {
 
 	} );
 
-	it( hasDefaultExport( "CarbonLDP.LDP.CarbonError.CarbonError" ), ():void => {
+	it( hasDefaultExport( "CarbonLDP.LDP.Error.Error" ), ():void => {
 		let defaultExport:DefaultExport = <any> {};
-		let defaultTarget:CarbonError;
+		let defaultTarget:Error;
 
 		defaultTarget = defaultExport;
 		expect( defaultTarget ).toEqual( jasmine.any( Object ) );

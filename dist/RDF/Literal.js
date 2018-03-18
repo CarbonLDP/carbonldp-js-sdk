@@ -1,18 +1,11 @@
 "use strict";
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
-    result["default"] = mod;
-    return result;
-}
 Object.defineProperty(exports, "__esModule", { value: true });
-var Utils = __importStar(require("./../Utils"));
+var Utils = require("./../Utils");
 var XSD_1 = require("../Vocabularies/XSD");
-var Errors = __importStar(require("../Errors"));
-var Serializer = __importStar(require("./Literal/Serializer"));
+var Errors = require("../Errors");
+var Serializer = require("./Literal/Serializer");
 exports.Serializer = Serializer;
-var Serializers = __importStar(require("./Literal/Serializers"));
+var Serializers = require("./Literal/Serializers");
 exports.Serializers = Serializers;
 exports.RDFLiteral = {
     from: function (value) {

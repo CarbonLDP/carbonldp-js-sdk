@@ -1,13 +1,6 @@
 "use strict";
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
-    result["default"] = mod;
-    return result;
-}
 Object.defineProperty(exports, "__esModule", { value: true });
-var Errors = __importStar(require("../Errors"));
+var Errors = require("../Errors");
 var Request_1 = require("../HTTP/Request");
 var StringParser_1 = require("../HTTP/StringParser");
 var Literal_1 = require("../RDF/Literal");

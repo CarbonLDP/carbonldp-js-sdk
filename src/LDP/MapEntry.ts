@@ -3,7 +3,7 @@ import { ObjectSchema } from "../ObjectSchema";
 import { C } from "../Vocabularies/C";
 
 
-export interface CarbonMapEntry<K, V> extends BlankNode {
+export interface MapEntry<K, V> extends BlankNode {
 	entryKey:K;
 	entryValue:V;
 }
@@ -18,12 +18,12 @@ const SCHEMA:ObjectSchema = {
 	},
 };
 
-export interface CarbonMapEntryFactory {
+export interface MapEntryFactory {
 	SCHEMA:ObjectSchema;
 }
 
-export const CarbonMapEntry:CarbonMapEntryFactory = {
+export const MapEntry:MapEntryFactory = {
 	SCHEMA,
 };
 
-export default CarbonMapEntry;
+export default MapEntry;

@@ -1,31 +1,24 @@
 "use strict";
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
-    result["default"] = mod;
-    return result;
-}
 Object.defineProperty(exports, "__esModule", { value: true });
-var AddMemberAction = __importStar(require("./AddMemberAction"));
+var AddMemberAction = require("./AddMemberAction");
 exports.AddMemberAction = AddMemberAction;
-var CarbonError = __importStar(require("./CarbonError"));
+var CarbonError = require("./Error");
 exports.CarbonError = CarbonError;
-var CarbonMap = __importStar(require("./CarbonMap"));
+var CarbonMap = require("./Map");
 exports.CarbonMap = CarbonMap;
-var CarbonMapEntry = __importStar(require("./CarbonMapEntry"));
+var CarbonMapEntry = require("./MapEntry");
 exports.CarbonMapEntry = CarbonMapEntry;
-var DirectContainer = __importStar(require("./DirectContainer"));
+var DirectContainer = require("./DirectContainer");
 exports.DirectContainer = DirectContainer;
-var DocumentMetadata = __importStar(require("./DocumentMetadata"));
+var DocumentMetadata = require("./DocumentMetadata");
 exports.DocumentMetadata = DocumentMetadata;
-var ErrorResponse = __importStar(require("./ErrorResponse"));
+var ErrorResponse = require("./ErrorResponse");
 exports.ErrorResponse = ErrorResponse;
-var RemoveMemberAction = __importStar(require("./RemoveMemberAction"));
+var RemoveMemberAction = require("./RemoveMemberAction");
 exports.RemoveMemberAction = RemoveMemberAction;
-var ResponseMetadata = __importStar(require("./ResponseMetadata"));
+var ResponseMetadata = require("./ResponseMetadata");
 exports.ResponseMetadata = ResponseMetadata;
-var ValidationError = __importStar(require("./ValidationError"));
+var ValidationError = require("./ValidationError");
 exports.ValidationError = ValidationError;
 
 //# sourceMappingURL=index.js.map

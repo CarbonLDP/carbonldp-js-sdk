@@ -11,14 +11,14 @@ import {
 import { C } from "../Vocabularies/C";
 import * as Utils from "./../Utils";
 
-import DefaultExport, { CarbonMapEntry } from "./CarbonMapEntry";
+import DefaultExport, { MapEntry } from "./MapEntry";
 
-describe( module( "carbonldp/LDP/CarbonMapEntry" ), ():void => {
+describe( module( "carbonldp/LDP/MapEntry" ), ():void => {
 
 	describe( interfaze(
-		"CarbonLDP.LDP.CarbonMapEntry.CarbonMapEntry",
+		"CarbonLDP.LDP.MapEntry.MapEntry",
 		[ "K", "V" ],
-		"Entries of the `CarbonLDP.LDP.CarbonMap.CarbonMap` with the key/value pair."
+		"Entries of the `CarbonLDP.LDP.Map.Map` with the key/value pair."
 	), ():void => {
 
 		it( extendsClass( "CarbonLDP.BlankNode.BlankNode" ), ():void => {} );
@@ -40,8 +40,8 @@ describe( module( "carbonldp/LDP/CarbonMapEntry" ), ():void => {
 	} );
 
 	describe( interfaze(
-		"CarbonLDP.LDP.CarbonMapEntry.CarbonMapEntryFactory",
-		"Interface with the factory, decorate and utils methods for `CarbonLDP.LDP.CarbonMapEntry.CarbonMapEntry` objects"
+		"CarbonLDP.LDP.MapEntry.MapEntryFactory",
+		"Interface with the factory, decorate and utils methods for `CarbonLDP.LDP.MapEntry.MapEntry` objects"
 	), ():void => {
 
 		it( hasProperty(
@@ -55,29 +55,29 @@ describe( module( "carbonldp/LDP/CarbonMapEntry" ), ():void => {
 	describe( property(
 		STATIC,
 		"CarbonMapEntry",
-		"CarbonLDP.LDP.CarbonMapEntry.CarbonMapEntryFactory"
+		"CarbonLDP.LDP.MapEntry.MapEntryFactory"
 	), ():void => {
 
 		it( "should exist", ():void => {
-			expect( CarbonMapEntry ).toBeDefined();
-			expect( CarbonMapEntry ).toEqual( jasmine.any( Object ) );
+			expect( MapEntry ).toBeDefined();
+			expect( MapEntry ).toEqual( jasmine.any( Object ) );
 		} );
 
 		// TODO: Separate in different tests
 		it( "CarbonMapEntry.SCHEMA", ():void => {
-			expect( CarbonMapEntry.SCHEMA ).toBeDefined();
-			expect( Utils.isObject( CarbonMapEntry.SCHEMA ) ).toBe( true );
+			expect( MapEntry.SCHEMA ).toBeDefined();
+			expect( Utils.isObject( MapEntry.SCHEMA ) ).toBe( true );
 
-			expect( CarbonMapEntry.SCHEMA as { [key:string]:object } ).toEqual( {
+			expect( MapEntry.SCHEMA as { [key:string]:object } ).toEqual( {
 				entryKey: jasmine.any( Object ),
 				entryValue: jasmine.any( Object ),
 			} );
 
-			expect( CarbonMapEntry.SCHEMA[ "entryKey" ] ).toEqual( {
+			expect( MapEntry.SCHEMA[ "entryKey" ] ).toEqual( {
 				"@id": C.entryKey,
 			} );
 
-			expect( CarbonMapEntry.SCHEMA[ "entryValue" ] ).toEqual( {
+			expect( MapEntry.SCHEMA[ "entryValue" ] ).toEqual( {
 				"@id": C.entryValue,
 			} );
 
@@ -85,9 +85,9 @@ describe( module( "carbonldp/LDP/CarbonMapEntry" ), ():void => {
 
 	} );
 
-	it( hasDefaultExport( "CarbonLDP.LDP.CarbonMapEntry.CarbonMapEntry" ), ():void => {
+	it( hasDefaultExport( "CarbonLDP.LDP.MapEntry.MapEntry" ), ():void => {
 		let defaultExport:DefaultExport<any, any> = <any> {};
-		let defaultTarget:CarbonMapEntry<any, any>;
+		let defaultTarget:MapEntry<any, any>;
 
 		defaultTarget = defaultExport;
 		expect( defaultTarget ).toEqual( jasmine.any( Object ) );

@@ -1,64 +1,129 @@
-export namespace C {
-	export const namespace:"https://carbonldp.com/ns/v1/platform#" = "https://carbonldp.com/ns/v1/platform#";
+export interface C {
+	namespace:"https://carbonldp.com/ns/v1/platform#";
 
-	export const AccessPoint:string = namespace + "AccessPoint";
-	export const AccessPointCreated:string = namespace + "AccessPointCreated";
-	export const AddMemberAction:string = namespace + "AddMemberAction";
-	export const ChildCreated:string = namespace + "ChildCreatedEvent";
-	export const Document:string = namespace + "Document";
-	export const DocumentCreatedDetails:string = namespace + "DocumentCreatedEventDetails";
-	export const DocumentDeleted:string = namespace + "DocumentDeleted";
-	export const DocumentMetadata:string = namespace + "DocumentMetadata";
-	export const DocumentModified:string = namespace + "DocumentModified";
-	export const ErrorResponse:string = namespace + "ErrorResponse";
-	export const Error:string = namespace + "Error";
-	export const Instance:string = namespace + "Instance";
-	export const Map:string = namespace + "Map";
-	export const MemberAdded:string = namespace + "MemberAddedEvent";
-	export const MemberAddedDetails:string = namespace + "MemberAddedEventDetails";
-	export const MemberRemoved:string = namespace + "MemberRemovedEvent";
-	export const MemberRemovedDetails:string = namespace + "MemberRemovedEventDetails";
-	export const NonReadableMembershipResourceTriples:string = namespace + "NonReadableMembershipResourceTriples";
-	export const Platform:string = namespace + "Platform";
-	export const PreferContainer:string = namespace + "PreferContainer";
-	export const PreferContainmentResources:string = namespace + "PreferContainmentResources";
-	export const PreferContainmentTriples:string = namespace + "PreferContainmentTriples";
-	export const PreferDocumentETags:string = namespace + "PreferDocumentETags";
-	export const PreferMembershipResources:string = namespace + "PreferMembershipResources";
-	export const PreferMembershipTriples:string = namespace + "PreferMembershipTriples";
-	export const PreferResultsContext:string = namespace + "PreferResultsContext";
-	export const PreferSelectedMembershipTriples:string = namespace + "PreferSelectedMembershipTriples";
-	export const QueryMetadata:string = namespace + "QueryMetadata";
-	export const RemoveMemberAction:string = namespace + "RemoveMemberAction";
-	export const ResponseMetadata:string = namespace + "ResponseMetadata";
-	export const ValidationError:string = namespace + "ValidationError";
-	export const VolatileResource:string = namespace + "VolatileResource";
+	AccessPoint:"https://carbonldp.com/ns/v1/platform#AccessPoint";
+	AccessPointCreated:"https://carbonldp.com/ns/v1/platform#AccessPointCreated";
+	AddMemberAction:"https://carbonldp.com/ns/v1/platform#AddMemberAction";
+	ChildCreated:"https://carbonldp.com/ns/v1/platform#ChildCreatedEvent";
+	Document:"https://carbonldp.com/ns/v1/platform#Document";
+	DocumentCreatedDetails:"https://carbonldp.com/ns/v1/platform#DocumentCreatedEventDetails";
+	DocumentDeleted:"https://carbonldp.com/ns/v1/platform#DocumentDeleted";
+	DocumentMetadata:"https://carbonldp.com/ns/v1/platform#DocumentMetadata";
+	DocumentModified:"https://carbonldp.com/ns/v1/platform#DocumentModified";
+	ErrorResponse:"https://carbonldp.com/ns/v1/platform#ErrorResponse";
+	Error:"https://carbonldp.com/ns/v1/platform#Error";
+	Instance:"https://carbonldp.com/ns/v1/platform#Instance";
+	Map:"https://carbonldp.com/ns/v1/platform#Map";
+	MemberAdded:"https://carbonldp.com/ns/v1/platform#MemberAddedEvent";
+	MemberAddedDetails:"https://carbonldp.com/ns/v1/platform#MemberAddedEventDetails";
+	MemberRemoved:"https://carbonldp.com/ns/v1/platform#MemberRemovedEvent";
+	MemberRemovedDetails:"https://carbonldp.com/ns/v1/platform#MemberRemovedEventDetails";
+	NonReadableMembershipResourceTriples:"https://carbonldp.com/ns/v1/platform#NonReadableMembershipResourceTriples";
+	Platform:"https://carbonldp.com/ns/v1/platform#Platform";
+	PreferContainer:"https://carbonldp.com/ns/v1/platform#PreferContainer";
+	PreferContainmentResources:"https://carbonldp.com/ns/v1/platform#PreferContainmentResources";
+	PreferContainmentTriples:"https://carbonldp.com/ns/v1/platform#PreferContainmentTriples";
+	PreferDocumentETags:"https://carbonldp.com/ns/v1/platform#PreferDocumentETags";
+	PreferMembershipResources:"https://carbonldp.com/ns/v1/platform#PreferMembershipResources";
+	PreferMembershipTriples:"https://carbonldp.com/ns/v1/platform#PreferMembershipTriples";
+	PreferResultsContext:"https://carbonldp.com/ns/v1/platform#PreferResultsContext";
+	PreferSelectedMembershipTriples:"https://carbonldp.com/ns/v1/platform#PreferSelectedMembershipTriples";
+	QueryMetadata:"https://carbonldp.com/ns/v1/platform#QueryMetadata";
+	RemoveMemberAction:"https://carbonldp.com/ns/v1/platform#RemoveMemberAction";
+	ResponseMetadata:"https://carbonldp.com/ns/v1/platform#ResponseMetadata";
+	ValidationError:"https://carbonldp.com/ns/v1/platform#ValidationError";
+	VolatileResource:"https://carbonldp.com/ns/v1/platform#VolatileResource";
 
-	export const accessPoint:string = namespace + "accessPoint";
-	export const bNodesMap:string = namespace + "bNodesMap";
-	export const buildDate:string = namespace + "buildDate";
-	export const created:string = namespace + "created";
-	export const createdDocument:string = namespace + "createdDocument";
-	export const details:string = namespace + "details";
-	export const defaultInteractionModel:string = namespace + "defaultInteractionModel";
-	export const documentMetadata:string = namespace + "documentMetadata";
-	export const entry:string = namespace + "entry";
-	export const entryKey:string = namespace + "key";
-	export const entryValue:string = namespace + "value";
-	export const error:string = namespace + "error";
-	export const errorCode:string = namespace + "errorCode";
-	export const errorDetails:string = namespace + "errorDetails";
-	export const errorMessage:string = namespace + "errorMessage";
-	export const errorParameters:string = namespace + "errorParameters";
-	export const eTag:string = namespace + "eTag";
-	export const httpStatusCode:string = namespace + "httpStatusCode";
-	export const mediaType:string = namespace + "mediaType";
-	export const member:string = namespace + "member";
-	export const modified:string = namespace + "modified";
-	export const requestID:string = namespace + "requestID";
-	export const relatedDocument:string = namespace + "relatedDocument";
-	export const size:string = namespace + "size";
-	export const target:string = namespace + "target";
-	export const targetMember:string = namespace + "targetMember";
-	export const version:string = namespace + "version";
+	accessPoint:"https://carbonldp.com/ns/v1/platform#accessPoint";
+	bNodesMap:"https://carbonldp.com/ns/v1/platform#bNodesMap";
+	buildDate:"https://carbonldp.com/ns/v1/platform#buildDate";
+	created:"https://carbonldp.com/ns/v1/platform#created";
+	createdDocument:"https://carbonldp.com/ns/v1/platform#createdDocument";
+	details:"https://carbonldp.com/ns/v1/platform#details";
+	defaultInteractionModel:"https://carbonldp.com/ns/v1/platform#defaultInteractionModel";
+	documentMetadata:"https://carbonldp.com/ns/v1/platform#documentMetadata";
+	entry:"https://carbonldp.com/ns/v1/platform#entry";
+	entryKey:"https://carbonldp.com/ns/v1/platform#key";
+	entryValue:"https://carbonldp.com/ns/v1/platform#value";
+	error:"https://carbonldp.com/ns/v1/platform#error";
+	errorCode:"https://carbonldp.com/ns/v1/platform#errorCode";
+	errorDetails:"https://carbonldp.com/ns/v1/platform#errorDetails";
+	errorMessage:"https://carbonldp.com/ns/v1/platform#errorMessage";
+	errorParameters:"https://carbonldp.com/ns/v1/platform#errorParameters";
+	eTag:"https://carbonldp.com/ns/v1/platform#eTag";
+	httpStatusCode:"https://carbonldp.com/ns/v1/platform#httpStatusCode";
+	mediaType:"https://carbonldp.com/ns/v1/platform#mediaType";
+	member:"https://carbonldp.com/ns/v1/platform#member";
+	modified:"https://carbonldp.com/ns/v1/platform#modified";
+	requestID:"https://carbonldp.com/ns/v1/platform#requestID";
+	relatedDocument:"https://carbonldp.com/ns/v1/platform#relatedDocument";
+	size:"https://carbonldp.com/ns/v1/platform#size";
+	target:"https://carbonldp.com/ns/v1/platform#target";
+	targetMember:"https://carbonldp.com/ns/v1/platform#targetMember";
+	version:"https://carbonldp.com/ns/v1/platform#version";
 }
+
+export const C:C = {
+	namespace: "https://carbonldp.com/ns/v1/platform#",
+
+	AccessPoint: "https://carbonldp.com/ns/v1/platform#AccessPoint",
+	AccessPointCreated: "https://carbonldp.com/ns/v1/platform#AccessPointCreated",
+	AddMemberAction: "https://carbonldp.com/ns/v1/platform#AddMemberAction",
+	ChildCreated: "https://carbonldp.com/ns/v1/platform#ChildCreatedEvent",
+	Document: "https://carbonldp.com/ns/v1/platform#Document",
+	DocumentCreatedDetails: "https://carbonldp.com/ns/v1/platform#DocumentCreatedEventDetails",
+	DocumentDeleted: "https://carbonldp.com/ns/v1/platform#DocumentDeleted",
+	DocumentMetadata: "https://carbonldp.com/ns/v1/platform#DocumentMetadata",
+	DocumentModified: "https://carbonldp.com/ns/v1/platform#DocumentModified",
+	ErrorResponse: "https://carbonldp.com/ns/v1/platform#ErrorResponse",
+	Error: "https://carbonldp.com/ns/v1/platform#Error",
+	Instance: "https://carbonldp.com/ns/v1/platform#Instance",
+	Map: "https://carbonldp.com/ns/v1/platform#Map",
+	MemberAdded: "https://carbonldp.com/ns/v1/platform#MemberAddedEvent",
+	MemberAddedDetails: "https://carbonldp.com/ns/v1/platform#MemberAddedEventDetails",
+	MemberRemoved: "https://carbonldp.com/ns/v1/platform#MemberRemovedEvent",
+	MemberRemovedDetails: "https://carbonldp.com/ns/v1/platform#MemberRemovedEventDetails",
+	NonReadableMembershipResourceTriples: "https://carbonldp.com/ns/v1/platform#NonReadableMembershipResourceTriples",
+	Platform: "https://carbonldp.com/ns/v1/platform#Platform",
+	PreferContainer: "https://carbonldp.com/ns/v1/platform#PreferContainer",
+	PreferContainmentResources: "https://carbonldp.com/ns/v1/platform#PreferContainmentResources",
+	PreferContainmentTriples: "https://carbonldp.com/ns/v1/platform#PreferContainmentTriples",
+	PreferDocumentETags: "https://carbonldp.com/ns/v1/platform#PreferDocumentETags",
+	PreferMembershipResources: "https://carbonldp.com/ns/v1/platform#PreferMembershipResources",
+	PreferMembershipTriples: "https://carbonldp.com/ns/v1/platform#PreferMembershipTriples",
+	PreferResultsContext: "https://carbonldp.com/ns/v1/platform#PreferResultsContext",
+	PreferSelectedMembershipTriples: "https://carbonldp.com/ns/v1/platform#PreferSelectedMembershipTriples",
+	QueryMetadata: "https://carbonldp.com/ns/v1/platform#QueryMetadata",
+	RemoveMemberAction: "https://carbonldp.com/ns/v1/platform#RemoveMemberAction",
+	ResponseMetadata: "https://carbonldp.com/ns/v1/platform#ResponseMetadata",
+	ValidationError: "https://carbonldp.com/ns/v1/platform#ValidationError",
+	VolatileResource: "https://carbonldp.com/ns/v1/platform#VolatileResource",
+
+	accessPoint: "https://carbonldp.com/ns/v1/platform#accessPoint",
+	bNodesMap: "https://carbonldp.com/ns/v1/platform#bNodesMap",
+	buildDate: "https://carbonldp.com/ns/v1/platform#buildDate",
+	created: "https://carbonldp.com/ns/v1/platform#created",
+	createdDocument: "https://carbonldp.com/ns/v1/platform#createdDocument",
+	details: "https://carbonldp.com/ns/v1/platform#details",
+	defaultInteractionModel: "https://carbonldp.com/ns/v1/platform#defaultInteractionModel",
+	documentMetadata: "https://carbonldp.com/ns/v1/platform#documentMetadata",
+	entry: "https://carbonldp.com/ns/v1/platform#entry",
+	entryKey: "https://carbonldp.com/ns/v1/platform#key",
+	entryValue: "https://carbonldp.com/ns/v1/platform#value",
+	error: "https://carbonldp.com/ns/v1/platform#error",
+	errorCode: "https://carbonldp.com/ns/v1/platform#errorCode",
+	errorDetails: "https://carbonldp.com/ns/v1/platform#errorDetails",
+	errorMessage: "https://carbonldp.com/ns/v1/platform#errorMessage",
+	errorParameters: "https://carbonldp.com/ns/v1/platform#errorParameters",
+	eTag: "https://carbonldp.com/ns/v1/platform#eTag",
+	httpStatusCode: "https://carbonldp.com/ns/v1/platform#httpStatusCode",
+	mediaType: "https://carbonldp.com/ns/v1/platform#mediaType",
+	member: "https://carbonldp.com/ns/v1/platform#member",
+	modified: "https://carbonldp.com/ns/v1/platform#modified",
+	requestID: "https://carbonldp.com/ns/v1/platform#requestID",
+	relatedDocument: "https://carbonldp.com/ns/v1/platform#relatedDocument",
+	size: "https://carbonldp.com/ns/v1/platform#size",
+	target: "https://carbonldp.com/ns/v1/platform#target",
+	targetMember: "https://carbonldp.com/ns/v1/platform#targetMember",
+	version: "https://carbonldp.com/ns/v1/platform#version",
+};

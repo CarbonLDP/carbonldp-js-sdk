@@ -9,9 +9,9 @@ var SCHEMA = {
         "@id": C_1.C.entryValue,
     },
 };
-exports.CarbonMapEntry = {
+exports.MapEntry = {
     SCHEMA: SCHEMA,
 };
-exports.default = exports.CarbonMapEntry;
+exports.default = exports.MapEntry;
 
-//# sourceMappingURL=CarbonMapEntry.js.map
+//# sourceMappingURL=MapEntry.js.map
