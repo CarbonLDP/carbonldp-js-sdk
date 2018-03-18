@@ -1,6 +1,6 @@
 {
   "name": "carbonldp",
-  "version": "1.0.0-alpha.12",
+  "version": "1.0.0-alpha.13",
   "description": "JavaScript/TypeScript SDK for Carbon LDP",
   "homepage": "https://github.com/CarbonLDP/carbonldp-js-sdk",
   "contributors": [
@@ -12,8 +12,8 @@
     "type": "git",
     "url": "https://github.com/CarbonLDP/carbonldp-js-sdk.git"
   },
-  "main": "./Carbon.js",
-  "typings": "./Carbon.d.ts",
+  "main": "./CarbonLDP.js",
+  "typings": "./CarbonLDP.d.ts",
   "browser": {
     "file-type": false,
     "url": false,
