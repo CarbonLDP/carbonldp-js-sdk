@@ -1,1 +1,1 @@
-{"version":3,"sources":["RDF/Literal/Serializers/index.ts"],"names":[],"mappings":";;AAAA,2BAA6B;AAG5B,kBAAG","file":"index.js","sourcesContent":["import * as XSD from \"./XSD\";\n\nexport {\n\tXSD\n};\n"]}
+{"version":3,"sources":["RDF/Literal/Serializers/index.ts"],"names":[],"mappings":";;;;;;;;;AAAA,yCAA6B;AAG5B,kBAAG","file":"index.js","sourcesContent":["import * as XSD from \"./XSD\";\n\nexport {\n\tXSD\n};\n"]}

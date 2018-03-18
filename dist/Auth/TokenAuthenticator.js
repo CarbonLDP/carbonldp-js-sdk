@@ -1,6 +1,16 @@
 "use strict";
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
+    result["default"] = mod;
+    return result;
+}
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+}
 Object.defineProperty(exports, "__esModule", { value: true });
-var Errors = require("../Errors");
+var Errors = __importStar(require("../Errors"));
 var Errors_1 = require("../HTTP/Errors");
 var Header_1 = require("../HTTP/Header");
 var Request_1 = require("../HTTP/Request");
@@ -9,10 +19,10 @@ var ResponseMetadata_1 = require("../LDP/ResponseMetadata");
 var Document_1 = require("../RDF/Document");
 var Node_1 = require("../RDF/Node");
 var LDP_1 = require("../Vocabularies/LDP");
-var Utils = require("./../Utils");
-var BasicAuthenticator_1 = require("./BasicAuthenticator");
-var Token = require("./Token");
-var UsernameAndPasswordToken = require("./UsernameAndPasswordToken");
+var Utils = __importStar(require("./../Utils"));
+var BasicAuthenticator_1 = __importDefault(require("./BasicAuthenticator"));
+var Token = __importStar(require("./Token"));
+var UsernameAndPasswordToken = __importStar(require("./UsernameAndPasswordToken"));
 exports.TOKEN_CONTAINER = "auth-tokens/";
 var Class = (function () {
     function Class(context) {

@@ -1,16 +1,23 @@
 "use strict";
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
+    result["default"] = mod;
+    return result;
+}
 Object.defineProperty(exports, "__esModule", { value: true });
-var Document = require("./Document");
+var Document = __importStar(require("./Document"));
 exports.Document = Document;
-var List = require("./List");
+var List = __importStar(require("./List"));
 exports.List = List;
-var Literal = require("./Literal");
+var Literal = __importStar(require("./Literal"));
 exports.Literal = Literal;
-var Node = require("./Node");
+var Node = __importStar(require("./Node"));
 exports.Node = Node;
-var URI = require("./URI");
+var URI = __importStar(require("./URI"));
 exports.URI = URI;
-var Value = require("./Value");
+var Value = __importStar(require("./Value"));
 exports.Value = Value;
 
 //# sourceMappingURL=index.js.map
