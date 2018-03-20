@@ -1204,7 +1204,7 @@ describe( module( "carbonldp/Auth" ), ():void => {
 				{ name: "uri", type: "string", description: "The URI to get an authentication ticket for." },
 				{ name: "requestOptions", type: "CarbonLDP.HTTP.Request.RequestOptions", optional: true },
 			],
-			{ type: "Promise<[ CarbonLDP.Auth.Ticket.Class, CarbonLDP.HTTP.Response.Response ]>" }
+			{ type: "Promise<CarbonLDP.Auth.Ticket.Class>" }
 		), ( done:{ ():void, fail:() => void } ):void => {
 			class MockedContext extends AbstractContext {
 				protected _baseURI:string;
@@ -1308,12 +1308,10 @@ describe( module( "carbonldp/Auth" ), ():void => {
 			let promises:Promise<any> [] = [];
 			let promise:Promise<any>;
 
-			function checkSuccess( [ ticket, response ]:[ Ticket.Class, Response ] ):void {
+			function checkSuccess( ticket:Ticket.Class ):void {
 				expect( ticket.expirationTime.getTime() ).toBeGreaterThan( Date.now() );
 				expect( ticket.forURI.id ).toBe( "http://example.com/resource/" );
 				expect( Utils.isString( ticket.ticketKey ) ).toBe( true );
-
-				expect( response instanceof Response ).toBe( true );
 			}
 
 			function checkFail( error:Error ):void {
@@ -1364,13 +1362,13 @@ describe( module( "carbonldp/Auth" ), ():void => {
 			expect( auth.getAuthenticatedURL ).toBeDefined();
 			expect( Utils.isFunction( auth.getAuthenticatedURL ) ).toBe( true );
 
-			spyOn( auth, "createTicket" ).and.returnValue( Promise.resolve( [ {
+			spyOn( auth, "createTicket" ).and.returnValue( Promise.resolve( {
 				id: "_:01",
 				types: [ CS.Ticket ],
 				expirationTime: new Date(),
 				forURI: context.documents.getPointer( "http://example.com/resource/" ),
 				ticketKey: "1234123412341234",
-			}, null ] ) );
+			} ) );
 
 			let promises:Promise<any>[] = [];
 			let promise:Promise<any>;

@@ -144,13 +144,12 @@ var Class = (function () {
             var ticket = Resource_1.Resource.create();
             var digestedSchema = _this.context.documents.getSchemaFor(expandedTicket);
             _this.context.documents.jsonldConverter.compact(expandedTicket, ticket, digestedSchema, _this.context.documents);
-            return [ticket, response];
+            return ticket;
         });
     };
     Class.prototype.getAuthenticatedURL = function (uri, requestOptions) {
         var resourceURI = this.context.resolve(uri);
-        return this.createTicket(resourceURI, requestOptions).then(function (_a) {
-            var ticket = _a[0], response = _a[1];
+        return this.createTicket(resourceURI, requestOptions).then(function (ticket) {
             resourceURI += URI_1.URI.hasQuery(resourceURI) ? "&" : "?";
             resourceURI += "ticket=" + ticket.ticketKey;
             return resourceURI;
@@ -202,10 +201,7 @@ var Class = (function () {
     Class.prototype.getAuthenticatedUser = function (authenticator) {
         var requestOptions = {};
         authenticator.addAuthentication(requestOptions);
-        return this.context.documents.get("users/me/", requestOptions).then(function (_a) {
-            var userDocument = _a[0], response = _a[1];
-            return userDocument;
-        });
+        return this.context.documents.get("users/me/", requestOptions);
     };
     return Class;
 }());

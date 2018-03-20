@@ -19,7 +19,6 @@ import UsernameAndPasswordToken from "./UsernameAndPasswordToken";
 import * as Users from "./Users";
 import Context from "../Context";
 import { RequestOptions } from "../HTTP/Request";
-import { Response } from "../HTTP/Response";
 export { ACE, ACL, User, Users, Authenticator, BasicAuthenticator, Credentials, PersistedACE, PersistedACL, PersistedCredentials, PersistedRole, PersistedUser, Role, Roles, Ticket, Token, TokenAuthenticator, UsernameAndPasswordToken };
 export declare enum Method {
     BASIC = 0,
@@ -41,7 +40,7 @@ export declare class Class {
     authenticateUsing(method: "TOKEN", token: Token.Class): Promise<Token.Class>;
     addAuthentication(requestOptions: RequestOptions): void;
     clearAuthentication(): void;
-    createTicket(uri: string, requestOptions?: RequestOptions): Promise<[Ticket.Class, Response]>;
+    createTicket(uri: string, requestOptions?: RequestOptions): Promise<Ticket.Class>;
     getAuthenticatedURL(uri: string, requestOptions?: RequestOptions): Promise<string>;
     private authenticateWithBasic(username, password);
     private authenticateWithToken(userOrTokenOrCredentials, password);

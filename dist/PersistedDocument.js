@@ -439,26 +439,26 @@ function extendCreateNamedFragment(superFunction) {
         return PersistedNamedFragment_1.PersistedNamedFragment.decorate(fragment);
     };
 }
-function refresh() {
-    return this._documents.refresh(this);
+function refresh(requestOptions) {
+    return this._documents.refresh(this, requestOptions);
 }
 function save(requestOptions) {
     return this._documents.save(this, requestOptions);
 }
-function saveAndRefresh() {
-    return this._documents.saveAndRefresh(this);
+function saveAndRefresh(requestOptions) {
+    return this._documents.saveAndRefresh(this, requestOptions);
 }
-function _delete() {
-    return this._documents.delete(this.id);
+function _delete(requestOptions) {
+    return this._documents.delete(this.id, requestOptions);
 }
-function getDownloadURL() {
-    return this._documents.getDownloadURL(this.id);
+function getDownloadURL(requestOptions) {
+    return this._documents.getDownloadURL(this.id, requestOptions);
 }
-function addMember(memberOrUri) {
-    return this._documents.addMember(this.id, memberOrUri);
+function addMember(memberOrUri, requestOptions) {
+    return this._documents.addMember(this.id, memberOrUri, requestOptions);
 }
-function addMembers(members) {
-    return this._documents.addMembers(this.id, members);
+function addMembers(members, requestOptions) {
+    return this._documents.addMembers(this.id, members, requestOptions);
 }
 function get(relativeURI, optionsOrQueryBuilderFn, queryBuilderFn) {
     var uri = URI_1.URI.resolve(this.id, relativeURI);
@@ -504,41 +504,34 @@ function listMembers(requestOptions) {
 function getMembers(requestOptionsOrQueryBuilderFn, childrenQuery) {
     return this._documents.getMembers(this.id, requestOptionsOrQueryBuilderFn, childrenQuery);
 }
-function removeMember(memberOrUri) {
-    return this._documents.removeMember(this.id, memberOrUri);
+function removeMember(memberOrUri, requestOptions) {
+    return this._documents.removeMember(this.id, memberOrUri, requestOptions);
 }
-function removeMembers(members) {
-    return this._documents.removeMembers(this.id, members);
+function removeMembers(members, requestOptions) {
+    return this._documents.removeMembers(this.id, members, requestOptions);
 }
-function removeAllMembers() {
-    return this._documents.removeAllMembers(this.id);
+function removeAllMembers(requestOptions) {
+    return this._documents.removeAllMembers(this.id, requestOptions);
 }
 function executeRawASKQuery(askQuery, requestOptions) {
-    if (requestOptions === void 0) { requestOptions = {}; }
     return this._documents.executeRawASKQuery(this.id, askQuery, requestOptions);
 }
 function executeASKQuery(askQuery, requestOptions) {
-    if (requestOptions === void 0) { requestOptions = {}; }
     return this._documents.executeASKQuery(this.id, askQuery, requestOptions);
 }
 function executeRawSELECTQuery(selectQuery, requestOptions) {
-    if (requestOptions === void 0) { requestOptions = {}; }
     return this._documents.executeRawSELECTQuery(this.id, selectQuery, requestOptions);
 }
 function executeSELECTQuery(selectQuery, requestOptions) {
-    if (requestOptions === void 0) { requestOptions = {}; }
     return this._documents.executeSELECTQuery(this.id, selectQuery, requestOptions);
 }
 function executeRawCONSTRUCTQuery(constructQuery, requestOptions) {
-    if (requestOptions === void 0) { requestOptions = {}; }
     return this._documents.executeRawCONSTRUCTQuery(this.id, constructQuery, requestOptions);
 }
 function executeRawDESCRIBEQuery(describeQuery, requestOptions) {
-    if (requestOptions === void 0) { requestOptions = {}; }
     return this._documents.executeRawDESCRIBEQuery(this.id, describeQuery, requestOptions);
 }
 function executeUPDATE(updateQuery, requestOptions) {
-    if (requestOptions === void 0) { requestOptions = {}; }
     return this._documents.executeUPDATE(this.id, updateQuery, requestOptions);
 }
 function sparql() {

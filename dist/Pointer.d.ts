@@ -6,8 +6,8 @@ export interface Pointer {
     _id: string;
     _resolved: boolean;
     id: string;
-    isResolved(): boolean;
-    resolve<T>(): Promise<[T & PersistedDocument, Response]>;
+    isResolved(): this is this & PersistedDocument;
+    resolve<T>(): Promise<T & PersistedDocument>;
 }
 export interface PointerLibrary {
     hasPointer(id: string): boolean;
@@ -24,7 +24,6 @@ export interface PointerFactory extends ModelFactory<Pointer>, ModelDecorator<Po
     decorate<T extends object>(object: T): T & Pointer;
     areEqual(pointer1: Pointer, pointer2: Pointer): boolean;
     getIDs(pointers: Pointer[]): string[];
-    resolveAll<T extends object>(pointers: Pointer[]): Promise<[(T & PersistedDocument)[], Response[]]>;
 }
 export declare function isPointerResolved(this: Pointer): boolean;
 export declare function resolveStandalonePointer(this: Pointer): Promise<[Pointer, Response]>;
