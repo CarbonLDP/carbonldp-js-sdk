@@ -1,29 +1,39 @@
-import * as NS from "./../NS";
-import ObjectSchema from "./../ObjectSchema";
-import Resource from "./../Resource";
-import Map from "./Map";
+import { C } from "../Vocabularies/C";
+import { XSD } from "../Vocabularies/XSD";
+import { ObjectSchema } from "../ObjectSchema";
+import { Resource } from "../Resource";
+import { Map } from "./Map";
 
-export const RDF_CLASS:string = NS.C.Class.Error;
 
-export const SCHEMA:ObjectSchema = {
-	"errorCode": {
-		"@id": NS.C.Predicate.errorCode,
-		"@type": NS.XSD.DataType.string,
-	},
-	"errorMessage": {
-		"@id": NS.C.Predicate.errorMessage,
-		"@language": "en",
-	},
-	"errorParameters": {
-		"@id": NS.C.Predicate.errorParameters,
-		"@type": "@id",
-	},
-};
-
-export interface Class extends Resource {
+export interface Error extends Resource {
 	errorCode:string;
 	errorMessage:string;
 	errorParameters:Map<string, any>;
 }
 
-export default Class;
+
+export interface ErrorFactory {
+	TYPE:string;
+	SCHEMA:ObjectSchema;
+}
+
+const SCHEMA:ObjectSchema = {
+	"errorCode": {
+		"@id": C.errorCode,
+		"@type": XSD.string,
+	},
+	"errorMessage": {
+		"@id": C.errorMessage,
+		"@language": "en",
+	},
+	"errorParameters": {
+		"@id": C.errorParameters,
+		"@type": "@id",
+	},
+};
+
+export const Error:ErrorFactory = {
+	TYPE:C.Error,
+	SCHEMA,
+};
+

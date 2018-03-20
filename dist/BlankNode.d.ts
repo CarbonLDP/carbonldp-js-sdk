@@ -1,9 +1,11 @@
-import * as Document from "./Document";
-import * as Fragment from "./Fragment";
-export interface Class extends Fragment.Class {
+import { Document } from "./Document";
+import { Fragment } from "./Fragment";
+import { ModelFactory } from "./ModelFactory";
+export interface BlankNode extends Fragment {
 }
-export declare class Factory {
-    static createFrom<T extends Object>(object: T, document: Document.Class): T & Class;
-    static createFrom<T extends Object>(object: T, id: string, document: Document.Class): T & Class;
+export interface BlankNodeFactory extends ModelFactory<BlankNode> {
+    is(object: object): object is BlankNode;
+    create(document: Document, id?: string): BlankNode;
+    createFrom<T extends object>(object: T, document: Document, id?: string): T & BlankNode;
 }
-export default Class;
+export declare const BlankNode: BlankNodeFactory;

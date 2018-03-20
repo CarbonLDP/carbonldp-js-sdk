@@ -18,7 +18,7 @@ swag.registerHelpers( Handlebars );
 		return str.replace( /\t/g, "" );
 	} );
 
-	const classRegex = /Carbon[./][./#a-zA-Z0-9]*/gm;
+	const classRegex = /CarbonLDP([./][./#a-zA-Z0-9]*)?/gmi;
 
 	Handlebars.registerHelper( "urlify", function( str, isHTML, noParagraph, options ) {
 		if( typeof str !== "string" ) throw new Error( "urlify: An string was expected but received: " + str );
@@ -53,12 +53,16 @@ swag.registerHelpers( Handlebars );
 		for( var i = 0; i < modules.length; ++ i ) {
 			var interfaces = modules[ i ][ "interfaces" ] || [];
 			var classes = modules[ i ][ "classes" ] || [];
+			var namespaces = modules[ i ][ "namespaces" ] || [];
 
 			Array.prototype.push.apply( elements, interfaces.map( element => {
 				return { path: element.path, description: element.description, type: "I" };
 			} ) );
 			Array.prototype.push.apply( elements, classes.map( element => {
 				return { path: element.path, description: element.description, type: "C" };
+			} ) );
+			Array.prototype.push.apply( elements, namespaces.map( element => {
+				return { path: element.path, description: element.description, type: "N" };
 			} ) );
 		}
 
@@ -79,12 +83,16 @@ swag.registerHelpers( Handlebars );
 
 		var interfaces = module[ "interfaces" ] || [];
 		var classes = module[ "classes" ] || [];
+		var namespaces = module[ "namespaces" ] || [];
 
 		Array.prototype.push.apply( elements, interfaces.map( element => {
 			return { element: element, isInterface: true };
 		} ) );
 		Array.prototype.push.apply( elements, classes.map( element => {
 			return { element: element, isClass: true };
+		} ) );
+		Array.prototype.push.apply( elements, namespaces.map( element => {
+			return { element: element, isNamespace: true };
 		} ) );
 
 		elements = elements.sort( function( a, b ) {
@@ -121,7 +129,7 @@ swag.registerHelpers( Handlebars );
 	function toURL( str ) {
 		if( typeof str !== "string" ) throw new Error( "toURL: An string was expected but received: " + str );
 
-		if( str.startsWith( "Carbon/" ) ) str = "Module/" + str;
+		if( str.startsWith( "carbonldp/" ) ) str = "Module/" + str;
 
 		return str
 			.replace( /\./g, "-" )
@@ -154,8 +162,8 @@ var MarkdownReporter = (() => {
 	}
 
 	// Obtains or generate the object for store and arrange the specs data
-	function getContainer( parent, data, isSuite ) {
-		if( "suiteType" in data || isSuite ) {
+	function getContainer( parent, data ) {
+		if( "suiteType" in data ) {
 			return composeSuite( parent, data );
 		} else {
 			return composeSpec( parent, data );
@@ -165,12 +173,17 @@ var MarkdownReporter = (() => {
 	function composeSuite( parent, suite ) {
 		var name = suite.name;
 		var type = suite.suiteType;
-		delete suite.suiteType;
 
 		switch( type ) {
 			case "module":
 				suite.path = suite.name;
 				suite.name = suite.path.split( "/" ).pop();
+				break;
+
+			case "namespace":
+				parent = parent[ "namespaces" ] || ( parent[ "namespaces" ] = {} );
+				suite.path = suite.name;
+				suite.name = suite.path.split( "." ).pop();
 				break;
 
 			case "class":
@@ -246,7 +259,7 @@ var MarkdownReporter = (() => {
 			case "property":
 				var properties = parent[ "properties" ] || ( parent[ "properties" ] = {} );
 
-				if( spec.access !== null ) {
+				if( parent.suiteType !== "namespace" && spec.access !== null ) {
 					properties = properties[ spec.access ] || ( properties[ spec.access ] = {} );
 				}
 
@@ -337,20 +350,21 @@ var MarkdownReporter = (() => {
 	}
 
 	function parseSpecs( parent, specs ) {
-		let container;
-		let data;
 		for( let key of Object.keys( specs ) ) {
-			data = parseData( key );
-			container = getContainer( parent, data, true );
+			if( ! isJSON( key ) ) continue;
+			const data = parseData( key );
+
+			const container = getContainer( parent, data );
 			if( container === null ) continue;
 
 			for( let spec of specs[ key ]._ ) {
-				data = parseData( spec );
-				getContainer( container, data, false );
+				const subData = parseData( spec );
+				getContainer( container, subData );
 			}
 			delete specs[ key ]._;
 			parseSpecs( container, specs[ key ] );
 
+			sortObjectProperty( container, "namespaces" );
 			sortObjectProperty( container, "classes" );
 			sortObjectProperty( container, "interfaces" );
 			sortObjectProperty( container, "reexports" );

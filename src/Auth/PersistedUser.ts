@@ -3,46 +3,37 @@ import {
 	isObject,
 	Minus,
 } from "../Utils";
-import * as Document from "./../Document";
-import * as Documents from "./../Documents";
-import * as HTTP from "./../HTTP";
-import * as PersistedProtectedDocument from "./../PersistedProtectedDocument";
+import { Document } from "../Document";
+import { Documents } from "../Documents";
+import { RequestOptions } from "../HTTP/Request";
+import { PersistedProtectedDocument } from "../PersistedProtectedDocument";
 import * as User from "./User";
 
-export interface Class extends Minus<User.Class, Document.Class>, PersistedProtectedDocument.Class {
-	enable( requestOptions?:HTTP.Request.Options ):Promise<[ Class, HTTP.Response.Class[] ]>;
+export interface Class extends Minus<User.Class, Document>, PersistedProtectedDocument {
+	enable( requestOptions?:RequestOptions ):Promise<Class>;
 
-	disable( requestOptions?:HTTP.Request.Options ):Promise<[ Class, HTTP.Response.Class[] ]>;
+	disable( requestOptions?:RequestOptions ):Promise<Class>;
 }
 
 
-export function enable( this:Class, requestOptions?:HTTP.Request.Options ):Promise<[ Class, HTTP.Response.Class[] ]> {
-	return changeAvailability.call( this, "enabled", requestOptions );
+export function enable( this:Class, requestOptions?:RequestOptions ):Promise<Class> {
+	return changeAvailability( this, "enabled", requestOptions );
 }
 
-export function disable( this:Class, requestOptions?:HTTP.Request.Options ):Promise<[ Class, HTTP.Response.Class[] ]> {
-	return changeAvailability.call( this, "disabled", requestOptions );
+export function disable( this:Class, requestOptions?:RequestOptions ):Promise<Class> {
+	return changeAvailability( this, "disabled", requestOptions );
 }
 
-function changeAvailability( this:Class, flag:"enabled" | "disabled", requestOptions?:HTTP.Request.Options ):Promise<[ Class, HTTP.Response.Class[] ]> {
-	const responses:HTTP.Response.Class[] = [];
-
-	return this
+function changeAvailability( user:Class, flag:"enabled" | "disabled", requestOptions?:RequestOptions ):Promise<Class> {
+	return user
 		.resolve()
-		.then( ( [ , response ] ) => {
-			if( response ) responses.push( response );
-
-			this[ flag ] = true;
+		.then( () => {
+			user[ flag ] = true;
 
 			const reverse:"disabled" | "enabled" = flag === "enabled" ? "disabled" : "enabled";
-			delete this[ reverse ];
+			delete user[ reverse ];
 
-			return this.save( requestOptions );
-		} )
-		.then<[ Class, HTTP.Response.Class[] ]>( ( [ , response ] ) => {
-			responses.push( response );
-
-			return [ this, responses ];
+			return user.save( requestOptions );
 		} )
 		;
 }
@@ -59,15 +50,15 @@ export class Factory {
 	static is( object:object ):object is Class {
 		return Factory.hasClassProperties( object )
 			&& User.Factory.hasClassProperties( object )
-			&& PersistedProtectedDocument.Factory.is( object )
+			&& PersistedProtectedDocument.is( object )
 			;
 	}
 
-	static decorate<T extends object>( object:T, documents:Documents.Class ):Class & T {
+	static decorate<T extends object>( object:T, documents:Documents ):Class & T {
 		if( Factory.hasClassProperties( object ) ) return object;
 
 		User.Factory.decorate( object );
-		PersistedProtectedDocument.Factory.decorate( object, documents );
+		PersistedProtectedDocument.decorate( object, documents );
 
 		const persistedUser:T & Class = Object.defineProperties( object, {
 			"enable": {

@@ -25,7 +25,7 @@ function isNull(value) {
 }
 exports.isNull = isNull;
 function isArray(object) {
-    return object instanceof Array;
+    return Array.isArray(object);
 }
 exports.isArray = isArray;
 function isString(value) {
@@ -107,30 +107,12 @@ function parseBoolean(value) {
     }
 }
 exports.parseBoolean = parseBoolean;
-function extend(target) {
-    var objects = [];
-    for (var _i = 1; _i < arguments.length; _i++) {
-        objects[_i - 1] = arguments[_i];
-    }
-    for (var _a = 0, objects_1 = objects; _a < objects_1.length; _a++) {
-        var toMerge = objects_1[_a];
-        if (!toMerge)
-            continue;
-        for (var name_1 in toMerge) {
-            if (toMerge.hasOwnProperty(name_1)) {
-                target[name_1] = toMerge[name_1];
-            }
-        }
-    }
-    return target;
-}
-exports.extend = extend;
 function forEachOwnProperty(object, action) {
     if (!(isObject(object) || isFunction(object)))
         throw new Error("IllegalArgument");
-    for (var name_2 in object) {
-        if (object.hasOwnProperty(name_2)) {
-            if (action(name_2, object[name_2]) === false)
+    for (var name_1 in object) {
+        if (object.hasOwnProperty(name_1)) {
+            if (action(name_1, object[name_1]) === false)
                 break;
         }
     }
@@ -150,10 +132,10 @@ function mapTupleArray(tuples) {
     return [firsts, seconds];
 }
 exports.mapTupleArray = mapTupleArray;
-var A = (function () {
-    function A() {
+var ArrayUtils = (function () {
+    function ArrayUtils() {
     }
-    A.from = function (iterator) {
+    ArrayUtils.from = function (iterator) {
         var array = [];
         var next = iterator.next();
         while (!next.done) {
@@ -162,7 +144,7 @@ var A = (function () {
         }
         return array;
     };
-    A.joinWithoutDuplicates = function () {
+    ArrayUtils.joinWithoutDuplicates = function () {
         var arrays = [];
         for (var _i = 0; _i < arguments.length; _i++) {
             arrays[_i] = arguments[_i];
@@ -175,7 +157,7 @@ var A = (function () {
         }
         return result;
     };
-    A.indexOf = function (array, searchedElement, comparator) {
+    ArrayUtils.indexOf = function (array, searchedElement, comparator) {
         if (comparator === void 0) { comparator = function (a, b) { return a === b; }; }
         if (!array)
             return -1;
@@ -185,50 +167,56 @@ var A = (function () {
         }
         return -1;
     };
-    return A;
+    return ArrayUtils;
 }());
-exports.A = A;
-var O = (function () {
-    function O() {
+exports.ArrayUtils = ArrayUtils;
+var ObjectUtils = (function () {
+    function ObjectUtils() {
     }
-    O.extend = function (target, source, config, ignore) {
+    ObjectUtils.extend = function (target, source, config) {
         if (config === void 0) { config = { arrays: false, objects: false }; }
-        if (ignore === void 0) { ignore = {}; }
         if (!isArray(source) && !isPlainObject(source) || !isArray(target) && !isPlainObject(target))
             return null;
-        var clone = target;
-        source.__CarbonSDK_circularReferenceFlag = clone;
+        source.__CarbonSDK_circularReferenceFlag = target;
         for (var _i = 0, _a = Object.keys(source); _i < _a.length; _i++) {
             var key = _a[_i];
             if (isFunction(source[key]) || key === "__CarbonSDK_circularReferenceFlag")
                 continue;
-            if (key in ignore)
-                continue;
             var property = source[key];
-            if (isArray(property) && config.arrays ||
-                isPlainObject(property) && config.objects) {
-                property = property.__CarbonSDK_circularReferenceFlag || O.clone(property, config);
+            if (isArray(property) && config.arrays || isPlainObject(property) && config.objects) {
+                if ("__CarbonSDK_circularReferenceFlag" in property) {
+                    property = property.__CarbonSDK_circularReferenceFlag;
+                }
+                else {
+                    property = !(key in target) || target[key].constructor !== property.constructor ?
+                        ObjectUtils.clone(property, config) :
+                        ObjectUtils.extend(target[key], property, config);
+                }
             }
-            clone[key] = property;
+            if (property === null) {
+                if (target[key])
+                    delete target[key];
+                continue;
+            }
+            target[key] = property;
         }
         delete source.__CarbonSDK_circularReferenceFlag;
-        return clone;
+        return target;
     };
-    O.clone = function (object, config, ignore) {
+    ObjectUtils.clone = function (object, config) {
         if (config === void 0) { config = { arrays: false, objects: false }; }
-        if (ignore === void 0) { ignore = {}; }
         var isAnArray = isArray(object);
         if (!isAnArray && !isPlainObject(object))
             return null;
         var clone = (isAnArray ? [] : Object.create(Object.getPrototypeOf(object)));
-        return O.extend(clone, object, config, ignore);
+        return ObjectUtils.extend(clone, object, config);
     };
-    O.areEqual = function (object1, object2, config, ignore) {
+    ObjectUtils.areEqual = function (object1, object2, config, ignore) {
         if (config === void 0) { config = { arrays: false, objects: false }; }
         if (ignore === void 0) { ignore = {}; }
         return internalAreEqual(object1, object2, config, [object1], [object2], ignore);
     };
-    O.areShallowlyEqual = function (object1, object2) {
+    ObjectUtils.areShallowlyEqual = function (object1, object2) {
         if (object1 === object2)
             return true;
         if (!isObject(object1) || !isObject(object2))
@@ -257,9 +245,9 @@ var O = (function () {
         }
         return true;
     };
-    return O;
+    return ObjectUtils;
 }());
-exports.O = O;
+exports.ObjectUtils = ObjectUtils;
 function internalAreEqual(object1, object2, config, stack1, stack2, ignore) {
     if (ignore === void 0) { ignore = {}; }
     if (object1 === object2)
@@ -268,7 +256,7 @@ function internalAreEqual(object1, object2, config, stack1, stack2, ignore) {
         return false;
     if (isDate(object1))
         return object1.getTime() === object2.getTime();
-    var keys = A.joinWithoutDuplicates(Object.keys(object1), Object.keys(object2));
+    var keys = ArrayUtils.joinWithoutDuplicates(Object.keys(object1), Object.keys(object2));
     for (var _i = 0, keys_1 = keys; _i < keys_1.length; _i++) {
         var key = keys_1[_i];
         if (!(key in object1) || !(key in object2))
@@ -306,32 +294,32 @@ function internalAreEqual(object1, object2, config, stack1, stack2, ignore) {
     }
     return true;
 }
-var S = (function () {
-    function S() {
+var StringUtils = (function () {
+    function StringUtils() {
     }
-    S.startsWith = function (str, substring) {
+    StringUtils.startsWith = function (str, substring) {
         return str.lastIndexOf(substring, 0) === 0;
     };
-    S.endsWith = function (str, substring) {
+    StringUtils.endsWith = function (str, substring) {
         return str.indexOf(substring, str.length - substring.length) !== -1;
     };
-    S.contains = function (str, substring) {
+    StringUtils.contains = function (str, substring) {
         return str.indexOf(substring) !== -1;
     };
-    return S;
+    return StringUtils;
 }());
-exports.S = S;
-var M = (function () {
-    function M() {
+exports.StringUtils = StringUtils;
+var MapUtils = (function () {
+    function MapUtils() {
     }
-    M.from = function (object) {
+    MapUtils.from = function (object) {
         var map = new Map();
         forEachOwnProperty(object, function (name, value) {
             map.set(name, value);
         });
         return map;
     };
-    M.extend = function (toExtend) {
+    MapUtils.extend = function (toExtend) {
         var extenders = [];
         for (var _i = 1; _i < arguments.length; _i++) {
             extenders[_i - 1] = arguments[_i];
@@ -350,25 +338,25 @@ var M = (function () {
         }
         return toExtend;
     };
-    return M;
+    return MapUtils;
 }());
-exports.M = M;
-var UUID = (function () {
-    function UUID() {
+exports.MapUtils = MapUtils;
+var UUIDUtils = (function () {
+    function UUIDUtils() {
     }
-    UUID.is = function (uuid) {
-        return UUID.regExp.test(uuid);
+    UUIDUtils.is = function (uuid) {
+        return UUIDUtils.regExp.test(uuid);
     };
-    UUID.generate = function () {
+    UUIDUtils.generate = function () {
         return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function (c) {
             var r = Math.random() * 16 | 0;
             var v = c === "x" ? r : (r & 0x3 | 0x8);
             return v.toString(16);
         });
     };
-    UUID.regExp = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
-    return UUID;
+    UUIDUtils.regExp = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+    return UUIDUtils;
 }());
-exports.UUID = UUID;
+exports.UUIDUtils = UUIDUtils;
 
 //# sourceMappingURL=Utils.js.map

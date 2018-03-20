@@ -1,82 +1,75 @@
 import {
-	STATIC,
-
-	OBLIGATORY,
-
-	module,
-	clazz,
-	interfaze,
-
-	isDefined,
 	hasMethod,
 	hasProperty,
-	hasDefaultExport,
-} from "./../test/JasmineExtender";
+	interfaze,
+	isDefined,
+	module,
+	OBLIGATORY,
+	property,
+	STATIC,
+} from "../test/JasmineExtender";
 import * as Utils from "./../Utils";
 
-import * as List from "./List";
-import DefaultExport from "./List";
+import { RDFList } from "./List";
 
-describe( module( "Carbon/RDF/List" ), ():void => {
-
-	it( isDefined(), ():void => {
-		expect( List ).toBeDefined();
-		expect( Utils.isObject( List ) ).toBe( true );
-	} );
+describe( module( "carbonldp/RDF/List" ), ():void => {
 
 	describe( interfaze(
-		"Carbon.RDF.List.Class",
-		"Interface that represents an `rdf:List`."
+		"CarbonLDP.RDF.RDFList",
+		"Interface that represents an RDF List."
 	), ():void => {
 
 		it( hasProperty(
 			OBLIGATORY,
 			"@list",
-			"Carbon.RDF.Value.Class[]",
+			"CarbonLDP.RDF.RDFValue[]",
 			"Array if the elements in the list."
 		), ():void => {} );
 
 	} );
 
-	it( hasDefaultExport( "Carbon.RDF.List.Class" ), ():void => {
-		let defaultExport:DefaultExport = <any> {};
-		let defaultTarget:List.Class;
+	describe( interfaze(
+		"CarbonLDP.RDF.RDFListFactory",
+		"Interface with the factory and utils for `CarbonLDP.RDF.RDFList` objects."
+	), ():void => {
 
-		defaultTarget = defaultExport;
-		expect( defaultTarget ).toEqual( jasmine.any( Object ) );
+		it( hasMethod(
+			OBLIGATORY,
+			"is",
+			"Returns true if the object provided is considered a `CarbonLDP.RDF.RDFList` object.", [
+				{ name: "value", type: "any" },
+			],
+			{ type: "value is CarbonLDP.RDF.RDFList" }
+		), ():void => {} );
+
 	} );
 
-	describe( clazz(
-		"Carbon.RDF.List.Factory",
-		"Factory class for `Carbon.RDF.List.Class` objects."
+	describe( property(
+		STATIC,
+		"RDFList",
+		"CarbonLDP.RDF.RDFListFactory"
 	), ():void => {
 
 		it( isDefined(), ():void => {
-			expect( List.Factory ).toBeDefined();
-			expect( Utils.isFunction( List.Factory ) ).toBe( true );
+			expect( RDFList ).toBeDefined();
+			expect( RDFList ).toEqual( jasmine.any( Object ) );
 		} );
 
-		it( hasMethod(
-			STATIC,
-			"is",
-			"Returns true if the object provided is considered a `Carbon.RDF.List.Class` object.", [
-				{ name: "value", type: "any" },
-			],
-			{ type: "boolean" }
-		), ():void => {
-			expect( List.Factory.is ).toBeDefined();
-			expect( Utils.isFunction( List.Factory.is ) ).toBe( true );
+		// TODO: Separate in different models
+		it( "RDFList.is", ():void => {
+			expect( RDFList.is ).toBeDefined();
+			expect( Utils.isFunction( RDFList.is ) ).toBe( true );
 
 			let list:any = void 0;
-			expect( List.Factory.is( list ) ).toBe( false );
+			expect( RDFList.is( list ) ).toBe( false );
 
 			list = {
 				"@list": null,
 			};
-			expect( List.Factory.is( list ) ).toBe( true );
+			expect( RDFList.is( list ) ).toBe( true );
 
 			delete list[ "@list" ];
-			expect( List.Factory.is( list ) ).toBe( false );
+			expect( RDFList.is( list ) ).toBe( false );
 			list[ "@list" ] = true;
 		} );
 

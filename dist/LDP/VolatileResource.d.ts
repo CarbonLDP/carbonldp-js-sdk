@@ -1,9 +1,10 @@
-import * as Resource from "./../Resource";
-export declare const RDF_CLASS: string;
-export interface Class extends Resource.Class {
+import { ModelFactory } from "../ModelFactory";
+import { Resource } from "../Resource";
+export interface VolatileResource extends Resource {
 }
-export declare class Factory {
-    static is(object: object): object is Class;
-    static createFrom<T extends object>(object: T): T & Class;
+export interface VolatileResourceFactory extends ModelFactory<VolatileResource> {
+    TYPE: string;
+    is(object: object): object is VolatileResource;
+    createFrom<T extends object>(object: T): T & VolatileResource;
 }
-export default Class;
+export declare const VolatileResource: VolatileResourceFactory;

@@ -1,105 +1,90 @@
-import {
-	INSTANCE,
-	STATIC,
-
-	module,
-	clazz,
-	method,
-
-	isDefined,
-	hasConstructor,
-	hasMethod,
-	hasProperty,
-	hasSignature,
-	hasDefaultExport,
-} from "./test/JasmineExtender";
-import * as Utils from "./Utils";
 import * as Auth from "./Auth";
-import Documents from "./Documents";
-import Context from "./Context";
+import { Documents } from "./Documents";
+import { IllegalStateError } from "./Errors";
 import * as ObjectSchema from "./ObjectSchema";
 
-import * as SDKContext from "./SDKContext";
-import DefaultExport from "./SDKContext";
+import {
+	globalContext,
+	SDKContext,
+} from "./SDKContext";
 
-describe( module( "Carbon/SDKContext" ), ():void => {
+import { ContextSettings } from "./Settings";
 
-	it( isDefined(), ():void => {
-		expect( SDKContext ).toBeDefined();
-		expect( Utils.isObject( SDKContext ) ).toBe( true );
-	} );
+import {
+	clazz,
+	constructor,
+	hasProperty,
+	hasSignature,
+	INSTANCE,
+	isDefined,
+	method,
+	module,
+	STATIC,
+} from "./test/JasmineExtender";
 
-	describe( clazz(
-		"Carbon.SDKContext.Class",
-		"Base class of every Context in the SDK.", [
-			"Carbon.Context.Class",
-		]
-	), ():void => {
+
+describe( module( "carbonldp/SDKContext" ), ():void => {
+
+	describe( clazz( "CarbonLDP.SDKContext", "Base class of every Context in the SDK.", [ "CarbonLDP.Context" ] ), ():void => {
 
 		it( isDefined(), ():void => {
-			expect( SDKContext.Class ).toBeDefined();
-			expect( Utils.isFunction( SDKContext.Class ) ).toBe( true );
+			expect( SDKContext ).toBeDefined();
+			expect( SDKContext ).toEqual( jasmine.any( Function ) );
 		} );
 
-		let context:SDKContext.Class;
-		beforeEach( ():void => {
-			context = new SDKContext.Class();
-			jasmine.addMatchers( {
-				// Custom handler for Map as Jasmine does not support it yet
-				toEqual: function( util:any ):any {
-					return {
-						compare: function( actual:any, expected:any ):any {
-							return { pass: util.equals( actual, expected, [ compareMap ] ) };
-						},
-					};
+		describe( constructor(), ():void => {
 
-					function compareMap( actual:any, expected:any ):any {
-						if( actual instanceof Map ) {
-							let pass:any = actual.size === expected.size;
-							if( pass ) {
-								actual.forEach( ( v, k ) => { pass = pass && util.equals( v, expected.get( k ) ); } );
-							}
-							return pass;
-						} else {
-							return undefined;
-						}
-					}
-				},
+			it( "should exists", ():void => {
+				expect( SDKContext.prototype ).toBeDefined();
+				expect( SDKContext.prototype ).toEqual( jasmine.any( Object ) );
 			} );
-		} );
 
-		it( hasConstructor(), ():void => {
-			expect( context ).toBeTruthy();
-			expect( context instanceof SDKContext.Class );
+			it( "should be instantiable", ():void => {
+				const target:SDKContext = new SDKContext();
+
+				expect( target ).toBeDefined();
+				expect( target ).toEqual( jasmine.any( SDKContext ) );
+			} );
+
+			it( "should instantiate auth as property", ():void => {
+				const target:SDKContext = new SDKContext();
+
+				expect( target.auth ).toBeDefined();
+				expect( target.auth ).toEqual( jasmine.any( Auth.AuthService ) );
+			} );
+
+			it( "should instantiate documents as property", ():void => {
+				const target:SDKContext = new SDKContext();
+
+				expect( target.documents ).toBeDefined();
+				expect( target.documents ).toEqual( jasmine.any( Documents ) );
+			} );
+
 		} );
 
 		it( hasProperty(
 			INSTANCE,
 			"auth",
-			"Carbon.Auth.Class",
-			"Instance of an implementation of the `Carbon.Auth.Class` class to manage authentications and authorizations in the context.\n" +
-			"In an instance of the SDKContext this property is set to `null`, and its children contexts must instantiate a valid implementation of the `Carbon.Auth.Class` abstract class."
-		), ():void => {
-			expect( context.auth ).toBeDefined();
-			expect( context.auth instanceof Auth.Class );
-		} );
+			"CarbonLDP.Auth.AuthService",
+			"Instance of an implementation of the `CarbonLDP.Auth.AuthService` class to manage authentications and authorizations in the context.\n" +
+			"In an instance of the SDKContext this property is set to `null`, and its children contexts must instantiate a valid implementation of the `CarbonLDP.Auth.AuthService` abstract class."
+		), ():void => {} );
 
 		it( hasProperty(
 			INSTANCE,
 			"documents",
-			"Carbon.Documents.Class",
-			"Instance of `Carbon.Documents.Class` class to manage all the documents in the context."
-		), ():void => {
-			expect( context.documents ).toBeDefined();
-			expect( context.documents instanceof Documents ).toBe( true );
-		} );
+			"CarbonLDP.Documents",
+			"Instance of `CarbonLDP.Documents` class to manage all the documents in the context."
+		), ():void => {} );
 
 		it( hasProperty(
 			INSTANCE,
 			"baseURI",
 			"string",
-			"The base URI of the context. For an instance of `Carbon.SDKContext.Class`, this is an empty string."
+			"The base URI of the context. For an instance of `CarbonLDP.SDKContext`, this is an empty string."
 		), ():void => {
+			const context:SDKContext = new SDKContext();
+
 			expect( context.baseURI ).toBeDefined();
 			expect( context.baseURI ).toEqual( jasmine.any( String ) );
 
@@ -109,414 +94,697 @@ describe( module( "Carbon/SDKContext" ), ():void => {
 		it( hasProperty(
 			INSTANCE,
 			"parentContext",
-			"Carbon.Context.Class",
-			"Parent context of the current context. For an instance of `Carbon.SDKContext.Class`, this is set to null since it is the root parent of every context in the SDK."
+			"CarbonLDP.Context",
+			"Parent context of the current context. For an instance of `CarbonLDP.SDKContext`, this is set to null since it is the root parent of every context in the SDK."
 		), ():void => {
+			const context:SDKContext = new SDKContext();
+
 			expect( context.parentContext ).toBeDefined();
 			expect( context.parentContext ).toBeNull();
 		} );
 
-		it( hasMethod(
-			INSTANCE,
-			"resolve",
-			"Returns the resolved relative URI specified, in accordance with the scope of the context.", [
-				{ name: "relativeURI", type: "string" },
-			],
-			{ type: "string" }
-		), ():void => {
-			expect( context.resolve ).toBeDefined();
-			expect( Utils.isFunction( context.resolve ) ).toBe( true );
 
-			expect( context.resolve( "http://example.com/a/uri/" ) ).toBe( "http://example.com/a/uri/" );
-			expect( context.resolve( "a/relative/uri/" ) ).toBe( "a/relative/uri/" );
-		} );
+		type ExtendedContext = SDKContext & { _generalSchema:ObjectSchema.DigestedObjectSchema };
 
-		it( hasMethod(
-			INSTANCE,
-			"hasSetting",
-			"Returns true if the setting sought for has been assign.", [
-				{ name: "name", type: "string", description: "Name of the setting to look for." },
-			],
-			{ type: "boolean" }
-		), ():void => {
-			expect( context.hasSetting ).toBeDefined();
-			expect( Utils.isFunction( context.hasSetting ) ).toBe( true );
+		function createContext( settings?:ContextSettings, generalSchema?:ObjectSchema.DigestedObjectSchema, schemasMap?:Map<string, ObjectSchema.DigestedObjectSchema> ):ExtendedContext {
+			return new class extends SDKContext {
+				get baseURI():string { return "https://example.com/"; }
 
-			expect( context.hasSetting( "a.setting" ) ).toBe( false );
+				get _generalSchema():ObjectSchema.DigestedObjectSchema { return this.generalObjectSchema; }
 
-			class MyContext extends SDKContext.Class {
 				constructor() {
 					super();
-					this.settings.set( "a.setting", "my setting" );
+					this.settings = settings ? settings : {};
+					this.generalObjectSchema = generalSchema ? generalSchema : new ObjectSchema.DigestedObjectSchema();
+					this.typeObjectSchemaMap = schemasMap ? schemasMap : new Map();
 				}
-			}
-			let mockedContext:Context = new MyContext();
-
-			expect( mockedContext.hasSetting( "a.setting" ) ).toBe( true );
-			expect( mockedContext.hasSetting( "another.setting" ) ).toBe( false );
-		} );
-
-		it( hasMethod(
-			INSTANCE,
-			"getSetting",
-			"Returns the value of the setting looked for.", [
-				{ name: "name", type: "string", description: "Name of the setting to look for." },
-			],
-			{ type: "any", description: "The value of the setting looked for. If no setting with the name specified exists, this value will be `null`." }
-		), ():void => {
-			expect( context.getSetting ).toBeDefined();
-			expect( Utils.isFunction( context.getSetting ) ).toBeDefined();
-
-			expect( context.getSetting( "a.setting " ) ).toBeNull();
-
-			class MyContext extends SDKContext.Class {
-				constructor() {
-					super();
-					this.settings.set( "a.setting", "my setting" );
-				}
-			}
-			let mockedContext:Context = new MyContext();
-
-			expect( mockedContext.getSetting( "a.setting" ) ).toBe( "my setting" );
-			expect( mockedContext.getSetting( "another.setting" ) ).toBeNull();
-		} );
-
-		it( hasMethod(
-			INSTANCE,
-			"setSetting",
-			"Set a setting in the current context.", [
-				{ name: "name", type: "string", description: "Name of the setting to look for." },
-				{ name: "value", type: "any", description: "The value to store as the setting specified." },
-			]
-		), ():void => {
-			expect( context.setSetting ).toBeDefined();
-			expect( Utils.isFunction( context.setSetting ) ).toBe( true );
-
-			context.setSetting( "a.setting", "my setting" );
-			expect( context.hasSetting( "a.setting" ) ).toBe( true );
-
-			context.setSetting( "a.setting", "the same setting" );
-			expect( context.getSetting( "a.setting" ) ).toBe( "the same setting" );
-		} );
-
-		it( hasMethod(
-			INSTANCE,
-			"deleteSetting",
-			"Deletes the setting specified by the name provided from the current context.", [
-				{ name: "name", type: "string", description: "Name of the setting to delete." },
-			]
-		), ():void => {
-			expect( context.deleteSetting ).toBeDefined();
-			expect( Utils.isFunction( context.deleteSetting ) ).toBe( true );
-
-			class MyContext extends SDKContext.Class {
-				constructor() {
-					super();
-					this.settings.set( "a.setting", "my setting" );
-				}
-			}
-			let mockedContext:Context = new MyContext();
-
-			mockedContext.deleteSetting( "a.setting" );
-			expect( mockedContext.hasSetting( "a.setting" ) ).toBe( false );
-		} );
-
-		it( hasMethod(
-			INSTANCE,
-			"hasObjectSchema",
-			"Returns true if there is an ObjectSchema for the specified type.", [
-				{ name: "type", type: "string", description: "The URI of the type to look for its schema." },
-			],
-			{ type: "boolean" }
-		), ():void => {
-			expect( context.hasObjectSchema ).toBeDefined();
-			expect( Utils.isFunction( context.hasObjectSchema ) ).toBe( true );
-
-			expect( context.hasObjectSchema( "http://example.com/ns#MyType" ) ).toBe( false );
-
-			let objectSchemaMyType:ObjectSchema.DigestedObjectSchema = new ObjectSchema.DigestedObjectSchema();
-			let objectSchemaAnotherType:ObjectSchema.DigestedObjectSchema = new ObjectSchema.DigestedObjectSchema();
-			let objectSchemaAnotherAnotherType:ObjectSchema.DigestedObjectSchema = new ObjectSchema.DigestedObjectSchema();
-			class MyContext extends SDKContext.Class {
-				constructor() {
-					super();
-					this.typeObjectSchemaMap.set( "http://example.com/ns#MyType", objectSchemaMyType );
-					this.typeObjectSchemaMap.set( "http://example.com/types#Another-Type", objectSchemaAnotherType );
-					this.typeObjectSchemaMap.set( "http://example.com/vocab#Another-Another-Type", objectSchemaAnotherAnotherType );
-					this.generalObjectSchema = ObjectSchema.Digester.digestSchema( {
-						"ex": "http://example.com/ns#",
-						"exTypes": "http://example.com/types#",
-					} );
-				}
-
-				resolve( uri:string ):string {
-					return "http://example.com/" + uri;
-				}
-			}
-			let mockedContext:Context = new MyContext();
-			mockedContext.setSetting( "vocabulary", "vocab#" );
-
-			expect( mockedContext.hasObjectSchema( "http://example.com/ns#MyType" ) ).toBe( true );
-			expect( mockedContext.hasObjectSchema( "ex:MyType" ) ).toBe( true );
-			expect( mockedContext.hasObjectSchema( "exTypes:Another-Type" ) ).toBe( true );
-			expect( mockedContext.hasObjectSchema( "Another-Another-Type" ) ).toBe( true );
-		} );
-
-		it( hasMethod(
-			INSTANCE,
-			"getObjectSchema",
-			"Returns the ObjectSchema for the specified type. If no type is specified, the general object schema of the context is returned.", [
-				{ name: "type", type: "string", optional: true, description: "The URI of the type to look for its schema." },
-			],
-			{ type: "Carbon.ObjectSchema.DigestedObjectSchema", description: "The specified schema to look for. If no schema was found `null` will be returned." }
-		), ():void => {
-			expect( context.getObjectSchema ).toBeDefined();
-			expect( Utils.isFunction( context.getObjectSchema ) ).toBe( true );
-
-			// Mocked Context
-			let rawObjectSchema:ObjectSchema.Class = {
-				"ex": "http://example.com/ns#",
-				"exTypes": "http://example.com/types#",
-				"xsd": "http://www.w3.org/2001/XMLSchema#",
-				"string": {
-					"@id": "ex:string",
-					"@type": "xsd:string",
-				},
-				"pointer": {
-					"@id": "ex:pointer",
-					"@type": "@id",
-				},
 			};
-			let objectSchemaMyType:ObjectSchema.DigestedObjectSchema = new ObjectSchema.DigestedObjectSchema();
-			let objectSchemaAnotherType:ObjectSchema.DigestedObjectSchema = new ObjectSchema.DigestedObjectSchema();
-			let objectSchemaAnotherAnotherType:ObjectSchema.DigestedObjectSchema = new ObjectSchema.DigestedObjectSchema();
-			class MyContext extends SDKContext.Class {
-				constructor() {
-					super();
-					this.typeObjectSchemaMap.set( "http://example.com/ns#MyType", objectSchemaMyType );
-					this.typeObjectSchemaMap.set( "http://example.com/types#Another-Type", objectSchemaAnotherType );
-					this.typeObjectSchemaMap.set( "http://example.com/vocab#Another-Another-Type", objectSchemaAnotherAnotherType );
-					this.generalObjectSchema = ObjectSchema.Digester.digestSchema( rawObjectSchema );
-				}
+		}
 
-				resolve( uri:string ):string {
-					return "http://example.com/" + uri;
-				}
-			}
-			let mockedContext:Context = new MyContext();
-			mockedContext.setSetting( "vocabulary", "vocab#" );
+		function createSchema( values?:Partial<ObjectSchema.DigestedObjectSchema> ):ObjectSchema.DigestedObjectSchema {
+			return Object.assign( new ObjectSchema.DigestedObjectSchema(), values );
+		}
 
-			let returnedSchema:ObjectSchema.DigestedObjectSchema;
 
-			// General Schema
-			returnedSchema = context.getObjectSchema();
-			expect( returnedSchema instanceof ObjectSchema.DigestedObjectSchema ).toBe( true );
-			expect( returnedSchema ).toEqual( SDKContext.instance.getObjectSchema() );
+		describe( method( INSTANCE, "resolve" ), ():void => {
 
-			returnedSchema = mockedContext.getObjectSchema();
-			expect( returnedSchema instanceof ObjectSchema.DigestedObjectSchema ).toBe( true );
-			expect( returnedSchema ).toEqual( ObjectSchema.Digester.digestSchema( rawObjectSchema ) );
+			it( hasSignature(
+				"Returns the resolved relative URI specified, in accordance with the scope of the context.", [
+					{ name: "relativeURI", type: "string" },
+				],
+				{ type: "string" }
+			), ():void => {} );
 
-			// Schema by type
-			expect( context.getObjectSchema( "http://example.com/ns#MyType" ) ).toBeNull();
-			returnedSchema = mockedContext.getObjectSchema( "http://example.com/ns#MyType" );
-			expect( returnedSchema instanceof ObjectSchema.DigestedObjectSchema ).toBe( true );
-			expect( returnedSchema ).toBe( objectSchemaMyType );
+			it( "should exists", ():void => {
+				expect( SDKContext.prototype.resolve ).toBeDefined();
+				expect( SDKContext.prototype.resolve ).toEqual( jasmine.any( Function ) );
+			} );
 
-			expect( context.getObjectSchema( "ex:MyType" ) ).toBeNull();
-			returnedSchema = mockedContext.getObjectSchema( "ex:MyType" );
-			expect( returnedSchema instanceof ObjectSchema.DigestedObjectSchema ).toBe( true );
-			expect( returnedSchema ).toBe( objectSchemaMyType );
+			it( "should resolve using the baseURI", ():void => {
+				const context:SDKContext = new SDKContext();
 
-			expect( context.getObjectSchema( "exTypes:Another-Type" ) ).toBeNull();
-			returnedSchema = mockedContext.getObjectSchema( "exTypes:Another-Type" );
-			expect( returnedSchema instanceof ObjectSchema.DigestedObjectSchema ).toBe( true );
-			expect( returnedSchema ).toBe( objectSchemaAnotherType );
+				const spy:jasmine.Spy = spyOnProperty( context, "baseURI", "get" ).and
+					.returnValue( "https://example.com" );
 
-			expect( context.getObjectSchema( "Another-Another-Type" ) ).toBeNull();
-			returnedSchema = mockedContext.getObjectSchema( "Another-Another-Type" );
-			expect( returnedSchema instanceof ObjectSchema.DigestedObjectSchema ).toBe( true );
-			expect( returnedSchema ).toBe( objectSchemaAnotherAnotherType );
+				expect( context.resolve( "relative/uri/" ) ).toBe( "https://example.com/relative/uri/" );
+				expect( spy ).toHaveBeenCalledTimes( 1 );
+
+				expect( context.resolve( "http://not-example.com/uri/" ) ).toBe( "http://not-example.com/uri/" );
+				expect( spy ).toHaveBeenCalledTimes( 2 );
+			} );
+
 		} );
 
-		describe( method(
-			INSTANCE,
-			"extendObjectSchema"
-		), ():void => {
+		describe( method( INSTANCE, "_resolvePath" ), ():void => {
+
+			it( hasSignature(
+				"Resolves the path provided into an URL using the `path` settings of the context.",
+				[
+					{ name: "path", type: "string", description: "The dot notation string that refers the path declared in the settings of the context." },
+				],
+				{ type: "string", description: "The absolute URI of the path provided." }
+			), ():void => {} );
+
+			it( "should exists", ():void => {
+				expect( SDKContext.prototype._resolvePath ).toBeDefined();
+				expect( SDKContext.prototype._resolvePath ).toEqual( jasmine.any( Function ) );
+			} );
+
+
+			it( "should throw error when no settings paths", ():void => {
+				const context:SDKContext = createContext( {} );
+				const helper:( path:string ) => void = path => () => {
+					context._resolvePath( path );
+				};
+
+				expect( helper( "document" ) ).toThrowError( IllegalStateError, `The path "document" hasn't been declared.` );
+				expect( helper( "document.subDocument" ) ).toThrowError( IllegalStateError, `The path "document" hasn't been declared.` );
+			} );
+
+			it( "should throw error when path not found in first level", ():void => {
+				const context:SDKContext = createContext( { paths: {} } );
+				const helper:( path:string ) => void = path => () => {
+					context._resolvePath( path );
+				};
+
+				expect( helper( "document" ) ).toThrowError( IllegalStateError, `The path "document" hasn't been declared.` );
+				expect( helper( "document.subDocument" ) ).toThrowError( IllegalStateError, `The path "document" hasn't been declared.` );
+			} );
+
+			it( "should throw error when path not found in second level string", ():void => {
+				const context:SDKContext = createContext( {
+					paths: {
+						document: "document/",
+					},
+				} );
+
+				const helper:( path:string ) => void = path => () => {
+					context._resolvePath( path );
+				};
+
+				expect( helper( "document" ) ).not.toThrowError( IllegalStateError, `The path "document" hasn't been declared.` );
+				expect( helper( "document.subDocument" ) ).toThrowError( IllegalStateError, `The path "document.subDocument" hasn't been declared.` );
+			} );
+
+			it( "should throw error when path not found in parent level object without paths", ():void => {
+				const context:SDKContext = createContext( {
+					paths: {
+						document: {
+							slug: "document/",
+						},
+					},
+				} );
+
+				const helper:( path:string ) => void = path => () => {
+					context._resolvePath( path );
+				};
+
+				expect( helper( "document" ) ).not.toThrowError( IllegalStateError, `The path "document" hasn't been declared.` );
+				expect( helper( "document.subDocument" ) ).toThrowError( IllegalStateError, `The path "document.subDocument" hasn't been declared.` );
+			} );
+
+			it( "should throw error when path not found in parent level object with empty paths", ():void => {
+				const context:SDKContext = createContext( {
+					paths: {
+						document: {
+							slug: "document/",
+							paths: {},
+						},
+					},
+				} );
+
+				const helper:( path:string ) => void = path => () => {
+					context._resolvePath( path );
+				};
+
+				expect( helper( "document" ) ).not.toThrowError( IllegalStateError, `The path "document" hasn't been declared.` );
+				expect( helper( "document.subDocument" ) ).toThrowError( IllegalStateError, `The path "document.subDocument" hasn't been declared.` );
+			} );
+
+			it( "should throw error when path not found in parent level object with not target path", ():void => {
+				const context:SDKContext = createContext( {
+					paths: {
+						document: {
+							slug: "document/",
+							paths: {
+								another: "another/",
+							},
+						},
+					},
+				} );
+
+				const helper:( path:string ) => void = path => () => {
+					context._resolvePath( path );
+				};
+
+				expect( helper( "document" ) ).not.toThrowError( IllegalStateError, `The path "document" hasn't been declared.` );
+				expect( helper( "document.subDocument" ) ).toThrowError( IllegalStateError, `The path "document.subDocument" hasn't been declared.` );
+			} );
+
+			it( "should throw error when no slug in parent level object", ():void => {
+				const context:SDKContext = createContext( {
+					paths: {
+						document: {
+							paths: {
+								subDocument: "document-1/",
+							},
+						} as any,
+					},
+				} );
+
+				const helper:( path:string ) => void = path => () => {
+					context._resolvePath( path );
+				};
+
+				expect( helper( "document" ) ).toThrowError( IllegalStateError, `The path "document" doesn't have a slug set.` );
+				expect( helper( "document.subDocument" ) ).toThrowError( IllegalStateError, `The path "document" doesn't have a slug set.` );
+			} );
+
+			it( "should throw error when no slug in target level object", ():void => {
+				const context:SDKContext = createContext( {
+					paths: {
+						document: {
+							slug: "document/",
+							paths: {
+								subDocument: {} as any,
+							},
+						},
+					},
+				} );
+
+				const helper:( path:string ) => void = path => () => {
+					context._resolvePath( path );
+				};
+
+				expect( helper( "document" ) ).not.toThrowError( IllegalStateError, `The path "document" doesn't have a slug set.` );
+				expect( helper( "document.subDocument" ) ).toThrowError( IllegalStateError, `The path "document.subDocument" doesn't have a slug set.` );
+			} );
+
+			it( "should throw error when no slug in target level object", ():void => {
+				const context:SDKContext = createContext( {
+					paths: {
+						document: {
+							slug: "document/",
+							paths: {
+								subDocument: {} as any,
+							},
+						},
+					},
+				} );
+
+				const helper:( path:string ) => void = path => () => {
+					context._resolvePath( path );
+				};
+
+				expect( helper( "document" ) ).not.toThrowError( IllegalStateError, `The path "document" doesn't have a slug set.` );
+				expect( helper( "document.subDocument" ) ).toThrowError( IllegalStateError, `The path "document.subDocument" doesn't have a slug set.` );
+			} );
+
+
+			it( "should resolve first level path string", ():void => {
+				const context:SDKContext = createContext( {
+					paths: {
+						document: "document/",
+					},
+				} );
+
+				expect( context._resolvePath( "document" ) ).toBe( "https://example.com/document/" );
+			} );
+
+			it( "should resolve first level path object", ():void => {
+				const context:SDKContext = createContext( {
+					paths: {
+						document: {
+							slug: "document/",
+						},
+					},
+				} );
+
+				expect( context._resolvePath( "document" ) ).toBe( "https://example.com/document/" );
+			} );
+
+			it( "should resolve second level path string", ():void => {
+				const context:SDKContext = createContext( {
+					paths: {
+						document: {
+							slug: "document/",
+							paths: { subDocument: "sub-document-1/" },
+						},
+					},
+				} );
+
+				expect( context._resolvePath( "document.subDocument" ) ).toBe( "https://example.com/document/sub-document-1/" );
+			} );
+
+			it( "should resolve second level path object", ():void => {
+				const context:SDKContext = createContext( {
+					paths: {
+						document: {
+							slug: "document/",
+							paths: {
+								subDocument: {
+									slug: "sub-document-1/",
+								},
+							},
+						},
+					},
+				} );
+
+				expect( context._resolvePath( "document.subDocument" ) ).toBe( "https://example.com/document/sub-document-1/" );
+			} );
+
+		} );
+
+		describe( method( INSTANCE, "hasObjectSchema" ), ():void => {
+
+			it( hasSignature(
+				"Returns true if there is an ObjectSchema for the specified type.", [
+					{ name: "type", type: "string", description: "The URI of the type to look for its schema." },
+				],
+				{ type: "boolean" }
+			), ():void => {} );
+
+			it( "should exists", ():void => {
+				expect( SDKContext.prototype.hasObjectSchema ).toBeDefined();
+				expect( SDKContext.prototype.hasObjectSchema ).toEqual( jasmine.any( Function ) );
+			} );
+
+
+			it( "should return false when not existing schema in schema maps", ():void => {
+				const context:SDKContext = createContext();
+
+				expect( context.hasObjectSchema( "https://example.com/ns#MyType" ) ).toBe( false );
+				expect( context.hasObjectSchema( "ex:MyType" ) ).toBe( false );
+			} );
+
+			it( "should return true when schema with absolute type", ():void => {
+				const context:SDKContext = createContext(
+					null,
+					null,
+					new Map( [ [ "https://example.com/ns#MyType", new ObjectSchema.DigestedObjectSchema() ] ] )
+				);
+
+				expect( context.hasObjectSchema( "https://example.com/ns#MyType" ) ).toBe( true );
+				expect( context.hasObjectSchema( "ex:MyType" ) ).toBe( false );
+			} );
+
+			it( "should return true when prefixed type with defined prefix in general", ():void => {
+				const context:SDKContext = createContext(
+					null,
+					createSchema( { prefixes: new Map( [ [ "ex", "https://example.com/ns#" ] ] ) } ),
+					new Map( [ [ "https://example.com/ns#MyType", new ObjectSchema.DigestedObjectSchema() ] ] )
+				);
+
+				expect( context.hasObjectSchema( "https://example.com/ns#MyType" ) ).toBe( true );
+				expect( context.hasObjectSchema( "ex:MyType" ) ).toBe( true );
+			} );
+
+			it( "should return true when relative and default vocab schema", ():void => {
+				const context:SDKContext = createContext(
+					{ vocabulary: "https://example.com/ns#" },
+					null,
+					new Map( [ [ "https://example.com/ns#MyType", new ObjectSchema.DigestedObjectSchema() ] ] )
+				);
+
+				expect( context.hasObjectSchema( "https://example.com/ns#MyType" ) ).toBe( true );
+				expect( context.hasObjectSchema( "MyType" ) ).toBe( true );
+			} );
+
+		} );
+
+		describe( method( INSTANCE, "getObjectSchema" ), ():void => {
+
+			it( hasSignature(
+				"Returns the ObjectSchema for the specified type", [
+					{ name: "type", type: "string", optional: true, description: "The URI of the type to look for its schema." },
+				],
+				{ type: "CarbonLDP.DigestedObjectSchema", description: "The specified schema to look for. If no schema was found `null` will be returned." }
+			), ():void => {} );
+
+			it( hasSignature(
+				"Returns the general object schema of the context.",
+				{ type: "CarbonLDP.DigestedObjectSchema", description: "The general schema of the context." }
+			), ():void => {} );
+
+			it( "should exists", ():void => {
+				expect( SDKContext.prototype.getObjectSchema ).toBeDefined();
+				expect( SDKContext.prototype.getObjectSchema ).toEqual( jasmine.any( Function ) );
+			} );
+
+			it( "should return null when not existing schema in schema maps", ():void => {
+				const context:SDKContext = createContext();
+
+				expect( context.getObjectSchema( "https://example.com/ns#MyType" ) ).toBeNull();
+				expect( context.getObjectSchema( "ex:MyType" ) ).toBeNull();
+			} );
+
+			it( "should return schema with absolute type", ():void => {
+				const schema:ObjectSchema.DigestedObjectSchema = new ObjectSchema.DigestedObjectSchema();
+				const context:SDKContext = createContext(
+					null,
+					null,
+					new Map( [ [ "https://example.com/ns#MyType", schema ] ] )
+				);
+
+				expect( context.getObjectSchema( "https://example.com/ns#MyType" ) ).toBe( schema );
+				expect( context.getObjectSchema( "ex:MyType" ) ).toBeNull();
+			} );
+
+			it( "should return schema when prefixed type with defined prefix in general", ():void => {
+				const schema:ObjectSchema.DigestedObjectSchema = new ObjectSchema.DigestedObjectSchema();
+				const context:SDKContext = createContext(
+					null,
+					createSchema( { prefixes: new Map( [ [ "ex", "https://example.com/ns#" ] ] ) } ),
+					new Map( [ [ "https://example.com/ns#MyType", schema ] ] )
+				);
+
+				expect( context.getObjectSchema( "https://example.com/ns#MyType" ) ).toBe( schema );
+				expect( context.getObjectSchema( "ex:MyType" ) ).toBe( schema );
+			} );
+
+			it( "should return schema when relative and default vocab schema", ():void => {
+				const schema:ObjectSchema.DigestedObjectSchema = new ObjectSchema.DigestedObjectSchema();
+				const context:SDKContext = createContext(
+					{ vocabulary: "https://example.com/ns#" },
+					null,
+					new Map( [ [ "https://example.com/ns#MyType", schema ] ] )
+				);
+
+				expect( context.getObjectSchema( "https://example.com/ns#MyType" ) ).toBe( schema );
+				expect( context.getObjectSchema( "MyType" ) ).toBe( schema );
+			} );
+
+			it( "should return general schema with base", ():void => {
+				const context:SDKContext = createContext(
+					null,
+					createSchema( {
+						prefixes: new Map( [
+							[ "schema", "https://schema.org/" ],
+						] ),
+					} )
+				);
+
+				expect( context.getObjectSchema() ).toEqual( createSchema( {
+					base: "https://example.com/",
+					prefixes: new Map( [
+						[ "schema", "https://schema.org/" ],
+					] ),
+				} ) );
+			} );
+
+			it( "should not replace base in general schema when already set", ():void => {
+				const context:SDKContext = createContext(
+					null,
+					createSchema( {
+						base: "https://not-example.com/",
+						prefixes: new Map( [
+							[ "schema", "https://schema.org/" ],
+						] ),
+					} )
+				);
+
+				expect( context.getObjectSchema() ).toEqual( createSchema( {
+					base: "https://not-example.com/",
+					prefixes: new Map( [
+						[ "schema", "https://schema.org/" ],
+					] ),
+				} ) );
+			} );
+
+			it( "should return general schema with vocab when setting set", ():void => {
+				const context:SDKContext = createContext(
+					{ vocabulary: "https://example.com/ns#" },
+					createSchema( {
+						prefixes: new Map( [
+							[ "schema", "https://schema.org/" ],
+						] ),
+					} )
+				);
+
+				expect( context.getObjectSchema() ).toEqual( createSchema( {
+					base: "https://example.com/",
+					vocab: "https://example.com/ns#",
+					prefixes: new Map( [
+						[ "schema", "https://schema.org/" ],
+					] ),
+				} ) );
+			} );
+
+			it( "should not replace vocab in general schema when already set and setting set", ():void => {
+				const context:SDKContext = createContext(
+					{ vocabulary: "https://example.com/ns#" },
+					createSchema( {
+						vocab: "https://example.com/another-ns#",
+						prefixes: new Map( [
+							[ "schema", "https://schema.org/" ],
+						] ),
+					} )
+				);
+
+				expect( context.getObjectSchema() ).toEqual( createSchema( {
+					base: "https://example.com/",
+					vocab: "https://example.com/another-ns#",
+					prefixes: new Map( [
+						[ "schema", "https://schema.org/" ],
+					] ),
+				} ) );
+			} );
+
+		} );
+
+		describe( method( INSTANCE, "extendObjectSchema" ), ():void => {
 
 			it( hasSignature(
 				"Extends the schema for a specified type of Resource.\nIf a schema for the type exists in the parent context, this is duplicated for the actual context, but only the first time this schema is extended.", [
 					{ name: "type", type: "string", description: "The URI of the type to extends its schema." },
-					{ name: "objectSchema", type: "Carbon.ObjectSchema.DigestedObjectSchema", description: "The new schema that will extends the previous one." },
+					{ name: "objectSchema", type: "CarbonLDP.DigestedObjectSchema", description: "The new schema that will extends the previous one." },
 				]
-			), ():void => {
-				class MockedSDKContext extends SDKContext.Class {
-					resolve( uri:string ):string {
-						return "http://example.com/" + uri;
-					}
-				}
-				context = new MockedSDKContext();
-				context.setSetting( "vocabulary", "vocab#" );
-				context.extendObjectSchema( {
-					"exTypes": "http://example.com/types#",
-				} );
-
-				expect( context.extendObjectSchema ).toBeDefined();
-				expect( Utils.isFunction( context.extendObjectSchema ) ).toBe( true );
-
-
-				let objectSchema:ObjectSchema.Class = {
-					"ex": "http://example.com/ns#",
-					"xsd": "http://www.w3.org/2001/XMLSchema#",
-					"string": {
-						"@id": "ex:string",
-						"@type": "xsd:string",
-					},
-					"pointer": {
-						"@id": "ex:pointer",
-						"@type": "@id",
-					},
-				};
-				let digestedSchema:ObjectSchema.DigestedObjectSchema;
-
-				context.extendObjectSchema( "http://example.com/ns#MyType", objectSchema );
-				expect( context.hasObjectSchema( "http://example.com/ns#MyType" ) ).toBe( true );
-
-				digestedSchema = context.getObjectSchema( "http://example.com/ns#MyType" );
-				expect( digestedSchema instanceof ObjectSchema.DigestedObjectSchema ).toBe( true );
-
-				expect( digestedSchema ).toEqual( ObjectSchema.Digester.digestSchema( objectSchema ) );
-
-				// Prefixed Type
-				context.extendObjectSchema( "exTypes:Another-Type", objectSchema );
-				expect( context.hasObjectSchema( "http://example.com/types#Another-Type" ) ).toBe( true );
-
-				digestedSchema = context.getObjectSchema( "http://example.com/types#Another-Type" );
-				expect( digestedSchema instanceof ObjectSchema.DigestedObjectSchema ).toBe( true );
-
-				expect( digestedSchema ).toEqual( ObjectSchema.Digester.digestSchema( objectSchema ) );
-
-				// Prefixed Type
-				context.extendObjectSchema( "ex:Another-Type", objectSchema );
-				expect( context.hasObjectSchema( "http://example.com/ns#Another-Type" ) ).toBe( false );
-
-				digestedSchema = context.getObjectSchema( "ex:Another-Type" );
-				expect( digestedSchema instanceof ObjectSchema.DigestedObjectSchema ).toBe( true );
-
-				expect( digestedSchema ).toEqual( ObjectSchema.Digester.digestSchema( objectSchema ) );
-
-				// Prefixed Type
-				context.extendObjectSchema( "Another-Type", objectSchema );
-				expect( context.hasObjectSchema( "http://example.com/vocab#Another-Type" ) ).toBe( true );
-
-				digestedSchema = context.getObjectSchema( "http://example.com/vocab#Another-Type" );
-				expect( digestedSchema instanceof ObjectSchema.DigestedObjectSchema ).toBe( true );
-
-				expect( digestedSchema ).toEqual( ObjectSchema.Digester.digestSchema( objectSchema ) );
-			} );
+			), ():void => {} );
 
 			it( hasSignature(
 				"Extends the general schema of the current context.\nIf a general schema exists in the parent context, this is duplicated for the current context, but only the first time the schema is extended.", [
-					{ name: "objectSchema", type: "Carbon.ObjectSchema.DigestedObjectSchema", description: "The new schema that will extends the previous one." },
+					{ name: "objectSchema", type: "CarbonLDP.DigestedObjectSchema", description: "The new schema that will extends the previous one." },
 				]
-			), ():void => {
-				expect( context.extendObjectSchema ).toBeDefined();
-				expect( Utils.isFunction( context.extendObjectSchema ) ).toBe( true );
+			), ():void => {} );
 
-				let objectSchema:ObjectSchema.Class = {
-					"ex": "http://example.com/ns#",
-					"xsd": "http://www.w3.org/2001/XMLSchema#",
-					"string": {
-						"@id": "ex:string",
-						"@type": "xsd:string",
-					},
-					"pointer": {
-						"@id": "ex:pointer",
-						"@type": "@id",
-					},
-				};
-				context.extendObjectSchema( objectSchema );
+			it( "should exists", ():void => {
+				expect( SDKContext.prototype.extendObjectSchema ).toBeDefined();
+				expect( SDKContext.prototype.extendObjectSchema ).toEqual( jasmine.any( Function ) );
+			} );
 
-				let digestedSchema:ObjectSchema.DigestedObjectSchema = context.getObjectSchema();
-				expect( digestedSchema instanceof ObjectSchema.DigestedObjectSchema ).toBe( true );
-				let some:ObjectSchema.DigestedObjectSchema = new ObjectSchema.DigestedObjectSchema();
-				expect( digestedSchema.properties ).not.toEqual( some.properties );
+			it( "should add when absolute type schema does not exists", ():void => {
+				const schemasMap:Map<string, ObjectSchema.DigestedObjectSchema> = new Map();
+				const context:SDKContext = createContext( null, null, schemasMap );
 
-				let expectedDigestedSchema:ObjectSchema.DigestedObjectSchema = ObjectSchema.Digester.combineDigestedObjectSchemas( [
-					ObjectSchema.Digester.digestSchema( objectSchema ),
-					SDKContext.instance.getObjectSchema(),
+				context.extendObjectSchema( "https://example.com/ns#Type", {
+					"ex": "https://example.com/ns#",
+				} );
+
+				expect( schemasMap ).toEqual( new Map( [ [
+					"https://example.com/ns#Type",
+					createSchema( {
+						prefixes: new Map( [ [ "ex", "https://example.com/ns#" ] ] ),
+					} ),
+				] ] ) );
+			} );
+
+			it( "should add when prefixed type schema does not exists", ():void => {
+				const schemasMap:Map<string, ObjectSchema.DigestedObjectSchema> = new Map();
+				const context:SDKContext = createContext(
+					null,
+					createSchema( {
+						prefixes: new Map( [
+							[ "ex", "https://example.com/ns#" ],
+						] ),
+					} ),
+					schemasMap
+				);
+
+				context.extendObjectSchema( "ex:Type", {
+					"schema": "https://schema.org/",
+				} );
+
+				expect( schemasMap ).toEqual( new Map( [ [
+					"https://example.com/ns#Type",
+					createSchema( {
+						prefixes: new Map( [ [ "schema", "https://schema.org/" ] ] ),
+					} ),
+				] ] ) );
+			} );
+
+			it( "should add when relative type schema does not exists and vocab is set", ():void => {
+				const schemasMap:Map<string, ObjectSchema.DigestedObjectSchema> = new Map();
+				const context:SDKContext = createContext(
+					{ vocabulary: "https://example.com/ns#" },
+					null,
+					schemasMap
+				);
+
+				context.extendObjectSchema( "Type", {
+					"schema": "https://schema.org/",
+				} );
+
+				expect( schemasMap ).toEqual( new Map( [ [
+					"https://example.com/ns#Type",
+					createSchema( {
+						prefixes: new Map( [ [ "schema", "https://schema.org/" ] ] ),
+					} ),
+				] ] ) );
+			} );
+
+			it( "should merge when type schema exists", ():void => {
+				const schemasMap:Map<string, ObjectSchema.DigestedObjectSchema> = new Map( [
+					[ "https://example.com/ns#Type", createSchema( {
+						prefixes: new Map( [ [ "schema", "https://schema.org/" ] ] ),
+					} ) ],
 				] );
-				expect( digestedSchema ).toEqual( expectedDigestedSchema );
+				const context:SDKContext = createContext( null, null, schemasMap );
+
+				context.extendObjectSchema( "https://example.com/ns#Type", {
+					"rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+				} );
+
+				expect( schemasMap ).toEqual( new Map( [ [
+					"https://example.com/ns#Type",
+					createSchema( {
+						prefixes: new Map( [
+							[ "schema", "https://schema.org/" ],
+							[ "rdfs", "http://www.w3.org/2000/01/rdf-schema#" ],
+						] ),
+					} ),
+				] ] ) );
+			} );
+
+			it( "should merge with general schema", ():void => {
+				const context:ExtendedContext = createContext(
+					null,
+					createSchema( {
+						prefixes: new Map( [
+							[ "ex", "https://example.com/ns#" ],
+						] ),
+					} )
+				);
+
+				context.extendObjectSchema( {
+					"schema": "https://schema.org/",
+				} );
+
+				expect( context._generalSchema ).toEqual( createSchema( {
+					prefixes: new Map( [
+						[ "ex", "https://example.com/ns#" ],
+						[ "schema", "https://schema.org/" ],
+					] ),
+				} ) );
 			} );
 
 		} );
 
-		it( hasMethod(
-			INSTANCE,
-			"clearObjectSchema",
-			"Remove the schema of the type specified, or the general schema if no type is provided.", [
-				{ name: "type", type: "string", optional: true, description: "The URI of the type to remove its schema." },
-			]
-		), ():void => {
-			expect( context.clearObjectSchema ).toBeDefined();
-			expect( Utils.isFunction( context.clearObjectSchema ) ).toBe( true );
+		describe( method( INSTANCE, "clearObjectSchema" ), ():void => {
 
-			// Mocked Context
-			let rawObjectSchema:ObjectSchema.Class = {
-				"ex": "http://example.com/ns#",
-				"xsd": "http://www.w3.org/2001/XMLSchema#",
-				"string": {
-					"@id": "ex:string",
-					"@type": "xsd:string",
-				},
-				"pointer": {
-					"@id": "ex:pointer",
-					"@type": "@id",
-				},
-			};
-			let objectSchema:ObjectSchema.DigestedObjectSchema = ObjectSchema.Digester.digestSchema( rawObjectSchema );
-			class MyContext extends SDKContext.Class {
-				constructor() {
-					super();
-					this.typeObjectSchemaMap.set( "http://example.com/ns#MyType", objectSchema );
-					this.generalObjectSchema = ObjectSchema.Digester.digestSchema( rawObjectSchema );
-				}
-			}
-			let mockedContext:Context = new MyContext();
+			it( hasSignature(
+				"Remove the schema of the type specified, or the general schema if no type is provided.", [
+					{ name: "type", type: "string", optional: true, description: "The URI of the type to remove its schema." },
+				]
+			), ():void => {} );
 
-			// Type schema
-			expect( mockedContext.hasObjectSchema( "http://example.com/ns#MyType" ) ).toBe( true );
-			mockedContext.clearObjectSchema( "http://example.com/ns#MyType" );
-			expect( mockedContext.hasObjectSchema( "http://example.com/ns#MyType" ) ).toBe( false );
+			it( "should exists", ():void => {
+				expect( SDKContext.prototype.clearObjectSchema ).toBeDefined();
+				expect( SDKContext.prototype.clearObjectSchema ).toEqual( jasmine.any( Function ) );
+			} );
 
-			// General schema
-			let returnedSchema:ObjectSchema.DigestedObjectSchema;
-			returnedSchema = mockedContext.getObjectSchema();
-			expect( returnedSchema ).toEqual( objectSchema );
-			mockedContext.clearObjectSchema();
-			returnedSchema = mockedContext.getObjectSchema();
-			expect( returnedSchema ).not.toEqual( objectSchema );
-			expect( returnedSchema ).toEqual( new ObjectSchema.DigestedObjectSchema() );
+			it( "should remove absolute typed schema", ():void => {
+				const schemasMap:Map<string, ObjectSchema.DigestedObjectSchema> = new Map( [
+					[ "https://example.com/ns#Type", createSchema() ],
+				] );
+				const context:SDKContext = createContext(
+					null,
+					null,
+					schemasMap
+				);
+
+				context.clearObjectSchema( "https://example.com/ns#Type" );
+				expect( schemasMap ).toEqual( new Map() );
+			} );
+
+			it( "should remove prefixed typed schema", ():void => {
+				const schemasMap:Map<string, ObjectSchema.DigestedObjectSchema> = new Map( [
+					[ "https://example.com/ns#Type", createSchema() ],
+				] );
+				const context:SDKContext = createContext(
+					null,
+					createSchema( {
+						prefixes: new Map( [
+							[ "ex", "https://example.com/ns#" ],
+						] ),
+					} ),
+					schemasMap
+				);
+
+				context.clearObjectSchema( "ex:Type" );
+				expect( schemasMap ).toEqual( new Map() );
+			} );
+
+			it( "should remove relative typed schema with vocab set", ():void => {
+				const schemasMap:Map<string, ObjectSchema.DigestedObjectSchema> = new Map( [
+					[ "https://example.com/ns#Type", createSchema() ],
+				] );
+				const context:SDKContext = createContext(
+					{ vocabulary: "https://example.com/ns#" },
+					null,
+					schemasMap
+				);
+
+				context.clearObjectSchema( "Type" );
+				expect( schemasMap ).toEqual( new Map() );
+			} );
+
+			it( "should clean general object schema", ():void => {
+				const context:ExtendedContext = createContext(
+					null,
+					createSchema( {
+						base: "https://example.com/",
+						prefixes: new Map( [
+							[ "ex", "https://example.com/ns#" ],
+						] ),
+					} )
+				);
+
+				context.clearObjectSchema();
+				expect( context._generalSchema ).toEqual( createSchema() );
+			} );
+
 		} );
 
 	} );
 
 	it( hasProperty(
 		STATIC,
-		"instance",
-		"Carbon.SDKContext.Class",
-		"Instance of `Carbon.SDKContext.Class` that is used as the root parent in every context."
+		"globalContext",
+		"CarbonLDP.SDKContext",
+		"Instance of `CarbonLDP.SDKContext` that is used as the root parent in every context."
 	), ():void => {
-		expect( SDKContext.instance ).toBeDefined();
-		expect( SDKContext.instance ).toBeTruthy();
-		expect( SDKContext.instance instanceof SDKContext.Class ).toBe( true );
-	} );
-
-	it( hasDefaultExport(
-		"Carbon.SDKContext.instance"
-	), ():void => {
-		expect( DefaultExport ).toBeDefined();
-		expect( DefaultExport ).toBe( SDKContext.instance );
+		expect( globalContext ).toBeDefined();
+		expect( globalContext ).toEqual( jasmine.any( SDKContext ) );
 	} );
 
 } );

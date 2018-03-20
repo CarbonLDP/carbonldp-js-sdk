@@ -1,10 +1,12 @@
-import * as NamedFragment from "./NamedFragment";
-import * as PersistedDocument from "./PersistedDocument";
-import * as PersistedFragment from "./PersistedFragment";
-export interface Class extends PersistedFragment.Class, NamedFragment.Class {
-    document: PersistedDocument.Class;
+import { ModelDecorator } from "./ModelDecorator";
+import { NamedFragment } from "./NamedFragment";
+import { PersistedDocument } from "./PersistedDocument";
+import { PersistedFragment } from "./PersistedFragment";
+export interface PersistedNamedFragment extends PersistedFragment, NamedFragment {
+    _document: PersistedDocument;
 }
-export declare class Factory {
-    static decorate<T extends NamedFragment.Class>(fragment: T): T & Class;
+export interface PersistedNamedFragmentFactory extends ModelDecorator<PersistedNamedFragment> {
+    isDecorated(object: object): object is PersistedNamedFragment;
+    decorate<T extends object>(object: T): T & PersistedNamedFragment;
 }
-export default Class;
+export declare const PersistedNamedFragment: PersistedNamedFragmentFactory;

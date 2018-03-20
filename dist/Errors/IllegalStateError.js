@@ -11,22 +11,18 @@ var __extends = (this && this.__extends) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 var AbstractError_1 = require("./AbstractError");
-var Class = (function (_super) {
-    __extends(Class, _super);
-    function Class(message) {
-        if (message === void 0) { message = ""; }
-        var _this = _super.call(this, message) || this;
-        Object.setPrototypeOf(_this, Class.prototype);
-        return _this;
+var IllegalStateError = (function (_super) {
+    __extends(IllegalStateError, _super);
+    function IllegalStateError(message) {
+        return _super.call(this, message) || this;
     }
-    Object.defineProperty(Class.prototype, "name", {
+    Object.defineProperty(IllegalStateError.prototype, "name", {
         get: function () { return "IllegalStateError"; },
         enumerable: true,
         configurable: true
     });
-    return Class;
-}(AbstractError_1.default));
-exports.Class = Class;
-exports.default = Class;
+    return IllegalStateError;
+}(AbstractError_1.AbstractError));
+exports.IllegalStateError = IllegalStateError;
 
 //# sourceMappingURL=IllegalStateError.js.map

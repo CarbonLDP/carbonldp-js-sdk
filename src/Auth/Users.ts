@@ -1,25 +1,25 @@
 import { promiseMethod } from "../Utils";
-import * as Context from "./../Context";
-import * as Errors from "./../Errors";
-import * as HTTP from "./../HTTP";
-import * as Pointer from "./../Pointer";
-import * as URI from "./../RDF/URI";
+import { Context } from "../Context";
+import * as Errors from "../Errors";
+import { RequestOptions } from "../HTTP/Request";
+import { Pointer } from "../Pointer";
+import { URI } from "../RDF/URI";
 import { QueryDocumentBuilder } from "./../SPARQL/QueryDocument";
 import * as PersistedUser from "./PersistedUser";
 import * as User from "./User";
 
 export class Class {
-	private context:Context.Class;
+	private context:Context;
 
-	constructor( context:Context.Class ) {
+	constructor( context:Context ) {
 		this.context = context;
 	}
 
-	register( email:string, password:string, disabled?:boolean ):Promise<[ PersistedUser.Class, HTTP.Response.Class ]> {
+	register( email:string, password:string, disabled?:boolean ):Promise<PersistedUser.Class> {
 		return this.registerWith( {}, email, password, disabled );
 	}
 
-	registerWith<T extends object>( userObject:T, email:string, password:string, disabled?:boolean ):Promise<[ T & PersistedUser.Class, HTTP.Response.Class ]> {
+	registerWith<T extends object>( userObject:T, email:string, password:string, disabled?:boolean ):Promise<T & PersistedUser.Class> {
 		return promiseMethod( () => {
 			const requestUser:T & User.Class = User.Factory.createFrom( userObject, disabled );
 			requestUser.setCredentials( email, password );
@@ -33,9 +33,9 @@ export class Class {
 		} );
 	}
 
-	get<T extends object>( userURI:string, requestOptions?:HTTP.Request.Options, queryBuilderFn?:( queryBuilder:QueryDocumentBuilder.Class ) => QueryDocumentBuilder.Class ):Promise<[ T & PersistedUser.Class, HTTP.Response.Class ]>;
-	get<T extends object>( userURI:string, queryBuilderFn?:( queryBuilder:QueryDocumentBuilder.Class ) => QueryDocumentBuilder.Class ):Promise<[ T & PersistedUser.Class, HTTP.Response.Class ]>;
-	get<T extends object>( userURI:string, queryBuilderFnOrOptions:any, queryBuilderFn?:( queryBuilder:QueryDocumentBuilder.Class ) => QueryDocumentBuilder.Class ):Promise<[ T & PersistedUser.Class, HTTP.Response.Class ]> {
+	get<T extends object>( userURI:string, requestOptions?:HTTP.Request.Options, queryBuilderFn?:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<T & PersistedUser.Class>;
+	get<T extends object>( userURI:string, queryBuilderFn?:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<T & PersistedUser.Class>;
+	get<T extends object>( userURI:string, queryBuilderFnOrOptions:any, queryBuilderFn?:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<T & PersistedUser.Class> {
 		return promiseMethod( () => {
 			const uri:string = this.resolveURI( userURI );
 
@@ -46,7 +46,7 @@ export class Class {
 		} );
 	}
 
-	enable( userURI:string, requestOptions?:HTTP.Request.Options ):Promise<[ PersistedUser.Class, HTTP.Response.Class[] ]> {
+	enable( userURI:string, requestOptions?:RequestOptions ):Promise<PersistedUser.Class> {
 		return this
 			.getPersistedUser( userURI )
 			.then( persistedUser => {
@@ -54,7 +54,7 @@ export class Class {
 			} );
 	}
 
-	disable( userURI:string, requestOptions?:HTTP.Request.Options ):Promise<[ PersistedUser.Class, HTTP.Response.Class[] ]> {
+	disable( userURI:string, requestOptions?:RequestOptions ):Promise<PersistedUser.Class> {
 		return this
 			.getPersistedUser( userURI )
 			.then( persistedUser => {
@@ -62,7 +62,7 @@ export class Class {
 			} );
 	}
 
-	delete( userURI:string, requestOptions?:HTTP.Request.Options ):Promise<HTTP.Response.Class> {
+	delete( userURI:string, requestOptions?:RequestOptions ):Promise<void> {
 		return promiseMethod( () => {
 			const uri:string = this.resolveURI( userURI );
 
@@ -76,21 +76,24 @@ export class Class {
 	private getPersistedUser( userURI:string ):Promise<PersistedUser.Class> {
 		return promiseMethod( () => {
 			const userID:string = this.resolveURI( userURI );
-			const userPointer:Pointer.Class = this.context.documents.getPointer( userID );
+			const userPointer:Pointer = this.context.documents.getPointer( userID );
 			return PersistedUser.Factory.decorate( userPointer, this.context.documents );
 		} );
 	}
 
 	private resolveURI( relativeURI?:string ):string {
-		if( ! this.context.hasSetting( "users.container" ) ) throw new Errors.IllegalStateError( `The "users.container" setting hasn't been defined.` );
-		const usersContainer:string = this.context.resolve( this.context.getSetting( "users.container" ) );
+		const usersContainer:string = this.context.resolve( this.getContainerURI() );
 
 		if( ! relativeURI ) return usersContainer;
 
-		const absoluteRoleURI:string = URI.Util.resolve( usersContainer, relativeURI );
+		const absoluteRoleURI:string = URI.resolve( usersContainer, relativeURI );
 		if( ! absoluteRoleURI.startsWith( usersContainer ) ) throw new Errors.IllegalArgumentError( `The URI "${ relativeURI }" isn't a valid user URI.` );
 
 		return absoluteRoleURI;
+	}
+
+	private getContainerURI():string {
+		return this.context._resolvePath( "users" );
 	}
 
 }

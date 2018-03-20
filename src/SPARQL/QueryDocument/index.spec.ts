@@ -1,88 +1,181 @@
-import { INSTANCE, module, reexports } from "../../test/JasmineExtender";
+import {
+	INSTANCE,
+	module,
+	reexports
+} from "../../test/JasmineExtender";
 
-import * as QueryDocument from "../QueryDocument";
-import * as PartialMetadata from "./PartialMetadata";
-import * as QueryContext from "./QueryContext";
-import * as QueryContextBuilder from "./QueryContextBuilder";
-import * as QueryContextPartial from "./QueryContextPartial";
-import * as QueryDocumentBuilder from "./QueryDocumentBuilder";
-import * as QueryDocumentsBuilder from "./QueryDocumentsBuilder";
-import * as QueryMetadata from "./QueryMetadata";
-import * as QueryObject from "./QueryObject";
-import * as QueryPropertiesSchema from "./QueryPropertiesSchema";
-import * as QueryProperty from "./QueryProperty";
-import * as QueryPropertySchema from "./QueryPropertySchema";
-import * as QueryValue from "./QueryValue";
-import * as QueryVariable from "./QueryVariable";
+import * as QueryDocument from "./";
 
-describe( module( "Carbon/SPARQL/QueryDocument" ), ():void => {
+import { PartialMetadata } from "./PartialMetadata";
+import { QueryContext } from "./QueryContext";
+import { QueryContextBuilder } from "./QueryContextBuilder";
+import { QueryContextPartial } from "./QueryContextPartial";
+import { QueryDocumentBuilder } from "./QueryDocumentBuilder";
+import {
+	QueryDocumentsBuilder,
+	QueryDocumentsBuilderOrderData,
+} from "./QueryDocumentsBuilder";
+import {
+	QueryMetadata,
+	QueryMetadataFactory,
+} from "./QueryMetadata";
+import { QueryObject } from "./QueryObject";
+import {
+	QueryProperty,
+	QueryPropertyType,
+} from "./QueryProperty";
+import { QuerySchema } from "./QuerySchema";
+import { QuerySchemaProperty } from "./QuerySchemaProperty";
+import { QueryValue } from "./QueryValue";
+import { QueryVariable } from "./QueryVariable";
+
+describe( module( "carbonldp/SPARQL/QueryDocument" ), ():void => {
 
 	it( "should exists", ():void => {
 		expect( QueryDocument ).toBeDefined();
 		expect( QueryDocument ).toEqual( jasmine.any( Object ) );
 	} );
 
-	it( reexports( INSTANCE, "PartialMetadata", "Carbon.SPARQL.QueryDocument.PartialMetadata" ), ():void => {
+	it( reexports(
+		INSTANCE,
+		"PartialMetadata",
+		"CarbonLDP.SPARQL.QueryDocument.PartialMetadata"
+	), ():void => {
 		expect( QueryDocument.PartialMetadata ).toBeDefined();
 		expect( QueryDocument.PartialMetadata ).toBe( PartialMetadata );
 	} );
 
-	it( reexports( INSTANCE, "QueryContext", "Carbon.SPARQL.QueryDocument.QueryContext" ), ():void => {
+	it( reexports(
+		INSTANCE,
+		"QueryContext",
+		"CarbonLDP.SPARQL.QueryDocument.QueryContext"
+	), ():void => {
 		expect( QueryDocument.QueryContext ).toBeDefined();
 		expect( QueryDocument.QueryContext ).toBe( QueryContext );
 	} );
 
-	it( reexports( INSTANCE, "QueryContextBuilder", "Carbon.SPARQL.QueryDocument.QueryContextBuilder" ), ():void => {
+	it( reexports(
+		INSTANCE,
+		"QueryContextBuilder",
+		"CarbonLDP.SPARQL.QueryDocument.QueryContextBuilder"
+	), ():void => {
 		expect( QueryDocument.QueryContextBuilder ).toBeDefined();
 		expect( QueryDocument.QueryContextBuilder ).toBe( QueryContextBuilder );
 	} );
 
-	it( reexports( INSTANCE, "QueryContextPartial", "Carbon.SPARQL.QueryDocument.QueryContextPartial" ), ():void => {
+	it( reexports(
+		INSTANCE,
+		"QueryContextPartial",
+		"CarbonLDP.SPARQL.QueryDocument.QueryContextPartial"
+	), ():void => {
 		expect( QueryDocument.QueryContextPartial ).toBeDefined();
 		expect( QueryDocument.QueryContextPartial ).toBe( QueryContextPartial );
 	} );
 
-	it( reexports( INSTANCE, "QueryDocumentBuilder", "Carbon.SPARQL.QueryDocument.QueryDocumentBuilder" ), ():void => {
+	it( reexports(
+		INSTANCE,
+		"QueryDocumentBuilder",
+		"CarbonLDP.SPARQL.QueryDocument.QueryDocumentBuilder"
+	), ():void => {
 		expect( QueryDocument.QueryDocumentBuilder ).toBeDefined();
 		expect( QueryDocument.QueryDocumentBuilder ).toBe( QueryDocumentBuilder );
 	} );
 
-	it( reexports( INSTANCE, "QueryDocumentsBuilder", "Carbon.SPARQL.QueryDocument.QueryDocumentsBuilder" ), ():void => {
+	it( reexports(
+		INSTANCE,
+		"QueryDocumentsBuilderOrderData",
+		"CarbonLDP.SPARQL.QueryDocument.QueryDocumentsBuilderOrderData"
+	), ():void => {
+		const target:QueryDocument.QueryDocumentsBuilderOrderData = {} as QueryDocumentsBuilderOrderData;
+		expect( target ).toBeDefined();
+	} );
+
+	it( reexports(
+		INSTANCE,
+		"QueryDocumentsBuilder",
+		"CarbonLDP.SPARQL.QueryDocument.QueryDocumentsBuilder"
+	), ():void => {
 		expect( QueryDocument.QueryDocumentsBuilder ).toBeDefined();
 		expect( QueryDocument.QueryDocumentsBuilder ).toBe( QueryDocumentsBuilder );
 	} );
 
-	it( reexports( INSTANCE, "QueryMetadata", "Carbon.SPARQL.QueryDocument.QueryMetadata" ), ():void => {
+	it( reexports(
+		INSTANCE,
+		"QueryMetadata",
+		"CarbonLDP.SPARQL.QueryDocument.QueryMetadata"
+	), ():void => {
 		expect( QueryDocument.QueryMetadata ).toBeDefined();
 		expect( QueryDocument.QueryMetadata ).toBe( QueryMetadata );
 	} );
 
-	it( reexports( INSTANCE, "QueryObject", "Carbon.SPARQL.QueryDocument.QueryObject" ), ():void => {
+	it( reexports(
+		INSTANCE,
+		"QueryMetadataFactory",
+		"CarbonLDP.SPARQL.QueryDocument.QueryMetadataFactory"
+	), ():void => {
+		const target:QueryDocument.QueryMetadataFactory = {} as QueryMetadataFactory;
+		expect( target ).toBeDefined();
+	} );
+
+	it( reexports(
+		INSTANCE,
+		"QueryObject",
+		"CarbonLDP.SPARQL.QueryDocument.QueryObject"
+	), ():void => {
 		expect( QueryDocument.QueryObject ).toBeDefined();
 		expect( QueryDocument.QueryObject ).toBe( QueryObject );
 	} );
 
-	it( reexports( INSTANCE, "QueryPropertiesSchema", "Carbon.SPARQL.QueryDocument.QueryPropertiesSchema" ), ():void => {
-		expect( QueryDocument.QueryPropertiesSchema ).toBeDefined();
-		expect( QueryDocument.QueryPropertiesSchema ).toBe( QueryPropertiesSchema );
-	} );
-
-	it( reexports( INSTANCE, "QueryProperty", "Carbon.SPARQL.QueryDocument.QueryProperty" ), ():void => {
+	it( reexports(
+		INSTANCE,
+		"QueryProperty",
+		"CarbonLDP.SPARQL.QueryDocument.QueryProperty"
+	), ():void => {
 		expect( QueryDocument.QueryProperty ).toBeDefined();
 		expect( QueryDocument.QueryProperty ).toBe( QueryProperty );
 	} );
 
-	it( reexports( INSTANCE, "QueryPropertySchema", "Carbon.SPARQL.QueryDocument.QueryPropertySchema" ), ():void => {
-		expect( QueryDocument.QueryPropertySchema ).toBeDefined();
-		expect( QueryDocument.QueryPropertySchema ).toBe( QueryPropertySchema );
+	it( reexports(
+		INSTANCE,
+		"QueryPropertyType",
+		"CarbonLDP.SPARQL.QueryDocument.QueryPropertyType"
+	), ():void => {
+		expect( QueryDocument.QueryPropertyType ).toBeDefined();
+		expect( QueryDocument.QueryPropertyType ).toBe( QueryPropertyType );
 	} );
 
-	it( reexports( INSTANCE, "QueryValue", "Carbon.SPARQL.QueryDocument.QueryValue" ), ():void => {
+	it( reexports(
+		INSTANCE,
+		"QuerySchema",
+		"CarbonLDP.SPARQL.QueryDocument.QuerySchema"
+	), ():void => {
+		const target:QueryDocument.QuerySchema = {} as QuerySchema;
+		expect( target ).toBeDefined();
+	} );
+
+	it( reexports(
+		INSTANCE,
+		"QuerySchemaProperty",
+		"CarbonLDP.SPARQL.QueryDocument.QuerySchemaProperty"
+	), ():void => {
+		const target:QueryDocument.QuerySchemaProperty = {} as QuerySchemaProperty;
+		expect( target ).toBeDefined();
+	} );
+
+	it( reexports(
+		INSTANCE,
+		"QueryValue",
+		"CarbonLDP.SPARQL.QueryDocument.QueryValue"
+	), ():void => {
 		expect( QueryDocument.QueryValue ).toBeDefined();
 		expect( QueryDocument.QueryValue ).toBe( QueryValue );
 	} );
 
-	it( reexports( INSTANCE, "QueryVariable", "Carbon.SPARQL.QueryDocument.QueryVariable" ), ():void => {
+	it( reexports(
+		INSTANCE,
+		"QueryVariable",
+		"CarbonLDP.SPARQL.QueryDocument.QueryVariable"
+	), ():void => {
 		expect( QueryDocument.QueryVariable ).toBeDefined();
 		expect( QueryDocument.QueryVariable ).toBe( QueryVariable );
 	} );

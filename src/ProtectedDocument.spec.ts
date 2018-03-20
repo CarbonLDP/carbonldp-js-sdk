@@ -1,67 +1,78 @@
+import { ProtectedDocument } from "./ProtectedDocument";
+
 import {
-	STATIC,
-
-	module,
-	interfaze,
-
-	isDefined,
-	hasProperty,
 	extendsClass,
-	hasDefaultExport,
+	hasProperty,
+	interfaze,
+	module,
+	OBLIGATORY,
+	property,
+	STATIC,
 } from "./test/JasmineExtender";
-import * as NS from "./NS";
 import * as Utils from "./Utils";
+import { CS } from "./Vocabularies/CS";
 
-import * as ProtectedDocument from "./ProtectedDocument";
-import DefaultExport from "./ProtectedDocument";
-
-describe( module( "Carbon/ProtectedDocument" ), ():void => {
-
-	it( isDefined(), ():void => {
-		expect( ProtectedDocument ).toBeDefined();
-		expect( Utils.isObject( ProtectedDocument ) ).toBe( true );
-	} );
+describe( module( "carbonldp/ProtectedDocument" ), ():void => {
 
 	describe( interfaze(
-		"Carbon.ProtectedDocument.Class",
+		"CarbonLDP.ProtectedDocument",
 		"Interface that represents a persisted blank node of a persisted document."
 	), ():void => {
 
-		it( extendsClass( "Carbon.Document.Class" ), ():void => {} );
+		it( extendsClass( "CarbonLDP.Document" ), ():void => {} );
 
 	} );
 
-	it( hasDefaultExport( "Carbon.ProtectedDocument.Class" ), ():void => {
-		let defaultExport:DefaultExport = <any> {};
-		let defaultTarget:ProtectedDocument.Class;
-
-		defaultTarget = defaultExport;
-		expect( defaultTarget ).toEqual( jasmine.any( Object ) );
-	} );
-
-	it( hasProperty(
-		STATIC,
-		"RDF_CLASS",
-		"string"
+	describe( interfaze(
+		"CarbonLDP.ProtectedDocumentFactory",
+		"Interface with the factory, decorate and utils for `CarbonLDP.ProtectedDocument` objects."
 	), ():void => {
-		expect( ProtectedDocument.RDF_CLASS ).toBeDefined();
-		expect( Utils.isString( ProtectedDocument.RDF_CLASS ) ).toBe( true );
 
-		expect( ProtectedDocument.RDF_CLASS ).toBe( NS.CS.Class.ProtectedDocument );
+		it( hasProperty(
+			OBLIGATORY,
+			"TYPE",
+			"string"
+		), ():void => {} );
+
+		it( hasProperty(
+			OBLIGATORY,
+			"SCHEMA",
+			"CarbonLDP.ObjectSchema"
+		), ():void => {} );
+
 	} );
 
-	it( hasProperty(
+	describe( property(
 		STATIC,
-		"SCHEMA",
-		"Carbon.ObjectSchema.Class"
+		"ProtectedDocument",
+		"CarbonLDP.ProtectedDocumentFactory",
+		"Constant that implements the `CarbonLDP.ProtectedDocumentFactory` interface."
 	), ():void => {
-		expect( ProtectedDocument.SCHEMA ).toBeDefined();
-		expect( Utils.isObject( ProtectedDocument.SCHEMA ) ).toBe( true );
 
-		expect( Utils.hasProperty( ProtectedDocument.SCHEMA, "accessControlList" ) ).toBe( true );
-		expect( ProtectedDocument.SCHEMA[ "accessControlList" ] ).toEqual( {
-			"@id": NS.CS.Predicate.accessControlList,
-			"@type": "@id",
+		it( "should exist", ():void => {
+			expect( ProtectedDocument ).toBeDefined();
+			expect( ProtectedDocument ).toEqual( jasmine.any( Object ) );
+		} );
+
+		// TODO: Separate in different errors
+		it( "ProtectedDocument.TYPE", ():void => {
+			expect( ProtectedDocument.TYPE ).toBeDefined();
+			expect( Utils.isString( ProtectedDocument.TYPE ) ).toBe( true );
+
+			expect( ProtectedDocument.TYPE ).toBe( CS.ProtectedDocument );
+		} );
+
+		// TODO: Separate in different errors
+		it( "ProtectedDocument.SCHEMA", ():void => {
+			expect( ProtectedDocument.SCHEMA ).toBeDefined();
+			expect( Utils.isObject( ProtectedDocument.SCHEMA ) ).toBe( true );
+
+			expect( Utils.hasProperty( ProtectedDocument.SCHEMA, "accessControlList" ) ).toBe( true );
+			expect( ProtectedDocument.SCHEMA[ "accessControlList" ] ).toEqual( {
+				"@id": CS.accessControlList,
+				"@type": "@id",
+			} );
+
 		} );
 
 	} );

@@ -1,37 +1,36 @@
+import { AbstractContext } from "../AbstractContext";
+import { Documents } from "../Documents";
+import * as Errors from "../Errors";
+import { RequestOptions } from "../HTTP/Request";
+import { Pointer } from "../Pointer";
 import {
-	STATIC,
+	clazz,
+	decoratedObject,
+	extendsClass,
+	hasDefaultExport,
+	hasMethod,
+	hasProperty,
+	hasSignature,
 	INSTANCE,
-
+	interfaze,
+	isDefined,
+	method,
+	module,
 	OBLIGATORY,
 	OPTIONAL,
-
-	module,
-	clazz,
-	method,
-	interfaze,
-
-	isDefined,
-	hasMethod,
-	decoratedObject,
-	hasSignature,
-	extendsClass,
-	hasProperty, hasDefaultExport,
-} from "./../test/JasmineExtender";
-import AbstractContext from "../AbstractContext";
-import * as Documents from "./../Documents";
-import * as Errors from "./../Errors";
-import * as HTTP from "./../HTTP";
-import * as PersistedDocument from "./../PersistedDocument";
-import * as PersistedProtectedDocument from "./../PersistedProtectedDocument";
-import * as Pointer from "./../Pointer";
+	STATIC,
+} from "../test/JasmineExtender";
+import { PersistedDocument } from "./../PersistedDocument";
+import { PersistedProtectedDocument } from "./../PersistedProtectedDocument";
 import * as Utils from "./../Utils";
-import * as Role from "./Role";
-import * as Roles from "./Roles";
 
 import * as PersistedRole from "./PersistedRole";
 import DefaultExport from "./PersistedRole";
 
-describe( module( "Carbon/Auth/PersistedRole" ), ():void => {
+import * as Role from "./Role";
+import * as Roles from "./Roles";
+
+describe( module( "carbonldp/Auth/PersistedRole" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( PersistedRole ).toBeDefined();
@@ -39,16 +38,16 @@ describe( module( "Carbon/Auth/PersistedRole" ), ():void => {
 	} );
 
 	describe( interfaze(
-		"Carbon.PersistedRole.Class",
+		"CarbonLDP.PersistedRole.Class",
 		"Specific interface that represents a persisted role of an application."
 	), ():void => {
 
-		it( extendsClass( "Carbon.Auth.PersistedRole.Class" ), ():void => {} );
+		it( extendsClass( "CarbonLDP.Auth.PersistedRole.Class" ), ():void => {} );
 
 		it( hasProperty(
 			OBLIGATORY,
 			"_roles",
-			"Carbon.Auth.Roles.Class",
+			"CarbonLDP.Auth.Roles.Class",
 			"(Internal) Instance of an implementation of the Roles abstract class that manage the current role."
 		), ():void => {} );
 
@@ -69,7 +68,7 @@ describe( module( "Carbon/Auth/PersistedRole" ), ():void => {
 		it( hasProperty(
 			OPTIONAL,
 			"users",
-			"Carbon.Pointer.Class[]",
+			"CarbonLDP.Pointer[]",
 			"An array of pointers that references to all the users that have the current role."
 		), ():void => {} );
 
@@ -79,22 +78,22 @@ describe( module( "Carbon/Auth/PersistedRole" ), ():void => {
 		), ():void => {
 
 			it( hasSignature(
-				[ "T extends Carbon.Auth.Roles.Class" ],
+				[ "T extends CarbonLDP.Auth.Roles.Class" ],
 				"Persists a new role with the slug specified as a child of the current role.", [
 					{ name: "role", type: "T", description: "The role to be persisted." },
 					{ name: "slug", type: "string", optional: true, description: "The slug that will be used in the child role URI." },
-					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request." },
+					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for the request." },
 				],
-				{ type: "Promise<[ T & Carbon.Auth.PersistedRole.Class, Carbon.HTTP.Response.Class ]>" }
+				{ type: "Promise<T & CarbonLDP.Auth.PersistedRole.Class>" }
 			), ():void => {} );
 
 			it( hasSignature(
-				[ "T extends Carbon.Auth.Roles.Class" ],
+				[ "T extends CarbonLDP.Auth.Roles.Class" ],
 				"Persists a new role as a child of the current one.", [
 					{ name: "role", type: "T", description: "The role to be persisted." },
-					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request." },
+					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for the request." },
 				],
-				{ type: "Promise<[ T & Carbon.Auth.PersistedRole.Class, Carbon.HTTP.Response.Class ]>" }
+				{ type: "Promise<T & CarbonLDP.Auth.PersistedRole.Class>" }
 			), ():void => {} );
 
 		} );
@@ -106,17 +105,17 @@ describe( module( "Carbon/Auth/PersistedRole" ), ():void => {
 
 			it( hasSignature(
 				"Retrieves an array of resolved pointers for all the users of the role.", [
-					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
+					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true },
 				],
-				{ type: "Promise<[ carbon.Auth.PersistedRole.Class, Carbon.HTTP.Response.Class ]>" }
+				{ type: "Promise<CarbonLDP.Auth.PersistedRole.Class>" }
 			), ():void => {} );
 
 			it( hasSignature(
 				"Retrieves an array of resolved pointers for the users of the role, in accordance of the retrievalPreferences provided.", [
-					{ name: "retrievalPreferences", type: "Carbon.RetrievalPreferences.Class", optional: true, description: "An object that specify the retrieval preferences for the request." },
-					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
+					{ name: "retrievalPreferences", type: "CarbonLDP.RetrievalPreferences.Class", optional: true, description: "An object that specify the retrieval preferences for the request." },
+					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true },
 				],
-				{ type: "Promise<[ carbon.Auth.PersistedRole.Class, Carbon.HTTP.Response.Class ]>" }
+				{ type: "Promise<CarbonLDP.Auth.PersistedRole.Class>" }
 			), ():void => {} );
 
 		} );
@@ -125,47 +124,47 @@ describe( module( "Carbon/Auth/PersistedRole" ), ():void => {
 			OBLIGATORY,
 			"addUser",
 			"Makes a relation in the role towards the users specified.", [
-				{ name: "user", type: "string | Carbon.Pointer.Class", description: "The users that wants to add to the role." },
-				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
+				{ name: "user", type: "string | CarbonLDP.Pointer", description: "The users that wants to add to the role." },
+				{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true },
 			],
-			{ type: "Promise<Carbon.HTTP.Response.Class>" }
+			{ type: "Promise<void>" }
 		), ():void => {} );
 
 		it( hasMethod(
 			OBLIGATORY,
 			"addUsers",
 			"Makes a relation in the role towards the users specified.", [
-				{ name: "users", type: "(string | Carbon.Pointer.Class)[]", description: "An array with strings or Pointers that refers to the users that wants to add to the role." },
-				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
+				{ name: "users", type: "(string | CarbonLDP.Pointer)[]", description: "An array with strings or Pointers that refers to the users that wants to add to the role." },
+				{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true },
 			],
-			{ type: "Promise<Carbon.HTTP.Response.Class>" }
+			{ type: "Promise<void>" }
 		), ():void => {} );
 
 		it( hasMethod(
 			OBLIGATORY,
 			"removeUser",
 			"Removes the relation in the role towards the users specified.", [
-				{ name: "user", type: "string | Carbon.Pointer.Class", description: "The users that wants to be removed from the role." },
-				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
+				{ name: "user", type: "string | CarbonLDP.Pointer", description: "The users that wants to be removed from the role." },
+				{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true },
 			],
-			{ type: "Promise<Carbon.HTTP.Response.Class>" }
+			{ type: "Promise<void>" }
 		), ():void => {} );
 
 		it( hasMethod(
 			OBLIGATORY,
 			"removeUsers",
 			"Remove the relation in the role towards the users specified.", [
-				{ name: "users", type: "(string | Carbon.Pointer.Class)[]", description: "An array with strings or Pointers that refers to the users that wants to be removed from the role." },
-				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
+				{ name: "users", type: "(string | CarbonLDP.Pointer)[]", description: "An array with strings or Pointers that refers to the users that wants to be removed from the role." },
+				{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true },
 			],
-			{ type: "Promise<Carbon.HTTP.Response.Class>" }
+			{ type: "Promise<void>" }
 		), ():void => {} );
 
 	} );
 
 	describe( clazz(
-		"Carbon.Auth.PersistedRole.Factory",
-		"Factory class for `Carbon.Auth.PersistedRole.Class` objects"
+		"CarbonLDP.Auth.PersistedRole.Factory",
+		"Factory class for `CarbonLDP.Auth.PersistedRole.Class` objects"
 	), ():void => {
 
 		it( isDefined(), ():void => {
@@ -176,7 +175,7 @@ describe( module( "Carbon/Auth/PersistedRole" ), ():void => {
 		it( hasMethod(
 			STATIC,
 			"hasClassProperties",
-			"Returns true if the object provided has the properties that defines a `Carbon.Auth.PersistedRole.Class` object", [
+			"Returns true if the object provided has the properties that defines a `CarbonLDP.Auth.PersistedRole.Class` object", [
 				{ name: "resource", type: "Object" },
 			],
 			{ type: "boolean" }
@@ -240,7 +239,7 @@ describe( module( "Carbon/Auth/PersistedRole" ), ():void => {
 		it( hasMethod(
 			STATIC,
 			"is",
-			"Returns true if the object provided is considered a `Carbon.Auth.PersistedRole.Class` object", [
+			"Returns true if the object provided is considered a `CarbonLDP.Auth.PersistedRole.Class` object", [
 				{ name: "object", type: "object" },
 			],
 			{ type: "boolean" }
@@ -267,10 +266,10 @@ describe( module( "Carbon/Auth/PersistedRole" ), ():void => {
 			object = Role.Factory.createFrom( object, "Role name" );
 			expect( PersistedRole.Factory.is( object ) ).toBe( false );
 
-			object = PersistedDocument.Factory.decorate( object, new Documents.Class() );
+			object = PersistedDocument.decorate( object, new Documents() );
 			expect( PersistedRole.Factory.is( object ) ).toBe( false );
 
-			object = PersistedProtectedDocument.Factory.decorate( object, new Documents.Class() );
+			object = PersistedProtectedDocument.decorate( object, new Documents() );
 			expect( PersistedRole.Factory.is( object ) ).toBe( true );
 		} );
 
@@ -278,11 +277,11 @@ describe( module( "Carbon/Auth/PersistedRole" ), ():void => {
 			STATIC,
 			"decorate",
 			[ "T extends object" ],
-			"Decorates the object provided with the methods and properties of a `Carbon.Auth.PersistedRole.Class` object.", [
+			"Decorates the object provided with the methods and properties of a `CarbonLDP.Auth.PersistedRole.Class` object.", [
 				{ name: "object", type: "T" },
-				{ name: "documents", type: "Carbon.Documents.Class" },
+				{ name: "documents", type: "CarbonLDP.Documents" },
 			],
-			{ type: "T & Carbon.Auth.PersistedRole.Class" }
+			{ type: "T & CarbonLDP.Auth.PersistedRole.Class" }
 		), ():void => {
 			expect( PersistedRole.Factory.decorate ).toBeDefined();
 			expect( Utils.isFunction( PersistedRole.Factory.decorate ) ).toBe( true );
@@ -293,23 +292,26 @@ describe( module( "Carbon/Auth/PersistedRole" ), ():void => {
 				constructor() {
 					super();
 					this._baseURI = "http://example.com/";
-					this.setSetting( "system.container", ".system/" );
+					this.settings = { paths: { system: ".system/" } };
 				}
 			}
+
 			let context:AbstractContext = new MockedContext();
 
 			interface ThePersistedRole {
 				myProperty?:string;
 			}
+
 			interface MyPersistedRole extends PersistedRole.Class, ThePersistedRole {}
+
 			let role:MyPersistedRole = PersistedRole.Factory.decorate<ThePersistedRole>( {}, context.documents );
 
 			expect( PersistedRole.Factory.hasClassProperties( role ) ).toBe( true );
 		} );
 
 		describe( decoratedObject(
-			"Object decorated by the `Carbon.Auth.PersistedRole.Factory.decorate()` function.", [
-				"Carbon.Auth.PersistedRole.Class",
+			"Object decorated by the `CarbonLDP.Auth.PersistedRole.Factory.decorate()` function.", [
+				"CarbonLDP.Auth.PersistedRole.Class",
 			]
 		), ():void => {
 			let role:PersistedRole.Class;
@@ -322,9 +324,10 @@ describe( module( "Carbon/Auth/PersistedRole" ), ():void => {
 					constructor() {
 						super();
 						this._baseURI = "http://example.com/";
-						this.setSetting( "system.container", ".system/" );
+						this.settings = { paths: { system: ".system/" } };
 					}
 				}
+
 				let context:AbstractContext = new MockedContext();
 				roles = context.auth.roles;
 
@@ -343,18 +346,18 @@ describe( module( "Carbon/Auth/PersistedRole" ), ():void => {
 				} );
 
 				it( hasSignature(
-					[ "T extends Carbon.Auth.Roles.Class" ],
+					[ "T extends CarbonLDP.Auth.Roles.Class" ],
 					"Persists a new role with the slug specified as a child of the current role.", [
 						{ name: "role", type: "T", description: "The role to be persisted." },
 						{ name: "slug", type: "string", optional: true, description: "The slug that will be used in the child role URI." },
-						{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request." },
+						{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for the request." },
 					],
-					{ type: "Promise<[ T & Carbon.Auth.PersistedRole.Class, Carbon.HTTP.Response.Class ]>" }
+					{ type: "Promise<T & CarbonLDP.Auth.PersistedRole.Class>" }
 				), ():void => {
 					let spy:jasmine.Spy = spyOn( roles, "createChild" );
 
 					let newRole:Role.Class = Role.Factory.create( "Role Name" );
-					let options:HTTP.Request.Options = { timeout: 5050 };
+					let options:RequestOptions = { timeout: 5050 };
 
 					//noinspection JSIgnoredPromiseFromCall
 					role.createChild( newRole, "role-slug", options );
@@ -368,22 +371,22 @@ describe( module( "Carbon/Auth/PersistedRole" ), ():void => {
 					role.createChild( newRole );
 					expect( spy ).toHaveBeenCalledWith( "http://example.com/.system/roles/a-role/", newRole, undefined, undefined );
 
-					role = PersistedRole.Factory.decorate( Role.Factory.create( "Role Name" ), new Documents.Class() );
+					role = PersistedRole.Factory.decorate( Role.Factory.create( "Role Name" ), new Documents() );
 					expect( () => role.createChild( newRole, "role-slug" ) ).toThrowError( Errors.IllegalStateError );
 				} );
 
 				it( hasSignature(
-					[ "T extends Carbon.Auth.Roles.Class" ],
+					[ "T extends CarbonLDP.Auth.Roles.Class" ],
 					"Persists a new role as a child of the current one.", [
 						{ name: "role", type: "T", description: "The role to be persisted." },
-						{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request." },
+						{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for the request." },
 					],
-					{ type: "Promise<[ T & Carbon.Auth.PersistedRole.Class, Carbon.HTTP.Response.Class ]>" }
+					{ type: "Promise<T & CarbonLDP.Auth.PersistedRole.Class>" }
 				), ():void => {
 					let spy:jasmine.Spy = spyOn( roles, "createChild" );
 
 					let newRole:Role.Class = Role.Factory.create( "Role Name" );
-					let options:HTTP.Request.Options = { timeout: 5050 };
+					let options:RequestOptions = { timeout: 5050 };
 
 					//noinspection JSIgnoredPromiseFromCall
 					role.createChild( newRole, options );
@@ -393,7 +396,7 @@ describe( module( "Carbon/Auth/PersistedRole" ), ():void => {
 					role.createChild( newRole );
 					expect( spy ).toHaveBeenCalledWith( "http://example.com/.system/roles/a-role/", newRole, undefined, undefined );
 
-					role = PersistedRole.Factory.decorate( Role.Factory.create( "Role Name" ), new Documents.Class() );
+					role = PersistedRole.Factory.decorate( Role.Factory.create( "Role Name" ), new Documents() );
 					expect( () => role.createChild( newRole ) ).toThrowError( Errors.IllegalStateError );
 				} );
 
@@ -408,15 +411,15 @@ describe( module( "Carbon/Auth/PersistedRole" ), ():void => {
 					expect( role.getUsers ).toBeDefined();
 					expect( Utils.isFunction( role.getUsers ) ).toBe( true );
 
-					role = PersistedRole.Factory.decorate( Role.Factory.create( "Role Name" ), new Documents.Class() );
+					role = PersistedRole.Factory.decorate( Role.Factory.create( "Role Name" ), new Documents() );
 					expect( () => role.getUsers() ).toThrowError( Errors.IllegalStateError );
 				} );
 
 				it( hasSignature(
 					"Retrieves an array of resolved pointers for all the users of the role.", [
-						{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
+						{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true },
 					],
-					{ type: "Promise<[ carbon.Auth.PersistedRole.Class, Carbon.HTTP.Response.Class ]>" }
+					{ type: "Promise<CarbonLDP.Auth.PersistedRole.Class>" }
 				), ():void => {
 					let spy:jasmine.Spy = spyOn( roles, "getUsers" );
 
@@ -424,7 +427,7 @@ describe( module( "Carbon/Auth/PersistedRole" ), ():void => {
 					role.getUsers();
 					expect( spy ).toHaveBeenCalledWith( "http://example.com/.system/roles/a-role/", undefined );
 
-					let options:HTTP.Request.Options = { timeout: 5050 };
+					let options:RequestOptions = { timeout: 5050 };
 					//noinspection JSIgnoredPromiseFromCall
 					role.getUsers( options );
 					expect( spy ).toHaveBeenCalledWith( "http://example.com/.system/roles/a-role/", options );
@@ -436,10 +439,10 @@ describe( module( "Carbon/Auth/PersistedRole" ), ():void => {
 				INSTANCE,
 				"addUser",
 				"Makes a relation in the role towards the users specified.", [
-					{ name: "user", type: "string | Carbon.Pointer.Class", description: "The users that wants to add to the role." },
-					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
+					{ name: "user", type: "string | CarbonLDP.Pointer", description: "The users that wants to add to the role." },
+					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true },
 				],
-				{ type: "Promise<Carbon.HTTP.Response.Class>" }
+				{ type: "Promise<void>" }
 			), ():void => {
 				expect( role.addUser ).toBeDefined();
 				expect( Utils.isFunction( role.addUser ) ).toBe( true );
@@ -450,12 +453,12 @@ describe( module( "Carbon/Auth/PersistedRole" ), ():void => {
 				role.addUser( "http://example.com/users/an-user/" );
 				expect( spy ).toHaveBeenCalledWith( "http://example.com/.system/roles/a-role/", [ "http://example.com/users/an-user/" ], undefined );
 
-				let options:HTTP.Request.Options = { timeout: 5050 };
+				let options:RequestOptions = { timeout: 5050 };
 				//noinspection JSIgnoredPromiseFromCall
 				role.addUser( role.getPointer( "http://example.com/users/another-user/" ), options );
 				expect( spy ).toHaveBeenCalledWith( "http://example.com/.system/roles/a-role/", [ role.getPointer( "http://example.com/users/another-user/" ) ], options );
 
-				role = PersistedRole.Factory.decorate( Role.Factory.create( "Role Name" ), new Documents.Class() );
+				role = PersistedRole.Factory.decorate( Role.Factory.create( "Role Name" ), new Documents() );
 				expect( () => role.addUser( "http://example.com/users/an-user/" ) ).toThrowError( Errors.IllegalStateError );
 			} );
 
@@ -463,27 +466,27 @@ describe( module( "Carbon/Auth/PersistedRole" ), ():void => {
 				INSTANCE,
 				"addUsers",
 				"Makes a relation in the role towards the users specified.", [
-					{ name: "users", type: "(string | Carbon.Pointer.Class)[]", description: "An array with strings or Pointers that refers to the users that wants to add to the role." },
-					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
+					{ name: "users", type: "(string | CarbonLDP.Pointer)[]", description: "An array with strings or Pointers that refers to the users that wants to add to the role." },
+					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true },
 				],
-				{ type: "Promise<Carbon.HTTP.Response.Class>" }
+				{ type: "Promise<void>" }
 			), ():void => {
 				expect( role.addUsers ).toBeDefined();
 				expect( Utils.isFunction( role.addUsers ) ).toBe( true );
 
 				let spy:jasmine.Spy = spyOn( roles, "addUsers" );
-				let users:(string | Pointer.Class)[] = [ "http://example.com/users/an-user/", role.getPointer( "http://example.com/users/another-user/" ) ];
+				let users:(string | Pointer)[] = [ "http://example.com/users/an-user/", role.getPointer( "http://example.com/users/another-user/" ) ];
 
 				//noinspection JSIgnoredPromiseFromCall
 				role.addUsers( users );
 				expect( spy ).toHaveBeenCalledWith( "http://example.com/.system/roles/a-role/", users, undefined );
 
-				let options:HTTP.Request.Options = { timeout: 5050 };
+				let options:RequestOptions = { timeout: 5050 };
 				//noinspection JSIgnoredPromiseFromCall
 				role.addUsers( users, options );
 				expect( spy ).toHaveBeenCalledWith( "http://example.com/.system/roles/a-role/", users, options );
 
-				role = PersistedRole.Factory.decorate( Role.Factory.create( "Role Name" ), new Documents.Class() );
+				role = PersistedRole.Factory.decorate( Role.Factory.create( "Role Name" ), new Documents() );
 				expect( () => role.addUsers( users ) ).toThrowError( Errors.IllegalStateError );
 			} );
 
@@ -491,10 +494,10 @@ describe( module( "Carbon/Auth/PersistedRole" ), ():void => {
 				INSTANCE,
 				"removeUser",
 				"Removes the relation in the role towards the users specified.", [
-					{ name: "user", type: "string | Carbon.Pointer.Class", description: "The users that wants to be removed from the role." },
-					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
+					{ name: "user", type: "string | CarbonLDP.Pointer", description: "The users that wants to be removed from the role." },
+					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true },
 				],
-				{ type: "Promise<Carbon.HTTP.Response.Class>" }
+				{ type: "Promise<void>" }
 			), ():void => {
 				expect( role.removeUser ).toBeDefined();
 				expect( Utils.isFunction( role.removeUser ) ).toBe( true );
@@ -505,12 +508,12 @@ describe( module( "Carbon/Auth/PersistedRole" ), ():void => {
 				role.removeUser( "http://example.com/users/an-user/" );
 				expect( spy ).toHaveBeenCalledWith( "http://example.com/.system/roles/a-role/", [ "http://example.com/users/an-user/" ], undefined );
 
-				let options:HTTP.Request.Options = { timeout: 5050 };
+				let options:RequestOptions = { timeout: 5050 };
 				//noinspection JSIgnoredPromiseFromCall
 				role.removeUser( role.getPointer( "http://example.com/users/another-user/" ), options );
 				expect( spy ).toHaveBeenCalledWith( "http://example.com/.system/roles/a-role/", [ role.getPointer( "http://example.com/users/another-user/" ) ], options );
 
-				role = PersistedRole.Factory.decorate( Role.Factory.create( "Role Name" ), new Documents.Class() );
+				role = PersistedRole.Factory.decorate( Role.Factory.create( "Role Name" ), new Documents() );
 				expect( () => role.removeUser( "http://example.com/users/an-user/" ) ).toThrowError( Errors.IllegalStateError );
 			} );
 
@@ -518,27 +521,27 @@ describe( module( "Carbon/Auth/PersistedRole" ), ():void => {
 				INSTANCE,
 				"removeUsers",
 				"Remove the relation in the role towards the users specified.", [
-					{ name: "users", type: "(string | Carbon.Pointer.Class)[]", description: "An array with strings or Pointers that refers to the users that wants to be removed from the role." },
-					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
+					{ name: "users", type: "(string | CarbonLDP.Pointer)[]", description: "An array with strings or Pointers that refers to the users that wants to be removed from the role." },
+					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true },
 				],
-				{ type: "Promise<Carbon.HTTP.Response.Class>" }
+				{ type: "Promise<void>" }
 			), ():void => {
 				expect( role.removeUsers ).toBeDefined();
 				expect( Utils.isFunction( role.removeUsers ) ).toBe( true );
 
 				let spy:jasmine.Spy = spyOn( roles, "removeUsers" );
-				let users:(Pointer.Class | string)[] = [ "http://example.com/users/an-user/", role.getPointer( "http://example.com/users/another-user/" ) ];
+				let users:(Pointer | string)[] = [ "http://example.com/users/an-user/", role.getPointer( "http://example.com/users/another-user/" ) ];
 
 				//noinspection JSIgnoredPromiseFromCall
 				role.removeUsers( users );
 				expect( spy ).toHaveBeenCalledWith( "http://example.com/.system/roles/a-role/", users, undefined );
 
-				let options:HTTP.Request.Options = { timeout: 5050 };
+				let options:RequestOptions = { timeout: 5050 };
 				//noinspection JSIgnoredPromiseFromCall
 				role.removeUsers( users, options );
 				expect( spy ).toHaveBeenCalledWith( "http://example.com/.system/roles/a-role/", users, options );
 
-				role = PersistedRole.Factory.decorate( Role.Factory.create( "Role Name" ), new Documents.Class() );
+				role = PersistedRole.Factory.decorate( Role.Factory.create( "Role Name" ), new Documents() );
 				expect( () => role.addUsers( users ) ).toThrowError( Errors.IllegalStateError );
 			} );
 
@@ -546,7 +549,7 @@ describe( module( "Carbon/Auth/PersistedRole" ), ():void => {
 
 	} );
 
-	it( hasDefaultExport( "Carbon.Auth.PersistedRole.Class" ), ():void => {
+	it( hasDefaultExport( "CarbonLDP.Auth.PersistedRole.Class" ), ():void => {
 		let defaultExport:DefaultExport = <any> {};
 		let defaultTarget:PersistedRole.Class;
 

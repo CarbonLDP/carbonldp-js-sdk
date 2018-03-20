@@ -1,29 +1,38 @@
-import * as NS from "./../NS";
-import * as ObjectSchema from "./../ObjectSchema";
-import * as ValidationResult from "./ValidationResult";
+import { ObjectSchema } from "../ObjectSchema";
+import { SHACL } from "../Vocabularies/SHACL";
+import { XSD } from "../Vocabularies/XSD";
+import { ValidationResult } from "./ValidationResult";
 
-export const RDF_CLASS:string = NS.SHACL.Class.ValidationReport;
 
-export const SCHEMA:ObjectSchema.Class = {
+export interface ValidationReport {
+	conforms:boolean;
+	results?:ValidationResult[];
+	shapesGraphWellFormed?:boolean;
+}
+
+
+export interface ValidationReportFactory {
+	TYPE:string;
+	SCHEMA:ObjectSchema;
+}
+
+const SCHEMA:ObjectSchema = {
 	"conforms": {
-		"@id": NS.SHACL.Predicate.conforms,
-		"@type": NS.XSD.DataType.boolean,
+		"@id": SHACL.conforms,
+		"@type": XSD.boolean,
 	},
 	"results": {
-		"@id": NS.SHACL.Predicate.result,
+		"@id": SHACL.result,
 		"@type": "@id",
 		"@container": "@set",
 	},
 	"shapesGraphWellFormed": {
-		"@id": NS.SHACL.Predicate.shapesGraphWellFormed,
-		"@type": NS.XSD.DataType.boolean,
+		"@id": SHACL.shapesGraphWellFormed,
+		"@type": XSD.boolean,
 	},
 };
 
-export interface Class {
-	conforms:boolean;
-	results?:ValidationResult.Class[];
-	shapesGraphWellFormed?:boolean;
-}
-
-export default Class;
+export const ValidationReport:ValidationReportFactory = {
+	TYPE: SHACL.ValidationReport,
+	SCHEMA,
+};

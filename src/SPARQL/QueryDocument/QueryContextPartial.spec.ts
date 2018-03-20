@@ -1,27 +1,30 @@
-import AbstractContext from "../../AbstractContext";
-import { Digester } from "../../ObjectSchema";
-import * as PersistedDocument from "../../PersistedDocument";
-import * as PersistedFragment from "../../PersistedFragment";
-import { clazz, constructor, extendsClass, hasDefaultExport, hasSignature, INSTANCE, method, module } from "../../test/JasmineExtender";
-import * as PartialMetadata from "./PartialMetadata";
-import QueryContext from "./QueryContext";
+import { AbstractContext } from "../../AbstractContext";
+import { ObjectSchemaDigester } from "../../ObjectSchema";
+import { PersistedDocument } from "../../PersistedDocument";
+import { PersistedFragment } from "../../PersistedFragment";
+import {
+	clazz,
+	constructor,
+	extendsClass,
+	hasSignature,
+	INSTANCE,
+	method,
+	module
+} from "../../test/JasmineExtender";
+import { PartialMetadata } from "./PartialMetadata";
+import { QueryContext } from "./QueryContext";
 
 import * as Module from "./QueryContextPartial";
-import { Class as QueryContextPartial } from "./QueryContextPartial";
+import { QueryContextPartial } from "./QueryContextPartial";
 
-describe( module( "Carbon/SPARQL/QueryDocument/QueryContextPartial" ), ():void => {
+describe( module( "carbonldp/SPARQL/QueryDocument/QueryContextPartial" ), ():void => {
 
 	it( "should exists", ():void => {
 		expect( Module ).toBeDefined();
 		expect( Module ).toEqual( jasmine.any( Object ) );
 	} );
 
-	it( hasDefaultExport( "Carbon.SPARQL.QueryDocument.QueryContextPartial.Class" ), ():void => {
-		expect( Module.default ).toBeDefined();
-		expect( Module.default ).toBe( QueryContextPartial );
-	} );
-
-	describe( clazz( "Carbon.SPARQL.QueryDocument.QueryContextPartial.Class", "Class with the shared status and data of the query." ), ():void => {
+	describe( clazz( "CarbonLDP.SPARQL.QueryDocument.QueryContextPartial", "Class with the shared status and data of the query." ), ():void => {
 
 		it( "should exists", ():void => {
 			expect( QueryContextPartial ).toBeDefined();
@@ -29,18 +32,18 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryContextPartial" ), ():void =
 		} );
 
 		let context:AbstractContext;
-		let persistedDocument:PersistedDocument.Class;
+		let persistedDocument:PersistedDocument;
 		beforeEach( ():void => {
 			context = new class extends AbstractContext {
 				protected _baseURI:string = "https://example.com/";
 			};
 
-			persistedDocument = PersistedDocument.Factory.createFrom(
+			persistedDocument = PersistedDocument.createFrom(
 				context.documents.getPointer( "https://example.com/resource/" ),
-				"https://example.com/resource/",
-				context.documents
+				context.documents,
+				"https://example.com/resource/"
 			);
-			persistedDocument._partialMetadata = new PartialMetadata.Class( Digester.digestSchema( {
+			persistedDocument._partialMetadata = new PartialMetadata( ObjectSchemaDigester.digestSchema( {
 				"documentProperty": {
 					"@id": "https://example.com/ns#document-property",
 				},
@@ -51,8 +54,8 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryContextPartial" ), ():void =
 
 			it( hasSignature(
 				[
-					{ name: "document", type: "Carbon.PersistedDocument.Class", description: "partial document from whom the query context is created for." },
-					{ name: "context", type: "Carbon.Context.Class", optional: true, description: "The carbon context from where the query belongs to." },
+					{ name: "document", type: "CarbonLDP.PersistedDocument", description: "partial document from whom the query context is created for." },
+					{ name: "context", type: "CarbonLDP.Context", optional: true, description: "The carbon context from where the query belongs to." },
 				]
 			), ():void => {
 			} );
@@ -70,7 +73,7 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryContextPartial" ), ():void =
 
 		} );
 
-		it( extendsClass( "Carbon.SPARQL.QueryDocument.QueryContext.Class" ), ():void => {
+		it( extendsClass( "CarbonLDP.SPARQL.QueryDocument.QueryContext" ), ():void => {
 			const queryContext:QueryContextPartial = new QueryContextPartial( persistedDocument, context );
 			expect( queryContext ).toEqual( jasmine.any( QueryContext ) );
 		} );
@@ -84,7 +87,7 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryContextPartial" ), ():void =
 					{ name: "object", type: "object", description: "The object to look for its corresponding schema.\nNOTE: Property is ignored when a path is specified." },
 					{ name: "path", type: "string", description: "An optional path that describes where the resource appears in the partial document." },
 				],
-				{ type: "Carbon.ObjectSchema.DigestedObjectSchema" }
+				{ type: "CarbonLDP.DigestedObjectSchema" }
 			), ():void => {
 			} );
 
@@ -108,8 +111,8 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryContextPartial" ), ():void =
 
 			it( "should return the schema of a document property", ():void => {
 				const queryContext:QueryContextPartial = new QueryContextPartial( persistedDocument, context );
-				const fragment:PersistedFragment.Class = persistedDocument.createFragment();
-				fragment._partialMetadata = new PartialMetadata.Class( Digester.digestSchema( {
+				const fragment:PersistedFragment = persistedDocument.createFragment();
+				fragment._partialMetadata = new PartialMetadata( ObjectSchemaDigester.digestSchema( {
 					"fragmentProperty": {
 						"@id": "https://example.com/ns#fragment-property",
 					},

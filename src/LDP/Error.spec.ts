@@ -1,68 +1,26 @@
 import {
-	STATIC,
-
+	extendsClass,
+	hasProperty,
+	interfaze,
 	module,
-
-	isDefined,
-	hasProperty, interfaze, extendsClass, OBLIGATORY, hasDefaultExport,
-} from "./../test/JasmineExtender";
-import * as NS from "./../NS";
+	OBLIGATORY,
+	property,
+	STATIC,
+} from "../test/JasmineExtender";
+import { C } from "../Vocabularies/C";
+import { XSD } from "../Vocabularies/XSD";
 import * as Utils from "./../Utils";
 
-import * as Error from "./Error";
-import DefaultExport from "./Error";
+import { Error } from "./Error";
 
-describe( module( "Carbon/LDP/Error" ), ():void => {
-
-	it( isDefined(), ():void => {
-		expect( Error ).toBeDefined();
-		expect( Utils.isObject( Error ) ).toBe( true );
-	} );
-
-	it( hasProperty(
-		STATIC,
-		"RDF_CLASS",
-		"string"
-	), ():void => {
-		expect( Error.RDF_CLASS ).toBeDefined();
-		expect( Utils.isString( Error.RDF_CLASS ) ).toBe( true );
-
-		expect( Error.RDF_CLASS ).toBe( NS.C.Class.Error );
-	} );
-
-	it( hasProperty(
-		STATIC,
-		"SCHEMA",
-		"Carbon.ObjectSchema.Class"
-	), ():void => {
-		expect( Error.SCHEMA ).toBeDefined();
-		expect( Utils.isObject( Error.SCHEMA ) ).toBe( true );
-
-		expect( Utils.hasProperty( Error.SCHEMA, "errorCode" ) ).toBe( true );
-		expect( Error.SCHEMA[ "errorCode" ] ).toEqual( {
-			"@id": NS.C.Predicate.errorCode,
-			"@type": NS.XSD.DataType.string,
-		} );
-
-		expect( Utils.hasProperty( Error.SCHEMA, "errorMessage" ) ).toBe( true );
-		expect( Error.SCHEMA[ "errorMessage" ] ).toEqual( {
-			"@id": NS.C.Predicate.errorMessage,
-			"@language": "en",
-		} );
-
-		expect( Utils.hasProperty( Error.SCHEMA, "errorParameters" ) ).toBe( true );
-		expect( Error.SCHEMA[ "errorParameters" ] ).toEqual( {
-			"@id": NS.C.Predicate.errorParameters,
-			"@type": "@id",
-		} );
-	} );
+describe( module( "carbonldp/LDP/Error" ), ():void => {
 
 	describe( interfaze(
-		"Carbon.LDP.Error.Class",
+		"CarbonLDP.LDP.Error",
 		"Interface that represents an error occurred in the server."
 	), ():void => {
 
-		it( extendsClass( "Carbon.Resource.Class" ), ():void => {} );
+		it( extendsClass( "CarbonLDP.Resource" ), ():void => {} );
 
 		it( hasProperty(
 			OBLIGATORY,
@@ -81,18 +39,74 @@ describe( module( "Carbon/LDP/Error" ), ():void => {
 		it( hasProperty(
 			OBLIGATORY,
 			"errorParameters",
-			"Carbon.LDP.Map.Class<string, any>",
+			"CarbonLDP.LDP.Map<string, any>",
 			"Map that contains the specific elements that make the error been thrown."
 		), ():void => {} );
 
 	} );
 
-	it( hasDefaultExport( "Carbon.LDP.Error.Class" ), ():void => {
-		let defaultExport:DefaultExport = <any> {};
-		let defaultTarget:Error.Class;
+	describe( interfaze(
+		"CarbonLDP.LDP.ErrorFactory",
+		"Interface with the factory, decorate and utils function for `CarbonLDP.LDP.Error.Error` objects."
+	), ():void => {
 
-		defaultTarget = defaultExport;
-		expect( defaultTarget ).toEqual( jasmine.any( Object ) );
+		it( hasProperty(
+			OBLIGATORY,
+			"TYPE",
+			"string"
+		), ():void => {} );
+
+		it( hasProperty(
+			OBLIGATORY,
+			"SCHEMA",
+			"CarbonLDP.ObjectSchema"
+		), ():void => {} );
+
+	} );
+
+	describe( property(
+		STATIC,
+		"CarbonError",
+		"CarbonLDP.LDP.ErrorFactory"
+	), ():void => {
+
+		it( "should exist", ():void => {
+			expect( Error ).toBeDefined();
+			expect( Error ).toEqual( jasmine.any( Object ) );
+		} );
+
+		// TODO: Separate in different tests
+		it( "CarbonError.TYPE", ():void => {
+			expect( Error.TYPE ).toBeDefined();
+			expect( Utils.isString( Error.TYPE ) ).toBe( true );
+
+			expect( Error.TYPE ).toBe( C.Error );
+		} );
+
+		// TODO: Separate in different tests
+		it( "CarbonError.SCHEMA", ():void => {
+			expect( Error.SCHEMA ).toBeDefined();
+			expect( Utils.isObject( Error.SCHEMA ) ).toBe( true );
+
+			expect( Utils.hasProperty( Error.SCHEMA, "errorCode" ) ).toBe( true );
+			expect( Error.SCHEMA[ "errorCode" ] ).toEqual( {
+				"@id": C.errorCode,
+				"@type": XSD.string,
+			} );
+
+			expect( Utils.hasProperty( Error.SCHEMA, "errorMessage" ) ).toBe( true );
+			expect( Error.SCHEMA[ "errorMessage" ] ).toEqual( {
+				"@id": C.errorMessage,
+				"@language": "en",
+			} );
+
+			expect( Utils.hasProperty( Error.SCHEMA, "errorParameters" ) ).toBe( true );
+			expect( Error.SCHEMA[ "errorParameters" ] ).toEqual( {
+				"@id": C.errorParameters,
+				"@type": "@id",
+			} );
+		} );
+
 	} );
 
 } );

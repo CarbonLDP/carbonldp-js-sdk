@@ -1,9 +1,8 @@
-import * as Pointer from "./../Pointer";
-export interface BindingObject {
-    [binding: string]: string | number | boolean | Date | Pointer.Class;
+import { Pointer } from "../Pointer";
+export interface SPARQLBindingObject {
+    [binding: string]: string | number | boolean | Date | Pointer;
 }
-export interface Class<T = BindingObject> {
+export interface SPARQLSelectResults<T = SPARQLBindingObject> {
     vars: string[];
     bindings: T[];
 }
-export default Class;

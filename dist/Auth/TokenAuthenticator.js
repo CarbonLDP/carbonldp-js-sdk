@@ -9,18 +9,26 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
+    result["default"] = mod;
+    return result;
+}
 Object.defineProperty(exports, "__esModule", { value: true });
-var Errors = require("./../Errors");
-var HTTP = require("./../HTTP");
-var JSONLD = require("./../JSONLD");
-var LDP = require("./../LDP");
-var NS = require("./../NS");
-var RDF = require("./../RDF");
-var Resource = require("./../Resource");
-var Utils = require("./../Utils");
+var Errors = __importStar(require("../Errors"));
+var Errors_1 = require("../HTTP/Errors");
+var Request_1 = require("../HTTP/Request");
+var JSONLD_1 = require("../JSONLD");
+var ResponseMetadata_1 = require("../LDP/ResponseMetadata");
+var Document_1 = require("../RDF/Document");
+var Node_1 = require("../RDF/Node");
+var LDP_1 = require("../Vocabularies/LDP");
+var Utils = __importStar(require("./../Utils"));
 var Authenticator_1 = require("./Authenticator");
 var BasicAuthenticator_1 = require("./BasicAuthenticator");
-var TokenCredentials = require("./TokenCredentials");
+var TokenCredentials = __importStar(require("./TokenCredentials"));
 exports.TOKEN_CONTAINER = "auth-tokens/";
 var Class = (function (_super) {
     __extends(Class, _super);
@@ -45,51 +53,51 @@ var Class = (function (_super) {
         });
     };
     Class.prototype.getHeaderValue = function () {
-        return new HTTP.Header.Value("Token " + this.credentials.key);
+        return "Token " + this.credentials.key;
     };
     Class.prototype.getCredentials = function (tokenOrCredentials) {
         var _this = this;
         if (TokenCredentials.Factory.hasClassProperties(tokenOrCredentials))
             return Promise.resolve(tokenOrCredentials);
-        var basicAuthenticator = new BasicAuthenticator_1.default();
+        var basicAuthenticator = new BasicAuthenticator_1.BasicAuthenticator();
         return basicAuthenticator
             .authenticate(tokenOrCredentials)
             .then(function () {
             var requestOptions = {};
             basicAuthenticator.addAuthentication(requestOptions);
-            HTTP.Request.Util.setAcceptHeader("application/ld+json", requestOptions);
-            HTTP.Request.Util.setPreferredInteractionModel(NS.LDP.Class.RDFSource, requestOptions);
-            var tokensURI = _this.context.auth._resolveSecurityURL(exports.TOKEN_CONTAINER);
-            return HTTP.Request.Service.post(tokensURI, null, requestOptions, new JSONLD.Parser.Class());
+            Request_1.RequestUtils.setAcceptHeader("application/ld+json", requestOptions);
+            Request_1.RequestUtils.setPreferredInteractionModel(LDP_1.LDP.RDFSource, requestOptions);
+            var tokensURI = _this.context._resolvePath("system.security") + exports.TOKEN_CONTAINER;
+            return Request_1.RequestService.post(tokensURI, null, requestOptions, new JSONLD_1.JSONLDParser());
         })
             .then(function (_a) {
             var expandedResult = _a[0], response = _a[1];
-            var freeNodes = RDF.Node.Util.getFreeNodes(expandedResult);
+            var freeNodes = Node_1.RDFNode.getFreeNodes(expandedResult);
             var freeResources = _this.context.documents._getFreeResources(freeNodes);
-            var tokenResources = freeResources.getResources().filter(function (resource) { return Resource.Util.hasType(resource, TokenCredentials.RDF_CLASS); });
+            var tokenResources = freeResources.getResources().filter(function (resource) { return resource.hasType(TokenCredentials.RDF_CLASS); });
             if (tokenResources.length === 0)
-                throw new HTTP.Errors.BadResponseError("No '" + TokenCredentials.RDF_CLASS + "' was returned.", response);
+                throw new Errors_1.BadResponseError("No '" + TokenCredentials.RDF_CLASS + "' was returned.", response);
             if (tokenResources.length > 1)
-                throw new HTTP.Errors.BadResponseError("Multiple '" + TokenCredentials.RDF_CLASS + "' were returned. ", response);
+                throw new Errors_1.BadResponseError("Multiple '" + TokenCredentials.RDF_CLASS + "' were returned. ", response);
             var token = tokenResources[0];
-            var userDocuments = RDF.Document.Util.getDocuments(expandedResult).filter(function (rdfDocument) { return rdfDocument["@id"] === token.user.id; });
+            var userDocuments = Document_1.RDFDocument.getDocuments(expandedResult).filter(function (rdfDocument) { return rdfDocument["@id"] === token.user.id; });
             userDocuments.forEach(function (document) { return _this.context.documents._getPersistedDocument(document, response); });
             var responseMetadata = freeResources
                 .getResources()
-                .find(LDP.ResponseMetadata.Factory.is);
+                .find(ResponseMetadata_1.ResponseMetadata.is);
             if (responseMetadata)
                 responseMetadata
                     .documentsMetadata
                     .forEach(function (documentMetadata) {
                     var document = documentMetadata.relatedDocument;
-                    document._etag = documentMetadata.eTag;
+                    document._eTag = documentMetadata.eTag;
                 });
             return token;
         })
             .catch(function (error) { return _this.context.documents._parseErrorResponse(error); });
     };
     return Class;
-}(Authenticator_1.default));
+}(Authenticator_1.Authenticator));
 exports.Class = Class;
 exports.default = Class;
 

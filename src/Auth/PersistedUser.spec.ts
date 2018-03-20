@@ -1,25 +1,29 @@
+import { AbstractContext } from "../AbstractContext";
+import { PersistedDocument } from "../PersistedDocument";
+import { PersistedProtectedDocument } from "../PersistedProtectedDocument";
 import {
 	clazz,
+	decoratedObject,
 	extendsClass,
 	hasDefaultExport,
+	hasMethod,
+	hasProperty,
 	hasSignature,
+	INSTANCE,
 	interfaze,
 	isDefined,
 	method,
 	module,
 	OBLIGATORY,
+	OPTIONAL,
 	STATIC,
 } from "../test/JasmineExtender";
-
-import { StrictMinus } from "../Utils";
-import AbstractContext from "./../AbstractContext";
-import * as User from "./../Auth/User";
-import * as PersistedProtectedDocument from "./../PersistedProtectedDocument";
+import * as Utils from "./../Utils";
 
 import * as PersistedUser from "./PersistedUser";
 
 
-describe( module( "Carbon/Auth/PersistedUser" ), ():void => {
+describe( module( "carbonldp/Auth/PersistedUser" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( PersistedUser ).toBeDefined();
@@ -27,12 +31,12 @@ describe( module( "Carbon/Auth/PersistedUser" ), ():void => {
 	} );
 
 	describe( interfaze(
-		"Carbon.Auth.PersistedUser.Class",
+		"CarbonLDP.Auth.PersistedUser.Class",
 		"Interface that represents the base of a persisted User in any context."
 	), ():void => {
 
 		it( extendsClass( "Carbon.Auth.User.Class" ), ():void => {} );
-		it( extendsClass( "Carbon.PersistedProtectedDocument.Class" ), ():void => {} );
+		it( extendsClass( "CarbonLDP.PersistedProtectedDocument" ), ():void => {} );
 
 		let context:AbstractContext;
 		let persistedUser:PersistedUser.Class;
@@ -54,7 +58,7 @@ describe( module( "Carbon/Auth/PersistedUser" ), ():void => {
 				[
 					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request." },
 				],
-				{ type: "Promise<[ Carbon.Auth.PersistedUser.Class, Carbon.HTTP.Response.Class ]>" }
+				{ type: "Promise<CarbonLDP.Auth.PersistedUser.Class>" }
 			), ():void => {} );
 
 			it( "should exists", ():void => {
@@ -192,7 +196,7 @@ describe( module( "Carbon/Auth/PersistedUser" ), ():void => {
 				[
 					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request." },
 				],
-				{ type: "Promise<[ Carbon.Auth.PersistedUser.Class, Carbon.HTTP.Response.Class ]>" }
+				{ type: "Promise<CarbonLDP.Auth.PersistedUser.Class>" }
 			), ():void => {} );
 
 			it( "should exists", ():void => {
@@ -326,8 +330,8 @@ describe( module( "Carbon/Auth/PersistedUser" ), ():void => {
 	} );
 
 	describe( clazz(
-		"Carbon.Auth.PersistedUser.Factory",
-		"Factory class for `Carbon.Auth.PersistedUser.Class` objects."
+		"CarbonLDP.Auth.PersistedUser.Factory",
+		"Factory class for `CarbonLDP.Auth.PersistedUser.Class` objects."
 	), ():void => {
 
 		type MockPersistedUser = StrictMinus<PersistedUser.Class, User.Class & PersistedProtectedDocument.Class>;
@@ -340,7 +344,7 @@ describe( module( "Carbon/Auth/PersistedUser" ), ():void => {
 		describe( method( STATIC, "hasClassProperties" ), ():void => {
 
 			it( hasSignature(
-				"Returns true if the object provided has the properties of a `Carbon.Auth.PersistedUser.Class` object.", [
+				"Returns true if the object provided has the properties of a `CarbonLDP.Auth.PersistedUser.Class` object.", [
 					{ name: "object", type: "object" },
 				],
 				{ type: "boolean" }
@@ -376,7 +380,7 @@ describe( module( "Carbon/Auth/PersistedUser" ), ():void => {
 		describe( method( STATIC, "is" ), ():void => {
 
 			it( hasSignature(
-				"Returns true if the object provided is considered a `Carbon.Auth.PersistedUser.Class` object.", [
+				"Returns true if the object provided is considered a `CarbonLDP.Auth.PersistedUser.Class` object.", [
 					{ name: "object", type: "object" },
 				],
 				{ type: "boolean" }
@@ -437,11 +441,11 @@ describe( module( "Carbon/Auth/PersistedUser" ), ():void => {
 
 			it( hasSignature(
 				[ "T extends object" ],
-				"Decorates the object provided with the properties and methods of a `Carbon.Auth.PersistedUser.Class` object.", [
+				"Decorates the object provided with the properties and methods of a `CarbonLDP.Auth.PersistedUser.Class` object.", [
 					{ name: "object", type: "T", description: "The object to decorate." },
 					{ name: "documents", type: "Carbon.Documents.Class", description: "The documents service the persisted belongs to." },
 				],
-				{ type: "T & Carbon.Auth.PersistedUser.Class" }
+				{ type: "T & CarbonLDP.Auth.PersistedUser.Class" }
 			), ():void => {} );
 
 			it( "should exists", ():void => {
@@ -499,7 +503,7 @@ describe( module( "Carbon/Auth/PersistedUser" ), ():void => {
 
 	} );
 
-	it( hasDefaultExport( "Carbon.Auth.PersistedUser.Class" ), ():void => {
+	it( hasDefaultExport( "CarbonLDP.Auth.PersistedUser.Class" ), ():void => {
 		let defaultExport:PersistedUser.default = <any> {};
 		let defaultTarget:PersistedUser.Class;
 

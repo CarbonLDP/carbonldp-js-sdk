@@ -1,3 +1,6 @@
+import { AbstractContext } from "../AbstractContext";
+import * as Errors from "../Errors";
+import { RequestOptions } from "../HTTP/Request";
 import {
 	clazz,
 	constructor,
@@ -9,10 +12,9 @@ import {
 	module,
 } from "../test/JasmineExtender";
 
-import AbstractContext from "./../AbstractContext";
-import * as Errors from "./../Errors";
-import * as HTTP from "./../HTTP";
-import * as NS from "./../NS";
+
+import { CS } from "../Vocabularies/CS";
+import { VCARD } from "../Vocabularies/VCARD";
 import * as Utils from "./../Utils";
 import * as PersistedUser from "./PersistedUser";
 import * as User from "./User";
@@ -20,7 +22,7 @@ import * as User from "./User";
 import * as Users from "./Users";
 
 
-describe( module( "Carbon/Auth/Users" ), ():void => {
+describe( module( "carbonldp/Auth/Users" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( Users ).toBeDefined();
@@ -28,7 +30,7 @@ describe( module( "Carbon/Auth/Users" ), ():void => {
 	} );
 
 	describe( clazz(
-		"Carbon.Auth.Users.Class",
+		"CarbonLDP.Auth.Users.Class",
 		"Abstract class for manage Users of a determined context."
 	), ():void => {
 
@@ -49,7 +51,7 @@ describe( module( "Carbon/Auth/Users" ), ():void => {
 
 			it( hasSignature(
 				[
-					{ name: "context", type: "Carbon.Context.Class", description: "The context where to manage its Users." },
+					{ name: "context", type: "CarbonLDP.Context", description: "The context where to manage its Users." },
 				]
 			), ():void => {} );
 
@@ -69,7 +71,7 @@ describe( module( "Carbon/Auth/Users" ), ():void => {
 					{ name: "email", type: "string" },
 					{ name: "password", type: "string" },
 				],
-				{ type: "Promise<[ Carbon.Auth.PersistedUser.Class, Carbon.HTTP.Response.Class ]>" }
+				{ type: "Promise<CarbonLDP.Auth.PersistedUser.Class>" }
 			), ():void => {} );
 
 			it( "should exists", ():void => {
@@ -77,20 +79,27 @@ describe( module( "Carbon/Auth/Users" ), ():void => {
 				expect( Users.Class.prototype.register ).toEqual( jasmine.any( Function ) );
 			} );
 
-			it( "should reject promise when no `users.container` setting is declared", ( done:DoneFn ):void => {
-				context.deleteSetting( "users.container" );
+			it( "should reject promise when no \"system\" path is declared", ( done:DoneFn ):void => {
+				const context:AbstractContext = new class extends AbstractContext {
+					protected _baseURI:string;
+
+					constructor() {
+						super();
+						this._baseURI = "http://example.com/";
+						this.settings = { paths: {} };
+					}
+				};
 				const users:Users.Class = new Users.Class( context );
 
-				const promise:Promise<[ PersistedUser.Class, HTTP.Response.Class ]> = users.register( "user@example.com", "my-password" );
+				const promise:Promise<PersistedUser.Class> = users.register( "user@example.com", "my-password" );
 				expect( promise ).toEqual( jasmine.any( Promise ) );
 				promise
 					.then( () => done.fail( "Promise should not be resolved." ) )
 					.catch( error => {
-						expect( error ).toEqual( jasmine.any( Errors.IllegalStateError ) );
-						expect( error.message ).toBe( `The "users.container" setting hasn't been defined.` );
-
+						expect( error.message ).toContain( "system" );
 						done();
-					} );
+					} )
+				;
 			} );
 
 			it( "should call `Documents.createChildAndRetrieve`", ( done:DoneFn ):void => {
@@ -144,8 +153,7 @@ describe( module( "Carbon/Auth/Users" ), ():void => {
 						} ) );
 
 						done();
-					} )
-				;
+					} );
 			} );
 
 			it( "should create user to persist when disabled flag", ( done:DoneFn ):void => {
@@ -296,14 +304,12 @@ describe( module( "Carbon/Auth/Users" ), ():void => {
 				context.deleteSetting( "users.container" );
 				const users:Users.Class = new Users.Class( context );
 
-				const promise:Promise<[ PersistedUser.Class, HTTP.Response.Class ]> = users.registerWith( {}, "user@example.com", "my-password" );
+				const promise:Promise<PersistedUser.Class> = users.registerWith( {}, "user@example.com", "my-password" );
 				expect( promise ).toEqual( jasmine.any( Promise ) );
 				promise
 					.then( () => done.fail( "Promise should not be resolved." ) )
 					.catch( error => {
-						expect( error ).toEqual( jasmine.any( Errors.IllegalStateError ) );
-						expect( error.message ).toBe( `The "users.container" setting hasn't been defined.` );
-
+						expect( error.message ).toContain( "system.credentials" );
 						done();
 					} );
 			} );
@@ -486,9 +492,9 @@ describe( module( "Carbon/Auth/Users" ), ():void => {
 				"Activate the account of the specified user.",
 				[
 					{ name: "userURI", type: "string", description: "The URI of the user to activate." },
-					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request." },
+					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for the request." },
 				],
-				{ type: "Promise<[ Carbon.Auth.PersistedUser.Class, Carbon.HTTP.Response.Class[] ]>" }
+				{ type: "Promise<CarbonLDP.Auth.PersistedUser.Class>" }
 			), ():void => {} );
 
 			it( "should exists", ():void => {
@@ -682,9 +688,9 @@ describe( module( "Carbon/Auth/Users" ), ():void => {
 			it( hasSignature(
 				"Deletes the specified user.", [
 					{ name: "userURI", type: "string", description: "The URI of the user to be deleted." },
-					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request." },
+					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for the request." },
 				],
-				{ type: "Promise<[ Carbon.Auth.PersistedUser.Class, Carbon.HTTP.Response.Class ]>" }
+				{ type: "Promise<void>" }
 			), ():void => {} );
 
 			it( "should exists", ():void => {
@@ -731,15 +737,13 @@ describe( module( "Carbon/Auth/Users" ), ():void => {
 			} );
 
 
-			it( "should reject when no `users.container` setting is declared", ( done:DoneFn ):void => {
+			it( "should reject when no ` users.container` setting is declared", ( done:DoneFn ):void => {
 				context.deleteSetting( "users.container" );
 				const users:Users.Class = new Users.Class( context );
 
-				users
-					.delete( "my-user/" )
-					.then( () => {
-						done.fail( "Should not resolve" );
-					} )
+				users.delete( "my-user/" ).then( () => {
+					done.fail( "Should not resolve" );
+				} )
 					.catch( error => {
 						expect( error ).toEqual( jasmine.any( Errors.IllegalStateError ) );
 						expect( error.message ).toBe( `The "users.container" setting hasn't been defined.` );
@@ -751,7 +755,6 @@ describe( module( "Carbon/Auth/Users" ), ():void => {
 
 			it( "should reject when invalid user URI", ( done:DoneFn ):void => {
 				const users:Users.Class = new Users.Class( context );
-
 				users
 					.delete( "https://example.com/another-container/not-user/" )
 					.then( () => {
@@ -759,20 +762,17 @@ describe( module( "Carbon/Auth/Users" ), ():void => {
 					} )
 					.catch( error => {
 						expect( error ).toEqual( jasmine.any( Errors.IllegalArgumentError ) );
-						expect( error.message ).toBe( `The URI "https://example.com/another-container/not-user/" isn't a valid user URI.` );
+						expect( error.message ).toBe( `The URI "https://example.com/another-container/not-user/" isn't a validuserURI.` );
 
 						done();
-					} )
-				;
+					} );
 			} );
 
 		} );
 
-	} );
+		it( hasDefaultExport( "CarbonLDP.Auth.Users.Class" ), ():void => {
+			expect( Users.default ).toBeDefined();
+			expect( Users.default ).toBe( Users.Class );
+		} );
 
-	it( hasDefaultExport( "Carbon.Auth.Users.Class" ), ():void => {
-		expect( Users.default ).toBeDefined();
-		expect( Users.default ).toBe( Users.Class );
 	} );
-
-} );

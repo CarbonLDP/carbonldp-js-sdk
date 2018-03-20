@@ -1,24 +1,27 @@
-import * as Pointer from "./../../Pointer";
-import * as QueryContextBuilder from "./QueryContextBuilder";
-import * as QueryObject from "./QueryObject";
-import * as QueryPropertiesSchema from "./QueryPropertiesSchema";
-import * as QueryProperty from "./QueryProperty";
-import * as QueryValue from "./QueryValue";
-export declare class Class {
+import { Pointer } from "../../Pointer";
+import { QueryContextBuilder } from "./QueryContextBuilder";
+import { QueryObject } from "./QueryObject";
+import { QueryProperty } from "./QueryProperty";
+import { QuerySchema } from "./QuerySchema";
+import { QuerySchemaProperty } from "./QuerySchemaProperty";
+import { QueryValue } from "./QueryValue";
+export declare class QueryDocumentBuilder {
+    static readonly ALL: Readonly<{}>;
     inherit: Readonly<{}>;
-    protected _context: QueryContextBuilder.Class;
-    protected _document: QueryProperty.Class;
+    all: Readonly<{}>;
+    readonly _context: QueryContextBuilder;
+    protected _document: QueryProperty;
     private _typesTriple;
     private _values;
     private _schema;
-    constructor(queryContext: QueryContextBuilder.Class, property: QueryProperty.Class);
-    property(name?: string): QueryProperty.Class;
-    value(value: string | number | boolean | Date): QueryValue.Class;
-    object(object: Pointer.Class | string): QueryObject.Class;
+    constructor(queryContext: QueryContextBuilder, property: QueryProperty);
+    property(name?: string): QueryProperty;
+    value(value: string | number | boolean | Date): QueryValue;
+    object(object: Pointer | string): QueryObject;
     withType(type: string): this;
-    properties(propertiesSchema: QueryPropertiesSchema.Class): this;
+    properties(propertiesSchema: QuerySchema): this;
     filter(constraint: string): this;
-    values(...values: (QueryValue.Class | QueryObject.Class)[]): this;
+    values(...values: (QueryValue | QueryObject)[]): this;
+    _addProperty(propertyName: string, propertyDefinition: QuerySchemaProperty): QueryProperty;
     private addPropertyDefinition(propertyName, propertyDefinition);
 }
-export default Class;

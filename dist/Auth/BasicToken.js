@@ -1,23 +1,22 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var Class = (function () {
-    function Class(username, password) {
+var UsernameAndPasswordToken = (function () {
+    function UsernameAndPasswordToken(username, password) {
         this._username = username;
         this._password = password;
     }
-    Object.defineProperty(Class.prototype, "username", {
+    Object.defineProperty(UsernameAndPasswordToken.prototype, "username", {
         get: function () { return this._username; },
         enumerable: true,
         configurable: true
     });
-    Object.defineProperty(Class.prototype, "password", {
+    Object.defineProperty(UsernameAndPasswordToken.prototype, "password", {
         get: function () { return this._password; },
         enumerable: true,
         configurable: true
     });
-    return Class;
+    return UsernameAndPasswordToken;
 }());
-exports.Class = Class;
-exports.default = Class;
+exports.UsernameAndPasswordToken = UsernameAndPasswordToken;
 
 //# sourceMappingURL=BasicToken.js.map

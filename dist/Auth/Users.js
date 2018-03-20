@@ -1,10 +1,17 @@
 "use strict";
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
+    result["default"] = mod;
+    return result;
+}
 Object.defineProperty(exports, "__esModule", { value: true });
 var Utils_1 = require("../Utils");
-var Errors = require("./../Errors");
-var URI = require("./../RDF/URI");
-var PersistedUser = require("./PersistedUser");
-var User = require("./User");
+var Errors = __importStar(require("../Errors"));
+var URI_1 = require("../RDF/URI");
+var PersistedUser = __importStar(require("./PersistedUser"));
+var User = __importStar(require("./User"));
 var Class = (function () {
     function Class(context) {
         this.context = context;
@@ -67,15 +74,16 @@ var Class = (function () {
         });
     };
     Class.prototype.resolveURI = function (relativeURI) {
-        if (!this.context.hasSetting("users.container"))
-            throw new Errors.IllegalStateError("The \"users.container\" setting hasn't been defined.");
-        var usersContainer = this.context.resolve(this.context.getSetting("users.container"));
+        var usersContainer = this.context.resolve(this.getContainerURI());
         if (!relativeURI)
             return usersContainer;
-        var absoluteRoleURI = URI.Util.resolve(usersContainer, relativeURI);
+        var absoluteRoleURI = URI_1.URI.resolve(usersContainer, relativeURI);
         if (!absoluteRoleURI.startsWith(usersContainer))
             throw new Errors.IllegalArgumentError("The URI \"" + relativeURI + "\" isn't a valid user URI.");
         return absoluteRoleURI;
+    };
+    Class.prototype.getContainerURI = function () {
+        return this.context._resolvePath("users");
     };
     return Class;
 }());

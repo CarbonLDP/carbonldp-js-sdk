@@ -1,25 +1,19 @@
-export interface Class {
-	"vocabulary"?:string;
-
-	"system.container"?:string;
-	"system.platform.metadata"?:string;
-	"system.instance.metadata"?:string;
-
-	"users.container"?:string;
-	"system.security.container"?:string;
-	"system.roles.container"?:string;
+export interface PlatformPaths {
+	paths?:{
+		[document:string]:string | DocumentPaths;
+	};
 }
 
-export const defaultSettings:Class = {
-	"vocabulary": "vocabulary/#",
+export interface DocumentPaths extends PlatformPaths {
+	slug:string;
+}
 
-	"system.container": ".system/",
-	"system.platform.metadata": "platform/",
-	"system.instance.metadata": "instance/",
+export interface ContextSettings extends PlatformPaths {
+	vocabulary?:string;
+}
 
-	"users.container": "users/",
-	"system.security.container": "security/",
-	"system.roles.container": "roles/",
-};
-
-export default defaultSettings;
+export interface CarbonSettings extends ContextSettings {
+	host:string;
+	port?:number;
+	ssl?:boolean;
+}

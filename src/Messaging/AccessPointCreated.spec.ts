@@ -1,82 +1,106 @@
-import * as Messaging from "../Messaging";
-import * as NS from "../NS";
-import * as Pointer from "../Pointer";
-import { extendsClass, hasDefaultExport, hasProperty, interfaze, isDefined, module, OBLIGATORY, STATIC } from "../test/JasmineExtender";
+import { Pointer } from "../Pointer";
+import {
+	extendsClass,
+	hasProperty,
+	interfaze,
+	isDefined,
+	module,
+	OBLIGATORY,
+	property,
+	STATIC
+} from "../test/JasmineExtender";
+import { C } from "../Vocabularies/C";
 
-import * as AccessPointCreated from "./AccessPointCreated";
-import DefaultExport from "./AccessPointCreated";
+import { AccessPointCreated } from "./AccessPointCreated";
+import { DocumentCreated } from "./DocumentCreated";
 
-describe( module( "Carbon/Messaging/AccessPointCreated" ), ():void => {
-
-	it( isDefined(), ():void => {
-		expect( AccessPointCreated ).toBeDefined();
-		expect( AccessPointCreated ).toEqual( jasmine.any( Object ) );
-	} );
-
-	it( hasProperty(
-		STATIC,
-		"RDF_CLASS",
-		"string"
-	), ():void => {
-		expect( AccessPointCreated.RDF_CLASS ).toBeDefined();
-		expect( AccessPointCreated.RDF_CLASS ).toEqual( jasmine.any( String ) );
-
-		expect( AccessPointCreated.RDF_CLASS ).toBe( NS.C.Class.AccessPointCreated );
-	} );
-
-	it( hasProperty(
-		STATIC,
-		"SCHEMA",
-		"Carbon.ObjectSchema.Class"
-	), ():void => {
-		expect( AccessPointCreated.SCHEMA ).toBeDefined();
-		expect( AccessPointCreated.SCHEMA ).toEqual( jasmine.any( Object ) );
-
-		expect( AccessPointCreated.SCHEMA as {} ).toEqual( {
-			"target": jasmine.any( Object ),
-			"details": jasmine.any( Object ),
-		} );
-
-		expect( AccessPointCreated.SCHEMA[ "target" ] ).toEqual( {
-			"@id": NS.C.Predicate.target,
-			"@type": "@id",
-		} );
-
-		expect( AccessPointCreated.SCHEMA[ "details" ] ).toEqual( {
-			"@id": NS.C.Predicate.details,
-			"@type": "@id",
-		} );
-	} );
+describe( module( "carbonldp/Messaging/AccessPointCreated" ), ():void => {
 
 	describe( interfaze(
-		"Carbon.Messaging.AccessPointCreated.Class",
+		"CarbonLDP.Messaging.AccessPointCreated",
 		"Interface with the properties of the data received in a access point created event."
 	), ():void => {
 
 		it( isDefined(), ():void => {
-			const target:AccessPointCreated.Class = {} as any;
+			const target:AccessPointCreated = {} as any;
 			expect( target ).toBeDefined();
 		} );
 
-		it( extendsClass( "Carbon.Messaging.DocumentCreated.Class" ), ():void => {
-			const target:Messaging.DocumentCreated.Class = {} as AccessPointCreated.Class;
+		it( extendsClass( "CarbonLDP.Messaging.DocumentCreated" ), ():void => {
+			const target:DocumentCreated = {} as AccessPointCreated;
 			expect( target ).toBeDefined();
 		} );
 
 		it( hasProperty(
 			OBLIGATORY,
 			"target",
-			"Carbon.Pointer.Class"
+			"CarbonLDP.Pointer"
 		), ():void => {
-			const target:AccessPointCreated.Class[ "target" ] = {} as Pointer.Class;
+			const target:AccessPointCreated[ "target" ] = {} as Pointer;
 			expect( target ).toBeDefined();
 		} );
 
 	} );
 
-	it( hasDefaultExport( "Carbon.Messaging.AccessPointCreated.Class" ), ():void => {
-		const target:AccessPointCreated.Class = {} as DefaultExport;
-		expect( target ).toBeDefined();
+	describe( interfaze(
+		"CarbonLDP.Messaging.AccessPointCreatedFactory",
+		"Interface with the factory, decorate and utils for `CarbonLDP.Messaging.AccessPointCreated` objects."
+	), ():void => {
+
+		it( hasProperty(
+			OBLIGATORY,
+			"TYPE",
+			"string"
+		), ():void => {} );
+
+		it( hasProperty(
+			OBLIGATORY,
+			"SCHEMA",
+			"CarbonLDP.ObjectSchema"
+		), ():void => {} );
+
+	} );
+
+	describe( property(
+		STATIC,
+		"AccessPointCreated",
+		"CarbonLDP.Messaging.AccessPointCreatedFactory"
+	), ():void => {
+
+		it( isDefined(), ():void => {
+			expect( AccessPointCreated ).toBeDefined();
+			expect( AccessPointCreated ).toEqual( jasmine.any( Object ) );
+		} );
+
+		// TODO: Separate in different tests
+		it( "AccessPointCreates.TYPE", ():void => {
+			expect( AccessPointCreated.TYPE ).toBeDefined();
+			expect( AccessPointCreated.TYPE ).toEqual( jasmine.any( String ) );
+
+			expect( AccessPointCreated.TYPE ).toBe( C.AccessPointCreated );
+		} );
+
+		// TODO: Separate in different tests
+		it( "AccessPointCreated.SCHEMA", ():void => {
+			expect( AccessPointCreated.SCHEMA ).toBeDefined();
+			expect( AccessPointCreated.SCHEMA ).toEqual( jasmine.any( Object ) );
+
+			expect( AccessPointCreated.SCHEMA as {} ).toEqual( {
+				"target": jasmine.any( Object ),
+				"details": jasmine.any( Object ),
+			} );
+
+			expect( AccessPointCreated.SCHEMA[ "target" ] ).toEqual( {
+				"@id": C.target,
+				"@type": "@id",
+			} );
+
+			expect( AccessPointCreated.SCHEMA[ "details" ] ).toEqual( {
+				"@id": C.details,
+				"@type": "@id",
+			} );
+		} );
+
 	} );
 
 } );

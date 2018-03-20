@@ -1,9 +1,9 @@
-import * as Document from "./../Document";
+import { Document } from "./../Document";
 import * as ObjectSchema from "./../ObjectSchema";
 import * as UsernameAndPasswordCredentials from "./UsernameAndPasswordCredentials";
 export declare const RDF_CLASS: string;
-export declare const SCHEMA: ObjectSchema.Class;
-export interface Class extends Document.Class {
+export declare const SCHEMA: ObjectSchema.ObjectSchema;
+export interface Class extends Document {
     name?: string;
     enabled?: boolean;
     disabled?: boolean;

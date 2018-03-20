@@ -1,14 +1,14 @@
-import * as Context from "../../Context";
+import { Context } from "../../Context";
 import { DigestedObjectSchema } from "../../ObjectSchema";
-import * as PersistedDocument from "../../PersistedDocument";
-import * as PersistedResource from "../../PersistedResource";
-import * as QueryContext from "./QueryContext";
+import { PersistedDocument } from "../../PersistedDocument";
+import { PersistedResource } from "../../PersistedResource";
+import { QueryContext } from "./QueryContext";
 
-export class Class extends QueryContext.Class {
+export class QueryContextPartial extends QueryContext {
 
-	private _document:PersistedDocument.Class;
+	private _document:PersistedDocument;
 
-	constructor( document:PersistedDocument.Class, context?:Context.Class ) {
+	constructor( document:PersistedDocument, context?:Context ) {
 		super( context );
 		this._document = document;
 	}
@@ -17,7 +17,7 @@ export class Class extends QueryContext.Class {
 		if( path === void 0 ) return super.getSchemaFor( object );
 
 		const parts:string[] = path.split( /\./g ).slice( 1 );
-		let schemaLibrary:PersistedResource.Class = this._document;
+		let schemaLibrary:PersistedResource = this._document;
 		while( parts.length ) {
 			const part:string = parts.shift();
 			const values:any[] = Array.isArray( schemaLibrary[ part ] ) ?
@@ -30,5 +30,3 @@ export class Class extends QueryContext.Class {
 		return schemaLibrary._partialMetadata.schema;
 	}
 }
-
-export default Class;

@@ -1,3 +1,13 @@
+import * as Errors from "../Errors";
+import { Header } from "../HTTP/Header";
+import { RequestOptions } from "../HTTP/Request";
+import { Resource } from "../Resource";
+import { ContextSettings } from "../Settings";
+import { C } from "../Vocabularies/C";
+import { CS } from "../Vocabularies/CS";
+import { VCARD } from "../Vocabularies/VCARD";
+import { XSD } from "../Vocabularies/XSD";
+import { AbstractContext } from "./../AbstractContext";
 import {
 	clazz,
 	constructor,
@@ -7,16 +17,7 @@ import {
 	isDefined,
 	method,
 	module,
-} from "../test/JasmineExtender";
-
-import AbstractContext from "./../AbstractContext";
-import * as Errors from "./../Errors";
-import {
-	Header,
-	Request
-} from "./../HTTP";
-import * as NS from "./../NS";
-import * as Resource from "./../Resource";
+} from "./../test/JasmineExtender";
 import * as Utils from "./../Utils";
 import * as PersistedUser from "./PersistedUser";
 
@@ -26,7 +27,7 @@ import DefaultExport from "./TokenAuthenticator";
 import * as TokenCredentials from "./TokenCredentials";
 import BasicToken from "./BasicToken";
 
-describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
+describe( module( "carbonldp/Auth/TokenAuthenticator" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( TokenAuthenticator ).toBeDefined();
@@ -39,10 +40,10 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 	} );
 
 	describe( clazz(
-		"Carbon.Auth.TokenAuthenticator.Class",
+		"CarbonLDP.Auth.TokenAuthenticator.Class",
 		"Authenticates requests using JSON Web TokenCredentials (JWT) Authentication.",
 		[
-			"Carbon.Auth.Authenticator.Class<Carbon.Auth.BasicToken.Class, Carbon.Auth.TokenCredentials.Class>",
+			"CarbonLDP.Auth.Authenticator.Class<CarbonLDP.Auth.BasicToken.Class, CarbonLDP.Auth.TokenCredentials.Class>",
 		]
 	), ():void => {
 
@@ -51,6 +52,16 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 			jasmine.Ajax.install();
 			context = new class extends AbstractContext {
 				protected _baseURI:string = "https://example.com/";
+				protected settings:ContextSettings = {
+					paths: {
+						system: {
+							slug: ".system/",
+							paths: {
+								security: "security/",
+							},
+						},
+					},
+				};
 			};
 		} );
 
@@ -77,7 +88,7 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 
 			it( hasSignature(
 				[
-					{ name: "context", type: "Carbon.Context.Class", description: "The context where to authenticate the user." },
+					{ name: "context", type: "CarbonLDP.Context", description: "The context where to authenticate the user." },
 				]
 			), ():void => {} );
 
@@ -115,7 +126,7 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 				const expirationTime:Date = new Date();
 				expirationTime.setDate( expirationTime.getDate() + 1 );
 
-				const credentials:TokenCredentials.Class = Resource.Factory.createFrom( {
+				const credentials:TokenCredentials.Class = Resource.createFrom( {
 					key: "token-value",
 					expirationTime,
 				} );
@@ -126,7 +137,7 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 
 			it( "should return true when expired credentials with by current time", ():void => {
 				const expirationTime:Date = new Date();
-				const credentials:TokenCredentials.Class = Resource.Factory.createFrom( {
+				const credentials:TokenCredentials.Class = Resource.createFrom( {
 					key: "token-value",
 					expirationTime,
 				} );
@@ -139,7 +150,7 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 				const expirationTime:Date = new Date();
 				expirationTime.setDate( expirationTime.getDate() - 1 );
 
-				const credentials:TokenCredentials.Class = Resource.Factory.createFrom( {
+				const credentials:TokenCredentials.Class = Resource.createFrom( {
 					key: "token-value",
 					expirationTime,
 				} );
@@ -155,15 +166,10 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 			it( hasSignature(
 				"When a token is provided credentials will be requested, in other case the credentials provided will be validated and stored.",
 				[
-					{ name: "tokenOrCredentials", type: "Carbon.Auth.BasicToken | Carbon.Auth.TokenCredentials.Class" },
+					{ name: "tokenOrCredentials", type: "CarbonLDP.Auth.BasicToken | CarbonLDP.Auth.TokenCredentials.Class" },
 				],
-				{ type: "Promise<Carbon.Auth.TokenCredentials.Class>" }
+				{ type: "Promise<CarbonLDP.Auth.TokenCredentials.Class>" }
 			), ():void => {} );
-
-			beforeEach( ():void => {
-				context.setSetting( "system.container", ".system/" );
-				context.setSetting( "system.security.container", "security/" );
-			} );
 
 			it( "should exists", ():void => {
 				expect( TokenAuthenticator.Class.prototype.authenticate ).toBeDefined();
@@ -178,56 +184,56 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 					responseText: `[ {
 							"@id": "_:00",
 							"@type": [
-								"${ NS.C.Class.ResponseMetadata }",
-								"${ NS.C.Class.VolatileResource }"
+								"${ C.ResponseMetadata }",
+								"${ C.VolatileResource }"
 							],
-							"${ NS.C.Predicate.documentMetadata }": [ {
+							"${ C.documentMetadata }": [ {
 								"@id": "_:01"
 							} ]
 						}, {
 							"@id": "_:01",
 							"@type": [
-								"${ NS.C.Class.DocumentMetadata }",
-								"${ NS.C.Class.VolatileResource }"
+								"${ C.DocumentMetadata }",
+								"${ C.VolatileResource }"
 							],
-							"${ NS.C.Predicate.eTag }": [ {
+							"${ C.eTag }": [ {
 								"@value": "\\"1234567890\\""
 							} ],
-							"${ NS.C.Predicate.relatedDocument }": [ {
+							"${ C.relatedDocument }": [ {
 								"@id": "http://successful.example.com/users/my-user/"
 							} ]
 						}, {
 							"@id": "_:02",
 							"@type": [
-								"${ NS.CS.Class.Token }",
-								"${ NS.C.Class.VolatileResource }"
+								"${ CS.Token }",
+								"${ C.VolatileResource }"
 							],
-							"${ NS.CS.Predicate.tokenKey }": [ {
+							"${ CS.tokenKey }": [ {
 								"@value": "token-value"
 							} ],
-							"${ NS.CS.Predicate.expirationTime }": {
+							"${ CS.expirationTime }": {
 								"@value": "${ expirationTime.toISOString() }",
-								"@type": "${ NS.XSD.DataType.dateTime }"
+								"@type": "${ XSD.dateTime }"
 							},
-							"${ NS.CS.Predicate.credentialsOf }": [ {
+							"${ CS.credentialsOf }": [ {
 								"@id": "http://successful.example.com/users/my-user/"
 							} ]
 						}, {
 							"@id": "http://successful.example.com/users/my-user/",
 							"@graph": [ {
 								"@id": "http://successful.example.com/users/my-user/",
-								"@type": [ "${ NS.CS.Class.User }" ],
-								"${ NS.CS.Predicate.name }": [ {
+								"@type": [ "${ CS.User }" ],
+								"${ CS.name }": [ {
 									"@value": "My User Name",
-									"@type": "${ NS.XSD.DataType.string }"
+									"@type": "${ XSD.string }"
 								} ],
-								"${ NS.CS.Predicate.username }": [ {
+								"${ CS.username }": [ {
 									"@value": "my-user@users.com",
-									"@type": "${ NS.XSD.DataType.string }"
+									"@type": "${ XSD.string }"
 								} ],
-								"${ NS.CS.Predicate.enabled }": [ {
+								"${ CS.enabled }": [ {
 									"@value": "true",
-									"@type": "${ NS.XSD.DataType.boolean }"
+									"@type": "${ XSD.boolean }"
 								} ]
 							} ]
 						} ]`,
@@ -279,8 +285,8 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 			it( "should return same credential when valid credentials", ( done:DoneFn ):void => {
 				const expirationTime:Date = new Date();
 				expirationTime.setDate( expirationTime.getDate() + 1 );
-				const credentials:TokenCredentials.Class = Resource.Factory.createFrom( {
-					types: [ NS.CS.Class.Token ],
+				const credentials:TokenCredentials.Class = Resource.createFrom( {
+					types: [ CS.Token ],
 					key: "token-value",
 					expirationTime,
 				} );
@@ -309,7 +315,7 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 				const authenticator:TokenAuthenticator.Class = new TokenAuthenticator.Class( context );
 				authenticator
 					.authenticate( JSON.parse( `{
-						"types": [ "${ NS.CS.Class.Token }" ],
+						"types": [ "${ CS.Token }" ],
 						"key": "token-value",
 						"expirationTime": "${ expirationTime.toISOString() }"
 					}` ) )
@@ -331,8 +337,8 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 			it( "should throw error when invalid expiration date", ( done:DoneFn ):void => {
 				const expirationTime:Date = new Date();
 				expirationTime.setDate( expirationTime.getDate() - 1 );
-				const credentials:TokenCredentials.Class = Resource.Factory.createFrom( {
-					types: [ NS.CS.Class.Token ],
+				const credentials:TokenCredentials.Class = Resource.createFrom( {
+					types: [ CS.Token ],
 					key: "token-value",
 					expirationTime,
 				} );
@@ -362,18 +368,18 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 				const expirationTime:Date = new Date();
 				expirationTime.setDate( expirationTime.getDate() + 1 );
 
-				const credentials:TokenCredentials.Class = Resource.Factory.createFrom( {
+				const credentials:TokenCredentials.Class = Resource.createFrom( {
 					key: "token-value",
 					expirationTime,
 				} );
 
 				const authenticator:TokenAuthenticator.Class = createAuthenticatorWith( credentials );
 
-				const options:Request.Options = {};
+				const options:RequestOptions = {};
 				authenticator.addAuthentication( options );
 
 				expect( options.headers ).toEqual( new Map( [
-					[ "authorization", new Header.Class( [ new Header.Value( "Token token-value" ) ] ), ],
+					[ "authorization", new Header( [ "Token token-value" ] ), ],
 				] ) );
 			} );
 
@@ -381,7 +387,7 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 
 	} );
 
-	it( hasDefaultExport( "Carbon.Auth.TokenAuthenticator.Class" ), ():void => {
+	it( hasDefaultExport( "CarbonLDP.Auth.TokenAuthenticator.Class" ), ():void => {
 		expect( DefaultExport ).toBeDefined();
 		expect( DefaultExport ).toBe( TokenAuthenticator.Class );
 	} );

@@ -1,9 +1,12 @@
 language: node_js
 
 node_js:
-  - "6"
+  - "8"
 
 dist: trusty
+
+# TODO: Workaround: travis-ci/travis-ci#8836
+sudo: required
 addons:
   chrome: stable
 

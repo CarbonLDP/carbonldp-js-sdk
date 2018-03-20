@@ -8,12 +8,16 @@ var __assign = (this && this.__assign) || Object.assign || function(t) {
     return t;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var NS = require("./../NS");
-var Message = require("./Message");
-exports.RDF_CLASS = NS.C.Class.MemberAdded;
-exports.SCHEMA = __assign({}, Message.SCHEMA, { "details": {
-        "@id": NS.C.Predicate.details,
+var C_1 = require("../Vocabularies/C");
+var EventMessage_1 = require("./EventMessage");
+var TYPE = C_1.C.MemberAdded;
+var SCHEMA = __assign({}, EventMessage_1.EventMessage.SCHEMA, { "details": {
+        "@id": C_1.C.details,
         "@type": "@id",
     } });
+exports.MemberAdded = {
+    TYPE: TYPE,
+    SCHEMA: SCHEMA,
+};
 
 //# sourceMappingURL=MemberAdded.js.map

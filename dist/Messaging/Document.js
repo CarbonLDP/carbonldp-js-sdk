@@ -10,14 +10,14 @@ function off(event, onEvent, onError) {
 function one(event, onEvent, onError) {
     return this._documents.one(event, this.id, onEvent, onError);
 }
-function onDocumentCreated(onEvent, onError) {
-    return this._documents.onDocumentCreated(this.id, onEvent, onError);
+function onAccessPointCreated(onEvent, onError) {
+    return this._documents.onAccessPointCreated(this.id, onEvent, onError);
 }
 function onChildCreated(onEvent, onError) {
     return this._documents.onChildCreated(this.id, onEvent, onError);
 }
-function onAccessPointCreated(onEvent, onError) {
-    return this._documents.onAccessPointCreated(this.id, onEvent, onError);
+function onDocumentCreated(onEvent, onError) {
+    return this._documents.onDocumentCreated(this.id, onEvent, onError);
 }
 function onDocumentModified(onEvent, onError) {
     return this._documents.onDocumentModified(this.id, onEvent, onError);
@@ -31,10 +31,8 @@ function onMemberAdded(onEvent, onError) {
 function onMemberRemoved(onEvent, onError) {
     return this._documents.onMemberRemoved(this.id, onEvent, onError);
 }
-var Factory = (function () {
-    function Factory() {
-    }
-    Factory.hasClassProperties = function (object) {
+exports.MessagingDocument = {
+    isDecorated: function (object) {
         return Utils_1.isObject(object)
             && Utils_1.hasFunction(object, "on")
             && Utils_1.hasFunction(object, "off")
@@ -46,9 +44,9 @@ var Factory = (function () {
             && Utils_1.hasFunction(object, "onDocumentDeleted")
             && Utils_1.hasFunction(object, "onMemberAdded")
             && Utils_1.hasFunction(object, "onMemberRemoved");
-    };
-    Factory.decorate = function (object) {
-        if (Factory.hasClassProperties(object))
+    },
+    decorate: function (object) {
+        if (exports.MessagingDocument.isDecorated(object))
             return object;
         return Object.defineProperties(object, {
             "on": {
@@ -112,9 +110,7 @@ var Factory = (function () {
                 value: onMemberRemoved,
             },
         });
-    };
-    return Factory;
-}());
-exports.Factory = Factory;
+    },
+};
 
 //# sourceMappingURL=Document.js.map

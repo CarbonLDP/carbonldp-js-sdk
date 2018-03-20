@@ -1,30 +1,37 @@
 "use strict";
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
+    result["default"] = mod;
+    return result;
+}
 Object.defineProperty(exports, "__esModule", { value: true });
-var ACE = require("./ACE");
-var NS = require("./../NS");
-var Pointer = require("./../Pointer");
-var Utils = require("./../Utils");
-exports.RDF_CLASS = NS.CS.Class.AccessControlList;
-exports.SCHEMA = {
+var Pointer_1 = require("../Pointer");
+var Utils = __importStar(require("../Utils"));
+var CS_1 = require("../Vocabularies/CS");
+var Document_1 = require("./../Document");
+var ACE_1 = require("./ACE");
+var SCHEMA = {
     "entries": {
-        "@id": NS.CS.Predicate.accessControlEntry,
+        "@id": CS_1.CS.accessControlEntry,
         "@type": "@id",
         "@container": "@set",
     },
     "accessTo": {
-        "@id": NS.CS.Predicate.accessTo,
+        "@id": CS_1.CS.accessTo,
         "@type": "@id",
     },
     "inheritableEntries": {
-        "@id": NS.CS.Predicate.inheritableEntry,
+        "@id": CS_1.CS.inheritableEntry,
         "@type": "@id",
         "@container": "@set",
     },
 };
-var Factory = (function () {
-    function Factory() {
-    }
-    Factory.hasClassProperties = function (object) {
+exports.ACL = {
+    TYPE: CS_1.CS.AccessControlList,
+    SCHEMA: SCHEMA,
+    isDecorated: function (object) {
         return Utils.hasPropertyDefined(object, "accessTo")
             && Utils.hasFunction(object, "_parsePointer")
             && Utils.hasFunction(object, "grant")
@@ -35,11 +42,12 @@ var Factory = (function () {
             && Utils.hasFunction(object, "getChildInheritance")
             && Utils.hasFunction(object, "remove")
             && Utils.hasFunction(object, "removeChildInheritance");
-    };
-    Factory.decorate = function (object) {
+    },
+    decorate: function (object) {
+        if (exports.ACL.isDecorated(object))
+            return object;
+        Document_1.Document.decorate(object);
         var acl = object;
-        if (Factory.hasClassProperties(acl))
-            return acl;
         Object.defineProperties(acl, {
             "_parsePointer": {
                 writable: true,
@@ -97,12 +105,10 @@ var Factory = (function () {
             },
         });
         return acl;
-    };
-    return Factory;
-}());
-exports.Factory = Factory;
+    },
+};
 function parsePointer(element) {
-    return Pointer.Factory.is(element) ? element : Pointer.Factory.create(element);
+    return Utils.isObject(element) ? element : Pointer_1.Pointer.create(element);
 }
 function parsePointers(elements) {
     var _this = this;
@@ -110,10 +116,10 @@ function parsePointers(elements) {
     return elementsArray.map(function (element) { return _this._parsePointer(element); });
 }
 function configACE(granting, subject, subjectClass, permissions, aces) {
-    var subjectACEs = aces.filter(function (ace) { return ace.subjects.length === 1 && ace.granting === granting && Pointer.Util.areEqual(ace.subjects[0], subject); });
+    var subjectACEs = aces.filter(function (_) { return _.subjects.length === 1 && _.granting === granting && Pointer_1.Pointer.areEqual(_.subjects[0], subject); });
     var ace;
     if (subjectACEs.length === 0) {
-        ace = ACE.Factory.createFrom(this.createFragment(), granting, [subject], subjectClass, []);
+        ace = ACE_1.ACE.createFrom(this.createFragment(), granting, [subject], subjectClass, []);
         aces.push(ace);
     }
     else {
@@ -148,10 +154,10 @@ function configureChildInheritance(granting, subjects, subjectsClass, permission
     configACEs.call(this, granting, subjects, subjectsClass, permissions, acl.inheritableEntries);
 }
 function grantingFrom(subject, permission, aces) {
-    var subjectACEs = aces.filter(function (ace) { return Utils.A.indexOf(ace.subjects, subject, Pointer.Util.areEqual) !== -1; });
+    var subjectACEs = aces.filter(function (ace) { return Utils.ArrayUtils.indexOf(ace.subjects, subject, Pointer_1.Pointer.areEqual) !== -1; });
     for (var _i = 0, subjectACEs_1 = subjectACEs; _i < subjectACEs_1.length; _i++) {
         var ace = subjectACEs_1[_i];
-        if (Utils.A.indexOf(ace.permissions, permission, Pointer.Util.areEqual) !== -1)
+        if (Utils.ArrayUtils.indexOf(ace.permissions, permission, Pointer_1.Pointer.areEqual) !== -1)
             return ace.granting;
     }
     return null;
@@ -181,30 +187,30 @@ function removePermissionsFrom(subject, permissions, aces) {
         return;
     var acl = this;
     var opposedAces = acl.entries === aces ? acl.inheritableEntries : acl.entries;
-    var subjectACEs = aces.filter(function (ace) { return Utils.A.indexOf(ace.subjects, subject, Pointer.Util.areEqual) !== -1; });
+    var subjectACEs = aces.filter(function (ace) { return Utils.ArrayUtils.indexOf(ace.subjects, subject, Pointer_1.Pointer.areEqual) !== -1; });
     for (var _i = 0, subjectACEs_2 = subjectACEs; _i < subjectACEs_2.length; _i++) {
         var ace = subjectACEs_2[_i];
-        if (opposedAces && Utils.A.indexOf(opposedAces, ace, Pointer.Util.areEqual) !== -1) {
-            aces.splice(Utils.A.indexOf(aces, ace, Pointer.Util.areEqual), 1);
+        if (opposedAces && Utils.ArrayUtils.indexOf(opposedAces, ace, Pointer_1.Pointer.areEqual) !== -1) {
+            aces.splice(Utils.ArrayUtils.indexOf(aces, ace, Pointer_1.Pointer.areEqual), 1);
             var newACE = configACE.call(this, ace.granting, subject, ace.subjectsClass, ace.permissions, aces);
             subjectACEs.push(newACE);
             continue;
         }
         if (ace.subjects.length > 1) {
-            ace.subjects.splice(Utils.A.indexOf(ace.subjects, subject, Pointer.Util.areEqual), 1);
+            ace.subjects.splice(Utils.ArrayUtils.indexOf(ace.subjects, subject, Pointer_1.Pointer.areEqual), 1);
             var newACE = configACE.call(this, ace.granting, subject, ace.subjectsClass, ace.permissions, aces);
             subjectACEs.push(newACE);
             continue;
         }
         for (var _a = 0, permissions_1 = permissions; _a < permissions_1.length; _a++) {
             var permission = permissions_1[_a];
-            var index = Utils.A.indexOf(ace.permissions, permission, Pointer.Util.areEqual);
+            var index = Utils.ArrayUtils.indexOf(ace.permissions, permission, Pointer_1.Pointer.areEqual);
             if (index === -1)
                 continue;
             ace.permissions.splice(index, 1);
         }
         if (ace.permissions.length === 0) {
-            aces.splice(Utils.A.indexOf(aces, ace, Pointer.Util.areEqual), 1);
+            aces.splice(Utils.ArrayUtils.indexOf(aces, ace, Pointer_1.Pointer.areEqual), 1);
             acl._removeFragment(ace);
         }
     }

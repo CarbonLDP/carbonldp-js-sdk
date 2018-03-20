@@ -1,25 +1,33 @@
-import { IRIToken, PrefixedNameToken, PrefixToken } from "sparqler/tokens";
+import {
+	IRIToken,
+	PrefixedNameToken,
+	PrefixToken
+} from "sparqler/tokens";
 
-import AbstractContext from "../../AbstractContext";
-import { IllegalArgumentError } from "../../Errors";
-import { clazz, constructor, hasDefaultExport, hasSignature, INSTANCE, method, module } from "../../test/JasmineExtender";
+import { AbstractContext } from "../../AbstractContext";
+import { IllegalArgumentError } from "../../Errors/IllegalArgumentError";
+import {
+	clazz,
+	constructor,
+	hasSignature,
+	INSTANCE,
+	method,
+	module
+} from "../../test/JasmineExtender";
+
 import * as Module from "./QueryContext";
-import { Class as QueryContext } from "./QueryContext";
-import QueryVariable from "./QueryVariable";
+import { QueryContext } from "./QueryContext";
 
-describe( module( "Carbon/SPARQL/QueryDocument/QueryContext" ), ():void => {
+import { QueryVariable } from "./QueryVariable";
+
+describe( module( "carbonldp/SPARQL/QueryDocument/QueryContext" ), ():void => {
 
 	it( "should exists", ():void => {
 		expect( Module ).toBeDefined();
 		expect( Module ).toEqual( jasmine.any( Object ) );
 	} );
 
-	it( hasDefaultExport( "Carbon.SPARQL.QueryDocument.QueryContext.Class" ), ():void => {
-		expect( Module.default ).toBeDefined();
-		expect( Module.default ).toBe( QueryContext );
-	} );
-
-	describe( clazz( "Carbon.SPARQL.QueryDocument.QueryContext.Class", "Class with the shared status and data of the query." ), ():void => {
+	describe( clazz( "CarbonLDP.SPARQL.QueryDocument.QueryContext", "Class with the shared status and data of the query." ), ():void => {
 
 		it( "should exists", ():void => {
 			expect( QueryContext ).toBeDefined();
@@ -38,7 +46,7 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryContext" ), ():void => {
 			it( hasSignature(
 				"Class that helps the builders of a query document with the shared data.",
 				[
-					{ name: "context", type: "Carbon.Context.Class", optional: true, description: "The carbon context from where the query belongs to." },
+					{ name: "context", type: "CarbonLDP.Context", optional: true, description: "The carbon context from where the query belongs to." },
 				]
 			), ():void => {} );
 
@@ -68,7 +76,7 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryContext" ), ():void => {
 				[
 					{ name: "name", type: "string" },
 				],
-				{ type: "Carbon.SPARQL.QueryDocument.QueryVariable.Class" }
+				{ type: "CarbonLDP.SPARQL.QueryDocument.QueryVariable" }
 			), ():void => {
 			} );
 
@@ -132,61 +140,6 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryContext" ), ():void => {
 				expect( spy ).toHaveBeenCalledWith( "http://www.w3.org/2001/XMLSchema#string" );
 			} );
 
-			it( "should call to expandIRI method", ():void => {
-				const queryContext:QueryContext = new QueryContext( context );
-				const spy:jasmine.Spy = spyOn( queryContext, "expandIRI" );
-
-				queryContext.serializeLiteral( "xsd:string", "value" );
-				expect( spy ).toHaveBeenCalledWith( "xsd:string" );
-			} );
-
-		} );
-
-		describe( method( INSTANCE, "expandIRI" ), ():void => {
-
-			it( hasSignature(
-				"Resolved the relative or prefixed IRI in an absolute one.",
-				[
-					{ name: "iri", type: "string", description: "The iri to be expanded." },
-				],
-				{ type: "string" }
-			), ():void => {
-			} );
-
-			it( "should exists", ():void => {
-				expect( QueryContext.prototype.expandIRI ).toBeDefined();
-				expect( QueryContext.prototype.expandIRI ).toEqual( jasmine.any( Function ) );
-			} );
-
-			it( "should resolve existing prefixes", ():void => {
-				context.extendObjectSchema( {
-					"ex": "http://example.com/ns#",
-					"schema": "https://schema.org/",
-				} );
-				const queryContext:QueryContext = new QueryContext( context );
-				expect( queryContext.expandIRI( "ex:resource" ) ).toBe( "http://example.com/ns#resource" );
-				expect( queryContext.expandIRI( "ex:another_resource" ) ).toBe( "http://example.com/ns#another_resource" );
-				expect( queryContext.expandIRI( "schema:resource" ) ).toBe( "https://schema.org/resource" );
-			} );
-
-			it( "should resolve relative with vocab", ():void => {
-				context.setSetting( "vocabulary", "http://example.com/vocab#" );
-				const queryContext:QueryContext = new QueryContext( context );
-				expect( queryContext.expandIRI( "resource" ) ).toBe( "http://example.com/vocab#resource" );
-				expect( queryContext.expandIRI( "another_resource" ) ).toBe( "http://example.com/vocab#another_resource" );
-			} );
-
-			it( "should throw error if no declared prefix", ():void => {
-				context.extendObjectSchema( {
-					"schema": "https://schema.org/",
-				} );
-				const queryContext:QueryContext = new QueryContext( context );
-				const helper:( iri:string ) => void = ( iri:string ) => () => queryContext.expandIRI( iri );
-				expect( helper( "ex:resource" ) ).toThrowError( IllegalArgumentError, `Prefix "ex" has not been declared.` );
-				expect( helper( "ex:another_resource" ) ).toThrowError( IllegalArgumentError, `Prefix "ex" has not been declared.` );
-				expect( helper( "schema2:resource" ) ).toThrowError( IllegalArgumentError, `Prefix "schema2" has not been declared.` );
-			} );
-
 		} );
 
 		describe( method( INSTANCE, "compactIRI" ), ():void => {
@@ -197,7 +150,7 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryContext" ), ():void => {
 				[
 					{ name: "iri", type: "string", description: "The iri to be compacted and tokenized" },
 				],
-				{ type: "SPARQLER/tokens/IRIToken | SPARQLER/tokens/PrefixedNameToken" }
+				{ type: "sparqler/tokens/IRIToken | sparqler/tokens/PrefixedNameToken" }
 			), ():void => {
 			} );
 
@@ -324,7 +277,7 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryContext" ), ():void => {
 			it( hasSignature(
 				"Returns the general schema of the carbon context.\n" +
 				"If no carbon context provided at the constructor an empty schema will be returned.",
-				{ type: "Carbon.ObjectSchema.DigestedObjectSchema" }
+				{ type: "CarbonLDP.DigestedObjectSchema" }
 			), ():void => {
 			} );
 
@@ -353,7 +306,7 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryContext" ), ():void => {
 					{ name: "object", type: "object", description: "The object to look for its corresponding schema." },
 					{ name: "path", type: "string", description: "An optional path that describes where the resource appears in the query.\nNOTE: Property is ignored but used in the extensions of this class." },
 				],
-				{ type: "Carbon.ObjectSchema.DigestedObjectSchema" }
+				{ type: "CarbonLDP.DigestedObjectSchema" }
 			), ():void => {
 			} );
 

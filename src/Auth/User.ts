@@ -3,29 +3,31 @@ import {
 	isBoolean,
 	isObject,
 } from "../Utils";
-import * as Document from "./../Document";
-import * as NS from "./../NS";
+import { C } from "../Vocabularies/C";
+import { CS } from "../Vocabularies/CS";
+import { XSD } from "../Vocabularies/XSD";
+import { Document } from "./../Document";
 import * as ObjectSchema from "./../ObjectSchema";
 import * as UsernameAndPasswordCredentials from "./UsernameAndPasswordCredentials";
 
-export const RDF_CLASS:string = NS.CS.Class.User;
+export const RDF_CLASS:string = CS.User;
 
-export const SCHEMA:ObjectSchema.Class = {
+export const SCHEMA:ObjectSchema.ObjectSchema = {
 	"name": {
-		"@id": NS.CS.Predicate.namae,
-		"@type": NS.XSD.DataType.string,
+		"@id": CS.name,
+		"@type": XSD.string,
 	},
 	"credentials": {
-		"@id": NS.CS.Predicate.credentials,
+		"@id": CS.credentials,
 		"@type": "@id",
 	},
 	"enabled": {
-		"@id": NS.CS.Predicate.enabled,
-		"@type": NS.XSD.DataType.boolean,
+		"@id": CS.enabled,
+		"@type": XSD.boolean,
 	},
 };
 
-export interface Class extends Document.Class {
+export interface Class extends Document {
 	name?:string;
 	enabled?:boolean;
 	disabled?:boolean;
@@ -39,7 +41,7 @@ function setCredentials( this:Class, email?:string, password?:string ):UsernameA
 		.Factory.create( email, password );
 
 	this.credentials = this.createFragment( credentials );
-	this.credentials.addType( NS.C.Class.VolatileResource );
+	this.credentials.addType( C.VolatileResource );
 
 	return this.credentials;
 }
@@ -65,7 +67,7 @@ export class Factory {
 	static decorate<T extends object>( object:T ):T & Class {
 		if( Factory.hasClassProperties( object ) ) return object;
 
-		Document.Factory.decorate( object );
+		Document.decorate( object );
 
 		const user:T & Class = Object.defineProperties( object, {
 			"setCredentials": {

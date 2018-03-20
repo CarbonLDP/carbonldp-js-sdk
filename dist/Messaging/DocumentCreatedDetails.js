@@ -1,13 +1,16 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var NS = require("./../NS");
-exports.RDF_CLASS = NS.C.Class.DocumentCreatedDetails;
-exports.SCHEMA = {
+var C_1 = require("../Vocabularies/C");
+var SCHEMA = {
     "createdDocuments": {
-        "@id": NS.C.Predicate.createdDocument,
+        "@id": C_1.C.createdDocument,
         "@type": "@id",
         "@container": "@set",
     },
+};
+exports.DocumentCreatedDetails = {
+    TYPE: C_1.C.DocumentCreatedDetails,
+    SCHEMA: SCHEMA,
 };
 
 //# sourceMappingURL=DocumentCreatedDetails.js.map

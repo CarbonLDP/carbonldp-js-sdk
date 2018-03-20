@@ -1,10 +1,11 @@
-import AbstractError from "./../../Errors/AbstractError";
-import * as PersistedDocument from "./../../PersistedDocument";
-import * as LDP from "./../../LDP";
-import * as Resource from "./../../Resource";
-import Response from "./../Response";
+import { AbstractError } from "../../Errors";
+import { Error } from "../../LDP/Error";
+import { ErrorResponse } from "../../LDP/ErrorResponse";
+import { PersistedDocument } from "../../PersistedDocument";
+import { Resource } from "../../Resource";
+import { Response } from "../Response";
 
-export class Class extends AbstractError implements LDP.ErrorResponse.Class {
+export class HTTPError extends AbstractError implements ErrorResponse {
 	static get statusCode():number { return null; }
 
 	get name():string { return "HTTPError"; }
@@ -13,7 +14,7 @@ export class Class extends AbstractError implements LDP.ErrorResponse.Class {
 	_resolved:boolean;
 
 	id:string;
-	errors:LDP.Error.Class[];
+	errors:Error[];
 	requestID:string;
 	response:Response;
 	statusCode:number;
@@ -21,7 +22,7 @@ export class Class extends AbstractError implements LDP.ErrorResponse.Class {
 
 	isResolved:() => boolean;
 
-	resolve:<T>() => Promise<[ T & PersistedDocument.Class, Response ]>;
+	resolve:<T>() => Promise<T & PersistedDocument>;
 
 	addType:( type:string ) => void;
 	hasType:( type:string ) => boolean;
@@ -29,9 +30,8 @@ export class Class extends AbstractError implements LDP.ErrorResponse.Class {
 
 	constructor( message:string, response:Response ) {
 		super( message );
-		Object.setPrototypeOf( this, Class.prototype );
 
-		Resource.Factory.createFrom( this );
+		Resource.createFrom( this );
 
 		this.errors = [];
 		this.requestID = null;
@@ -39,5 +39,3 @@ export class Class extends AbstractError implements LDP.ErrorResponse.Class {
 		this.statusCode = response.status;
 	}
 }
-
-export default Class;
