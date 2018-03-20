@@ -1,47 +1,95 @@
-export namespace CS {
-	export const namespace:"https://carbonldp.com/ns/v1/security#" = "https://carbonldp.com/ns/v1/security#";
+export interface CS {
+	namespace:"https://carbonldp.com/ns/v1/security#";
 
-	export const AccessControlEntry:string = namespace + "AccessControlEntry";
-	export const AccessControlList:string = namespace + "AccessControlList";
-	export const AllOrigins:string = namespace + "AllOrigins";
-	export const CreateAccessPoint:string = namespace + "CreateAccessPoint";
-	export const CreateChild:string = namespace + "CreateChild";
-	export const Credentials:string = namespace + "Credentials";
-	export const Delete:string = namespace + "Delete";
-	export const Download:string = namespace + "Download";
-	export const Extend:string = namespace + "Extend";
-	export const ManageSecurity:string = namespace + "ManageSecurity";
-	export const ProtectedDocument:string = namespace + "ProtectedDocument";
-	export const Read:string = namespace + "Read";
-	export const RemoveMember:string = namespace + "RemoveMember";
-	export const Role:string = namespace + "Role";
-	export const Ticket:string = namespace + "Ticket";
-	export const Token:string = namespace + "Token";
-	export const Update:string = namespace + "Update";
-	export const Upload:string = namespace + "Upload";
-	export const User:string = namespace + "User";
+	AccessControlEntry:"https://carbonldp.com/ns/v1/security#AccessControlEntry";
+	AccessControlList:"https://carbonldp.com/ns/v1/security#AccessControlList";
+	AllOrigins:"https://carbonldp.com/ns/v1/security#AllOrigins";
+	CreateAccessPoint:"https://carbonldp.com/ns/v1/security#CreateAccessPoint";
+	CreateChild:"https://carbonldp.com/ns/v1/security#CreateChild";
+	Credentials:"https://carbonldp.com/ns/v1/security#Credentials";
+	Delete:"https://carbonldp.com/ns/v1/security#Delete";
+	Download:"https://carbonldp.com/ns/v1/security#Download";
+	Extend:"https://carbonldp.com/ns/v1/security#Extend";
+	ManageSecurity:"https://carbonldp.com/ns/v1/security#ManageSecurity";
+	ProtectedDocument:"https://carbonldp.com/ns/v1/security#ProtectedDocument";
+	Read:"https://carbonldp.com/ns/v1/security#Read";
+	RemoveMember:"https://carbonldp.com/ns/v1/security#RemoveMember";
+	Role:"https://carbonldp.com/ns/v1/security#Role";
+	Ticket:"https://carbonldp.com/ns/v1/security#Ticket";
+	Token:"https://carbonldp.com/ns/v1/security#Token";
+	Update:"https://carbonldp.com/ns/v1/security#Update";
+	Upload:"https://carbonldp.com/ns/v1/security#Upload";
+	User:"https://carbonldp.com/ns/v1/security#User";
 
-	export const accessControlEntry:string = namespace + "accessControlEntry";
-	export const accessControlList:string = namespace + "accessControlList";
-	export const accessTo:string = namespace + "accessTo";
-	export const allowsOrigin:string = namespace + "allowsOrigin";
-	export const childRole:string = namespace + "childRole";
-	export const credentials:string = namespace + "credentials";
-	export const credentialsOf:string = namespace + "credentialsOf";
-	export const description:string = namespace + "description";
-	export const enabled:string = namespace + "enabled";
-	export const expirationTime:string = namespace + "expirationTime";
-	export const forIRI:string = namespace + "forIRI";
-	export const granting:string = namespace + "granting";
-	export const inheritableEntry:string = namespace + "inheritableEntry";
-	export const name:string = namespace + "name";
-	export const parentRole:string = namespace + "parentRole";
-	export const password:string = namespace + "password";
-	export const permission:string = namespace + "permission";
-	export const rootContainer:string = namespace + "rootContainer";
-	export const subject:string = namespace + "subject";
-	export const subjectClass:string = namespace + "subjectClass";
-	export const ticketKey:string = namespace + "ticketKey";
-	export const tokenKey:string = namespace + "tokenKey";
-	export const user:string = namespace + "user";
+	accessControlEntry:"https://carbonldp.com/ns/v1/security#accessControlEntry";
+	accessControlList:"https://carbonldp.com/ns/v1/security#accessControlList";
+	accessTo:"https://carbonldp.com/ns/v1/security#accessTo";
+	allowsOrigin:"https://carbonldp.com/ns/v1/security#allowsOrigin";
+	childRole:"https://carbonldp.com/ns/v1/security#childRole";
+	credentials:"https://carbonldp.com/ns/v1/security#credentials";
+	credentialsOf:"https://carbonldp.com/ns/v1/security#credentialsOf";
+	description:"https://carbonldp.com/ns/v1/security#description";
+	enabled:"https://carbonldp.com/ns/v1/security#enabled";
+	expirationTime:"https://carbonldp.com/ns/v1/security#expirationTime";
+	forIRI:"https://carbonldp.com/ns/v1/security#forIRI";
+	granting:"https://carbonldp.com/ns/v1/security#granting";
+	inheritableEntry:"https://carbonldp.com/ns/v1/security#inheritableEntry";
+	name:"https://carbonldp.com/ns/v1/security#name";
+	parentRole:"https://carbonldp.com/ns/v1/security#parentRole";
+	password:"https://carbonldp.com/ns/v1/security#password";
+	permission:"https://carbonldp.com/ns/v1/security#permission";
+	rootContainer:"https://carbonldp.com/ns/v1/security#rootContainer";
+	subject:"https://carbonldp.com/ns/v1/security#subject";
+	subjectClass:"https://carbonldp.com/ns/v1/security#subjectClass";
+	ticketKey:"https://carbonldp.com/ns/v1/security#ticketKey";
+	tokenKey:"https://carbonldp.com/ns/v1/security#tokenKey";
+	user:"https://carbonldp.com/ns/v1/security#user";
+}
+
+export const CS:CS = {
+	namespace:"https://carbonldp.com/ns/v1/security#",
+
+	AccessControlEntry:"https://carbonldp.com/ns/v1/security#AccessControlEntry",
+	AccessControlList:"https://carbonldp.com/ns/v1/security#AccessControlList",
+	AllOrigins:"https://carbonldp.com/ns/v1/security#AllOrigins",
+	CreateAccessPoint:"https://carbonldp.com/ns/v1/security#CreateAccessPoint",
+	CreateChild:"https://carbonldp.com/ns/v1/security#CreateChild",
+	Credentials:"https://carbonldp.com/ns/v1/security#Credentials",
+	Delete:"https://carbonldp.com/ns/v1/security#Delete",
+	Download:"https://carbonldp.com/ns/v1/security#Download",
+	Extend:"https://carbonldp.com/ns/v1/security#Extend",
+	ManageSecurity:"https://carbonldp.com/ns/v1/security#ManageSecurity",
+	ProtectedDocument:"https://carbonldp.com/ns/v1/security#ProtectedDocument",
+	Read:"https://carbonldp.com/ns/v1/security#Read",
+	RemoveMember:"https://carbonldp.com/ns/v1/security#RemoveMember",
+	Role:"https://carbonldp.com/ns/v1/security#Role",
+	Ticket:"https://carbonldp.com/ns/v1/security#Ticket",
+	Token:"https://carbonldp.com/ns/v1/security#Token",
+	Update:"https://carbonldp.com/ns/v1/security#Update",
+	Upload:"https://carbonldp.com/ns/v1/security#Upload",
+	User:"https://carbonldp.com/ns/v1/security#User",
+
+	accessControlEntry:"https://carbonldp.com/ns/v1/security#accessControlEntry",
+	accessControlList:"https://carbonldp.com/ns/v1/security#accessControlList",
+	accessTo:"https://carbonldp.com/ns/v1/security#accessTo",
+	allowsOrigin:"https://carbonldp.com/ns/v1/security#allowsOrigin",
+	childRole:"https://carbonldp.com/ns/v1/security#childRole",
+	credentials:"https://carbonldp.com/ns/v1/security#credentials",
+	credentialsOf:"https://carbonldp.com/ns/v1/security#credentialsOf",
+	description:"https://carbonldp.com/ns/v1/security#description",
+	enabled:"https://carbonldp.com/ns/v1/security#enabled",
+	expirationTime:"https://carbonldp.com/ns/v1/security#expirationTime",
+	forIRI:"https://carbonldp.com/ns/v1/security#forIRI",
+	granting:"https://carbonldp.com/ns/v1/security#granting",
+	inheritableEntry:"https://carbonldp.com/ns/v1/security#inheritableEntry",
+	name:"https://carbonldp.com/ns/v1/security#name",
+	parentRole:"https://carbonldp.com/ns/v1/security#parentRole",
+	password:"https://carbonldp.com/ns/v1/security#password",
+	permission:"https://carbonldp.com/ns/v1/security#permission",
+	rootContainer:"https://carbonldp.com/ns/v1/security#rootContainer",
+	subject:"https://carbonldp.com/ns/v1/security#subject",
+	subjectClass:"https://carbonldp.com/ns/v1/security#subjectClass",
+	ticketKey:"https://carbonldp.com/ns/v1/security#ticketKey",
+	tokenKey:"https://carbonldp.com/ns/v1/security#tokenKey",
+	user:"https://carbonldp.com/ns/v1/security#user",
 }

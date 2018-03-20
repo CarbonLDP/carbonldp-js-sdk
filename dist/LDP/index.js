@@ -4,9 +4,9 @@ function __export(m) {
 }
 Object.defineProperty(exports, "__esModule", { value: true });
 __export(require("./AddMemberAction"));
-__export(require("./CarbonError"));
-__export(require("./CarbonMap"));
-__export(require("./CarbonMapEntry"));
+__export(require("./Error"));
+__export(require("./Map"));
+__export(require("./MapEntry"));
 __export(require("./DirectContainer"));
 __export(require("./DocumentMetadata"));
 __export(require("./ErrorResponse"));

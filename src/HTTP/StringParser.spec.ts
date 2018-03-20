@@ -18,7 +18,7 @@ describe( module( "carbonldp/HTTP/StringParser" ), ():void => {
 
 	describe( clazz(
 		"CarbonLDP.HTTP.StringParser",
-		"Parses a `CarbonLDP.HTTP.Response` and returns a string.", [
+		"Parses the body of a `CarbonLDP.HTTP.Response` and returns a string.", [
 			"CarbonLDP.HTTP.Parser<string>",
 		]
 	), ():void => {
@@ -28,7 +28,7 @@ describe( module( "carbonldp/HTTP/StringParser" ), ():void => {
 			INSTANCE,
 			"parse",
 			"Gets a string and returns a Promise with the same string.", [
-				{ name: "body", type: "CarbonLDP.HTTP.Response" },
+				{ name: "body", type: "string" },
 			],
 			{ type: "Promise<string>" }
 		), ( done:DoneFn ):void => {

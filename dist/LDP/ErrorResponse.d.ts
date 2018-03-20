@@ -1,9 +1,9 @@
 import { ModelFactory } from "../ModelFactory";
 import { ObjectSchema } from "../ObjectSchema";
 import { Resource } from "../Resource";
-import { CarbonError } from "./CarbonError";
+import { Error } from "./Error";
 export interface ErrorResponse extends Resource {
-    errors: CarbonError[];
+    errors: Error[];
     requestID: string;
     statusCode: number;
 }

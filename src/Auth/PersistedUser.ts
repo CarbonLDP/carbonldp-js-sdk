@@ -1,10 +1,8 @@
 import { Documents } from "../Documents";
 import { RequestOptions } from "../HTTP/Request";
-import { Response } from "../HTTP/Response";
+import { PersistedProtectedDocument } from "../PersistedProtectedDocument";
 import { Pointer } from "../Pointer";
 import { CS } from "../Vocabularies/CS";
-import { PersistedProtectedDocument } from "./../PersistedProtectedDocument";
-import * as SELECTResults from "../SPARQL/SelectResults";
 import * as Utils from "./../Utils";
 import * as PersistedCredentials from "./PersistedCredentials";
 
@@ -12,9 +10,9 @@ export interface Class extends PersistedProtectedDocument {
 	name?:string;
 	credentials?:PersistedCredentials.Class;
 
-	enableCredentials( requestOptions?:RequestOptions ):Promise<[ Class, Response[] ]>;
+	enableCredentials( requestOptions?:RequestOptions ):Promise<Class>;
 
-	disableCredentials( requestOptions?:RequestOptions ):Promise<[ Class, Response[] ]>;
+	disableCredentials( requestOptions?:RequestOptions ):Promise<Class>;
 }
 
 export class Factory {
@@ -58,29 +56,24 @@ export class Factory {
 
 }
 
-function changeEnabledCredentials( this:Class, enabled:boolean, requestOptions?:RequestOptions ):Promise<[ Class, Response[] ]> {
-	const promise:Promise<void | Response> = "credentials" in this ?
-		Promise.resolve() : obtainCredentials( this );
-
-	let responses:Response[] = [];
-	return promise.then( ( response ) => {
-		if( response ) responses.push( response );
-
-		if( enabled ) return this.credentials.enable( requestOptions );
-		return this.credentials.disable( requestOptions );
-	} ).then<[ Class, Response[] ]>( ( [ _credentials, credentialsResponses ]:[ PersistedCredentials.Class, Response[] ] ) => {
-		responses.push( ...credentialsResponses );
-
-		return [ this, responses ];
-	} );
+function changeEnabledCredentials( this:Class, enabled:boolean, requestOptions?:RequestOptions ):Promise<Class> {
+	return ensureCredentials( this )
+		.then( () => {
+			if( enabled ) return this.credentials.enable( requestOptions );
+			return this.credentials.disable( requestOptions );
+		} ).then( () => {
+			return this;
+		} );
 }
 
-function obtainCredentials( user:Class ):Promise<Response> {
+function ensureCredentials( user:Class ):Promise<void> {
+	if( PersistedCredentials.Factory.hasClassProperties( user.credentials ) )
+		return Promise.resolve();
+
 	return user
-		.executeSELECTQuery( `BASE<${ user.id }>SELECT?c FROM<>WHERE{GRAPH<>{<><${ CS.credentials }>?c}}` )
-		.then( ( [ { bindings: [ credentialsBinding ] }, response ]:[ SELECTResults.SPARQLSelectResults<{ credentials:Pointer }>, Response ] ) => {
+		.executeSELECTQuery<{ credentials:Pointer }>( `BASE<${ user.id }>SELECT?c FROM<>WHERE{GRAPH<>{<><${ CS.credentials }>?c}}` )
+		.then( ( { bindings: [ credentialsBinding ] } ) => {
 			user.credentials = PersistedCredentials.Factory.decorate( credentialsBinding.credentials, user._documents );
-			return response;
 		} );
 }
 

@@ -1,18 +1,37 @@
-export namespace SHACL {
-	export const namespace:"http://www.w3.org/ns/shacl#" = "http://www.w3.org/ns/shacl#";
+export interface SHACL {
+	namespace:"http://www.w3.org/ns/shacl#";
 
-	export const ValidationReport:string = namespace + "ValidationReport";
-	export const ValidationResult:string = namespace + "ValidationResult";
+	ValidationReport:"http://www.w3.org/ns/shacl#ValidationReport";
+	ValidationResult:"http://www.w3.org/ns/shacl#ValidationResult";
 
-	export const conforms:string = namespace + "conforms";
-	export const detail:string = namespace + "detail";
-	export const focusNode:string = namespace + "focusNode";
-	export const result:string = namespace + "result";
-	export const resultMessage:string = namespace + "resultMessage";
-	export const resultPath:string = namespace + "resultPath";
-	export const resultSeverity:string = namespace + "resultSeverity";
-	export const shapesGraphWellFormed:string = namespace + "shapesGraphWellFormed";
-	export const sourceConstraintComponent:string = namespace + "sourceConstraintComponent";
-	export const sourceShape:string = namespace + "sourceShape";
-	export const value:string = namespace + "value";
+	conforms:"http://www.w3.org/ns/shacl#conforms";
+	detail:"http://www.w3.org/ns/shacl#detail";
+	focusNode:"http://www.w3.org/ns/shacl#focusNode";
+	result:"http://www.w3.org/ns/shacl#result";
+	resultMessage:"http://www.w3.org/ns/shacl#resultMessage";
+	resultPath:"http://www.w3.org/ns/shacl#resultPath";
+	resultSeverity:"http://www.w3.org/ns/shacl#resultSeverity";
+	shapesGraphWellFormed:"http://www.w3.org/ns/shacl#shapesGraphWellFormed";
+	sourceConstraintComponent:"http://www.w3.org/ns/shacl#sourceConstraintComponent";
+	sourceShape:"http://www.w3.org/ns/shacl#sourceShape";
+	value:"http://www.w3.org/ns/shacl#value";
 }
+
+export const SHACL:SHACL = {
+	namespace: "http://www.w3.org/ns/shacl#",
+
+	ValidationReport: "http://www.w3.org/ns/shacl#ValidationReport",
+	ValidationResult: "http://www.w3.org/ns/shacl#ValidationResult",
+
+	conforms: "http://www.w3.org/ns/shacl#conforms",
+	detail: "http://www.w3.org/ns/shacl#detail",
+	focusNode: "http://www.w3.org/ns/shacl#focusNode",
+	result: "http://www.w3.org/ns/shacl#result",
+	resultMessage: "http://www.w3.org/ns/shacl#resultMessage",
+	resultPath: "http://www.w3.org/ns/shacl#resultPath",
+	resultSeverity: "http://www.w3.org/ns/shacl#resultSeverity",
+	shapesGraphWellFormed: "http://www.w3.org/ns/shacl#shapesGraphWellFormed",
+	sourceConstraintComponent: "http://www.w3.org/ns/shacl#sourceConstraintComponent",
+	sourceShape: "http://www.w3.org/ns/shacl#sourceShape",
+	value: "http://www.w3.org/ns/shacl#value",
+};

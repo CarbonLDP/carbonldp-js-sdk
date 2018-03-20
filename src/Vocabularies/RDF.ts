@@ -1,5 +1,11 @@
-export namespace RDF {
-	export const namespace:"http://www.w3.org/1999/02/22-rdf-syntax-ns#" = "http://www.w3.org/1999/02/22-rdf-syntax-ns#";
+export interface RDF {
+	namespace:"http://www.w3.org/1999/02/22-rdf-syntax-ns#";
 
-	export const type:string = namespace + "type";
+	type:"http://www.w3.org/1999/02/22-rdf-syntax-ns#type";
 }
+
+export const RDF:RDF = {
+	namespace: "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+
+	type: "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+};
