@@ -7,11 +7,11 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 }
 Object.defineProperty(exports, "__esModule", { value: true });
-var Utils_1 = require("../Utils");
 var Errors = __importStar(require("../Errors"));
-var URI_1 = require("../RDF/URI");
+var RDF_1 = require("../RDF");
+var Utils_1 = require("../Utils");
 var PersistedUser = __importStar(require("./PersistedUser"));
-var User = __importStar(require("./User"));
+var User_1 = require("./User");
 var Class = (function () {
     function Class(context) {
         this.context = context;
@@ -22,7 +22,7 @@ var Class = (function () {
     Class.prototype.registerWith = function (userObject, email, password, disabled) {
         var _this = this;
         return Utils_1.promiseMethod(function () {
-            var requestUser = User.Factory.createFrom(userObject, disabled);
+            var requestUser = User_1.User.createFrom(userObject, disabled);
             requestUser.setCredentials(email, password);
             var containerURI = _this.resolveURI();
             return _this
@@ -77,7 +77,7 @@ var Class = (function () {
         var usersContainer = this.context.resolve(this.getContainerURI());
         if (!relativeURI)
             return usersContainer;
-        var absoluteRoleURI = URI_1.URI.resolve(usersContainer, relativeURI);
+        var absoluteRoleURI = RDF_1.URI.resolve(usersContainer, relativeURI);
         if (!absoluteRoleURI.startsWith(usersContainer))
             throw new Errors.IllegalArgumentError("The URI \"" + relativeURI + "\" isn't a valid user URI.");
         return absoluteRoleURI;

@@ -1,4 +1,4 @@
-export class UsernameAndPasswordToken {
+export class BasicToken {
 	private _username:string;
 	private _password:string;
 

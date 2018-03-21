@@ -1,43 +1,50 @@
-import { IllegalArgumentError } from "./../Errors";
-import * as NS from "./../NS";
-import * as ObjectSchema from "./../ObjectSchema";
-import * as Resource from "./../Resource";
+import { ObjectSchema } from "../ObjectSchema";
+import { Resource } from "../Resource";
+import { CS } from "../Vocabularies/CS";
+import { XSD } from "../Vocabularies/XSD";
 
-export const RDF_CLASS:string = NS.CS.Class.UsernameAndPasswordCredentials;
 
-export const SCHEMA:ObjectSchema.Class = {
+export interface UsernameAndPasswordCredentials extends Resource {
+	username?:string;
+	password?:string;
+}
+
+
+export interface UsernameAndPasswordCredentialsFactory {
+	TYPE:CS[ "UsernameAndPasswordCredentials" ];
+	SCHEMA:ObjectSchema;
+
+	create( username?:string, password?:string ):UsernameAndPasswordCredentials;
+
+	createFrom<T extends object>( object:T, username?:string, password?:string ):T & UsernameAndPasswordCredentials;
+}
+
+const SCHEMA:ObjectSchema = {
 	"username": {
-		"@id": NS.CS.Predicate.username,
-		"@type": NS.XSD.DataType.string,
+		"@id": CS.username,
+		"@type": XSD.string,
 	},
 	"password": {
-		"@id": NS.CS.Predicate.password,
-		"@type": NS.XSD.DataType.string,
+		"@id": CS.password,
+		"@type": XSD.string,
 	},
 };
 
-export interface Class extends Resource.Class {
-	username:string;
-	password:string;
-}
+export const UsernameAndPasswordCredentials:UsernameAndPasswordCredentialsFactory = {
+	TYPE: CS.UsernameAndPasswordCredentials,
+	SCHEMA,
 
-export class Factory {
-	static create( username:string, password:string ):Class {
-		return Factory.createFrom( {}, username, password );
-	}
+	create( username?:string, password?:string ):UsernameAndPasswordCredentials {
+		return UsernameAndPasswordCredentials.createFrom( {}, username, password );
+	},
 
-	static createFrom<T extends object>( object:T, username:string, password:string ):T & Class {
-		const credentials:T & Resource.Class = Resource.Factory.createFrom<T>( object );
+	createFrom<T extends object>( object:T, username?:string, password?:string ):T & UsernameAndPasswordCredentials {
+		const credentials:T & UsernameAndPasswordCredentials = Resource.createFrom<T>( object );
 
-		if( ! username ) throw new IllegalArgumentError( "The credentials username cannot be empty." );
-		if( ! password ) throw new IllegalArgumentError( "The credentials password cannot be empty." );
+		credentials.addType( UsernameAndPasswordCredentials.TYPE );
+		if( username ) credentials.username = username;
+		if( password ) credentials.password = password;
 
-		credentials.addType( RDF_CLASS );
-		return Object.assign( credentials, {
-			username,
-			password,
-		} );
-	}
-}
-
-export default Class;
+		return credentials;
+	},
+};

@@ -1,14 +1,14 @@
 import { Context } from "../Context";
 import { Authenticator } from "./Authenticator";
+import { BasicToken } from "./BasicToken";
 import * as TokenCredentials from "./TokenCredentials";
-import * as BasicToken from "./BasicToken";
 export declare const TOKEN_CONTAINER: string;
-export declare class Class extends Authenticator<BasicToken.Class, TokenCredentials.Class> {
+export declare class Class extends Authenticator<BasicToken, TokenCredentials.Class> {
     protected context: Context;
     protected credentials: TokenCredentials.Class;
     constructor(context: Context);
     isAuthenticated(): boolean;
-    authenticate(tokenOrCredentials: BasicToken.Class | TokenCredentials.Class): Promise<TokenCredentials.Class>;
+    authenticate(tokenOrCredentials: BasicToken | TokenCredentials.Class): Promise<TokenCredentials.Class>;
     protected getHeaderValue(): string;
     private getCredentials(tokenOrCredentials);
 }

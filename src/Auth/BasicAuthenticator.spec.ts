@@ -10,13 +10,12 @@ import {
 	isDefined,
 	module,
 } from "../test/JasmineExtender";
-import * as Utils from "./../Utils";
 import { Authenticator } from "./Authenticator";
 
 import { BasicAuthenticator } from "./BasicAuthenticator";
 
-import * as BasicCredentials from "./BasicCredentials";
-import BasicToken from "./BasicToken";
+import { BasicCredentials } from "./BasicCredentials";
+import { BasicToken } from "./BasicToken";
 
 describe( module( "carbonldp/Auth/BasicAuthenticator" ), ():void => {
 
@@ -51,7 +50,7 @@ describe( module( "carbonldp/Auth/BasicAuthenticator" ), ():void => {
 			let authenticator:BasicAuthenticator = new BasicAuthenticator();
 
 			expect( authenticator.isAuthenticated ).toBeDefined();
-			expect( Utils.isFunction( authenticator.isAuthenticated ) ).toBeDefined();
+			expect( authenticator.isAuthenticated ).toEqual( jasmine.any( Function ) );
 
 			expect( authenticator.isAuthenticated() ).toEqual( false );
 
@@ -72,7 +71,7 @@ describe( module( "carbonldp/Auth/BasicAuthenticator" ), ():void => {
 			"Stores credentials to authenticate future requests.", [
 				{ name: "authenticationToken", type: "CarbonLDP.Auth.BasicToken" },
 			],
-			{ type: "Promise<CarbonLDP.Auth.BasicCredentials.Class>" }
+			{ type: "Promise<CarbonLDP.Auth.BasicCredentials>" }
 		), ( done:{ ():void; fail:( error:any ) => void } ):void => {
 
 			// Property Integrity
@@ -80,7 +79,7 @@ describe( module( "carbonldp/Auth/BasicAuthenticator" ), ():void => {
 				let authenticator:BasicAuthenticator = new BasicAuthenticator();
 
 				expect( authenticator.authenticate ).toBeDefined();
-				expect( Utils.isFunction( authenticator.authenticate ) ).toEqual( true );
+				expect( authenticator.authenticate ).toEqual( jasmine.any( Function ) );
 			})();
 
 			let promises:Promise<any>[] = [];
@@ -88,13 +87,13 @@ describe( module( "carbonldp/Auth/BasicAuthenticator" ), ():void => {
 			// Successful Authentication
 			(() => {
 				let authenticator:BasicAuthenticator = new BasicAuthenticator();
-				let promise:Promise<BasicCredentials.Class>;
+				let promise:Promise<BasicCredentials>;
 				promise = authenticator.authenticate( new BasicToken( "foo", "foo" ) );
 
 				expect( ! ! promise ).toEqual( true );
 				expect( promise instanceof Promise ).toEqual( true );
 
-				promises.push( promise.then( ( credentials:BasicCredentials.Class ):void => {
+				promises.push( promise.then( ( credentials:BasicCredentials ):void => {
 					expect( authenticator.isAuthenticated() ).toEqual( true );
 
 					expect( credentials ).toBeDefined();
@@ -102,17 +101,17 @@ describe( module( "carbonldp/Auth/BasicAuthenticator" ), ():void => {
 
 					expect( "username" in credentials ).toEqual( true );
 					expect( ! ! credentials.username ).toEqual( true );
-					expect( Utils.isString( credentials.username ) ).toEqual( true );
+					expect( credentials.username ).toEqual( jasmine.any( String ) );
 
 					expect( "password" in credentials ).toEqual( true );
 					expect( ! ! credentials.password ).toEqual( true );
-					expect( Utils.isString( credentials.password ) ).toEqual( true );
+					expect( credentials.password ).toEqual( jasmine.any( String ) );
 				}, done ) );
 			})();
 
 			(() => {
 				let unsuccessfulAuthenticator:BasicAuthenticator = new BasicAuthenticator();
-				let promise:Promise<BasicCredentials.Class>;
+				let promise:Promise<BasicCredentials>;
 				promise = unsuccessfulAuthenticator.authenticate( new BasicToken( null, null ) );
 
 				expect( ! ! promise ).toEqual( true );
@@ -144,7 +143,7 @@ describe( module( "carbonldp/Auth/BasicAuthenticator" ), ():void => {
 			let authenticator:BasicAuthenticator = new BasicAuthenticator();
 
 			expect( authenticator.addAuthentication ).toBeDefined();
-			expect( Utils.isFunction( authenticator.addAuthentication ) ).toEqual( true );
+			expect( authenticator.addAuthentication ).toEqual( jasmine.any( Function ) );
 
 			expect( ():void => {
 				authenticator.addAuthentication( {} );
@@ -154,7 +153,7 @@ describe( module( "carbonldp/Auth/BasicAuthenticator" ), ():void => {
 				let requestOptions:RequestOptions = authenticator.addAuthentication( {} );
 
 				expect( ! ! requestOptions ).toEqual( true );
-				expect( Utils.isObject( requestOptions ) ).toEqual( true );
+				expect( requestOptions ).toEqual( jasmine.any( Object ) );
 				expect( "headers" in requestOptions ).toEqual( true );
 				expect( requestOptions.headers instanceof Map ).toEqual( true );
 				expect( requestOptions.headers.has( "authorization" ) ).toEqual( true );
@@ -166,7 +165,7 @@ describe( module( "carbonldp/Auth/BasicAuthenticator" ), ():void => {
 
 				let authorization:string = authorizationHeader.toString();
 
-				expect( Utils.StringUtils.startsWith( authorization, "Basic " ) ).toEqual( true );
+				expect( authorization ).toMatch( /^Basic/ );
 
 				let auth:string = (typeof atob !== "undefined") ? atob( authorization.substring( 6 ) ) : (new Buffer( authorization.substring( 6 ), "base64" )).toString( "utf8" );
 				expect( auth ).toEqual( "user:pass" );
@@ -179,7 +178,7 @@ describe( module( "carbonldp/Auth/BasicAuthenticator" ), ():void => {
 				authenticator.addAuthentication( requestOptions );
 
 				expect( ! ! requestOptions ).toEqual( true );
-				expect( Utils.isObject( requestOptions ) ).toEqual( true );
+				expect( requestOptions ).toEqual( jasmine.any( Object ) );
 				expect( "headers" in requestOptions ).toEqual( true );
 				expect( requestOptions.headers instanceof Map ).toEqual( true );
 				expect( requestOptions.headers.size ).toEqual( 1 );
@@ -192,7 +191,7 @@ describe( module( "carbonldp/Auth/BasicAuthenticator" ), ():void => {
 
 				let authorization:string = authorizationHeader.toString();
 
-				expect( Utils.StringUtils.startsWith( authorization, "Basic " ) ).toEqual( true );
+				expect( authorization ).toMatch( /^Basic/ );
 
 				let auth:string = (typeof atob !== "undefined") ? atob( authorization.substring( 6 ) ) : (new Buffer( authorization.substring( 6 ), "base64" )).toString( "utf8" );
 				expect( auth ).toEqual( "user:pass" );
@@ -207,7 +206,7 @@ describe( module( "carbonldp/Auth/BasicAuthenticator" ), ():void => {
 				authenticator.addAuthentication( requestOptions );
 
 				expect( ! ! requestOptions ).toEqual( true );
-				expect( Utils.isObject( requestOptions ) ).toEqual( true );
+				expect( requestOptions ).toEqual( jasmine.any( Object ) );
 				expect( "headers" in requestOptions ).toEqual( true );
 				expect( requestOptions.headers instanceof Map ).toEqual( true );
 				expect( requestOptions.headers.size ).toEqual( 3 );
@@ -222,7 +221,7 @@ describe( module( "carbonldp/Auth/BasicAuthenticator" ), ():void => {
 
 				let authorization:string = authorizationHeader.toString();
 
-				expect( Utils.StringUtils.startsWith( authorization, "Basic " ) ).toEqual( true );
+				expect( authorization ).toMatch( /^Basic/ );
 
 				let auth:string = (typeof atob !== "undefined") ? atob( authorization.substring( 6 ) ) : (new Buffer( authorization.substring( 6 ), "base64" )).toString( "utf8" );
 				expect( auth ).toEqual( "user:pass" );
@@ -238,7 +237,7 @@ describe( module( "carbonldp/Auth/BasicAuthenticator" ), ():void => {
 				authenticator.addAuthentication( requestOptions );
 
 				expect( ! ! requestOptions ).toEqual( true );
-				expect( Utils.isObject( requestOptions ) ).toEqual( true );
+				expect( requestOptions ).toEqual( jasmine.any( Object ) );
 				expect( "headers" in requestOptions ).toEqual( true );
 				expect( requestOptions.headers instanceof Map ).toEqual( true );
 				expect( requestOptions.headers.size ).toEqual( 3 );
@@ -253,7 +252,7 @@ describe( module( "carbonldp/Auth/BasicAuthenticator" ), ():void => {
 
 				let authorization:string = authorizationHeader.toString();
 
-				expect( Utils.StringUtils.startsWith( authorization, "Another " ) ).toEqual( true );
+				expect( authorization ).toMatch( /^Another/ );
 
 				let auth:string = (typeof atob !== "undefined") ? atob( authorization.substring( 7 ) ) : (new Buffer( authorization.substring( 7 ), "base64" )).toString( "utf8" );
 				expect( auth ).toEqual( "another-authorization-type" );
@@ -269,7 +268,7 @@ describe( module( "carbonldp/Auth/BasicAuthenticator" ), ():void => {
 				authenticator.addAuthentication( requestOptions );
 
 				expect( ! ! requestOptions ).toEqual( true );
-				expect( Utils.isObject( requestOptions ) ).toEqual( true );
+				expect( requestOptions ).toEqual( jasmine.any( Object ) );
 				expect( "headers" in requestOptions ).toEqual( true );
 				expect( requestOptions.headers instanceof Map ).toEqual( true );
 				expect( requestOptions.headers.size ).toEqual( 3 );
@@ -284,7 +283,7 @@ describe( module( "carbonldp/Auth/BasicAuthenticator" ), ():void => {
 
 				let authorization:string = authorizationHeader.toString();
 
-				expect( Utils.StringUtils.startsWith( authorization, "Basic " ) ).toEqual( true );
+				expect( authorization ).toMatch( /^Basic/ );
 
 				let auth:string = (typeof atob !== "undefined") ? atob( authorization.substring( 6 ) ) : (new Buffer( authorization.substring( 6 ), "base64" )).toString( "utf8" );
 				expect( auth ).toEqual( "another-user:another-pass" );
@@ -302,7 +301,7 @@ describe( module( "carbonldp/Auth/BasicAuthenticator" ), ():void => {
 			let authenticator:BasicAuthenticator = new BasicAuthenticator();
 
 			expect( authenticator.clearAuthentication ).toBeDefined();
-			expect( Utils.isFunction( authenticator.clearAuthentication ) ).toEqual( true );
+			expect( authenticator.clearAuthentication ).toEqual( jasmine.any( Function ) );
 
 			expect( () => authenticator.clearAuthentication() ).not.toThrow();
 

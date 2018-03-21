@@ -1,46 +1,33 @@
 "use strict";
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
-    result["default"] = mod;
-    return result;
-}
 Object.defineProperty(exports, "__esModule", { value: true });
-var Errors_1 = require("./../Errors");
-var NS = __importStar(require("./../NS"));
-var Resource = __importStar(require("./../Resource"));
-exports.RDF_CLASS = NS.CS.Class.UsernameAndPasswordCredentials;
-exports.SCHEMA = {
+var Resource_1 = require("../Resource");
+var CS_1 = require("../Vocabularies/CS");
+var XSD_1 = require("../Vocabularies/XSD");
+var SCHEMA = {
     "username": {
-        "@id": NS.CS.Predicate.username,
-        "@type": NS.XSD.DataType.string,
+        "@id": CS_1.CS.username,
+        "@type": XSD_1.XSD.string,
     },
     "password": {
-        "@id": NS.CS.Predicate.password,
-        "@type": NS.XSD.DataType.string,
+        "@id": CS_1.CS.password,
+        "@type": XSD_1.XSD.string,
     },
 };
-var Factory = (function () {
-    function Factory() {
-    }
-    Factory.create = function (username, password) {
-        return Factory.createFrom({}, username, password);
-    };
-    Factory.createFrom = function (object, username, password) {
-        var credentials = Resource.Factory.createFrom(object);
-        if (!username)
-            throw new Errors_1.IllegalArgumentError("The credentials username cannot be empty.");
-        if (!password)
-            throw new Errors_1.IllegalArgumentError("The credentials password cannot be empty.");
-        credentials.addType(exports.RDF_CLASS);
-        return Object.assign(credentials, {
-            username: username,
-            password: password,
-        });
-    };
-    return Factory;
-}());
-exports.Factory = Factory;
+exports.UsernameAndPasswordCredentials = {
+    TYPE: CS_1.CS.UsernameAndPasswordCredentials,
+    SCHEMA: SCHEMA,
+    create: function (username, password) {
+        return exports.UsernameAndPasswordCredentials.createFrom({}, username, password);
+    },
+    createFrom: function (object, username, password) {
+        var credentials = Resource_1.Resource.createFrom(object);
+        credentials.addType(exports.UsernameAndPasswordCredentials.TYPE);
+        if (username)
+            credentials.username = username;
+        if (password)
+            credentials.password = password;
+        return credentials;
+    },
+};
 
 //# sourceMappingURL=UsernameAndPasswordCredentials.js.map

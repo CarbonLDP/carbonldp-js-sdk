@@ -1,6 +1,5 @@
 import { AbstractContext } from "../AbstractContext";
 import * as Errors from "../Errors";
-import { RequestOptions } from "../HTTP/Request";
 import {
 	clazz,
 	constructor,
@@ -11,18 +10,14 @@ import {
 	method,
 	module,
 } from "../test/JasmineExtender";
-
-
-import { CS } from "../Vocabularies/CS";
-import { VCARD } from "../Vocabularies/VCARD";
 import * as Utils from "./../Utils";
 import * as PersistedUser from "./PersistedUser";
-import * as User from "./User";
+import { User } from "./User";
 
 import * as Users from "./Users";
 
 
-describe( module( "carbonldp/Auth/Users" ), ():void => {
+xdescribe( module( "carbonldp/Auth/Users" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( Users ).toBeDefined();
@@ -30,7 +25,7 @@ describe( module( "carbonldp/Auth/Users" ), ():void => {
 	} );
 
 	describe( clazz(
-		"CarbonLDP.Auth.Users.Class",
+		"CarbonLDP.Auth.Users",
 		"Abstract class for manage Users of a determined context."
 	), ():void => {
 
@@ -133,9 +128,9 @@ describe( module( "carbonldp/Auth/Users" ), ():void => {
 						done.fail( "Should not resolve" );
 					} )
 					.catch( () => {
-						const user:User.Class = spy.calls.mostRecent().args[ 1 ];
+						const user:User = spy.calls.mostRecent().args[ 1 ];
 
-						expect( User.Factory.hasClassProperties( user ) ).toBe( true );
+						expect( User.isDecorated( user ) ).toBe( true );
 						expect( user ).toEqual( jasmine.objectContaining( {
 							credentials: jasmine.objectContaining( {
 								types: jasmine.arrayContaining( [
@@ -167,9 +162,9 @@ describe( module( "carbonldp/Auth/Users" ), ():void => {
 						done.fail( "Should not resolve" );
 					} )
 					.catch( () => {
-						const user:User.Class = spy.calls.mostRecent().args[ 1 ];
+						const user:User = spy.calls.mostRecent().args[ 1 ];
 
-						expect( User.Factory.hasClassProperties( user ) ).toBe( true );
+						expect( User.isDecorated( user ) ).toBe( true );
 						expect( user ).toEqual( jasmine.objectContaining( {
 							disabled: true,
 							credentials: jasmine.objectContaining( {
@@ -202,7 +197,7 @@ describe( module( "carbonldp/Auth/Users" ), ():void => {
 					{ name: "email", type: "string" },
 					{ name: "password", type: "string" },
 				],
-				{ type: "Promise<[ Carbon.Auth.PersistedUser.Class, Carbon.HTTP.Response.Class ]>" }
+				{ type: "Promise<[ CarbonLDP.Auth.PersistedUser.Class, CarbonLDP.HTTP.Response.Class ]>" }
 			), ():void => {} );
 
 			it( "should exists", ():void => {
@@ -243,10 +238,10 @@ describe( module( "carbonldp/Auth/Users" ), ():void => {
 						done.fail( "Should not resolve" );
 					} )
 					.catch( () => {
-						const user:User.Class = spy.calls.mostRecent().args[ 1 ];
+						const user:User = spy.calls.mostRecent().args[ 1 ];
 
 						expect( object ).toBe( user );
-						expect( User.Factory.hasClassProperties( user ) ).toBe( true );
+						expect( User.isDecorated( user ) ).toBe( true );
 						expect( user ).toEqual( jasmine.objectContaining( {
 							the: "object",
 							credentials: jasmine.objectContaining( {
@@ -282,7 +277,7 @@ describe( module( "carbonldp/Auth/Users" ), ():void => {
 						done.fail( "Should not resolve" );
 					} )
 					.catch( () => {
-						const user:User.Class = spy.calls.mostRecent().args[ 1 ];
+						const user:User = spy.calls.mostRecent().args[ 1 ];
 
 						expect( object ).toBe( user );
 						expect( user ).toEqual( jasmine.objectContaining( {
@@ -322,19 +317,19 @@ describe( module( "carbonldp/Auth/Users" ), ():void => {
 				[ "T extends object" ],
 				"Retrieves the user specified from the current context.", [
 					{ name: "userURI", type: "string", description: "The URI of the user to retrieve." },
-					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
-					{ name: "queryBuilderFn", type: "( queryBuilder:Carbon.SPARQL.QueryDocument.QueryDocumentBuilder.Class ) => Carbon.SPARQL.QueryDocument.QueryDocumentBuilder.Class", optional: true, description: "Function that receives a the builder that helps you to construct the retrieval query.\nThe same builder must be returned." },
+					{ name: "requestOptions", type: "CarbonLDP.HTTP.Request.Options", optional: true },
+					{ name: "queryBuilderFn", type: "( queryBuilder:CarbonLDP.SPARQL.QueryDocument.QueryDocumentBuilder.Class ) => CarbonLDP.SPARQL.QueryDocument.QueryDocumentBuilder.Class", optional: true, description: "Function that receives a the builder that helps you to construct the retrieval query.\nThe same builder must be returned." },
 				],
-				{ type: "Promise<[ Carbon.Auth.PersistedUser.Class, Carbon.HTTP.Response.Class ]>" }
+				{ type: "Promise<[ CarbonLDP.Auth.PersistedUser.Class, CarbonLDP.HTTP.Response.Class ]>" }
 			), ():void => {} );
 
 			it( hasSignature(
 				[ "T extends object" ],
 				"Retrieves the user specified from the current context.", [
 					{ name: "userURI", type: "string", description: "The URI of the user to retrieve." },
-					{ name: "queryBuilderFn", type: "( queryBuilder:Carbon.SPARQL.QueryDocument.QueryDocumentBuilder.Class ) => Carbon.SPARQL.QueryDocument.QueryDocumentBuilder.Class", optional: true, description: "Function that receives a the builder that helps you to construct the retrieval query.\nThe same builder must be returned." },
+					{ name: "queryBuilderFn", type: "( queryBuilder:CarbonLDP.SPARQL.QueryDocument.QueryDocumentBuilder.Class ) => CarbonLDP.SPARQL.QueryDocument.QueryDocumentBuilder.Class", optional: true, description: "Function that receives a the builder that helps you to construct the retrieval query.\nThe same builder must be returned." },
 				],
-				{ type: "Promise<[ Carbon.Auth.PersistedUser.Class, Carbon.HTTP.Response.Class ]>" }
+				{ type: "Promise<[ CarbonLDP.Auth.PersistedUser.Class, CarbonLDP.HTTP.Response.Class ]>" }
 			), ():void => {} );
 
 			it( "should exists", ():void => {
@@ -590,9 +585,9 @@ describe( module( "carbonldp/Auth/Users" ), ():void => {
 			it( hasSignature(
 				"Deactivate the account of the specified user.",
 				[
-					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true, description: "Customizable options for the request." },
+					{ name: "requestOptions", type: "CarbonLDP.HTTP.Request.Options", optional: true, description: "Customizable options for the request." },
 				],
-				{ type: "Promise<[ Carbon.Auth.PersistedUser.Class, Carbon.HTTP.Response.Class[] ]>" }
+				{ type: "Promise<[ CarbonLDP.Auth.PersistedUser.Class, CarbonLDP.HTTP.Response.Class[] ]>" }
 			), ():void => {} );
 
 			it( "should exists", ():void => {
@@ -770,7 +765,7 @@ describe( module( "carbonldp/Auth/Users" ), ():void => {
 
 		} );
 
-		it( hasDefaultExport( "CarbonLDP.Auth.Users.Class" ), ():void => {
+		it( hasDefaultExport( "CarbonLDP.Auth.Users" ), ():void => {
 			expect( Users.default ).toBeDefined();
 			expect( Users.default ).toBe( Users.Class );
 		} );

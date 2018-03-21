@@ -1,10 +1,10 @@
-import { Minus } from "../Utils";
 import { Document } from "../Document";
 import { Documents } from "../Documents";
-import { RequestOptions } from "../HTTP/Request";
+import { RequestOptions } from "../HTTP";
 import { PersistedProtectedDocument } from "../PersistedProtectedDocument";
-import * as User from "./User";
-export interface Class extends Minus<User.Class, Document>, PersistedProtectedDocument {
+import { Minus } from "../Utils";
+import { User } from "./User";
+export interface Class extends Minus<User, Document>, PersistedProtectedDocument {
     enable(requestOptions?: RequestOptions): Promise<Class>;
     disable(requestOptions?: RequestOptions): Promise<Class>;
 }

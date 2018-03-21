@@ -1,11 +1,14 @@
-import * as ObjectSchema from "./../ObjectSchema";
-import * as Pointer from "./../Pointer";
-import * as LDAPCredentials from "./LDAPCredentials";
-import * as UsernameAndPasswordCredentials from "./UsernameAndPasswordCredentials";
-export declare const RDF_CLASS: string;
-export declare const SCHEMA: ObjectSchema.Class;
-export interface Class {
-    user: Pointer.Class;
-    credentials: (UsernameAndPasswordCredentials.Class | LDAPCredentials.Class)[];
+import { CS } from "../Vocabularies";
+import { ObjectSchema } from "../ObjectSchema";
+import { Pointer } from "../Pointer";
+import { LDAPCredentials } from "./LDAPCredentials";
+import { UsernameAndPasswordCredentials } from "./UsernameAndPasswordCredentials";
+export interface CredentialsSet {
+    user: Pointer;
+    credentials: (UsernameAndPasswordCredentials | LDAPCredentials)[];
 }
-export default Class;
+export interface CredentialsSetFactory {
+    TYPE: CS["CredentialsSet"];
+    SCHEMA: ObjectSchema;
+}
+export declare const CredentialsSet: CredentialsSetFactory;

@@ -1,21 +1,21 @@
 import { IllegalArgumentError } from "../Errors";
 import { promiseMethod } from "../Utils";
 import { Authenticator } from "./Authenticator";
-import * as BasicCredentials from "./BasicCredentials";
-import * as BasicToken from "./BasicToken";
+import { BasicCredentials } from "./BasicCredentials";
+import { BasicToken } from "./BasicToken";
 
-export class BasicAuthenticator extends Authenticator<BasicToken.Class, BasicCredentials.Class> {
+export class BasicAuthenticator extends Authenticator<BasicToken, BasicCredentials> {
 
-	protected credentials:BasicCredentials.Class;
+	protected credentials:BasicCredentials;
 
-	authenticate( authenticationToken:BasicToken.Class ):Promise<BasicCredentials.Class> {
+	authenticate( authenticationToken:BasicToken ):Promise<BasicCredentials> {
 		return promiseMethod( () => {
 			if( authenticationToken === null ) throw new IllegalArgumentError( "The authenticationToken cannot be null." );
 
 			if( ! authenticationToken.username ) throw new IllegalArgumentError( "The username cannot be empty." );
 			if( ! authenticationToken.password ) throw new IllegalArgumentError( "The password cannot be empty." );
 
-			this.credentials = new BasicCredentials.Class( authenticationToken.username, authenticationToken.password );
+			this.credentials = new BasicCredentials( authenticationToken.username, authenticationToken.password );
 
 			return this.credentials;
 		} );

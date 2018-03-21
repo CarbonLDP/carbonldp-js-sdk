@@ -9,18 +9,11 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
-    result["default"] = mod;
-    return result;
-}
 Object.defineProperty(exports, "__esModule", { value: true });
 var Errors_1 = require("../Errors");
 var Utils_1 = require("../Utils");
 var Authenticator_1 = require("./Authenticator");
-var BasicCredentials = __importStar(require("./BasicCredentials"));
+var BasicCredentials_1 = require("./BasicCredentials");
 var BasicAuthenticator = (function (_super) {
     __extends(BasicAuthenticator, _super);
     function BasicAuthenticator() {
@@ -35,7 +28,7 @@ var BasicAuthenticator = (function (_super) {
                 throw new Errors_1.IllegalArgumentError("The username cannot be empty.");
             if (!authenticationToken.password)
                 throw new Errors_1.IllegalArgumentError("The password cannot be empty.");
-            _this.credentials = new BasicCredentials.Class(authenticationToken.username, authenticationToken.password);
+            _this.credentials = new BasicCredentials_1.BasicCredentials(authenticationToken.username, authenticationToken.password);
             return _this.credentials;
         });
     };

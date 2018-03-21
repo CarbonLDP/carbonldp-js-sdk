@@ -1,4 +1,4 @@
-export declare class UsernameAndPasswordToken {
+export declare class BasicToken {
     private _username;
     private _password;
     constructor(username: string, password: string);

@@ -107,7 +107,7 @@ export function parseBoolean( value:string ):boolean {
 }
 
 export function forEachOwnProperty( object:Object, action:( name:string, value:any ) => ( boolean | void ) ):void {
-	if( ! ( isObject( object ) || isFunction( object ) ) ) throw new Error( "IllegalArgument" );
+	if( ! (isObject( object ) || isFunction( object )) ) throw new Error( "IllegalArgument" );
 	for( let name in object ) {
 		if( object.hasOwnProperty( name ) ) {
 			if( action( name, object[ name ] ) === false ) break;
@@ -179,7 +179,7 @@ export class ObjectUtils {
 				if( "__CarbonSDK_circularReferenceFlag" in property ) {
 					property = property.__CarbonSDK_circularReferenceFlag;
 				} else {
-					property = ! ( key in target ) || target[ key ].constructor !== property.constructor ?
+					property = ! (key in target) || target[ key ].constructor !== property.constructor ?
 						ObjectUtils.clone( property, config ) :
 						ObjectUtils.extend( target[ key ], property, config );
 				}
@@ -333,3 +333,7 @@ export class UUIDUtils {
 		} );
 	}
 }
+
+type Diff<T extends string, U extends string> = ( { [P in T]: P } & { [P in U]: never } & { [x:string]:never } )[T];
+
+export type Minus<T, U> = Pick<T, Diff<keyof T, keyof U>>;

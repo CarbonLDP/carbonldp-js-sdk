@@ -5,7 +5,6 @@ import { Resource } from "../Resource";
 import { ContextSettings } from "../Settings";
 import { C } from "../Vocabularies/C";
 import { CS } from "../Vocabularies/CS";
-import { VCARD } from "../Vocabularies/VCARD";
 import { XSD } from "../Vocabularies/XSD";
 import { AbstractContext } from "./../AbstractContext";
 import {
@@ -19,13 +18,13 @@ import {
 	module,
 } from "./../test/JasmineExtender";
 import * as Utils from "./../Utils";
+import { BasicToken } from "./BasicToken";
 import * as PersistedUser from "./PersistedUser";
 
 import * as TokenAuthenticator from "./TokenAuthenticator";
 import DefaultExport from "./TokenAuthenticator";
 
 import * as TokenCredentials from "./TokenCredentials";
-import BasicToken from "./BasicToken";
 
 describe( module( "carbonldp/Auth/TokenAuthenticator" ), ():void => {
 
@@ -43,7 +42,7 @@ describe( module( "carbonldp/Auth/TokenAuthenticator" ), ():void => {
 		"CarbonLDP.Auth.TokenAuthenticator.Class",
 		"Authenticates requests using JSON Web TokenCredentials (JWT) Authentication.",
 		[
-			"CarbonLDP.Auth.Authenticator.Class<CarbonLDP.Auth.BasicToken.Class, CarbonLDP.Auth.TokenCredentials.Class>",
+			"CarbonLDP.Auth.Authenticator.Class<CarbonLDP.Auth.BasicToken, CarbonLDP.Auth.TokenCredentials.Class>",
 		]
 	), ():void => {
 

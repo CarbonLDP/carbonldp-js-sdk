@@ -41,7 +41,7 @@ describe( module( "Carbon/Auth/TokenCredentials" ), ():void => {
 	it( hasProperty(
 		STATIC,
 		"SCHEMA",
-		"Carbon.ObjectSchema.Class"
+		"CarbonLDP.ObjectSchema"
 	), ():void => {
 		expect( TokenCredentials.SCHEMA ).toBeDefined();
 		expect( Utils.isObject( TokenCredentials.SCHEMA ) ).toBe( true );
@@ -71,7 +71,7 @@ describe( module( "Carbon/Auth/TokenCredentials" ), ():void => {
 		"Interface that represents an authentication token for every context."
 	), ():void => {
 
-		it( extendsClass( "Carbon.Resource.Class" ), ():void => {} );
+		it( extendsClass( "CarbonLDP.Resource" ), ():void => {} );
 
 		it( hasProperty(
 			OBLIGATORY,

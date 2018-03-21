@@ -1,7 +1,6 @@
 import {
 	clazz,
 	hasConstructor,
-	hasDefaultExport,
 	hasProperty,
 	INSTANCE,
 	isDefined,
@@ -9,33 +8,28 @@ import {
 } from "../test/JasmineExtender";
 import * as Utils from "./../Utils";
 
-import * as BasicCredentials from "./BasicCredentials";
+import { BasicCredentials } from "./BasicCredentials";
 
 describe( module( "Carbon/Auth/BasicCredentials" ), ():void => {
 
-	it( isDefined(), ():void => {
-		expect( BasicCredentials ).toBeDefined();
-		expect( Utils.isObject( BasicCredentials ) ).toBe( true );
-	} );
-
 	describe( clazz(
-		"Carbon.Auth.BasicCredentials.Class",
+		"CarbonLDP.Auth.BasicCredentials",
 		"Wrapper to manage Authentication Credentials in form of Username/Password."
 	), ():void => {
 
 		it( isDefined(), ():void => {
-			expect( BasicCredentials.Class ).toBeDefined();
-			expect( Utils.isFunction( BasicCredentials.Class ) ).toBe( true );
+			expect( BasicCredentials ).toBeDefined();
+			expect( Utils.isFunction( BasicCredentials ) ).toBe( true );
 		} );
 
 		it( hasConstructor( [
 			{ name: "username", type: "string" },
 			{ name: "password", type: "string" },
 		] ), ():void => {
-			let token:BasicCredentials.Class = new BasicCredentials.Class( "myUserName", "myPassword" );
+			let token:BasicCredentials = new BasicCredentials( "myUserName", "myPassword" );
 
 			expect( token ).toBeTruthy();
-			expect( token instanceof BasicCredentials.Class ).toBe( true );
+			expect( token instanceof BasicCredentials ).toBe( true );
 		} );
 
 		it( hasProperty(
@@ -43,7 +37,7 @@ describe( module( "Carbon/Auth/BasicCredentials" ), ():void => {
 			"username",
 			"string"
 		), ():void => {
-			let token:BasicCredentials.Class = new BasicCredentials.Class( "myUserName", "myPassword" );
+			let token:BasicCredentials = new BasicCredentials( "myUserName", "myPassword" );
 
 			expect( token.username ).toBeDefined();
 			expect( Utils.isString( token.username ) ).toBe( true );
@@ -56,7 +50,7 @@ describe( module( "Carbon/Auth/BasicCredentials" ), ():void => {
 			"password",
 			"string"
 		), ():void => {
-			let token:BasicCredentials.Class = new BasicCredentials.Class( "myUserName", "myPassword" );
+			let token:BasicCredentials = new BasicCredentials( "myUserName", "myPassword" );
 
 			expect( token.password ).toBeDefined();
 			expect( Utils.isString( token.password ) ).toBe( true );
@@ -64,11 +58,6 @@ describe( module( "Carbon/Auth/BasicCredentials" ), ():void => {
 			expect( token.password ).toBe( "myPassword" );
 		} );
 
-	} );
-
-	it( hasDefaultExport( "Carbon.Auth.BasicCredentials.Class" ), ():void => {
-		expect( BasicCredentials.default ).toBeDefined();
-		expect( BasicCredentials.default ).toBe( BasicCredentials.Class );
 	} );
 
 } );

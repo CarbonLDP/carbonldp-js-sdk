@@ -151,8 +151,12 @@ export interface PersistedDocument extends Document, PersistedResource, ServiceA
 
 	removeMembers( members:(Pointer | string)[], requestOptions?:RequestOptions ):Promise<void>;
 
+	removeAllMembers( requestOptions?:RequestOptions ):Promise<void>;
+
 
 	executeRawASKQuery( askQuery:string, requestOptions?:RequestOptions ):Promise<SPARQLRawResults>;
+
+	executeASKQuery( askQuery:string, requestOptions?:RequestOptions ):Promise<boolean>;
 
 	executeRawSELECTQuery( selectQuery:string, requestOptions?:RequestOptions ):Promise<SPARQLRawResults>;
 

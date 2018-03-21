@@ -1,24 +1,20 @@
 "use strict";
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
-    result["default"] = mod;
-    return result;
-}
 Object.defineProperty(exports, "__esModule", { value: true });
-var NS = __importStar(require("./../NS"));
-exports.RDF_CLASS = NS.CS.Class.CredentialsSet;
-exports.SCHEMA = {
+var Vocabularies_1 = require("../Vocabularies");
+var SCHEMA = {
     "user": {
-        "@id": NS.CS.Predicate.user,
+        "@id": Vocabularies_1.CS.user,
         "@type": "@id",
     },
     "credentials": {
-        "@id": NS.CS.Predicate.credentials,
+        "@id": Vocabularies_1.CS.credentials,
         "@type": "@id",
         "@container": "@set",
     },
+};
+exports.CredentialsSet = {
+    TYPE: Vocabularies_1.CS.CredentialsSet,
+    SCHEMA: SCHEMA,
 };
 
 //# sourceMappingURL=CredentialsSet.js.map

@@ -1,10 +1,13 @@
-import * as ObjectSchema from "./../ObjectSchema";
-import * as Pointer from "./../Pointer";
-import * as Resource from "./../Resource";
-export declare const RDF_CLASS: string;
-export declare const SCHEMA: ObjectSchema.Class;
-export interface Class extends Resource.Class {
-    ldapServer: Pointer.Class;
+import { ObjectSchema } from "../ObjectSchema";
+import { Pointer } from "../Pointer";
+import { Resource } from "../Resource";
+import { CS } from "../Vocabularies";
+export interface LDAPCredentials extends Resource {
+    ldapServer: Pointer;
     ldapUserDN: string;
 }
-export default Class;
+export interface LDAPCredentialsFactory {
+    TYPE: CS["LDAPCredentials"];
+    SCHEMA: ObjectSchema;
+}
+export declare const LDAPCredentials: LDAPCredentialsFactory;

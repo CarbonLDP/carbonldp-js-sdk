@@ -81,6 +81,15 @@ describe( module( "carbonldp/Vocabularies/CS" ), ():void => {
 
 		it( hasProperty(
 			OBLIGATORY,
+			"CredentialsSet",
+			"https://carbonldp.com/ns/v1/security#CredentialsSet"
+		), ():void => {
+			const target:CS[ "CredentialsSet" ] = "https://carbonldp.com/ns/v1/security#CredentialsSet";
+			expect( target ).toBeDefined();
+		} );
+
+		it( hasProperty(
+			OBLIGATORY,
 			"Delete",
 			"https://carbonldp.com/ns/v1/security#Delete"
 		), ():void => {
@@ -103,6 +112,15 @@ describe( module( "carbonldp/Vocabularies/CS" ), ():void => {
 			"https://carbonldp.com/ns/v1/security#Extend"
 		), ():void => {
 			const target:CS[ "Extend" ] = "https://carbonldp.com/ns/v1/security#Extend";
+			expect( target ).toBeDefined();
+		} );
+
+		it( hasProperty(
+			OBLIGATORY,
+			"LDAPCredentials",
+			"https://carbonldp.com/ns/v1/security#LDAPCredentials"
+		), ():void => {
+			const target:CS[ "LDAPCredentials" ] = "https://carbonldp.com/ns/v1/security#LDAPCredentials";
 			expect( target ).toBeDefined();
 		} );
 
@@ -195,6 +213,16 @@ describe( module( "carbonldp/Vocabularies/CS" ), ():void => {
 			const target:CS[ "User" ] = "https://carbonldp.com/ns/v1/security#User";
 			expect( target ).toBeDefined();
 		} );
+
+		it( hasProperty(
+			OBLIGATORY,
+			"UsernameAndPasswordCredentials",
+			"https://carbonldp.com/ns/v1/security#UsernameAndPasswordCredentials"
+		), ():void => {
+			const target:CS[ "UsernameAndPasswordCredentials" ] = "https://carbonldp.com/ns/v1/security#UsernameAndPasswordCredentials";
+			expect( target ).toBeDefined();
+		} );
+
 
 		it( hasProperty(
 			OBLIGATORY,
@@ -403,6 +431,15 @@ describe( module( "carbonldp/Vocabularies/CS" ), ():void => {
 			expect( target ).toBeDefined();
 		} );
 
+		it( hasProperty(
+			OBLIGATORY,
+			"username",
+			"https://carbonldp.com/ns/v1/security#username"
+		), ():void => {
+			const target:CS[ "username" ] = "https://carbonldp.com/ns/v1/security#username";
+			expect( target ).toBeDefined();
+		} );
+
 	} );
 
 	describe( property(
@@ -418,7 +455,7 @@ describe( module( "carbonldp/Vocabularies/CS" ), ():void => {
 		} );
 
 		it( "should test all exported IRIs", ():void => {
-			expect( Object.keys( CS ).length ).toBe( 43 );
+			expect( Object.keys( CS ).length ).toBe( 49 );
 		} );
 
 		it( "CS.namespace", ():void => {
@@ -521,6 +558,11 @@ describe( module( "carbonldp/Vocabularies/CS" ), ():void => {
 			expect( CS.User ).toBe( "https://carbonldp.com/ns/v1/security#User" );
 		} );
 
+		it( "CS.User", ():void => {
+			expect( CS.UsernameAndPasswordCredentials ).toEqual( jasmine.any( String ) );
+			expect( CS.UsernameAndPasswordCredentials ).toBe( "https://carbonldp.com/ns/v1/security#UsernameAndPasswordCredentials" );
+		} );
+
 		it( "CS.accessControlEntry", ():void => {
 			expect( CS.accessControlEntry ).toEqual( jasmine.any( String ) );
 			expect( CS.accessControlEntry ).toBe( "https://carbonldp.com/ns/v1/security#accessControlEntry" );
@@ -586,6 +628,16 @@ describe( module( "carbonldp/Vocabularies/CS" ), ():void => {
 			expect( CS.inheritableEntry ).toBe( "https://carbonldp.com/ns/v1/security#inheritableEntry" );
 		} );
 
+		it( "CS.ldapServer", ():void => {
+			expect( CS.ldapServer ).toEqual( jasmine.any( String ) );
+			expect( CS.ldapServer ).toBe( "https://carbonldp.com/ns/v1/security#ldapServer" );
+		} );
+
+		it( "CS.ldapUserDN", ():void => {
+			expect( CS.ldapUserDN ).toEqual( jasmine.any( String ) );
+			expect( CS.ldapUserDN ).toBe( "https://carbonldp.com/ns/v1/security#ldapUserDN" );
+		} );
+
 		it( "CS.name", ():void => {
 			expect( CS.name ).toEqual( jasmine.any( String ) );
 			expect( CS.name ).toBe( "https://carbonldp.com/ns/v1/security#name" );
@@ -634,6 +686,11 @@ describe( module( "carbonldp/Vocabularies/CS" ), ():void => {
 		it( "CS.user", ():void => {
 			expect( CS.user ).toEqual( jasmine.any( String ) );
 			expect( CS.user ).toBe( "https://carbonldp.com/ns/v1/security#user" );
+		} );
+
+		it( "CS.username", ():void => {
+			expect( CS.username ).toEqual( jasmine.any( String ) );
+			expect( CS.username ).toBe( "https://carbonldp.com/ns/v1/security#username" );
 		} );
 
 	} );

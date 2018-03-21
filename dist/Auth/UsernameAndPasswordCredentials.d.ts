@@ -1,13 +1,14 @@
-import * as ObjectSchema from "./../ObjectSchema";
-import * as Resource from "./../Resource";
-export declare const RDF_CLASS: string;
-export declare const SCHEMA: ObjectSchema.Class;
-export interface Class extends Resource.Class {
-    username: string;
-    password: string;
+import { ObjectSchema } from "../ObjectSchema";
+import { Resource } from "../Resource";
+import { CS } from "../Vocabularies/CS";
+export interface UsernameAndPasswordCredentials extends Resource {
+    username?: string;
+    password?: string;
 }
-export declare class Factory {
-    static create(username: string, password: string): Class;
-    static createFrom<T extends object>(object: T, username: string, password: string): T & Class;
+export interface UsernameAndPasswordCredentialsFactory {
+    TYPE: CS["UsernameAndPasswordCredentials"];
+    SCHEMA: ObjectSchema;
+    create(username?: string, password?: string): UsernameAndPasswordCredentials;
+    createFrom<T extends object>(object: T, username?: string, password?: string): T & UsernameAndPasswordCredentials;
 }
-export default Class;
+export declare const UsernameAndPasswordCredentials: UsernameAndPasswordCredentialsFactory;

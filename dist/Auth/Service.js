@@ -20,14 +20,14 @@ var URI_1 = require("../RDF/URI");
 var Resource_1 = require("../Resource");
 var Utils = __importStar(require("../Utils"));
 var LDP_1 = require("../Vocabularies/LDP");
-var BasicAuthenticator_1 = require("./BasicAuthenticator");
 var AuthMethod_1 = require("./AuthMethod");
+var BasicAuthenticator_1 = require("./BasicAuthenticator");
+var BasicToken_1 = require("./BasicToken");
 var PersistedUser = __importStar(require("./PersistedUser"));
 var Roles = __importStar(require("./Roles"));
 var Ticket = __importStar(require("./Ticket"));
 var TokenAuthenticator_1 = __importDefault(require("./TokenAuthenticator"));
 var TokenCredentials = __importStar(require("./TokenCredentials"));
-var UsernameAndPasswordToken_1 = require("./UsernameAndPasswordToken");
 var Users = __importStar(require("./Users"));
 var AuthService = (function () {
     function AuthService(context) {
@@ -66,7 +66,7 @@ var AuthService = (function () {
             case AuthMethod_1.AuthMethod.TOKEN:
                 return this.authenticateWithToken(userOrCredentials, password);
             default:
-                return Promise.reject(new Errors.IllegalArgumentError("No exists the authentication method '" + method + "'"));
+                return Promise.reject(new Errors.IllegalArgumentError("Unsupported authentication method \"" + method + "\""));
         }
     };
     AuthService.prototype.addAuthentication = function (requestOptions) {
@@ -130,13 +130,16 @@ var AuthService = (function () {
     AuthService.prototype.authenticateWithBasic = function (username, password) {
         var _this = this;
         var authenticator = this.authenticators[AuthMethod_1.AuthMethod.BASIC];
-        var authenticationToken = new UsernameAndPasswordToken_1.UsernameAndPasswordToken(username, password);
+        var authenticationToken = new BasicToken_1.BasicToken(username, password);
         this.clearAuthentication();
         var newCredentials;
-        return authenticator.authenticate(authenticationToken).then(function (credentials) {
+        return authenticator
+            .authenticate(authenticationToken)
+            .then(function (credentials) {
             newCredentials = credentials;
             return _this.getAuthenticatedUser(authenticator);
-        }).then(function (persistedUser) {
+        })
+            .then(function (persistedUser) {
             _this._authenticatedUser = persistedUser;
             _this.authenticator = authenticator;
             return newCredentials;
@@ -146,10 +149,10 @@ var AuthService = (function () {
         var _this = this;
         var authenticator = this.authenticators[AuthMethod_1.AuthMethod.TOKEN];
         var tokenOrCredentials = Utils.isString(userOrCredentials) ?
-            new UsernameAndPasswordToken_1.UsernameAndPasswordToken(userOrCredentials, password) :
+            new BasicToken_1.BasicToken(userOrCredentials, password) :
             TokenCredentials.Factory.hasClassProperties(userOrCredentials) ?
                 userOrCredentials :
-                new Errors.IllegalArgumentError("The token provided in not valid.");
+                new Errors.IllegalArgumentError("The token credentials provided in not valid.");
         if (tokenOrCredentials instanceof Error)
             return Promise.reject(tokenOrCredentials);
         this.clearAuthentication();
@@ -169,13 +172,7 @@ var AuthService = (function () {
     AuthService.prototype.getAuthenticatedUser = function (authenticator) {
         var requestOptions = {};
         authenticator.addAuthentication(requestOptions);
-        return Promise.resolve(null);
-        return this.context.documents
-            .get("users/me/", requestOptions)
-            .then(function (_a) {
-            var persistedUser = _a[0];
-            return persistedUser;
-        });
+        return this.users.get("me/", requestOptions);
     };
     return AuthService;
 }());

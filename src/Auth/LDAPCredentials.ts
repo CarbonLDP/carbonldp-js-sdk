@@ -1,24 +1,35 @@
-import * as NS from "./../NS";
-import * as ObjectSchema from "./../ObjectSchema";
-import * as Pointer from "./../Pointer";
-import * as Resource from "./../Resource";
+import { ObjectSchema } from "../ObjectSchema";
+import { Pointer } from "../Pointer";
+import { Resource } from "../Resource";
+import {
+	CS,
+	XSD,
+} from "../Vocabularies";
 
-export const RDF_CLASS:string = NS.CS.Class.LDAPCredentials;
 
-export const SCHEMA:ObjectSchema.Class = {
-	"ldapServer": {
-		"@id": NS.CS.Predicate.ldapServer,
-		"@type": "@id",
-	},
-	"ldapUserDN": {
-		"@id": NS.CS.Predicate.ldapUserDN,
-		"@type": NS.XSD.DataType.string,
-	},
-};
-
-export interface Class extends Resource.Class {
-	ldapServer:Pointer.Class;
+export interface LDAPCredentials extends Resource {
+	ldapServer:Pointer;
 	ldapUserDN:string;
 }
 
-export default Class;
+
+export interface LDAPCredentialsFactory {
+	TYPE:CS[ "LDAPCredentials" ];
+	SCHEMA:ObjectSchema;
+}
+
+const SCHEMA:ObjectSchema = {
+	"ldapServer": {
+		"@id": CS.ldapServer,
+		"@type": "@id",
+	},
+	"ldapUserDN": {
+		"@id": CS.ldapUserDN,
+		"@type": XSD.string,
+	},
+};
+
+export const LDAPCredentials:LDAPCredentialsFactory = {
+	TYPE: CS.LDAPCredentials,
+	SCHEMA,
+};

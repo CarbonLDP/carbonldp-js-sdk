@@ -16,15 +16,15 @@ import { Resource } from "../Resource";
 import * as Utils from "../Utils";
 import { LDP } from "../Vocabularies/LDP";
 import { Authenticator } from "./Authenticator";
-import { BasicAuthenticator } from "./BasicAuthenticator";
 import { AuthMethod } from "./AuthMethod";
+import { BasicAuthenticator } from "./BasicAuthenticator";
+import { BasicCredentials } from "./BasicCredentials";
+import { BasicToken } from "./BasicToken";
 import * as PersistedUser from "./PersistedUser";
 import * as Roles from "./Roles";
 import * as Ticket from "./Ticket";
 import TokenAuthenticator from "./TokenAuthenticator";
 import * as TokenCredentials from "./TokenCredentials";
-import { UsernameAndPasswordCredentials } from "./UsernameAndPasswordCredentials";
-import { UsernameAndPasswordToken } from "./UsernameAndPasswordToken";
 import * as Users from "./Users";
 
 export class AuthService {
@@ -67,17 +67,17 @@ export class AuthService {
 		return this.authenticateUsing( AuthMethod.TOKEN, username, password );
 	}
 
-	authenticateUsing( method:AuthMethod.BASIC, username:string, password:string ):Promise<UsernameAndPasswordCredentials>;
+	authenticateUsing( method:AuthMethod.BASIC, username:string, password:string ):Promise<BasicCredentials>;
 	authenticateUsing( method:AuthMethod.TOKEN, username:string, password:string ):Promise<TokenCredentials.Class>;
 	authenticateUsing( method:AuthMethod.TOKEN, token:TokenCredentials.Class ):Promise<TokenCredentials.Class>;
-	authenticateUsing( method:AuthMethod, userOrCredentials:string | TokenCredentials.Class, password?:string ):Promise<UsernameAndPasswordCredentials | TokenCredentials.Class> {
+	authenticateUsing( method:AuthMethod, userOrCredentials:string | TokenCredentials.Class, password?:string ):Promise<BasicCredentials | TokenCredentials.Class> {
 		switch( method ) {
 			case AuthMethod.BASIC:
 				return this.authenticateWithBasic( userOrCredentials as string, password );
 			case AuthMethod.TOKEN:
 				return this.authenticateWithToken( userOrCredentials, password );
 			default:
-				return Promise.reject( new Errors.IllegalArgumentError( `No exists the authentication method '${method}'` ) );
+				return Promise.reject( new Errors.IllegalArgumentError( `Unsupported authentication method "${method}"` ) );
 		}
 	}
 
@@ -144,32 +144,36 @@ export class AuthService {
 		} );
 	}
 
-	private authenticateWithBasic( username:string, password:string ):Promise<UsernameAndPasswordCredentials> {
+	private authenticateWithBasic( username:string, password:string ):Promise<BasicCredentials> {
 		const authenticator:BasicAuthenticator = <BasicAuthenticator> this.authenticators[ AuthMethod.BASIC ];
-		const authenticationToken:UsernameAndPasswordToken = new UsernameAndPasswordToken( username, password );
+		const authenticationToken:BasicToken = new BasicToken( username, password );
 
 		this.clearAuthentication();
 
-		let newCredentials:UsernameAndPasswordCredentials;
-		return authenticator.authenticate( authenticationToken ).then( ( credentials:UsernameAndPasswordCredentials ) => {
-			newCredentials = credentials;
+		let newCredentials:BasicCredentials;
+		return authenticator
+			.authenticate( authenticationToken )
+			.then( ( credentials:BasicCredentials ) => {
+				newCredentials = credentials;
 
-			return this.getAuthenticatedUser( authenticator );
-		} ).then( ( persistedUser:PersistedUser.Class ) => {
-			this._authenticatedUser = persistedUser;
-			this.authenticator = authenticator;
+				return this.getAuthenticatedUser( authenticator );
+			} )
+			.then( ( persistedUser:PersistedUser.Class ) => {
+				this._authenticatedUser = persistedUser;
+				this.authenticator = authenticator;
 
-			return newCredentials;
-		} );
+				return newCredentials;
+			} )
+			;
 	}
 
 	private authenticateWithToken( userOrCredentials:string | TokenCredentials.Class, password?:string ):Promise<TokenCredentials.Class> {
 		const authenticator:TokenAuthenticator = <TokenAuthenticator> this.authenticators[ AuthMethod.TOKEN ];
-		const tokenOrCredentials:UsernameAndPasswordToken | TokenCredentials.Class | Error = Utils.isString( userOrCredentials ) ?
-			new UsernameAndPasswordToken( userOrCredentials, password ) :
+		const tokenOrCredentials:BasicToken | TokenCredentials.Class | Error = Utils.isString( userOrCredentials ) ?
+			new BasicToken( userOrCredentials, password ) :
 			TokenCredentials.Factory.hasClassProperties( userOrCredentials ) ?
 				userOrCredentials :
-				new Errors.IllegalArgumentError( "The token provided in not valid." );
+				new Errors.IllegalArgumentError( "The token credentials provided in not valid." );
 
 		if( tokenOrCredentials instanceof Error ) return Promise.reject( tokenOrCredentials );
 		this.clearAuthentication();
@@ -193,12 +197,7 @@ export class AuthService {
 		const requestOptions:RequestOptions = {};
 		authenticator.addAuthentication( requestOptions );
 
-		// TODO: Missing implementation in platform (Remove, and enable tests)
-		return Promise.resolve( null );
-
-		return this.context.documents
-			.get<PersistedUser.Class>( "users/me/", requestOptions )
-			.then( ( [ persistedUser ]:[ PersistedUser.Class, Response ] ) => persistedUser );
+		return this.users.get( "me/", requestOptions );
 	}
 
 }

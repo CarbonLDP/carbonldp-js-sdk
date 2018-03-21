@@ -20,7 +20,8 @@ import * as Utils from "../Utils";
 import { CS } from "../Vocabularies/CS";
 import { XSD } from "../Vocabularies/XSD";
 import { AuthMethod } from "./AuthMethod";
-import * as BasicToken from "./BasicToken";
+import { BasicCredentials } from "./BasicCredentials";
+import { BasicToken } from "./BasicToken";
 import * as PersistedUser from "./PersistedUser";
 import * as Roles from "./Roles";
 
@@ -29,7 +30,7 @@ import { AuthService } from "./Service";
 import * as Ticket from "./Ticket";
 import TokenAuthenticator from "./TokenAuthenticator";
 import * as TokenCredentials from "./TokenCredentials";
-import * as User from "./User";
+import { User } from "./User";
 import * as Users from "./Users";
 
 describe( module( "carbonldp/Auth/Service" ), ():void => {
@@ -72,8 +73,8 @@ describe( module( "carbonldp/Auth/Service" ), ():void => {
 		it( hasProperty(
 			INSTANCE,
 			"users",
-			"CarbonLDP.Auth.Users.Class",
-			"Instance of `CarbonLDP.Auth.Users.Class` that helps managing the users of your Carbon LDP."
+			"CarbonLDP.Auth.Users",
+			"Instance of `CarbonLDP.Auth.Users` that helps managing the users of your Carbon LDP."
 		), ():void => {
 			class MockedContext extends AbstractContext {
 				protected _baseURI:string;
@@ -101,7 +102,7 @@ describe( module( "carbonldp/Auth/Service" ), ():void => {
 			function createUser( context:AbstractContext ):PersistedUser.Class {
 				return PersistedUser.Factory.decorate( {
 					id: "http://example.com/users/my-user/",
-					types: [ User.RDF_CLASS ],
+					types: [ User.TYPE ],
 					email: null,
 					name: null,
 					enabled: true,
@@ -425,7 +426,7 @@ describe( module( "carbonldp/Auth/Service" ), ():void => {
 					{ name: "username", type: "string" },
 					{ name: "password", type: "string" },
 				],
-				{ type: "Promise<CarbonLDP.Auth.BasicCredentials.Class>" }
+				{ type: "Promise<CarbonLDP.Auth.BasicCredentials>" }
 			), ():void => {} );
 
 			it( hasSignature(
@@ -438,11 +439,11 @@ describe( module( "carbonldp/Auth/Service" ), ():void => {
 			), ():void => {} );
 
 			it( hasSignature(
-				"Authenticates the user with a `Carbon.Auth.TokenCredentials.Class`, which contains a JSON Web Token (JWT) that will be used in every request.", [
-					{ name: "method", type: "Carbon.AuthMethod.TOKEN" },
-					{ name: "token", type: "Carbon.Auth.TokenCredentials.Class" },
+				"Authenticates the user with a `CarbonLDP.Auth.TokenCredentials.Class`, which contains a JSON Web Token (JWT) that will be used in every request.", [
+					{ name: "method", type: "CarbonLDP.AuthMethod.TOKEN" },
+					{ name: "token", type: "CarbonLDP.Auth.TokenCredentials.Class" },
 				],
-				{ type: "Promise<Carbon.Auth.TokenCredentials.Class>" }
+				{ type: "Promise<CarbonLDP.Auth.TokenCredentials.Class>" }
 			), ():void => {} );
 
 
@@ -516,7 +517,7 @@ describe( module( "carbonldp/Auth/Service" ), ():void => {
 						context.documents
 					);
 					spyOn( auth.users, "get" )
-						.and.returnValue( Promise.resolve( [ user, null ] ) );
+						.and.returnValue( Promise.resolve( user ) );
 
 					auth
 						.authenticateUsing( AuthMethod.BASIC, "username", "password" )
@@ -538,7 +539,7 @@ describe( module( "carbonldp/Auth/Service" ), ():void => {
 					auth
 						.authenticateUsing( AuthMethod.BASIC, "username", "password" )
 						.then( ( credentials ) => {
-							expect( credentials ).toEqual( jasmine.any( BasicCredentials.Class ) );
+							expect( credentials ).toEqual( jasmine.any( BasicCredentials ) );
 							expect( credentials.username ).toBe( "username" );
 							expect( credentials.password ).toBe( "password" );
 
@@ -565,7 +566,7 @@ describe( module( "carbonldp/Auth/Service" ), ():void => {
 						.catch( error => {
 							if( error ) done.fail( error );
 
-							const token:BasicToken.Class = new BasicToken.Class( "username", "password" );
+							const token:BasicToken = new BasicToken( "username", "password" );
 							expect( spy ).toHaveBeenCalledWith( token );
 
 							done();
@@ -574,7 +575,7 @@ describe( module( "carbonldp/Auth/Service" ), ():void => {
 				} );
 
 				it( "should return the credentials", ( done:DoneFn ):void => {
-					const credentials:TokenCredentials.Class = Resource.Factory.createFrom( {
+					const credentials:TokenCredentials.Class = Resource.createFrom( {
 						key: "token-value",
 						expirationTime: new Date( Date.now() + 24 * 60 * 60 * 100 ),
 						user: PersistedUser.Factory.decorate( {
@@ -600,7 +601,7 @@ describe( module( "carbonldp/Auth/Service" ), ():void => {
 				} );
 
 				it( "should get authenticated user when no valid user in credentials", ( done:DoneFn ):void => {
-					const credentials:TokenCredentials.Class = Resource.Factory.createFrom( {
+					const credentials:TokenCredentials.Class = Resource.createFrom( {
 						key: "token-value",
 						expirationTime: new Date( Date.now() + 24 * 60 * 60 * 100 ),
 					} );
@@ -650,7 +651,7 @@ describe( module( "carbonldp/Auth/Service" ), ():void => {
 						context.documents
 					);
 					spyOn( auth.users, "get" )
-						.and.returnValue( Promise.resolve( [ user, null ] ) );
+						.and.returnValue( Promise.resolve( user ) );
 
 					auth
 						.authenticateUsing( AuthMethod.TOKEN, "username", "password" )
@@ -686,7 +687,7 @@ describe( module( "carbonldp/Auth/Service" ), ():void => {
 					const spy:jasmine.Spy = spyOn( TokenAuthenticator.prototype, "authenticate" )
 						.and.returnValue( Promise.reject( null ) );
 
-					const credentials:TokenCredentials.Class = Resource.Factory.createFrom( {
+					const credentials:TokenCredentials.Class = Resource.createFrom( {
 						key: "token-value",
 						expirationTime: new Date( Date.now() + 24 * 60 * 60 * 100 ),
 						user: PersistedUser.Factory.decorate( {
@@ -713,7 +714,7 @@ describe( module( "carbonldp/Auth/Service" ), ():void => {
 				} );
 
 				it( "should return the credentials", ( done:DoneFn ):void => {
-					const credentials:TokenCredentials.Class = Resource.Factory.createFrom( {
+					const credentials:TokenCredentials.Class = Resource.createFrom( {
 						key: "token-value",
 						expirationTime: new Date( Date.now() + 24 * 60 * 60 * 100 ),
 						user: PersistedUser.Factory.decorate( {
@@ -736,7 +737,7 @@ describe( module( "carbonldp/Auth/Service" ), ():void => {
 				} );
 
 				it( "should store authenticated user", ( done:DoneFn ):void => {
-					const credentials:TokenCredentials.Class = Resource.Factory.createFrom( {
+					const credentials:TokenCredentials.Class = Resource.createFrom( {
 						key: "token-value",
 						expirationTime: new Date( Date.now() + 24 * 60 * 60 * 100 ),
 						user: PersistedUser.Factory.decorate(
@@ -764,7 +765,7 @@ describe( module( "carbonldp/Auth/Service" ), ():void => {
 				} );
 
 				it( "should get authenticated user when no valid user in credentials", ( done:DoneFn ):void => {
-					const credentials:TokenCredentials.Class = Resource.Factory.createFrom( {
+					const credentials:TokenCredentials.Class = Resource.createFrom( {
 						key: "token-value",
 						expirationTime: new Date( Date.now() + 24 * 60 * 60 * 100 ),
 					} );

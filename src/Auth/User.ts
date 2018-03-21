@@ -1,18 +1,43 @@
+import { Document } from "../Document";
+import { ObjectSchema } from "../ObjectSchema";
 import {
 	hasFunction,
 	isBoolean,
-	isObject,
 } from "../Utils";
 import { C } from "../Vocabularies/C";
 import { CS } from "../Vocabularies/CS";
 import { XSD } from "../Vocabularies/XSD";
-import { Document } from "./../Document";
-import * as ObjectSchema from "./../ObjectSchema";
-import * as UsernameAndPasswordCredentials from "./UsernameAndPasswordCredentials";
+import { UsernameAndPasswordCredentials } from "./UsernameAndPasswordCredentials";
 
-export const RDF_CLASS:string = CS.User;
 
-export const SCHEMA:ObjectSchema.ObjectSchema = {
+export interface User extends Document {
+	name?:string;
+	enabled?:boolean;
+	disabled?:boolean;
+	credentials?:UsernameAndPasswordCredentials;
+
+	setCredentials( email?:string, password?:string ):UsernameAndPasswordCredentials;
+}
+
+
+export interface UserFactory {
+	TYPE:CS[ "User" ];
+	SCHEMA:ObjectSchema;
+
+
+	isDecorated( object:object ):object is User;
+
+	is( value:any ):value is User;
+
+
+	decorate<T extends object>( object:T ):T & User;
+
+	create( disabled?:boolean ):User;
+
+	createFrom<T extends object>( object:T, disabled?:boolean ):T & User;
+}
+
+const SCHEMA:ObjectSchema = {
 	"name": {
 		"@id": CS.name,
 		"@type": XSD.string,
@@ -27,49 +52,29 @@ export const SCHEMA:ObjectSchema.ObjectSchema = {
 	},
 };
 
-export interface Class extends Document {
-	name?:string;
-	enabled?:boolean;
-	disabled?:boolean;
-	credentials?:UsernameAndPasswordCredentials.Class;
+export const User:UserFactory = {
+	TYPE: CS.User,
+	SCHEMA,
 
-	setCredentials( email?:string, password?:string ):UsernameAndPasswordCredentials.Class;
-}
 
-function setCredentials( this:Class, email?:string, password?:string ):UsernameAndPasswordCredentials.Class {
-	const credentials:UsernameAndPasswordCredentials.Class = UsernameAndPasswordCredentials
-		.Factory.create( email, password );
-
-	this.credentials = this.createFragment( credentials );
-	this.credentials.addType( C.VolatileResource );
-
-	return this.credentials;
-}
-
-export class Factory {
-	static hasClassProperties( object:object ):object is Class {
-		return isObject( object )
-			&& hasFunction( object, "setCredentials" )
+	isDecorated( object:object ):object is User {
+		return hasFunction( object, "setCredentials" )
 			;
-	}
+	},
 
-	static create( disabled?:boolean ):Class {
-		return Factory.createFrom( {}, disabled );
-	}
+	is( value:any ):value is User {
+		return Document.is( value )
+			&& User.isDecorated( value )
+			;
+	},
 
-	static createFrom<T extends object>( object:T, disabled?:boolean ):T & Class {
-		const user:T & Class = Factory.decorate( object );
-		if( isBoolean( disabled ) ) user.disabled = disabled;
 
-		return user;
-	}
-
-	static decorate<T extends object>( object:T ):T & Class {
-		if( Factory.hasClassProperties( object ) ) return object;
+	decorate<T extends object>( object:T ):T & User {
+		if( User.isDecorated( object ) ) return object;
 
 		Document.decorate( object );
 
-		const user:T & Class = Object.defineProperties( object, {
+		return Object.defineProperties( object, {
 			"setCredentials": {
 				writable: false,
 				enumerable: false,
@@ -77,10 +82,25 @@ export class Factory {
 				value: setCredentials,
 			},
 		} );
+	},
+
+	create( disabled?:boolean ):User {
+		return User.createFrom( {}, disabled );
+	},
+
+	createFrom<T extends object>( object:T, disabled?:boolean ):T & User {
+		const user:T & User = User.decorate( object );
+		if( isBoolean( disabled ) ) user.disabled = disabled;
 
 		return user;
+	},
+};
 
-	}
+function setCredentials( this:User, email?:string, password?:string ):UsernameAndPasswordCredentials {
+	const credentials:UsernameAndPasswordCredentials = UsernameAndPasswordCredentials.create( email, password );
+
+	this.credentials = this.createFragment( credentials );
+	this.credentials.addType( C.VolatileResource );
+
+	return this.credentials;
 }
-
-export default Class;

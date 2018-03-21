@@ -1,19 +1,21 @@
-import { Document } from "./../Document";
-import * as ObjectSchema from "./../ObjectSchema";
-import * as UsernameAndPasswordCredentials from "./UsernameAndPasswordCredentials";
-export declare const RDF_CLASS: string;
-export declare const SCHEMA: ObjectSchema.ObjectSchema;
-export interface Class extends Document {
+import { Document } from "../Document";
+import { ObjectSchema } from "../ObjectSchema";
+import { CS } from "../Vocabularies/CS";
+import { UsernameAndPasswordCredentials } from "./UsernameAndPasswordCredentials";
+export interface User extends Document {
     name?: string;
     enabled?: boolean;
     disabled?: boolean;
-    credentials?: UsernameAndPasswordCredentials.Class;
-    setCredentials(email?: string, password?: string): UsernameAndPasswordCredentials.Class;
+    credentials?: UsernameAndPasswordCredentials;
+    setCredentials(email?: string, password?: string): UsernameAndPasswordCredentials;
 }
-export declare class Factory {
-    static hasClassProperties(object: object): object is Class;
-    static create(disabled?: boolean): Class;
-    static createFrom<T extends object>(object: T, disabled?: boolean): T & Class;
-    static decorate<T extends object>(object: T): T & Class;
+export interface UserFactory {
+    TYPE: CS["User"];
+    SCHEMA: ObjectSchema;
+    isDecorated(object: object): object is User;
+    is(value: any): value is User;
+    decorate<T extends object>(object: T): T & User;
+    create(disabled?: boolean): User;
+    createFrom<T extends object>(object: T, disabled?: boolean): T & User;
 }
-export default Class;
+export declare const User: UserFactory;

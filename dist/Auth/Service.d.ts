@@ -2,11 +2,11 @@ import { Context } from "../Context";
 import { RequestOptions } from "../HTTP/Request";
 import { Response } from "../HTTP/Response";
 import { AuthMethod } from "./AuthMethod";
+import { BasicCredentials } from "./BasicCredentials";
 import * as PersistedUser from "./PersistedUser";
 import * as Roles from "./Roles";
 import * as Ticket from "./Ticket";
 import * as TokenCredentials from "./TokenCredentials";
-import { UsernameAndPasswordCredentials } from "./UsernameAndPasswordCredentials";
 import * as Users from "./Users";
 export declare class AuthService {
     users: Users.Class;
@@ -19,7 +19,7 @@ export declare class AuthService {
     constructor(context: Context);
     isAuthenticated(askParent?: boolean): boolean;
     authenticate(username: string, password: string): Promise<TokenCredentials.Class>;
-    authenticateUsing(method: AuthMethod.BASIC, username: string, password: string): Promise<UsernameAndPasswordCredentials>;
+    authenticateUsing(method: AuthMethod.BASIC, username: string, password: string): Promise<BasicCredentials>;
     authenticateUsing(method: AuthMethod.TOKEN, username: string, password: string): Promise<TokenCredentials.Class>;
     authenticateUsing(method: AuthMethod.TOKEN, token: TokenCredentials.Class): Promise<TokenCredentials.Class>;
     addAuthentication(requestOptions: RequestOptions): void;
