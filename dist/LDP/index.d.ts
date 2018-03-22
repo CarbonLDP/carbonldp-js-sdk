@@ -1,7 +1,7 @@
 import * as AddMemberAction from "./AddMemberAction";
-import * as CarbonError from "./CarbonError";
-import * as CarbonMap from "./CarbonMap";
-import * as CarbonMapEntry from "./CarbonMapEntry";
+import * as CarbonError from "./Error";
+import * as CarbonMap from "./Map";
+import * as CarbonMapEntry from "./MapEntry";
 import * as DirectContainer from "./DirectContainer";
 import * as DocumentMetadata from "./DocumentMetadata";
 import * as ErrorResponse from "./ErrorResponse";

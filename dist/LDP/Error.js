@@ -16,10 +16,10 @@ var SCHEMA = {
         "@type": "@id",
     },
 };
-exports.CarbonError = {
+exports.Error = {
     TYPE: C_1.C.Error,
     SCHEMA: SCHEMA,
 };
-exports.default = exports.CarbonError;
+exports.default = exports.Error;
 
-//# sourceMappingURL=CarbonError.js.map
+//# sourceMappingURL=Error.js.map

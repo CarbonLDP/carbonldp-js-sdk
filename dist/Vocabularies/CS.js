@@ -1,50 +1,49 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var CS;
-(function (CS) {
-    CS.namespace = "https://carbonldp.com/ns/v1/security#";
-    CS.AccessControlEntry = CS.namespace + "AccessControlEntry";
-    CS.AccessControlList = CS.namespace + "AccessControlList";
-    CS.AllOrigins = CS.namespace + "AllOrigins";
-    CS.CreateAccessPoint = CS.namespace + "CreateAccessPoint";
-    CS.CreateChild = CS.namespace + "CreateChild";
-    CS.Credentials = CS.namespace + "Credentials";
-    CS.Delete = CS.namespace + "Delete";
-    CS.Download = CS.namespace + "Download";
-    CS.Extend = CS.namespace + "Extend";
-    CS.ManageSecurity = CS.namespace + "ManageSecurity";
-    CS.ProtectedDocument = CS.namespace + "ProtectedDocument";
-    CS.Read = CS.namespace + "Read";
-    CS.RemoveMember = CS.namespace + "RemoveMember";
-    CS.Role = CS.namespace + "Role";
-    CS.Ticket = CS.namespace + "Ticket";
-    CS.Token = CS.namespace + "Token";
-    CS.Update = CS.namespace + "Update";
-    CS.Upload = CS.namespace + "Upload";
-    CS.User = CS.namespace + "User";
-    CS.accessControlEntry = CS.namespace + "accessControlEntry";
-    CS.accessControlList = CS.namespace + "accessControlList";
-    CS.accessTo = CS.namespace + "accessTo";
-    CS.allowsOrigin = CS.namespace + "allowsOrigin";
-    CS.childRole = CS.namespace + "childRole";
-    CS.credentials = CS.namespace + "credentials";
-    CS.credentialsOf = CS.namespace + "credentialsOf";
-    CS.description = CS.namespace + "description";
-    CS.enabled = CS.namespace + "enabled";
-    CS.expirationTime = CS.namespace + "expirationTime";
-    CS.forIRI = CS.namespace + "forIRI";
-    CS.granting = CS.namespace + "granting";
-    CS.inheritableEntry = CS.namespace + "inheritableEntry";
-    CS.name = CS.namespace + "name";
-    CS.parentRole = CS.namespace + "parentRole";
-    CS.password = CS.namespace + "password";
-    CS.permission = CS.namespace + "permission";
-    CS.rootContainer = CS.namespace + "rootContainer";
-    CS.subject = CS.namespace + "subject";
-    CS.subjectClass = CS.namespace + "subjectClass";
-    CS.ticketKey = CS.namespace + "ticketKey";
-    CS.tokenKey = CS.namespace + "tokenKey";
-    CS.user = CS.namespace + "user";
-})(CS = exports.CS || (exports.CS = {}));
+exports.CS = {
+    namespace: "https://carbonldp.com/ns/v1/security#",
+    AccessControlEntry: "https://carbonldp.com/ns/v1/security#AccessControlEntry",
+    AccessControlList: "https://carbonldp.com/ns/v1/security#AccessControlList",
+    AllOrigins: "https://carbonldp.com/ns/v1/security#AllOrigins",
+    CreateAccessPoint: "https://carbonldp.com/ns/v1/security#CreateAccessPoint",
+    CreateChild: "https://carbonldp.com/ns/v1/security#CreateChild",
+    Credentials: "https://carbonldp.com/ns/v1/security#Credentials",
+    Delete: "https://carbonldp.com/ns/v1/security#Delete",
+    Download: "https://carbonldp.com/ns/v1/security#Download",
+    Extend: "https://carbonldp.com/ns/v1/security#Extend",
+    ManageSecurity: "https://carbonldp.com/ns/v1/security#ManageSecurity",
+    ProtectedDocument: "https://carbonldp.com/ns/v1/security#ProtectedDocument",
+    Read: "https://carbonldp.com/ns/v1/security#Read",
+    RemoveMember: "https://carbonldp.com/ns/v1/security#RemoveMember",
+    Role: "https://carbonldp.com/ns/v1/security#Role",
+    Ticket: "https://carbonldp.com/ns/v1/security#Ticket",
+    Token: "https://carbonldp.com/ns/v1/security#Token",
+    Update: "https://carbonldp.com/ns/v1/security#Update",
+    Upload: "https://carbonldp.com/ns/v1/security#Upload",
+    User: "https://carbonldp.com/ns/v1/security#User",
+    accessControlEntry: "https://carbonldp.com/ns/v1/security#accessControlEntry",
+    accessControlList: "https://carbonldp.com/ns/v1/security#accessControlList",
+    accessTo: "https://carbonldp.com/ns/v1/security#accessTo",
+    allowsOrigin: "https://carbonldp.com/ns/v1/security#allowsOrigin",
+    childRole: "https://carbonldp.com/ns/v1/security#childRole",
+    credentials: "https://carbonldp.com/ns/v1/security#credentials",
+    credentialsOf: "https://carbonldp.com/ns/v1/security#credentialsOf",
+    description: "https://carbonldp.com/ns/v1/security#description",
+    enabled: "https://carbonldp.com/ns/v1/security#enabled",
+    expirationTime: "https://carbonldp.com/ns/v1/security#expirationTime",
+    forIRI: "https://carbonldp.com/ns/v1/security#forIRI",
+    granting: "https://carbonldp.com/ns/v1/security#granting",
+    inheritableEntry: "https://carbonldp.com/ns/v1/security#inheritableEntry",
+    name: "https://carbonldp.com/ns/v1/security#name",
+    parentRole: "https://carbonldp.com/ns/v1/security#parentRole",
+    password: "https://carbonldp.com/ns/v1/security#password",
+    permission: "https://carbonldp.com/ns/v1/security#permission",
+    rootContainer: "https://carbonldp.com/ns/v1/security#rootContainer",
+    subject: "https://carbonldp.com/ns/v1/security#subject",
+    subjectClass: "https://carbonldp.com/ns/v1/security#subjectClass",
+    ticketKey: "https://carbonldp.com/ns/v1/security#ticketKey",
+    tokenKey: "https://carbonldp.com/ns/v1/security#tokenKey",
+    user: "https://carbonldp.com/ns/v1/security#user",
+};
 
 //# sourceMappingURL=CS.js.map

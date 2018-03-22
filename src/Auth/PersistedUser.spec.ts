@@ -1,7 +1,6 @@
-import AbstractContext from "../AbstractContext";
-import { Response } from "../HTTP/Response";
-import { PersistedDocument } from "./../PersistedDocument";
-import { PersistedProtectedDocument } from "./../PersistedProtectedDocument";
+import { AbstractContext } from "../AbstractContext";
+import { PersistedDocument } from "../PersistedDocument";
+import { PersistedProtectedDocument } from "../PersistedProtectedDocument";
 import {
 	clazz,
 	decoratedObject,
@@ -16,7 +15,7 @@ import {
 	OBLIGATORY,
 	OPTIONAL,
 	STATIC,
-} from "./../test/JasmineExtender";
+} from "../test/JasmineExtender";
 import * as Utils from "./../Utils";
 import * as PersistedCredentials from "./PersistedCredentials";
 
@@ -76,14 +75,14 @@ describe( module( "carbonldp/Auth/PersistedUser" ), ():void => {
 			OBLIGATORY,
 			"enableCredentials",
 			"Activate the account credentials of the user.",
-			{ type: "Promise<[ CarbonLDP.Auth.PersistedUser.Class, CarbonLDP.HTTP.Response.Response ]>" }
+			{ type: "Promise<CarbonLDP.Auth.PersistedUser.Class>" }
 		), ():void => {} );
 
 		it( hasMethod(
 			OBLIGATORY,
 			"disableCredentials",
 			"Deactivate the account credentials of the user.",
-			{ type: "Promise<[ CarbonLDP.Auth.PersistedUser.Class, CarbonLDP.HTTP.Response.Response ]>" }
+			{ type: "Promise<CarbonLDP.Auth.PersistedUser.Class>" }
 		), ():void => {} );
 
 	} );
@@ -235,6 +234,7 @@ describe( module( "carbonldp/Auth/PersistedUser" ), ():void => {
 						this.settings = { paths: { system: ".system/" } };
 					}
 				}
+
 				context = new MockedContext();
 			} );
 
@@ -242,15 +242,12 @@ describe( module( "carbonldp/Auth/PersistedUser" ), ():void => {
 				INSTANCE,
 				"enableCredentials",
 				"Activate the account of the user.",
-				{ type: "Promise<[ CarbonLDP.Auth.PersistedUser.Class, CarbonLDP.HTTP.Response.Response[] ]>" }
+				{ type: "Promise<CarbonLDP.Auth.PersistedUser.Class>" }
 			), ( done:DoneFn ):void => {
-				const mockedResponse:Response = new Response( {} as any, "response-data" );
 				const promises:Promise<void>[] = [];
 
-				function checkResponse( currentObject:PersistedUser.Class, expectedResponses:number, [ returnedObject, responses ]:[ PersistedUser.Class, Response[] ] ):void {
+				function checkResponse( currentObject:PersistedUser.Class, returnedObject:PersistedUser.Class ):void {
 					expect( currentObject ).toBe( returnedObject );
-					expect( responses.length ).toBe( expectedResponses );
-					responses.forEach( response => expect( response ).toBe( mockedResponse ) );
 				}
 
 				// Property Integrity
@@ -266,16 +263,16 @@ describe( module( "carbonldp/Auth/PersistedUser" ), ():void => {
 						context.documents.getPointer( "http://example.org/.system/credentials/my-user-credentials/" ),
 						context.documents
 					);
-					const selectSPARQLSpy:jasmine.Spy = spyOn( context.documents, "executeSELECTQuery" ).and.returnValue( Promise.resolve( [ { bindings: [ { credentials: mockCredentials } ] }, mockedResponse ] ) );
+					const selectSPARQLSpy:jasmine.Spy = spyOn( context.documents, "executeSELECTQuery" ).and.returnValue( Promise.resolve( { bindings: [ { credentials: mockCredentials } ] } ) );
 					Object.defineProperty( mockCredentials, "enable", { writable: true } );
-					const enableSpy:jasmine.Spy = spyOn( mockCredentials, "enable" ).and.returnValue( [ {}, [ mockedResponse ] ] );
+					const enableSpy:jasmine.Spy = spyOn( mockCredentials, "enable" ).and.returnValue( {} );
 
 					const user:PersistedUser.Class = PersistedUser.Factory.decorate( {
 						id: "http://example.com/user/my-user/",
 					}, context.documents );
-					const promise:Promise<[ PersistedUser.Class, Response[] ]> = user.enableCredentials();
+					const promise:Promise<PersistedUser.Class> = user.enableCredentials();
 					expect( promise ).toEqual( jasmine.any( Promise ) );
-					promises.push( promise.then( checkResponse.bind( null, user, 2 ) ).then( () => {
+					promises.push( promise.then( checkResponse.bind( null, user ) ).then( () => {
 						expect( selectSPARQLSpy ).toHaveBeenCalledTimes( 1 );
 						expect( enableSpy ).toHaveBeenCalledTimes( 1 );
 					} ) );
@@ -285,14 +282,14 @@ describe( module( "carbonldp/Auth/PersistedUser" ), ():void => {
 				(() => {
 					const mockCredentials:PersistedCredentials.Class = PersistedCredentials.Factory.decorate( {}, context.documents );
 					Object.defineProperty( mockCredentials, "enable", { writable: true } );
-					const enableSpy:jasmine.Spy = spyOn( mockCredentials, "enable" ).and.returnValue( [ {}, [ mockedResponse ] ] );
+					const enableSpy:jasmine.Spy = spyOn( mockCredentials, "enable" ).and.returnValue( {} );
 
 					const user:PersistedUser.Class = PersistedUser.Factory.decorate( {
 						credentials: mockCredentials,
 					}, context.documents );
-					const promise:Promise<[ PersistedUser.Class, Response[] ]> = user.enableCredentials();
+					const promise:Promise<PersistedUser.Class> = user.enableCredentials();
 					expect( promise ).toEqual( jasmine.any( Promise ) );
-					promises.push( promise.then( checkResponse.bind( null, user, 1 ) ).then( () => {
+					promises.push( promise.then( checkResponse.bind( null, user ) ).then( () => {
 						expect( enableSpy ).toHaveBeenCalledTimes( 1 );
 					} ) );
 				})();
@@ -304,15 +301,12 @@ describe( module( "carbonldp/Auth/PersistedUser" ), ():void => {
 				INSTANCE,
 				"disableCredentials",
 				"Deactivate the account of the user.",
-				{ type: "Promise<[ CarbonLDP.Auth.PersistedUser.Class, CarbonLDP.HTTP.Response.Response[] ]>" }
+				{ type: "Promise<CarbonLDP.Auth.PersistedUser.Class>" }
 			), ( done:DoneFn ):void => {
-				const mockedResponse:Response = new Response( {} as any, "response-data" );
 				const promises:Promise<void>[] = [];
 
-				function checkResponse( currentObject:PersistedUser.Class, expectedResponses:number, [ returnedObject, responses ]:[ PersistedUser.Class, Response[] ] ):void {
+				function checkResponse( currentObject:PersistedUser.Class, returnedObject:PersistedUser.Class ):void {
 					expect( currentObject ).toBe( returnedObject );
-					expect( responses.length ).toBe( expectedResponses );
-					responses.forEach( response => expect( response ).toBe( mockedResponse ) );
 				}
 
 				// Property Integrity
@@ -328,15 +322,15 @@ describe( module( "carbonldp/Auth/PersistedUser" ), ():void => {
 						context.documents.getPointer( "http://example.org/.system/credentials/my-user-credentials/" ),
 						context.documents
 					);
-					const selectSPARQLSpy:jasmine.Spy = spyOn( context.documents, "executeSELECTQuery" ).and.returnValue( Promise.resolve( [ { bindings: [ { credentials: mockCredentials } ] }, mockedResponse ] ) );
+					const selectSPARQLSpy:jasmine.Spy = spyOn( context.documents, "executeSELECTQuery" ).and.returnValue( Promise.resolve( { bindings: [ { credentials: mockCredentials } ] } ) );
 					Object.defineProperty( mockCredentials, "disable", { writable: true } );
-					const enableSpy:jasmine.Spy = spyOn( mockCredentials, "disable" ).and.returnValue( [ {}, [ mockedResponse ] ] );
+					const enableSpy:jasmine.Spy = spyOn( mockCredentials, "disable" ).and.returnValue( {} );
 
 					const user:PersistedUser.Class = PersistedUser.Factory.decorate( { id: "http://example.com/user/my-user/" }, context.documents );
 
-					const promise:Promise<[ PersistedUser.Class, Response[] ]> = user.disableCredentials();
+					const promise:Promise<PersistedUser.Class> = user.disableCredentials();
 					expect( promise ).toEqual( jasmine.any( Promise ) );
-					promises.push( promise.then( checkResponse.bind( null, user, 2 ) ).then( () => {
+					promises.push( promise.then( checkResponse.bind( null, user ) ).then( () => {
 						expect( selectSPARQLSpy ).toHaveBeenCalledTimes( 1 );
 						expect( enableSpy ).toHaveBeenCalledTimes( 1 );
 					} ) );
@@ -346,13 +340,13 @@ describe( module( "carbonldp/Auth/PersistedUser" ), ():void => {
 				(() => {
 					const mockCredentials:PersistedCredentials.Class = PersistedCredentials.Factory.decorate( {}, context.documents );
 					Object.defineProperty( mockCredentials, "disable", { writable: true } );
-					const enableSpy:jasmine.Spy = spyOn( mockCredentials, "disable" ).and.returnValue( [ {}, [ mockedResponse ] ] );
+					const enableSpy:jasmine.Spy = spyOn( mockCredentials, "disable" ).and.returnValue( {} );
 
 					const user:PersistedUser.Class = PersistedUser.Factory.decorate( { credentials: mockCredentials }, context.documents );
 
-					const promise:Promise<[ PersistedUser.Class, Response[] ]> = user.disableCredentials();
+					const promise:Promise<PersistedUser.Class> = user.disableCredentials();
 					expect( promise ).toEqual( jasmine.any( Promise ) );
-					promises.push( promise.then( checkResponse.bind( null, user, 1 ) ).then( () => {
+					promises.push( promise.then( checkResponse.bind( null, user ) ).then( () => {
 						expect( enableSpy ).toHaveBeenCalledTimes( 1 );
 					} ) );
 				})();

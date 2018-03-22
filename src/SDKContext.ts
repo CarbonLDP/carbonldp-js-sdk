@@ -6,9 +6,9 @@ import { Document } from "./Document";
 import { Documents } from "./Documents";
 import * as Errors from "./Errors";
 import { AddMemberAction } from "./LDP/AddMemberAction";
-import { CarbonError } from "./LDP/CarbonError";
-import { CarbonMap } from "./LDP/CarbonMap";
-import { CarbonMapEntry } from "./LDP/CarbonMapEntry";
+import { Error } from "./LDP/Error";
+import { Map as CarbonMap } from "./LDP/Map";
+import { MapEntry } from "./LDP/MapEntry";
 import { DocumentMetadata } from "./LDP/DocumentMetadata";
 import { ErrorResponse } from "./LDP/ErrorResponse";
 import { RemoveMemberAction } from "./LDP/RemoveMemberAction";
@@ -209,9 +209,9 @@ export class SDKContext implements Context {
 		this.extendObjectSchema( PlatformInstance.TYPE, PlatformInstance.SCHEMA );
 
 		this.extendObjectSchema( AddMemberAction.TYPE, AddMemberAction.SCHEMA );
-		this.extendObjectSchema( CarbonError.TYPE, CarbonError.SCHEMA );
+		this.extendObjectSchema( Error.TYPE, Error.SCHEMA );
 		this.extendObjectSchema( CarbonMap.TYPE, CarbonMap.SCHEMA );
-		this.extendObjectSchema( CarbonMapEntry.SCHEMA );
+		this.extendObjectSchema( MapEntry.SCHEMA );
 		this.extendObjectSchema( DocumentMetadata.TYPE, DocumentMetadata.SCHEMA );
 		this.extendObjectSchema( ErrorResponse.TYPE, ErrorResponse.SCHEMA );
 		this.extendObjectSchema( RemoveMemberAction.TYPE, RemoveMemberAction.SCHEMA );

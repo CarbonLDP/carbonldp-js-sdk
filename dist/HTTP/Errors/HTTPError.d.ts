@@ -1,5 +1,5 @@
 import { AbstractError } from "../../Errors";
-import { CarbonError } from "../../LDP/CarbonError";
+import { Error } from "../../LDP/Error";
 import { ErrorResponse } from "../../LDP/ErrorResponse";
 import { PersistedDocument } from "../../PersistedDocument";
 import { Response } from "../Response";
@@ -9,13 +9,13 @@ export declare class HTTPError extends AbstractError implements ErrorResponse {
     _id: string;
     _resolved: boolean;
     id: string;
-    errors: CarbonError[];
+    errors: Error[];
     requestID: string;
     response: Response;
     statusCode: number;
     types: string[];
     isResolved: () => boolean;
-    resolve: <T>() => Promise<[T & PersistedDocument, Response]>;
+    resolve: <T>() => Promise<T & PersistedDocument>;
     addType: (type: string) => void;
     hasType: (type: string) => boolean;
     removeType: (type: string) => void;

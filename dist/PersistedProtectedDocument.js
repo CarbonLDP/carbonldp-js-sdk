@@ -7,8 +7,6 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 }
 Object.defineProperty(exports, "__esModule", { value: true });
-var ACL_1 = require("./Auth/ACL");
-var Errors_1 = require("./HTTP/Errors");
 var PersistedDocument_1 = require("./PersistedDocument");
 var Utils = __importStar(require("./Utils"));
 var CS_1 = require("./Vocabularies/CS");
@@ -39,23 +37,12 @@ exports.PersistedProtectedDocument = {
 };
 function getACL(requestOptions) {
     var _this = this;
-    var aclPromise;
-    if (this.isResolved()) {
-        aclPromise = Promise.resolve(this.accessControlList);
-    }
-    else {
-        aclPromise = this.executeSELECTQuery("SELECT ?acl WHERE {\n\t\t\t<" + this.id + "> <" + CS_1.CS.accessControlList + "> ?acl.\n\t\t}").then(function (_a) {
-            var results = _a[0];
-            return results.bindings[0].acl;
-        });
-    }
+    var aclPromise = this.isResolved() ?
+        Promise.resolve(this.accessControlList) :
+        this.executeSELECTQuery("SELECT ?acl WHERE {<" + this.id + "> <" + CS_1.CS.accessControlList + "> ?acl}")
+            .then(function (results) { return results.bindings[0].acl; });
     return aclPromise.then(function (acl) {
         return _this._documents.get(acl.id, requestOptions);
-    }).then(function (_a) {
-        var acl = _a[0], response = _a[1];
-        if (!acl.hasType(ACL_1.ACL.TYPE))
-            throw new Errors_1.BadResponseError("The response does not contains a " + ACL_1.ACL.TYPE + " object.", response);
-        return [acl, response];
     });
 }
 exports.default = exports.PersistedProtectedDocument;
