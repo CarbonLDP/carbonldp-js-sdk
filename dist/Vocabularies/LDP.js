@@ -1,35 +1,34 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var LDP;
-(function (LDP) {
-    LDP.namespace = "http://www.w3.org/ns/ldp#";
-    LDP.Ascending = LDP.namespace + "Ascending";
-    LDP.BasicContainer = LDP.namespace + "BasicContainer";
-    LDP.Container = LDP.namespace + "Container";
-    LDP.Descending = LDP.namespace + "Descending";
-    LDP.DirectContainer = LDP.namespace + "DirectContainer";
-    LDP.IndirectContainer = LDP.namespace + "IndirectContainer";
-    LDP.RDFSource = LDP.namespace + "RDFSource";
-    LDP.Resource = LDP.namespace + "Resource";
-    LDP.MemberSubject = LDP.namespace + "MemberSubject";
-    LDP.NonRDFSource = LDP.namespace + "NonRDFSource";
-    LDP.Page = LDP.namespace + "Page";
-    LDP.PageSortCriterion = LDP.namespace + "PageSortCriterion";
-    LDP.PreferContainment = LDP.namespace + "PreferContainment";
-    LDP.PreferEmptyContainer = LDP.namespace + "PreferEmptyContainer";
-    LDP.PreferMembership = LDP.namespace + "PreferMembership";
-    LDP.PreferMinimalContainer = LDP.namespace + "PreferMinimalContainer";
-    LDP.constrainedBy = LDP.namespace + "constrainedBy";
-    LDP.contains = LDP.namespace + "contains";
-    LDP.hasMemberRelation = LDP.namespace + "hasMemberRelation";
-    LDP.insertedContentRelation = LDP.namespace + "insertedContentRelation";
-    LDP.isMemberOfRelation = LDP.namespace + "isMemberOfRelation";
-    LDP.member = LDP.namespace + "member";
-    LDP.membershipResource = LDP.namespace + "membershipResource";
-    LDP.pageSequence = LDP.namespace + "pageSequence";
-    LDP.pageSortCollation = LDP.namespace + "pageSortCollation";
-    LDP.pageSortCriteria = LDP.namespace + "pageSortCriteria";
-    LDP.pageSortOrder = LDP.namespace + "pageSortOrder";
-})(LDP = exports.LDP || (exports.LDP = {}));
+exports.LDP = {
+    namespace: "http://www.w3.org/ns/ldp#",
+    Ascending: "http://www.w3.org/ns/ldp#Ascending",
+    BasicContainer: "http://www.w3.org/ns/ldp#BasicContainer",
+    Container: "http://www.w3.org/ns/ldp#Container",
+    Descending: "http://www.w3.org/ns/ldp#Descending",
+    DirectContainer: "http://www.w3.org/ns/ldp#DirectContainer",
+    IndirectContainer: "http://www.w3.org/ns/ldp#IndirectContainer",
+    RDFSource: "http://www.w3.org/ns/ldp#RDFSource",
+    Resource: "http://www.w3.org/ns/ldp#Resource",
+    MemberSubject: "http://www.w3.org/ns/ldp#MemberSubject",
+    NonRDFSource: "http://www.w3.org/ns/ldp#NonRDFSource",
+    Page: "http://www.w3.org/ns/ldp#Page",
+    PageSortCriterion: "http://www.w3.org/ns/ldp#PageSortCriterion",
+    PreferContainment: "http://www.w3.org/ns/ldp#PreferContainment",
+    PreferEmptyContainer: "http://www.w3.org/ns/ldp#PreferEmptyContainer",
+    PreferMembership: "http://www.w3.org/ns/ldp#PreferMembership",
+    PreferMinimalContainer: "http://www.w3.org/ns/ldp#PreferMinimalContainer",
+    constrainedBy: "http://www.w3.org/ns/ldp#constrainedBy",
+    contains: "http://www.w3.org/ns/ldp#contains",
+    hasMemberRelation: "http://www.w3.org/ns/ldp#hasMemberRelation",
+    insertedContentRelation: "http://www.w3.org/ns/ldp#insertedContentRelation",
+    isMemberOfRelation: "http://www.w3.org/ns/ldp#isMemberOfRelation",
+    member: "http://www.w3.org/ns/ldp#member",
+    membershipResource: "http://www.w3.org/ns/ldp#membershipResource",
+    pageSequence: "http://www.w3.org/ns/ldp#pageSequence",
+    pageSortCollation: "http://www.w3.org/ns/ldp#pageSortCollation",
+    pageSortCriteria: "http://www.w3.org/ns/ldp#pageSortCriteria",
+    pageSortOrder: "http://www.w3.org/ns/ldp#pageSortOrder",
+};
 
 //# sourceMappingURL=LDP.js.map

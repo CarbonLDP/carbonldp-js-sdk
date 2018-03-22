@@ -9,11 +9,11 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var AddMemberAction = __importStar(require("./AddMemberAction"));
 exports.AddMemberAction = AddMemberAction;
-var CarbonError = __importStar(require("./CarbonError"));
+var CarbonError = __importStar(require("./Error"));
 exports.CarbonError = CarbonError;
-var CarbonMap = __importStar(require("./CarbonMap"));
+var CarbonMap = __importStar(require("./Map"));
 exports.CarbonMap = CarbonMap;
-var CarbonMapEntry = __importStar(require("./CarbonMapEntry"));
+var CarbonMapEntry = __importStar(require("./MapEntry"));
 exports.CarbonMapEntry = CarbonMapEntry;
 var DirectContainer = __importStar(require("./DirectContainer"));
 exports.DirectContainer = DirectContainer;

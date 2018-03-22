@@ -2,7 +2,6 @@ import { AbstractContext } from "./AbstractContext";
 import { PersistedACL } from "./Auth/PersistedACL";
 import { Document } from "./Document";
 import { Documents } from "./Documents";
-import { Response } from "./HTTP/Response";
 import { PersistedDocument } from "./PersistedDocument";
 
 import { PersistedProtectedDocument } from "./PersistedProtectedDocument";
@@ -43,7 +42,7 @@ describe( module( "carbonldp/PersistedProtectedDocument" ), ():void => {
 			"Obtains and resolve the ACL of the actual document.", [
 				{ name: "requestOptions", type: "CarbonLDP.HTTP.Request.RequestOptions", optional: true, description: " Customizable options for the request." },
 			],
-			{ type: "Promise<[ CarbonLDP.Auth.PersistedACL.PersistedACL, CarbonLDP.HTTP.Response.Response ]>" }
+			{ type: "Promise<CarbonLDP.Auth.PersistedACL.PersistedACL>" }
 		), ():void => {} );
 
 	} );
@@ -327,9 +326,8 @@ describe( module( "carbonldp/PersistedProtectedDocument" ), ():void => {
 
 				let promises:Promise<any>[] = [];
 
-				promises.push( protectedDocument.getACL().then( ( [ acl, response ]:[ PersistedACL, Response ] ) => {
+				promises.push( protectedDocument.getACL().then( ( acl:PersistedACL ) => {
 					expect( acl ).toBeDefined();
-					expect( response ).toBeDefined();
 
 					expect( PersistedACL.isDecorated( acl ) ).toBe( true );
 					expect( acl.entries ).toBeDefined();
@@ -340,9 +338,8 @@ describe( module( "carbonldp/PersistedProtectedDocument" ), ():void => {
 				} ) );
 
 				const unresolvedProtectedDocument:PersistedProtectedDocument = PersistedProtectedDocument.decorate( { id: "http://example.com/resource/" }, documents );
-				promises.push( unresolvedProtectedDocument.getACL().then( ( [ acl, response ]:[ PersistedACL, Response ] ) => {
+				promises.push( unresolvedProtectedDocument.getACL().then( ( acl:PersistedACL ) => {
 					expect( acl ).toBeDefined();
-					expect( response ).toBeDefined();
 
 					expect( PersistedACL.isDecorated( acl ) ).toBe( true );
 					expect( acl.entries ).toBeDefined();

@@ -9,9 +9,9 @@ import * as Utils from "../Utils";
 import * as LDP from "./";
 
 import * as AddMemberAction from "./AddMemberAction";
-import * as CarbonError from "./CarbonError";
-import * as CarbonMap from "./CarbonMap";
-import * as CarbonMapEntry from "./CarbonMapEntry";
+import * as Error from "./Error";
+import * as Map from "./Map";
+import * as CarbonMapEntry from "./MapEntry";
 import * as DirectContainer from "./DirectContainer";
 import * as DocumentMetadata from "./DocumentMetadata";
 import * as ErrorResponse from "./ErrorResponse";
@@ -37,11 +37,11 @@ describe( module( "carbonldp/LDP" ), ():void => {
 
 	it( reexports(
 		STATIC,
-		"CarbonMap",
-		"carbonldp/LDP/CarbonMap"
+		"Map",
+		"carbonldp/LDP/Map"
 	), ():void => {
 		expect( LDP.CarbonMap ).toBeDefined();
-		expect( LDP.CarbonMap ).toBe( CarbonMap );
+		expect( LDP.CarbonMap ).toBe( Map );
 	} );
 
 	it( reexports(
@@ -56,7 +56,7 @@ describe( module( "carbonldp/LDP" ), ():void => {
 	it( reexports(
 		STATIC,
 		"CarbonMapEntry",
-		"carbonldp/LDP/CarbonMapEntry"
+		"carbonldp/LDP/MapEntry"
 	), ():void => {
 		expect( LDP.CarbonMapEntry ).toBeDefined();
 		expect( LDP.CarbonMapEntry ).toBe( CarbonMapEntry );
@@ -64,11 +64,11 @@ describe( module( "carbonldp/LDP" ), ():void => {
 
 	it( reexports(
 		STATIC,
-		"CarbonError",
-		"carbonldp/LDP/CarbonError"
+		"Error",
+		"carbonldp/LDP/Error"
 	), ():void => {
 		expect( LDP.CarbonError ).toBeDefined();
-		expect( LDP.CarbonError ).toBe( CarbonError );
+		expect( LDP.CarbonError ).toBe( Error );
 	} );
 
 	it( reexports(

@@ -7,14 +7,14 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 }
 Object.defineProperty(exports, "__esModule", { value: true });
-var Errors_1 = require("./Errors");
+var IllegalStateError_1 = require("./Errors/IllegalStateError");
 var Utils = __importStar(require("./Utils"));
 function isPointerResolved() {
     return this._resolved;
 }
 exports.isPointerResolved = isPointerResolved;
 function resolveStandalonePointer() {
-    return Promise.reject(new Errors_1.IllegalStateError("The pointer has not been assigned to a context."));
+    return Promise.reject(new IllegalStateError_1.IllegalStateError("The pointer has not been assigned to a context."));
 }
 exports.resolveStandalonePointer = resolveStandalonePointer;
 exports.Pointer = {
@@ -82,16 +82,6 @@ exports.Pointer = {
     getIDs: function (pointers) {
         return pointers
             .map(function (pointer) { return pointer.id; });
-    },
-    resolveAll: function (pointers) {
-        var promises = pointers.map(function (pointer) { return pointer.resolve(); });
-        return Promise
-            .all(promises)
-            .then(function (results) {
-            var resolvedPointers = results.map(function (result) { return result[0]; });
-            var responses = results.map(function (result) { return result[1]; });
-            return [resolvedPointers, responses];
-        });
     },
 };
 

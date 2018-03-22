@@ -2,17 +2,17 @@ import { C } from "../Vocabularies/C";
 import { XSD } from "../Vocabularies/XSD";
 import { ObjectSchema } from "../ObjectSchema";
 import { Resource } from "../Resource";
-import { CarbonMap } from "./CarbonMap";
+import { Map } from "./Map";
 
 
-export interface CarbonError extends Resource {
+export interface Error extends Resource {
 	errorCode:string;
 	errorMessage:string;
-	errorParameters:CarbonMap<string, any>;
+	errorParameters:Map<string, any>;
 }
 
 
-export interface CarbonErrorFactory {
+export interface ErrorFactory {
 	TYPE:string;
 	SCHEMA:ObjectSchema;
 }
@@ -32,7 +32,7 @@ const SCHEMA:ObjectSchema = {
 	},
 };
 
-export const CarbonError:CarbonErrorFactory = {
+export const Error:ErrorFactory = {
 	TYPE:C.Error,
 	SCHEMA,
 };

@@ -13,6 +13,8 @@ describe( module( "carbonldp/SPARQL/Builder", "Module that reexports the customi
 		expect( Builder ).toEqual( jasmine.any( Object ) );
 	} );
 
+	// TODO: Document `FinishSPARQLSelect`
+
 	describe( clazz( "CarbonLDP.SPARQL.Builder.SPARQLBuilder", "Customized SPARQLER class to be used by the SDK" ), ():void => {
 
 		// TODO: Test `SPARQLBuilder.constructor`

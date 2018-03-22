@@ -1,32 +1,65 @@
-export namespace LDP {
-	export const namespace:"http://www.w3.org/ns/ldp#" = "http://www.w3.org/ns/ldp#";
+export interface LDP {
+	namespace:"http://www.w3.org/ns/ldp#";
 
-	export const Ascending:string = namespace + "Ascending";
-	export const BasicContainer:string = namespace + "BasicContainer";
-	export const Container:string = namespace + "Container";
-	export const Descending:string = namespace + "Descending";
-	export const DirectContainer:string = namespace + "DirectContainer";
-	export const IndirectContainer:string = namespace + "IndirectContainer";
-	export const RDFSource:string = namespace + "RDFSource";
-	export const Resource:string = namespace + "Resource";
-	export const MemberSubject:string = namespace + "MemberSubject";
-	export const NonRDFSource:string = namespace + "NonRDFSource";
-	export const Page:string = namespace + "Page";
-	export const PageSortCriterion:string = namespace + "PageSortCriterion";
-	export const PreferContainment:string = namespace + "PreferContainment";
-	export const PreferEmptyContainer:string = namespace + "PreferEmptyContainer";
-	export const PreferMembership:string = namespace + "PreferMembership";
-	export const PreferMinimalContainer:string = namespace + "PreferMinimalContainer";
+	Ascending:"http://www.w3.org/ns/ldp#Ascending";
+	BasicContainer:"http://www.w3.org/ns/ldp#BasicContainer";
+	Container:"http://www.w3.org/ns/ldp#Container";
+	Descending:"http://www.w3.org/ns/ldp#Descending";
+	DirectContainer:"http://www.w3.org/ns/ldp#DirectContainer";
+	IndirectContainer:"http://www.w3.org/ns/ldp#IndirectContainer";
+	RDFSource:"http://www.w3.org/ns/ldp#RDFSource";
+	Resource:"http://www.w3.org/ns/ldp#Resource";
+	MemberSubject:"http://www.w3.org/ns/ldp#MemberSubject";
+	NonRDFSource:"http://www.w3.org/ns/ldp#NonRDFSource";
+	Page:"http://www.w3.org/ns/ldp#Page";
+	PageSortCriterion:"http://www.w3.org/ns/ldp#PageSortCriterion";
+	PreferContainment:"http://www.w3.org/ns/ldp#PreferContainment";
+	PreferEmptyContainer:"http://www.w3.org/ns/ldp#PreferEmptyContainer";
+	PreferMembership:"http://www.w3.org/ns/ldp#PreferMembership";
+	PreferMinimalContainer:"http://www.w3.org/ns/ldp#PreferMinimalContainer";
 
-	export const constrainedBy:string = namespace + "constrainedBy";
-	export const contains:string = namespace + "contains";
-	export const hasMemberRelation:string = namespace + "hasMemberRelation";
-	export const insertedContentRelation:string = namespace + "insertedContentRelation";
-	export const isMemberOfRelation:string = namespace + "isMemberOfRelation";
-	export const member:string = namespace + "member";
-	export const membershipResource:string = namespace + "membershipResource";
-	export const pageSequence:string = namespace + "pageSequence";
-	export const pageSortCollation:string = namespace + "pageSortCollation";
-	export const pageSortCriteria:string = namespace + "pageSortCriteria";
-	export const pageSortOrder:string = namespace + "pageSortOrder";
+	constrainedBy:"http://www.w3.org/ns/ldp#constrainedBy";
+	contains:"http://www.w3.org/ns/ldp#contains";
+	hasMemberRelation:"http://www.w3.org/ns/ldp#hasMemberRelation";
+	insertedContentRelation:"http://www.w3.org/ns/ldp#insertedContentRelation";
+	isMemberOfRelation:"http://www.w3.org/ns/ldp#isMemberOfRelation";
+	member:"http://www.w3.org/ns/ldp#member";
+	membershipResource:"http://www.w3.org/ns/ldp#membershipResource";
+	pageSequence:"http://www.w3.org/ns/ldp#pageSequence";
+	pageSortCollation:"http://www.w3.org/ns/ldp#pageSortCollation";
+	pageSortCriteria:"http://www.w3.org/ns/ldp#pageSortCriteria";
+	pageSortOrder:"http://www.w3.org/ns/ldp#pageSortOrder";
 }
+
+export const LDP:LDP = {
+	namespace: "http://www.w3.org/ns/ldp#",
+
+	Ascending: "http://www.w3.org/ns/ldp#Ascending",
+	BasicContainer: "http://www.w3.org/ns/ldp#BasicContainer",
+	Container: "http://www.w3.org/ns/ldp#Container",
+	Descending: "http://www.w3.org/ns/ldp#Descending",
+	DirectContainer: "http://www.w3.org/ns/ldp#DirectContainer",
+	IndirectContainer: "http://www.w3.org/ns/ldp#IndirectContainer",
+	RDFSource: "http://www.w3.org/ns/ldp#RDFSource",
+	Resource: "http://www.w3.org/ns/ldp#Resource",
+	MemberSubject: "http://www.w3.org/ns/ldp#MemberSubject",
+	NonRDFSource: "http://www.w3.org/ns/ldp#NonRDFSource",
+	Page: "http://www.w3.org/ns/ldp#Page",
+	PageSortCriterion: "http://www.w3.org/ns/ldp#PageSortCriterion",
+	PreferContainment: "http://www.w3.org/ns/ldp#PreferContainment",
+	PreferEmptyContainer: "http://www.w3.org/ns/ldp#PreferEmptyContainer",
+	PreferMembership: "http://www.w3.org/ns/ldp#PreferMembership",
+	PreferMinimalContainer: "http://www.w3.org/ns/ldp#PreferMinimalContainer",
+
+	constrainedBy: "http://www.w3.org/ns/ldp#constrainedBy",
+	contains: "http://www.w3.org/ns/ldp#contains",
+	hasMemberRelation: "http://www.w3.org/ns/ldp#hasMemberRelation",
+	insertedContentRelation: "http://www.w3.org/ns/ldp#insertedContentRelation",
+	isMemberOfRelation: "http://www.w3.org/ns/ldp#isMemberOfRelation",
+	member: "http://www.w3.org/ns/ldp#member",
+	membershipResource: "http://www.w3.org/ns/ldp#membershipResource",
+	pageSequence: "http://www.w3.org/ns/ldp#pageSequence",
+	pageSortCollation: "http://www.w3.org/ns/ldp#pageSortCollation",
+	pageSortCriteria: "http://www.w3.org/ns/ldp#pageSortCriteria",
+	pageSortOrder: "http://www.w3.org/ns/ldp#pageSortOrder",
+};

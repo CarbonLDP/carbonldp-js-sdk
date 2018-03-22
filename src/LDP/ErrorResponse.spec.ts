@@ -25,7 +25,7 @@ describe( module( "carbonldp/LDP/ErrorResponse" ), ():void => {
 		it( hasProperty(
 			OBLIGATORY,
 			"errors",
-			"CarbonLDP.LDP.CarbonError.CarbonError[]",
+			"CarbonLDP.LDP.Error.Error[]",
 			"Array that list the error occurred in the server."
 		), ():void => {} );
 

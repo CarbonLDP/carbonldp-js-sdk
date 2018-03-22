@@ -1,20 +1,16 @@
-import { ACL } from "./Auth/ACL";
 import { PersistedACL } from "./Auth/PersistedACL";
 import { Documents } from "./Documents";
-import { BadResponseError } from "./HTTP/Errors";
 import { RequestOptions } from "./HTTP/Request";
-import { Response } from "./HTTP/Response";
 import { ModelDecorator } from "./ModelDecorator";
 import { PersistedDocument } from "./PersistedDocument";
 import { Pointer } from "./Pointer";
-import { SPARQLSelectResults } from "./SPARQL/SelectResults";
 import * as Utils from "./Utils";
 import { CS } from "./Vocabularies/CS";
 
 export interface PersistedProtectedDocument extends PersistedDocument {
 	accessControlList?:Pointer;
 
-	getACL( requestOptions?:RequestOptions ):Promise<[ PersistedACL, Response ]>;
+	getACL( requestOptions?:RequestOptions ):Promise<PersistedACL>;
 }
 
 
@@ -63,22 +59,13 @@ interface ACLResult {
 	acl:Pointer;
 }
 
-function getACL( this:PersistedProtectedDocument, requestOptions?:RequestOptions ):Promise<[ PersistedACL, Response ]> {
-	let aclPromise:Promise<Pointer>;
-	if( this.isResolved() ) {
-		aclPromise = Promise.resolve( this.accessControlList );
-	} else {
-		aclPromise = this.executeSELECTQuery<ACLResult>( `SELECT ?acl WHERE {
-			<${ this.id }> <${ CS.accessControlList }> ?acl.
-		}` ).then( ( [ results ]:[ SPARQLSelectResults<ACLResult>, Response ] ) => {
-			return results.bindings[ 0 ].acl;
-		} );
-	}
+function getACL( this:PersistedProtectedDocument, requestOptions?:RequestOptions ):Promise<PersistedACL> {
+	const aclPromise:Promise<Pointer> = this.isResolved() ?
+		Promise.resolve( this.accessControlList ) :
+		this.executeSELECTQuery<ACLResult>( `SELECT ?acl WHERE {<${ this.id }> <${ CS.accessControlList }> ?acl}` )
+			.then( results => results.bindings[ 0 ].acl );
 
 	return aclPromise.then( ( acl:Pointer ) => {
-		return this._documents.get( acl.id, requestOptions );
-	} ).then<[ PersistedACL, Response ]>( ( [ acl, response ]:[ PersistedACL, Response ] ) => {
-		if( ! acl.hasType( ACL.TYPE ) ) throw new BadResponseError( `The response does not contains a ${ ACL.TYPE } object.`, response );
-		return [ acl, response ];
+		return this._documents.get<PersistedACL>( acl.id, requestOptions );
 	} );
 }
