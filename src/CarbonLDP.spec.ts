@@ -767,7 +767,7 @@ describe( module( "carbonldp/CarbonLDP" ), ():void => {
 					.getPlatformMetadata()
 					.then( ( platformMetadata ):void => {
 						type AllPartial<T> = { [P in keyof T]?: Partial<T[P]> };
-						type JSPlatform = AllPartial<System.PlatformMetadata.PlatformMetadata>;
+						type JSPlatform = AllPartial<System.PlatformMetadata>;
 
 						expect( platformMetadata as JSPlatform ).toEqual( {
 							created: new Date( "2016-05-01T06:00:00.000Z" ),
