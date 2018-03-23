@@ -8,5 +8,3 @@ export class UnsupportedMediaTypeError extends HTTPError {
 
 	get name():string { return name; }
 }
-
-export default UnsupportedMediaTypeError;

@@ -13,5 +13,4 @@ export interface RDFLiteralFactory {
     hasType(value: RDFLiteral, type: string): boolean;
 }
 export declare const RDFLiteral: RDFLiteralFactory;
-export default RDFLiteral;
 export { Serializer, Serializers };

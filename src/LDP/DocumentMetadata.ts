@@ -56,5 +56,3 @@ export const DocumentMetadata:DocumentMetadataFactory = {
 	},
 
 };
-
-export default DocumentMetadata;

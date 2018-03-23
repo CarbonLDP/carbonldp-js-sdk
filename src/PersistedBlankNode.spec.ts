@@ -1,9 +1,7 @@
 import * as PersistedBlankNode from "./PersistedBlankNode";
-import DefaultExport from "./PersistedBlankNode";
 
 import {
 	extendsClass,
-	hasDefaultExport,
 	interfaze,
 	isDefined,
 	module,
@@ -24,14 +22,6 @@ describe( module( "carbonldp/LDP/PersistedBlankNode" ), ():void => {
 
 		it( extendsClass( "CarbonLDP.PersistedFragment.PersistedFragment" ), ():void => {} );
 
-	} );
-
-	it( hasDefaultExport( "CarbonLDP.PersistedBlankNode.PersistedBlankNode" ), ():void => {
-		let defaultExport:DefaultExport = <any> {};
-		let defaultTarget:PersistedBlankNode.PersistedBlankNode;
-
-		defaultTarget = defaultExport;
-		expect( defaultTarget ).toEqual( jasmine.any( Object ) );
 	} );
 
 } );

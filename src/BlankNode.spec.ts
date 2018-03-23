@@ -1,9 +1,7 @@
-import DefaultExport, { BlankNode } from "./BlankNode";
+import { BlankNode } from "./BlankNode";
 import { Document } from "./Document";
 import { URI } from "./RDF/URI";
-
 import {
-	hasDefaultExport,
 	hasMethod,
 	interfaze,
 	isDefined,
@@ -56,14 +54,6 @@ describe( module( "carbonldp/BlankNode" ), ():void => {
 			{ type: "T & CarbonLDP.BlankNode.BlankNode" }
 		), ():void => {} );
 
-	} );
-
-	it( hasDefaultExport( "CarbonLDP.BlankNode.BlankNode" ), ():void => {
-		let defaultExport:DefaultExport = <any> {};
-		let defaultTarget:BlankNode;
-
-		defaultTarget = defaultExport;
-		expect( defaultTarget ).toEqual( jasmine.any( Object ) );
 	} );
 
 	describe( property( STATIC, "BlankNode", "CarbonLDP.BlankNode.BlankNodeFactory", "Constant that implements the `CarbonLDP.BlankNode.BlankNodeFactory` interface." ), ():void => {

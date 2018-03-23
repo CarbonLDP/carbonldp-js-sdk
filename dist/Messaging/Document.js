@@ -112,6 +112,5 @@ exports.MessagingDocument = {
         });
     },
 };
-exports.default = exports.MessagingDocument;
 
 //# sourceMappingURL=Document.js.map

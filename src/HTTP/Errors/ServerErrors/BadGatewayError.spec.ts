@@ -4,7 +4,6 @@ import { HTTPError } from "../HTTPError";
 import {
 	clazz,
 	extendsClass,
-	hasDefaultExport,
 	hasMethod,
 	hasProperty,
 	INSTANCE,
@@ -15,7 +14,6 @@ import {
 import * as Utils from "./../../../Utils";
 
 import * as BadGatewayError from "./BadGatewayError";
-import DefaultExport from "./BadGatewayError";
 
 describe( module( "carbonldp/HTTP/Errors/ServerErrors/BadGatewayError" ), ():void => {
 
@@ -99,11 +97,6 @@ describe( module( "carbonldp/HTTP/Errors/ServerErrors/BadGatewayError" ), ():voi
 			expect( BadGatewayError.BadGatewayError.statusCode ).toBe( 502 );
 		} );
 
-	} );
-
-	it( hasDefaultExport( "CarbonLDP.HTTP.Errors.BadGatewayError" ), ():void => {
-		expect( DefaultExport ).toBeDefined();
-		expect( DefaultExport ).toBe( BadGatewayError.BadGatewayError );
 	} );
 
 } );

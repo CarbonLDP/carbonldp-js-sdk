@@ -8,5 +8,3 @@ export class HTTPVersionNotSupportedError extends HTTPError {
 
 	get name():string { return name; }
 }
-
-export default HTTPVersionNotSupportedError;

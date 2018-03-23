@@ -31,6 +31,5 @@ var BadResponseError = (function (_super) {
     return BadResponseError;
 }(HTTPError_1.HTTPError));
 exports.BadResponseError = BadResponseError;
-exports.default = BadResponseError;
 
 //# sourceMappingURL=BadResponseError.js.map

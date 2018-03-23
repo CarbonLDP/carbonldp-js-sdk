@@ -1,6 +1,5 @@
 import * as Errors from "../Errors";
 import {
-	hasDefaultExport,
 	hasMethod,
 	hasProperty,
 	interfaze,
@@ -16,7 +15,7 @@ import { XSD } from "../Vocabularies/XSD";
 import * as Utils from "./../Utils";
 
 import * as Module from "./Literal";
-import DefaultExport, { RDFLiteral } from "./Literal";
+import { RDFLiteral } from "./Literal";
 
 import * as Serializer from "./Literal/Serializer";
 import * as Serializers from "./Literal/Serializers";
@@ -42,14 +41,6 @@ describe( module( "carbonldp/RDF/Literal" ), ():void => {
 			"The actual string value if the literal."
 		), ():void => {} );
 
-	} );
-
-	it( hasDefaultExport( "CarbonLDP.RDF.Literal.RDFLiteral" ), ():void => {
-		let defaultExport:DefaultExport = <any> {};
-		let defaultTarget:RDFLiteral;
-
-		defaultTarget = defaultExport;
-		expect( defaultTarget ).toEqual( jasmine.any( Object ) );
 	} );
 
 	describe( interfaze(

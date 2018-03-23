@@ -4,11 +4,10 @@ import { Document } from "./Document";
 import { Documents } from "./Documents";
 import { PersistedDocument } from "./PersistedDocument";
 
-import DefaultExport, { PersistedProtectedDocument } from "./PersistedProtectedDocument";
+import { PersistedProtectedDocument } from "./PersistedProtectedDocument";
 
 import {
 	extendsClass,
-	hasDefaultExport,
 	hasMethod,
 	hasProperty,
 	interfaze,
@@ -355,14 +354,6 @@ describe( module( "carbonldp/PersistedProtectedDocument" ), ():void => {
 
 		} );
 
-	} );
-
-	it( hasDefaultExport( "CarbonLDP.PersistedProtectedDocument.PersistedProtectedDocument" ), ():void => {
-		let defaultExport:DefaultExport = <any> {};
-		let defaultTarget:PersistedProtectedDocument;
-
-		defaultTarget = defaultExport;
-		expect( defaultTarget ).toEqual( jasmine.any( Object ) );
 	} );
 
 } );

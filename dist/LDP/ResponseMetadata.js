@@ -17,6 +17,5 @@ exports.ResponseMetadata = {
             && object.hasType(exports.ResponseMetadata.TYPE);
     },
 };
-exports.default = exports.ResponseMetadata;
 
 //# sourceMappingURL=ResponseMetadata.js.map

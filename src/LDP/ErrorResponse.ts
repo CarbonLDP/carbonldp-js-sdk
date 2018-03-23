@@ -48,5 +48,3 @@ export const ErrorResponse:ErrorResponseFactory = {
 	},
 
 };
-
-export default ErrorResponse;

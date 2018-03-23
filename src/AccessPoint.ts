@@ -43,5 +43,3 @@ export const AccessPoint:AccessPointFactory = {
 		return <any> DirectContainer.createFrom<T>( object, membershipResource, hasMemberRelation, isMemberOfRelation );
 	},
 };
-
-export default AccessPoint;

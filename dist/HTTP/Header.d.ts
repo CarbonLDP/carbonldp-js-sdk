@@ -6,4 +6,3 @@ export declare class Header {
     hasValue(value: string): boolean;
     toString(): string;
 }
-export default Header;

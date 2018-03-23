@@ -8,5 +8,3 @@ export class MethodNotAllowedError extends HTTPError {
 
 	get name():string { return name; }
 }
-
-export default MethodNotAllowedError;

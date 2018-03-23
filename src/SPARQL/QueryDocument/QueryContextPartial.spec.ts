@@ -2,23 +2,26 @@ import { AbstractContext } from "../../AbstractContext";
 import { ObjectSchemaDigester } from "../../ObjectSchema";
 import { PersistedDocument } from "../../PersistedDocument";
 import { PersistedFragment } from "../../PersistedFragment";
-import { clazz, constructor, extendsClass, hasDefaultExport, hasSignature, INSTANCE, method, module } from "../../test/JasmineExtender";
+import {
+	clazz,
+	constructor,
+	extendsClass,
+	hasSignature,
+	INSTANCE,
+	method,
+	module
+} from "../../test/JasmineExtender";
 import { PartialMetadata } from "./PartialMetadata";
-import { QueryContext }  from "./QueryContext";
+import { QueryContext } from "./QueryContext";
 
 import * as Module from "./QueryContextPartial";
-import DefaultExport, { QueryContextPartial } from "./QueryContextPartial";
+import { QueryContextPartial } from "./QueryContextPartial";
 
 describe( module( "carbonldp/SPARQL/QueryDocument/QueryContextPartial" ), ():void => {
 
 	it( "should exists", ():void => {
 		expect( Module ).toBeDefined();
 		expect( Module ).toEqual( jasmine.any( Object ) );
-	} );
-
-	it( hasDefaultExport( "CarbonLDP.SPARQL.QueryDocument.QueryContextPartial.QueryContextPartial" ), ():void => {
-		expect( DefaultExport ).toBeDefined();
-		expect( DefaultExport ).toBe( QueryContextPartial );
 	} );
 
 	describe( clazz( "CarbonLDP.SPARQL.QueryDocument.QueryContextPartial.QueryContextPartial", "Class with the shared status and data of the query." ), ():void => {

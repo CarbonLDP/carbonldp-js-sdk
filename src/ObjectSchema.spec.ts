@@ -1,10 +1,8 @@
 import * as ObjectSchema from "./ObjectSchema";
-import DefaultExport from "./ObjectSchema";
 
 import {
 	clazz,
 	enumeration,
-	hasDefaultExport,
 	hasEnumeral,
 	hasMethod,
 	hasProperty,
@@ -858,14 +856,6 @@ describe( module( "carbonldp/ObjectSchema" ), ():void => {
 
 		} );
 
-	} );
-
-	it( hasDefaultExport( "CarbonLDP.ObjectSchema.ObjectSchema" ), ():void => {
-		let defaultExport:DefaultExport = <any> {};
-		let defaultTarget:ObjectSchema.ObjectSchema;
-
-		defaultTarget = defaultExport;
-		expect( defaultTarget ).toEqual( jasmine.any( Object ) );
 	} );
 
 } );

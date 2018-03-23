@@ -1,9 +1,7 @@
 import { Fragment } from "../Fragment";
 import { Pointer } from "../Pointer";
 import {
-	clazz,
 	extendsClass,
-	hasDefaultExport,
 	hasMethod,
 	hasProperty,
 	interfaze,
@@ -18,7 +16,6 @@ import { XSD } from "../Vocabularies/XSD";
 import * as Utils from "./../Utils";
 
 import { ACE } from "./ACE";
-import DefaultExport from "./ACE";
 
 describe( module( "carbonldp/Auth/ACE" ), ():void => {
 
@@ -264,14 +261,6 @@ describe( module( "carbonldp/Auth/ACE" ), ():void => {
 			expect( ace[ "some" ] ).toBe( "some" );
 		} );
 
-	} );
-
-	it( hasDefaultExport( "CarbonLDP.Auth.ACE.ACE" ), ():void => {
-		let defaultExport:DefaultExport = <any> {};
-		let ace:ACE;
-
-		ace = defaultExport;
-		expect( ace ).toEqual( jasmine.any( Object ) );
 	} );
 
 } );

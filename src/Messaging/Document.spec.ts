@@ -3,7 +3,6 @@ import { Documents } from "../Documents";
 import { ServiceAwareDocument } from "../ServiceAwareDocument";
 import {
 	extendsClass,
-	hasDefaultExport,
 	hasMethod,
 	hasSignature,
 	interfaze,
@@ -15,7 +14,7 @@ import {
 	STATIC
 } from "../test/JasmineExtender";
 
-import DefaultExport, { MessagingDocument } from "./Document";
+import { MessagingDocument } from "./Document";
 
 describe( module( "carbonldp/Messaging/Document" ), ():void => {
 
@@ -548,11 +547,6 @@ describe( module( "carbonldp/Messaging/Document" ), ():void => {
 
 		} );
 
-	} );
-
-	it( hasDefaultExport( "CarbonLDP.Messaging.Document.MessagingDocument" ), ():void => {
-		const target:MessagingDocument = {} as DefaultExport;
-		expect( target ).toBeDefined();
 	} );
 
 } );

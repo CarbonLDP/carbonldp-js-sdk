@@ -11,4 +11,3 @@ export interface ResponseMetadataFactory extends ModelFactory<ResponseMetadata> 
     is(object: object): object is ResponseMetadata;
 }
 export declare const ResponseMetadata: ResponseMetadataFactory;
-export default ResponseMetadata;

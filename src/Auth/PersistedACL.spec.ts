@@ -1,7 +1,6 @@
 import { Documents } from "../Documents";
 import {
 	extendsClass,
-	hasDefaultExport,
 	hasMethod,
 	hasProperty,
 	hasSignature,
@@ -18,7 +17,7 @@ import * as Utils from "./../Utils";
 
 import { ACL } from "./ACL";
 
-import DefaultExport, { PersistedACL } from "./PersistedACL";
+import { PersistedACL } from "./PersistedACL";
 
 describe( module( "carbonldp/Auth/PersistedACL" ), ():void => {
 
@@ -301,14 +300,6 @@ describe( module( "carbonldp/Auth/PersistedACL" ), ():void => {
 			expect( spy ).toHaveBeenCalledTimes( 1 );
 		} );
 
-	} );
-
-	it( hasDefaultExport( "CarbonLDP.Auth.PersistedACL.PersistedACL" ), ():void => {
-		let defaultExport:DefaultExport = <any> {};
-		let defaultTarget:PersistedACL;
-
-		defaultTarget = defaultExport;
-		expect( defaultTarget ).toEqual( jasmine.any( Object ) );
 	} );
 
 } );

@@ -21,6 +21,5 @@ exports.ServiceAwareDocument = {
         });
     },
 };
-exports.default = exports.ServiceAwareDocument;
 
 //# sourceMappingURL=ServiceAwareDocument.js.map

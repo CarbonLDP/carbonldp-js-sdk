@@ -1,6 +1,5 @@
 import {
 	extendsClass,
-	hasDefaultExport,
 	hasProperty,
 	interfaze,
 	module,
@@ -11,7 +10,7 @@ import {
 import { C } from "../Vocabularies/C";
 import * as Utils from "./../Utils";
 
-import DefaultExport, { MapEntry } from "./MapEntry";
+import { MapEntry } from "./MapEntry";
 
 describe( module( "carbonldp/LDP/MapEntry" ), ():void => {
 
@@ -83,14 +82,6 @@ describe( module( "carbonldp/LDP/MapEntry" ), ():void => {
 
 		} );
 
-	} );
-
-	it( hasDefaultExport( "CarbonLDP.LDP.MapEntry.MapEntry" ), ():void => {
-		let defaultExport:DefaultExport<any, any> = <any> {};
-		let defaultTarget:MapEntry<any, any>;
-
-		defaultTarget = defaultExport;
-		expect( defaultTarget ).toEqual( jasmine.any( Object ) );
 	} );
 
 } );

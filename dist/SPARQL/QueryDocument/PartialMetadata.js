@@ -34,6 +34,5 @@ var PartialMetadata = (function () {
     return PartialMetadata;
 }());
 exports.PartialMetadata = PartialMetadata;
-exports.default = PartialMetadata;
 
 //# sourceMappingURL=PartialMetadata.js.map

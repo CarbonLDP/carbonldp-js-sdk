@@ -34,6 +34,5 @@ var Response = (function () {
     return Response;
 }());
 exports.Response = Response;
-exports.default = Response;
 
 //# sourceMappingURL=Response.js.map

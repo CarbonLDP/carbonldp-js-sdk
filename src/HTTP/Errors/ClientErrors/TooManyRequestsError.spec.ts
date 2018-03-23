@@ -1,21 +1,19 @@
-import { RequestService } from "../../Request";
-import { Response } from "../../Response";
-import { HTTPError } from "../HTTPError";
 import {
 	clazz,
 	extendsClass,
-	hasDefaultExport,
 	hasMethod,
 	hasProperty,
 	INSTANCE,
 	isDefined,
 	module,
 	STATIC,
-} from "./../../../test/JasmineExtender";
+} from "../../../test/JasmineExtender";
+import { RequestService } from "../../Request";
+import { Response } from "../../Response";
+import { HTTPError } from "../HTTPError";
 import * as Utils from "./../../../Utils";
 
 import * as TooManyRequestsError from "./TooManyRequestsError";
-import DefaultExport from "./TooManyRequestsError";
 
 describe( module( "carbonldp/HTTP/Errors/ClientErrors/TooManyRequestsError" ), ():void => {
 
@@ -99,11 +97,6 @@ describe( module( "carbonldp/HTTP/Errors/ClientErrors/TooManyRequestsError" ), (
 			expect( TooManyRequestsError.TooManyRequestsError.statusCode ).toBe( 429 );
 		} );
 
-	} );
-
-	it( hasDefaultExport( "CarbonLDP.HTTP.Errors.TooManyRequestsError" ), ():void => {
-		expect( DefaultExport ).toBeDefined();
-		expect( DefaultExport ).toBe( TooManyRequestsError.TooManyRequestsError );
 	} );
 
 } );

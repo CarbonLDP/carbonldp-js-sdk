@@ -1,10 +1,9 @@
 import { Pointer } from "./Pointer";
 import * as Module from "./Resource";
-import DefaultExport, { Resource } from "./Resource";
+import { Resource } from "./Resource";
 
 import {
 	extendsClass,
-	hasDefaultExport,
 	hasMethod,
 	hasProperty,
 	interfaze,
@@ -120,14 +119,6 @@ describe( module( "carbonldp/Resource" ), ():void => {
 			{ type: "T & CarbonLDP.Resource.Resource" }
 		), ():void => {} );
 
-	} );
-
-	it( hasDefaultExport( "CarbonLDP.Resource.Resource" ), ():void => {
-		let defaultExport:DefaultExport = <any> {};
-		let defaultTarget:Resource;
-
-		defaultTarget = defaultExport;
-		expect( defaultTarget ).toEqual( jasmine.any( Object ) );
 	} );
 
 	describe( property( STATIC, "Resource", "CarbonLDP.Resource.ResourceFactory", "Constant that implements the `CarbonLDP.Resource.ResourceFactory` interface." ), ():void => {

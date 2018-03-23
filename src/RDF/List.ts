@@ -17,5 +17,3 @@ export const RDFList:RDFListFactory = {
 	},
 };
 
-
-export default RDFList;

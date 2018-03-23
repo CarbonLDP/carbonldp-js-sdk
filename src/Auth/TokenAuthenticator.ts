@@ -14,7 +14,7 @@ import { PersistedDocument } from "../PersistedDocument";
 import { RDFDocument } from "../RDF/Document";
 import { RDFNode } from "../RDF/Node";
 import { LDP } from "../Vocabularies/LDP";
-import Context from "./../Context";
+import { Context } from "../Context";
 import * as Utils from "./../Utils";
 import Authenticator from "./Authenticator";
 import BasicAuthenticator from "./BasicAuthenticator";

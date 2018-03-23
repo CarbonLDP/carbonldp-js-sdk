@@ -6,7 +6,7 @@ import { C } from "../Vocabularies/C";
 import { CS } from "../Vocabularies/CS";
 import { VCARD } from "../Vocabularies/VCARD";
 import { XSD } from "../Vocabularies/XSD";
-import AbstractContext from "./../AbstractContext";
+import { AbstractContext } from "./../AbstractContext";
 import {
 	clazz,
 	hasConstructor,

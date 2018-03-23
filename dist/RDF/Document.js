@@ -99,6 +99,5 @@ var RDFDocumentParser = (function (_super) {
     return RDFDocumentParser;
 }(Parser_1.JSONLDParser));
 exports.RDFDocumentParser = RDFDocumentParser;
-exports.default = exports.RDFDocument;
 
 //# sourceMappingURL=Document.js.map

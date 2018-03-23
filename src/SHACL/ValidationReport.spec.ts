@@ -1,5 +1,4 @@
 import {
-	hasDefaultExport,
 	hasProperty,
 	interfaze,
 	module,
@@ -10,7 +9,7 @@ import {
 import { SHACL } from "../Vocabularies/SHACL";
 import { XSD } from "../Vocabularies/XSD";
 
-import DefaultExport, { ValidationReport } from "./ValidationReport";
+import { ValidationReport } from "./ValidationReport";
 
 import { ValidationResult } from "./ValidationResult";
 
@@ -124,11 +123,6 @@ describe( module( "carbonldp/SHACL/ValidationReport" ), ():void => {
 			} );
 		} );
 
-	} );
-
-	it( hasDefaultExport( "CarbonLDP.SHACL.ValidationReport.ValidationReport" ), ():void => {
-		const target:ValidationReport = {} as DefaultExport;
-		expect( target ).toBeDefined();
 	} );
 
 } );

@@ -1,5 +1,5 @@
 import { RequestOptions } from "../HTTP/Request";
-import Context from "./../Context";
+import { Context } from "../Context";
 import Authenticator from "./Authenticator";
 import * as Token from "./Token";
 import * as UsernameAndPasswordToken from "./UsernameAndPasswordToken";

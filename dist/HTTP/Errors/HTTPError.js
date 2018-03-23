@@ -36,6 +36,5 @@ var HTTPError = (function (_super) {
     return HTTPError;
 }(Errors_1.AbstractError));
 exports.HTTPError = HTTPError;
-exports.default = HTTPError;
 
 //# sourceMappingURL=HTTPError.js.map

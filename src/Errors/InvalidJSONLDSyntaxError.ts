@@ -1,7 +1,5 @@
-import AbstractError from "./AbstractError";
+import { AbstractError } from "./AbstractError";
 
 export class InvalidJSONLDSyntaxError extends AbstractError {
 	get name():string { return "InvalidJSONLDSyntaxError"; }
 }
-
-export default InvalidJSONLDSyntaxError;

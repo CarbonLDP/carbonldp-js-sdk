@@ -1,6 +1,5 @@
 import {
 	enumeration,
-	hasDefaultExport,
 	hasEnumeral,
 	isDefined,
 	module,
@@ -8,7 +7,6 @@ import {
 import * as Utils from "./../Utils";
 
 import * as MethodModule from "./HTTPMethod";
-import DefaultExport from "./HTTPMethod";
 
 describe( module(
 	"carbonldp/HTTP/HTTPMethod"
@@ -78,11 +76,6 @@ describe( module(
 			expect( MethodModule.HTTPMethod.DELETE ).toBeDefined();
 		} );
 
-	} );
-
-	it( hasDefaultExport( "CarbonLDP.HTTP.HTTPMethod.HTTPMethod" ), ():void => {
-		expect( DefaultExport ).toBeDefined();
-		expect( DefaultExport ).toBe( MethodModule.HTTPMethod );
 	} );
 
 } );

@@ -27,6 +27,5 @@ exports.ErrorResponse = {
             .join(", ");
     },
 };
-exports.default = exports.ErrorResponse;
 
 //# sourceMappingURL=ErrorResponse.js.map

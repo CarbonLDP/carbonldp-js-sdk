@@ -2,7 +2,6 @@ import { VolatileResource } from "../../LDP/VolatileResource";
 import { Pointer } from "../../Pointer";
 import { Resource } from "../../Resource";
 import {
-	hasDefaultExport,
 	hasProperty,
 	hasSignature,
 	interfaze,
@@ -14,18 +13,13 @@ import {
 } from "../../test/JasmineExtender";
 import { C } from "../../Vocabularies/C";
 
-import DefaultExport, { QueryMetadata } from "./QueryMetadata";
+import { QueryMetadata } from "./QueryMetadata";
 
 describe( module( "carbonldp/SPARQL/QueryDocument/QueryMetadata" ), ():void => {
 
 	it( "should exists", ():void => {
 		expect( QueryMetadata ).toBeDefined();
 		expect( QueryMetadata ).toEqual( jasmine.any( Object ) );
-	} );
-
-	it( hasDefaultExport( "CarbonLDP.SPARQL.QueryDocument.QueryMetadata.QueryMetadata" ), ():void => {
-		const target:DefaultExport = {} as QueryMetadata;
-		expect( target ).toBeDefined();
 	} );
 
 	describe( interfaze( "CarbonLDP.SPARQL.QueryDocument.QueryMetadata.QueryMetadata", "Interface of the volatile resource created by the SDK in the partial query request." ), ():void => {

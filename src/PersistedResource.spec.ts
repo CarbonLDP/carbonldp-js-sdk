@@ -1,9 +1,8 @@
-import DefaultExport, { PersistedResource } from "./PersistedResource";
+import { PersistedResource } from "./PersistedResource";
 
 import { Resource } from "./Resource";
 import {
 	extendsClass,
-	hasDefaultExport,
 	hasMethod,
 	hasProperty,
 	interfaze,
@@ -95,14 +94,6 @@ describe( module( "carbonldp/PersistedResource" ), ():void => {
 			]
 		), ():void => {} );
 
-	} );
-
-	it( hasDefaultExport( "CarbonLDP.PersistedResource.PersistedResource" ), ():void => {
-		let defaultExport:DefaultExport = <any> {};
-		let defaultTarget:PersistedResource;
-
-		defaultTarget = defaultExport;
-		expect( defaultTarget ).toEqual( jasmine.any( Object ) );
 	} );
 
 	describe( property( STATIC, "PersistedResource", "CarbonLDP.PersistedResource.PersistedResourceFactory", "Constant that implements the `CarbonLDP.PersistedResource.PersistedResourceFactory` interface." ), ():void => {

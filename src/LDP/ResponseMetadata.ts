@@ -35,5 +35,3 @@ export const ResponseMetadata:ResponseMetadataFactory = {
 	},
 
 };
-
-export default ResponseMetadata;

@@ -2,7 +2,6 @@ import {
 	clazz,
 	extendsClass,
 	hasConstructor,
-	hasDefaultExport,
 	hasProperty,
 	INSTANCE,
 	isDefined,
@@ -10,10 +9,9 @@ import {
 } from "./../test/JasmineExtender";
 import * as Utils from "./../Utils";
 
-import AbstractError from "./AbstractError";
+import { AbstractError } from "./AbstractError";
 
 import * as NotImplementedError from "./NotImplementedError";
-import DefaultExport from "./NotImplementedError";
 
 // TODO: Refactor tests
 describe( module( "carbonldp/Errors/NotImplementedError" ), ():void => {
@@ -68,11 +66,6 @@ describe( module( "carbonldp/Errors/NotImplementedError" ), ():void => {
 			expect( error.name ).toBe( "NotImplementedError" );
 		} );
 
-	} );
-
-	it( hasDefaultExport( "CarbonLDP.Errors.NotImplementedError" ), ():void => {
-		expect( DefaultExport ).toBeDefined();
-		expect( DefaultExport ).toBe( NotImplementedError.NotImplementedError );
 	} );
 
 } );

@@ -25,4 +25,3 @@ export declare class SDKContext implements Context {
     private _resolveTypeURI(uri);
 }
 export declare const globalContext: SDKContext;
-export default globalContext;

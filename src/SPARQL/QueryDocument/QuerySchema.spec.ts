@@ -1,13 +1,13 @@
-import { hasDefaultExport, hasProperty, interfaze, module, OBLIGATORY } from "../../test/JasmineExtender";
+import {
+	hasProperty,
+	interfaze,
+	module,
+	OBLIGATORY
+} from "../../test/JasmineExtender";
 
-import DefaultExport, { QuerySchema } from "./QuerySchema";
+import { QuerySchema } from "./QuerySchema";
 
 describe( module( "carbonldp/SPARQL/QueryDocument/QuerySchema" ), ():void => {
-
-	it( hasDefaultExport( "CarbonLDP.SPARQL.QueryDocument.QuerySchema.QuerySchema" ), ():void => {
-		const target:DefaultExport = {} as QuerySchema;
-		expect( target ).toBeDefined();
-	} );
 
 	describe( interfaze( "CarbonLDP.SPARQL.QueryDocument.QuerySchema.QuerySchema", "Interface that describes an object that contains the data to to use in a partial query creation." ), ():void => {
 

@@ -380,5 +380,3 @@ function isValidValue( value:any ):boolean {
 	return value !== null && value !== void 0;
 }
 
-
-export default DeltaCreator;

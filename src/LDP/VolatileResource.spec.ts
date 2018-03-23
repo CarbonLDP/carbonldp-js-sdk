@@ -1,7 +1,6 @@
 import { Resource } from "../Resource";
 import {
 	extendsClass,
-	hasDefaultExport,
 	hasMethod,
 	hasProperty,
 	interfaze,
@@ -14,7 +13,7 @@ import {
 import { C } from "../Vocabularies/C";
 import * as Utils from "./../Utils";
 
-import DefaultExport, { VolatileResource } from "./VolatileResource";
+import { VolatileResource } from "./VolatileResource";
 
 describe( module( "carbonldp/LDP/VolatileResource" ), ():void => {
 
@@ -88,14 +87,6 @@ describe( module( "carbonldp/LDP/VolatileResource" ), ():void => {
 			expect( VolatileResource.is( object ) ).toBe( true );
 		} );
 
-	} );
-
-	it( hasDefaultExport( "CarbonLDP.LDP.VolatileResource.VolatileResource" ), ():void => {
-		let defaultExport:DefaultExport = <any> {};
-		let defaultTarget:VolatileResource;
-
-		defaultTarget = defaultExport;
-		expect( defaultTarget ).toEqual( jasmine.any( Object ) );
 	} );
 
 } );

@@ -115,5 +115,3 @@ function parseFlowString( flow?:"ASC" | "DESC" | "ascending" | "descending" ):"A
 	}
 }
 
-export default QueryDocumentsBuilder;
-

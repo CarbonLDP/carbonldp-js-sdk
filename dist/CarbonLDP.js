@@ -142,6 +142,5 @@ var CarbonLDP = (function (_super) {
     return CarbonLDP;
 }(AbstractContext.AbstractContext));
 exports.CarbonLDP = CarbonLDP;
-exports.default = CarbonLDP;
 
 //# sourceMappingURL=CarbonLDP.js.map

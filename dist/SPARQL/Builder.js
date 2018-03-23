@@ -30,6 +30,5 @@ var SPARQLBuilder = (function (_super) {
     return SPARQLBuilder;
 }(sparqler_1.SPARQLER));
 exports.SPARQLBuilder = SPARQLBuilder;
-exports.default = SPARQLBuilder;
 
 //# sourceMappingURL=Builder.js.map

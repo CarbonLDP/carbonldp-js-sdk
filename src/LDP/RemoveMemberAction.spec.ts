@@ -2,7 +2,6 @@ import { Pointer } from "../Pointer";
 import { Resource } from "../Resource";
 import {
 	extendsClass,
-	hasDefaultExport,
 	hasMethod,
 	hasProperty,
 	interfaze,
@@ -15,7 +14,7 @@ import {
 import { C } from "../Vocabularies/C";
 import * as Utils from "./../Utils";
 
-import DefaultExport, { RemoveMemberAction } from "./RemoveMemberAction";
+import { RemoveMemberAction } from "./RemoveMemberAction";
 
 describe( module( "carbonldp/LDP/RemoveMemberAction" ), ():void => {
 
@@ -140,14 +139,6 @@ describe( module( "carbonldp/LDP/RemoveMemberAction" ), ():void => {
 			expect( removeMemberAction.types ).toContain( RemoveMemberAction.TYPE );
 		} );
 
-	} );
-
-	it( hasDefaultExport( "CarbonLDP.LDP.RemoveMemberAction.RemoveMemberAction" ), ():void => {
-		let defaultExport:DefaultExport = <any> {};
-		let defaultTarget:RemoveMemberAction;
-
-		defaultTarget = defaultExport;
-		expect( defaultTarget ).toEqual( jasmine.any( Object ) );
 	} );
 
 } );

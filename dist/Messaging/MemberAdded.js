@@ -19,6 +19,5 @@ exports.MemberAdded = {
     TYPE: TYPE,
     SCHEMA: SCHEMA,
 };
-exports.default = exports.MemberAdded;
 
 //# sourceMappingURL=MemberAdded.js.map

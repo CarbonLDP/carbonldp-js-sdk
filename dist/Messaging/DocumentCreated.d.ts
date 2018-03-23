@@ -8,4 +8,3 @@ export interface DocumentCreatedFactory {
     SCHEMA: ObjectSchema;
 }
 export declare const DocumentCreated: DocumentCreatedFactory;
-export default DocumentCreated;

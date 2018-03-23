@@ -16,6 +16,7 @@ import {
 	STATIC,
 } from "./../test/JasmineExtender";
 import * as Utils from "./../Utils";
+
 import * as Credentials from "./Credentials";
 import DefaultExport from "./Credentials";
 

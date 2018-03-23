@@ -8,5 +8,3 @@ export class NotAcceptableError extends HTTPError {
 
 	get name():string { return name; }
 }
-
-export default NotAcceptableError;

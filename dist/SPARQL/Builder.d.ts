@@ -10,4 +10,3 @@ export interface FinishSPARQLSelect extends FinishClause {
 export declare class SPARQLBuilder extends SPARQLER<FinishSPARQLSelect> {
     constructor(documents: Documents, entryPoint: string);
 }
-export default SPARQLBuilder;

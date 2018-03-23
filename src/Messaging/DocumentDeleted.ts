@@ -20,5 +20,3 @@ export const DocumentDeleted:DocumentDeletedFactory = {
 	SCHEMA,
 };
 
-
-export default DocumentDeleted;

@@ -11,4 +11,3 @@ export interface QueryMetadataFactory extends ModelFactory<QueryMetadata> {
     is(object: object): object is QueryMetadata;
 }
 export declare const QueryMetadata: QueryMetadataFactory;
-export default QueryMetadata;

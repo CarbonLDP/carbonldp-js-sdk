@@ -1,21 +1,19 @@
-import { RequestService } from "../../Request";
-import { Response } from "../../Response";
-import { HTTPError } from "../HTTPError";
 import {
 	clazz,
 	extendsClass,
-	hasDefaultExport,
 	hasMethod,
 	hasProperty,
 	INSTANCE,
 	isDefined,
 	module,
 	STATIC,
-} from "./../../../test/JasmineExtender";
+} from "../../../test/JasmineExtender";
+import { RequestService } from "../../Request";
+import { Response } from "../../Response";
+import { HTTPError } from "../HTTPError";
 import * as Utils from "./../../../Utils";
 
 import * as MethodNotAllowedError from "./MethodNotAllowedError";
-import DefaultExport from "./MethodNotAllowedError";
 
 describe( module( "carbonldp/HTTP/Errors/ClientErrors/MethodNotAllowedError" ), ():void => {
 
@@ -99,11 +97,6 @@ describe( module( "carbonldp/HTTP/Errors/ClientErrors/MethodNotAllowedError" ), 
 			expect( MethodNotAllowedError.MethodNotAllowedError.statusCode ).toBe( 405 );
 		} );
 
-	} );
-
-	it( hasDefaultExport( "CarbonLDP.HTTP.Errors.MethodNotAllowedError" ), ():void => {
-		expect( DefaultExport ).toBeDefined();
-		expect( DefaultExport ).toBe( MethodNotAllowedError.MethodNotAllowedError );
 	} );
 
 } );

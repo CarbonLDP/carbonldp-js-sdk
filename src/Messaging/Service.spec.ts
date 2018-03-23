@@ -8,17 +8,15 @@ import { Resource } from "../Resource";
 import {
 	clazz,
 	constructor,
-	hasDefaultExport,
 	hasSignature,
 	INSTANCE,
 	isDefined,
 	method,
 	module
 } from "../test/JasmineExtender";
-import { EventMessage } from "./EventMessage";
+import { EventMessage } from "./EventMessage";
 
 import * as MessagingService from "./Service";
-import DefaultExport from "./Service";
 
 describe( module( "carbonldp/Messaging/Service" ), ():void => {
 
@@ -698,11 +696,6 @@ describe( module( "carbonldp/Messaging/Service" ), ():void => {
 
 		} );
 
-	} );
-
-	it( hasDefaultExport( "CarbonLDP.Messaging.Service.MessagingService" ), ():void => {
-		expect( DefaultExport ).toBeDefined();
-		expect( MessagingService.MessagingService ).toBe( DefaultExport );
 	} );
 
 } );

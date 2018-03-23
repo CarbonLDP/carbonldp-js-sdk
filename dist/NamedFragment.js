@@ -39,6 +39,5 @@ exports.NamedFragment = {
         return namedFragment;
     },
 };
-exports.default = exports.NamedFragment;
 
 //# sourceMappingURL=NamedFragment.js.map

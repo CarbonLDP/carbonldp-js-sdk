@@ -9,4 +9,3 @@ export interface BlankNodeFactory extends ModelFactory<BlankNode> {
     createFrom<T extends object>(object: T, document: Document, id?: string): T & BlankNode;
 }
 export declare const BlankNode: BlankNodeFactory;
-export default BlankNode;

@@ -10,7 +10,6 @@ import { RDFValue } from "../RDF/Value";
 import {
 	clazz,
 	hasConstructor,
-	hasDefaultExport,
 	hasProperty,
 	hasSignature,
 	INSTANCE,
@@ -22,7 +21,7 @@ import * as Utils from "../Utils";
 import { XSD } from "../Vocabularies/XSD";
 import * as ObjectSchema from "./../ObjectSchema";
 
-import DefaultExport, { JSONLDConverter } from "./Converter";
+import { JSONLDConverter } from "./Converter";
 
 describe( module( "carbonldp/JSONLD/Converter" ), ():void => {
 
@@ -589,11 +588,6 @@ describe( module( "carbonldp/JSONLD/Converter" ), ():void => {
 
 		} );
 
-	} );
-
-	it( hasDefaultExport( "CarbonLDP.JSONLD.Converter.JSONLDConverter" ), () => {
-		expect( DefaultExport ).toBeDefined();
-		expect( JSONLDConverter ).toBe( DefaultExport );
 	} );
 
 } );

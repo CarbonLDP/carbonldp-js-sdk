@@ -25,5 +25,3 @@ export class SPARQLBuilder extends SPARQLER<FinishSPARQLSelect> {
 		} );
 	}
 }
-
-export default SPARQLBuilder;

@@ -30,6 +30,5 @@ exports.AddMemberAction = {
         });
     },
 };
-exports.default = exports.AddMemberAction;
 
 //# sourceMappingURL=AddMemberAction.js.map

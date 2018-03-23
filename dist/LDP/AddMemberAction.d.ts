@@ -14,4 +14,3 @@ export interface AddMemberActionFactory extends ModelFactory<AddMemberAction>, M
 }
 export declare const SCHEMA: ObjectSchema;
 export declare const AddMemberAction: AddMemberActionFactory;
-export default AddMemberAction;

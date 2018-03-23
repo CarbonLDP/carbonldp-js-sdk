@@ -47,4 +47,3 @@ export interface MessagingDocumentFactory extends ModelDecorator<MessagingDocume
     decorate<T extends ServiceAwareDocument>(object: T): T & MessagingDocument;
 }
 export declare const MessagingDocument: MessagingDocumentFactory;
-export default MessagingDocument;

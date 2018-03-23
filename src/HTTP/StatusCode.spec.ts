@@ -1,15 +1,12 @@
 import {
-	module,
 	enumeration,
-
-	isDefined,
 	hasEnumeral,
-	hasDefaultExport,
+	isDefined,
+	module,
 } from "./../test/JasmineExtender";
 import * as Utils from "./../Utils";
 
 import * as StatusCodeModule from "./StatusCode";
-import DefaultExport from "./StatusCode";
 
 describe( module(
 	"carbonldp/HTTP/StatusCode"
@@ -355,11 +352,6 @@ describe( module(
 			expect( StatusCodeModule.StatusCode[ 505 ] ).toBe( "HTTP_VERSION_NOT_SUPPORTED" );
 		} );
 
-	} );
-
-	it( hasDefaultExport( "CarbonLDP.HTTP.StatusCode.StatusCode" ), ():void => {
-		expect( DefaultExport ).toBeDefined();
-		expect( DefaultExport ).toBe( StatusCodeModule.StatusCode );
 	} );
 
 } );

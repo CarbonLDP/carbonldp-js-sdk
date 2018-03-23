@@ -2,12 +2,11 @@ import { AbstractContext } from "./AbstractContext";
 import { Fragment } from "./Fragment";
 import { PersistedDocument } from "./PersistedDocument";
 
-import DefaultExport, { PersistedFragment } from "./PersistedFragment";
+import { PersistedFragment } from "./PersistedFragment";
 
 import { PersistedResource } from "./PersistedResource";
 import {
 	extendsClass,
-	hasDefaultExport,
 	hasMethod,
 	hasProperty,
 	interfaze,
@@ -91,14 +90,6 @@ describe( module( "carbonldp/PersistedFragment" ), ():void => {
 			{ type: "T & CarbonLDP.PersistedFragment.PersistedFragment" }
 		), ():void => {} );
 
-	} );
-
-	it( hasDefaultExport( "CarbonLDP.PersistedFragment.PersistedFragment" ), ():void => {
-		let defaultExport:DefaultExport = <any> {};
-		let defaultTarget:PersistedFragment;
-
-		defaultTarget = defaultExport;
-		expect( defaultTarget ).toEqual( jasmine.any( Object ) );
 	} );
 
 	describe( property( STATIC, "PersistedFragment", "CarbonLDP.PersistedFragment.PersistedFragmentFactory", "Constant that implements the `CarbonLDP.PersistedFragment.PersistedFragmentFactory` interface." ), ():void => {

@@ -44,5 +44,3 @@ export const RemoveMemberAction:RemoveMemberActionFactory = {
 		} );
 	},
 };
-
-export default RemoveMemberAction;

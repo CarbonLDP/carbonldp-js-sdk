@@ -8,4 +8,3 @@ export interface MemberDetailsFactory {
     SCHEMA: ObjectSchema;
 }
 export declare const MemberDetails: MemberDetailsFactory;
-export default MemberDetails;

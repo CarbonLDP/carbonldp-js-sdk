@@ -39,5 +39,3 @@ export class HTTPError extends AbstractError implements ErrorResponse {
 		this.statusCode = response.status;
 	}
 }
-
-export default HTTPError;

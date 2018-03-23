@@ -10,6 +10,5 @@ var Event;
     Event["MEMBER_ADDED"] = "member.added";
     Event["MEMBER_REMOVED"] = "member.removed";
 })(Event = exports.Event || (exports.Event = {}));
-exports.default = Event;
 
 //# sourceMappingURL=Event.js.map

@@ -6,7 +6,6 @@ import {
 import {
 	clazz,
 	constructor,
-	hasDefaultExport,
 	hasMethod,
 	hasProperty,
 	hasSignature,
@@ -17,7 +16,7 @@ import {
 import * as Utils from "./../Utils";
 import { Header } from "./Header";
 
-import DefaultExport, { Response } from "./Response";
+import { Response } from "./Response";
 
 describe( module( "carbonldp/HTTP/Response" ), ():void => {
 
@@ -252,11 +251,5 @@ describe( module( "carbonldp/HTTP/Response" ), ():void => {
 			}
 		} );
 	}
-
-	it( hasDefaultExport(
-		"CarbonLDP.HTTP.Response.Response"
-	), ():void => {
-		expect( DefaultExport ).toBe( Response );
-	} );
 
 } );

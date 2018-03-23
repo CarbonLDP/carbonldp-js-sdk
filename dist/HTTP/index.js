@@ -6,9 +6,6 @@ var __importStar = (this && this.__importStar) || function (mod) {
     result["default"] = mod;
     return result;
 }
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-}
 Object.defineProperty(exports, "__esModule", { value: true });
 var Errors = __importStar(require("./Errors"));
 exports.Errors = Errors;
@@ -24,8 +21,8 @@ var Request = __importStar(require("./Request"));
 exports.Request = Request;
 var Response = __importStar(require("./Response"));
 exports.Response = Response;
-var StatusCode_1 = __importDefault(require("./StatusCode"));
-exports.StatusCode = StatusCode_1.default;
+var StatusCode_1 = require("./StatusCode");
+exports.StatusCode = StatusCode_1.StatusCode;
 var StringParser = __importStar(require("./StringParser"));
 exports.StringParser = StringParser;
 

@@ -27,5 +27,3 @@ export const MemberRemoved:MemberRemovedFactory = {
 	TYPE,
 	SCHEMA,
 };
-
-export default MemberRemoved;

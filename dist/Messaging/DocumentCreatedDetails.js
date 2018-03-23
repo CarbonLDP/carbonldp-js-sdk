@@ -12,6 +12,5 @@ exports.DocumentCreatedDetails = {
     TYPE: C_1.C.DocumentCreatedDetails,
     SCHEMA: SCHEMA,
 };
-exports.default = exports.DocumentCreatedDetails;
 
 //# sourceMappingURL=DocumentCreatedDetails.js.map

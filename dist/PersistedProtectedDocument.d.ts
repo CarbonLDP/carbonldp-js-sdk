@@ -14,4 +14,3 @@ export interface PersistedProtectedDocumentFactory extends ModelDecorator<Persis
     decorate<T extends object>(object: T, documents: Documents): T & PersistedProtectedDocument;
 }
 export declare const PersistedProtectedDocument: PersistedProtectedDocumentFactory;
-export default PersistedProtectedDocument;

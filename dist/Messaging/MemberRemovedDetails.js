@@ -8,6 +8,5 @@ exports.MemberRemovedDetails = {
     TYPE: exports.TYPE,
     SCHEMA: exports.SCHEMA,
 };
-exports.default = exports.MemberRemovedDetails;
 
 //# sourceMappingURL=MemberRemovedDetails.js.map

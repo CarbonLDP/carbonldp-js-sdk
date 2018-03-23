@@ -1,6 +1,5 @@
 import {
 	extendsClass,
-	hasDefaultExport,
 	hasProperty,
 	interfaze,
 	module,
@@ -12,7 +11,7 @@ import { C } from "../Vocabularies/C";
 import { XSD } from "../Vocabularies/XSD";
 import * as Utils from "./../Utils";
 
-import DefaultExport, { Error } from "./Error";
+import { Error } from "./Error";
 
 describe( module( "carbonldp/LDP/Error" ), ():void => {
 
@@ -108,14 +107,6 @@ describe( module( "carbonldp/LDP/Error" ), ():void => {
 			} );
 		} );
 
-	} );
-
-	it( hasDefaultExport( "CarbonLDP.LDP.Error.Error" ), ():void => {
-		let defaultExport:DefaultExport = <any> {};
-		let defaultTarget:Error;
-
-		defaultTarget = defaultExport;
-		expect( defaultTarget ).toEqual( jasmine.any( Object ) );
 	} );
 
 } );

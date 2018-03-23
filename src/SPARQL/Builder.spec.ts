@@ -1,13 +1,10 @@
 import {
-	module,
 	clazz,
-
-	hasDefaultExport,
 	isDefined,
+	module,
 } from "../test/JasmineExtender";
 
 import * as Builder from "./Builder";
-import DefaultExport from "./Builder";
 
 describe( module( "carbonldp/SPARQL/Builder", "Module that reexports the customized SPARQLER class." ), ():void => {
 
@@ -24,11 +21,6 @@ describe( module( "carbonldp/SPARQL/Builder", "Module that reexports the customi
 
 		// TODO: Test `SPARQLBuilder => FinishSPARQLSelect`
 
-	} );
-
-	it( hasDefaultExport( "CarbonLDP.SPARQL.Builder.SPARQLBuilder" ), ():void => {
-		expect( DefaultExport ).toBeDefined();
-		expect( DefaultExport ).toBe( Builder.SPARQLBuilder );
 	} );
 
 } );

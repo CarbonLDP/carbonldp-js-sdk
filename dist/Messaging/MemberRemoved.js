@@ -19,6 +19,5 @@ exports.MemberRemoved = {
     TYPE: TYPE,
     SCHEMA: SCHEMA,
 };
-exports.default = exports.MemberRemoved;
 
 //# sourceMappingURL=MemberRemoved.js.map

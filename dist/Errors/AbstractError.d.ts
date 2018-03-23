@@ -3,4 +3,3 @@ export declare abstract class AbstractError extends Error {
     readonly name: string;
     constructor(message: string);
 }
-export default AbstractError;

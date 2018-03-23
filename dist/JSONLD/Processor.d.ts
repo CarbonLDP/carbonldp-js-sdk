@@ -17,4 +17,3 @@ export declare class JSONLDProcessor {
 }
 export declare class Util {
 }
-export default JSONLDProcessor;

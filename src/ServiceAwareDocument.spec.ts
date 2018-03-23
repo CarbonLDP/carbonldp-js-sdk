@@ -2,11 +2,10 @@ import { Minus } from "../test/helpers/types";
 
 import { Document } from "./Document";
 import { Documents } from "./Documents";
-import DefaultExport, { ServiceAwareDocument } from "./ServiceAwareDocument";
+import { ServiceAwareDocument } from "./ServiceAwareDocument";
 
 import {
 	extendsClass,
-	hasDefaultExport,
 	hasMethod,
 	hasProperty,
 	interfaze,
@@ -139,11 +138,6 @@ describe( module( "carbonldp/ServiceAwareDocument" ), ():void => {
 
 		} );
 
-	} );
-
-	it( hasDefaultExport( "CarbonLDP.ServiceAwareDocument.ServiceAwareDocument" ), ():void => {
-		const defaultTarget:ServiceAwareDocument = <DefaultExport> {};
-		expect( defaultTarget ).toBeDefined();
 	} );
 
 } );

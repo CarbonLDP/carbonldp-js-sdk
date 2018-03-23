@@ -32,5 +32,3 @@ export const EventMessage:EventMessageFactory = {
 	},
 };
 
-
-export default EventMessage;

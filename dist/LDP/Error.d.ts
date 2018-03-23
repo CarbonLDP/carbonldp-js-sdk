@@ -11,4 +11,3 @@ export interface ErrorFactory {
     SCHEMA: ObjectSchema;
 }
 export declare const Error: ErrorFactory;
-export default Error;

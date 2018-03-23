@@ -5,7 +5,6 @@ import {
 	PointerLibrary,
 } from "../Pointer";
 import {
-	hasDefaultExport,
 	hasMethod,
 	hasProperty,
 	interfaze,
@@ -19,7 +18,7 @@ import {
 import { RDFDocument } from "./../RDF/Document";
 import * as Utils from "./../Utils";
 
-import DefaultExport, { RDFValue } from "./Value";
+import { RDFValue } from "./Value";
 
 describe( module( "carbonldp/RDF/Value" ), ():void => {
 
@@ -49,14 +48,6 @@ describe( module( "carbonldp/RDF/Value" ), ():void => {
 			"The possible string value if the current object value."
 		), ():void => {} );
 
-	} );
-
-	it( hasDefaultExport( "CarbonLDP.RDF.Value.RDFValue" ), ():void => {
-		let defaultExport:DefaultExport = <any> {};
-		let defaultTarget:RDFValue;
-
-		defaultTarget = defaultExport;
-		expect( defaultTarget ).toEqual( jasmine.any( Object ) );
 	} );
 
 	describe( interfaze(

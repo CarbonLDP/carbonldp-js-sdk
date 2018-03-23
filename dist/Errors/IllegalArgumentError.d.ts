@@ -1,5 +1,4 @@
-import AbstractError from "./AbstractError";
+import { AbstractError } from "./AbstractError";
 export declare class IllegalArgumentError extends AbstractError {
     readonly name: string;
 }
-export default IllegalArgumentError;

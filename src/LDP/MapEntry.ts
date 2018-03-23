@@ -25,5 +25,3 @@ export interface MapEntryFactory {
 export const MapEntry:MapEntryFactory = {
 	SCHEMA,
 };
-
-export default MapEntry;

@@ -7,4 +7,3 @@ export interface AccessPointCreatedFactory {
     SCHEMA: ObjectSchema;
 }
 export declare const AccessPointCreated: AccessPointCreatedFactory;
-export default AccessPointCreated;

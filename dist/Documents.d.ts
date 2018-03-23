@@ -150,4 +150,3 @@ export declare class Documents implements PointerLibrary, PointerValidator, Obje
     private _sendRequest(method, uri, options, body?);
     private _sendRequest<T>(method, uri, options, body?, parser?);
 }
-export default Documents;

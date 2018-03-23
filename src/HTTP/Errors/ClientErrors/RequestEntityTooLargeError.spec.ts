@@ -1,21 +1,19 @@
-import { RequestService } from "../../Request";
-import { Response } from "../../Response";
-import { HTTPError } from "../HTTPError";
 import {
 	clazz,
 	extendsClass,
-	hasDefaultExport,
 	hasMethod,
 	hasProperty,
 	INSTANCE,
 	isDefined,
 	module,
 	STATIC,
-} from "./../../../test/JasmineExtender";
+} from "../../../test/JasmineExtender";
+import { RequestService } from "../../Request";
+import { Response } from "../../Response";
+import { HTTPError } from "../HTTPError";
 import * as Utils from "./../../../Utils";
 
 import * as RequestEntityTooLargeError from "./RequestEntityTooLargeError";
-import DefaultExport from "./RequestEntityTooLargeError";
 
 describe( module( "carbonldp/HTTP/Errors/ClientErrors/RequestEntityTooLargeError" ), ():void => {
 
@@ -99,11 +97,6 @@ describe( module( "carbonldp/HTTP/Errors/ClientErrors/RequestEntityTooLargeError
 			expect( RequestEntityTooLargeError.RequestEntityTooLargeError.statusCode ).toBe( 413 );
 		} );
 
-	} );
-
-	it( hasDefaultExport( "CarbonLDP.HTTP.Errors.RequestEntityTooLargeError" ), ():void => {
-		expect( DefaultExport ).toBeDefined();
-		expect( DefaultExport ).toBe( RequestEntityTooLargeError.RequestEntityTooLargeError );
 	} );
 
 } );

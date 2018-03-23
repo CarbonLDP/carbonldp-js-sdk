@@ -32,7 +32,6 @@ import {
 	clazz,
 	constructor,
 	extendsClass,
-	hasDefaultExport,
 	hasProperty,
 	hasSignature,
 	INSTANCE,
@@ -699,11 +698,6 @@ describe( module( "carbonldp/CarbonLDP" ), ():void => {
 
 		} );
 
-	} );
-
-	it( hasDefaultExport( "CarbonLDP" ), () => {
-		expect( CarbonLDP.default ).toBeDefined();
-		expect( CarbonLDP.default ).toBe( CarbonLDP.CarbonLDP );
 	} );
 
 } );

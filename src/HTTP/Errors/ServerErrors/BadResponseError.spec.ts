@@ -4,7 +4,6 @@ import { HTTPError } from "../HTTPError";
 import {
 	clazz,
 	extendsClass,
-	hasDefaultExport,
 	hasMethod,
 	hasProperty,
 	INSTANCE,
@@ -15,7 +14,6 @@ import {
 import * as Utils from "./../../../Utils";
 
 import * as BadResponseError from "./BadResponseError";
-import DefaultExport from "./BadResponseError";
 
 describe( module( "carbonldp/HTTP/Errors/ServerErrors/BadResponseError" ), ():void => {
 
@@ -99,11 +97,6 @@ describe( module( "carbonldp/HTTP/Errors/ServerErrors/BadResponseError" ), ():vo
 			expect( BadResponseError.BadResponseError.statusCode ).toBe( 0 );
 		} );
 
-	} );
-
-	it( hasDefaultExport( "CarbonLDP.HTTP.Errors.BadResponseError" ), ():void => {
-		expect( DefaultExport ).toBeDefined();
-		expect( DefaultExport ).toBe( BadResponseError.BadResponseError );
 	} );
 
 } );

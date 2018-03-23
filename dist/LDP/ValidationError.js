@@ -11,6 +11,5 @@ exports.ValidationError = {
     TYPE: C_1.C.ValidationError,
     SCHEMA: SCHEMA,
 };
-exports.default = exports.ValidationError;
 
 //# sourceMappingURL=ValidationError.js.map

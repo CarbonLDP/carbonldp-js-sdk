@@ -1,4 +1,4 @@
-import Context from "./Context";
+import { Context }from "./Context";
 import * as ObjectSchema from "./ObjectSchema";
 import {
 	globalContext,
@@ -22,5 +22,3 @@ export abstract class AbstractContext extends SDKContext {
 	}
 
 }
-
-export default AbstractContext;

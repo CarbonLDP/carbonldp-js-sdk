@@ -1,7 +1,6 @@
 import { Pointer } from "../Pointer";
 import {
 	extendsClass,
-	hasDefaultExport,
 	hasProperty,
 	interfaze,
 	isDefined,
@@ -12,7 +11,7 @@ import {
 } from "../test/JasmineExtender";
 import { C } from "../Vocabularies/C";
 
-import DefaultExport, { DocumentCreated } from "./DocumentCreated";
+import { DocumentCreated } from "./DocumentCreated";
 
 import { DocumentCreatedDetails } from "./DocumentCreatedDetails";
 import { EventMessage } from "./EventMessage";
@@ -99,11 +98,6 @@ describe( module( "carbonldp/Messaging/DocumentCreated" ), ():void => {
 			} );
 		} );
 
-	} );
-
-	it( hasDefaultExport( "CarbonLDP.Messaging.DocumentCreated.DocumentCreated" ), ():void => {
-		const target:DocumentCreated = {} as DefaultExport;
-		expect( target ).toBeDefined();
 	} );
 
 } );

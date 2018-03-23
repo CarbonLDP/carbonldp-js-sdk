@@ -7,5 +7,3 @@ export interface QuerySchemaProperty {
 	"@container"?:"@set" | "@list" | "@language";
 	query?:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder;
 }
-
-export default QuerySchemaProperty;

@@ -11,6 +11,5 @@ exports.PlatformMetadata = {
     TYPE: C_1.C.Platform,
     SCHEMA: SCHEMA,
 };
-exports.default = exports.PlatformMetadata;
 
 //# sourceMappingURL=PlatformMetadata.js.map

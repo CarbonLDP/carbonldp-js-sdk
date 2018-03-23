@@ -3,8 +3,6 @@ import { Response } from "../Response";
 import {
 	clazz,
 	extendsClass,
-	hasConstructor,
-	hasDefaultExport,
 	hasMethod,
 	hasProperty,
 	INSTANCE,
@@ -16,7 +14,6 @@ import * as Utils from "./../../Utils";
 import { HTTPError } from "./HTTPError";
 
 import * as UnknownError from "./UnknownError";
-import DefaultExport from "./UnknownError";
 
 describe( module(
 	"carbonldp/HTTP/Errors/UnknownError"
@@ -101,11 +98,6 @@ describe( module(
 			expect( UnknownError.UnknownError.statusCode ).toBeNull();
 		} );
 
-	} );
-
-	it( hasDefaultExport( "CarbonLDP.HTTP.Errors.UnknownError" ), ():void => {
-		expect( DefaultExport ).toBeDefined();
-		expect( DefaultExport ).toBe( UnknownError.UnknownError );
 	} );
 
 } );

@@ -36,4 +36,3 @@ export interface DocumentFactory extends ModelFactory<Document>, ModelDecorator<
     _convertNestedObjects(parent: Document, actual: any, fragmentsTracker?: Set<string>): void;
 }
 export declare const Document: DocumentFactory;
-export default Document;

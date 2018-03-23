@@ -47,5 +47,3 @@ export class Header {
 		return this.values.join( ", " );
 	}
 }
-
-export default Header;

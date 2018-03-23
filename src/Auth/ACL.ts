@@ -323,5 +323,3 @@ function removeChildInheritance( subject:string | Pointer, permissions:string | 
 	let acl:ACL = this;
 	removePermissions.call( this, subject, permissions, acl.inheritableEntries );
 }
-
-export default ACL;

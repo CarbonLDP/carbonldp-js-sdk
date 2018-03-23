@@ -37,6 +37,5 @@ exports.DocumentMetadata = {
             && exports.DocumentMetadata.isDecorated(object);
     },
 };
-exports.default = exports.DocumentMetadata;
 
 //# sourceMappingURL=DocumentMetadata.js.map

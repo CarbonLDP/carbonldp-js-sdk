@@ -17,4 +17,3 @@ export interface SPARQLRawResults {
     };
     "boolean"?: boolean;
 }
-export default SPARQLRawResults;

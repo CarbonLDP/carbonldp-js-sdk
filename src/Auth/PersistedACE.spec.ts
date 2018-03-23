@@ -1,13 +1,10 @@
 import {
 	extendsClass,
-	hasDefaultExport,
 	hasProperty,
 	interfaze,
 	module,
 	OBLIGATORY,
 } from "../test/JasmineExtender";
-
-import DefaultExport, { PersistedACE } from "./PersistedACE";
 
 describe( module( "carbonldp/Auth/ACE" ), ():void => {
 
@@ -26,14 +23,6 @@ describe( module( "carbonldp/Auth/ACE" ), ():void => {
 			"Reference to the persisted ACL where the current ACE belongs."
 		), ():void => {} );
 
-	} );
-
-	it( hasDefaultExport( "CarbonLDP.Auth.PersistedACE.PersistedACE" ), ():void => {
-		let defaultExport:DefaultExport = <any> {};
-		let persistedACE:PersistedACE;
-
-		persistedACE = defaultExport;
-		expect( persistedACE ).toEqual( jasmine.any( Object ) );
 	} );
 
 } );

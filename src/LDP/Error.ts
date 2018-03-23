@@ -37,5 +37,3 @@ export const Error:ErrorFactory = {
 	SCHEMA,
 };
 
-
-export default Error;

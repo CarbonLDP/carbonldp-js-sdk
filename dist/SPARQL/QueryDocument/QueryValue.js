@@ -41,6 +41,5 @@ var QueryValue = (function () {
     return QueryValue;
 }());
 exports.QueryValue = QueryValue;
-exports.default = QueryValue;
 
 //# sourceMappingURL=QueryValue.js.map

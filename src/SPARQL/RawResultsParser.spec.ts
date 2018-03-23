@@ -1,6 +1,5 @@
 import {
 	clazz,
-	hasDefaultExport,
 	hasMethod,
 	INSTANCE,
 	isDefined,
@@ -10,7 +9,6 @@ import * as Utils from "./../Utils";
 import { SPARQLRawResults } from "./RawResults";
 
 import * as RawResultsParser from "./RawResultsParser";
-import DefaultExport from "./RawResultsParser";
 
 describe( module( "carbonldp/SPARQL/RawResultsParser" ), ():void => {
 
@@ -145,11 +143,6 @@ describe( module( "carbonldp/SPARQL/RawResultsParser" ), ():void => {
 			}, done.fail );
 		} );
 
-	} );
-
-	it( hasDefaultExport( "CarbonLDP.SPARQL.RawResultParser.Class" ), ():void => {
-		expect( DefaultExport ).toBeDefined();
-		expect( DefaultExport ).toBe( RawResultsParser.SPARQLRawResultsParser );
 	} );
 
 } );

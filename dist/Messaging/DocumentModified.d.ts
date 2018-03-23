@@ -9,4 +9,3 @@ export interface DocumentModifiedFactory {
 export declare const TYPE: string;
 export declare const SCHEMA: ObjectSchema;
 export declare const DocumentModified: DocumentModifiedFactory;
-export default DocumentModified;

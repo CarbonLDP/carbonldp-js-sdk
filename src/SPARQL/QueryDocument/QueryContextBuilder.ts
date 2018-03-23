@@ -115,5 +115,3 @@ export class QueryContextBuilder extends QueryContext {
 	}
 
 }
-
-export default QueryContextBuilder;

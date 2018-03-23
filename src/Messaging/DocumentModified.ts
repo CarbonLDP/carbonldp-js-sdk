@@ -19,5 +19,3 @@ export const DocumentModified:DocumentModifiedFactory = {
 	TYPE,
 	SCHEMA,
 };
-
-export default DocumentModified;

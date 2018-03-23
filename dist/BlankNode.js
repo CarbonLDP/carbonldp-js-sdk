@@ -19,6 +19,5 @@ exports.BlankNode = {
         return Fragment_1.Fragment.createFrom(object, document, id);
     },
 };
-exports.default = exports.BlankNode;
 
 //# sourceMappingURL=BlankNode.js.map

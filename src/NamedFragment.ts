@@ -67,5 +67,3 @@ export const NamedFragment:NamedFragmentFactory = {
 		return namedFragment;
 	},
 };
-
-export default NamedFragment;

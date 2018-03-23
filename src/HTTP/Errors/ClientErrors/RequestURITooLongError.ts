@@ -8,5 +8,3 @@ export class RequestURITooLongError extends HTTPError {
 
 	get name():string { return name; }
 }
-
-export default RequestURITooLongError;

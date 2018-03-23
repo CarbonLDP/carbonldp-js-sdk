@@ -28,4 +28,3 @@ export interface PointerFactory extends ModelFactory<Pointer>, ModelDecorator<Po
 export declare function isPointerResolved(this: Pointer): boolean;
 export declare function resolveStandalonePointer(this: Pointer): Promise<[Pointer, Response]>;
 export declare const Pointer: PointerFactory;
-export default Pointer;

@@ -14,4 +14,3 @@ export interface PersistedResourceFactory extends ModelDecorator<PersistedResour
     decorate<T extends object>(object: T): T & PersistedResource;
 }
 export declare const PersistedResource: PersistedResourceFactory;
-export default PersistedResource;

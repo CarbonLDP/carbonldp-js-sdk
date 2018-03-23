@@ -18,6 +18,5 @@ var QueryObject = (function () {
     return QueryObject;
 }());
 exports.QueryObject = QueryObject;
-exports.default = QueryObject;
 
 //# sourceMappingURL=QueryObject.js.map

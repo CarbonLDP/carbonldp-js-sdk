@@ -210,5 +210,3 @@ export class QueryDocumentBuilder {
 	}
 
 }
-
-export default QueryDocumentBuilder;

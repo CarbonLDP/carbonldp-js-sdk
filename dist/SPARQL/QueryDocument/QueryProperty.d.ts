@@ -28,4 +28,3 @@ export declare class QueryProperty {
     getTriple(): SubjectToken;
     toString(): string;
 }
-export default QueryProperty;

@@ -23,5 +23,3 @@ export class QueryObject {
 		return `${ this._resource }`;
 	}
 }
-
-export default QueryObject;

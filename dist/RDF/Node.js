@@ -101,6 +101,5 @@ exports.RDFNode = {
         return propertyLanguageMap;
     },
 };
-exports.default = exports.RDFNode;
 
 //# sourceMappingURL=Node.js.map

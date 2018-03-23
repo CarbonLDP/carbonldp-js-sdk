@@ -16,4 +16,3 @@ export interface ACEFactory extends ModelFactory<ACE> {
     createFrom<T extends object>(object: T, granting: boolean, subjects: Pointer[], subjectClass: Pointer, permissions: Pointer[]): T & ACE;
 }
 export declare const ACE: ACEFactory;
-export default ACE;

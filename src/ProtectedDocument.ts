@@ -23,5 +23,3 @@ export const ProtectedDocument:ProtectedDocumentFactory = {
 	TYPE: CS.ProtectedDocument,
 	SCHEMA,
 };
-
-export default ProtectedDocument;

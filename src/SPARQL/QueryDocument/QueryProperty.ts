@@ -102,5 +102,3 @@ export class QueryProperty {
 		return `${ this.variable }`;
 	}
 }
-
-export default QueryProperty;

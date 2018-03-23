@@ -21,4 +21,3 @@ export interface URIFactory {
     prefix(uri: string, objectSchema: DigestedObjectSchema): string;
 }
 export declare const URI: URIFactory;
-export default URI;

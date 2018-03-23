@@ -69,5 +69,3 @@ function getACL( this:PersistedProtectedDocument, requestOptions?:RequestOptions
 		return this._documents.get<PersistedACL>( acl.id, requestOptions );
 	} );
 }
-
-export default PersistedProtectedDocument;

@@ -8,6 +8,5 @@ exports.DocumentModified = {
     TYPE: exports.TYPE,
     SCHEMA: exports.SCHEMA,
 };
-exports.default = exports.DocumentModified;
 
 //# sourceMappingURL=DocumentModified.js.map

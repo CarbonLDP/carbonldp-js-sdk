@@ -1,6 +1,5 @@
 import {
 	clazz,
-	hasDefaultExport,
 	hasMethod,
 	hasProperty,
 	INSTANCE,
@@ -14,7 +13,7 @@ import {
 } from "../test/JasmineExtender";
 import * as Utils from "./../Utils";
 
-import DefaultExport, {
+import {
 	RDFDocument,
 	RDFDocumentParser,
 } from "./Document";
@@ -116,14 +115,6 @@ describe( module( "carbonldp/RDF/Document" ), ():void => {
 			{ type: "CarbonLDP.RDF.Node.RDFNode[]" }
 		), ():void => {} );
 
-	} );
-
-	it( hasDefaultExport( "CarbonLDP.RDF.Document.RDFDocument" ), ():void => {
-		let defaultExport:DefaultExport = <any> {};
-		let defaultTarget:RDFDocument;
-
-		defaultTarget = defaultExport;
-		expect( defaultTarget ).toEqual( jasmine.any( Object ) );
 	} );
 
 	describe( property(

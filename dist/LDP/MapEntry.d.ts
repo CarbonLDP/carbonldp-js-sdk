@@ -8,4 +8,3 @@ export interface MapEntryFactory {
     SCHEMA: ObjectSchema;
 }
 export declare const MapEntry: MapEntryFactory;
-export default MapEntry;

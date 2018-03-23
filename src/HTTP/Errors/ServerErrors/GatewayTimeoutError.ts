@@ -8,5 +8,3 @@ export class GatewayTimeoutError extends HTTPError {
 
 	get name():string { return name; }
 }
-
-export default GatewayTimeoutError;

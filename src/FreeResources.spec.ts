@@ -1,13 +1,14 @@
-import AbstractContext from "./AbstractContext";
-import Documents from "./Documents";
+import { AbstractContext } from "./AbstractContext";
+import { Documents } from "./Documents";
 import * as Errors from "./Errors";
-import DefaultExport, { FreeResources } from "./FreeResources";
+
+import { FreeResources } from "./FreeResources";
+
 import { Pointer } from "./Pointer";
 import { URI } from "./RDF/URI";
 import { Resource } from "./Resource";
 import {
 	extendsClass,
-	hasDefaultExport,
 	hasMethod,
 	hasProperty,
 	interfaze,
@@ -565,14 +566,6 @@ describe( module( "carbonldp/FreeResources" ), ():void => {
 
 		} );
 
-	} );
-
-	it( hasDefaultExport( "CarbonLDP.FreeResources.FreeResources" ), ():void => {
-		let defaultExport:DefaultExport = <any> {};
-		let defaultTarget:FreeResources;
-
-		defaultTarget = defaultExport;
-		expect( defaultTarget ).toEqual( jasmine.any( Object ) );
 	} );
 
 } );

@@ -1,5 +1,4 @@
 import {
-	hasDefaultExport,
 	hasProperty,
 	interfaze,
 	isDefined,
@@ -9,7 +8,6 @@ import {
 import * as Utils from "./../Utils";
 
 import * as SELECTResults from "./SelectResults";
-import DefaultExport from "./SelectResults";
 
 describe( module( "carbonldp/SPARQL/SelectResults" ), ():void => {
 
@@ -52,14 +50,6 @@ describe( module( "carbonldp/SPARQL/SelectResults" ), ():void => {
 			"An entry peer every `vars` selected for, which contains the parsed value requested. This elements can be from every literal type (`String`, `Number`, `Date`, etc.), to a `CarbonLDP.Pointer.Pointer` if it is an URI."
 		), ():void => {} );
 
-	} );
-
-	it( hasDefaultExport( "CarbonLDP.SPARQL.SelectResults.SPARQLSelectResults" ), ():void => {
-		let defaultExport:DefaultExport = <any> {};
-		let defaultTarget:SELECTResults.SPARQLSelectResults;
-
-		defaultTarget = defaultExport;
-		expect( defaultTarget ).toEqual( jasmine.any( Object ) );
 	} );
 
 } );

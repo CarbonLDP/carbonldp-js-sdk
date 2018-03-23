@@ -30,6 +30,5 @@ exports.RemoveMemberAction = {
         });
     },
 };
-exports.default = exports.RemoveMemberAction;
 
 //# sourceMappingURL=RemoveMemberAction.js.map

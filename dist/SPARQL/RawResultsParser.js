@@ -22,6 +22,5 @@ var SPARQLRawResultsParser = (function (_super) {
     return SPARQLRawResultsParser;
 }(JSONParser_1.JSONParser));
 exports.SPARQLRawResultsParser = SPARQLRawResultsParser;
-exports.default = SPARQLRawResultsParser;
 
 //# sourceMappingURL=RawResultsParser.js.map

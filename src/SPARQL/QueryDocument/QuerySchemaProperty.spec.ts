@@ -1,5 +1,4 @@
 import {
-	hasDefaultExport,
 	hasProperty,
 	interfaze,
 	module,
@@ -7,14 +6,9 @@ import {
 } from "../../test/JasmineExtender";
 import { QueryDocumentBuilder } from "./QueryDocumentBuilder";
 
-import DefaultExport, { QuerySchemaProperty } from "./QuerySchemaProperty";
+import { QuerySchemaProperty } from "./QuerySchemaProperty";
 
 describe( module( "carbonldp/SPARQL/QueryDocument/QueryPropertySchema" ), ():void => {
-
-	it( hasDefaultExport( "CarbonLDP.SPARQL.QueryDocument.QuerySchemaProperty.QuerySchemaProperty" ), ():void => {
-		const target:DefaultExport = {} as QuerySchemaProperty;
-		expect( target ).toBeDefined();
-	} );
 
 	describe( interfaze( "CarbonLDP.SPARQL.QueryDocument.QuerySchemaProperty.QuerySchemaProperty", "Interface that describes an property to retrieve in a partial query creation." ), ():void => {
 

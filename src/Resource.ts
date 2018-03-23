@@ -108,5 +108,3 @@ export const Resource:ResourceFactory = {
 		return resource;
 	},
 };
-
-export default Resource;

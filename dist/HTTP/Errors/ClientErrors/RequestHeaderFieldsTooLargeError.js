@@ -31,6 +31,5 @@ var RequestHeaderFieldsTooLargeError = (function (_super) {
     return RequestHeaderFieldsTooLargeError;
 }(HTTPError_1.HTTPError));
 exports.RequestHeaderFieldsTooLargeError = RequestHeaderFieldsTooLargeError;
-exports.default = RequestHeaderFieldsTooLargeError;
 
 //# sourceMappingURL=RequestHeaderFieldsTooLargeError.js.map

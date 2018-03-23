@@ -5,5 +5,3 @@ export class StringParser implements Parser<string> {
 		return new Promise<string>( resolve => resolve( body ) );
 	}
 }
-
-export default StringParser;

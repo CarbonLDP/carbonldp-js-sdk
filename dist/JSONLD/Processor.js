@@ -438,6 +438,5 @@ var Util = (function () {
     return Util;
 }());
 exports.Util = Util;
-exports.default = JSONLDProcessor;
 
 //# sourceMappingURL=Processor.js.map

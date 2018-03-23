@@ -1,7 +1,6 @@
 import { PersistedDocument } from "../PersistedDocument";
 import {
 	extendsClass,
-	hasDefaultExport,
 	hasProperty,
 	interfaze,
 	module,
@@ -11,7 +10,7 @@ import {
 } from "../test/JasmineExtender";
 import { C } from "../Vocabularies/C";
 
-import DefaultExport, { PlatformMetadata } from "./PlatformMetadata";
+import { PlatformMetadata } from "./PlatformMetadata";
 
 describe( module( "carbonldp/System/PlatformMetadata" ), ():void => {
 
@@ -96,14 +95,6 @@ describe( module( "carbonldp/System/PlatformMetadata" ), ():void => {
 		} );
 
 
-	} );
-
-	it( hasDefaultExport( "CarbonLDP.System.PlatformMetadata.PlatformMetadata" ), ():void => {
-		let defaultExport:DefaultExport = <any> {};
-		let defaultTarget:PlatformMetadata;
-
-		defaultTarget = defaultExport;
-		expect( defaultTarget ).toEqual( jasmine.any( Object ) );
 	} );
 
 } );

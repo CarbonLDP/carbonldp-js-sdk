@@ -3,7 +3,7 @@ import { Documents } from "./Documents";
 import { IllegalStateError } from "./Errors";
 import * as ObjectSchema from "./ObjectSchema";
 
-import DefaultExport, {
+import {
 	globalContext,
 	SDKContext,
 } from "./SDKContext";
@@ -13,7 +13,6 @@ import { ContextSettings } from "./Settings";
 import {
 	clazz,
 	constructor,
-	hasDefaultExport,
 	hasProperty,
 	hasSignature,
 	INSTANCE,
@@ -786,13 +785,6 @@ describe( module( "carbonldp/SDKContext" ), ():void => {
 	), ():void => {
 		expect( globalContext ).toBeDefined();
 		expect( globalContext ).toEqual( jasmine.any( SDKContext ) );
-	} );
-
-	it( hasDefaultExport(
-		"carbonldp/SDKContext#globalContext"
-	), ():void => {
-		expect( DefaultExport ).toBeDefined();
-		expect( DefaultExport ).toBe( globalContext );
 	} );
 
 } );

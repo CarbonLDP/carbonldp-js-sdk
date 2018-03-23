@@ -31,6 +31,5 @@ var NotAcceptableError = (function (_super) {
     return NotAcceptableError;
 }(HTTPError_1.HTTPError));
 exports.NotAcceptableError = NotAcceptableError;
-exports.default = NotAcceptableError;
 
 //# sourceMappingURL=NotAcceptableError.js.map

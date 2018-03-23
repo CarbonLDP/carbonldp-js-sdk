@@ -11,4 +11,3 @@ export interface EventMessageFactory extends ModelFactory<EventMessage> {
 }
 export declare const SCHEMA: ObjectSchema;
 export declare const EventMessage: EventMessageFactory;
-export default EventMessage;

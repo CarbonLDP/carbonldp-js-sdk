@@ -1,7 +1,6 @@
 import {
 	clazz,
 	extendsClass,
-	hasDefaultExport,
 	hasMethod,
 	hasProperty,
 	interfaze,
@@ -12,7 +11,7 @@ import { C } from "../Vocabularies/C";
 import { XSD } from "../Vocabularies/XSD";
 import * as Utils from "./../Utils";
 
-import DefaultExport, { ErrorResponse } from "./ErrorResponse";
+import { ErrorResponse } from "./ErrorResponse";
 
 describe( module( "carbonldp/LDP/ErrorResponse" ), ():void => {
 
@@ -156,14 +155,6 @@ describe( module( "carbonldp/LDP/ErrorResponse" ), ():void => {
 			expect( message ).toBe( "Message 01, Message 02" );
 		} );
 
-	} );
-
-	it( hasDefaultExport( "CarbonLDP.LDP.ErrorResponse.ErrorResponse" ), ():void => {
-		let defaultExport:DefaultExport = <any> {};
-		let defaultTarget:ErrorResponse;
-
-		defaultTarget = defaultExport;
-		expect( defaultTarget ).toEqual( jasmine.any( Object ) );
 	} );
 
 } );

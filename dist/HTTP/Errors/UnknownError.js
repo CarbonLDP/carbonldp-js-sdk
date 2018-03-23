@@ -25,6 +25,5 @@ var UnknownError = (function (_super) {
     return UnknownError;
 }(HTTPError_1.HTTPError));
 exports.UnknownError = UnknownError;
-exports.default = UnknownError;
 
 //# sourceMappingURL=UnknownError.js.map

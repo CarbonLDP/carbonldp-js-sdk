@@ -31,6 +31,5 @@ var BadGatewayError = (function (_super) {
     return BadGatewayError;
 }(HTTPError_1.HTTPError));
 exports.BadGatewayError = BadGatewayError;
-exports.default = BadGatewayError;
 
 //# sourceMappingURL=BadGatewayError.js.map

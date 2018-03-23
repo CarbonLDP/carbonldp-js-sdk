@@ -12,4 +12,3 @@ export interface RDFValueFactory {
     parse(pointerLibrary: PointerLibrary, value: RDFLiteral | RDFNode | RDFList | RDFValue | string): any;
 }
 export declare const RDFValue: RDFValueFactory;
-export default RDFValue;

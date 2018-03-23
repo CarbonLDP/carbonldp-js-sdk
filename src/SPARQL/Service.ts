@@ -119,5 +119,3 @@ export class SPARQLService {
 	}
 
 }
-
-export default SPARQLService;

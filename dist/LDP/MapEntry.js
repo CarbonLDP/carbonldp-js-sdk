@@ -12,6 +12,5 @@ var SCHEMA = {
 exports.MapEntry = {
     SCHEMA: SCHEMA,
 };
-exports.default = exports.MapEntry;
 
 //# sourceMappingURL=MapEntry.js.map

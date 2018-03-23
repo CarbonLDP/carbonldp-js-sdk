@@ -1,5 +1,4 @@
 import {
-	hasDefaultExport,
 	hasMethod,
 	hasProperty,
 	interfaze,
@@ -11,7 +10,7 @@ import {
 } from "../test/JasmineExtender";
 import * as Utils from "./../Utils";
 
-import DefaultExport, { RDFList } from "./List";
+import { RDFList } from "./List";
 
 describe( module( "carbonldp/RDF/List" ), ():void => {
 
@@ -27,14 +26,6 @@ describe( module( "carbonldp/RDF/List" ), ():void => {
 			"Array if the elements in the list."
 		), ():void => {} );
 
-	} );
-
-	it( hasDefaultExport( "CarbonLDP.RDF.List.RDFList" ), ():void => {
-		let defaultExport:DefaultExport = <any> {};
-		let defaultTarget:RDFList;
-
-		defaultTarget = defaultExport;
-		expect( defaultTarget ).toEqual( jasmine.any( Object ) );
 	} );
 
 	describe( interfaze(

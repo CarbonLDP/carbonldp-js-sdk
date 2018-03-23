@@ -191,5 +191,3 @@ export class JSONLDCompacter {
 	}
 
 }
-
-export default JSONLDCompacter;

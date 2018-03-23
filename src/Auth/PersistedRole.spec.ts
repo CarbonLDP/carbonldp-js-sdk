@@ -1,4 +1,4 @@
-import AbstractContext from "../AbstractContext";
+import { AbstractContext } from "../AbstractContext";
 import { Documents } from "../Documents";
 import * as Errors from "../Errors";
 import { RequestOptions } from "../HTTP/Request";

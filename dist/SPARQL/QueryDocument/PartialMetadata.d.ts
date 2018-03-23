@@ -5,4 +5,3 @@ export declare class PartialMetadata {
     constructor(schema: DigestedObjectSchema, previousPartial?: PartialMetadata);
     private mergeSchemas(oldSchema, newSchema);
 }
-export default PartialMetadata;

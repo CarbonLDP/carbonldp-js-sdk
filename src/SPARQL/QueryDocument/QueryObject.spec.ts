@@ -9,7 +9,6 @@ import { Pointer } from "../../Pointer";
 import {
 	clazz,
 	constructor,
-	hasDefaultExport,
 	hasSignature,
 	INSTANCE,
 	method,
@@ -18,18 +17,13 @@ import {
 import { QueryContext } from "./QueryContext";
 
 import * as Module from "./QueryObject";
-import DefaultExport, { QueryObject } from "./QueryObject";
+import { QueryObject } from "./QueryObject";
 
 describe( module( "carbonldp/SPARQL/QueryDocument/QueryObject" ), ():void => {
 
 	it( "should exists", ():void => {
 		expect( Module ).toBeDefined();
 		expect( Module ).toEqual( jasmine.any( Object ) );
-	} );
-
-	it( hasDefaultExport( "CarbonLDP.SPARQL.QueryDocument.QueryObject.QueryObject" ), ():void => {
-		expect( DefaultExport ).toBeDefined();
-		expect( DefaultExport ).toBe( QueryObject );
 	} );
 
 	describe( clazz( "CarbonLDP.SPARQL.QueryDocument.QueryObject.QueryObject", "Class that represents any resource." ), ():void => {

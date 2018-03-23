@@ -36,6 +36,5 @@ exports.Fragment = {
         return fragment;
     },
 };
-exports.default = exports.Fragment;
 
 //# sourceMappingURL=Fragment.js.map

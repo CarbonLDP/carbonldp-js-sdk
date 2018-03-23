@@ -2,7 +2,6 @@ import { Pointer } from "../Pointer";
 import { Resource } from "../Resource";
 import {
 	extendsClass,
-	hasDefaultExport,
 	hasProperty,
 	interfaze,
 	module,
@@ -14,7 +13,7 @@ import {
 import { SHACL } from "../Vocabularies/SHACL";
 import { XSD } from "../Vocabularies/XSD";
 
-import DefaultExport, { ValidationResult } from "./ValidationResult";
+import { ValidationResult } from "./ValidationResult";
 
 describe( module( "carbonldp/SHACL/ValidationResult" ), ():void => {
 
@@ -199,11 +198,6 @@ describe( module( "carbonldp/SHACL/ValidationResult" ), ():void => {
 			} );
 		} );
 
-	} );
-
-	it( hasDefaultExport( "CarbonLDP.SHACL.ValidationResult.ValidationResult" ), ():void => {
-		const target:ValidationResult = {} as DefaultExport;
-		expect( target ).toBeDefined();
 	} );
 
 } );

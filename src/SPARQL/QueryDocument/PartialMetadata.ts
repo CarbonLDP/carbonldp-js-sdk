@@ -43,5 +43,3 @@ export class PartialMetadata {
 	}
 
 }
-
-export default PartialMetadata;

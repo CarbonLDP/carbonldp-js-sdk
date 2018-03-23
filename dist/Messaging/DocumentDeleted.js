@@ -8,6 +8,5 @@ exports.DocumentDeleted = {
     TYPE: TYPE,
     SCHEMA: SCHEMA,
 };
-exports.default = exports.DocumentDeleted;
 
 //# sourceMappingURL=DocumentDeleted.js.map

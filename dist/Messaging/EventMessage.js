@@ -14,6 +14,5 @@ exports.EventMessage = {
         return Utils_1.hasProperty(object, "target");
     },
 };
-exports.default = exports.EventMessage;
 
 //# sourceMappingURL=EventMessage.js.map

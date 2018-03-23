@@ -14,6 +14,5 @@ exports.AccessPoint = {
         return DirectContainer_1.DirectContainer.createFrom(object, membershipResource, hasMemberRelation, isMemberOfRelation);
     },
 };
-exports.default = exports.AccessPoint;
 
 //# sourceMappingURL=AccessPoint.js.map

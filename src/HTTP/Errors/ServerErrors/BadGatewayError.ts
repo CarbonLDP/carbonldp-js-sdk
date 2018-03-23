@@ -8,5 +8,3 @@ export class BadGatewayError extends HTTPError {
 
 	get name():string { return name; }
 }
-
-export default BadGatewayError;

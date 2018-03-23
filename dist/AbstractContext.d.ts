@@ -1,4 +1,4 @@
-import Context from "./Context";
+import { Context } from "./Context";
 import { SDKContext } from "./SDKContext";
 export declare abstract class AbstractContext extends SDKContext {
     protected abstract _baseURI: string;
@@ -7,4 +7,3 @@ export declare abstract class AbstractContext extends SDKContext {
     readonly parentContext: Context;
     constructor(parentContext?: Context);
 }
-export default AbstractContext;

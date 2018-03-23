@@ -14,4 +14,3 @@ export interface RemoveMemberActionFactory extends ModelDecorator<RemoveMemberAc
 }
 export declare const SCHEMA: ObjectSchema;
 export declare const RemoveMemberAction: RemoveMemberActionFactory;
-export default RemoveMemberAction;

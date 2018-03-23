@@ -10,4 +10,3 @@ export interface PersistedNamedFragmentFactory extends ModelDecorator<PersistedN
     decorate<T extends object>(object: T): T & PersistedNamedFragment;
 }
 export declare const PersistedNamedFragment: PersistedNamedFragmentFactory;
-export default PersistedNamedFragment;

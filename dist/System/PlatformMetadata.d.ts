@@ -9,4 +9,3 @@ export interface PlatformMetadataFactory {
     SCHEMA: ObjectSchema;
 }
 export declare const PlatformMetadata: PlatformMetadataFactory;
-export default PlatformMetadata;

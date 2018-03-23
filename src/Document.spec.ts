@@ -1,7 +1,7 @@
 import { Minus } from "../test/helpers/types";
 import { BlankNode } from "./BlankNode";
 
-import DefaultExport, { Document } from "./Document";
+import { Document } from "./Document";
 
 import { IDAlreadyInUseError } from "./Errors/IDAlreadyInUseError";
 import { IllegalArgumentError } from "./Errors/IllegalArgumentError";
@@ -20,7 +20,6 @@ import { URI } from "./RDF/URI";
 import { Resource } from "./Resource";
 import {
 	extendsClass,
-	hasDefaultExport,
 	hasMethod,
 	hasProperty,
 	hasSignature,
@@ -1884,11 +1883,6 @@ describe( module( "carbonldp/Document" ), ():void => {
 
 		} );
 
-	} );
-
-	it( hasDefaultExport( "CarbonLDP.Document.Document" ), ():void => {
-		const target:DefaultExport = {} as Document;
-		expect( target ).toBeDefined();
 	} );
 
 } );
