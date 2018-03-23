@@ -1,14 +1,7 @@
 "use strict";
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
-    result["default"] = mod;
-    return result;
-}
 Object.defineProperty(exports, "__esModule", { value: true });
 var IllegalStateError_1 = require("./Errors/IllegalStateError");
-var Utils = __importStar(require("./Utils"));
+var Utils = require("./Utils");
 function isPointerResolved() {
     return this._resolved;
 }

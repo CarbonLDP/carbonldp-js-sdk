@@ -348,7 +348,7 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 				.addProperty( "child" )
 				.setOptional( false );
 
-			const selectChildren:SelectToken = new SelectToken()
+			const selectChildren:SelectToken = new SelectToken( "DISTINCT" )
 				.addVariable( childrenProperty.variable )
 				.addPattern( new SubjectToken( queryContext.compactIRI( parentURI ) )
 					.addPredicate( new PredicateToken( queryContext.compactIRI( LDP.contains ) )
@@ -440,7 +440,7 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 
 			const membershipResource:VariableToken = queryContext.getVariable( "membershipResource" );
 			const hasMemberRelation:VariableToken = queryContext.getVariable( "hasMemberRelation" );
-			const selectMembers:SelectToken = new SelectToken()
+			const selectMembers:SelectToken = new SelectToken( "DISTINCT" )
 				.addVariable( membersProperty.variable )
 				.addPattern( new SubjectToken( queryContext.compactIRI( uri ) )
 					.addPredicate( new PredicateToken( queryContext.compactIRI( LDP.membershipResource ) )
@@ -1165,7 +1165,7 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 
 	private _executeSelectPatterns( uri:string, requestOptions:RequestOptions, queryContext:QueryContext, targetName:string, selectPatterns:PatternToken[] ):Promise<PersistedDocument[]> {
 		const targetVar:VariableToken = queryContext.getVariable( targetName );
-		const select:SelectToken = new SelectToken()
+		const select:SelectToken = new SelectToken( "DISTINCT" )
 			.addVariable( targetVar )
 			.addPattern( ...selectPatterns )
 		;

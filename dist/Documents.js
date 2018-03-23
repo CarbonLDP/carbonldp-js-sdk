@@ -1,19 +1,12 @@
 "use strict";
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
-    result["default"] = mod;
-    return result;
-}
 Object.defineProperty(exports, "__esModule", { value: true });
 var tokens_1 = require("sparqler/tokens");
 var AccessPoint_1 = require("./AccessPoint");
-var Auth = __importStar(require("./Auth"));
+var Auth = require("./Auth");
 var ACL_1 = require("./Auth/ACL");
 var PersistedACL_1 = require("./Auth/PersistedACL");
 var Document_1 = require("./Document");
-var Errors = __importStar(require("./Errors"));
+var Errors = require("./Errors");
 var FreeResources_1 = require("./FreeResources");
 var Errors_1 = require("./HTTP/Errors");
 var BadResponseError_1 = require("./HTTP/Errors/ServerErrors/BadResponseError");
@@ -50,7 +43,7 @@ var QueryMetadata_1 = require("./SPARQL/QueryDocument/QueryMetadata");
 var QueryProperty_1 = require("./SPARQL/QueryDocument/QueryProperty");
 var Utils_2 = require("./SPARQL/QueryDocument/Utils");
 var Service_1 = require("./SPARQL/Service");
-var Utils = __importStar(require("./Utils"));
+var Utils = require("./Utils");
 var Utils_3 = require("./Utils");
 var C_1 = require("./Vocabularies/C");
 var LDP_1 = require("./Vocabularies/LDP");
@@ -247,7 +240,7 @@ var Documents = (function () {
             var childrenProperty = queryContext
                 .addProperty("child")
                 .setOptional(false);
-            var selectChildren = new tokens_1.SelectToken()
+            var selectChildren = new tokens_1.SelectToken("DISTINCT")
                 .addVariable(childrenProperty.variable)
                 .addPattern(new tokens_1.SubjectToken(queryContext.compactIRI(parentURI))
                 .addPredicate(new tokens_1.PredicateToken(queryContext.compactIRI(LDP_1.LDP.contains))
@@ -316,7 +309,7 @@ var Documents = (function () {
                 .setOptional(false);
             var membershipResource = queryContext.getVariable("membershipResource");
             var hasMemberRelation = queryContext.getVariable("hasMemberRelation");
-            var selectMembers = new tokens_1.SelectToken()
+            var selectMembers = new tokens_1.SelectToken("DISTINCT")
                 .addVariable(membersProperty.variable)
                 .addPattern(new tokens_1.SubjectToken(queryContext.compactIRI(uri))
                 .addPredicate(new tokens_1.PredicateToken(queryContext.compactIRI(LDP_1.LDP.membershipResource))
@@ -948,7 +941,7 @@ var Documents = (function () {
     Documents.prototype._executeSelectPatterns = function (uri, requestOptions, queryContext, targetName, selectPatterns) {
         var _this = this;
         var targetVar = queryContext.getVariable(targetName);
-        var select = (_a = new tokens_1.SelectToken()
+        var select = (_a = new tokens_1.SelectToken("DISTINCT")
             .addVariable(targetVar)).addPattern.apply(_a, selectPatterns);
         var query = (_b = new tokens_1.QueryToken(select)).addPrologues.apply(_b, queryContext.getPrologues());
         return this

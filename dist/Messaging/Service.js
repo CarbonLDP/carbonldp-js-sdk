@@ -7,19 +7,9 @@ var __assign = (this && this.__assign) || Object.assign || function(t) {
     }
     return t;
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-}
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
-    result["default"] = mod;
-    return result;
-}
 Object.defineProperty(exports, "__esModule", { value: true });
-var sockjs_client_1 = __importDefault(require("sockjs-client"));
-var webstomp = __importStar(require("webstomp-client"));
+var sockjs_client_1 = require("sockjs-client");
+var webstomp = require("webstomp-client");
 var Errors_1 = require("../Errors");
 var Parser_1 = require("../JSONLD/Parser");
 var Utils_1 = require("../Utils");
