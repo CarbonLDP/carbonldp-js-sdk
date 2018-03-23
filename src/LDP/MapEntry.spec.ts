@@ -10,14 +10,14 @@ import {
 import { C } from "../Vocabularies/C";
 import * as Utils from "./../Utils";
 
-import { CarbonMapEntry } from "./CarbonMapEntry";
+import { MapEntry } from "./MapEntry";
 
-describe( module( "carbonldp/LDP/CarbonMapEntry" ), ():void => {
+describe( module( "carbonldp/LDP/MapEntry" ), ():void => {
 
 	describe( interfaze(
-		"CarbonLDP.LDP.CarbonMapEntry",
+		"CarbonLDP.LDP.MapEntry",
 		[ "K", "V" ],
-		"Entries of the `CarbonLDP.LDP.CarbonMap` with the key/value pair."
+		"Entries of the `CarbonLDP.LDP.Map` with the key/value pair."
 	), ():void => {
 
 		it( extendsClass( "CarbonLDP.BlankNode" ), ():void => {} );
@@ -39,8 +39,8 @@ describe( module( "carbonldp/LDP/CarbonMapEntry" ), ():void => {
 	} );
 
 	describe( interfaze(
-		"CarbonLDP.LDP.CarbonMapEntryFactory",
-		"Interface with the factory, decorate and utils methods for `CarbonLDP.LDP.CarbonMapEntry` objects"
+		"CarbonLDP.LDP.MapEntryFactory",
+		"Interface with the factory, decorate and utils methods for `CarbonLDP.LDP.MapEntry` objects"
 	), ():void => {
 
 		it( hasProperty(
@@ -54,29 +54,29 @@ describe( module( "carbonldp/LDP/CarbonMapEntry" ), ():void => {
 	describe( property(
 		STATIC,
 		"CarbonMapEntry",
-		"CarbonLDP.LDP.CarbonMapEntryFactory"
+		"CarbonLDP.LDP.MapEntryFactory"
 	), ():void => {
 
 		it( "should exist", ():void => {
-			expect( CarbonMapEntry ).toBeDefined();
-			expect( CarbonMapEntry ).toEqual( jasmine.any( Object ) );
+			expect( MapEntry ).toBeDefined();
+			expect( MapEntry ).toEqual( jasmine.any( Object ) );
 		} );
 
 		// TODO: Separate in different tests
 		it( "CarbonMapEntry.SCHEMA", ():void => {
-			expect( CarbonMapEntry.SCHEMA ).toBeDefined();
-			expect( Utils.isObject( CarbonMapEntry.SCHEMA ) ).toBe( true );
+			expect( MapEntry.SCHEMA ).toBeDefined();
+			expect( Utils.isObject( MapEntry.SCHEMA ) ).toBe( true );
 
-			expect( CarbonMapEntry.SCHEMA as { [key:string]:object } ).toEqual( {
+			expect( MapEntry.SCHEMA as { [key:string]:object } ).toEqual( {
 				entryKey: jasmine.any( Object ),
 				entryValue: jasmine.any( Object ),
 			} );
 
-			expect( CarbonMapEntry.SCHEMA[ "entryKey" ] ).toEqual( {
+			expect( MapEntry.SCHEMA[ "entryKey" ] ).toEqual( {
 				"@id": C.entryKey,
 			} );
 
-			expect( CarbonMapEntry.SCHEMA[ "entryValue" ] ).toEqual( {
+			expect( MapEntry.SCHEMA[ "entryValue" ] ).toEqual( {
 				"@id": C.entryValue,
 			} );
 

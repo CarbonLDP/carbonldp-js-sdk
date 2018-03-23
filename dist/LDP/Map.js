@@ -9,14 +9,14 @@ var SCHEMA = {
         "@container": "@set",
     },
 };
-exports.CarbonMap = {
+exports.Map = {
     TYPE: C_1.C.Map,
     SCHEMA: SCHEMA,
     is: function (object) {
         return Resource_1.Resource.is(object)
-            && object.hasType(exports.CarbonMap.TYPE)
+            && object.hasType(exports.Map.TYPE)
             && object.hasOwnProperty("entries");
     },
 };
 
-//# sourceMappingURL=CarbonMap.js.map
+//# sourceMappingURL=Map.js.map

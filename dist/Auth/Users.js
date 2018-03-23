@@ -8,8 +8,8 @@ var __importStar = (this && this.__importStar) || function (mod) {
 }
 Object.defineProperty(exports, "__esModule", { value: true });
 var Errors = __importStar(require("../Errors"));
+var URI_1 = require("../RDF/URI");
 var Utils_1 = require("../Utils");
-var URI_1 = require("./../RDF/URI");
 var Credentials = __importStar(require("./Credentials"));
 var PersistedUser = __importStar(require("./PersistedUser"));
 var Class = (function () {
@@ -23,9 +23,8 @@ var Class = (function () {
         return Utils_1.promiseMethod(function () {
             var containerURI = _this.getCredentialsContainerURI();
             return _this.context.documents.createChildAndRetrieve(containerURI, credentials);
-        }).then(function (_a) {
-            var persistedCredentials = _a[0], response = _a[1];
-            return [persistedCredentials.user, response];
+        }).then(function (persistedCredentials) {
+            return persistedCredentials.user;
         });
     };
     Class.prototype.get = function (userURI, requestOptions) {

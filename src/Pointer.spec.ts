@@ -1,4 +1,3 @@
-import { Documents } from "./Documents";
 import { IllegalStateError } from "./Errors";
 
 import * as Module from "./Pointer";
@@ -58,7 +57,7 @@ describe( module( "carbonldp/Pointer" ), ():void => {
 			OBLIGATORY,
 			"isResolved",
 			"Returns true if the pointer has been resolved. It checks the `_resolved` property.",
-			{ type: "boolean" }
+			{ type: "this is this & Carbon.PersistedDocument.PersistedDocument" }
 		), ():void => {} );
 
 		it( hasMethod(
@@ -66,7 +65,7 @@ describe( module( "carbonldp/Pointer" ), ():void => {
 			"resolve",
 			[ "T" ],
 			"Resolves the pointer. This function throw an Error if it has no been configured by another decorator.",
-			{ type: "Promise<[ T & CarbonLDP.PersistedDocument, CarbonLDP.HTTP.Response ]>" }
+			{ type: "Promise<T & CarbonLDP.PersistedDocument>" }
 		), ():void => {} );
 
 	} );
@@ -194,16 +193,6 @@ describe( module( "carbonldp/Pointer" ), ():void => {
 				{ name: "pointers", type: "CarbonLDP.Pointer[]", description: "The array of Pointers to obtain their IDs." },
 			],
 			{ type: "string[]" }
-		), ():void => {} );
-
-		it( hasMethod(
-			OBLIGATORY,
-			"resolveAll",
-			[ "T extends object" ],
-			"Calls the `resolve()` method of every pointer, and returns a single Promise with the results of every call.", [
-				{ name: "pointers", type: "CarbonLDP.Pointer[]", description: "The array of Pointers to resolve." },
-			],
-			{ type: "Promise<[ (T & CarbonLDP.PersistedDocument)[], CarbonLDP.HTTP.Response[] ]>" }
 		), ():void => {} );
 
 	} );
@@ -458,48 +447,6 @@ describe( module( "carbonldp/Pointer" ), ():void => {
 				expect( ids ).toContain( "http://example.com/resource-1/" );
 				expect( ids ).toContain( "http://example.com/resource-2/" );
 				expect( ids ).toContain( "http://example.com/resource-3/" );
-			} );
-
-		} );
-
-		describe( "Pointer.resolveAll", ():void => {
-
-			it( "should exist", ():void => {
-				expect( Pointer.resolveAll ).toBeDefined();
-				expect( Pointer.resolveAll ).toEqual( jasmine.any( Function ) );
-			} );
-
-			// TODO: Separate in different test
-			it( "should tests method", ( done:DoneFn ):void => {
-				let documents:Documents = new Documents();
-				let pointers:Pointer[];
-
-				pointers = [ documents.getPointer( "http://example.com/some/id/" ), documents.getPointer( "http://example.com/another/id/" ), documents.getPointer( "http://example.com/random/id/1234567890/" ) ];
-				spyOn( documents, "get" ).and.callFake( ( id:string ):any => {
-					let pointer:Pointer = documents.getPointer( id );
-					pointer._resolved = true;
-
-					return Promise.resolve( [ pointer, null ] );
-				} );
-
-				let promise:Promise<[ Pointer[], any[] ]> = Pointer.resolveAll( pointers );
-				expect( promise instanceof Promise ).toBe( true );
-
-				promise.then( ( [ _pointers, responses ]:[ Pointer[], any[] ] ) => {
-					expect( _pointers.length ).toBe( 3 );
-					expect( responses.length ).toBe( 3 );
-
-					expect( _pointers ).toEqual( pointers );
-					expect( _pointers[ 0 ].isResolved() ).toBe( true );
-					expect( _pointers[ 1 ].isResolved() ).toBe( true );
-					expect( _pointers[ 2 ].isResolved() ).toBe( true );
-
-					expect( responses[ 0 ] ).toBeNull();
-					expect( responses[ 1 ] ).toBeNull();
-					expect( responses[ 2 ] ).toBeNull();
-
-					done();
-				} ).catch( done.fail );
 			} );
 
 		} );

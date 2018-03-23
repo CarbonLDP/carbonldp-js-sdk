@@ -23,31 +23,28 @@ var Class = (function () {
         requestOptions = Request_1.RequestUtils.isOptions(slugOrRequestOptions) ? slugOrRequestOptions : requestOptions;
         var containerURI;
         var persistedRole;
-        var responseCreated;
         return Utils.promiseMethod(function () {
             containerURI = _this.getContainerURI();
             parentURI = URI_1.URI.resolve(containerURI, parentURI);
             if (!URI_1.URI.isBaseOf(containerURI, parentURI))
                 throw new Errors.IllegalArgumentError("The parent role provided is not a valid role.");
             return _this.context.documents.exists(parentURI);
-        }).then(function (_a) {
-            var exists = _a[0], response = _a[1];
+        }).then(function (exists) {
             if (!exists)
                 throw new Errors.IllegalArgumentError("The parent role provided doesn't exist.");
             return _this.context.documents.createChild(containerURI, role, slug, requestOptions);
-        }).then(function (_a) {
-            var newRole = _a[0], response = _a[1];
-            responseCreated = response;
+        }).then(function (newRole) {
             persistedRole = PersistedRole.Factory.decorate(newRole, _this.context.documents);
             return _this.context.documents.addMember(parentURI, newRole);
-        }).then(function (response) {
-            return [persistedRole, responseCreated];
+        }).then(function () {
+            return persistedRole;
         });
     };
     Class.prototype.get = function (roleURI, requestOptions) {
         var _this = this;
         return Utils.promiseMethod(function () {
-            return _this.context.documents.get(_this.resolveURI(roleURI), requestOptions);
+            var uri = _this.resolveURI(roleURI);
+            return _this.context.documents.get(uri, requestOptions);
         });
     };
     Class.prototype.getUsers = function (roleURI, retrievalPreferencesOrRequestOptions, requestOptions) {
@@ -83,8 +80,7 @@ var Class = (function () {
         return Utils.promiseMethod(function () {
             var uri = _this.resolveURI(roleURI);
             return _this.context.documents.executeSELECTQuery(uri, "PREFIX:<https://carbonldp.com/ns/v1/>SELECT DISTINCT?accessPoint{<" + uri + ">:platform#accessPoint?accessPoint.?accessPoint<http://www.w3.org/ns/ldp#hasMemberRelation>:security#user}");
-        }).then(function (_a) {
-            var selectResults = _a[0], response = _a[1];
+        }).then(function (selectResults) {
             return selectResults.bindings[0].accessPoint;
         });
     };

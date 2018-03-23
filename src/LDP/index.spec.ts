@@ -13,17 +13,17 @@ import {
 	AddMemberActionFactory,
 } from "./AddMemberAction";
 import {
-	CarbonError,
-	CarbonErrorFactory,
-} from "./CarbonError";
+	Error,
+	ErrorFactory,
+} from "./Error";
 import {
-	CarbonMap,
-	CarbonMapFactory,
-} from "./CarbonMap";
+	Map,
+	MapFactory,
+} from "./Map";
 import {
-	CarbonMapEntry,
-	CarbonMapEntryFactory,
-} from "./CarbonMapEntry";
+	MapEntry,
+	MapEntryFactory,
+} from "./MapEntry";
 import {
 	DirectContainer,
 	DirectContainerFactory,
@@ -80,19 +80,19 @@ describe( module( "carbonldp/LDP" ), ():void => {
 
 	it( reexports(
 		STATIC,
-		"CarbonMap",
-		"CarbonLDP.LDP.CarbonMap"
+		"Map",
+		"CarbonLDP.LDP.Map"
 	), ():void => {
-		expect( LDP.CarbonMap ).toBeDefined();
-		expect( LDP.CarbonMap ).toBe( CarbonMap );
+		expect( LDP.Map ).toBeDefined();
+		expect( LDP.Map ).toBe( Map );
 	} );
 
 	it( reexports(
 		STATIC,
-		"CarbonMapFactory",
-		"CarbonLDP.LDP.CarbonMapFactory"
+		"MapFactory",
+		"CarbonLDP.LDP.MapFactory"
 	), ():void => {
-		const target:LDP.CarbonMapFactory = {} as CarbonMapFactory;
+		const target:LDP.MapFactory = {} as MapFactory;
 		expect( target ).toBeDefined();
 	} );
 
@@ -116,37 +116,37 @@ describe( module( "carbonldp/LDP" ), ():void => {
 
 	it( reexports(
 		STATIC,
-		"CarbonMapEntry",
-		"CarbonLDP.LDP.CarbonMapEntry"
+		"MapEntry",
+		"CarbonLDP.LDP.MapEntry"
 	), ():void => {
-		expect( LDP.CarbonMapEntry ).toBeDefined();
-		expect( LDP.CarbonMapEntry ).toBe( CarbonMapEntry );
+		expect( LDP.MapEntry ).toBeDefined();
+		expect( LDP.MapEntry ).toBe( MapEntry );
 	} );
 
 	it( reexports(
 		STATIC,
-		"CarbonMapEntryFactory",
-		"CarbonLDP.LDP.CarbonMapEntryFactory"
+		"MapEntryFactory",
+		"CarbonLDP.LDP.MapEntryFactory"
 	), ():void => {
-		const target:LDP.CarbonMapEntryFactory = {} as CarbonMapEntryFactory;
+		const target:LDP.MapEntryFactory = {} as MapEntryFactory;
 		expect( target ).toBeDefined();
 	} );
 
 	it( reexports(
 		STATIC,
-		"CarbonError",
-		"CarbonLDP.LDP.CarbonError"
+		"Error",
+		"CarbonLDP.LDP.Error"
 	), ():void => {
-		expect( LDP.CarbonError ).toBeDefined();
-		expect( LDP.CarbonError ).toBe( CarbonError );
+		expect( LDP.Error ).toBeDefined();
+		expect( LDP.Error ).toBe( Error );
 	} );
 
 	it( reexports(
 		STATIC,
-		"CarbonErrorFactory",
-		"CarbonLDP.LDP.CarbonErrorFactory"
+		"ErrorFactory",
+		"CarbonLDP.LDP.ErrorFactory"
 	), ():void => {
-		const target:LDP.CarbonErrorFactory = {} as CarbonErrorFactory;
+		const target:LDP.ErrorFactory = {} as ErrorFactory;
 		expect( target ).toBeDefined();
 	} );
 
