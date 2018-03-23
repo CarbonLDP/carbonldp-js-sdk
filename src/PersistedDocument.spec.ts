@@ -29,6 +29,7 @@ import {
 } from "./test/JasmineExtender";
 import * as Utils from "./Utils";
 
+
 describe( module( "carbonldp/PersistedDocument" ), ():void => {
 
 	describe( interfaze(
@@ -252,31 +253,6 @@ describe( module( "carbonldp/PersistedDocument" ), ():void => {
 			{ type: "Promise<void>" }
 		), ():void => {} );
 
-		describe( method(
-			OBLIGATORY,
-			"get"
-		), ():void => {
-
-			it( hasSignature(
-				[ "T extends object" ],
-				"Retrieves the entire document referred by the URI specified when no query function si provided.\nIf the function builder es provided the query is able to specify the properties of the document to be retrieved and the sub-documents' properties and on and on.", [
-					{ name: "relativeURI", type: "string", description: "The URI of the document to retrieve/query. If relative, it will be resolved by the current document ID." },
-					{ name: "requestOptions", type: "CarbonLDP.HTTP.Request.RequestOptions", optional: true, description: "Customizable options for the request." },
-					{ name: "queryBuilderFn", type: "( queryBuilder:CarbonLDP.SPARQL.QueryDocument.QueryDocumentBuilder.QueryDocumentBuilder ) => CarbonLDP.SPARQL.QueryDocument.QueryDocumentBuilder.QueryDocumentBuilder", optional: true, description: "Function that receives a the builder that helps you to construct the retrieval query.\nThe same builder must be returned." },
-				],
-				{ type: "Promise<T & CarbonLDP.PersistedDocument.PersistedDocument>" }
-			), ():void => {} );
-
-			it( hasSignature(
-				[ "T extends object" ],
-				"Retrieves the entire document referred by the URI specified when no query function si provided.\nIf the function builder es provided the query is able to specify the properties of the document to be retrieved and the sub-documents' properties and on and on.", [
-					{ name: "relativeURI", type: "string", description: "The URI of the document to retrieve. If relative, it will be resolved by the current document ID." },
-					{ name: "queryBuilderFn", type: "( queryBuilder:CarbonLDP.SPARQL.QueryDocument.QueryDocumentBuilder.QueryDocumentBuilder ) => CarbonLDP.SPARQL.QueryDocument.QueryDocumentBuilder.QueryDocumentBuilder", optional: true, description: "Function that receives a the builder that helps you to construct the retrieval query.\nThe same builder must be returned." },
-				],
-				{ type: "Promise<T & CarbonLDP.PersistedDocument.PersistedDocument>" }
-			), ():void => {} );
-
-		} );
 
 		describe( method(
 			OBLIGATORY,
@@ -759,8 +735,6 @@ describe( module( "carbonldp/PersistedDocument" ), ():void => {
 				addMember: ():void => {},
 				addMembers: ():void => {},
 
-				get: ():any => {},
-
 				createAccessPoint: ():void => {},
 				createAccessPoints: ():void => {},
 				createChild: ():void => {},
@@ -838,10 +812,6 @@ describe( module( "carbonldp/PersistedDocument" ), ():void => {
 			delete document.addMembers;
 			expect( PersistedDocument.isDecorated( document ) ).toBe( false );
 			document.addMembers = ():void => {};
-
-			delete document.get;
-			expect( PersistedDocument.isDecorated( document ) ).toBe( false );
-			document.get = ():void => {};
 
 			delete document.createAccessPoint;
 			expect( PersistedDocument.isDecorated( document ) ).toBe( false );
@@ -958,8 +928,6 @@ describe( module( "carbonldp/PersistedDocument" ), ():void => {
 
 				addMember: ():void => {},
 				addMembers: ():void => {},
-
-				get: ():any => {},
 
 				createAccessPoint: ():void => {},
 				createAccessPoints: ():void => {},
@@ -1651,39 +1619,6 @@ describe( module( "carbonldp/PersistedDocument" ), ():void => {
 				expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", pointers, void 0 );
 			} );
 
-			describe( "PersistedDocument.get", ():void => {
-
-				it( "should exists", ():void => {
-					expect( document.get ).toBeDefined();
-					expect( document.get ).toEqual( jasmine.any( Function ) );
-				} );
-
-				it( "should resolve relative URI", ():void => {
-					const spy:jasmine.Spy = spyOn( document._documents, "get" )
-						.and.returnValue( Promise.resolve( [] ) );
-
-					document.get( "sub-document/" );
-					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/sub-document/", void 0, void 0 );
-				} );
-
-				it( "should call Documents.get when options", ():void => {
-					const spy:jasmine.Spy = spyOn( document._documents, "get" )
-						.and.returnValue( Promise.resolve( [] ) );
-
-					document.get( "sub-document/", { timeout: 5050 }, queryBuilder => queryBuilder );
-					expect( spy ).toHaveBeenCalledWith( jasmine.any( String ), { timeout: 5050 }, jasmine.any( Function ) );
-				} );
-
-				it( "should call Documents.get with out options", ():void => {
-					const spy:jasmine.Spy = spyOn( document._documents, "get" )
-						.and.returnValue( Promise.resolve( [] ) );
-
-					document.get( "sub-document/", queryBuilder => queryBuilder );
-					expect( spy ).toHaveBeenCalledWith( jasmine.any( String ), jasmine.any( Function ), void 0 );
-				} );
-
-			} );
-
 			describe( "PersistedDocument.createChild", ():void => {
 
 				// TODO: Separate in different tests
@@ -1696,7 +1631,7 @@ describe( module( "carbonldp/PersistedDocument" ), ():void => {
 					let childDocument:Document = Document.create();
 					document.createChild( childDocument, "child" );
 
-					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", childDocument, "child", {} );
+					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", childDocument, "child", void 0 );
 					spy.calls.reset();
 
 					let object:Object;
@@ -1710,7 +1645,7 @@ describe( module( "carbonldp/PersistedDocument" ), ():void => {
 
 					object = { my: "object" };
 					document.createChild( object, "child" );
-					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", object, "child", {} );
+					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", object, "child", void 0 );
 				} );
 
 				// TODO: Separate in different tests
@@ -1723,12 +1658,12 @@ describe( module( "carbonldp/PersistedDocument" ), ():void => {
 					let childDocument:Document = Document.create();
 					document.createChild( childDocument );
 
-					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", childDocument, null, {} );
+					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", childDocument, null, void 0 );
 					spy.calls.reset();
 
 					let object:Object = { my: "object" };
 					document.createChild( object );
-					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", object, null, {} );
+					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", object, null, void 0 );
 					spy.calls.reset();
 
 					object = { my: "object" };
@@ -1745,7 +1680,7 @@ describe( module( "carbonldp/PersistedDocument" ), ():void => {
 					let spy:jasmine.Spy = spyOn( document._documents, "createChild" );
 
 					document.createChild( "child" );
-					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", {}, "child", {} );
+					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", {}, "child", void 0 );
 					spy.calls.reset();
 
 					let options:RequestOptions = { timeout: 5050 };
@@ -1761,7 +1696,7 @@ describe( module( "carbonldp/PersistedDocument" ), ():void => {
 					let spy:jasmine.Spy = spyOn( document._documents, "createChild" );
 
 					document.createChild();
-					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", {}, null, {} );
+					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", {}, null, void 0 );
 					spy.calls.reset();
 
 					let options:RequestOptions = { timeout: 5050 };
@@ -1833,7 +1768,7 @@ describe( module( "carbonldp/PersistedDocument" ), ():void => {
 					let childDocument:Document = Document.create();
 					document.createChildAndRetrieve( childDocument, "child" );
 
-					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", childDocument, "child", {} );
+					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", childDocument, "child", void 0 );
 					spy.calls.reset();
 
 					let object:Object;
@@ -1847,7 +1782,7 @@ describe( module( "carbonldp/PersistedDocument" ), ():void => {
 
 					object = { my: "object" };
 					document.createChildAndRetrieve( object, "child" );
-					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", object, "child", {} );
+					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", object, "child", void 0 );
 				} );
 
 				// TODO: Separate in different tests
@@ -1857,12 +1792,12 @@ describe( module( "carbonldp/PersistedDocument" ), ():void => {
 					let childDocument:Document = Document.create();
 					document.createChildAndRetrieve( childDocument );
 
-					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", childDocument, null, {} );
+					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", childDocument, null, void 0 );
 					spy.calls.reset();
 
 					let object:Object = { my: "object" };
 					document.createChildAndRetrieve( object );
-					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", object, null, {} );
+					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", object, null, void 0 );
 					spy.calls.reset();
 
 					object = { my: "object" };
@@ -1876,7 +1811,7 @@ describe( module( "carbonldp/PersistedDocument" ), ():void => {
 					let spy:jasmine.Spy = spyOn( document._documents, "createChildAndRetrieve" );
 
 					document.createChildAndRetrieve( "child" );
-					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", {}, "child", {} );
+					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", {}, "child", void 0 );
 					spy.calls.reset();
 
 					let options:RequestOptions = { timeout: 5050 };
@@ -1889,7 +1824,7 @@ describe( module( "carbonldp/PersistedDocument" ), ():void => {
 					let spy:jasmine.Spy = spyOn( document._documents, "createChildAndRetrieve" );
 
 					document.createChildAndRetrieve();
-					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", {}, null, {} );
+					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", {}, null, void 0 );
 					spy.calls.reset();
 
 					let options:RequestOptions = { timeout: 5050 };
