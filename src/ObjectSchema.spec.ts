@@ -1,10 +1,8 @@
 import * as ObjectSchema from "./ObjectSchema";
-import DefaultExport, { DigestedObjectSchema } from "./ObjectSchema";
 
 import {
 	clazz,
 	enumeration,
-	hasDefaultExport,
 	hasEnumeral,
 	hasMethod,
 	hasProperty,
@@ -18,7 +16,6 @@ import {
 	OPTIONAL,
 	STATIC,
 } from "./test/JasmineExtender";
-import * as Utils from "./Utils";
 
 
 function createSchema( values?:Partial<ObjectSchema.DigestedObjectSchema> ):ObjectSchema.DigestedObjectSchema {
@@ -26,21 +23,21 @@ function createSchema( values?:Partial<ObjectSchema.DigestedObjectSchema> ):Obje
 	return Object.assign( schema, values );
 }
 
-function createProperty( values:Partial<ObjectSchema.DigestedPropertyDefinition> ):ObjectSchema.DigestedPropertyDefinition {
-	const schema:ObjectSchema.DigestedPropertyDefinition = new ObjectSchema.DigestedPropertyDefinition();
+function createProperty( values:Partial<ObjectSchema.DigestedObjectSchemaProperty> ):ObjectSchema.DigestedObjectSchemaProperty {
+	const schema:ObjectSchema.DigestedObjectSchemaProperty = new ObjectSchema.DigestedObjectSchemaProperty();
 	return Object.assign( schema, values );
 }
 
 
-describe( module( "Carbon/ObjectSchema" ), ():void => {
+describe( module( "carbonldp/ObjectSchema" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( ObjectSchema ).toBeDefined();
-		expect( Utils.isObject( ObjectSchema ) ).toEqual( true );
+		expect( ObjectSchema ).toEqual( jasmine.any( Object ) );
 	} );
 
 	describe( interfaze(
-		"Carbon.ObjectSchema.Class",
+		"CarbonLDP.ObjectSchema",
 		"Interface that represents an schema based in the [JSONLD contexts](https://www.w3.org/TR/json-ld/#the-context). This is used to convert from the JSONLD stored in the server to the Documents used in the SDK and vice versa."
 	), ():void => {
 
@@ -82,14 +79,14 @@ describe( module( "Carbon/ObjectSchema" ), ():void => {
 		it( hasProperty(
 			OBLIGATORY,
 			"[ name:string ]",
-			"(string | Carbon.ObjectSchema.PropertyDefinition)",
-			"This index can be interpreted in two forms:\n- As a prefix: When the value is as string. The name is taken a a prefix and the string value must be an absolute URI.\n- As a property: When the value is of type `Carbon.ObjectSchema.PropertyDefinition`. The name is taken as the name of the property."
+			"(string | CarbonLDP.ObjectSchemaProperty)",
+			"This index can be interpreted in two forms:\n- As a prefix: When the value is as string. The name is taken a a prefix and the string value must be an absolute URI.\n- As a property: When the value is of type `CarbonLDP.ObjectSchemaProperty`. The name is taken as the name of the property."
 		), ():void => {} );
 
 	} );
 
 	describe( interfaze(
-		"Carbon.ObjectSchema.PropertyDefinition",
+		"CarbonLDP.ObjectSchemaProperty",
 		"Interface that defines the property of a schema."
 	), ():void => {
 
@@ -124,7 +121,7 @@ describe( module( "Carbon/ObjectSchema" ), ():void => {
 	} );
 
 	describe( interfaze(
-		"Carbon.ObjectSchema.Resolver",
+		"CarbonLDP.ObjectSchemaResolver",
 		"Interface that defines the methods needed for an element that can provide object schemas."
 	), ():void => {
 
@@ -132,7 +129,7 @@ describe( module( "Carbon/ObjectSchema" ), ():void => {
 			OPTIONAL,
 			"getGeneralSchema",
 			"Returns the general object schema that applies to all the objects.",
-			{ type: "Carbon.ObjectSchema.DigestedObjectSchema" }
+			{ type: "CarbonLDP.DigestedObjectSchema" }
 		), ():void => {} );
 
 		it( hasMethod(
@@ -141,27 +138,19 @@ describe( module( "Carbon/ObjectSchema" ), ():void => {
 			"Returns the specific object schema that applies to the object provided.", [
 				{ name: "object", type: "object", description: "The object to look for its schema." },
 			],
-			{ type: "Carbon.ObjectSchema.DigestedObjectSchema" }
+			{ type: "CarbonLDP.DigestedObjectSchema" }
 		), ():void => {} );
 
 	} );
 
-	it( hasDefaultExport( "Carbon.ObjectSchema.Class" ), ():void => {
-		let defaultExport:DefaultExport = <any> {};
-		let defaultTarget:ObjectSchema.Class;
-
-		defaultTarget = defaultExport;
-		expect( defaultTarget ).toEqual( jasmine.any( Object ) );
-	} );
-
 	describe( enumeration(
-		"Carbon.ObjectSchema.ContainerType",
+		"CarbonLDP.ContainerType",
 		"Enum for the types that a container can be."
 	), ():void => {
 
 		it( isDefined(), ():void => {
 			expect( ObjectSchema.ContainerType ).toBeDefined();
-			expect( Utils.isObject( ObjectSchema.ContainerType ) ).toBe( true );
+			expect( ObjectSchema.ContainerType ).toEqual( jasmine.any( Object ) );
 		} );
 
 		it( hasEnumeral(
@@ -184,7 +173,7 @@ describe( module( "Carbon/ObjectSchema" ), ():void => {
 
 	} );
 
-	describe( clazz( "Carbon.ObjectSchema.DigestedObjectSchema", "Class of a standardized Schema that is used for the SDK for compact and expand JSON-LD objects and Carbon Resources." ), ():void => {
+	describe( clazz( "CarbonLDP.DigestedObjectSchema", "Class of a standardized Schema that is used for the SDK for compact and expand JSON-LD objects and Carbon Resources." ), ():void => {
 
 		it( "should exists", ():void => {
 			expect( ObjectSchema.DigestedObjectSchema ).toBeDefined();
@@ -247,7 +236,7 @@ describe( module( "Carbon/ObjectSchema" ), ():void => {
 		it( hasProperty(
 			INSTANCE,
 			"properties",
-			"Map<string, Carbon.ObjectSchema.DigestedPropertyDefinition>",
+			"Map<string, CarbonLDP.DigestedObjectSchemaProperty>",
 			"Map that contains the definitions of the properties in the schema."
 		), ():void => {
 			const digestedSchema:ObjectSchema.DigestedObjectSchema = createSchema();
@@ -256,334 +245,25 @@ describe( module( "Carbon/ObjectSchema" ), ():void => {
 			expect( digestedSchema.properties.size ).toBe( 0 );
 		} );
 
-		/*describe( "DigestedObjectSchema._resolve", ():void => {
-
-			it( "should exists", ():void => {
-				expect( DigestedObjectSchema.prototype._resolve ).toBeDefined();
-				expect( DigestedObjectSchema.prototype._resolve ).toEqual( jasmine.any( Function ) );
-			} );
-
-			it( "should resolve itself", ():void => {
-				const schema:ObjectSchema.DigestedObjectSchema = createSchema();
-
-				const returned:ObjectSchema.DigestedObjectSchema = schema._resolve();
-				expect( returned ).toBe( schema );
-			} );
-
-			it( "should resolve prefixes", ():void => {
-				const schema:ObjectSchema.DigestedObjectSchema = createSchema( {
-					prefixes: new Map( [
-						[ "prefix1", "https://example.com/ns#" ],
-						[ "prefix2", "schema:Prefix" ],
-						[ "prefix3", "prefix2:/" ],
-						[ "prefix4", "prefix1:property" ],
-						[ "prefix5", "prefix4:-2" ],
-						[ "prefix6", "prefix5:.5" ],
-					] ),
-				} );
-
-				schema._resolve();
-				expect( schema.prefixes.get( "prefix1" ) ).toBe( "https://example.com/ns#" );
-				expect( schema.prefixes.get( "prefix2" ) ).toBe( "schema:Prefix" );
-				expect( schema.prefixes.get( "prefix3" ) ).toBe( "schema:Prefix/" );
-				expect( schema.prefixes.get( "prefix4" ) ).toBe( "https://example.com/ns#property" );
-				expect( schema.prefixes.get( "prefix5" ) ).toBe( "https://example.com/ns#property-2" );
-				expect( schema.prefixes.get( "prefix6" ) ).toBe( "https://example.com/ns#property-2.5" );
-			} );
-
-			it( "should resolve only prefixed property URIs", ():void => {
-				const schema:ObjectSchema.DigestedObjectSchema = createSchema( {
-					prefixes: new Map( [
-						[ "prefix1", "https://example.com/ns#" ],
-						[ "prefix2", "schema:Prefix" ],
-						[ "prefix3", "prefix1:property" ],
-						[ "resource", "https://example.com/resource/" ],
-					] ),
-					properties: new Map( [
-						[ "property1", createProperty( {
-							uri: "https://example.com/ns#",
-						} ) ],
-						[ "property2", createProperty( {
-							uri: "schema:Prefix",
-						} ) ],
-						[ "property3", createProperty( {
-							uri: "prefix1:property",
-						} ) ],
-						[ "property4", createProperty( {
-							uri: "prefix1:property-2",
-						} ) ],
-						[ "property5", createProperty( {
-							uri: "resource",
-						} ) ],
-					] ),
-				} );
-
-				schema._resolve();
-				expect( schema.properties.get( "property1" ).uri ).toBe( "https://example.com/ns#" );
-				expect( schema.properties.get( "property2" ).uri ).toBe( "schema:Prefix" );
-				expect( schema.properties.get( "property3" ).uri ).toBe( "https://example.com/ns#property" );
-				expect( schema.properties.get( "property4" ).uri ).toBe( "https://example.com/ns#property-2" );
-				expect( schema.properties.get( "property5" ).uri ).toBe( "https://example.com/resource/" );
-			} );
-
-			it( "should resolve only relative property URIs with vocab", ():void => {
-				const schema:ObjectSchema.DigestedObjectSchema = createSchema( {
-					vocab: "https://example.com/ns#",
-					base: "https://example.com/",
-					properties: new Map( [
-						[ "property1", createProperty( {
-							uri: "https://example.com/ns#",
-						} ) ],
-						[ "property2", createProperty( {
-							uri: "schema:Prefix",
-						} ) ],
-						[ "property3", createProperty( {
-							uri: "prefix:property",
-						} ) ],
-						[ "property4", createProperty( {
-							uri: "property-2",
-						} ) ],
-						[ "property5", createProperty( {
-							uri: "resource",
-						} ) ],
-					] ),
-				} );
-
-				schema._resolve();
-
-				expect( schema.properties.get( "property1" ).uri ).toBe( "https://example.com/ns#" );
-				expect( schema.properties.get( "property2" ).uri ).toBe( "schema:Prefix" );
-				expect( schema.properties.get( "property3" ).uri ).toBe( "prefix:property" );
-				expect( schema.properties.get( "property4" ).uri ).toBe( "https://example.com/ns#property-2" );
-				expect( schema.properties.get( "property5" ).uri ).toBe( "https://example.com/ns#resource" );
-			} );
-
-			it( "should resolve only relative property URIs with base when no vocab", ():void => {
-				const schema:ObjectSchema.DigestedObjectSchema = createSchema( {
-					base: "https://example.com/",
-					properties: new Map( [
-						[ "property1", createProperty( {
-							uri: "https://example.com/ns#",
-						} ) ],
-						[ "property2", createProperty( {
-							uri: "schema:Prefix",
-						} ) ],
-						[ "property3", createProperty( {
-							uri: "prefix:property",
-						} ) ],
-						[ "property4", createProperty( {
-							uri: "property-2",
-						} ) ],
-						[ "property5", createProperty( {
-							uri: "resource",
-						} ) ],
-					] ),
-				} );
-
-				schema._resolve();
-
-				expect( schema.properties.get( "property1" ).uri ).toBe( "https://example.com/ns#" );
-				expect( schema.properties.get( "property2" ).uri ).toBe( "schema:Prefix" );
-				expect( schema.properties.get( "property3" ).uri ).toBe( "prefix:property" );
-				expect( schema.properties.get( "property4" ).uri ).toBe( "https://example.com/property-2" );
-				expect( schema.properties.get( "property5" ).uri ).toBe( "https://example.com/resource" );
-			} );
-
-			it( "should resolve only prefixed property types", ():void => {
-				const schema:ObjectSchema.DigestedObjectSchema = createSchema( {
-					prefixes: new Map( [
-						[ "prefix1", "https://example.com/ns#" ],
-						[ "prefix2", "schema:Prefix" ],
-						[ "prefix3", "prefix1:type" ],
-						[ "type", "https://example.com/type/" ],
-					] ),
-					properties: new Map( [
-						[ "property1", createProperty( {
-							literalType: "https://example.com/ns#",
-						} ) ],
-						[ "property2", createProperty( {
-							literalType: "schema:Prefix",
-						} ) ],
-						[ "property3", createProperty( {
-							literalType: "prefix1:type",
-						} ) ],
-						[ "property4", createProperty( {
-							literalType: "prefix1:type-2",
-						} ) ],
-						[ "property5", createProperty( {
-							literalType: "type",
-						} ) ],
-					] ),
-				} );
-
-				schema._resolve();
-				expect( schema.properties.get( "property1" ).literalType ).toBe( "https://example.com/ns#" );
-				expect( schema.properties.get( "property2" ).literalType ).toBe( "schema:Prefix" );
-				expect( schema.properties.get( "property3" ).literalType ).toBe( "https://example.com/ns#type" );
-				expect( schema.properties.get( "property4" ).literalType ).toBe( "https://example.com/ns#type-2" );
-				expect( schema.properties.get( "property5" ).literalType ).toBe( "https://example.com/type/" );
-			} );
-
-			it( "should resolve only prefixed property types with vocab", ():void => {
-				const schema:ObjectSchema.DigestedObjectSchema = createSchema( {
-					vocab: "https://example.com/ns#",
-					base: "https://example.com/",
-					properties: new Map( [
-						[ "property1", createProperty( {
-							literalType: "https://example.com/ns#",
-						} ) ],
-						[ "property2", createProperty( {
-							literalType: "schema:Prefix",
-						} ) ],
-						[ "property3", createProperty( {
-							literalType: "prefix:type",
-						} ) ],
-						[ "property4", createProperty( {
-							literalType: "type-2",
-						} ) ],
-						[ "property5", createProperty( {
-							literalType: "type",
-						} ) ],
-					] ),
-				} );
-
-				schema._resolve();
-
-				expect( schema.properties.get( "property1" ).literalType ).toBe( "https://example.com/ns#" );
-				expect( schema.properties.get( "property2" ).literalType ).toBe( "schema:Prefix" );
-				expect( schema.properties.get( "property3" ).literalType ).toBe( "prefix:type" );
-				expect( schema.properties.get( "property4" ).literalType ).toBe( "https://example.com/ns#type-2" );
-				expect( schema.properties.get( "property5" ).literalType ).toBe( "https://example.com/ns#type" );
-			} );
-
-			it( "should resolve only prefixed property types with base when no vocab", ():void => {
-				const schema:ObjectSchema.DigestedObjectSchema = createSchema( {
-					base: "https://example.com/",
-					properties: new Map( [
-						[ "property1", createProperty( {
-							literalType: "https://example.com/ns#",
-						} ) ],
-						[ "property2", createProperty( {
-							literalType: "schema:Prefix",
-						} ) ],
-						[ "property3", createProperty( {
-							literalType: "prefix:type",
-						} ) ],
-						[ "property4", createProperty( {
-							literalType: "type-2",
-						} ) ],
-						[ "property5", createProperty( {
-							literalType: "type",
-						} ) ],
-					] ),
-				} );
-
-				schema._resolve();
-
-				expect( schema.properties.get( "property1" ).literalType ).toBe( "https://example.com/ns#" );
-				expect( schema.properties.get( "property2" ).literalType ).toBe( "schema:Prefix" );
-				expect( schema.properties.get( "property3" ).literalType ).toBe( "prefix:type" );
-				expect( schema.properties.get( "property4" ).literalType ).toBe( "https://example.com/type-2" );
-				expect( schema.properties.get( "property5" ).literalType ).toBe( "https://example.com/type" );
-			} );
-
-			it( "should clone property when URI resolved", ():void => {
-				const schema:ObjectSchema.DigestedObjectSchema = createSchema( {
-					vocab: "https://example.com/ns#",
-					prefixes: new Map( [
-						[ "prefix1", "https://example.com/ns#" ],
-						[ "prefix2", "schema:Prefix" ],
-						[ "prefix3", "prefix1:type" ],
-						[ "type", "https://example.com/type/" ],
-					] ),
-					properties: new Map( [
-						[ "property1", createProperty( {
-							uri: "https://example.com/ns#",
-						} ) ],
-						[ "property2", createProperty( {
-							uri: "schema:Prefix",
-						} ) ],
-						[ "property3", createProperty( {
-							uri: "prefix1:type",
-						} ) ],
-						[ "property4", createProperty( {
-							uri: "type",
-						} ) ],
-						[ "property5", createProperty( {
-							uri: "type-2",
-						} ) ],
-					] ),
-				} );
-
-				const properties:ObjectSchema.DigestedPropertyDefinition[] = Array.from( schema.properties.values() );
-				schema._resolve();
-
-				expect( schema.properties.get( "property1" ) ).toBe( properties[ 0 ] );
-				expect( schema.properties.get( "property2" ) ).toBe( properties[ 1 ] );
-				expect( schema.properties.get( "property3" ) ).not.toBe( properties[ 2 ] );
-				expect( schema.properties.get( "property4" ) ).not.toBe( properties[ 3 ] );
-				expect( schema.properties.get( "property5" ) ).not.toBe( properties[ 4 ] );
-			} );
-
-			it( "should clone property when type resolved", ():void => {
-				const schema:ObjectSchema.DigestedObjectSchema = createSchema( {
-					vocab: "https://example.com/ns#",
-					prefixes: new Map( [
-						[ "prefix1", "https://example.com/ns#" ],
-						[ "prefix2", "schema:Prefix" ],
-						[ "prefix3", "prefix1:type" ],
-						[ "type", "https://example.com/type/" ],
-					] ),
-					properties: new Map( [
-						[ "property1", createProperty( {
-							literalType: "https://example.com/ns#",
-						} ) ],
-						[ "property2", createProperty( {
-							literalType: "schema:Prefix",
-						} ) ],
-						[ "property3", createProperty( {
-							literalType: "prefix1:type",
-						} ) ],
-						[ "property4", createProperty( {
-							literalType: "type",
-						} ) ],
-						[ "property5", createProperty( {
-							literalType: "type-2",
-						} ) ],
-					] ),
-				} );
-
-				const properties:ObjectSchema.DigestedPropertyDefinition[] = Array.from( schema.properties.values() );
-				schema._resolve();
-
-				expect( schema.properties.get( "property1" ) ).toBe( properties[ 0 ] );
-				expect( schema.properties.get( "property2" ) ).toBe( properties[ 1 ] );
-				expect( schema.properties.get( "property3" ) ).not.toBe( properties[ 2 ] );
-				expect( schema.properties.get( "property4" ) ).not.toBe( properties[ 3 ] );
-				expect( schema.properties.get( "property5" ) ).not.toBe( properties[ 4 ] );
-			} );
-
-		} );*/
-
 	} );
 
-	describe( clazz( "Carbon.ObjectSchema.DigestedPropertyDefinition", "Class for standardized object properties of a schema." ), ():void => {
+	describe( clazz( "CarbonLDP.DigestedObjectSchemaProperty", "Class for standardized object properties of a schema." ), ():void => {
 
 		it( isDefined(), ():void => {
-			expect( ObjectSchema.DigestedPropertyDefinition ).toBeDefined();
-			expect( Utils.isFunction( ObjectSchema.DigestedPropertyDefinition ) ).toBe( true );
+			expect( ObjectSchema.DigestedObjectSchemaProperty ).toBeDefined();
+			expect( ObjectSchema.DigestedObjectSchemaProperty ).toEqual( jasmine.any( Function ) );
 		} );
 
-		let digestedProperty:ObjectSchema.DigestedPropertyDefinition;
+		let digestedProperty:ObjectSchema.DigestedObjectSchemaProperty;
 		beforeEach( ():void => {
-			digestedProperty = new ObjectSchema.DigestedPropertyDefinition();
+			digestedProperty = new ObjectSchema.DigestedObjectSchemaProperty();
 		} );
 
 		it( "should be instantiable", ():void => {
-			const instance:ObjectSchema.DigestedPropertyDefinition = new ObjectSchema.DigestedPropertyDefinition();
+			const instance:ObjectSchema.DigestedObjectSchemaProperty = new ObjectSchema.DigestedObjectSchemaProperty();
 
 			expect( instance ).toBeDefined();
-			expect( instance ).toEqual( jasmine.any( ObjectSchema.DigestedPropertyDefinition ) );
+			expect( instance ).toEqual( jasmine.any( ObjectSchema.DigestedObjectSchemaProperty ) );
 		} );
 
 		it( hasProperty(
@@ -628,7 +308,7 @@ describe( module( "Carbon/ObjectSchema" ), ():void => {
 		it( hasProperty(
 			INSTANCE,
 			"containerType",
-			"Carbon.ObjectSchema.ContainerType",
+			"CarbonLDP.ContainerType",
 			"The type of container the property is. It's `null` if the property is no container type."
 		), ():void => {
 			expect( digestedProperty.containerType ).toBeDefined();
@@ -637,32 +317,32 @@ describe( module( "Carbon/ObjectSchema" ), ():void => {
 
 	} );
 
-	describe( clazz( "Carbon.ObjectSchema.Digester", "Class with functions to standardize a JSON-LD Context Schema." ), ():void => {
+	describe( clazz( "CarbonLDP.ObjectSchemaDigester", "Class with functions to standardize a JSON-LD Context Schema." ), ():void => {
 
 		describe( method( STATIC, "digestSchema" ), ():void => {
 
 			it( hasSignature(
 				"Processes a schema to standardize it before using it.", [
-					{ name: "schema", type: "Carbon.ObjectSchema.Class" },
+					{ name: "schema", type: "CarbonLDP.ObjectSchema" },
 				],
-				{ type: "Carbon.ObjectSchema.DigestedObjectSchema" }
+				{ type: "CarbonLDP.DigestedObjectSchema" }
 			), ():void => {} );
 
 			it( hasSignature(
 				"Processes several schemas to standardize and combine them before using them.", [
-					{ name: "schemas", type: "Array<Carbon.ObjectSchema.Class>" },
+					{ name: "schemas", type: "Array<CarbonLDP.ObjectSchema>" },
 				],
-				{ type: "Carbon.ObjectSchema.DigestedObjectSchema" }
+				{ type: "CarbonLDP.DigestedObjectSchema" }
 			), ():void => {} );
 
 			it( "should exists", ():void => {
-				expect( ObjectSchema.Digester.digestSchema ).toBeDefined();
-				expect( ObjectSchema.Digester.digestSchema ).toEqual( jasmine.any( Function ) );
+				expect( ObjectSchema.ObjectSchemaDigester.digestSchema ).toBeDefined();
+				expect( ObjectSchema.ObjectSchemaDigester.digestSchema ).toEqual( jasmine.any( Function ) );
 			} );
 
 
 			it( "should digest @vocab", ():void => {
-				const schema:ObjectSchema.DigestedObjectSchema = ObjectSchema.Digester.digestSchema( {
+				const schema:ObjectSchema.DigestedObjectSchema = ObjectSchema.ObjectSchemaDigester.digestSchema( {
 					"@vocab": "https://example.com/ns#",
 				} );
 
@@ -670,7 +350,7 @@ describe( module( "Carbon/ObjectSchema" ), ():void => {
 			} );
 
 			it( "should digest @base", ():void => {
-				const schema:ObjectSchema.DigestedObjectSchema = ObjectSchema.Digester.digestSchema( {
+				const schema:ObjectSchema.DigestedObjectSchema = ObjectSchema.ObjectSchemaDigester.digestSchema( {
 					"@base": "https://example.com/",
 				} );
 
@@ -678,7 +358,7 @@ describe( module( "Carbon/ObjectSchema" ), ():void => {
 			} );
 
 			it( "should digest @language", ():void => {
-				const schema:ObjectSchema.DigestedObjectSchema = ObjectSchema.Digester.digestSchema( {
+				const schema:ObjectSchema.DigestedObjectSchema = ObjectSchema.ObjectSchemaDigester.digestSchema( {
 					"@language": "en",
 				} );
 
@@ -686,7 +366,7 @@ describe( module( "Carbon/ObjectSchema" ), ():void => {
 			} );
 
 			it( "should digest prefixes", ():void => {
-				const schema:ObjectSchema.DigestedObjectSchema = ObjectSchema.Digester.digestSchema( {
+				const schema:ObjectSchema.DigestedObjectSchema = ObjectSchema.ObjectSchemaDigester.digestSchema( {
 					"skos": "http://www.w3.org/2004/02/skos/core#",
 					"dct": "http://purl.org/dc/terms/",
 					"Concept": "skos:Concept",
@@ -700,10 +380,10 @@ describe( module( "Carbon/ObjectSchema" ), ():void => {
 			} );
 
 			it( "should digest properties", ():void => {
-				const spy:jasmine.Spy = spyOn( ObjectSchema.Digester, "digestProperty" )
+				const spy:jasmine.Spy = spyOn( ObjectSchema.ObjectSchemaDigester, "digestProperty" )
 					.and.callThrough();
 
-				const schema:ObjectSchema.DigestedObjectSchema = ObjectSchema.Digester.digestSchema( {
+				const schema:ObjectSchema.DigestedObjectSchema = ObjectSchema.ObjectSchemaDigester.digestSchema( {
 					"hasTopConcept": {
 						"@id": "skos:hasTopConcept",
 						"@type": "@id",
@@ -733,7 +413,7 @@ describe( module( "Carbon/ObjectSchema" ), ():void => {
 
 
 			it( "should keep last set @vocab", ():void => {
-				const schema:ObjectSchema.DigestedObjectSchema = ObjectSchema.Digester.digestSchema( [
+				const schema:ObjectSchema.DigestedObjectSchema = ObjectSchema.ObjectSchemaDigester.digestSchema( [
 					{ "@vocab": "https://example.com/ns-1#" },
 					{ "@vocab": "https://example.com/ns-2#" },
 					{},
@@ -743,7 +423,7 @@ describe( module( "Carbon/ObjectSchema" ), ():void => {
 			} );
 
 			it( "should keep last set @base", ():void => {
-				const schema:ObjectSchema.DigestedObjectSchema = ObjectSchema.Digester.digestSchema( [
+				const schema:ObjectSchema.DigestedObjectSchema = ObjectSchema.ObjectSchemaDigester.digestSchema( [
 					{ "@base": "https://example.com/base-1/" },
 					{ "@base": "https://example.com/base-2/" },
 					{},
@@ -753,7 +433,7 @@ describe( module( "Carbon/ObjectSchema" ), ():void => {
 			} );
 
 			it( "should keep last set @language", ():void => {
-				const schema:ObjectSchema.DigestedObjectSchema = ObjectSchema.Digester.digestSchema( [
+				const schema:ObjectSchema.DigestedObjectSchema = ObjectSchema.ObjectSchemaDigester.digestSchema( [
 					{ "@language": "en-US" },
 					{ "@language": "en-UK" },
 					{},
@@ -763,7 +443,7 @@ describe( module( "Carbon/ObjectSchema" ), ():void => {
 			} );
 
 			it( "should combine prefixes", ():void => {
-				const schema:ObjectSchema.DigestedObjectSchema = ObjectSchema.Digester.digestSchema( [
+				const schema:ObjectSchema.DigestedObjectSchema = ObjectSchema.ObjectSchemaDigester.digestSchema( [
 					{ "prefix1": "https://example.com/prefix-1/ns#" },
 					{ "prefix2": "https://example.com/prefix-2/ns#" },
 					{},
@@ -776,7 +456,7 @@ describe( module( "Carbon/ObjectSchema" ), ():void => {
 			} );
 
 			it( "should keep last same prefix", ():void => {
-				const schema:ObjectSchema.DigestedObjectSchema = ObjectSchema.Digester.digestSchema( [
+				const schema:ObjectSchema.DigestedObjectSchema = ObjectSchema.ObjectSchemaDigester.digestSchema( [
 					{ "prefix": "https://example.com/prefix-1/ns#" },
 					{ "prefix": "https://example.com/prefix-2/ns#" },
 					{},
@@ -788,10 +468,10 @@ describe( module( "Carbon/ObjectSchema" ), ():void => {
 			} );
 
 			it( "should combine properties", ():void => {
-				const spy:jasmine.Spy = spyOn( ObjectSchema.Digester, "digestProperty" )
+				const spy:jasmine.Spy = spyOn( ObjectSchema.ObjectSchemaDigester, "digestProperty" )
 					.and.callThrough();
 
-				const schema:ObjectSchema.DigestedObjectSchema = ObjectSchema.Digester.digestSchema( [
+				const schema:ObjectSchema.DigestedObjectSchema = ObjectSchema.ObjectSchemaDigester.digestSchema( [
 					{ "property1": {} },
 					{ "property2": {} },
 					{},
@@ -804,10 +484,10 @@ describe( module( "Carbon/ObjectSchema" ), ():void => {
 			} );
 
 			it( "should keep last same property", ():void => {
-				const spy:jasmine.Spy = spyOn( ObjectSchema.Digester, "digestProperty" )
+				const spy:jasmine.Spy = spyOn( ObjectSchema.ObjectSchemaDigester, "digestProperty" )
 					.and.callThrough();
 
-				const schema:ObjectSchema.DigestedObjectSchema = ObjectSchema.Digester.digestSchema( [
+				const schema:ObjectSchema.DigestedObjectSchema = ObjectSchema.ObjectSchemaDigester.digestSchema( [
 					{ "property": {} },
 					{ "property": {} },
 					{},
@@ -825,19 +505,19 @@ describe( module( "Carbon/ObjectSchema" ), ():void => {
 			it( hasSignature(
 				"Process an schema property definition before using it.", [
 					{ name: "name", type: "string" },
-					{ name: "definition", type: "Carbon.ObjectSchema.PropertyDefinition" },
+					{ name: "definition", type: "CarbonLDP.ObjectSchemaProperty" },
 				],
-				{ type: "Carbon.ObjectSchema.DigestedPropertyDefinition" }
+				{ type: "CarbonLDP.DigestedObjectSchemaProperty" }
 			), ():void => {} );
 
 			it( "should exists", ():void => {
-				expect( ObjectSchema.Digester.digestProperty ).toBeDefined();
-				expect( ObjectSchema.Digester.digestProperty ).toEqual( jasmine.any( Function ) );
+				expect( ObjectSchema.ObjectSchemaDigester.digestProperty ).toBeDefined();
+				expect( ObjectSchema.ObjectSchemaDigester.digestProperty ).toEqual( jasmine.any( Function ) );
 			} );
 
 
 			it( "should digest @id", ():void => {
-				const definition:ObjectSchema.DigestedPropertyDefinition = ObjectSchema.Digester.digestProperty( "property", {
+				const definition:ObjectSchema.DigestedObjectSchemaProperty = ObjectSchema.ObjectSchemaDigester.digestProperty( "property", {
 					"@id": "https://example.com/ns#property",
 				} );
 
@@ -847,7 +527,7 @@ describe( module( "Carbon/ObjectSchema" ), ():void => {
 			} );
 
 			it( "should digest name when @id", ():void => {
-				const definition:ObjectSchema.DigestedPropertyDefinition = ObjectSchema.Digester.digestProperty( "property", {} );
+				const definition:ObjectSchema.DigestedObjectSchemaProperty = ObjectSchema.ObjectSchemaDigester.digestProperty( "property", {} );
 
 				expect( definition ).toEqual( jasmine.objectContaining( {
 					uri: "property",
@@ -855,7 +535,7 @@ describe( module( "Carbon/ObjectSchema" ), ():void => {
 			} );
 
 			it( "should digest @type when string", ():void => {
-				const definition:ObjectSchema.DigestedPropertyDefinition = ObjectSchema.Digester.digestProperty( "property", {
+				const definition:ObjectSchema.DigestedObjectSchemaProperty = ObjectSchema.ObjectSchemaDigester.digestProperty( "property", {
 					"@type": "https://example.com/ns#type",
 				} );
 
@@ -866,7 +546,7 @@ describe( module( "Carbon/ObjectSchema" ), ():void => {
 			} );
 
 			it( "should digest @type when @id", ():void => {
-				const definition:ObjectSchema.DigestedPropertyDefinition = ObjectSchema.Digester.digestProperty( "property", {
+				const definition:ObjectSchema.DigestedObjectSchemaProperty = ObjectSchema.ObjectSchemaDigester.digestProperty( "property", {
 					"@type": "@id",
 				} );
 
@@ -877,7 +557,7 @@ describe( module( "Carbon/ObjectSchema" ), ():void => {
 			} );
 
 			it( "should digest @type when @vocab", ():void => {
-				const definition:ObjectSchema.DigestedPropertyDefinition = ObjectSchema.Digester.digestProperty( "property", {
+				const definition:ObjectSchema.DigestedObjectSchemaProperty = ObjectSchema.ObjectSchemaDigester.digestProperty( "property", {
 					"@type": "@vocab",
 				} );
 
@@ -888,7 +568,7 @@ describe( module( "Carbon/ObjectSchema" ), ():void => {
 			} );
 
 			it( "should digest @language", ():void => {
-				const definition:ObjectSchema.DigestedPropertyDefinition = ObjectSchema.Digester.digestProperty( "property", {
+				const definition:ObjectSchema.DigestedObjectSchemaProperty = ObjectSchema.ObjectSchemaDigester.digestProperty( "property", {
 					"@language": "en",
 				} );
 
@@ -898,7 +578,7 @@ describe( module( "Carbon/ObjectSchema" ), ():void => {
 			} );
 
 			it( "should digest @container when @set", ():void => {
-				const definition:ObjectSchema.DigestedPropertyDefinition = ObjectSchema.Digester.digestProperty( "property", {
+				const definition:ObjectSchema.DigestedObjectSchemaProperty = ObjectSchema.ObjectSchemaDigester.digestProperty( "property", {
 					"@container": "@set",
 				} );
 
@@ -908,7 +588,7 @@ describe( module( "Carbon/ObjectSchema" ), ():void => {
 			} );
 
 			it( "should digest @container when @list", ():void => {
-				const definition:ObjectSchema.DigestedPropertyDefinition = ObjectSchema.Digester.digestProperty( "property", {
+				const definition:ObjectSchema.DigestedObjectSchemaProperty = ObjectSchema.ObjectSchemaDigester.digestProperty( "property", {
 					"@container": "@list",
 				} );
 
@@ -918,7 +598,7 @@ describe( module( "Carbon/ObjectSchema" ), ():void => {
 			} );
 
 			it( "should digest @container when @language", ():void => {
-				const definition:ObjectSchema.DigestedPropertyDefinition = ObjectSchema.Digester.digestProperty( "property", {
+				const definition:ObjectSchema.DigestedObjectSchemaProperty = ObjectSchema.ObjectSchemaDigester.digestProperty( "property", {
 					"@container": "@language",
 				} );
 
@@ -933,14 +613,14 @@ describe( module( "Carbon/ObjectSchema" ), ():void => {
 
 			it( hasSignature(
 				"Combine several standardized schemas into one.", [
-					{ name: "digestedSchemas", type: "Carbon.ObjectSchema.DigestedObjectSchema[]" },
+					{ name: "digestedSchemas", type: "CarbonLDP.DigestedObjectSchema[]" },
 				],
-				{ type: "Carbon.ObjectSchema.DigestedObjectSchema" }
+				{ type: "CarbonLDP.DigestedObjectSchema" }
 			), ():void => {} );
 
 			it( "should exists", ():void => {
-				expect( ObjectSchema.Digester.combineDigestedObjectSchemas ).toBeDefined();
-				expect( ObjectSchema.Digester.combineDigestedObjectSchemas ).toEqual( jasmine.any( Function ) );
+				expect( ObjectSchema.ObjectSchemaDigester.combineDigestedObjectSchemas ).toBeDefined();
+				expect( ObjectSchema.ObjectSchemaDigester.combineDigestedObjectSchemas ).toEqual( jasmine.any( Function ) );
 			} );
 
 
@@ -948,7 +628,7 @@ describe( module( "Carbon/ObjectSchema" ), ():void => {
 				const schema1:ObjectSchema.DigestedObjectSchema = new ObjectSchema.DigestedObjectSchema();
 				const schema2:ObjectSchema.DigestedObjectSchema = new ObjectSchema.DigestedObjectSchema();
 
-				const schema:ObjectSchema.DigestedObjectSchema = ObjectSchema.Digester.combineDigestedObjectSchemas( [
+				const schema:ObjectSchema.DigestedObjectSchema = ObjectSchema.ObjectSchemaDigester.combineDigestedObjectSchemas( [
 					schema1,
 					schema2,
 				] );
@@ -958,7 +638,7 @@ describe( module( "Carbon/ObjectSchema" ), ():void => {
 			} );
 
 			it( "should keep last set vocab", ():void => {
-				const schema:ObjectSchema.DigestedObjectSchema = ObjectSchema.Digester.combineDigestedObjectSchemas( [
+				const schema:ObjectSchema.DigestedObjectSchema = ObjectSchema.ObjectSchemaDigester.combineDigestedObjectSchemas( [
 					createSchema( { vocab: "https://example.com/ns-1#" } ),
 					createSchema( { vocab: "https://example.com/ns-2#" } ),
 					createSchema( {} ),
@@ -968,7 +648,7 @@ describe( module( "Carbon/ObjectSchema" ), ():void => {
 			} );
 
 			it( "should keep last set base", ():void => {
-				const schema:ObjectSchema.DigestedObjectSchema = ObjectSchema.Digester.combineDigestedObjectSchemas( [
+				const schema:ObjectSchema.DigestedObjectSchema = ObjectSchema.ObjectSchemaDigester.combineDigestedObjectSchemas( [
 					createSchema( { base: "https://example.com/base-1/" } ),
 					createSchema( { base: "https://example.com/base-2/" } ),
 					createSchema( {} ),
@@ -978,7 +658,7 @@ describe( module( "Carbon/ObjectSchema" ), ():void => {
 			} );
 
 			it( "should keep last set language", ():void => {
-				const schema:ObjectSchema.DigestedObjectSchema = ObjectSchema.Digester.combineDigestedObjectSchemas( [
+				const schema:ObjectSchema.DigestedObjectSchema = ObjectSchema.ObjectSchemaDigester.combineDigestedObjectSchemas( [
 					createSchema( { language: "en-US" } ),
 					createSchema( { language: "en-UK" } ),
 					createSchema( {} ),
@@ -988,7 +668,7 @@ describe( module( "Carbon/ObjectSchema" ), ():void => {
 			} );
 
 			it( "should combine prefixes", ():void => {
-				const schema:ObjectSchema.DigestedObjectSchema = ObjectSchema.Digester.combineDigestedObjectSchemas( [
+				const schema:ObjectSchema.DigestedObjectSchema = ObjectSchema.ObjectSchemaDigester.combineDigestedObjectSchemas( [
 					createSchema( { prefixes: new Map( [ [ "prefix1", "https://example.com/prefix-1/ns#" ] ] ) } ),
 					createSchema( { prefixes: new Map( [ [ "prefix2", "https://example.com/prefix-2/ns#" ] ] ) } ),
 					createSchema( {} ),
@@ -1001,7 +681,7 @@ describe( module( "Carbon/ObjectSchema" ), ():void => {
 			} );
 
 			it( "should keep last same prefix", ():void => {
-				const schema:ObjectSchema.DigestedObjectSchema = ObjectSchema.Digester.combineDigestedObjectSchemas( [
+				const schema:ObjectSchema.DigestedObjectSchema = ObjectSchema.ObjectSchemaDigester.combineDigestedObjectSchemas( [
 					createSchema( { prefixes: new Map( [ [ "prefix", "https://example.com/prefix-1/ns#" ] ] ) } ),
 					createSchema( { prefixes: new Map( [ [ "prefix", "https://example.com/prefix-2/ns#" ] ] ) } ),
 					createSchema( {} ),
@@ -1013,7 +693,7 @@ describe( module( "Carbon/ObjectSchema" ), ():void => {
 			} );
 
 			it( "should combine properties", ():void => {
-				const schema:ObjectSchema.DigestedObjectSchema = ObjectSchema.Digester.combineDigestedObjectSchemas( [
+				const schema:ObjectSchema.DigestedObjectSchema = ObjectSchema.ObjectSchemaDigester.combineDigestedObjectSchemas( [
 					createSchema( { properties: new Map( [ [ "property1", createProperty( { uri: "https://example.com/ns#property1" } ) ] ] ) } ),
 					createSchema( { properties: new Map( [ [ "property2", createProperty( { uri: "https://example.com/ns#property2" } ) ] ] ) } ),
 					createSchema( {} ),
@@ -1026,7 +706,7 @@ describe( module( "Carbon/ObjectSchema" ), ():void => {
 			} );
 
 			it( "should keep last same property", ():void => {
-				const schema:ObjectSchema.DigestedObjectSchema = ObjectSchema.Digester.combineDigestedObjectSchemas( [
+				const schema:ObjectSchema.DigestedObjectSchema = ObjectSchema.ObjectSchemaDigester.combineDigestedObjectSchemas( [
 					createSchema( { properties: new Map( [ [ "property", createProperty( { uri: "https://example.com/ns#property1" } ) ] ] ) } ),
 					createSchema( { properties: new Map( [ [ "property", createProperty( { uri: "https://example.com/ns#property2" } ) ] ] ) } ),
 					createSchema( {} ),
@@ -1041,11 +721,11 @@ describe( module( "Carbon/ObjectSchema" ), ():void => {
 
 	} );
 
-	describe( clazz( "Carbon.ObjectSchema.Util", "Class with useful functions that use schemas." ), ():void => {
+	describe( clazz( "CarbonLDP.ObjectSchemaUtils", "Class with useful functions that use schemas." ), ():void => {
 
 		it( isDefined(), ():void => {
-			expect( ObjectSchema.Util ).toBeDefined();
-			expect( Utils.isFunction( ObjectSchema.Util ) ).toBe( true );
+			expect( ObjectSchema.ObjectSchemaUtils ).toBeDefined();
+			expect( ObjectSchema.ObjectSchemaUtils ).toEqual( jasmine.any( Function ) );
 		} );
 
 		describe( method( STATIC, "resolveURI" ), ():void => {
@@ -1053,15 +733,15 @@ describe( module( "Carbon/ObjectSchema" ), ():void => {
 			it( hasSignature(
 				"Tries to resolve a non absolute URI using the schema and the configuration provided.", [
 					{ name: "uri", type: "string", description: "The URI to ve resolved." },
-					{ name: "schema", type: "Carbon.ObjectSchema.DigestedObjectSchema", description: "The schema where to find the prefixes or the default vocabulary to utilize." },
+					{ name: "schema", type: "CarbonLDP.DigestedObjectSchema", description: "The schema where to find the prefixes or the default vocabulary to utilize." },
 					{ name: "relativeTo", type: "{ vocab?:boolean, base?:boolean }", optional: true, description: "An additional configuration object to specify the resolution mode of a relative URI, where the vocab takes priority before the base." },
 				],
 				{ type: "string", description: "The resolved absolute URI." } ), ():void => {
 			} );
 
 			it( "should exists", ():void => {
-				expect( ObjectSchema.Util.resolveURI ).toBeDefined();
-				expect( ObjectSchema.Util.resolveURI ).toEqual( jasmine.any( Function ) );
+				expect( ObjectSchema.ObjectSchemaUtils.resolveURI ).toBeDefined();
+				expect( ObjectSchema.ObjectSchemaUtils.resolveURI ).toEqual( jasmine.any( Function ) );
 			} );
 
 
@@ -1073,8 +753,8 @@ describe( module( "Carbon/ObjectSchema" ), ():void => {
 					] ),
 				} );
 
-				expect( ObjectSchema.Util.resolveURI( "https://example.com/", schema ) ).toBe( "https://example.com/" );
-				expect( ObjectSchema.Util.resolveURI( "http://example.com/resource/", schema ) ).toBe( "http://example.com/resource/" );
+				expect( ObjectSchema.ObjectSchemaUtils.resolveURI( "https://example.com/", schema ) ).toBe( "https://example.com/" );
+				expect( ObjectSchema.ObjectSchemaUtils.resolveURI( "http://example.com/resource/", schema ) ).toBe( "http://example.com/resource/" );
 			} );
 
 			it( "should not alter blank node labels", ():void => {
@@ -1085,8 +765,8 @@ describe( module( "Carbon/ObjectSchema" ), ():void => {
 					] ),
 				} );
 
-				expect( ObjectSchema.Util.resolveURI( "_:blank-node", schema ) ).toBe( "_:blank-node" );
-				expect( ObjectSchema.Util.resolveURI( "_:1", schema ) ).toBe( "_:1" );
+				expect( ObjectSchema.ObjectSchemaUtils.resolveURI( "_:blank-node", schema ) ).toBe( "_:blank-node" );
+				expect( ObjectSchema.ObjectSchemaUtils.resolveURI( "_:1", schema ) ).toBe( "_:1" );
 			} );
 
 			it( "should resolve relative with vocab schema", ():void => {
@@ -1094,8 +774,8 @@ describe( module( "Carbon/ObjectSchema" ), ():void => {
 					vocab: "https://example.com/ns#",
 				} );
 
-				expect( ObjectSchema.Util.resolveURI( "relative-uri", schema, { vocab: true } ) ).toBe( "https://example.com/ns#relative-uri" );
-				expect( ObjectSchema.Util.resolveURI( "another", schema, { vocab: true } ) ).toBe( "https://example.com/ns#another" );
+				expect( ObjectSchema.ObjectSchemaUtils.resolveURI( "relative-uri", schema, { vocab: true } ) ).toBe( "https://example.com/ns#relative-uri" );
+				expect( ObjectSchema.ObjectSchemaUtils.resolveURI( "another", schema, { vocab: true } ) ).toBe( "https://example.com/ns#another" );
 			} );
 
 			it( "should resolve relative with base schema", ():void => {
@@ -1103,8 +783,8 @@ describe( module( "Carbon/ObjectSchema" ), ():void => {
 					base: "https://example.com/ns#",
 				} );
 
-				expect( ObjectSchema.Util.resolveURI( "relative-uri", schema, { base: true } ) ).toBe( "https://example.com/relative-uri" );
-				expect( ObjectSchema.Util.resolveURI( "another", schema, { base: true } ) ).toBe( "https://example.com/another" );
+				expect( ObjectSchema.ObjectSchemaUtils.resolveURI( "relative-uri", schema, { base: true } ) ).toBe( "https://example.com/relative-uri" );
+				expect( ObjectSchema.ObjectSchemaUtils.resolveURI( "another", schema, { base: true } ) ).toBe( "https://example.com/another" );
 			} );
 
 			it( "should resolve relative with vocab schema before base", ():void => {
@@ -1113,8 +793,8 @@ describe( module( "Carbon/ObjectSchema" ), ():void => {
 					base: "https://example.com/ns#",
 				} );
 
-				expect( ObjectSchema.Util.resolveURI( "relative-uri", schema, { vocab: true, base: true } ) ).toBe( "https://example.com/ns#relative-uri" );
-				expect( ObjectSchema.Util.resolveURI( "another", schema, { vocab: true, base: true } ) ).toBe( "https://example.com/ns#another" );
+				expect( ObjectSchema.ObjectSchemaUtils.resolveURI( "relative-uri", schema, { vocab: true, base: true } ) ).toBe( "https://example.com/ns#relative-uri" );
+				expect( ObjectSchema.ObjectSchemaUtils.resolveURI( "another", schema, { vocab: true, base: true } ) ).toBe( "https://example.com/ns#another" );
 			} );
 
 			it( "should resolve relative with base schema when no vocab", ():void => {
@@ -1122,8 +802,8 @@ describe( module( "Carbon/ObjectSchema" ), ():void => {
 					base: "https://example.com/ns#",
 				} );
 
-				expect( ObjectSchema.Util.resolveURI( "relative-uri", schema, { vocab: true, base: true } ) ).toBe( "https://example.com/relative-uri" );
-				expect( ObjectSchema.Util.resolveURI( "another", schema, { vocab: true, base: true } ) ).toBe( "https://example.com/another" );
+				expect( ObjectSchema.ObjectSchemaUtils.resolveURI( "relative-uri", schema, { vocab: true, base: true } ) ).toBe( "https://example.com/relative-uri" );
+				expect( ObjectSchema.ObjectSchemaUtils.resolveURI( "another", schema, { vocab: true, base: true } ) ).toBe( "https://example.com/another" );
 			} );
 
 			it( "should resolve prefixed name from prefixes", ():void => {
@@ -1134,8 +814,8 @@ describe( module( "Carbon/ObjectSchema" ), ():void => {
 					] ),
 				} );
 
-				expect( ObjectSchema.Util.resolveURI( "prefix1:slug", schema ) ).toBe( "https://example.com/prefix-1#slug" );
-				expect( ObjectSchema.Util.resolveURI( "prefix2:resource/", schema ) ).toBe( "https://example.com/prefix-2/resource/" );
+				expect( ObjectSchema.ObjectSchemaUtils.resolveURI( "prefix1:slug", schema ) ).toBe( "https://example.com/prefix-1#slug" );
+				expect( ObjectSchema.ObjectSchemaUtils.resolveURI( "prefix2:resource/", schema ) ).toBe( "https://example.com/prefix-2/resource/" );
 			} );
 
 			it( "should resolve prefixed name from properties' @id", ():void => {
@@ -1146,8 +826,8 @@ describe( module( "Carbon/ObjectSchema" ), ():void => {
 					] ),
 				} );
 
-				expect( ObjectSchema.Util.resolveURI( "prefix1:slug", schema ) ).toBe( "https://example.com/prefix-1#slug" );
-				expect( ObjectSchema.Util.resolveURI( "prefix2:resource/", schema ) ).toBe( "https://example.com/prefix-2/resource/" );
+				expect( ObjectSchema.ObjectSchemaUtils.resolveURI( "prefix1:slug", schema ) ).toBe( "https://example.com/prefix-1#slug" );
+				expect( ObjectSchema.ObjectSchemaUtils.resolveURI( "prefix2:resource/", schema ) ).toBe( "https://example.com/prefix-2/resource/" );
 			} );
 
 			it( "should resolve recursive prefixed name", ():void => {
@@ -1158,8 +838,8 @@ describe( module( "Carbon/ObjectSchema" ), ():void => {
 					] ),
 				} );
 
-				expect( ObjectSchema.Util.resolveURI( "prefix2:query", schema ) ).toBe( "https://example.com/prefix-1#?query" );
-				expect( ObjectSchema.Util.resolveURI( "prefix2:another&flag", schema ) ).toBe( "https://example.com/prefix-1#?another&flag" );
+				expect( ObjectSchema.ObjectSchemaUtils.resolveURI( "prefix2:query", schema ) ).toBe( "https://example.com/prefix-1#?query" );
+				expect( ObjectSchema.ObjectSchemaUtils.resolveURI( "prefix2:another&flag", schema ) ).toBe( "https://example.com/prefix-1#?another&flag" );
 			} );
 
 			it( "should relative from prefix", ():void => {
@@ -1170,8 +850,8 @@ describe( module( "Carbon/ObjectSchema" ), ():void => {
 					] ),
 				} );
 
-				expect( ObjectSchema.Util.resolveURI( "Restaurant", schema ) ).toBe( "https://example.com/ns#Restaurant" );
-				expect( ObjectSchema.Util.resolveURI( "Brewery", schema ) ).toBe( "https://example.com/ns#Brewery" );
+				expect( ObjectSchema.ObjectSchemaUtils.resolveURI( "Restaurant", schema ) ).toBe( "https://example.com/ns#Restaurant" );
+				expect( ObjectSchema.ObjectSchemaUtils.resolveURI( "Brewery", schema ) ).toBe( "https://example.com/ns#Brewery" );
 			} );
 
 		} );

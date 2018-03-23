@@ -1,27 +1,26 @@
+import { CS } from "../Vocabularies/CS";
+import { VCARD } from "../Vocabularies/VCARD";
+import { XSD } from "../Vocabularies/XSD";
+import { Document } from "./../Document";
+import * as Errors from "../Errors";
 import {
-	STATIC,
-
-	OBLIGATORY,
-
-	module,
 	clazz,
-	interfaze,
-
-	isDefined,
-	hasMethod,
-	hasProperty,
 	extendsClass,
 	hasDefaultExport,
+	hasMethod,
+	hasProperty,
+	interfaze,
+	isDefined,
+	module,
+	OBLIGATORY,
+	STATIC,
 } from "./../test/JasmineExtender";
-import * as Document from "./../Document";
-import * as Errors from "./../Errors";
-import * as NS from "./../NS";
 import * as Utils from "./../Utils";
 
 import * as Credentials from "./Credentials";
 import DefaultExport from "./Credentials";
 
-describe( module( "Carbon/Auth/Credentials" ), ():void => {
+describe( module( "carbonldp/Auth/Credentials" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( Credentials ).toBeDefined();
@@ -36,44 +35,44 @@ describe( module( "Carbon/Auth/Credentials" ), ():void => {
 		expect( Credentials.RDF_CLASS ).toBeDefined();
 		expect( Utils.isString( Credentials.RDF_CLASS ) ).toBe( true );
 
-		expect( Credentials.RDF_CLASS ).toBe( NS.CS.Class.Credentials );
+		expect( Credentials.RDF_CLASS ).toBe( CS.Credentials );
 	} );
 
 	it( hasProperty(
 		STATIC,
 		"SCHEMA",
-		"Carbon.ObjectSchema.Class"
+		"CarbonLDP.ObjectSchema"
 	), ():void => {
 		expect( Credentials.SCHEMA ).toBeDefined();
 		expect( Utils.isObject( Credentials.SCHEMA ) ).toBe( true );
 
 		expect( Utils.hasProperty( Credentials.SCHEMA, "email" ) ).toBe( true );
 		expect( Credentials.SCHEMA[ "email" ] ).toEqual( {
-			"@id": NS.VCARD.Predicate.email,
-			"@type": NS.XSD.DataType.string,
+			"@id": VCARD.email,
+			"@type": XSD.string,
 		} );
 
 		expect( Utils.hasProperty( Credentials.SCHEMA, "password" ) ).toBe( true );
 		expect( Credentials.SCHEMA[ "password" ] ).toEqual( {
-			"@id": NS.CS.Predicate.password,
-			"@type": NS.XSD.DataType.string,
+			"@id": CS.password,
+			"@type": XSD.string,
 		} );
 
 		expect( Utils.hasProperty( Credentials.SCHEMA, "enabled" ) ).toBe( true );
 		expect( Credentials.SCHEMA[ "enabled" ] ).toEqual( {
-			"@id": NS.CS.Predicate.enabled,
-			"@type": NS.XSD.DataType.boolean,
+			"@id": CS.enabled,
+			"@type": XSD.boolean,
 		} );
 	} );
 
 	describe( interfaze(
-		"Carbon.Auth.Credentials.Class",
+		"CarbonLDP.Auth.Credentials.Class",
 		"Interface that represents an in-memory Credentials of a user."
 	), ():void => {
 
-		it( extendsClass( "Carbon.Document.Class" ), ():void => {
+		it( extendsClass( "CarbonLDP.Document" ), ():void => {
 			const user:Credentials.Class = <any> {};
-			let document:Document.Class;
+			let document:Document;
 
 			document = user;
 			expect( document ).toEqual( jasmine.any( Object ) );
@@ -121,8 +120,8 @@ describe( module( "Carbon/Auth/Credentials" ), ():void => {
 	} );
 
 	describe( clazz(
-		"Carbon.Auth.Credentials.Factory",
-		"Factory class for `Carbon.Auth.Credentials.Class` objects."
+		"CarbonLDP.Auth.Credentials.Factory",
+		"Factory class for `CarbonLDP.Auth.Credentials.Class` objects."
 	), ():void => {
 
 		it( isDefined(), ():void => {
@@ -133,11 +132,11 @@ describe( module( "Carbon/Auth/Credentials" ), ():void => {
 		it( hasMethod(
 			STATIC,
 			"create",
-			"Creates a `Carbon.Auth.Credentials.Class` object with the email and password specified.", [
+			"Creates a `CarbonLDP.Auth.Credentials.Class` object with the email and password specified.", [
 				{ name: "email", type: "string", description: "Email of the user to be created." },
 				{ name: "password", type: "string", description: "Password of the user to be created." },
 			],
-			{ type: "Carbon.Auth.Credentials.Class" }
+			{ type: "CarbonLDP.Auth.Credentials.Class" }
 		), ():void => {
 			expect( Credentials.Factory.create ).toBeDefined();
 			expect( Utils.isFunction( Credentials.Factory.create ) ).toBe( true );
@@ -158,12 +157,12 @@ describe( module( "Carbon/Auth/Credentials" ), ():void => {
 			STATIC,
 			"createFrom",
 			[ "T extends Object" ],
-			"Creates a `Carbon.Auth.Credentials.Class` object from the object and parameters specified.", [
+			"Creates a `CarbonLDP.Auth.Credentials.Class` object from the object and parameters specified.", [
 				{ name: "object", type: "T", description: "Object that will be converted into an Credentials." },
 				{ name: "email", type: "string", description: "Email of the user to be created." },
 				{ name: "password", type: "string", description: "Password of the user to be created." },
 			],
-			{ type: "T & Carbon.Auth.Credentials.Class" }
+			{ type: "T & CarbonLDP.Auth.Credentials.Class" }
 		), ():void => {
 			expect( Credentials.Factory.createFrom ).toBeDefined();
 			expect( Utils.isFunction( Credentials.Factory.createFrom ) ).toBe( true );
@@ -171,6 +170,7 @@ describe( module( "Carbon/Auth/Credentials" ), ():void => {
 			interface TheCredentials {
 				myProperty?:string;
 			}
+
 			interface MyCredentials extends Credentials.Class, TheCredentials {}
 
 			let user:MyCredentials;
@@ -178,14 +178,14 @@ describe( module( "Carbon/Auth/Credentials" ), ():void => {
 			expect( user.myProperty ).toBeUndefined();
 			expect( user.email ).toBe( "email.of.user@example.com" );
 			expect( user.password ).toBe( "myAwesomePassword" );
-			expect( user.types ).toContain( NS.CS.Class.Credentials );
+			expect( user.types ).toContain( CS.Credentials );
 
 			user = Credentials.Factory.createFrom<TheCredentials>( { myProperty: "a property" }, "email.of.user@example.com", "myAwesomePassword" );
 			expect( user.myProperty ).toBeDefined();
 			expect( user.myProperty ).toBe( "a property" );
 			expect( user.email ).toBe( "email.of.user@example.com" );
 			expect( user.password ).toBe( "myAwesomePassword" );
-			expect( user.types ).toContain( NS.CS.Class.Credentials );
+			expect( user.types ).toContain( CS.Credentials );
 
 			expect( () => Credentials.Factory.createFrom( {}, "email.of.user@example.com", "" ) ).toThrowError( Errors.IllegalArgumentError );
 			expect( () => Credentials.Factory.createFrom( {}, "", "myAwesomePassword" ) ).toThrowError( Errors.IllegalArgumentError );
@@ -194,7 +194,7 @@ describe( module( "Carbon/Auth/Credentials" ), ():void => {
 
 	} );
 
-	it( hasDefaultExport( "Carbon.Auth.Credentials.Class" ), ():void => {
+	it( hasDefaultExport( "CarbonLDP.Auth.Credentials.Class" ), ():void => {
 		let defaultExport:DefaultExport = <any> {};
 		let user:Credentials.Class;
 

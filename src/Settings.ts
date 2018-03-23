@@ -17,8 +17,3 @@ export interface CarbonSettings extends ContextSettings {
 	port?:number;
 	ssl?:boolean;
 }
-
-export {
-	CarbonSettings as default,
-	CarbonSettings as Class,
-};

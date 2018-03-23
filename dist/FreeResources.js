@@ -1,79 +1,72 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var Errors = require("./Errors");
-var Converter_1 = require("./JSONLD/Converter");
-var Pointer = require("./Pointer");
-var RDF = require("./RDF");
-var Resource = require("./Resource");
+var IDAlreadyInUseError_1 = require("./Errors/IDAlreadyInUseError");
+var IllegalArgumentError_1 = require("./Errors/IllegalArgumentError");
+var URI_1 = require("./RDF/URI");
+var Resource_1 = require("./Resource");
 var Utils = require("./Utils");
 function hasPointer(id) {
-    var freeResources = this;
     if (!inLocalScope(id)) {
-        return freeResources._documents.hasPointer(id);
+        return this._documents.hasPointer(id);
     }
-    return freeResources.hasResource(id);
+    return this.hasResource(id);
 }
 function getPointer(id) {
-    var freeResources = this;
     if (!inLocalScope(id)) {
-        return freeResources._documents.getPointer(id);
+        return this._documents.getPointer(id);
     }
-    var resource = freeResources.getResource(id);
-    return !resource ? freeResources.createResource(id) : resource;
+    var resource = this.getResource(id);
+    return !resource ? this.createResource(id) : resource;
 }
 function inLocalScope(id) {
-    return RDF.URI.Util.isBNodeID(id);
+    return URI_1.URI.isBNodeID(id);
 }
 function inScope(idOrPointer) {
-    var freeResources = this;
-    var id = Pointer.Factory.is(idOrPointer) ? idOrPointer.id : idOrPointer;
-    return inLocalScope(id) || freeResources._documents.inScope(id);
+    var id = Utils.isString(idOrPointer) ? idOrPointer : idOrPointer.id;
+    return inLocalScope(id) || this._documents.inScope(id);
 }
 function hasResource(id) {
-    var freeResources = this;
-    return freeResources._resourcesIndex.has(id);
+    return this._resourcesIndex.has(id);
 }
 function getResource(id) {
-    var freeResources = this;
-    return freeResources._resourcesIndex.get(id) || null;
+    return this._resourcesIndex.get(id) || null;
 }
 function getResources() {
-    var freeResources = this;
-    return Utils.A.from(freeResources._resourcesIndex.values());
+    return Utils.ArrayUtils.from(this._resourcesIndex.values());
 }
 function createResource(id) {
     return this.createResourceFrom({}, id);
 }
 function createResourceFrom(object, id) {
-    var freeResources = this;
     if (id) {
         if (!inLocalScope(id))
-            throw new Errors.IllegalArgumentError("The id \"" + id + "\" is out of scope.");
-        if (freeResources._resourcesIndex.has(id))
-            throw new Errors.IDAlreadyInUseError("The id \"" + id + "\" is already in use by another resource.");
+            throw new IllegalArgumentError_1.IllegalArgumentError("The id \"" + id + "\" is out of scope.");
+        if (this._resourcesIndex.has(id))
+            throw new IDAlreadyInUseError_1.IDAlreadyInUseError("The id \"" + id + "\" is already in use by another resource.");
     }
     else {
-        id = RDF.URI.Util.generateBNodeID();
+        id = URI_1.URI.generateBNodeID();
     }
-    var resource = Resource.Factory.createFrom(object, id);
-    freeResources._resourcesIndex.set(id, resource);
+    var resource = Resource_1.Resource.createFrom(object, id);
+    this._resourcesIndex.set(id, resource);
     return resource;
 }
-function toJSON() {
+function toJSON(key) {
+    var _this = this;
     var generalSchema = this._documents.getGeneralSchema();
-    var jsonldConverter = new Converter_1.default();
-    var resources = this.getResources();
-    var expandedResources = [];
-    for (var _i = 0, resources_1 = resources; _i < resources_1.length; _i++) {
-        var resource = resources_1[_i];
-        expandedResources.push(jsonldConverter.expand(resource, generalSchema, this._documents.getSchemaFor(resource)));
-    }
-    return JSON.stringify(expandedResources);
+    var jsonldConverter = this._documents.jsonldConverter;
+    return this
+        .getResources()
+        .map(function (resource) {
+        var resourceSchema = _this._documents.getSchemaFor(resource);
+        return jsonldConverter.expand(resource, generalSchema, resourceSchema);
+    });
 }
-var Factory = (function () {
-    function Factory() {
-    }
-    Factory.hasClassProperties = function (object) {
+exports.FreeResources = {
+    is: function (object) {
+        return exports.FreeResources.isDecorated(object);
+    },
+    isDecorated: function (object) {
         return (Utils.hasPropertyDefined(object, "_documents") &&
             Utils.hasPropertyDefined(object, "_resourcesIndex") &&
             Utils.hasFunction(object, "hasResource") &&
@@ -85,19 +78,21 @@ var Factory = (function () {
             Utils.hasFunction(object, "getPointer") &&
             Utils.hasFunction(object, "inScope") &&
             Utils.hasFunction(object, "toJSON"));
-    };
-    Factory.create = function (documents) {
-        return Factory.createFrom({}, documents);
-    };
-    Factory.createFrom = function (object, documents) {
-        var freeResources = Factory.decorate(object);
-        freeResources._documents = documents;
-        return freeResources;
-    };
-    Factory.decorate = function (object) {
-        if (Factory.hasClassProperties(object))
+    },
+    create: function (documents) {
+        return exports.FreeResources.createFrom({}, documents);
+    },
+    createFrom: function (object, documents) {
+        return exports.FreeResources.decorate(object, documents);
+    },
+    decorate: function (object, documents) {
+        if (exports.FreeResources.isDecorated(object))
             return object;
         Object.defineProperties(object, {
+            "_documents": {
+                configurable: true,
+                value: documents,
+            },
             "_resourcesIndex": {
                 writable: false,
                 enumerable: false,
@@ -160,9 +155,7 @@ var Factory = (function () {
             },
         });
         return object;
-    };
-    return Factory;
-}());
-exports.Factory = Factory;
+    },
+};
 
 //# sourceMappingURL=FreeResources.js.map

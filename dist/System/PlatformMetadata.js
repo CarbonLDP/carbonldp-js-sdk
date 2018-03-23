@@ -1,16 +1,15 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var NS = require("./../NS");
-exports.RDF_CLASS = NS.C.Class.Platform;
-exports.SCHEMA = {
-    "version": {
-        "@id": NS.C.Predicate.version,
-        "@type": NS.XSD.DataType.string,
+var C_1 = require("../Vocabularies/C");
+var SCHEMA = {
+    "instance": {
+        "@id": C_1.C.instance,
+        "@type": "@id",
     },
-    "buildDate": {
-        "@id": NS.C.Predicate.buildDate,
-        "@type": NS.XSD.DataType.dateTime,
-    },
+};
+exports.PlatformMetadata = {
+    TYPE: C_1.C.Platform,
+    SCHEMA: SCHEMA,
 };
 
 //# sourceMappingURL=PlatformMetadata.js.map

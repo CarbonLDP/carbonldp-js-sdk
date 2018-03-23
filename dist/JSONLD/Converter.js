@@ -1,38 +1,41 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var Errors = require("./../Errors");
-var NS = require("./../NS");
+var IllegalArgumentError_1 = require("../Errors/IllegalArgumentError");
+var Pointer_1 = require("../Pointer");
+var List_1 = require("../RDF/List");
+var XSDSerializers = require("../RDF/Literal/Serializers/XSD");
+var Node_1 = require("../RDF/Node");
+var URI_1 = require("../RDF/URI");
+var XSD_1 = require("../Vocabularies/XSD");
 var ObjectSchema = require("./../ObjectSchema");
-var Pointer = require("./../Pointer");
-var RDF = require("./../RDF");
 var Utils = require("./../Utils");
 var Utils_1 = require("./Utils");
-var Class = (function () {
-    function Class(literalSerializers) {
-        this._literalSerializers = !!literalSerializers ? literalSerializers : Class.getDefaultSerializers();
+var JSONLDConverter = (function () {
+    function JSONLDConverter(literalSerializers) {
+        this._literalSerializers = !!literalSerializers ? literalSerializers : JSONLDConverter.getDefaultSerializers();
     }
-    Object.defineProperty(Class.prototype, "literalSerializers", {
+    Object.defineProperty(JSONLDConverter.prototype, "literalSerializers", {
         get: function () { return this._literalSerializers; },
         enumerable: true,
         configurable: true
     });
-    Class.getDefaultSerializers = function () {
+    JSONLDConverter.getDefaultSerializers = function () {
         var literalSerializers = new Map();
-        literalSerializers.set(NS.XSD.DataType.date, RDF.Literal.Serializers.XSD.dateSerializer);
-        literalSerializers.set(NS.XSD.DataType.dateTime, RDF.Literal.Serializers.XSD.dateTimeSerializer);
-        literalSerializers.set(NS.XSD.DataType.time, RDF.Literal.Serializers.XSD.timeSerializer);
-        literalSerializers.set(NS.XSD.DataType.integer, RDF.Literal.Serializers.XSD.integerSerializer);
-        literalSerializers.set(NS.XSD.DataType.int, RDF.Literal.Serializers.XSD.integerSerializer);
-        literalSerializers.set(NS.XSD.DataType.unsignedInt, RDF.Literal.Serializers.XSD.unsignedIntegerSerializer);
-        literalSerializers.set(NS.XSD.DataType.long, RDF.Literal.Serializers.XSD.longSerializer);
-        literalSerializers.set(NS.XSD.DataType.unsignedLong, RDF.Literal.Serializers.XSD.unsignedLongSerializer);
-        literalSerializers.set(NS.XSD.DataType.float, RDF.Literal.Serializers.XSD.floatSerializer);
-        literalSerializers.set(NS.XSD.DataType.double, RDF.Literal.Serializers.XSD.floatSerializer);
-        literalSerializers.set(NS.XSD.DataType.boolean, RDF.Literal.Serializers.XSD.booleanSerializer);
-        literalSerializers.set(NS.XSD.DataType.string, RDF.Literal.Serializers.XSD.stringSerializer);
+        literalSerializers.set(XSD_1.XSD.date, XSDSerializers.dateSerializer);
+        literalSerializers.set(XSD_1.XSD.dateTime, XSDSerializers.dateTimeSerializer);
+        literalSerializers.set(XSD_1.XSD.time, XSDSerializers.timeSerializer);
+        literalSerializers.set(XSD_1.XSD.integer, XSDSerializers.integerSerializer);
+        literalSerializers.set(XSD_1.XSD.int, XSDSerializers.integerSerializer);
+        literalSerializers.set(XSD_1.XSD.unsignedInt, XSDSerializers.unsignedIntegerSerializer);
+        literalSerializers.set(XSD_1.XSD.long, XSDSerializers.longSerializer);
+        literalSerializers.set(XSD_1.XSD.unsignedLong, XSDSerializers.unsignedLongSerializer);
+        literalSerializers.set(XSD_1.XSD.float, XSDSerializers.floatSerializer);
+        literalSerializers.set(XSD_1.XSD.double, XSDSerializers.floatSerializer);
+        literalSerializers.set(XSD_1.XSD.boolean, XSDSerializers.booleanSerializer);
+        literalSerializers.set(XSD_1.XSD.string, XSDSerializers.stringSerializer);
         return literalSerializers;
     };
-    Class.prototype.compact = function (expandedObjectOrObjects, targetObjectOrObjectsOrDigestedContext, digestedSchemaOrPointerLibrary, pointerLibrary, strict) {
+    JSONLDConverter.prototype.compact = function (expandedObjectOrObjects, targetObjectOrObjectsOrDigestedContext, digestedSchemaOrPointerLibrary, pointerLibrary, strict) {
         if (pointerLibrary === void 0) { pointerLibrary = null; }
         var targetObjectOrObjects = !pointerLibrary ? null : targetObjectOrObjectsOrDigestedContext;
         var digestedSchema = !pointerLibrary ? targetObjectOrObjectsOrDigestedContext : digestedSchemaOrPointerLibrary;
@@ -48,23 +51,23 @@ var Class = (function () {
         }
         return targetObjects;
     };
-    Class.prototype.expand = function (compactedObjectOrObjects, generalSchema, digestedSchema) {
+    JSONLDConverter.prototype.expand = function (compactedObjectOrObjects, generalSchema, digestedSchema) {
         if (!Utils.isArray(compactedObjectOrObjects))
             return this.expandSingle(compactedObjectOrObjects, generalSchema, digestedSchema);
     };
-    Class.prototype.expandSingle = function (compactedObject, generalSchema, digestedSchema) {
+    JSONLDConverter.prototype.expandSingle = function (compactedObject, generalSchema, digestedSchema) {
         var _this = this;
         var expandedObject = {};
         expandedObject["@id"] = !!compactedObject["id"] ? compactedObject["id"] : "";
         if (!!compactedObject["types"])
-            expandedObject["@type"] = compactedObject["types"].map(function (type) { return ObjectSchema.Util.resolveURI(type, generalSchema, { vocab: true, base: true }); });
+            expandedObject["@type"] = compactedObject["types"].map(function (type) { return ObjectSchema.ObjectSchemaUtils.resolveURI(type, generalSchema, { vocab: true, base: true }); });
         Utils.forEachOwnProperty(compactedObject, function (propertyName, value) {
             if (propertyName === "id")
                 return;
             if (propertyName === "types")
                 return;
-            var expandedPropertyName = ObjectSchema.Util.resolveURI(propertyName, digestedSchema, { vocab: true });
-            if (RDF.URI.Util.isRelative(expandedPropertyName))
+            var expandedPropertyName = ObjectSchema.ObjectSchemaUtils.resolveURI(propertyName, digestedSchema, { vocab: true });
+            if (URI_1.URI.isRelative(expandedPropertyName))
                 return;
             var expandedValue = _this.expandProperty(propertyName, value, digestedSchema, generalSchema);
             if (expandedPropertyName === null)
@@ -73,7 +76,7 @@ var Class = (function () {
         });
         return expandedObject;
     };
-    Class.prototype.expandProperty = function (propertyName, propertyValue, digestedSchema, generalSchema) {
+    JSONLDConverter.prototype.expandProperty = function (propertyName, propertyValue, digestedSchema, generalSchema) {
         var definition = digestedSchema.properties.get(propertyName);
         var propertyContainer = definition ? definition.containerType : void 0;
         if (propertyContainer === ObjectSchema.ContainerType.LANGUAGE)
@@ -96,54 +99,54 @@ var Class = (function () {
             ];
         return filteredValues;
     };
-    Class.prototype.expandPropertyValue = function (propertyValue, digestedSchema, generalSchema) {
+    JSONLDConverter.prototype.expandPropertyValue = function (propertyValue, digestedSchema, generalSchema) {
         var _this = this;
         return propertyValue.map(function (value) { return _this.expandValue(value, digestedSchema, generalSchema); });
     };
-    Class.prototype.expandPropertyPointer = function (propertyValue, digestedSchema, generalSchema) {
+    JSONLDConverter.prototype.expandPropertyPointer = function (propertyValue, digestedSchema, generalSchema) {
         var _this = this;
         return propertyValue.map(function (value) { return _this.expandPointerValue(value, digestedSchema, generalSchema); });
     };
-    Class.prototype.expandPropertyLiteral = function (propertyValue, definition, digestedSchema) {
+    JSONLDConverter.prototype.expandPropertyLiteral = function (propertyValue, definition, digestedSchema) {
         var _this = this;
-        var literalType = ObjectSchema.Util.resolveURI(definition.literalType, digestedSchema, { vocab: true, base: true });
+        var literalType = ObjectSchema.ObjectSchemaUtils.resolveURI(definition.literalType, digestedSchema, { vocab: true, base: true });
         var expandedValues = propertyValue.map(function (value) { return _this.expandLiteralValue(value, literalType); });
-        if (!definition.language)
+        if (definition.language)
             expandedValues.forEach(function (value) { return value["@language"] = definition.language; });
         return expandedValues;
     };
-    Class.prototype.expandPropertyLanguageMap = function (propertyValue) {
+    JSONLDConverter.prototype.expandPropertyLanguageMap = function (propertyValue) {
         var _this = this;
         if (!Utils.isObject(propertyValue)) {
             return null;
         }
         var mapValues = [];
         Utils.forEachOwnProperty(propertyValue, function (languageTag, value) {
-            var serializedValue = _this.literalSerializers.get(NS.XSD.DataType.string).serialize(value);
-            mapValues.push({ "@value": serializedValue, "@type": NS.XSD.DataType.string, "@language": languageTag });
+            var serializedValue = _this.literalSerializers.get(XSD_1.XSD.string).serialize(value);
+            mapValues.push({ "@value": serializedValue, "@type": XSD_1.XSD.string, "@language": languageTag });
         });
         return mapValues;
     };
-    Class.prototype.expandPointerValue = function (propertyValue, digestedSchema, generalSchema) {
+    JSONLDConverter.prototype.expandPointerValue = function (propertyValue, digestedSchema, generalSchema) {
         var isString = Utils.isString(propertyValue);
-        var id = Pointer.Factory.is(propertyValue) ?
+        var id = Pointer_1.Pointer.is(propertyValue) ?
             propertyValue.id :
             isString ?
                 propertyValue :
                 null;
         if (!id)
             return null;
-        var resolved = ObjectSchema.Util.resolveURI(id, generalSchema, { vocab: isString, base: true });
+        var resolved = ObjectSchema.ObjectSchemaUtils.resolveURI(id, generalSchema, { vocab: isString, base: true });
         return { "@id": resolved };
     };
-    Class.prototype.expandValue = function (propertyValue, digestedSchema, generalSchema) {
+    JSONLDConverter.prototype.expandValue = function (propertyValue, digestedSchema, generalSchema) {
         if (Utils.isArray(propertyValue))
             return null;
-        return Pointer.Factory.is(propertyValue) ?
+        return Pointer_1.Pointer.is(propertyValue) ?
             this.expandPointerValue(propertyValue, generalSchema, digestedSchema) :
             this.expandLiteralValue(propertyValue, Utils_1.guessXSDType(propertyValue));
     };
-    Class.prototype.expandLiteralValue = function (literalValue, literalType) {
+    JSONLDConverter.prototype.expandLiteralValue = function (literalValue, literalType) {
         if (literalType === null)
             return null;
         if (!this.literalSerializers.has(literalType))
@@ -153,10 +156,10 @@ var Class = (function () {
             .serialize(literalValue);
         return { "@value": serializedValue, "@type": literalType };
     };
-    Class.prototype.compactSingle = function (expandedObject, targetObject, digestedSchema, pointerLibrary, strict) {
+    JSONLDConverter.prototype.compactSingle = function (expandedObject, targetObject, digestedSchema, pointerLibrary, strict) {
         var _this = this;
         if (!expandedObject["@id"])
-            throw new Errors.IllegalArgumentError("The expandedObject doesn't have an @id defined.");
+            throw new IllegalArgumentError_1.IllegalArgumentError("The expandedObject doesn't have an @id defined.");
         targetObject["id"] = expandedObject["@id"];
         targetObject["types"] = !!expandedObject["@type"] ? expandedObject["@type"] : [];
         var propertyURINameMap = this.getPropertyURINameMap(digestedSchema);
@@ -170,18 +173,18 @@ var Class = (function () {
             var propertyName = propertyURINameMap.has(propertyURI) ?
                 propertyURINameMap.get(propertyURI) :
                 digestedSchema.vocab !== null ?
-                    RDF.URI.Util.getRelativeURI(propertyURI, digestedSchema.vocab) :
+                    URI_1.URI.getRelativeURI(propertyURI, digestedSchema.vocab) :
                     propertyURI;
             var targetValue = _this.getPropertyValue(propertyName, propertyValues, digestedSchema, pointerLibrary);
-            if (targetValue === null)
+            if (targetValue === null || targetValue === void 0)
                 return;
             targetObject[propertyName] = targetValue;
         });
         return targetObject;
     };
-    Class.prototype.getPropertyContainerType = function (propertyValues) {
+    JSONLDConverter.prototype.getPropertyContainerType = function (propertyValues) {
         if (propertyValues.length === 1) {
-            if (RDF.List.Factory.is(propertyValues[0]))
+            if (List_1.RDFList.is(propertyValues[0]))
                 return ObjectSchema.ContainerType.LIST;
         }
         else {
@@ -189,16 +192,16 @@ var Class = (function () {
         }
         return null;
     };
-    Class.prototype.getPropertyValue = function (propertyName, propertyValues, digestedSchema, pointerLibrary) {
+    JSONLDConverter.prototype.getPropertyValue = function (propertyName, propertyValues, digestedSchema, pointerLibrary) {
         var definition = digestedSchema.properties.get(propertyName);
         var propertyContainer = definition ?
             definition.containerType :
             this.getPropertyContainerType(propertyValues);
         if (propertyContainer === ObjectSchema.ContainerType.LANGUAGE)
-            return RDF.Node.Util.getPropertyLanguageMap(propertyValues);
+            return Node_1.RDFNode.getPropertyLanguageMap(propertyValues);
         if (propertyContainer === ObjectSchema.ContainerType.LIST) {
-            var list = RDF.Node.Util.getList(propertyValues);
-            if (!propertyValues)
+            var list = Node_1.RDFNode.getList(propertyValues);
+            if (!list)
                 return null;
             propertyValues = list["@list"];
         }
@@ -211,8 +214,10 @@ var Class = (function () {
         var compactedValues = propertyType === true ?
             this.compactPropertyLiteral(propertyValues, definition, digestedSchema) :
             propertyType === false ?
-                RDF.Node.Util.getPropertyPointers(propertyValues, pointerLibrary) :
-                RDF.Node.Util.getProperties(propertyValues, pointerLibrary);
+                Node_1.RDFNode.getPropertyPointers(propertyValues, pointerLibrary) :
+                Node_1.RDFNode.getProperties(propertyValues, pointerLibrary);
+        if (!compactedValues)
+            return null;
         var filteredValues = compactedValues.filter(function (value) { return value !== null; });
         if (!filteredValues.length)
             return null;
@@ -220,23 +225,21 @@ var Class = (function () {
             return filteredValues[0];
         return filteredValues;
     };
-    Class.prototype.getPropertyURINameMap = function (digestedSchema) {
+    JSONLDConverter.prototype.getPropertyURINameMap = function (digestedSchema) {
         var map = new Map();
         digestedSchema.properties.forEach(function (definition, propertyName) {
-            var uri = ObjectSchema.Util.resolveURI(definition.uri, digestedSchema, { vocab: true });
+            var uri = ObjectSchema.ObjectSchemaUtils.resolveURI(definition.uri, digestedSchema, { vocab: true });
             map.set(uri, propertyName);
         });
         return map;
     };
-    Class.prototype.compactPropertyLiteral = function (propertyValues, definition, digestedSchema) {
+    JSONLDConverter.prototype.compactPropertyLiteral = function (propertyValues, definition, digestedSchema) {
         var literalType = definition.literalType === null ?
-            NS.XSD.DataType.string :
-            ObjectSchema.Util.resolveURI(definition.literalType, digestedSchema, { vocab: true, base: true });
-        return RDF.Node.Util.getPropertyLiterals(propertyValues, literalType);
+            XSD_1.XSD.string : ObjectSchema.ObjectSchemaUtils.resolveURI(definition.literalType, digestedSchema, { vocab: true, base: true });
+        return Node_1.RDFNode.getPropertyLiterals(propertyValues, literalType);
     };
-    return Class;
+    return JSONLDConverter;
 }());
-exports.Class = Class;
-exports.default = Class;
+exports.JSONLDConverter = JSONLDConverter;
 
 //# sourceMappingURL=Converter.js.map

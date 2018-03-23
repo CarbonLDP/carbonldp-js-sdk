@@ -1,24 +1,26 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var Document = require("./../Document");
-var NS = require("./../NS");
-var Errors_1 = require("./../Errors");
-exports.RDF_CLASS = NS.CS.Class.Credentials;
+var CS_1 = require("../Vocabularies/CS");
+var VCARD_1 = require("../Vocabularies/VCARD");
+var XSD_1 = require("../Vocabularies/XSD");
+var Document_1 = require("./../Document");
+var Errors_1 = require("../Errors");
+exports.RDF_CLASS = CS_1.CS.Credentials;
 exports.SCHEMA = {
     "email": {
-        "@id": NS.VCARD.Predicate.email,
-        "@type": NS.XSD.DataType.string,
+        "@id": VCARD_1.VCARD.email,
+        "@type": XSD_1.XSD.string,
     },
     "password": {
-        "@id": NS.CS.Predicate.password,
-        "@type": NS.XSD.DataType.string,
+        "@id": CS_1.CS.password,
+        "@type": XSD_1.XSD.string,
     },
     "enabled": {
-        "@id": NS.CS.Predicate.enabled,
-        "@type": NS.XSD.DataType.boolean,
+        "@id": CS_1.CS.enabled,
+        "@type": XSD_1.XSD.boolean,
     },
     "user": {
-        "@id": NS.CS.Predicate.credentialsOf,
+        "@id": CS_1.CS.credentialsOf,
         "@type": "@id",
     },
 };
@@ -29,7 +31,7 @@ var Factory = (function () {
         return Factory.createFrom({}, email, password);
     };
     Factory.createFrom = function (object, email, password) {
-        var credentials = Document.Factory.createFrom(object);
+        var credentials = Document_1.Document.createFrom(object);
         if (!email)
             throw new Errors_1.IllegalArgumentError("The email cannot be empty.");
         if (!password)

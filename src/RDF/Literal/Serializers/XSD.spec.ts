@@ -1,21 +1,19 @@
+import * as Errors from "../../../Errors";
 import {
-	STATIC,
-	INSTANCE,
-
-	module,
 	clazz,
-
-	isDefined,
 	hasMethod,
 	hasProperty,
-} from "./../../../test/JasmineExtender";
+	INSTANCE,
+	isDefined,
+	module,
+	STATIC,
+} from "../../../test/JasmineExtender";
 import * as Utils from "./../../../Utils";
 
 import * as XSD from "./XSD";
-import * as Errors from "./../../../Errors";
 
 describe( module(
-	"Carbon/RDF/Literal/Serializers/XSD"
+	"carbonldp/RDF/Literal/Serializers/XSD"
 ), ():void => {
 
 	it( isDefined(), ():void => {
@@ -24,11 +22,12 @@ describe( module(
 	} );
 
 	describe( clazz(
-		"Carbon.RDF.Literal.Serializes.XSD.DateSerializer",
+		"CarbonLDP.RDF.Literal.Serializers.DateSerializer",
 		"Class that can serialize a Date object into a string literal with format `YYYY-MM-DD`.\n" +
-		"Instead of instantiating this class, use the already exposed instance `Carbon.RDF.Literal.Serializes.XSD.dateSerializer`."
+		"Instead of instantiating this class, use the already exposed instance `carbonldp/RDF/Literal/Serializes/XSD#dateSerializer`."
 	), ():void => {
 
+		// TODO: Separate in different tests
 		it( isDefined(), ():void => {
 			expect( XSD.DateSerializer ).toBeDefined();
 			expect( Utils.isFunction( XSD.DateSerializer ) ).toBe( true );
@@ -38,6 +37,7 @@ describe( module(
 			expect( serializer instanceof XSD.DateSerializer ).toBe( true );
 		} );
 
+		// TODO: Separate in different tests
 		it( hasMethod(
 			INSTANCE,
 			"serialize",
@@ -66,19 +66,20 @@ describe( module(
 	it( hasProperty(
 		STATIC,
 		"dateSerializer",
-		"Carbon.RDF.Literal.Serializes.XSD.DateSerializer",
-		"The already exposed instance of the class `Carbon.RDF.Literal.Serializes.XSD.DateSerializer`."
+		"CarbonLDP.RDF.Literal.Serializers.DateSerializer",
+		"The already exposed instance of the class `CarbonLDP.RDF.Literal.Serializers.DateSerializer`."
 	), ():void => {
 		expect( XSD.dateSerializer ).toBeDefined();
 		expect( XSD.dateSerializer instanceof XSD.DateSerializer ).toBe( true );
 	} );
 
 	describe( clazz(
-		"Carbon.RDF.Literal.Serializes.XSD.DateTimeSerializer",
+		"CarbonLDP.RDF.Literal.Serializers.DateTimeSerializer",
 		"Class that can serialize a Date object into a string ISO literal.\n" +
-		"Instead of instantiating this class, use the already exposed instance `Carbon.RDF.Literal.Serializes.XSD.dateTimeSerializer`."
+		"Instead of instantiating this class, use the already exposed instance `carbonldp/RDF/Literal/Serializes/XSD#dateTimeSerializer`."
 	), ():void => {
 
+		// TODO: Separate in different tests
 		it( isDefined(), ():void => {
 			expect( XSD.DateTimeSerializer ).toBeDefined();
 			expect( Utils.isFunction( XSD.DateTimeSerializer ) ).toBe( true );
@@ -88,6 +89,7 @@ describe( module(
 			expect( serializer instanceof XSD.DateTimeSerializer ).toBe( true );
 		} );
 
+		// TODO: Separate in different tests
 		it( hasMethod(
 			INSTANCE,
 			"serialize",
@@ -116,19 +118,20 @@ describe( module(
 	it( hasProperty(
 		STATIC,
 		"dateTimeSerializer",
-		"Carbon.RDF.Literal.Serializes.XSD.DateTimeSerializer",
-		"The already exposed instance of the class `Carbon.RDF.Literal.Serializes.XSD.DateTimeSerializer`."
+		"CarbonLDP.RDF.Literal.Serializers.DateTimeSerializer",
+		"The already exposed instance of the class `CarbonLDP.RDF.Literal.Serializers.DateTimeSerializer`."
 	), ():void => {
 		expect( XSD.dateTimeSerializer ).toBeDefined();
 		expect( XSD.dateTimeSerializer instanceof XSD.DateTimeSerializer ).toBe( true );
 	} );
 
 	describe( clazz(
-		"Carbon.RDF.Literal.Serializes.XSD.TimeSerializer",
+		"CarbonLDP.RDF.Literal.Serializers.TimeSerializer",
 		"Class that can serialize a Date object into a literal string with format `HH:mm:ss.sssZ`.\n" +
-		"Instead of instantiating this class, use the already exposed instance `Carbon.RDF.Literal.Serializes.XSD.timeSerializer`."
+		"Instead of instantiating this class, use the already exposed instance `carbonldp/RDF/Literal/Serializes/XSD#timeSerializer`."
 	), ():void => {
 
+		// TODO: Separate in different tests
 		it( isDefined(), ():void => {
 			expect( XSD.TimeSerializer ).toBeDefined();
 			expect( Utils.isFunction( XSD.TimeSerializer ) ).toBe( true );
@@ -138,6 +141,7 @@ describe( module(
 			expect( serializer instanceof XSD.TimeSerializer ).toBe( true );
 		} );
 
+		// TODO: Separate in different tests
 		it( hasMethod(
 			INSTANCE,
 			"serialize",
@@ -166,19 +170,20 @@ describe( module(
 	it( hasProperty(
 		STATIC,
 		"timeSerializer",
-		"Carbon.RDF.Literal.Serializes.XSD.TimeSerializer",
-		"The already exposed instance of the class `Carbon.RDF.Literal.Serializes.XSD.TimeSerializer`."
+		"CarbonLDP.RDF.Literal.Serializers.TimeSerializer",
+		"The already exposed instance of the class `CarbonLDP.RDF.Literal.Serializers.TimeSerializer`."
 	), ():void => {
 		expect( XSD.timeSerializer ).toBeDefined();
 		expect( XSD.timeSerializer instanceof XSD.TimeSerializer ).toBe( true );
 	} );
 
 	describe( clazz(
-		"Carbon.RDF.Literal.Serializes.XSD.IntegerSerializer",
+		"CarbonLDP.RDF.Literal.Serializers.IntegerSerializer",
 		"Class that can serialize any Number value to a string literal of an integer.\n" +
-		"Instead of instantiating this class, use the already exposed instance `Carbon.RDF.Literal.Serializes.XSD.integerSerializer`."
+		"Instead of instantiating this class, use the already exposed instance `carbonldp/RDF/Literal/Serializes/XSD#integerSerializer`."
 	), ():void => {
 
+		// TODO: Separate in different tests
 		it( isDefined(), ():void => {
 			expect( XSD.IntegerSerializer ).toBeDefined();
 			expect( Utils.isFunction( XSD.IntegerSerializer ) ).toBe( true );
@@ -188,16 +193,13 @@ describe( module(
 			expect( serializer instanceof XSD.IntegerSerializer ).toBe( true );
 		} );
 
-		describe( "IntegerSerializer.serialize", ():void => {
-
-			it( "should overflow if larger than 2^32 - 1", ():void => {
-				const serializer:XSD.IntegerSerializer = new XSD.IntegerSerializer();
-				expect( serializer.serialize( Math.pow( 2, 32 ) ) ).not.toBe( "4294967296" );
-				expect( serializer.serialize( Math.pow( 2, 40 ) ) ).not.toBe( "1099511627776" );
-			} );
-
+		it( "should overflow if larger than 2^32 - 1", ():void => {
+			const serializer:XSD.IntegerSerializer = new XSD.IntegerSerializer();
+			expect( serializer.serialize( Math.pow( 2, 32 ) ) ).not.toBe( "4294967296" );
+			expect( serializer.serialize( Math.pow( 2, 40 ) ) ).not.toBe( "1099511627776" );
 		} );
 
+		// TODO: Separate in different tests
 		it( hasMethod(
 			INSTANCE,
 			"serialize",
@@ -233,19 +235,20 @@ describe( module(
 	it( hasProperty(
 		STATIC,
 		"integerSerializer",
-		"Carbon.RDF.Literal.Serializes.XSD.IntegerSerializer",
-		"The already exposed instance of the class `Carbon.RDF.Literal.Serializes.XSD.IntegerSerializer`."
+		"CarbonLDP.RDF.Literal.Serializers.IntegerSerializer",
+		"The already exposed instance of the class `CarbonLDP.RDF.Literal.Serializers.IntegerSerializer`."
 	), ():void => {
 		expect( XSD.integerSerializer ).toBeDefined();
 		expect( XSD.integerSerializer instanceof XSD.IntegerSerializer ).toBe( true );
 	} );
 
 	describe( clazz(
-		"Carbon.RDF.Literal.Serializes.XSD.UnsignedIntegerSerializer",
+		"CarbonLDP.RDF.Literal.Serializers.UnsignedIntegerSerializer",
 		"Class that can serialize any Number value to a string literal of an unsigned integer.\n" +
-		"Instead of instantiating this class, use the already exposed instance `Carbon.RDF.Literal.Serializes.XSD.unsignedIntegerSerializer`."
+		"Instead of instantiating this class, use the already exposed instance `carbonldp/RDF/Literal/Serializes/XSD#unsignedIntegerSerializer`."
 	), ():void => {
 
+		// TODO: Separate in different tests
 		it( isDefined(), ():void => {
 			expect( XSD.UnsignedIntegerSerializer ).toBeDefined();
 			expect( Utils.isFunction( XSD.UnsignedIntegerSerializer ) ).toBe( true );
@@ -255,6 +258,7 @@ describe( module(
 			expect( serializer instanceof XSD.UnsignedIntegerSerializer ).toBe( true );
 		} );
 
+		// TODO: Separate in different tests
 		it( hasMethod(
 			INSTANCE,
 			"serialize",
@@ -336,19 +340,20 @@ describe( module(
 	it( hasProperty(
 		STATIC,
 		"unsignedIntegerSerializer",
-		"Carbon.RDF.Literal.Serializes.XSD.UnsignedIntegerSerializer",
-		"The already exposed instance of the class `Carbon.RDF.Literal.Serializes.XSD.UnsignedIntegerSerializer`."
+		"CarbonLDP.RDF.Literal.Serializers.UnsignedIntegerSerializer",
+		"The already exposed instance of the class `CarbonLDP.RDF.Literal.Serializers.UnsignedIntegerSerializer`."
 	), ():void => {
 		expect( XSD.unsignedIntegerSerializer ).toBeDefined();
 		expect( XSD.unsignedIntegerSerializer instanceof XSD.UnsignedIntegerSerializer ).toBe( true );
 	} );
 
 	describe( clazz(
-		"Carbon.RDF.Literal.Serializes.XSD.FloatSerializer",
+		"CarbonLDP.RDF.Literal.Serializers.FloatSerializer",
 		"Class that can serialize any Number value to a string literal of float.\n" +
-		"Instead of instantiating this class, use the already exposed instance `Carbon.RDF.Literal.Serializes.XSD.floatSerializer`."
+		"Instead of instantiating this class, use the already exposed instance `carbonldp/RDF/Literal/Serializes/XSD#floatSerializer`."
 	), ():void => {
 
+		// TODO: Separate in different tests
 		it( isDefined(), ():void => {
 			expect( XSD.FloatSerializer ).toBeDefined();
 			expect( Utils.isFunction( XSD.FloatSerializer ) ).toBe( true );
@@ -358,6 +363,7 @@ describe( module(
 			expect( serializer instanceof XSD.FloatSerializer ).toBe( true );
 		} );
 
+		// TODO: Separate in different tests
 		it( hasMethod(
 			INSTANCE,
 			"serialize",
@@ -393,19 +399,20 @@ describe( module(
 	it( hasProperty(
 		STATIC,
 		"floatSerializer",
-		"Carbon.RDF.Literal.Serializes.XSD.FloatSerializer",
-		"The already exposed instance of the class `Carbon.RDF.Literal.Serializes.XSD.FloatSerializer`."
+		"CarbonLDP.RDF.Literal.Serializers.FloatSerializer",
+		"The already exposed instance of the class `CarbonLDP.RDF.Literal.Serializers.FloatSerializer`."
 	), ():void => {
 		expect( XSD.floatSerializer ).toBeDefined();
 		expect( XSD.floatSerializer instanceof XSD.FloatSerializer ).toBe( true );
 	} );
 
 	describe( clazz(
-		"Carbon.RDF.Literal.Serializes.XSD.BooleanSerializer",
+		"CarbonLDP.RDF.Literal.Serializers.BooleanSerializer",
 		"Class that can serialize any variable to a string literal representation its truth value.\n" +
-		"Instead of instantiating this class, use the already exposed instance `Carbon.RDF.Literal.Serializes.XSD.booleanSerializer`."
+		"Instead of instantiating this class, use the already exposed instance `carbonldp/RDF/Literal/Serializes/XSD#booleanSerializer`."
 	), ():void => {
 
+		// TODO: Separate in different tests
 		it( isDefined(), ():void => {
 			expect( XSD.BooleanSerializer ).toBeDefined();
 			expect( Utils.isFunction( XSD.BooleanSerializer ) ).toBe( true );
@@ -415,6 +422,7 @@ describe( module(
 			expect( serializer instanceof XSD.BooleanSerializer ).toBe( true );
 		} );
 
+		// TODO: Separate in different tests
 		it( hasMethod(
 			INSTANCE,
 			"serialize",
@@ -457,19 +465,20 @@ describe( module(
 	it( hasProperty(
 		STATIC,
 		"booleanSerializer",
-		"Carbon.RDF.Literal.Serializes.XSD.BooleanSerializer",
-		"The already exposed instance of the class `Carbon.RDF.Literal.Serializes.XSD.BooleanSerializer`"
+		"CarbonLDP.RDF.Literal.Serializers.BooleanSerializer",
+		"The already exposed instance of the class `CarbonLDP.RDF.Literal.Serializers.BooleanSerializer`"
 	), ():void => {
 		expect( XSD.booleanSerializer ).toBeDefined();
 		expect( XSD.booleanSerializer instanceof XSD.BooleanSerializer ).toBe( true );
 	} );
 
 	describe( clazz(
-		"Carbon.RDF.Literal.Serializes.XSD.StringSerializer",
+		"CarbonLDP.RDF.Literal.Serializers.StringSerializer",
 		"Class that can serialize any variable to a string literal representation its truth value.\n" +
-		"Instead of instantiating this class, use the already exposed instance `Carbon.RDF.Literal.Serializes.XSD.stringSerializer`."
+		"Instead of instantiating this class, use the already exposed instance `carbonldp/RDF/Literal/Serializes/XSD#stringSerializer`."
 	), ():void => {
 
+		// TODO: Separate in different tests
 		it( isDefined(), ():void => {
 			expect( XSD.StringSerializer ).toBeDefined();
 			expect( Utils.isFunction( XSD.StringSerializer ) ).toBe( true );
@@ -479,6 +488,7 @@ describe( module(
 			expect( serializer instanceof XSD.StringSerializer ).toBe( true );
 		} );
 
+		// TODO: Separate in different tests
 		it( hasMethod(
 			INSTANCE,
 			"serialize",
@@ -518,8 +528,8 @@ describe( module(
 	it( hasProperty(
 		STATIC,
 		"stringSerializer",
-		"Carbon.RDF.Literal.Serializes.XSD.StringSerializer",
-		"The already exposed instance of the class `Carbon.RDF.Literal.Serializes.XSD.StringSerializer`."
+		"CarbonLDP.RDF.Literal.Serializers.StringSerializer",
+		"The already exposed instance of the class `CarbonLDP.RDF.Literal.Serializers.StringSerializer`."
 	), ():void => {
 		expect( XSD.stringSerializer ).toBeDefined();
 		expect( XSD.stringSerializer instanceof XSD.StringSerializer ).toBe( true );

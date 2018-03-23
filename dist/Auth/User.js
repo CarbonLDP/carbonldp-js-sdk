@@ -1,15 +1,16 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var NS = require("./../NS");
+var CS_1 = require("../Vocabularies/CS");
+var XSD_1 = require("../Vocabularies/XSD");
 var Utils = require("./../Utils");
-exports.RDF_CLASS = NS.CS.Class.User;
+exports.RDF_CLASS = CS_1.CS.User;
 exports.SCHEMA = {
     "name": {
-        "@id": NS.CS.Predicate.namae,
-        "@type": NS.XSD.DataType.string,
+        "@id": CS_1.CS.name,
+        "@type": XSD_1.XSD.string,
     },
     "credentials": {
-        "@id": NS.CS.Predicate.credentials,
+        "@id": CS_1.CS.credentials,
         "@type": "@id",
     },
 };

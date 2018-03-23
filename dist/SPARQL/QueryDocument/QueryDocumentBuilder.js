@@ -1,19 +1,19 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var tokens_1 = require("sparqler/tokens");
+var IllegalArgumentError_1 = require("../../Errors/IllegalArgumentError");
+var IllegalStateError_1 = require("../../Errors/IllegalStateError");
 var ObjectSchema_1 = require("../../ObjectSchema");
 var Utils_1 = require("../../Utils");
-var Errors_1 = require("./../../Errors");
-var QueryObject = require("./QueryObject");
-var QueryProperty = require("./QueryProperty");
-var QueryValue = require("./QueryValue");
+var QueryObject_1 = require("./QueryObject");
+var QueryProperty_1 = require("./QueryProperty");
+var QueryValue_1 = require("./QueryValue");
 var Utils_2 = require("./Utils");
 var INHERIT = Object.freeze({});
-exports.ALL = Object.freeze({});
-var Class = (function () {
-    function Class(queryContext, property) {
+var QueryDocumentBuilder = (function () {
+    function QueryDocumentBuilder(queryContext, property) {
         this.inherit = INHERIT;
-        this.all = exports.ALL;
+        this.all = QueryDocumentBuilder.ALL;
         this._context = queryContext;
         property._builder = this;
         this._document = property;
@@ -21,7 +21,7 @@ var Class = (function () {
         this._values = new tokens_1.ValuesToken().addValues(property.variable);
         this._schema = this._context.getSchemaFor({ id: "" });
     }
-    Class.prototype.property = function (name) {
+    QueryDocumentBuilder.prototype.property = function (name) {
         if (name === void 0)
             return this._document;
         var parent = this._document.name;
@@ -33,25 +33,25 @@ var Class = (function () {
             if (this._context.hasProperty(directPath)) {
                 var direct = this._context.getProperty(directPath);
                 var directType = direct.getType();
-                if (directType === QueryProperty.PropertyType.FULL || directType === QueryProperty.PropertyType.ALL) {
+                if (directType === QueryProperty_1.QueryPropertyType.FULL || directType === QueryProperty_1.QueryPropertyType.ALL) {
                     var propertyName = fullPath.substr(directPath.length + 1);
                     return direct._builder._addProperty(propertyName, INHERIT);
                 }
             }
             parent = Utils_2.getParentPath(parent);
         }
-        throw new Errors_1.IllegalArgumentError("The \"" + name + "\" property was not declared.");
+        throw new IllegalArgumentError_1.IllegalArgumentError("The \"" + name + "\" property was not declared.");
     };
-    Class.prototype.value = function (value) {
-        return new QueryValue.Class(this._context, value);
+    QueryDocumentBuilder.prototype.value = function (value) {
+        return new QueryValue_1.QueryValue(this._context, value);
     };
-    Class.prototype.object = function (object) {
-        return new QueryObject.Class(this._context, object);
+    QueryDocumentBuilder.prototype.object = function (object) {
+        return new QueryObject_1.QueryObject(this._context, object);
     };
-    Class.prototype.withType = function (type) {
+    QueryDocumentBuilder.prototype.withType = function (type) {
         if (this._context.hasProperties(this._document.name))
-            throw new Errors_1.IllegalStateError("Types must be specified before the properties.");
-        type = ObjectSchema_1.Util.resolveURI(type, this._schema, { vocab: true, base: true });
+            throw new IllegalStateError_1.IllegalStateError("Types must be specified before the properties.");
+        type = ObjectSchema_1.ObjectSchemaUtils.resolveURI(type, this._schema, { vocab: true, base: true });
         if (!this._typesTriple.predicates[0].objects.length)
             this._document.addPattern(this._typesTriple);
         this._typesTriple.predicates[0].addObject(this._context.compactIRI(type));
@@ -59,13 +59,13 @@ var Class = (function () {
             return this;
         var schema = this._context.context.getObjectSchema(type);
         if (schema) {
-            this._schema = ObjectSchema_1.Digester.combineDigestedObjectSchemas([this._schema, schema]);
+            this._schema = ObjectSchema_1.ObjectSchemaDigester.combineDigestedObjectSchemas([this._schema, schema]);
         }
         return this;
     };
-    Class.prototype.properties = function (propertiesSchema) {
-        if (propertiesSchema === exports.ALL) {
-            this._document.setType(QueryProperty.PropertyType.ALL);
+    QueryDocumentBuilder.prototype.properties = function (propertiesSchema) {
+        if (propertiesSchema === QueryDocumentBuilder.ALL) {
+            this._document.setType(QueryProperty_1.QueryPropertyType.ALL);
             return this;
         }
         for (var propertyName in propertiesSchema) {
@@ -75,14 +75,14 @@ var Class = (function () {
         }
         return this;
     };
-    Class.prototype.filter = function (constraint) {
+    QueryDocumentBuilder.prototype.filter = function (constraint) {
         var baseName = this._document.name.split(".")[0];
         this._context
             .getProperty(baseName)
             .addPattern(new tokens_1.FilterToken(constraint));
         return this;
     };
-    Class.prototype.values = function () {
+    QueryDocumentBuilder.prototype.values = function () {
         var values = [];
         for (var _i = 0; _i < arguments.length; _i++) {
             values[_i] = arguments[_i];
@@ -90,7 +90,7 @@ var Class = (function () {
         var termTokens = values.map(function (value) {
             var token = value.getToken();
             if (token.token === "blankNode")
-                throw new Errors_1.IllegalArgumentError("Blank node \"" + token.label + "\" is not a valid value.");
+                throw new IllegalArgumentError_1.IllegalArgumentError("Blank node \"" + token.label + "\" is not a valid value.");
             return token;
         });
         if (!this._values.values[0].length)
@@ -105,25 +105,25 @@ var Class = (function () {
         return this;
         var _a;
     };
-    Class.prototype._addProperty = function (propertyName, propertyDefinition) {
+    QueryDocumentBuilder.prototype._addProperty = function (propertyName, propertyDefinition) {
         var digestedDefinition = this.addPropertyDefinition(propertyName, propertyDefinition);
         var name = this._document.name + "." + propertyName;
         var property = (_a = this._context
             .addProperty(name)).addPattern.apply(_a, Utils_2.createPropertyPatterns(this._context, this._document.name, name, digestedDefinition));
         if ("query" in propertyDefinition) {
             if (digestedDefinition.literal === false) {
-                property.setType(QueryProperty.PropertyType.PARTIAL);
+                property.setType(QueryProperty_1.QueryPropertyType.PARTIAL);
             }
-            var builder = new Class(this._context, property);
+            var builder = new QueryDocumentBuilder(this._context, property);
             if (builder !== propertyDefinition["query"].call(void 0, builder))
-                throw new Errors_1.IllegalArgumentError("The provided query builder was not returned");
+                throw new IllegalArgumentError_1.IllegalArgumentError("The provided query builder was not returned");
         }
         (_b = this._document).addPattern.apply(_b, property.getPatterns());
         return property;
         var _a, _b;
     };
-    Class.prototype.addPropertyDefinition = function (propertyName, propertyDefinition) {
-        var digestedDefinition = ObjectSchema_1.Digester.digestProperty(propertyName, propertyDefinition, this._schema);
+    QueryDocumentBuilder.prototype.addPropertyDefinition = function (propertyName, propertyDefinition) {
+        var digestedDefinition = ObjectSchema_1.ObjectSchemaDigester.digestProperty(propertyName, propertyDefinition, this._schema);
         var uri = "@id" in propertyDefinition ? digestedDefinition.uri : void 0;
         var inheritDefinition = this._context.getInheritTypeDefinition(this._schema, propertyName, uri);
         if (inheritDefinition) {
@@ -134,14 +134,14 @@ var Class = (function () {
             }
         }
         if (!digestedDefinition.uri)
-            throw new Errors_1.IllegalArgumentError("Invalid property \"" + propertyName + "\" definition, \"@id\" is necessary.");
+            throw new IllegalArgumentError_1.IllegalArgumentError("Invalid property \"" + propertyName + "\" definition, \"@id\" is necessary.");
         this._document.getSchema()
             .properties.set(propertyName, digestedDefinition);
         return digestedDefinition;
     };
-    return Class;
+    QueryDocumentBuilder.ALL = Object.freeze({});
+    return QueryDocumentBuilder;
 }());
-exports.Class = Class;
-exports.default = Class;
+exports.QueryDocumentBuilder = QueryDocumentBuilder;
 
 //# sourceMappingURL=QueryDocumentBuilder.js.map

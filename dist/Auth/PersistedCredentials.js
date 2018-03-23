@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var PersistedProtectedDocument = require("./../PersistedProtectedDocument");
+var PersistedProtectedDocument_1 = require("../PersistedProtectedDocument");
 var Utils = require("./../Utils");
 var PersistedUser = require("./PersistedUser");
 var Factory = (function () {
@@ -15,7 +15,7 @@ var Factory = (function () {
         var persistedCredentials = persistedDocument;
         if (Factory.hasClassProperties(persistedDocument))
             return persistedCredentials;
-        PersistedProtectedDocument.Factory.decorate(persistedCredentials, documents);
+        PersistedProtectedDocument_1.PersistedProtectedDocument.decorate(persistedCredentials, documents);
         Object.defineProperties(persistedCredentials, {
             "enable": {
                 writable: false,
@@ -41,19 +41,10 @@ var Factory = (function () {
 exports.Factory = Factory;
 function changeEnabled(enabled, requestOptions) {
     var _this = this;
-    var responses = [];
-    var promise = this.isResolved() ? Promise.resolve([]) : this.resolve();
-    return promise.then(function (_a) {
-        var _credentials = _a[0], response = _a[1];
-        if (response)
-            responses.push(response);
+    var promise = this.isResolved() ? Promise.resolve() : this.resolve();
+    return promise.then(function () {
         _this.enabled = enabled;
         return _this.save(requestOptions);
-    }).then(function (_a) {
-        var _credentials = _a[0], response = _a[1];
-        if (response)
-            responses.push(response);
-        return [_this, responses];
     });
 }
 

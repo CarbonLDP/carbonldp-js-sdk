@@ -1,246 +1,260 @@
+import { Document } from "./Document";
+import { Fragment } from "./Fragment";
+
 import {
-	INSTANCE,
-	STATIC,
-
-	module,
-	clazz,
-	method,
-
-	isDefined,
 	hasMethod,
-	hasSignature, interfaze, hasProperty, OBLIGATORY, hasDefaultExport,
+	hasProperty,
+	interfaze,
+	module,
+	OBLIGATORY,
+	STATIC,
 } from "./test/JasmineExtender";
-import * as Utils from "./Utils";
-import * as Document from "./Document";
 
-import * as Fragment from "./Fragment";
-import DefaultExport from "./Fragment";
 
-describe( module( "Carbon/Fragment" ), ():void => {
-
-	it( isDefined(), ():void => {
-		expect( Fragment ).toBeDefined();
-		expect( Utils.isObject( Fragment ) ).toBe( true );
-	} );
+describe( module( "carbonldp/Fragment" ), ():void => {
 
 	describe( interfaze(
-		"Carbon.Fragment.Class",
-		"Interface that an in-memory fragment of a document."
+		"CarbonLDP.Fragment",
+		"Interface of an in-memory fragment of a document."
 	), ():void => {
 
 		it( hasProperty(
 			OBLIGATORY,
-			"document",
-			"Carbon.Document.Class",
+			"_document",
+			"CarbonLDP.Document",
 			"The document the fragment belongs to."
 		), ():void => {} );
 
 	} );
 
-	it( hasDefaultExport( "Carbon.Fragment.Class" ), ():void => {
-		let defaultExport:DefaultExport = <any> {};
-		let defaultTarget:Fragment.Class;
-
-		defaultTarget = defaultExport;
-		expect( defaultTarget ).toEqual( jasmine.any( Object ) );
-	} );
-
-	describe( clazz(
-		"Carbon.Fragment.Factory",
-		"Factory class for `Carbon.Fragment.Class` objects."
+	describe( interfaze(
+		"CarbonLDP.FragmentFactory",
+		"Interface with the factory, decorate and utils methods of a `CarbonLDP.Fragment` object."
 	), ():void => {
 
-		it( isDefined(), ():void => {
-			expect( Fragment.Factory ).toBeDefined();
-			expect( Utils.isFunction( Fragment.Factory ) ).toBe( true );
-		} );
+		it( hasMethod(
+			OBLIGATORY,
+			"isDecorated",
+			"Returns true if the object provided has the properties and methods of a `CarbonLDP.Fragment` object.", [
+				{ name: "object", type: "object" },
+			],
+			{ type: "object is CarbonLDP.Fragment" }
+		), ():void => {} );
 
 		it( hasMethod(
-			STATIC,
-			"hasClassProperties",
-			"Returns true if the object provided has the properties and methods of a `Class.Fragment.Class` object.", [
-				{name: "resource", type: "Object"},
+			OBLIGATORY,
+			"is",
+			"Returns true if the object provided is considered a `CarbonLDP.Fragment` object.", [
+				{ name: "object", type: "object" },
 			],
-			{type: "boolean"}
-		), ():void => {
-			expect( Fragment.Factory.hasClassProperties ).toBeDefined();
-			expect( Utils.isFunction( Fragment.Factory.hasClassProperties ) ).toBe( true );
+			{ type: "object is CarbonLDP.Fragment" }
+		), ():void => {} );
 
-			let resource:any = undefined;
-			expect( Fragment.Factory.hasClassProperties( resource ) ).toBe( false );
+		it( hasMethod(
+			OBLIGATORY,
+			"create",
+			"Creates a Fragment with the ID if provided.", [
+				{ name: "document", type: "CarbonLDP.Document", description: "The document that the fragment will be part of." },
+				{ name: "id", type: "string", optional: true, description: "The ID of the fragment to create." },
+			],
+			{ type: "CarbonLDP.Fragment" }
+		), ():void => {} );
 
-			resource = {
-				document: null,
-			};
-			expect( Fragment.Factory.hasClassProperties( resource ) ).toBe( true );
+		it( hasMethod(
+			OBLIGATORY,
+			"createFrom",
+			[ "T extends object" ],
+			"Creates a Fragment from an object with the ID if provided.", [
+				{ name: "object", type: "T", description: "Object that will be converted to a fragment." },
+				{ name: "document", type: "CarbonLDP.Document", description: "The document that the fragment will be part of." },
+				{ name: "id", type: "string", optional: true, description: "The ID that will be assigned to the fragment." },
+			],
+			{ type: "T & CarbonLDP.Fragment" }
+		), ():void => {} );
 
-			delete resource.document;
-			expect( Fragment.Factory.hasClassProperties( resource ) ).toBe( false );
-			resource.document = null;
+		it( hasMethod(
+			OBLIGATORY,
+			"decorate",
+			[ "T extends object" ],
+			"Decorates the object with the required `CarbonLDP.Fragment` properties and methods.", [
+				{ name: "object", type: "T", description: "Object that will be converted to a fragment." },
+			],
+			{ type: "T & CarbonLDP.Fragment" }
+		), ():void => {} );
+
+	} );
+
+	describe( hasProperty( STATIC, "Fragment", "CarbonLDP.FragmentFactory", "Constant that implements the `CarbonLDP.FragmentFactory` interface" ), ():void => {
+
+		it( "should exist", ():void => {
+			expect( Fragment ).toBeDefined();
+			expect( Fragment ).toEqual( jasmine.any( Object ) );
 		} );
 
-		let document:Document.Class;
+		describe( "Fragment.TYPE", ():void => {
 
+			it( "shuold not exist", ():void => {
+				expect( Fragment.TYPE ).not.toBeDefined();
+			} );
+
+		} );
+
+		describe( "Fragment.SCHEMA", ():void => {
+
+			it( "should not exist", ():void => {
+				expect( Fragment.SCHEMA ).not.toBeDefined();
+			} );
+
+		} );
+
+		// TODO: Separate in different tests
+		it( "Fragment.isDecorated", ():void => {
+			expect( Fragment.isDecorated ).toBeDefined();
+			expect( Fragment.isDecorated ).toEqual( jasmine.any( Function ) );
+
+			let resource:Partial<Fragment> = undefined;
+			expect( Fragment.isDecorated( resource ) ).toBe( false );
+
+			resource = {
+				_document: null,
+			};
+			expect( Fragment.isDecorated( resource ) ).toBe( true );
+
+			delete resource._document;
+			expect( Fragment.isDecorated( resource ) ).toBe( false );
+			resource._document = null;
+		} );
+
+		// TODO: Add tests for `Fragment.is`
+
+		let document:Document;
 		beforeAll( ():void => {
-			document = Document.Factory.create();
+			document = Document.create();
 			document.id = "http://example.com/document/";
 		} );
 
-		describe( method(
-			STATIC,
-			"create"
-		), ():void => {
+		describe( "Fragment.create", ():void => {
 
-			it( hasSignature(
-				"Creates a Fragment with the ID provided.", [
-					{name: "id", type: "string", description: "The ID of the fragment to create."},
-					{name: "document", type: "Carbon.Document.Class", description: "The document that the fragment will be part of."},
-				],
-				{type: "Carbon.Fragment.Class"}
-			), ():void => {
-				expect( Fragment.Factory.create ).toBeDefined();
-				expect( Utils.isFunction( Fragment.Factory.create ) ).toBe( true );
+			// TODO: Separate in different methods
+			it( "should test method with id", ():void => {
+				expect( Fragment.create ).toBeDefined();
+				expect( Fragment.create ).toEqual( jasmine.any( Function ) );
 
-				let fragment:Fragment.Class;
+				let fragment:Fragment;
 
-				fragment = Fragment.Factory.create( "#fragment", document );
+				fragment = Fragment.create( document, "#fragment" );
 				expect( fragment ).toBeTruthy();
-				expect( Fragment.Factory.hasClassProperties( fragment ) ).toBe( true );
-				expect( fragment.document ).toBe( document );
+				expect( Fragment.isDecorated( fragment ) ).toBe( true );
+				expect( fragment._document ).toBe( document );
 				expect( fragment.id ).toBe( "#fragment" );
 
-				fragment = Fragment.Factory.create( "http://example.com/document/#fragment", document );
+				fragment = Fragment.create( document, "http://example.com/document/#fragment" );
 				expect( fragment ).toBeTruthy();
-				expect( Fragment.Factory.hasClassProperties( fragment ) ).toBe( true );
-				expect( fragment.document ).toBe( document );
+				expect( Fragment.isDecorated( fragment ) ).toBe( true );
+				expect( fragment._document ).toBe( document );
 				expect( fragment.id ).toBe( "http://example.com/document/#fragment" );
 
-				fragment = Fragment.Factory.create( "_:BlankNode", document );
+				fragment = Fragment.create( document, "_:BlankNode" );
 				expect( fragment ).toBeTruthy();
-				expect( Fragment.Factory.hasClassProperties( fragment ) ).toBe( true );
-				expect( fragment.document ).toBe( document );
+				expect( Fragment.isDecorated( fragment ) ).toBe( true );
+				expect( fragment._document ).toBe( document );
 				expect( fragment.id ).toBe( "_:BlankNode" );
 			} );
 
-			it( hasSignature(
-				"Creates a BlankNode since no ID is provided.", [
-					{name: "document", type: "Carbon.Document.Class", description: "The document that the fragment will be part of."},
-				],
-				{type: "Carbon.Fragment.Class"}
-			), ():void => {
-				expect( Fragment.Factory.create ).toBeDefined();
-				expect( Utils.isFunction( Fragment.Factory.create ) ).toBe( true );
+			// TODO: Separate in different methods
+			it( "should test method without id", ():void => {
+				let fragment1:Fragment;
+				let fragment2:Fragment;
 
-				let fragment1:Fragment.Class;
-				let fragment2:Fragment.Class;
-
-				fragment1 = Fragment.Factory.create( document );
+				fragment1 = Fragment.create( document );
 				expect( fragment1 ).toBeTruthy();
-				expect( Fragment.Factory.hasClassProperties( fragment1 ) ).toBe( true );
-				expect( fragment1.document ).toBe( document );
+				expect( Fragment.isDecorated( fragment1 ) ).toBe( true );
+				expect( fragment1._document ).toBe( document );
 				expect( fragment1.id ).toBe( "" );
 
 
-				fragment2 = Fragment.Factory.create( document );
+				fragment2 = Fragment.create( document );
 				expect( fragment2 ).toBeTruthy();
-				expect( Fragment.Factory.hasClassProperties( fragment2 ) ).toBe( true );
-				expect( fragment2.document ).toBe( document );
+				expect( Fragment.isDecorated( fragment2 ) ).toBe( true );
+				expect( fragment2._document ).toBe( document );
 				expect( fragment2.id ).toBe( "" );
 			} );
 
 		} );
 
-
-		describe( method(
-			STATIC,
-			"createFrom"
-		), ():void => {
+		describe( "Fragment.createFrom", ():void => {
 
 			interface MyFragment {
 				property:string;
 			}
 
-			it( hasSignature(
-				[ "T extends Object" ],
-				"Creates a Fragment from an Object with the ID provided.", [
-					{name: "object", type: "T", description: "Object that will be converted to a fragment."},
-					{name: "id", type: "string", description: "The ID that will be assigned to the fragment."},
-					{name: "document", type: "Carbon.Document.Class", description: "The document that the fragment will be part of."},
-				],
-				{type: "T & Carbon.Fragment.Class"}
-			), ():void => {
-				expect( Fragment.Factory.createFrom ).toBeDefined();
-				expect( Utils.isFunction( Fragment.Factory.createFrom ) ).toBe( true );
+			// TODO: Separate in different tests
+			it( "should test method with id", ():void => {
+				expect( Fragment.createFrom ).toBeDefined();
+				expect( Fragment.createFrom ).toEqual( jasmine.any( Function ) );
 
-				let fragment:Fragment.Class & MyFragment;
+				let fragment:Fragment & MyFragment;
 
-				fragment = Fragment.Factory.createFrom<MyFragment>( {property: "my property 1"}, "#fragment", document );
+				fragment = Fragment.createFrom<MyFragment>( { property: "my property 1" }, document, "#fragment" );
 				expect( fragment ).toBeTruthy();
-				expect( Fragment.Factory.hasClassProperties( fragment ) ).toBe( true );
-				expect( fragment.document ).toBe( document );
+				expect( Fragment.isDecorated( fragment ) ).toBe( true );
+				expect( fragment._document ).toBe( document );
 				expect( fragment.id ).toBe( "#fragment" );
 				expect( fragment.property ).toBe( "my property 1" );
 
-				fragment = Fragment.Factory.createFrom<MyFragment>( {property: "my property 2"}, "http://example.com/document/#fragment", document );
+				fragment = Fragment.createFrom<MyFragment>( { property: "my property 2" }, document, "http://example.com/document/#fragment" );
 				expect( fragment ).toBeTruthy();
-				expect( Fragment.Factory.hasClassProperties( fragment ) ).toBe( true );
-				expect( fragment.document ).toBe( document );
+				expect( Fragment.isDecorated( fragment ) ).toBe( true );
+				expect( fragment._document ).toBe( document );
 				expect( fragment.id ).toBe( "http://example.com/document/#fragment" );
 				expect( fragment.property ).toBe( "my property 2" );
 
-				fragment = Fragment.Factory.createFrom<MyFragment>( {property: "my property 3"}, "_:BlankNode", document );
+				fragment = Fragment.createFrom<MyFragment>( { property: "my property 3" }, document, "_:BlankNode" );
 				expect( fragment ).toBeTruthy();
-				expect( Fragment.Factory.hasClassProperties( fragment ) ).toBe( true );
-				expect( fragment.document ).toBe( document );
+				expect( Fragment.isDecorated( fragment ) ).toBe( true );
+				expect( fragment._document ).toBe( document );
 				expect( fragment.id ).toBe( "_:BlankNode" );
 				expect( fragment.property ).toBe( "my property 3" );
 
-				let anotherFragment:Fragment.Class = Fragment.Factory.createFrom<Object>( {}, "_:AnotherBlankNode", document );
+				let anotherFragment:Fragment = Fragment.createFrom<Object>( {}, document, "_:AnotherBlankNode" );
 				expect( anotherFragment ).toBeTruthy();
-				expect( Fragment.Factory.hasClassProperties( anotherFragment ) ).toBe( true );
-				expect( anotherFragment.document ).toBe( document );
+				expect( Fragment.isDecorated( anotherFragment ) ).toBe( true );
+				expect( anotherFragment._document ).toBe( document );
 				expect( anotherFragment.id ).toBe( "_:AnotherBlankNode" );
 				expect( anotherFragment[ "property" ] ).toBeUndefined();
 			} );
 
-			it( hasSignature(
-				[ "T extends Object" ],
-				"Creates a BlankNode since no ID is provided.", [
-					{name: "object", type: "T", description: "Object that will be converted to a fragment."},
-					{name: "document", type: "Carbon.Document.Class", description: "The document that the fragment will be part of."},
-				],
-				{type: "T & Carbon.Fragment.Class"}
-			), ():void => {
-				expect( Fragment.Factory.createFrom ).toBeDefined();
-				expect( Utils.isFunction( Fragment.Factory.createFrom ) ).toBe( true );
+			// TODO: Separate in different tests
+			it( "should test method without id", ():void => {
+				let fragment1:Fragment & MyFragment;
+				let fragment2:Fragment & MyFragment;
 
-				let fragment1:Fragment.Class & MyFragment;
-				let fragment2:Fragment.Class & MyFragment;
-
-				fragment1 = Fragment.Factory.createFrom<MyFragment>( {property: "my property 1"}, document );
+				fragment1 = Fragment.createFrom<MyFragment>( { property: "my property 1" }, document );
 				expect( fragment1 ).toBeTruthy();
-				expect( Fragment.Factory.hasClassProperties( fragment1 ) ).toBe( true );
-				expect( fragment1.document ).toBe( document );
+				expect( Fragment.isDecorated( fragment1 ) ).toBe( true );
+				expect( fragment1._document ).toBe( document );
 				expect( fragment1.id ).toBe( "" );
 				expect( fragment1.property ).toBe( "my property 1" );
 
 
-				fragment2 = Fragment.Factory.createFrom<MyFragment>( {property: "my property 2"}, document );
+				fragment2 = Fragment.createFrom<MyFragment>( { property: "my property 2" }, document );
 				expect( fragment2 ).toBeTruthy();
-				expect( Fragment.Factory.hasClassProperties( fragment2 ) ).toBe( true );
-				expect( fragment2.document ).toBe( document );
+				expect( Fragment.isDecorated( fragment2 ) ).toBe( true );
+				expect( fragment2._document ).toBe( document );
 				expect( fragment2.id ).toBe( "" );
 				expect( fragment2.property ).toBe( "my property 2" );
 
-				let anotherFragment:Fragment.Class = Fragment.Factory.createFrom<Object>( {}, document );
+				let anotherFragment:Fragment = Fragment.createFrom<Object>( {}, document );
 				expect( anotherFragment ).toBeTruthy();
-				expect( Fragment.Factory.hasClassProperties( anotherFragment ) ).toBe( true );
-				expect( anotherFragment.document ).toBe( document );
+				expect( Fragment.isDecorated( anotherFragment ) ).toBe( true );
+				expect( anotherFragment._document ).toBe( document );
 				expect( anotherFragment.id ).toBe( "" );
 				expect( anotherFragment[ "property" ] ).toBeUndefined();
 			} );
 
 		} );
+
+		// TODO: Add tests for `Fragment.decorate`
 
 	} );
 

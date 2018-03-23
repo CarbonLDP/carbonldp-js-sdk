@@ -1,39 +1,50 @@
-import Error from "./Error";
-import * as NS from "./../NS";
-import ObjectSchema from "./../ObjectSchema";
-import Resource from "./../Resource";
+import { ModelFactory } from "../ModelFactory";
+import { ObjectSchema } from "../ObjectSchema";
+import { Resource } from "../Resource";
+import { C } from "../Vocabularies/C";
+import { XSD } from "../Vocabularies/XSD";
+import { Error } from "./Error";
 
-export const RDF_CLASS:string = NS.C.Class.ErrorResponse;
 
-export const SCHEMA:ObjectSchema = {
-	"errors": {
-		"@id": NS.C.Predicate.error,
-		"@type": "@id",
-		"@container": "@set",
-	},
-	"requestID": {
-		"@id": NS.C.Predicate.requestID,
-		"@type": NS.XSD.DataType.string,
-	},
-	"statusCode": {
-		"@id": NS.C.Predicate.httpStatusCode,
-		"@type": NS.XSD.DataType.int,
-	},
-};
-
-export interface Class extends Resource {
+export interface ErrorResponse extends Resource {
 	errors:Error[];
 	requestID:string;
 	statusCode:number;
 }
 
-export class Util {
-	static getMessage( errorResponse:Class ):string {
+
+export interface ErrorResponseFactory extends ModelFactory<ErrorResponse> {
+	TYPE:string;
+	SCHEMA:ObjectSchema;
+
+	getMessage( errorResponse:ErrorResponse ):string;
+}
+
+const SCHEMA:ObjectSchema = {
+	"errors": {
+		"@id": C.error,
+		"@type": "@id",
+		"@container": "@set",
+	},
+	"requestID": {
+		"@id": C.requestID,
+		"@type": XSD.string,
+	},
+	"statusCode": {
+		"@id": C.httpStatusCode,
+		"@type": XSD.int,
+	},
+};
+
+export const ErrorResponse:ErrorResponseFactory = {
+	TYPE: C.ErrorResponse,
+	SCHEMA,
+
+	getMessage( errorResponse:ErrorResponse ):string {
 		return errorResponse
 			.errors
 			.map( error => error.errorMessage )
 			.join( ", " );
-	}
-}
+	},
 
-export default Class;
+};

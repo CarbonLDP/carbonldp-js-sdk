@@ -1,61 +1,49 @@
-export class Class {
-	values:string[] = [];
+export class Header {
+	readonly values:string[];
 
-	constructor();
-	constructor( values:string[] );
-	constructor( value:string );
-	constructor( valueOrValues?:(string | string[]) ) {
-		if( ! valueOrValues ) return;
+	static parseHeaders( headersString:string ):Map<string, Header> {
+		const headers:Map<string, Header> = new Map<string, Header>();
 
-		if( Array.isArray( valueOrValues ) ) {
-			this.values = valueOrValues;
-		} else {
-			this.setValues( valueOrValues );
-		}
+		headersString.split( /\r?\n/ ).forEach( strHeader => {
+			if( ! strHeader.trim() ) return;
+
+			const parts:string[] = strHeader.split( ":" );
+			if( parts.length < 2 ) throw new Error( "ParseError: The header couldn't be parsed." );
+
+			const name:string = parts[ 0 ].trim().toLowerCase();
+			const values:string[] = Header._parseValues( parts.slice( 1 ).join( ":" ) );
+
+			if( headers.has( name ) ) {
+				headers.get( name ).values.push( ...values );
+			} else {
+				headers.set( name, new Header( values ) );
+			}
+		} );
+
+		return headers;
 	}
 
-	hasValue( value:string ) {
-		return this.values.indexOf( value ) !== -1;
+	private static _parseValues( strValues:string | undefined ):string[] {
+		if( ! strValues ) return [];
+
+		return strValues
+			.split( "," )
+			.map( valueString => {
+				return valueString.trim();
+			} )
+			;
+	}
+
+	constructor( values?:(string | string[]) ) {
+		this.values = Array.isArray( values ) ?
+			values : Header._parseValues( values );
+	}
+
+	hasValue( value:string ):boolean {
+		return this.values.indexOf( value ) !== - 1;
 	}
 
 	toString():string {
 		return this.values.join( ", " );
 	}
-
-	private setValues( valuesString:string ):void {
-		this.values = [];
-
-		let valueStrings:string[] = valuesString.split( "," );
-		for( let i:number = 0, length:number = valueStrings.length; i < length; i ++ ) {
-			let valueString:string = valueStrings[ i ].trim();
-			this.values.push( valueString );
-		}
-	}
 }
-
-export class Util {
-	static parseHeaders( headersString:string ):Map<string, Class> {
-		let headers:Map<string, Class> = new Map<string, Class>();
-
-		let headerStrings:string[] = headersString.split( /\r?\n/ );
-		for( let i:number = 0, length:number = headerStrings.length; i < length; i ++ ) {
-			let headerString:string = headerStrings[ i ];
-			if( ! headerString.trim() ) continue;
-
-			let parts:string[] = headerString.split( ":" );
-			if( parts.length < 2 ) throw new Error( "ParseError: The header couldn't be parsed." );
-			if( parts.length > 2 ) parts[ 1 ] = parts.slice( 1 ).join( ":" );
-
-			let name:string = parts[ 0 ].trim().toLowerCase();
-			let header:Class = new Class( parts[ 1 ].trim() );
-			if( headers.has( name ) ) {
-				let existingHeader:Class = headers.get( name );
-				existingHeader.values.concat( header.values );
-			} else headers.set( name, header );
-		}
-
-		return headers;
-	}
-}
-
-export default Class;

@@ -1,30 +1,38 @@
-import * as NS from "./../NS";
-import { Class as ObjectSchema } from "./../ObjectSchema";
-import { Class as Entry } from "./Entry";
-import { Class as Resource, Factory as ResourceFactory } from "./../Resource";
+import { ModelFactory } from "../ModelFactory";
+import { ObjectSchema } from "../ObjectSchema";
+import { Resource } from "../Resource";
+import { C } from "../Vocabularies/C";
+import { MapEntry } from "./MapEntry";
 
-export const RDF_CLASS:string = NS.C.Class.Map;
 
-export const SCHEMA:ObjectSchema = {
+export interface Map<K, V> extends Resource {
+	entries:MapEntry<K, V>[];
+}
+
+
+export interface MapFactory extends ModelFactory<Map<any, any>> {
+	TYPE:string;
+	SCHEMA:ObjectSchema;
+
+	is( object:object ):object is Map<any, any>;
+}
+
+const SCHEMA:ObjectSchema = {
 	"entries": {
-		"@id": NS.C.Predicate.entry,
+		"@id": C.entry,
 		"@type": "@id",
 		"@container": "@set",
 	},
 };
 
-export interface Class<K, V> extends Resource {
-	entries:Entry<K, V>[];
-}
+export const Map:MapFactory = {
+	TYPE: C.Map,
+	SCHEMA,
 
-export class Factory {
-
-	static is( object:object ):object is Class<any, any> {
-		return ResourceFactory.is( object )
-			&& object.hasType( RDF_CLASS )
+	is( object:object ):object is Map<any, any> {
+		return Resource.is( object )
+			&& object.hasType( Map.TYPE )
 			&& object.hasOwnProperty( "entries" );
-	}
+	},
 
-}
-
-export default Class;
+};

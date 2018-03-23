@@ -1,29 +1,27 @@
-import * as List from "./List";
-import * as Pointer from "./../Pointer";
-export interface Class {
+import { PointerLibrary } from "../Pointer";
+import { RDFList } from "./List";
+import { RDFLiteral } from "./Literal";
+import { RDFValue } from "./Value";
+export declare type RDFNodePropertyValue = string | RDFNode | RDFList | RDFValue | RDFLiteral;
+export interface RDFNode {
     "@id": string;
+    "@type"?: string[];
+    [propertyURI: string]: string | RDFNodePropertyValue[];
 }
-export declare class Factory {
-    static is(value: Object): boolean;
-    static create(uri: string): Class;
+export interface RDFNodeFactory {
+    is(value: any): value is RDFNode;
+    create(uri: string): RDFNode;
+    getID(node: RDFNode): string;
+    getRelativeID(node: RDFNode): string;
+    areEqual(node1: RDFNode, node2: RDFNode): boolean;
+    isFragment(node: RDFNode): boolean;
+    hasType(node: RDFNode, type: string): boolean;
+    getTypes(node: RDFNode): string[];
+    getFreeNodes(objects: object | object[]): RDFNode[];
+    getList(propertyValues: RDFNodePropertyValue[]): RDFList | undefined;
+    getProperties(propertyValues: RDFNodePropertyValue[], pointerLibrary: PointerLibrary): any[] | undefined;
+    getPropertyPointers(propertyValues: RDFNodePropertyValue[], pointerLibrary: PointerLibrary): any[] | undefined;
+    getPropertyLiterals(propertyValues: RDFNodePropertyValue[], literalType: string): any[] | undefined;
+    getPropertyLanguageMap(propertyValues: RDFNodePropertyValue[]): object | undefined;
 }
-export declare class Util {
-    static areEqual(node1: Class, node2: Class): boolean;
-    static hasType(node: Class, type: string): boolean;
-    static getTypes(node: Class): string[];
-    static getPropertyURI(node: Class, predicate: string): string;
-    static getFreeNodes<T extends Object>(value: T): Class[];
-    static getProperty(expandedObject: any, propertyURI: string, pointerLibrary: Pointer.Library): any;
-    static getPropertyPointer(expandedObject: any, propertyURI: string, pointerLibrary: Pointer.Library): any;
-    static getPropertyLiteral(expandedObject: any, propertyURI: string, literalType: string): any;
-    static getPropertyList(expandedObject: any, propertyURI: string, pointerLibrary: Pointer.Library): any;
-    static getPropertyPointerList(expandedObject: any, propertyURI: string, pointerLibrary: Pointer.Library): any;
-    static getPropertyLiteralList(expandedObject: any, propertyURI: string, literalType: string): any;
-    static getProperties(propertyValues: any[], pointerLibrary: Pointer.Library): any;
-    static getPropertyPointers(propertyValues: any[], pointerLibrary: Pointer.Library): any;
-    static getPropertyURIs(expandedObject: any, propertyURI: string): string[];
-    static getPropertyLiterals(propertyValues: any[], literalType: string): any;
-    static getPropertyLanguageMap(propertyValues: any[]): any;
-    static getList(propertyValues: any[]): List.Class;
-}
-export default Class;
+export declare const RDFNode: RDFNodeFactory;

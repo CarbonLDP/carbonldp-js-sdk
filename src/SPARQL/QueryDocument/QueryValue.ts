@@ -1,24 +1,24 @@
 import { isAbsolute } from "sparqler/iri";
 import { LiteralToken } from "sparqler/tokens";
 
+import { IllegalArgumentError } from "../../Errors/IllegalArgumentError";
 import { isDate } from "../../Utils";
-import { IllegalArgumentError } from "./../../Errors";
-import * as XSD from "./../../NS/XSD";
-import * as QueryContext from "./QueryContext";
+import { XSD } from "../../Vocabularies/XSD";
+import { QueryContext } from "./QueryContext";
 
-export class Class {
+export class QueryValue {
 	private _value:string | number | boolean | Date;
 
 	private _literal:LiteralToken;
-	private _context:QueryContext.Class;
+	private _context:QueryContext;
 
-	constructor( context:QueryContext.Class, value:string | number | boolean | Date ) {
+	constructor( context:QueryContext, value:string | number | boolean | Date ) {
 		this._value = value;
 		this._context = context;
 
 		if( isDate( value ) ) {
 			this._literal = new LiteralToken();
-			this.withType( XSD.DataType.dateTime );
+			this.withType( XSD.dateTime );
 		} else {
 			this._literal = new LiteralToken( value );
 		}
@@ -26,8 +26,8 @@ export class Class {
 
 	withType( type:string ):this {
 		if( ! isAbsolute( type ) ) {
-			if( ! XSD.DataType.hasOwnProperty( type ) ) throw new IllegalArgumentError( "Invalid type provided." );
-			type = XSD.DataType[ type ];
+			if( ! XSD.hasOwnProperty( type ) ) throw new IllegalArgumentError( "Invalid type provided." );
+			type = XSD[ type ];
 		}
 		const value:string = this._context.serializeLiteral( type, this._value );
 		this._literal.setValue( value );
@@ -50,8 +50,6 @@ export class Class {
 		return `${ this._literal }`;
 	}
 }
-
-export default Class;
 
 
 

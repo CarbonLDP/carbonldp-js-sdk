@@ -1,7 +1,9 @@
-import * as ObjectSchema from "./../ObjectSchema";
-import * as DocumentCreated from "./DocumentCreated";
-export declare const RDF_CLASS: string;
-export declare const SCHEMA: ObjectSchema.Class;
-export interface Class extends DocumentCreated.Class {
+import { ObjectSchema } from "../ObjectSchema";
+import { DocumentCreated } from "./DocumentCreated";
+export interface AccessPointCreated extends DocumentCreated {
 }
-export default Class;
+export interface AccessPointCreatedFactory {
+    TYPE: string;
+    SCHEMA: ObjectSchema;
+}
+export declare const AccessPointCreated: AccessPointCreatedFactory;

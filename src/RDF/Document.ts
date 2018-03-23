@@ -1,142 +1,123 @@
-import * as HTTP from "./../HTTP";
-import * as JSONLD from "./../JSONLD";
-import * as Node from "./Node";
+import { Parser } from "../HTTP/Parser";
+import { JSONLDParser } from "../JSONLD/Parser";
 import * as Utils from "./../Utils";
-import * as URI from "./URI";
+import { RDFNode } from "./Node";
+import { URI } from "./URI";
 
-export interface Class {
+export interface RDFDocument {
 	"@id"?:string;
-	"@graph":Node.Class[];
+	"@graph":RDFNode[];
 }
 
-export class Factory {
-	static is( object:Object ):object is Class {
-		return Utils.hasProperty( object, "@graph" )
-			&& Utils.isArray( object[ "@graph" ] );
-	}
 
-	static create( resources:Node.Class[], uri?:string ):Class {
-		let document:any = uri ? Node.Factory.create( uri ) : {};
-		document[ "@graph" ] = resources;
+export interface RDFDocumentFactory {
+	is( value:any ):value is RDFDocument;
+
+	create( resources:RDFNode[], uri?:string ):RDFDocument;
+
+
+	getDocuments( objects:object | object[] ):RDFDocument[];
+
+	getResources( objects:object | object[] ):RDFNode[];
+
+	getDocumentResources( document:RDFNode[] | RDFDocument ):RDFNode[];
+
+	getNamedFragmentResources( document:RDFNode[] | RDFDocument, documentResource?:string | RDFNode ):RDFNode[];
+
+	getBNodeResources( document:RDFDocument ):RDFNode[];
+
+	getNodes( rdfDocument:RDFDocument ):[ RDFNode[], RDFNode[] ];
+}
+
+export const RDFDocument:RDFDocumentFactory = {
+	is( value:any ):value is RDFDocument {
+		return Utils.hasProperty( value, "@graph" )
+			&& Utils.isArray( value[ "@graph" ] );
+	},
+
+	create( resources:RDFNode[], uri?:string ):RDFDocument {
+		const document:RDFDocument = {
+			"@graph": resources,
+		};
+
+		if( uri ) document[ "@id" ] = uri;
 
 		return document;
-	}
-}
+	},
 
-export class Util {
-	static getDocuments( objects:Object[] ):Class[];
-	static getDocuments( object:Object ):Class[];
-	static getDocuments( value:any ):Class[] {
-		if( Utils.isArray( value ) ) {
-			let array:any[] = <any> value;
-			return array.filter( ( element:any ) => Factory.is( element ) );
-		} else if( Utils.isObject( value ) ) {
-			if( Factory.is( value ) ) return [ value ];
-		}
+
+	getDocuments( objects:object | object[] ):RDFDocument[] {
+		if( Utils.isArray( objects ) ) return objects
+			.filter( RDFDocument.is );
+
+		if( RDFDocument.is( objects ) ) return [ objects ];
+
 		return [];
-	}
+	},
 
-	static getResources( objects:Object[] ):Node.Class[];
-	static getResources( object:Object ):Node.Class[];
-	static getResources( value:any ):Node.Class[] {
-		let freeNodes:Node.Class[] = Node.Util.getFreeNodes( value );
-		let documents:Class[] = Util.getDocuments( value );
+	getResources( objects:object | object[] ):RDFNode[] {
+		const resources:RDFNode[] = RDFNode.getFreeNodes( objects );
 
-		let resources:Node.Class[] = [].concat( freeNodes );
-
-		for( let document of documents ) {
-			resources = resources.concat( document[ "@graph" ] );
-		}
+		RDFDocument
+			.getDocuments( objects )
+			.map( document => document[ "@graph" ] )
+			.forEach( nodes => resources.push( ...nodes ) )
+		;
 
 		return resources;
-	}
+	},
 
-	static getDocumentResources( document:Node.Class[] ):Node.Class[];
-	static getDocumentResources( document:Class ):Node.Class[];
-	static getDocumentResources( document:any ):Node.Class[] {
-		let resources:Node.Class[] = Util.getResources( document );
-		let documentResources:Node.Class[] = [];
+	getDocumentResources( document:RDFDocument | RDFNode[] ):RDFNode[] {
+		return RDFDocument
+			.getResources( document )
+			.filter( node => ! RDFNode.isFragment( node ) )
+			;
+	},
 
-		for( let i:number = 0, length:number = resources.length; i < length; i ++ ) {
-			let resource:Node.Class = resources[ i ];
-			let uri:string = resource[ "@id" ];
-			if( ! uri ) continue;
+	getNamedFragmentResources( document:RDFDocument | RDFNode[], documentResource?:string | RDFNode ):RDFNode[] {
+		const uriToMatch:string = Utils.isObject( documentResource ) ?
+			RDFNode.getID( documentResource ) :
+			documentResource;
 
-			if( ! URI.Util.hasFragment( uri ) && ! URI.Util.isBNodeID( uri ) ) documentResources.push( resource );
-		}
+		return RDFDocument
+			.getResources( document )
+			.filter( node => {
+				const id:string = RDFNode.getID( node );
 
-		return documentResources;
-	}
+				if( ! URI.hasFragment( id ) ) return;
 
-	static getFragmentResources( document:Node.Class[], documentResource?:Node.Class ):Node.Class[];
-	static getFragmentResources( document:Class, documentResource?:Node.Class ):Node.Class[];
-	static getFragmentResources( document:Node.Class[], documentResourceURI?:string ):Node.Class[];
-	static getFragmentResources( document:Class, documentResourceURI?:string ):Node.Class[];
-	static getFragmentResources( document:any, documentResource?:any ):Node.Class[] {
-		let resources:Node.Class[] = Util.getResources( document );
+				if( ! uriToMatch ) return true;
+				return URI.getDocumentURI( id ) === uriToMatch;
+			} )
+			;
+	},
 
-		let documentURIToMatch:string = null;
-		if( documentResource ) {
-			if( Utils.isString( documentResource ) ) {
-				documentURIToMatch = documentResource;
-			} else documentURIToMatch = documentResource[ "@id" ];
-		}
+	getBNodeResources( document:RDFDocument | RDFNode[] ):RDFNode[] {
+		return RDFDocument
+			.getResources( document )
+			.filter( node => {
+				const id:string = RDFNode.getID( node );
+				return URI.isBNodeID( id );
+			} )
+			;
+	},
 
-		let fragmentResources:Node.Class[] = [];
-
-		for( let i:number = 0, length:number = resources.length; i < length; i ++ ) {
-			let resource:Node.Class = resources[ i ];
-			let uri:string = resource[ "@id" ];
-
-			if( ! uri ) continue;
-			if( ! URI.Util.hasFragment( uri ) ) continue;
-
-			if( ! documentURIToMatch ) {
-				fragmentResources.push( resource );
-			} else {
-				let documentURI:string = URI.Util.getDocumentURI( uri );
-				if( documentURI === documentURIToMatch ) fragmentResources.push( resource );
-			}
-		}
-
-		return fragmentResources;
-	}
-
-	static getBNodeResources( document:Class ):Node.Class[] {
-		let resources:Node.Class[] = Util.getResources( document );
-
-		let bnodes:Node.Class[] = [];
-		for( let i:number = 0, length:number = resources.length; i < length; i ++ ) {
-			let resource:Node.Class = resources[ i ];
-			if( ! ( "@id" in resource ) || URI.Util.isBNodeID( resource[ "@id" ] ) ) bnodes.push( resource );
-		}
-
-		return bnodes;
-	}
-
-	static getNodes( rdfDocument:Class ):[ Node.Class[], Node.Class[] ] {
-		const documentNodes:Node.Class[] = [];
-		const fragmentNodes:Node.Class[] = [];
+	getNodes( rdfDocument:RDFDocument ):[ RDFNode[], RDFNode[] ] {
+		const documentNodes:RDFNode[] = [];
+		const fragmentNodes:RDFNode[] = [];
 
 		for( const node of rdfDocument[ "@graph" ] ) {
-			( Util.isNodeFragment( node ) ? fragmentNodes : documentNodes ).push( node );
+			( RDFNode.isFragment( node ) ? fragmentNodes : documentNodes ).push( node );
 		}
 
 		return [ documentNodes, fragmentNodes ];
-	}
+	},
 
-	private static isNodeFragment( node:Node.Class ):boolean {
-		return URI.Util.hasFragment( node[ "@id" ] ) || URI.Util.isBNodeID( node[ "@id" ] );
-	}
-}
+};
 
-export class Parser implements HTTP.Parser.Class<Class[]> {
-	parse( input:string ):Promise<any> {
-		let jsonLDParser:JSONLD.Parser.Class = new JSONLD.Parser.Class();
-		return jsonLDParser.parse( input ).then( ( expandedResult:any ) => {
-			return Util.getDocuments( expandedResult );
-		} );
+
+export class RDFDocumentParser extends JSONLDParser implements Parser<RDFDocument[]> {
+	parse( input:string ):Promise<RDFDocument[]> {
+		return super.parse( input ).then( RDFDocument.getDocuments );
 	}
 }
-
-export default Class;

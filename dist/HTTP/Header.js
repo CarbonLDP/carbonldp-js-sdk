@@ -1,63 +1,47 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var Class = (function () {
-    function Class(valueOrValues) {
-        this.values = [];
-        if (!valueOrValues)
-            return;
-        if (Array.isArray(valueOrValues)) {
-            this.values = valueOrValues;
-        }
-        else {
-            this.setValues(valueOrValues);
-        }
+var Header = (function () {
+    function Header(values) {
+        this.values = Array.isArray(values) ?
+            values : Header._parseValues(values);
     }
-    Class.prototype.hasValue = function (value) {
-        return this.values.indexOf(value) !== -1;
-    };
-    Class.prototype.toString = function () {
-        return this.values.join(", ");
-    };
-    Class.prototype.setValues = function (valuesString) {
-        this.values = [];
-        var valueStrings = valuesString.split(",");
-        for (var i = 0, length_1 = valueStrings.length; i < length_1; i++) {
-            var valueString = valueStrings[i].trim();
-            this.values.push(valueString);
-        }
-    };
-    return Class;
-}());
-exports.Class = Class;
-var Util = (function () {
-    function Util() {
-    }
-    Util.parseHeaders = function (headersString) {
+    Header.parseHeaders = function (headersString) {
         var headers = new Map();
-        var headerStrings = headersString.split(/\r?\n/);
-        for (var i = 0, length_2 = headerStrings.length; i < length_2; i++) {
-            var headerString = headerStrings[i];
-            if (!headerString.trim())
-                continue;
-            var parts = headerString.split(":");
+        headersString.split(/\r?\n/).forEach(function (strHeader) {
+            if (!strHeader.trim())
+                return;
+            var parts = strHeader.split(":");
             if (parts.length < 2)
                 throw new Error("ParseError: The header couldn't be parsed.");
-            if (parts.length > 2)
-                parts[1] = parts.slice(1).join(":");
-            var name_1 = parts[0].trim().toLowerCase();
-            var header = new Class(parts[1].trim());
-            if (headers.has(name_1)) {
-                var existingHeader = headers.get(name_1);
-                existingHeader.values.concat(header.values);
+            var name = parts[0].trim().toLowerCase();
+            var values = Header._parseValues(parts.slice(1).join(":"));
+            if (headers.has(name)) {
+                (_a = headers.get(name).values).push.apply(_a, values);
             }
-            else
-                headers.set(name_1, header);
-        }
+            else {
+                headers.set(name, new Header(values));
+            }
+            var _a;
+        });
         return headers;
     };
-    return Util;
+    Header._parseValues = function (strValues) {
+        if (!strValues)
+            return [];
+        return strValues
+            .split(",")
+            .map(function (valueString) {
+            return valueString.trim();
+        });
+    };
+    Header.prototype.hasValue = function (value) {
+        return this.values.indexOf(value) !== -1;
+    };
+    Header.prototype.toString = function () {
+        return this.values.join(", ");
+    };
+    return Header;
 }());
-exports.Util = Util;
-exports.default = Class;
+exports.Header = Header;
 
 //# sourceMappingURL=Header.js.map

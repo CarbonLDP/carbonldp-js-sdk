@@ -1,4 +1,4 @@
-import { Class as Context } from "../Context";
+import { Context } from "../Context";
 export declare function validateEventContext(context: Context): void;
 export declare function validateEventType(event: string): void;
 export declare function parseURIPattern(uriPattern: string, baseURI: string): string;

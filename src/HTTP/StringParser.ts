@@ -1,11 +1,7 @@
-import Parser from "./Parser";
+import { Parser } from "./Parser";
 
-export class Class implements Parser<string> {
+export class StringParser implements Parser<string> {
 	parse( body:string ):Promise<string> {
-		return new Promise<string>( ( resolve:( result:string ) => void, reject:( error:Error ) => void ) => {
-			resolve( body );
-		} );
+		return new Promise<string>( resolve => resolve( body ) );
 	}
 }
-
-export default Class;

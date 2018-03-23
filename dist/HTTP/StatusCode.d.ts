@@ -40,4 +40,3 @@ export declare enum StatusCode {
     GATEWAY_TIME_OUT = 504,
     HTTP_VERSION_NOT_SUPPORTED = 505,
 }
-export default StatusCode;

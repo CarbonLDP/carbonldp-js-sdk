@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var Errors = require("./../Errors");
-var PersistedProtectedDocument = require("./../PersistedProtectedDocument");
+var Errors = require("../Errors");
+var PersistedProtectedDocument_1 = require("../PersistedProtectedDocument");
 var Utils = require("./../Utils");
 var Factory = (function () {
     function Factory() {
@@ -17,13 +17,13 @@ var Factory = (function () {
     };
     Factory.is = function (object) {
         return Factory.hasClassProperties(object)
-            && PersistedProtectedDocument.Factory.is(object);
+            && PersistedProtectedDocument_1.PersistedProtectedDocument.is(object);
     };
     Factory.decorate = function (object, documents) {
         var persistedRole = object;
         if (Factory.hasClassProperties(persistedRole))
             return persistedRole;
-        PersistedProtectedDocument.Factory.decorate(persistedRole, documents);
+        PersistedProtectedDocument_1.PersistedProtectedDocument.decorate(persistedRole, documents);
         Object.defineProperties(persistedRole, {
             "_roles": {
                 writable: false,

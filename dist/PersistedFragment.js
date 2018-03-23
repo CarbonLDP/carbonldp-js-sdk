@@ -1,66 +1,79 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var Fragment = require("./Fragment");
-var ObjectSchema = require("./ObjectSchema");
-var PersistedResource = require("./PersistedResource");
-var RDF = require("./RDF");
-function resolveURI(uri) {
-    if (RDF.URI.Util.isAbsolute(uri))
+var Fragment_1 = require("./Fragment");
+var ObjectSchema_1 = require("./ObjectSchema");
+var PersistedResource_1 = require("./PersistedResource");
+var URI_1 = require("./RDF/URI");
+var Resource_1 = require("./Resource");
+var Utils_1 = require("./Utils");
+function resolveURI(fragment, uri) {
+    if (URI_1.URI.isAbsolute(uri))
         return uri;
-    var schema = this.document._documents.getGeneralSchema();
-    return ObjectSchema.Util.resolveURI(uri, schema, { vocab: true });
+    var schema = fragment._document._documents.getGeneralSchema();
+    return ObjectSchema_1.ObjectSchemaUtils.resolveURI(uri, schema, { vocab: true });
 }
-function extendAddType(superFunction) {
-    return function (type) {
-        type = resolveURI.call(this, type);
-        superFunction.call(this, type);
-    };
+function addTypeInPersistedFragment(type) {
+    type = resolveURI(this, type);
+    return Resource_1.addTypeInResource.call(this, type);
 }
-function extendHasType(superFunction) {
-    return function (type) {
-        type = resolveURI.call(this, type);
-        return superFunction.call(this, type);
-    };
+function hasTypeInPersistedFragment(type) {
+    type = resolveURI(this, type);
+    return Resource_1.hasTypeInResource.call(this, type);
 }
-function extendRemoveType(superFunction) {
-    return function (type) {
-        type = resolveURI.call(this, type);
-        superFunction.call(this, type);
-    };
+function removeTypeInPersistedFragment(type) {
+    type = resolveURI(this, type);
+    return Resource_1.removeTypeInResource.call(this, type);
 }
-var Factory = (function () {
-    function Factory() {
-    }
-    Factory.is = function (object) {
-        return PersistedResource.Factory.hasClassProperties(object)
-            && Fragment.Factory.hasClassProperties(object);
-    };
-    Factory.decorate = function (fragment) {
-        PersistedResource.Factory.decorate(fragment);
-        Object.defineProperties(fragment, {
+exports.PersistedFragment = {
+    isDecorated: function (object) {
+        return Utils_1.isObject(object) &&
+            object["addType"] === addTypeInPersistedFragment &&
+            object["hasType"] === hasTypeInPersistedFragment &&
+            object["removeType"] === removeTypeInPersistedFragment;
+    },
+    is: function (object) {
+        return Fragment_1.Fragment.is(object) &&
+            PersistedResource_1.PersistedResource.isDecorated(object) &&
+            exports.PersistedFragment.isDecorated(object);
+    },
+    decorate: function (object) {
+        if (exports.PersistedFragment.isDecorated(object))
+            return object;
+        Fragment_1.Fragment.decorate(object);
+        PersistedResource_1.PersistedResource.decorate(object);
+        var fragment = object;
+        Object.defineProperties(object, {
             "addType": {
                 writable: false,
                 enumerable: false,
                 configurable: true,
-                value: extendAddType(fragment.addType),
+                value: addTypeInPersistedFragment,
             },
             "hasType": {
                 writable: false,
                 enumerable: false,
                 configurable: true,
-                value: extendHasType(fragment.hasType),
+                value: hasTypeInPersistedFragment,
             },
             "removeType": {
                 writable: false,
                 enumerable: false,
                 configurable: true,
-                value: extendRemoveType(fragment.removeType),
+                value: removeTypeInPersistedFragment,
             },
         });
         return fragment;
-    };
-    return Factory;
-}());
-exports.Factory = Factory;
+    },
+    create: function (document, id) {
+        return exports.PersistedFragment.createFrom({}, document, id);
+    },
+    createFrom: function (object, document, id) {
+        var fragment = exports.PersistedFragment.decorate(object);
+        fragment._document = document;
+        if (id)
+            fragment.id = id;
+        return fragment;
+    },
+};
 
 //# sourceMappingURL=PersistedFragment.js.map

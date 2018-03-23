@@ -1,154 +1,106 @@
-import AbstractContext from "./AbstractContext";
+import { Minus } from "../test/helpers/types";
+import { BlankNode } from "./BlankNode";
 
-import * as Document from "./Document";
-import DefaultExport from "./Document";
-import * as Errors from "./Errors";
-import * as Fragment from "./Fragment";
-import JSONLDConverter from "./JSONLD/Converter";
-import * as NamedFragment from "./NamedFragment";
-import * as NS from "./NS";
-import * as Pointer from "./Pointer";
-import * as URI from "./RDF/URI";
-import * as Resource from "./Resource";
+import { Document } from "./Document";
+
+import { IDAlreadyInUseError } from "./Errors/IDAlreadyInUseError";
+import { IllegalArgumentError } from "./Errors/IllegalArgumentError";
+import { Fragment } from "./Fragment";
+import * as JSONLDConverterModule from "./JSONLD/Converter";
+import { JSONLDConverter } from "./JSONLD/Converter";
+import { NamedFragment } from "./NamedFragment";
 import {
-	clazz,
-	decoratedObject,
-	hasDefaultExport,
+	DigestedObjectSchema,
+	ObjectSchemaDigester,
+	ObjectSchemaResolver,
+} from "./ObjectSchema";
+import { Pointer } from "./Pointer";
+import { RDFDocument } from "./RDF/Document";
+import { URI } from "./RDF/URI";
+import { Resource } from "./Resource";
+import {
+	extendsClass,
 	hasMethod,
 	hasProperty,
 	hasSignature,
-	INSTANCE,
 	interfaze,
-	isDefined,
 	method,
 	module,
 	OBLIGATORY,
 	OPTIONAL,
+	property,
 	STATIC,
 } from "./test/JasmineExtender";
-import * as Utils from "./Utils";
-
-describe( module( "Carbon/Document" ), ():void => {
-
-	it( isDefined(), ():void => {
-		expect( Document ).toBeDefined();
-		expect( Utils.isObject( Document ) ).toBe( true );
-	} );
-
-	it( hasProperty(
-		STATIC,
-		"RDF_CLASS",
-		"string"
-	), ():void => {
-		expect( Document.RDF_CLASS ).toBeDefined();
-		expect( Utils.isString( Document.RDF_CLASS ) ).toBe( true );
-
-		expect( Document.RDF_CLASS ).toBe( NS.C.Class.Document );
-	} );
-
-	it( hasProperty(
-		STATIC,
-		"SCHEMA",
-		"Carbon.ObjectSchema.Class"
-	), ():void => {
-		expect( Document.SCHEMA ).toBeDefined();
-		expect( Utils.isObject( Document.SCHEMA ) ).toBe( true );
-
-		expect( Utils.hasProperty( Document.SCHEMA, "contains" ) ).toBe( true );
-		expect( Document.SCHEMA[ "contains" ] ).toEqual( {
-			"@id": NS.LDP.Predicate.contains,
-			"@container": "@set",
-			"@type": "@id",
-		} );
-
-		expect( Utils.hasProperty( Document.SCHEMA, "members" ) ).toBe( true );
-		expect( Document.SCHEMA[ "members" ] ).toEqual( {
-			"@id": NS.LDP.Predicate.member,
-			"@container": "@set",
-			"@type": "@id",
-		} );
+import { C } from "./Vocabularies/C";
+import { LDP } from "./Vocabularies/LDP";
+import { XSD } from "./Vocabularies/XSD";
 
 
-		expect( Utils.hasProperty( Document.SCHEMA, "membershipResource" ) ).toBe( true );
-		expect( Document.SCHEMA[ "membershipResource" ] ).toEqual( {
-			"@id": NS.LDP.Predicate.membershipResource,
-			"@type": "@id",
-		} );
+type DocumentProperties = Minus<Document, Resource>;
 
-		expect( Utils.hasProperty( Document.SCHEMA, "isMemberOfRelation" ) ).toBe( true );
-		expect( Document.SCHEMA[ "isMemberOfRelation" ] ).toEqual( {
-			"@id": NS.LDP.Predicate.isMemberOfRelation,
-			"@type": "@id",
-		} );
+function mockDocumentProperties():DocumentProperties {
+	return {
+		hasMemberRelation: null,
+		isMemberOfRelation: null,
+		defaultInteractionModel: null,
 
-		expect( Utils.hasProperty( Document.SCHEMA, "hasMemberRelation" ) ).toBe( true );
-		expect( Document.SCHEMA[ "hasMemberRelation" ] ).toEqual( {
-			"@id": NS.LDP.Predicate.hasMemberRelation,
-			"@type": "@id",
-		} );
+		_fragmentsIndex: null,
+		_normalize: ():any => {},
+		_removeFragment: ():any => {},
 
-		expect( Utils.hasProperty( Document.SCHEMA, "insertedContentRelation" ) ).toBe( true );
-		expect( Document.SCHEMA[ "insertedContentRelation" ] ).toEqual( {
-			"@id": NS.LDP.Predicate.insertedContentRelation,
-			"@type": "@id",
-		} );
+		hasPointer: ():any => {},
+		getPointer: ():any => {},
 
-		expect( Utils.hasProperty( Document.SCHEMA, "created" ) ).toBe( true );
-		expect( Document.SCHEMA[ "created" ] ).toEqual( {
-			"@id": NS.C.Predicate.created,
-			"@type": NS.XSD.DataType.dateTime,
-		} );
+		inScope: ():any => {},
 
-		expect( Utils.hasProperty( Document.SCHEMA, "modified" ) ).toBe( true );
-		expect( Document.SCHEMA[ "modified" ] ).toEqual( {
-			"@id": NS.C.Predicate.modified,
-			"@type": NS.XSD.DataType.dateTime,
-		} );
+		hasFragment: ():any => {},
+		getFragment: ():any => {},
+		getNamedFragment: ():any => {},
+		getFragments: ():any => {},
+		createFragment: ():any => {},
+		createNamedFragment: ():any => {},
+		removeNamedFragment: ():any => {},
+		toJSON: ():any => {},
+	};
+}
 
-		expect( Utils.hasProperty( Document.SCHEMA, "defaultInteractionModel" ) ).toBe( true );
-		expect( Document.SCHEMA[ "defaultInteractionModel" ] ).toEqual( {
-			"@id": NS.C.Predicate.defaultInteractionModel,
-			"@type": "@id",
-		} );
+function createMockDocument<T extends {}>( origin:T = {} as T ):T & Document {
+	return Document.createFrom( Object.assign( origin, { id: "https://example.com/document/" } ) );
+}
 
-		expect( Utils.hasProperty( Document.SCHEMA, "accessPoints" ) ).toBe( true );
-		expect( Document.SCHEMA[ "accessPoints" ] ).toEqual( {
-			"@id": NS.C.Predicate.accessPoint,
-			"@type": "@id",
-			"@container": "@set",
-		} );
-	} );
+
+describe( module( "carbonldp/Document" ), ():void => {
 
 	describe( interfaze(
-		"Carbon.Document.Class",
+		"CarbonLDP.Document",
 		"Interface that represents an in-memory Carbon LDP Document."
 	), ():void => {
 
 		it( hasProperty(
 			OPTIONAL,
 			"defaultInteractionModel",
-			"Carbon.Pointer.Class",
+			"CarbonLDP.Pointer",
 			"A Pointer URI representing the default interaction model of the document when persisted."
 		), ():void => {} );
 
 		it( hasProperty(
 			OPTIONAL,
 			"isMemberOfRelation",
-			"Carbon.Pointer.Class",
+			"CarbonLDP.Pointer",
 			"A Pointer with the member of relation of the document."
 		), ():void => {} );
 
 		it( hasProperty(
 			OPTIONAL,
 			"hasMemberRelation",
-			"Carbon.Pointer.Class",
+			"CarbonLDP.Pointer",
 			"A Pointer with the inverted relation the document will have."
 		), ():void => {} );
 
 		it( hasProperty(
 			OBLIGATORY,
 			"_fragmentsIndex",
-			"Map<string, Carbon.Fragment.Class>",
+			"Map<string, CarbonLDP.Fragment>",
 			"Map that stores the fragments (named fragments and blank nodes) of the Document."
 		), ():void => {} );
 
@@ -184,7 +136,7 @@ describe( module( "Carbon/Document" ), ():void => {
 
 			it( hasSignature(
 				"Returns true if the pointer provided is inside the scope of the Document.", [
-					{ name: "pointer", type: "Carbon.Pointer.Class" },
+					{ name: "pointer", type: "CarbonLDP.Pointer" },
 				],
 				{ type: "boolean" }
 			), ():void => {} );
@@ -215,7 +167,7 @@ describe( module( "Carbon/Document" ), ():void => {
 			"Returns `null` if no fragment exists in the Document.", [
 				{ name: "id", type: "string" },
 			],
-			{ type: "T & Carbon.Fragment.Class" }
+			{ type: "T & CarbonLDP.Fragment" }
 		), ():void => {} );
 
 		it( hasMethod(
@@ -226,14 +178,14 @@ describe( module( "Carbon/Document" ), ():void => {
 			"Returns `null` if no fragment exists in the Document.", [
 				{ name: "id", type: "string" },
 			],
-			{ type: "T & Carbon.Fragment.Class" }
+			{ type: "T & CarbonLDP.Fragment" }
 		), ():void => {} );
 
 		it( hasMethod(
 			OBLIGATORY,
 			"getFragments",
 			"Returns an array with all the fragments in the Document.",
-			{ type: "Carbon.Fragment.Class[]" }
+			{ type: "CarbonLDP.Fragment[]" }
 		), ():void => {} );
 
 		describe( method(
@@ -243,33 +195,33 @@ describe( module( "Carbon/Document" ), ():void => {
 
 			it( hasSignature(
 				[ "T" ],
-				"Creates a `Carbon.NamedFragment.Class` from the object provided and the slug specified.\n" +
-				"If the slug has the form of a BlankNode ID, a `Carbon.Fragment.Class` is created instead.", [
+				"Creates a `CarbonLDP.NamedFragment` from the object provided and the slug specified.\n" +
+				"If the slug has the form of a BlankNode ID, a `CarbonLDP.Fragment` is created instead.", [
 					{ name: "object", type: "T" },
 					{ name: "slug", type: "string" },
 				],
-				{ type: "T & Carbon.Fragment.Class" }
+				{ type: "T & CarbonLDP.Fragment" }
 			), ():void => {} );
 
 			it( hasSignature(
 				[ "T" ],
-				"Creates a `Carbon.Fragment.Class` from the object provided, since no slug is specified.", [
+				"Creates a `CarbonLDP.Fragment` from the object provided, since no slug is specified.", [
 					{ name: "object", type: "object" },
 				],
-				{ type: "T & Carbon.Fragment.Class" }
+				{ type: "T & CarbonLDP.Fragment" }
 			), ():void => {} );
 
 			it( hasSignature(
-				"Creates an empty `Carbon.NamedFragment.Class` with the slug specified.\n" +
-				"If the slug has the form of a BlankNode ID, a `Carbon.Fragment.Class` is created instead.", [
+				"Creates an empty `CarbonLDP.NamedFragment` with the slug specified.\n" +
+				"If the slug has the form of a BlankNode ID, a `CarbonLDP.Fragment` is created instead.", [
 					{ name: "slug", type: "string" },
 				],
-				{ type: "Carbon.Fragment.Class" }
+				{ type: "CarbonLDP.Fragment" }
 			), ():void => {} );
 
 			it( hasSignature(
-				"Creates an empty `Carbon.Fragment.Class`, since no slug is provided.",
-				{ type: "Carbon.Fragment.Class" }
+				"Creates an empty `CarbonLDP.Fragment`, since no slug is provided.",
+				{ type: "CarbonLDP.Fragment" }
 			), ():void => {} );
 
 		} );
@@ -280,21 +232,21 @@ describe( module( "Carbon/Document" ), ():void => {
 		), ():void => {
 
 			it( hasSignature(
-				"Creates a `Carbon.NamedFragment.Class` with the slug provided.\n" +
+				"Creates a `CarbonLDP.NamedFragment` with the slug provided.\n" +
 				"If the slug has the form of a BlankNode ID, an Error is thrown.", [
 					{ name: "slug", type: "string" },
 				],
-				{ type: "Carbon.NamedFragment.Class" }
+				{ type: "CarbonLDP.NamedFragment" }
 			), ():void => {} );
 
 			it( hasSignature(
 				[ "T" ],
-				"Creates a `Carbon.NamedFragment.Class` from the object provided and the slug specified.\n" +
+				"Creates a `CarbonLDP.NamedFragment` from the object provided and the slug specified.\n" +
 				"If the slug has the form of a BlankNode ID, an Error is thrown.", [
 					{ name: "object", type: "T" },
 					{ name: "slug", type: "string" },
 				],
-				{ type: "T & Carbon.NamedFragment.Class" }
+				{ type: "T & CarbonLDP.NamedFragment" }
 			), ():void => {} );
 
 		} );
@@ -305,8 +257,8 @@ describe( module( "Carbon/Document" ), ():void => {
 		), ():void => {
 
 			it( hasSignature(
-				"Remove the fragment referenced by the `Carbon.Fragment.Class` provided from the Document.", [
-					{ name: "fragment", type: "Carbon.Fragment.Class" },
+				"Remove the fragment referenced by the `CarbonLDP.Fragment` provided from the Document.", [
+					{ name: "fragment", type: "CarbonLDP.Fragment" },
 				]
 			), ():void => {} );
 
@@ -324,8 +276,8 @@ describe( module( "Carbon/Document" ), ():void => {
 		), ():void => {
 
 			it( hasSignature(
-				"Remove the maned fragment referenced by the `Carbon.NamedFragment.Class` provided from the Document.", [
-					{ name: "fragment", type: "Carbon.NamedFragment.Class" },
+				"Remove the maned fragment referenced by the `CarbonLDP.NamedFragment` provided from the Document.", [
+					{ name: "fragment", type: "CarbonLDP.NamedFragment" },
 				]
 			), ():void => {} );
 
@@ -343,1456 +295,1590 @@ describe( module( "Carbon/Document" ), ():void => {
 		), ():void => {
 
 			it( hasSignature(
-				"Returns a JSON string from the Document using an ObjectSchema and a JSONLDConverter.", [
-					{ name: "objectSchemaResolver", type: "Carbon.ObjectSchema.Resolver" },
-					{ name: "jsonLDConverter", type: "Carbon.JSONLDConverter.Class" },
+				"Returns a JSON string from the Document using the ObjectSchema and then JSONLDConverter if provided.", [
+					{ name: "objectSchemaResolver", type: "CarbonLDP.ObjectSchemaResolver", optional: true },
+					{ name: "jsonLDConverter", type: "CarbonLDP.JSONLDConverter.Class", optional: true },
 				],
-				{ type: "string" }
-			), ():void => {} );
-
-			it( hasSignature(
-				"Returns a JSON string from the Document using an ObjectSchema", [
-					{ name: "objectSchemaResolver", type: "Carbon.ObjectSchema.Resolver" },
-				],
-				{ type: "string" }
-			), ():void => {} );
-
-			it( hasSignature(
-				"Returns a JSON string from the Document using the default ObjectSchema.",
-				{ type: "string" }
+				{ type: "CarbonLDP.RDF.RDFDocument" }
 			), ():void => {} );
 
 		} );
 
 	} );
 
-	it( hasDefaultExport( "Carbon.Document.Class" ), ():void => {
-		let defaultExport:DefaultExport = <any> {};
-		let defaultTarget:Document.Class;
-
-		defaultTarget = defaultExport;
-		expect( defaultTarget ).toEqual( jasmine.any( Object ) );
-	} );
-
-	describe( clazz(
-		"Carbon.Document.Factory",
-		"Factory class for `Carbon.Document.Class` objects."
+	describe( interfaze(
+		"CarbonLDP.DocumentFactory",
+		"Interface with the factory, decorate and utils for `CarbonLDP.Document` objects."
 	), ():void => {
 
-		it( isDefined(), ():void => {
-			expect( Document.Factory ).toBeDefined();
-			expect( Utils.isFunction( Document.Factory ) ).toBe( true );
-		} );
+		it( extendsClass( "CarbonLDP.ModelFactory<CarbonLDP.Document>" ), ():void => {} );
+		it( extendsClass( "CarbonLDP.ModelDecorator<CarbonLDP.Document>" ), ():void => {} );
 
-		it( hasMethod(
-			STATIC,
-			"hasClassProperties",
-			"Returns true if the object provided has the properties and methods of a `Carbon.Document.Class` object.", [
-				{ name: "documentResource", type: "Object" },
-			],
-			{ type: "boolean" }
-		), ():void => {
-			expect( Document.Factory.hasClassProperties ).toBeDefined();
-			expect( Utils.isFunction( Document.Factory.hasClassProperties ) ).toBe( true );
+	} );
 
-			let resource:any = undefined;
-			expect( Document.Factory.hasClassProperties( resource ) ).toBe( false );
+	describe( property(
+		STATIC,
+		"Document",
+		"CarbonLDP.DocumentFactory",
+		"Constant that implements the `CarbonLDP.DocumentFactory` interface."
+	), ():void => {
 
-			resource = {
-				hasMemberRelation: null,
-				isMemberOfRelation: null,
-				defaultInteractionModel: null,
+		describe( "Document.TYPE", ():void => {
 
-				_fragmentsIndex: null,
-				_normalize: ():void => {},
-				_removeFragment: ():void => {},
-				hasFragment: ():void => {},
-				getFragment: ():void => {},
-				getNamedFragment: ():void => {},
-				getFragments: ():void => {},
-				createFragment: ():void => {},
-				createNamedFragment: ():void => {},
-				removeNamedFragment: ():void => {},
-				toJSON: ():void => {},
-			};
-			expect( Document.Factory.hasClassProperties( resource ) ).toBe( true );
+			it( "should exists", ():void => {
+				expect( Document.TYPE ).toBeDefined();
+				expect( Document.TYPE ).toEqual( jasmine.any( String ) );
+			} );
 
-			delete resource.hasMemberRelation;
-			expect( Document.Factory.hasClassProperties( resource ) ).toBe( true );
-			resource.hasMemberRelation = null;
-
-			delete resource.isMemberOfRelation;
-			expect( Document.Factory.hasClassProperties( resource ) ).toBe( true );
-			resource.isMemberOfRelation = null;
-
-			delete resource.defaultInteractionModel;
-			expect( Document.Factory.hasClassProperties( resource ) ).toBe( true );
-			resource.defaultInteractionModel = null;
-
-			delete resource._fragmentsIndex;
-			expect( Document.Factory.hasClassProperties( resource ) ).toBe( false );
-			resource._fragmentsIndex = null;
-
-			delete resource._normalize;
-			expect( Document.Factory.hasClassProperties( resource ) ).toBe( false );
-			resource._normalize = ():void => {};
-
-			delete resource._removeFragment;
-			expect( Document.Factory.hasClassProperties( resource ) ).toBe( false );
-			resource._removeFragment = ():void => {};
-
-			delete resource.hasFragment;
-			expect( Document.Factory.hasClassProperties( resource ) ).toBe( false );
-			resource.hasFragment = ():void => {};
-
-			delete resource.getFragment;
-			expect( Document.Factory.hasClassProperties( resource ) ).toBe( false );
-			resource.getFragment = ():void => {};
-
-			delete resource.getNamedFragment;
-			expect( Document.Factory.hasClassProperties( resource ) ).toBe( false );
-			resource.getNamedFragment = ():void => {};
-
-			delete resource.getFragments;
-			expect( Document.Factory.hasClassProperties( resource ) ).toBe( false );
-			resource.getFragments = ():void => {};
-
-			delete resource.createFragment;
-			expect( Document.Factory.hasClassProperties( resource ) ).toBe( false );
-			resource.createFragment = ():void => {};
-
-			delete resource.createNamedFragment;
-			expect( Document.Factory.hasClassProperties( resource ) ).toBe( false );
-			resource.createNamedFragment = ():void => {};
-
-			delete resource.removeNamedFragment;
-			expect( Document.Factory.hasClassProperties( resource ) ).toBe( false );
-			resource.removeNamedFragment = ():void => {};
-
-			delete resource.toJSON;
-			expect( Document.Factory.hasClassProperties( resource ) ).toBe( false );
-			resource.toJSON = ():void => {};
-		} );
-
-		it( hasMethod(
-			STATIC,
-			"is",
-			"Returns true if the object provided is considered a `Carbon.Document.Class` object.", [
-				{ name: "object", type: "object" },
-			],
-			{ type: "boolean" }
-		), ():void => {
-			expect( Document.Factory.hasClassProperties ).toBeDefined();
-			expect( Utils.isFunction( Document.Factory.hasClassProperties ) ).toBe( true );
-
-			let resource:Object = undefined;
-			expect( Document.Factory.is( resource ) ).toBe( false );
-			resource = {};
-			expect( Document.Factory.is( resource ) ).toBe( false );
-			resource[ "_fragmentsIndex" ] = null;
-			expect( Document.Factory.is( resource ) ).toBe( false );
-			resource[ "_normalize" ] = ():void => {};
-			expect( Document.Factory.is( resource ) ).toBe( false );
-			resource[ "_removeFragment" ] = ():void => {};
-			expect( Document.Factory.is( resource ) ).toBe( false );
-			resource[ "hasFragment" ] = ():void => {};
-			expect( Document.Factory.is( resource ) ).toBe( false );
-			resource[ "getFragment" ] = ():void => {};
-			expect( Document.Factory.is( resource ) ).toBe( false );
-			resource[ "getNamedFragment" ] = ():void => {};
-			expect( Document.Factory.is( resource ) ).toBe( false );
-			resource[ "getFragments" ] = ():void => {};
-			expect( Document.Factory.is( resource ) ).toBe( false );
-			resource[ "createFragment" ] = ():void => {};
-			expect( Document.Factory.is( resource ) ).toBe( false );
-			resource[ "createNamedFragment" ] = ():void => {};
-			expect( Document.Factory.is( resource ) ).toBe( false );
-			resource[ "removeNamedFragment" ] = ():void => {};
-			expect( Document.Factory.is( resource ) ).toBe( false );
-			resource[ "toJSON" ] = ():void => {};
-			expect( Document.Factory.is( resource ) ).toBe( false );
-
-			let document:Resource.Class = Resource.Factory.createFrom( resource );
-			expect( Document.Factory.is( document ) ).toBe( true );
-		} );
-
-		describe( method(
-			STATIC,
-			"create"
-		), ():void => {
-
-			it( hasSignature(
-				"Creates a `Carbon.Document.Class` object.",
-				{ type: "Carbon.Document.Class" }
-			), ():void => {
-				expect( Document.Factory.create ).toBeDefined();
-				expect( Utils.isFunction( Document.Factory.create ) ).toBe( true );
-
-				let document:Document.Class;
-				document = Document.Factory.create();
-				expect( document.id ).toBe( "" );
-				expect( Document.Factory.hasClassProperties( document ) ).toBe( true );
+			it( "should be `c:Document`", ():void => {
+				expect( Document.TYPE ).toBe( C.Document );
 			} );
 
 		} );
 
+		describe( "Document.SCHEMA", ():void => {
 
-		describe( method(
-			STATIC,
-			"createFrom"
-		), ():void => {
+			it( "should exists", ():void => {
+				expect( Document.SCHEMA ).toBeDefined();
+				expect( Document.SCHEMA ).toEqual( jasmine.any( Object ) );
+			} );
 
-			it( hasSignature(
-				[ "T extends Object" ],
-				"Creates a `Carbon.Document.Class` object from the object provided.", [
-					{ name: "object", type: "T", description: "Object to be converted into a Document." },
-				],
-				{ type: "T & Carbon.Document.Class" }
-			), ():void => {
-				expect( Document.Factory.createFrom ).toBeDefined();
-				expect( Utils.isFunction( Document.Factory.createFrom ) ).toBe( true );
+			it( "should have `contains` definition", ():void => {
+				expect( Document.SCHEMA[ "contains" ] ).toEqual( {
+					"@id": LDP.contains,
+					"@container": "@set",
+					"@type": "@id",
+				} );
+			} );
 
-				interface MyInterface {
-					myProperty?:string;
-				}
+			it( "should have `members` definition", ():void => {
+				expect( Document.SCHEMA[ "members" ] ).toEqual( {
+					"@id": LDP.member,
+					"@container": "@set",
+					"@type": "@id",
+				} );
+			} );
 
-				let document:Document.Class & MyInterface;
+			it( "should have `membershipResource` definition", ():void => {
+				expect( Document.SCHEMA[ "membershipResource" ] ).toEqual( {
+					"@id": LDP.membershipResource,
+					"@type": "@id",
+				} );
+			} );
 
-				document = Document.Factory.createFrom<MyInterface>( {} );
-				expect( Document.Factory.hasClassProperties( document ) ).toBe( true );
-				expect( document.id ).toBe( "" );
-				expect( document.myProperty ).toBeUndefined();
+			it( "should have `isMemberOfRelation` definition", ():void => {
+				expect( Document.SCHEMA[ "isMemberOfRelation" ] ).toEqual( {
+					"@id": LDP.isMemberOfRelation,
+					"@type": "@id",
+				} );
+			} );
+
+			it( "should have `hasMemberRelation` definition", ():void => {
+				expect( Document.SCHEMA[ "hasMemberRelation" ] ).toEqual( {
+					"@id": LDP.hasMemberRelation,
+					"@type": "@id",
+				} );
+			} );
+
+			it( "should have `insertContentRelation` definition", ():void => {
+				expect( Document.SCHEMA[ "insertedContentRelation" ] ).toEqual( {
+					"@id": LDP.insertedContentRelation,
+					"@type": "@id",
+				} );
+			} );
+
+			it( "should have `created` definition", ():void => {
+				expect( Document.SCHEMA[ "created" ] ).toEqual( {
+					"@id": C.created,
+					"@type": XSD.dateTime,
+				} );
+			} );
+
+			it( "should have `modified` definition", ():void => {
+				expect( Document.SCHEMA[ "modified" ] ).toEqual( {
+					"@id": C.modified,
+					"@type": XSD.dateTime,
+				} );
+			} );
+
+			it( "should have `defaultInteractionModel` definition", ():void => {
+				expect( Document.SCHEMA[ "defaultInteractionModel" ] ).toEqual( {
+					"@id": C.defaultInteractionModel,
+					"@type": "@id",
+				} );
+			} );
+
+			it( "should have `accessPoints` definition", ():void => {
+				expect( Document.SCHEMA[ "accessPoints" ] ).toEqual( {
+					"@id": C.accessPoint,
+					"@type": "@id",
+					"@container": "@set",
+				} );
+			} );
+
+		} );
+
+		describe( "Document.is", ():void => {
+
+			it( "should exists", ():void => {
+				expect( Document.is ).toBeDefined();
+				expect( Document.is ).toEqual( jasmine.any( Function ) );
+			} );
+
+			it( "should return false when `undefined`", ():void => {
+				expect( Document.is( void 0 ) ).toBe( false );
+			} );
+
+			it( "should return false when `null`", ():void => {
+				expect( Document.is( null ) ).toBe( false );
+			} );
+
+			it( "should assert that is a `Resource`", ():void => {
+				const spy:jasmine.Spy = spyOn( Resource, "is" );
+
+				const target:object = { the: "object" };
+				Document.is( target );
+
+				expect( spy ).toHaveBeenCalledWith( target );
+			} );
+
+			it( "should assert that is decorated", ():void => {
+				spyOn( Resource, "is" ).and.returnValue( true );
+				const spy:jasmine.Spy = spyOn( Document, "isDecorated" );
+
+				const target:object = { the: "object" };
+				Document.is( target );
+
+				expect( spy ).toHaveBeenCalledWith( target );
+			} );
+
+			it( "should assert that is a document", ():void => {
+				spyOn( Resource, "is" ).and.returnValue( true );
+				spyOn( Document, "isDecorated" ).and.returnValue( true );
+
+				expect( Document.is( {} ) ).toBe( true );
+			} );
+
+		} );
+
+		describe( "Document.isDecorated", ():void => {
+
+			it( "should exists", ():void => {
+				expect( Document.isDecorated ).toBeDefined();
+				expect( Document.isDecorated ).toEqual( jasmine.any( Function ) );
+			} );
+
+			it( "should return false when `undefined`", ():void => {
+				expect( Document.isDecorated( void 0 ) ).toBe( false );
+			} );
+
+			it( "should return false when `null`", ():void => {
+				expect( Document.isDecorated( null ) ).toBe( false );
+			} );
+
+			it( "should return true when all properties", ():void => {
+				const target:DocumentProperties = mockDocumentProperties();
+				expect( Document.isDecorated( target ) ).toBe( true );
+			} );
+
+			it( "should return true when no `hasMemberRelation`", ():void => {
+				const target:DocumentProperties = mockDocumentProperties();
+				delete target.hasMemberRelation;
+				expect( Document.isDecorated( target ) ).toBe( true );
+			} );
+
+			it( "should return true when no `isMemberOfRelation`", ():void => {
+				const target:DocumentProperties = mockDocumentProperties();
+				delete target.isMemberOfRelation;
+				expect( Document.isDecorated( target ) ).toBe( true );
+			} );
+
+			it( "should return true when no `defaultInteractionModel`", ():void => {
+				const target:DocumentProperties = mockDocumentProperties();
+				delete target.defaultInteractionModel;
+				expect( Document.isDecorated( target ) ).toBe( true );
+			} );
+
+			it( "should return false when no `_fragmentsIndex`", ():void => {
+				const target:DocumentProperties = mockDocumentProperties();
+				delete target._fragmentsIndex;
+				expect( Document.isDecorated( target ) ).toBe( false );
+			} );
+
+			it( "should return false when no `_normalize`", ():void => {
+				const target:DocumentProperties = mockDocumentProperties();
+				delete target._normalize;
+				expect( Document.isDecorated( target ) ).toBe( false );
+			} );
+
+			it( "should return false when no `_removeFragment`", ():void => {
+				const target:DocumentProperties = mockDocumentProperties();
+				delete target._removeFragment;
+				expect( Document.isDecorated( target ) ).toBe( false );
+			} );
+
+			it( "should return false when no `hasPointer`", ():void => {
+				const target:DocumentProperties = mockDocumentProperties();
+				delete target.hasPointer;
+				expect( Document.isDecorated( target ) ).toBe( false );
+			} );
+
+			it( "should return false when no `getPointer`", ():void => {
+				const target:DocumentProperties = mockDocumentProperties();
+				delete target.getPointer;
+				expect( Document.isDecorated( target ) ).toBe( false );
+			} );
+
+			it( "should return false when no `inScope`", ():void => {
+				const target:DocumentProperties = mockDocumentProperties();
+				delete target.inScope;
+				expect( Document.isDecorated( target ) ).toBe( false );
+			} );
+
+			it( "should return false when no `hasFragment`", ():void => {
+				const target:DocumentProperties = mockDocumentProperties();
+				delete target.hasFragment;
+				expect( Document.isDecorated( target ) ).toBe( false );
+			} );
+
+			it( "should return false when no `getFragment`", ():void => {
+				const target:DocumentProperties = mockDocumentProperties();
+				delete target.getFragment;
+				expect( Document.isDecorated( target ) ).toBe( false );
+			} );
+
+			it( "should return false when no `getNamedFragment`", ():void => {
+				const target:DocumentProperties = mockDocumentProperties();
+				delete target.getNamedFragment;
+				expect( Document.isDecorated( target ) ).toBe( false );
+			} );
+
+			it( "should return false when no `getFragments`", ():void => {
+				const target:DocumentProperties = mockDocumentProperties();
+				delete target.getFragments;
+				expect( Document.isDecorated( target ) ).toBe( false );
+			} );
+
+			it( "should return false when no `createFragment`", ():void => {
+				const target:DocumentProperties = mockDocumentProperties();
+				delete target.createFragment;
+				expect( Document.isDecorated( target ) ).toBe( false );
+			} );
+
+			it( "should return false when no `createNamedFragment`", ():void => {
+				const target:DocumentProperties = mockDocumentProperties();
+				delete target.createNamedFragment;
+				expect( Document.isDecorated( target ) ).toBe( false );
+			} );
+
+			it( "should return false when no `removeNamedFragment`", ():void => {
+				const target:DocumentProperties = mockDocumentProperties();
+				delete target.removeNamedFragment;
+				expect( Document.isDecorated( target ) ).toBe( false );
+			} );
+
+			it( "should return false when no `toJSON`", ():void => {
+				const target:DocumentProperties = mockDocumentProperties();
+				delete target.toJSON;
+				expect( Document.isDecorated( target ) ).toBe( false );
+			} );
+
+		} );
+
+		describe( "Document.create", ():void => {
+
+			it( "should exists", ():void => {
+				expect( Document.create ).toBeDefined();
+				expect( Document.create ).toEqual( jasmine.any( Function ) );
+			} );
+
+			it( "should return a `Document`", ():void => {
+				const target:Document = Document.create();
+				expect( Document.is( target ) ).toBe( true );
+			} );
+
+		} );
+
+		describe( "Document.createFrom", ():void => {
+
+			it( "should exists", ():void => {
+				expect( Document.createFrom ).toBeDefined();
+				expect( Document.createFrom ).toEqual( jasmine.any( Function ) );
+			} );
+
+			it( "should create a `Document`", ():void => {
+				const target:Document = Document.createFrom( {} );
+				expect( Document.is( target ) ).toBe( true );
+			} );
+
+			it( "should convert nested objects to `Fragment`s", ():void => {
+				type TargetDocument = Document & { object:object };
+				const target:TargetDocument = Document.createFrom( { object: {} } );
+
+				// TODO use `isFragment` instead
+				expect( Resource.is( target.object ) ).toBe( true );
+			} );
+
+		} );
+
+		describe( "Document.decorate", ():void => {
+
+			it( "should exists", ():void => {
+				expect( Document.decorate ).toBeDefined();
+				expect( Document.decorate ).toEqual( jasmine.any( Function ) );
+			} );
+
+			it( "should add the `Resource` properties", ():void => {
+				const target:Resource = Document.decorate( {} );
+				expect( Resource.isDecorated( target ) ).toBe( true );
+			} );
+
+			it( "should work with the `isDecorated` function", ():void => {
+				const target:Document = Document.decorate( {} );
+				expect( Document.isDecorated( target ) ).toBe( true );
+			} );
+
+			it( "should add en empty Map in `_fragmentsIndex`", ():void => {
+				const target:Document = Document.decorate( {} );
+				expect( target._fragmentsIndex ).toEqual( jasmine.any( Map ) );
+			} );
+
+		} );
+
+		describe( "Document instance", ():void => {
+
+			describe( "Document.hasPointer", ():void => {
+
+				it( "should exists", ():void => {
+					const document:Document = createMockDocument();
+
+					expect( document.hasPointer ).toBeDefined();
+					expect( document.hasPointer ).toEqual( jasmine.any( Function ) );
+				} );
+
+				it( "should return true when IRI of the document", ():void => {
+					const document:Document = createMockDocument();
+
+					expect( document.hasPointer( "https://example.com/document/" ) ).toBe( true );
+				} );
+
+				it( "should return false when relative IRIs", ():void => {
+					const document:Document = createMockDocument();
+
+					expect( document.hasPointer( "document/" ) ).toBe( false );
+					expect( document.hasPointer( "another/document/" ) ).toBe( false );
+				} );
+
+				it( "should return false when another absolute IRIs", ():void => {
+					const document:Document = createMockDocument();
+
+					expect( document.hasPointer( "https://example.com/another/document/" ) ).toBe( false );
+				} );
+
+				it( "should return false when relative fragment label and not exits", ():void => {
+					const document:Document = createMockDocument();
+
+					expect( document.hasPointer( "#fragment" ) ).toBe( false );
+				} );
+
+				it( "should return true when relative fragment label and exits", ():void => {
+					const document:Document = createMockDocument();
+					document._fragmentsIndex.set( "fragment", {} as any );
+
+					expect( document.hasPointer( "#fragment" ) ).toBe( true );
+				} );
+
+				it( "should return false when absolute fragment label and not exits", ():void => {
+					const document:Document = createMockDocument();
+
+					expect( document.hasPointer( "https://example.com/document/#fragment" ) ).toBe( false );
+				} );
+
+				it( "should return true when absolute fragment label and exits", ():void => {
+					const document:Document = createMockDocument();
+					document._fragmentsIndex.set( "fragment", {} as any );
+
+					expect( document.hasPointer( "https://example.com/document/#fragment" ) ).toBe( true );
+				} );
+
+				it( "should return false when blank node label and not exists", ():void => {
+					const document:Document = createMockDocument();
+
+					expect( document.hasPointer( "_:1" ) ).toBe( false );
+				} );
+
+				it( "should be true when blank node label and exits", ():void => {
+					const document:Document = createMockDocument();
+					document._fragmentsIndex.set( "_:1", {} as any );
+
+					expect( document.hasPointer( "_:1" ) ).toBe( true );
+				} );
+
+			} );
+
+			describe( "Document.getPointer", ():void => {
+
+				it( "should exists", ():void => {
+					const document:Document = createMockDocument();
+
+					expect( document.getPointer ).toBeDefined();
+					expect( document.getPointer ).toEqual( jasmine.any( Function ) );
+				} );
+
+				it( "should return the document when IRI of the document", ():void => {
+					const document:Document = createMockDocument();
+
+					const pointer:Pointer = document.getPointer( "https://example.com/document/" );
+					expect( pointer ).toBe( document );
+				} );
+
+				it( "should return null when relative IRIs", ():void => {
+					const document:Document = createMockDocument();
+
+					expect( document.getPointer( "document/" ) ).toBeNull();
+					expect( document.getPointer( "another/document/" ) ).toBeNull();
+				} );
+
+				it( "should return null when another absolute IRIs", ():void => {
+					const document:Document = createMockDocument();
+
+					expect( document.getPointer( "https://example.com/another/document/" ) ).toBeNull();
+				} );
+
+				it( "should create `NamedFragment` when relative fragment label and not exits", ():void => {
+					const document:Document = createMockDocument();
+					const pointer:Pointer = document.getPointer( "#fragment" );
+
+					expect( NamedFragment.is( pointer ) ).toBe( true );
+					expect( document._fragmentsIndex ).toEqual( new Map( [
+						[ "fragment", pointer as NamedFragment ],
+					] ) );
+				} );
+
+				it( "should return fragment when relative fragment label and exits", ():void => {
+					const document:Document = createMockDocument();
+					const fragment:Fragment = {} as any;
+					document._fragmentsIndex.set( "fragment", fragment );
+
+					expect( document.getPointer( "#fragment" ) ).toBe( fragment );
+				} );
+
+				it( "should create `NamedFragment` when absolute fragment label and not exits", ():void => {
+					const document:Document = createMockDocument();
+					const pointer:Pointer = document.getPointer( "https://example.com/document/#fragment" );
+
+					expect( NamedFragment.is( pointer ) ).toBe( true );
+					expect( document._fragmentsIndex ).toEqual( new Map( [
+						[ "fragment", pointer as NamedFragment ],
+					] ) );
+				} );
+
+				it( "should return fragment when absolute fragment label and exits", ():void => {
+					const document:Document = createMockDocument();
+					const fragment:Fragment = {} as any;
+					document._fragmentsIndex.set( "fragment", fragment );
+
+					expect( document.getPointer( "https://example.com/document/#fragment" ) ).toBe( fragment );
+				} );
+
+				it( "should create `BlankNode` when blank node label and not exists", ():void => {
+					const document:Document = createMockDocument();
+					const pointer:Pointer = document.getPointer( "_:1" );
+
+					expect( BlankNode.is( pointer ) ).toBe( true );
+					expect( document._fragmentsIndex ).toEqual( new Map( [
+						[ "_:1", pointer as BlankNode ],
+					] ) );
+				} );
+
+				it( "should return true when blank node label and exits", ():void => {
+					const document:Document = createMockDocument();
+					const fragment:Fragment = {} as any;
+					document._fragmentsIndex.set( "_:1", fragment );
+
+					expect( document.getPointer( "_:1" ) ).toBe( fragment );
+				} );
+
+			} );
 
 
-				document = Document.Factory.createFrom<MyInterface>( { myProperty: "a property" } );
-				expect( Document.Factory.hasClassProperties( document ) ).toBe( true );
-				expect( document.id ).toBe( "" );
-				expect( document.myProperty ).toBe( "a property" );
+			describe( "Document.inScope", ():void => {
 
-				// Conversion of simple nested objects to BlankNodes and NamedFragments
-				(() => {
-					let object:any = {
-						myProperty: "THE property",
-						myBlankNode: {
-							myProperty: "A BlankNode property",
-						},
-						myNamedFragment: {
-							slug: "namedFragment",
-							myProperty: "A NamedFragment property",
-						},
-					};
-					document = Document.Factory.createFrom<MyInterface>( object );
-					expect( object ).toBe( document );
-					expect( document.id ).toBe( "" );
-					expect( document.myProperty ).toBe( "THE property" );
-					expect( document.hasFragment( "namedFragment" ) ).toBe( true );
+				it( "should exists", ():void => {
+					const document:Document = createMockDocument();
 
-					let fragments:Fragment.Class[] = document.getFragments();
-					expect( fragments.length ).toBe( 2 );
+					expect( document.inScope ).toBeDefined();
+					expect( document.inScope ).toEqual( jasmine.any( Function ) );
+				} );
 
-					let theBNode:Fragment.Class & MyInterface,
-						theNFragment:NamedFragment.Class & MyInterface;
+				describe( "When string IRI", ():void => {
 
-					theBNode = <Fragment.Class & MyInterface> fragments[ 0 ];
-					theNFragment = <NamedFragment.Class & MyInterface> fragments[ 1 ];
+					it( "should return true when IRI of the document", ():void => {
+						const document:Document = createMockDocument();
 
-					expect( URI.Util.isBNodeID( theBNode.id ) ).toBe( true );
-					expect( theBNode.myProperty ).toBe( "A BlankNode property" );
-					expect( document[ "myBlankNode" ] ).toBe( theBNode );
-					expect( object[ "myBlankNode" ] ).toBe( document[ "myBlankNode" ] );
+						expect( document.inScope( "https://example.com/document/" ) ).toBe( true );
+					} );
 
-					expect( URI.Util.getFragment( theNFragment.id ) ).toEqual( theNFragment.slug );
-					expect( theNFragment.slug ).toBe( "namedFragment" );
-					expect( theNFragment.myProperty ).toBe( "A NamedFragment property" );
-					expect( document[ "myNamedFragment" ] ).toBe( theNFragment );
-					expect( object[ "myNamedFragment" ] ).toBe( document[ "myNamedFragment" ] );
-				})();
+					it( "should return false when relative IRIs", ():void => {
+						const document:Document = createMockDocument();
 
-				// Conversion double nested objects to BlankNodes and NamedFragments
-				(() => {
-					let object:any = {
-						myProperty: "THE property",
-						myBlankNode: {
-							myProperty: "A BlankNode property",
-						},
-						myNamedFragment: {
-							slug: "namedFragment",
-							myProperty: "A NamedFragment property",
-							anotherFragment: {
-								myProperty: "A nested BlankNode property",
-							},
-						},
-					};
-					document = Document.Factory.createFrom<MyInterface>( object );
-					expect( object ).toBe( document );
-					expect( document.id ).toBe( "" );
-					expect( document.myProperty ).toBe( "THE property" );
-					expect( document.hasFragment( "namedFragment" ) ).toBe( true );
+						expect( document.inScope( "document/" ) ).toBe( false );
+						expect( document.inScope( "another/document/" ) ).toBe( false );
+					} );
 
-					let fragments:Fragment.Class[] = document.getFragments();
-					expect( fragments.length ).toBe( 3 );
+					it( "should return false when another absolute IRIs", ():void => {
+						const document:Document = createMockDocument();
 
-					let theBNode:Fragment.Class & MyInterface,
-						theNestedBNode:Fragment.Class & MyInterface,
-						theNFragment:NamedFragment.Class & MyInterface;
-					theBNode = <Fragment.Class & MyInterface> fragments[ 0 ];
-					theNFragment = <NamedFragment.Class & MyInterface> fragments[ 1 ];
-					theNestedBNode = <Fragment.Class & MyInterface> fragments[ 2 ];
+						expect( document.inScope( "https://example.com/another/document/" ) ).toBe( false );
+					} );
 
-					expect( URI.Util.isBNodeID( theBNode.id ) ).toBe( true );
-					expect( theBNode.myProperty ).toBe( "A BlankNode property" );
-					expect( document[ "myBlankNode" ] ).toBe( theBNode );
-					expect( object[ "myBlankNode" ] ).toBe( document[ "myBlankNode" ] );
+					it( "should return true when relative fragment label", ():void => {
+						const document:Document = createMockDocument();
 
-					expect( URI.Util.getFragment( theNFragment.id ) ).toEqual( theNFragment.slug );
-					expect( theNFragment.slug ).toBe( "namedFragment" );
-					expect( theNFragment.myProperty ).toBe( "A NamedFragment property" );
-					expect( document[ "myNamedFragment" ] ).toBe( theNFragment );
-					expect( object[ "myNamedFragment" ] ).toBe( document[ "myNamedFragment" ] );
+						expect( document.inScope( "#fragment" ) ).toBe( true );
+					} );
 
-					expect( URI.Util.isBNodeID( theNestedBNode.id ) ).toBe( true );
-					expect( theNestedBNode.myProperty ).toBe( "A nested BlankNode property" );
-					expect( theNFragment[ "anotherFragment" ] ).toBe( theNestedBNode );
-					expect( object[ "anotherFragment" ] ).toBe( document[ "anotherFragment" ] );
-				})();
+					it( "should return true when absolute fragment label", ():void => {
+						const document:Document = createMockDocument();
 
-				// Conversion of a nested object with a reference to another nested object
-				(() => {
-					let fragment:any = {
-						myProperty: "A BlankNode property",
-					};
-					let object:any = {
-						myProperty: "THE property",
-						myBlankNode: fragment,
-						myNamedFragment: {
-							slug: "namedFragment",
-							myProperty: "A NamedFragment property",
-							sameBlankNode: fragment,
-						},
-					};
-					document = Document.Factory.createFrom<MyInterface>( object );
-					expect( object ).toBe( document );
-					expect( document.id ).toBe( "" );
-					expect( document.myProperty ).toBe( "THE property" );
-					expect( document.hasFragment( "namedFragment" ) ).toBe( true );
+						expect( document.inScope( "https://example.com/document/#fragment" ) ).toBe( true );
+					} );
 
-					let fragments:Fragment.Class[] = document.getFragments();
-					expect( fragments.length ).toBe( 2 );
+					it( "should return false when another absolute fragment label", ():void => {
+						const document:Document = createMockDocument();
 
-					let theBNode:Fragment.Class & MyInterface,
-						theNFragment:NamedFragment.Class & MyInterface;
-					theBNode = <Fragment.Class & MyInterface> fragments[ 0 ];
-					theNFragment = <NamedFragment.Class & MyInterface> fragments[ 1 ];
+						expect( document.inScope( "https://example.com/another/document/#fragment" ) ).toBe( false );
+					} );
 
-					expect( URI.Util.isBNodeID( theBNode.id ) ).toBe( true );
-					expect( theBNode.myProperty ).toBe( "A BlankNode property" );
-					expect( document[ "myBlankNode" ] ).toBe( theBNode );
-					expect( document[ "myBlankNode" ] ).toBe( document[ "myNamedFragment" ][ "sameBlankNode" ] );
-					expect( object[ "myBlankNode" ] ).toBe( document[ "myBlankNode" ] );
+					it( "should return true when blank node label", ():void => {
+						const document:Document = createMockDocument();
 
-					expect( URI.Util.getFragment( theNFragment.id ) ).toEqual( theNFragment.slug );
-					expect( theNFragment.slug ).toBe( "namedFragment" );
-					expect( theNFragment.myProperty ).toBe( "A NamedFragment property" );
-					expect( document[ "myNamedFragment" ] ).toBe( theNFragment );
-					expect( object[ "myNamedFragment" ] ).toBe( document[ "myNamedFragment" ] );
+						expect( document.inScope( "_:1" ) ).toBe( true );
+					} );
 
-					expect( theNFragment[ "sameBlankNode" ] ).toBe( theBNode );
-					expect( object[ "myNamedFragment" ][ "sameBlankNode" ] ).toBe( document[ "myNamedFragment" ][ "sameBlankNode" ] );
-					expect( fragment ).toBe( document[ "myBlankNode" ] );
-				})();
+				} );
 
-				// If there are multiples nested objects that implies the same Fragment, the reference to the first converted is preserved adding changes from the remaining ones
-				(() => {
-					let anotherBlankNode1:any = {
-						id: "_:2",
-						myProperty: "Another BNode property",
-					};
-					let anotherBlankNode2:any = {
-						id: "_:2",
-						newProperty: "New property",
-					};
-					let object:any = {
-						id: "http://example.org/resource/",
-						myProperty: "THE property",
-						myNamedFragment: {
-							id: "http://example.org/resource/#namedFragment",
-							myProperty: "A NamedFragment property",
-							anotherBlankNode: anotherBlankNode1,
-						},
-						myBlankNode: {
-							id: "_:1",
-							myProperty: "A BNode property",
-							myNamedFragment: {
-								slug: "namedFragment",
-								myProperty: "A replace of the NamedFragment property",
-								anotherBlankNode: anotherBlankNode2,
-							},
-						},
-					};
-					document = Document.Factory.createFrom<MyInterface>( object );
-					expect( object ).toBe( document );
-					expect( document.id ).toBe( "http://example.org/resource/" );
-					expect( document.myProperty ).toBe( "THE property" );
-					expect( document.hasFragment( "namedFragment" ) ).toBe( true );
+				describe( "When Pointer", ():void => {
 
-					let fragments:Fragment.Class[] = document.getFragments();
-					expect( fragments.length ).toBe( 3 );
+					it( "should return true when IRI of the document", ():void => {
+						const document:Document = createMockDocument();
 
-					let theBNode:Fragment.Class & MyInterface,
-						anotherBNode:Fragment.Class & MyInterface,
-						theNFragment:NamedFragment.Class & MyInterface;
-					theNFragment = <NamedFragment.Class & MyInterface> fragments[ 0 ];
-					anotherBNode = <Fragment.Class & MyInterface> fragments[ 1 ];
-					theBNode = <Fragment.Class & MyInterface> fragments[ 2 ];
+						expect( document.inScope( Pointer.create( "https://example.com/document/" ) ) ).toBe( true );
+					} );
 
-					expect( URI.Util.getDocumentURI( theNFragment.id ) ).toEqual( "http://example.org/resource/" );
-					expect( URI.Util.getFragment( theNFragment.id ) ).toEqual( theNFragment.slug );
-					expect( theNFragment.slug ).toBe( "namedFragment" );
-					expect( theNFragment.myProperty ).toBe( "A replace of the NamedFragment property" );
-					expect( theNFragment[ "anotherBlankNode" ] ).toBe( anotherBNode );
-					expect( document[ "myNamedFragment" ] ).toBe( theNFragment );
-					expect( object[ "myNamedFragment" ] ).toBe( document[ "myNamedFragment" ] );
-					expect( object[ "myNamedFragment" ][ "anotherBlankNode" ] ).toBe( document[ "myNamedFragment" ][ "anotherBlankNode" ] );
+					it( "should return false when relative IRIs", ():void => {
+						const document:Document = createMockDocument();
 
-					expect( URI.Util.isBNodeID( theBNode.id ) ).toBe( true );
-					expect( theBNode.id ).toBe( "_:1" );
-					expect( theBNode.myProperty ).toBe( "A BNode property" );
-					expect( document[ "myBlankNode" ] ).toBe( theBNode );
-					expect( object[ "myBlankNode" ] ).toBe( document[ "myBlankNode" ] );
+						expect( document.inScope( Pointer.create( "document/" ) ) ).toBe( false );
+						expect( document.inScope( Pointer.create( "another/document/" ) ) ).toBe( false );
+					} );
 
-					expect( URI.Util.isBNodeID( anotherBNode.id ) ).toBe( true );
-					expect( anotherBNode.id ).toBe( "_:2" );
-					expect( anotherBNode.myProperty ).toBe( "Another BNode property" );
-					expect( anotherBNode[ "newProperty" ] ).toBe( "New property" );
+					it( "should return false when another absolute IRIs", ():void => {
+						const document:Document = createMockDocument();
 
-					expect( document[ "myNamedFragment" ][ "anotherBlankNode" ] ).toBe( anotherBlankNode1 );
-					expect( document[ "myNamedFragment" ][ "anotherBlankNode" ] ).toBe( document[ "myBlankNode" ][ "myNamedFragment" ][ "anotherBlankNode" ] );
-					expect( document[ "myBlankNode" ][ "myNamedFragment" ][ "anotherBlankNode" ] ).not.toBe( anotherBlankNode2 );
-					expect( document[ "myBlankNode" ][ "myNamedFragment" ][ "anotherBlankNode" ] ).toBe( anotherBlankNode1 );
-				})();
+						expect( document.inScope( Pointer.create( "https://example.com/another/document/" ) ) ).toBe( false );
+					} );
 
-				// If a nested object is a fragment that refers outside the scope of the current converted document, it will not be added as a fragment of the document
-				(() => {
-					let object:any = {
-						id: "http://example.org/resource/",
-						myProperty: "THE property",
-						myNamedFragment: {
-							id: "http://example.org/no-parent-resource/#namedFragment",
-							myProperty: "A NamedFragment property",
-							anotherBlankNode: {
-								id: "_:2",
-								myProperty: "Another BNode property",
-							},
-						},
-					};
-					document = Document.Factory.createFrom<MyInterface>( object );
-					expect( object ).toBe( document );
-					expect( document.id ).toBe( "http://example.org/resource/" );
-					expect( document.myProperty ).toBe( "THE property" );
-					expect( document.hasFragment( "namedFragment" ) ).toBe( false );
+					it( "should return true when relative fragment label", ():void => {
+						const document:Document = createMockDocument();
 
-					let fragments:Fragment.Class[] = document.getFragments();
-					expect( Utils.isArray( fragments ) ).toBe( true );
-					expect( fragments.length ).toBe( 0 );
-					expect( object[ "myNamedFragment" ] ).toBe( document[ "myNamedFragment" ] );
-					expect( object[ "myNamedFragment" ][ "anotherBlankNode" ] ).toBe( document[ "myNamedFragment" ][ "anotherBlankNode" ] );
-				})();
+						expect( document.inScope( Pointer.create( "#fragment" ) ) ).toBe( true );
+					} );
 
-				// Nested objects from an array are also converted to fragments
-				(() => {
-					let object:any = {
-						myProperty: "The ONE property",
-						date: new Date(),
-						pointerList: [
+					it( "should return true when absolute fragment label", ():void => {
+						const document:Document = createMockDocument();
+
+						expect( document.inScope( Pointer.create( "https://example.com/document/#fragment" ) ) ).toBe( true );
+					} );
+
+					it( "should return false when another absolute fragment label", ():void => {
+						const document:Document = createMockDocument();
+
+						expect( document.inScope( Pointer.create( "https://example.com/another/document/#fragment" ) ) ).toBe( false );
+					} );
+
+					it( "should return true when blank node label", ():void => {
+						const document:Document = createMockDocument();
+
+						expect( document.inScope( Pointer.create( "_:1" ) ) ).toBe( true );
+					} );
+
+				} );
+
+			} );
+
+
+			describe( "Document.hasFragment", ():void => {
+
+				it( "should exists", ():void => {
+					const document:Document = createMockDocument();
+
+					expect( document.hasFragment ).toBeDefined();
+					expect( document.hasFragment ).toEqual( jasmine.any( Function ) );
+				} );
+
+				it( "should return false when IRI of the document", ():void => {
+					const document:Document = createMockDocument();
+
+					expect( document.hasFragment( "https://example.com/document/" ) ).toBe( false );
+				} );
+
+				it( "should return false when relative IRIs", ():void => {
+					const document:Document = createMockDocument();
+
+					expect( document.hasFragment( "document/" ) ).toBe( false );
+					expect( document.hasFragment( "another/document/" ) ).toBe( false );
+				} );
+
+				it( "should return false when another absolute IRIs", ():void => {
+					const document:Document = createMockDocument();
+
+					expect( document.hasFragment( "https://example.com/another/document/" ) ).toBe( false );
+				} );
+
+				it( "should return false when relative fragment label and not exits", ():void => {
+					const document:Document = createMockDocument();
+
+					expect( document.hasFragment( "#fragment" ) ).toBe( false );
+				} );
+
+				it( "should return true when relative fragment label and exits", ():void => {
+					const document:Document = createMockDocument();
+					document._fragmentsIndex.set( "fragment", {} as any );
+
+					expect( document.hasFragment( "#fragment" ) ).toBe( true );
+				} );
+
+				it( "should return false when absolute fragment label and not exits", ():void => {
+					const document:Document = createMockDocument();
+
+					expect( document.hasFragment( "https://example.com/document/#fragment" ) ).toBe( false );
+				} );
+
+				it( "should return true when absolute fragment label and exits", ():void => {
+					const document:Document = createMockDocument();
+					document._fragmentsIndex.set( "fragment", {} as any );
+
+					expect( document.hasFragment( "https://example.com/document/#fragment" ) ).toBe( true );
+				} );
+
+				it( "should return false when blank node label and not exists", ():void => {
+					const document:Document = createMockDocument();
+
+					expect( document.hasFragment( "_:1" ) ).toBe( false );
+				} );
+
+				it( "should be true when blank node label and exits", ():void => {
+					const document:Document = createMockDocument();
+					document._fragmentsIndex.set( "_:1", {} as any );
+
+					expect( document.hasFragment( "_:1" ) ).toBe( true );
+				} );
+
+			} );
+
+			describe( "Document.getFragment", ():void => {
+
+				it( "should exists", ():void => {
+					const document:Document = createMockDocument();
+
+					expect( document.getFragment ).toBeDefined();
+					expect( document.getFragment ).toEqual( jasmine.any( Function ) );
+				} );
+
+				it( "should throw error when IRI of the document", ():void => {
+					const document:Document = createMockDocument();
+
+					expect( () => document.getFragment( "https://example.com/document/" ) ).toThrowError( IllegalArgumentError, "The id is out of scope." );
+				} );
+
+				it( "should throw error when another absolute IRIs", ():void => {
+					const document:Document = createMockDocument();
+
+					expect( () => document.getFragment( "https://example.com/another/document/" ) ).toThrowError( IllegalArgumentError, "The id is out of scope." );
+				} );
+
+				it( "should return null when relative fragment label and not exits", ():void => {
+					const document:Document = createMockDocument();
+
+					expect( document.getFragment( "#fragment" ) ).toBeNull();
+				} );
+
+				it( "should return fragment when relative fragment label and exits", ():void => {
+					const document:Document = createMockDocument();
+					const fragment:Fragment = {} as any;
+					document._fragmentsIndex.set( "fragment", fragment );
+
+					expect( document.getFragment( "#fragment" ) ).toBe( fragment );
+				} );
+
+				it( "should return null when absolute fragment label and not exits", ():void => {
+					const document:Document = createMockDocument();
+
+					expect( document.getFragment( "https://example.com/document/#fragment" ) ).toBeNull();
+				} );
+
+				it( "should return fragment when absolute fragment label and exits", ():void => {
+					const document:Document = createMockDocument();
+					const fragment:Fragment = {} as any;
+					document._fragmentsIndex.set( "fragment", fragment );
+
+					expect( document.getFragment( "https://example.com/document/#fragment" ) ).toBe( fragment );
+				} );
+
+				it( "should return null when blank node label and not exists", ():void => {
+					const document:Document = createMockDocument();
+
+					expect( document.getFragment( "_:1" ) ).toBeNull();
+				} );
+
+				it( "should return true when blank node label and exits", ():void => {
+					const document:Document = createMockDocument();
+					const fragment:Fragment = {} as any;
+					document._fragmentsIndex.set( "_:1", fragment );
+
+					expect( document.getFragment( "_:1" ) ).toBe( fragment );
+				} );
+
+			} );
+
+			describe( "Document.getNamedFragment", ():void => {
+
+				it( "should exists", ():void => {
+					const document:Document = createMockDocument();
+
+					expect( document.getNamedFragment ).toBeDefined();
+					expect( document.getNamedFragment ).toEqual( jasmine.any( Function ) );
+				} );
+
+				it( "should throw error when IRI of the document", ():void => {
+					const document:Document = createMockDocument();
+
+					expect( () => document.getNamedFragment( "https://example.com/document/" ) ).toThrowError( IllegalArgumentError, "The id is out of scope." );
+				} );
+
+				it( "should throw error when another absolute IRIs", ():void => {
+					const document:Document = createMockDocument();
+
+					expect( () => document.getNamedFragment( "https://example.com/another/document/" ) ).toThrowError( IllegalArgumentError, "The id is out of scope." );
+				} );
+
+				it( "should return null when relative fragment label and not exits", ():void => {
+					const document:Document = createMockDocument();
+
+					expect( document.getNamedFragment( "#fragment" ) ).toBeNull();
+				} );
+
+				it( "should return fragment when relative fragment label and exits", ():void => {
+					const document:Document = createMockDocument();
+					const fragment:Fragment = {} as any;
+					document._fragmentsIndex.set( "fragment", fragment );
+
+					expect( document.getNamedFragment( "#fragment" ) ).toBe( fragment );
+				} );
+
+				it( "should return fragment when relative label and exits", ():void => {
+					const document:Document = createMockDocument();
+					const fragment:Fragment = {} as any;
+					document._fragmentsIndex.set( "fragment", fragment );
+
+					expect( document.getNamedFragment( "fragment" ) ).toBe( fragment );
+				} );
+
+				it( "should return null when absolute fragment label and not exits", ():void => {
+					const document:Document = createMockDocument();
+
+					expect( document.getNamedFragment( "https://example.com/document/#fragment" ) ).toBeNull();
+				} );
+
+				it( "should return fragment when absolute fragment label and exits", ():void => {
+					const document:Document = createMockDocument();
+					const fragment:Fragment = {} as any;
+					document._fragmentsIndex.set( "fragment", fragment );
+
+					expect( document.getNamedFragment( "https://example.com/document/#fragment" ) ).toBe( fragment );
+				} );
+
+				it( "should throw error when another absolute fragment label", ():void => {
+					const document:Document = createMockDocument();
+
+					expect( () => document.getNamedFragment( "https://example.com/anotherdocument/#fragment" ) ).toThrowError( IllegalArgumentError, "The id is out of scope." );
+				} );
+
+				it( "should throw error when blank node label and not exists", ():void => {
+					const document:Document = createMockDocument();
+
+					expect( () => document.getNamedFragment( "_:1" ) ).toThrowError( IllegalArgumentError, "Named fragments can't have a id that starts with '_:'." );
+				} );
+
+			} );
+
+
+			describe( "Document.getFragments", ():void => {
+
+				it( "should exists", ():void => {
+					const document:Document = createMockDocument();
+
+					expect( document.getFragments ).toBeDefined();
+					expect( document.getFragments ).toEqual( jasmine.any( Function ) );
+				} );
+
+				it( "should return empty array when no fragments", ():void => {
+					const document:Document = createMockDocument();
+
+					expect( document.getFragments() ).toEqual( [] );
+				} );
+
+				it( "should return array with all fragments", ():void => {
+					const document:Document = createMockDocument();
+					document._fragmentsIndex
+						.set( "fragment", { the: "first fragment" } as any )
+						.set( "_:1", { the: "second fragment" } as any )
+						.set( "another", { the: "third fragment" } as any )
+						.set( "_:2", { the: "fourth fragment" } as any )
+					;
+
+					expect( document.getFragments() ).toEqual( [
+						{ the: "first fragment" } as any,
+						{ the: "second fragment" } as any,
+						{ the: "third fragment" } as any,
+						{ the: "fourth fragment" } as any,
+					] );
+				} );
+
+			} );
+
+
+			describe( "Document.createFragment", ():void => {
+
+				it( "should exists", ():void => {
+					const document:Document = createMockDocument();
+
+					expect( document.createFragment ).toBeDefined();
+					expect( document.createFragment ).toEqual( jasmine.any( Function ) );
+				} );
+
+				it( "should create `NamedFragment` when object and slug label provided", ():void => {
+					const document:Document = createMockDocument();
+					const fragment:{ string:string } = document.createFragment( { string: "a string" }, "fragment" );
+
+					// TODO: Use `isNamedFragment`
+					expect( Resource.is( fragment ) ).toBe( true );
+					expect( Fragment.isDecorated( fragment ) ).toBe( true );
+
+					expect( fragment ).toEqual( {
+						string: "a string",
+					} );
+				} );
+
+				it( "should create `NamedFragment` when only slug label provided", ():void => {
+					const document:Document = createMockDocument();
+					const fragment:Fragment = document.createFragment( "fragment" );
+
+					// TODO: Use `isNamedFragment`
+					expect( Resource.is( fragment ) ).toBe( true );
+					expect( Fragment.isDecorated( fragment ) ).toBe( true );
+				} );
+
+				it( "should create `NamedFragment` when object and absolute IRI provided", ():void => {
+					const document:Document = createMockDocument();
+					type TargetFragment = Fragment & { string:string };
+					const fragment:TargetFragment = document.createFragment( { string: "a string" }, "https://example.com/document/#fragment" );
+
+					// TODO: Use `isNamedFragment`
+					expect( Resource.is( fragment ) ).toBe( true );
+					expect( Fragment.isDecorated( fragment ) ).toBe( true );
+
+					expect( fragment as { string:string } ).toEqual( {
+						string: "a string",
+					} );
+				} );
+
+				it( "should create `NamedFragment` when only absolute IRI provided", ():void => {
+					const document:Document = createMockDocument();
+					const fragment:Fragment = document.createFragment( "https://example.com/document/#fragment" );
+
+					// TODO: Use `isNamedFragment`
+					expect( Resource.is( fragment ) ).toBe( true );
+					expect( Fragment.isDecorated( fragment ) ).toBe( true );
+				} );
+
+				it( "should create `BlankNode` when no label provided", ():void => {
+					const document:Document = createMockDocument();
+					const fragment:Fragment = document.createFragment( {} );
+
+					// TODO: Use `isBlankNode`
+					expect( Resource.is( fragment ) ).toBe( true );
+					expect( Fragment.isDecorated( fragment ) ).toBe( true );
+					expect( URI.isBNodeID( fragment.id ) ).toBe( true );
+				} );
+
+				it( "should create `BlankNode` when object and blank node label provided", ():void => {
+					const document:Document = createMockDocument();
+					type TargetFragment = Fragment & { string:string };
+					const fragment:TargetFragment = document.createFragment( { string: "a string" }, "_:1" );
+
+					// TODO: Use `isBlankNode`
+					expect( Resource.is( fragment ) ).toBe( true );
+					expect( Fragment.isDecorated( fragment ) ).toBe( true );
+					expect( URI.isBNodeID( fragment.id ) ).toBe( true );
+
+					expect( fragment as { string:string } ).toEqual( {
+						string: "a string",
+					} );
+				} );
+
+				it( "should create `BlankNode` when only blank node label provided", ():void => {
+					const document:Document = createMockDocument();
+					const fragment:Fragment = document.createFragment( "_:1" );
+
+					// TODO: Use `isBlankNode`
+					expect( Resource.is( fragment ) ).toBe( true );
+					expect( Fragment.isDecorated( fragment ) ).toBe( true );
+					expect( URI.isBNodeID( fragment.id ) ).toBe( true );
+				} );
+
+				it( "should call `convertNestedObjects` with the object provided", ():void => {
+					const document:Document = createMockDocument();
+					const spy:jasmine.Spy = spyOn( Document, "_convertNestedObjects" );
+
+					const object:object = { the: "object" };
+					document.createFragment( object );
+
+					expect( spy ).toHaveBeenCalledWith( document, object );
+				} );
+
+				it( "should throw error when object but slug label is already used", ():void => {
+					const document:Document = createMockDocument();
+					document._fragmentsIndex.set( "fragment", null );
+
+					expect( () => document.createFragment( {}, "fragment" ) ).toThrowError( IDAlreadyInUseError, "The slug provided is already being used by a fragment." );
+				} );
+
+				it( "should throw error when only slug label is already used", ():void => {
+					const document:Document = createMockDocument();
+					document._fragmentsIndex.set( "fragment", null );
+
+					expect( () => document.createFragment( "fragment" ) ).toThrowError( IDAlreadyInUseError, "The slug provided is already being used by a fragment." );
+				} );
+
+				it( "should throw error when object but absolute IRI provided is already used", ():void => {
+					const document:Document = createMockDocument();
+					document._fragmentsIndex.set( "fragment", null );
+
+					expect( () => document.createFragment( {}, "https://example.com/document/#fragment" ) ).toThrowError( IDAlreadyInUseError, "The slug provided is already being used by a fragment." );
+				} );
+
+				it( "should throw error when only absolute IRI provided is already used", ():void => {
+					const document:Document = createMockDocument();
+					document._fragmentsIndex.set( "fragment", null );
+
+					expect( () => document.createFragment( "https://example.com/document/#fragment" ) ).toThrowError( IDAlreadyInUseError, "The slug provided is already being used by a fragment." );
+				} );
+
+				it( "should throw error when object but blank node label is used", ():void => {
+					const document:Document = createMockDocument();
+					document._fragmentsIndex.set( "_:1", null );
+
+					expect( () => document.createFragment( {}, "_:1" ) ).toThrowError( IDAlreadyInUseError, "The slug provided is already being used by a fragment." );
+				} );
+
+				it( "should throw error when only blank node label is used", ():void => {
+					const document:Document = createMockDocument();
+					document._fragmentsIndex.set( "_:1", null );
+
+					expect( () => document.createFragment( "_:1" ) ).toThrowError( IDAlreadyInUseError, "The slug provided is already being used by a fragment." );
+				} );
+
+			} );
+
+			describe( "Document.createNamedFragment", ():void => {
+
+				it( "should exists", ():void => {
+					const document:Document = createMockDocument();
+
+					expect( document.createNamedFragment ).toBeDefined();
+					expect( document.createNamedFragment ).toEqual( jasmine.any( Function ) );
+				} );
+
+				it( "should create `NamedFragment` when object and slug label provided", ():void => {
+					const document:Document = createMockDocument();
+					type TargetFragment = Fragment & { string:string };
+					const fragment:TargetFragment = document.createNamedFragment( { string: "a string" }, "fragment" );
+
+					// TODO: Use `isNamedFragment`
+					expect( Resource.is( fragment ) ).toBe( true );
+					expect( Fragment.isDecorated( fragment ) ).toBe( true );
+
+					expect( fragment as { string:string } ).toEqual( {
+						string: "a string",
+					} );
+				} );
+
+				it( "should create `NamedFragment` when only slug label provided", ():void => {
+					const document:Document = createMockDocument();
+					const fragment:Fragment = document.createNamedFragment( "fragment" );
+
+					// TODO: Use `isNamedFragment`
+					expect( Resource.is( fragment ) ).toBe( true );
+					expect( Fragment.isDecorated( fragment ) ).toBe( true );
+				} );
+
+				it( "should create `NamedFragment` when object and absolute IRI provided", ():void => {
+					const document:Document = createMockDocument();
+					type TargetFragment = Fragment & { string:string };
+					const fragment:TargetFragment = document.createNamedFragment( { string: "a string" }, "https://example.com/document/#fragment" );
+
+					// TODO: Use `isNamedFragment`
+					expect( Resource.is( fragment ) ).toBe( true );
+					expect( Fragment.isDecorated( fragment ) ).toBe( true );
+
+					expect( fragment as { string:string } ).toEqual( {
+						string: "a string",
+					} );
+				} );
+
+				it( "should create `NamedFragment` when only absolute IRI provided", ():void => {
+					const document:Document = createMockDocument();
+					const fragment:Fragment = document.createNamedFragment( "https://example.com/document/#fragment" );
+
+					// TODO: Use `isNamedFragment`
+					expect( Resource.is( fragment ) ).toBe( true );
+					expect( Fragment.isDecorated( fragment ) ).toBe( true );
+				} );
+
+				it( "should throw error when object and blank node label provided", ():void => {
+					const document:Document = createMockDocument();
+					expect( () => document.createNamedFragment( {}, "_:1" ) ).toThrowError( IllegalArgumentError, "Named fragments can't have a slug that starts with '_:'." );
+				} );
+
+				it( "should throw error when only blank node label provided", ():void => {
+					const document:Document = createMockDocument();
+					expect( () => document.createNamedFragment( "_:1" ) ).toThrowError( IllegalArgumentError, "Named fragments can't have a slug that starts with '_:'." );
+				} );
+
+				it( "should call `convertNestedObjects` with the object provided", ():void => {
+					const document:Document = createMockDocument();
+					const spy:jasmine.Spy = spyOn( Document, "_convertNestedObjects" );
+
+					const object:object = { the: "object" };
+					document.createNamedFragment( object, "fragment" );
+
+					expect( spy ).toHaveBeenCalledWith( document, object );
+				} );
+
+				it( "should throw error when object but slug label is already used", ():void => {
+					const document:Document = createMockDocument();
+					document._fragmentsIndex.set( "fragment", null );
+
+					expect( () => document.createNamedFragment( {}, "fragment" ) ).toThrowError( IDAlreadyInUseError, "The slug provided is already being used by a fragment." );
+				} );
+
+				it( "should throw error when only slug label is already used", ():void => {
+					const document:Document = createMockDocument();
+					document._fragmentsIndex.set( "fragment", null );
+
+					expect( () => document.createNamedFragment( "fragment" ) ).toThrowError( IDAlreadyInUseError, "The slug provided is already being used by a fragment." );
+				} );
+
+				it( "should throw error when object but absolute IRI provided is already used", ():void => {
+					const document:Document = createMockDocument();
+					document._fragmentsIndex.set( "fragment", null );
+
+					expect( () => document.createNamedFragment( {}, "https://example.com/document/#fragment" ) ).toThrowError( IDAlreadyInUseError, "The slug provided is already being used by a fragment." );
+				} );
+
+				it( "should throw error when only absolute IRI provided is already used", ():void => {
+					const document:Document = createMockDocument();
+					document._fragmentsIndex.set( "fragment", null );
+
+					expect( () => document.createNamedFragment( "https://example.com/document/#fragment" ) ).toThrowError( IDAlreadyInUseError, "The slug provided is already being used by a fragment." );
+				} );
+
+			} );
+
+
+			describe( "Document._removeFragment", ():void => {
+
+				it( "should exists", ():void => {
+					const document:Document = createMockDocument();
+
+					expect( document._removeFragment ).toBeDefined();
+					expect( document._removeFragment ).toEqual( jasmine.any( Function ) );
+				} );
+
+				it( "should remove providing a `NamedFragment`", ():void => {
+					const document:Document = createMockDocument();
+
+					const fragment:NamedFragment = NamedFragment.create( document, "fragment" );
+					document._fragmentsIndex.set( "fragment", fragment );
+
+					document._removeFragment( fragment );
+					expect( document._fragmentsIndex ).toEqual( new Map() );
+				} );
+
+				it( "should remove providing a `BlankNode`", ():void => {
+					const document:Document = createMockDocument();
+
+					const fragment:BlankNode = BlankNode.create( document, "_:1" );
+					document._fragmentsIndex.set( "_:1", fragment );
+
+					document._removeFragment( fragment );
+					expect( document._fragmentsIndex ).toEqual( new Map() );
+				} );
+
+				it( "should remove providing a fragment label", ():void => {
+					const document:Document = createMockDocument();
+
+					document._fragmentsIndex.set( "fragment", null );
+
+					document._removeFragment( "#fragment" );
+					expect( document._fragmentsIndex ).toEqual( new Map() );
+				} );
+
+				it( "should remove providing a fragment slug label", ():void => {
+					const document:Document = createMockDocument();
+
+					document._fragmentsIndex.set( "fragment", null );
+
+					document._removeFragment( "fragment" );
+					expect( document._fragmentsIndex ).toEqual( new Map() );
+				} );
+
+				it( "should remove providing an absolute fragment IRI", ():void => {
+					const document:Document = createMockDocument();
+
+					document._fragmentsIndex.set( "fragment", null );
+
+					document._removeFragment( "https://example.com/document/#fragment" );
+					expect( document._fragmentsIndex ).toEqual( new Map() );
+				} );
+
+				it( "should remove providing a blank node label", ():void => {
+					const document:Document = createMockDocument();
+					document._fragmentsIndex.set( "_:1", null );
+
+					document._removeFragment( "_:1" );
+					expect( document._fragmentsIndex ).toEqual( new Map() );
+				} );
+
+			} );
+
+			describe( "Document.removeNamedFragment", ():void => {
+
+				it( "should exists", ():void => {
+					const document:Document = createMockDocument();
+
+					expect( document.removeNamedFragment ).toBeDefined();
+					expect( document.removeNamedFragment ).toEqual( jasmine.any( Function ) );
+				} );
+
+				it( "should remove providing a `NamedFragment`", ():void => {
+					const document:Document = createMockDocument();
+
+					const fragment:NamedFragment = NamedFragment.create( document, "fragment" );
+					document._fragmentsIndex.set( "fragment", fragment );
+
+					document.removeNamedFragment( fragment );
+					expect( document._fragmentsIndex ).toEqual( new Map() );
+				} );
+
+				it( "should throw error providing a `BlankNode`", ():void => {
+					const document:Document = createMockDocument();
+
+					const fragment:BlankNode = BlankNode.create( document, "_:1" );
+					document._fragmentsIndex.set( "_:1", fragment );
+
+					expect( () => document.removeNamedFragment( fragment as any ) ).toThrowError( IllegalArgumentError, "You can only remove NamedFragments." );
+				} );
+
+				it( "should remove providing a fragment label", ():void => {
+					const document:Document = createMockDocument();
+
+					document._fragmentsIndex.set( "fragment", null );
+
+					document.removeNamedFragment( "#fragment" );
+					expect( document._fragmentsIndex ).toEqual( new Map() );
+				} );
+
+				it( "should remove providing a fragment slug label", ():void => {
+					const document:Document = createMockDocument();
+
+					document._fragmentsIndex.set( "fragment", null );
+
+					document.removeNamedFragment( "fragment" );
+					expect( document._fragmentsIndex ).toEqual( new Map() );
+				} );
+
+				it( "should remove providing an absolute fragment IRI", ():void => {
+					const document:Document = createMockDocument();
+
+					document._fragmentsIndex.set( "fragment", null );
+
+					document.removeNamedFragment( "https://example.com/document/#fragment" );
+					expect( document._fragmentsIndex ).toEqual( new Map() );
+				} );
+
+				it( "should throw error providing a blank node label", ():void => {
+					const document:Document = createMockDocument();
+					document._fragmentsIndex.set( "_:1", null );
+
+					expect( () => document.removeNamedFragment( "_:1" ) ).toThrowError( IllegalArgumentError, "You can only remove NamedFragments." );
+				} );
+
+			} );
+
+
+			describe( "Document.toJSON", ():void => {
+
+				it( "should exists", ():void => {
+					const document:Document = createMockDocument();
+
+					expect( document.toJSON ).toBeDefined();
+					expect( document.toJSON ).toEqual( jasmine.any( Function ) );
+				} );
+
+				it( "should expand all resources with a new `JSONLDConverter` with empty `DigestedObjectSchema`s when none provided", ():void => {
+					const document:Document = createMockDocument( { the: "document" } );
+					document.createFragment( { then: "blank node" }, "_:1" );
+					document.createFragment( { then: "named fragment" }, "fragment" );
+
+					const jsonldConverter:jasmine.SpyObj<JSONLDConverter> = jasmine
+						.createSpyObj<JSONLDConverter>( "JSONLDConverter", [ "expand" ] );
+					spyOn( JSONLDConverterModule, "JSONLDConverter" ).and.returnValue( jsonldConverter );
+
+					document.toJSON();
+					expect( jsonldConverter.expand ).toHaveBeenCalledWith( document, new DigestedObjectSchema(), new DigestedObjectSchema() );
+					expect( jsonldConverter.expand ).toHaveBeenCalledWith( { then: "blank node" }, new DigestedObjectSchema(), new DigestedObjectSchema() );
+					expect( jsonldConverter.expand ).toHaveBeenCalledWith( { then: "named fragment" }, new DigestedObjectSchema(), new DigestedObjectSchema() );
+				} );
+
+				it( "should get the schemas of every resource with the `ObjectSchemaResolver`", ():void => {
+					const document:Document = createMockDocument( { the: "document" } );
+					document.createFragment( { then: "blank node" }, "_:1" );
+					document.createFragment( { then: "named fragment" }, "fragment" );
+
+					const schemaResolver:jasmine.SpyObj<ObjectSchemaResolver> = jasmine
+						.createSpyObj<ObjectSchemaResolver>(
+							"ObjectSchemaResolver", {
+								"getGeneralSchema": new DigestedObjectSchema(),
+								"getSchemaFor": new DigestedObjectSchema(),
+							}
+						);
+
+					document.toJSON( schemaResolver );
+
+					expect( schemaResolver.getGeneralSchema ).toHaveBeenCalledTimes( 1 );
+
+					expect( schemaResolver.getSchemaFor ).toHaveBeenCalledWith( document );
+					expect( schemaResolver.getSchemaFor ).toHaveBeenCalledWith( { then: "blank node" } );
+					expect( schemaResolver.getSchemaFor ).toHaveBeenCalledWith( { then: "named fragment" } );
+				} );
+
+				it( "should expand all resources with a new `JSONLDConverter` with the schemas of the `ObjectSchemaResolver` provided", ():void => {
+					const document:Document = createMockDocument( { the: "document" } );
+					document.createFragment( { then: "blank node" }, "_:1" );
+					document.createFragment( { then: "named fragment" }, "fragment" );
+
+					const generalSchema:DigestedObjectSchema = ObjectSchemaDigester.digestSchema( { "@base": "https://example.com/schema/general/" } );
+					const resourceSchema:DigestedObjectSchema = ObjectSchemaDigester.digestSchema( { "@base": "https://example.com/schema/resource/" } );
+					const schemaResolver:jasmine.SpyObj<ObjectSchemaResolver> = jasmine
+						.createSpyObj<ObjectSchemaResolver>(
+							"ObjectSchemaResolver", {
+								"getGeneralSchema": generalSchema,
+								"getSchemaFor": resourceSchema,
+							}
+						);
+
+					const jsonldConverter:jasmine.SpyObj<JSONLDConverter> = jasmine
+						.createSpyObj<JSONLDConverter>( "JSONLDConverter", [ "expand" ] );
+					spyOn( JSONLDConverterModule, "JSONLDConverter" ).and.returnValue( jsonldConverter );
+
+					document.toJSON( schemaResolver );
+					expect( jsonldConverter.expand ).toHaveBeenCalledWith( document, generalSchema, resourceSchema );
+					expect( jsonldConverter.expand ).toHaveBeenCalledWith( { then: "blank node" }, generalSchema, resourceSchema );
+					expect( jsonldConverter.expand ).toHaveBeenCalledWith( { then: "named fragment" }, generalSchema, resourceSchema );
+				} );
+
+				it( "should expand all resources with the `JSONLDConverter` provided and the schemas of the `ObjectSchemaResolver` also provided", ():void => {
+					const document:Document = createMockDocument( { the: "document" } );
+					document.createFragment( { then: "blank node" }, "_:1" );
+					document.createFragment( { then: "named fragment" }, "fragment" );
+
+					const generalSchema:DigestedObjectSchema = ObjectSchemaDigester.digestSchema( { "@base": "https://example.com/schema/general/" } );
+					const resourceSchema:DigestedObjectSchema = ObjectSchemaDigester.digestSchema( { "@base": "https://example.com/schema/resource/" } );
+					const schemaResolver:jasmine.SpyObj<ObjectSchemaResolver> = jasmine
+						.createSpyObj<ObjectSchemaResolver>(
+							"ObjectSchemaResolver", {
+								"getGeneralSchema": generalSchema,
+								"getSchemaFor": resourceSchema,
+							}
+						);
+
+					const jsonldConverter:jasmine.SpyObj<JSONLDConverter> = jasmine
+						.createSpyObj<JSONLDConverter>( "JSONLDConverter", { "expand": {} } );
+
+					document.toJSON( schemaResolver, jsonldConverter );
+					expect( jsonldConverter.expand ).toHaveBeenCalledWith( document, generalSchema, resourceSchema );
+					expect( jsonldConverter.expand ).toHaveBeenCalledWith( { then: "blank node" }, generalSchema, resourceSchema );
+					expect( jsonldConverter.expand ).toHaveBeenCalledWith( { then: "named fragment" }, generalSchema, resourceSchema );
+				} );
+
+				it( "should return a `RDFDocument` with the expanded resources", ():void => {
+					const document:Document = createMockDocument( { the: "document" } );
+					document.createFragment( { then: "blank node" }, "_:1" );
+					document.createFragment( { then: "named fragment" }, "fragment" );
+
+					const jsonldConverter:jasmine.SpyObj<JSONLDConverter> = jasmine.createSpyObj<JSONLDConverter>( "JSONLDConverter", [ "expand" ] );
+					jsonldConverter.expand.and.callFake( ( resource ) => {
+						if( resource === document ) return {
+							"@id": "https://example.com/document/",
+							the: "expanded document",
+						};
+
+						if( resource === document.getFragment( "_:1" ) ) return {
+							"@id": "_:1",
+							the: "expanded blank node",
+						};
+
+						return {
+							"@id": "https://example.com/document/#fragment",
+							the: "expanded named fragment",
+						};
+					} );
+
+					const expanded:RDFDocument = document.toJSON( void 0, jsonldConverter );
+					expect( expanded ).toEqual( {
+						"@id": "https://example.com/document/",
+						"@graph": [
 							{
-								slug: "Fragment_1",
-								myProperty: "The Named Fragment",
+								"@id": "https://example.com/document/",
+								the: "expanded document",
 							},
 							{
-								id: "_:Fragment_2",
-								myProperty: "The Blank Node",
+								"@id": "_:1",
+								the: "expanded blank node",
+							},
+							{
+								"@id": "https://example.com/document/#fragment",
+								the: "expanded named fragment",
 							},
 						],
-						pointer: {
-							id: "#Fragment_1",
-							myProperty: "The real Named Fragment",
-						},
-					};
+					} );
+				} );
 
-					document = Document.Factory.createFrom<MyInterface>( object );
-					expect( object ).toBe( document );
-					expect( document.id ).toBe( "" );
-					expect( document.myProperty ).toBe( "The ONE property" );
-					expect( document.hasFragment( "Fragment_1" ) ).toBe( true );
-					expect( document.hasFragment( "_:Fragment_2" ) ).toBe( true );
+			} );
 
-					let fragments:Fragment.Class[] = document.getFragments();
-					expect( Utils.isArray( fragments ) ).toBe( true );
-					expect( fragments.length ).toBe( 2 );
 
-					let theBNode:Fragment.Class & MyInterface,
-						theNFragment:NamedFragment.Class & MyInterface;
-					theNFragment = <NamedFragment.Class & MyInterface> fragments[ 0 ];
-					theBNode = <Fragment.Class & MyInterface> fragments[ 1 ];
+			describe( "Document._normalize", ():void => {
 
-					expect( theNFragment.id ).toEqual( "#Fragment_1" );
-					expect( theNFragment.slug ).toBe( "Fragment_1" );
-					expect( theNFragment.myProperty ).toBe( "The real Named Fragment" );
+				it( "should exists", ():void => {
+					const document:Document = createMockDocument();
 
-					expect( URI.Util.isBNodeID( theBNode.id ) ).toBe( true );
-					expect( theBNode.id ).toBe( "_:Fragment_2" );
-					expect( theBNode.myProperty ).toBe( "The Blank Node" );
+					expect( document._normalize ).toBeDefined();
+					expect( document._normalize ).toEqual( jasmine.any( Function ) );
+				} );
 
-					expect( document[ "pointerList" ][ 0 ] ).toBe( fragments[ 0 ] );
-					expect( document[ "pointerList" ][ 1 ] ).toBe( fragments[ 1 ] );
-					expect( document[ "pointer" ] ).toBe( theNFragment );
+				it( "should remove `BlankNodes` not referenced from the main document", ():void => {
+					type TargetDocument = Document & { object?:{ id:string } };
+					const document:TargetDocument = createMockDocument( { object: { id: "_:1" } } );
+					delete document.object;
 
-					expect( object[ "pointer" ] ).toBe( document[ "pointer" ] );
-					expect( object[ "pointerList" ][ 0 ] ).toBe( document[ "pointerList" ][ 0 ] );
-					expect( object[ "pointerList" ][ 1 ] ).toBe( document[ "pointerList" ][ 1 ] );
-				})();
+					document._normalize();
+					expect( document.object ).not.toBeDefined();
+					expect( document.hasFragment( "_:1" ) ).toBe( false );
+				} );
+
+				it( "should remove `BlankNodes` not referenced from the fragments", ():void => {
+					type TargetDocument = Document & { object:{ object?:{ id:string } } };
+					const document:TargetDocument = createMockDocument( { object: { object: { id: "_:1" } } } );
+					delete document.object.object;
+
+					document._normalize();
+					expect( document.object.object ).not.toBeDefined();
+					expect( document.hasFragment( "_:1" ) ).toBe( false );
+				} );
+
+				it( "should maintain `NamedFragments` not referenced from the main document", ():void => {
+					type TargetDocument = Document & { object?:{ id:string } };
+					const document:TargetDocument = createMockDocument( { object: { id: "#1" } } );
+					delete document.object;
+
+					document._normalize();
+					expect( document.object ).not.toBeDefined();
+					expect( document.hasFragment( "#1" ) ).toBe( true );
+				} );
+
+				it( "should maintain `NamedFragments` not referenced from the fragments", ():void => {
+					type TargetDocument = Document & { object:{ object?:{ id:string } } };
+					const document:TargetDocument = createMockDocument( { object: { object: { id: "#1" } } } );
+					delete document.object.object;
+
+					document._normalize();
+					expect( document.object.object ).not.toBeDefined();
+					expect( document.hasFragment( "#1" ) ).toBe( true );
+				} );
+
+				it( "should convert without problems cyclical referenced fragments", ():void => {
+					type TargetDocument = Document & { object?:{ self?:{} } };
+					const document:TargetDocument = createMockDocument( {} );
+
+					const object:{ id?:string, self?:{} } = { id: "_:1" };
+					object.self = object;
+
+					document.object = object;
+					document._normalize();
+
+					expect( document.object ).toBeDefined();
+					// TODO: Use `isFragment`
+					expect( Resource.is( document.object ) ).toBe( true );
+					expect( document.hasFragment( "_:1" ) ).toBe( true );
+					expect( document.object.self ).toBe( document.object );
+				} );
 
 			} );
 
 		} );
 
-		it( hasMethod(
-			STATIC,
-			"decorate",
-			[ "T extends Object" ],
-			"Decorates the object provided with the properties and methods of a `Carbon.Document.Class` object.", [
-				{ name: "object", type: "T", description: "Object to be decorated." },
-			],
-			{ type: "T & Carbon.Document.Class" }
-		), ():void => {
-			expect( Document.Factory.decorate ).toBeDefined();
-			expect( Utils.isFunction( Document.Factory.decorate ) ).toBe( true );
+		describe( "Document._convertNestedObjects", ():void => {
 
-			let document:{ myProperty?:string } & Document.Class;
-			let anotherDocument:{ myProperty?:string } & Document.Class;
-
-			document = Document.Factory.decorate( {} );
-			expect( Document.Factory.hasClassProperties( document ) ).toBe( true );
-
-			document = Document.Factory.decorate( { myProperty: "a property" } );
-			expect( Document.Factory.hasClassProperties( document ) ).toBe( true );
-			expect( document.myProperty ).toBeDefined();
-			expect( document.myProperty ).toBe( "a property" );
-
-			anotherDocument = Document.Factory.decorate( document );
-			expect( anotherDocument ).toBe( document );
-		} );
-
-		describe( decoratedObject(
-			"Object decorated by the `Carbon.Document.Factory.decorate()` function.", [
-				"Carbon.Document.Class",
-			]
-		), ():void => {
-			let document:Document.Class;
-
-			beforeEach( ():void => {
-				document = Document.Factory.create();
-				document.id = "http://example.com/document/";
+			it( "should exists", ():void => {
+				expect( Document._convertNestedObjects ).toBeDefined();
+				expect( Document._convertNestedObjects ).toEqual( jasmine.any( Function ) );
 			} );
 
-			it( hasProperty(
-				INSTANCE,
-				"_fragmentsIndex",
-				"Map<string, Carbon.Fragment.Class>",
-				"Map that stores the fragments (named fragments and blank nodes) of the Document."
-			), ():void => {
-				expect( document._fragmentsIndex ).toBeDefined();
-				expect( Utils.isMap( document._fragmentsIndex ) ).toBe( true );
+			it( "should convert single object property to `Fragment`", ():void => {
+				type TargetDocument = Document & { object?:{ string:string } };
+				const document:TargetDocument = createMockDocument();
+				document.object = { string: "new object" };
+
+				Document._convertNestedObjects( document, document );
+				expect( document.object ).toEqual( { string: "new object" } );
+
+				// TODO: Use `isFragment`
+				expect( Resource.is( document.object ) ).toBe( true );
+				expect( document.hasFragment( document.object[ "id" ] ) ).toBe( true );
 			} );
 
-			it( hasMethod(
-				INSTANCE,
-				"_normalize",
-				"Search over the document for normal objects to convert into fragments, and unused fragments to eliminate."
-			), ():void => {
-				expect( document._normalize ).toBeDefined();
-				expect( Utils.isFunction( document._normalize ) ).toBe( true );
+			it( "should convert object array property to `Fragment`", ():void => {
+				type TargetDocument = Document & { array?:{ string:string }[] };
+				const document:TargetDocument = createMockDocument();
+				document.array = [ { string: "element 1" }, { string: "element 2" } ];
 
-				document[ "object" ] = { string: "A new object" };
-				expect( Pointer.Factory.is( document[ "object" ] ) ).toBe( false );
+				Document._convertNestedObjects( document, document );
+				expect( document.array ).toEqual( [
+					{ string: "element 1" },
+					{ string: "element 2" },
+				] );
 
-				document._normalize();
-				expect( Pointer.Factory.is( document[ "object" ] ) ).toBe( true );
-				expect( document[ "object" ][ "string" ] ).toBe( "A new object" );
-				expect( URI.Util.isBNodeID( document[ "object" ].id ) ).toBe( true );
-				expect( document.hasFragment( document[ "object" ].id ) ).toBe( true );
+				// TODO: Use `isFragment`
+				expect( Resource.is( document.array[ 0 ] ) ).toBe( true );
+				expect( document.hasFragment( document.array[ 0 ][ "id" ] ) ).toBe( true );
 
-				document[ "array" ] = [ { string: "Element 1" }, { string: "Element 2" } ];
-				document[ "object" ][ "object" ] = { string: "Nested object inside the new object" };
-
-				document._normalize();
-				expect( document[ "array" ].length ).toBe( 2 );
-				expect( Pointer.Factory.is( document[ "array" ][ 0 ] ) ).toBe( true );
-				expect( document.hasFragment( document[ "array" ][ 0 ].id ) ).toBe( true );
-				expect( document[ "array" ][ 0 ][ "string" ] ).toBe( "Element 1" );
-				expect( Pointer.Factory.is( document[ "array" ][ 1 ] ) ).toBe( true );
-				expect( document.hasFragment( document[ "array" ][ 1 ].id ) ).toBe( true );
-				expect( document[ "array" ][ 1 ][ "string" ] ).toBe( "Element 2" );
-
-				expect( Pointer.Factory.is( document[ "object" ][ "object" ] ) ).toBe( true );
-				expect( document.hasFragment( document[ "object" ][ "object" ].id ) ).toBe( true );
-				expect( document[ "object" ][ "object" ][ "string" ] ).toBe( "Nested object inside the new object" );
-
-				let fragment:Fragment.Class;
-				fragment = document.createFragment( { string: "Fragment that will be deleted" } );
-
-				document._normalize();
-				expect( document.hasFragment( fragment.id ) ).toBe( false );
-
-				document.createFragment( { string: "Fragment that will not be deleted" }, "named-fragment" );
-
-				fragment = document.createFragment( { string: "Fragment with a reference" } );
-				document[ "fragment" ] = fragment;
-
-				fragment = document.createFragment( { string: "Another fragment that will be deleted" } );
-
-				document._normalize();
-				expect( document.hasFragment( fragment.id ) ).toBe( false );
-				expect( Pointer.Factory.is( document[ "fragment" ] ) ).toBe( true );
-				expect( document.hasFragment( document[ "fragment" ].id ) ).toBe( true );
-				expect( URI.Util.isBNodeID( document[ "object" ].id ) ).toBe( true );
-				expect( document.hasFragment( "named-fragment" ) ).toBe( true );
-
-				expect( Pointer.Factory.is( document[ "object" ] ) ).toBe( true );
-				expect( document[ "object" ][ "string" ] ).toBe( "A new object" );
-				expect( URI.Util.isBNodeID( document[ "object" ].id ) ).toBe( true );
-				expect( document.hasFragment( document[ "object" ].id ) ).toBe( true );
-
-				expect( document[ "array" ].length ).toBe( 2 );
-				expect( Pointer.Factory.is( document[ "array" ][ 0 ] ) ).toBe( true );
-				expect( document.hasFragment( document[ "array" ][ 0 ].id ) ).toBe( true );
-				expect( document[ "array" ][ 0 ][ "string" ] ).toBe( "Element 1" );
-				expect( Pointer.Factory.is( document[ "array" ][ 1 ] ) ).toBe( true );
-				expect( document.hasFragment( document[ "array" ][ 1 ].id ) ).toBe( true );
-				expect( document[ "array" ][ 1 ][ "string" ] ).toBe( "Element 2" );
-
-				expect( Pointer.Factory.is( document[ "object" ][ "object" ] ) ).toBe( true );
-				expect( document.hasFragment( document[ "object" ][ "object" ].id ) ).toBe( true );
-				expect( document[ "object" ][ "object" ][ "string" ] ).toBe( "Nested object inside the new object" );
-
-				fragment = document[ "object" ];
-				delete document[ "object" ];
-				document._normalize();
-				expect( document.hasFragment( fragment.id ) ).toBe( false );
-
-				fragment = document.createFragment( { string: "Cyclical Fragment" } );
-				fragment[ "cycle" ] = fragment;
-				document[ "cyclical-fragment" ] = fragment;
-				document._normalize();
-				expect( document[ "cyclical-fragment" ] ).toBeDefined();
-				expect( document.hasFragment( fragment.id ) ).toBe( true );
+				expect( Resource.is( document.array[ 1 ] ) ).toBe( true );
+				expect( document.hasFragment( document.array[ 1 ][ "id" ] ) ).toBe( true );
 			} );
 
-			it( hasMethod(
-				INSTANCE,
-				"hasPointer",
-				"Returns true if the Document has a pointer referenced by the URI provided.", [
-					{ name: "id", type: "string" },
-				],
-				{ type: "boolean" }
-			), ():void => {
-				expect( document.hasPointer ).toBeDefined();
-				expect( Utils.isFunction( document.hasPointer ) ).toBe( true );
+			it( "should convert second level object property to `Fragment`", ():void => {
+				type TargetDocument = Document & { object?:{ object:{ string:string } } };
+				const document:TargetDocument = createMockDocument();
+				document.object = { object: { string: "new object" } };
 
-				expect( document.hasPointer( "http://example.com/document/" ) ).toBe( true );
-				expect( document.hasPointer( "document/" ) ).toBe( false );
-				expect( document.hasPointer( "http://example.com/document/#fragment" ) ).toBe( false );
-				expect( document.hasPointer( "_:BlankNode" ) ).toBe( false );
-				expect( document.hasPointer( "http://example.com/another-document/" ) ).toBe( false );
+				Document._convertNestedObjects( document, document );
+				expect( document.object ).toEqual( { object: { string: "new object" } } );
+
+				// TODO: Use `isFragment`
+				expect( Resource.is( document.object ) ).toBe( true );
+				expect( document.hasFragment( document.object[ "id" ] ) ).toBe( true );
+
+				expect( Resource.is( document.object.object ) ).toBe( true );
+				expect( document.hasFragment( document.object.object[ "id" ] ) ).toBe( true );
 			} );
 
-			it( hasMethod(
-				INSTANCE,
-				"getPointer",
-				"Returns the pointer referenced by the URI provided. If no pointer exists, one is created and then returned.\n" +
-				"Returns `null` if the URI is outside the scope of the Document.", [
-					{ name: "id", type: "string" },
-				],
-				{ type: "boolean" }
-			), ():void => {
-				expect( document.getPointer ).toBeDefined();
-				expect( Utils.isFunction( document.getPointer ) ).toBe( true );
+			it( "should convert only second level object property to `Fragment`", ():void => {
+				type TargetDocument = Document & { object?:{ object:{ string:string } } };
+				const document:TargetDocument = createMockDocument();
+				document.object = { object: { string: "new object" } };
 
-				let pointer:Pointer.Class;
+				Document._convertNestedObjects( document, document.object );
+				expect( document.object ).toEqual( { object: { string: "new object" } } );
 
-				pointer = document.getPointer( "http://example.com/document/" );
-				expect( pointer ).toBe( document );
-				pointer = document.getPointer( "http://example.com/document/#fragment" );
-				expect( pointer.id ).toBe( "http://example.com/document/#fragment" );
-				pointer = document.getPointer( "_:BlankNode" );
-				expect( pointer.id ).toBe( "_:BlankNode" );
-				pointer = document.getPointer( "#fragment" );
-				expect( pointer.id ).toBe( "http://example.com/document/#fragment" );
+				// TODO: Use `isFragment`
+				expect( Resource.is( document.object ) ).toBe( false );
 
-				pointer = document.getPointer( "relative-uri-is-not-valid/" );
-				expect( pointer ).toBeNull();
-				pointer = document.getPointer( "http://example.com/another-document/" );
-				expect( pointer ).toBeNull();
+				expect( Resource.is( document.object.object ) ).toBe( true );
+				expect( document.hasFragment( document.object.object[ "id" ] ) ).toBe( true );
 			} );
 
-			describe( method(
-				INSTANCE,
-				"inScope"
-			), ():void => {
+			it( "should be a `BlankNode` when no slug/id in new object", ():void => {
+				type TargetDocument = Document & { object?:{ string:string } };
+				const document:TargetDocument = createMockDocument();
+				document.object = { string: "new object" };
 
-				it( hasSignature(
-					"Returns true if the pointer provided is inside the scope of the Document.", [
-						{ name: "pointer", type: "Carbon.Pointer.Class" },
-					],
-					{ type: "boolean" }
-				), ():void => {
-					expect( document.inScope ).toBeDefined();
-					expect( Utils.isFunction( document.inScope ) ).toBe( true );
+				Document._convertNestedObjects( document, document );
+				expect( document.object ).toEqual( { string: "new object" } );
 
-					let pointer:Pointer.Class;
-
-					expect( document.inScope.bind( document, undefined ) ).toThrowError();
-					expect( document.inScope.bind( document, null ) ).toThrowError();
-
-					expect( document.inScope( document ) ).toBe( true );
-					pointer = Pointer.Factory.create( "http://example.com/document/" );
-					expect( document.inScope( pointer ) ).toBe( true );
-					pointer = Pointer.Factory.create( "http://example.com/document/#fragment" );
-					expect( document.inScope( pointer ) ).toBe( true );
-					pointer = Pointer.Factory.create( "http://example.com/document/#another-fragment" );
-					expect( document.inScope( pointer ) ).toBe( true );
-					pointer = Pointer.Factory.create( "_:BlankNode" );
-					expect( document.inScope( pointer ) ).toBe( true );
-					pointer = Pointer.Factory.create( "#fragment" );
-					expect( document.inScope( pointer ) ).toBe( true );
-
-					pointer = Pointer.Factory.create( "relative-uri-is-not-valid/" );
-					expect( document.inScope( pointer ) ).toBe( false );
-					pointer = Pointer.Factory.create( "http://example.com/document/child/" );
-					expect( document.inScope( pointer ) ).toBe( false );
-					pointer = Pointer.Factory.create( "http://example.com/another-document/" );
-					expect( document.inScope( pointer ) ).toBe( false );
-					pointer = Pointer.Factory.create( "http://example.org/document/" );
-					expect( document.inScope( pointer ) ).toBe( false );
-				} );
-
-				it( hasSignature(
-					"Returns true if the URI provided is inside the scope of the Document.", [
-						{ name: "id", type: "string" },
-					],
-					{ type: "boolean" }
-				), ():void => {
-					expect( document.inScope ).toBeDefined();
-					expect( Utils.isFunction( document.inScope ) ).toBe( true );
-
-					expect( document.inScope( document.id ) ).toBe( true );
-					expect( document.inScope( "http://example.com/document/" ) ).toBe( true );
-					expect( document.inScope( "http://example.com/document/#fragment" ) ).toBe( true );
-					expect( document.inScope( "http://example.com/document/#another-fragment" ) ).toBe( true );
-					expect( document.inScope( "_:BlankNode" ) ).toBe( true );
-					expect( document.inScope( "#fragment" ) ).toBe( true );
-
-					expect( document.inScope( "relative-uri-is-not-valid/" ) ).toBe( false );
-					expect( document.inScope( "http://example.com/document/child/" ) ).toBe( false );
-					expect( document.inScope( "http://example.com/another-document/" ) ).toBe( false );
-					expect( document.inScope( "http://example.org/document/" ) ).toBe( false );
-				} );
-
+				// TODO: Use `isBlankNode`
+				expect( URI.isBNodeID( document.object[ "id" ] ) ).toBe( true );
 			} );
 
-			it( hasMethod(
-				INSTANCE,
-				"hasFragment",
-				"Returns true if the Document has the fragment referenced by the ID provided.", [
-					{ name: "id", type: "string" },
-				],
-				{ type: "boolean" }
-			), ():void => {
-				expect( document.hasFragment ).toBeDefined();
-				expect( Utils.isFunction( document.hasFragment ) ).toBe( true );
+			it( "should be a `BlankNode` when bnode label in id property", ():void => {
+				type TargetDocument = Document & { object?:{ id?:string, string:string } };
+				const document:TargetDocument = createMockDocument();
+				document.object = { id: "_:1", string: "new object" };
 
-				expect( document.hasFragment( "http://example.com/document/" ) ).toBe( false );
-				expect( document.hasFragment( "http://example.com/document/#fragment" ) ).toBe( false );
-				expect( document.hasFragment( "http://example.com/document/#another-fragment" ) ).toBe( false );
-				expect( document.hasFragment( "_:BlankNode" ) ).toBe( false );
+				Document._convertNestedObjects( document, document );
+				expect( document.object ).toEqual( { string: "new object" } );
+				// TODO: Use `isBlankNode`
+				expect( URI.isBNodeID( document.object[ "id" ] ) ).toBe( true );
 
-				document.getPointer( "http://example.com/document/#fragment" );
-				document.getPointer( "_:BlankNode" );
+				expect( document.hasFragment( "_:1" ) ).toBe( true );
+				expect( document.object ).toBe( document.getFragment( "_:1" ) );
+			} );
 
-				expect( document.hasFragment( "http://example.com/document/#fragment" ) ).toBe( true );
+			it( "should be a `NamedFragment` when relative fragment label in id property", ():void => {
+				type TargetDocument = Document & { object?:{ id?:string, string:string } };
+				const document:TargetDocument = createMockDocument();
+				document.object = { id: "#fragment", string: "new object" };
+
+				Document._convertNestedObjects( document, document );
+				expect( document.object ).toEqual( { string: "new object" } );
+				// TODO: Use `isNamedFragment`
+				expect( Resource.is( document.object ) ).toBe( true );
+				expect( NamedFragment.isDecorated( document.object ) ).toBe( true );
+
 				expect( document.hasFragment( "#fragment" ) ).toBe( true );
-				expect( document.hasFragment( "fragment" ) ).toBe( true );
-
-				expect( document.hasFragment( "_:BlankNode" ) ).toBe( true );
-
-				expect( document.hasFragment( "http://example.com/document/#another-fragment" ) ).toBe( false );
+				expect( document.object ).toBe( document.getFragment( "#fragment" ) );
 			} );
 
-			it( hasMethod(
-				INSTANCE,
-				"getFragment",
-				[ "T" ],
-				"Returns the fragment referenced by the ID provided.\n" +
-				"Returns `null` if no fragment exists in the Document.", [
-					{ name: "id", type: "string" },
-				],
-				{ type: "T & Carbon.Fragment.Class" }
-			), ():void => {
-				expect( document.getFragment ).toBeDefined();
-				expect( Utils.isFunction( document.getFragment ) ).toBe( true );
+			it( "should be a `NamedFragment` when relative fragment label in slug property", ():void => {
+				type TargetDocument = Document & { object?:{ slug?:string, string:string } };
+				const document:TargetDocument = createMockDocument();
+				document.object = { slug: "#1", string: "new object" };
 
-				let fragment:Fragment.Class;
-				expect( document.getFragment( "http://example.com/document/#fragment" ) ).toBeNull();
-				expect( document.getFragment( "#fragment" ) ).toBeNull();
-				expect( document.getFragment( "fragment" ) ).toBeNull();
-				expect( document.getFragment( "_:BlankNode" ) ).toBeNull();
+				Document._convertNestedObjects( document, document );
+				expect( document.object ).toEqual( { string: "new object" } );
+				// TODO: Use `isNamedFragment`
+				expect( Resource.is( document.object ) ).toBe( true );
+				expect( NamedFragment.isDecorated( document.object ) ).toBe( true );
 
-				document.getPointer( "http://example.com/document/#fragment" );
-				document.getPointer( "_:BlankNode" );
-
-				fragment = document.getFragment( "http://example.com/document/#fragment" );
-				expect( Fragment.Factory.hasClassProperties( fragment ) ).toBe( true );
-				expect( fragment.id ).toBe( "http://example.com/document/#fragment" );
-				fragment = document.getFragment( "#fragment" );
-				expect( Fragment.Factory.hasClassProperties( fragment ) ).toBe( true );
-				expect( fragment.id ).toBe( "http://example.com/document/#fragment" );
-				fragment = document.getFragment( "fragment" );
-				expect( Fragment.Factory.hasClassProperties( fragment ) ).toBe( true );
-				expect( fragment.id ).toBe( "http://example.com/document/#fragment" );
-				fragment = document.getFragment( "_:BlankNode" );
-				expect( Fragment.Factory.hasClassProperties( fragment ) ).toBe( true );
-				expect( fragment.id ).toBe( "_:BlankNode" );
+				expect( document.hasFragment( "#1" ) ).toBe( true );
+				expect( document.object ).toBe( document.getFragment( "#1" ) );
 			} );
 
-			it( hasMethod(
-				INSTANCE,
-				"getNamedFragment",
-				[ "T" ],
-				"Returns the fragment referenced by the ID provided.\n" +
-				"Returns `null` if no fragment exists in the Document.", [
-					{ name: "id", type: "string" },
-				],
-				{ type: "T & Carbon.Fragment.Class" }
-			), ():void => {
-				expect( document.getNamedFragment ).toBeDefined();
-				expect( Utils.isFunction( document.getNamedFragment ) ).toBe( true );
-
-				expect( document.getNamedFragment.bind( document, "_:BlankNode" ) ).toThrowError( Errors.IllegalArgumentError );
-				expect( document.getNamedFragment.bind( document, "http://example.com/another-document/#fragment" ) ).toThrowError( Errors.IllegalArgumentError );
-
-				expect( document.getNamedFragment( "http://example.com/document/#fragment" ) ).toBeNull();
-				expect( document.getNamedFragment( "#fragment" ) ).toBeNull();
-				expect( document.getNamedFragment( "fragment" ) ).toBeNull();
-
-				document.getPointer( "http://example.com/document/#fragment" );
-				document.getPointer( "_:BlankNode" );
-
-				let fragment:Fragment.Class;
-				fragment = document.getNamedFragment( "http://example.com/document/#fragment" );
-				expect( NamedFragment.Factory.hasClassProperties( fragment ) ).toBe( true );
-				expect( fragment.id ).toBe( "http://example.com/document/#fragment" );
-				fragment = document.getNamedFragment( "#fragment" );
-				expect( NamedFragment.Factory.hasClassProperties( fragment ) ).toBe( true );
-				expect( fragment.id ).toBe( "http://example.com/document/#fragment" );
-				fragment = document.getNamedFragment( "fragment" );
-				expect( NamedFragment.Factory.hasClassProperties( fragment ) ).toBe( true );
-				expect( fragment.id ).toBe( "http://example.com/document/#fragment" );
-			} );
-
-			it( hasMethod(
-				INSTANCE,
-				"getFragments",
-				"Returns an array with all the fragments in the Document.",
-				{ type: "Carbon.Fragment.Class[]" }
-			), ():void => {
-				expect( document.getFragments ).toBeDefined();
-				expect( Utils.isFunction( document.getFragments ) ).toBe( true );
-
-				let fragments:Fragment.Class[];
-				fragments = document.getFragments();
-				expect( Utils.isArray( fragments ) ).toBe( true );
-				expect( fragments.length ).toBe( 0 );
-
-				document.getPointer( "http://example.com/document/#fragment" );
-				document.getPointer( "_:BlankNode" );
-
-				fragments = document.getFragments();
-				expect( Utils.isArray( fragments ) ).toBe( true );
-				expect( fragments.length ).toBe( 2 );
-				if( NamedFragment.Factory.hasClassProperties( fragments[ 0 ] ) ) {
-					expect( fragments[ 0 ].id ).toBe( "http://example.com/document/#fragment" );
-					expect( fragments[ 1 ].id ).toBe( "_:BlankNode" );
-				} else {
-					expect( fragments[ 0 ].id ).toBe( "_:BlankNode" );
-					expect( fragments[ 1 ].id ).toBe( "http://example.com/document/#fragment" );
-				}
-			} );
-
-			describe( method(
-				INSTANCE,
-				"createFragment"
-			), ():void => {
-
-				it( hasSignature(
-					[ "T" ],
-					"Creates a `Carbon.NamedFragment.Class` from the object provided and the slug specified.\n" +
-					"If the slug has the form of a BlankNode ID, a `Carbon.Fragment.Class` is created instead.", [
-						{ name: "object", type: "T" },
-						{ name: "slug", type: "string" },
-					],
-					{ type: "T & Carbon.Fragment.Class" }
-				), ():void => {
-					expect( document.createFragment ).toBeDefined();
-					expect( Utils.isFunction( document.createFragment ) ).toBe( true );
-
-					interface MyInterface {
-						myProperty?:string;
-						myPointer?:MyInterface;
-					}
-
-					let object:MyInterface;
-					let fragment:Fragment.Class & MyInterface;
-
-					object = {};
-					fragment = document.createFragment<MyInterface>( object, "fragment" );
-					expect( object ).toBe( fragment );
-					expect( Fragment.Factory.hasClassProperties( fragment ) ).toBe( true );
-					expect( fragment.id ).toBe( "http://example.com/document/#fragment" );
-					expect( fragment.myProperty ).toBeUndefined();
-
-					object = { myProperty: "The property" };
-					fragment = document.createFragment<MyInterface>( object, "http://example.com/document/#another-fragment" );
-					expect( Fragment.Factory.hasClassProperties( fragment ) ).toBe( true );
-					expect( fragment.id ).toBe( "http://example.com/document/#another-fragment" );
-					expect( fragment.myProperty ).toBe( "The property" );
-
-					object = { myProperty: "The BlankNode property" };
-					fragment = document.createFragment<MyInterface>( object, "_:BlankNode" );
-					expect( Fragment.Factory.hasClassProperties( fragment ) ).toBe( true );
-					expect( fragment.id ).toBe( "_:BlankNode" );
-					expect( fragment.myProperty ).toBe( "The BlankNode property" );
-
-					object = { myProperty: "Fragment with nested object", myPointer: { myProperty: "The Nested object" } };
-					fragment = document.createFragment<MyInterface>( object, "#another-another-fragment" );
-					expect( Fragment.Factory.hasClassProperties( fragment ) ).toBe( true );
-					expect( fragment.id ).toBe( "http://example.com/document/#another-another-fragment" );
-					expect( fragment.myProperty ).toBe( "Fragment with nested object" );
-					expect( fragment.myPointer ).toBeDefined();
-					expect( Fragment.Factory.hasClassProperties( fragment.myPointer ) ).toBe( true );
-					expect( URI.Util.isBNodeID( (<Fragment.Class> fragment.myPointer).id ) ).toBe( true );
-					expect( fragment.myPointer.myProperty ).toBeDefined();
-					expect( fragment.myPointer.myProperty ).toBe( "The Nested object" );
-
-					object = { myProperty: "Fragment with nested object", myPointer: { myProperty: "The Nested object" } };
-					fragment = document.createFragment<MyInterface>( object, "_:AnotherBlankNode" );
-					expect( Fragment.Factory.hasClassProperties( fragment ) ).toBe( true );
-					expect( fragment.id ).toBe( "_:AnotherBlankNode" );
-					expect( fragment.myProperty ).toBe( "Fragment with nested object" );
-					expect( fragment.myPointer ).toBeDefined();
-					expect( Fragment.Factory.hasClassProperties( fragment.myPointer ) ).toBe( true );
-					expect( URI.Util.isBNodeID( (<Fragment.Class> fragment.myPointer).id ) ).toBe( true );
-					expect( fragment.myPointer.myProperty ).toBeDefined();
-					expect( fragment.myPointer.myProperty ).toBe( "The Nested object" );
-
-					expect( () => document.createFragment( {}, "http://example.com/another-document/#fragment" ) ).toThrowError( Errors.IllegalArgumentError );
-					expect( () => document.createFragment( {}, "fragment" ) ).toThrowError( Errors.IDAlreadyInUseError );
-					expect( () => document.createFragment( {}, "_:BlankNode" ) ).toThrowError( Errors.IDAlreadyInUseError );
-				} );
-
-				it( hasSignature(
-					[ "T" ],
-					"Creates a `Carbon.Fragment.Class` from the object provided, since no slug is specified.", [
-						{ name: "object", type: "object" },
-					],
-					{ type: "T & Carbon.Fragment.Class" }
-				), ():void => {
-					expect( document.createFragment ).toBeDefined();
-					expect( Utils.isFunction( document.createFragment ) ).toBe( true );
-
-					interface MyInterface {
-						myProperty?:string;
-						myPointer?:MyInterface;
-					}
-
-					let object:MyInterface;
-					let fragment:Fragment.Class & MyInterface;
-
-					object = {};
-					fragment = document.createFragment<MyInterface>( object );
-					expect( object ).toBe( fragment );
-					expect( Fragment.Factory.hasClassProperties( fragment ) ).toBe( true );
-					expect( URI.Util.isBNodeID( fragment.id ) ).toBe( true );
-					expect( fragment.myProperty ).toBeUndefined();
-
-					object = { myProperty: "The property" };
-					fragment = document.createFragment<MyInterface>( object );
-					expect( Fragment.Factory.hasClassProperties( fragment ) ).toBe( true );
-					expect( URI.Util.isBNodeID( fragment.id ) ).toBe( true );
-					expect( fragment.myProperty ).toBe( "The property" );
-
-					object = { myProperty: "Fragment with nested object", myPointer: { myProperty: "The Nested object" } };
-					fragment = document.createFragment<MyInterface>( object );
-					expect( Fragment.Factory.hasClassProperties( fragment ) ).toBe( true );
-					expect( URI.Util.isBNodeID( fragment.id ) ).toBe( true );
-					expect( fragment.myProperty ).toBe( "Fragment with nested object" );
-					expect( fragment.myPointer ).toBeDefined();
-					expect( Fragment.Factory.hasClassProperties( fragment.myPointer ) ).toBe( true );
-					expect( URI.Util.isBNodeID( (<Fragment.Class> fragment.myPointer).id ) ).toBe( true );
-					expect( fragment.myPointer.myProperty ).toBeDefined();
-					expect( fragment.myPointer.myProperty ).toBe( "The Nested object" );
-				} );
-
-				it( hasSignature(
-					"Creates an empty `Carbon.NamedFragment.Class` with the slug specified.\n" +
-					"If the slug has the form of a BlankNode ID, a `Carbon.Fragment.Class` is created instead.", [
-						{ name: "slug", type: "string" },
-					],
-					{ type: "Carbon.Fragment.Class" }
-				), ():void => {
-					expect( document.createFragment ).toBeDefined();
-					expect( Utils.isFunction( document.createFragment ) ).toBe( true );
-
-					let fragment:Fragment.Class;
-
-					fragment = document.createFragment( "fragment" );
-					expect( Fragment.Factory.hasClassProperties( fragment ) ).toBe( true );
-					expect( fragment.id ).toBe( "http://example.com/document/#fragment" );
-
-					fragment = document.createFragment( "http://example.com/document/#another-fragment" );
-					expect( Fragment.Factory.hasClassProperties( fragment ) ).toBe( true );
-					expect( fragment.id ).toBe( "http://example.com/document/#another-fragment" );
-
-					fragment = document.createFragment( "_:BlankNode" );
-					expect( Fragment.Factory.hasClassProperties( fragment ) ).toBe( true );
-					expect( fragment.id ).toBe( "_:BlankNode" );
-
-					expect( () => document.createFragment( "http://example.com/another-document/#fragment" ) ).toThrowError( Errors.IllegalArgumentError );
-					expect( () => document.createFragment( "fragment" ) ).toThrowError( Errors.IDAlreadyInUseError );
-					expect( () => document.createFragment( "_:BlankNode" ) ).toThrowError( Errors.IDAlreadyInUseError );
-				} );
-
-				it( hasSignature(
-					"Creates an empty `Carbon.Fragment.Class`, since no slug is provided.",
-					{ type: "Carbon.Fragment.Class" }
-				), ():void => {
-					expect( document.createFragment ).toBeDefined();
-					expect( Utils.isFunction( document.createFragment ) ).toBe( true );
-
-					let fragment1:Fragment.Class;
-					let fragment2:Fragment.Class;
-
-					fragment1 = document.createFragment();
-					expect( Fragment.Factory.hasClassProperties( fragment1 ) ).toBe( true );
-					expect( Utils.isString( fragment1.id ) ).toBe( true );
-					expect( URI.Util.isBNodeID( fragment1.id ) ).toBe( true );
-
-					fragment2 = document.createFragment();
-					expect( Fragment.Factory.hasClassProperties( fragment2 ) ).toBe( true );
-					expect( Utils.isString( fragment2.id ) ).toBe( true );
-					expect( URI.Util.isBNodeID( fragment2.id ) ).toBe( true );
-
-					expect( fragment1.id ).not.toBe( fragment2.id );
-				} );
-
-			} );
-
-			describe( method(
-				INSTANCE,
-				"createNamedFragment"
-			), ():void => {
-
-				it( hasSignature(
-					"Creates a `Carbon.NamedFragment.Class` with the slug provided.\n" +
-					"If the slug has the form of a BlankNode ID, an Error is thrown.", [
-						{ name: "slug", type: "string" },
-					],
-					{ type: "Carbon.NamedFragment.Class" }
-				), ():void => {
-					expect( document.createNamedFragment ).toBeDefined();
-					expect( Utils.isFunction( document.createNamedFragment ) ).toBe( true );
-
-					let fragment:NamedFragment.Class;
-
-					fragment = document.createNamedFragment( "fragment" );
-					expect( NamedFragment.Factory.hasClassProperties( fragment ) ).toBe( true );
-					expect( fragment.slug ).toBe( "fragment" );
-					expect( fragment.id ).toBe( "http://example.com/document/#fragment" );
-
-					fragment = document.createNamedFragment( "http://example.com/document/#another-fragment" );
-					expect( Fragment.Factory.hasClassProperties( fragment ) ).toBe( true );
-					expect( fragment.slug ).toBe( "another-fragment" );
-					expect( fragment.id ).toBe( "http://example.com/document/#another-fragment" );
-
-					expect( () => document.createNamedFragment( "_:BlankNode" ) ).toThrowError( Errors.IllegalArgumentError );
-					expect( () => document.createNamedFragment( "http://example.com/another-document/#fragment" ) ).toThrowError( Errors.IllegalArgumentError );
-					expect( () => document.createNamedFragment( "fragment" ) ).toThrowError( Errors.IDAlreadyInUseError );
-				} );
-
-				it( hasSignature(
-					[ "T" ],
-					"Creates a `Carbon.NamedFragment.Class` from the object provided and the slug specified.\n" +
-					"If the slug has the form of a BlankNode ID, an Error is thrown.", [
-						{ name: "object", type: "T" },
-						{ name: "slug", type: "string" },
-					],
-					{ type: "T & Carbon.NamedFragment.Class" }
-				), ():void => {
-
-					expect( document.createNamedFragment ).toBeDefined();
-					expect( Utils.isFunction( document.createNamedFragment ) ).toBe( true );
-
-					interface MyInterface {
-						myProperty?:string;
-						myPointer?:MyInterface;
-					}
-
-					let object:MyInterface;
-					let fragment:Fragment.Class & MyInterface;
-
-					object = {};
-					fragment = document.createNamedFragment<MyInterface>( object, "fragment" );
-					expect( object ).toBe( fragment );
-					expect( Fragment.Factory.hasClassProperties( fragment ) ).toBe( true );
-					expect( fragment.id ).toBe( "http://example.com/document/#fragment" );
-					expect( fragment.myProperty ).toBeUndefined();
-
-					object = { myProperty: "The property" };
-					fragment = document.createNamedFragment<MyInterface>( object, "http://example.com/document/#another-fragment" );
-					expect( Fragment.Factory.hasClassProperties( fragment ) ).toBe( true );
-					expect( fragment.id ).toBe( "http://example.com/document/#another-fragment" );
-					expect( fragment.myProperty ).toBe( "The property" );
-
-					object = { myProperty: "Fragment with nested object", myPointer: { myProperty: "The Nested object" } };
-					fragment = document.createNamedFragment<MyInterface>( object, "#another-another-fragment" );
-					expect( Fragment.Factory.hasClassProperties( fragment ) ).toBe( true );
-					expect( fragment.id ).toBe( "http://example.com/document/#another-another-fragment" );
-					expect( fragment.myProperty ).toBe( "Fragment with nested object" );
-					expect( fragment.myPointer ).toBeDefined();
-					expect( Fragment.Factory.hasClassProperties( fragment.myPointer ) ).toBe( true );
-					expect( URI.Util.isBNodeID( (<Fragment.Class> fragment.myPointer).id ) ).toBe( true );
-					expect( fragment.myPointer.myProperty ).toBeDefined();
-					expect( fragment.myPointer.myProperty ).toBe( "The Nested object" );
-				} );
-
-			} );
-
-			describe( method(
-				INSTANCE,
-				"_removeFragment"
-			), ():void => {
-
-				it( isDefined(), () => {
-					expect( document._removeFragment ).toBeDefined();
-					expect( Utils.isFunction( document._removeFragment ) ).toBe( true );
-				} );
-
-				it( hasSignature(
-					"Remove the fragment referenced by the `Carbon.Fragment.Class` provided from the Document.", [
-						{ name: "fragment", type: "Carbon.Fragment.Class" },
-					]
-				), ():void => {
-					let fragment1:NamedFragment.Class = document.createNamedFragment( "slug" );
-					let fragment2:Fragment.Class = document.createFragment();
-
-					expect( document.getFragments().length ).toBe( 2 );
-
-					document._removeFragment( fragment1 );
-					expect( document.getFragments().length ).toBe( 1 );
-					expect( document.hasFragment( fragment1.id ) ).toBe( false );
-					expect( document.hasFragment( fragment2.id ) ).toBe( true );
-
-					document._removeFragment( fragment2 );
-					expect( document.getFragments().length ).toBe( 0 );
-					expect( document.hasFragment( fragment1.id ) ).toBe( false );
-					expect( document.hasFragment( fragment2.id ) ).toBe( false );
-				} );
-
-				it( hasSignature(
-					"Remove the fragment referenced by the Slug provided from the Document.", [
-						{ name: "slug", type: "string" },
-					]
-				), ():void => {
-					document.createNamedFragment( "slug" );
-					document.createFragment( "_:bNode" );
-
-					expect( document.getFragments().length ).toBe( 2 );
-
-					document._removeFragment( "slug" );
-					expect( document.getFragments().length ).toBe( 1 );
-					expect( document.hasFragment( "slug" ) ).toBe( false );
-					expect( document.hasFragment( "_:bNode" ) ).toBe( true );
-
-					document._removeFragment( "_:bNode" );
-					expect( document.getFragments().length ).toBe( 0 );
-					expect( document.hasFragment( "slug" ) ).toBe( false );
-					expect( document.hasFragment( "_:bNode" ) ).toBe( false );
-				} );
-
-			} );
-
-			describe( method(
-				INSTANCE,
-				"removeNamedFragment"
-			), ():void => {
-
-				it( isDefined(), ():void => {
-					expect( document.removeNamedFragment ).toBeDefined();
-					expect( Utils.isFunction( document.removeNamedFragment ) ).toBe( true );
-				} );
-
-				it( hasSignature(
-					"Remove the maned fragment referenced by the `Carbon.NamedFragment.Class` provided from the Document.", [
-						{ name: "fragment", type: "Carbon.NamedFragment.Class" },
-					]
-				), ():void => {
-					let fragment1:NamedFragment.Class = document.createNamedFragment( "slug" );
-					let fragment2:Fragment.Class = document.createFragment();
-
-					expect( document.getFragments().length ).toBe( 2 );
-
-					document.removeNamedFragment( fragment1 );
-					expect( document.getFragments().length ).toBe( 1 );
-					expect( document.hasFragment( fragment1.id ) ).toBe( false );
-					expect( document.hasFragment( fragment2.id ) ).toBe( true );
-
-					expect( () => document.removeNamedFragment( <any> fragment2 ) ).toThrowError( Errors.IllegalArgumentError );
-				} );
-
-				it( hasSignature(
-					"Remove the named fragment referenced by the Slug provided from the Document.", [
-						{ name: "slug", type: "string" },
-					]
-				), ():void => {
-					document.createNamedFragment( "slug" );
-					document.createFragment( "_:bNode" );
-
-					expect( document.getFragments().length ).toBe( 2 );
-
-					document.removeNamedFragment( "slug" );
-					expect( document.getFragments().length ).toBe( 1 );
-					expect( document.hasFragment( "slug" ) ).toBe( false );
-					expect( document.hasFragment( "_:bNode" ) ).toBe( true );
-
-					expect( () => document.removeNamedFragment( "_:bNode" ) ).toThrowError( Errors.IllegalArgumentError );
-				} );
-
-			} );
-
-			describe( method(
-				INSTANCE,
-				"toJSON"
-			), ():void => {
-				let jsonEmptyDocument:string;
-				let jsonFullDocument:string;
-
-				beforeAll( ():void => {
-					let emptyObject:any = {
-						"@id": "http://example.com/document/",
-						"@graph": [ {
-							"@id": "http://example.com/document/",
-							"@type": [],
-						}, {
-							"@id": "_:BlankNode",
-							"@type": [],
-						}, {
-							"@id": "http://example.com/document/#fragment",
-							"@type": [],
-						} ],
-					};
-					jsonEmptyDocument = JSON.stringify( emptyObject );
-
-					let fullObject:any = {
-						"@id": "http://example.com/document/",
-						"@graph": [ {
-							"@id": "http://example.com/document/",
-							"@type": [],
-							"http://example.com/ns#myProperty": [ {
-								"@value": "a property",
-								"@type": "http://www.w3.org/2001/XMLSchema#string",
-							} ],
-							"http://example.com/ns#myDate": [ {
-								"@value": "2016-06-01",
-								"@type": "http://www.w3.org/2001/XMLSchema#date",
-							} ],
-							"http://example.com/ns#myFragment": [ {
-								"@id": "_:BlankNode",
-							}, {
-								"@id": "http://example.com/document/#fragment",
-							} ],
-						}, {
-							"@id": "_:BlankNode",
-							"@type": [],
-						}, {
-							"@id": "http://example.com/document/#fragment",
-							"@type": [],
-						} ],
-					};
-					jsonFullDocument = JSON.stringify( fullObject );
-				} );
-
-				beforeEach( ():void => {
-					document.createFragment( {}, "_:BlankNode" );
-					document.createFragment( "fragment" );
-					document[ "myProperty" ] = "a property";
-					document[ "myDate" ] = new Date( "2016-06-01" );
-					document[ "myFragment" ] = document.getFragments();
-				} );
-
-				it( hasSignature(
-					"Returns a JSON string from the Document using an ObjectSchema and a JSONLDConverter.", [
-						{ name: "objectSchemaResolver", type: "Carbon.ObjectSchema.Resolver" },
-						{ name: "jsonLDConverter", type: "Carbon.JSONLDConverter.Class" },
-					],
-					{ type: "string" }
-				), ():void => {
-					expect( document.toJSON ).toBeDefined();
-					expect( Utils.isFunction( document.toJSON ) ).toBe( true );
-
-					class MockedContext extends AbstractContext {
-						protected _baseURI:string;
-
-						constructor() {
-							super();
-							this._baseURI = "http://example.com/";
-							this.settings = { paths: { system: ".system/" } };
-						}
-					}
-
-					let context:AbstractContext = new MockedContext();
-					let converter:JSONLDConverter = new JSONLDConverter();
-					let json:string;
-
-					json = document.toJSON( context.documents, converter );
-					expect( json ).toEqual( jsonEmptyDocument );
-
-					context.extendObjectSchema( {
-						"ex": "http://example.com/ns#",
-						"xsd": "http://www.w3.org/2001/XMLSchema#",
-						"ldp": "http://www.w3.org/ns/ldp#",
-						"myProperty": {
-							"@id": "ex:myProperty",
-							"@type": "xsd:string",
-						},
-						"myDate": {
-							"@id": "ex:myDate",
-							"@type": "xsd:date",
-						},
-						"myFragment": {
-							"@id": "ex:myFragment",
-							"@type": "@id",
-							"@container": "@set",
-						},
-					} );
-					json = document.toJSON( context.documents, converter );
-					expect( json ).toEqual( jsonFullDocument );
-				} );
-
-				it( hasSignature(
-					"Returns a JSON string from the Document using an ObjectSchema", [
-						{ name: "objectSchemaResolver", type: "Carbon.ObjectSchema.Resolver" },
-					],
-					{ type: "string" }
-				), ():void => {
-					expect( document.toJSON ).toBeDefined();
-					expect( Utils.isFunction( document.toJSON ) ).toBe( true );
-
-					class MockedContext extends AbstractContext {
-						protected _baseURI:string;
-
-						constructor() {
-							super();
-							this._baseURI = "http://example.com/";
-							this.settings = { paths: { system: ".system/" } };
-						}
-					}
-
-					let context:AbstractContext = new MockedContext();
-					let json:string;
-
-					json = document.toJSON( context.documents );
-					expect( json ).toEqual( jsonEmptyDocument );
-
-					context.extendObjectSchema( {
-						"ex": "http://example.com/ns#",
-						"xsd": "http://www.w3.org/2001/XMLSchema#",
-						"ldp": "http://www.w3.org/ns/ldp#",
-						"myProperty": {
-							"@id": "ex:myProperty",
-							"@type": "xsd:string",
-						},
-						"myDate": {
-							"@id": "ex:myDate",
-							"@type": "xsd:date",
-						},
-						"myFragment": {
-							"@id": "ex:myFragment",
-							"@type": "@id",
-							"@container": "@set",
-						},
-					} );
-					json = document.toJSON( context.documents );
-					expect( json ).toEqual( jsonFullDocument );
-
-					context.clearObjectSchema();
-					context.extendObjectSchema( {
-						"@vocab": context.resolve( "vocabulary/#" ),
-					} );
-					json = document.toJSON( context.documents );
-					expect( json ).toEqual( JSON.stringify( {
-						"@id": "http://example.com/document/",
-						"@graph": [ {
-							"@id": "http://example.com/document/",
-							"@type": [],
-							"http://example.com/vocabulary/#myProperty": [ {
-								"@value": "a property",
-								"@type": "http://www.w3.org/2001/XMLSchema#string",
-							} ],
-							"http://example.com/vocabulary/#myDate": [ {
-								"@value": "2016-06-01T00:00:00.000Z",
-								"@type": "http://www.w3.org/2001/XMLSchema#dateTime",
-							} ],
-							"http://example.com/vocabulary/#myFragment": [ {
-								"@id": "_:BlankNode",
-							}, {
-								"@id": "http://example.com/document/#fragment",
-							} ],
-						}, {
-							"@id": "_:BlankNode",
-							"@type": [],
-						}, {
-							"@id": "http://example.com/document/#fragment",
-							"@type": [],
-						} ],
-					} ) );
-				} );
-
-				it( hasSignature(
-					"Returns a JSON string from the Document using the default ObjectSchema.",
-					{ type: "string" }
-				), ():void => {
-					expect( document.toJSON ).toBeDefined();
-					expect( Utils.isFunction( document.toJSON ) ).toBe( true );
-
-					let emptyObject:any = {
-						"@id": "http://example.com/document/",
-						"@graph": [ {
-							"@id": "http://example.com/document/",
-							"@type": [],
-						}, {
-							"@id": "_:BlankNode",
-							"@type": [],
-						}, {
-							"@id": "http://example.com/document/#fragment",
-							"@type": [],
-						} ],
-					};
-					jsonEmptyDocument = JSON.stringify( emptyObject );
-
-					let json:string;
-					json = document.toJSON();
-					expect( json ).toEqual( jsonEmptyDocument );
-				} );
-
+			it( "should be a `NamedFragment` when relative label in slug property", ():void => {
+				type TargetDocument = Document & { object?:{ slug?:string, string:string } };
+				const document:TargetDocument = createMockDocument();
+				document.object = { slug: "fragment", string: "new object" };
+
+				Document._convertNestedObjects( document, document );
+				expect( document.object ).toEqual( { string: "new object" } );
+				// TODO: Use `isNamedFragment`
+				expect( Resource.is( document.object ) ).toBe( true );
+				expect( NamedFragment.isDecorated( document.object ) ).toBe( true );
+
+				expect( document.hasFragment( "#fragment" ) ).toBe( true );
+				expect( document.object ).toBe( document.getFragment( "#fragment" ) );
 			} );
 
 		} );

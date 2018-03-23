@@ -1,10 +1,10 @@
-import * as events from "events";
-import * as http from "http";
-import * as https from "https";
-import * as common from "nock/lib/common.js";
-import * as Socket from "nock/lib/socket.js";
-import * as timers from "timers";
-import * as URL from "url";
+import events from "events";
+import http from "http";
+import https from "https";
+import common from "nock/lib/common.js";
+import Socket from "nock/lib/socket.js";
+import timers from "timers";
+import URL from "url";
 
 
 class MockAgent {

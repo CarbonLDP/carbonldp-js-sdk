@@ -1,24 +1,28 @@
-import * as VolatileResource from "./../LDP/VolatileResource";
-import * as NS from "./../NS";
-import * as ObjectSchema from "./../ObjectSchema";
-import * as PersistedDocument from "./../PersistedDocument";
+import { ObjectSchema } from "../ObjectSchema";
+import { PersistedDocument } from "../PersistedDocument";
+import { C } from "../Vocabularies/C";
+import { PlatformInstance } from "./PlatformInstance";
 
-export const RDF_CLASS:string = NS.C.Class.Platform;
 
-export const SCHEMA:ObjectSchema.Class = {
-	"version": {
-		"@id": NS.C.Predicate.version,
-		"@type": NS.XSD.DataType.string,
-	},
-	"buildDate": {
-		"@id": NS.C.Predicate.buildDate,
-		"@type": NS.XSD.DataType.dateTime,
+export interface PlatformMetadata extends PersistedDocument {
+	instance:PlatformInstance;
+}
+
+
+export interface PlatformMetadataFactory {
+	TYPE:string;
+	SCHEMA:ObjectSchema;
+}
+
+const SCHEMA:ObjectSchema = {
+	"instance": {
+		"@id": C.instance,
+		"@type": "@id",
 	},
 };
 
-export interface Class extends VolatileResource.Class, PersistedDocument.Class {
-	version:string;
-	buildDate:Date;
-}
+export const PlatformMetadata:PlatformMetadataFactory = {
+	TYPE: C.Platform,
+	SCHEMA,
+};
 
-export default Class;

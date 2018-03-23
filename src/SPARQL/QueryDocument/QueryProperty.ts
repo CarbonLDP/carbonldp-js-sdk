@@ -5,36 +5,36 @@ import {
 } from "sparqler/tokens";
 
 import { DigestedObjectSchema } from "../../ObjectSchema";
-import * as QueryContext from "./QueryContext";
-import * as QueryDocumentBuilder from "./QueryDocumentBuilder";
-import * as QueryVariable from "./QueryVariable";
+import { QueryContext } from "./QueryContext";
+import { QueryDocumentBuilder } from "./QueryDocumentBuilder";
+import { QueryVariable } from "./QueryVariable";
 import {
 	createAllPattern,
 	createGraphPattern,
 	createTypesPattern
 } from "./Utils";
 
-export enum PropertyType {
+export enum QueryPropertyType {
 	FULL,
 	PARTIAL,
 	ALL,
 }
 
-export class Class {
+export class QueryProperty {
 	readonly name:string;
-	readonly variable:QueryVariable.Class;
+	readonly variable:QueryVariable;
 
-	_builder:QueryDocumentBuilder.Class;
+	_builder:QueryDocumentBuilder;
 
-	private _context:QueryContext.Class;
+	private _context:QueryContext;
 
 	private _optional:boolean;
-	private _type?:PropertyType;
+	private _type?:QueryPropertyType;
 
 	private _patterns:PatternToken[];
 	private _schema:DigestedObjectSchema;
 
-	constructor( context:QueryContext.Class, name:string ) {
+	constructor( context:QueryContext, name:string ) {
 		this.name = name;
 		this.variable = context.getVariable( name );
 
@@ -53,9 +53,9 @@ export class Class {
 		let patterns:PatternToken[] = this._patterns.slice();
 
 		if( this._type !== void 0 ) {
-			const fn:( context:QueryContext.Class, resourcePath:string ) => PatternToken =
-				this._type === PropertyType.PARTIAL ? createTypesPattern :
-					this._type === PropertyType.FULL ? createGraphPattern : createAllPattern;
+			const fn:( context:QueryContext, resourcePath:string ) => PatternToken =
+				this._type === QueryPropertyType.PARTIAL ? createTypesPattern :
+					this._type === QueryPropertyType.FULL ? createGraphPattern : createAllPattern;
 
 			const index:number = patterns.findIndex( pattern => pattern === void 0 );
 			patterns[ index ] = fn( this._context, this.name );
@@ -82,11 +82,11 @@ export class Class {
 		return this;
 	}
 
-	getType():PropertyType {
+	getType():QueryPropertyType {
 		return this._type;
 	}
 
-	setType( type:PropertyType ):this {
+	setType( type:QueryPropertyType ):this {
 		if( this._type === void 0 ) this._patterns.push( void 0 );
 		this._type = type;
 
@@ -102,5 +102,3 @@ export class Class {
 		return `${ this.variable }`;
 	}
 }
-
-export default Class;

@@ -1,3 +1,6 @@
+import { AbstractContext } from "../AbstractContext";
+import * as Errors from "../Errors";
+import { RequestOptions } from "../HTTP/Request";
 import {
 	clazz,
 	hasConstructor,
@@ -9,11 +12,8 @@ import {
 	method,
 	module,
 } from "../test/JasmineExtender";
-
-import AbstractContext from "./../AbstractContext";
-import * as Errors from "./../Errors";
-import * as HTTP from "./../HTTP";
-import * as NS from "./../NS";
+import { CS } from "../Vocabularies/CS";
+import { VCARD } from "../Vocabularies/VCARD";
 import * as Utils from "./../Utils";
 import * as PersistedCredentials from "./PersistedCredentials";
 import * as PersistedUser from "./PersistedUser";
@@ -21,7 +21,7 @@ import * as PersistedUser from "./PersistedUser";
 import * as Users from "./Users";
 import DefaultExport from "./Users";
 
-describe( module( "Carbon/Auth/Users" ), ():void => {
+describe( module( "carbonldp/Auth/Users" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( Users ).toBeDefined();
@@ -29,7 +29,7 @@ describe( module( "Carbon/Auth/Users" ), ():void => {
 	} );
 
 	describe( clazz(
-		"Carbon.Auth.Users.Class",
+		"CarbonLDP.Auth.Users.Class",
 		"Abstract class for manage Users of a determined context."
 	), ():void => {
 
@@ -39,7 +39,7 @@ describe( module( "Carbon/Auth/Users" ), ():void => {
 		} );
 
 		it( hasConstructor( [
-			{ name: "context", type: "Carbon.Context.Class", description: "The context where to manage its Users." },
+			{ name: "context", type: "CarbonLDP.Context", description: "The context where to manage its Users." },
 		] ), ():void => {
 			const context:AbstractContext = new class extends AbstractContext {
 				protected _baseURI:string;
@@ -59,7 +59,7 @@ describe( module( "Carbon/Auth/Users" ), ():void => {
 					{ name: "email", type: "string" },
 					{ name: "password", type: "string" },
 				],
-				{ type: "Promise<[ Carbon.Auth.PersistedUser.Class, Carbon.HTTP.Response.Class ]>" }
+				{ type: "Promise<CarbonLDP.Auth.PersistedUser.Class>" }
 			), ():void => {} );
 
 			it( "should exists", ():void => {
@@ -84,7 +84,7 @@ describe( module( "Carbon/Auth/Users" ), ():void => {
 				};
 				const users:Users.Class = new Users.Class( context );
 
-				const promise:Promise<[ PersistedUser.Class, HTTP.Response.Class ]> = users.register( "user@example.com", "my-password" );
+				const promise:Promise<PersistedUser.Class> = users.register( "user@example.com", "my-password" );
 				expect( promise ).toEqual( jasmine.any( Promise ) );
 				promise
 					.then( () => done.fail( "Promise should not be resolved." ) )
@@ -107,7 +107,7 @@ describe( module( "Carbon/Auth/Users" ), ():void => {
 
 				const users:Users.Class = new Users.Class( context );
 
-				const promise:Promise<[ PersistedUser.Class, HTTP.Response.Class ]> = users.register( "user@example.com", "my-password" );
+				const promise:Promise<PersistedUser.Class> = users.register( "user@example.com", "my-password" );
 				expect( promise ).toEqual( jasmine.any( Promise ) );
 				promise
 					.then( () => done.fail( "Promise should not be resolved." ) )
@@ -142,26 +142,24 @@ describe( module( "Carbon/Auth/Users" ), ():void => {
 						"@id": "http://example.com/.system/credentials/a-user-credentials/",
 						"@graph": [ {
 							"@id": "http://example.com/.system/credentials/a-user-credentials/",
-							"@type": [ "${ NS.CS.Class.Credentials }" ],
-							"${ NS.VCARD.Predicate.email }": {
+							"@type": [ "${ CS.Credentials }" ],
+							"${ VCARD.email }": {
 								"@value": "user@example.com"
 							},
-							"${ NS.CS.Predicate.password }": {
+							"${ CS.password }": {
 								"@value": "my-encrypted-password"
 							},
-							"${ NS.CS.Predicate.credentialsOf }": {
+							"${ CS.credentialsOf }": {
 								"@id": "http://example.com/users/a-user/"
 							}
 						} ]
 					}`,
 				} );
 
-				const promise:Promise<[ PersistedUser.Class, HTTP.Response.Class ]> = users.register( "user@example.com", "my-password" );
+				const promise:Promise<PersistedUser.Class> = users.register( "user@example.com", "my-password" );
 				expect( promise ).toEqual( jasmine.any( Promise ) );
 
-				promise.then( ( [ persistedUser, response ]:[ PersistedUser.Class, HTTP.Response.Class ] ) => {
-					expect( response ).toEqual( jasmine.any( HTTP.Response.Class ) );
-
+				promise.then( ( persistedUser:PersistedUser.Class ) => {
 					expect( PersistedUser.Factory.is( persistedUser ) ).toBe( true );
 					expect( persistedUser ).toEqual( jasmine.objectContaining( { credentials: jasmine.any( Object ) as any } ) );
 					expect( persistedUser.credentials ).toEqual( jasmine.objectContaining( { email: "user@example.com" } ) );
@@ -181,9 +179,9 @@ describe( module( "Carbon/Auth/Users" ), ():void => {
 			"get",
 			"Retrieves the user specified from the current context.", [
 				{ name: "userURI", type: "string", description: "The URI of the user to retrieve." },
-				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
+				{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true },
 			],
-			{ type: "Promise<[ Carbon.Auth.PersistedUser.Class, Carbon.HTTP.Response.Class ]>" }
+			{ type: "Promise<CarbonLDP.Auth.PersistedUser.Class>" }
 		), ( done:{ ():void, fail:() => void } ) => {
 			let users:Users.Class;
 			let context:AbstractContext;
@@ -205,7 +203,7 @@ describe( module( "Carbon/Auth/Users" ), ():void => {
 			expect( users.get ).toBeDefined();
 			expect( Utils.isFunction( users.get ) ).toBe( true );
 
-			let options:HTTP.Request.Options = { timeout: 5555 };
+			let options:RequestOptions = { timeout: 5555 };
 			let spy:jasmine.Spy = spyOn( context.documents, "get" ).and.returnValue( Promise.resolve() );
 
 			let promises:Promise<any>[] = [];
@@ -255,7 +253,7 @@ describe( module( "Carbon/Auth/Users" ), ():void => {
 				};
 				const users:Users.Class = new Users.Class( context );
 
-				const promise:Promise<[ PersistedUser.Class, HTTP.Response.Class[] ]> = users.enableCredentials( "a-user/" );
+				const promise:Promise<PersistedUser.Class> = users.enableCredentials( "a-user/" );
 				expect( promise ).toEqual( jasmine.any( Promise ) );
 				promise
 					.then( () => done.fail( "Promise should not be resolved." ) )
@@ -277,7 +275,7 @@ describe( module( "Carbon/Auth/Users" ), ():void => {
 				};
 				const users:Users.Class = new Users.Class( context );
 
-				const promise:Promise<[ PersistedUser.Class, HTTP.Response.Class[] ]> = users.enableCredentials( "http://example.com/not-users-container/a-user/" );
+				const promise:Promise<PersistedUser.Class> = users.enableCredentials( "http://example.com/not-users-container/a-user/" );
 				expect( promise ).toEqual( jasmine.any( Promise ) );
 				promise
 					.then( () => done.fail( "Promise should not be resolved." ) )
@@ -300,22 +298,17 @@ describe( module( "Carbon/Auth/Users" ), ():void => {
 				const users:Users.Class = new Users.Class( context );
 
 				// Spies decorator and function called
-				const mockedResponse:HTTP.Response.Class = new HTTP.Response.Class( {} as any, "response-data" );
 				const mockedUser:PersistedUser.Class = PersistedUser.Factory.decorate(
 					context.documents.getPointer( "http://example.com/users/a-user/" ),
 					context.documents
 				);
 				const decoratorSpy:jasmine.Spy = spyOn( PersistedUser.Factory, "decorate" ).and.callThrough();
 				Object.defineProperty( mockedUser, "enableCredentials", { writable: true } );
-				const enableCredentialsSpy:jasmine.Spy = spyOn( mockedUser, "enableCredentials" ).and.returnValue( [ null, [ mockedResponse ] ] );
+				const enableCredentialsSpy:jasmine.Spy = spyOn( mockedUser, "enableCredentials" ).and.returnValue( null );
 
-				const promise:Promise<[ PersistedUser.Class, HTTP.Response.Class[] ]> = users.enableCredentials( "a-user/" );
+				const promise:Promise<PersistedUser.Class> = users.enableCredentials( "a-user/" );
 				expect( promise ).toEqual( jasmine.any( Promise ) );
-				promise.then( ( [ returnedUser, responses ] ) => {
-					expect( responses ).toEqual( jasmine.any( Array ) );
-					expect( responses.length ).toBe( 1 );
-					responses.forEach( response => expect( response ).toBe( mockedResponse ) );
-
+				promise.then( ( returnedUser ) => {
 					// Null from the spy
 					expect( returnedUser ).toBeNull();
 
@@ -334,9 +327,9 @@ describe( module( "Carbon/Auth/Users" ), ():void => {
 			"disableCredentials",
 			"Activate the account of the user specified.", [
 				{ name: "userURI", type: "string", description: "The URI of the user to deactivate its credentials." },
-				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
+				{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true },
 			],
-			{ type: "Promise<[ Carbon.Auth.PersistedUser.Class, Carbon.HTTP.Response.Class[] ]>" }
+			{ type: "Promise<CarbonLDP.Auth.PersistedUser.Class>" }
 		), () => {} );
 
 		describe( "disableCredentials", ():void => {
@@ -357,7 +350,7 @@ describe( module( "Carbon/Auth/Users" ), ():void => {
 				};
 				const users:Users.Class = new Users.Class( context );
 
-				const promise:Promise<[ PersistedUser.Class, HTTP.Response.Class[] ]> = users.disableCredentials( "a-user/" );
+				const promise:Promise<PersistedUser.Class> = users.disableCredentials( "a-user/" );
 				expect( promise ).toEqual( jasmine.any( Promise ) );
 				promise
 					.then( () => done.fail( "Promise should not be resolved." ) )
@@ -379,7 +372,7 @@ describe( module( "Carbon/Auth/Users" ), ():void => {
 				};
 				const users:Users.Class = new Users.Class( context );
 
-				const promise:Promise<[ PersistedUser.Class, HTTP.Response.Class[] ]> = users.disableCredentials( "http://example.com/not-users-container/a-user/" );
+				const promise:Promise<PersistedUser.Class> = users.disableCredentials( "http://example.com/not-users-container/a-user/" );
 				expect( promise ).toEqual( jasmine.any( Promise ) );
 				promise
 					.then( () => done.fail( "Promise should not be resolved." ) )
@@ -402,22 +395,17 @@ describe( module( "Carbon/Auth/Users" ), ():void => {
 				const users:Users.Class = new Users.Class( context );
 
 				// Spies decorator and function called
-				const mockedResponse:HTTP.Response.Class = new HTTP.Response.Class( {} as any, "response-data" );
 				const mockedUser:PersistedUser.Class = PersistedUser.Factory.decorate(
 					context.documents.getPointer( "http://example.com/users/a-user/" ),
 					context.documents
 				);
 				const decoratorSpy:jasmine.Spy = spyOn( PersistedUser.Factory, "decorate" ).and.callThrough();
 				Object.defineProperty( mockedUser, "disableCredentials", { writable: true } );
-				const enableCredentialsSpy:jasmine.Spy = spyOn( mockedUser, "disableCredentials" ).and.returnValue( [ null, [ mockedResponse ] ] );
+				const enableCredentialsSpy:jasmine.Spy = spyOn( mockedUser, "disableCredentials" ).and.returnValue( null );
 
-				const promise:Promise<[ PersistedUser.Class, HTTP.Response.Class[] ]> = users.disableCredentials( "a-user/" );
+				const promise:Promise<PersistedUser.Class> = users.disableCredentials( "a-user/" );
 				expect( promise ).toEqual( jasmine.any( Promise ) );
-				promise.then( ( [ returnedUser, responses ] ) => {
-					expect( responses ).toEqual( jasmine.any( Array ) );
-					expect( responses.length ).toBe( 1 );
-					responses.forEach( response => expect( response ).toBe( mockedResponse ) );
-
+				promise.then( ( returnedUser ) => {
 					// Null from the spy
 					expect( returnedUser ).toBeNull();
 
@@ -436,9 +424,9 @@ describe( module( "Carbon/Auth/Users" ), ():void => {
 			"disableCredentials",
 			"Deactivate the account of the user specified.", [
 				{ name: "userURI", type: "string", description: "The URI of the user to activate its credentials." },
-				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
+				{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true },
 			],
-			{ type: "Promise<[ Carbon.Auth.PersistedUser.Class, [ Carbon.HTTP.Response.Class, Carbon.HTTP.Response.Class ] ]>" }
+			{ type: "Promise<CarbonLDP.Auth.PersistedUser.Class>" }
 		), () => {} );
 
 		it( hasMethod(
@@ -446,9 +434,9 @@ describe( module( "Carbon/Auth/Users" ), ():void => {
 			"delete",
 			"Deletes the user specified.", [
 				{ name: "userURI", type: "string", description: "The URI of the user to be deleted." },
-				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", optional: true },
+				{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true },
 			],
-			{ type: "Promise<[ Carbon.Auth.PersistedUser.Class, Carbon.HTTP.Response.Class ]>" }
+			{ type: "Promise<void>" }
 		), ( done:{ ():void, fail:() => void } ) => {
 			let users:Users.Class;
 			let context:AbstractContext;
@@ -469,7 +457,7 @@ describe( module( "Carbon/Auth/Users" ), ():void => {
 			expect( users.delete ).toBeDefined();
 			expect( Utils.isFunction( users.delete ) ).toBe( true );
 
-			let options:HTTP.Request.Options = { timeout: 5555 };
+			let options:RequestOptions = { timeout: 5555 };
 			let spy:jasmine.Spy = spyOn( context.documents, "delete" ).and.returnValue( Promise.resolve() );
 
 			let promises:Promise<any>[] = [];
@@ -504,7 +492,7 @@ describe( module( "Carbon/Auth/Users" ), ():void => {
 	} );
 
 	it( hasDefaultExport(
-		"Carbon.Auth.Users.Class"
+		"CarbonLDP.Auth.Users.Class"
 	), ():void => {
 		expect( DefaultExport ).toBeDefined();
 		expect( DefaultExport ).toBe( Users.Class );

@@ -1,32 +1,33 @@
+import * as Errors from "../Errors";
+import { UnauthorizedError } from "../HTTP/Errors";
+import { Header } from "../HTTP/Header";
+import { RequestOptions } from "../HTTP/Request";
+import { C } from "../Vocabularies/C";
+import { CS } from "../Vocabularies/CS";
+import { VCARD } from "../Vocabularies/VCARD";
+import { XSD } from "../Vocabularies/XSD";
+import { AbstractContext } from "./../AbstractContext";
 import {
-	INSTANCE,
-
-	module,
-
-	isDefined,
-
 	clazz,
-	method,
-
 	hasConstructor,
+	hasDefaultExport,
 	hasMethod,
 	hasSignature,
-	hasDefaultExport,
+	INSTANCE,
+	isDefined,
+	method,
+	module,
 } from "./../test/JasmineExtender";
-
-import AbstractContext from "./../AbstractContext";
-import * as Errors from "./../Errors";
-import * as HTTP from "./../HTTP";
 import * as Utils from "./../Utils";
-import * as NS from "./../NS";
 import * as PersistedUser from "./PersistedUser";
 import * as Token from "./Token";
-import UsernameAndPasswordToken from "./UsernameAndPasswordToken";
 
 import * as TokenAuthenticator from "./TokenAuthenticator";
 import DefaultExport from "./TokenAuthenticator";
 
-describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
+import UsernameAndPasswordToken from "./UsernameAndPasswordToken";
+
+describe( module( "carbonldp/Auth/TokenAuthenticator" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( TokenAuthenticator ).toBeDefined();
@@ -39,9 +40,9 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 	} );
 
 	describe( clazz(
-		"Carbon.Auth.TokenAuthenticator.Class",
+		"CarbonLDP.Auth.TokenAuthenticator.Class",
 		"Authenticates requests using JSON Web Token (JWT) Authentication.", [
-			"Carbon.Auth.Authenticator.Class<Carbon.Auth.UsernameAndPasswordToken.Class>",
+			"CarbonLDP.Auth.Authenticator.Class<CarbonLDP.Auth.UsernameAndPasswordToken.Class>",
 		]
 	), ():void => {
 
@@ -59,7 +60,7 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 		} );
 
 		it( hasConstructor( [
-			{ name: "context", type: "Carbon.Context.Class", description: "The context where to authenticate the user." },
+			{ name: "context", type: "CarbonLDP.Context", description: "The context where to authenticate the user." },
 		] ), ():void => {
 			class MockedContext extends AbstractContext {
 				protected _baseURI:string;
@@ -130,9 +131,9 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 
 			it( hasSignature(
 				"Stores credentials to authenticate future requests.", [
-					{ name: "authenticationToken", type: "Carbon.Auth.UsernameAndPasswordToken" },
+					{ name: "authenticationToken", type: "CarbonLDP.Auth.UsernameAndPasswordToken" },
 				],
-				{ type: "Promise<Carbon.Auth.Token.Class>" }
+				{ type: "Promise<CarbonLDP.Auth.Token.Class>" }
 			), ( done:{ ():void, fail:( error:Error ) => void } ):void => {
 
 				// Property Integrity
@@ -146,6 +147,7 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 							this.settings = { paths: { system: ".system/" } };
 						}
 					}
+
 					let context:AbstractContext = new MockedContext();
 					let authenticator:TokenAuthenticator.Class = new TokenAuthenticator.Class( context );
 
@@ -174,56 +176,56 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 						responseText: `[ {
 							"@id": "_:00",
 							"@type": [
-								"${ NS.C.Class.ResponseMetadata }",
-								"${ NS.C.Class.VolatileResource }"
+								"${ C.ResponseMetadata }",
+								"${ C.VolatileResource }"
 							],
-							"${ NS.C.Predicate.documentMetadata }": [ {
+							"${ C.documentMetadata }": [ {
 								"@id": "_:01"
 							} ]
 						}, {
 							"@id": "_:01",
 							"@type": [
-								"${ NS.C.Class.DocumentMetadata }",
-								"${ NS.C.Class.VolatileResource }"
+								"${ C.DocumentMetadata }",
+								"${ C.VolatileResource }"
 							],
-							"${ NS.C.Predicate.eTag }": [ {
+							"${ C.eTag }": [ {
 								"@value": "\\"1234567890\\""
 							} ],
-							"${ NS.C.Predicate.relatedDocument }": [ {
+							"${ C.relatedDocument }": [ {
 								"@id": "http://successful.example.com/users/my-user/"
 							} ]
 						}, {
 							"@id": "_:02",
 							"@type": [
-								"${ NS.CS.Class.Token }",
-								"${ NS.C.Class.VolatileResource }"
+								"${ CS.Token }",
+								"${ C.VolatileResource }"
 							],
-							"${ NS.CS.Predicate.tokenKey }": [ {
+							"${ CS.tokenKey }": [ {
 								"@value": "token-value"
 							} ],
-							"${ NS.CS.Predicate.expirationTime }": {
+							"${ CS.expirationTime }": {
 								"@value": "${ expirationTime.toISOString() }",
-								"@type": "${ NS.XSD.DataType.dateTime }"
+								"@type": "${ XSD.dateTime }"
 							},
-							"${ NS.CS.Predicate.credentialsOf }": [ {
+							"${ CS.credentialsOf }": [ {
 								"@id": "http://successful.example.com/users/my-user/"
 							} ]
 						}, {
 							"@id": "http://successful.example.com/users/my-user/",
 							"@graph": [ {
 								"@id": "http://successful.example.com/users/my-user/",
-								"@type": [ "${ NS.CS.Class.User }" ],
-								"${ NS.CS.Predicate.name }": [ {
+								"@type": [ "${ CS.User }" ],
+								"${ CS.name }": [ {
 									"@value": "My User Name",
-									"@type": "${ NS.XSD.DataType.string }"
+									"@type": "${ XSD.string }"
 								} ],
-								"${ NS.VCARD.Predicate.email }": [ {
+								"${ VCARD.email }": [ {
 									"@value": "my-user@users.com",
-									"@type": "${ NS.XSD.DataType.string }"
+									"@type": "${ XSD.string }"
 								} ],
-								"${ NS.CS.Predicate.enabled }": [ {
+								"${ CS.enabled }": [ {
 									"@value": "true",
-									"@type": "${ NS.XSD.DataType.boolean }"
+									"@type": "${ XSD.boolean }"
 								} ]
 							} ]
 						} ]`,
@@ -267,7 +269,7 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 					promises.push( authenticator.authenticate( new UsernameAndPasswordToken( "user", "pass" ) ).then( () => {
 						done.fail( new Error( "The authentication should have been unsuccessful." ) );
 					}, ( error:Error ) => {
-						expect( error instanceof HTTP.Errors.UnauthorizedError ).toEqual( true );
+						expect( error instanceof UnauthorizedError ).toEqual( true );
 
 						expect( authenticator.isAuthenticated() ).toEqual( false );
 					} ) );
@@ -278,9 +280,9 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 
 			it( hasSignature(
 				"Stores credentials to authenticate future requests.", [
-					{ name: "token", type: "Carbon.Auth.Token.Class" },
+					{ name: "token", type: "CarbonLDP.Auth.Token.Class" },
 				],
-				{ type: "Promise<Carbon.Auth.Token.Class>" }
+				{ type: "Promise<CarbonLDP.Auth.Token.Class>" }
 			), ( done:{ ():void, fail:( error:Error ) => void } ):void => {
 
 				class MockedContext extends AbstractContext {
@@ -292,6 +294,7 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 						this.settings = { paths: { system: ".system/" } };
 					}
 				}
+
 				let context:AbstractContext = new MockedContext();
 
 				// Property Integrity
@@ -312,7 +315,7 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 						"expirationTime": "${ expirationTime.toISOString() }",
 						"id": "",
 						"key": "token-value",
-						"types": [ "${ NS.CS.Class.Token }" ],
+						"types": [ "${ CS.Token }" ],
 						"user": { "id": "http://exmple.com/users/my-user/" }
 					}`;
 					let authenticator:TokenAuthenticator.Class = new TokenAuthenticator.Class( context );
@@ -334,7 +337,7 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 						"expirationTime": "${expirationTime.toISOString()}",
 						"id": "",
 						"key": "token-value",
-						"types": [ "${ NS.CS.Class.Token }" ]
+						"types": [ "${ CS.Token }" ]
 					}`;
 					let authenticator:TokenAuthenticator.Class = new TokenAuthenticator.Class( context );
 
@@ -357,7 +360,7 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 						"expirationTime": "${ expirationTime.toISOString() }",
 						"id": "",
 						"key": "token-value",
-						"types": [ "${ NS.CS.Class.Token }" ],
+						"types": [ "${ CS.Token }" ],
 						"user": { "id": "http://exmple.com/users/my-user/" }
 					}`;
 					let authenticator:TokenAuthenticator.Class = new TokenAuthenticator.Class( context );
@@ -380,10 +383,10 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 			INSTANCE,
 			"addAuthentication",
 			"Adds the Token Authentication header to the passed request options object.\n" +
-			"The `Carbon.HTTP.Request.Options` provided is returned without modifications if it already has an authentication header.", [
-				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", description: "Request options object to add Authentication headers." },
+			"The `CarbonLDP.HTTP.RequestOptions` provided is returned without modifications if it already has an authentication header.", [
+				{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", description: "Request options object to add Authentication headers." },
 			],
-			{ type: "Carbon.HTTP.Request.Options", description: "The request options with the added authentication headers." }
+			{ type: "CarbonLDP.HTTP.RequestOptions", description: "The request options with the added authentication headers." }
 		), ():void => {
 
 			// Property Integrity
@@ -425,7 +428,7 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 					expirationTime: expirationTime,
 				};
 
-				let requestOptions:HTTP.Request.Options = authenticator.addAuthentication( {} );
+				let requestOptions:RequestOptions = authenticator.addAuthentication( {} );
 
 				expect( ! ! requestOptions ).toEqual( true );
 				expect( Utils.isObject( requestOptions ) ).toEqual( true );
@@ -433,14 +436,14 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 				expect( requestOptions.headers instanceof Map ).toEqual( true );
 				expect( requestOptions.headers.has( "authorization" ) ).toEqual( true );
 
-				let authorizationHeader:HTTP.Header.Class = requestOptions.headers.get( "authorization" );
+				let authorizationHeader:Header = requestOptions.headers.get( "authorization" );
 
-				expect( authorizationHeader instanceof HTTP.Header.Class ).toEqual( true );
+				expect( authorizationHeader instanceof Header ).toEqual( true );
 				expect( authorizationHeader.values.length ).toEqual( 1 );
 
 				let authorization:string = authorizationHeader.toString();
 
-				expect( Utils.S.startsWith( authorization, "Token " ) ).toEqual( true );
+				expect( Utils.StringUtils.startsWith( authorization, "Token " ) ).toEqual( true );
 				expect( authorization.substring( 6 ) ).toEqual( "token-value" );
 			})();
 
@@ -465,8 +468,8 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 					expirationTime: expirationTime,
 				};
 
-				let requestOptions:HTTP.Request.Options = {
-					headers: new Map<string, HTTP.Header.Class>(),
+				let requestOptions:RequestOptions = {
+					headers: new Map<string, Header>(),
 				};
 				authenticator.addAuthentication( requestOptions );
 
@@ -477,14 +480,14 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 				expect( requestOptions.headers.size ).toEqual( 1 );
 				expect( requestOptions.headers.has( "authorization" ) ).toEqual( true );
 
-				let authorizationHeader:HTTP.Header.Class = requestOptions.headers.get( "authorization" );
+				let authorizationHeader:Header = requestOptions.headers.get( "authorization" );
 
-				expect( authorizationHeader instanceof HTTP.Header.Class ).toEqual( true );
+				expect( authorizationHeader instanceof Header ).toEqual( true );
 				expect( authorizationHeader.values.length ).toEqual( 1 );
 
 				let authorization:string = authorizationHeader.toString();
 
-				expect( Utils.S.startsWith( authorization, "Token " ) ).toEqual( true );
+				expect( Utils.StringUtils.startsWith( authorization, "Token " ) ).toEqual( true );
 				expect( authorization.substring( 6 ) ).toEqual( "token-value" );
 			})();
 
@@ -509,11 +512,11 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 					expirationTime: expirationTime,
 				};
 
-				let requestOptions:HTTP.Request.Options = {
-					headers: new Map<string, HTTP.Header.Class>(),
+				let requestOptions:RequestOptions = {
+					headers: new Map<string, Header>(),
 				};
-				requestOptions.headers.set( "content-type", new HTTP.Header.Class( "text/plain" ) );
-				requestOptions.headers.set( "accept", new HTTP.Header.Class( "text/plain" ) );
+				requestOptions.headers.set( "content-type", new Header( "text/plain" ) );
+				requestOptions.headers.set( "accept", new Header( "text/plain" ) );
 				authenticator.addAuthentication( requestOptions );
 
 				expect( ! ! requestOptions ).toEqual( true );
@@ -525,14 +528,14 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 				expect( requestOptions.headers.has( "accept" ) ).toEqual( true );
 				expect( requestOptions.headers.has( "authorization" ) ).toEqual( true );
 
-				let authorizationHeader:HTTP.Header.Class = requestOptions.headers.get( "authorization" );
+				let authorizationHeader:Header = requestOptions.headers.get( "authorization" );
 
-				expect( authorizationHeader instanceof HTTP.Header.Class ).toEqual( true );
+				expect( authorizationHeader instanceof Header ).toEqual( true );
 				expect( authorizationHeader.values.length ).toEqual( 1 );
 
 				let authorization:string = authorizationHeader.toString();
 
-				expect( Utils.S.startsWith( authorization, "Token " ) ).toEqual( true );
+				expect( Utils.StringUtils.startsWith( authorization, "Token " ) ).toEqual( true );
 				expect( authorization.substring( 6 ) ).toEqual( "token-value" );
 			})();
 
@@ -557,12 +560,12 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 					expirationTime: expirationTime,
 				};
 
-				let requestOptions:HTTP.Request.Options = {
-					headers: new Map<string, HTTP.Header.Class>(),
+				let requestOptions:RequestOptions = {
+					headers: new Map<string, Header>(),
 				};
-				requestOptions.headers.set( "content-type", new HTTP.Header.Class( "text/plain" ) );
-				requestOptions.headers.set( "accept", new HTTP.Header.Class( "text/plain" ) );
-				requestOptions.headers.set( "authorization", new HTTP.Header.Class( "Another another-type-of-authorization" ) );
+				requestOptions.headers.set( "content-type", new Header( "text/plain" ) );
+				requestOptions.headers.set( "accept", new Header( "text/plain" ) );
+				requestOptions.headers.set( "authorization", new Header( "Another another-type-of-authorization" ) );
 				authenticator.addAuthentication( requestOptions );
 
 				expect( ! ! requestOptions ).toEqual( true );
@@ -574,14 +577,14 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 				expect( requestOptions.headers.has( "accept" ) ).toEqual( true );
 				expect( requestOptions.headers.has( "authorization" ) ).toEqual( true );
 
-				let authorizationHeader:HTTP.Header.Class = requestOptions.headers.get( "authorization" );
+				let authorizationHeader:Header = requestOptions.headers.get( "authorization" );
 
-				expect( authorizationHeader instanceof HTTP.Header.Class ).toEqual( true );
+				expect( authorizationHeader instanceof Header ).toEqual( true );
 				expect( authorizationHeader.values.length ).toEqual( 1 );
 
 				let authorization:string = authorizationHeader.toString();
 
-				expect( Utils.S.startsWith( authorization, "Another " ) ).toEqual( true );
+				expect( Utils.StringUtils.startsWith( authorization, "Another " ) ).toEqual( true );
 				expect( authorization.substring( 8 ) ).toEqual( "another-type-of-authorization" );
 			})();
 
@@ -606,12 +609,12 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 					expirationTime: expirationTime,
 				};
 
-				let requestOptions:HTTP.Request.Options = {
-					headers: new Map<string, HTTP.Header.Class>(),
+				let requestOptions:RequestOptions = {
+					headers: new Map<string, Header>(),
 				};
-				requestOptions.headers.set( "content-type", new HTTP.Header.Class( "text/plain" ) );
-				requestOptions.headers.set( "accept", new HTTP.Header.Class( "text/plain" ) );
-				requestOptions.headers.set( "authorization", new HTTP.Header.Class( "Token another-token-value" ) );
+				requestOptions.headers.set( "content-type", new Header( "text/plain" ) );
+				requestOptions.headers.set( "accept", new Header( "text/plain" ) );
+				requestOptions.headers.set( "authorization", new Header( "Token another-token-value" ) );
 				authenticator.addAuthentication( requestOptions );
 
 				expect( ! ! requestOptions ).toEqual( true );
@@ -623,14 +626,14 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 				expect( requestOptions.headers.has( "accept" ) ).toEqual( true );
 				expect( requestOptions.headers.has( "authorization" ) ).toEqual( true );
 
-				let authorizationHeader:HTTP.Header.Class = requestOptions.headers.get( "authorization" );
+				let authorizationHeader:Header = requestOptions.headers.get( "authorization" );
 
-				expect( authorizationHeader instanceof HTTP.Header.Class ).toEqual( true );
+				expect( authorizationHeader instanceof Header ).toEqual( true );
 				expect( authorizationHeader.values.length ).toEqual( 1 );
 
 				let authorization:string = authorizationHeader.toString();
 
-				expect( Utils.S.startsWith( authorization, "Token " ) ).toEqual( true );
+				expect( Utils.StringUtils.startsWith( authorization, "Token " ) ).toEqual( true );
 				expect( authorization.substring( 6 ) ).toEqual( "another-token-value" );
 			})();
 
@@ -650,6 +653,7 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 						this.settings = { paths: { system: ".system/" } };
 					}
 				}
+
 				let authenticator:TokenAuthenticator.Class = new TokenAuthenticator.Class( new MockedContext() );
 
 				expect( "clearAuthentication" in authenticator ).toEqual( true );
@@ -679,56 +683,56 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 					responseText: `[ {
 						"@id": "_:00",
 						"@type": [
-							"${ NS.C.Class.ResponseMetadata }",
-							"${ NS.C.Class.VolatileResource }"
+							"${ C.ResponseMetadata }",
+							"${ C.VolatileResource }"
 						],
-						"${ NS.C.Predicate.documentMetadata }": [ {
+						"${ C.documentMetadata }": [ {
 							"@id": "_:01"
 						} ]
 					}, {
 						"@id": "_:01",
 						"@type": [
-							"${ NS.C.Class.DocumentMetadata }",
-							"${ NS.C.Class.VolatileResource }"
+							"${ C.DocumentMetadata }",
+							"${ C.VolatileResource }"
 						],
-						"${ NS.C.Predicate.eTag }": [ {
+						"${ C.eTag }": [ {
 							"@value": "\\"1234567890\\""
 						} ],
-						"${ NS.C.Predicate.relatedDocument }": [ {
+						"${ C.relatedDocument }": [ {
 							"@id": "http://successful.example.com/users/my-user/"
 						} ]
 					}, {
 						"@id": "_:02",
 						"@type": [
-							"${ NS.CS.Class.Token }",
-							"${ NS.C.Class.VolatileResource }"
+							"${ CS.Token }",
+							"${ C.VolatileResource }"
 						],
-						"${ NS.CS.Predicate.tokenKey }": [ {
+						"${ CS.tokenKey }": [ {
 							"@value": "token-value"
 						} ],
-						"${ NS.CS.Predicate.expirationTime }": {
+						"${ CS.expirationTime }": {
 							"@value": "${expirationTime.toISOString()}",
-							"@type": "${ NS.XSD.DataType.dateTime }"
+							"@type": "${ XSD.dateTime }"
 						},
-						"${ NS.CS.Predicate.credentialsOf }": [ {
+						"${ CS.credentialsOf }": [ {
 							"@id": "http://successful.example.com/users/my-user/"
 						} ]
 					}, {
 						"@id": "http://successful.example.com/users/my-user/",
 						"@graph": [ {
 							"@id": "http://successful.example.com/users/my-user/",
-							"@type": [ "${ NS.CS.Class.User }" ],
-							"${ NS.CS.Predicate.name }": [ {
+							"@type": [ "${ CS.User }" ],
+							"${ CS.name }": [ {
 								"@value": "My User Name",
-								"@type": "${ NS.XSD.DataType.string }"
+								"@type": "${ XSD.string }"
 							} ],
-							"${ NS.VCARD.Predicate.email }": [ {
+							"${ VCARD.email }": [ {
 								"@value": "my-user@users.com",
-								"@type": "${ NS.XSD.DataType.string }"
+								"@type": "${ XSD.string }"
 							} ],
-							"${ NS.CS.Predicate.enabled }": [ {
+							"${ CS.enabled }": [ {
 								"@value": "true",
-								"@type": "${ NS.XSD.DataType.boolean }"
+								"@type": "${ XSD.boolean }"
 							} ]
 						} ]
 					} ]`,
@@ -751,7 +755,7 @@ describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
 
 	} );
 
-	it( hasDefaultExport( "Carbon.Auth.TokenAuthenticator.Class" ), ():void => {
+	it( hasDefaultExport( "CarbonLDP.Auth.TokenAuthenticator.Class" ), ():void => {
 		expect( DefaultExport ).toBeDefined();
 		expect( DefaultExport ).toBe( TokenAuthenticator.Class );
 	} );

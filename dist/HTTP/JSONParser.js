@@ -1,21 +1,13 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var Class = (function () {
-    function Class() {
+var JSONParser = (function () {
+    function JSONParser() {
     }
-    Class.prototype.parse = function (body) {
-        return new Promise(function (resolve, reject) {
-            try {
-                resolve(JSON.parse(body));
-            }
-            catch (error) {
-                reject(error);
-            }
-        });
+    JSONParser.prototype.parse = function (body) {
+        return new Promise(function (resolve) { return resolve(JSON.parse(body)); });
     };
-    return Class;
+    return JSONParser;
 }());
-exports.Class = Class;
-exports.default = Class;
+exports.JSONParser = JSONParser;
 
 //# sourceMappingURL=JSONParser.js.map

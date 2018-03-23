@@ -1,22 +1,17 @@
+import * as Context from "./Context";
 import {
-	OBLIGATORY,
-
-	module,
-	method,
-	interfaze,
-
-	isDefined,
-	hasProperty,
 	hasMethod,
+	hasProperty,
 	hasSignature,
-	hasDefaultExport,
+	interfaze,
+	isDefined,
+	method,
+	module,
+	OBLIGATORY,
 } from "./test/JasmineExtender";
 import * as Utils from "./Utils";
 
-import * as Context from "./Context";
-import DefaultExport from "./Context";
-
-describe( module( "Carbon/Context" ), ():void => {
+describe( module( "carbonldp/Context" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( Context ).toBeDefined();
@@ -24,28 +19,28 @@ describe( module( "Carbon/Context" ), ():void => {
 	} );
 
 	describe( interfaze(
-		"Carbon.Context.Class",
+		"CarbonLDP.Context",
 		"Interface that every context in the SDK implements."
 	), ():void => {
 
 		it( hasProperty(
 			OBLIGATORY,
 			"auth",
-			"Carbon.Auth.Class",
+			"CarbonLDP.Auth.Class",
 			"The authentication and authorization class of the context."
 		), ():void => {} );
 
 		it( hasProperty(
 			OBLIGATORY,
 			"documents",
-			"Carbon.Documents.Class",
+			"CarbonLDP.Documents",
 			"The documents class of the context."
 		), ():void => {} );
 
 		it( hasProperty(
 			OBLIGATORY,
 			"parentContext",
-			"Carbon.Context.Class",
+			"CarbonLDP.Context",
 			"The parent context of the current context. It will be `null` when the context has no parent."
 		), ():void => {} );
 
@@ -89,7 +84,7 @@ describe( module( "Carbon/Context" ), ():void => {
 			"Returns the ObjectSchema for the specified type. If no type is specified, the general object schema of the context should be returned.", [
 				{ name: "type", type: "string", optional: true, description: "The URI of the type to look for its schema." },
 			],
-			{ type: "Carbon.ObjectSchema.DigestedObjectSchema", description: "The specified schema to look for." }
+			{ type: "CarbonLDP.DigestedObjectSchema", description: "The specified schema to look for." }
 		), ():void => {} );
 
 		describe( method(
@@ -100,13 +95,13 @@ describe( module( "Carbon/Context" ), ():void => {
 			it( hasSignature(
 				"Extends the schema for a specified type of Resource.\nIf a schema for the type exists in the parent context, this is duplicated for the actual context, but only the first time this schema is extended.", [
 					{ name: "type", type: "string", description: "The URI of the type to extends its schema." },
-					{ name: "objectSchema", type: "Carbon.ObjectSchema.DigestedObjectSchema", description: "The new schema that will extends the previous one." },
+					{ name: "objectSchema", type: "CarbonLDP.DigestedObjectSchema", description: "The new schema that will extends the previous one." },
 				]
 			), ():void => {} );
 
 			it( hasSignature(
 				"Extends the general schema of the current context.\nIf a general schema exists in the parent context, this is duplicated for the current context, but only the first time the schema is extended.", [
-					{ name: "objectSchema", type: "Carbon.ObjectSchema.DigestedObjectSchema", description: "The new schema that will extends the previous one." },
+					{ name: "objectSchema", type: "CarbonLDP.DigestedObjectSchema", description: "The new schema that will extends the previous one." },
 				]
 			), ():void => {} );
 
@@ -120,14 +115,6 @@ describe( module( "Carbon/Context" ), ():void => {
 			]
 		), ():void => {} );
 
-	} );
-
-	it( hasDefaultExport( "Carbon.Context.Class" ), ():void => {
-		let defaultExport:DefaultExport = <any> {};
-		let defaultTarget:Context.Class;
-
-		defaultTarget = defaultExport;
-		expect( defaultTarget ).toEqual( jasmine.any( Object ) );
 	} );
 
 } );

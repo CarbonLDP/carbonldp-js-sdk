@@ -14,18 +14,18 @@ import {
 	VariableOrIRI,
 } from "sparqler/tokens";
 
-import { Converter } from "../JSONLD";
+import { JSONLDConverter } from "../JSONLD/Converter";
 import { guessXSDType } from "../JSONLD/Utils";
-import { XSD } from "../NS";
 import {
 	ContainerType,
 	DigestedObjectSchema,
-	DigestedPropertyDefinition,
+	DigestedObjectSchemaProperty,
 	PointerType,
 } from "../ObjectSchema";
-import * as Pointer from "../Pointer";
-import * as Resource from "../Resource";
+import { Pointer } from "../Pointer";
+import { Resource } from "../Resource";
 import { isString } from "../Utils";
+import { XSD } from "../Vocabularies/XSD";
 
 import {
 	AddToken,
@@ -46,21 +46,21 @@ interface UpdateDelta {
 	objects:ObjectToken[];
 }
 
-const typesDefinition:DigestedPropertyDefinition = new DigestedPropertyDefinition();
+const typesDefinition:DigestedObjectSchemaProperty = new DigestedObjectSchemaProperty();
 typesDefinition.literal = false;
 typesDefinition.pointerType = PointerType.ID;
 typesDefinition.containerType = ContainerType.SET;
 
-export class Class {
+export class DeltaCreator {
 
 	private prefixesMap:Map<string, PrefixToken>;
-	private jsonldConverter:Converter.Class;
+	private jsonldConverter:JSONLDConverter;
 
 	private addToken:AddToken;
 	private deleteToken:DeleteToken;
 	private updateLists:UpdateListToken[];
 
-	constructor( jsonldConverter:Converter.Class ) {
+	constructor( jsonldConverter:JSONLDConverter ) {
 		this.prefixesMap = new Map();
 		this.jsonldConverter = jsonldConverter;
 
@@ -81,7 +81,7 @@ export class Class {
 		return `${ patch }`;
 	}
 
-	addResource( schema:DigestedObjectSchema, oldResource:Resource.Class, newResource:Resource.Class ):void {
+	addResource( schema:DigestedObjectSchema, oldResource:Resource, newResource:Resource ):void {
 		const id:string = newResource.id;
 		const resource:IRIToken | PrefixedNameToken | BlankNodeToken = isBNodeLabel( id ) ?
 			new BlankNodeToken( id ) : this.compactIRI( schema, id );
@@ -100,7 +100,7 @@ export class Class {
 			const predicateURI:IRIToken | PrefixedNameToken | "a" = propertyName === "types" ?
 				"a" : this.getPropertyIRI( schema, propertyName );
 
-			const definition:DigestedPropertyDefinition = predicateURI === "a" ?
+			const definition:DigestedObjectSchemaProperty = predicateURI === "a" ?
 				typesDefinition : schema.properties.get( propertyName );
 
 			const oldValue:any = oldResource[ propertyName ];
@@ -114,7 +114,7 @@ export class Class {
 					listUpdates.push( { slice: [ 0, void 0 ], objects: [] } );
 
 				} else {
-					const tempDefinition:DigestedPropertyDefinition = { ...definition, containerType: ContainerType.SET };
+					const tempDefinition:DigestedObjectSchemaProperty = { ...definition, containerType: ContainerType.SET };
 
 					listUpdates.push( ...getListDelta(
 						this.getObjects( oldValue, schema, tempDefinition ),
@@ -182,7 +182,7 @@ export class Class {
 	}
 
 	private getPropertyIRI( schema:DigestedObjectSchema, propertyName:string ):IRIToken | PrefixedNameToken {
-		const propertyDefinition:DigestedPropertyDefinition = schema.properties.get( propertyName );
+		const propertyDefinition:DigestedObjectSchemaProperty = schema.properties.get( propertyName );
 		const uri:string = propertyDefinition && propertyDefinition.uri ?
 			propertyDefinition.uri :
 			propertyName;
@@ -190,7 +190,7 @@ export class Class {
 		return this.compactIRI( schema, uri );
 	}
 
-	private getObjects( value:any, schema:DigestedObjectSchema, definition?:DigestedPropertyDefinition ):ObjectToken[] {
+	private getObjects( value:any, schema:DigestedObjectSchema, definition?:DigestedObjectSchemaProperty ):ObjectToken[] {
 		const values:any[] = (Array.isArray( value ) ?
 				! definition || definition.containerType !== null ? value : value.slice( 0, 1 ) :
 				[ value ]
@@ -212,10 +212,10 @@ export class Class {
 		return this.expandValues( values, schema, definition );
 	}
 
-	private expandValues( values:any[], schema:DigestedObjectSchema, definition?:DigestedPropertyDefinition ):ObjectToken[] {
+	private expandValues( values:any[], schema:DigestedObjectSchema, definition?:DigestedObjectSchemaProperty ):ObjectToken[] {
 		const areDefinedLiteral:boolean = definition && definition.literal !== null ? definition.literal : null;
 		return values.map( value => {
-			const isLiteral:boolean = areDefinedLiteral !== null ? areDefinedLiteral : ! Pointer.Factory.is( value );
+			const isLiteral:boolean = areDefinedLiteral !== null ? areDefinedLiteral : ! Pointer.is( value );
 
 			if( isLiteral ) return this.expandLiteral( value, schema, definition );
 			return this.expandPointer( value, schema );
@@ -229,16 +229,16 @@ export class Class {
 		return Object.keys( languageMap ).map( key => {
 			const value:any = languageMap[ key ];
 
-			const tempDefinition:DigestedPropertyDefinition = new DigestedPropertyDefinition();
+			const tempDefinition:DigestedObjectSchemaProperty = new DigestedObjectSchemaProperty();
 			tempDefinition.language = key;
-			tempDefinition.literalType = XSD.DataType.string;
+			tempDefinition.literalType = XSD.string;
 
 			return this.expandLiteral( value, schema, tempDefinition );
 		} ).filter( isValidValue );
 	}
 
 	private expandPointer( value:any, schema:DigestedObjectSchema ):IRIToken | PrefixedNameToken | BlankNodeToken {
-		let id:string = Pointer.Factory.is( value ) ? value.id : value;
+		let id:string = Pointer.is( value ) ? value.id : value;
 		if( ! isString( id ) ) return null;
 
 		return isBNodeLabel( id ) ?
@@ -246,7 +246,7 @@ export class Class {
 			this.compactIRI( schema, id );
 	}
 
-	private expandLiteral( value:any, schema:DigestedObjectSchema, definition?:DigestedPropertyDefinition ):LiteralToken {
+	private expandLiteral( value:any, schema:DigestedObjectSchema, definition?:DigestedObjectSchemaProperty ):LiteralToken {
 		const type:string = definition && definition.literalType ?
 			definition.literalType :
 			guessXSDType( value );
@@ -256,7 +256,7 @@ export class Class {
 		value = this.jsonldConverter.literalSerializers.get( type ).serialize( value );
 		const literal:LiteralToken = new LiteralToken( value );
 
-		if( type !== XSD.DataType.string ) literal.setType( this.compactIRI( schema, type ) );
+		if( type !== XSD.string ) literal.setType( this.compactIRI( schema, type ) );
 		if( definition && definition.language !== void 0 ) literal.setLanguage( definition.language );
 
 		return literal;
@@ -380,5 +380,3 @@ function isValidValue( value:any ):boolean {
 	return value !== null && value !== void 0;
 }
 
-
-export default Class;

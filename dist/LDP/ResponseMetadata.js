@@ -1,24 +1,21 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var NS = require("./../NS");
-var VolatileResource = require("./VolatileResource");
-exports.RDF_CLASS = NS.C.Class.ResponseMetadata;
-exports.SCHEMA = {
+var C_1 = require("../Vocabularies/C");
+var VolatileResource_1 = require("./VolatileResource");
+var SCHEMA = {
     "documentsMetadata": {
-        "@id": NS.C.Predicate.documentMetadata,
+        "@id": C_1.C.documentMetadata,
         "@type": "@id",
         "@container": "@set",
     },
 };
-var Factory = (function () {
-    function Factory() {
-    }
-    Factory.is = function (object) {
-        return VolatileResource.Factory.is(object)
-            && object.hasType(exports.RDF_CLASS);
-    };
-    return Factory;
-}());
-exports.Factory = Factory;
+exports.ResponseMetadata = {
+    TYPE: C_1.C.ResponseMetadata,
+    SCHEMA: SCHEMA,
+    is: function (object) {
+        return VolatileResource_1.VolatileResource.is(object)
+            && object.hasType(exports.ResponseMetadata.TYPE);
+    },
+};
 
 //# sourceMappingURL=ResponseMetadata.js.map

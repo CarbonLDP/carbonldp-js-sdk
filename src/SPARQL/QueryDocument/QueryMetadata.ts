@@ -1,29 +1,37 @@
-import * as NS from "../../NS";
-import * as ObjectSchema from "../../ObjectSchema";
-import * as Pointer from "../../Pointer";
-import * as VolatileResource from "../../LDP/VolatileResource";
+import { VolatileResource } from "../../LDP/VolatileResource";
+import { ModelFactory } from "../../ModelFactory";
+import { ObjectSchema } from "../../ObjectSchema";
+import { Pointer } from "../../Pointer";
+import { C } from "../../Vocabularies/C";
 
-export const RDF_CLASS:string = NS.C.Class.QueryMetadata;
 
-export const SCHEMA:ObjectSchema.Class = {
+export interface QueryMetadata extends VolatileResource {
+	target:Pointer;
+}
+
+
+export interface QueryMetadataFactory extends ModelFactory<QueryMetadata> {
+	TYPE:string;
+	SCHEMA:ObjectSchema;
+
+	is( object:object ):object is QueryMetadata;
+}
+
+const SCHEMA:ObjectSchema = {
 	"target": {
-		"@id": NS.C.Predicate.target,
+		"@id": C.target,
 		"@type": "@id",
 		"@container": "@set",
 	},
 };
 
-export interface Class extends VolatileResource.Class {
-	target:Pointer.Class;
-}
+export const QueryMetadata:QueryMetadataFactory = {
+	TYPE: C.QueryMetadata,
+	SCHEMA,
 
-export class Factory {
+	is( object:object ):object is QueryMetadata {
+		return VolatileResource.is( object )
+			&& object.hasType( QueryMetadata.TYPE );
+	},
 
-	static is( object:object ):object is Class {
-		return VolatileResource.Factory.is( object )
-			&& object.hasType( RDF_CLASS );
-	}
-
-}
-
-export default Class;
+};

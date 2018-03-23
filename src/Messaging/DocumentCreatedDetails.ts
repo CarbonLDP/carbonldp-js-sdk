@@ -1,20 +1,28 @@
-import * as NS from "./../NS";
-import * as ObjectSchema from "./../ObjectSchema";
-import * as Pointer from "./../Pointer";
-import * as Resource from "./../Resource";
+import { ObjectSchema } from "../ObjectSchema";
+import { Pointer } from "../Pointer";
+import { Resource } from "../Resource";
+import { C } from "../Vocabularies/C";
 
-export const RDF_CLASS:string = NS.C.Class.DocumentCreatedDetails;
 
-export const SCHEMA:ObjectSchema.Class = {
+export interface DocumentCreatedDetails extends Resource {
+	createdDocuments:Pointer[];
+}
+
+
+export interface DocumentCreatedDetailsFactory {
+	TYPE:string;
+	SCHEMA:ObjectSchema;
+}
+
+const SCHEMA:ObjectSchema = {
 	"createdDocuments": {
-		"@id": NS.C.Predicate.createdDocument,
+		"@id": C.createdDocument,
 		"@type": "@id",
 		"@container": "@set",
 	},
 };
 
-export interface Class extends Resource.Class {
-	createdDocuments:Pointer.Class[];
-}
-
-export default Class;
+export const DocumentCreatedDetails:DocumentCreatedDetailsFactory = {
+	TYPE: C.DocumentCreatedDetails,
+	SCHEMA,
+};

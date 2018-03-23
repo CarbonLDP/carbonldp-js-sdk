@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var Errors = require("./../Errors");
-var HTTP = require("./../HTTP");
+var Errors = require("../Errors");
+var Header_1 = require("../HTTP/Header");
 var UsernameAndPasswordCredentials = require("./UsernameAndPasswordCredentials");
 var Class = (function () {
     function Class() {
@@ -35,7 +35,7 @@ var Class = (function () {
     Class.prototype.addBasicAuthenticationHeader = function (headers) {
         if (headers.has("authorization"))
             return;
-        var header = new HTTP.Header.Class();
+        var header = new Header_1.Header();
         headers.set("authorization", header);
         var authorization = "Basic " + toB64(this.credentials.username + ":" + this.credentials.password);
         header.values.push(authorization);

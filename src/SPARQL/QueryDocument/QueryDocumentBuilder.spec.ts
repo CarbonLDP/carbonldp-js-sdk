@@ -9,48 +9,46 @@ import {
 	ValuesToken,
 } from "sparqler/tokens";
 
-import AbstractContext from "../../AbstractContext";
+import { AbstractContext } from "../../AbstractContext";
+import {
+	IllegalArgumentError,
+	IllegalStateError
+} from "../../Errors";
 import {
 	DigestedObjectSchema,
-	Digester,
+	ObjectSchemaDigester,
 } from "../../ObjectSchema";
+import { Pointer } from "../../Pointer";
 import {
 	clazz,
 	constructor,
-	hasDefaultExport,
 	hasSignature,
 	INSTANCE,
 	method,
 	module,
 	property,
 } from "../../test/JasmineExtender";
-import * as Document from "./../../Document";
-import {
-	IllegalArgumentError,
-	IllegalStateError
-} from "./../../Errors";
-import * as Pointer from "./../../Pointer";
-import QueryContextBuilder from "./QueryContextBuilder";
-import * as Module from "./QueryDocumentBuilder";
-import { Class as QueryDocumentBuilder } from "./QueryDocumentBuilder";
-import * as QueryObject from "./QueryObject";
-import * as QueryProperty from "./QueryProperty";
-import * as QueryValue from "./QueryValue";
-import * as QueryVariable from "./QueryVariable";
+import { Document } from "./../../Document";
+import { QueryContextBuilder } from "./QueryContextBuilder";
 
-describe( module( "Carbon/SPARQL/QueryDocument/QueryDocumentBuilder" ), ():void => {
+import * as Module from "./QueryDocumentBuilder";
+import { QueryDocumentBuilder } from "./QueryDocumentBuilder";
+
+import * as QueryObjectModule from "./QueryObject";
+import { QueryObject } from "./QueryObject";
+import { QueryProperty } from "./QueryProperty";
+import * as QueryValueModule from "./QueryValue";
+import { QueryValue } from "./QueryValue";
+import { QueryVariable } from "./QueryVariable";
+
+describe( module( "carbonldp/SPARQL/QueryDocument/QueryDocumentBuilder" ), ():void => {
 
 	it( "should exists", ():void => {
 		expect( Module ).toBeDefined();
 		expect( Module ).toEqual( jasmine.any( Object ) );
 	} );
 
-	it( hasDefaultExport( "Carbon.SPARQL.QueryDocument.QueryDocumentBuilder.Class" ), ():void => {
-		expect( Module.default ).toBeDefined();
-		expect( Module.default ).toBe( QueryDocumentBuilder );
-	} );
-
-	describe( clazz( "Carbon.SPARQL.QueryDocument.QueryDocumentBuilder.Class", "Class with the helpers and properties for construct a query document" ), ():void => {
+	describe( clazz( "CarbonLDP.SPARQL.QueryDocument.QueryDocumentBuilder", "Class with the helpers and properties for construct a query document" ), ():void => {
 
 		it( "should exists", ():void => {
 			expect( QueryDocumentBuilder ).toBeDefined();
@@ -59,7 +57,7 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryDocumentBuilder" ), ():void 
 
 		let context:AbstractContext;
 		let queryContext:QueryContextBuilder;
-		let baseProperty:QueryProperty.Class;
+		let baseProperty:QueryProperty;
 		beforeEach( ():void => {
 			context = new class extends AbstractContext {
 				protected _baseURI:string = "http://example.com";
@@ -91,9 +89,9 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryDocumentBuilder" ), ():void 
 			it( "should initialize the schema with a general document schema", ():void => {
 				const builder:QueryDocumentBuilder = new QueryDocumentBuilder( queryContext, baseProperty );
 
-				const schema:DigestedObjectSchema = Digester.combineDigestedObjectSchemas( [
+				const schema:DigestedObjectSchema = ObjectSchemaDigester.combineDigestedObjectSchemas( [
 					context.getObjectSchema(),
-					context.getObjectSchema( Document.RDF_CLASS ),
+					context.getObjectSchema( Document.TYPE ),
 				] );
 				schema.vocab = "http://example.com/vocab#";
 
@@ -162,7 +160,7 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryDocumentBuilder" ), ():void 
 				[
 					{ name: "name", type: "string", optional: true, description: "Optional name of the property to look for." },
 				],
-				{ type: "Carbon.SPARQL.QueryDocument.QueryProperty.Class" }
+				{ type: "CarbonLDP.SPARQL.QueryDocument.QueryProperty" }
 			), ():void => {
 			} );
 
@@ -186,7 +184,7 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryDocumentBuilder" ), ():void 
 				spyOn( queryContext, "getProperty" );
 				const spy:jasmine.Spy = spyOn( queryContext, "hasProperty" ).and.returnValue( false );
 
-				baseProperty = new QueryProperty.Class( queryContext, "document.path1.path2.path3" );
+				baseProperty = new QueryProperty( queryContext, "document.path1.path2.path3" );
 				const builder:QueryDocumentBuilder = new QueryDocumentBuilder( queryContext, baseProperty );
 
 				try {
@@ -203,7 +201,7 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryDocumentBuilder" ), ():void 
 				spyOn( queryContext, "getProperty" );
 				spyOn( queryContext, "hasProperty" ).and.callFake( name => name === "document.path1.name" );
 
-				baseProperty = new QueryProperty.Class( queryContext, "document.path1.path2.path3" );
+				baseProperty = new QueryProperty( queryContext, "document.path1.path2.path3" );
 				const builder:QueryDocumentBuilder = new QueryDocumentBuilder( queryContext, baseProperty );
 				const helper:( name:string ) => void = ( name:string ) => () => builder.property( name );
 
@@ -223,7 +221,7 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryDocumentBuilder" ), ():void 
 				[
 					{ name: "value", type: "string | number | boolean | Date", description: "Value to be converted in a safe to use in query object." },
 				],
-				{ type: "Carbon.SPARQL.QueryDocument.QueryValue.Class" }
+				{ type: "CarbonLDP.SPARQL.QueryDocument.QueryValue" }
 			), ():void => {
 			} );
 
@@ -233,7 +231,7 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryDocumentBuilder" ), ():void 
 			} );
 
 			it( "should create a QueryValue with the name provided", ():void => {
-				const spy:jasmine.Spy = spyOn( QueryValue, "Class" );
+				const spy:jasmine.Spy = spyOn( QueryValueModule, "QueryValue" );
 				const builder:QueryDocumentBuilder = new QueryDocumentBuilder( queryContext, baseProperty );
 
 				builder.value( "name" );
@@ -252,10 +250,10 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryDocumentBuilder" ), ():void 
 
 			it( "should return a QueryValue", ():void => {
 				const builder:QueryDocumentBuilder = new QueryDocumentBuilder( queryContext, baseProperty );
-				expect( builder.value( "value" ) ).toEqual( jasmine.any( QueryValue.Class ) );
-				expect( builder.value( 10.01 ) ).toEqual( jasmine.any( QueryValue.Class ) );
-				expect( builder.value( true ) ).toEqual( jasmine.any( QueryValue.Class ) );
-				expect( builder.value( new Date() ) ).toEqual( jasmine.any( QueryValue.Class ) );
+				expect( builder.value( "value" ) ).toEqual( jasmine.any( QueryValue ) );
+				expect( builder.value( 10.01 ) ).toEqual( jasmine.any( QueryValue ) );
+				expect( builder.value( true ) ).toEqual( jasmine.any( QueryValue ) );
+				expect( builder.value( new Date() ) ).toEqual( jasmine.any( QueryValue ) );
 			} );
 
 		} );
@@ -265,9 +263,9 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryDocumentBuilder" ), ():void 
 			it( hasSignature(
 				"Wraps a pointer or URi to be used correctly in the query filters and values.",
 				[
-					{ name: "value", type: "Carbon.Pointer.Class | string", description: "Pointer or URI to be converted in a safe to use in query object." },
+					{ name: "value", type: "CarbonLDP.Pointer | string", description: "Pointer or URI to be converted in a safe to use in query object." },
 				],
-				{ type: "Carbon.SPARQL.QueryDocument.QueryObject.Class" }
+				{ type: "CarbonLDP.SPARQL.QueryDocument.QueryObject" }
 			), ():void => {
 			} );
 
@@ -277,21 +275,21 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryDocumentBuilder" ), ():void 
 			} );
 
 			it( "should create a QueryObject with the name provided", ():void => {
-				const spy:jasmine.Spy = spyOn( QueryObject, "Class" );
+				const spy:jasmine.Spy = spyOn( QueryObjectModule, "QueryObject" );
 				const builder:QueryDocumentBuilder = new QueryDocumentBuilder( queryContext, baseProperty );
 
 				builder.object( "http://example.com/resource/" );
 				expect( spy ).toHaveBeenCalledWith( queryContext, "http://example.com/resource/" );
 
-				const pointer:Pointer.Class = context.documents.getPointer( "http://example.com/resource/" );
+				const pointer:Pointer = context.documents.getPointer( "http://example.com/resource/" );
 				builder.object( pointer );
 				expect( spy ).toHaveBeenCalledWith( queryContext, pointer );
 			} );
 
 			it( "should return a QueryObject", ():void => {
 				const builder:QueryDocumentBuilder = new QueryDocumentBuilder( queryContext, baseProperty );
-				expect( builder.object( "http://example.com/resource/" ) ).toEqual( jasmine.any( QueryObject.Class ) );
-				expect( builder.object( context.documents.getPointer( "http://example.com/resource/" ) ) ).toEqual( jasmine.any( QueryObject.Class ) );
+				expect( builder.object( "http://example.com/resource/" ) ).toEqual( jasmine.any( QueryObject ) );
+				expect( builder.object( context.documents.getPointer( "http://example.com/resource/" ) ) ).toEqual( jasmine.any( QueryObject ) );
 			} );
 
 		} );
@@ -409,7 +407,7 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryDocumentBuilder" ), ():void 
 			it( hasSignature(
 				"Method that allows to specify the property to be retrieved the the target document",
 				[
-					{ name: "propertiesSchema", type: "Carbon.SPARQL.QueryDocument.QueryPropertiesSchema.Class", description: "Similar as an schema object, but this specifies the properties to be retrieved." },
+					{ name: "propertiesSchema", type: "CarbonLDP.SPARQL.QueryDocument.QuerySchema", description: "Similar as an schema object, but this specifies the properties to be retrieved." },
 				],
 				{ type: "this" }
 			), ():void => {
@@ -495,44 +493,44 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryDocumentBuilder" ), ():void 
 					"inlineProperty": "ex:inlineProperty",
 				} );
 
-				const defaultProperty:QueryProperty.Class = builder.property( "defaultProperty" );
+				const defaultProperty:QueryProperty = builder.property( "defaultProperty" );
 				expect( defaultProperty ).toBeDefined();
 				expect( defaultProperty.getPatterns() ).toEqual( [
 					new OptionalToken()
-						.addPattern( new SubjectToken( new QueryVariable.Class( "document", jasmine.any( Number ) as any ) )
+						.addPattern( new SubjectToken( new QueryVariable( "document", jasmine.any( Number ) as any ) )
 							.addPredicate( new PredicateToken( new IRIToken( "http://example.com/vocab#defaultProperty" ) )
-								.addObject( new QueryVariable.Class( "document.defaultProperty", jasmine.any( Number ) as any ) ) ) )
+								.addObject( new QueryVariable( "document.defaultProperty", jasmine.any( Number ) as any ) ) ) )
 					,
 				] );
 
-				const inheritProperty:QueryProperty.Class = builder.property( "inheritProperty" );
+				const inheritProperty:QueryProperty = builder.property( "inheritProperty" );
 				expect( inheritProperty ).toBeDefined();
 				expect( inheritProperty.getPatterns() ).toEqual( [
 					new OptionalToken()
-						.addPattern( new SubjectToken( new QueryVariable.Class( "document", jasmine.any( Number ) as any ) )
+						.addPattern( new SubjectToken( new QueryVariable( "document", jasmine.any( Number ) as any ) )
 							.addPredicate( new PredicateToken( new PrefixedNameToken( "ex:inheritProperty" ) )
-								.addObject( new QueryVariable.Class( "document.inheritProperty", jasmine.any( Number ) as any ) ) ) )
+								.addObject( new QueryVariable( "document.inheritProperty", jasmine.any( Number ) as any ) ) ) )
 					,
 				] );
 
-				const extendedProperty:QueryProperty.Class = builder.property( "extendedProperty" );
+				const extendedProperty:QueryProperty = builder.property( "extendedProperty" );
 				expect( extendedProperty ).toBeDefined();
 				expect( extendedProperty.getPatterns() ).toEqual( [
 					new OptionalToken()
-						.addPattern( new SubjectToken( new QueryVariable.Class( "document", jasmine.any( Number ) as any ) )
+						.addPattern( new SubjectToken( new QueryVariable( "document", jasmine.any( Number ) as any ) )
 							.addPredicate( new PredicateToken( new PrefixedNameToken( "ex:extendedProperty" ) )
-								.addObject( new QueryVariable.Class( "document.extendedProperty", jasmine.any( Number ) as any ) ) ) )
+								.addObject( new QueryVariable( "document.extendedProperty", jasmine.any( Number ) as any ) ) ) )
 						.addPattern( new FilterToken( "datatype( ?document__extendedProperty ) = xsd:string" ) )
 					,
 				] );
 
-				const inlineProperty:QueryProperty.Class = builder.property( "inlineProperty" );
+				const inlineProperty:QueryProperty = builder.property( "inlineProperty" );
 				expect( inlineProperty ).toBeDefined();
 				expect( inlineProperty.getPatterns() ).toEqual( [
 					new OptionalToken()
-						.addPattern( new SubjectToken( new QueryVariable.Class( "document", jasmine.any( Number ) as any ) )
+						.addPattern( new SubjectToken( new QueryVariable( "document", jasmine.any( Number ) as any ) )
 							.addPredicate( new PredicateToken( new PrefixedNameToken( "ex:inlineProperty" ) )
-								.addObject( new QueryVariable.Class( "document.inlineProperty", jasmine.any( Number ) as any ) ) ) )
+								.addObject( new QueryVariable( "document.inlineProperty", jasmine.any( Number ) as any ) ) ) )
 					,
 				] );
 			} );
@@ -582,7 +580,7 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryDocumentBuilder" ), ():void 
 				"Adds a filter to the specific values of the property where the query is been applied.\n" +
 				"NOTE: Using this function makes all the properties in the path of the one's applied, will be obligatory to exists.",
 				[
-					{ name: "...values", type: "(Carbon.SPARQL.QueryDocument.QueryValue.Class | Carbon.SPARQL.QueryDocument.QueryObject.Class)[]", description: "Values the property must have so that the document would be returned." },
+					{ name: "...values", type: "(CarbonLDP.SPARQL.QueryDocument.QueryValue | CarbonLDP.SPARQL.QueryDocument.QueryObject)[]", description: "Values the property must have so that the document would be returned." },
 				],
 				{ type: "this" }
 			), ():void => {
@@ -609,8 +607,8 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryDocumentBuilder" ), ():void 
 				);
 
 				builder.values(
-					builder.object( Pointer.Factory.create( "http://example.com/pointer-1" ) ),
-					builder.object( Pointer.Factory.create( "ex:pointer2" ) )
+					builder.object( Pointer.create( "http://example.com/pointer-1" ) ),
+					builder.object( Pointer.create( "ex:pointer2" ) )
 				);
 				expect( baseProperty.getPatterns() ).toContain( new ValuesToken()
 					.addValues(
@@ -627,7 +625,7 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryDocumentBuilder" ), ():void 
 			it( "should throw error if blank node is provided", ():void => {
 				const builder:QueryDocumentBuilder = new QueryDocumentBuilder( queryContext, baseProperty );
 				const helper:( label:string ) => void = label => () => {
-					builder.values( builder.object( Pointer.Factory.create( label ) ) );
+					builder.values( builder.object( Pointer.create( label ) ) );
 				};
 
 				expect( helper( "_:blank-node" ) ).toThrowError( IllegalArgumentError, `Blank node "_:blank-node" is not a valid value.` );

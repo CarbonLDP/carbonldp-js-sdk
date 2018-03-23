@@ -1,27 +1,27 @@
-import * as Documents from "./../Documents";
-import * as HTTP from "./../HTTP";
-import * as PersistedProtectedDocument from "./../PersistedProtectedDocument";
-import * as Pointer from "./../Pointer";
+import { Documents } from "../Documents";
+import { RequestOptions } from "../HTTP/Request";
+import { PersistedProtectedDocument } from "../PersistedProtectedDocument";
+import { Pointer } from "../Pointer";
 import * as Role from "./Role";
 import * as Roles from "./Roles";
-export interface Class extends PersistedProtectedDocument.Class {
+export interface Class extends PersistedProtectedDocument {
     _roles: Roles.Class;
     name?: string;
     description?: string;
-    parentRole?: Pointer.Class;
-    childRoles?: Pointer.Class[];
-    users?: Pointer.Class[];
-    createChild<T extends object>(role: T & Role.Class, requestOptions?: HTTP.Request.Options): Promise<[T & Class, HTTP.Response.Class]>;
-    createChild<T extends object>(role: T & Role.Class, slug?: string, requestOptions?: HTTP.Request.Options): Promise<[T & Class, HTTP.Response.Class]>;
-    getUsers<T>(requestOptions?: HTTP.Request.Options): Promise<[(T & PersistedProtectedDocument.Class)[], HTTP.Response.Class]>;
-    addUser(user: Pointer.Class | string, requestOptions?: HTTP.Request.Options): Promise<HTTP.Response.Class>;
-    addUsers(users: (Pointer.Class | string)[], requestOptions?: HTTP.Request.Options): Promise<HTTP.Response.Class>;
-    removeUser(user: Pointer.Class | string, requestOptions?: HTTP.Request.Options): Promise<HTTP.Response.Class>;
-    removeUsers(users: (Pointer.Class | string)[], requestOptions?: HTTP.Request.Options): Promise<HTTP.Response.Class>;
+    parentRole?: Pointer;
+    childRoles?: Pointer[];
+    users?: Pointer[];
+    createChild<T extends object>(role: T & Role.Class, requestOptions?: RequestOptions): Promise<T & Class>;
+    createChild<T extends object>(role: T & Role.Class, slug?: string, requestOptions?: RequestOptions): Promise<T & Class>;
+    getUsers<T>(requestOptions?: RequestOptions): Promise<(T & PersistedProtectedDocument)[]>;
+    addUser(user: Pointer | string, requestOptions?: RequestOptions): Promise<void>;
+    addUsers(users: (Pointer | string)[], requestOptions?: RequestOptions): Promise<void>;
+    removeUser(user: Pointer | string, requestOptions?: RequestOptions): Promise<void>;
+    removeUsers(users: (Pointer | string)[], requestOptions?: RequestOptions): Promise<void>;
 }
 export declare class Factory {
     static hasClassProperties(object: Object): boolean;
-    static is(object: Object): boolean;
-    static decorate<T extends object>(object: T, documents: Documents.Class): T & Class;
+    static is(object: Object): object is Class;
+    static decorate<T extends object>(object: T, documents: Documents): T & Class;
 }
 export default Class;

@@ -11,19 +11,20 @@ var __extends = (this && this.__extends) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 var tokens_1 = require("sparqler/tokens");
-var Errors_1 = require("./../../Errors");
-var QueryDocumentBuilder = require("./QueryDocumentBuilder");
+var IllegalArgumentError_1 = require("../../Errors/IllegalArgumentError");
+var IllegalStateError_1 = require("../../Errors/IllegalStateError");
+var QueryDocumentBuilder_1 = require("./QueryDocumentBuilder");
 var Utils_1 = require("./Utils");
-var Class = (function (_super) {
-    __extends(Class, _super);
-    function Class() {
+var QueryDocumentsBuilder = (function (_super) {
+    __extends(QueryDocumentsBuilder, _super);
+    function QueryDocumentsBuilder() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
-    Class.prototype.orderBy = function (property, flow) {
+    QueryDocumentsBuilder.prototype.orderBy = function (property, flow) {
         var propertyObj = this.property(property);
         var select = this._document.getPatterns().find(function (pattern) { return pattern.token === "select"; });
         if (!select)
-            throw new Errors_1.IllegalStateError("A sub-select token has not been defined.");
+            throw new IllegalStateError_1.IllegalStateError("A sub-select token has not been defined.");
         this._orderData = void 0;
         var orderIndex = select.modifiers.findIndex(function (pattern) { return pattern.token === "order"; });
         if (orderIndex !== -1) {
@@ -44,7 +45,7 @@ var Class = (function (_super) {
         while (propertyObj !== this._document) {
             var propertyTriple = propertyObj && propertyObj.getTriple();
             if (!propertyTriple)
-                throw new Errors_1.IllegalArgumentError("The property \"" + propertyObj.name + "\" is not a valid property defined by the builder.");
+                throw new IllegalArgumentError_1.IllegalArgumentError("The property \"" + propertyObj.name + "\" is not a valid property defined by the builder.");
             var propertyPattern = new tokens_1.OptionalToken()
                 .addPattern(propertyTriple);
             if (propertyPatternsPath)
@@ -56,29 +57,29 @@ var Class = (function (_super) {
         select.addPattern(propertyPatternsPath);
         return this;
     };
-    Class.prototype.limit = function (limit) {
+    QueryDocumentsBuilder.prototype.limit = function (limit) {
         var select = this._document.getPatterns().find(function (pattern) { return pattern.token === "select"; });
         if (!select)
-            throw new Errors_1.IllegalStateError("A sub-select token has not been defined.");
+            throw new IllegalStateError_1.IllegalStateError("A sub-select token has not been defined.");
         var limitIndex = select.modifiers.findIndex(function (pattern) { return pattern.token === "limit"; });
         if (limitIndex !== -1)
             select.modifiers.splice(limitIndex, 1);
         select.modifiers.push(new tokens_1.LimitToken(limit));
         return this;
     };
-    Class.prototype.offset = function (offset) {
+    QueryDocumentsBuilder.prototype.offset = function (offset) {
         var select = this._document.getPatterns().find(function (pattern) { return pattern.token === "select"; });
         if (!select)
-            throw new Errors_1.IllegalStateError("A sub-select token has not been defined.");
+            throw new IllegalStateError_1.IllegalStateError("A sub-select token has not been defined.");
         var offsetIndex = select.modifiers.findIndex(function (pattern) { return pattern.token === "offset"; });
         if (offsetIndex !== -1)
             select.modifiers.splice(offsetIndex, 1);
         select.modifiers.push(new tokens_1.OffsetToken(offset));
         return this;
     };
-    return Class;
-}(QueryDocumentBuilder.Class));
-exports.Class = Class;
+    return QueryDocumentsBuilder;
+}(QueryDocumentBuilder_1.QueryDocumentBuilder));
+exports.QueryDocumentsBuilder = QueryDocumentsBuilder;
 function parseFlowString(flow) {
     if (flow === void 0)
         return void 0;
@@ -93,9 +94,8 @@ function parseFlowString(flow) {
             return upperCase
                 .slice(0, -6);
         default:
-            throw new Errors_1.IllegalArgumentError("Invalid flow order.");
+            throw new IllegalArgumentError_1.IllegalArgumentError("Invalid flow order.");
     }
 }
-exports.default = Class;
 
 //# sourceMappingURL=QueryDocumentsBuilder.js.map

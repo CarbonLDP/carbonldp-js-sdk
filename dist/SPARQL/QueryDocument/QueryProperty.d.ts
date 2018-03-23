@@ -1,31 +1,30 @@
 import { PatternToken, SubjectToken } from "sparqler/tokens";
 import { DigestedObjectSchema } from "../../ObjectSchema";
-import * as QueryContext from "./QueryContext";
-import * as QueryDocumentBuilder from "./QueryDocumentBuilder";
-import * as QueryVariable from "./QueryVariable";
-export declare enum PropertyType {
+import { QueryContext } from "./QueryContext";
+import { QueryDocumentBuilder } from "./QueryDocumentBuilder";
+import { QueryVariable } from "./QueryVariable";
+export declare enum QueryPropertyType {
     FULL = 0,
     PARTIAL = 1,
     ALL = 2,
 }
-export declare class Class {
+export declare class QueryProperty {
     readonly name: string;
-    readonly variable: QueryVariable.Class;
-    _builder: QueryDocumentBuilder.Class;
+    readonly variable: QueryVariable;
+    _builder: QueryDocumentBuilder;
     private _context;
     private _optional;
     private _type?;
     private _patterns;
     private _schema;
-    constructor(context: QueryContext.Class, name: string);
+    constructor(context: QueryContext, name: string);
     addPattern(...patterns: PatternToken[]): this;
     getPatterns(): PatternToken[];
     getSchema(): DigestedObjectSchema;
     isOptional(): boolean;
     setOptional(optional: boolean): this;
-    getType(): PropertyType;
-    setType(type: PropertyType): this;
+    getType(): QueryPropertyType;
+    setType(type: QueryPropertyType): this;
     getTriple(): SubjectToken;
     toString(): string;
 }
-export default Class;

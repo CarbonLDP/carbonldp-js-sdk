@@ -1,6 +1,4 @@
-import * as PersistedFragment from "./PersistedFragment";
+import { PersistedFragment } from "./PersistedFragment";
 
-export interface Class extends PersistedFragment.Class {
+export interface PersistedBlankNode extends PersistedFragment {
 }
-
-export default Class;

@@ -1,18 +1,18 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var NS_1 = require("../NS");
 var Utils_1 = require("../Utils");
+var XSD_1 = require("../Vocabularies/XSD");
 function guessXSDType(value) {
     if (Utils_1.isFunction(value))
         return null;
     if (Utils_1.isString(value))
-        return NS_1.XSD.DataType.string;
+        return XSD_1.XSD.string;
     if (Utils_1.isDate(value))
-        return NS_1.XSD.DataType.dateTime;
+        return XSD_1.XSD.dateTime;
     if (Utils_1.isNumber(value))
-        return NS_1.XSD.DataType.float;
+        return XSD_1.XSD.float;
     if (Utils_1.isBoolean(value))
-        return NS_1.XSD.DataType.boolean;
+        return XSD_1.XSD.boolean;
     return null;
 }
 exports.guessXSDType = guessXSDType;

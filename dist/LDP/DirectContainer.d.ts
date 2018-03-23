@@ -1,13 +1,14 @@
-import * as Document from "./../Document";
-import * as Pointer from "./../Pointer";
-export declare const RDF_CLASS: string;
-export interface Class extends Document.Class {
-    membershipResource: Pointer.Class;
+import { Document } from "../Document";
+import { ModelFactory } from "../ModelFactory";
+import { Pointer } from "../Pointer";
+export interface DirectContainer extends Document {
+    membershipResource: Pointer;
+    hasMemberRelation: Pointer;
 }
-export declare class Factory {
-    static hasClassProperties(resource: object): boolean;
-    static is(object: object): object is Class;
-    static create(membershipResource: Pointer.Class, hasMemberRelation: string | Pointer.Class, isMemberOfRelation?: string | Pointer.Class): Class;
-    static createFrom<T extends object>(object: T, membershipResource: Pointer.Class, hasMemberRelation: string | Pointer.Class, isMemberOfRelation?: string | Pointer.Class): T & Class;
+export interface DirectContainerFactory extends ModelFactory<DirectContainer> {
+    TYPE: string;
+    is(object: object): object is DirectContainer;
+    create(membershipResource: Pointer, hasMemberRelation: string | Pointer, isMemberOfRelation?: string | Pointer): DirectContainer;
+    createFrom<T extends object>(object: T, membershipResource: Pointer, hasMemberRelation: string | Pointer, isMemberOfRelation?: string | Pointer): T & DirectContainer;
 }
-export default Class;
+export declare const DirectContainer: DirectContainerFactory;
