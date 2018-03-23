@@ -647,7 +647,21 @@ describe( module( "carbonldp/CarbonLDP" ), ():void => {
 					responseText: `[ {
 					"@graph": [ {
 						"@id": "https://example.com/.system/platform/",
-						"@type": [ "${ Vocabularies.C.VolatileResource }", "${ Vocabularies.C.Platform }" ],
+						"@type": [ "${ Vocabularies.C.Document }", "${ Vocabularies.C.Platform }" ],
+						"${ Vocabularies.C.created }": [ {
+							"@type": "${ Vocabularies.XSD.dateTime }",
+							"@value": "2016-05-01T00:00:00.000-06:00"
+						} ],
+						"${ Vocabularies.C.modified }": [ {
+							"@type": "${ Vocabularies.XSD.dateTime }",
+							"@value": "2016-05-01T00:00:00.000-06:00"
+						} ],
+						"${ Vocabularies.C.instance }": [ {
+							"@id": "_:1"
+						} ]
+					}, {
+						"@id": "_:1",
+						"@type": [ "${ Vocabularies.C.VolatileResource }", "${ Vocabularies.C.PlatformInstance }" ],
 						"${ Vocabularies.C.buildDate }": [ {
 							"@type": "http://www.w3.org/2001/XMLSchema#dateTime",
 							"@value": "2016-06-01T00:00:00.000-06:00"
@@ -655,8 +669,7 @@ describe( module( "carbonldp/CarbonLDP" ), ():void => {
 						"${ Vocabularies.C.version }": [ {
 							"@value": "1.0.0"
 						} ]
-					}
-					],
+					} ],
 					"@id": "https://example.com/.system/platform/"
 				} ]`,
 				} );
@@ -667,16 +680,17 @@ describe( module( "carbonldp/CarbonLDP" ), ():void => {
 				carbon
 					.getPlatformMetadata()
 					.then( ( platformMetadata ):void => {
-						expect( platformMetadata ).toBeTruthy();
-						expect( Object.keys( platformMetadata ).length ).toBe( 2 );
+						type AllPartial<T> = { [P in keyof T]?: Partial<T[P]> };
+						type JSPlatform = AllPartial<System.PlatformMetadata.PlatformMetadata>;
 
-						expect( platformMetadata.version ).toBeDefined();
-						expect( platformMetadata.version ).toEqual( jasmine.any( String ) );
-						expect( platformMetadata.version ).toBe( "1.0.0" );
-
-						expect( platformMetadata.buildDate ).toBeDefined();
-						expect( platformMetadata.buildDate ).toEqual( jasmine.any( Date ) );
-						expect( platformMetadata.buildDate ).toEqual( new Date( "2016-06-01T06:00:00.000Z" ) );
+						expect( platformMetadata as JSPlatform ).toEqual( {
+							created: new Date( "2016-05-01T06:00:00.000Z" ),
+							modified: new Date( "2016-05-01T06:00:00.000Z" ),
+							instance: {
+								buildDate: new Date( "2016-06-01T06:00:00.000Z" ),
+								version: "1.0.0",
+							},
+						} );
 
 						done();
 					} )
