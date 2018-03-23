@@ -1,7 +1,6 @@
 import * as jsonld from "jsonld";
 import {
 	clazz,
-	hasDefaultExport,
 	hasMethod,
 	isDefined,
 	module,
@@ -9,11 +8,11 @@ import {
 } from "../test/JasmineExtender";
 import * as Utils from "./../Utils";
 
-import DefaultExport, { JSONLDProcessor } from "./Processor";
+import { JSONLDProcessor } from "./Processor";
 
 describe( module( "carbonldp/JSONLD/Processor" ), ():void => {
 
-	describe( clazz( "CarbonLDP.JSONLD.Processor.JSONLDProcessor", "Class that contains methods that can process JSON-LD objects." ), ():void => {
+	describe( clazz( "CarbonLDP.JSONLD.JSONLDProcessor", "Class that contains methods that can process JSON-LD objects." ), ():void => {
 
 		it( isDefined(), ():void => {
 			expect( JSONLDProcessor ).toBeDefined();
@@ -689,11 +688,6 @@ describe( module( "carbonldp/JSONLD/Processor" ), ():void => {
 			Promise.all( promises ).then( done ).catch( done.fail );
 		} );
 
-	} );
-
-	it( hasDefaultExport( "CarbonLDP.JSONLD.Processor.JSONLDProcessor" ), ():void => {
-		expect( DefaultExport ).toBeDefined();
-		expect( DefaultExport ).toBe( JSONLDProcessor );
 	} );
 
 } );

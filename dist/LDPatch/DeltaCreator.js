@@ -11,10 +11,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var iri_1 = require("sparqler/iri");
 var tokens_1 = require("sparqler/tokens");
 var Utils_1 = require("../JSONLD/Utils");
-var XSD_1 = require("../Vocabularies/XSD");
 var ObjectSchema_1 = require("../ObjectSchema");
 var Pointer_1 = require("../Pointer");
 var Utils_2 = require("../Utils");
+var XSD_1 = require("../Vocabularies/XSD");
 var Tokens_1 = require("./Tokens");
 var typesDefinition = new ObjectSchema_1.DigestedObjectSchemaProperty();
 typesDefinition.literal = false;
@@ -278,6 +278,5 @@ function getListDelta(oldValues, newValues) {
 function isValidValue(value) {
     return value !== null && value !== void 0;
 }
-exports.default = DeltaCreator;
 
 //# sourceMappingURL=DeltaCreator.js.map

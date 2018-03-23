@@ -7,11 +7,9 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 }
 Object.defineProperty(exports, "__esModule", { value: true });
-var Utils = __importStar(require("./../Utils"));
-var XSD_1 = require("../Vocabularies/XSD");
 var Errors = __importStar(require("../Errors"));
-var Serializer = __importStar(require("./Literal/Serializer"));
-exports.Serializer = Serializer;
+var XSD_1 = require("../Vocabularies/XSD");
+var Utils = __importStar(require("./../Utils"));
 var Serializers = __importStar(require("./Literal/Serializers"));
 exports.Serializers = Serializers;
 exports.RDFLiteral = {
@@ -126,6 +124,5 @@ exports.RDFLiteral = {
         return value["@type"] === type;
     },
 };
-exports.default = exports.RDFLiteral;
 
 //# sourceMappingURL=Literal.js.map

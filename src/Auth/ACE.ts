@@ -79,5 +79,3 @@ export const ACE:ACEFactory = {
 	},
 
 };
-
-export default ACE;

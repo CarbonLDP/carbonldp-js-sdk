@@ -1,19 +1,11 @@
 "use strict";
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
-    result["default"] = mod;
-    return result;
+function __export(m) {
+    for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
 }
 Object.defineProperty(exports, "__esModule", { value: true });
-var Compacter = __importStar(require("./Compacter"));
-exports.Compacter = Compacter;
-var Converter = __importStar(require("./Converter"));
-exports.Converter = Converter;
-var Parser = __importStar(require("./Parser"));
-exports.Parser = Parser;
-var Processor = __importStar(require("./Processor"));
-exports.Processor = Processor;
+__export(require("./Compacter"));
+__export(require("./Converter"));
+__export(require("./Parser"));
+__export(require("./Processor"));
 
 //# sourceMappingURL=index.js.map

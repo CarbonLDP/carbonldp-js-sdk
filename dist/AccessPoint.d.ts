@@ -18,4 +18,3 @@ export interface AccessPointFactory extends ModelFactory<AccessPoint> {
     createFrom<T extends object>(object: T, membershipResource: Pointer, hasMemberRelation: string | Pointer, isMemberOfRelation?: string | Pointer): T & AccessPoint;
 }
 export declare const AccessPoint: AccessPointFactory;
-export default AccessPoint;

@@ -8,4 +8,3 @@ export declare class QueryObject {
     getToken(): IRIToken | BlankNodeToken | PrefixedNameToken;
     toString(): string;
 }
-export default QueryObject;

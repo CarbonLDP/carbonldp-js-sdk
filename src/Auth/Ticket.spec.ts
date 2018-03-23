@@ -40,7 +40,7 @@ describe( module( "carbonldp/Auth/Ticket" ), ():void => {
 	it( hasProperty(
 		STATIC,
 		"SCHEMA",
-		"CarbonLDP.ObjectSchema.ObjectSchema"
+		"CarbonLDP.ObjectSchema"
 	), ():void => {
 		expect( Ticket.SCHEMA ).toBeDefined();
 		expect( Utils.isObject( Ticket.SCHEMA ) ).toBe( true );
@@ -69,7 +69,7 @@ describe( module( "carbonldp/Auth/Ticket" ), ():void => {
 		"Interface that represents an authentication ticket."
 	), ():void => {
 
-		it( extendsClass( "CarbonLDP.Resource.Resource" ), ():void => {
+		it( extendsClass( "CarbonLDP.Resource" ), ():void => {
 			let ticket:Ticket.Class = <any> {};
 			let resource:Resource;
 
@@ -80,7 +80,7 @@ describe( module( "carbonldp/Auth/Ticket" ), ():void => {
 		it( hasProperty(
 			OBLIGATORY,
 			"forURI",
-			"CarbonLDP.Pointer.Pointer",
+			"CarbonLDP.Pointer",
 			"Pointer that relates the document that the authentication ticket only works for."
 		), ():void => {} );
 

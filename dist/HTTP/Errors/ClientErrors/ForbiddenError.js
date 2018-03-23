@@ -31,6 +31,5 @@ var ForbiddenError = (function (_super) {
     return ForbiddenError;
 }(HTTPError_1.HTTPError));
 exports.ForbiddenError = ForbiddenError;
-exports.default = ForbiddenError;
 
 //# sourceMappingURL=ForbiddenError.js.map

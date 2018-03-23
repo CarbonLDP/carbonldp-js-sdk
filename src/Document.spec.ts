@@ -1,7 +1,7 @@
 import { Minus } from "../test/helpers/types";
 import { BlankNode } from "./BlankNode";
 
-import DefaultExport, { Document } from "./Document";
+import { Document } from "./Document";
 
 import { IDAlreadyInUseError } from "./Errors/IDAlreadyInUseError";
 import { IllegalArgumentError } from "./Errors/IllegalArgumentError";
@@ -20,7 +20,6 @@ import { URI } from "./RDF/URI";
 import { Resource } from "./Resource";
 import {
 	extendsClass,
-	hasDefaultExport,
 	hasMethod,
 	hasProperty,
 	hasSignature,
@@ -73,35 +72,35 @@ function createMockDocument<T extends {}>( origin:T = {} as T ):T & Document {
 describe( module( "carbonldp/Document" ), ():void => {
 
 	describe( interfaze(
-		"CarbonLDP.Document.Document",
+		"CarbonLDP.Document",
 		"Interface that represents an in-memory Carbon LDP Document."
 	), ():void => {
 
 		it( hasProperty(
 			OPTIONAL,
 			"defaultInteractionModel",
-			"CarbonLDP.Pointer.Pointer",
+			"CarbonLDP.Pointer",
 			"A Pointer URI representing the default interaction model of the document when persisted."
 		), ():void => {} );
 
 		it( hasProperty(
 			OPTIONAL,
 			"isMemberOfRelation",
-			"CarbonLDP.Pointer.Pointer",
+			"CarbonLDP.Pointer",
 			"A Pointer with the member of relation of the document."
 		), ():void => {} );
 
 		it( hasProperty(
 			OPTIONAL,
 			"hasMemberRelation",
-			"CarbonLDP.Pointer.Pointer",
+			"CarbonLDP.Pointer",
 			"A Pointer with the inverted relation the document will have."
 		), ():void => {} );
 
 		it( hasProperty(
 			OBLIGATORY,
 			"_fragmentsIndex",
-			"Map<string, CarbonLDP.Fragment.Fragment>",
+			"Map<string, CarbonLDP.Fragment>",
 			"Map that stores the fragments (named fragments and blank nodes) of the Document."
 		), ():void => {} );
 
@@ -137,7 +136,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 
 			it( hasSignature(
 				"Returns true if the pointer provided is inside the scope of the Document.", [
-					{ name: "pointer", type: "CarbonLDP.Pointer.Pointer" },
+					{ name: "pointer", type: "CarbonLDP.Pointer" },
 				],
 				{ type: "boolean" }
 			), ():void => {} );
@@ -168,7 +167,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 			"Returns `null` if no fragment exists in the Document.", [
 				{ name: "id", type: "string" },
 			],
-			{ type: "T & CarbonLDP.Fragment.Fragment" }
+			{ type: "T & CarbonLDP.Fragment" }
 		), ():void => {} );
 
 		it( hasMethod(
@@ -179,14 +178,14 @@ describe( module( "carbonldp/Document" ), ():void => {
 			"Returns `null` if no fragment exists in the Document.", [
 				{ name: "id", type: "string" },
 			],
-			{ type: "T & CarbonLDP.Fragment.Fragment" }
+			{ type: "T & CarbonLDP.Fragment" }
 		), ():void => {} );
 
 		it( hasMethod(
 			OBLIGATORY,
 			"getFragments",
 			"Returns an array with all the fragments in the Document.",
-			{ type: "CarbonLDP.Fragment.Fragment[]" }
+			{ type: "CarbonLDP.Fragment[]" }
 		), ():void => {} );
 
 		describe( method(
@@ -196,33 +195,33 @@ describe( module( "carbonldp/Document" ), ():void => {
 
 			it( hasSignature(
 				[ "T" ],
-				"Creates a `CarbonLDP.NamedFragment.NamedFragment` from the object provided and the slug specified.\n" +
-				"If the slug has the form of a BlankNode ID, a `CarbonLDP.Fragment.Fragment` is created instead.", [
+				"Creates a `CarbonLDP.NamedFragment` from the object provided and the slug specified.\n" +
+				"If the slug has the form of a BlankNode ID, a `CarbonLDP.Fragment` is created instead.", [
 					{ name: "object", type: "T" },
 					{ name: "slug", type: "string" },
 				],
-				{ type: "T & CarbonLDP.Fragment.Fragment" }
+				{ type: "T & CarbonLDP.Fragment" }
 			), ():void => {} );
 
 			it( hasSignature(
 				[ "T" ],
-				"Creates a `CarbonLDP.Fragment.Fragment` from the object provided, since no slug is specified.", [
+				"Creates a `CarbonLDP.Fragment` from the object provided, since no slug is specified.", [
 					{ name: "object", type: "object" },
 				],
-				{ type: "T & CarbonLDP.Fragment.Fragment" }
+				{ type: "T & CarbonLDP.Fragment" }
 			), ():void => {} );
 
 			it( hasSignature(
-				"Creates an empty `CarbonLDP.NamedFragment.NamedFragment` with the slug specified.\n" +
-				"If the slug has the form of a BlankNode ID, a `CarbonLDP.Fragment.Fragment` is created instead.", [
+				"Creates an empty `CarbonLDP.NamedFragment` with the slug specified.\n" +
+				"If the slug has the form of a BlankNode ID, a `CarbonLDP.Fragment` is created instead.", [
 					{ name: "slug", type: "string" },
 				],
-				{ type: "CarbonLDP.Fragment.Fragment" }
+				{ type: "CarbonLDP.Fragment" }
 			), ():void => {} );
 
 			it( hasSignature(
-				"Creates an empty `CarbonLDP.Fragment.Fragment`, since no slug is provided.",
-				{ type: "CarbonLDP.Fragment.Fragment" }
+				"Creates an empty `CarbonLDP.Fragment`, since no slug is provided.",
+				{ type: "CarbonLDP.Fragment" }
 			), ():void => {} );
 
 		} );
@@ -233,21 +232,21 @@ describe( module( "carbonldp/Document" ), ():void => {
 		), ():void => {
 
 			it( hasSignature(
-				"Creates a `CarbonLDP.NamedFragment.NamedFragment` with the slug provided.\n" +
+				"Creates a `CarbonLDP.NamedFragment` with the slug provided.\n" +
 				"If the slug has the form of a BlankNode ID, an Error is thrown.", [
 					{ name: "slug", type: "string" },
 				],
-				{ type: "CarbonLDP.NamedFragment.NamedFragment" }
+				{ type: "CarbonLDP.NamedFragment" }
 			), ():void => {} );
 
 			it( hasSignature(
 				[ "T" ],
-				"Creates a `CarbonLDP.NamedFragment.NamedFragment` from the object provided and the slug specified.\n" +
+				"Creates a `CarbonLDP.NamedFragment` from the object provided and the slug specified.\n" +
 				"If the slug has the form of a BlankNode ID, an Error is thrown.", [
 					{ name: "object", type: "T" },
 					{ name: "slug", type: "string" },
 				],
-				{ type: "T & CarbonLDP.NamedFragment.NamedFragment" }
+				{ type: "T & CarbonLDP.NamedFragment" }
 			), ():void => {} );
 
 		} );
@@ -258,8 +257,8 @@ describe( module( "carbonldp/Document" ), ():void => {
 		), ():void => {
 
 			it( hasSignature(
-				"Remove the fragment referenced by the `CarbonLDP.Fragment.Fragment` provided from the Document.", [
-					{ name: "fragment", type: "CarbonLDP.Fragment.Fragment" },
+				"Remove the fragment referenced by the `CarbonLDP.Fragment` provided from the Document.", [
+					{ name: "fragment", type: "CarbonLDP.Fragment" },
 				]
 			), ():void => {} );
 
@@ -277,8 +276,8 @@ describe( module( "carbonldp/Document" ), ():void => {
 		), ():void => {
 
 			it( hasSignature(
-				"Remove the maned fragment referenced by the `CarbonLDP.NamedFragment.NamedFragment` provided from the Document.", [
-					{ name: "fragment", type: "CarbonLDP.NamedFragment.NamedFragment" },
+				"Remove the maned fragment referenced by the `CarbonLDP.NamedFragment` provided from the Document.", [
+					{ name: "fragment", type: "CarbonLDP.NamedFragment" },
 				]
 			), ():void => {} );
 
@@ -297,10 +296,10 @@ describe( module( "carbonldp/Document" ), ():void => {
 
 			it( hasSignature(
 				"Returns a JSON string from the Document using the ObjectSchema and then JSONLDConverter if provided.", [
-					{ name: "objectSchemaResolver", type: "CarbonLDP.ObjectSchema.ObjectSchemaResolver", optional: true },
+					{ name: "objectSchemaResolver", type: "CarbonLDP.ObjectSchemaResolver", optional: true },
 					{ name: "jsonLDConverter", type: "CarbonLDP.JSONLDConverter.Class", optional: true },
 				],
-				{ type: "CarbonLDP.RDF.Document.RDFDocument" }
+				{ type: "CarbonLDP.RDF.RDFDocument" }
 			), ():void => {} );
 
 		} );
@@ -308,20 +307,20 @@ describe( module( "carbonldp/Document" ), ():void => {
 	} );
 
 	describe( interfaze(
-		"CarbonLDP.Document.DocumentFactory",
-		"Interface with the factory, decorate and utils for `CarbonLDP.Document.Document` objects."
+		"CarbonLDP.DocumentFactory",
+		"Interface with the factory, decorate and utils for `CarbonLDP.Document` objects."
 	), ():void => {
 
-		it( extendsClass( "CarbonLDP.ModelFactory.ModelFactory<CarbonLDP.Document.Document>" ), ():void => {} );
-		it( extendsClass( "CarbonLDP.ModelDecorator.ModelDecorator<CarbonLDP.Document.Document>" ), ():void => {} );
+		it( extendsClass( "CarbonLDP.ModelFactory<CarbonLDP.Document>" ), ():void => {} );
+		it( extendsClass( "CarbonLDP.ModelDecorator<CarbonLDP.Document>" ), ():void => {} );
 
 	} );
 
 	describe( property(
 		STATIC,
 		"Document",
-		"CarbonLDP.Document.DocumentFactory",
-		"Constant that implements the `CarbonLDP.Document.DocumentFactory` interface."
+		"CarbonLDP.DocumentFactory",
+		"Constant that implements the `CarbonLDP.DocumentFactory` interface."
 	), ():void => {
 
 		describe( "Document.TYPE", ():void => {
@@ -1884,11 +1883,6 @@ describe( module( "carbonldp/Document" ), ():void => {
 
 		} );
 
-	} );
-
-	it( hasDefaultExport( "CarbonLDP.Document.Document" ), ():void => {
-		const target:DefaultExport = {} as Document;
-		expect( target ).toBeDefined();
 	} );
 
 } );

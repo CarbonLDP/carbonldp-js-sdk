@@ -1,7 +1,6 @@
 import { Pointer } from "../Pointer";
 import {
 	extendsClass,
-	hasDefaultExport,
 	hasProperty,
 	interfaze,
 	isDefined,
@@ -12,14 +11,14 @@ import {
 } from "../test/JasmineExtender";
 import { C } from "../Vocabularies/C";
 
-import DefaultExport, { MemberAddedDetails } from "./MemberAddedDetails";
+import { MemberAddedDetails } from "./MemberAddedDetails";
 
 import { MemberDetails } from "./MemberDetails";
 
 describe( module( "carbonldp/Messaging/MemberAddedDetails" ), ():void => {
 
 	describe( interfaze(
-		"CarbonLDP.Messaging.MemberAddedDetails.MemberAddedDetails",
+		"CarbonLDP.Messaging.MemberAddedDetails",
 		"Interface with the properties of the details in a member added event."
 	), ():void => {
 
@@ -28,7 +27,7 @@ describe( module( "carbonldp/Messaging/MemberAddedDetails" ), ():void => {
 			expect( target ).toBeDefined();
 		} );
 
-		it( extendsClass( "CarbonLDP.Messaging.MemberDetails.MemberDetails" ), ():void => {
+		it( extendsClass( "CarbonLDP.Messaging.MemberDetails" ), ():void => {
 			const target:MemberDetails = {} as MemberAddedDetails;
 			expect( target ).toBeDefined();
 		} );
@@ -36,7 +35,7 @@ describe( module( "carbonldp/Messaging/MemberAddedDetails" ), ():void => {
 		it( hasProperty(
 			OBLIGATORY,
 			"members",
-			"CarbonLDP.Pointer.Pointer[]"
+			"CarbonLDP.Pointer[]"
 		), ():void => {
 			const target:MemberAddedDetails[ "members" ] = [] as Pointer[];
 			expect( target ).toBeDefined();
@@ -45,8 +44,8 @@ describe( module( "carbonldp/Messaging/MemberAddedDetails" ), ():void => {
 	} );
 
 	describe( interfaze(
-		"CarbonLDP.Messaging.MemberAddedDetails.MemberAddedDetailsFactory",
-		"Interface with the factory, decorator and utils for `CarbonLDP.Messaging.MemberAddedDetails.MemberAddedDetails` objects."
+		"CarbonLDP.Messaging.MemberAddedDetailsFactory",
+		"Interface with the factory, decorator and utils for `CarbonLDP.Messaging.MemberAddedDetails` objects."
 	), ():void => {
 
 		it( hasProperty(
@@ -58,7 +57,7 @@ describe( module( "carbonldp/Messaging/MemberAddedDetails" ), ():void => {
 		it( hasProperty(
 			STATIC,
 			"SCHEMA",
-			"CarbonLDP.ObjectSchema.ObjectSchema"
+			"CarbonLDP.ObjectSchema"
 		), ():void => {} );
 
 	} );
@@ -66,7 +65,7 @@ describe( module( "carbonldp/Messaging/MemberAddedDetails" ), ():void => {
 	describe( property(
 		STATIC,
 		"MemberAddedDetails",
-		"CarbonLDP.Messaging.MemberAddedDetails.MemberAddedDetailsFactory"
+		"CarbonLDP.Messaging.MemberAddedDetailsFactory"
 	), ():void => {
 
 		it( isDefined(), ():void => {
@@ -98,11 +97,6 @@ describe( module( "carbonldp/Messaging/MemberAddedDetails" ), ():void => {
 			} );
 		} );
 
-	} );
-
-	it( hasDefaultExport( "CarbonLDP.Messaging.MemberAddedDetails.MemberAddedDetails" ), ():void => {
-		const target:MemberAddedDetails = {} as DefaultExport;
-		expect( target ).toBeDefined();
 	} );
 
 } );

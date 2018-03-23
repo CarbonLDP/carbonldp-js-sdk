@@ -21,7 +21,7 @@ export interface RemoveMemberActionFactory extends ModelDecorator<RemoveMemberAc
 	create( targetMembers:Pointer[] ):RemoveMemberAction;
 }
 
-export const SCHEMA:ObjectSchema = {
+const SCHEMA:ObjectSchema = {
 	"targetMembers": {
 		"@id": C.targetMember,
 		"@type": "@id",
@@ -44,5 +44,3 @@ export const RemoveMemberAction:RemoveMemberActionFactory = {
 		} );
 	},
 };
-
-export default RemoveMemberAction;

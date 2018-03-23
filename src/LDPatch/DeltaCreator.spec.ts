@@ -18,7 +18,6 @@ import { Resource } from "../Resource";
 import {
 	clazz,
 	constructor,
-	hasDefaultExport,
 	hasSignature,
 	INSTANCE,
 	method,
@@ -44,12 +43,7 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 		expect( Module ).toEqual( jasmine.any( Object ) );
 	} );
 
-	it( hasDefaultExport( "CarbonLDP.LDPatch.DeltaCreator.DeltaCreator" ), ():void => {
-		expect( Module.default ).toBeDefined();
-		expect( Module.default ).toBe( DeltaCreator );
-	} );
-
-	describe( clazz( "CarbonLDP.LDPatch.DeltaCreator.DeltaCreator", "Creator of LDPatch deltas" ), ():void => {
+	describe( clazz( "CarbonLDP.LDPatch.DeltaCreator", "Creator of LDPatch deltas" ), ():void => {
 
 		it( "should exists", ():void => {
 			expect( DeltaCreator ).toBeDefined();
@@ -65,7 +59,7 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 
 			it( hasSignature(
 				[
-					{ name: "jsonldConverter", type: "CarbonLDP.JSONLD.Converter.JSONLDConverter", description: "The converted of JSON-LD to Javascript and viceversa to use." },
+					{ name: "jsonldConverter", type: "CarbonLDP.JSONLD.JSONLDConverter", description: "The converted of JSON-LD to Javascript and viceversa to use." },
 				]
 			), ():void => {
 			} );
@@ -103,9 +97,9 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 			it( hasSignature(
 				"Creates and adds the delta to the patch, of the provided old and new resource.",
 				[
-					{ name: "schema", type: "CarbonLDP.ObjectSchema.DigestedObjectSchema", description: "The schema of the resource to create its delta." },
-					{ name: "oldResource", type: "CarbonLDP.Resource.Resource", description: "The old representation of the resource to create the delta." },
-					{ name: "newResource", type: "CarbonLDP.Resource.Resource", description: "The current representation of the resource to create the delta." },
+					{ name: "schema", type: "CarbonLDP.DigestedObjectSchema", description: "The schema of the resource to create its delta." },
+					{ name: "oldResource", type: "CarbonLDP.Resource", description: "The old representation of the resource to create the delta." },
+					{ name: "newResource", type: "CarbonLDP.Resource", description: "The current representation of the resource to create the delta." },
 				]
 			), ():void => {
 			} );

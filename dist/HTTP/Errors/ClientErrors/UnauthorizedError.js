@@ -31,6 +31,5 @@ var UnauthorizedError = (function (_super) {
     return UnauthorizedError;
 }(HTTPError_1.HTTPError));
 exports.UnauthorizedError = UnauthorizedError;
-exports.default = UnauthorizedError;
 
 //# sourceMappingURL=UnauthorizedError.js.map

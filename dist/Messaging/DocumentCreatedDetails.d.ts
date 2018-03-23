@@ -9,4 +9,3 @@ export interface DocumentCreatedDetailsFactory {
     SCHEMA: ObjectSchema;
 }
 export declare const DocumentCreatedDetails: DocumentCreatedDetailsFactory;
-export default DocumentCreatedDetails;

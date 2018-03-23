@@ -248,6 +248,5 @@ var JSONLDConverter = (function () {
     return JSONLDConverter;
 }());
 exports.JSONLDConverter = JSONLDConverter;
-exports.default = JSONLDConverter;
 
 //# sourceMappingURL=Converter.js.map

@@ -9,6 +9,5 @@ var StringParser = (function () {
     return StringParser;
 }());
 exports.StringParser = StringParser;
-exports.default = StringParser;
 
 //# sourceMappingURL=StringParser.js.map

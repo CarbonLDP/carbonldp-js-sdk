@@ -9,11 +9,8 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-}
 Object.defineProperty(exports, "__esModule", { value: true });
-var AbstractError_1 = __importDefault(require("./AbstractError"));
+var AbstractError_1 = require("./AbstractError");
 var IDAlreadyInUseError = (function (_super) {
     __extends(IDAlreadyInUseError, _super);
     function IDAlreadyInUseError() {
@@ -25,8 +22,7 @@ var IDAlreadyInUseError = (function (_super) {
         configurable: true
     });
     return IDAlreadyInUseError;
-}(AbstractError_1.default));
+}(AbstractError_1.AbstractError));
 exports.IDAlreadyInUseError = IDAlreadyInUseError;
-exports.default = IDAlreadyInUseError;
 
 //# sourceMappingURL=IDAlreadyInUseError.js.map

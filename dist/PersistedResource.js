@@ -88,6 +88,5 @@ exports.PersistedResource = {
         return persistedResource;
     },
 };
-exports.default = exports.PersistedResource;
 
 //# sourceMappingURL=PersistedResource.js.map

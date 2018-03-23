@@ -76,6 +76,5 @@ var QueryContext = (function () {
     return QueryContext;
 }());
 exports.QueryContext = QueryContext;
-exports.default = QueryContext;
 
 //# sourceMappingURL=QueryContext.js.map

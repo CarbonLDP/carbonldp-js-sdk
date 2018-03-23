@@ -6,4 +6,3 @@ export interface SPARQLSelectResults<T = SPARQLBindingObject> {
     vars: string[];
     bindings: T[];
 }
-export default SPARQLSelectResults;

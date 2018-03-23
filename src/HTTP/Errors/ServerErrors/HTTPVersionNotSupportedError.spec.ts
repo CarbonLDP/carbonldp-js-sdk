@@ -4,7 +4,6 @@ import { HTTPError } from "../HTTPError";
 import {
 	clazz,
 	extendsClass,
-	hasDefaultExport,
 	hasMethod,
 	hasProperty,
 	INSTANCE,
@@ -15,7 +14,6 @@ import {
 import * as Utils from "./../../../Utils";
 
 import * as HTTPVersionNotSupportedError from "./HTTPVersionNotSupportedError";
-import DefaultExport from "./HTTPVersionNotSupportedError";
 
 describe( module( "carbonldp/HTTP/Errors/ServerErrors/HTTPVersionNotSupportedError" ), ():void => {
 
@@ -99,11 +97,6 @@ describe( module( "carbonldp/HTTP/Errors/ServerErrors/HTTPVersionNotSupportedErr
 			expect( HTTPVersionNotSupportedError.HTTPVersionNotSupportedError.statusCode ).toBe( 505 );
 		} );
 
-	} );
-
-	it( hasDefaultExport( "CarbonLDP.HTTP.Errors.HTTPVersionNotSupportedError" ), ():void => {
-		expect( DefaultExport ).toBeDefined();
-		expect( DefaultExport ).toBe( HTTPVersionNotSupportedError.HTTPVersionNotSupportedError );
 	} );
 
 } );

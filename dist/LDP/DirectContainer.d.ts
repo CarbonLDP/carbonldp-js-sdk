@@ -12,4 +12,3 @@ export interface DirectContainerFactory extends ModelFactory<DirectContainer> {
     createFrom<T extends object>(object: T, membershipResource: Pointer, hasMemberRelation: string | Pointer, isMemberOfRelation?: string | Pointer): T & DirectContainer;
 }
 export declare const DirectContainer: DirectContainerFactory;
-export default DirectContainer;

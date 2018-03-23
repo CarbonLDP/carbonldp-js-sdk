@@ -84,6 +84,5 @@ exports.Pointer = {
             .map(function (pointer) { return pointer.id; });
     },
 };
-exports.default = exports.Pointer;
 
 //# sourceMappingURL=Pointer.js.map

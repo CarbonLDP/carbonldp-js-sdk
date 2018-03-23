@@ -8,5 +8,3 @@ export class TooManyRequestsError extends HTTPError {
 
 	get name():string { return name; }
 }
-
-export default TooManyRequestsError;

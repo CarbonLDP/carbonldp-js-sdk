@@ -9,5 +9,3 @@ export interface SPARQLSelectResults<T = SPARQLBindingObject> {
 
 	bindings:T[];
 }
-
-export default SPARQLSelectResults;

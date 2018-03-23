@@ -43,6 +43,5 @@ var Header = (function () {
     return Header;
 }());
 exports.Header = Header;
-exports.default = Header;
 
 //# sourceMappingURL=Header.js.map

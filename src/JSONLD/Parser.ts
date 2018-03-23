@@ -7,5 +7,3 @@ export class JSONLDParser extends JSONParser implements Parser<object[]> {
 		return super.parse( input ).then( JSONLDProcessor.expand );
 	}
 }
-
-export default JSONLDParser;

@@ -97,6 +97,5 @@ function parseFlowString(flow) {
             throw new IllegalArgumentError_1.IllegalArgumentError("Invalid flow order.");
     }
 }
-exports.default = QueryDocumentsBuilder;
 
 //# sourceMappingURL=QueryDocumentsBuilder.js.map

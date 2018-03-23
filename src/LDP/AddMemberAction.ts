@@ -21,7 +21,7 @@ export interface AddMemberActionFactory extends ModelFactory<AddMemberAction>, M
 	create( targetMembers:Pointer[] ):AddMemberAction;
 }
 
-export const SCHEMA:ObjectSchema = {
+const SCHEMA:ObjectSchema = {
 	"targetMembers": {
 		"@id": C.targetMember,
 		"@type": "@id",
@@ -44,5 +44,3 @@ export const AddMemberAction:AddMemberActionFactory = {
 		} );
 	},
 };
-
-export default AddMemberAction;

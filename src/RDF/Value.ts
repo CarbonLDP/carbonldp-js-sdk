@@ -36,5 +36,3 @@ export const RDFValue:RDFValueFactory = {
 	},
 
 };
-
-export default RDFValue;

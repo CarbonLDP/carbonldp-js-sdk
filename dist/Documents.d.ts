@@ -25,7 +25,7 @@ import { FinishSPARQLSelect } from "./SPARQL/Builder";
 import { QueryDocumentBuilder } from "./SPARQL/QueryDocument/QueryDocumentBuilder";
 import { QueryDocumentsBuilder } from "./SPARQL/QueryDocument/QueryDocumentsBuilder";
 import { SPARQLRawResults } from "./SPARQL/RawResults";
-import { SPARQLSelectResults } from "./SPARQL/SELECTResults";
+import { SPARQLSelectResults } from "./SPARQL/SelectResults";
 export declare class Documents implements PointerLibrary, PointerValidator, ObjectSchemaResolver {
     private _jsonldConverter;
     readonly jsonldConverter: JSONLDConverter;
@@ -152,4 +152,3 @@ export declare class Documents implements PointerLibrary, PointerValidator, Obje
     private _sendRequest(method, uri, options, body?);
     private _sendRequest<T>(method, uri, options, body?, parser?);
 }
-export default Documents;

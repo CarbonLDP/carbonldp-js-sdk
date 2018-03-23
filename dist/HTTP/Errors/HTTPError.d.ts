@@ -21,4 +21,3 @@ export declare class HTTPError extends AbstractError implements ErrorResponse {
     removeType: (type: string) => void;
     constructor(message: string, response: Response);
 }
-export default HTTPError;

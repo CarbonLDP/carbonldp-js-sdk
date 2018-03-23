@@ -79,6 +79,5 @@ exports.Resource = {
         return resource;
     },
 };
-exports.default = exports.Resource;
 
 //# sourceMappingURL=Resource.js.map

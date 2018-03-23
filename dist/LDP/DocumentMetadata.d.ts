@@ -16,6 +16,4 @@ export interface DocumentMetadataFactory extends ModelFactory<DocumentMetadata>,
     isDecorated(object: object): object is DocumentMetadata;
     is(object: object): object is DocumentMetadata;
 }
-export declare const SCHEMA: ObjectSchema;
 export declare const DocumentMetadata: DocumentMetadataFactory;
-export default DocumentMetadata;

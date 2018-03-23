@@ -6,7 +6,7 @@ import { C } from "../Vocabularies/C";
 import { CS } from "../Vocabularies/CS";
 import { VCARD } from "../Vocabularies/VCARD";
 import { XSD } from "../Vocabularies/XSD";
-import AbstractContext from "./../AbstractContext";
+import { AbstractContext } from "./../AbstractContext";
 import {
 	clazz,
 	hasConstructor,
@@ -60,7 +60,7 @@ describe( module( "carbonldp/Auth/TokenAuthenticator" ), ():void => {
 		} );
 
 		it( hasConstructor( [
-			{ name: "context", type: "CarbonLDP.Context.Context", description: "The context where to authenticate the user." },
+			{ name: "context", type: "CarbonLDP.Context", description: "The context where to authenticate the user." },
 		] ), ():void => {
 			class MockedContext extends AbstractContext {
 				protected _baseURI:string;
@@ -383,10 +383,10 @@ describe( module( "carbonldp/Auth/TokenAuthenticator" ), ():void => {
 			INSTANCE,
 			"addAuthentication",
 			"Adds the Token Authentication header to the passed request options object.\n" +
-			"The `CarbonLDP.HTTP.Request.RequestOptions` provided is returned without modifications if it already has an authentication header.", [
-				{ name: "requestOptions", type: "CarbonLDP.HTTP.Request.RequestOptions", description: "Request options object to add Authentication headers." },
+			"The `CarbonLDP.HTTP.RequestOptions` provided is returned without modifications if it already has an authentication header.", [
+				{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", description: "Request options object to add Authentication headers." },
 			],
-			{ type: "CarbonLDP.HTTP.Request.RequestOptions", description: "The request options with the added authentication headers." }
+			{ type: "CarbonLDP.HTTP.RequestOptions", description: "The request options with the added authentication headers." }
 		), ():void => {
 
 			// Property Integrity

@@ -91,8 +91,8 @@ import {
 	FinishSPARQLSelect,
 	SPARQLBuilder,
 } from "./SPARQL/Builder";
+import { QueryContext } from "./SPARQL/QueryDocument";
 import { PartialMetadata } from "./SPARQL/QueryDocument/PartialMetadata";
-import { QueryContext } from "./SPARQL/QueryDocument/QueryContext";
 import { QueryContextBuilder } from "./SPARQL/QueryDocument/QueryContextBuilder";
 import { QueryContextPartial } from "./SPARQL/QueryDocument/QueryContextPartial";
 import { QueryDocumentBuilder } from "./SPARQL/QueryDocument/QueryDocumentBuilder";
@@ -111,7 +111,7 @@ import {
 	getPathProperty,
 } from "./SPARQL/QueryDocument/Utils";
 import { SPARQLRawResults } from "./SPARQL/RawResults";
-import { SPARQLSelectResults } from "./SPARQL/SELECTResults";
+import { SPARQLSelectResults } from "./SPARQL/SelectResults";
 import { SPARQLService } from "./SPARQL/Service";
 import * as Utils from "./Utils";
 import { promiseMethod } from "./Utils";
@@ -378,7 +378,7 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 				.addProperty( "child" )
 				.setOptional( false );
 
-			const selectChildren:SelectToken = new SelectToken()
+			const selectChildren:SelectToken = new SelectToken( "DISTINCT" )
 				.addVariable( childrenProperty.variable )
 				.addPattern( new SubjectToken( queryContext.compactIRI( parentURI ) )
 					.addPredicate( new PredicateToken( queryContext.compactIRI( LDP.contains ) )
@@ -470,7 +470,7 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 
 			const membershipResource:VariableToken = queryContext.getVariable( "membershipResource" );
 			const hasMemberRelation:VariableToken = queryContext.getVariable( "hasMemberRelation" );
-			const selectMembers:SelectToken = new SelectToken()
+			const selectMembers:SelectToken = new SelectToken( "DISTINCT" )
 				.addVariable( membersProperty.variable )
 				.addPattern( new SubjectToken( queryContext.compactIRI( uri ) )
 					.addPredicate( new PredicateToken( queryContext.compactIRI( LDP.membershipResource ) )
@@ -1195,7 +1195,7 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 
 	private _executeSelectPatterns( uri:string, requestOptions:RequestOptions, queryContext:QueryContext, targetName:string, selectPatterns:PatternToken[] ):Promise<PersistedDocument[]> {
 		const targetVar:VariableToken = queryContext.getVariable( targetName );
-		const select:SelectToken = new SelectToken()
+		const select:SelectToken = new SelectToken( "DISTINCT" )
 			.addVariable( targetVar )
 			.addPattern( ...selectPatterns )
 		;
@@ -1485,5 +1485,3 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 			.catch( this._parseErrorResponse.bind( this ) );
 	}
 }
-
-export default Documents;

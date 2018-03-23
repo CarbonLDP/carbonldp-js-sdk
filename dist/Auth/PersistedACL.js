@@ -44,6 +44,5 @@ exports.PersistedACL = {
 function parsePointer(element) {
     return Utils.isObject(element) ? element : this.getPointer(element);
 }
-exports.default = exports.PersistedACL;
 
 //# sourceMappingURL=PersistedACL.js.map

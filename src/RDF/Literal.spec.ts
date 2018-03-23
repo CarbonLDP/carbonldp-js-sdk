@@ -1,6 +1,5 @@
 import * as Errors from "../Errors";
 import {
-	hasDefaultExport,
 	hasMethod,
 	hasProperty,
 	interfaze,
@@ -16,16 +15,16 @@ import { XSD } from "../Vocabularies/XSD";
 import * as Utils from "./../Utils";
 
 import * as Module from "./Literal";
-import DefaultExport, { RDFLiteral } from "./Literal";
+import { RDFLiteral } from "./Literal";
 
-import * as Serializer from "./Literal/Serializer";
+import { Serializer } from "./Literal/Serializer";
 import * as Serializers from "./Literal/Serializers";
 
 describe( module( "carbonldp/RDF/Literal" ), ():void => {
 
 	describe( interfaze(
-		"CarbonLDP.RDF.Literal.RDFLiteral",
-		"Interface that represents an `rdf:Literal`."
+		"CarbonLDP.RDF.RDFLiteral",
+		"Interface that represents an RDF Literal Value."
 	), ():void => {
 
 		it( hasProperty(
@@ -44,23 +43,15 @@ describe( module( "carbonldp/RDF/Literal" ), ():void => {
 
 	} );
 
-	it( hasDefaultExport( "CarbonLDP.RDF.Literal.RDFLiteral" ), ():void => {
-		let defaultExport:DefaultExport = <any> {};
-		let defaultTarget:RDFLiteral;
-
-		defaultTarget = defaultExport;
-		expect( defaultTarget ).toEqual( jasmine.any( Object ) );
-	} );
-
 	describe( interfaze(
-		"CarbonLDP.RDF.Literal.RDFLiteralFactory",
-		"Interface with the factory and utils for `CarbonLDP.RDF.Literal.RDFLiteral` objects."
+		"CarbonLDP.RDF.RDFLiteralFactory",
+		"Interface with the factory and utils for `CarbonLDP.RDF.RDFLiteral` objects."
 	), ():void => {
 
 		it( hasMethod(
 			STATIC,
 			"from",
-			"Convert the value provided to a `CarbonLDP.RDF.Literal.RDFLiteral` object."
+			"Convert the value provided to a `CarbonLDP.RDF.RDFLiteral` object."
 		), ():void => {} );
 
 		// TODO: Missing docs of second signature
@@ -69,7 +60,7 @@ describe( module( "carbonldp/RDF/Literal" ), ():void => {
 			"parse",
 			"Parse the Literal object to the respective JavaScript type.\n" +
 			"Returns `null` if the Literal can't be parsed.", [
-				{ name: "literal", type: "CarbonLDP.RDF.Literal.RDFLiteral" },
+				{ name: "literal", type: "CarbonLDP.RDF.RDFLiteral" },
 			],
 			{ type: "any" }
 		), ():void => {} );
@@ -77,17 +68,17 @@ describe( module( "carbonldp/RDF/Literal" ), ():void => {
 		it( hasMethod(
 			STATIC,
 			"is",
-			"Returns true if the object provided is considered a `CarbonLDP.RDF.Literal.RDFLiteral` object.", [
+			"Returns true if the object provided is considered a `CarbonLDP.RDF.RDFLiteral` object.", [
 				{ name: "value", type: "any" },
 			],
-			{ type: "value is CarbonLDP.RDF.Literal.RDFLiteral" }
+			{ type: "value is CarbonLDP.RDF.RDFLiteral" }
 		), ():void => {} );
 
 		it( hasMethod(
 			STATIC,
 			"hasType",
 			"Returns true if the Literal has the type specified.", [
-				{ name: "value", type: "CarbonLDP.RDF.Literal.RDFLiteral" },
+				{ name: "value", type: "CarbonLDP.RDF.RDFLiteral" },
 				{ name: "type", type: "string" },
 			],
 			{ type: "boolean" }
@@ -98,7 +89,7 @@ describe( module( "carbonldp/RDF/Literal" ), ():void => {
 	describe( property(
 		STATIC,
 		"RDFLiteral",
-		"CarbonLDP.RDF.Literal.RDFLiteralFactory"
+		"CarbonLDP.RDF.RDFLiteralFactory"
 	), ():void => {
 
 		it( isDefined(), ():void => {
@@ -450,10 +441,10 @@ describe( module( "carbonldp/RDF/Literal" ), ():void => {
 	it( reexports(
 		STATIC,
 		"Serializer",
-		"carbonldp/RDF/Literal/Serializer"
+		"CarbonLDP.RDF.Literal.Serializer"
 	), ():void => {
-		expect( Module.Serializer ).toBeDefined();
-		expect( Module.Serializer ).toBe( Serializer );
+		const target:Module.Serializer = {} as Serializer;
+		expect( target ).toBeDefined();
 	} );
 
 } );

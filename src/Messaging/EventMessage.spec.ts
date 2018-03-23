@@ -2,7 +2,6 @@ import { Pointer } from "../Pointer";
 import { Resource } from "../Resource";
 import {
 	extendsClass,
-	hasDefaultExport,
 	hasProperty,
 	hasSignature,
 	interfaze,
@@ -15,13 +14,12 @@ import {
 } from "../test/JasmineExtender";
 import { C } from "../Vocabularies/C";
 
-import DefaultExport, { EventMessage } from "./EventMessage";
+import { EventMessage } from "./EventMessage";
 
 describe( module( "carbonldp/Messaging/Message" ), ():void => {
 
-
 	describe( interfaze(
-		"CarbonLDP.Messaging.EventMessage.EventMessage",
+		"CarbonLDP.Messaging.EventMessage",
 		"Interface with the base properties of the data received in a subscription event."
 	), ():void => {
 
@@ -30,7 +28,7 @@ describe( module( "carbonldp/Messaging/Message" ), ():void => {
 			expect( target ).toBeDefined();
 		} );
 
-		it( extendsClass( "CarbonLDP.Resource.Resource" ), ():void => {
+		it( extendsClass( "CarbonLDP.Resource" ), ():void => {
 			const target:Resource = {} as EventMessage;
 			expect( target ).toBeDefined();
 		} );
@@ -38,7 +36,7 @@ describe( module( "carbonldp/Messaging/Message" ), ():void => {
 		it( hasProperty(
 			OBLIGATORY,
 			"target",
-			"CarbonLDP.Pointer.Pointer"
+			"CarbonLDP.Pointer"
 		), ():void => {
 			const target:EventMessage[ "target" ] = {} as Pointer;
 			expect( target ).toBeDefined();
@@ -47,14 +45,14 @@ describe( module( "carbonldp/Messaging/Message" ), ():void => {
 	} );
 
 	describe( interfaze(
-		"CarbonLDP.Messaging.EventMessage.EventMessageFactory",
-		"Interface with the factory, decorate and utils elements for `CarbonLDP.Messaging.EventMessage.EventMessage` objects."
+		"CarbonLDP.Messaging.EventMessageFactory",
+		"Interface with the factory, decorate and utils elements for `CarbonLDP.Messaging.EventMessage` objects."
 	), ():void => {
 
 		it( hasProperty(
 			OBLIGATORY,
 			"SCHEMA",
-			"CarbonLDP.ObjectSchema.ObjectSchema"
+			"CarbonLDP.ObjectSchema"
 		), ():void => {} );
 
 
@@ -64,11 +62,11 @@ describe( module( "carbonldp/Messaging/Message" ), ():void => {
 		), ():void => {
 
 			it( hasSignature(
-				"Returns true if the object provided has the specific properties of the `CarbonLDP.Messaging.EventMessage.EventMessage` interface.",
+				"Returns true if the object provided has the specific properties of the `CarbonLDP.Messaging.EventMessage` interface.",
 				[
 					{ name: "object", type: "object", description: "The object to be tested." },
 				],
-				{ type: "object is CarbonLDP.Messaging.EventMessage.EventMessage" }
+				{ type: "object is CarbonLDP.Messaging.EventMessage" }
 			), ():void => {} );
 
 		} );
@@ -78,7 +76,7 @@ describe( module( "carbonldp/Messaging/Message" ), ():void => {
 	describe( property(
 		STATIC,
 		"EventMessage",
-		"CarbonLDP.Messaging.EventMessage.EventMessageFactory"
+		"CarbonLDP.Messaging.EventMessageFactory"
 	), ():void => {
 
 		it( "should exist", ():void => {
@@ -127,11 +125,6 @@ describe( module( "carbonldp/Messaging/Message" ), ():void => {
 
 		} );
 
-	} );
-
-	it( hasDefaultExport( "CarbonLDP.Messaging.EventMessage.EventMessage" ), ():void => {
-		const target:EventMessage = {} as DefaultExport;
-		expect( target ).toBeDefined();
 	} );
 
 } );

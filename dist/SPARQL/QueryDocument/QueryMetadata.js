@@ -17,6 +17,5 @@ exports.QueryMetadata = {
             && object.hasType(exports.QueryMetadata.TYPE);
     },
 };
-exports.default = exports.QueryMetadata;
 
 //# sourceMappingURL=QueryMetadata.js.map

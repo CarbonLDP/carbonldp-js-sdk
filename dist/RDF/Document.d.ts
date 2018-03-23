@@ -19,4 +19,3 @@ export declare const RDFDocument: RDFDocumentFactory;
 export declare class RDFDocumentParser extends JSONLDParser implements Parser<RDFDocument[]> {
     parse(input: string): Promise<RDFDocument[]>;
 }
-export default RDFDocument;

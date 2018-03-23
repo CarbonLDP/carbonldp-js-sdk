@@ -28,5 +28,3 @@ export const PersistedNamedFragment:PersistedNamedFragmentFactory = {
 		return PersistedFragment.decorate( fragment );
 	},
 };
-
-export default PersistedNamedFragment;

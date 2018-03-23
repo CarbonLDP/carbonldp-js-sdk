@@ -9,11 +9,8 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-}
 Object.defineProperty(exports, "__esModule", { value: true });
-var AbstractError_1 = __importDefault(require("./AbstractError"));
+var AbstractError_1 = require("./AbstractError");
 var IllegalStateError = (function (_super) {
     __extends(IllegalStateError, _super);
     function IllegalStateError(message) {
@@ -25,8 +22,7 @@ var IllegalStateError = (function (_super) {
         configurable: true
     });
     return IllegalStateError;
-}(AbstractError_1.default));
+}(AbstractError_1.AbstractError));
 exports.IllegalStateError = IllegalStateError;
-exports.default = IllegalStateError;
 
 //# sourceMappingURL=IllegalStateError.js.map

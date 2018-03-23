@@ -1,9 +1,9 @@
 import { Document } from "./Document";
-import DefaultExport, { NamedFragment } from "./NamedFragment";
+
+import { NamedFragment } from "./NamedFragment";
 
 import {
 	extendsClass,
-	hasDefaultExport,
 	hasMethod,
 	hasProperty,
 	interfaze,
@@ -17,11 +17,11 @@ import {
 describe( module( "carbonldp/NamedFragment" ), ():void => {
 
 	describe( interfaze(
-		"CarbonLDP.NamedFragment.NamedFragment",
+		"CarbonLDP.NamedFragment",
 		"Interface that represents an in-memory named fragment from a Carbon LDP document."
 	), ():void => {
 
-		it( extendsClass( "CarbonLDP.Fragment.Fragment" ), ():void => {} );
+		it( extendsClass( "CarbonLDP.Fragment" ), ():void => {} );
 
 		it( hasProperty(
 			OBLIGATORY,
@@ -33,71 +33,54 @@ describe( module( "carbonldp/NamedFragment" ), ():void => {
 	} );
 
 	describe( interfaze(
-		"CarbonLDP.NamedFragment.NamedFragmentFactory",
-		"Interface with the factory, decorate and utils methods of a `CarbonLDP.NamedFragment.NamedFragment` object."
+		"CarbonLDP.NamedFragmentFactory",
+		"Interface with the factory, decorate and utils methods of a `CarbonLDP.NamedFragment` object."
 	), ():void => {
 
 		it( hasMethod(
 			OBLIGATORY,
 			"isDecorated",
-			"Returns true if the object provided has the properties and methods of a `CarbonLDP.NamedFragment.NamedFragment` object.", [
+			"Returns true if the object provided has the properties and methods of a `CarbonLDP.NamedFragment` object.", [
 				{ name: "object", type: "object" },
 			],
-			{ type: "object is CarbonLDP.NamedFragment.NamedFragment" }
-		), ():void => {} );
-
-		it( hasMethod(
-			OBLIGATORY,
-			"isDecorated",
-			"Returns true if the object provided is considered a `CarbonLDP.NamedFragment.NamedFragment` object.", [
-				{ name: "object", type: "object" },
-			],
-			{ type: "object is CarbonLDP.NamedFragment.NamedFragment" }
+			{ type: "object is CarbonLDP.NamedFragment" }
 		), ():void => {} );
 
 		it( hasMethod(
 			OBLIGATORY,
 			"create",
 			"Creates a NamedFragment with the slug provided", [
-				{ name: "document", type: "CarbonLDP.Document.Document", description: "The document that the NamedFragment will be part of." },
+				{ name: "document", type: "CarbonLDP.Document", description: "The document that the NamedFragment will be part of." },
 				{ name: "slug", type: "string", description: "The slug that will identify the NamedFragment." },
 			],
-			{ type: "CarbonLDP.NamedFragment.Class" }
+			{ type: "CarbonLDP.Class" }
 		), ():void => {} );
 
 		it( hasMethod(
-			STATIC,
+			OBLIGATORY,
 			"createFrom",
 			[ "T extends object" ],
 			"Creates a NamedFragment from an Object with the slug provided.", [
 				{ name: "object", type: "T", description: "Object that will be converted to a NamedFragment." },
-				{ name: "document", type: "CarbonLDP.Document.Document", description: "The document that the NamedFragment will be part of." },
+				{ name: "document", type: "CarbonLDP.Document", description: "The document that the NamedFragment will be part of." },
 				{ name: "slug", type: "string", description: "The slug that will identify the NamedFragment." },
 			],
-			{ type: "T & CarbonLDP.NamedFragment.NamedFragment" }
+			{ type: "T & CarbonLDP.NamedFragment" }
 		), ():void => {} );
 
 		it( hasMethod(
-			STATIC,
+			OBLIGATORY,
 			"decorate",
 			[ "T extends object" ],
 			"Decorates the object provided with the properties and methods of a `CarbonLDP.Named.Fragment.NamedFragment` object.", [
 				{ name: "object", type: "T", description: "Object to be decorated." },
 			],
-			{ type: "T & CarbonLDP.NamedFragment.NamedFragment" }
+			{ type: "T & CarbonLDP.NamedFragment" }
 		), ():void => {} );
 
 	} );
 
-	it( hasDefaultExport( "CarbonLDP.NamedFragment.NamedFragment" ), ():void => {
-		let defaultExport:DefaultExport = <any> {};
-		let defaultTarget:NamedFragment;
-
-		defaultTarget = defaultExport;
-		expect( defaultTarget ).toEqual( jasmine.any( Object ) );
-	} );
-
-	describe( property( STATIC, "NamedFragment", "CarbonLDP.NamedFragment.NamedFragmentFactory", "Constant that implements the `CarbonLDP.NamedFragment.NamedFragment`, interface" ), ():void => {
+	describe( property( STATIC, "NamedFragment", "CarbonLDP.NamedFragmentFactory", "Constant that implements the `CarbonLDP.NamedFragment`, interface" ), ():void => {
 
 		it( isDefined(), ():void => {
 			expect( NamedFragment ).toBeDefined();

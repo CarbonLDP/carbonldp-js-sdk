@@ -43,7 +43,7 @@ describe( module( "carbonldp/Auth/User" ), ():void => {
 	it( hasProperty(
 		STATIC,
 		"SCHEMA",
-		"CarbonLDP.ObjectSchema.ObjectSchema"
+		"CarbonLDP.ObjectSchema"
 	), ():void => {
 		expect( User.SCHEMA ).toBeDefined();
 		expect( Utils.isObject( User.SCHEMA ) ).toBe( true );
@@ -60,7 +60,7 @@ describe( module( "carbonldp/Auth/User" ), ():void => {
 		"Interface that represents an in-memory User of any Context."
 	), ():void => {
 
-		it( extendsClass( "CarbonLDP.Document.Document" ), ():void => {
+		it( extendsClass( "CarbonLDP.Document" ), ():void => {
 			let user:User.Class = <any> {};
 			let document:Document;
 

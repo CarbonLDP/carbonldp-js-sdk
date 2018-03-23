@@ -4,7 +4,6 @@ import { HTTPError } from "../HTTPError";
 import {
 	clazz,
 	extendsClass,
-	hasDefaultExport,
 	hasMethod,
 	hasProperty,
 	INSTANCE,
@@ -15,7 +14,6 @@ import {
 import * as Utils from "./../../../Utils";
 
 import * as UnauthorizedError from "./UnauthorizedError";
-import DefaultExport from "./UnauthorizedError";
 
 describe( module( "carbonldp/HTTP/Errors/ClientErrors/UnauthorizedError" ), ():void => {
 
@@ -99,11 +97,6 @@ describe( module( "carbonldp/HTTP/Errors/ClientErrors/UnauthorizedError" ), ():v
 			expect( UnauthorizedError.UnauthorizedError.statusCode ).toBe( 401 );
 		} );
 
-	} );
-
-	it( hasDefaultExport( "CarbonLDP.HTTP.Errors.UnauthorizedError" ), ():void => {
-		expect( DefaultExport ).toBeDefined();
-		expect( DefaultExport ).toBe( UnauthorizedError.UnauthorizedError );
 	} );
 
 } );

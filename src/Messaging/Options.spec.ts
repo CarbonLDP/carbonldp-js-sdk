@@ -1,5 +1,4 @@
 import {
-	hasDefaultExport,
 	hasProperty,
 	interfaze,
 	isDefined,
@@ -7,7 +6,7 @@ import {
 	OPTIONAL
 } from "../test/JasmineExtender";
 
-import DefaultExport, { MessagingOptions } from "./Options";
+import { MessagingOptions } from "./Options";
 
 describe( module( "carbonldp/Messaging/Options" ), ():void => {
 
@@ -41,11 +40,6 @@ describe( module( "carbonldp/Messaging/Options" ), ():void => {
 			expect( target ).toBeDefined();
 		} );
 
-	} );
-
-	it( hasDefaultExport( "CarbonLDP.Messaging.MessagingOptions" ), ():void => {
-		const target:MessagingOptions = {} as DefaultExport;
-		expect( target ).toBeDefined();
 	} );
 
 } );

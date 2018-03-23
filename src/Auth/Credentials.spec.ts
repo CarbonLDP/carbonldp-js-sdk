@@ -16,6 +16,7 @@ import {
 	STATIC,
 } from "./../test/JasmineExtender";
 import * as Utils from "./../Utils";
+
 import * as Credentials from "./Credentials";
 import DefaultExport from "./Credentials";
 
@@ -40,7 +41,7 @@ describe( module( "carbonldp/Auth/Credentials" ), ():void => {
 	it( hasProperty(
 		STATIC,
 		"SCHEMA",
-		"CarbonLDP.ObjectSchema.ObjectSchema"
+		"CarbonLDP.ObjectSchema"
 	), ():void => {
 		expect( Credentials.SCHEMA ).toBeDefined();
 		expect( Utils.isObject( Credentials.SCHEMA ) ).toBe( true );
@@ -69,7 +70,7 @@ describe( module( "carbonldp/Auth/Credentials" ), ():void => {
 		"Interface that represents an in-memory Credentials of a user."
 	), ():void => {
 
-		it( extendsClass( "CarbonLDP.Document.Document" ), ():void => {
+		it( extendsClass( "CarbonLDP.Document" ), ():void => {
 			const user:Credentials.Class = <any> {};
 			let document:Document;
 

@@ -8,17 +8,15 @@ import { Resource } from "../Resource";
 import {
 	clazz,
 	constructor,
-	hasDefaultExport,
 	hasSignature,
 	INSTANCE,
 	isDefined,
 	method,
 	module
 } from "../test/JasmineExtender";
-import { EventMessage } from "./EventMessage";
+import { EventMessage } from "./EventMessage";
 
 import * as MessagingService from "./Service";
-import DefaultExport from "./Service";
 
 describe( module( "carbonldp/Messaging/Service" ), ():void => {
 
@@ -28,7 +26,7 @@ describe( module( "carbonldp/Messaging/Service" ), ():void => {
 	} );
 
 	describe( clazz(
-		"CarbonLDP.Messaging.Service.MessagingService",
+		"CarbonLDP.Messaging.MessagingService",
 		"Class that manages the messaging client, connecting and subscriptions."
 	), ():void => {
 
@@ -440,7 +438,7 @@ describe( module( "carbonldp/Messaging/Service" ), ():void => {
 				"Subscribe to an event described by the destination provided.",
 				[
 					{ name: "destination", type: "string", description: "The destination of the event to subscribe for." },
-					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.EventMessage.EventMessage ) => void", optional: true, description: "Callback to be invoked in every notification event and will be provided with the data message of the event." },
+					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.EventMessage ) => void", optional: true, description: "Callback to be invoked in every notification event and will be provided with the data message of the event." },
 					{ name: "onError", type: "( error:Error ) => void", optional: true, description: "Callback to be invoked when a error has occurred in the subscription." },
 				]
 			), ():void => {} );
@@ -607,7 +605,7 @@ describe( module( "carbonldp/Messaging/Service" ), ():void => {
 				"Remove the subscription set for the specific destination and onEvent callback.",
 				[
 					{ name: "destination", type: "string", description: "The destination of the subscription to be removed." },
-					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.EventMessage.EventMessage ) => void", optional: true, description: "Callback of the subscription to be be removed." },
+					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.EventMessage ) => void", optional: true, description: "Callback of the subscription to be be removed." },
 				]
 			), ():void => {} );
 
@@ -698,11 +696,6 @@ describe( module( "carbonldp/Messaging/Service" ), ():void => {
 
 		} );
 
-	} );
-
-	it( hasDefaultExport( "CarbonLDP.Messaging.Service.MessagingService" ), ():void => {
-		expect( DefaultExport ).toBeDefined();
-		expect( MessagingService.MessagingService ).toBe( DefaultExport );
 	} );
 
 } );

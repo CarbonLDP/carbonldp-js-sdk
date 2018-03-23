@@ -6,4 +6,3 @@ export interface RDFListFactory {
     is(value: any): value is RDFList;
 }
 export declare const RDFList: RDFListFactory;
-export default RDFList;

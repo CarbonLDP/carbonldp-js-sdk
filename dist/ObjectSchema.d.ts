@@ -57,4 +57,3 @@ export declare class ObjectSchemaUtils {
     }): string;
     static resolveProperty(schema: DigestedObjectSchema, definition: DigestedObjectSchemaProperty, inSame?: boolean): DigestedObjectSchemaProperty;
 }
-export default ObjectSchema;

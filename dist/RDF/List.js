@@ -13,6 +13,5 @@ exports.RDFList = {
         return Utils.hasPropertyDefined(value, "@list");
     },
 };
-exports.default = exports.RDFList;
 
 //# sourceMappingURL=List.js.map

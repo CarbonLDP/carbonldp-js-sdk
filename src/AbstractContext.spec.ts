@@ -1,14 +1,13 @@
-import DefaultExport, { AbstractContext } from "./AbstractContext";
+import { AbstractContext } from "./AbstractContext";
+
 import {
 	globalContext,
 	SDKContext
 } from "./SDKContext";
-
 import {
 	clazz,
 	extendsClass,
 	hasConstructor,
-	hasDefaultExport,
 	hasMethod,
 	hasProperty,
 	INSTANCE,
@@ -17,7 +16,7 @@ import {
 
 describe( module( "carbonldp/AbstractContext" ), ():void => {
 
-	describe( clazz( "CarbonLDP.AbstractContext.AbstractContext", "Abstract class for defining contexts." ), ():void => {
+	describe( clazz( "CarbonLDP.AbstractContext", "Abstract class for defining contexts." ), ():void => {
 
 		it( "should exists", ():void => {
 			expect( AbstractContext ).toBeDefined();
@@ -36,7 +35,7 @@ describe( module( "carbonldp/AbstractContext" ), ():void => {
 			expect( context ).toEqual( jasmine.any( AbstractContext ) );
 		} );
 
-		it( extendsClass( "CarbonLDP.SDKContext.SDKContext" ), ():void => {
+		it( extendsClass( "CarbonLDP.SDKContext" ), ():void => {
 			expect( context ).toEqual( jasmine.any( SDKContext ) );
 		} );
 
@@ -57,9 +56,9 @@ describe( module( "carbonldp/AbstractContext" ), ():void => {
 		it( hasProperty(
 			INSTANCE,
 			"parentContext",
-			"CarbonLDP.Context.Context",
+			"CarbonLDP.Context",
 			"The parent context provided in the constructor. " +
-			"If no context was provided, this property will be the singleton `CarbonLDP.SDKContext#globalContext` of the class `CarbonLDP.SDKContext.SDKContext`."
+			"If no context was provided, this property will be the singleton `carbonldp/SDKContext#globalContext` of the class `CarbonLDP.SDKContext`."
 		), ():void => {
 			expect( context.parentContext ).toBeDefined();
 
@@ -71,11 +70,6 @@ describe( module( "carbonldp/AbstractContext" ), ():void => {
 			expect( newContext.parentContext ).toBe( context );
 		} );
 
-	} );
-
-	it( hasDefaultExport( "CarbonLDP.AbstractContext.AbstractContext" ), ():void => {
-		expect( DefaultExport ).toBeDefined();
-		expect( DefaultExport ).toBe( AbstractContext );
 	} );
 
 } );

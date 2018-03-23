@@ -1,11 +1,10 @@
 import { NamedFragment } from "./NamedFragment";
 import { PersistedFragment } from "./PersistedFragment";
 
-import DefaultExport, { PersistedNamedFragment } from "./PersistedNamedFragment";
+import { PersistedNamedFragment } from "./PersistedNamedFragment";
 
 import {
 	extendsClass,
-	hasDefaultExport,
 	hasMethod,
 	hasProperty,
 	interfaze,
@@ -20,25 +19,25 @@ import * as Utils from "./Utils";
 describe( module( "carbonldp/PersistedNamedFragment" ), ():void => {
 
 	describe( interfaze(
-		"CarbonLDP.PersistedNamedFragment.PersistedNamedFragment",
+		"CarbonLDP.PersistedNamedFragment",
 		"Interface that represents a persisted named fragment of a persisted document."
 	), ():void => {
 
-		it( extendsClass( "CarbonLDP.PersistedFragment.PersistedFragment" ), ():void => {} );
-		it( extendsClass( "CarbonLDP.NamedFragment.NamedFragment" ), ():void => {} );
+		it( extendsClass( "CarbonLDP.PersistedFragment" ), ():void => {} );
+		it( extendsClass( "CarbonLDP.NamedFragment" ), ():void => {} );
 
 		it( hasProperty(
 			OBLIGATORY,
 			"_document",
-			"CarbonLDP.PersistedDocument.PersistedDocument",
+			"CarbonLDP.PersistedDocument",
 			"A reference to the persisted document the current named fragment belongs to."
 		), ():void => {} );
 
 	} );
 
 	describe( interfaze(
-		"CarbonLDP.PersistedNamedFragment.PersistedNamedFragmentFactory",
-		"Interface with the factory, decorate and utils methods of a `CarbonLDP.PersistedNamedFragment.PersistedNamedFragment` object."
+		"CarbonLDP.PersistedNamedFragmentFactory",
+		"Interface with the factory, decorate and utils methods of a `CarbonLDP.PersistedNamedFragment` object."
 	), ():void => {
 
 		it( hasMethod(
@@ -47,14 +46,14 @@ describe( module( "carbonldp/PersistedNamedFragment" ), ():void => {
 			[
 				{ name: "object", type: "object" },
 			],
-			{ type: "object is CarbonLDP.PersistedNamedFragment.PersistedNamedFragment" }
+			{ type: "object is CarbonLDP.PersistedNamedFragment" }
 		), ():void => {} );
 
 		it( hasMethod(
 			OBLIGATORY,
 			"decorate",
 			[ "T extends object" ],
-			"Decorates the object provided with the properties and methods of a `CarbonLDP.PersistedNamedFragment.PersistedNamedFragment` object.",
+			"Decorates the object provided with the properties and methods of a `CarbonLDP.PersistedNamedFragment` object.",
 			[
 				{ name: "object", type: "T", description: "The object to convert into a persisted named fragment." },
 			]
@@ -62,16 +61,7 @@ describe( module( "carbonldp/PersistedNamedFragment" ), ():void => {
 
 	} );
 
-	it( hasDefaultExport( "CarbonLDP.PersistedNamedFragment.PersistedNamedFragment" ), ():void => {
-		let defaultExport:DefaultExport = <any> {};
-		let defaultTarget:PersistedNamedFragment;
-
-		defaultTarget = defaultExport;
-		expect( defaultTarget ).toEqual( jasmine.any( Object ) );
-	} );
-
-
-	describe( property( STATIC, "PersistedNamedFragment", "CarbonLDP.PersistedNamedFragment.PersistedNamedFragmentFactory", "Constant that implements the `CarbonLDP.PersistedNamedFragment.PersistedNamedFragmentFactory` interface." ), ():void => {
+	describe( property( STATIC, "PersistedNamedFragment", "CarbonLDP.PersistedNamedFragmentFactory", "Constant that implements the `CarbonLDP.PersistedNamedFragmentFactory` interface." ), ():void => {
 
 		it( isDefined(), ():void => {
 			expect( PersistedNamedFragment ).toBeDefined();

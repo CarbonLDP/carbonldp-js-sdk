@@ -4,7 +4,6 @@ import { HTTPError } from "../HTTPError";
 import {
 	clazz,
 	extendsClass,
-	hasDefaultExport,
 	hasMethod,
 	hasProperty,
 	INSTANCE,
@@ -15,7 +14,6 @@ import {
 import * as Utils from "./../../../Utils";
 
 import * as UnsupportedMediaTypeError from "./UnsupportedMediaTypeError";
-import DefaultExport from "./UnsupportedMediaTypeError";
 
 describe( module( "carbonldp/HTTP/Errors/ClientErrors/UnsupportedMediaTypeError" ), ():void => {
 
@@ -99,11 +97,6 @@ describe( module( "carbonldp/HTTP/Errors/ClientErrors/UnsupportedMediaTypeError"
 			expect( UnsupportedMediaTypeError.UnsupportedMediaTypeError.statusCode ).toBe( 415 );
 		} );
 
-	} );
-
-	it( hasDefaultExport( "CarbonLDP.HTTP.Errors.UnsupportedMediaTypeError" ), ():void => {
-		expect( DefaultExport ).toBeDefined();
-		expect( DefaultExport ).toBe( UnsupportedMediaTypeError.UnsupportedMediaTypeError );
 	} );
 
 } );

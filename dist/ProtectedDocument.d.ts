@@ -7,4 +7,3 @@ export interface ProtectedDocumentFactory {
     SCHEMA: ObjectSchema;
 }
 export declare const ProtectedDocument: ProtectedDocumentFactory;
-export default ProtectedDocument;

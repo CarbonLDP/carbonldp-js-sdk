@@ -8,5 +8,3 @@ export class PreconditionFailedError extends HTTPError {
 
 	get name():string { return name; }
 }
-
-export default PreconditionFailedError;

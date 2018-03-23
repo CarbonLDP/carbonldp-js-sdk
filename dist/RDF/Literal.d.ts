@@ -1,5 +1,6 @@
-import * as Serializer from "./Literal/Serializer";
 import * as Serializers from "./Literal/Serializers";
+export * from "./Literal/Serializer";
+export { Serializers };
 export interface RDFLiteral {
     "@type"?: string;
     "@value": string;
@@ -13,5 +14,3 @@ export interface RDFLiteralFactory {
     hasType(value: RDFLiteral, type: string): boolean;
 }
 export declare const RDFLiteral: RDFLiteralFactory;
-export default RDFLiteral;
-export { Serializer, Serializers };

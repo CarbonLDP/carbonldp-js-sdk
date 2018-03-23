@@ -155,6 +155,5 @@ var MessagingService = (function () {
     return MessagingService;
 }());
 exports.MessagingService = MessagingService;
-exports.default = MessagingService;
 
 //# sourceMappingURL=Service.js.map

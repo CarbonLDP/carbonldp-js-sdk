@@ -10,6 +10,5 @@ var HTTPMethod;
     HTTPMethod[HTTPMethod["PATCH"] = 5] = "PATCH";
     HTTPMethod[HTTPMethod["DELETE"] = 6] = "DELETE";
 })(HTTPMethod = exports.HTTPMethod || (exports.HTTPMethod = {}));
-exports.default = HTTPMethod;
 
 //# sourceMappingURL=HTTPMethod.js.map

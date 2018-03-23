@@ -39,6 +39,5 @@ exports.ValidationResult = {
     TYPE: SHACL_1.SHACL.ValidationResult,
     SCHEMA: SCHEMA,
 };
-exports.default = exports.ValidationResult;
 
 //# sourceMappingURL=ValidationResult.js.map

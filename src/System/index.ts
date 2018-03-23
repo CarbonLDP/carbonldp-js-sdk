@@ -1,5 +1,1 @@
-import * as PlatformMetadata from "./PlatformMetadata";
-
-export {
-	PlatformMetadata,
-};
+export * from "./PlatformMetadata";

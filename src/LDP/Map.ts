@@ -36,5 +36,3 @@ export const Map:MapFactory = {
 	},
 
 };
-
-export default Map;

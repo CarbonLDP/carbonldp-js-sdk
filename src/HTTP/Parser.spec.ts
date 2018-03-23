@@ -1,17 +1,13 @@
 import {
-	OBLIGATORY,
-
-	module,
-	interfaze,
-
-	isDefined,
 	hasMethod,
-	hasDefaultExport,
+	interfaze,
+	isDefined,
+	module,
+	OBLIGATORY,
 } from "./../test/JasmineExtender";
 import * as Utils from "./../Utils";
 
 import * as Parser from "./Parser";
-import DefaultExport from "./Parser";
 
 describe( module( "carbonldp/HTTP/Parser" ), ():void => {
 
@@ -21,7 +17,7 @@ describe( module( "carbonldp/HTTP/Parser" ), ():void => {
 	} );
 
 	describe( interfaze(
-		"CarbonLDP.HTTP.Parser.Parser",
+		"CarbonLDP.HTTP.Parser",
 		[ "T" ],
 		"Interface that represents a what a parser must contains to be used when converting the response of a request."
 	), ():void => {
@@ -35,15 +31,6 @@ describe( module( "carbonldp/HTTP/Parser" ), ():void => {
 			{ type: "Promise<T>", description: "Promise that contains the parsed T element if the process success." }
 		), ():void => {} );
 
-	} );
-
-
-	it( hasDefaultExport( "CarbonLDP.HTTP.Parser.Parser" ), ():void => {
-		let defaultExport:DefaultExport<any> = <any> {};
-		let defaultTarget:Parser.Parser<any>;
-
-		defaultTarget = defaultExport;
-		expect( defaultTarget ).toEqual( jasmine.any( Object ) );
 	} );
 
 } );

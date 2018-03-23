@@ -1,7 +1,6 @@
 import {
 	clazz,
 	extendsClass,
-	hasDefaultExport,
 	hasProperty,
 	INSTANCE,
 	isDefined,
@@ -9,10 +8,9 @@ import {
 } from "./../test/JasmineExtender";
 import * as Utils from "./../Utils";
 
-import AbstractError from "./AbstractError";
+import { AbstractError } from "./AbstractError";
 
 import * as IllegalArgumentError from "./IllegalArgumentError";
-import DefaultExport from "./IllegalArgumentError";
 
 // TODO: Refactor tests
 describe( module( "carbonldp/Errors/IllegalArgumentError" ), ():void => {
@@ -56,11 +54,6 @@ describe( module( "carbonldp/Errors/IllegalArgumentError" ), ():void => {
 			expect( error.name ).toBe( "IllegalArgumentError" );
 		} );
 
-	} );
-
-	it( hasDefaultExport( "CarbonLDP.Errors.IllegalArgumentError" ), ():void => {
-		expect( DefaultExport ).toBeDefined();
-		expect( DefaultExport ).toBe( IllegalArgumentError.IllegalArgumentError );
 	} );
 
 } );

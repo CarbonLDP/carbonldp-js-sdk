@@ -20,6 +20,5 @@ exports.Error = {
     TYPE: C_1.C.Error,
     SCHEMA: SCHEMA,
 };
-exports.default = exports.Error;
 
 //# sourceMappingURL=Error.js.map

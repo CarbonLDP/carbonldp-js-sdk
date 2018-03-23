@@ -17,5 +17,3 @@ export class QueryVariable extends VariableToken {
 		return super.toString();
 	}
 }
-
-export default QueryVariable;

@@ -10,4 +10,3 @@ export interface ValidationErrorFactory extends ModelFactory<ValidationError> {
     SCHEMA: ObjectSchema;
 }
 export declare const ValidationError: ValidationErrorFactory;
-export default ValidationError;

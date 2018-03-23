@@ -21,5 +21,3 @@ export const VolatileResource:VolatileResourceFactory = {
 	},
 
 };
-
-export default VolatileResource;

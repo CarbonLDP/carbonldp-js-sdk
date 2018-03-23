@@ -35,4 +35,3 @@ export interface ACLFactory extends ModelDecorator<ACL> {
     decorate<T extends object>(object: T): T & ACL;
 }
 export declare const ACL: ACLFactory;
-export default ACL;

@@ -28,6 +28,5 @@ var QueryVariable = (function (_super) {
     return QueryVariable;
 }(tokens_1.VariableToken));
 exports.QueryVariable = QueryVariable;
-exports.default = QueryVariable;
 
 //# sourceMappingURL=QueryVariable.js.map

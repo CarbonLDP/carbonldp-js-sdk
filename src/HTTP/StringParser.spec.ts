@@ -1,6 +1,5 @@
 import {
 	clazz,
-	hasDefaultExport,
 	hasMethod,
 	INSTANCE,
 	isDefined,
@@ -9,7 +8,6 @@ import {
 import * as Utils from "./../Utils";
 
 import * as StringParser from "./StringParser";
-import DefaultExport from "./StringParser";
 
 describe( module( "carbonldp/HTTP/StringParser" ), ():void => {
 
@@ -19,9 +17,9 @@ describe( module( "carbonldp/HTTP/StringParser" ), ():void => {
 	} );
 
 	describe( clazz(
-		"CarbonLDP.HTTP.StringParser.StringParser",
-		"Parses the body of a `CarbonLDP.HTTP.Response.Response` and returns a string.", [
-			"CarbonLDP.HTTP.Parser.Parser<string>",
+		"CarbonLDP.HTTP.StringParser",
+		"Parses the body of a `CarbonLDP.HTTP.Response` and returns a string.", [
+			"CarbonLDP.HTTP.Parser<string>",
 		]
 	), ():void => {
 
@@ -66,8 +64,4 @@ describe( module( "carbonldp/HTTP/StringParser" ), ():void => {
 
 	} );
 
-	it( hasDefaultExport( "CarbonLDP.HTTP.StringParser.StringParser" ), ():void => {
-		expect( DefaultExport ).toBeDefined();
-		expect( DefaultExport ).toEqual( StringParser.StringParser );
-	} );
 } );

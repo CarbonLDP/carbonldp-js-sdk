@@ -4,7 +4,6 @@ import { HTTPError } from "../HTTPError";
 import {
 	clazz,
 	extendsClass,
-	hasDefaultExport,
 	hasMethod,
 	hasProperty,
 	INSTANCE,
@@ -15,7 +14,6 @@ import {
 import * as Utils from "./../../../Utils";
 
 import * as ServiceUnavailableError from "./ServiceUnavailableError";
-import DefaultExport from "./ServiceUnavailableError";
 
 describe( module( "carbonldp/HTTP/Errors/ServerErrors/ServiceUnavailableError" ), ():void => {
 
@@ -99,11 +97,6 @@ describe( module( "carbonldp/HTTP/Errors/ServerErrors/ServiceUnavailableError" )
 			expect( ServiceUnavailableError.ServiceUnavailableError.statusCode ).toBe( 503 );
 		} );
 
-	} );
-
-	it( hasDefaultExport( "CarbonLDP.HTTP.Errors.ServiceUnavailableError" ), ():void => {
-		expect( DefaultExport ).toBeDefined();
-		expect( DefaultExport ).toBe( ServiceUnavailableError.ServiceUnavailableError );
 	} );
 
 } );

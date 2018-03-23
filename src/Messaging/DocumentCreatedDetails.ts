@@ -26,5 +26,3 @@ export const DocumentCreatedDetails:DocumentCreatedDetailsFactory = {
 	TYPE: C.DocumentCreatedDetails,
 	SCHEMA,
 };
-
-export default DocumentCreatedDetails;

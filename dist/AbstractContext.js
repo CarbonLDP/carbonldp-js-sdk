@@ -33,6 +33,5 @@ var AbstractContext = (function (_super) {
     return AbstractContext;
 }(SDKContext_1.SDKContext));
 exports.AbstractContext = AbstractContext;
-exports.default = AbstractContext;
 
 //# sourceMappingURL=AbstractContext.js.map

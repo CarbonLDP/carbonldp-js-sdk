@@ -31,6 +31,5 @@ var TooManyRequestsError = (function (_super) {
     return TooManyRequestsError;
 }(HTTPError_1.HTTPError));
 exports.TooManyRequestsError = TooManyRequestsError;
-exports.default = TooManyRequestsError;
 
 //# sourceMappingURL=TooManyRequestsError.js.map

@@ -20,7 +20,7 @@ import {
 	VariableToken
 } from "sparqler/tokens";
 
-import AbstractContext from "./AbstractContext";
+import { AbstractContext } from "./AbstractContext";
 import {
 	AccessPoint,
 	AccessPointBase,
@@ -30,7 +30,7 @@ import { BlankNode } from "./BlankNode";
 import { CarbonLDP } from "./CarbonLDP";
 import { Document } from "./Document";
 
-import DefaultExport, { Documents } from "./Documents";
+import { Documents } from "./Documents";
 
 import * as Errors from "./Errors";
 import { Fragment } from "./Fragment";
@@ -39,7 +39,7 @@ import { Header } from "./HTTP/Header";
 import { RequestService } from "./HTTP/Request";
 import { Response } from "./HTTP/Response";
 import { JSONLDConverter } from "./JSONLD/Converter";
-import MessagingEvent from "./Messaging/Event";
+import { Event } from "./Messaging/Event";
 import * as MessagingUtils from "./Messaging/Utils";
 import * as ObjectSchema from "./ObjectSchema";
 import { PersistedAccessPoint } from "./PersistedAccessPoint";
@@ -54,7 +54,6 @@ import { PartialMetadata } from "./SPARQL/QueryDocument/PartialMetadata";
 import {
 	clazz,
 	hasConstructor,
-	hasDefaultExport,
 	hasMethod,
 	hasProperty,
 	hasSignature,
@@ -78,11 +77,11 @@ function createPartialMetadata( schema:ObjectSchema.ObjectSchema ):PartialMetada
 describe( module( "carbonldp/Documents" ), ():void => {
 
 	describe( clazz(
-		"CarbonLDP.Documents.Documents",
+		"CarbonLDP.Documents",
 		"Class that contains methods for retrieving, saving and updating documents from the Carbon LDP server.", [
-			"CarbonLDP.Pointer.PointerLibrary",
-			"CarbonLDP.Pointer.PointerValidator",
-			"CarbonLDP.ObjectSchema.ObjectSchemaResolver",
+			"CarbonLDP.PointerLibrary",
+			"CarbonLDP.PointerValidator",
+			"CarbonLDP.ObjectSchemaResolver",
 		]
 	), ():void => {
 
@@ -100,7 +99,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 		} );
 
 		it( hasConstructor( [
-			{ name: "context", type: "CarbonLDP.Context.Context", optional: true, description: "The context where the documents instance will live. If no context is provided, calling its methods with relative URIs will throw an error, since there will be no form to resolve them." },
+			{ name: "context", type: "CarbonLDP.Context", optional: true, description: "The context where the documents instance will live. If no context is provided, calling its methods with relative URIs will throw an error, since there will be no form to resolve them." },
 		] ), ():void => {
 			class MockedContext extends AbstractContext {
 				protected _baseURI:string;
@@ -126,8 +125,8 @@ describe( module( "carbonldp/Documents" ), ():void => {
 		it( hasProperty(
 			INSTANCE,
 			"jsonldConverter",
-			"CarbonLDP.JSONLD.Converter.JSONLDConverter",
-			"Instance of `CarbonLDP.JSONLD.Converter.JSONLDConverter` that is used to compact retrieved documents and to expand documents to persist. This property is not writable."
+			"CarbonLDP.JSONLD.JSONLDConverter",
+			"Instance of `CarbonLDP.JSONLD.JSONLDConverter` that is used to compact retrieved documents and to expand documents to persist. This property is not writable."
 		), ():void => {
 			class MockedContext extends AbstractContext {
 				protected _baseURI:string;
@@ -149,7 +148,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 		it( hasProperty(
 			INSTANCE,
 			"documentDecorators",
-			"Map<string, CarbonLDP.Documents.DocumentDecorator>",
+			"Map<string, CarbonLDP.DocumentDecorator>",
 			"A map that specifies a type and a tuple with a function decorator and its parameters which will be called when a document with the specified type has been resolved or refreshed.\n\nThe decorator function must at least accept the object to decorate and optional parameters declared in the tuple."
 		), ():void => {
 			class MockedContext extends AbstractContext {
@@ -202,7 +201,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 
 			it( hasSignature(
 				"Returns true if the pointer provided is inside the scope of the Documents instance.", [
-					{ name: "pointer", type: "CarbonLDP.Pointer.Pointer", description: "Pointer to evaluate." },
+					{ name: "pointer", type: "CarbonLDP.Pointer", description: "Pointer to evaluate." },
 				],
 				{ type: "boolean" }
 			), ():void => {
@@ -1026,19 +1025,19 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				[ "T extends object" ],
 				"Retrieves the entire document referred by the URI specified when no query function si provided.\nIf the function builder es provided the query is able to specify the properties of the document to be retrieved and the sub-documents' properties and on and on.", [
 					{ name: "uri", type: "string", description: "The URI of the document to retrieve/query." },
-					{ name: "requestOptions", type: "CarbonLDP.HTTP.Request.RequestOptions", optional: true, description: "Customizable options for the request." },
-					{ name: "queryBuilderFn", type: "( queryBuilder:CarbonLDP.SPARQL.QueryDocument.QueryDocumentBuilder.QueryDocumentBuilder ) => CarbonLDP.SPARQL.QueryDocument.QueryDocumentBuilder.QueryDocumentBuilder", optional: true, description: "Function that receives a the builder that helps you to construct the retrieval query.\nThe same builder must be returned." },
+					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for the request." },
+					{ name: "queryBuilderFn", type: "( queryBuilder:CarbonLDP.SPARQL.QueryDocument.QueryDocumentBuilder ) => CarbonLDP.SPARQL.QueryDocument.QueryDocumentBuilder", optional: true, description: "Function that receives a the builder that helps you to construct the retrieval query.\nThe same builder must be returned." },
 				],
-				{ type: "Promise<T & CarbonLDP.PersistedDocument.PersistedDocument>" }
+				{ type: "Promise<T & CarbonLDP.PersistedDocument>" }
 			), ():void => {} );
 
 			it( hasSignature(
 				[ "T extends object" ],
 				"Retrieves the entire document referred by the URI specified when no query function si provided.\nIf the function builder es provided the query is able to specify the properties of the document to be retrieved and the sub-documents' properties and on and on.", [
 					{ name: "uri", type: "string", description: "The URI of the document to retrieve." },
-					{ name: "queryBuilderFn", type: "( queryBuilder:CarbonLDP.SPARQL.QueryDocument.QueryDocumentBuilder.QueryDocumentBuilder ) => CarbonLDP.SPARQL.QueryDocument.QueryDocumentBuilder.QueryDocumentBuilder", optional: true, description: "Function that receives a the builder that helps you to construct the retrieval query.\nThe same builder must be returned." },
+					{ name: "queryBuilderFn", type: "( queryBuilder:CarbonLDP.SPARQL.QueryDocument.QueryDocumentBuilder ) => CarbonLDP.SPARQL.QueryDocument.QueryDocumentBuilder", optional: true, description: "Function that receives a the builder that helps you to construct the retrieval query.\nThe same builder must be returned." },
 				],
-				{ type: "Promise<T & CarbonLDP.PersistedDocument.PersistedDocument>" }
+				{ type: "Promise<T & CarbonLDP.PersistedDocument>" }
 			), ():void => {} );
 
 			it( "should release cached request when failed", ( done:DoneFn ):void => {
@@ -2492,7 +2491,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 			it( hasSignature(
 				"Retrieves a boolean indicating if the resource exists or not in the Carbon LDP server.", [
 					{ name: "documentURI", type: "string", description: "The URI to verify if it exists." },
-					{ name: "requestOptions", type: "CarbonLDP.HTTP.Request.RequestOptions", optional: true, description: "Customizable options for the request." },
+					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for the request." },
 				],
 				{ type: "Promise<boolean>" }
 			), ( done:DoneFn ):void => {
@@ -2671,9 +2670,9 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				"Persists JavaScript object as a child document for the respective parent source.", [
 					{ name: "parentURI", type: "string", description: "URI of the document where to create a new child." },
 					{ name: "childObject", type: "T", description: "A normal JavaScript object that will be converted and persisted as a new child document." },
-					{ name: "requestOptions", type: "CarbonLDP.HTTP.Request.RequestOptions", optional: true, description: "Customizable options for the request." },
+					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for the request." },
 				],
-				{ type: "Promise<T & CarbonLDP.PersistedProtectedDocument.PersistedProtectedDocument>" }
+				{ type: "Promise<T & CarbonLDP.PersistedProtectedDocument>" }
 			), ():void => {} );
 
 			it( hasSignature(
@@ -2682,9 +2681,9 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					{ name: "parentURI", type: "string", description: "URI of the document where to create a new child." },
 					{ name: "childObject", type: "T", description: "A normal JavaScript object that will be converted and persisted as a new child document." },
 					{ name: "slug", type: "string", optional: true, description: "Slug that will be used for the URI of the new child." },
-					{ name: "requestOptions", type: "CarbonLDP.HTTP.Request.RequestOptions", optional: true, description: "Customizable options for the request." },
+					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for the request." },
 				],
-				{ type: "Promise<T & CarbonLDP.PersistedProtectedDocument.PersistedProtectedDocument>" }
+				{ type: "Promise<T & CarbonLDP.PersistedProtectedDocument>" }
 			), ():void => {} );
 
 			it( isDefined(), ():void => {
@@ -3042,9 +3041,9 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				"Persists multiple JavaScript objects as children of the parent document.", [
 					{ name: "parentURI", type: "string", description: "URI of the document where to create a new child." },
 					{ name: "childrenObjects", type: "T[]", description: "An array with the objects to be converted and persisted as new children of the parent document." },
-					{ name: "requestOptions", type: "CarbonLDP.HTTP.Request.RequestOptions", optional: true, description: "Customizable options for every the request." },
+					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for every the request." },
 				],
-				{ type: "Promise<(T & CarbonLDP.PersistedProtectedDocument.PersistedProtectedDocument)[]>", description: "Promise that contains the new UNRESOLVED persisted children." }
+				{ type: "Promise<(T & CarbonLDP.PersistedProtectedDocument)[]>", description: "Promise that contains the new UNRESOLVED persisted children." }
 			), ():void => {} );
 
 			it( hasSignature(
@@ -3053,9 +3052,9 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					{ name: "parentURI", type: "string", description: "URI of the document where to create a new child." },
 					{ name: "childrenObjects", type: "T[]", description: "An array with the objects to be converted and persisted as new children of the parent document." },
 					{ name: "slugs", type: "string[]", optional: true, description: "Array with the slugs that corresponds to each object in `childrenObjects`, in the order in which they were defined. If an element in the array is undefined or null, the slug will be generated by the platform." },
-					{ name: "requestOptions", type: "CarbonLDP.HTTP.Request.RequestOptions", optional: true, description: "Customizable options for every the request." },
+					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for every the request." },
 				],
-				{ type: "Promise<(T & CarbonLDP.PersistedProtectedDocument.PersistedProtectedDocument)[]>", description: "Promise that contains the new UNRESOLVED persisted children." }
+				{ type: "Promise<(T & CarbonLDP.PersistedProtectedDocument)[]>", description: "Promise that contains the new UNRESOLVED persisted children." }
 			), ():void => {} );
 
 			it( isDefined(), ():void => {
@@ -3308,9 +3307,9 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				"Persists JavaScript object as a child document for the respective parent source and retrieves the updated data from the server.", [
 					{ name: "parentURI", type: "string", description: "URI of the document where to create a new child." },
 					{ name: "childObject", type: "T", description: " A normal JavaScript object that will be converted and persisted as a new child document." },
-					{ name: "requestOptions", type: "CarbonLDP.HTTP.Request.RequestOptions", optional: true, description: "Customizable options for the request." },
+					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for the request." },
 				],
-				{ type: "Promise<T & CarbonLDP.PersistedProtectedDocument.PersistedProtectedDocument>" }
+				{ type: "Promise<T & CarbonLDP.PersistedProtectedDocument>" }
 			), ():void => {} );
 
 			it( hasSignature(
@@ -3319,9 +3318,9 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					{ name: "parentURI", type: "string", description: "URI of the document where to create a new child." },
 					{ name: "childObject", type: "T", description: " A normal JavaScript object that will be converted and persisted as a new child document." },
 					{ name: "slug", type: "string", optional: true, description: "Slug that will be used for the URI of the new child." },
-					{ name: "requestOptions", type: "CarbonLDP.HTTP.Request.RequestOptions", optional: true, description: "Customizable options for the request." },
+					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for the request." },
 				],
-				{ type: "Promise<T & CarbonLDP.PersistedProtectedDocument.PersistedProtectedDocument>" }
+				{ type: "Promise<T & CarbonLDP.PersistedProtectedDocument>" }
 			), ():void => {} );
 
 			it( isDefined(), ():void => {
@@ -3761,9 +3760,9 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				"Persists multiple JavaScript objects as children of the parent document and retrieves the updated data from the server.", [
 					{ name: "parentURI", type: "string", description: "URI of the document where to create a new child." },
 					{ name: "childrenObjects", type: "T[]", description: "An array with the objects to be converted and persisted as new children of the parent document." },
-					{ name: "requestOptions", type: "CarbonLDP.HTTP.Request.RequestOptions", optional: true, description: "Customizable options for every the request." },
+					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for every the request." },
 				],
-				{ type: "Promise<(T & CarbonLDP.PersistedProtectedDocument.PersistedProtectedDocument)[]>", description: "Promise that contains the new and resolved persisted children." }
+				{ type: "Promise<(T & CarbonLDP.PersistedProtectedDocument)[]>", description: "Promise that contains the new and resolved persisted children." }
 			), ():void => {} );
 
 			it( hasSignature(
@@ -3772,9 +3771,9 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					{ name: "parentURI", type: "string", description: "URI of the document where to create a new child." },
 					{ name: "childrenObjects", type: "T[]", description: "An array with the objects to be converted and persisted as new children of the parent document." },
 					{ name: "slugs", type: "string[]", optional: true, description: "Array with the slugs that corresponds to each object in `childrenObjects`, in the order in which they were defined. If an element in the array is undefined or null, the slug will be generated by the platform." },
-					{ name: "requestOptions", type: "CarbonLDP.HTTP.Request.RequestOptions", optional: true, description: "Customizable options for every the request." },
+					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for every the request." },
 				],
-				{ type: "Promise<(T & CarbonLDP.PersistedProtectedDocument.PersistedProtectedDocument)[]>", description: "Promise that contains the new and resolved persisted children." }
+				{ type: "Promise<(T & CarbonLDP.PersistedProtectedDocument)[]>", description: "Promise that contains the new and resolved persisted children." }
 			), ():void => {} );
 
 			it( isDefined(), ():void => {
@@ -4082,9 +4081,9 @@ describe( module( "carbonldp/Documents" ), ():void => {
 			it( hasSignature(
 				"Retrieves the empty children of a document.", [
 					{ name: "parentURI", type: "string", description: "URI of the document from where to look for its children." },
-					{ name: "requestOptions", type: "CarbonLDP.HTTP.Request.RequestOptions", optional: true, description: "Customizable options for the request." },
+					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for the request." },
 				],
-				{ type: "Promise<CarbonLDP.PersistedDocument.PersistedDocument[]>" }
+				{ type: "Promise<CarbonLDP.PersistedDocument[]>" }
 			), () => {} );
 
 			it( isDefined(), () => {
@@ -4170,7 +4169,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 
 							expect( sendSpy ).toHaveBeenCalledWith(
 								"https://example.com/resource/",
-								"SELECT ?child WHERE { " +
+								"SELECT DISTINCT ?child WHERE { " +
 								"" + "<https://example.com/resource/> <http://www.w3.org/ns/ldp#contains> ?child " +
 								"}",
 
@@ -4306,7 +4305,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 
 							expect( sendSpy ).toHaveBeenCalledWith(
 								"https://example.com/resource/",
-								"SELECT ?child WHERE { " +
+								"SELECT DISTINCT ?child WHERE { " +
 								"" + "<https://example.com/resource/> <http://www.w3.org/ns/ldp#contains> ?child " +
 								"}",
 
@@ -4377,19 +4376,19 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				[ "T extends object" ],
 				"Retrieves the children of a document, building a query on which one is able to specify the properties to be retrieve and sub-documents' properties and on and on.", [
 					{ name: "parentURI", type: "string", description: "URI of the document from where to look for its children." },
-					{ name: "requestOptions", type: "CarbonLDP.HTTP.Request.RequestOptions", optional: true, description: "Customizable options for the request." },
-					{ name: "queryBuilderFn", type: "( queryBuilder:CarbonLDP.SPARQL.QueryDocument.QueryDocumentsBuilder.QueryDocumentsBuilder ) => CarbonLDP.SPARQL.QueryDocument.QueryDocumentsBuilder.QueryDocumentsBuilder", optional: true, description: "Function that receives a the builder that helps you to construct the children retrieval query.\nThe same builder must be returned." },
+					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for the request." },
+					{ name: "queryBuilderFn", type: "( queryBuilder:CarbonLDP.SPARQL.QueryDocument.QueryDocumentsBuilder ) => CarbonLDP.SPARQL.QueryDocument.QueryDocumentsBuilder", optional: true, description: "Function that receives a the builder that helps you to construct the children retrieval query.\nThe same builder must be returned." },
 				],
-				{ type: "Promise<(T & CarbonLDP.PersistedDocument.PersistedDocument)[]>" }
+				{ type: "Promise<(T & CarbonLDP.PersistedDocument)[]>" }
 			), () => {} );
 
 			it( hasSignature(
 				[ "T extends object" ],
 				"Retrieves the children of a document, building a query on which one is able to specify the properties to be retrieve and sub-documents' properties and on and on.", [
 					{ name: "parentURI", type: "string", description: "URI of the document from where to look for its children." },
-					{ name: "queryBuilderFn", type: "( queryBuilder:CarbonLDP.SPARQL.QueryDocument.QueryDocumentsBuilder.QueryDocumentsBuilder ) => CarbonLDP.SPARQL.QueryDocument.QueryDocumentsBuilder.QueryDocumentsBuilder", optional: true, description: "Function that receives a the builder that helps you to construct the children retrieval query.\nThe same builder must be returned." },
+					{ name: "queryBuilderFn", type: "( queryBuilder:CarbonLDP.SPARQL.QueryDocument.QueryDocumentsBuilder ) => CarbonLDP.SPARQL.QueryDocument.QueryDocumentsBuilder", optional: true, description: "Function that receives a the builder that helps you to construct the children retrieval query.\nThe same builder must be returned." },
 				],
-				{ type: "Promise<(T & CarbonLDP.PersistedDocument.PersistedDocument)[]>" }
+				{ type: "Promise<(T & CarbonLDP.PersistedDocument)[]>" }
 			), () => {} );
 
 			it( isDefined(), () => {
@@ -4515,7 +4514,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 							" BIND(BNODE() AS ?metadata)." +
 
 							" {" +
-							"" + " SELECT ?child WHERE {" +
+							"" + " SELECT DISTINCT ?child WHERE {" +
 							"" + "" + " <https://example.com/resource/> <http://www.w3.org/ns/ldp#contains> ?child." +
 							"" + "" + " OPTIONAL { ?child schema:property-2 ?child__property2 }" +
 							"" + " }" +
@@ -4602,7 +4601,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 								" BIND(BNODE() AS ?metadata)." +
 
 								" {" +
-								"" + " SELECT ?child WHERE {" +
+								"" + " SELECT DISTINCT ?child WHERE {" +
 								"" + "" + " <https://example.com/resource/> <http://www.w3.org/ns/ldp#contains> ?child" +
 								"" + " }" +
 								" }." +
@@ -4673,7 +4672,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 								" BIND(BNODE() AS ?metadata)." +
 
 								" {" +
-								"" + " SELECT ?child WHERE {" +
+								"" + " SELECT DISTINCT ?child WHERE {" +
 								"" + "" + " <https://example.com/resource/> <http://www.w3.org/ns/ldp#contains> ?child." +
 								"" + "" + " OPTIONAL { ?child schema:property-2 ?child__property2 }" +
 								"" + " }" +
@@ -4807,7 +4806,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 								)
 
 								.addPattern( new BindToken( "BNODE()", variableHelper( "metadata" ) ) )
-								.addPattern( new SelectToken()
+								.addPattern( new SelectToken( "DISTINCT" )
 									.addVariable( variableHelper( "child" ) )
 									.addPattern( new SubjectToken( new IRIToken( "https://example.com/resource/" ) )
 										.addPredicate( new PredicateToken( new IRIToken( LDP.contains ) )
@@ -5884,7 +5883,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 							" BIND(BNODE() AS ?metadata)." +
 
 							" {" +
-							"" + " SELECT ?child WHERE {" +
+							"" + " SELECT DISTINCT ?child WHERE {" +
 							"" + "" + " <https://example.com/resource/> <http://www.w3.org/ns/ldp#contains> ?child." +
 							"" + "" + " OPTIONAL { ?child <https://schema.org/property-2> ?child__property2 }" +
 							"" + " }" +
@@ -6308,21 +6307,21 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				[ "T extends object" ],
 				"Persists an AccessPoint in the document specified.", [
 					{ name: "documentURI", type: "string", description: "URI of the document where to create a new access point." },
-					{ name: "accessPoint", type: "T & CarbonLDP.AccessPoint.AccessPointBase", description: "AccessPoint Document to persist." },
+					{ name: "accessPoint", type: "T & CarbonLDP.AccessPointBase", description: "AccessPoint Document to persist." },
 					{ name: "slug", type: "string", optional: true, description: "Slug that will be used for the URI of the new access point." },
-					{ name: "requestOptions", type: "CarbonLDP.HTTP.Request.RequestOptions", optional: true, description: "Customizable options for the request." },
+					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for the request." },
 				],
-				{ type: "Promise<T & CarbonLDP.PersistedAccessPoint.PersistedAccessPoint>" }
+				{ type: "Promise<T & CarbonLDP.PersistedAccessPoint>" }
 			), ():void => {} );
 
 			it( hasSignature(
 				[ "T extends object" ],
 				"Persists an AccessPoint in the document specified.", [
 					{ name: "documentURI", type: "string", description: "URI of the document where to create a new access point." },
-					{ name: "accessPoint", type: "T & CarbonLDP.AccessPoint.AccessPointBase", description: "AccessPoint Document to persist." },
-					{ name: "requestOptions", type: "CarbonLDP.HTTP.Request.RequestOptions", optional: true, description: "Customizable options for the request." },
+					{ name: "accessPoint", type: "T & CarbonLDP.AccessPointBase", description: "AccessPoint Document to persist." },
+					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for the request." },
 				],
-				{ type: "Promise<T & CarbonLDP.PersistedAccessPoint.PersistedAccessPoint>" }
+				{ type: "Promise<T & CarbonLDP.PersistedAccessPoint>" }
 			), ():void => {} );
 
 			it( isDefined(), () => {
@@ -6701,21 +6700,21 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				[ "T extends object" ],
 				"Persists multiple access points objects for the specified document.", [
 					{ name: "documentURI", type: "string", description: "URI of the document where to create the new access points." },
-					{ name: "accessPoints", type: "T & CarbonLDP.AccessPoint.AccessPointBase", description: "Array with the access points to persist." },
+					{ name: "accessPoints", type: "T & CarbonLDP.AccessPointBase", description: "Array with the access points to persist." },
 					{ name: "slugs", type: "string[]", optional: true, description: "Array with the slugs that corresponds to each object in `accessPoints` parameter, in the order in which they were defined. If an element in the array is undefined or null, the slug will be generated by the platform." },
-					{ name: "requestOptions", type: "CarbonLDP.HTTP.Request.RequestOptions", optional: true, description: "Customizable options for the request." },
+					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for the request." },
 				],
-				{ type: "Promise<(T & CarbonLDP.PersistedAccessPoint.PersistedAccessPoint)[]>", description: "Promise that contains the new and UNRESOLVED persisted access points." }
+				{ type: "Promise<(T & CarbonLDP.PersistedAccessPoint)[]>", description: "Promise that contains the new and UNRESOLVED persisted access points." }
 			), ():void => {} );
 
 			it( hasSignature(
 				[ "T extends object" ],
 				"Persists multiple access points objects for the specified document.", [
 					{ name: "documentURI", type: "string", description: "URI of the document where to create the new access points." },
-					{ name: "accessPoints", type: "T & CarbonLDP.AccessPoint.AccessPointBase", description: "Array with the access points to persist." },
-					{ name: "requestOptions", type: "CarbonLDP.HTTP.Request.RequestOptions", optional: true, description: "Customizable options for the request." },
+					{ name: "accessPoints", type: "T & CarbonLDP.AccessPointBase", description: "Array with the access points to persist." },
+					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for the request." },
 				],
-				{ type: "Promise<(T & CarbonLDP.PersistedAccessPoint.PersistedAccessPoint)[]>", description: "Promise that contains the new and UNRESOLVED persisted access points." }
+				{ type: "Promise<(T & CarbonLDP.PersistedAccessPoint)[]>", description: "Promise that contains the new and UNRESOLVED persisted access points." }
 			), ():void => {} );
 
 			it( isDefined(), () => {
@@ -7009,9 +7008,9 @@ describe( module( "carbonldp/Documents" ), ():void => {
 			it( hasSignature(
 				"Retrieves the empty members of a document.", [
 					{ name: "uri", type: "string", description: "URI of the document from where to look for its members." },
-					{ name: "requestOptions", type: "CarbonLDP.HTTP.Request.RequestOptions", optional: true, description: "Customizable options for the request." },
+					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for the request." },
 				],
-				{ type: "Promise<CarbonLDP.PersistedDocument.PersistedDocument[]>" }
+				{ type: "Promise<CarbonLDP.PersistedDocument[]>" }
 			), () => {} );
 
 			it( isDefined(), () => {
@@ -7098,7 +7097,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 							expect( sendSpy ).toHaveBeenCalledWith(
 								"https://example.com/resource/",
 
-								"SELECT ?member WHERE { " +
+								"SELECT DISTINCT ?member WHERE { " +
 								"" + "<https://example.com/resource/> <http://www.w3.org/ns/ldp#membershipResource> ?membershipResource; " +
 								"" + "" + "<http://www.w3.org/ns/ldp#hasMemberRelation> ?hasMemberRelation. " +
 								"" + "?membershipResource ?hasMemberRelation ?member " +
@@ -7238,7 +7237,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 							expect( sendSpy ).toHaveBeenCalledWith(
 								"https://example.com/resource/",
 
-								"SELECT ?member WHERE { " +
+								"SELECT DISTINCT ?member WHERE { " +
 								"" + "<https://example.com/resource/> <http://www.w3.org/ns/ldp#membershipResource> ?membershipResource; " +
 								"" + "" + "<http://www.w3.org/ns/ldp#hasMemberRelation> ?hasMemberRelation. " +
 								"" + "?membershipResource ?hasMemberRelation ?member " +
@@ -7311,19 +7310,19 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				[ "T extends object" ],
 				"Retrieves the members of a document, building a query on which one is able to specify the properties to be retrieve and sub-documents' properties and on and on.", [
 					{ name: "uri", type: "string", description: "URI of the document from where to look for its members." },
-					{ name: "requestOptions", type: "CarbonLDP.HTTP.Request.RequestOptions", optional: true, description: "Customizable options for the request." },
-					{ name: "queryBuilderFn", type: "( queryBuilder:CarbonLDP.SPARQL.QueryDocument.QueryDocumentsBuilder.QueryDocumentsBuilder ) => CarbonLDP.SPARQL.QueryDocument.QueryDocumentsBuilder.QueryDocumentsBuilder", optional: true, description: "Function that receives a the builder that helps you to construct the member retrieval query.\nThe same builder must be returned." },
+					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for the request." },
+					{ name: "queryBuilderFn", type: "( queryBuilder:CarbonLDP.SPARQL.QueryDocument.QueryDocumentsBuilder ) => CarbonLDP.SPARQL.QueryDocument.QueryDocumentsBuilder", optional: true, description: "Function that receives a the builder that helps you to construct the member retrieval query.\nThe same builder must be returned." },
 				],
-				{ type: "Promise<(T & CarbonLDP.PersistedDocument.PersistedDocument)[]>" }
+				{ type: "Promise<(T & CarbonLDP.PersistedDocument)[]>" }
 			), () => {} );
 
 			it( hasSignature(
 				[ "T extends object" ],
 				"Retrieves the members of a document, building a query on which one is able to specify the properties to be retrieve and sub-documents' properties and on and on.", [
 					{ name: "uri", type: "string", description: "URI of the document from where to look for its members." },
-					{ name: "queryBuilderFn", type: "( queryBuilder:CarbonLDP.SPARQL.QueryDocument.QueryDocumentsBuilder.QueryDocumentsBuilder ) => CarbonLDP.SPARQL.QueryDocument.QueryDocumentsBuilder.QueryDocumentsBuilder", optional: true, description: "Function that receives a the builder that helps you to construct the member retrieval query.\nThe same builder must be returned." },
+					{ name: "queryBuilderFn", type: "( queryBuilder:CarbonLDP.SPARQL.QueryDocument.QueryDocumentsBuilder ) => CarbonLDP.SPARQL.QueryDocument.QueryDocumentsBuilder", optional: true, description: "Function that receives a the builder that helps you to construct the member retrieval query.\nThe same builder must be returned." },
 				],
-				{ type: "Promise<(T & CarbonLDP.PersistedDocument.PersistedDocument)[]>" }
+				{ type: "Promise<(T & CarbonLDP.PersistedDocument)[]>" }
 			), () => {} );
 
 			it( isDefined(), () => {
@@ -7449,7 +7448,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 							" BIND(BNODE() AS ?metadata)." +
 
 							" {" +
-							"" + " SELECT ?member WHERE {" +
+							"" + " SELECT DISTINCT ?member WHERE {" +
 							"" + "" + " <https://example.com/resource/> <http://www.w3.org/ns/ldp#membershipResource> ?membershipResource;" +
 							"" + "" + "" + " <http://www.w3.org/ns/ldp#hasMemberRelation> ?hasMemberRelation." +
 							"" + "" + " ?membershipResource ?hasMemberRelation ?member." +
@@ -7538,7 +7537,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 								" BIND(BNODE() AS ?metadata)." +
 
 								" {" +
-								"" + " SELECT ?member WHERE {" +
+								"" + " SELECT DISTINCT ?member WHERE {" +
 								"" + "" + " <https://example.com/resource/> <http://www.w3.org/ns/ldp#membershipResource> ?membershipResource;" +
 								"" + "" + "" + " <http://www.w3.org/ns/ldp#hasMemberRelation> ?hasMemberRelation." +
 								"" + "" + " ?membershipResource ?hasMemberRelation ?member" +
@@ -7611,7 +7610,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 								" BIND(BNODE() AS ?metadata)." +
 
 								" {" +
-								"" + " SELECT ?member WHERE {" +
+								"" + " SELECT DISTINCT ?member WHERE {" +
 								"" + "" + " <https://example.com/resource/> <http://www.w3.org/ns/ldp#membershipResource> ?membershipResource;" +
 								"" + "" + "" + " <http://www.w3.org/ns/ldp#hasMemberRelation> ?hasMemberRelation." +
 								"" + "" + " ?membershipResource ?hasMemberRelation ?member." +
@@ -7747,7 +7746,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 								)
 
 								.addPattern( new BindToken( "BNODE()", variableHelper( "metadata" ) ) )
-								.addPattern( new SelectToken()
+								.addPattern( new SelectToken( "DISTINCT" )
 									.addVariable( variableHelper( "member" ) )
 									.addPattern( new SubjectToken( new IRIToken( "https://example.com/resource/" ) )
 										.addPredicate( new PredicateToken( new IRIToken( LDP.membershipResource ) )
@@ -8832,7 +8831,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 							" BIND(BNODE() AS ?metadata)." +
 
 							" {" +
-							"" + " SELECT ?member WHERE {" +
+							"" + " SELECT DISTINCT ?member WHERE {" +
 							"" + "" + " <https://example.com/resource/> <http://www.w3.org/ns/ldp#membershipResource> ?membershipResource;" +
 							"" + "" + "" + " <http://www.w3.org/ns/ldp#hasMemberRelation> ?hasMemberRelation." +
 							"" + "" + " ?membershipResource ?hasMemberRelation ?member." +
@@ -9278,8 +9277,8 @@ describe( module( "carbonldp/Documents" ), ():void => {
 			it( hasSignature(
 				"Add a member relation to the resource Pointer in the document container specified.", [
 					{ name: "documentURI", type: "string", description: "URI of the document container where the member will be added." },
-					{ name: "member", type: "CarbonLDP.Pointer.Pointer", description: "Pointer object that references the resource to add as a member." },
-					{ name: "requestOptions", type: "CarbonLDP.HTTP.Request.RequestOptions", optional: true, description: "Customizable options for the request." },
+					{ name: "member", type: "CarbonLDP.Pointer", description: "Pointer object that references the resource to add as a member." },
+					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for the request." },
 				],
 				{ type: "Promise<void>" }
 			), ():void => {
@@ -9298,7 +9297,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				"Add a member relation to the resource URI in the document container specified.", [
 					{ name: "documentURI", type: "string", description: "URI of the document container where the member will be added." },
 					{ name: "memberURI", type: "string", description: "URI of the resource to add as a member." },
-					{ name: "requestOptions", type: "CarbonLDP.HTTP.Request.RequestOptions", optional: true, description: "Customizable options for the request." },
+					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for the request." },
 				],
 				{ type: "Promise<void>" }
 			), ():void => {
@@ -9448,8 +9447,8 @@ describe( module( "carbonldp/Documents" ), ():void => {
 			it( hasSignature(
 				"Add a member relation to every resource URI or Pointer provided in the document container specified.", [
 					{ name: "documentURI", type: "string", description: "URI of the document container where the members will be added." },
-					{ name: "members", type: "(CarbonLDP.Pointer.Pointer | string)[]", description: "Array of URIs or Pointers to add as members." },
-					{ name: "requestOptions", type: "CarbonLDP.HTTP.Request.RequestOptions", optional: true, description: "Customizable options for the request." },
+					{ name: "members", type: "(CarbonLDP.Pointer | string)[]", description: "Array of URIs or Pointers to add as members." },
+					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for the request." },
 				],
 				{ type: "Promise<void>" }
 			), ( done:DoneFn ):void => {
@@ -9656,8 +9655,8 @@ describe( module( "carbonldp/Documents" ), ():void => {
 			it( hasSignature(
 				"Remove the member relation between the Pointer and the resource container specified.", [
 					{ name: "documentURI", type: "string", description: "URI of the resource container from where the member will be removed." },
-					{ name: "member", type: "CarbonLDP.Pointer.Pointer", description: "Pointer object that references the resource to remove as a member." },
-					{ name: "requestOptions", type: "CarbonLDP.HTTP.Request.RequestOptions", optional: true, description: "Customizable options for the request." },
+					{ name: "member", type: "CarbonLDP.Pointer", description: "Pointer object that references the resource to remove as a member." },
+					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for the request." },
 				],
 				{ type: "Promise<void>" }
 			), ():void => {
@@ -9676,7 +9675,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				"Remove the member relation between the resource URI and the resource container specified.", [
 					{ name: "documentURI", type: "string", description: "URI of the resource container from where the member will be removed." },
 					{ name: "memberURI", type: "string", description: "URI of the resource to remove as a member." },
-					{ name: "requestOptions", type: "CarbonLDP.HTTP.Request.RequestOptions", optional: true, description: "Customizable options for the request." },
+					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for the request." },
 				],
 				{ type: "Promise<void>" }
 			), ():void => {
@@ -9826,8 +9825,8 @@ describe( module( "carbonldp/Documents" ), ():void => {
 			it( hasSignature(
 				"Remove the member relation to every specified resource URI or Pointer form the document container specified.", [
 					{ name: "documentURI", type: "string", description: "URI of the document container where the members will be removed." },
-					{ name: "members", type: "(CarbonLDP.Pointer.Pointer | string)[]", description: "Array of URIs or Pointers to remove as members" },
-					{ name: "requestOptions", type: "CarbonLDP.HTTP.Request.RequestOptions", optional: true, description: "Customizable options for the request." },
+					{ name: "members", type: "(CarbonLDP.Pointer | string)[]", description: "Array of URIs or Pointers to remove as members" },
+					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for the request." },
 				],
 				{ type: "Promise<void>" }
 			), ( done:DoneFn ):void => {
@@ -10016,7 +10015,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 			it( hasSignature(
 				"Remove all the member relations from the document container specified.", [
 					{ name: "documentURI", type: "string", description: "URI of the document container where the members will be removed." },
-					{ name: "requestOptions", type: "CarbonLDP.HTTP.Request.RequestOptions", optional: true, description: "Customizable options for the request." },
+					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for the request." },
 				],
 				{ type: "Promise<void>" }
 			), ( done:DoneFn ):void => {
@@ -10175,10 +10174,10 @@ describe( module( "carbonldp/Documents" ), ():void => {
 			it( hasSignature(
 				[ "T extends object" ],
 				"Update the data of the document provided in the server.", [
-					{ name: "persistedDocument", type: "T & CarbonLDP.PersistedDocument.PersistedDocument", description: "The persisted document with the data to update in the server." },
-					{ name: "requestOptions", type: "CarbonLDP.HTTP.Request.RequestOptions", optional: true, description: "Customisable options for the request." },
+					{ name: "persistedDocument", type: "T & CarbonLDP.PersistedDocument", description: "The persisted document with the data to update in the server." },
+					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customisable options for the request." },
 				],
-				{ type: "Promise<T & CarbonLDP.PersistedDocument.PersistedDocument>" }
+				{ type: "Promise<T & CarbonLDP.PersistedDocument>" }
 			), ():void => {} );
 
 			it( isDefined(), ():void => {
@@ -10640,10 +10639,10 @@ describe( module( "carbonldp/Documents" ), ():void => {
 			it( hasSignature(
 				[ "T extends object" ],
 				"Update the specified document with the data of the Carbon LDP server, if a newest version exists.", [
-					{ name: "persistedDocument", type: "T & CarbonLDP.PersistedDocument.PersistedDocument", description: "The persisted document to update." },
-					{ name: "requestOptions", type: "CarbonLDP.HTTP.Request.RequestOptions", optional: true, description: "Customizable options for the request." },
+					{ name: "persistedDocument", type: "T & CarbonLDP.PersistedDocument", description: "The persisted document to update." },
+					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for the request." },
 				],
-				{ type: "Promise<T & CarbonLDP.PersistedDocument.PersistedDocument>" }
+				{ type: "Promise<T & CarbonLDP.PersistedDocument>" }
 			), ():void => {} );
 
 			it( isDefined(), () => {
@@ -11822,10 +11821,10 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				[ "T extends object" ],
 				"Save and refresh the PersistedDocument specified.\n" +
 				"If the documents is partial the refresh will be executed with another query.", [
-					{ name: "persistedDocument", type: "T & CarbonLDP.PersistedDocument.PersistedDocument", description: "The persistedDocument to save and refresh." },
-					{ name: "requestOptions", type: "CarbonLDP.HTTP.Request.RequestOptions", optional: true, description: "Customizable options for the request." },
+					{ name: "persistedDocument", type: "T & CarbonLDP.PersistedDocument", description: "The persistedDocument to save and refresh." },
+					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for the request." },
 				],
-				{ type: "Promise<T & CarbonLDP.PersistedDocument.PersistedDocument>" }
+				{ type: "Promise<T & CarbonLDP.PersistedDocument>" }
 			), ():void => {} );
 
 			it( isDefined(), () => {
@@ -12470,7 +12469,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 			it( hasSignature(
 				"Delete the resource from the Carbon LDP server referred by the URI provided.", [
 					{ name: "documentURI", type: "string", description: "The resource to delete from the Carbon LDP server." },
-					{ name: "requestOptions", type: "CarbonLDP.HTTP.Request.RequestOptions", optional: true, description: "Customizable options for the request." },
+					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for the request." },
 				],
 				{ type: "Promise<void>" }
 			), ( done:DoneFn ):void => {
@@ -12645,7 +12644,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 			it( hasSignature(
 				"Add to the URI provided the necessary properties for a single download request.", [
 					{ name: "documentURI", type: "string", description: "The URI of the document that will be converted in a single download request." },
-					{ name: "requestOptions", type: "CarbonLDP.HTTP.Request.RequestOptions", optional: true },
+					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true },
 				],
 				{ type: "Promise<string>" }
 			), ( done:DoneFn ):void => {
@@ -12767,8 +12766,8 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				"Executes an ASK query on a document and returns a raw application/sparql-results+json object.", [
 					{ name: "documentURI", type: "string", description: "URI of the document that works as a SPARQL endpoint where to execute the SPARQL query." },
 					{ name: "askQuery", type: "string", description: "ASK query to execute in the selected endpoint." },
-					{ name: "requestOptions", type: "CarbonLDP.HTTP.Request.RequestOptions", optional: true, description: "Customizable options for the request." },
-				], { type: "Promise<CarbonLDP.SPARQL.RawResults.SPARQLRawResults>" }
+					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for the request." },
+				], { type: "Promise<CarbonLDP.SPARQL.SPARQLRawResults>" }
 			), ():void => {} );
 
 			it( "should exists", ():void => {
@@ -12793,7 +12792,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				} );
 
 				it( "should use SPARQL service", ():void => {
-					const spyService:jasmine.Spy = spyOn( SPARQL.Service.SPARQLService, "executeRawASKQuery" ).and.returnValue( new Promise( () => {} ) );
+					const spyService:jasmine.Spy = spyOn( SPARQL.SPARQLService, "executeRawASKQuery" ).and.returnValue( new Promise( () => {} ) );
 
 					// noinspection JSIgnoredPromiseFromCall
 					documents.executeRawASKQuery( "http://example.com/document/", "ASK { ?subject, ?predicate, ?object }" );
@@ -12802,7 +12801,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				} );
 
 				it( "should resolve relative URIs", ():void => {
-					const spyService:jasmine.Spy = spyOn( SPARQL.Service.SPARQLService, "executeRawASKQuery" ).and.returnValue( new Promise( () => {} ) );
+					const spyService:jasmine.Spy = spyOn( SPARQL.SPARQLService, "executeRawASKQuery" ).and.returnValue( new Promise( () => {} ) );
 
 					// noinspection JSIgnoredPromiseFromCall
 					documents.executeRawASKQuery( "document/", "ASK { ?subject, ?predicate, ?object }" );
@@ -12861,7 +12860,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				} );
 
 				it( "should use SPARQL service", ():void => {
-					const spyService:jasmine.Spy = spyOn( SPARQL.Service.SPARQLService, "executeRawASKQuery" ).and.returnValue( new Promise( () => {} ) );
+					const spyService:jasmine.Spy = spyOn( SPARQL.SPARQLService, "executeRawASKQuery" ).and.returnValue( new Promise( () => {} ) );
 
 					// noinspection JSIgnoredPromiseFromCall
 					documents.executeRawASKQuery( "http://example.com/document/", "ASK { ?subject, ?predicate, ?object }" );
@@ -12923,7 +12922,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				"Executes an ASK query on a document and returns the response of the query in form of a boolean.", [
 					{ name: "documentURI", type: "string", description: "URI of the document that works as a SPARQL endpoint where to execute the SPARQL query." },
 					{ name: "askQuery", type: "string", description: "ASK query to execute in the selected endpoint." },
-					{ name: "requestOptions", type: "CarbonLDP.HTTP.Request.RequestOptions", optional: true, description: "Customizable options for the request." },
+					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for the request." },
 				], { type: "Promise<boolean>" }
 			), ():void => {} );
 
@@ -12949,7 +12948,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				} );
 
 				it( "should use SPARQL service", ():void => {
-					const spyService:jasmine.Spy = spyOn( SPARQL.Service.SPARQLService, "executeASKQuery" ).and.returnValue( new Promise( () => {} ) );
+					const spyService:jasmine.Spy = spyOn( SPARQL.SPARQLService, "executeASKQuery" ).and.returnValue( new Promise( () => {} ) );
 
 					// noinspection JSIgnoredPromiseFromCall
 					documents.executeASKQuery( "http://example.com/document/", "ASK { ?subject, ?predicate, ?object }" );
@@ -12958,7 +12957,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				} );
 
 				it( "should resolve relative URIs", ():void => {
-					const spyService:jasmine.Spy = spyOn( SPARQL.Service.SPARQLService, "executeASKQuery" ).and.returnValue( new Promise( () => {} ) );
+					const spyService:jasmine.Spy = spyOn( SPARQL.SPARQLService, "executeASKQuery" ).and.returnValue( new Promise( () => {} ) );
 
 					// noinspection JSIgnoredPromiseFromCall
 					documents.executeASKQuery( "document/", "ASK { ?subject, ?predicate, ?object }" );
@@ -13017,7 +13016,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				} );
 
 				it( "should use SPARQL service", ():void => {
-					const spyService:jasmine.Spy = spyOn( SPARQL.Service.SPARQLService, "executeASKQuery" ).and.returnValue( new Promise( () => {} ) );
+					const spyService:jasmine.Spy = spyOn( SPARQL.SPARQLService, "executeASKQuery" ).and.returnValue( new Promise( () => {} ) );
 
 					// noinspection JSIgnoredPromiseFromCall
 					documents.executeASKQuery( "http://example.com/document/", "ASK { ?subject, ?predicate, ?object }" );
@@ -13079,8 +13078,8 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				"Executes a SELECT query on a document and returns a raw application/sparql-results+json object.", [
 					{ name: "documentURI", type: "string", description: "URI of the document that works as a SPARQL endpoint where to execute the SPARQL query." },
 					{ name: "selectQuery", type: "string", description: "SELECT query to execute in the selected endpoint." },
-					{ name: "requestOptions", type: "CarbonLDP.HTTP.Request.RequestOptions", optional: true, description: "Customizable options for the request." },
-				], { type: "Promise<CarbonLDP.SPARQL.RawResults.SPARQLRawResults>" }
+					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for the request." },
+				], { type: "Promise<CarbonLDP.SPARQL.SPARQLRawResults>" }
 			), ():void => {} );
 
 			it( "should exists", ():void => {
@@ -13105,7 +13104,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				} );
 
 				it( "should use SPARQL service", ():void => {
-					const spyService:jasmine.Spy = spyOn( SPARQL.Service.SPARQLService, "executeRawSELECTQuery" ).and.returnValue( new Promise( () => {} ) );
+					const spyService:jasmine.Spy = spyOn( SPARQL.SPARQLService, "executeRawSELECTQuery" ).and.returnValue( new Promise( () => {} ) );
 
 					// noinspection JSIgnoredPromiseFromCall
 					documents.executeRawSELECTQuery( "http://example.com/document/", "SELECT ?book ?title WHERE { <http://example.com/some-document/> ?book ?title }" );
@@ -13114,7 +13113,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				} );
 
 				it( "should resolve relative URIs", ():void => {
-					const spyService:jasmine.Spy = spyOn( SPARQL.Service.SPARQLService, "executeRawSELECTQuery" ).and.returnValue( new Promise( () => {} ) );
+					const spyService:jasmine.Spy = spyOn( SPARQL.SPARQLService, "executeRawSELECTQuery" ).and.returnValue( new Promise( () => {} ) );
 
 					// noinspection JSIgnoredPromiseFromCall
 					documents.executeRawSELECTQuery( "http://example.com/document/", "SELECT ?book ?title WHERE { <http://example.com/some-document/> ?book ?title }" );
@@ -13173,7 +13172,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				} );
 
 				it( "should use SPARQL service", ():void => {
-					const spyService:jasmine.Spy = spyOn( SPARQL.Service.SPARQLService, "executeRawSELECTQuery" ).and.returnValue( new Promise( () => {} ) );
+					const spyService:jasmine.Spy = spyOn( SPARQL.SPARQLService, "executeRawSELECTQuery" ).and.returnValue( new Promise( () => {} ) );
 
 					// noinspection JSIgnoredPromiseFromCall
 					documents.executeRawSELECTQuery( "http://example.com/document/", "SELECT ?book ?title WHERE { <http://example.com/some-document/> ?book ?title }" );
@@ -13236,8 +13235,8 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				"Executes a SELECT query on a document and returns a parsed response object.", [
 					{ name: "documentURI", type: "string", description: "URI of the document that works as a SPARQL endpoint where to execute the SPARQL query." },
 					{ name: "selectQuery", type: "string", description: "SELECT query to execute in the selected endpoint." },
-					{ name: "requestOptions", type: "CarbonLDP.HTTP.Request.RequestOptions", optional: true, description: "Customizable options for the request." },
-				], { type: "Promise<CarbonLDP.SPARQL.SelectResults.SPARQLSelectResults<T>>" }
+					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for the request." },
+				], { type: "Promise<CarbonLDP.SPARQL.SPARQLSelectResults<T>>" }
 			), ():void => {} );
 
 			it( "should exists", ():void => {
@@ -13262,7 +13261,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				} );
 
 				it( "should use SPARQL service", ():void => {
-					const spyService:jasmine.Spy = spyOn( SPARQL.Service.SPARQLService, "executeSELECTQuery" ).and.returnValue( new Promise( () => {} ) );
+					const spyService:jasmine.Spy = spyOn( SPARQL.SPARQLService, "executeSELECTQuery" ).and.returnValue( new Promise( () => {} ) );
 
 					// noinspection JSIgnoredPromiseFromCall
 					documents.executeSELECTQuery( "http://example.com/document/", "SELECT ?book ?title WHERE { <http://example.com/some-document/> ?book ?title }" );
@@ -13271,7 +13270,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				} );
 
 				it( "should resolve relative URIs", ():void => {
-					const spyService:jasmine.Spy = spyOn( SPARQL.Service.SPARQLService, "executeSELECTQuery" ).and.returnValue( new Promise( () => {} ) );
+					const spyService:jasmine.Spy = spyOn( SPARQL.SPARQLService, "executeSELECTQuery" ).and.returnValue( new Promise( () => {} ) );
 
 					// noinspection JSIgnoredPromiseFromCall
 					documents.executeSELECTQuery( "document/", "SELECT ?book ?title WHERE { <http://example.com/some-document/> ?book ?title }" );
@@ -13330,7 +13329,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				} );
 
 				it( "should use SPARQL service", ():void => {
-					const spyService:jasmine.Spy = spyOn( SPARQL.Service.SPARQLService, "executeSELECTQuery" ).and.returnValue( new Promise( () => {} ) );
+					const spyService:jasmine.Spy = spyOn( SPARQL.SPARQLService, "executeSELECTQuery" ).and.returnValue( new Promise( () => {} ) );
 
 					// noinspection JSIgnoredPromiseFromCall
 					documents.executeSELECTQuery( "http://example.com/document/", "SELECT ?book ?title WHERE { <http://example.com/some-document/> ?book ?title }" );
@@ -13392,7 +13391,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				"Executes a CONSTRUCT query on a document and returns a string with the resulting model.", [
 					{ name: "documentURI", type: "string", description: "URI of the document that works as a SPARQL endpoint where to execute the SPARQL query." },
 					{ name: "constructQuery", type: "string", description: "CONSTRUCT query to execute in the selected endpoint." },
-					{ name: "requestOptions", type: "CarbonLDP.HTTP.Request.RequestOptions", optional: true, description: "Customizable options for the request." },
+					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for the request." },
 				], { type: "Promise<string>" }
 			), ():void => {} );
 
@@ -13418,7 +13417,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				} );
 
 				it( "should use SPARQL service", ():void => {
-					const spyService:jasmine.Spy = spyOn( SPARQL.Service.SPARQLService, "executeRawCONSTRUCTQuery" ).and.returnValue( new Promise( () => {} ) );
+					const spyService:jasmine.Spy = spyOn( SPARQL.SPARQLService, "executeRawCONSTRUCTQuery" ).and.returnValue( new Promise( () => {} ) );
 
 					// noinspection JSIgnoredPromiseFromCall
 					documents.executeRawCONSTRUCTQuery( "http://example.com/document/", "CONSTRUCT { ?subject ?predicate ?object } WHERE { ?subject ?predicate ?object }" );
@@ -13427,7 +13426,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				} );
 
 				it( "should resolve relative URIs", ():void => {
-					const spyService:jasmine.Spy = spyOn( SPARQL.Service.SPARQLService, "executeRawCONSTRUCTQuery" ).and.returnValue( new Promise( () => {} ) );
+					const spyService:jasmine.Spy = spyOn( SPARQL.SPARQLService, "executeRawCONSTRUCTQuery" ).and.returnValue( new Promise( () => {} ) );
 
 					// noinspection JSIgnoredPromiseFromCall
 					documents.executeRawCONSTRUCTQuery( "document/", "CONSTRUCT { ?subject ?predicate ?object } WHERE { ?subject ?predicate ?object }" );
@@ -13486,7 +13485,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				} );
 
 				it( "should use SPARQL service", ():void => {
-					const spyService:jasmine.Spy = spyOn( SPARQL.Service.SPARQLService, "executeRawCONSTRUCTQuery" ).and.returnValue( new Promise( () => {} ) );
+					const spyService:jasmine.Spy = spyOn( SPARQL.SPARQLService, "executeRawCONSTRUCTQuery" ).and.returnValue( new Promise( () => {} ) );
 
 					// noinspection JSIgnoredPromiseFromCall
 					documents.executeRawCONSTRUCTQuery( "http://example.com/document/", "CONSTRUCT { ?subject ?predicate ?object } WHERE { ?subject ?predicate ?object }" );
@@ -13548,7 +13547,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				"Executes a DESCRIBE query and returns a string with the resulting model.", [
 					{ name: "documentURI", type: "string", description: "URI of the document that works as a SPARQL endpoint where to execute the SPARQL query." },
 					{ name: "describeQuery", type: "string", description: "DESCRIBE query to execute in the selected endpoint." },
-					{ name: "requestOptions", type: "CarbonLDP.HTTP.Request.RequestOptions", optional: true, description: "Customizable options for the request." },
+					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for the request." },
 				], { type: "Promise<string>" }
 			), ():void => {} );
 
@@ -13574,7 +13573,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				} );
 
 				it( "should use SPARQL service", ():void => {
-					const spyService:jasmine.Spy = spyOn( SPARQL.Service.SPARQLService, "executeRawDESCRIBEQuery" ).and.returnValue( new Promise( () => {} ) );
+					const spyService:jasmine.Spy = spyOn( SPARQL.SPARQLService, "executeRawDESCRIBEQuery" ).and.returnValue( new Promise( () => {} ) );
 
 					// noinspection JSIgnoredPromiseFromCall
 					documents.executeRawDESCRIBEQuery( "http://example.com/document/", "DESCRIBE { ?subject ?predicate ?object } WHERE { ?subject ?predicate ?object }" );
@@ -13583,7 +13582,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				} );
 
 				it( "should resolve relative URIs", ():void => {
-					const spyService:jasmine.Spy = spyOn( SPARQL.Service.SPARQLService, "executeRawDESCRIBEQuery" ).and.returnValue( new Promise( () => {} ) );
+					const spyService:jasmine.Spy = spyOn( SPARQL.SPARQLService, "executeRawDESCRIBEQuery" ).and.returnValue( new Promise( () => {} ) );
 
 					// noinspection JSIgnoredPromiseFromCall
 					documents.executeRawDESCRIBEQuery( "document/", "DESCRIBE { ?subject ?predicate ?object } WHERE { ?subject ?predicate ?object }" );
@@ -13642,7 +13641,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				} );
 
 				it( "should use SPARQL service", ():void => {
-					const spyService:jasmine.Spy = spyOn( SPARQL.Service.SPARQLService, "executeRawDESCRIBEQuery" ).and.returnValue( new Promise( () => {} ) );
+					const spyService:jasmine.Spy = spyOn( SPARQL.SPARQLService, "executeRawDESCRIBEQuery" ).and.returnValue( new Promise( () => {} ) );
 
 					// noinspection JSIgnoredPromiseFromCall
 					documents.executeRawDESCRIBEQuery( "http://example.com/document/", "DESCRIBE { ?subject ?predicate ?object } WHERE { ?subject ?predicate ?object }" );
@@ -13704,7 +13703,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				"Executes a DESCRIBE query and returns a string with the resulting model.", [
 					{ name: "documentURI", type: "string", description: "URI of the document that works as a SPARQL endpoint where to execute the SPARQL query." },
 					{ name: "update", type: "string", description: "UPDATE query to execute in the selected endpoint." },
-					{ name: "requestOptions", type: "CarbonLDP.HTTP.Request.RequestOptions", optional: true, description: "Customizable options for the request." },
+					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for the request." },
 				], { type: "Promise<void>" }
 			), ():void => {} );
 
@@ -13730,7 +13729,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				} );
 
 				it( "should use SPARQL service", ():void => {
-					const spyService:jasmine.Spy = spyOn( SPARQL.Service.SPARQLService, "executeUPDATE" ).and.returnValue( new Promise( () => {} ) );
+					const spyService:jasmine.Spy = spyOn( SPARQL.SPARQLService, "executeUPDATE" ).and.returnValue( new Promise( () => {} ) );
 
 					// noinspection JSIgnoredPromiseFromCall
 					documents.executeUPDATE( "http://example.com/document/", `INSERT DATA { GRAPH <http://example.com/some-document/> { <http://example.com/some-document/> <http://example.com/ns#propertyString> "Property Value" } }` );
@@ -13739,7 +13738,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				} );
 
 				it( "should resolve relative URIs", ():void => {
-					const spyService:jasmine.Spy = spyOn( SPARQL.Service.SPARQLService, "executeUPDATE" ).and.returnValue( new Promise( () => {} ) );
+					const spyService:jasmine.Spy = spyOn( SPARQL.SPARQLService, "executeUPDATE" ).and.returnValue( new Promise( () => {} ) );
 
 					// noinspection JSIgnoredPromiseFromCall
 					documents.executeUPDATE( "document/", `INSERT DATA { GRAPH <http://example.com/some-document/> { <http://example.com/some-document/> <http://example.com/ns#propertyString> "Property Value" } }` );
@@ -13798,7 +13797,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				} );
 
 				it( "should use SPARQL service", ():void => {
-					const spyService:jasmine.Spy = spyOn( SPARQL.Service.SPARQLService, "executeUPDATE" ).and.returnValue( new Promise( () => {} ) );
+					const spyService:jasmine.Spy = spyOn( SPARQL.SPARQLService, "executeUPDATE" ).and.returnValue( new Promise( () => {} ) );
 
 					// noinspection JSIgnoredPromiseFromCall
 					documents.executeUPDATE( "http://example.com/document/", `INSERT DATA { GRAPH <http://example.com/some-document/> { <http://example.com/some-document/> <http://example.com/ns#propertyString> "Property Value" } }` );
@@ -13893,7 +13892,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					"ex": "http://example.com/",
 				} );
 
-				let queryBuilder:SPARQL.Builder.FinishSPARQLSelect = documents
+				let queryBuilder:SPARQL.FinishSPARQLSelect = documents
 					.sparql( "http://example.com/resource/" )
 					.select( "a" )
 					.where( _ =>
@@ -13928,7 +13927,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				[
 					{ name: "event", type: "CarbonLDP.Messaging.Event.CHILD_CREATED", description: "The event to subscribe for its notifications." },
 					{ name: "uriPattern", type: "string", description: "URI and/or pattern of the resource(s) to subscribe for the event specified." },
-					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.ChildCreated.ChildCreated ) => void", description: "Callback that receives the data message from the notification event." },
+					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.ChildCreated ) => void", description: "Callback that receives the data message from the notification event." },
 					{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the errors thrown by the subscription." },
 				]
 			), ():void => {} );
@@ -13937,7 +13936,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				[
 					{ name: "event", type: "CarbonLDP.Messaging.Event.ACCESS_POINT_CREATED", description: "The event to subscribe for its notifications." },
 					{ name: "uriPattern", type: "string", description: "URI and/or pattern of the resource(s) to subscribe for the event specified." },
-					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.AccessPointCreated.AccessPointCreated ) => void", description: "Callback that receives the data message from the notification event." },
+					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.AccessPointCreated ) => void", description: "Callback that receives the data message from the notification event." },
 					{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the errors thrown by the subscription." },
 				]
 			), ():void => {} );
@@ -13946,7 +13945,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				[
 					{ name: "event", type: "CarbonLDP.Messaging.Event.DOCUMENT_CREATED", description: "The event to subscribe for its notifications." },
 					{ name: "uriPattern", type: "string", description: "URI and/or pattern of the resource(s) to subscribe for the event specified." },
-					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.DocumentCreated.DocumentCreated ) => void", description: "Callback that receives the data message from the notification event." },
+					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.DocumentCreated ) => void", description: "Callback that receives the data message from the notification event." },
 					{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the errors thrown by the subscription." },
 				]
 			), ():void => {} );
@@ -13955,7 +13954,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				[
 					{ name: "event", type: "CarbonLDP.Messaging.Event.DOCUMENT_MODIFIED", description: "The event to subscribe for its notifications." },
 					{ name: "uriPattern", type: "string", description: "URI and/or pattern of the resource(s) to subscribe for the event specified." },
-					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.DocumentModified.DocumentModified ) => void", description: "Callback that receives the data message from the notification event." },
+					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.DocumentModified ) => void", description: "Callback that receives the data message from the notification event." },
 					{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the errors thrown by the subscription." },
 				]
 			), ():void => {} );
@@ -13964,7 +13963,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				[
 					{ name: "event", type: "CarbonLDP.Messaging.Event.DOCUMENT_DELETED", description: "The event to subscribe for its notifications." },
 					{ name: "uriPattern", type: "string", description: "URI and/or pattern of the resource(s) to subscribe for the event specified." },
-					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.DocumentDeleted.DocumentDeleted ) => void", description: "Callback that receives the data message from the notification event." },
+					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.DocumentDeleted ) => void", description: "Callback that receives the data message from the notification event." },
 					{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the errors thrown by the subscription." },
 				]
 			), ():void => {} );
@@ -13973,7 +13972,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				[
 					{ name: "event", type: "CarbonLDP.Messaging.Event.MEMBER_ADDED", description: "The event to subscribe for its notifications." },
 					{ name: "uriPattern", type: "string", description: "URI and/or pattern of the resource(s) to subscribe for the event specified." },
-					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.MemberAdded.MemberAdded ) => void", description: "Callback that receives the data message from the notification event." },
+					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.MemberAdded ) => void", description: "Callback that receives the data message from the notification event." },
 					{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the errors thrown by the subscription." },
 				]
 			), ():void => {} );
@@ -13982,7 +13981,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				[
 					{ name: "event", type: "CarbonLDP.Messaging.Event.MEMBER_REMOVED", description: "The event to subscribe for its notifications." },
 					{ name: "uriPattern", type: "string", description: "URI and/or pattern of the resource(s) to subscribe for the event specified." },
-					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.MemberRemoved.MemberRemoved ) => void", description: "Callback that receives the data message from the notification event." },
+					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.MemberRemoved ) => void", description: "Callback that receives the data message from the notification event." },
 					{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the errors thrown by the subscription." },
 				]
 			), ():void => {} );
@@ -13991,7 +13990,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				[
 					{ name: "event", type: "CarbonLDP.Messaging.Event | string", description: "The event to subscribe for its notifications." },
 					{ name: "uriPattern", type: "string", description: "URI and/or pattern of the resource(s) to subscribe for the event specified." },
-					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.EventMessage.EventMessage ) => void", description: "Callback that receives the data message from the notification event." },
+					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.EventMessage ) => void", description: "Callback that receives the data message from the notification event." },
 					{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the errors thrown by the subscription." },
 				]
 			), ():void => {} );
@@ -14094,7 +14093,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				[
 					{ name: "event", type: "CarbonLDP.Messaging.Event.CHILD_CREATED", description: "The event of the subscription to remove." },
 					{ name: "uriPattern", type: "string", description: "URI and/or pattern of the resource(s) of the subscription to remove." },
-					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.ChildCreated.ChildCreated ) => void", description: "The onEvent callback of the subscription to be removed.\nIt must be the same call back provided in the `on` methods." },
+					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.ChildCreated ) => void", description: "The onEvent callback of the subscription to be removed.\nIt must be the same call back provided in the `on` methods." },
 					{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the error thrown trying to remove the subscription." },
 				]
 			), ():void => {} );
@@ -14103,7 +14102,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				[
 					{ name: "event", type: "CarbonLDP.Messaging.Event.ACCESS_POINT_CREATED", description: "The event of the subscription to remove." },
 					{ name: "uriPattern", type: "string", description: "URI and/or pattern of the resource(s) of the subscription to remove." },
-					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.AccessPointCreated.AccessPointCreated ) => void", description: "The onEvent callback of the subscription to be removed.\nIt must be the same call back provided in the `on` methods." },
+					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.AccessPointCreated ) => void", description: "The onEvent callback of the subscription to be removed.\nIt must be the same call back provided in the `on` methods." },
 					{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the error thrown trying to remove the subscription." },
 				]
 			), ():void => {} );
@@ -14112,7 +14111,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				[
 					{ name: "event", type: "CarbonLDP.Messaging.Event.DOCUMENT_CREATED", description: "The event of the subscription to remove." },
 					{ name: "uriPattern", type: "string", description: "URI and/or pattern of the resource(s) of the subscription to remove." },
-					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.DocumentCreated.DocumentCreated ) => void", description: "The onEvent callback of the subscription to be removed.\nIt must be the same call back provided in the `on` methods." },
+					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.DocumentCreated ) => void", description: "The onEvent callback of the subscription to be removed.\nIt must be the same call back provided in the `on` methods." },
 					{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the error thrown trying to remove the subscription." },
 				]
 			), ():void => {} );
@@ -14121,7 +14120,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				[
 					{ name: "event", type: "CarbonLDP.Messaging.Event.DOCUMENT_MODIFIED", description: "The event of the subscription to remove." },
 					{ name: "uriPattern", type: "string", description: "URI and/or pattern of the resource(s) of the subscription to remove." },
-					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.DocumentModified.DocumentModified ) => void", description: "The onEvent callback of the subscription to be removed.\nIt must be the same call back provided in the `on` methods." },
+					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.DocumentModified ) => void", description: "The onEvent callback of the subscription to be removed.\nIt must be the same call back provided in the `on` methods." },
 					{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the error thrown trying to remove the subscription." },
 				]
 			), ():void => {} );
@@ -14130,7 +14129,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				[
 					{ name: "event", type: "CarbonLDP.Messaging.Event.DOCUMENT_DELETED", description: "The event of the subscription to remove." },
 					{ name: "uriPattern", type: "string", description: "URI and/or pattern of the resource(s) of the subscription to remove." },
-					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.DocumentDeleted.DocumentDeleted ) => void", description: "The onEvent callback of the subscription to be removed.\nIt must be the same call back provided in the `on` methods." },
+					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.DocumentDeleted ) => void", description: "The onEvent callback of the subscription to be removed.\nIt must be the same call back provided in the `on` methods." },
 					{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the error thrown trying to remove the subscription." },
 				]
 			), ():void => {} );
@@ -14139,7 +14138,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				[
 					{ name: "event", type: "CarbonLDP.Messaging.Event.MEMBER_ADDED", description: "The event of the subscription to remove." },
 					{ name: "uriPattern", type: "string", description: "URI and/or pattern of the resource(s) of the subscription to remove." },
-					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.MemberAdded.MemberAdded ) => void", description: "The onEvent callback of the subscription to be removed.\nIt must be the same call back provided in the `on` methods." },
+					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.MemberAdded ) => void", description: "The onEvent callback of the subscription to be removed.\nIt must be the same call back provided in the `on` methods." },
 					{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the error thrown trying to remove the subscription." },
 				]
 			), ():void => {} );
@@ -14148,7 +14147,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				[
 					{ name: "event", type: "CarbonLDP.Messaging.Event.MEMBER_REMOVED", description: "The event of the subscription to remove." },
 					{ name: "uriPattern", type: "string", description: "URI and/or pattern of the resource(s) of the subscription to remove." },
-					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.MemberRemoved.MemberRemoved ) => void", description: "The onEvent callback of the subscription to be removed.\nIt must be the same call back provided in the `on` methods." },
+					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.MemberRemoved ) => void", description: "The onEvent callback of the subscription to be removed.\nIt must be the same call back provided in the `on` methods." },
 					{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the error thrown trying to remove the subscription." },
 				]
 			), ():void => {} );
@@ -14157,7 +14156,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				[
 					{ name: "event", type: "CarbonLDP.Messaging.Event | string", description: "The event of the subscription to remove." },
 					{ name: "uriPattern", type: "string", description: "URI and/or pattern of the resource(s) of the subscription to remove." },
-					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.EventMessage.EventMessage ) => void", description: "The onEvent callback of the subscription to be removed.\nIt must be the same call back provided in the `on` methods." },
+					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.EventMessage ) => void", description: "The onEvent callback of the subscription to be removed.\nIt must be the same call back provided in the `on` methods." },
 					{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the error thrown trying to remove the subscription." },
 				]
 			), ():void => {} );
@@ -14260,7 +14259,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				[
 					{ name: "event", type: "CarbonLDP.Messaging.Event.CHILD_CREATED", description: "The event to subscribe for the notification." },
 					{ name: "uriPattern", type: "string", description: "URI and/or pattern of the resource(s) to subscribe for the event specified." },
-					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.ChildCreated.ChildCreated ) => void", description: "Callback that receives the data message from the notification event." },
+					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.ChildCreated ) => void", description: "Callback that receives the data message from the notification event." },
 					{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the errors thrown by the subscription." },
 				]
 			), ():void => {} );
@@ -14269,7 +14268,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				[
 					{ name: "event", type: "CarbonLDP.Messaging.Event.ACCESS_POINT_CREATED", description: "The event to subscribe for the notification." },
 					{ name: "uriPattern", type: "string", description: "URI and/or pattern of the resource(s) to subscribe for the event specified." },
-					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.AccessPointCreated.AccessPointCreated ) => void", description: "Callback that receives the data message from the notification event." },
+					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.AccessPointCreated ) => void", description: "Callback that receives the data message from the notification event." },
 					{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the errors thrown by the subscription." },
 				]
 			), ():void => {} );
@@ -14278,7 +14277,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				[
 					{ name: "event", type: "CarbonLDP.Messaging.Event.DOCUMENT_CREATED", description: "The event to subscribe for the notification." },
 					{ name: "uriPattern", type: "string", description: "URI and/or pattern of the resource(s) to subscribe for the event specified." },
-					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.DocumentCreated.DocumentCreated ) => void", description: "Callback that receives the data message from the notification event." },
+					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.DocumentCreated ) => void", description: "Callback that receives the data message from the notification event." },
 					{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the errors thrown by the subscription." },
 				]
 			), ():void => {} );
@@ -14287,7 +14286,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				[
 					{ name: "event", type: "CarbonLDP.Messaging.Event.DOCUMENT_MODIFIED", description: "The event to subscribe for the notification." },
 					{ name: "uriPattern", type: "string", description: "URI and/or pattern of the resource(s) to subscribe for the event specified." },
-					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.DocumentModified.DocumentModified ) => void", description: "Callback that receives the data message from the notification event." },
+					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.DocumentModified ) => void", description: "Callback that receives the data message from the notification event." },
 					{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the errors thrown by the subscription." },
 				]
 			), ():void => {} );
@@ -14296,7 +14295,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				[
 					{ name: "event", type: "CarbonLDP.Messaging.Event.DOCUMENT_DELETED", description: "The event to subscribe for the notification." },
 					{ name: "uriPattern", type: "string", description: "URI and/or pattern of the resource(s) to subscribe for the event specified." },
-					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.DocumentDeleted.DocumentDeleted ) => void", description: "Callback that receives the data message from the notification event." },
+					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.DocumentDeleted ) => void", description: "Callback that receives the data message from the notification event." },
 					{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the errors thrown by the subscription." },
 				]
 			), ():void => {} );
@@ -14305,7 +14304,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				[
 					{ name: "event", type: "CarbonLDP.Messaging.Event.MEMBER_ADDED", description: "The event to subscribe for the notification." },
 					{ name: "uriPattern", type: "string", description: "URI and/or pattern of the resource(s) to subscribe for the event specified." },
-					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.MemberAdded.MemberAdded ) => void", description: "Callback that receives the data message from the notification event." },
+					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.MemberAdded ) => void", description: "Callback that receives the data message from the notification event." },
 					{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the errors thrown by the subscription." },
 				]
 			), ():void => {} );
@@ -14314,7 +14313,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				[
 					{ name: "event", type: "CarbonLDP.Messaging.Event.MEMBER_REMOVED", description: "The event to subscribe for the notification." },
 					{ name: "uriPattern", type: "string", description: "URI and/or pattern of the resource(s) to subscribe for the event specified." },
-					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.MemberRemoved.MemberRemoved ) => void", description: "Callback that receives the data message from the notification event." },
+					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.MemberRemoved ) => void", description: "Callback that receives the data message from the notification event." },
 					{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the errors thrown by the subscription." },
 				]
 			), ():void => {} );
@@ -14323,7 +14322,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				[
 					{ name: "event", type: "CarbonLDP.Messaging.Event | string", description: "The event to subscribe for the notification." },
 					{ name: "uriPattern", type: "string", description: "URI and/or pattern of the resource(s) to subscribe for the event specified." },
-					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.EventMessage.EventMessage ) => void", description: "Callback that receives the data message from the notification event." },
+					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.EventMessage ) => void", description: "Callback that receives the data message from the notification event." },
 					{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the errors thrown by the subscription." },
 				]
 			), ():void => {} );
@@ -14406,7 +14405,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				"Subscribe to the `CarbonLDP.Messaging.Event.DOCUMENT_CREATED` event notifications for the specified URI pattern.",
 				[
 					{ name: "uriPattern", type: "string", description: "URI and/or pattern of the resource(s) to subscribe for." },
-					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.DocumentCreated.DocumentCreated ) => void", description: "Callback that receives the data message from the notifications event." },
+					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.DocumentCreated ) => void", description: "Callback that receives the data message from the notifications event." },
 					{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the errors thrown by the subscription." },
 				]
 			), ():void => {} );
@@ -14432,7 +14431,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				const uriPattern:string = "resource/*";
 				carbon.documents.onDocumentCreated( uriPattern, onEvent, onError );
 
-				expect( onSpy ).toHaveBeenCalledWith( MessagingEvent.DOCUMENT_CREATED, uriPattern, onEvent, onError );
+				expect( onSpy ).toHaveBeenCalledWith( Event.DOCUMENT_CREATED, uriPattern, onEvent, onError );
 				done();
 			} );
 
@@ -14447,7 +14446,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				"Subscribe to the `CarbonLDP.Messaging.Event.CHILD_CREATED` event notifications for the specified URI pattern.",
 				[
 					{ name: "uriPattern", type: "string", description: "URI and/or pattern of the resource(s) to subscribe for." },
-					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.ChildCreated.ChildCreated ) => void", description: "Callback that receives the data message from the notifications event." },
+					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.ChildCreated ) => void", description: "Callback that receives the data message from the notifications event." },
 					{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the errors thrown by the subscription." },
 				]
 			), ():void => {} );
@@ -14473,7 +14472,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				const uriPattern:string = "resource/*";
 				carbon.documents.onChildCreated( uriPattern, onEvent, onError );
 
-				expect( onSpy ).toHaveBeenCalledWith( MessagingEvent.CHILD_CREATED, uriPattern, onEvent, onError );
+				expect( onSpy ).toHaveBeenCalledWith( Event.CHILD_CREATED, uriPattern, onEvent, onError );
 				done();
 			} );
 
@@ -14488,7 +14487,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				"Subscribe to the `CarbonLDP.Messaging.Event.ACCESS_POINT_CREATED` event notifications for the specified URI pattern.",
 				[
 					{ name: "uriPattern", type: "string", description: "URI and/or pattern of the resource(s) to subscribe for." },
-					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.AccessPointCreated.AccessPointCreated ) => void", description: "Callback that receives the data message from the notifications event." },
+					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.AccessPointCreated ) => void", description: "Callback that receives the data message from the notifications event." },
 					{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the errors thrown by the subscription." },
 				]
 			), ():void => {} );
@@ -14514,7 +14513,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				const uriPattern:string = "resource/*";
 				carbon.documents.onAccessPointCreated( uriPattern, onEvent, onError );
 
-				expect( onSpy ).toHaveBeenCalledWith( MessagingEvent.ACCESS_POINT_CREATED, uriPattern, onEvent, onError );
+				expect( onSpy ).toHaveBeenCalledWith( Event.ACCESS_POINT_CREATED, uriPattern, onEvent, onError );
 				done();
 			} );
 
@@ -14529,7 +14528,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				"Subscribe to the `CarbonLDP.Messaging.Event.DOCUMENT_MODIFIED` event notifications for the specified URI pattern.",
 				[
 					{ name: "uriPattern", type: "string", description: "URI and/or pattern of the resource(s) to subscribe for." },
-					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.DocumentModified.DocumentModified ) => void", description: "Callback that receives the data message from the notifications event." },
+					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.DocumentModified ) => void", description: "Callback that receives the data message from the notifications event." },
 					{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the errors thrown by the subscription." },
 				]
 			), ():void => {} );
@@ -14555,7 +14554,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				const uriPattern:string = "resource/*";
 				carbon.documents.onDocumentModified( uriPattern, onEvent, onError );
 
-				expect( onSpy ).toHaveBeenCalledWith( MessagingEvent.DOCUMENT_MODIFIED, uriPattern, onEvent, onError );
+				expect( onSpy ).toHaveBeenCalledWith( Event.DOCUMENT_MODIFIED, uriPattern, onEvent, onError );
 				done();
 			} );
 
@@ -14570,7 +14569,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				"Subscribe to the `CarbonLDP.Messaging.Event.DOCUMENT_DELETED` event notifications for the specified URI pattern.",
 				[
 					{ name: "uriPattern", type: "string", description: "URI and/or pattern of the resource(s) to subscribe for." },
-					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.DocumentDeleted.DocumentDeleted ) => void", description: "Callback that receives the data message from the notifications event." },
+					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.DocumentDeleted ) => void", description: "Callback that receives the data message from the notifications event." },
 					{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the errors thrown by the subscription." },
 				]
 			), ():void => {} );
@@ -14596,7 +14595,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				const uriPattern:string = "resource/*";
 				carbon.documents.onDocumentDeleted( uriPattern, onEvent, onError );
 
-				expect( onSpy ).toHaveBeenCalledWith( MessagingEvent.DOCUMENT_DELETED, uriPattern, onEvent, onError );
+				expect( onSpy ).toHaveBeenCalledWith( Event.DOCUMENT_DELETED, uriPattern, onEvent, onError );
 				done();
 			} );
 
@@ -14611,7 +14610,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				"Subscribe to the `CarbonLDP.Messaging.Event.MEMBER_ADDED` event notifications for the specified URI pattern.",
 				[
 					{ name: "uriPattern", type: "string", description: "URI and/or pattern of the resource(s) to subscribe for." },
-					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.MemberAdded.MemberAdded ) => void", description: "Callback that receives the data message from the notifications event." },
+					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.MemberAdded ) => void", description: "Callback that receives the data message from the notifications event." },
 					{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the errors thrown by the subscription." },
 				]
 			), ():void => {} );
@@ -14637,7 +14636,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				const uriPattern:string = "resource/*";
 				carbon.documents.onMemberAdded( uriPattern, onEvent, onError );
 
-				expect( onSpy ).toHaveBeenCalledWith( MessagingEvent.MEMBER_ADDED, uriPattern, onEvent, onError );
+				expect( onSpy ).toHaveBeenCalledWith( Event.MEMBER_ADDED, uriPattern, onEvent, onError );
 				done();
 			} );
 
@@ -14652,7 +14651,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				"Subscribe to the `CarbonLDP.Messaging.Event.MEMBER_REMOVED` event notifications for the specified URI pattern.",
 				[
 					{ name: "uriPattern", type: "string", description: "URI and/or pattern of the resource(s) to subscribe for." },
-					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.MemberRemoved.MemberRemoved ) => void", description: "Callback that receives the data message from the notifications event." },
+					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.MemberRemoved ) => void", description: "Callback that receives the data message from the notifications event." },
 					{ name: "onError", type: "( error:Error ) => void", description: "Callback that receives the errors thrown by the subscription." },
 				]
 			), ():void => {} );
@@ -14678,17 +14677,12 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				const uriPattern:string = "resource/*";
 				carbon.documents.onMemberRemoved( uriPattern, onEvent, onError );
 
-				expect( onSpy ).toHaveBeenCalledWith( MessagingEvent.MEMBER_REMOVED, uriPattern, onEvent, onError );
+				expect( onSpy ).toHaveBeenCalledWith( Event.MEMBER_REMOVED, uriPattern, onEvent, onError );
 				done();
 			} );
 
 		} );
 
-	} );
-
-	it( hasDefaultExport( "CarbonLDP.Documents.Documents" ), ():void => {
-		expect( DefaultExport ).toBeDefined();
-		expect( DefaultExport ).toBe( Documents );
 	} );
 
 } );

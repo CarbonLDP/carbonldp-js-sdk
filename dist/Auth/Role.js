@@ -1,7 +1,4 @@
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-}
 var __importStar = (this && this.__importStar) || function (mod) {
     if (mod && mod.__esModule) return mod;
     var result = {};
@@ -10,10 +7,10 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 }
 Object.defineProperty(exports, "__esModule", { value: true });
+var Document_1 = require("../Document");
+var IllegalArgumentError_1 = require("../Errors/IllegalArgumentError");
 var CS_1 = require("../Vocabularies/CS");
 var XSD_1 = require("../Vocabularies/XSD");
-var Document_1 = require("./../Document");
-var IllegalArgumentError_1 = __importDefault(require("./../Errors/IllegalArgumentError"));
 var Utils = __importStar(require("./../Utils"));
 exports.RDF_CLASS = CS_1.CS.Role;
 exports.SCHEMA = {
@@ -57,7 +54,7 @@ var Factory = (function () {
         if (!Document_1.Document.isDecorated(object))
             object = Document_1.Document.createFrom(object);
         if (!name)
-            throw new IllegalArgumentError_1.default("The name cannot be empty.");
+            throw new IllegalArgumentError_1.IllegalArgumentError("The name cannot be empty.");
         var role = object;
         role.name = name;
         role.description = description;

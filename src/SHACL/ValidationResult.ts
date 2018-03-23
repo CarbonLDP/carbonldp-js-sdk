@@ -60,5 +60,3 @@ export const ValidationResult:ValidationResultFactory = {
 	TYPE: SHACL.ValidationResult,
 	SCHEMA,
 };
-
-export default ValidationResult;

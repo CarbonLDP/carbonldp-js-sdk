@@ -6,22 +6,16 @@ import { QueryContextBuilder } from "../SPARQL/QueryDocument/QueryContextBuilder
 import { QueryPropertyType } from "../SPARQL/QueryDocument/QueryProperty";
 import {
 	clazz,
-	hasDefaultExport,
 	INSTANCE,
 	method,
 	module
 } from "../test/JasmineExtender";
 
-import DefaultExport, { JSONLDCompacter } from "./Compacter";
+import { JSONLDCompacter } from "./Compacter";
 
 describe( module( "carbonldp/JSONLD/Compacter" ), ():void => {
 
-	it( hasDefaultExport( "CarbonLDP.JSONLD.Compacter.JSONLDCompacter" ), ():void => {
-		expect( DefaultExport ).toBeDefined();
-		expect( DefaultExport ).toBe( JSONLDCompacter );
-	} );
-
-	describe( clazz( "CarbonLDP.JSONLD.Compacter.JSONLDCompacter", "Class for compacting a set of RDF resources in level of relations" ), ():void => {
+	describe( clazz( "CarbonLDP.JSONLD.JSONLDCompacter", "Class for compacting a set of RDF resources in level of relations" ), ():void => {
 
 		it( "should exists", ():void => {
 			expect( JSONLDCompacter ).toBeDefined();

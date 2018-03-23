@@ -21,6 +21,5 @@ exports.ValidationReport = {
     TYPE: SHACL_1.SHACL.ValidationReport,
     SCHEMA: SCHEMA,
 };
-exports.default = exports.ValidationReport;
 
 //# sourceMappingURL=ValidationReport.js.map

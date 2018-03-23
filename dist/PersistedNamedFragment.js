@@ -13,6 +13,5 @@ exports.PersistedNamedFragment = {
         return PersistedFragment_1.PersistedFragment.decorate(fragment);
     },
 };
-exports.default = exports.PersistedNamedFragment;
 
 //# sourceMappingURL=PersistedNamedFragment.js.map

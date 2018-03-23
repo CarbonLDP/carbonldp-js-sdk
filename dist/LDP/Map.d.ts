@@ -11,4 +11,3 @@ export interface MapFactory extends ModelFactory<Map<any, any>> {
     is(object: object): object is Map<any, any>;
 }
 export declare const Map: MapFactory;
-export default Map;

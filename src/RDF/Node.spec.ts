@@ -5,7 +5,6 @@ import {
 	PointerLibrary,
 } from "../Pointer";
 import {
-	hasDefaultExport,
 	hasMethod,
 	hasProperty,
 	interfaze,
@@ -20,13 +19,13 @@ import * as Utils from "./../Utils";
 import { RDFDocument } from "./Document";
 import { RDFList } from "./List";
 
-import DefaultExport, { RDFNode } from "./Node";
+import { RDFNode } from "./Node";
 
 describe( module( "carbonldp/RDF/Node" ), ():void => {
 
 	describe( interfaze(
-		"CarbonLDP.RDF.Node.RDFNode",
-		"Interface that represents an `rdf:Node`."
+		"CarbonLDP.RDF.RDFNode",
+		"Interface that represents an RDF Node."
 	), ():void => {
 
 		it( hasProperty(
@@ -39,26 +38,26 @@ describe( module( "carbonldp/RDF/Node" ), ():void => {
 	} );
 
 	describe( interfaze(
-		"CarbonLDP.RDF.Node.RDFNodeFactory",
-		"Interface with the factory and utils for `CarbonLDP.RDF.Node.RDFNode` objects."
+		"CarbonLDP.RDF.RDFNodeFactory",
+		"Interface with the factory and utils for `CarbonLDP.RDF.RDFNode` objects."
 	), ():void => {
 
 		it( hasMethod(
 			OBLIGATORY,
 			"is",
-			"Returns true if the object provided is considered a `CarbonLDP.RDF.Node.RDFNode` object.", [
+			"Returns true if the object provided is considered a `CarbonLDP.RDF.RDFNode` object.", [
 				{ name: "value", type: "any" },
 			],
-			{ type: "value is CarbonLDP.RDF.Node.RDFNode" }
+			{ type: "value is CarbonLDP.RDF.RDFNode" }
 		), ():void => {} );
 
 		it( hasMethod(
 			OBLIGATORY,
 			"create",
-			"Creates a `CarbonLDP.RDF.Node.RDFNode` object with the URI provided.", [
+			"Creates a `CarbonLDP.RDF.RDFNode` object with the URI provided.", [
 				{ name: "uri", type: "string" },
 			],
-			{ type: "CarbonLDP.RDF.Node.RDFNode" }
+			{ type: "CarbonLDP.RDF.RDFNode" }
 		), ():void => {} );
 
 
@@ -66,7 +65,7 @@ describe( module( "carbonldp/RDF/Node" ), ():void => {
 			OBLIGATORY,
 			"getID",
 			"Returns the `@id` of the node.", [
-				{ name: "node", type: "CarbonLDP.RDF.Node.RDFNode" },
+				{ name: "node", type: "CarbonLDP.RDF.RDFNode" },
 			],
 			{ type: "string" }
 		), ():void => {} );
@@ -76,7 +75,7 @@ describe( module( "carbonldp/RDF/Node" ), ():void => {
 			OBLIGATORY,
 			"getRelativeID",
 			"Returns the relative `@id` of the node when it is a fragment node.", [
-				{ name: "node", type: "CarbonLDP.RDF.Node.RDFNode" },
+				{ name: "node", type: "CarbonLDP.RDF.RDFNode" },
 			],
 			{ type: "string" }
 		), ():void => {} );
@@ -85,8 +84,8 @@ describe( module( "carbonldp/RDF/Node" ), ():void => {
 			OBLIGATORY,
 			"areEqual",
 			"Returns true if the objects represent the same resource.", [
-				{ name: "node1", type: "CarbonLDP.RDF.Node.RDFNode" },
-				{ name: "node2", type: "CarbonLDP.RDF.Node.RDFNode" },
+				{ name: "node1", type: "CarbonLDP.RDF.RDFNode" },
+				{ name: "node2", type: "CarbonLDP.RDF.RDFNode" },
 			],
 			{ type: "boolean" }
 		), ():void => {} );
@@ -95,7 +94,7 @@ describe( module( "carbonldp/RDF/Node" ), ():void => {
 			OBLIGATORY,
 			"isFragment",
 			"Returns true if the node has a fragment `@id`, i.e. a named fragment or a blank node label.", [
-				{ name: "node", type: "CarbonLDP.RDF.Node.RDFNode" },
+				{ name: "node", type: "CarbonLDP.RDF.RDFNode" },
 			],
 			{ type: "boolean" }
 		), ():void => {} );
@@ -104,7 +103,7 @@ describe( module( "carbonldp/RDF/Node" ), ():void => {
 			OBLIGATORY,
 			"hasType",
 			"Returns true if the Node provided has the specified type.", [
-				{ name: "object", type: "CarbonLDP.RDF.Node.RDFNode", description: "The Node to evaluate." },
+				{ name: "object", type: "CarbonLDP.RDF.RDFNode", description: "The Node to evaluate." },
 				{ name: "type", type: "string", description: "The type to look for it existence." },
 			],
 			{ type: "boolean" }
@@ -114,7 +113,7 @@ describe( module( "carbonldp/RDF/Node" ), ():void => {
 			OBLIGATORY,
 			"getTypes",
 			"Returns an array with the types of the Node provided.", [
-				{ name: "object", type: "CarbonLDP.RDF.Node.RDFNode", description: "The Node to evaluate." },
+				{ name: "object", type: "CarbonLDP.RDF.RDFNode", description: "The Node to evaluate." },
 			],
 			{ type: "string[]" }
 		), ():void => {} );
@@ -125,7 +124,7 @@ describe( module( "carbonldp/RDF/Node" ), ():void => {
 			"Returns an array with the nodes that are neither a Document nor are contained inside a one.", [
 				{ name: "objects", type: "objects[]", description: "The object to evaluate for its free nodes." },
 			],
-			{ type: "CarbonLDP.RDF.Node.RDFNode[]" }
+			{ type: "CarbonLDP.RDF.RDFNode[]" }
 		), ():void => {} );
 
 		it( hasMethod(
@@ -133,9 +132,9 @@ describe( module( "carbonldp/RDF/Node" ), ():void => {
 			"getList",
 			"Returns the List object from the provided property of an expanded JSON-LD object.\n" +
 			"Returns `undefined` if no List object is found.", [
-				{ name: "expandedValues", type: "string | (string | CarbonLDP.RDF.Node.RDFNode | CarbonLDP.RDF.List.RDFList | CarbonLDP.RDF.Value.RDFValue | CarbonLDP.RDF.Literal.RDFLiteral)[]" },
+				{ name: "expandedValues", type: "string | (string | CarbonLDP.RDF.RDFNode | CarbonLDP.RDF.RDFList | CarbonLDP.RDF.RDFValue | CarbonLDP.RDF.RDFLiteral)[]" },
 			],
-			{ type: "CarbonLDP.RDF.List.RDFList" }
+			{ type: "CarbonLDP.RDF.RDFList" }
 		), ():void => {} );
 
 		it( hasMethod(
@@ -143,8 +142,8 @@ describe( module( "carbonldp/RDF/Node" ), ():void => {
 			"getProperties",
 			"Returns the property array with the parsed Literal, Pointer or List.\n" +
 			"Returns `undefined` if it cannot be parsed.", [
-				{ name: "expandedValues", type: "string | (string | CarbonLDP.RDF.Node.RDFNode | CarbonLDP.RDF.List.RDFList | CarbonLDP.RDF.Value.RDFValue | CarbonLDP.RDF.Literal.RDFLiteral)[]" },
-				{ name: "pointerLibrary", type: "CarbonLDP.Pointer.PointerLibrary" },
+				{ name: "expandedValues", type: "string | (string | CarbonLDP.RDF.RDFNode | CarbonLDP.RDF.RDFList | CarbonLDP.RDF.RDFValue | CarbonLDP.RDF.RDFLiteral)[]" },
+				{ name: "pointerLibrary", type: "CarbonLDP.PointerLibrary" },
 			],
 			{ type: "any[]" }
 		), ():void => {} );
@@ -154,8 +153,8 @@ describe( module( "carbonldp/RDF/Node" ), ():void => {
 			"getPropertyPointers",
 			"Returns the property array with the parsed Pointers values.\n" +
 			"Returns `undefined` if the property cannot be parsed as a pointer.", [
-				{ name: "expandedValues", type: "string | (string | CarbonLDP.RDF.Node.RDFNode | CarbonLDP.RDF.List.RDFList | CarbonLDP.RDF.Value.RDFValue | CarbonLDP.RDF.Literal.RDFLiteral)[]" },
-				{ name: "pointerLibrary", type: "CarbonLDP.Pointer.PointerLibrary" },
+				{ name: "expandedValues", type: "string | (string | CarbonLDP.RDF.RDFNode | CarbonLDP.RDF.RDFList | CarbonLDP.RDF.RDFValue | CarbonLDP.RDF.RDFLiteral)[]" },
+				{ name: "pointerLibrary", type: "CarbonLDP.PointerLibrary" },
 			],
 			{ type: "any[]" }
 		), ():void => {} );
@@ -165,7 +164,7 @@ describe( module( "carbonldp/RDF/Node" ), ():void => {
 			"getPropertyLiterals",
 			"Returns the property array with the parsed Literals.\n" +
 			"Returns `undefined` if it cannot be parsed.", [
-				{ name: "expandedValues", type: "string | (string | CarbonLDP.RDF.Node.RDFNode | CarbonLDP.RDF.List.RDFList | CarbonLDP.RDF.Value.RDFValue | CarbonLDP.RDF.Literal.RDFLiteral)[]" },
+				{ name: "expandedValues", type: "string | (string | CarbonLDP.RDF.RDFNode | CarbonLDP.RDF.RDFList | CarbonLDP.RDF.RDFValue | CarbonLDP.RDF.RDFLiteral)[]" },
 				{ name: "propertyURI", type: "string" },
 				{ name: "literalType", type: "string" },
 			],
@@ -177,26 +176,18 @@ describe( module( "carbonldp/RDF/Node" ), ():void => {
 			"getPropertyLanguageMap",
 			"Returns an object associating the language with the parsed string literal.\n" +
 			"Returns an empty object if it is not a property with language.", [
-				{ name: "expandedValues", type: "string | (string | CarbonLDP.RDF.Node.RDFNode | CarbonLDP.RDF.List.RDFList | CarbonLDP.RDF.Value.RDFValue | CarbonLDP.RDF.Literal.RDFLiteral)[]" },
-				{ name: "pointerLibrary", type: "CarbonLDP.Pointer.PointerLibrary" },
+				{ name: "expandedValues", type: "string | (string | CarbonLDP.RDF.RDFNode | CarbonLDP.RDF.RDFList | CarbonLDP.RDF.RDFValue | CarbonLDP.RDF.RDFLiteral)[]" },
+				{ name: "pointerLibrary", type: "CarbonLDP.PointerLibrary" },
 			],
 			{ type: "object" }
 		), ():void => {} );
 
 	} );
 
-	it( hasDefaultExport( "CarbonLDP.RDF.Node.RDFNode" ), ():void => {
-		let defaultExport:DefaultExport = <any> {};
-		let defaultTarget:RDFNode;
-
-		defaultTarget = defaultExport;
-		expect( defaultTarget ).toEqual( jasmine.any( Object ) );
-	} );
-
 	describe( property(
 		STATIC,
 		"RDFNode",
-		"CarbonLDP.RDF.Node.RDFNodeFactory"
+		"CarbonLDP.RDF.RDFNodeFactory"
 	), ():void => {
 
 		it( isDefined(), ():void => {

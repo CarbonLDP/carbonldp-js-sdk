@@ -22,4 +22,3 @@ export interface FreeResourcesFactory extends ModelFactory<FreeResources>, Model
     decorate<T extends object>(object: T, documents: Documents): T & FreeResources;
 }
 export declare const FreeResources: FreeResourcesFactory;
-export default FreeResources;

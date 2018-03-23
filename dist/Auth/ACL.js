@@ -228,6 +228,5 @@ function removeChildInheritance(subject, permissions) {
     var acl = this;
     removePermissions.call(this, subject, permissions, acl.inheritableEntries);
 }
-exports.default = exports.ACL;
 
 //# sourceMappingURL=ACL.js.map

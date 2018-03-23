@@ -440,9 +440,3 @@ export class JSONLDProcessor {
 	}
 
 }
-
-export class Util {
-
-}
-
-export default JSONLDProcessor;

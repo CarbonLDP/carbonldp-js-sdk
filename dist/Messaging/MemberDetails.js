@@ -11,6 +11,5 @@ var SCHEMA = {
 exports.MemberDetails = {
     SCHEMA: SCHEMA,
 };
-exports.default = exports.MemberDetails;
 
 //# sourceMappingURL=MemberDetails.js.map

@@ -12,12 +12,10 @@ export interface MemberRemovedDetailsFactory {
 	SCHEMA:ObjectSchema;
 }
 
-export const TYPE:string = C.MemberRemovedDetails;
-export const SCHEMA:ObjectSchema = MemberDetails.SCHEMA;
+const TYPE:string = C.MemberRemovedDetails;
+const SCHEMA:ObjectSchema = MemberDetails.SCHEMA;
 
 export const MemberRemovedDetails:MemberRemovedDetailsFactory = {
 	TYPE,
 	SCHEMA,
 };
-
-export default MemberRemovedDetails;

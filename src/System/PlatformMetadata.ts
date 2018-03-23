@@ -1,13 +1,11 @@
-import { VolatileResource } from "../LDP/VolatileResource";
 import { ObjectSchema } from "../ObjectSchema";
 import { PersistedDocument } from "../PersistedDocument";
 import { C } from "../Vocabularies/C";
-import { XSD } from "../Vocabularies/XSD";
+import { PlatformInstance } from "./PlatformInstance";
 
 
-export interface PlatformMetadata extends VolatileResource, PersistedDocument {
-	version:string;
-	buildDate:Date;
+export interface PlatformMetadata extends PersistedDocument {
+	instance:PlatformInstance;
 }
 
 
@@ -17,13 +15,9 @@ export interface PlatformMetadataFactory {
 }
 
 const SCHEMA:ObjectSchema = {
-	"version": {
-		"@id": C.version,
-		"@type": XSD.string,
-	},
-	"buildDate": {
-		"@id": C.buildDate,
-		"@type": XSD.dateTime,
+	"instance": {
+		"@id": C.instance,
+		"@type": "@id",
 	},
 };
 
@@ -32,5 +26,3 @@ export const PlatformMetadata:PlatformMetadataFactory = {
 	SCHEMA,
 };
 
-
-export default PlatformMetadata;

@@ -111,6 +111,5 @@ var SPARQLService = (function () {
     return SPARQLService;
 }());
 exports.SPARQLService = SPARQLService;
-exports.default = SPARQLService;
 
 //# sourceMappingURL=Service.js.map

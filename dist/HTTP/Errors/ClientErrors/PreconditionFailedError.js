@@ -31,6 +31,5 @@ var PreconditionFailedError = (function (_super) {
     return PreconditionFailedError;
 }(HTTPError_1.HTTPError));
 exports.PreconditionFailedError = PreconditionFailedError;
-exports.default = PreconditionFailedError;
 
 //# sourceMappingURL=PreconditionFailedError.js.map

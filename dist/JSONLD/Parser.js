@@ -23,6 +23,5 @@ var JSONLDParser = (function (_super) {
     return JSONLDParser;
 }(JSONParser_1.JSONParser));
 exports.JSONLDParser = JSONLDParser;
-exports.default = JSONLDParser;
 
 //# sourceMappingURL=Parser.js.map

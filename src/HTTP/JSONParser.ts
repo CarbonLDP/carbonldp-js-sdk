@@ -6,5 +6,3 @@ export class JSONParser implements Parser<object> {
 		return new Promise<object>( resolve => resolve( JSON.parse( body ) ) );
 	}
 }
-
-export default JSONParser;

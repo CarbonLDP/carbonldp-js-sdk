@@ -29,7 +29,7 @@ describe( module( "carbonldp/Auth/Role" ), ():void => {
 	it( hasProperty(
 		STATIC,
 		"SCHEMA",
-		"CarbonLDP.ObjectSchema.ObjectSchema"
+		"CarbonLDP.ObjectSchema"
 	), ():void => {
 		expect( Role.SCHEMA ).toBeDefined();
 		expect( Utils.isObject( Role.SCHEMA ) ).toBe( true );
@@ -72,7 +72,7 @@ describe( module( "carbonldp/Auth/Role" ), ():void => {
 		"Specific interface that represents the base of an in-memory role for any context."
 	), ():void => {
 
-		it( extendsClass( "CarbonLDP.Document.Document" ), ():void => {
+		it( extendsClass( "CarbonLDP.Document" ), ():void => {
 			let role:Role.Class = <any> {};
 			let document:Document;
 

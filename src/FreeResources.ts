@@ -229,5 +229,3 @@ export const FreeResources:FreeResourcesFactory = {
 	},
 };
 
-
-export default FreeResources;

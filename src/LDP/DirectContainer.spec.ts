@@ -1,8 +1,8 @@
+import { Document } from "../Document";
 import * as Errors from "../Errors";
 import { Pointer } from "../Pointer";
 import {
 	extendsClass,
-	hasDefaultExport,
 	hasMethod,
 	hasProperty,
 	interfaze,
@@ -12,40 +12,38 @@ import {
 	property,
 	STATIC,
 } from "../test/JasmineExtender";
-
 import { LDP } from "../Vocabularies/LDP";
-import { Document } from "./../Document";
 
-import DefaultExport, { DirectContainer } from "./DirectContainer";
+import { DirectContainer } from "./DirectContainer";
 
 describe( module( "carbonldp/LDP/DirectContainer" ), ():void => {
 
 	describe( interfaze(
-		"CarbonLDP.LDP.DirectContainer.DirectContainer",
+		"CarbonLDP.LDP.DirectContainer",
 		"Interface that represents an `ldp:DirectContainer`."
 	), ():void => {
 
-		it( extendsClass( "CarbonLDP.Document.Document" ), ():void => {} );
+		it( extendsClass( "CarbonLDP.Document" ), ():void => {} );
 
 		it( hasProperty(
 			OBLIGATORY,
 			"membershipResource",
-			"CarbonLDP.Pointer.Pointer",
+			"CarbonLDP.Pointer",
 			"Pointer that references the document that the direct container belongs to."
 		), ():void => {} );
 
 		it( hasProperty(
 			OBLIGATORY,
 			"hasMembershipRelation",
-			"CarbonLDP.Pointer.Pointer",
+			"CarbonLDP.Pointer",
 			"Pointer that reference to the property the direct container manages."
 		), ():void => {} );
 
 	} );
 
 	describe( interfaze(
-		"CarbonLDP.LDP.DirectContainer.DirectContainerFactory",
-		"Interface with the factory, decorate and utils methods of a `CarbonLDP.LDP.DirectContainer.DirectContainer`"
+		"CarbonLDP.LDP.DirectContainerFactory",
+		"Interface with the factory, decorate and utils methods of a `CarbonLDP.LDP.DirectContainer`"
 	), ():void => {
 
 		it( hasProperty(
@@ -57,39 +55,39 @@ describe( module( "carbonldp/LDP/DirectContainer" ), ():void => {
 		it( hasMethod(
 			OBLIGATORY,
 			"is",
-			"Returns true if the object provided is considered a `CarbonLDP.LDP.DirectContainer.DirectContainer` object.", [
+			"Returns true if the object provided is considered a `CarbonLDP.LDP.DirectContainer` object.", [
 				{ name: "object", type: "object" },
 			],
-			{ type: "object is CarbonLDP.LDP.DirectContainer.DirectContainer" }
+			{ type: "object is CarbonLDP.LDP.DirectContainer" }
 		), ():void => {} );
 
 		it( hasMethod(
 			OBLIGATORY,
 			"create",
-			"Creates a `CarbonLDP.LDP.DirectContainer.DirectContainer` object with the parameters specified.", [
-				{ name: "membershipResource", type: "CarbonLDP.Pointer.Pointer" },
-				{ name: "hasMemberRelation", type: "string | CarbonLDP.Pointer.Pointer" },
-				{ name: "isMemberOfRelation", type: "string | CarbonLDP.Pointer.Pointer", optional: true },
+			"Creates a `CarbonLDP.LDP.DirectContainer` object with the parameters specified.", [
+				{ name: "membershipResource", type: "CarbonLDP.Pointer" },
+				{ name: "hasMemberRelation", type: "string | CarbonLDP.Pointer" },
+				{ name: "isMemberOfRelation", type: "string | CarbonLDP.Pointer", optional: true },
 			],
-			{ type: "CarbonLDP.LDP.DirectContainer.DirectContainer" }
+			{ type: "CarbonLDP.LDP.DirectContainer" }
 		), ():void => {} );
 
 		it( hasMethod(
 			OBLIGATORY,
 			"createFrom",
 			[ "T extends object" ],
-			"Creates a `CarbonLDP.LDP.DirectContainer.DirectContainer` object with the object provided and the parameters specified.", [
+			"Creates a `CarbonLDP.LDP.DirectContainer` object with the object provided and the parameters specified.", [
 				{ name: "object", type: "T" },
-				{ name: "membershipResource", type: "CarbonLDP.Pointer.Pointer" },
-				{ name: "hasMemberRelation", type: "string | CarbonLDP.Pointer.Pointer" },
-				{ name: "isMemberOfRelation", type: "string | CarbonLDP.Pointer.Pointer", optional: true },
+				{ name: "membershipResource", type: "CarbonLDP.Pointer" },
+				{ name: "hasMemberRelation", type: "string | CarbonLDP.Pointer" },
+				{ name: "isMemberOfRelation", type: "string | CarbonLDP.Pointer", optional: true },
 			],
-			{ type: "T & CarbonLDP.LDP.DirectContainer.DirectContainer" }
+			{ type: "T & CarbonLDP.LDP.DirectContainer" }
 		), ():void => {} );
 
 	} );
 
-	describe( property( STATIC, "DirectContainer", "CarbonLDP.LDP.DirectContainer.DirectContainerFactory", "Constant that implements the `CarbonLDP.LDP.DirectContainer.DirectContainerFactory` interface." ), ():void => {
+	describe( property( STATIC, "DirectContainer", "CarbonLDP.LDP.DirectContainerFactory", "Constant that implements the `CarbonLDP.LDP.DirectContainerFactory` interface." ), ():void => {
 
 		it( isDefined(), ():void => {
 			expect( DirectContainer ).toBeDefined();
@@ -256,14 +254,6 @@ describe( module( "carbonldp/LDP/DirectContainer" ), ():void => {
 			expect( () => DirectContainer.createFrom( {}, null, hasMemberRelation ) ).toThrowError( Errors.IllegalArgumentError );
 		} );
 
-	} );
-
-	it( hasDefaultExport( "CarbonLDP.LDP.DirectContainer.DirectContainer" ), ():void => {
-		let defaultExport:DefaultExport = <any> {};
-		let defaultTarget:DirectContainer;
-
-		defaultTarget = defaultExport;
-		expect( defaultTarget ).toEqual( jasmine.any( Object ) );
 	} );
 
 } );

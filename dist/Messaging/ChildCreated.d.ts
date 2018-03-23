@@ -7,4 +7,3 @@ export interface ChildCreatedFactory {
     SCHEMA: ObjectSchema;
 }
 export declare const ChildCreated: ChildCreatedFactory;
-export default ChildCreated;

@@ -7,4 +7,3 @@ export interface PersistedAccessPoint extends AccessPointBase, PersistedProtecte
     isMemberOfRelation?: Pointer;
     insertedContentRelation?: Pointer;
 }
-export default PersistedAccessPoint;

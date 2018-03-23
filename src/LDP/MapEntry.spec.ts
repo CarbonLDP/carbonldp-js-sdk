@@ -1,6 +1,5 @@
 import {
 	extendsClass,
-	hasDefaultExport,
 	hasProperty,
 	interfaze,
 	module,
@@ -11,17 +10,17 @@ import {
 import { C } from "../Vocabularies/C";
 import * as Utils from "./../Utils";
 
-import DefaultExport, { MapEntry } from "./MapEntry";
+import { MapEntry } from "./MapEntry";
 
 describe( module( "carbonldp/LDP/MapEntry" ), ():void => {
 
 	describe( interfaze(
-		"CarbonLDP.LDP.MapEntry.MapEntry",
+		"CarbonLDP.LDP.MapEntry",
 		[ "K", "V" ],
-		"Entries of the `CarbonLDP.LDP.Map.Map` with the key/value pair."
+		"Entries of the `CarbonLDP.LDP.Map` with the key/value pair."
 	), ():void => {
 
-		it( extendsClass( "CarbonLDP.BlankNode.BlankNode" ), ():void => {} );
+		it( extendsClass( "CarbonLDP.BlankNode" ), ():void => {} );
 
 		it( hasProperty(
 			OBLIGATORY,
@@ -40,14 +39,14 @@ describe( module( "carbonldp/LDP/MapEntry" ), ():void => {
 	} );
 
 	describe( interfaze(
-		"CarbonLDP.LDP.MapEntry.MapEntryFactory",
-		"Interface with the factory, decorate and utils methods for `CarbonLDP.LDP.MapEntry.MapEntry` objects"
+		"CarbonLDP.LDP.MapEntryFactory",
+		"Interface with the factory, decorate and utils methods for `CarbonLDP.LDP.MapEntry` objects"
 	), ():void => {
 
 		it( hasProperty(
 			OBLIGATORY,
 			"SCHEMA",
-			"CarbonLDP.ObjectSchema.ObjectSchema"
+			"CarbonLDP.ObjectSchema"
 		), ():void => {} );
 
 	} );
@@ -55,7 +54,7 @@ describe( module( "carbonldp/LDP/MapEntry" ), ():void => {
 	describe( property(
 		STATIC,
 		"CarbonMapEntry",
-		"CarbonLDP.LDP.MapEntry.MapEntryFactory"
+		"CarbonLDP.LDP.MapEntryFactory"
 	), ():void => {
 
 		it( "should exist", ():void => {
@@ -83,14 +82,6 @@ describe( module( "carbonldp/LDP/MapEntry" ), ():void => {
 
 		} );
 
-	} );
-
-	it( hasDefaultExport( "CarbonLDP.LDP.MapEntry.MapEntry" ), ():void => {
-		let defaultExport:DefaultExport<any, any> = <any> {};
-		let defaultTarget:MapEntry<any, any>;
-
-		defaultTarget = defaultExport;
-		expect( defaultTarget ).toEqual( jasmine.any( Object ) );
 	} );
 
 } );

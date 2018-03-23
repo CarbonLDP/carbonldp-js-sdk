@@ -18,5 +18,3 @@ export const AccessPointCreated:AccessPointCreatedFactory = {
 	TYPE: C.AccessPointCreated,
 	SCHEMA,
 };
-
-export default AccessPointCreated;

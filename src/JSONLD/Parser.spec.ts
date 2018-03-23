@@ -1,6 +1,5 @@
 import {
 	clazz,
-	hasDefaultExport,
 	hasMethod,
 	INSTANCE,
 	isDefined,
@@ -8,16 +7,16 @@ import {
 } from "../test/JasmineExtender";
 import * as Utils from "../Utils";
 
-import DefaultExport, { JSONLDParser } from "./Parser";
+import { JSONLDParser } from "./Parser";
 
 describe( module(
 	"carbonldp/JSONLD/Parser"
 ), ():void => {
 
 	describe( clazz(
-		"CarbonLDP.JSONLD.Parser.JSONLDParser",
+		"CarbonLDP.JSONLD.JSONLDParser",
 		"Class to parse strings to valid JSONLD objects.", [
-			"CarbonLDP.HTTP.Parser.Parser<object[]>",
+			"CarbonLDP.HTTP.Parser<object[]>",
 		]
 	), ():void => {
 
@@ -43,7 +42,7 @@ describe( module(
 		it( hasMethod(
 			INSTANCE,
 			"parse",
-			"Parse the string provided using the `CarbonLDP.JSONLD.Processor.JSONLDProcessor#expand()` method.", [
+			"Parse the string provided using the `CarbonLDP.JSONLD.JSONLDProcessor#expand()` method.", [
 				{ name: "body", type: "string", description: "A JSON-LD string to parse." },
 			],
 			{ type: "Promise<object[]>", description: "Promise that contains the parsed JSONLD object. If error occurs a `CarbonLDP.Errors.InvalidJSONLDSyntaxError` will be thrown." }
@@ -181,13 +180,6 @@ describe( module(
 			}, done.fail );
 		} );
 
-	} );
-
-	it( hasDefaultExport(
-		"CarbonLDP.JSONLD.Parser.JSONLDParser"
-	), ():void => {
-		expect( DefaultExport ).toBeDefined();
-		expect( DefaultExport ).toBe( JSONLDParser );
 	} );
 
 } );

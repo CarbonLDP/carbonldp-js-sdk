@@ -139,6 +139,5 @@ var JSONLDCompacter = (function () {
     return JSONLDCompacter;
 }());
 exports.JSONLDCompacter = JSONLDCompacter;
-exports.default = JSONLDCompacter;
 
 //# sourceMappingURL=Compacter.js.map

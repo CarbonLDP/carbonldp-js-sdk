@@ -12,6 +12,4 @@ export interface AddMemberActionFactory extends ModelFactory<AddMemberAction>, M
     isDecorated(object: object): object is AddMemberAction;
     create(targetMembers: Pointer[]): AddMemberAction;
 }
-export declare const SCHEMA: ObjectSchema;
 export declare const AddMemberAction: AddMemberActionFactory;
-export default AddMemberAction;

@@ -2,12 +2,11 @@ import { AbstractContext } from "./AbstractContext";
 import { Fragment } from "./Fragment";
 import { PersistedDocument } from "./PersistedDocument";
 
-import DefaultExport, { PersistedFragment } from "./PersistedFragment";
+import { PersistedFragment } from "./PersistedFragment";
 
 import { PersistedResource } from "./PersistedResource";
 import {
 	extendsClass,
-	hasDefaultExport,
 	hasMethod,
 	hasProperty,
 	interfaze,
@@ -22,25 +21,25 @@ import * as Utils from "./Utils";
 describe( module( "carbonldp/PersistedFragment" ), ():void => {
 
 	describe( interfaze(
-		"CarbonLDP.PersistedFragment.PersistedFragment",
+		"CarbonLDP.PersistedFragment",
 		"Interface that represents a persisted fragment of a persisted document."
 	), ():void => {
 
-		it( extendsClass( "CarbonLDP.PersistedResource.PersistedResource" ), ():void => {} );
-		it( extendsClass( "CarbonLDP.Fragment.Fragment" ), ():void => {} );
+		it( extendsClass( "CarbonLDP.PersistedResource" ), ():void => {} );
+		it( extendsClass( "CarbonLDP.Fragment" ), ():void => {} );
 
 		it( hasProperty(
 			OBLIGATORY,
 			"document",
-			"CarbonLDP.PersistedDocument.PersistedDocument",
+			"CarbonLDP.PersistedDocument",
 			"A reference to the persisted document the current fragment belongs to."
 		), ():void => {} );
 
 	} );
 
 	describe( interfaze(
-		"CarbonLDP.PersistedFragment.PersistedFragmentFactory",
-		"Interface with the factory, decorate and utils methods of a `CarbonLDP.PersistedFragment.PersistedFragment` object."
+		"CarbonLDP.PersistedFragmentFactory",
+		"Interface with the factory, decorate and utils methods of a `CarbonLDP.PersistedFragment` object."
 	), ():void => {
 
 		it( hasMethod(
@@ -48,7 +47,7 @@ describe( module( "carbonldp/PersistedFragment" ), ():void => {
 			"isDecorated", [
 				{ name: "object", type: "object" },
 			],
-			{ type: "object is CarbonLDP.PersistedFragment.PersistedFragment" }
+			{ type: "object is CarbonLDP.PersistedFragment" }
 		), ():void => {} );
 
 		it( hasMethod(
@@ -56,14 +55,14 @@ describe( module( "carbonldp/PersistedFragment" ), ():void => {
 			"is", [
 				{ name: "object", type: "object" },
 			],
-			{ type: "object is CarbonLDP.PersistedFragment.PersistedFragment" }
+			{ type: "object is CarbonLDP.PersistedFragment" }
 		), ():void => {} );
 
 		it( hasMethod(
 			OBLIGATORY,
 			"decorate",
 			[ "T extends object" ],
-			"Decorates the object provided with the properties and methods of a `CarbonLDP.PersistedFragment.PersistedFragment` object.",
+			"Decorates the object provided with the properties and methods of a `CarbonLDP.PersistedFragment` object.",
 			[
 				{ name: "object", type: "object", description: "The object to convert into a persisted fragment." },
 			]
@@ -73,10 +72,10 @@ describe( module( "carbonldp/PersistedFragment" ), ():void => {
 			OBLIGATORY,
 			"create",
 			[
-				{ name: "document", type: "CarbonLDP.PersistedDocument.PersistedDocument" },
+				{ name: "document", type: "CarbonLDP.PersistedDocument" },
 				{ name: "id", type: "string", optional: true },
 			],
-			{ type: "CarbonLDP.PersistedFragment.PersistedFragment" }
+			{ type: "CarbonLDP.PersistedFragment" }
 		), ():void => {} );
 
 		it( hasMethod(
@@ -85,23 +84,15 @@ describe( module( "carbonldp/PersistedFragment" ), ():void => {
 			[ "T extends object" ],
 			[
 				{ name: "object", type: "object" },
-				{ name: "document", type: "CarbonLDP.PersistedDocument.PersistedDocument" },
+				{ name: "document", type: "CarbonLDP.PersistedDocument" },
 				{ name: "id", type: "string", optional: true },
 			],
-			{ type: "T & CarbonLDP.PersistedFragment.PersistedFragment" }
+			{ type: "T & CarbonLDP.PersistedFragment" }
 		), ():void => {} );
 
 	} );
 
-	it( hasDefaultExport( "CarbonLDP.PersistedFragment.PersistedFragment" ), ():void => {
-		let defaultExport:DefaultExport = <any> {};
-		let defaultTarget:PersistedFragment;
-
-		defaultTarget = defaultExport;
-		expect( defaultTarget ).toEqual( jasmine.any( Object ) );
-	} );
-
-	describe( property( STATIC, "PersistedFragment", "CarbonLDP.PersistedFragment.PersistedFragmentFactory", "Constant that implements the `CarbonLDP.PersistedFragment.PersistedFragmentFactory` interface." ), ():void => {
+	describe( property( STATIC, "PersistedFragment", "CarbonLDP.PersistedFragmentFactory", "Constant that implements the `CarbonLDP.PersistedFragmentFactory` interface." ), ():void => {
 
 		it( isDefined(), ():void => {
 			expect( PersistedFragment ).toBeDefined();

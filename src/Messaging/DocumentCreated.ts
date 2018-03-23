@@ -24,5 +24,3 @@ const SCHEMA:ObjectSchema = {
 export const DocumentCreated:DocumentCreatedFactory = {
 	SCHEMA,
 };
-
-export default DocumentCreated;

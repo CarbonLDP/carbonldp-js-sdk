@@ -39,7 +39,7 @@ describe( module( "carbonldp/Auth/Token" ), ():void => {
 	it( hasProperty(
 		STATIC,
 		"SCHEMA",
-		"CarbonLDP.ObjectSchema.ObjectSchema"
+		"CarbonLDP.ObjectSchema"
 	), ():void => {
 		expect( Token.SCHEMA ).toBeDefined();
 		expect( Utils.isObject( Token.SCHEMA ) ).toBe( true );
@@ -63,7 +63,7 @@ describe( module( "carbonldp/Auth/Token" ), ():void => {
 		"Interface that represents an authentication token for every context."
 	), ():void => {
 
-		it( extendsClass( "CarbonLDP.Resource.Resource" ), ():void => {} );
+		it( extendsClass( "CarbonLDP.Resource" ), ():void => {} );
 
 		it( hasProperty(
 			OBLIGATORY,
@@ -98,7 +98,7 @@ describe( module( "carbonldp/Auth/Token" ), ():void => {
 		it( hasProperty(
 			STATIC,
 			"SCHEMA",
-			"CarbonLDP.ObjectSchema.ObjectSchema"
+			"CarbonLDP.ObjectSchema"
 		), ():void => {
 			expect( Token.SCHEMA ).toBeDefined();
 			expect( Utils.isObject( Token.SCHEMA ) ).toBe( true );

@@ -1,7 +1,7 @@
+import { Document } from "../Document";
+import { IllegalArgumentError } from "../Errors/IllegalArgumentError";
 import { CS } from "../Vocabularies/CS";
 import { XSD } from "../Vocabularies/XSD";
-import { Document } from "./../Document";
-import IllegalArgumentError from "./../Errors/IllegalArgumentError";
 import * as ObjectSchema from "./../ObjectSchema";
 import * as Utils from "./../Utils";
 

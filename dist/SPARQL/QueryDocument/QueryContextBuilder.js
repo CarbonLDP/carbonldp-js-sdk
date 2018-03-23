@@ -108,6 +108,5 @@ var QueryContextBuilder = (function (_super) {
     return QueryContextBuilder;
 }(QueryContext_1.QueryContext));
 exports.QueryContextBuilder = QueryContextBuilder;
-exports.default = QueryContextBuilder;
 
 //# sourceMappingURL=QueryContextBuilder.js.map

@@ -31,6 +31,5 @@ var UnsupportedMediaTypeError = (function (_super) {
     return UnsupportedMediaTypeError;
 }(HTTPError_1.HTTPError));
 exports.UnsupportedMediaTypeError = UnsupportedMediaTypeError;
-exports.default = UnsupportedMediaTypeError;
 
 //# sourceMappingURL=UnsupportedMediaTypeError.js.map

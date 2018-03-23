@@ -1,4 +1,4 @@
-import AbstractError from "./AbstractError";
+import { AbstractError } from "./AbstractError";
 
 export class NotImplementedError extends AbstractError {
 	get name():string { return "NotImplementedError"; }
@@ -7,5 +7,3 @@ export class NotImplementedError extends AbstractError {
 		super( message );
 	}
 }
-
-export default NotImplementedError;

@@ -5,4 +5,3 @@ export declare class QueryVariable extends VariableToken {
     constructor(name: string, index: number);
     toString(): string;
 }
-export default QueryVariable;

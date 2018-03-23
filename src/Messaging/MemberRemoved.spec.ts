@@ -1,7 +1,6 @@
 import { Pointer } from "../Pointer";
 import {
 	extendsClass,
-	hasDefaultExport,
 	hasProperty,
 	interfaze,
 	isDefined,
@@ -13,14 +12,14 @@ import {
 import { C } from "../Vocabularies/C";
 import { EventMessage } from "./EventMessage";
 
-import DefaultExport, { MemberRemoved } from "./MemberRemoved";
+import { MemberRemoved } from "./MemberRemoved";
 
 import { MemberRemovedDetails } from "./MemberRemovedDetails";
 
 describe( module( "carbonldp/Messaging/MemberRemoved" ), ():void => {
 
 	describe( interfaze(
-		"CarbonLDP.Messaging.MemberRemoved.MemberRemoved",
+		"CarbonLDP.Messaging.MemberRemoved",
 		"Interface with the properties of the data received in a member removed event."
 	), ():void => {
 
@@ -29,7 +28,7 @@ describe( module( "carbonldp/Messaging/MemberRemoved" ), ():void => {
 			expect( target ).toBeDefined();
 		} );
 
-		it( extendsClass( "CarbonLDP.Messaging.EventMessage.EventMessage" ), ():void => {
+		it( extendsClass( "CarbonLDP.Messaging.EventMessage" ), ():void => {
 			const target:EventMessage = {} as MemberRemoved;
 			expect( target ).toBeDefined();
 		} );
@@ -37,7 +36,7 @@ describe( module( "carbonldp/Messaging/MemberRemoved" ), ():void => {
 		it( hasProperty(
 			OBLIGATORY,
 			"target",
-			"CarbonLDP.Pointer.Pointer"
+			"CarbonLDP.Pointer"
 		), ():void => {
 			const target:MemberRemoved[ "target" ] = {} as Pointer;
 			expect( target ).toBeDefined();
@@ -46,7 +45,7 @@ describe( module( "carbonldp/Messaging/MemberRemoved" ), ():void => {
 		it( hasProperty(
 			OBLIGATORY,
 			"details",
-			"CarbonLDP.Messaging.MemberRemovedDetails.MemberRemovedDetails"
+			"CarbonLDP.Messaging.MemberRemovedDetails"
 		), ():void => {
 			const target:MemberRemoved[ "details" ] = {} as MemberRemovedDetails;
 			expect( target ).toBeDefined();
@@ -55,8 +54,8 @@ describe( module( "carbonldp/Messaging/MemberRemoved" ), ():void => {
 	} );
 
 	describe( interfaze(
-		"CarbonLDP.Messaging.MemberRemoved.MemberRemovedFactory",
-		"Interface with the factory, decorate and utils for `CarbonLDP.Messaging.MemberRemoved.MemberRemoved` objects."
+		"CarbonLDP.Messaging.MemberRemovedFactory",
+		"Interface with the factory, decorate and utils for `CarbonLDP.Messaging.MemberRemoved` objects."
 	), ():void => {
 
 		it( hasProperty(
@@ -68,7 +67,7 @@ describe( module( "carbonldp/Messaging/MemberRemoved" ), ():void => {
 		it( hasProperty(
 			OBLIGATORY,
 			"SCHEMA",
-			"CarbonLDP.ObjectSchema.ObjectSchema"
+			"CarbonLDP.ObjectSchema"
 		), ():void => {} );
 
 	} );
@@ -76,7 +75,7 @@ describe( module( "carbonldp/Messaging/MemberRemoved" ), ():void => {
 	describe( property(
 		STATIC,
 		"MemberRemoved",
-		"CarbonLDP.Messaging.MemberRemoved.MemberRemovedFactory"
+		"CarbonLDP.Messaging.MemberRemovedFactory"
 	), ():void => {
 
 		it( isDefined(), ():void => {
@@ -113,11 +112,6 @@ describe( module( "carbonldp/Messaging/MemberRemoved" ), ():void => {
 			} );
 		} );
 
-	} );
-
-	it( hasDefaultExport( "CarbonLDP.Messaging.MemberRemoved.MemberRemoved" ), ():void => {
-		const target:MemberRemoved = {} as DefaultExport;
-		expect( target ).toBeDefined();
 	} );
 
 } );

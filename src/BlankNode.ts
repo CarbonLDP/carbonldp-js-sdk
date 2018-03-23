@@ -35,5 +35,3 @@ export const BlankNode:BlankNodeFactory = {
 		return Fragment.createFrom<T>( object, document, id );
 	},
 };
-
-export default BlankNode;

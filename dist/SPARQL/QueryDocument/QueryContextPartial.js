@@ -36,6 +36,5 @@ var QueryContextPartial = (function (_super) {
     return QueryContextPartial;
 }(QueryContext_1.QueryContext));
 exports.QueryContextPartial = QueryContextPartial;
-exports.default = QueryContextPartial;
 
 //# sourceMappingURL=QueryContextPartial.js.map

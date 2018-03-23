@@ -1,4 +1,4 @@
-import { Converter } from "../JSONLD/index";
+import { JSONLDConverter } from "../JSONLD/Converter";
 import { DigestedObjectSchema } from "../ObjectSchema";
 import { Resource } from "../Resource";
 export declare class DeltaCreator {
@@ -7,7 +7,7 @@ export declare class DeltaCreator {
     private addToken;
     private deleteToken;
     private updateLists;
-    constructor(jsonldConverter: Converter.JSONLDConverter);
+    constructor(jsonldConverter: JSONLDConverter);
     getPatch(): string;
     addResource(schema: DigestedObjectSchema, oldResource: Resource, newResource: Resource): void;
     private getPropertyIRI(schema, propertyName);
@@ -19,4 +19,3 @@ export declare class DeltaCreator {
     private compactIRI(schema, iri);
     private addPrefixFrom(object, schema);
 }
-export default DeltaCreator;

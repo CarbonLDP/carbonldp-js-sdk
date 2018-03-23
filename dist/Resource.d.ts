@@ -18,4 +18,3 @@ export declare function addTypeInResource(this: Resource, type: string): void;
 export declare function hasTypeInResource(this: Resource, type: string): boolean;
 export declare function removeTypeInResource(this: Resource, type: string): void;
 export declare const Resource: ResourceFactory;
-export default Resource;

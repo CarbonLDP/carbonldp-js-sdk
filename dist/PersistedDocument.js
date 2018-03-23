@@ -528,6 +528,5 @@ function executeUPDATE(updateQuery, requestOptions) {
 function sparql() {
     return this._documents.sparql(this.id);
 }
-exports.default = exports.PersistedDocument;
 
 //# sourceMappingURL=PersistedDocument.js.map

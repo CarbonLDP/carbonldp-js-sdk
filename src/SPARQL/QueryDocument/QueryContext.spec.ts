@@ -9,7 +9,6 @@ import { IllegalArgumentError } from "../../Errors/IllegalArgumentError";
 import {
 	clazz,
 	constructor,
-	hasDefaultExport,
 	hasSignature,
 	INSTANCE,
 	method,
@@ -17,7 +16,7 @@ import {
 } from "../../test/JasmineExtender";
 
 import * as Module from "./QueryContext";
-import DefaultExport, { QueryContext } from "./QueryContext";
+import { QueryContext } from "./QueryContext";
 
 import { QueryVariable } from "./QueryVariable";
 
@@ -28,12 +27,7 @@ describe( module( "carbonldp/SPARQL/QueryDocument/QueryContext" ), ():void => {
 		expect( Module ).toEqual( jasmine.any( Object ) );
 	} );
 
-	it( hasDefaultExport( "CarbonLDP.SPARQL.QueryDocument.QueryContext.QueryContext" ), ():void => {
-		expect( DefaultExport ).toBeDefined();
-		expect( DefaultExport ).toBe( QueryContext );
-	} );
-
-	describe( clazz( "CarbonLDP.SPARQL.QueryDocument.QueryContext.QueryContext", "Class with the shared status and data of the query." ), ():void => {
+	describe( clazz( "CarbonLDP.SPARQL.QueryDocument.QueryContext", "Class with the shared status and data of the query." ), ():void => {
 
 		it( "should exists", ():void => {
 			expect( QueryContext ).toBeDefined();
@@ -52,7 +46,7 @@ describe( module( "carbonldp/SPARQL/QueryDocument/QueryContext" ), ():void => {
 			it( hasSignature(
 				"Class that helps the builders of a query document with the shared data.",
 				[
-					{ name: "context", type: "CarbonLDP.Context.Context", optional: true, description: "The carbon context from where the query belongs to." },
+					{ name: "context", type: "CarbonLDP.Context", optional: true, description: "The carbon context from where the query belongs to." },
 				]
 			), ():void => {} );
 
@@ -82,7 +76,7 @@ describe( module( "carbonldp/SPARQL/QueryDocument/QueryContext" ), ():void => {
 				[
 					{ name: "name", type: "string" },
 				],
-				{ type: "CarbonLDP.SPARQL.QueryDocument.QueryVariable.QueryVariable" }
+				{ type: "CarbonLDP.SPARQL.QueryDocument.QueryVariable" }
 			), ():void => {
 			} );
 
@@ -156,7 +150,7 @@ describe( module( "carbonldp/SPARQL/QueryDocument/QueryContext" ), ():void => {
 				[
 					{ name: "iri", type: "string", description: "The iri to be compacted and tokenized" },
 				],
-				{ type: "SPARQLER/tokens/IRIToken | SPARQLER/tokens/PrefixedNameToken" }
+				{ type: "sparqler/tokens/IRIToken | sparqler/tokens/PrefixedNameToken" }
 			), ():void => {
 			} );
 
@@ -283,7 +277,7 @@ describe( module( "carbonldp/SPARQL/QueryDocument/QueryContext" ), ():void => {
 			it( hasSignature(
 				"Returns the general schema of the carbon context.\n" +
 				"If no carbon context provided at the constructor an empty schema will be returned.",
-				{ type: "CarbonLDP.ObjectSchema.DigestedObjectSchema" }
+				{ type: "CarbonLDP.DigestedObjectSchema" }
 			), ():void => {
 			} );
 
@@ -312,7 +306,7 @@ describe( module( "carbonldp/SPARQL/QueryDocument/QueryContext" ), ():void => {
 					{ name: "object", type: "object", description: "The object to look for its corresponding schema." },
 					{ name: "path", type: "string", description: "An optional path that describes where the resource appears in the query.\nNOTE: Property is ignored but used in the extensions of this class." },
 				],
-				{ type: "CarbonLDP.ObjectSchema.DigestedObjectSchema" }
+				{ type: "CarbonLDP.DigestedObjectSchema" }
 			), ():void => {
 			} );
 

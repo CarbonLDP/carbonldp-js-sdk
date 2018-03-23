@@ -11,19 +11,16 @@ var __importStar = (this && this.__importStar) || function (mod) {
 }
 Object.defineProperty(exports, "__esModule", { value: true });
 var ClientErrors = __importStar(require("./ClientErrors"));
-var HTTPError_1 = require("./HTTPError");
-exports.HTTPError = HTTPError_1.HTTPError;
 var ServerErrors = __importStar(require("./ServerErrors"));
-var UnknownError_1 = require("./UnknownError");
-exports.UnknownError = UnknownError_1.UnknownError;
 __export(require("./ClientErrors"));
 __export(require("./ServerErrors"));
-var statusCodeMap = new Map();
-exports.statusCodeMap = statusCodeMap;
+__export(require("./HTTPError"));
+__export(require("./UnknownError"));
+exports.statusCodeMap = new Map();
 var addErrors = function (o) { return Object
     .keys(o)
     .map(function (k) { return o[k]; })
-    .forEach(function (e) { return statusCodeMap.set(e.statusCode, e); }); };
+    .forEach(function (e) { return exports.statusCodeMap.set(e.statusCode, e); }); };
 addErrors(ClientErrors);
 addErrors(ServerErrors);
 

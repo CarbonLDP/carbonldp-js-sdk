@@ -2,7 +2,6 @@ import { Pointer } from "../Pointer";
 import { Resource } from "../Resource";
 import {
 	extendsClass,
-	hasDefaultExport,
 	hasProperty,
 	interfaze,
 	module,
@@ -14,12 +13,12 @@ import {
 import { SHACL } from "../Vocabularies/SHACL";
 import { XSD } from "../Vocabularies/XSD";
 
-import DefaultExport, { ValidationResult } from "./ValidationResult";
+import { ValidationResult } from "./ValidationResult";
 
 describe( module( "carbonldp/SHACL/ValidationResult" ), ():void => {
 
 	describe( interfaze(
-		"CarbonLDP.SHACL.ValidationResult.ValidationResult",
+		"CarbonLDP.SHACL.ValidationResult",
 		"Interface of a result that reports individual SHACL validation failure."
 	), ():void => {
 
@@ -28,7 +27,7 @@ describe( module( "carbonldp/SHACL/ValidationResult" ), ():void => {
 			expect( target ).toBeDefined();
 		} );
 
-		it( extendsClass( "CarbonLDP.Resource.Resource" ), ():void => {
+		it( extendsClass( "CarbonLDP.Resource" ), ():void => {
 			const target:Resource = {} as ValidationResult;
 			expect( target ).toBeDefined();
 		} );
@@ -36,7 +35,7 @@ describe( module( "carbonldp/SHACL/ValidationResult" ), ():void => {
 		it( hasProperty(
 			OBLIGATORY,
 			"focusNode",
-			"CarbonLDP.Pointer.Pointer",
+			"CarbonLDP.Pointer",
 			"The focus node that has caused the result."
 		), ():void => {
 			const target:ValidationResult[ "focusNode" ] = {} as Pointer;
@@ -46,7 +45,7 @@ describe( module( "carbonldp/SHACL/ValidationResult" ), ():void => {
 		it( hasProperty(
 			OPTIONAL,
 			"resultPath",
-			"CarbonLDP.Pointer.Pointer",
+			"CarbonLDP.Pointer",
 			"The SHACL shape property path that where tested."
 		), ():void => {
 			const target:ValidationResult[ "resultPath" ] = {} as Pointer;
@@ -66,7 +65,7 @@ describe( module( "carbonldp/SHACL/ValidationResult" ), ():void => {
 		it( hasProperty(
 			OPTIONAL,
 			"sourceShape",
-			"CarbonLDP.Pointer.Pointer",
+			"CarbonLDP.Pointer",
 			"Pointer to the source SHACL shape used in the validation."
 		), ():void => {
 			const target:ValidationResult[ "sourceShape" ] = {} as Pointer;
@@ -76,7 +75,7 @@ describe( module( "carbonldp/SHACL/ValidationResult" ), ():void => {
 		it( hasProperty(
 			OPTIONAL,
 			"detail",
-			"CarbonLDP.Pointer.Pointer",
+			"CarbonLDP.Pointer",
 			"Pointer to the possible parent wih one or more SHACL results."
 		), ():void => {
 			const target:ValidationResult[ "detail" ] = {} as Pointer;
@@ -96,7 +95,7 @@ describe( module( "carbonldp/SHACL/ValidationResult" ), ():void => {
 		it( hasProperty(
 			OPTIONAL,
 			"resultSeverity",
-			"CarbonLDP.Pointer.Pointer",
+			"CarbonLDP.Pointer",
 			"The severity described by the SHACL shape severity property."
 		), ():void => {
 			const target:ValidationResult[ "resultSeverity" ] = {} as Pointer;
@@ -107,7 +106,7 @@ describe( module( "carbonldp/SHACL/ValidationResult" ), ():void => {
 
 	describe( interfaze(
 		"CarbonLDP.SHACL.ValidationResult.ValidationResultFactory",
-		"Interface with the factory, decorate and utils elements for `CarbonLDP.SHACL.ValidationResult.ValidationResult` objects."
+		"Interface with the factory, decorate and utils elements for `CarbonLDP.SHACL.ValidationResult` objects."
 	), ():void => {
 
 		it( hasProperty(
@@ -119,7 +118,7 @@ describe( module( "carbonldp/SHACL/ValidationResult" ), ():void => {
 		it( hasProperty(
 			OBLIGATORY,
 			"SCHEMA",
-			"CarbonLDP.ObjectSchema.ObjectSchema"
+			"CarbonLDP.ObjectSchema"
 		), ():void => {} );
 
 	} );
@@ -199,11 +198,6 @@ describe( module( "carbonldp/SHACL/ValidationResult" ), ():void => {
 			} );
 		} );
 
-	} );
-
-	it( hasDefaultExport( "CarbonLDP.SHACL.ValidationResult.ValidationResult" ), ():void => {
-		const target:ValidationResult = {} as DefaultExport;
-		expect( target ).toBeDefined();
 	} );
 
 } );

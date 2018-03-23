@@ -4,7 +4,6 @@ import {
 	clazz,
 	constructor,
 	extendsClass,
-	hasDefaultExport,
 	hasSignature,
 	INSTANCE,
 	method,
@@ -12,7 +11,7 @@ import {
 } from "../../test/JasmineExtender";
 
 import * as Module from "./QueryVariable";
-import DefaultExport, { QueryVariable } from "./QueryVariable";
+import { QueryVariable } from "./QueryVariable";
 
 describe( module( "carbonldp/SPARQL/QueryDocument/QueryVariable" ), ():void => {
 
@@ -21,12 +20,7 @@ describe( module( "carbonldp/SPARQL/QueryDocument/QueryVariable" ), ():void => {
 		expect( Module ).toEqual( jasmine.any( Object ) );
 	} );
 
-	it( hasDefaultExport( "CarbonLDP.SPARQL.QueryDocument.QueryVariable.QueryVariable" ), ():void => {
-		expect( DefaultExport ).toBeDefined();
-		expect( DefaultExport ).toBe( QueryVariable );
-	} );
-
-	describe( clazz( "CarbonLDP.SPARQL.QueryDocument.QueryVariable.QueryVariable", "Class that represents a property in the query" ), ():void => {
+	describe( clazz( "CarbonLDP.SPARQL.QueryDocument.QueryVariable", "Class that represents a property in the query" ), ():void => {
 
 		it( "should exists", ():void => {
 			expect( QueryVariable ).toBeDefined();

@@ -2,7 +2,6 @@ import { VolatileResource } from "../../LDP/VolatileResource";
 import { Pointer } from "../../Pointer";
 import { Resource } from "../../Resource";
 import {
-	hasDefaultExport,
 	hasProperty,
 	hasSignature,
 	interfaze,
@@ -14,7 +13,7 @@ import {
 } from "../../test/JasmineExtender";
 import { C } from "../../Vocabularies/C";
 
-import DefaultExport, { QueryMetadata } from "./QueryMetadata";
+import { QueryMetadata } from "./QueryMetadata";
 
 describe( module( "carbonldp/SPARQL/QueryDocument/QueryMetadata" ), ():void => {
 
@@ -23,12 +22,7 @@ describe( module( "carbonldp/SPARQL/QueryDocument/QueryMetadata" ), ():void => {
 		expect( QueryMetadata ).toEqual( jasmine.any( Object ) );
 	} );
 
-	it( hasDefaultExport( "CarbonLDP.SPARQL.QueryDocument.QueryMetadata.QueryMetadata" ), ():void => {
-		const target:DefaultExport = {} as QueryMetadata;
-		expect( target ).toBeDefined();
-	} );
-
-	describe( interfaze( "CarbonLDP.SPARQL.QueryDocument.QueryMetadata.QueryMetadata", "Interface of the volatile resource created by the SDK in the partial query request." ), ():void => {
+	describe( interfaze( "CarbonLDP.SPARQL.QueryDocument.QueryMetadata", "Interface of the volatile resource created by the SDK in the partial query request." ), ():void => {
 
 		it( "should exists", ():void => {
 			const target:QueryMetadata = {} as QueryMetadata;
@@ -38,7 +32,7 @@ describe( module( "carbonldp/SPARQL/QueryDocument/QueryMetadata" ), ():void => {
 		it( hasProperty(
 			OBLIGATORY,
 			"target",
-			"CarbonLDP.Pointer.Pointer",
+			"CarbonLDP.Pointer",
 			"The pointer to one of the targeted resources requested in the partial query."
 		), ():void => {
 			const target:QueryMetadata[ "target" ] = {} as Pointer;
@@ -49,7 +43,7 @@ describe( module( "carbonldp/SPARQL/QueryDocument/QueryMetadata" ), ():void => {
 
 	describe( interfaze(
 		"CarbonLDP.SPARQL.QueryDocument.QueryMetadataFactory",
-		"Interface with the factory, decorate and utils methods for `CarbonLDP.SPARQL.QueryDocument.QueryMetadata.QueryMetadata` objects."
+		"Interface with the factory, decorate and utils methods for `CarbonLDP.SPARQL.QueryDocument.QueryMetadata` objects."
 	), ():void => {
 
 		it( hasProperty(
@@ -61,7 +55,7 @@ describe( module( "carbonldp/SPARQL/QueryDocument/QueryMetadata" ), ():void => {
 		it( hasProperty(
 			OBLIGATORY,
 			"SCHEMA",
-			"CarbonLDP.ObjectSchema.ObjectSchema"
+			"CarbonLDP.ObjectSchema"
 		), ():void => {} );
 
 		describe( method( OBLIGATORY, "is" ), ():void => {
@@ -71,7 +65,7 @@ describe( module( "carbonldp/SPARQL/QueryDocument/QueryMetadata" ), ():void => {
 				[
 					{ name: "object", type: "object", description: "The object to check." },
 				],
-				{ type: "object is CarbonLDP.SPARQL.QueryDocument.QueryMetadata.QueryMetadata" }
+				{ type: "object is CarbonLDP.SPARQL.QueryDocument.QueryMetadata" }
 			), ():void => {} );
 
 		} );

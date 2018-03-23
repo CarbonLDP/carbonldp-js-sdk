@@ -1,7 +1,6 @@
 import {
 	clazz,
 	extendsClass,
-	hasDefaultExport,
 	hasProperty,
 	INSTANCE,
 	isDefined,
@@ -9,10 +8,9 @@ import {
 } from "./../test/JasmineExtender";
 import * as Utils from "./../Utils";
 
-import AbstractError from "./AbstractError";
+import { AbstractError } from "./AbstractError";
 
 import * as IDAlreadyInUseError from "./IDAlreadyInUseError";
-import DefaultExport from "./IDAlreadyInUseError";
 
 // TODO: Refactor tests
 describe( module( "carbonldp/Errors/IDAlreadyInUseError" ), ():void => {
@@ -56,11 +54,6 @@ describe( module( "carbonldp/Errors/IDAlreadyInUseError" ), ():void => {
 			expect( error.name ).toBe( "IDAlreadyInUseError" );
 		} );
 
-	} );
-
-	it( hasDefaultExport( "CarbonLDP.Errors.IDAlreadyInUseError" ), ():void => {
-		expect( DefaultExport ).toBeDefined();
-		expect( DefaultExport ).toBe( IDAlreadyInUseError.IDAlreadyInUseError );
 	} );
 
 } );

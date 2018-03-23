@@ -152,5 +152,3 @@ export const RDFNode:RDFNodeFactory = {
 	},
 
 };
-
-export default RDFNode;

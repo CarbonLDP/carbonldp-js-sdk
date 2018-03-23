@@ -18,6 +18,5 @@ exports.RDFValue = {
         return null;
     },
 };
-exports.default = exports.RDFValue;
 
 //# sourceMappingURL=Value.js.map

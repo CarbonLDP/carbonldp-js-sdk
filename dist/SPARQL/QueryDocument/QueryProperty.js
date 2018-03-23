@@ -70,6 +70,5 @@ var QueryProperty = (function () {
     return QueryProperty;
 }());
 exports.QueryProperty = QueryProperty;
-exports.default = QueryProperty;
 
 //# sourceMappingURL=QueryProperty.js.map

@@ -11,7 +11,7 @@ var Utils = __importStar(require("../Utils"));
 var C_1 = require("../Vocabularies/C");
 var XSD_1 = require("../Vocabularies/XSD");
 var VolatileResource_1 = require("./VolatileResource");
-exports.SCHEMA = {
+var SCHEMA = {
     "relatedDocument": {
         "@id": C_1.C.relatedDocument,
         "@type": "@id",
@@ -27,7 +27,7 @@ exports.SCHEMA = {
 };
 exports.DocumentMetadata = {
     TYPE: C_1.C.DocumentMetadata,
-    SCHEMA: exports.SCHEMA,
+    SCHEMA: SCHEMA,
     isDecorated: function (object) {
         return Utils.hasPropertyDefined(object, "relatedDocument");
     },
@@ -37,6 +37,5 @@ exports.DocumentMetadata = {
             && exports.DocumentMetadata.isDecorated(object);
     },
 };
-exports.default = exports.DocumentMetadata;
 
 //# sourceMappingURL=DocumentMetadata.js.map

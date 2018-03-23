@@ -8,7 +8,6 @@ import { IllegalArgumentError } from "../../Errors";
 import {
 	clazz,
 	constructor,
-	hasDefaultExport,
 	hasSignature,
 	INSTANCE,
 	method,
@@ -18,7 +17,7 @@ import { XSD } from "../../Vocabularies/XSD";
 import { QueryContext } from "./QueryContext";
 
 import * as Module from "./QueryValue";
-import DefaultValue, { QueryValue } from "./QueryValue";
+import { QueryValue } from "./QueryValue";
 
 describe( module( "carbonldp/SPARQL/QueryDocument/QueryValue" ), ():void => {
 
@@ -27,12 +26,7 @@ describe( module( "carbonldp/SPARQL/QueryDocument/QueryValue" ), ():void => {
 		expect( Module ).toEqual( jasmine.any( Object ) );
 	} );
 
-	it( hasDefaultExport( "CarbonLDP.SPARQL.QueryDocument.QueryValue.QueryValue" ), ():void => {
-		expect( DefaultValue ).toBeDefined();
-		expect( DefaultValue ).toBe( QueryValue );
-	} );
-
-	describe( clazz( "CarbonLDP.SPARQL.QueryDocument.QueryValue.QueryValue", "Class that represents a property in the query" ), ():void => {
+	describe( clazz( "CarbonLDP.SPARQL.QueryDocument.QueryValue", "Class that represents a property in the query" ), ():void => {
 
 		it( "should exists", ():void => {
 			expect( QueryValue ).toBeDefined();
@@ -53,7 +47,7 @@ describe( module( "carbonldp/SPARQL/QueryDocument/QueryValue" ), ():void => {
 			it( hasSignature(
 				"Creates a value wrapper for the specified value.",
 				[
-					{ name: "context", type: "CarbonLDP.SPARQL.QueryDocument.QueryContext.QueryContext", description: "The context of the query where the value is been used." },
+					{ name: "context", type: "CarbonLDP.SPARQL.QueryDocument.QueryContext", description: "The context of the query where the value is been used." },
 					{ name: "value", type: "string | number | boolean | Date", description: "The value to be converted and wrapped fot the ready to use in the query statements." },
 				]
 			), ():void => {

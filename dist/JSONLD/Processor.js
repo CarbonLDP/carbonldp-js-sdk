@@ -432,12 +432,5 @@ var JSONLDProcessor = (function () {
     return JSONLDProcessor;
 }());
 exports.JSONLDProcessor = JSONLDProcessor;
-var Util = (function () {
-    function Util() {
-    }
-    return Util;
-}());
-exports.Util = Util;
-exports.default = JSONLDProcessor;
 
 //# sourceMappingURL=Processor.js.map

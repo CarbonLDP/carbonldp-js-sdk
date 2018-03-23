@@ -3,4 +3,3 @@ export declare class BadResponseError extends HTTPError {
     static readonly statusCode: number;
     readonly name: string;
 }
-export default BadResponseError;

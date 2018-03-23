@@ -143,6 +143,5 @@ var QueryDocumentBuilder = (function () {
     return QueryDocumentBuilder;
 }());
 exports.QueryDocumentBuilder = QueryDocumentBuilder;
-exports.default = QueryDocumentBuilder;
 
 //# sourceMappingURL=QueryDocumentBuilder.js.map

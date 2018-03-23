@@ -17,6 +17,5 @@ var SCHEMA = __assign({}, EventMessage_1.EventMessage.SCHEMA, { "details": {
 exports.DocumentCreated = {
     SCHEMA: SCHEMA,
 };
-exports.default = exports.DocumentCreated;
 
 //# sourceMappingURL=DocumentCreated.js.map

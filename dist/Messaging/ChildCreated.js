@@ -8,6 +8,5 @@ exports.ChildCreated = {
     TYPE: TYPE,
     SCHEMA: SCHEMA,
 };
-exports.default = exports.ChildCreated;
 
 //# sourceMappingURL=ChildCreated.js.map

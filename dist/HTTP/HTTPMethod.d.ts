@@ -7,4 +7,3 @@ export declare enum HTTPMethod {
     PATCH = 5,
     DELETE = 6,
 }
-export default HTTPMethod;

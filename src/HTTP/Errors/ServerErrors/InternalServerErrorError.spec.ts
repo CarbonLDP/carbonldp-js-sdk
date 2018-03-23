@@ -4,7 +4,6 @@ import { HTTPError } from "../HTTPError";
 import {
 	clazz,
 	extendsClass,
-	hasDefaultExport,
 	hasMethod,
 	hasProperty,
 	INSTANCE,
@@ -15,7 +14,6 @@ import {
 import * as Utils from "./../../../Utils";
 
 import * as InternalServerErrorError from "./InternalServerErrorError";
-import DefaultExport from "./InternalServerErrorError";
 
 describe( module( "carbonldp/HTTP/Errors/ServerErrors/InternalServerErrorError" ), ():void => {
 
@@ -99,11 +97,6 @@ describe( module( "carbonldp/HTTP/Errors/ServerErrors/InternalServerErrorError" 
 			expect( InternalServerErrorError.InternalServerErrorError.statusCode ).toBe( 500 );
 		} );
 
-	} );
-
-	it( hasDefaultExport( "CarbonLDP.HTTP.Errors.InternalServerErrorError" ), ():void => {
-		expect( DefaultExport ).toBeDefined();
-		expect( DefaultExport ).toBe( InternalServerErrorError.InternalServerErrorError );
 	} );
 
 } );

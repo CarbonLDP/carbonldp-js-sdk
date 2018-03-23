@@ -18,4 +18,3 @@ export declare class MessagingService {
     private makeSubscription(id, destination, eventCallback, errorCallback);
     private storeSubscriptions();
 }
-export default MessagingService;

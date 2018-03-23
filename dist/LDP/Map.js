@@ -18,6 +18,5 @@ exports.Map = {
             && object.hasOwnProperty("entries");
     },
 };
-exports.default = exports.Map;
 
 //# sourceMappingURL=Map.js.map

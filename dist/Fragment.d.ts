@@ -13,4 +13,3 @@ export interface FragmentFactory extends ModelFactory<Fragment>, ModelDecorator<
     decorate<T extends object>(object: T): T & Fragment;
 }
 export declare const Fragment: FragmentFactory;
-export default Fragment;

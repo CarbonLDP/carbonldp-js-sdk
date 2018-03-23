@@ -164,6 +164,5 @@ exports.FreeResources = {
         return object;
     },
 };
-exports.default = exports.FreeResources;
 
 //# sourceMappingURL=FreeResources.js.map

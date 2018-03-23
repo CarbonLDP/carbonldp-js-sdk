@@ -1,6 +1,5 @@
 import {
 	clazz,
-	hasDefaultExport,
 	hasMethod,
 	INSTANCE,
 	isDefined,
@@ -9,7 +8,6 @@ import {
 import * as Utils from "./../Utils";
 
 import * as JSONParser from "./JSONParser";
-import DefaultExport from "./JSONParser";
 
 describe( module( "carbonldp/HTTP/JSONParser" ), ():void => {
 
@@ -19,9 +17,9 @@ describe( module( "carbonldp/HTTP/JSONParser" ), ():void => {
 	} );
 
 	describe( clazz(
-		"CarbonLDP.HTTP.JSONParser.JSONParser",
+		"CarbonLDP.HTTP.JSONParser",
 		"Wrapper class for the native `JSON.parse()` function using the `Promise` pattern.", [
-			"CarbonLDP.HTTP.Parser.Parser<object>",
+			"CarbonLDP.HTTP.Parser<object>",
 		]
 	), ():void => {
 
@@ -123,13 +121,6 @@ describe( module( "carbonldp/HTTP/JSONParser" ), ():void => {
 			}, done.fail );
 		} );
 
-	} );
-
-	it( hasDefaultExport(
-		"CarbonLDP.HTTP.JSONParser.JSONParser"
-	), ():void => {
-		expect( DefaultExport ).toBeDefined();
-		expect( DefaultExport ).toBe( JSONParser.JSONParser );
 	} );
 
 } );

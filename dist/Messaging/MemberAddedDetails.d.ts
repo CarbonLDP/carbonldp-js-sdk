@@ -7,4 +7,3 @@ export interface MemberAddedDetailsFactory {
     SCHEMA: ObjectSchema;
 }
 export declare const MemberAddedDetails: MemberAddedDetailsFactory;
-export default MemberAddedDetails;

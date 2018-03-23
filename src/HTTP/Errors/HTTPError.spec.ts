@@ -3,7 +3,6 @@ import {
 	clazz,
 	extendsClass,
 	hasConstructor,
-	hasDefaultExport,
 	hasMethod,
 	hasProperty,
 	INSTANCE,
@@ -16,7 +15,6 @@ import { Response } from "../Response";
 import * as Utils from "./../../Utils";
 
 import * as HTTPError from "./HTTPError";
-import DefaultExport from "./HTTPError";
 
 describe( module(
 	"carbonldp/HTTP/Errors/HTTPError"
@@ -67,7 +65,7 @@ describe( module(
 
 		it( hasConstructor( [
 			{ name: "message", type: "string" },
-			{ name: "response", type: "CarbonLDP.HTTP.Response.Response" },
+			{ name: "response", type: "CarbonLDP.HTTP.Response" },
 		] ), ():void => {
 			let error:HTTPError.HTTPError = new HTTPError.HTTPError( "Message of the error", response );
 
@@ -145,11 +143,6 @@ describe( module(
 			expect( error.requestID ).toEqual( null );
 		} );
 
-	} );
-
-	it( hasDefaultExport( "CarbonLDP.HTTP.Errors.HTTPError" ), ():void => {
-		expect( DefaultExport ).toBeDefined();
-		expect( DefaultExport ).toBe( HTTPError.HTTPError );
 	} );
 
 } );
