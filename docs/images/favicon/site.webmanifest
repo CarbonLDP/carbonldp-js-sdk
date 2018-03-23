@@ -1,5 +1,6 @@
 {
-    "name": "",
+	    "name": "Carbon LDP JS SDK",
+    "short_name": "carbonldp-js-sdk",
     "icons": [
         {
             "src": "/android-chrome-192x192.png",
