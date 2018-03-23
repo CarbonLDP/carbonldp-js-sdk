@@ -1,9 +1,8 @@
-import { VolatileResource } from "../LDP/VolatileResource";
 import { ObjectSchema } from "../ObjectSchema";
 import { PersistedDocument } from "../PersistedDocument";
-export interface PlatformMetadata extends VolatileResource, PersistedDocument {
-    version: string;
-    buildDate: Date;
+import { PlatformInstance } from "./PlatformInstance";
+export interface PlatformMetadata extends PersistedDocument {
+    instance: PlatformInstance;
 }
 export interface PlatformMetadataFactory {
     TYPE: string;

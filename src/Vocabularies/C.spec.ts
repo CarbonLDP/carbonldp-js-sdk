@@ -198,6 +198,15 @@ describe( module( "carbonldp/Vocabularies/C" ), ():void => {
 
 		it( hasProperty(
 			OBLIGATORY,
+			"PlatformInstance",
+			"string"
+		), ():void => {
+			expect( C.PlatformInstance ).toEqual( jasmine.any( String ) );
+			expect( C.PlatformInstance ).toBe( "https://carbonldp.com/ns/v1/platform#PlatformInstance" );
+		} );
+
+		it( hasProperty(
+			OBLIGATORY,
 			"PreferContainer",
 			"https://carbonldp.com/ns/v1/platform#PreferContainer"
 		), ():void => {
@@ -489,6 +498,15 @@ describe( module( "carbonldp/Vocabularies/C" ), ():void => {
 
 		it( hasProperty(
 			OBLIGATORY,
+			"instance",
+			"string"
+		), ():void => {
+			expect( C.instance ).toEqual( jasmine.any( String ) );
+			expect( C.instance ).toBe( "https://carbonldp.com/ns/v1/platform#instance" );
+		} );
+
+		it( hasProperty(
+			OBLIGATORY,
 			"relatedDocument",
 			"https://carbonldp.com/ns/v1/platform#relatedDocument"
 		), ():void => {
@@ -563,7 +581,7 @@ describe( module( "carbonldp/Vocabularies/C" ), ():void => {
 		} );
 
 		it( "should test all exported IRIs", ():void => {
-			expect( Object.keys( C ).length ).toBe( 60 );
+			expect( Object.keys( C ).length ).toBe( 62 );
 		} );
 
 		it( "C.namespace", ():void => {
@@ -664,6 +682,11 @@ describe( module( "carbonldp/Vocabularies/C" ), ():void => {
 		it( "C.Platform", ():void => {
 			expect( C.Platform ).toEqual( jasmine.any( String ) );
 			expect( C.Platform ).toBe( "https://carbonldp.com/ns/v1/platform#Platform" );
+		} );
+
+		it( "C.PlatformInstance", ():void => {
+			expect( C.PlatformInstance ).toEqual( jasmine.any( String ) );
+			expect( C.PlatformInstance ).toBe( "https://carbonldp.com/ns/v1/platform#PlatformInstance" );
 		} );
 
 		it( "C.PreferContainer", ():void => {
@@ -827,6 +850,11 @@ describe( module( "carbonldp/Vocabularies/C" ), ():void => {
 		it( "C.httpStatusCode", ():void => {
 			expect( C.httpStatusCode ).toEqual( jasmine.any( String ) );
 			expect( C.httpStatusCode ).toBe( "https://carbonldp.com/ns/v1/platform#httpStatusCode" );
+		} );
+
+		it( "C.instance", ():void => {
+			expect( C.instance ).toEqual( jasmine.any( String ) );
+			expect( C.instance ).toBe( "https://carbonldp.com/ns/v1/platform#instance" );
 		} );
 
 		it( "C.relatedDocument", ():void => {

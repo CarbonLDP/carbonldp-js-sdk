@@ -37,6 +37,7 @@ var URI_1 = require("./RDF/URI");
 var ValidationReport_1 = require("./SHACL/ValidationReport");
 var ValidationResult_1 = require("./SHACL/ValidationResult");
 var QueryMetadata_1 = require("./SPARQL/QueryDocument/QueryMetadata");
+var PlatformInstance_1 = require("./System/PlatformInstance");
 var PlatformMetadata_1 = require("./System/PlatformMetadata");
 var Utils_1 = require("./Utils");
 var SDKContext = (function () {
@@ -168,6 +169,7 @@ var SDKContext = (function () {
         this.extendObjectSchema(Document_1.Document.TYPE, Document_1.Document.SCHEMA);
         this.extendObjectSchema(ProtectedDocument_1.ProtectedDocument.TYPE, ProtectedDocument_1.ProtectedDocument.SCHEMA);
         this.extendObjectSchema(PlatformMetadata_1.PlatformMetadata.TYPE, PlatformMetadata_1.PlatformMetadata.SCHEMA);
+        this.extendObjectSchema(PlatformInstance_1.PlatformInstance.TYPE, PlatformInstance_1.PlatformInstance.SCHEMA);
         this.extendObjectSchema(AddMemberAction_1.AddMemberAction.TYPE, AddMemberAction_1.AddMemberAction.SCHEMA);
         this.extendObjectSchema(Error_1.Error.TYPE, Error_1.Error.SCHEMA);
         this.extendObjectSchema(Map_1.Map.TYPE, Map_1.Map.SCHEMA);

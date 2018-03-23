@@ -1,4 +1,4 @@
-import { VolatileResource } from "../LDP/VolatileResource";
+import { PersistedDocument } from "../PersistedDocument";
 import {
 	extendsClass,
 	hasProperty,
@@ -9,8 +9,6 @@ import {
 	STATIC,
 } from "../test/JasmineExtender";
 import { C } from "../Vocabularies/C";
-import { XSD } from "../Vocabularies/XSD";
-import * as Utils from "./../Utils";
 
 import { PlatformMetadata } from "./PlatformMetadata";
 
@@ -18,29 +16,19 @@ describe( module( "carbonldp/System/PlatformMetadata" ), ():void => {
 
 	describe( interfaze(
 		"CarbonLDP.System.PlatformMetadata.PlatformMetadata",
-		"Interface that represents a requested API description of the Carbon LDP Platform configured."
+		"Interface that represents the document with the data of the Carbon LDP Platform instance."
 	), ():void => {
 
-		it( extendsClass( "CarbonLDP.LDP.VolatileResource.VolatileResource" ), ():void => {
-			const instanceMetadata:PlatformMetadata = <any> {};
-			const volatileResource:VolatileResource = instanceMetadata;
-
-			expect( instanceMetadata ).toBeDefined();
-			expect( volatileResource ).toBeDefined();
+		it( extendsClass( "CarbonLDP.PersistedDocument.PersistedDocument" ), ():void => {
+			const target:PersistedDocument = {} as PlatformMetadata;
+			expect( target ).toBeDefined();
 		} );
 
 		it( hasProperty(
 			OBLIGATORY,
-			"version",
-			"string",
-			"The version of the Carbon LDP Platform configured."
-		), ():void => {} );
-
-		it( hasProperty(
-			OBLIGATORY,
-			"buildDate",
-			"Date",
-			"The last time the platform was built."
+			"instance",
+			"CarbonLDP.System.PlatformInstance.PlatformInstance",
+			"The fragment where the actual data of the instance lives on."
 		), ():void => {} );
 
 	} );
@@ -75,29 +63,33 @@ describe( module( "carbonldp/System/PlatformMetadata" ), ():void => {
 			expect( PlatformMetadata ).toEqual( jasmine.any( Object ) );
 		} );
 
-		// TODO: Separate in different methods
-		it( "PlatformMetadata.TYPE", ():void => {
-			expect( PlatformMetadata.TYPE ).toBeDefined();
-			expect( Utils.isString( PlatformMetadata.TYPE ) ).toBe( true );
+		describe( "PlatformMetadata.TYPE", ():void => {
 
-			expect( PlatformMetadata.TYPE ).toBe( C.Platform );
-		} );
-
-		// TODO: Separate in different methods
-		it( "PlatformMetadata.SCHEMA", ():void => {
-			expect( PlatformMetadata.SCHEMA ).toBeDefined();
-			expect( Utils.isObject( PlatformMetadata.SCHEMA ) ).toBe( true );
-
-			expect( Utils.hasProperty( PlatformMetadata.SCHEMA, "version" ) ).toBe( true );
-			expect( PlatformMetadata.SCHEMA[ "version" ] ).toEqual( {
-				"@id": C.version,
-				"@type": XSD.string,
+			it( "should exist", ():void => {
+				expect( PlatformMetadata.TYPE ).toBeDefined();
+				expect( PlatformMetadata.TYPE ).toEqual( jasmine.any( String ) );
 			} );
 
-			expect( Utils.hasProperty( PlatformMetadata.SCHEMA, "buildDate" ) ).toBe( true );
-			expect( PlatformMetadata.SCHEMA[ "buildDate" ] ).toEqual( {
-				"@id": C.buildDate,
-				"@type": XSD.dateTime,
+			it( "should be c:Platform", ():void => {
+				expect( PlatformMetadata.TYPE ).toBe( C.Platform );
+			} );
+
+		} );
+
+		describe( "PlatformMetadata.SCHEMA", ():void => {
+
+			it( "should exist", ():void => {
+				expect( PlatformMetadata.SCHEMA ).toBeDefined();
+				expect( PlatformMetadata.SCHEMA ).toEqual( jasmine.any( Object ) );
+			} );
+
+			it( "should have c:instance", ():void => {
+				expect( PlatformMetadata.SCHEMA ).toEqual( jasmine.objectContaining( {
+					instance: {
+						"@id": C.instance,
+						"@type": "@id",
+					},
+				} ) );
 			} );
 
 		} );
