@@ -41,7 +41,7 @@ describe( module( "carbonldp/Auth/PersistedUser" ), ():void => {
 		"Interface that represents the base of a persisted User in any context."
 	), ():void => {
 
-		it( extendsClass( "CarbonLDP.PersistedProtectedDocument.PersistedProtectedDocument" ), ():void => {} );
+		it( extendsClass( "CarbonLDP.PersistedProtectedDocument" ), ():void => {} );
 
 		it( hasProperty(
 			OBLIGATORY,

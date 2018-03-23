@@ -19,17 +19,17 @@ import { DocumentMetadata } from "./DocumentMetadata";
 describe( module( "carbonldp/LDP/DocumentMetadata" ), ():void => {
 
 	describe( interfaze(
-		"CarbonLDP.LDP.DocumentMetadata.DocumentMetadata",
+		"CarbonLDP.LDP.DocumentMetadata",
 		"Interface that represents a free node resource that contains dynamic information about an specific resource."
 	), ():void => {
 
-		it( extendsClass( "CarbonLDP.LDP.VolatileResource.VolatileResource" ), ():void => {} );
+		it( extendsClass( "CarbonLDP.LDP.VolatileResource" ), ():void => {} );
 
 
 		it( hasProperty(
 			OBLIGATORY,
 			"relatedDocument",
-			"CarbonLDP.Pointer.Pointer",
+			"CarbonLDP.Pointer",
 			"Reference to the resource the metadata information refers to."
 		), ():void => {} );
 
@@ -43,7 +43,7 @@ describe( module( "carbonldp/LDP/DocumentMetadata" ), ():void => {
 		it( hasProperty(
 			OBLIGATORY,
 			"bNodesMap",
-			"CarbonLDP.LDP.Map.Map<CarbonLDP.BlankNode.BlankNode, CarbonLDP.BlankNode.BlankNode>",
+			"CarbonLDP.LDP.Map<CarbonLDP.BlankNode, CarbonLDP.BlankNode>",
 			"A `c:Map` object that contains the changes of persisted BNode IDs."
 		), ():void => {} );
 
@@ -51,8 +51,8 @@ describe( module( "carbonldp/LDP/DocumentMetadata" ), ():void => {
 
 
 	describe( interfaze(
-		"CarbonLDP.LDP.DocumentMetadata.DocumentMetadataFactory",
-		"Interface with the factory, decorate and utils methods for `CarbonLDP.LDP.DocumentMetadata.DocumentMetadata` objects."
+		"CarbonLDP.LDP.DocumentMetadataFactory",
+		"Interface with the factory, decorate and utils methods for `CarbonLDP.LDP.DocumentMetadata` objects."
 	), ():void => {
 
 		it( hasProperty(
@@ -64,25 +64,25 @@ describe( module( "carbonldp/LDP/DocumentMetadata" ), ():void => {
 		it( hasProperty(
 			OBLIGATORY,
 			"SCHEMA",
-			"CarbonLDP.ObjectSchema.ObjectSchema"
+			"CarbonLDP.ObjectSchema"
 		), ():void => {} );
 
 		it( hasMethod(
 			OBLIGATORY,
 			"isDecorated",
-			"Return true if the object provided has the properties of a `CarbonLDP.LDP.DocumentMetadata.DocumentMetadata` object.", [
+			"Return true if the object provided has the properties of a `CarbonLDP.LDP.DocumentMetadata` object.", [
 				{ name: "object", type: "object", description: "Object to check." },
 			],
-			{ type: "object is CarbonLDP.LDP.DocumentMetadata.DocumentMetadata" }
+			{ type: "object is CarbonLDP.LDP.DocumentMetadata" }
 		), ():void => {} );
 
 		it( hasMethod(
 			OBLIGATORY,
 			"is",
-			"Return true if the object provided is considered a `CarbonLDP.LDP.DocumentMetadata.DocumentMetadata` object.", [
+			"Return true if the object provided is considered a `CarbonLDP.LDP.DocumentMetadata` object.", [
 				{ name: "object", type: "object", description: "Object to check." },
 			],
-			{ type: "object is CarbonLDP.LDP.DocumentMetadata.DocumentMetadata" }
+			{ type: "object is CarbonLDP.LDP.DocumentMetadata" }
 		), ():void => {} );
 
 	} );
@@ -90,7 +90,7 @@ describe( module( "carbonldp/LDP/DocumentMetadata" ), ():void => {
 	describe( property(
 		STATIC,
 		"DocumentMetadata",
-		"CarbonLDP.LDP.DocumentMetadata.DocumentMetadataFactory"
+		"CarbonLDP.LDP.DocumentMetadataFactory"
 	), ():void => {
 
 		it( isDefined(), ():void => {

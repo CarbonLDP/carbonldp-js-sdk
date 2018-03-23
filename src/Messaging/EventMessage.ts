@@ -17,7 +17,7 @@ export interface EventMessageFactory extends ModelFactory<EventMessage> {
 	isDecorated( object:object ):object is EventMessage;
 }
 
-export const SCHEMA:ObjectSchema = {
+const SCHEMA:ObjectSchema = {
 	"target": {
 		"@id": C.target,
 		"@type": "@id",

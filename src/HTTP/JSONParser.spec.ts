@@ -17,9 +17,9 @@ describe( module( "carbonldp/HTTP/JSONParser" ), ():void => {
 	} );
 
 	describe( clazz(
-		"CarbonLDP.HTTP.JSONParser.JSONParser",
+		"CarbonLDP.HTTP.JSONParser",
 		"Wrapper class for the native `JSON.parse()` function using the `Promise` pattern.", [
-			"CarbonLDP.HTTP.Parser.Parser<object>",
+			"CarbonLDP.HTTP.Parser<object>",
 		]
 	), ():void => {
 

@@ -19,24 +19,24 @@ import { AddMemberAction } from "./AddMemberAction";
 describe( module( "carbonldp/LDP/AddMemberAction" ), ():void => {
 
 	describe( interfaze(
-		"CarbonLDP.LDP.AddMemberAction.AddMemberAction",
+		"CarbonLDP.LDP.AddMemberAction",
 		"Interface that represents an object to be sent in a request that add members to a container."
 	), ():void => {
 
-		it( extendsClass( "CarbonLDP.Resource.Resource" ), ():void => {} );
+		it( extendsClass( "CarbonLDP.Resource" ), ():void => {} );
 
 		it( hasProperty(
 			OBLIGATORY,
 			"targetMembers",
-			"CarbonLDP.Pointer.Pointer[]",
+			"CarbonLDP.Pointer[]",
 			"Array with the members to be added to the container."
 		), ():void => {} );
 
 	} );
 
 	describe( interfaze(
-		"CarbonLDP.LDP.AddMemberAction.AddMemberActionFactory",
-		"Interface with the factory, decorate and utils methods of `CarbonLDP.LDP.AddMemberAction.AddMemberAction` objects"
+		"CarbonLDP.LDP.AddMemberActionFactory",
+		"Interface with the factory, decorate and utils methods of `CarbonLDP.LDP.AddMemberAction` objects"
 	), ():void => {
 
 		it( hasProperty(
@@ -48,25 +48,25 @@ describe( module( "carbonldp/LDP/AddMemberAction" ), ():void => {
 		it( hasProperty(
 			OBLIGATORY,
 			"SCHEMA",
-			"CarbonLDP.ObjectSchema.ObjectSchema"
+			"CarbonLDP.ObjectSchema"
 		), ():void => {} );
 
 		it( hasMethod(
 			STATIC,
 			"isDecorated",
-			"Returns true if the object has the properties of a `CarbonLDP.LDP.AddMemberAction.AddMemberAction` object.", [
+			"Returns true if the object has the properties of a `CarbonLDP.LDP.AddMemberAction` object.", [
 				{ name: "object", type: "object" },
 			],
-			{ type: "object is CarbonLDP.LDP.AddMemberAction.AddMemberAction" }
+			{ type: "object is CarbonLDP.LDP.AddMemberAction" }
 		), ():void => {} );
 
 		it( hasMethod(
 			STATIC,
 			"create",
-			"Creates `CarbonLDP.LDP.AddMemberAction.AddMemberAction` resource for the specified targetMembers.", [
-				{ name: "targetMembers", type: "CarbonLDP.Pointer.Pointer[]", description: "The target members to add in a `addMember` request." },
+			"Creates `CarbonLDP.LDP.AddMemberAction` resource for the specified targetMembers.", [
+				{ name: "targetMembers", type: "CarbonLDP.Pointer[]", description: "The target members to add in a `addMember` request." },
 			],
-			{ type: "CarbonLDP.LDP.AddMemberAction.AddMemberAction" }
+			{ type: "CarbonLDP.LDP.AddMemberAction" }
 		), ():void => {} );
 
 	} );
@@ -74,8 +74,8 @@ describe( module( "carbonldp/LDP/AddMemberAction" ), ():void => {
 	describe( property(
 		STATIC,
 		"AddMemberAction",
-		"CarbonLDP.LDP.AddMemberAction.AddMemberActionFactory",
-		"Constant that implements the `CarbonLDP.LDP.AddMemberAction.AddMemberActionFactory` instance."
+		"CarbonLDP.LDP.AddMemberActionFactory",
+		"Constant that implements the `CarbonLDP.LDP.AddMemberActionFactory` instance."
 	), ():void => {
 
 		it( isDefined(), ():void => {

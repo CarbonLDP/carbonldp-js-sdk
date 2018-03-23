@@ -14,9 +14,8 @@ import {
 	VariableOrIRI,
 } from "sparqler/tokens";
 
-import { Converter } from "../JSONLD/index";
+import { JSONLDConverter } from "../JSONLD/Converter";
 import { guessXSDType } from "../JSONLD/Utils";
-import { XSD } from "../Vocabularies/XSD";
 import {
 	ContainerType,
 	DigestedObjectSchema,
@@ -26,6 +25,7 @@ import {
 import { Pointer } from "../Pointer";
 import { Resource } from "../Resource";
 import { isString } from "../Utils";
+import { XSD } from "../Vocabularies/XSD";
 
 import {
 	AddToken,
@@ -54,13 +54,13 @@ typesDefinition.containerType = ContainerType.SET;
 export class DeltaCreator {
 
 	private prefixesMap:Map<string, PrefixToken>;
-	private jsonldConverter:Converter.JSONLDConverter;
+	private jsonldConverter:JSONLDConverter;
 
 	private addToken:AddToken;
 	private deleteToken:DeleteToken;
 	private updateLists:UpdateListToken[];
 
-	constructor( jsonldConverter:Converter.JSONLDConverter ) {
+	constructor( jsonldConverter:JSONLDConverter ) {
 		this.prefixesMap = new Map();
 		this.jsonldConverter = jsonldConverter;
 

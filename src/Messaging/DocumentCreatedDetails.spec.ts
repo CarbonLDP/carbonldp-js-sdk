@@ -17,7 +17,7 @@ import { DocumentCreatedDetails } from "./DocumentCreatedDetails";
 describe( module( "carbonldp/Messaging/DocumentCreatedDetails" ), ():void => {
 
 	describe( interfaze(
-		"CarbonLDP.Messaging.DocumentCreatedDetails.DocumentCreatedDetails",
+		"CarbonLDP.Messaging.DocumentCreatedDetails",
 		"Interface with the properties of the details in a document created event."
 	), ():void => {
 
@@ -26,7 +26,7 @@ describe( module( "carbonldp/Messaging/DocumentCreatedDetails" ), ():void => {
 			expect( target ).toBeDefined();
 		} );
 
-		it( extendsClass( "CarbonLDP.Resource.Resource" ), ():void => {
+		it( extendsClass( "CarbonLDP.Resource" ), ():void => {
 			const target:Resource = {} as DocumentCreatedDetails;
 			expect( target ).toBeDefined();
 		} );
@@ -34,7 +34,7 @@ describe( module( "carbonldp/Messaging/DocumentCreatedDetails" ), ():void => {
 		it( hasProperty(
 			OBLIGATORY,
 			"createdDocuments",
-			"CarbonLDP.Pointer.Pointer[]"
+			"CarbonLDP.Pointer[]"
 		), ():void => {
 			const target:DocumentCreatedDetails[ "createdDocuments" ] = [] as Pointer[];
 			expect( target ).toBeDefined();
@@ -43,8 +43,8 @@ describe( module( "carbonldp/Messaging/DocumentCreatedDetails" ), ():void => {
 	} );
 
 	describe( interfaze(
-		"CarbonLDP.Messaging.DocumentCreatedDetails.DocumentCreatedDetailsFactory",
-		"Interface with the factory, decorate and utils for `CarbonLDP.Messaging.DocumentCreatedDetails.DocumentCreatedDetails` objects."
+		"CarbonLDP.Messaging.DocumentCreatedDetailsFactory",
+		"Interface with the factory, decorate and utils for `CarbonLDP.Messaging.DocumentCreatedDetails` objects."
 	), ():void => {
 
 		it( hasProperty(
@@ -56,7 +56,7 @@ describe( module( "carbonldp/Messaging/DocumentCreatedDetails" ), ():void => {
 		it( hasProperty(
 			OBLIGATORY,
 			"SCHEMA",
-			"CarbonLDP.ObjectSchema.ObjectSchema"
+			"CarbonLDP.ObjectSchema"
 		), ():void => {} );
 
 	} );
@@ -64,7 +64,7 @@ describe( module( "carbonldp/Messaging/DocumentCreatedDetails" ), ():void => {
 	describe( property(
 		STATIC,
 		"DocumentCreatedDetails",
-		"CarbonLDP.Messaging.DocumentCreatedDetails.DocumentCreatedDetailsFactory"
+		"CarbonLDP.Messaging.DocumentCreatedDetailsFactory"
 	), ():void => {
 
 		it( isDefined(), ():void => {

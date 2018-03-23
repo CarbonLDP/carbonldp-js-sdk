@@ -12,5 +12,4 @@ export interface RemoveMemberActionFactory extends ModelDecorator<RemoveMemberAc
     isDecorated(object: object): object is RemoveMemberAction;
     create(targetMembers: Pointer[]): RemoveMemberAction;
 }
-export declare const SCHEMA: ObjectSchema;
 export declare const RemoveMemberAction: RemoveMemberActionFactory;

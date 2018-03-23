@@ -16,11 +16,11 @@ import { Error } from "./Error";
 describe( module( "carbonldp/LDP/Error" ), ():void => {
 
 	describe( interfaze(
-		"CarbonLDP.LDP.Error.Error",
+		"CarbonLDP.LDP.Error",
 		"Interface that represents an error occurred in the server."
 	), ():void => {
 
-		it( extendsClass( "CarbonLDP.Resource.Resource" ), ():void => {} );
+		it( extendsClass( "CarbonLDP.Resource" ), ():void => {} );
 
 		it( hasProperty(
 			OBLIGATORY,
@@ -39,15 +39,15 @@ describe( module( "carbonldp/LDP/Error" ), ():void => {
 		it( hasProperty(
 			OBLIGATORY,
 			"errorParameters",
-			"CarbonLDP.LDP.Map.Map<string, any>",
+			"CarbonLDP.LDP.Map<string, any>",
 			"Map that contains the specific elements that make the error been thrown."
 		), ():void => {} );
 
 	} );
 
 	describe( interfaze(
-		"CarbonLDP.LDP.Error.ErrorFactory",
-		"Interface with the factory, decorate and utils function for `CarbonLDP.LDP.Error.Error` objects."
+		"CarbonLDP.LDP.ErrorFactory",
+		"Interface with the factory, decorate and utils function for `CarbonLDP.LDP.Error` objects."
 	), ():void => {
 
 		it( hasProperty(
@@ -59,7 +59,7 @@ describe( module( "carbonldp/LDP/Error" ), ():void => {
 		it( hasProperty(
 			OBLIGATORY,
 			"SCHEMA",
-			"CarbonLDP.ObjectSchema.ObjectSchema"
+			"CarbonLDP.ObjectSchema"
 		), ():void => {} );
 
 	} );
@@ -67,7 +67,7 @@ describe( module( "carbonldp/LDP/Error" ), ():void => {
 	describe( property(
 		STATIC,
 		"CarbonError",
-		"CarbonLDP.LDP.Error.ErrorFactory"
+		"CarbonLDP.LDP.ErrorFactory"
 	), ():void => {
 
 		it( "should exist", ():void => {

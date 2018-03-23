@@ -18,25 +18,25 @@ import { Map } from "./Map";
 describe( module( "carbonldp/LDP/Map" ), ():void => {
 
 	describe( interfaze(
-		"CarbonLDP.LDP.Map.Map",
+		"CarbonLDP.LDP.Map",
 		[ "K", "V" ],
 		"Interface that contains a set entries with a close relation in the form of a key/value pair."
 	), ():void => {
 
-		it( extendsClass( "CarbonLDP.Resource.Resource" ), ():void => {} );
+		it( extendsClass( "CarbonLDP.Resource" ), ():void => {} );
 
 		it( hasProperty(
 			OBLIGATORY,
 			"entries",
-			"CarbonLDP.LDP.MapEntry.MapEntry<K,V>[]",
+			"CarbonLDP.LDP.MapEntry<K,V>[]",
 			"An array of entries' pair relations."
 		), ():void => {} );
 
 	} );
 
 	describe( interfaze(
-		"CarbonLDP.LDP.Map.MapFactory",
-		"Interface with the factory, decorate and utils methods for `CarbonLDP.LDP.Map.Map` objects."
+		"CarbonLDP.LDP.MapFactory",
+		"Interface with the factory, decorate and utils methods for `CarbonLDP.LDP.Map` objects."
 	), ():void => {
 
 		it( hasProperty(
@@ -48,16 +48,16 @@ describe( module( "carbonldp/LDP/Map" ), ():void => {
 		it( hasProperty(
 			OBLIGATORY,
 			"SCHEMA",
-			"CarbonLDP.ObjectSchema.ObjectSchema"
+			"CarbonLDP.ObjectSchema"
 		), ():void => {} );
 
 		it( hasMethod(
 			OBLIGATORY,
 			"is",
-			"Return true if the object provided is considered a `CarbonLDP.LDP.Map.Map` object.", [
+			"Return true if the object provided is considered a `CarbonLDP.LDP.Map` object.", [
 				{ name: "object", type: "object", description: "Object to check" },
 			],
-			{ type: "object is CarbonLDP.LDP.Map.Map<any, any>" }
+			{ type: "object is CarbonLDP.LDP.Map<any, any>" }
 		), ():void => {} );
 
 	} );
@@ -65,7 +65,7 @@ describe( module( "carbonldp/LDP/Map" ), ():void => {
 	describe( property(
 		STATIC,
 		"CarbonMap",
-		"CarbonLDP.LDP.Map.MapFactory"
+		"CarbonLDP.LDP.MapFactory"
 	), ():void => {
 
 		it( isDefined(), ():void => {

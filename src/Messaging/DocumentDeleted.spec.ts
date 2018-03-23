@@ -18,7 +18,7 @@ import { EventMessage } from "./EventMessage";
 describe( module( "carbonldp/Messaging/DocumentDeleted" ), ():void => {
 
 	describe( interfaze(
-		"CarbonLDP.Messaging.DocumentDeleted.DocumentDeleted",
+		"CarbonLDP.Messaging.DocumentDeleted",
 		"Interface with the properties of the data received in a document deleted event."
 	), ():void => {
 
@@ -27,7 +27,7 @@ describe( module( "carbonldp/Messaging/DocumentDeleted" ), ():void => {
 			expect( target ).toBeDefined();
 		} );
 
-		it( extendsClass( "CarbonLDP.Messaging.EventMessage.EventMessage" ), ():void => {
+		it( extendsClass( "CarbonLDP.Messaging.EventMessage" ), ():void => {
 			const target:EventMessage = {} as DocumentDeleted;
 			expect( target ).toBeDefined();
 		} );
@@ -35,7 +35,7 @@ describe( module( "carbonldp/Messaging/DocumentDeleted" ), ():void => {
 		it( hasProperty(
 			OBLIGATORY,
 			"target",
-			"CarbonLDP.Pointer.Pointer"
+			"CarbonLDP.Pointer"
 		), ():void => {
 			const target:DocumentDeleted[ "target" ] = {} as Pointer;
 			expect( target ).toBeDefined();
@@ -44,8 +44,8 @@ describe( module( "carbonldp/Messaging/DocumentDeleted" ), ():void => {
 	} );
 
 	describe( interfaze(
-		"CarbonLDP.Messaging.DocumentDeleted.DocumentDeletedFactory",
-		"Interface with the factory, decorate and utils for `CarbonLDP.Messaging.DocumentDeleted.DocumentDeleted` objects."
+		"CarbonLDP.Messaging.DocumentDeletedFactory",
+		"Interface with the factory, decorate and utils for `CarbonLDP.Messaging.DocumentDeleted` objects."
 	), ():void => {
 
 		it( hasProperty(
@@ -57,7 +57,7 @@ describe( module( "carbonldp/Messaging/DocumentDeleted" ), ():void => {
 		it( hasProperty(
 			STATIC,
 			"SCHEMA",
-			"CarbonLDP.ObjectSchema.ObjectSchema"
+			"CarbonLDP.ObjectSchema"
 		), ():void => {} );
 
 	} );
@@ -65,7 +65,7 @@ describe( module( "carbonldp/Messaging/DocumentDeleted" ), ():void => {
 	describe( property(
 		STATIC,
 		"DocumentDeleted",
-		"CarbonLDP.Messaging.DocumentDeleted.DocumentDeletedFactory"
+		"CarbonLDP.Messaging.DocumentDeletedFactory"
 	), ():void => {
 
 		it( isDefined(), ():void => {

@@ -8,12 +8,22 @@ import * as Utils from "../Utils";
 
 import * as SPARQL from "./";
 
-import * as Builder from "./Builder";
+import {
+	FinishSPARQLSelect,
+	SPARQLBuilder,
+} from "./Builder";
 import * as QueryDocument from "./QueryDocument";
-import * as RawResults from "./RawResults";
-import * as RawResultsParser from "./RawResultsParser";
-import * as SELECTResults from "./SelectResults";
-import * as Service from "./Service";
+import {
+	SPARQLRawBindingObject,
+	SPARQLRawBindingProperty,
+	SPARQLRawResults,
+} from "./RawResults";
+import { SPARQLRawResultsParser } from "./RawResultsParser";
+import {
+	SPARQLBindingObject,
+	SPARQLSelectResults,
+} from "./SelectResults";
+import { SPARQLService } from "./Service";
 
 describe( module( "carbonldp/SPARQL" ), ():void => {
 
@@ -24,13 +34,21 @@ describe( module( "carbonldp/SPARQL" ), ():void => {
 
 	it( reexports(
 		STATIC,
-		"Builder",
-		"carbonldp/SPARQL/Builder"
+		"SPARQLBuilder",
+		"CarbonLDP.SPARQL.SPARQLBuilder"
 	), ():void => {
-		expect( SPARQL.Builder ).toBeDefined();
-		expect( SPARQL.Builder ).toBe( Builder );
+		expect( SPARQL.SPARQLBuilder ).toBeDefined();
+		expect( SPARQL.SPARQLBuilder ).toBe( SPARQLBuilder );
 	} );
 
+	it( reexports(
+		STATIC,
+		"FinishSPARQLSelect",
+		"CarbonLDP.SPARQL.FinishSPARQLSelect"
+	), ():void => {
+		const target:SPARQL.FinishSPARQLSelect = {} as FinishSPARQLSelect;
+		expect( target ).toBeDefined();
+	} );
 
 	it( reexports(
 		STATIC,
@@ -43,38 +61,65 @@ describe( module( "carbonldp/SPARQL" ), ():void => {
 
 	it( reexports(
 		STATIC,
-		"RawResults",
-		"carbonldp/SPARQL/RawResults"
+		"SPARQLRawResults",
+		"CarbonLDP.SPARQL.SPARQLRawResults"
 	), ():void => {
-		expect( SPARQL.RawResults ).toBeDefined();
-		expect( SPARQL.RawResults ).toBe( RawResults );
+		const target:SPARQL.SPARQLRawResults = {} as SPARQLRawResults;
+		expect( target ).toBeDefined();
 	} );
 
 	it( reexports(
 		STATIC,
-		"RawResultsParser",
-		"carbonldp/SPARQL/RawResultsParser"
+		"SPARQLRawBindingObject",
+		"CarbonLDP.SPARQL.SPARQLRawBindingObject"
 	), ():void => {
-		expect( SPARQL.RawResultsParser ).toBeDefined();
-		expect( SPARQL.RawResultsParser ).toBe( RawResultsParser );
+		const target:SPARQL.SPARQLRawBindingObject = {} as SPARQLRawBindingObject;
+		expect( target ).toBeDefined();
 	} );
 
 	it( reexports(
 		STATIC,
-		"SelectResults",
-		"carbonldp/SPARQL/SelectResults"
+		"SPARQLRawBindingProperty",
+		"CarbonLDP.SPARQL.SPARQLRawBindingProperty"
 	), ():void => {
-		expect( SPARQL.SelectResults ).toBeDefined();
-		expect( SPARQL.SelectResults ).toBe( SELECTResults );
+		const target:SPARQL.SPARQLRawBindingProperty = {} as SPARQLRawBindingProperty;
+		expect( target ).toBeDefined();
 	} );
 
 	it( reexports(
 		STATIC,
-		"Service",
-		"carbonldp/SPARQL/Service"
+		"SPARQLRawResultsParser",
+		"CarbonLDP.SPARQL.SPARQLRawResultsParser"
 	), ():void => {
-		expect( SPARQL.Service ).toBeDefined();
-		expect( SPARQL.Service ).toBe( Service );
+		expect( SPARQL.SPARQLRawResultsParser ).toBeDefined();
+		expect( SPARQL.SPARQLRawResultsParser ).toBe( SPARQLRawResultsParser );
+	} );
+
+	it( reexports(
+		STATIC,
+		"SPARQLBindingObject",
+		"CarbonLDP.SPARQL.SPARQLBindingObject"
+	), ():void => {
+		const target:SPARQL.SPARQLBindingObject = {} as SPARQLBindingObject;
+		expect( target ).toBeDefined();
+	} );
+
+	it( reexports(
+		STATIC,
+		"SPARQLSelectResults",
+		"CarbonLDP.SPARQL.SPARQLSelectResults"
+	), ():void => {
+		const target:SPARQL.SPARQLSelectResults = {} as SPARQLSelectResults;
+		expect( target ).toBeDefined();
+	} );
+
+	it( reexports(
+		STATIC,
+		"SPARQLService",
+		"CarbonLDP.SPARQL.SPARQLService"
+	), ():void => {
+		expect( SPARQL.SPARQLService ).toBeDefined();
+		expect( SPARQL.SPARQLService ).toBe( SPARQLService );
 	} );
 
 } );

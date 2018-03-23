@@ -15,11 +15,11 @@ import { PlatformMetadata } from "./PlatformMetadata";
 describe( module( "carbonldp/System/PlatformMetadata" ), ():void => {
 
 	describe( interfaze(
-		"CarbonLDP.System.PlatformMetadata.PlatformMetadata",
+		"CarbonLDP.System.PlatformMetadata",
 		"Interface that represents the document with the data of the Carbon LDP Platform instance."
 	), ():void => {
 
-		it( extendsClass( "CarbonLDP.PersistedDocument.PersistedDocument" ), ():void => {
+		it( extendsClass( "CarbonLDP.PersistedDocument" ), ():void => {
 			const target:PersistedDocument = {} as PlatformMetadata;
 			expect( target ).toBeDefined();
 		} );
@@ -34,8 +34,8 @@ describe( module( "carbonldp/System/PlatformMetadata" ), ():void => {
 	} );
 
 	describe( interfaze(
-		"CarbonLDP.System.PlatformMetadata.PlatformMetadataFactory",
-		"Interface with the factory, decorate and utils elements for `CarbonLDP.System.PlatformMetadata.PlatformMetadata` objects."
+		"CarbonLDP.System.PlatformMetadataFactory",
+		"Interface with the factory, decorate and utils elements for `CarbonLDP.System.PlatformMetadata` objects."
 	), ():void => {
 
 		it( hasProperty(
@@ -47,7 +47,7 @@ describe( module( "carbonldp/System/PlatformMetadata" ), ():void => {
 		it( hasProperty(
 			OBLIGATORY,
 			"SCHEMA",
-			"CarbonLDP.ObjectSchema.ObjectSchema"
+			"CarbonLDP.ObjectSchema"
 		), ():void => {} );
 
 	} );
@@ -55,7 +55,7 @@ describe( module( "carbonldp/System/PlatformMetadata" ), ():void => {
 	describe( property(
 		STATIC,
 		"PlatformMetadata",
-		"CarbonLDP.System.PlatformMetadata.PlatformMetadataFactory"
+		"CarbonLDP.System.PlatformMetadataFactory"
 	), ():void => {
 
 		it( "should exist", ():void => {

@@ -19,7 +19,7 @@ describe( module( "carbonldp/Context" ), ():void => {
 	} );
 
 	describe( interfaze(
-		"CarbonLDP.Context.Context",
+		"CarbonLDP.Context",
 		"Interface that every context in the SDK implements."
 	), ():void => {
 
@@ -33,14 +33,14 @@ describe( module( "carbonldp/Context" ), ():void => {
 		it( hasProperty(
 			OBLIGATORY,
 			"documents",
-			"CarbonLDP.Documents.Documents",
+			"CarbonLDP.Documents",
 			"The documents class of the context."
 		), ():void => {} );
 
 		it( hasProperty(
 			OBLIGATORY,
 			"parentContext",
-			"CarbonLDP.Context.Context",
+			"CarbonLDP.Context",
 			"The parent context of the current context. It will be `null` when the context has no parent."
 		), ():void => {} );
 
@@ -84,7 +84,7 @@ describe( module( "carbonldp/Context" ), ():void => {
 			"Returns the ObjectSchema for the specified type. If no type is specified, the general object schema of the context should be returned.", [
 				{ name: "type", type: "string", optional: true, description: "The URI of the type to look for its schema." },
 			],
-			{ type: "CarbonLDP.ObjectSchema.DigestedObjectSchema", description: "The specified schema to look for." }
+			{ type: "CarbonLDP.DigestedObjectSchema", description: "The specified schema to look for." }
 		), ():void => {} );
 
 		describe( method(
@@ -95,13 +95,13 @@ describe( module( "carbonldp/Context" ), ():void => {
 			it( hasSignature(
 				"Extends the schema for a specified type of Resource.\nIf a schema for the type exists in the parent context, this is duplicated for the actual context, but only the first time this schema is extended.", [
 					{ name: "type", type: "string", description: "The URI of the type to extends its schema." },
-					{ name: "objectSchema", type: "CarbonLDP.ObjectSchema.DigestedObjectSchema", description: "The new schema that will extends the previous one." },
+					{ name: "objectSchema", type: "CarbonLDP.DigestedObjectSchema", description: "The new schema that will extends the previous one." },
 				]
 			), ():void => {} );
 
 			it( hasSignature(
 				"Extends the general schema of the current context.\nIf a general schema exists in the parent context, this is duplicated for the current context, but only the first time the schema is extended.", [
-					{ name: "objectSchema", type: "CarbonLDP.ObjectSchema.DigestedObjectSchema", description: "The new schema that will extends the previous one." },
+					{ name: "objectSchema", type: "CarbonLDP.DigestedObjectSchema", description: "The new schema that will extends the previous one." },
 				]
 			), ():void => {} );
 

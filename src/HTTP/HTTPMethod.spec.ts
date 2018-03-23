@@ -18,7 +18,7 @@ describe( module(
 	} );
 
 	describe( enumeration(
-		"CarbonLDP.HTTP.HTTPMethod.HTTPMethod",
+		"CarbonLDP.HTTP.HTTPMethod",
 		"Enum with the HTTP/1.1 methods."
 	), ():void => {
 

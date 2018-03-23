@@ -24,7 +24,7 @@ describe( module( "carbonldp/SPARQL/QueryDocument/QueryContextPartial" ), ():voi
 		expect( Module ).toEqual( jasmine.any( Object ) );
 	} );
 
-	describe( clazz( "CarbonLDP.SPARQL.QueryDocument.QueryContextPartial.QueryContextPartial", "Class with the shared status and data of the query." ), ():void => {
+	describe( clazz( "CarbonLDP.SPARQL.QueryDocument.QueryContextPartial", "Class with the shared status and data of the query." ), ():void => {
 
 		it( "should exists", ():void => {
 			expect( QueryContextPartial ).toBeDefined();
@@ -54,8 +54,8 @@ describe( module( "carbonldp/SPARQL/QueryDocument/QueryContextPartial" ), ():voi
 
 			it( hasSignature(
 				[
-					{ name: "document", type: "CarbonLDP.PersistedDocument.PersistedDocument", description: "partial document from whom the query context is created for." },
-					{ name: "context", type: "CarbonLDP.Context.Context", optional: true, description: "The carbon context from where the query belongs to." },
+					{ name: "document", type: "CarbonLDP.PersistedDocument", description: "partial document from whom the query context is created for." },
+					{ name: "context", type: "CarbonLDP.Context", optional: true, description: "The carbon context from where the query belongs to." },
 				]
 			), ():void => {
 			} );
@@ -73,7 +73,7 @@ describe( module( "carbonldp/SPARQL/QueryDocument/QueryContextPartial" ), ():voi
 
 		} );
 
-		it( extendsClass( "CarbonLDP.SPARQL.QueryDocument.QueryContext.QueryContext" ), ():void => {
+		it( extendsClass( "CarbonLDP.SPARQL.QueryDocument.QueryContext" ), ():void => {
 			const queryContext:QueryContextPartial = new QueryContextPartial( persistedDocument, context );
 			expect( queryContext ).toEqual( jasmine.any( QueryContext ) );
 		} );
@@ -87,7 +87,7 @@ describe( module( "carbonldp/SPARQL/QueryDocument/QueryContextPartial" ), ():voi
 					{ name: "object", type: "object", description: "The object to look for its corresponding schema.\nNOTE: Property is ignored when a path is specified." },
 					{ name: "path", type: "string", description: "An optional path that describes where the resource appears in the partial document." },
 				],
-				{ type: "CarbonLDP.ObjectSchema.DigestedObjectSchema" }
+				{ type: "CarbonLDP.DigestedObjectSchema" }
 			), ():void => {
 			} );
 

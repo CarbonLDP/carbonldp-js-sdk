@@ -15,7 +15,7 @@ import { JSONLDCompacter } from "./Compacter";
 
 describe( module( "carbonldp/JSONLD/Compacter" ), ():void => {
 
-	describe( clazz( "CarbonLDP.JSONLD.Compacter.JSONLDCompacter", "Class for compacting a set of RDF resources in level of relations" ), ():void => {
+	describe( clazz( "CarbonLDP.JSONLD.JSONLDCompacter", "Class for compacting a set of RDF resources in level of relations" ), ():void => {
 
 		it( "should exists", ():void => {
 			expect( JSONLDCompacter ).toBeDefined();

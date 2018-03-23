@@ -27,14 +27,14 @@ import { Response } from "./Response";
 describe( module( "carbonldp/HTTP/Request" ), function():void {
 
 	describe( interfaze(
-		"CarbonLDP.HTTP.Request.RequestOptions",
+		"CarbonLDP.HTTP.RequestOptions",
 		"Customizable options that can change the behaviour of the request."
 	), ():void => {
 
 		it( hasProperty(
 			OPTIONAL,
 			"headers",
-			"Map<string, CarbonLDP.HTTP.Header.Header>",
+			"Map<string, CarbonLDP.HTTP.Header>",
 			"Map that contains the references to the headers to include in the request."
 		), ():void => {
 			let headers:Map<string, Header> = new Map();
@@ -60,8 +60,8 @@ describe( module( "carbonldp/HTTP/Request" ), function():void {
 	} );
 
 	describe( interfaze(
-		"CarbonLDP.HTTP.Request.RetrievalPreferences",
-		"Object used at `CarbonLDP.HTTP.Request.RequestUtils.setRetrievalPreferences()` method, which specifies the behaviour of the of the requested document as a ldp:container."
+		"CarbonLDP.HTTP.RetrievalPreferences",
+		"Object used at `CarbonLDP.HTTP.RequestUtils#setRetrievalPreferences()` method, which specifies the behaviour of the of the requested document as a ldp:container."
 	), ():void => {
 
 		it( hasProperty(
@@ -95,7 +95,7 @@ describe( module( "carbonldp/HTTP/Request" ), function():void {
 	} );
 
 	describe( clazz(
-		"CarbonLDP.HTTP.Request.RequestService",
+		"CarbonLDP.HTTP.RequestService",
 		"Class with functions to easily manage HTTP requests."
 	), ():void => {
 
@@ -174,7 +174,7 @@ describe( module( "carbonldp/HTTP/Request" ), function():void {
 					{ name: "body", type: "string" },
 					{ name: "options", type: "object" },
 				],
-				{ type: "Promise<CarbonLDP.HTTP.Response.Response>" }
+				{ type: "Promise<CarbonLDP.HTTP.Response>" }
 			), ():void => {} );
 
 			it( "should exists", ():void => {
@@ -191,7 +191,7 @@ describe( module( "carbonldp/HTTP/Request" ), function():void {
 				{ name: "url", type: "string" },
 				{ name: "options", type: "object", optional: true, defaultValue: "{ sendCredentialsOnCORS: true }" },
 			],
-			{ type: "Promise<CarbonLDP.HTTP.Response.Response>" }
+			{ type: "Promise<CarbonLDP.HTTP.Response>" }
 		), ( done:{ ():void, fail:() => void } ):void => {
 			expect( RequestService.head ).toBeDefined();
 			expect( Utils.isFunction( RequestService.head ) ).toBe( true );
@@ -247,7 +247,7 @@ describe( module( "carbonldp/HTTP/Request" ), function():void {
 				{ name: "url", type: "string" },
 				{ name: "options", type: "object", optional: true, defaultValue: "{ sendCredentialsOnCORS: true }" },
 			],
-			{ type: "Promise<CarbonLDP.HTTP.Response.Response>" }
+			{ type: "Promise<CarbonLDP.HTTP.Response>" }
 		), ( done:{ ():void, fail:() => void } ):void => {
 			expect( RequestService.head ).toBeDefined();
 			expect( Utils.isFunction( RequestService.head ) ).toBe( true );
@@ -307,7 +307,7 @@ describe( module( "carbonldp/HTTP/Request" ), function():void {
 					{ name: "url", type: "string" },
 					{ name: "options", type: "object", optional: true, defaultValue: "{ sendCredentialsOnCORS: true }" },
 				],
-				{ type: "Promise<CarbonLDP.HTTP.Response.Response>" }
+				{ type: "Promise<CarbonLDP.HTTP.Response>" }
 			), ( done:{ ():void, fail:() => void } ):void => {
 				expect( RequestService.get ).toBeDefined();
 				expect( Utils.isFunction( RequestService.get ) ).toBe( true );
@@ -362,9 +362,9 @@ describe( module( "carbonldp/HTTP/Request" ), function():void {
 				"Get request with specified response parser.", [
 					{ name: "url", type: "string" },
 					{ name: "options", type: "object", optional: true, defaultValue: "{ sendCredentialsOnCORS: true }" },
-					{ name: "parser", type: "CarbonLDP.HTTP.Parser.Parser<T>", optional: true },
+					{ name: "parser", type: "CarbonLDP.HTTP.Parser<T>", optional: true },
 				],
-				{ type: "Promise<[Object, CarbonLDP.HTTP.Response.Response]>" }
+				{ type: "Promise<[Object, CarbonLDP.HTTP.Response]>" }
 			), ( done:{ ():void, fail:() => void } ):void => {
 				expect( RequestService.get ).toBeDefined();
 				expect( Utils.isFunction( RequestService.get ) ).toBe( true );
@@ -434,7 +434,7 @@ describe( module( "carbonldp/HTTP/Request" ), function():void {
 					{ name: "body", type: "string" },
 					{ name: "options", type: "object", optional: true, defaultValue: "{ sendCredentialsOnCORS: true }" },
 				],
-				{ type: "Promise<CarbonLDP.HTTP.Response.Response>" }
+				{ type: "Promise<CarbonLDP.HTTP.Response>" }
 			), ( done:{ ():void, fail:() => void } ):void => {
 				expect( RequestService.post ).toBeDefined();
 				expect( Utils.isFunction( RequestService.post ) ).toBe( true );
@@ -489,9 +489,9 @@ describe( module( "carbonldp/HTTP/Request" ), function():void {
 				"Post request with specified response parser.", [
 					{ name: "url", type: "string" },
 					{ name: "options", type: "object", optional: true, defaultValue: "{ sendCredentialsOnCORS: true }" },
-					{ name: "parser", type: "CarbonLDP.HTTP.Parser.Parser<T>", optional: true },
+					{ name: "parser", type: "CarbonLDP.HTTP.Parser<T>", optional: true },
 				],
-				{ type: "Promise<CarbonLDP.HTTP.Response.Response>" }
+				{ type: "Promise<CarbonLDP.HTTP.Response>" }
 			), ( done:{ ():void, fail:() => void } ):void => {
 				expect( RequestService.post ).toBeDefined();
 				expect( Utils.isFunction( RequestService.post ) ).toBe( true );
@@ -561,7 +561,7 @@ describe( module( "carbonldp/HTTP/Request" ), function():void {
 					{ name: "body", type: "string" },
 					{ name: "options", type: "object", optional: true, defaultValue: "{ sendCredentialsOnCORS: true }" },
 				],
-				{ type: "Promise<CarbonLDP.HTTP.Response.Response>" }
+				{ type: "Promise<CarbonLDP.HTTP.Response>" }
 			), ( done:{ ():void, fail:() => void } ):void => {
 				expect( RequestService.put ).toBeDefined();
 				expect( Utils.isFunction( RequestService.put ) ).toBe( true );
@@ -616,9 +616,9 @@ describe( module( "carbonldp/HTTP/Request" ), function():void {
 				"Put request with specified response parser.", [
 					{ name: "url", type: "string" },
 					{ name: "options", type: "object", optional: true, defaultValue: "{ sendCredentialsOnCORS: true }" },
-					{ name: "parser", type: "CarbonLDP.HTTP.Parser.Parser<T>", optional: true },
+					{ name: "parser", type: "CarbonLDP.HTTP.Parser<T>", optional: true },
 				],
-				{ type: "Promise<CarbonLDP.HTTP.Response.Response>" }
+				{ type: "Promise<CarbonLDP.HTTP.Response>" }
 			), ( done:{ ():void, fail:() => void } ):void => {
 				expect( RequestService.put ).toBeDefined();
 				expect( Utils.isFunction( RequestService.put ) ).toBe( true );
@@ -688,7 +688,7 @@ describe( module( "carbonldp/HTTP/Request" ), function():void {
 					{ name: "body", type: "string" },
 					{ name: "options", type: "object", optional: true, defaultValue: "{ sendCredentialsOnCORS: true }" },
 				],
-				{ type: "Promise<CarbonLDP.HTTP.Response.Response>" }
+				{ type: "Promise<CarbonLDP.HTTP.Response>" }
 			), ( done:{ ():void, fail:() => void } ):void => {
 				expect( RequestService.patch ).toBeDefined();
 				expect( Utils.isFunction( RequestService.patch ) ).toBe( true );
@@ -743,9 +743,9 @@ describe( module( "carbonldp/HTTP/Request" ), function():void {
 				"Patch request with specified response parser.", [
 					{ name: "url", type: "string" },
 					{ name: "options", type: "object", optional: true, defaultValue: "{ sendCredentialsOnCORS: true }" },
-					{ name: "parser", type: "CarbonLDP.HTTP.Parser.Parser<T>", optional: true },
+					{ name: "parser", type: "CarbonLDP.HTTP.Parser<T>", optional: true },
 				],
-				{ type: "Promise<CarbonLDP.HTTP.Response.Response>" }
+				{ type: "Promise<CarbonLDP.HTTP.Response>" }
 			), ( done:{ ():void, fail:() => void } ):void => {
 				expect( RequestService.patch ).toBeDefined();
 				expect( Utils.isFunction( RequestService.patch ) ).toBe( true );
@@ -815,7 +815,7 @@ describe( module( "carbonldp/HTTP/Request" ), function():void {
 					{ name: "body", type: "string" },
 					{ name: "options", type: "object", optional: true, defaultValue: "{ sendCredentialsOnCORS: true }" },
 				],
-				{ type: "Promise<CarbonLDP.HTTP.Response.Response>" }
+				{ type: "Promise<CarbonLDP.HTTP.Response>" }
 			), ( done:{ ():void, fail:() => void } ):void => {
 				expect( RequestService.delete ).toBeDefined();
 				expect( Utils.isFunction( RequestService.delete ) ).toBe( true );
@@ -870,9 +870,9 @@ describe( module( "carbonldp/HTTP/Request" ), function():void {
 				"Delete request with specified response parser.", [
 					{ name: "url", type: "string" },
 					{ name: "options", type: "object", optional: true, defaultValue: "{ sendCredentialsOnCORS: true }" },
-					{ name: "parser", type: "CarbonLDP.HTTP.Parser.Parser<T>", optional: true },
+					{ name: "parser", type: "CarbonLDP.HTTP.Parser<T>", optional: true },
 				],
-				{ type: "Promise<CarbonLDP.HTTP.Response.Response>" }
+				{ type: "Promise<CarbonLDP.HTTP.Response>" }
 			), ( done:{ ():void, fail:() => void } ):void => {
 				expect( RequestService.delete ).toBeDefined();
 				expect( Utils.isFunction( RequestService.delete ) ).toBe( true );
@@ -934,7 +934,7 @@ describe( module( "carbonldp/HTTP/Request" ), function():void {
 					{ name: "url", type: "string" },
 					{ name: "options", type: "object", optional: true, defaultValue: "{ sendCredentialsOnCORS: true }" },
 				],
-				{ type: "Promise<CarbonLDP.HTTP.Response.Response>" }
+				{ type: "Promise<CarbonLDP.HTTP.Response>" }
 			), ( done:{ ():void, fail:() => void } ):void => {
 				expect( RequestService.delete ).toBeDefined();
 				expect( Utils.isFunction( RequestService.delete ) ).toBe( true );
@@ -989,9 +989,9 @@ describe( module( "carbonldp/HTTP/Request" ), function():void {
 				"Delete request with specified response parser.", [
 					{ name: "url", type: "string" },
 					{ name: "options", type: "object", optional: true, defaultValue: "{ sendCredentialsOnCORS: true }" },
-					{ name: "parser", type: "CarbonLDP.HTTP.Parser.Parser<T>", optional: true },
+					{ name: "parser", type: "CarbonLDP.HTTP.Parser<T>", optional: true },
 				],
-				{ type: "Promise<CarbonLDP.HTTP.Response.Response>" }
+				{ type: "Promise<CarbonLDP.HTTP.Response>" }
 			), ( done:{ ():void, fail:() => void } ):void => {
 				expect( RequestService.delete ).toBeDefined();
 				expect( Utils.isFunction( RequestService.delete ) ).toBe( true );
@@ -1081,7 +1081,7 @@ describe( module( "carbonldp/HTTP/Request" ), function():void {
 	} );
 
 	describe( clazz(
-		"CarbonLDP.HTTP.Request.RequestUtils",
+		"CarbonLDP.HTTP.RequestUtils",
 		"Class with useful functions to manage the options object of a request."
 	), ():void => {
 		let options:RequestOptions,
@@ -1109,10 +1109,10 @@ describe( module( "carbonldp/HTTP/Request" ), function():void {
 			"getHeader",
 			"Returns the header object of a header-name inside an options object request. Returns `undefined` if the header doesn't exists. If `initialize` flag is provided with true, an empty header will be created even if it already exits.", [
 				{ name: "headerName", type: "string" },
-				{ name: "requestOptions", type: "CarbonLDP.HTTP.Request.RequestOptions" },
+				{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions" },
 				{ name: "initialize", type: "boolean", optional: true, defaultValue: "false" },
 			],
-			{ type: "CarbonLDP.HTTP.Header.Header" }
+			{ type: "CarbonLDP.HTTP.Header" }
 		), ():void => {
 			expect( RequestUtils.getHeader ).toBeDefined();
 			expect( Utils.isFunction( RequestUtils.getHeader ) ).toBe( true );
@@ -1134,9 +1134,9 @@ describe( module( "carbonldp/HTTP/Request" ), function():void {
 			"setAcceptHeader",
 			"Set an Accept header in an options object request.", [
 				{ name: "accept", type: "string" },
-				{ name: "requestOptions", type: "CarbonLDP.HTTP.Request.RequestOptions" },
+				{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions" },
 			],
-			{ type: "CarbonLDP.HTTP.Request.RequestOptions" }
+			{ type: "CarbonLDP.HTTP.RequestOptions" }
 		), ():void => {
 			expect( RequestUtils.setAcceptHeader ).toBeDefined();
 			expect( Utils.isFunction( RequestUtils.setAcceptHeader ) ).toBe( true );
@@ -1155,9 +1155,9 @@ describe( module( "carbonldp/HTTP/Request" ), function():void {
 			"setContentTypeHeader",
 			"Set a Content-Type header in an options object request.", [
 				{ name: "contentType", type: "string" },
-				{ name: "requestOptions", type: "CarbonLDP.HTTP.Request.RequestOptions" },
+				{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions" },
 			],
-			{ type: "CarbonLDP.HTTP.Request.RequestOptions" }
+			{ type: "CarbonLDP.HTTP.RequestOptions" }
 		), ():void => {
 			expect( RequestUtils.setContentTypeHeader ).toBeDefined();
 			expect( Utils.isFunction( RequestUtils.setContentTypeHeader ) ).toBe( true );
@@ -1176,9 +1176,9 @@ describe( module( "carbonldp/HTTP/Request" ), function():void {
 			"setIfMatchHeader",
 			"Set an If-Match header in an options object request.", [
 				{ name: "eTag", type: "string" },
-				{ name: "requestOptions", type: "CarbonLDP.HTTP.Request.RequestOptions" },
+				{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions" },
 			],
-			{ type: "CarbonLDP.HTTP.Request.RequestOptions" }
+			{ type: "CarbonLDP.HTTP.RequestOptions" }
 		), ():void => {
 			expect( RequestUtils.setIfMatchHeader ).toBeDefined();
 			expect( Utils.isFunction( RequestUtils.setIfMatchHeader ) ).toBe( true );
@@ -1197,7 +1197,7 @@ describe( module( "carbonldp/HTTP/Request" ), function():void {
 			"setIfNoneMatchHeader",
 			"Set an If-None-Match header in an options object request.", [
 				{ name: "eTag", type: "string" },
-				{ name: "requestOptions", type: "CarbonLDP.HTTP.Request.RequestOptions" },
+				{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions" },
 			],
 			{ type: "Object" }
 		), ():void => {
@@ -1218,9 +1218,9 @@ describe( module( "carbonldp/HTTP/Request" ), function():void {
 			"setPreferredInteractionModel",
 			"Set a Prefer header with `rel=interaction-model` in an options object request.", [
 				{ name: "interactionModelURI", type: "string" },
-				{ name: "requestOptions", type: "CarbonLDP.HTTP.Request.RequestOptions" },
+				{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions" },
 			],
-			{ type: "CarbonLDP.HTTP.Request.RequestOptions" }
+			{ type: "CarbonLDP.HTTP.RequestOptions" }
 		), ():void => {
 			expect( RequestUtils.setPreferredInteractionModel ).toBeDefined();
 			expect( Utils.isFunction( RequestUtils.setPreferredInteractionModel ) ).toBe( true );
@@ -1239,9 +1239,9 @@ describe( module( "carbonldp/HTTP/Request" ), function():void {
 			"setPreferredRetrieval",
 			"Set a Prefer header which indicates to the platform to type of retrieval to make.", [
 				{ name: "retrievalType", type: `"representation" | "minimal"`, description: `If "representation" is chosen the platform must retrieve the entire resource; otherwise when "minimal" is sent the minimal data will be returned generally an empty one.` },
-				{ name: "requestOptions", type: "CarbonLDP.HTTP.Request.RequestOptions" },
+				{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions" },
 			],
-			{ type: "CarbonLDP.HTTP.Request.RequestOptions" }
+			{ type: "CarbonLDP.HTTP.RequestOptions" }
 		), ():void => {
 			expect( RequestUtils.setPreferredRetrieval ).toBeDefined();
 			expect( Utils.isFunction( RequestUtils.setPreferredRetrieval ) ).toBe( true );
@@ -1273,9 +1273,9 @@ describe( module( "carbonldp/HTTP/Request" ), function():void {
 			"setSlug",
 			"Set a Slug header in an options object request.", [
 				{ name: "slug", type: "string" },
-				{ name: "requestOptions", type: "CarbonLDP.HTTP.Request.RequestOptions" },
+				{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions" },
 			],
-			{ type: "CarbonLDP.HTTP.Request.RequestOptions" }
+			{ type: "CarbonLDP.HTTP.RequestOptions" }
 		), ():void => {
 			expect( RequestUtils.setSlug ).toBeDefined();
 			expect( Utils.isFunction( RequestUtils.setSlug ) ).toBe( true );
@@ -1293,11 +1293,11 @@ describe( module( "carbonldp/HTTP/Request" ), function():void {
 			STATIC,
 			"setRetrievalPreferences",
 			"Set a Prefer header with `return=representation` in an options object request.", [
-				{ name: "preference", type: "CarbonLDP.HTTP.Request.RetrievalPreferences" },
-				{ name: "requestOptions", type: "CarbonLDP.HTTP.Request.RequestOptions" },
+				{ name: "preference", type: "CarbonLDP.HTTP.RetrievalPreferences" },
+				{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions" },
 				{ name: "returnRepresentation", type: "boolean", optional: true, description: "If set to true, add `return=representation;` before include and/or omit. Default value is set to `true`." },
 			],
-			{ type: "CarbonLDP.HTTP.Request.RequestOptions" }
+			{ type: "CarbonLDP.HTTP.RequestOptions" }
 		), ():void => {
 			expect( RequestUtils.setRetrievalPreferences ).toBeDefined();
 			expect( Utils.isFunction( RequestUtils.setRetrievalPreferences ) ).toBe( true );

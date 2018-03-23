@@ -15,17 +15,17 @@ import { CS } from "./Vocabularies/CS";
 describe( module( "carbonldp/ProtectedDocument" ), ():void => {
 
 	describe( interfaze(
-		"CarbonLDP.ProtectedDocument.ProtectedDocument",
+		"CarbonLDP.ProtectedDocument",
 		"Interface that represents a persisted blank node of a persisted document."
 	), ():void => {
 
-		it( extendsClass( "CarbonLDP.Document.Document" ), ():void => {} );
+		it( extendsClass( "CarbonLDP.Document" ), ():void => {} );
 
 	} );
 
 	describe( interfaze(
-		"CarbonLDP.ProtectedDocument.ProtectedDocumentFactory",
-		"Interface with the factory, decorate and utils for `CarbonLDP.ProtectedDocument.ProtectedDocument` objects."
+		"CarbonLDP.ProtectedDocumentFactory",
+		"Interface with the factory, decorate and utils for `CarbonLDP.ProtectedDocument` objects."
 	), ():void => {
 
 		it( hasProperty(
@@ -37,7 +37,7 @@ describe( module( "carbonldp/ProtectedDocument" ), ():void => {
 		it( hasProperty(
 			OBLIGATORY,
 			"SCHEMA",
-			"CarbonLDP.ObjectSchema.ObjectSchema"
+			"CarbonLDP.ObjectSchema"
 		), ():void => {} );
 
 	} );
@@ -45,8 +45,8 @@ describe( module( "carbonldp/ProtectedDocument" ), ():void => {
 	describe( property(
 		STATIC,
 		"ProtectedDocument",
-		"CarbonLDP.ProtectedDocument.ProtectedDocumentFactory",
-		"Constant that implements the `CarbonLDP.ProtectedDocument.ProtectedDocumentFactory` interface."
+		"CarbonLDP.ProtectedDocumentFactory",
+		"Constant that implements the `CarbonLDP.ProtectedDocumentFactory` interface."
 	), ():void => {
 
 		it( "should exist", ():void => {

@@ -1,9 +1,11 @@
-import * as Utils from "./../Utils";
-import { XSD } from "../Vocabularies/XSD" ;
 import * as Errors from "../Errors";
+import { XSD } from "../Vocabularies/XSD";
+import * as Utils from "./../Utils";
 
-import * as Serializer from "./Literal/Serializer";
 import * as Serializers from "./Literal/Serializers";
+
+export * from "./Literal/Serializer";
+export { Serializers };
 
 export interface RDFLiteral {
 	"@type"?:string;
@@ -150,9 +152,4 @@ export const RDFLiteral:RDFLiteralFactory = {
 		if( ! value[ "@type" ] && type === XSD.string ) return true;
 		return value[ "@type" ] === type;
 	},
-};
-
-export {
-	Serializer,
-	Serializers
 };

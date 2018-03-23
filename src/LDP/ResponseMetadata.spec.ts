@@ -23,24 +23,24 @@ describe( module( "carbonldp/LDP/ResponseMetadata" ), ():void => {
 	} );
 
 	describe( interfaze(
-		"CarbonLDP.LDP.ResponseMetadata.ResponseMetadata",
+		"CarbonLDP.LDP.ResponseMetadata",
 		"Interface that represents the main resource of a set of metadata resources, which references everyone resource related to an specific dynamic response of tha server."
 	), ():void => {
 
-		it( extendsClass( "CarbonLDP.LDP.VolatileResource.VolatileResource" ), ():void => {} );
+		it( extendsClass( "CarbonLDP.LDP.VolatileResource" ), ():void => {} );
 
 		it( hasProperty(
 			OBLIGATORY,
 			"documentsMetadata",
-			"CarbonLDP.LDP.DocumentMetadata.DocumentMetadata[]",
+			"CarbonLDP.LDP.DocumentMetadata[]",
 			"An array with all the metadata resources of the dynamic response."
 		), ():void => {} );
 
 	} );
 
 	describe( interfaze(
-		"CarbonLDP.LDP.ResponseMetadata.ResponseMetadataFactory",
-		"Interface with the factory, decorate and utils methods for `CarbonLDP.LDP.ResponseMetadata.ResponseMetadata` objects."
+		"CarbonLDP.LDP.ResponseMetadataFactory",
+		"Interface with the factory, decorate and utils methods for `CarbonLDP.LDP.ResponseMetadata` objects."
 	), ():void => {
 
 		it( hasProperty(
@@ -52,16 +52,16 @@ describe( module( "carbonldp/LDP/ResponseMetadata" ), ():void => {
 		it( hasProperty(
 			OBLIGATORY,
 			"SCHEMA",
-			"CarbonLDP.ObjectSchema.ObjectSchema"
+			"CarbonLDP.ObjectSchema"
 		), ():void => {} );
 
 		it( hasMethod(
 			OBLIGATORY,
 			"is",
-			"Return true if the object provided is considered a `CarbonLDP.LDP.ResponseMetadata.ResponseMetadata` object.", [
+			"Return true if the object provided is considered a `CarbonLDP.LDP.ResponseMetadata` object.", [
 				{ name: "object", type: "object", description: "Object to check" },
 			],
-			{ type: "object is CarbonLDP.LDP.ResponseMetadata.ResponseMetadata" }
+			{ type: "object is CarbonLDP.LDP.ResponseMetadata" }
 		), ():void => {} );
 
 	} );
@@ -69,7 +69,7 @@ describe( module( "carbonldp/LDP/ResponseMetadata" ), ():void => {
 	describe( property(
 		STATIC,
 		"ResponseMetadata",
-		"CarbonLDP.LDP.ResponseMetadata.ResponseMetadataFactory"
+		"CarbonLDP.LDP.ResponseMetadataFactory"
 	), ():void => {
 
 		it( "should exist", ():void => {

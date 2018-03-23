@@ -120,12 +120,12 @@ var FloatSerializer = (function () {
     function FloatSerializer() {
     }
     FloatSerializer.prototype.serialize = function (value) {
-        if (!Utils.isNumber(value))
-            throw new Errors.IllegalArgumentError(notNumberError);
         if (value === Number.POSITIVE_INFINITY)
             return "INF";
         if (value === Number.NEGATIVE_INFINITY)
             return "-INF";
+        if (!Utils.isNumber(value))
+            throw new Errors.IllegalArgumentError(notNumberError);
         return value.toString();
     };
     return FloatSerializer;

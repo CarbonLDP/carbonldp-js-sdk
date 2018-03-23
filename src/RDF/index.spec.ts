@@ -1,21 +1,41 @@
 import {
-	STATIC,
-
-	module,
-
 	isDefined,
+	module,
 	reexports,
+	STATIC,
 } from "../test/JasmineExtender";
 import * as Utils from "../Utils";
 
-import * as Literal from "./Literal";
-import * as Document from "./Document";
-import * as List from "./List";
-import * as Node from "./Node";
-import * as URI from "./URI";
-import * as Value from "./Value";
-
 import * as RDF from "./";
+
+import {
+	RDFDocument,
+	RDFDocumentFactory,
+	RDFDocumentParser,
+} from "./Document";
+import {
+	RDFList,
+	RDFListFactory,
+} from "./List";
+import {
+	RDFLiteral,
+	RDFLiteralFactory,
+	Serializer,
+	Serializers,
+} from "./Literal";
+import {
+	RDFNode,
+	RDFNodeFactory,
+	RDFNodePropertyValue,
+} from "./Node";
+import {
+	URI,
+	URIFactory,
+} from "./URI";
+import {
+	RDFValue,
+	RDFValueFactory,
+} from "./Value";
 
 describe( module( "carbonldp/RDF" ), ():void => {
 
@@ -26,44 +46,116 @@ describe( module( "carbonldp/RDF" ), ():void => {
 
 	it( reexports(
 		STATIC,
-		"Literal",
-		"carbonldp/RDF/Literal"
+		"Serializers",
+		"carbonldp/RDF/Serializers"
 	), ():void => {
-		expect( RDF.Literal ).toBeDefined();
-		expect( RDF.Literal ).toBe( Literal );
+		expect( RDF.Serializers ).toBeDefined();
+		expect( RDF.Serializers ).toBe( Serializers );
 	} );
 
 	it( reexports(
 		STATIC,
-		"Document",
-		"carbonldp/RDF/Document"
+		"RDFLiteral",
+		"carbonldp/RDF/RDFLiteral"
 	), ():void => {
-		expect( RDF.Document ).toBeDefined();
-		expect( RDF.Document ).toBe( Document );
+		expect( RDF.RDFLiteral ).toBeDefined();
+		expect( RDF.RDFLiteral ).toBe( RDFLiteral );
 	} );
 
 	it( reexports(
 		STATIC,
-		"List",
-		"carbonldp/RDF/List"
+		"Serializer",
+		"CarbonLDP.RDF.Literal.Serializer"
 	), ():void => {
-		expect( RDF.List ).toBeDefined();
-		expect( RDF.List ).toBe( List );
+		const target:RDF.Serializer = {} as Serializer;
+		expect( target ).toBeDefined();
 	} );
 
 	it( reexports(
 		STATIC,
-		"Node",
-		"carbonldp/RDF/Node"
+		"RDFLiteralFactory",
+		"CarbonLDP.RDF.RDFLiteralFactory"
 	), ():void => {
-		expect( RDF.Node ).toBeDefined();
-		expect( RDF.Node ).toBe( Node );
+		const target:RDF.RDFLiteralFactory = {} as RDFLiteralFactory;
+		expect( target ).toBeDefined();
+	} );
+
+	it( reexports(
+		STATIC,
+		"RDFDocument",
+		"CarbonLDP.RDF.RDFDocument"
+	), ():void => {
+		expect( RDF.RDFDocument ).toBeDefined();
+		expect( RDF.RDFDocument ).toBe( RDFDocument );
+	} );
+
+	it( reexports(
+		STATIC,
+		"RDFDocumentFactory",
+		"CarbonLDP.RDF.RDFDocumentFactory"
+	), ():void => {
+		const target:RDF.RDFDocumentFactory = {} as RDFDocumentFactory;
+		expect( target ).toBeDefined();
+	} );
+
+	it( reexports(
+		STATIC,
+		"RDFDocumentParser",
+		"CarbonLDP.RDF.RDFDocumentParser"
+	), ():void => {
+		expect( RDF.RDFDocumentParser ).toBeDefined();
+		expect( RDF.RDFDocumentParser ).toBe( RDFDocumentParser );
+	} );
+
+	it( reexports(
+		STATIC,
+		"RDFList",
+		"CarbonLDP.RDF.RDFList"
+	), ():void => {
+		expect( RDF.RDFList ).toBeDefined();
+		expect( RDF.RDFList ).toBe( RDFList );
+	} );
+
+	it( reexports(
+		STATIC,
+		"RDFListFactory",
+		"CarbonLDP.RDF.RDFListFactory"
+	), ():void => {
+		const target:RDF.RDFListFactory = {} as RDFListFactory;
+		expect( target ).toBeDefined();
+	} );
+
+	it( reexports(
+		STATIC,
+		"RDFNode",
+		"CarbonLDP.RDF.RDFNode"
+	), ():void => {
+		expect( RDF.RDFNode ).toBeDefined();
+		expect( RDF.RDFNode ).toBe( RDFNode );
+	} );
+
+	it( reexports(
+		STATIC,
+		"RDFNodeFactory",
+		"CarbonLDP.RDF.RDFNodeFactory"
+	), ():void => {
+		const target:RDF.RDFNodeFactory = {} as RDFNodeFactory;
+		expect( target ).toBeDefined();
+	} );
+
+	it( reexports(
+		STATIC,
+		"RDFNodePropertyValue",
+		"CarbonLDP.RDF.RDFNodePropertyValue"
+	), ():void => {
+		const target:RDF.RDFNodePropertyValue = {} as RDFNodePropertyValue;
+		expect( target ).toBeDefined();
 	} );
 
 	it( reexports(
 		STATIC,
 		"URI",
-		"carbonldp/RDF/URI"
+		"CarbonLDP.RDF.URI"
 	), ():void => {
 		expect( RDF.URI ).toBeDefined();
 		expect( RDF.URI ).toBe( URI );
@@ -71,11 +163,29 @@ describe( module( "carbonldp/RDF" ), ():void => {
 
 	it( reexports(
 		STATIC,
-		"Value",
-		"carbonldp/RDF/Value"
+		"URIFactory",
+		"CarbonLDP.RDF.URIFactory"
 	), ():void => {
-		expect( RDF.Value ).toBeDefined();
-		expect( RDF.Value ).toBe( Value );
+		const target:RDF.URIFactory = {} as URIFactory;
+		expect( target ).toBeDefined();
+	} );
+
+	it( reexports(
+		STATIC,
+		"RDFValue",
+		"CarbonLDP.RDF.RDFValue"
+	), ():void => {
+		expect( RDF.RDFValue ).toBeDefined();
+		expect( RDF.RDFValue ).toBe( RDFValue );
+	} );
+
+	it( reexports(
+		STATIC,
+		"RDFValueFactory",
+		"CarbonLDP.RDF.RDFValueFactory"
+	), ():void => {
+		const target:RDF.RDFValueFactory = {} as RDFValueFactory;
+		expect( target ).toBeDefined();
 	} );
 
 } );

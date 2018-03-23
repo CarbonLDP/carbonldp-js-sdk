@@ -26,7 +26,7 @@ describe( module( "carbonldp/SPARQL/QueryDocument/QueryObject" ), ():void => {
 		expect( Module ).toEqual( jasmine.any( Object ) );
 	} );
 
-	describe( clazz( "CarbonLDP.SPARQL.QueryDocument.QueryObject.QueryObject", "Class that represents any resource." ), ():void => {
+	describe( clazz( "CarbonLDP.SPARQL.QueryDocument.QueryObject", "Class that represents any resource." ), ():void => {
 
 		it( "should exists", ():void => {
 			expect( QueryObject ).toBeDefined();
@@ -50,8 +50,8 @@ describe( module( "carbonldp/SPARQL/QueryDocument/QueryObject" ), ():void => {
 			it( hasSignature(
 				"Creates an object for the specified object resource.",
 				[
-					{ name: "context", type: "CarbonLDP.SPARQL.QueryDocument.QueryContext.QueryContext", description: "The context of the query where the object is been used." },
-					{ name: "object", type: "CarbonLDP.Pointer.Pointer | string", description: "The object to be converted in a safe to use in query object resource." },
+					{ name: "context", type: "CarbonLDP.SPARQL.QueryDocument.QueryContext", description: "The context of the query where the object is been used." },
+					{ name: "object", type: "CarbonLDP.Pointer | string", description: "The object to be converted in a safe to use in query object resource." },
 				]
 			), ():void => {
 			} );

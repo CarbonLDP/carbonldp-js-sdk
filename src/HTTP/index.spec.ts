@@ -9,14 +9,20 @@ import * as Utils from "../Utils";
 import * as HTTP from "./";
 
 import * as Errors from "./Errors";
-import * as Header from "./Header";
+import { Header } from "./Header";
 import { HTTPMethod } from "./HTTPMethod";
-import * as JSONParser from "./JSONParser";
-import * as Parser from "./Parser";
-import * as Request from "./Request";
-import * as Response from "./Response";
+import { JSONParser } from "./JSONParser";
+import { Parser } from "./Parser";
+import {
+	GETOptions,
+	RequestOptions,
+	RequestService,
+	RequestUtils,
+	RetrievalPreferences,
+} from "./Request";
+import { Response } from "./Response";
 import { StatusCode } from "./StatusCode";
-import * as StringParser from "./StringParser";
+import { StringParser } from "./StringParser";
 
 describe( module( "carbonldp/HTTP" ), ():void => {
 
@@ -37,7 +43,7 @@ describe( module( "carbonldp/HTTP" ), ():void => {
 	it( reexports(
 		STATIC,
 		"Header",
-		"carbonldp/HTTP/Header"
+		"CarbonLDP.HTTP.Header"
 	), ():void => {
 		expect( HTTP.Header ).toBeDefined();
 		expect( HTTP.Header ).toBe( Header );
@@ -46,7 +52,7 @@ describe( module( "carbonldp/HTTP" ), ():void => {
 	it( reexports(
 		STATIC,
 		"JSONParser",
-		"carbonldp/HTTP/JSONParser"
+		"CarbonLDP.HTTP.JSONParser"
 	), ():void => {
 		expect( HTTP.JSONParser ).toBeDefined();
 		expect( HTTP.JSONParser ).toBe( JSONParser );
@@ -55,7 +61,7 @@ describe( module( "carbonldp/HTTP" ), ():void => {
 	it( reexports(
 		STATIC,
 		"HTTPMethod",
-		"CarbonLDP.HTTP.HTTPMethod.HTTPMethod"
+		"CarbonLDP.HTTP.HTTPMethod"
 	), ():void => {
 		expect( HTTP.HTTPMethod ).toBeDefined();
 		expect( HTTP.HTTPMethod ).toBe( HTTPMethod );
@@ -64,25 +70,61 @@ describe( module( "carbonldp/HTTP" ), ():void => {
 	it( reexports(
 		STATIC,
 		"Parser",
-		"carbonldp/HTTP/Parser"
+		"CarbonLDP.HTTP.Parser"
 	), ():void => {
-		expect( HTTP.Parser ).toBeDefined();
-		expect( HTTP.Parser ).toBe( Parser );
+		const target:HTTP.Parser<any> = {} as Parser<any>;
+		expect( target ).toBeDefined();
 	} );
 
 	it( reexports(
 		STATIC,
-		"Request",
-		"carbonldp/HTTP/Request"
+		"GETOptions",
+		"CarbonLDP.HTTP.GETOptions"
 	), ():void => {
-		expect( HTTP.Request ).toBeDefined();
-		expect( HTTP.Request ).toBe( Request );
+		const target:HTTP.GETOptions = {} as GETOptions;
+		expect( target ).toBeDefined();
+	} );
+
+	it( reexports(
+		STATIC,
+		"RequestOptions",
+		"CarbonLDP.HTTP.RequestOptions"
+	), ():void => {
+		const target:HTTP.RequestOptions = {} as RequestOptions;
+		expect( target ).toBeDefined();
+	} );
+
+	it( reexports(
+		STATIC,
+		"RequestService",
+		"CarbonLDP.HTTP.RequestService"
+	), ():void => {
+		expect( HTTP.RequestService ).toBeDefined();
+		expect( HTTP.RequestService ).toBe( RequestService );
+	} );
+
+	it( reexports(
+		STATIC,
+		"RequestUtils",
+		"CarbonLDP.HTTP.RequestUtils"
+	), ():void => {
+		expect( HTTP.RequestUtils ).toBeDefined();
+		expect( HTTP.RequestUtils ).toBe( RequestUtils );
+	} );
+
+	it( reexports(
+		STATIC,
+		"RetrievalPreferences",
+		"CarbonLDP.HTTP.RetrievalPreferences"
+	), ():void => {
+		const target:HTTP.RetrievalPreferences = {} as RetrievalPreferences;
+		expect( target ).toBeDefined();
 	} );
 
 	it( reexports(
 		STATIC,
 		"Response",
-		"carbonldp/HTTP/Response"
+		"CarbonLDP.HTTP.Response"
 	), ():void => {
 		expect( Response ).toBeDefined();
 		expect( Response ).toBe( Response );
@@ -91,7 +133,7 @@ describe( module( "carbonldp/HTTP" ), ():void => {
 	it( reexports(
 		STATIC,
 		"StatusCode",
-		"CarbonLDP.HTTP.StatusCode.StatusCode"
+		"CarbonLDP.HTTP.StatusCode"
 	), ():void => {
 		expect( HTTP.StatusCode ).toBeDefined();
 		expect( HTTP.StatusCode ).toBe( StatusCode );
@@ -100,7 +142,7 @@ describe( module( "carbonldp/HTTP" ), ():void => {
 	it( reexports(
 		STATIC,
 		"StringParser",
-		"carbonldp/HTTP/StringParser"
+		"CarbonLDP.HTTP.StringParser"
 	), ():void => {
 		expect( HTTP.StringParser ).toBeDefined();
 		expect( HTTP.StringParser ).toBe( StringParser );

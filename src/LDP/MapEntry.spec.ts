@@ -15,12 +15,12 @@ import { MapEntry } from "./MapEntry";
 describe( module( "carbonldp/LDP/MapEntry" ), ():void => {
 
 	describe( interfaze(
-		"CarbonLDP.LDP.MapEntry.MapEntry",
+		"CarbonLDP.LDP.MapEntry",
 		[ "K", "V" ],
-		"Entries of the `CarbonLDP.LDP.Map.Map` with the key/value pair."
+		"Entries of the `CarbonLDP.LDP.Map` with the key/value pair."
 	), ():void => {
 
-		it( extendsClass( "CarbonLDP.BlankNode.BlankNode" ), ():void => {} );
+		it( extendsClass( "CarbonLDP.BlankNode" ), ():void => {} );
 
 		it( hasProperty(
 			OBLIGATORY,
@@ -39,14 +39,14 @@ describe( module( "carbonldp/LDP/MapEntry" ), ():void => {
 	} );
 
 	describe( interfaze(
-		"CarbonLDP.LDP.MapEntry.MapEntryFactory",
-		"Interface with the factory, decorate and utils methods for `CarbonLDP.LDP.MapEntry.MapEntry` objects"
+		"CarbonLDP.LDP.MapEntryFactory",
+		"Interface with the factory, decorate and utils methods for `CarbonLDP.LDP.MapEntry` objects"
 	), ():void => {
 
 		it( hasProperty(
 			OBLIGATORY,
 			"SCHEMA",
-			"CarbonLDP.ObjectSchema.ObjectSchema"
+			"CarbonLDP.ObjectSchema"
 		), ():void => {} );
 
 	} );
@@ -54,7 +54,7 @@ describe( module( "carbonldp/LDP/MapEntry" ), ():void => {
 	describe( property(
 		STATIC,
 		"CarbonMapEntry",
-		"CarbonLDP.LDP.MapEntry.MapEntryFactory"
+		"CarbonLDP.LDP.MapEntryFactory"
 	), ():void => {
 
 		it( "should exist", ():void => {

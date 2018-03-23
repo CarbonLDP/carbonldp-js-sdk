@@ -43,7 +43,7 @@ describe( module( "carbonldp/Auth/PersistedCredentials" ), ():void => {
 		"Interface that represents a persisted Credentials."
 	), ():void => {
 
-		it( extendsClass( "CarbonLDP.PersistedProtectedDocument.PersistedProtectedDocument" ), ():void => {} );
+		it( extendsClass( "CarbonLDP.PersistedProtectedDocument" ), ():void => {} );
 		it( extendsClass( "CarbonLDP.Auth.Credentials.Class" ), ():void => {} );
 
 		it( hasProperty(

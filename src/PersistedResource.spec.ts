@@ -22,11 +22,11 @@ describe( module( "carbonldp/PersistedResource" ), ():void => {
 	} );
 
 	describe( interfaze(
-		"CarbonLDP.PersistedResource.PersistedResource",
+		"CarbonLDP.PersistedResource",
 		"Interface that represents any persisted resource in the SDK."
 	), ():void => {
 
-		it( extendsClass( "CarbonLDP.Resource.Resource" ), ():void => {
+		it( extendsClass( "CarbonLDP.Resource" ), ():void => {
 			const target:Resource = {} as PersistedResource;
 			expect( target ).toBeDefined();
 		} );
@@ -47,7 +47,7 @@ describe( module( "carbonldp/PersistedResource" ), ():void => {
 		it( hasProperty(
 			OBLIGATORY,
 			"_partialMetadata",
-			"CarbonLDP.SPARQL.QueryDocument.PartialMetadata.PartialMetadata",
+			"CarbonLDP.SPARQL.QueryDocument.PartialMetadata",
 			"Metadata for documents that are partial documents."
 		), ():void => {} );
 
@@ -72,31 +72,31 @@ describe( module( "carbonldp/PersistedResource" ), ():void => {
 	} );
 
 	describe( interfaze(
-		"CarbonLDP.PersistedResource.PersistedResourceFactory",
-		"Interface with the factory, decorate and utils methods of a `CarbonLDP.PersistedResource.PersistedResource` object"
+		"CarbonLDP.PersistedResourceFactory",
+		"Interface with the factory, decorate and utils methods of a `CarbonLDP.PersistedResource` object"
 	), ():void => {
 
 		it( hasMethod(
 			OBLIGATORY,
 			"isDecorated",
-			"Returns true if the object provided has the properties and methods of a `CarbonLDP.PersistedResource.PersistedResource` object.", [
+			"Returns true if the object provided has the properties and methods of a `CarbonLDP.PersistedResource` object.", [
 				{ name: "object", type: "object" },
 			],
-			{ type: "object is CarbonLDP.PersistedResource.PersistedResource" }
+			{ type: "object is CarbonLDP.PersistedResource" }
 		), ():void => {} );
 
 		it( hasMethod(
 			OBLIGATORY,
 			"decorate",
 			[ "T extends object" ],
-			"Decorates the object provided with the properties and methods of a `CarbonLDP.PersistedResource.PersistedResource` object.", [
+			"Decorates the object provided with the properties and methods of a `CarbonLDP.PersistedResource` object.", [
 				{ name: "object", type: "T", description: "The object to convert into a persisted resource one." },
 			]
 		), ():void => {} );
 
 	} );
 
-	describe( property( STATIC, "PersistedResource", "CarbonLDP.PersistedResource.PersistedResourceFactory", "Constant that implements the `CarbonLDP.PersistedResource.PersistedResourceFactory` interface." ), ():void => {
+	describe( property( STATIC, "PersistedResource", "CarbonLDP.PersistedResourceFactory", "Constant that implements the `CarbonLDP.PersistedResourceFactory` interface." ), ():void => {
 
 		it( isDefined(), ():void => {
 			expect( PersistedResource ).toBeDefined();

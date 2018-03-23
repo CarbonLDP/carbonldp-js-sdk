@@ -16,9 +16,9 @@ describe( module( "carbonldp/Messaging/Utils" ), ():void => {
 	), ():void => {
 
 		it( hasSignature(
-			"Test if the provided context has a valid `CarbonLDP.Messaging.Service.MessagingService` instance. If don't an error will be thrown.",
+			"Test if the provided context has a valid `CarbonLDP.Messaging.MessagingService` instance. If don't an error will be thrown.",
 			[
-				{ name: "context", type: "CarbonLDP.Context.Context", description: "The context to be evaluated." },
+				{ name: "context", type: "CarbonLDP.Context", description: "The context to be evaluated." },
 			] ), ():void => {
 		} );
 

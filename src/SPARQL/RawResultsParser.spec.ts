@@ -18,9 +18,9 @@ describe( module( "carbonldp/SPARQL/RawResultsParser" ), ():void => {
 	} );
 
 	describe( clazz(
-		"CarbonLDP.SPARQL.RawResultsParser",
-		"Class to parse SPARQL Query result to a `CarbonLDP.SPARQL.RawResults.SPARQLRawResults` object.", [
-			"CarbonLDP.HTTP.Parser.Parser<CarbonLDP.SPARQL.RawResults.SPARQLRawResults>",
+		"CarbonLDP.SPARQL.SPARQLRawResultsParser",
+		"Class to parse SPARQL Query result to a `CarbonLDP.SPARQL.SPARQLRawResults` object.", [
+			"CarbonLDP.HTTP.Parser<CarbonLDP.SPARQL.SPARQLRawResults>",
 		]
 	), ():void => {
 
@@ -38,10 +38,10 @@ describe( module( "carbonldp/SPARQL/RawResultsParser" ), ():void => {
 		it( hasMethod(
 			INSTANCE,
 			"parse",
-			"Parse the SPARQL Query string result to a `CarbonLDP.SPARQL.RawResults.SPARQLRawResults` object.", [
+			"Parse the SPARQL Query string result to a `CarbonLDP.SPARQL.SPARQLRawResults` object.", [
 				{ name: "input", type: "string" },
 			],
-			{ type: "Promise<CarbonLDP.SPARQL.RawResults.SPARQLRawResults>" }
+			{ type: "Promise<CarbonLDP.SPARQL.SPARQLRawResults>" }
 		), ( done:{ ():void, fail:() => void } ):void => {
 			let parser:RawResultsParser.SPARQLRawResultsParser = new RawResultsParser.SPARQLRawResultsParser();
 

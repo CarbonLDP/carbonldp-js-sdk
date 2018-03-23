@@ -21,7 +21,7 @@ import { URI } from "./URI";
 describe( module( "carbonldp/RDF/URI" ), ():void => {
 
 	describe( interfaze(
-		"CarbonLDP.RDF.URI.URIFactory",
+		"CarbonLDP.RDF.URIFactory",
 		"Interface with the utils for URI strings."
 	), ():void => {
 
@@ -192,7 +192,7 @@ describe( module( "carbonldp/RDF/URI" ), ():void => {
 			it( hasSignature(
 				"Replace the base of a URI with a prefix in accordance with the ObjectSchema provided. If the prefix can not be resolved, the URI provided will be returned.", [
 					{ name: "uri", type: "string" },
-					{ name: "objectSchema", type: "CarbonLDP.ObjectSchema.DigestedObjectSchema" },
+					{ name: "objectSchema", type: "CarbonLDP.DigestedObjectSchema" },
 				],
 				{ type: "string" }
 			), ():void => {} );
@@ -204,8 +204,8 @@ describe( module( "carbonldp/RDF/URI" ), ():void => {
 	describe( property(
 		STATIC,
 		"URI",
-		"CarbonLDP.RDF.URI.URIFactory",
-		"Constant that implements the `CarbonLDP.RDF.URI.URIFactory` interface."
+		"CarbonLDP.RDF.URIFactory",
+		"Constant that implements the `CarbonLDP.RDF.URIFactory` interface."
 	), ():void => {
 
 		it( isDefined(), ():void => {

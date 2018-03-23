@@ -1,7 +1,6 @@
 import * as Errors from "../../../Errors";
+import { Serializer } from "../Serializer";
 import * as Utils from "./../../../Utils";
-
-import { Serializer } from "./../Serializer";
 
 function pad( value:number ):string {
 	let paddedValue:string = String( value );
@@ -89,9 +88,9 @@ export const unsignedLongSerializer:UnsignedLongSerializer = new UnsignedLongSer
 
 export class FloatSerializer implements Serializer {
 	serialize( value:any ):string {
-		if( ! Utils.isNumber( value ) ) throw new Errors.IllegalArgumentError( notNumberError );
 		if( value === Number.POSITIVE_INFINITY ) return "INF";
 		if( value === Number.NEGATIVE_INFINITY ) return "-INF";
+		if( ! Utils.isNumber( value ) ) throw new Errors.IllegalArgumentError( notNumberError );
 
 		return value.toString();
 	}

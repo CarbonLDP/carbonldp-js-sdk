@@ -16,16 +16,16 @@ import { ErrorResponse } from "./ErrorResponse";
 describe( module( "carbonldp/LDP/ErrorResponse" ), ():void => {
 
 	describe( interfaze(
-		"CarbonLDP.LDP.ErrorResponse.ErrorResponse",
+		"CarbonLDP.LDP.ErrorResponse",
 		"Interface that its used to represents part of an error (or multiple of them) thrown by the server."
 	), ():void => {
 
-		it( extendsClass( "CarbonLDP.Resource.Resource" ), ():void => {} );
+		it( extendsClass( "CarbonLDP.Resource" ), ():void => {} );
 
 		it( hasProperty(
 			OBLIGATORY,
 			"errors",
-			"CarbonLDP.LDP.Error.Error[]",
+			"CarbonLDP.LDP.Error[]",
 			"Array that list the error occurred in the server."
 		), ():void => {} );
 
@@ -46,8 +46,8 @@ describe( module( "carbonldp/LDP/ErrorResponse" ), ():void => {
 	} );
 
 	describe( interfaze(
-		"CarbonLDP.LDP.ErrorResponse.ErrorResponseFactory",
-		"Interface with the factory, decorate and utils methods for `CarbonLDP.LDP.ErrorResponse.ErrorResponse` objects."
+		"CarbonLDP.LDP.ErrorResponseFactory",
+		"Interface with the factory, decorate and utils methods for `CarbonLDP.LDP.ErrorResponse` objects."
 	), ():void => {
 
 		it( hasProperty(
@@ -59,14 +59,14 @@ describe( module( "carbonldp/LDP/ErrorResponse" ), ():void => {
 		it( hasProperty(
 			OBLIGATORY,
 			"SCHEMA",
-			"CarbonLDP.ObjectSchema.ObjectSchema"
+			"CarbonLDP.ObjectSchema"
 		), ():void => {} );
 
 		it( hasMethod(
 			OBLIGATORY,
 			"getMessage",
 			"Returns a string with the message of all the errors in the ErrorResponse.", [
-				{ name: "errorResponse", type: "CarbonLDP.LDP.ErrorResponse.ErrorResponse", description: "The ErrorResponse object to obtain the message from." },
+				{ name: "errorResponse", type: "CarbonLDP.LDP.ErrorResponse", description: "The ErrorResponse object to obtain the message from." },
 			],
 			{ type: "string" }
 		), ():void => {} );
@@ -74,8 +74,8 @@ describe( module( "carbonldp/LDP/ErrorResponse" ), ():void => {
 	} );
 
 	describe( clazz(
-		"CarbonLDP.LDP.ErrorResponse.ErrorResponseFactory",
-		"Useful functions for managing `CarbonLDP.LDP.ErrorResponse.ErrorResponse` objects."
+		"CarbonLDP.LDP.ErrorResponseFactory",
+		"Useful functions for managing `CarbonLDP.LDP.ErrorResponse` objects."
 	), ():void => {
 
 		it( "should exist", ():void => {

@@ -24,8 +24,8 @@ import * as Utils from "../Utils";
 import { C } from "../Vocabularies/C";
 import { CS } from "../Vocabularies/CS";
 import { XSD } from "../Vocabularies/XSD";
-import * as ACE from "./ACE";
-import * as ACL from "./ACL";
+import { ACE } from "./ACE";
+import { ACL } from "./ACL";
 import Authenticator from "./Authenticator";
 import BasicAuthenticator from "./BasicAuthenticator";
 import * as Credentials from "./Credentials";
@@ -33,8 +33,8 @@ import * as Credentials from "./Credentials";
 import * as Auth from "./";
 import DefaultExport from "./";
 
-import * as PersistedACE from "./PersistedACE";
-import * as PersistedACL from "./PersistedACL";
+import { PersistedACE } from "./PersistedACE";
+import { PersistedACL } from "./PersistedACL";
 import * as PersistedCredentials from "./PersistedCredentials";
 import * as PersistedRole from "./PersistedRole";
 import * as PersistedUser from "./PersistedUser";
@@ -76,7 +76,7 @@ describe( module( "carbonldp/Auth" ), ():void => {
 	it( reexports(
 		STATIC,
 		"User",
-		"CarbonLDP.Auth.User"
+		"carbonldp/Auth/User"
 	), ():void => {
 		expect( Auth.User ).toBeDefined();
 		expect( Auth.User ).toBe( User );
@@ -85,7 +85,7 @@ describe( module( "carbonldp/Auth" ), ():void => {
 	it( reexports(
 		STATIC,
 		"Users",
-		"CarbonLDP.Auth.Users"
+		"carbonldp/Auth/Users"
 	), ():void => {
 		expect( Auth.Users ).toBeDefined();
 		expect( Auth.Users ).toBe( Users );
@@ -94,14 +94,14 @@ describe( module( "carbonldp/Auth" ), ():void => {
 	it( reexports(
 		STATIC,
 		"Authenticator",
-		"CarbonLDP.Auth.Authenticator"
+		"carbonldp/Auth/Authenticator"
 	), ():void => {
 	} );
 
 	it( reexports(
 		STATIC,
 		"BasicAuthenticator",
-		"CarbonLDP.Auth.BasicAuthenticator"
+		"carbonldp/Auth/BasicAuthenticator"
 	), ():void => {
 		expect( Auth.BasicAuthenticator ).toBeDefined();
 		expect( Auth.BasicAuthenticator ).toBe( BasicAuthenticator );
@@ -110,7 +110,7 @@ describe( module( "carbonldp/Auth" ), ():void => {
 	it( reexports(
 		STATIC,
 		"Credentials",
-		"CarbonLDP.Auth.Credentials"
+		"carbonldp/Auth/Credentials"
 	), ():void => {
 		expect( Auth.Credentials ).toBeDefined();
 		expect( Auth.Credentials ).toBe( Credentials );
@@ -121,8 +121,8 @@ describe( module( "carbonldp/Auth" ), ():void => {
 		"PersistedACE",
 		"CarbonLDP.Auth.PersistedACE"
 	), ():void => {
-		expect( Auth.PersistedACE ).toBeDefined();
-		expect( Auth.PersistedACE ).toBe( PersistedACE );
+		const target:Auth.PersistedACE = {} as PersistedACE;
+		expect( target ).toBeDefined();
 	} );
 
 	it( reexports(
@@ -137,7 +137,7 @@ describe( module( "carbonldp/Auth" ), ():void => {
 	it( reexports(
 		STATIC,
 		"PersistedCredentials",
-		"CarbonLDP.Auth.PersistedCredentials"
+		"carbonldp/Auth/PersistedCredentials"
 	), ():void => {
 		expect( Auth.PersistedCredentials ).toBeDefined();
 		expect( Auth.PersistedCredentials ).toBe( PersistedCredentials );
@@ -146,7 +146,7 @@ describe( module( "carbonldp/Auth" ), ():void => {
 	it( reexports(
 		STATIC,
 		"PersistedUser",
-		"CarbonLDP.Auth.PersistedUser"
+		"carbonldp/Auth/PersistedUser"
 	), ():void => {
 		expect( Auth.PersistedUser ).toBeDefined();
 		expect( Auth.PersistedUser ).toBe( PersistedUser );
@@ -155,7 +155,7 @@ describe( module( "carbonldp/Auth" ), ():void => {
 	it( reexports(
 		STATIC,
 		"PersistedRole",
-		"CarbonLDP.Auth.PersistedRole"
+		"carbonldp/Auth/PersistedRole"
 	), ():void => {
 		expect( Auth.PersistedRole ).toBeDefined();
 		expect( Auth.PersistedRole ).toBe( PersistedRole );
@@ -164,7 +164,7 @@ describe( module( "carbonldp/Auth" ), ():void => {
 	it( reexports(
 		STATIC,
 		"Role",
-		"CarbonLDP.Auth.Role"
+		"carbonldp/Auth/Role"
 	), ():void => {
 		expect( Auth.Role ).toBeDefined();
 		expect( Auth.Role ).toBe( Role );
@@ -173,7 +173,7 @@ describe( module( "carbonldp/Auth" ), ():void => {
 	it( reexports(
 		STATIC,
 		"Roles",
-		"CarbonLDP.Auth.Roles"
+		"carbonldp/Auth/Roles"
 	), ():void => {
 		expect( Auth.Roles ).toBeDefined();
 		expect( Auth.Roles ).toBe( Roles );
@@ -182,7 +182,7 @@ describe( module( "carbonldp/Auth" ), ():void => {
 	it( reexports(
 		STATIC,
 		"Ticket",
-		"CarbonLDP.Auth.Ticket"
+		"carbonldp/Auth/Ticket"
 	), ():void => {
 		expect( Auth.Ticket ).toBeDefined();
 		expect( Auth.Ticket ).toBe( Ticket );
@@ -191,7 +191,7 @@ describe( module( "carbonldp/Auth" ), ():void => {
 	it( reexports(
 		STATIC,
 		"Token",
-		"CarbonLDP.Auth.Token"
+		"carbonldp/Auth/Token"
 	), ():void => {
 		expect( Auth.Token ).toBeDefined();
 		expect( Auth.Token ).toBe( Token );
@@ -200,7 +200,7 @@ describe( module( "carbonldp/Auth" ), ():void => {
 	it( reexports(
 		STATIC,
 		"TokenAuthenticator",
-		"CarbonLDP.Auth.TokenAuthenticator"
+		"carbonldp/Auth/TokenAuthenticator"
 	), ():void => {
 		expect( Auth.TokenAuthenticator ).toBeDefined();
 		expect( Auth.TokenAuthenticator ).toBe( TokenAuthenticator );
@@ -209,7 +209,7 @@ describe( module( "carbonldp/Auth" ), ():void => {
 	it( reexports(
 		STATIC,
 		"UsernameAndPasswordToken",
-		"CarbonLDP.Auth.UsernameAndPasswordToken"
+		"carbonldp/Auth/UsernameAndPasswordToken"
 	), ():void => {
 		expect( Auth.UsernameAndPasswordToken ).toBeDefined();
 		expect( Auth.UsernameAndPasswordToken ).toBe( UsernameAndPasswordToken );
@@ -260,7 +260,7 @@ describe( module( "carbonldp/Auth" ), ():void => {
 		} );
 
 		it( hasConstructor( [
-			{ name: "context", type: "CarbonLDP.Context.Context" },
+			{ name: "context", type: "CarbonLDP.Context" },
 		] ), ():void => {
 			let auth:Auth.Class = new Auth.Class( new class extends AbstractContext {
 				protected _baseURI:string;
@@ -980,8 +980,8 @@ describe( module( "carbonldp/Auth" ), ():void => {
 		it( hasMethod(
 			INSTANCE,
 			"addAuthentication",
-			"Adds the authentication header to a `CarbonLDP.HTTP.Request.RequestOptions` object.", [
-				{ name: "options", type: "CarbonLDP.HTTP.Request.RequestOptions" },
+			"Adds the authentication header to a `CarbonLDP.HTTP.RequestOptions` object.", [
+				{ name: "options", type: "CarbonLDP.HTTP.RequestOptions" },
 			]
 		), ():void => {
 
@@ -1202,7 +1202,7 @@ describe( module( "carbonldp/Auth" ), ():void => {
 			"createTicket",
 			"Retrieves an authentication ticket for the URI specified.", [
 				{ name: "uri", type: "string", description: "The URI to get an authentication ticket for." },
-				{ name: "requestOptions", type: "CarbonLDP.HTTP.Request.RequestOptions", optional: true },
+				{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true },
 			],
 			{ type: "Promise<CarbonLDP.Auth.Ticket.Class>" }
 		), ( done:{ ():void, fail:() => void } ):void => {
@@ -1342,7 +1342,7 @@ describe( module( "carbonldp/Auth" ), ():void => {
 			"getAuthenticatedURL",
 			"Returns a Promise with a one time use only authenticated URI.", [
 				{ name: "uri", type: "string", description: "The URI to generate an authenticated URI for." },
-				{ name: "requestOptions", type: "CarbonLDP.HTTP.Request.RequestOptions", optional: true },
+				{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true },
 			],
 			{ type: "Promise<string>" }
 		), ( done:{ ():void, fail:() => void } ) => {

@@ -20,11 +20,11 @@ describe( module(
 	} );
 
 	describe( interfaze(
-		"CarbonLDP.RDF.Literal.Serializer.Serializer",
+		"CarbonLDP.RDF.Literal.Serializer",
 		"Interface that serializer classes must implement."
 	), ():void => {
 
-		it( extendsClass( "CarbonLDP.Resource.Resource" ), ():void => {} );
+		it( extendsClass( "CarbonLDP.Resource" ), ():void => {} );
 
 		it( hasMethod(
 			OBLIGATORY,

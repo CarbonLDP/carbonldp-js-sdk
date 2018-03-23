@@ -15,12 +15,14 @@ describe( module( "carbonldp/SPARQL/Builder", "Module that reexports the customi
 
 	// TODO: Document `FinishSPARQLSelect`
 
-	describe( clazz( "CarbonLDP.SPARQL.Builder.SPARQLBuilder", "Customized SPARQLER class to be used by the SDK" ), ():void => {
+	describe( clazz( "CarbonLDP.SPARQL.SPARQLBuilder", "Customized SPARQLER class to be used by the SDK" ), ():void => {
 
 		// TODO: Test `SPARQLBuilder.constructor`
 
 		// TODO: Test `SPARQLBuilder => FinishSPARQLSelect`
 
 	} );
+
+	// TODO: Document `FinishSPARQLSelect`
 
 } );

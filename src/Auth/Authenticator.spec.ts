@@ -54,9 +54,9 @@ describe( module( "carbonldp/Auth/Authenticator" ), ():void => {
 			OBLIGATORY,
 			"addAuthentication",
 			"If the authenticator is authenticated, it adds an authentication header in the request options object provided.", [
-				{ name: "requestOptions", type: "CarbonLDP.HTTP.Request.RequestOptions", description: "The request options object where to add the authentication header." },
+				{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", description: "The request options object where to add the authentication header." },
 			],
-			{ type: "CarbonLDP.HTTP.Request.RequestOptions", description: "The request options object provided after adding the authentication header." }
+			{ type: "CarbonLDP.HTTP.RequestOptions", description: "The request options object provided after adding the authentication header." }
 		), ():void => {} );
 
 	} );

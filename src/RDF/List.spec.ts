@@ -15,31 +15,31 @@ import { RDFList } from "./List";
 describe( module( "carbonldp/RDF/List" ), ():void => {
 
 	describe( interfaze(
-		"CarbonLDP.RDF.List.RDFList",
-		"Interface that represents an `rdf:List`."
+		"CarbonLDP.RDF.RDFList",
+		"Interface that represents an RDF List."
 	), ():void => {
 
 		it( hasProperty(
 			OBLIGATORY,
 			"@list",
-			"CarbonLDP.RDF.Value.RDFValue[]",
+			"CarbonLDP.RDF.RDFValue[]",
 			"Array if the elements in the list."
 		), ():void => {} );
 
 	} );
 
 	describe( interfaze(
-		"CarbonLDP.RDF.List.RDFListFactory",
-		"Interface with the factory and utils for `CarbonLDP.RDF.List.RDFList` objects."
+		"CarbonLDP.RDF.RDFListFactory",
+		"Interface with the factory and utils for `CarbonLDP.RDF.RDFList` objects."
 	), ():void => {
 
 		it( hasMethod(
 			OBLIGATORY,
 			"is",
-			"Returns true if the object provided is considered a `CarbonLDP.RDF.List.RDFList` object.", [
+			"Returns true if the object provided is considered a `CarbonLDP.RDF.RDFList` object.", [
 				{ name: "value", type: "any" },
 			],
-			{ type: "value is CarbonLDP.RDF.List.RDFList" }
+			{ type: "value is CarbonLDP.RDF.RDFList" }
 		), ():void => {} );
 
 	} );
@@ -47,7 +47,7 @@ describe( module( "carbonldp/RDF/List" ), ():void => {
 	describe( property(
 		STATIC,
 		"RDFList",
-		"CarbonLDP.RDF.List.RDFListFactory"
+		"CarbonLDP.RDF.RDFListFactory"
 	), ():void => {
 
 		it( isDefined(), ():void => {

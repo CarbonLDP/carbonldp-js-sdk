@@ -25,7 +25,7 @@ import {
 
 describe( module( "carbonldp/SDKContext" ), ():void => {
 
-	describe( clazz( "CarbonLDP.SDKContext.SDKContext", "Base class of every Context in the SDK.", [ "CarbonLDP.Context.Context" ] ), ():void => {
+	describe( clazz( "CarbonLDP.SDKContext", "Base class of every Context in the SDK.", [ "CarbonLDP.Context" ] ), ():void => {
 
 		it( isDefined(), ():void => {
 			expect( SDKContext ).toBeDefined();
@@ -73,15 +73,15 @@ describe( module( "carbonldp/SDKContext" ), ():void => {
 		it( hasProperty(
 			INSTANCE,
 			"documents",
-			"CarbonLDP.Documents.Documents",
-			"Instance of `CarbonLDP.Documents.Documents` class to manage all the documents in the context."
+			"CarbonLDP.Documents",
+			"Instance of `CarbonLDP.Documents` class to manage all the documents in the context."
 		), ():void => {} );
 
 		it( hasProperty(
 			INSTANCE,
 			"baseURI",
 			"string",
-			"The base URI of the context. For an instance of `CarbonLDP.SDKContext.SDKContext`, this is an empty string."
+			"The base URI of the context. For an instance of `CarbonLDP.SDKContext`, this is an empty string."
 		), ():void => {
 			const context:SDKContext = new SDKContext();
 
@@ -94,8 +94,8 @@ describe( module( "carbonldp/SDKContext" ), ():void => {
 		it( hasProperty(
 			INSTANCE,
 			"parentContext",
-			"CarbonLDP.Context.Context",
-			"Parent context of the current context. For an instance of `CarbonLDP.SDKContext.SDKContext`, this is set to null since it is the root parent of every context in the SDK."
+			"CarbonLDP.Context",
+			"Parent context of the current context. For an instance of `CarbonLDP.SDKContext`, this is set to null since it is the root parent of every context in the SDK."
 		), ():void => {
 			const context:SDKContext = new SDKContext();
 
@@ -438,12 +438,12 @@ describe( module( "carbonldp/SDKContext" ), ():void => {
 				"Returns the ObjectSchema for the specified type", [
 					{ name: "type", type: "string", optional: true, description: "The URI of the type to look for its schema." },
 				],
-				{ type: "CarbonLDP.ObjectSchema.DigestedObjectSchema", description: "The specified schema to look for. If no schema was found `null` will be returned." }
+				{ type: "CarbonLDP.DigestedObjectSchema", description: "The specified schema to look for. If no schema was found `null` will be returned." }
 			), ():void => {} );
 
 			it( hasSignature(
 				"Returns the general object schema of the context.",
-				{ type: "CarbonLDP.ObjectSchema.DigestedObjectSchema", description: "The general schema of the context." }
+				{ type: "CarbonLDP.DigestedObjectSchema", description: "The general schema of the context." }
 			), ():void => {} );
 
 			it( "should exists", ():void => {
@@ -577,13 +577,13 @@ describe( module( "carbonldp/SDKContext" ), ():void => {
 			it( hasSignature(
 				"Extends the schema for a specified type of Resource.\nIf a schema for the type exists in the parent context, this is duplicated for the actual context, but only the first time this schema is extended.", [
 					{ name: "type", type: "string", description: "The URI of the type to extends its schema." },
-					{ name: "objectSchema", type: "CarbonLDP.ObjectSchema.DigestedObjectSchema", description: "The new schema that will extends the previous one." },
+					{ name: "objectSchema", type: "CarbonLDP.DigestedObjectSchema", description: "The new schema that will extends the previous one." },
 				]
 			), ():void => {} );
 
 			it( hasSignature(
 				"Extends the general schema of the current context.\nIf a general schema exists in the parent context, this is duplicated for the current context, but only the first time the schema is extended.", [
-					{ name: "objectSchema", type: "CarbonLDP.ObjectSchema.DigestedObjectSchema", description: "The new schema that will extends the previous one." },
+					{ name: "objectSchema", type: "CarbonLDP.DigestedObjectSchema", description: "The new schema that will extends the previous one." },
 				]
 			), ():void => {} );
 
@@ -780,8 +780,8 @@ describe( module( "carbonldp/SDKContext" ), ():void => {
 	it( hasProperty(
 		STATIC,
 		"globalContext",
-		"CarbonLDP.SDKContext.SDKContext",
-		"Instance of `CarbonLDP.SDKContext.SDKContext` that is used as the root parent in every context."
+		"CarbonLDP.SDKContext",
+		"Instance of `CarbonLDP.SDKContext` that is used as the root parent in every context."
 	), ():void => {
 		expect( globalContext ).toBeDefined();
 		expect( globalContext ).toEqual( jasmine.any( SDKContext ) );

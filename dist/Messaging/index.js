@@ -1,45 +1,23 @@
 "use strict";
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
-    result["default"] = mod;
-    return result;
+function __export(m) {
+    for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
 }
 Object.defineProperty(exports, "__esModule", { value: true });
-var AccessPointCreated = __importStar(require("./AccessPointCreated"));
-exports.AccessPointCreated = AccessPointCreated;
-var ChildCreated = __importStar(require("./ChildCreated"));
-exports.ChildCreated = ChildCreated;
-var Document = __importStar(require("./Document"));
-exports.Document = Document;
-var DocumentCreated = __importStar(require("./DocumentCreated"));
-exports.DocumentCreated = DocumentCreated;
-var DocumentCreatedDetails = __importStar(require("./DocumentCreatedDetails"));
-exports.DocumentCreatedDetails = DocumentCreatedDetails;
-var DocumentDeleted = __importStar(require("./DocumentDeleted"));
-exports.DocumentDeleted = DocumentDeleted;
-var DocumentModified = __importStar(require("./DocumentModified"));
-exports.DocumentModified = DocumentModified;
-var Event_1 = require("./Event");
-exports.Event = Event_1.Event;
-var EventMessage = __importStar(require("./EventMessage"));
-exports.EventMessage = EventMessage;
-var MemberAdded = __importStar(require("./MemberAdded"));
-exports.MemberAdded = MemberAdded;
-var MemberAddedDetails = __importStar(require("./MemberAddedDetails"));
-exports.MemberAddedDetails = MemberAddedDetails;
-var MemberDetails = __importStar(require("./MemberDetails"));
-exports.MemberDetails = MemberDetails;
-var MemberRemoved = __importStar(require("./MemberRemoved"));
-exports.MemberRemoved = MemberRemoved;
-var MemberRemovedDetails = __importStar(require("./MemberRemovedDetails"));
-exports.MemberRemovedDetails = MemberRemovedDetails;
-var Options = __importStar(require("./Options"));
-exports.Options = Options;
-var Service = __importStar(require("./Service"));
-exports.Service = Service;
-var Utils = __importStar(require("./Utils"));
-exports.Utils = Utils;
+__export(require("./AccessPointCreated"));
+__export(require("./ChildCreated"));
+__export(require("./Document"));
+__export(require("./DocumentCreated"));
+__export(require("./DocumentCreatedDetails"));
+__export(require("./DocumentDeleted"));
+__export(require("./DocumentModified"));
+__export(require("./Event"));
+__export(require("./EventMessage"));
+__export(require("./MemberAdded"));
+__export(require("./MemberAddedDetails"));
+__export(require("./MemberDetails"));
+__export(require("./MemberRemoved"));
+__export(require("./MemberRemovedDetails"));
+__export(require("./Service"));
+__export(require("./Utils"));
 
 //# sourceMappingURL=index.js.map

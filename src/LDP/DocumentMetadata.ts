@@ -25,7 +25,7 @@ export interface DocumentMetadataFactory extends ModelFactory<DocumentMetadata>,
 	is( object:object ):object is DocumentMetadata;
 }
 
-export const SCHEMA:ObjectSchema = {
+const SCHEMA:ObjectSchema = {
 	"relatedDocument": {
 		"@id": C.relatedDocument,
 		"@type": "@id",
