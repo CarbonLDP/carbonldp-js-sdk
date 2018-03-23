@@ -7,11 +7,21 @@ var __assign = (this && this.__assign) || Object.assign || function(t) {
     }
     return t;
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+}
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
+    result["default"] = mod;
+    return result;
+}
 Object.defineProperty(exports, "__esModule", { value: true });
-var http_1 = require("http");
-var https_1 = require("https");
-var url_1 = require("url");
-var Utils = require("./../Utils");
+var http_1 = __importDefault(require("http"));
+var https_1 = __importDefault(require("https"));
+var url_1 = __importDefault(require("url"));
+var Utils = __importStar(require("./../Utils"));
 var Errors_1 = require("./Errors");
 var Header_1 = require("./Header");
 var HTTPMethod_1 = require("./HTTPMethod");

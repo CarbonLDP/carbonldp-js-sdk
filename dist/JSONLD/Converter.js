@@ -1,14 +1,21 @@
 "use strict";
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
+    result["default"] = mod;
+    return result;
+}
 Object.defineProperty(exports, "__esModule", { value: true });
 var IllegalArgumentError_1 = require("../Errors/IllegalArgumentError");
 var Pointer_1 = require("../Pointer");
 var List_1 = require("../RDF/List");
-var XSDSerializers = require("../RDF/Literal/Serializers/XSD");
+var XSDSerializers = __importStar(require("../RDF/Literal/Serializers/XSD"));
 var Node_1 = require("../RDF/Node");
 var URI_1 = require("../RDF/URI");
 var XSD_1 = require("../Vocabularies/XSD");
-var ObjectSchema = require("./../ObjectSchema");
-var Utils = require("./../Utils");
+var ObjectSchema = __importStar(require("./../ObjectSchema"));
+var Utils = __importStar(require("./../Utils"));
 var Utils_1 = require("./Utils");
 var JSONLDConverter = (function () {
     function JSONLDConverter(literalSerializers) {

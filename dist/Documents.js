@@ -1,12 +1,19 @@
 "use strict";
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
+    result["default"] = mod;
+    return result;
+}
 Object.defineProperty(exports, "__esModule", { value: true });
 var tokens_1 = require("sparqler/tokens");
 var AccessPoint_1 = require("./AccessPoint");
-var Auth = require("./Auth");
+var Auth = __importStar(require("./Auth"));
 var ACL_1 = require("./Auth/ACL");
 var PersistedACL_1 = require("./Auth/PersistedACL");
 var Document_1 = require("./Document");
-var Errors = require("./Errors");
+var Errors = __importStar(require("./Errors"));
 var FreeResources_1 = require("./FreeResources");
 var Errors_1 = require("./HTTP/Errors");
 var BadResponseError_1 = require("./HTTP/Errors/ServerErrors/BadResponseError");
@@ -43,7 +50,7 @@ var QueryMetadata_1 = require("./SPARQL/QueryDocument/QueryMetadata");
 var QueryProperty_1 = require("./SPARQL/QueryDocument/QueryProperty");
 var Utils_2 = require("./SPARQL/QueryDocument/Utils");
 var Service_1 = require("./SPARQL/Service");
-var Utils = require("./Utils");
+var Utils = __importStar(require("./Utils"));
 var Utils_3 = require("./Utils");
 var C_1 = require("./Vocabularies/C");
 var LDP_1 = require("./Vocabularies/LDP");

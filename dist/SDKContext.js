@@ -1,11 +1,18 @@
 "use strict";
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
+    result["default"] = mod;
+    return result;
+}
 Object.defineProperty(exports, "__esModule", { value: true });
-var Auth = require("./Auth");
+var Auth = __importStar(require("./Auth"));
 var ACE_1 = require("./Auth/ACE");
 var ACL_1 = require("./Auth/ACL");
 var Document_1 = require("./Document");
 var Documents_1 = require("./Documents");
-var Errors = require("./Errors");
+var Errors = __importStar(require("./Errors"));
 var AddMemberAction_1 = require("./LDP/AddMemberAction");
 var Error_1 = require("./LDP/Error");
 var Map_1 = require("./LDP/Map");
@@ -24,7 +31,7 @@ var MemberAdded_1 = require("./Messaging/MemberAdded");
 var MemberAddedDetails_1 = require("./Messaging/MemberAddedDetails");
 var MemberRemoved_1 = require("./Messaging/MemberRemoved");
 var MemberRemovedDetails_1 = require("./Messaging/MemberRemovedDetails");
-var ObjectSchema = require("./ObjectSchema");
+var ObjectSchema = __importStar(require("./ObjectSchema"));
 var ProtectedDocument_1 = require("./ProtectedDocument");
 var URI_1 = require("./RDF/URI");
 var ValidationReport_1 = require("./SHACL/ValidationReport");
