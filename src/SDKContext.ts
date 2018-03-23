@@ -30,6 +30,7 @@ import * as Settings from "./Settings";
 import { ValidationReport } from "./SHACL/ValidationReport";
 import { ValidationResult } from "./SHACL/ValidationResult";
 import { QueryMetadata } from "./SPARQL/QueryDocument/QueryMetadata";
+import { PlatformInstance } from "./System/PlatformInstance";
 import { PlatformMetadata } from "./System/PlatformMetadata";
 import {
 	isObject,
@@ -205,6 +206,7 @@ export class SDKContext implements Context {
 		this.extendObjectSchema( ProtectedDocument.TYPE, ProtectedDocument.SCHEMA );
 
 		this.extendObjectSchema( PlatformMetadata.TYPE, PlatformMetadata.SCHEMA );
+		this.extendObjectSchema( PlatformInstance.TYPE, PlatformInstance.SCHEMA );
 
 		this.extendObjectSchema( AddMemberAction.TYPE, AddMemberAction.SCHEMA );
 		this.extendObjectSchema( Error.TYPE, Error.SCHEMA );
