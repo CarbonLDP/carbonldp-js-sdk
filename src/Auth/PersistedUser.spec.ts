@@ -49,7 +49,7 @@ xdescribe( module( "carbonldp/Auth/PersistedUser" ), ():void => {
 			it( hasSignature(
 				"Activate the account of the user.",
 				[
-					{ name: "requestOptions", type: "CarbonLDP.HTTP.Request.Options", optional: true, description: "Customizable options for the request." },
+					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for the request." },
 				],
 				{ type: "Promise<CarbonLDP.Auth.PersistedUser.Class>" }
 			), ():void => {} );

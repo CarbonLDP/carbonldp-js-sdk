@@ -10,6 +10,7 @@ import {
 	method,
 	module,
 } from "../test/JasmineExtender";
+import { CS } from "../Vocabularies/CS";
 import * as Utils from "./../Utils";
 import * as PersistedUser from "./PersistedUser";
 import { User } from "./User";

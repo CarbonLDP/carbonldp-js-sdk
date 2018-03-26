@@ -47,7 +47,7 @@ describe( module( "carbonldp/LDP/Error" ), ():void => {
 
 	describe( interfaze(
 		"CarbonLDP.LDP.ErrorFactory",
-		"Interface with the factory, decorate and utils function for `CarbonLDP.LDP.Error.Error` objects."
+		"Interface with the factory, decorate and utils function for `CarbonLDP.LDP.Error` objects."
 	), ():void => {
 
 		it( hasProperty(

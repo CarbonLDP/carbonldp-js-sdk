@@ -1,3 +1,4 @@
+import { Document } from "./Document";
 import { Documents } from "./Documents";
 import { IllegalArgumentError } from "./Errors/IllegalArgumentError";
 import {
@@ -17,40 +18,41 @@ import {
 } from "./Utils";
 
 
-export interface EndpointModelFactory<T extends object, U extends PersistedProtectedDocument> extends ModelDecorator<U> {
-	validateBase?( object:object ):object is T;
+export interface EndpointModelFactory<B extends object, D extends Document, P extends PersistedProtectedDocument> {
+	createFrom?( object:B ):B & D;
+	decorate?<T extends object>( object:T, documents:Documents ):T & P;
 }
 
-export interface Endpoint<T extends object, U extends PersistedProtectedDocument> extends PersistedProtectedDocument {
-	_ModelFactory:EndpointModelFactory<T, U>;
+export interface Endpoint<B extends object, D extends Document, P extends PersistedProtectedDocument> extends PersistedProtectedDocument {
+	_ModelFactory:EndpointModelFactory<B, D, P>;
 
 
-	get<W extends object>( relativeURI:string, requestOptions?:GETOptions, queryBuilderFn?:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<W & U>;
-	get<W extends object>( relativeURI:string, queryBuilderFn?:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<W & U>;
+	get<T extends object>( relativeURI:string, requestOptions?:GETOptions, queryBuilderFn?:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<T & P>;
+	get<T extends object>( relativeURI:string, queryBuilderFn?:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<T & P>;
 
 
-	createChild<W extends T>( child:W, slug:string, requestOptions?:RequestOptions ):Promise<W & U>;
-	createChild<W extends T>( child:W, requestOptions?:RequestOptions ):Promise<W & U>;
+	createChild<T extends B>( child:T, slug:string, requestOptions?:RequestOptions ):Promise<T & P>;
+	createChild<T extends B>( child:T, requestOptions?:RequestOptions ):Promise<T & P>;
 
-	createChildren<W extends T>( children:W[], slugs:string[], requestOptions?:RequestOptions ):Promise<(W & U)[]>;
-	createChildren<W extends T>( children:W[], requestOptions?:RequestOptions ):Promise<(W & U)[]>;
+	createChildren<T extends B>( children:T[], slugs:string[], requestOptions?:RequestOptions ):Promise<(T & P)[]>;
+	createChildren<T extends B>( children:T[], requestOptions?:RequestOptions ):Promise<(T & P)[]>;
 
-	createChildAndRetrieve<W extends T>( child:W, slug:string, requestOptions?:RequestOptions ):Promise<W & U>;
-	createChildAndRetrieve<W extends T>( child:W, requestOptions?:RequestOptions ):Promise<W & U>;
+	createChildAndRetrieve<T extends B>( child:T, slug:string, requestOptions?:RequestOptions ):Promise<T & P>;
+	createChildAndRetrieve<T extends B>( child:T, requestOptions?:RequestOptions ):Promise<T & P>;
 
-	createChildrenAndRetrieve<W extends T>( children:W[], slugs:string[], requestOptions?:RequestOptions ):Promise<(W & U)[]>;
-	createChildrenAndRetrieve<W extends T>( children:W[], requestOptions?:RequestOptions ):Promise<(W & U)[]>;
+	createChildrenAndRetrieve<T extends B>( children:T[], slugs:string[], requestOptions?:RequestOptions ):Promise<(T & P)[]>;
+	createChildrenAndRetrieve<T extends B>( children:T[], requestOptions?:RequestOptions ):Promise<(T & P)[]>;
 
 
-	listChildren( requestOptions?:RequestOptions ):Promise<U[]>;
+	listChildren( requestOptions?:RequestOptions ):Promise<P[]>;
 
-	listMembers( requestOptions?:RequestOptions ):Promise<U[]>;
+	listMembers( requestOptions?:RequestOptions ):Promise<P[]>;
 
-	getChildren<W extends object>( requestOptions?:RequestOptions, queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder ) => QueryDocumentsBuilder ):Promise<(W & U)[]>;
-	getChildren<W extends object>( queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder ) => QueryDocumentsBuilder ):Promise<(W & U)[]>;
+	getChildren<T extends object>( requestOptions?:RequestOptions, queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder ) => QueryDocumentsBuilder ):Promise<(T & P)[]>;
+	getChildren<T extends object>( queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder ) => QueryDocumentsBuilder ):Promise<(T & P)[]>;
 
-	getMembers<W extends object>( requestOptions?:RequestOptions, queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder ) => QueryDocumentsBuilder ):Promise<(W & U)[]>;
-	getMembers<W extends object>( queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder ) => QueryDocumentsBuilder ):Promise<(W & U)[]>;
+	getMembers<T extends object>( requestOptions?:RequestOptions, queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder ) => QueryDocumentsBuilder ):Promise<(T & P)[]>;
+	getMembers<T extends object>( queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder ) => QueryDocumentsBuilder ):Promise<(T & P)[]>;
 
 
 	delete( relativeURI:string, requestOptions?:RequestOptions ):Promise<void>;
@@ -58,44 +60,44 @@ export interface Endpoint<T extends object, U extends PersistedProtectedDocument
 }
 
 
-export interface EndpointFactory extends ModelDecorator<Endpoint<any, any>, PersistedProtectedDocument> {
-	isDecorated<U extends object, W extends PersistedProtectedDocument>( object:object ):object is Endpoint<U, W>;
+export interface EndpointFactory extends ModelDecorator<Endpoint<object, Document, PersistedProtectedDocument>, PersistedProtectedDocument> {
+	isDecorated<B extends object, D extends Document, P extends PersistedProtectedDocument>( value:any ):value is Endpoint<B, D, P>;
 
-	decorate<T extends object, U extends object, W extends PersistedProtectedDocument>( object:T, documents:Documents ):T & Endpoint<U, W>;
+	decorate<T extends object, B extends object, D extends Document, P extends PersistedProtectedDocument>( object:T, documents:Documents ):T & Endpoint<B, D, P>;
 
 
-	resolveEndpointURI( endpoint:Endpoint<any, any>, relativeURI:string ):Promise<string>;
+	resolveEndpointURI( endpoint:Endpoint<any, any, any>, relativeURI:string ):Promise<string>;
 
-	resolveChildBase<T extends object>( endpoint:Endpoint<T, any>, objects:object[] ):Promise<T[]>;
-	resolveChildBase<T extends object>( endpoint:Endpoint<T, any>, object:object ):Promise<T>;
+	createChildren<B extends object, D extends Document>( endpoint:Endpoint<B, D, any>, objects:B[] ):Promise<(B & D)[]>;
+	createChildren<B extends object, D extends Document>( endpoint:Endpoint<B, D, any>, object:B ):Promise<B & D>;
 
-	decorateEndpointChild<T extends object, U extends PersistedProtectedDocument>( endpoint:Endpoint<T, U>, documents:(T & PersistedDocument)[] ):(T & U)[];
-	decorateEndpointChild<T extends object, U extends PersistedProtectedDocument>( endpoint:Endpoint<T, U>, documents:T & PersistedDocument ):T & U;
+	decorateChildren<B extends object, P extends PersistedProtectedDocument>( endpoint:Endpoint<B, any, P>, documents:(B & PersistedDocument)[] ):(B & P)[];
+	decorateChildren<B extends object, P extends PersistedProtectedDocument>( endpoint:Endpoint<B, any, P>, documents:B & PersistedDocument ):B & P;
 }
 
 export const Endpoint:EndpointFactory = {
-	isDecorated<U extends object = any, W extends PersistedProtectedDocument = any>( object:object ):object is Endpoint<U, W> {
-		return isObject( object )
-			&& object.hasOwnProperty( "_ModelFactory" )
+	isDecorated( value:any ):value is Endpoint<any, any, any> {
+		return isObject( value )
+			&& value.hasOwnProperty( "_ModelFactory" )
 
-			&& object[ "get" ] === get
+			&& value[ "get" ] === get
 
-			&& object[ "createChild" ] === createChild
-			&& object[ "createChildren" ] === createChildren
-			&& object[ "createChildAndRetrieve" ] === createChildAndRetrieve
-			&& object[ "createChildrenAndRetrieve" ] === createChildrenAndRetrieve
+			&& value[ "createChild" ] === createChild
+			&& value[ "createChildren" ] === createChildren
+			&& value[ "createChildAndRetrieve" ] === createChildAndRetrieve
+			&& value[ "createChildrenAndRetrieve" ] === createChildrenAndRetrieve
 
-			&& object[ "listChildren" ] === listChildren
-			&& object[ "listMembers" ] === listMembers
-			&& object[ "getChildren" ] === getChildren
-			&& object[ "getMembers" ] === getMembers
+			&& value[ "listChildren" ] === listChildren
+			&& value[ "listMembers" ] === listMembers
+			&& value[ "getChildren" ] === getChildren
+			&& value[ "getMembers" ] === getMembers
 
-			&& object[ "delete" ] === deleteChild
+			&& value[ "delete" ] === deleteChild
 			;
 	},
 
-	decorate<T extends object, U extends object, W extends PersistedProtectedDocument>( object:T, documents:Documents ):T & Endpoint<U, W> {
-		if( Endpoint.isDecorated<U, W>( object ) ) return object;
+	decorate<T extends object, B extends object, D extends Document, P extends PersistedProtectedDocument>( object:T, documents:Documents ):T & Endpoint<B, D, P> {
+		if( Endpoint.isDecorated<B, D, P>( object ) ) return object;
 
 		PersistedProtectedDocument.decorate( object, documents );
 
@@ -148,7 +150,7 @@ export const Endpoint:EndpointFactory = {
 	},
 
 
-	resolveEndpointURI( endpoint:Endpoint<any, any>, relativeURI:string ):Promise<string> {
+	resolveEndpointURI( endpoint:Endpoint<any, any, any>, relativeURI:string ):Promise<string> {
 		return promiseMethod( () => {
 			if( ! URI.isBaseOf( endpoint.id, relativeURI ) )
 				throw new IllegalArgumentError( `The URI "${ relativeURI }" isn't a child of "${ endpoint.id }".` );
@@ -157,25 +159,31 @@ export const Endpoint:EndpointFactory = {
 		} );
 	},
 
-	resolveChildBase<T extends object>( endpoint:Endpoint<T, any>, objects:object | object[] ):Promise<T | T[]> {
+	createChildren<B extends object, D extends Document>( endpoint:Endpoint<B, D, any>, objects:B | B[] ):Promise<(B & D) | (B & D)[]> {
 		return promiseMethod( () => {
-			if( ! endpoint._ModelFactory || ! endpoint._ModelFactory.validateBase )
-				return objects as T | T[];
+			if( ! endpoint._ModelFactory || ! endpoint._ModelFactory.createFrom )
+				return objects as (B & D) | (B & D)[];
 
 			if( ! Array.isArray( objects ) ) {
-				if( endpoint._ModelFactory.validateBase( objects ) ) return objects;
+				const document:B & D = endpoint._ModelFactory.createFrom( objects );
+
+				if( document ) return document;
 				throw new IllegalArgumentError( `Invalid base child object for the "${ endpoint.id }" endpoint.` );
 			}
 
-			if( objects.every( object => endpoint._ModelFactory.validateBase( object ) ) )
-				return objects as T[];
+			const documents:(B & D)[] = objects
+				.map( object => endpoint._ModelFactory.createFrom( object ) )
+				.filter( document => ! ! document )
+			;
+
+			if( documents.length === objects.length ) return documents;
 			throw new IllegalArgumentError( `Invalid base child objects for the "${ endpoint.id }" endpoint.` );
 		} );
 	},
 
-	decorateEndpointChild<T extends object, U extends PersistedProtectedDocument>( endpoint:Endpoint<T, U>, documents:(T & PersistedDocument) | (T & PersistedDocument)[] ):(T & U) | (T & U)[] {
+	decorateChildren<B extends object, P extends PersistedProtectedDocument>( endpoint:Endpoint<B, any, P>, documents:(B & PersistedDocument) | (B & PersistedDocument)[] ):(B & P) | (B & P)[] {
 		if( ! endpoint._ModelFactory || ! endpoint._ModelFactory.decorate )
-			return documents as (T & U) | (T & U)[];
+			return documents as (B & P) | (B & P)[];
 
 		if( ! Array.isArray( documents ) )
 			return endpoint._ModelFactory.decorate( documents, endpoint._documents );
@@ -186,96 +194,96 @@ export const Endpoint:EndpointFactory = {
 };
 
 
-function get<T extends object, U extends PersistedProtectedDocument>( relativeURI:string, requestOptions?:GETOptions, queryBuilderFn?:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<T & U>;
-function get<T extends object, U extends PersistedProtectedDocument>( relativeURI:string, queryBuilderFn?:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<T & U>;
-function get<T extends object, U extends PersistedProtectedDocument>( this:Endpoint<any, U>, relativeURI:string, optionsOrQueryBuilderFn:any, queryBuilderFn?:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<T & U> {
+function get<T extends object, P extends PersistedProtectedDocument>( relativeURI:string, requestOptions?:GETOptions, queryBuilderFn?:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<T & P>;
+function get<T extends object, P extends PersistedProtectedDocument>( relativeURI:string, queryBuilderFn?:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<T & P>;
+function get<T extends object, P extends PersistedProtectedDocument>( this:Endpoint<any, any, P>, relativeURI:string, optionsOrQueryBuilderFn:any, queryBuilderFn?:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<T & P> {
 	return Endpoint
 		.resolveEndpointURI( this, relativeURI )
 		.then( absoluteURI => this._documents
 			.get( absoluteURI, optionsOrQueryBuilderFn, queryBuilderFn ) )
-		.then( document => Endpoint.decorateEndpointChild( this, document ) )
+		.then( document => Endpoint.decorateChildren( this, document ) )
 		;
 }
 
-function createChild<T extends object, U extends PersistedProtectedDocument>( child:T, slug:string, requestOptions?:RequestOptions ):Promise<T & U>;
-function createChild<T extends object, U extends PersistedProtectedDocument>( child:T, requestOptions?:RequestOptions ):Promise<T & U>;
-function createChild<T extends object, U extends PersistedProtectedDocument>( this:Endpoint<T, U>, child:T, slugOrRequestOptions?:any, requestOptions?:RequestOptions ):Promise<T & U> {
+function createChild<B extends object, D extends Document, P extends PersistedProtectedDocument>( child:B, slug:string, requestOptions?:RequestOptions ):Promise<B & P>;
+function createChild<B extends object, D extends Document, P extends PersistedProtectedDocument>( child:B, requestOptions?:RequestOptions ):Promise<B & P>;
+function createChild<B extends object, D extends Document, P extends PersistedProtectedDocument>( this:Endpoint<B, D, P>, child:B, slugOrRequestOptions?:any, requestOptions?:RequestOptions ):Promise<B & P> {
 	return Endpoint
-		.resolveChildBase( this, child )
+		.createChildren( this, child )
 		.then( base => this._documents
 			.createChild( this.id, base, slugOrRequestOptions, requestOptions ) )
-		.then( document => Endpoint.decorateEndpointChild( this, document ) )
+		.then( document => Endpoint.decorateChildren( this, document ) )
 		;
 }
 
-function createChildren<T extends object, U extends PersistedProtectedDocument>( children:T[], slugs:string[], requestOptions?:RequestOptions ):Promise<(T & U)[]>;
-function createChildren<T extends object, U extends PersistedProtectedDocument>( children:T[], requestOptions?:RequestOptions ):Promise<(T & U)[]>;
-function createChildren<T extends object, U extends PersistedProtectedDocument>( this:Endpoint<T, U>, children:T[], slugsOrRequestOptions?:any, requestOptions?:RequestOptions ):Promise<(T & U)[]> {
+function createChildren<B extends object, D extends Document, P extends PersistedProtectedDocument>( children:B[], slugs:string[], requestOptions?:RequestOptions ):Promise<(B & P)[]>;
+function createChildren<B extends object, D extends Document, P extends PersistedProtectedDocument>( children:B[], requestOptions?:RequestOptions ):Promise<(B & P)[]>;
+function createChildren<B extends object, D extends Document, P extends PersistedProtectedDocument>( this:Endpoint<B, D, P>, children:B[], slugsOrRequestOptions?:any, requestOptions?:RequestOptions ):Promise<(B & P)[]> {
 	return Endpoint
-		.resolveChildBase( this, children )
+		.createChildren( this, children )
 		.then( bases => this._documents
 			.createChildren( this.id, bases, slugsOrRequestOptions, requestOptions ) )
-		.then( documents => Endpoint.decorateEndpointChild( this, documents ) )
+		.then( documents => Endpoint.decorateChildren( this, documents ) )
 		;
 }
 
-function createChildAndRetrieve<T extends object, U extends PersistedProtectedDocument>( child:T, slug:string, requestOptions?:RequestOptions ):Promise<T & U>;
-function createChildAndRetrieve<T extends object, U extends PersistedProtectedDocument>( child:T, requestOptions?:RequestOptions ):Promise<T & U>;
-function createChildAndRetrieve<T extends object, U extends PersistedProtectedDocument>( this:Endpoint<T, U>, child:T, slugOrRequestOptions?:any, requestOptions?:RequestOptions ):Promise<T & U> {
+function createChildAndRetrieve<B extends object, D extends Document, P extends PersistedProtectedDocument>( child:B, slug:string, requestOptions?:RequestOptions ):Promise<B & P>;
+function createChildAndRetrieve<B extends object, D extends Document, P extends PersistedProtectedDocument>( child:B, requestOptions?:RequestOptions ):Promise<B & P>;
+function createChildAndRetrieve<B extends object, D extends Document, P extends PersistedProtectedDocument>( this:Endpoint<B, D, P>, child:B, slugOrRequestOptions?:any, requestOptions?:RequestOptions ):Promise<B & P> {
 	return Endpoint
-		.resolveChildBase( this, child )
+		.createChildren( this, child )
 		.then( base => this._documents
 			.createChildAndRetrieve( this.id, base, slugOrRequestOptions, requestOptions ) )
-		.then( document => Endpoint.decorateEndpointChild( this, document ) )
+		.then( document => Endpoint.decorateChildren( this, document ) )
 		;
 }
 
-function createChildrenAndRetrieve<T extends object, U extends PersistedProtectedDocument>( children:T[], slugs:string[], requestOptions?:RequestOptions ):Promise<(T & U)[]>;
-function createChildrenAndRetrieve<T extends object, U extends PersistedProtectedDocument>( children:T[], requestOptions?:RequestOptions ):Promise<(T & U)[]>;
-function createChildrenAndRetrieve<T extends object, U extends PersistedProtectedDocument>( this:Endpoint<T, U>, children:T[], slugsOrRequestOptions?:any, requestOptions?:RequestOptions ):Promise<(T & U)[]> {
+function createChildrenAndRetrieve<B extends object, D extends Document, P extends PersistedProtectedDocument>( children:B[], slugs:string[], requestOptions?:RequestOptions ):Promise<(B & P)[]>;
+function createChildrenAndRetrieve<B extends object, D extends Document, P extends PersistedProtectedDocument>( children:B[], requestOptions?:RequestOptions ):Promise<(B & P)[]>;
+function createChildrenAndRetrieve<B extends object, D extends Document, P extends PersistedProtectedDocument>( this:Endpoint<B, D, P>, children:B[], slugsOrRequestOptions?:any, requestOptions?:RequestOptions ):Promise<(B & P)[]> {
 	return Endpoint
-		.resolveChildBase( this, children )
+		.createChildren( this, children )
 		.then( bases => this._documents
 			.createChildrenAndRetrieve( this.id, bases, slugsOrRequestOptions, requestOptions ) )
-		.then( documents => Endpoint.decorateEndpointChild( this, documents ) )
+		.then( documents => Endpoint.decorateChildren( this, documents ) )
 		;
 }
 
 
-function listChildren<U extends PersistedProtectedDocument>( this:Endpoint<{}, U>, requestOptions?:RequestOptions ):Promise<U[]> {
+function listChildren<P extends PersistedProtectedDocument>( this:Endpoint<{}, any, P>, requestOptions?:RequestOptions ):Promise<P[]> {
 	return this._documents
 		.listChildren( this.id, requestOptions )
-		.then( documents => Endpoint.decorateEndpointChild( this, documents ) );
+		.then( documents => Endpoint.decorateChildren( this, documents ) );
 }
 
-function listMembers<U extends PersistedProtectedDocument>( this:Endpoint<{}, U>, requestOptions?:RequestOptions ):Promise<U[]> {
+function listMembers<P extends PersistedProtectedDocument>( this:Endpoint<{}, any, P>, requestOptions?:RequestOptions ):Promise<P[]> {
 	return this._documents
 		.listMembers( this.id, requestOptions )
-		.then( documents => Endpoint.decorateEndpointChild( this, documents ) )
+		.then( documents => Endpoint.decorateChildren( this, documents ) )
 		;
 }
 
-function getChildren<T extends object, U extends PersistedProtectedDocument>( requestOptions?:RequestOptions, childrenQuery?:( queryBuilder:QueryDocumentsBuilder ) => QueryDocumentsBuilder ):Promise<(T & U)[]>;
-function getChildren<T extends object, U extends PersistedProtectedDocument>( queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder ) => QueryDocumentsBuilder ):Promise<(T & U)[]>;
-function getChildren<T extends object, U extends PersistedProtectedDocument>( this:Endpoint<T, U>, requestOptionsOrQueryBuilderFn?:any, queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder ) => QueryDocumentsBuilder ):Promise<(T & U)[]> {
+function getChildren<T extends object, P extends PersistedProtectedDocument>( requestOptions?:RequestOptions, childrenQuery?:( queryBuilder:QueryDocumentsBuilder ) => QueryDocumentsBuilder ):Promise<(T & P)[]>;
+function getChildren<T extends object, P extends PersistedProtectedDocument>( queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder ) => QueryDocumentsBuilder ):Promise<(T & P)[]>;
+function getChildren<T extends object, P extends PersistedProtectedDocument>( this:Endpoint<T, any, P>, requestOptionsOrQueryBuilderFn?:any, queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder ) => QueryDocumentsBuilder ):Promise<(T & P)[]> {
 	return this._documents
 		.getChildren<T>( this.id, requestOptionsOrQueryBuilderFn, queryBuilderFn )
-		.then( documents => Endpoint.decorateEndpointChild( this, documents ) )
+		.then( documents => Endpoint.decorateChildren( this, documents ) )
 		;
 }
 
-function getMembers<T extends object, U extends PersistedProtectedDocument>( requestOptions?:RequestOptions, queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder ) => QueryDocumentsBuilder ):Promise<(T & U)[]>;
-function getMembers<T extends object, U extends PersistedProtectedDocument>( queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder ) => QueryDocumentsBuilder ):Promise<(T & U)[]>;
-function getMembers<T extends object, U extends PersistedProtectedDocument>( this:Endpoint<T, U>, requestOptionsOrQueryBuilderFn?:any, childrenQuery?:( queryBuilder:QueryDocumentsBuilder ) => QueryDocumentsBuilder ):Promise<(T & U)[]> {
+function getMembers<T extends object, P extends PersistedProtectedDocument>( requestOptions?:RequestOptions, queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder ) => QueryDocumentsBuilder ):Promise<(T & P)[]>;
+function getMembers<T extends object, P extends PersistedProtectedDocument>( queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder ) => QueryDocumentsBuilder ):Promise<(T & P)[]>;
+function getMembers<T extends object, P extends PersistedProtectedDocument>( this:Endpoint<T, any, P>, requestOptionsOrQueryBuilderFn?:any, childrenQuery?:( queryBuilder:QueryDocumentsBuilder ) => QueryDocumentsBuilder ):Promise<(T & P)[]> {
 	return this._documents
 		.getMembers<T>( this.id, requestOptionsOrQueryBuilderFn, childrenQuery )
-		.then( documents => Endpoint.decorateEndpointChild( this, documents ) )
+		.then( documents => Endpoint.decorateChildren( this, documents ) )
 		;
 }
 
 function deleteChild( relativeURI:string, requestOptions?:RequestOptions ):Promise<void>;
 function deleteChild( requestOptions?:RequestOptions ):Promise<void>;
-function deleteChild<T extends object, U extends PersistedProtectedDocument>( this:Endpoint<T, U>, relativeURIOrOptions:string | RequestOptions, requestOptions?:RequestOptions ):Promise<void> {
+function deleteChild( this:Endpoint<any, any, any>, relativeURIOrOptions:string | RequestOptions, requestOptions?:RequestOptions ):Promise<void> {
 	const relativeURI:string = isString( relativeURIOrOptions ) ? relativeURIOrOptions : "";
 	if( isObject( relativeURIOrOptions ) ) requestOptions = relativeURIOrOptions;
 

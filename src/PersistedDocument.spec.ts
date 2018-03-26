@@ -206,7 +206,7 @@ describe( module( "carbonldp/PersistedDocument" ), ():void => {
 			"saveAndRefresh",
 			[ "T extends object" ],
 			"Save and refresh the persisted document.",
-			{ type: "Promise<T & CarbonLDP.PersistedDocument.PersistedDocument>" }
+			{ type: "Promise<T & CarbonLDP.PersistedDocument>" }
 		), ():void => {} );
 
 		it( hasMethod(

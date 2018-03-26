@@ -76,8 +76,6 @@ export interface PersistedDocument extends Document, PersistedResource, ServiceA
     executeASKQuery(askQuery: string, requestOptions?: RequestOptions): Promise<boolean>;
     executeRawSELECTQuery(selectQuery: string, requestOptions?: RequestOptions): Promise<SPARQLRawResults>;
     executeSELECTQuery<T extends object>(selectQuery: string, requestOptions?: RequestOptions): Promise<SPARQLSelectResults<T>>;
-    executeRawSELECTQuery(selectQuery: string, requestOptions?: RequestOptions): Promise<SPARQLRawResults>;
-    executeSELECTQuery<T extends object>(selectQuery: string, requestOptions?: RequestOptions): Promise<SPARQLSelectResults<T>>;
     executeRawCONSTRUCTQuery(constructQuery: string, requestOptions?: RequestOptions): Promise<string>;
     executeRawDESCRIBEQuery(describeQuery: string, requestOptions?: RequestOptions): Promise<string>;
     executeUPDATE(updateQuery: string, requestOptions?: RequestOptions): Promise<void>;

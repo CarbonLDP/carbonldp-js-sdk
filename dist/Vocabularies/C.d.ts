@@ -19,6 +19,7 @@ export interface C {
     MemberRemovedDetails: "https://carbonldp.com/ns/v1/platform#MemberRemovedEventDetails";
     NonReadableMembershipResourceTriples: "https://carbonldp.com/ns/v1/platform#NonReadableMembershipResourceTriples";
     Platform: "https://carbonldp.com/ns/v1/platform#Platform";
+    PlatformInstance: "https://carbonldp.com/ns/v1/platform#PlatformInstance";
     PreferContainer: "https://carbonldp.com/ns/v1/platform#PreferContainer";
     PreferContainmentResources: "https://carbonldp.com/ns/v1/platform#PreferContainmentResources";
     PreferContainmentTriples: "https://carbonldp.com/ns/v1/platform#PreferContainmentTriples";
@@ -50,6 +51,7 @@ export interface C {
     errorParameters: "https://carbonldp.com/ns/v1/platform#errorParameters";
     eTag: "https://carbonldp.com/ns/v1/platform#eTag";
     httpStatusCode: "https://carbonldp.com/ns/v1/platform#httpStatusCode";
+    instance: "https://carbonldp.com/ns/v1/platform#instance";
     mediaType: "https://carbonldp.com/ns/v1/platform#mediaType";
     member: "https://carbonldp.com/ns/v1/platform#member";
     modified: "https://carbonldp.com/ns/v1/platform#modified";

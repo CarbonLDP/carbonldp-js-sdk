@@ -5,19 +5,19 @@ var PersistedProtectedDocument_1 = require("./PersistedProtectedDocument");
 var URI_1 = require("./RDF/URI");
 var Utils_1 = require("./Utils");
 exports.Endpoint = {
-    isDecorated: function (object) {
-        return Utils_1.isObject(object)
-            && object.hasOwnProperty("_ModelFactory")
-            && object["get"] === get
-            && object["createChild"] === createChild
-            && object["createChildren"] === createChildren
-            && object["createChildAndRetrieve"] === createChildAndRetrieve
-            && object["createChildrenAndRetrieve"] === createChildrenAndRetrieve
-            && object["listChildren"] === listChildren
-            && object["listMembers"] === listMembers
-            && object["getChildren"] === getChildren
-            && object["getMembers"] === getMembers
-            && object["delete"] === deleteChild;
+    isDecorated: function (value) {
+        return Utils_1.isObject(value)
+            && value.hasOwnProperty("_ModelFactory")
+            && value["get"] === get
+            && value["createChild"] === createChild
+            && value["createChildren"] === createChildren
+            && value["createChildAndRetrieve"] === createChildAndRetrieve
+            && value["createChildrenAndRetrieve"] === createChildrenAndRetrieve
+            && value["listChildren"] === listChildren
+            && value["listMembers"] === listMembers
+            && value["getChildren"] === getChildren
+            && value["getMembers"] === getMembers
+            && value["delete"] === deleteChild;
     },
     decorate: function (object, documents) {
         if (exports.Endpoint.isDecorated(object))
@@ -76,21 +76,25 @@ exports.Endpoint = {
             return URI_1.URI.resolve(endpoint.id, relativeURI);
         });
     },
-    resolveChildBase: function (endpoint, objects) {
+    createChildren: function (endpoint, objects) {
         return Utils_1.promiseMethod(function () {
-            if (!endpoint._ModelFactory || !endpoint._ModelFactory.validateBase)
+            if (!endpoint._ModelFactory || !endpoint._ModelFactory.createFrom)
                 return objects;
             if (!Array.isArray(objects)) {
-                if (endpoint._ModelFactory.validateBase(objects))
-                    return objects;
+                var document_1 = endpoint._ModelFactory.createFrom(objects);
+                if (document_1)
+                    return document_1;
                 throw new IllegalArgumentError_1.IllegalArgumentError("Invalid base child object for the \"" + endpoint.id + "\" endpoint.");
             }
-            if (objects.every(function (object) { return endpoint._ModelFactory.validateBase(object); }))
-                return objects;
+            var documents = objects
+                .map(function (object) { return endpoint._ModelFactory.createFrom(object); })
+                .filter(function (document) { return !!document; });
+            if (documents.length === objects.length)
+                return documents;
             throw new IllegalArgumentError_1.IllegalArgumentError("Invalid base child objects for the \"" + endpoint.id + "\" endpoint.");
         });
     },
-    decorateEndpointChild: function (endpoint, documents) {
+    decorateChildren: function (endpoint, documents) {
         if (!endpoint._ModelFactory || !endpoint._ModelFactory.decorate)
             return documents;
         if (!Array.isArray(documents))
@@ -105,63 +109,63 @@ function get(relativeURI, optionsOrQueryBuilderFn, queryBuilderFn) {
         .resolveEndpointURI(this, relativeURI)
         .then(function (absoluteURI) { return _this._documents
         .get(absoluteURI, optionsOrQueryBuilderFn, queryBuilderFn); })
-        .then(function (document) { return exports.Endpoint.decorateEndpointChild(_this, document); });
+        .then(function (document) { return exports.Endpoint.decorateChildren(_this, document); });
 }
 function createChild(child, slugOrRequestOptions, requestOptions) {
     var _this = this;
     return exports.Endpoint
-        .resolveChildBase(this, child)
+        .createChildren(this, child)
         .then(function (base) { return _this._documents
         .createChild(_this.id, base, slugOrRequestOptions, requestOptions); })
-        .then(function (document) { return exports.Endpoint.decorateEndpointChild(_this, document); });
+        .then(function (document) { return exports.Endpoint.decorateChildren(_this, document); });
 }
 function createChildren(children, slugsOrRequestOptions, requestOptions) {
     var _this = this;
     return exports.Endpoint
-        .resolveChildBase(this, children)
+        .createChildren(this, children)
         .then(function (bases) { return _this._documents
         .createChildren(_this.id, bases, slugsOrRequestOptions, requestOptions); })
-        .then(function (documents) { return exports.Endpoint.decorateEndpointChild(_this, documents); });
+        .then(function (documents) { return exports.Endpoint.decorateChildren(_this, documents); });
 }
 function createChildAndRetrieve(child, slugOrRequestOptions, requestOptions) {
     var _this = this;
     return exports.Endpoint
-        .resolveChildBase(this, child)
+        .createChildren(this, child)
         .then(function (base) { return _this._documents
         .createChildAndRetrieve(_this.id, base, slugOrRequestOptions, requestOptions); })
-        .then(function (document) { return exports.Endpoint.decorateEndpointChild(_this, document); });
+        .then(function (document) { return exports.Endpoint.decorateChildren(_this, document); });
 }
 function createChildrenAndRetrieve(children, slugsOrRequestOptions, requestOptions) {
     var _this = this;
     return exports.Endpoint
-        .resolveChildBase(this, children)
+        .createChildren(this, children)
         .then(function (bases) { return _this._documents
         .createChildrenAndRetrieve(_this.id, bases, slugsOrRequestOptions, requestOptions); })
-        .then(function (documents) { return exports.Endpoint.decorateEndpointChild(_this, documents); });
+        .then(function (documents) { return exports.Endpoint.decorateChildren(_this, documents); });
 }
 function listChildren(requestOptions) {
     var _this = this;
     return this._documents
         .listChildren(this.id, requestOptions)
-        .then(function (documents) { return exports.Endpoint.decorateEndpointChild(_this, documents); });
+        .then(function (documents) { return exports.Endpoint.decorateChildren(_this, documents); });
 }
 function listMembers(requestOptions) {
     var _this = this;
     return this._documents
         .listMembers(this.id, requestOptions)
-        .then(function (documents) { return exports.Endpoint.decorateEndpointChild(_this, documents); });
+        .then(function (documents) { return exports.Endpoint.decorateChildren(_this, documents); });
 }
 function getChildren(requestOptionsOrQueryBuilderFn, queryBuilderFn) {
     var _this = this;
     return this._documents
         .getChildren(this.id, requestOptionsOrQueryBuilderFn, queryBuilderFn)
-        .then(function (documents) { return exports.Endpoint.decorateEndpointChild(_this, documents); });
+        .then(function (documents) { return exports.Endpoint.decorateChildren(_this, documents); });
 }
 function getMembers(requestOptionsOrQueryBuilderFn, childrenQuery) {
     var _this = this;
     return this._documents
         .getMembers(this.id, requestOptionsOrQueryBuilderFn, childrenQuery)
-        .then(function (documents) { return exports.Endpoint.decorateEndpointChild(_this, documents); });
+        .then(function (documents) { return exports.Endpoint.decorateChildren(_this, documents); });
 }
 function deleteChild(relativeURIOrOptions, requestOptions) {
     var _this = this;
