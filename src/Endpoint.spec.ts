@@ -1,4 +1,5 @@
 import { anyThatMatches } from "../test/helpers/jasmine-equalities";
+import { Document } from "./Document";
 import { Documents } from "./Documents";
 import {
 	Endpoint,
@@ -97,7 +98,7 @@ describe( module( "carbonldp/Endpoint" ), ():void => {
 			} );
 
 			it( "should work with Endpoint.decorate", ():void => {
-				const target:Endpoint<any, any> = Endpoint.decorate( {}, documents );
+				const target:Endpoint<any, any, any> = Endpoint.decorate( {}, documents );
 				expect( Endpoint.isDecorated( target ) ).toBe( true );
 			} );
 
@@ -112,12 +113,12 @@ describe( module( "carbonldp/Endpoint" ), ():void => {
 
 
 			it( "should be a PersistedProtectedDocument", ():void => {
-				const target:Endpoint<any, any> = Endpoint.decorate( {}, documents );
+				const target:Endpoint<any, any, any> = Endpoint.decorate( {}, documents );
 				expect( target ).toEqual( anyThatMatches( PersistedProtectedDocument.is, "isPersistedProtectedDocument" ) as any );
 			} );
 
 			it( "should add self methods and properties", ():void => {
-				const target:Endpoint<any, any> = Endpoint.decorate( {}, documents );
+				const target:Endpoint<any, any, any> = Endpoint.decorate( {}, documents );
 				expect( target ).toEqual( jasmine.objectContaining( {
 					_ModelFactory: void 0,
 
@@ -140,13 +141,13 @@ describe( module( "carbonldp/Endpoint" ), ():void => {
 		} );
 
 		// TODO: Test `Endpoint.resolveEndpointURI`
-		// TODO: Test `Endpoint.resolveChildBase`
-		// TODO: Test `Endpoint.decorateEndpointChild`
+		// TODO: Test `Endpoint.createChildren`
+		// TODO: Test `Endpoint.decorateChildren`
 
 
 		describe( "Decorated Endpoint", ():void => {
 
-			let endpoint:Endpoint<object, PersistedProtectedDocument>;
+			let endpoint:Endpoint<object, Document, PersistedProtectedDocument>;
 			beforeEach( () => {
 				endpoint = Endpoint.decorate( {
 					id: "https://example.com/endpoint/",
@@ -215,7 +216,7 @@ describe( module( "carbonldp/Endpoint" ), ():void => {
 					spyOn( endpoint._documents, "get" )
 						.and.returnValue( Promise.resolve( { the: "fetched document" } ) );
 
-					const factorySpy:EndpointModelFactory<any, any> = jasmine
+					const factorySpy:EndpointModelFactory<any, any, any> = jasmine
 						.createSpyObj( [ "decorate" ] );
 					Object.defineProperty( endpoint, "_ModelFactory", { value: factorySpy } );
 
@@ -235,25 +236,25 @@ describe( module( "carbonldp/Endpoint" ), ():void => {
 				} );
 
 
-				it( "should call validate child object", async () => {
+				it( "should call create child object", async () => {
 					spyOn( endpoint._documents, "createChild" )
 						.and.returnValue( Promise.resolve( {} ) );
 
-					const factorySpy:EndpointModelFactory<any, any> = jasmine
-						.createSpyObj( { "validateBase": true } );
+					const factorySpy:EndpointModelFactory<any, any, any> = jasmine
+						.createSpyObj( { "createFrom": {} } );
 					Object.defineProperty( endpoint, "_ModelFactory", { value: factorySpy } );
 
 					await endpoint.createChild( { the: "child" } );
 
-					expect( factorySpy.validateBase ).toHaveBeenCalledWith( { the: "child" } );
+					expect( factorySpy.createFrom ).toHaveBeenCalledWith( { the: "child" } );
 				} );
 
 				it( "should throw error when invalid child", async () => {
 					spyOn( endpoint._documents, "createChild" )
 						.and.returnValue( Promise.resolve( {} ) );
 
-					const factorySpy:EndpointModelFactory<any, any> = jasmine
-						.createSpyObj( { "validateBase": false } );
+					const factorySpy:EndpointModelFactory<any, any, any> = jasmine
+						.createSpyObj( { "createFrom": null } );
 					Object.defineProperty( endpoint, "_ModelFactory", { value: factorySpy } );
 
 					try {
@@ -267,9 +268,9 @@ describe( module( "carbonldp/Endpoint" ), ():void => {
 					spyOn( endpoint._documents, "createChild" )
 						.and.returnValue( Promise.resolve( {} ) );
 
-					const factorySpy:jasmine.SpyObj<EndpointModelFactory<any, any>> = jasmine
-						.createSpyObj( { "validateBase": false } );
-					factorySpy.validateBase
+					const factorySpy:jasmine.SpyObj<EndpointModelFactory<any, any, any>> = jasmine
+						.createSpyObj( { "createFrom": null } );
+					factorySpy.createFrom
 						.and.callFake( () => { throw new Error( "Fake validation error." ); } );
 
 					Object.defineProperty( endpoint, "_ModelFactory", { value: factorySpy } );
@@ -317,7 +318,7 @@ describe( module( "carbonldp/Endpoint" ), ():void => {
 					spyOn( endpoint._documents, "createChild" )
 						.and.returnValue( Promise.resolve( { the: "created document" } ) );
 
-					const factorySpy:EndpointModelFactory<any, any> = jasmine
+					const factorySpy:EndpointModelFactory<any, any, any> = jasmine
 						.createSpyObj( [ "decorate" ] );
 					Object.defineProperty( endpoint, "_ModelFactory", { value: factorySpy } );
 
@@ -336,26 +337,26 @@ describe( module( "carbonldp/Endpoint" ), ():void => {
 				} );
 
 
-				it( "should call validate child object", async () => {
+				it( "should call create child object", async () => {
 					spyOn( endpoint._documents, "createChildren" )
 						.and.returnValue( Promise.resolve( [ {} ] ) );
 
-					const factorySpy:EndpointModelFactory<any, any> = jasmine
-						.createSpyObj( { "validateBase": true } );
+					const factorySpy:EndpointModelFactory<any, any, any> = jasmine
+						.createSpyObj( { "createFrom": {} } );
 					Object.defineProperty( endpoint, "_ModelFactory", { value: factorySpy } );
 
 					await endpoint.createChildren( [ { the: "child 1" }, { the: "child 2" } ] );
 
-					expect( factorySpy.validateBase ).toHaveBeenCalledWith( { the: "child 1" } );
-					expect( factorySpy.validateBase ).toHaveBeenCalledWith( { the: "child 2" } );
+					expect( factorySpy.createFrom ).toHaveBeenCalledWith( { the: "child 1" } );
+					expect( factorySpy.createFrom ).toHaveBeenCalledWith( { the: "child 2" } );
 				} );
 
 				it( "should throw error when invalid child", async () => {
 					spyOn( endpoint._documents, "createChildren" )
 						.and.returnValue( Promise.resolve( [ {} ] ) );
 
-					const factorySpy:EndpointModelFactory<any, any> = jasmine
-						.createSpyObj( { "validateBase": false } );
+					const factorySpy:EndpointModelFactory<any, any, any> = jasmine
+						.createSpyObj( { "createFrom": null } );
 					Object.defineProperty( endpoint, "_ModelFactory", { value: factorySpy } );
 
 					try {
@@ -369,9 +370,9 @@ describe( module( "carbonldp/Endpoint" ), ():void => {
 					spyOn( endpoint._documents, "createChildren" )
 						.and.returnValue( Promise.resolve( [ {} ] ) );
 
-					const factorySpy:jasmine.SpyObj<EndpointModelFactory<any, any>> = jasmine
-						.createSpyObj( { "validateBase": false } );
-					factorySpy.validateBase
+					const factorySpy:jasmine.SpyObj<EndpointModelFactory<any, any, any>> = jasmine
+						.createSpyObj( { "createFrom": null } );
+					factorySpy.createFrom
 						.and.callFake( () => { throw new Error( "Fake validation error." ); } );
 
 					Object.defineProperty( endpoint, "_ModelFactory", { value: factorySpy } );
@@ -419,7 +420,7 @@ describe( module( "carbonldp/Endpoint" ), ():void => {
 					spyOn( endpoint._documents, "createChildren" )
 						.and.returnValue( Promise.resolve( [ { the: "created document 1" }, { the: "created document 2" } ] ) );
 
-					const factorySpy:EndpointModelFactory<any, any> = jasmine
+					const factorySpy:EndpointModelFactory<any, any, any> = jasmine
 						.createSpyObj( [ "decorate" ] );
 					Object.defineProperty( endpoint, "_ModelFactory", { value: factorySpy } );
 
@@ -439,25 +440,25 @@ describe( module( "carbonldp/Endpoint" ), ():void => {
 				} );
 
 
-				it( "should call validate child object", async () => {
+				it( "should call create child object", async () => {
 					spyOn( endpoint._documents, "createChildAndRetrieve" )
 						.and.returnValue( Promise.resolve( {} ) );
 
-					const factorySpy:EndpointModelFactory<any, any> = jasmine
-						.createSpyObj( { "validateBase": true } );
+					const factorySpy:EndpointModelFactory<any, any, any> = jasmine
+						.createSpyObj( { "createFrom": true } );
 					Object.defineProperty( endpoint, "_ModelFactory", { value: factorySpy } );
 
 					await endpoint.createChildAndRetrieve( { the: "child" } );
 
-					expect( factorySpy.validateBase ).toHaveBeenCalledWith( { the: "child" } );
+					expect( factorySpy.createFrom ).toHaveBeenCalledWith( { the: "child" } );
 				} );
 
 				it( "should throw error when invalid child", async () => {
 					spyOn( endpoint._documents, "createChildAndRetrieve" )
 						.and.returnValue( Promise.resolve( {} ) );
 
-					const factorySpy:EndpointModelFactory<any, any> = jasmine
-						.createSpyObj( { "validateBase": false } );
+					const factorySpy:EndpointModelFactory<any, any, any> = jasmine
+						.createSpyObj( { "createFrom": null } );
 					Object.defineProperty( endpoint, "_ModelFactory", { value: factorySpy } );
 
 					try {
@@ -471,9 +472,9 @@ describe( module( "carbonldp/Endpoint" ), ():void => {
 					spyOn( endpoint._documents, "createChildAndRetrieve" )
 						.and.returnValue( Promise.resolve( {} ) );
 
-					const factorySpy:jasmine.SpyObj<EndpointModelFactory<any, any>> = jasmine
-						.createSpyObj( { "validateBase": false } );
-					factorySpy.validateBase
+					const factorySpy:jasmine.SpyObj<EndpointModelFactory<any, any, any>> = jasmine
+						.createSpyObj( { "createFrom": null } );
+					factorySpy.createFrom
 						.and.callFake( () => { throw new Error( "Fake validation error." ); } );
 
 					Object.defineProperty( endpoint, "_ModelFactory", { value: factorySpy } );
@@ -521,7 +522,7 @@ describe( module( "carbonldp/Endpoint" ), ():void => {
 					spyOn( endpoint._documents, "createChildAndRetrieve" )
 						.and.returnValue( Promise.resolve( { the: "created document" } ) );
 
-					const factorySpy:EndpointModelFactory<any, any> = jasmine
+					const factorySpy:EndpointModelFactory<any, any, any> = jasmine
 						.createSpyObj( [ "decorate" ] );
 					Object.defineProperty( endpoint, "_ModelFactory", { value: factorySpy } );
 
@@ -540,26 +541,26 @@ describe( module( "carbonldp/Endpoint" ), ():void => {
 				} );
 
 
-				it( "should call validate child object", async () => {
+				it( "should call create child object", async () => {
 					spyOn( endpoint._documents, "createChildrenAndRetrieve" )
 						.and.returnValue( Promise.resolve( [ {} ] ) );
 
-					const factorySpy:EndpointModelFactory<any, any> = jasmine
-						.createSpyObj( { "validateBase": true } );
+					const factorySpy:EndpointModelFactory<any, any, any> = jasmine
+						.createSpyObj( { "createFrom": true } );
 					Object.defineProperty( endpoint, "_ModelFactory", { value: factorySpy } );
 
 					await endpoint.createChildrenAndRetrieve( [ { the: "child 1" }, { the: "child 2" } ] );
 
-					expect( factorySpy.validateBase ).toHaveBeenCalledWith( { the: "child 1" } );
-					expect( factorySpy.validateBase ).toHaveBeenCalledWith( { the: "child 2" } );
+					expect( factorySpy.createFrom ).toHaveBeenCalledWith( { the: "child 1" } );
+					expect( factorySpy.createFrom ).toHaveBeenCalledWith( { the: "child 2" } );
 				} );
 
 				it( "should throw error when invalid child", async () => {
 					spyOn( endpoint._documents, "createChildrenAndRetrieve" )
 						.and.returnValue( Promise.resolve( [ {} ] ) );
 
-					const factorySpy:EndpointModelFactory<any, any> = jasmine
-						.createSpyObj( { "validateBase": false } );
+					const factorySpy:EndpointModelFactory<any, any, any> = jasmine
+						.createSpyObj( { "createFrom": null } );
 					Object.defineProperty( endpoint, "_ModelFactory", { value: factorySpy } );
 
 					try {
@@ -573,9 +574,9 @@ describe( module( "carbonldp/Endpoint" ), ():void => {
 					spyOn( endpoint._documents, "createChildrenAndRetrieve" )
 						.and.returnValue( Promise.resolve( [ {} ] ) );
 
-					const factorySpy:jasmine.SpyObj<EndpointModelFactory<any, any>> = jasmine
-						.createSpyObj( { "validateBase": false } );
-					factorySpy.validateBase
+					const factorySpy:jasmine.SpyObj<EndpointModelFactory<any, any, any>> = jasmine
+						.createSpyObj( { "createFrom": null } );
+					factorySpy.createFrom
 						.and.callFake( () => { throw new Error( "Fake validation error." ); } );
 
 					Object.defineProperty( endpoint, "_ModelFactory", { value: factorySpy } );
@@ -623,7 +624,7 @@ describe( module( "carbonldp/Endpoint" ), ():void => {
 					spyOn( endpoint._documents, "createChildrenAndRetrieve" )
 						.and.returnValue( Promise.resolve( [ { the: "created document 1" }, { the: "created document 2" } ] ) );
 
-					const factorySpy:EndpointModelFactory<any, any> = jasmine
+					const factorySpy:EndpointModelFactory<any, any, any> = jasmine
 						.createSpyObj( [ "decorate" ] );
 					Object.defineProperty( endpoint, "_ModelFactory", { value: factorySpy } );
 
@@ -664,7 +665,7 @@ describe( module( "carbonldp/Endpoint" ), ():void => {
 					spyOn( endpoint._documents, "listChildren" )
 						.and.returnValue( Promise.resolve( [ { the: "document 1" }, { the: "document 2" } ] ) );
 
-					const factorySpy:EndpointModelFactory<any, any> = jasmine
+					const factorySpy:EndpointModelFactory<any, any, any> = jasmine
 						.createSpyObj( [ "decorate" ] );
 					Object.defineProperty( endpoint, "_ModelFactory", { value: factorySpy } );
 
@@ -704,7 +705,7 @@ describe( module( "carbonldp/Endpoint" ), ():void => {
 					spyOn( endpoint._documents, "listMembers" )
 						.and.returnValue( Promise.resolve( [ { the: "document 1" }, { the: "document 2" } ] ) );
 
-					const factorySpy:EndpointModelFactory<any, any> = jasmine
+					const factorySpy:EndpointModelFactory<any, any, any> = jasmine
 						.createSpyObj( [ "decorate" ] );
 					Object.defineProperty( endpoint, "_ModelFactory", { value: factorySpy } );
 
@@ -752,7 +753,7 @@ describe( module( "carbonldp/Endpoint" ), ():void => {
 					spyOn( endpoint._documents, "getChildren" )
 						.and.returnValue( Promise.resolve( [ { the: "document 1" }, { the: "document 2" } ] ) );
 
-					const factorySpy:EndpointModelFactory<any, any> = jasmine
+					const factorySpy:EndpointModelFactory<any, any, any> = jasmine
 						.createSpyObj( [ "decorate" ] );
 					Object.defineProperty( endpoint, "_ModelFactory", { value: factorySpy } );
 
@@ -800,7 +801,7 @@ describe( module( "carbonldp/Endpoint" ), ():void => {
 					spyOn( endpoint._documents, "getMembers" )
 						.and.returnValue( Promise.resolve( [ { the: "document 1" }, { the: "document 2" } ] ) );
 
-					const factorySpy:EndpointModelFactory<any, any> = jasmine
+					const factorySpy:EndpointModelFactory<any, any, any> = jasmine
 						.createSpyObj( [ "decorate" ] );
 					Object.defineProperty( endpoint, "_ModelFactory", { value: factorySpy } );
 
