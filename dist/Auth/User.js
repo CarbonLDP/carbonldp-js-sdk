@@ -15,16 +15,13 @@ var SCHEMA = {
         "@id": CS_1.CS.credentials,
         "@type": "@id",
     },
-    "enabled": {
-        "@id": CS_1.CS.enabled,
-        "@type": XSD_1.XSD.boolean,
-    },
 };
 exports.User = {
     TYPE: CS_1.CS.User,
     SCHEMA: SCHEMA,
     isDecorated: function (object) {
-        return Utils_1.hasFunction(object, "setCredentials");
+        return Utils_1.isObject(object)
+            && Utils_1.hasFunction(object, "setCredentials");
     },
     is: function (value) {
         return Document_1.Document.is(value)
@@ -43,13 +40,11 @@ exports.User = {
             },
         });
     },
-    create: function (disabled) {
-        return exports.User.createFrom({}, disabled);
+    create: function () {
+        return exports.User.createFrom({});
     },
-    createFrom: function (object, disabled) {
+    createFrom: function (object) {
         var user = exports.User.decorate(object);
-        if (Utils_1.isBoolean(disabled))
-            user.disabled = disabled;
         user.addType(exports.User.TYPE);
         return user;
     },

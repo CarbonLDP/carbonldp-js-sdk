@@ -17,6 +17,7 @@ import { CS } from "../Vocabularies/CS";
 import { XSD } from "../Vocabularies/XSD";
 
 import { User } from "./User";
+import { UsernameAndPasswordCredentials } from "./UsernameAndPasswordCredentials";
 
 describe( module( "carbonldp/Auth/User" ), ():void => {
 
@@ -44,6 +45,15 @@ describe( module( "carbonldp/Auth/User" ), ():void => {
 
 			user.name = name;
 			expect( user.name ).toEqual( jasmine.any( String ) );
+		} );
+
+		it( hasProperty(
+			OBLIGATORY,
+			"credentials",
+			"CarbonLDP.Auth.UsernameAndPasswordCredentials"
+		), ():void => {
+			const target:UsernameAndPasswordCredentials = {} as User[ "credentials" ];
+			expect( target ).toBeDefined();
 		} );
 
 	} );
@@ -92,7 +102,6 @@ describe( module( "carbonldp/Auth/User" ), ():void => {
 			it( hasSignature(
 				"Creates a `CarbonLDP.Auth.User` object.",
 				[
-					{ name: "disabled", type: "boolean", optional: true },
 				],
 				{ type: "CarbonLDP.Auth.User" }
 			), ():void => {} );
@@ -106,7 +115,6 @@ describe( module( "carbonldp/Auth/User" ), ():void => {
 				"Creates a `CarbonLDP.Auth.User` object with the one provided.",
 				[
 					{ name: "object", type: "T" },
-					{ name: "disabled", type: "boolean", optional: true },
 				],
 				{ type: "T & CarbonLDP.Auth.User" }
 			), ():void => {} );
@@ -171,8 +179,6 @@ describe( module( "carbonldp/Auth/User" ), ():void => {
 			it( "should only reject in required properties", ():void => {
 				const object:MockUser = {
 					name: null,
-					enabled: null,
-					disabled: null,
 					credentials: null,
 
 					setCredentials: ():any => {},
@@ -182,14 +188,6 @@ describe( module( "carbonldp/Auth/User" ), ():void => {
 				delete object.name;
 				expect( User.isDecorated( object ) ).toBe( true );
 				object.name = null;
-
-				delete object.enabled;
-				expect( User.isDecorated( object ) ).toBe( true );
-				object.enabled = null;
-
-				delete object.disabled;
-				expect( User.isDecorated( object ) ).toBe( true );
-				object.disabled = null;
 
 				delete object.credentials;
 				expect( User.isDecorated( object ) ).toBe( true );
@@ -213,10 +211,7 @@ describe( module( "carbonldp/Auth/User" ), ():void => {
 				const spy:jasmine.Spy = spyOn( User, "createFrom" );
 
 				User.create();
-				expect( spy ).toHaveBeenCalledWith( jasmine.any( Object ), void 0 );
-
-				User.create( true );
-				expect( spy ).toHaveBeenCalledWith( jasmine.any( Object ), true );
+				expect( spy ).toHaveBeenCalledWith( jasmine.any( Object ) );
 			} );
 
 		} );
@@ -238,20 +233,8 @@ describe( module( "carbonldp/Auth/User" ), ():void => {
 				expect( spy ).toHaveBeenCalledWith( object );
 			} );
 
-			it( "should assign the provided `disabled` property", ():void => {
-				spyOn( User, "decorate" )
-					.and.callThrough();
-
-				const object:object = { the: "object" };
-				const returned:object = User.createFrom( object, true );
-
-				expect( returned ).toEqual( jasmine.objectContaining( {
-					disabled: true,
-				} ) );
-			} );
-
 			it( "should add cs:User type", ():void => {
-				const user:User = User.createFrom( {}, true );
+				const user:User = User.createFrom( {} );
 
 				expect( user.types ).toContain( User.TYPE );
 			} );
@@ -275,8 +258,6 @@ describe( module( "carbonldp/Auth/User" ), ():void => {
 				const fn:() => any = () => {};
 				const object:MockUser = {
 					name: null,
-					enabled: null,
-					disabled: null,
 					credentials: null,
 
 					setCredentials: fn,

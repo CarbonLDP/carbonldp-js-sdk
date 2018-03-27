@@ -30,7 +30,6 @@ import { Authenticator } from "./Authenticator";
 import { AuthMethod } from "./AuthMethod";
 import { BasicCredentials } from "./BasicCredentials";
 import { BasicToken } from "./BasicToken";
-import { PersistedACL } from "./PersistedACL";
 import { PersistedUser } from "./PersistedUser";
 import * as Roles from "./Roles";
 
@@ -39,7 +38,6 @@ import { AuthService } from "./Service";
 import * as Ticket from "./Ticket";
 import TokenAuthenticator from "./TokenAuthenticator";
 import * as TokenCredentials from "./TokenCredentials";
-import { User } from "./User";
 import { UsersEndpoint } from "./UsersEndpoint";
 
 

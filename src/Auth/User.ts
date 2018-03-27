@@ -2,7 +2,7 @@ import { Document } from "../Document";
 import { ObjectSchema } from "../ObjectSchema";
 import {
 	hasFunction,
-	isBoolean,
+	isObject,
 } from "../Utils";
 import { C } from "../Vocabularies/C";
 import { CS } from "../Vocabularies/CS";
@@ -15,15 +15,11 @@ import {
 
 export interface UserBase {
 	name?:string;
-	enabled?:boolean;
-	disabled?:boolean;
 	credentials:UsernameAndPasswordCredentialsBase;
 }
 
 export interface User extends Document {
 	name?:string;
-	enabled?:boolean;
-	disabled?:boolean;
 	credentials?:UsernameAndPasswordCredentials;
 
 	setCredentials( email?:string, password?:string ):UsernameAndPasswordCredentials;
@@ -42,9 +38,9 @@ export interface UserFactory {
 
 	decorate<T extends object>( object:T ):T & User;
 
-	create( disabled?:boolean ):User;
+	create():User;
 
-	createFrom<T extends object>( object:T, disabled?:boolean ):T & User;
+	createFrom<T extends object>( object:T ):T & User;
 }
 
 const SCHEMA:ObjectSchema = {
@@ -56,10 +52,6 @@ const SCHEMA:ObjectSchema = {
 		"@id": CS.credentials,
 		"@type": "@id",
 	},
-	"enabled": {
-		"@id": CS.enabled,
-		"@type": XSD.boolean,
-	},
 };
 
 export const User:UserFactory = {
@@ -68,7 +60,8 @@ export const User:UserFactory = {
 
 
 	isDecorated( object:object ):object is User {
-		return hasFunction( object, "setCredentials" )
+		return isObject( object )
+			&& hasFunction( object, "setCredentials" )
 			;
 	},
 
@@ -94,14 +87,13 @@ export const User:UserFactory = {
 		} );
 	},
 
-	create( disabled?:boolean ):User {
-		return User.createFrom( {}, disabled );
+	create():User {
+		return User.createFrom( {} );
 	},
 
-	createFrom<T extends object>( object:T, disabled?:boolean ):T & User {
+	createFrom<T extends object>( object:T ):T & User {
 		const user:T & User = User.decorate( object );
 
-		if( isBoolean( disabled ) ) user.disabled = disabled;
 		user.addType( User.TYPE );
 
 		return user;

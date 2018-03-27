@@ -5078,16 +5078,13 @@ var SCHEMA = {
         "@id": CS_1.CS.credentials,
         "@type": "@id",
     },
-    "enabled": {
-        "@id": CS_1.CS.enabled,
-        "@type": XSD_1.XSD.boolean,
-    },
 };
 exports.User = {
     TYPE: CS_1.CS.User,
     SCHEMA: SCHEMA,
     isDecorated: function (object) {
-        return Utils_1.hasFunction(object, "setCredentials");
+        return Utils_1.isObject(object)
+            && Utils_1.hasFunction(object, "setCredentials");
     },
     is: function (value) {
         return Document_1.Document.is(value)
@@ -5106,13 +5103,11 @@ exports.User = {
             },
         });
     },
-    create: function (disabled) {
-        return exports.User.createFrom({}, disabled);
+    create: function () {
+        return exports.User.createFrom({});
     },
-    createFrom: function (object, disabled) {
+    createFrom: function (object) {
         var user = exports.User.decorate(object);
-        if (Utils_1.isBoolean(disabled))
-            user.disabled = disabled;
         user.addType(exports.User.TYPE);
         return user;
     },
@@ -5914,56 +5909,18 @@ __export(__webpack_require__(6));
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var PersistedProtectedDocument_1 = __webpack_require__(37);
-var Utils_1 = __webpack_require__(0);
 var User_1 = __webpack_require__(46);
 exports.PersistedUser = {
-    isDecorated: function (value) {
-        return Utils_1.isObject(value)
-            && Utils_1.hasFunction(value, "enable")
-            && Utils_1.hasFunction(value, "disable");
-    },
     is: function (value) {
-        return exports.PersistedUser.isDecorated(value)
-            && User_1.User.isDecorated(value)
+        return User_1.User.isDecorated(value)
             && PersistedProtectedDocument_1.PersistedProtectedDocument.is(value);
     },
     decorate: function (object, documents) {
-        if (exports.PersistedUser.isDecorated(object))
-            return object;
         User_1.User.decorate(object);
         PersistedProtectedDocument_1.PersistedProtectedDocument.decorate(object, documents);
-        return Object.defineProperties(object, {
-            "enable": {
-                configurable: true,
-                writable: true,
-                value: enable,
-            },
-            "disable": {
-                configurable: true,
-                writable: true,
-                value: disable,
-            },
-        });
+        return object;
     },
 };
-function enable(requestOptions) {
-    return changeAvailability(this, "enabled", requestOptions);
-}
-exports.enable = enable;
-function disable(requestOptions) {
-    return changeAvailability(this, "disabled", requestOptions);
-}
-exports.disable = disable;
-function changeAvailability(user, flag, requestOptions) {
-    return user
-        .resolve()
-        .then(function () {
-        user[flag] = true;
-        var reverse = flag === "enabled" ? "disabled" : "enabled";
-        delete user[reverse];
-        return user.save(requestOptions);
-    });
-}
 
 
 /***/ }),
@@ -7397,15 +7354,17 @@ exports.Factory = Factory;
 Object.defineProperty(exports, "__esModule", { value: true });
 var Endpoint_1 = __webpack_require__(242);
 var Errors_1 = __webpack_require__(9);
-var Utils_1 = __webpack_require__(0);
 var Vocabularies_1 = __webpack_require__(59);
 var PersistedUser_1 = __webpack_require__(60);
 var User_1 = __webpack_require__(46);
+var EndpointUserFactory = {
+    createFrom: createFromBase,
+    decorate: PersistedUser_1.PersistedUser.decorate,
+};
 exports.UsersEndpoint = {
     TYPE: Vocabularies_1.CS.Users,
     isDecorated: function (object) {
-        return (Utils_1.hasFunction(object, "enable") &&
-            Utils_1.hasFunction(object, "disable"));
+        return (object["_ModelFactory"] === EndpointUserFactory);
     },
     decorate: function (object, documents) {
         if (exports.UsersEndpoint.isDecorated(object))
@@ -7413,18 +7372,7 @@ exports.UsersEndpoint = {
         Endpoint_1.Endpoint.decorate(object, documents);
         return Object.defineProperties(object, {
             "_ModelFactory": {
-                value: {
-                    createFrom: createFromBase,
-                    decorate: PersistedUser_1.PersistedUser.decorate,
-                },
-            },
-            "enable": {
-                configurable: true,
-                value: enableUser,
-            },
-            "disable": {
-                configurable: true,
-                value: disableUser,
+                value: EndpointUserFactory,
             },
         });
     },
@@ -7439,16 +7387,6 @@ function createFromBase(base) {
         throw new Errors_1.IllegalArgumentError("A credentials password cannot be empty.");
     user.setCredentials(user.credentials.username, user.credentials.password);
     return user;
-}
-function enableUser(userURI, requestOptions) {
-    return Endpoint_1.Endpoint
-        .getChild(this, userURI)
-        .then(function (user) { return user.enable(requestOptions); });
-}
-function disableUser(userURI, requestOptions) {
-    return Endpoint_1.Endpoint
-        .getChild(this, userURI)
-        .then(function (user) { return user.disable(requestOptions); });
 }
 
 
