@@ -23,17 +23,18 @@ var LDP_1 = require("../Vocabularies/LDP");
 var AuthMethod_1 = require("./AuthMethod");
 var BasicAuthenticator_1 = require("./BasicAuthenticator");
 var BasicToken_1 = require("./BasicToken");
-var PersistedUser = __importStar(require("./PersistedUser"));
+var PersistedUser_1 = require("./PersistedUser");
 var Roles = __importStar(require("./Roles"));
 var Ticket = __importStar(require("./Ticket"));
 var TokenAuthenticator_1 = __importDefault(require("./TokenAuthenticator"));
 var TokenCredentials = __importStar(require("./TokenCredentials"));
-var Users = __importStar(require("./Users"));
+var UsersEndpoint_1 = require("./UsersEndpoint");
 var AuthService = (function () {
     function AuthService(context) {
-        this.roles = new Roles.Class(this.context);
-        this.users = new Users.Class(this.context);
         this.context = context;
+        var usersIRI = context._resolvePath("users");
+        this.users = context.documents.register(usersIRI, [UsersEndpoint_1.UsersEndpoint.TYPE]);
+        this.roles = new Roles.Class(context);
         this.authenticators = (_a = {},
             _a[AuthMethod_1.AuthMethod.BASIC] = new BasicAuthenticator_1.BasicAuthenticator(),
             _a[AuthMethod_1.AuthMethod.TOKEN] = new TokenAuthenticator_1.default(this.context),
@@ -44,7 +45,7 @@ var AuthService = (function () {
         get: function () {
             if (this._authenticatedUser)
                 return this._authenticatedUser;
-            if (this.context.parentContext)
+            if (this.context.parentContext && this.context.parentContext.auth)
                 return this.context.parentContext.auth.authenticatedUser;
             return null;
         },
@@ -159,7 +160,7 @@ var AuthService = (function () {
         var newCredentials;
         return authenticator.authenticate(tokenOrCredentials).then(function (credentials) {
             newCredentials = credentials;
-            if (PersistedUser.Factory.is(credentials.user))
+            if (PersistedUser_1.PersistedUser.is(credentials.user))
                 return credentials.user;
             return _this.getAuthenticatedUser(authenticator);
         }).then(function (persistedUser) {

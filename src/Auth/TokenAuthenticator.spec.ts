@@ -19,7 +19,7 @@ import {
 } from "./../test/JasmineExtender";
 import * as Utils from "./../Utils";
 import { BasicToken } from "./BasicToken";
-import * as PersistedUser from "./PersistedUser";
+import { PersistedUser } from "./PersistedUser";
 
 import * as TokenAuthenticator from "./TokenAuthenticator";
 import DefaultExport from "./TokenAuthenticator";
@@ -248,7 +248,7 @@ describe( module( "carbonldp/Auth/TokenAuthenticator" ), ():void => {
 						expect( token ).not.toBeNull();
 						expect( TokenCredentials.Factory.is( token ) ).toEqual( true );
 
-						expect( PersistedUser.Factory.is( token.user ) ).toBe( true );
+						expect( PersistedUser.is( token.user ) ).toBe( true );
 						done();
 					} )
 					.catch( done.fail );

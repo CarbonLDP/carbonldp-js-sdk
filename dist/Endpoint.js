@@ -76,6 +76,12 @@ exports.Endpoint = {
             return URI_1.URI.resolve(endpoint.id, relativeURI);
         });
     },
+    getChild: function (endpoint, relativeURI) {
+        return exports.Endpoint
+            .resolveEndpointURI(endpoint, relativeURI)
+            .then(function (uri) { return endpoint._documents.getPointer(uri); })
+            .then(function (pointer) { return endpoint._ModelFactory.decorate(pointer, endpoint._documents); });
+    },
     createChildren: function (endpoint, objects) {
         return Utils_1.promiseMethod(function () {
             if (!endpoint._ModelFactory || !endpoint._ModelFactory.createFrom)

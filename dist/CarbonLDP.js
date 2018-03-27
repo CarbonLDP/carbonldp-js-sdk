@@ -62,10 +62,10 @@ var CarbonLDP = (function (_super) {
                     paths: {
                         platform: "platform/",
                         credentials: "credentials/",
-                        users: "users/",
                         roles: "roles/",
                     },
                 },
+                users: "users/",
             },
         };
         if (Utils.isString(urlOrSettings)) {
@@ -91,6 +91,7 @@ var CarbonLDP = (function (_super) {
         }
         if (!_this._baseURI.endsWith("/"))
             _this._baseURI = _this._baseURI + "/";
+        _this.auth = new Auth.AuthService(_this);
         _this.messaging = new Messaging.MessagingService(_this);
         return _this;
     }

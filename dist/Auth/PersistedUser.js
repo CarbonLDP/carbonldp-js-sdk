@@ -3,6 +3,36 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var PersistedProtectedDocument_1 = require("../PersistedProtectedDocument");
 var Utils_1 = require("../Utils");
 var User_1 = require("./User");
+exports.PersistedUser = {
+    isDecorated: function (value) {
+        return Utils_1.isObject(value)
+            && Utils_1.hasFunction(value, "enable")
+            && Utils_1.hasFunction(value, "disable");
+    },
+    is: function (value) {
+        return exports.PersistedUser.isDecorated(value)
+            && User_1.User.isDecorated(value)
+            && PersistedProtectedDocument_1.PersistedProtectedDocument.is(value);
+    },
+    decorate: function (object, documents) {
+        if (exports.PersistedUser.isDecorated(object))
+            return object;
+        User_1.User.decorate(object);
+        PersistedProtectedDocument_1.PersistedProtectedDocument.decorate(object, documents);
+        return Object.defineProperties(object, {
+            "enable": {
+                configurable: true,
+                writable: true,
+                value: enable,
+            },
+            "disable": {
+                configurable: true,
+                writable: true,
+                value: disable,
+            },
+        });
+    },
+};
 function enable(requestOptions) {
     return changeAvailability(this, "enabled", requestOptions);
 }
@@ -21,40 +51,5 @@ function changeAvailability(user, flag, requestOptions) {
         return user.save(requestOptions);
     });
 }
-var Factory = (function () {
-    function Factory() {
-    }
-    Factory.hasClassProperties = function (object) {
-        return Utils_1.isObject(object)
-            && Utils_1.hasFunction(object, "enable")
-            && Utils_1.hasFunction(object, "disable");
-    };
-    Factory.is = function (object) {
-        return Factory.hasClassProperties(object)
-            && User_1.User.isDecorated(object)
-            && PersistedProtectedDocument_1.PersistedProtectedDocument.is(object);
-    };
-    Factory.decorate = function (object, documents) {
-        if (Factory.hasClassProperties(object))
-            return object;
-        User_1.User.decorate(object);
-        PersistedProtectedDocument_1.PersistedProtectedDocument.decorate(object, documents);
-        var persistedUser = Object.defineProperties(object, {
-            "enable": {
-                configurable: true,
-                writable: true,
-                value: enable,
-            },
-            "disable": {
-                configurable: true,
-                writable: true,
-                value: disable,
-            },
-        });
-        return persistedUser;
-    };
-    return Factory;
-}());
-exports.Factory = Factory;
 
 //# sourceMappingURL=PersistedUser.js.map

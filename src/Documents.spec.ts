@@ -19,6 +19,7 @@ import {
 	ValuesToken,
 	VariableToken
 } from "sparqler/tokens";
+import { createMockContext } from "../test/helpers/mocks";
 
 import { AbstractContext } from "./AbstractContext";
 import {
@@ -28,6 +29,7 @@ import {
 import * as Auth from "./Auth";
 import { BlankNode } from "./BlankNode";
 import { CarbonLDP } from "./CarbonLDP";
+import { Context } from "./Context";
 import { Document } from "./Document";
 
 import { Documents } from "./Documents";
@@ -106,7 +108,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 
 				constructor() {
 					super();
-					this._baseURI = "http://example.com/";
+					this._baseURI = "https://example.com/";
 					this.settings = { paths: { system: ".system/" } };
 				}
 			}
@@ -133,7 +135,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 
 				constructor() {
 					super();
-					this._baseURI = "http://example.com/";
+					this._baseURI = "https://example.com/";
 					this.settings = { paths: { system: ".system/" } };
 				}
 			}
@@ -156,7 +158,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 
 				constructor() {
 					super();
-					this._baseURI = "http://example.com/";
+					this._baseURI = "https://example.com/";
 					this.settings = { paths: { system: ".system/" } };
 				}
 			}
@@ -168,9 +170,10 @@ describe( module( "carbonldp/Documents" ), ():void => {
 			expect( documents.documentDecorators ).toEqual( jasmine.any( Map ) );
 
 			// Has default decorators
-			expect( documents.documentDecorators.size ).toBe( 4 );
+			expect( documents.documentDecorators.size ).toBe( 5 );
 			expect( documents.documentDecorators.has( CS.ProtectedDocument ) ).toBe( true );
 			expect( documents.documentDecorators.has( CS.AccessControlList ) ).toBe( true );
+			expect( documents.documentDecorators.has( CS.Users ) ).toBe( true );
 			expect( documents.documentDecorators.has( CS.User ) ).toBe( true );
 			expect( documents.documentDecorators.has( CS.Role ) ).toBe( true );
 		} );
@@ -186,7 +189,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 
 					constructor() {
 						super();
-						this._baseURI = "http://example.com/";
+						this._baseURI = "https://example.com/";
 						this.settings = { paths: { system: ".system/" } };
 					}
 				}
@@ -209,7 +212,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 
 					constructor() {
 						super();
-						this._baseURI = "http://example.com/";
+						this._baseURI = "https://example.com/";
 						this.settings = { paths: { system: ".system/" } };
 					}
 				}
@@ -219,18 +222,18 @@ describe( module( "carbonldp/Documents" ), ():void => {
 
 				let pointer:Pointer;
 
-				pointer = Pointer.create( "http://example.com/document/child/" );
+				pointer = Pointer.create( "https://example.com/document/child/" );
 				expect( documents.inScope( pointer ) ).toBe( true );
-				pointer = Pointer.create( "http://example.com/another-document/" );
+				pointer = Pointer.create( "https://example.com/another-document/" );
 				expect( documents.inScope( pointer ) ).toBe( true );
-				pointer = Pointer.create( "http://example.com/document/" );
+				pointer = Pointer.create( "https://example.com/document/" );
 				expect( documents.inScope( pointer ) ).toBe( true );
 				pointer = Pointer.create( "a-relative-document/" );
 				expect( documents.inScope( pointer ) ).toBe( true );
 
-				pointer = Pointer.create( "http://example.com/document/#fragment" );
+				pointer = Pointer.create( "https://example.com/document/#fragment" );
 				expect( documents.inScope( pointer ) ).toBe( true );
-				pointer = Pointer.create( "http://example.com/document/#another-fragment" );
+				pointer = Pointer.create( "https://example.com/document/#another-fragment" );
 				expect( documents.inScope( pointer ) ).toBe( true );
 
 				pointer = Pointer.create( "_:BlankNode" );
@@ -252,7 +255,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 
 					constructor() {
 						super();
-						this._baseURI = "http://example.com/";
+						this._baseURI = "https://example.com/";
 						this.settings = { paths: { system: ".system/" } };
 					}
 				}
@@ -260,13 +263,13 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				let context:MockedContext = new MockedContext();
 				let documents:Documents = context.documents;
 
-				expect( documents.inScope( "http://example.com/document/" ) ).toBe( true );
-				expect( documents.inScope( "http://example.com/document/child/" ) ).toBe( true );
-				expect( documents.inScope( "http://example.com/another-document/" ) ).toBe( true );
+				expect( documents.inScope( "https://example.com/document/" ) ).toBe( true );
+				expect( documents.inScope( "https://example.com/document/child/" ) ).toBe( true );
+				expect( documents.inScope( "https://example.com/another-document/" ) ).toBe( true );
 				expect( documents.inScope( "a-relative-document/" ) ).toBe( true );
 
-				expect( documents.inScope( "http://example.com/document/#fragment" ) ).toBe( true );
-				expect( documents.inScope( "http://example.com/document/#another-fragment" ) ).toBe( true );
+				expect( documents.inScope( "https://example.com/document/#fragment" ) ).toBe( true );
+				expect( documents.inScope( "https://example.com/document/#another-fragment" ) ).toBe( true );
 
 				expect( documents.inScope( "_:BlankNode" ) ).toBe( false );
 
@@ -292,7 +295,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 
 				constructor() {
 					super();
-					this._baseURI = "http://example.com/";
+					this._baseURI = "https://example.com/";
 					this.settings = { paths: { system: ".system/" } };
 				}
 			}
@@ -303,27 +306,27 @@ describe( module( "carbonldp/Documents" ), ():void => {
 			expect( documents.hasPointer ).toBeDefined();
 			expect( Utils.isFunction( documents.hasPointer ) ).toBe( true );
 
-			expect( documents.hasPointer( "http://example.com/document/" ) ).toBe( false );
+			expect( documents.hasPointer( "https://example.com/document/" ) ).toBe( false );
 			expect( documents.hasPointer( "document/" ) ).toBe( false );
-			expect( documents.hasPointer( "http://example.com/document/#fragment" ) ).toBe( false );
-			expect( documents.hasPointer( "http://example.com/another-document/" ) ).toBe( false );
+			expect( documents.hasPointer( "https://example.com/document/#fragment" ) ).toBe( false );
+			expect( documents.hasPointer( "https://example.com/another-document/" ) ).toBe( false );
 
 			expect( () => documents.hasPointer( "_:BlankNode" ) ).toThrowError( Errors.IllegalArgumentError );
 
 			context = new MockedContext();
 			documents = context.documents;
-			(<any> documents).pointers.set( "document/", Pointer.create( "http://example.com/document/" ) );
-			expect( documents.hasPointer( "http://example.com/document/" ) ).toBe( true );
-			expect( documents.hasPointer( "http://example.com/document/#fragment" ) ).toBe( false );
+			(<any> documents).pointers.set( "document/", Pointer.create( "https://example.com/document/" ) );
+			expect( documents.hasPointer( "https://example.com/document/" ) ).toBe( true );
+			expect( documents.hasPointer( "https://example.com/document/#fragment" ) ).toBe( false );
 			expect( documents.hasPointer( "document/" ) ).toBe( true );
 
-			expect( documents.hasPointer( "http://example.com/another-document/" ) ).toBe( false );
+			expect( documents.hasPointer( "https://example.com/another-document/" ) ).toBe( false );
 
-			(<any> documents).pointers.set( "document/", Pointer.create( "http://example.com/document/" ) );
-			(<any> documents).pointers.set( "another-document/", Pointer.create( "http://example.com/another-document/" ) );
-			expect( documents.hasPointer( "http://example.com/document/" ) ).toBe( true );
+			(<any> documents).pointers.set( "document/", Pointer.create( "https://example.com/document/" ) );
+			(<any> documents).pointers.set( "another-document/", Pointer.create( "https://example.com/another-document/" ) );
+			expect( documents.hasPointer( "https://example.com/document/" ) ).toBe( true );
 			expect( documents.hasPointer( "document/" ) ).toBe( true );
-			expect( documents.hasPointer( "http://example.com/another-document/" ) ).toBe( true );
+			expect( documents.hasPointer( "https://example.com/another-document/" ) ).toBe( true );
 		} );
 
 		it( hasMethod(
@@ -343,7 +346,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 
 				constructor() {
 					super();
-					this._baseURI = "http://example.com/";
+					this._baseURI = "https://example.com/";
 					this.settings = { paths: { system: ".system/" } };
 				}
 			}
@@ -356,21 +359,21 @@ describe( module( "carbonldp/Documents" ), ():void => {
 
 			let pointer:Pointer;
 
-			pointer = documents.getPointer( "http://example.com/document/" );
+			pointer = documents.getPointer( "https://example.com/document/" );
 			expect( Pointer.is( pointer ) ).toBe( true );
-			expect( pointer.id ).toBe( "http://example.com/document/" );
+			expect( pointer.id ).toBe( "https://example.com/document/" );
 
 			pointer = documents.getPointer( "document/" );
 			expect( Pointer.is( pointer ) ).toBe( true );
-			expect( pointer.id ).toBe( "http://example.com/document/" );
+			expect( pointer.id ).toBe( "https://example.com/document/" );
 
-			pointer = documents.getPointer( "http://example.com/document/#fragment" );
+			pointer = documents.getPointer( "https://example.com/document/#fragment" );
 			expect( Pointer.is( pointer ) ).toBe( true );
-			expect( pointer.id ).toBe( "http://example.com/document/#fragment" );
+			expect( pointer.id ).toBe( "https://example.com/document/#fragment" );
 
-			pointer = documents.getPointer( "http://example.com/another-document/" );
+			pointer = documents.getPointer( "https://example.com/another-document/" );
 			expect( Pointer.is( pointer ) ).toBe( true );
-			expect( pointer.id ).toBe( "http://example.com/another-document/" );
+			expect( pointer.id ).toBe( "https://example.com/another-document/" );
 
 			// Asks to context.parentContext.documents
 			pointer = documents.getPointer( "http://example.org/document/" );
@@ -379,11 +382,11 @@ describe( module( "carbonldp/Documents" ), ():void => {
 
 			expect( () => documents.getPointer( "_:BlankNode" ) ).toThrowError( Errors.IllegalArgumentError );
 
-			let anotherPointer:Pointer = Pointer.create( "http://example.com/document/" );
+			let anotherPointer:Pointer = Pointer.create( "https://example.com/document/" );
 			context = new MockedContext();
 			documents = context.documents;
 			(<any> documents).pointers.set( "document/", anotherPointer );
-			pointer = documents.getPointer( "http://example.com/document/" );
+			pointer = documents.getPointer( "https://example.com/document/" );
 			expect( pointer ).toBe( anotherPointer );
 			pointer = documents.getPointer( "document/" );
 			expect( pointer ).toBe( anotherPointer );
@@ -399,13 +402,13 @@ describe( module( "carbonldp/Documents" ), ():void => {
 
 				beforeEach( () => {
 					const context:AbstractContext = new class extends AbstractContext {
-						protected _baseURI:string = "http://example.com/";
+						protected _baseURI:string = "https://example.com/";
 					};
 					documents = context.documents;
 				} );
 
 				it( "should generate an HTTP error when status code is not 2xx", ( done:DoneFn ):void => {
-					jasmine.Ajax.stubRequest( "http://example.com/", null, "GET" ).andReturn( {
+					jasmine.Ajax.stubRequest( "https://example.com/", null, "GET" ).andReturn( {
 						status: 500,
 						responseText: `[ {
 							"@id": "_:1",
@@ -478,7 +481,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 						} ]`,
 					} );
 
-					documents.get( "http://example.com/" ).then( () => {
+					documents.get( "https://example.com/" ).then( () => {
 						done.fail( "Should not resolve" );
 					} ).catch( ( error:HTTPError ) => {
 						expect( error ).toBeDefined();
@@ -503,7 +506,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				} );
 
 				it( "should generate an error when multiple c:ErrorResponse in the response", ( done:DoneFn ):void => {
-					jasmine.Ajax.stubRequest( "http://example.com/", null, "GET" ).andReturn( {
+					jasmine.Ajax.stubRequest( "https://example.com/", null, "GET" ).andReturn( {
 						status: 500,
 						responseText: `[ {
 							"@id": "_:1",
@@ -524,7 +527,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 						} ]`,
 					} );
 
-					documents.get( "http://example.com/" ).then( () => {
+					documents.get( "https://example.com/" ).then( () => {
 						done.fail( "Should not resolve" );
 					} ).catch( ( error:Error ) => {
 						expect( error ).toEqual( jasmine.any( Errors.IllegalArgumentError ) );
@@ -534,7 +537,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				} );
 
 				it( "should generate an error when no c:ErrorResponse in the response", ( done:DoneFn ):void => {
-					jasmine.Ajax.stubRequest( "http://example.com/", null, "GET" ).andReturn( {
+					jasmine.Ajax.stubRequest( "https://example.com/", null, "GET" ).andReturn( {
 						status: 500,
 						responseText: `[ {
 							"@id": "_:3",
@@ -567,7 +570,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 						} ]`,
 					} );
 
-					documents.get( "http://example.com/" ).then( () => {
+					documents.get( "https://example.com/" ).then( () => {
 						done.fail( "Should not resolve" );
 					} ).catch( ( error:Error ) => {
 						expect( error ).toEqual( jasmine.any( Errors.IllegalArgumentError ) );
@@ -577,12 +580,12 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				} );
 
 				it( "should generate an HTTP error with the body if no JSON-LD is provided", ( done:DoneFn ):void => {
-					jasmine.Ajax.stubRequest( "http://example.com/", null, "GET" ).andReturn( {
+					jasmine.Ajax.stubRequest( "https://example.com/", null, "GET" ).andReturn( {
 						status: 500,
 						responseText: `An error message.`,
 					} );
 
-					documents.get( "http://example.com/" ).then( () => {
+					documents.get( "https://example.com/" ).then( () => {
 						done.fail( "Should not resolve" );
 					} ).catch( ( error:Error ) => {
 						expect( error ).toEqual( jasmine.any( HTTPError ) );
@@ -669,12 +672,12 @@ describe( module( "carbonldp/Documents" ), ():void => {
 								"@id": "https://example.com/target-document/"
 							} ]
 						} ]`;
-					jasmine.Ajax.stubRequest( "http://example.com/", null, "GET" ).andReturn( {
+					jasmine.Ajax.stubRequest( "https://example.com/", null, "GET" ).andReturn( {
 						status: 500,
 						responseText,
 					} );
 
-					documents.get( "http://example.com/" ).then( () => {
+					documents.get( "https://example.com/" ).then( () => {
 						done.fail( "Should not resolve" );
 					} ).catch( ( error:HTTPError ) => {
 						expect( error ).toBeDefined();
@@ -1046,7 +1049,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 
 					constructor() {
 						super();
-						this._baseURI = "http://example.com/";
+						this._baseURI = "https://example.com/";
 					}
 				}
 
@@ -1068,11 +1071,11 @@ describe( module( "carbonldp/Documents" ), ():void => {
 
 						// Second correct request
 						spySend.and.returnValue( Promise.resolve( [
-							[ { "@id": "http://example.com/resource/", "@graph": [ { "@id": "http://example.com/resource/" } ] } ],
+							[ { "@id": "https://example.com/resource/", "@graph": [ { "@id": "https://example.com/resource/" } ] } ],
 							new Response( <any> null, "", <any> {
 								headers: {
 									"ETag": "123456",
-									"Content-Location": "http://example.com/resource/",
+									"Content-Location": "https://example.com/resource/",
 								},
 							} ),
 						] ) );
@@ -1081,7 +1084,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					} )
 					.then( ( document ) => {
 						expect( document ).toBeDefined();
-						expect( document.id ).toBe( "http://example.com/resource/" );
+						expect( document.id ).toBe( "https://example.com/resource/" );
 
 						done();
 					} )
@@ -1241,7 +1244,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 
 						expect( document[ "string" ] ).toBe( "Document Resource" );
 
-						(function documentResource():void {
+						(():void => {
 							expect( document[ "pointerSet" ].length ).toBe( 4 );
 							expect( Pointer.getIDs( document[ "pointerSet" ] ) ).toContain( "_:1" );
 							expect( Pointer.getIDs( document[ "pointerSet" ] ) ).toContain( "_:2" );
@@ -1249,12 +1252,12 @@ describe( module( "carbonldp/Documents" ), ():void => {
 							expect( Pointer.getIDs( document[ "pointerSet" ] ) ).toContain( "https://example.com/external-resource/" );
 						})();
 
-						(function documentFragments():void {
+						(():void => {
 
 							let fragment:Fragment;
 							expect( document.getFragments().length ).toBe( 4 );
 
-							(function documentBlankNode_1():void {
+							(():void => {
 								fragment = document.getFragment( "_:1" );
 								expect( fragment ).toBeTruthy();
 								expect( fragment[ "string" ] ).toBe( "Fragment 1" );
@@ -1265,19 +1268,19 @@ describe( module( "carbonldp/Documents" ), ():void => {
 								expect( fragment[ "pointerSet" ].find( pointer => pointer.id === "https://example.com/resource/#1" ) ).toBe( document.getFragment( "1" ) );
 							})();
 
-							(function documentBlankNode_2():void {
+							(():void => {
 								fragment = document.getFragment( "_:2" );
 								expect( fragment ).toBeTruthy();
 								expect( fragment[ "string" ] ).toBe( "Fragment 2" );
 							})();
 
-							(function documentNamedFragment_1():void {
+							(():void => {
 								fragment = document.getFragment( "1" );
 								expect( fragment ).toBeTruthy();
 								expect( fragment[ "string" ] ).toBe( "NamedFragment 1" );
 							})();
 
-							(function documentNamedFragment_1():void {
+							(():void => {
 								fragment = document.getFragment( "2" );
 								expect( fragment ).toBeTruthy();
 								expect( fragment[ "string" ] ).toBe( "NamedFragment 2" );
@@ -2143,7 +2146,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				} );
 
 				it( "should call _parseErrorResponse when request error", ( done:DoneFn ):void => {
-					jasmine.Ajax.stubRequest( "http://example.com/" ).andReturn( {
+					jasmine.Ajax.stubRequest( "https://example.com/" ).andReturn( {
 						status: 500,
 						responseText: "",
 					} );
@@ -2151,7 +2154,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					const error:Error = new Error( "Error message" );
 					const spy:jasmine.Spy = spyOn( documents, "_parseErrorResponse" ).and.callFake( () => Promise.reject( error ) );
 
-					documents.get( "http://example.com/" ).then( () => {
+					documents.get( "https://example.com/" ).then( () => {
 						done.fail( "Should not resolve" );
 					} ).catch( _error => {
 						expect( spy ).toHaveBeenCalled();
@@ -2501,7 +2504,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 
 					constructor() {
 						super();
-						this._baseURI = "http://example.com/";
+						this._baseURI = "https://example.com/";
 						this.settings = { paths: { system: ".system/" } };
 					}
 				}
@@ -2513,27 +2516,27 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				let spyNotExists:jasmine.Spy = jasmine.createSpy( "notExists" );
 				let spyFail:jasmine.Spy = jasmine.createSpy( "fail" );
 
-				jasmine.Ajax.stubRequest( "http://example.com/resource/exists/", null, "HEAD" ).andReturn( {
+				jasmine.Ajax.stubRequest( "https://example.com/resource/exists/", null, "HEAD" ).andReturn( {
 					status: 200,
 				} );
-				jasmine.Ajax.stubRequest( "http://example.com/resource/not-exists/", null, "HEAD" ).andReturn( {
+				jasmine.Ajax.stubRequest( "https://example.com/resource/not-exists/", null, "HEAD" ).andReturn( {
 					status: 404,
 				} );
-				jasmine.Ajax.stubRequest( "http://example.com/resource/error/", null, "HEAD" ).andReturn( {
+				jasmine.Ajax.stubRequest( "https://example.com/resource/error/", null, "HEAD" ).andReturn( {
 					status: 500,
 				} );
 
 				let promise:Promise<any>;
 
-				promise = documents.exists( "http://example.com/resource/exists/" );
+				promise = documents.exists( "https://example.com/resource/exists/" );
 				expect( promise instanceof Promise ).toBe( true );
 				promises.push( promise.then( spyExists ) );
 
-				promise = documents.exists( "http://example.com/resource/not-exists/" );
+				promise = documents.exists( "https://example.com/resource/not-exists/" );
 				expect( promise instanceof Promise ).toBe( true );
 				promises.push( promise.then( spyNotExists ) );
 
-				promise = documents.exists( "http://example.com/resource/error/" );
+				promise = documents.exists( "https://example.com/resource/error/" );
 				expect( promise instanceof Promise ).toBe( true );
 				promises.push( promise.catch( spyFail ) );
 
@@ -2560,7 +2563,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 
 						constructor() {
 							super();
-							this._baseURI = "http://example.com/";
+							this._baseURI = "https://example.com/";
 						}
 					}();
 					documents = context.documents;
@@ -2587,7 +2590,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				} );
 
 				it( "should call _parseErrorResponse when request error", ( done:DoneFn ):void => {
-					jasmine.Ajax.stubRequest( "http://example.com/" ).andReturn( {
+					jasmine.Ajax.stubRequest( "https://example.com/" ).andReturn( {
 						status: 500,
 						responseText: "",
 					} );
@@ -2595,7 +2598,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					const error:Error = new Error( "Error message" );
 					const spy:jasmine.Spy = spyOn( documents, "_parseErrorResponse" ).and.callFake( () => Promise.reject( error ) );
 
-					documents.exists( "http://example.com/" ).then( () => {
+					documents.exists( "https://example.com/" ).then( () => {
 						done.fail( "Should not resolve" );
 					} ).catch( _error => {
 						expect( spy ).toHaveBeenCalled();
@@ -2637,7 +2640,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				} );
 
 				it( "should call _parseErrorResponse when request error", ( done:DoneFn ):void => {
-					jasmine.Ajax.stubRequest( "http://example.com/" ).andReturn( {
+					jasmine.Ajax.stubRequest( "https://example.com/" ).andReturn( {
 						status: 500,
 						responseText: "",
 					} );
@@ -2645,7 +2648,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					const error:Error = new Error( "Error message" );
 					const spy:jasmine.Spy = spyOn( documents, "_parseErrorResponse" ).and.callFake( () => Promise.reject( error ) );
 
-					documents.exists( "http://example.com/" ).then( () => {
+					documents.exists( "https://example.com/" ).then( () => {
 						done.fail( "Should not resolve" );
 					} ).catch( _error => {
 						expect( spy ).toHaveBeenCalled();
@@ -3009,7 +3012,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				} );
 
 				it( "should call _parseErrorResponse when request error", ( done:DoneFn ):void => {
-					jasmine.Ajax.stubRequest( "http://example.com/" ).andReturn( {
+					jasmine.Ajax.stubRequest( "https://example.com/" ).andReturn( {
 						status: 500,
 						responseText: "",
 					} );
@@ -3017,7 +3020,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					const error:Error = new Error( "Error message" );
 					const spy:jasmine.Spy = spyOn( documents, "_parseErrorResponse" ).and.callFake( () => Promise.reject( error ) );
 
-					documents.createChild( "http://example.com/", {} ).then( () => {
+					documents.createChild( "https://example.com/", {} ).then( () => {
 						done.fail( "Should not resolve" );
 					} ).catch( _error => {
 						expect( spy ).toHaveBeenCalled();
@@ -3728,7 +3731,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				} );
 
 				it( "should call _parseErrorResponse when request error", ( done:DoneFn ):void => {
-					jasmine.Ajax.stubRequest( "http://example.com/" ).andReturn( {
+					jasmine.Ajax.stubRequest( "https://example.com/" ).andReturn( {
 						status: 500,
 						responseText: "",
 					} );
@@ -3736,7 +3739,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					const error:Error = new Error( "Error message" );
 					const spy:jasmine.Spy = spyOn( documents, "_parseErrorResponse" ).and.callFake( () => Promise.reject( error ) );
 
-					documents.createChildAndRetrieve( "http://example.com/", {} ).then( () => {
+					documents.createChildAndRetrieve( "https://example.com/", {} ).then( () => {
 						done.fail( "Should not resolve" );
 					} ).catch( _error => {
 						expect( spy ).toHaveBeenCalled();
@@ -4273,7 +4276,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				} );
 
 				it( "should call _parseErrorResponse when request error", ( done:DoneFn ):void => {
-					jasmine.Ajax.stubRequest( "http://example.com/" ).andReturn( {
+					jasmine.Ajax.stubRequest( "https://example.com/" ).andReturn( {
 						status: 500,
 						responseText: "",
 					} );
@@ -4281,7 +4284,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					const error:Error = new Error( "Error message" );
 					const spy:jasmine.Spy = spyOn( documents, "_parseErrorResponse" ).and.callFake( () => Promise.reject( error ) );
 
-					documents.listChildren( "http://example.com/" ).then( () => {
+					documents.listChildren( "https://example.com/" ).then( () => {
 						done.fail( "Should not resolve" );
 					} ).catch( _error => {
 						expect( spy ).toHaveBeenCalled();
@@ -5807,7 +5810,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				} );
 
 				it( "should call _parseErrorResponse when request error", ( done:DoneFn ):void => {
-					jasmine.Ajax.stubRequest( "http://example.com/" ).andReturn( {
+					jasmine.Ajax.stubRequest( "https://example.com/" ).andReturn( {
 						status: 500,
 						responseText: "",
 					} );
@@ -5815,7 +5818,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					const error:Error = new Error( "Error message" );
 					const spy:jasmine.Spy = spyOn( documents, "_parseErrorResponse" ).and.callFake( () => Promise.reject( error ) );
 
-					documents.getChildren( "http://example.com/" ).then( () => {
+					documents.getChildren( "https://example.com/" ).then( () => {
 						done.fail( "Should not resolve" );
 					} ).catch( _error => {
 						expect( spy ).toHaveBeenCalled();
@@ -7204,7 +7207,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				} );
 
 				it( "should call _parseErrorResponse when request error", ( done:DoneFn ):void => {
-					jasmine.Ajax.stubRequest( "http://example.com/" ).andReturn( {
+					jasmine.Ajax.stubRequest( "https://example.com/" ).andReturn( {
 						status: 500,
 						responseText: "",
 					} );
@@ -7212,7 +7215,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					const error:Error = new Error( "Error message" );
 					const spy:jasmine.Spy = spyOn( documents, "_parseErrorResponse" ).and.callFake( () => Promise.reject( error ) );
 
-					documents.listMembers( "http://example.com/" ).then( () => {
+					documents.listMembers( "https://example.com/" ).then( () => {
 						done.fail( "Should not resolve" );
 					} ).catch( _error => {
 						expect( spy ).toHaveBeenCalled();
@@ -8755,7 +8758,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				} );
 
 				it( "should call _parseErrorResponse when request error", ( done:DoneFn ):void => {
-					jasmine.Ajax.stubRequest( "http://example.com/" ).andReturn( {
+					jasmine.Ajax.stubRequest( "https://example.com/" ).andReturn( {
 						status: 500,
 						responseText: "",
 					} );
@@ -8763,7 +8766,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					const error:Error = new Error( "Error message" );
 					const spy:jasmine.Spy = spyOn( documents, "_parseErrorResponse" ).and.callFake( () => Promise.reject( error ) );
 
-					documents.getMembers( "http://example.com/" ).then( () => {
+					documents.getMembers( "https://example.com/" ).then( () => {
 						done.fail( "Should not resolve" );
 					} ).catch( _error => {
 						expect( spy ).toHaveBeenCalled();
@@ -9260,7 +9263,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 
 				constructor() {
 					super();
-					this._baseURI = "http://example.com/";
+					this._baseURI = "https://example.com/";
 					this.settings = { paths: { system: ".system/" } };
 				}
 			}
@@ -9318,14 +9321,14 @@ describe( module( "carbonldp/Documents" ), ():void => {
 
 						constructor() {
 							super();
-							this._baseURI = "http://example.com/";
+							this._baseURI = "https://example.com/";
 						}
 					};
 					documents = context.documents;
 				} );
 
 				it( "should reject promise if URI is not in the context base", ( done:DoneFn ):void => {
-					const promise:Promise<any> = documents.addMember( "http://not-example.com", "http://example.com/member/" );
+					const promise:Promise<any> = documents.addMember( "http://not-example.com", "https://example.com/member/" );
 					promise.then( () => {
 						done.fail( "Should not resolve promise." );
 					} ).catch( error => {
@@ -9335,7 +9338,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				} );
 
 				it( "should reject promise if prefixed URI cannot be resolved", ( done:DoneFn ):void => {
-					const promise:Promise<any> = documents.addMember( "prefix:the-uri", "http://example.com/member/" );
+					const promise:Promise<any> = documents.addMember( "prefix:the-uri", "https://example.com/member/" );
 					promise.then( () => {
 						done.fail( "Should not resolve promise." );
 					} ).catch( error => {
@@ -9345,7 +9348,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				} );
 
 				it( "should call _parseErrorResponse when request error", ( done:DoneFn ):void => {
-					jasmine.Ajax.stubRequest( "http://example.com/" ).andReturn( {
+					jasmine.Ajax.stubRequest( "https://example.com/" ).andReturn( {
 						status: 500,
 						responseText: "",
 					} );
@@ -9353,7 +9356,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					const error:Error = new Error( "Error message" );
 					const spy:jasmine.Spy = spyOn( documents, "_parseErrorResponse" ).and.callFake( () => Promise.reject( error ) );
 
-					documents.addMember( "http://example.com/", "http://example.com/member/" ).then( () => {
+					documents.addMember( "https://example.com/", "https://example.com/member/" ).then( () => {
 						done.fail( "Should not resolve" );
 					} ).catch( _error => {
 						expect( spy ).toHaveBeenCalled();
@@ -9374,7 +9377,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				} );
 
 				it( "should reject if URI is relative", ( done:DoneFn ):void => {
-					const promise:Promise<any> = documents.addMember( "relative-uri/", "http://example.com/member/" );
+					const promise:Promise<any> = documents.addMember( "relative-uri/", "https://example.com/member/" );
 					promise.then( () => {
 						done.fail( "Should not resolve promise." );
 					} ).catch( error => {
@@ -9384,7 +9387,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				} );
 
 				it( "should reject if URI is prefixed", ( done:DoneFn ):void => {
-					const promise:Promise<any> = documents.addMember( "prefix:the-uri", "http://example.com/member/" );
+					const promise:Promise<any> = documents.addMember( "prefix:the-uri", "https://example.com/member/" );
 					promise.then( () => {
 						done.fail( "Should not resolve promise." );
 					} ).catch( error => {
@@ -9394,7 +9397,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				} );
 
 				it( "should reject if member is relative", ( done:DoneFn ):void => {
-					const promise:Promise<any> = documents.addMember( "http://example.com/resource/", "relative-member/" );
+					const promise:Promise<any> = documents.addMember( "https://example.com/resource/", "relative-member/" );
 					promise.then( () => {
 						done.fail( "Should not resolve promise." );
 					} ).catch( error => {
@@ -9404,7 +9407,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				} );
 
 				it( "should reject if member is prefixed", ( done:DoneFn ):void => {
-					const promise:Promise<any> = documents.addMember( "http://example.com/resource/", "prefix:member" );
+					const promise:Promise<any> = documents.addMember( "https://example.com/resource/", "prefix:member" );
 					promise.then( () => {
 						done.fail( "Should not resolve promise." );
 					} ).catch( error => {
@@ -9414,7 +9417,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				} );
 
 				it( "should call _parseErrorResponse when request error", ( done:DoneFn ):void => {
-					jasmine.Ajax.stubRequest( "http://example.com/" ).andReturn( {
+					jasmine.Ajax.stubRequest( "https://example.com/" ).andReturn( {
 						status: 500,
 						responseText: "",
 					} );
@@ -9422,7 +9425,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					const error:Error = new Error( "Error message" );
 					const spy:jasmine.Spy = spyOn( documents, "_parseErrorResponse" ).and.callFake( () => Promise.reject( error ) );
 
-					documents.addMember( "http://example.com/", "http://example.com/member/" ).then( () => {
+					documents.addMember( "https://example.com/", "https://example.com/member/" ).then( () => {
 						done.fail( "Should not resolve" );
 					} ).catch( _error => {
 						expect( spy ).toHaveBeenCalled();
@@ -9456,7 +9459,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 
 					constructor() {
 						super();
-						this._baseURI = "http://example.com/";
+						this._baseURI = "https://example.com/";
 						this.settings = { paths: { system: ".system/" } };
 					}
 				}
@@ -9467,7 +9470,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				expect( documents.addMembers ).toBeDefined();
 				expect( Utils.isFunction( documents.addMembers ) ).toBe( true );
 
-				jasmine.Ajax.stubRequest( "http://example.com/resource/", null, "PUT" ).andReturn( {
+				jasmine.Ajax.stubRequest( "https://example.com/resource/", null, "PUT" ).andReturn( {
 					status: 200,
 				} );
 
@@ -9507,14 +9510,14 @@ describe( module( "carbonldp/Documents" ), ():void => {
 
 						constructor() {
 							super();
-							this._baseURI = "http://example.com/";
+							this._baseURI = "https://example.com/";
 						}
 					}();
 					documents = context.documents;
 				} );
 
 				it( "should reject promise if URI is not in the context base", ( done:DoneFn ):void => {
-					const promise:Promise<any> = documents.addMembers( "http://not-example.com", [ "http://example.com/member/" ] );
+					const promise:Promise<any> = documents.addMembers( "http://not-example.com", [ "https://example.com/member/" ] );
 					promise.then( () => {
 						done.fail( "Should not resolve promise." );
 					} ).catch( error => {
@@ -9524,7 +9527,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				} );
 
 				it( "should reject promise if prefixed URI cannot be resolved", ( done:DoneFn ):void => {
-					const promise:Promise<any> = documents.addMembers( "prefix:the-uri", [ "http://example.com/member/" ] );
+					const promise:Promise<any> = documents.addMembers( "prefix:the-uri", [ "https://example.com/member/" ] );
 					promise.then( () => {
 						done.fail( "Should not resolve promise." );
 					} ).catch( error => {
@@ -9534,7 +9537,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				} );
 
 				it( "should call _parseErrorResponse when request error", ( done:DoneFn ):void => {
-					jasmine.Ajax.stubRequest( "http://example.com/" ).andReturn( {
+					jasmine.Ajax.stubRequest( "https://example.com/" ).andReturn( {
 						status: 500,
 						responseText: "",
 					} );
@@ -9542,7 +9545,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					const error:Error = new Error( "Error message" );
 					const spy:jasmine.Spy = spyOn( documents, "_parseErrorResponse" ).and.callFake( () => Promise.reject( error ) );
 
-					documents.addMembers( "http://example.com/", [ "http://example.com/member/" ] ).then( () => {
+					documents.addMembers( "https://example.com/", [ "https://example.com/member/" ] ).then( () => {
 						done.fail( "Should not resolve" );
 					} ).catch( _error => {
 						expect( spy ).toHaveBeenCalled();
@@ -9564,7 +9567,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				} );
 
 				it( "should reject if URI is relative", ( done:DoneFn ):void => {
-					const promise:Promise<any> = documents.addMembers( "relative-uri/", [ "http://example.com/member/" ] );
+					const promise:Promise<any> = documents.addMembers( "relative-uri/", [ "https://example.com/member/" ] );
 					promise.then( () => {
 						done.fail( "Should not resolve promise." );
 					} ).catch( error => {
@@ -9574,7 +9577,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				} );
 
 				it( "should reject if URI is prefixed", ( done:DoneFn ):void => {
-					const promise:Promise<any> = documents.addMembers( "prefix:the-uri", [ "http://example.com/member/" ] );
+					const promise:Promise<any> = documents.addMembers( "prefix:the-uri", [ "https://example.com/member/" ] );
 					promise.then( () => {
 						done.fail( "Should not resolve promise." );
 					} ).catch( error => {
@@ -9584,7 +9587,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				} );
 
 				it( "should reject if members is relative", ( done:DoneFn ):void => {
-					const promise:Promise<any> = documents.addMembers( "http://example.com/resource/", [ "relative-members/" ] );
+					const promise:Promise<any> = documents.addMembers( "https://example.com/resource/", [ "relative-members/" ] );
 					promise.then( () => {
 						done.fail( "Should not resolve promise." );
 					} ).catch( error => {
@@ -9594,7 +9597,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				} );
 
 				it( "should reject if member is prefixed", ( done:DoneFn ):void => {
-					const promise:Promise<any> = documents.addMembers( "http://example.com/resource/", [ "prefix:member" ] );
+					const promise:Promise<any> = documents.addMembers( "https://example.com/resource/", [ "prefix:member" ] );
 					promise.then( () => {
 						done.fail( "Should not resolve promise." );
 					} ).catch( error => {
@@ -9604,7 +9607,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				} );
 
 				it( "should call _parseErrorResponse when request error", ( done:DoneFn ):void => {
-					jasmine.Ajax.stubRequest( "http://example.com/" ).andReturn( {
+					jasmine.Ajax.stubRequest( "https://example.com/" ).andReturn( {
 						status: 500,
 						responseText: "",
 					} );
@@ -9612,7 +9615,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					const error:Error = new Error( "Error message" );
 					const spy:jasmine.Spy = spyOn( documents, "_parseErrorResponse" ).and.callFake( () => Promise.reject( error ) );
 
-					documents.addMembers( "http://example.com/", [ "http://example.com/member/" ] ).then( () => {
+					documents.addMembers( "https://example.com/", [ "https://example.com/member/" ] ).then( () => {
 						done.fail( "Should not resolve" );
 					} ).catch( _error => {
 						expect( spy ).toHaveBeenCalled();
@@ -9638,7 +9641,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 
 				constructor() {
 					super();
-					this._baseURI = "http://example.com/";
+					this._baseURI = "https://example.com/";
 					this.settings = { paths: { system: ".system/" } };
 				}
 			}
@@ -9696,14 +9699,14 @@ describe( module( "carbonldp/Documents" ), ():void => {
 
 						constructor() {
 							super();
-							this._baseURI = "http://example.com/";
+							this._baseURI = "https://example.com/";
 						}
 					};
 					documents = context.documents;
 				} );
 
 				it( "should reject promise if URI is not in the context base", ( done:DoneFn ):void => {
-					const promise:Promise<any> = documents.removeMember( "http://not-example.com", "http://example.com/member/" );
+					const promise:Promise<any> = documents.removeMember( "http://not-example.com", "https://example.com/member/" );
 					promise.then( () => {
 						done.fail( "Should not resolve promise." );
 					} ).catch( error => {
@@ -9713,7 +9716,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				} );
 
 				it( "should reject promise if prefixed URI cannot be resolved", ( done:DoneFn ):void => {
-					const promise:Promise<any> = documents.removeMember( "prefix:the-uri", "http://example.com/member/" );
+					const promise:Promise<any> = documents.removeMember( "prefix:the-uri", "https://example.com/member/" );
 					promise.then( () => {
 						done.fail( "Should not resolve promise." );
 					} ).catch( error => {
@@ -9723,7 +9726,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				} );
 
 				it( "should call _parseErrorResponse when request error", ( done:DoneFn ):void => {
-					jasmine.Ajax.stubRequest( "http://example.com/" ).andReturn( {
+					jasmine.Ajax.stubRequest( "https://example.com/" ).andReturn( {
 						status: 500,
 						responseText: "",
 					} );
@@ -9731,7 +9734,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					const error:Error = new Error( "Error message" );
 					const spy:jasmine.Spy = spyOn( documents, "_parseErrorResponse" ).and.callFake( () => Promise.reject( error ) );
 
-					documents.removeMember( "http://example.com/", "http://example.com/member/" ).then( () => {
+					documents.removeMember( "https://example.com/", "https://example.com/member/" ).then( () => {
 						done.fail( "Should not resolve" );
 					} ).catch( _error => {
 						expect( spy ).toHaveBeenCalled();
@@ -9752,7 +9755,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				} );
 
 				it( "should reject if URI is relative", ( done:DoneFn ):void => {
-					const promise:Promise<any> = documents.removeMember( "relative-uri/", "http://example.com/member/" );
+					const promise:Promise<any> = documents.removeMember( "relative-uri/", "https://example.com/member/" );
 					promise.then( () => {
 						done.fail( "Should not resolve promise." );
 					} ).catch( error => {
@@ -9762,7 +9765,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				} );
 
 				it( "should reject if URI is prefixed", ( done:DoneFn ):void => {
-					const promise:Promise<any> = documents.removeMember( "prefix:the-uri", "http://example.com/member/" );
+					const promise:Promise<any> = documents.removeMember( "prefix:the-uri", "https://example.com/member/" );
 					promise.then( () => {
 						done.fail( "Should not resolve promise." );
 					} ).catch( error => {
@@ -9772,7 +9775,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				} );
 
 				it( "should reject if member is relative", ( done:DoneFn ):void => {
-					const promise:Promise<any> = documents.removeMember( "http://example.com/resource/", "relative-member/" );
+					const promise:Promise<any> = documents.removeMember( "https://example.com/resource/", "relative-member/" );
 					promise.then( () => {
 						done.fail( "Should not resolve promise." );
 					} ).catch( error => {
@@ -9782,7 +9785,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				} );
 
 				it( "should reject if member is prefixed", ( done:DoneFn ):void => {
-					const promise:Promise<any> = documents.removeMember( "http://example.com/resource/", "prefix:member" );
+					const promise:Promise<any> = documents.removeMember( "https://example.com/resource/", "prefix:member" );
 					promise.then( () => {
 						done.fail( "Should not resolve promise." );
 					} ).catch( error => {
@@ -9792,7 +9795,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				} );
 
 				it( "should call _parseErrorResponse when request error", ( done:DoneFn ):void => {
-					jasmine.Ajax.stubRequest( "http://example.com/" ).andReturn( {
+					jasmine.Ajax.stubRequest( "https://example.com/" ).andReturn( {
 						status: 500,
 						responseText: "",
 					} );
@@ -9800,7 +9803,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					const error:Error = new Error( "Error message" );
 					const spy:jasmine.Spy = spyOn( documents, "_parseErrorResponse" ).and.callFake( () => Promise.reject( error ) );
 
-					documents.removeMember( "http://example.com/", "http://example.com/member/" ).then( () => {
+					documents.removeMember( "https://example.com/", "https://example.com/member/" ).then( () => {
 						done.fail( "Should not resolve" );
 					} ).catch( _error => {
 						expect( spy ).toHaveBeenCalled();
@@ -9834,7 +9837,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 
 					constructor() {
 						super();
-						this._baseURI = "http://example.com/";
+						this._baseURI = "https://example.com/";
 						this.settings = { paths: { system: ".system/" } };
 					}
 				}
@@ -9845,7 +9848,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				expect( documents.removeMembers ).toBeDefined();
 				expect( Utils.isFunction( documents.removeMembers ) ).toBe( true );
 
-				jasmine.Ajax.stubRequest( "http://example.com/resource/", null, "DELETE" ).andReturn( {
+				jasmine.Ajax.stubRequest( "https://example.com/resource/", null, "DELETE" ).andReturn( {
 					status: 200,
 				} );
 
@@ -9885,14 +9888,14 @@ describe( module( "carbonldp/Documents" ), ():void => {
 
 						constructor() {
 							super();
-							this._baseURI = "http://example.com/";
+							this._baseURI = "https://example.com/";
 						}
 					}();
 					documents = context.documents;
 				} );
 
 				it( "should reject promise if URI is not in the context base", ( done:DoneFn ):void => {
-					const promise:Promise<any> = documents.removeMembers( "http://not-example.com", [ "http://example.com/member/" ] );
+					const promise:Promise<any> = documents.removeMembers( "http://not-example.com", [ "https://example.com/member/" ] );
 					promise.then( () => {
 						done.fail( "Should not resolve promise." );
 					} ).catch( error => {
@@ -9902,7 +9905,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				} );
 
 				it( "should reject promise if prefixed URI cannot be resolved", ( done:DoneFn ):void => {
-					const promise:Promise<any> = documents.removeMembers( "prefix:the-uri", [ "http://example.com/member/" ] );
+					const promise:Promise<any> = documents.removeMembers( "prefix:the-uri", [ "https://example.com/member/" ] );
 					promise.then( () => {
 						done.fail( "Should not resolve promise." );
 					} ).catch( error => {
@@ -9912,7 +9915,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				} );
 
 				it( "should call _parseErrorResponse when request error", ( done:DoneFn ):void => {
-					jasmine.Ajax.stubRequest( "http://example.com/" ).andReturn( {
+					jasmine.Ajax.stubRequest( "https://example.com/" ).andReturn( {
 						status: 500,
 						responseText: "",
 					} );
@@ -9920,7 +9923,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					const error:Error = new Error( "Error message" );
 					const spy:jasmine.Spy = spyOn( documents, "_parseErrorResponse" ).and.callFake( () => Promise.reject( error ) );
 
-					documents.removeMembers( "http://example.com/", [ "http://example.com/member/" ] ).then( () => {
+					documents.removeMembers( "https://example.com/", [ "https://example.com/member/" ] ).then( () => {
 						done.fail( "Should not resolve" );
 					} ).catch( _error => {
 						expect( spy ).toHaveBeenCalled();
@@ -9942,7 +9945,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				} );
 
 				it( "should reject if URI is relative", ( done:DoneFn ):void => {
-					const promise:Promise<any> = documents.removeMembers( "relative-uri/", [ "http://example.com/member/" ] );
+					const promise:Promise<any> = documents.removeMembers( "relative-uri/", [ "https://example.com/member/" ] );
 					promise.then( () => {
 						done.fail( "Should not resolve promise." );
 					} ).catch( error => {
@@ -9952,7 +9955,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				} );
 
 				it( "should reject if URI is prefixed", ( done:DoneFn ):void => {
-					const promise:Promise<any> = documents.removeMembers( "prefix:the-uri", [ "http://example.com/member/" ] );
+					const promise:Promise<any> = documents.removeMembers( "prefix:the-uri", [ "https://example.com/member/" ] );
 					promise.then( () => {
 						done.fail( "Should not resolve promise." );
 					} ).catch( error => {
@@ -9962,7 +9965,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				} );
 
 				it( "should reject if members is relative", ( done:DoneFn ):void => {
-					const promise:Promise<any> = documents.removeMembers( "http://example.com/resource/", [ "relative-members/" ] );
+					const promise:Promise<any> = documents.removeMembers( "https://example.com/resource/", [ "relative-members/" ] );
 					promise.then( () => {
 						done.fail( "Should not resolve promise." );
 					} ).catch( error => {
@@ -9972,7 +9975,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				} );
 
 				it( "should reject if members is prefixed", ( done:DoneFn ):void => {
-					const promise:Promise<any> = documents.removeMembers( "http://example.com/resource/", [ "prefix:member" ] );
+					const promise:Promise<any> = documents.removeMembers( "https://example.com/resource/", [ "prefix:member" ] );
 					promise.then( () => {
 						done.fail( "Should not resolve promise." );
 					} ).catch( error => {
@@ -9982,7 +9985,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				} );
 
 				it( "should call _parseErrorResponse when request error", ( done:DoneFn ):void => {
-					jasmine.Ajax.stubRequest( "http://example.com/" ).andReturn( {
+					jasmine.Ajax.stubRequest( "https://example.com/" ).andReturn( {
 						status: 500,
 						responseText: "",
 					} );
@@ -9990,7 +9993,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					const error:Error = new Error( "Error message" );
 					const spy:jasmine.Spy = spyOn( documents, "_parseErrorResponse" ).and.callFake( () => Promise.reject( error ) );
 
-					documents.removeMembers( "http://example.com/", [ "http://example.com/member/" ] ).then( () => {
+					documents.removeMembers( "https://example.com/", [ "https://example.com/member/" ] ).then( () => {
 						done.fail( "Should not resolve" );
 					} ).catch( _error => {
 						expect( spy ).toHaveBeenCalled();
@@ -10023,7 +10026,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 
 					constructor() {
 						super();
-						this._baseURI = "http://example.com/";
+						this._baseURI = "https://example.com/";
 						this.settings = { paths: { system: ".system/" } };
 					}
 				}
@@ -10034,7 +10037,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				expect( documents.removeAllMembers ).toBeDefined();
 				expect( Utils.isFunction( documents.removeAllMembers ) ).toBe( true );
 
-				jasmine.Ajax.stubRequest( "http://example.com/resource/", null, "DELETE" ).andReturn( {
+				jasmine.Ajax.stubRequest( "https://example.com/resource/", null, "DELETE" ).andReturn( {
 					status: 200,
 				} );
 
@@ -10066,7 +10069,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 
 						constructor() {
 							super();
-							this._baseURI = "http://example.com/";
+							this._baseURI = "https://example.com/";
 						}
 					}();
 					documents = context.documents;
@@ -10093,7 +10096,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				} );
 
 				it( "should call _parseErrorResponse when request error", ( done:DoneFn ):void => {
-					jasmine.Ajax.stubRequest( "http://example.com/" ).andReturn( {
+					jasmine.Ajax.stubRequest( "https://example.com/" ).andReturn( {
 						status: 500,
 						responseText: "",
 					} );
@@ -10101,7 +10104,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					const error:Error = new Error( "Error message" );
 					const spy:jasmine.Spy = spyOn( documents, "_parseErrorResponse" ).and.callFake( () => Promise.reject( error ) );
 
-					documents.removeAllMembers( "http://example.com/" ).then( () => {
+					documents.removeAllMembers( "https://example.com/" ).then( () => {
 						done.fail( "Should not resolve" );
 					} ).catch( _error => {
 						expect( spy ).toHaveBeenCalled();
@@ -10143,7 +10146,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				} );
 
 				it( "should call _parseErrorResponse when request error", ( done:DoneFn ):void => {
-					jasmine.Ajax.stubRequest( "http://example.com/" ).andReturn( {
+					jasmine.Ajax.stubRequest( "https://example.com/" ).andReturn( {
 						status: 500,
 						responseText: "",
 					} );
@@ -10151,7 +10154,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					const error:Error = new Error( "Error message" );
 					const spy:jasmine.Spy = spyOn( documents, "_parseErrorResponse" ).and.callFake( () => Promise.reject( error ) );
 
-					documents.removeAllMembers( "http://example.com/" ).then( () => {
+					documents.removeAllMembers( "https://example.com/" ).then( () => {
 						done.fail( "Should not resolve" );
 					} ).catch( _error => {
 						expect( spy ).toHaveBeenCalled();
@@ -11561,7 +11564,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				} );
 
 				it( "should call _parseErrorResponse when request error", ( done:DoneFn ):void => {
-					jasmine.Ajax.stubRequest( "http://example.com/" ).andReturn( {
+					jasmine.Ajax.stubRequest( "https://example.com/" ).andReturn( {
 						status: 500,
 						responseText: "",
 					} );
@@ -11569,7 +11572,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					const error:Error = new Error( "Error message" );
 					const spy:jasmine.Spy = spyOn( documents, "_parseErrorResponse" ).and.callFake( () => Promise.reject( error ) );
 
-					const document:PersistedDocument = PersistedDocument.create( documents, "http://example.com/" );
+					const document:PersistedDocument = PersistedDocument.create( documents, "https://example.com/" );
 					documents.refresh( document ).then( () => {
 						done.fail( "Should not resolve" );
 					} ).catch( _error => {
@@ -12477,7 +12480,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 
 					constructor() {
 						super();
-						this._baseURI = "http://example.com/";
+						this._baseURI = "https://example.com/";
 						this.settings = { paths: { system: ".system/" } };
 					}
 				}
@@ -12488,10 +12491,10 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				expect( documents.delete ).toBeDefined();
 				expect( Utils.isFunction( documents.delete ) ).toBe( true );
 
-				jasmine.Ajax.stubRequest( "http://example.com/resource/", null, "DELETE" ).andReturn( {
+				jasmine.Ajax.stubRequest( "https://example.com/resource/", null, "DELETE" ).andReturn( {
 					status: 200,
 				} );
-				jasmine.Ajax.stubRequest( "http://example.com/a-document/", null, "DELETE" ).andReturn( {
+				jasmine.Ajax.stubRequest( "https://example.com/a-document/", null, "DELETE" ).andReturn( {
 					status: 200,
 				} );
 
@@ -12501,7 +12504,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				let promise:Promise<any>;
 
 				// Proper execution
-				promise = documents.delete( "http://example.com/resource/" );
+				promise = documents.delete( "https://example.com/resource/" );
 				expect( promise ).toEqual( jasmine.any( Promise ) );
 				promises.push( promise.then( spySuccess ) );
 
@@ -12511,8 +12514,8 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				promises.push( promise.then( spySuccess ) );
 
 				// Remove pointer from cache
-				documents.getPointer( "http://example.com/a-document/" );
-				promise = documents.delete( "http://example.com/a-document/" );
+				documents.getPointer( "https://example.com/a-document/" );
+				promise = documents.delete( "https://example.com/a-document/" );
 				expect( promise ).toEqual( jasmine.any( Promise ) );
 				promises.push( promise.then( spySuccess ) );
 
@@ -12520,7 +12523,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					expect( spySuccess ).toHaveBeenCalledTimes( 3 );
 					expect( spySuccess ).toHaveBeenCalledWith( void 0 );
 
-					expect( documents.hasPointer( "http://example.com/a-document/" ) ).toBe( false );
+					expect( documents.hasPointer( "https://example.com/a-document/" ) ).toBe( false );
 					done();
 				}, done.fail );
 			} );
@@ -12534,7 +12537,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 
 						constructor() {
 							super();
-							this._baseURI = "http://example.com/";
+							this._baseURI = "https://example.com/";
 						}
 					}();
 					documents = context.documents;
@@ -12561,7 +12564,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				} );
 
 				it( "should call _parseErrorResponse when request error", ( done:DoneFn ):void => {
-					jasmine.Ajax.stubRequest( "http://example.com/" ).andReturn( {
+					jasmine.Ajax.stubRequest( "https://example.com/" ).andReturn( {
 						status: 500,
 						responseText: "",
 					} );
@@ -12569,7 +12572,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					const error:Error = new Error( "Error message" );
 					const spy:jasmine.Spy = spyOn( documents, "_parseErrorResponse" ).and.callFake( () => Promise.reject( error ) );
 
-					documents.delete( "http://example.com/" ).then( () => {
+					documents.delete( "https://example.com/" ).then( () => {
 						done.fail( "Should not resolve" );
 					} ).catch( _error => {
 						expect( spy ).toHaveBeenCalled();
@@ -12611,7 +12614,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				} );
 
 				it( "should call _parseErrorResponse when request error", ( done:DoneFn ):void => {
-					jasmine.Ajax.stubRequest( "http://example.com/" ).andReturn( {
+					jasmine.Ajax.stubRequest( "https://example.com/" ).andReturn( {
 						status: 500,
 						responseText: "",
 					} );
@@ -12619,7 +12622,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					const error:Error = new Error( "Error message" );
 					const spy:jasmine.Spy = spyOn( documents, "_parseErrorResponse" ).and.callFake( () => Promise.reject( error ) );
 
-					documents.delete( "http://example.com/" ).then( () => {
+					documents.delete( "https://example.com/" ).then( () => {
 						done.fail( "Should not resolve" );
 					} ).catch( _error => {
 						expect( spy ).toHaveBeenCalled();
@@ -12647,29 +12650,16 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				],
 				{ type: "Promise<string>" }
 			), ( done:DoneFn ):void => {
-				class MockedAuth extends Auth.AuthService {}
-
-				class MockedContext extends AbstractContext {
-					protected _baseURI:string;
-
-					constructor() {
-						super();
-						this._baseURI = "http://example.com/";
-						this.settings = { paths: { system: ".system/" } };
-						this.auth = new MockedAuth( this );
-					}
-				}
-
-				let context:MockedContext = new MockedContext();
+				let context:Context = createMockContext( { auth: true } );
 				let documents:Documents = context.documents;
 
 				expect( documents.getDownloadURL ).toBeDefined();
 				expect( Utils.isFunction( documents.getDownloadURL ) ).toBe( true );
 
-				spyOn( context.auth, "getAuthenticatedURL" ).and.returnValue( Promise.resolve( "http://example.com/resource/?ticket=1234567890" ) );
+				spyOn( context.auth, "getAuthenticatedURL" ).and.returnValue( Promise.resolve( "https://example.com/resource/?ticket=1234567890" ) );
 
-				documents.getDownloadURL( "http://example.com/resource/" ).then( ( downloadURL:string ) => {
-					expect( downloadURL ).toBe( "http://example.com/resource/?ticket=1234567890" );
+				documents.getDownloadURL( "https://example.com/resource/" ).then( ( downloadURL:string ) => {
+					expect( downloadURL ).toBe( "https://example.com/resource/?ticket=1234567890" );
 					done();
 				} ).catch( done.fail );
 			} );
@@ -12678,17 +12668,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				let documents:Documents;
 
 				beforeEach( () => {
-					const context:AbstractContext = new class extends AbstractContext {
-						auth:Auth.AuthService = new Auth.AuthService( this );
-
-						protected _baseURI:string;
-
-						constructor() {
-							super();
-							this._baseURI = "http://example.com/";
-							this.settings = { paths: { system: ".system/" } };
-						}
-					}();
+					const context:Context = createMockContext( { auth: true } );
 					documents = context.documents;
 				} );
 
@@ -12713,7 +12693,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				} );
 
 				it( "should call _parseErrorResponse when request error", ( done:DoneFn ):void => {
-					jasmine.Ajax.stubRequest( new RegExp( "http://example.com/" ) ).andReturn( {
+					jasmine.Ajax.stubRequest( new RegExp( "https://example.com/" ) ).andReturn( {
 						status: 500,
 						responseText: "",
 					} );
@@ -12721,7 +12701,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					const error:Error = new Error( "Error message" );
 					const spy:jasmine.Spy = spyOn( documents, "_parseErrorResponse" ).and.callFake( () => Promise.reject( error ) );
 
-					documents.getDownloadURL( "http://example.com/" ).then( () => {
+					documents.getDownloadURL( "https://example.com/" ).then( () => {
 						done.fail( "Should not resolve" );
 					} ).catch( _error => {
 						expect( spy ).toHaveBeenCalled();
@@ -12743,7 +12723,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				} );
 
 				it( "should reject any request", ( done:DoneFn ):void => {
-					const promise:Promise<any> = documents.getDownloadURL( "http://example.com/resource/" );
+					const promise:Promise<any> = documents.getDownloadURL( "https://example.com/resource/" );
 					promise.then( () => {
 						done.fail( "Should not resolve promise." );
 					} ).catch( error => {
@@ -12784,7 +12764,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 
 						constructor() {
 							super();
-							this._baseURI = "http://example.com/";
+							this._baseURI = "https://example.com/";
 						}
 					};
 					documents = context.documents;
@@ -12794,9 +12774,9 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					const spyService:jasmine.Spy = spyOn( SPARQL.SPARQLService, "executeRawASKQuery" ).and.returnValue( new Promise( () => {} ) );
 
 					// noinspection JSIgnoredPromiseFromCall
-					documents.executeRawASKQuery( "http://example.com/document/", "ASK { ?subject, ?predicate, ?object }" );
+					documents.executeRawASKQuery( "https://example.com/document/", "ASK { ?subject, ?predicate, ?object }" );
 
-					expect( spyService ).toHaveBeenCalledWith( "http://example.com/document/", "ASK { ?subject, ?predicate, ?object }", jasmine.any( Object ) );
+					expect( spyService ).toHaveBeenCalledWith( "https://example.com/document/", "ASK { ?subject, ?predicate, ?object }", jasmine.any( Object ) );
 				} );
 
 				it( "should resolve relative URIs", ():void => {
@@ -12805,7 +12785,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					// noinspection JSIgnoredPromiseFromCall
 					documents.executeRawASKQuery( "document/", "ASK { ?subject, ?predicate, ?object }" );
 
-					expect( spyService ).toHaveBeenCalledWith( "http://example.com/document/", "ASK { ?subject, ?predicate, ?object }", jasmine.any( Object ) );
+					expect( spyService ).toHaveBeenCalledWith( "https://example.com/document/", "ASK { ?subject, ?predicate, ?object }", jasmine.any( Object ) );
 				} );
 
 				it( "should reject promise if URI is not in the context base", ( done:DoneFn ):void => {
@@ -12829,7 +12809,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				} );
 
 				it( "should call _parseErrorResponse when request error", ( done:DoneFn ):void => {
-					jasmine.Ajax.stubRequest( "http://example.com/" ).andReturn( {
+					jasmine.Ajax.stubRequest( "https://example.com/" ).andReturn( {
 						status: 500,
 						responseText: "",
 					} );
@@ -12837,7 +12817,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					const error:Error = new Error( "Error message" );
 					const spy:jasmine.Spy = spyOn( documents, "_parseErrorResponse" ).and.callFake( () => Promise.reject( error ) );
 
-					documents.executeRawASKQuery( "http://example.com/", "" ).then( () => {
+					documents.executeRawASKQuery( "https://example.com/", "" ).then( () => {
 						done.fail( "Should not resolve" );
 					} ).catch( _error => {
 						expect( spy ).toHaveBeenCalled();
@@ -12862,9 +12842,9 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					const spyService:jasmine.Spy = spyOn( SPARQL.SPARQLService, "executeRawASKQuery" ).and.returnValue( new Promise( () => {} ) );
 
 					// noinspection JSIgnoredPromiseFromCall
-					documents.executeRawASKQuery( "http://example.com/document/", "ASK { ?subject, ?predicate, ?object }" );
+					documents.executeRawASKQuery( "https://example.com/document/", "ASK { ?subject, ?predicate, ?object }" );
 
-					expect( spyService ).toHaveBeenCalledWith( "http://example.com/document/", "ASK { ?subject, ?predicate, ?object }", jasmine.any( Object ) );
+					expect( spyService ).toHaveBeenCalledWith( "https://example.com/document/", "ASK { ?subject, ?predicate, ?object }", jasmine.any( Object ) );
 				} );
 
 				it( "should reject if URI is relative", ( done:DoneFn ):void => {
@@ -12888,7 +12868,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				} );
 
 				it( "should call _parseErrorResponse when request error", ( done:DoneFn ):void => {
-					jasmine.Ajax.stubRequest( "http://example.com/" ).andReturn( {
+					jasmine.Ajax.stubRequest( "https://example.com/" ).andReturn( {
 						status: 500,
 						responseText: "",
 					} );
@@ -12896,7 +12876,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					const error:Error = new Error( "Error message" );
 					const spy:jasmine.Spy = spyOn( documents, "_parseErrorResponse" ).and.callFake( () => Promise.reject( error ) );
 
-					documents.executeRawASKQuery( "http://example.com/", "" ).then( () => {
+					documents.executeRawASKQuery( "https://example.com/", "" ).then( () => {
 						done.fail( "Should not resolve" );
 					} ).catch( _error => {
 						expect( spy ).toHaveBeenCalled();
@@ -12940,7 +12920,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 
 						constructor() {
 							super();
-							this._baseURI = "http://example.com/";
+							this._baseURI = "https://example.com/";
 						}
 					}();
 					documents = context.documents;
@@ -12950,9 +12930,9 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					const spyService:jasmine.Spy = spyOn( SPARQL.SPARQLService, "executeASKQuery" ).and.returnValue( new Promise( () => {} ) );
 
 					// noinspection JSIgnoredPromiseFromCall
-					documents.executeASKQuery( "http://example.com/document/", "ASK { ?subject, ?predicate, ?object }" );
+					documents.executeASKQuery( "https://example.com/document/", "ASK { ?subject, ?predicate, ?object }" );
 
-					expect( spyService ).toHaveBeenCalledWith( "http://example.com/document/", "ASK { ?subject, ?predicate, ?object }", jasmine.any( Object ) );
+					expect( spyService ).toHaveBeenCalledWith( "https://example.com/document/", "ASK { ?subject, ?predicate, ?object }", jasmine.any( Object ) );
 				} );
 
 				it( "should resolve relative URIs", ():void => {
@@ -12961,7 +12941,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					// noinspection JSIgnoredPromiseFromCall
 					documents.executeASKQuery( "document/", "ASK { ?subject, ?predicate, ?object }" );
 
-					expect( spyService ).toHaveBeenCalledWith( "http://example.com/document/", "ASK { ?subject, ?predicate, ?object }", jasmine.any( Object ) );
+					expect( spyService ).toHaveBeenCalledWith( "https://example.com/document/", "ASK { ?subject, ?predicate, ?object }", jasmine.any( Object ) );
 				} );
 
 				it( "should reject promise if URI is not in the context base", ( done:DoneFn ):void => {
@@ -12985,7 +12965,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				} );
 
 				it( "should call _parseErrorResponse when request error", ( done:DoneFn ):void => {
-					jasmine.Ajax.stubRequest( "http://example.com/" ).andReturn( {
+					jasmine.Ajax.stubRequest( "https://example.com/" ).andReturn( {
 						status: 500,
 						responseText: "",
 					} );
@@ -12993,7 +12973,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					const error:Error = new Error( "Error message" );
 					const spy:jasmine.Spy = spyOn( documents, "_parseErrorResponse" ).and.callFake( () => Promise.reject( error ) );
 
-					documents.executeASKQuery( "http://example.com/", "" ).then( () => {
+					documents.executeASKQuery( "https://example.com/", "" ).then( () => {
 						done.fail( "Should not resolve" );
 					} ).catch( _error => {
 						expect( spy ).toHaveBeenCalled();
@@ -13018,9 +12998,9 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					const spyService:jasmine.Spy = spyOn( SPARQL.SPARQLService, "executeASKQuery" ).and.returnValue( new Promise( () => {} ) );
 
 					// noinspection JSIgnoredPromiseFromCall
-					documents.executeASKQuery( "http://example.com/document/", "ASK { ?subject, ?predicate, ?object }" );
+					documents.executeASKQuery( "https://example.com/document/", "ASK { ?subject, ?predicate, ?object }" );
 
-					expect( spyService ).toHaveBeenCalledWith( "http://example.com/document/", "ASK { ?subject, ?predicate, ?object }", jasmine.any( Object ) );
+					expect( spyService ).toHaveBeenCalledWith( "https://example.com/document/", "ASK { ?subject, ?predicate, ?object }", jasmine.any( Object ) );
 				} );
 
 				it( "should reject if URI is relative", ( done:DoneFn ):void => {
@@ -13044,7 +13024,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				} );
 
 				it( "should call _parseErrorResponse when request error", ( done:DoneFn ):void => {
-					jasmine.Ajax.stubRequest( "http://example.com/" ).andReturn( {
+					jasmine.Ajax.stubRequest( "https://example.com/" ).andReturn( {
 						status: 500,
 						responseText: "",
 					} );
@@ -13052,7 +13032,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					const error:Error = new Error( "Error message" );
 					const spy:jasmine.Spy = spyOn( documents, "_parseErrorResponse" ).and.callFake( () => Promise.reject( error ) );
 
-					documents.executeASKQuery( "http://example.com/", "" ).then( () => {
+					documents.executeASKQuery( "https://example.com/", "" ).then( () => {
 						done.fail( "Should not resolve" );
 					} ).catch( _error => {
 						expect( spy ).toHaveBeenCalled();
@@ -13096,7 +13076,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 
 						constructor() {
 							super();
-							this._baseURI = "http://example.com/";
+							this._baseURI = "https://example.com/";
 						}
 					};
 					documents = context.documents;
@@ -13106,18 +13086,18 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					const spyService:jasmine.Spy = spyOn( SPARQL.SPARQLService, "executeRawSELECTQuery" ).and.returnValue( new Promise( () => {} ) );
 
 					// noinspection JSIgnoredPromiseFromCall
-					documents.executeRawSELECTQuery( "http://example.com/document/", "SELECT ?book ?title WHERE { <http://example.com/some-document/> ?book ?title }" );
+					documents.executeRawSELECTQuery( "https://example.com/document/", "SELECT ?book ?title WHERE { <https://example.com/some-document/> ?book ?title }" );
 
-					expect( spyService ).toHaveBeenCalledWith( "http://example.com/document/", "SELECT ?book ?title WHERE { <http://example.com/some-document/> ?book ?title }", jasmine.any( Object ) );
+					expect( spyService ).toHaveBeenCalledWith( "https://example.com/document/", "SELECT ?book ?title WHERE { <https://example.com/some-document/> ?book ?title }", jasmine.any( Object ) );
 				} );
 
 				it( "should resolve relative URIs", ():void => {
 					const spyService:jasmine.Spy = spyOn( SPARQL.SPARQLService, "executeRawSELECTQuery" ).and.returnValue( new Promise( () => {} ) );
 
 					// noinspection JSIgnoredPromiseFromCall
-					documents.executeRawSELECTQuery( "http://example.com/document/", "SELECT ?book ?title WHERE { <http://example.com/some-document/> ?book ?title }" );
+					documents.executeRawSELECTQuery( "https://example.com/document/", "SELECT ?book ?title WHERE { <https://example.com/some-document/> ?book ?title }" );
 
-					expect( spyService ).toHaveBeenCalledWith( "http://example.com/document/", "SELECT ?book ?title WHERE { <http://example.com/some-document/> ?book ?title }", jasmine.any( Object ) );
+					expect( spyService ).toHaveBeenCalledWith( "https://example.com/document/", "SELECT ?book ?title WHERE { <https://example.com/some-document/> ?book ?title }", jasmine.any( Object ) );
 				} );
 
 				it( "should reject promise if URI is not in the context base", ( done:DoneFn ):void => {
@@ -13141,7 +13121,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				} );
 
 				it( "should call _parseErrorResponse when request error", ( done:DoneFn ):void => {
-					jasmine.Ajax.stubRequest( "http://example.com/" ).andReturn( {
+					jasmine.Ajax.stubRequest( "https://example.com/" ).andReturn( {
 						status: 500,
 						responseText: "",
 					} );
@@ -13149,7 +13129,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					const error:Error = new Error( "Error message" );
 					const spy:jasmine.Spy = spyOn( documents, "_parseErrorResponse" ).and.callFake( () => Promise.reject( error ) );
 
-					documents.executeRawSELECTQuery( "http://example.com/", "" ).then( () => {
+					documents.executeRawSELECTQuery( "https://example.com/", "" ).then( () => {
 						done.fail( "Should not resolve" );
 					} ).catch( _error => {
 						expect( spy ).toHaveBeenCalled();
@@ -13174,9 +13154,9 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					const spyService:jasmine.Spy = spyOn( SPARQL.SPARQLService, "executeRawSELECTQuery" ).and.returnValue( new Promise( () => {} ) );
 
 					// noinspection JSIgnoredPromiseFromCall
-					documents.executeRawSELECTQuery( "http://example.com/document/", "SELECT ?book ?title WHERE { <http://example.com/some-document/> ?book ?title }" );
+					documents.executeRawSELECTQuery( "https://example.com/document/", "SELECT ?book ?title WHERE { <https://example.com/some-document/> ?book ?title }" );
 
-					expect( spyService ).toHaveBeenCalledWith( "http://example.com/document/", "SELECT ?book ?title WHERE { <http://example.com/some-document/> ?book ?title }", jasmine.any( Object ) );
+					expect( spyService ).toHaveBeenCalledWith( "https://example.com/document/", "SELECT ?book ?title WHERE { <https://example.com/some-document/> ?book ?title }", jasmine.any( Object ) );
 				} );
 
 				it( "should reject if URI is relative", ( done:DoneFn ):void => {
@@ -13200,7 +13180,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				} );
 
 				it( "should call _parseErrorResponse when request error", ( done:DoneFn ):void => {
-					jasmine.Ajax.stubRequest( "http://example.com/" ).andReturn( {
+					jasmine.Ajax.stubRequest( "https://example.com/" ).andReturn( {
 						status: 500,
 						responseText: "",
 					} );
@@ -13208,7 +13188,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					const error:Error = new Error( "Error message" );
 					const spy:jasmine.Spy = spyOn( documents, "_parseErrorResponse" ).and.callFake( () => Promise.reject( error ) );
 
-					documents.executeRawSELECTQuery( "http://example.com/", "" ).then( () => {
+					documents.executeRawSELECTQuery( "https://example.com/", "" ).then( () => {
 						done.fail( "Should not resolve" );
 					} ).catch( _error => {
 						expect( spy ).toHaveBeenCalled();
@@ -13253,7 +13233,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 
 						constructor() {
 							super();
-							this._baseURI = "http://example.com/";
+							this._baseURI = "https://example.com/";
 						}
 					}();
 					documents = context.documents;
@@ -13263,18 +13243,18 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					const spyService:jasmine.Spy = spyOn( SPARQL.SPARQLService, "executeSELECTQuery" ).and.returnValue( new Promise( () => {} ) );
 
 					// noinspection JSIgnoredPromiseFromCall
-					documents.executeSELECTQuery( "http://example.com/document/", "SELECT ?book ?title WHERE { <http://example.com/some-document/> ?book ?title }" );
+					documents.executeSELECTQuery( "https://example.com/document/", "SELECT ?book ?title WHERE { <https://example.com/some-document/> ?book ?title }" );
 
-					expect( spyService ).toHaveBeenCalledWith( "http://example.com/document/", "SELECT ?book ?title WHERE { <http://example.com/some-document/> ?book ?title }", documents, jasmine.any( Object ) );
+					expect( spyService ).toHaveBeenCalledWith( "https://example.com/document/", "SELECT ?book ?title WHERE { <https://example.com/some-document/> ?book ?title }", documents, jasmine.any( Object ) );
 				} );
 
 				it( "should resolve relative URIs", ():void => {
 					const spyService:jasmine.Spy = spyOn( SPARQL.SPARQLService, "executeSELECTQuery" ).and.returnValue( new Promise( () => {} ) );
 
 					// noinspection JSIgnoredPromiseFromCall
-					documents.executeSELECTQuery( "document/", "SELECT ?book ?title WHERE { <http://example.com/some-document/> ?book ?title }" );
+					documents.executeSELECTQuery( "document/", "SELECT ?book ?title WHERE { <https://example.com/some-document/> ?book ?title }" );
 
-					expect( spyService ).toHaveBeenCalledWith( "http://example.com/document/", "SELECT ?book ?title WHERE { <http://example.com/some-document/> ?book ?title }", documents, jasmine.any( Object ) );
+					expect( spyService ).toHaveBeenCalledWith( "https://example.com/document/", "SELECT ?book ?title WHERE { <https://example.com/some-document/> ?book ?title }", documents, jasmine.any( Object ) );
 				} );
 
 				it( "should reject promise if URI is not in the context base", ( done:DoneFn ):void => {
@@ -13298,7 +13278,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				} );
 
 				it( "should call _parseErrorResponse when request error", ( done:DoneFn ):void => {
-					jasmine.Ajax.stubRequest( "http://example.com/" ).andReturn( {
+					jasmine.Ajax.stubRequest( "https://example.com/" ).andReturn( {
 						status: 500,
 						responseText: "",
 					} );
@@ -13306,7 +13286,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					const error:Error = new Error( "Error message" );
 					const spy:jasmine.Spy = spyOn( documents, "_parseErrorResponse" ).and.callFake( () => Promise.reject( error ) );
 
-					documents.executeSELECTQuery( "http://example.com/", "" ).then( () => {
+					documents.executeSELECTQuery( "https://example.com/", "" ).then( () => {
 						done.fail( "Should not resolve" );
 					} ).catch( _error => {
 						expect( spy ).toHaveBeenCalled();
@@ -13331,9 +13311,9 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					const spyService:jasmine.Spy = spyOn( SPARQL.SPARQLService, "executeSELECTQuery" ).and.returnValue( new Promise( () => {} ) );
 
 					// noinspection JSIgnoredPromiseFromCall
-					documents.executeSELECTQuery( "http://example.com/document/", "SELECT ?book ?title WHERE { <http://example.com/some-document/> ?book ?title }" );
+					documents.executeSELECTQuery( "https://example.com/document/", "SELECT ?book ?title WHERE { <https://example.com/some-document/> ?book ?title }" );
 
-					expect( spyService ).toHaveBeenCalledWith( "http://example.com/document/", "SELECT ?book ?title WHERE { <http://example.com/some-document/> ?book ?title }", documents, jasmine.any( Object ) );
+					expect( spyService ).toHaveBeenCalledWith( "https://example.com/document/", "SELECT ?book ?title WHERE { <https://example.com/some-document/> ?book ?title }", documents, jasmine.any( Object ) );
 				} );
 
 				it( "should reject if URI is relative", ( done:DoneFn ):void => {
@@ -13357,7 +13337,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				} );
 
 				it( "should call _parseErrorResponse when request error", ( done:DoneFn ):void => {
-					jasmine.Ajax.stubRequest( "http://example.com/" ).andReturn( {
+					jasmine.Ajax.stubRequest( "https://example.com/" ).andReturn( {
 						status: 500,
 						responseText: "",
 					} );
@@ -13365,7 +13345,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					const error:Error = new Error( "Error message" );
 					const spy:jasmine.Spy = spyOn( documents, "_parseErrorResponse" ).and.callFake( () => Promise.reject( error ) );
 
-					documents.executeSELECTQuery( "http://example.com/", "" ).then( () => {
+					documents.executeSELECTQuery( "https://example.com/", "" ).then( () => {
 						done.fail( "Should not resolve" );
 					} ).catch( _error => {
 						expect( spy ).toHaveBeenCalled();
@@ -13409,7 +13389,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 
 						constructor() {
 							super();
-							this._baseURI = "http://example.com/";
+							this._baseURI = "https://example.com/";
 						}
 					}();
 					documents = context.documents;
@@ -13419,9 +13399,9 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					const spyService:jasmine.Spy = spyOn( SPARQL.SPARQLService, "executeRawCONSTRUCTQuery" ).and.returnValue( new Promise( () => {} ) );
 
 					// noinspection JSIgnoredPromiseFromCall
-					documents.executeRawCONSTRUCTQuery( "http://example.com/document/", "CONSTRUCT { ?subject ?predicate ?object } WHERE { ?subject ?predicate ?object }" );
+					documents.executeRawCONSTRUCTQuery( "https://example.com/document/", "CONSTRUCT { ?subject ?predicate ?object } WHERE { ?subject ?predicate ?object }" );
 
-					expect( spyService ).toHaveBeenCalledWith( "http://example.com/document/", "CONSTRUCT { ?subject ?predicate ?object } WHERE { ?subject ?predicate ?object }", jasmine.any( Object ) );
+					expect( spyService ).toHaveBeenCalledWith( "https://example.com/document/", "CONSTRUCT { ?subject ?predicate ?object } WHERE { ?subject ?predicate ?object }", jasmine.any( Object ) );
 				} );
 
 				it( "should resolve relative URIs", ():void => {
@@ -13430,7 +13410,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					// noinspection JSIgnoredPromiseFromCall
 					documents.executeRawCONSTRUCTQuery( "document/", "CONSTRUCT { ?subject ?predicate ?object } WHERE { ?subject ?predicate ?object }" );
 
-					expect( spyService ).toHaveBeenCalledWith( "http://example.com/document/", "CONSTRUCT { ?subject ?predicate ?object } WHERE { ?subject ?predicate ?object }", jasmine.any( Object ) );
+					expect( spyService ).toHaveBeenCalledWith( "https://example.com/document/", "CONSTRUCT { ?subject ?predicate ?object } WHERE { ?subject ?predicate ?object }", jasmine.any( Object ) );
 				} );
 
 				it( "should reject promise if URI is not in the context base", ( done:DoneFn ):void => {
@@ -13454,7 +13434,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				} );
 
 				it( "should call _parseErrorResponse when request error", ( done:DoneFn ):void => {
-					jasmine.Ajax.stubRequest( "http://example.com/" ).andReturn( {
+					jasmine.Ajax.stubRequest( "https://example.com/" ).andReturn( {
 						status: 500,
 						responseText: "",
 					} );
@@ -13462,7 +13442,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					const error:Error = new Error( "Error message" );
 					const spy:jasmine.Spy = spyOn( documents, "_parseErrorResponse" ).and.callFake( () => Promise.reject( error ) );
 
-					documents.executeRawCONSTRUCTQuery( "http://example.com/", "" ).then( () => {
+					documents.executeRawCONSTRUCTQuery( "https://example.com/", "" ).then( () => {
 						done.fail( "Should not resolve" );
 					} ).catch( _error => {
 						expect( spy ).toHaveBeenCalled();
@@ -13487,9 +13467,9 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					const spyService:jasmine.Spy = spyOn( SPARQL.SPARQLService, "executeRawCONSTRUCTQuery" ).and.returnValue( new Promise( () => {} ) );
 
 					// noinspection JSIgnoredPromiseFromCall
-					documents.executeRawCONSTRUCTQuery( "http://example.com/document/", "CONSTRUCT { ?subject ?predicate ?object } WHERE { ?subject ?predicate ?object }" );
+					documents.executeRawCONSTRUCTQuery( "https://example.com/document/", "CONSTRUCT { ?subject ?predicate ?object } WHERE { ?subject ?predicate ?object }" );
 
-					expect( spyService ).toHaveBeenCalledWith( "http://example.com/document/", "CONSTRUCT { ?subject ?predicate ?object } WHERE { ?subject ?predicate ?object }", jasmine.any( Object ) );
+					expect( spyService ).toHaveBeenCalledWith( "https://example.com/document/", "CONSTRUCT { ?subject ?predicate ?object } WHERE { ?subject ?predicate ?object }", jasmine.any( Object ) );
 				} );
 
 				it( "should reject if URI is relative", ( done:DoneFn ):void => {
@@ -13513,7 +13493,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				} );
 
 				it( "should call _parseErrorResponse when request error", ( done:DoneFn ):void => {
-					jasmine.Ajax.stubRequest( "http://example.com/" ).andReturn( {
+					jasmine.Ajax.stubRequest( "https://example.com/" ).andReturn( {
 						status: 500,
 						responseText: "",
 					} );
@@ -13521,7 +13501,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					const error:Error = new Error( "Error message" );
 					const spy:jasmine.Spy = spyOn( documents, "_parseErrorResponse" ).and.callFake( () => Promise.reject( error ) );
 
-					documents.executeRawCONSTRUCTQuery( "http://example.com/", "" ).then( () => {
+					documents.executeRawCONSTRUCTQuery( "https://example.com/", "" ).then( () => {
 						done.fail( "Should not resolve" );
 					} ).catch( _error => {
 						expect( spy ).toHaveBeenCalled();
@@ -13565,7 +13545,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 
 						constructor() {
 							super();
-							this._baseURI = "http://example.com/";
+							this._baseURI = "https://example.com/";
 						}
 					}();
 					documents = context.documents;
@@ -13575,9 +13555,9 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					const spyService:jasmine.Spy = spyOn( SPARQL.SPARQLService, "executeRawDESCRIBEQuery" ).and.returnValue( new Promise( () => {} ) );
 
 					// noinspection JSIgnoredPromiseFromCall
-					documents.executeRawDESCRIBEQuery( "http://example.com/document/", "DESCRIBE { ?subject ?predicate ?object } WHERE { ?subject ?predicate ?object }" );
+					documents.executeRawDESCRIBEQuery( "https://example.com/document/", "DESCRIBE { ?subject ?predicate ?object } WHERE { ?subject ?predicate ?object }" );
 
-					expect( spyService ).toHaveBeenCalledWith( "http://example.com/document/", "DESCRIBE { ?subject ?predicate ?object } WHERE { ?subject ?predicate ?object }", jasmine.any( Object ) );
+					expect( spyService ).toHaveBeenCalledWith( "https://example.com/document/", "DESCRIBE { ?subject ?predicate ?object } WHERE { ?subject ?predicate ?object }", jasmine.any( Object ) );
 				} );
 
 				it( "should resolve relative URIs", ():void => {
@@ -13586,7 +13566,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					// noinspection JSIgnoredPromiseFromCall
 					documents.executeRawDESCRIBEQuery( "document/", "DESCRIBE { ?subject ?predicate ?object } WHERE { ?subject ?predicate ?object }" );
 
-					expect( spyService ).toHaveBeenCalledWith( "http://example.com/document/", "DESCRIBE { ?subject ?predicate ?object } WHERE { ?subject ?predicate ?object }", jasmine.any( Object ) );
+					expect( spyService ).toHaveBeenCalledWith( "https://example.com/document/", "DESCRIBE { ?subject ?predicate ?object } WHERE { ?subject ?predicate ?object }", jasmine.any( Object ) );
 				} );
 
 				it( "should reject promise if URI is not in the context base", ( done:DoneFn ):void => {
@@ -13610,7 +13590,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				} );
 
 				it( "should call _parseErrorResponse when request error", ( done:DoneFn ):void => {
-					jasmine.Ajax.stubRequest( "http://example.com/" ).andReturn( {
+					jasmine.Ajax.stubRequest( "https://example.com/" ).andReturn( {
 						status: 500,
 						responseText: "",
 					} );
@@ -13618,7 +13598,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					const error:Error = new Error( "Error message" );
 					const spy:jasmine.Spy = spyOn( documents, "_parseErrorResponse" ).and.callFake( () => Promise.reject( error ) );
 
-					documents.executeRawDESCRIBEQuery( "http://example.com/", "" ).then( () => {
+					documents.executeRawDESCRIBEQuery( "https://example.com/", "" ).then( () => {
 						done.fail( "Should not resolve" );
 					} ).catch( _error => {
 						expect( spy ).toHaveBeenCalled();
@@ -13643,9 +13623,9 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					const spyService:jasmine.Spy = spyOn( SPARQL.SPARQLService, "executeRawDESCRIBEQuery" ).and.returnValue( new Promise( () => {} ) );
 
 					// noinspection JSIgnoredPromiseFromCall
-					documents.executeRawDESCRIBEQuery( "http://example.com/document/", "DESCRIBE { ?subject ?predicate ?object } WHERE { ?subject ?predicate ?object }" );
+					documents.executeRawDESCRIBEQuery( "https://example.com/document/", "DESCRIBE { ?subject ?predicate ?object } WHERE { ?subject ?predicate ?object }" );
 
-					expect( spyService ).toHaveBeenCalledWith( "http://example.com/document/", "DESCRIBE { ?subject ?predicate ?object } WHERE { ?subject ?predicate ?object }", jasmine.any( Object ) );
+					expect( spyService ).toHaveBeenCalledWith( "https://example.com/document/", "DESCRIBE { ?subject ?predicate ?object } WHERE { ?subject ?predicate ?object }", jasmine.any( Object ) );
 				} );
 
 				it( "should reject if URI is relative", ( done:DoneFn ):void => {
@@ -13669,7 +13649,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				} );
 
 				it( "should call _parseErrorResponse when request error", ( done:DoneFn ):void => {
-					jasmine.Ajax.stubRequest( "http://example.com/" ).andReturn( {
+					jasmine.Ajax.stubRequest( "https://example.com/" ).andReturn( {
 						status: 500,
 						responseText: "",
 					} );
@@ -13677,7 +13657,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					const error:Error = new Error( "Error message" );
 					const spy:jasmine.Spy = spyOn( documents, "_parseErrorResponse" ).and.callFake( () => Promise.reject( error ) );
 
-					documents.executeRawDESCRIBEQuery( "http://example.com/", "" ).then( () => {
+					documents.executeRawDESCRIBEQuery( "https://example.com/", "" ).then( () => {
 						done.fail( "Should not resolve" );
 					} ).catch( _error => {
 						expect( spy ).toHaveBeenCalled();
@@ -13721,7 +13701,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 
 						constructor() {
 							super();
-							this._baseURI = "http://example.com/";
+							this._baseURI = "https://example.com/";
 						}
 					}();
 					documents = context.documents;
@@ -13731,18 +13711,18 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					const spyService:jasmine.Spy = spyOn( SPARQL.SPARQLService, "executeUPDATE" ).and.returnValue( new Promise( () => {} ) );
 
 					// noinspection JSIgnoredPromiseFromCall
-					documents.executeUPDATE( "http://example.com/document/", `INSERT DATA { GRAPH <http://example.com/some-document/> { <http://example.com/some-document/> <http://example.com/ns#propertyString> "Property Value" } }` );
+					documents.executeUPDATE( "https://example.com/document/", `INSERT DATA { GRAPH <https://example.com/some-document/> { <https://example.com/some-document/> <https://example.com/ns#propertyString> "Property Value" } }` );
 
-					expect( spyService ).toHaveBeenCalledWith( "http://example.com/document/", `INSERT DATA { GRAPH <http://example.com/some-document/> { <http://example.com/some-document/> <http://example.com/ns#propertyString> "Property Value" } }`, jasmine.any( Object ) );
+					expect( spyService ).toHaveBeenCalledWith( "https://example.com/document/", `INSERT DATA { GRAPH <https://example.com/some-document/> { <https://example.com/some-document/> <https://example.com/ns#propertyString> "Property Value" } }`, jasmine.any( Object ) );
 				} );
 
 				it( "should resolve relative URIs", ():void => {
 					const spyService:jasmine.Spy = spyOn( SPARQL.SPARQLService, "executeUPDATE" ).and.returnValue( new Promise( () => {} ) );
 
 					// noinspection JSIgnoredPromiseFromCall
-					documents.executeUPDATE( "document/", `INSERT DATA { GRAPH <http://example.com/some-document/> { <http://example.com/some-document/> <http://example.com/ns#propertyString> "Property Value" } }` );
+					documents.executeUPDATE( "document/", `INSERT DATA { GRAPH <https://example.com/some-document/> { <https://example.com/some-document/> <https://example.com/ns#propertyString> "Property Value" } }` );
 
-					expect( spyService ).toHaveBeenCalledWith( "http://example.com/document/", `INSERT DATA { GRAPH <http://example.com/some-document/> { <http://example.com/some-document/> <http://example.com/ns#propertyString> "Property Value" } }`, jasmine.any( Object ) );
+					expect( spyService ).toHaveBeenCalledWith( "https://example.com/document/", `INSERT DATA { GRAPH <https://example.com/some-document/> { <https://example.com/some-document/> <https://example.com/ns#propertyString> "Property Value" } }`, jasmine.any( Object ) );
 				} );
 
 				it( "should reject promise if URI is not in the context base", ( done:DoneFn ):void => {
@@ -13766,7 +13746,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				} );
 
 				it( "should call _parseErrorResponse when request error", ( done:DoneFn ):void => {
-					jasmine.Ajax.stubRequest( "http://example.com/" ).andReturn( {
+					jasmine.Ajax.stubRequest( "https://example.com/" ).andReturn( {
 						status: 500,
 						responseText: "",
 					} );
@@ -13774,7 +13754,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					const error:Error = new Error( "Error message" );
 					const spy:jasmine.Spy = spyOn( documents, "_parseErrorResponse" ).and.callFake( () => Promise.reject( error ) );
 
-					documents.executeUPDATE( "http://example.com/", "" ).then( () => {
+					documents.executeUPDATE( "https://example.com/", "" ).then( () => {
 						done.fail( "Should not resolve" );
 					} ).catch( _error => {
 						expect( spy ).toHaveBeenCalled();
@@ -13799,9 +13779,9 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					const spyService:jasmine.Spy = spyOn( SPARQL.SPARQLService, "executeUPDATE" ).and.returnValue( new Promise( () => {} ) );
 
 					// noinspection JSIgnoredPromiseFromCall
-					documents.executeUPDATE( "http://example.com/document/", `INSERT DATA { GRAPH <http://example.com/some-document/> { <http://example.com/some-document/> <http://example.com/ns#propertyString> "Property Value" } }` );
+					documents.executeUPDATE( "https://example.com/document/", `INSERT DATA { GRAPH <https://example.com/some-document/> { <https://example.com/some-document/> <https://example.com/ns#propertyString> "Property Value" } }` );
 
-					expect( spyService ).toHaveBeenCalledWith( "http://example.com/document/", `INSERT DATA { GRAPH <http://example.com/some-document/> { <http://example.com/some-document/> <http://example.com/ns#propertyString> "Property Value" } }`, jasmine.any( Object ) );
+					expect( spyService ).toHaveBeenCalledWith( "https://example.com/document/", `INSERT DATA { GRAPH <https://example.com/some-document/> { <https://example.com/some-document/> <https://example.com/ns#propertyString> "Property Value" } }`, jasmine.any( Object ) );
 				} );
 
 				it( "should reject if URI is relative", ( done:DoneFn ):void => {
@@ -13825,7 +13805,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				} );
 
 				it( "should call _parseErrorResponse when request error", ( done:DoneFn ):void => {
-					jasmine.Ajax.stubRequest( "http://example.com/" ).andReturn( {
+					jasmine.Ajax.stubRequest( "https://example.com/" ).andReturn( {
 						status: 500,
 						responseText: "",
 					} );
@@ -13833,7 +13813,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					const error:Error = new Error( "Error message" );
 					const spy:jasmine.Spy = spyOn( documents, "_parseErrorResponse" ).and.callFake( () => Promise.reject( error ) );
 
-					documents.executeUPDATE( "http://example.com/", "" ).then( () => {
+					documents.executeUPDATE( "https://example.com/", "" ).then( () => {
 						done.fail( "Should not resolve" );
 					} ).catch( _error => {
 						expect( spy ).toHaveBeenCalled();
@@ -13862,7 +13842,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 
 				constructor() {
 					super();
-					this._baseURI = "http://example.com/";
+					this._baseURI = "https://example.com/";
 					this.settings = { paths: { system: ".system/" } };
 				}
 			}
@@ -13878,7 +13858,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 
 			// Returns a QueryClause
 			(() => {
-				let queryBuilder:QueryClause = documents.sparql( "http://example.com/resource/" );
+				let queryBuilder:QueryClause = documents.sparql( "https://example.com/resource/" );
 				expect( "base" in queryBuilder ).toBe( true );
 				expect( "vocab" in queryBuilder ).toBe( true );
 				expect( "prefix" in queryBuilder ).toBe( true );
@@ -13888,11 +13868,11 @@ describe( module( "carbonldp/Documents" ), ():void => {
 			(() => {
 				context.extendObjectSchema( {
 					"xsd": "http://www.w3.org/2001/XMLSchema#",
-					"ex": "http://example.com/",
+					"ex": "https://example.com/",
 				} );
 
 				let queryBuilder:SPARQL.FinishSPARQLSelect = documents
-					.sparql( "http://example.com/resource/" )
+					.sparql( "https://example.com/resource/" )
 					.select( "a" )
 					.where( _ =>
 						_.var( "a" )
@@ -13907,9 +13887,9 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				} ) );
 
 				expect( queryBuilder.toPrettyString() ).toBe( "" +
-					"BASE <http://example.com/>\n" +
+					"BASE <https://example.com/>\n" +
 					"PREFIX xsd:<http://www.w3.org/2001/XMLSchema#>\n" +
-					"PREFIX ex:<http://example.com/>\n" +
+					"PREFIX ex:<https://example.com/>\n" +
 					"SELECT ?a\n" +
 					"WHERE { ?a ex:property \"value\" }"
 				);

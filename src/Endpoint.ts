@@ -68,6 +68,8 @@ export interface EndpointFactory extends ModelDecorator<Endpoint<object, Documen
 
 	resolveEndpointURI( endpoint:Endpoint<any, any, any>, relativeURI:string ):Promise<string>;
 
+	getChild<P extends PersistedProtectedDocument>( endpoint:Endpoint<any, any, P>, relativeURI:string ):Promise<P>;
+
 	createChildren<B extends object, D extends Document>( endpoint:Endpoint<B, D, any>, objects:B[] ):Promise<(B & D)[]>;
 	createChildren<B extends object, D extends Document>( endpoint:Endpoint<B, D, any>, object:B ):Promise<B & D>;
 
@@ -157,6 +159,14 @@ export const Endpoint:EndpointFactory = {
 
 			return URI.resolve( endpoint.id, relativeURI );
 		} );
+	},
+
+	getChild<P extends PersistedProtectedDocument>( endpoint:Endpoint<any, any, P>, relativeURI:string ):Promise<P> {
+		return Endpoint
+			.resolveEndpointURI( endpoint, relativeURI )
+			.then( uri => endpoint._documents.getPointer( uri ) )
+			.then( pointer => endpoint._ModelFactory.decorate( pointer, endpoint._documents ) )
+			;
 	},
 
 	createChildren<B extends object, D extends Document>( endpoint:Endpoint<B, D, any>, objects:B | B[] ):Promise<(B & D) | (B & D)[]> {

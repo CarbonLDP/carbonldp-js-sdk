@@ -9,7 +9,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var CS_1 = require("../Vocabularies/CS");
 var XSD_1 = require("../Vocabularies/XSD");
-var Resource_1 = require("./../Resource");
+var Resource_1 = require("../Resource");
 var Utils = __importStar(require("./../Utils"));
 exports.RDF_CLASS = CS_1.CS.Token;
 exports.SCHEMA = {

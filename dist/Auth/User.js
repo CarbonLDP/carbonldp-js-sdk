@@ -50,11 +50,12 @@ exports.User = {
         var user = exports.User.decorate(object);
         if (Utils_1.isBoolean(disabled))
             user.disabled = disabled;
+        user.addType(exports.User.TYPE);
         return user;
     },
 };
-function setCredentials(email, password) {
-    var credentials = UsernameAndPasswordCredentials_1.UsernameAndPasswordCredentials.create(email, password);
+function setCredentials(username, password) {
+    var credentials = UsernameAndPasswordCredentials_1.UsernameAndPasswordCredentials.create(username, password);
     this.credentials = this.createFragment(credentials);
     this.credentials.addType(C_1.C.VolatileResource);
     return this.credentials;

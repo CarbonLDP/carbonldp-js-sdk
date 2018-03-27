@@ -3,6 +3,7 @@ import { ACE } from "./Auth/ACE";
 import { ACL } from "./Auth/ACL";
 import { CredentialsSet } from "./Auth/CredentialsSet";
 import { LDAPCredentials } from "./Auth/LDAPCredentials";
+import { AuthService } from "./Auth/Service";
 import { User } from "./Auth/User";
 import { UsernameAndPasswordCredentials } from "./Auth/UsernameAndPasswordCredentials";
 import { Context } from "./Context";
@@ -42,7 +43,7 @@ import {
 } from "./Utils";
 
 export class SDKContext implements Context {
-	auth:Auth.AuthService;
+	auth:AuthService;
 	documents:Documents;
 
 	get baseURI():string { return ""; }
@@ -58,7 +59,6 @@ export class SDKContext implements Context {
 		this.generalObjectSchema = new ObjectSchema.DigestedObjectSchema();
 		this.typeObjectSchemaMap = new Map<string, ObjectSchema.DigestedObjectSchema>();
 
-		this.auth = new Auth.AuthService( this );
 		this.documents = new Documents( this );
 
 		this.registerDefaultObjectSchemas();

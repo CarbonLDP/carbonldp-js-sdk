@@ -25,7 +25,7 @@ import * as Role from "./Role";
 import * as Roles from "./Roles";
 import DefaultExport from "./Roles";
 
-describe( module( "carbonldp/Auth/Roles" ), ():void => {
+xdescribe( module( "carbonldp/Auth/Roles" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( Roles ).toBeDefined();
@@ -417,7 +417,7 @@ describe( module( "carbonldp/Auth/Roles" ), ():void => {
 					{ name: "roleURI", type: "string", description: "The URI of the role to look for its users." },
 					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true },
 				],
-				{ type: "Promise<(T & CarbonLDP.Auth.PersistedUser.Class)[]>" }
+				{ type: "Promise<(T & CarbonLDP.Auth.PersistedUser)[]>" }
 			), ( done:{ ():void, fail:() => void } ):void => {
 				let spies:any = {
 					success: ( [ pointers, response ]:[ Pointer[], Response ] ):void => {

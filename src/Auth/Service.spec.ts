@@ -1,13 +1,20 @@
-import { AbstractContext } from "../AbstractContext";
+import { anyThatMatches } from "../../test/helpers/jasmine-equalities";
+import {
+	createMockAuthService,
+	createMockContext,
+} from "../../test/helpers/mocks";
+
+import { Context } from "../Context";
+import { Endpoint } from "../Endpoint";
 import * as Errors from "../Errors";
 import { BadResponseError } from "../HTTP/Errors";
 import { RequestOptions } from "../HTTP/Request";
 import { Response } from "../HTTP/Response";
+import { PersistedProtectedDocument } from "../PersistedProtectedDocument";
 import { Resource } from "../Resource";
-import { ContextSettings } from "../Settings";
 import {
 	clazz,
-	hasConstructor,
+	constructor,
 	hasMethod,
 	hasProperty,
 	hasSignature,
@@ -19,10 +26,12 @@ import {
 import * as Utils from "../Utils";
 import { CS } from "../Vocabularies/CS";
 import { XSD } from "../Vocabularies/XSD";
+import { Authenticator } from "./Authenticator";
 import { AuthMethod } from "./AuthMethod";
 import { BasicCredentials } from "./BasicCredentials";
 import { BasicToken } from "./BasicToken";
-import * as PersistedUser from "./PersistedUser";
+import { PersistedACL } from "./PersistedACL";
+import { PersistedUser } from "./PersistedUser";
 import * as Roles from "./Roles";
 
 import { AuthService } from "./Service";
@@ -31,7 +40,8 @@ import * as Ticket from "./Ticket";
 import TokenAuthenticator from "./TokenAuthenticator";
 import * as TokenCredentials from "./TokenCredentials";
 import { User } from "./User";
-import * as Users from "./Users";
+import { UsersEndpoint } from "./UsersEndpoint";
+
 
 describe( module( "carbonldp/Auth/Service" ), ():void => {
 
@@ -53,172 +63,91 @@ describe( module( "carbonldp/Auth/Service" ), ():void => {
 			expect( Utils.isFunction( AuthService ) ).toBe( true );
 		} );
 
-		it( hasConstructor( [
-			{ name: "context", type: "CarbonLDP.Context" },
-		] ), ():void => {
-			let auth:AuthService = new AuthService( new class extends AbstractContext {
-				protected _baseURI:string;
+		let context:Context;
+		beforeEach( ():void => {
+			context = createMockContext();
+		} );
 
-				constructor() {
-					super();
-					this._baseURI = "http://example.com/";
-					this.settings = { paths: { system: ".system/" } };
-				}
+		describe( constructor(), ():void => {
+
+			it( hasSignature( [
+				{ name: "context", type: "CarbonLDP.Context" },
+			] ), ():void => {} );
+
+			it( "should be instantiable", ():void => {
+				const auth:AuthService = new AuthService( context );
+				expect( auth ).toEqual( jasmine.any( AuthService ) );
 			} );
 
-			expect( auth ).toBeTruthy();
-			expect( auth instanceof AuthService ).toBe( true );
+			it( "should assign UsersEndpoint in users", ():void => {
+				const auth:AuthService = new AuthService( context );
+
+				expect( auth.users ).toEqual( anyThatMatches( PersistedProtectedDocument.is ) as any, "PersistedProtectedDocument" );
+				expect( auth.users ).toEqual( anyThatMatches( Endpoint.isDecorated ) as any, "Endpoint" );
+				expect( auth.users ).toEqual( anyThatMatches( UsersEndpoint.isDecorated ) as any, "UsersEndpoint" );
+
+				expect( auth.users ).toEqual( jasmine.objectContaining( {
+					id: "https://example.com/users/",
+				} ) );
+			} );
+
 		} );
 
 		it( hasProperty(
 			INSTANCE,
 			"users",
-			"CarbonLDP.Auth.Users",
-			"Instance of `CarbonLDP.Auth.Users` that helps managing the users of your Carbon LDP."
-		), ():void => {
-			class MockedContext extends AbstractContext {
-				protected _baseURI:string;
+			"CarbonLDP.Auth.UsersEndpoint",
+			"Instance of `CarbonLDP.Auth.UsersEndpoint` that helps managing the users of your Carbon LDP."
+		), ():void => {} );
 
-				constructor() {
-					super();
-					this._baseURI = "";
-				}
-			}
-
-			let auth:AuthService = new AuthService( new MockedContext() );
-
-			expect( auth.users ).toBeDefined();
-			expect( auth.users ).toEqual( jasmine.any( Users.Class ) );
-		} );
-
+		// TODO: Separate in different tests
 		it( hasProperty(
 			INSTANCE,
 			"authenticatedUser",
-			"CarbonLDP.Auth.PersistedUser.Class",
+			"CarbonLDP.Auth.PersistedUser",
 			"The user of the user that has been authenticated.\n" +
 			"Returns `null` if the user it not authenticated."
 		), ():void => {
 
-			function createUser( context:AbstractContext ):PersistedUser.Class {
-				return PersistedUser.Factory.decorate( {
-					id: "http://example.com/users/my-user/",
-					types: [ User.TYPE ],
-					email: null,
-					name: null,
-					enabled: true,
-				}, context.documents );
-			}
-
 			(() => {
-				class MockedContext extends AbstractContext {
-					protected _baseURI:string;
-
-					constructor() {
-						super();
-						this._baseURI = "";
-					}
-				}
-
-				let context:AbstractContext = new MockedContext();
-
-				expect( context.auth.authenticatedUser ).toBeNull();
+				const auth:AuthService = new AuthService( context );
+				expect( auth.authenticatedUser ).toBeNull();
 			})();
 
 			(() => {
-				class MockedContext extends AbstractContext {
-					protected _baseURI:string;
-
-					constructor() {
-						super();
-						this._baseURI = "";
-					}
-				}
-
-				let context:AbstractContext = new MockedContext();
-
-				expect( context.auth.authenticatedUser ).toBeNull();
-
 				// Authenticated Auth
-				let auth:AuthService = new class extends AuthService {
-					constructor() {
-						super( context );
-						this._authenticatedUser = createUser( context );
-					}
-				};
+				let auth:AuthService = createMockAuthService( context, { user: true } );
 				expect( auth.authenticatedUser ).toBeTruthy();
-				expect( PersistedUser.Factory.is( auth.authenticatedUser ) ).toBe( true );
+				expect( PersistedUser.is( auth.authenticatedUser ) ).toBe( true );
 			})();
 
 			(() => {
-				let parentContext:AbstractContext = new class extends AbstractContext {
-					protected _baseURI:string;
+				context.auth = createMockAuthService( context, { user: true } );
 
-					constructor() {
-						super();
-						this._baseURI = "";
-						this.auth = new class extends AuthService {
-							constructor( _context:AbstractContext ) {
-								super( _context );
-								this._authenticatedUser = createUser( _context );
-							}
-						}( this );
-					}
-				};
-				let context:AbstractContext = new class extends AbstractContext {
-					protected _baseURI:string;
-
-					constructor() {
-						super( parentContext );
-						this._baseURI = "";
-					}
-				};
-
-				expect( parentContext.auth.authenticatedUser ).toBeTruthy();
-				expect( PersistedUser.Factory.is( parentContext.auth.authenticatedUser ) ).toBe( true );
+				let contextWithParent:Context = createMockContext( { parentContext: context, auth: true } );
 
 				expect( context.auth.authenticatedUser ).toBeTruthy();
-				expect( PersistedUser.Factory.is( context.auth.authenticatedUser ) ).toBe( true );
+				expect( PersistedUser.is( context.auth.authenticatedUser ) ).toBe( true );
 
-				expect( parentContext.auth.authenticatedUser ).toBe( context.auth.authenticatedUser );
+				expect( contextWithParent.auth.authenticatedUser ).toBeTruthy();
+				expect( PersistedUser.is( contextWithParent.auth.authenticatedUser ) ).toBe( true );
+
+				expect( context.auth.authenticatedUser ).toBe( contextWithParent.auth.authenticatedUser );
 			})();
 
 			(() => {
-				let parentContext:AbstractContext = new class extends AbstractContext {
-					protected _baseURI:string;
+				context.auth = createMockAuthService( context, { user: true } );
 
-					constructor() {
-						super();
-						this._baseURI = "";
-						this.auth = new class extends AuthService {
-							constructor( _context:AbstractContext ) {
-								super( _context );
-								this._authenticatedUser = createUser( _context );
-							}
-						}( this );
-					}
-				};
-				let context:AbstractContext = new class extends AbstractContext {
-					protected _baseURI:string;
-
-					constructor() {
-						super( parentContext );
-						this._baseURI = "";
-						this.auth = new class extends AuthService {
-							constructor( _context:AbstractContext ) {
-								super( _context );
-								this._authenticatedUser = createUser( _context );
-							}
-						}( this );
-					}
-				};
-
-				expect( parentContext.auth.authenticatedUser ).toBeTruthy();
-				expect( PersistedUser.Factory.is( parentContext.auth.authenticatedUser ) ).toBe( true );
+				let childContext:Context = createMockContext( { parentContext: context } );
+				childContext.auth = createMockAuthService( childContext, { user: true } );
 
 				expect( context.auth.authenticatedUser ).toBeTruthy();
-				expect( PersistedUser.Factory.is( context.auth.authenticatedUser ) ).toBe( true );
+				expect( PersistedUser.is( context.auth.authenticatedUser ) ).toBe( true );
 
-				expect( parentContext.auth.authenticatedUser ).not.toBe( context.auth.authenticatedUser );
+				expect( childContext.auth.authenticatedUser ).toBeTruthy();
+				expect( PersistedUser.is( childContext.auth.authenticatedUser ) ).toBe( true );
+
+				expect( context.auth.authenticatedUser ).not.toBe( childContext.auth.authenticatedUser );
 			})();
 
 		} );
@@ -229,19 +158,13 @@ describe( module( "carbonldp/Auth/Service" ), ():void => {
 			"CarbonLDP.Auth.Roles.Class",
 			"Instance of `CarbonLDP.Auth.Roles.Class` that helps managing the roles of your Carbon LDP."
 		), ():void => {
-			let auth:AuthService = new AuthService( new class extends AbstractContext {
-				protected _baseURI:string;
-
-				constructor() {
-					super();
-					this._baseURI = "";
-				}
-			} );
+			let auth:AuthService = new AuthService( context );
 
 			expect( auth.roles ).toBeDefined();
 			expect( auth.roles ).toEqual( jasmine.any( Roles.Class ) );
 		} );
 
+		// TODO: Separate in different tests
 		it( hasMethod(
 			INSTANCE,
 			"isAuthenticated",
@@ -252,39 +175,22 @@ describe( module( "carbonldp/Auth/Service" ), ():void => {
 		), ():void => {
 
 			// Property Integrity
-			(function propertyIntegrity():void {
-				class MockedContext extends AbstractContext {
-					protected _baseURI:string;
-
-					constructor() {
-						super();
-						this._baseURI = "";
-					}
-				}
-
-				let context:AbstractContext = new MockedContext();
-
-				expect( context.auth.isAuthenticated ).toBeDefined();
-				expect( Utils.isFunction( context.auth.isAuthenticated ) ).toBe( true );
+			(():void => {
+				const auth:AuthService = new AuthService( context );
+				expect( auth.isAuthenticated ).toBeDefined();
+				expect( Utils.isFunction( auth.isAuthenticated ) ).toBe( true );
 			})();
 
 
 			// Neither current nor parent authenticated
-			(function currentNotAuthenticated_parentNotAuthenticated():void {
-				class MockedContext extends AbstractContext {
-					protected _baseURI:string;
+			(():void => {
+				let parentAuth:AuthService = new AuthService( context );
+				context.auth = parentAuth;
 
-					constructor() {
-						super();
-						this._baseURI = "";
-						this._parentContext = this;
-					}
-				}
+				let subContext:Context = createMockContext( { parentContext: context } );
+				let auth:AuthService = new AuthService( subContext );
 
-				let context:AbstractContext = new MockedContext();
-				let auth:AuthService = new AuthService( context );
-
-				let spyParent:jasmine.Spy = spyOn( context.auth, "isAuthenticated" ).and.returnValue( false );
+				let spyParent:jasmine.Spy = spyOn( parentAuth, "isAuthenticated" ).and.returnValue( false );
 
 				expect( auth.isAuthenticated() ).toBe( false );
 				expect( spyParent ).toHaveBeenCalled();
@@ -299,19 +205,11 @@ describe( module( "carbonldp/Auth/Service" ), ():void => {
 			})();
 
 			// Current not authenticated but parent is
-			(function currentNotAuthenticated_parentAuthenticated():void {
-				class MockedContext extends AbstractContext {
-					protected _baseURI:string;
+			(():void => {
+				context.auth = new AuthService( context );
 
-					constructor() {
-						super();
-						this._baseURI = "";
-						this._parentContext = this;
-					}
-				}
-
-				let context:AbstractContext = new MockedContext();
-				let auth:AuthService = new AuthService( context );
+				let subContext:Context = createMockContext( { parentContext: context } );
+				let auth:AuthService = new AuthService( subContext );
 
 				let spyParent:jasmine.Spy = spyOn( context.auth, "isAuthenticated" ).and.returnValue( true );
 
@@ -328,22 +226,13 @@ describe( module( "carbonldp/Auth/Service" ), ():void => {
 			})();
 
 			// Current and parent authenticated
-			(function currentAuthenticated_parentAuthenticated():void {
-				class MockedContext extends AbstractContext {
-					protected _baseURI:string;
+			(():void => {
+				context.auth = createMockAuthService( context );
+				const spyParent:jasmine.Spy = spyOn( context.auth, "isAuthenticated" ).and.returnValue( true );
 
-					constructor() {
-						super();
-						this._baseURI = "";
-						this._parentContext = this;
-					}
-				}
-
-				let context:AbstractContext = new MockedContext();
-				let auth:AuthService = new AuthService( context );
-				(<any> auth).authenticator = { isAuthenticated: ():boolean => true };
-
-				let spyParent:jasmine.Spy = spyOn( context.auth, "isAuthenticated" ).and.returnValue( true );
+				const authenticator:jasmine.SpyObj<Authenticator<{}, {}>> = jasmine.createSpyObj( "Authenticator", { isAuthenticated: true } );
+				const subContext:Context = createMockContext( { parentContext: context } );
+				const auth:AuthService = createMockAuthService( subContext, { authenticator: authenticator } );
 
 				expect( auth.isAuthenticated() ).toBe( true );
 				expect( spyParent ).not.toHaveBeenCalled();
@@ -358,22 +247,13 @@ describe( module( "carbonldp/Auth/Service" ), ():void => {
 			})();
 
 			// Current authenticated but parent not
-			(function currentAuthenticated_parentNotAuthenticated():void {
-				class MockedContext extends AbstractContext {
-					protected _baseURI:string;
+			(():void => {
+				context.auth = createMockAuthService( context );
+				const spyParent:jasmine.Spy = spyOn( context.auth, "isAuthenticated" ).and.returnValue( false );
 
-					constructor() {
-						super();
-						this._baseURI = "";
-						this._parentContext = this;
-					}
-				}
-
-				let context:AbstractContext = new MockedContext();
-				let auth:AuthService = new AuthService( context );
-				(<any> auth).authenticator = { isAuthenticated: ():boolean => true };
-
-				let spyParent:jasmine.Spy = spyOn( context.auth, "isAuthenticated" ).and.returnValue( false );
+				const subContext:Context = createMockContext( { parentContext: context } );
+				const authenticator:jasmine.SpyObj<Authenticator<{}, {}>> = jasmine.createSpyObj( "Authenticator", { isAuthenticated: true } );
+				const auth:AuthService = createMockAuthService( subContext, { authenticator } );
 
 				expect( auth.isAuthenticated() ).toBe( true );
 				expect( spyParent ).not.toHaveBeenCalled();
@@ -389,6 +269,7 @@ describe( module( "carbonldp/Auth/Service" ), ():void => {
 
 		} );
 
+		// TODO: Separate in different tests
 		it( hasMethod(
 			INSTANCE,
 			"authenticate",
@@ -398,14 +279,7 @@ describe( module( "carbonldp/Auth/Service" ), ():void => {
 			],
 			{ type: "Promise<CarbonLDP.Auth.TokenCredentials.Class>" }
 		), ():void => {
-			let auth:AuthService = new AuthService( new class extends AbstractContext {
-				protected _baseURI:string;
-
-				constructor() {
-					super();
-					this._baseURI = "";
-				}
-			} );
+			let auth:AuthService = new AuthService( context );
 
 			expect( auth.authenticate ).toBeDefined();
 			expect( Utils.isFunction( auth.authenticate ) ).toBe( true );
@@ -420,7 +294,7 @@ describe( module( "carbonldp/Auth/Service" ), ():void => {
 
 		describe( method( INSTANCE, "authenticateUsing" ), ():void => {
 
-			xit( hasSignature(
+			it( hasSignature(
 				"Authenticates the user with Basic HTTP Authentication, which uses an encoded string with username and password in every request.", [
 					{ name: "method", type: "CarbonLDP.Auth.AuthMethod.BASIC" },
 					{ name: "username", type: "string" },
@@ -445,24 +319,6 @@ describe( module( "carbonldp/Auth/Service" ), ():void => {
 				],
 				{ type: "Promise<CarbonLDP.Auth.TokenCredentials.Class>" }
 			), ():void => {} );
-
-
-			let context:AbstractContext;
-			beforeEach( ():void => {
-				context = new class extends AbstractContext {
-					protected _baseURI:string = "http://example.com/";
-					protected settings:ContextSettings = {
-						paths: {
-							system: {
-								slug: ".system/",
-								paths: {
-									system: "system/",
-								},
-							},
-						},
-					};
-				};
-			} );
 
 			it( "should exists", ():void => {
 				expect( AuthService.prototype.authenticateUsing ).toBeDefined();
@@ -491,8 +347,9 @@ describe( module( "carbonldp/Auth/Service" ), ():void => {
 				it( "should get authenticated user with `Users` class", ( done:DoneFn ):void => {
 					const auth:AuthService = new AuthService( context );
 
-					const spy:jasmine.Spy = spyOn( auth.users, "get" )
+					const spy:jasmine.Spy = jasmine.createSpy( "get" )
 						.and.returnValue( Promise.reject( null ) );
+					Object.defineProperty( auth.users, "get", { value: spy } );
 
 					auth
 						.authenticateUsing( AuthMethod.BASIC, "username", "password" )
@@ -512,12 +369,11 @@ describe( module( "carbonldp/Auth/Service" ), ():void => {
 				it( "should store authenticated user", ( done:DoneFn ):void => {
 					const auth:AuthService = new AuthService( context );
 
-					const user:PersistedUser.Class = PersistedUser.Factory.decorate(
+					const user:PersistedUser = PersistedUser.decorate(
 						context.documents.getPointer( "https://example.com/users/a-user/" ),
 						context.documents
 					);
-					spyOn( auth.users, "get" )
-						.and.returnValue( Promise.resolve( user ) );
+					Object.defineProperty( auth.users, "get", { value: () => Promise.resolve( user ) } );
 
 					auth
 						.authenticateUsing( AuthMethod.BASIC, "username", "password" )
@@ -533,8 +389,7 @@ describe( module( "carbonldp/Auth/Service" ), ():void => {
 				it( "should return the credentials", ( done:DoneFn ):void => {
 					const auth:AuthService = new AuthService( context );
 
-					spyOn( auth.users, "get" )
-						.and.returnValue( Promise.resolve( [ null, null ] ) );
+					Object.defineProperty( auth.users, "get", { value: () => Promise.resolve() } );
 
 					auth
 						.authenticateUsing( AuthMethod.BASIC, "username", "password" )
@@ -578,7 +433,7 @@ describe( module( "carbonldp/Auth/Service" ), ():void => {
 					const credentials:TokenCredentials.Class = Resource.createFrom( {
 						key: "token-value",
 						expirationTime: new Date( Date.now() + 24 * 60 * 60 * 100 ),
-						user: PersistedUser.Factory.decorate( {
+						user: PersistedUser.decorate( {
 							_resolved: true,
 							_etag: "\"1-123445\"",
 							name: "My User Name",
@@ -613,8 +468,9 @@ describe( module( "carbonldp/Auth/Service" ), ():void => {
 
 					const auth:AuthService = new AuthService( context );
 
-					const spy:jasmine.Spy = spyOn( auth.users, "get" )
+					const spy:jasmine.Spy = jasmine.createSpy( "get" )
 						.and.returnValue( Promise.reject( null ) );
+					Object.defineProperty( auth.users, "get", { value: spy } );
 
 
 					auth
@@ -646,12 +502,11 @@ describe( module( "carbonldp/Auth/Service" ), ():void => {
 					const auth:AuthService = new AuthService( context );
 
 
-					const user:PersistedUser.Class = PersistedUser.Factory.decorate(
+					const user:PersistedUser = PersistedUser.decorate(
 						context.documents.getPointer( "https://example.com/users/a-user/" ),
 						context.documents
 					);
-					spyOn( auth.users, "get" )
-						.and.returnValue( Promise.resolve( user ) );
+					Object.defineProperty( auth.users, "get", { value: () => Promise.resolve( user ) } );
 
 					auth
 						.authenticateUsing( AuthMethod.TOKEN, "username", "password" )
@@ -690,7 +545,7 @@ describe( module( "carbonldp/Auth/Service" ), ():void => {
 					const credentials:TokenCredentials.Class = Resource.createFrom( {
 						key: "token-value",
 						expirationTime: new Date( Date.now() + 24 * 60 * 60 * 100 ),
-						user: PersistedUser.Factory.decorate( {
+						user: PersistedUser.decorate( {
 							_resolved: true,
 							_eTag: "\"1-123445\"",
 							name: "My User Name",
@@ -717,7 +572,7 @@ describe( module( "carbonldp/Auth/Service" ), ():void => {
 					const credentials:TokenCredentials.Class = Resource.createFrom( {
 						key: "token-value",
 						expirationTime: new Date( Date.now() + 24 * 60 * 60 * 100 ),
-						user: PersistedUser.Factory.decorate( {
+						user: PersistedUser.decorate( {
 							_resolved: true,
 							_etag: "\"1-123445\"",
 							name: "My User Name",
@@ -740,7 +595,7 @@ describe( module( "carbonldp/Auth/Service" ), ():void => {
 					const credentials:TokenCredentials.Class = Resource.createFrom( {
 						key: "token-value",
 						expirationTime: new Date( Date.now() + 24 * 60 * 60 * 100 ),
-						user: PersistedUser.Factory.decorate(
+						user: PersistedUser.decorate(
 							context.documents.getPointer( "https://example.com/users/a-user/" ),
 							context.documents
 						),
@@ -775,8 +630,9 @@ describe( module( "carbonldp/Auth/Service" ), ():void => {
 
 					const auth:AuthService = new AuthService( context );
 
-					const spy:jasmine.Spy = spyOn( auth.users, "get" )
+					const spy:jasmine.Spy = jasmine.createSpy( "get" )
 						.and.returnValue( Promise.reject( null ) );
+					Object.defineProperty( auth.users, "get", { value: spy } );
 
 
 					auth
@@ -797,6 +653,7 @@ describe( module( "carbonldp/Auth/Service" ), ():void => {
 
 		} );
 
+		// TODO: Separate in different tests
 		it( hasMethod(
 			INSTANCE,
 			"addAuthentication",
@@ -806,18 +663,7 @@ describe( module( "carbonldp/Auth/Service" ), ():void => {
 		), ():void => {
 
 			// Property Integrity
-			(function propertyIntegrity():void {
-				class MockedContext extends AbstractContext {
-					protected _baseURI:string;
-
-					constructor() {
-						super();
-						this._baseURI = "";
-					}
-				}
-
-				let context:AbstractContext = new MockedContext();
-
+			(():void => {
 				let auth:AuthService = new AuthService( context );
 
 				expect( auth.addAuthentication ).toBeDefined();
@@ -825,114 +671,71 @@ describe( module( "carbonldp/Auth/Service" ), ():void => {
 			})();
 
 			// Neither current nor parent authenticated
-			(function currentNotAuthenticated_parentNotAuthenticated():void {
-				class MockedContext extends AbstractContext {
-					protected _baseURI:string;
+			(():void => {
+				const mockAuthSpy:jasmine.SpyObj<AuthService> = jasmine
+					.createSpyObj( "AuthService", [ "addAuthentication" ] );
+				context.auth = mockAuthSpy;
 
-					constructor() {
-						super();
-						this.auth = new AuthService( this );
-						this._baseURI = "";
-						this._parentContext = this;
-					}
-				}
-
-				let context:AbstractContext = new MockedContext();
-				let auth:AuthService = new AuthService( context );
-
-				let spyParent:jasmine.Spy = spyOn( context.auth, "addAuthentication" ).and.callFake( mockOptions => {
-					mockOptions[ "parentAuth" ] = "no authenticated";
-				} );
+				let subContext:Context = createMockContext( { parentContext: context } );
+				let auth:AuthService = new AuthService( subContext );
 
 				let options:RequestOptions & { parentAuth?:string } = {};
 
 				auth.addAuthentication( options );
-				expect( spyParent ).toHaveBeenCalledWith( options );
-				expect( options ).toEqual( { parentAuth: "no authenticated" } );
+				expect( mockAuthSpy.addAuthentication ).toHaveBeenCalledWith( options );
 			})();
 
 			// Current not authenticated but parent is
-			(function currentNotAuthenticated_parentAuthenticated():void {
-				class MockedContext extends AbstractContext {
-					protected _baseURI:string;
+			(():void => {
+				const mockAuthSpy:jasmine.SpyObj<AuthService> = jasmine
+					.createSpyObj( "AuthService", [ "addAuthentication" ] );
+				context.auth = mockAuthSpy;
 
-					constructor() {
-						super();
-						this.auth = new AuthService( this );
-						this._baseURI = "";
-						this._parentContext = this;
-					}
-				}
-
-				let context:AbstractContext = new MockedContext();
-				let auth:AuthService = new AuthService( context );
-
-				let spyParent:jasmine.Spy = spyOn( context.auth, "addAuthentication" ).and.callFake( mockOptions => {
-					mockOptions[ "parentAuth" ] = "is authenticated";
-				} );
+				let subContext:Context = createMockContext( { parentContext: context } );
+				let auth:AuthService = new AuthService( subContext );
 
 				let options:RequestOptions & { parentAuth?:string } = {};
 
 				auth.addAuthentication( options );
-				expect( spyParent ).toHaveBeenCalledWith( options );
-				expect( options ).toEqual( { parentAuth: "is authenticated" } );
+				expect( mockAuthSpy.addAuthentication ).toHaveBeenCalledWith( options );
 			})();
 
 			// Current and parent authenticated
-			(function currentAuthenticated_parentAuthenticated():void {
-				class MockedContext extends AbstractContext {
-					protected _baseURI:string;
+			(():void => {
+				const mockAuthSpy:jasmine.SpyObj<AuthService> = jasmine
+					.createSpyObj( "AuthService", [ "addAuthentication" ] );
+				context.auth = mockAuthSpy;
 
-					constructor() {
-						super();
-						this.auth = new AuthService( this );
-						this._baseURI = "";
-						this._parentContext = this;
-					}
-				}
-
-				let context:AbstractContext = new MockedContext();
-				let auth:AuthService = new AuthService( context );
+				let subContext:Context = createMockContext( { parentContext: context } );
+				let auth:AuthService = new AuthService( subContext );
 
 				(<any> auth).authenticator = {
 					isAuthenticated: ():boolean => true, addAuthentication: ( mockOptions:any ):void => {
 						mockOptions[ "currentAuth" ] = "is authenticated";
 					},
 				};
-				let spyParent:jasmine.Spy = spyOn( context.auth, "addAuthentication" ).and.callFake( mockOptions => {
-					mockOptions[ "parentAuth" ] = "is authenticated";
-				} );
 
 				let options:RequestOptions & { currentAuth?:string } = {};
 
 				auth.addAuthentication( options );
-				expect( spyParent ).not.toHaveBeenCalled();
+				expect( mockAuthSpy.addAuthentication ).not.toHaveBeenCalled();
 				expect( options ).toEqual( { currentAuth: "is authenticated" } );
 			})();
 
 			// Current authenticated but parent not
-			(function currentAuthenticated_parentNotAuthenticated():void {
-				class MockedContext extends AbstractContext {
-					protected _baseURI:string;
+			(():void => {
+				const parentAuth:AuthService = new AuthService( context );
+				let spyParent:jasmine.Spy = spyOn( parentAuth, "addAuthentication" ).and.callFake( mockOptions => {
+					mockOptions[ "parentAuth" ] = "no authenticated";
+				} );
 
-					constructor() {
-						super();
-						this.auth = new AuthService( this );
-						this._baseURI = "";
-						this._parentContext = this;
-					}
-				}
-
-				let context:AbstractContext = new MockedContext();
-				let auth:AuthService = new AuthService( context );
+				let subContext:Context = createMockContext( { parentContext: context } );
+				let auth:AuthService = new AuthService( subContext );
 				(<any> auth).authenticator = {
 					isAuthenticated: ():boolean => true, addAuthentication: ( mockOptions:any ):void => {
 						mockOptions[ "currentAuth" ] = "is authenticated";
 					},
 				};
-				let spyParent:jasmine.Spy = spyOn( context.auth, "addAuthentication" ).and.callFake( mockOptions => {
-					mockOptions[ "parentAuth" ] = "no authenticated";
-				} );
 
 				let options:RequestOptions & { currentAuth?:string } = {};
 
@@ -943,6 +746,7 @@ describe( module( "carbonldp/Auth/Service" ), ():void => {
 
 		} );
 
+		// TODO: Separate in different tests
 		it( hasMethod(
 			INSTANCE,
 			"clearAuthentication",
@@ -950,18 +754,7 @@ describe( module( "carbonldp/Auth/Service" ), ():void => {
 		), ():void => {
 
 			// Property Integrity
-			(function propertyIntegrity():void {
-				class MockedContext extends AbstractContext {
-					protected _baseURI:string;
-
-					constructor() {
-						super();
-						this._baseURI = "";
-					}
-				}
-
-				let context:AbstractContext = new MockedContext();
-
+			(():void => {
 				let auth:AuthService = new AuthService( context );
 
 				expect( auth.clearAuthentication ).toBeDefined();
@@ -969,18 +762,7 @@ describe( module( "carbonldp/Auth/Service" ), ():void => {
 			})();
 
 			// The module isn't authenticated
-			(function NotAuthenticated():void {
-				class MockedContext extends AbstractContext {
-					protected _baseURI:string;
-
-					constructor() {
-						super();
-						this._baseURI = "";
-					}
-				}
-
-				let context:AbstractContext = new MockedContext();
-
+			(():void => {
 				let auth:AuthService = new AuthService( context );
 
 				auth.clearAuthentication();
@@ -988,18 +770,7 @@ describe( module( "carbonldp/Auth/Service" ), ():void => {
 			})();
 
 			// The module is authenticated
-			(function currentAuthenticated():void {
-				class MockedContext extends AbstractContext {
-					protected _baseURI:string;
-
-					constructor() {
-						super();
-						this._baseURI = "";
-					}
-				}
-
-				let context:AbstractContext = new MockedContext();
-
+			(():void => {
 				let auth:AuthService = new AuthService( context );
 
 				(<any> auth).authenticator = {
@@ -1030,23 +801,6 @@ describe( module( "carbonldp/Auth/Service" ), ():void => {
 			it( "should exists", ():void => {
 				expect( AuthService.prototype.createTicket ).toBeDefined();
 				expect( AuthService.prototype.createTicket ).toEqual( jasmine.any( Function ) );
-			} );
-
-			let context:AbstractContext;
-			beforeEach( ():void => {
-				context = new class extends AbstractContext {
-					protected _baseURI:string = "https://example.com/";
-					protected settings:ContextSettings = {
-						paths: {
-							system: {
-								slug: ".system/",
-								paths: {
-									security: "security/",
-								},
-							},
-						},
-					};
-				};
 			} );
 
 			it( "should return the ticket requested", ( done:DoneFn ):void => {
@@ -1199,13 +953,6 @@ describe( module( "carbonldp/Auth/Service" ), ():void => {
 			it( "should exists", ():void => {
 				expect( AuthService.prototype.getAuthenticatedURL ).toBeDefined();
 				expect( AuthService.prototype.getAuthenticatedURL ).toEqual( jasmine.any( Function ) );
-			} );
-
-			let context:AbstractContext;
-			beforeEach( ():void => {
-				context = new class extends AbstractContext {
-					protected _baseURI:string = "https://example.com/";
-				};
 			} );
 
 			it( "should call to createTicket", ( done:DoneFn ):void => {

@@ -106,7 +106,7 @@ export function parseBoolean( value:string ):boolean {
 	/* tslint:enable: no-switch-case-fall-through */
 }
 
-export function forEachOwnProperty( object:Object, action:( name:string, value:any ) => ( boolean | void ) ):void {
+export function forEachOwnProperty( object:Object, action:( name:string, value:any ) => (boolean | void) ):void {
 	if( ! (isObject( object ) || isFunction( object )) ) throw new Error( "IllegalArgument" );
 	for( let name in object ) {
 		if( object.hasOwnProperty( name ) ) {
@@ -333,7 +333,3 @@ export class UUIDUtils {
 		} );
 	}
 }
-
-type Diff<T extends string, U extends string> = ( { [P in T]: P } & { [P in U]: never } & { [x:string]:never } )[T];
-
-export type Minus<T, U> = Pick<T, Diff<keyof T, keyof U>>;

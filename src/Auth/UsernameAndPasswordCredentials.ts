@@ -1,10 +1,15 @@
+import { VolatileResource } from "../LDP";
 import { ObjectSchema } from "../ObjectSchema";
-import { Resource } from "../Resource";
 import { CS } from "../Vocabularies/CS";
 import { XSD } from "../Vocabularies/XSD";
 
 
-export interface UsernameAndPasswordCredentials extends Resource {
+export interface UsernameAndPasswordCredentialsBase {
+	username:string;
+	password:string;
+}
+
+export interface UsernameAndPasswordCredentials extends VolatileResource {
 	username?:string;
 	password?:string;
 }
@@ -39,7 +44,7 @@ export const UsernameAndPasswordCredentials:UsernameAndPasswordCredentialsFactor
 	},
 
 	createFrom<T extends object>( object:T, username?:string, password?:string ):T & UsernameAndPasswordCredentials {
-		const credentials:T & UsernameAndPasswordCredentials = Resource.createFrom<T>( object );
+		const credentials:T & UsernameAndPasswordCredentials = VolatileResource.createFrom<T>( object );
 
 		credentials.addType( UsernameAndPasswordCredentials.TYPE );
 		if( username ) credentials.username = username;

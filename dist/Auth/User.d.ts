@@ -1,7 +1,13 @@
 import { Document } from "../Document";
 import { ObjectSchema } from "../ObjectSchema";
 import { CS } from "../Vocabularies/CS";
-import { UsernameAndPasswordCredentials } from "./UsernameAndPasswordCredentials";
+import { UsernameAndPasswordCredentials, UsernameAndPasswordCredentialsBase } from "./UsernameAndPasswordCredentials";
+export interface UserBase {
+    name?: string;
+    enabled?: boolean;
+    disabled?: boolean;
+    credentials: UsernameAndPasswordCredentialsBase;
+}
 export interface User extends Document {
     name?: string;
     enabled?: boolean;

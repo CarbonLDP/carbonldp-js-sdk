@@ -1,7 +1,11 @@
+import { VolatileResource } from "../LDP";
 import { ObjectSchema } from "../ObjectSchema";
-import { Resource } from "../Resource";
 import { CS } from "../Vocabularies/CS";
-export interface UsernameAndPasswordCredentials extends Resource {
+export interface UsernameAndPasswordCredentialsBase {
+    username: string;
+    password: string;
+}
+export interface UsernameAndPasswordCredentials extends VolatileResource {
     username?: string;
     password?: string;
 }

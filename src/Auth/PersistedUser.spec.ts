@@ -1,30 +1,29 @@
+import { StrictMinus } from "../../test/helpers/types";
 import { AbstractContext } from "../AbstractContext";
+import { RequestOptions } from "../HTTP";
 import { PersistedProtectedDocument } from "../PersistedProtectedDocument";
+import { Pointer } from "../Pointer";
 import {
-	clazz,
 	extendsClass,
-	hasDefaultExport,
 	hasSignature,
 	interfaze,
 	isDefined,
 	method,
 	module,
 	OBLIGATORY,
+	property,
 	STATIC,
 } from "../test/JasmineExtender";
 
-import * as PersistedUser from "./PersistedUser";
+import { PersistedUser } from "./PersistedUser";
+
+import { User } from "./User";
 
 
-xdescribe( module( "carbonldp/Auth/PersistedUser" ), ():void => {
-
-	it( isDefined(), ():void => {
-		expect( PersistedUser ).toBeDefined();
-		expect( PersistedUser ).toEqual( jasmine.any( Object ) );
-	} );
+describe( module( "carbonldp/Auth/PersistedUser" ), ():void => {
 
 	describe( interfaze(
-		"CarbonLDP.Auth.PersistedUser.Class",
+		"CarbonLDP.Auth.PersistedUser",
 		"Interface that represents the base of a persisted User in any context."
 	), ():void => {
 
@@ -32,14 +31,15 @@ xdescribe( module( "carbonldp/Auth/PersistedUser" ), ():void => {
 		it( extendsClass( "CarbonLDP.PersistedProtectedDocument" ), ():void => {} );
 
 		let context:AbstractContext;
-		let persistedUser:PersistedUser.Class;
+		let persistedUser:PersistedUser;
 		beforeEach( ():void => {
 			context = new class extends AbstractContext {
 				protected _baseURI:string = "https://example.com/";
 			};
 
-			persistedUser = PersistedUser.Factory.decorate(
-				Object.assign( context.documents.getPointer( "https://example.com/resource/" ), {} ),
+			const pointerUser:Pointer = context.documents.getPointer( "https://example.com/resource/" );
+			persistedUser = PersistedUser.decorate(
+				Object.assign( pointerUser, {} ),
 				context.documents
 			);
 		} );
@@ -51,7 +51,7 @@ xdescribe( module( "carbonldp/Auth/PersistedUser" ), ():void => {
 				[
 					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for the request." },
 				],
-				{ type: "Promise<CarbonLDP.Auth.PersistedUser.Class>" }
+				{ type: "Promise<CarbonLDP.Auth.PersistedUser>" }
 			), ():void => {} );
 
 			it( "should exists", ():void => {
@@ -61,13 +61,11 @@ xdescribe( module( "carbonldp/Auth/PersistedUser" ), ():void => {
 
 
 			it( "should get and save", ( done:DoneFn ):void => {
-				const fakeGetResponse:any = { fake: "GET Response" };
 				const getSpy:jasmine.Spy = spyOn( context.documents, "get" )
-					.and.returnValue( Promise.resolve( [ null, fakeGetResponse ] ) );
+					.and.returnValue( Promise.resolve( null ) );
 
-				const fakeSaveResponse:any = { fake: "SAVE Response" };
 				const saveSpy:jasmine.Spy = spyOn( context.documents, "save" )
-					.and.returnValue( Promise.resolve( [ null, fakeSaveResponse ] ) );
+					.and.returnValue( Promise.resolve( null ) );
 
 				persistedUser
 					.enable()
@@ -80,43 +78,19 @@ xdescribe( module( "carbonldp/Auth/PersistedUser" ), ():void => {
 					.catch( done.fail );
 			} );
 
-			it( "should return the get and save responses", ( done:DoneFn ):void => {
-				const fakeGetResponse:any = { fake: "GET Response" };
-				spyOn( context.documents, "get" )
-					.and.returnValue( Promise.resolve( [ null, fakeGetResponse ] ) );
+			it( "should send options on save", ( done:DoneFn ):void => {
+				const getSpy:jasmine.Spy = spyOn( context.documents, "get" )
+					.and.returnValue( Promise.resolve( null ) );
 
-				const fakeSaveResponse:any = { fake: "SAVE Response" };
-				spyOn( context.documents, "save" )
-					.and.returnValue( Promise.resolve( [ null, fakeSaveResponse ] ) );
+				const saveSpy:jasmine.Spy = spyOn( context.documents, "save" )
+					.and.returnValue( Promise.resolve( null ) );
 
+				const options:RequestOptions = { timeout: 5050 };
 				persistedUser
-					.enable()
-					.then( ( [ , responses ] ) => {
-						expect( responses ).toEqual( [
-							fakeGetResponse,
-							fakeSaveResponse,
-						] );
-
-						done();
-					} )
-					.catch( done.fail );
-			} );
-
-			it( "should not return get response when resolved", ( done:DoneFn ):void => {
-				spyOn( context.documents, "get" )
-					.and.returnValue( Promise.resolve( [ null, null ] ) );
-
-				const fakeSaveResponse:any = { fake: "SAVE Response" };
-				spyOn( context.documents, "save" )
-					.and.returnValue( Promise.resolve( [ null, fakeSaveResponse ] ) );
-
-				persistedUser._resolved = false;
-				persistedUser
-					.enable()
-					.then( ( [ , responses ] ) => {
-						expect( responses ).toEqual( [
-							fakeSaveResponse,
-						] );
+					.enable( options )
+					.then( () => {
+						expect( getSpy ).toHaveBeenCalledWith( "https://example.com/resource/" );
+						expect( saveSpy ).toHaveBeenCalledWith( persistedUser, options );
 
 						done();
 					} )
@@ -125,13 +99,13 @@ xdescribe( module( "carbonldp/Auth/PersistedUser" ), ():void => {
 
 			it( "should return itself", ( done:DoneFn ):void => {
 				spyOn( context.documents, "get" )
-					.and.returnValue( Promise.resolve( [ null, null ] ) );
+					.and.returnValue( Promise.resolve( persistedUser ) );
 				spyOn( context.documents, "save" )
-					.and.returnValue( Promise.resolve( [ null, null ] ) );
+					.and.returnValue( Promise.resolve( persistedUser ) );
 
 				persistedUser
 					.enable()
-					.then( ( [ returned ] ) => {
+					.then( ( returned ) => {
 						expect( returned ).toBe( persistedUser );
 
 						done();
@@ -141,9 +115,9 @@ xdescribe( module( "carbonldp/Auth/PersistedUser" ), ():void => {
 
 			it( "should set the `enabled` flag", ( done:DoneFn ):void => {
 				spyOn( context.documents, "get" )
-					.and.returnValue( Promise.resolve( [ null, null ] ) );
+					.and.returnValue( Promise.resolve( persistedUser ) );
 				spyOn( context.documents, "save" )
-					.and.returnValue( Promise.resolve( [ null, null ] ) );
+					.and.returnValue( Promise.resolve( persistedUser ) );
 
 				persistedUser
 					.enable()
@@ -163,9 +137,9 @@ xdescribe( module( "carbonldp/Auth/PersistedUser" ), ():void => {
 
 			it( "should delete the `disabled` flag", ( done:DoneFn ):void => {
 				spyOn( context.documents, "get" )
-					.and.returnValue( Promise.resolve( [ null, null ] ) );
+					.and.returnValue( Promise.resolve( persistedUser ) );
 				spyOn( context.documents, "save" )
-					.and.returnValue( Promise.resolve( [ null, null ] ) );
+					.and.returnValue( Promise.resolve( persistedUser ) );
 
 				persistedUser.disabled = true;
 				persistedUser
@@ -189,7 +163,7 @@ xdescribe( module( "carbonldp/Auth/PersistedUser" ), ():void => {
 				[
 					{ name: "requestOptions", type: "CarbonLDP.HTTP.Request.Options", optional: true, description: "Customizable options for the request." },
 				],
-				{ type: "Promise<CarbonLDP.Auth.PersistedUser.Class>" }
+				{ type: "Promise<CarbonLDP.Auth.PersistedUser>" }
 			), ():void => {} );
 
 			it( "should exists", ():void => {
@@ -199,13 +173,11 @@ xdescribe( module( "carbonldp/Auth/PersistedUser" ), ():void => {
 
 
 			it( "should get and save", ( done:DoneFn ):void => {
-				const fakeGetResponse:any = { fake: "GET Response" };
 				const getSpy:jasmine.Spy = spyOn( context.documents, "get" )
-					.and.returnValue( Promise.resolve( [ null, fakeGetResponse ] ) );
+					.and.returnValue( Promise.resolve( null ) );
 
-				const fakeSaveResponse:any = { fake: "SAVE Response" };
 				const saveSpy:jasmine.Spy = spyOn( context.documents, "save" )
-					.and.returnValue( Promise.resolve( [ null, fakeSaveResponse ] ) );
+					.and.returnValue( Promise.resolve( null ) );
 
 				persistedUser
 					.disable()
@@ -218,43 +190,19 @@ xdescribe( module( "carbonldp/Auth/PersistedUser" ), ():void => {
 					.catch( done.fail );
 			} );
 
-			it( "should return the get and save responses", ( done:DoneFn ):void => {
-				const fakeGetResponse:any = { fake: "GET Response" };
-				spyOn( context.documents, "get" )
-					.and.returnValue( Promise.resolve( [ null, fakeGetResponse ] ) );
+			it( "should send options on save", ( done:DoneFn ):void => {
+				const getSpy:jasmine.Spy = spyOn( context.documents, "get" )
+					.and.returnValue( Promise.resolve( null ) );
 
-				const fakeSaveResponse:any = { fake: "SAVE Response" };
-				spyOn( context.documents, "save" )
-					.and.returnValue( Promise.resolve( [ null, fakeSaveResponse ] ) );
+				const saveSpy:jasmine.Spy = spyOn( context.documents, "save" )
+					.and.returnValue( Promise.resolve( null ) );
 
+				const options:RequestOptions = { timeout: 5050 };
 				persistedUser
-					.disable()
-					.then( ( [ , responses ] ) => {
-						expect( responses ).toEqual( [
-							fakeGetResponse,
-							fakeSaveResponse,
-						] );
-
-						done();
-					} )
-					.catch( done.fail );
-			} );
-
-			it( "should not return get response when resolved", ( done:DoneFn ):void => {
-				spyOn( context.documents, "get" )
-					.and.returnValue( Promise.resolve( [ null, null ] ) );
-
-				const fakeSaveResponse:any = { fake: "SAVE Response" };
-				spyOn( context.documents, "save" )
-					.and.returnValue( Promise.resolve( [ null, fakeSaveResponse ] ) );
-
-				persistedUser._resolved = false;
-				persistedUser
-					.disable()
-					.then( ( [ , responses ] ) => {
-						expect( responses ).toEqual( [
-							fakeSaveResponse,
-						] );
+					.disable( options )
+					.then( () => {
+						expect( getSpy ).toHaveBeenCalledWith( "https://example.com/resource/" );
+						expect( saveSpy ).toHaveBeenCalledWith( persistedUser, options );
 
 						done();
 					} )
@@ -263,13 +211,13 @@ xdescribe( module( "carbonldp/Auth/PersistedUser" ), ():void => {
 
 			it( "should return itself", ( done:DoneFn ):void => {
 				spyOn( context.documents, "get" )
-					.and.returnValue( Promise.resolve( [ null, null ] ) );
+					.and.returnValue( Promise.resolve( persistedUser ) );
 				spyOn( context.documents, "save" )
-					.and.returnValue( Promise.resolve( [ null, null ] ) );
+					.and.returnValue( Promise.resolve( persistedUser ) );
 
 				persistedUser
 					.disable()
-					.then( ( [ returned ] ) => {
+					.then( ( returned ) => {
 						expect( returned ).toBe( persistedUser );
 
 						done();
@@ -322,34 +270,70 @@ xdescribe( module( "carbonldp/Auth/PersistedUser" ), ():void => {
 
 	} );
 
-	describe( clazz(
-		"CarbonLDP.Auth.PersistedUser.Factory",
-		"Factory class for `CarbonLDP.Auth.PersistedUser.Class` objects."
+	describe( interfaze(
+		"CarbonLDP.Auth.PersistedUserFactory",
+		"Interface with the factory, decorate and utils for `CarbonLDP.Auth.PersistedUser` objects."
 	), ():void => {
 
-		type MockPersistedUser = StrictMinus<PersistedUser.Class, User.Class & PersistedProtectedDocument.Class>;
-
-		it( isDefined(), ():void => {
-			expect( PersistedUser.Factory ).toBeDefined();
-			expect( PersistedUser.Factory ).toEqual( jasmine.any( Function ) );
-		} );
-
-		describe( method( STATIC, "hasClassProperties" ), ():void => {
+		describe( method( OBLIGATORY, "isDecorated" ), ():void => {
 
 			it( hasSignature(
-				"Returns true if the object provided has the properties of a `CarbonLDP.Auth.PersistedUser.Class` object.", [
-					{ name: "object", type: "object" },
+				"Returns true if the object provided has the properties of a `CarbonLDP.Auth.PersistedUser` object.", [
+					{ name: "value", type: "any" },
 				],
-				{ type: "boolean" }
+				{ type: "value is CarbonLDP.Auth.PersistedUser" }
 			), ():void => {} );
 
+		} );
+
+		describe( method( OBLIGATORY, "is" ), ():void => {
+
+			it( hasSignature(
+				"Returns true if the object provided is considered a `CarbonLDP.Auth.PersistedUser` object.", [
+					{ name: "value", type: "any" },
+				],
+				{ type: "value is CarbonLDP.Auth.PersistedUser" }
+			), ():void => {} );
+
+		} );
+
+		describe( method( OBLIGATORY, "decorate" ), ():void => {
+
+			it( hasSignature(
+				[ "T extends object" ],
+				"Decorates the object provided with the properties and methods of a `CarbonLDP.Auth.PersistedUser` object.", [
+					{ name: "object", type: "T", description: "The object to decorate." },
+					{ name: "documents", type: "CarbonLDP.Documents", description: "The documents service the persisted belongs to." },
+				],
+				{ type: "T & CarbonLDP.Auth.PersistedUser" }
+			), ():void => {} );
+
+		} );
+
+	} );
+
+	describe( property(
+		STATIC,
+		"PersistedUser",
+		"CarbonLDP.Auth.PersistedUserFactory"
+	), ():void => {
+
+		type MockPersistedUser = StrictMinus<PersistedUser, User & PersistedProtectedDocument>;
+
+		it( isDefined(), ():void => {
+			expect( PersistedUser ).toBeDefined();
+			expect( PersistedUser ).toEqual( jasmine.any( Object ) );
+		} );
+
+		describe( method( STATIC, "isDecorated" ), ():void => {
+
 			it( "should exists", ():void => {
-				expect( PersistedUser.Factory.hasClassProperties ).toBeDefined();
-				expect( PersistedUser.Factory.hasClassProperties ).toEqual( jasmine.any( Function ) );
+				expect( PersistedUser.isDecorated ).toBeDefined();
+				expect( PersistedUser.isDecorated ).toEqual( jasmine.any( Function ) );
 			} );
 
 			it( "should reject undefined value", ():void => {
-				expect( PersistedUser.Factory.hasClassProperties( void 0 ) ).toBe( false );
+				expect( PersistedUser.isDecorated( void 0 ) ).toBe( false );
 			} );
 
 			it( "should only reject in required properties", ():void => {
@@ -357,14 +341,14 @@ xdescribe( module( "carbonldp/Auth/PersistedUser" ), ():void => {
 					enable: ():any => {},
 					disable: ():any => {},
 				};
-				expect( PersistedUser.Factory.hasClassProperties( object ) ).toBe( true );
+				expect( PersistedUser.isDecorated( object ) ).toBe( true );
 
 				delete object.enable;
-				expect( PersistedUser.Factory.hasClassProperties( object ) ).toBe( false );
+				expect( PersistedUser.isDecorated( object ) ).toBe( false );
 				object.enable = ():any => {};
 
 				delete object.disable;
-				expect( PersistedUser.Factory.hasClassProperties( object ) ).toBe( false );
+				expect( PersistedUser.isDecorated( object ) ).toBe( false );
 				object.disable = ():any => {};
 			} );
 
@@ -372,58 +356,51 @@ xdescribe( module( "carbonldp/Auth/PersistedUser" ), ():void => {
 
 		describe( method( STATIC, "is" ), ():void => {
 
-			it( hasSignature(
-				"Returns true if the object provided is considered a `CarbonLDP.Auth.PersistedUser.Class` object.", [
-					{ name: "object", type: "object" },
-				],
-				{ type: "boolean" }
-			), ():void => {} );
-
 			it( "should exists", ():void => {
-				expect( PersistedUser.Factory.is ).toBeDefined();
-				expect( PersistedUser.Factory.is ).toEqual( jasmine.any( Function ) );
+				expect( PersistedUser.is ).toBeDefined();
+				expect( PersistedUser.is ).toEqual( jasmine.any( Function ) );
 			} );
 
-			it( "should call to `PersistedUser.Factory.hasClassProperties`", ():void => {
-				const spy:jasmine.Spy = spyOn( PersistedUser.Factory, "hasClassProperties" );
+			it( "should call to `PersistedUser.isDecorated`", ():void => {
+				const spy:jasmine.Spy = spyOn( PersistedUser, "isDecorated" );
 
 				const object:object = { the: "object" };
-				PersistedUser.Factory.is( object );
+				PersistedUser.is( object );
 				expect( spy ).toHaveBeenCalledWith( object );
 			} );
 
-			it( "should call to `User.Factory.hasClassProperties`", ():void => {
-				spyOn( PersistedUser.Factory, "hasClassProperties" )
+			it( "should call to `User.isDecorated`", ():void => {
+				spyOn( PersistedUser, "isDecorated" )
 					.and.returnValue( true );
-				const spy:jasmine.Spy = spyOn( User.Factory, "hasClassProperties" );
+				const spy:jasmine.Spy = spyOn( User, "isDecorated" );
 
 				const object:object = { the: "object" };
-				PersistedUser.Factory.is( object );
+				PersistedUser.is( object );
 				expect( spy ).toHaveBeenCalledWith( object );
 			} );
 
-			it( "should call to `PersistedProtectedDocument.Factory.is`", ():void => {
-				spyOn( PersistedUser.Factory, "hasClassProperties" )
+			it( "should call to `PersistedProtectedDocument.is`", ():void => {
+				spyOn( PersistedUser, "isDecorated" )
 					.and.returnValue( true );
-				spyOn( User.Factory, "hasClassProperties" )
+				spyOn( User, "isDecorated" )
 					.and.returnValue( true );
-				const spy:jasmine.Spy = spyOn( PersistedProtectedDocument.Factory, "is" );
+				const spy:jasmine.Spy = spyOn( PersistedProtectedDocument, "is" );
 
 				const object:object = { the: "object" };
-				PersistedUser.Factory.is( object );
+				PersistedUser.is( object );
 				expect( spy ).toHaveBeenCalledWith( object );
 			} );
 
 			it( "should return true when all verifications pass", ():void => {
-				spyOn( PersistedUser.Factory, "hasClassProperties" )
+				spyOn( PersistedUser, "isDecorated" )
 					.and.returnValue( true );
-				spyOn( User.Factory, "hasClassProperties" )
+				spyOn( User, "isDecorated" )
 					.and.returnValue( true );
-				spyOn( PersistedProtectedDocument.Factory, "is" )
+				spyOn( PersistedProtectedDocument, "is" )
 					.and.returnValue( true );
 
 				const object:object = { the: "object" };
-				const returned:boolean = PersistedUser.Factory.is( object );
+				const returned:boolean = PersistedUser.is( object );
 
 				expect( returned ).toBe( true );
 			} );
@@ -434,21 +411,21 @@ xdescribe( module( "carbonldp/Auth/PersistedUser" ), ():void => {
 
 			it( hasSignature(
 				[ "T extends object" ],
-				"Decorates the object provided with the properties and methods of a `CarbonLDP.Auth.PersistedUser.Class` object.", [
+				"Decorates the object provided with the properties and methods of a `CarbonLDP.Auth.PersistedUser` object.", [
 					{ name: "object", type: "T", description: "The object to decorate." },
-					{ name: "documents", type: "CarbonLDP.Documents.Class", description: "The documents service the persisted belongs to." },
+					{ name: "documents", type: "CarbonLDP.Documents", description: "The documents service the persisted belongs to." },
 				],
-				{ type: "T & CarbonLDP.Auth.PersistedUser.Class" }
+				{ type: "T & CarbonLDP.Auth.PersistedUser" }
 			), ():void => {} );
 
 			it( "should exists", ():void => {
-				expect( PersistedUser.Factory.decorate ).toBeDefined();
-				expect( PersistedUser.Factory.decorate ).toEqual( jasmine.any( Function ) );
+				expect( PersistedUser.decorate ).toBeDefined();
+				expect( PersistedUser.decorate ).toEqual( jasmine.any( Function ) );
 			} );
 
 			it( "should return the same object", ():void => {
 				const object:object = {};
-				const returned:object = PersistedUser.Factory.decorate( object, null );
+				const returned:object = PersistedUser.decorate( object, null );
 				expect( returned ).toBe( object );
 			} );
 
@@ -459,7 +436,7 @@ xdescribe( module( "carbonldp/Auth/PersistedUser" ), ():void => {
 					disable: fn,
 				};
 
-				PersistedUser.Factory.decorate( object, null );
+				PersistedUser.decorate( object, null );
 				expect( object ).toEqual( jasmine.objectContaining( {
 					enable: fn,
 					disable: fn,
@@ -467,41 +444,33 @@ xdescribe( module( "carbonldp/Auth/PersistedUser" ), ():void => {
 			} );
 
 			it( "should add the class properties", ():void => {
-				const returned:PersistedUser.Class = PersistedUser.Factory.decorate( {}, null );
+				const returned:PersistedUser = PersistedUser.decorate( {}, null );
 				expect( returned ).toEqual( jasmine.objectContaining( {
 					enable: jasmine.any( Function ),
 					disable: jasmine.any( Function ),
 				} ) );
 			} );
 
-			it( "should call `User.Factory.decorate`", ():void => {
-				const spy:jasmine.Spy = spyOn( User.Factory, "decorate" );
+			it( "should call `User.decorate`", ():void => {
+				const spy:jasmine.Spy = spyOn( User, "decorate" );
 
 				const object:object = { the: "object" };
-				PersistedUser.Factory.decorate( object, null );
+				PersistedUser.decorate( object, null );
 				expect( spy ).toHaveBeenCalledWith( object );
 			} );
 
-			it( "should call `PersistedProtectedDocument.Factory.decorate`", ():void => {
-				const spy:jasmine.Spy = spyOn( PersistedProtectedDocument.Factory, "decorate" );
+			it( "should call `PersistedProtectedDocument.decorate`", ():void => {
+				const spy:jasmine.Spy = spyOn( PersistedProtectedDocument, "decorate" );
 
 				const object:object = { the: "object" };
 				const fakeDocuments:any = { fake: "Documents" };
-				PersistedUser.Factory.decorate( object, fakeDocuments );
+				PersistedUser.decorate( object, fakeDocuments );
 
 				expect( spy ).toHaveBeenCalledWith( object, fakeDocuments );
 			} );
 
 		} );
 
-	} );
-
-	it( hasDefaultExport( "CarbonLDP.Auth.PersistedUser.Class" ), ():void => {
-		let defaultExport:PersistedUser.default = <any> {};
-		let defaultTarget:PersistedUser.Class;
-
-		defaultTarget = defaultExport;
-		expect( defaultTarget ).toEqual( jasmine.any( Object ) );
 	} );
 
 } );

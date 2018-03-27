@@ -2,7 +2,7 @@ import { Context } from "../Context";
 import { RequestOptions } from "../HTTP/Request";
 import { Pointer } from "../Pointer";
 import * as PersistedRole from "./PersistedRole";
-import * as PersistedUser from "./PersistedUser";
+import { PersistedUser } from "./PersistedUser";
 import * as Role from "./Role";
 export declare class Class {
     private context;
@@ -10,7 +10,7 @@ export declare class Class {
     createChild<T extends object>(parentRole: string | Pointer, role: T & Role.Class, requestOptions?: RequestOptions): Promise<T & PersistedRole.Class>;
     createChild<T extends object>(parentRole: string | Pointer, role: T & Role.Class, slug?: string, requestOptions?: RequestOptions): Promise<T & PersistedRole.Class>;
     get<T>(roleURI: string, requestOptions?: RequestOptions): Promise<T & PersistedRole.Class>;
-    getUsers<T>(roleURI: string, requestOptions?: RequestOptions): Promise<(T & PersistedUser.Class)[]>;
+    getUsers<T>(roleURI: string, requestOptions?: RequestOptions): Promise<(T & PersistedUser)[]>;
     addUser(roleURI: string, user: Pointer | string, requestOptions?: RequestOptions): Promise<void>;
     addUsers(roleURI: string, users: (Pointer | string)[], requestOptions?: RequestOptions): Promise<void>;
     removeUser(roleURI: string, user: Pointer | string, requestOptions?: RequestOptions): Promise<void>;

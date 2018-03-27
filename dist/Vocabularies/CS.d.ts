@@ -21,6 +21,7 @@ export interface CS {
     Update: "https://carbonldp.com/ns/v1/security#Update";
     Upload: "https://carbonldp.com/ns/v1/security#Upload";
     User: "https://carbonldp.com/ns/v1/security#User";
+    Users: "https://carbonldp.com/ns/v1/security#Users";
     UsernameAndPasswordCredentials: "https://carbonldp.com/ns/v1/security#UsernameAndPasswordCredentials";
     accessControlEntry: "https://carbonldp.com/ns/v1/security#accessControlEntry";
     accessControlList: "https://carbonldp.com/ns/v1/security#accessControlList";

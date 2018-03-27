@@ -7,8 +7,18 @@ import {
 import { C } from "../Vocabularies/C";
 import { CS } from "../Vocabularies/CS";
 import { XSD } from "../Vocabularies/XSD";
-import { UsernameAndPasswordCredentials } from "./UsernameAndPasswordCredentials";
+import {
+	UsernameAndPasswordCredentials,
+	UsernameAndPasswordCredentialsBase,
+} from "./UsernameAndPasswordCredentials";
 
+
+export interface UserBase {
+	name?:string;
+	enabled?:boolean;
+	disabled?:boolean;
+	credentials:UsernameAndPasswordCredentialsBase;
+}
 
 export interface User extends Document {
 	name?:string;
@@ -90,14 +100,16 @@ export const User:UserFactory = {
 
 	createFrom<T extends object>( object:T, disabled?:boolean ):T & User {
 		const user:T & User = User.decorate( object );
+
 		if( isBoolean( disabled ) ) user.disabled = disabled;
+		user.addType( User.TYPE );
 
 		return user;
 	},
 };
 
-function setCredentials( this:User, email?:string, password?:string ):UsernameAndPasswordCredentials {
-	const credentials:UsernameAndPasswordCredentials = UsernameAndPasswordCredentials.create( email, password );
+function setCredentials( this:User, username?:string, password?:string ):UsernameAndPasswordCredentials {
+	const credentials:UsernameAndPasswordCredentials = UsernameAndPasswordCredentials.create( username, password );
 
 	this.credentials = this.createFragment( credentials );
 	this.credentials.addType( C.VolatileResource );

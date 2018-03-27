@@ -30,7 +30,7 @@ import DefaultExport from "./PersistedRole";
 import * as Role from "./Role";
 import * as Roles from "./Roles";
 
-describe( module( "carbonldp/Auth/PersistedRole" ), ():void => {
+xdescribe( module( "carbonldp/Auth/PersistedRole" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( PersistedRole ).toBeDefined();

@@ -579,10 +579,10 @@ describe( module( "carbonldp/CarbonLDP" ), ():void => {
 							paths: {
 								platform: "platform/",
 								credentials: "credentials/",
-								users: "users/",
 								roles: "roles/",
 							},
 						},
+						users: "users/",
 					},
 				} );
 			} );

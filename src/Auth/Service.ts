@@ -1,4 +1,5 @@
 import { Context } from "../Context";
+import { Documents } from "../Documents";
 import * as Errors from "../Errors";
 import { FreeResources } from "../FreeResources";
 import { BadResponseError } from "../HTTP/Errors";
@@ -15,40 +16,44 @@ import { URI } from "../RDF/URI";
 import { Resource } from "../Resource";
 import * as Utils from "../Utils";
 import { LDP } from "../Vocabularies/LDP";
+import { ACL } from "./ACL";
 import { Authenticator } from "./Authenticator";
 import { AuthMethod } from "./AuthMethod";
 import { BasicAuthenticator } from "./BasicAuthenticator";
 import { BasicCredentials } from "./BasicCredentials";
 import { BasicToken } from "./BasicToken";
-import * as PersistedUser from "./PersistedUser";
+import { PersistedACL } from "./PersistedACL";
+import { PersistedUser } from "./PersistedUser";
 import * as Roles from "./Roles";
 import * as Ticket from "./Ticket";
 import TokenAuthenticator from "./TokenAuthenticator";
 import * as TokenCredentials from "./TokenCredentials";
-import * as Users from "./Users";
+import { User } from "./User";
+import { UsersEndpoint } from "./UsersEndpoint";
 
 export class AuthService {
-	public users:Users.Class;
-	public roles:Roles.Class;
+	public readonly users:UsersEndpoint;
+	public readonly roles:Roles.Class;
 
-	protected _authenticatedUser:PersistedUser.Class;
+	protected _authenticatedUser:PersistedUser;
+	protected authenticator:Authenticator<object, object>;
+	protected readonly context:Context;
+	protected readonly authenticators:{ [P in AuthMethod]:Authenticator<object, object> };
 
-	private context:Context;
-	private authenticators:{ [ P in AuthMethod ]:Authenticator<object, object> };
-	private authenticator:Authenticator<object, object>;
-
-	public get authenticatedUser():PersistedUser.Class {
+	public get authenticatedUser():PersistedUser {
 		if( this._authenticatedUser ) return this._authenticatedUser;
-		if( this.context.parentContext ) return this.context.parentContext.auth.authenticatedUser;
+		if( this.context.parentContext && this.context.parentContext.auth ) return this.context.parentContext.auth.authenticatedUser;
 
 		return null;
 	}
 
 	constructor( context:Context ) {
-		this.roles = new Roles.Class( this.context );
-		this.users = new Users.Class( this.context );
-
 		this.context = context;
+
+		const usersIRI:string = context._resolvePath( "users" );
+		this.users = context.documents.register( usersIRI, [ UsersEndpoint.TYPE ] );
+
+		this.roles = new Roles.Class( context );
 
 		this.authenticators = {
 			[ AuthMethod.BASIC ]: new BasicAuthenticator(),
@@ -158,7 +163,7 @@ export class AuthService {
 
 				return this.getAuthenticatedUser( authenticator );
 			} )
-			.then( ( persistedUser:PersistedUser.Class ) => {
+			.then( ( persistedUser:PersistedUser ) => {
 				this._authenticatedUser = persistedUser;
 				this.authenticator = authenticator;
 
@@ -182,9 +187,9 @@ export class AuthService {
 		return authenticator.authenticate( tokenOrCredentials ).then( ( credentials:TokenCredentials.Class ) => {
 			newCredentials = credentials;
 
-			if( PersistedUser.Factory.is( credentials.user ) ) return credentials.user;
+			if( PersistedUser.is( credentials.user ) ) return credentials.user;
 			return this.getAuthenticatedUser( authenticator );
-		} ).then( ( persistedUser:PersistedUser.Class ) => {
+		} ).then( ( persistedUser:PersistedUser ) => {
 			this._authenticatedUser = persistedUser;
 			this.authenticator = authenticator;
 
@@ -193,7 +198,7 @@ export class AuthService {
 		} );
 	}
 
-	private getAuthenticatedUser( authenticator:Authenticator<object, object> ):Promise<PersistedUser.Class> {
+	private getAuthenticatedUser( authenticator:Authenticator<object, object> ):Promise<PersistedUser> {
 		const requestOptions:RequestOptions = {};
 		authenticator.addAuthentication( requestOptions );
 

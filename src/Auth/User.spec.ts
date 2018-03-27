@@ -209,7 +209,7 @@ describe( module( "carbonldp/Auth/User" ), ():void => {
 				expect( User.create ).toEqual( jasmine.any( Function ) );
 			} );
 
-			it( "should call `User.Factory.createFrom`", ():void => {
+			it( "should call `User.createFrom`", ():void => {
 				const spy:jasmine.Spy = spyOn( User, "createFrom" );
 
 				User.create();
@@ -228,9 +228,9 @@ describe( module( "carbonldp/Auth/User" ), ():void => {
 				expect( User.createFrom ).toEqual( jasmine.any( Function ) );
 			} );
 
-			it( "should call the `User.Factory.decorate`", ():void => {
+			it( "should call the `User.decorate`", ():void => {
 				const spy:jasmine.Spy = spyOn( User, "decorate" )
-					.and.returnValue( {} );
+					.and.callThrough();
 
 				const object:object = { the: "object" };
 				User.createFrom( object );
@@ -240,7 +240,7 @@ describe( module( "carbonldp/Auth/User" ), ():void => {
 
 			it( "should assign the provided `disabled` property", ():void => {
 				spyOn( User, "decorate" )
-					.and.returnValue( {} );
+					.and.callThrough();
 
 				const object:object = { the: "object" };
 				const returned:object = User.createFrom( object, true );
@@ -248,6 +248,12 @@ describe( module( "carbonldp/Auth/User" ), ():void => {
 				expect( returned ).toEqual( jasmine.objectContaining( {
 					disabled: true,
 				} ) );
+			} );
+
+			it( "should add cs:User type", ():void => {
+				const user:User = User.createFrom( {}, true );
+
+				expect( user.types ).toContain( User.TYPE );
 			} );
 
 		} );
@@ -289,7 +295,7 @@ describe( module( "carbonldp/Auth/User" ), ():void => {
 				} ) );
 			} );
 
-			it( "should call `Document.Factory.decorate`", ():void => {
+			it( "should call `Document.decorate`", ():void => {
 				const spy:jasmine.Spy = spyOn( Document, "decorate" );
 
 				const object:object = { the: "object" };

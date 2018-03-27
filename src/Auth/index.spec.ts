@@ -20,7 +20,7 @@ import { LDAPCredentials } from "./LDAPCredentials";
 import { PersistedACE } from "./PersistedACE";
 import { PersistedACL } from "./PersistedACL";
 import * as PersistedRole from "./PersistedRole";
-import * as PersistedUser from "./PersistedUser";
+import { PersistedUser } from "./PersistedUser";
 import * as Role from "./Role";
 import * as Roles from "./Roles";
 import { AuthService } from "./Service";
@@ -29,7 +29,7 @@ import TokenAuthenticator from "./TokenAuthenticator";
 import * as TokenCredentials from "./TokenCredentials";
 import { User } from "./User";
 import { UsernameAndPasswordCredentials } from "./UsernameAndPasswordCredentials";
-import * as Users from "./Users";
+import * as Users from "./UsersEndpoint";
 
 describe( module( "carbonldp/Auth" ), ():void => {
 
@@ -67,8 +67,8 @@ describe( module( "carbonldp/Auth" ), ():void => {
 
 	it( reexports(
 		STATIC,
-		"Users",
-		"carbonldp/Auth/Users"
+		"UsersEndpoint",
+		"CarbonLDP.Auth.UsersEndpoint"
 	), ():void => {
 		expect( Auth.Users ).toBeDefined();
 		expect( Auth.Users ).toBe( Users );
@@ -167,7 +167,7 @@ describe( module( "carbonldp/Auth" ), ():void => {
 	it( reexports(
 		STATIC,
 		"PersistedUser",
-		"carbonldp/Auth/PersistedUser"
+		"CarbonLDP.Auth.PersistedUser"
 	), ():void => {
 		expect( Auth.PersistedUser ).toBeDefined();
 		expect( Auth.PersistedUser ).toBe( PersistedUser );

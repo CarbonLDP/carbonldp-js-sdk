@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var Resource_1 = require("../Resource");
+var LDP_1 = require("../LDP");
 var CS_1 = require("../Vocabularies/CS");
 var XSD_1 = require("../Vocabularies/XSD");
 var SCHEMA = {
@@ -20,7 +20,7 @@ exports.UsernameAndPasswordCredentials = {
         return exports.UsernameAndPasswordCredentials.createFrom({}, username, password);
     },
     createFrom: function (object, username, password) {
-        var credentials = Resource_1.Resource.createFrom(object);
+        var credentials = LDP_1.VolatileResource.createFrom(object);
         credentials.addType(exports.UsernameAndPasswordCredentials.TYPE);
         if (username)
             credentials.username = username;

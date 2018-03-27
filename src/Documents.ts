@@ -20,6 +20,9 @@ import {
 import * as Auth from "./Auth";
 import { ACL } from "./Auth/ACL";
 import { PersistedACL } from "./Auth/PersistedACL";
+import { PersistedUser } from "./Auth/PersistedUser";
+import { User } from "./Auth/User";
+import { UsersEndpoint } from "./Auth/UsersEndpoint";
 import { CarbonLDP } from "./CarbonLDP";
 import { Context } from "./Context";
 import { Document } from "./Document";
@@ -150,10 +153,13 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 			let parentDecorators:Documents[ "documentDecorators" ] = this.context.parentContext.documents.documentDecorators;
 			if( parentDecorators ) decorators = this._documentDecorators = Utils.MapUtils.extend( decorators, parentDecorators );
 		} else {
-			decorators.set( ProtectedDocument.TYPE, PersistedProtectedDocument.decorate );
-			decorators.set( ACL.TYPE, PersistedACL.decorate );
-			decorators.set( Auth.User.TYPE, Auth.PersistedUser.Factory.decorate );
-			decorators.set( Auth.Role.RDF_CLASS, Auth.PersistedRole.Factory.decorate );
+			decorators
+				.set( ProtectedDocument.TYPE, PersistedProtectedDocument.decorate )
+				.set( UsersEndpoint.TYPE, UsersEndpoint.decorate )
+				.set( User.TYPE, PersistedUser.decorate )
+				.set( ACL.TYPE, PersistedACL.decorate )
+				.set( Auth.Role.RDF_CLASS, Auth.PersistedRole.Factory.decorate )
+			;
 		}
 
 		this._documentDecorators = decorators;
@@ -621,7 +627,7 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 	}
 
 	getDownloadURL( documentURI:string, requestOptions?:RequestOptions ):Promise<string> {
-		if( ! this.context ) return Promise.reject( new Errors.IllegalStateError( "This instance doesn't support Authenticated request." ) );
+		if( ! this.context || ! this.context.auth ) return Promise.reject( new Errors.IllegalStateError( "This instance doesn't support Authenticated request." ) );
 		return promiseMethod( () => {
 			documentURI = this._getRequestURI( documentURI );
 			return this.context.auth.getAuthenticatedURL( documentURI, requestOptions );
@@ -650,7 +656,7 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 		return promiseMethod( () => {
 			documentURI = this._getRequestURI( documentURI );
 
-			if( this.context && this.context.auth.isAuthenticated() ) this.context.auth.addAuthentication( requestOptions );
+			if( this.context && this.context.auth && this.context.auth.isAuthenticated() ) this.context.auth.addAuthentication( requestOptions );
 
 			return SPARQLService
 				.executeRawASKQuery( documentURI, askQuery, requestOptions )
@@ -663,7 +669,7 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 		return promiseMethod( () => {
 			documentURI = this._getRequestURI( documentURI );
 
-			if( this.context && this.context.auth.isAuthenticated() ) this.context.auth.addAuthentication( requestOptions );
+			if( this.context && this.context.auth && this.context.auth.isAuthenticated() ) this.context.auth.addAuthentication( requestOptions );
 
 			return SPARQLService
 				.executeASKQuery( documentURI, askQuery, requestOptions )
@@ -676,7 +682,7 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 		return promiseMethod( () => {
 			documentURI = this._getRequestURI( documentURI );
 
-			if( this.context && this.context.auth.isAuthenticated() ) this.context.auth.addAuthentication( requestOptions );
+			if( this.context && this.context.auth && this.context.auth.isAuthenticated() ) this.context.auth.addAuthentication( requestOptions );
 
 			return SPARQLService
 				.executeRawSELECTQuery( documentURI, selectQuery, requestOptions )
@@ -689,7 +695,7 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 		return promiseMethod( () => {
 			documentURI = this._getRequestURI( documentURI );
 
-			if( this.context && this.context.auth.isAuthenticated() ) this.context.auth.addAuthentication( requestOptions );
+			if( this.context && this.context.auth && this.context.auth.isAuthenticated() ) this.context.auth.addAuthentication( requestOptions );
 
 			return SPARQLService
 				.executeSELECTQuery<T>( documentURI, selectQuery, this, requestOptions )
@@ -702,7 +708,7 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 		return promiseMethod( () => {
 			documentURI = this._getRequestURI( documentURI );
 
-			if( this.context && this.context.auth.isAuthenticated() ) this.context.auth.addAuthentication( requestOptions );
+			if( this.context && this.context.auth && this.context.auth.isAuthenticated() ) this.context.auth.addAuthentication( requestOptions );
 
 			return SPARQLService
 				.executeRawCONSTRUCTQuery( documentURI, constructQuery, requestOptions )
@@ -715,7 +721,7 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 		return promiseMethod( () => {
 			documentURI = this._getRequestURI( documentURI );
 
-			if( this.context && this.context.auth.isAuthenticated() ) this.context.auth.addAuthentication( requestOptions );
+			if( this.context && this.context.auth && this.context.auth.isAuthenticated() ) this.context.auth.addAuthentication( requestOptions );
 
 			return SPARQLService
 				.executeRawDESCRIBEQuery( documentURI, describeQuery, requestOptions )
@@ -728,7 +734,7 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 		return promiseMethod( () => {
 			documentURI = this._getRequestURI( documentURI );
 
-			if( this.context && this.context.auth.isAuthenticated() ) this.context.auth.addAuthentication( requestOptions );
+			if( this.context && this.context.auth && this.context.auth.isAuthenticated() ) this.context.auth.addAuthentication( requestOptions );
 
 			return SPARQLService
 				.executeUPDATE( documentURI, update, requestOptions )
@@ -1203,7 +1209,7 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 			.addPrologues( ...queryContext.getPrologues() );
 
 		return this
-			.executeSELECTQuery<{ [docs:string]:Pointer }>( uri, query.toString(), requestOptions )
+			.executeSELECTQuery<{ [ docs:string ]:Pointer }>( uri, query.toString(), requestOptions )
 			.then<PersistedDocument[]>( ( results ) => {
 				const name:string = targetVar.toString().slice( 1 );
 				return results
@@ -1412,7 +1418,7 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 	}
 
 	private _setDefaultRequestOptions( requestOptions:RequestOptions, interactionModel?:string ):RequestOptions {
-		if( this.context && this.context.auth.isAuthenticated() ) this.context.auth.addAuthentication( requestOptions );
+		if( this.context && this.context.auth && this.context.auth.isAuthenticated() ) this.context.auth.addAuthentication( requestOptions );
 		if( interactionModel ) RequestUtils.setPreferredInteractionModel( interactionModel, requestOptions );
 
 		RequestUtils.setAcceptHeader( "application/ld+json", requestOptions );

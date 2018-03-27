@@ -1,5 +1,4 @@
-import { IllegalArgumentError } from "../Errors";
-import { Resource } from "../Resource";
+import { VolatileResource } from "../LDP";
 import {
 	extendsClass,
 	hasMethod,
@@ -25,8 +24,8 @@ describe( module( "carbonldp/Auth/UsernameAndPasswordCredentials" ), ():void => 
 		"Interface that represents an in-memory UsernameAndPasswordCredentials of a user."
 	), ():void => {
 
-		it( extendsClass( "CarbonLDP.Resource" ), ():void => {
-			const target:Resource = {} as UsernameAndPasswordCredentials;
+		it( extendsClass( "CarbonLDP.VolatileResource" ), ():void => {
+			const target:VolatileResource = {} as UsernameAndPasswordCredentials;
 			expect( target ).toBeDefined();
 		} );
 

@@ -76,7 +76,7 @@ describe( module( "Carbon/Auth/TokenCredentials" ), ():void => {
 		it( hasProperty(
 			OBLIGATORY,
 			"user",
-			"CarbonLDP.Auth.PersistedUser.Class",
+			"CarbonLDP.Auth.PersistedUser",
 			"User that has been requested the token, and which authentication the token represents."
 		), ():void => {} );
 

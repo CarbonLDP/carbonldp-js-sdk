@@ -35,6 +35,7 @@ export interface EndpointFactory extends ModelDecorator<Endpoint<object, Documen
     isDecorated<B extends object, D extends Document, P extends PersistedProtectedDocument>(value: any): value is Endpoint<B, D, P>;
     decorate<T extends object, B extends object, D extends Document, P extends PersistedProtectedDocument>(object: T, documents: Documents): T & Endpoint<B, D, P>;
     resolveEndpointURI(endpoint: Endpoint<any, any, any>, relativeURI: string): Promise<string>;
+    getChild<P extends PersistedProtectedDocument>(endpoint: Endpoint<any, any, P>, relativeURI: string): Promise<P>;
     createChildren<B extends object, D extends Document>(endpoint: Endpoint<B, D, any>, objects: B[]): Promise<(B & D)[]>;
     createChildren<B extends object, D extends Document>(endpoint: Endpoint<B, D, any>, object: B): Promise<B & D>;
     decorateChildren<B extends object, P extends PersistedProtectedDocument>(endpoint: Endpoint<B, any, P>, documents: (B & PersistedDocument)[]): (B & P)[];
