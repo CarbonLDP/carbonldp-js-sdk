@@ -35,14 +35,14 @@ exports.UsersEndpoint = {
     },
 };
 function createFromBase(base) {
-    var user = User_1.User.createFrom(base);
-    if (!user.credentials)
+    if (!base.credentials)
         throw new Errors_1.IllegalArgumentError("A credentials object is required.");
-    user.setCredentials(user.credentials.username, user.credentials.username);
+    var user = User_1.User.createFrom(base);
     if (!user.credentials.username)
         throw new Errors_1.IllegalArgumentError("A credentials username cannot be empty.");
     if (!user.credentials.password)
         throw new Errors_1.IllegalArgumentError("A credentials password cannot be empty.");
+    user.setCredentials(user.credentials.username, user.credentials.password);
     return user;
 }
 function enableUser(userURI, requestOptions) {

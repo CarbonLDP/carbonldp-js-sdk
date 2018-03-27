@@ -64,13 +64,12 @@ export const UsersEndpoint:UsersEndpointFactory = {
 
 
 function createFromBase<T extends UserBase>( base:T ):T & User {
+	if( ! base.credentials ) throw new IllegalArgumentError( "A credentials object is required." );
 	const user:T & User = User.createFrom( base );
-
-	if( ! user.credentials ) throw new IllegalArgumentError( "A credentials object is required." );
-	user.setCredentials( user.credentials.username, user.credentials.username );
 
 	if( ! user.credentials.username ) throw new IllegalArgumentError( "A credentials username cannot be empty." );
 	if( ! user.credentials.password ) throw new IllegalArgumentError( "A credentials password cannot be empty." );
+	user.setCredentials( user.credentials.username, user.credentials.password );
 
 	return user;
 }

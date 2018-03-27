@@ -237,7 +237,7 @@
 
 	describe( "Auth Tests >", () => {
 
-		let app;
+		let app; // CarbonLDP
 		beforeEach( () => {
 			app = new CarbonLDP( "http://localhost:8083" );
 		} );
@@ -260,22 +260,90 @@
 
 			it( "should get with BASIC auth", async () => {
 				await app.auth.authenticateUsing( token, "user01", "pass01" );
+				const doc = await app.documents.get( ".system/platform/" );
 
-				const [ , response ] = await app.documents.get( ".system/platform/" );
-
-				expect( response.status ).toBe( 200 );
+				expect( doc ).toBeDefined()
 			} );
 
-			it( "should unauthorized with BASIC auth", async () => {
+			xit( "should unauthorized with BASIC auth", async () => {
 				await app.auth.authenticateUsing( token, "user01", "incorrect-pass" );
 
 				try {
 					await app.documents.get( ".system/platform/" );
 					fail( "should not reach here" );
 				} catch( e ) {
-					debugger;
 					expect( e.response.status ).toBe( 401 );
 				}
+			} );
+
+		} );
+
+		fdescribe( "When Users", () => {
+
+			it( "should register user", async () => {
+				const user = await app.auth
+					.users
+					.createChild( {
+						name: "User 02",
+						credentials: {
+							username: "user02",
+							password: "pass02",
+						},
+					}, "user02/" )
+				;
+
+				expect( CarbonLDP.Auth.PersistedUser.is( user ) ).toBe( true );
+
+				console.log( user );
+			} );
+
+			it( "should list users", async () => {
+				const users = await  app.auth
+					.users
+					.listChildren();
+
+				expect( users ).toEqual( jasmine.any( Array ) );
+				expect( users ).toContain( jasmine.objectContaining( {
+					id: app.resolve( "users/user02/" ),
+				} ) );
+
+				expect( users ).not.toContain( jasmine.objectContaining( {
+					id: app.resolve( "users/user02/" ),
+					name: "User 02",
+					created: jasmine.any( Date ),
+					modified: jasmine.any( Date ),
+				} ) );
+
+				const user = users.find( user => user.id === app.resolve( "users/user02/" ) );
+				expect( CarbonLDP.Auth.PersistedUser.is( user ) ).toBe( true );
+
+				console.log( users );
+			} );
+
+			it( "should list users", async () => {
+				const users = await  app.auth
+					.users
+					.getChildren();
+
+				expect( users ).toEqual( jasmine.any( Array ) );
+				expect( users ).toContain( jasmine.objectContaining( {
+					id: app.resolve( "users/user02/" ),
+					name: "User 02",
+					created: jasmine.any( Date ),
+					modified: jasmine.any( Date ),
+				} ) );
+
+				const user = users.find( user => user.id === app.resolve( "users/user02/" ) );
+				expect( CarbonLDP.Auth.PersistedUser.is( user ) ).toBe( true );
+
+				console.log( users );
+			} );
+
+			it( "should delete user", async () => {
+				await app.auth.users
+					.delete( "user02/" );
+
+				expect().nothing();
 			} );
 
 		} );
