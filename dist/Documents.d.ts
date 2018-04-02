@@ -40,7 +40,6 @@ export declare class Documents implements PointerLibrary, PointerValidator, Obje
     hasPointer(id: string): boolean;
     getPointer(id: string): Pointer;
     removePointer(idOrPointer: string | Pointer): boolean;
-    register<T extends object>(rdfDocument: RDFDocument): T & PersistedDocument;
     register<T extends object>(id: string, types?: string[]): T & PersistedDocument;
     get<T extends object>(uri: string, requestOptions?: GETOptions, queryBuilderFn?: (queryBuilder: QueryDocumentBuilder) => QueryDocumentBuilder): Promise<T & PersistedDocument>;
     get<T extends object>(uri: string, queryBuilderFn?: (queryBuilder: QueryDocumentBuilder) => QueryDocumentBuilder): Promise<T & PersistedDocument>;

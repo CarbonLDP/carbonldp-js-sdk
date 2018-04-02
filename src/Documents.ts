@@ -220,25 +220,11 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 		return this.pointers.delete( localID );
 	}
 
-	register<T extends object>( rdfDocument:RDFDocument ):T & PersistedDocument;
-	register<T extends object>( id:string, types?:string[] ):T & PersistedDocument;
-	register<T extends object>( rdfDocumentOrID:RDFDocument | string, types?:string[] ):T & PersistedDocument {
-		let id:string = Utils.isString( rdfDocumentOrID ) ? rdfDocumentOrID : void 0;
-		const rdfDocument:RDFDocument = RDFDocument.is( rdfDocumentOrID ) ? rdfDocumentOrID : void 0;
-
-		if( rdfDocument ) {
-			const [ documentResource ] = RDFDocument.getDocumentResources( rdfDocument );
-			if( ! documentResource ) throw new Errors.IllegalArgumentError( "The RDF Document must contain a valid document resource." );
-
-			id = RDFNode.getID( documentResource );
-			types = RDFNode.getTypes( documentResource );
-		}
-
+	register<T extends object>( id:string, types?:string[] ):T & PersistedDocument {
 		const pointerID:string = this._getPointerID( id );
 		if( ! pointerID ) throw new Errors.IllegalArgumentError( `Cannot register a document outside the scope of this documents instance.` );
 
-		const persistedDocument:PersistedDocument = rdfDocument ?
-			new JSONLDCompacter( this ).compactDocument( rdfDocument ) :
+		const persistedDocument:PersistedDocument =
 			PersistedDocument.decorate( this.getPointer( pointerID ), this )
 		;
 
@@ -1204,7 +1190,7 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 			.addPrologues( ...queryContext.getPrologues() );
 
 		return this
-			.executeSELECTQuery<{ [docs:string]:Pointer }>( uri, query.toString(), requestOptions )
+			.executeSELECTQuery<{ [ docs:string ]:Pointer }>( uri, query.toString(), requestOptions )
 			.then<PersistedDocument[]>( ( results ) => {
 				const name:string = targetVar.toString().slice( 1 );
 				return results

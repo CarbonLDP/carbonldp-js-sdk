@@ -10181,23 +10181,12 @@ var Documents = (function () {
         }
         return this.pointers.delete(localID);
     };
-    Documents.prototype.register = function (rdfDocumentOrID, types) {
+    Documents.prototype.register = function (id, types) {
         var _this = this;
-        var id = Utils.isString(rdfDocumentOrID) ? rdfDocumentOrID : void 0;
-        var rdfDocument = Document_2.RDFDocument.is(rdfDocumentOrID) ? rdfDocumentOrID : void 0;
-        if (rdfDocument) {
-            var documentResource = Document_2.RDFDocument.getDocumentResources(rdfDocument)[0];
-            if (!documentResource)
-                throw new Errors.IllegalArgumentError("The RDF Document must contain a valid document resource.");
-            id = Node_1.RDFNode.getID(documentResource);
-            types = Node_1.RDFNode.getTypes(documentResource);
-        }
         var pointerID = this._getPointerID(id);
         if (!pointerID)
             throw new Errors.IllegalArgumentError("Cannot register a document outside the scope of this documents instance.");
-        var persistedDocument = rdfDocument ?
-            new Compacter_1.JSONLDCompacter(this).compactDocument(rdfDocument) :
-            PersistedDocument_1.PersistedDocument.decorate(this.getPointer(pointerID), this);
+        var persistedDocument = PersistedDocument_1.PersistedDocument.decorate(this.getPointer(pointerID), this);
         if (types)
             types
                 .map(function (type) { return _this.documentDecorators.get(type); })
