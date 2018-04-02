@@ -52,14 +52,14 @@ export declare class Documents implements PointerLibrary, PointerValidator, Obje
     createChildAndRetrieve<T extends object>(parentURI: string, childObject: T, requestOptions?: RequestOptions): Promise<T & PersistedProtectedDocument>;
     createChildrenAndRetrieve<T extends object>(parentURI: string, childrenObjects: T[], slugs?: string[], requestOptions?: RequestOptions): Promise<(T & PersistedProtectedDocument)[]>;
     createChildrenAndRetrieve<T extends object>(parentURI: string, childrenObjects: T[], requestOptions?: RequestOptions): Promise<(T & PersistedProtectedDocument)[]>;
-    listChildren(parentURI: string, requestOptions?: RequestOptions): Promise<PersistedDocument[]>;
+    listChildren<T extends object>(parentURI: string, requestOptions?: RequestOptions): Promise<(T & PersistedDocument)[]>;
     getChildren<T extends object>(parentURI: string, requestOptions: RequestOptions, queryBuilderFn?: (queryBuilder: QueryDocumentsBuilder) => QueryDocumentsBuilder): Promise<(T & PersistedDocument)[]>;
     getChildren<T extends object>(parentURI: string, queryBuilderFn?: (queryBuilder: QueryDocumentsBuilder) => QueryDocumentsBuilder): Promise<(T & PersistedDocument)[]>;
     createAccessPoint<T extends object>(documentURI: string, accessPoint: T & AccessPointBase, slug?: string, requestOptions?: RequestOptions): Promise<T & PersistedAccessPoint>;
     createAccessPoint<T extends object>(documentURI: string, accessPoint: T & AccessPointBase, requestOptions?: RequestOptions): Promise<T & PersistedAccessPoint>;
     createAccessPoints<T extends object>(documentURI: string, accessPoints: (T & AccessPointBase)[], slugs?: string[], requestOptions?: RequestOptions): Promise<(T & PersistedAccessPoint)[]>;
     createAccessPoints<T extends object>(documentURI: string, accessPoints: (T & AccessPointBase)[], requestOptions?: RequestOptions): Promise<(T & PersistedAccessPoint)[]>;
-    listMembers(uri: string, requestOptions?: RequestOptions): Promise<PersistedDocument[]>;
+    listMembers<T extends object>(uri: string, requestOptions?: RequestOptions): Promise<(T & PersistedDocument)[]>;
     getMembers<T extends object>(uri: string, requestOptions: RequestOptions, queryBuilderFn?: (queryBuilder: QueryDocumentsBuilder) => QueryDocumentsBuilder): Promise<(T & PersistedDocument)[]>;
     getMembers<T extends object>(uri: string, queryBuilderFn?: (queryBuilder: QueryDocumentsBuilder) => QueryDocumentsBuilder): Promise<(T & PersistedDocument)[]>;
     addMember(documentURI: string, member: Pointer, requestOptions?: RequestOptions): Promise<void>;

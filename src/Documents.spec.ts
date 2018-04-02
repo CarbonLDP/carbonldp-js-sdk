@@ -3834,11 +3834,12 @@ describe( module( "carbonldp/Documents" ), ():void => {
 		describe( method( INSTANCE, "listChildren" ), () => {
 
 			it( hasSignature(
+				[ "T extends object" ],
 				"Retrieves the empty children of a document.", [
 					{ name: "parentURI", type: "string", description: "URI of the document from where to look for its children." },
 					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for the request." },
 				],
-				{ type: "Promise<CarbonLDP.PersistedDocument[]>" }
+				{ type: "Promise<(T & CarbonLDP.PersistedDocument)[]>" }
 			), () => {} );
 
 			it( isDefined(), () => {
@@ -6839,11 +6840,12 @@ describe( module( "carbonldp/Documents" ), ():void => {
 		describe( method( INSTANCE, "listMembers" ), () => {
 
 			it( hasSignature(
+				[ "T extends object" ],
 				"Retrieves the empty members of a document.", [
 					{ name: "uri", type: "string", description: "URI of the document from where to look for its members." },
 					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for the request." },
 				],
-				{ type: "Promise<CarbonLDP.PersistedDocument[]>" }
+				{ type: "Promise<(T & CarbonLDP.PersistedDocument)[]>" }
 			), () => {} );
 
 			it( isDefined(), () => {

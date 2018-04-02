@@ -62,10 +62,10 @@ export interface PersistedDocument extends Document, PersistedResource, ServiceA
     createAccessPoint<T extends object>(accessPoint: T & AccessPointBase, requestOptions?: RequestOptions): Promise<T & PersistedAccessPoint>;
     createAccessPoints<T extends object>(accessPoints: (T & AccessPointBase)[], slugs?: string[], requestOptions?: RequestOptions): Promise<(T & PersistedAccessPoint)[]>;
     createAccessPoints<T extends object>(accessPoints: (T & AccessPointBase)[], requestOptions?: RequestOptions): Promise<(T & PersistedAccessPoint)[]>;
-    listChildren(requestOptions?: RequestOptions): Promise<PersistedDocument[]>;
+    listChildren<T extends object>(requestOptions?: RequestOptions): Promise<(T & PersistedDocument)[]>;
     getChildren<T extends object>(requestOptions?: RequestOptions, queryBuilderFn?: (queryBuilder: QueryDocumentsBuilder) => QueryDocumentsBuilder): Promise<(T & PersistedDocument)[]>;
     getChildren<T extends object>(queryBuilderFn?: (queryBuilder: QueryDocumentsBuilder) => QueryDocumentsBuilder): Promise<(T & PersistedDocument)[]>;
-    listMembers(requestOptions?: RequestOptions): Promise<PersistedDocument[]>;
+    listMembers<T extends object>(requestOptions?: RequestOptions): Promise<(T & PersistedDocument)[]>;
     getMembers<T extends object>(requestOptions?: RequestOptions, queryBuilderFn?: (queryBuilder: QueryDocumentsBuilder) => QueryDocumentsBuilder): Promise<(T & PersistedDocument)[]>;
     getMembers<T extends object>(queryBuilderFn?: (queryBuilder: QueryDocumentsBuilder) => QueryDocumentsBuilder): Promise<(T & PersistedDocument)[]>;
     removeMember(member: Pointer, requestOptions?: RequestOptions): Promise<void>;

@@ -328,7 +328,7 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 	}
 
 
-	listChildren( parentURI:string, requestOptions:RequestOptions = {} ):Promise<PersistedDocument[]> {
+	listChildren<T extends object>( parentURI:string, requestOptions:RequestOptions = {} ):Promise<(T & PersistedDocument)[]> {
 		return this._executeChildrenBuilder( parentURI, requestOptions, _ => _ );
 	}
 
@@ -376,7 +376,7 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 		} );
 	}
 
-	listMembers( uri:string, requestOptions:RequestOptions = {} ):Promise<PersistedDocument[]> {
+	listMembers<T extends object>( uri:string, requestOptions:RequestOptions = {} ):Promise<(T & PersistedDocument)[]> {
 		return this._executeMembersBuilder( uri, requestOptions, _ => _ );
 	}
 

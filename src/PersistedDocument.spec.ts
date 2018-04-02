@@ -440,10 +440,11 @@ describe( module( "carbonldp/PersistedDocument" ), ():void => {
 		describe( method( OBLIGATORY, "listChildren" ), ():void => {
 
 			it( hasSignature(
+				[ "T extends object" ],
 				"Retrieves the empty children of the document.", [
 					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for the request." },
 				],
-				{ type: "Promise<CarbonLDP.PersistedDocument[]>" }
+				{ type: "Promise<(T & CarbonLDP.PersistedDocument)[]>" }
 			), ():void => {} );
 
 		} );
@@ -473,10 +474,11 @@ describe( module( "carbonldp/PersistedDocument" ), ():void => {
 		describe( method( OBLIGATORY, "listMembers" ), ():void => {
 
 			it( hasSignature(
+				[ "T extends object" ],
 				"Retrieves the empty members of the document.", [
 					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for the request." },
 				],
-				{ type: "Promise<CarbonLDP.PersistedDocument[]>" }
+				{ type: "Promise<(T & CarbonLDP.PersistedDocument)[]>" }
 			), ():void => {} );
 
 		} );
