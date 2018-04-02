@@ -740,37 +740,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				expect( returned as Partial<PersistedDocument> ).toEqual( {} );
 			} );
 
-			it( "should return empty PersistedDocument when id string and a type", ():void => {
-				const documents:Documents = new Documents( context );
-
-				interface TestDocument {
-					decorated:boolean;
-
-					aFunction():void;
-				}
-
-				documents.documentDecorators.set( "https://example.com/ns#TestDocument", ( object ):TestDocument => {
-					return Object.assign( object, {
-						decorated: true,
-						aFunction():void {},
-					} );
-				} );
-
-				const returned:TestDocument & PersistedDocument = documents
-					.register<TestDocument>( "https://example.com/document/", [ "https://example.com/ns#TestDocument" ] );
-
-				expect( PersistedDocument.is( returned ) ).toBe( true );
-				expect( returned ).toEqual( jasmine.objectContaining( {
-					id: "https://example.com/document/",
-				} ) );
-
-				expect( returned as TestDocument ).toEqual( {
-					decorated: true,
-					aFunction: jasmine.any( Function ),
-				} );
-			} );
-
-			it( "should return existing PersistedDocument when id string and decorated with the type", ():void => {
+			it( "should return existing PersistedDocument when id string", ():void => {
 				const documents:Documents = new Documents( context );
 
 				interface ExistingDocument {
@@ -786,41 +756,21 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					}
 				);
 
-
-				interface TestDocument {
-					decorated:boolean;
-
-					aFunction():void;
-				}
-
-				type ExistingTestDocument = ExistingDocument & TestDocument;
-
-				documents.documentDecorators.set( "https://example.com/ns#TestDocument", ( object ):TestDocument => {
-					return Object.assign( object, {
-						decorated: true,
-						aFunction():void {},
-					} );
-				} );
-
-				const returned:ExistingTestDocument & PersistedDocument = documents
-					.register<ExistingTestDocument>( "https://example.com/document/", [ "https://example.com/ns#TestDocument" ] );
+				const returned:ExistingDocument & PersistedDocument = documents
+					.register<ExistingDocument>( "https://example.com/document/" );
 
 				expect( PersistedDocument.is( returned ) ).toBe( true );
 				expect( returned ).toEqual( jasmine.objectContaining( {
 					id: "https://example.com/document/",
 				} ) );
 
-				expect( returned as ExistingTestDocument ).toEqual( {
+				expect( returned as ExistingDocument ).toEqual( {
 					alreadyExists: true,
 					alreadyFunction: jasmine.any( Function ),
-
-					decorated: true,
-					aFunction: jasmine.any( Function ),
 				} );
 
 				expect( existingDoc ).toBe( returned );
 			} );
-
 
 		} );
 

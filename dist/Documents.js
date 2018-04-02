@@ -142,16 +142,11 @@ var Documents = (function () {
         }
         return this.pointers.delete(localID);
     };
-    Documents.prototype.register = function (id, types) {
-        var _this = this;
+    Documents.prototype.register = function (id) {
         var pointerID = this._getPointerID(id);
         if (!pointerID)
             throw new Errors.IllegalArgumentError("Cannot register a document outside the scope of this documents instance.");
         var persistedDocument = PersistedDocument_1.PersistedDocument.decorate(this.getPointer(pointerID), this);
-        if (types)
-            types
-                .map(function (type) { return _this.documentDecorators.get(type); })
-                .forEach(function (decorator) { return decorator && decorator.call(void 0, persistedDocument, _this); });
         return persistedDocument;
     };
     Documents.prototype.get = function (uri, optionsOrQueryBuilderFn, queryBuilderFn) {

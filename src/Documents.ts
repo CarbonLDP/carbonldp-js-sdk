@@ -220,17 +220,13 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 		return this.pointers.delete( localID );
 	}
 
-	register<T extends object>( id:string, types?:string[] ):T & PersistedDocument {
+	register<T extends object>( id:string ):T & PersistedDocument {
 		const pointerID:string = this._getPointerID( id );
 		if( ! pointerID ) throw new Errors.IllegalArgumentError( `Cannot register a document outside the scope of this documents instance.` );
 
 		const persistedDocument:PersistedDocument =
 			PersistedDocument.decorate( this.getPointer( pointerID ), this )
 		;
-
-		if( types ) types
-			.map( type => this.documentDecorators.get( type ) )
-			.forEach( decorator => decorator && decorator.call( void 0, persistedDocument, this ) );
 
 		return persistedDocument as T & PersistedDocument;
 	}
