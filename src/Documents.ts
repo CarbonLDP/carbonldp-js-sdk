@@ -328,22 +328,8 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 	}
 
 
-	listChildren( parentURI:string, requestOptions?:RequestOptions ):Promise<PersistedDocument[]> {
-		return promiseMethod( () => {
-			parentURI = this._getRequestURI( parentURI );
-
-			const queryContext:QueryContextBuilder = new QueryContextBuilder( this.context );
-			const childrenVar:VariableToken = queryContext.getVariable( "child" );
-
-			const pattens:PatternToken[] = [
-				new SubjectToken( queryContext.compactIRI( parentURI ) )
-					.addPredicate( new PredicateToken( queryContext.compactIRI( LDP.contains ) )
-						.addObject( childrenVar )
-					),
-			];
-
-			return this._executeSelectPatterns( parentURI, requestOptions, queryContext, "child", pattens );
-		} );
+	listChildren( parentURI:string, requestOptions:RequestOptions = {} ):Promise<PersistedDocument[]> {
+		return this._executeChildrenBuilder( parentURI, requestOptions, _ => _ );
 	}
 
 	getChildren<T extends object>( parentURI:string, requestOptions:RequestOptions, queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder ) => QueryDocumentsBuilder ):Promise<(T & PersistedDocument)[]>;
@@ -352,26 +338,9 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 		const requestOptions:RequestOptions = RequestUtils.isOptions( requestOptionsOrQueryBuilderFn ) ? requestOptionsOrQueryBuilderFn : {};
 		queryBuilderFn = Utils.isFunction( requestOptionsOrQueryBuilderFn ) ? requestOptionsOrQueryBuilderFn : queryBuilderFn;
 
-		return promiseMethod( () => {
-			parentURI = this._getRequestURI( parentURI );
+		RequestUtils.setRetrievalPreferences( { include: [ C.PreferDocumentETags ] }, requestOptions );
 
-			const queryContext:QueryContextBuilder = new QueryContextBuilder( this.context );
-			const childrenProperty:QueryProperty = queryContext
-				.addProperty( "child" )
-				.setOptional( false );
-
-			const selectChildren:SelectToken = new SelectToken( "DISTINCT" )
-				.addVariable( childrenProperty.variable )
-				.addPattern( new SubjectToken( queryContext.compactIRI( parentURI ) )
-					.addPredicate( new PredicateToken( queryContext.compactIRI( LDP.contains ) )
-						.addObject( childrenProperty.variable )
-					)
-				)
-			;
-			childrenProperty.addPattern( selectChildren );
-
-			return this._executeQueryBuilder<T>( parentURI, requestOptions, queryContext, childrenProperty, queryBuilderFn );
-		} );
+		return this._executeChildrenBuilder( parentURI, requestOptions, queryBuilderFn );
 	}
 
 	createAccessPoint<T extends object>( documentURI:string, accessPoint:T & AccessPointBase, slug?:string, requestOptions?:RequestOptions ):Promise<T & PersistedAccessPoint>;
@@ -407,33 +376,8 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 		} );
 	}
 
-	listMembers( uri:string, requestOptions?:RequestOptions ):Promise<PersistedDocument[]> {
-		return promiseMethod( () => {
-			uri = this._getRequestURI( uri );
-
-			const queryContext:QueryContextBuilder = new QueryContextBuilder( this.context );
-			const memberVar:VariableToken = queryContext.getVariable( "member" );
-
-			const membershipResource:VariableToken = queryContext.getVariable( "membershipResource" );
-			const hasMemberRelation:VariableToken = queryContext.getVariable( "hasMemberRelation" );
-			const pattens:PatternToken[] = [
-				new SubjectToken( queryContext.compactIRI( uri ) )
-					.addPredicate( new PredicateToken( queryContext.compactIRI( LDP.membershipResource ) )
-						.addObject( membershipResource )
-					)
-					.addPredicate( new PredicateToken( queryContext.compactIRI( LDP.hasMemberRelation ) )
-						.addObject( hasMemberRelation )
-					)
-				,
-				new SubjectToken( membershipResource )
-					.addPredicate( new PredicateToken( hasMemberRelation )
-						.addObject( memberVar )
-					)
-				,
-			];
-
-			return this._executeSelectPatterns( uri, requestOptions, queryContext, "member", pattens );
-		} );
+	listMembers( uri:string, requestOptions:RequestOptions = {} ):Promise<PersistedDocument[]> {
+		return this._executeMembersBuilder( uri, requestOptions, _ => _ );
 	}
 
 	getMembers<T extends object>( uri:string, requestOptions:RequestOptions, queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder ) => QueryDocumentsBuilder ):Promise<(T & PersistedDocument)[]>;
@@ -442,36 +386,9 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 		const requestOptions:RequestOptions = RequestUtils.isOptions( requestOptionsOrQueryBuilderFn ) ? requestOptionsOrQueryBuilderFn : {};
 		queryBuilderFn = Utils.isFunction( requestOptionsOrQueryBuilderFn ) ? requestOptionsOrQueryBuilderFn : queryBuilderFn;
 
-		return promiseMethod( () => {
-			uri = this._getRequestURI( uri );
+		RequestUtils.setRetrievalPreferences( { include: [ C.PreferDocumentETags ] }, requestOptions );
 
-			const queryContext:QueryContextBuilder = new QueryContextBuilder( this.context );
-			const membersProperty:QueryProperty = queryContext
-				.addProperty( "member" )
-				.setOptional( false );
-
-			const membershipResource:VariableToken = queryContext.getVariable( "membershipResource" );
-			const hasMemberRelation:VariableToken = queryContext.getVariable( "hasMemberRelation" );
-			const selectMembers:SelectToken = new SelectToken( "DISTINCT" )
-				.addVariable( membersProperty.variable )
-				.addPattern( new SubjectToken( queryContext.compactIRI( uri ) )
-					.addPredicate( new PredicateToken( queryContext.compactIRI( LDP.membershipResource ) )
-						.addObject( membershipResource )
-					)
-					.addPredicate( new PredicateToken( queryContext.compactIRI( LDP.hasMemberRelation ) )
-						.addObject( hasMemberRelation )
-					)
-				)
-				.addPattern( new SubjectToken( membershipResource )
-					.addPredicate( new PredicateToken( hasMemberRelation )
-						.addObject( membersProperty.variable )
-					)
-				)
-			;
-			membersProperty.addPattern( selectMembers );
-
-			return this._executeQueryBuilder<T>( uri, requestOptions, queryContext, membersProperty, queryBuilderFn );
-		} );
+		return this._executeMembersBuilder( uri, requestOptions, queryBuilderFn );
 	}
 
 	addMember( documentURI:string, member:Pointer, requestOptions?:RequestOptions ):Promise<void>;
@@ -518,7 +435,7 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 				include: [ C.PreferSelectedMembershipTriples ],
 				omit: [ C.PreferMembershipTriples ],
 			};
-			RequestUtils.setRetrievalPreferences( containerRetrievalPreferences, requestOptions, false );
+			RequestUtils.setRetrievalPreferences( containerRetrievalPreferences, requestOptions );
 
 			const freeResources:FreeResources = FreeResources.create( this );
 			freeResources.createResourceFrom( RemoveMemberAction.create( pointers ) );
@@ -547,7 +464,7 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 					C.PreferContainer,
 				],
 			};
-			RequestUtils.setRetrievalPreferences( containerRetrievalPreferences, requestOptions, false );
+			RequestUtils.setRetrievalPreferences( containerRetrievalPreferences, requestOptions );
 
 			return this
 				._sendRequest( HTTPMethod.DELETE, documentURI, requestOptions )
@@ -827,7 +744,11 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 		if( documentResources.length === 0 ) throw new BadResponseError( `The RDFDocument: ${ rdfDocument[ "@id" ] }, doesn't contain a document resource.`, response );
 		if( documentResources.length > 1 ) throw new BadResponseError( `The RDFDocument: ${ rdfDocument[ "@id" ] }, contains more than one document resource.`, response );
 
-		return new JSONLDCompacter( this ).compactDocument( rdfDocument );
+		const persistedDocument:T & PersistedDocument = new JSONLDCompacter( this )
+			.compactDocument( rdfDocument );
+		persistedDocument._resolved = true;
+
+		return persistedDocument;
 	}
 
 	_getFreeResources( nodes:RDFNode[] ):FreeResources {
@@ -921,6 +842,8 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 		const propertyValue:ValuesToken = new ValuesToken().addValues( documentProperty.variable, queryContext.compactIRI( uri ) );
 		documentProperty.addPattern( propertyValue );
 
+		RequestUtils.setRetrievalPreferences( { include: [ C.PreferDocumentETags ] }, requestOptions );
+
 		return this
 			._executeQueryBuilder<T>( uri, requestOptions, queryContext, documentProperty, queryBuilderFn )
 			.then<T & PersistedDocument>( ( documents ) => documents[ 0 ] );
@@ -994,6 +917,8 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 
 		this._addRefreshQueryPatterns( queryContext, constructPatterns, persistedDocument, targetName );
 
+		RequestUtils.setRetrievalPreferences( { include: [ C.PreferDocumentETags ] }, requestOptions );
+
 		return this
 			._executeConstructPatterns<T>( uri, requestOptions, queryContext, targetName, constructPatterns.patterns, persistedDocument )
 			.then<T & PersistedDocument>( ( documents ) => documents[ 0 ] );
@@ -1030,13 +955,66 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 	}
 
 
+	private _executeChildrenBuilder<T extends object>( uri:string, requestOptions:RequestOptions, queryBuilderFn?:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<(T & PersistedDocument)[]> {
+		return promiseMethod( () => {
+			uri = this._getRequestURI( uri );
+
+			const queryContext:QueryContextBuilder = new QueryContextBuilder( this.context );
+			const childrenProperty:QueryProperty = queryContext
+				.addProperty( "child" )
+				.setOptional( false );
+
+			const selectChildren:SelectToken = new SelectToken( "DISTINCT" )
+				.addVariable( childrenProperty.variable )
+				.addPattern( new SubjectToken( queryContext.compactIRI( uri ) )
+					.addPredicate( new PredicateToken( queryContext.compactIRI( LDP.contains ) )
+						.addObject( childrenProperty.variable )
+					)
+				)
+			;
+			childrenProperty.addPattern( selectChildren );
+
+			return this._executeQueryBuilder<T>( uri, requestOptions, queryContext, childrenProperty, queryBuilderFn );
+		} );
+	}
+
+	private _executeMembersBuilder<T extends object>( uri:string, requestOptions:RequestOptions, queryBuilderFn?:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<(T & PersistedDocument)[]> {
+		return promiseMethod( () => {
+			uri = this._getRequestURI( uri );
+
+			const queryContext:QueryContextBuilder = new QueryContextBuilder( this.context );
+			const membersProperty:QueryProperty = queryContext
+				.addProperty( "member" )
+				.setOptional( false );
+
+			const membershipResource:VariableToken = queryContext.getVariable( "membershipResource" );
+			const hasMemberRelation:VariableToken = queryContext.getVariable( "hasMemberRelation" );
+			const selectMembers:SelectToken = new SelectToken( "DISTINCT" )
+				.addVariable( membersProperty.variable )
+				.addPattern( new SubjectToken( queryContext.compactIRI( uri ) )
+					.addPredicate( new PredicateToken( queryContext.compactIRI( LDP.membershipResource ) )
+						.addObject( membershipResource )
+					)
+					.addPredicate( new PredicateToken( queryContext.compactIRI( LDP.hasMemberRelation ) )
+						.addObject( hasMemberRelation )
+					)
+				)
+				.addPattern( new SubjectToken( membershipResource )
+					.addPredicate( new PredicateToken( hasMemberRelation )
+						.addObject( membersProperty.variable )
+					)
+				)
+			;
+			membersProperty.addPattern( selectMembers );
+
+			return this._executeQueryBuilder<T>( uri, requestOptions, queryContext, membersProperty, queryBuilderFn );
+		} );
+	}
+
 	private _executeQueryBuilder<T extends object>( uri:string, requestOptions:RequestOptions, queryContext:QueryContextBuilder, targetProperty:QueryProperty, queryBuilderFn?:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<(T & PersistedDocument)[]> {
-		type Builder = QueryDocumentBuilder | QueryDocumentBuilder;
-		// tslint:disable: variable-name
 		const Builder:typeof QueryDocumentBuilder = targetProperty.name === "document" ?
 			QueryDocumentBuilder : QueryDocumentsBuilder;
-		// tslint:enable: variable-name
-		const queryBuilder:Builder = new Builder( queryContext, targetProperty );
+		const queryBuilder:QueryDocumentBuilder | QueryDocumentBuilder = new Builder( queryContext, targetProperty );
 
 		targetProperty.setType( queryBuilderFn ?
 			QueryPropertyType.PARTIAL :
@@ -1122,8 +1100,7 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 		const triples:SubjectToken[] = getAllTriples( constructPatterns );
 		construct.addTriple( ...triples );
 
-		RequestUtils.setRetrievalPreferences( { include: [ C.PreferResultsContext ] }, requestOptions, false );
-		RequestUtils.setRetrievalPreferences( { include: [ C.PreferDocumentETags ] }, requestOptions, false );
+		RequestUtils.setRetrievalPreferences( { include: [ C.PreferResultsContext ] }, requestOptions );
 
 		return this
 			.executeRawCONSTRUCTQuery( uri, query.toString(), requestOptions )
@@ -1157,6 +1134,9 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 						const relatedDocument:PersistedDocument = documentMetadata.relatedDocument || documentMetadata[ C.relatedDocument ];
 						const eTag:string = documentMetadata.eTag || documentMetadata[ C.eTag ];
 
+						if( ! eTag ) return;
+						relatedDocument._resolved = true;
+
 						if( relatedDocument._eTag === void 0 ) relatedDocument._eTag = eTag;
 						if( relatedDocument._eTag !== eTag ) relatedDocument._eTag = null;
 					} ) );
@@ -1172,27 +1152,6 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 
 				return new JSONLDCompacter( this, targetName, queryContext )
 					.compactDocuments( rdfDocuments, targetDocuments );
-			} );
-	}
-
-	private _executeSelectPatterns( uri:string, requestOptions:RequestOptions, queryContext:QueryContext, targetName:string, selectPatterns:PatternToken[] ):Promise<PersistedDocument[]> {
-		const targetVar:VariableToken = queryContext.getVariable( targetName );
-		const select:SelectToken = new SelectToken( "DISTINCT" )
-			.addVariable( targetVar )
-			.addPattern( ...selectPatterns )
-		;
-
-		const query:QueryToken = new QueryToken( select as any )
-			.addPrologues( ...queryContext.getPrologues() );
-
-		return this
-			.executeSELECTQuery<{ [ docs:string ]:Pointer }>( uri, query.toString(), requestOptions )
-			.then<PersistedDocument[]>( ( results ) => {
-				const name:string = targetVar.toString().slice( 1 );
-				return results
-					.bindings
-					.map( x => x[ name ] )
-					.map( x => PersistedDocument.decorate( x, this ) );
 			} );
 	}
 

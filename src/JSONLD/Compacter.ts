@@ -90,7 +90,6 @@ export class JSONLDCompacter {
 
 		compactedDocuments.forEach( persistedDocument => {
 			persistedDocument._syncSavedFragments();
-			persistedDocument._resolved = true;
 
 			persistedDocument.types
 				.map( type => this.documents.documentDecorators.get( type ) )

@@ -231,37 +231,14 @@ var Documents = (function () {
         });
     };
     Documents.prototype.listChildren = function (parentURI, requestOptions) {
-        var _this = this;
-        return Utils_3.promiseMethod(function () {
-            parentURI = _this._getRequestURI(parentURI);
-            var queryContext = new QueryContextBuilder_1.QueryContextBuilder(_this.context);
-            var childrenVar = queryContext.getVariable("child");
-            var pattens = [
-                new tokens_1.SubjectToken(queryContext.compactIRI(parentURI))
-                    .addPredicate(new tokens_1.PredicateToken(queryContext.compactIRI(LDP_1.LDP.contains))
-                    .addObject(childrenVar)),
-            ];
-            return _this._executeSelectPatterns(parentURI, requestOptions, queryContext, "child", pattens);
-        });
+        if (requestOptions === void 0) { requestOptions = {}; }
+        return this._executeChildrenBuilder(parentURI, requestOptions, function (_) { return _; });
     };
     Documents.prototype.getChildren = function (parentURI, requestOptionsOrQueryBuilderFn, queryBuilderFn) {
-        var _this = this;
         var requestOptions = Request_1.RequestUtils.isOptions(requestOptionsOrQueryBuilderFn) ? requestOptionsOrQueryBuilderFn : {};
         queryBuilderFn = Utils.isFunction(requestOptionsOrQueryBuilderFn) ? requestOptionsOrQueryBuilderFn : queryBuilderFn;
-        return Utils_3.promiseMethod(function () {
-            parentURI = _this._getRequestURI(parentURI);
-            var queryContext = new QueryContextBuilder_1.QueryContextBuilder(_this.context);
-            var childrenProperty = queryContext
-                .addProperty("child")
-                .setOptional(false);
-            var selectChildren = new tokens_1.SelectToken("DISTINCT")
-                .addVariable(childrenProperty.variable)
-                .addPattern(new tokens_1.SubjectToken(queryContext.compactIRI(parentURI))
-                .addPredicate(new tokens_1.PredicateToken(queryContext.compactIRI(LDP_1.LDP.contains))
-                .addObject(childrenProperty.variable)));
-            childrenProperty.addPattern(selectChildren);
-            return _this._executeQueryBuilder(parentURI, requestOptions, queryContext, childrenProperty, queryBuilderFn);
-        });
+        Request_1.RequestUtils.setRetrievalPreferences({ include: [C_1.C.PreferDocumentETags] }, requestOptions);
+        return this._executeChildrenBuilder(parentURI, requestOptions, queryBuilderFn);
     };
     Documents.prototype.createAccessPoint = function (documentURI, accessPoint, slugOrRequestOptions, requestOptions) {
         var _this = this;
@@ -291,51 +268,14 @@ var Documents = (function () {
         });
     };
     Documents.prototype.listMembers = function (uri, requestOptions) {
-        var _this = this;
-        return Utils_3.promiseMethod(function () {
-            uri = _this._getRequestURI(uri);
-            var queryContext = new QueryContextBuilder_1.QueryContextBuilder(_this.context);
-            var memberVar = queryContext.getVariable("member");
-            var membershipResource = queryContext.getVariable("membershipResource");
-            var hasMemberRelation = queryContext.getVariable("hasMemberRelation");
-            var pattens = [
-                new tokens_1.SubjectToken(queryContext.compactIRI(uri))
-                    .addPredicate(new tokens_1.PredicateToken(queryContext.compactIRI(LDP_1.LDP.membershipResource))
-                    .addObject(membershipResource))
-                    .addPredicate(new tokens_1.PredicateToken(queryContext.compactIRI(LDP_1.LDP.hasMemberRelation))
-                    .addObject(hasMemberRelation)),
-                new tokens_1.SubjectToken(membershipResource)
-                    .addPredicate(new tokens_1.PredicateToken(hasMemberRelation)
-                    .addObject(memberVar)),
-            ];
-            return _this._executeSelectPatterns(uri, requestOptions, queryContext, "member", pattens);
-        });
+        if (requestOptions === void 0) { requestOptions = {}; }
+        return this._executeMembersBuilder(uri, requestOptions, function (_) { return _; });
     };
     Documents.prototype.getMembers = function (uri, requestOptionsOrQueryBuilderFn, queryBuilderFn) {
-        var _this = this;
         var requestOptions = Request_1.RequestUtils.isOptions(requestOptionsOrQueryBuilderFn) ? requestOptionsOrQueryBuilderFn : {};
         queryBuilderFn = Utils.isFunction(requestOptionsOrQueryBuilderFn) ? requestOptionsOrQueryBuilderFn : queryBuilderFn;
-        return Utils_3.promiseMethod(function () {
-            uri = _this._getRequestURI(uri);
-            var queryContext = new QueryContextBuilder_1.QueryContextBuilder(_this.context);
-            var membersProperty = queryContext
-                .addProperty("member")
-                .setOptional(false);
-            var membershipResource = queryContext.getVariable("membershipResource");
-            var hasMemberRelation = queryContext.getVariable("hasMemberRelation");
-            var selectMembers = new tokens_1.SelectToken("DISTINCT")
-                .addVariable(membersProperty.variable)
-                .addPattern(new tokens_1.SubjectToken(queryContext.compactIRI(uri))
-                .addPredicate(new tokens_1.PredicateToken(queryContext.compactIRI(LDP_1.LDP.membershipResource))
-                .addObject(membershipResource))
-                .addPredicate(new tokens_1.PredicateToken(queryContext.compactIRI(LDP_1.LDP.hasMemberRelation))
-                .addObject(hasMemberRelation)))
-                .addPattern(new tokens_1.SubjectToken(membershipResource)
-                .addPredicate(new tokens_1.PredicateToken(hasMemberRelation)
-                .addObject(membersProperty.variable)));
-            membersProperty.addPattern(selectMembers);
-            return _this._executeQueryBuilder(uri, requestOptions, queryContext, membersProperty, queryBuilderFn);
-        });
+        Request_1.RequestUtils.setRetrievalPreferences({ include: [C_1.C.PreferDocumentETags] }, requestOptions);
+        return this._executeMembersBuilder(uri, requestOptions, queryBuilderFn);
     };
     Documents.prototype.addMember = function (documentURI, memberORUri, requestOptions) {
         if (requestOptions === void 0) { requestOptions = {}; }
@@ -373,7 +313,7 @@ var Documents = (function () {
                 include: [C_1.C.PreferSelectedMembershipTriples],
                 omit: [C_1.C.PreferMembershipTriples],
             };
-            Request_1.RequestUtils.setRetrievalPreferences(containerRetrievalPreferences, requestOptions, false);
+            Request_1.RequestUtils.setRetrievalPreferences(containerRetrievalPreferences, requestOptions);
             var freeResources = FreeResources_1.FreeResources.create(_this);
             freeResources.createResourceFrom(RemoveMemberAction_1.RemoveMemberAction.create(pointers));
             var body = JSON.stringify(freeResources);
@@ -399,7 +339,7 @@ var Documents = (function () {
                     C_1.C.PreferContainer,
                 ],
             };
-            Request_1.RequestUtils.setRetrievalPreferences(containerRetrievalPreferences, requestOptions, false);
+            Request_1.RequestUtils.setRetrievalPreferences(containerRetrievalPreferences, requestOptions);
             return _this
                 ._sendRequest(HTTPMethod_1.HTTPMethod.DELETE, documentURI, requestOptions)
                 .then(function () { });
@@ -657,7 +597,10 @@ var Documents = (function () {
             throw new BadResponseError_1.BadResponseError("The RDFDocument: " + rdfDocument["@id"] + ", doesn't contain a document resource.", response);
         if (documentResources.length > 1)
             throw new BadResponseError_1.BadResponseError("The RDFDocument: " + rdfDocument["@id"] + ", contains more than one document resource.", response);
-        return new Compacter_1.JSONLDCompacter(this).compactDocument(rdfDocument);
+        var persistedDocument = new Compacter_1.JSONLDCompacter(this)
+            .compactDocument(rdfDocument);
+        persistedDocument._resolved = true;
+        return persistedDocument;
     };
     Documents.prototype._getFreeResources = function (nodes) {
         var freeResourcesDocument = FreeResources_1.FreeResources.create(this);
@@ -740,6 +683,7 @@ var Documents = (function () {
             .setOptional(false);
         var propertyValue = new tokens_1.ValuesToken().addValues(documentProperty.variable, queryContext.compactIRI(uri));
         documentProperty.addPattern(propertyValue);
+        Request_1.RequestUtils.setRetrievalPreferences({ include: [C_1.C.PreferDocumentETags] }, requestOptions);
         return this
             ._executeQueryBuilder(uri, requestOptions, queryContext, documentProperty, queryBuilderFn)
             .then(function (documents) { return documents[0]; });
@@ -801,6 +745,7 @@ var Documents = (function () {
             .addPattern(new tokens_1.ValuesToken()
             .addValues(queryContext.getVariable(targetName), new tokens_1.IRIToken(uri)));
         this._addRefreshQueryPatterns(queryContext, constructPatterns, persistedDocument, targetName);
+        Request_1.RequestUtils.setRetrievalPreferences({ include: [C_1.C.PreferDocumentETags] }, requestOptions);
         return this
             ._executeConstructPatterns(uri, requestOptions, queryContext, targetName, constructPatterns.patterns, persistedDocument)
             .then(function (documents) { return documents[0]; });
@@ -824,6 +769,47 @@ var Documents = (function () {
                 return;
             _this._addRefreshQueryPatterns(queryContext, propertyPattern, propertyFragment, path);
             var _a;
+        });
+    };
+    Documents.prototype._executeChildrenBuilder = function (uri, requestOptions, queryBuilderFn) {
+        var _this = this;
+        return Utils_3.promiseMethod(function () {
+            uri = _this._getRequestURI(uri);
+            var queryContext = new QueryContextBuilder_1.QueryContextBuilder(_this.context);
+            var childrenProperty = queryContext
+                .addProperty("child")
+                .setOptional(false);
+            var selectChildren = new tokens_1.SelectToken("DISTINCT")
+                .addVariable(childrenProperty.variable)
+                .addPattern(new tokens_1.SubjectToken(queryContext.compactIRI(uri))
+                .addPredicate(new tokens_1.PredicateToken(queryContext.compactIRI(LDP_1.LDP.contains))
+                .addObject(childrenProperty.variable)));
+            childrenProperty.addPattern(selectChildren);
+            return _this._executeQueryBuilder(uri, requestOptions, queryContext, childrenProperty, queryBuilderFn);
+        });
+    };
+    Documents.prototype._executeMembersBuilder = function (uri, requestOptions, queryBuilderFn) {
+        var _this = this;
+        return Utils_3.promiseMethod(function () {
+            uri = _this._getRequestURI(uri);
+            var queryContext = new QueryContextBuilder_1.QueryContextBuilder(_this.context);
+            var membersProperty = queryContext
+                .addProperty("member")
+                .setOptional(false);
+            var membershipResource = queryContext.getVariable("membershipResource");
+            var hasMemberRelation = queryContext.getVariable("hasMemberRelation");
+            var selectMembers = new tokens_1.SelectToken("DISTINCT")
+                .addVariable(membersProperty.variable)
+                .addPattern(new tokens_1.SubjectToken(queryContext.compactIRI(uri))
+                .addPredicate(new tokens_1.PredicateToken(queryContext.compactIRI(LDP_1.LDP.membershipResource))
+                .addObject(membershipResource))
+                .addPredicate(new tokens_1.PredicateToken(queryContext.compactIRI(LDP_1.LDP.hasMemberRelation))
+                .addObject(hasMemberRelation)))
+                .addPattern(new tokens_1.SubjectToken(membershipResource)
+                .addPredicate(new tokens_1.PredicateToken(hasMemberRelation)
+                .addObject(membersProperty.variable)));
+            membersProperty.addPattern(selectMembers);
+            return _this._executeQueryBuilder(uri, requestOptions, queryContext, membersProperty, queryBuilderFn);
         });
     };
     Documents.prototype._executeQueryBuilder = function (uri, requestOptions, queryContext, targetProperty, queryBuilderFn) {
@@ -908,8 +894,7 @@ var Documents = (function () {
         var query = (_b = new tokens_1.QueryToken(construct)).addPrologues.apply(_b, queryContext.getPrologues());
         var triples = Utils_2.getAllTriples(constructPatterns);
         construct.addTriple.apply(construct, triples);
-        Request_1.RequestUtils.setRetrievalPreferences({ include: [C_1.C.PreferResultsContext] }, requestOptions, false);
-        Request_1.RequestUtils.setRetrievalPreferences({ include: [C_1.C.PreferDocumentETags] }, requestOptions, false);
+        Request_1.RequestUtils.setRetrievalPreferences({ include: [C_1.C.PreferResultsContext] }, requestOptions);
         return this
             .executeRawCONSTRUCTQuery(uri, query.toString(), requestOptions)
             .then(function (jsonldString) {
@@ -936,6 +921,9 @@ var Documents = (function () {
                     return;
                 var relatedDocument = documentMetadata.relatedDocument || documentMetadata[C_1.C.relatedDocument];
                 var eTag = documentMetadata.eTag || documentMetadata[C_1.C.eTag];
+                if (!eTag)
+                    return;
+                relatedDocument._resolved = true;
                 if (relatedDocument._eTag === void 0)
                     relatedDocument._eTag = eTag;
                 if (relatedDocument._eTag !== eTag)
@@ -949,23 +937,6 @@ var Documents = (function () {
                 .filter(function (x) { return targetSet.has(x["@id"]); });
             return new Compacter_1.JSONLDCompacter(_this, targetName, queryContext)
                 .compactDocuments(rdfDocuments, targetDocuments);
-        });
-        var _a, _b;
-    };
-    Documents.prototype._executeSelectPatterns = function (uri, requestOptions, queryContext, targetName, selectPatterns) {
-        var _this = this;
-        var targetVar = queryContext.getVariable(targetName);
-        var select = (_a = new tokens_1.SelectToken("DISTINCT")
-            .addVariable(targetVar)).addPattern.apply(_a, selectPatterns);
-        var query = (_b = new tokens_1.QueryToken(select)).addPrologues.apply(_b, queryContext.getPrologues());
-        return this
-            .executeSELECTQuery(uri, query.toString(), requestOptions)
-            .then(function (results) {
-            var name = targetVar.toString().slice(1);
-            return results
-                .bindings
-                .map(function (x) { return x[name]; })
-                .map(function (x) { return PersistedDocument_1.PersistedDocument.decorate(x, _this); });
         });
         var _a, _b;
     };

@@ -125,9 +125,10 @@ export declare class Documents implements PointerLibrary, PointerValidator, Obje
     private _refreshFullDocument<T>(persistedDocument, requestOptions);
     private _refreshPartialDocument<T>(persistedDocument, requestOptions);
     private _addRefreshQueryPatterns(queryContext, parentAdder, resource, parentName);
+    private _executeChildrenBuilder<T>(uri, requestOptions, queryBuilderFn?);
+    private _executeMembersBuilder<T>(uri, requestOptions, queryBuilderFn?);
     private _executeQueryBuilder<T>(uri, requestOptions, queryContext, targetProperty, queryBuilderFn?);
     private _executeConstructPatterns<T>(uri, requestOptions, queryContext, targetName, constructPatterns, targetDocument?);
-    private _executeSelectPatterns(uri, requestOptions, queryContext, targetName, selectPatterns);
     private _persistChildDocument<T>(parentURI, childObject, slug, requestOptions);
     private _persistAccessPoint<T>(documentURI, accessPoint, slug, requestOptions);
     private _persistDocument<T, W>(parentURI, slug, document, requestOptions);
