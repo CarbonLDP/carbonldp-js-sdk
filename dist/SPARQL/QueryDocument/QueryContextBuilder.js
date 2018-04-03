@@ -67,8 +67,10 @@ var QueryContextBuilder = (function (_super) {
             return _super.prototype.hasSchemaFor.call(this, object);
         if (!this.hasProperty(path))
             return false;
-        var property = this.getProperty(path);
-        return property.getType() !== void 0;
+        var type = this
+            .getProperty(path)
+            .getType();
+        return type !== void 0 && type !== QueryProperty_1.QueryPropertyType.EMPTY;
     };
     QueryContextBuilder.prototype.getSchemaFor = function (object, path) {
         if (path === void 0)
@@ -81,6 +83,8 @@ var QueryContextBuilder = (function (_super) {
                 case QueryProperty_1.QueryPropertyType.FULL:
                 case QueryProperty_1.QueryPropertyType.ALL:
                     return _super.prototype.getSchemaFor.call(this, object);
+                case QueryProperty_1.QueryPropertyType.EMPTY:
+                    return new ObjectSchema_1.DigestedObjectSchema();
                 default:
                     throw new Errors_1.IllegalArgumentError("Property \"" + path + "\" is not a resource.");
             }

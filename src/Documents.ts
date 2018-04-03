@@ -329,7 +329,7 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 
 
 	listChildren<T extends object>( parentURI:string, requestOptions:RequestOptions = {} ):Promise<(T & PersistedDocument)[]> {
-		return this._executeChildrenBuilder( parentURI, requestOptions, _ => _ );
+		return this._executeChildrenBuilder( parentURI, requestOptions, emptyQueryBuildFn );
 	}
 
 	getChildren<T extends object>( parentURI:string, requestOptions:RequestOptions, queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder ) => QueryDocumentsBuilder ):Promise<(T & PersistedDocument)[]>;
@@ -377,7 +377,7 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 	}
 
 	listMembers<T extends object>( uri:string, requestOptions:RequestOptions = {} ):Promise<(T & PersistedDocument)[]> {
-		return this._executeMembersBuilder( uri, requestOptions, _ => _ );
+		return this._executeMembersBuilder( uri, requestOptions, emptyQueryBuildFn );
 	}
 
 	getMembers<T extends object>( uri:string, requestOptions:RequestOptions, queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder ) => QueryDocumentsBuilder ):Promise<(T & PersistedDocument)[]>;
@@ -1017,7 +1017,9 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 		const queryBuilder:QueryDocumentBuilder | QueryDocumentBuilder = new Builder( queryContext, targetProperty );
 
 		targetProperty.setType( queryBuilderFn ?
-			QueryPropertyType.PARTIAL :
+			queryBuilderFn === emptyQueryBuildFn ?
+				QueryPropertyType.EMPTY :
+				QueryPropertyType.PARTIAL :
 			QueryPropertyType.FULL
 		);
 
@@ -1426,3 +1428,5 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 			.catch( this._parseErrorResponse.bind( this ) );
 	}
 }
+
+const emptyQueryBuildFn:( queryBuilder:QueryDocumentsBuilder ) => QueryDocumentsBuilder = _ => _;

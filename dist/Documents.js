@@ -232,7 +232,7 @@ var Documents = (function () {
     };
     Documents.prototype.listChildren = function (parentURI, requestOptions) {
         if (requestOptions === void 0) { requestOptions = {}; }
-        return this._executeChildrenBuilder(parentURI, requestOptions, function (_) { return _; });
+        return this._executeChildrenBuilder(parentURI, requestOptions, emptyQueryBuildFn);
     };
     Documents.prototype.getChildren = function (parentURI, requestOptionsOrQueryBuilderFn, queryBuilderFn) {
         var requestOptions = Request_1.RequestUtils.isOptions(requestOptionsOrQueryBuilderFn) ? requestOptionsOrQueryBuilderFn : {};
@@ -269,7 +269,7 @@ var Documents = (function () {
     };
     Documents.prototype.listMembers = function (uri, requestOptions) {
         if (requestOptions === void 0) { requestOptions = {}; }
-        return this._executeMembersBuilder(uri, requestOptions, function (_) { return _; });
+        return this._executeMembersBuilder(uri, requestOptions, emptyQueryBuildFn);
     };
     Documents.prototype.getMembers = function (uri, requestOptionsOrQueryBuilderFn, queryBuilderFn) {
         var requestOptions = Request_1.RequestUtils.isOptions(requestOptionsOrQueryBuilderFn) ? requestOptionsOrQueryBuilderFn : {};
@@ -817,7 +817,9 @@ var Documents = (function () {
             QueryDocumentBuilder_1.QueryDocumentBuilder : QueryDocumentsBuilder_1.QueryDocumentsBuilder;
         var queryBuilder = new Builder(queryContext, targetProperty);
         targetProperty.setType(queryBuilderFn ?
-            QueryProperty_1.QueryPropertyType.PARTIAL :
+            queryBuilderFn === emptyQueryBuildFn ?
+                QueryProperty_1.QueryPropertyType.EMPTY :
+                QueryProperty_1.QueryPropertyType.PARTIAL :
             QueryProperty_1.QueryPropertyType.FULL);
         if (queryBuilderFn && queryBuilderFn.call(void 0, queryBuilder) !== queryBuilder)
             throw new Errors.IllegalArgumentError("The provided query builder was not returned");
@@ -1180,5 +1182,6 @@ var Documents = (function () {
     return Documents;
 }());
 exports.Documents = Documents;
+var emptyQueryBuildFn = function (_) { return _; };
 
 //# sourceMappingURL=Documents.js.map

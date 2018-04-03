@@ -4914,6 +4914,7 @@ var QueryPropertyType;
     QueryPropertyType[QueryPropertyType["FULL"] = 0] = "FULL";
     QueryPropertyType[QueryPropertyType["PARTIAL"] = 1] = "PARTIAL";
     QueryPropertyType[QueryPropertyType["ALL"] = 2] = "ALL";
+    QueryPropertyType[QueryPropertyType["EMPTY"] = 3] = "EMPTY";
 })(QueryPropertyType = exports.QueryPropertyType || (exports.QueryPropertyType = {}));
 var QueryProperty = (function () {
     function QueryProperty(context, name) {
@@ -4934,9 +4935,8 @@ var QueryProperty = (function () {
     };
     QueryProperty.prototype.getPatterns = function () {
         var patterns = this._patterns.slice();
-        if (this._type !== void 0) {
-            var fn = this._type === QueryPropertyType.PARTIAL ? Utils_1.createTypesPattern :
-                this._type === QueryPropertyType.FULL ? Utils_1.createGraphPattern : Utils_1.createAllPattern;
+        var fn = getFunctionPattern(this.getType());
+        if (fn) {
             var index = patterns.findIndex(function (pattern) { return pattern === void 0; });
             patterns[index] = fn(this._context, this.name);
         }
@@ -4976,6 +4976,19 @@ var QueryProperty = (function () {
     return QueryProperty;
 }());
 exports.QueryProperty = QueryProperty;
+function getFunctionPattern(type) {
+    switch (type) {
+        case QueryPropertyType.ALL:
+            return Utils_1.createAllPattern;
+        case QueryPropertyType.FULL:
+            return Utils_1.createGraphPattern;
+        case QueryPropertyType.EMPTY:
+        case QueryPropertyType.PARTIAL:
+            return Utils_1.createTypesPattern;
+        default:
+            return null;
+    }
+}
 
 
 /***/ }),
@@ -7427,8 +7440,10 @@ var QueryContextBuilder = (function (_super) {
             return _super.prototype.hasSchemaFor.call(this, object);
         if (!this.hasProperty(path))
             return false;
-        var property = this.getProperty(path);
-        return property.getType() !== void 0;
+        var type = this
+            .getProperty(path)
+            .getType();
+        return type !== void 0 && type !== QueryProperty_1.QueryPropertyType.EMPTY;
     };
     QueryContextBuilder.prototype.getSchemaFor = function (object, path) {
         if (path === void 0)
@@ -7441,6 +7456,8 @@ var QueryContextBuilder = (function (_super) {
                 case QueryProperty_1.QueryPropertyType.FULL:
                 case QueryProperty_1.QueryPropertyType.ALL:
                     return _super.prototype.getSchemaFor.call(this, object);
+                case QueryProperty_1.QueryPropertyType.EMPTY:
+                    return new ObjectSchema_1.DigestedObjectSchema();
                 default:
                     throw new Errors_1.IllegalArgumentError("Property \"" + path + "\" is not a resource.");
             }
@@ -10269,7 +10286,7 @@ var Documents = (function () {
     };
     Documents.prototype.listChildren = function (parentURI, requestOptions) {
         if (requestOptions === void 0) { requestOptions = {}; }
-        return this._executeChildrenBuilder(parentURI, requestOptions, function (_) { return _; });
+        return this._executeChildrenBuilder(parentURI, requestOptions, emptyQueryBuildFn);
     };
     Documents.prototype.getChildren = function (parentURI, requestOptionsOrQueryBuilderFn, queryBuilderFn) {
         var requestOptions = Request_1.RequestUtils.isOptions(requestOptionsOrQueryBuilderFn) ? requestOptionsOrQueryBuilderFn : {};
@@ -10306,7 +10323,7 @@ var Documents = (function () {
     };
     Documents.prototype.listMembers = function (uri, requestOptions) {
         if (requestOptions === void 0) { requestOptions = {}; }
-        return this._executeMembersBuilder(uri, requestOptions, function (_) { return _; });
+        return this._executeMembersBuilder(uri, requestOptions, emptyQueryBuildFn);
     };
     Documents.prototype.getMembers = function (uri, requestOptionsOrQueryBuilderFn, queryBuilderFn) {
         var requestOptions = Request_1.RequestUtils.isOptions(requestOptionsOrQueryBuilderFn) ? requestOptionsOrQueryBuilderFn : {};
@@ -10854,7 +10871,9 @@ var Documents = (function () {
             QueryDocumentBuilder_1.QueryDocumentBuilder : QueryDocumentsBuilder_1.QueryDocumentsBuilder;
         var queryBuilder = new Builder(queryContext, targetProperty);
         targetProperty.setType(queryBuilderFn ?
-            QueryProperty_1.QueryPropertyType.PARTIAL :
+            queryBuilderFn === emptyQueryBuildFn ?
+                QueryProperty_1.QueryPropertyType.EMPTY :
+                QueryProperty_1.QueryPropertyType.PARTIAL :
             QueryProperty_1.QueryPropertyType.FULL);
         if (queryBuilderFn && queryBuilderFn.call(void 0, queryBuilder) !== queryBuilder)
             throw new Errors.IllegalArgumentError("The provided query builder was not returned");
@@ -11217,6 +11236,7 @@ var Documents = (function () {
     return Documents;
 }());
 exports.Documents = Documents;
+var emptyQueryBuildFn = function (_) { return _; };
 
 
 /***/ }),

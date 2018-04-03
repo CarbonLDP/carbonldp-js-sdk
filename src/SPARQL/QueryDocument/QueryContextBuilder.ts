@@ -70,8 +70,11 @@ export class QueryContextBuilder extends QueryContext {
 		if( path === void 0 ) return super.hasSchemaFor( object );
 		if( ! this.hasProperty( path ) ) return false;
 
-		const property:QueryProperty = this.getProperty( path );
-		return property.getType() !== void 0;
+		const type:QueryPropertyType = this
+			.getProperty( path )
+			.getType();
+
+		return type !== void 0 && type !== QueryPropertyType.EMPTY;
 	}
 
 	getSchemaFor( object:object, path?:string ):DigestedObjectSchema {
@@ -86,6 +89,9 @@ export class QueryContextBuilder extends QueryContext {
 				case QueryPropertyType.FULL:
 				case QueryPropertyType.ALL:
 					return super.getSchemaFor( object );
+
+				case QueryPropertyType.EMPTY:
+					return new DigestedObjectSchema();
 
 				default:
 					throw new IllegalArgumentError( `Property "${ path }" is not a resource.` );
