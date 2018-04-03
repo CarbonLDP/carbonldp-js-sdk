@@ -27,7 +27,6 @@ exports.PersistedDocument = {
             && Utils.hasFunction(object, "save")
             && Utils.hasFunction(object, "saveAndRefresh")
             && Utils.hasFunction(object, "delete")
-            && Utils.hasFunction(object, "getDownloadURL")
             && Utils.hasFunction(object, "addMember")
             && Utils.hasFunction(object, "addMembers")
             && Utils.hasFunction(object, "createAccessPoint")
@@ -183,12 +182,6 @@ exports.PersistedDocument = {
                 enumerable: false,
                 configurable: true,
                 value: _delete,
-            },
-            "getDownloadURL": {
-                writable: false,
-                enumerable: false,
-                configurable: true,
-                value: getDownloadURL,
             },
             "addMember": {
                 writable: false,
@@ -450,9 +443,6 @@ function saveAndRefresh(requestOptions) {
 }
 function _delete(requestOptions) {
     return this._documents.delete(this.id, requestOptions);
-}
-function getDownloadURL(requestOptions) {
-    return this._documents.getDownloadURL(this.id, requestOptions);
 }
 function addMember(memberOrUri, requestOptions) {
     return this._documents.addMember(this.id, memberOrUri, requestOptions);

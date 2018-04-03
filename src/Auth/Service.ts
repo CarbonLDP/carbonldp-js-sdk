@@ -20,7 +20,6 @@ import { BasicAuthenticator } from "./BasicAuthenticator";
 import { AuthMethod } from "./AuthMethod";
 import * as PersistedUser from "./PersistedUser";
 import * as Roles from "./Roles";
-import * as Ticket from "./Ticket";
 import TokenAuthenticator from "./TokenAuthenticator";
 import * as TokenCredentials from "./TokenCredentials";
 import { UsernameAndPasswordCredentials } from "./UsernameAndPasswordCredentials";
@@ -97,51 +96,6 @@ export class AuthService {
 		this.authenticator.clearAuthentication();
 		this.authenticator = null;
 		this._authenticatedUser = null;
-	}
-
-	createTicket( uri:string, requestOptions:RequestOptions = {} ):Promise<[ Ticket.Class, Response ]> {
-		const resourceURI:string = this.context.resolve( uri );
-
-		const freeResources:FreeResources = FreeResources.create( this.context.documents );
-		Ticket.Factory.createFrom( freeResources.createResource(), resourceURI );
-
-		if( this.isAuthenticated() ) this.addAuthentication( requestOptions );
-		RequestUtils.setAcceptHeader( "application/ld+json", requestOptions );
-		RequestUtils.setContentTypeHeader( "application/ld+json", requestOptions );
-		RequestUtils.setPreferredInteractionModel( LDP.RDFSource, requestOptions );
-
-		return Utils.promiseMethod( () => {
-			const containerURI:string = this.context._resolvePath( "system.security" ) + Ticket.TICKETS_CONTAINER;
-			const body:string = JSON.stringify( freeResources );
-
-			return RequestService.post( containerURI, body, requestOptions, new JSONLDParser() );
-		} ).then<[ Ticket.Class, Response ]>( ( [ expandedResult, response ]:[ any, Response ] ) => {
-			const freeNodes:RDFNode[] = RDFNode.getFreeNodes( expandedResult );
-
-			const ticketNodes:RDFNode[] = freeNodes.filter( freeNode => RDFNode.hasType( freeNode, Ticket.RDF_CLASS ) );
-			if( ticketNodes.length === 0 ) throw new BadResponseError( `No ${ Ticket.RDF_CLASS } was returned.`, response );
-			if( ticketNodes.length > 1 ) throw new BadResponseError( `Multiple ${ Ticket.RDF_CLASS } were returned.`, response );
-
-			const expandedTicket:RDFNode = ticketNodes[ 0 ];
-			const ticket:Ticket.Class = <any> Resource.create();
-
-			const digestedSchema:ObjectSchema.DigestedObjectSchema = this.context.documents.getSchemaFor( expandedTicket );
-			this.context.documents.jsonldConverter.compact( expandedTicket, ticket, digestedSchema, this.context.documents );
-
-			return [ ticket, response ];
-		} )
-			.catch( error => this.context.documents._parseErrorResponse( error ) );
-	}
-
-	getAuthenticatedURL( uri:string, requestOptions?:RequestOptions ):Promise<string> {
-		let resourceURI:string = this.context.resolve( uri );
-
-		return this.createTicket( resourceURI, requestOptions ).then( ( [ ticket ]:[ Ticket.Class, Response ] ) => {
-			resourceURI += URI.hasQuery( resourceURI ) ? "&" : "?";
-			resourceURI += `ticket=${ ticket.ticketKey }`;
-
-			return resourceURI;
-		} );
 	}
 
 	private authenticateWithBasic( username:string, password:string ):Promise<UsernameAndPasswordCredentials> {

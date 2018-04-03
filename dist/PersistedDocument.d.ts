@@ -43,7 +43,6 @@ export interface PersistedDocument extends Document, PersistedResource, ServiceA
     save<T extends object>(requestOptions?: RequestOptions): Promise<T & this>;
     saveAndRefresh<T extends object>(requestOptions?: RequestOptions): Promise<T & this>;
     delete(requestOptions?: RequestOptions): Promise<void>;
-    getDownloadURL(requestOptions?: RequestOptions): Promise<string>;
     addMember(member: Pointer, requestOptions?: RequestOptions): Promise<void>;
     addMember(memberURI: string, requestOptions?: RequestOptions): Promise<void>;
     addMembers(members: (Pointer | string)[], requestOptions?: RequestOptions): Promise<void>;
@@ -74,7 +73,9 @@ export interface PersistedDocument extends Document, PersistedResource, ServiceA
     removeMember(member: Pointer, requestOptions?: RequestOptions): Promise<void>;
     removeMember(memberURI: string, requestOptions?: RequestOptions): Promise<void>;
     removeMembers(members: (Pointer | string)[], requestOptions?: RequestOptions): Promise<void>;
+    removeAllMembers(requestOptions?: RequestOptions): Promise<void>;
     executeRawASKQuery(askQuery: string, requestOptions?: RequestOptions): Promise<SPARQLRawResults>;
+    executeASKQuery(askQuery: string, requestOptions?: RequestOptions): Promise<boolean>;
     executeRawSELECTQuery(selectQuery: string, requestOptions?: RequestOptions): Promise<SPARQLRawResults>;
     executeSELECTQuery<T extends object>(selectQuery: string, requestOptions?: RequestOptions): Promise<SPARQLSelectResults<T>>;
     executeRawSELECTQuery(selectQuery: string, requestOptions?: RequestOptions): Promise<SPARQLRawResults>;

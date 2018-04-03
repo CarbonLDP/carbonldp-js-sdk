@@ -12,7 +12,6 @@ import * as PersistedRole from "./PersistedRole";
 import * as PersistedUser from "./PersistedUser";
 import * as Role from "./Role";
 import * as Roles from "./Roles";
-import * as Ticket from "./Ticket";
 import TokenAuthenticator from "./TokenAuthenticator";
 import * as TokenCredentials from "./TokenCredentials";
 import * as User from "./User";
@@ -29,7 +28,6 @@ export {
 	PersistedUser,
 	Role,
 	Roles,
-	Ticket,
 	TokenCredentials,
 	TokenAuthenticator,
 };

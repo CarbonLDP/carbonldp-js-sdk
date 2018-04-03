@@ -469,15 +469,6 @@ var Documents = (function () {
             _this.pointers.delete(pointerID);
         });
     };
-    Documents.prototype.getDownloadURL = function (documentURI, requestOptions) {
-        var _this = this;
-        if (!this.context)
-            return Promise.reject(new Errors.IllegalStateError("This instance doesn't support Authenticated request."));
-        return Utils_3.promiseMethod(function () {
-            documentURI = _this._getRequestURI(documentURI);
-            return _this.context.auth.getAuthenticatedURL(documentURI, requestOptions);
-        });
-    };
     Documents.prototype.getGeneralSchema = function () {
         if (!this.context)
             return new ObjectSchema_1.DigestedObjectSchema();

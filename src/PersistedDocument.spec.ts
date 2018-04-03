@@ -215,13 +215,6 @@ describe( module( "carbonldp/PersistedDocument" ), ():void => {
 			{ type: "Promise<void>" }
 		), ():void => {} );
 
-		it( hasMethod(
-			OBLIGATORY,
-			"getDownloadURL",
-			"Returns the URI of the current document with the properties necessarily for a single download request.",
-			{ type: "Promise<string>" }
-		), ():void => {} );
-
 		describe( method(
 			OBLIGATORY,
 			"addMember"
@@ -754,8 +747,6 @@ describe( module( "carbonldp/PersistedDocument" ), ():void => {
 				saveAndRefresh: ():void => {},
 				delete: ():void => {},
 
-				getDownloadURL: ():void => {},
-
 				addMember: ():void => {},
 				addMembers: ():void => {},
 
@@ -826,10 +817,6 @@ describe( module( "carbonldp/PersistedDocument" ), ():void => {
 			delete document.delete;
 			expect( PersistedDocument.isDecorated( document ) ).toBe( false );
 			document.delete = ():void => {};
-
-			delete document.getDownloadURL;
-			expect( PersistedDocument.isDecorated( document ) ).toBe( false );
-			document.getDownloadURL = ():void => {};
 
 			delete document.addMember;
 			expect( PersistedDocument.isDecorated( document ) ).toBe( false );
@@ -953,8 +940,6 @@ describe( module( "carbonldp/PersistedDocument" ), ():void => {
 				save: ():void => {},
 				saveAndRefresh: ():void => {},
 				delete: ():void => {},
-
-				getDownloadURL: ():void => {},
 
 				addMember: ():void => {},
 				addMembers: ():void => {},
@@ -1595,16 +1580,6 @@ describe( module( "carbonldp/PersistedDocument" ), ():void => {
 
 				let spy:jasmine.Spy = spyOn( context.documents, "delete" );
 				document.delete();
-				expect( spy ).toHaveBeenCalledWith( document.id, void 0 );
-			} );
-
-			// TODO: Separate in different tests
-			it( "PersistedDocument.getDownloadURL", ():void => {
-				expect( document.getDownloadURL ).toBeDefined();
-				expect( Utils.isFunction( document.getDownloadURL ) ).toBe( true );
-
-				let spy:jasmine.Spy = spyOn( context.documents, "getDownloadURL" );
-				document.getDownloadURL();
 				expect( spy ).toHaveBeenCalledWith( document.id, void 0 );
 			} );
 

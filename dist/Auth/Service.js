@@ -11,20 +11,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 }
 Object.defineProperty(exports, "__esModule", { value: true });
 var Errors = __importStar(require("../Errors"));
-var FreeResources_1 = require("../FreeResources");
-var Errors_1 = require("../HTTP/Errors");
-var Request_1 = require("../HTTP/Request");
-var Parser_1 = require("../JSONLD/Parser");
-var Node_1 = require("../RDF/Node");
-var URI_1 = require("../RDF/URI");
-var Resource_1 = require("../Resource");
 var Utils = __importStar(require("../Utils"));
-var LDP_1 = require("../Vocabularies/LDP");
 var BasicAuthenticator_1 = require("./BasicAuthenticator");
 var AuthMethod_1 = require("./AuthMethod");
 var PersistedUser = __importStar(require("./PersistedUser"));
 var Roles = __importStar(require("./Roles"));
-var Ticket = __importStar(require("./Ticket"));
 var TokenAuthenticator_1 = __importDefault(require("./TokenAuthenticator"));
 var TokenCredentials = __importStar(require("./TokenCredentials"));
 var UsernameAndPasswordToken_1 = require("./UsernameAndPasswordToken");
@@ -86,46 +77,6 @@ var AuthService = (function () {
         this.authenticator.clearAuthentication();
         this.authenticator = null;
         this._authenticatedUser = null;
-    };
-    AuthService.prototype.createTicket = function (uri, requestOptions) {
-        var _this = this;
-        if (requestOptions === void 0) { requestOptions = {}; }
-        var resourceURI = this.context.resolve(uri);
-        var freeResources = FreeResources_1.FreeResources.create(this.context.documents);
-        Ticket.Factory.createFrom(freeResources.createResource(), resourceURI);
-        if (this.isAuthenticated())
-            this.addAuthentication(requestOptions);
-        Request_1.RequestUtils.setAcceptHeader("application/ld+json", requestOptions);
-        Request_1.RequestUtils.setContentTypeHeader("application/ld+json", requestOptions);
-        Request_1.RequestUtils.setPreferredInteractionModel(LDP_1.LDP.RDFSource, requestOptions);
-        return Utils.promiseMethod(function () {
-            var containerURI = _this.context._resolvePath("system.security") + Ticket.TICKETS_CONTAINER;
-            var body = JSON.stringify(freeResources);
-            return Request_1.RequestService.post(containerURI, body, requestOptions, new Parser_1.JSONLDParser());
-        }).then(function (_a) {
-            var expandedResult = _a[0], response = _a[1];
-            var freeNodes = Node_1.RDFNode.getFreeNodes(expandedResult);
-            var ticketNodes = freeNodes.filter(function (freeNode) { return Node_1.RDFNode.hasType(freeNode, Ticket.RDF_CLASS); });
-            if (ticketNodes.length === 0)
-                throw new Errors_1.BadResponseError("No " + Ticket.RDF_CLASS + " was returned.", response);
-            if (ticketNodes.length > 1)
-                throw new Errors_1.BadResponseError("Multiple " + Ticket.RDF_CLASS + " were returned.", response);
-            var expandedTicket = ticketNodes[0];
-            var ticket = Resource_1.Resource.create();
-            var digestedSchema = _this.context.documents.getSchemaFor(expandedTicket);
-            _this.context.documents.jsonldConverter.compact(expandedTicket, ticket, digestedSchema, _this.context.documents);
-            return [ticket, response];
-        })
-            .catch(function (error) { return _this.context.documents._parseErrorResponse(error); });
-    };
-    AuthService.prototype.getAuthenticatedURL = function (uri, requestOptions) {
-        var resourceURI = this.context.resolve(uri);
-        return this.createTicket(resourceURI, requestOptions).then(function (_a) {
-            var ticket = _a[0];
-            resourceURI += URI_1.URI.hasQuery(resourceURI) ? "&" : "?";
-            resourceURI += "ticket=" + ticket.ticketKey;
-            return resourceURI;
-        });
     };
     AuthService.prototype.authenticateWithBasic = function (username, password) {
         var _this = this;

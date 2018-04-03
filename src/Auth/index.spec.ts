@@ -22,7 +22,6 @@ import * as PersistedUser from "./PersistedUser";
 import * as Role from "./Role";
 import * as Roles from "./Roles";
 import { AuthService } from "./Service";
-import * as Ticket from "./Ticket";
 import TokenAuthenticator from "./TokenAuthenticator";
 import * as TokenCredentials from "./TokenCredentials";
 import * as User from "./User";
@@ -183,15 +182,6 @@ describe( module( "carbonldp/Auth" ), ():void => {
 
 	it( reexports(
 		STATIC,
-		"Ticket",
-		"carbonldp/Auth/Ticket"
-	), ():void => {
-		expect( Auth.Ticket ).toBeDefined();
-		expect( Auth.Ticket ).toBe( Ticket );
-	} );
-
-	it( reexports(
-		STATIC,
 		"TokenCredentials",
 		"carbonldp/Auth/TokenCredentials"
 	), ():void => {
@@ -226,5 +216,4 @@ describe( module( "carbonldp/Auth" ), ():void => {
 		expect( Auth.UsernameAndPasswordToken ).toBe( UsernameAndPasswordToken );
 	} );
 
-} )
-;
+} );

@@ -621,14 +621,6 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 		} );
 	}
 
-	getDownloadURL( documentURI:string, requestOptions?:RequestOptions ):Promise<string> {
-		if( ! this.context ) return Promise.reject( new Errors.IllegalStateError( "This instance doesn't support Authenticated request." ) );
-		return promiseMethod( () => {
-			documentURI = this._getRequestURI( documentURI );
-			return this.context.auth.getAuthenticatedURL( documentURI, requestOptions );
-		} );
-	}
-
 
 	getGeneralSchema():DigestedObjectSchema {
 		if( ! this.context ) return new DigestedObjectSchema();

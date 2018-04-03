@@ -74,7 +74,6 @@ export declare class Documents implements PointerLibrary, PointerValidator, Obje
     refresh<T extends object>(persistedDocument: T & PersistedDocument, requestOptions?: RequestOptions): Promise<T & PersistedDocument>;
     saveAndRefresh<T extends object>(persistedDocument: T & PersistedDocument, requestOptions?: RequestOptions): Promise<T & PersistedDocument>;
     delete(documentURI: string, requestOptions?: RequestOptions): Promise<void>;
-    getDownloadURL(documentURI: string, requestOptions?: RequestOptions): Promise<string>;
     getGeneralSchema(): DigestedObjectSchema;
     hasSchemaFor(object: object, path?: string): boolean;
     getSchemaFor(object: object): DigestedObjectSchema;
