@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+var Errors_1 = require("./Errors");
 var Resource_1 = require("./Resource");
 var Utils_1 = require("./Utils");
 exports.Fragment = {
@@ -32,9 +33,16 @@ exports.Fragment = {
                 enumerable: false,
                 configurable: true,
             },
+            "resolve": {
+                configurable: true,
+                value: resolveFragment,
+            },
         });
         return fragment;
     },
 };
+function resolveFragment() {
+    throw new Errors_1.IllegalActionError("A fragment cannot be resolved by itself.");
+}
 
 //# sourceMappingURL=Fragment.js.map

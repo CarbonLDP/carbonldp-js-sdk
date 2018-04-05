@@ -1196,7 +1196,7 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 			.addPrologues( ...queryContext.getPrologues() );
 
 		return this
-			.executeSELECTQuery<{ [docs:string]:Pointer }>( uri, query.toString(), requestOptions )
+			.executeSELECTQuery<{ [ docs:string ]:Pointer }>( uri, query.toString(), requestOptions )
 			.then<PersistedDocument[]>( ( results ) => {
 				const name:string = targetVar.toString().slice( 1 );
 				return results
@@ -1306,16 +1306,19 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 		return this._createPointerFrom( {}, localID );
 	}
 
-	private _createPointerFrom<T extends Object>( object:T, localID:string ):T & Pointer {
-		let id:string = ! ! this.context ? this.context.resolve( localID ) : localID;
-		let pointer:T & Pointer = Pointer.createFrom<T>( object, id );
+	private _createPointerFrom<T extends object>( object:T, localID:string ):T & Pointer {
+		const id:string = ! ! this.context ? this.context.resolve( localID ) : localID;
+		const pointer:T & Pointer = Pointer.createFrom<T>( object, id );
+
+		const resolve:Pointer[ "resolve" ] = <W extends object>( requestOptions?:GETOptions ):Promise<W & T & PersistedDocument> => {
+			return this.get( id, requestOptions );
+		};
+
 		Object.defineProperty( pointer, "resolve", {
 			writable: false,
 			enumerable: false,
 			configurable: true,
-			value: ():Promise<[ PersistedDocument, Response ]> => {
-				return this.get( id );
-			},
+			value: resolve,
 		} );
 
 		return pointer;

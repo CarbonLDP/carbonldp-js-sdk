@@ -12,8 +12,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var Errors = __importStar(require("../Errors"));
 var Utils = __importStar(require("../Utils"));
-var BasicAuthenticator_1 = require("./BasicAuthenticator");
 var AuthMethod_1 = require("./AuthMethod");
+var BasicAuthenticator_1 = require("./BasicAuthenticator");
 var PersistedUser = __importStar(require("./PersistedUser"));
 var Roles = __importStar(require("./Roles"));
 var TokenAuthenticator_1 = __importDefault(require("./TokenAuthenticator"));
@@ -26,7 +26,7 @@ var AuthService = (function () {
         this.users = new Users.Class(this.context);
         this.context = context;
         this.authenticators = (_a = {},
-            _a[AuthMethod_1.AuthMethod.BASIC] = new BasicAuthenticator_1.BasicAuthenticator(),
+            _a[AuthMethod_1.AuthMethod.BASIC] = new BasicAuthenticator_1.BasicAuthenticator(this.context),
             _a[AuthMethod_1.AuthMethod.TOKEN] = new TokenAuthenticator_1.default(this.context),
             _a);
         var _a;

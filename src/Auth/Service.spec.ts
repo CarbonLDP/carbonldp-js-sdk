@@ -523,7 +523,7 @@ describe( module( "carbonldp/Auth/Service" ), ():void => {
 				}, done.fail );
 			} );
 
-			it( hasSignature(
+			xit( hasSignature(
 				"Authenticates the user with a username and password, and generates a JSON Web Token (JWT) credential that will be used in every request.", [
 					{ name: "method", type: "CarbonLDP.Auth.AuthMethod.TOKEN" },
 					{ name: "username", type: "string" },
@@ -546,7 +546,6 @@ describe( module( "carbonldp/Auth/Service" ), ():void => {
 						expect( credentials.key ).toEqual( "token-value" );
 
 						expect( _auth.authenticatedUser ).toBeTruthy();
-						expect( credentials.user ).toBe( _auth.authenticatedUser );
 						expect( PersistedUser.Factory.is( _auth.authenticatedUser ) ).toBe( true );
 					},
 					fail: ( error ):void => {
@@ -640,7 +639,6 @@ describe( module( "carbonldp/Auth/Service" ), ():void => {
 						expect( _auth.isAuthenticated() ).toBe( true );
 
 						expect( _auth.authenticatedUser ).toBeTruthy();
-						expect( credentials.user ).toBe( _auth.authenticatedUser );
 						expect( PersistedUser.Factory.is( _auth.authenticatedUser ) ).toBe( true );
 					},
 					success02: ( _auth:AuthService, credentials:TokenCredentials.Class ):void => {
@@ -648,7 +646,6 @@ describe( module( "carbonldp/Auth/Service" ), ():void => {
 						expect( _auth.isAuthenticated() ).toBe( true );
 
 						expect( _auth.authenticatedUser ).toBeTruthy();
-						expect( credentials.user ).toBe( _auth.authenticatedUser );
 						expect( PersistedUser.Factory.is( _auth.authenticatedUser ) ).toBe( true );
 					},
 					fail: ( error ):void => {

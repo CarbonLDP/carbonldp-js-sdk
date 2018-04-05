@@ -54,7 +54,7 @@ export class Factory {
 }
 
 function changeEnabled( this:Class, enabled:boolean, requestOptions?:RequestOptions ):Promise<Class> {
-	const promise:Promise<void> = this.isResolved() ? Promise.resolve() : this.resolve();
+	const promise:Promise<any> = this.isResolved() ? Promise.resolve() : this.resolve();
 	return promise.then( () => {
 		this.enabled = enabled;
 		return this.save( requestOptions );

@@ -1,5 +1,5 @@
 import { IllegalStateError } from "./Errors/IllegalStateError";
-import { Response } from "./HTTP/Response";
+import { GETOptions } from "./HTTP/Request";
 import { ModelDecorator } from "./ModelDecorator";
 import { ModelFactory } from "./ModelFactory";
 import { PersistedDocument } from "./PersistedDocument";
@@ -14,7 +14,7 @@ export interface Pointer {
 
 	isResolved():this is this & PersistedDocument;
 
-	resolve<T>():Promise<T & PersistedDocument>;
+	resolve<T extends object>( requestOptions?:GETOptions ):Promise<T & this & PersistedDocument>;
 }
 
 
@@ -53,7 +53,7 @@ export function isPointerResolved( this:Pointer ):boolean {
 	return this._resolved;
 }
 
-export function resolveStandalonePointer( this:Pointer ):Promise<[ Pointer, Response ]> {
+export function resolveStandalonePointer( this:Pointer ):Promise<never> {
 	return Promise.reject( new IllegalStateError( "The pointer has not been assigned to a context." ) );
 }
 

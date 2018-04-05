@@ -58,12 +58,6 @@ describe( module( "Carbon/Auth/TokenCredentials" ), ():void => {
 			"@type": XSD.dateTime,
 		} );
 
-		expect( Utils.hasProperty( TokenCredentials.SCHEMA, "user" ) ).toBe( true );
-		expect( TokenCredentials.SCHEMA[ "user" ] ).toEqual( {
-			"@id": CS.credentialsOf,
-			"@type": "@id",
-		} );
-
 	} );
 
 	describe( interfaze(

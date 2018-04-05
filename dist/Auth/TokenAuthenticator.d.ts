@@ -9,7 +9,7 @@ export declare class Class extends Authenticator<UsernameAndPasswordToken, Token
     constructor(context: Context);
     isAuthenticated(): boolean;
     authenticate(tokenOrCredentials: UsernameAndPasswordToken | TokenCredentials.Class): Promise<TokenCredentials.Class>;
-    protected getHeaderValue(): string;
+    protected _getHeaderValue(): string;
     private getCredentials(tokenOrCredentials);
 }
 export default Class;

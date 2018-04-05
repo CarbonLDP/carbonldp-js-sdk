@@ -22,8 +22,8 @@ var BasicAuthenticator = (function (_super) {
     BasicAuthenticator.prototype.authenticate = function (authenticationToken) {
         var _this = this;
         return Utils_1.promiseMethod(function () {
-            if (authenticationToken === null)
-                throw new Errors_1.IllegalArgumentError("The authenticationToken cannot be null.");
+            if (!authenticationToken)
+                throw new Errors_1.IllegalArgumentError("The authenticationToken cannot be empty.");
             if (!authenticationToken.username)
                 throw new Errors_1.IllegalArgumentError("The username cannot be empty.");
             if (!authenticationToken.password)
@@ -32,7 +32,7 @@ var BasicAuthenticator = (function (_super) {
             return _this.credentials;
         });
     };
-    BasicAuthenticator.prototype.getHeaderValue = function () {
+    BasicAuthenticator.prototype._getHeaderValue = function () {
         return "Basic " + toB64(this.credentials.username + ":" + this.credentials.password);
     };
     return BasicAuthenticator;

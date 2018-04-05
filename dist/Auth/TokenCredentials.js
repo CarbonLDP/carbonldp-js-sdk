@@ -21,10 +21,6 @@ exports.SCHEMA = {
         "@id": CS_1.CS.expirationTime,
         "@type": XSD_1.XSD.dateTime,
     },
-    "user": {
-        "@id": CS_1.CS.credentialsOf,
-        "@type": "@id",
-    },
 };
 var Factory = (function () {
     function Factory() {

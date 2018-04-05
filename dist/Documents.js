@@ -1065,13 +1065,14 @@ var Documents = (function () {
         var _this = this;
         var id = !!this.context ? this.context.resolve(localID) : localID;
         var pointer = Pointer_1.Pointer.createFrom(object, id);
+        var resolve = function (requestOptions) {
+            return _this.get(id, requestOptions);
+        };
         Object.defineProperty(pointer, "resolve", {
             writable: false,
             enumerable: false,
             configurable: true,
-            value: function () {
-                return _this.get(id);
-            },
+            value: resolve,
         });
         return pointer;
     };

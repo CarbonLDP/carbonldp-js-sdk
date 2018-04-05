@@ -1,23 +1,10 @@
 import { Context } from "../Context";
 import * as Errors from "../Errors";
-import { FreeResources } from "../FreeResources";
-import { BadResponseError } from "../HTTP/Errors";
-import {
-	RequestOptions,
-	RequestService,
-	RequestUtils
-} from "../HTTP/Request";
-import { Response } from "../HTTP/Response";
-import { JSONLDParser } from "../JSONLD/Parser";
-import * as ObjectSchema from "../ObjectSchema";
-import { RDFNode } from "../RDF/Node";
-import { URI } from "../RDF/URI";
-import { Resource } from "../Resource";
+import { RequestOptions } from "../HTTP";
 import * as Utils from "../Utils";
-import { LDP } from "../Vocabularies/LDP";
 import { Authenticator } from "./Authenticator";
-import { BasicAuthenticator } from "./BasicAuthenticator";
 import { AuthMethod } from "./AuthMethod";
+import { BasicAuthenticator } from "./BasicAuthenticator";
 import * as PersistedUser from "./PersistedUser";
 import * as Roles from "./Roles";
 import TokenAuthenticator from "./TokenAuthenticator";
@@ -32,8 +19,8 @@ export class AuthService {
 
 	protected _authenticatedUser:PersistedUser.Class;
 
-	private context:Context;
-	private authenticators:{ [ P in AuthMethod ]:Authenticator<object, object> };
+	private readonly context:Context;
+	private readonly authenticators:{ [P in AuthMethod]:Authenticator<object, object> };
 	private authenticator:Authenticator<object, object>;
 
 	public get authenticatedUser():PersistedUser.Class {
@@ -50,7 +37,7 @@ export class AuthService {
 		this.context = context;
 
 		this.authenticators = {
-			[ AuthMethod.BASIC ]: new BasicAuthenticator(),
+			[ AuthMethod.BASIC ]: new BasicAuthenticator( this.context ),
 			[ AuthMethod.TOKEN ]: new TokenAuthenticator( this.context ),
 		};
 	}

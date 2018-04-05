@@ -28,7 +28,7 @@ export class Class extends Authenticator<UsernameAndPasswordToken, TokenCredenti
 	protected credentials:TokenCredentials.Class;
 
 	constructor( context:Context ) {
-		super();
+		super( context );
 		this.context = context;
 	}
 
@@ -47,7 +47,7 @@ export class Class extends Authenticator<UsernameAndPasswordToken, TokenCredenti
 			} );
 	}
 
-	protected getHeaderValue():string {
+	protected _getHeaderValue():string {
 		return "Token " + this.credentials.key;
 	}
 

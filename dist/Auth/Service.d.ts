@@ -1,5 +1,5 @@
 import { Context } from "../Context";
-import { RequestOptions } from "../HTTP/Request";
+import { RequestOptions } from "../HTTP";
 import { AuthMethod } from "./AuthMethod";
 import * as PersistedUser from "./PersistedUser";
 import * as Roles from "./Roles";
@@ -10,8 +10,8 @@ export declare class AuthService {
     users: Users.Class;
     roles: Roles.Class;
     protected _authenticatedUser: PersistedUser.Class;
-    private context;
-    private authenticators;
+    private readonly context;
+    private readonly authenticators;
     private authenticator;
     readonly authenticatedUser: PersistedUser.Class;
     constructor(context: Context);

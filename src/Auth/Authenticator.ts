@@ -1,10 +1,31 @@
+import { Context } from "../Context";
 import { IllegalStateError } from "../Errors";
-import { Header } from "../HTTP/Header";
-import { RequestOptions } from "../HTTP/Request";
+import {
+	GETOptions,
+	Header,
+	RequestOptions,
+	RequestService,
+	RequestUtils,
+	Response,
+} from "../HTTP";
+import { BadResponseError } from "../HTTP/Errors";
+import { JSONLDParser } from "../JSONLD";
+import { RDFDocument } from "../RDF/Document";
+import { promiseMethod } from "../Utils";
+import { LDP } from "../Vocabularies/LDP";
+import * as PersistedUser from "./PersistedUser";
+import { UserMetadata } from "./UserMetadata";
 
 export abstract class Authenticator<T extends object, W extends object> {
 
-	protected abstract credentials:W;
+	protected context:Context;
+
+	protected authenticatedUser?:PersistedUser.Class;
+	protected abstract credentials?:W;
+
+	constructor( context:Context ) {
+		this.context = context;
+	}
 
 	isAuthenticated():boolean {
 		return ! ! this.credentials;
@@ -14,6 +35,7 @@ export abstract class Authenticator<T extends object, W extends object> {
 
 	clearAuthentication():void {
 		this.credentials = null;
+		this.authenticatedUser = null;
 	}
 
 	addAuthentication( requestOptions:RequestOptions ):RequestOptions {
@@ -24,11 +46,55 @@ export abstract class Authenticator<T extends object, W extends object> {
 
 		if( headers.has( "authorization" ) ) return requestOptions;
 
-		const strAuthHeader:string = this.getHeaderValue();
+		const strAuthHeader:string = this._getHeaderValue();
 		headers.set( "authorization", new Header( [ strAuthHeader ] ) );
 
 		return requestOptions;
 	}
 
-	protected abstract getHeaderValue():string;
+	getAuthenticatedUser( requestOptions:GETOptions = {} ):Promise<PersistedUser.Class> {
+		if( this.authenticatedUser ) return Promise.resolve( this.authenticatedUser );
+
+		return promiseMethod( () => {
+			const metadataURI:string = this.context._resolvePath( "users.me" );
+
+			const localOptions:GETOptions = RequestUtils.cloneOptions( requestOptions );
+			this.addAuthentication( localOptions );
+			RequestUtils.setAcceptHeader( "application/ld+json", localOptions );
+			RequestUtils.setPreferredInteractionModel( LDP.RDFSource, localOptions );
+
+			return RequestService
+				.get( metadataURI, localOptions, new JSONLDParser() )
+				.catch( response => this.context.documents._parseErrorResponse( response ) )
+				;
+		} ).then( ( [ rdfData, response ] ) => {
+			const userMetadata:UserMetadata = this._parseRDFMetadata( rdfData, response );
+
+			const localOptions:GETOptions = RequestUtils.cloneOptions( requestOptions );
+			this.addAuthentication( localOptions );
+
+			return userMetadata
+				.authenticatedUser
+				.user
+				.resolve( localOptions );
+		} ).then( user => {
+			return this.authenticatedUser = user;
+		} );
+	}
+
+	protected abstract _getHeaderValue():string;
+
+	protected _parseRDFMetadata( rdfData:object[], response:Response ):UserMetadata {
+		const metadataURI:string = this.context._resolvePath( "users.me" );
+
+		const metadataRDFs:RDFDocument[] = RDFDocument
+			.getDocuments( rdfData )
+			.filter( rdfDocument => rdfDocument[ "@id" ] === metadataURI );
+
+		if( metadataRDFs.length !== 1 ) throw new BadResponseError( "No correct cs:UserMetadata was returned.", response );
+
+		return this.context.documents
+			._getPersistedDocument( metadataRDFs[ 0 ], response );
+	}
+
 }

@@ -33,7 +33,7 @@ exports.TOKEN_CONTAINER = "auth-tokens/";
 var Class = (function (_super) {
     __extends(Class, _super);
     function Class(context) {
-        var _this = _super.call(this) || this;
+        var _this = _super.call(this, context) || this;
         _this.context = context;
         return _this;
     }
@@ -52,7 +52,7 @@ var Class = (function (_super) {
             return _this.credentials = credentials;
         });
     };
-    Class.prototype.getHeaderValue = function () {
+    Class.prototype._getHeaderValue = function () {
         return "Token " + this.credentials.key;
     };
     Class.prototype.getCredentials = function (tokenOrCredentials) {

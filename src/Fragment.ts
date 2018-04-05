@@ -1,4 +1,5 @@
 import { Document } from "./Document";
+import { IllegalActionError } from "./Errors";
 import { ModelDecorator } from "./ModelDecorator";
 import { ModelFactory } from "./ModelFactory";
 import { Resource } from "./Resource";
@@ -61,8 +62,16 @@ export const Fragment:FragmentFactory = {
 				enumerable: false,
 				configurable: true,
 			},
+			"resolve": {
+				configurable: true,
+				value: resolveFragment,
+			},
 		} );
 
 		return fragment;
 	},
 };
+
+function resolveFragment():never {
+	throw new IllegalActionError( "A fragment cannot be resolved by itself." );
+}

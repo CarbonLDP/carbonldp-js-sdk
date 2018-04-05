@@ -54,6 +54,15 @@ describe( module( "carbonldp/Vocabularies/CS" ), ():void => {
 
 		it( hasProperty(
 			OBLIGATORY,
+			"AuthenticatedUserMetadata",
+			"https://carbonldp.com/ns/v1/security#AuthenticatedUserMetadata"
+		), ():void => {
+			const target:CS[ "AuthenticatedUserMetadata" ] = "https://carbonldp.com/ns/v1/security#AuthenticatedUserMetadata";
+			expect( target ).toBeDefined();
+		} );
+
+		it( hasProperty(
+			OBLIGATORY,
 			"CreateAccessPoint",
 			"https://carbonldp.com/ns/v1/security#CreateAccessPoint"
 		), ():void => {
@@ -193,6 +202,15 @@ describe( module( "carbonldp/Vocabularies/CS" ), ():void => {
 			"https://carbonldp.com/ns/v1/security#User"
 		), ():void => {
 			const target:CS[ "User" ] = "https://carbonldp.com/ns/v1/security#User";
+			expect( target ).toBeDefined();
+		} );
+
+		it( hasProperty(
+			OBLIGATORY,
+			"UserMetadata",
+			"https://carbonldp.com/ns/v1/security#UserMetadata"
+		), ():void => {
+			const target:CS[ "UserMetadata" ] = "https://carbonldp.com/ns/v1/security#UserMetadata";
 			expect( target ).toBeDefined();
 		} );
 
@@ -418,7 +436,7 @@ describe( module( "carbonldp/Vocabularies/CS" ), ():void => {
 		} );
 
 		it( "should test all exported IRIs", ():void => {
-			expect( Object.keys( CS ).length ).toBe( 43 );
+			expect( Object.keys( CS ).length ).toBe( 46 );
 		} );
 
 		it( "CS.namespace", ():void => {
@@ -439,6 +457,11 @@ describe( module( "carbonldp/Vocabularies/CS" ), ():void => {
 		it( "CS.AllOrigins", ():void => {
 			expect( CS.AllOrigins ).toEqual( jasmine.any( String ) );
 			expect( CS.AllOrigins ).toBe( "https://carbonldp.com/ns/v1/security#AllOrigins" );
+		} );
+
+		it( "CS.AuthenticatedUserMetadata", ():void => {
+			expect( CS.AuthenticatedUserMetadata ).toEqual( jasmine.any( String ) );
+			expect( CS.AuthenticatedUserMetadata ).toBe( "https://carbonldp.com/ns/v1/security#AuthenticatedUserMetadata" );
 		} );
 
 		it( "CS.CreateAccessPoint", ():void => {
@@ -521,6 +544,12 @@ describe( module( "carbonldp/Vocabularies/CS" ), ():void => {
 			expect( CS.User ).toBe( "https://carbonldp.com/ns/v1/security#User" );
 		} );
 
+		it( "CS.UserMetadata", ():void => {
+			expect( CS.UserMetadata ).toEqual( jasmine.any( String ) );
+			expect( CS.UserMetadata ).toBe( "https://carbonldp.com/ns/v1/security#UserMetadata" );
+		} );
+
+
 		it( "CS.accessControlEntry", ():void => {
 			expect( CS.accessControlEntry ).toEqual( jasmine.any( String ) );
 			expect( CS.accessControlEntry ).toBe( "https://carbonldp.com/ns/v1/security#accessControlEntry" );
@@ -539,6 +568,11 @@ describe( module( "carbonldp/Vocabularies/CS" ), ():void => {
 		it( "CS.allowsOrigin", ():void => {
 			expect( CS.allowsOrigin ).toEqual( jasmine.any( String ) );
 			expect( CS.allowsOrigin ).toBe( "https://carbonldp.com/ns/v1/security#allowsOrigin" );
+		} );
+
+		it( "CS.authenticatedUser", ():void => {
+			expect( CS.authenticatedUser ).toEqual( jasmine.any( String ) );
+			expect( CS.authenticatedUser ).toBe( "https://carbonldp.com/ns/v1/security#authenticatedUser" );
 		} );
 
 		it( "CS.childRole", ():void => {
