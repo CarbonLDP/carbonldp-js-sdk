@@ -8976,8 +8976,6 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					).then( () => done.fail( "Should not resolve, spy is makes it fail." ) ).catch( ( error ) => {
 						if( error ) done.fail( error );
 
-						console.log( sendSpy.calls.argsFor( 0 ) );
-						console.log( Array.from( sendSpy.calls.argsFor( 0 )[ 2 ].headers )[ 0 ][ 1 ] );
 						expect( sendSpy ).toHaveBeenCalledWith(
 							"https://example.com/resource/", "" +
 							"CONSTRUCT {" +
