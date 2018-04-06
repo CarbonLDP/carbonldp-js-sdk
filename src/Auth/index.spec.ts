@@ -10,6 +10,8 @@ import * as Auth from "./";
 
 import { ACE } from "./ACE";
 import { ACL } from "./ACL";
+import { AuthenticatedUserInformationAccessor } from "./AuthenticatedUserInformationAccessor";
+import { AuthenticatedUserMetadata } from "./AuthenticatedUserMetadata";
 import { Authenticator } from "./Authenticator";
 import { AuthMethod } from "./AuthMethod";
 import { BasicAuthenticator } from "./BasicAuthenticator";
@@ -52,6 +54,24 @@ describe( module( "carbonldp/Auth" ), ():void => {
 	), ():void => {
 		expect( Auth.ACL ).toBeDefined();
 		expect( Auth.ACL ).toBe( ACL );
+	} );
+
+	it( reexports(
+		STATIC,
+		"AuthenticatedUserInformationAccessor",
+		"CarbonLDP.Auth.AuthenticatedUserInformationAccessor"
+	), ():void => {
+		expect( Auth.AuthenticatedUserInformationAccessor ).toBeDefined();
+		expect( Auth.AuthenticatedUserInformationAccessor ).toBe( AuthenticatedUserInformationAccessor );
+	} );
+
+	it( reexports(
+		STATIC,
+		"AuthenticatedUserMetadata",
+		"CarbonLDP.Auth.AuthenticatedUserMetadata"
+	), ():void => {
+		expect( Auth.AuthenticatedUserMetadata ).toBeDefined();
+		expect( Auth.AuthenticatedUserMetadata ).toBe( AuthenticatedUserMetadata );
 	} );
 
 	it( reexports(
