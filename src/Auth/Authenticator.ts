@@ -67,12 +67,12 @@ export abstract class Authenticator<T extends object, W extends object> {
 				.catch( response => this.context.documents._parseErrorResponse( response ) )
 				;
 		} ).then( ( [ rdfData, response ] ) => {
-			const userMetadata:AuthenticatedUserInformationAccessor = this._parseRDFMetadata( rdfData, response );
+			const accessor:AuthenticatedUserInformationAccessor = this._parseRDFMetadata( rdfData, response, requestOptions );
 
 			const localOptions:GETOptions = RequestUtils.cloneOptions( requestOptions );
 			this.addAuthentication( localOptions );
 
-			return userMetadata
+			return accessor
 				.authenticatedUserMetadata
 				.user
 				.resolve( localOptions );
@@ -83,7 +83,7 @@ export abstract class Authenticator<T extends object, W extends object> {
 
 	protected abstract _getHeaderValue():string;
 
-	protected _parseRDFMetadata( rdfData:object[], response:Response ):AuthenticatedUserInformationAccessor {
+	protected _parseRDFMetadata( rdfData:object[], response:Response, requestOptions?:GETOptions ):AuthenticatedUserInformationAccessor {
 		const metadataURI:string = this.context._resolvePath( "users.me" );
 
 		const metadataRDFs:RDFDocument[] = RDFDocument

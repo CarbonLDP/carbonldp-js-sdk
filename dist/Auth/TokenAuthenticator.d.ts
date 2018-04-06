@@ -1,3 +1,4 @@
+import { RequestOptions } from "../HTTP/Request";
 import { Response } from "../HTTP/Response";
 import { AuthenticatedUserInformationAccessor } from "./AuthenticatedUserInformationAccessor";
 import { Authenticator } from "./Authenticator";
@@ -10,6 +11,6 @@ export declare class TokenAuthenticator extends Authenticator<UsernameAndPasswor
     protected _getHeaderValue(): string;
     protected _parseCredentialsBase(credentialsBase: TokenCredentialsBase): Promise<TokenCredentials>;
     protected _getCredentials(token: UsernameAndPasswordToken): Promise<TokenCredentials>;
-    protected _parseRDFMetadata(rdfData: object[], response: Response): AuthenticatedUserInformationAccessor;
+    protected _parseRDFMetadata(rdfData: object[], response: Response, requestOptions: RequestOptions): AuthenticatedUserInformationAccessor;
     protected _parseRDFCredentials(rdfData: object[], response: Response): TokenCredentials;
 }

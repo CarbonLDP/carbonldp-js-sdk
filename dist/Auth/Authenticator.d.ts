@@ -13,5 +13,5 @@ export declare abstract class Authenticator<T extends object, W extends object> 
     addAuthentication(requestOptions: RequestOptions): RequestOptions;
     getAuthenticatedUser(requestOptions?: GETOptions): Promise<PersistedUser.Class>;
     protected abstract _getHeaderValue(): string;
-    protected _parseRDFMetadata(rdfData: object[], response: Response): AuthenticatedUserInformationAccessor;
+    protected _parseRDFMetadata(rdfData: object[], response: Response, requestOptions?: GETOptions): AuthenticatedUserInformationAccessor;
 }

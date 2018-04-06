@@ -67,11 +67,17 @@ var TokenAuthenticator = (function (_super) {
             return _this.credentials;
         });
     };
-    TokenAuthenticator.prototype._parseRDFMetadata = function (rdfData, response) {
-        var preferenceHeader = response.getHeader("Preference-Applied");
-        if (preferenceHeader && preferenceHeader.hasValue(Vocabularies_1.CS.PreferAuthToken))
-            this._parseRDFCredentials(rdfData, response);
-        return _super.prototype._parseRDFMetadata.call(this, rdfData, response);
+    TokenAuthenticator.prototype._parseRDFMetadata = function (rdfData, response, requestOptions) {
+        var accessor = _super.prototype._parseRDFMetadata.call(this, rdfData, response);
+        var authTokenPrefer = "include=\"" + Vocabularies_1.CS.PreferAuthToken + "\"";
+        var prefer = requestOptions.headers && requestOptions.headers.get("prefer");
+        if (!prefer || !prefer.hasValue(authTokenPrefer))
+            return accessor;
+        var preference = response.getHeader("preference-applied");
+        if (!preference || !preference.hasValue(authTokenPrefer))
+            throw new Errors_1.BadResponseError("Preference \"" + authTokenPrefer + "\" was not applied.", response);
+        this._parseRDFCredentials(rdfData, response);
+        return accessor;
     };
     TokenAuthenticator.prototype._parseRDFCredentials = function (rdfData, response) {
         var freeNodes = Node_1.RDFNode.getFreeNodes(rdfData);

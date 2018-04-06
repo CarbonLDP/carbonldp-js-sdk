@@ -65,12 +65,21 @@ export class TokenAuthenticator extends Authenticator<UsernameAndPasswordToken, 
 			} );
 	}
 
-	protected _parseRDFMetadata( rdfData:object[], response:Response ):AuthenticatedUserInformationAccessor {
-		const preferenceHeader:Header = response.getHeader( "Preference-Applied" );
-		if( preferenceHeader && preferenceHeader.hasValue( CS.PreferAuthToken ) )
-			this._parseRDFCredentials( rdfData, response );
+	protected _parseRDFMetadata( rdfData:object[], response:Response, requestOptions:RequestOptions ):AuthenticatedUserInformationAccessor {
+		const accessor:AuthenticatedUserInformationAccessor = super._parseRDFMetadata( rdfData, response );
 
-		return super._parseRDFMetadata( rdfData, response );
+		const authTokenPrefer:string = `include="${ CS.PreferAuthToken }"`;
+
+		const prefer:Header = requestOptions.headers && requestOptions.headers.get( "prefer" );
+		if( ! prefer || ! prefer.hasValue( authTokenPrefer ) ) return accessor;
+
+		const preference:Header = response.getHeader( "preference-applied" );
+		if( ! preference || ! preference.hasValue( authTokenPrefer ) )
+			throw new BadResponseError( `Preference "${ authTokenPrefer }" was not applied.`, response );
+
+		this._parseRDFCredentials( rdfData, response );
+
+		return accessor;
 	}
 
 	protected _parseRDFCredentials( rdfData:object[], response:Response ):TokenCredentials {

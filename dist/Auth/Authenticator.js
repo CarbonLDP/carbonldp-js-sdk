@@ -46,10 +46,10 @@ var Authenticator = (function () {
                 .catch(function (response) { return _this.context.documents._parseErrorResponse(response); });
         }).then(function (_a) {
             var rdfData = _a[0], response = _a[1];
-            var userMetadata = _this._parseRDFMetadata(rdfData, response);
+            var accessor = _this._parseRDFMetadata(rdfData, response, requestOptions);
             var localOptions = HTTP_1.RequestUtils.cloneOptions(requestOptions);
             _this.addAuthentication(localOptions);
-            return userMetadata
+            return accessor
                 .authenticatedUserMetadata
                 .user
                 .resolve(localOptions);
@@ -57,7 +57,7 @@ var Authenticator = (function () {
             return _this.authenticatedUser = user;
         });
     };
-    Authenticator.prototype._parseRDFMetadata = function (rdfData, response) {
+    Authenticator.prototype._parseRDFMetadata = function (rdfData, response, requestOptions) {
         var metadataURI = this.context._resolvePath("users.me");
         var metadataRDFs = Document_1.RDFDocument
             .getDocuments(rdfData)

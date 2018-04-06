@@ -573,7 +573,7 @@ describe( module( "carbonldp/Auth/Service" ), ():void => {
 						status: 200,
 						responseHeaders: {
 							"eTag": `"1-12345"`,
-							"Preference-Applied": `${ CS.PreferAuthToken }`,
+							"Preference-Applied": `include="${ CS.PreferAuthToken }"`,
 						},
 						responseText: `[ {
 						"@id": "_:1",

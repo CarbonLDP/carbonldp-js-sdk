@@ -1,4 +1,5 @@
 import { IllegalArgumentError } from "../Errors";
+import { BadResponseError } from "../HTTP/Errors/ServerErrors";
 import { Header } from "../HTTP/Header";
 import { RequestOptions } from "../HTTP/Request";
 import { Resource } from "../Resource";
@@ -142,7 +143,7 @@ describe( module( "carbonldp/Auth/TokenAuthenticator" ), ():void => {
 					status: 200,
 					responseHeaders: {
 						"eTag": `"1-12345"`,
-						"Preference-Applied": `${ CS.PreferAuthToken }`,
+						"Preference-Applied": `include="${ CS.PreferAuthToken }"`,
 					},
 					responseText: `[ {
 						"@id": "_:1",
@@ -381,6 +382,45 @@ describe( module( "carbonldp/Auth/TokenAuthenticator" ), ():void => {
 					} )
 					.catch( done.fail )
 				;
+			} );
+
+
+			it( "should throw error if preference cs:PreferAuthToken was not applied", ( done:DoneFn ):void => {
+				jasmine.Ajax.stubRequest( "https://example.com/users/me/" ).andReturn( {
+					status: 200,
+					responseHeaders: {
+						"eTag": `"1-12345"`,
+					},
+					responseText: `[ {
+						"@id": "https://example.com/users/me/",
+						"@graph": [
+							{
+								"@id": "https://example.com/users/me/",
+								"@type": [ "${ C.Document }", "${ CS.AuthenticatedUserInformationAccessor }" ],
+								"${ CS.authenticatedUserMetadata }": [ {
+									"@id": "_:1"
+								} ]
+							},
+							{
+								"@id": "_:1",
+								"@type": [ "${ CS.AuthenticatedUserMetadata }", "${ C.VolatileResource }" ],
+								"${ CS.user }": [ {
+									"@id": "https://example.com/users/the-user/"
+								} ]
+							}
+						]
+					} ]`,
+				} );
+
+				const authenticator:TokenAuthenticator = new TokenAuthenticator( context );
+				authenticator
+					.authenticate( new UsernameAndPasswordToken( "user", "pass" ) )
+					.then( () => done.fail( "should not resolve" ) )
+					.catch( error => {
+						expect( () => { throw error; } ).toThrowError( BadResponseError, `Preference "include="${ CS.PreferAuthToken }"" was not applied.` );
+
+						done();
+					} );
 			} );
 
 		} );
