@@ -35,7 +35,7 @@ export class TokenAuthenticator extends Authenticator<UsernameAndPasswordToken, 
 	}
 
 	protected _getHeaderValue():string {
-		return "Token " + this.credentials.token;
+		return "Bearer " + this.credentials.token;
 	}
 
 	protected _parseCredentialsBase( credentialsBase:TokenCredentialsBase ):Promise<TokenCredentials> {

@@ -442,7 +442,7 @@ describe( module( "carbonldp/Auth/TokenAuthenticator" ), ():void => {
 				authenticator.addAuthentication( options );
 
 				expect( options.headers ).toEqual( new Map( [
-					[ "authorization", new Header( [ "Token token-value" ] ), ],
+					[ "authorization", new Header( [ "Bearer token-value" ] ), ],
 				] ) );
 			} );
 

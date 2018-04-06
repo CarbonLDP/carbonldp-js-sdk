@@ -10110,7 +10110,7 @@ var TokenAuthenticator = (function (_super) {
         return this._getCredentials(tokenOrCredentials);
     };
     TokenAuthenticator.prototype._getHeaderValue = function () {
-        return "Token " + this.credentials.token;
+        return "Bearer " + this.credentials.token;
     };
     TokenAuthenticator.prototype._parseCredentialsBase = function (credentialsBase) {
         var _this = this;

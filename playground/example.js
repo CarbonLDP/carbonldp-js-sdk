@@ -283,25 +283,57 @@
 				token = CarbonLDP.Auth.AuthMethod.TOKEN;
 			} );
 
+			let storedCredentials;
 			it( "should add credentials", async () => {
 				const credentials = await app.auth.authenticateUsing( token, "user01", "pass01" );
 
 				expect( credentials ).toEqual( jasmine.objectContaining( {
 					token: jasmine.any( String ),
-					// expiresOn: jasmine.any( Date ),
+					expires: jasmine.any( Date ),
 				} ) );
+
+				storedCredentials = JSON.parse( JSON.stringify( credentials ) );
 			} );
 
-			it( "should get with BASIC auth", async () => {
+			it( "should get with TOKEN auth", async () => {
 				await app.auth.authenticateUsing( token, "user01", "pass01" );
 
 				await app.documents.get( ".system/platform/" );
 				expect().nothing();
 			} );
 
-			it( "should unauthorized with BASIC auth", async () => {
+			it( "should unauthorized with TOKEN auth", async () => {
 				try {
 					await app.auth.authenticateUsing( token, "user01", "incorrect-pass" );
+					fail( "should not reach here" );
+				} catch( e ) {
+					expect( e.response.status ).toBe( 401 );
+				}
+			} );
+
+
+			it( "should authenticate with stored credentials", async () => {
+				const credentials = await app.auth.authenticateUsing( token, storedCredentials );
+
+				expect( credentials ).toEqual( jasmine.objectContaining( {
+					token: jasmine.any( String ),
+					expires: jasmine.any( Date ),
+				} ) );
+			} );
+
+
+			it( "should get with stored credentials", async () => {
+				await app.auth.authenticateUsing( token, storedCredentials );
+
+				await app.documents.get( ".system/platform/" );
+				expect().nothing();
+			} );
+
+			it( "should unauthorized with wrong stored credentials", async () => {
+				const credentials = Object.assign( {}, storedCredentials, { token: "wrong" } );
+
+				try {
+					await app.auth.authenticateUsing( token, credentials );
 					fail( "should not reach here" );
 				} catch( e ) {
 					expect( e.response.status ).toBe( 401 );
