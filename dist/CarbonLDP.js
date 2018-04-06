@@ -55,7 +55,7 @@ var CarbonLDP = (function (_super) {
     function CarbonLDP(urlOrSettings) {
         var _this = _super.call(this) || this;
         _this.settings = {
-            vocabulary: "vocabulary/#",
+            vocabulary: "vocabularies/main/#",
             paths: {
                 system: {
                     slug: ".system/",

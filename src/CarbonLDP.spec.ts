@@ -572,7 +572,7 @@ describe( module( "carbonldp/CarbonLDP" ), ():void => {
 			it( "should have the default settings when url provided", ():void => {
 				const carbon:CarbonLDP.CarbonLDP = new CarbonLDP.CarbonLDP( "https://example.com/" );
 				expect( carbon[ "settings" ] ).toEqual( {
-					vocabulary: "vocabulary/#",
+					vocabulary: "vocabularies/main/#",
 					paths: {
 						system: {
 							slug: ".system/",

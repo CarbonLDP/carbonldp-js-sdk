@@ -97,7 +97,7 @@ export class CarbonLDP extends AbstractContext {
 
 	protected _baseURI:string;
 	protected settings:ContextSettings = {
-		vocabulary: "vocabulary/#",
+		vocabulary: "vocabularies/main/#",
 		paths: {
 			system: {
 				slug: ".system/",
