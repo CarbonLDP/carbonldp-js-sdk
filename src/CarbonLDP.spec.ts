@@ -579,8 +579,13 @@ describe( module( "carbonldp/CarbonLDP" ), ():void => {
 							paths: {
 								platform: "platform/",
 								credentials: "credentials/",
-								users: "users/",
 								roles: "roles/",
+							},
+						},
+						users: {
+							slug: "users/",
+							paths: {
+								me: "me/",
 							},
 						},
 					},
@@ -595,7 +600,8 @@ describe( module( "carbonldp/CarbonLDP" ), ():void => {
 						system: {
 							slug: "https://secure.example.com/",
 							paths: {
-								users: null,
+								roles: null,
+								another: "another/",
 							},
 						},
 						users: "agents/",
@@ -610,10 +616,15 @@ describe( module( "carbonldp/CarbonLDP" ), ():void => {
 							paths: {
 								platform: "platform/",
 								credentials: "credentials/",
-								roles: "roles/",
+								another: "another/",
 							},
 						},
-						users: "agents/",
+						users: {
+							slug: "agents/",
+							paths: {
+								me: "me/",
+							},
+						},
 					},
 				} );
 			} );

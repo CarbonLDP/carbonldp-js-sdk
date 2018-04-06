@@ -15272,8 +15272,13 @@ var CarbonLDP = (function (_super) {
                     paths: {
                         platform: "platform/",
                         credentials: "credentials/",
-                        users: "users/",
                         roles: "roles/",
+                    },
+                },
+                users: {
+                    slug: "users/",
+                    paths: {
+                        me: "me/",
                     },
                 },
             },
@@ -15297,7 +15302,9 @@ var CarbonLDP = (function (_super) {
                 _this._baseURI += ":" + urlOrSettings.port;
             }
             urlOrSettings.ssl = urlOrSettings.host = urlOrSettings.port = null;
-            _this.settings = Utils.ObjectUtils.extend(_this.settings, urlOrSettings, { objects: true });
+            var paths = mergePaths(_this.settings.paths, urlOrSettings.paths);
+            _this.settings = Utils.ObjectUtils.extend(_this.settings, urlOrSettings);
+            _this.settings.paths = paths;
         }
         if (!_this._baseURI.endsWith("/"))
             _this._baseURI = _this._baseURI + "/";
@@ -15362,6 +15369,45 @@ var CarbonLDP = (function (_super) {
     return CarbonLDP;
 }(AbstractContext_1.AbstractContext));
 exports.CarbonLDP = CarbonLDP;
+function mergePaths(target, source) {
+    if (!source)
+        return target;
+    if (!target)
+        return Utils.ObjectUtils.clone(source, { objects: true });
+    for (var _i = 0, _a = Object.keys(source); _i < _a.length; _i++) {
+        var key = _a[_i];
+        var sourcePath = source[key];
+        if (sourcePath === null) {
+            delete target[key];
+            continue;
+        }
+        var targetPath = target[key];
+        if (!targetPath) {
+            target[key] = Utils.isObject(sourcePath) ?
+                Utils.ObjectUtils.clone(sourcePath, { objects: true }) :
+                sourcePath;
+            continue;
+        }
+        if (Utils.isString(sourcePath)) {
+            if (Utils.isObject(targetPath)) {
+                targetPath.slug = sourcePath;
+            }
+            else {
+                target[key] = sourcePath;
+            }
+            continue;
+        }
+        if (sourcePath.slug === void 0 && sourcePath.paths === void 0)
+            continue;
+        var targetDocPaths = Utils.isString(targetPath) ?
+            target[key] = { slug: targetPath } : targetPath;
+        if (sourcePath.slug !== void 0)
+            targetDocPaths.slug = sourcePath.slug;
+        if (sourcePath.paths !== void 0)
+            targetDocPaths.paths = mergePaths(targetDocPaths.paths, sourcePath.paths);
+    }
+    return target;
+}
 
 
 /***/ }),
