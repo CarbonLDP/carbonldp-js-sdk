@@ -1,7 +1,7 @@
 import { Context } from "../Context";
 import { GETOptions, RequestOptions, Response } from "../HTTP";
 import * as PersistedUser from "./PersistedUser";
-import { UserMetadata } from "./UserMetadata";
+import { AuthenticatedUserInformationAccessor } from "./AuthenticatedUserInformationAccessor";
 export declare abstract class Authenticator<T extends object, W extends object> {
     protected context: Context;
     protected authenticatedUser?: PersistedUser.Class;
@@ -13,5 +13,5 @@ export declare abstract class Authenticator<T extends object, W extends object> 
     addAuthentication(requestOptions: RequestOptions): RequestOptions;
     getAuthenticatedUser(requestOptions?: GETOptions): Promise<PersistedUser.Class>;
     protected abstract _getHeaderValue(): string;
-    protected _parseRDFMetadata(rdfData: object[], response: Response): UserMetadata;
+    protected _parseRDFMetadata(rdfData: object[], response: Response): AuthenticatedUserInformationAccessor;
 }

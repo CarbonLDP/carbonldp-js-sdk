@@ -14,7 +14,7 @@ import { RDFDocument } from "../RDF/Document";
 import { promiseMethod } from "../Utils";
 import { LDP } from "../Vocabularies/LDP";
 import * as PersistedUser from "./PersistedUser";
-import { UserMetadata } from "./UserMetadata";
+import { AuthenticatedUserInformationAccessor } from "./AuthenticatedUserInformationAccessor";
 
 export abstract class Authenticator<T extends object, W extends object> {
 
@@ -67,7 +67,7 @@ export abstract class Authenticator<T extends object, W extends object> {
 				.catch( response => this.context.documents._parseErrorResponse( response ) )
 				;
 		} ).then( ( [ rdfData, response ] ) => {
-			const userMetadata:UserMetadata = this._parseRDFMetadata( rdfData, response );
+			const userMetadata:AuthenticatedUserInformationAccessor = this._parseRDFMetadata( rdfData, response );
 
 			const localOptions:GETOptions = RequestUtils.cloneOptions( requestOptions );
 			this.addAuthentication( localOptions );
@@ -83,7 +83,7 @@ export abstract class Authenticator<T extends object, W extends object> {
 
 	protected abstract _getHeaderValue():string;
 
-	protected _parseRDFMetadata( rdfData:object[], response:Response ):UserMetadata {
+	protected _parseRDFMetadata( rdfData:object[], response:Response ):AuthenticatedUserInformationAccessor {
 		const metadataURI:string = this.context._resolvePath( "users.me" );
 
 		const metadataRDFs:RDFDocument[] = RDFDocument

@@ -3,6 +3,7 @@ export interface CS {
     AccessControlEntry: "https://carbonldp.com/ns/v1/security#AccessControlEntry";
     AccessControlList: "https://carbonldp.com/ns/v1/security#AccessControlList";
     AllOrigins: "https://carbonldp.com/ns/v1/security#AllOrigins";
+    AuthenticatedUserInformationAccessor: "https://carbonldp.com/ns/v1/security#AuthenticatedUserInformationAccessor";
     AuthenticatedUserMetadata: "https://carbonldp.com/ns/v1/security#AuthenticatedUserMetadata";
     CreateAccessPoint: "https://carbonldp.com/ns/v1/security#CreateAccessPoint";
     CreateChild: "https://carbonldp.com/ns/v1/security#CreateChild";
@@ -21,7 +22,6 @@ export interface CS {
     Update: "https://carbonldp.com/ns/v1/security#Update";
     Upload: "https://carbonldp.com/ns/v1/security#Upload";
     User: "https://carbonldp.com/ns/v1/security#User";
-    UserMetadata: "https://carbonldp.com/ns/v1/security#UserMetadata";
     accessControlEntry: "https://carbonldp.com/ns/v1/security#accessControlEntry";
     accessControlList: "https://carbonldp.com/ns/v1/security#accessControlList";
     accessTo: "https://carbonldp.com/ns/v1/security#accessTo";

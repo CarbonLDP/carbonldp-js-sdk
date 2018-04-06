@@ -4,13 +4,13 @@ import { CS } from "../Vocabularies";
 import { AuthenticatedUserMetadata } from "./AuthenticatedUserMetadata";
 
 
-export interface UserMetadata extends PersistedProtectedDocument {
+export interface AuthenticatedUserInformationAccessor extends PersistedProtectedDocument {
 	authenticatedUser:AuthenticatedUserMetadata;
 }
 
 
-export interface UserMetadataFactory {
-	TYPE:CS[ "UserMetadata" ];
+export interface AuthenticatedUserInformationAccessorFactory {
+	TYPE:CS[ "AuthenticatedUserInformationAccessor" ];
 	SCHEMA:ObjectSchema;
 }
 
@@ -21,7 +21,7 @@ const SCHEMA:ObjectSchema = {
 	},
 };
 
-export const UserMetadata:UserMetadataFactory = {
-	TYPE: CS.UserMetadata,
+export const AuthenticatedUserInformationAccessor:AuthenticatedUserInformationAccessorFactory = {
+	TYPE: CS.AuthenticatedUserInformationAccessor,
 	SCHEMA,
 };

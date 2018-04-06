@@ -162,7 +162,7 @@ describe( module( "carbonldp/Auth/TokenAuthenticator" ), ():void => {
 						"@graph": [
 							{
 								"@id": "https://example.com/users/me/",
-								"@type": [ "${ C.Document }", "${ CS.UserMetadata }" ],
+								"@type": [ "${ C.Document }", "${ CS.AuthenticatedUserInformationAccessor }" ],
 								"${ CS.authenticatedUser }": [ {
 									"@id": "_:1"
 								} ]

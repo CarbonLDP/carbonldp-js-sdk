@@ -2,7 +2,7 @@ import * as Auth from "./Auth";
 import { ACE } from "./Auth/ACE";
 import { ACL } from "./Auth/ACL";
 import { AuthenticatedUserMetadata } from "./Auth/AuthenticatedUserMetadata";
-import { UserMetadata } from "./Auth/UserMetadata";
+import { AuthenticatedUserInformationAccessor } from "./Auth/AuthenticatedUserInformationAccessor";
 import { Context } from "./Context";
 import { Document } from "./Document";
 import { Documents } from "./Documents";
@@ -221,7 +221,7 @@ export class SDKContext implements Context {
 		this.extendObjectSchema( Auth.Role.RDF_CLASS, Auth.Role.SCHEMA );
 		this.extendObjectSchema( ACE.TYPE, ACE.SCHEMA );
 		this.extendObjectSchema( ACL.TYPE, ACL.SCHEMA );
-		this.extendObjectSchema( UserMetadata.TYPE, UserMetadata.SCHEMA );
+		this.extendObjectSchema( AuthenticatedUserInformationAccessor.TYPE, AuthenticatedUserInformationAccessor.SCHEMA );
 		this.extendObjectSchema( AuthenticatedUserMetadata.TYPE, AuthenticatedUserMetadata.SCHEMA );
 		this.extendObjectSchema( Auth.User.RDF_CLASS, Auth.User.SCHEMA );
 		this.extendObjectSchema( Auth.Credentials.RDF_CLASS, Auth.Credentials.SCHEMA );

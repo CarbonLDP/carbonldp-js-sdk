@@ -13,7 +13,7 @@ import * as Utils from "./../Utils";
 import { Authenticator } from "./Authenticator";
 import { BasicAuthenticator } from "./BasicAuthenticator";
 import * as TokenCredentials from "./TokenCredentials";
-import { UserMetadata } from "./UserMetadata";
+import { AuthenticatedUserInformationAccessor } from "./AuthenticatedUserInformationAccessor";
 import { UsernameAndPasswordToken } from "./UsernameAndPasswordToken";
 
 
@@ -62,7 +62,7 @@ export class TokenAuthenticator extends Authenticator<UsernameAndPasswordToken, 
 			} );
 	}
 
-	protected _parseRDFMetadata( rdfData:object[], response:Response ):UserMetadata {
+	protected _parseRDFMetadata( rdfData:object[], response:Response ):AuthenticatedUserInformationAccessor {
 		const preferenceHeader:Header = response.getHeader( "Preference-Applied" );
 		if( preferenceHeader && preferenceHeader.hasValue( CS.PreferAuthToken ) )
 			this._parseRDFCredentials( rdfData, response );

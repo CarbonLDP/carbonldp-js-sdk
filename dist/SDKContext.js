@@ -11,7 +11,7 @@ var Auth = __importStar(require("./Auth"));
 var ACE_1 = require("./Auth/ACE");
 var ACL_1 = require("./Auth/ACL");
 var AuthenticatedUserMetadata_1 = require("./Auth/AuthenticatedUserMetadata");
-var UserMetadata_1 = require("./Auth/UserMetadata");
+var AuthenticatedUserInformationAccessor_1 = require("./Auth/AuthenticatedUserInformationAccessor");
 var Document_1 = require("./Document");
 var Documents_1 = require("./Documents");
 var Errors = __importStar(require("./Errors"));
@@ -182,7 +182,7 @@ var SDKContext = (function () {
         this.extendObjectSchema(Auth.Role.RDF_CLASS, Auth.Role.SCHEMA);
         this.extendObjectSchema(ACE_1.ACE.TYPE, ACE_1.ACE.SCHEMA);
         this.extendObjectSchema(ACL_1.ACL.TYPE, ACL_1.ACL.SCHEMA);
-        this.extendObjectSchema(UserMetadata_1.UserMetadata.TYPE, UserMetadata_1.UserMetadata.SCHEMA);
+        this.extendObjectSchema(AuthenticatedUserInformationAccessor_1.AuthenticatedUserInformationAccessor.TYPE, AuthenticatedUserInformationAccessor_1.AuthenticatedUserInformationAccessor.SCHEMA);
         this.extendObjectSchema(AuthenticatedUserMetadata_1.AuthenticatedUserMetadata.TYPE, AuthenticatedUserMetadata_1.AuthenticatedUserMetadata.SCHEMA);
         this.extendObjectSchema(Auth.User.RDF_CLASS, Auth.User.SCHEMA);
         this.extendObjectSchema(Auth.Credentials.RDF_CLASS, Auth.Credentials.SCHEMA);

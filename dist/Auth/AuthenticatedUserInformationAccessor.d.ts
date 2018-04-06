@@ -2,11 +2,11 @@ import { ObjectSchema } from "../ObjectSchema";
 import { PersistedProtectedDocument } from "../PersistedProtectedDocument";
 import { CS } from "../Vocabularies";
 import { AuthenticatedUserMetadata } from "./AuthenticatedUserMetadata";
-export interface UserMetadata extends PersistedProtectedDocument {
+export interface AuthenticatedUserInformationAccessor extends PersistedProtectedDocument {
     authenticatedUser: AuthenticatedUserMetadata;
 }
-export interface UserMetadataFactory {
-    TYPE: CS["UserMetadata"];
+export interface AuthenticatedUserInformationAccessorFactory {
+    TYPE: CS["AuthenticatedUserInformationAccessor"];
     SCHEMA: ObjectSchema;
 }
-export declare const UserMetadata: UserMetadataFactory;
+export declare const AuthenticatedUserInformationAccessor: AuthenticatedUserInformationAccessorFactory;

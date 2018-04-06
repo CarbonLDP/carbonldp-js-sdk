@@ -1654,6 +1654,7 @@ exports.CS = {
     AccessControlEntry: "https://carbonldp.com/ns/v1/security#AccessControlEntry",
     AccessControlList: "https://carbonldp.com/ns/v1/security#AccessControlList",
     AllOrigins: "https://carbonldp.com/ns/v1/security#AllOrigins",
+    AuthenticatedUserInformationAccessor: "https://carbonldp.com/ns/v1/security#AuthenticatedUserInformationAccessor",
     AuthenticatedUserMetadata: "https://carbonldp.com/ns/v1/security#AuthenticatedUserMetadata",
     CreateAccessPoint: "https://carbonldp.com/ns/v1/security#CreateAccessPoint",
     CreateChild: "https://carbonldp.com/ns/v1/security#CreateChild",
@@ -1672,7 +1673,6 @@ exports.CS = {
     Update: "https://carbonldp.com/ns/v1/security#Update",
     Upload: "https://carbonldp.com/ns/v1/security#Upload",
     User: "https://carbonldp.com/ns/v1/security#User",
-    UserMetadata: "https://carbonldp.com/ns/v1/security#UserMetadata",
     accessControlEntry: "https://carbonldp.com/ns/v1/security#accessControlEntry",
     accessControlList: "https://carbonldp.com/ns/v1/security#accessControlList",
     accessTo: "https://carbonldp.com/ns/v1/security#accessTo",
@@ -8290,7 +8290,7 @@ var Auth = __importStar(__webpack_require__(66));
 var ACE_1 = __webpack_require__(85);
 var ACL_1 = __webpack_require__(58);
 var AuthenticatedUserMetadata_1 = __webpack_require__(247);
-var UserMetadata_1 = __webpack_require__(248);
+var AuthenticatedUserInformationAccessor_1 = __webpack_require__(248);
 var Document_1 = __webpack_require__(21);
 var Documents_1 = __webpack_require__(138);
 var Errors = __importStar(__webpack_require__(6));
@@ -8461,7 +8461,7 @@ var SDKContext = (function () {
         this.extendObjectSchema(Auth.Role.RDF_CLASS, Auth.Role.SCHEMA);
         this.extendObjectSchema(ACE_1.ACE.TYPE, ACE_1.ACE.SCHEMA);
         this.extendObjectSchema(ACL_1.ACL.TYPE, ACL_1.ACL.SCHEMA);
-        this.extendObjectSchema(UserMetadata_1.UserMetadata.TYPE, UserMetadata_1.UserMetadata.SCHEMA);
+        this.extendObjectSchema(AuthenticatedUserInformationAccessor_1.AuthenticatedUserInformationAccessor.TYPE, AuthenticatedUserInformationAccessor_1.AuthenticatedUserInformationAccessor.SCHEMA);
         this.extendObjectSchema(AuthenticatedUserMetadata_1.AuthenticatedUserMetadata.TYPE, AuthenticatedUserMetadata_1.AuthenticatedUserMetadata.SCHEMA);
         this.extendObjectSchema(Auth.User.RDF_CLASS, Auth.User.SCHEMA);
         this.extendObjectSchema(Auth.Credentials.RDF_CLASS, Auth.Credentials.SCHEMA);
@@ -17316,8 +17316,8 @@ var SCHEMA = {
         "@type": "@id",
     },
 };
-exports.UserMetadata = {
-    TYPE: Vocabularies_1.CS.UserMetadata,
+exports.AuthenticatedUserInformationAccessor = {
+    TYPE: Vocabularies_1.CS.AuthenticatedUserInformationAccessor,
     SCHEMA: SCHEMA,
 };
 

@@ -54,6 +54,15 @@ describe( module( "carbonldp/Vocabularies/CS" ), ():void => {
 
 		it( hasProperty(
 			OBLIGATORY,
+			"AuthenticatedUserInformationAccessor",
+			"https://carbonldp.com/ns/v1/security#AuthenticatedUserInformationAccessor"
+		), ():void => {
+			const target:CS[ "AuthenticatedUserInformationAccessor" ] = "https://carbonldp.com/ns/v1/security#AuthenticatedUserInformationAccessor";
+			expect( target ).toBeDefined();
+		} );
+
+		it( hasProperty(
+			OBLIGATORY,
 			"AuthenticatedUserMetadata",
 			"https://carbonldp.com/ns/v1/security#AuthenticatedUserMetadata"
 		), ():void => {
@@ -211,15 +220,6 @@ describe( module( "carbonldp/Vocabularies/CS" ), ():void => {
 			"https://carbonldp.com/ns/v1/security#User"
 		), ():void => {
 			const target:CS[ "User" ] = "https://carbonldp.com/ns/v1/security#User";
-			expect( target ).toBeDefined();
-		} );
-
-		it( hasProperty(
-			OBLIGATORY,
-			"UserMetadata",
-			"https://carbonldp.com/ns/v1/security#UserMetadata"
-		), ():void => {
-			const target:CS[ "UserMetadata" ] = "https://carbonldp.com/ns/v1/security#UserMetadata";
 			expect( target ).toBeDefined();
 		} );
 
@@ -486,6 +486,11 @@ describe( module( "carbonldp/Vocabularies/CS" ), ():void => {
 			expect( CS.AllOrigins ).toBe( "https://carbonldp.com/ns/v1/security#AllOrigins" );
 		} );
 
+		it( "CS.AuthenticatedUserInformationAccessor", ():void => {
+			expect( CS.AuthenticatedUserInformationAccessor ).toEqual( jasmine.any( String ) );
+			expect( CS.AuthenticatedUserInformationAccessor ).toBe( "https://carbonldp.com/ns/v1/security#AuthenticatedUserInformationAccessor" );
+		} );
+
 		it( "CS.AuthenticatedUserMetadata", ():void => {
 			expect( CS.AuthenticatedUserMetadata ).toEqual( jasmine.any( String ) );
 			expect( CS.AuthenticatedUserMetadata ).toBe( "https://carbonldp.com/ns/v1/security#AuthenticatedUserMetadata" );
@@ -574,11 +579,6 @@ describe( module( "carbonldp/Vocabularies/CS" ), ():void => {
 		it( "CS.User", ():void => {
 			expect( CS.User ).toEqual( jasmine.any( String ) );
 			expect( CS.User ).toBe( "https://carbonldp.com/ns/v1/security#User" );
-		} );
-
-		it( "CS.UserMetadata", ():void => {
-			expect( CS.UserMetadata ).toEqual( jasmine.any( String ) );
-			expect( CS.UserMetadata ).toBe( "https://carbonldp.com/ns/v1/security#UserMetadata" );
 		} );
 
 

@@ -7,9 +7,9 @@ var SCHEMA = {
         "@type": "@id",
     },
 };
-exports.UserMetadata = {
-    TYPE: Vocabularies_1.CS.UserMetadata,
+exports.AuthenticatedUserInformationAccessor = {
+    TYPE: Vocabularies_1.CS.AuthenticatedUserInformationAccessor,
     SCHEMA: SCHEMA,
 };
 
-//# sourceMappingURL=UserMetadata.js.map
+//# sourceMappingURL=AuthenticatedUserInformationAccessor.js.map
