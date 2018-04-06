@@ -59,7 +59,6 @@ var JSONLDCompacter = (function () {
         }
         compactedDocuments.forEach(function (persistedDocument) {
             persistedDocument._syncSavedFragments();
-            persistedDocument._resolved = true;
             persistedDocument.types
                 .map(function (type) { return _this.documents.documentDecorators.get(type); })
                 .forEach(function (decorator) { return decorator && decorator.call(void 0, persistedDocument, _this.documents); });

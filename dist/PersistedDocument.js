@@ -453,8 +453,13 @@ function addMember(memberOrUri, requestOptions) {
 function addMembers(members, requestOptions) {
     return this._documents.addMembers(this.id, members, requestOptions);
 }
+function get(relativeURI, optionsOrQueryBuilderFn, queryBuilderFn) {
+    var uri = URI_1.URI.resolve(this.id, relativeURI);
+    return this._documents
+        .get(uri, optionsOrQueryBuilderFn, queryBuilderFn)
+        .then(function (data) { return data[0]; });
+}
 function createChild(objectOrSlugOrRequestOptions, slugOrRequestOptions, requestOptions) {
-    if (requestOptions === void 0) { requestOptions = {}; }
     requestOptions = Request_1.RequestUtils.isOptions(objectOrSlugOrRequestOptions) ? objectOrSlugOrRequestOptions : Request_1.RequestUtils.isOptions(slugOrRequestOptions) ? slugOrRequestOptions : requestOptions;
     var object = Utils.isString(objectOrSlugOrRequestOptions) || Request_1.RequestUtils.isOptions(objectOrSlugOrRequestOptions) || !objectOrSlugOrRequestOptions ? {} : objectOrSlugOrRequestOptions;
     var slug = Utils.isString(objectOrSlugOrRequestOptions) ? objectOrSlugOrRequestOptions : Utils.isString(slugOrRequestOptions) ? slugOrRequestOptions : null;
@@ -464,7 +469,6 @@ function createChildren(objects, slugsOrRequestOptions, requestOptions) {
     return this._documents.createChildren(this.id, objects, slugsOrRequestOptions, requestOptions);
 }
 function createChildAndRetrieve(objectOrSlugOrRequestOptions, slugOrRequestOptions, requestOptions) {
-    if (requestOptions === void 0) { requestOptions = {}; }
     requestOptions = Request_1.RequestUtils.isOptions(objectOrSlugOrRequestOptions) ? objectOrSlugOrRequestOptions : Request_1.RequestUtils.isOptions(slugOrRequestOptions) ? slugOrRequestOptions : requestOptions;
     var object = Utils.isString(objectOrSlugOrRequestOptions) || Request_1.RequestUtils.isOptions(objectOrSlugOrRequestOptions) || !objectOrSlugOrRequestOptions ? {} : objectOrSlugOrRequestOptions;
     var slug = Utils.isString(objectOrSlugOrRequestOptions) ? objectOrSlugOrRequestOptions : Utils.isString(slugOrRequestOptions) ? slugOrRequestOptions : null;

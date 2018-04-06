@@ -1295,38 +1295,43 @@ describe( module( "carbonldp/HTTP/Request" ), function():void {
 			"Set a Prefer header with `return=representation` in an options object request.", [
 				{ name: "preference", type: "CarbonLDP.HTTP.RetrievalPreferences" },
 				{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions" },
-				{ name: "returnRepresentation", type: "boolean", optional: true, description: "If set to true, add `return=representation;` before include and/or omit. Default value is set to `true`." },
 			],
 			{ type: "CarbonLDP.HTTP.RequestOptions" }
 		), ():void => {
 			expect( RequestUtils.setRetrievalPreferences ).toBeDefined();
 			expect( Utils.isFunction( RequestUtils.setRetrievalPreferences ) ).toBe( true );
 
-			let preferencesEmpty:RetrievalPreferences = {};
-			let preferencesIncludeNormal:RetrievalPreferences = {
+			options = RequestUtils.setRetrievalPreferences( {}, newOptionsObject() );
+			expect( RequestUtils.getHeader( "Prefer", options ) ).toEqual( new Header() );
+
+			options = RequestUtils.setRetrievalPreferences( { include: [] }, newOptionsObject() );
+			expect( RequestUtils.getHeader( "Prefer", options ) ).toEqual( new Header() );
+
+			options = RequestUtils.setRetrievalPreferences( { omit: [] }, newOptionsObject() );
+			expect( RequestUtils.getHeader( "Prefer", options ) ).toEqual( new Header() );
+
+			options = RequestUtils.setRetrievalPreferences( { include: [], omit: [] }, newOptionsObject() );
+			expect( RequestUtils.getHeader( "Prefer", options ) ).toEqual( new Header() );
+
+
+			options = RequestUtils.setRetrievalPreferences( {
 				include: [
 					LDP.PreferMinimalContainer,
 					LDP.PreferMembership,
 				],
-			};
-			let preferencesIncludeString:string = `return=representation; include="${LDP.PreferMinimalContainer} ${LDP.PreferMembership}"`;
-			let preferencesIncludeStringNoRepresentation:string = `include="${LDP.PreferMinimalContainer} ${LDP.PreferMembership}"`;
-			let preferencesIncludeEmpty:RetrievalPreferences = {
-				include: [],
-			};
-			let preferencesOmitNormal:RetrievalPreferences = {
+			}, newOptionsObject() );
+			expect( RequestUtils.getHeader( "Prefer", options ).toString() ).toEqual( `include="${LDP.PreferMinimalContainer} ${LDP.PreferMembership}"` );
+
+			options = RequestUtils.setRetrievalPreferences( {
 				omit: [
 					LDP.PreferContainment,
 					C.PreferContainmentResources,
 					C.PreferMembershipResources,
 				],
-			};
-			let preferencesOmitString:string = `return=representation; omit="${LDP.PreferContainment} ${C.PreferContainmentResources} ${C.PreferMembershipResources}"`;
-			let preferencesOmitStringNoRepresentation:string = `omit="${LDP.PreferContainment} ${C.PreferContainmentResources} ${C.PreferMembershipResources}"`;
-			let preferencesOmitEmpty:RetrievalPreferences = {
-				omit: [],
-			};
-			let preferencesFullNormal:RetrievalPreferences = {
+			}, newOptionsObject() );
+			expect( RequestUtils.getHeader( "Prefer", options ).toString() ).toEqual( `omit="${LDP.PreferContainment} ${C.PreferContainmentResources} ${C.PreferMembershipResources}"` );
+
+			options = RequestUtils.setRetrievalPreferences( {
 				include: [
 					LDP.PreferMinimalContainer,
 					LDP.PreferMembership,
@@ -1336,37 +1341,8 @@ describe( module( "carbonldp/HTTP/Request" ), function():void {
 					C.PreferContainmentResources,
 					C.PreferMembershipResources,
 				],
-			};
-			let preferencesFullString:string = `return=representation; include="${LDP.PreferMinimalContainer} ${LDP.PreferMembership}", return=representation; omit="${LDP.PreferContainment} ${C.PreferContainmentResources} ${C.PreferMembershipResources}"`;
-			let preferencesFullStringNoRepresentation:string = `include="${LDP.PreferMinimalContainer} ${LDP.PreferMembership}", omit="${LDP.PreferContainment} ${C.PreferContainmentResources} ${C.PreferMembershipResources}"`;
-			let preferencesFullEmpty:RetrievalPreferences = {
-				include: [],
-				omit: [],
-			};
-
-			options = RequestUtils.setRetrievalPreferences( preferencesEmpty, newOptionsObject() );
-			expect( RequestUtils.getHeader( "Prefer", options ) ).toEqual( new Header() );
-			options = RequestUtils.setRetrievalPreferences( preferencesIncludeEmpty, newOptionsObject() );
-			expect( RequestUtils.getHeader( "Prefer", options ) ).toEqual( new Header() );
-			options = RequestUtils.setRetrievalPreferences( preferencesOmitEmpty, newOptionsObject() );
-			expect( RequestUtils.getHeader( "Prefer", options ) ).toEqual( new Header() );
-			options = RequestUtils.setRetrievalPreferences( preferencesFullEmpty, newOptionsObject() );
-			expect( RequestUtils.getHeader( "Prefer", options ) ).toEqual( new Header() );
-
-			options = RequestUtils.setRetrievalPreferences( preferencesIncludeNormal, newOptionsObject() );
-			expect( RequestUtils.getHeader( "Prefer", options ).toString() ).toEqual( preferencesIncludeString );
-			options = RequestUtils.setRetrievalPreferences( preferencesOmitNormal, newOptionsObject() );
-			expect( RequestUtils.getHeader( "Prefer", options ).toString() ).toEqual( preferencesOmitString );
-			options = RequestUtils.setRetrievalPreferences( preferencesFullNormal, newOptionsObject() );
-			expect( RequestUtils.getHeader( "Prefer", options ).toString() ).toEqual( preferencesFullString );
-
-			options = RequestUtils.setRetrievalPreferences( preferencesIncludeNormal, newOptionsObject(), false );
-			expect( RequestUtils.getHeader( "Prefer", options ).toString() ).toEqual( preferencesIncludeStringNoRepresentation );
-			options = RequestUtils.setRetrievalPreferences( preferencesOmitNormal, newOptionsObject(), false );
-			expect( RequestUtils.getHeader( "Prefer", options ).toString() ).toEqual( preferencesOmitStringNoRepresentation );
-			options = RequestUtils.setRetrievalPreferences( preferencesFullNormal, newOptionsObject(), false );
-			expect( RequestUtils.getHeader( "Prefer", options ).toString() ).toEqual( preferencesFullStringNoRepresentation );
-
+			}, newOptionsObject() );
+			expect( RequestUtils.getHeader( "Prefer", options ).toString() ).toEqual( `include="${LDP.PreferMinimalContainer} ${LDP.PreferMembership}", omit="${LDP.PreferContainment} ${C.PreferContainmentResources} ${C.PreferMembershipResources}"` );
 		} );
 
 		// TODO: Separate in different tests

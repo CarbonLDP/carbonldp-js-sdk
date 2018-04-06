@@ -40,6 +40,7 @@ export declare class Documents implements PointerLibrary, PointerValidator, Obje
     hasPointer(id: string): boolean;
     getPointer(id: string): Pointer;
     removePointer(idOrPointer: string | Pointer): boolean;
+    register<T extends object>(id: string): T & PersistedDocument;
     get<T extends object>(uri: string, requestOptions?: GETOptions, queryBuilderFn?: (queryBuilder: QueryDocumentBuilder) => QueryDocumentBuilder): Promise<T & PersistedDocument>;
     get<T extends object>(uri: string, queryBuilderFn?: (queryBuilder: QueryDocumentBuilder) => QueryDocumentBuilder): Promise<T & PersistedDocument>;
     exists(documentURI: string, requestOptions?: RequestOptions): Promise<boolean>;
@@ -51,14 +52,14 @@ export declare class Documents implements PointerLibrary, PointerValidator, Obje
     createChildAndRetrieve<T extends object>(parentURI: string, childObject: T, requestOptions?: RequestOptions): Promise<T & PersistedProtectedDocument>;
     createChildrenAndRetrieve<T extends object>(parentURI: string, childrenObjects: T[], slugs?: string[], requestOptions?: RequestOptions): Promise<(T & PersistedProtectedDocument)[]>;
     createChildrenAndRetrieve<T extends object>(parentURI: string, childrenObjects: T[], requestOptions?: RequestOptions): Promise<(T & PersistedProtectedDocument)[]>;
-    listChildren(parentURI: string, requestOptions?: RequestOptions): Promise<PersistedDocument[]>;
+    listChildren<T extends object>(parentURI: string, requestOptions?: RequestOptions): Promise<(T & PersistedDocument)[]>;
     getChildren<T extends object>(parentURI: string, requestOptions: RequestOptions, queryBuilderFn?: (queryBuilder: QueryDocumentsBuilder) => QueryDocumentsBuilder): Promise<(T & PersistedDocument)[]>;
     getChildren<T extends object>(parentURI: string, queryBuilderFn?: (queryBuilder: QueryDocumentsBuilder) => QueryDocumentsBuilder): Promise<(T & PersistedDocument)[]>;
     createAccessPoint<T extends object>(documentURI: string, accessPoint: T & AccessPointBase, slug?: string, requestOptions?: RequestOptions): Promise<T & PersistedAccessPoint>;
     createAccessPoint<T extends object>(documentURI: string, accessPoint: T & AccessPointBase, requestOptions?: RequestOptions): Promise<T & PersistedAccessPoint>;
     createAccessPoints<T extends object>(documentURI: string, accessPoints: (T & AccessPointBase)[], slugs?: string[], requestOptions?: RequestOptions): Promise<(T & PersistedAccessPoint)[]>;
     createAccessPoints<T extends object>(documentURI: string, accessPoints: (T & AccessPointBase)[], requestOptions?: RequestOptions): Promise<(T & PersistedAccessPoint)[]>;
-    listMembers(uri: string, requestOptions?: RequestOptions): Promise<PersistedDocument[]>;
+    listMembers<T extends object>(uri: string, requestOptions?: RequestOptions): Promise<(T & PersistedDocument)[]>;
     getMembers<T extends object>(uri: string, requestOptions: RequestOptions, queryBuilderFn?: (queryBuilder: QueryDocumentsBuilder) => QueryDocumentsBuilder): Promise<(T & PersistedDocument)[]>;
     getMembers<T extends object>(uri: string, queryBuilderFn?: (queryBuilder: QueryDocumentsBuilder) => QueryDocumentsBuilder): Promise<(T & PersistedDocument)[]>;
     addMember(documentURI: string, member: Pointer, requestOptions?: RequestOptions): Promise<void>;
@@ -124,9 +125,10 @@ export declare class Documents implements PointerLibrary, PointerValidator, Obje
     private _refreshFullDocument<T>(persistedDocument, requestOptions);
     private _refreshPartialDocument<T>(persistedDocument, requestOptions);
     private _addRefreshQueryPatterns(queryContext, parentAdder, resource, parentName);
+    private _executeChildrenBuilder<T>(uri, requestOptions, queryBuilderFn?);
+    private _executeMembersBuilder<T>(uri, requestOptions, queryBuilderFn?);
     private _executeQueryBuilder<T>(uri, requestOptions, queryContext, targetProperty, queryBuilderFn?);
     private _executeConstructPatterns<T>(uri, requestOptions, queryContext, targetName, constructPatterns, targetDocument?);
-    private _executeSelectPatterns(uri, requestOptions, queryContext, targetName, selectPatterns);
     private _persistChildDocument<T>(parentURI, childObject, slug, requestOptions);
     private _persistAccessPoint<T>(documentURI, accessPoint, slug, requestOptions);
     private _persistDocument<T, W>(parentURI, slug, document, requestOptions);

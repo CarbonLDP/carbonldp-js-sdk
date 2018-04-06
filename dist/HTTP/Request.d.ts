@@ -55,7 +55,7 @@ export declare class RequestUtils {
     static setIfNoneMatchHeader(eTag: string, requestOptions: RequestOptions): RequestOptions;
     static setPreferredInteractionModel(interactionModelURI: string, requestOptions: RequestOptions): RequestOptions;
     static setPreferredRetrieval(retrievalType: "representation" | "minimal", requestOptions: RequestOptions): RequestOptions;
-    static setRetrievalPreferences(preferences: RetrievalPreferences, requestOptions: RequestOptions, returnRepresentation?: boolean): RequestOptions;
+    static setRetrievalPreferences(preferences: RetrievalPreferences, requestOptions: RequestOptions): RequestOptions;
     static setSlug(slug: string, requestOptions: RequestOptions): RequestOptions;
     static isOptions(object: Object): object is RequestOptions;
     static cloneOptions(options: RequestOptions): RequestOptions;

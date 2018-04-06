@@ -331,14 +331,13 @@ export class RequestUtils {
 		return requestOptions;
 	}
 
-	static setRetrievalPreferences( preferences:RetrievalPreferences, requestOptions:RequestOptions, returnRepresentation:boolean = true ):RequestOptions {
+	static setRetrievalPreferences( preferences:RetrievalPreferences, requestOptions:RequestOptions ):RequestOptions {
 		let prefer:Header = RequestUtils.getHeader( "prefer", requestOptions, true );
-		let representation:string = returnRepresentation ? "return=representation; " : "";
 
 		let keys:string[] = [ "include", "omit" ];
 		for( let key of keys ) {
 			if( key in preferences && preferences[ key ].length > 0 ) {
-				prefer.values.push( `${ representation }${ key }="${ preferences[ key ].join( " " ) }"` );
+				prefer.values.push( `${ key }="${ preferences[ key ].join( " " ) }"` );
 			}
 		}
 

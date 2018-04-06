@@ -287,15 +287,13 @@ var RequestUtils = (function () {
         prefer.values.push("return=" + retrievalType);
         return requestOptions;
     };
-    RequestUtils.setRetrievalPreferences = function (preferences, requestOptions, returnRepresentation) {
-        if (returnRepresentation === void 0) { returnRepresentation = true; }
+    RequestUtils.setRetrievalPreferences = function (preferences, requestOptions) {
         var prefer = RequestUtils.getHeader("prefer", requestOptions, true);
-        var representation = returnRepresentation ? "return=representation; " : "";
         var keys = ["include", "omit"];
         for (var _i = 0, keys_1 = keys; _i < keys_1.length; _i++) {
             var key = keys_1[_i];
             if (key in preferences && preferences[key].length > 0) {
-                prefer.values.push("" + representation + key + "=\"" + preferences[key].join(" ") + "\"");
+                prefer.values.push(key + "=\"" + preferences[key].join(" ") + "\"");
             }
         }
         return requestOptions;

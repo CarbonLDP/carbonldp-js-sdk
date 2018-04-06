@@ -693,6 +693,87 @@ describe( module( "carbonldp/Documents" ), ():void => {
 
 		} );
 
+
+		describe( method( INSTANCE, "register" ), ():void => {
+
+			it( hasSignature(
+				[ "T extends object" ],
+				"Register an empty PersistedDocument with the provided id and decorate it with the types provided.",
+				[
+					{ name: "id", type: "string" },
+					{ name: "types", type: "string[]", optional: true },
+				],
+				{ type: "T & CarbonLDP.PersistedDocument" }
+			), ():void => {} );
+
+			let context:AbstractContext;
+			beforeEach( ():void => {
+				context = new class extends AbstractContext {
+					protected _baseURI:string = "https://example.com/";
+				};
+			} );
+
+			it( "should exist", ():void => {
+				expect( Documents.prototype.register ).toBeDefined();
+				expect( Documents.prototype.register ).toEqual( jasmine.any( Function ) );
+			} );
+
+
+			it( "should throw error when id is out scope", ():void => {
+				const documents:Documents = new Documents( context );
+
+				expect( () => documents.register( "https://not-example.com/document/" ) ).toThrowError( Errors.IllegalArgumentError, "Cannot register a document outside the scope of this documents instance." );
+			} );
+
+
+			it( "should return empty PersistedDocument when only id string", ():void => {
+				const documents:Documents = new Documents( context );
+
+				const returned:PersistedDocument = documents.register( "https://example.com/document/" );
+
+				expect( PersistedDocument.is( returned ) ).toBe( true );
+				expect( returned ).toEqual( jasmine.objectContaining( {
+					id: "https://example.com/document/",
+				} ) );
+
+				expect( returned as Partial<PersistedDocument> ).toEqual( {} );
+			} );
+
+			it( "should return existing PersistedDocument when id string", ():void => {
+				const documents:Documents = new Documents( context );
+
+				interface ExistingDocument {
+					alreadyExists:boolean;
+
+					alreadyFunction():void;
+				}
+
+				const existingDoc:ExistingDocument = Object.assign(
+					documents.getPointer( "https://example.com/document/" ), {
+						alreadyExists: true,
+						alreadyFunction():void {},
+					}
+				);
+
+				const returned:ExistingDocument & PersistedDocument = documents
+					.register<ExistingDocument>( "https://example.com/document/" );
+
+				expect( PersistedDocument.is( returned ) ).toBe( true );
+				expect( returned ).toEqual( jasmine.objectContaining( {
+					id: "https://example.com/document/",
+				} ) );
+
+				expect( returned as ExistingDocument ).toEqual( {
+					alreadyExists: true,
+					alreadyFunction: jasmine.any( Function ),
+				} );
+
+				expect( existingDoc ).toBe( returned );
+			} );
+
+		} );
+
+
 		describe( method( INSTANCE, "get" ), ():void => {
 
 			it( hasSignature(
@@ -1117,8 +1198,8 @@ describe( module( "carbonldp/Documents" ), ():void => {
 							jasmine.objectContaining( {
 								headers: new Map( [
 									[ "prefer", new Header( [
-										`include="${ C.PreferResultsContext }"`,
 										`include="${ C.PreferDocumentETags }"`,
+										`include="${ C.PreferResultsContext }"`,
 									] ) ],
 								] ),
 							} )
@@ -1918,8 +1999,8 @@ describe( module( "carbonldp/Documents" ), ():void => {
 							jasmine.objectContaining( {
 								headers: new Map( [
 									[ "prefer", new Header( [
-										`include="${ C.PreferResultsContext }"`,
 										`include="${ C.PreferDocumentETags }"`,
+										`include="${ C.PreferResultsContext }"`,
 									] ) ],
 								] ),
 							} )
@@ -3753,11 +3834,12 @@ describe( module( "carbonldp/Documents" ), ():void => {
 		describe( method( INSTANCE, "listChildren" ), () => {
 
 			it( hasSignature(
+				[ "T extends object" ],
 				"Retrieves the empty children of a document.", [
 					{ name: "parentURI", type: "string", description: "URI of the document from where to look for its children." },
 					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for the request." },
 				],
-				{ type: "Promise<CarbonLDP.PersistedDocument[]>" }
+				{ type: "Promise<(T & CarbonLDP.PersistedDocument)[]>" }
 			), () => {} );
 
 			it( isDefined(), () => {
@@ -3819,22 +3901,9 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				} );
 
 
-				it( "should send a select query", ( done:DoneFn ):void => {
-					context.extendObjectSchema( {
-						"schema": "https://schema.org/",
-					} );
-					context.extendObjectSchema( "Resource", {
-						"property1": {
-							"@id": "https://schema.org/property-1",
-							"@type": XSD.string,
-						},
-						"property2": {
-							"@id": "https://schema.org/property-2",
-							"@type": "@id",
-						},
-					} );
-
-					const sendSpy:jasmine.Spy = spyOn( documents, "executeSELECTQuery" ).and.returnValue( Promise.reject( null ) );
+				it( "should send a CONSTRUCT query", ( done:DoneFn ):void => {
+					const sendSpy:jasmine.Spy = spyOn( documents, "executeRawCONSTRUCTQuery" )
+						.and.returnValue( Promise.reject( null ) );
 
 					documents.listChildren( "https://example.com/resource/" )
 						.then( () => done.fail( "Should not resolve, spy is makes it fail." ) )
@@ -3843,11 +3912,33 @@ describe( module( "carbonldp/Documents" ), ():void => {
 
 							expect( sendSpy ).toHaveBeenCalledWith(
 								"https://example.com/resource/",
-								"SELECT DISTINCT ?child WHERE { " +
-								"" + "<https://example.com/resource/> <http://www.w3.org/ns/ldp#contains> ?child " +
+
+								"CONSTRUCT {" +
+								` ?metadata a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
+								"" + ` <${ C.target }> ?child.` +
+
+								" ?child a ?child__types " +
+
+								"} WHERE {" +
+								" BIND(BNODE() AS ?metadata)." +
+
+								" {" +
+								"" + " SELECT DISTINCT ?child WHERE {" +
+								"" + "" + ` <https://example.com/resource/> <${ LDP.contains }> ?child` +
+								"" + " }" +
+								" }." +
+
+								" OPTIONAL { ?child a ?child__types } " +
+
 								"}",
 
-								void 0
+								jasmine.objectContaining( {
+									headers: new Map( [
+										[ "prefer", new Header( [
+											`include="${ C.PreferResultsContext }"`,
+										] ) ],
+									] ),
+								} )
 							);
 							done();
 						} );
@@ -3856,43 +3947,47 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				it( "should return the children", ( done:DoneFn ):void => {
 					jasmine.Ajax.stubRequest( "https://example.com/resource/" ).andReturn( {
 						status: 200,
-						responseText: `{
-							"head": {
-								"vars": [
-									"child"
+						responseText: `[ {
+							"@id":"_:1",
+							"@type": [
+								"${ C.VolatileResource }",
+								"${ C.QueryMetadata }"
+							],
+							"${ C.target }": [ {
+								"@id":"https://example.com/resource/child1/"
+							} ]
+						}, {
+							"@id":"_:2",
+							"@type": [
+								"${ C.VolatileResource }",
+								"${ C.QueryMetadata }"
+							],
+							"${ C.target }": [ {
+								"@id":"https://example.com/resource/child2/"
+							} ]
+						}, {
+							"@id": "https://example.com/resource/child1/",
+							"@graph": [ {
+								"@id": "https://example.com/resource/child1/",
+								"@type": [
+									"${ C.Document }",
+									"https://example.com/ns#Resource",
+									"${ LDP.BasicContainer }",
+									"${ LDP.RDFSource }"
 								]
-							},
-							"results": {
-								"bindings": [
-									{
-										"child": {
-											"type": "uri",
-											"value": "https://example.com/resource/child1/"
-										}
-									},
-									{
-										"child": {
-											"type": "uri",
-											"value": "https://example.com/resource/child2/"
-										}
-									}
+							} ]
+						}, {
+							"@id": "https://example.com/resource/child2/",
+							"@graph": [ {
+								"@id": "https://example.com/resource/child2/",
+								"@type": [
+									"${ C.Document }",
+									"https://example.com/ns#Resource",
+									"${ LDP.BasicContainer }",
+									"${ LDP.RDFSource }"
 								]
-							}
-						}`,
-					} );
-
-					context.extendObjectSchema( {
-						"schema": "https://schema.org/",
-					} );
-					context.extendObjectSchema( "schema:Resource", {
-						"property1": {
-							"@id": "https://schema.org/property-1",
-							"@type": XSD.string,
-						},
-						"property2": {
-							"@id": "https://schema.org/property-2",
-							"@type": "@id",
-						},
+							} ]
+						} ]`,
 					} );
 
 					documents
@@ -3905,13 +4000,88 @@ describe( module( "carbonldp/Documents" ), ():void => {
 							expect( myDocuments[ 0 ] ).toEqual( jasmine.objectContaining( {
 								"_eTag": void 0,
 								"_resolved": false,
+								"types": [
+									`${ C.Document }`,
+									`https://example.com/ns#Resource`,
+									`${ LDP.BasicContainer }`,
+									`${ LDP.RDFSource }`,
+								],
 							} ) );
 
-							expect( PersistedDocument.is( myDocuments[ 0 ] ) ).toBe( true );
+							expect( PersistedDocument.is( myDocuments[ 1 ] ) ).toBe( true );
 							expect( myDocuments[ 1 ] ).toEqual( jasmine.objectContaining( {
 								"_eTag": void 0,
 								"_resolved": false,
+								"types": [
+									`${ C.Document }`,
+									`https://example.com/ns#Resource`,
+									`${ LDP.BasicContainer }`,
+									`${ LDP.RDFSource }`,
+								],
 							} ) );
+
+							done();
+						} )
+						.catch( done.fail );
+				} );
+
+				it( "should NOT return partial children", ( done:DoneFn ):void => {
+					jasmine.Ajax.stubRequest( "https://example.com/resource/" ).andReturn( {
+						status: 200,
+						responseText: `[ {
+							"@id":"_:1",
+							"@type": [
+								"${ C.VolatileResource }",
+								"${ C.QueryMetadata }"
+							],
+							"${ C.target }": [ {
+								"@id":"https://example.com/resource/child1/"
+							} ]
+						}, {
+							"@id":"_:2",
+							"@type": [
+								"${ C.VolatileResource }",
+								"${ C.QueryMetadata }"
+							],
+							"${ C.target }": [ {
+								"@id":"https://example.com/resource/child2/"
+							} ]
+						}, {
+							"@id": "https://example.com/resource/child1/",
+							"@graph": [ {
+								"@id": "https://example.com/resource/child1/",
+								"@type": [
+									"${ C.Document }",
+									"https://example.com/ns#Resource",
+									"${ LDP.BasicContainer }",
+									"${ LDP.RDFSource }"
+								]
+							} ]
+						}, {
+							"@id": "https://example.com/resource/child2/",
+							"@graph": [ {
+								"@id": "https://example.com/resource/child2/",
+								"@type": [
+									"${ C.Document }",
+									"https://example.com/ns#Resource",
+									"${ LDP.BasicContainer }",
+									"${ LDP.RDFSource }"
+								]
+							} ]
+						} ]`,
+					} );
+
+					documents
+						.listChildren( "https://example.com/resource/" )
+						.then( ( myDocuments ) => {
+							expect( myDocuments ).toEqual( jasmine.any( Array ) );
+							expect( myDocuments.length ).toBe( 2 );
+
+							expect( PersistedDocument.is( myDocuments[ 0 ] ) ).toBe( true );
+							expect( myDocuments[ 0 ].isPartial() ).toBe( false );
+
+							expect( PersistedDocument.is( myDocuments[ 1 ] ) ).toBe( true );
+							expect( myDocuments[ 1 ].isPartial() ).toBe( false );
 
 							done();
 						} )
@@ -3969,8 +4139,9 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				} );
 
 
-				it( "should send a select query", ( done:DoneFn ):void => {
-					const sendSpy:jasmine.Spy = spyOn( documents, "executeSELECTQuery" ).and.returnValue( Promise.reject( null ) );
+				it( "should send a CONSTRUCT query", ( done:DoneFn ):void => {
+					const sendSpy:jasmine.Spy = spyOn( documents, "executeRawCONSTRUCTQuery" )
+						.and.returnValue( Promise.reject( null ) );
 
 					documents.listChildren( "https://example.com/resource/" )
 						.then( () => done.fail( "Should not resolve, spy is makes it fail." ) )
@@ -3979,11 +4150,33 @@ describe( module( "carbonldp/Documents" ), ():void => {
 
 							expect( sendSpy ).toHaveBeenCalledWith(
 								"https://example.com/resource/",
-								"SELECT DISTINCT ?child WHERE { " +
-								"" + "<https://example.com/resource/> <http://www.w3.org/ns/ldp#contains> ?child " +
+
+								"CONSTRUCT {" +
+								` ?metadata a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
+								"" + ` <${ C.target }> ?child.` +
+
+								" ?child a ?child__types " +
+
+								"} WHERE {" +
+								" BIND(BNODE() AS ?metadata)." +
+
+								" {" +
+								"" + " SELECT DISTINCT ?child WHERE {" +
+								"" + "" + ` <https://example.com/resource/> <${ LDP.contains }> ?child` +
+								"" + " }" +
+								" }." +
+
+								" OPTIONAL { ?child a ?child__types } " +
+
 								"}",
 
-								void 0
+								jasmine.objectContaining( {
+									headers: new Map( [
+										[ "prefer", new Header( [
+											`include="${ C.PreferResultsContext }"`,
+										] ) ],
+									] ),
+								} )
 							);
 							done();
 						} );
@@ -3992,29 +4185,47 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				it( "should return the children", ( done:DoneFn ):void => {
 					jasmine.Ajax.stubRequest( "https://example.com/resource/" ).andReturn( {
 						status: 200,
-						responseText: `{
-							"head": {
-								"vars": [
-									"child"
+						responseText: `[ {
+							"@id":"_:1",
+							"@type": [
+								"${ C.VolatileResource }",
+								"${ C.QueryMetadata }"
+							],
+							"${ C.target }": [ {
+								"@id":"https://example.com/resource/child1/"
+							} ]
+						}, {
+							"@id":"_:2",
+							"@type": [
+								"${ C.VolatileResource }",
+								"${ C.QueryMetadata }"
+							],
+							"${ C.target }": [ {
+								"@id":"https://example.com/resource/child2/"
+							} ]
+						}, {
+							"@id": "https://example.com/resource/child1/",
+							"@graph": [ {
+								"@id": "https://example.com/resource/child1/",
+								"@type": [
+									"${ C.Document }",
+									"https://example.com/ns#Resource",
+									"${ LDP.BasicContainer }",
+									"${ LDP.RDFSource }"
 								]
-							},
-							"results": {
-								"bindings": [
-									{
-										"child": {
-											"type": "uri",
-											"value": "https://example.com/resource/child1/"
-										}
-									},
-									{
-										"child": {
-											"type": "uri",
-											"value": "https://example.com/resource/child2/"
-										}
-									}
+							} ]
+						}, {
+							"@id": "https://example.com/resource/child2/",
+							"@graph": [ {
+								"@id": "https://example.com/resource/child2/",
+								"@type": [
+									"${ C.Document }",
+									"https://example.com/ns#Resource",
+									"${ LDP.BasicContainer }",
+									"${ LDP.RDFSource }"
 								]
-							}
-						}`,
+							} ]
+						} ]`,
 					} );
 
 					documents
@@ -4027,13 +4238,88 @@ describe( module( "carbonldp/Documents" ), ():void => {
 							expect( myDocuments[ 0 ] ).toEqual( jasmine.objectContaining( {
 								"_eTag": void 0,
 								"_resolved": false,
+								"types": [
+									`${ C.Document }`,
+									`https://example.com/ns#Resource`,
+									`${ LDP.BasicContainer }`,
+									`${ LDP.RDFSource }`,
+								],
 							} ) );
 
 							expect( PersistedDocument.is( myDocuments[ 0 ] ) ).toBe( true );
 							expect( myDocuments[ 1 ] ).toEqual( jasmine.objectContaining( {
 								"_eTag": void 0,
 								"_resolved": false,
+								"types": [
+									`${ C.Document }`,
+									`https://example.com/ns#Resource`,
+									`${ LDP.BasicContainer }`,
+									`${ LDP.RDFSource }`,
+								],
 							} ) );
+
+							done();
+						} )
+						.catch( done.fail );
+				} );
+
+				it( "should NOT return partial children", ( done:DoneFn ):void => {
+					jasmine.Ajax.stubRequest( "https://example.com/resource/" ).andReturn( {
+						status: 200,
+						responseText: `[ {
+							"@id":"_:1",
+							"@type": [
+								"${ C.VolatileResource }",
+								"${ C.QueryMetadata }"
+							],
+							"${ C.target }": [ {
+								"@id":"https://example.com/resource/child1/"
+							} ]
+						}, {
+							"@id":"_:2",
+							"@type": [
+								"${ C.VolatileResource }",
+								"${ C.QueryMetadata }"
+							],
+							"${ C.target }": [ {
+								"@id":"https://example.com/resource/child2/"
+							} ]
+						}, {
+							"@id": "https://example.com/resource/child1/",
+							"@graph": [ {
+								"@id": "https://example.com/resource/child1/",
+								"@type": [
+									"${ C.Document }",
+									"https://example.com/ns#Resource",
+									"${ LDP.BasicContainer }",
+									"${ LDP.RDFSource }"
+								]
+							} ]
+						}, {
+							"@id": "https://example.com/resource/child2/",
+							"@graph": [ {
+								"@id": "https://example.com/resource/child2/",
+								"@type": [
+									"${ C.Document }",
+									"https://example.com/ns#Resource",
+									"${ LDP.BasicContainer }",
+									"${ LDP.RDFSource }"
+								]
+							} ]
+						} ]`,
+					} );
+
+					documents
+						.listChildren( "https://example.com/resource/" )
+						.then( ( myDocuments ) => {
+							expect( myDocuments ).toEqual( jasmine.any( Array ) );
+							expect( myDocuments.length ).toBe( 2 );
+
+							expect( PersistedDocument.is( myDocuments[ 0 ] ) ).toBe( true );
+							expect( myDocuments[ 0 ].isPartial() ).toBe( false );
+
+							expect( PersistedDocument.is( myDocuments[ 1 ] ) ).toBe( true );
+							expect( myDocuments[ 1 ].isPartial() ).toBe( false );
 
 							done();
 						} )
@@ -4225,8 +4511,8 @@ describe( module( "carbonldp/Documents" ), ():void => {
 							jasmine.objectContaining( {
 								headers: new Map( [
 									[ "prefer", new Header( [
-										`include="${ C.PreferResultsContext }"`,
 										`include="${ C.PreferDocumentETags }"`,
+										`include="${ C.PreferResultsContext }"`,
 									] ) ],
 								] ),
 							} )
@@ -4289,8 +4575,8 @@ describe( module( "carbonldp/Documents" ), ():void => {
 								jasmine.objectContaining( {
 									headers: new Map( [
 										[ "prefer", new Header( [
-											`include="${ C.PreferResultsContext }"`,
 											`include="${ C.PreferDocumentETags }"`,
+											`include="${ C.PreferResultsContext }"`,
 										] ) ],
 									] ),
 								} )
@@ -4368,8 +4654,8 @@ describe( module( "carbonldp/Documents" ), ():void => {
 								jasmine.objectContaining( {
 									headers: new Map( [
 										[ "prefer", new Header( [
-											`include="${ C.PreferResultsContext }"`,
 											`include="${ C.PreferDocumentETags }"`,
+											`include="${ C.PreferResultsContext }"`,
 										] ) ],
 									] ),
 								} )
@@ -5594,8 +5880,8 @@ describe( module( "carbonldp/Documents" ), ():void => {
 							jasmine.objectContaining( {
 								headers: new Map( [
 									[ "prefer", new Header( [
-										`include="${ C.PreferResultsContext }"`,
 										`include="${ C.PreferDocumentETags }"`,
+										`include="${ C.PreferResultsContext }"`,
 									] ) ],
 								] ),
 							} )
@@ -6680,11 +6966,12 @@ describe( module( "carbonldp/Documents" ), ():void => {
 		describe( method( INSTANCE, "listMembers" ), () => {
 
 			it( hasSignature(
+				[ "T extends object" ],
 				"Retrieves the empty members of a document.", [
 					{ name: "uri", type: "string", description: "URI of the document from where to look for its members." },
 					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for the request." },
 				],
-				{ type: "Promise<CarbonLDP.PersistedDocument[]>" }
+				{ type: "Promise<(T & CarbonLDP.PersistedDocument)[]>" }
 			), () => {} );
 
 			it( isDefined(), () => {
@@ -6746,22 +7033,9 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				} );
 
 
-				it( "should send a select query", ( done:DoneFn ):void => {
-					context.extendObjectSchema( {
-						"schema": "https://schema.org/",
-					} );
-					context.extendObjectSchema( "Resource", {
-						"property1": {
-							"@id": "https://schema.org/property-1",
-							"@type": XSD.string,
-						},
-						"property2": {
-							"@id": "https://schema.org/property-2",
-							"@type": "@id",
-						},
-					} );
-
-					const sendSpy:jasmine.Spy = spyOn( documents, "executeSELECTQuery" ).and.returnValue( Promise.reject( null ) );
+				it( "should send a CONSTRUCT query", ( done:DoneFn ):void => {
+					const sendSpy:jasmine.Spy = spyOn( documents, "executeRawCONSTRUCTQuery" )
+						.and.returnValue( Promise.reject( null ) );
 
 					documents.listMembers( "https://example.com/resource/" )
 						.then( () => done.fail( "Should not resolve, spy is makes it fail." ) )
@@ -6771,13 +7045,34 @@ describe( module( "carbonldp/Documents" ), ():void => {
 							expect( sendSpy ).toHaveBeenCalledWith(
 								"https://example.com/resource/",
 
-								"SELECT DISTINCT ?member WHERE { " +
-								"" + "<https://example.com/resource/> <http://www.w3.org/ns/ldp#membershipResource> ?membershipResource; " +
-								"" + "" + "<http://www.w3.org/ns/ldp#hasMemberRelation> ?hasMemberRelation. " +
-								"" + "?membershipResource ?hasMemberRelation ?member " +
+								"CONSTRUCT {" +
+								` ?metadata a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
+								"" + ` <${ C.target }> ?member.` +
+
+								" ?member a ?member__types " +
+
+								"} WHERE {" +
+								" BIND(BNODE() AS ?metadata)." +
+
+								" {" +
+								"" + " SELECT DISTINCT ?member WHERE {" +
+								"" + "" + " <https://example.com/resource/> <http://www.w3.org/ns/ldp#membershipResource> ?membershipResource;" +
+								"" + "" + "" + " <http://www.w3.org/ns/ldp#hasMemberRelation> ?hasMemberRelation." +
+								"" + "" + " ?membershipResource ?hasMemberRelation ?member" +
+								"" + " }" +
+								" }." +
+
+								" OPTIONAL { ?member a ?member__types } " +
+
 								"}",
 
-								void 0
+								jasmine.objectContaining( {
+									headers: new Map( [
+										[ "prefer", new Header( [
+											`include="${ C.PreferResultsContext }"`,
+										] ) ],
+									] ),
+								} )
 							);
 
 							done();
@@ -6787,43 +7082,47 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				it( "should return the members", ( done:DoneFn ):void => {
 					jasmine.Ajax.stubRequest( "https://example.com/resource/" ).andReturn( {
 						status: 200,
-						responseText: `{
-							"head": {
-								"vars": [
-									"member"
+						responseText: `[ {
+							"@id":"_:1",
+							"@type": [
+								"${ C.VolatileResource }",
+								"${ C.QueryMetadata }"
+							],
+							"${ C.target }": [ {
+								"@id":"https://example.com/resource/member1/"
+							} ]
+						}, {
+							"@id":"_:2",
+							"@type": [
+								"${ C.VolatileResource }",
+								"${ C.QueryMetadata }"
+							],
+							"${ C.target }": [ {
+								"@id":"https://example.com/resource/member2/"
+							} ]
+						}, {
+							"@id": "https://example.com/resource/member1/",
+							"@graph": [ {
+								"@id": "https://example.com/resource/member1/",
+								"@type": [
+									"${ C.Document }",
+									"https://example.com/ns#Resource",
+									"${ LDP.BasicContainer }",
+									"${ LDP.RDFSource }"
 								]
-							},
-							"results": {
-								"bindings": [
-									{
-										"member": {
-											"type": "uri",
-											"value": "https://example.com/resource/child1/"
-										}
-									},
-									{
-										"member": {
-											"type": "uri",
-											"value": "https://example.com/resource/child2/"
-										}
-									}
+							} ]
+						}, {
+							"@id": "https://example.com/resource/member2/",
+							"@graph": [ {
+								"@id": "https://example.com/resource/member2/",
+								"@type": [
+									"${ C.Document }",
+									"https://example.com/ns#Resource",
+									"${ LDP.BasicContainer }",
+									"${ LDP.RDFSource }"
 								]
-							}
-						}`,
-					} );
-
-					context.extendObjectSchema( {
-						"schema": "https://schema.org/",
-					} );
-					context.extendObjectSchema( "schema:Resource", {
-						"property1": {
-							"@id": "https://schema.org/property-1",
-							"@type": XSD.string,
-						},
-						"property2": {
-							"@id": "https://schema.org/property-2",
-							"@type": "@id",
-						},
+							} ]
+						} ]`,
 					} );
 
 					documents
@@ -6836,13 +7135,88 @@ describe( module( "carbonldp/Documents" ), ():void => {
 							expect( myDocuments[ 0 ] ).toEqual( jasmine.objectContaining( {
 								"_eTag": void 0,
 								"_resolved": false,
+								"types": [
+									`${ C.Document }`,
+									`https://example.com/ns#Resource`,
+									`${ LDP.BasicContainer }`,
+									`${ LDP.RDFSource }`,
+								],
 							} ) );
 
-							expect( PersistedDocument.is( myDocuments[ 0 ] ) ).toBe( true );
+							expect( PersistedDocument.is( myDocuments[ 1 ] ) ).toBe( true );
 							expect( myDocuments[ 1 ] ).toEqual( jasmine.objectContaining( {
 								"_eTag": void 0,
 								"_resolved": false,
+								"types": [
+									`${ C.Document }`,
+									`https://example.com/ns#Resource`,
+									`${ LDP.BasicContainer }`,
+									`${ LDP.RDFSource }`,
+								],
 							} ) );
+
+							done();
+						} )
+						.catch( done.fail );
+				} );
+
+				it( "should NOT return partial members", ( done:DoneFn ):void => {
+					jasmine.Ajax.stubRequest( "https://example.com/resource/" ).andReturn( {
+						status: 200,
+						responseText: `[ {
+							"@id":"_:1",
+							"@type": [
+								"${ C.VolatileResource }",
+								"${ C.QueryMetadata }"
+							],
+							"${ C.target }": [ {
+								"@id":"https://example.com/resource/member1/"
+							} ]
+						}, {
+							"@id":"_:2",
+							"@type": [
+								"${ C.VolatileResource }",
+								"${ C.QueryMetadata }"
+							],
+							"${ C.target }": [ {
+								"@id":"https://example.com/resource/member2/"
+							} ]
+						}, {
+							"@id": "https://example.com/resource/member1/",
+							"@graph": [ {
+								"@id": "https://example.com/resource/member1/",
+								"@type": [
+									"${ C.Document }",
+									"https://example.com/ns#Resource",
+									"${ LDP.BasicContainer }",
+									"${ LDP.RDFSource }"
+								]
+							} ]
+						}, {
+							"@id": "https://example.com/resource/member2/",
+							"@graph": [ {
+								"@id": "https://example.com/resource/member2/",
+								"@type": [
+									"${ C.Document }",
+									"https://example.com/ns#Resource",
+									"${ LDP.BasicContainer }",
+									"${ LDP.RDFSource }"
+								]
+							} ]
+						} ]`,
+					} );
+
+					documents
+						.listMembers( "https://example.com/resource/" )
+						.then( ( myDocuments ) => {
+							expect( myDocuments ).toEqual( jasmine.any( Array ) );
+							expect( myDocuments.length ).toBe( 2 );
+
+							expect( PersistedDocument.is( myDocuments[ 0 ] ) ).toBe( true );
+							expect( myDocuments[ 0 ].isPartial() ).toBe( false );
+
+							expect( PersistedDocument.is( myDocuments[ 1 ] ) ).toBe( true );
+							expect( myDocuments[ 1 ].isPartial() ).toBe( false );
 
 							done();
 						} )
@@ -6900,8 +7274,9 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				} );
 
 
-				it( "should send a select query", ( done:DoneFn ):void => {
-					const sendSpy:jasmine.Spy = spyOn( documents, "executeSELECTQuery" ).and.returnValue( Promise.reject( null ) );
+				it( "should send a CONSTRUCT query", ( done:DoneFn ):void => {
+					const sendSpy:jasmine.Spy = spyOn( documents, "executeRawCONSTRUCTQuery" )
+						.and.returnValue( Promise.reject( null ) );
 
 					documents.listMembers( "https://example.com/resource/" )
 						.then( () => done.fail( "Should not resolve, spy is makes it fail." ) )
@@ -6911,13 +7286,34 @@ describe( module( "carbonldp/Documents" ), ():void => {
 							expect( sendSpy ).toHaveBeenCalledWith(
 								"https://example.com/resource/",
 
-								"SELECT DISTINCT ?member WHERE { " +
-								"" + "<https://example.com/resource/> <http://www.w3.org/ns/ldp#membershipResource> ?membershipResource; " +
-								"" + "" + "<http://www.w3.org/ns/ldp#hasMemberRelation> ?hasMemberRelation. " +
-								"" + "?membershipResource ?hasMemberRelation ?member " +
+								"CONSTRUCT {" +
+								` ?metadata a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
+								"" + ` <${ C.target }> ?member.` +
+
+								" ?member a ?member__types " +
+
+								"} WHERE {" +
+								" BIND(BNODE() AS ?metadata)." +
+
+								" {" +
+								"" + " SELECT DISTINCT ?member WHERE {" +
+								"" + "" + " <https://example.com/resource/> <http://www.w3.org/ns/ldp#membershipResource> ?membershipResource;" +
+								"" + "" + "" + " <http://www.w3.org/ns/ldp#hasMemberRelation> ?hasMemberRelation." +
+								"" + "" + " ?membershipResource ?hasMemberRelation ?member" +
+								"" + " }" +
+								" }." +
+
+								" OPTIONAL { ?member a ?member__types } " +
+
 								"}",
 
-								void 0
+								jasmine.objectContaining( {
+									headers: new Map( [
+										[ "prefer", new Header( [
+											`include="${ C.PreferResultsContext }"`,
+										] ) ],
+									] ),
+								} )
 							);
 							done();
 						} );
@@ -6926,29 +7322,47 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				it( "should return the children", ( done:DoneFn ):void => {
 					jasmine.Ajax.stubRequest( "https://example.com/resource/" ).andReturn( {
 						status: 200,
-						responseText: `{
-							"head": {
-								"vars": [
-									"member"
+						responseText: `[ {
+							"@id":"_:1",
+							"@type": [
+								"${ C.VolatileResource }",
+								"${ C.QueryMetadata }"
+							],
+							"${ C.target }": [ {
+								"@id":"https://example.com/resource/member1/"
+							} ]
+						}, {
+							"@id":"_:2",
+							"@type": [
+								"${ C.VolatileResource }",
+								"${ C.QueryMetadata }"
+							],
+							"${ C.target }": [ {
+								"@id":"https://example.com/resource/member2/"
+							} ]
+						}, {
+							"@id": "https://example.com/resource/member1/",
+							"@graph": [ {
+								"@id": "https://example.com/resource/member1/",
+								"@type": [
+									"${ C.Document }",
+									"https://example.com/ns#Resource",
+									"${ LDP.BasicContainer }",
+									"${ LDP.RDFSource }"
 								]
-							},
-							"results": {
-								"bindings": [
-									{
-										"member": {
-											"type": "uri",
-											"value": "https://example.com/resource/child1/"
-										}
-									},
-									{
-										"member": {
-											"type": "uri",
-											"value": "https://example.com/resource/child2/"
-										}
-									}
+							} ]
+						}, {
+							"@id": "https://example.com/resource/member2/",
+							"@graph": [ {
+								"@id": "https://example.com/resource/member2/",
+								"@type": [
+									"${ C.Document }",
+									"https://example.com/ns#Resource",
+									"${ LDP.BasicContainer }",
+									"${ LDP.RDFSource }"
 								]
-							}
-						}`,
+							} ]
+						} ]`,
 					} );
 
 					documents
@@ -6961,13 +7375,88 @@ describe( module( "carbonldp/Documents" ), ():void => {
 							expect( myDocuments[ 0 ] ).toEqual( jasmine.objectContaining( {
 								"_eTag": void 0,
 								"_resolved": false,
+								"types": [
+									`${ C.Document }`,
+									`https://example.com/ns#Resource`,
+									`${ LDP.BasicContainer }`,
+									`${ LDP.RDFSource }`,
+								],
 							} ) );
 
 							expect( PersistedDocument.is( myDocuments[ 0 ] ) ).toBe( true );
 							expect( myDocuments[ 1 ] ).toEqual( jasmine.objectContaining( {
 								"_eTag": void 0,
 								"_resolved": false,
+								"types": [
+									`${ C.Document }`,
+									`https://example.com/ns#Resource`,
+									`${ LDP.BasicContainer }`,
+									`${ LDP.RDFSource }`,
+								],
 							} ) );
+
+							done();
+						} )
+						.catch( done.fail );
+				} );
+
+				it( "should NOT return partial members", ( done:DoneFn ):void => {
+					jasmine.Ajax.stubRequest( "https://example.com/resource/" ).andReturn( {
+						status: 200,
+						responseText: `[ {
+							"@id":"_:1",
+							"@type": [
+								"${ C.VolatileResource }",
+								"${ C.QueryMetadata }"
+							],
+							"${ C.target }": [ {
+								"@id":"https://example.com/resource/member1/"
+							} ]
+						}, {
+							"@id":"_:2",
+							"@type": [
+								"${ C.VolatileResource }",
+								"${ C.QueryMetadata }"
+							],
+							"${ C.target }": [ {
+								"@id":"https://example.com/resource/member2/"
+							} ]
+						}, {
+							"@id": "https://example.com/resource/member1/",
+							"@graph": [ {
+								"@id": "https://example.com/resource/member1/",
+								"@type": [
+									"${ C.Document }",
+									"https://example.com/ns#Resource",
+									"${ LDP.BasicContainer }",
+									"${ LDP.RDFSource }"
+								]
+							} ]
+						}, {
+							"@id": "https://example.com/resource/member2/",
+							"@graph": [ {
+								"@id": "https://example.com/resource/member2/",
+								"@type": [
+									"${ C.Document }",
+									"https://example.com/ns#Resource",
+									"${ LDP.BasicContainer }",
+									"${ LDP.RDFSource }"
+								]
+							} ]
+						} ]`,
+					} );
+
+					documents
+						.listMembers( "https://example.com/resource/" )
+						.then( ( myDocuments ) => {
+							expect( myDocuments ).toEqual( jasmine.any( Array ) );
+							expect( myDocuments.length ).toBe( 2 );
+
+							expect( PersistedDocument.is( myDocuments[ 0 ] ) ).toBe( true );
+							expect( myDocuments[ 0 ].isPartial() ).toBe( false );
+
+							expect( PersistedDocument.is( myDocuments[ 1 ] ) ).toBe( true );
+							expect( myDocuments[ 1 ].isPartial() ).toBe( false );
 
 							done();
 						} )
@@ -7161,8 +7650,8 @@ describe( module( "carbonldp/Documents" ), ():void => {
 							jasmine.objectContaining( {
 								headers: new Map( [
 									[ "prefer", new Header( [
-										`include="${ C.PreferResultsContext }"`,
 										`include="${ C.PreferDocumentETags }"`,
+										`include="${ C.PreferResultsContext }"`,
 									] ) ],
 								] ),
 							} )
@@ -7227,8 +7716,8 @@ describe( module( "carbonldp/Documents" ), ():void => {
 								jasmine.objectContaining( {
 									headers: new Map( [
 										[ "prefer", new Header( [
-											`include="${ C.PreferResultsContext }"`,
 											`include="${ C.PreferDocumentETags }"`,
+											`include="${ C.PreferResultsContext }"`,
 										] ) ],
 									] ),
 								} )
@@ -7308,8 +7797,8 @@ describe( module( "carbonldp/Documents" ), ():void => {
 								jasmine.objectContaining( {
 									headers: new Map( [
 										[ "prefer", new Header( [
-											`include="${ C.PreferResultsContext }"`,
 											`include="${ C.PreferDocumentETags }"`,
+											`include="${ C.PreferResultsContext }"`,
 										] ) ],
 									] ),
 								} )
@@ -8487,6 +8976,8 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					).then( () => done.fail( "Should not resolve, spy is makes it fail." ) ).catch( ( error ) => {
 						if( error ) done.fail( error );
 
+						console.log( sendSpy.calls.argsFor( 0 ) );
+						console.log( Array.from( sendSpy.calls.argsFor( 0 )[ 2 ].headers )[ 0 ][ 1 ] );
 						expect( sendSpy ).toHaveBeenCalledWith(
 							"https://example.com/resource/", "" +
 							"CONSTRUCT {" +
@@ -8544,8 +9035,8 @@ describe( module( "carbonldp/Documents" ), ():void => {
 							jasmine.objectContaining( {
 								headers: new Map( [
 									[ "prefer", new Header( [
-										`include="${ C.PreferResultsContext }"`,
 										`include="${ C.PreferDocumentETags }"`,
+										`include="${ C.PreferResultsContext }"`,
 									] ) ],
 								] ),
 							} )
