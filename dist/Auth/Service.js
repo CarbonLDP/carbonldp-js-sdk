@@ -51,7 +51,7 @@ var AuthService = (function () {
         this.clearAuthentication();
         var authenticator = this.authenticators[method];
         if (!authenticator)
-            return Promise.reject(new Errors.IllegalArgumentError("Invalid authentication method '" + method + "'."));
+            return Promise.reject(new Errors.IllegalArgumentError("Invalid authentication method \"" + method + "\"."));
         var authenticationToken;
         if (Utils.isString(userOrCredentials))
             authenticationToken = new UsernameAndPasswordToken_1.UsernameAndPasswordToken(userOrCredentials, password);
@@ -59,7 +59,7 @@ var AuthService = (function () {
             authenticationToken = userOrCredentials;
         }
         else {
-            return Promise.reject(new Errors.IllegalArgumentError("The authentication token provided in not valid."));
+            return Promise.reject(new Errors.IllegalArgumentError("Invalid authentication token."));
         }
         var credentials;
         return authenticator

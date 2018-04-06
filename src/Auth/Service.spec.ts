@@ -1,9 +1,6 @@
 import { AbstractContext } from "../AbstractContext";
-import * as Errors from "../Errors";
-import { BadResponseError } from "../HTTP/Errors";
+import { IllegalArgumentError } from "../Errors";
 import { RequestOptions } from "../HTTP/Request";
-import { Response } from "../HTTP/Response";
-import { Resource } from "../Resource";
 import { ContextSettings } from "../Settings";
 import {
 	clazz,
@@ -17,6 +14,7 @@ import {
 	module
 } from "../test/JasmineExtender";
 import * as Utils from "../Utils";
+import { C } from "../Vocabularies/C";
 import { CS } from "../Vocabularies/CS";
 import { XSD } from "../Vocabularies/XSD";
 import { AuthMethod } from "./AuthMethod";
@@ -25,10 +23,8 @@ import * as Roles from "./Roles";
 
 import { AuthService } from "./Service";
 
-import { TokenAuthenticator } from "./TokenAuthenticator";
 import * as TokenCredentials from "./TokenCredentials";
 import * as User from "./User";
-import { UsernameAndPasswordCredentials } from "./UsernameAndPasswordCredentials";
 import * as Users from "./Users";
 
 describe( module( "carbonldp/Auth/Service" ), ():void => {
@@ -51,6 +47,7 @@ describe( module( "carbonldp/Auth/Service" ), ():void => {
 			expect( Utils.isFunction( AuthService ) ).toBe( true );
 		} );
 
+		// TODO: Separate in different tests
 		it( hasConstructor( [
 			{ name: "context", type: "CarbonLDP.Context" },
 		] ), ():void => {
@@ -68,6 +65,7 @@ describe( module( "carbonldp/Auth/Service" ), ():void => {
 			expect( auth instanceof AuthService ).toBe( true );
 		} );
 
+		// TODO: Move to constructor tests
 		it( hasProperty(
 			INSTANCE,
 			"users",
@@ -89,6 +87,7 @@ describe( module( "carbonldp/Auth/Service" ), ():void => {
 			expect( auth.users ).toEqual( jasmine.any( Users.Class ) );
 		} );
 
+		// TODO: Separate in different tests
 		it( hasProperty(
 			INSTANCE,
 			"authenticatedUser",
@@ -221,6 +220,7 @@ describe( module( "carbonldp/Auth/Service" ), ():void => {
 
 		} );
 
+		// TODO: Move to constructor tests
 		it( hasProperty(
 			INSTANCE,
 			"roles",
@@ -240,6 +240,7 @@ describe( module( "carbonldp/Auth/Service" ), ():void => {
 			expect( auth.roles ).toEqual( jasmine.any( Roles.Class ) );
 		} );
 
+		// TODO: Separate in different tests
 		it( hasMethod(
 			INSTANCE,
 			"isAuthenticated",
@@ -387,6 +388,7 @@ describe( module( "carbonldp/Auth/Service" ), ():void => {
 
 		} );
 
+		// TODO: Separate in different tests
 		it( hasMethod(
 			INSTANCE,
 			"authenticate",
@@ -421,308 +423,291 @@ describe( module( "carbonldp/Auth/Service" ), ():void => {
 			"authenticateUsing"
 		), ():void => {
 
-			let context:AbstractContext;
-			beforeEach( ():void => {
-				context = new class extends AbstractContext {
-					protected _baseURI:string = "http://example.com/";
-					protected settings:ContextSettings = {
-						paths: {
-							system: {
-								slug: ".system/",
-								paths: {
-									system: "system/",
-								},
-							},
-						},
-					};
-				};
-			} );
-
-			xit( hasSignature(
+			it( hasSignature(
 				"Authenticates the user with Basic HTTP Authentication, which uses an encoded string with username and password in every request.", [
 					{ name: "method", type: "CarbonLDP.Auth.AuthMethod.BASIC" },
 					{ name: "username", type: "string" },
 					{ name: "password", type: "string" },
 				],
 				{ type: "Promise<CarbonLDP.Auth.UsernameAndPasswordCredentials>" }
-			), ( done:{ ():void, fail:() => void } ):void => {
-				jasmine.Ajax.stubRequest( "http://example.com/users/me/", null, "GET" ).andReturn( {
-					status: 200,
-					responseHeaders: {
-						"ETag": "1234567890",
-						"Content-Location": "http://example.com/users/my-user/",
-					},
-					responseText: `[ {
-						"@id": "http://example.com/users/my-user/",
-						"@graph": [ {
-							"@id": "http://example.com/users/my-user/",
-							"@type": [ "${ CS.User }" ],
-							"${ CS.name }": [ {
-								"@value": "My User Name",
-								"@type": "${ XSD.string }"
-							} ],
-							"${ CS.credentials }": [ {
-								"@id": "http://example.com/.system/credentials/my-user-credentials/"
-							} ]
-						} ]
-					} ]`,
-				} );
+			), ():void => {} );
 
-				let auth:AuthService = new AuthService( context );
-
-				expect( auth.authenticateUsing ).toBeDefined();
-				expect( Utils.isFunction( auth.authenticateUsing ) ).toBe( true );
-				expect( auth.isAuthenticated() ).toBe( false );
-
-				let username:string = "myUser@user.com";
-				let password:string = "myAwesomePassword";
-				let promises:Promise<any>[] = [];
-				let promise:Promise<any>;
-
-				let spies:any = {
-					success: ( _auth:AuthService, credentials:UsernameAndPasswordCredentials ):void => {
-						expect( _auth.isAuthenticated() ).toBe( true );
-
-						expect( credentials.username ).toEqual( username );
-						expect( credentials.password ).toEqual( password );
-
-						expect( _auth.authenticatedUser ).toBeTruthy();
-						expect( PersistedUser.Factory.is( _auth.authenticatedUser ) ).toBe( true );
-					},
-					fail: ( error ):void => {
-						expect( error ).toEqual( jasmine.any( Errors.IllegalArgumentError ) );
-					},
-				};
-				let spySuccess:jasmine.Spy = spyOn( spies, "success" ).and.callThrough();
-				let spyFail:jasmine.Spy = spyOn( spies, "fail" ).and.callThrough();
-
-				// Expected behavior
-				let auth01:AuthService = new AuthService( context );
-				promise = auth01.authenticateUsing( AuthMethod.BASIC, username, password );
-				expect( promise instanceof Promise ).toBe( true );
-				promises.push( promise.then( ( credentials:UsernameAndPasswordCredentials ):void => {
-					spies.success( auth01, credentials );
-				} ) );
-
-				// Wrong parameters
-				let auth02:AuthService = new AuthService( context );
-				promise = auth02.authenticateUsing( AuthMethod.BASIC as any, {} as any );
-				expect( promise instanceof Promise ).toBe( true );
-				promises.push( promise.catch( spies.fail ) );
-
-				// Nonexistent authentication type
-				let auth03:AuthService = new AuthService( context );
-				promise = auth03.authenticateUsing( "Error" as any, username, password );
-				expect( promise instanceof Promise ).toBe( true );
-				promises.push( promise.catch( spies.fail ) );
-
-				Promise.all( promises ).then( ():void => {
-					expect( spySuccess.calls.count() ).toBe( 1 );
-					expect( spyFail.calls.count() ).toBe( 2 );
-					done();
-				}, done.fail );
-			} );
-
-			xit( hasSignature(
+			it( hasSignature(
 				"Authenticates the user with a username and password, and generates a JSON Web Token (JWT) credential that will be used in every request.", [
 					{ name: "method", type: "CarbonLDP.Auth.AuthMethod.TOKEN" },
 					{ name: "username", type: "string" },
 					{ name: "password", type: "string" },
 				],
 				{ type: "Promise<CarbonLDP.Auth.TokenCredentials.Class>" }
-			), ( done:DoneFn ):void => {
-				let auth:AuthService = new AuthService( context );
+			), ():void => {} );
 
-				expect( auth.authenticateUsing ).toBeDefined();
-				expect( Utils.isFunction( auth.authenticateUsing ) ).toBe( true );
-				expect( auth.isAuthenticated() ).toBe( false );
-
-				let date:Date = new Date();
-				date.setDate( date.getDate() + 1 );
-				let promises:Promise<any>[] = [];
-				let promise:Promise<any>;
-				let spies:any = {
-					success: ( _auth:AuthService, credentials:TokenCredentials.Class ):void => {
-						expect( credentials.key ).toEqual( "token-value" );
-
-						expect( _auth.authenticatedUser ).toBeTruthy();
-						expect( PersistedUser.Factory.is( _auth.authenticatedUser ) ).toBe( true );
-					},
-					fail: ( error ):void => {
-						expect( error instanceof Errors.IllegalArgumentError ).toBe( true );
-					},
-				};
-				let spySuccess:jasmine.Spy = spyOn( spies, "success" ).and.callThrough();
-				let spyFail:jasmine.Spy = spyOn( spies, "fail" ).and.callThrough();
-
-				spyOn( TokenAuthenticator.prototype, "authenticate" ).and.callFake( ():Promise<TokenCredentials.Class> => {
-					return Promise.resolve( Resource.createFrom( {
-						key: "token-value",
-						expirationTime: date,
-						user: PersistedUser.Factory.decorate( {
-							_eTag: "\"1-123445\"",
-							name: "My User Name",
-						}, context.documents ),
-					} ) );
-				} );
-
-				// Expected behavior
-				let auth01:AuthService = new AuthService( context );
-				promise = auth01.authenticateUsing( AuthMethod.TOKEN, "myUser@user.con", "myAwesomePassword" );
-				expect( promise instanceof Promise ).toBe( true );
-				promises.push( promise.then( ( credentials:TokenCredentials.Class ):void => {
-					spies.success( auth01, credentials );
-				} ) );
-
-				// Wrong parameters
-				let auth02:AuthService = new AuthService( context );
-				promise = auth02.authenticateUsing( AuthMethod.TOKEN, {} as any );
-				expect( promise instanceof Promise ).toBe( true );
-				promises.push( promise.catch( spies.fail ) );
-
-				// Nonexistent authentication method
-				let auth03:AuthService = new AuthService( context );
-				promise = auth03.authenticateUsing( "Error" as any, "myUser@user.con", "myAwesomePassword" );
-				expect( promise instanceof Promise ).toBe( true );
-				promises.push( promise.catch( spies.fail ) );
-
-				Promise.all( promises ).then( ():void => {
-					expect( spySuccess.calls.count() ).toBe( 1 );
-					expect( spyFail.calls.count() ).toBe( 2 );
-					done();
-				}, done.fail );
-			} );
-
-			xit( hasSignature(
+			it( hasSignature(
 				"Authenticates the user with a `CarbonLDP.Auth.TokenCredentials.Class`, which contains a JSON Web Token (JWT) that will be used in every request.", [
 					{ name: "method", type: "CarbonLDP.Auth.AuthMethod.TOKEN" },
 					{ name: "token", type: "CarbonLDP.Auth.TokenCredentials.Class" },
 				],
 				{ type: "Promise<CarbonLDP.Auth.TokenCredentials.Class>" }
-			), ( done:{ ():void, fail:() => void } ):void => {
-				jasmine.Ajax.stubRequest( "http://example.com/users/me/" ).andReturn( {
+			), ():void => {} );
+
+
+			let context:AbstractContext;
+			beforeEach( () => {
+				context = new class extends AbstractContext {
+					protected _baseURI:string = "https://example.com/";
+					protected settings:ContextSettings = {
+						paths: {
+							users: {
+								slug: "users/",
+								paths: { me: "me/" },
+							},
+						},
+					};
+				};
+
+				jasmine.Ajax.stubRequest( "https://example.com/users/me/" ).andReturn( {
 					status: 200,
 					responseHeaders: {
-						"ETag": "1234567890",
-						"Content-Location": "http://example.com/users/my-user/",
+						"eTag": `"1-12345"`,
 					},
 					responseText: `[ {
-						"@id": "http://example.com/users/my-user/",
-						"@graph": [ {
-							"@id": "http://example.com/users/my-user/",
-							"@type": [ "${ CS.User }" ],
-							"${ CS.name }": [ {
-								"@value": "My User Name",
-								"@type": "${ XSD.string }"
-							} ],
-							"${ CS.credentials }": [ {
-								"@id": "http://example.com/.system/credentials/my-user-credentials/"
-							} ]
-						} ]
-					} ]`,
+							"@id": "https://example.com/users/me/",
+							"@graph": [
+								{
+									"@id": "https://example.com/users/me/",
+									"@type": [ "${ C.Document }", "${ CS.AuthenticatedUserInformationAccessor }" ],
+									"${ CS.authenticatedUserMetadata }": [ {
+										"@id": "_:1"
+									} ]
+								},
+								{
+									"@id": "_:1",
+									"@type": [ "${ CS.AuthenticatedUserMetadata }", "${ C.VolatileResource }" ],
+									"${ CS.user }": [ {
+										"@id": "https://example.com/users/the-user/"
+									} ]
+								}
+							]
+						} ]`,
 				} );
-				let auth01:AuthService = new AuthService( context );
-				let auth02:AuthService = new AuthService( context );
-
-				expect( auth01.authenticateUsing ).toBeDefined();
-				expect( Utils.isFunction( auth01.authenticateUsing ) ).toBe( true );
-				expect( auth01.isAuthenticated() ).toBe( false );
-
-
-				let date:Date;
-				let token:TokenCredentials.Class;
-				let promises:Promise<any>[] = [];
-				let promise:Promise<any>;
-				let spies:any = {
-					success01: ( _auth:AuthService, credentials:TokenCredentials.Class ):void => {
-						expect( credentials.key ).toEqual( token.key );
-						expect( _auth.isAuthenticated() ).toBe( true );
-
-						expect( _auth.authenticatedUser ).toBeTruthy();
-						expect( PersistedUser.Factory.is( _auth.authenticatedUser ) ).toBe( true );
+				jasmine.Ajax.stubRequest( "https://example.com/users/the-user/" ).andReturn( {
+					status: 200,
+					responseHeaders: {
+						"eTag": `"2-12345"`,
 					},
-					success02: ( _auth:AuthService, credentials:TokenCredentials.Class ):void => {
-						expect( credentials.key ).toEqual( token.key );
-						expect( _auth.isAuthenticated() ).toBe( true );
+					responseText: `{
+						"@id": "https://example.com/users/the-user/",
+						"@graph": [
+							{
+								"@id": "https://example.com/users/the-user/",
+								"@type": [
+									"${ C.Document }",
+									"${ CS.User }"
+								],
+								"${ CS.name }": [ {
+									"@value": "The user name"
+								} ]
+							}
+						]
+					}`,
+				} );
+			} );
 
-						expect( _auth.authenticatedUser ).toBeTruthy();
-						expect( PersistedUser.Factory.is( _auth.authenticatedUser ) ).toBe( true );
-					},
-					fail: ( error ):void => {
-						expect( error ).toEqual( jasmine.any( Errors.IllegalArgumentError ) );
-					},
-				};
-				let spySuccess01:jasmine.Spy = spyOn( spies, "success01" ).and.callThrough();
-				let spySuccess02:jasmine.Spy = spyOn( spies, "success02" ).and.callThrough();
-				let spyFail:jasmine.Spy = spyOn( spies, "fail" ).and.callThrough();
+			it( "should exists", ():void => {
+				expect( AuthService.prototype.authenticateUsing ).toBeDefined();
+				expect( AuthService.prototype.authenticateUsing ).toEqual( jasmine.any( Function ) );
+			} );
 
-				// Expected behavior
-				date = new Date();
-				date.setDate( date.getDate() + 1 );
-				token = <any> {
-					expirationTime: date,
-					id: "_:BlankNode",
-					key: "dG9rZW4tdmFsdWU=",
-					types: [ CS.Token ],
-				};
-				promise = auth01.authenticateUsing( AuthMethod.TOKEN, token );
-				expect( promise instanceof Promise ).toBe( true );
-				promises.push( promise.then( ( credentials:TokenCredentials.Class ):void => {
-					spies.success01( auth01, credentials );
-				} ) );
+			it( "should throw error if invalid auth method", ( done:DoneFn ):void => {
+				const auth:AuthService = new AuthService( context );
+				auth
+					.authenticateUsing( "ERROR" as any, "username", "password" )
+					.then( () => done.fail( "should not resolve" ) )
+					.catch( error => {
+						expect( () => { throw error; } ).toThrowError( IllegalArgumentError, `Invalid authentication method "ERROR".` );
 
-				// Expected behavior. If expirationDate is a string the method parse it to a Date object
-				date = new Date();
-				date.setDate( date.getDate() + 1 );
-				let getFromStorage:Function = ():Object => {
-					let storedToken:any = {
-						expirationTime: date.toISOString(),
-						id: "_:BlankNode",
-						key: "dG9rZW4tdmFsdWU=",
-						types: [ CS.Token ],
+						done();
+					} );
+			} );
+
+
+			describe( "When BASIC auth method with basic credentials", ():void => {
+
+				it( "should return credentials", ( done:DoneFn ):void => {
+					const auth:AuthService = new AuthService( context );
+					auth
+						.authenticateUsing( AuthMethod.BASIC, "username", "password" )
+						.then( credentials => {
+							expect( credentials ).toBeDefined();
+							expect( credentials ).toEqual( jasmine.objectContaining( {
+								username: "username",
+								password: "password",
+							} ) );
+
+							done();
+						} )
+						.catch( done.fail );
+				} );
+
+				it( "should populate the authenticated user", ( done:DoneFn ):void => {
+					const auth:AuthService = new AuthService( context );
+					auth
+						.authenticateUsing( AuthMethod.BASIC, "username", "password" )
+						.then( () => {
+							expect( auth.authenticatedUser ).toBeDefined();
+							expect( auth.authenticatedUser ).toEqual( jasmine.objectContaining( {
+								types: jasmine.arrayContaining( [ User.RDF_CLASS ] ) as any,
+								name: "The user name",
+							} ) );
+
+							done();
+						} )
+						.catch( done.fail );
+				} );
+
+			} );
+
+			describe( "When TOKEN auth method with basic credentials", ():void => {
+
+				beforeEach( ():void => {
+					jasmine.Ajax.stubRequest( "https://example.com/users/me/" ).andReturn( {
+						status: 200,
+						responseHeaders: {
+							"eTag": `"1-12345"`,
+							"Preference-Applied": `${ CS.PreferAuthToken }`,
+						},
+						responseText: `[ {
+						"@id": "_:1",
+						"@type": [ "${ C.ResponseMetadata }", "${ C.VolatileResource }" ],
+						"${ CS.authToken }": [ {
+							"@id": "_:2"
+						} ]
+					}, {
+						"@id": "_:2",
+						"@type": [ "${ CS.Token }", "${ C.VolatileResource }" ],
+						"${ CS.tokenKey }": [ {
+							"@value": "token-key"
+						} ],
+						"${ CS.expirationTime }": [ {
+							"@value": "${ new Date( Date.now() + 24 * 60 * 60 * 1000 ).toISOString() }",
+							"@type": "${ XSD.dateTime }"
+						} ]
+					}, {
+						"@id": "https://example.com/users/me/",
+						"@graph": [
+							{
+								"@id": "https://example.com/users/me/",
+								"@type": [ "${ C.Document }", "${ CS.AuthenticatedUserInformationAccessor }" ],
+								"${ CS.authenticatedUserMetadata }": [ {
+									"@id": "_:1"
+								} ]
+							},
+							{
+								"@id": "_:1",
+								"@type": [ "${ CS.AuthenticatedUserMetadata }", "${ C.VolatileResource }" ],
+								"${ CS.user }": [ {
+									"@id": "https://example.com/users/the-user/"
+								} ]
+							}
+						]
+					} ]`,
+					} );
+				} );
+
+				it( "should return credentials", ( done:DoneFn ):void => {
+					const auth:AuthService = new AuthService( context );
+					auth
+						.authenticateUsing( AuthMethod.TOKEN, "username", "password" )
+						.then( credentials => {
+							expect( credentials ).toBeDefined();
+							expect( credentials ).toEqual( jasmine.objectContaining( {
+								key: "token-key",
+								expirationTime: jasmine.any( Date ) as any as Date,
+							} ) );
+
+							done();
+						} )
+						.catch( done.fail );
+				} );
+
+				it( "should populate the authenticated user", ( done:DoneFn ):void => {
+					const auth:AuthService = new AuthService( context );
+					auth
+						.authenticateUsing( AuthMethod.TOKEN, "username", "password" )
+						.then( () => {
+							expect( auth.authenticatedUser ).toBeDefined();
+							expect( auth.authenticatedUser ).toEqual( jasmine.objectContaining( {
+								types: jasmine.arrayContaining( [ User.RDF_CLASS ] ) as any,
+								name: "The user name",
+							} ) );
+
+							done();
+						} )
+						.catch( done.fail );
+				} );
+
+			} );
+
+			describe( "When TOKEN auth method with token credentials", ():void => {
+
+				it( "should throw error if invalid token credentials", ( done:DoneFn ):void => {
+					const auth:AuthService = new AuthService( context );
+					auth
+						.authenticateUsing( AuthMethod.TOKEN, {} as any )
+						.then( () => done.fail( "should not resolve" ) )
+						.catch( error => {
+							expect( () => { throw error; } ).toThrowError( IllegalArgumentError, `Invalid authentication token.` );
+
+							done();
+						} );
+				} );
+
+				it( "should return credentials", ( done:DoneFn ):void => {
+					const tokenCredentials:TokenCredentials.Class = <TokenCredentials.Class> {
+						key: "token-key",
+						expirationTime: new Date( Date.now() + 24 * 60 * 60 * 1000 ),
 					};
-					return JSON.parse( JSON.stringify( storedToken ) );
-				};
-				promise = auth02.authenticateUsing( AuthMethod.TOKEN, <TokenCredentials.Class> getFromStorage() );
-				expect( promise instanceof Promise ).toBe( true );
-				promises.push( promise.then( ( credentials:TokenCredentials.Class ):void => {
-					spies.success02( auth01, credentials );
-				} ) );
 
-				// ExpirationDate has been reached
-				let auth03:AuthService = new AuthService( context );
-				date = new Date();
-				date.setDate( date.getDate() - 1 );
-				token = <any> {
-					expirationTime: date,
-					id: "_:BlankNode",
-					key: "dG9rZW4tdmFsdWU=",
-					types: [ CS.Token ],
-				};
-				promise = auth03.authenticateUsing( AuthMethod.TOKEN, token );
-				expect( promise instanceof Promise ).toBe( true );
-				promises.push( promise.catch( spies.fail ) );
+					const auth:AuthService = new AuthService( context );
+					auth
+						.authenticateUsing( AuthMethod.TOKEN, tokenCredentials )
+						.then( credentials => {
+							expect( credentials ).toBeDefined();
+							expect( credentials ).toEqual( jasmine.objectContaining( {
+								key: "token-key",
+								expirationTime: jasmine.any( Date ) as any as Date,
+							} ) );
 
-				// Wrong parameters
-				promise = auth03.authenticateUsing( AuthMethod.TOKEN, {} as any );
-				expect( promise instanceof Promise ).toBe( true );
-				promises.push( promise.catch( spies.fail ) );
+							done();
+						} )
+						.catch( done.fail );
+				} );
 
-				// Nonexistent authentication method
-				promise = auth03.authenticateUsing( "Error" as any, token );
-				expect( promise instanceof Promise ).toBe( true );
-				promises.push( promise.catch( spies.fail ) );
+				it( "should populate the authenticated user", ( done:DoneFn ):void => {
+					const tokenCredentials:TokenCredentials.Class = <TokenCredentials.Class> {
+						key: "token-key",
+						expirationTime: new Date( Date.now() + 24 * 60 * 60 * 1000 ),
+					};
 
-				Promise.all( promises ).then( ():void => {
-					expect( spySuccess01.calls.count() ).toBe( 1 );
-					expect( spySuccess02.calls.count() ).toBe( 1 );
-					expect( spyFail.calls.count() ).toBe( 3 );
-					done();
-				}, done.fail );
+					const auth:AuthService = new AuthService( context );
+					auth
+						.authenticateUsing( AuthMethod.TOKEN, tokenCredentials )
+						.then( () => {
+							expect( auth.authenticatedUser ).toBeDefined();
+							expect( auth.authenticatedUser ).toEqual( jasmine.objectContaining( {
+								types: jasmine.arrayContaining( [ User.RDF_CLASS ] ) as any,
+								name: "The user name",
+							} ) );
+
+							done();
+						} )
+						.catch( done.fail );
+				} );
+
 			} );
 
 		} );
 
+		// TODO: Separate in different tests
 		it( hasMethod(
 			INSTANCE,
 			"addAuthentication",
@@ -869,6 +854,7 @@ describe( module( "carbonldp/Auth/Service" ), ():void => {
 
 		} );
 
+		// TODO: Separate in different tests
 		it( hasMethod(
 			INSTANCE,
 			"clearAuthentication",
