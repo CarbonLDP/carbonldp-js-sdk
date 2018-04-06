@@ -18,7 +18,7 @@ export interface CS {
     RemoveMember: "https://carbonldp.com/ns/v1/security#RemoveMember";
     Role: "https://carbonldp.com/ns/v1/security#Role";
     Ticket: "https://carbonldp.com/ns/v1/security#Ticket";
-    Token: "https://carbonldp.com/ns/v1/security#Token";
+    TokenCredentials: "https://carbonldp.com/ns/v1/security#TokenCredentials";
     Update: "https://carbonldp.com/ns/v1/security#Update";
     Upload: "https://carbonldp.com/ns/v1/security#Upload";
     User: "https://carbonldp.com/ns/v1/security#User";
@@ -33,7 +33,7 @@ export interface CS {
     credentialsOf: "https://carbonldp.com/ns/v1/security#credentialsOf";
     description: "https://carbonldp.com/ns/v1/security#description";
     enabled: "https://carbonldp.com/ns/v1/security#enabled";
-    expirationTime: "https://carbonldp.com/ns/v1/security#expirationTime";
+    expiresOn: "https://carbonldp.com/ns/v1/security#expiresOn";
     forIRI: "https://carbonldp.com/ns/v1/security#forIRI";
     granting: "https://carbonldp.com/ns/v1/security#granting";
     inheritableEntry: "https://carbonldp.com/ns/v1/security#inheritableEntry";
@@ -45,7 +45,7 @@ export interface CS {
     subject: "https://carbonldp.com/ns/v1/security#subject";
     subjectClass: "https://carbonldp.com/ns/v1/security#subjectClass";
     ticketKey: "https://carbonldp.com/ns/v1/security#ticketKey";
-    tokenKey: "https://carbonldp.com/ns/v1/security#tokenKey";
+    token: "https://carbonldp.com/ns/v1/security#token";
     user: "https://carbonldp.com/ns/v1/security#user";
 }
 export declare const CS: CS;

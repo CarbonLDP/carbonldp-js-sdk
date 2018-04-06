@@ -24,32 +24,30 @@ var LDP_1 = require("../LDP");
 var Node_1 = require("../RDF/Node");
 var Utils_1 = require("../Utils");
 var Vocabularies_1 = require("../Vocabularies");
-var Utils = __importStar(require("./../Utils"));
 var Authenticator_1 = require("./Authenticator");
 var BasicAuthenticator_1 = require("./BasicAuthenticator");
-var TokenCredentials = __importStar(require("./TokenCredentials"));
+var TokenCredentials_1 = require("./TokenCredentials");
 var TokenAuthenticator = (function (_super) {
     __extends(TokenAuthenticator, _super);
     function TokenAuthenticator() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
     TokenAuthenticator.prototype.isAuthenticated = function () {
-        return _super.prototype.isAuthenticated.call(this) && this.credentials.expirationTime > new Date();
+        return _super.prototype.isAuthenticated.call(this) && this.credentials.expiresOn > new Date();
     };
     TokenAuthenticator.prototype.authenticate = function (tokenOrCredentials) {
-        if (TokenCredentials.Factory.hasClassProperties(tokenOrCredentials))
-            return this._parseRawCredentials(tokenOrCredentials);
+        if (TokenCredentials_1.TokenCredentialsBase.is(tokenOrCredentials))
+            return this._parseCredentialsBase(tokenOrCredentials);
         return this._getCredentials(tokenOrCredentials);
     };
     TokenAuthenticator.prototype._getHeaderValue = function () {
-        return "Token " + this.credentials.key;
+        return "Token " + this.credentials.token;
     };
-    TokenAuthenticator.prototype._parseRawCredentials = function (credentials) {
+    TokenAuthenticator.prototype._parseCredentialsBase = function (credentialsBase) {
         var _this = this;
         return Utils_1.promiseMethod(function () {
-            if (Utils.isString(credentials.expirationTime))
-                credentials.expirationTime = new Date(credentials.expirationTime);
-            if (credentials.expirationTime <= new Date())
+            var credentials = TokenCredentials_1.TokenCredentials.createFrom(credentialsBase);
+            if (credentials.expiresOn <= new Date())
                 throw new Errors.IllegalArgumentError("The token has already expired.");
             return _this.credentials = credentials;
         });
@@ -86,7 +84,7 @@ var TokenAuthenticator = (function (_super) {
             throw new Errors_1.BadResponseError("No \"" + LDP_1.ResponseMetadata.TYPE + "\" was returned.", response);
         var tokenCredentials = responseMetadata.authToken;
         if (!tokenCredentials)
-            throw new Errors_1.BadResponseError("No \"" + TokenCredentials.RDF_CLASS + "\" was returned.", response);
+            throw new Errors_1.BadResponseError("No \"" + TokenCredentials_1.TokenCredentials.TYPE + "\" was returned.", response);
         return this.credentials = tokenCredentials;
     };
     return TokenAuthenticator;

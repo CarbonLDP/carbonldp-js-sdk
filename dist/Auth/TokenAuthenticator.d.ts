@@ -1,15 +1,15 @@
 import { Response } from "../HTTP/Response";
-import { Authenticator } from "./Authenticator";
-import * as TokenCredentials from "./TokenCredentials";
 import { AuthenticatedUserInformationAccessor } from "./AuthenticatedUserInformationAccessor";
+import { Authenticator } from "./Authenticator";
+import { TokenCredentials, TokenCredentialsBase } from "./TokenCredentials";
 import { UsernameAndPasswordToken } from "./UsernameAndPasswordToken";
-export declare class TokenAuthenticator extends Authenticator<UsernameAndPasswordToken, TokenCredentials.Class> {
-    protected credentials: TokenCredentials.Class;
+export declare class TokenAuthenticator extends Authenticator<UsernameAndPasswordToken, TokenCredentials> {
+    protected credentials: TokenCredentials;
     isAuthenticated(): boolean;
-    authenticate(tokenOrCredentials: UsernameAndPasswordToken | TokenCredentials.Class): Promise<TokenCredentials.Class>;
+    authenticate(tokenOrCredentials: UsernameAndPasswordToken | TokenCredentialsBase): Promise<TokenCredentials>;
     protected _getHeaderValue(): string;
-    protected _parseRawCredentials(credentials: TokenCredentials.Class): Promise<TokenCredentials.Class>;
-    protected _getCredentials(token: UsernameAndPasswordToken): Promise<TokenCredentials.Class>;
+    protected _parseCredentialsBase(credentialsBase: TokenCredentialsBase): Promise<TokenCredentials>;
+    protected _getCredentials(token: UsernameAndPasswordToken): Promise<TokenCredentials>;
     protected _parseRDFMetadata(rdfData: object[], response: Response): AuthenticatedUserInformationAccessor;
-    protected _parseRDFCredentials(rdfData: object[], response: Response): TokenCredentials.Class;
+    protected _parseRDFCredentials(rdfData: object[], response: Response): TokenCredentials;
 }

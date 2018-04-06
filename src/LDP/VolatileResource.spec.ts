@@ -46,6 +46,23 @@ describe( module( "carbonldp/LDP/VolatileResource" ), ():void => {
 			{ type: "object is CarbonLDP.LDP.VolatileResource" }
 		), ():void => {} );
 
+		it( hasMethod(
+			OBLIGATORY,
+			"create",
+			"Creates empty `CarbonLDP.LDP.VolatileResource` object.",
+			{ type: "CarbonLDP.LDP.VolatileResource" }
+		), ():void => {} );
+
+		it( hasMethod(
+			OBLIGATORY,
+			"createFrom",
+			[ "T extends object" ],
+			"Creates a `CarbonLDP.LDP.VolatileResource` object from the object specified.", [
+				{ name: "object", type: "T" },
+			],
+			{ type: "T & CarbonLDP.LDP.VolatileResource" }
+		), ():void => {} );
+
 	} );
 
 	describe( property(
@@ -86,6 +103,10 @@ describe( module( "carbonldp/LDP/VolatileResource" ), ():void => {
 			object[ "types" ].push( C.VolatileResource );
 			expect( VolatileResource.is( object ) ).toBe( true );
 		} );
+
+		// TODO: Test VolatileResource.is
+		// TODO: Test VolatileResource.create
+		// TODO: Test VolatileResource.createFrom
 
 	} );
 

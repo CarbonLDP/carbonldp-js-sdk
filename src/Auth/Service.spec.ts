@@ -396,7 +396,7 @@ describe( module( "carbonldp/Auth/Service" ), ():void => {
 				{ name: "username", type: "string" },
 				{ name: "password", type: "string" },
 			],
-			{ type: "Promise<CarbonLDP.Auth.TokenCredentials.Class>" }
+			{ type: "Promise<CarbonLDP.Auth.TokenCredentials>" }
 		), ():void => {
 			let auth:AuthService = new AuthService( new class extends AbstractContext {
 				protected _baseURI:string;
@@ -438,15 +438,15 @@ describe( module( "carbonldp/Auth/Service" ), ():void => {
 					{ name: "username", type: "string" },
 					{ name: "password", type: "string" },
 				],
-				{ type: "Promise<CarbonLDP.Auth.TokenCredentials.Class>" }
+				{ type: "Promise<CarbonLDP.Auth.TokenCredentials>" }
 			), ():void => {} );
 
 			it( hasSignature(
-				"Authenticates the user with a `CarbonLDP.Auth.TokenCredentials.Class`, which contains a JSON Web Token (JWT) that will be used in every request.", [
+				"Authenticates the user with a `CarbonLDP.Auth.TokenCredentials`, which contains a JSON Web Token (JWT) that will be used in every request.", [
 					{ name: "method", type: "CarbonLDP.Auth.AuthMethod.TOKEN" },
-					{ name: "token", type: "CarbonLDP.Auth.TokenCredentials.Class" },
+					{ name: "token", type: "CarbonLDP.Auth.TokenCredentialsBase" },
 				],
-				{ type: "Promise<CarbonLDP.Auth.TokenCredentials.Class>" }
+				{ type: "Promise<CarbonLDP.Auth.TokenCredentials>" }
 			), ():void => {} );
 
 
@@ -583,11 +583,11 @@ describe( module( "carbonldp/Auth/Service" ), ():void => {
 						} ]
 					}, {
 						"@id": "_:2",
-						"@type": [ "${ CS.Token }", "${ C.VolatileResource }" ],
-						"${ CS.tokenKey }": [ {
+						"@type": [ "${ CS.TokenCredentials }", "${ C.VolatileResource }" ],
+						"${ CS.token }": [ {
 							"@value": "token-key"
 						} ],
-						"${ CS.expirationTime }": [ {
+						"${ CS.expiresOn }": [ {
 							"@value": "${ new Date( Date.now() + 24 * 60 * 60 * 1000 ).toISOString() }",
 							"@type": "${ XSD.dateTime }"
 						} ]
@@ -620,8 +620,8 @@ describe( module( "carbonldp/Auth/Service" ), ():void => {
 						.then( credentials => {
 							expect( credentials ).toBeDefined();
 							expect( credentials ).toEqual( jasmine.objectContaining( {
-								key: "token-key",
-								expirationTime: jasmine.any( Date ) as any as Date,
+								token: "token-key",
+								expiresOn: jasmine.any( Date ) as any as Date,
 							} ) );
 
 							done();
@@ -662,9 +662,9 @@ describe( module( "carbonldp/Auth/Service" ), ():void => {
 				} );
 
 				it( "should return credentials", ( done:DoneFn ):void => {
-					const tokenCredentials:TokenCredentials.Class = <TokenCredentials.Class> {
-						key: "token-key",
-						expirationTime: new Date( Date.now() + 24 * 60 * 60 * 1000 ),
+					const tokenCredentials:TokenCredentials.TokenCredentials = <TokenCredentials.TokenCredentials> {
+						token: "token-key",
+						expiresOn: new Date( Date.now() + 24 * 60 * 60 * 1000 ),
 					};
 
 					const auth:AuthService = new AuthService( context );
@@ -673,8 +673,8 @@ describe( module( "carbonldp/Auth/Service" ), ():void => {
 						.then( credentials => {
 							expect( credentials ).toBeDefined();
 							expect( credentials ).toEqual( jasmine.objectContaining( {
-								key: "token-key",
-								expirationTime: jasmine.any( Date ) as any as Date,
+								token: "token-key",
+								expiresOn: jasmine.any( Date ) as any as Date,
 							} ) );
 
 							done();
@@ -683,9 +683,9 @@ describe( module( "carbonldp/Auth/Service" ), ():void => {
 				} );
 
 				it( "should populate the authenticated user", ( done:DoneFn ):void => {
-					const tokenCredentials:TokenCredentials.Class = <TokenCredentials.Class> {
-						key: "token-key",
-						expirationTime: new Date( Date.now() + 24 * 60 * 60 * 1000 ),
+					const tokenCredentials:TokenCredentials.TokenCredentials = <TokenCredentials.TokenCredentials> {
+						token: "token-key",
+						expiresOn: new Date( Date.now() + 24 * 60 * 60 * 1000 ),
 					};
 
 					const auth:AuthService = new AuthService( context );

@@ -1,8 +1,9 @@
 import * as Auth from "./Auth";
 import { ACE } from "./Auth/ACE";
 import { ACL } from "./Auth/ACL";
-import { AuthenticatedUserMetadata } from "./Auth/AuthenticatedUserMetadata";
 import { AuthenticatedUserInformationAccessor } from "./Auth/AuthenticatedUserInformationAccessor";
+import { AuthenticatedUserMetadata } from "./Auth/AuthenticatedUserMetadata";
+import { TokenCredentials } from "./Auth/TokenCredentials";
 import { Context } from "./Context";
 import { Document } from "./Document";
 import { Documents } from "./Documents";
@@ -225,7 +226,7 @@ export class SDKContext implements Context {
 		this.extendObjectSchema( AuthenticatedUserMetadata.TYPE, AuthenticatedUserMetadata.SCHEMA );
 		this.extendObjectSchema( Auth.User.RDF_CLASS, Auth.User.SCHEMA );
 		this.extendObjectSchema( Auth.Credentials.RDF_CLASS, Auth.Credentials.SCHEMA );
-		this.extendObjectSchema( Auth.TokenCredentials.RDF_CLASS, Auth.TokenCredentials.SCHEMA );
+		this.extendObjectSchema( TokenCredentials.TYPE, TokenCredentials.SCHEMA );
 
 		this.extendObjectSchema( ValidationReport.TYPE, ValidationReport.SCHEMA );
 		this.extendObjectSchema( ValidationResult.TYPE, ValidationResult.SCHEMA );

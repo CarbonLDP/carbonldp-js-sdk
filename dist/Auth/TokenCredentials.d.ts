@@ -1,13 +1,22 @@
-import * as ObjectSchema from "./../ObjectSchema";
-import { Resource } from "./../Resource";
-export declare const RDF_CLASS: string;
-export declare const SCHEMA: ObjectSchema.ObjectSchema;
-export interface Class extends Resource {
-    key: string;
-    expirationTime: Date;
+import { VolatileResource } from "../LDP";
+import { ObjectSchema } from "../ObjectSchema";
+import { CS } from "../Vocabularies/CS";
+export interface TokenCredentialsBase {
+    token: string;
+    expiresOn: string | Date;
 }
-export declare class Factory {
-    static is(object: object): object is Class;
-    static hasClassProperties(object: object): object is Class;
+export interface TokenCredentialsBaseFactory {
+    is(value: any): value is TokenCredentialsBase;
 }
-export default Class;
+export declare const TokenCredentialsBase: TokenCredentialsBaseFactory;
+export interface TokenCredentials extends VolatileResource {
+    token: string;
+    expiresOn: Date;
+}
+export interface TokenCredentialsFactory {
+    TYPE: CS["TokenCredentials"];
+    SCHEMA: ObjectSchema;
+    is(value: any): value is TokenCredentials;
+    createFrom<T extends TokenCredentialsBase>(object: T): T & TokenCredentials;
+}
+export declare const TokenCredentials: TokenCredentialsFactory;

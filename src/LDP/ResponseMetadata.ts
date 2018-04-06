@@ -11,7 +11,7 @@ import { TokenCredentials } from "../Auth";
 
 export interface ResponseMetadata extends VolatileResource {
 	documentsMetadata?:DocumentMetadata[];
-	authToken?:TokenCredentials.Class;
+	authToken?:TokenCredentials;
 }
 
 

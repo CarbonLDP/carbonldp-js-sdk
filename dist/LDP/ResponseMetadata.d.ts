@@ -5,7 +5,7 @@ import { VolatileResource } from "./VolatileResource";
 import { TokenCredentials } from "../Auth";
 export interface ResponseMetadata extends VolatileResource {
     documentsMetadata?: DocumentMetadata[];
-    authToken?: TokenCredentials.Class;
+    authToken?: TokenCredentials;
 }
 export interface ResponseMetadataFactory extends ModelFactory<ResponseMetadata> {
     TYPE: string;

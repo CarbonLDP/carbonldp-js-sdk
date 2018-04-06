@@ -9,6 +9,7 @@ export { BasicAuthenticator } from "./BasicAuthenticator";
 export { PersistedACE } from "./PersistedACE";
 export { PersistedACL } from "./PersistedACL";
 export { TokenAuthenticator } from "./TokenAuthenticator";
+export { TokenCredentials, TokenCredentialsBase } from "./TokenCredentials";
 export { UsernameAndPasswordCredentials } from "./UsernameAndPasswordCredentials";
 export { UsernameAndPasswordToken } from "./UsernameAndPasswordToken";
 
@@ -18,7 +19,6 @@ import * as PersistedRole from "./PersistedRole";
 import * as PersistedUser from "./PersistedUser";
 import * as Role from "./Role";
 import * as Roles from "./Roles";
-import * as TokenCredentials from "./TokenCredentials";
 import * as User from "./User";
 import * as Users from "./Users";
 
@@ -31,5 +31,4 @@ export {
 	PersistedUser,
 	Role,
 	Roles,
-	TokenCredentials,
 };

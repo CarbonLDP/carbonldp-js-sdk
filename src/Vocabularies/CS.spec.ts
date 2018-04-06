@@ -189,10 +189,10 @@ describe( module( "carbonldp/Vocabularies/CS" ), ():void => {
 
 		it( hasProperty(
 			OBLIGATORY,
-			"Token",
-			"https://carbonldp.com/ns/v1/security#Token"
+			"TokenCredentials",
+			"https://carbonldp.com/ns/v1/security#TokenCredentials"
 		), ():void => {
-			const target:CS[ "Token" ] = "https://carbonldp.com/ns/v1/security#Token";
+			const target:CS[ "TokenCredentials" ] = "https://carbonldp.com/ns/v1/security#TokenCredentials";
 			expect( target ).toBeDefined();
 		} );
 
@@ -324,10 +324,10 @@ describe( module( "carbonldp/Vocabularies/CS" ), ():void => {
 
 		it( hasProperty(
 			OBLIGATORY,
-			"expirationTime",
-			"https://carbonldp.com/ns/v1/security#expirationTime"
+			"expiresOn",
+			"https://carbonldp.com/ns/v1/security#expiresOn"
 		), ():void => {
-			const target:CS[ "expirationTime" ] = "https://carbonldp.com/ns/v1/security#expirationTime";
+			const target:CS[ "expiresOn" ] = "https://carbonldp.com/ns/v1/security#expiresOn";
 			expect( target ).toBeDefined();
 		} );
 
@@ -432,10 +432,10 @@ describe( module( "carbonldp/Vocabularies/CS" ), ():void => {
 
 		it( hasProperty(
 			OBLIGATORY,
-			"tokenKey",
-			"https://carbonldp.com/ns/v1/security#tokenKey"
+			"token",
+			"https://carbonldp.com/ns/v1/security#token"
 		), ():void => {
-			const target:CS[ "tokenKey" ] = "https://carbonldp.com/ns/v1/security#tokenKey";
+			const target:CS[ "token" ] = "https://carbonldp.com/ns/v1/security#token";
 			expect( target ).toBeDefined();
 		} );
 
@@ -561,9 +561,9 @@ describe( module( "carbonldp/Vocabularies/CS" ), ():void => {
 			expect( CS.Ticket ).toBe( "https://carbonldp.com/ns/v1/security#Ticket" );
 		} );
 
-		it( "CS.Token", ():void => {
-			expect( CS.Token ).toEqual( jasmine.any( String ) );
-			expect( CS.Token ).toBe( "https://carbonldp.com/ns/v1/security#Token" );
+		it( "CS.TokenCredentials", ():void => {
+			expect( CS.TokenCredentials ).toEqual( jasmine.any( String ) );
+			expect( CS.TokenCredentials ).toBe( "https://carbonldp.com/ns/v1/security#TokenCredentials" );
 		} );
 
 		it( "CS.Update", ():void => {
@@ -637,9 +637,9 @@ describe( module( "carbonldp/Vocabularies/CS" ), ():void => {
 			expect( CS.enabled ).toBe( "https://carbonldp.com/ns/v1/security#enabled" );
 		} );
 
-		it( "CS.expirationTime", ():void => {
-			expect( CS.expirationTime ).toEqual( jasmine.any( String ) );
-			expect( CS.expirationTime ).toBe( "https://carbonldp.com/ns/v1/security#expirationTime" );
+		it( "CS.expiresOn", ():void => {
+			expect( CS.expiresOn ).toEqual( jasmine.any( String ) );
+			expect( CS.expiresOn ).toBe( "https://carbonldp.com/ns/v1/security#expiresOn" );
 		} );
 
 		it( "CS.forIRI", ():void => {
@@ -697,9 +697,9 @@ describe( module( "carbonldp/Vocabularies/CS" ), ():void => {
 			expect( CS.ticketKey ).toBe( "https://carbonldp.com/ns/v1/security#ticketKey" );
 		} );
 
-		it( "CS.tokenKey", ():void => {
-			expect( CS.tokenKey ).toEqual( jasmine.any( String ) );
-			expect( CS.tokenKey ).toBe( "https://carbonldp.com/ns/v1/security#tokenKey" );
+		it( "CS.token", ():void => {
+			expect( CS.token ).toEqual( jasmine.any( String ) );
+			expect( CS.token ).toBe( "https://carbonldp.com/ns/v1/security#token" );
 		} );
 
 		it( "CS.user", ():void => {

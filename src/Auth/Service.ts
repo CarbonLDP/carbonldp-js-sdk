@@ -8,7 +8,8 @@ import { BasicAuthenticator } from "./BasicAuthenticator";
 import * as PersistedUser from "./PersistedUser";
 import * as Roles from "./Roles";
 import { TokenAuthenticator } from "./TokenAuthenticator";
-import * as TokenCredentials from "./TokenCredentials";
+import { TokenCredentialsBase } from "./TokenCredentials";
+import { TokenCredentials } from "./TokenCredentials";
 import { UsernameAndPasswordCredentials } from "./UsernameAndPasswordCredentials";
 import { UsernameAndPasswordToken } from "./UsernameAndPasswordToken";
 import * as Users from "./Users";
@@ -49,29 +50,29 @@ export class AuthService {
 		);
 	}
 
-	authenticate( username:string, password:string ):Promise<TokenCredentials.Class> {
+	authenticate( username:string, password:string ):Promise<TokenCredentials> {
 		return this.authenticateUsing( AuthMethod.TOKEN, username, password );
 	}
 
 	authenticateUsing( method:AuthMethod.BASIC, username:string, password:string ):Promise<UsernameAndPasswordCredentials>;
-	authenticateUsing( method:AuthMethod.TOKEN, username:string, password:string ):Promise<TokenCredentials.Class>;
-	authenticateUsing( method:AuthMethod.TOKEN, token:TokenCredentials.Class ):Promise<TokenCredentials.Class>;
-	authenticateUsing( method:AuthMethod, userOrCredentials:string | TokenCredentials.Class, password?:string ):Promise<UsernameAndPasswordCredentials | TokenCredentials.Class> {
+	authenticateUsing( method:AuthMethod.TOKEN, username:string, password:string ):Promise<TokenCredentials>;
+	authenticateUsing( method:AuthMethod.TOKEN, token:TokenCredentialsBase ):Promise<TokenCredentials>;
+	authenticateUsing( method:AuthMethod, userOrCredentials:string | TokenCredentialsBase, password?:string ):Promise<UsernameAndPasswordCredentials | TokenCredentials> {
 		this.clearAuthentication();
 
 		const authenticator:Authenticator<any, any> = this.authenticators[ method ];
 		if( ! authenticator ) return Promise.reject( new Errors.IllegalArgumentError( `Invalid authentication method "${method}".` ) );
 
-		let authenticationToken:UsernameAndPasswordToken | TokenCredentials.Class;
+		let authenticationToken:UsernameAndPasswordToken | TokenCredentialsBase;
 		if( Utils.isString( userOrCredentials ) )
 			authenticationToken = new UsernameAndPasswordToken( userOrCredentials, password );
-		else if( TokenCredentials.Factory.hasClassProperties( userOrCredentials ) ) {
+		else if( TokenCredentialsBase.is( userOrCredentials ) ) {
 			authenticationToken = userOrCredentials;
 		} else {
 			return Promise.reject( new Errors.IllegalArgumentError( "Invalid authentication token." ) );
 		}
 
-		let credentials:UsernameAndPasswordCredentials | TokenCredentials.Class;
+		let credentials:UsernameAndPasswordCredentials | TokenCredentials;
 		return authenticator
 			.authenticate( authenticationToken )
 			.then( ( _credentials ) => {

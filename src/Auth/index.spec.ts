@@ -25,7 +25,10 @@ import * as Role from "./Role";
 import * as Roles from "./Roles";
 import { AuthService } from "./Service";
 import { TokenAuthenticator } from "./TokenAuthenticator";
-import * as TokenCredentials from "./TokenCredentials";
+import {
+	TokenCredentials,
+	TokenCredentialsBase,
+} from "./TokenCredentials";
 import * as User from "./User";
 import { UsernameAndPasswordCredentials } from "./UsernameAndPasswordCredentials";
 import { UsernameAndPasswordToken } from "./UsernameAndPasswordToken";
@@ -203,10 +206,19 @@ describe( module( "carbonldp/Auth" ), ():void => {
 	it( reexports(
 		STATIC,
 		"TokenCredentials",
-		"carbonldp/Auth/TokenCredentials"
+		"CarbonLDP.Auth.TokenCredentials"
 	), ():void => {
 		expect( Auth.TokenCredentials ).toBeDefined();
 		expect( Auth.TokenCredentials ).toBe( TokenCredentials );
+	} );
+
+	it( reexports(
+		STATIC,
+		"TokenCredentialsBase",
+		"CarbonLDP.Auth.TokenCredentialsBase"
+	), ():void => {
+		expect( Auth.TokenCredentialsBase ).toBeDefined();
+		expect( Auth.TokenCredentialsBase ).toBe( TokenCredentialsBase );
 	} );
 
 	it( reexports(

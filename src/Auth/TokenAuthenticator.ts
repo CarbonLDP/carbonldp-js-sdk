@@ -9,43 +9,46 @@ import { ResponseMetadata } from "../LDP";
 import { RDFNode } from "../RDF/Node";
 import { promiseMethod } from "../Utils";
 import { CS } from "../Vocabularies";
-import * as Utils from "./../Utils";
+import { AuthenticatedUserInformationAccessor } from "./AuthenticatedUserInformationAccessor";
 import { Authenticator } from "./Authenticator";
 import { BasicAuthenticator } from "./BasicAuthenticator";
-import * as TokenCredentials from "./TokenCredentials";
-import { AuthenticatedUserInformationAccessor } from "./AuthenticatedUserInformationAccessor";
+import {
+	TokenCredentials,
+	TokenCredentialsBase,
+} from "./TokenCredentials";
 import { UsernameAndPasswordToken } from "./UsernameAndPasswordToken";
 
 
-export class TokenAuthenticator extends Authenticator<UsernameAndPasswordToken, TokenCredentials.Class> {
+export class TokenAuthenticator extends Authenticator<UsernameAndPasswordToken, TokenCredentials> {
 
-	protected credentials:TokenCredentials.Class;
+	protected credentials:TokenCredentials;
 
 	isAuthenticated():boolean {
-		return super.isAuthenticated() && this.credentials.expirationTime > new Date();
+		return super.isAuthenticated() && this.credentials.expiresOn > new Date();
 	}
 
-	authenticate( tokenOrCredentials:UsernameAndPasswordToken | TokenCredentials.Class ):Promise<TokenCredentials.Class> {
-		if( TokenCredentials.Factory.hasClassProperties( tokenOrCredentials ) )
-			return this._parseRawCredentials( tokenOrCredentials );
+	authenticate( tokenOrCredentials:UsernameAndPasswordToken | TokenCredentialsBase ):Promise<TokenCredentials> {
+		if( TokenCredentialsBase.is( tokenOrCredentials ) )
+			return this._parseCredentialsBase( tokenOrCredentials );
 
 		return this._getCredentials( tokenOrCredentials );
 	}
 
 	protected _getHeaderValue():string {
-		return "Token " + this.credentials.key;
+		return "Token " + this.credentials.token;
 	}
 
-	protected _parseRawCredentials( credentials:TokenCredentials.Class ):Promise<TokenCredentials.Class> {
+	protected _parseCredentialsBase( credentialsBase:TokenCredentialsBase ):Promise<TokenCredentials> {
 		return promiseMethod( () => {
-			if( Utils.isString( credentials.expirationTime ) ) credentials.expirationTime = new Date( credentials.expirationTime );
-			if( credentials.expirationTime <= new Date() ) throw new Errors.IllegalArgumentError( "The token has already expired." );
+			const credentials:TokenCredentials = TokenCredentials.createFrom( credentialsBase );
+
+			if( credentials.expiresOn <= new Date() ) throw new Errors.IllegalArgumentError( "The token has already expired." );
 
 			return this.credentials = credentials;
 		} );
 	}
 
-	protected _getCredentials( token:UsernameAndPasswordToken ):Promise<TokenCredentials.Class> {
+	protected _getCredentials( token:UsernameAndPasswordToken ):Promise<TokenCredentials> {
 		const basicAuthenticator:BasicAuthenticator = new BasicAuthenticator( this.context );
 		return basicAuthenticator
 			.authenticate( token )
@@ -70,7 +73,7 @@ export class TokenAuthenticator extends Authenticator<UsernameAndPasswordToken, 
 		return super._parseRDFMetadata( rdfData, response );
 	}
 
-	protected _parseRDFCredentials( rdfData:object[], response:Response ):TokenCredentials.Class {
+	protected _parseRDFCredentials( rdfData:object[], response:Response ):TokenCredentials {
 		const freeNodes:RDFNode[] = RDFNode.getFreeNodes( rdfData );
 
 		const freeResources:FreeResources = this.context.documents
@@ -81,8 +84,8 @@ export class TokenAuthenticator extends Authenticator<UsernameAndPasswordToken, 
 			.find( ResponseMetadata.is );
 		if( ! responseMetadata ) throw new BadResponseError( `No "${ ResponseMetadata.TYPE }" was returned.`, response );
 
-		const tokenCredentials:TokenCredentials.Class = responseMetadata.authToken;
-		if( ! tokenCredentials ) throw new BadResponseError( `No "${ TokenCredentials.RDF_CLASS }" was returned.`, response );
+		const tokenCredentials:TokenCredentials = responseMetadata.authToken;
+		if( ! tokenCredentials ) throw new BadResponseError( `No "${ TokenCredentials.TYPE }" was returned.`, response );
 
 		return this.credentials = tokenCredentials;
 	}

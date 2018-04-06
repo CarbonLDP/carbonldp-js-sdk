@@ -13,7 +13,7 @@ var AuthMethod_1 = require("./AuthMethod");
 var BasicAuthenticator_1 = require("./BasicAuthenticator");
 var Roles = __importStar(require("./Roles"));
 var TokenAuthenticator_1 = require("./TokenAuthenticator");
-var TokenCredentials = __importStar(require("./TokenCredentials"));
+var TokenCredentials_1 = require("./TokenCredentials");
 var UsernameAndPasswordToken_1 = require("./UsernameAndPasswordToken");
 var Users = __importStar(require("./Users"));
 var AuthService = (function () {
@@ -55,7 +55,7 @@ var AuthService = (function () {
         var authenticationToken;
         if (Utils.isString(userOrCredentials))
             authenticationToken = new UsernameAndPasswordToken_1.UsernameAndPasswordToken(userOrCredentials, password);
-        else if (TokenCredentials.Factory.hasClassProperties(userOrCredentials)) {
+        else if (TokenCredentials_1.TokenCredentialsBase.is(userOrCredentials)) {
             authenticationToken = userOrCredentials;
         }
         else {
