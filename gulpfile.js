@@ -41,10 +41,10 @@ let config = {
 		],
 		all: "src/**/*.ts",
 		test: "**/*.spec.js",
-		main: "src/Carbon.ts",
+		main: "src/CarbonLDP.ts",
 	},
 	dist: {
-		sfxBundle: "dist/bundles/Carbon.sfx.js",
+		sfxBundle: "dist/bundles/CarbonLDP.sfx.js",
 		tsOutput: "dist",
 		all: "dist/**/*",
 		doc: "doc/*",

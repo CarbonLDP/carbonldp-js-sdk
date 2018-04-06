@@ -102,7 +102,7 @@ var CarbonLDP = (function (_super) {
         return _this;
     }
     Object.defineProperty(CarbonLDP, "version", {
-        get: function () { return "1.0.0-alpha.11"; },
+        get: function () { return "1.0.0-alpha.15"; },
         enumerable: true,
         configurable: true
     });
