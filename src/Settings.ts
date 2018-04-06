@@ -12,7 +12,7 @@ export interface ContextSettings extends PlatformPaths {
 	vocabulary?:string;
 }
 
-export interface CarbonSettings extends ContextSettings {
+export interface CarbonLDPSettings extends ContextSettings {
 	host:string;
 	port?:number;
 	ssl?:boolean;

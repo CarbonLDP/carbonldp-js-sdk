@@ -38,7 +38,7 @@ import {
 	SDKContext,
 } from "./SDKContext";
 import {
-	CarbonSettings,
+	CarbonLDPSettings,
 	ContextSettings,
 	DocumentPaths,
 } from "./Settings";
@@ -119,8 +119,8 @@ export class CarbonLDP extends AbstractContext {
 	messaging:Messaging.MessagingService;
 
 	constructor( url:string );
-	constructor( settings:CarbonSettings );
-	constructor( urlOrSettings:string | CarbonSettings ) {
+	constructor( settings:CarbonLDPSettings );
+	constructor( urlOrSettings:string | CarbonLDPSettings ) {
 		super();
 
 		if( Utils.isString( urlOrSettings ) ) {
