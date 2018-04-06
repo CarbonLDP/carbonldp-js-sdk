@@ -2,8 +2,8 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 var Vocabularies_1 = require("../Vocabularies");
 var SCHEMA = {
-    "authenticatedUser": {
-        "@id": Vocabularies_1.CS.authenticatedUser,
+    "authenticatedUserMetadata": {
+        "@id": Vocabularies_1.CS.authenticatedUserMetadata,
         "@type": "@id",
     },
 };

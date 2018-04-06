@@ -28,7 +28,7 @@ export interface CS {
 	accessControlList:"https://carbonldp.com/ns/v1/security#accessControlList";
 	accessTo:"https://carbonldp.com/ns/v1/security#accessTo";
 	allowsOrigin:"https://carbonldp.com/ns/v1/security#allowsOrigin";
-	authenticatedUser:"https://carbonldp.com/ns/v1/security#authenticatedUser";
+	authenticatedUserMetadata:"https://carbonldp.com/ns/v1/security#authenticatedUserMetadata";
 	authToken:"https://carbonldp.com/ns/v1/security#authToken";
 	childRole:"https://carbonldp.com/ns/v1/security#childRole";
 	credentials:"https://carbonldp.com/ns/v1/security#credentials";
@@ -82,7 +82,7 @@ export const CS:CS = {
 	accessTo: "https://carbonldp.com/ns/v1/security#accessTo",
 	allowsOrigin: "https://carbonldp.com/ns/v1/security#allowsOrigin",
 	authToken: "https://carbonldp.com/ns/v1/security#authToken",
-	authenticatedUser: "https://carbonldp.com/ns/v1/security#authenticatedUser",
+	authenticatedUserMetadata: "https://carbonldp.com/ns/v1/security#authenticatedUserMetadata",
 	childRole: "https://carbonldp.com/ns/v1/security#childRole",
 	credentials: "https://carbonldp.com/ns/v1/security#credentials",
 	credentialsOf: "https://carbonldp.com/ns/v1/security#credentialsOf",

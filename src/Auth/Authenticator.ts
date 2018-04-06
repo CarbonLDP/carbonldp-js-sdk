@@ -73,7 +73,7 @@ export abstract class Authenticator<T extends object, W extends object> {
 			this.addAuthentication( localOptions );
 
 			return userMetadata
-				.authenticatedUser
+				.authenticatedUserMetadata
 				.user
 				.resolve( localOptions );
 		} ).then( user => {

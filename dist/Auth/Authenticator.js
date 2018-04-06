@@ -50,7 +50,7 @@ var Authenticator = (function () {
             var localOptions = HTTP_1.RequestUtils.cloneOptions(requestOptions);
             _this.addAuthentication(localOptions);
             return userMetadata
-                .authenticatedUser
+                .authenticatedUserMetadata
                 .user
                 .resolve(localOptions);
         }).then(function (user) {

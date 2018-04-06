@@ -260,7 +260,7 @@ describe( module( "carbonldp/Auth/Authenticator" ), ():void => {
 									"${ C.Document }",
 									"${ CS.AuthenticatedUserInformationAccessor }"
 								],
-								"${ CS.authenticatedUser }": [ {
+								"${ CS.authenticatedUserMetadata }": [ {
 									"@id": "_:1"
 								} ]
 							},

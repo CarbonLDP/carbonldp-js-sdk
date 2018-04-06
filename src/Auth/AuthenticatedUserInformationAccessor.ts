@@ -5,7 +5,7 @@ import { AuthenticatedUserMetadata } from "./AuthenticatedUserMetadata";
 
 
 export interface AuthenticatedUserInformationAccessor extends PersistedProtectedDocument {
-	authenticatedUser:AuthenticatedUserMetadata;
+	authenticatedUserMetadata:AuthenticatedUserMetadata;
 }
 
 
@@ -15,8 +15,8 @@ export interface AuthenticatedUserInformationAccessorFactory {
 }
 
 const SCHEMA:ObjectSchema = {
-	"authenticatedUser": {
-		"@id": CS.authenticatedUser,
+	"authenticatedUserMetadata": {
+		"@id": CS.authenticatedUserMetadata,
 		"@type": "@id",
 	},
 };

@@ -163,7 +163,7 @@ describe( module( "carbonldp/Auth/TokenAuthenticator" ), ():void => {
 							{
 								"@id": "https://example.com/users/me/",
 								"@type": [ "${ C.Document }", "${ CS.AuthenticatedUserInformationAccessor }" ],
-								"${ CS.authenticatedUser }": [ {
+								"${ CS.authenticatedUserMetadata }": [ {
 									"@id": "_:1"
 								} ]
 							},

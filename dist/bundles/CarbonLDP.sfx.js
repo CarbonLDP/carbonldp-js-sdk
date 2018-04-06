@@ -1678,7 +1678,7 @@ exports.CS = {
     accessTo: "https://carbonldp.com/ns/v1/security#accessTo",
     allowsOrigin: "https://carbonldp.com/ns/v1/security#allowsOrigin",
     authToken: "https://carbonldp.com/ns/v1/security#authToken",
-    authenticatedUser: "https://carbonldp.com/ns/v1/security#authenticatedUser",
+    authenticatedUserMetadata: "https://carbonldp.com/ns/v1/security#authenticatedUserMetadata",
     childRole: "https://carbonldp.com/ns/v1/security#childRole",
     credentials: "https://carbonldp.com/ns/v1/security#credentials",
     credentialsOf: "https://carbonldp.com/ns/v1/security#credentialsOf",
@@ -6596,7 +6596,7 @@ var Authenticator = (function () {
             var localOptions = HTTP_1.RequestUtils.cloneOptions(requestOptions);
             _this.addAuthentication(localOptions);
             return userMetadata
-                .authenticatedUser
+                .authenticatedUserMetadata
                 .user
                 .resolve(localOptions);
         }).then(function (user) {
@@ -17311,8 +17311,8 @@ exports.AuthenticatedUserMetadata = {
 Object.defineProperty(exports, "__esModule", { value: true });
 var Vocabularies_1 = __webpack_require__(46);
 var SCHEMA = {
-    "authenticatedUser": {
-        "@id": Vocabularies_1.CS.authenticatedUser,
+    "authenticatedUserMetadata": {
+        "@id": Vocabularies_1.CS.authenticatedUserMetadata,
         "@type": "@id",
     },
 };

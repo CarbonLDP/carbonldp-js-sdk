@@ -270,10 +270,10 @@ describe( module( "carbonldp/Vocabularies/CS" ), ():void => {
 
 		it( hasProperty(
 			OBLIGATORY,
-			"authenticatedUser",
-			"https://carbonldp.com/ns/v1/security#authenticatedUser"
+			"authenticatedUserMetadata",
+			"https://carbonldp.com/ns/v1/security#authenticatedUserMetadata"
 		), ():void => {
-			const target:CS[ "authenticatedUser" ] = "https://carbonldp.com/ns/v1/security#authenticatedUser";
+			const target:CS[ "authenticatedUserMetadata" ] = "https://carbonldp.com/ns/v1/security#authenticatedUserMetadata";
 			expect( target ).toBeDefined();
 		} );
 
@@ -607,9 +607,9 @@ describe( module( "carbonldp/Vocabularies/CS" ), ():void => {
 			expect( CS.authToken ).toBe( "https://carbonldp.com/ns/v1/security#authToken" );
 		} );
 
-		it( "CS.authenticatedUser", ():void => {
-			expect( CS.authenticatedUser ).toEqual( jasmine.any( String ) );
-			expect( CS.authenticatedUser ).toBe( "https://carbonldp.com/ns/v1/security#authenticatedUser" );
+		it( "CS.authenticatedUserMetadata", ():void => {
+			expect( CS.authenticatedUserMetadata ).toEqual( jasmine.any( String ) );
+			expect( CS.authenticatedUserMetadata ).toBe( "https://carbonldp.com/ns/v1/security#authenticatedUserMetadata" );
 		} );
 
 		it( "CS.childRole", ():void => {

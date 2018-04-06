@@ -59,9 +59,9 @@ describe( module( "carbonldp/Auth/AuthenticatedUserInformationAccessor" ), ():vo
 				expect( AuthenticatedUserInformationAccessor.SCHEMA ).toEqual( jasmine.any( Object ) );
 			} );
 
-			it( "should have cs:authenticatedUser", ():void => {
-				expect( AuthenticatedUserInformationAccessor.SCHEMA.authenticatedUser ).toEqual( {
-					"@id": CS.authenticatedUser,
+			it( "should have cs:authenticatedUserMetadata", ():void => {
+				expect( AuthenticatedUserInformationAccessor.SCHEMA[ "authenticatedUserMetadata" ] ).toEqual( {
+					"@id": CS.authenticatedUserMetadata,
 					"@type": "@id",
 				} );
 			} );
