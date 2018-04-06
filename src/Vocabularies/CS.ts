@@ -12,6 +12,7 @@ export interface CS {
 	Download:"https://carbonldp.com/ns/v1/security#Download";
 	Extend:"https://carbonldp.com/ns/v1/security#Extend";
 	ManageSecurity:"https://carbonldp.com/ns/v1/security#ManageSecurity";
+	PreferAuthToken:"https://carbonldp.com/ns/v1/security#PreferAuthToken";
 	ProtectedDocument:"https://carbonldp.com/ns/v1/security#ProtectedDocument";
 	Read:"https://carbonldp.com/ns/v1/security#Read";
 	RemoveMember:"https://carbonldp.com/ns/v1/security#RemoveMember";
@@ -28,6 +29,7 @@ export interface CS {
 	accessTo:"https://carbonldp.com/ns/v1/security#accessTo";
 	allowsOrigin:"https://carbonldp.com/ns/v1/security#allowsOrigin";
 	authenticatedUser:"https://carbonldp.com/ns/v1/security#authenticatedUser";
+	authToken:"https://carbonldp.com/ns/v1/security#authToken";
 	childRole:"https://carbonldp.com/ns/v1/security#childRole";
 	credentials:"https://carbonldp.com/ns/v1/security#credentials";
 	credentialsOf:"https://carbonldp.com/ns/v1/security#credentialsOf";
@@ -63,6 +65,7 @@ export const CS:CS = {
 	Download: "https://carbonldp.com/ns/v1/security#Download",
 	Extend: "https://carbonldp.com/ns/v1/security#Extend",
 	ManageSecurity: "https://carbonldp.com/ns/v1/security#ManageSecurity",
+	PreferAuthToken: "https://carbonldp.com/ns/v1/security#PreferAuthToken",
 	ProtectedDocument: "https://carbonldp.com/ns/v1/security#ProtectedDocument",
 	Read: "https://carbonldp.com/ns/v1/security#Read",
 	RemoveMember: "https://carbonldp.com/ns/v1/security#RemoveMember",
@@ -78,6 +81,7 @@ export const CS:CS = {
 	accessControlList: "https://carbonldp.com/ns/v1/security#accessControlList",
 	accessTo: "https://carbonldp.com/ns/v1/security#accessTo",
 	allowsOrigin: "https://carbonldp.com/ns/v1/security#allowsOrigin",
+	authToken: "https://carbonldp.com/ns/v1/security#authToken",
 	authenticatedUser: "https://carbonldp.com/ns/v1/security#authenticatedUser",
 	childRole: "https://carbonldp.com/ns/v1/security#childRole",
 	credentials: "https://carbonldp.com/ns/v1/security#credentials",

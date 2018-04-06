@@ -22,7 +22,4 @@ export declare class AuthService {
     authenticateUsing(method: AuthMethod.TOKEN, token: TokenCredentials.Class): Promise<TokenCredentials.Class>;
     addAuthentication(requestOptions: RequestOptions): void;
     clearAuthentication(): void;
-    private authenticateWithBasic(username, password);
-    private authenticateWithToken(userOrCredentials, password?);
-    private getAuthenticatedUser(authenticator);
 }

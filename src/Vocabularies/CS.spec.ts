@@ -126,6 +126,15 @@ describe( module( "carbonldp/Vocabularies/CS" ), ():void => {
 
 		it( hasProperty(
 			OBLIGATORY,
+			"PreferAuthToken",
+			"https://carbonldp.com/ns/v1/security#PreferAuthToken"
+		), ():void => {
+			const target:CS[ "PreferAuthToken" ] = "https://carbonldp.com/ns/v1/security#PreferAuthToken";
+			expect( target ).toBeDefined();
+		} );
+
+		it( hasProperty(
+			OBLIGATORY,
 			"ProtectedDocument",
 			"https://carbonldp.com/ns/v1/security#ProtectedDocument"
 		), ():void => {
@@ -247,6 +256,24 @@ describe( module( "carbonldp/Vocabularies/CS" ), ():void => {
 			"https://carbonldp.com/ns/v1/security#allowsOrigin"
 		), ():void => {
 			const target:CS[ "allowsOrigin" ] = "https://carbonldp.com/ns/v1/security#allowsOrigin";
+			expect( target ).toBeDefined();
+		} );
+
+		it( hasProperty(
+			OBLIGATORY,
+			"authToken",
+			"https://carbonldp.com/ns/v1/security#authToken"
+		), ():void => {
+			const target:CS[ "authToken" ] = "https://carbonldp.com/ns/v1/security#authToken";
+			expect( target ).toBeDefined();
+		} );
+
+		it( hasProperty(
+			OBLIGATORY,
+			"authenticatedUser",
+			"https://carbonldp.com/ns/v1/security#authenticatedUser"
+		), ():void => {
+			const target:CS[ "authenticatedUser" ] = "https://carbonldp.com/ns/v1/security#authenticatedUser";
 			expect( target ).toBeDefined();
 		} );
 
@@ -436,7 +463,7 @@ describe( module( "carbonldp/Vocabularies/CS" ), ():void => {
 		} );
 
 		it( "should test all exported IRIs", ():void => {
-			expect( Object.keys( CS ).length ).toBe( 46 );
+			expect( Object.keys( CS ).length ).toBe( 48 );
 		} );
 
 		it( "CS.namespace", ():void => {
@@ -497,6 +524,11 @@ describe( module( "carbonldp/Vocabularies/CS" ), ():void => {
 		it( "CS.ManageSecurity", ():void => {
 			expect( CS.ManageSecurity ).toEqual( jasmine.any( String ) );
 			expect( CS.ManageSecurity ).toBe( "https://carbonldp.com/ns/v1/security#ManageSecurity" );
+		} );
+
+		it( "CS.PreferAuthToken", ():void => {
+			expect( CS.PreferAuthToken ).toEqual( jasmine.any( String ) );
+			expect( CS.PreferAuthToken ).toBe( "https://carbonldp.com/ns/v1/security#PreferAuthToken" );
 		} );
 
 		it( "CS.ProtectedDocument", ():void => {
@@ -568,6 +600,11 @@ describe( module( "carbonldp/Vocabularies/CS" ), ():void => {
 		it( "CS.allowsOrigin", ():void => {
 			expect( CS.allowsOrigin ).toEqual( jasmine.any( String ) );
 			expect( CS.allowsOrigin ).toBe( "https://carbonldp.com/ns/v1/security#allowsOrigin" );
+		} );
+
+		it( "CS.authToken", ():void => {
+			expect( CS.authToken ).toEqual( jasmine.any( String ) );
+			expect( CS.authToken ).toBe( "https://carbonldp.com/ns/v1/security#authToken" );
 		} );
 
 		it( "CS.authenticatedUser", ():void => {

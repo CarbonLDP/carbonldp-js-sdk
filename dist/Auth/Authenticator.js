@@ -19,14 +19,14 @@ var Authenticator = (function () {
         this.authenticatedUser = null;
     };
     Authenticator.prototype.addAuthentication = function (requestOptions) {
+        if (requestOptions.headers && requestOptions.headers.has("authorization"))
+            return requestOptions;
         if (!this.isAuthenticated())
             throw new Errors_1.IllegalStateError("The authenticator isn't authenticated.");
-        var headers = requestOptions.headers ?
-            requestOptions.headers : requestOptions.headers = new Map();
-        if (headers.has("authorization"))
-            return requestOptions;
+        if (!requestOptions.headers)
+            requestOptions.headers = new Map();
         var strAuthHeader = this._getHeaderValue();
-        headers.set("authorization", new HTTP_1.Header([strAuthHeader]));
+        requestOptions.headers.set("authorization", new HTTP_1.Header([strAuthHeader]));
         return requestOptions;
     };
     Authenticator.prototype.getAuthenticatedUser = function (requestOptions) {
@@ -40,6 +40,7 @@ var Authenticator = (function () {
             _this.addAuthentication(localOptions);
             HTTP_1.RequestUtils.setAcceptHeader("application/ld+json", localOptions);
             HTTP_1.RequestUtils.setPreferredInteractionModel(LDP_1.LDP.RDFSource, localOptions);
+            localOptions.ensureLatest = true;
             return HTTP_1.RequestService
                 .get(metadataURI, localOptions, new JSONLD_1.JSONLDParser())
                 .catch(function (response) { return _this.context.documents._parseErrorResponse(response); });

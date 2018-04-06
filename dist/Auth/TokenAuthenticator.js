@@ -18,33 +18,35 @@ var __importStar = (this && this.__importStar) || function (mod) {
 }
 Object.defineProperty(exports, "__esModule", { value: true });
 var Errors = __importStar(require("../Errors"));
+var HTTP_1 = require("../HTTP");
 var Errors_1 = require("../HTTP/Errors");
-var Request_1 = require("../HTTP/Request");
-var JSONLD_1 = require("../JSONLD");
-var ResponseMetadata_1 = require("../LDP/ResponseMetadata");
-var Document_1 = require("../RDF/Document");
+var LDP_1 = require("../LDP");
 var Node_1 = require("../RDF/Node");
-var LDP_1 = require("../Vocabularies/LDP");
+var Utils_1 = require("../Utils");
+var Vocabularies_1 = require("../Vocabularies");
 var Utils = __importStar(require("./../Utils"));
 var Authenticator_1 = require("./Authenticator");
 var BasicAuthenticator_1 = require("./BasicAuthenticator");
 var TokenCredentials = __importStar(require("./TokenCredentials"));
-exports.TOKEN_CONTAINER = "auth-tokens/";
-var Class = (function (_super) {
-    __extends(Class, _super);
-    function Class(context) {
-        var _this = _super.call(this, context) || this;
-        _this.context = context;
-        return _this;
+var TokenAuthenticator = (function (_super) {
+    __extends(TokenAuthenticator, _super);
+    function TokenAuthenticator() {
+        return _super !== null && _super.apply(this, arguments) || this;
     }
-    Class.prototype.isAuthenticated = function () {
+    TokenAuthenticator.prototype.isAuthenticated = function () {
         return _super.prototype.isAuthenticated.call(this) && this.credentials.expirationTime > new Date();
     };
-    Class.prototype.authenticate = function (tokenOrCredentials) {
+    TokenAuthenticator.prototype.authenticate = function (tokenOrCredentials) {
+        if (TokenCredentials.Factory.hasClassProperties(tokenOrCredentials))
+            return this._parseRawCredentials(tokenOrCredentials);
+        return this._getCredentials(tokenOrCredentials);
+    };
+    TokenAuthenticator.prototype._getHeaderValue = function () {
+        return "Token " + this.credentials.key;
+    };
+    TokenAuthenticator.prototype._parseRawCredentials = function (credentials) {
         var _this = this;
-        return this
-            .getCredentials(tokenOrCredentials)
-            .then(function (credentials) {
+        return Utils_1.promiseMethod(function () {
             if (Utils.isString(credentials.expirationTime))
                 credentials.expirationTime = new Date(credentials.expirationTime);
             if (credentials.expirationTime <= new Date())
@@ -52,53 +54,43 @@ var Class = (function (_super) {
             return _this.credentials = credentials;
         });
     };
-    Class.prototype._getHeaderValue = function () {
-        return "Token " + this.credentials.key;
-    };
-    Class.prototype.getCredentials = function (tokenOrCredentials) {
+    TokenAuthenticator.prototype._getCredentials = function (token) {
         var _this = this;
-        if (TokenCredentials.Factory.hasClassProperties(tokenOrCredentials))
-            return Promise.resolve(tokenOrCredentials);
-        var basicAuthenticator = new BasicAuthenticator_1.BasicAuthenticator();
+        var basicAuthenticator = new BasicAuthenticator_1.BasicAuthenticator(this.context);
         return basicAuthenticator
-            .authenticate(tokenOrCredentials)
+            .authenticate(token)
             .then(function () {
             var requestOptions = {};
             basicAuthenticator.addAuthentication(requestOptions);
-            Request_1.RequestUtils.setAcceptHeader("application/ld+json", requestOptions);
-            Request_1.RequestUtils.setPreferredInteractionModel(LDP_1.LDP.RDFSource, requestOptions);
-            var tokensURI = _this.context._resolvePath("system.security") + exports.TOKEN_CONTAINER;
-            return Request_1.RequestService.post(tokensURI, null, requestOptions, new JSONLD_1.JSONLDParser());
+            HTTP_1.RequestUtils.setRetrievalPreferences({ include: [Vocabularies_1.CS.PreferAuthToken] }, requestOptions, false);
+            return _this.getAuthenticatedUser(requestOptions);
         })
-            .then(function (_a) {
-            var expandedResult = _a[0], response = _a[1];
-            var freeNodes = Node_1.RDFNode.getFreeNodes(expandedResult);
-            var freeResources = _this.context.documents._getFreeResources(freeNodes);
-            var tokenResources = freeResources.getResources().filter(function (resource) { return resource.hasType(TokenCredentials.RDF_CLASS); });
-            if (tokenResources.length === 0)
-                throw new Errors_1.BadResponseError("No '" + TokenCredentials.RDF_CLASS + "' was returned.", response);
-            if (tokenResources.length > 1)
-                throw new Errors_1.BadResponseError("Multiple '" + TokenCredentials.RDF_CLASS + "' were returned. ", response);
-            var token = tokenResources[0];
-            var userDocuments = Document_1.RDFDocument.getDocuments(expandedResult).filter(function (rdfDocument) { return rdfDocument["@id"] === token.user.id; });
-            userDocuments.forEach(function (document) { return _this.context.documents._getPersistedDocument(document, response); });
-            var responseMetadata = freeResources
-                .getResources()
-                .find(ResponseMetadata_1.ResponseMetadata.is);
-            if (responseMetadata)
-                responseMetadata
-                    .documentsMetadata
-                    .forEach(function (documentMetadata) {
-                    var document = documentMetadata.relatedDocument;
-                    document._eTag = documentMetadata.eTag;
-                });
-            return token;
-        })
-            .catch(function (error) { return _this.context.documents._parseErrorResponse(error); });
+            .then(function () {
+            return _this.credentials;
+        });
     };
-    return Class;
+    TokenAuthenticator.prototype._parseRDFMetadata = function (rdfData, response) {
+        var preferenceHeader = response.getHeader("Preference-Applied");
+        if (preferenceHeader && preferenceHeader.hasValue(Vocabularies_1.CS.PreferAuthToken))
+            this._parseRDFCredentials(rdfData, response);
+        return _super.prototype._parseRDFMetadata.call(this, rdfData, response);
+    };
+    TokenAuthenticator.prototype._parseRDFCredentials = function (rdfData, response) {
+        var freeNodes = Node_1.RDFNode.getFreeNodes(rdfData);
+        var freeResources = this.context.documents
+            ._getFreeResources(freeNodes);
+        var responseMetadata = freeResources
+            .getResources()
+            .find(LDP_1.ResponseMetadata.is);
+        if (!responseMetadata)
+            throw new Errors_1.BadResponseError("No \"" + LDP_1.ResponseMetadata.TYPE + "\" was returned.", response);
+        var tokenCredentials = responseMetadata.authToken;
+        if (!tokenCredentials)
+            throw new Errors_1.BadResponseError("No \"" + TokenCredentials.RDF_CLASS + "\" was returned.", response);
+        return this.credentials = tokenCredentials;
+    };
+    return TokenAuthenticator;
 }(Authenticator_1.Authenticator));
-exports.Class = Class;
-exports.default = Class;
+exports.TokenAuthenticator = TokenAuthenticator;
 
 //# sourceMappingURL=TokenAuthenticator.js.map

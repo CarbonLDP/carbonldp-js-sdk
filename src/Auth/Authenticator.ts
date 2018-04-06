@@ -39,15 +39,13 @@ export abstract class Authenticator<T extends object, W extends object> {
 	}
 
 	addAuthentication( requestOptions:RequestOptions ):RequestOptions {
+		if( requestOptions.headers && requestOptions.headers.has( "authorization" ) ) return requestOptions;
+
 		if( ! this.isAuthenticated() ) throw new IllegalStateError( "The authenticator isn't authenticated." );
-
-		const headers:Map<string, Header> = requestOptions.headers ?
-			requestOptions.headers : requestOptions.headers = new Map<string, Header>();
-
-		if( headers.has( "authorization" ) ) return requestOptions;
+		if( ! requestOptions.headers ) requestOptions.headers = new Map<string, Header>();
 
 		const strAuthHeader:string = this._getHeaderValue();
-		headers.set( "authorization", new Header( [ strAuthHeader ] ) );
+		requestOptions.headers.set( "authorization", new Header( [ strAuthHeader ] ) );
 
 		return requestOptions;
 	}
@@ -62,6 +60,7 @@ export abstract class Authenticator<T extends object, W extends object> {
 			this.addAuthentication( localOptions );
 			RequestUtils.setAcceptHeader( "application/ld+json", localOptions );
 			RequestUtils.setPreferredInteractionModel( LDP.RDFSource, localOptions );
+			localOptions.ensureLatest = true;
 
 			return RequestService
 				.get( metadataURI, localOptions, new JSONLDParser() )

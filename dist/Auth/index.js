@@ -6,9 +6,6 @@ var __importStar = (this && this.__importStar) || function (mod) {
     result["default"] = mod;
     return result;
 }
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-}
 Object.defineProperty(exports, "__esModule", { value: true });
 var Service_1 = require("./Service");
 exports.AuthService = Service_1.AuthService;
@@ -26,6 +23,8 @@ var Credentials = __importStar(require("./Credentials"));
 exports.Credentials = Credentials;
 var PersistedACL_1 = require("./PersistedACL");
 exports.PersistedACL = PersistedACL_1.PersistedACL;
+var TokenAuthenticator_1 = require("./TokenAuthenticator");
+exports.TokenAuthenticator = TokenAuthenticator_1.TokenAuthenticator;
 var PersistedCredentials = __importStar(require("./PersistedCredentials"));
 exports.PersistedCredentials = PersistedCredentials;
 var PersistedRole = __importStar(require("./PersistedRole"));
@@ -36,8 +35,6 @@ var Role = __importStar(require("./Role"));
 exports.Role = Role;
 var Roles = __importStar(require("./Roles"));
 exports.Roles = Roles;
-var TokenAuthenticator_1 = __importDefault(require("./TokenAuthenticator"));
-exports.TokenAuthenticator = TokenAuthenticator_1.default;
 var TokenCredentials = __importStar(require("./TokenCredentials"));
 exports.TokenCredentials = TokenCredentials;
 var User = __importStar(require("./User"));

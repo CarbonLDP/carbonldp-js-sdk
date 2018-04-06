@@ -22,7 +22,7 @@ import * as PersistedUser from "./PersistedUser";
 import * as Role from "./Role";
 import * as Roles from "./Roles";
 import { AuthService } from "./Service";
-import TokenAuthenticator from "./TokenAuthenticator";
+import { TokenAuthenticator } from "./TokenAuthenticator";
 import * as TokenCredentials from "./TokenCredentials";
 import * as User from "./User";
 import { UsernameAndPasswordCredentials } from "./UsernameAndPasswordCredentials";
@@ -192,7 +192,7 @@ describe( module( "carbonldp/Auth" ), ():void => {
 	it( reexports(
 		STATIC,
 		"TokenAuthenticator",
-		"carbonldp/Auth/TokenAuthenticator"
+		"CarbonLDP.Auth.TokenAuthenticator"
 	), ():void => {
 		expect( Auth.TokenAuthenticator ).toBeDefined();
 		expect( Auth.TokenAuthenticator ).toBe( TokenAuthenticator );

@@ -1,16 +1,20 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var C_1 = require("../Vocabularies/C");
+var Vocabularies_1 = require("../Vocabularies");
 var VolatileResource_1 = require("./VolatileResource");
 var SCHEMA = {
     "documentsMetadata": {
-        "@id": C_1.C.documentMetadata,
+        "@id": Vocabularies_1.C.documentMetadata,
         "@type": "@id",
         "@container": "@set",
     },
+    "authToken": {
+        "@id": Vocabularies_1.CS.authToken,
+        "@type": "@id",
+    },
 };
 exports.ResponseMetadata = {
-    TYPE: C_1.C.ResponseMetadata,
+    TYPE: Vocabularies_1.C.ResponseMetadata,
     SCHEMA: SCHEMA,
     is: function (object) {
         return VolatileResource_1.VolatileResource.is(object)

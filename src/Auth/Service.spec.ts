@@ -25,7 +25,7 @@ import * as Roles from "./Roles";
 
 import { AuthService } from "./Service";
 
-import TokenAuthenticator from "./TokenAuthenticator";
+import { TokenAuthenticator } from "./TokenAuthenticator";
 import * as TokenCredentials from "./TokenCredentials";
 import * as User from "./User";
 import { UsernameAndPasswordCredentials } from "./UsernameAndPasswordCredentials";
