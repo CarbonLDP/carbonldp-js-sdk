@@ -15,7 +15,6 @@ import {
 	OPTIONAL,
 	STATIC,
 } from "../test/JasmineExtender";
-import { Response } from "../HTTP/Response";
 import * as Utils from "./../Utils";
 
 import * as PersistedCredentials from "./PersistedCredentials";

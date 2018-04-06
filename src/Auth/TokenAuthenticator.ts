@@ -56,7 +56,7 @@ export class TokenAuthenticator extends Authenticator<UsernameAndPasswordToken, 
 				const requestOptions:RequestOptions = {};
 				basicAuthenticator.addAuthentication( requestOptions );
 
-				RequestUtils.setRetrievalPreferences( { include: [ CS.PreferAuthToken ] }, requestOptions, false );
+				RequestUtils.setRetrievalPreferences( { include: [ CS.PreferAuthToken ] }, requestOptions );
 
 				return this.getAuthenticatedUser( requestOptions );
 			} )

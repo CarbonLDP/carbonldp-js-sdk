@@ -81,7 +81,7 @@ describe( module( "carbonldp/LDP" ), ():void => {
 	it( reexports(
 		STATIC,
 		"Map",
-		"carbonldp/LDP/Map"
+		"CarbonLDP.LDP.Map"
 	), ():void => {
 		expect( LDP.Map ).toBeDefined();
 		expect( LDP.Map ).toBe( Map );
@@ -117,7 +117,7 @@ describe( module( "carbonldp/LDP" ), ():void => {
 	it( reexports(
 		STATIC,
 		"MapEntry",
-		"carbonldp/LDP/MapEntry"
+		"CarbonLDP.LDP.MapEntry"
 	), ():void => {
 		expect( LDP.MapEntry ).toBeDefined();
 		expect( LDP.MapEntry ).toBe( MapEntry );
@@ -135,7 +135,7 @@ describe( module( "carbonldp/LDP" ), ():void => {
 	it( reexports(
 		STATIC,
 		"Error",
-		"carbonldp/LDP/Error"
+		"CarbonLDP.LDP.Error"
 	), ():void => {
 		expect( LDP.Error ).toBeDefined();
 		expect( LDP.Error ).toBe( Error );

@@ -1,4 +1,3 @@
-import { Documents } from "./Documents";
 import { IllegalStateError } from "./Errors";
 
 import * as Module from "./Pointer";

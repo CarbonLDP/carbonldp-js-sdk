@@ -22,7 +22,6 @@ exports.PersistedDocument = {
     isDecorated: function (object) {
         return Utils.hasPropertyDefined(object, "_eTag")
             && Utils.hasFunction(object, "isLocallyOutDated")
-            && Utils.hasFunction(object, "get")
             && Utils.hasFunction(object, "refresh")
             && Utils.hasFunction(object, "save")
             && Utils.hasFunction(object, "saveAndRefresh")
@@ -194,12 +193,6 @@ exports.PersistedDocument = {
                 enumerable: false,
                 configurable: true,
                 value: addMembers,
-            },
-            "get": {
-                writable: false,
-                enumerable: false,
-                configurable: true,
-                value: get,
             },
             "createChild": {
                 writable: false,
@@ -457,7 +450,6 @@ function get(relativeURI, optionsOrQueryBuilderFn, queryBuilderFn) {
         .then(function (data) { return data[0]; });
 }
 function createChild(objectOrSlugOrRequestOptions, slugOrRequestOptions, requestOptions) {
-    if (requestOptions === void 0) { requestOptions = {}; }
     requestOptions = Request_1.RequestUtils.isOptions(objectOrSlugOrRequestOptions) ? objectOrSlugOrRequestOptions : Request_1.RequestUtils.isOptions(slugOrRequestOptions) ? slugOrRequestOptions : requestOptions;
     var object = Utils.isString(objectOrSlugOrRequestOptions) || Request_1.RequestUtils.isOptions(objectOrSlugOrRequestOptions) || !objectOrSlugOrRequestOptions ? {} : objectOrSlugOrRequestOptions;
     var slug = Utils.isString(objectOrSlugOrRequestOptions) ? objectOrSlugOrRequestOptions : Utils.isString(slugOrRequestOptions) ? slugOrRequestOptions : null;
@@ -467,7 +459,6 @@ function createChildren(objects, slugsOrRequestOptions, requestOptions) {
     return this._documents.createChildren(this.id, objects, slugsOrRequestOptions, requestOptions);
 }
 function createChildAndRetrieve(objectOrSlugOrRequestOptions, slugOrRequestOptions, requestOptions) {
-    if (requestOptions === void 0) { requestOptions = {}; }
     requestOptions = Request_1.RequestUtils.isOptions(objectOrSlugOrRequestOptions) ? objectOrSlugOrRequestOptions : Request_1.RequestUtils.isOptions(slugOrRequestOptions) ? slugOrRequestOptions : requestOptions;
     var object = Utils.isString(objectOrSlugOrRequestOptions) || Request_1.RequestUtils.isOptions(objectOrSlugOrRequestOptions) || !objectOrSlugOrRequestOptions ? {} : objectOrSlugOrRequestOptions;
     var slug = Utils.isString(objectOrSlugOrRequestOptions) ? objectOrSlugOrRequestOptions : Utils.isString(slugOrRequestOptions) ? slugOrRequestOptions : null;

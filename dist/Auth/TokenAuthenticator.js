@@ -60,7 +60,7 @@ var TokenAuthenticator = (function (_super) {
             .then(function () {
             var requestOptions = {};
             basicAuthenticator.addAuthentication(requestOptions);
-            HTTP_1.RequestUtils.setRetrievalPreferences({ include: [Vocabularies_1.CS.PreferAuthToken] }, requestOptions, false);
+            HTTP_1.RequestUtils.setRetrievalPreferences({ include: [Vocabularies_1.CS.PreferAuthToken] }, requestOptions);
             return _this.getAuthenticatedUser(requestOptions);
         })
             .then(function () {

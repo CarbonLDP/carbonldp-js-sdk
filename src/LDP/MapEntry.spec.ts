@@ -40,7 +40,7 @@ describe( module( "carbonldp/LDP/MapEntry" ), ():void => {
 
 	describe( interfaze(
 		"CarbonLDP.LDP.MapEntryFactory",
-		"Interface with the factory, decorate and utils methods for `CarbonLDP.LDP.MapEntry.MapEntry` objects"
+		"Interface with the factory, decorate and utils methods for `CarbonLDP.LDP.MapEntry` objects"
 	), ():void => {
 
 		it( hasProperty(

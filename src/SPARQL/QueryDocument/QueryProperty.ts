@@ -18,6 +18,7 @@ export enum QueryPropertyType {
 	FULL,
 	PARTIAL,
 	ALL,
+	EMPTY,
 }
 
 export class QueryProperty {
@@ -50,13 +51,10 @@ export class QueryProperty {
 	}
 
 	getPatterns():PatternToken[] {
-		let patterns:PatternToken[] = this._patterns.slice();
+		const patterns:PatternToken[] = this._patterns.slice();
 
-		if( this._type !== void 0 ) {
-			const fn:( context:QueryContext, resourcePath:string ) => PatternToken =
-				this._type === QueryPropertyType.PARTIAL ? createTypesPattern :
-					this._type === QueryPropertyType.FULL ? createGraphPattern : createAllPattern;
-
+		const fn:FunctionPattern = getFunctionPattern( this.getType() );
+		if( fn ) {
 			const index:number = patterns.findIndex( pattern => pattern === void 0 );
 			patterns[ index ] = fn( this._context, this.name );
 		}
@@ -100,5 +98,24 @@ export class QueryProperty {
 
 	toString():string {
 		return `${ this.variable }`;
+	}
+}
+
+type FunctionPattern = ( context:QueryContext, resourcePath:string ) => PatternToken;
+
+function getFunctionPattern( type:QueryPropertyType | undefined ):null | FunctionPattern {
+	switch( type ) {
+		case QueryPropertyType.ALL:
+			return createAllPattern;
+
+		case QueryPropertyType.FULL:
+			return createGraphPattern;
+
+		case QueryPropertyType.EMPTY:
+		case QueryPropertyType.PARTIAL:
+			return createTypesPattern;
+
+		default:
+			return null;
 	}
 }
