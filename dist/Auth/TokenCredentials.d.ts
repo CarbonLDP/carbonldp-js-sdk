@@ -3,7 +3,7 @@ import { ObjectSchema } from "../ObjectSchema";
 import { CS } from "../Vocabularies/CS";
 export interface TokenCredentialsBase {
     token: string;
-    expiresOn: string | Date;
+    expires: string | Date;
 }
 export interface TokenCredentialsBaseFactory {
     is(value: any): value is TokenCredentialsBase;
@@ -11,7 +11,7 @@ export interface TokenCredentialsBaseFactory {
 export declare const TokenCredentialsBase: TokenCredentialsBaseFactory;
 export interface TokenCredentials extends VolatileResource {
     token: string;
-    expiresOn: Date;
+    expires: Date;
 }
 export interface TokenCredentialsFactory {
     TYPE: CS["TokenCredentials"];

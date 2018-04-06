@@ -95,12 +95,12 @@ describe( module( "carbonldp/Auth/TokenAuthenticator" ), ():void => {
 			} );
 
 			it( "should return true when not expired credentials", ():void => {
-				const expiresOn:Date = new Date();
-				expiresOn.setDate( expiresOn.getDate() + 1 );
+				const expires:Date = new Date();
+				expires.setDate( expires.getDate() + 1 );
 
 				const credentials:TokenCredentials = Resource.createFrom( {
 					token: "token-value",
-					expiresOn,
+					expires: expires,
 				} );
 
 				const authenticator:TokenAuthenticator = createAuthenticatorWith( credentials );
@@ -108,10 +108,10 @@ describe( module( "carbonldp/Auth/TokenAuthenticator" ), ():void => {
 			} );
 
 			it( "should return true when expired credentials with by current time", ():void => {
-				const expiresOn:Date = new Date();
+				const expires:Date = new Date();
 				const credentials:TokenCredentials = Resource.createFrom( {
 					token: "token-value",
-					expiresOn,
+					expires: expires,
 				} );
 
 				const authenticator:TokenAuthenticator = createAuthenticatorWith( credentials );
@@ -119,12 +119,12 @@ describe( module( "carbonldp/Auth/TokenAuthenticator" ), ():void => {
 			} );
 
 			it( "should return true when expired credentials with by one day", ():void => {
-				const expiresOn:Date = new Date();
-				expiresOn.setDate( expiresOn.getDate() - 1 );
+				const expires:Date = new Date();
+				expires.setDate( expires.getDate() - 1 );
 
 				const credentials:TokenCredentials = Resource.createFrom( {
 					token: "token-value",
-					expiresOn,
+					expires: expires,
 				} );
 
 				const authenticator:TokenAuthenticator = createAuthenticatorWith( credentials );
@@ -135,9 +135,9 @@ describe( module( "carbonldp/Auth/TokenAuthenticator" ), ():void => {
 
 		describe( method( INSTANCE, "authenticate" ), ():void => {
 
-			let expiresOn:Date;
+			let expires:Date;
 			beforeEach( ():void => {
-				expiresOn = new Date( Date.now() + 24 * 60 * 60 * 1000 );
+				expires = new Date( Date.now() + 24 * 60 * 60 * 1000 );
 
 				jasmine.Ajax.stubRequest( "https://example.com/users/me/" ).andReturn( {
 					status: 200,
@@ -157,8 +157,8 @@ describe( module( "carbonldp/Auth/TokenAuthenticator" ), ():void => {
 						"${ CS.token }": [ {
 							"@value": "token-key"
 						} ],
-						"${ CS.expiresOn }": [ {
-							"@value": "${ expiresOn.toISOString() }",
+						"${ CS.expires }": [ {
+							"@value": "${ expires.toISOString() }",
 							"@type": "${ XSD.dateTime }"
 						} ]
 					}, {
@@ -226,7 +226,7 @@ describe( module( "carbonldp/Auth/TokenAuthenticator" ), ():void => {
 						expect( token ).toEqual( jasmine.objectContaining( {
 							types: jasmine.arrayContaining( [ CS.TokenCredentials ] ) as any as string[],
 							token: "token-key",
-							expiresOn,
+							expires: expires,
 						} ) );
 
 						done();
@@ -275,7 +275,7 @@ describe( module( "carbonldp/Auth/TokenAuthenticator" ), ():void => {
 			it( "should return same credentials when valid token credentials", ( done:DoneFn ):void => {
 				const credentials:TokenCredentials = TokenCredentials.createFrom( {
 					token: "token-value",
-					expiresOn,
+					expires: expires,
 				} );
 
 				const authenticator:TokenAuthenticator = new TokenAuthenticator( context );
@@ -294,7 +294,7 @@ describe( module( "carbonldp/Auth/TokenAuthenticator" ), ():void => {
 			it( "should set authenticated when valid token credentials", ( done:DoneFn ):void => {
 				const credentials:TokenCredentials = TokenCredentials.createFrom( {
 					token: "token-value",
-					expiresOn,
+					expires: expires,
 				} );
 
 				const authenticator:TokenAuthenticator = new TokenAuthenticator( context );
@@ -312,7 +312,7 @@ describe( module( "carbonldp/Auth/TokenAuthenticator" ), ():void => {
 			it( "should throw error when invalid expiration date", ( done:DoneFn ):void => {
 				const credentials:TokenCredentials = TokenCredentials.createFrom( {
 					token: "token-value",
-					expiresOn: new Date( Date.now() - 24 * 60 * 60 * 1000 ),
+					expires: new Date( Date.now() - 24 * 60 * 60 * 1000 ),
 				} );
 
 				const authenticator:TokenAuthenticator = new TokenAuthenticator( context );
@@ -332,7 +332,7 @@ describe( module( "carbonldp/Auth/TokenAuthenticator" ), ():void => {
 			it( "should not authenticate when invalid expiration date", ( done:DoneFn ):void => {
 				const credentials:TokenCredentials = TokenCredentials.createFrom( {
 					token: "token-value",
-					expiresOn: new Date( Date.now() - 24 * 60 * 60 * 1000 ),
+					expires: new Date( Date.now() - 24 * 60 * 60 * 1000 ),
 				} );
 
 				const authenticator:TokenAuthenticator = new TokenAuthenticator( context );
@@ -351,7 +351,7 @@ describe( module( "carbonldp/Auth/TokenAuthenticator" ), ():void => {
 
 
 			it( "should return credentials when token credentials base", ( done:DoneFn ):void => {
-				const credentials:TokenCredentialsBase = { token: "token-value", expiresOn };
+				const credentials:TokenCredentialsBase = { token: "token-value", expires: expires };
 
 				const authenticator:TokenAuthenticator = new TokenAuthenticator( context );
 				authenticator
@@ -367,7 +367,7 @@ describe( module( "carbonldp/Auth/TokenAuthenticator" ), ():void => {
 			} );
 
 			it( "should parse expiration date if string in token credentials base", ( done:DoneFn ):void => {
-				const credentials:TokenCredentialsBase = { token: "token-value", expiresOn: expiresOn.toISOString() };
+				const credentials:TokenCredentialsBase = { token: "token-value", expires: expires.toISOString() };
 
 				const authenticator:TokenAuthenticator = new TokenAuthenticator( context );
 				authenticator
@@ -375,8 +375,8 @@ describe( module( "carbonldp/Auth/TokenAuthenticator" ), ():void => {
 					.then( ( tokenCredentials:TokenCredentials ):void => {
 						expect( tokenCredentials ).toBeDefined();
 
-						expect( tokenCredentials.expiresOn ).toEqual( jasmine.any( Date ) );
-						expect( tokenCredentials.expiresOn ).toEqual( new Date( credentials.expiresOn as string ) );
+						expect( tokenCredentials.expires ).toEqual( jasmine.any( Date ) );
+						expect( tokenCredentials.expires ).toEqual( new Date( credentials.expires as string ) );
 
 						done();
 					} )
@@ -428,12 +428,12 @@ describe( module( "carbonldp/Auth/TokenAuthenticator" ), ():void => {
 		describe( "TokenAuthenticator.addAuthentication", ():void => {
 
 			it( "should add the header value", ():void => {
-				const expiresOn:Date = new Date();
-				expiresOn.setDate( expiresOn.getDate() + 1 );
+				const expires:Date = new Date();
+				expires.setDate( expires.getDate() + 1 );
 
 				const credentials:TokenCredentials = Resource.createFrom( {
 					token: "token-value",
-					expiresOn,
+					expires: expires,
 				} );
 
 				const authenticator:TokenAuthenticator = createAuthenticatorWith( credentials );

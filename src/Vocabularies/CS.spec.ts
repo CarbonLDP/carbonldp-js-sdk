@@ -324,10 +324,10 @@ describe( module( "carbonldp/Vocabularies/CS" ), ():void => {
 
 		it( hasProperty(
 			OBLIGATORY,
-			"expiresOn",
-			"https://carbonldp.com/ns/v1/security#expiresOn"
+			"expires",
+			"https://carbonldp.com/ns/v1/security#expires"
 		), ():void => {
-			const target:CS[ "expiresOn" ] = "https://carbonldp.com/ns/v1/security#expiresOn";
+			const target:CS[ "expires" ] = "https://carbonldp.com/ns/v1/security#expires";
 			expect( target ).toBeDefined();
 		} );
 
@@ -637,9 +637,9 @@ describe( module( "carbonldp/Vocabularies/CS" ), ():void => {
 			expect( CS.enabled ).toBe( "https://carbonldp.com/ns/v1/security#enabled" );
 		} );
 
-		it( "CS.expiresOn", ():void => {
-			expect( CS.expiresOn ).toEqual( jasmine.any( String ) );
-			expect( CS.expiresOn ).toBe( "https://carbonldp.com/ns/v1/security#expiresOn" );
+		it( "CS.expires", ():void => {
+			expect( CS.expires ).toEqual( jasmine.any( String ) );
+			expect( CS.expires ).toBe( "https://carbonldp.com/ns/v1/security#expires" );
 		} );
 
 		it( "CS.forIRI", ():void => {

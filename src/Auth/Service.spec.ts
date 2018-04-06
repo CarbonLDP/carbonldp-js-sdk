@@ -587,7 +587,7 @@ describe( module( "carbonldp/Auth/Service" ), ():void => {
 						"${ CS.token }": [ {
 							"@value": "token-key"
 						} ],
-						"${ CS.expiresOn }": [ {
+						"${ CS.expires }": [ {
 							"@value": "${ new Date( Date.now() + 24 * 60 * 60 * 1000 ).toISOString() }",
 							"@type": "${ XSD.dateTime }"
 						} ]
@@ -621,7 +621,7 @@ describe( module( "carbonldp/Auth/Service" ), ():void => {
 							expect( credentials ).toBeDefined();
 							expect( credentials ).toEqual( jasmine.objectContaining( {
 								token: "token-key",
-								expiresOn: jasmine.any( Date ) as any as Date,
+								expires: jasmine.any( Date ) as any as Date,
 							} ) );
 
 							done();
@@ -664,7 +664,7 @@ describe( module( "carbonldp/Auth/Service" ), ():void => {
 				it( "should return credentials", ( done:DoneFn ):void => {
 					const tokenCredentials:TokenCredentials.TokenCredentials = <TokenCredentials.TokenCredentials> {
 						token: "token-key",
-						expiresOn: new Date( Date.now() + 24 * 60 * 60 * 1000 ),
+						expires: new Date( Date.now() + 24 * 60 * 60 * 1000 ),
 					};
 
 					const auth:AuthService = new AuthService( context );
@@ -674,7 +674,7 @@ describe( module( "carbonldp/Auth/Service" ), ():void => {
 							expect( credentials ).toBeDefined();
 							expect( credentials ).toEqual( jasmine.objectContaining( {
 								token: "token-key",
-								expiresOn: jasmine.any( Date ) as any as Date,
+								expires: jasmine.any( Date ) as any as Date,
 							} ) );
 
 							done();
@@ -685,7 +685,7 @@ describe( module( "carbonldp/Auth/Service" ), ():void => {
 				it( "should populate the authenticated user", ( done:DoneFn ):void => {
 					const tokenCredentials:TokenCredentials.TokenCredentials = <TokenCredentials.TokenCredentials> {
 						token: "token-key",
-						expiresOn: new Date( Date.now() + 24 * 60 * 60 * 1000 ),
+						expires: new Date( Date.now() + 24 * 60 * 60 * 1000 ),
 					};
 
 					const auth:AuthService = new AuthService( context );

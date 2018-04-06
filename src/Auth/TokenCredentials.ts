@@ -10,7 +10,7 @@ import { XSD } from "../Vocabularies/XSD";
 
 export interface TokenCredentialsBase {
 	token:string;
-	expiresOn:string | Date;
+	expires:string | Date;
 }
 
 export interface TokenCredentialsBaseFactory {
@@ -21,7 +21,7 @@ export const TokenCredentialsBase:TokenCredentialsBaseFactory = {
 	is( value:any ):value is TokenCredentialsBase {
 		return isObject( value )
 			&& value.hasOwnProperty( "token" )
-			&& value.hasOwnProperty( "expiresOn" )
+			&& value.hasOwnProperty( "expires" )
 			;
 	},
 };
@@ -29,7 +29,7 @@ export const TokenCredentialsBase:TokenCredentialsBaseFactory = {
 
 export interface TokenCredentials extends VolatileResource {
 	token:string;
-	expiresOn:Date;
+	expires:Date;
 }
 
 
@@ -47,8 +47,8 @@ const SCHEMA:ObjectSchema = {
 		"@id": CS.token,
 		"@type": XSD.string,
 	},
-	"expiresOn": {
-		"@id": CS.expiresOn,
+	"expires": {
+		"@id": CS.expires,
 		"@type": XSD.dateTime,
 	},
 };
@@ -67,8 +67,8 @@ export const TokenCredentials:TokenCredentialsFactory = {
 		const credentials:T & VolatileResource = VolatileResource.createFrom( object );
 		credentials.addType( TokenCredentials.TYPE );
 
-		if( isString( credentials.expiresOn ) )
-			credentials.expiresOn = new Date( credentials.expiresOn );
+		if( isString( credentials.expires ) )
+			credentials.expires = new Date( credentials.expires );
 
 		return credentials as T & TokenCredentials;
 	},

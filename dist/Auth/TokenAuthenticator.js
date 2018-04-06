@@ -33,7 +33,7 @@ var TokenAuthenticator = (function (_super) {
         return _super !== null && _super.apply(this, arguments) || this;
     }
     TokenAuthenticator.prototype.isAuthenticated = function () {
-        return _super.prototype.isAuthenticated.call(this) && this.credentials.expiresOn > new Date();
+        return _super.prototype.isAuthenticated.call(this) && this.credentials.expires > new Date();
     };
     TokenAuthenticator.prototype.authenticate = function (tokenOrCredentials) {
         if (TokenCredentials_1.TokenCredentialsBase.is(tokenOrCredentials))
@@ -47,7 +47,7 @@ var TokenAuthenticator = (function (_super) {
         var _this = this;
         return Utils_1.promiseMethod(function () {
             var credentials = TokenCredentials_1.TokenCredentials.createFrom(credentialsBase);
-            if (credentials.expiresOn <= new Date())
+            if (credentials.expires <= new Date())
                 throw new Errors.IllegalArgumentError("The token has already expired.");
             return _this.credentials = credentials;
         });

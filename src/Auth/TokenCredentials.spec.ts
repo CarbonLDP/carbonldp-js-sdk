@@ -92,7 +92,7 @@ describe( module( "Carbon/Auth/TokenCredentials" ), ():void => {
 				beforeEach( ():void => {
 					target = {
 						token: null,
-						expiresOn: null,
+						expires: null,
 					};
 				} );
 
@@ -109,7 +109,7 @@ describe( module( "Carbon/Auth/TokenCredentials" ), ():void => {
 				} );
 
 				it( "should fail when no expiresOn", ():void => {
-					delete target.expiresOn;
+					delete target.expires;
 
 					const returned:boolean = TokenCredentialsBase.is( target );
 					expect( returned ).toBe( false );
@@ -218,7 +218,7 @@ describe( module( "Carbon/Auth/TokenCredentials" ), ():void => {
 			it( "should have model properties", ():void => {
 				expect( TokenCredentials.SCHEMA as {} ).toEqual( {
 					token: jasmine.any( Object ),
-					expiresOn: jasmine.any( Object ),
+					expires: jasmine.any( Object ),
 				} );
 			} );
 
@@ -230,8 +230,8 @@ describe( module( "Carbon/Auth/TokenCredentials" ), ():void => {
 			} );
 
 			it( "should have cs:expiresOn", ():void => {
-				expect( TokenCredentials.SCHEMA[ "expiresOn" ] ).toEqual( {
-					"@id": CS.expiresOn,
+				expect( TokenCredentials.SCHEMA[ "expires" ] ).toEqual( {
+					"@id": CS.expires,
 					"@type": XSD.dateTime,
 				} );
 			} );
@@ -294,7 +294,7 @@ describe( module( "Carbon/Auth/TokenCredentials" ), ():void => {
 			it( "should create a volatile resource", ():void => {
 				const target:VolatileResource = TokenCredentials.createFrom( {
 					token: "token",
-					expiresOn: new Date(),
+					expires: new Date(),
 				} );
 
 				expect( VolatileResource.is( target ) ).toBe( true );
@@ -303,7 +303,7 @@ describe( module( "Carbon/Auth/TokenCredentials" ), ():void => {
 			it( "should add the TokenCredentials.TYPE", ():void => {
 				const target:TokenCredentials = TokenCredentials.createFrom( {
 					token: "token",
-					expiresOn: new Date(),
+					expires: new Date(),
 				} );
 
 				expect( target.types ).toContain( TokenCredentials.TYPE );
@@ -314,10 +314,10 @@ describe( module( "Carbon/Auth/TokenCredentials" ), ():void => {
 
 				const target:TokenCredentials = TokenCredentials.createFrom( {
 					token: "token",
-					expiresOn: time.toISOString(),
+					expires: time.toISOString(),
 				} );
 
-				expect( target.expiresOn ).toEqual( time );
+				expect( target.expires ).toEqual( time );
 			} );
 
 		} );

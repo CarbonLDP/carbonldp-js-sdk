@@ -1686,7 +1686,7 @@ exports.CS = {
     credentialsOf: "https://carbonldp.com/ns/v1/security#credentialsOf",
     description: "https://carbonldp.com/ns/v1/security#description",
     enabled: "https://carbonldp.com/ns/v1/security#enabled",
-    expiresOn: "https://carbonldp.com/ns/v1/security#expiresOn",
+    expires: "https://carbonldp.com/ns/v1/security#expires",
     forIRI: "https://carbonldp.com/ns/v1/security#forIRI",
     granting: "https://carbonldp.com/ns/v1/security#granting",
     inheritableEntry: "https://carbonldp.com/ns/v1/security#inheritableEntry",
@@ -6021,7 +6021,7 @@ exports.TokenCredentialsBase = {
     is: function (value) {
         return Utils_1.isObject(value)
             && value.hasOwnProperty("token")
-            && value.hasOwnProperty("expiresOn");
+            && value.hasOwnProperty("expires");
     },
 };
 var SCHEMA = {
@@ -6029,8 +6029,8 @@ var SCHEMA = {
         "@id": CS_1.CS.token,
         "@type": XSD_1.XSD.string,
     },
-    "expiresOn": {
-        "@id": CS_1.CS.expiresOn,
+    "expires": {
+        "@id": CS_1.CS.expires,
         "@type": XSD_1.XSD.dateTime,
     },
 };
@@ -6044,8 +6044,8 @@ exports.TokenCredentials = {
     createFrom: function (object) {
         var credentials = LDP_1.VolatileResource.createFrom(object);
         credentials.addType(exports.TokenCredentials.TYPE);
-        if (Utils_1.isString(credentials.expiresOn))
-            credentials.expiresOn = new Date(credentials.expiresOn);
+        if (Utils_1.isString(credentials.expires))
+            credentials.expires = new Date(credentials.expires);
         return credentials;
     },
 };
@@ -7042,10 +7042,10 @@ var Authenticator = (function () {
                 .catch(function (response) { return _this.context.documents._parseErrorResponse(response); });
         }).then(function (_a) {
             var rdfData = _a[0], response = _a[1];
-            var userMetadata = _this._parseRDFMetadata(rdfData, response);
+            var accessor = _this._parseRDFMetadata(rdfData, response, requestOptions);
             var localOptions = HTTP_1.RequestUtils.cloneOptions(requestOptions);
             _this.addAuthentication(localOptions);
-            return userMetadata
+            return accessor
                 .authenticatedUserMetadata
                 .user
                 .resolve(localOptions);
@@ -7053,7 +7053,7 @@ var Authenticator = (function () {
             return _this.authenticatedUser = user;
         });
     };
-    Authenticator.prototype._parseRDFMetadata = function (rdfData, response) {
+    Authenticator.prototype._parseRDFMetadata = function (rdfData, response, requestOptions) {
         var metadataURI = this.context._resolvePath("users.me");
         var metadataRDFs = Document_1.RDFDocument
             .getDocuments(rdfData)
@@ -10102,7 +10102,7 @@ var TokenAuthenticator = (function (_super) {
         return _super !== null && _super.apply(this, arguments) || this;
     }
     TokenAuthenticator.prototype.isAuthenticated = function () {
-        return _super.prototype.isAuthenticated.call(this) && this.credentials.expiresOn > new Date();
+        return _super.prototype.isAuthenticated.call(this) && this.credentials.expires > new Date();
     };
     TokenAuthenticator.prototype.authenticate = function (tokenOrCredentials) {
         if (TokenCredentials_1.TokenCredentialsBase.is(tokenOrCredentials))
@@ -10116,7 +10116,7 @@ var TokenAuthenticator = (function (_super) {
         var _this = this;
         return Utils_1.promiseMethod(function () {
             var credentials = TokenCredentials_1.TokenCredentials.createFrom(credentialsBase);
-            if (credentials.expiresOn <= new Date())
+            if (credentials.expires <= new Date())
                 throw new Errors.IllegalArgumentError("The token has already expired.");
             return _this.credentials = credentials;
         });
@@ -10136,11 +10136,17 @@ var TokenAuthenticator = (function (_super) {
             return _this.credentials;
         });
     };
-    TokenAuthenticator.prototype._parseRDFMetadata = function (rdfData, response) {
-        var preferenceHeader = response.getHeader("Preference-Applied");
-        if (preferenceHeader && preferenceHeader.hasValue(Vocabularies_1.CS.PreferAuthToken))
-            this._parseRDFCredentials(rdfData, response);
-        return _super.prototype._parseRDFMetadata.call(this, rdfData, response);
+    TokenAuthenticator.prototype._parseRDFMetadata = function (rdfData, response, requestOptions) {
+        var accessor = _super.prototype._parseRDFMetadata.call(this, rdfData, response);
+        var authTokenPrefer = "include=\"" + Vocabularies_1.CS.PreferAuthToken + "\"";
+        var prefer = requestOptions.headers && requestOptions.headers.get("prefer");
+        if (!prefer || !prefer.hasValue(authTokenPrefer))
+            return accessor;
+        var preference = response.getHeader("preference-applied");
+        if (!preference || !preference.hasValue(authTokenPrefer))
+            throw new Errors_1.BadResponseError("Preference \"" + authTokenPrefer + "\" was not applied.", response);
+        this._parseRDFCredentials(rdfData, response);
+        return accessor;
     };
     TokenAuthenticator.prototype._parseRDFCredentials = function (rdfData, response) {
         var freeNodes = Node_1.RDFNode.getFreeNodes(rdfData);

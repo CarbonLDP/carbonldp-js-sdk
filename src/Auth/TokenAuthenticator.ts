@@ -24,7 +24,7 @@ export class TokenAuthenticator extends Authenticator<UsernameAndPasswordToken, 
 	protected credentials:TokenCredentials;
 
 	isAuthenticated():boolean {
-		return super.isAuthenticated() && this.credentials.expiresOn > new Date();
+		return super.isAuthenticated() && this.credentials.expires > new Date();
 	}
 
 	authenticate( tokenOrCredentials:UsernameAndPasswordToken | TokenCredentialsBase ):Promise<TokenCredentials> {
@@ -42,7 +42,7 @@ export class TokenAuthenticator extends Authenticator<UsernameAndPasswordToken, 
 		return promiseMethod( () => {
 			const credentials:TokenCredentials = TokenCredentials.createFrom( credentialsBase );
 
-			if( credentials.expiresOn <= new Date() ) throw new Errors.IllegalArgumentError( "The token has already expired." );
+			if( credentials.expires <= new Date() ) throw new Errors.IllegalArgumentError( "The token has already expired." );
 
 			return this.credentials = credentials;
 		} );

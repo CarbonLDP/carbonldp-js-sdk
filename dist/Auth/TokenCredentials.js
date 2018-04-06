@@ -8,7 +8,7 @@ exports.TokenCredentialsBase = {
     is: function (value) {
         return Utils_1.isObject(value)
             && value.hasOwnProperty("token")
-            && value.hasOwnProperty("expiresOn");
+            && value.hasOwnProperty("expires");
     },
 };
 var SCHEMA = {
@@ -16,8 +16,8 @@ var SCHEMA = {
         "@id": CS_1.CS.token,
         "@type": XSD_1.XSD.string,
     },
-    "expiresOn": {
-        "@id": CS_1.CS.expiresOn,
+    "expires": {
+        "@id": CS_1.CS.expires,
         "@type": XSD_1.XSD.dateTime,
     },
 };
@@ -31,8 +31,8 @@ exports.TokenCredentials = {
     createFrom: function (object) {
         var credentials = LDP_1.VolatileResource.createFrom(object);
         credentials.addType(exports.TokenCredentials.TYPE);
-        if (Utils_1.isString(credentials.expiresOn))
-            credentials.expiresOn = new Date(credentials.expiresOn);
+        if (Utils_1.isString(credentials.expires))
+            credentials.expires = new Date(credentials.expires);
         return credentials;
     },
 };

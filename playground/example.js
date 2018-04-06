@@ -261,19 +261,49 @@
 			it( "should get with BASIC auth", async () => {
 				await app.auth.authenticateUsing( token, "user01", "pass01" );
 
-				const [ , response ] = await app.documents.get( ".system/platform/" );
-
-				expect( response.status ).toBe( 200 );
+				await app.documents.get( ".system/platform/" );
+				expect().nothing();
 			} );
 
 			it( "should unauthorized with BASIC auth", async () => {
-				await app.auth.authenticateUsing( token, "user01", "incorrect-pass" );
-
 				try {
-					await app.documents.get( ".system/platform/" );
+					await app.auth.authenticateUsing( token, "user01", "incorrect-pass" );
 					fail( "should not reach here" );
 				} catch( e ) {
-					debugger;
+					expect( e.response.status ).toBe( 401 );
+				}
+			} );
+
+		} );
+
+		describe( "When TOKEN auth", () => {
+
+			let token;
+			beforeEach( () => {
+				token = CarbonLDP.Auth.AuthMethod.TOKEN;
+			} );
+
+			it( "should add credentials", async () => {
+				const credentials = await app.auth.authenticateUsing( token, "user01", "pass01" );
+
+				expect( credentials ).toEqual( jasmine.objectContaining( {
+					token: jasmine.any( String ),
+					// expiresOn: jasmine.any( Date ),
+				} ) );
+			} );
+
+			it( "should get with BASIC auth", async () => {
+				await app.auth.authenticateUsing( token, "user01", "pass01" );
+
+				await app.documents.get( ".system/platform/" );
+				expect().nothing();
+			} );
+
+			it( "should unauthorized with BASIC auth", async () => {
+				try {
+					await app.auth.authenticateUsing( token, "user01", "incorrect-pass" );
+					fail( "should not reach here" );
+				} catch( e ) {
 					expect( e.response.status ).toBe( 401 );
 				}
 			} );

@@ -35,7 +35,7 @@ export interface CS {
 	credentialsOf:"https://carbonldp.com/ns/v1/security#credentialsOf";
 	description:"https://carbonldp.com/ns/v1/security#description";
 	enabled:"https://carbonldp.com/ns/v1/security#enabled";
-	expiresOn:"https://carbonldp.com/ns/v1/security#expiresOn";
+	expires:"https://carbonldp.com/ns/v1/security#expires";
 	forIRI:"https://carbonldp.com/ns/v1/security#forIRI";
 	granting:"https://carbonldp.com/ns/v1/security#granting";
 	inheritableEntry:"https://carbonldp.com/ns/v1/security#inheritableEntry";
@@ -88,7 +88,7 @@ export const CS:CS = {
 	credentialsOf: "https://carbonldp.com/ns/v1/security#credentialsOf",
 	description: "https://carbonldp.com/ns/v1/security#description",
 	enabled: "https://carbonldp.com/ns/v1/security#enabled",
-	expiresOn: "https://carbonldp.com/ns/v1/security#expiresOn",
+	expires: "https://carbonldp.com/ns/v1/security#expires",
 	forIRI: "https://carbonldp.com/ns/v1/security#forIRI",
 	granting: "https://carbonldp.com/ns/v1/security#granting",
 	inheritableEntry: "https://carbonldp.com/ns/v1/security#inheritableEntry",
