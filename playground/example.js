@@ -302,6 +302,19 @@
 				expect().nothing();
 			} );
 
+			it( "should resolve authenticated user", async () => {
+				await app.auth.authenticateUsing( token, "user01", "pass01" );
+
+				const user = await app.auth.authenticatedUser.resolve( _ => _
+					.properties( { name: _.inherit } )
+				);
+
+				expect( user ).toEqual( jasmine.objectContaining( {
+					name: jasmine.any( String ),
+				} ) );
+				console.log( user );
+			} );
+
 			it( "should unauthorized with TOKEN auth", async () => {
 				try {
 					await app.auth.authenticateUsing( token, "user01", "incorrect-pass" );

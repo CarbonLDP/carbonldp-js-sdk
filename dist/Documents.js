@@ -1022,8 +1022,24 @@ var Documents = (function () {
         var _this = this;
         var id = !!this.context ? this.context.resolve(localID) : localID;
         var pointer = Pointer_1.Pointer.createFrom(object, id);
-        var resolve = function (requestOptions) {
-            return _this.get(id, requestOptions);
+        var resolve = function (requestOptionsOrQueryBuilderFn, queryBuilderFn) {
+            var requestOptions;
+            if (Utils.isFunction(requestOptionsOrQueryBuilderFn)) {
+                requestOptions = {};
+                queryBuilderFn = requestOptionsOrQueryBuilderFn;
+            }
+            else {
+                requestOptions = requestOptionsOrQueryBuilderFn;
+            }
+            if (queryBuilderFn && "types" in pointer) {
+                var resource_1 = pointer;
+                var superQueryBuilderFn_1 = queryBuilderFn;
+                queryBuilderFn = function (_) {
+                    resource_1.types.forEach(function (type) { return _.withType(type); });
+                    return superQueryBuilderFn_1.call(void 0, _);
+                };
+            }
+            return _this.get(id, requestOptions, queryBuilderFn);
         };
         Object.defineProperty(pointer, "resolve", {
             writable: false,

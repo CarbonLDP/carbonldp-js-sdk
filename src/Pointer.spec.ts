@@ -60,13 +60,29 @@ describe( module( "carbonldp/Pointer" ), ():void => {
 			{ type: "this is this & Carbon.PersistedDocument.PersistedDocument" }
 		), ():void => {} );
 
-		it( hasMethod(
-			OBLIGATORY,
-			"resolve",
-			[ "T" ],
-			"Resolves the pointer. This function throw an Error if it has no been configured by another decorator.",
-			{ type: "Promise<T & CarbonLDP.PersistedDocument>" }
-		), ():void => {} );
+
+		describe( method( OBLIGATORY, "resolve" ), ():void => {
+
+			it( hasSignature(
+				[ "T extends objects" ],
+				"Resolves the pointer. This function throw an Error if it has no been configured by a context.",
+				[
+					{ name: "requestOptions", type: "CarbonLDP.HTTP.GETOptions", optional: true, description: "Customizable options for the request." },
+					{ name: "queryBuilderFn", type: "( queryBuilder:CarbonLDP.SPARQL.QueryDocument.QueryDocumentBuilder ) => CarbonLDP.SPARQL.QueryDocument.QueryDocumentBuilder", optional: true, description: "Function that receives a the builder that helps you to construct the retrieval query.\nThe same builder must be returned." },
+				],
+				{ type: "Promise<T & this & CarbonLDP.PersistedDocument>" }
+			), ():void => {} );
+
+			it( hasSignature(
+				[ "T extends objects" ],
+				"Resolves the pointer. This function throw an Error if it has no been configured by a context.",
+				[
+					{ name: "queryBuilderFn", type: "( queryBuilder:CarbonLDP.SPARQL.QueryDocument.QueryDocumentBuilder ) => CarbonLDP.SPARQL.QueryDocument.QueryDocumentBuilder", optional: true, description: "Function that receives a the builder that helps you to construct the retrieval query.\nThe same builder must be returned." },
+				],
+				{ type: "Promise<T & this & CarbonLDP.PersistedDocument>" }
+			), ():void => {} );
+
+		} );
 
 	} );
 
