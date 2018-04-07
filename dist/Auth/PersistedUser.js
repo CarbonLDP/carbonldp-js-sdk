@@ -11,6 +11,7 @@ var PersistedProtectedDocument_1 = require("../PersistedProtectedDocument");
 var CS_1 = require("../Vocabularies/CS");
 var Utils = __importStar(require("./../Utils"));
 var PersistedCredentials = __importStar(require("./PersistedCredentials"));
+var User = __importStar(require("./User"));
 var Factory = (function () {
     function Factory() {
     }
@@ -45,6 +46,7 @@ var Factory = (function () {
         });
         if (persistedUser.credentials)
             PersistedCredentials.Factory.decorate(persistedUser.credentials, documents);
+        persistedUser.addType(User.RDF_CLASS);
         return persistedUser;
     };
     return Factory;

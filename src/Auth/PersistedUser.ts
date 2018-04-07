@@ -5,6 +5,7 @@ import { Pointer } from "../Pointer";
 import { CS } from "../Vocabularies/CS";
 import * as Utils from "./../Utils";
 import * as PersistedCredentials from "./PersistedCredentials";
+import * as User from "./User";
 
 export interface Class extends PersistedProtectedDocument {
 	name?:string;
@@ -23,7 +24,7 @@ export class Factory {
 			;
 	}
 
-	static is( object:Object ):boolean {
+	static is( object:object ):object is Class {
 		return Factory.hasClassProperties( object )
 			&& PersistedProtectedDocument.is( object )
 			;
@@ -50,6 +51,8 @@ export class Factory {
 			},
 		} );
 		if( persistedUser.credentials ) PersistedCredentials.Factory.decorate( persistedUser.credentials, documents );
+
+		persistedUser.addType( User.RDF_CLASS );
 
 		return persistedUser;
 	}

@@ -1,3 +1,4 @@
+import { anyThatMatches } from "../../test/helpers/jasmine-equalities";
 import { AbstractContext } from "../AbstractContext";
 import { Context } from "../Context";
 import { IllegalStateError } from "../Errors";
@@ -44,8 +45,8 @@ describe( module( "carbonldp/Auth/Authenticator" ), ():void => {
 		function createMockAuthenticator( data?:{ credentials?:object, header?:string, user?:PersistedUser.Class } ):Authenticator<object, object> {
 			return new class extends Authenticator<object, object> {
 
-				protected credentials:object = data && data.credentials;
-				protected authenticatedUser:PersistedUser.Class = data && data.user;
+				protected _credentials:object = data && data.credentials;
+				protected _authenticatedUser:PersistedUser.Class = data && data.user;
 
 				authenticate():Promise<object> {
 					throw new Error( "Method not implemented." );
@@ -274,27 +275,6 @@ describe( module( "carbonldp/Auth/Authenticator" ), ():void => {
 						]
 					}`,
 				} );
-				jasmine.Ajax.stubRequest( "https://example.com/users/the-user/" ).andReturn( {
-					status: 200,
-					responseHeaders: {
-						"eTag": `"2-12345"`,
-					},
-					responseText: `{
-						"@id": "https://example.com/users/the-user/",
-						"@graph": [
-							{
-								"@id": "https://example.com/users/the-user/",
-								"@type": [
-									"${ C.Document }",
-									"${ CS.User }"
-								],
-								"${ CS.name }": [ {
-									"@value": "The user name"
-								} ]
-							}
-						]
-					}`,
-				} );
 			} );
 
 			afterEach( ():void => {
@@ -320,14 +300,15 @@ describe( module( "carbonldp/Auth/Authenticator" ), ():void => {
 			} );
 
 
-			it( "should retrieve the user", ( done:DoneFn ):void => {
+			it( "should retrieve the unresolved user", ( done:DoneFn ):void => {
 				const authenticator:Authenticator<object, object> = createMockAuthenticator( { credentials: {} } );
 				authenticator
 					.getAuthenticatedUser()
 					.then( user => {
+						expect( user ).toEqual( anyThatMatches( PersistedUser.Factory.is, "PersistedUser" ) as any );
 						expect( user ).toEqual( jasmine.objectContaining( {
+							_resolved: false,
 							types: jasmine.arrayContaining( [ CS.User ] ) as any as string[],
-							name: "The user name",
 						} ) );
 
 						done();
@@ -340,13 +321,10 @@ describe( module( "carbonldp/Auth/Authenticator" ), ():void => {
 				authenticator
 					.getAuthenticatedUser()
 					.then( () => {
-						const count:number = jasmine.Ajax.requests.count();
-						for( let i:number = 0; i < count; ++ i ) {
-							const request:JasmineAjaxRequest = jasmine.Ajax.requests.at( i );
-							expect( request.requestHeaders ).toEqual( jasmine.objectContaining( {
-								"authorization": "the-header-value",
-							} ) );
-						}
+						const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+						expect( request.requestHeaders ).toEqual( jasmine.objectContaining( {
+							"authorization": "the-header-value",
+						} ) );
 
 						done();
 					} )
@@ -379,13 +357,10 @@ describe( module( "carbonldp/Auth/Authenticator" ), ():void => {
 				authenticator
 					.getAuthenticatedUser( options )
 					.then( () => {
-						const count:number = jasmine.Ajax.requests.count();
-						for( let i:number = 0; i < count; ++ i ) {
-							const request:JasmineAjaxRequest = jasmine.Ajax.requests.at( i );
-							expect( request.requestHeaders ).toEqual( jasmine.objectContaining( {
-								"authorization": "existing-authorization",
-							} ) );
-						}
+						const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+						expect( request.requestHeaders ).toEqual( jasmine.objectContaining( {
+							"authorization": "existing-authorization",
+						} ) );
 
 						done();
 					} )

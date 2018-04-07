@@ -33,7 +33,7 @@ var TokenAuthenticator = (function (_super) {
         return _super !== null && _super.apply(this, arguments) || this;
     }
     TokenAuthenticator.prototype.isAuthenticated = function () {
-        return _super.prototype.isAuthenticated.call(this) && this.credentials.expires > new Date();
+        return _super.prototype.isAuthenticated.call(this) && this._credentials.expires > new Date();
     };
     TokenAuthenticator.prototype.authenticate = function (tokenOrCredentials) {
         if (TokenCredentials_1.TokenCredentialsBase.is(tokenOrCredentials))
@@ -41,7 +41,7 @@ var TokenAuthenticator = (function (_super) {
         return this._getCredentials(tokenOrCredentials);
     };
     TokenAuthenticator.prototype._getHeaderValue = function () {
-        return "Bearer " + this.credentials.token;
+        return "Bearer " + this._credentials.token;
     };
     TokenAuthenticator.prototype._parseCredentialsBase = function (credentialsBase) {
         var _this = this;
@@ -49,7 +49,7 @@ var TokenAuthenticator = (function (_super) {
             var credentials = TokenCredentials_1.TokenCredentials.createFrom(credentialsBase);
             if (credentials.expires <= new Date())
                 throw new Errors.IllegalArgumentError("The token has already expired.");
-            return _this.credentials = credentials;
+            return _this._credentials = credentials;
         });
     };
     TokenAuthenticator.prototype._getCredentials = function (token) {
@@ -64,7 +64,7 @@ var TokenAuthenticator = (function (_super) {
             return _this.getAuthenticatedUser(requestOptions);
         })
             .then(function () {
-            return _this.credentials;
+            return _this._credentials;
         });
     };
     TokenAuthenticator.prototype._parseRDFMetadata = function (rdfData, response, requestOptions) {
@@ -91,7 +91,7 @@ var TokenAuthenticator = (function (_super) {
         var tokenCredentials = responseMetadata.authToken;
         if (!tokenCredentials)
             throw new Errors_1.BadResponseError("No \"" + TokenCredentials_1.TokenCredentials.TYPE + "\" was returned.", response);
-        return this.credentials = tokenCredentials;
+        return this._credentials = tokenCredentials;
     };
     return TokenAuthenticator;
 }(Authenticator_1.Authenticator));

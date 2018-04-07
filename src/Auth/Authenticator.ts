@@ -20,22 +20,24 @@ export abstract class Authenticator<T extends object, W extends object> {
 
 	protected context:Context;
 
-	protected authenticatedUser?:PersistedUser.Class;
-	protected abstract credentials?:W;
+	protected _authenticatedUser?:PersistedUser.Class;
+	get authenticatedUser():PersistedUser.Class { return this._authenticatedUser; }
+
+	protected abstract _credentials?:W;
 
 	constructor( context:Context ) {
 		this.context = context;
 	}
 
 	isAuthenticated():boolean {
-		return ! ! this.credentials;
+		return ! ! this._credentials;
 	}
 
 	abstract authenticate( authenticationToken:T ):Promise<W>;
 
 	clearAuthentication():void {
-		this.credentials = null;
-		this.authenticatedUser = null;
+		this._credentials = null;
+		this._authenticatedUser = null;
 	}
 
 	addAuthentication( requestOptions:RequestOptions ):RequestOptions {
@@ -51,7 +53,7 @@ export abstract class Authenticator<T extends object, W extends object> {
 	}
 
 	getAuthenticatedUser( requestOptions:GETOptions = {} ):Promise<PersistedUser.Class> {
-		if( this.authenticatedUser ) return Promise.resolve( this.authenticatedUser );
+		if( this._authenticatedUser ) return Promise.resolve( this._authenticatedUser );
 
 		return promiseMethod( () => {
 			const metadataURI:string = this.context._resolvePath( "users.me" );
@@ -69,15 +71,12 @@ export abstract class Authenticator<T extends object, W extends object> {
 		} ).then( ( [ rdfData, response ] ) => {
 			const accessor:AuthenticatedUserInformationAccessor = this._parseRDFMetadata( rdfData, response, requestOptions );
 
-			const localOptions:GETOptions = RequestUtils.cloneOptions( requestOptions );
-			this.addAuthentication( localOptions );
-
-			return accessor
+			this._authenticatedUser = accessor
 				.authenticatedUserMetadata
-				.user
-				.resolve( localOptions );
-		} ).then( user => {
-			return this.authenticatedUser = user;
+				.user;
+
+			return PersistedUser.Factory
+				.decorate( this._authenticatedUser, this.context.documents );
 		} );
 	}
 

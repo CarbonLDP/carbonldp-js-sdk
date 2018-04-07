@@ -61,7 +61,7 @@ describe( module( "carbonldp/Auth/TokenAuthenticator" ), ():void => {
 			return new class extends TokenAuthenticator {
 				constructor() {
 					super( context );
-					if( credentials ) this.credentials = credentials;
+					if( credentials ) this._credentials = credentials;
 				}
 			};
 		}

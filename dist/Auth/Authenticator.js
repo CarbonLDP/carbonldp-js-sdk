@@ -1,4 +1,11 @@
 "use strict";
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
+    result["default"] = mod;
+    return result;
+}
 Object.defineProperty(exports, "__esModule", { value: true });
 var Errors_1 = require("../Errors");
 var HTTP_1 = require("../HTTP");
@@ -7,16 +14,22 @@ var JSONLD_1 = require("../JSONLD");
 var Document_1 = require("../RDF/Document");
 var Utils_1 = require("../Utils");
 var LDP_1 = require("../Vocabularies/LDP");
+var PersistedUser = __importStar(require("./PersistedUser"));
 var Authenticator = (function () {
     function Authenticator(context) {
         this.context = context;
     }
+    Object.defineProperty(Authenticator.prototype, "authenticatedUser", {
+        get: function () { return this._authenticatedUser; },
+        enumerable: true,
+        configurable: true
+    });
     Authenticator.prototype.isAuthenticated = function () {
-        return !!this.credentials;
+        return !!this._credentials;
     };
     Authenticator.prototype.clearAuthentication = function () {
-        this.credentials = null;
-        this.authenticatedUser = null;
+        this._credentials = null;
+        this._authenticatedUser = null;
     };
     Authenticator.prototype.addAuthentication = function (requestOptions) {
         if (requestOptions.headers && requestOptions.headers.has("authorization"))
@@ -32,8 +45,8 @@ var Authenticator = (function () {
     Authenticator.prototype.getAuthenticatedUser = function (requestOptions) {
         var _this = this;
         if (requestOptions === void 0) { requestOptions = {}; }
-        if (this.authenticatedUser)
-            return Promise.resolve(this.authenticatedUser);
+        if (this._authenticatedUser)
+            return Promise.resolve(this._authenticatedUser);
         return Utils_1.promiseMethod(function () {
             var metadataURI = _this.context._resolvePath("users.me");
             var localOptions = HTTP_1.RequestUtils.cloneOptions(requestOptions);
@@ -47,14 +60,11 @@ var Authenticator = (function () {
         }).then(function (_a) {
             var rdfData = _a[0], response = _a[1];
             var accessor = _this._parseRDFMetadata(rdfData, response, requestOptions);
-            var localOptions = HTTP_1.RequestUtils.cloneOptions(requestOptions);
-            _this.addAuthentication(localOptions);
-            return accessor
+            _this._authenticatedUser = accessor
                 .authenticatedUserMetadata
-                .user
-                .resolve(localOptions);
-        }).then(function (user) {
-            return _this.authenticatedUser = user;
+                .user;
+            return PersistedUser.Factory
+                .decorate(_this._authenticatedUser, _this.context.documents);
         });
     };
     Authenticator.prototype._parseRDFMetadata = function (rdfData, response, requestOptions) {

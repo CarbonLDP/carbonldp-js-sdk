@@ -7,7 +7,7 @@ import { UsernameAndPasswordToken } from "./UsernameAndPasswordToken";
 
 export class BasicAuthenticator extends Authenticator<UsernameAndPasswordToken, UsernameAndPasswordCredentials> {
 
-	protected credentials:UsernameAndPasswordCredentials;
+	protected _credentials:UsernameAndPasswordCredentials;
 
 	authenticate( authenticationToken:UsernameAndPasswordToken ):Promise<UsernameAndPasswordCredentials> {
 		return promiseMethod( () => {
@@ -16,13 +16,13 @@ export class BasicAuthenticator extends Authenticator<UsernameAndPasswordToken, 
 			if( ! authenticationToken.username ) throw new IllegalArgumentError( "The username cannot be empty." );
 			if( ! authenticationToken.password ) throw new IllegalArgumentError( "The password cannot be empty." );
 
-			this.credentials = new UsernameAndPasswordCredentials( authenticationToken.username, authenticationToken.password );
-			return this.credentials;
+			this._credentials = new UsernameAndPasswordCredentials( authenticationToken.username, authenticationToken.password );
+			return this._credentials;
 		} );
 	}
 
 	protected _getHeaderValue():string {
-		return "Basic " + toB64( this.credentials.username + ":" + this.credentials.password );
+		return "Basic " + toB64( this._credentials.username + ":" + this._credentials.password );
 	}
 
 }

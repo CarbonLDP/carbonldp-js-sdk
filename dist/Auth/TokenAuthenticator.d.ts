@@ -5,7 +5,7 @@ import { Authenticator } from "./Authenticator";
 import { TokenCredentials, TokenCredentialsBase } from "./TokenCredentials";
 import { UsernameAndPasswordToken } from "./UsernameAndPasswordToken";
 export declare class TokenAuthenticator extends Authenticator<UsernameAndPasswordToken, TokenCredentials> {
-    protected credentials: TokenCredentials;
+    protected _credentials: TokenCredentials;
     isAuthenticated(): boolean;
     authenticate(tokenOrCredentials: UsernameAndPasswordToken | TokenCredentialsBase): Promise<TokenCredentials>;
     protected _getHeaderValue(): string;

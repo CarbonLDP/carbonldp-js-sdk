@@ -28,12 +28,12 @@ var BasicAuthenticator = (function (_super) {
                 throw new Errors_1.IllegalArgumentError("The username cannot be empty.");
             if (!authenticationToken.password)
                 throw new Errors_1.IllegalArgumentError("The password cannot be empty.");
-            _this.credentials = new UsernameAndPasswordCredentials_1.UsernameAndPasswordCredentials(authenticationToken.username, authenticationToken.password);
-            return _this.credentials;
+            _this._credentials = new UsernameAndPasswordCredentials_1.UsernameAndPasswordCredentials(authenticationToken.username, authenticationToken.password);
+            return _this._credentials;
         });
     };
     BasicAuthenticator.prototype._getHeaderValue = function () {
-        return "Basic " + toB64(this.credentials.username + ":" + this.credentials.password);
+        return "Basic " + toB64(this._credentials.username + ":" + this._credentials.password);
     };
     return BasicAuthenticator;
 }(Authenticator_1.Authenticator));

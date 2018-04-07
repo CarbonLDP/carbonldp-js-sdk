@@ -489,27 +489,6 @@ describe( module( "carbonldp/Auth/Service" ), ():void => {
 							]
 						} ]`,
 				} );
-				jasmine.Ajax.stubRequest( "https://example.com/users/the-user/" ).andReturn( {
-					status: 200,
-					responseHeaders: {
-						"eTag": `"2-12345"`,
-					},
-					responseText: `{
-						"@id": "https://example.com/users/the-user/",
-						"@graph": [
-							{
-								"@id": "https://example.com/users/the-user/",
-								"@type": [
-									"${ C.Document }",
-									"${ CS.User }"
-								],
-								"${ CS.name }": [ {
-									"@value": "The user name"
-								} ]
-							}
-						]
-					}`,
-				} );
 			} );
 
 			it( "should exists", ():void => {
@@ -555,8 +534,8 @@ describe( module( "carbonldp/Auth/Service" ), ():void => {
 						.then( () => {
 							expect( auth.authenticatedUser ).toBeDefined();
 							expect( auth.authenticatedUser ).toEqual( jasmine.objectContaining( {
+								_resolved: false,
 								types: jasmine.arrayContaining( [ User.RDF_CLASS ] ) as any,
-								name: "The user name",
 							} ) );
 
 							done();
@@ -636,8 +615,8 @@ describe( module( "carbonldp/Auth/Service" ), ():void => {
 						.then( () => {
 							expect( auth.authenticatedUser ).toBeDefined();
 							expect( auth.authenticatedUser ).toEqual( jasmine.objectContaining( {
+								_resolved: false,
 								types: jasmine.arrayContaining( [ User.RDF_CLASS ] ) as any,
-								name: "The user name",
 							} ) );
 
 							done();
@@ -694,8 +673,8 @@ describe( module( "carbonldp/Auth/Service" ), ():void => {
 						.then( () => {
 							expect( auth.authenticatedUser ).toBeDefined();
 							expect( auth.authenticatedUser ).toEqual( jasmine.objectContaining( {
+								_resolved: false,
 								types: jasmine.arrayContaining( [ User.RDF_CLASS ] ) as any,
-								name: "The user name",
 							} ) );
 
 							done();

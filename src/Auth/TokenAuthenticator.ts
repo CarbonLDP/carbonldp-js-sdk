@@ -21,10 +21,10 @@ import { UsernameAndPasswordToken } from "./UsernameAndPasswordToken";
 
 export class TokenAuthenticator extends Authenticator<UsernameAndPasswordToken, TokenCredentials> {
 
-	protected credentials:TokenCredentials;
+	protected _credentials:TokenCredentials;
 
 	isAuthenticated():boolean {
-		return super.isAuthenticated() && this.credentials.expires > new Date();
+		return super.isAuthenticated() && this._credentials.expires > new Date();
 	}
 
 	authenticate( tokenOrCredentials:UsernameAndPasswordToken | TokenCredentialsBase ):Promise<TokenCredentials> {
@@ -35,7 +35,7 @@ export class TokenAuthenticator extends Authenticator<UsernameAndPasswordToken, 
 	}
 
 	protected _getHeaderValue():string {
-		return "Bearer " + this.credentials.token;
+		return "Bearer " + this._credentials.token;
 	}
 
 	protected _parseCredentialsBase( credentialsBase:TokenCredentialsBase ):Promise<TokenCredentials> {
@@ -44,7 +44,7 @@ export class TokenAuthenticator extends Authenticator<UsernameAndPasswordToken, 
 
 			if( credentials.expires <= new Date() ) throw new Errors.IllegalArgumentError( "The token has already expired." );
 
-			return this.credentials = credentials;
+			return this._credentials = credentials;
 		} );
 	}
 
@@ -61,7 +61,7 @@ export class TokenAuthenticator extends Authenticator<UsernameAndPasswordToken, 
 				return this.getAuthenticatedUser( requestOptions );
 			} )
 			.then( () => {
-				return this.credentials;
+				return this._credentials;
 			} );
 	}
 
@@ -96,7 +96,7 @@ export class TokenAuthenticator extends Authenticator<UsernameAndPasswordToken, 
 		const tokenCredentials:TokenCredentials = responseMetadata.authToken;
 		if( ! tokenCredentials ) throw new BadResponseError( `No "${ TokenCredentials.TYPE }" was returned.`, response );
 
-		return this.credentials = tokenCredentials;
+		return this._credentials = tokenCredentials;
 	}
 
 }

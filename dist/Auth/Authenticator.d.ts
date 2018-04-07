@@ -4,8 +4,9 @@ import * as PersistedUser from "./PersistedUser";
 import { AuthenticatedUserInformationAccessor } from "./AuthenticatedUserInformationAccessor";
 export declare abstract class Authenticator<T extends object, W extends object> {
     protected context: Context;
-    protected authenticatedUser?: PersistedUser.Class;
-    protected abstract credentials?: W;
+    protected _authenticatedUser?: PersistedUser.Class;
+    readonly authenticatedUser: PersistedUser.Class;
+    protected abstract _credentials?: W;
     constructor(context: Context);
     isAuthenticated(): boolean;
     abstract authenticate(authenticationToken: T): Promise<W>;
