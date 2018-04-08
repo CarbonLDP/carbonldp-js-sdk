@@ -1,13 +1,8 @@
-import { RequestOptions } from "../HTTP/Request";
-import Authenticator from "./Authenticator";
-import * as UsernameAndPasswordCredentials from "./UsernameAndPasswordCredentials";
-import * as UsernameAndPasswordToken from "./UsernameAndPasswordToken";
-export declare class Class implements Authenticator<UsernameAndPasswordToken.Class, UsernameAndPasswordCredentials.Class> {
-    private credentials;
-    isAuthenticated(): boolean;
-    authenticate(authenticationToken: UsernameAndPasswordToken.Class): Promise<UsernameAndPasswordCredentials.Class>;
-    addAuthentication(requestOptions: RequestOptions): RequestOptions;
-    clearAuthentication(): void;
-    private addBasicAuthenticationHeader(headers);
+import { Authenticator } from "./Authenticator";
+import { UsernameAndPasswordCredentials } from "./UsernameAndPasswordCredentials";
+import { UsernameAndPasswordToken } from "./UsernameAndPasswordToken";
+export declare class BasicAuthenticator extends Authenticator<UsernameAndPasswordToken, UsernameAndPasswordCredentials> {
+    protected _credentials: UsernameAndPasswordCredentials;
+    authenticate(authenticationToken: UsernameAndPasswordToken): Promise<UsernameAndPasswordCredentials>;
+    protected _getHeaderValue(): string;
 }
-export default Class;

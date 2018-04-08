@@ -393,15 +393,6 @@ var Documents = (function () {
             _this.pointers.delete(pointerID);
         });
     };
-    Documents.prototype.getDownloadURL = function (documentURI, requestOptions) {
-        var _this = this;
-        if (!this.context)
-            return Promise.reject(new Errors.IllegalStateError("This instance doesn't support Authenticated request."));
-        return Utils_3.promiseMethod(function () {
-            documentURI = _this._getRequestURI(documentURI);
-            return _this.context.auth.getAuthenticatedURL(documentURI, requestOptions);
-        });
-    };
     Documents.prototype.getGeneralSchema = function () {
         if (!this.context)
             return new ObjectSchema_1.DigestedObjectSchema();
@@ -1031,13 +1022,30 @@ var Documents = (function () {
         var _this = this;
         var id = !!this.context ? this.context.resolve(localID) : localID;
         var pointer = Pointer_1.Pointer.createFrom(object, id);
+        var resolve = function (requestOptionsOrQueryBuilderFn, queryBuilderFn) {
+            var requestOptions;
+            if (Utils.isFunction(requestOptionsOrQueryBuilderFn)) {
+                requestOptions = {};
+                queryBuilderFn = requestOptionsOrQueryBuilderFn;
+            }
+            else {
+                requestOptions = requestOptionsOrQueryBuilderFn;
+            }
+            if (queryBuilderFn && "types" in pointer) {
+                var resource_1 = pointer;
+                var superQueryBuilderFn_1 = queryBuilderFn;
+                queryBuilderFn = function (_) {
+                    resource_1.types.forEach(function (type) { return _.withType(type); });
+                    return superQueryBuilderFn_1.call(void 0, _);
+                };
+            }
+            return _this.get(id, requestOptions, queryBuilderFn);
+        };
         Object.defineProperty(pointer, "resolve", {
             writable: false,
             enumerable: false,
             configurable: true,
-            value: function () {
-                return _this.get(id);
-            },
+            value: resolve,
         });
         return pointer;
     };

@@ -38,8 +38,9 @@ import {
 	SDKContext,
 } from "./SDKContext";
 import {
-	CarbonSettings,
+	CarbonLDPSettings,
 	ContextSettings,
+	DocumentPaths,
 } from "./Settings";
 import * as SHACL from "./SHACL";
 import * as SPARQL from "./SPARQL";
@@ -89,22 +90,27 @@ export class CarbonLDP extends AbstractContext {
 	static Utils:typeof Utils = Utils;
 
 
-	static get version():string { return "1.0.0-alpha.11"; }
+	static get version():string { return "1.0.0-alpha.15"; }
 
 	// noinspection JSMethodCanBeStatic
 	get version():string { return CarbonLDP.version; }
 
 	protected _baseURI:string;
 	protected settings:ContextSettings = {
-		vocabulary: "vocabulary/#",
+		vocabulary: "vocabularies/main/#",
 		paths: {
 			system: {
 				slug: ".system/",
 				paths: {
 					platform: "platform/",
 					credentials: "credentials/",
-					users: "users/",
 					roles: "roles/",
+				},
+			},
+			users: {
+				slug: "users/",
+				paths: {
+					me: "me/",
 				},
 			},
 		},
@@ -113,8 +119,8 @@ export class CarbonLDP extends AbstractContext {
 	messaging:Messaging.MessagingService;
 
 	constructor( url:string );
-	constructor( settings:CarbonSettings );
-	constructor( urlOrSettings:string | CarbonSettings ) {
+	constructor( settings:CarbonLDPSettings );
+	constructor( urlOrSettings:string | CarbonLDPSettings ) {
 		super();
 
 		if( Utils.isString( urlOrSettings ) ) {
@@ -134,7 +140,11 @@ export class CarbonLDP extends AbstractContext {
 			}
 
 			urlOrSettings.ssl = urlOrSettings.host = urlOrSettings.port = null;
-			this.settings = Utils.ObjectUtils.extend( this.settings, urlOrSettings, { objects: true } );
+
+			const paths:ContextSettings[ "paths" ] = mergePaths( this.settings.paths, urlOrSettings.paths );
+
+			this.settings = Utils.ObjectUtils.extend( this.settings, urlOrSettings );
+			this.settings.paths = paths;
 		}
 
 		if( ! this._baseURI.endsWith( "/" ) ) this._baseURI = this._baseURI + "/";
@@ -152,4 +162,45 @@ export class CarbonLDP extends AbstractContext {
 		} );
 	}
 
+}
+
+function mergePaths( target:ContextSettings[ "paths" ], source:ContextSettings[ "paths" ] ):ContextSettings[ "paths" ] {
+	if( ! source ) return target;
+	if( ! target ) return Utils.ObjectUtils.clone( source, { objects: true } );
+
+	for( const key of Object.keys( source ) ) {
+		const sourcePath:string | DocumentPaths = source[ key ];
+
+		if( sourcePath === null ) {
+			delete target[ key ];
+			continue;
+		}
+
+		const targetPath:string | DocumentPaths = target[ key ];
+		if( ! targetPath ) {
+			target[ key ] = Utils.isObject( sourcePath ) ?
+				Utils.ObjectUtils.clone( sourcePath, { objects: true } ) :
+				sourcePath;
+			continue;
+		}
+
+		if( Utils.isString( sourcePath ) ) {
+			if( Utils.isObject( targetPath ) ) {
+				targetPath.slug = sourcePath;
+			} else {
+				target[ key ] = sourcePath;
+			}
+			continue;
+		}
+
+		if( sourcePath.slug === void 0 && sourcePath.paths === void 0 ) continue;
+
+		const targetDocPaths:DocumentPaths = Utils.isString( targetPath ) ?
+			target[ key ] = { slug: targetPath } : targetPath;
+
+		if( sourcePath.slug !== void 0 ) targetDocPaths.slug = sourcePath.slug;
+		if( sourcePath.paths !== void 0 ) targetDocPaths.paths = mergePaths( targetDocPaths.paths, sourcePath.paths );
+	}
+
+	return target;
 }

@@ -10,15 +10,18 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var Auth = __importStar(require("./Auth"));
 var ACE_1 = require("./Auth/ACE");
 var ACL_1 = require("./Auth/ACL");
+var AuthenticatedUserInformationAccessor_1 = require("./Auth/AuthenticatedUserInformationAccessor");
+var AuthenticatedUserMetadata_1 = require("./Auth/AuthenticatedUserMetadata");
+var TokenCredentials_1 = require("./Auth/TokenCredentials");
 var Document_1 = require("./Document");
 var Documents_1 = require("./Documents");
 var Errors = __importStar(require("./Errors"));
 var AddMemberAction_1 = require("./LDP/AddMemberAction");
+var DocumentMetadata_1 = require("./LDP/DocumentMetadata");
 var Error_1 = require("./LDP/Error");
+var ErrorResponse_1 = require("./LDP/ErrorResponse");
 var Map_1 = require("./LDP/Map");
 var MapEntry_1 = require("./LDP/MapEntry");
-var DocumentMetadata_1 = require("./LDP/DocumentMetadata");
-var ErrorResponse_1 = require("./LDP/ErrorResponse");
 var RemoveMemberAction_1 = require("./LDP/RemoveMemberAction");
 var ResponseMetadata_1 = require("./LDP/ResponseMetadata");
 var ValidationError_1 = require("./LDP/ValidationError");
@@ -44,7 +47,7 @@ var SDKContext = (function () {
     function SDKContext() {
         this.generalObjectSchema = new ObjectSchema.DigestedObjectSchema();
         this.typeObjectSchemaMap = new Map();
-        this.auth = new Auth.Class(this);
+        this.auth = new Auth.AuthService(this);
         this.documents = new Documents_1.Documents(this);
         this.registerDefaultObjectSchemas();
     }
@@ -182,10 +185,11 @@ var SDKContext = (function () {
         this.extendObjectSchema(Auth.Role.RDF_CLASS, Auth.Role.SCHEMA);
         this.extendObjectSchema(ACE_1.ACE.TYPE, ACE_1.ACE.SCHEMA);
         this.extendObjectSchema(ACL_1.ACL.TYPE, ACL_1.ACL.SCHEMA);
+        this.extendObjectSchema(AuthenticatedUserInformationAccessor_1.AuthenticatedUserInformationAccessor.TYPE, AuthenticatedUserInformationAccessor_1.AuthenticatedUserInformationAccessor.SCHEMA);
+        this.extendObjectSchema(AuthenticatedUserMetadata_1.AuthenticatedUserMetadata.TYPE, AuthenticatedUserMetadata_1.AuthenticatedUserMetadata.SCHEMA);
         this.extendObjectSchema(Auth.User.RDF_CLASS, Auth.User.SCHEMA);
         this.extendObjectSchema(Auth.Credentials.RDF_CLASS, Auth.Credentials.SCHEMA);
-        this.extendObjectSchema(Auth.Ticket.RDF_CLASS, Auth.Ticket.SCHEMA);
-        this.extendObjectSchema(Auth.Token.RDF_CLASS, Auth.Token.SCHEMA);
+        this.extendObjectSchema(TokenCredentials_1.TokenCredentials.TYPE, TokenCredentials_1.TokenCredentials.SCHEMA);
         this.extendObjectSchema(ValidationReport_1.ValidationReport.TYPE, ValidationReport_1.ValidationReport.SCHEMA);
         this.extendObjectSchema(ValidationResult_1.ValidationResult.TYPE, ValidationResult_1.ValidationResult.SCHEMA);
         this.extendObjectSchema(QueryMetadata_1.QueryMetadata.TYPE, QueryMetadata_1.QueryMetadata.SCHEMA);

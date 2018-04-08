@@ -11,6 +11,7 @@ import {
 	STATIC,
 } from "../test/JasmineExtender";
 import { C } from "../Vocabularies/C";
+import { CS } from "../Vocabularies/CS";
 import * as Utils from "./../Utils";
 
 import { ResponseMetadata } from "./ResponseMetadata";
@@ -86,18 +87,33 @@ describe( module( "carbonldp/LDP/ResponseMetadata" ), ():void => {
 		} );
 
 		// TODO: Separate in different tests
-		it( "ResponseMetadata.SCHEMA", ():void => {
-			expect( ResponseMetadata.SCHEMA ).toBeDefined();
-			expect( Utils.isObject( ResponseMetadata.SCHEMA ) ).toBe( true );
+		describe( "ResponseMetadata.SCHEMA", ():void => {
 
-			expect( ResponseMetadata.SCHEMA as { [key:string]:object } ).toEqual( {
-				documentsMetadata: jasmine.any( Object ),
+			it( "should exists", ():void => {
+				expect( ResponseMetadata ).toBeDefined();
+				expect( ResponseMetadata ).toEqual( jasmine.any( Object ) );
 			} );
 
-			expect( ResponseMetadata.SCHEMA[ "documentsMetadata" ] ).toEqual( {
-				"@id": C.documentMetadata,
-				"@type": "@id",
-				"@container": "@set",
+			it( "should have the model properties", ():void => {
+				expect( ResponseMetadata.SCHEMA as { [ key:string ]:object } ).toEqual( {
+					documentsMetadata: jasmine.any( Object ),
+					authToken: jasmine.any( Object ),
+				} );
+			} );
+
+			it( "should have c:documentMetadata", ():void => {
+				expect( ResponseMetadata.SCHEMA[ "documentsMetadata" ] ).toEqual( {
+					"@id": C.documentMetadata,
+					"@type": "@id",
+					"@container": "@set",
+				} );
+			} );
+
+			it( "should have cs:authToken", ():void => {
+				expect( ResponseMetadata.SCHEMA[ "authToken" ] ).toEqual( {
+					"@id": CS.authToken,
+					"@type": "@id",
+				} );
 			} );
 
 		} );

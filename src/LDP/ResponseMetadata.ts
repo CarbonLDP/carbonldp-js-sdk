@@ -1,12 +1,17 @@
 import { ModelFactory } from "../ModelFactory";
 import { ObjectSchema } from "../ObjectSchema";
-import { C } from "../Vocabularies/C";
+import {
+	C,
+	CS,
+} from "../Vocabularies";
 import { DocumentMetadata } from "./DocumentMetadata";
 import { VolatileResource } from "./VolatileResource";
+import { TokenCredentials } from "../Auth";
 
 
 export interface ResponseMetadata extends VolatileResource {
 	documentsMetadata?:DocumentMetadata[];
+	authToken?:TokenCredentials;
 }
 
 
@@ -22,6 +27,10 @@ const SCHEMA:ObjectSchema = {
 		"@id": C.documentMetadata,
 		"@type": "@id",
 		"@container": "@set",
+	},
+	"authToken": {
+		"@id": CS.authToken,
+		"@type": "@id",
 	},
 };
 

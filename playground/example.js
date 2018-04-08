@@ -5,9 +5,9 @@
 		};
 	}
 
-	const carbon1 = new CarbonLDP( "localhost:8083", false );
-	const carbon2 = new CarbonLDP( "localhost:8083", false );
-	const carbon3 = new CarbonLDP( "localhost:8083", false );
+	const carbon1 = new CarbonLDP( "http://localhost:8083" );
+	const carbon2 = new CarbonLDP( "http://localhost:8083" );
+	const carbon3 = new CarbonLDP( "http://localhost:8083" );
 
 	const prefixes = {
 		"acl": "http://www.w3.org/ns/auth/acl#",
@@ -233,6 +233,128 @@
 			expect( freshChild.index ).toEqual( 100 );
 			expect( freshChild.somethingElse ).toEqual( "Hello world!" );
 		} ) );
+	} );
+
+	describe( "Auth Tests >", () => {
+
+		let app;
+		beforeEach( () => {
+			app = new CarbonLDP( "http://localhost:8083" );
+		} );
+
+		describe( "When BASIC auth", () => {
+
+			let token;
+			beforeEach( () => {
+				token = CarbonLDP.Auth.AuthMethod.BASIC;
+			} );
+
+			it( "should add credentials", async () => {
+				const credentials = await app.auth.authenticateUsing( token, "user01", "pass01" );
+
+				expect( credentials ).toEqual( jasmine.objectContaining( {
+					username: "user01",
+					password: "pass01",
+				} ) );
+			} );
+
+			it( "should get with BASIC auth", async () => {
+				await app.auth.authenticateUsing( token, "user01", "pass01" );
+
+				await app.documents.get( ".system/platform/" );
+				expect().nothing();
+			} );
+
+			it( "should unauthorized with BASIC auth", async () => {
+				try {
+					await app.auth.authenticateUsing( token, "user01", "incorrect-pass" );
+					fail( "should not reach here" );
+				} catch( e ) {
+					expect( e.response.status ).toBe( 401 );
+				}
+			} );
+
+		} );
+
+		describe( "When TOKEN auth", () => {
+
+			let token;
+			beforeEach( () => {
+				token = CarbonLDP.Auth.AuthMethod.TOKEN;
+			} );
+
+			let storedCredentials;
+			it( "should add credentials", async () => {
+				const credentials = await app.auth.authenticateUsing( token, "user01", "pass01" );
+
+				expect( credentials ).toEqual( jasmine.objectContaining( {
+					token: jasmine.any( String ),
+					expires: jasmine.any( Date ),
+				} ) );
+
+				storedCredentials = JSON.parse( JSON.stringify( credentials ) );
+			} );
+
+			it( "should get with TOKEN auth", async () => {
+				await app.auth.authenticateUsing( token, "user01", "pass01" );
+
+				await app.documents.get( ".system/platform/" );
+				expect().nothing();
+			} );
+
+			it( "should resolve authenticated user", async () => {
+				await app.auth.authenticateUsing( token, "user01", "pass01" );
+
+				const user = await app.auth.authenticatedUser.resolve( _ => _
+					.properties( { name: _.inherit } )
+				);
+
+				expect( user ).toEqual( jasmine.objectContaining( {
+					name: jasmine.any( String ),
+				} ) );
+				console.log( user );
+			} );
+
+			it( "should unauthorized with TOKEN auth", async () => {
+				try {
+					await app.auth.authenticateUsing( token, "user01", "incorrect-pass" );
+					fail( "should not reach here" );
+				} catch( e ) {
+					expect( e.response.status ).toBe( 401 );
+				}
+			} );
+
+
+			it( "should authenticate with stored credentials", async () => {
+				const credentials = await app.auth.authenticateUsing( token, storedCredentials );
+
+				expect( credentials ).toEqual( jasmine.objectContaining( {
+					token: jasmine.any( String ),
+					expires: jasmine.any( Date ),
+				} ) );
+			} );
+
+
+			it( "should get with stored credentials", async () => {
+				await app.auth.authenticateUsing( token, storedCredentials );
+
+				await app.documents.get( ".system/platform/" );
+				expect().nothing();
+			} );
+
+			it( "should unauthorized with wrong stored credentials", async () => {
+				const credentials = Object.assign( {}, storedCredentials, { token: "wrong" } );
+
+				try {
+					await app.auth.authenticateUsing( token, credentials );
+					fail( "should not reach here" );
+				} catch( e ) {
+					expect( e.response.status ).toBe( 401 );
+				}
+			} );
+
+		} );
+
 	} );
 
 })();

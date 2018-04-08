@@ -10,6 +10,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var Pointer_1 = require("./Pointer");
 var Utils = __importStar(require("./Utils"));
 function addTypeInResource(type) {
+    if (this.types.indexOf(type) !== -1)
+        return;
     this.types.push(type);
 }
 exports.addTypeInResource = addTypeInResource;

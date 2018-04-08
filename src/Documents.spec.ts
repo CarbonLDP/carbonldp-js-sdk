@@ -25,7 +25,6 @@ import {
 	AccessPoint,
 	AccessPointBase,
 } from "./AccessPoint";
-import * as Auth from "./Auth";
 import { BlankNode } from "./BlankNode";
 import { CarbonLDP } from "./CarbonLDP";
 import { Document } from "./Document";
@@ -47,6 +46,7 @@ import { PersistedDocument } from "./PersistedDocument";
 import { PersistedNamedFragment } from "./PersistedNamedFragment";
 import { PersistedResource } from "./PersistedResource";
 import { Pointer } from "./Pointer";
+import { Resource } from "./Resource";
 import { ContextSettings } from "./Settings";
 import * as SPARQL from "./SPARQL";
 import { PartialMetadata } from "./SPARQL/QueryDocument/PartialMetadata";
@@ -780,7 +780,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				[ "T extends object" ],
 				"Retrieves the entire document referred by the URI specified when no query function si provided.\nIf the function builder es provided the query is able to specify the properties of the document to be retrieved and the sub-documents' properties and on and on.", [
 					{ name: "uri", type: "string", description: "The URI of the document to retrieve/query." },
-					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for the request." },
+					{ name: "requestOptions", type: "CarbonLDP.HTTP.GETOptions", optional: true, description: "Customizable options for the request." },
 					{ name: "queryBuilderFn", type: "( queryBuilder:CarbonLDP.SPARQL.QueryDocument.QueryDocumentBuilder ) => CarbonLDP.SPARQL.QueryDocument.QueryDocumentBuilder", optional: true, description: "Function that receives a the builder that helps you to construct the retrieval query.\nThe same builder must be returned." },
 				],
 				{ type: "Promise<T & CarbonLDP.PersistedDocument>" }
@@ -997,20 +997,29 @@ describe( module( "carbonldp/Documents" ), ():void => {
 
 						expect( document[ "string" ] ).toBe( "Document Resource" );
 
-						(function documentResource():void {
+						(
+
+						function documentResource():void {
 							expect( document[ "pointerSet" ].length ).toBe( 4 );
 							expect( Pointer.getIDs( document[ "pointerSet" ] ) ).toContain( "_:1" );
 							expect( Pointer.getIDs( document[ "pointerSet" ] ) ).toContain( "_:2" );
 							expect( Pointer.getIDs( document[ "pointerSet" ] ) ).toContain( "https://example.com/resource/#1" );
 							expect( Pointer.getIDs( document[ "pointerSet" ] ) ).toContain( "https://example.com/external-resource/" );
-						})();
+						}
 
-						(function documentFragments():void {
+					)
+						();
+
+						(
+
+						function documentFragments():void {
 
 							let fragment:Fragment;
 							expect( document.getFragments().length ).toBe( 4 );
 
-							(function documentBlankNode_1():void {
+							(
+
+							function documentBlankNode_1():void {
 								fragment = document.getFragment( "_:1" );
 								expect( fragment ).toBeTruthy();
 								expect( fragment[ "string" ] ).toBe( "Fragment 1" );
@@ -1019,27 +1028,48 @@ describe( module( "carbonldp/Documents" ), ():void => {
 								expect( Pointer.getIDs( fragment[ "pointerSet" ] ) ).toContain( "https://example.com/resource/#1" );
 								expect( fragment[ "pointerSet" ].find( pointer => pointer.id === "https://example.com/resource/" ) ).toBe( document );
 								expect( fragment[ "pointerSet" ].find( pointer => pointer.id === "https://example.com/resource/#1" ) ).toBe( document.getFragment( "1" ) );
-							})();
+							}
 
-							(function documentBlankNode_2():void {
+						)
+							();
+
+							(
+
+							function documentBlankNode_2():void {
 								fragment = document.getFragment( "_:2" );
 								expect( fragment ).toBeTruthy();
 								expect( fragment[ "string" ] ).toBe( "Fragment 2" );
-							})();
+							}
 
-							(function documentNamedFragment_1():void {
+						)
+							();
+
+							(
+
+							function documentNamedFragment_1():void {
 								fragment = document.getFragment( "1" );
 								expect( fragment ).toBeTruthy();
 								expect( fragment[ "string" ] ).toBe( "NamedFragment 1" );
-							})();
+							}
 
-							(function documentNamedFragment_1():void {
+						)
+							();
+
+							(
+
+							function documentNamedFragment_1():void {
 								fragment = document.getFragment( "2" );
 								expect( fragment ).toBeTruthy();
 								expect( fragment[ "string" ] ).toBe( "NamedFragment 2" );
-							})();
+							}
 
-						})();
+						)
+							();
+
+						}
+
+					)
+						();
 
 						done();
 					} ).catch( done.fail );
@@ -8976,8 +9006,6 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					).then( () => done.fail( "Should not resolve, spy is makes it fail." ) ).catch( ( error ) => {
 						if( error ) done.fail( error );
 
-						console.log( sendSpy.calls.argsFor( 0 ) );
-						console.log( Array.from( sendSpy.calls.argsFor( 0 )[ 2 ].headers )[ 0 ][ 1 ] );
 						expect( sendSpy ).toHaveBeenCalledWith(
 							"https://example.com/resource/", "" +
 							"CONSTRUCT {" +
@@ -12803,127 +12831,6 @@ describe( module( "carbonldp/Documents" ), ():void => {
 
 		describe( method(
 			INSTANCE,
-			"getDownloadURL"
-		), ():void => {
-
-			it( hasSignature(
-				"Add to the URI provided the necessary properties for a single download request.", [
-					{ name: "documentURI", type: "string", description: "The URI of the document that will be converted in a single download request." },
-					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true },
-				],
-				{ type: "Promise<string>" }
-			), ( done:DoneFn ):void => {
-				class MockedAuth extends Auth.Class {}
-
-				class MockedContext extends AbstractContext {
-					protected _baseURI:string;
-
-					constructor() {
-						super();
-						this._baseURI = "http://example.com/";
-						this.settings = { paths: { system: ".system/" } };
-						this.auth = new MockedAuth( this );
-					}
-				}
-
-				let context:MockedContext = new MockedContext();
-				let documents:Documents = context.documents;
-
-				expect( documents.getDownloadURL ).toBeDefined();
-				expect( Utils.isFunction( documents.getDownloadURL ) ).toBe( true );
-
-				spyOn( context.auth, "getAuthenticatedURL" ).and.returnValue( Promise.resolve( "http://example.com/resource/?ticket=1234567890" ) );
-
-				documents.getDownloadURL( "http://example.com/resource/" ).then( ( downloadURL:string ) => {
-					expect( downloadURL ).toBe( "http://example.com/resource/?ticket=1234567890" );
-					done();
-				} ).catch( done.fail );
-			} );
-
-			describe( "When Documents has a specified context", ():void => {
-				let documents:Documents;
-
-				beforeEach( () => {
-					const context:AbstractContext = new class extends AbstractContext {
-						auth:Auth.Class = new Auth.Class( this );
-
-						protected _baseURI:string;
-
-						constructor() {
-							super();
-							this._baseURI = "http://example.com/";
-							this.settings = { paths: { system: ".system/" } };
-						}
-					}();
-					documents = context.documents;
-				} );
-
-				it( "should reject promise if URI is not in the context base", ( done:DoneFn ):void => {
-					const promise:Promise<any> = documents.getDownloadURL( "http://not-example.com" );
-					promise.then( () => {
-						done.fail( "Should not resolve promise." );
-					} ).catch( error => {
-						expect( error.message ).toBe( `"http://not-example.com" isn't a valid URI for this Carbon instance.` );
-						done();
-					} );
-				} );
-
-				it( "should reject promise if prefixed URI cannot be resolved", ( done:DoneFn ):void => {
-					const promise:Promise<any> = documents.getDownloadURL( "prefix:the-uri" );
-					promise.then( () => {
-						done.fail( "Should not resolve promise." );
-					} ).catch( error => {
-						expect( error.message ).toBe( `The prefixed URI "prefix:the-uri" could not be resolved.` );
-						done();
-					} );
-				} );
-
-				it( "should call _parseErrorResponse when request error", ( done:DoneFn ):void => {
-					jasmine.Ajax.stubRequest( new RegExp( "http://example.com/" ) ).andReturn( {
-						status: 500,
-						responseText: "",
-					} );
-
-					const error:Error = new Error( "Error message" );
-					const spy:jasmine.Spy = spyOn( documents, "_parseErrorResponse" ).and.callFake( () => Promise.reject( error ) );
-
-					documents.getDownloadURL( "http://example.com/" ).then( () => {
-						done.fail( "Should not resolve" );
-					} ).catch( _error => {
-						expect( spy ).toHaveBeenCalled();
-
-						expect( _error ).toBeDefined();
-						expect( _error ).toBe( error );
-
-						done();
-					} );
-				} );
-
-			} );
-
-			describe( "When Documents does not have a context", ():void => {
-				let documents:Documents;
-
-				beforeEach( () => {
-					documents = new Documents();
-				} );
-
-				it( "should reject any request", ( done:DoneFn ):void => {
-					const promise:Promise<any> = documents.getDownloadURL( "http://example.com/resource/" );
-					promise.then( () => {
-						done.fail( "Should not resolve promise." );
-					} ).catch( error => {
-						expect( error.message ).toBe( "This instance doesn't support Authenticated request." );
-						done();
-					} );
-				} );
-
-			} );
-
-		} );
-
-		describe( method(
-			INSTANCE,
 			"executeRawASKQuery"
 		), ():void => {
 
@@ -14846,6 +14753,76 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				done();
 			} );
 
+		} );
+
+	} );
+
+	describe( "Decorated Pointer", ():void => {
+
+		let pointer:Pointer;
+		let documents:Documents;
+		let context:AbstractContext;
+		beforeEach( () => {
+			context = new class extends AbstractContext {
+				_baseURI:string = "https://example.com/";
+				settings:ContextSettings = { vocabulary: "https://example.com/ns#" };
+			};
+			documents = context.documents;
+
+			pointer = documents.getPointer( "pointer/" );
+		} );
+
+		it( "should add types to query", ( done:DoneFn ):void => {
+			const resource:Resource = Resource.decorate( pointer );
+			resource.addType( "https://example.com/ns#Type-1" );
+			resource.addType( "https://example.com/ns#Type-2" );
+
+			context.extendObjectSchema( "https://example.com/ns#Type-2", {
+				"name": { "@id": "name" },
+			} );
+
+			const spy:jasmine.Spy = spyOn( documents, "executeRawCONSTRUCTQuery" )
+				.and.returnValue( Promise.reject( null ) );
+
+			resource
+				.resolve( _ => _
+					.withType( "Another" )
+					.properties( {
+						"name": { "@type": "string" },
+					} )
+				)
+				.then( () => done.fail( "should not resolve" ) )
+				.catch( error => {
+					if( error ) done.fail( error );
+
+					expect( spy ).toHaveBeenCalledWith(
+						"https://example.com/pointer/",
+
+						"CONSTRUCT {" +
+						` ?metadata a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
+						"" + ` <${ C.target }> ?document.` +
+
+						" ?document a ?document__types;" +
+						"" + " <https://example.com/ns#name> ?document__name " +
+
+						"} WHERE {" +
+						" BIND(BNODE() AS ?metadata)." +
+
+						" VALUES ?document { <https://example.com/pointer/> }." +
+						" OPTIONAL { ?document a ?document__types }." +
+						" ?document a <https://example.com/ns#Type-1>, <https://example.com/ns#Type-2>, <https://example.com/ns#Another>." +
+
+						" OPTIONAL {" +
+						"" + " ?document <https://example.com/ns#name> ?document__name." +
+						"" + " FILTER( datatype( ?document__name ) = <http://www.w3.org/2001/XMLSchema#string> )" +
+						" } " +
+						"}",
+
+						jasmine.any( Object )
+					);
+
+					done();
+				} );
 		} );
 
 	} );

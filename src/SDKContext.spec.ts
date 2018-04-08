@@ -50,7 +50,7 @@ describe( module( "carbonldp/SDKContext" ), ():void => {
 				const target:SDKContext = new SDKContext();
 
 				expect( target.auth ).toBeDefined();
-				expect( target.auth ).toEqual( jasmine.any( Auth.Class ) );
+				expect( target.auth ).toEqual( jasmine.any( Auth.AuthService ) );
 			} );
 
 			it( "should instantiate documents as property", ():void => {
@@ -65,9 +65,9 @@ describe( module( "carbonldp/SDKContext" ), ():void => {
 		it( hasProperty(
 			INSTANCE,
 			"auth",
-			"CarbonLDP.Auth.Class",
-			"Instance of an implementation of the `CarbonLDP.Auth.Class` class to manage authentications and authorizations in the context.\n" +
-			"In an instance of the SDKContext this property is set to `null`, and its children contexts must instantiate a valid implementation of the `CarbonLDP.Auth.Class` abstract class."
+			"CarbonLDP.Auth.AuthService",
+			"Instance of an implementation of the `CarbonLDP.Auth.AuthService` class to manage authentications and authorizations in the context.\n" +
+			"In an instance of the SDKContext this property is set to `null`, and its children contexts must instantiate a valid implementation of the `CarbonLDP.Auth.AuthService` abstract class."
 		), ():void => {} );
 
 		it( hasProperty(

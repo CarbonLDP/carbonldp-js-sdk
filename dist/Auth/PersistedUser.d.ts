@@ -10,7 +10,7 @@ export interface Class extends PersistedProtectedDocument {
 }
 export declare class Factory {
     static hasClassProperties(object: Object): boolean;
-    static is(object: Object): boolean;
+    static is(object: object): object is Class;
     static decorate<T extends object>(object: T, documents: Documents): Class & T;
 }
 export default Class;

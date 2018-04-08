@@ -520,14 +520,6 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 		} );
 	}
 
-	getDownloadURL( documentURI:string, requestOptions?:RequestOptions ):Promise<string> {
-		if( ! this.context ) return Promise.reject( new Errors.IllegalStateError( "This instance doesn't support Authenticated request." ) );
-		return promiseMethod( () => {
-			documentURI = this._getRequestURI( documentURI );
-			return this.context.auth.getAuthenticatedURL( documentURI, requestOptions );
-		} );
-	}
-
 
 	getGeneralSchema():DigestedObjectSchema {
 		if( ! this.context ) return new DigestedObjectSchema();
@@ -1257,16 +1249,36 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 		return this._createPointerFrom( {}, localID );
 	}
 
-	private _createPointerFrom<T extends Object>( object:T, localID:string ):T & Pointer {
-		let id:string = ! ! this.context ? this.context.resolve( localID ) : localID;
-		let pointer:T & Pointer = Pointer.createFrom<T>( object, id );
+	private _createPointerFrom<T extends object>( object:T, localID:string ):T & Pointer {
+		const id:string = ! ! this.context ? this.context.resolve( localID ) : localID;
+		const pointer:T & Pointer = Pointer.createFrom<T>( object, id );
+
+		const resolve:Pointer[ "resolve" ] = <W extends object>( requestOptionsOrQueryBuilderFn?:GETOptions | ( ( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ), queryBuilderFn?:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<W & T & PersistedDocument> => {
+			let requestOptions:GETOptions;
+			if( Utils.isFunction( requestOptionsOrQueryBuilderFn ) ) {
+				requestOptions = {};
+				queryBuilderFn =  requestOptionsOrQueryBuilderFn;
+			} else {
+				requestOptions = requestOptionsOrQueryBuilderFn;
+			}
+
+			if( queryBuilderFn && "types" in pointer ) {
+				const resource:Resource = pointer as Resource;
+				const superQueryBuilderFn:typeof queryBuilderFn = queryBuilderFn;
+				queryBuilderFn = _ => {
+					resource.types.forEach( type => _.withType( type ) );
+					return superQueryBuilderFn.call( void 0, _ );
+				};
+			}
+
+			return this.get( id, requestOptions, queryBuilderFn );
+		};
+
 		Object.defineProperty( pointer, "resolve", {
 			writable: false,
 			enumerable: false,
 			configurable: true,
-			value: ():Promise<[ PersistedDocument, Response ]> => {
-				return this.get( id );
-			},
+			value: resolve,
 		} );
 
 		return pointer;

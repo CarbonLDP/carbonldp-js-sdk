@@ -25,7 +25,7 @@ import { Pointer } from "./Pointer";
 import * as RDF from "./RDF";
 import { Resource } from "./Resource";
 import { globalContext, SDKContext } from "./SDKContext";
-import { CarbonSettings, ContextSettings } from "./Settings";
+import { CarbonLDPSettings, ContextSettings } from "./Settings";
 import * as SHACL from "./SHACL";
 import * as SPARQL from "./SPARQL";
 import * as System from "./System";
@@ -76,6 +76,6 @@ export declare class CarbonLDP extends AbstractContext {
     protected settings: ContextSettings;
     messaging: Messaging.MessagingService;
     constructor(url: string);
-    constructor(settings: CarbonSettings);
+    constructor(settings: CarbonLDPSettings);
     getPlatformMetadata(): Promise<System.PlatformMetadata>;
 }

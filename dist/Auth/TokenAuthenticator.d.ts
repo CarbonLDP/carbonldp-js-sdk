@@ -1,20 +1,16 @@
 import { RequestOptions } from "../HTTP/Request";
-import { Context } from "../Context";
-import Authenticator from "./Authenticator";
-import * as Token from "./Token";
-import * as UsernameAndPasswordToken from "./UsernameAndPasswordToken";
-export declare const TOKEN_CONTAINER: string;
-export declare class Class implements Authenticator<UsernameAndPasswordToken.Class, Token.Class> {
-    private context;
-    private basicAuthenticator;
-    private _credentials;
-    constructor(context: Context);
+import { Response } from "../HTTP/Response";
+import { AuthenticatedUserInformationAccessor } from "./AuthenticatedUserInformationAccessor";
+import { Authenticator } from "./Authenticator";
+import { TokenCredentials, TokenCredentialsBase } from "./TokenCredentials";
+import { UsernameAndPasswordToken } from "./UsernameAndPasswordToken";
+export declare class TokenAuthenticator extends Authenticator<UsernameAndPasswordToken, TokenCredentials> {
+    protected _credentials: TokenCredentials;
     isAuthenticated(): boolean;
-    authenticate(authenticationToken: UsernameAndPasswordToken.Class): Promise<Token.Class>;
-    authenticate(credentials: Token.Class): Promise<Token.Class>;
-    addAuthentication(requestOptions: RequestOptions): RequestOptions;
-    clearAuthentication(): void;
-    private createToken();
-    private addTokenAuthenticationHeader(headers);
+    authenticate(tokenOrCredentials: UsernameAndPasswordToken | TokenCredentialsBase): Promise<TokenCredentials>;
+    protected _getHeaderValue(): string;
+    protected _parseCredentialsBase(credentialsBase: TokenCredentialsBase): Promise<TokenCredentials>;
+    protected _getCredentials(token: UsernameAndPasswordToken): Promise<TokenCredentials>;
+    protected _parseRDFMetadata(rdfData: object[], response: Response, requestOptions: RequestOptions): AuthenticatedUserInformationAccessor;
+    protected _parseRDFCredentials(rdfData: object[], response: Response): TokenCredentials;
 }
-export default Class;

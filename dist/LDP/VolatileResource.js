@@ -8,6 +8,14 @@ exports.VolatileResource = {
         return Resource_1.Resource.is(object)
             && object.hasType(exports.VolatileResource.TYPE);
     },
+    create: function () {
+        return exports.VolatileResource.createFrom({});
+    },
+    createFrom: function (object) {
+        var resource = Resource_1.Resource.createFrom(object);
+        resource.addType(exports.VolatileResource.TYPE);
+        return resource;
+    },
 };
 
 //# sourceMappingURL=VolatileResource.js.map

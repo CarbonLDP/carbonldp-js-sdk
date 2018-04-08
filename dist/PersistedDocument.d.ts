@@ -42,7 +42,6 @@ export interface PersistedDocument extends Document, PersistedResource, ServiceA
     save<T extends object>(requestOptions?: RequestOptions): Promise<T & this>;
     saveAndRefresh<T extends object>(requestOptions?: RequestOptions): Promise<T & this>;
     delete(requestOptions?: RequestOptions): Promise<void>;
-    getDownloadURL(requestOptions?: RequestOptions): Promise<string>;
     addMember(member: Pointer, requestOptions?: RequestOptions): Promise<void>;
     addMember(memberURI: string, requestOptions?: RequestOptions): Promise<void>;
     addMembers(members: (Pointer | string)[], requestOptions?: RequestOptions): Promise<void>;
@@ -74,6 +73,8 @@ export interface PersistedDocument extends Document, PersistedResource, ServiceA
     removeAllMembers(requestOptions?: RequestOptions): Promise<void>;
     executeRawASKQuery(askQuery: string, requestOptions?: RequestOptions): Promise<SPARQLRawResults>;
     executeASKQuery(askQuery: string, requestOptions?: RequestOptions): Promise<boolean>;
+    executeRawSELECTQuery(selectQuery: string, requestOptions?: RequestOptions): Promise<SPARQLRawResults>;
+    executeSELECTQuery<T extends object>(selectQuery: string, requestOptions?: RequestOptions): Promise<SPARQLSelectResults<T>>;
     executeRawSELECTQuery(selectQuery: string, requestOptions?: RequestOptions): Promise<SPARQLRawResults>;
     executeSELECTQuery<T extends object>(selectQuery: string, requestOptions?: RequestOptions): Promise<SPARQLSelectResults<T>>;
     executeRawCONSTRUCTQuery(constructQuery: string, requestOptions?: RequestOptions): Promise<string>;

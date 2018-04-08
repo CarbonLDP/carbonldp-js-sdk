@@ -1,124 +1,102 @@
 import * as Errors from "../Errors";
 import { FreeResources } from "../FreeResources";
+import { RequestUtils } from "../HTTP";
 import { BadResponseError } from "../HTTP/Errors";
 import { Header } from "../HTTP/Header";
-import {
-	RequestOptions,
-	RequestService,
-	RequestUtils,
-} from "../HTTP/Request";
+import { RequestOptions } from "../HTTP/Request";
 import { Response } from "../HTTP/Response";
-import { JSONLDParser } from "../JSONLD/Parser";
-import { ResponseMetadata } from "../LDP/ResponseMetadata";
-import { PersistedDocument } from "../PersistedDocument";
-import { RDFDocument } from "../RDF/Document";
+import { ResponseMetadata } from "../LDP";
 import { RDFNode } from "../RDF/Node";
-import { LDP } from "../Vocabularies/LDP";
-import { Context } from "../Context";
-import * as Utils from "./../Utils";
-import Authenticator from "./Authenticator";
-import BasicAuthenticator from "./BasicAuthenticator";
-import * as Token from "./Token";
-import * as UsernameAndPasswordToken from "./UsernameAndPasswordToken";
+import { promiseMethod } from "../Utils";
+import { CS } from "../Vocabularies";
+import { AuthenticatedUserInformationAccessor } from "./AuthenticatedUserInformationAccessor";
+import { Authenticator } from "./Authenticator";
+import { BasicAuthenticator } from "./BasicAuthenticator";
+import {
+	TokenCredentials,
+	TokenCredentialsBase,
+} from "./TokenCredentials";
+import { UsernameAndPasswordToken } from "./UsernameAndPasswordToken";
 
-export const TOKEN_CONTAINER:string = "auth-tokens/";
 
-export class Class implements Authenticator<UsernameAndPasswordToken.Class, Token.Class> {
+export class TokenAuthenticator extends Authenticator<UsernameAndPasswordToken, TokenCredentials> {
 
-	private context:Context;
-	private basicAuthenticator:BasicAuthenticator;
-	private _credentials:Token.Class;
-
-	constructor( context:Context ) {
-		if( context === null ) throw new Errors.IllegalArgumentError( "context cannot be null" );
-
-		this.context = context;
-		this.basicAuthenticator = new BasicAuthenticator();
-	}
+	protected _credentials:TokenCredentials;
 
 	isAuthenticated():boolean {
-		return ! ! this._credentials && this._credentials.expirationTime > new Date();
+		return super.isAuthenticated() && this._credentials.expires > new Date();
 	}
 
-	authenticate( authenticationToken:UsernameAndPasswordToken.Class ):Promise<Token.Class>;
-	authenticate( credentials:Token.Class ):Promise<Token.Class>;
-	authenticate( authenticationOrCredentials:UsernameAndPasswordToken.Class | Token.Class ):Promise<Token.Class> {
-		if( authenticationOrCredentials instanceof UsernameAndPasswordToken.Class ) return this.basicAuthenticator.authenticate( authenticationOrCredentials ).then( () => {
-			return this.createToken();
-		} ).then( ( token:Token.Class ):Token.Class => {
-			this.basicAuthenticator.clearAuthentication();
-			this._credentials = token;
-			return token;
+	authenticate( tokenOrCredentials:UsernameAndPasswordToken | TokenCredentialsBase ):Promise<TokenCredentials> {
+		if( TokenCredentialsBase.is( tokenOrCredentials ) )
+			return this._parseCredentialsBase( tokenOrCredentials );
+
+		return this._getCredentials( tokenOrCredentials );
+	}
+
+	protected _getHeaderValue():string {
+		return "Bearer " + this._credentials.token;
+	}
+
+	protected _parseCredentialsBase( credentialsBase:TokenCredentialsBase ):Promise<TokenCredentials> {
+		return promiseMethod( () => {
+			const credentials:TokenCredentials = TokenCredentials.createFrom( credentialsBase );
+
+			if( credentials.expires <= new Date() ) throw new Errors.IllegalArgumentError( "The token has already expired." );
+
+			return this._credentials = credentials;
 		} );
-
-		let credentials:Token.Class = <Token.Class> authenticationOrCredentials;
-		if( Utils.isString( credentials.expirationTime ) ) authenticationOrCredentials.expirationTime = new Date( <any> credentials.expirationTime );
-		if( credentials.expirationTime <= new Date() ) return Promise.reject<any>( new Errors.IllegalArgumentError( "The token provided in not valid." ) );
-
-		this._credentials = credentials;
-		return Promise.resolve( credentials );
 	}
 
-	addAuthentication( requestOptions:RequestOptions ):RequestOptions {
-		let headers:Map<string, Header> = requestOptions.headers ? requestOptions.headers : requestOptions.headers = new Map<string, Header>();
+	protected _getCredentials( token:UsernameAndPasswordToken ):Promise<TokenCredentials> {
+		const basicAuthenticator:BasicAuthenticator = new BasicAuthenticator( this.context );
+		return basicAuthenticator
+			.authenticate( token )
+			.then( () => {
+				const requestOptions:RequestOptions = {};
+				basicAuthenticator.addAuthentication( requestOptions );
 
-		this.addTokenAuthenticationHeader( headers );
+				RequestUtils.setRetrievalPreferences( { include: [ CS.PreferAuthToken ] }, requestOptions );
 
-		return requestOptions;
+				return this.getAuthenticatedUser( requestOptions );
+			} )
+			.then( () => {
+				return this._credentials;
+			} );
 	}
 
-	clearAuthentication():void {
-		this._credentials = null;
+	protected _parseRDFMetadata( rdfData:object[], response:Response, requestOptions:RequestOptions ):AuthenticatedUserInformationAccessor {
+		const accessor:AuthenticatedUserInformationAccessor = super._parseRDFMetadata( rdfData, response );
+
+		const authTokenPrefer:string = `include="${ CS.PreferAuthToken }"`;
+
+		const prefer:Header = requestOptions.headers && requestOptions.headers.get( "prefer" );
+		if( ! prefer || ! prefer.hasValue( authTokenPrefer ) ) return accessor;
+
+		const preference:Header = response.getHeader( "preference-applied" );
+		if( ! preference || ! preference.hasValue( authTokenPrefer ) )
+			throw new BadResponseError( `Preference "${ authTokenPrefer }" was not applied.`, response );
+
+		this._parseRDFCredentials( rdfData, response );
+
+		return accessor;
 	}
 
-	private createToken():Promise<Token.Class> {
-		let requestOptions:RequestOptions = {};
+	protected _parseRDFCredentials( rdfData:object[], response:Response ):TokenCredentials {
+		const freeNodes:RDFNode[] = RDFNode.getFreeNodes( rdfData );
 
-		this.basicAuthenticator.addAuthentication( requestOptions );
+		const freeResources:FreeResources = this.context.documents
+			._getFreeResources( freeNodes );
 
-		RequestUtils.setAcceptHeader( "application/ld+json", requestOptions );
-		RequestUtils.setPreferredInteractionModel( LDP.RDFSource, requestOptions );
+		const responseMetadata:ResponseMetadata = freeResources
+			.getResources()
+			.find( ResponseMetadata.is );
+		if( ! responseMetadata ) throw new BadResponseError( `No "${ ResponseMetadata.TYPE }" was returned.`, response );
 
-		return Promise.resolve().then( () => {
-			const tokensURI:string = this.context._resolvePath( "system" ) + TOKEN_CONTAINER;
-			return RequestService.post( tokensURI, null, requestOptions, new JSONLDParser() );
-		} ).then( ( [ expandedResult, response ]:[ any, Response ] ) => {
-			let freeNodes:RDFNode[] = RDFNode.getFreeNodes( expandedResult );
+		const tokenCredentials:TokenCredentials = responseMetadata.authToken;
+		if( ! tokenCredentials ) throw new BadResponseError( `No "${ TokenCredentials.TYPE }" was returned.`, response );
 
-			let freeResources:FreeResources = this.context.documents._getFreeResources( freeNodes );
-			let tokenResources:Token.Class[] = <Token.Class[]> freeResources.getResources().filter( resource => resource.hasType( Token.RDF_CLASS ) );
-
-			if( tokenResources.length === 0 ) throw new BadResponseError( "No '" + Token.RDF_CLASS + "' was returned.", response );
-			if( tokenResources.length > 1 ) throw new BadResponseError( "Multiple '" + Token.RDF_CLASS + "' were returned. ", response );
-			let token:Token.Class = tokenResources[ 0 ];
-
-			let userDocuments:RDFDocument[] = RDFDocument.getDocuments( expandedResult ).filter( rdfDocument => rdfDocument[ "@id" ] === token.user.id );
-			userDocuments.forEach( document => this.context.documents._getPersistedDocument( document, response ) );
-
-			const responseMetadata:ResponseMetadata = <ResponseMetadata> freeResources
-				.getResources()
-				.find( ResponseMetadata.is );
-
-			if( responseMetadata ) responseMetadata
-				.documentsMetadata
-				.forEach( documentMetadata => {
-					const document:PersistedDocument = documentMetadata.relatedDocument as PersistedDocument;
-					document._eTag = documentMetadata.eTag;
-				} );
-
-			return token;
-		}, response => this.context.documents._parseErrorResponse( response ) );
+		return this._credentials = tokenCredentials;
 	}
 
-	private addTokenAuthenticationHeader( headers:Map<string, Header> ):void {
-		if( headers.has( "authorization" ) ) return;
-
-		let header:Header = new Header();
-		headers.set( "authorization", header );
-
-		let authorization:string = "Token " + this._credentials.key;
-		header.values.push( authorization );
-	}
 }
-
-export default Class;
