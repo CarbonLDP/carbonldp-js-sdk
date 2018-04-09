@@ -1,63 +1,53 @@
-import * as Errors from "../Errors";
+import { IllegalArgumentError } from "../Errors";
+import { BadResponseError } from "../HTTP/Errors/ServerErrors";
 import { Header } from "../HTTP/Header";
 import { RequestOptions } from "../HTTP/Request";
 import { Resource } from "../Resource";
 import { ContextSettings } from "../Settings";
-import { C } from "../Vocabularies/C";
-import { CS } from "../Vocabularies/CS";
-import { XSD } from "../Vocabularies/XSD";
-import { AbstractContext } from "./../AbstractContext";
 import {
 	clazz,
-	constructor,
-	hasDefaultExport,
 	hasSignature,
 	INSTANCE,
 	isDefined,
 	method,
 	module,
-} from "./../test/JasmineExtender";
+} from "../test/JasmineExtender";
+import { C } from "../Vocabularies/C";
+import { CS } from "../Vocabularies/CS";
+import { XSD } from "../Vocabularies/XSD";
+import { AbstractContext } from "./../AbstractContext";
 import * as Utils from "./../Utils";
 import { BasicToken } from "./BasicToken";
 import { PersistedUser } from "./PersistedUser";
 
-import * as TokenAuthenticator from "./TokenAuthenticator";
-import DefaultExport from "./TokenAuthenticator";
+import { TokenAuthenticator } from "./TokenAuthenticator";
 
-import * as TokenCredentials from "./TokenCredentials";
+import {
+	TokenCredentials,
+	TokenCredentialsBase
+} from "./TokenCredentials";
 
 describe( module( "carbonldp/Auth/TokenAuthenticator" ), ():void => {
 
-	it( isDefined(), ():void => {
-		expect( TokenAuthenticator ).toBeDefined();
-		expect( Utils.isObject( TokenAuthenticator ) ).toEqual( true );
-	} );
-
-	it( "should have token container constant", () => {
-		expect( TokenAuthenticator.TOKEN_CONTAINER ).toBeDefined();
-		expect( TokenAuthenticator.TOKEN_CONTAINER ).toBe( "auth-tokens/" );
-	} );
-
 	describe( clazz(
-		"CarbonLDP.Auth.TokenAuthenticator.Class",
+		"CarbonLDP.Auth.TokenAuthenticator",
 		"Authenticates requests using JSON Web TokenCredentials (JWT) Authentication.",
 		[
-			"CarbonLDP.Auth.Authenticator.Class<CarbonLDP.Auth.BasicToken, CarbonLDP.Auth.TokenCredentials.Class>",
+			"CarbonLDP.Auth.Authenticator.Class<CarbonLDP.Auth.BasicToken, CarbonLDP.Auth.TokenCredentials>",
 		]
 	), ():void => {
 
 		let context:AbstractContext;
 		beforeEach( function():void {
 			jasmine.Ajax.install();
+
 			context = new class extends AbstractContext {
 				protected _baseURI:string = "https://example.com/";
 				protected settings:ContextSettings = {
 					paths: {
-						system: {
-							slug: ".system/",
-							paths: {
-								security: "security/",
-							},
+						users: {
+							slug: "users/",
+							paths: { me: "me/" },
 						},
 					},
 				};
@@ -68,35 +58,19 @@ describe( module( "carbonldp/Auth/TokenAuthenticator" ), ():void => {
 			jasmine.Ajax.uninstall();
 		} );
 
-		function createAuthenticatorWith( credentials?:TokenCredentials.Class ):TokenAuthenticator.Class {
-			return new class extends TokenAuthenticator.Class {
+		function createAuthenticatorWith( credentials?:TokenCredentials ):TokenAuthenticator {
+			return new class extends TokenAuthenticator {
 				constructor() {
 					super( context );
-					if( credentials ) this.credentials = credentials;
+					if( credentials ) this._credentials = credentials;
 				}
 			};
 		}
 
 
 		it( isDefined(), ():void => {
-			expect( TokenAuthenticator.Class ).toBeDefined();
-			expect( Utils.isFunction( TokenAuthenticator.Class ) ).toEqual( true );
-		} );
-
-		describe( constructor(), ():void => {
-
-			it( hasSignature(
-				[
-					{ name: "context", type: "CarbonLDP.Context", description: "The context where to authenticate the user." },
-				]
-			), ():void => {} );
-
-			it( "should be instantiable", ():void => {
-				const authenticator:TokenAuthenticator.Class = new TokenAuthenticator.Class( context );
-
-				expect( authenticator ).toEqual( jasmine.any( TokenAuthenticator.Class ) );
-			} );
-
+			expect( TokenAuthenticator ).toBeDefined();
+			expect( Utils.isFunction( TokenAuthenticator ) ).toEqual( true );
 		} );
 
 		describe( method( INSTANCE, "isAuthenticated" ), ():void => {
@@ -107,54 +81,54 @@ describe( module( "carbonldp/Auth/TokenAuthenticator" ), ():void => {
 			), ():void => {} );
 
 			it( "should exists", ():void => {
-				expect( TokenAuthenticator.Class.prototype.isAuthenticated ).toBeDefined();
-				expect( TokenAuthenticator.Class.prototype.isAuthenticated ).toEqual( jasmine.any( Function ) );
+				expect( TokenAuthenticator.prototype.isAuthenticated ).toBeDefined();
+				expect( TokenAuthenticator.prototype.isAuthenticated ).toEqual( jasmine.any( Function ) );
 			} );
 
 			it( "should return false when no credentials", ():void => {
-				const authenticator:TokenAuthenticator.Class = createAuthenticatorWith();
+				const authenticator:TokenAuthenticator = createAuthenticatorWith();
 				expect( authenticator.isAuthenticated() ).toBe( false );
 			} );
 
 			it( "should return false when null credentials", ():void => {
-				const authenticator:TokenAuthenticator.Class = createAuthenticatorWith( null );
+				const authenticator:TokenAuthenticator = createAuthenticatorWith( null );
 				expect( authenticator.isAuthenticated() ).toBe( false );
 			} );
 
 			it( "should return true when not expired credentials", ():void => {
-				const expirationTime:Date = new Date();
-				expirationTime.setDate( expirationTime.getDate() + 1 );
+				const expires:Date = new Date();
+				expires.setDate( expires.getDate() + 1 );
 
-				const credentials:TokenCredentials.Class = Resource.createFrom( {
-					key: "token-value",
-					expirationTime,
+				const credentials:TokenCredentials = Resource.createFrom( {
+					token: "token-value",
+					expires: expires,
 				} );
 
-				const authenticator:TokenAuthenticator.Class = createAuthenticatorWith( credentials );
+				const authenticator:TokenAuthenticator = createAuthenticatorWith( credentials );
 				expect( authenticator.isAuthenticated() ).toBe( true );
 			} );
 
 			it( "should return true when expired credentials with by current time", ():void => {
-				const expirationTime:Date = new Date();
-				const credentials:TokenCredentials.Class = Resource.createFrom( {
-					key: "token-value",
-					expirationTime,
+				const expires:Date = new Date();
+				const credentials:TokenCredentials = Resource.createFrom( {
+					token: "token-value",
+					expires: expires,
 				} );
 
-				const authenticator:TokenAuthenticator.Class = createAuthenticatorWith( credentials );
+				const authenticator:TokenAuthenticator = createAuthenticatorWith( credentials );
 				expect( authenticator.isAuthenticated() ).toBe( false );
 			} );
 
 			it( "should return true when expired credentials with by one day", ():void => {
-				const expirationTime:Date = new Date();
-				expirationTime.setDate( expirationTime.getDate() - 1 );
+				const expires:Date = new Date();
+				expires.setDate( expires.getDate() - 1 );
 
-				const credentials:TokenCredentials.Class = Resource.createFrom( {
-					key: "token-value",
-					expirationTime,
+				const credentials:TokenCredentials = Resource.createFrom( {
+					token: "token-value",
+					expires: expires,
 				} );
 
-				const authenticator:TokenAuthenticator.Class = createAuthenticatorWith( credentials );
+				const authenticator:TokenAuthenticator = createAuthenticatorWith( credentials );
 				expect( authenticator.isAuthenticated() ).toBe( false );
 			} );
 
@@ -162,118 +136,136 @@ describe( module( "carbonldp/Auth/TokenAuthenticator" ), ():void => {
 
 		describe( method( INSTANCE, "authenticate" ), ():void => {
 
+			let expires:Date;
+			beforeEach( ():void => {
+				expires = new Date( Date.now() + 24 * 60 * 60 * 1000 );
+
+				jasmine.Ajax.stubRequest( "https://example.com/users/me/" ).andReturn( {
+					status: 200,
+					responseHeaders: {
+						"eTag": `"1-12345"`,
+						"Preference-Applied": `include="${ CS.PreferAuthToken }"`,
+					},
+					responseText: `[ {
+						"@id": "_:1",
+						"@type": [ "${ C.ResponseMetadata }", "${ C.VolatileResource }" ],
+						"${ CS.authToken }": [ {
+							"@id": "_:2"
+						} ]
+					}, {
+						"@id": "_:2",
+						"@type": [ "${ CS.TokenCredentials }", "${ C.VolatileResource }" ],
+						"${ CS.token }": [ {
+							"@value": "token-key"
+						} ],
+						"${ CS.expires }": [ {
+							"@value": "${ expires.toISOString() }",
+							"@type": "${ XSD.dateTime }"
+						} ]
+					}, {
+						"@id": "https://example.com/users/me/",
+						"@graph": [
+							{
+								"@id": "https://example.com/users/me/",
+								"@type": [ "${ C.Document }", "${ CS.AuthenticatedUserInformationAccessor }" ],
+								"${ CS.authenticatedUserMetadata }": [ {
+									"@id": "_:1"
+								} ]
+							},
+							{
+								"@id": "_:1",
+								"@type": [ "${ CS.AuthenticatedUserMetadata }", "${ C.VolatileResource }" ],
+								"${ CS.user }": [ {
+									"@id": "https://example.com/users/the-user/"
+								} ]
+							}
+						]
+					} ]`,
+				} );
+				jasmine.Ajax.stubRequest( "https://example.com/users/the-user/" ).andReturn( {
+					status: 200,
+					responseHeaders: {
+						"eTag": `"2-12345"`,
+					},
+					responseText: `{
+						"@id": "https://example.com/users/the-user/",
+						"@graph": [
+							{
+								"@id": "https://example.com/users/the-user/",
+								"@type": [
+									"${ C.Document }",
+									"${ CS.User }"
+								],
+								"${ CS.name }": [ {
+									"@value": "The user name"
+								} ]
+							}
+						]
+					}`,
+				} );
+			} );
+
 			it( hasSignature(
 				"When a token is provided credentials will be requested, in other case the credentials provided will be validated and stored.",
 				[
-					{ name: "tokenOrCredentials", type: "CarbonLDP.Auth.BasicToken | CarbonLDP.Auth.TokenCredentials.Class" },
+					{ name: "tokenOrCredentials", type: "CarbonLDP.Auth.UsernameAndPasswordToken | CarbonLDP.Auth.TokenCredentialsBase" },
 				],
-				{ type: "Promise<CarbonLDP.Auth.TokenCredentials.Class>" }
+				{ type: "Promise<CarbonLDP.Auth.TokenCredentials>" }
 			), ():void => {} );
 
 			it( "should exists", ():void => {
-				expect( TokenAuthenticator.Class.prototype.authenticate ).toBeDefined();
-				expect( TokenAuthenticator.Class.prototype.authenticate ).toEqual( jasmine.any( Function ) );
+				expect( TokenAuthenticator.prototype.authenticate ).toBeDefined();
+				expect( TokenAuthenticator.prototype.authenticate ).toEqual( jasmine.any( Function ) );
 			} );
 
-			it( "should get credential when token provided", ( done:DoneFn ):void => {
-				let expirationTime:Date = new Date();
-				expirationTime.setDate( expirationTime.getDate() + 1 );
-				jasmine.Ajax.stubRequest( "https://example.com/.system/security/auth-tokens/", null, "POST" ).andReturn( {
-					status: 200,
-					responseText: `[ {
-							"@id": "_:00",
-							"@type": [
-								"${ C.ResponseMetadata }",
-								"${ C.VolatileResource }"
-							],
-							"${ C.documentMetadata }": [ {
-								"@id": "_:01"
-							} ]
-						}, {
-							"@id": "_:01",
-							"@type": [
-								"${ C.DocumentMetadata }",
-								"${ C.VolatileResource }"
-							],
-							"${ C.eTag }": [ {
-								"@value": "\\"1234567890\\""
-							} ],
-							"${ C.relatedDocument }": [ {
-								"@id": "http://successful.example.com/users/my-user/"
-							} ]
-						}, {
-							"@id": "_:02",
-							"@type": [
-								"${ CS.Token }",
-								"${ C.VolatileResource }"
-							],
-							"${ CS.tokenKey }": [ {
-								"@value": "token-value"
-							} ],
-							"${ CS.expirationTime }": {
-								"@value": "${ expirationTime.toISOString() }",
-								"@type": "${ XSD.dateTime }"
-							},
-							"${ CS.credentialsOf }": [ {
-								"@id": "http://successful.example.com/users/my-user/"
-							} ]
-						}, {
-							"@id": "http://successful.example.com/users/my-user/",
-							"@graph": [ {
-								"@id": "http://successful.example.com/users/my-user/",
-								"@type": [ "${ CS.User }" ],
-								"${ CS.name }": [ {
-									"@value": "My User Name",
-									"@type": "${ XSD.string }"
-								} ],
-								"${ CS.username }": [ {
-									"@value": "my-user@users.com",
-									"@type": "${ XSD.string }"
-								} ],
-								"${ CS.enabled }": [ {
-									"@value": "true",
-									"@type": "${ XSD.boolean }"
-								} ]
-							} ]
-						} ]`,
-				} );
-
-				const authenticator:TokenAuthenticator.Class = new TokenAuthenticator.Class( context );
+			it( "should return credentials when authentication token", ( done:DoneFn ):void => {
+				const authenticator:TokenAuthenticator = new TokenAuthenticator( context );
 				authenticator
 					.authenticate( new BasicToken( "user", "pass" ) )
-					.then( ( token:TokenCredentials.Class ):void => {
+					.then( ( token:TokenCredentials ):void => {
+						expect( token ).toBeDefined();
+						expect( token ).toEqual( jasmine.objectContaining( {
+							types: jasmine.arrayContaining( [ CS.TokenCredentials ] ) as any as string[],
+							token: "token-key",
+							expires: expires,
+						} ) );
+
+						done();
+					} )
+					.catch( done.fail );
+			} );
+
+			it( "should set authenticated when authentication token", ( done:DoneFn ):void => {
+				const authenticator:TokenAuthenticator = new TokenAuthenticator( context );
+				authenticator
+					.authenticate( new UsernameAndPasswordToken( "user", "pass" ) )
+					.then( ():void => {
 						expect( authenticator.isAuthenticated() ).toEqual( true );
 
-						expect( token ).toBeDefined();
-						expect( token ).not.toBeNull();
-						expect( TokenCredentials.Factory.is( token ) ).toEqual( true );
-
-						expect( PersistedUser.is( token.user ) ).toBe( true );
 						done();
 					} )
 					.catch( done.fail );
 			} );
 
 			it( "should call _parseErrorResponse when request error", ( done:DoneFn ):void => {
-				jasmine.Ajax.stubRequest( "https://example.com/.system/security/auth-tokens/" ).andReturn( {
+				jasmine.Ajax.stubRequest( "https://example.com/users/me/" ).andReturn( {
 					status: 500,
 					responseText: "",
 				} );
 
-				const error:Error = new Error( "Error message" );
-				const spy:jasmine.Spy = spyOn( context.documents, "_parseErrorResponse" ).and.callFake( () => Promise.reject( error ) );
+				const expectedError:Error = new Error( "Error message" );
+				const spy:jasmine.Spy = spyOn( context.documents, "_parseErrorResponse" )
+					.and.callFake( () => Promise.reject( expectedError ) );
 
-				const authenticator:TokenAuthenticator.Class = new TokenAuthenticator.Class( context );
+				const authenticator:TokenAuthenticator = new TokenAuthenticator( context );
 				authenticator
 					.authenticate( new BasicToken( "user", "pass" ) )
-					.then( () => {
-						done.fail( "Should not resolve" );
-					} )
-					.catch( _error => {
+					.then( () => done.fail( "Should not resolve" ) )
+					.catch( error => {
 						expect( spy ).toHaveBeenCalled();
 
-						expect( _error ).toBeDefined();
-						expect( _error ).toBe( error );
+						expect( error ).toBeDefined();
+						expect( error ).toBe( expectedError );
 
 						done();
 					} )
@@ -281,25 +273,18 @@ describe( module( "carbonldp/Auth/TokenAuthenticator" ), ():void => {
 			} );
 
 
-			it( "should return same credential when valid credentials", ( done:DoneFn ):void => {
-				const expirationTime:Date = new Date();
-				expirationTime.setDate( expirationTime.getDate() + 1 );
-				const credentials:TokenCredentials.Class = Resource.createFrom( {
-					types: [ CS.Token ],
-					key: "token-value",
-					expirationTime,
+			it( "should return same credentials when valid token credentials", ( done:DoneFn ):void => {
+				const credentials:TokenCredentials = TokenCredentials.createFrom( {
+					token: "token-value",
+					expires: expires,
 				} );
 
-				const authenticator:TokenAuthenticator.Class = new TokenAuthenticator.Class( context );
+				const authenticator:TokenAuthenticator = new TokenAuthenticator( context );
 				authenticator
 					.authenticate( credentials )
-					.then( ( newCredentials:TokenCredentials.Class ):void => {
-						expect( authenticator.isAuthenticated() ).toEqual( true );
-
-						expect( newCredentials ).toBeDefined();
-						expect( TokenCredentials.Factory.hasClassProperties( newCredentials ) ).toEqual( true );
-
-						expect( newCredentials ).toBe( credentials );
+					.then( ( tokenCredentials:TokenCredentials ):void => {
+						expect( tokenCredentials ).toBeDefined();
+						expect( tokenCredentials ).toBe( credentials );
 
 						done();
 					} )
@@ -307,25 +292,17 @@ describe( module( "carbonldp/Auth/TokenAuthenticator" ), ():void => {
 				;
 			} );
 
-			it( "should parse expiration date if string", ( done:DoneFn ):void => {
-				const expirationTime:Date = new Date();
-				expirationTime.setDate( expirationTime.getDate() + 1 );
+			it( "should set authenticated when valid token credentials", ( done:DoneFn ):void => {
+				const credentials:TokenCredentials = TokenCredentials.createFrom( {
+					token: "token-value",
+					expires: expires,
+				} );
 
-				const authenticator:TokenAuthenticator.Class = new TokenAuthenticator.Class( context );
+				const authenticator:TokenAuthenticator = new TokenAuthenticator( context );
 				authenticator
-					.authenticate( JSON.parse( `{
-						"types": [ "${ CS.Token }" ],
-						"key": "token-value",
-						"expirationTime": "${ expirationTime.toISOString() }"
-					}` ) )
-					.then( ( credentials:TokenCredentials.Class ):void => {
-						expect( authenticator.isAuthenticated() ).toEqual( true );
-
-						expect( credentials ).toBeDefined();
-						expect( TokenCredentials.Factory.hasClassProperties( credentials ) ).toEqual( true );
-
-						expect( credentials.expirationTime ).toEqual( jasmine.any( Date ) );
-						expect( credentials.expirationTime ).toEqual( expirationTime );
+					.authenticate( credentials )
+					.then( ():void => {
+						expect( authenticator.isAuthenticated() ).toBe( true );
 
 						done();
 					} )
@@ -334,29 +311,117 @@ describe( module( "carbonldp/Auth/TokenAuthenticator" ), ():void => {
 			} );
 
 			it( "should throw error when invalid expiration date", ( done:DoneFn ):void => {
-				const expirationTime:Date = new Date();
-				expirationTime.setDate( expirationTime.getDate() - 1 );
-				const credentials:TokenCredentials.Class = Resource.createFrom( {
-					types: [ CS.Token ],
-					key: "token-value",
-					expirationTime,
+				const credentials:TokenCredentials = TokenCredentials.createFrom( {
+					token: "token-value",
+					expires: new Date( Date.now() - 24 * 60 * 60 * 1000 ),
 				} );
 
-				const authenticator:TokenAuthenticator.Class = new TokenAuthenticator.Class( context );
+				const authenticator:TokenAuthenticator = new TokenAuthenticator( context );
 				authenticator
 					.authenticate( credentials )
 					.then( ():void => {
 						done.fail( "Should not resolve." );
 					} )
 					.catch( error => {
-						expect( error ).toEqual( jasmine.any( Errors.IllegalArgumentError ) );
-						expect( error.message ).toBe( "The token has already expired." );
-
-						expect( authenticator.isAuthenticated() ).toEqual( false );
+						expect( () => { throw error; } ).toThrowError( IllegalArgumentError, "The token has already expired." );
 
 						done();
 					} )
 				;
+			} );
+
+			it( "should not authenticate when invalid expiration date", ( done:DoneFn ):void => {
+				const credentials:TokenCredentials = TokenCredentials.createFrom( {
+					token: "token-value",
+					expires: new Date( Date.now() - 24 * 60 * 60 * 1000 ),
+				} );
+
+				const authenticator:TokenAuthenticator = new TokenAuthenticator( context );
+				authenticator
+					.authenticate( credentials )
+					.then( ():void => {
+						done.fail( "Should not resolve." );
+					} )
+					.catch( () => {
+						expect( authenticator.isAuthenticated() ).toBe( false );
+
+						done();
+					} )
+				;
+			} );
+
+
+			it( "should return credentials when token credentials base", ( done:DoneFn ):void => {
+				const credentials:TokenCredentialsBase = { token: "token-value", expires: expires };
+
+				const authenticator:TokenAuthenticator = new TokenAuthenticator( context );
+				authenticator
+					.authenticate( credentials )
+					.then( ( tokenCredentials:TokenCredentials ):void => {
+						expect( tokenCredentials ).toBeDefined();
+						expect( credentials ).toBe( tokenCredentials );
+
+						done();
+					} )
+					.catch( done.fail )
+				;
+			} );
+
+			it( "should parse expiration date if string in token credentials base", ( done:DoneFn ):void => {
+				const credentials:TokenCredentialsBase = { token: "token-value", expires: expires.toISOString() };
+
+				const authenticator:TokenAuthenticator = new TokenAuthenticator( context );
+				authenticator
+					.authenticate( credentials )
+					.then( ( tokenCredentials:TokenCredentials ):void => {
+						expect( tokenCredentials ).toBeDefined();
+
+						expect( tokenCredentials.expires ).toEqual( jasmine.any( Date ) );
+						expect( tokenCredentials.expires ).toEqual( new Date( credentials.expires as string ) );
+
+						done();
+					} )
+					.catch( done.fail )
+				;
+			} );
+
+
+			it( "should throw error if preference cs:PreferAuthToken was not applied", ( done:DoneFn ):void => {
+				jasmine.Ajax.stubRequest( "https://example.com/users/me/" ).andReturn( {
+					status: 200,
+					responseHeaders: {
+						"eTag": `"1-12345"`,
+					},
+					responseText: `[ {
+						"@id": "https://example.com/users/me/",
+						"@graph": [
+							{
+								"@id": "https://example.com/users/me/",
+								"@type": [ "${ C.Document }", "${ CS.AuthenticatedUserInformationAccessor }" ],
+								"${ CS.authenticatedUserMetadata }": [ {
+									"@id": "_:1"
+								} ]
+							},
+							{
+								"@id": "_:1",
+								"@type": [ "${ CS.AuthenticatedUserMetadata }", "${ C.VolatileResource }" ],
+								"${ CS.user }": [ {
+									"@id": "https://example.com/users/the-user/"
+								} ]
+							}
+						]
+					} ]`,
+				} );
+
+				const authenticator:TokenAuthenticator = new TokenAuthenticator( context );
+				authenticator
+					.authenticate( new UsernameAndPasswordToken( "user", "pass" ) )
+					.then( () => done.fail( "should not resolve" ) )
+					.catch( error => {
+						expect( () => { throw error; } ).toThrowError( BadResponseError, `Preference "include="${ CS.PreferAuthToken }"" was not applied.` );
+
+						done();
+					} );
 			} );
 
 		} );
@@ -364,31 +429,26 @@ describe( module( "carbonldp/Auth/TokenAuthenticator" ), ():void => {
 		describe( "TokenAuthenticator.addAuthentication", ():void => {
 
 			it( "should add the header value", ():void => {
-				const expirationTime:Date = new Date();
-				expirationTime.setDate( expirationTime.getDate() + 1 );
+				const expires:Date = new Date();
+				expires.setDate( expires.getDate() + 1 );
 
-				const credentials:TokenCredentials.Class = Resource.createFrom( {
-					key: "token-value",
-					expirationTime,
+				const credentials:TokenCredentials = Resource.createFrom( {
+					token: "token-value",
+					expires: expires,
 				} );
 
-				const authenticator:TokenAuthenticator.Class = createAuthenticatorWith( credentials );
+				const authenticator:TokenAuthenticator = createAuthenticatorWith( credentials );
 
 				const options:RequestOptions = {};
 				authenticator.addAuthentication( options );
 
 				expect( options.headers ).toEqual( new Map( [
-					[ "authorization", new Header( [ "Token token-value" ] ), ],
+					[ "authorization", new Header( [ "Bearer token-value" ] ), ],
 				] ) );
 			} );
 
 		} );
 
-	} );
-
-	it( hasDefaultExport( "CarbonLDP.Auth.TokenAuthenticator.Class" ), ():void => {
-		expect( DefaultExport ).toBeDefined();
-		expect( DefaultExport ).toBe( TokenAuthenticator.Class );
 	} );
 
 } );

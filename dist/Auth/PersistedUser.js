@@ -10,7 +10,9 @@ exports.PersistedUser = {
     decorate: function (object, documents) {
         User_1.User.decorate(object);
         PersistedProtectedDocument_1.PersistedProtectedDocument.decorate(object, documents);
-        return object;
+        var persistedUser = object;
+        persistedUser.addType(exports.PersistedUser.TYPE);
+        return persistedUser;
     },
 };
 

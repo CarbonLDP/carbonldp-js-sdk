@@ -28,6 +28,9 @@ export const PersistedUser:PersistedUserFactory = {
 		User.decorate( object );
 		PersistedProtectedDocument.decorate( object, documents );
 
-		return object as T & PersistedUser;
+		const persistedUser:T & PersistedUser = object as T & PersistedUser;
+		persistedUser.addType( PersistedUser.TYPE );
+
+		return persistedUser;
 	},
 };

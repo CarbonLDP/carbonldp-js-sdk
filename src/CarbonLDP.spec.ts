@@ -490,7 +490,7 @@ describe( module( "carbonldp/CarbonLDP" ), ():void => {
 
 
 			it( "should throw error when invalid host property", ():void => {
-				const helper:( settings:Settings.CarbonSettings ) => void = settings => () => {
+				const helper:( settings:Settings.CarbonLDPSettings ) => void = settings => () => {
 					new CarbonLDP.CarbonLDP( settings );
 				};
 
@@ -500,7 +500,7 @@ describe( module( "carbonldp/CarbonLDP" ), ():void => {
 			} );
 
 			it( "should throw error when invalid host with protocol", ():void => {
-				const helper:( settings:Settings.CarbonSettings ) => void = settings => () => {
+				const helper:( settings:Settings.CarbonLDPSettings ) => void = settings => () => {
 					new CarbonLDP.CarbonLDP( settings );
 				};
 
@@ -510,7 +510,7 @@ describe( module( "carbonldp/CarbonLDP" ), ():void => {
 			} );
 
 			it( "should throw error when invalid host with port", ():void => {
-				const helper:( settings:Settings.CarbonSettings ) => void = settings => () => {
+				const helper:( settings:Settings.CarbonLDPSettings ) => void = settings => () => {
 					new CarbonLDP.CarbonLDP( settings );
 				};
 
@@ -519,7 +519,7 @@ describe( module( "carbonldp/CarbonLDP" ), ():void => {
 			} );
 
 			it( "should create base URI with settings host", ():void => {
-				const helper:( settings:Settings.CarbonSettings, uri:string ) => void = ( settings, uri ) => {
+				const helper:( settings:Settings.CarbonLDPSettings, uri:string ) => void = ( settings, uri ) => {
 					const carbon:CarbonLDP.CarbonLDP = new CarbonLDP.CarbonLDP( settings );
 					expect( carbon.baseURI ).toBe( uri );
 				};
@@ -529,7 +529,7 @@ describe( module( "carbonldp/CarbonLDP" ), ():void => {
 			} );
 
 			it( "should create base URI with settings host and ssl", ():void => {
-				const helper:( settings:Settings.CarbonSettings, uri:string ) => void = ( settings, uri ) => {
+				const helper:( settings:Settings.CarbonLDPSettings, uri:string ) => void = ( settings, uri ) => {
 					const carbon:CarbonLDP.CarbonLDP = new CarbonLDP.CarbonLDP( settings );
 					expect( carbon.baseURI ).toBe( uri );
 				};
@@ -539,7 +539,7 @@ describe( module( "carbonldp/CarbonLDP" ), ():void => {
 			} );
 
 			it( "should create base URI with settings host and port", ():void => {
-				const helper:( settings:Settings.CarbonSettings, uri:string ) => void = ( settings, uri ) => {
+				const helper:( settings:Settings.CarbonLDPSettings, uri:string ) => void = ( settings, uri ) => {
 					const carbon:CarbonLDP.CarbonLDP = new CarbonLDP.CarbonLDP( settings );
 					expect( carbon.baseURI ).toBe( uri );
 				};
@@ -549,7 +549,7 @@ describe( module( "carbonldp/CarbonLDP" ), ():void => {
 			} );
 
 			it( "should create base URI with settings host, ssl and port", ():void => {
-				const helper:( settings:Settings.CarbonSettings, uri:string ) => void = ( settings, uri ) => {
+				const helper:( settings:Settings.CarbonLDPSettings, uri:string ) => void = ( settings, uri ) => {
 					const carbon:CarbonLDP.CarbonLDP = new CarbonLDP.CarbonLDP( settings );
 					expect( carbon.baseURI ).toBe( uri );
 				};
@@ -559,7 +559,7 @@ describe( module( "carbonldp/CarbonLDP" ), ():void => {
 			} );
 
 			it( "should create base URI with settings host, ssl and port", ():void => {
-				const helper:( settings:Settings.CarbonSettings, uri:string ) => void = ( settings, uri ) => {
+				const helper:( settings:Settings.CarbonLDPSettings, uri:string ) => void = ( settings, uri ) => {
 					const carbon:CarbonLDP.CarbonLDP = new CarbonLDP.CarbonLDP( settings );
 					expect( carbon.baseURI ).toBe( uri );
 				};
@@ -572,7 +572,7 @@ describe( module( "carbonldp/CarbonLDP" ), ():void => {
 			it( "should have the default settings when url provided", ():void => {
 				const carbon:CarbonLDP.CarbonLDP = new CarbonLDP.CarbonLDP( "https://example.com/" );
 				expect( carbon[ "settings" ] ).toEqual( {
-					vocabulary: "vocabulary/#",
+					vocabulary: "vocabularies/main/#",
 					paths: {
 						system: {
 							slug: ".system/",
@@ -582,7 +582,12 @@ describe( module( "carbonldp/CarbonLDP" ), ():void => {
 								roles: "roles/",
 							},
 						},
-						users: "users/",
+						users: {
+							slug: "users/",
+							paths: {
+								me: "me/",
+							},
+						},
 					},
 				} );
 			} );
@@ -595,7 +600,8 @@ describe( module( "carbonldp/CarbonLDP" ), ():void => {
 						system: {
 							slug: "https://secure.example.com/",
 							paths: {
-								users: null,
+								roles: null,
+								another: "another/",
 							},
 						},
 						users: "agents/",
@@ -610,10 +616,15 @@ describe( module( "carbonldp/CarbonLDP" ), ():void => {
 							paths: {
 								platform: "platform/",
 								credentials: "credentials/",
-								roles: "roles/",
+								another: "another/",
 							},
 						},
-						users: "agents/",
+						users: {
+							slug: "agents/",
+							paths: {
+								me: "me/",
+							},
+						},
 					},
 				} );
 			} );

@@ -16,7 +16,7 @@ export declare function isFunction(value: any): value is Function;
 export declare function isMap(value: any): boolean;
 export declare function parseBoolean(value: string): boolean;
 export declare function forEachOwnProperty(object: Object, action: (name: string, value: any) => (boolean | void)): void;
-export declare function promiseMethod<T>(fn: () => T | Promise<T>): Promise<T>;
+export declare function promiseMethod<T>(fn?: () => T | Promise<T>): Promise<T>;
 export declare function mapTupleArray<T, W>(tuples: [T, W][]): [T[], W[]];
 export declare class ArrayUtils {
     static from<T>(iterator: Iterator<T>): Array<T>;

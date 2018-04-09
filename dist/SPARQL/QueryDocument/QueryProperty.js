@@ -8,6 +8,7 @@ var QueryPropertyType;
     QueryPropertyType[QueryPropertyType["FULL"] = 0] = "FULL";
     QueryPropertyType[QueryPropertyType["PARTIAL"] = 1] = "PARTIAL";
     QueryPropertyType[QueryPropertyType["ALL"] = 2] = "ALL";
+    QueryPropertyType[QueryPropertyType["EMPTY"] = 3] = "EMPTY";
 })(QueryPropertyType = exports.QueryPropertyType || (exports.QueryPropertyType = {}));
 var QueryProperty = (function () {
     function QueryProperty(context, name) {
@@ -28,9 +29,8 @@ var QueryProperty = (function () {
     };
     QueryProperty.prototype.getPatterns = function () {
         var patterns = this._patterns.slice();
-        if (this._type !== void 0) {
-            var fn = this._type === QueryPropertyType.PARTIAL ? Utils_1.createTypesPattern :
-                this._type === QueryPropertyType.FULL ? Utils_1.createGraphPattern : Utils_1.createAllPattern;
+        var fn = getFunctionPattern(this.getType());
+        if (fn) {
             var index = patterns.findIndex(function (pattern) { return pattern === void 0; });
             patterns[index] = fn(this._context, this.name);
         }
@@ -70,5 +70,18 @@ var QueryProperty = (function () {
     return QueryProperty;
 }());
 exports.QueryProperty = QueryProperty;
+function getFunctionPattern(type) {
+    switch (type) {
+        case QueryPropertyType.ALL:
+            return Utils_1.createAllPattern;
+        case QueryPropertyType.FULL:
+            return Utils_1.createGraphPattern;
+        case QueryPropertyType.EMPTY:
+        case QueryPropertyType.PARTIAL:
+            return Utils_1.createTypesPattern;
+        default:
+            return null;
+    }
+}
 
 //# sourceMappingURL=QueryProperty.js.map

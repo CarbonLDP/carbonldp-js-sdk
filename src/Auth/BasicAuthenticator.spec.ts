@@ -1,6 +1,9 @@
+import { AbstractContext } from "../AbstractContext";
+import { Context } from "../Context";
 import * as Errors from "../Errors";
 import { Header } from "../HTTP/Header";
 import { RequestOptions } from "../HTTP/Request";
+import { ContextSettings } from "../Settings";
 import {
 	clazz,
 	extendsClass,
@@ -19,6 +22,21 @@ import { BasicToken } from "./BasicToken";
 
 describe( module( "carbonldp/Auth/BasicAuthenticator" ), ():void => {
 
+	let context:Context;
+	beforeEach( ():void => {
+		context = new class extends AbstractContext {
+			protected _baseURI:string = "https://example.com";
+			protected settings:ContextSettings = {
+				paths: {
+					users: {
+						slug: "users/",
+						paths: { me: "me/" },
+					},
+				},
+			};
+		};
+	} );
+
 	describe( clazz(
 		"CarbonLDP.Auth.BasicAuthenticator",
 		"Authenticates requests using HTTP Basic Authentication."
@@ -30,14 +48,14 @@ describe( module( "carbonldp/Auth/BasicAuthenticator" ), ():void => {
 		} );
 
 		it( hasConstructor(), ():void => {
-			const authenticator:BasicAuthenticator = new BasicAuthenticator();
+			const authenticator:BasicAuthenticator = new BasicAuthenticator( context );
 
 			expect( authenticator ).toBeDefined();
 			expect( authenticator ).toEqual( jasmine.any( BasicAuthenticator ) );
 		} );
 
 		it( extendsClass( "CarbonLDP.Auth.Authenticator<CarbonLDP.Auth.UsernameAndPasswordToken>" ), ():void => {
-			const authenticator:BasicAuthenticator = new BasicAuthenticator();
+			const authenticator:BasicAuthenticator = new BasicAuthenticator( context );
 			expect( authenticator ).toEqual( jasmine.any( Authenticator ) );
 		} );
 
@@ -47,7 +65,7 @@ describe( module( "carbonldp/Auth/BasicAuthenticator" ), ():void => {
 			"Returns true if the instance contains stored credentials.",
 			{ type: "boolean" }
 		), ( done:() => void ):void => {
-			let authenticator:BasicAuthenticator = new BasicAuthenticator();
+			let authenticator:BasicAuthenticator = new BasicAuthenticator( context );
 
 			expect( authenticator.isAuthenticated ).toBeDefined();
 			expect( authenticator.isAuthenticated ).toEqual( jasmine.any( Function ) );
@@ -76,7 +94,7 @@ describe( module( "carbonldp/Auth/BasicAuthenticator" ), ():void => {
 
 			// Property Integrity
 			(() => {
-				let authenticator:BasicAuthenticator = new BasicAuthenticator();
+				let authenticator:BasicAuthenticator = new BasicAuthenticator( context );
 
 				expect( authenticator.authenticate ).toBeDefined();
 				expect( authenticator.authenticate ).toEqual( jasmine.any( Function ) );
@@ -86,7 +104,7 @@ describe( module( "carbonldp/Auth/BasicAuthenticator" ), ():void => {
 
 			// Successful Authentication
 			(() => {
-				let authenticator:BasicAuthenticator = new BasicAuthenticator();
+				let authenticator:BasicAuthenticator = new BasicAuthenticator( context );
 				let promise:Promise<BasicCredentials>;
 				promise = authenticator.authenticate( new BasicToken( "foo", "foo" ) );
 
@@ -110,7 +128,7 @@ describe( module( "carbonldp/Auth/BasicAuthenticator" ), ():void => {
 			})();
 
 			(() => {
-				let unsuccessfulAuthenticator:BasicAuthenticator = new BasicAuthenticator();
+				let unsuccessfulAuthenticator:BasicAuthenticator = new BasicAuthenticator( context );
 				let promise:Promise<BasicCredentials>;
 				promise = unsuccessfulAuthenticator.authenticate( new BasicToken( null, null ) );
 
@@ -140,7 +158,7 @@ describe( module( "carbonldp/Auth/BasicAuthenticator" ), ():void => {
 			{ type: "CarbonLDP.HTTP.RequestOptions", description: "The request options with the added authentication headers." }
 		), ( done:{ ():void; fail:( error:any ) => void } ):void => {
 			let promises:Promise<void>[] = [];
-			let authenticator:BasicAuthenticator = new BasicAuthenticator();
+			let authenticator:BasicAuthenticator = new BasicAuthenticator( context );
 
 			expect( authenticator.addAuthentication ).toBeDefined();
 			expect( authenticator.addAuthentication ).toEqual( jasmine.any( Function ) );
@@ -298,7 +316,7 @@ describe( module( "carbonldp/Auth/BasicAuthenticator" ), ():void => {
 			"Clears any saved credentials and restores the Authenticator to its initial state."
 		), ( done:{ ():void; fail:( error:any ) => void } ):void => {
 			let promises:Promise<void>[] = [];
-			let authenticator:BasicAuthenticator = new BasicAuthenticator();
+			let authenticator:BasicAuthenticator = new BasicAuthenticator( context );
 
 			expect( authenticator.clearAuthentication ).toBeDefined();
 			expect( authenticator.clearAuthentication ).toEqual( jasmine.any( Function ) );

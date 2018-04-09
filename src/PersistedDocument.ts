@@ -76,8 +76,6 @@ export interface PersistedDocument extends Document, PersistedResource, ServiceA
 
 	delete( requestOptions?:RequestOptions ):Promise<void>;
 
-	getDownloadURL( requestOptions?:RequestOptions ):Promise<string>;
-
 
 	addMember( member:Pointer, requestOptions?:RequestOptions ):Promise<void>;
 
@@ -124,7 +122,7 @@ export interface PersistedDocument extends Document, PersistedResource, ServiceA
 	createAccessPoints<T extends object>( accessPoints:(T & AccessPointBase)[], requestOptions?:RequestOptions ):Promise<(T & PersistedAccessPoint)[]>;
 
 
-	listChildren( requestOptions?:RequestOptions ):Promise<PersistedDocument[]>;
+	listChildren<T extends object>( requestOptions?:RequestOptions ):Promise<(T & PersistedDocument)[]>;
 
 
 	getChildren<T extends object>( requestOptions?:RequestOptions, queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder ) => QueryDocumentsBuilder ):Promise<(T & PersistedDocument)[]>;
@@ -132,7 +130,7 @@ export interface PersistedDocument extends Document, PersistedResource, ServiceA
 	getChildren<T extends object>( queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder ) => QueryDocumentsBuilder ):Promise<(T & PersistedDocument)[]>;
 
 
-	listMembers( requestOptions?:RequestOptions ):Promise<PersistedDocument[]>;
+	listMembers<T extends object>( requestOptions?:RequestOptions ):Promise<(T & PersistedDocument)[]>;
 
 
 	getMembers<T extends object>( requestOptions?:RequestOptions, queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder ) => QueryDocumentsBuilder ):Promise<(T & PersistedDocument)[]>;
@@ -152,6 +150,10 @@ export interface PersistedDocument extends Document, PersistedResource, ServiceA
 	executeRawASKQuery( askQuery:string, requestOptions?:RequestOptions ):Promise<SPARQLRawResults>;
 
 	executeASKQuery( askQuery:string, requestOptions?:RequestOptions ):Promise<boolean>;
+
+	executeRawSELECTQuery( selectQuery:string, requestOptions?:RequestOptions ):Promise<SPARQLRawResults>;
+
+	executeSELECTQuery<T extends object>( selectQuery:string, requestOptions?:RequestOptions ):Promise<SPARQLSelectResults<T>>;
 
 	executeRawSELECTQuery( selectQuery:string, requestOptions?:RequestOptions ):Promise<SPARQLRawResults>;
 
@@ -191,8 +193,6 @@ export const PersistedDocument:PersistedDocumentFactory = {
 			&& Utils.hasFunction( object, "save" )
 			&& Utils.hasFunction( object, "saveAndRefresh" )
 			&& Utils.hasFunction( object, "delete" )
-
-			&& Utils.hasFunction( object, "getDownloadURL" )
 
 			&& Utils.hasFunction( object, "addMember" )
 			&& Utils.hasFunction( object, "addMembers" )
@@ -363,13 +363,6 @@ export const PersistedDocument:PersistedDocumentFactory = {
 				enumerable: false,
 				configurable: true,
 				value: _delete,
-			},
-
-			"getDownloadURL": {
-				writable: false,
-				enumerable: false,
-				configurable: true,
-				value: getDownloadURL,
 			},
 
 			"addMember": {
@@ -653,10 +646,6 @@ function saveAndRefresh<T extends object>( this:T & PersistedDocument, requestOp
 
 function _delete( this:PersistedDocument, requestOptions?:RequestOptions ):Promise<void> {
 	return this._documents.delete( this.id, requestOptions );
-}
-
-function getDownloadURL( this:PersistedDocument, requestOptions?:RequestOptions ):Promise<string> {
-	return this._documents.getDownloadURL( this.id, requestOptions );
 }
 
 function addMember( member:Pointer, requestOptions?:RequestOptions ):Promise<void>;

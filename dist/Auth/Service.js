@@ -6,28 +6,15 @@ var __importStar = (this && this.__importStar) || function (mod) {
     result["default"] = mod;
     return result;
 }
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-}
 Object.defineProperty(exports, "__esModule", { value: true });
 var Errors = __importStar(require("../Errors"));
-var FreeResources_1 = require("../FreeResources");
-var Errors_1 = require("../HTTP/Errors");
-var Request_1 = require("../HTTP/Request");
-var Parser_1 = require("../JSONLD/Parser");
-var Node_1 = require("../RDF/Node");
-var URI_1 = require("../RDF/URI");
-var Resource_1 = require("../Resource");
 var Utils = __importStar(require("../Utils"));
-var LDP_1 = require("../Vocabularies/LDP");
 var AuthMethod_1 = require("./AuthMethod");
 var BasicAuthenticator_1 = require("./BasicAuthenticator");
 var BasicToken_1 = require("./BasicToken");
-var PersistedUser_1 = require("./PersistedUser");
 var Roles = __importStar(require("./Roles"));
-var Ticket = __importStar(require("./Ticket"));
-var TokenAuthenticator_1 = __importDefault(require("./TokenAuthenticator"));
-var TokenCredentials = __importStar(require("./TokenCredentials"));
+var TokenAuthenticator_1 = require("./TokenAuthenticator");
+var TokenCredentials_1 = require("./TokenCredentials");
 var UsersEndpoint_1 = require("./UsersEndpoint");
 var AuthService = (function () {
     function AuthService(context) {
@@ -36,8 +23,8 @@ var AuthService = (function () {
         this.users = context.documents.register(usersIRI, [UsersEndpoint_1.UsersEndpoint.TYPE]);
         this.roles = new Roles.Class(context);
         this.authenticators = (_a = {},
-            _a[AuthMethod_1.AuthMethod.BASIC] = new BasicAuthenticator_1.BasicAuthenticator(),
-            _a[AuthMethod_1.AuthMethod.TOKEN] = new TokenAuthenticator_1.default(this.context),
+            _a[AuthMethod_1.AuthMethod.BASIC] = new BasicAuthenticator_1.BasicAuthenticator(this.context),
+            _a[AuthMethod_1.AuthMethod.TOKEN] = new TokenAuthenticator_1.TokenAuthenticator(this.context),
             _a);
         var _a;
     }
@@ -61,14 +48,32 @@ var AuthService = (function () {
         return this.authenticateUsing(AuthMethod_1.AuthMethod.TOKEN, username, password);
     };
     AuthService.prototype.authenticateUsing = function (method, userOrCredentials, password) {
-        switch (method) {
-            case AuthMethod_1.AuthMethod.BASIC:
-                return this.authenticateWithBasic(userOrCredentials, password);
-            case AuthMethod_1.AuthMethod.TOKEN:
-                return this.authenticateWithToken(userOrCredentials, password);
-            default:
-                return Promise.reject(new Errors.IllegalArgumentError("Unsupported authentication method \"" + method + "\""));
+        var _this = this;
+        this.clearAuthentication();
+        var authenticator = this.authenticators[method];
+        if (!authenticator)
+            return Promise.reject(new Errors.IllegalArgumentError("Invalid authentication method \"" + method + "\"."));
+        var authenticationToken;
+        if (Utils.isString(userOrCredentials))
+            authenticationToken = new BasicToken_1.BasicToken(userOrCredentials, password);
+        else if (TokenCredentials_1.TokenCredentialsBase.is(userOrCredentials)) {
+            authenticationToken = userOrCredentials;
         }
+        else {
+            return Promise.reject(new Errors.IllegalArgumentError("Invalid authentication token."));
+        }
+        var credentials;
+        return authenticator
+            .authenticate(authenticationToken)
+            .then(function (_credentials) {
+            credentials = _credentials;
+            return authenticator
+                .getAuthenticatedUser();
+        }).then(function (persistedUser) {
+            _this._authenticatedUser = persistedUser;
+            _this.authenticator = authenticator;
+            return credentials;
+        });
     };
     AuthService.prototype.addAuthentication = function (requestOptions) {
         if (this.isAuthenticated(false)) {
@@ -87,93 +92,6 @@ var AuthService = (function () {
         this.authenticator.clearAuthentication();
         this.authenticator = null;
         this._authenticatedUser = null;
-    };
-    AuthService.prototype.createTicket = function (uri, requestOptions) {
-        var _this = this;
-        if (requestOptions === void 0) { requestOptions = {}; }
-        var resourceURI = this.context.resolve(uri);
-        var freeResources = FreeResources_1.FreeResources.create(this.context.documents);
-        Ticket.Factory.createFrom(freeResources.createResource(), resourceURI);
-        if (this.isAuthenticated())
-            this.addAuthentication(requestOptions);
-        Request_1.RequestUtils.setAcceptHeader("application/ld+json", requestOptions);
-        Request_1.RequestUtils.setContentTypeHeader("application/ld+json", requestOptions);
-        Request_1.RequestUtils.setPreferredInteractionModel(LDP_1.LDP.RDFSource, requestOptions);
-        return Utils.promiseMethod(function () {
-            var containerURI = _this.context._resolvePath("system.security") + Ticket.TICKETS_CONTAINER;
-            var body = JSON.stringify(freeResources);
-            return Request_1.RequestService.post(containerURI, body, requestOptions, new Parser_1.JSONLDParser());
-        }).then(function (_a) {
-            var expandedResult = _a[0], response = _a[1];
-            var freeNodes = Node_1.RDFNode.getFreeNodes(expandedResult);
-            var ticketNodes = freeNodes.filter(function (freeNode) { return Node_1.RDFNode.hasType(freeNode, Ticket.RDF_CLASS); });
-            if (ticketNodes.length === 0)
-                throw new Errors_1.BadResponseError("No " + Ticket.RDF_CLASS + " was returned.", response);
-            if (ticketNodes.length > 1)
-                throw new Errors_1.BadResponseError("Multiple " + Ticket.RDF_CLASS + " were returned.", response);
-            var expandedTicket = ticketNodes[0];
-            var ticket = Resource_1.Resource.create();
-            var digestedSchema = _this.context.documents.getSchemaFor(expandedTicket);
-            _this.context.documents.jsonldConverter.compact(expandedTicket, ticket, digestedSchema, _this.context.documents);
-            return [ticket, response];
-        })
-            .catch(function (error) { return _this.context.documents._parseErrorResponse(error); });
-    };
-    AuthService.prototype.getAuthenticatedURL = function (uri, requestOptions) {
-        var resourceURI = this.context.resolve(uri);
-        return this.createTicket(resourceURI, requestOptions).then(function (_a) {
-            var ticket = _a[0];
-            resourceURI += URI_1.URI.hasQuery(resourceURI) ? "&" : "?";
-            resourceURI += "ticket=" + ticket.ticketKey;
-            return resourceURI;
-        });
-    };
-    AuthService.prototype.authenticateWithBasic = function (username, password) {
-        var _this = this;
-        var authenticator = this.authenticators[AuthMethod_1.AuthMethod.BASIC];
-        var authenticationToken = new BasicToken_1.BasicToken(username, password);
-        this.clearAuthentication();
-        var newCredentials;
-        return authenticator
-            .authenticate(authenticationToken)
-            .then(function (credentials) {
-            newCredentials = credentials;
-            return _this.getAuthenticatedUser(authenticator);
-        })
-            .then(function (persistedUser) {
-            _this._authenticatedUser = persistedUser;
-            _this.authenticator = authenticator;
-            return newCredentials;
-        });
-    };
-    AuthService.prototype.authenticateWithToken = function (userOrCredentials, password) {
-        var _this = this;
-        var authenticator = this.authenticators[AuthMethod_1.AuthMethod.TOKEN];
-        var tokenOrCredentials = Utils.isString(userOrCredentials) ?
-            new BasicToken_1.BasicToken(userOrCredentials, password) :
-            TokenCredentials.Factory.hasClassProperties(userOrCredentials) ?
-                userOrCredentials :
-                new Errors.IllegalArgumentError("The token credentials provided in not valid.");
-        if (tokenOrCredentials instanceof Error)
-            return Promise.reject(tokenOrCredentials);
-        this.clearAuthentication();
-        var newCredentials;
-        return authenticator.authenticate(tokenOrCredentials).then(function (credentials) {
-            newCredentials = credentials;
-            if (PersistedUser_1.PersistedUser.is(credentials.user))
-                return credentials.user;
-            return _this.getAuthenticatedUser(authenticator);
-        }).then(function (persistedUser) {
-            _this._authenticatedUser = persistedUser;
-            _this.authenticator = authenticator;
-            newCredentials.user = persistedUser;
-            return newCredentials;
-        });
-    };
-    AuthService.prototype.getAuthenticatedUser = function (authenticator) {
-        var requestOptions = {};
-        authenticator.addAuthentication(requestOptions);
-        return this.users.get("me/", requestOptions);
     };
     return AuthService;
 }());

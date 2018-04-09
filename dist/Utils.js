@@ -119,7 +119,7 @@ function forEachOwnProperty(object, action) {
 }
 exports.forEachOwnProperty = forEachOwnProperty;
 function promiseMethod(fn) {
-    return new Promise(function (resolve) { return resolve(fn()); });
+    return new Promise(function (resolve) { return resolve(fn ? fn() : void 0); });
 }
 exports.promiseMethod = promiseMethod;
 function mapTupleArray(tuples) {

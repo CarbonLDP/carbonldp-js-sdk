@@ -84,10 +84,10 @@ describe( module( "carbonldp/Settings" ), ():void => {
 
 	} );
 
-	describe( interfaze( "CarbonLDP.CarbonSettings", "Interface of the possible settings used by the Carbon class." ), ():void => {
+	describe( interfaze( "CarbonLDP.CarbonLDPSettings", "Interface of the possible settings used by the Carbon class." ), ():void => {
 
 		it( extendsClass( "CarbonLDP.ContextSettings" ), ():void => {
-			const target:Settings.ContextSettings = {} as Settings.CarbonSettings;
+			const target:Settings.ContextSettings = {} as Settings.CarbonLDPSettings;
 			expect( target ).toBeDefined();
 		} );
 
@@ -97,7 +97,7 @@ describe( module( "carbonldp/Settings" ), ():void => {
 			"string",
 			"The host of the platform to connect to."
 		), ():void => {
-			const target:Settings.CarbonSettings[ "host" ] = "" as string;
+			const target:Settings.CarbonLDPSettings[ "host" ] = "" as string;
 			expect( target ).toBeDefined();
 		} );
 
@@ -107,7 +107,7 @@ describe( module( "carbonldp/Settings" ), ():void => {
 			"number",
 			"The optional port of the host to connect to."
 		), ():void => {
-			const target:Settings.CarbonSettings[ "port" ] = 80 as number;
+			const target:Settings.CarbonLDPSettings[ "port" ] = 80 as number;
 			expect( target ).toBeDefined();
 		} );
 
@@ -118,7 +118,7 @@ describe( module( "carbonldp/Settings" ), ():void => {
 			"Flag that indicates is the server is under a secure connection or not.\n" +
 			"By default it will be set to true, making the host to be resolved as `https://`"
 		), ():void => {
-			const target:Settings.CarbonSettings[ "ssl" ] = false as boolean;
+			const target:Settings.CarbonLDPSettings[ "ssl" ] = false as boolean;
 			expect( target ).toBeDefined();
 		} );
 

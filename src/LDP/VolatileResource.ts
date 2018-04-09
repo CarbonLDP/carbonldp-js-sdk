@@ -11,6 +11,7 @@ export interface VolatileResourceFactory extends ModelFactory<VolatileResource> 
 
 	is( object:object ):object is VolatileResource;
 
+	create():VolatileResource;
 
 	createFrom<T extends object>( object:T ):T & VolatileResource;
 }
@@ -23,10 +24,14 @@ export const VolatileResource:VolatileResourceFactory = {
 			&& object.hasType( VolatileResource.TYPE );
 	},
 
+	create():VolatileResource {
+		return VolatileResource.createFrom( {} );
+	},
+
 	createFrom<T extends object>( object:T ):T & VolatileResource {
 		const resource:T & Resource = Resource.createFrom( object );
-
 		resource.addType( VolatileResource.TYPE );
+
 		return resource;
 	},
 

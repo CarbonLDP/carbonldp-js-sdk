@@ -115,8 +115,8 @@ export function forEachOwnProperty( object:Object, action:( name:string, value:a
 	}
 }
 
-export function promiseMethod<T>( fn:() => T | Promise<T> ):Promise<T> {
-	return new Promise<T>( resolve => resolve( fn() ) );
+export function promiseMethod<T>( fn?:() => T | Promise<T> ):Promise<T> {
+	return new Promise<T>( resolve => resolve( fn ? fn() : void 0 ) );
 }
 
 export function mapTupleArray<T, W>( tuples:[ T, W ][] ):[ T[], W[] ] {

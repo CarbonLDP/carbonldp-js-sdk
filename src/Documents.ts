@@ -225,31 +225,13 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 		return this.pointers.delete( localID );
 	}
 
-	register<T extends object>( rdfDocument:RDFDocument ):T & PersistedDocument;
-	register<T extends object>( id:string, types?:string[] ):T & PersistedDocument;
-	register<T extends object>( rdfDocumentOrID:RDFDocument | string, types?:string[] ):T & PersistedDocument {
-		let id:string = Utils.isString( rdfDocumentOrID ) ? rdfDocumentOrID : void 0;
-		const rdfDocument:RDFDocument = RDFDocument.is( rdfDocumentOrID ) ? rdfDocumentOrID : void 0;
-
-		if( rdfDocument ) {
-			const [ documentResource ] = RDFDocument.getDocumentResources( rdfDocument );
-			if( ! documentResource ) throw new Errors.IllegalArgumentError( "The RDF Document must contain a valid document resource." );
-
-			id = RDFNode.getID( documentResource );
-			types = RDFNode.getTypes( documentResource );
-		}
-
+	register<T extends object>( id:string ):T & PersistedDocument {
 		const pointerID:string = this._getPointerID( id );
 		if( ! pointerID ) throw new Errors.IllegalArgumentError( `Cannot register a document outside the scope of this documents instance.` );
 
-		const persistedDocument:PersistedDocument = rdfDocument ?
-			new JSONLDCompacter( this ).compactDocument( rdfDocument ) :
+		const persistedDocument:PersistedDocument =
 			PersistedDocument.decorate( this.getPointer( pointerID ), this )
 		;
-
-		if( types ) types
-			.map( type => this.documentDecorators.get( type ) )
-			.forEach( decorator => decorator && decorator.call( void 0, persistedDocument, this ) );
 
 		return persistedDocument as T & PersistedDocument;
 	}
@@ -351,22 +333,8 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 	}
 
 
-	listChildren( parentURI:string, requestOptions?:RequestOptions ):Promise<PersistedDocument[]> {
-		return promiseMethod( () => {
-			parentURI = this._getRequestURI( parentURI );
-
-			const queryContext:QueryContextBuilder = new QueryContextBuilder( this.context );
-			const childrenVar:VariableToken = queryContext.getVariable( "child" );
-
-			const pattens:PatternToken[] = [
-				new SubjectToken( queryContext.compactIRI( parentURI ) )
-					.addPredicate( new PredicateToken( queryContext.compactIRI( LDP.contains ) )
-						.addObject( childrenVar )
-					),
-			];
-
-			return this._executeSelectPatterns( parentURI, requestOptions, queryContext, "child", pattens );
-		} );
+	listChildren<T extends object>( parentURI:string, requestOptions:RequestOptions = {} ):Promise<(T & PersistedDocument)[]> {
+		return this._executeChildrenBuilder( parentURI, requestOptions, emptyQueryBuildFn );
 	}
 
 	getChildren<T extends object>( parentURI:string, requestOptions:RequestOptions, queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder ) => QueryDocumentsBuilder ):Promise<(T & PersistedDocument)[]>;
@@ -375,26 +343,9 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 		const requestOptions:RequestOptions = RequestUtils.isOptions( requestOptionsOrQueryBuilderFn ) ? requestOptionsOrQueryBuilderFn : {};
 		queryBuilderFn = Utils.isFunction( requestOptionsOrQueryBuilderFn ) ? requestOptionsOrQueryBuilderFn : queryBuilderFn;
 
-		return promiseMethod( () => {
-			parentURI = this._getRequestURI( parentURI );
+		RequestUtils.setRetrievalPreferences( { include: [ C.PreferDocumentETags ] }, requestOptions );
 
-			const queryContext:QueryContextBuilder = new QueryContextBuilder( this.context );
-			const childrenProperty:QueryProperty = queryContext
-				.addProperty( "child" )
-				.setOptional( false );
-
-			const selectChildren:SelectToken = new SelectToken( "DISTINCT" )
-				.addVariable( childrenProperty.variable )
-				.addPattern( new SubjectToken( queryContext.compactIRI( parentURI ) )
-					.addPredicate( new PredicateToken( queryContext.compactIRI( LDP.contains ) )
-						.addObject( childrenProperty.variable )
-					)
-				)
-			;
-			childrenProperty.addPattern( selectChildren );
-
-			return this._executeQueryBuilder<T>( parentURI, requestOptions, queryContext, childrenProperty, queryBuilderFn );
-		} );
+		return this._executeChildrenBuilder( parentURI, requestOptions, queryBuilderFn );
 	}
 
 	createAccessPoint<T extends object>( documentURI:string, accessPoint:T & AccessPointBase, slug?:string, requestOptions?:RequestOptions ):Promise<T & PersistedAccessPoint>;
@@ -430,33 +381,8 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 		} );
 	}
 
-	listMembers( uri:string, requestOptions?:RequestOptions ):Promise<PersistedDocument[]> {
-		return promiseMethod( () => {
-			uri = this._getRequestURI( uri );
-
-			const queryContext:QueryContextBuilder = new QueryContextBuilder( this.context );
-			const memberVar:VariableToken = queryContext.getVariable( "member" );
-
-			const membershipResource:VariableToken = queryContext.getVariable( "membershipResource" );
-			const hasMemberRelation:VariableToken = queryContext.getVariable( "hasMemberRelation" );
-			const pattens:PatternToken[] = [
-				new SubjectToken( queryContext.compactIRI( uri ) )
-					.addPredicate( new PredicateToken( queryContext.compactIRI( LDP.membershipResource ) )
-						.addObject( membershipResource )
-					)
-					.addPredicate( new PredicateToken( queryContext.compactIRI( LDP.hasMemberRelation ) )
-						.addObject( hasMemberRelation )
-					)
-				,
-				new SubjectToken( membershipResource )
-					.addPredicate( new PredicateToken( hasMemberRelation )
-						.addObject( memberVar )
-					)
-				,
-			];
-
-			return this._executeSelectPatterns( uri, requestOptions, queryContext, "member", pattens );
-		} );
+	listMembers<T extends object>( uri:string, requestOptions:RequestOptions = {} ):Promise<(T & PersistedDocument)[]> {
+		return this._executeMembersBuilder( uri, requestOptions, emptyQueryBuildFn );
 	}
 
 	getMembers<T extends object>( uri:string, requestOptions:RequestOptions, queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder ) => QueryDocumentsBuilder ):Promise<(T & PersistedDocument)[]>;
@@ -465,36 +391,9 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 		const requestOptions:RequestOptions = RequestUtils.isOptions( requestOptionsOrQueryBuilderFn ) ? requestOptionsOrQueryBuilderFn : {};
 		queryBuilderFn = Utils.isFunction( requestOptionsOrQueryBuilderFn ) ? requestOptionsOrQueryBuilderFn : queryBuilderFn;
 
-		return promiseMethod( () => {
-			uri = this._getRequestURI( uri );
+		RequestUtils.setRetrievalPreferences( { include: [ C.PreferDocumentETags ] }, requestOptions );
 
-			const queryContext:QueryContextBuilder = new QueryContextBuilder( this.context );
-			const membersProperty:QueryProperty = queryContext
-				.addProperty( "member" )
-				.setOptional( false );
-
-			const membershipResource:VariableToken = queryContext.getVariable( "membershipResource" );
-			const hasMemberRelation:VariableToken = queryContext.getVariable( "hasMemberRelation" );
-			const selectMembers:SelectToken = new SelectToken( "DISTINCT" )
-				.addVariable( membersProperty.variable )
-				.addPattern( new SubjectToken( queryContext.compactIRI( uri ) )
-					.addPredicate( new PredicateToken( queryContext.compactIRI( LDP.membershipResource ) )
-						.addObject( membershipResource )
-					)
-					.addPredicate( new PredicateToken( queryContext.compactIRI( LDP.hasMemberRelation ) )
-						.addObject( hasMemberRelation )
-					)
-				)
-				.addPattern( new SubjectToken( membershipResource )
-					.addPredicate( new PredicateToken( hasMemberRelation )
-						.addObject( membersProperty.variable )
-					)
-				)
-			;
-			membersProperty.addPattern( selectMembers );
-
-			return this._executeQueryBuilder<T>( uri, requestOptions, queryContext, membersProperty, queryBuilderFn );
-		} );
+		return this._executeMembersBuilder( uri, requestOptions, queryBuilderFn );
 	}
 
 	addMember( documentURI:string, member:Pointer, requestOptions?:RequestOptions ):Promise<void>;
@@ -541,7 +440,7 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 				include: [ C.PreferSelectedMembershipTriples ],
 				omit: [ C.PreferMembershipTriples ],
 			};
-			RequestUtils.setRetrievalPreferences( containerRetrievalPreferences, requestOptions, false );
+			RequestUtils.setRetrievalPreferences( containerRetrievalPreferences, requestOptions );
 
 			const freeResources:FreeResources = FreeResources.create( this );
 			freeResources.createResourceFrom( RemoveMemberAction.create( pointers ) );
@@ -570,7 +469,7 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 					C.PreferContainer,
 				],
 			};
-			RequestUtils.setRetrievalPreferences( containerRetrievalPreferences, requestOptions, false );
+			RequestUtils.setRetrievalPreferences( containerRetrievalPreferences, requestOptions );
 
 			return this
 				._sendRequest( HTTPMethod.DELETE, documentURI, requestOptions )
@@ -623,14 +522,6 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 		} ).then( () => {
 			const pointerID:string = this._getPointerID( documentURI );
 			this.pointers.delete( pointerID );
-		} );
-	}
-
-	getDownloadURL( documentURI:string, requestOptions?:RequestOptions ):Promise<string> {
-		if( ! this.context || ! this.context.auth ) return Promise.reject( new Errors.IllegalStateError( "This instance doesn't support Authenticated request." ) );
-		return promiseMethod( () => {
-			documentURI = this._getRequestURI( documentURI );
-			return this.context.auth.getAuthenticatedURL( documentURI, requestOptions );
 		} );
 	}
 
@@ -850,7 +741,11 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 		if( documentResources.length === 0 ) throw new BadResponseError( `The RDFDocument: ${ rdfDocument[ "@id" ] }, doesn't contain a document resource.`, response );
 		if( documentResources.length > 1 ) throw new BadResponseError( `The RDFDocument: ${ rdfDocument[ "@id" ] }, contains more than one document resource.`, response );
 
-		return new JSONLDCompacter( this ).compactDocument( rdfDocument );
+		const persistedDocument:T & PersistedDocument = new JSONLDCompacter( this )
+			.compactDocument( rdfDocument );
+		persistedDocument._resolved = true;
+
+		return persistedDocument;
 	}
 
 	_getFreeResources( nodes:RDFNode[] ):FreeResources {
@@ -944,6 +839,8 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 		const propertyValue:ValuesToken = new ValuesToken().addValues( documentProperty.variable, queryContext.compactIRI( uri ) );
 		documentProperty.addPattern( propertyValue );
 
+		RequestUtils.setRetrievalPreferences( { include: [ C.PreferDocumentETags ] }, requestOptions );
+
 		return this
 			._executeQueryBuilder<T>( uri, requestOptions, queryContext, documentProperty, queryBuilderFn )
 			.then<T & PersistedDocument>( ( documents ) => documents[ 0 ] );
@@ -1017,6 +914,8 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 
 		this._addRefreshQueryPatterns( queryContext, constructPatterns, persistedDocument, targetName );
 
+		RequestUtils.setRetrievalPreferences( { include: [ C.PreferDocumentETags ] }, requestOptions );
+
 		return this
 			._executeConstructPatterns<T>( uri, requestOptions, queryContext, targetName, constructPatterns.patterns, persistedDocument )
 			.then<T & PersistedDocument>( ( documents ) => documents[ 0 ] );
@@ -1053,16 +952,71 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 	}
 
 
+	private _executeChildrenBuilder<T extends object>( uri:string, requestOptions:RequestOptions, queryBuilderFn?:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<(T & PersistedDocument)[]> {
+		return promiseMethod( () => {
+			uri = this._getRequestURI( uri );
+
+			const queryContext:QueryContextBuilder = new QueryContextBuilder( this.context );
+			const childrenProperty:QueryProperty = queryContext
+				.addProperty( "child" )
+				.setOptional( false );
+
+			const selectChildren:SelectToken = new SelectToken( "DISTINCT" )
+				.addVariable( childrenProperty.variable )
+				.addPattern( new SubjectToken( queryContext.compactIRI( uri ) )
+					.addPredicate( new PredicateToken( queryContext.compactIRI( LDP.contains ) )
+						.addObject( childrenProperty.variable )
+					)
+				)
+			;
+			childrenProperty.addPattern( selectChildren );
+
+			return this._executeQueryBuilder<T>( uri, requestOptions, queryContext, childrenProperty, queryBuilderFn );
+		} );
+	}
+
+	private _executeMembersBuilder<T extends object>( uri:string, requestOptions:RequestOptions, queryBuilderFn?:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<(T & PersistedDocument)[]> {
+		return promiseMethod( () => {
+			uri = this._getRequestURI( uri );
+
+			const queryContext:QueryContextBuilder = new QueryContextBuilder( this.context );
+			const membersProperty:QueryProperty = queryContext
+				.addProperty( "member" )
+				.setOptional( false );
+
+			const membershipResource:VariableToken = queryContext.getVariable( "membershipResource" );
+			const hasMemberRelation:VariableToken = queryContext.getVariable( "hasMemberRelation" );
+			const selectMembers:SelectToken = new SelectToken( "DISTINCT" )
+				.addVariable( membersProperty.variable )
+				.addPattern( new SubjectToken( queryContext.compactIRI( uri ) )
+					.addPredicate( new PredicateToken( queryContext.compactIRI( LDP.membershipResource ) )
+						.addObject( membershipResource )
+					)
+					.addPredicate( new PredicateToken( queryContext.compactIRI( LDP.hasMemberRelation ) )
+						.addObject( hasMemberRelation )
+					)
+				)
+				.addPattern( new SubjectToken( membershipResource )
+					.addPredicate( new PredicateToken( hasMemberRelation )
+						.addObject( membersProperty.variable )
+					)
+				)
+			;
+			membersProperty.addPattern( selectMembers );
+
+			return this._executeQueryBuilder<T>( uri, requestOptions, queryContext, membersProperty, queryBuilderFn );
+		} );
+	}
+
 	private _executeQueryBuilder<T extends object>( uri:string, requestOptions:RequestOptions, queryContext:QueryContextBuilder, targetProperty:QueryProperty, queryBuilderFn?:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<(T & PersistedDocument)[]> {
-		type Builder = QueryDocumentBuilder | QueryDocumentBuilder;
-		// tslint:disable: variable-name
 		const Builder:typeof QueryDocumentBuilder = targetProperty.name === "document" ?
 			QueryDocumentBuilder : QueryDocumentsBuilder;
-		// tslint:enable: variable-name
-		const queryBuilder:Builder = new Builder( queryContext, targetProperty );
+		const queryBuilder:QueryDocumentBuilder | QueryDocumentBuilder = new Builder( queryContext, targetProperty );
 
 		targetProperty.setType( queryBuilderFn ?
-			QueryPropertyType.PARTIAL :
+			queryBuilderFn === emptyQueryBuildFn ?
+				QueryPropertyType.EMPTY :
+				QueryPropertyType.PARTIAL :
 			QueryPropertyType.FULL
 		);
 
@@ -1145,8 +1099,7 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 		const triples:SubjectToken[] = getAllTriples( constructPatterns );
 		construct.addTriple( ...triples );
 
-		RequestUtils.setRetrievalPreferences( { include: [ C.PreferResultsContext ] }, requestOptions, false );
-		RequestUtils.setRetrievalPreferences( { include: [ C.PreferDocumentETags ] }, requestOptions, false );
+		RequestUtils.setRetrievalPreferences( { include: [ C.PreferResultsContext ] }, requestOptions );
 
 		return this
 			.executeRawCONSTRUCTQuery( uri, query.toString(), requestOptions )
@@ -1180,6 +1133,9 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 						const relatedDocument:PersistedDocument = documentMetadata.relatedDocument || documentMetadata[ C.relatedDocument ];
 						const eTag:string = documentMetadata.eTag || documentMetadata[ C.eTag ];
 
+						if( ! eTag ) return;
+						relatedDocument._resolved = true;
+
 						if( relatedDocument._eTag === void 0 ) relatedDocument._eTag = eTag;
 						if( relatedDocument._eTag !== eTag ) relatedDocument._eTag = null;
 					} ) );
@@ -1195,27 +1151,6 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 
 				return new JSONLDCompacter( this, targetName, queryContext )
 					.compactDocuments( rdfDocuments, targetDocuments );
-			} );
-	}
-
-	private _executeSelectPatterns( uri:string, requestOptions:RequestOptions, queryContext:QueryContext, targetName:string, selectPatterns:PatternToken[] ):Promise<PersistedDocument[]> {
-		const targetVar:VariableToken = queryContext.getVariable( targetName );
-		const select:SelectToken = new SelectToken( "DISTINCT" )
-			.addVariable( targetVar )
-			.addPattern( ...selectPatterns )
-		;
-
-		const query:QueryToken = new QueryToken( select as any )
-			.addPrologues( ...queryContext.getPrologues() );
-
-		return this
-			.executeSELECTQuery<{ [ docs:string ]:Pointer }>( uri, query.toString(), requestOptions )
-			.then<PersistedDocument[]>( ( results ) => {
-				const name:string = targetVar.toString().slice( 1 );
-				return results
-					.bindings
-					.map( x => x[ name ] )
-					.map( x => PersistedDocument.decorate( x, this ) );
 			} );
 	}
 
@@ -1319,16 +1254,36 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 		return this._createPointerFrom( {}, localID );
 	}
 
-	private _createPointerFrom<T extends Object>( object:T, localID:string ):T & Pointer {
-		let id:string = ! ! this.context ? this.context.resolve( localID ) : localID;
-		let pointer:T & Pointer = Pointer.createFrom<T>( object, id );
+	private _createPointerFrom<T extends object>( object:T, localID:string ):T & Pointer {
+		const id:string = ! ! this.context ? this.context.resolve( localID ) : localID;
+		const pointer:T & Pointer = Pointer.createFrom<T>( object, id );
+
+		const resolve:Pointer[ "resolve" ] = <W extends object>( requestOptionsOrQueryBuilderFn?:GETOptions | ( ( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ), queryBuilderFn?:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<W & T & PersistedDocument> => {
+			let requestOptions:GETOptions;
+			if( Utils.isFunction( requestOptionsOrQueryBuilderFn ) ) {
+				requestOptions = {};
+				queryBuilderFn =  requestOptionsOrQueryBuilderFn;
+			} else {
+				requestOptions = requestOptionsOrQueryBuilderFn;
+			}
+
+			if( queryBuilderFn && "types" in pointer ) {
+				const resource:Resource = pointer as Resource;
+				const superQueryBuilderFn:typeof queryBuilderFn = queryBuilderFn;
+				queryBuilderFn = _ => {
+					resource.types.forEach( type => _.withType( type ) );
+					return superQueryBuilderFn.call( void 0, _ );
+				};
+			}
+
+			return this.get( id, requestOptions, queryBuilderFn );
+		};
+
 		Object.defineProperty( pointer, "resolve", {
 			writable: false,
 			enumerable: false,
 			configurable: true,
-			value: ():Promise<[ PersistedDocument, Response ]> => {
-				return this.get( id );
-			},
+			value: resolve,
 		} );
 
 		return pointer;
@@ -1490,3 +1445,5 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 			.catch( this._parseErrorResponse.bind( this ) );
 	}
 }
+
+const emptyQueryBuildFn:( queryBuilder:QueryDocumentsBuilder ) => QueryDocumentsBuilder = _ => _;

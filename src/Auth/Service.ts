@@ -1,34 +1,18 @@
 import { Context } from "../Context";
 import { Documents } from "../Documents";
 import * as Errors from "../Errors";
-import { FreeResources } from "../FreeResources";
-import { BadResponseError } from "../HTTP/Errors";
-import {
-	RequestOptions,
-	RequestService,
-	RequestUtils
-} from "../HTTP/Request";
-import { Response } from "../HTTP/Response";
-import { JSONLDParser } from "../JSONLD/Parser";
-import * as ObjectSchema from "../ObjectSchema";
-import { RDFNode } from "../RDF/Node";
-import { URI } from "../RDF/URI";
-import { Resource } from "../Resource";
+import { RequestOptions } from "../HTTP";
 import * as Utils from "../Utils";
-import { LDP } from "../Vocabularies/LDP";
-import { ACL } from "./ACL";
 import { Authenticator } from "./Authenticator";
 import { AuthMethod } from "./AuthMethod";
 import { BasicAuthenticator } from "./BasicAuthenticator";
 import { BasicCredentials } from "./BasicCredentials";
 import { BasicToken } from "./BasicToken";
-import { PersistedACL } from "./PersistedACL";
 import { PersistedUser } from "./PersistedUser";
 import * as Roles from "./Roles";
-import * as Ticket from "./Ticket";
-import TokenAuthenticator from "./TokenAuthenticator";
-import * as TokenCredentials from "./TokenCredentials";
-import { User } from "./User";
+import { TokenAuthenticator } from "./TokenAuthenticator";
+import { TokenCredentialsBase } from "./TokenCredentials";
+import { TokenCredentials } from "./TokenCredentials";
 import { UsersEndpoint } from "./UsersEndpoint";
 
 export class AuthService {
@@ -36,9 +20,10 @@ export class AuthService {
 	public readonly roles:Roles.Class;
 
 	protected _authenticatedUser:PersistedUser;
-	protected authenticator:Authenticator<object, object>;
-	protected readonly context:Context;
-	protected readonly authenticators:{ [P in AuthMethod]:Authenticator<object, object> };
+
+	private readonly context:Context;
+	private readonly authenticators:{ [P in AuthMethod]:Authenticator<object, object> };
+	private authenticator:Authenticator<object, object>;
 
 	public get authenticatedUser():PersistedUser {
 		if( this._authenticatedUser ) return this._authenticatedUser;
@@ -56,7 +41,7 @@ export class AuthService {
 		this.roles = new Roles.Class( context );
 
 		this.authenticators = {
-			[ AuthMethod.BASIC ]: new BasicAuthenticator(),
+			[ AuthMethod.BASIC ]: new BasicAuthenticator( this.context ),
 			[ AuthMethod.TOKEN ]: new TokenAuthenticator( this.context ),
 		};
 	}
@@ -68,22 +53,42 @@ export class AuthService {
 		);
 	}
 
-	authenticate( username:string, password:string ):Promise<TokenCredentials.Class> {
+	authenticate( username:string, password:string ):Promise<TokenCredentials> {
 		return this.authenticateUsing( AuthMethod.TOKEN, username, password );
 	}
 
 	authenticateUsing( method:AuthMethod.BASIC, username:string, password:string ):Promise<BasicCredentials>;
-	authenticateUsing( method:AuthMethod.TOKEN, username:string, password:string ):Promise<TokenCredentials.Class>;
-	authenticateUsing( method:AuthMethod.TOKEN, token:TokenCredentials.Class ):Promise<TokenCredentials.Class>;
-	authenticateUsing( method:AuthMethod, userOrCredentials:string | TokenCredentials.Class, password?:string ):Promise<BasicCredentials | TokenCredentials.Class> {
-		switch( method ) {
-			case AuthMethod.BASIC:
-				return this.authenticateWithBasic( userOrCredentials as string, password );
-			case AuthMethod.TOKEN:
-				return this.authenticateWithToken( userOrCredentials, password );
-			default:
-				return Promise.reject( new Errors.IllegalArgumentError( `Unsupported authentication method "${method}"` ) );
+	authenticateUsing( method:AuthMethod.TOKEN, username:string, password:string ):Promise<TokenCredentials>;
+	authenticateUsing( method:AuthMethod.TOKEN, token:TokenCredentialsBase ):Promise<TokenCredentials>;
+	authenticateUsing( method:AuthMethod, userOrCredentials:string | TokenCredentialsBase, password?:string ):Promise<BasicCredentials | TokenCredentials> {
+		this.clearAuthentication();
+
+		const authenticator:Authenticator<any, any> = this.authenticators[ method ];
+		if( ! authenticator ) return Promise.reject( new Errors.IllegalArgumentError( `Invalid authentication method "${method}".` ) );
+
+		let authenticationToken:BasicToken | TokenCredentialsBase;
+		if( Utils.isString( userOrCredentials ) )
+			authenticationToken = new BasicToken( userOrCredentials, password );
+		else if( TokenCredentialsBase.is( userOrCredentials ) ) {
+			authenticationToken = userOrCredentials;
+		} else {
+			return Promise.reject( new Errors.IllegalArgumentError( "Invalid authentication token." ) );
 		}
+
+		let credentials:BasicCredentials | TokenCredentials;
+		return authenticator
+			.authenticate( authenticationToken )
+			.then( ( _credentials ) => {
+				credentials = _credentials;
+
+				return authenticator
+					.getAuthenticatedUser();
+			} ).then( ( persistedUser:PersistedUser.Class ) => {
+				this._authenticatedUser = persistedUser;
+				this.authenticator = authenticator;
+
+				return credentials;
+			} );
 	}
 
 	addAuthentication( requestOptions:RequestOptions ):void {
@@ -102,107 +107,6 @@ export class AuthService {
 		this.authenticator.clearAuthentication();
 		this.authenticator = null;
 		this._authenticatedUser = null;
-	}
-
-	createTicket( uri:string, requestOptions:RequestOptions = {} ):Promise<[ Ticket.Class, Response ]> {
-		const resourceURI:string = this.context.resolve( uri );
-
-		const freeResources:FreeResources = FreeResources.create( this.context.documents );
-		Ticket.Factory.createFrom( freeResources.createResource(), resourceURI );
-
-		if( this.isAuthenticated() ) this.addAuthentication( requestOptions );
-		RequestUtils.setAcceptHeader( "application/ld+json", requestOptions );
-		RequestUtils.setContentTypeHeader( "application/ld+json", requestOptions );
-		RequestUtils.setPreferredInteractionModel( LDP.RDFSource, requestOptions );
-
-		return Utils.promiseMethod( () => {
-			const containerURI:string = this.context._resolvePath( "system.security" ) + Ticket.TICKETS_CONTAINER;
-			const body:string = JSON.stringify( freeResources );
-
-			return RequestService.post( containerURI, body, requestOptions, new JSONLDParser() );
-		} ).then<[ Ticket.Class, Response ]>( ( [ expandedResult, response ]:[ any, Response ] ) => {
-			const freeNodes:RDFNode[] = RDFNode.getFreeNodes( expandedResult );
-
-			const ticketNodes:RDFNode[] = freeNodes.filter( freeNode => RDFNode.hasType( freeNode, Ticket.RDF_CLASS ) );
-			if( ticketNodes.length === 0 ) throw new BadResponseError( `No ${ Ticket.RDF_CLASS } was returned.`, response );
-			if( ticketNodes.length > 1 ) throw new BadResponseError( `Multiple ${ Ticket.RDF_CLASS } were returned.`, response );
-
-			const expandedTicket:RDFNode = ticketNodes[ 0 ];
-			const ticket:Ticket.Class = <any> Resource.create();
-
-			const digestedSchema:ObjectSchema.DigestedObjectSchema = this.context.documents.getSchemaFor( expandedTicket );
-			this.context.documents.jsonldConverter.compact( expandedTicket, ticket, digestedSchema, this.context.documents );
-
-			return [ ticket, response ];
-		} )
-			.catch( error => this.context.documents._parseErrorResponse( error ) );
-	}
-
-	getAuthenticatedURL( uri:string, requestOptions?:RequestOptions ):Promise<string> {
-		let resourceURI:string = this.context.resolve( uri );
-
-		return this.createTicket( resourceURI, requestOptions ).then( ( [ ticket ]:[ Ticket.Class, Response ] ) => {
-			resourceURI += URI.hasQuery( resourceURI ) ? "&" : "?";
-			resourceURI += `ticket=${ ticket.ticketKey }`;
-
-			return resourceURI;
-		} );
-	}
-
-	private authenticateWithBasic( username:string, password:string ):Promise<BasicCredentials> {
-		const authenticator:BasicAuthenticator = <BasicAuthenticator> this.authenticators[ AuthMethod.BASIC ];
-		const authenticationToken:BasicToken = new BasicToken( username, password );
-
-		this.clearAuthentication();
-
-		let newCredentials:BasicCredentials;
-		return authenticator
-			.authenticate( authenticationToken )
-			.then( ( credentials:BasicCredentials ) => {
-				newCredentials = credentials;
-
-				return this.getAuthenticatedUser( authenticator );
-			} )
-			.then( ( persistedUser:PersistedUser ) => {
-				this._authenticatedUser = persistedUser;
-				this.authenticator = authenticator;
-
-				return newCredentials;
-			} )
-			;
-	}
-
-	private authenticateWithToken( userOrCredentials:string | TokenCredentials.Class, password?:string ):Promise<TokenCredentials.Class> {
-		const authenticator:TokenAuthenticator = <TokenAuthenticator> this.authenticators[ AuthMethod.TOKEN ];
-		const tokenOrCredentials:BasicToken | TokenCredentials.Class | Error = Utils.isString( userOrCredentials ) ?
-			new BasicToken( userOrCredentials, password ) :
-			TokenCredentials.Factory.hasClassProperties( userOrCredentials ) ?
-				userOrCredentials :
-				new Errors.IllegalArgumentError( "The token credentials provided in not valid." );
-
-		if( tokenOrCredentials instanceof Error ) return Promise.reject( tokenOrCredentials );
-		this.clearAuthentication();
-
-		let newCredentials:TokenCredentials.Class;
-		return authenticator.authenticate( tokenOrCredentials ).then( ( credentials:TokenCredentials.Class ) => {
-			newCredentials = credentials;
-
-			if( PersistedUser.is( credentials.user ) ) return credentials.user;
-			return this.getAuthenticatedUser( authenticator );
-		} ).then( ( persistedUser:PersistedUser ) => {
-			this._authenticatedUser = persistedUser;
-			this.authenticator = authenticator;
-
-			newCredentials.user = persistedUser;
-			return newCredentials;
-		} );
-	}
-
-	private getAuthenticatedUser( authenticator:Authenticator<object, object> ):Promise<PersistedUser> {
-		const requestOptions:RequestOptions = {};
-		authenticator.addAuthentication( requestOptions );
-
-		return this.users.get( "me/", requestOptions );
 	}
 
 }

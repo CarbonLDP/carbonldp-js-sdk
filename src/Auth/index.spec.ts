@@ -10,6 +10,8 @@ import * as Auth from "./";
 
 import { ACE } from "./ACE";
 import { ACL } from "./ACL";
+import { AuthenticatedUserInformationAccessor } from "./AuthenticatedUserInformationAccessor";
+import { AuthenticatedUserMetadata } from "./AuthenticatedUserMetadata";
 import { Authenticator } from "./Authenticator";
 import { AuthMethod } from "./AuthMethod";
 import { BasicAuthenticator } from "./BasicAuthenticator";
@@ -24,9 +26,11 @@ import { PersistedUser } from "./PersistedUser";
 import * as Role from "./Role";
 import * as Roles from "./Roles";
 import { AuthService } from "./Service";
-import * as Ticket from "./Ticket";
-import TokenAuthenticator from "./TokenAuthenticator";
-import * as TokenCredentials from "./TokenCredentials";
+import { TokenAuthenticator } from "./TokenAuthenticator";
+import {
+	TokenCredentials,
+	TokenCredentialsBase,
+} from "./TokenCredentials";
 import { User } from "./User";
 import { UsernameAndPasswordCredentials } from "./UsernameAndPasswordCredentials";
 import * as Users from "./UsersEndpoint";
@@ -54,6 +58,24 @@ describe( module( "carbonldp/Auth" ), ():void => {
 	), ():void => {
 		expect( Auth.ACL ).toBeDefined();
 		expect( Auth.ACL ).toBe( ACL );
+	} );
+
+	it( reexports(
+		STATIC,
+		"AuthenticatedUserInformationAccessor",
+		"CarbonLDP.Auth.AuthenticatedUserInformationAccessor"
+	), ():void => {
+		expect( Auth.AuthenticatedUserInformationAccessor ).toBeDefined();
+		expect( Auth.AuthenticatedUserInformationAccessor ).toBe( AuthenticatedUserInformationAccessor );
+	} );
+
+	it( reexports(
+		STATIC,
+		"AuthenticatedUserMetadata",
+		"CarbonLDP.Auth.AuthenticatedUserMetadata"
+	), ():void => {
+		expect( Auth.AuthenticatedUserMetadata ).toBeDefined();
+		expect( Auth.AuthenticatedUserMetadata ).toBe( AuthenticatedUserMetadata );
 	} );
 
 	it( reexports(
@@ -202,17 +224,8 @@ describe( module( "carbonldp/Auth" ), ():void => {
 
 	it( reexports(
 		STATIC,
-		"Ticket",
-		"carbonldp/Auth/Ticket"
-	), ():void => {
-		expect( Auth.Ticket ).toBeDefined();
-		expect( Auth.Ticket ).toBe( Ticket );
-	} );
-
-	it( reexports(
-		STATIC,
 		"TokenCredentials",
-		"carbonldp/Auth/TokenCredentials"
+		"CarbonLDP.Auth.TokenCredentials"
 	), ():void => {
 		expect( Auth.TokenCredentials ).toBeDefined();
 		expect( Auth.TokenCredentials ).toBe( TokenCredentials );
@@ -220,8 +233,17 @@ describe( module( "carbonldp/Auth" ), ():void => {
 
 	it( reexports(
 		STATIC,
+		"TokenCredentialsBase",
+		"CarbonLDP.Auth.TokenCredentialsBase"
+	), ():void => {
+		expect( Auth.TokenCredentialsBase ).toBeDefined();
+		expect( Auth.TokenCredentialsBase ).toBe( TokenCredentialsBase );
+	} );
+
+	it( reexports(
+		STATIC,
 		"TokenAuthenticator",
-		"carbonldp/Auth/TokenAuthenticator"
+		"CarbonLDP.Auth.TokenAuthenticator"
 	), ():void => {
 		expect( Auth.TokenAuthenticator ).toBeDefined();
 		expect( Auth.TokenAuthenticator ).toBe( TokenAuthenticator );
@@ -236,5 +258,13 @@ describe( module( "carbonldp/Auth" ), ():void => {
 		expect( Auth.UsernameAndPasswordCredentials ).toBe( UsernameAndPasswordCredentials );
 	} );
 
-} )
-;
+	it( reexports(
+		STATIC,
+		"UsernameAndPasswordToken",
+		"CarbonLDP.Auth.UsernameAndPasswordToken"
+	), ():void => {
+		expect( Auth.UsernameAndPasswordToken ).toBeDefined();
+		expect( Auth.UsernameAndPasswordToken ).toBe( UsernameAndPasswordToken );
+	} );
+
+} );

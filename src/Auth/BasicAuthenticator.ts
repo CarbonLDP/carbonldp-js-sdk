@@ -4,25 +4,25 @@ import { Authenticator } from "./Authenticator";
 import { BasicCredentials } from "./BasicCredentials";
 import { BasicToken } from "./BasicToken";
 
+
 export class BasicAuthenticator extends Authenticator<BasicToken, BasicCredentials> {
 
-	protected credentials:BasicCredentials;
+	protected _credentials:BasicCredentials;
 
 	authenticate( authenticationToken:BasicToken ):Promise<BasicCredentials> {
 		return promiseMethod( () => {
-			if( authenticationToken === null ) throw new IllegalArgumentError( "The authenticationToken cannot be null." );
+			if( ! authenticationToken ) throw new IllegalArgumentError( "The authenticationToken cannot be empty." );
 
 			if( ! authenticationToken.username ) throw new IllegalArgumentError( "The username cannot be empty." );
 			if( ! authenticationToken.password ) throw new IllegalArgumentError( "The password cannot be empty." );
 
-			this.credentials = new BasicCredentials( authenticationToken.username, authenticationToken.password );
-
-			return this.credentials;
+			this._credentials = new BasicCredentials( authenticationToken.username, authenticationToken.password );
+			return this._credentials;
 		} );
 	}
 
-	protected getHeaderValue():string {
-		return "Basic " + toB64( this.credentials.username + ":" + this.credentials.password );
+	protected _getHeaderValue():string {
+		return "Basic " + toB64( this._credentials.username + ":" + this._credentials.password );
 	}
 
 }

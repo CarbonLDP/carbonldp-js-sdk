@@ -1,13 +1,15 @@
-import { Response } from "./HTTP/Response";
+import { GETOptions } from "./HTTP/Request";
 import { ModelDecorator } from "./ModelDecorator";
 import { ModelFactory } from "./ModelFactory";
 import { PersistedDocument } from "./PersistedDocument";
+import { QueryDocumentBuilder } from "./SPARQL/QueryDocument/QueryDocumentBuilder";
 export interface Pointer {
     _id: string;
     _resolved: boolean;
     id: string;
     isResolved(): this is this & PersistedDocument;
-    resolve<T>(): Promise<T & PersistedDocument>;
+    resolve<T extends object>(requestOptions?: GETOptions, queryBuilderFn?: (queryBuilder: QueryDocumentBuilder) => QueryDocumentBuilder): Promise<T & this & PersistedDocument>;
+    resolve<T extends object>(queryBuilderFn?: (queryBuilder: QueryDocumentBuilder) => QueryDocumentBuilder): Promise<T & this & PersistedDocument>;
 }
 export interface PointerLibrary {
     hasPointer(id: string): boolean;
@@ -26,5 +28,5 @@ export interface PointerFactory extends ModelFactory<Pointer>, ModelDecorator<Po
     getIDs(pointers: Pointer[]): string[];
 }
 export declare function isPointerResolved(this: Pointer): boolean;
-export declare function resolveStandalonePointer(this: Pointer): Promise<[Pointer, Response]>;
+export declare function resolveStandalonePointer(this: Pointer): Promise<never>;
 export declare const Pointer: PointerFactory;

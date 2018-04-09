@@ -30,6 +30,8 @@ export interface ResourceFactory extends ModelFactory<Resource>, ModelDecorator<
 
 
 export function addTypeInResource( this:Resource, type:string ):void {
+	if( this.types.indexOf( type ) !== - 1 ) return;
+
 	this.types.push( type );
 }
 

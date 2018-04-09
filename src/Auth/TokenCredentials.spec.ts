@@ -1,184 +1,327 @@
-import { Resource } from "../Resource";
+import { Minus } from "../../test/helpers/types";
+import { VolatileResource } from "../LDP";
 import {
-	clazz,
 	extendsClass,
-	hasDefaultExport,
 	hasMethod,
 	hasProperty,
 	interfaze,
-	isDefined,
 	module,
 	OBLIGATORY,
+	property,
 	STATIC,
 } from "../test/JasmineExtender";
 import {
 	CS,
 	XSD,
 } from "../Vocabularies";
-import * as Utils from "./../Utils";
 
-import * as TokenCredentials from "./TokenCredentials";
-import DefaultExport from "./TokenCredentials";
+import {
+	TokenCredentials,
+	TokenCredentialsBase,
+} from "./TokenCredentials";
 
 describe( module( "Carbon/Auth/TokenCredentials" ), ():void => {
 
-	it( isDefined(), ():void => {
-		expect( TokenCredentials ).toBeDefined();
-		expect( Utils.isObject( TokenCredentials ) ).toBe( true );
-	} );
-
-	it( hasProperty(
-		STATIC,
-		"RDF_CLASS",
-		"string"
-	), ():void => {
-		expect( TokenCredentials.RDF_CLASS ).toBeDefined();
-		expect( Utils.isString( TokenCredentials.RDF_CLASS ) ).toBe( true );
-
-		expect( TokenCredentials.RDF_CLASS ).toBe( CS.Token );
-	} );
-
-	it( hasProperty(
-		STATIC,
-		"SCHEMA",
-		"CarbonLDP.ObjectSchema"
-	), ():void => {
-		expect( TokenCredentials.SCHEMA ).toBeDefined();
-		expect( Utils.isObject( TokenCredentials.SCHEMA ) ).toBe( true );
-
-		expect( Utils.hasProperty( TokenCredentials.SCHEMA, "key" ) ).toBe( true );
-		expect( TokenCredentials.SCHEMA[ "key" ] ).toEqual( {
-			"@id": CS.tokenKey,
-			"@type": XSD.string,
-		} );
-
-		expect( Utils.hasProperty( TokenCredentials.SCHEMA, "expirationTime" ) ).toBe( true );
-		expect( TokenCredentials.SCHEMA[ "expirationTime" ] ).toEqual( {
-			"@id": CS.expirationTime,
-			"@type": XSD.dateTime,
-		} );
-
-		expect( Utils.hasProperty( TokenCredentials.SCHEMA, "user" ) ).toBe( true );
-		expect( TokenCredentials.SCHEMA[ "user" ] ).toEqual( {
-			"@id": CS.credentialsOf,
-			"@type": "@id",
-		} );
-
-	} );
-
 	describe( interfaze(
-		"CarbonLDP.Auth.TokenCredentials.Class",
-		"Interface that represents an authentication token for every context."
+		"CarbonLDP.Auth.TokenCredentialsBase",
+		"Interface that represents the base properties for an authentication token credentials."
 	), ():void => {
 
-		it( extendsClass( "CarbonLDP.Resource" ), ():void => {} );
-
 		it( hasProperty(
 			OBLIGATORY,
-			"user",
-			"CarbonLDP.Auth.PersistedUser",
-			"User that has been requested the token, and which authentication the token represents."
-		), ():void => {} );
-
-		it( hasProperty(
-			OBLIGATORY,
-			"expirationTime",
+			"expiresOn",
 			"Date",
 			"The time when the token will expire."
 		), ():void => {} );
 
 		it( hasProperty(
 			OBLIGATORY,
-			"key",
+			"token",
 			"string",
 			"The value to provide as the authentication token in the headers of a a request."
 		), ():void => {} );
 
 	} );
 
-	describe( clazz( "CarbonLDP.Auth.TokenCredentials.Factory", "Factory class for `CarbonLDP.Auth.TokenCredentials.Class` objects." ), ():void => {
+	describe( interfaze(
+		"CarbonLDP.Auth.TokenCredentialsBaseFactory",
+		"Interface with the factory and utils for `CarbonLDP.Auth.TokenCredentialsBase` objects."
+	), ():void => {
 
-		it( isDefined(), ():void => {
-			expect( TokenCredentials.Factory ).toBeDefined();
-			expect( Utils.isFunction( TokenCredentials.Factory ) ).toBe( true );
+		it( hasMethod(
+			OBLIGATORY,
+			"is",
+			"Returns true if the object provided is considered a `CarbonLDP.Auth.TokenCredentialsBase` object.", [
+				{ name: "value", type: "any" },
+			],
+			{ type: "value is CarbonLDP.Auth.TokenCredentialsBase" }
+		), ():void => {} );
+
+	} );
+
+	describe( property(
+		STATIC,
+		"TokenCredentialsBase",
+		"CarbonLDP.Auth.TokenCredentialsBaseFactory"
+	), ():void => {
+
+		it( "should exists", ():void => {
+			expect( TokenCredentialsBase ).toBeDefined();
+			expect( TokenCredentialsBase ).toEqual( jasmine.any( Object ) );
 		} );
 
-		it( hasMethod( STATIC, "is",
-			"Returns true if the object provided is considered a `CarbonLDP.Auth.TokenCredentials.Class` object.", [
-				{ name: "object", type: "object" },
-			],
-			{ type: "boolean" }
-		), ():void => {
-			expect( "is" in TokenCredentials.Factory ).toBe( true );
-			expect( Utils.isFunction( TokenCredentials.Factory.is ) ).toBe( true );
+		describe( "TokenCredentialsBase.is", ():void => {
 
-			expect( TokenCredentials.Factory.is( {} ) ).toBe( false );
-
-			let object:any = Resource.createFrom( {
-				key: null,
-				expirationTime: null,
-				user: null,
+			it( "should exists", ():void => {
+				expect( TokenCredentialsBase.is ).toBeDefined();
+				expect( TokenCredentialsBase.is ).toEqual( jasmine.any( Function ) );
 			} );
 
-			expect( TokenCredentials.Factory.is( object ) ).toBe( true );
 
-			delete object.key;
-			expect( TokenCredentials.Factory.is( object ) ).toBe( false );
-			object.key = null;
+			it( "should return false when void", ():void => {
+				expect( TokenCredentialsBase.is( void 0 ) ).toBe( false );
+			} );
 
-			delete object.expirationTime;
-			expect( TokenCredentials.Factory.is( object ) ).toBe( false );
-			object.expirationTime = null;
+			it( "should return false when null", ():void => {
+				expect( TokenCredentialsBase.is( null ) ).toBe( false );
+			} );
 
-			delete object.user;
-			expect( TokenCredentials.Factory.is( object ) ).toBe( true );
-			object.user = null;
-		} );
+			describe( "When check properties", ():void => {
 
-		it( hasMethod( STATIC, "hasClassProperties",
-			"Returns true if the object provided has the properties of a `CarbonLDP.Auth.TokenCredentials.Class` object.", [
-				{ name: "object", type: "object" },
-			],
-			{ type: "boolean" }
-		), ():void => {
-			expect( "hasClassProperties" in TokenCredentials.Factory ).toBe( true );
-			expect( Utils.isFunction( TokenCredentials.Factory.hasClassProperties ) ).toBe( true );
+				let target:Minus<TokenCredentialsBase, object>;
+				beforeEach( ():void => {
+					target = {
+						token: null,
+						expires: null,
+					};
+				} );
 
-			expect( TokenCredentials.Factory.hasClassProperties( {} ) ).toBe( false );
+				it( "should return true when all properties defined", ():void => {
+					const returned:boolean = TokenCredentialsBase.is( target );
+					expect( returned ).toBe( true );
+				} );
 
-			let object:any = {
-				key: null,
-				expirationTime: null,
-				user: null,
-			};
+				it( "should fail when no token", ():void => {
+					delete target.token;
 
-			expect( TokenCredentials.Factory.hasClassProperties( object ) ).toBe( true );
+					const returned:boolean = TokenCredentialsBase.is( target );
+					expect( returned ).toBe( false );
+				} );
 
-			object.anotherProperty = null;
-			expect( TokenCredentials.Factory.hasClassProperties( object ) ).toBe( true );
-			delete object[ "anotherProperty" ];
+				it( "should fail when no expiresOn", ():void => {
+					delete target.expires;
 
-			delete object.key;
-			expect( TokenCredentials.Factory.hasClassProperties( object ) ).toBe( false );
-			object.key = null;
+					const returned:boolean = TokenCredentialsBase.is( target );
+					expect( returned ).toBe( false );
+				} );
 
-			delete object.expirationTime;
-			expect( TokenCredentials.Factory.hasClassProperties( object ) ).toBe( false );
-			object.expirationTime = null;
+			} );
 
-			delete object.user;
-			expect( TokenCredentials.Factory.hasClassProperties( object ) ).toBe( true );
-			object.user = null;
 		} );
 
 	} );
 
-	it( hasDefaultExport( "CarbonLDP.Auth.Ticket.Class" ), ():void => {
-		let defaultExport:DefaultExport = <any> {};
-		let defaultTarget:TokenCredentials.Class;
 
-		defaultTarget = defaultExport;
-		expect( defaultTarget ).toEqual( jasmine.any( Object ) );
+	describe( interfaze(
+		"CarbonLDP.Auth.TokenCredentials",
+		"Interface that represents an authentication token for every context."
+	), ():void => {
+
+		it( extendsClass( "Carbon.LDP.VolatileResource" ), ():void => {} );
+
+		it( hasProperty(
+			OBLIGATORY,
+			"expiresOn",
+			"Date",
+			"The time when the token will expire."
+		), ():void => {} );
+
+		it( hasProperty(
+			OBLIGATORY,
+			"token",
+			"string",
+			"The value to provide as the authentication token in the headers of a a request."
+		), ():void => {} );
+
+	} );
+
+	describe( interfaze(
+		"CarbonLDP.Auth.TokenCredentialsFactory",
+		"Interface with the factory and utils for `CarbonLDP.Auth.TokenCredentials` objects."
+	), ():void => {
+
+		it( hasProperty(
+			OBLIGATORY,
+			"TYPE",
+			"string"
+		), ():void => {} );
+
+		it( hasProperty(
+			OBLIGATORY,
+			"SCHEMA",
+			"Carbon.ObjectSchema.Class"
+		), ():void => {} );
+
+
+		it( hasMethod(
+			OBLIGATORY,
+			"is",
+			"Returns true if the object provided is considered a `CarbonLDP.Auth.TokenCredentials` object.", [
+				{ name: "value", type: "any" },
+			],
+			{ type: "value is CarbonLDP.Auth.TokenCredentials" }
+		), ():void => {} );
+
+		it( hasMethod(
+			OBLIGATORY,
+			"createFrom",
+			[ "T extends CarbonLDP.Auth.TokenCredentialsBase" ],
+			"Creates a `CarbonLDP.Auth.TokenCredentials` object from the `CarbonLDP.Auth.TokenCredentialsBase` specified.", [
+				{ name: "object", type: "T" },
+			],
+			{ type: "T & CarbonLDP.Auth.TokenCredentials" }
+		), ():void => {} );
+
+	} );
+
+	describe( property(
+		STATIC,
+		"TokenCredentials",
+		"CarbonLDP.Auth.TokenCredentialsFactory"
+	), ():void => {
+
+		it( "should exists", ():void => {
+			expect( TokenCredentials ).toBeDefined();
+			expect( TokenCredentials ).toEqual( jasmine.any( Object ) );
+		} );
+
+		describe( "TokenCredentials.TYPE", ():void => {
+
+			it( "should exists", ():void => {
+				expect( TokenCredentials.TYPE ).toBeDefined();
+				expect( TokenCredentials.TYPE ).toEqual( jasmine.any( String ) );
+			} );
+
+			it( "should be cs:TokenCredentials", ():void => {
+				expect( TokenCredentials.TYPE ).toBe( CS.TokenCredentials );
+			} );
+
+		} );
+
+		describe( "TokenCredentials.SCHEMA", ():void => {
+
+			it( "should exists", ():void => {
+				expect( TokenCredentials.SCHEMA ).toBeDefined();
+				expect( TokenCredentials.SCHEMA ).toEqual( jasmine.any( Object ) );
+			} );
+
+			it( "should have model properties", ():void => {
+				expect( TokenCredentials.SCHEMA as {} ).toEqual( {
+					token: jasmine.any( Object ),
+					expires: jasmine.any( Object ),
+				} );
+			} );
+
+			it( "should have cs:token", ():void => {
+				expect( TokenCredentials.SCHEMA[ "token" ] ).toEqual( {
+					"@id": CS.token,
+					"@type": XSD.string,
+				} );
+			} );
+
+			it( "should have cs:expiresOn", ():void => {
+				expect( TokenCredentials.SCHEMA[ "expires" ] ).toEqual( {
+					"@id": CS.expires,
+					"@type": XSD.dateTime,
+				} );
+			} );
+
+		} );
+
+		describe( "TokenCredentials.is", ():void => {
+
+			it( "should exists", ():void => {
+				expect( TokenCredentials.is ).toBeDefined();
+				expect( TokenCredentials.is ).toEqual( jasmine.any( Function ) );
+			} );
+
+
+			it( "should return false when void", ():void => {
+				expect( TokenCredentials.is( void 0 ) ).toBe( false );
+			} );
+
+			it( "should return false when null", ():void => {
+				expect( TokenCredentials.is( null ) ).toBe( false );
+			} );
+
+			it( "should call VolatileResource.is", ():void => {
+				const spy:jasmine.Spy = spyOn( VolatileResource, "is" )
+					.and.returnValue( false );
+
+				TokenCredentials.is( { the: "object" } );
+				expect( spy ).toHaveBeenCalledWith( { the: "object" } );
+			} );
+
+			it( "should call self.hasType", ():void => {
+				spyOn( VolatileResource, "is" ).and.returnValue( true );
+
+				const spyObj:jasmine.SpyObj<{ hasType:Function }> = jasmine
+					.createSpyObj( { hasType: true } );
+
+				TokenCredentials.is( spyObj );
+				expect( spyObj.hasType ).toHaveBeenCalledWith( TokenCredentials.TYPE );
+			} );
+
+			it( "should return true when all spies true", ():void => {
+				spyOn( VolatileResource, "is" ).and.returnValue( true );
+
+				const spyObj:jasmine.SpyObj<{ hasType:Function }> = jasmine
+					.createSpyObj( { hasType: true } );
+
+				const returned:boolean = TokenCredentials.is( spyObj );
+				expect( returned ).toBe( true );
+			} );
+
+		} );
+
+		describe( "TokenCredentials.createFrom", ():void => {
+
+			it( "should exists", ():void => {
+				expect( TokenCredentials.createFrom ).toBeDefined();
+				expect( TokenCredentials.createFrom ).toEqual( jasmine.any( Function ) );
+			} );
+
+			it( "should create a volatile resource", ():void => {
+				const target:VolatileResource = TokenCredentials.createFrom( {
+					token: "token",
+					expires: new Date(),
+				} );
+
+				expect( VolatileResource.is( target ) ).toBe( true );
+			} );
+
+			it( "should add the TokenCredentials.TYPE", ():void => {
+				const target:TokenCredentials = TokenCredentials.createFrom( {
+					token: "token",
+					expires: new Date(),
+				} );
+
+				expect( target.types ).toContain( TokenCredentials.TYPE );
+			} );
+
+			it( "should convert string date to Date object", ():void => {
+				const time:Date = new Date();
+
+				const target:TokenCredentials = TokenCredentials.createFrom( {
+					token: "token",
+					expires: time.toISOString(),
+				} );
+
+				expect( target.expires ).toEqual( time );
+			} );
+
+		} );
+
 	} );
 
 } );
