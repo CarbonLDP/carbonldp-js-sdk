@@ -9,7 +9,7 @@ export interface UserBase {
 export interface User extends Document {
     name?: string;
     credentials?: UsernameAndPasswordCredentials;
-    setCredentials(email?: string, password?: string): UsernameAndPasswordCredentials;
+    updateCredentials(username?: string, password?: string): UsernameAndPasswordCredentials;
 }
 export interface UserFactory {
     TYPE: CS["User"];

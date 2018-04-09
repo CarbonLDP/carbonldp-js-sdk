@@ -22,7 +22,7 @@ export interface User extends Document {
 	name?:string;
 	credentials?:UsernameAndPasswordCredentials;
 
-	setCredentials( email?:string, password?:string ):UsernameAndPasswordCredentials;
+	updateCredentials( username?:string, password?:string ):UsernameAndPasswordCredentials;
 }
 
 
@@ -61,7 +61,7 @@ export const User:UserFactory = {
 
 	isDecorated( object:object ):object is User {
 		return isObject( object )
-			&& hasFunction( object, "setCredentials" )
+			&& hasFunction( object, "updateCredentials" )
 			;
 	},
 
@@ -78,11 +78,11 @@ export const User:UserFactory = {
 		Document.decorate( object );
 
 		return Object.defineProperties( object, {
-			"setCredentials": {
+			"updateCredentials": {
 				writable: false,
 				enumerable: false,
 				configurable: true,
-				value: setCredentials,
+				value: updateCredentials,
 			},
 		} );
 	},
@@ -102,7 +102,7 @@ export const User:UserFactory = {
 	},
 };
 
-function setCredentials( this:User, username?:string, password?:string ):UsernameAndPasswordCredentials {
+function updateCredentials( this:User, username?:string, password?:string ):UsernameAndPasswordCredentials {
 	const credentials:UsernameAndPasswordCredentials = UsernameAndPasswordCredentials.create( username, password );
 
 	this.credentials = this.createFragment( credentials );

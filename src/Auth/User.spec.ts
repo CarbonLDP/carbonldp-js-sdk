@@ -2,6 +2,7 @@ import { StrictMinus } from "../../test/helpers/types";
 import { Document } from "../Document";
 import {
 	extendsClass,
+	hasMethod,
 	hasProperty,
 	hasSignature,
 	interfaze,
@@ -56,6 +57,19 @@ describe( module( "carbonldp/Auth/User" ), ():void => {
 			"CarbonLDP.Auth.UsernameAndPasswordCredentials"
 		), ():void => {
 			const target:User[ "credentials" ] = {} as UsernameAndPasswordCredentials;
+			expect( target ).toBeDefined();
+		} );
+
+		it( hasMethod(
+			OBLIGATORY,
+			"updateCredentials",
+			"Add a credentials fragment with the properties provided. The document needs to be saved for the changes be applied in the platform.",
+			[
+				{ name: "username", type: "string" },
+				{ name: "password", type: "string" },
+			]
+		), ():void => {
+			const target:User[ "updateCredentials" ] = ( username?:string, password?:string ):UsernameAndPasswordCredentials => null;
 			expect( target ).toBeDefined();
 		} );
 
@@ -185,7 +199,7 @@ describe( module( "carbonldp/Auth/User" ), ():void => {
 					name: null,
 					credentials: null,
 
-					setCredentials: ():any => {},
+					updateCredentials: ():any => {},
 				};
 				expect( User.isDecorated( object ) ).toBe( true );
 
@@ -197,9 +211,9 @@ describe( module( "carbonldp/Auth/User" ), ():void => {
 				expect( User.isDecorated( object ) ).toBe( true );
 				object.credentials = null;
 
-				delete object.setCredentials;
+				delete object.updateCredentials;
 				expect( User.isDecorated( object ) ).toBe( false );
-				object.setCredentials = ():any => {};
+				object.updateCredentials = ():any => {};
 			} );
 
 		} );
@@ -274,19 +288,19 @@ describe( module( "carbonldp/Auth/User" ), ():void => {
 					name: null,
 					credentials: null,
 
-					setCredentials: fn,
+					updateCredentials: fn,
 				};
 
 				User.decorate( object );
 				expect( object ).toEqual( jasmine.objectContaining( {
-					setCredentials: fn,
+					updateCredentials: fn,
 				} ) );
 			} );
 
 			it( "should add the class properties", ():void => {
 				const returned:User = User.decorate( {} );
 				expect( returned ).toEqual( jasmine.objectContaining( {
-					setCredentials: jasmine.any( Function ),
+					updateCredentials: jasmine.any( Function ),
 				} ) );
 			} );
 
@@ -299,6 +313,8 @@ describe( module( "carbonldp/Auth/User" ), ():void => {
 			} );
 
 		} );
+
+		// TODO: Test decorated object
 
 	} );
 

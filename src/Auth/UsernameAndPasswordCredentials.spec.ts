@@ -71,7 +71,7 @@ describe( module( "carbonldp/Auth/UsernameAndPasswordCredentials" ), ():void => 
 		it( hasMethod(
 			OBLIGATORY,
 			"create",
-			"Creates a `CarbonLDP.Auth.UsernameAndPasswordCredentials` object with the email and password specified.", [
+			"Creates a `CarbonLDP.Auth.UsernameAndPasswordCredentials` object with the username and password specified.", [
 				{ name: "username", type: "string", description: "Username of the user to be created." },
 				{ name: "password", type: "string", description: "Password of the user to be created." },
 			],

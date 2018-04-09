@@ -21,7 +21,7 @@ exports.User = {
     SCHEMA: SCHEMA,
     isDecorated: function (object) {
         return Utils_1.isObject(object)
-            && Utils_1.hasFunction(object, "setCredentials");
+            && Utils_1.hasFunction(object, "updateCredentials");
     },
     is: function (value) {
         return Document_1.Document.is(value)
@@ -32,11 +32,11 @@ exports.User = {
             return object;
         Document_1.Document.decorate(object);
         return Object.defineProperties(object, {
-            "setCredentials": {
+            "updateCredentials": {
                 writable: false,
                 enumerable: false,
                 configurable: true,
-                value: setCredentials,
+                value: updateCredentials,
             },
         });
     },
@@ -51,7 +51,7 @@ exports.User = {
         return user;
     },
 };
-function setCredentials(username, password) {
+function updateCredentials(username, password) {
     var credentials = UsernameAndPasswordCredentials_1.UsernameAndPasswordCredentials.create(username, password);
     this.credentials = this.createFragment(credentials);
     this.credentials.addType(C_1.C.VolatileResource);
