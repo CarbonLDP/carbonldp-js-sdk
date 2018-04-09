@@ -242,7 +242,7 @@
 			app = new CarbonLDP( "http://localhost:8083" );
 		} );
 
-		describe( "When BASIC auth", () => {
+		xdescribe( "When BASIC auth", () => {
 
 			let token;
 			beforeEach( () => {
@@ -276,7 +276,7 @@
 
 		} );
 
-		describe( "When TOKEN auth", () => {
+		xdescribe( "When TOKEN auth", () => {
 
 			let token;
 			beforeEach( () => {
@@ -355,10 +355,11 @@
 
 		} );
 
-		fdescribe( "When Users", () => {
+		describe( "When Users", () => {
+			let user;
 
 			it( "should register user", async () => {
-				const user = await app.auth
+				user = await app.auth
 					.users
 					.createChild( CarbonLDP.Auth.User.create( {
 						name: "User 02",
@@ -416,11 +417,9 @@
 				console.log( users );
 			} );
 
-			it( "should delete user", async () => {
-				await app.auth.users
-					.delete( "user02/" );
-
-				expect().nothing();
+			afterAll( async () => {
+				if( ! user ) return;
+				await app.documents.delete( user.id );
 			} );
 
 		} );

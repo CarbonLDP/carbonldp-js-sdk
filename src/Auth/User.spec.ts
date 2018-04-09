@@ -1,4 +1,6 @@
+import { anyThatMatches } from "../../test/helpers/jasmine-equalities";
 import { StrictMinus } from "../../test/helpers/types";
+import { BlankNode } from "../BlankNode";
 import { Document } from "../Document";
 import {
 	extendsClass,
@@ -265,6 +267,17 @@ describe( module( "carbonldp/Auth/User" ), ():void => {
 				const user:User = User.createFrom( { credentials: null } );
 
 				expect( user.types ).toContain( User.TYPE );
+			} );
+
+			it( "should convert the credentials in a fragment", ():void => {
+				const user:User = User.createFrom( {
+					credentials: UsernameAndPasswordCredentials.create( {
+						username: "username@example.com",
+						password: "password",
+					} ),
+				} );
+
+				expect( user.credentials ).toEqual( anyThatMatches( BlankNode.is, "BlankNode" ) as any );
 			} );
 
 		} );

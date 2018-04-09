@@ -1,4 +1,5 @@
 import { Document } from "../Document";
+import { Fragment } from "../Fragment";
 import { ObjectSchema } from "../ObjectSchema";
 import {
 	hasFunction,
@@ -7,22 +8,19 @@ import {
 import { C } from "../Vocabularies/C";
 import { CS } from "../Vocabularies/CS";
 import { XSD } from "../Vocabularies/XSD";
-import {
-	UsernameAndPasswordCredentials,
-	UsernameAndPasswordCredentialsBase,
-} from "./UsernameAndPasswordCredentials";
+import { UsernameAndPasswordCredentials } from "./UsernameAndPasswordCredentials";
 
 
 export interface UserBase {
 	name?:string;
-	credentials:UsernameAndPasswordCredentialsBase;
+	credentials:UsernameAndPasswordCredentials;
 }
 
 export interface User extends Document {
 	name?:string;
-	credentials?:UsernameAndPasswordCredentials;
+	credentials?:Fragment & UsernameAndPasswordCredentials;
 
-	updateCredentials( username?:string, password?:string ):UsernameAndPasswordCredentials;
+	updateCredentials( username?:string, password?:string ):Fragment & UsernameAndPasswordCredentials;
 }
 
 
@@ -88,7 +86,7 @@ export const User:UserFactory = {
 	},
 
 	create( data:UserBase ):User {
-		return User.createFrom(  { ...data } );
+		return User.createFrom( { ...data } );
 	},
 
 	createFrom<T extends UserBase>( object:T ):T & User {

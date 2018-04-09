@@ -1,15 +1,16 @@
 import { Document } from "../Document";
+import { Fragment } from "../Fragment";
 import { ObjectSchema } from "../ObjectSchema";
 import { CS } from "../Vocabularies/CS";
-import { UsernameAndPasswordCredentials, UsernameAndPasswordCredentialsBase } from "./UsernameAndPasswordCredentials";
+import { UsernameAndPasswordCredentials } from "./UsernameAndPasswordCredentials";
 export interface UserBase {
     name?: string;
-    credentials: UsernameAndPasswordCredentialsBase;
+    credentials: UsernameAndPasswordCredentials;
 }
 export interface User extends Document {
     name?: string;
-    credentials?: UsernameAndPasswordCredentials;
-    updateCredentials(username?: string, password?: string): UsernameAndPasswordCredentials;
+    credentials?: Fragment & UsernameAndPasswordCredentials;
+    updateCredentials(username?: string, password?: string): Fragment & UsernameAndPasswordCredentials;
 }
 export interface UserFactory {
     TYPE: CS["User"];

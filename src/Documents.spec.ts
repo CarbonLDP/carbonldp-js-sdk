@@ -998,7 +998,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 
 						expect( document[ "string" ] ).toBe( "Document Resource" );
 
-						(():void =>{
+						(():void => {
 							expect( document[ "pointerSet" ].length ).toBe( 4 );
 							expect( Pointer.getIDs( document[ "pointerSet" ] ) ).toContain( "_:1" );
 							expect( Pointer.getIDs( document[ "pointerSet" ] ) ).toContain( "_:2" );
@@ -1022,7 +1022,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 								expect( fragment[ "pointerSet" ].find( pointer => pointer.id === "https://example.com/resource/#1" ) ).toBe( document.getFragment( "1" ) );
 							})();
 
-							(():void =>{
+							(():void => {
 								fragment = document.getFragment( "_:2" );
 								expect( fragment ).toBeTruthy();
 								expect( fragment[ "string" ] ).toBe( "Fragment 2" );

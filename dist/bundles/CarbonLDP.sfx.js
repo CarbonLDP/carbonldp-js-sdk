@@ -559,7 +559,7 @@ __export(__webpack_require__(195));
 __export(__webpack_require__(50));
 __export(__webpack_require__(67));
 __export(__webpack_require__(33));
-__export(__webpack_require__(22));
+__export(__webpack_require__(21));
 __export(__webpack_require__(196));
 __export(__webpack_require__(197));
 __export(__webpack_require__(98));
@@ -1533,7 +1533,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 }
 Object.defineProperty(exports, "__esModule", { value: true });
-var Pointer_1 = __webpack_require__(18);
+var Pointer_1 = __webpack_require__(22);
 var Utils = __importStar(__webpack_require__(0));
 function addTypeInResource(type) {
     if (this.types.indexOf(type) !== -1)
@@ -1676,99 +1676,6 @@ __export(__webpack_require__(294));
 
 "use strict";
 
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
-    result["default"] = mod;
-    return result;
-}
-Object.defineProperty(exports, "__esModule", { value: true });
-var IllegalStateError_1 = __webpack_require__(37);
-var Utils = __importStar(__webpack_require__(0));
-function isPointerResolved() {
-    return this._resolved;
-}
-exports.isPointerResolved = isPointerResolved;
-function resolveStandalonePointer() {
-    return Promise.reject(new IllegalStateError_1.IllegalStateError("The pointer has not been assigned to a context."));
-}
-exports.resolveStandalonePointer = resolveStandalonePointer;
-exports.Pointer = {
-    isDecorated: function (object) {
-        return (Utils.hasPropertyDefined(object, "_id") &&
-            Utils.hasPropertyDefined(object, "_resolved") &&
-            Utils.hasPropertyDefined(object, "id") &&
-            Utils.hasFunction(object, "isResolved") &&
-            Utils.hasPropertyDefined(object, "resolve"));
-    },
-    is: function (object) {
-        return (Utils.isObject(object) &&
-            exports.Pointer.isDecorated(object));
-    },
-    create: function (id) {
-        return exports.Pointer.createFrom({}, id);
-    },
-    createFrom: function (object, id) {
-        var pointer = exports.Pointer.decorate(object);
-        if (id)
-            pointer.id = id;
-        return pointer;
-    },
-    decorate: function (object) {
-        if (exports.Pointer.isDecorated(object))
-            return object;
-        var pointer = object;
-        Object.defineProperties(pointer, {
-            "_id": {
-                writable: true,
-                configurable: true,
-                value: pointer.id || "",
-            },
-            "_resolved": {
-                writable: true,
-                configurable: true,
-                value: pointer._resolved || false,
-            },
-            "id": {
-                enumerable: false,
-                configurable: true,
-                get: function () {
-                    return this._id;
-                },
-                set: function (value) {
-                    this._id = value;
-                },
-            },
-            "isResolved": {
-                configurable: true,
-                value: isPointerResolved,
-            },
-            "resolve": {
-                writable: false,
-                enumerable: false,
-                configurable: true,
-                value: resolveStandalonePointer,
-            },
-        });
-        return pointer;
-    },
-    areEqual: function (pointer1, pointer2) {
-        return pointer1.id === pointer2.id;
-    },
-    getIDs: function (pointers) {
-        return pointers
-            .map(function (pointer) { return pointer.id; });
-    },
-};
-
-
-/***/ }),
-/* 19 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CS = {
     namespace: "https://carbonldp.com/ns/v1/security#",
@@ -1829,7 +1736,7 @@ exports.CS = {
 
 
 /***/ }),
-/* 20 */
+/* 19 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1841,7 +1748,6 @@ var IllegalArgumentError_1 = __webpack_require__(13);
 var Converter_1 = __webpack_require__(71);
 var NamedFragment_1 = __webpack_require__(74);
 var ObjectSchema_1 = __webpack_require__(12);
-var Pointer_1 = __webpack_require__(18);
 var URI_1 = __webpack_require__(10);
 var Resource_1 = __webpack_require__(15);
 var Utils_1 = __webpack_require__(0);
@@ -1991,42 +1897,44 @@ exports.Document = {
     create: function () { return exports.Document.createFrom({}); },
     _convertNestedObjects: function (parent, actual, fragmentsTracker) {
         if (fragmentsTracker === void 0) { fragmentsTracker = new Set(); }
-        var next;
-        var idOrSlug;
-        var fragment;
-        var keys = Object.keys(actual);
-        for (var _i = 0, keys_1 = keys; _i < keys_1.length; _i++) {
-            var key = keys_1[_i];
-            next = actual[key];
+        for (var _i = 0, _a = Object.keys(actual); _i < _a.length; _i++) {
+            var key = _a[_i];
+            var next = actual[key];
             if (Array.isArray(next)) {
                 exports.Document._convertNestedObjects(parent, next, fragmentsTracker);
                 continue;
             }
             if (!Utils_1.isPlainObject(next))
                 continue;
-            if (Pointer_1.Pointer.is(next)) {
-                if (parent.hasFragment(next.id) && !fragmentsTracker.has(next.id)) {
-                    fragmentsTracker.add(next.id);
-                    exports.Document._convertNestedObjects(parent, next, fragmentsTracker);
-                }
+            if (exports.Document.is(next))
                 continue;
-            }
-            idOrSlug = ("id" in next) ? next.id : (("slug" in next) ? URI_1.URI.hasFragment(next.slug) ? next.slug : "#" + next.slug : "");
-            if (!!idOrSlug && !parent.inScope(idOrSlug))
+            var idOrSlug = getNestedObjectId(next);
+            if (!!idOrSlug && !inScope.call(parent, idOrSlug))
                 continue;
             var parentFragment = parent.getFragment(idOrSlug);
             if (!parentFragment) {
-                fragment = parent.createFragment(next, idOrSlug);
+                var fragment = parent.createFragment(next, idOrSlug);
                 exports.Document._convertNestedObjects(parent, fragment, fragmentsTracker);
             }
             else if (parentFragment !== next) {
-                Object.assign(parentFragment, next);
-                fragment = actual[key] = parentFragment;
+                var fragment = actual[key] = Object.assign(parentFragment, next);
                 exports.Document._convertNestedObjects(parent, fragment, fragmentsTracker);
+            }
+            else if (!fragmentsTracker.has(next.id)) {
+                fragmentsTracker.add(next.id);
+                exports.Document._convertNestedObjects(parent, next, fragmentsTracker);
             }
         }
     },
 };
+function getNestedObjectId(object) {
+    if ("id" in object)
+        return object.id;
+    if ("slug" in object)
+        return URI_1.URI.hasFragment(object.slug) ?
+            object.slug : "#" + object.slug;
+    return "";
+}
 function hasPointer(id) {
     if (id === this.id)
         return true;
@@ -2167,7 +2075,7 @@ function normalize() {
 
 
 /***/ }),
-/* 21 */
+/* 20 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(module, global) {var __WEBPACK_AMD_DEFINE_RESULT__;/*! JSON v3.3.2 | http://bestiejs.github.io/json3 | Copyright 2012-2014, Kit Cambridge | http://kit.mit-license.org */
@@ -3077,7 +2985,7 @@ function normalize() {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(262)(module), __webpack_require__(6)))
 
 /***/ }),
-/* 22 */
+/* 21 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3116,6 +3024,99 @@ exports.Token = Token;
 exports.default = Token;
 
 //# sourceMappingURL=Token.js.map
+
+
+/***/ }),
+/* 22 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
+    result["default"] = mod;
+    return result;
+}
+Object.defineProperty(exports, "__esModule", { value: true });
+var IllegalStateError_1 = __webpack_require__(37);
+var Utils = __importStar(__webpack_require__(0));
+function isPointerResolved() {
+    return this._resolved;
+}
+exports.isPointerResolved = isPointerResolved;
+function resolveStandalonePointer() {
+    return Promise.reject(new IllegalStateError_1.IllegalStateError("The pointer has not been assigned to a context."));
+}
+exports.resolveStandalonePointer = resolveStandalonePointer;
+exports.Pointer = {
+    isDecorated: function (object) {
+        return (Utils.hasPropertyDefined(object, "_id") &&
+            Utils.hasPropertyDefined(object, "_resolved") &&
+            Utils.hasPropertyDefined(object, "id") &&
+            Utils.hasFunction(object, "isResolved") &&
+            Utils.hasPropertyDefined(object, "resolve"));
+    },
+    is: function (object) {
+        return (Utils.isObject(object) &&
+            exports.Pointer.isDecorated(object));
+    },
+    create: function (id) {
+        return exports.Pointer.createFrom({}, id);
+    },
+    createFrom: function (object, id) {
+        var pointer = exports.Pointer.decorate(object);
+        if (id)
+            pointer.id = id;
+        return pointer;
+    },
+    decorate: function (object) {
+        if (exports.Pointer.isDecorated(object))
+            return object;
+        var pointer = object;
+        Object.defineProperties(pointer, {
+            "_id": {
+                writable: true,
+                configurable: true,
+                value: pointer.id || "",
+            },
+            "_resolved": {
+                writable: true,
+                configurable: true,
+                value: pointer._resolved || false,
+            },
+            "id": {
+                enumerable: false,
+                configurable: true,
+                get: function () {
+                    return this._id;
+                },
+                set: function (value) {
+                    this._id = value;
+                },
+            },
+            "isResolved": {
+                configurable: true,
+                value: isPointerResolved,
+            },
+            "resolve": {
+                writable: false,
+                enumerable: false,
+                configurable: true,
+                value: resolveStandalonePointer,
+            },
+        });
+        return pointer;
+    },
+    areEqual: function (pointer1, pointer2) {
+        return pointer1.id === pointer2.id;
+    },
+    getIDs: function (pointers) {
+        return pointers
+            .map(function (pointer) { return pointer.id; });
+    },
+};
 
 
 /***/ }),
@@ -3357,7 +3358,7 @@ function __export(m) {
 }
 Object.defineProperty(exports, "__esModule", { value: true });
 __export(__webpack_require__(2));
-__export(__webpack_require__(19));
+__export(__webpack_require__(18));
 __export(__webpack_require__(41));
 __export(__webpack_require__(243));
 __export(__webpack_require__(75));
@@ -3889,7 +3890,7 @@ var Identifier_1 = __webpack_require__(34);
 var NewLineSymbol_1 = __webpack_require__(66);
 var Operator_1 = __webpack_require__(50);
 var RightSymbol_1 = __webpack_require__(67);
-var Token_1 = __webpack_require__(22);
+var Token_1 = __webpack_require__(21);
 var StringLiteral = (function (_super) {
     __extends(StringLiteral, _super);
     function StringLiteral() {
@@ -3933,7 +3934,7 @@ var __extends = (this && this.__extends) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 var StringLiteral_1 = __webpack_require__(33);
-var Token_1 = __webpack_require__(22);
+var Token_1 = __webpack_require__(21);
 var Identifier = (function (_super) {
     __extends(Identifier, _super);
     function Identifier() {
@@ -4278,14 +4279,14 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 }
 Object.defineProperty(exports, "__esModule", { value: true });
-var Document_1 = __webpack_require__(20);
+var Document_1 = __webpack_require__(19);
 var Request_1 = __webpack_require__(30);
 var Document_2 = __webpack_require__(120);
 var ObjectSchema = __importStar(__webpack_require__(12));
 var PersistedFragment_1 = __webpack_require__(55);
 var PersistedNamedFragment_1 = __webpack_require__(121);
 var PersistedResource_1 = __webpack_require__(56);
-var Pointer_1 = __webpack_require__(18);
+var Pointer_1 = __webpack_require__(22);
 var URI_1 = __webpack_require__(10);
 var ServiceAwareDocument_1 = __webpack_require__(122);
 var Utils = __importStar(__webpack_require__(0));
@@ -5020,7 +5021,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var PersistedDocument_1 = __webpack_require__(42);
 var Utils = __importStar(__webpack_require__(0));
-var CS_1 = __webpack_require__(19);
+var CS_1 = __webpack_require__(18);
 exports.PersistedProtectedDocument = {
     isDecorated: function (object) {
         return Utils.isObject(object)
@@ -5125,7 +5126,7 @@ module.exports = {
 /* WEBPACK VAR INJECTION */(function(global) {
 
 var eventUtils = __webpack_require__(23)
-  , JSON3 = __webpack_require__(21)
+  , JSON3 = __webpack_require__(20)
   , browser = __webpack_require__(47)
   ;
 
@@ -5367,7 +5368,7 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-var Token_1 = __webpack_require__(22);
+var Token_1 = __webpack_require__(21);
 var Operator = (function (_super) {
     __extends(Operator, _super);
     function Operator() {
@@ -5401,10 +5402,10 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 }
 Object.defineProperty(exports, "__esModule", { value: true });
-var Pointer_1 = __webpack_require__(18);
+var Pointer_1 = __webpack_require__(22);
 var Utils = __importStar(__webpack_require__(0));
-var CS_1 = __webpack_require__(19);
-var Document_1 = __webpack_require__(20);
+var CS_1 = __webpack_require__(18);
+var Document_1 = __webpack_require__(19);
 var ACE_1 = __webpack_require__(69);
 var SCHEMA = {
     "entries": {
@@ -6003,10 +6004,10 @@ var __assign = (this && this.__assign) || Object.assign || function(t) {
     return t;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var Document_1 = __webpack_require__(20);
+var Document_1 = __webpack_require__(19);
 var Utils_1 = __webpack_require__(0);
 var C_1 = __webpack_require__(2);
-var CS_1 = __webpack_require__(19);
+var CS_1 = __webpack_require__(18);
 var XSD_1 = __webpack_require__(8);
 var UsernameAndPasswordCredentials_1 = __webpack_require__(82);
 var SCHEMA = {
@@ -6120,7 +6121,7 @@ exports.VolatileResource = {
 Object.defineProperty(exports, "__esModule", { value: true });
 var LDP_1 = __webpack_require__(58);
 var Utils_1 = __webpack_require__(0);
-var CS_1 = __webpack_require__(19);
+var CS_1 = __webpack_require__(18);
 var XSD_1 = __webpack_require__(8);
 exports.TokenCredentialsBase = {
     is: function (value) {
@@ -6467,7 +6468,7 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-var Token_1 = __webpack_require__(22);
+var Token_1 = __webpack_require__(21);
 var NewLineSymbol = (function (_super) {
     __extends(NewLineSymbol, _super);
     function NewLineSymbol() {
@@ -6512,7 +6513,7 @@ var Identifier_1 = __webpack_require__(34);
 var LeftSymbol_1 = __webpack_require__(97);
 var NewLineSymbol_1 = __webpack_require__(66);
 var Operator_1 = __webpack_require__(50);
-var Token_1 = __webpack_require__(22);
+var Token_1 = __webpack_require__(21);
 var RightSymbol = (function (_super) {
     __extends(RightSymbol, _super);
     function RightSymbol() {
@@ -6614,7 +6615,7 @@ exports.Users = Users;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var Fragment_1 = __webpack_require__(36);
-var CS_1 = __webpack_require__(19);
+var CS_1 = __webpack_require__(18);
 var XSD_1 = __webpack_require__(8);
 var SCHEMA = {
     "granting": {
@@ -6710,7 +6711,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
 }
 Object.defineProperty(exports, "__esModule", { value: true });
 var IllegalArgumentError_1 = __webpack_require__(13);
-var Pointer_1 = __webpack_require__(18);
+var Pointer_1 = __webpack_require__(22);
 var List_1 = __webpack_require__(38);
 var XSDSerializers = __importStar(__webpack_require__(106));
 var Node_1 = __webpack_require__(25);
@@ -7495,7 +7496,7 @@ var __assign = (this && this.__assign) || Object.assign || function(t) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var LDP_1 = __webpack_require__(58);
-var CS_1 = __webpack_require__(19);
+var CS_1 = __webpack_require__(18);
 var XSD_1 = __webpack_require__(8);
 var SCHEMA = {
     "username": {
@@ -7934,7 +7935,7 @@ module.exports = Event;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var CS_1 = __webpack_require__(19);
+var CS_1 = __webpack_require__(18);
 var SCHEMA = {
     "accessControlList": {
         "@id": CS_1.CS.accessControlList,
@@ -8189,7 +8190,7 @@ var __extends = (this && this.__extends) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 var Identifier_1 = __webpack_require__(34);
-var Token_1 = __webpack_require__(22);
+var Token_1 = __webpack_require__(21);
 var LeftSymbol = (function (_super) {
     __extends(LeftSymbol, _super);
     function LeftSymbol() {
@@ -8394,7 +8395,7 @@ var LDAPCredentials_1 = __webpack_require__(138);
 var TokenCredentials_1 = __webpack_require__(60);
 var User_1 = __webpack_require__(57);
 var UsernameAndPasswordCredentials_1 = __webpack_require__(82);
-var Document_1 = __webpack_require__(20);
+var Document_1 = __webpack_require__(19);
 var Documents_1 = __webpack_require__(140);
 var Errors = __importStar(__webpack_require__(9));
 var AddMemberAction_1 = __webpack_require__(83);
@@ -9520,7 +9521,7 @@ __export(__webpack_require__(107));
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var PersistedDocument_1 = __webpack_require__(42);
-var Pointer_1 = __webpack_require__(18);
+var Pointer_1 = __webpack_require__(22);
 var Document_1 = __webpack_require__(39);
 var Node_1 = __webpack_require__(25);
 var PartialMetadata_1 = __webpack_require__(78);
@@ -9809,7 +9810,7 @@ exports.PersistedNamedFragment = {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var Document_1 = __webpack_require__(20);
+var Document_1 = __webpack_require__(19);
 var Utils_1 = __webpack_require__(0);
 exports.ServiceAwareDocument = {
     isDecorated: function (object) {
@@ -9953,7 +9954,7 @@ exports.MapEntry = {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var Document_1 = __webpack_require__(20);
+var Document_1 = __webpack_require__(19);
 var IllegalArgumentError_1 = __webpack_require__(13);
 var LDP_1 = __webpack_require__(41);
 exports.DirectContainer = {
@@ -10585,7 +10586,7 @@ var ACL_1 = __webpack_require__(51);
 var PersistedACL_1 = __webpack_require__(139);
 var PersistedUser_1 = __webpack_require__(81);
 var User_1 = __webpack_require__(57);
-var Document_1 = __webpack_require__(20);
+var Document_1 = __webpack_require__(19);
 var Errors = __importStar(__webpack_require__(9));
 var FreeResources_1 = __webpack_require__(142);
 var Errors_1 = __webpack_require__(40);
@@ -10608,7 +10609,7 @@ var PersistedDocument_1 = __webpack_require__(42);
 var PersistedFragment_1 = __webpack_require__(55);
 var PersistedProtectedDocument_1 = __webpack_require__(45);
 var PersistedResource_1 = __webpack_require__(56);
-var Pointer_1 = __webpack_require__(18);
+var Pointer_1 = __webpack_require__(22);
 var ProtectedDocument_1 = __webpack_require__(92);
 var Document_2 = __webpack_require__(39);
 var Node_1 = __webpack_require__(25);
@@ -11981,7 +11982,7 @@ var iri_1 = __webpack_require__(28);
 var tokens_1 = __webpack_require__(3);
 var Utils_1 = __webpack_require__(114);
 var ObjectSchema_1 = __webpack_require__(12);
-var Pointer_1 = __webpack_require__(18);
+var Pointer_1 = __webpack_require__(22);
 var Utils_2 = __webpack_require__(0);
 var XSD_1 = __webpack_require__(8);
 var Tokens_1 = __webpack_require__(144);
@@ -13408,7 +13409,7 @@ module.exports = EventSourceTransport;
 //    http://stevesouders.com/misc/test-postmessage.php
 
 var inherits = __webpack_require__(1)
-  , JSON3 = __webpack_require__(21)
+  , JSON3 = __webpack_require__(20)
   , EventEmitter = __webpack_require__(11).EventEmitter
   , version = __webpack_require__(156)
   , urlUtils = __webpack_require__(14)
@@ -13646,7 +13647,7 @@ module.exports = global.location || {
 
 var inherits = __webpack_require__(1)
   , EventEmitter = __webpack_require__(11).EventEmitter
-  , JSON3 = __webpack_require__(21)
+  , JSON3 = __webpack_require__(20)
   , XHRLocalObject = __webpack_require__(46)
   , InfoAjax = __webpack_require__(161)
   ;
@@ -13686,7 +13687,7 @@ module.exports = InfoReceiverIframe;
 
 var EventEmitter = __webpack_require__(11).EventEmitter
   , inherits = __webpack_require__(1)
-  , JSON3 = __webpack_require__(21)
+  , JSON3 = __webpack_require__(20)
   , objectUtils = __webpack_require__(90)
   ;
 
@@ -15185,7 +15186,7 @@ var AbstractContext_1 = __webpack_require__(215);
 var AccessPoint_1 = __webpack_require__(141);
 var Auth = __importStar(__webpack_require__(68));
 var BlankNode_1 = __webpack_require__(105);
-var Document_1 = __webpack_require__(20);
+var Document_1 = __webpack_require__(19);
 var Documents_1 = __webpack_require__(140);
 var Errors = __importStar(__webpack_require__(9));
 var Fragment_1 = __webpack_require__(36);
@@ -15204,7 +15205,7 @@ var PersistedDocument_1 = __webpack_require__(42);
 var PersistedFragment_1 = __webpack_require__(55);
 var PersistedNamedFragment_1 = __webpack_require__(121);
 var PersistedResource_1 = __webpack_require__(56);
-var Pointer_1 = __webpack_require__(18);
+var Pointer_1 = __webpack_require__(22);
 var RDF = __importStar(__webpack_require__(298));
 var Resource_1 = __webpack_require__(15);
 var SDKContext_1 = __webpack_require__(104);
@@ -15384,7 +15385,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var Identifier_1 = __webpack_require__(34);
 var Operator_1 = __webpack_require__(50);
 var RightSymbol_1 = __webpack_require__(67);
-var Token_1 = __webpack_require__(22);
+var Token_1 = __webpack_require__(21);
 var NumberLiteral = (function (_super) {
     __extends(NumberLiteral, _super);
     function NumberLiteral(value) {
@@ -17191,9 +17192,9 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 }
 Object.defineProperty(exports, "__esModule", { value: true });
-var Document_1 = __webpack_require__(20);
+var Document_1 = __webpack_require__(19);
 var IllegalArgumentError_1 = __webpack_require__(13);
-var CS_1 = __webpack_require__(19);
+var CS_1 = __webpack_require__(18);
 var XSD_1 = __webpack_require__(8);
 var Utils = __importStar(__webpack_require__(0));
 exports.RDF_CLASS = CS_1.CS.Role;
@@ -18911,7 +18912,7 @@ __webpack_require__(270);
 
 var URL = __webpack_require__(148)
   , inherits = __webpack_require__(1)
-  , JSON3 = __webpack_require__(21)
+  , JSON3 = __webpack_require__(20)
   , random = __webpack_require__(31)
   , escape = __webpack_require__(271)
   , urlUtils = __webpack_require__(14)
@@ -19755,7 +19756,7 @@ defineProperties(StringPrototype, {
 "use strict";
 
 
-var JSON3 = __webpack_require__(21);
+var JSON3 = __webpack_require__(20);
 
 // Some extra characters that Chrome gets wrong, and substitutes with
 // something else on the wire.
@@ -20070,7 +20071,7 @@ module.exports = XHRFake;
 
 var EventEmitter = __webpack_require__(11).EventEmitter
   , inherits = __webpack_require__(1)
-  , JSON3 = __webpack_require__(21)
+  , JSON3 = __webpack_require__(20)
   , utils = __webpack_require__(23)
   , IframeTransport = __webpack_require__(155)
   , InfoReceiverIframe = __webpack_require__(160)
@@ -20147,7 +20148,7 @@ module.exports = InfoIframe;
 
 var urlUtils = __webpack_require__(14)
   , eventUtils = __webpack_require__(23)
-  , JSON3 = __webpack_require__(21)
+  , JSON3 = __webpack_require__(20)
   , FacadeJS = __webpack_require__(280)
   , InfoIframeReceiver = __webpack_require__(160)
   , iframeUtils = __webpack_require__(48)
@@ -20254,7 +20255,7 @@ module.exports = function(SockJS, availableTransports) {
 "use strict";
 
 
-var JSON3 = __webpack_require__(21)
+var JSON3 = __webpack_require__(20)
   , iframeUtils = __webpack_require__(48)
   ;
 
