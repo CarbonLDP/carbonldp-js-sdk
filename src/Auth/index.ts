@@ -15,7 +15,7 @@ export { PersistedACL } from "./PersistedACL";
 export { PersistedUser } from "./PersistedUser";
 export { TokenAuthenticator } from "./TokenAuthenticator";
 export { TokenCredentials, TokenCredentialsBase } from "./TokenCredentials";
-export { User } from "./User";
+export { User, UserBase } from "./User";
 export { UsernameAndPasswordCredentials } from "./UsernameAndPasswordCredentials";
 
 

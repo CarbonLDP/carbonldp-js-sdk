@@ -16,7 +16,10 @@ import * as Utils from "../Utils";
 import { CS } from "../Vocabularies/CS";
 import { XSD } from "../Vocabularies/XSD";
 
-import { User } from "./User";
+import {
+	User,
+	UserBase
+} from "./User";
 import { UsernameAndPasswordCredentials } from "./UsernameAndPasswordCredentials";
 
 describe( module( "carbonldp/Auth/User" ), ():void => {
@@ -52,7 +55,7 @@ describe( module( "carbonldp/Auth/User" ), ():void => {
 			"credentials",
 			"CarbonLDP.Auth.UsernameAndPasswordCredentials"
 		), ():void => {
-			const target:UsernameAndPasswordCredentials = {} as User[ "credentials" ];
+			const target:User[ "credentials" ] = {} as UsernameAndPasswordCredentials;
 			expect( target ).toBeDefined();
 		} );
 
@@ -102,6 +105,7 @@ describe( module( "carbonldp/Auth/User" ), ():void => {
 			it( hasSignature(
 				"Creates a `CarbonLDP.Auth.User` object.",
 				[
+					{ name: "data", type: "CarbonLDP.Auth.UserBase", description: "The data requited for creating a User document." },
 				],
 				{ type: "CarbonLDP.Auth.User" }
 			), ():void => {} );
@@ -111,7 +115,7 @@ describe( module( "carbonldp/Auth/User" ), ():void => {
 		describe( method( OBLIGATORY, "createFrom" ), ():void => {
 
 			it( hasSignature(
-				[ "T extends object" ],
+				[ "T extends CarbonLDP.Auth.UserBase" ],
 				"Creates a `CarbonLDP.Auth.User` object with the one provided.",
 				[
 					{ name: "object", type: "T" },
@@ -210,8 +214,18 @@ describe( module( "carbonldp/Auth/User" ), ():void => {
 			it( "should call `User.createFrom`", ():void => {
 				const spy:jasmine.Spy = spyOn( User, "createFrom" );
 
-				User.create();
+				User.create( { credentials: null } );
 				expect( spy ).toHaveBeenCalledWith( jasmine.any( Object ) );
+			} );
+
+			it( "should pass the base object properties in copy", ():void => {
+				const spy:jasmine.Spy = spyOn( User, "createFrom" );
+
+				const base:UserBase = { name: "User name", credentials: null };
+				User.create( base );
+
+				expect( spy.calls.argsFor( 0 )[ 0 ] ).toEqual( base );
+				expect( spy.calls.argsFor( 0 )[ 0 ] ).not.toBe( base );
 			} );
 
 		} );
@@ -227,14 +241,14 @@ describe( module( "carbonldp/Auth/User" ), ():void => {
 				const spy:jasmine.Spy = spyOn( User, "decorate" )
 					.and.callThrough();
 
-				const object:object = { the: "object" };
+				const object:{ the:string } & UserBase = { the: "object", credentials: null };
 				User.createFrom( object );
 
 				expect( spy ).toHaveBeenCalledWith( object );
 			} );
 
 			it( "should add cs:User type", ():void => {
-				const user:User = User.createFrom( {} );
+				const user:User = User.createFrom( { credentials: null } );
 
 				expect( user.types ).toContain( User.TYPE );
 			} );

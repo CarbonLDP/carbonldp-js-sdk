@@ -6035,11 +6035,13 @@ exports.User = {
             },
         });
     },
-    create: function () {
-        return exports.User.createFrom({});
+    create: function (data) {
+        var copy = Object.assign({}, data);
+        return exports.User.createFrom(copy);
     },
     createFrom: function (object) {
         var user = exports.User.decorate(object);
+        user._normalize();
         user.addType(exports.User.TYPE);
         return user;
     },
@@ -6769,7 +6771,7 @@ var JSONLDConverter = (function () {
             if (URI_1.URI.isRelative(expandedPropertyName))
                 return;
             var expandedValue = _this.expandProperty(propertyName, value, digestedSchema, generalSchema);
-            if (expandedPropertyName === null)
+            if (expandedValue === null)
                 return;
             expandedObject[expandedPropertyName] = expandedValue;
         });

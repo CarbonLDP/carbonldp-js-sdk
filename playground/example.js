@@ -360,13 +360,13 @@
 			it( "should register user", async () => {
 				const user = await app.auth
 					.users
-					.createChild( {
+					.createChild( CarbonLDP.Auth.User.create( {
 						name: "User 02",
 						credentials: {
 							username: "user02",
 							password: "pass02",
 						},
-					}, "user02/" )
+					} ), "user02/" )
 				;
 
 				expect( CarbonLDP.Auth.PersistedUser.is( user ) ).toBe( true );
@@ -397,7 +397,7 @@
 				console.log( users );
 			} );
 
-			it( "should list users", async () => {
+			it( "should get users", async () => {
 				const users = await  app.auth
 					.users
 					.getChildren();

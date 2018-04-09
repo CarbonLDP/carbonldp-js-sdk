@@ -38,9 +38,9 @@ export interface UserFactory {
 
 	decorate<T extends object>( object:T ):T & User;
 
-	create():User;
+	create( data:UserBase ):User;
 
-	createFrom<T extends object>( object:T ):T & User;
+	createFrom<T extends UserBase>( object:T ):T & User;
 }
 
 const SCHEMA:ObjectSchema = {
@@ -87,12 +87,14 @@ export const User:UserFactory = {
 		} );
 	},
 
-	create():User {
-		return User.createFrom( {} );
+	create( data:UserBase ):User {
+		const copy:UserBase = Object.assign( {}, data );
+		return User.createFrom( copy );
 	},
 
-	createFrom<T extends object>( object:T ):T & User {
+	createFrom<T extends UserBase>( object:T ):T & User {
 		const user:T & User = User.decorate( object );
+		user._normalize();
 
 		user.addType( User.TYPE );
 

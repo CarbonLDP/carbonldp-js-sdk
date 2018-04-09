@@ -17,7 +17,7 @@ export interface UserFactory {
     isDecorated(object: object): object is User;
     is(value: any): value is User;
     decorate<T extends object>(object: T): T & User;
-    create(): User;
-    createFrom<T extends object>(object: T): T & User;
+    create(data: UserBase): User;
+    createFrom<T extends UserBase>(object: T): T & User;
 }
 export declare const User: UserFactory;

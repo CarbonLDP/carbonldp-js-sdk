@@ -77,7 +77,7 @@ var JSONLDConverter = (function () {
             if (URI_1.URI.isRelative(expandedPropertyName))
                 return;
             var expandedValue = _this.expandProperty(propertyName, value, digestedSchema, generalSchema);
-            if (expandedPropertyName === null)
+            if (expandedValue === null)
                 return;
             expandedObject[expandedPropertyName] = expandedValue;
         });

@@ -40,11 +40,13 @@ exports.User = {
             },
         });
     },
-    create: function () {
-        return exports.User.createFrom({});
+    create: function (data) {
+        var copy = Object.assign({}, data);
+        return exports.User.createFrom(copy);
     },
     createFrom: function (object) {
         var user = exports.User.decorate(object);
+        user._normalize();
         user.addType(exports.User.TYPE);
         return user;
     },
