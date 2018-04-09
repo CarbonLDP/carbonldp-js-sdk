@@ -1,11 +1,4 @@
 "use strict";
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
-    result["default"] = mod;
-    return result;
-}
 Object.defineProperty(exports, "__esModule", { value: true });
 var Errors_1 = require("../Errors");
 var HTTP_1 = require("../HTTP");
@@ -14,7 +7,7 @@ var JSONLD_1 = require("../JSONLD");
 var Document_1 = require("../RDF/Document");
 var Utils_1 = require("../Utils");
 var LDP_1 = require("../Vocabularies/LDP");
-var PersistedUser = __importStar(require("./PersistedUser"));
+var PersistedUser_1 = require("./PersistedUser");
 var Authenticator = (function () {
     function Authenticator(context) {
         this.context = context;
@@ -63,7 +56,7 @@ var Authenticator = (function () {
             _this._authenticatedUser = accessor
                 .authenticatedUserMetadata
                 .user;
-            return PersistedUser.Factory
+            return PersistedUser_1.PersistedUser
                 .decorate(_this._authenticatedUser, _this.context.documents);
         });
     };

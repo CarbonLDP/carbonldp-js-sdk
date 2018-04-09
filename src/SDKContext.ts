@@ -19,8 +19,6 @@ import { Error } from "./LDP/Error";
 import { ErrorResponse } from "./LDP/ErrorResponse";
 import { Map as CarbonMap } from "./LDP/Map";
 import { MapEntry } from "./LDP/MapEntry";
-import { DocumentMetadata } from "./LDP/DocumentMetadata";
-import { ErrorResponse } from "./LDP/ErrorResponse";
 import { RemoveMemberAction } from "./LDP/RemoveMemberAction";
 import { ResponseMetadata } from "./LDP/ResponseMetadata";
 import { ValidationError } from "./LDP/ValidationError";

@@ -500,7 +500,7 @@ describe( module( "carbonldp/Vocabularies/CS" ), ():void => {
 		} );
 
 		it( "should test all exported IRIs", ():void => {
-			expect( Object.keys( CS ).length ).toBe( 52 );
+			expect( Object.keys( CS ).length ).toBe( 55 );
 		} );
 
 		it( "CS.namespace", ():void => {
@@ -548,6 +548,11 @@ describe( module( "carbonldp/Vocabularies/CS" ), ():void => {
 			expect( CS.Credentials ).toBe( "https://carbonldp.com/ns/v1/security#Credentials" );
 		} );
 
+		it( "CS.CredentialsSet", ():void => {
+			expect( CS.CredentialsSet ).toEqual( jasmine.any( String ) );
+			expect( CS.CredentialsSet ).toBe( "https://carbonldp.com/ns/v1/security#CredentialsSet" );
+		} );
+
 		it( "CS.Delete", ():void => {
 			expect( CS.Delete ).toEqual( jasmine.any( String ) );
 			expect( CS.Delete ).toBe( "https://carbonldp.com/ns/v1/security#Delete" );
@@ -561,6 +566,11 @@ describe( module( "carbonldp/Vocabularies/CS" ), ():void => {
 		it( "CS.Extend", ():void => {
 			expect( CS.Extend ).toEqual( jasmine.any( String ) );
 			expect( CS.Extend ).toBe( "https://carbonldp.com/ns/v1/security#Extend" );
+		} );
+
+		it( "CS.LDAPCredentials", ():void => {
+			expect( CS.LDAPCredentials ).toEqual( jasmine.any( String ) );
+			expect( CS.LDAPCredentials ).toBe( "https://carbonldp.com/ns/v1/security#LDAPCredentials" );
 		} );
 
 		it( "CS.ManageSecurity", ():void => {

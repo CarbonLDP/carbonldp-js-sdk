@@ -18,13 +18,12 @@ import { XSD } from "../Vocabularies/XSD";
 import { AbstractContext } from "./../AbstractContext";
 import * as Utils from "./../Utils";
 import { BasicToken } from "./BasicToken";
-import { PersistedUser } from "./PersistedUser";
 
 import { TokenAuthenticator } from "./TokenAuthenticator";
 
 import {
 	TokenCredentials,
-	TokenCredentialsBase
+	TokenCredentialsBase,
 } from "./TokenCredentials";
 
 describe( module( "carbonldp/Auth/TokenAuthenticator" ), ():void => {
@@ -208,7 +207,7 @@ describe( module( "carbonldp/Auth/TokenAuthenticator" ), ():void => {
 			it( hasSignature(
 				"When a token is provided credentials will be requested, in other case the credentials provided will be validated and stored.",
 				[
-					{ name: "tokenOrCredentials", type: "CarbonLDP.Auth.UsernameAndPasswordToken | CarbonLDP.Auth.TokenCredentialsBase" },
+					{ name: "tokenOrCredentials", type: "CarbonLDP.Auth.BasicToken | CarbonLDP.Auth.TokenCredentialsBase" },
 				],
 				{ type: "Promise<CarbonLDP.Auth.TokenCredentials>" }
 			), ():void => {} );
@@ -238,7 +237,7 @@ describe( module( "carbonldp/Auth/TokenAuthenticator" ), ():void => {
 			it( "should set authenticated when authentication token", ( done:DoneFn ):void => {
 				const authenticator:TokenAuthenticator = new TokenAuthenticator( context );
 				authenticator
-					.authenticate( new UsernameAndPasswordToken( "user", "pass" ) )
+					.authenticate( new BasicToken( "user", "pass" ) )
 					.then( ():void => {
 						expect( authenticator.isAuthenticated() ).toEqual( true );
 
@@ -415,7 +414,7 @@ describe( module( "carbonldp/Auth/TokenAuthenticator" ), ():void => {
 
 				const authenticator:TokenAuthenticator = new TokenAuthenticator( context );
 				authenticator
-					.authenticate( new UsernameAndPasswordToken( "user", "pass" ) )
+					.authenticate( new BasicToken( "user", "pass" ) )
 					.then( () => done.fail( "should not resolve" ) )
 					.catch( error => {
 						expect( () => { throw error; } ).toThrowError( BadResponseError, `Preference "include="${ CS.PreferAuthToken }"" was not applied.` );

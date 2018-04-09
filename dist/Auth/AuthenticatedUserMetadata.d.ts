@@ -1,9 +1,9 @@
 import { VolatileResource } from "../LDP";
 import { ObjectSchema } from "../ObjectSchema";
 import { CS } from "../Vocabularies";
-import * as PersistedUser from "./PersistedUser";
+import { PersistedUser } from "./PersistedUser";
 export interface AuthenticatedUserMetadata extends VolatileResource {
-    user: PersistedUser.Class;
+    user: PersistedUser;
 }
 export interface AuthenticatedUserMetadataFactory {
     TYPE: CS["AuthenticatedUserMetadata"];

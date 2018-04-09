@@ -13,15 +13,15 @@ import { JSONLDParser } from "../JSONLD";
 import { RDFDocument } from "../RDF/Document";
 import { promiseMethod } from "../Utils";
 import { LDP } from "../Vocabularies/LDP";
-import * as PersistedUser from "./PersistedUser";
 import { AuthenticatedUserInformationAccessor } from "./AuthenticatedUserInformationAccessor";
+import { PersistedUser } from "./PersistedUser";
 
 export abstract class Authenticator<T extends object, W extends object> {
 
 	protected context:Context;
 
-	protected _authenticatedUser?:PersistedUser.Class;
-	get authenticatedUser():PersistedUser.Class { return this._authenticatedUser; }
+	protected _authenticatedUser?:PersistedUser;
+	get authenticatedUser():PersistedUser { return this._authenticatedUser; }
 
 	protected abstract _credentials?:W;
 
@@ -52,7 +52,7 @@ export abstract class Authenticator<T extends object, W extends object> {
 		return requestOptions;
 	}
 
-	getAuthenticatedUser( requestOptions:GETOptions = {} ):Promise<PersistedUser.Class> {
+	getAuthenticatedUser( requestOptions:GETOptions = {} ):Promise<PersistedUser> {
 		if( this._authenticatedUser ) return Promise.resolve( this._authenticatedUser );
 
 		return promiseMethod( () => {
@@ -75,7 +75,7 @@ export abstract class Authenticator<T extends object, W extends object> {
 				.authenticatedUserMetadata
 				.user;
 
-			return PersistedUser.Factory
+			return PersistedUser
 				.decorate( this._authenticatedUser, this.context.documents );
 		} );
 	}

@@ -1,7 +1,6 @@
 import { Documents } from "../Documents";
 import { Endpoint } from "../Endpoint";
 import { IllegalArgumentError } from "../Errors";
-import { RequestOptions } from "../HTTP";
 import { ModelDecorator } from "../ModelDecorator";
 import { CS } from "../Vocabularies";
 import { PersistedUser } from "./PersistedUser";

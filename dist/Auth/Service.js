@@ -15,12 +15,11 @@ var BasicToken_1 = require("./BasicToken");
 var Roles = __importStar(require("./Roles"));
 var TokenAuthenticator_1 = require("./TokenAuthenticator");
 var TokenCredentials_1 = require("./TokenCredentials");
-var UsersEndpoint_1 = require("./UsersEndpoint");
 var AuthService = (function () {
     function AuthService(context) {
         this.context = context;
         var usersIRI = context._resolvePath("users");
-        this.users = context.documents.register(usersIRI, [UsersEndpoint_1.UsersEndpoint.TYPE]);
+        this.users = context.documents.register(usersIRI);
         this.roles = new Roles.Class(context);
         this.authenticators = (_a = {},
             _a[AuthMethod_1.AuthMethod.BASIC] = new BasicAuthenticator_1.BasicAuthenticator(this.context),

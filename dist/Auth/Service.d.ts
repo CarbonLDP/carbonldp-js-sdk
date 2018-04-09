@@ -1,19 +1,21 @@
 import { Context } from "../Context";
 import { RequestOptions } from "../HTTP";
+import { Authenticator } from "./Authenticator";
 import { AuthMethod } from "./AuthMethod";
 import { BasicCredentials } from "./BasicCredentials";
 import { PersistedUser } from "./PersistedUser";
 import * as Roles from "./Roles";
-import { TokenCredentialsBase } from "./TokenCredentials";
-import { TokenCredentials } from "./TokenCredentials";
+import { TokenCredentials, TokenCredentialsBase } from "./TokenCredentials";
 import { UsersEndpoint } from "./UsersEndpoint";
 export declare class AuthService {
     readonly users: UsersEndpoint;
     readonly roles: Roles.Class;
+    protected readonly context: Context;
+    protected readonly authenticators: {
+        [P in AuthMethod]: Authenticator<object, object>;
+    };
+    protected authenticator: Authenticator<object, object>;
     protected _authenticatedUser: PersistedUser;
-    private readonly context;
-    private readonly authenticators;
-    private authenticator;
     readonly authenticatedUser: PersistedUser;
     constructor(context: Context);
     isAuthenticated(askParent?: boolean): boolean;

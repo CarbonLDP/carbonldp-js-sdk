@@ -5,13 +5,9 @@ import {
 } from "../../test/helpers/mocks";
 
 import { Context } from "../Context";
-import { Endpoint } from "../Endpoint";
 import { IllegalArgumentError } from "../Errors";
 import { RequestOptions } from "../HTTP/Request";
-import { Response } from "../HTTP/Response";
-import { PersistedProtectedDocument } from "../PersistedProtectedDocument";
-import { Resource } from "../Resource";
-import { ContextSettings } from "../Settings";
+import { PersistedDocument } from "../PersistedDocument";
 import {
 	clazz,
 	constructor,
@@ -29,15 +25,13 @@ import { CS } from "../Vocabularies/CS";
 import { XSD } from "../Vocabularies/XSD";
 import { Authenticator } from "./Authenticator";
 import { AuthMethod } from "./AuthMethod";
-import { BasicCredentials } from "./BasicCredentials";
-import { BasicToken } from "./BasicToken";
 import { PersistedUser } from "./PersistedUser";
 import * as Roles from "./Roles";
 
 import { AuthService } from "./Service";
 
-import * as TokenCredentials from "./TokenCredentials";
-import { UsersEndpoint } from "./UsersEndpoint";
+import { TokenCredentials } from "./TokenCredentials";
+import { User } from "./User";
 
 
 describe( module( "carbonldp/Auth/Service" ), ():void => {
@@ -79,10 +73,7 @@ describe( module( "carbonldp/Auth/Service" ), ():void => {
 			it( "should assign UsersEndpoint in users", ():void => {
 				const auth:AuthService = new AuthService( context );
 
-				expect( auth.users ).toEqual( anyThatMatches( PersistedProtectedDocument.is ) as any, "PersistedProtectedDocument" );
-				expect( auth.users ).toEqual( anyThatMatches( Endpoint.isDecorated ) as any, "Endpoint" );
-				expect( auth.users ).toEqual( anyThatMatches( UsersEndpoint.isDecorated ) as any, "UsersEndpoint" );
-
+				expect( auth.users ).toEqual( anyThatMatches( PersistedDocument.is, "PersistedDocument" ) as any );
 				expect( auth.users ).toEqual( jasmine.objectContaining( {
 					id: "https://example.com/users/",
 				} ) );
@@ -320,20 +311,7 @@ describe( module( "carbonldp/Auth/Service" ), ():void => {
 			), ():void => {} );
 
 
-			let context:AbstractContext;
 			beforeEach( () => {
-				context = new class extends AbstractContext {
-					protected _baseURI:string = "https://example.com/";
-					protected settings:ContextSettings = {
-						paths: {
-							users: {
-								slug: "users/",
-								paths: { me: "me/" },
-							},
-						},
-					};
-				};
-
 				jasmine.Ajax.stubRequest( "https://example.com/users/me/" ).andReturn( {
 					status: 200,
 					responseHeaders: {
@@ -405,7 +383,7 @@ describe( module( "carbonldp/Auth/Service" ), ():void => {
 							expect( auth.authenticatedUser ).toBeDefined();
 							expect( auth.authenticatedUser ).toEqual( jasmine.objectContaining( {
 								_resolved: false,
-								types: jasmine.arrayContaining( [ User.RDF_CLASS ] ) as any,
+								types: jasmine.arrayContaining( [ User.TYPE ] ) as any,
 							} ) );
 
 							done();
@@ -486,7 +464,7 @@ describe( module( "carbonldp/Auth/Service" ), ():void => {
 							expect( auth.authenticatedUser ).toBeDefined();
 							expect( auth.authenticatedUser ).toEqual( jasmine.objectContaining( {
 								_resolved: false,
-								types: jasmine.arrayContaining( [ User.RDF_CLASS ] ) as any,
+								types: jasmine.arrayContaining( [ User.TYPE ] ) as any,
 							} ) );
 
 							done();
@@ -511,7 +489,7 @@ describe( module( "carbonldp/Auth/Service" ), ():void => {
 				} );
 
 				it( "should return credentials", ( done:DoneFn ):void => {
-					const tokenCredentials:TokenCredentials.TokenCredentials = <TokenCredentials.TokenCredentials> {
+					const tokenCredentials:TokenCredentials = <TokenCredentials> {
 						token: "token-key",
 						expires: new Date( Date.now() + 24 * 60 * 60 * 1000 ),
 					};
@@ -532,7 +510,7 @@ describe( module( "carbonldp/Auth/Service" ), ():void => {
 				} );
 
 				it( "should populate the authenticated user", ( done:DoneFn ):void => {
-					const tokenCredentials:TokenCredentials.TokenCredentials = <TokenCredentials.TokenCredentials> {
+					const tokenCredentials:TokenCredentials = <TokenCredentials> {
 						token: "token-key",
 						expires: new Date( Date.now() + 24 * 60 * 60 * 1000 ),
 					};
@@ -544,7 +522,7 @@ describe( module( "carbonldp/Auth/Service" ), ():void => {
 							expect( auth.authenticatedUser ).toBeDefined();
 							expect( auth.authenticatedUser ).toEqual( jasmine.objectContaining( {
 								_resolved: false,
-								types: jasmine.arrayContaining( [ User.RDF_CLASS ] ) as any,
+								types: jasmine.arrayContaining( [ User.TYPE ] ) as any,
 							} ) );
 
 							done();

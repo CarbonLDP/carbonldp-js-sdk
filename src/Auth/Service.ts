@@ -1,5 +1,4 @@
 import { Context } from "../Context";
-import { Documents } from "../Documents";
 import * as Errors from "../Errors";
 import { RequestOptions } from "../HTTP";
 import * as Utils from "../Utils";
@@ -11,20 +10,21 @@ import { BasicToken } from "./BasicToken";
 import { PersistedUser } from "./PersistedUser";
 import * as Roles from "./Roles";
 import { TokenAuthenticator } from "./TokenAuthenticator";
-import { TokenCredentialsBase } from "./TokenCredentials";
-import { TokenCredentials } from "./TokenCredentials";
+import {
+	TokenCredentials,
+	TokenCredentialsBase,
+} from "./TokenCredentials";
 import { UsersEndpoint } from "./UsersEndpoint";
 
 export class AuthService {
 	public readonly users:UsersEndpoint;
 	public readonly roles:Roles.Class;
 
+	protected readonly context:Context;
+	protected readonly authenticators:{ [P in AuthMethod]:Authenticator<object, object> };
+	protected authenticator:Authenticator<object, object>;
+
 	protected _authenticatedUser:PersistedUser;
-
-	private readonly context:Context;
-	private readonly authenticators:{ [P in AuthMethod]:Authenticator<object, object> };
-	private authenticator:Authenticator<object, object>;
-
 	public get authenticatedUser():PersistedUser {
 		if( this._authenticatedUser ) return this._authenticatedUser;
 		if( this.context.parentContext && this.context.parentContext.auth ) return this.context.parentContext.auth.authenticatedUser;
@@ -36,7 +36,7 @@ export class AuthService {
 		this.context = context;
 
 		const usersIRI:string = context._resolvePath( "users" );
-		this.users = context.documents.register( usersIRI, [ UsersEndpoint.TYPE ] );
+		this.users = context.documents.register( usersIRI );
 
 		this.roles = new Roles.Class( context );
 
@@ -83,7 +83,7 @@ export class AuthService {
 
 				return authenticator
 					.getAuthenticatedUser();
-			} ).then( ( persistedUser:PersistedUser.Class ) => {
+			} ).then( ( persistedUser:PersistedUser ) => {
 				this._authenticatedUser = persistedUser;
 				this.authenticator = authenticator;
 

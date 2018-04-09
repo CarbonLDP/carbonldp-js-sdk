@@ -64,7 +64,10 @@ export function createMockContext( data?:{
 							security: "security/",
 						},
 					},
-					users: "users/",
+					users: {
+						slug: "users/",
+						paths: { me: "me/" },
+					},
 				},
 			};
 

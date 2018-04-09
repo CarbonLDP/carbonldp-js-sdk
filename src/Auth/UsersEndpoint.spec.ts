@@ -19,32 +19,6 @@ describe( module( "carbonldp/Auth/UsersEndpoint" ), ():void => {
 		"CarbonLDP.Auth.UsersEndpoint",
 		"Endpoint for manage the users of a Carbon LDP instance."
 	), ():void => {
-
-		describe( method( OBLIGATORY, "enable" ), ():void => {
-
-			it( hasSignature(
-				"Activate the account of the specified user.",
-				[
-					{ name: "userURI", type: "string", description: "The URI of the user to activate." },
-					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for the request." },
-				],
-				{ type: "Promise<CarbonLDP.Auth.PersistedUser>" }
-			), ():void => {} );
-
-		} );
-
-		describe( method( OBLIGATORY, "disable" ), ():void => {
-
-			it( hasSignature(
-				"Deactivate the account of the specified user.",
-				[
-					{ name: "requestOptions", type: "CarbonLDP.HTTP.Request.Options", optional: true, description: "Customizable options for the request." },
-				],
-				{ type: "Promise<CarbonLDP.Auth.PersistedUser>" }
-			), ():void => {} );
-
-		} );
-
 	} );
 
 	describe( interfaze(

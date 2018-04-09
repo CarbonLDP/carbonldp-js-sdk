@@ -48,7 +48,7 @@ export class TokenAuthenticator extends Authenticator<BasicToken, TokenCredentia
 		} );
 	}
 
-	protected _getCredentials( token:UsernameAndPasswordToken ):Promise<TokenCredentials> {
+	protected _getCredentials( token:BasicToken ):Promise<TokenCredentials> {
 		const basicAuthenticator:BasicAuthenticator = new BasicAuthenticator( this.context );
 		return basicAuthenticator
 			.authenticate( token )

@@ -258,13 +258,4 @@ describe( module( "carbonldp/Auth" ), ():void => {
 		expect( Auth.UsernameAndPasswordCredentials ).toBe( UsernameAndPasswordCredentials );
 	} );
 
-	it( reexports(
-		STATIC,
-		"UsernameAndPasswordToken",
-		"CarbonLDP.Auth.UsernameAndPasswordToken"
-	), ():void => {
-		expect( Auth.UsernameAndPasswordToken ).toBeDefined();
-		expect( Auth.UsernameAndPasswordToken ).toBe( UsernameAndPasswordToken );
-	} );
-
 } );
