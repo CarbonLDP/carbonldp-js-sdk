@@ -1,14 +1,13 @@
+import { PersistedProtectedDocument } from "../PersistedProtectedDocument";
 import {
-	hasSignature,
+	hasMethod,
 	interfaze,
 	isDefined,
-	method,
 	module,
 	OBLIGATORY,
 	property,
 	STATIC,
 } from "../test/JasmineExtender";
-import { CS } from "../Vocabularies";
 
 import { UsersEndpoint } from "./UsersEndpoint";
 
@@ -25,7 +24,28 @@ describe( module( "carbonldp/Auth/UsersEndpoint" ), ():void => {
 		"CarbonLDP.Auth.UsersEndpointFactory",
 		"Interface with the factory, decorate and utils for `CarbonLDP.Auth.UsersEndpoint` objects."
 	), ():void => {
-		// TODO: Document
+
+		it( hasMethod(
+			OBLIGATORY,
+			"is",
+			"Returns true if the object is a `CarbonLDP.Auth.UsersEndpoint` object.",
+			[
+				{ name: "value", type: "any" },
+			],
+			{ type: "value is CarbonLDP.Auth.UsersEndpoint" }
+		), ():void => {} );
+
+		it( hasMethod(
+			OBLIGATORY,
+			"decorate",
+			[ "T extends object" ],
+			"Decorates the object provided with the properties and methods of a `CarbonLDP.Auth.UsersEndpoint` object.",
+			[
+				{ name: "object", type: "T", description: "The object to decorate." },
+			],
+			{ type: "T & CarbonLDP.Auth.UsersEndpoint" }
+		), ():void => {} );
+
 	} );
 
 	describe( property(
@@ -39,23 +59,59 @@ describe( module( "carbonldp/Auth/UsersEndpoint" ), ():void => {
 			expect( UsersEndpoint ).toEqual( jasmine.any( Object ) );
 		} );
 
-		describe( "UsersEndpoint.TYPE", ():void => {
+		describe( "UsersEndpoint.is", ():void => {
 
 			it( "should exists", ():void => {
-				expect( UsersEndpoint.TYPE ).toBeDefined();
-				expect( UsersEndpoint.TYPE ).toEqual( jasmine.any( String ) );
+				expect( UsersEndpoint.is ).toBeDefined();
+				expect( UsersEndpoint.is ).toEqual( jasmine.any( Function ) );
 			} );
 
-			it( "should bbe cs:Users", ():void => {
-				expect( UsersEndpoint.TYPE ).toBe( CS.Users );
+			it( "should call PersistedProtectedDocument.is", ():void => {
+				const spy:jasmine.Spy = spyOn( PersistedProtectedDocument, "is" )
+					.and.returnValue( false );
+
+				const value:any = { the: "object" };
+				UsersEndpoint.is( value );
+
+				expect( spy ).toHaveBeenCalledWith( value );
+			} );
+
+			it( "should return true if all dependencies are true", ():void => {
+				spyOn( PersistedProtectedDocument, "is" )
+					.and.returnValue( true );
+
+				const returned:boolean = UsersEndpoint.is( {} );
+				expect( returned ).toBe( true );
 			} );
 
 		} );
 
-		// TODO: UsersEndpoint.isDecorated
-		// TODO: UsersEndpoint.decorate
+		describe( "UsersEndpoint.decorate", ():void => {
 
-		// TODO: Test decorated
+			it( "should exists", ():void => {
+				expect( UsersEndpoint.decorate ).toBeDefined();
+				expect( UsersEndpoint.decorate ).toEqual( jasmine.any( Function ) );
+			} );
+
+			it( "should call PersistedProtectedDocument.decorate", ():void => {
+				const spy:jasmine.Spy = spyOn( PersistedProtectedDocument, "decorate" )
+					.and.callThrough();
+
+				const object:{} = { the: "object" };
+				UsersEndpoint.decorate( object, null );
+
+				expect( spy ).toHaveBeenCalledWith( object, null );
+			} );
+
+			it( "should return object provided", ():void => {
+				const object:{} = { the: "object" };
+
+				const returned:{} = UsersEndpoint.decorate( object, null );
+
+				expect( returned ).toBe( object );
+			} );
+
+		} );
 
 	} );
 

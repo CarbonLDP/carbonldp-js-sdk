@@ -169,10 +169,9 @@ describe( module( "carbonldp/Documents" ), ():void => {
 			expect( documents.documentDecorators ).toEqual( jasmine.any( Map ) );
 
 			// Has default decorators
-			expect( documents.documentDecorators.size ).toBe( 5 );
+			expect( documents.documentDecorators.size ).toBe( 4 );
 			expect( documents.documentDecorators.has( CS.ProtectedDocument ) ).toBe( true );
 			expect( documents.documentDecorators.has( CS.AccessControlList ) ).toBe( true );
-			expect( documents.documentDecorators.has( CS.Users ) ).toBe( true );
 			expect( documents.documentDecorators.has( CS.User ) ).toBe( true );
 			expect( documents.documentDecorators.has( CS.Role ) ).toBe( true );
 		} );

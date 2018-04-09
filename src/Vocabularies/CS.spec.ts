@@ -500,7 +500,7 @@ describe( module( "carbonldp/Vocabularies/CS" ), ():void => {
 		} );
 
 		it( "should test all exported IRIs", ():void => {
-			expect( Object.keys( CS ).length ).toBe( 55 );
+			expect( Object.keys( CS ).length ).toBe( 54 );
 		} );
 
 		it( "CS.namespace", ():void => {
@@ -626,11 +626,6 @@ describe( module( "carbonldp/Vocabularies/CS" ), ():void => {
 		it( "CS.User", ():void => {
 			expect( CS.User ).toEqual( jasmine.any( String ) );
 			expect( CS.User ).toBe( "https://carbonldp.com/ns/v1/security#User" );
-		} );
-
-		it( "CS.Users", ():void => {
-			expect( CS.Users ).toEqual( jasmine.any( String ) );
-			expect( CS.Users ).toBe( "https://carbonldp.com/ns/v1/security#Users" );
 		} );
 
 		it( "CS.UsernameAndPasswordCredentials", ():void => {

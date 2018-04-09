@@ -1,14 +1,9 @@
 import { Documents } from "../Documents";
-import { Endpoint } from "../Endpoint";
-import { ModelDecorator } from "../ModelDecorator";
-import { CS } from "../Vocabularies";
-import { PersistedUser } from "./PersistedUser";
-import { User, UserBase } from "./User";
-export interface UsersEndpoint extends Endpoint<UserBase, User, PersistedUser> {
+import { PersistedProtectedDocument } from "../PersistedProtectedDocument";
+export interface UsersEndpoint extends PersistedProtectedDocument {
 }
-export interface UsersEndpointFactory extends ModelDecorator<UsersEndpoint> {
-    TYPE: CS["Users"];
-    isDecorated(object: object): object is UsersEndpoint;
+export interface UsersEndpointFactory {
+    is(value: any): value is UsersEndpoint;
     decorate<T extends object>(object: T, documents: Documents): T & UsersEndpoint;
 }
 export declare const UsersEndpoint: UsersEndpointFactory;

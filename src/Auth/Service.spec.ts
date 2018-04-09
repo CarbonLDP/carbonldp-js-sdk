@@ -32,6 +32,7 @@ import { AuthService } from "./Service";
 
 import { TokenCredentials } from "./TokenCredentials";
 import { User } from "./User";
+import { UsersEndpoint } from "./UsersEndpoint";
 
 
 describe( module( "carbonldp/Auth/Service" ), ():void => {
@@ -73,7 +74,7 @@ describe( module( "carbonldp/Auth/Service" ), ():void => {
 			it( "should assign UsersEndpoint in users", ():void => {
 				const auth:AuthService = new AuthService( context );
 
-				expect( auth.users ).toEqual( anyThatMatches( PersistedDocument.is, "PersistedDocument" ) as any );
+				expect( auth.users ).toEqual( anyThatMatches( UsersEndpoint.is, "UsersEndpoint" ) as any );
 				expect( auth.users ).toEqual( jasmine.objectContaining( {
 					id: "https://example.com/users/",
 				} ) );

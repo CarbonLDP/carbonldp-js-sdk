@@ -37,6 +37,7 @@ export class AuthService {
 
 		const usersIRI:string = context._resolvePath( "users" );
 		this.users = context.documents.register( usersIRI );
+		UsersEndpoint.decorate( this.users, this.context.documents );
 
 		this.roles = new Roles.Class( context );
 
