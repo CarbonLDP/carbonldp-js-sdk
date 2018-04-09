@@ -19,9 +19,9 @@ export interface UsernameAndPasswordCredentialsFactory {
 	TYPE:CS[ "UsernameAndPasswordCredentials" ];
 	SCHEMA:ObjectSchema;
 
-	create( username?:string, password?:string ):UsernameAndPasswordCredentials;
+	create( data:UsernameAndPasswordCredentialsBase ):UsernameAndPasswordCredentials;
 
-	createFrom<T extends object>( object:T, username?:string, password?:string ):T & UsernameAndPasswordCredentials;
+	createFrom<T extends UsernameAndPasswordCredentialsBase>( object:T ):T & UsernameAndPasswordCredentials;
 }
 
 const SCHEMA:ObjectSchema = {
@@ -39,16 +39,14 @@ export const UsernameAndPasswordCredentials:UsernameAndPasswordCredentialsFactor
 	TYPE: CS.UsernameAndPasswordCredentials,
 	SCHEMA,
 
-	create( username?:string, password?:string ):UsernameAndPasswordCredentials {
-		return UsernameAndPasswordCredentials.createFrom( {}, username, password );
+	create( data:UsernameAndPasswordCredentialsBase ):UsernameAndPasswordCredentials {
+		return UsernameAndPasswordCredentials.createFrom( { ...data } );
 	},
 
-	createFrom<T extends object>( object:T, username?:string, password?:string ):T & UsernameAndPasswordCredentials {
+	createFrom<T extends UsernameAndPasswordCredentialsBase>( object:T ):T & UsernameAndPasswordCredentials {
 		const credentials:T & UsernameAndPasswordCredentials = VolatileResource.createFrom<T>( object );
 
 		credentials.addType( UsernameAndPasswordCredentials.TYPE );
-		if( username ) credentials.username = username;
-		if( password ) credentials.password = password;
 
 		return credentials;
 	},

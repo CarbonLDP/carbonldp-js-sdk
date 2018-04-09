@@ -88,8 +88,7 @@ export const User:UserFactory = {
 	},
 
 	create( data:UserBase ):User {
-		const copy:UserBase = Object.assign( {}, data );
-		return User.createFrom( copy );
+		return User.createFrom(  { ...data } );
 	},
 
 	createFrom<T extends UserBase>( object:T ):T & User {
@@ -103,7 +102,8 @@ export const User:UserFactory = {
 };
 
 function updateCredentials( this:User, username?:string, password?:string ):UsernameAndPasswordCredentials {
-	const credentials:UsernameAndPasswordCredentials = UsernameAndPasswordCredentials.create( username, password );
+	const credentials:UsernameAndPasswordCredentials = UsernameAndPasswordCredentials
+		.createFrom( { username, password } );
 
 	this.credentials = this.createFragment( credentials );
 	this.credentials.addType( C.VolatileResource );

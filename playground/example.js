@@ -362,10 +362,10 @@
 					.users
 					.createChild( CarbonLDP.Auth.User.create( {
 						name: "User 02",
-						credentials: {
+						credentials: CarbonLDP.Auth.UsernameAndPasswordCredentials.create( {
 							username: "user02",
 							password: "pass02",
-						},
+						} ),
 					} ), "user02/" )
 				;
 

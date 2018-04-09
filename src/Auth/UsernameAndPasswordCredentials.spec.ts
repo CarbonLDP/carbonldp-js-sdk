@@ -14,7 +14,10 @@ import * as Utils from "../Utils";
 import { CS } from "../Vocabularies/CS";
 import { XSD } from "../Vocabularies/XSD";
 
-import { UsernameAndPasswordCredentials } from "./UsernameAndPasswordCredentials";
+import {
+	UsernameAndPasswordCredentials,
+	UsernameAndPasswordCredentialsBase,
+} from "./UsernameAndPasswordCredentials";
 
 
 describe( module( "carbonldp/Auth/UsernameAndPasswordCredentials" ), ():void => {
@@ -72,8 +75,7 @@ describe( module( "carbonldp/Auth/UsernameAndPasswordCredentials" ), ():void => 
 			OBLIGATORY,
 			"create",
 			"Creates a `CarbonLDP.Auth.UsernameAndPasswordCredentials` object with the username and password specified.", [
-				{ name: "username", type: "string", description: "Username of the user to be created." },
-				{ name: "password", type: "string", description: "Password of the user to be created." },
+				{ name: "data", type: "CarbonLDP.Auth.UsernameAndPasswordCredentialsBase", description: "Object with the username and password for the credentials." },
 			],
 			{ type: "CarbonLDP.Auth.UsernameAndPasswordCredentials" }
 		), ():void => {} );
@@ -81,11 +83,10 @@ describe( module( "carbonldp/Auth/UsernameAndPasswordCredentials" ), ():void => 
 		it( hasMethod(
 			OBLIGATORY,
 			"createFrom",
-			[ "T extends object" ],
-			"Creates a `CarbonLDP.Auth.UsernameAndPasswordCredentials` object from the object and parameters specified.", [
-				{ name: "object", type: "T", description: "Object that will be converted into an " },
-				{ name: "username", type: "string", description: "Username of the user to be created." },
-				{ name: "password", type: "string", description: "Password of the user to be created." },
+			[ "T extends CarbonLDP.Auth.UsernameAndPasswordCredentialsBase" ],
+			"Creates a `CarbonLDP.Auth.UsernameAndPasswordCredentials` object from the object and parameters specified.",
+			[
+				{ name: "object", type: "T", description: "Object that will be converted into a credentials resource" },
 			],
 			{ type: "T & CarbonLDP.Auth.UsernameAndPasswordCredentials" }
 		), ():void => {} );
@@ -129,57 +130,83 @@ describe( module( "carbonldp/Auth/UsernameAndPasswordCredentials" ), ():void => 
 			} );
 		} );
 
-		// TODO: Separate in different tests
-		it( "UsernameAndPasswordCredentials.create", ():void => {
-			expect( UsernameAndPasswordCredentials.create ).toBeDefined();
-			expect( UsernameAndPasswordCredentials.create ).toEqual( jasmine.any( Function ) );
+		describe( "UsernameAndPasswordCredentials.create", ():void => {
 
-			let spy:jasmine.Spy = spyOn( UsernameAndPasswordCredentials, "createFrom" );
+			it( "should exists", ():void => {
+				expect( UsernameAndPasswordCredentials.create ).toBeDefined();
+				expect( UsernameAndPasswordCredentials.create ).toEqual( jasmine.any( Function ) );
+			} );
 
-			UsernameAndPasswordCredentials.create( "email.of.user@example.com", "myAwesomePassword" );
-			expect( spy ).toHaveBeenCalledWith( {}, "email.of.user@example.com", "myAwesomePassword" );
+			it( "should call UsernameAndPasswordCredentials.createFrom", ():void => {
+				const spy:jasmine.Spy = spyOn( UsernameAndPasswordCredentials, "createFrom" );
 
-			UsernameAndPasswordCredentials.create( "another.email.of.user@example.com", "myAwesomePassword" );
-			expect( spy ).toHaveBeenCalledWith( {}, "another.email.of.user@example.com", "myAwesomePassword" );
+				UsernameAndPasswordCredentials.create( {
+					username: "username@example.com",
+					password: "myAwesomePassword",
+				} );
 
-			UsernameAndPasswordCredentials.create( "", "" );
-			expect( spy ).toHaveBeenCalledWith( {}, "", "" );
+				expect( spy ).toHaveBeenCalledWith( {
+					username: "username@example.com",
+					password: "myAwesomePassword",
+				} );
+			} );
+
+			it( "should return another object", ():void => {
+				const baseCredentials:UsernameAndPasswordCredentialsBase = {
+					username: "username@example.com",
+					password: "myAwesomePassword",
+				};
+				const returned:UsernameAndPasswordCredentials = UsernameAndPasswordCredentials
+					.create( baseCredentials );
+
+				expect( returned ).not.toBe( baseCredentials as any );
+			} );
+
 		} );
 
-		// TODO: Separate in different tests
-		it( "UsernameAndPasswordCredentials.createFrom", ():void => {
-			expect( UsernameAndPasswordCredentials.createFrom ).toBeDefined();
-			expect( UsernameAndPasswordCredentials.createFrom ).toEqual( jasmine.any( Function ) );
+		describe( "UsernameAndPasswordCredentials.createFrom", ():void => {
 
-			interface TheCredentials {
-				myProperty?:string;
-			}
+			it( "should exists", ():void => {
+				expect( UsernameAndPasswordCredentials.createFrom ).toBeDefined();
+				expect( UsernameAndPasswordCredentials.createFrom ).toEqual( jasmine.any( Function ) );
+			} );
 
-			interface MyCredentials extends UsernameAndPasswordCredentials, TheCredentials {}
 
-			let user:MyCredentials;
-			user = UsernameAndPasswordCredentials.createFrom<TheCredentials>( {}, "email.of.user@example.com", "myAwesomePassword" );
-			expect( user.myProperty ).toBeUndefined();
-			expect( user.username ).toBe( "email.of.user@example.com" );
-			expect( user.password ).toBe( "myAwesomePassword" );
-			expect( user.types ).toContain( CS.UsernameAndPasswordCredentials );
+			it( "should return the same object provided", ():void => {
+				const object:UsernameAndPasswordCredentialsBase = {
+					username: "username@example.com",
+					password: "myAwesomePassword",
+				};
 
-			user = UsernameAndPasswordCredentials.createFrom<TheCredentials>( { myProperty: "a property" }, "email.of.user@example.com", "myAwesomePassword" );
-			expect( user.myProperty ).toBeDefined();
-			expect( user.myProperty ).toBe( "a property" );
-			expect( user.username ).toBe( "email.of.user@example.com" );
-			expect( user.password ).toBe( "myAwesomePassword" );
-			expect( user.types ).toContain( CS.UsernameAndPasswordCredentials );
+				const returned:{} = UsernameAndPasswordCredentials.createFrom( object );
 
-			user = UsernameAndPasswordCredentials.createFrom<TheCredentials>( {}, "email.of.user@example.com" );
-			expect( user.username ).toBe( "email.of.user@example.com" );
-			expect( user.password ).toBeUndefined();
-			expect( user.types ).toContain( CS.UsernameAndPasswordCredentials );
+				expect( returned ).toBe( object );
+			} );
 
-			user = UsernameAndPasswordCredentials.createFrom<TheCredentials>( {}, null, "myAwesomePassword" );
-			expect( user.username ).toBeUndefined();
-			expect( user.password ).toBe( "myAwesomePassword" );
-			expect( user.types ).toContain( CS.UsernameAndPasswordCredentials );
+			it( "should return object with the credentials properties", ():void => {
+				const returned:{ the:string } & UsernameAndPasswordCredentials = UsernameAndPasswordCredentials
+					.createFrom( {
+						the: "credentials",
+						username: "username@example.com",
+						password: "myAwesomePassword",
+					} );
+
+				expect( returned ).toEqual( {
+					the: "credentials",
+					username: "username@example.com",
+					password: "myAwesomePassword",
+				} as any );
+			} );
+
+			it( "should add the cs:UsernameAndPasswordCredentials type", ():void => {
+				const credentials:UsernameAndPasswordCredentials = UsernameAndPasswordCredentials.createFrom( {
+					username: "username@example.com",
+					password: "myAwesomePassword",
+				} );
+
+				expect( credentials.types ).toContain( CS.UsernameAndPasswordCredentials );
+			} );
+
 		} );
 
 	} );

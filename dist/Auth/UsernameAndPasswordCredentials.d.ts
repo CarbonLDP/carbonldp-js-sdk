@@ -12,7 +12,7 @@ export interface UsernameAndPasswordCredentials extends VolatileResource {
 export interface UsernameAndPasswordCredentialsFactory {
     TYPE: CS["UsernameAndPasswordCredentials"];
     SCHEMA: ObjectSchema;
-    create(username?: string, password?: string): UsernameAndPasswordCredentials;
-    createFrom<T extends object>(object: T, username?: string, password?: string): T & UsernameAndPasswordCredentials;
+    create(data: UsernameAndPasswordCredentialsBase): UsernameAndPasswordCredentials;
+    createFrom<T extends UsernameAndPasswordCredentialsBase>(object: T): T & UsernameAndPasswordCredentials;
 }
 export declare const UsernameAndPasswordCredentials: UsernameAndPasswordCredentialsFactory;
