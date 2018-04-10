@@ -13,6 +13,7 @@ import {
 	method,
 	module,
 	OBLIGATORY,
+	OPTIONAL,
 	property,
 	STATIC,
 } from "../test/JasmineExtender";
@@ -27,6 +28,28 @@ import {
 import { UsernameAndPasswordCredentials } from "./UsernameAndPasswordCredentials";
 
 describe( module( "carbonldp/Auth/User" ), ():void => {
+
+	describe( interfaze(
+		"CarbonLDP.Auth.UserBaser",
+		"Interface that represents the basic properties for a User."
+	), ():void => {
+
+		it( hasProperty(
+			OPTIONAL,
+			"name",
+			"string",
+			"The optional name of the user."
+		), ():void => {} );
+
+		it( hasProperty(
+			OBLIGATORY,
+			"credentials",
+			"CarbonLDP.Auth.UsernameAndPasswordCredentials",
+			"A resource with the username and password for the basic credentials."
+		), ():void => {} );
+
+	} );
+
 
 	describe( interfaze(
 		"CarbonLDP.Auth.User",

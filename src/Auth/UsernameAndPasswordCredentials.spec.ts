@@ -23,6 +23,28 @@ import {
 describe( module( "carbonldp/Auth/UsernameAndPasswordCredentials" ), ():void => {
 
 	describe( interfaze(
+		"CarbonLDP.Auth.UsernameAndPasswordCredentialsBase",
+		"Interface that represents the basic properties of a UsernameAndPasswordCredentials."
+	), ():void => {
+
+		it( hasProperty(
+			OBLIGATORY,
+			"username",
+			"string",
+			"The username of the credentials."
+		), ():void => {} );
+
+		it( hasProperty(
+			OBLIGATORY,
+			"password",
+			"string",
+			"The password of the credentials."
+		), ():void => {} );
+
+	} );
+
+
+	describe( interfaze(
 		"CarbonLDP.Auth.UsernameAndPasswordCredentials",
 		"Interface that represents an in-memory UsernameAndPasswordCredentials of a user."
 	), ():void => {
