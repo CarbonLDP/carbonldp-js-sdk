@@ -2,6 +2,7 @@ import { anyThatMatches } from "../../test/helpers/jasmine-equalities";
 import { StrictMinus } from "../../test/helpers/types";
 import { BlankNode } from "../BlankNode";
 import { Document } from "../Document";
+import { Fragment } from "../Fragment";
 import {
 	extendsClass,
 	hasMethod,
@@ -58,7 +59,7 @@ describe( module( "carbonldp/Auth/User" ), ():void => {
 			"credentials",
 			"CarbonLDP.Auth.UsernameAndPasswordCredentials"
 		), ():void => {
-			const target:User[ "credentials" ] = {} as UsernameAndPasswordCredentials;
+			const target:User[ "credentials" ] = {} as Fragment & UsernameAndPasswordCredentials;
 			expect( target ).toBeDefined();
 		} );
 
@@ -71,7 +72,7 @@ describe( module( "carbonldp/Auth/User" ), ():void => {
 				{ name: "password", type: "string" },
 			]
 		), ():void => {
-			const target:User[ "updateCredentials" ] = ( username?:string, password?:string ):UsernameAndPasswordCredentials => null;
+			const target:User[ "updateCredentials" ] = ( username?:string, password?:string ):Fragment & UsernameAndPasswordCredentials => null;
 			expect( target ).toBeDefined();
 		} );
 
@@ -327,7 +328,60 @@ describe( module( "carbonldp/Auth/User" ), ():void => {
 
 		} );
 
-		// TODO: Test decorated object
+
+		describe( "Decorated User", ():void => {
+
+			let user:User;
+			beforeEach( ():void => {
+				user = User.create( {
+					name: "User name",
+					credentials: void 0,
+				} );
+			} );
+
+			describe( "User.updateCredentials", ():void => {
+
+				it( "should exists", ():void => {
+					expect( user.updateCredentials ).toBeDefined();
+					expect( user.updateCredentials ).toEqual( jasmine.any( Function ) );
+				} );
+
+				it( "should assign the credentials property", ():void => {
+					user.updateCredentials( "username", "password" );
+
+					expect( user.credentials ).toBeDefined();
+					expect( user.credentials ).toEqual( jasmine.objectContaining( {
+						username: "username",
+						password: "password",
+					} ) );
+				} );
+
+				it( "should return a credentials object", ():void => {
+					const returned:UsernameAndPasswordCredentials = user.updateCredentials( "username", "password" );
+
+					expect( returned ).toBeDefined();
+					expect( returned ).toEqual( jasmine.objectContaining( {
+						username: "username",
+						password: "password",
+					} ) );
+				} );
+
+				it( "should assign same object that returned", ():void => {
+					const returned:UsernameAndPasswordCredentials = user.updateCredentials( "username", "password" );
+
+					expect( returned ).toBeDefined( user.credentials );
+				} );
+
+				it( "should credentials be a blank node", ():void => {
+					user.updateCredentials( "username", "password" );
+
+					expect( user.credentials ).toBeDefined();
+					expect( user.credentials ).toEqual( anyThatMatches( BlankNode.is, "BlankNode" ) as any );
+				} );
+
+			} );
+
+		} );
 
 	} );
 
