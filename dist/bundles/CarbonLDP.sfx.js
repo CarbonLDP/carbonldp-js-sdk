@@ -6597,14 +6597,14 @@ var User_1 = __webpack_require__(57);
 exports.User = User_1.User;
 var UsernameAndPasswordCredentials_1 = __webpack_require__(82);
 exports.UsernameAndPasswordCredentials = UsernameAndPasswordCredentials_1.UsernameAndPasswordCredentials;
+var UsersEndpoint_1 = __webpack_require__(136);
+exports.UsersEndpoint = UsersEndpoint_1.UsersEndpoint;
 var PersistedRole = __importStar(__webpack_require__(134));
 exports.PersistedRole = PersistedRole;
 var Role = __importStar(__webpack_require__(247));
 exports.Role = Role;
 var Roles = __importStar(__webpack_require__(133));
 exports.Roles = Roles;
-var Users = __importStar(__webpack_require__(136));
-exports.Users = Users;
 
 
 /***/ }),

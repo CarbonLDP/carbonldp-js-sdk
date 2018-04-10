@@ -33,7 +33,7 @@ import {
 } from "./TokenCredentials";
 import { User } from "./User";
 import { UsernameAndPasswordCredentials } from "./UsernameAndPasswordCredentials";
-import * as Users from "./UsersEndpoint";
+import { UsersEndpoint } from "./UsersEndpoint";
 
 describe( module( "carbonldp/Auth" ), ():void => {
 
@@ -92,8 +92,8 @@ describe( module( "carbonldp/Auth" ), ():void => {
 		"UsersEndpoint",
 		"CarbonLDP.Auth.UsersEndpoint"
 	), ():void => {
-		expect( Auth.Users ).toBeDefined();
-		expect( Auth.Users ).toBe( Users );
+		expect( Auth.UsersEndpoint ).toBeDefined();
+		expect( Auth.UsersEndpoint ).toBe( UsersEndpoint );
 	} );
 
 	it( reexports(

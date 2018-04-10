@@ -17,15 +17,14 @@ export { TokenAuthenticator } from "./TokenAuthenticator";
 export { TokenCredentials, TokenCredentialsBase } from "./TokenCredentials";
 export { User, UserBase } from "./User";
 export { UsernameAndPasswordCredentials } from "./UsernameAndPasswordCredentials";
+export { UsersEndpoint } from "./UsersEndpoint";
 
 
 import * as PersistedRole from "./PersistedRole";
 import * as Role from "./Role";
 import * as Roles from "./Roles";
-import * as Users from "./UsersEndpoint";
 
 export {
-	Users,
 	PersistedRole,
 	Role,
 	Roles,
