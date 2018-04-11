@@ -1,3 +1,5 @@
+import { AbstractContext } from "../AbstractContext";
+import { Pointer } from "../Pointer";
 import {
 	clazz,
 	constructor,
@@ -8,16 +10,13 @@ import {
 	method,
 	module,
 } from "../test/JasmineExtender";
-
-import AbstractContext from "./../AbstractContext";
 import * as Errors from "./../Errors";
-import * as Pointer from "./../Pointer";
 import * as PersistedRole from "./PersistedRole";
 
 import * as Roles from "./Roles";
 
 
-describe( module( "Carbon/Auth/Roles" ), ():void => {
+xdescribe( module( "Carbon/Auth/Roles" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( Roles ).toBeDefined();

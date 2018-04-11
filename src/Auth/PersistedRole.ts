@@ -1,11 +1,11 @@
-import { QueryDocumentsBuilder } from "../SPARQL/QueryDocument";
 import { Documents } from "../Documents";
 import * as Errors from "../Errors";
 import { RequestOptions } from "../HTTP/Request";
 import { PersistedProtectedDocument } from "../PersistedProtectedDocument";
 import { Pointer } from "../Pointer";
+import { QueryDocumentsBuilder } from "../SPARQL/QueryDocument";
 import * as Utils from "./../Utils";
-import * as Role from "./Role";
+import { PersistedUser } from "./PersistedUser";
 import * as Roles from "./Roles";
 
 
@@ -19,11 +19,11 @@ export interface Class extends PersistedProtectedDocument {
 	users?:Pointer[];
 
 
-	createChild<T extends object>( role:T & Roles.NewRole, slug?:string, requestOptions?:HTTP.Request.Options ):Promise<T & Class>;
+	createChild<T extends object>( role:T & Roles.NewRole, slug?:string, requestOptions?:RequestOptions ):Promise<T & Class>;
 	createChild<T extends object>( role:T & Roles.NewRole, requestOptions?:RequestOptions ):Promise<T & Class>;
 
-	getUsers<T>( requestOptions?:RequestOptions, queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder ) => QueryDocumentsBuilder ):Promise<(T & PersistedProtectedDocument.Class)[]>;
-	getUsers<T>( queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder ) => QueryDocumentsBuilder ):Promise<(T & PersistedProtectedDocument.Class)[]>;
+	getUsers<T>( requestOptions?:RequestOptions, queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder ) => QueryDocumentsBuilder ):Promise<(T & PersistedUser)[]>;
+	getUsers<T>( queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder ) => QueryDocumentsBuilder ):Promise<(T & PersistedUser)[]>;
 
 	addUser( user:Pointer | string, requestOptions?:RequestOptions ):Promise<void>;
 	addUsers( users:(Pointer | string)[], requestOptions?:RequestOptions ):Promise<void>;
@@ -103,7 +103,7 @@ function createChild<T extends object>( role:T & Roles.NewRole, slug?:string, re
 function createChild<T extends object>( this:Class, role:T & Roles.NewRole, slugOrRequestOptions?:any, requestOptions?:RequestOptions ):Promise<T & Class> {
 	return getRolesClass( this )
 		.then( roles => {
-			return roles.createChild( this.id, role, slugOrRequestOptions, requestOptions );
+			return roles.createChild<T>( this.id, role, slugOrRequestOptions, requestOptions );
 		} );
 }
 

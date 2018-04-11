@@ -1,6 +1,4 @@
-import { CS } from "../Vocabularies/CS";
-import { XSD } from "../Vocabularies/XSD";
-import { Document } from "./../Document";
+import { Document } from "../Document";
 import * as Errors from "../Errors";
 import {
 	clazz,
@@ -15,7 +13,9 @@ import {
 	OPTIONAL,
 	property,
 	STATIC,
-} from "./../test/JasmineExtender";
+} from "../test/JasmineExtender";
+import { CS } from "../Vocabularies/CS";
+import { XSD } from "../Vocabularies/XSD";
 import * as Utils from "./../Utils";
 
 import * as Role from "./Role";

@@ -7,10 +7,10 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 }
 Object.defineProperty(exports, "__esModule", { value: true });
-var Utils_1 = require("../Utils");
 var Errors = __importStar(require("../Errors"));
 var Request_1 = require("../HTTP/Request");
 var URI_1 = require("../RDF/URI");
+var Utils_1 = require("../Utils");
 var PersistedRole = __importStar(require("./PersistedRole"));
 var Class = (function () {
     function Class(context) {
@@ -96,8 +96,7 @@ var Class = (function () {
             return _this.context
                 .documents
                 .executeSELECTQuery(uri, "PREFIX:<https://carbonldp.com/ns/v1/>SELECT DISTINCT?accessPoint{<" + uri + ">:platform#accessPoint?accessPoint.?accessPoint<http://www.w3.org/ns/ldp#hasMemberRelation>:security#user}");
-        }).then(function (_a) {
-            var selectResults = _a[0];
+        }).then(function (selectResults) {
             return selectResults.bindings[0].accessPoint;
         });
     };
@@ -105,7 +104,7 @@ var Class = (function () {
         var containerURI = this.context._resolvePath("system.security.roles");
         if (!relativeURI)
             return containerURI;
-        var absoluteURI = URI_1.URI.Util.resolve(containerURI, relativeURI);
+        var absoluteURI = URI_1.URI.resolve(containerURI, relativeURI);
         if (!absoluteURI.startsWith(containerURI))
             throw new Errors.IllegalArgumentError("The URI \"" + relativeURI + "\" isn't a valid role URI.");
         return absoluteURI;

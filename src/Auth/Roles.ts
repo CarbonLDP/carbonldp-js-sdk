@@ -1,28 +1,26 @@
-import { Minus } from "../../tests/helpers/types";
-import {
-	isString,
-	promiseMethod,
-} from "../Utils";
 import { Context } from "../Context";
 import * as Errors from "../Errors";
 import {
 	RequestOptions,
 	RequestUtils,
 } from "../HTTP/Request";
-import { PersistedDocument } from "../PersistedDocument";
 import { Pointer } from "../Pointer";
 import { URI } from "../RDF/URI";
 import {
 	QueryDocumentBuilder,
 	QueryDocumentsBuilder,
-} from "./../SPARQL/QueryDocument";
-import { SPARQLSelectResults } from "../SPARQL/SelectResults";
-import * as Utils from "./../Utils";
+} from "../SPARQL/QueryDocument";
+import {
+	isString,
+	promiseMethod,
+} from "../Utils";
 import * as PersistedRole from "./PersistedRole";
 import { PersistedUser } from "./PersistedUser";
-import * as Role from "./Role";
 
-export type NewRole = Minus<Role.Class, Document.Class>;
+export type NewRole = {
+	name:string;
+	description?:string;
+};
 
 export class Class {
 	private context:Context;
@@ -33,7 +31,7 @@ export class Class {
 
 	createChild<T extends object>( parentRole:string | Pointer, role:T & NewRole, requestOptions?:RequestOptions ):Promise<T & PersistedRole.Class>;
 	createChild<T extends object>( parentRole:string | Pointer, role:T & NewRole, slug?:string, requestOptions?:RequestOptions ):Promise<T & PersistedRole.Class>;
-	createChild<T extends object>( parentRole:string | Pointer, role:T & NewRole, slugOrRequestOptions?:any, requestOptions?:RequestOptions ):Promise<T & PersistedRole.Class {
+	createChild<T extends object>( parentRole:string | Pointer, role:T & NewRole, slugOrRequestOptions?:any, requestOptions?:RequestOptions ):Promise<T & PersistedRole.Class> {
 		const slug:string = isString( slugOrRequestOptions ) ? slugOrRequestOptions : void 0;
 		requestOptions = RequestUtils.isOptions( slugOrRequestOptions ) ? slugOrRequestOptions : requestOptions;
 
@@ -55,7 +53,7 @@ export class Class {
 			return this.context
 				.documents
 				.addMember( parentURI, document );
-		} ).then<>( () => {
+		} ).then( () => {
 			return PersistedRole.Factory.decorate( role, this.context.documents );
 		} );
 	}
@@ -72,16 +70,16 @@ export class Class {
 		} );
 	}
 
-	getUsers<T extends object>( roleURI:string, requestOptions?:RequestOptions, queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder ) => QueryDocumentsBuilder ):Promise<(T & PersistedUser.Class)[]>;
-	getUsers<T extends object>( roleURI:string, queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder ) => QueryDocumentsBuilder ):Promise<(T & PersistedUser.Class)[]>;
-	getUsers<T extends object>( roleURI:string, queryBuilderFnOrOptions:any, queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder ) => QueryDocumentsBuilder ):Promise<(T & PersistedUser.Class)[]> {
+	getUsers<T extends object>( roleURI:string, requestOptions?:RequestOptions, queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder ) => QueryDocumentsBuilder ):Promise<(T & PersistedUser)[]>;
+	getUsers<T extends object>( roleURI:string, queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder ) => QueryDocumentsBuilder ):Promise<(T & PersistedUser)[]>;
+	getUsers<T extends object>( roleURI:string, queryBuilderFnOrOptions:any, queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder ) => QueryDocumentsBuilder ):Promise<(T & PersistedUser)[]> {
 		return this
 			.getUsersAccessPoint( roleURI )
 			.then( accessPoint => {
 				return this
 					.context
 					.documents
-					.getMembers<T & PersistedUser.Class>( accessPoint.id, queryBuilderFnOrOptions, queryBuilderFn );
+					.getMembers<T & PersistedUser>( accessPoint.id, queryBuilderFnOrOptions, queryBuilderFn );
 			} );
 	}
 
@@ -122,18 +120,18 @@ export class Class {
 
 			return this.context
 				.documents
-				.executeSELECTQuery( uri, `PREFIX:<https://carbonldp.com/ns/v1/>SELECT DISTINCT?accessPoint{<${ uri }>:platform#accessPoint?accessPoint.?accessPoint<http://www.w3.org/ns/ldp#hasMemberRelation>:security#user}` );
-		} ).then( ( [ selectResults ]:[ SPARQL.SELECTResults.Class<{ accessPoint:Pointer.Class }>, HTTP.Response.Class ] ) => {
+				.executeSELECTQuery<{ accessPoint:Pointer }>( uri, `PREFIX:<https://carbonldp.com/ns/v1/>SELECT DISTINCT?accessPoint{<${ uri }>:platform#accessPoint?accessPoint.?accessPoint<http://www.w3.org/ns/ldp#hasMemberRelation>:security#user}` );
+		} ).then( ( selectResults ) => {
 			return selectResults.bindings[ 0 ].accessPoint;
 		} );
 	}
 
 	private resolveURI( relativeURI?:string ):string {
-		const containerURI:string = this.context._resolvePath( "system.security.roles" ) );
+		const containerURI:string = this.context._resolvePath( "system.security.roles" );
 
 		if( ! relativeURI ) return containerURI;
 
-		const absoluteURI:string = URI.Util.resolve( containerURI, relativeURI );
+		const absoluteURI:string = URI.resolve( containerURI, relativeURI );
 		if( ! absoluteURI.startsWith( containerURI ) ) throw new Errors.IllegalArgumentError( `The URI "${ relativeURI }" isn't a valid role URI.` );
 
 		return absoluteURI;
