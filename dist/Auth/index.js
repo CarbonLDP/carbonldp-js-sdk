@@ -35,6 +35,8 @@ var PersistedACL_1 = require("./PersistedACL");
 exports.PersistedACL = PersistedACL_1.PersistedACL;
 var PersistedUser_1 = require("./PersistedUser");
 exports.PersistedUser = PersistedUser_1.PersistedUser;
+var Role_1 = require("./Role");
+exports.Role = Role_1.Role;
 var TokenAuthenticator_1 = require("./TokenAuthenticator");
 exports.TokenAuthenticator = TokenAuthenticator_1.TokenAuthenticator;
 var TokenCredentials_1 = require("./TokenCredentials");
@@ -48,8 +50,6 @@ var UsersEndpoint_1 = require("./UsersEndpoint");
 exports.UsersEndpoint = UsersEndpoint_1.UsersEndpoint;
 var PersistedRole = __importStar(require("./PersistedRole"));
 exports.PersistedRole = PersistedRole;
-var Role = __importStar(require("./Role"));
-exports.Role = Role;
 var Roles = __importStar(require("./RolesEndpoint"));
 exports.Roles = Roles;
 

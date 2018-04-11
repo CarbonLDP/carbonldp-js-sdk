@@ -6,7 +6,8 @@ import { Pointer } from "../Pointer";
 import { QueryDocumentsBuilder } from "../SPARQL/QueryDocument";
 import * as Utils from "./../Utils";
 import { PersistedUser } from "./PersistedUser";
-import * as Roles from "./RolesEndpoint";
+import { RoleBase } from "./Role";
+import { RolesEndpoint } from "./RolesEndpoint";
 
 
 export interface Class extends PersistedProtectedDocument {
@@ -19,8 +20,8 @@ export interface Class extends PersistedProtectedDocument {
 	users?:Pointer[];
 
 
-	createChild<T extends object>( role:T & Roles.NewRole, slug?:string, requestOptions?:RequestOptions ):Promise<T & Class>;
-	createChild<T extends object>( role:T & Roles.NewRole, requestOptions?:RequestOptions ):Promise<T & Class>;
+	createChild<T extends object>( role:T & RoleBase, slug?:string, requestOptions?:RequestOptions ):Promise<T & Class>;
+	createChild<T extends object>( role:T & RoleBase, requestOptions?:RequestOptions ):Promise<T & Class>;
 
 	getUsers<T>( requestOptions?:RequestOptions, queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder ) => QueryDocumentsBuilder ):Promise<(T & PersistedUser)[]>;
 	getUsers<T>( queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder ) => QueryDocumentsBuilder ):Promise<(T & PersistedUser)[]>;
@@ -98,9 +99,9 @@ export class Factory {
 
 }
 
-function createChild<T extends object>( role:T & Roles.NewRole, requestOptions?:RequestOptions ):Promise<T & Class>;
-function createChild<T extends object>( role:T & Roles.NewRole, slug?:string, requestOptions?:RequestOptions ):Promise<T & Class>;
-function createChild<T extends object>( this:Class, role:T & Roles.NewRole, slugOrRequestOptions?:any, requestOptions?:RequestOptions ):Promise<T & Class> {
+function createChild<T extends object>( role:T & RoleBase, requestOptions?:RequestOptions ):Promise<T & Class>;
+function createChild<T extends object>( role:T & RoleBase, slug?:string, requestOptions?:RequestOptions ):Promise<T & Class>;
+function createChild<T extends object>( this:Class, role:T & RoleBase, slugOrRequestOptions?:any, requestOptions?:RequestOptions ):Promise<T & Class> {
 	return getRolesClass( this )
 		.then( roles => {
 			return roles.createChild<T>( this.id, role, slugOrRequestOptions, requestOptions );
@@ -144,7 +145,7 @@ function removeUsers( this:Class, users:(Pointer | string)[], requestOptions?:Re
 		} );
 }
 
-function getRolesClass( role:Class ):Promise<Roles.Class> {
+function getRolesClass( role:Class ):Promise<RolesEndpoint> {
 	return Utils.promiseMethod( () => {
 		if( ! role._documents[ "context" ] )
 			throw new Errors.IllegalStateError( "The context of the role doesn't support roles management." );

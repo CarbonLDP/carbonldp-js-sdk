@@ -1,11 +1,6 @@
 import { Documents } from "../Documents";
 import { PersistedProtectedDocument } from "../PersistedProtectedDocument";
 
-export type NewRole = {
-	name:string;
-	description?:string;
-};
-
 
 export interface RolesEndpoint extends PersistedProtectedDocument {
 }

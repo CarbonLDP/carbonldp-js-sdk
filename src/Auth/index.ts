@@ -13,6 +13,7 @@ export { LDAPCredentials } from "./LDAPCredentials";
 export { PersistedACE } from "./PersistedACE";
 export { PersistedACL } from "./PersistedACL";
 export { PersistedUser } from "./PersistedUser";
+export { Role, RoleBase } from "./Role";
 export { TokenAuthenticator } from "./TokenAuthenticator";
 export { TokenCredentials, TokenCredentialsBase } from "./TokenCredentials";
 export { User, UserBase } from "./User";
@@ -21,11 +22,9 @@ export { UsersEndpoint } from "./UsersEndpoint";
 
 
 import * as PersistedRole from "./PersistedRole";
-import * as Role from "./Role";
 import * as Roles from "./RolesEndpoint";
 
 export {
 	PersistedRole,
-	Role,
 	Roles,
 };

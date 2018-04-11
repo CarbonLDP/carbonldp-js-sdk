@@ -13,6 +13,7 @@ var Auth = __importStar(require("./Auth"));
 var ACL_1 = require("./Auth/ACL");
 var PersistedACL_1 = require("./Auth/PersistedACL");
 var PersistedUser_1 = require("./Auth/PersistedUser");
+var Role_1 = require("./Auth/Role");
 var User_1 = require("./Auth/User");
 var Document_1 = require("./Document");
 var Errors = __importStar(require("./Errors"));
@@ -79,7 +80,7 @@ var Documents = (function () {
                 .set(ProtectedDocument_1.ProtectedDocument.TYPE, PersistedProtectedDocument_1.PersistedProtectedDocument.decorate)
                 .set(User_1.User.TYPE, PersistedUser_1.PersistedUser.decorate)
                 .set(ACL_1.ACL.TYPE, PersistedACL_1.PersistedACL.decorate)
-                .set(Auth.Role.RDF_CLASS, Auth.PersistedRole.Factory.decorate);
+                .set(Role_1.Role.TYPE, Auth.PersistedRole.Factory.decorate);
         }
         this._documentDecorators = decorators;
     }

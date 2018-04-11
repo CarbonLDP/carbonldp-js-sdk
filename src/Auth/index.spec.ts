@@ -23,7 +23,7 @@ import { PersistedACE } from "./PersistedACE";
 import { PersistedACL } from "./PersistedACL";
 import * as PersistedRole from "./PersistedRole";
 import { PersistedUser } from "./PersistedUser";
-import * as Role from "./Role";
+import { Role } from "./Role";
 import * as Roles from "./RolesEndpoint";
 import { AuthService } from "./Service";
 import { TokenAuthenticator } from "./TokenAuthenticator";
@@ -207,7 +207,7 @@ describe( module( "carbonldp/Auth" ), ():void => {
 	it( reexports(
 		STATIC,
 		"Role",
-		"carbonldp/Auth/Role"
+		"CarbonLDP.Auth.Role"
 	), ():void => {
 		expect( Auth.Role ).toBeDefined();
 		expect( Auth.Role ).toBe( Role );

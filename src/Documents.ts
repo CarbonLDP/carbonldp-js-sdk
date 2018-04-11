@@ -21,6 +21,7 @@ import * as Auth from "./Auth";
 import { ACL } from "./Auth/ACL";
 import { PersistedACL } from "./Auth/PersistedACL";
 import { PersistedUser } from "./Auth/PersistedUser";
+import { Role } from "./Auth/Role";
 import { User } from "./Auth/User";
 import { CarbonLDP } from "./CarbonLDP";
 import { Context } from "./Context";
@@ -156,7 +157,7 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 				.set( ProtectedDocument.TYPE, PersistedProtectedDocument.decorate )
 				.set( User.TYPE, PersistedUser.decorate )
 				.set( ACL.TYPE, PersistedACL.decorate )
-				.set( Auth.Role.RDF_CLASS, Auth.PersistedRole.Factory.decorate )
+				.set( Role.TYPE, Auth.PersistedRole.Factory.decorate )
 			;
 		}
 

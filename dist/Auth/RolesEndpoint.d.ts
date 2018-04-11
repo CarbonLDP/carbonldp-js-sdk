@@ -1,9 +1,5 @@
 import { Documents } from "../Documents";
 import { PersistedProtectedDocument } from "../PersistedProtectedDocument";
-export declare type NewRole = {
-    name: string;
-    description?: string;
-};
 export interface RolesEndpoint extends PersistedProtectedDocument {
 }
 export interface RolesEndpointFactory {
