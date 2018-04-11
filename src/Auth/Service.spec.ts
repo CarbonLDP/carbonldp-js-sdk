@@ -6,8 +6,7 @@ import {
 
 import { Context } from "../Context";
 import { IllegalArgumentError } from "../Errors";
-import { RequestOptions } from "../HTTP/Request";
-import { PersistedDocument } from "../PersistedDocument";
+import { RequestOptions } from "../HTTP";
 import {
 	clazz,
 	constructor,
@@ -26,13 +25,14 @@ import { XSD } from "../Vocabularies/XSD";
 import { Authenticator } from "./Authenticator";
 import { AuthMethod } from "./AuthMethod";
 import { PersistedUser } from "./PersistedUser";
-import * as Roles from "./Roles";
+import * as Roles from "./RolesEndpoint";
 
 import { AuthService } from "./Service";
 
 import { TokenCredentials } from "./TokenCredentials";
 import { User } from "./User";
 import { UsersEndpoint } from "./UsersEndpoint";
+import { RolesEndpoint } from "./RolesEndpoint";
 
 
 describe( module( "carbonldp/Auth/Service" ), ():void => {
@@ -80,14 +80,29 @@ describe( module( "carbonldp/Auth/Service" ), ():void => {
 				} ) );
 			} );
 
+			it( "should assign RolesEndpoint in roles", ():void => {
+				const auth:AuthService = new AuthService( context );
+
+				expect( auth.users ).toEqual( anyThatMatches( RolesEndpoint.is, "RolesEndpoint" ) as any );
+				expect( auth.users ).toEqual( jasmine.objectContaining( {
+					id: "https://example.com/users/",
+				} ) );
+			} );
+
 		} );
 
-		// TODO: Move to constructor tests
 		it( hasProperty(
 			INSTANCE,
 			"users",
 			"CarbonLDP.Auth.UsersEndpoint",
 			"Instance of `CarbonLDP.Auth.UsersEndpoint` that helps managing the users of your Carbon LDP."
+		), ():void => {} );
+
+		it( hasProperty(
+			INSTANCE,
+			"roles",
+			"CarbonLDP.Auth.RolesEndpoint",
+			"Instance of `CarbonLDP.Auth.RolesEndpoint` that helps managing the roles of your Carbon LDP."
 		), ():void => {} );
 
 		// TODO: Separate in different tests
@@ -140,19 +155,6 @@ describe( module( "carbonldp/Auth/Service" ), ():void => {
 				expect( context.auth.authenticatedUser ).not.toBe( childContext.auth.authenticatedUser );
 			})();
 
-		} );
-
-		// TODO: Move to constructor tests
-		it( hasProperty(
-			INSTANCE,
-			"roles",
-			"CarbonLDP.Auth.Roles.Class",
-			"Instance of `CarbonLDP.Auth.Roles.Class` that helps managing the roles of your Carbon LDP."
-		), ():void => {
-			let auth:AuthService = new AuthService( context );
-
-			expect( auth.roles ).toBeDefined();
-			expect( auth.roles ).toEqual( jasmine.any( Roles.Class ) );
 		} );
 
 		// TODO: Separate in different tests

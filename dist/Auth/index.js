@@ -50,7 +50,7 @@ var PersistedRole = __importStar(require("./PersistedRole"));
 exports.PersistedRole = PersistedRole;
 var Role = __importStar(require("./Role"));
 exports.Role = Role;
-var Roles = __importStar(require("./Roles"));
+var Roles = __importStar(require("./RolesEndpoint"));
 exports.Roles = Roles;
 
 //# sourceMappingURL=index.js.map

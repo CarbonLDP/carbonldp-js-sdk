@@ -4,7 +4,7 @@ import { PersistedProtectedDocument } from "../PersistedProtectedDocument";
 import { Pointer } from "../Pointer";
 import { QueryDocumentsBuilder } from "../SPARQL/QueryDocument";
 import { PersistedUser } from "./PersistedUser";
-import * as Roles from "./Roles";
+import * as Roles from "./RolesEndpoint";
 export interface Class extends PersistedProtectedDocument {
     name?: string;
     description?: string;

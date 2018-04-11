@@ -103,8 +103,13 @@ export class CarbonLDP extends AbstractContext {
 				slug: ".system/",
 				paths: {
 					platform: "platform/",
-					credentials: "credentials/",
-					roles: "roles/",
+					security: {
+						slug: "security/",
+						paths: {
+							credentials: "credentials/",
+							roles: "roles/",
+						},
+					},
 				},
 			},
 			users: {

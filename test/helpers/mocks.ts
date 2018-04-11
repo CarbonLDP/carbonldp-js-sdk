@@ -61,7 +61,12 @@ export function createMockContext( data?:{
 					system: {
 						slug: ".system/",
 						paths: {
-							security: "security/",
+							security: {
+								slug: "security/",
+								paths: {
+									roles: "roles/",
+								},
+							},
 						},
 					},
 					users: {

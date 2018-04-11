@@ -61,8 +61,13 @@ var CarbonLDP = (function (_super) {
                     slug: ".system/",
                     paths: {
                         platform: "platform/",
-                        credentials: "credentials/",
-                        roles: "roles/",
+                        security: {
+                            slug: "security/",
+                            paths: {
+                                credentials: "credentials/",
+                                roles: "roles/",
+                            },
+                        },
                     },
                 },
                 users: {

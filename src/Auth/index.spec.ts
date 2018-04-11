@@ -24,7 +24,7 @@ import { PersistedACL } from "./PersistedACL";
 import * as PersistedRole from "./PersistedRole";
 import { PersistedUser } from "./PersistedUser";
 import * as Role from "./Role";
-import * as Roles from "./Roles";
+import * as Roles from "./RolesEndpoint";
 import { AuthService } from "./Service";
 import { TokenAuthenticator } from "./TokenAuthenticator";
 import {

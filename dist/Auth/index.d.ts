@@ -20,5 +20,5 @@ export { UsernameAndPasswordCredentials } from "./UsernameAndPasswordCredentials
 export { UsersEndpoint } from "./UsersEndpoint";
 import * as PersistedRole from "./PersistedRole";
 import * as Role from "./Role";
-import * as Roles from "./Roles";
+import * as Roles from "./RolesEndpoint";
 export { PersistedRole, Role, Roles };
