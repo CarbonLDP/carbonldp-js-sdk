@@ -1,12 +1,20 @@
-import * as NS from "./../NS";
-import * as ObjectSchema from "./../ObjectSchema";
-import * as DocumentCreated from "./DocumentCreated";
+import { ObjectSchema } from "../ObjectSchema";
+import { C } from "../Vocabularies/C";
+import { DocumentCreated } from "./DocumentCreated";
 
-export const RDF_CLASS:string = NS.C.Class.AccessPointCreated;
 
-export const SCHEMA:ObjectSchema.Class = DocumentCreated.SCHEMA;
-
-export interface Class extends DocumentCreated.Class {
+export interface AccessPointCreated extends DocumentCreated {
 }
 
-export default Class;
+
+export interface AccessPointCreatedFactory {
+	TYPE:string;
+	SCHEMA:ObjectSchema;
+}
+
+const SCHEMA:ObjectSchema = DocumentCreated.SCHEMA;
+
+export const AccessPointCreated:AccessPointCreatedFactory = {
+	TYPE: C.AccessPointCreated,
+	SCHEMA,
+};

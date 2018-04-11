@@ -1,16 +1,16 @@
-import * as Context from "../Context";
-import * as HTTP from "./../HTTP";
-import Authenticator from "./Authenticator";
-import * as TokenCredentials from "./TokenCredentials";
-import * as BasicToken from "./BasicToken";
-export declare const TOKEN_CONTAINER: string;
-export declare class Class extends Authenticator<BasicToken.Class, TokenCredentials.Class> {
-    protected context: Context.Class;
-    protected credentials: TokenCredentials.Class;
-    constructor(context: Context.Class);
+import { RequestOptions } from "../HTTP/Request";
+import { Response } from "../HTTP/Response";
+import { AuthenticatedUserInformationAccessor } from "./AuthenticatedUserInformationAccessor";
+import { Authenticator } from "./Authenticator";
+import { BasicToken } from "./BasicToken";
+import { TokenCredentials, TokenCredentialsBase } from "./TokenCredentials";
+export declare class TokenAuthenticator extends Authenticator<BasicToken, TokenCredentials> {
+    protected _credentials: TokenCredentials;
     isAuthenticated(): boolean;
-    authenticate(tokenOrCredentials: BasicToken.Class | TokenCredentials.Class): Promise<TokenCredentials.Class>;
-    protected getHeaderValue(): HTTP.Header.Value;
-    private getCredentials(tokenOrCredentials);
+    authenticate(tokenOrCredentials: BasicToken | TokenCredentialsBase): Promise<TokenCredentials>;
+    protected _getHeaderValue(): string;
+    protected _parseCredentialsBase(credentialsBase: TokenCredentialsBase): Promise<TokenCredentials>;
+    protected _getCredentials(token: BasicToken): Promise<TokenCredentials>;
+    protected _parseRDFMetadata(rdfData: object[], response: Response, requestOptions: RequestOptions): AuthenticatedUserInformationAccessor;
+    protected _parseRDFCredentials(rdfData: object[], response: Response): TokenCredentials;
 }
-export default Class;

@@ -293,22 +293,30 @@ td.optional-label > .ui.horizontal.ribbon.label:after {
     transform: translateY(-50%) translateX(50%) rotate(-45deg);
 }
 
-.doc-menu-location .doc-menu-location__item:not(:last-child):hover::after, .doc-menu-location .doc-menu-location__item:not(:last-child):active::after, .doc-menu-location .doc-menu-location__item:not(:last-child).active::after {
+.doc-menu-location .doc-menu-location__item:not(:last-child):hover::after,
+.doc-menu-location .doc-menu-location__item:not(:last-child):active::after,
+.doc-menu-location .doc-menu-location__item:not(:last-child).active::after {
     background-color: #f7f7f7;
 }
 
-.doc-menu-location .doc-menu-location__item.dynamic-location.dynamic-location_module.active, .doc-menu-location .doc-menu-location__item.dynamic-location.dynamic-location_module.active::after {
+.doc-menu-location .doc-menu-location__item.dynamic-location.dynamic-location_module.active,
+.doc-menu-location .doc-menu-location__item.dynamic-location.dynamic-location_module.active::after {
     background-color: #e5e5e5;
 }
 
-.doc-menu-location .doc-menu-location__item.dynamic-location.dynamic-location_interface.active, .doc-menu-location .doc-menu-location__item.dynamic-location.dynamic-location_interface.active::after {
-    /*background-color: #fdf0e8;*/
+.doc-menu-location .doc-menu-location__item.dynamic-location.dynamic-location_interface.active,
+.doc-menu-location .doc-menu-location__item.dynamic-location.dynamic-location_interface.active::after {
     background-color: #fbd4ba;
 }
 
-.doc-menu-location .doc-menu-location__item.dynamic-location.dynamic-location_class.active, .doc-menu-location .doc-menu-location__item.dynamic-location.dynamic-location_class.active::after {
-    /*background-color: #e8f2fa;*/
+.doc-menu-location .doc-menu-location__item.dynamic-location.dynamic-location_class.active,
+.doc-menu-location .doc-menu-location__item.dynamic-location.dynamic-location_class.active::after {
     background-color: #bcdaf0;
+}
+
+.doc-menu-location .doc-menu-location__item.dynamic-location.dynamic-location_namespace.active,
+.doc-menu-location .doc-menu-location__item.dynamic-location.dynamic-location_namespace.active::after {
+    background-color: #E1BEE7;
 }
 
 .doc-search {

@@ -1,10 +1,10 @@
-import * as events from "events";
-import * as http from "http";
-import * as https from "https";
-import * as common from "nock/lib/common.js";
-import * as Socket from "nock/lib/socket.js";
-import * as timers from "timers";
-import * as URL from "url";
+import events from "events";
+import http from "http";
+import https from "https";
+import common from "nock/lib/common.js";
+import Socket from "nock/lib/socket.js";
+import timers from "timers";
+import URL from "url";
 
 
 class MockAgent {
@@ -28,7 +28,7 @@ interface AjaxResponse {
 	responseText?:string;
 	response?:string;
 	contentType?:string;
-	responseHeaders?:{ [key:string]:string };
+	responseHeaders?:{ [ key:string ]:string };
 }
 
 
@@ -42,7 +42,7 @@ class RequestStub {
 	status:number;
 	contentType:string;
 	responseText:string;
-	responseHeaders:{ [p:string]:string };
+	responseHeaders:{ [ p:string ]:string };
 
 	constructor( url:string | RegExp, stubData:string | RegExp, method:string ) {
 		if( url instanceof RegExp ) {
@@ -96,7 +96,7 @@ class FakeClientRequest extends http.ClientRequest {
 	url:string;
 	method:string;
 	params:any;
-	requestHeaders:{ [key:string]:string };
+	requestHeaders:{ [ key:string ]:string };
 
 	private ajax:MockAjax;
 	private res:http.IncomingMessage;
@@ -331,13 +331,17 @@ class RequestTracker {
 		return this.requests[ index ];
 	}
 
-	filter( urlToMatch:string | RegExp | ( ( request:FakeClientRequest ) => boolean ) ):FakeClientRequest[] {
+	filter( urlToMatch:string | RegExp | (( request:FakeClientRequest ) => boolean) ):FakeClientRequest[] {
 		const filter:( request:FakeClientRequest ) => boolean = urlToMatch instanceof Function ? urlToMatch :
 			urlToMatch instanceof RegExp ?
 				request => urlToMatch.test( request.url ) :
 				request => urlToMatch === request.url;
 
 		return this.requests.filter( filter );
+	}
+
+	count():number {
+		return this.requests.length;
 	}
 
 	reset():void {

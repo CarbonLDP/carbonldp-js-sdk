@@ -1,10 +1,8 @@
-import * as HTTP from "./../HTTP";
-import Authenticator from "./Authenticator";
-import * as BasicCredentials from "./BasicCredentials";
-import * as BasicToken from "./BasicToken";
-export declare class Class extends Authenticator<BasicToken.Class, BasicCredentials.Class> {
-    protected credentials: BasicCredentials.Class;
-    authenticate(authenticationToken: BasicToken.Class): Promise<BasicCredentials.Class>;
-    protected getHeaderValue(): HTTP.Header.Value;
+import { Authenticator } from "./Authenticator";
+import { BasicCredentials } from "./BasicCredentials";
+import { BasicToken } from "./BasicToken";
+export declare class BasicAuthenticator extends Authenticator<BasicToken, BasicCredentials> {
+    protected _credentials: BasicCredentials;
+    authenticate(authenticationToken: BasicToken): Promise<BasicCredentials>;
+    protected _getHeaderValue(): string;
 }
-export default Class;

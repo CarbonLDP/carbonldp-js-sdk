@@ -1,35 +1,38 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var Errors_1 = require("../../Errors");
-var URI = require("../../RDF/URI");
-var Class = (function () {
-    function Class(schema, previousPartial) {
-        this.schema = previousPartial ? this.mergeSchemas(previousPartial.schema, schema) : schema;
+var IllegalArgumentError_1 = require("../../Errors/IllegalArgumentError");
+var ObjectSchema_1 = require("../../ObjectSchema");
+var PartialMetadata = (function () {
+    function PartialMetadata(schema, previousPartial) {
+        this.schema = this.mergeSchemas(previousPartial ? previousPartial.schema : new ObjectSchema_1.DigestedObjectSchema(), schema);
     }
-    Class.prototype.mergeSchemas = function (oldSchema, newSchema) {
-        oldSchema.prefixes.forEach(function (oldURI, namespace) {
-            if (!newSchema.prefixes.has(namespace))
-                return newSchema.prefixes.set(namespace, oldURI);
-            var newURI = newSchema.prefixes.get(namespace);
-            if (newURI.stringValue !== oldURI.stringValue)
-                throw new Errors_1.IllegalArgumentError("Prefix \"" + namespace + "\" has different values: \"" + oldURI.stringValue + "\", \"" + newURI.stringValue + "\"");
+    PartialMetadata.prototype.mergeSchemas = function (oldSchema, newSchema) {
+        if (newSchema === PartialMetadata.ALL || oldSchema === PartialMetadata.ALL)
+            return PartialMetadata.ALL;
+        newSchema.prefixes.forEach(function (newURI, namespace) {
+            newURI = ObjectSchema_1.ObjectSchemaUtils.resolveURI(newURI, newSchema);
+            if (!oldSchema.prefixes.has(namespace))
+                return oldSchema.prefixes.set(namespace, newURI);
+            var oldURI = oldSchema.prefixes.get(namespace);
+            if (oldURI !== newURI)
+                throw new IllegalArgumentError_1.IllegalArgumentError("Prefix \"" + namespace + "\" has different values: \"" + oldURI + "\", \"" + newURI + "\"");
         });
-        oldSchema.properties.forEach(function (oldDefinition, propertyName) {
-            if (!newSchema.properties.has(propertyName))
-                return newSchema.properties.set(propertyName, oldDefinition);
-            var newDefinition = newSchema.properties.get(propertyName);
+        newSchema.properties.forEach(function (newDefinition, propertyName) {
+            if (!oldSchema.properties.has(propertyName))
+                return oldSchema.properties.set(propertyName, newDefinition);
+            var oldDefinition = oldSchema.properties.get(propertyName);
             for (var key in newDefinition) {
-                var newValue = newDefinition[key] instanceof URI.Class ? newDefinition[key].stringValue : newDefinition[key];
-                var oldValue = oldDefinition[key] instanceof URI.Class ? oldDefinition[key].stringValue : oldDefinition[key];
+                var newValue = newDefinition[key];
+                var oldValue = oldDefinition[key];
                 if (newValue !== oldValue)
-                    throw new Errors_1.IllegalArgumentError("Property \"" + propertyName + "\" has different \"" + key + "\": \"" + oldValue + "\", \"" + newValue + "\"");
+                    throw new IllegalArgumentError_1.IllegalArgumentError("Property \"" + propertyName + "\" has different \"" + key + "\": \"" + oldValue + "\", \"" + newValue + "\"");
             }
         });
-        return newSchema;
+        return oldSchema;
     };
-    return Class;
+    PartialMetadata.ALL = Object.freeze(new ObjectSchema_1.DigestedObjectSchema());
+    return PartialMetadata;
 }());
-exports.Class = Class;
-exports.default = Class;
+exports.PartialMetadata = PartialMetadata;
 
 //# sourceMappingURL=PartialMetadata.js.map

@@ -4,11 +4,12 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=0.8">
 
-	<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
-	<link rel="icon" type="image/png" href="favicon-32x32.png" sizes="32x32">
-	<link rel="icon" type="image/png" href="favicon-16x16.png" sizes="16x16">
-	<link rel="manifest" href="manifest.json">
-	<link rel="mask-icon" href="safari-pinned-tab.svg" color="#5bbad5">
+	<link rel="apple-touch-icon" sizes="180x180" href="images/favicon/apple-touch-icon.png">
+	<link rel="icon" type="image/png" href="images/favicon/favicon-32x32.png" sizes="32x32">
+	<link rel="icon" type="image/png" href="images/favicon/favicon-16x16.png" sizes="16x16">
+	<link rel="manifest" href="images/favicon/manifest.json">
+	<link rel="mask-icon" href="images/favicon/safari-pinned-tab.svg">
+	<meta name="msapplication-TileColor" content="#da532c">
 	<meta name="theme-color" content="#ffffff">
 
 	<title>Carbon LDP JavaScript SDK - Docs</title>
@@ -20,7 +21,7 @@
 <body class="pushable">
 	<div class="ui inverted top fixed menu doc-menu doc-menu-top">
 		<a class="item" href="https://carbonldp.com">
-			<img class="ui small image doc-logo" src="images/carbon-ldp-logo.png">
+			<img class="ui small image doc-logo" src="images/carbonldp-logo.png">
 		</a>
 		<div class="ui right aligned search item doc-search">
 			<div class="ui icon input">
@@ -45,7 +46,7 @@
 					<a class="header" href="#{{toURL path}}">{{path}}</a>
 					<div class="menu">
 						{{#combineElements this}}
-							<a class="item{{#if isClass}} item-class{{else}} item-interface{{/if}}" href="#{{toURL element.path}}">{{element.path}}</a>
+							<a class="item{{#if isClass}} item-class{{/if}}{{#if isInterface}} item-interface{{/if}}{{#if isNamespace}} item-namespace{{/if}}" href="#{{toURL element.path}}">{{element.path}}</a>
 						{{/combineElements}}
 					</div>
 				</div>
@@ -75,11 +76,11 @@
 			<div class="ui divider"></div>
 
 			<div class="ui basic segment doc-section__content">
-				{{>header level=2 name="Classes and Interfaces"}}
+				{{>header level=2 name="Exported Elements"}}
 				<div class="ui list elements-list elements-list_single">
 					{{#toc-tree modules}}
 						<div class="item">
-							<span class="ui {{#is type "I"}}orange{{else}}blue{{/is}} label icon elements-list__item-type">{{type}}</span>
+							<span class="ui {{#is type "I"}}orange{{else}}{{#is type "C"}}blue{{else}}purple{{/is}}{{/is}} label icon elements-list__item-type">{{type}}</span>
 							<a class="content" href="#{{toURL path}}">{{path}}</a>
 						</div>
 					{{/toc-tree}}
@@ -104,23 +105,59 @@
 							{{br 1}}
 						{{/with}}
 
-						{{#or this.interfaces this.classes}}
-							{{>header level=2 path=(concat path "--Classes and Interfaces") name="Classes and Interfaces in the Module" }}
+						{{#if this.classes}}
+							{{>header level=2 path=(concat path "--Classes") name="Classes" }}
 							<div class="ui list elements-list">
-								{{#combineElements this}}
+								{{#each this.classes}}
 									<div class="item">
-										<span class="ui {{#if isInterface}}orange{{else}}blue{{/if}} label icon elements-list__item-type">{{#if isClass}}C{{else}}I{{/if}}</span>
+										<span class="ui blue label icon elements-list__item-type">C</span>
 										<div class="content">
-											<a class="header" href="#{{toURL element.path}}">{{element.path}}</a>
-											{{#with element.description}}
+											<a class="header" href="#{{toURL this.path}}">{{this.path}}</a>
+											{{#with this.description}}
 												<div class="description">{{>text-markdown element=(trim this) noParagraph=true}}</div>
 											{{/with}}
 										</div>
 									</div>
-								{{/combineElements}}
+								{{/each}}
 							</div>
 							<br>
-						{{/or}}
+						{{/if}}
+
+						{{#if this.interfaces}}
+							{{>header level=2 path=(concat path "--Interfaces") name="Interfaces" }}
+							<div class="ui list elements-list">
+								{{#each this.interfaces}}
+									<div class="item">
+										<span class="ui orange label icon elements-list__item-type">I</span>
+										<div class="content">
+											<a class="header" href="#{{toURL this.path}}">{{this.path}}</a>
+											{{#with this.description}}
+												<div class="description">{{>text-markdown element=(trim this) noParagraph=true}}</div>
+											{{/with}}
+										</div>
+									</div>
+								{{/each}}
+							</div>
+							<br>
+						{{/if}}
+
+						{{#if this.namespaces}}
+							{{>header level=2 path=(concat path "--Namespaces") name="Namespaces" }}
+							<div class="ui list elements-list">
+								{{#each this.namespaces}}
+									<div class="item">
+										<span class="ui purple label icon elements-list__item-type">N</span>
+										<div class="content">
+											<a class="header" href="#{{toURL this.path}}">{{this.path}}</a>
+											{{#with this.description}}
+												<div class="description">{{>text-markdown element=(trim this) noParagraph=true}}</div>
+											{{/with}}
+										</div>
+									</div>
+								{{/each}}
+							</div>
+							<br>
+						{{/if}}
 
 						{{#if reexports}}
 							{{> reexports}}
@@ -386,6 +423,7 @@
 
 					if( $sidebarItem.hasClass( "item-class" ) ) $objectLocation.addClass( "dynamic-location_class" );
 					if( $sidebarItem.hasClass( "item-interface" ) ) $objectLocation.addClass( "dynamic-location_interface" );
+					if( $sidebarItem.hasClass( "item-namespace" ) ) $objectLocation.addClass( "dynamic-location_namespace" );
 				}
 
 				$locationMenu

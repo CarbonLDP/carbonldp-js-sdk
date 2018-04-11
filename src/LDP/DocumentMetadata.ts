@@ -1,46 +1,58 @@
-import * as NS from "./../NS";
-import * as ObjectSchema from "./../ObjectSchema";
-import * as PersistedDocument from "./../PersistedDocument";
-import * as Utils from "./../Utils";
-import * as VolatileResource from "./VolatileResource";
-import * as Map from "./Map";
-import BlankNode from "./../BlankNode";
+import { BlankNode } from "../BlankNode";
+import { ObjectSchema } from "../ObjectSchema";
+import { PersistedDocument } from "../PersistedDocument";
+import * as Utils from "../Utils";
+import { C } from "../Vocabularies/C";
+import { XSD } from "../Vocabularies/XSD";
+import { Map } from "./Map";
+import { VolatileResource } from "./VolatileResource";
+import { ModelFactory } from "../ModelFactory";
+import { ModelDecorator } from "../ModelDecorator";
 
-export const RDF_CLASS:string = NS.C.Class.DocumentMetadata;
+export interface DocumentMetadata extends VolatileResource {
+	relatedDocument:PersistedDocument;
+	eTag?:string;
+	bNodesMap?:Map<BlankNode, BlankNode>;
+}
 
-export const SCHEMA:ObjectSchema.Class = {
+
+export interface DocumentMetadataFactory extends ModelFactory<DocumentMetadata>, ModelDecorator<DocumentMetadata> {
+	TYPE:string;
+	SCHEMA:ObjectSchema;
+
+	isDecorated( object:object ):object is DocumentMetadata;
+
+	is( object:object ):object is DocumentMetadata;
+}
+
+const SCHEMA:ObjectSchema = {
 	"relatedDocument": {
-		"@id": NS.C.Predicate.relatedDocument,
+		"@id": C.relatedDocument,
 		"@type": "@id",
 	},
 	"eTag": {
-		"@id": NS.C.Predicate.eTag,
-		"@type": NS.XSD.DataType.string,
+		"@id": C.eTag,
+		"@type": XSD.string,
 	},
 	"bNodesMap": {
-		"@id": NS.C.Predicate.bNodesMap,
+		"@id": C.bNodesMap,
 		"@type": "@id",
 	},
 };
 
-export interface Class extends VolatileResource.Class {
-	relatedDocument:PersistedDocument.Class;
-	eTag?:string;
-	bNodesMap?:Map.Class<BlankNode, BlankNode>;
-}
+export const DocumentMetadata:DocumentMetadataFactory = {
+	TYPE: C.DocumentMetadata,
+	SCHEMA,
 
-export class Factory {
-
-	static hasClassProperties( object:Object ):boolean {
+	isDecorated( object:object ):object is DocumentMetadata {
 		return Utils.hasPropertyDefined( object, "relatedDocument" );
-	}
+	},
 
-	static is( object:Object ):boolean {
-		return VolatileResource.Factory.is( object )
-			&& Factory.hasClassProperties( object )
-			&& object.hasType( RDF_CLASS );
-	}
+	is( object:object ):object is DocumentMetadata {
+		return VolatileResource.is( object )
+			&& object.hasType( DocumentMetadata.TYPE )
+			&& DocumentMetadata.isDecorated( object )
+			;
+	},
 
-}
-
-export default Class;
+};

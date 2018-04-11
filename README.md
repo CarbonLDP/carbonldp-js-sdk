@@ -1,65 +1,72 @@
 # [CarbonLDP JavaScript SDK](http://carbonldp.com/)
 
-[![npm version](https://badge.fury.io/js/carbonldp.svg)](https://badge.fury.io/js/carbonldp) [![Join the chat at https://gitter.im/CarbonLDP/CarbonLDP-JS-SDK](https://badges.gitter.im/CarbonLDP/CarbonLDP-JS-SDK.svg)](https://gitter.im/CarbonLDP/CarbonLDP-JS-SDK?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+[![npm version][npm-image]][npm-url]
+[![Downloads][npm-downloads]][npm-url]
+[![Join the chat at https://gitter.im/CarbonLDP/CarbonLDP-JS-SDK][gitter-image]][gitter-url]
 
-[![Build Status](https://travis-ci.org/CarbonLDP/carbonldp-js-sdk.svg)](https://travis-ci.org/CarbonLDP/carbonldp-js-sdk)
+[![Build Status][travis-image]][travis-url]
 
-Official JavaScript SDK for Carbon LDP applications, which simplifies the use of Carbon's REST API.
+Official JavaScript SDK for Carbon LDP applications. Simplifies the use of Carbon LDP's REST API.
+
+For information on how to use the SDK, please refer to the [JavaScript SDK user guide](https://carbonldp.com/documentation/v1.0.x/javascript-sdk/) on the Carbon LDP website.
+
+## Installing
+
+```
+npm install carbonldp
+```
 
 ## Development setup
+
 1. Install dependencies
     - [node.js 6+](https://nodejs.org/en/)
     - gulp: `npm install gulp -g` (you may need to run it as root)
-    - typings: `npm install typings -g` (you may need to run it as root)
 2. cd into the project's root directory
 3. Run `npm install`
-4. Run `typings install`
 5. Build the source code by running `npm start`
 
 ## Main gulp tasks
+
 1. `build`: Same as `npm start`. Build the source code and prepare it for production (inside the dist/ folder)
 2. `lint`: Same as `npm lint`. Run TSLint over the source code to perform static code analysis.
+3. `test`: Same as `npm test`. Run the test in both Node.js and Google Chrome.
 
 ## File structure
-- **build**: Build related scripts
-    - **documentation**: Files used to generate documentation
-        - **html**: Files used for html based documentation
-        - **markdown**: Files used for markdown based documentation
-    - **license.js**: Contains the license to append to the build
-        - **sfx.ts**: Main file that feeds the SFX building process. Requires Carbon and exports its entire content as a module
-- **config**: Configuration files used for building and testing the SDK 
-	- **karma.conf.js**: Actual Karma test runner configuration file, used by the karma file in the base path
-	- **webpack.common.js**: Base Webpack configuration used by every by the specific environment webpack configuration files
-	- **webpack.prod.js**: Webpack configuration used for generate the bundle files
-	- **webpack.test.js**: Webpack configuration used by **karma.conf.js**
-- **dist**: Compiled files
-    - **bundles**: Contains different versions of Carbon, bundled for simplicity
-        - **Carbon.sfx.js**: Bundle that contains Carbon and all of its dependencies. Carbon is exposed in the global environment
-        - **Carbon.sfx.min.js**: Minimized version of the bundle
-- **documentation**: JS SDK's API documentation
-- **node_modules**: npm dependencies (don't touch them)
-- **playground**: Informal testing ground (TODO: Clean directory)
-- **scripts**: Scripts that aid in the workflow
-	- **copy-hooks.js**: Copies `pre-commit` to .git when `npm install` is called
-    - **pre-commit**: Builds Carbon and adds the dist folder to the commit. Makes sure there's a fresh build in each commit
-- **src**: Source files
-- **test**: Test framework related files (not the real tests)
-- **typings**: TypeScript definition files (See [typings](https://github.com/typings/typings))
-    - **modules**: Definition files are installed here. This folder is managed by [typings](https://github.com/typings/typings)
-    - **index.d.ts**: Definition file managed by [typings](https://github.com/typings/typings). Most typings are installed with `npm`, but the `@types` repository doesn't have typings for `jsonld` yet
-    - **typings.d.ts**: Main definitions file
-- **.gitignore**: Git configuration file to mark which files to ignore
-- **.travis.yml**: Travis configuration file
-- **CHANGELOG.md**: File to track changes. Any new addition needs to be added here
-- **gulpfile.js**: Gulp configuration file
-- **karma.conf.js**: Karma test runner configuration file
-- **LICENSE**: Self explanatory
-- **package.json**: npm configuration file
-- **README.md**: === this
-- **tsconfig.json**: TypeScript compiler configuration file
-- **tslint.json**: tslint configuration file
-- **typings.json**: [typings](https://github.com/typings/typings) configuration file
-- **webpack.config.js**: Webpack configuration file used to create the bundle files
+
+    ├── .idea                               # WebStorm shared configuration files (like code style)
+    ├── build                               # Build related scripts
+    │   ├── license.js                      # Contains the license to append to the build
+    │   ├── sfx.ts                          # Main file that feeds the SFX building process
+    │   └── docs                            # Templates for build the different types of API documentation
+    │       ├── html                        # Templates for html documentation (used for github pages)
+    │       └── markdown                    # Templates for markdown documentation
+    ├── config                              # Configuration files used while bundling the application
+    │   ├── karma.conf.js                   # Actual Karma test runner configuration file
+    │   ├── webpack.common.js               # Webpack's settings used by every mode
+    │   ├── webpack.prod.js                 # Webpack bundling settings for PRODUCTION mode
+    │   └── webpack.test.js                 # Webpack bundling settings for TESTING mode
+    ├── dist                                # Distribution related files
+    │   └── bundles                         # Contains the bundled versions of the entire SDK
+    ├── docs                                # JS SDK's API docucmentation files
+    ├── node_modules                        # npm dependencies (don't touch them)
+    ├── playground                          # Informal testing ground (TODO: Clean directory)
+    ├── scripts                             # Scripts that aid in the workflow
+    │   ├── copy-hooks.js                   # Copies `pre-commit` to .git when `npm install` is called 
+    │   └── pre_commit                      # SHELL script that builds Carbon and adds the dist folder to the commit
+    ├── src                                 # All source files
+    ├── test                                # Test framework related files (not the real tests)
+    ├── .gitignore                          # Ignore file for git
+    ├── .travis.yml                         # Travis configuration file
+    ├── CHANGELOG.md                        # File to track package changes
+    ├── gulpfile.js                         # Gulp's configuration file
+    ├── karma.conf.js                       # Karma configuration file used for the Browser tests
+    ├── LICENSE                             # Self explanatory
+    ├── package.json                        # npm's configuration file
+    ├── package-lock.json                   # npm's with the exact desired dependency tree
+    ├── README.md                           # this
+    ├── tsconfig.json                       # Typescript compiler configuration file
+    ├── tslint.json                         # TSLint configuration file
+    └── webpack.config.js                   # Webpack configuration used to bundle the SDK
 
 ## License
 
@@ -68,3 +75,11 @@ Official JavaScript SDK for Carbon LDP applications, which simplifies the use of
 
 	This source code is licensed under the BSD-style license found in the
 	LICENSE file in the root directory of this source tree.
+
+[npm-image]: https://img.shields.io/npm/v/carbonldp.svg?style=flat-square
+[npm-url]: https://npmjs.org/package/carbonldp
+[npm-downloads]: https://img.shields.io/npm/dm/carbonldp.svg?style=flat-square
+[gitter-image]: https://badges.gitter.im/CarbonLDP/CarbonLDP-JS-SDK.svg
+[gitter-url]: https://gitter.im/CarbonLDP/CarbonLDP-JS-SDK?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge
+[travis-image]: https://travis-ci.org/CarbonLDP/carbonldp-js-sdk.svg
+[travis-url]: https://travis-ci.org/CarbonLDP/carbonldp-js-sdk

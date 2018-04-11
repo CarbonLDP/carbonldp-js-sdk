@@ -1,30 +1,46 @@
-import * as NS from "./../NS";
-import * as ObjectSchema from "./../ObjectSchema";
-import * as DocumentMetadata from "./DocumentMetadata";
-import * as VolatileResource from "./VolatileResource";
-import * as Utils from "./../Utils";
+import { ModelFactory } from "../ModelFactory";
+import { ObjectSchema } from "../ObjectSchema";
+import {
+	C,
+	CS,
+} from "../Vocabularies";
+import { DocumentMetadata } from "./DocumentMetadata";
+import { VolatileResource } from "./VolatileResource";
+import { TokenCredentials } from "../Auth";
 
-export const RDF_CLASS:string = NS.C.Class.ResponseMetadata;
 
-export const SCHEMA:ObjectSchema.Class = {
+export interface ResponseMetadata extends VolatileResource {
+	documentsMetadata?:DocumentMetadata[];
+	authToken?:TokenCredentials;
+}
+
+
+export interface ResponseMetadataFactory extends ModelFactory<ResponseMetadata> {
+	TYPE:string;
+	SCHEMA:ObjectSchema;
+
+	is( object:object ):object is ResponseMetadata;
+}
+
+const SCHEMA:ObjectSchema = {
 	"documentsMetadata": {
-		"@id": NS.C.Predicate.documentMetadata,
+		"@id": C.documentMetadata,
 		"@type": "@id",
 		"@container": "@set",
 	},
+	"authToken": {
+		"@id": CS.authToken,
+		"@type": "@id",
+	},
 };
 
-export interface Class extends VolatileResource.Class {
-	documentsMetadata?:DocumentMetadata.Class[];
-}
+export const ResponseMetadata:ResponseMetadataFactory = {
+	TYPE: C.ResponseMetadata,
+	SCHEMA,
 
-export class Factory {
+	is( object:object ):object is ResponseMetadata {
+		return VolatileResource.is( object )
+			&& object.hasType( ResponseMetadata.TYPE );
+	},
 
-	static is( object:object ):object is Class {
-		return VolatileResource.Factory.is( object )
-			&& object.hasType( RDF_CLASS );
-	}
-
-}
-
-export default Class;
+};

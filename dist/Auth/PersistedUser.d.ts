@@ -1,18 +1,12 @@
-import { Minus } from "../Utils";
-import * as Document from "./../Document";
-import * as Documents from "./../Documents";
-import * as HTTP from "./../HTTP";
-import * as PersistedProtectedDocument from "./../PersistedProtectedDocument";
-import * as User from "./User";
-export interface Class extends Minus<User.Class, Document.Class>, PersistedProtectedDocument.Class {
-    enable(requestOptions?: HTTP.Request.Options): Promise<[Class, HTTP.Response.Class[]]>;
-    disable(requestOptions?: HTTP.Request.Options): Promise<[Class, HTTP.Response.Class[]]>;
+import { Documents } from "../Documents";
+import { PersistedProtectedDocument } from "../PersistedProtectedDocument";
+import { UsernameAndPasswordCredentials } from "./UsernameAndPasswordCredentials";
+export interface PersistedUser extends PersistedProtectedDocument {
+    name?: string;
+    credentials?: UsernameAndPasswordCredentials;
 }
-export declare function enable(this: Class, requestOptions?: HTTP.Request.Options): Promise<[Class, HTTP.Response.Class[]]>;
-export declare function disable(this: Class, requestOptions?: HTTP.Request.Options): Promise<[Class, HTTP.Response.Class[]]>;
-export declare class Factory {
-    static hasClassProperties(object: object): object is Class;
-    static is(object: object): object is Class;
-    static decorate<T extends object>(object: T, documents: Documents.Class): Class & T;
+export interface PersistedUserFactory {
+    is(value: any): value is PersistedUser;
+    decorate<T extends object>(object: T, documents: Documents): PersistedUser & T;
 }
-export default Class;
+export declare const PersistedUser: PersistedUserFactory;

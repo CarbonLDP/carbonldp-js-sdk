@@ -1,10 +1,17 @@
 "use strict";
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
+    result["default"] = mod;
+    return result;
+}
 Object.defineProperty(exports, "__esModule", { value: true });
 var Utils_1 = require("../Utils");
-var Errors = require("./../Errors");
-var HTTP = require("./../HTTP");
-var URI = require("./../RDF/URI");
-var PersistedRole = require("./PersistedRole");
+var Errors = __importStar(require("../Errors"));
+var Request_1 = require("../HTTP/Request");
+var URI_1 = require("../RDF/URI");
+var PersistedRole = __importStar(require("./PersistedRole"));
 var Class = (function () {
     function Class(context) {
         this.context = context;
@@ -12,31 +19,26 @@ var Class = (function () {
     Class.prototype.createChild = function (parentRole, role, slugOrRequestOptions, requestOptions) {
         var _this = this;
         var slug = Utils_1.isString(slugOrRequestOptions) ? slugOrRequestOptions : void 0;
-        requestOptions = HTTP.Request.Util.isOptions(slugOrRequestOptions) ? slugOrRequestOptions : requestOptions;
+        requestOptions = Request_1.RequestUtils.isOptions(slugOrRequestOptions) ? slugOrRequestOptions : requestOptions;
         var parentURI = Utils_1.isString(parentRole) ? parentRole : parentRole.id;
-        var responses = [];
         return Utils_1.promiseMethod(function () {
             parentURI = _this.resolveURI(parentURI);
             return _this.context
                 .documents
                 .exists(parentURI);
-        }).then(function (_a) {
-            var exists = _a[0];
+        }).then(function (exists) {
             if (!exists)
                 throw new Errors.IllegalArgumentError("The parent role \"" + parentURI + "\" doesn't exists.");
             var container = _this.resolveURI();
             return _this.context
                 .documents
                 .createChild(container, role, slug, requestOptions);
-        }).then(function (_a) {
-            var document = _a[0], response = _a[1];
-            responses.push(response);
+        }).then(function (document) {
             return _this.context
                 .documents
                 .addMember(parentURI, document);
         }).then(function () {
-            var persistedRole = PersistedRole.Factory.decorate(role, _this.context.documents);
-            return [persistedRole, responses[0]];
+            return PersistedRole.Factory.decorate(role, _this.context.documents);
         });
     };
     Class.prototype.get = function (roleURI, queryBuilderFnOrOptions, queryBuilderFn) {
@@ -100,12 +102,10 @@ var Class = (function () {
         });
     };
     Class.prototype.resolveURI = function (relativeURI) {
-        if (!this.context.hasSetting("system.security.roles.container"))
-            throw new Errors.IllegalStateError("The \"system.security.roles.container\" setting hasn't been defined.");
-        var containerURI = this.context.auth._resolveSecurityURL(this.context.getSetting("system.security.roles.container"));
+        var containerURI = this.context._resolvePath("system.security.roles");
         if (!relativeURI)
             return containerURI;
-        var absoluteURI = URI.Util.resolve(containerURI, relativeURI);
+        var absoluteURI = URI_1.URI.Util.resolve(containerURI, relativeURI);
         if (!absoluteURI.startsWith(containerURI))
             throw new Errors.IllegalArgumentError("The URI \"" + relativeURI + "\" isn't a valid role URI.");
         return absoluteURI;

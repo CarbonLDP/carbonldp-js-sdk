@@ -1,24 +1,20 @@
-import AbstractError from "./AbstractError";
-import * as Utils from "./../Utils";
-
 import {
-	INSTANCE,
-
 	clazz,
-	module,
-
-	isDefined,
-	hasConstructor,
-	hasMethod,
-	hasProperty,
 	extendsClass,
-	hasDefaultExport,
+	hasConstructor,
+	hasProperty,
+	INSTANCE,
+	isDefined,
+	module,
 } from "./../test/JasmineExtender";
 
-import * as IllegalStateError from "./IllegalStateError";
-import DefaultExport from "./IllegalStateError";
+import * as Utils from "./../Utils";
+import { AbstractError } from "./AbstractError";
 
-describe( module( "Carbon/Errors/IllegalStateError" ), function():void {
+import * as IllegalStateError from "./IllegalStateError";
+
+// TODO: Refactor tests
+describe( module( "carbonldp/Errors/IllegalStateError" ), function():void {
 
 	it( isDefined(), ():void => {
 		expect( IllegalStateError ).toBeDefined();
@@ -26,48 +22,33 @@ describe( module( "Carbon/Errors/IllegalStateError" ), function():void {
 	} );
 
 	describe( clazz(
-		"Carbon.Errors.IllegalStateError.Class",
+		"CarbonLDP.Errors.IllegalStateError",
 		"Error class to indicate that a task can't be completed because of the lack of pre-required configuration or execution of previous tasks."
 	), function():void {
+
 		it( isDefined(), function():void {
-			expect( IllegalStateError.Class ).toBeDefined();
-			expect( IllegalStateError.Class ).not.toBeNull();
-			expect( Utils.isFunction( IllegalStateError.Class ) ).toBe( true );
+			expect( IllegalStateError.IllegalStateError ).toBeDefined();
+			expect( IllegalStateError.IllegalStateError ).not.toBeNull();
+			expect( Utils.isFunction( IllegalStateError.IllegalStateError ) ).toBe( true );
 		} );
 
-		it( extendsClass( "Carbon.Errors.AbstractError" ), function():void {
-			let illegalStateError:IllegalStateError.Class = new IllegalStateError.Class( "This is the message" );
+		it( extendsClass( "CarbonLDP.Errors.AbstractError.AbstractError" ), function():void {
+			let illegalStateError:IllegalStateError.IllegalStateError = new IllegalStateError.IllegalStateError( "This is the message" );
 			expect( illegalStateError instanceof AbstractError ).toBe( true );
 		} );
 
 		it( hasConstructor( [
-			{ name: "message", type: "string", optional: true, defaultValue: "" },
+			{ name: "message", type: "string", optional: true },
 		] ), ():void => {
-			let error:IllegalStateError.Class = new IllegalStateError.Class( "Message of the error" );
+			let error:IllegalStateError.IllegalStateError = new IllegalStateError.IllegalStateError( "Message of the error" );
 
 			expect( error ).toBeTruthy();
-			expect( error instanceof IllegalStateError.Class ).toBe( true );
+			expect( error instanceof IllegalStateError.IllegalStateError ).toBe( true );
 
-			error = new IllegalStateError.Class();
+			error = new IllegalStateError.IllegalStateError();
 
 			expect( error ).toBeTruthy();
-			expect( error instanceof IllegalStateError.Class ).toBe( true );
-		} );
-
-		it( hasMethod(
-			INSTANCE,
-			"toString",
-			{ type: "string" }
-		), ():void => {
-			let error:IllegalStateError.Class = new IllegalStateError.Class( "Message of the error" );
-
-			expect( error.toString ).toBeDefined();
-			expect( Utils.isFunction( error.toString ) );
-
-			expect( error.toString() ).toBe( "IllegalStateError: Message of the error" );
-
-			error = new IllegalStateError.Class();
-			expect( error.toString() ).toBe( "IllegalStateError: " );
+			expect( error instanceof IllegalStateError.IllegalStateError ).toBe( true );
 		} );
 
 		it( hasProperty(
@@ -75,7 +56,7 @@ describe( module( "Carbon/Errors/IllegalStateError" ), function():void {
 			"name",
 			"string"
 		), ():void => {
-			let error:IllegalStateError.Class = new IllegalStateError.Class( "Message of the error" );
+			let error:IllegalStateError.IllegalStateError = new IllegalStateError.IllegalStateError( "Message of the error" );
 
 			expect( error.name ).toBeDefined();
 			expect( Utils.isString( error.name ) ).toBe( true );
@@ -83,11 +64,6 @@ describe( module( "Carbon/Errors/IllegalStateError" ), function():void {
 			expect( error.name ).toBe( "IllegalStateError" );
 		} );
 
-	} );
-
-	it( hasDefaultExport( "Carbon.Errors.IllegalStateError.Class" ), ():void => {
-		expect( DefaultExport ).toBeDefined();
-		expect( DefaultExport ).toBe( IllegalStateError.Class );
 	} );
 
 } );

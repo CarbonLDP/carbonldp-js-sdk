@@ -1,27 +1,34 @@
-import * as NS from "./../NS";
-import * as ObjectSchema from "./../ObjectSchema";
-import * as Pointer from "./../Pointer";
-import * as LDAPCredentials from "./LDAPCredentials";
-import * as UsernameAndPasswordCredentials from "./UsernameAndPasswordCredentials";
+import { CS } from "../Vocabularies";
+import { ObjectSchema } from "../ObjectSchema";
+import { Pointer } from "../Pointer";
+import { LDAPCredentials } from "./LDAPCredentials";
+import { UsernameAndPasswordCredentials } from "./UsernameAndPasswordCredentials";
 
 
-export const RDF_CLASS:string = NS.CS.Class.CredentialsSet;
+export interface CredentialsSet {
+	user:Pointer;
+	credentials:( UsernameAndPasswordCredentials | LDAPCredentials )[];
+}
 
-export const SCHEMA:ObjectSchema.Class = {
+
+export interface CredentialsSetFactory {
+	TYPE:CS[ "CredentialsSet" ];
+	SCHEMA:ObjectSchema;
+}
+
+const SCHEMA:ObjectSchema = {
 	"user": {
-		"@id": NS.CS.Predicate.user,
+		"@id": CS.user,
 		"@type": "@id",
 	},
 	"credentials": {
-		"@id": NS.CS.Predicate.credentials,
+		"@id": CS.credentials,
 		"@type": "@id",
 		"@container": "@set",
 	},
 };
 
-export interface Class {
-	user:Pointer.Class;
-	credentials:( UsernameAndPasswordCredentials.Class | LDAPCredentials.Class )[];
-}
-
-export default Class;
+export const CredentialsSet:CredentialsSetFactory = {
+	TYPE: CS.CredentialsSet,
+	SCHEMA,
+};

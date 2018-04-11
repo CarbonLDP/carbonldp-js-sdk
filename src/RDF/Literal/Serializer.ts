@@ -1,5 +1,3 @@
-export interface Class {
+export interface Serializer {
 	serialize( value:any ):string;
 }
-
-export default Class;

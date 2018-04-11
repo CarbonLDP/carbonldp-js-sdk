@@ -1,15 +1,9 @@
-import Parser from "./../HTTP/Parser";
-import JSONParser from "./../HTTP/JSONParser";
+import { JSONParser } from "../HTTP/JSONParser";
+import { Parser } from "../HTTP/Parser";
+import { SPARQLRawResults } from "./RawResults";
 
-import RawResults from "./RawResults";
-
-export class Class implements Parser<RawResults> {
-	parse( input:string ):Promise<any> {
-		let jsonParser:JSONParser = new JSONParser();
-		return jsonParser.parse( input ).then( ( parsedObject:Object ) => {
-			return <any> parsedObject;
-		} );
+export class SPARQLRawResultsParser extends JSONParser implements Parser<SPARQLRawResults> {
+	parse( input:string ):Promise<SPARQLRawResults> {
+		return super.parse( input ).then( object => object as SPARQLRawResults );
 	}
 }
-
-export default Class;

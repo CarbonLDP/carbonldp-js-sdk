@@ -1,6 +1,6 @@
-import Parser from "./../HTTP/Parser";
-import RawResults from "./RawResults";
-export declare class Class implements Parser<RawResults> {
-    parse(input: string): Promise<any>;
+import { JSONParser } from "../HTTP/JSONParser";
+import { Parser } from "../HTTP/Parser";
+import { SPARQLRawResults } from "./RawResults";
+export declare class SPARQLRawResultsParser extends JSONParser implements Parser<SPARQLRawResults> {
+    parse(input: string): Promise<SPARQLRawResults>;
 }
-export default Class;

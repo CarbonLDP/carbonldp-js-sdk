@@ -1,13 +1,15 @@
-import * as Document from "./Document";
-import * as Resource from "./Resource";
-export interface Class extends Resource.Class {
-    document: Document.Class;
+import { Document } from "./Document";
+import { ModelDecorator } from "./ModelDecorator";
+import { ModelFactory } from "./ModelFactory";
+import { Resource } from "./Resource";
+export interface Fragment extends Resource {
+    _document: Document;
 }
-export declare class Factory {
-    static hasClassProperties(resource: Object): boolean;
-    static create(id: string, document: Document.Class): Class;
-    static create(document: Document.Class): Class;
-    static createFrom<T extends Object>(object: T, id: string, document: Document.Class): T & Class;
-    static createFrom<T extends Object>(object: T, document: Document.Class): T & Class;
+export interface FragmentFactory extends ModelFactory<Fragment>, ModelDecorator<Fragment> {
+    isDecorated(object: object): object is Fragment;
+    is(object: object): object is Fragment;
+    create(document: Document, id?: string): Fragment;
+    createFrom<T extends object>(object: T, document: Document, id?: string): T & Fragment;
+    decorate<T extends object>(object: T): T & Fragment;
 }
-export default Class;
+export declare const Fragment: FragmentFactory;

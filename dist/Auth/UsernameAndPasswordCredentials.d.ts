@@ -1,13 +1,18 @@
-import * as ObjectSchema from "./../ObjectSchema";
-import * as Resource from "./../Resource";
-export declare const RDF_CLASS: string;
-export declare const SCHEMA: ObjectSchema.Class;
-export interface Class extends Resource.Class {
+import { VolatileResource } from "../LDP";
+import { ObjectSchema } from "../ObjectSchema";
+import { CS } from "../Vocabularies/CS";
+export interface UsernameAndPasswordCredentialsBase {
     username: string;
     password: string;
 }
-export declare class Factory {
-    static create(username: string, password: string): Class;
-    static createFrom<T extends object>(object: T, username: string, password: string): T & Class;
+export interface UsernameAndPasswordCredentials extends VolatileResource {
+    username?: string;
+    password?: string;
 }
-export default Class;
+export interface UsernameAndPasswordCredentialsFactory {
+    TYPE: CS["UsernameAndPasswordCredentials"];
+    SCHEMA: ObjectSchema;
+    create(data: UsernameAndPasswordCredentialsBase): UsernameAndPasswordCredentials;
+    createFrom<T extends UsernameAndPasswordCredentialsBase>(object: T): T & UsernameAndPasswordCredentials;
+}
+export declare const UsernameAndPasswordCredentials: UsernameAndPasswordCredentialsFactory;

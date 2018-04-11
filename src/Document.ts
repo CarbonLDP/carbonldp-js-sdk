@@ -1,464 +1,450 @@
-import * as BlankNode from "./BlankNode";
-import * as Errors from "./Errors";
-import * as Fragment from "./Fragment";
-import JSONLDConverter from "./JSONLD/Converter";
-import * as NamedFragment from "./NamedFragment";
-import * as NS from "./NS";
-import * as ObjectSchema from "./ObjectSchema";
-import * as Pointer from "./Pointer";
-import * as RDF from "./RDF";
-import * as Resource from "./Resource";
-import * as Utils from "./Utils";
+import { BlankNode } from "./BlankNode";
+import { IDAlreadyInUseError } from "./Errors/IDAlreadyInUseError";
+import { IllegalArgumentError } from "./Errors/IllegalArgumentError";
+import { Fragment } from "./Fragment";
+import { JSONLDConverter } from "./JSONLD/Converter";
+import { ModelDecorator } from "./ModelDecorator";
+import { ModelFactory } from "./ModelFactory";
+import { NamedFragment } from "./NamedFragment";
+import {
+	DigestedObjectSchema,
+	ObjectSchema,
+	ObjectSchemaResolver,
+} from "./ObjectSchema";
+import {
+	Pointer,
+	PointerLibrary,
+	PointerValidator,
+} from "./Pointer";
+import { RDFDocument } from "./RDF/Document";
+import { RDFNode } from "./RDF/Node";
+import { URI } from "./RDF/URI";
+import { Resource } from "./Resource";
+import {
+	hasFunction,
+	hasPropertyDefined,
+	isObject,
+	isPlainObject,
+	isString,
+} from "./Utils";
+import { C } from "./Vocabularies/C";
+import { LDP } from "./Vocabularies/LDP";
+import { XSD } from "./Vocabularies/XSD";
 
-export const RDF_CLASS:string = NS.C.Class.Document;
 
-export const SCHEMA:ObjectSchema.Class = {
+export interface Document extends Resource, PointerLibrary, PointerValidator {
+	defaultInteractionModel?:Pointer;
+	isMemberOfRelation?:Pointer;
+	hasMemberRelation?:Pointer;
+
+	_fragmentsIndex:Map<string, Fragment>;
+
+	_normalize():void;
+
+
+	_removeFragment( slugOrFragment:string | Fragment ):void;
+
+
+	hasFragment( slug:string ):boolean;
+
+
+	getFragment<T>( slug:string ):T & Fragment;
+
+	getNamedFragment<T>( slug:string ):T & NamedFragment;
+
+
+	getFragments():Fragment[];
+
+
+	createFragment<T>( object:T, slug?:string ):T & Fragment;
+
+	createFragment( slug?:string ):Fragment;
+
+
+	createNamedFragment<T>( object:T, slug:string ):T & NamedFragment;
+
+	createNamedFragment( slug:string ):NamedFragment;
+
+
+	removeNamedFragment( slugOrFragment:string | NamedFragment ):void;
+
+
+	toJSON( objectSchemaResolver?:ObjectSchemaResolver, jsonldConverter?:JSONLDConverter ):RDFDocument;
+}
+
+
+export interface DocumentFactory extends ModelFactory<Document>, ModelDecorator<Document> {
+	TYPE:string;
+	SCHEMA:ObjectSchema;
+
+
+	is( object:object ):object is Document;
+
+	isDecorated( object:object ):object is Document;
+
+
+	create():Document;
+
+	createFrom<T extends object>( object:T ):T & Document;
+
+	decorate<T extends object>( object:T ):T & Document;
+
+
+	_convertNestedObjects( parent:Document, actual:any, fragmentsTracker?:Set<string> ):void;
+}
+
+
+const SCHEMA:ObjectSchema = {
 	"contains": {
-		"@id": NS.LDP.Predicate.contains,
+		"@id": LDP.contains,
 		"@container": "@set",
 		"@type": "@id",
 	},
 	"members": {
-		"@id": NS.LDP.Predicate.member,
+		"@id": LDP.member,
 		"@container": "@set",
 		"@type": "@id",
 	},
 	"membershipResource": {
-		"@id": NS.LDP.Predicate.membershipResource,
+		"@id": LDP.membershipResource,
 		"@type": "@id",
 	},
 	"isMemberOfRelation": {
-		"@id": NS.LDP.Predicate.isMemberOfRelation,
+		"@id": LDP.isMemberOfRelation,
 		"@type": "@id",
 	},
 	"hasMemberRelation": {
-		"@id": NS.LDP.Predicate.hasMemberRelation,
+		"@id": LDP.hasMemberRelation,
 		"@type": "@id",
 	},
 	"insertedContentRelation": {
-		"@id": NS.LDP.Predicate.insertedContentRelation,
+		"@id": LDP.insertedContentRelation,
 		"@type": "@id",
 	},
 	"created": {
-		"@id": NS.C.Predicate.created,
-		"@type": NS.XSD.DataType.dateTime,
+		"@id": C.created,
+		"@type": XSD.dateTime,
 	},
 	"modified": {
-		"@id": NS.C.Predicate.modified,
-		"@type": NS.XSD.DataType.dateTime,
+		"@id": C.modified,
+		"@type": XSD.dateTime,
 	},
 	"defaultInteractionModel": {
-		"@id": NS.C.Predicate.defaultInteractionModel,
+		"@id": C.defaultInteractionModel,
 		"@type": "@id",
 	},
 	"accessPoints": {
-		"@id": NS.C.Predicate.accessPoint,
+		"@id": C.accessPoint,
 		"@type": "@id",
 		"@container": "@set",
 	},
 };
 
-export interface Class extends Resource.Class, Pointer.Library, Pointer.Validator {
-	defaultInteractionModel?:Pointer.Class;
-	isMemberOfRelation?:Pointer.Class;
-	hasMemberRelation?:Pointer.Class;
+export const Document:DocumentFactory = {
+	TYPE: C.Document,
+	SCHEMA,
 
-	_fragmentsIndex:Map<string, Fragment.Class>;
+	isDecorated: ( object ):object is Document =>
+		isObject( object ) &&
+		hasPropertyDefined( object, "_fragmentsIndex" ) &&
 
-	_normalize():void;
+		hasFunction( object, "_normalize" ) &&
+		hasFunction( object, "_removeFragment" ) &&
 
-	_removeFragment( fragment:Fragment.Class ):void;
+		hasFunction( object, "hasPointer" ) &&
+		hasFunction( object, "getPointer" ) &&
 
-	_removeFragment( slug:string ):void;
+		hasFunction( object, "inScope" ) &&
 
-	hasFragment( slug:string ):boolean;
+		hasFunction( object, "hasFragment" ) &&
+		hasFunction( object, "getFragment" ) &&
+		hasFunction( object, "getNamedFragment" ) &&
+		hasFunction( object, "getFragments" ) &&
+		hasFunction( object, "createFragment" ) &&
+		hasFunction( object, "createNamedFragment" ) &&
+		hasFunction( object, "removeNamedFragment" ) &&
 
-	getFragment<T>( slug:string ):T & Fragment.Class;
+		hasFunction( object, "toJSON" )
+	,
 
-	getNamedFragment<T>( slug:string ):T & NamedFragment.Class;
+	is: ( object ):object is Document =>
+		Resource.is( object ) &&
+		Document.isDecorated( object )
+	,
 
-	getFragments():Fragment.Class[];
 
-	createFragment<T>( object:T, slug:string ):T & Fragment.Class;
+	decorate: <T extends object>( object:T ) => {
+		if( Document.isDecorated( object ) ) return object;
 
-	createFragment<T>( object:T ):T & Fragment.Class;
-
-	createFragment( slug:string ):Fragment.Class;
-
-	createFragment():Fragment.Class;
-
-	createNamedFragment<T>( object:T, slug:string ):T & NamedFragment.Class;
-
-	createNamedFragment( slug:string ):NamedFragment.Class;
-
-	removeNamedFragment( fragment:NamedFragment.Class ):void;
-
-	removeNamedFragment( slug:string ):void;
-
-	toJSON( objectSchemaResolver:ObjectSchema.Resolver, jsonldConverter:JSONLDConverter ):string;
-
-	toJSON( objectSchemaResolver:ObjectSchema.Resolver ):string;
-
-	toJSON():string;
-}
-
-function hasPointer( id:string ):boolean {
-	let document:Class = <Class> this;
-
-	if( id === document.id ) return true;
-
-	if( ! document.inScope( id ) ) return false;
-
-	return document.hasFragment( id );
-}
-
-function getPointer( id:string ):Pointer.Class {
-	let document:Class = <Class> this;
-
-	if( ! document.inScope( id ) ) return null;
-
-	if( id === document.id ) return document;
-
-	let fragment:Fragment.Class = document.getFragment( id );
-	fragment = ! fragment ? document.createFragment( id ) : fragment;
-
-	return fragment;
-}
-
-function inScope( pointer:Pointer.Class ):boolean;
-function inScope( id:string ):boolean;
-function inScope( idOrPointer:any ):boolean {
-	let document:Class = <Class> this;
-
-	let id:string = Pointer.Factory.is( idOrPointer ) ? idOrPointer.id : idOrPointer;
-
-	if( id === document.id ) return true;
-
-	if( RDF.URI.Util.isBNodeID( id ) ) return true;
-
-	if( RDF.URI.Util.isFragmentOf( id, document.id ) ) return true;
-
-	return RDF.URI.Util.isFragmentOf( id, "" );
-}
-
-function hasFragment( id:string ):boolean {
-	let document:Class = <Class> this;
-
-	if( RDF.URI.Util.isAbsolute( id ) ) {
-		if( ! RDF.URI.Util.isFragmentOf( id, document.id ) ) return false;
-		id = RDF.URI.Util.hasFragment( id ) ? RDF.URI.Util.getFragment( id ) : id;
-	} else if( Utils.S.startsWith( id, "#" ) ) id = id.substring( 1 );
-
-	return document._fragmentsIndex.has( id );
-}
-
-function getFragment( id:string ):Fragment.Class {
-	let document:Class = <Class> this;
-
-	if( ! RDF.URI.Util.isBNodeID( id ) ) return document.getNamedFragment( id );
-
-	return document._fragmentsIndex.get( id ) || null;
-}
-
-function getNamedFragment( id:string ):NamedFragment.Class {
-	let document:Class = <Class> this;
-
-	if( RDF.URI.Util.isBNodeID( id ) ) throw new Errors.IllegalArgumentError( "Named fragments can't have a id that starts with '_:'." );
-	if( RDF.URI.Util.isAbsolute( id ) ) {
-		if( ! RDF.URI.Util.isFragmentOf( id, document.id ) ) throw new Errors.IllegalArgumentError( "The id is out of scope." );
-		id = RDF.URI.Util.hasFragment( id ) ? RDF.URI.Util.getFragment( id ) : id;
-	} else if( Utils.S.startsWith( id, "#" ) ) id = id.substring( 1 );
-
-	return <NamedFragment.Class> document._fragmentsIndex.get( id ) || null;
-}
-
-function getFragments():Fragment.Class[] {
-	let document:Class = <Class> this;
-	return Utils.A.from( document._fragmentsIndex.values() );
-}
-
-function createFragment<T extends Object>( object:T, slug:string ):T & Fragment.Class;
-function createFragment<T extends Object>( object:T ):T & Fragment.Class;
-function createFragment( slug:string ):Fragment.Class;
-function createFragment():Fragment.Class;
-function createFragment<T extends Object>( slugOrObject?:any, slug?:string ):T & Fragment.Class {
-	let document:Class = <Class> this;
-	slug = Utils.isString( slugOrObject ) ? slugOrObject : slug;
-	let object:T = ! Utils.isString( slugOrObject ) && ! ! slugOrObject ? slugOrObject : <T> {};
-
-	if( slug ) {
-		if( ! RDF.URI.Util.isBNodeID( slug ) ) return document.createNamedFragment<T>( object, slug );
-		if( this._fragmentsIndex.has( slug ) ) throw new Errors.IDAlreadyInUseError( "The slug provided is already being used by a fragment." );
-	}
-
-	let fragment:T & BlankNode.Class = BlankNode.Factory.createFrom<T>( object, slug, document );
-	document._fragmentsIndex.set( fragment.id, fragment );
-
-	convertNestedObjects( document, fragment );
-	return fragment;
-}
-
-function createNamedFragment<T extends Object>( object:T, slug:string ):NamedFragment.Class & T;
-function createNamedFragment( slug:string ):NamedFragment.Class;
-function createNamedFragment<T extends Object>( slugOrObject:any, slug?:string ):T & NamedFragment.Class {
-	let document:Class = <Class> this;
-	slug = Utils.isString( slugOrObject ) ? slugOrObject : slug;
-	let object:T = ! Utils.isString( slugOrObject ) && ! ! slugOrObject ? slugOrObject : <T> {};
-
-	if( RDF.URI.Util.isBNodeID( slug ) ) throw new Errors.IllegalArgumentError( "Named fragments can't have a slug that starts with '_:'." );
-
-	if( RDF.URI.Util.isAbsolute( slug ) ) {
-		if( ! RDF.URI.Util.isFragmentOf( slug, document.id ) ) throw new Errors.IllegalArgumentError( "The slug is out of scope." );
-		slug = RDF.URI.Util.hasFragment( slug ) ? RDF.URI.Util.getFragment( slug ) : slug;
-	} else if( Utils.S.startsWith( slug, "#" ) ) slug = slug.substring( 1 );
-
-	if( document._fragmentsIndex.has( slug ) ) throw new Errors.IDAlreadyInUseError( "The slug provided is already being used by a fragment." );
-
-	let fragment:T & NamedFragment.Class = NamedFragment.Factory.createFrom<T>( object, slug, document );
-	document._fragmentsIndex.set( slug, fragment );
-
-	convertNestedObjects( document, fragment );
-	return fragment;
-}
-
-function removeFragment( this:Class, fragmentOrSlug:string | Fragment.Class ):void {
-	let id:string = Utils.isString( fragmentOrSlug ) ? fragmentOrSlug : fragmentOrSlug.id;
-
-	if( RDF.URI.Util.isAbsolute( id ) ) {
-		if( ! RDF.URI.Util.isFragmentOf( id, this.id ) ) return;
-		id = RDF.URI.Util.hasFragment( id ) ? RDF.URI.Util.getFragment( id ) : id;
-	} else if( Utils.S.startsWith( id, "#" ) ) id = id.substring( 1 );
-
-	this._fragmentsIndex.delete( id );
-}
-
-function removeNamedFragment( this:Class, fragmentOrSlug:NamedFragment.Class | string ):void {
-	let id:string = Utils.isString( fragmentOrSlug ) ? fragmentOrSlug : fragmentOrSlug.id;
-
-	if( RDF.URI.Util.isBNodeID( id ) ) throw new Errors.IllegalArgumentError( "You can only remove NamedFragments." );
-
-	this._removeFragment( id );
-}
-
-function toJSON( objectSchemaResolver:ObjectSchema.Resolver, jsonldConverter:JSONLDConverter ):string;
-function toJSON( objectSchemaResolver:ObjectSchema.Resolver ):string;
-function toJSON():string;
-function toJSON( objectSchemaResolver:ObjectSchema.Resolver = null, jsonldConverter:JSONLDConverter = null ):string {
-	let generalSchema:ObjectSchema.DigestedObjectSchema = objectSchemaResolver ? objectSchemaResolver.getGeneralSchema() : new ObjectSchema.DigestedObjectSchema();
-	jsonldConverter = ! ! jsonldConverter ? jsonldConverter : new JSONLDConverter();
-
-	let resources:{ toJSON:() => string }[] = [];
-	resources.push( this );
-	resources = resources.concat( this.getFragments() );
-
-	let expandedResources:RDF.Node.Class[] = [];
-	for( let resource of resources ) {
-		let resourceSchema:ObjectSchema.DigestedObjectSchema = objectSchemaResolver ? objectSchemaResolver.getSchemaFor( resource ) : new ObjectSchema.DigestedObjectSchema();
-
-		expandedResources.push( jsonldConverter.expand( resource, generalSchema, resourceSchema ) );
-	}
-
-	let graph:RDF.Document.Class = {
-		"@id": this.id,
-		"@graph": expandedResources,
-	};
-
-	return JSON.stringify( graph );
-}
-
-function normalize():void {
-	let currentFragments:Fragment.Class[] = (<Class> this).getFragments().filter( fragment => RDF.URI.Util.isBNodeID( fragment.id ) );
-	let usedFragmentsIDs:Set<string> = new Set();
-
-	convertNestedObjects( this, this, usedFragmentsIDs );
-
-	currentFragments.forEach( fragment => {
-		if( ! usedFragmentsIDs.has( fragment.id ) ) {
-			(<Class> this)._fragmentsIndex.delete( fragment.id );
-		}
-	} );
-}
-
-export class Factory {
-	static hasClassProperties( object:object ):object is Class {
-		return (
-			Utils.isObject( object ) &&
-
-			Utils.hasPropertyDefined( object, "_fragmentsIndex" ) &&
-
-			Utils.hasFunction( object, "_normalize" ) &&
-			Utils.hasFunction( object, "_removeFragment" ) &&
-
-			Utils.hasFunction( object, "hasFragment" ) &&
-			Utils.hasFunction( object, "getFragment" ) &&
-			Utils.hasFunction( object, "getNamedFragment" ) &&
-			Utils.hasFunction( object, "getFragments" ) &&
-			Utils.hasFunction( object, "createFragment" ) &&
-			Utils.hasFunction( object, "createNamedFragment" ) &&
-			Utils.hasFunction( object, "removeNamedFragment" ) &&
-			Utils.hasFunction( object, "toJSON" )
-		);
-	}
-
-	static is( object:object ):object is Class {
-		return Resource.Factory.is( object ) &&
-			Factory.hasClassProperties( object )
-			;
-	}
-
-	static create():Class {
-		return Factory.createFrom( {} );
-	}
-
-	static createFrom<T extends object>( object:T ):T & Class {
-		if( Factory.is( object ) ) throw new Errors.IllegalArgumentError( "The object provided is already a Document" );
-
-		let resource:Resource.Class = <any> object;
-		if( ! Resource.Factory.is( object ) ) resource = Resource.Factory.createFrom( object );
-
-		let document:T & Class = Factory.decorate<T>( <any> resource );
-		convertNestedObjects( document, document );
-
-		return document;
-	}
-
-	static decorate<T extends object>( object:T ):T & Class {
-		if( Factory.hasClassProperties( object ) ) return object;
-
-		Resource.Factory.decorate( object );
+		Resource.decorate( object );
 
 		Object.defineProperties( object, {
 			"_fragmentsIndex": {
-				writable: false,
-				enumerable: false,
 				configurable: true,
-				value: new Map<string, Fragment.Class>(),
+				value: new Map<string, Fragment>(),
 			},
+
 			"_normalize": {
-				writable: false,
-				enumerable: false,
 				configurable: true,
 				value: normalize,
 			},
 			"_removeFragment": {
-				writable: true,
-				enumerable: false,
 				configurable: true,
 				value: removeFragment,
 			},
+
 			"hasPointer": {
-				writable: true,
-				enumerable: false,
 				configurable: true,
 				value: hasPointer,
 			},
 			"getPointer": {
-				writable: true,
-				enumerable: false,
 				configurable: true,
 				value: getPointer,
 			},
 			"inScope": {
-				writable: true,
-				enumerable: false,
 				configurable: true,
 				value: inScope,
 			},
 
 			"hasFragment": {
-				writable: true,
-				enumerable: false,
 				configurable: true,
 				value: hasFragment,
 			},
 			"getFragment": {
-				writable: true,
-				enumerable: false,
 				configurable: true,
 				value: getFragment,
 			},
 			"getNamedFragment": {
-				writable: true,
-				enumerable: false,
 				configurable: true,
 				value: getNamedFragment,
 			},
 			"getFragments": {
-				writable: true,
-				enumerable: false,
 				configurable: true,
 				value: getFragments,
 			},
 			"createFragment": {
-				writable: true,
-				enumerable: false,
 				configurable: true,
 				value: createFragment,
 			},
 			"createNamedFragment": {
-				writable: true,
-				enumerable: false,
 				configurable: true,
 				value: createNamedFragment,
 			},
 			"removeNamedFragment": {
-				writable: true,
-				enumerable: false,
 				configurable: true,
 				value: removeNamedFragment,
 			},
 			"toJSON": {
-				writable: true,
-				enumerable: false,
 				configurable: true,
 				value: toJSON,
 			},
 		} );
 
-		return <any> object;
-	}
-}
+		return object as any;
+	},
 
-function convertNestedObjects( parent:Class, actual:any, fragmentsTracker:Set<string> = new Set() ):void {
-	let next:any;
-	let idOrSlug:string;
-	let fragment:Fragment.Class;
+	createFrom: <T extends object>( object:T ) => {
+		if( Document.is( object ) ) throw new IllegalArgumentError( "The object provided is already a Document." );
 
-	let keys:string[] = Object.keys( actual );
-	for( let key of keys ) {
-		next = actual[ key ];
+		const document:T & Document = Document.decorate<T>( object );
+		Document._convertNestedObjects( document, document );
 
-		if( Utils.isArray( next ) ) {
-			convertNestedObjects( parent, next, fragmentsTracker );
-			continue;
-		}
+		return document;
+	},
 
-		if( ! Utils.isPlainObject( next ) ) continue;
-		if( Pointer.Factory.is( next ) ) {
-			if( parent.hasFragment( next.id ) && ! fragmentsTracker.has( next.id ) ) {
-				fragmentsTracker.add( next.id );
-				convertNestedObjects( parent, next, fragmentsTracker );
+	create: () => Document.createFrom( {} ),
+
+
+	_convertNestedObjects( parent:Document, actual:any, fragmentsTracker:Set<string> = new Set() ):void {
+		for( let key of Object.keys( actual ) ) {
+			const next:any = actual[ key ];
+
+			if( Array.isArray( next ) ) {
+				Document._convertNestedObjects( parent, next, fragmentsTracker );
+				continue;
 			}
-			continue;
+
+			if( ! isPlainObject( next ) ) continue;
+			if( Document.is( next ) ) continue;
+
+			const idOrSlug:string = getNestedObjectId( next );
+			if( ! ! idOrSlug && ! inScope.call( parent, idOrSlug ) ) continue;
+
+			const parentFragment:Fragment = parent.getFragment( idOrSlug );
+			if( ! parentFragment ) {
+				const fragment:Fragment = parent.createFragment( <Object> next, idOrSlug );
+				Document._convertNestedObjects( parent, fragment, fragmentsTracker );
+
+			} else if( parentFragment !== next ) {
+				const fragment:Fragment = actual[ key ] = Object.assign( parentFragment, next );
+				Document._convertNestedObjects( parent, fragment, fragmentsTracker );
+
+			} else if( ! fragmentsTracker.has( next.id ) ) {
+				fragmentsTracker.add( next.id );
+				Document._convertNestedObjects( parent, next, fragmentsTracker );
+			}
+
 		}
 
-		idOrSlug = ("id" in next) ? next.id : (("slug" in next) ? RDF.URI.Util.hasFragment( next.slug ) ? next.slug : "#" + next.slug : "");
-		if( ! ! idOrSlug && ! parent.inScope( idOrSlug ) ) continue;
+	},
 
-		let parentFragment:Fragment.Class = parent.getFragment( idOrSlug );
+};
 
-		if( ! parentFragment ) {
-			fragment = parent.createFragment( <Object> next, idOrSlug );
-			convertNestedObjects( parent, fragment, fragmentsTracker );
+function getNestedObjectId( object:any ):string {
+	if( "id" in object ) return object.id;
 
-		} else if( parentFragment !== next ) {
-			Object.assign( parentFragment, next );
-			fragment = actual[ key ] = parentFragment;
-			convertNestedObjects( parent, fragment, fragmentsTracker );
-		}
+	if( "slug" in object ) return URI.hasFragment( object.slug ) ?
+		object.slug : "#" + object.slug;
 
-	}
-
+	return "";
 }
 
-export default Class;
+
+function hasPointer( this:Document, id:string ):boolean {
+	if( id === this.id ) return true;
+	if( ! this.inScope( id ) ) return false;
+
+	return this.hasFragment( id );
+}
+
+function getPointer( this:Document, id:string ):Pointer {
+	if( ! this.inScope( id ) ) return null;
+	if( id === this.id ) return this;
+
+	return this.hasFragment( id ) ?
+		this.getFragment( id ) :
+		this.createFragment( id );
+}
+
+function inScope( this:Document, idOrPointer:string | Pointer ):boolean {
+	const id:string = isString( idOrPointer ) ? idOrPointer : idOrPointer.id;
+
+	if( id === this.id ) return true;
+	if( URI.isBNodeID( id ) ) return true;
+	if( URI.isFragmentOf( id, this.id ) ) return true;
+	return id.startsWith( "#" );
+}
+
+function hasFragment( this:Document, id:string ):boolean {
+	if( URI.isAbsolute( id ) ) {
+		if( ! URI.isFragmentOf( id, this.id ) ) return false;
+		id = URI.hasFragment( id ) ? URI.getFragment( id ) : id;
+	} else if( id.startsWith( "#" ) ) {
+		id = id.substring( 1 );
+	}
+
+	return this._fragmentsIndex.has( id );
+}
+
+function getFragment( this:Document, id:string ):Fragment {
+	if( ! URI.isBNodeID( id ) ) return this.getNamedFragment( id );
+	return this._fragmentsIndex.get( id ) || null;
+}
+
+function getNamedFragment( this:Document, id:string ):NamedFragment {
+	if( URI.isBNodeID( id ) ) throw new IllegalArgumentError( "Named fragments can't have a id that starts with '_:'." );
+	if( URI.isAbsolute( id ) ) {
+		if( ! URI.isFragmentOf( id, this.id ) ) throw new IllegalArgumentError( "The id is out of scope." );
+		id = URI.hasFragment( id ) ? URI.getFragment( id ) : id;
+	} else if( id.startsWith( "#" ) ) {
+		id = id.substring( 1 );
+	}
+
+	return <NamedFragment> this._fragmentsIndex.get( id ) || null;
+}
+
+function getFragments( this:Document ):Fragment[] {
+	return Array.from( this._fragmentsIndex.values() );
+}
+
+function createFragment<T extends object>( object:T, slug?:string ):T & Fragment;
+function createFragment( slug?:string ):Fragment;
+function createFragment<T extends object>( this:Document, slugOrObject?:any, slug?:string ):T & Fragment {
+	slug = isString( slugOrObject ) ? slugOrObject : slug;
+	const object:T = ! isString( slugOrObject ) && ! ! slugOrObject ? slugOrObject : <T> {};
+
+	if( slug ) {
+		if( ! URI.isBNodeID( slug ) ) return this.createNamedFragment<T>( object, slug );
+		if( this._fragmentsIndex.has( slug ) ) throw new IDAlreadyInUseError( "The slug provided is already being used by a fragment." );
+	}
+
+	const fragment:T & BlankNode = BlankNode.createFrom<T>( object, this, slug );
+	this._fragmentsIndex.set( fragment.id, fragment );
+
+	Document._convertNestedObjects( this, fragment );
+	return fragment;
+}
+
+function createNamedFragment<T extends Object>( object:T, slug:string ):NamedFragment & T;
+function createNamedFragment( slug:string ):NamedFragment;
+function createNamedFragment<T extends Object>( this:Document, slugOrObject:any, slug?:string ):T & NamedFragment {
+	slug = isString( slugOrObject ) ? slugOrObject : slug;
+	const object:T = ! isString( slugOrObject ) && ! ! slugOrObject ? slugOrObject : <T> {};
+
+	if( URI.isBNodeID( slug ) ) throw new IllegalArgumentError( "Named fragments can't have a slug that starts with '_:'." );
+
+	if( URI.isAbsolute( slug ) ) {
+		if( ! URI.isFragmentOf( slug, this.id ) ) throw new IllegalArgumentError( "The slug is out of scope." );
+		slug = URI.hasFragment( slug ) ? URI.getFragment( slug ) : slug;
+	} else if( slug.startsWith( "#" ) ) slug = slug.substring( 1 );
+
+	if( this._fragmentsIndex.has( slug ) ) throw new IDAlreadyInUseError( "The slug provided is already being used by a fragment." );
+
+	const fragment:T & NamedFragment = NamedFragment.createFrom<T>( object, this, slug );
+	this._fragmentsIndex.set( slug, fragment );
+
+	Document._convertNestedObjects( this, fragment );
+	return fragment;
+}
+
+function removeFragment( this:Document, fragmentOrSlug:string | Fragment ):void {
+	let id:string = isString( fragmentOrSlug ) ? fragmentOrSlug : fragmentOrSlug.id;
+
+	if( URI.isAbsolute( id ) ) {
+		if( ! URI.isFragmentOf( id, this.id ) ) return;
+		id = URI.hasFragment( id ) ? URI.getFragment( id ) : id;
+	} else if( id.startsWith( "#" ) ) {
+		id = id.substring( 1 );
+	}
+
+	this._fragmentsIndex.delete( id );
+}
+
+function removeNamedFragment( this:Document, fragmentOrSlug:NamedFragment | string ):void {
+	const id:string = isString( fragmentOrSlug ) ? fragmentOrSlug : fragmentOrSlug.id;
+
+	if( URI.isBNodeID( id ) ) throw new IllegalArgumentError( "You can only remove NamedFragments." );
+	this._removeFragment( id );
+}
+
+function toJSON( this:Document, keyOrObjectSchemaResolver?:string | ObjectSchemaResolver, jsonldConverter:JSONLDConverter = new JSONLDConverter() ):RDFDocument {
+	const objectSchemaResolver:ObjectSchemaResolver = isObject( keyOrObjectSchemaResolver ) ?
+		keyOrObjectSchemaResolver : null;
+	const generalSchema:DigestedObjectSchema = objectSchemaResolver ?
+		objectSchemaResolver.getGeneralSchema() : new DigestedObjectSchema();
+
+	const resources:object[] = [ this, ...this.getFragments() ];
+	const expandedResources:RDFNode[] = resources.map( resource => {
+		const resourceSchema:DigestedObjectSchema = objectSchemaResolver ? objectSchemaResolver.getSchemaFor( resource ) : new DigestedObjectSchema();
+		return jsonldConverter.expand( resource, generalSchema, resourceSchema );
+	} );
+
+	return {
+		"@id": this.id,
+		"@graph": expandedResources,
+	};
+}
+
+function normalize( this:Document ):void {
+	const currentFragments:Fragment[] = this.getFragments()
+		.filter( fragment => URI.isBNodeID( fragment.id ) );
+	const usedFragmentsIDs:Set<string> = new Set();
+
+	Document._convertNestedObjects( this, this, usedFragmentsIDs );
+	currentFragments.forEach( fragment => {
+		if( usedFragmentsIDs.has( fragment.id ) ) return;
+		this._fragmentsIndex.delete( fragment.id );
+	} );
+}
+
+

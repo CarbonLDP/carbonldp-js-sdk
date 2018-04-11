@@ -1,4 +1,4 @@
-export class Class {
+export class BasicCredentials {
 	private _username:string;
 	private _password:string;
 
@@ -11,5 +11,3 @@ export class Class {
 		this._password = password;
 	}
 }
-
-export default Class;

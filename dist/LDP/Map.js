@@ -1,25 +1,22 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var NS = require("./../NS");
-var Resource_1 = require("./../Resource");
-exports.RDF_CLASS = NS.C.Class.Map;
-exports.SCHEMA = {
+var Resource_1 = require("../Resource");
+var C_1 = require("../Vocabularies/C");
+var SCHEMA = {
     "entries": {
-        "@id": NS.C.Predicate.entry,
+        "@id": C_1.C.entry,
         "@type": "@id",
         "@container": "@set",
     },
 };
-var Factory = (function () {
-    function Factory() {
-    }
-    Factory.is = function (object) {
-        return Resource_1.Factory.is(object)
-            && object.hasType(exports.RDF_CLASS)
+exports.Map = {
+    TYPE: C_1.C.Map,
+    SCHEMA: SCHEMA,
+    is: function (object) {
+        return Resource_1.Resource.is(object)
+            && object.hasType(exports.Map.TYPE)
             && object.hasOwnProperty("entries");
-    };
-    return Factory;
-}());
-exports.Factory = Factory;
+    },
+};
 
 //# sourceMappingURL=Map.js.map

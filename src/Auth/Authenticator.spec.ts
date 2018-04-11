@@ -1,32 +1,35 @@
+import { anyThatMatches } from "../../test/helpers/jasmine-equalities";
+import { AbstractContext } from "../AbstractContext";
+import { Context } from "../Context";
 import { IllegalStateError } from "../Errors";
 import {
 	Header,
-	Request
+	RequestOptions,
 } from "../HTTP";
+import { ContextSettings } from "../Settings";
 
 import {
 	clazz,
 	constructor,
-	hasDefaultExport,
 	hasSignature,
 	INSTANCE,
-	isDefined,
 	method,
 	module,
 } from "../test/JasmineExtender";
+import {
+	C,
+	CS,
+} from "../Vocabularies";
 
-import * as Authenticator from "./Authenticator";
-import DefaultExport from "./Authenticator";
+import { Authenticator } from "./Authenticator";
 
-describe( module( "Carbon/Auth/Authenticator" ), ():void => {
+import { PersistedUser } from "./PersistedUser";
 
-	it( isDefined(), ():void => {
-		expect( Authenticator ).toBeDefined();
-		expect( Authenticator ).toEqual( jasmine.any( Object ) );
-	} );
+describe( module( "carbonldp/Auth/Authenticator" ), ():void => {
 
 	describe( clazz(
-		"Carbon.Auth.Authenticator.Class", [
+		"CarbonLDP.Auth.Authenticator",
+		[
 			"T extends object",
 			"W extends object",
 		],
@@ -34,33 +37,54 @@ describe( module( "Carbon/Auth/Authenticator" ), ():void => {
 	), ():void => {
 
 		it( "should exists", ():void => {
-			expect( Authenticator.Class ).toBeDefined();
-			expect( Authenticator.Class ).toEqual( jasmine.any( Function ) );
+			expect( Authenticator ).toBeDefined();
+			expect( Authenticator ).toEqual( jasmine.any( Function ) );
 		} );
 
 
-		function createAuthenticatorWith( credentials?:object, header?:string ):Authenticator.Class<object, object> {
-			return new class extends Authenticator.Class<object, object> {
+		function createMockAuthenticator( data?:{ credentials?:object, header?:string, user?:PersistedUser } ):Authenticator<object, object> {
+			return new class extends Authenticator<object, object> {
 
-				protected credentials:object = credentials;
+				protected _credentials:object = data && data.credentials;
+				protected _authenticatedUser:PersistedUser = data && data.user;
 
 				authenticate():Promise<object> {
 					throw new Error( "Method not implemented." );
 				}
 
-				protected getHeaderValue():Header.Value {
-					return null;
+				protected _getHeaderValue():string {
+					return data && data.header;
 				}
-			};
+
+			}( context );
 		}
+
+		let context:Context;
+		beforeEach( ():void => {
+			context = new class extends AbstractContext {
+				protected _baseURI:string = "https://example.com/";
+				protected settings:ContextSettings = {
+					paths: {
+						users: {
+							slug: "users/",
+							paths: { me: "me/" },
+						},
+					},
+				};
+			};
+		} );
 
 		describe( constructor(), ():void => {
 
+			it( hasSignature( [
+				{ name: "context", type: "CarbonLDP.Context" },
+			] ), ():void => {} );
+
 			it( "should be extensible", ():void => {
-				const authenticator:Authenticator.Class<object, object> = createAuthenticatorWith();
+				const authenticator:Authenticator<object, object> = createMockAuthenticator();
 
 				expect( authenticator ).toBeDefined();
-				expect( authenticator ).toEqual( jasmine.any( Authenticator.Class ) );
+				expect( authenticator ).toEqual( jasmine.any( Authenticator ) );
 			} );
 
 		} );
@@ -73,22 +97,22 @@ describe( module( "Carbon/Auth/Authenticator" ), ():void => {
 			), ():void => {} );
 
 			it( "should exists", ():void => {
-				expect( Authenticator.Class.prototype.isAuthenticated ).toBeDefined();
-				expect( Authenticator.Class.prototype.isAuthenticated ).toEqual( jasmine.any( Function ) );
+				expect( Authenticator.prototype.isAuthenticated ).toBeDefined();
+				expect( Authenticator.prototype.isAuthenticated ).toEqual( jasmine.any( Function ) );
 			} );
 
 			it( "should return false when no credentials", ():void => {
-				const authenticator:Authenticator.Class<object, object> = createAuthenticatorWith();
+				const authenticator:Authenticator<object, object> = createMockAuthenticator();
 				expect( authenticator.isAuthenticated() ).toBe( false );
 			} );
 
 			it( "should return false when null credentials", ():void => {
-				const authenticator:Authenticator.Class<object, object> = createAuthenticatorWith( null );
+				const authenticator:Authenticator<object, object> = createMockAuthenticator( { credentials: null } );
 				expect( authenticator.isAuthenticated() ).toBe( false );
 			} );
 
 			it( "should return true when credentials an object", ():void => {
-				const authenticator:Authenticator.Class<object, object> = createAuthenticatorWith( {} );
+				const authenticator:Authenticator<object, object> = createMockAuthenticator( { credentials: {} } );
 				expect( authenticator.isAuthenticated() ).toBe( true );
 			} );
 
@@ -112,19 +136,19 @@ describe( module( "Carbon/Auth/Authenticator" ), ():void => {
 			), ():void => {} );
 
 			it( "should exists", ():void => {
-				expect( Authenticator.Class.prototype.clearAuthentication ).toBeDefined();
-				expect( Authenticator.Class.prototype.clearAuthentication ).toEqual( jasmine.any( Function ) );
+				expect( Authenticator.prototype.clearAuthentication ).toBeDefined();
+				expect( Authenticator.prototype.clearAuthentication ).toEqual( jasmine.any( Function ) );
 			} );
 
 			it( "should clear when existing", ():void => {
-				const authenticator:Authenticator.Class<object, object> = createAuthenticatorWith( {} );
+				const authenticator:Authenticator<object, object> = createMockAuthenticator( { credentials: {} } );
 
 				authenticator.clearAuthentication();
 				expect( authenticator.isAuthenticated() ).toBe( false );
 			} );
 
 			it( "should clear when non existing", ():void => {
-				const authenticator:Authenticator.Class<object, object> = createAuthenticatorWith();
+				const authenticator:Authenticator<object, object> = createMockAuthenticator();
 
 				authenticator.clearAuthentication();
 				expect( authenticator.isAuthenticated() ).toBe( false );
@@ -136,87 +160,215 @@ describe( module( "Carbon/Auth/Authenticator" ), ():void => {
 
 			it( hasSignature(
 				"If the authenticator is authenticated, it adds an authentication header in the request options object provided.", [
-					{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", description: "The request options object where to add the authentication header." },
+					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", description: "The request options object where to add the authentication header." },
 				],
-				{ type: "Carbon.HTTP.Request.Options", description: "The request options object provided after adding the authentication header." }
+				{ type: "CarbonLDP.HTTP.RequestOptions", description: "The request options object provided after adding the authentication header." }
 			), ():void => {} );
 
 			it( "should exists", ():void => {
-				expect( Authenticator.Class.prototype.addAuthentication ).toBeDefined();
-				expect( Authenticator.Class.prototype.addAuthentication ).toEqual( jasmine.any( Function ) );
+				expect( Authenticator.prototype.addAuthentication ).toBeDefined();
+				expect( Authenticator.prototype.addAuthentication ).toEqual( jasmine.any( Function ) );
 			} );
 
 			it( "should throw error if no authenticated", ():void => {
-				const authenticator:Authenticator.Class<object, object> = createAuthenticatorWith();
+				const authenticator:Authenticator<object, object> = createMockAuthenticator();
 				expect( () => authenticator.addAuthentication( {} ) ).toThrowError( IllegalStateError, "The authenticator isn't authenticated." );
 			} );
 
 			it( "should options provided must be the same returned", ():void => {
-				const authenticator:Authenticator.Class<object, object> = createAuthenticatorWith( {} );
+				const authenticator:Authenticator<object, object> = createMockAuthenticator( { credentials: {} } );
 
-				const options:Request.Options = {};
-				const returned:Request.Options = authenticator.addAuthentication( options );
+				const options:RequestOptions = {};
+				const returned:RequestOptions = authenticator.addAuthentication( options );
 
 				expect( returned ).toBe( options );
 			} );
 
 			it( "should create headers map if not defined", ():void => {
-				const authenticator:Authenticator.Class<object, object> = createAuthenticatorWith( {} );
+				const authenticator:Authenticator<object, object> = createMockAuthenticator( { credentials: {} } );
 
-				const options:Request.Options = {};
+				const options:RequestOptions = {};
 				authenticator.addAuthentication( options );
 
 				expect( options.headers ).toEqual( jasmine.any( Map ) );
 			} );
 
 			it( "should create not replace headers map if defined", ():void => {
-				const authenticator:Authenticator.Class<object, object> = createAuthenticatorWith( {} );
+				const authenticator:Authenticator<object, object> = createMockAuthenticator( { credentials: {} } );
 
-				const headers:Request.Options[ "headers" ] = new Map();
-				const options:Request.Options = { headers };
+				const headers:RequestOptions[ "headers" ] = new Map();
+				const options:RequestOptions = { headers };
 				authenticator.addAuthentication( options );
 
 				expect( options.headers ).toBe( headers );
 			} );
 
 			it( "should not alter if authorization header exists", ():void => {
-				const authenticator:Authenticator.Class<object, object> = createAuthenticatorWith( {} );
+				const authenticator:Authenticator<object, object> = createMockAuthenticator( { credentials: {} } );
 
-				const headers:Request.Options[ "headers" ] = new Map( [
-					[ "authorization", new Header.Class() ],
+				const headers:RequestOptions[ "headers" ] = new Map( [
+					[ "authorization", new Header() ],
 				] );
 
-				const options:Request.Options = { headers };
+				const options:RequestOptions = { headers };
 				authenticator.addAuthentication( options );
 
 				expect( options.headers ).toEqual( new Map( [
-					[ "authorization", new Header.Class() ],
+					[ "authorization", new Header() ],
 				] ) );
 			} );
 
 			it( "should call and add the header value `createHeaderValue`", ():void => {
-				const authenticator:Authenticator.Class<object, object> = createAuthenticatorWith( {} );
+				const authenticator:Authenticator<object, object> = createMockAuthenticator( { credentials: {} } );
 
-				const value:Header.Value = new Header.Value( "value" );
-				const spy:jasmine.Spy = spyOn( authenticator, "getHeaderValue" as any )
-					.and.returnValue( value );
+				const spy:jasmine.Spy = spyOn( authenticator, "_getHeaderValue" as any )
+					.and.returnValue( "value" );
 
-				const options:Request.Options = {};
+				const options:RequestOptions = {};
 				authenticator.addAuthentication( options );
 
 				expect( spy ).toHaveBeenCalled();
 				expect( options.headers ).toEqual( new Map( [
-					[ "authorization", new Header.Class( [ value ] ) ],
+					[ "authorization", new Header( [ "value" ] ) ],
 				] ) );
 			} );
 
 		} );
 
-	} );
+		describe( method( INSTANCE, "getAuthenticatedUser" ), ():void => {
 
-	it( hasDefaultExport( "Carbon.Auth.Authenticator.Class" ), ():void => {
-		expect( DefaultExport ).toBeDefined();
-		expect( DefaultExport ).toBe( Authenticator.Class );
+			it( hasSignature(
+				"If the authenticator is authenticated, request the authenticated user using the st credentials.", [
+					{ name: "requestOptions", type: "CarbonLDP.HTTP.GETOptions", description: "The request options object where to add the authentication header." },
+				],
+				{ type: "CarbonLDP.Auth.PersistedUser" }
+			), ():void => {} );
+
+			beforeEach( ():void => {
+				jasmine.Ajax.install();
+
+				jasmine.Ajax.stubRequest( "https://example.com/users/me/" ).andReturn( {
+					status: 200,
+					responseHeaders: {
+						"eTag": `"1-12345"`,
+					},
+					responseText: `{
+						"@id": "https://example.com/users/me/",
+						"@graph": [
+							{
+								"@id": "https://example.com/users/me/",
+								"@type": [
+									"${ C.Document }",
+									"${ CS.AuthenticatedUserInformationAccessor }"
+								],
+								"${ CS.authenticatedUserMetadata }": [ {
+									"@id": "_:1"
+								} ]
+							},
+							{
+								"@id": "_:1",
+								"@type": [ "${ CS.AuthenticatedUserMetadata }", "${ C.VolatileResource }" ],
+								"${ CS.user }": [ {
+									"@id": "https://example.com/users/the-user/"
+								} ]
+							}
+						]
+					}`,
+				} );
+			} );
+
+			afterEach( ():void => {
+				jasmine.Ajax.uninstall();
+			} );
+
+
+			it( "should exists", ():void => {
+				expect( Authenticator.prototype.getAuthenticatedUser ).toBeDefined();
+				expect( Authenticator.prototype.getAuthenticatedUser ).toEqual( jasmine.any( Function ) );
+			} );
+
+			it( "should throw error if authenticator not authenticated", ( done:DoneFn ):void => {
+				const authenticator:Authenticator<object, object> = createMockAuthenticator();
+
+				authenticator
+					.getAuthenticatedUser()
+					.then( () => done.fail( "Should not resolve" ) )
+					.catch( ( error ) => {
+						expect( () => { throw error; } ).toThrowError( IllegalStateError, "The authenticator isn't authenticated." );
+						done();
+					} );
+			} );
+
+
+			it( "should retrieve the unresolved user", ( done:DoneFn ):void => {
+				const authenticator:Authenticator<object, object> = createMockAuthenticator( { credentials: {} } );
+				authenticator
+					.getAuthenticatedUser()
+					.then( user => {
+						expect( user ).toEqual( anyThatMatches( PersistedUser.is, "PersistedUser" ) as any );
+						expect( user ).toEqual( jasmine.objectContaining( {
+							_resolved: false,
+							types: jasmine.arrayContaining( [ CS.User ] ) as any as string[],
+						} ) );
+
+						done();
+					} )
+					.catch( done.fail );
+			} );
+
+			it( "should send `authorization` header in request", ( done:DoneFn ):void => {
+				const authenticator:Authenticator<any, any> = createMockAuthenticator( { credentials: {}, header: "the-header-value" } );
+				authenticator
+					.getAuthenticatedUser()
+					.then( () => {
+						const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+						expect( request.requestHeaders ).toEqual( jasmine.objectContaining( {
+							"authorization": "the-header-value",
+						} ) );
+
+						done();
+					} )
+					.catch( done.fail );
+			} );
+
+			it( "should retrieve user if already exists in the authenticator", ( done:DoneFn ):void => {
+				const mockUser:PersistedUser = { the: "user" } as any;
+				const authenticator:Authenticator<any, any> = createMockAuthenticator( { credentials: {}, header: "the-header-value", user: mockUser } );
+
+				authenticator
+					.getAuthenticatedUser()
+					.then( ( user ) => {
+						expect( user ).toBe( mockUser );
+
+						done();
+					} )
+					.catch( done.fail );
+			} );
+
+			it( "should send `authorization` header from the request options", ( done:DoneFn ):void => {
+				const authenticator:Authenticator<any, any> = createMockAuthenticator( { credentials: {}, header: "the-header-value" } );
+
+				const options:RequestOptions = {
+					headers: new Map<string, Header>( [
+						[ "authorization", new Header( "existing-authorization" ) ],
+					] ),
+				};
+
+				authenticator
+					.getAuthenticatedUser( options )
+					.then( () => {
+						const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+						expect( request.requestHeaders ).toEqual( jasmine.objectContaining( {
+							"authorization": "existing-authorization",
+						} ) );
+
+						done();
+					} )
+					.catch( done.fail );
+			} );
+
+		} );
+
 	} );
 
 } );

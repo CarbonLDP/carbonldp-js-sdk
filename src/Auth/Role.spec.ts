@@ -1,3 +1,7 @@
+import { CS } from "../Vocabularies/CS";
+import { XSD } from "../Vocabularies/XSD";
+import { Document } from "./../Document";
+import * as Errors from "../Errors";
 import {
 	clazz,
 	extendsClass,
@@ -11,17 +15,13 @@ import {
 	OPTIONAL,
 	property,
 	STATIC,
-} from "../test/JasmineExtender";
-
-import * as Document from "./../Document";
-import * as Errors from "./../Errors";
-import * as NS from "./../NS";
+} from "./../test/JasmineExtender";
 import * as Utils from "./../Utils";
 
 import * as Role from "./Role";
 
 
-describe( module( "Carbon/Auth/Role" ), ():void => {
+describe( module( "carbonldp/Auth/Role" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( Role ).toBeDefined();
@@ -30,10 +30,10 @@ describe( module( "Carbon/Auth/Role" ), ():void => {
 
 	it( hasProperty( STATIC, "RDF_CLASS", "string" ), ():void => {
 		expect( Role.RDF_CLASS ).toEqual( jasmine.any( String ) );
-		expect( Role.RDF_CLASS ).toBe( NS.CS.Class.Role );
+		expect( Role.RDF_CLASS ).toBe( CS.Role );
 	} );
 
-	describe( property( STATIC, "SCHEMA", "Carbon.ObjectSchema.Class" ), ():void => {
+	describe( property( STATIC, "SCHEMA", "CarbonLDP.ObjectSchema" ), ():void => {
 
 		it( "should exists", ():void => {
 			expect( Role.SCHEMA ).toEqual( jasmine.any( Object ) );
@@ -41,28 +41,28 @@ describe( module( "Carbon/Auth/Role" ), ():void => {
 
 		it( "should have cs:name property", ():void => {
 			expect( Role.SCHEMA[ "name" ] ).toEqual( {
-				"@id": NS.CS.Predicate.namae,
-				"@type": NS.XSD.DataType.string,
+				"@id": CS.name,
+				"@type": XSD.string,
 			} );
 		} );
 
 		it( "should have cs:description property", ():void => {
 			expect( Role.SCHEMA[ "description" ] ).toEqual( {
-				"@id": NS.CS.Predicate.description,
-				"@type": NS.XSD.DataType.string,
+				"@id": CS.description,
+				"@type": XSD.string,
 			} );
 		} );
 
 		it( "should have cs:parent property", ():void => {
 			expect( Role.SCHEMA[ "parent" ] ).toEqual( {
-				"@id": NS.CS.Predicate.parent,
+				"@id": CS.parent,
 				"@type": "@id",
 			} );
 		} );
 
 		it( "should have cs:child property", ():void => {
 			expect( Role.SCHEMA[ "children" ] ).toEqual( {
-				"@id": NS.CS.Predicate.child,
+				"@id": CS.child,
 				"@type": "@id",
 				"@container": "@set",
 			} );
@@ -70,7 +70,7 @@ describe( module( "Carbon/Auth/Role" ), ():void => {
 
 		it( "should have cs:user property", ():void => {
 			expect( Role.SCHEMA[ "users" ] ).toEqual( {
-				"@id": NS.CS.Predicate.user,
+				"@id": CS.user,
 				"@type": "@id",
 				"@container": "@set",
 			} );
@@ -79,13 +79,13 @@ describe( module( "Carbon/Auth/Role" ), ():void => {
 	} );
 
 	describe( interfaze(
-		"Carbon.Auth.Role.Class",
+		"CarbonLDP.Auth.Role.Class",
 		"Specific interface that represents the base of an in-memory role for any context."
 	), ():void => {
 
-		it( extendsClass( "Carbon.Document.Class" ), ():void => {
+		it( extendsClass( "CarbonLDP.Document" ), ():void => {
 			let role:Role.Class = <any> {};
-			let document:Document.Class;
+			let document:Document;
 
 			document = role;
 			expect( document ).toEqual( jasmine.any( Object ) );
@@ -108,8 +108,8 @@ describe( module( "Carbon/Auth/Role" ), ():void => {
 	} );
 
 	describe( clazz(
-		"Carbon.Auth.Role.Factory",
-		"Factory class for `Carbon.Auth.Role.Class` objects"
+		"CarbonLDP.Auth.Role.Factory",
+		"Factory class for `CarbonLDP.Auth.Role.Class` objects"
 	), ():void => {
 
 		it( isDefined(), ():void => {
@@ -120,7 +120,7 @@ describe( module( "Carbon/Auth/Role" ), ():void => {
 		it( hasMethod(
 			STATIC,
 			"hasClassProperties",
-			"Returns true if the object provided has the properties that defines a `Carbon.Auth.Role.Class` object", [
+			"Returns true if the object provided has the properties that defines a `CarbonLDP.Auth.Role.Class` object", [
 				{ name: "object", type: "object" },
 			],
 			{ type: "boolean" }
@@ -154,7 +154,7 @@ describe( module( "Carbon/Auth/Role" ), ():void => {
 		it( hasMethod(
 			STATIC,
 			"is",
-			"Returns true if the object provided is considered a `Carbon.Auth.Role.Class` object", [
+			"Returns true if the object provided is considered a `CarbonLDP.Auth.Role.Class` object", [
 				{ name: "object", type: "object" },
 			],
 			{ type: "boolean" }
@@ -171,18 +171,18 @@ describe( module( "Carbon/Auth/Role" ), ():void => {
 			};
 			expect( Role.Factory.is( object ) ).toBe( false );
 
-			object = Document.Factory.createFrom( object );
+			object = Document.createFrom( object );
 			expect( Role.Factory.is( object ) ).toBe( true );
 		} );
 
 		it( hasMethod(
 			STATIC,
 			"create",
-			"Create a `Carbon.Auth.Role.Class` object with the name specified.", [
+			"Create a `CarbonLDP.Auth.Role.Class` object with the name specified.", [
 				{ name: "name", type: "string", description: "The name of the role to create." },
 				{ name: "description", type: "string", optional: true, description: "The optional description of the role to create." },
 			],
-			{ type: "Carbon.Auth.Role.Class" }
+			{ type: "CarbonLDP.Auth.Role.Class" }
 		), ():void => {
 			expect( Role.Factory.create ).toBeDefined();
 			expect( Utils.isFunction( Role.Factory.create ) ).toBe( true );
@@ -206,12 +206,12 @@ describe( module( "Carbon/Auth/Role" ), ():void => {
 			STATIC,
 			"createFrom",
 			[ "T extends object" ],
-			"Create a `Carbon.Auth.Role.Class` object with the object provided.", [
+			"Create a `CarbonLDP.Auth.Role.Class` object with the object provided.", [
 				{ name: "object", type: "T", description: "Object where to create the new role." },
 				{ name: "name", type: "string", description: "The name of the role to create." },
 				{ name: "description", type: "string", optional: true, description: "The optional description of the role to create." },
 			],
-			{ type: "T & Carbon.Auth.Role.Class" }
+			{ type: "T & CarbonLDP.Auth.Role.Class" }
 		), ():void => {
 			expect( Role.Factory.createFrom ).toBeDefined();
 			expect( Utils.isFunction( Role.Factory.createFrom ) ).toBe( true );
@@ -250,7 +250,7 @@ describe( module( "Carbon/Auth/Role" ), ():void => {
 
 	} );
 
-	it( hasDefaultExport( "Carbon.Auth.Role.Class" ), ():void => {
+	it( hasDefaultExport( "CarbonLDP.Auth.Role.Class" ), ():void => {
 		const target:Role.default = {} as Role.Class;
 		expect( target ).toBeDefined();
 	} );

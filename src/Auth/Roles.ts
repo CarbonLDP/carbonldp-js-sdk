@@ -1,21 +1,25 @@
+import { Minus } from "../../tests/helpers/types";
 import {
 	isString,
-	Minus,
 	promiseMethod,
 } from "../Utils";
-import Context from "./../Context";
-import * as Document from "./../Document";
-import * as Errors from "./../Errors";
-import * as HTTP from "./../HTTP";
-import * as Pointer from "./../Pointer";
-import * as URI from "./../RDF/URI";
-import * as SPARQL from "./../SPARQL";
+import { Context } from "../Context";
+import * as Errors from "../Errors";
+import {
+	RequestOptions,
+	RequestUtils,
+} from "../HTTP/Request";
+import { PersistedDocument } from "../PersistedDocument";
+import { Pointer } from "../Pointer";
+import { URI } from "../RDF/URI";
 import {
 	QueryDocumentBuilder,
 	QueryDocumentsBuilder,
 } from "./../SPARQL/QueryDocument";
+import { SPARQLSelectResults } from "../SPARQL/SelectResults";
+import * as Utils from "./../Utils";
 import * as PersistedRole from "./PersistedRole";
-import * as PersistedUser from "./PersistedUser";
+import { PersistedUser } from "./PersistedUser";
 import * as Role from "./Role";
 
 export type NewRole = Minus<Role.Class, Document.Class>;
@@ -27,43 +31,38 @@ export class Class {
 		this.context = context;
 	}
 
-	// TODO: Requests must return all the responses made
-	createChild<T extends object>( parentRole:string | Pointer.Class, role:T & NewRole, requestOptions?:HTTP.Request.Options ):Promise<[ T & PersistedRole.Class, HTTP.Response.Class ]>;
-	createChild<T extends object>( parentRole:string | Pointer.Class, role:T & NewRole, slug?:string, requestOptions?:HTTP.Request.Options ):Promise<[ T & PersistedRole.Class, HTTP.Response.Class ]>;
-	createChild<T extends object>( parentRole:string | Pointer.Class, role:T & NewRole, slugOrRequestOptions?:any, requestOptions?:HTTP.Request.Options ):Promise<[ T & PersistedRole.Class, HTTP.Response.Class ]> {
+	createChild<T extends object>( parentRole:string | Pointer, role:T & NewRole, requestOptions?:RequestOptions ):Promise<T & PersistedRole.Class>;
+	createChild<T extends object>( parentRole:string | Pointer, role:T & NewRole, slug?:string, requestOptions?:RequestOptions ):Promise<T & PersistedRole.Class>;
+	createChild<T extends object>( parentRole:string | Pointer, role:T & NewRole, slugOrRequestOptions?:any, requestOptions?:RequestOptions ):Promise<T & PersistedRole.Class {
 		const slug:string = isString( slugOrRequestOptions ) ? slugOrRequestOptions : void 0;
-		requestOptions = HTTP.Request.Util.isOptions( slugOrRequestOptions ) ? slugOrRequestOptions : requestOptions;
+		requestOptions = RequestUtils.isOptions( slugOrRequestOptions ) ? slugOrRequestOptions : requestOptions;
 
 		let parentURI:string = isString( parentRole ) ? parentRole : parentRole.id;
-		const responses:HTTP.Response.Class[] = [];
 		return promiseMethod( () => {
 			parentURI = this.resolveURI( parentURI );
 
 			return this.context
 				.documents
 				.exists( parentURI );
-		} ).then( ( [ exists ] ) => {
+		} ).then( ( exists:boolean ) => {
 			if( ! exists ) throw new Errors.IllegalArgumentError( `The parent role "${ parentURI }" doesn't exists.` );
 
 			const container:string = this.resolveURI();
 			return this.context
 				.documents
 				.createChild<T>( container, role, slug, requestOptions );
-		} ).then( ( [ document, response ] ) => {
-			responses.push( response );
-
+		} ).then( ( document ) => {
 			return this.context
 				.documents
 				.addMember( parentURI, document );
-		} ).then<[ T & PersistedRole.Class, HTTP.Response.Class ]>( () => {
-			const persistedRole:T & PersistedRole.Class = PersistedRole.Factory.decorate( role, this.context.documents );
-			return [ persistedRole, responses[ 0 ] ];
+		} ).then<>( () => {
+			return PersistedRole.Factory.decorate( role, this.context.documents );
 		} );
 	}
 
-	get<T extends object>( roleURI:string, requestOptions?:HTTP.Request.Options, queryBuilderFn?:( queryBuilder:QueryDocumentBuilder.Class ) => QueryDocumentBuilder.Class ):Promise<[ T & PersistedRole.Class, HTTP.Response.Class ]>;
-	get<T extends object>( roleURI:string, queryBuilderFn?:( queryBuilder:QueryDocumentBuilder.Class ) => QueryDocumentBuilder.Class ):Promise<[ T & PersistedRole.Class, HTTP.Response.Class ]>;
-	get<T extends object>( roleURI:string, queryBuilderFnOrOptions:any, queryBuilderFn?:( queryBuilder:QueryDocumentBuilder.Class ) => QueryDocumentBuilder.Class ):Promise<[ T & PersistedRole.Class, HTTP.Response.Class ]> {
+	get<T extends object>( roleURI:string, requestOptions?:RequestOptions, queryBuilderFn?:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<T & PersistedRole.Class>;
+	get<T extends object>( roleURI:string, queryBuilderFn?:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<T & PersistedRole.Class>;
+	get<T extends object>( roleURI:string, queryBuilderFnOrOptions:any, queryBuilderFn?:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<T & PersistedRole.Class> {
 		return promiseMethod( () => {
 			const uri:string = this.resolveURI( roleURI );
 
@@ -73,9 +72,9 @@ export class Class {
 		} );
 	}
 
-	getUsers<T extends object>( roleURI:string, requestOptions?:HTTP.Request.Options, queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder.Class ) => QueryDocumentsBuilder.Class ):Promise<[ (T & PersistedUser.Class)[], HTTP.Response.Class ]>;
-	getUsers<T extends object>( roleURI:string, queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder.Class ) => QueryDocumentsBuilder.Class ):Promise<[ (T & PersistedUser.Class)[], HTTP.Response.Class ]>;
-	getUsers<T extends object>( roleURI:string, queryBuilderFnOrOptions:any, queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder.Class ) => QueryDocumentsBuilder.Class ):Promise<[ (T & PersistedUser.Class)[], HTTP.Response.Class ]> {
+	getUsers<T extends object>( roleURI:string, requestOptions?:RequestOptions, queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder ) => QueryDocumentsBuilder ):Promise<(T & PersistedUser.Class)[]>;
+	getUsers<T extends object>( roleURI:string, queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder ) => QueryDocumentsBuilder ):Promise<(T & PersistedUser.Class)[]>;
+	getUsers<T extends object>( roleURI:string, queryBuilderFnOrOptions:any, queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder ) => QueryDocumentsBuilder ):Promise<(T & PersistedUser.Class)[]> {
 		return this
 			.getUsersAccessPoint( roleURI )
 			.then( accessPoint => {
@@ -86,11 +85,11 @@ export class Class {
 			} );
 	}
 
-	addUser( roleURI:string, user:Pointer.Class | string, requestOptions?:HTTP.Request.Options ):Promise<HTTP.Response.Class> {
+	addUser( roleURI:string, user:Pointer | string, requestOptions?:RequestOptions ):Promise<void> {
 		return this.addUsers( roleURI, [ user ], requestOptions );
 	}
 
-	addUsers( roleURI:string, users:(Pointer.Class | string)[], requestOptions?:HTTP.Request.Options ):Promise<HTTP.Response.Class> {
+	addUsers( roleURI:string, users:(Pointer | string)[], requestOptions?:RequestOptions ):Promise<void> {
 		return this
 			.getUsersAccessPoint( roleURI )
 			.then( accessPoint => {
@@ -101,14 +100,14 @@ export class Class {
 			} );
 	}
 
-	removeUser( roleURI:string, user:Pointer.Class | string, requestOptions?:HTTP.Request.Options ):Promise<HTTP.Response.Class> {
+	removeUser( roleURI:string, user:Pointer | string, requestOptions?:RequestOptions ):Promise<void> {
 		return this.removeUsers( roleURI, [ user ], requestOptions );
 	}
 
-	removeUsers( roleURI:string, users:(Pointer.Class | string)[], requestOptions?:HTTP.Request.Options ):Promise<HTTP.Response.Class> {
+	removeUsers( roleURI:string, users:(Pointer | string)[], requestOptions?:RequestOptions ):Promise<void> {
 		return this
 			.getUsersAccessPoint( roleURI )
-			.then( ( accessPoint:Pointer.Class ) => {
+			.then( ( accessPoint:Pointer ) => {
 				return this
 					.context
 					.documents
@@ -117,7 +116,7 @@ export class Class {
 	}
 
 	// TODO: Optimize
-	private getUsersAccessPoint( roleURI:string ):Promise<Pointer.Class> {
+	private getUsersAccessPoint( roleURI:string ):Promise<Pointer> {
 		return promiseMethod( () => {
 			const uri:string = this.resolveURI( roleURI );
 
@@ -130,8 +129,7 @@ export class Class {
 	}
 
 	private resolveURI( relativeURI?:string ):string {
-		if( ! this.context.hasSetting( "system.security.roles.container" ) ) throw new Errors.IllegalStateError( `The "system.security.roles.container" setting hasn't been defined.` );
-		const containerURI:string = this.context.auth._resolveSecurityURL( this.context.getSetting( "system.security.roles.container" ) );
+		const containerURI:string = this.context._resolvePath( "system.security.roles" ) );
 
 		if( ! relativeURI ) return containerURI;
 

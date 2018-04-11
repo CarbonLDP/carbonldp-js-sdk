@@ -12,15 +12,15 @@ module.exports = function( options = {} ) {
 
 	return webpackMerge( commonConfig( options ), {
 		entry: {
-			"Carbon.sfx": path.resolve( SRC_DIR, "sfx.ts" ),
-			"Carbon.sfx.min": path.resolve( SRC_DIR, "sfx.ts" ),
+			"CarbonLDP.sfx": path.resolve( SRC_DIR, "sfx.ts" ),
+			"CarbonLDP.sfx.min": path.resolve( SRC_DIR, "sfx.ts" ),
 		},
 
 		output: {
 			path: path.resolve( DIST_DIR, "bundles" ),
 			filename: "[name].js",
 			libraryTarget: "umd",
-			library: "Carbon",
+			library: "CarbonLDP",
 		},
 
 		plugins: [

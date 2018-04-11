@@ -1,35 +1,38 @@
-import * as List from "./List";
-import * as Literal from "./Literal";
-import * as NS from "./../NS";
-import * as Pointer from "./../Pointer";
-import * as RDFNode from "./Node";
+import { PointerLibrary } from "../Pointer";
+import { RDFList } from "./List";
+import { RDFLiteral } from "./Literal";
+import { RDFNode } from "./Node";
+import { isString } from "../Utils";
 
-export interface Class {
+export interface RDFValue {
 	"@id"?:string;
 	"@type"?:string;
 	"@value"?:string;
+	"@language"?:string;
 }
 
-export class Util {
 
-	static parseValue( propertyValue:Class, pointerLibrary:Pointer.Library ):any {
-		if( Literal.Factory.is( propertyValue ) ) {
-			return Literal.Factory.parse( <any> propertyValue );
-		} else if( RDFNode.Factory.is( propertyValue ) ) {
-			return pointerLibrary.getPointer( propertyValue[ "@id" ] );
-		} else if( List.Factory.is( propertyValue ) ) {
-			let parsedValue:Array<any> = [];
-			let listValues:Array<any> = propertyValue[ "@list" ];
-			for( let listValue of listValues ) {
-				parsedValue.push( Util.parseValue( listValue, pointerLibrary ) );
-			}
-			return parsedValue;
-		} else {
-			// TODO: What else could it be?
-		}
+export interface RDFValueFactory {
+	parse( pointerLibrary:PointerLibrary, value:RDFLiteral | RDFNode | RDFList | RDFValue | string, ):any;
+}
+
+export const RDFValue:RDFValueFactory = {
+
+	parse( pointerLibrary:PointerLibrary, value:RDFLiteral | RDFNode | RDFList | RDFValue | string ):any {
+		if( isString( value ) ) return value;
+
+		if( RDFLiteral.is( value ) )
+			return RDFLiteral.parse( value );
+
+		if( RDFNode.is( value ) )
+			return pointerLibrary.getPointer( value[ "@id" ] );
+
+		if( RDFList.is( value ) )
+			return value[ "@list" ]
+				.map( RDFValue.parse.bind( null, pointerLibrary ) );
+
+		// TODO: What else could it be?
 		return null;
-	}
+	},
 
-}
-
-export default Class;
+};

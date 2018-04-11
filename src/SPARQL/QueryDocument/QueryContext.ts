@@ -1,20 +1,27 @@
-import { isPrefixed, isRelative } from "sparqler/iri";
-import { IRIToken, PrefixedNameToken, PrefixToken } from "sparqler/tokens";
+import { isPrefixed } from "sparqler/iri";
+import {
+	IRIToken,
+	PrefixedNameToken,
+	PrefixToken
+} from "sparqler/tokens";
 
-import * as Context from "../../Context";
-import { IllegalArgumentError } from "../../Errors";
-import { DigestedObjectSchema, Resolver, Util as SchemaUtils } from "../../ObjectSchema";
-import * as QueryVariable from "./QueryVariable";
+import { Context } from "../../Context";
+import { IllegalArgumentError } from "../../Errors/IllegalArgumentError";
+import {
+	DigestedObjectSchema,
+	ObjectSchemaResolver,
+} from "../../ObjectSchema";
+import { QueryVariable } from "./QueryVariable";
 
-export class Class implements Resolver {
-	readonly context?:Context.Class;
+export class QueryContext implements ObjectSchemaResolver {
+	readonly context?:Context;
 
 	private _variablesCounter:number;
-	private _variablesMap:Map<string, QueryVariable.Class>;
+	private _variablesMap:Map<string, QueryVariable>;
 
 	private _prefixesMap:Map<string, PrefixToken>;
 
-	constructor( context?:Context.Class ) {
+	constructor( context?:Context ) {
 		this.context = context;
 
 		this._variablesCounter = 0;
@@ -23,36 +30,22 @@ export class Class implements Resolver {
 		this._prefixesMap = new Map();
 	}
 
-	getVariable( name:string ):QueryVariable.Class {
+	getVariable( name:string ):QueryVariable {
 		if( this._variablesMap.has( name ) ) return this._variablesMap.get( name );
 
-		const variable:QueryVariable.Class = new QueryVariable.Class( name, this._variablesCounter ++ );
+		const variable:QueryVariable = new QueryVariable( name, this._variablesCounter ++ );
 		this._variablesMap.set( name, variable );
 		return variable;
 	}
 
 	serializeLiteral( type:string, value:any ):string {
-		type = this.expandIRI( type );
-
 		if( ! this.context || ! this.context.documents.jsonldConverter.literalSerializers.has( type ) ) return "" + value;
 		return this.context.documents.jsonldConverter.literalSerializers.get( type ).serialize( value );
 	}
 
-	expandIRI( iri:string ):string {
-		if( this.context ) {
-			const vocab:string = this.context.hasSetting( "vocabulary" ) ? this.context.resolve( this.context.getSetting( "vocabulary" ) ) : void 0;
-			iri = SchemaUtils.resolveURI( iri, this.context.getObjectSchema(), vocab );
-		}
-
-		if( isPrefixed( iri ) ) throw new IllegalArgumentError( `Prefix "${ iri.split( ":" )[ 0 ] }" has not been declared.` );
-
-		return iri;
-	}
-
 	compactIRI( iri:string ):IRIToken | PrefixedNameToken {
 		if( ! this.context ) {
-			if( isPrefixed( iri ) ) throw new IllegalArgumentError( `Prefixed iri "${ iri }" is not supported without a context.` );
-			if( isRelative( iri ) ) throw new IllegalArgumentError( `Relative iri "${ iri }" is not supported without a context.` );
+			if( isPrefixed( iri ) ) return new PrefixedNameToken( iri );
 			return new IRIToken( iri );
 		}
 
@@ -61,7 +54,7 @@ export class Class implements Resolver {
 		let namespace:string;
 		let localName:string;
 		if( ! isPrefixed( iri ) ) {
-			for( const [ prefixName, { stringValue: prefixURI } ] of Array.from( schema.prefixes.entries() ) ) {
+			for( const [ prefixName, prefixURI ] of Array.from( schema.prefixes.entries() ) ) {
 				if( ! iri.startsWith( prefixURI ) ) continue;
 				namespace = prefixName;
 				localName = iri.substr( prefixURI.length );
@@ -75,7 +68,7 @@ export class Class implements Resolver {
 		namespace = prefixedName.namespace;
 		if( ! this._prefixesMap.has( namespace ) ) {
 			if( ! schema.prefixes.has( namespace ) ) throw new IllegalArgumentError( `Prefix "${ namespace }" has not been declared.` );
-			const prefixIRI:IRIToken = new IRIToken( schema.prefixes.get( namespace ).stringValue );
+			const prefixIRI:IRIToken = new IRIToken( schema.prefixes.get( namespace ) );
 			this._prefixesMap.set( namespace, new PrefixToken( namespace, prefixIRI ) );
 		}
 
@@ -91,11 +84,14 @@ export class Class implements Resolver {
 		return this.context.documents.getGeneralSchema();
 	}
 
+	hasSchemaFor( object:object, path?:string ):boolean {
+		if( ! this.context ) return false;
+		return this.context.documents.hasSchemaFor( object );
+	}
+
 	getSchemaFor( object:object, path?:string ):DigestedObjectSchema {
 		if( ! this.context ) return new DigestedObjectSchema();
 		return this.context.documents.getSchemaFor( object );
 	}
 
 }
-
-export default Class;

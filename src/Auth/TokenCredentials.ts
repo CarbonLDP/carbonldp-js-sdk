@@ -1,46 +1,75 @@
-import * as NS from "./../NS";
-import * as ObjectSchema from "./../ObjectSchema";
-import * as Resource from "./../Resource";
-import * as Utils from "./../Utils";
-import * as PersistedUser from "./PersistedUser";
+import { VolatileResource } from "../LDP";
+import { ObjectSchema } from "../ObjectSchema";
+import {
+	isObject,
+	isString,
+} from "../Utils";
+import { CS } from "../Vocabularies/CS";
+import { XSD } from "../Vocabularies/XSD";
 
-export const RDF_CLASS:string = NS.CS.Class.Token;
 
-export const SCHEMA:ObjectSchema.Class = {
-	"key": {
-		"@id": NS.CS.Predicate.tokenKey,
-		"@type": NS.XSD.DataType.string,
-	},
-	"expirationTime": {
-		"@id": NS.CS.Predicate.expirationTime,
-		"@type": NS.XSD.DataType.dateTime,
-	},
-	"user": {
-		"@id": NS.CS.Predicate.credentialsOf,
-		"@type": "@id",
+export interface TokenCredentialsBase {
+	token:string;
+	expires:string | Date;
+}
+
+export interface TokenCredentialsBaseFactory {
+	is( value:any ):value is TokenCredentialsBase;
+}
+
+export const TokenCredentialsBase:TokenCredentialsBaseFactory = {
+	is( value:any ):value is TokenCredentialsBase {
+		return isObject( value )
+			&& value.hasOwnProperty( "token" )
+			&& value.hasOwnProperty( "expires" )
+			;
 	},
 };
 
-export interface Class extends Resource.Class {
-	key:string;
-	expirationTime:Date;
-	user?:PersistedUser.Class;
+
+export interface TokenCredentials extends VolatileResource {
+	token:string;
+	expires:Date;
 }
 
-export class Factory {
 
-	static is( object:object ):object is Class {
-		return Resource.Factory.is( object )
-			&& Factory.hasClassProperties( object )
-			;
-	}
+export interface TokenCredentialsFactory {
+	TYPE:CS[ "TokenCredentials" ];
+	SCHEMA:ObjectSchema;
 
-	static hasClassProperties( object:object ):object is Class {
-		return Utils.hasPropertyDefined( object, "key" )
-			&& Utils.hasPropertyDefined( object, "expirationTime" )
-			;
-	}
+	is( value:any ):value is TokenCredentials;
 
+	createFrom<T extends TokenCredentialsBase>( object:T ):T & TokenCredentials;
 }
 
-export default Class;
+const SCHEMA:ObjectSchema = {
+	"token": {
+		"@id": CS.token,
+		"@type": XSD.string,
+	},
+	"expires": {
+		"@id": CS.expires,
+		"@type": XSD.dateTime,
+	},
+};
+
+export const TokenCredentials:TokenCredentialsFactory = {
+	TYPE: CS.TokenCredentials,
+	SCHEMA,
+
+	is( value:any ):value is TokenCredentials {
+		return VolatileResource.is( value )
+			&& value.hasType( TokenCredentials.TYPE )
+			;
+	},
+
+	createFrom<T extends TokenCredentialsBase>( object:T ):T & TokenCredentials {
+		const credentials:T & VolatileResource = VolatileResource.createFrom( object );
+		credentials.addType( TokenCredentials.TYPE );
+
+		if( isString( credentials.expires ) )
+			credentials.expires = new Date( credentials.expires );
+
+		return credentials as T & TokenCredentials;
+	},
+};
