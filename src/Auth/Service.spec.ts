@@ -121,13 +121,13 @@ describe( module( "carbonldp/Auth/Service" ), ():void => {
 
 			(() => {
 				// Authenticated Auth
-				let auth:AuthService = createMockAuthService( context, { user: true } );
+				let auth:AuthService = createMockAuthService( { context, user: true } );
 				expect( auth.authenticatedUser ).toBeTruthy();
 				expect( PersistedUser.is( auth.authenticatedUser ) ).toBe( true );
 			})();
 
 			(() => {
-				context.auth = createMockAuthService( context, { user: true } );
+				context.auth = createMockAuthService( { context, user: true } );
 
 				let contextWithParent:Context = createMockContext( { parentContext: context, auth: true } );
 
@@ -141,10 +141,10 @@ describe( module( "carbonldp/Auth/Service" ), ():void => {
 			})();
 
 			(() => {
-				context.auth = createMockAuthService( context, { user: true } );
+				context.auth = createMockAuthService( { context, user: true } );
 
 				let childContext:Context = createMockContext( { parentContext: context } );
-				childContext.auth = createMockAuthService( childContext, { user: true } );
+				childContext.auth = createMockAuthService( { context: childContext, user: true } );
 
 				expect( context.auth.authenticatedUser ).toBeTruthy();
 				expect( PersistedUser.is( context.auth.authenticatedUser ) ).toBe( true );
@@ -220,12 +220,12 @@ describe( module( "carbonldp/Auth/Service" ), ():void => {
 
 			// Current and parent authenticated
 			(():void => {
-				context.auth = createMockAuthService( context );
+				context.auth = createMockAuthService( { context } );
 				const spyParent:jasmine.Spy = spyOn( context.auth, "isAuthenticated" ).and.returnValue( true );
 
 				const authenticator:jasmine.SpyObj<Authenticator<{}, {}>> = jasmine.createSpyObj( "Authenticator", { isAuthenticated: true } );
 				const subContext:Context = createMockContext( { parentContext: context } );
-				const auth:AuthService = createMockAuthService( subContext, { authenticator: authenticator } );
+				const auth:AuthService = createMockAuthService( { context: subContext, authenticator: authenticator } );
 
 				expect( auth.isAuthenticated() ).toBe( true );
 				expect( spyParent ).not.toHaveBeenCalled();
@@ -241,12 +241,12 @@ describe( module( "carbonldp/Auth/Service" ), ():void => {
 
 			// Current authenticated but parent not
 			(():void => {
-				context.auth = createMockAuthService( context );
+				context.auth = createMockAuthService( { context } );
 				const spyParent:jasmine.Spy = spyOn( context.auth, "isAuthenticated" ).and.returnValue( false );
 
 				const subContext:Context = createMockContext( { parentContext: context } );
 				const authenticator:jasmine.SpyObj<Authenticator<{}, {}>> = jasmine.createSpyObj( "Authenticator", { isAuthenticated: true } );
-				const auth:AuthService = createMockAuthService( subContext, { authenticator } );
+				const auth:AuthService = createMockAuthService( { context: subContext, authenticator } );
 
 				expect( auth.isAuthenticated() ).toBe( true );
 				expect( spyParent ).not.toHaveBeenCalled();

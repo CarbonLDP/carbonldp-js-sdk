@@ -1,4 +1,5 @@
 import { anyThatMatches } from "../../test/helpers/jasmine-equalities";
+import { createMockRole } from "../../test/helpers/mocks";
 
 import { Document } from "../Document";
 import { ObjectSchema } from "../ObjectSchema";
@@ -21,13 +22,6 @@ import {
 	RoleBase,
 	RoleFactory,
 } from "./Role";
-
-function createMockRole( data?:{} ):Role {
-	return Document.createFrom( {
-		name: "Role name",
-		description: "Role description",
-	} );
-}
 
 
 describe( module( "carbonldp/Auth/Role" ), ():void => {
