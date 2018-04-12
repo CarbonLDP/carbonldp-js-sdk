@@ -15267,7 +15267,7 @@ var CarbonLDP = (function (_super) {
         return _this;
     }
     Object.defineProperty(CarbonLDP, "version", {
-        get: function () { return "1.0.0-alpha.16"; },
+        get: function () { return "1.0.0-alpha.17"; },
         enumerable: true,
         configurable: true
     });
@@ -16987,11 +16987,9 @@ exports.ServiceUnavailableError = ServiceUnavailableError;
 
 "use strict";
 
-function __export(m) {
-    for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
-}
 Object.defineProperty(exports, "__esModule", { value: true });
-__export(__webpack_require__(106));
+var XSD = __webpack_require__(106);
+exports.XSD = XSD;
 
 
 /***/ }),
