@@ -90,7 +90,7 @@ export class CarbonLDP extends AbstractContext {
 	static Utils:typeof Utils = Utils;
 
 
-	static get version():string { return "1.0.0-alpha.17"; }
+	static get version():string { return "1.0.0-alpha.18"; }
 
 	// noinspection JSMethodCanBeStatic
 	get version():string { return CarbonLDP.version; }
