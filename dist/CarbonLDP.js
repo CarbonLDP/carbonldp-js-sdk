@@ -61,8 +61,13 @@ var CarbonLDP = (function (_super) {
                     slug: ".system/",
                     paths: {
                         platform: "platform/",
-                        credentials: "credentials/",
-                        roles: "roles/",
+                        security: {
+                            slug: "security/",
+                            paths: {
+                                credentials: "credentials/",
+                                roles: "roles/",
+                            },
+                        },
                     },
                 },
                 users: {
@@ -98,6 +103,7 @@ var CarbonLDP = (function (_super) {
         }
         if (!_this._baseURI.endsWith("/"))
             _this._baseURI = _this._baseURI + "/";
+        _this.auth = new Auth.AuthService(_this);
         _this.messaging = new Messaging.MessagingService(_this);
         return _this;
     }

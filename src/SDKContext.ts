@@ -1,9 +1,14 @@
-import * as Auth from "./Auth";
 import { ACE } from "./Auth/ACE";
 import { ACL } from "./Auth/ACL";
 import { AuthenticatedUserInformationAccessor } from "./Auth/AuthenticatedUserInformationAccessor";
 import { AuthenticatedUserMetadata } from "./Auth/AuthenticatedUserMetadata";
+import { CredentialsSet } from "./Auth/CredentialsSet";
+import { LDAPCredentials } from "./Auth/LDAPCredentials";
+import { Role } from "./Auth/Role";
+import { AuthService } from "./Auth/Service";
 import { TokenCredentials } from "./Auth/TokenCredentials";
+import { User } from "./Auth/User";
+import { UsernameAndPasswordCredentials } from "./Auth/UsernameAndPasswordCredentials";
 import { Context } from "./Context";
 import { Document } from "./Document";
 import { Documents } from "./Documents";
@@ -41,7 +46,7 @@ import {
 } from "./Utils";
 
 export class SDKContext implements Context {
-	auth:Auth.AuthService;
+	auth:AuthService;
 	documents:Documents;
 
 	get baseURI():string { return ""; }
@@ -57,7 +62,6 @@ export class SDKContext implements Context {
 		this.generalObjectSchema = new ObjectSchema.DigestedObjectSchema();
 		this.typeObjectSchemaMap = new Map<string, ObjectSchema.DigestedObjectSchema>();
 
-		this.auth = new Auth.AuthService( this );
 		this.documents = new Documents( this );
 
 		this.registerDefaultObjectSchemas();
@@ -221,14 +225,16 @@ export class SDKContext implements Context {
 		this.extendObjectSchema( ResponseMetadata.TYPE, ResponseMetadata.SCHEMA );
 		this.extendObjectSchema( ValidationError.TYPE, ValidationError.SCHEMA );
 
-		this.extendObjectSchema( Auth.Role.RDF_CLASS, Auth.Role.SCHEMA );
+		this.extendObjectSchema( Role.TYPE, Role.SCHEMA );
 		this.extendObjectSchema( ACE.TYPE, ACE.SCHEMA );
 		this.extendObjectSchema( ACL.TYPE, ACL.SCHEMA );
 		this.extendObjectSchema( AuthenticatedUserInformationAccessor.TYPE, AuthenticatedUserInformationAccessor.SCHEMA );
 		this.extendObjectSchema( AuthenticatedUserMetadata.TYPE, AuthenticatedUserMetadata.SCHEMA );
-		this.extendObjectSchema( Auth.User.RDF_CLASS, Auth.User.SCHEMA );
-		this.extendObjectSchema( Auth.Credentials.RDF_CLASS, Auth.Credentials.SCHEMA );
+		this.extendObjectSchema( User.TYPE, User.SCHEMA );
 		this.extendObjectSchema( TokenCredentials.TYPE, TokenCredentials.SCHEMA );
+		this.extendObjectSchema( CredentialsSet.TYPE, CredentialsSet.SCHEMA );
+		this.extendObjectSchema( UsernameAndPasswordCredentials.TYPE, UsernameAndPasswordCredentials.SCHEMA );
+		this.extendObjectSchema( LDAPCredentials.TYPE, LDAPCredentials.SCHEMA );
 
 		this.extendObjectSchema( ValidationReport.TYPE, ValidationReport.SCHEMA );
 		this.extendObjectSchema( ValidationResult.TYPE, ValidationResult.SCHEMA );

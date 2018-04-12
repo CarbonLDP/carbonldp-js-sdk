@@ -1,4 +1,5 @@
-import { Context }from "./Context";
+import { AuthService } from "./Auth";
+import { Context } from "./Context";
 import * as ObjectSchema from "./ObjectSchema";
 import {
 	globalContext,

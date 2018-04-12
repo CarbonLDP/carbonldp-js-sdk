@@ -23,6 +23,4 @@ describe( module( "carbonldp/SPARQL/Builder", "Module that reexports the customi
 
 	} );
 
-	// TODO: Document `FinishSPARQLSelect`
-
 } );

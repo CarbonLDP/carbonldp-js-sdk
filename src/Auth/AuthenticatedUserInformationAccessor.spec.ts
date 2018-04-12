@@ -1,12 +1,15 @@
 import {
+	hasProperty,
 	interfaze,
 	module,
+	OBLIGATORY,
 	property,
 	STATIC
 } from "../test/JasmineExtender";
 import { CS } from "../Vocabularies";
 
 import { AuthenticatedUserInformationAccessor } from "./AuthenticatedUserInformationAccessor";
+
 
 describe( module( "carbonldp/Auth/AuthenticatedUserInformationAccessor" ), ():void => {
 
@@ -15,7 +18,12 @@ describe( module( "carbonldp/Auth/AuthenticatedUserInformationAccessor" ), ():vo
 		"Interface that describes the metadata for a user."
 	), ():void => {
 
-		// TODO: Document
+		it( hasProperty(
+			OBLIGATORY,
+			"authenticatedUserMetadata",
+			"CarbonLDP.Auth.AuthenticatedUserMetadata",
+			"Fragment for the resource that contains metadata about the authenticated user."
+		), ():void => {} );
 
 	} );
 
@@ -24,7 +32,17 @@ describe( module( "carbonldp/Auth/AuthenticatedUserInformationAccessor" ), ():vo
 		"Interface with the factory for `CarbonLDP.Auth.AuthenticatedUserInformationAccessor` objects."
 	), ():void => {
 
-		// TODO: Document
+		it( hasProperty(
+			OBLIGATORY,
+			"TYPE",
+			"CarbonLDP.Vocabularies.CS.AuthenticatedUserInformationAccessor"
+		), ():void => {} );
+
+		it( hasProperty(
+			OBLIGATORY,
+			"SCHEMA",
+			"CarbonLDP.ObjectSchema"
+		), ():void => {} );
 
 	} );
 

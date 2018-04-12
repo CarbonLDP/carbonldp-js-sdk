@@ -5,37 +5,43 @@ import * as Utils from "../Utils";
 import { Authenticator } from "./Authenticator";
 import { AuthMethod } from "./AuthMethod";
 import { BasicAuthenticator } from "./BasicAuthenticator";
-import * as PersistedUser from "./PersistedUser";
-import * as Roles from "./Roles";
+import { BasicCredentials } from "./BasicCredentials";
+import { BasicToken } from "./BasicToken";
+import { PersistedUser } from "./PersistedUser";
+import { RolesEndpoint } from "./RolesEndpoint";
 import { TokenAuthenticator } from "./TokenAuthenticator";
-import { TokenCredentialsBase } from "./TokenCredentials";
-import { TokenCredentials } from "./TokenCredentials";
-import { UsernameAndPasswordCredentials } from "./UsernameAndPasswordCredentials";
-import { UsernameAndPasswordToken } from "./UsernameAndPasswordToken";
-import * as Users from "./Users";
+import {
+	TokenCredentials,
+	TokenCredentialsBase,
+} from "./TokenCredentials";
+import { UsersEndpoint } from "./UsersEndpoint";
 
 export class AuthService {
-	public users:Users.Class;
-	public roles:Roles.Class;
+	public readonly users:UsersEndpoint;
+	public readonly roles:RolesEndpoint;
 
-	protected _authenticatedUser:PersistedUser.Class;
+	protected readonly context:Context;
+	protected readonly authenticators:{ [P in AuthMethod]:Authenticator<object, object> };
+	protected authenticator:Authenticator<object, object>;
 
-	private readonly context:Context;
-	private readonly authenticators:{ [P in AuthMethod]:Authenticator<object, object> };
-	private authenticator:Authenticator<object, object>;
-
-	public get authenticatedUser():PersistedUser.Class {
+	protected _authenticatedUser:PersistedUser;
+	public get authenticatedUser():PersistedUser {
 		if( this._authenticatedUser ) return this._authenticatedUser;
-		if( this.context.parentContext ) return this.context.parentContext.auth.authenticatedUser;
+		if( this.context.parentContext && this.context.parentContext.auth ) return this.context.parentContext.auth.authenticatedUser;
 
 		return null;
 	}
 
 	constructor( context:Context ) {
-		this.roles = new Roles.Class( this.context );
-		this.users = new Users.Class( this.context );
-
 		this.context = context;
+
+		const usersIRI:string = context._resolvePath( "users" );
+		this.users = context.documents.register( usersIRI );
+		UsersEndpoint.decorate( this.users, this.context.documents );
+
+		const rolesIRI:string = context._resolvePath( "system.security.roles" );
+		this.roles = context.documents.register( rolesIRI );
+		UsersEndpoint.decorate( this.roles, this.context.documents );
 
 		this.authenticators = {
 			[ AuthMethod.BASIC ]: new BasicAuthenticator( this.context ),
@@ -54,25 +60,25 @@ export class AuthService {
 		return this.authenticateUsing( AuthMethod.TOKEN, username, password );
 	}
 
-	authenticateUsing( method:AuthMethod.BASIC, username:string, password:string ):Promise<UsernameAndPasswordCredentials>;
+	authenticateUsing( method:AuthMethod.BASIC, username:string, password:string ):Promise<BasicCredentials>;
 	authenticateUsing( method:AuthMethod.TOKEN, username:string, password:string ):Promise<TokenCredentials>;
 	authenticateUsing( method:AuthMethod.TOKEN, token:TokenCredentialsBase ):Promise<TokenCredentials>;
-	authenticateUsing( method:AuthMethod, userOrCredentials:string | TokenCredentialsBase, password?:string ):Promise<UsernameAndPasswordCredentials | TokenCredentials> {
+	authenticateUsing( method:AuthMethod, userOrCredentials:string | TokenCredentialsBase, password?:string ):Promise<BasicCredentials | TokenCredentials> {
 		this.clearAuthentication();
 
 		const authenticator:Authenticator<any, any> = this.authenticators[ method ];
 		if( ! authenticator ) return Promise.reject( new Errors.IllegalArgumentError( `Invalid authentication method "${method}".` ) );
 
-		let authenticationToken:UsernameAndPasswordToken | TokenCredentialsBase;
+		let authenticationToken:BasicToken | TokenCredentialsBase;
 		if( Utils.isString( userOrCredentials ) )
-			authenticationToken = new UsernameAndPasswordToken( userOrCredentials, password );
+			authenticationToken = new BasicToken( userOrCredentials, password );
 		else if( TokenCredentialsBase.is( userOrCredentials ) ) {
 			authenticationToken = userOrCredentials;
 		} else {
 			return Promise.reject( new Errors.IllegalArgumentError( "Invalid authentication token." ) );
 		}
 
-		let credentials:UsernameAndPasswordCredentials | TokenCredentials;
+		let credentials:BasicCredentials | TokenCredentials;
 		return authenticator
 			.authenticate( authenticationToken )
 			.then( ( _credentials ) => {
@@ -80,7 +86,7 @@ export class AuthService {
 
 				return authenticator
 					.getAuthenticatedUser();
-			} ).then( ( persistedUser:PersistedUser.Class ) => {
+			} ).then( ( persistedUser:PersistedUser ) => {
 				this._authenticatedUser = persistedUser;
 				this.authenticator = authenticator;
 

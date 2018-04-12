@@ -3,29 +3,30 @@ import * as Errors from "../Errors";
 import { RequestOptions } from "../HTTP/Request";
 import { PersistedProtectedDocument } from "../PersistedProtectedDocument";
 import { Pointer } from "../Pointer";
+import { QueryDocumentsBuilder } from "../SPARQL/QueryDocument";
 import * as Utils from "./../Utils";
-import * as Role from "./Role";
-import * as Roles from "./Roles";
+import { PersistedUser } from "./PersistedUser";
+import { RoleBase } from "./Role";
+import { RolesEndpoint } from "./RolesEndpoint";
+
 
 export interface Class extends PersistedProtectedDocument {
-	_roles:Roles.Class;
-
 	name?:string;
 	description?:string;
 
-	parentRole?:Pointer;
-	childRoles?:Pointer[];
+	parent?:Pointer;
+	children?:Pointer[];
 
 	users?:Pointer[];
 
-	createChild<T extends object>( role:T & Role.Class, requestOptions?:RequestOptions ):Promise<T & Class>;
 
-	createChild<T extends object>( role:T & Role.Class, slug?:string, requestOptions?:RequestOptions ):Promise<T & Class>;
+	createChild<T extends object>( role:T & RoleBase, slug?:string, requestOptions?:RequestOptions ):Promise<T & Class>;
+	createChild<T extends object>( role:T & RoleBase, requestOptions?:RequestOptions ):Promise<T & Class>;
 
-	getUsers<T>( requestOptions?:RequestOptions ):Promise<(T & PersistedProtectedDocument)[]>;
+	getUsers<T>( requestOptions?:RequestOptions, queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder ) => QueryDocumentsBuilder ):Promise<(T & PersistedUser)[]>;
+	getUsers<T>( queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder ) => QueryDocumentsBuilder ):Promise<(T & PersistedUser)[]>;
 
 	addUser( user:Pointer | string, requestOptions?:RequestOptions ):Promise<void>;
-
 	addUsers( users:(Pointer | string)[], requestOptions?:RequestOptions ):Promise<void>;
 
 	removeUser( user:Pointer | string, requestOptions?:RequestOptions ):Promise<void>;
@@ -35,8 +36,8 @@ export interface Class extends PersistedProtectedDocument {
 
 export class Factory {
 
-	static hasClassProperties( object:Object ):boolean {
-		return Utils.hasPropertyDefined( object, "_roles" )
+	static hasClassProperties( object:object ):object is Class {
+		return Utils.isObject( object )
 			&& Utils.hasFunction( object, "createChild" )
 			&& Utils.hasFunction( object, "getUsers" )
 			&& Utils.hasFunction( object, "addUser" )
@@ -46,24 +47,17 @@ export class Factory {
 			;
 	}
 
-	static is( object:Object ):object is Class {
+	static is( object:object ):object is Class {
 		return Factory.hasClassProperties( object )
 			&& PersistedProtectedDocument.is( object );
 	}
 
 	static decorate<T extends object>( object:T, documents:Documents ):T & Class {
-		let persistedRole:Class & T = <T & Class> object;
-		if( Factory.hasClassProperties( persistedRole ) ) return persistedRole;
+		if( Factory.hasClassProperties( object ) ) return object;
 
-		PersistedProtectedDocument.decorate( persistedRole, documents );
+		PersistedProtectedDocument.decorate( object, documents );
 
-		Object.defineProperties( persistedRole, {
-			"_roles": {
-				writable: false,
-				enumerable: false,
-				configurable: true,
-				value: documents[ "context" ] ? documents[ "context" ].auth.roles : null,
-			},
+		return Object.defineProperties( object, {
 			"createChild": {
 				writable: true,
 				enumerable: false,
@@ -101,47 +95,63 @@ export class Factory {
 				value: removeUsers,
 			},
 		} );
-
-		return persistedRole;
 	}
 
 }
 
-function createChild<T extends object>( role:T & Role.Class, requestOptions?:RequestOptions ):Promise<T & Class>;
-function createChild<T extends object>( role:T & Role.Class, slug?:string, requestOptions?:RequestOptions ):Promise<T & Class>;
-function createChild<T extends object>( this:Class, role:T & Role.Class, slugOrRequestOptions?:any, requestOptions?:RequestOptions ):Promise<T & Class> {
-	checkState( this );
-	return this._roles.createChild( this.id, role, slugOrRequestOptions, requestOptions );
+function createChild<T extends object>( role:T & RoleBase, requestOptions?:RequestOptions ):Promise<T & Class>;
+function createChild<T extends object>( role:T & RoleBase, slug?:string, requestOptions?:RequestOptions ):Promise<T & Class>;
+function createChild<T extends object>( this:Class, role:T & RoleBase, slugOrRequestOptions?:any, requestOptions?:RequestOptions ):Promise<T & Class> {
+	return getRolesClass( this )
+		.then( roles => {
+			return roles.createChild<T>( this.id, role, slugOrRequestOptions, requestOptions );
+		} );
 }
 
-function getUsers<T>( requestOptions?:RequestOptions ):Promise<(T & PersistedProtectedDocument)[]>;
-function getUsers<T>( this:Class, requestOptions?:RequestOptions ):Promise<(T & PersistedProtectedDocument)[]> {
-	checkState( this );
-	return this._roles.getUsers( this.id, requestOptions );
+function getUsers<T extends object>( requestOptions?:RequestOptions, queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder ) => QueryDocumentsBuilder ):Promise<(T & PersistedProtectedDocument)[]>;
+function getUsers<T extends object>( queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder ) => QueryDocumentsBuilder ):Promise<(T & PersistedProtectedDocument)[]>;
+function getUsers<T extends object>( this:Class, queryBuilderFnOrOptions:any, queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder ) => QueryDocumentsBuilder ):Promise<(T & PersistedProtectedDocument)[]> {
+	return getRolesClass( this )
+		.then( roles => {
+			return roles.getUsers<T>( this.id, queryBuilderFnOrOptions, queryBuilderFn );
+		} );
 }
 
 function addUser( this:Class, user:Pointer | string, requestOptions?:RequestOptions ):Promise<void> {
-	checkState( this );
-	return this._roles.addUsers( this.id, [ user ], requestOptions );
+	return getRolesClass( this )
+		.then( roles => {
+			return roles.addUser( this.id, user, requestOptions );
+		} );
 }
 
 function addUsers( this:Class, users:(Pointer | string)[], requestOptions?:RequestOptions ):Promise<void> {
-	checkState( this );
-	return this._roles.addUsers( this.id, users, requestOptions );
+	return getRolesClass( this )
+		.then( roles => {
+			return roles.addUsers( this.id, users, requestOptions );
+		} );
 }
 
 function removeUser( this:Class, user:Pointer | string, requestOptions?:RequestOptions ):Promise<void> {
-	checkState( this );
-	return this._roles.removeUsers( this.id, [ user ], requestOptions );
+	return getRolesClass( this )
+		.then( roles => {
+			return roles.removeUser( this.id, user, requestOptions );
+		} );
 }
 
 function removeUsers( this:Class, users:(Pointer | string)[], requestOptions?:RequestOptions ):Promise<void> {
-	checkState( this );
-	return this._roles.removeUsers( this.id, users, requestOptions );
+	return getRolesClass( this )
+		.then( roles => {
+			return roles.removeUsers( this.id, users, requestOptions );
+		} );
 }
 
-function checkState( role:Class ):void {
-	if( ! role._roles ) throw new Errors.IllegalStateError( "The context of the current role, does not support roles management." );
+function getRolesClass( role:Class ):Promise<RolesEndpoint> {
+	return Utils.promiseMethod( () => {
+		if( ! role._documents[ "context" ] )
+			throw new Errors.IllegalStateError( "The context of the role doesn't support roles management." );
+
+		return role._documents[ "context" ].auth.roles;
+	} );
 }
 
 export default Class;

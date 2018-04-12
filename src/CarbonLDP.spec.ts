@@ -578,8 +578,13 @@ describe( module( "carbonldp/CarbonLDP" ), ():void => {
 							slug: ".system/",
 							paths: {
 								platform: "platform/",
-								credentials: "credentials/",
-								roles: "roles/",
+								security: {
+									slug: "security/",
+									paths: {
+										credentials: "credentials/",
+										roles: "roles/",
+									},
+								},
 							},
 						},
 						users: {
@@ -594,13 +599,15 @@ describe( module( "carbonldp/CarbonLDP" ), ():void => {
 
 			it( "should merge when settings provided", ():void => {
 				const carbon:CarbonLDP.CarbonLDP = new CarbonLDP.CarbonLDP( {
-					host: "example.com",
+					host: "secure.example.com",
 					vocabulary: "https://schema.org/",
 					paths: {
 						system: {
 							slug: "https://secure.example.com/",
 							paths: {
-								roles: null,
+								security: {
+									paths: { credentials: null },
+								},
 								another: "another/",
 							},
 						},
@@ -615,7 +622,12 @@ describe( module( "carbonldp/CarbonLDP" ), ():void => {
 							slug: "https://secure.example.com/",
 							paths: {
 								platform: "platform/",
-								credentials: "credentials/",
+								security: {
+									slug: "security/",
+									paths: {
+										roles: "roles/",
+									},
+								},
 								another: "another/",
 							},
 						},
@@ -777,7 +789,7 @@ describe( module( "carbonldp/CarbonLDP" ), ():void => {
 				carbon
 					.getPlatformMetadata()
 					.then( ( platformMetadata ):void => {
-						type AllPartial<T> = { [P in keyof T]?: Partial<T[P]> };
+						type AllPartial<T> = { [P in keyof T]?:Partial<T[P]> };
 						type JSPlatform = AllPartial<System.PlatformMetadata>;
 
 						expect( platformMetadata as JSPlatform ).toEqual( {

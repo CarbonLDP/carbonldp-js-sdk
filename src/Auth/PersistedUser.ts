@@ -1,83 +1,36 @@
 import { Documents } from "../Documents";
-import { RequestOptions } from "../HTTP/Request";
 import { PersistedProtectedDocument } from "../PersistedProtectedDocument";
-import { Pointer } from "../Pointer";
-import { CS } from "../Vocabularies/CS";
-import * as Utils from "./../Utils";
-import * as PersistedCredentials from "./PersistedCredentials";
-import * as User from "./User";
+import { User } from "./User";
+import { UsernameAndPasswordCredentials } from "./UsernameAndPasswordCredentials";
 
-export interface Class extends PersistedProtectedDocument {
+
+export interface PersistedUser extends PersistedProtectedDocument {
 	name?:string;
-	credentials?:PersistedCredentials.Class;
-
-	enableCredentials( requestOptions?:RequestOptions ):Promise<Class>;
-
-	disableCredentials( requestOptions?:RequestOptions ):Promise<Class>;
+	credentials?:UsernameAndPasswordCredentials;
 }
 
-export class Factory {
-	static hasClassProperties( object:Object ):boolean {
-		return Utils.isObject( object )
-			&& Utils.hasFunction( object, "enableCredentials" )
-			&& Utils.hasFunction( object, "disableCredentials" )
+
+export interface PersistedUserFactory {
+	is( value:any ):value is PersistedUser;
+
+
+	decorate<T extends object>( object:T, documents:Documents ):PersistedUser & T;
+}
+
+export const PersistedUser:PersistedUserFactory = {
+	is( value:any ):value is PersistedUser {
+		return User.isDecorated( value )
+			&& PersistedProtectedDocument.is( value )
 			;
-	}
+	},
 
-	static is( object:object ):object is Class {
-		return Factory.hasClassProperties( object )
-			&& PersistedProtectedDocument.is( object )
-			;
-	}
+	decorate<T extends object>( object:T, documents:Documents ):PersistedUser & T {
+		User.decorate( object );
+		PersistedProtectedDocument.decorate( object, documents );
 
-	static decorate<T extends object>( object:T, documents:Documents ):Class & T {
-		const persistedUser:T & Class = <any> object;
-
-		if( Factory.hasClassProperties( persistedUser ) ) return persistedUser;
-		if( ! PersistedProtectedDocument.isDecorated( persistedUser ) ) PersistedProtectedDocument.decorate( persistedUser, documents );
-
-		Object.defineProperties( persistedUser, {
-			"enableCredentials": {
-				writable: false,
-				enumerable: false,
-				configurable: true,
-				value: changeEnabledCredentials.bind( persistedUser, true ),
-			},
-			"disableCredentials": {
-				writable: false,
-				enumerable: false,
-				configurable: true,
-				value: changeEnabledCredentials.bind( persistedUser, false ),
-			},
-		} );
-		if( persistedUser.credentials ) PersistedCredentials.Factory.decorate( persistedUser.credentials, documents );
-
-		persistedUser.addType( User.RDF_CLASS );
+		const persistedUser:T & PersistedUser = object as T & PersistedUser;
+		persistedUser.addType( User.TYPE );
 
 		return persistedUser;
-	}
-
-}
-
-function changeEnabledCredentials( this:Class, enabled:boolean, requestOptions?:RequestOptions ):Promise<Class> {
-	return ensureCredentials( this )
-		.then( () => {
-			if( enabled ) return this.credentials.enable( requestOptions );
-			return this.credentials.disable( requestOptions );
-		} ).then( () => {
-			return this;
-		} );
-}
-
-function ensureCredentials( user:Class ):Promise<void> {
-	if( PersistedCredentials.Factory.hasClassProperties( user.credentials ) )
-		return Promise.resolve();
-
-	return user
-		.executeSELECTQuery<{ credentials:Pointer }>( `BASE<${ user.id }>SELECT?c FROM<>WHERE{GRAPH<>{<><${ CS.credentials }>?c}}` )
-		.then( ( { bindings: [ credentialsBinding ] } ) => {
-			user.credentials = PersistedCredentials.Factory.decorate( credentialsBinding.credentials, user._documents );
-		} );
-}
-
-export default Class;
+	},
+};

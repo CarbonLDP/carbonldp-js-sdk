@@ -1,15 +1,19 @@
 import { Document } from "../Document";
-import * as ObjectSchema from "./../ObjectSchema";
-export declare const RDF_CLASS: string;
-export declare const SCHEMA: ObjectSchema.ObjectSchema;
-export interface Class extends Document {
+import { ObjectSchema } from "../ObjectSchema";
+import { CS } from "../Vocabularies/CS";
+export interface RoleBase {
     name: string;
     description?: string;
 }
-export declare class Factory {
-    static hasClassProperties(object: Object): boolean;
-    static is(object: Object): boolean;
-    static create(name: string, description?: string): Class;
-    static createFrom<T extends Object>(object: T, name: string, description?: string): T & Class;
+export interface Role extends Document {
+    name: string;
+    description?: string;
 }
-export default Class;
+export interface RoleFactory {
+    TYPE: CS["Role"];
+    SCHEMA: ObjectSchema;
+    is(value: any): value is Role;
+    create(data: RoleBase): Role;
+    createFrom<T extends RoleBase>(object: T): Role;
+}
+export declare const Role: RoleFactory;

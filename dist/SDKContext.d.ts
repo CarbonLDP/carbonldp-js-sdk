@@ -1,10 +1,10 @@
-import * as Auth from "./Auth";
+import { AuthService } from "./Auth/Service";
 import { Context } from "./Context";
 import { Documents } from "./Documents";
 import * as ObjectSchema from "./ObjectSchema";
 import * as Settings from "./Settings";
 export declare class SDKContext implements Context {
-    auth: Auth.AuthService;
+    auth: AuthService;
     documents: Documents;
     readonly baseURI: string;
     readonly parentContext: Context;

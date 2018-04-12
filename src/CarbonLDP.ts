@@ -103,8 +103,13 @@ export class CarbonLDP extends AbstractContext {
 				slug: ".system/",
 				paths: {
 					platform: "platform/",
-					credentials: "credentials/",
-					roles: "roles/",
+					security: {
+						slug: "security/",
+						paths: {
+							credentials: "credentials/",
+							roles: "roles/",
+						},
+					},
 				},
 			},
 			users: {
@@ -149,6 +154,7 @@ export class CarbonLDP extends AbstractContext {
 
 		if( ! this._baseURI.endsWith( "/" ) ) this._baseURI = this._baseURI + "/";
 
+		this.auth = new Auth.AuthService( this );
 		this.messaging = new Messaging.MessagingService( this );
 	}
 

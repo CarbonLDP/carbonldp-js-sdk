@@ -15,24 +15,25 @@ import { AuthenticatedUserMetadata } from "./AuthenticatedUserMetadata";
 import { Authenticator } from "./Authenticator";
 import { AuthMethod } from "./AuthMethod";
 import { BasicAuthenticator } from "./BasicAuthenticator";
-import * as Credentials from "./Credentials";
+import { BasicCredentials } from "./BasicCredentials";
+import { BasicToken } from "./BasicToken";
+import { CredentialsSet } from "./CredentialsSet";
+import { LDAPCredentials } from "./LDAPCredentials";
 import { PersistedACE } from "./PersistedACE";
 import { PersistedACL } from "./PersistedACL";
-import * as PersistedCredentials from "./PersistedCredentials";
 import * as PersistedRole from "./PersistedRole";
-import * as PersistedUser from "./PersistedUser";
-import * as Role from "./Role";
-import * as Roles from "./Roles";
+import { PersistedUser } from "./PersistedUser";
+import { Role } from "./Role";
+import * as Roles from "./RolesEndpoint";
 import { AuthService } from "./Service";
 import { TokenAuthenticator } from "./TokenAuthenticator";
 import {
 	TokenCredentials,
 	TokenCredentialsBase,
 } from "./TokenCredentials";
-import * as User from "./User";
+import { User } from "./User";
 import { UsernameAndPasswordCredentials } from "./UsernameAndPasswordCredentials";
-import { UsernameAndPasswordToken } from "./UsernameAndPasswordToken";
-import * as Users from "./Users";
+import { UsersEndpoint } from "./UsersEndpoint";
 
 describe( module( "carbonldp/Auth" ), ():void => {
 
@@ -88,11 +89,11 @@ describe( module( "carbonldp/Auth" ), ():void => {
 
 	it( reexports(
 		STATIC,
-		"Users",
-		"carbonldp/Auth/Users"
+		"UsersEndpoint",
+		"CarbonLDP.Auth.UsersEndpoint"
 	), ():void => {
-		expect( Auth.Users ).toBeDefined();
-		expect( Auth.Users ).toBe( Users );
+		expect( Auth.UsersEndpoint ).toBeDefined();
+		expect( Auth.UsersEndpoint ).toBe( UsersEndpoint );
 	} );
 
 	it( reexports(
@@ -133,11 +134,38 @@ describe( module( "carbonldp/Auth" ), ():void => {
 
 	it( reexports(
 		STATIC,
-		"Credentials",
-		"carbonldp/Auth/Credentials"
+		"BasicCredentials",
+		"CarbonLDP.Auth.BasicCredentials"
 	), ():void => {
-		expect( Auth.Credentials ).toBeDefined();
-		expect( Auth.Credentials ).toBe( Credentials );
+		expect( Auth.BasicCredentials ).toBeDefined();
+		expect( Auth.BasicCredentials ).toBe( BasicCredentials );
+	} );
+
+	it( reexports(
+		STATIC,
+		"BasicToken",
+		"CarbonLDP.Auth.BasicToken"
+	), ():void => {
+		expect( Auth.BasicToken ).toBeDefined();
+		expect( Auth.BasicToken ).toBe( BasicToken );
+	} );
+
+	it( reexports(
+		STATIC,
+		"CredentialsSet",
+		"CarbonLDP.Auth.CredentialsSet"
+	), ():void => {
+		expect( Auth.CredentialsSet ).toBeDefined();
+		expect( Auth.CredentialsSet ).toBe( CredentialsSet );
+	} );
+
+	it( reexports(
+		STATIC,
+		"LDAPCredentials",
+		"CarbonLDP.Auth.LDAPCredentials"
+	), ():void => {
+		expect( Auth.LDAPCredentials ).toBeDefined();
+		expect( Auth.LDAPCredentials ).toBe( LDAPCredentials );
 	} );
 
 	it( reexports(
@@ -160,17 +188,8 @@ describe( module( "carbonldp/Auth" ), ():void => {
 
 	it( reexports(
 		STATIC,
-		"PersistedCredentials",
-		"carbonldp/Auth/PersistedCredentials"
-	), ():void => {
-		expect( Auth.PersistedCredentials ).toBeDefined();
-		expect( Auth.PersistedCredentials ).toBe( PersistedCredentials );
-	} );
-
-	it( reexports(
-		STATIC,
 		"PersistedUser",
-		"carbonldp/Auth/PersistedUser"
+		"CarbonLDP.Auth.PersistedUser"
 	), ():void => {
 		expect( Auth.PersistedUser ).toBeDefined();
 		expect( Auth.PersistedUser ).toBe( PersistedUser );
@@ -188,7 +207,7 @@ describe( module( "carbonldp/Auth" ), ():void => {
 	it( reexports(
 		STATIC,
 		"Role",
-		"carbonldp/Auth/Role"
+		"CarbonLDP.Auth.Role"
 	), ():void => {
 		expect( Auth.Role ).toBeDefined();
 		expect( Auth.Role ).toBe( Role );
@@ -237,15 +256,6 @@ describe( module( "carbonldp/Auth" ), ():void => {
 	), ():void => {
 		expect( Auth.UsernameAndPasswordCredentials ).toBeDefined();
 		expect( Auth.UsernameAndPasswordCredentials ).toBe( UsernameAndPasswordCredentials );
-	} );
-
-	it( reexports(
-		STATIC,
-		"UsernameAndPasswordToken",
-		"CarbonLDP.Auth.UsernameAndPasswordToken"
-	), ():void => {
-		expect( Auth.UsernameAndPasswordToken ).toBeDefined();
-		expect( Auth.UsernameAndPasswordToken ).toBe( UsernameAndPasswordToken );
 	} );
 
 } );

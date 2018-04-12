@@ -1,13 +1,32 @@
 import { Document } from "../Document";
-import { IllegalArgumentError } from "../Errors/IllegalArgumentError";
+import { ObjectSchema } from "../ObjectSchema";
 import { CS } from "../Vocabularies/CS";
 import { XSD } from "../Vocabularies/XSD";
-import * as ObjectSchema from "./../ObjectSchema";
-import * as Utils from "./../Utils";
 
-export const RDF_CLASS:string = CS.Role;
+export interface RoleBase {
+	name:string;
+	description?:string;
+}
 
-export const SCHEMA:ObjectSchema.ObjectSchema = {
+
+export interface Role extends Document {
+	name:string;
+	description?:string;
+}
+
+
+export interface RoleFactory {
+	TYPE:CS[ "Role" ];
+	SCHEMA:ObjectSchema;
+
+	is( value:any ):value is Role;
+
+	create( data:RoleBase ):Role;
+
+	createFrom<T extends RoleBase>( object:T ):Role;
+}
+
+const SCHEMA:ObjectSchema = {
 	"name": {
 		"@id": CS.name,
 		"@type": XSD.string,
@@ -16,12 +35,12 @@ export const SCHEMA:ObjectSchema.ObjectSchema = {
 		"@id": CS.description,
 		"@type": XSD.string,
 	},
-	"parentRole": {
-		"@id": CS.parentRole,
+	"parent": {
+		"@id": CS.parent,
 		"@type": "@id",
 	},
-	"childRoles": {
-		"@id": CS.childRole,
+	"children": {
+		"@id": CS.child,
 		"@type": "@id",
 		"@container": "@set",
 	},
@@ -32,38 +51,27 @@ export const SCHEMA:ObjectSchema.ObjectSchema = {
 	},
 };
 
-export interface Class extends Document {
-	name:string;
-	description?:string;
-}
+export const Role:RoleFactory = {
+	TYPE: CS.Role,
+	SCHEMA,
 
-export class Factory {
-	static hasClassProperties( object:Object ):boolean {
-		return Utils.hasPropertyDefined( object, "name" );
-	}
-
-	static is( object:Object ):boolean {
-		return Factory.hasClassProperties( object )
-			&& Document.is( object )
+	is( value:any ):value is Role {
+		return Document.is( value )
+			&& value.hasOwnProperty( "name" )
 			;
-	}
+	},
 
-	static create( name:string, description?:string ):Class {
-		return Factory.createFrom<Object>( {}, name, description );
-	}
+	create( data:RoleBase ):Role {
+		return Role.createFrom( { ...data } );
+	},
 
-	static createFrom<T extends Object>( object:T, name:string, description?:string ):T & Class {
-		if( ! Document.isDecorated( object ) ) object = Document.createFrom( object );
+	createFrom<T extends RoleBase>( object:T ):T & Role {
+		const role:T & Role = Document.isDecorated( object ) ?
+			object : Document.createFrom( object );
 
-		if( ! name ) throw new IllegalArgumentError( "The name cannot be empty." );
-
-		let role:T & Class = <T & Class> object;
-		role.name = name;
-		role.description = description;
+		role.addType( Role.TYPE );
 
 		return role;
-	}
+	},
 
-}
-
-export default Class;
+};
