@@ -47,11 +47,11 @@ export function isDouble( value:any ):boolean {
 }
 
 export function isDate( date:any ):date is Date {
-	return date instanceof Date || ( typeof date === "object" && Object.prototype.toString.call( date ) === "[object Date]" );
+	return date instanceof Date || (typeof date === "object" && Object.prototype.toString.call( date ) === "[object Date]");
 }
 
 export function isObject( object:any ):object is object {
-	return typeof object === "object" && ( ! ! object );
+	return typeof object === "object" && (! ! object);
 }
 
 export function isPlainObject( object:Object ):boolean {
@@ -59,8 +59,8 @@ export function isPlainObject( object:Object ):boolean {
 		&& ! isArray( object )
 		&& ! isDate( object )
 		&& ! isMap( object )
-		&& ! ( typeof Blob !== "undefined" && object instanceof Blob )
-		&& ! ( Object.prototype.toString.call( object ) === "[object Set]" );
+		&& ! (typeof Blob !== "undefined" && object instanceof Blob)
+		&& ! (Object.prototype.toString.call( object ) === "[object Set]");
 }
 
 export function isFunction( value:any ):value is Function {
@@ -106,8 +106,8 @@ export function parseBoolean( value:string ):boolean {
 	/* tslint:enable: no-switch-case-fall-through */
 }
 
-export function forEachOwnProperty( object:Object, action:( name:string, value:any ) => ( boolean | void ) ):void {
-	if( ! ( isObject( object ) || isFunction( object ) ) ) throw new Error( "IllegalArgument" );
+export function forEachOwnProperty( object:Object, action:( name:string, value:any ) => (boolean | void) ):void {
+	if( ! (isObject( object ) || isFunction( object )) ) throw new Error( "IllegalArgument" );
 	for( let name in object ) {
 		if( object.hasOwnProperty( name ) ) {
 			if( action( name, object[ name ] ) === false ) break;
@@ -179,7 +179,7 @@ export class ObjectUtils {
 				if( "__CarbonSDK_circularReferenceFlag" in property ) {
 					property = property.__CarbonSDK_circularReferenceFlag;
 				} else {
-					property = ! ( key in target ) || target[ key ].constructor !== property.constructor ?
+					property = ! (key in target) || target[ key ].constructor !== property.constructor ?
 						ObjectUtils.clone( property, config ) :
 						ObjectUtils.extend( target[ key ], property, config );
 				}
@@ -201,7 +201,7 @@ export class ObjectUtils {
 		let isAnArray:boolean = isArray( object );
 		if( ! isAnArray && ! isPlainObject( object ) ) return null;
 
-		let clone:T = <T> ( isAnArray ? [] : Object.create( Object.getPrototypeOf( object ) ) );
+		let clone:T = <T> (isAnArray ? [] : Object.create( Object.getPrototypeOf( object ) ));
 		return ObjectUtils.extend<T, T>( clone, object, config );
 	}
 
@@ -217,7 +217,7 @@ export class ObjectUtils {
 		for( let propertyName in object1 ) {
 			if( ! object1.hasOwnProperty( propertyName ) ) continue;
 			if( isFunction( object1[ propertyName ] ) ) continue;
-			if( ! ( propertyName in object2 ) ) return false;
+			if( ! (propertyName in object2) ) return false;
 			if( object1[ propertyName ] !== object2[ propertyName ] ) return false;
 			properties.push( propertyName );
 		}
@@ -225,7 +225,7 @@ export class ObjectUtils {
 		for( let propertyName in object2 ) {
 			if( ! object2.hasOwnProperty( propertyName ) ) continue;
 			if( isFunction( object2[ propertyName ] ) ) continue;
-			if( ! ( propertyName in object1 ) ) return false;
+			if( ! (propertyName in object1) ) return false;
 			if( properties.indexOf( propertyName ) === - 1 ) return false;
 		}
 
@@ -241,7 +241,7 @@ function internalAreEqual( object1:Object, object2:Object, config:{ arrays?:bool
 
 	let keys:string[] = ArrayUtils.joinWithoutDuplicates( Object.keys( object1 ), Object.keys( object2 ) );
 	for( let key of keys ) {
-		if( ! ( key in object1 ) || ! ( key in object2 ) ) return false;
+		if( ! (key in object1) || ! (key in object2) ) return false;
 		if( typeof object1 !== typeof object2 ) return false;
 		if( key in ignore ) continue;
 

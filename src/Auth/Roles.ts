@@ -10,7 +10,7 @@ import { URI } from "../RDF/URI";
 import { SPARQLSelectResults } from "../SPARQL/SelectResults";
 import * as Utils from "./../Utils";
 import * as PersistedRole from "./PersistedRole";
-import * as PersistedUser from "./PersistedUser";
+import { PersistedUser } from "./PersistedUser";
 import * as Role from "./Role";
 
 export class Class {
@@ -57,8 +57,8 @@ export class Class {
 		} );
 	}
 
-	getUsers<T>( roleURI:string, requestOptions?:RequestOptions ):Promise<(T & PersistedUser.Class)[]>;
-	getUsers<T>( roleURI:string, retrievalPreferencesOrRequestOptions?:any, requestOptions?:RequestOptions ):Promise<(T & PersistedUser.Class)[]> {
+	getUsers<T>( roleURI:string, requestOptions?:RequestOptions ):Promise<(T & PersistedUser)[]>;
+	getUsers<T>( roleURI:string, retrievalPreferencesOrRequestOptions?:any, requestOptions?:RequestOptions ):Promise<(T & PersistedUser)[]> {
 		// TODO: Implement in milestone:Security
 		throw new Errors.NotImplementedError( "To be re-implemented in milestone:Security" );
 	}

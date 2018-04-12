@@ -46,11 +46,10 @@ describe( module( "carbonldp/SDKContext" ), ():void => {
 				expect( target ).toEqual( jasmine.any( SDKContext ) );
 			} );
 
-			it( "should instantiate auth as property", ():void => {
+			it( "should NOT instantiate auth as property", ():void => {
 				const target:SDKContext = new SDKContext();
 
-				expect( target.auth ).toBeDefined();
-				expect( target.auth ).toEqual( jasmine.any( Auth.AuthService ) );
+				expect( target.auth ).toBeUndefined();
 			} );
 
 			it( "should instantiate documents as property", ():void => {

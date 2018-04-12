@@ -85,7 +85,7 @@ export class JSONLDConverter {
 			if( URI.isRelative( expandedPropertyName ) ) return;
 
 			const expandedValue:any[] = this.expandProperty( propertyName, value, digestedSchema, generalSchema );
-			if( expandedPropertyName === null ) return;
+			if( expandedValue === null ) return;
 
 			expandedObject[ expandedPropertyName ] = expandedValue;
 		} );

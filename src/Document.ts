@@ -256,13 +256,8 @@ export const Document:DocumentFactory = {
 
 
 	_convertNestedObjects( parent:Document, actual:any, fragmentsTracker:Set<string> = new Set() ):void {
-		let next:any;
-		let idOrSlug:string;
-		let fragment:Fragment;
-
-		let keys:string[] = Object.keys( actual );
-		for( let key of keys ) {
-			next = actual[ key ];
+		for( let key of Object.keys( actual ) ) {
+			const next:any = actual[ key ];
 
 			if( Array.isArray( next ) ) {
 				Document._convertNestedObjects( parent, next, fragmentsTracker );
@@ -270,27 +265,23 @@ export const Document:DocumentFactory = {
 			}
 
 			if( ! isPlainObject( next ) ) continue;
-			if( Pointer.is( next ) ) {
-				if( parent.hasFragment( next.id ) && ! fragmentsTracker.has( next.id ) ) {
-					fragmentsTracker.add( next.id );
-					Document._convertNestedObjects( parent, next, fragmentsTracker );
-				}
-				continue;
-			}
+			if( Document.is( next ) ) continue;
 
-			idOrSlug = ( "id" in next ) ? next.id : ( ( "slug" in next ) ? URI.hasFragment( next.slug ) ? next.slug : "#" + next.slug : "" );
-			if( ! ! idOrSlug && ! parent.inScope( idOrSlug ) ) continue;
+			const idOrSlug:string = getNestedObjectId( next );
+			if( ! ! idOrSlug && ! inScope.call( parent, idOrSlug ) ) continue;
 
-			let parentFragment:Fragment = parent.getFragment( idOrSlug );
-
+			const parentFragment:Fragment = parent.getFragment( idOrSlug );
 			if( ! parentFragment ) {
-				fragment = parent.createFragment( <Object> next, idOrSlug );
+				const fragment:Fragment = parent.createFragment( <Object> next, idOrSlug );
 				Document._convertNestedObjects( parent, fragment, fragmentsTracker );
 
 			} else if( parentFragment !== next ) {
-				Object.assign( parentFragment, next );
-				fragment = actual[ key ] = parentFragment;
+				const fragment:Fragment = actual[ key ] = Object.assign( parentFragment, next );
 				Document._convertNestedObjects( parent, fragment, fragmentsTracker );
+
+			} else if( ! fragmentsTracker.has( next.id ) ) {
+				fragmentsTracker.add( next.id );
+				Document._convertNestedObjects( parent, next, fragmentsTracker );
 			}
 
 		}
@@ -298,6 +289,16 @@ export const Document:DocumentFactory = {
 	},
 
 };
+
+function getNestedObjectId( object:any ):string {
+	if( "id" in object ) return object.id;
+
+	if( "slug" in object ) return URI.hasFragment( object.slug ) ?
+		object.slug : "#" + object.slug;
+
+	return "";
+}
+
 
 function hasPointer( this:Document, id:string ):boolean {
 	if( id === this.id ) return true;

@@ -57,7 +57,7 @@ describe( module( "carbonldp/Pointer" ), ():void => {
 			OBLIGATORY,
 			"isResolved",
 			"Returns true if the pointer has been resolved. It checks the `_resolved` property.",
-			{ type: "this is this & Carbon.PersistedDocument.PersistedDocument" }
+			{ type: "this is this & CarbonLDP.PersistedDocument.PersistedDocument" }
 		), ():void => {} );
 
 

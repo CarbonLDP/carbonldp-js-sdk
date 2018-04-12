@@ -13,7 +13,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var Errors_1 = require("../Errors");
 var Utils_1 = require("../Utils");
 var Authenticator_1 = require("./Authenticator");
-var UsernameAndPasswordCredentials_1 = require("./UsernameAndPasswordCredentials");
+var BasicCredentials_1 = require("./BasicCredentials");
 var BasicAuthenticator = (function (_super) {
     __extends(BasicAuthenticator, _super);
     function BasicAuthenticator() {
@@ -28,7 +28,7 @@ var BasicAuthenticator = (function (_super) {
                 throw new Errors_1.IllegalArgumentError("The username cannot be empty.");
             if (!authenticationToken.password)
                 throw new Errors_1.IllegalArgumentError("The password cannot be empty.");
-            _this._credentials = new UsernameAndPasswordCredentials_1.UsernameAndPasswordCredentials(authenticationToken.username, authenticationToken.password);
+            _this._credentials = new BasicCredentials_1.BasicCredentials(authenticationToken.username, authenticationToken.password);
             return _this._credentials;
         });
     };

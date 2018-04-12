@@ -3,7 +3,7 @@ import { Documents } from "./Documents";
 import * as ObjectSchema from "./ObjectSchema";
 
 export interface Context {
-	auth:AuthService;
+	auth?:AuthService;
 	documents:Documents;
 
 	readonly baseURI:string;

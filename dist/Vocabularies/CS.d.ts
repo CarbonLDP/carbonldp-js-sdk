@@ -8,9 +8,11 @@ export interface CS {
     CreateAccessPoint: "https://carbonldp.com/ns/v1/security#CreateAccessPoint";
     CreateChild: "https://carbonldp.com/ns/v1/security#CreateChild";
     Credentials: "https://carbonldp.com/ns/v1/security#Credentials";
+    CredentialsSet: "https://carbonldp.com/ns/v1/security#CredentialsSet";
     Delete: "https://carbonldp.com/ns/v1/security#Delete";
     Download: "https://carbonldp.com/ns/v1/security#Download";
     Extend: "https://carbonldp.com/ns/v1/security#Extend";
+    LDAPCredentials: "https://carbonldp.com/ns/v1/security#LDAPCredentials";
     ManageSecurity: "https://carbonldp.com/ns/v1/security#ManageSecurity";
     PreferAuthToken: "https://carbonldp.com/ns/v1/security#PreferAuthToken";
     ProtectedDocument: "https://carbonldp.com/ns/v1/security#ProtectedDocument";
@@ -22,6 +24,7 @@ export interface CS {
     Update: "https://carbonldp.com/ns/v1/security#Update";
     Upload: "https://carbonldp.com/ns/v1/security#Upload";
     User: "https://carbonldp.com/ns/v1/security#User";
+    UsernameAndPasswordCredentials: "https://carbonldp.com/ns/v1/security#UsernameAndPasswordCredentials";
     accessControlEntry: "https://carbonldp.com/ns/v1/security#accessControlEntry";
     accessControlList: "https://carbonldp.com/ns/v1/security#accessControlList";
     accessTo: "https://carbonldp.com/ns/v1/security#accessTo";
@@ -37,6 +40,8 @@ export interface CS {
     forIRI: "https://carbonldp.com/ns/v1/security#forIRI";
     granting: "https://carbonldp.com/ns/v1/security#granting";
     inheritableEntry: "https://carbonldp.com/ns/v1/security#inheritableEntry";
+    ldapServer: "https://carbonldp.com/ns/v1/security#ldapServer";
+    ldapUserDN: "https://carbonldp.com/ns/v1/security#ldapUserDN";
     name: "https://carbonldp.com/ns/v1/security#name";
     parentRole: "https://carbonldp.com/ns/v1/security#parentRole";
     password: "https://carbonldp.com/ns/v1/security#password";
@@ -47,5 +52,6 @@ export interface CS {
     ticketKey: "https://carbonldp.com/ns/v1/security#ticketKey";
     token: "https://carbonldp.com/ns/v1/security#token";
     user: "https://carbonldp.com/ns/v1/security#user";
+    username: "https://carbonldp.com/ns/v1/security#username";
 }
 export declare const CS: CS;

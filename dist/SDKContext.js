@@ -12,7 +12,11 @@ var ACE_1 = require("./Auth/ACE");
 var ACL_1 = require("./Auth/ACL");
 var AuthenticatedUserInformationAccessor_1 = require("./Auth/AuthenticatedUserInformationAccessor");
 var AuthenticatedUserMetadata_1 = require("./Auth/AuthenticatedUserMetadata");
+var CredentialsSet_1 = require("./Auth/CredentialsSet");
+var LDAPCredentials_1 = require("./Auth/LDAPCredentials");
 var TokenCredentials_1 = require("./Auth/TokenCredentials");
+var User_1 = require("./Auth/User");
+var UsernameAndPasswordCredentials_1 = require("./Auth/UsernameAndPasswordCredentials");
 var Document_1 = require("./Document");
 var Documents_1 = require("./Documents");
 var Errors = __importStar(require("./Errors"));
@@ -47,7 +51,6 @@ var SDKContext = (function () {
     function SDKContext() {
         this.generalObjectSchema = new ObjectSchema.DigestedObjectSchema();
         this.typeObjectSchemaMap = new Map();
-        this.auth = new Auth.AuthService(this);
         this.documents = new Documents_1.Documents(this);
         this.registerDefaultObjectSchemas();
     }
@@ -187,9 +190,11 @@ var SDKContext = (function () {
         this.extendObjectSchema(ACL_1.ACL.TYPE, ACL_1.ACL.SCHEMA);
         this.extendObjectSchema(AuthenticatedUserInformationAccessor_1.AuthenticatedUserInformationAccessor.TYPE, AuthenticatedUserInformationAccessor_1.AuthenticatedUserInformationAccessor.SCHEMA);
         this.extendObjectSchema(AuthenticatedUserMetadata_1.AuthenticatedUserMetadata.TYPE, AuthenticatedUserMetadata_1.AuthenticatedUserMetadata.SCHEMA);
-        this.extendObjectSchema(Auth.User.RDF_CLASS, Auth.User.SCHEMA);
-        this.extendObjectSchema(Auth.Credentials.RDF_CLASS, Auth.Credentials.SCHEMA);
+        this.extendObjectSchema(User_1.User.TYPE, User_1.User.SCHEMA);
         this.extendObjectSchema(TokenCredentials_1.TokenCredentials.TYPE, TokenCredentials_1.TokenCredentials.SCHEMA);
+        this.extendObjectSchema(CredentialsSet_1.CredentialsSet.TYPE, CredentialsSet_1.CredentialsSet.SCHEMA);
+        this.extendObjectSchema(UsernameAndPasswordCredentials_1.UsernameAndPasswordCredentials.TYPE, UsernameAndPasswordCredentials_1.UsernameAndPasswordCredentials.SCHEMA);
+        this.extendObjectSchema(LDAPCredentials_1.LDAPCredentials.TYPE, LDAPCredentials_1.LDAPCredentials.SCHEMA);
         this.extendObjectSchema(ValidationReport_1.ValidationReport.TYPE, ValidationReport_1.ValidationReport.SCHEMA);
         this.extendObjectSchema(ValidationResult_1.ValidationResult.TYPE, ValidationResult_1.ValidationResult.SCHEMA);
         this.extendObjectSchema(QueryMetadata_1.QueryMetadata.TYPE, QueryMetadata_1.QueryMetadata.SCHEMA);

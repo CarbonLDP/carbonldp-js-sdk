@@ -6,7 +6,6 @@ var IllegalArgumentError_1 = require("./Errors/IllegalArgumentError");
 var Converter_1 = require("./JSONLD/Converter");
 var NamedFragment_1 = require("./NamedFragment");
 var ObjectSchema_1 = require("./ObjectSchema");
-var Pointer_1 = require("./Pointer");
 var URI_1 = require("./RDF/URI");
 var Resource_1 = require("./Resource");
 var Utils_1 = require("./Utils");
@@ -156,42 +155,44 @@ exports.Document = {
     create: function () { return exports.Document.createFrom({}); },
     _convertNestedObjects: function (parent, actual, fragmentsTracker) {
         if (fragmentsTracker === void 0) { fragmentsTracker = new Set(); }
-        var next;
-        var idOrSlug;
-        var fragment;
-        var keys = Object.keys(actual);
-        for (var _i = 0, keys_1 = keys; _i < keys_1.length; _i++) {
-            var key = keys_1[_i];
-            next = actual[key];
+        for (var _i = 0, _a = Object.keys(actual); _i < _a.length; _i++) {
+            var key = _a[_i];
+            var next = actual[key];
             if (Array.isArray(next)) {
                 exports.Document._convertNestedObjects(parent, next, fragmentsTracker);
                 continue;
             }
             if (!Utils_1.isPlainObject(next))
                 continue;
-            if (Pointer_1.Pointer.is(next)) {
-                if (parent.hasFragment(next.id) && !fragmentsTracker.has(next.id)) {
-                    fragmentsTracker.add(next.id);
-                    exports.Document._convertNestedObjects(parent, next, fragmentsTracker);
-                }
+            if (exports.Document.is(next))
                 continue;
-            }
-            idOrSlug = ("id" in next) ? next.id : (("slug" in next) ? URI_1.URI.hasFragment(next.slug) ? next.slug : "#" + next.slug : "");
-            if (!!idOrSlug && !parent.inScope(idOrSlug))
+            var idOrSlug = getNestedObjectId(next);
+            if (!!idOrSlug && !inScope.call(parent, idOrSlug))
                 continue;
             var parentFragment = parent.getFragment(idOrSlug);
             if (!parentFragment) {
-                fragment = parent.createFragment(next, idOrSlug);
+                var fragment = parent.createFragment(next, idOrSlug);
                 exports.Document._convertNestedObjects(parent, fragment, fragmentsTracker);
             }
             else if (parentFragment !== next) {
-                Object.assign(parentFragment, next);
-                fragment = actual[key] = parentFragment;
+                var fragment = actual[key] = Object.assign(parentFragment, next);
                 exports.Document._convertNestedObjects(parent, fragment, fragmentsTracker);
+            }
+            else if (!fragmentsTracker.has(next.id)) {
+                fragmentsTracker.add(next.id);
+                exports.Document._convertNestedObjects(parent, next, fragmentsTracker);
             }
         }
     },
 };
+function getNestedObjectId(object) {
+    if ("id" in object)
+        return object.id;
+    if ("slug" in object)
+        return URI_1.URI.hasFragment(object.slug) ?
+            object.slug : "#" + object.slug;
+    return "";
+}
 function hasPointer(id) {
     if (id === this.id)
         return true;

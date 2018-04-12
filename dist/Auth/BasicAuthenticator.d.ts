@@ -1,8 +1,8 @@
 import { Authenticator } from "./Authenticator";
-import { UsernameAndPasswordCredentials } from "./UsernameAndPasswordCredentials";
-import { UsernameAndPasswordToken } from "./UsernameAndPasswordToken";
-export declare class BasicAuthenticator extends Authenticator<UsernameAndPasswordToken, UsernameAndPasswordCredentials> {
-    protected _credentials: UsernameAndPasswordCredentials;
-    authenticate(authenticationToken: UsernameAndPasswordToken): Promise<UsernameAndPasswordCredentials>;
+import { BasicCredentials } from "./BasicCredentials";
+import { BasicToken } from "./BasicToken";
+export declare class BasicAuthenticator extends Authenticator<BasicToken, BasicCredentials> {
+    protected _credentials: BasicCredentials;
+    authenticate(authenticationToken: BasicToken): Promise<BasicCredentials>;
     protected _getHeaderValue(): string;
 }

@@ -11,16 +11,18 @@ var Errors = __importStar(require("../Errors"));
 var Utils = __importStar(require("../Utils"));
 var AuthMethod_1 = require("./AuthMethod");
 var BasicAuthenticator_1 = require("./BasicAuthenticator");
+var BasicToken_1 = require("./BasicToken");
 var Roles = __importStar(require("./Roles"));
 var TokenAuthenticator_1 = require("./TokenAuthenticator");
 var TokenCredentials_1 = require("./TokenCredentials");
-var UsernameAndPasswordToken_1 = require("./UsernameAndPasswordToken");
-var Users = __importStar(require("./Users"));
+var UsersEndpoint_1 = require("./UsersEndpoint");
 var AuthService = (function () {
     function AuthService(context) {
-        this.roles = new Roles.Class(this.context);
-        this.users = new Users.Class(this.context);
         this.context = context;
+        var usersIRI = context._resolvePath("users");
+        this.users = context.documents.register(usersIRI);
+        UsersEndpoint_1.UsersEndpoint.decorate(this.users, this.context.documents);
+        this.roles = new Roles.Class(context);
         this.authenticators = (_a = {},
             _a[AuthMethod_1.AuthMethod.BASIC] = new BasicAuthenticator_1.BasicAuthenticator(this.context),
             _a[AuthMethod_1.AuthMethod.TOKEN] = new TokenAuthenticator_1.TokenAuthenticator(this.context),
@@ -31,7 +33,7 @@ var AuthService = (function () {
         get: function () {
             if (this._authenticatedUser)
                 return this._authenticatedUser;
-            if (this.context.parentContext)
+            if (this.context.parentContext && this.context.parentContext.auth)
                 return this.context.parentContext.auth.authenticatedUser;
             return null;
         },
@@ -54,7 +56,7 @@ var AuthService = (function () {
             return Promise.reject(new Errors.IllegalArgumentError("Invalid authentication method \"" + method + "\"."));
         var authenticationToken;
         if (Utils.isString(userOrCredentials))
-            authenticationToken = new UsernameAndPasswordToken_1.UsernameAndPasswordToken(userOrCredentials, password);
+            authenticationToken = new BasicToken_1.BasicToken(userOrCredentials, password);
         else if (TokenCredentials_1.TokenCredentialsBase.is(userOrCredentials)) {
             authenticationToken = userOrCredentials;
         }

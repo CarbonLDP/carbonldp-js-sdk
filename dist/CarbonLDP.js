@@ -98,6 +98,7 @@ var CarbonLDP = (function (_super) {
         }
         if (!_this._baseURI.endsWith("/"))
             _this._baseURI = _this._baseURI + "/";
+        _this.auth = new Auth.AuthService(_this);
         _this.messaging = new Messaging.MessagingService(_this);
         return _this;
     }

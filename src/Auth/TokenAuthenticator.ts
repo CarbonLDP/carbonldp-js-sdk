@@ -12,14 +12,14 @@ import { CS } from "../Vocabularies";
 import { AuthenticatedUserInformationAccessor } from "./AuthenticatedUserInformationAccessor";
 import { Authenticator } from "./Authenticator";
 import { BasicAuthenticator } from "./BasicAuthenticator";
+import { BasicToken } from "./BasicToken";
 import {
 	TokenCredentials,
 	TokenCredentialsBase,
 } from "./TokenCredentials";
-import { UsernameAndPasswordToken } from "./UsernameAndPasswordToken";
 
 
-export class TokenAuthenticator extends Authenticator<UsernameAndPasswordToken, TokenCredentials> {
+export class TokenAuthenticator extends Authenticator<BasicToken, TokenCredentials> {
 
 	protected _credentials:TokenCredentials;
 
@@ -27,7 +27,7 @@ export class TokenAuthenticator extends Authenticator<UsernameAndPasswordToken, 
 		return super.isAuthenticated() && this._credentials.expires > new Date();
 	}
 
-	authenticate( tokenOrCredentials:UsernameAndPasswordToken | TokenCredentialsBase ):Promise<TokenCredentials> {
+	authenticate( tokenOrCredentials:BasicToken | TokenCredentialsBase ):Promise<TokenCredentials> {
 		if( TokenCredentialsBase.is( tokenOrCredentials ) )
 			return this._parseCredentialsBase( tokenOrCredentials );
 
@@ -48,7 +48,7 @@ export class TokenAuthenticator extends Authenticator<UsernameAndPasswordToken, 
 		} );
 	}
 
-	protected _getCredentials( token:UsernameAndPasswordToken ):Promise<TokenCredentials> {
+	protected _getCredentials( token:BasicToken ):Promise<TokenCredentials> {
 		const basicAuthenticator:BasicAuthenticator = new BasicAuthenticator( this.context );
 		return basicAuthenticator
 			.authenticate( token )
