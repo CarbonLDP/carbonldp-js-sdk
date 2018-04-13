@@ -7,7 +7,7 @@ export interface Pointer {
     _id: string;
     _resolved: boolean;
     id: string;
-    isResolved(): this is this & PersistedDocument;
+    isResolved(): boolean;
     resolve<T extends object>(requestOptions?: GETOptions, queryBuilderFn?: (queryBuilder: QueryDocumentBuilder) => QueryDocumentBuilder): Promise<T & this & PersistedDocument>;
     resolve<T extends object>(queryBuilderFn?: (queryBuilder: QueryDocumentBuilder) => QueryDocumentBuilder): Promise<T & this & PersistedDocument>;
 }

@@ -787,7 +787,7 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 	private _getFullDocument<T extends object>( uri:string, requestOptions:GETOptions ):T & PersistedDocument | Promise<T & PersistedDocument> {
 		if( this.hasPointer( uri ) && ! requestOptions.ensureLatest ) {
 			const pointer:T & Pointer = this.getPointer( uri ) as T & Pointer;
-			if( pointer.isResolved() && ! pointer.isPartial() ) return pointer;
+			if( pointer.isResolved() && ! (pointer as PersistedDocument).isPartial() ) return pointer as T & PersistedDocument;
 		}
 
 		this._setDefaultRequestOptions( requestOptions, LDP.RDFSource );
@@ -1257,11 +1257,11 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 		const id:string = ! ! this.context ? this.context.resolve( localID ) : localID;
 		const pointer:T & Pointer = Pointer.createFrom<T>( object, id );
 
-		const resolve:Pointer[ "resolve" ] = <W extends object>( requestOptionsOrQueryBuilderFn?:GETOptions | ( ( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ), queryBuilderFn?:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<W & T & PersistedDocument> => {
+		const resolve:Pointer[ "resolve" ] = <W extends object>( requestOptionsOrQueryBuilderFn?:GETOptions | (( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder), queryBuilderFn?:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<W & T & PersistedDocument> => {
 			let requestOptions:GETOptions;
 			if( Utils.isFunction( requestOptionsOrQueryBuilderFn ) ) {
 				requestOptions = {};
-				queryBuilderFn =  requestOptionsOrQueryBuilderFn;
+				queryBuilderFn = requestOptionsOrQueryBuilderFn;
 			} else {
 				requestOptions = requestOptionsOrQueryBuilderFn;
 			}
