@@ -755,12 +755,6 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 		return freeResourcesDocument;
 	}
 
-	_getConstructDocuments<T extends object>( uri:string, requestOptions:RequestOptions, query:QueryToken, queryContext?:QueryContext, targetName?:string, targetDocument?:T & PersistedDocument ):Promise<(T & PersistedDocument)[]> {
-		RequestUtils.setRetrievalPreferences( { include: [ C.PreferDocumentETags ] }, requestOptions );
-
-		return this._requestConstructQuery<T>( uri, requestOptions, query, queryContext, targetName, targetDocument );
-	}
-
 	_parseErrorResponse<T extends object>( response:Response | Error ):Promise<never> {
 		if( response instanceof Error ) return Promise.reject( response );
 
@@ -1103,10 +1097,6 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 		const triples:SubjectToken[] = getAllTriples( constructPatterns );
 		construct.addTriple( ...triples );
 
-		return this._requestConstructQuery( uri, requestOptions, query, queryContext, targetName, targetDocument );
-	}
-
-	private _requestConstructQuery<T extends object>( uri:string, requestOptions:RequestOptions, query:QueryToken, queryContext?:QueryContext, targetName?:string, targetDocument?:T & PersistedDocument ):Promise<(T & PersistedDocument)[]> {
 		RequestUtils.setRetrievalPreferences( { include: [ C.PreferResultsContext ] }, requestOptions );
 
 		return this

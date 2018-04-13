@@ -1,13 +1,3 @@
-import {
-	ConstructToken,
-	GraphToken,
-	IRIToken,
-	PredicateToken,
-	QueryToken,
-	SubjectToken,
-	VariableToken,
-} from "sparqler/tokens";
-
 import { PersistedACL } from "./Auth/PersistedACL";
 import { Documents } from "./Documents";
 import { RequestOptions } from "./HTTP/Request";
@@ -15,7 +5,7 @@ import { ModelDecorator } from "./ModelDecorator";
 import { PersistedDocument } from "./PersistedDocument";
 import { Pointer } from "./Pointer";
 import * as Utils from "./Utils";
-import { CS } from "./Vocabularies/CS";
+import { CS } from "./Vocabularies";
 
 
 export interface PersistedProtectedDocument extends PersistedDocument {
@@ -66,29 +56,18 @@ export const PersistedProtectedDocument:PersistedProtectedDocumentFactory = {
 
 };
 
-function getACL( this:PersistedProtectedDocument, requestOptions:RequestOptions = {} ):Promise<PersistedACL> {
-	if( this.isResolved() ) return this._documents.get( this.accessControlList.id, requestOptions );
+function getACL( this:PersistedProtectedDocument, requestOptions:RequestOptions ):Promise<PersistedACL> {
+	if( this.accessControlList ) return this._documents.get( this.accessControlList.id, requestOptions );
 
-	const aclGraphVar:VariableToken = new VariableToken( "g" );
-
-	const aclGetter:SubjectToken = new SubjectToken( new IRIToken( this.id ) )
-		.addPredicate( new PredicateToken( new IRIToken( CS.accessControlList ) )
-			.addObject( aclGraphVar ) );
-
-	const aclContent:SubjectToken = new SubjectToken( new VariableToken( "s" ) )
-		.addPredicate( new PredicateToken( new VariableToken( "p" ) )
-			.addObject( new VariableToken( "o" ) ) );
-
-	const query:QueryToken = new QueryToken( new ConstructToken()
-		.addTriple( aclContent )
-		.addPattern( aclGetter )
-		.addPattern( new GraphToken( aclGraphVar )
-			.addPattern( aclContent )
-		)
-	);
-
-	return this._documents
-		._getConstructDocuments<PersistedACL>( this.id, requestOptions, query )
-		.then( documents => documents[ 0 ] )
-		;
+	return this.resolve( _ => _
+		.withType( CS.ProtectedDocument )
+		.properties( {
+			accessControlList: {
+				"query": __ => __
+					.properties( __.full ),
+			},
+		} )
+	).then( () => {
+		return this.accessControlList as PersistedACL;
+	} );
 }

@@ -1,11 +1,10 @@
-import { QueryToken } from "sparqler/tokens";
-
 import { AbstractContext } from "./AbstractContext";
 import { PersistedACL } from "./Auth/PersistedACL";
 import { Documents } from "./Documents";
 import { PersistedDocument } from "./PersistedDocument";
 
 import { PersistedProtectedDocument } from "./PersistedProtectedDocument";
+import { Pointer } from "./Pointer";
 
 import {
 	extendsClass,
@@ -22,6 +21,10 @@ import {
 	STATIC,
 } from "./test/JasmineExtender";
 import * as Utils from "./Utils";
+import { CS } from "./Vocabularies";
+import { C } from "./Vocabularies/C";
+import { LDP } from "./Vocabularies/LDP";
+import { XSD } from "./Vocabularies/XSD";
 
 describe( module( "carbonldp/PersistedProtectedDocument" ), ():void => {
 
@@ -90,31 +93,7 @@ describe( module( "carbonldp/PersistedProtectedDocument" ), ():void => {
 					.catch( returned => {
 						expect( returned ).toBe( "spy called" );
 
-						expect( spy ).toHaveBeenCalledWith( "https://example.com/resource/.acl/", jasmine.any( Object ) );
-
-						done();
-					} );
-			} );
-
-			it( "should call execute query when not resolved", ( done:DoneFn ):void => {
-				const document:PersistedProtectedDocument = PersistedProtectedDocument.decorate(
-					Object.assign( context.documents.getPointer( "https://example.com/resource/" ), {
-						_resolved: false,
-					} ),
-					context.documents
-				);
-
-				const spy:jasmine.Spy = spyOn( context.documents, "_getConstructDocuments" )
-					.and.returnValue( Promise.reject( "spy called" ) );
-
-				document.getACL()
-					.then( () => {
-						done.fail( "Should not resolve" );
-					} )
-					.catch( returned => {
-						expect( returned ).toBe( "spy called" );
-
-						expect( spy ).toHaveBeenCalledWith( "https://example.com/resource/", jasmine.any( Object ), jasmine.any( QueryToken ) );
+						expect( spy ).toHaveBeenCalledWith( "https://example.com/resource/.acl/", void 0 );
 
 						done();
 					} );
@@ -128,29 +107,47 @@ describe( module( "carbonldp/PersistedProtectedDocument" ), ():void => {
 					context.documents
 				);
 
-				const spy:jasmine.Spy = spyOn( context.documents, "_getConstructDocuments" )
-					.and.returnValue( Promise.reject( "spy called" ) );
+				const spy:jasmine.Spy = spyOn( context.documents, "executeRawCONSTRUCTQuery" )
+					.and.returnValue( Promise.reject( null ) );
 
 				document.getACL()
 					.then( () => {
 						done.fail( "Should not resolve" );
 					} )
-					.catch( () => {
-						const query:QueryToken = spy
+					.catch( ( error ) => {
+						if( error ) done.fail( error );
+
+						const [ uri, query ] = spy
 							.calls
 							.mostRecent()
-							.args
-							.find( arg => arg instanceof QueryToken );
+							.args;
 
-						expect( query.toString() ).toBe( "" +
-							"CONSTRUCT { " +
-							"" + "?s ?p ?o " +
-							"} " +
-							"WHERE { " +
-							"" + `<https://example.com/resource/> <https://carbonldp.com/ns/v1/security#accessControlList> ?g. ` +
-							"" + "GRAPH ?g { " +
-							"" + "" + "?s ?p ?o " +
-							"" + "} " +
+						expect( uri ).toBe( "https://example.com/resource/" );
+
+						expect( query ).toBe( "" +
+							"CONSTRUCT {" +
+							` ?metadata a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
+							"" + ` <${ C.target }> ?document.` +
+
+							" ?document a ?document__types;" +
+							"" + ` <${ CS.accessControlList }> ?document__accessControlList.` +
+
+							" ?document__accessControlList___subject ?document__accessControlList___predicate ?document__accessControlList___object " +
+
+							"} WHERE {" +
+							" BIND(BNODE() AS ?metadata)." +
+
+							" VALUES ?document { <https://example.com/resource/> }." +
+							" OPTIONAL { ?document a ?document__types }." +
+							` ?document a <${ CS.ProtectedDocument }>.` +
+
+							" OPTIONAL {" +
+							"" + ` ?document <${ CS.accessControlList }> ?document__accessControlList.` +
+							"" + " FILTER( ! isLiteral( ?document__accessControlList ) )." +
+							"" + " GRAPH ?document__accessControlList {" +
+							"" + "" + " ?document__accessControlList___subject ?document__accessControlList___predicate ?document__accessControlList___object" +
+							"" + " }" +
+							" } " +
 							"}"
 						);
 
@@ -159,6 +156,79 @@ describe( module( "carbonldp/PersistedProtectedDocument" ), ():void => {
 			} );
 
 			it( "should return the queried ACL", ( done:DoneFn ):void => {
+				jasmine.Ajax.stubRequest( "https://example.com/resource/" ).andReturn( {
+					status: 200,
+					responseText: `[ {
+							"@id":"_:1",
+							"@type": [
+								"${ C.VolatileResource }",
+								"${ C.QueryMetadata }"
+							],
+							"${ C.target }": [ {
+								"@id":"https://example.com/resource/"
+							} ]
+						}, {
+							"@id": "_:2",
+							"@type": [
+								"${ C.ResponseMetadata }",
+								"${ C.VolatileResource }"
+							],
+							"${ C.documentMetadata }": [ {
+								"@id": "_:3"
+							}, {
+								"@id": "_:4"
+							} ]
+						}, {
+							"@id": "_:3",
+							"@type": [
+								"${ C.DocumentMetadata }",
+								"${ C.VolatileResource }"
+							],
+							"${ C.eTag }": [ {
+								"@value": "\\"1-12345\\""
+							} ],
+							"${ C.relatedDocument }": [ {
+								"@id": "https://example.com/resource/"
+							} ]
+						}, {
+							"@id": "_:4",
+							"@type": [
+								"${ C.DocumentMetadata }",
+								"${ C.VolatileResource }"
+							],
+							"${ C.eTag }": [ {
+								"@value": "\\"2-12345\\""
+							} ],
+							"${ C.relatedDocument }": [ {
+								"@id": "https://example.com/resource/.acl/"
+							} ]
+						}, {
+							"@id": "https://example.com/resource/",
+							"@graph": [ {
+								"@id": "https://example.com/resource/",
+								"@type": [
+									"${ C.Document }",
+									"${ CS.ProtectedDocument }"
+								],
+								"${ CS.accessControlList }": [ {
+									"@id": "https://example.com/resource/.acl/"
+								} ]
+							} ]
+						}, {
+							"@id": "https://example.com/resource/.acl/",
+							"@graph": [ {
+								"@id": "https://example.com/resource/.acl/",
+								"@type": [
+									"${ C.Document }",
+									"${ CS.AccessControlList }"
+								],
+								"${ CS.accessTo }": [ {
+									"@id": "https://example.com/resource/"
+								} ]
+							} ]
+						} ]`,
+				} );
+
 				const document:PersistedProtectedDocument = PersistedProtectedDocument.decorate(
 					Object.assign( context.documents.getPointer( "https://example.com/resource/" ), {
 						_resolved: false,
@@ -166,21 +236,15 @@ describe( module( "carbonldp/PersistedProtectedDocument" ), ():void => {
 					context.documents
 				);
 
-				const mockACL:PersistedACL = PersistedACL.decorate(
-					PersistedDocument.createFrom( Object.assign( context.documents.getPointer( "https://example.com/resource/.acl/" ), {
-							accessTo: document,
-						} ),
-						context.documents,
-						"https://example.com/resource/.acl/"
-					),
-					context.documents
-				);
-				spyOn( context.documents, "_getConstructDocuments" )
-					.and.returnValue( Promise.resolve( [ mockACL ] ) );
-
 				document.getACL()
 					.then( ( persistedACL ) => {
-						expect( persistedACL ).toBe( mockACL );
+						expect( persistedACL ).toEqual( jasmine.objectContaining( {
+							_eTag: "\"2-12345\"",
+							types: jasmine.arrayContaining( [ CS.AccessControlList ] ) as any as string[],
+							accessTo: jasmine.objectContaining( {
+								"id": "https://example.com/resource/",
+							} ) as any,
+						} ) );
 
 						done();
 					} )

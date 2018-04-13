@@ -7,10 +7,9 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 }
 Object.defineProperty(exports, "__esModule", { value: true });
-var tokens_1 = require("sparqler/tokens");
 var PersistedDocument_1 = require("./PersistedDocument");
 var Utils = __importStar(require("./Utils"));
-var CS_1 = require("./Vocabularies/CS");
+var Vocabularies_1 = require("./Vocabularies");
 exports.PersistedProtectedDocument = {
     isDecorated: function (object) {
         return Utils.isObject(object)
@@ -37,24 +36,19 @@ exports.PersistedProtectedDocument = {
     },
 };
 function getACL(requestOptions) {
-    if (requestOptions === void 0) { requestOptions = {}; }
-    if (this.isResolved())
+    var _this = this;
+    if (this.accessControlList)
         return this._documents.get(this.accessControlList.id, requestOptions);
-    var aclGraphVar = new tokens_1.VariableToken("g");
-    var aclGetter = new tokens_1.SubjectToken(new tokens_1.IRIToken(this.id))
-        .addPredicate(new tokens_1.PredicateToken(new tokens_1.IRIToken(CS_1.CS.accessControlList))
-        .addObject(aclGraphVar));
-    var aclContent = new tokens_1.SubjectToken(new tokens_1.VariableToken("s"))
-        .addPredicate(new tokens_1.PredicateToken(new tokens_1.VariableToken("p"))
-        .addObject(new tokens_1.VariableToken("o")));
-    var query = new tokens_1.QueryToken(new tokens_1.ConstructToken()
-        .addTriple(aclContent)
-        .addPattern(aclGetter)
-        .addPattern(new tokens_1.GraphToken(aclGraphVar)
-        .addPattern(aclContent)));
-    return this._documents
-        ._getConstructDocuments(this.id, requestOptions, query)
-        .then(function (documents) { return documents[0]; });
+    return this.resolve(function (_) { return _
+        .withType(Vocabularies_1.CS.ProtectedDocument)
+        .properties({
+        accessControlList: {
+            "query": function (__) { return __
+                .properties(__.full); },
+        },
+    }); }).then(function () {
+        return _this.accessControlList;
+    });
 }
 
 //# sourceMappingURL=PersistedProtectedDocument.js.map

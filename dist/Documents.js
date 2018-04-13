@@ -601,10 +601,6 @@ var Documents = (function () {
         this._compact(nodes, resources, freeResourcesDocument);
         return freeResourcesDocument;
     };
-    Documents.prototype._getConstructDocuments = function (uri, requestOptions, query, queryContext, targetName, targetDocument) {
-        Request_1.RequestUtils.setRetrievalPreferences({ include: [C_1.C.PreferDocumentETags] }, requestOptions);
-        return this._requestConstructQuery(uri, requestOptions, query, queryContext, targetName, targetDocument);
-    };
     Documents.prototype._parseErrorResponse = function (response) {
         var _this = this;
         if (response instanceof Error)
@@ -880,6 +876,7 @@ var Documents = (function () {
         });
     };
     Documents.prototype._executeConstructPatterns = function (uri, requestOptions, queryContext, targetName, constructPatterns, targetDocument) {
+        var _this = this;
         var metadataVar = queryContext.getVariable("metadata");
         var construct = (_a = new tokens_1.ConstructToken()
             .addTriple(new tokens_1.SubjectToken(metadataVar)
@@ -892,11 +889,6 @@ var Documents = (function () {
         var query = (_b = new tokens_1.QueryToken(construct)).addPrologues.apply(_b, queryContext.getPrologues());
         var triples = Utils_2.getAllTriples(constructPatterns);
         construct.addTriple.apply(construct, triples);
-        return this._requestConstructQuery(uri, requestOptions, query, queryContext, targetName, targetDocument);
-        var _a, _b;
-    };
-    Documents.prototype._requestConstructQuery = function (uri, requestOptions, query, queryContext, targetName, targetDocument) {
-        var _this = this;
         Request_1.RequestUtils.setRetrievalPreferences({ include: [C_1.C.PreferResultsContext] }, requestOptions);
         return this
             .executeRawCONSTRUCTQuery(uri, query.toString(), requestOptions)
@@ -941,6 +933,7 @@ var Documents = (function () {
             return new Compacter_1.JSONLDCompacter(_this, targetName, queryContext)
                 .compactDocuments(rdfDocuments, targetDocuments);
         });
+        var _a, _b;
     };
     Documents.prototype._persistChildDocument = function (parentURI, childObject, slug, requestOptions) {
         if (PersistedDocument_1.PersistedDocument.is(childObject))

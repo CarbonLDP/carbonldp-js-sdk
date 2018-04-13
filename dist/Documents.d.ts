@@ -1,5 +1,4 @@
 import { QueryClause } from "sparqler/clauses";
-import { QueryToken } from "sparqler/tokens";
 import { AccessPointBase } from "./AccessPoint";
 import { Context } from "./Context";
 import { FreeResources } from "./FreeResources";
@@ -23,7 +22,6 @@ import { Pointer, PointerLibrary, PointerValidator } from "./Pointer";
 import { RDFDocument } from "./RDF/Document";
 import { RDFNode } from "./RDF/Node";
 import { FinishSPARQLSelect } from "./SPARQL/Builder";
-import { QueryContext } from "./SPARQL/QueryDocument";
 import { QueryDocumentBuilder } from "./SPARQL/QueryDocument/QueryDocumentBuilder";
 import { QueryDocumentsBuilder } from "./SPARQL/QueryDocument/QueryDocumentsBuilder";
 import { SPARQLRawResults } from "./SPARQL/RawResults";
@@ -119,7 +117,6 @@ export declare class Documents implements PointerLibrary, PointerValidator, Obje
     onMemberRemoved(uriPattern: string, onEvent: (message: MemberRemoved) => void, onError: (error: Error) => void): void;
     _getPersistedDocument<T extends object>(rdfDocument: RDFDocument, response: Response): T & PersistedDocument;
     _getFreeResources(nodes: RDFNode[]): FreeResources;
-    _getConstructDocuments<T extends object>(uri: string, requestOptions: RequestOptions, query: QueryToken, queryContext?: QueryContext, targetName?: string, targetDocument?: T & PersistedDocument): Promise<(T & PersistedDocument)[]>;
     _parseErrorResponse<T extends object>(response: Response | Error): Promise<never>;
     private _getFullDocument<T>(uri, requestOptions);
     private _getPartialDocument<T>(uri, requestOptions, queryBuilderFn?);
@@ -131,7 +128,6 @@ export declare class Documents implements PointerLibrary, PointerValidator, Obje
     private _executeMembersBuilder<T>(uri, requestOptions, queryBuilderFn?);
     private _executeQueryBuilder<T>(uri, requestOptions, queryContext, targetProperty, queryBuilderFn?);
     private _executeConstructPatterns<T>(uri, requestOptions, queryContext, targetName, constructPatterns, targetDocument?);
-    private _requestConstructQuery<T>(uri, requestOptions, query, queryContext?, targetName?, targetDocument?);
     private _persistChildDocument<T>(parentURI, childObject, slug, requestOptions);
     private _persistAccessPoint<T>(documentURI, accessPoint, slug, requestOptions);
     private _persistDocument<T, W>(parentURI, slug, document, requestOptions);
