@@ -31,7 +31,7 @@ describe( module( "carbonldp/Auth/PersistedACL" ), ():void => {
 		it( hasProperty(
 			OBLIGATORY,
 			"accessTo",
-			"CarbonLDP.Pointer",
+			"CarbonLDP.PersistedProtectedDocument",
 			"Reference to the document the ACL belongs."
 		), ():void => {} );
 

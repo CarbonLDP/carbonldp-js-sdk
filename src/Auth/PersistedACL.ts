@@ -1,13 +1,14 @@
 import { PersistedDocument } from "../PersistedDocument";
+import { PersistedProtectedDocument } from "../PersistedProtectedDocument";
 import { Pointer } from "../Pointer";
-import * as Utils from "../Utils";
+import { isObject } from "../Utils";
 import { ACL } from "./ACL";
 import { PersistedACE } from "./PersistedACE";
 import { ModelDecorator } from "../ModelDecorator";
 import { Documents } from "../Documents";
 
 export interface PersistedACL extends PersistedDocument {
-	accessTo:Pointer;
+	accessTo?:PersistedProtectedDocument;
 	entries?:PersistedACE[];
 	inheritableEntries?:PersistedACE[];
 
@@ -63,7 +64,7 @@ export interface PersistedACLFactory extends ModelDecorator<PersistedACL> {
 
 export const PersistedACL:PersistedACLFactory = {
 	isDecorated( object:object ):object is PersistedACL {
-		return Utils.hasPropertyDefined( object, "accessTo" )
+		return isObject( object )
 			&& object[ "_parsePointer" ] === parsePointer
 			;
 	},
@@ -99,5 +100,5 @@ export const PersistedACL:PersistedACLFactory = {
 };
 
 function parsePointer( this:PersistedACL, element:string | Pointer ):Pointer {
-	return Utils.isObject( element ) ? element : this.getPointer( element );
+	return isObject( element ) ? element : this.getPointer( element );
 }

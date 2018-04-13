@@ -10530,20 +10530,13 @@ exports.LDAPCredentials = {
 
 "use strict";
 
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
-    result["default"] = mod;
-    return result;
-}
 Object.defineProperty(exports, "__esModule", { value: true });
 var PersistedDocument_1 = __webpack_require__(42);
-var Utils = __importStar(__webpack_require__(0));
+var Utils_1 = __webpack_require__(0);
 var ACL_1 = __webpack_require__(51);
 exports.PersistedACL = {
     isDecorated: function (object) {
-        return Utils.hasPropertyDefined(object, "accessTo")
+        return Utils_1.isObject(object)
             && object["_parsePointer"] === parsePointer;
     },
     decorate: function (object, documents) {
@@ -10573,7 +10566,7 @@ exports.PersistedACL = {
     },
 };
 function parsePointer(element) {
-    return Utils.isObject(element) ? element : this.getPointer(element);
+    return Utils_1.isObject(element) ? element : this.getPointer(element);
 }
 
 

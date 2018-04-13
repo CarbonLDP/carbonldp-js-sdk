@@ -1,10 +1,11 @@
 import { PersistedDocument } from "../PersistedDocument";
+import { PersistedProtectedDocument } from "../PersistedProtectedDocument";
 import { Pointer } from "../Pointer";
 import { PersistedACE } from "./PersistedACE";
 import { ModelDecorator } from "../ModelDecorator";
 import { Documents } from "../Documents";
 export interface PersistedACL extends PersistedDocument {
-    accessTo: Pointer;
+    accessTo?: PersistedProtectedDocument;
     entries?: PersistedACE[];
     inheritableEntries?: PersistedACE[];
     _parsePointer(element: string | Pointer): Pointer;
