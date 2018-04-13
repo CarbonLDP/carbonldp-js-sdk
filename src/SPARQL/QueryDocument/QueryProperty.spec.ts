@@ -1,25 +1,39 @@
-import { OptionalToken, ValuesToken, VariableToken } from "sparqler/tokens";
+import {
+	OptionalToken,
+	ValuesToken,
+	VariableToken,
+} from "sparqler/tokens";
 
-import AbstractContext from "../../AbstractContext";
-import { DigestedObjectSchema, Digester } from "../../ObjectSchema";
-import { clazz, constructor, hasDefaultExport, hasProperty, hasSignature, INSTANCE, method, module } from "../../test/JasmineExtender";
-import QueryContext from "./QueryContext";
+import { AbstractContext } from "../../AbstractContext";
+import {
+	DigestedObjectSchema,
+	ObjectSchemaDigester,
+} from "../../ObjectSchema";
+import { ContextSettings } from "../../Settings";
+import {
+	clazz,
+	constructor,
+	hasProperty,
+	hasSignature,
+	INSTANCE,
+	method,
+	module,
+} from "../../test/JasmineExtender";
+import { QueryContext } from "./QueryContext";
+
 import * as Module from "./QueryProperty";
-import { Class as QueryProperty } from "./QueryProperty";
+import { QueryProperty } from "./QueryProperty";
 
-describe( module( "Carbon/SPARQL/QueryDocument/QueryProperty" ), ():void => {
+describe( module( "carbonldp/SPARQL/QueryDocument/QueryProperty" ), ():void => {
 
 	it( "should exists", ():void => {
 		expect( Module ).toBeDefined();
 		expect( Module ).toEqual( jasmine.any( Object ) );
 	} );
 
-	it( hasDefaultExport( "Carbon.SPARQL.QueryDocument.QueryProperty.Class" ), ():void => {
-		expect( Module.default ).toBeDefined();
-		expect( Module.default ).toBe( QueryProperty );
-	} );
+	// TODO: To document `QueryPropertyType`
 
-	describe( clazz( "Carbon.SPARQL.QueryDocument.QueryProperty.Class", "Class that represents a property in the query" ), ():void => {
+	describe( clazz( "CarbonLDP.SPARQL.QueryDocument.QueryProperty", "Class that represents a property in the query" ), ():void => {
 
 		it( "should exists", ():void => {
 			expect( QueryProperty ).toBeDefined();
@@ -31,8 +45,8 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryProperty" ), ():void => {
 		beforeEach( ():void => {
 			context = new class extends AbstractContext {
 				protected _baseURI:string = "https://example.com/";
+				protected settings:ContextSettings = { vocabulary: "http://example.com/vocab#" };
 			};
-			context.setSetting( "vocabulary", "http://example.com/vocab#" );
 
 			queryContext = new QueryContext( context );
 		} );
@@ -43,7 +57,7 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryProperty" ), ():void => {
 				"Creates a query property for the specified name.\n" +
 				"By default the property will be optional, i.e. the patterns returned will be wrapped by an optional token.",
 				[
-					{ name: "context", type: "Carbon.SPARQL.QueryDocument.QueryContext.Class", description: "The context of the query where the property is been used." },
+					{ name: "context", type: "CarbonLDP.SPARQL.QueryDocument.QueryContext", description: "The context of the query where the property is been used." },
 					{ name: "name", type: "string", description: "The name of the property." },
 				]
 			), ():void => {
@@ -63,6 +77,7 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryProperty" ), ():void => {
 				const queryProperty:QueryProperty = new QueryProperty( queryContext, "name" );
 				expect( queryProperty[ "_patterns" ] ).toEqual( [] );
 			} );
+
 		} );
 
 		it( hasProperty(
@@ -76,7 +91,7 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryProperty" ), ():void => {
 		it( hasProperty(
 			INSTANCE,
 			"variable",
-			"Carbon.SPARQL.QueryDocument.QueryVariable.Class",
+			"CarbonLDP.SPARQL.QueryDocument.QueryVariable",
 			"The variable that represents the property in the query."
 		), ():void => {
 		} );
@@ -141,7 +156,7 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryProperty" ), ():void => {
 			it( "should return the patterns array when isn't optional", ():void => {
 				const queryProperty:QueryProperty = new QueryProperty( queryContext, "name" )
 					.setOptional( false );
-				expect( queryProperty.getPatterns() ).toBe( queryProperty[ "_patterns" ] );
+				expect( queryProperty.getPatterns() ).toEqual( queryProperty[ "_patterns" ] );
 			} );
 
 			it( "should return the patterns as optional array when is optional", ():void => {
@@ -157,22 +172,18 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryProperty" ), ():void => {
 
 			it( hasSignature(
 				"Returns the specific schema for the property objects that was created query definition.",
-				{ type: "Carbon.ObjectSchema.DigestedObjectSchema" }
-			), ():void => {
-			} );
+				{ type: "CarbonLDP.DigestedObjectSchema" }
+			), ():void => {} );
 
 			it( "should exists", ():void => {
 				expect( QueryProperty.prototype.getSchema ).toBeDefined();
 				expect( QueryProperty.prototype.getSchema ).toEqual( jasmine.any( Function ) );
 			} );
 
-			it( "should initialize the schema with an empty schema with vocab", ():void => {
+			it( "should initialize the schema with an empty schema", ():void => {
 				const queryProperty:QueryProperty = new QueryProperty( queryContext, "name" );
 
-				const schema:DigestedObjectSchema = Digester.digestSchema( {
-					"@vocab": "http://example.com/vocab#",
-				} );
-
+				const schema:DigestedObjectSchema = ObjectSchemaDigester.digestSchema( {} );
 				expect( queryProperty[ "_schema" ] ).toBeUndefined();
 
 				const propertySchema:DigestedObjectSchema = queryProperty.getSchema();

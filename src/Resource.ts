@@ -1,27 +1,51 @@
-import * as Pointer from "./Pointer";
+import { ModelDecorator } from "./ModelDecorator";
+import { ModelFactory } from "./ModelFactory";
+import { Pointer } from "./Pointer";
 import * as Utils from "./Utils";
 
-export interface Class extends Pointer.Class {
+
+export interface Resource extends Pointer {
 	types:string[];
 
+
 	addType( type:string ):void;
+
 	hasType( type:string ):boolean;
+
 	removeType( type:string ):void;
 }
 
-function addType( type:string ):void {
+export interface ResourceFactory extends ModelFactory<Resource>, ModelDecorator<Resource> {
+	isDecorated( object:object ):object is Resource;
+
+	is( object:object ):object is Resource;
+
+
+	create( id?:string, types?:string[] ):Resource;
+
+	createFrom<T extends object>( object:T, id?:string, types?:string[] ):T & Resource;
+
+	decorate<T extends object>( object:T ):T & Resource;
+}
+
+
+export function addTypeInResource( this:Resource, type:string ):void {
+	if( this.types.indexOf( type ) !== - 1 ) return;
+
 	this.types.push( type );
 }
-function hasType( type:string ):boolean {
+
+export function hasTypeInResource( this:Resource, type:string ):boolean {
 	return this.types.indexOf( type ) !== - 1;
 }
-function removeType( type:string ):void {
-	let index:number = this.types.indexOf( type );
+
+export function removeTypeInResource( this:Resource, type:string ):void {
+	const index:number = this.types.indexOf( type );
 	if( index !== - 1 ) this.types.splice( index, 1 );
 }
 
-export class Factory {
-	static hasClassProperties( object:Object ):boolean {
+export const Resource:ResourceFactory = {
+	isDecorated( object:object ):object is Resource {
 		return (
 			Utils.hasPropertyDefined( object, "types" )
 
@@ -29,30 +53,31 @@ export class Factory {
 			&& Utils.hasFunction( object, "hasType" )
 			&& Utils.hasFunction( object, "removeType" )
 		);
-	}
+	},
 
-	static is( object:object ):object is Class {
-		return Pointer.Factory.is( object )
-			&& Factory.hasClassProperties( object );
-	}
+	is( object:object ):object is Resource {
+		return Pointer.is( object )
+			&& Resource.isDecorated( object );
+	},
 
-	static create( id:string = null, types:string[] = null ):Class {
-		return Factory.createFrom( {}, id, types );
-	}
+	create( id?:string, types?:string[] ):Resource {
+		return Resource.createFrom( {}, id, types );
+	},
 
-	static createFrom<T extends object>( object:T, id:string = null, types:string[] = null ):T & Class {
-		const resource:T & Class = object as T & Class;
-		resource.id = id || resource.id;
-		resource.types = types || resource.types;
+	createFrom<T extends object>( object:T, id?:string, types?:string[] ):T & Resource {
+		const resource:T & Resource = Resource.decorate<T>( object );
 
-		return Factory.decorate<T>( resource );
-	}
+		if( id ) resource.id = id;
+		if( types ) resource.types = types;
 
-	static decorate<T extends Object>( object:T ):T & Class {
-		const resource:T & Class = object as T & Class;
-		if( Factory.hasClassProperties( object ) ) return resource;
+		return resource;
+	},
 
-		Pointer.Factory.decorate<T>( resource );
+	decorate<T extends object>( object:T ):T & Resource {
+		const resource:T & Resource = object as T & Resource;
+		if( Resource.isDecorated( object ) ) return resource;
+
+		Pointer.decorate<T>( resource );
 
 		Object.defineProperties( resource, {
 			"types": {
@@ -66,36 +91,22 @@ export class Factory {
 				writable: true,
 				enumerable: false,
 				configurable: true,
-				value: addType,
+				value: addTypeInResource,
 			},
 			"hasType": {
 				writable: true,
 				enumerable: false,
 				configurable: true,
-				value: hasType,
+				value: hasTypeInResource,
 			},
 			"removeType": {
 				writable: true,
 				enumerable: false,
 				configurable: true,
-				value: removeType,
+				value: removeTypeInResource,
 			},
 		} );
 
 		return resource;
-	}
-}
-
-export class Util {
-
-	static hasType( resource:Object, type:string ):boolean {
-		return Util.getTypes( resource ).indexOf( type ) !== - 1;
-	}
-
-	static getTypes( resource:Object ):string[] {
-		return ( <Class> resource).types || [];
-	}
-
-}
-
-export default Class;
+	},
+};

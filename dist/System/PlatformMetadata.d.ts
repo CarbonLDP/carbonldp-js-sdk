@@ -1,10 +1,11 @@
-import * as VolatileResource from "./../LDP/VolatileResource";
-import * as ObjectSchema from "./../ObjectSchema";
-import * as PersistedDocument from "./../PersistedDocument";
-export declare const RDF_CLASS: string;
-export declare const SCHEMA: ObjectSchema.Class;
-export interface Class extends VolatileResource.Class, PersistedDocument.Class {
-    version: string;
-    buildDate: Date;
+import { ObjectSchema } from "../ObjectSchema";
+import { PersistedDocument } from "../PersistedDocument";
+import { PlatformInstance } from "./PlatformInstance";
+export interface PlatformMetadata extends PersistedDocument {
+    instance: PlatformInstance;
 }
-export default Class;
+export interface PlatformMetadataFactory {
+    TYPE: string;
+    SCHEMA: ObjectSchema;
+}
+export declare const PlatformMetadata: PlatformMetadataFactory;

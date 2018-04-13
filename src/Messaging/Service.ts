@@ -1,17 +1,17 @@
-import * as SockJS from "sockjs-client";
+import SockJS from "sockjs-client";
 import * as webstomp from "webstomp-client";
 import { Client, Frame } from "webstomp-client";
 
-import Carbon from "../Carbon";
+import { CarbonLDP } from "../CarbonLDP";
 import { IllegalStateError } from "../Errors";
-import JSONLDParser from "../JSONLD/Parser";
-import RDFNode from "../RDF/Node";
-import { UUID } from "../Utils";
-import * as FreeResources from "./../FreeResources";
-import * as Message from "./Message";
-import Options from "./Options";
+import { FreeResources } from "../FreeResources";
+import { JSONLDParser } from "../JSONLD/Parser";
+import { RDFNode } from "../RDF/Node";
+import { UUIDUtils } from "../Utils";
+import { EventMessage } from "./EventMessage";
+import { MessagingOptions } from "./Options";
 
-export const DEFAULT_OPTIONS:Options = {
+const DEFAULT_OPTIONS:Readonly<MessagingOptions> = {
 	maxReconnectAttempts: 10,
 	reconnectDelay: 1000,
 };
@@ -21,23 +21,22 @@ interface Subscription {
 	errorCallback:( error:Error ) => void;
 }
 
-export class Class {
+export class MessagingService {
+	private context:CarbonLDP;
 
-	private context:Carbon;
-
-	private _options:Options;
+	private _options:MessagingOptions;
 	private _attempts:number;
 	private _client?:Client;
-	private _subscriptionsMap:Map<string, Map<( data:Message.Class ) => void, Subscription>>;
+	private _subscriptionsMap:Map<string, Map<( data:EventMessage ) => void, Subscription>>;
 	private _subscriptionsQueue:Function[];
 
-	constructor( context:Carbon ) {
+	constructor( context:CarbonLDP ) {
 		this.context = context;
 		this._subscriptionsQueue = [];
 		this._options = DEFAULT_OPTIONS;
 	}
 
-	setOptions( options:Options ):void {
+	setOptions( options:MessagingOptions ):void {
 		this._options = {
 			...DEFAULT_OPTIONS,
 			...options,
@@ -75,7 +74,7 @@ export class Class {
 		}, ( errorFrameOrEvent:Frame | CloseEvent ) => {
 			const canReconnect:boolean = this._options.maxReconnectAttempts === null || this._options.maxReconnectAttempts >= this._attempts;
 			let errorMessage:string;
-			if( isCloseError( errorFrameOrEvent ) ) {
+			if( "reason" in errorFrameOrEvent ) {
 				if( canReconnect ) {
 					if( ++ this._attempts === 1 ) this.storeSubscriptions();
 					setTimeout( () => this.reconnect( onConnect, onError ), this._options.reconnectDelay );
@@ -84,7 +83,7 @@ export class Class {
 				this._client = null;
 				this._subscriptionsQueue.length = 0;
 				errorMessage = `CloseEventError: ${ errorFrameOrEvent.reason }`;
-			} else if( isFrameError( errorFrameOrEvent ) ) {
+			} else if( "body" in errorFrameOrEvent ) {
 				if( ! this._client.connected && canReconnect ) return;
 				errorMessage = `${ errorFrameOrEvent.headers[ "message" ] }: ${ errorFrameOrEvent.body.trim() }`;
 			} else {
@@ -94,13 +93,13 @@ export class Class {
 		} );
 	}
 
-	subscribe( destination:string, onEvent:( data:Message.Class ) => void, onError:( error:Error ) => void ):void {
+	subscribe( destination:string, onEvent:( data:EventMessage ) => void, onError:( error:Error ) => void ):void {
 		if( ! this._client ) this.connect();
 		if( ! this._subscriptionsMap.has( destination ) ) this._subscriptionsMap.set( destination, new Map() );
-		const callbacksMap:Map<( data:Message.Class ) => void, Subscription> = this._subscriptionsMap.get( destination );
+		const callbacksMap:Map<( data:EventMessage ) => void, Subscription> = this._subscriptionsMap.get( destination );
 
 		if( callbacksMap.has( onEvent ) ) return;
-		const subscriptionID:string = UUID.generate();
+		const subscriptionID:string = UUIDUtils.generate();
 		callbacksMap.set( onEvent, {
 			id: subscriptionID,
 			errorCallback: onError,
@@ -111,10 +110,10 @@ export class Class {
 		this._subscriptionsQueue.push( subscribeTo );
 	}
 
-	unsubscribe( destination:string, onEvent:( data:Message.Class ) => void ):void {
+	unsubscribe( destination:string, onEvent:( data:EventMessage ) => void ):void {
 		if( ! this._client || ! this._subscriptionsMap || ! this._subscriptionsMap.has( destination ) ) return;
 
-		const callbackMap:Map<( data:Message.Class ) => void, Subscription> = this._subscriptionsMap.get( destination );
+		const callbackMap:Map<( data:EventMessage ) => void, Subscription> = this._subscriptionsMap.get( destination );
 		if( ! callbackMap.has( onEvent ) ) return;
 
 		const subscriptionID:string = callbackMap.get( onEvent ).id;
@@ -132,13 +131,13 @@ export class Class {
 		} ) );
 	}
 
-	private makeSubscription( id:string, destination:string, eventCallback:( data:Message.Class ) => void, errorCallback:( error:Error ) => void ):() => void {
+	private makeSubscription( id:string, destination:string, eventCallback:( data:EventMessage ) => void, errorCallback:( error:Error ) => void ):() => void {
 		return () => this._client.subscribe( destination, message => {
 			new JSONLDParser()
 				.parse( message.body )
 				.then( ( data:RDFNode[] ) => {
-					const freeResources:FreeResources.Class = this.context.documents._getFreeResources( data );
-					return freeResources.getResources().find( Message.Factory.hasClassProperties );
+					const freeResources:FreeResources = this.context.documents._getFreeResources( data );
+					return freeResources.getResources().find( EventMessage.isDecorated );
 				} )
 				.then( eventCallback )
 				.catch( errorCallback );
@@ -154,13 +153,3 @@ export class Class {
 	}
 
 }
-
-function isCloseError( object:any ):object is CloseEvent {
-	return "reason" in object;
-}
-
-function isFrameError( object:any ):object is Frame {
-	return "body" in object;
-}
-
-export default Class;

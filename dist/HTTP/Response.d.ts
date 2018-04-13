@@ -1,18 +1,13 @@
 /// <reference types="node" />
-import * as Header from "./Header";
 import { ClientRequest, IncomingMessage } from "http";
-export declare class Class {
-    status: number;
-    data: string;
-    headers: Map<string, Header.Class>;
-    request: XMLHttpRequest | ClientRequest;
+import { Header } from "./Header";
+export declare class Response {
+    readonly status: number;
+    readonly data: string;
+    readonly headers: Map<string, Header>;
+    readonly request: XMLHttpRequest | ClientRequest;
     constructor(request: XMLHttpRequest);
     constructor(request: ClientRequest, data: string, response?: IncomingMessage);
-    getHeader(name: string): Header.Class;
-    private setHeaders(headersString);
-    private setHeaders(headerObject);
+    getHeader(name: string): Header;
+    getETag(): string;
 }
-export declare class Util {
-    static getETag(response: Class): string;
-}
-export default Class;

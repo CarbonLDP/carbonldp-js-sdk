@@ -1,34 +1,46 @@
-import * as NS from "./../NS";
-import * as ObjectSchema from "./../ObjectSchema";
-import * as Pointer from "./../Pointer";
-import * as Resource from "./../Resource";
+import { ModelDecorator } from "../ModelDecorator";
+import { ModelFactory } from "../ModelFactory";
+import { ObjectSchema } from "../ObjectSchema";
+import { Pointer } from "../Pointer";
+import { Resource } from "../Resource";
+import { C } from "../Vocabularies/C";
 import * as Utils from "./../Utils";
 
-export const RDF_CLASS:string = NS.C.Class.RemoveMemberAction;
 
-export const SCHEMA:ObjectSchema.Class = {
+export interface RemoveMemberAction extends Resource {
+	targetMembers:Pointer[];
+}
+
+
+export interface RemoveMemberActionFactory extends ModelDecorator<RemoveMemberAction>, ModelFactory<RemoveMemberAction> {
+	TYPE:string;
+	SCHEMA:ObjectSchema;
+
+	isDecorated( object:object ):object is RemoveMemberAction;
+
+	create( targetMembers:Pointer[] ):RemoveMemberAction;
+}
+
+const SCHEMA:ObjectSchema = {
 	"targetMembers": {
-		"@id": NS.C.Predicate.targetMember,
+		"@id": C.targetMember,
 		"@type": "@id",
 		"@container": "@set",
 	},
 };
 
-export interface Class extends Resource.Class {
-	targetMembers:Pointer.Class[];
-}
+export const RemoveMemberAction:RemoveMemberActionFactory = {
+	TYPE: C.RemoveMemberAction,
+	SCHEMA,
 
-export class Factory {
-	static hasClassProperties( object:Object ):boolean {
+	isDecorated( object:object ):object is RemoveMemberAction {
 		return Utils.hasPropertyDefined( object, "targetMembers" );
-	}
+	},
 
-	static create( targetMembers:Pointer.Class[] ):Class {
-		return Resource.Factory.createFrom( {
-			types: [ RDF_CLASS ],
+	create( targetMembers:Pointer[] ):RemoveMemberAction {
+		return Resource.createFrom( {
+			types: [ RemoveMemberAction.TYPE ],
 			targetMembers,
 		} );
-	}
-}
-
-export default Class;
+	},
+};

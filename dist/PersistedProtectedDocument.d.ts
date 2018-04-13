@@ -1,15 +1,17 @@
-import * as Auth from "./Auth";
-import * as Documents from "./Documents";
-import * as HTTP from "./HTTP";
-import * as PersistedDocument from "./PersistedDocument";
-import * as Pointer from "./Pointer";
-export interface Class extends PersistedDocument.Class {
-    accessControlList?: Pointer.Class;
-    getACL(requestOptions?: HTTP.Request.Options): Promise<[Auth.PersistedACL.Class, HTTP.Response.Class]>;
+import { PersistedACL } from "./Auth/PersistedACL";
+import { Documents } from "./Documents";
+import { RequestOptions } from "./HTTP/Request";
+import { ModelDecorator } from "./ModelDecorator";
+import { PersistedDocument } from "./PersistedDocument";
+import { Pointer } from "./Pointer";
+export interface PersistedProtectedDocument extends PersistedDocument {
+    accessControlList?: Pointer;
+    getACL(requestOptions?: RequestOptions): Promise<PersistedACL>;
 }
-export declare class Factory {
-    static hasClassProperties(object: Object): boolean;
-    static is(object: Object): boolean;
-    static decorate<T extends object>(document: T, documents: Documents.Class): T & Class;
+export interface PersistedProtectedDocumentFactory extends ModelDecorator<PersistedProtectedDocument> {
+    isDecorated(object: object): object is PersistedProtectedDocument;
+    is(object: object): object is PersistedProtectedDocument;
+    decorate<T extends object>(object: T, documents: Documents): T & PersistedProtectedDocument;
 }
+export declare const PersistedProtectedDocument: PersistedProtectedDocumentFactory;
 export default Class;

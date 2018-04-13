@@ -1,65 +1,27 @@
-import { hasDefaultExport, hasProperty, interfaze, module, OBLIGATORY, STATIC } from "../test/JasmineExtender";
-import * as NS from "./../NS";
-import * as ValidationReport from "./ValidationReport";
-import DefaultExport from "./ValidationReport";
-import * as ValidationResult from "./ValidationResult";
+import {
+	hasProperty,
+	interfaze,
+	module,
+	OBLIGATORY,
+	property,
+	STATIC
+} from "../test/JasmineExtender";
+import { SHACL } from "../Vocabularies/SHACL";
+import { XSD } from "../Vocabularies/XSD";
 
-describe( module( "Carbon/SHACL/ValidationReport" ), ():void => {
+import { ValidationReport } from "./ValidationReport";
 
-	it( "should exists", ():void => {
-		expect( ValidationReport ).toBeDefined();
-		expect( ValidationReport ).toEqual( jasmine.any( Object ) );
-	} );
+import { ValidationResult } from "./ValidationResult";
 
-	it( hasProperty(
-		STATIC,
-		"RDF_CLASS",
-		"string"
-	), ():void => {
-		expect( ValidationReport.RDF_CLASS ).toBeDefined();
-		expect( ValidationReport.RDF_CLASS ).toEqual( jasmine.any( String ) );
-
-		expect( ValidationReport.RDF_CLASS ).toBe( NS.SHACL.Class.ValidationReport );
-	} );
-
-	it( hasProperty(
-		STATIC,
-		"SCHEMA",
-		"Carbon.ObjectSchema.Class"
-	), ():void => {
-		expect( ValidationReport.SCHEMA ).toBeDefined();
-		expect( ValidationReport.SCHEMA ).toEqual( jasmine.any( Object ) );
-
-		expect( ValidationReport.SCHEMA as {} ).toEqual( {
-			"conforms": jasmine.any( Object ),
-			"results": jasmine.any( Object ),
-			"shapesGraphWellFormed": jasmine.any( Object ),
-		} );
-
-		expect( ValidationReport.SCHEMA[ "conforms" ] ).toEqual( {
-			"@id": NS.SHACL.Predicate.conforms,
-			"@type": NS.XSD.DataType.boolean,
-		} );
-
-		expect( ValidationReport.SCHEMA[ "results" ] ).toEqual( {
-			"@id": NS.SHACL.Predicate.result,
-			"@type": "@id",
-			"@container": "@set",
-		} );
-
-		expect( ValidationReport.SCHEMA[ "shapesGraphWellFormed" ] ).toEqual( {
-			"@id": NS.SHACL.Predicate.shapesGraphWellFormed,
-			"@type": NS.XSD.DataType.boolean,
-		} );
-	} );
+describe( module( "carbonldp/SHACL/ValidationReport" ), ():void => {
 
 	describe( interfaze(
-		"Carbon.SHACL.ValidationReport.Class",
+		"CarbonLDP.SHACL.ValidationReport",
 		"Interface that represents the results of a validation process."
 	), ():void => {
 
 		it( "should exists", ():void => {
-			const target:ValidationReport.Class = {} as any;
+			const target:ValidationReport = {} as any;
 			expect( target ).toBeDefined();
 		} );
 
@@ -69,35 +31,98 @@ describe( module( "Carbon/SHACL/ValidationReport" ), ():void => {
 			"boolean",
 			"Indicates if the validation conforms the given shape. If that's the case, no results data will be returned."
 		), ():void => {
-			const target:ValidationReport.Class[ "conforms" ] = true;
+			const target:ValidationReport[ "conforms" ] = true;
 			expect( target ).toBeDefined();
 		} );
 
 		it( hasProperty(
 			OBLIGATORY,
 			"results",
-			"Carbon.SHACL.ValidationResult.Class[]",
+			"CarbonLDP.SHACL.ValidationResult[]",
 			"The results of a failure validation process."
 		), ():void => {
-			const target:ValidationReport.Class[ "results" ] = [] as ValidationResult.Class[];
+			const target:ValidationReport[ "results" ] = [] as ValidationResult[];
 			expect( target ).toBeDefined();
 		} );
 
 		it( hasProperty(
 			OBLIGATORY,
 			"shapesGraphWellFormed",
-			"Carbon.SHACL.ValidationResult.Class",
+			"CarbonLDP.SHACL.ValidationResult",
 			"The shapesGraphWellFormed of a failure validation process."
 		), ():void => {
-			const target:ValidationReport.Class[ "shapesGraphWellFormed" ] = true;
+			const target:ValidationReport[ "shapesGraphWellFormed" ] = true;
 			expect( target ).toBeDefined();
 		} );
 
 	} );
 
-	it( hasDefaultExport( "Carbon.SHACL.ValidationReport.Class" ), ():void => {
-		const target:ValidationReport.Class = {} as DefaultExport;
-		expect( target ).toBeDefined();
+	describe( interfaze(
+		"CarbonLDP.SHACL.ValidationReport.ValidationReportFactory",
+		"Interface with the factory, decorate and utils methods for `CarbonLDP.SHACL.ValidationReport` objects."
+	), ():void => {
+
+		it( hasProperty(
+			OBLIGATORY,
+			"TYPE",
+			"string"
+		), ():void => {} );
+
+		it( hasProperty(
+			OBLIGATORY,
+			"SCHEMA",
+			"CarbonLDP.ObjectSchema"
+		), ():void => {} );
+
+	} );
+
+	describe( property(
+		STATIC,
+		"ValidationReport",
+		"CarbonLDP.SHACL.ValidationReport.ValidationReportFactory"
+	), ():void => {
+
+		it( "should exist", ():void => {
+			expect( ValidationReport ).toBeDefined();
+			expect( ValidationReport ).toEqual( jasmine.any( Object ) );
+		} );
+
+		// TODO: Separate in different tests
+		it( "ValidationReport.TYPE", ():void => {
+			expect( ValidationReport.TYPE ).toBeDefined();
+			expect( ValidationReport.TYPE ).toEqual( jasmine.any( String ) );
+
+			expect( ValidationReport.TYPE ).toBe( SHACL.ValidationReport );
+		} );
+
+		// TODO: Separate in different tests
+		it( "ValidationReport.SCHEMA", ():void => {
+			expect( ValidationReport.SCHEMA ).toBeDefined();
+			expect( ValidationReport.SCHEMA ).toEqual( jasmine.any( Object ) );
+
+			expect( ValidationReport.SCHEMA as {} ).toEqual( {
+				"conforms": jasmine.any( Object ),
+				"results": jasmine.any( Object ),
+				"shapesGraphWellFormed": jasmine.any( Object ),
+			} );
+
+			expect( ValidationReport.SCHEMA[ "conforms" ] ).toEqual( {
+				"@id": SHACL.conforms,
+				"@type": XSD.boolean,
+			} );
+
+			expect( ValidationReport.SCHEMA[ "results" ] ).toEqual( {
+				"@id": SHACL.result,
+				"@type": "@id",
+				"@container": "@set",
+			} );
+
+			expect( ValidationReport.SCHEMA[ "shapesGraphWellFormed" ] ).toEqual( {
+				"@id": SHACL.shapesGraphWellFormed,
+				"@type": XSD.boolean,
+			} );
+		} );
+
 	} );
 
 } );

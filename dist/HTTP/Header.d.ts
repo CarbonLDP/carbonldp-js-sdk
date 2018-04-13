@@ -1,17 +1,8 @@
-export declare class Value {
-    private value;
-    constructor(value: string);
+export declare class Header {
+    readonly values: string[];
+    static parseHeaders(headersString: string): Map<string, Header>;
+    private static _parseValues(strValues);
+    constructor(values?: (string | string[]));
+    hasValue(value: string): boolean;
     toString(): string;
 }
-export declare class Class {
-    values: Value[];
-    constructor();
-    constructor(values: Value[]);
-    constructor(value: string);
-    toString(): string;
-    private setValues(valuesString);
-}
-export declare class Util {
-    static parseHeaders(headersString: string): Map<string, Class>;
-}
-export default Class;

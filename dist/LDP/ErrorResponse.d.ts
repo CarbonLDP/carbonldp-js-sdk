@@ -1,14 +1,15 @@
-import Error from "./Error";
-import ObjectSchema from "./../ObjectSchema";
-import Resource from "./../Resource";
-export declare const RDF_CLASS: string;
-export declare const SCHEMA: ObjectSchema;
-export interface Class extends Resource {
+import { ModelFactory } from "../ModelFactory";
+import { ObjectSchema } from "../ObjectSchema";
+import { Resource } from "../Resource";
+import { Error } from "./Error";
+export interface ErrorResponse extends Resource {
     errors: Error[];
     requestID: string;
     statusCode: number;
 }
-export declare class Util {
-    static getMessage(errorResponse: Class): string;
+export interface ErrorResponseFactory extends ModelFactory<ErrorResponse> {
+    TYPE: string;
+    SCHEMA: ObjectSchema;
+    getMessage(errorResponse: ErrorResponse): string;
 }
-export default Class;
+export declare const ErrorResponse: ErrorResponseFactory;

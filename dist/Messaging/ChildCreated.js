@@ -1,8 +1,12 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var NS = require("./../NS");
-var DocumentCreated = require("./DocumentCreated");
-exports.RDF_CLASS = NS.C.Class.ChildCreated;
-exports.SCHEMA = DocumentCreated.SCHEMA;
+var C_1 = require("../Vocabularies/C");
+var DocumentCreated_1 = require("./DocumentCreated");
+var TYPE = C_1.C.ChildCreated;
+var SCHEMA = DocumentCreated_1.DocumentCreated.SCHEMA;
+exports.ChildCreated = {
+    TYPE: TYPE,
+    SCHEMA: SCHEMA,
+};
 
 //# sourceMappingURL=ChildCreated.js.map

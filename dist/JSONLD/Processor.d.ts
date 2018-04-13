@@ -1,5 +1,5 @@
-export declare class Class {
-    static expand(input: Object): Promise<Array<Object>>;
+export declare class JSONLDProcessor {
+    static expand(input: object): Promise<object[]>;
     private static getTargetFromLinkHeader(header);
     private static findContextURLs(input, contexts, base, replace?);
     private static retrieveContexts(input, contextsRequested, base);
@@ -15,4 +15,3 @@ export declare class Class {
     private static compareValues(value1, value2);
     private static hasValue(element, propertyName, value);
 }
-export default Class;

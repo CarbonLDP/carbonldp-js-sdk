@@ -1,19 +1,38 @@
-import * as NS from "./../NS";
-import * as Resource from "./../Resource";
+import { ModelFactory } from "../ModelFactory";
+import { Resource } from "../Resource";
+import { C } from "../Vocabularies/C";
 
-export const RDF_CLASS:string = NS.C.Class.VolatileResource;
-
-export interface Class extends Resource.Class {
-
+export interface VolatileResource extends Resource {
 }
 
-export class Factory {
 
-	static is( object:object ):object is Class {
-		return Resource.Factory.is( object )
-			&& object.hasType( RDF_CLASS );
-	}
+export interface VolatileResourceFactory extends ModelFactory<VolatileResource> {
+	TYPE:string;
 
+	is( object:object ):object is VolatileResource;
+
+	create():VolatileResource;
+
+	createFrom<T extends object>( object:T ):T & VolatileResource;
 }
 
-export default Class;
+export const VolatileResource:VolatileResourceFactory = {
+	TYPE: C.VolatileResource,
+
+	is( object:object ):object is VolatileResource {
+		return Resource.is( object )
+			&& object.hasType( VolatileResource.TYPE );
+	},
+
+	create():VolatileResource {
+		return VolatileResource.createFrom( {} );
+	},
+
+	createFrom<T extends object>( object:T ):T & VolatileResource {
+		const resource:T & Resource = Resource.createFrom( object );
+		resource.addType( VolatileResource.TYPE );
+
+		return resource;
+	},
+
+};

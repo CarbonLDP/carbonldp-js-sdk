@@ -2,45 +2,44 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 var iri_1 = require("sparqler/iri");
 var tokens_1 = require("sparqler/tokens");
+var IllegalArgumentError_1 = require("../../Errors/IllegalArgumentError");
 var Utils_1 = require("../../Utils");
-var Errors_1 = require("./../../Errors");
-var XSD = require("./../../NS/XSD");
-var Class = (function () {
-    function Class(context, value) {
+var XSD_1 = require("../../Vocabularies/XSD");
+var QueryValue = (function () {
+    function QueryValue(context, value) {
         this._value = value;
         this._context = context;
         if (Utils_1.isDate(value)) {
             this._literal = new tokens_1.LiteralToken();
-            this.withType(XSD.DataType.dateTime);
+            this.withType(XSD_1.XSD.dateTime);
         }
         else {
             this._literal = new tokens_1.LiteralToken(value);
         }
     }
-    Class.prototype.withType = function (type) {
+    QueryValue.prototype.withType = function (type) {
         if (!iri_1.isAbsolute(type)) {
-            if (!XSD.DataType.hasOwnProperty(type))
-                throw new Errors_1.IllegalArgumentError("Invalid type provided.");
-            type = XSD.DataType[type];
+            if (!XSD_1.XSD.hasOwnProperty(type))
+                throw new IllegalArgumentError_1.IllegalArgumentError("Invalid type provided.");
+            type = XSD_1.XSD[type];
         }
         var value = this._context.serializeLiteral(type, this._value);
         this._literal.setValue(value);
         this._literal.setType(this._context.compactIRI(type));
         return this;
     };
-    Class.prototype.withLanguage = function (language) {
+    QueryValue.prototype.withLanguage = function (language) {
         this._literal.setLanguage(language);
         return this;
     };
-    Class.prototype.getToken = function () {
+    QueryValue.prototype.getToken = function () {
         return this._literal;
     };
-    Class.prototype.toString = function () {
+    QueryValue.prototype.toString = function () {
         return "" + this._literal;
     };
-    return Class;
+    return QueryValue;
 }());
-exports.Class = Class;
-exports.default = Class;
+exports.QueryValue = QueryValue;
 
 //# sourceMappingURL=QueryValue.js.map

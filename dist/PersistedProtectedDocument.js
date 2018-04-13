@@ -1,25 +1,29 @@
 "use strict";
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
+    result["default"] = mod;
+    return result;
+}
 Object.defineProperty(exports, "__esModule", { value: true });
 var tokens_1 = require("sparqler/tokens");
-var NS = require("./NS");
-var PersistedDocument = require("./PersistedDocument");
-var Utils = require("./Utils");
-var Factory = (function () {
-    function Factory() {
-    }
-    Factory.hasClassProperties = function (object) {
+var PersistedDocument_1 = require("./PersistedDocument");
+var Utils = __importStar(require("./Utils"));
+exports.PersistedProtectedDocument = {
+    isDecorated: function (object) {
         return Utils.isObject(object)
             && Utils.hasFunction(object, "getACL");
-    };
-    Factory.is = function (object) {
-        return Factory.hasClassProperties(object)
-            && PersistedDocument.Factory.is(object);
-    };
-    Factory.decorate = function (document, documents) {
-        var persistedProtectedDocument = document;
-        if (Factory.hasClassProperties(document))
-            return persistedProtectedDocument;
-        PersistedDocument.Factory.decorate(document, documents);
+    },
+    is: function (object) {
+        return exports.PersistedProtectedDocument.isDecorated(object)
+            && PersistedDocument_1.PersistedDocument.is(object);
+    },
+    decorate: function (object, documents) {
+        if (exports.PersistedProtectedDocument.isDecorated(object))
+            return object;
+        PersistedDocument_1.PersistedDocument.decorate(object, documents);
+        var persistedProtectedDocument = object;
         Object.defineProperties(persistedProtectedDocument, {
             "getACL": {
                 writable: false,
@@ -29,10 +33,8 @@ var Factory = (function () {
             },
         });
         return persistedProtectedDocument;
-    };
-    return Factory;
-}());
-exports.Factory = Factory;
+    },
+};
 function getACL(requestOptions) {
     if (requestOptions === void 0) { requestOptions = {}; }
     if (this.isResolved())
@@ -50,11 +52,8 @@ function getACL(requestOptions) {
         .addPattern(new tokens_1.GraphToken(aclGraphVar)
         .addPattern(aclContent)));
     return this._documents
-        ._getConstructDocuments(this.id, requestOptions, query)
-        .then(function (_a) {
-        var documents = _a[0], response = _a[1];
-        return [documents[0], response];
-    });
+        ._getConstructDocuments(this.id, requestOptions, query);
 }
+exports.default = Class;
 
 //# sourceMappingURL=PersistedProtectedDocument.js.map

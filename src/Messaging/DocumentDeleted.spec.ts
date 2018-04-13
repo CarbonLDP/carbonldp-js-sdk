@@ -1,76 +1,101 @@
-import * as Messaging from "../Messaging";
-import * as NS from "../NS";
-import * as Pointer from "../Pointer";
-import { extendsClass, hasDefaultExport, hasProperty, interfaze, isDefined, module, OBLIGATORY, STATIC } from "../test/JasmineExtender";
+import { Pointer } from "../Pointer";
+import {
+	extendsClass,
+	hasProperty,
+	interfaze,
+	isDefined,
+	module,
+	OBLIGATORY,
+	property,
+	STATIC
+} from "../test/JasmineExtender";
+import { C } from "../Vocabularies/C";
 
-import * as DocumentDeleted from "./DocumentDeleted";
-import DefaultExport from "./DocumentDeleted";
+import { DocumentDeleted } from "./DocumentDeleted";
 
-describe( module( "Carbon/Messaging/DocumentDeleted" ), ():void => {
+import { EventMessage } from "./EventMessage";
 
-	it( isDefined(), ():void => {
-		expect( DocumentDeleted ).toBeDefined();
-		expect( DocumentDeleted ).toEqual( jasmine.any( Object ) );
-	} );
-
-	it( hasProperty(
-		STATIC,
-		"RDF_CLASS",
-		"string"
-	), ():void => {
-		expect( DocumentDeleted.RDF_CLASS ).toBeDefined();
-		expect( DocumentDeleted.RDF_CLASS ).toEqual( jasmine.any( String ) );
-
-		expect( DocumentDeleted.RDF_CLASS ).toBe( NS.C.Class.DocumentDeleted );
-	} );
-
-	it( hasProperty(
-		STATIC,
-		"SCHEMA",
-		"Carbon.ObjectSchema.Class"
-	), ():void => {
-		expect( DocumentDeleted.SCHEMA ).toBeDefined();
-		expect( DocumentDeleted.SCHEMA ).toEqual( jasmine.any( Object ) );
-
-		expect( DocumentDeleted.SCHEMA as {} ).toEqual( {
-			"target": jasmine.any( Object ),
-		} );
-
-		expect( DocumentDeleted.SCHEMA[ "target" ] ).toEqual( {
-			"@id": NS.C.Predicate.target,
-			"@type": "@id",
-		} );
-	} );
+describe( module( "carbonldp/Messaging/DocumentDeleted" ), ():void => {
 
 	describe( interfaze(
-		"Carbon.Messaging.DocumentDeleted.Class",
+		"CarbonLDP.Messaging.DocumentDeleted",
 		"Interface with the properties of the data received in a document deleted event."
 	), ():void => {
 
 		it( isDefined(), ():void => {
-			const target:DocumentDeleted.Class = {} as any;
+			const target:DocumentDeleted = {} as any;
 			expect( target ).toBeDefined();
 		} );
 
-		it( extendsClass( "Carbon.Messaging.Message.Class" ), ():void => {
-			const target:Messaging.Message.Class = {} as DocumentDeleted.Class;
+		it( extendsClass( "CarbonLDP.Messaging.EventMessage" ), ():void => {
+			const target:EventMessage = {} as DocumentDeleted;
 			expect( target ).toBeDefined();
 		} );
 
 		it( hasProperty(
 			OBLIGATORY,
 			"target",
-			"Carbon.Pointer.Class"
+			"CarbonLDP.Pointer"
 		), ():void => {
-			const target:DocumentDeleted.Class[ "target" ] = {} as Pointer.Class;
+			const target:DocumentDeleted[ "target" ] = {} as Pointer;
 			expect( target ).toBeDefined();
 		} );
 
 	} );
 
-	it( hasDefaultExport( "Carbon.Messaging.DocumentDeleted.Class" ), ():void => {
-		const target:DocumentDeleted.Class = {} as DefaultExport;
-		expect( target ).toBeDefined();
+	describe( interfaze(
+		"CarbonLDP.Messaging.DocumentDeletedFactory",
+		"Interface with the factory, decorate and utils for `CarbonLDP.Messaging.DocumentDeleted` objects."
+	), ():void => {
+
+		it( hasProperty(
+			STATIC,
+			"TYPE",
+			"string"
+		), ():void => {} );
+
+		it( hasProperty(
+			STATIC,
+			"SCHEMA",
+			"CarbonLDP.ObjectSchema"
+		), ():void => {} );
+
+	} );
+
+	describe( property(
+		STATIC,
+		"DocumentDeleted",
+		"CarbonLDP.Messaging.DocumentDeletedFactory"
+	), ():void => {
+
+		it( isDefined(), ():void => {
+			expect( DocumentDeleted ).toBeDefined();
+			expect( DocumentDeleted ).toEqual( jasmine.any( Object ) );
+		} );
+
+		// TODO: Separate in different tests
+		it( "DocumentDeleted.TYPE", ():void => {
+			expect( DocumentDeleted.TYPE ).toBeDefined();
+			expect( DocumentDeleted.TYPE ).toEqual( jasmine.any( String ) );
+
+			expect( DocumentDeleted.TYPE ).toBe( C.DocumentDeleted );
+		} );
+
+		// TODO: Separate in different tests
+		it( "DocumentDeleted.SCHEMA", ():void => {
+			expect( DocumentDeleted.SCHEMA ).toBeDefined();
+			expect( DocumentDeleted.SCHEMA ).toEqual( jasmine.any( Object ) );
+
+			expect( DocumentDeleted.SCHEMA as {} ).toEqual( {
+				"target": jasmine.any( Object ),
+			} );
+
+			expect( DocumentDeleted.SCHEMA[ "target" ] ).toEqual( {
+				"@id": C.target,
+				"@type": "@id",
+			} );
+		} );
+
 	} );
 
 } );

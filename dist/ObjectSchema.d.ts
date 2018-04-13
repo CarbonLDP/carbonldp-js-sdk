@@ -1,17 +1,16 @@
-import * as RDF from "./RDF";
-export interface PropertyDefinition {
+export interface ObjectSchemaProperty {
     "@id"?: string;
     "@type"?: string;
     "@language"?: string;
     "@container"?: string;
 }
-export interface Class {
+export interface ObjectSchema {
     "@base"?: string;
     "@vocab"?: string;
-    "@index"?: Object;
+    "@index"?: object;
     "@language"?: string;
-    "@reverse"?: Object;
-    [name: string]: (string | PropertyDefinition);
+    "@reverse"?: object;
+    [name: string]: (string | ObjectSchemaProperty);
 }
 export declare enum ContainerType {
     SET = 0,
@@ -22,39 +21,39 @@ export declare enum PointerType {
     ID = 0,
     VOCAB = 1,
 }
+export declare class DigestedObjectSchemaProperty {
+    uri: string;
+    literal: boolean;
+    literalType: string;
+    pointerType: PointerType;
+    language?: string;
+    containerType: ContainerType;
+}
 export declare class DigestedObjectSchema {
     base: string;
     language: string;
     vocab: string;
-    prefixes: Map<string, RDF.URI.Class>;
-    properties: Map<string, DigestedPropertyDefinition>;
-    prefixedURIs: Map<string, RDF.URI.Class[]>;
+    prefixes: Map<string, string>;
+    properties: Map<string, DigestedObjectSchemaProperty>;
     constructor();
 }
-export declare class DigestedPropertyDefinition {
-    uri: RDF.URI.Class;
-    literal: boolean;
-    literalType: RDF.URI.Class;
-    pointerType: PointerType;
-    language: string;
-    containerType: ContainerType;
-}
-export interface Resolver {
+export interface ObjectSchemaResolver {
     getGeneralSchema(): DigestedObjectSchema;
-    getSchemaFor(object: Object, path?: string): DigestedObjectSchema;
+    hasSchemaFor(object: object, path?: string): boolean;
+    getSchemaFor(object: object, path?: string): DigestedObjectSchema;
 }
-export declare class Digester {
-    static digestSchema(schemas: Class[], vocab?: string): DigestedObjectSchema;
-    static digestSchema(schema: Class, vocab?: string): DigestedObjectSchema;
+export declare class ObjectSchemaDigester {
+    static digestSchema(schema: ObjectSchema): DigestedObjectSchema;
+    static digestSchema(schemas: ObjectSchema[]): DigestedObjectSchema;
+    static digestProperty(name: string, definition: ObjectSchemaProperty, digestedSchema?: DigestedObjectSchema): DigestedObjectSchemaProperty;
     static combineDigestedObjectSchemas(digestedSchemas: DigestedObjectSchema[]): DigestedObjectSchema;
-    static digestPropertyDefinition(digestedSchema: DigestedObjectSchema, propertyName: string, propertyDefinition: PropertyDefinition, vocab?: string): DigestedPropertyDefinition;
-    static resolvePrefixedURI(uri: string, digestedSchema: DigestedObjectSchema): string;
-    private static _resolveURI(uri, digestedSchema, vocab?);
-    private static _resolvePrefixedURI(uri, digestedSchema);
-    private static digestSingleSchema(schema, vocab?);
-    private static resolvePrefixedURIs(digestedSchema);
+    private static _digestSchema(schema);
+    private static _combineSchemas(digestedSchemas);
 }
-export declare class Util {
-    static resolveURI(uri: string, schema: DigestedObjectSchema, vocab?: string): string;
+export declare class ObjectSchemaUtils {
+    static resolveURI(uri: string, schema: DigestedObjectSchema, relativeTo?: {
+        vocab?: boolean;
+        base?: boolean;
+    }): string;
+    static resolveProperty(schema: DigestedObjectSchema, definition: DigestedObjectSchemaProperty, inSame?: boolean): DigestedObjectSchemaProperty;
 }
-export default Class;

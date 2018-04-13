@@ -1,21 +1,14 @@
+import * as PersistedBlankNode from "./PersistedBlankNode";
+
 import {
-	module,
-
-	OBLIGATORY,
-
-	interfaze,
-
-	isDefined,
-	hasProperty,
 	extendsClass,
-	hasDefaultExport,
+	interfaze,
+	isDefined,
+	module,
 } from "./test/JasmineExtender";
 import * as Utils from "./Utils";
 
-import * as PersistedBlankNode from "./PersistedBlankNode";
-import DefaultExport from "./PersistedBlankNode";
-
-describe( module( "Carbon/LDP/PersistedBlankNode" ), ():void => {
+describe( module( "carbonldp/LDP/PersistedBlankNode" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( PersistedBlankNode ).toBeDefined();
@@ -23,20 +16,12 @@ describe( module( "Carbon/LDP/PersistedBlankNode" ), ():void => {
 	} );
 
 	describe( interfaze(
-		"Carbon.PersistedBlankNode.Class",
+		"CarbonLDP.PersistedBlankNode",
 		"Interface that represents a persisted blank node of a persisted document."
 	), ():void => {
 
-		it( extendsClass( "Carbon.PersistedFragment.Class" ), ():void => {} );
+		it( extendsClass( "CarbonLDP.PersistedFragment" ), ():void => {} );
 
-	} );
-
-	it( hasDefaultExport( "Carbon.PersistedBlankNode.Class" ), ():void => {
-		let defaultExport:DefaultExport = <any> {};
-		let defaultTarget:PersistedBlankNode.Class;
-
-		defaultTarget = defaultExport;
-		expect( defaultTarget ).toEqual( jasmine.any( Object ) );
 	} );
 
 } );

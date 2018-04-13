@@ -1,19 +1,30 @@
-import Error from "../Errors/InvalidJSONLDSyntaxError";
-import * as Errors from "./../Errors";
-import * as HTTP from "./../HTTP";
+import {
+	InvalidJSONLDSyntaxError,
+	NotImplementedError,
+} from "../Errors";
+import { Header } from "../HTTP/Header";
+import { JSONParser } from "../HTTP/JSONParser";
+import {
+	RequestOptions,
+	RequestService,
+	RequestUtils,
+} from "../HTTP/Request";
+import { Response } from "../HTTP/Response";
+import { RDFList } from "../RDF/List";
+import { URI } from "../RDF/URI";
 import * as ObjectSchema from "./../ObjectSchema";
-import * as RDF from "./../RDF";
 import * as Utils from "./../Utils";
 
 const MAX_CONTEXT_URLS:number = 10;
 const LINK_HEADER_REL:string = "http://www.w3.org/ns/json-ld#context";
 
-export class Class {
-	static expand( input:Object ):Promise<Array<Object>> {
+export class JSONLDProcessor {
+
+	static expand( input:object ):Promise<object[]> {
 		// Find and resolve context URLs
-		return this.retrieveContexts( input, <{ [ index:string ]:boolean }> Object.create( null ), "" ).then( () => {
+		return JSONLDProcessor.retrieveContexts( input, <{ [ index:string ]:boolean }> Object.create( null ), "" ).then( () => {
 			// Expand the document
-			let expanded:any = Class.process( new ObjectSchema.DigestedObjectSchema(), input );
+			let expanded:any = JSONLDProcessor.process( new ObjectSchema.DigestedObjectSchema(), input );
 
 			// Optimize @graph
 			if( Utils.isObject( expanded ) && "@graph" in expanded && Object.keys( expanded ).length === 1 ) {
@@ -29,7 +40,7 @@ export class Class {
 		} );
 	}
 
-	private static getTargetFromLinkHeader( header:HTTP.Header.Class ):string {
+	private static getTargetFromLinkHeader( header:Header ):string {
 		let rLinkHeader:RegExp = /\s*<([^>]*?)>\s*(?:;\s*(.*))?/;
 		for( let value of header.values ) {
 			let match:string[] = value.toString().match( rLinkHeader );
@@ -56,12 +67,12 @@ export class Class {
 
 		if( Utils.isArray( input ) ) {
 			for( let element of (<Array<Object>> input) ) {
-				Class.findContextURLs( element, contexts, base );
+				JSONLDProcessor.findContextURLs( element, contexts, base );
 			}
 		} else if( Utils.isPlainObject( input ) ) {
 			for( let key in input ) {
 				if( "@context" !== key ) {
-					Class.findContextURLs( input[ key ], contexts, base );
+					JSONLDProcessor.findContextURLs( input[ key ], contexts, base );
 					continue;
 				}
 
@@ -73,7 +84,7 @@ export class Class {
 						if( ! Utils.isString( urlOrContext ) ) continue;
 
 						let url:string = <string> urlOrContext;
-						url = RDF.URI.Util.resolve( base, url );
+						url = URI.resolve( base, url );
 						if( replace ) {
 							if( Utils.isArray( contexts[ url ] ) ) {
 								Array.prototype.splice.apply( contextArray, [ index, 1 ].concat( <any> contexts[ url ] ) );
@@ -88,7 +99,7 @@ export class Class {
 					}
 				} else if( Utils.isString( urlOrArrayOrContext ) ) {
 					let url:string = <string> urlOrArrayOrContext;
-					url = RDF.URI.Util.resolve( base, url );
+					url = URI.resolve( base, url );
 					if( replace ) {
 						input[ key ] = contexts[ url ];
 					} else if( ! ( url in contexts ) ) {
@@ -102,50 +113,50 @@ export class Class {
 	}
 
 	private static retrieveContexts( input:Object, contextsRequested:{ [ index:string ]:boolean }, base:string ):Promise<void> {
-		if( Object.keys( contextsRequested ).length > MAX_CONTEXT_URLS ) return Promise.reject<void>( new Error( "Maximum number of @context URLs exceeded." ) );
+		if( Object.keys( contextsRequested ).length > MAX_CONTEXT_URLS ) return Promise.reject<void>( new InvalidJSONLDSyntaxError( "Maximum number of @context URLs exceeded." ) );
 
 		let contextToResolved:{ [ index:string ]:Object } = Object.create( null );
-		if( ! Class.findContextURLs( input, contextToResolved, base ) ) return Promise.resolve();
+		if( ! JSONLDProcessor.findContextURLs( input, contextToResolved, base ) ) return Promise.resolve();
 
-		function resolved( url:string, promise:Promise<[ any, HTTP.Response.Class ]> ):Promise<void> {
-			return promise.then( ( [ object, response ]:[ any, HTTP.Response.Class ] ) => {
-				let _contextsRequested:{ [ index:string ]:boolean } = Utils.O.clone<{ [ index:string ]:boolean }>( contextsRequested );
+		function resolved( url:string, promise:Promise<[ any, Response ]> ):Promise<void> {
+			return promise.then( ( [ object, response ]:[ any, Response ] ) => {
+				let _contextsRequested:{ [ index:string ]:boolean } = Utils.ObjectUtils.clone<{ [ index:string ]:boolean }>( contextsRequested );
 				_contextsRequested[ url ] = true;
 
 				let contextWrapper:Object = { "@context": {} };
 
-				let header:HTTP.Header.Class = response.getHeader( "Content-Type" );
-				if( ! Utils.S.contains( header.toString(), "application/ld+json" ) ) {
+				let header:Header = response.getHeader( "Content-Type" );
+				if( ! Utils.StringUtils.contains( header.toString(), "application/ld+json" ) ) {
 					header = response.getHeader( "Link" );
 					let link:string;
-					if( ! ! header ) link = Class.getTargetFromLinkHeader( header );
+					if( ! ! header ) link = JSONLDProcessor.getTargetFromLinkHeader( header );
 					if( ! ! link ) contextWrapper[ "@context" ] = link;
 				} else {
 					contextWrapper[ "@context" ] = ( "@context" in object ) ? object[ "@context" ] : {};
 				}
 				contextToResolved[ url ] = contextWrapper[ "@context" ];
 
-				return Class.retrieveContexts( contextWrapper, _contextsRequested, url );
+				return JSONLDProcessor.retrieveContexts( contextWrapper, _contextsRequested, url );
 			} );
 		}
 
 		let promises:Promise<void>[] = [];
 		for( let url in contextToResolved ) {
-			if( url in contextsRequested ) return Promise.reject<void>( new Error( "Cyclical @context URLs detected." ) );
+			if( url in contextsRequested ) return Promise.reject<void>( new InvalidJSONLDSyntaxError( "Cyclical @context URLs detected." ) );
 
-			let requestOptions:HTTP.Request.Options = { sendCredentialsOnCORS: false };
-			HTTP.Request.Util.setAcceptHeader( "application/ld+json, application/json", requestOptions );
+			let requestOptions:RequestOptions = { sendCredentialsOnCORS: false };
+			RequestUtils.setAcceptHeader( "application/ld+json, application/json", requestOptions );
 
-			let promise:Promise<[ any, HTTP.Response.Class ]> = HTTP.Request.Service
-				.get( url, requestOptions, new HTTP.JSONParser.Class() )
-				.catch( ( response:HTTP.Response.Class ) =>
-					Promise.reject( new Error( `Unable to resolve context from "${ url }". Code: ${ response.status }` ) )
+			let promise:Promise<[ any, Response ]> = RequestService
+				.get( url, requestOptions, new JSONParser() )
+				.catch( ( response:Response ) =>
+					Promise.reject( new InvalidJSONLDSyntaxError( `Unable to resolve context from "${ url }". Status code: ${ response.status }` ) )
 				);
 			promises.push( resolved( url, promise ) );
 		}
 
 		return Promise.all<void>( promises ).then( () => {
-			Class.findContextURLs( input, contextToResolved, base, true );
+			JSONLDProcessor.findContextURLs( input, contextToResolved, base, true );
 		} );
 	}
 
@@ -191,20 +202,9 @@ export class Class {
 		return true;
 	}
 
-	private static expandURI( schema:ObjectSchema.DigestedObjectSchema, uri:string, relativeTo:{ vocab?:boolean, base?:boolean } = {} ):string {
-		if( uri === null || Class.isKeyword( uri ) || RDF.URI.Util.isAbsolute( uri ) ) return uri;
-
-		if( schema.properties.has( uri ) ) return schema.properties.get( uri ).uri.stringValue;
-		if( RDF.URI.Util.isPrefixed( uri ) ) return ObjectSchema.Digester.resolvePrefixedURI( uri, schema );
-		if( schema.prefixes.has( uri ) ) return schema.prefixes.get( uri ).stringValue;
-
-		if( relativeTo.vocab ) {
-			if( schema.vocab === null ) return null;
-			return schema.vocab + uri;
-		}
-		if( relativeTo.base ) return RDF.URI.Util.resolve( schema.base, uri );
-
-		return uri;
+	private static expandURI( schema:ObjectSchema.DigestedObjectSchema, uri:string, relativeTo?:{ vocab?:boolean, base?:boolean } ):string {
+		if( JSONLDProcessor.isKeyword( uri ) ) return uri;
+		return ObjectSchema.ObjectSchemaUtils.resolveURI( uri, schema, relativeTo );
 	}
 
 	private static expandLanguageMap( languageMap:any ):any {
@@ -217,7 +217,7 @@ export class Class {
 
 			for( let item of values ) {
 				if( item === null ) continue;
-				if( ! Utils.isString( item ) ) throw new Error( "Language map values must be strings." );
+				if( ! Utils.isString( item ) ) throw new InvalidJSONLDSyntaxError( "Language map values must be strings." );
 
 				expandedLanguage.push( {
 					"@value": item,
@@ -230,33 +230,33 @@ export class Class {
 
 	private static getContainer( context:ObjectSchema.DigestedObjectSchema, property:string ):ObjectSchema.ContainerType {
 		if( context.properties.has( property ) ) return context.properties.get( property ).containerType;
-		return undefined;
+		return void 0;
 	}
 
 	private static expandValue( context:ObjectSchema.DigestedObjectSchema, value:any, propertyName:string ):any {
 		if( Utils.isNull( value ) || ! Utils.isDefined( value ) ) return null;
 
 		if( propertyName === "@id" ) {
-			return Class.expandURI( context, value, { base: true } );
+			return JSONLDProcessor.expandURI( context, value, { base: true } );
 		} else if( propertyName === "@type" ) {
-			return Class.expandURI( context, value, { vocab: true, base: true } );
+			return JSONLDProcessor.expandURI( context, value, { vocab: true, base: true } );
 		}
 
-		let definition:ObjectSchema.DigestedPropertyDefinition = new ObjectSchema.DigestedPropertyDefinition();
+		let definition:ObjectSchema.DigestedObjectSchemaProperty = new ObjectSchema.DigestedObjectSchemaProperty();
 		if( context.properties.has( propertyName ) ) definition = context.properties.get( propertyName );
 
 		if( definition.literal === false || ( propertyName === "@graph" && Utils.isString( value ) ) ) {
 			let options:{ base:boolean, vocab?:boolean } = { base: true };
 			if( definition.pointerType === ObjectSchema.PointerType.VOCAB ) options.vocab = true;
 
-			return { "@id": Class.expandURI( context, value, options ) };
+			return { "@id": JSONLDProcessor.expandURI( context, value, options ) };
 		}
 
-		if( Class.isKeyword( propertyName ) ) return value;
+		if( JSONLDProcessor.isKeyword( propertyName ) ) return value;
 
 		let expandedValue:Object = {};
-		if( ! ! definition.literalType ) {
-			expandedValue[ "@type" ] = definition.literalType.stringValue;
+		if( definition.literalType ) {
+			expandedValue[ "@type" ] = ObjectSchema.ObjectSchemaUtils.resolveURI( definition.literalType, context, { vocab: true, base: true } );
 		} else if( Utils.isString( value ) ) {
 			let language:string = Utils.isDefined( definition.language ) ? definition.language : context.language;
 			if( language !== null ) expandedValue[ "@language" ] = language;
@@ -275,33 +275,34 @@ export class Class {
 		// Expand an element according to the context
 		if( ! Utils.isArray( element ) && ! Utils.isObject( element ) ) {
 			if( ! insideList && ( activeProperty === null || activeProperty === "@graph" ) ) return null;
-			return Class.expandValue( context, element, activeProperty );
+			return JSONLDProcessor.expandValue( context, element, activeProperty );
 		}
 
 		// Recursively expand the array
 		if( Utils.isArray( element ) ) {
-			let container:ObjectSchema.ContainerType = Class.getContainer( context, activeProperty );
+			let container:ObjectSchema.ContainerType = JSONLDProcessor.getContainer( context, activeProperty );
 			insideList = insideList || container === ObjectSchema.ContainerType.LIST;
 
-			let expandedElement:Array<Object> = [];
-			for( let item of (<Array<any>> element) ) {
-				let expandedItem:any = Class.process( context, item, activeProperty );
+			const expanded:object[] = [];
+			for( let item of element as any[] ) {
+				let expandedItem:any = JSONLDProcessor.process( context, item, activeProperty );
 				if( expandedItem === null ) continue;
 
-				if( insideList && ( Utils.isArray( expandedItem ) || RDF.List.Factory.is( expandedItem ) ) ) throw new Error( "Lists of lists are not permitted." );
+				if( insideList && ( Utils.isArray( expandedItem ) || RDFList.is( expandedItem ) ) ) throw new InvalidJSONLDSyntaxError( "Lists of lists are not permitted." );
 
 				if( ! Utils.isArray( expandedItem ) ) expandedItem = [ expandedItem ];
-				Array.prototype.push.apply( expandedElement, expandedItem );
+				expanded.push( ...expandedItem );
 			}
-			return expandedElement;
+			return expanded;
 		}
 
 		// Expand current context
 		if( "@context" in element ) {
-			context = ObjectSchema.Digester.combineDigestedObjectSchemas( [
-				ObjectSchema.Digester.digestSchema( element[ "@context" ] ),
-				context,
-			] );
+			context = ObjectSchema.ObjectSchemaDigester
+				.combineDigestedObjectSchemas( [
+					context,
+					ObjectSchema.ObjectSchemaDigester.digestSchema( element[ "@context" ] ),
+				] );
 		}
 
 		// Recursively expand the object
@@ -310,33 +311,33 @@ export class Class {
 		for( let key of keys ) {
 			if( key === "@context" ) continue;
 
-			let uri:string = Class.expandURI( context, key, { vocab: true } );
-			if( ! uri || ! ( RDF.URI.Util.isAbsolute( uri ) || RDF.URI.Util.isBNodeID( uri ) || Class.isKeyword( uri ) ) ) continue;
+			let uri:string = JSONLDProcessor.expandURI( context, key, { vocab: true } );
+			if( ! uri || ! ( URI.isAbsolute( uri ) || URI.isBNodeID( uri ) || JSONLDProcessor.isKeyword( uri ) ) ) continue;
 
 			let value:any = element[ key ];
 
 			// Validate value
-			if( Class.isKeyword( uri ) ) {
-				if( uri === "@id" && ! Utils.isString( value ) ) throw new Error( `"@id" value must a string.` );
-				if( uri === "@type" && ! Class.isValidType( value ) ) throw new Error( `"@type" value must a string, an array of strings.` );
-				if( uri === "@graph" && ! ( Utils.isObject( value ) || Utils.isArray( value ) ) ) throw new Error( `"@graph" value must not be an object or an array.` );
-				if( uri === "@value" && ( Utils.isObject( value ) || Utils.isArray( value ) ) ) throw new Error( `"@value" value must not be an object or an array.` );
+			if( JSONLDProcessor.isKeyword( uri ) ) {
+				if( uri === "@id" && ! Utils.isString( value ) ) throw new InvalidJSONLDSyntaxError( `"@id" value must a string.` );
+				if( uri === "@type" && ! JSONLDProcessor.isValidType( value ) ) throw new InvalidJSONLDSyntaxError( `"@type" value must a string, an array of strings.` );
+				if( uri === "@graph" && ! ( Utils.isObject( value ) || Utils.isArray( value ) ) ) throw new InvalidJSONLDSyntaxError( `"@graph" value must not be an object or an array.` );
+				if( uri === "@value" && ( Utils.isObject( value ) || Utils.isArray( value ) ) ) throw new InvalidJSONLDSyntaxError( `"@value" value must not be an object or an array.` );
 				if( uri === "@language" ) {
 					if( value === null ) continue;
-					if( ! Utils.isString( value ) ) throw new Error( `"@language" value must be a string.` );
+					if( ! Utils.isString( value ) ) throw new InvalidJSONLDSyntaxError( `"@language" value must be a string.` );
 					value = (<string> value).toLowerCase();
 				}
 
-				if( uri === "@index" && ! Utils.isString( value ) ) throw new Error( `"@index" value must be a string.` );
-				if( uri === "@reverse" && ! Utils.isObject( value ) ) throw new Error( `"@reverse" value must be an object.` );
+				if( uri === "@index" && ! Utils.isString( value ) ) throw new InvalidJSONLDSyntaxError( `"@index" value must be a string.` );
+				if( uri === "@reverse" && ! Utils.isObject( value ) ) throw new InvalidJSONLDSyntaxError( `"@reverse" value must be an object.` );
 				// TODO: Not supported
-				if( uri === "@index" || uri === "@reverse" ) throw new Errors.NotImplementedError( `The SDK does not support "@index" and "@reverse" tags.` );
+				if( uri === "@index" || uri === "@reverse" ) throw new NotImplementedError( `The SDK does not support "@index" and "@reverse" tags.` );
 			}
 
 			let expandedValue:any;
-			let container:ObjectSchema.ContainerType = Class.getContainer( context, key );
+			let container:ObjectSchema.ContainerType = JSONLDProcessor.getContainer( context, key );
 			if( container === ObjectSchema.ContainerType.LANGUAGE && Utils.isObject( value ) ) {
-				expandedValue = Class.expandLanguageMap( value );
+				expandedValue = JSONLDProcessor.expandLanguageMap( value );
 			} else {
 				let nextActiveProperty:string = key;
 
@@ -346,19 +347,19 @@ export class Class {
 					if( isList && activeProperty === "@graph" ) nextActiveProperty = null;
 				}
 
-				expandedValue = Class.process( context, value, nextActiveProperty, isList );
+				expandedValue = JSONLDProcessor.process( context, value, nextActiveProperty, isList );
 			}
 
 			// Drop null values if is not a "@value" property
 			if( expandedValue === null && uri !== "@value" ) continue;
 
-			if( uri !== "@list" && ! RDF.List.Factory.is( expandedValue ) && container === ObjectSchema.ContainerType.LIST ) {
+			if( uri !== "@list" && ! RDFList.is( expandedValue ) && container === ObjectSchema.ContainerType.LIST ) {
 				if( ! Utils.isArray( expandedValue ) ) expandedValue = [ expandedValue ];
 				expandedValue = { "@list": expandedValue };
 			}
 
 			let useArray:boolean = [ "@type", "@id", "@value", "@language" ].indexOf( uri ) === - 1;
-			Class.addValue( expandedElement, uri, expandedValue, { propertyIsArray: useArray } );
+			JSONLDProcessor.addValue( expandedElement, uri, expandedValue, { propertyIsArray: useArray } );
 		}
 
 		if( "@value" in expandedElement ) {
@@ -377,11 +378,11 @@ export class Class {
 			let values:Array<any> = value;
 			if( values.length === 0 && options.propertyIsArray && ! Utils.hasProperty( element, propertyName ) ) element[ propertyName ] = [];
 			for( let item of values ) {
-				Class.addValue( element, propertyName, item, options );
+				JSONLDProcessor.addValue( element, propertyName, item, options );
 			}
 
 		} else if( propertyName in element ) {
-			if( ! Class.hasValue( element, propertyName, value ) ) {
+			if( ! JSONLDProcessor.hasValue( element, propertyName, value ) ) {
 				let items:Array<any> = element[ propertyName ];
 				if( ! Utils.isArray( items ) ) items = element[ propertyName ] = [ items ];
 				items.push( value );
@@ -420,18 +421,18 @@ export class Class {
 	}
 
 	private static hasValue( element:Object, propertyName:string, value:any ):boolean {
-		if( Class.hasProperty( element, propertyName ) ) {
+		if( JSONLDProcessor.hasProperty( element, propertyName ) ) {
 			let item:any = element[ propertyName ];
-			let isList:boolean = RDF.List.Factory.is( item );
+			let isList:boolean = RDFList.is( item );
 
 			if( isList || Utils.isArray( item ) ) {
 				let items:any[] = isList ? item[ "@list" ] : item;
 
 				for( let entry of items ) {
-					if( Class.compareValues( entry, value ) ) return true;
+					if( JSONLDProcessor.compareValues( entry, value ) ) return true;
 				}
 			} else if( ! Utils.isArray( value ) ) {
-				return Class.compareValues( item, value );
+				return JSONLDProcessor.compareValues( item, value );
 			}
 		}
 
@@ -439,5 +440,3 @@ export class Class {
 	}
 
 }
-
-export default Class;

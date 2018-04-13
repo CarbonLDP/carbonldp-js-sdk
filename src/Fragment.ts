@@ -1,48 +1,77 @@
-import * as Document from "./Document";
-import * as Errors from "./Errors";
-import * as Pointer from "./Pointer";
-import * as RDF from "./RDF";
-import * as Resource from "./Resource";
-import * as Utils from "./Utils";
+import { Document } from "./Document";
+import { IllegalActionError } from "./Errors";
+import { ModelDecorator } from "./ModelDecorator";
+import { ModelFactory } from "./ModelFactory";
+import { Resource } from "./Resource";
+import { isObject } from "./Utils";
 
-export interface Class extends Resource.Class {
-	document:Document.Class;
+
+export interface Fragment extends Resource {
+	_document:Document;
 }
 
-export class Factory {
-	static hasClassProperties( resource:Object ):boolean {
-		return (
-			Utils.hasPropertyDefined( resource, "document" )
-		);
-	}
 
-	static create( id:string, document:Document.Class ):Class;
-	static create( document:Document.Class ):Class;
-	static create( idOrDocument:any, document?:Document.Class ):Class {
-		return this.createFrom( {}, idOrDocument, document );
-	}
+export interface FragmentFactory extends ModelFactory<Fragment>, ModelDecorator<Fragment> {
+	isDecorated( object:object ):object is Fragment;
 
-	static createFrom<T extends Object>( object:T, id:string, document:Document.Class ):T & Class;
-	static createFrom<T extends Object>( object:T, document:Document.Class ):T & Class;
-	static createFrom<T extends Object>( object:T, idOrDocument:any, document:Document.Class = null ):T & Class {
-		let id:string = ! ! idOrDocument && Utils.isString( idOrDocument ) ? idOrDocument : "";
-		document = document || idOrDocument;
+	is( object:object ):object is Fragment;
 
-		let resource:Resource.Class = Resource.Factory.createFrom( object, id );
 
-		if( Factory.hasClassProperties( resource ) ) return <any> resource;
+	create( document:Document, id?:string ):Fragment;
 
-		Object.defineProperties( resource, {
-			"document": {
-				writable: false,
+	createFrom<T extends object>( object:T, document:Document, id?:string ):T & Fragment;
+
+	decorate<T extends object>( object:T ):T & Fragment;
+}
+
+export const Fragment:FragmentFactory = {
+	isDecorated( object:object ):object is Fragment {
+		return isObject( object ) &&
+			object.hasOwnProperty( "_document" )
+			;
+	},
+
+	is( object:object ):object is Fragment {
+		return Resource.is( object ) &&
+			Fragment.isDecorated( object )
+			;
+	},
+
+	create( document:Document, id?:string ):Fragment {
+		return this.createFrom( {}, document, id );
+	},
+
+	createFrom<T extends object>( object:T, document:Document, id?:string ):T & Fragment {
+		const fragment:T & Fragment = Fragment.decorate<T>( object );
+
+		if( id ) fragment.id = id;
+		fragment._document = document;
+
+		return fragment;
+	},
+
+	decorate<T extends object>( object:T ):T & Fragment {
+		if( Fragment.isDecorated( object ) ) return object;
+
+		Resource.decorate( object );
+
+		const fragment:T & Fragment = object as T & Fragment;
+		Object.defineProperties( fragment, {
+			"_document": {
+				writable: true,
 				enumerable: false,
 				configurable: true,
-				value: document,
+			},
+			"resolve": {
+				configurable: true,
+				value: resolveFragment,
 			},
 		} );
 
-		return <any> resource;
-	}
-}
+		return fragment;
+	},
+};
 
-export default Class;
+function resolveFragment():never {
+	throw new IllegalActionError( "A fragment cannot be resolved by itself." );
+}

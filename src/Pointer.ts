@@ -1,9 +1,13 @@
-import * as Errors from "./Errors";
-import * as HTTP from "./HTTP";
-import * as PersistedDocument from "./PersistedDocument";
+import { IllegalStateError } from "./Errors/IllegalStateError";
+import { GETOptions } from "./HTTP/Request";
+import { ModelDecorator } from "./ModelDecorator";
+import { ModelFactory } from "./ModelFactory";
+import { PersistedDocument } from "./PersistedDocument";
+import { QueryDocumentBuilder } from "./SPARQL/QueryDocument/QueryDocumentBuilder";
 import * as Utils from "./Utils";
 
-export interface Class {
+
+export interface Pointer {
 	_id:string;
 	_resolved:boolean;
 
@@ -11,17 +15,52 @@ export interface Class {
 
 	isResolved():boolean;
 
-	resolve<T>():Promise<[ T & PersistedDocument.Class, HTTP.Response.Class ]>;
+	resolve<T extends object>( requestOptions?:GETOptions, queryBuilderFn?:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<T & this & PersistedDocument>;
+	resolve<T extends object>( queryBuilderFn?:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<T & this & PersistedDocument>;
 }
 
-export interface Library {
+
+export interface PointerLibrary {
 	hasPointer( id:string ):boolean;
 
-	getPointer( id:string ):Class;
+	getPointer( id:string ):Pointer;
 }
 
-export class Factory {
-	static hasClassProperties( object:Object ):boolean {
+
+export interface PointerValidator {
+	inScope( idOrPointer:string | Pointer ):boolean;
+}
+
+
+export interface PointerFactory extends ModelFactory<Pointer>, ModelDecorator<Pointer> {
+	isDecorated( object:object ):object is Pointer;
+
+	is( object:object ):object is Pointer;
+
+
+	create( id?:string ):Pointer;
+
+	createFrom<T extends object>( object:T, id?:string ):T & Pointer;
+
+	decorate<T extends object>( object:T ):T & Pointer;
+
+
+	areEqual( pointer1:Pointer, pointer2:Pointer ):boolean;
+
+	getIDs( pointers:Pointer[] ):string[];
+}
+
+
+export function isPointerResolved( this:Pointer ):boolean {
+	return this._resolved;
+}
+
+export function resolveStandalonePointer( this:Pointer ):Promise<never> {
+	return Promise.reject( new IllegalStateError( "The pointer has not been assigned to a context." ) );
+}
+
+export const Pointer:PointerFactory = {
+	isDecorated( object:object ):object is Pointer {
 		return (
 			Utils.hasPropertyDefined( object, "_id" ) &&
 			Utils.hasPropertyDefined( object, "_resolved" ) &&
@@ -30,106 +69,77 @@ export class Factory {
 			Utils.hasFunction( object, "isResolved" ) &&
 			Utils.hasPropertyDefined( object, "resolve" )
 		);
-	}
+	},
 
-	static is( value:any ):value is Class {
+	is( object:any ):object is Pointer {
 		return (
-			Utils.isObject( value ) &&
-			Factory.hasClassProperties( value )
+			Utils.isObject( object ) &&
+			Pointer.isDecorated( object )
 		);
-	}
+	},
 
-	static create( id?:string ):Class {
-		return Factory.createFrom( {}, id );
-	}
 
-	static createFrom<T extends Object>( object:T, id?:string ):T & Class {
-		const pointer:T & Class = object as T & Class;
-		pointer.id = id || pointer.id;
+	create( id?:string ):Pointer {
+		return Pointer.createFrom( {}, id );
+	},
 
-		return Factory.decorate<T>( pointer );
-	}
+	createFrom<T extends object>( object:T, id?:string ):T & Pointer {
+		const pointer:T & Pointer = Pointer.decorate<T>( object );
 
-	static decorate<T extends Object>( object:T ):T & Class {
-		const pointer:T & Class = object as T & Class;
-		if( Factory.hasClassProperties( object ) ) return pointer;
+		if( id ) pointer.id = id;
 
+		return pointer;
+	},
+
+	decorate<T extends object>( object:T ):T & Pointer {
+		if( Pointer.isDecorated( object ) ) return object;
+
+		const pointer:T & Pointer = object as T & Pointer;
 		Object.defineProperties( pointer, {
 			"_id": {
 				writable: true,
-				enumerable: false,
 				configurable: true,
-				value: pointer.id,
+				value: pointer.id || "",
 			},
 			"_resolved": {
 				writable: true,
-				enumerable: false,
 				configurable: true,
-				value: ! ! (pointer._resolved as boolean | null),
+				value: pointer._resolved || false,
 			},
 			"id": {
 				enumerable: false,
 				configurable: true,
-				get: function():string {
-					if( ! this._id ) return "";
-					return this._id || "";
+				get( this:Pointer ):string {
+					return this._id;
 				},
-				set: function( value:string ):void {
+				set( this:Pointer, value:string ):void {
 					this._id = value;
 				},
 			},
 			"isResolved": {
-				writable: false,
-				enumerable: false,
 				configurable: true,
-				value: function():boolean {
-					return this._resolved;
-				},
+				value: isPointerResolved,
 			},
 			"resolve": {
 				writable: false,
 				enumerable: false,
 				configurable: true,
-				value: function():Promise<[ Class, HTTP.Response.Class ]> {
-					return Promise.reject<any>( new Errors.NotImplementedError( "A simple pointer cannot be resolved by it self." ) );
-				},
+				value: resolveStandalonePointer,
 			},
 		} );
 
 		return pointer;
-	}
-}
+	},
 
-export class Util {
-	static areEqual( pointer1:Class, pointer2:Class ):boolean {
+
+	areEqual( pointer1:Pointer, pointer2:Pointer ):boolean {
 		return pointer1.id === pointer2.id;
-	}
+	},
 
-	static getIDs( pointers:Class[] ):string[] {
-		let ids:string[] = [];
-		for( let pointer of pointers ) {
-			ids.push( pointer.id );
-		}
-		return ids;
-	}
+	getIDs( pointers:Pointer[] ):string[] {
+		return pointers
+			.map( pointer => pointer.id )
+			;
+	},
+};
 
-	static resolveAll<T>( pointers:Class[] ):Promise<[ (T & PersistedDocument.Class)[], HTTP.Response.Class[] ]> {
-		let promises:Promise<[ T & PersistedDocument.Class, HTTP.Response.Class ]>[] = pointers.map( ( pointer:Class ) => pointer.resolve<T>() );
-		return Promise
-			.all<[ T & PersistedDocument.Class, HTTP.Response.Class ]>( promises )
-			.then<[ (T & PersistedDocument.Class)[], HTTP.Response.Class[] ]>( ( results:[ T & PersistedDocument.Class, HTTP.Response.Class ][] ) => {
-				let resolvedPointers:(T & PersistedDocument.Class)[] = results.map( ( result:[ T & PersistedDocument.Class, HTTP.Response.Class ] ) => result[ 0 ] );
-				let responses:HTTP.Response.Class[] = results.map( ( result:[ T & PersistedDocument.Class, HTTP.Response.Class ] ) => result[ 1 ] );
-
-				return [ resolvedPointers, responses ];
-			} );
-	}
-}
-
-export interface Validator {
-	inScope( id:string ):boolean;
-
-	inScope( pointer:Class ):boolean;
-}
-
-export default Class;

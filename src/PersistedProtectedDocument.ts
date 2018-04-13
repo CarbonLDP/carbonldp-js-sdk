@@ -8,40 +8,50 @@ import {
 	VariableToken,
 } from "sparqler/tokens";
 
-import * as Auth from "./Auth";
-import * as Documents from "./Documents";
-import * as HTTP from "./HTTP";
-import * as NS from "./NS";
-import * as PersistedDocument from "./PersistedDocument";
-import * as Pointer from "./Pointer";
+import { PersistedACL } from "./Auth/PersistedACL";
+import { Documents } from "./Documents";
+import { RequestOptions } from "./HTTP/Request";
+import { ModelDecorator } from "./ModelDecorator";
+import { PersistedDocument } from "./PersistedDocument";
+import { Pointer } from "./Pointer";
 import * as Utils from "./Utils";
+import { CS } from "./Vocabularies/CS";
 
-export interface Class extends PersistedDocument.Class {
-	accessControlList?:Pointer.Class;
 
-	getACL( requestOptions?:HTTP.Request.Options ):Promise<[ Auth.PersistedACL.Class, HTTP.Response.Class ]>;
+export interface PersistedProtectedDocument extends PersistedDocument {
+	accessControlList?:Pointer;
+
+	getACL( requestOptions?:RequestOptions ):Promise<PersistedACL>;
 }
 
-export class Factory {
 
-	static hasClassProperties( object:Object ):boolean {
+export interface PersistedProtectedDocumentFactory extends ModelDecorator<PersistedProtectedDocument> {
+	isDecorated( object:object ):object is PersistedProtectedDocument;
+
+	is( object:object ):object is PersistedProtectedDocument;
+
+	decorate<T extends object>( object:T, documents:Documents ):T & PersistedProtectedDocument;
+}
+
+export const PersistedProtectedDocument:PersistedProtectedDocumentFactory = {
+	isDecorated( object:object ):object is PersistedProtectedDocument {
 		return Utils.isObject( object )
 			&& Utils.hasFunction( object, "getACL" )
 			;
-	}
+	},
 
-	static is( object:Object ):boolean {
-		return Factory.hasClassProperties( object )
-			&& PersistedDocument.Factory.is( object )
+	is( object:object ):object is PersistedProtectedDocument {
+		return PersistedProtectedDocument.isDecorated( object )
+			&& PersistedDocument.is( object )
 			;
-	}
+	},
 
-	static decorate<T extends object>( document:T, documents:Documents.Class ):T & Class {
-		const persistedProtectedDocument:T & Class = document as T & Class;
+	decorate<T extends object>( object:T, documents:Documents ):T & PersistedProtectedDocument {
+		if( PersistedProtectedDocument.isDecorated( object ) ) return object;
 
-		if( Factory.hasClassProperties( document ) ) return persistedProtectedDocument;
-		PersistedDocument.Factory.decorate( document, documents );
+		PersistedDocument.decorate( object, documents );
 
+		const persistedProtectedDocument:T & PersistedProtectedDocument = object as T & PersistedProtectedDocument;
 		Object.defineProperties( persistedProtectedDocument, {
 			"getACL": {
 				writable: false,
@@ -52,11 +62,11 @@ export class Factory {
 		} );
 
 		return persistedProtectedDocument;
-	}
+	},
 
-}
+};
 
-function getACL( this:Class, requestOptions:HTTP.Request.Options = {} ):Promise<[ Auth.PersistedACL.Class, HTTP.Response.Class ]> {
+function getACL( this:Class, requestOptions:HTTP.Request.Options = {} ):Promise<PersistedACL> {
 	if( this.isResolved() ) return this._documents.get( this.accessControlList.id, requestOptions );
 
 	const aclGraphVar:VariableToken = new VariableToken( "g" );
@@ -78,10 +88,8 @@ function getACL( this:Class, requestOptions:HTTP.Request.Options = {} ):Promise<
 	);
 
 	return this._documents
-		._getConstructDocuments<Auth.PersistedACL.Class>( this.id, requestOptions, query )
-		.then<[ Auth.PersistedACL.Class, HTTP.Response.Class ]>( ( [ documents, response ] ) => {
-			return [ documents[ 0 ], response ];
-		} );
+		._getConstructDocuments<PersistedACL>( this.id, requestOptions, query )
+		;
 }
 
 export default Class;

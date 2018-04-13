@@ -1,759 +1,453 @@
+import { IllegalArgumentError } from "../Errors";
+import { BadResponseError } from "../HTTP/Errors/ServerErrors";
+import { Header } from "../HTTP/Header";
+import { RequestOptions } from "../HTTP/Request";
+import { Resource } from "../Resource";
+import { ContextSettings } from "../Settings";
 import {
-	INSTANCE,
-
-	module,
-
-	isDefined,
-
 	clazz,
-	method,
-
-	hasConstructor,
-	hasMethod,
 	hasSignature,
-	hasDefaultExport,
-} from "./../test/JasmineExtender";
-
-import AbstractContext from "./../AbstractContext";
-import * as Errors from "./../Errors";
-import * as HTTP from "./../HTTP";
+	INSTANCE,
+	isDefined,
+	method,
+	module,
+} from "../test/JasmineExtender";
+import { C } from "../Vocabularies/C";
+import { CS } from "../Vocabularies/CS";
+import { XSD } from "../Vocabularies/XSD";
+import { AbstractContext } from "./../AbstractContext";
 import * as Utils from "./../Utils";
-import * as NS from "./../NS";
-import * as PersistedUser from "./PersistedUser";
-import * as Token from "./Token";
-import UsernameAndPasswordToken from "./UsernameAndPasswordToken";
+import { BasicToken } from "./BasicToken";
 
-import * as TokenAuthenticator from "./TokenAuthenticator";
-import DefaultExport from "./TokenAuthenticator";
+import { TokenAuthenticator } from "./TokenAuthenticator";
 
-describe( module( "Carbon/Auth/TokenAuthenticator" ), ():void => {
+import {
+	TokenCredentials,
+	TokenCredentialsBase,
+} from "./TokenCredentials";
 
-	it( isDefined(), ():void => {
-		expect( TokenAuthenticator ).toBeDefined();
-		expect( Utils.isObject( TokenAuthenticator ) ).toEqual( true );
-	} );
-
-	it( "should have token container constant", () => {
-		expect( TokenAuthenticator.TOKEN_CONTAINER ).toBeDefined();
-		expect( TokenAuthenticator.TOKEN_CONTAINER ).toBe( "auth-tokens/" );
-	} );
+describe( module( "carbonldp/Auth/TokenAuthenticator" ), ():void => {
 
 	describe( clazz(
-		"Carbon.Auth.TokenAuthenticator.Class",
-		"Authenticates requests using JSON Web Token (JWT) Authentication.", [
-			"Carbon.Auth.Authenticator.Class<Carbon.Auth.UsernameAndPasswordToken.Class>",
+		"CarbonLDP.Auth.TokenAuthenticator",
+		"Authenticates requests using JSON Web TokenCredentials (JWT) Authentication.",
+		[
+			"CarbonLDP.Auth.Authenticator.Class<CarbonLDP.Auth.BasicToken, CarbonLDP.Auth.TokenCredentials>",
 		]
 	), ():void => {
 
+		let context:AbstractContext;
 		beforeEach( function():void {
 			jasmine.Ajax.install();
+
+			context = new class extends AbstractContext {
+				protected _baseURI:string = "https://example.com/";
+				protected settings:ContextSettings = {
+					paths: {
+						users: {
+							slug: "users/",
+							paths: { me: "me/" },
+						},
+					},
+				};
+			};
 		} );
 
 		afterEach( function():void {
 			jasmine.Ajax.uninstall();
 		} );
 
+		function createAuthenticatorWith( credentials?:TokenCredentials ):TokenAuthenticator {
+			return new class extends TokenAuthenticator {
+				constructor() {
+					super( context );
+					if( credentials ) this._credentials = credentials;
+				}
+			};
+		}
+
+
 		it( isDefined(), ():void => {
-			expect( TokenAuthenticator.Class ).toBeDefined();
-			expect( Utils.isFunction( TokenAuthenticator.Class ) ).toEqual( true );
+			expect( TokenAuthenticator ).toBeDefined();
+			expect( Utils.isFunction( TokenAuthenticator ) ).toEqual( true );
 		} );
 
-		it( hasConstructor( [
-			{ name: "context", type: "Carbon.Context.Class", description: "The context where to authenticate the user." },
-		] ), ():void => {
-			class MockedContext extends AbstractContext {
-				protected _baseURI:string;
-
-				constructor() {
-					super();
-					this._baseURI = "http://example.com/";
-					this.setSetting( "system.container", ".system/" );
-				}
-			}
-
-			let authenticator:TokenAuthenticator.Class = new TokenAuthenticator.Class( new MockedContext() );
-
-			expect( ! ! authenticator ).toEqual( true );
-			expect( authenticator instanceof TokenAuthenticator.Class ).toEqual( true );
-		} );
-
-		it( hasMethod(
-			INSTANCE,
-			"isAuthenticated",
-			"Returns true if the instance contains stored credentials.",
-			{ type: "boolean" }
-		), ():void => {
-			class MockedContext extends AbstractContext {
-				protected _baseURI:string;
-
-				constructor() {
-					super();
-					this._baseURI = "http://example.com/";
-					this.setSetting( "system.container", ".system/" );
-				}
-			}
-
-			let authenticator:TokenAuthenticator.Class = new TokenAuthenticator.Class( new MockedContext() );
-
-			expect( "isAuthenticated" in authenticator ).toEqual( true );
-			expect( Utils.isFunction( authenticator.isAuthenticated ) ).toEqual( true );
-
-			expect( authenticator.isAuthenticated() ).toBe( false );
-
-			let expirationTime:Date = new Date();
-			expirationTime.setDate( expirationTime.getDate() + 1 );
-			(<any> authenticator)._credentials = {
-				key: "token-value",
-				expirationTime: expirationTime,
-			};
-			expect( authenticator.isAuthenticated() ).toBe( true );
-
-			(<any> authenticator)._credentials = {
-				key: "token-value",
-				expirationTime: new Date(),
-			};
-			expect( authenticator.isAuthenticated() ).toBe( false );
-
-			expirationTime = new Date();
-			expirationTime.setDate( expirationTime.getDate() - 1 );
-			(<any> authenticator)._credentials = {
-				key: "token-value",
-				expirationTime: expirationTime,
-			};
-			expect( authenticator.isAuthenticated() ).toBe( false );
-		} );
-
-		describe( method(
-			INSTANCE,
-			"authenticate"
-		), ():void => {
+		describe( method( INSTANCE, "isAuthenticated" ), ():void => {
 
 			it( hasSignature(
-				"Stores credentials to authenticate future requests.", [
-					{ name: "authenticationToken", type: "Carbon.Auth.UsernameAndPasswordToken" },
-				],
-				{ type: "Promise<Carbon.Auth.Token.Class>" }
-			), ( done:{ ():void, fail:( error:Error ) => void } ):void => {
+				"Returns true if the instance contains stored credentials.",
+				{ type: "boolean" }
+			), ():void => {} );
 
-				// Property Integrity
-				(() => {
-					class MockedContext extends AbstractContext {
-						protected _baseURI:string;
+			it( "should exists", ():void => {
+				expect( TokenAuthenticator.prototype.isAuthenticated ).toBeDefined();
+				expect( TokenAuthenticator.prototype.isAuthenticated ).toEqual( jasmine.any( Function ) );
+			} );
 
-						constructor() {
-							super();
-							this._baseURI = "http://example.com/";
-							this.setSetting( "system.container", ".system/" );
-						}
-					}
-					let context:AbstractContext = new MockedContext();
-					let authenticator:TokenAuthenticator.Class = new TokenAuthenticator.Class( context );
+			it( "should return false when no credentials", ():void => {
+				const authenticator:TokenAuthenticator = createAuthenticatorWith();
+				expect( authenticator.isAuthenticated() ).toBe( false );
+			} );
 
-					expect( "authenticate" in authenticator ).toEqual( true );
-					expect( Utils.isFunction( authenticator.authenticate ) ).toEqual( true );
-				})();
+			it( "should return false when null credentials", ():void => {
+				const authenticator:TokenAuthenticator = createAuthenticatorWith( null );
+				expect( authenticator.isAuthenticated() ).toBe( false );
+			} );
 
-				let promises:Promise<void>[] = [];
+			it( "should return true when not expired credentials", ():void => {
+				const expires:Date = new Date();
+				expires.setDate( expires.getDate() + 1 );
 
-				// Successful Authentication
-				(() => {
-					class SuccessfulContext extends AbstractContext {
-						protected _baseURI:string;
+				const credentials:TokenCredentials = Resource.createFrom( {
+					token: "token-value",
+					expires: expires,
+				} );
 
-						constructor() {
-							super();
-							this._baseURI = "http://successful.example.com/";
-							this.setSetting( "system.container", ".system/" );
-						}
-					}
+				const authenticator:TokenAuthenticator = createAuthenticatorWith( credentials );
+				expect( authenticator.isAuthenticated() ).toBe( true );
+			} );
 
-					let expirationTime:Date = new Date();
-					expirationTime.setDate( expirationTime.getDate() + 1 );
-					jasmine.Ajax.stubRequest( "http://successful.example.com/.system/auth-tokens/", null, "POST" ).andReturn( {
-						status: 200,
-						responseText: `[ {
-							"@id": "_:00",
-							"@type": [
-								"${ NS.C.Class.ResponseMetadata }",
-								"${ NS.C.Class.VolatileResource }"
-							],
-							"${ NS.C.Predicate.documentMetadata }": [ {
-								"@id": "_:01"
-							} ]
-						}, {
-							"@id": "_:01",
-							"@type": [
-								"${ NS.C.Class.DocumentMetadata }",
-								"${ NS.C.Class.VolatileResource }"
-							],
-							"${ NS.C.Predicate.eTag }": [ {
-								"@value": "\\"1234567890\\""
-							} ],
-							"${ NS.C.Predicate.relatedDocument }": [ {
-								"@id": "http://successful.example.com/users/my-user/"
-							} ]
-						}, {
-							"@id": "_:02",
-							"@type": [
-								"${ NS.CS.Class.Token }",
-								"${ NS.C.Class.VolatileResource }"
-							],
-							"${ NS.CS.Predicate.tokenKey }": [ {
-								"@value": "token-value"
-							} ],
-							"${ NS.CS.Predicate.expirationTime }": {
-								"@value": "${ expirationTime.toISOString() }",
-								"@type": "${ NS.XSD.DataType.dateTime }"
-							},
-							"${ NS.CS.Predicate.credentialsOf }": [ {
-								"@id": "http://successful.example.com/users/my-user/"
-							} ]
-						}, {
-							"@id": "http://successful.example.com/users/my-user/",
-							"@graph": [ {
-								"@id": "http://successful.example.com/users/my-user/",
-								"@type": [ "${ NS.CS.Class.User }" ],
-								"${ NS.CS.Predicate.name }": [ {
-									"@value": "My User Name",
-									"@type": "${ NS.XSD.DataType.string }"
-								} ],
-								"${ NS.VCARD.Predicate.email }": [ {
-									"@value": "my-user@users.com",
-									"@type": "${ NS.XSD.DataType.string }"
-								} ],
-								"${ NS.CS.Predicate.enabled }": [ {
-									"@value": "true",
-									"@type": "${ NS.XSD.DataType.boolean }"
+			it( "should return true when expired credentials with by current time", ():void => {
+				const expires:Date = new Date();
+				const credentials:TokenCredentials = Resource.createFrom( {
+					token: "token-value",
+					expires: expires,
+				} );
+
+				const authenticator:TokenAuthenticator = createAuthenticatorWith( credentials );
+				expect( authenticator.isAuthenticated() ).toBe( false );
+			} );
+
+			it( "should return true when expired credentials with by one day", ():void => {
+				const expires:Date = new Date();
+				expires.setDate( expires.getDate() - 1 );
+
+				const credentials:TokenCredentials = Resource.createFrom( {
+					token: "token-value",
+					expires: expires,
+				} );
+
+				const authenticator:TokenAuthenticator = createAuthenticatorWith( credentials );
+				expect( authenticator.isAuthenticated() ).toBe( false );
+			} );
+
+		} );
+
+		describe( method( INSTANCE, "authenticate" ), ():void => {
+
+			let expires:Date;
+			beforeEach( ():void => {
+				expires = new Date( Date.now() + 24 * 60 * 60 * 1000 );
+
+				jasmine.Ajax.stubRequest( "https://example.com/users/me/" ).andReturn( {
+					status: 200,
+					responseHeaders: {
+						"eTag": `"1-12345"`,
+						"Preference-Applied": `include="${ CS.PreferAuthToken }"`,
+					},
+					responseText: `[ {
+						"@id": "_:1",
+						"@type": [ "${ C.ResponseMetadata }", "${ C.VolatileResource }" ],
+						"${ CS.authToken }": [ {
+							"@id": "_:2"
+						} ]
+					}, {
+						"@id": "_:2",
+						"@type": [ "${ CS.TokenCredentials }", "${ C.VolatileResource }" ],
+						"${ CS.token }": [ {
+							"@value": "token-key"
+						} ],
+						"${ CS.expires }": [ {
+							"@value": "${ expires.toISOString() }",
+							"@type": "${ XSD.dateTime }"
+						} ]
+					}, {
+						"@id": "https://example.com/users/me/",
+						"@graph": [
+							{
+								"@id": "https://example.com/users/me/",
+								"@type": [ "${ C.Document }", "${ CS.AuthenticatedUserInformationAccessor }" ],
+								"${ CS.authenticatedUserMetadata }": [ {
+									"@id": "_:1"
 								} ]
-							} ]
-						} ]`,
-					} );
+							},
+							{
+								"@id": "_:1",
+								"@type": [ "${ CS.AuthenticatedUserMetadata }", "${ C.VolatileResource }" ],
+								"${ CS.user }": [ {
+									"@id": "https://example.com/users/the-user/"
+								} ]
+							}
+						]
+					} ]`,
+				} );
+				jasmine.Ajax.stubRequest( "https://example.com/users/the-user/" ).andReturn( {
+					status: 200,
+					responseHeaders: {
+						"eTag": `"2-12345"`,
+					},
+					responseText: `{
+						"@id": "https://example.com/users/the-user/",
+						"@graph": [
+							{
+								"@id": "https://example.com/users/the-user/",
+								"@type": [
+									"${ C.Document }",
+									"${ CS.User }"
+								],
+								"${ CS.name }": [ {
+									"@value": "The user name"
+								} ]
+							}
+						]
+					}`,
+				} );
+			} );
 
-					let context:SuccessfulContext = new SuccessfulContext();
-					let authenticator:TokenAuthenticator.Class = new TokenAuthenticator.Class( context );
+			it( hasSignature(
+				"When a token is provided credentials will be requested, in other case the credentials provided will be validated and stored.",
+				[
+					{ name: "tokenOrCredentials", type: "CarbonLDP.Auth.BasicToken | CarbonLDP.Auth.TokenCredentialsBase" },
+				],
+				{ type: "Promise<CarbonLDP.Auth.TokenCredentials>" }
+			), ():void => {} );
 
-					promises.push( authenticator.authenticate( new UsernameAndPasswordToken( "user", "pass" ) ).then( ( token:Token.Class ):void => {
+			it( "should exists", ():void => {
+				expect( TokenAuthenticator.prototype.authenticate ).toBeDefined();
+				expect( TokenAuthenticator.prototype.authenticate ).toEqual( jasmine.any( Function ) );
+			} );
+
+			it( "should return credentials when authentication token", ( done:DoneFn ):void => {
+				const authenticator:TokenAuthenticator = new TokenAuthenticator( context );
+				authenticator
+					.authenticate( new BasicToken( "user", "pass" ) )
+					.then( ( token:TokenCredentials ):void => {
+						expect( token ).toBeDefined();
+						expect( token ).toEqual( jasmine.objectContaining( {
+							types: jasmine.arrayContaining( [ CS.TokenCredentials ] ) as any as string[],
+							token: "token-key",
+							expires: expires,
+						} ) );
+
+						done();
+					} )
+					.catch( done.fail );
+			} );
+
+			it( "should set authenticated when authentication token", ( done:DoneFn ):void => {
+				const authenticator:TokenAuthenticator = new TokenAuthenticator( context );
+				authenticator
+					.authenticate( new BasicToken( "user", "pass" ) )
+					.then( ():void => {
 						expect( authenticator.isAuthenticated() ).toEqual( true );
 
-						expect( token ).toBeDefined();
-						expect( token ).not.toBeNull();
-						expect( Token.Factory.is( token ) ).toEqual( true );
-
-						expect( PersistedUser.Factory.is( token.user ) ).toBe( true );
-					} ) );
-				})();
-
-				// Unsuccessful Authentication
-				(() => {
-					class UnsuccessfulContext extends AbstractContext {
-						protected _baseURI:string;
-
-						constructor() {
-							super();
-							this._baseURI = "http://unsuccessful.example.com/";
-							this.setSetting( "system.container", ".system/" );
-						}
-					}
-
-					let expirationTime:Date = new Date();
-					expirationTime.setDate( expirationTime.getDate() + 1 );
-					jasmine.Ajax.stubRequest( "http://unsuccessful.example.com/.system/auth-tokens/", null, "POST" ).andReturn( {
-						status: 401,
-					} );
-
-					let context:UnsuccessfulContext = new UnsuccessfulContext();
-					let authenticator:TokenAuthenticator.Class = new TokenAuthenticator.Class( context );
-
-					promises.push( authenticator.authenticate( new UsernameAndPasswordToken( "user", "pass" ) ).then( () => {
-						done.fail( new Error( "The authentication should have been unsuccessful." ) );
-					}, ( error:Error ) => {
-						expect( error instanceof HTTP.Errors.UnauthorizedError ).toEqual( true );
-
-						expect( authenticator.isAuthenticated() ).toEqual( false );
-					} ) );
-				})();
-
-				Promise.all( promises ).then( done, done.fail );
+						done();
+					} )
+					.catch( done.fail );
 			} );
 
-			it( hasSignature(
-				"Stores credentials to authenticate future requests.", [
-					{ name: "token", type: "Carbon.Auth.Token.Class" },
-				],
-				{ type: "Promise<Carbon.Auth.Token.Class>" }
-			), ( done:{ ():void, fail:( error:Error ) => void } ):void => {
+			it( "should call _parseErrorResponse when request error", ( done:DoneFn ):void => {
+				jasmine.Ajax.stubRequest( "https://example.com/users/me/" ).andReturn( {
+					status: 500,
+					responseText: "",
+				} );
 
-				class MockedContext extends AbstractContext {
-					protected _baseURI:string;
+				const expectedError:Error = new Error( "Error message" );
+				const spy:jasmine.Spy = spyOn( context.documents, "_parseErrorResponse" )
+					.and.callFake( () => Promise.reject( expectedError ) );
 
-					constructor() {
-						super();
-						this._baseURI = "http://example.com/";
-						this.setSetting( "system.container", ".system/" );
-					}
-				}
-				let context:AbstractContext = new MockedContext();
+				const authenticator:TokenAuthenticator = new TokenAuthenticator( context );
+				authenticator
+					.authenticate( new BasicToken( "user", "pass" ) )
+					.then( () => done.fail( "Should not resolve" ) )
+					.catch( error => {
+						expect( spy ).toHaveBeenCalled();
 
-				// Property Integrity
-				(() => {
-					let authenticator:TokenAuthenticator.Class = new TokenAuthenticator.Class( context );
+						expect( error ).toBeDefined();
+						expect( error ).toBe( expectedError );
 
-					expect( "authenticate" in authenticator ).toEqual( true );
-					expect( Utils.isFunction( authenticator.authenticate ) ).toEqual( true );
-				})();
-
-				let promises:Promise<void>[] = [];
-
-				// Successful Authentication
-				(() => {
-					let expirationTime:Date = new Date();
-					expirationTime.setDate( expirationTime.getDate() + 1 );
-					let tokenString:string = `{
-						"expirationTime": "${ expirationTime.toISOString() }",
-						"id": "",
-						"key": "token-value",
-						"types": [ "${ NS.CS.Class.Token }" ],
-						"user": { "id": "http://exmple.com/users/my-user/" }
-					}`;
-					let authenticator:TokenAuthenticator.Class = new TokenAuthenticator.Class( context );
-
-					promises.push( authenticator.authenticate( JSON.parse( tokenString ) )
-						.then( ( tokenCredentials:Token.Class ):void => {
-							expect( authenticator.isAuthenticated() ).toEqual( true );
-
-							expect( tokenCredentials ).toBeDefined();
-							expect( tokenCredentials ).not.toBeNull();
-							expect( Token.Factory.hasRequiredValues( tokenCredentials ) ).toEqual( true );
-						} )
-					);
-				})();
-				(() => {
-					let expirationTime:Date = new Date();
-					expirationTime.setDate( expirationTime.getDate() + 1 );
-					let tokenString:string = `{
-						"expirationTime": "${expirationTime.toISOString()}",
-						"id": "",
-						"key": "token-value",
-						"types": [ "${ NS.CS.Class.Token }" ]
-					}`;
-					let authenticator:TokenAuthenticator.Class = new TokenAuthenticator.Class( context );
-
-					promises.push( authenticator.authenticate( JSON.parse( tokenString ) )
-						.then( ( tokenCredentials:Token.Class ):void => {
-							expect( authenticator.isAuthenticated() ).toEqual( true );
-
-							expect( tokenCredentials ).toBeDefined();
-							expect( tokenCredentials ).not.toBeNull();
-							expect( Token.Factory.hasRequiredValues( tokenCredentials ) ).toEqual( true );
-						} )
-					);
-				})();
-
-				// Unsuccessful Authentication, time expired
-				(() => {
-					let expirationTime:Date = new Date();
-					expirationTime.setDate( expirationTime.getDate() - 1 );
-					let tokenString:string = `{
-						"expirationTime": "${ expirationTime.toISOString() }",
-						"id": "",
-						"key": "token-value",
-						"types": [ "${ NS.CS.Class.Token }" ],
-						"user": { "id": "http://exmple.com/users/my-user/" }
-					}`;
-					let authenticator:TokenAuthenticator.Class = new TokenAuthenticator.Class( context );
-
-					promises.push( authenticator.authenticate( JSON.parse( tokenString ) ).then( () => {
-						done.fail( new Error( "The authentication should have been unsuccessful." ) );
-					}, ( error:Error ) => {
-						expect( error instanceof Errors.IllegalArgumentError ).toEqual( true );
-
-						expect( authenticator.isAuthenticated() ).toEqual( false );
-					} ) );
-				})();
-
-				Promise.all( promises ).then( done, done.fail );
+						done();
+					} )
+				;
 			} );
 
-		} );
-
-		it( hasMethod(
-			INSTANCE,
-			"addAuthentication",
-			"Adds the Token Authentication header to the passed request options object.\n" +
-			"The `Carbon.HTTP.Request.Options` provided is returned without modifications if it already has an authentication header.", [
-				{ name: "requestOptions", type: "Carbon.HTTP.Request.Options", description: "Request options object to add Authentication headers." },
-			],
-			{ type: "Carbon.HTTP.Request.Options", description: "The request options with the added authentication headers." }
-		), ():void => {
-
-			// Property Integrity
-			(() => {
-				class MockedContext extends AbstractContext {
-					protected _baseURI:string;
-
-					constructor() {
-						super();
-						this._baseURI = "http://example.com/";
-						this.setSetting( "system.container", ".system/" );
-					}
-				}
-
-				let authenticator:TokenAuthenticator.Class = new TokenAuthenticator.Class( new MockedContext() );
-
-				expect( "addAuthentication" in authenticator ).toEqual( true );
-				expect( Utils.isFunction( authenticator.addAuthentication ) ).toEqual( true );
-			})();
-
-			(() => {
-				class Context extends AbstractContext {
-					protected _baseURI:string;
-
-					constructor() {
-						super();
-						this._baseURI = "http://successful.example.com/";
-						this.setSetting( "system.container", ".system/" );
-					}
-				}
-
-				let context:AbstractContext = new Context();
-				let authenticator:TokenAuthenticator.Class = new TokenAuthenticator.Class( context );
-
-				let expirationTime:Date = new Date();
-				expirationTime.setDate( expirationTime.getDate() + 1 );
-				(<any> authenticator)._credentials = {
-					key: "token-value",
-					expirationTime: expirationTime,
-				};
-
-				let requestOptions:HTTP.Request.Options = authenticator.addAuthentication( {} );
-
-				expect( ! ! requestOptions ).toEqual( true );
-				expect( Utils.isObject( requestOptions ) ).toEqual( true );
-				expect( "headers" in requestOptions ).toEqual( true );
-				expect( requestOptions.headers instanceof Map ).toEqual( true );
-				expect( requestOptions.headers.has( "authorization" ) ).toEqual( true );
-
-				let authorizationHeader:HTTP.Header.Class = requestOptions.headers.get( "authorization" );
-
-				expect( authorizationHeader instanceof HTTP.Header.Class ).toEqual( true );
-				expect( authorizationHeader.values.length ).toEqual( 1 );
-
-				let authorization:string = authorizationHeader.toString();
-
-				expect( Utils.S.startsWith( authorization, "Token " ) ).toEqual( true );
-				expect( authorization.substring( 6 ) ).toEqual( "token-value" );
-			})();
-
-			(() => {
-				class Context extends AbstractContext {
-					protected _baseURI:string;
-
-					constructor() {
-						super();
-						this._baseURI = "http://successfull.example.com/";
-						this.setSetting( "system.container", ".system/" );
-					}
-				}
-
-				let context:AbstractContext = new Context();
-				let authenticator:TokenAuthenticator.Class = new TokenAuthenticator.Class( context );
-
-				let expirationTime:Date = new Date();
-				expirationTime.setDate( expirationTime.getDate() + 1 );
-				(<any> authenticator)._credentials = {
-					key: "token-value",
-					expirationTime: expirationTime,
-				};
-
-				let requestOptions:HTTP.Request.Options = {
-					headers: new Map<string, HTTP.Header.Class>(),
-				};
-				authenticator.addAuthentication( requestOptions );
-
-				expect( ! ! requestOptions ).toEqual( true );
-				expect( Utils.isObject( requestOptions ) ).toEqual( true );
-				expect( "headers" in requestOptions ).toEqual( true );
-				expect( requestOptions.headers instanceof Map ).toEqual( true );
-				expect( requestOptions.headers.size ).toEqual( 1 );
-				expect( requestOptions.headers.has( "authorization" ) ).toEqual( true );
-
-				let authorizationHeader:HTTP.Header.Class = requestOptions.headers.get( "authorization" );
-
-				expect( authorizationHeader instanceof HTTP.Header.Class ).toEqual( true );
-				expect( authorizationHeader.values.length ).toEqual( 1 );
-
-				let authorization:string = authorizationHeader.toString();
-
-				expect( Utils.S.startsWith( authorization, "Token " ) ).toEqual( true );
-				expect( authorization.substring( 6 ) ).toEqual( "token-value" );
-			})();
-
-			(() => {
-				class Context extends AbstractContext {
-					protected _baseURI:string;
-
-					constructor() {
-						super();
-						this._baseURI = "http://successfull.example.com/";
-						this.setSetting( "system.container", ".system/" );
-					}
-				}
-
-				let context:AbstractContext = new Context();
-				let authenticator:TokenAuthenticator.Class = new TokenAuthenticator.Class( context );
-
-				let expirationTime:Date = new Date();
-				expirationTime.setDate( expirationTime.getDate() + 1 );
-				(<any> authenticator)._credentials = {
-					key: "token-value",
-					expirationTime: expirationTime,
-				};
-
-				let requestOptions:HTTP.Request.Options = {
-					headers: new Map<string, HTTP.Header.Class>(),
-				};
-				requestOptions.headers.set( "content-type", new HTTP.Header.Class( "text/plain" ) );
-				requestOptions.headers.set( "accept", new HTTP.Header.Class( "text/plain" ) );
-				authenticator.addAuthentication( requestOptions );
-
-				expect( ! ! requestOptions ).toEqual( true );
-				expect( Utils.isObject( requestOptions ) ).toEqual( true );
-				expect( "headers" in requestOptions ).toEqual( true );
-				expect( requestOptions.headers instanceof Map ).toEqual( true );
-				expect( requestOptions.headers.size ).toEqual( 3 );
-				expect( requestOptions.headers.has( "content-type" ) ).toEqual( true );
-				expect( requestOptions.headers.has( "accept" ) ).toEqual( true );
-				expect( requestOptions.headers.has( "authorization" ) ).toEqual( true );
-
-				let authorizationHeader:HTTP.Header.Class = requestOptions.headers.get( "authorization" );
-
-				expect( authorizationHeader instanceof HTTP.Header.Class ).toEqual( true );
-				expect( authorizationHeader.values.length ).toEqual( 1 );
-
-				let authorization:string = authorizationHeader.toString();
-
-				expect( Utils.S.startsWith( authorization, "Token " ) ).toEqual( true );
-				expect( authorization.substring( 6 ) ).toEqual( "token-value" );
-			})();
-
-			(() => {
-				class Context extends AbstractContext {
-					protected _baseURI:string;
-
-					constructor() {
-						super();
-						this._baseURI = "http://successful.example.com/";
-						this.setSetting( "system.container", ".system/" );
-					}
-				}
-
-				let context:AbstractContext = new Context();
-				let authenticator:TokenAuthenticator.Class = new TokenAuthenticator.Class( context );
-
-				let expirationTime:Date = new Date();
-				expirationTime.setDate( expirationTime.getDate() + 1 );
-				(<any> authenticator)._credentials = {
-					key: "token-value",
-					expirationTime: expirationTime,
-				};
-
-				let requestOptions:HTTP.Request.Options = {
-					headers: new Map<string, HTTP.Header.Class>(),
-				};
-				requestOptions.headers.set( "content-type", new HTTP.Header.Class( "text/plain" ) );
-				requestOptions.headers.set( "accept", new HTTP.Header.Class( "text/plain" ) );
-				requestOptions.headers.set( "authorization", new HTTP.Header.Class( "Another another-type-of-authorization" ) );
-				authenticator.addAuthentication( requestOptions );
-
-				expect( ! ! requestOptions ).toEqual( true );
-				expect( Utils.isObject( requestOptions ) ).toEqual( true );
-				expect( "headers" in requestOptions ).toEqual( true );
-				expect( requestOptions.headers instanceof Map ).toEqual( true );
-				expect( requestOptions.headers.size ).toEqual( 3 );
-				expect( requestOptions.headers.has( "content-type" ) ).toEqual( true );
-				expect( requestOptions.headers.has( "accept" ) ).toEqual( true );
-				expect( requestOptions.headers.has( "authorization" ) ).toEqual( true );
-
-				let authorizationHeader:HTTP.Header.Class = requestOptions.headers.get( "authorization" );
-
-				expect( authorizationHeader instanceof HTTP.Header.Class ).toEqual( true );
-				expect( authorizationHeader.values.length ).toEqual( 1 );
-
-				let authorization:string = authorizationHeader.toString();
-
-				expect( Utils.S.startsWith( authorization, "Another " ) ).toEqual( true );
-				expect( authorization.substring( 8 ) ).toEqual( "another-type-of-authorization" );
-			})();
-
-			(() => {
-				class Context extends AbstractContext {
-					protected _baseURI:string;
-
-					constructor() {
-						super();
-						this._baseURI = "http://successful.example.com/";
-						this.setSetting( "system.container", ".system/" );
-					}
-				}
-
-				let context:AbstractContext = new Context();
-				let authenticator:TokenAuthenticator.Class = new TokenAuthenticator.Class( context );
-
-				let expirationTime:Date = new Date();
-				expirationTime.setDate( expirationTime.getDate() + 1 );
-				(<any> authenticator)._credentials = {
-					key: "token-value",
-					expirationTime: expirationTime,
-				};
-
-				let requestOptions:HTTP.Request.Options = {
-					headers: new Map<string, HTTP.Header.Class>(),
-				};
-				requestOptions.headers.set( "content-type", new HTTP.Header.Class( "text/plain" ) );
-				requestOptions.headers.set( "accept", new HTTP.Header.Class( "text/plain" ) );
-				requestOptions.headers.set( "authorization", new HTTP.Header.Class( "Token another-token-value" ) );
-				authenticator.addAuthentication( requestOptions );
-
-				expect( ! ! requestOptions ).toEqual( true );
-				expect( Utils.isObject( requestOptions ) ).toEqual( true );
-				expect( "headers" in requestOptions ).toEqual( true );
-				expect( requestOptions.headers instanceof Map ).toEqual( true );
-				expect( requestOptions.headers.size ).toEqual( 3 );
-				expect( requestOptions.headers.has( "content-type" ) ).toEqual( true );
-				expect( requestOptions.headers.has( "accept" ) ).toEqual( true );
-				expect( requestOptions.headers.has( "authorization" ) ).toEqual( true );
-
-				let authorizationHeader:HTTP.Header.Class = requestOptions.headers.get( "authorization" );
-
-				expect( authorizationHeader instanceof HTTP.Header.Class ).toEqual( true );
-				expect( authorizationHeader.values.length ).toEqual( 1 );
-
-				let authorization:string = authorizationHeader.toString();
-
-				expect( Utils.S.startsWith( authorization, "Token " ) ).toEqual( true );
-				expect( authorization.substring( 6 ) ).toEqual( "another-token-value" );
-			})();
-
-		} );
-
-		it( hasMethod( INSTANCE, "clearAuthentication", `
-			Clears any saved credentials and restores the Authenticator to its initial state.
-		` ), ( done:{ ():void; fail:( error:any ) => void } ):void => {
-			// Property Integrity
-			(() => {
-				class MockedContext extends AbstractContext {
-					protected _baseURI:string;
-
-					constructor() {
-						super();
-						this._baseURI = "http://example.com/";
-						this.setSetting( "system.container", ".system/" );
-					}
-				}
-				let authenticator:TokenAuthenticator.Class = new TokenAuthenticator.Class( new MockedContext() );
-
-				expect( "clearAuthentication" in authenticator ).toEqual( true );
-				expect( Utils.isFunction( authenticator.clearAuthentication ) ).toEqual( true );
-
-				expect( () => authenticator.clearAuthentication() ).not.toThrow();
-			})();
-
-			let promises:Promise<void>[] = [];
-
-			// Successful Authentication
-			(() => {
-				class SuccessfulContext extends AbstractContext {
-					protected _baseURI:string;
-
-					constructor() {
-						super();
-						this._baseURI = "http://successful.example.com/";
-						this.setSetting( "system.container", ".system/" );
-					}
-				}
-
-				let expirationTime:Date = new Date();
-				expirationTime.setDate( expirationTime.getDate() + 1 );
-				jasmine.Ajax.stubRequest( "http://successful.example.com/.system/auth-tokens/", null, "POST" ).andReturn( {
+
+			it( "should return same credentials when valid token credentials", ( done:DoneFn ):void => {
+				const credentials:TokenCredentials = TokenCredentials.createFrom( {
+					token: "token-value",
+					expires: expires,
+				} );
+
+				const authenticator:TokenAuthenticator = new TokenAuthenticator( context );
+				authenticator
+					.authenticate( credentials )
+					.then( ( tokenCredentials:TokenCredentials ):void => {
+						expect( tokenCredentials ).toBeDefined();
+						expect( tokenCredentials ).toBe( credentials );
+
+						done();
+					} )
+					.catch( done.fail )
+				;
+			} );
+
+			it( "should set authenticated when valid token credentials", ( done:DoneFn ):void => {
+				const credentials:TokenCredentials = TokenCredentials.createFrom( {
+					token: "token-value",
+					expires: expires,
+				} );
+
+				const authenticator:TokenAuthenticator = new TokenAuthenticator( context );
+				authenticator
+					.authenticate( credentials )
+					.then( ():void => {
+						expect( authenticator.isAuthenticated() ).toBe( true );
+
+						done();
+					} )
+					.catch( done.fail )
+				;
+			} );
+
+			it( "should throw error when invalid expiration date", ( done:DoneFn ):void => {
+				const credentials:TokenCredentials = TokenCredentials.createFrom( {
+					token: "token-value",
+					expires: new Date( Date.now() - 24 * 60 * 60 * 1000 ),
+				} );
+
+				const authenticator:TokenAuthenticator = new TokenAuthenticator( context );
+				authenticator
+					.authenticate( credentials )
+					.then( ():void => {
+						done.fail( "Should not resolve." );
+					} )
+					.catch( error => {
+						expect( () => { throw error; } ).toThrowError( IllegalArgumentError, "The token has already expired." );
+
+						done();
+					} )
+				;
+			} );
+
+			it( "should not authenticate when invalid expiration date", ( done:DoneFn ):void => {
+				const credentials:TokenCredentials = TokenCredentials.createFrom( {
+					token: "token-value",
+					expires: new Date( Date.now() - 24 * 60 * 60 * 1000 ),
+				} );
+
+				const authenticator:TokenAuthenticator = new TokenAuthenticator( context );
+				authenticator
+					.authenticate( credentials )
+					.then( ():void => {
+						done.fail( "Should not resolve." );
+					} )
+					.catch( () => {
+						expect( authenticator.isAuthenticated() ).toBe( false );
+
+						done();
+					} )
+				;
+			} );
+
+
+			it( "should return credentials when token credentials base", ( done:DoneFn ):void => {
+				const credentials:TokenCredentialsBase = { token: "token-value", expires: expires };
+
+				const authenticator:TokenAuthenticator = new TokenAuthenticator( context );
+				authenticator
+					.authenticate( credentials )
+					.then( ( tokenCredentials:TokenCredentials ):void => {
+						expect( tokenCredentials ).toBeDefined();
+						expect( credentials ).toBe( tokenCredentials );
+
+						done();
+					} )
+					.catch( done.fail )
+				;
+			} );
+
+			it( "should parse expiration date if string in token credentials base", ( done:DoneFn ):void => {
+				const credentials:TokenCredentialsBase = { token: "token-value", expires: expires.toISOString() };
+
+				const authenticator:TokenAuthenticator = new TokenAuthenticator( context );
+				authenticator
+					.authenticate( credentials )
+					.then( ( tokenCredentials:TokenCredentials ):void => {
+						expect( tokenCredentials ).toBeDefined();
+
+						expect( tokenCredentials.expires ).toEqual( jasmine.any( Date ) );
+						expect( tokenCredentials.expires ).toEqual( new Date( credentials.expires as string ) );
+
+						done();
+					} )
+					.catch( done.fail )
+				;
+			} );
+
+
+			it( "should throw error if preference cs:PreferAuthToken was not applied", ( done:DoneFn ):void => {
+				jasmine.Ajax.stubRequest( "https://example.com/users/me/" ).andReturn( {
 					status: 200,
+					responseHeaders: {
+						"eTag": `"1-12345"`,
+					},
 					responseText: `[ {
-						"@id": "_:00",
-						"@type": [
-							"${ NS.C.Class.ResponseMetadata }",
-							"${ NS.C.Class.VolatileResource }"
-						],
-						"${ NS.C.Predicate.documentMetadata }": [ {
-							"@id": "_:01"
-						} ]
-					}, {
-						"@id": "_:01",
-						"@type": [
-							"${ NS.C.Class.DocumentMetadata }",
-							"${ NS.C.Class.VolatileResource }"
-						],
-						"${ NS.C.Predicate.eTag }": [ {
-							"@value": "\\"1234567890\\""
-						} ],
-						"${ NS.C.Predicate.relatedDocument }": [ {
-							"@id": "http://successful.example.com/users/my-user/"
-						} ]
-					}, {
-						"@id": "_:02",
-						"@type": [
-							"${ NS.CS.Class.Token }",
-							"${ NS.C.Class.VolatileResource }"
-						],
-						"${ NS.CS.Predicate.tokenKey }": [ {
-							"@value": "token-value"
-						} ],
-						"${ NS.CS.Predicate.expirationTime }": {
-							"@value": "${expirationTime.toISOString()}",
-							"@type": "${ NS.XSD.DataType.dateTime }"
-						},
-						"${ NS.CS.Predicate.credentialsOf }": [ {
-							"@id": "http://successful.example.com/users/my-user/"
-						} ]
-					}, {
-						"@id": "http://successful.example.com/users/my-user/",
-						"@graph": [ {
-							"@id": "http://successful.example.com/users/my-user/",
-							"@type": [ "${ NS.CS.Class.User }" ],
-							"${ NS.CS.Predicate.name }": [ {
-								"@value": "My User Name",
-								"@type": "${ NS.XSD.DataType.string }"
-							} ],
-							"${ NS.VCARD.Predicate.email }": [ {
-								"@value": "my-user@users.com",
-								"@type": "${ NS.XSD.DataType.string }"
-							} ],
-							"${ NS.CS.Predicate.enabled }": [ {
-								"@value": "true",
-								"@type": "${ NS.XSD.DataType.boolean }"
-							} ]
-						} ]
+						"@id": "https://example.com/users/me/",
+						"@graph": [
+							{
+								"@id": "https://example.com/users/me/",
+								"@type": [ "${ C.Document }", "${ CS.AuthenticatedUserInformationAccessor }" ],
+								"${ CS.authenticatedUserMetadata }": [ {
+									"@id": "_:1"
+								} ]
+							},
+							{
+								"@id": "_:1",
+								"@type": [ "${ CS.AuthenticatedUserMetadata }", "${ C.VolatileResource }" ],
+								"${ CS.user }": [ {
+									"@id": "https://example.com/users/the-user/"
+								} ]
+							}
+						]
 					} ]`,
 				} );
 
-				let context:SuccessfulContext = new SuccessfulContext();
-				let authenticator:TokenAuthenticator.Class = new TokenAuthenticator.Class( context );
+				const authenticator:TokenAuthenticator = new TokenAuthenticator( context );
+				authenticator
+					.authenticate( new BasicToken( "user", "pass" ) )
+					.then( () => done.fail( "should not resolve" ) )
+					.catch( error => {
+						expect( () => { throw error; } ).toThrowError( BadResponseError, `Preference "include="${ CS.PreferAuthToken }"" was not applied.` );
 
-				promises.push( authenticator.authenticate( new UsernameAndPasswordToken( "user", "pass" ) ).then( ():void => {
-					expect( authenticator.isAuthenticated() ).toEqual( true );
+						done();
+					} );
+			} );
 
-					authenticator.clearAuthentication();
-
-					expect( authenticator.isAuthenticated() ).toEqual( false );
-				} ) );
-			})();
-
-			Promise.all( promises ).then( done, done.fail );
 		} );
 
-	} );
+		describe( "TokenAuthenticator.addAuthentication", ():void => {
 
-	it( hasDefaultExport( "Carbon.Auth.TokenAuthenticator.Class" ), ():void => {
-		expect( DefaultExport ).toBeDefined();
-		expect( DefaultExport ).toBe( TokenAuthenticator.Class );
+			it( "should add the header value", ():void => {
+				const expires:Date = new Date();
+				expires.setDate( expires.getDate() + 1 );
+
+				const credentials:TokenCredentials = Resource.createFrom( {
+					token: "token-value",
+					expires: expires,
+				} );
+
+				const authenticator:TokenAuthenticator = createAuthenticatorWith( credentials );
+
+				const options:RequestOptions = {};
+				authenticator.addAuthentication( options );
+
+				expect( options.headers ).toEqual( new Map( [
+					[ "authorization", new Header( [ "Bearer token-value" ] ), ],
+				] ) );
+			} );
+
+		} );
+
 	} );
 
 } );

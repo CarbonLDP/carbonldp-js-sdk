@@ -1,16 +1,12 @@
-import * as Documents from "./../Documents";
-import * as HTTP from "./../HTTP";
-import * as PersistedProtectedDocument from "./../PersistedProtectedDocument";
-import * as PersistedCredentials from "./PersistedCredentials";
-export interface Class extends PersistedProtectedDocument.Class {
+import { Documents } from "../Documents";
+import { PersistedProtectedDocument } from "../PersistedProtectedDocument";
+import { UsernameAndPasswordCredentials } from "./UsernameAndPasswordCredentials";
+export interface PersistedUser extends PersistedProtectedDocument {
     name?: string;
-    credentials?: PersistedCredentials.Class;
-    enableCredentials(requestOptions?: HTTP.Request.Options): Promise<[Class, HTTP.Response.Class[]]>;
-    disableCredentials(requestOptions?: HTTP.Request.Options): Promise<[Class, HTTP.Response.Class[]]>;
+    credentials?: UsernameAndPasswordCredentials;
 }
-export declare class Factory {
-    static hasClassProperties(object: Object): boolean;
-    static is(object: Object): boolean;
-    static decorate<T extends object>(object: T, documents: Documents.Class): Class & T;
+export interface PersistedUserFactory {
+    is(value: any): value is PersistedUser;
+    decorate<T extends object>(object: T, documents: Documents): PersistedUser & T;
 }
-export default Class;
+export declare const PersistedUser: PersistedUserFactory;

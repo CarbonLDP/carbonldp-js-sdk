@@ -1,25 +1,38 @@
-import AbstractContext from "../../AbstractContext";
-import { ContainerType, DigestedObjectSchema, DigestedPropertyDefinition, Digester } from "../../ObjectSchema";
-import { clazz, constructor, extendsClass, hasDefaultExport, hasSignature, INSTANCE, method, module } from "../../test/JasmineExtender";
-import * as URI from "./../../RDF/URI";
-import QueryContext from "./QueryContext";
-import * as Module from "./QueryContextBuilder";
-import { Class as QueryContextBuilder } from "./QueryContextBuilder";
-import QueryProperty from "./QueryProperty";
+import { AbstractContext } from "../../AbstractContext";
+import { IllegalArgumentError } from "../../Errors/IllegalArgumentError";
+import {
+	ContainerType,
+	DigestedObjectSchema,
+	DigestedObjectSchemaProperty,
+	ObjectSchemaDigester
+} from "../../ObjectSchema";
+import {
+	clazz,
+	constructor,
+	extendsClass,
+	hasSignature,
+	INSTANCE,
+	method,
+	module
+} from "../../test/JasmineExtender";
+import { QueryContext } from "./QueryContext";
 
-describe( module( "Carbon/SPARQL/QueryDocument/QueryContextBuilder" ), ():void => {
+import * as Module from "./QueryContextBuilder";
+import { QueryContextBuilder } from "./QueryContextBuilder";
+
+import {
+	QueryProperty,
+	QueryPropertyType,
+} from "./QueryProperty";
+
+describe( module( "carbonldp/SPARQL/QueryDocument/QueryContextBuilder" ), ():void => {
 
 	it( "should exists", ():void => {
 		expect( Module ).toBeDefined();
 		expect( Module ).toEqual( jasmine.any( Object ) );
 	} );
 
-	it( hasDefaultExport( "Carbon.SPARQL.QueryDocument.QueryContextBuilder.Class" ), ():void => {
-		expect( Module.default ).toBeDefined();
-		expect( Module.default ).toBe( QueryContextBuilder );
-	} );
-
-	describe( clazz( "Carbon.SPARQL.QueryDocument.QueryContextBuilder.Class", "Class with the shared status and data of the query." ), ():void => {
+	describe( clazz( "CarbonLDP.SPARQL.QueryDocument.QueryContextBuilder", "Class with the shared status and data of the query." ), ():void => {
 
 		it( "should exists", ():void => {
 			expect( QueryContextBuilder ).toBeDefined();
@@ -37,7 +50,7 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryContextBuilder" ), ():void =
 
 			it( hasSignature(
 				[
-					{ name: "context", type: "Carbon.Context.Class", optional: true, description: "The carbon context from where the query belongs to." },
+					{ name: "context", type: "CarbonLDP.Context", optional: true, description: "The carbon context from where the query belongs to." },
 				]
 			), ():void => {
 			} );
@@ -55,7 +68,7 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryContextBuilder" ), ():void =
 
 		} );
 
-		it( extendsClass( "Carbon.SPARQL.QueryDocument.QueryContext.Class" ), ():void => {
+		it( extendsClass( "CarbonLDP.SPARQL.QueryDocument.QueryContext" ), ():void => {
 			const queryContext:QueryContextBuilder = new QueryContextBuilder( context );
 			expect( queryContext ).toEqual( jasmine.any( QueryContext ) );
 		} );
@@ -138,7 +151,7 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryContextBuilder" ), ():void =
 				[
 					{ name: "name", type: "string", description: "Name of the property to look for." },
 				],
-				{ type: "Carbon.SPARQL.QueryDocument.QueryProperty.Class" }
+				{ type: "CarbonLDP.SPARQL.QueryDocument.QueryProperty" }
 			), ():void => {
 			} );
 
@@ -171,7 +184,7 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryContextBuilder" ), ():void =
 				[
 					{ name: "name", type: "string", description: "Name of the property to look for its children properties." },
 				],
-				{ type: "Carbon.SPARQL.QueryDocument.QueryProperty.Class[]" }
+				{ type: "CarbonLDP.SPARQL.QueryDocument.QueryProperty[]" }
 			), ():void => {
 			} );
 
@@ -219,9 +232,8 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryContextBuilder" ), ():void =
 				[
 					{ name: "name", type: "string", description: "Name that the property will have." },
 				],
-				{ type: "Carbon.SPARQL.QueryDocument.QueryProperty.Class" }
-			), ():void => {
-			} );
+				{ type: "CarbonLDP.SPARQL.QueryDocument.QueryProperty" }
+			), ():void => {} );
 
 			it( "should exists", ():void => {
 				expect( QueryContextBuilder.prototype.addProperty ).toBeDefined();
@@ -251,11 +263,11 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryContextBuilder" ), ():void =
 			it( hasSignature(
 				"Search for a property definition defined by the parameters provided.",
 				[
-					{ name: "existingSchema", type: "Carbon.ObjectSchema.DigestedObjectSchema", description: "Specific schema where to look for first.\nIf not in there it will be searched in all the schemas available in the carbon context." },
+					{ name: "existingSchema", type: "CarbonLDP.DigestedObjectSchema", description: "Specific schema where to look for first.\nIf not in there it will be searched in all the schemas available in the carbon context." },
 					{ name: "propertyName", type: "string", description: "Name of the property definition to find for." },
 					{ name: "propertyURI", type: "string", optional: true, description: "If specified, it will only retrieve the property with the same name and URI." },
 				],
-				{ type: "Carbon.ObjectSchema.DigestedObjectSchema" }
+				{ type: "CarbonLDP.DigestedObjectSchema" }
 			), ():void => {
 			} );
 
@@ -273,9 +285,9 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryContextBuilder" ), ():void =
 				} );
 
 				const queryContext:QueryContextBuilder = new QueryContextBuilder( context );
-				const definition:DigestedPropertyDefinition = queryContext.getInheritTypeDefinition( new DigestedObjectSchema(), "property" );
+				const definition:DigestedObjectSchemaProperty = queryContext.getInheritTypeDefinition( new DigestedObjectSchema(), "property" );
 				expect( definition ).toEqual( jasmine.objectContaining( {
-					uri: new URI.Class( "http://example.com/ns#type-property" ),
+					uri: "http://example.com/ns#type-property",
 				} ) );
 			} );
 
@@ -295,9 +307,9 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryContextBuilder" ), ():void =
 				} );
 
 				const queryContext:QueryContextBuilder = new QueryContextBuilder( context );
-				const definition:DigestedPropertyDefinition = queryContext.getInheritTypeDefinition( new DigestedObjectSchema(), "property", "http://example.com/ns#type-2-property" );
+				const definition:DigestedObjectSchemaProperty = queryContext.getInheritTypeDefinition( new DigestedObjectSchema(), "property", "http://example.com/ns#type-2-property" );
 				expect( definition ).toEqual( jasmine.objectContaining( {
-					uri: new URI.Class( "http://example.com/ns#type-2-property" ),
+					uri: "http://example.com/ns#type-2-property",
 					literal: false,
 				} ) );
 			} );
@@ -321,11 +333,11 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryContextBuilder" ), ():void =
 				} );
 
 				const queryContext:QueryContextBuilder = new QueryContextBuilder( context );
-				const definition:DigestedPropertyDefinition = queryContext.getInheritTypeDefinition( new DigestedObjectSchema(), "property", "http://example.com/ns#type-1-property" );
+				const definition:DigestedObjectSchemaProperty = queryContext.getInheritTypeDefinition( new DigestedObjectSchema(), "property", "http://example.com/ns#type-1-property" );
 				expect( definition ).toEqual( jasmine.objectContaining( {
-					uri: new URI.Class( "http://example.com/ns#type-1-property" ),
+					uri: "http://example.com/ns#type-1-property",
 					literal: true,
-					literalType: new URI.Class( "http://www.w3.org/2001/XMLSchema#string" ),
+					literalType: "http://www.w3.org/2001/XMLSchema#string",
 				} ) );
 			} );
 
@@ -347,7 +359,7 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryContextBuilder" ), ():void =
 					},
 				} );
 
-				const schema:DigestedObjectSchema = Digester.digestSchema( {
+				const schema:DigestedObjectSchema = ObjectSchemaDigester.digestSchema( {
 					"xsd": "http://www.w3.org/2001/XMLSchema#",
 					"ex": "http://example.com/ns#",
 					"property": {
@@ -358,11 +370,11 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryContextBuilder" ), ():void =
 				} );
 
 				const queryContext:QueryContextBuilder = new QueryContextBuilder( context );
-				const definition:DigestedPropertyDefinition = queryContext.getInheritTypeDefinition( schema, "property", "http://example.com/ns#type-1-property" );
+				const definition:DigestedObjectSchemaProperty = queryContext.getInheritTypeDefinition( schema, "property", "http://example.com/ns#type-1-property" );
 				expect( definition ).toEqual( jasmine.objectContaining( {
-					uri: new URI.Class( "http://example.com/ns#type-1-property" ),
+					uri: "http://example.com/ns#type-1-property",
 					literal: true,
-					literalType: new URI.Class( "http://www.w3.org/2001/XMLSchema#string" ),
+					literalType: "http://www.w3.org/2001/XMLSchema#string",
 					containerType: ContainerType.SET,
 				} ) );
 			} );
@@ -378,7 +390,7 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryContextBuilder" ), ():void =
 					{ name: "object", type: "object", description: "The object to look for its corresponding schema.\nNOTE: Property is ignored when a path is specified." },
 					{ name: "path", type: "string", description: "An optional path that describes where the resource appears in the query." },
 				],
-				{ type: "Carbon.ObjectSchema.DigestedObjectSchema" }
+				{ type: "CarbonLDP.DigestedObjectSchema" }
 			), ():void => {
 			} );
 
@@ -387,11 +399,13 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryContextBuilder" ), ():void =
 				expect( QueryContextBuilder.prototype.getSchemaFor ).toEqual( jasmine.any( Function ) );
 			} );
 
-			it( "should return the schema of the property defined by the path", ():void => {
+			it( "should return the schema of the property path when partial", ():void => {
 				const queryContext:QueryContextBuilder = new QueryContextBuilder( context );
 
 				const helper:( name:string ) => void = name => {
-					const property:QueryProperty = queryContext.addProperty( name );
+					const property:QueryProperty = queryContext
+						.addProperty( name )
+						.setType( QueryPropertyType.PARTIAL );
 					const spy:jasmine.Spy = spyOn( property, "getSchema" ).and.returnValue( null );
 
 					const returnedValue:any = queryContext.getSchemaFor( {}, name );
@@ -401,6 +415,68 @@ describe( module( "Carbon/SPARQL/QueryDocument/QueryContextBuilder" ), ():void =
 
 				helper( "property" );
 				helper( "property.another-one" );
+			} );
+
+			it( "should return the schema from context when full", ():void => {
+				const queryContext:QueryContextBuilder = new QueryContextBuilder( context );
+
+				const spy:jasmine.Spy = spyOn( queryContext.context.documents, "getSchemaFor" ).and.returnValue( null );
+				const helper:( name:string ) => void = name => {
+					queryContext
+						.addProperty( name )
+						.setType( QueryPropertyType.FULL );
+
+					const returnedValue:any = queryContext.getSchemaFor( {}, name );
+					expect( spy ).toHaveBeenCalled();
+					expect( returnedValue ).toBeNull();
+				};
+
+				helper( "property" );
+				helper( "property.another-one" );
+			} );
+
+			it( "should throw error when no type", ():void => {
+				const queryContext:QueryContextBuilder = new QueryContextBuilder( context );
+
+				const helper:( name:string ) => void = name => () => {
+					queryContext
+						.addProperty( name )
+						.setType( void 0 );
+
+					queryContext.getSchemaFor( {}, name );
+				};
+
+				expect( helper( "property" ) ).toThrowError( IllegalArgumentError, `Property "property" is not a resource.` );
+				expect( helper( "property.another-one" ) ).toThrowError( IllegalArgumentError, `Property "property.another-one" is not a resource.` );
+			} );
+
+			it( "should throw error when not exits", ():void => {
+				const queryContext:QueryContextBuilder = new QueryContextBuilder( context );
+
+				const helper:( name:string ) => void = name => () => {
+					queryContext.getSchemaFor( {}, name );
+				};
+
+				expect( helper( "property" ) ).toThrowError( IllegalArgumentError, `Schema path "property" does not exists.` );
+				expect( helper( "property.another-one" ) ).toThrowError( IllegalArgumentError, `Schema path "property.another-one" does not exists.` );
+			} );
+
+			it( "should return the schema from the context when not exits and parent is full", ():void => {
+				const queryContext:QueryContextBuilder = new QueryContextBuilder( context );
+
+				const spy:jasmine.Spy = spyOn( queryContext.context.documents, "getSchemaFor" ).and.returnValue( null );
+				const helper:( parent:string, name:string ) => void = ( parent, child ) => {
+					queryContext
+						.addProperty( parent )
+						.setType( QueryPropertyType.FULL );
+
+					const returnedValue:any = queryContext.getSchemaFor( {}, `${ parent }.${ child }` );
+					expect( spy ).toHaveBeenCalled();
+					expect( returnedValue ).toBeNull();
+				};
+
+				helper( "property-1", "child-1" );
+				helper( "property-2", "child-2" );
 			} );
 
 		} );
