@@ -602,8 +602,8 @@ var Documents = (function () {
         return freeResourcesDocument;
     };
     Documents.prototype._getConstructDocuments = function (uri, requestOptions, query, queryContext, targetName, targetDocument) {
-        HTTP.Request.Util.setRetrievalPreferences({ include: [NS.C.Class.PreferDocumentETags] }, requestOptions, false);
-        return this._requestConstructQuery(uri, requestOptions, query, queryContext, targetDocument);
+        Request_1.RequestUtils.setRetrievalPreferences({ include: [C_1.C.PreferDocumentETags] }, requestOptions);
+        return this._requestConstructQuery(uri, requestOptions, query, queryContext, targetName, targetDocument);
     };
     Documents.prototype._parseErrorResponse = function (response) {
         var _this = this;

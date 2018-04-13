@@ -2,7 +2,6 @@ import { QueryToken } from "sparqler/tokens";
 
 import { AbstractContext } from "./AbstractContext";
 import { PersistedACL } from "./Auth/PersistedACL";
-import { Document } from "./Document";
 import { Documents } from "./Documents";
 import { PersistedDocument } from "./PersistedDocument";
 
@@ -168,20 +167,19 @@ describe( module( "carbonldp/PersistedProtectedDocument" ), ():void => {
 				);
 
 				const mockACL:PersistedACL = PersistedACL.decorate(
-					PersistedDocument.Factory.createFrom( Object.assign( context.documents.getPointer( "https://example.com/resource/.acl/" ), {
+					PersistedDocument.createFrom( Object.assign( context.documents.getPointer( "https://example.com/resource/.acl/" ), {
 							accessTo: document,
 						} ),
-						"https://example.com/resource/.acl/",
-						context.documents
-					)
+						context.documents,
+						"https://example.com/resource/.acl/"
+					),
+					context.documents
 				);
 				spyOn( context.documents, "_getConstructDocuments" )
 					.and.returnValue( Promise.resolve( [ mockACL ] ) );
 
 				document.getACL()
 					.then( ( persistedACL ) => {
-						expect( response ).toBeNull();
-
 						expect( persistedACL ).toBe( mockACL );
 
 						done();

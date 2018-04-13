@@ -10,6 +10,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var tokens_1 = require("sparqler/tokens");
 var PersistedDocument_1 = require("./PersistedDocument");
 var Utils = __importStar(require("./Utils"));
+var CS_1 = require("./Vocabularies/CS");
 exports.PersistedProtectedDocument = {
     isDecorated: function (object) {
         return Utils.isObject(object)
@@ -41,7 +42,7 @@ function getACL(requestOptions) {
         return this._documents.get(this.accessControlList.id, requestOptions);
     var aclGraphVar = new tokens_1.VariableToken("g");
     var aclGetter = new tokens_1.SubjectToken(new tokens_1.IRIToken(this.id))
-        .addPredicate(new tokens_1.PredicateToken(new tokens_1.IRIToken(NS.CS.Predicate.accessControlList))
+        .addPredicate(new tokens_1.PredicateToken(new tokens_1.IRIToken(CS_1.CS.accessControlList))
         .addObject(aclGraphVar));
     var aclContent = new tokens_1.SubjectToken(new tokens_1.VariableToken("s"))
         .addPredicate(new tokens_1.PredicateToken(new tokens_1.VariableToken("p"))
@@ -52,8 +53,8 @@ function getACL(requestOptions) {
         .addPattern(new tokens_1.GraphToken(aclGraphVar)
         .addPattern(aclContent)));
     return this._documents
-        ._getConstructDocuments(this.id, requestOptions, query);
+        ._getConstructDocuments(this.id, requestOptions, query)
+        .then(function (documents) { return documents[0]; });
 }
-exports.default = Class;
 
 //# sourceMappingURL=PersistedProtectedDocument.js.map

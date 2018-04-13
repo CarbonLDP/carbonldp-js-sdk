@@ -66,13 +66,13 @@ export const PersistedProtectedDocument:PersistedProtectedDocumentFactory = {
 
 };
 
-function getACL( this:Class, requestOptions:HTTP.Request.Options = {} ):Promise<PersistedACL> {
+function getACL( this:PersistedProtectedDocument, requestOptions:RequestOptions = {} ):Promise<PersistedACL> {
 	if( this.isResolved() ) return this._documents.get( this.accessControlList.id, requestOptions );
 
 	const aclGraphVar:VariableToken = new VariableToken( "g" );
 
 	const aclGetter:SubjectToken = new SubjectToken( new IRIToken( this.id ) )
-		.addPredicate( new PredicateToken( new IRIToken( NS.CS.Predicate.accessControlList ) )
+		.addPredicate( new PredicateToken( new IRIToken( CS.accessControlList ) )
 			.addObject( aclGraphVar ) );
 
 	const aclContent:SubjectToken = new SubjectToken( new VariableToken( "s" ) )
@@ -89,7 +89,6 @@ function getACL( this:Class, requestOptions:HTTP.Request.Options = {} ):Promise<
 
 	return this._documents
 		._getConstructDocuments<PersistedACL>( this.id, requestOptions, query )
+		.then( documents => documents[ 0 ] )
 		;
 }
-
-export default Class;

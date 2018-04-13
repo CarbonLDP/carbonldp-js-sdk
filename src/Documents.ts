@@ -755,10 +755,10 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 		return freeResourcesDocument;
 	}
 
-	_getConstructDocuments<T extends object>( uri:string, requestOptions:HTTP.Request.Options, query:QueryToken, queryContext?:QueryContext.Class, targetName?:string, targetDocument?:T & PersistedDocument.Class ):Promise<(T & PersistedDocument.Class)[]> {
-		HTTP.Request.Util.setRetrievalPreferences( { include: [ NS.C.Class.PreferDocumentETags ] }, requestOptions, false );
+	_getConstructDocuments<T extends object>( uri:string, requestOptions:RequestOptions, query:QueryToken, queryContext?:QueryContext, targetName?:string, targetDocument?:T & PersistedDocument ):Promise<(T & PersistedDocument)[]> {
+		RequestUtils.setRetrievalPreferences( { include: [ C.PreferDocumentETags ] }, requestOptions );
 
-		return this._requestConstructQuery( uri, requestOptions, query, queryContext, targetDocument );
+		return this._requestConstructQuery<T>( uri, requestOptions, query, queryContext, targetName, targetDocument );
 	}
 
 	_parseErrorResponse<T extends object>( response:Response | Error ):Promise<never> {
@@ -1106,7 +1106,7 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 		return this._requestConstructQuery( uri, requestOptions, query, queryContext, targetName, targetDocument );
 	}
 
-	private _requestConstructQuery<T extends object>( uri:string, requestOptions:HTTP.Request.Options, query:QueryToken, queryContext?:QueryContext.Class, targetName?:string, targetDocument?:T & PersistedDocument.Class ):Promise<(T & PersistedDocument.Class)[]> {
+	private _requestConstructQuery<T extends object>( uri:string, requestOptions:RequestOptions, query:QueryToken, queryContext?:QueryContext, targetName?:string, targetDocument?:T & PersistedDocument ):Promise<(T & PersistedDocument)[]> {
 		RequestUtils.setRetrievalPreferences( { include: [ C.PreferResultsContext ] }, requestOptions );
 
 		return this
