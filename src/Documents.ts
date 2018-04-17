@@ -1077,7 +1077,7 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 	}
 
 	private _executeConstructPatterns<T extends object>( uri:string, requestOptions:RequestOptions, queryContext:QueryContext, targetName:string, constructPatterns:PatternToken[], targetDocument?:T & PersistedDocument ):Promise<(T & PersistedDocument)[]> {
-		const metadataVar:VariableToken = queryContext.getVariable( "metadata" );
+		const metadataVar:VariableToken = queryContext.getVariable( "queryMetadata" );
 		const construct:ConstructToken = new ConstructToken()
 			.addTriple( new SubjectToken( metadataVar )
 				.addPredicate( new PredicateToken( "a" )
@@ -1105,20 +1105,11 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 				return new JSONLDParser().parse( jsonldString );
 
 			} ).then<(T & PersistedDocument)[]>( ( rdfNodes:RDFNode[] ) => {
-				const freeNodes:RDFNode[] = RDFNode.getFreeNodes( rdfNodes );
-				const freeResources:FreeResources = this._getFreeResources( freeNodes );
-
-				const targetSet:Set<string> = new Set( freeResources
-					.getResources()
-					.filter( QueryMetadata.is )
-					.map( x => this.context ? x.target : x[ C.target ] )
-					// Alternative to flatMap
-					.reduce( ( targets, currentTargets ) => targets.concat( currentTargets ), [] )
-					.map( x => x.id )
-				);
-
 				const targetETag:string = targetDocument && targetDocument._eTag;
 				if( targetDocument ) targetDocument._eTag = void 0;
+
+				const freeNodes:RDFNode[] = RDFNode.getFreeNodes( rdfNodes );
+				const freeResources:FreeResources = this._getFreeResources( freeNodes );
 
 				freeResources
 					.getResources()
@@ -1144,6 +1135,14 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 				const rdfDocuments:RDFDocument[] = rdfNodes
 					.filter<any>( RDFDocument.is );
 
+				const targetSet:Set<string> = new Set( freeResources
+					.getResources()
+					.filter( QueryMetadata.is )
+					.map( x => this.context ? x.target : x[ C.target ] )
+					// Alternative to flatMap
+					.reduce( ( targets, currentTargets ) => targets.concat( currentTargets ), [] )
+					.map( x => x.id )
+				);
 				const targetDocuments:RDFDocument[] = rdfDocuments
 					.filter( x => targetSet.has( x[ "@id" ] ) );
 

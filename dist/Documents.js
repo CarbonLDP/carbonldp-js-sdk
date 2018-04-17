@@ -877,7 +877,7 @@ var Documents = (function () {
     };
     Documents.prototype._executeConstructPatterns = function (uri, requestOptions, queryContext, targetName, constructPatterns, targetDocument) {
         var _this = this;
-        var metadataVar = queryContext.getVariable("metadata");
+        var metadataVar = queryContext.getVariable("queryMetadata");
         var construct = (_a = new tokens_1.ConstructToken()
             .addTriple(new tokens_1.SubjectToken(metadataVar)
             .addPredicate(new tokens_1.PredicateToken("a")
@@ -895,17 +895,11 @@ var Documents = (function () {
             .then(function (jsonldString) {
             return new Parser_1.JSONLDParser().parse(jsonldString);
         }).then(function (rdfNodes) {
-            var freeNodes = Node_1.RDFNode.getFreeNodes(rdfNodes);
-            var freeResources = _this._getFreeResources(freeNodes);
-            var targetSet = new Set(freeResources
-                .getResources()
-                .filter(QueryMetadata_1.QueryMetadata.is)
-                .map(function (x) { return _this.context ? x.target : x[C_1.C.target]; })
-                .reduce(function (targets, currentTargets) { return targets.concat(currentTargets); }, [])
-                .map(function (x) { return x.id; }));
             var targetETag = targetDocument && targetDocument._eTag;
             if (targetDocument)
                 targetDocument._eTag = void 0;
+            var freeNodes = Node_1.RDFNode.getFreeNodes(rdfNodes);
+            var freeResources = _this._getFreeResources(freeNodes);
             freeResources
                 .getResources()
                 .filter(ResponseMetadata_1.ResponseMetadata.is)
@@ -928,6 +922,12 @@ var Documents = (function () {
                 return [targetDocument];
             var rdfDocuments = rdfNodes
                 .filter(Document_2.RDFDocument.is);
+            var targetSet = new Set(freeResources
+                .getResources()
+                .filter(QueryMetadata_1.QueryMetadata.is)
+                .map(function (x) { return _this.context ? x.target : x[C_1.C.target]; })
+                .reduce(function (targets, currentTargets) { return targets.concat(currentTargets); }, [])
+                .map(function (x) { return x.id; }));
             var targetDocuments = rdfDocuments
                 .filter(function (x) { return targetSet.has(x["@id"]); });
             return new Compacter_1.JSONLDCompacter(_this, targetName, queryContext)

@@ -1156,7 +1156,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 							"https://example.com/resource/",
 							"PREFIX schema: <https://schema.org/> " +
 							"CONSTRUCT {" +
-							` ?metadata a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
+							` ?queryMetadata a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
 							"" + ` <${ C.target }> ?document.` +
 
 							" ?document a ?document__types;" +
@@ -1168,7 +1168,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 							"" + " schema:property-3 ?document__property2__property3 " +
 
 							"} WHERE {" +
-							" BIND(BNODE() AS ?metadata)." +
+							" BIND(BNODE() AS ?queryMetadata)." +
 
 							" VALUES ?document { <https://example.com/resource/> }." +
 							" OPTIONAL { ?document a ?document__types }." +
@@ -1957,7 +1957,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 						expect( sendSpy ).toHaveBeenCalledWith(
 							"https://example.com/resource/", "" +
 							"CONSTRUCT {" +
-							` ?metadata a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
+							` ?queryMetadata a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
 							"" + ` <${ C.target }> ?document.` +
 
 							" ?document a ?document__types;" +
@@ -1969,7 +1969,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 							"" + " <https://schema.org/property-3> ?document__property2__property3 " +
 
 							"} WHERE {" +
-							" BIND(BNODE() AS ?metadata)." +
+							" BIND(BNODE() AS ?queryMetadata)." +
 
 							" VALUES ?document { <https://example.com/resource/> }." +
 							" OPTIONAL { ?document a ?document__types }." +
@@ -3915,13 +3915,13 @@ describe( module( "carbonldp/Documents" ), ():void => {
 								"https://example.com/resource/",
 
 								"CONSTRUCT {" +
-								` ?metadata a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
+								` ?queryMetadata a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
 								"" + ` <${ C.target }> ?child.` +
 
 								" ?child a ?child__types " +
 
 								"} WHERE {" +
-								" BIND(BNODE() AS ?metadata)." +
+								" BIND(BNODE() AS ?queryMetadata)." +
 
 								" {" +
 								"" + " SELECT DISTINCT ?child WHERE {" +
@@ -4153,13 +4153,13 @@ describe( module( "carbonldp/Documents" ), ():void => {
 								"https://example.com/resource/",
 
 								"CONSTRUCT {" +
-								` ?metadata a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
+								` ?queryMetadata a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
 								"" + ` <${ C.target }> ?child.` +
 
 								" ?child a ?child__types " +
 
 								"} WHERE {" +
-								" BIND(BNODE() AS ?metadata)." +
+								" BIND(BNODE() AS ?queryMetadata)." +
 
 								" {" +
 								"" + " SELECT DISTINCT ?child WHERE {" +
@@ -4460,7 +4460,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 							"https://example.com/resource/",
 							"PREFIX schema: <https://schema.org/> " +
 							"CONSTRUCT {" +
-							` ?metadata a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
+							` ?queryMetadata a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
 							"" + ` <${ C.target }> ?child.` +
 
 							" ?child a ?child__types;" +
@@ -4472,7 +4472,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 							"" + " schema:property-3 ?child__property2__property3 " +
 
 							"} WHERE {" +
-							" BIND(BNODE() AS ?metadata)." +
+							" BIND(BNODE() AS ?queryMetadata)." +
 
 							" {" +
 							"" + " SELECT DISTINCT ?child WHERE {" +
@@ -4553,13 +4553,13 @@ describe( module( "carbonldp/Documents" ), ():void => {
 							expect( sendSpy ).toHaveBeenCalledWith(
 								"https://example.com/resource/",
 								"CONSTRUCT {" +
-								` ?metadata a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
+								` ?queryMetadata a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
 								"" + ` <${ C.target }> ?child.` +
 
 								" ?child___subject ?child___predicate ?child___object " +
 
 								"} WHERE {" +
-								" BIND(BNODE() AS ?metadata)." +
+								" BIND(BNODE() AS ?queryMetadata)." +
 
 								" {" +
 								"" + " SELECT DISTINCT ?child WHERE {" +
@@ -4624,13 +4624,13 @@ describe( module( "carbonldp/Documents" ), ():void => {
 								"https://example.com/resource/",
 								"PREFIX schema: <https://schema.org/> " +
 								"CONSTRUCT {" +
-								` ?metadata a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
+								` ?queryMetadata a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
 								"" + ` <${ C.target }> ?child.` +
 
 								" ?child ?child___predicate ?child___object " +
 
 								"} WHERE {" +
-								" BIND(BNODE() AS ?metadata)." +
+								" BIND(BNODE() AS ?queryMetadata)." +
 
 								" {" +
 								"" + " SELECT DISTINCT ?child WHERE {" +
@@ -4734,7 +4734,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 
 						expect( query ).toEqual( new QueryToken(
 							new ConstructToken()
-								.addTriple( new SubjectToken( variableHelper( "metadata" ) )
+								.addTriple( new SubjectToken( variableHelper( "queryMetadata" ) )
 									.addPredicate( new PredicateToken( "a" )
 										.addObject( new IRIToken( C.VolatileResource ) )
 										.addObject( new IRIToken( C.QueryMetadata ) )
@@ -4766,7 +4766,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 									)
 								)
 
-								.addPattern( new BindToken( "BNODE()", variableHelper( "metadata" ) ) )
+								.addPattern( new BindToken( "BNODE()", variableHelper( "queryMetadata" ) ) )
 								.addPattern( new SelectToken( "DISTINCT" )
 									.addVariable( variableHelper( "child" ) )
 									.addPattern( new SubjectToken( new IRIToken( "https://example.com/resource/" ) )
@@ -5829,7 +5829,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 						expect( sendSpy ).toHaveBeenCalledWith(
 							"https://example.com/resource/", "" +
 							"CONSTRUCT {" +
-							` ?metadata a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
+							` ?queryMetadata a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
 							"" + ` <${ C.target }> ?child.` +
 
 							" ?child a ?child__types;" +
@@ -5841,7 +5841,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 							"" + " <https://schema.org/property-3> ?child__property2__property3 " +
 
 							"} WHERE {" +
-							" BIND(BNODE() AS ?metadata)." +
+							" BIND(BNODE() AS ?queryMetadata)." +
 
 							" {" +
 							"" + " SELECT DISTINCT ?child WHERE {" +
@@ -7047,13 +7047,13 @@ describe( module( "carbonldp/Documents" ), ():void => {
 								"https://example.com/resource/",
 
 								"CONSTRUCT {" +
-								` ?metadata a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
+								` ?queryMetadata a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
 								"" + ` <${ C.target }> ?member.` +
 
 								" ?member a ?member__types " +
 
 								"} WHERE {" +
-								" BIND(BNODE() AS ?metadata)." +
+								" BIND(BNODE() AS ?queryMetadata)." +
 
 								" {" +
 								"" + " SELECT DISTINCT ?member WHERE {" +
@@ -7288,13 +7288,13 @@ describe( module( "carbonldp/Documents" ), ():void => {
 								"https://example.com/resource/",
 
 								"CONSTRUCT {" +
-								` ?metadata a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
+								` ?queryMetadata a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
 								"" + ` <${ C.target }> ?member.` +
 
 								" ?member a ?member__types " +
 
 								"} WHERE {" +
-								" BIND(BNODE() AS ?metadata)." +
+								" BIND(BNODE() AS ?queryMetadata)." +
 
 								" {" +
 								"" + " SELECT DISTINCT ?member WHERE {" +
@@ -7597,7 +7597,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 							"https://example.com/resource/",
 							"PREFIX schema: <https://schema.org/> " +
 							"CONSTRUCT {" +
-							` ?metadata a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
+							` ?queryMetadata a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
 							"" + ` <${ C.target }> ?member.` +
 
 							" ?member a ?member__types;" +
@@ -7609,7 +7609,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 							"" + " schema:property-3 ?member__property2__property3 " +
 
 							"} WHERE {" +
-							" BIND(BNODE() AS ?metadata)." +
+							" BIND(BNODE() AS ?queryMetadata)." +
 
 							" {" +
 							"" + " SELECT DISTINCT ?member WHERE {" +
@@ -7692,13 +7692,13 @@ describe( module( "carbonldp/Documents" ), ():void => {
 							expect( sendSpy ).toHaveBeenCalledWith(
 								"https://example.com/resource/",
 								"CONSTRUCT {" +
-								` ?metadata a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
+								` ?queryMetadata a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
 								"" + ` <${ C.target }> ?member.` +
 
 								" ?member___subject ?member___predicate ?member___object " +
 
 								"} WHERE {" +
-								" BIND(BNODE() AS ?metadata)." +
+								" BIND(BNODE() AS ?queryMetadata)." +
 
 								" {" +
 								"" + " SELECT DISTINCT ?member WHERE {" +
@@ -7765,13 +7765,13 @@ describe( module( "carbonldp/Documents" ), ():void => {
 								"https://example.com/resource/",
 								"PREFIX schema: <https://schema.org/> " +
 								"CONSTRUCT {" +
-								` ?metadata a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
+								` ?queryMetadata a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
 								"" + ` <${ C.target }> ?member.` +
 
 								" ?member ?member___predicate ?member___object " +
 
 								"} WHERE {" +
-								" BIND(BNODE() AS ?metadata)." +
+								" BIND(BNODE() AS ?queryMetadata)." +
 
 								" {" +
 								"" + " SELECT DISTINCT ?member WHERE {" +
@@ -7877,7 +7877,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 
 						expect( query ).toEqual( new QueryToken(
 							new ConstructToken()
-								.addTriple( new SubjectToken( variableHelper( "metadata" ) )
+								.addTriple( new SubjectToken( variableHelper( "queryMetadata" ) )
 									.addPredicate( new PredicateToken( "a" )
 										.addObject( new IRIToken( C.VolatileResource ) )
 										.addObject( new IRIToken( C.QueryMetadata ) )
@@ -7909,7 +7909,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 									)
 								)
 
-								.addPattern( new BindToken( "BNODE()", variableHelper( "metadata" ) ) )
+								.addPattern( new BindToken( "BNODE()", variableHelper( "queryMetadata" ) ) )
 								.addPattern( new SelectToken( "DISTINCT" )
 									.addVariable( variableHelper( "member" ) )
 									.addPattern( new SubjectToken( new IRIToken( "https://example.com/resource/" ) )
@@ -8980,7 +8980,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 						expect( sendSpy ).toHaveBeenCalledWith(
 							"https://example.com/resource/", "" +
 							"CONSTRUCT {" +
-							` ?metadata a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
+							` ?queryMetadata a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
 							"" + ` <${ C.target }> ?member.` +
 
 							" ?member a ?member__types;" +
@@ -8992,7 +8992,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 							"" + " <https://schema.org/property-3> ?member__property2__property3 " +
 
 							"} WHERE {" +
-							" BIND(BNODE() AS ?metadata)." +
+							" BIND(BNODE() AS ?queryMetadata)." +
 
 							" {" +
 							"" + " SELECT DISTINCT ?member WHERE {" +
@@ -11100,7 +11100,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 
 						expect( query ).toEqual( new QueryToken(
 							new ConstructToken()
-								.addTriple( new SubjectToken( variableHelper( "metadata" ) )
+								.addTriple( new SubjectToken( variableHelper( "queryMetadata" ) )
 									.addPredicate( new PredicateToken( "a" )
 										.addObject( new IRIToken( C.VolatileResource ) )
 										.addObject( new IRIToken( C.QueryMetadata ) )
@@ -11138,7 +11138,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 									)
 								)
 
-								.addPattern( new BindToken( "BNODE()", variableHelper( "metadata" ) ) )
+								.addPattern( new BindToken( "BNODE()", variableHelper( "queryMetadata" ) ) )
 								.addPattern( new ValuesToken()
 									.addValues( variableHelper( "document" ), new IRIToken( persistedDocument.id ) )
 								)
@@ -11289,7 +11289,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 
 							expect( query ).toEqual( new QueryToken(
 								new ConstructToken()
-									.addTriple( new SubjectToken( variableHelper( "metadata" ) )
+									.addTriple( new SubjectToken( variableHelper( "queryMetadata" ) )
 										.addPredicate( new PredicateToken( "a" )
 											.addObject( new IRIToken( C.VolatileResource ) )
 											.addObject( new IRIToken( C.QueryMetadata ) )
@@ -11318,7 +11318,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 										)
 									)
 
-									.addPattern( new BindToken( "BNODE()", variableHelper( "metadata" ) ) )
+									.addPattern( new BindToken( "BNODE()", variableHelper( "queryMetadata" ) ) )
 									.addPattern( new ValuesToken()
 										.addValues( variableHelper( "document" ), new IRIToken( persistedDocument.id ) )
 									)
@@ -11861,7 +11861,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 
 						expect( query ).toEqual( new QueryToken(
 							new ConstructToken()
-								.addTriple( new SubjectToken( variableHelper( "metadata" ) )
+								.addTriple( new SubjectToken( variableHelper( "queryMetadata" ) )
 									.addPredicate( new PredicateToken( "a" )
 										.addObject( new IRIToken( C.VolatileResource ) )
 										.addObject( new IRIToken( C.QueryMetadata ) )
@@ -11899,7 +11899,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 									)
 								)
 
-								.addPattern( new BindToken( "BNODE()", variableHelper( "metadata" ) ) )
+								.addPattern( new BindToken( "BNODE()", variableHelper( "queryMetadata" ) ) )
 								.addPattern( new ValuesToken()
 									.addValues( variableHelper( "document" ), new IRIToken( persistedDocument.id ) )
 								)
@@ -14770,14 +14770,14 @@ describe( module( "carbonldp/Documents" ), ():void => {
 						"https://example.com/pointer/",
 
 						"CONSTRUCT {" +
-						` ?metadata a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
+						` ?queryMetadata a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
 						"" + ` <${ C.target }> ?document.` +
 
 						" ?document a ?document__types;" +
 						"" + " <https://example.com/ns#name> ?document__name " +
 
 						"} WHERE {" +
-						" BIND(BNODE() AS ?metadata)." +
+						" BIND(BNODE() AS ?queryMetadata)." +
 
 						" VALUES ?document { <https://example.com/pointer/> }." +
 						" OPTIONAL { ?document a ?document__types }." +
