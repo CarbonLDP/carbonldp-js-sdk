@@ -480,6 +480,7 @@ exports.C = {
     namespace: "https://carbonldp.com/ns/v1/platform#",
     AccessPoint: "https://carbonldp.com/ns/v1/platform#AccessPoint",
     AccessPointCreated: "https://carbonldp.com/ns/v1/platform#AccessPointCreated",
+    AccessPointsMetadata: "https://carbonldp.com/ns/v1/platform#AccessPointsMetadata",
     AddMemberAction: "https://carbonldp.com/ns/v1/platform#AddMemberAction",
     ChildCreated: "https://carbonldp.com/ns/v1/platform#ChildCreatedEvent",
     Document: "https://carbonldp.com/ns/v1/platform#Document",
@@ -4986,6 +4987,26 @@ function getSubject(subjectsMap, original) {
     subjectsMap.set(subjectStr, subject);
     return subject;
 }
+function getResourcesVariables(patterns) {
+    var resourcesVariables = new Set();
+    patterns.forEach(function (pattern) {
+        if (pattern.token === "optional")
+            getResourcesVariables(pattern.patterns)
+                .forEach(resourcesVariables.add, resourcesVariables);
+        if (pattern.token === "graph" && pattern.graph.token === "variable")
+            resourcesVariables.add(pattern.graph);
+        if (pattern.token !== "subject")
+            return;
+        if (pattern.subject.token !== "variable")
+            return;
+        var predicate = pattern.predicates
+            .find(function (p) { return p.predicate === "a" || p.predicate.token === "variable"; });
+        if (predicate)
+            resourcesVariables.add(pattern.subject);
+    });
+    return Array.from(resourcesVariables);
+}
+exports.getResourcesVariables = getResourcesVariables;
 function getPathProperty(element, path) {
     if (element === void 0 || !path)
         return element;
@@ -11449,16 +11470,40 @@ var Documents = (function () {
     };
     Documents.prototype._executeConstructPatterns = function (uri, requestOptions, queryContext, targetName, constructPatterns, targetDocument) {
         var _this = this;
-        var metadataVar = queryContext.getVariable("queryMetadata");
+        var queryMetadata = queryContext.getVariable("queryMetadata");
+        var accessPointsMetadata = queryContext.getVariable("accessPointsMetadata");
         var construct = (_a = new tokens_1.ConstructToken()
-            .addTriple(new tokens_1.SubjectToken(metadataVar)
+            .addTriple(new tokens_1.SubjectToken(queryMetadata)
             .addPredicate(new tokens_1.PredicateToken("a")
             .addObject(queryContext.compactIRI(C_1.C.VolatileResource))
             .addObject(queryContext.compactIRI(C_1.C.QueryMetadata)))
             .addPredicate(new tokens_1.PredicateToken(queryContext.compactIRI(C_1.C.target))
             .addObject(queryContext.getVariable(targetName))))
-            .addPattern(new tokens_1.BindToken("BNODE()", metadataVar))).addPattern.apply(_a, constructPatterns);
+            .addPattern(new tokens_1.BindToken("BNODE()", queryMetadata))
+            .addPattern("{ " + new tokens_1.BindToken("BNODE()", accessPointsMetadata) + " }")).addPattern.apply(_a, constructPatterns);
         var query = (_b = new tokens_1.QueryToken(construct)).addPrologues.apply(_b, queryContext.getPrologues());
+        var accessPointsTriple = new tokens_1.SubjectToken(accessPointsMetadata)
+            .addPredicate(new tokens_1.PredicateToken("a")
+            .addObject(queryContext.compactIRI(C_1.C.VolatileResource))
+            .addObject(queryContext.compactIRI(C_1.C.AccessPointsMetadata)));
+        construct.addTriple(accessPointsTriple);
+        Utils_2.getResourcesVariables(constructPatterns)
+            .forEach(function (resource) {
+            var name = resource.name.replace(/__/g, ".");
+            var accessPoints = queryContext.getVariable(name + ".accessPoints");
+            var relation = queryContext.getVariable(name + ".accessPoints.hasMemberRelation");
+            construct
+                .addPattern(new tokens_1.OptionalToken()
+                .addPattern(new tokens_1.SubjectToken(resource)
+                .addPredicate(new tokens_1.PredicateToken(queryContext.compactIRI(C_1.C.accessPoint))
+                .addObject(accessPoints)))
+                .addPattern(new tokens_1.SubjectToken(accessPoints)
+                .addPredicate(new tokens_1.PredicateToken(queryContext.compactIRI(LDP_1.LDP.hasMemberRelation))
+                .addObject(relation))));
+            accessPointsTriple
+                .addPredicate(new tokens_1.PredicateToken(relation)
+                .addObject(accessPoints));
+        });
         var triples = Utils_2.getAllTriples(constructPatterns);
         construct.addTriple.apply(construct, triples);
         Request_1.RequestUtils.setRetrievalPreferences({ include: [C_1.C.PreferResultsContext] }, requestOptions);

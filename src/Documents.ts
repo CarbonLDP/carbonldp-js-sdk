@@ -111,6 +111,7 @@ import {
 	createTypesPattern,
 	getAllTriples,
 	getPathProperty,
+	getResourcesVariables,
 } from "./SPARQL/QueryDocument/Utils";
 import { SPARQLRawResults } from "./SPARQL/RawResults";
 import { SPARQLSelectResults } from "./SPARQL/SelectResults";
@@ -1077,9 +1078,11 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 	}
 
 	private _executeConstructPatterns<T extends object>( uri:string, requestOptions:RequestOptions, queryContext:QueryContext, targetName:string, constructPatterns:PatternToken[], targetDocument?:T & PersistedDocument ):Promise<(T & PersistedDocument)[]> {
-		const metadataVar:VariableToken = queryContext.getVariable( "queryMetadata" );
+		const queryMetadata:VariableToken = queryContext.getVariable( "queryMetadata" );
+		const accessPointsMetadata:VariableToken = queryContext.getVariable( "accessPointsMetadata" );
+
 		const construct:ConstructToken = new ConstructToken()
-			.addTriple( new SubjectToken( metadataVar )
+			.addTriple( new SubjectToken( queryMetadata )
 				.addPredicate( new PredicateToken( "a" )
 					.addObject( queryContext.compactIRI( C.VolatileResource ) )
 					.addObject( queryContext.compactIRI( C.QueryMetadata ) )
@@ -1088,11 +1091,45 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 					.addObject( queryContext.getVariable( targetName ) )
 				)
 			)
-			.addPattern( new BindToken( "BNODE()", metadataVar ) )
+			.addPattern( new BindToken( "BNODE()", queryMetadata ) )
+			// TODO: Make GroupGraphToken in `sparqler`
+			.addPattern( `{ ${ new BindToken( "BNODE()", accessPointsMetadata ) } }` as any )
 			.addPattern( ...constructPatterns );
 
 		const query:QueryToken = new QueryToken( construct )
 			.addPrologues( ...queryContext.getPrologues() );
+
+		const accessPointsTriple:SubjectToken = new SubjectToken( accessPointsMetadata )
+			.addPredicate( new PredicateToken( "a" )
+				.addObject( queryContext.compactIRI( C.VolatileResource ) )
+				.addObject( queryContext.compactIRI( C.AccessPointsMetadata ) )
+			);
+		construct.addTriple( accessPointsTriple );
+
+		getResourcesVariables( constructPatterns )
+			.forEach( resource => {
+				const name:string = resource.name.replace( /__/g, "." );
+				const accessPoints:VariableToken = queryContext.getVariable( name + ".accessPoints" );
+				const relation:VariableToken = queryContext.getVariable( name + ".accessPoints.hasMemberRelation" );
+
+				construct
+					.addPattern( new OptionalToken()
+						.addPattern( new SubjectToken( resource )
+							.addPredicate( new PredicateToken( queryContext.compactIRI( C.accessPoint ) )
+								.addObject( accessPoints )
+							)
+						)
+						.addPattern( new SubjectToken( accessPoints )
+							.addPredicate( new PredicateToken( queryContext.compactIRI( LDP.hasMemberRelation ) )
+								.addObject( relation )
+							)
+						)
+					);
+
+				accessPointsTriple
+					.addPredicate( new PredicateToken( relation )
+						.addObject( accessPoints ) );
+			} );
 
 		const triples:SubjectToken[] = getAllTriples( constructPatterns );
 		construct.addTriple( ...triples );
