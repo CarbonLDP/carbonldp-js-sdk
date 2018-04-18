@@ -19,6 +19,7 @@ import {
 	ValuesToken,
 	VariableToken
 } from "sparqler/tokens";
+import { anyThatMatches } from "../test/helpers/jasmine-equalities";
 
 import { AbstractContext } from "./AbstractContext";
 import {
@@ -44,6 +45,7 @@ import * as ObjectSchema from "./ObjectSchema";
 import { PersistedAccessPoint } from "./PersistedAccessPoint";
 import { PersistedDocument } from "./PersistedDocument";
 import { PersistedNamedFragment } from "./PersistedNamedFragment";
+import { PersistedProtectedDocument } from "./PersistedProtectedDocument";
 import { PersistedResource } from "./PersistedResource";
 import { Pointer } from "./Pointer";
 import { Resource } from "./Resource";
@@ -1881,6 +1883,114 @@ describe( module( "carbonldp/Documents" ), ():void => {
 						} ) );
 						done();
 					} ).catch( done.fail );
+				} );
+
+
+				it( "should add retrieved access points from metadata", ( done:DoneFn ):void => {
+					jasmine.Ajax.stubRequest( "https://example.com/resource/" ).andReturn( {
+						status: 200,
+						responseText: `[ {
+							"@id":"_:1",
+							"@type": [
+								"${ C.VolatileResource }",
+								"${ C.QueryMetadata }"
+							],
+							"${ C.target }": [ {
+								"@id":"https://example.com/resource/"
+							} ]
+						}, {
+							"@id": "_:2",
+							"@type": [
+								"${ C.ResponseMetadata }",
+								"${ C.VolatileResource }"
+							],
+							"${ C.documentMetadata }": [ {
+								"@id": "_:3"
+							} ]
+						}, {
+							"@id": "_:3",
+							"@type": [
+								"${ C.DocumentMetadata }",
+								"${ C.VolatileResource }"
+							],
+							"${ C.eTag }": [ {
+								"@value": "\\"1-12345\\""
+							} ],
+							"${ C.relatedDocument }": [ {
+								"@id": "https://example.com/resource/"
+							} ]
+						}, {
+							"@id": "_:4",
+							"@type": [
+								"${ C.VolatileResource }",
+								"${ C.AccessPointsMetadata }"
+							],
+							"https://example.com/ns#relation-1": [ {
+								"@id": "https://example.com/resource/relation-1/"
+							} ],
+							"https://example.com/ns#relation-2": {
+								"@id": "https://example.com/resource/relation-2/"
+							},
+							"https://example.com/ns#relation3": {
+								"@id": "https://example.com/resource/relation-3/"
+							}
+						}, {
+							"@id": "https://example.com/resource/",
+							"@graph": [ {
+								"@id": "https://example.com/resource/",
+								"@type": [
+									"${ C.Document }",
+									"https://example.com/ns#Resource",
+									"${ LDP.BasicContainer }",
+									"${ LDP.RDFSource }"
+								]
+							} ]
+						} ]`,
+					} );
+
+
+					interface MyDocument {
+						$relation1:PersistedAccessPoint;
+						$relation2:PersistedAccessPoint;
+						$relation3:PersistedAccessPoint;
+					}
+
+					context.extendObjectSchema( "https://example.com/ns#Resource", {
+						"relation1": {
+							"@id": "https://example.com/ns#relation-1",
+							"@type": "@id",
+							"@container": "@set",
+						},
+						"relation2": {
+							"@id": "https://example.com/ns#relation-2",
+							"@type": "@id",
+						},
+					} );
+
+
+					documents
+						.get<MyDocument>( "https://example.com/resource/", _ => _
+							.withType( "https://example.com/ns#Resource" )
+							.properties( {} )
+						)
+						.then( ( document ) => {
+							expect( document.$relation1 ).toEqual( anyThatMatches( PersistedProtectedDocument.is, "PersistedProtectedDocument" ) as any );
+							expect( document.$relation1 ).toEqual( jasmine.objectContaining( {
+								id: "https://example.com/resource/relation-1/",
+							} ) );
+
+							expect( document.$relation2 ).toEqual( anyThatMatches( PersistedProtectedDocument.is, "PersistedProtectedDocument" ) as any );
+							expect( document.$relation2 ).toEqual( jasmine.objectContaining( {
+								id: "https://example.com/resource/relation-2/",
+							} ) );
+
+							expect( document.$relation3 ).toEqual( anyThatMatches( PersistedProtectedDocument.is, "PersistedProtectedDocument" ) as any );
+							expect( document.$relation3 ).toEqual( jasmine.objectContaining( {
+								id: "https://example.com/resource/relation-3/",
+							} ) );
+
+							done();
+						} ).catch( done.fail );
 				} );
 
 			} );
@@ -4965,6 +5075,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					} );
 				} );
 
+
 				it( "should order returned children", ( done:DoneFn ):void => {
 					jasmine.Ajax.stubRequest( "https://example.com/resource/" ).andReturn( {
 						status: 200,
@@ -5852,6 +5963,266 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					} ).catch( done.fail );
 				} );
 
+
+				it( "should add retrieved access points from metadata", ( done:DoneFn ):void => {
+					jasmine.Ajax.stubRequest( "https://example.com/resource/" ).andReturn( {
+						status: 200,
+						responseText: `[ {
+							"@id":"_:1",
+							"@type": [
+								"${ C.VolatileResource }",
+								"${ C.QueryMetadata }"
+							],
+							"${ C.target }": [ {
+								"@id":"https://example.com/resource/child1/"
+							} ]
+						}, {
+							"@id":"_:2",
+							"@type": [
+								"${ C.VolatileResource }",
+								"${ C.QueryMetadata }"
+							],
+							"${ C.target }": [ {
+								"@id":"https://example.com/resource/child2/"
+							} ]
+						}, {
+							"@id": "_:3",
+							"@type": [
+								"${ C.ResponseMetadata }",
+								"${ C.VolatileResource }"
+							],
+							"${ C.documentMetadata }": [ {
+								"@id": "_:4"
+							}, {
+								"@id": "_:5"
+							}, {
+								"@id": "_:6"
+							}, {
+								"@id": "_:7"
+							} ]
+						}, {
+							"@id": "_:4",
+							"@type": [
+								"${ C.DocumentMetadata }",
+								"${ C.VolatileResource }"
+							],
+							"${ C.eTag }": [ {
+								"@value": "\\"1-12345\\""
+							} ],
+							"${ C.relatedDocument }": [ {
+								"@id": "https://example.com/resource/child1/"
+							} ]
+						}, {
+							"@id": "_:5",
+							"@type": [
+								"${ C.DocumentMetadata }",
+								"${ C.VolatileResource }"
+							],
+							"${ C.eTag }": [ {
+								"@value": "\\"2-12345\\""
+							} ],
+							"${ C.relatedDocument }": [ {
+								"@id": "https://example.com/resource/child2/"
+							} ]
+						}, {
+							"@id": "_:6",
+							"@type": [
+								"${ C.DocumentMetadata }",
+								"${ C.VolatileResource }"
+							],
+							"${ C.eTag }": [ {
+								"@value": "\\"3-12345\\""
+							} ],
+							"${ C.relatedDocument }": [ {
+								"@id": "https://example.com/sub-documents/sub-document1/"
+							} ]
+						}, {
+							"@id": "_:7",
+							"@type": [
+								"${ C.DocumentMetadata }",
+								"${ C.VolatileResource }"
+							],
+							"${ C.eTag }": [ {
+								"@value": "\\"4-12345\\""
+							} ],
+							"${ C.relatedDocument }": [ {
+								"@id": "https://example.com/sub-documents/sub-document2/"
+							} ]
+						}, {
+							"@id": "_:8",
+							"@type": [
+								"${ C.VolatileResource }",
+								"${ C.AccessPointsMetadata }"
+							],
+							"https://example.com/ns#relation-1": [ {
+								"@id": "https://example.com/resource/child1/relation-1/"
+							}, {
+								"@id": "https://example.com/resource/child2/relation-1/"
+							}, {
+								"@id": "https://example.com/sub-documents/sub-document1/relation-1/"
+							} ],
+							"https://example.com/ns#relation-2": [ {
+								"@id": "https://example.com/resource/child1/relation-2/"
+							}, {
+								"@id": "https://example.com/resource/child2/relation-2/"
+							}, {
+								"@id": "https://example.com/sub-documents/sub-document2/relation-2/"
+							} ],
+							"https://example.com/ns#relation-3": [ {
+								"@id": "https://example.com/sub-documents/sub-document1/relation-3/"
+							}, {
+								"@id": "https://example.com/sub-documents/sub-document2/relation-3/"
+							} ]
+						}, {
+							"@id": "https://example.com/resource/child1/",
+							"@graph": [ {
+								"@id": "https://example.com/resource/child1/",
+								"@type": [
+									"${ C.Document }",
+									"https://example.com/ns#Resource",
+									"${ LDP.BasicContainer }",
+									"${ LDP.RDFSource }"
+								],
+								"https://schema.org/property-2": [ {
+									"@id": "https://example.com/sub-documents/sub-document1/"
+								} ]
+							} ]
+						}, {
+							"@id": "https://example.com/sub-documents/sub-document1/",
+							"@graph": [ {
+								"@id": "https://example.com/sub-documents/sub-document1/",
+								"@type": [
+									"${ C.Document }",
+									"https://example.com/ns#Resource",
+									"https://example.com/ns#AnotherResource",
+									"${ LDP.BasicContainer }",
+									"${ LDP.RDFSource }"
+								]
+							} ]
+						}, {
+							"@id": "https://example.com/resource/child2/",
+							"@graph": [ {
+								"@id": "https://example.com/resource/child2/",
+								"@type": [
+									"${ C.Document }",
+									"https://example.com/ns#Resource",
+									"${ LDP.BasicContainer }",
+									"${ LDP.RDFSource }"
+								],
+								"https://schema.org/property-2": [ {
+									"@id": "https://example.com/sub-documents/sub-document2/"
+								} ]
+							} ]
+						}, {
+							"@id": "https://example.com/sub-documents/sub-document2/",
+							"@graph": [ {
+								"@id": "https://example.com/sub-documents/sub-document2/",
+								"@type": [
+									"${ C.Document }",
+									"https://example.com/ns#Resource",
+									"https://example.com/ns#AnotherResource",
+									"${ LDP.BasicContainer }",
+									"${ LDP.RDFSource }"
+								]
+							} ]
+						} ]`,
+					} );
+
+					interface MyDocument {
+						$relation1:PersistedAccessPoint;
+						$relation2:PersistedAccessPoint;
+						property2:MySubDocument;
+					}
+
+					interface MySubDocument {
+						$subRelation1:PersistedAccessPoint;
+						$subRelation2:PersistedAccessPoint;
+						$relation3:PersistedAccessPoint;
+					}
+
+
+					context.extendObjectSchema( "Resource", {
+						"relation1": {
+							"@id": "https://example.com/ns#relation-1",
+							"@type": "@id",
+							"@container": "@set",
+						},
+						"relation2": {
+							"@id": "https://example.com/ns#relation-2",
+							"@type": "@id",
+						},
+						"property2": {
+							"@id": "https://schema.org/property-2",
+							"@type": "@id",
+						},
+					} );
+
+					context.extendObjectSchema( "AnotherResource", {
+						"subRelation1": {
+							"@id": "https://example.com/ns#relation-1",
+							"@type": "@id",
+							"@container": "@set",
+						},
+						"subRelation2": {
+							"@id": "https://example.com/ns#relation-2",
+							"@type": "@id",
+						},
+						"relation3": {
+							"@id": "https://example.com/ns#relation-3",
+							"@type": "@id",
+							"@container": "@set",
+						},
+					} );
+
+
+					documents.getChildren<MyDocument>( "https://example.com/resource/", _ => _
+						.withType( "Resource" )
+						.properties( {
+							"property2": {
+								"query": __ => __,
+							},
+						} )
+					).then( ( myDocuments ) => {
+						expect( myDocuments[ 0 ].$relation1 ).toEqual( anyThatMatches( PersistedProtectedDocument.is, "PersistedProtectedDocument" ) as any );
+						expect( myDocuments[ 0 ].$relation1 ).toEqual( jasmine.objectContaining( {
+							id: "https://example.com/resource/child1/relation-1/",
+						} ) );
+						expect( myDocuments[ 0 ].$relation2 ).toEqual( anyThatMatches( PersistedProtectedDocument.is, "PersistedProtectedDocument" ) as any );
+						expect( myDocuments[ 0 ].$relation2 ).toEqual( jasmine.objectContaining( {
+							id: "https://example.com/resource/child1/relation-2/",
+						} ) );
+
+						expect( myDocuments[ 1 ].$relation1 ).toEqual( anyThatMatches( PersistedProtectedDocument.is, "PersistedProtectedDocument" ) as any );
+						expect( myDocuments[ 1 ].$relation1 ).toEqual( jasmine.objectContaining( {
+							id: "https://example.com/resource/child2/relation-1/",
+						} ) );
+						expect( myDocuments[ 1 ].$relation2 ).toEqual( anyThatMatches( PersistedProtectedDocument.is, "PersistedProtectedDocument" ) as any );
+						expect( myDocuments[ 1 ].$relation2 ).toEqual( jasmine.objectContaining( {
+							id: "https://example.com/resource/child2/relation-2/",
+						} ) );
+
+						expect( myDocuments[ 0 ].property2.$subRelation1 ).toEqual( anyThatMatches( PersistedProtectedDocument.is, "PersistedProtectedDocument" ) as any );
+						expect( myDocuments[ 0 ].property2.$subRelation1 ).toEqual( jasmine.objectContaining( {
+							id: "https://example.com/sub-documents/sub-document1/relation-1/",
+						} ) );
+						expect( myDocuments[ 0 ].property2.$relation3 ).toEqual( anyThatMatches( PersistedProtectedDocument.is, "PersistedProtectedDocument" ) as any );
+						expect( myDocuments[ 0 ].property2.$relation3 ).toEqual( jasmine.objectContaining( {
+							id: "https://example.com/sub-documents/sub-document1/relation-3/",
+						} ) );
+
+						expect( myDocuments[ 1 ].property2.$subRelation2 ).toEqual( anyThatMatches( PersistedProtectedDocument.is, "PersistedProtectedDocument" ) as any );
+						expect( myDocuments[ 1 ].property2.$subRelation2 ).toEqual( jasmine.objectContaining( {
+							id: "https://example.com/sub-documents/sub-document2/relation-2/",
+						} ) );
+						expect( myDocuments[ 1 ].property2.$relation3 ).toEqual( anyThatMatches( PersistedProtectedDocument.is, "PersistedProtectedDocument" ) as any );
+						expect( myDocuments[ 1 ].property2.$relation3 ).toEqual( jasmine.objectContaining( {
+							id: "https://example.com/sub-documents/sub-document2/relation-3/",
+						} ) );
+
+						done();
+					} ).catch( done.fail );
+				} );
+
 			} );
 
 			describe( "When Documents does not have a context", ():void => {
@@ -6627,7 +6998,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 
 					const accessPoint:AccessPointBase = { hasMemberRelation: "member-relation" };
 					documents.createAccessPoint( "https://example.com/parent-resource/", accessPoint ).then( ( document:PersistedAccessPoint ):void => {
-						expect( accessPoint ).toBe( document );
+						expect( accessPoint as {} ).toBe( document );
 
 						expect( PersistedDocument.is( document ) ).toBe( true );
 						expect( document ).toEqual( jasmine.objectContaining( {
@@ -6939,7 +7310,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 						.then( ( persistedDocuments:PersistedAccessPoint[] ):void => {
 							expect( persistedDocuments ).toEqual( new Array( 3 ).fill( jasmine.anything() ) );
 							persistedDocuments.forEach( ( document, index ) => {
-								expect( accessPoints[ index ] ).toBe( document );
+								expect( accessPoints[ index ] as {} ).toBe( document );
 
 								expect( PersistedDocument.is( document ) ).toBe( true );
 								expect( document ).toEqual( jasmine.objectContaining( {

@@ -36,7 +36,6 @@ exports.DigestedObjectSchemaProperty = DigestedObjectSchemaProperty;
 var DigestedObjectSchema = (function () {
     function DigestedObjectSchema() {
         this.base = "";
-        this.vocab = null;
         this.language = null;
         this.prefixes = new Map();
         this.properties = new Map();
@@ -123,10 +122,14 @@ var ObjectSchemaDigester = (function () {
             if (!(propertyName in schema))
                 continue;
             var value = schema[propertyName];
-            if (value !== null && !Utils.isString(value))
-                throw new Errors_1.IllegalArgumentError("The value of '" + propertyName + "' must be a string or null.");
-            if ((propertyName === "@vocab" && value === "") || !URI_1.URI.isAbsolute(value) && !URI_1.URI.isBNodeID(value))
-                throw new Errors_1.IllegalArgumentError("The value of '" + propertyName + "' must be an absolute URI" + (propertyName === "@base" ? " or an empty string" : "") + ".");
+            if (value !== null) {
+                if (!Utils.isString(value))
+                    throw new Errors_1.IllegalArgumentError("The value of '" + propertyName + "' must be a string or null.");
+                if (propertyName === "@vocab" && value === "")
+                    throw new Errors_1.IllegalArgumentError("The value of '" + propertyName + "' must be an absolute URI.");
+                if (!URI_1.URI.isAbsolute(value) && !URI_1.URI.isBNodeID(value))
+                    throw new Errors_1.IllegalArgumentError("The value of '" + propertyName + "' must be an absolute URI" + (propertyName === "@base" ? " or an empty string" : "") + ".");
+            }
             digestedSchema[propertyName.substr(1)] = value;
         }
         digestedSchema.base = digestedSchema.base || "";
@@ -168,7 +171,7 @@ var ObjectSchemaDigester = (function () {
     ObjectSchemaDigester._combineSchemas = function (digestedSchemas) {
         var targetSchema = digestedSchemas[0], restSchemas = digestedSchemas.slice(1);
         restSchemas.forEach(function (schema) {
-            if (schema.vocab !== null)
+            if (schema.vocab !== void 0)
                 targetSchema.vocab = schema.vocab;
             if (schema.base !== "")
                 targetSchema.base = schema.base;
@@ -199,7 +202,7 @@ var ObjectSchemaUtils = (function () {
         }
         if (localName)
             return uri;
-        if (relativeTo.vocab && schema.vocab !== null)
+        if (relativeTo.vocab && Utils.isString(schema.vocab))
             return schema.vocab + uri;
         if (relativeTo.base)
             return URI_1.URI.resolve(schema.base, uri);

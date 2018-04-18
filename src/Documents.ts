@@ -45,6 +45,7 @@ import { Response } from "./HTTP/Response";
 import { JSONLDCompacter } from "./JSONLD/Compacter";
 import { JSONLDConverter } from "./JSONLD/Converter";
 import { JSONLDParser } from "./JSONLD/Parser";
+import { AccessPointsMetadata } from "./LDP";
 import { AddMemberAction } from "./LDP/AddMemberAction";
 import { DocumentMetadata } from "./LDP/DocumentMetadata";
 import { ErrorResponse } from "./LDP/ErrorResponse";
@@ -1145,11 +1146,12 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 				const targetETag:string = targetDocument && targetDocument._eTag;
 				if( targetDocument ) targetDocument._eTag = void 0;
 
-				const freeNodes:RDFNode[] = RDFNode.getFreeNodes( rdfNodes );
-				const freeResources:FreeResources = this._getFreeResources( freeNodes );
+				const freeResources:Resource[] = this
+					._getFreeResources( RDFNode.getFreeNodes( rdfNodes ) )
+					.getResources()
+				;
 
 				freeResources
-					.getResources()
 					.filter( ResponseMetadata.is )
 					.map<DocumentMetadata[] | DocumentMetadata>( responseMetadata => responseMetadata.documentsMetadata || responseMetadata[ C.documentMetadata ] )
 					.map<DocumentMetadata[]>( documentsMetadata => Array.isArray( documentsMetadata ) ? documentsMetadata : [ documentsMetadata ] )
@@ -1173,7 +1175,6 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 					.filter<any>( RDFDocument.is );
 
 				const targetSet:Set<string> = new Set( freeResources
-					.getResources()
 					.filter( QueryMetadata.is )
 					.map( x => this.context ? x.target : x[ C.target ] )
 					// Alternative to flatMap
@@ -1183,8 +1184,84 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 				const targetDocuments:RDFDocument[] = rdfDocuments
 					.filter( x => targetSet.has( x[ "@id" ] ) );
 
-				return new JSONLDCompacter( this, targetName, queryContext )
+				const documents:(T & PersistedDocument)[] = new JSONLDCompacter( this, targetName, queryContext )
 					.compactDocuments( rdfDocuments, targetDocuments );
+
+
+				freeResources
+					.filter( AccessPointsMetadata.is )
+					.forEach( metadata => {
+						const relationURIs:string[] = Object.keys( metadata );
+
+						relationURIs
+							.forEach( relationURI => {
+								const pointers:Pointer[] = Array.isArray( metadata[ relationURI ] ) ?
+									metadata[ relationURI ] : [ metadata[ relationURI ] ];
+
+								const resources:Map<string, Resource> = new Map<string, Resource>();
+								const getResource:( child:Pointer ) => Resource = child => {
+									if( resources.has( child.id ) ) return resources.get( child.id );
+
+									const pointer:Pointer = this.getPointer( child
+										.id
+										.split( "/" )
+										.slice( 0, - 2 )
+										.concat( "" )
+										.join( "/" )
+									);
+									const resource:Resource = Resource.decorate( pointer );
+
+									resources.set( child.id, resource );
+									return resource;
+								};
+
+								type ResourceData = { schema:DigestedObjectSchema, uris:Map<string, string> };
+								const resourcesData:Map<string, ResourceData> = new Map();
+								const getResourcesData:( resource:Resource ) => ResourceData = resource => {
+									if( resourcesData.has( resource.id ) ) return resourcesData.get( resource.id );
+
+									const resourceSchema:DigestedObjectSchema = this._getDigestedObjectSchema( resource.types, resource.id );
+									const resourceURIsMap:Map<string, string> = JSONLDConverter.getPropertyURINameMap( resourceSchema );
+
+									const resourceData:ResourceData = {
+										uris: resourceURIsMap,
+										schema: resourceSchema,
+									};
+									resourcesData.set( resource.id, resourceData );
+
+									return resourceData;
+								};
+
+								const compactRelation:( resource:Resource ) => string = ( resource ) => {
+									const { uris, schema } = getResourcesData( resource );
+
+									if( uris.has( relationURI ) ) return uris.get( relationURI );
+									if( schema.vocab ) return URI.getRelativeURI( relationURI, schema.vocab );
+
+									return relationURI;
+								};
+
+								pointers.forEach( pointer => {
+									const resource:Resource = getResource( pointer );
+									const relationName:string = compactRelation( resource );
+
+									const accessPoint:PersistedAccessPoint = PersistedProtectedDocument
+										.decorate( pointer, this );
+
+									Object.defineProperty( resource, "$" + relationName, {
+										configurable: true,
+										value: accessPoint,
+									} );
+								} );
+							} )
+						;
+
+
+					} )
+				;
+
+
+				return documents;
 			} );
 	}
 
