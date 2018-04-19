@@ -17,7 +17,7 @@ var LDAPCredentials_1 = require("./Auth/LDAPCredentials");
 var TokenCredentials_1 = require("./Auth/TokenCredentials");
 var User_1 = require("./Auth/User");
 var UsernameAndPasswordCredentials_1 = require("./Auth/UsernameAndPasswordCredentials");
-var Document_1 = require("./Document");
+var TransientDocument_1 = require("./TransientDocument");
 var Documents_1 = require("./Documents");
 var Errors = __importStar(require("./Errors"));
 var AddMemberAction_1 = require("./LDP/AddMemberAction");
@@ -172,7 +172,7 @@ var SDKContext = (function () {
         this.typeObjectSchemaMap.set(type, extendedDigestedSchema);
     };
     SDKContext.prototype.registerDefaultObjectSchemas = function () {
-        this.extendObjectSchema(Document_1.Document.TYPE, Document_1.Document.SCHEMA);
+        this.extendObjectSchema(TransientDocument_1.TransientDocument.TYPE, TransientDocument_1.TransientDocument.SCHEMA);
         this.extendObjectSchema(ProtectedDocument_1.ProtectedDocument.TYPE, ProtectedDocument_1.ProtectedDocument.SCHEMA);
         this.extendObjectSchema(PlatformMetadata_1.PlatformMetadata.TYPE, PlatformMetadata_1.PlatformMetadata.SCHEMA);
         this.extendObjectSchema(PlatformInstance_1.PlatformInstance.TYPE, PlatformInstance_1.PlatformInstance.SCHEMA);

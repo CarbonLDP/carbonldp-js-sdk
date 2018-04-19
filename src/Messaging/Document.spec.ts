@@ -1,4 +1,4 @@
-import { Document } from "../Document";
+import { TransientDocument } from "../TransientDocument";
 import { Documents } from "../Documents";
 import { ServiceAwareDocument } from "../ServiceAwareDocument";
 import {
@@ -488,7 +488,7 @@ describe( module( "carbonldp/Messaging/Document" ), ():void => {
 
 			it( "should return the same reference of the object provided", ():void => {
 				const documents:Documents = new Documents();
-				const base:ServiceAwareDocument = ServiceAwareDocument.decorate( Document.create(), documents );
+				const base:ServiceAwareDocument = ServiceAwareDocument.decorate( TransientDocument.create(), documents );
 
 				const target:MessagingDocument = MessagingDocument.decorate( base );
 				expect( base ).toBe( target );
@@ -498,7 +498,7 @@ describe( module( "carbonldp/Messaging/Document" ), ():void => {
 				const documents:Documents = new Documents();
 
 				const methodsFunction:() => void = () => {};
-				const base:ServiceAwareDocument = ServiceAwareDocument.decorate( Document.createFrom( {
+				const base:ServiceAwareDocument = ServiceAwareDocument.decorate( TransientDocument.createFrom( {
 					on: methodsFunction,
 					off: methodsFunction,
 					one: methodsFunction,
@@ -528,7 +528,7 @@ describe( module( "carbonldp/Messaging/Document" ), ():void => {
 
 			it( "should add the new properties", ():void => {
 				const documents:Documents = new Documents();
-				const base:ServiceAwareDocument = ServiceAwareDocument.decorate( Document.create(), documents );
+				const base:ServiceAwareDocument = ServiceAwareDocument.decorate( TransientDocument.create(), documents );
 
 				const target:MessagingDocument = MessagingDocument.decorate( base );
 				expect( target ).toEqual( jasmine.objectContaining( {

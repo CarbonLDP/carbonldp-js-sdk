@@ -1,9 +1,9 @@
 import { ModelDecorator } from "../ModelDecorator";
 import { ObjectSchema } from "../ObjectSchema";
 import { Pointer } from "../Pointer";
-import { Document } from "./../Document";
+import { TransientDocument } from "../TransientDocument";
 import { ACE } from "./ACE";
-export interface ACL extends Document {
+export interface ACL extends TransientDocument {
     accessTo: Pointer;
     entries?: ACE[];
     inheritableEntries?: ACE[];

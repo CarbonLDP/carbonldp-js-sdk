@@ -5,7 +5,7 @@ import { BlankNode } from "./BlankNode";
 
 import * as CarbonLDP from "./CarbonLDP";
 
-import { Document } from "./Document";
+import { TransientDocument } from "./TransientDocument";
 import { Documents } from "./Documents";
 import * as Errors from "./Errors";
 import { Fragment } from "./Fragment";
@@ -129,11 +129,11 @@ describe( module( "carbonldp/CarbonLDP" ), ():void => {
 
 		it( reexports(
 			STATIC,
-			"Document",
-			"carbonldp/Document#Document"
+			"TransientDocument",
+			"carbonldp/TransientDocument#TransientDocument"
 		), ():void => {
-			expect( CarbonLDP.CarbonLDP.Document ).toBeDefined();
-			expect( CarbonLDP.CarbonLDP.Document ).toBe( Document );
+			expect( CarbonLDP.CarbonLDP.TransientDocument ).toBeDefined();
+			expect( CarbonLDP.CarbonLDP.TransientDocument ).toBe( TransientDocument );
 		} );
 
 		it( reexports(

@@ -1,4 +1,4 @@
-import { Document } from "./Document";
+import { TransientDocument } from "./TransientDocument";
 import { Fragment } from "./Fragment";
 
 import {
@@ -21,7 +21,7 @@ describe( module( "carbonldp/Fragment" ), ():void => {
 		it( hasProperty(
 			OBLIGATORY,
 			"_document",
-			"CarbonLDP.Document",
+			"CarbonLDP.TransientDocument",
 			"The document the fragment belongs to."
 		), ():void => {} );
 
@@ -54,7 +54,7 @@ describe( module( "carbonldp/Fragment" ), ():void => {
 			OBLIGATORY,
 			"create",
 			"Creates a Fragment with the ID if provided.", [
-				{ name: "document", type: "CarbonLDP.Document", description: "The document that the fragment will be part of." },
+				{ name: "document", type: "CarbonLDP.TransientDocument", description: "The document that the fragment will be part of." },
 				{ name: "id", type: "string", optional: true, description: "The ID of the fragment to create." },
 			],
 			{ type: "CarbonLDP.Fragment" }
@@ -66,7 +66,7 @@ describe( module( "carbonldp/Fragment" ), ():void => {
 			[ "T extends object" ],
 			"Creates a Fragment from an object with the ID if provided.", [
 				{ name: "object", type: "T", description: "Object that will be converted to a fragment." },
-				{ name: "document", type: "CarbonLDP.Document", description: "The document that the fragment will be part of." },
+				{ name: "document", type: "CarbonLDP.TransientDocument", description: "The document that the fragment will be part of." },
 				{ name: "id", type: "string", optional: true, description: "The ID that will be assigned to the fragment." },
 			],
 			{ type: "T & CarbonLDP.Fragment" }
@@ -127,9 +127,9 @@ describe( module( "carbonldp/Fragment" ), ():void => {
 
 		// TODO: Add tests for `Fragment.is`
 
-		let document:Document;
+		let document:TransientDocument;
 		beforeAll( ():void => {
-			document = Document.create();
+			document = TransientDocument.create();
 			document.id = "http://example.com/document/";
 		} );
 

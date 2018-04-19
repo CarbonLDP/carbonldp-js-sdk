@@ -28,7 +28,7 @@ import {
 	module,
 	property,
 } from "../../test/JasmineExtender";
-import { Document } from "./../../Document";
+import { TransientDocument } from "../../TransientDocument";
 import { QueryContextBuilder } from "./QueryContextBuilder";
 
 import * as Module from "./QueryDocumentBuilder";
@@ -91,7 +91,7 @@ describe( module( "carbonldp/SPARQL/QueryDocument/QueryDocumentBuilder" ), ():vo
 
 				const schema:DigestedObjectSchema = ObjectSchemaDigester.combineDigestedObjectSchemas( [
 					context.getObjectSchema(),
-					context.getObjectSchema( Document.TYPE ),
+					context.getObjectSchema( TransientDocument.TYPE ),
 				] );
 				schema.vocab = "http://example.com/vocab#";
 

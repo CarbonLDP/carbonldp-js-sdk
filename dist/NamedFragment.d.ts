@@ -1,4 +1,4 @@
-import { Document } from "./Document";
+import { TransientDocument } from "./TransientDocument";
 import { Fragment } from "./Fragment";
 import { ModelDecorator } from "./ModelDecorator";
 import { ModelFactory } from "./ModelFactory";
@@ -8,8 +8,8 @@ export interface NamedFragment extends Fragment {
 export interface NamedFragmentFactory extends ModelFactory<NamedFragment>, ModelDecorator<NamedFragment> {
     isDecorated(object: object): object is NamedFragment;
     is(object: object): object is NamedFragment;
-    create(document: Document, slug: string): NamedFragment;
-    createFrom<T extends object>(object: T, document: Document, slug: string): T & NamedFragment;
+    create(document: TransientDocument, slug: string): NamedFragment;
+    createFrom<T extends object>(object: T, document: TransientDocument, slug: string): T & NamedFragment;
     decorate<T extends object>(object: T): T & NamedFragment;
 }
 export declare const NamedFragment: NamedFragmentFactory;

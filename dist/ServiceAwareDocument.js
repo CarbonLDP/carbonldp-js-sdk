@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var Document_1 = require("./Document");
+var TransientDocument_1 = require("./TransientDocument");
 var Utils_1 = require("./Utils");
 exports.ServiceAwareDocument = {
     isDecorated: function (object) {
@@ -10,7 +10,7 @@ exports.ServiceAwareDocument = {
     decorate: function (object, documents) {
         if (exports.ServiceAwareDocument.isDecorated(object))
             return object;
-        Document_1.Document.decorate(object);
+        TransientDocument_1.TransientDocument.decorate(object);
         return Object.defineProperties(object, {
             "_documents": {
                 writable: false,

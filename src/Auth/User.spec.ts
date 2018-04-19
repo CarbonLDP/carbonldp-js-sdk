@@ -1,7 +1,7 @@
 import { anyThatMatches } from "../../test/helpers/jasmine-equalities";
 import { StrictMinus } from "../../test/helpers/types";
 import { BlankNode } from "../BlankNode";
-import { Document } from "../Document";
+import { TransientDocument } from "../TransientDocument";
 import { Fragment } from "../Fragment";
 import {
 	extendsClass,
@@ -56,9 +56,9 @@ describe( module( "carbonldp/Auth/User" ), ():void => {
 		"Interface that represents an in-memory User of any Context."
 	), ():void => {
 
-		it( extendsClass( "CarbonLDP.Document" ), ():void => {
+		it( extendsClass( "CarbonLDP.TransientDocument" ), ():void => {
 			let user:User = <any> {};
-			let document:Document;
+			let document:TransientDocument;
 
 			document = user;
 			expect( document ).toEqual( jasmine.any( Object ) );
@@ -185,7 +185,7 @@ describe( module( "carbonldp/Auth/User" ), ():void => {
 		"CarbonLDP.Auth.UserFactory"
 	), ():void => {
 
-		type MockUser = StrictMinus<User, Document>;
+		type MockUser = StrictMinus<User, TransientDocument>;
 
 		it( isDefined(), ():void => {
 			expect( User ).toBeDefined();
@@ -342,7 +342,7 @@ describe( module( "carbonldp/Auth/User" ), ():void => {
 			} );
 
 			it( "should call `Document.decorate`", ():void => {
-				const spy:jasmine.Spy = spyOn( Document, "decorate" );
+				const spy:jasmine.Spy = spyOn( TransientDocument, "decorate" );
 
 				const object:object = { the: "object" };
 				User.decorate( object );

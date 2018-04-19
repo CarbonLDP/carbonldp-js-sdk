@@ -3,10 +3,10 @@ import { ObjectSchema } from "../ObjectSchema";
 import { Pointer } from "../Pointer";
 import * as Utils from "../Utils";
 import { CS } from "../Vocabularies/CS";
-import { Document } from "./../Document";
+import { TransientDocument } from "../TransientDocument";
 import { ACE } from "./ACE";
 
-export interface ACL extends Document {
+export interface ACL extends TransientDocument {
 	accessTo:Pointer;
 	entries?:ACE[];
 	inheritableEntries?:ACE[];
@@ -101,7 +101,7 @@ export const ACL:ACLFactory = {
 	decorate<T extends object>( object:T ):T & ACL {
 		if( ACL.isDecorated( object ) ) return object;
 
-		Document.decorate( object );
+		TransientDocument.decorate( object );
 
 		const acl:T & ACL = object as T & ACL;
 		Object.defineProperties( acl, {

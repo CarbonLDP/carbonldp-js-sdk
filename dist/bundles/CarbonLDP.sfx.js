@@ -1799,7 +1799,7 @@ var SCHEMA = {
         "@container": "@set",
     },
 };
-exports.Document = {
+exports.TransientDocument = {
     TYPE: C_1.C.Document,
     SCHEMA: SCHEMA,
     isDecorated: function (object) {
@@ -1821,10 +1821,10 @@ exports.Document = {
     },
     is: function (object) {
         return Resource_1.Resource.is(object) &&
-            exports.Document.isDecorated(object);
+            exports.TransientDocument.isDecorated(object);
     },
     decorate: function (object) {
-        if (exports.Document.isDecorated(object))
+        if (exports.TransientDocument.isDecorated(object))
             return object;
         Resource_1.Resource.decorate(object);
         Object.defineProperties(object, {
@@ -1888,25 +1888,25 @@ exports.Document = {
         return object;
     },
     createFrom: function (object) {
-        if (exports.Document.is(object))
+        if (exports.TransientDocument.is(object))
             throw new IllegalArgumentError_1.IllegalArgumentError("The object provided is already a Document.");
-        var document = exports.Document.decorate(object);
-        exports.Document._convertNestedObjects(document, document);
+        var document = exports.TransientDocument.decorate(object);
+        exports.TransientDocument._convertNestedObjects(document, document);
         return document;
     },
-    create: function () { return exports.Document.createFrom({}); },
+    create: function () { return exports.TransientDocument.createFrom({}); },
     _convertNestedObjects: function (parent, actual, fragmentsTracker) {
         if (fragmentsTracker === void 0) { fragmentsTracker = new Set(); }
         for (var _i = 0, _a = Object.keys(actual); _i < _a.length; _i++) {
             var key = _a[_i];
             var next = actual[key];
             if (Array.isArray(next)) {
-                exports.Document._convertNestedObjects(parent, next, fragmentsTracker);
+                exports.TransientDocument._convertNestedObjects(parent, next, fragmentsTracker);
                 continue;
             }
             if (!Utils_1.isPlainObject(next))
                 continue;
-            if (exports.Document.is(next))
+            if (exports.TransientDocument.is(next))
                 continue;
             var idOrSlug = getNestedObjectId(next);
             if (!!idOrSlug && !inScope.call(parent, idOrSlug))
@@ -1914,15 +1914,15 @@ exports.Document = {
             var parentFragment = parent.getFragment(idOrSlug);
             if (!parentFragment) {
                 var fragment = parent.createFragment(next, idOrSlug);
-                exports.Document._convertNestedObjects(parent, fragment, fragmentsTracker);
+                exports.TransientDocument._convertNestedObjects(parent, fragment, fragmentsTracker);
             }
             else if (parentFragment !== next) {
                 var fragment = actual[key] = Object.assign(parentFragment, next);
-                exports.Document._convertNestedObjects(parent, fragment, fragmentsTracker);
+                exports.TransientDocument._convertNestedObjects(parent, fragment, fragmentsTracker);
             }
             else if (!fragmentsTracker.has(next.id)) {
                 fragmentsTracker.add(next.id);
-                exports.Document._convertNestedObjects(parent, next, fragmentsTracker);
+                exports.TransientDocument._convertNestedObjects(parent, next, fragmentsTracker);
             }
         }
     },
@@ -2004,7 +2004,7 @@ function createFragment(slugOrObject, slug) {
     }
     var fragment = BlankNode_1.BlankNode.createFrom(object, this, slug);
     this._fragmentsIndex.set(fragment.id, fragment);
-    exports.Document._convertNestedObjects(this, fragment);
+    exports.TransientDocument._convertNestedObjects(this, fragment);
     return fragment;
 }
 function createNamedFragment(slugOrObject, slug) {
@@ -2023,7 +2023,7 @@ function createNamedFragment(slugOrObject, slug) {
         throw new IDAlreadyInUseError_1.IDAlreadyInUseError("The slug provided is already being used by a fragment.");
     var fragment = NamedFragment_1.NamedFragment.createFrom(object, this, slug);
     this._fragmentsIndex.set(slug, fragment);
-    exports.Document._convertNestedObjects(this, fragment);
+    exports.TransientDocument._convertNestedObjects(this, fragment);
     return fragment;
 }
 function removeFragment(fragmentOrSlug) {
@@ -2065,7 +2065,7 @@ function normalize() {
     var currentFragments = this.getFragments()
         .filter(function (fragment) { return URI_1.URI.isBNodeID(fragment.id); });
     var usedFragmentsIDs = new Set();
-    exports.Document._convertNestedObjects(this, this, usedFragmentsIDs);
+    exports.TransientDocument._convertNestedObjects(this, this, usedFragmentsIDs);
     currentFragments.forEach(function (fragment) {
         if (usedFragmentsIDs.has(fragment.id))
             return;
@@ -4279,9 +4279,9 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 }
 Object.defineProperty(exports, "__esModule", { value: true });
-var Document_1 = __webpack_require__(19);
+var TransientDocument_1 = __webpack_require__(19);
 var Request_1 = __webpack_require__(30);
-var Document_2 = __webpack_require__(120);
+var Document_1 = __webpack_require__(120);
 var ObjectSchema = __importStar(__webpack_require__(12));
 var PersistedFragment_1 = __webpack_require__(55);
 var PersistedNamedFragment_1 = __webpack_require__(121);
@@ -4323,8 +4323,8 @@ exports.PersistedDocument = {
             && Utils.hasFunction(object, "sparql");
     },
     is: function (object) {
-        return Document_1.Document.is(object)
-            && Document_2.MessagingDocument.isDecorated(object)
+        return TransientDocument_1.TransientDocument.is(object)
+            && Document_1.MessagingDocument.isDecorated(object)
             && exports.PersistedDocument.isDecorated(object);
     },
     create: function (documents, uri) {
@@ -4333,16 +4333,16 @@ exports.PersistedDocument = {
     createFrom: function (object, documents, uri) {
         var document = exports.PersistedDocument.decorate(object, documents);
         document.id = uri;
-        Document_1.Document._convertNestedObjects(document, document);
+        TransientDocument_1.TransientDocument._convertNestedObjects(document, document);
         return document;
     },
     decorate: function (object, documents) {
         if (exports.PersistedDocument.isDecorated(object))
             return object;
-        Document_1.Document.decorate(object);
+        TransientDocument_1.TransientDocument.decorate(object);
         PersistedResource_1.PersistedResource.decorate(object);
         ServiceAwareDocument_1.ServiceAwareDocument.decorate(object, documents);
-        Document_2.MessagingDocument.decorate(object);
+        Document_1.MessagingDocument.decorate(object);
         var persistedDocument = object;
         return Object.defineProperties(persistedDocument, {
             "_eTag": {
@@ -5405,7 +5405,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var Pointer_1 = __webpack_require__(22);
 var Utils = __importStar(__webpack_require__(0));
 var CS_1 = __webpack_require__(18);
-var Document_1 = __webpack_require__(19);
+var TransientDocument_1 = __webpack_require__(19);
 var ACE_1 = __webpack_require__(69);
 var SCHEMA = {
     "entries": {
@@ -5441,7 +5441,7 @@ exports.ACL = {
     decorate: function (object) {
         if (exports.ACL.isDecorated(object))
             return object;
-        Document_1.Document.decorate(object);
+        TransientDocument_1.TransientDocument.decorate(object);
         var acl = object;
         Object.defineProperties(acl, {
             "_parsePointer": {
@@ -6004,7 +6004,7 @@ var __assign = (this && this.__assign) || Object.assign || function(t) {
     return t;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var Document_1 = __webpack_require__(19);
+var TransientDocument_1 = __webpack_require__(19);
 var Utils_1 = __webpack_require__(0);
 var C_1 = __webpack_require__(2);
 var CS_1 = __webpack_require__(18);
@@ -6028,13 +6028,13 @@ exports.User = {
             && Utils_1.hasFunction(object, "updateCredentials");
     },
     is: function (value) {
-        return Document_1.Document.is(value)
+        return TransientDocument_1.TransientDocument.is(value)
             && exports.User.isDecorated(value);
     },
     decorate: function (object) {
         if (exports.User.isDecorated(object))
             return object;
-        Document_1.Document.decorate(object);
+        TransientDocument_1.TransientDocument.decorate(object);
         return Object.defineProperties(object, {
             "updateCredentials": {
                 writable: false,
@@ -8395,7 +8395,7 @@ var LDAPCredentials_1 = __webpack_require__(138);
 var TokenCredentials_1 = __webpack_require__(60);
 var User_1 = __webpack_require__(57);
 var UsernameAndPasswordCredentials_1 = __webpack_require__(82);
-var Document_1 = __webpack_require__(19);
+var TransientDocument_1 = __webpack_require__(19);
 var Documents_1 = __webpack_require__(140);
 var Errors = __importStar(__webpack_require__(9));
 var AddMemberAction_1 = __webpack_require__(83);
@@ -8550,7 +8550,7 @@ var SDKContext = (function () {
         this.typeObjectSchemaMap.set(type, extendedDigestedSchema);
     };
     SDKContext.prototype.registerDefaultObjectSchemas = function () {
-        this.extendObjectSchema(Document_1.Document.TYPE, Document_1.Document.SCHEMA);
+        this.extendObjectSchema(TransientDocument_1.TransientDocument.TYPE, TransientDocument_1.TransientDocument.SCHEMA);
         this.extendObjectSchema(ProtectedDocument_1.ProtectedDocument.TYPE, ProtectedDocument_1.ProtectedDocument.SCHEMA);
         this.extendObjectSchema(PlatformMetadata_1.PlatformMetadata.TYPE, PlatformMetadata_1.PlatformMetadata.SCHEMA);
         this.extendObjectSchema(PlatformInstance_1.PlatformInstance.TYPE, PlatformInstance_1.PlatformInstance.SCHEMA);
@@ -9810,7 +9810,7 @@ exports.PersistedNamedFragment = {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var Document_1 = __webpack_require__(19);
+var TransientDocument_1 = __webpack_require__(19);
 var Utils_1 = __webpack_require__(0);
 exports.ServiceAwareDocument = {
     isDecorated: function (object) {
@@ -9820,7 +9820,7 @@ exports.ServiceAwareDocument = {
     decorate: function (object, documents) {
         if (exports.ServiceAwareDocument.isDecorated(object))
             return object;
-        Document_1.Document.decorate(object);
+        TransientDocument_1.TransientDocument.decorate(object);
         return Object.defineProperties(object, {
             "_documents": {
                 writable: false,
@@ -9954,13 +9954,13 @@ exports.MapEntry = {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var Document_1 = __webpack_require__(19);
+var TransientDocument_1 = __webpack_require__(19);
 var IllegalArgumentError_1 = __webpack_require__(13);
 var LDP_1 = __webpack_require__(41);
 exports.DirectContainer = {
     TYPE: LDP_1.LDP.DirectContainer,
     is: function (object) {
-        return Document_1.Document.is(object)
+        return TransientDocument_1.TransientDocument.is(object)
             && object.hasType(exports.DirectContainer.TYPE)
             && object.hasOwnProperty("membershipResource");
     },
@@ -9978,8 +9978,8 @@ exports.DirectContainer = {
             membershipResource: membershipResource,
             hasMemberRelation: hasMemberRelation,
         });
-        var container = Document_1.Document.is(containerBase) ?
-            containerBase : Document_1.Document.createFrom(containerBase);
+        var container = TransientDocument_1.TransientDocument.is(containerBase) ?
+            containerBase : TransientDocument_1.TransientDocument.createFrom(containerBase);
         container.addType(exports.DirectContainer.TYPE);
         if (isMemberOfRelation)
             container.isMemberOfRelation = isMemberOfRelation;
@@ -10586,7 +10586,7 @@ var ACL_1 = __webpack_require__(51);
 var PersistedACL_1 = __webpack_require__(139);
 var PersistedUser_1 = __webpack_require__(81);
 var User_1 = __webpack_require__(57);
-var Document_1 = __webpack_require__(19);
+var TransientDocument_1 = __webpack_require__(19);
 var Errors = __importStar(__webpack_require__(9));
 var FreeResources_1 = __webpack_require__(142);
 var Errors_1 = __webpack_require__(40);
@@ -10611,7 +10611,7 @@ var PersistedProtectedDocument_1 = __webpack_require__(45);
 var PersistedResource_1 = __webpack_require__(56);
 var Pointer_1 = __webpack_require__(22);
 var ProtectedDocument_1 = __webpack_require__(92);
-var Document_2 = __webpack_require__(39);
+var Document_1 = __webpack_require__(39);
 var Node_1 = __webpack_require__(25);
 var URI_1 = __webpack_require__(10);
 var Builder_1 = __webpack_require__(162);
@@ -11157,7 +11157,7 @@ var Documents = (function () {
         return this.on(Event_1.Event.MEMBER_REMOVED, uriPattern, onEvent, onError);
     };
     Documents.prototype._getPersistedDocument = function (rdfDocument, response) {
-        var documentResources = Document_2.RDFDocument.getNodes(rdfDocument)[0];
+        var documentResources = Document_1.RDFDocument.getNodes(rdfDocument)[0];
         if (documentResources.length === 0)
             throw new BadResponseError_1.BadResponseError("The RDFDocument: " + rdfDocument["@id"] + ", doesn't contain a document resource.", response);
         if (documentResources.length > 1)
@@ -11211,7 +11211,7 @@ var Documents = (function () {
         if (this.documentsBeingResolved.has(uri))
             return this.documentsBeingResolved.get(uri);
         var promise = this
-            ._sendRequest(HTTPMethod_1.HTTPMethod.GET, uri, requestOptions, null, new Document_2.RDFDocumentParser())
+            ._sendRequest(HTTPMethod_1.HTTPMethod.GET, uri, requestOptions, null, new Document_1.RDFDocumentParser())
             .then(function (_a) {
             var rdfDocuments = _a[0], response = _a[1];
             var eTag = response.getETag();
@@ -11282,7 +11282,7 @@ var Documents = (function () {
         this._setDefaultRequestOptions(requestOptions, LDP_1.LDP.RDFSource);
         Request_1.RequestUtils.setIfNoneMatchHeader(persistedDocument._eTag, requestOptions);
         return this
-            ._sendRequest(HTTPMethod_1.HTTPMethod.GET, uri, requestOptions, null, new Document_2.RDFDocumentParser())
+            ._sendRequest(HTTPMethod_1.HTTPMethod.GET, uri, requestOptions, null, new Document_1.RDFDocumentParser())
             .then(function (_a) {
             var rdfDocuments = _a[0], response = _a[1];
             if (response === null)
@@ -11499,7 +11499,7 @@ var Documents = (function () {
             if (targetDocument && targetETag === targetDocument._eTag)
                 return [targetDocument];
             var rdfDocuments = rdfNodes
-                .filter(Document_2.RDFDocument.is);
+                .filter(Document_1.RDFDocument.is);
             var targetDocuments = rdfDocuments
                 .filter(function (x) { return targetSet.has(x["@id"]); });
             return new Compacter_1.JSONLDCompacter(_this, targetName, queryContext)
@@ -11510,7 +11510,7 @@ var Documents = (function () {
     Documents.prototype._persistChildDocument = function (parentURI, childObject, slug, requestOptions) {
         if (PersistedDocument_1.PersistedDocument.is(childObject))
             throw new Errors.IllegalArgumentError("The child provided has been already persisted.");
-        var childDocument = Document_1.Document.is(childObject) ? childObject : Document_1.Document.createFrom(childObject);
+        var childDocument = TransientDocument_1.TransientDocument.is(childObject) ? childObject : TransientDocument_1.TransientDocument.createFrom(childObject);
         this._setDefaultRequestOptions(requestOptions, LDP_1.LDP.Container);
         return this._persistDocument(parentURI, slug, childDocument, requestOptions);
     };
@@ -11660,8 +11660,8 @@ var Documents = (function () {
         if (Utils.isDefined(objectID) &&
             !URI_1.URI.hasFragment(objectID) &&
             !URI_1.URI.isBNodeID(objectID) &&
-            objectTypes.indexOf(Document_1.Document.TYPE) === -1)
-            objectTypes = objectTypes.concat(Document_1.Document.TYPE);
+            objectTypes.indexOf(TransientDocument_1.TransientDocument.TYPE) === -1)
+            objectTypes = objectTypes.concat(TransientDocument_1.TransientDocument.TYPE);
         var schemas = objectTypes
             .filter(function (type) { return _this.context.hasObjectSchema(type); })
             .map(function (type) { return _this.context.getObjectSchema(type); });
@@ -11735,7 +11735,7 @@ var Documents = (function () {
             var preferenceHeader = response.getHeader("Preference-Applied");
             if (preferenceHeader === null || preferenceHeader.toString() !== "return=representation")
                 return persistedProtectedDocument;
-            var rdfDocuments = Document_2.RDFDocument.getDocuments(expandedResult);
+            var rdfDocuments = Document_1.RDFDocument.getDocuments(expandedResult);
             return _this._updateFromPreferenceApplied(persistedProtectedDocument, rdfDocuments, response);
         });
     };
@@ -15186,7 +15186,7 @@ var AbstractContext_1 = __webpack_require__(215);
 var AccessPoint_1 = __webpack_require__(141);
 var Auth = __importStar(__webpack_require__(68));
 var BlankNode_1 = __webpack_require__(105);
-var Document_1 = __webpack_require__(19);
+var TransientDocument_1 = __webpack_require__(19);
 var Documents_1 = __webpack_require__(140);
 var Errors = __importStar(__webpack_require__(9));
 var Fragment_1 = __webpack_require__(36);
@@ -15287,7 +15287,7 @@ var CarbonLDP = (function (_super) {
     CarbonLDP.AccessPoint = AccessPoint_1.AccessPoint;
     CarbonLDP.Auth = Auth;
     CarbonLDP.BlankNode = BlankNode_1.BlankNode;
-    CarbonLDP.Document = Document_1.Document;
+    CarbonLDP.TransientDocument = TransientDocument_1.TransientDocument;
     CarbonLDP.Documents = Documents_1.Documents;
     CarbonLDP.Errors = Errors;
     CarbonLDP.Fragment = Fragment_1.Fragment;
@@ -16987,9 +16987,11 @@ exports.ServiceUnavailableError = ServiceUnavailableError;
 
 "use strict";
 
+function __export(m) {
+    for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
+}
 Object.defineProperty(exports, "__esModule", { value: true });
-var XSD = __webpack_require__(106);
-exports.XSD = XSD;
+__export(__webpack_require__(106));
 
 
 /***/ }),
@@ -17190,7 +17192,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 }
 Object.defineProperty(exports, "__esModule", { value: true });
-var Document_1 = __webpack_require__(19);
+var TransientDocument_1 = __webpack_require__(19);
 var IllegalArgumentError_1 = __webpack_require__(13);
 var CS_1 = __webpack_require__(18);
 var XSD_1 = __webpack_require__(8);
@@ -17228,14 +17230,14 @@ var Factory = (function () {
     };
     Factory.is = function (object) {
         return Factory.hasClassProperties(object)
-            && Document_1.Document.is(object);
+            && TransientDocument_1.TransientDocument.is(object);
     };
     Factory.create = function (name, description) {
         return Factory.createFrom({}, name, description);
     };
     Factory.createFrom = function (object, name, description) {
-        if (!Document_1.Document.isDecorated(object))
-            object = Document_1.Document.createFrom(object);
+        if (!TransientDocument_1.TransientDocument.isDecorated(object))
+            object = TransientDocument_1.TransientDocument.createFrom(object);
         if (!name)
             throw new IllegalArgumentError_1.IllegalArgumentError("The name cannot be empty.");
         var role = object;

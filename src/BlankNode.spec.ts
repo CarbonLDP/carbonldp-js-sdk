@@ -1,5 +1,5 @@
 import { BlankNode } from "./BlankNode";
-import { Document } from "./Document";
+import { TransientDocument } from "./TransientDocument";
 import { URI } from "./RDF/URI";
 import {
 	hasMethod,
@@ -36,7 +36,7 @@ describe( module( "carbonldp/BlankNode" ), ():void => {
 			OBLIGATORY,
 			"create",
 			"Creates a `CarbonLDP.BlankNode` object from the parameters specified.", [
-				{ name: "document", type: "CarbonLDP.Document", description: "The `CarbonLDP.Document` object where the fragment is part of." },
+				{ name: "document", type: "CarbonLDP.TransientDocument", description: "The `CarbonLDP.TransientDocument` object where the fragment is part of." },
 				{ name: "id", type: "string", optional: true, description: "The ID of the of the BlankNode to create. If no ID is provided, one will be created." },
 			],
 			{ type: "T & CarbonLDP.BlankNode" }
@@ -48,7 +48,7 @@ describe( module( "carbonldp/BlankNode" ), ():void => {
 			[ "T extends object" ],
 			"Creates a `CarbonLDP.BlankNode` object from the object and parameters specified.", [
 				{ name: "object", type: "T", description: "Object to be converted into a `CarbonLDP.BlankNode`." },
-				{ name: "document", type: "CarbonLDP.Document", description: "The `CarbonLDP.Document` object where the fragment is part of." },
+				{ name: "document", type: "CarbonLDP.TransientDocument", description: "The `CarbonLDP.TransientDocument` object where the fragment is part of." },
 				{ name: "id", type: "string", optional: true, description: "The ID of the of the BlankNode to create. If no ID is provided, one will be created." },
 			],
 			{ type: "T & CarbonLDP.BlankNode" }
@@ -77,7 +77,7 @@ describe( module( "carbonldp/BlankNode" ), ():void => {
 
 			// TODO: Separate in different tests
 			it( "should test method with blank node label", ():void => {
-				let document:Document = Document.create();
+				let document:TransientDocument = TransientDocument.create();
 
 				interface MyFragment {
 					property:string;
@@ -100,7 +100,7 @@ describe( module( "carbonldp/BlankNode" ), ():void => {
 
 			// TODO: Separate in different tests
 			it( "should test method without label", ():void => {
-				let document:Document = Document.create();
+				let document:TransientDocument = TransientDocument.create();
 
 				interface MyFragment {
 					property:string;

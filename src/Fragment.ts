@@ -1,4 +1,4 @@
-import { Document } from "./Document";
+import { TransientDocument } from "./TransientDocument";
 import { IllegalActionError } from "./Errors";
 import { ModelDecorator } from "./ModelDecorator";
 import { ModelFactory } from "./ModelFactory";
@@ -7,7 +7,7 @@ import { isObject } from "./Utils";
 
 
 export interface Fragment extends Resource {
-	_document:Document;
+	_document:TransientDocument;
 }
 
 
@@ -17,9 +17,9 @@ export interface FragmentFactory extends ModelFactory<Fragment>, ModelDecorator<
 	is( object:object ):object is Fragment;
 
 
-	create( document:Document, id?:string ):Fragment;
+	create( document:TransientDocument, id?:string ):Fragment;
 
-	createFrom<T extends object>( object:T, document:Document, id?:string ):T & Fragment;
+	createFrom<T extends object>( object:T, document:TransientDocument, id?:string ):T & Fragment;
 
 	decorate<T extends object>( object:T ):T & Fragment;
 }
@@ -37,11 +37,11 @@ export const Fragment:FragmentFactory = {
 			;
 	},
 
-	create( document:Document, id?:string ):Fragment {
+	create( document:TransientDocument, id?:string ):Fragment {
 		return this.createFrom( {}, document, id );
 	},
 
-	createFrom<T extends object>( object:T, document:Document, id?:string ):T & Fragment {
+	createFrom<T extends object>( object:T, document:TransientDocument, id?:string ):T & Fragment {
 		const fragment:T & Fragment = Fragment.decorate<T>( object );
 
 		if( id ) fragment.id = id;

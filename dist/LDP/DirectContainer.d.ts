@@ -1,7 +1,7 @@
-import { Document } from "../Document";
+import { TransientDocument } from "../TransientDocument";
 import { ModelFactory } from "../ModelFactory";
 import { Pointer } from "../Pointer";
-export interface DirectContainer extends Document {
+export interface DirectContainer extends TransientDocument {
     membershipResource: Pointer;
     hasMemberRelation: Pointer;
 }

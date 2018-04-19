@@ -1,10 +1,10 @@
-import { Document } from "./Document";
+import { TransientDocument } from "./TransientDocument";
 import { Documents } from "./Documents";
 import { ModelDecorator } from "./ModelDecorator";
 import { isObject } from "./Utils";
 
 
-export interface ServiceAwareDocument extends Document {
+export interface ServiceAwareDocument extends TransientDocument {
 	_documents:Documents;
 }
 
@@ -25,7 +25,7 @@ export const ServiceAwareDocument:ServiceAwareDocumentFactory = {
 	decorate<T extends object>( object:T, documents:Documents ):T & ServiceAwareDocument {
 		if( ServiceAwareDocument.isDecorated( object ) ) return object;
 
-		Document.decorate( object );
+		TransientDocument.decorate( object );
 
 		return Object.defineProperties( object, {
 			"_documents": {

@@ -1,4 +1,4 @@
-import { Document } from "./Document";
+import { TransientDocument } from "./TransientDocument";
 
 import { NamedFragment } from "./NamedFragment";
 
@@ -50,7 +50,7 @@ describe( module( "carbonldp/NamedFragment" ), ():void => {
 			OBLIGATORY,
 			"create",
 			"Creates a NamedFragment with the slug provided", [
-				{ name: "document", type: "CarbonLDP.Document", description: "The document that the NamedFragment will be part of." },
+				{ name: "document", type: "CarbonLDP.TransientDocument", description: "The document that the NamedFragment will be part of." },
 				{ name: "slug", type: "string", description: "The slug that will identify the NamedFragment." },
 			],
 			{ type: "CarbonLDP.Class" }
@@ -62,7 +62,7 @@ describe( module( "carbonldp/NamedFragment" ), ():void => {
 			[ "T extends object" ],
 			"Creates a NamedFragment from an Object with the slug provided.", [
 				{ name: "object", type: "T", description: "Object that will be converted to a NamedFragment." },
-				{ name: "document", type: "CarbonLDP.Document", description: "The document that the NamedFragment will be part of." },
+				{ name: "document", type: "CarbonLDP.TransientDocument", description: "The document that the NamedFragment will be part of." },
 				{ name: "slug", type: "string", description: "The slug that will identify the NamedFragment." },
 			],
 			{ type: "T & CarbonLDP.NamedFragment" }
@@ -87,9 +87,9 @@ describe( module( "carbonldp/NamedFragment" ), ():void => {
 			expect( NamedFragment ).toEqual( jasmine.any( Object ) );
 		} );
 
-		let document:Document;
+		let document:TransientDocument;
 		beforeAll( ():void => {
-			document = Document.create();
+			document = TransientDocument.create();
 			document.id = "http://example.com/document/";
 		} );
 

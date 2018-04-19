@@ -1,7 +1,7 @@
 import { QueryClause } from "sparqler/clauses";
 
 import { AccessPointBase } from "./AccessPoint";
-import { Document } from "./Document";
+import { TransientDocument } from "./TransientDocument";
 import { Documents } from "./Documents";
 import { Fragment } from "./Fragment";
 import {
@@ -29,7 +29,7 @@ import { SPARQLRawResults } from "./SPARQL/RawResults";
 import { SPARQLSelectResults } from "./SPARQL/SelectResults";
 import * as Utils from "./Utils";
 
-export interface PersistedDocument extends Document, PersistedResource, ServiceAwareDocument, MessagingDocument {
+export interface PersistedDocument extends TransientDocument, PersistedResource, ServiceAwareDocument, MessagingDocument {
 	created?:Date;
 	modified?:Date;
 	defaultInteractionModel?:Pointer;
@@ -223,7 +223,7 @@ export const PersistedDocument:PersistedDocumentFactory = {
 	},
 
 	is( object:object ):object is PersistedDocument {
-		return Document.is( object )
+		return TransientDocument.is( object )
 			&& MessagingDocument.isDecorated( object )
 			&& PersistedDocument.isDecorated( object )
 			;
@@ -237,7 +237,7 @@ export const PersistedDocument:PersistedDocumentFactory = {
 		const document:T & PersistedDocument = PersistedDocument.decorate<T>( object, documents );
 
 		document.id = uri;
-		Document._convertNestedObjects( document, document );
+		TransientDocument._convertNestedObjects( document, document );
 
 		return document;
 	},
@@ -245,7 +245,7 @@ export const PersistedDocument:PersistedDocumentFactory = {
 	decorate<T extends object>( object:T, documents:Documents ):T & PersistedDocument {
 		if( PersistedDocument.isDecorated( object ) ) return object;
 
-		Document.decorate( object );
+		TransientDocument.decorate( object );
 		PersistedResource.decorate( object );
 		ServiceAwareDocument.decorate( object, documents );
 		MessagingDocument.decorate( <T & ServiceAwareDocument> object );

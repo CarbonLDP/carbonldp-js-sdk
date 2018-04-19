@@ -1,4 +1,4 @@
-import { Document } from "../Document";
+import { TransientDocument } from "../TransientDocument";
 import { Documents } from "../Documents";
 import { Fragment } from "../Fragment";
 import { PersistedDocument } from "../PersistedDocument";
@@ -30,9 +30,9 @@ describe( module( "carbonldp/Auth/ACL" ), ():void => {
 		"Interface that represents an in-memory Access Control List (ACL)."
 	), ():void => {
 
-		it( extendsClass( "CarbonLDP.Document" ), ():void => {
+		it( extendsClass( "CarbonLDP.TransientDocument" ), ():void => {
 			let acl:ACL = <any> {};
-			let fragment:Document;
+			let fragment:TransientDocument;
 
 			fragment = acl;
 			expect( fragment ).toEqual( jasmine.any( Object ) );

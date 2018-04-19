@@ -1,6 +1,6 @@
 import { CS } from "../Vocabularies/CS";
 import { XSD } from "../Vocabularies/XSD";
-import { Document } from "./../Document";
+import { TransientDocument } from "../TransientDocument";
 import * as Errors from "../Errors";
 import {
 	clazz,
@@ -72,9 +72,9 @@ describe( module( "carbonldp/Auth/Role" ), ():void => {
 		"Specific interface that represents the base of an in-memory role for any context."
 	), ():void => {
 
-		it( extendsClass( "CarbonLDP.Document" ), ():void => {
+		it( extendsClass( "CarbonLDP.TransientDocument" ), ():void => {
 			let role:Role.Class = <any> {};
-			let document:Document;
+			let document:TransientDocument;
 
 			document = role;
 			expect( document ).toEqual( jasmine.any( Object ) );
@@ -153,7 +153,7 @@ describe( module( "carbonldp/Auth/Role" ), ():void => {
 			};
 			expect( Role.Factory.is( object ) ).toBe( false );
 
-			object = Document.createFrom( object );
+			object = TransientDocument.createFrom( object );
 			expect( Role.Factory.is( object ) ).toBe( true );
 		} );
 

@@ -1,4 +1,4 @@
-import { Document } from "../Document";
+import { TransientDocument } from "../TransientDocument";
 import { Fragment } from "../Fragment";
 import { ObjectSchema } from "../ObjectSchema";
 import { CS } from "../Vocabularies/CS";
@@ -7,7 +7,7 @@ export interface UserBase {
     name?: string;
     credentials: UsernameAndPasswordCredentials;
 }
-export interface User extends Document {
+export interface User extends TransientDocument {
     name?: string;
     credentials?: Fragment & UsernameAndPasswordCredentials;
     updateCredentials(username?: string, password?: string): Fragment & UsernameAndPasswordCredentials;

@@ -1,6 +1,6 @@
 import { AbstractContext } from "./AbstractContext";
 import { AccessPointBase } from "./AccessPoint";
-import { Document } from "./Document";
+import { TransientDocument } from "./TransientDocument";
 import { Documents } from "./Documents";
 import * as Errors from "./Errors";
 import { Fragment } from "./Fragment";
@@ -37,7 +37,7 @@ describe( module( "carbonldp/PersistedDocument" ), ():void => {
 		"Interface that represents a persisted blank node of a persisted document."
 	), ():void => {
 
-		it( extendsClass( "CarbonLDP.Document" ), ():void => {} );
+		it( extendsClass( "CarbonLDP.TransientDocument" ), ():void => {} );
 		it( extendsClass( "CarbonLDP.PersistedResource" ), ():void => {} );
 		it( extendsClass( "CarbonLDP.ServiceAwareDocument" ), ():void => {} );
 		it( extendsClass( "CarbonLDP.Messaging.MessagingDocument" ), ():void => {} );
@@ -255,7 +255,7 @@ describe( module( "carbonldp/PersistedDocument" ), ():void => {
 			it( hasSignature(
 				[ "T extends object" ],
 				"Persists a document with the slug specified as a child of the current document.", [
-					{ name: "object", type: "T", description: "The object from where create the child. If it's a non `CarbonLDP.Document` object, it's transformed into one." },
+					{ name: "object", type: "T", description: "The object from where create the child. If it's a non `CarbonLDP.TransientDocument` object, it's transformed into one." },
 					{ name: "slug", type: "string", description: "The slug that will be used in the child URI." },
 					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for the request." },
 				],
@@ -265,7 +265,7 @@ describe( module( "carbonldp/PersistedDocument" ), ():void => {
 			it( hasSignature(
 				[ "T extends object" ],
 				"Persists a document as a child of the current document.", [
-					{ name: "object", type: "T", description: "The object from where create the child. If it's a non `CarbonLDP.Document` object, it's transformed into one." },
+					{ name: "object", type: "T", description: "The object from where create the child. If it's a non `CarbonLDP.TransientDocument` object, it's transformed into one." },
 					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for the request." },
 				],
 				{ type: "Promise<T & CarbonLDP.PersistedProtectedDocument>" }
@@ -322,7 +322,7 @@ describe( module( "carbonldp/PersistedDocument" ), ():void => {
 
 			it( hasSignature(
 				[ "T extends object" ], [
-					{ name: "object", type: "T", description: "The object from where create the child. If it's a non `CarbonLDP.Document` object, it is transformed into one." },
+					{ name: "object", type: "T", description: "The object from where create the child. If it's a non `CarbonLDP.TransientDocument` object, it is transformed into one." },
 					{ name: "slug", type: "string", description: "The slug name for the children URI." },
 					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for the request." },
 				],
@@ -331,7 +331,7 @@ describe( module( "carbonldp/PersistedDocument" ), ():void => {
 
 			it( hasSignature(
 				[ "T extends object" ], [
-					{ name: "object", type: "T", description: "The object from where create the child. If it's a non `CarbonLDP.Document` object, it is transformed into one." },
+					{ name: "object", type: "T", description: "The object from where create the child. If it's a non `CarbonLDP.TransientDocument` object, it is transformed into one." },
 					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for the request." },
 				],
 				{ type: "Promise<T & CarbonLDP.PersistedProtectedDocument>" }
@@ -898,7 +898,7 @@ describe( module( "carbonldp/PersistedDocument" ), ():void => {
 			expect( PersistedDocument.is( <any> 100 ) ).toBe( false );
 			expect( PersistedDocument.is( {} ) ).toBe( false );
 
-			let object:any = Document.createFrom( {
+			let object:any = TransientDocument.createFrom( {
 				created: null,
 				modified: null,
 				defaultInteractionModel: null,
@@ -1000,7 +1000,7 @@ describe( module( "carbonldp/PersistedDocument" ), ():void => {
 				myProperty?:string;
 			}
 
-			interface MyDocument extends MyObject, Document {}
+			interface MyDocument extends MyObject, TransientDocument {}
 
 			let document:MyDocument;
 
@@ -1009,13 +1009,13 @@ describe( module( "carbonldp/PersistedDocument" ), ():void => {
 
 			let persistedDocument:MyPersistedDocument;
 
-			document = Document.createFrom<MyObject>( {} );
+			document = TransientDocument.createFrom<MyObject>( {} );
 			persistedDocument = PersistedDocument.decorate<MyDocument>( document, context.documents );
 			expect( PersistedDocument.is( persistedDocument ) ).toBe( true );
 			expect( persistedDocument.myProperty ).toBeUndefined();
 			expect( persistedDocument._documents ).toBe( context.documents );
 
-			document = Document.createFrom<MyObject>( { myProperty: "a property" } );
+			document = TransientDocument.createFrom<MyObject>( { myProperty: "a property" } );
 			persistedDocument = PersistedDocument.decorate<MyDocument>( document, context.documents );
 			expect( PersistedDocument.is( persistedDocument ) ).toBe( true );
 			expect( persistedDocument.myProperty ).toBeDefined();
@@ -1605,7 +1605,7 @@ describe( module( "carbonldp/PersistedDocument" ), ():void => {
 
 					let spy:jasmine.Spy = spyOn( document._documents, "createChild" );
 
-					let childDocument:Document = Document.create();
+					let childDocument:TransientDocument = TransientDocument.create();
 					document.createChild( childDocument, "child" );
 
 					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", childDocument, "child", void 0 );
@@ -1632,7 +1632,7 @@ describe( module( "carbonldp/PersistedDocument" ), ():void => {
 
 					let spy:jasmine.Spy = spyOn( document._documents, "createChild" );
 
-					let childDocument:Document = Document.create();
+					let childDocument:TransientDocument = TransientDocument.create();
 					document.createChild( childDocument );
 
 					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", childDocument, null, void 0 );
@@ -1742,7 +1742,7 @@ describe( module( "carbonldp/PersistedDocument" ), ():void => {
 				it( "should test when object, slug and options", ():void => {
 					let spy:jasmine.Spy = spyOn( document._documents, "createChildAndRetrieve" );
 
-					let childDocument:Document = Document.create();
+					let childDocument:TransientDocument = TransientDocument.create();
 					document.createChildAndRetrieve( childDocument, "child" );
 
 					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", childDocument, "child", void 0 );
@@ -1766,7 +1766,7 @@ describe( module( "carbonldp/PersistedDocument" ), ():void => {
 				it( "should test when object and options", ():void => {
 					let spy:jasmine.Spy = spyOn( document._documents, "createChildAndRetrieve" );
 
-					let childDocument:Document = Document.create();
+					let childDocument:TransientDocument = TransientDocument.create();
 					document.createChildAndRetrieve( childDocument );
 
 					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", childDocument, null, void 0 );

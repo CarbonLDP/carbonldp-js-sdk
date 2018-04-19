@@ -29,7 +29,7 @@ import {
 import { BlankNode } from "./BlankNode";
 import { CarbonLDP } from "./CarbonLDP";
 import { Context } from "./Context";
-import { Document } from "./Document";
+import { TransientDocument } from "./TransientDocument";
 
 import { Documents } from "./Documents";
 
@@ -2601,7 +2601,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 
 
 				it( "should convert plain object into document before request", ( done:DoneFn ):void => {
-					const spy:jasmine.Spy = spyOn( Document, "createFrom" );
+					const spy:jasmine.Spy = spyOn( TransientDocument, "createFrom" );
 					spyOn( documents, "_persistDocument" as any ).and.returnValue( Promise.resolve( [] ) );
 
 					const childObject:object = {};
@@ -2873,7 +2873,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 
 
 				it( "should convert plain objects into documents before requests", ( done:DoneFn ):void => {
-					const spy:jasmine.Spy = spyOn( Document, "createFrom" );
+					const spy:jasmine.Spy = spyOn( TransientDocument, "createFrom" );
 					spyOn( documents, "_persistDocument" as any ).and.returnValue( Promise.resolve( [] ) );
 
 					const childObjects:object[] = [ { index: 1 }, { index: 2 }, { index: 3 } ];
@@ -3267,7 +3267,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 
 
 				it( "should convert plain object into document before request", ( done:DoneFn ):void => {
-					const spy:jasmine.Spy = spyOn( Document, "createFrom" );
+					const spy:jasmine.Spy = spyOn( TransientDocument, "createFrom" );
 					spyOn( documents, "_persistDocument" as any ).and.returnValue( Promise.resolve( [] ) );
 
 					const childObject:object = {};
@@ -3592,7 +3592,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 
 
 				it( "should convert plain objects into documents before requests", ( done:DoneFn ):void => {
-					const spy:jasmine.Spy = spyOn( Document, "createFrom" );
+					const spy:jasmine.Spy = spyOn( TransientDocument, "createFrom" );
 					spyOn( documents, "_persistDocument" as any ).and.returnValue( Promise.resolve( [] ) );
 
 					const childObjects:object[] = [ { index: 1 }, { index: 2 }, { index: 3 } ];

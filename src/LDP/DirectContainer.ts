@@ -1,4 +1,4 @@
-import { Document } from "../Document";
+import { TransientDocument } from "../TransientDocument";
 import { IllegalArgumentError } from "../Errors/IllegalArgumentError";
 import { ModelFactory } from "../ModelFactory";
 import { Pointer } from "../Pointer";
@@ -9,7 +9,7 @@ interface DirectContainerBase {
 	hasMemberRelation:Pointer;
 }
 
-export interface DirectContainer extends Document {
+export interface DirectContainer extends TransientDocument {
 	membershipResource:Pointer;
 	hasMemberRelation:Pointer;
 }
@@ -30,7 +30,7 @@ export const DirectContainer:DirectContainerFactory = {
 	TYPE: LDP.DirectContainer,
 
 	is( object:object ):object is DirectContainer {
-		return Document.is( object )
+		return TransientDocument.is( object )
 			&& object.hasType( DirectContainer.TYPE )
 			&& object.hasOwnProperty( "membershipResource" )
 			;
@@ -52,8 +52,8 @@ export const DirectContainer:DirectContainerFactory = {
 			hasMemberRelation: <Pointer> hasMemberRelation,
 		} );
 
-		const container:T & DirectContainer = Document.is( containerBase ) ?
-			containerBase : Document.createFrom( containerBase );
+		const container:T & DirectContainer = TransientDocument.is( containerBase ) ?
+			containerBase : TransientDocument.createFrom( containerBase );
 
 		container.addType( DirectContainer.TYPE );
 

@@ -32,7 +32,7 @@ import { LDP } from "./Vocabularies/LDP";
 import { XSD } from "./Vocabularies/XSD";
 
 
-export interface Document extends Resource, PointerLibrary, PointerValidator {
+export interface TransientDocument extends Resource, PointerLibrary, PointerValidator {
 	defaultInteractionModel?:Pointer;
 	isMemberOfRelation?:Pointer;
 	hasMemberRelation?:Pointer;
@@ -73,24 +73,24 @@ export interface Document extends Resource, PointerLibrary, PointerValidator {
 }
 
 
-export interface DocumentFactory extends ModelFactory<Document>, ModelDecorator<Document> {
+export interface DocumentFactory extends ModelFactory<TransientDocument>, ModelDecorator<TransientDocument> {
 	TYPE:string;
 	SCHEMA:ObjectSchema;
 
 
-	is( object:object ):object is Document;
+	is( object:object ):object is TransientDocument;
 
-	isDecorated( object:object ):object is Document;
-
-
-	create():Document;
-
-	createFrom<T extends object>( object:T ):T & Document;
-
-	decorate<T extends object>( object:T ):T & Document;
+	isDecorated( object:object ):object is TransientDocument;
 
 
-	_convertNestedObjects( parent:Document, actual:any, fragmentsTracker?:Set<string> ):void;
+	create():TransientDocument;
+
+	createFrom<T extends object>( object:T ):T & TransientDocument;
+
+	decorate<T extends object>( object:T ):T & TransientDocument;
+
+
+	_convertNestedObjects( parent:TransientDocument, actual:any, fragmentsTracker?:Set<string> ):void;
 }
 
 
@@ -140,11 +140,11 @@ const SCHEMA:ObjectSchema = {
 	},
 };
 
-export const Document:DocumentFactory = {
+export const TransientDocument:DocumentFactory = {
 	TYPE: C.Document,
 	SCHEMA,
 
-	isDecorated: ( object ):object is Document =>
+	isDecorated: ( object ):object is TransientDocument =>
 		isObject( object ) &&
 		hasPropertyDefined( object, "_fragmentsIndex" ) &&
 
@@ -167,14 +167,14 @@ export const Document:DocumentFactory = {
 		hasFunction( object, "toJSON" )
 	,
 
-	is: ( object ):object is Document =>
+	is: ( object ):object is TransientDocument =>
 		Resource.is( object ) &&
-		Document.isDecorated( object )
+		TransientDocument.isDecorated( object )
 	,
 
 
 	decorate: <T extends object>( object:T ) => {
-		if( Document.isDecorated( object ) ) return object;
+		if( TransientDocument.isDecorated( object ) ) return object;
 
 		Resource.decorate( object );
 
@@ -244,28 +244,28 @@ export const Document:DocumentFactory = {
 	},
 
 	createFrom: <T extends object>( object:T ) => {
-		if( Document.is( object ) ) throw new IllegalArgumentError( "The object provided is already a Document." );
+		if( TransientDocument.is( object ) ) throw new IllegalArgumentError( "The object provided is already a Document." );
 
-		const document:T & Document = Document.decorate<T>( object );
-		Document._convertNestedObjects( document, document );
+		const document:T & TransientDocument = TransientDocument.decorate<T>( object );
+		TransientDocument._convertNestedObjects( document, document );
 
 		return document;
 	},
 
-	create: () => Document.createFrom( {} ),
+	create: () => TransientDocument.createFrom( {} ),
 
 
-	_convertNestedObjects( parent:Document, actual:any, fragmentsTracker:Set<string> = new Set() ):void {
+	_convertNestedObjects( parent:TransientDocument, actual:any, fragmentsTracker:Set<string> = new Set() ):void {
 		for( let key of Object.keys( actual ) ) {
 			const next:any = actual[ key ];
 
 			if( Array.isArray( next ) ) {
-				Document._convertNestedObjects( parent, next, fragmentsTracker );
+				TransientDocument._convertNestedObjects( parent, next, fragmentsTracker );
 				continue;
 			}
 
 			if( ! isPlainObject( next ) ) continue;
-			if( Document.is( next ) ) continue;
+			if( TransientDocument.is( next ) ) continue;
 
 			const idOrSlug:string = getNestedObjectId( next );
 			if( ! ! idOrSlug && ! inScope.call( parent, idOrSlug ) ) continue;
@@ -273,15 +273,15 @@ export const Document:DocumentFactory = {
 			const parentFragment:Fragment = parent.getFragment( idOrSlug );
 			if( ! parentFragment ) {
 				const fragment:Fragment = parent.createFragment( <Object> next, idOrSlug );
-				Document._convertNestedObjects( parent, fragment, fragmentsTracker );
+				TransientDocument._convertNestedObjects( parent, fragment, fragmentsTracker );
 
 			} else if( parentFragment !== next ) {
 				const fragment:Fragment = actual[ key ] = Object.assign( parentFragment, next );
-				Document._convertNestedObjects( parent, fragment, fragmentsTracker );
+				TransientDocument._convertNestedObjects( parent, fragment, fragmentsTracker );
 
 			} else if( ! fragmentsTracker.has( next.id ) ) {
 				fragmentsTracker.add( next.id );
-				Document._convertNestedObjects( parent, next, fragmentsTracker );
+				TransientDocument._convertNestedObjects( parent, next, fragmentsTracker );
 			}
 
 		}
@@ -300,14 +300,14 @@ function getNestedObjectId( object:any ):string {
 }
 
 
-function hasPointer( this:Document, id:string ):boolean {
+function hasPointer( this:TransientDocument, id:string ):boolean {
 	if( id === this.id ) return true;
 	if( ! this.inScope( id ) ) return false;
 
 	return this.hasFragment( id );
 }
 
-function getPointer( this:Document, id:string ):Pointer {
+function getPointer( this:TransientDocument, id:string ):Pointer {
 	if( ! this.inScope( id ) ) return null;
 	if( id === this.id ) return this;
 
@@ -316,7 +316,7 @@ function getPointer( this:Document, id:string ):Pointer {
 		this.createFragment( id );
 }
 
-function inScope( this:Document, idOrPointer:string | Pointer ):boolean {
+function inScope( this:TransientDocument, idOrPointer:string | Pointer ):boolean {
 	const id:string = isString( idOrPointer ) ? idOrPointer : idOrPointer.id;
 
 	if( id === this.id ) return true;
@@ -325,7 +325,7 @@ function inScope( this:Document, idOrPointer:string | Pointer ):boolean {
 	return id.startsWith( "#" );
 }
 
-function hasFragment( this:Document, id:string ):boolean {
+function hasFragment( this:TransientDocument, id:string ):boolean {
 	if( URI.isAbsolute( id ) ) {
 		if( ! URI.isFragmentOf( id, this.id ) ) return false;
 		id = URI.hasFragment( id ) ? URI.getFragment( id ) : id;
@@ -336,12 +336,12 @@ function hasFragment( this:Document, id:string ):boolean {
 	return this._fragmentsIndex.has( id );
 }
 
-function getFragment( this:Document, id:string ):Fragment {
+function getFragment( this:TransientDocument, id:string ):Fragment {
 	if( ! URI.isBNodeID( id ) ) return this.getNamedFragment( id );
 	return this._fragmentsIndex.get( id ) || null;
 }
 
-function getNamedFragment( this:Document, id:string ):NamedFragment {
+function getNamedFragment( this:TransientDocument, id:string ):NamedFragment {
 	if( URI.isBNodeID( id ) ) throw new IllegalArgumentError( "Named fragments can't have a id that starts with '_:'." );
 	if( URI.isAbsolute( id ) ) {
 		if( ! URI.isFragmentOf( id, this.id ) ) throw new IllegalArgumentError( "The id is out of scope." );
@@ -353,13 +353,13 @@ function getNamedFragment( this:Document, id:string ):NamedFragment {
 	return <NamedFragment> this._fragmentsIndex.get( id ) || null;
 }
 
-function getFragments( this:Document ):Fragment[] {
+function getFragments( this:TransientDocument ):Fragment[] {
 	return Array.from( this._fragmentsIndex.values() );
 }
 
 function createFragment<T extends object>( object:T, slug?:string ):T & Fragment;
 function createFragment( slug?:string ):Fragment;
-function createFragment<T extends object>( this:Document, slugOrObject?:any, slug?:string ):T & Fragment {
+function createFragment<T extends object>( this:TransientDocument, slugOrObject?:any, slug?:string ):T & Fragment {
 	slug = isString( slugOrObject ) ? slugOrObject : slug;
 	const object:T = ! isString( slugOrObject ) && ! ! slugOrObject ? slugOrObject : <T> {};
 
@@ -371,13 +371,13 @@ function createFragment<T extends object>( this:Document, slugOrObject?:any, slu
 	const fragment:T & BlankNode = BlankNode.createFrom<T>( object, this, slug );
 	this._fragmentsIndex.set( fragment.id, fragment );
 
-	Document._convertNestedObjects( this, fragment );
+	TransientDocument._convertNestedObjects( this, fragment );
 	return fragment;
 }
 
 function createNamedFragment<T extends Object>( object:T, slug:string ):NamedFragment & T;
 function createNamedFragment( slug:string ):NamedFragment;
-function createNamedFragment<T extends Object>( this:Document, slugOrObject:any, slug?:string ):T & NamedFragment {
+function createNamedFragment<T extends Object>( this:TransientDocument, slugOrObject:any, slug?:string ):T & NamedFragment {
 	slug = isString( slugOrObject ) ? slugOrObject : slug;
 	const object:T = ! isString( slugOrObject ) && ! ! slugOrObject ? slugOrObject : <T> {};
 
@@ -393,11 +393,11 @@ function createNamedFragment<T extends Object>( this:Document, slugOrObject:any,
 	const fragment:T & NamedFragment = NamedFragment.createFrom<T>( object, this, slug );
 	this._fragmentsIndex.set( slug, fragment );
 
-	Document._convertNestedObjects( this, fragment );
+	TransientDocument._convertNestedObjects( this, fragment );
 	return fragment;
 }
 
-function removeFragment( this:Document, fragmentOrSlug:string | Fragment ):void {
+function removeFragment( this:TransientDocument, fragmentOrSlug:string | Fragment ):void {
 	let id:string = isString( fragmentOrSlug ) ? fragmentOrSlug : fragmentOrSlug.id;
 
 	if( URI.isAbsolute( id ) ) {
@@ -410,14 +410,14 @@ function removeFragment( this:Document, fragmentOrSlug:string | Fragment ):void 
 	this._fragmentsIndex.delete( id );
 }
 
-function removeNamedFragment( this:Document, fragmentOrSlug:NamedFragment | string ):void {
+function removeNamedFragment( this:TransientDocument, fragmentOrSlug:NamedFragment | string ):void {
 	const id:string = isString( fragmentOrSlug ) ? fragmentOrSlug : fragmentOrSlug.id;
 
 	if( URI.isBNodeID( id ) ) throw new IllegalArgumentError( "You can only remove NamedFragments." );
 	this._removeFragment( id );
 }
 
-function toJSON( this:Document, keyOrObjectSchemaResolver?:string | ObjectSchemaResolver, jsonldConverter:JSONLDConverter = new JSONLDConverter() ):RDFDocument {
+function toJSON( this:TransientDocument, keyOrObjectSchemaResolver?:string | ObjectSchemaResolver, jsonldConverter:JSONLDConverter = new JSONLDConverter() ):RDFDocument {
 	const objectSchemaResolver:ObjectSchemaResolver = isObject( keyOrObjectSchemaResolver ) ?
 		keyOrObjectSchemaResolver : null;
 	const generalSchema:DigestedObjectSchema = objectSchemaResolver ?
@@ -435,12 +435,12 @@ function toJSON( this:Document, keyOrObjectSchemaResolver?:string | ObjectSchema
 	};
 }
 
-function normalize( this:Document ):void {
+function normalize( this:TransientDocument ):void {
 	const currentFragments:Fragment[] = this.getFragments()
 		.filter( fragment => URI.isBNodeID( fragment.id ) );
 	const usedFragmentsIDs:Set<string> = new Set();
 
-	Document._convertNestedObjects( this, this, usedFragmentsIDs );
+	TransientDocument._convertNestedObjects( this, this, usedFragmentsIDs );
 	currentFragments.forEach( fragment => {
 		if( usedFragmentsIDs.has( fragment.id ) ) return;
 		this._fragmentsIndex.delete( fragment.id );

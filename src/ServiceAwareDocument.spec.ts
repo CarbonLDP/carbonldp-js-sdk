@@ -1,6 +1,6 @@
 import { Minus } from "../test/helpers/types";
 
-import { Document } from "./Document";
+import { TransientDocument } from "./TransientDocument";
 import { Documents } from "./Documents";
 import { ServiceAwareDocument } from "./ServiceAwareDocument";
 
@@ -22,7 +22,7 @@ describe( module( "carbonldp/ServiceAwareDocument" ), ():void => {
 		"Interface that has a reference to its `CarbonLDP.Documents`."
 	), ():void => {
 
-		it( extendsClass( "CarbonLDP.Document" ), ():void => {} );
+		it( extendsClass( "CarbonLDP.TransientDocument" ), ():void => {} );
 
 		it( hasProperty(
 			OBLIGATORY,
@@ -54,7 +54,7 @@ describe( module( "carbonldp/ServiceAwareDocument" ), ():void => {
 		it( hasMethod(
 			OBLIGATORY,
 			"decorate",
-			[ "T extends CarbonLDP.Document" ],
+			[ "T extends CarbonLDP.TransientDocument" ],
 			"Decorates the provided document with the properties of the `CarbonLDP.ServiceAwareDocument` interface.",
 			[
 				{ name: "document", type: "T", description: "Document object to decorate." },
@@ -120,7 +120,7 @@ describe( module( "carbonldp/ServiceAwareDocument" ), ():void => {
 
 			it( "should not decorate if already has the specific properties", ():void => {
 				const documents:Documents = new Documents();
-				const object:Minus<Document, ServiceAwareDocument> = {
+				const object:Minus<TransientDocument, ServiceAwareDocument> = {
 					_documents: null,
 				};
 

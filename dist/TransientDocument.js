@@ -57,7 +57,7 @@ var SCHEMA = {
         "@container": "@set",
     },
 };
-exports.Document = {
+exports.TransientDocument = {
     TYPE: C_1.C.Document,
     SCHEMA: SCHEMA,
     isDecorated: function (object) {
@@ -79,10 +79,10 @@ exports.Document = {
     },
     is: function (object) {
         return Resource_1.Resource.is(object) &&
-            exports.Document.isDecorated(object);
+            exports.TransientDocument.isDecorated(object);
     },
     decorate: function (object) {
-        if (exports.Document.isDecorated(object))
+        if (exports.TransientDocument.isDecorated(object))
             return object;
         Resource_1.Resource.decorate(object);
         Object.defineProperties(object, {
@@ -146,25 +146,25 @@ exports.Document = {
         return object;
     },
     createFrom: function (object) {
-        if (exports.Document.is(object))
+        if (exports.TransientDocument.is(object))
             throw new IllegalArgumentError_1.IllegalArgumentError("The object provided is already a Document.");
-        var document = exports.Document.decorate(object);
-        exports.Document._convertNestedObjects(document, document);
+        var document = exports.TransientDocument.decorate(object);
+        exports.TransientDocument._convertNestedObjects(document, document);
         return document;
     },
-    create: function () { return exports.Document.createFrom({}); },
+    create: function () { return exports.TransientDocument.createFrom({}); },
     _convertNestedObjects: function (parent, actual, fragmentsTracker) {
         if (fragmentsTracker === void 0) { fragmentsTracker = new Set(); }
         for (var _i = 0, _a = Object.keys(actual); _i < _a.length; _i++) {
             var key = _a[_i];
             var next = actual[key];
             if (Array.isArray(next)) {
-                exports.Document._convertNestedObjects(parent, next, fragmentsTracker);
+                exports.TransientDocument._convertNestedObjects(parent, next, fragmentsTracker);
                 continue;
             }
             if (!Utils_1.isPlainObject(next))
                 continue;
-            if (exports.Document.is(next))
+            if (exports.TransientDocument.is(next))
                 continue;
             var idOrSlug = getNestedObjectId(next);
             if (!!idOrSlug && !inScope.call(parent, idOrSlug))
@@ -172,15 +172,15 @@ exports.Document = {
             var parentFragment = parent.getFragment(idOrSlug);
             if (!parentFragment) {
                 var fragment = parent.createFragment(next, idOrSlug);
-                exports.Document._convertNestedObjects(parent, fragment, fragmentsTracker);
+                exports.TransientDocument._convertNestedObjects(parent, fragment, fragmentsTracker);
             }
             else if (parentFragment !== next) {
                 var fragment = actual[key] = Object.assign(parentFragment, next);
-                exports.Document._convertNestedObjects(parent, fragment, fragmentsTracker);
+                exports.TransientDocument._convertNestedObjects(parent, fragment, fragmentsTracker);
             }
             else if (!fragmentsTracker.has(next.id)) {
                 fragmentsTracker.add(next.id);
-                exports.Document._convertNestedObjects(parent, next, fragmentsTracker);
+                exports.TransientDocument._convertNestedObjects(parent, next, fragmentsTracker);
             }
         }
     },
@@ -262,7 +262,7 @@ function createFragment(slugOrObject, slug) {
     }
     var fragment = BlankNode_1.BlankNode.createFrom(object, this, slug);
     this._fragmentsIndex.set(fragment.id, fragment);
-    exports.Document._convertNestedObjects(this, fragment);
+    exports.TransientDocument._convertNestedObjects(this, fragment);
     return fragment;
 }
 function createNamedFragment(slugOrObject, slug) {
@@ -281,7 +281,7 @@ function createNamedFragment(slugOrObject, slug) {
         throw new IDAlreadyInUseError_1.IDAlreadyInUseError("The slug provided is already being used by a fragment.");
     var fragment = NamedFragment_1.NamedFragment.createFrom(object, this, slug);
     this._fragmentsIndex.set(slug, fragment);
-    exports.Document._convertNestedObjects(this, fragment);
+    exports.TransientDocument._convertNestedObjects(this, fragment);
     return fragment;
 }
 function removeFragment(fragmentOrSlug) {
@@ -323,7 +323,7 @@ function normalize() {
     var currentFragments = this.getFragments()
         .filter(function (fragment) { return URI_1.URI.isBNodeID(fragment.id); });
     var usedFragmentsIDs = new Set();
-    exports.Document._convertNestedObjects(this, this, usedFragmentsIDs);
+    exports.TransientDocument._convertNestedObjects(this, this, usedFragmentsIDs);
     currentFragments.forEach(function (fragment) {
         if (usedFragmentsIDs.has(fragment.id))
             return;
@@ -331,4 +331,4 @@ function normalize() {
     });
 }
 
-//# sourceMappingURL=Document.js.map
+//# sourceMappingURL=TransientDocument.js.map

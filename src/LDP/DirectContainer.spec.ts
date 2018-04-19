@@ -1,4 +1,4 @@
-import { Document } from "../Document";
+import { TransientDocument } from "../TransientDocument";
 import * as Errors from "../Errors";
 import { Pointer } from "../Pointer";
 import {
@@ -23,7 +23,7 @@ describe( module( "carbonldp/LDP/DirectContainer" ), ():void => {
 		"Interface that represents an `ldp:DirectContainer`."
 	), ():void => {
 
-		it( extendsClass( "CarbonLDP.Document" ), ():void => {} );
+		it( extendsClass( "CarbonLDP.TransientDocument" ), ():void => {} );
 
 		it( hasProperty(
 			OBLIGATORY,
@@ -121,7 +121,7 @@ describe( module( "carbonldp/LDP/DirectContainer" ), ():void => {
 			object.types = [ LDP.DirectContainer ];
 			expect( DirectContainer.is( object ) ).toBe( false );
 
-			object = Document.create();
+			object = TransientDocument.create();
 			expect( DirectContainer.is( object ) ).toBe( false );
 			object.membershipResource = "http://example.com/myNamespace#some-relation";
 			expect( DirectContainer.is( object ) ).toBe( false );

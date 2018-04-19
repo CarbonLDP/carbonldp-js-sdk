@@ -1,6 +1,6 @@
 import { AbstractContext } from "./AbstractContext";
 import { PersistedACL } from "./Auth/PersistedACL";
-import { Document } from "./Document";
+import { TransientDocument } from "./TransientDocument";
 import { Documents } from "./Documents";
 import { PersistedDocument } from "./PersistedDocument";
 
@@ -186,7 +186,7 @@ describe( module( "carbonldp/PersistedProtectedDocument" ), ():void => {
 				let context:AbstractContext = new MockContext();
 				documents = context.documents;
 
-				let document:Document = Document.createFrom( {
+				let document:TransientDocument = TransientDocument.createFrom( {
 					id: "http://example.com/resource/",
 					accessControlList: documents.getPointer( "http://example.com/resource/~acl/" ),
 					_resolved: true,

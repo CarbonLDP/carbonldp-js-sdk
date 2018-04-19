@@ -1,6 +1,6 @@
-import { Document } from "./Document";
+import { TransientDocument } from "./TransientDocument";
 import { ObjectSchema } from "./ObjectSchema";
-export interface ProtectedDocument extends Document {
+export interface ProtectedDocument extends TransientDocument {
 }
 export interface ProtectedDocumentFactory {
     TYPE: string;

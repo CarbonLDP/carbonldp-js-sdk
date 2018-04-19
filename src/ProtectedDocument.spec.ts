@@ -19,7 +19,7 @@ describe( module( "carbonldp/ProtectedDocument" ), ():void => {
 		"Interface that represents a persisted blank node of a persisted document."
 	), ():void => {
 
-		it( extendsClass( "CarbonLDP.Document" ), ():void => {} );
+		it( extendsClass( "CarbonLDP.TransientDocument" ), ():void => {} );
 
 	} );
 

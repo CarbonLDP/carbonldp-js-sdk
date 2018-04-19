@@ -7,9 +7,9 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 }
 Object.defineProperty(exports, "__esModule", { value: true });
-var Document_1 = require("./Document");
+var TransientDocument_1 = require("./TransientDocument");
 var Request_1 = require("./HTTP/Request");
-var Document_2 = require("./Messaging/Document");
+var Document_1 = require("./Messaging/Document");
 var ObjectSchema = __importStar(require("./ObjectSchema"));
 var PersistedFragment_1 = require("./PersistedFragment");
 var PersistedNamedFragment_1 = require("./PersistedNamedFragment");
@@ -51,8 +51,8 @@ exports.PersistedDocument = {
             && Utils.hasFunction(object, "sparql");
     },
     is: function (object) {
-        return Document_1.Document.is(object)
-            && Document_2.MessagingDocument.isDecorated(object)
+        return TransientDocument_1.TransientDocument.is(object)
+            && Document_1.MessagingDocument.isDecorated(object)
             && exports.PersistedDocument.isDecorated(object);
     },
     create: function (documents, uri) {
@@ -61,16 +61,16 @@ exports.PersistedDocument = {
     createFrom: function (object, documents, uri) {
         var document = exports.PersistedDocument.decorate(object, documents);
         document.id = uri;
-        Document_1.Document._convertNestedObjects(document, document);
+        TransientDocument_1.TransientDocument._convertNestedObjects(document, document);
         return document;
     },
     decorate: function (object, documents) {
         if (exports.PersistedDocument.isDecorated(object))
             return object;
-        Document_1.Document.decorate(object);
+        TransientDocument_1.TransientDocument.decorate(object);
         PersistedResource_1.PersistedResource.decorate(object);
         ServiceAwareDocument_1.ServiceAwareDocument.decorate(object, documents);
-        Document_2.MessagingDocument.decorate(object);
+        Document_1.MessagingDocument.decorate(object);
         var persistedDocument = object;
         return Object.defineProperties(persistedDocument, {
             "_eTag": {

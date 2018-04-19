@@ -24,7 +24,7 @@ import { PersistedUser } from "./Auth/PersistedUser";
 import { User } from "./Auth/User";
 import { CarbonLDP } from "./CarbonLDP";
 import { Context } from "./Context";
-import { Document } from "./Document";
+import { TransientDocument } from "./TransientDocument";
 import * as Errors from "./Errors";
 import { FreeResources } from "./FreeResources";
 import { statusCodeMap } from "./HTTP/Errors";
@@ -1155,10 +1155,10 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 
 	private _persistChildDocument<T extends object>( parentURI:string, childObject:T, slug:string, requestOptions:RequestOptions ):Promise<T & PersistedProtectedDocument> {
 		if( PersistedDocument.is( childObject ) ) throw new Errors.IllegalArgumentError( "The child provided has been already persisted." );
-		let childDocument:T & Document = Document.is( childObject ) ? <T & Document> childObject : Document.createFrom<T>( childObject );
+		let childDocument:T & TransientDocument = TransientDocument.is( childObject ) ? <T & TransientDocument> childObject : TransientDocument.createFrom<T>( childObject );
 
 		this._setDefaultRequestOptions( requestOptions, LDP.Container );
-		return this._persistDocument<T & Document, PersistedProtectedDocument>( parentURI, slug, childDocument, requestOptions );
+		return this._persistDocument<T & TransientDocument, PersistedProtectedDocument>( parentURI, slug, childDocument, requestOptions );
 	}
 
 	private _persistAccessPoint<T extends object>( documentURI:string, accessPoint:T & AccessPointBase, slug:string, requestOptions:RequestOptions ):Promise<T & PersistedAccessPoint> {
@@ -1173,7 +1173,7 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 		return this._persistDocument<T & AccessPoint, PersistedAccessPoint>( documentURI, slug, accessPointDocument, requestOptions );
 	}
 
-	private _persistDocument<T extends Document, W extends PersistedProtectedDocument>( parentURI:string, slug:string, document:T, requestOptions:RequestOptions ):Promise<T & W> {
+	private _persistDocument<T extends TransientDocument, W extends PersistedProtectedDocument>( parentURI:string, slug:string, document:T, requestOptions:RequestOptions ):Promise<T & W> {
 		RequestUtils.setContentTypeHeader( "application/ld+json", requestOptions );
 
 		if( document.id ) {
@@ -1318,7 +1318,7 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 		return this._getDigestedObjectSchema( types, expandedObject[ "@id" ] );
 	}
 
-	private _getDigestedObjectSchemaForDocument( document:Document ):DigestedObjectSchema {
+	private _getDigestedObjectSchemaForDocument( document:TransientDocument ):DigestedObjectSchema {
 		if( PersistedResource.isDecorated( document ) && document.isPartial() ) {
 			const schemas:DigestedObjectSchema[] = [ document._partialMetadata.schema ];
 			return this._getProcessedSchema( schemas );
@@ -1335,9 +1335,9 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 			Utils.isDefined( objectID ) &&
 			! URI.hasFragment( objectID ) &&
 			! URI.isBNodeID( objectID ) &&
-			objectTypes.indexOf( Document.TYPE ) === - 1
+			objectTypes.indexOf( TransientDocument.TYPE ) === - 1
 		)
-			objectTypes = objectTypes.concat( Document.TYPE );
+			objectTypes = objectTypes.concat( TransientDocument.TYPE );
 
 		const schemas:DigestedObjectSchema[] = objectTypes
 			.filter( type => this.context.hasObjectSchema( type ) )

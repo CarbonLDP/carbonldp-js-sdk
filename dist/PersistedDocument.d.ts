@@ -1,6 +1,6 @@
 import { QueryClause } from "sparqler/clauses";
 import { AccessPointBase } from "./AccessPoint";
-import { Document } from "./Document";
+import { TransientDocument } from "./TransientDocument";
 import { Documents } from "./Documents";
 import { RequestOptions } from "./HTTP/Request";
 import { MessagingDocument } from "./Messaging/Document";
@@ -17,7 +17,7 @@ import { FinishSPARQLSelect } from "./SPARQL/Builder";
 import { QueryDocumentsBuilder } from "./SPARQL/QueryDocument/QueryDocumentsBuilder";
 import { SPARQLRawResults } from "./SPARQL/RawResults";
 import { SPARQLSelectResults } from "./SPARQL/SelectResults";
-export interface PersistedDocument extends Document, PersistedResource, ServiceAwareDocument, MessagingDocument {
+export interface PersistedDocument extends TransientDocument, PersistedResource, ServiceAwareDocument, MessagingDocument {
     created?: Date;
     modified?: Date;
     defaultInteractionModel?: Pointer;

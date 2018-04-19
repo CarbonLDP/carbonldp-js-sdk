@@ -7,7 +7,7 @@ import { ObjectSchema, ObjectSchemaResolver } from "./ObjectSchema";
 import { Pointer, PointerLibrary, PointerValidator } from "./Pointer";
 import { RDFDocument } from "./RDF/Document";
 import { Resource } from "./Resource";
-export interface Document extends Resource, PointerLibrary, PointerValidator {
+export interface TransientDocument extends Resource, PointerLibrary, PointerValidator {
     defaultInteractionModel?: Pointer;
     isMemberOfRelation?: Pointer;
     hasMemberRelation?: Pointer;
@@ -25,14 +25,14 @@ export interface Document extends Resource, PointerLibrary, PointerValidator {
     removeNamedFragment(slugOrFragment: string | NamedFragment): void;
     toJSON(objectSchemaResolver?: ObjectSchemaResolver, jsonldConverter?: JSONLDConverter): RDFDocument;
 }
-export interface DocumentFactory extends ModelFactory<Document>, ModelDecorator<Document> {
+export interface DocumentFactory extends ModelFactory<TransientDocument>, ModelDecorator<TransientDocument> {
     TYPE: string;
     SCHEMA: ObjectSchema;
-    is(object: object): object is Document;
-    isDecorated(object: object): object is Document;
-    create(): Document;
-    createFrom<T extends object>(object: T): T & Document;
-    decorate<T extends object>(object: T): T & Document;
-    _convertNestedObjects(parent: Document, actual: any, fragmentsTracker?: Set<string>): void;
+    is(object: object): object is TransientDocument;
+    isDecorated(object: object): object is TransientDocument;
+    create(): TransientDocument;
+    createFrom<T extends object>(object: T): T & TransientDocument;
+    decorate<T extends object>(object: T): T & TransientDocument;
+    _convertNestedObjects(parent: TransientDocument, actual: any, fragmentsTracker?: Set<string>): void;
 }
-export declare const Document: DocumentFactory;
+export declare const TransientDocument: DocumentFactory;

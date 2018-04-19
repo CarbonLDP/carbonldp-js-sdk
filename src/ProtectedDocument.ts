@@ -1,8 +1,8 @@
-import { Document } from "./Document";
+import { TransientDocument } from "./TransientDocument";
 import { ObjectSchema } from "./ObjectSchema";
 import { CS } from "./Vocabularies/CS";
 
-export interface ProtectedDocument extends Document {
+export interface ProtectedDocument extends TransientDocument {
 }
 
 

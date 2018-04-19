@@ -1,4 +1,4 @@
-import { Document } from "../Document";
+import { TransientDocument } from "../TransientDocument";
 import { Fragment } from "../Fragment";
 import { ObjectSchema } from "../ObjectSchema";
 import {
@@ -16,7 +16,7 @@ export interface UserBase {
 	credentials:UsernameAndPasswordCredentials;
 }
 
-export interface User extends Document {
+export interface User extends TransientDocument {
 	name?:string;
 	credentials?:Fragment & UsernameAndPasswordCredentials;
 
@@ -64,7 +64,7 @@ export const User:UserFactory = {
 	},
 
 	is( value:any ):value is User {
-		return Document.is( value )
+		return TransientDocument.is( value )
 			&& User.isDecorated( value )
 			;
 	},
@@ -73,7 +73,7 @@ export const User:UserFactory = {
 	decorate<T extends object>( object:T ):T & User {
 		if( User.isDecorated( object ) ) return object;
 
-		Document.decorate( object );
+		TransientDocument.decorate( object );
 
 		return Object.defineProperties( object, {
 			"updateCredentials": {
