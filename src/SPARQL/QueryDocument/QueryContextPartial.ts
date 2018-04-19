@@ -1,14 +1,14 @@
 import { Context } from "../../Context";
 import { DigestedObjectSchema } from "../../ObjectSchema";
-import { PersistedDocument } from "../../PersistedDocument";
+import { Document } from "../../Document";
 import { PersistedResource } from "../../PersistedResource";
 import { QueryContext } from "./QueryContext";
 
 export class QueryContextPartial extends QueryContext {
 
-	private _document:PersistedDocument;
+	private _document:Document;
 
-	constructor( document:PersistedDocument, context?:Context ) {
+	constructor( document:Document, context?:Context ) {
 		super( context );
 		this._document = document;
 	}

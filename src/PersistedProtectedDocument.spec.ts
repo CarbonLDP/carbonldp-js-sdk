@@ -2,7 +2,7 @@ import { AbstractContext } from "./AbstractContext";
 import { PersistedACL } from "./Auth/PersistedACL";
 import { TransientDocument } from "./TransientDocument";
 import { Documents } from "./Documents";
-import { PersistedDocument } from "./PersistedDocument";
+import { Document } from "./Document";
 
 import { PersistedProtectedDocument } from "./PersistedProtectedDocument";
 
@@ -27,7 +27,7 @@ describe( module( "carbonldp/PersistedProtectedDocument" ), ():void => {
 		"Interface that represents a persisted protected document."
 	), ():void => {
 
-		it( extendsClass( "CarbonLDP.PersistedDocument" ), ():void => {} );
+		it( extendsClass( "CarbonLDP.Document" ), ():void => {} );
 
 		it( hasProperty(
 			OPTIONAL,
@@ -131,7 +131,7 @@ describe( module( "carbonldp/PersistedProtectedDocument" ), ():void => {
 			};
 			expect( PersistedProtectedDocument.is( object ) ).toBe( false );
 
-			let document:PersistedDocument = PersistedDocument.decorate( object, new Documents() );
+			let document:Document = Document.decorate( object, new Documents() );
 			expect( PersistedProtectedDocument.is( document ) ).toBe( true );
 		} );
 
@@ -140,7 +140,7 @@ describe( module( "carbonldp/PersistedProtectedDocument" ), ():void => {
 			expect( PersistedACL.decorate ).toBeDefined();
 			expect( Utils.isFunction( PersistedACL.decorate ) ).toBe( true );
 
-			const persistedDocumentSpy:jasmine.Spy = spyOn( PersistedDocument, "decorate" ).and.callThrough();
+			const persistedDocumentSpy:jasmine.Spy = spyOn( Document, "decorate" ).and.callThrough();
 
 			let fn:Function = ():void => {};
 			let document:object;

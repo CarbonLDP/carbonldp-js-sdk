@@ -24,7 +24,7 @@ import {
 	ObjectSchemaUtils,
 	PointerType,
 } from "./ObjectSchema";
-import { PersistedDocument } from "./PersistedDocument";
+import { Document } from "./Document";
 import { PersistedFragment } from "./PersistedFragment";
 import { PersistedNamedFragment } from "./PersistedNamedFragment";
 import { PersistedProtectedDocument } from "./PersistedProtectedDocument";
@@ -291,11 +291,11 @@ describe( module( "carbonldp/CarbonLDP" ), ():void => {
 
 		it( reexports(
 			STATIC,
-			"PersistedDocument",
-			"carbonldp/PersistedDocument#PersistedDocument"
+			"Document",
+			"carbonldp/Document#Document"
 		), ():void => {
-			expect( CarbonLDP.CarbonLDP.PersistedDocument ).toBeDefined();
-			expect( CarbonLDP.CarbonLDP.PersistedDocument ).toBe( PersistedDocument );
+			expect( CarbonLDP.CarbonLDP.Document ).toBeDefined();
+			expect( CarbonLDP.CarbonLDP.Document ).toBe( Document );
 		} );
 
 		it( reexports(

@@ -1,6 +1,6 @@
 import { AbstractContext } from "../../AbstractContext";
 import { ObjectSchemaDigester } from "../../ObjectSchema";
-import { PersistedDocument } from "../../PersistedDocument";
+import { Document } from "../../Document";
 import { PersistedFragment } from "../../PersistedFragment";
 import {
 	clazz,
@@ -32,13 +32,13 @@ describe( module( "carbonldp/SPARQL/QueryDocument/QueryContextPartial" ), ():voi
 		} );
 
 		let context:AbstractContext;
-		let persistedDocument:PersistedDocument;
+		let persistedDocument:Document;
 		beforeEach( ():void => {
 			context = new class extends AbstractContext {
 				protected _baseURI:string = "https://example.com/";
 			};
 
-			persistedDocument = PersistedDocument.createFrom(
+			persistedDocument = Document.createFrom(
 				context.documents.getPointer( "https://example.com/resource/" ),
 				context.documents,
 				"https://example.com/resource/"
@@ -54,7 +54,7 @@ describe( module( "carbonldp/SPARQL/QueryDocument/QueryContextPartial" ), ():voi
 
 			it( hasSignature(
 				[
-					{ name: "document", type: "CarbonLDP.PersistedDocument", description: "partial document from whom the query context is created for." },
+					{ name: "document", type: "CarbonLDP.Document", description: "partial document from whom the query context is created for." },
 					{ name: "context", type: "CarbonLDP.Context", optional: true, description: "The carbon context from where the query belongs to." },
 				]
 			), ():void => {

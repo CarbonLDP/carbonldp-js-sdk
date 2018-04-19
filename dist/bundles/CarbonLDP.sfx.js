@@ -4290,7 +4290,7 @@ var Pointer_1 = __webpack_require__(22);
 var URI_1 = __webpack_require__(10);
 var ServiceAwareDocument_1 = __webpack_require__(122);
 var Utils = __importStar(__webpack_require__(0));
-exports.PersistedDocument = {
+exports.Document = {
     isDecorated: function (object) {
         return Utils.hasPropertyDefined(object, "_eTag")
             && Utils.hasFunction(object, "isLocallyOutDated")
@@ -4325,19 +4325,19 @@ exports.PersistedDocument = {
     is: function (object) {
         return TransientDocument_1.TransientDocument.is(object)
             && Document_1.MessagingDocument.isDecorated(object)
-            && exports.PersistedDocument.isDecorated(object);
+            && exports.Document.isDecorated(object);
     },
     create: function (documents, uri) {
-        return exports.PersistedDocument.createFrom({}, documents, uri);
+        return exports.Document.createFrom({}, documents, uri);
     },
     createFrom: function (object, documents, uri) {
-        var document = exports.PersistedDocument.decorate(object, documents);
+        var document = exports.Document.decorate(object, documents);
         document.id = uri;
         TransientDocument_1.TransientDocument._convertNestedObjects(document, document);
         return document;
     },
     decorate: function (object, documents) {
-        if (exports.PersistedDocument.isDecorated(object))
+        if (exports.Document.isDecorated(object))
             return object;
         TransientDocument_1.TransientDocument.decorate(object);
         PersistedResource_1.PersistedResource.decorate(object);
@@ -5019,7 +5019,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 }
 Object.defineProperty(exports, "__esModule", { value: true });
-var PersistedDocument_1 = __webpack_require__(42);
+var Document_1 = __webpack_require__(42);
 var Utils = __importStar(__webpack_require__(0));
 var CS_1 = __webpack_require__(18);
 exports.PersistedProtectedDocument = {
@@ -5029,12 +5029,12 @@ exports.PersistedProtectedDocument = {
     },
     is: function (object) {
         return exports.PersistedProtectedDocument.isDecorated(object)
-            && PersistedDocument_1.PersistedDocument.is(object);
+            && Document_1.Document.is(object);
     },
     decorate: function (object, documents) {
         if (exports.PersistedProtectedDocument.isDecorated(object))
             return object;
-        PersistedDocument_1.PersistedDocument.decorate(object, documents);
+        Document_1.Document.decorate(object, documents);
         var persistedProtectedDocument = object;
         Object.defineProperties(persistedProtectedDocument, {
             "getACL": {
@@ -9520,9 +9520,9 @@ __export(__webpack_require__(107));
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var PersistedDocument_1 = __webpack_require__(42);
+var Document_1 = __webpack_require__(42);
 var Pointer_1 = __webpack_require__(22);
-var Document_1 = __webpack_require__(39);
+var Document_2 = __webpack_require__(39);
 var Node_1 = __webpack_require__(25);
 var PartialMetadata_1 = __webpack_require__(78);
 var QueryContextBuilder_1 = __webpack_require__(79);
@@ -9543,7 +9543,7 @@ var JSONLDCompacter = (function () {
         var _this = this;
         if (mainDocuments === void 0) { mainDocuments = rdfDocuments; }
         rdfDocuments.forEach(function (rdfDocument) {
-            var _a = Document_1.RDFDocument.getNodes(rdfDocument), documentNode = _a[0][0], fragmentNodes = _a[1];
+            var _a = Document_2.RDFDocument.getNodes(rdfDocument), documentNode = _a[0][0], fragmentNodes = _a[1];
             var targetDocument = _this.getResource(documentNode, _this.documents, true);
             var fragmentsSet = new Set(targetDocument._fragmentsIndex.keys());
             fragmentNodes.forEach(function (fragmentNode) {
@@ -9618,7 +9618,7 @@ var JSONLDCompacter = (function () {
     JSONLDCompacter.prototype.getResource = function (node, containerLibrary, isDocument) {
         var resource = containerLibrary.getPointer(node["@id"]);
         if (isDocument)
-            containerLibrary = PersistedDocument_1.PersistedDocument.decorate(resource, this.documents);
+            containerLibrary = Document_1.Document.decorate(resource, this.documents);
         this.compactionMap.set(resource.id, { paths: [], node: node, resource: resource, containerLibrary: containerLibrary });
         return resource;
     };
@@ -10526,7 +10526,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 }
 Object.defineProperty(exports, "__esModule", { value: true });
-var PersistedDocument_1 = __webpack_require__(42);
+var Document_1 = __webpack_require__(42);
 var Utils = __importStar(__webpack_require__(0));
 var ACL_1 = __webpack_require__(51);
 exports.PersistedACL = {
@@ -10538,7 +10538,7 @@ exports.PersistedACL = {
         if (exports.PersistedACL.isDecorated(object))
             return object;
         ACL_1.ACL.decorate(object);
-        PersistedDocument_1.PersistedDocument.decorate(object, documents);
+        Document_1.Document.decorate(object, documents);
         var acl = object;
         Object.defineProperties(acl, {
             "_parsePointer": {
@@ -10605,13 +10605,13 @@ var DeltaCreator_1 = __webpack_require__(143);
 var Event_1 = __webpack_require__(145);
 var Utils_1 = __webpack_require__(146);
 var ObjectSchema_1 = __webpack_require__(12);
-var PersistedDocument_1 = __webpack_require__(42);
+var Document_1 = __webpack_require__(42);
 var PersistedFragment_1 = __webpack_require__(55);
 var PersistedProtectedDocument_1 = __webpack_require__(45);
 var PersistedResource_1 = __webpack_require__(56);
 var Pointer_1 = __webpack_require__(22);
 var ProtectedDocument_1 = __webpack_require__(92);
-var Document_1 = __webpack_require__(39);
+var Document_2 = __webpack_require__(39);
 var Node_1 = __webpack_require__(25);
 var URI_1 = __webpack_require__(10);
 var Builder_1 = __webpack_require__(162);
@@ -10720,7 +10720,7 @@ var Documents = (function () {
         var pointerID = this._getPointerID(id);
         if (!pointerID)
             throw new Errors.IllegalArgumentError("Cannot register a document outside the scope of this documents instance.");
-        var persistedDocument = PersistedDocument_1.PersistedDocument.decorate(this.getPointer(pointerID), this);
+        var persistedDocument = Document_1.Document.decorate(this.getPointer(pointerID), this);
         return persistedDocument;
     };
     Documents.prototype.get = function (uri, optionsOrQueryBuilderFn, queryBuilderFn) {
@@ -10923,7 +10923,7 @@ var Documents = (function () {
         var _this = this;
         if (requestOptions === void 0) { requestOptions = {}; }
         return Utils_3.promiseMethod(function () {
-            if (!PersistedDocument_1.PersistedDocument.is(persistedDocument))
+            if (!Document_1.Document.is(persistedDocument))
                 throw new Errors.IllegalArgumentError("Provided element is not a valid persisted document.");
             Request_1.RequestUtils.setPreferredRetrieval("minimal", requestOptions);
             return _this._patchDocument(persistedDocument, requestOptions);
@@ -10933,7 +10933,7 @@ var Documents = (function () {
         var _this = this;
         if (requestOptions === void 0) { requestOptions = {}; }
         return Utils.promiseMethod(function () {
-            if (!PersistedDocument_1.PersistedDocument.is(persistedDocument))
+            if (!Document_1.Document.is(persistedDocument))
                 throw new Errors.IllegalArgumentError("Provided element is not a valid persisted document.");
             return persistedDocument.isPartial() ?
                 _this._refreshPartialDocument(persistedDocument, requestOptions) :
@@ -10944,7 +10944,7 @@ var Documents = (function () {
         var _this = this;
         if (requestOptions === void 0) { requestOptions = {}; }
         return Utils_3.promiseMethod(function () {
-            if (!PersistedDocument_1.PersistedDocument.is(persistedDocument))
+            if (!Document_1.Document.is(persistedDocument))
                 throw new Errors.IllegalArgumentError("Provided element is not a valid persisted document.");
             var cloneOptions = Request_1.RequestUtils.cloneOptions(requestOptions);
             Request_1.RequestUtils.setPreferredRetrieval(persistedDocument.isPartial() ? "minimal" : "representation", cloneOptions);
@@ -11157,7 +11157,7 @@ var Documents = (function () {
         return this.on(Event_1.Event.MEMBER_REMOVED, uriPattern, onEvent, onError);
     };
     Documents.prototype._getPersistedDocument = function (rdfDocument, response) {
-        var documentResources = Document_1.RDFDocument.getNodes(rdfDocument)[0];
+        var documentResources = Document_2.RDFDocument.getNodes(rdfDocument)[0];
         if (documentResources.length === 0)
             throw new BadResponseError_1.BadResponseError("The RDFDocument: " + rdfDocument["@id"] + ", doesn't contain a document resource.", response);
         if (documentResources.length > 1)
@@ -11211,7 +11211,7 @@ var Documents = (function () {
         if (this.documentsBeingResolved.has(uri))
             return this.documentsBeingResolved.get(uri);
         var promise = this
-            ._sendRequest(HTTPMethod_1.HTTPMethod.GET, uri, requestOptions, null, new Document_1.RDFDocumentParser())
+            ._sendRequest(HTTPMethod_1.HTTPMethod.GET, uri, requestOptions, null, new Document_2.RDFDocumentParser())
             .then(function (_a) {
             var rdfDocuments = _a[0], response = _a[1];
             var eTag = response.getETag();
@@ -11282,7 +11282,7 @@ var Documents = (function () {
         this._setDefaultRequestOptions(requestOptions, LDP_1.LDP.RDFSource);
         Request_1.RequestUtils.setIfNoneMatchHeader(persistedDocument._eTag, requestOptions);
         return this
-            ._sendRequest(HTTPMethod_1.HTTPMethod.GET, uri, requestOptions, null, new Document_1.RDFDocumentParser())
+            ._sendRequest(HTTPMethod_1.HTTPMethod.GET, uri, requestOptions, null, new Document_2.RDFDocumentParser())
             .then(function (_a) {
             var rdfDocuments = _a[0], response = _a[1];
             if (response === null)
@@ -11499,7 +11499,7 @@ var Documents = (function () {
             if (targetDocument && targetETag === targetDocument._eTag)
                 return [targetDocument];
             var rdfDocuments = rdfNodes
-                .filter(Document_1.RDFDocument.is);
+                .filter(Document_2.RDFDocument.is);
             var targetDocuments = rdfDocuments
                 .filter(function (x) { return targetSet.has(x["@id"]); });
             return new Compacter_1.JSONLDCompacter(_this, targetName, queryContext)
@@ -11508,14 +11508,14 @@ var Documents = (function () {
         var _a, _b;
     };
     Documents.prototype._persistChildDocument = function (parentURI, childObject, slug, requestOptions) {
-        if (PersistedDocument_1.PersistedDocument.is(childObject))
+        if (Document_1.Document.is(childObject))
             throw new Errors.IllegalArgumentError("The child provided has been already persisted.");
         var childDocument = TransientDocument_1.TransientDocument.is(childObject) ? childObject : TransientDocument_1.TransientDocument.createFrom(childObject);
         this._setDefaultRequestOptions(requestOptions, LDP_1.LDP.Container);
         return this._persistDocument(parentURI, slug, childDocument, requestOptions);
     };
     Documents.prototype._persistAccessPoint = function (documentURI, accessPoint, slug, requestOptions) {
-        if (PersistedDocument_1.PersistedDocument.is(accessPoint))
+        if (Document_1.Document.is(accessPoint))
             throw new Errors.IllegalArgumentError("The access-point provided has been already persisted.");
         var accessPointDocument = AccessPoint_1.AccessPoint.is(accessPoint) ?
             accessPoint : AccessPoint_1.AccessPoint.createFrom(accessPoint, this.getPointer(documentURI), accessPoint.hasMemberRelation, accessPoint.isMemberOfRelation);
@@ -11735,7 +11735,7 @@ var Documents = (function () {
             var preferenceHeader = response.getHeader("Preference-Applied");
             if (preferenceHeader === null || preferenceHeader.toString() !== "return=representation")
                 return persistedProtectedDocument;
-            var rdfDocuments = Document_1.RDFDocument.getDocuments(expandedResult);
+            var rdfDocuments = Document_2.RDFDocument.getDocuments(expandedResult);
             return _this._updateFromPreferenceApplied(persistedProtectedDocument, rdfDocuments, response);
         });
     };
@@ -15201,7 +15201,7 @@ var LDPatch = __importStar(__webpack_require__(296));
 var Messaging = __importStar(__webpack_require__(297));
 var NamedFragment_1 = __webpack_require__(74);
 var ObjectSchema_1 = __webpack_require__(12);
-var PersistedDocument_1 = __webpack_require__(42);
+var Document_1 = __webpack_require__(42);
 var PersistedFragment_1 = __webpack_require__(55);
 var PersistedNamedFragment_1 = __webpack_require__(121);
 var PersistedResource_1 = __webpack_require__(56);
@@ -15305,7 +15305,7 @@ var CarbonLDP = (function (_super) {
     CarbonLDP.PointerType = ObjectSchema_1.PointerType;
     CarbonLDP.ContainerType = ObjectSchema_1.ContainerType;
     CarbonLDP.DigestedObjectSchema = ObjectSchema_1.DigestedObjectSchema;
-    CarbonLDP.PersistedDocument = PersistedDocument_1.PersistedDocument;
+    CarbonLDP.Document = Document_1.Document;
     CarbonLDP.PersistedFragment = PersistedFragment_1.PersistedFragment;
     CarbonLDP.PersistedNamedFragment = PersistedNamedFragment_1.PersistedNamedFragment;
     CarbonLDP.PersistedProtectedDocument = PersistedProtectedDocument_1.PersistedProtectedDocument;

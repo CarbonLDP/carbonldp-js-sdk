@@ -70,7 +70,7 @@ describe( module( "carbonldp/Pointer" ), ():void => {
 					{ name: "requestOptions", type: "CarbonLDP.HTTP.GETOptions", optional: true, description: "Customizable options for the request." },
 					{ name: "queryBuilderFn", type: "( queryBuilder:CarbonLDP.SPARQL.QueryDocument.QueryDocumentBuilder ) => CarbonLDP.SPARQL.QueryDocument.QueryDocumentBuilder", optional: true, description: "Function that receives a the builder that helps you to construct the retrieval query.\nThe same builder must be returned." },
 				],
-				{ type: "Promise<T & this & CarbonLDP.PersistedDocument>" }
+				{ type: "Promise<T & this & CarbonLDP.Document>" }
 			), ():void => {} );
 
 			it( hasSignature(
@@ -79,7 +79,7 @@ describe( module( "carbonldp/Pointer" ), ():void => {
 				[
 					{ name: "queryBuilderFn", type: "( queryBuilder:CarbonLDP.SPARQL.QueryDocument.QueryDocumentBuilder ) => CarbonLDP.SPARQL.QueryDocument.QueryDocumentBuilder", optional: true, description: "Function that receives a the builder that helps you to construct the retrieval query.\nThe same builder must be returned." },
 				],
-				{ type: "Promise<T & this & CarbonLDP.PersistedDocument>" }
+				{ type: "Promise<T & this & CarbonLDP.Document>" }
 			), ():void => {} );
 
 		} );

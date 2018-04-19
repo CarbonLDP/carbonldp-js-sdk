@@ -7,7 +7,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 }
 Object.defineProperty(exports, "__esModule", { value: true });
-var PersistedDocument_1 = require("../PersistedDocument");
+var Document_1 = require("../Document");
 var Utils = __importStar(require("../Utils"));
 var ACL_1 = require("./ACL");
 exports.PersistedACL = {
@@ -19,7 +19,7 @@ exports.PersistedACL = {
         if (exports.PersistedACL.isDecorated(object))
             return object;
         ACL_1.ACL.decorate(object);
-        PersistedDocument_1.PersistedDocument.decorate(object, documents);
+        Document_1.Document.decorate(object, documents);
         var acl = object;
         Object.defineProperties(acl, {
             "_parsePointer": {

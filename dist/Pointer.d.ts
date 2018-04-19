@@ -1,15 +1,15 @@
 import { GETOptions } from "./HTTP/Request";
 import { ModelDecorator } from "./ModelDecorator";
 import { ModelFactory } from "./ModelFactory";
-import { PersistedDocument } from "./PersistedDocument";
+import { Document } from "./Document";
 import { QueryDocumentBuilder } from "./SPARQL/QueryDocument/QueryDocumentBuilder";
 export interface Pointer {
     _id: string;
     _resolved: boolean;
     id: string;
     isResolved(): boolean;
-    resolve<T extends object>(requestOptions?: GETOptions, queryBuilderFn?: (queryBuilder: QueryDocumentBuilder) => QueryDocumentBuilder): Promise<T & this & PersistedDocument>;
-    resolve<T extends object>(queryBuilderFn?: (queryBuilder: QueryDocumentBuilder) => QueryDocumentBuilder): Promise<T & this & PersistedDocument>;
+    resolve<T extends object>(requestOptions?: GETOptions, queryBuilderFn?: (queryBuilder: QueryDocumentBuilder) => QueryDocumentBuilder): Promise<T & this & Document>;
+    resolve<T extends object>(queryBuilderFn?: (queryBuilder: QueryDocumentBuilder) => QueryDocumentBuilder): Promise<T & this & Document>;
 }
 export interface PointerLibrary {
     hasPointer(id: string): boolean;

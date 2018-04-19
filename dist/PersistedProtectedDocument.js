@@ -7,7 +7,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 }
 Object.defineProperty(exports, "__esModule", { value: true });
-var PersistedDocument_1 = require("./PersistedDocument");
+var Document_1 = require("./Document");
 var Utils = __importStar(require("./Utils"));
 var CS_1 = require("./Vocabularies/CS");
 exports.PersistedProtectedDocument = {
@@ -17,12 +17,12 @@ exports.PersistedProtectedDocument = {
     },
     is: function (object) {
         return exports.PersistedProtectedDocument.isDecorated(object)
-            && PersistedDocument_1.PersistedDocument.is(object);
+            && Document_1.Document.is(object);
     },
     decorate: function (object, documents) {
         if (exports.PersistedProtectedDocument.isDecorated(object))
             return object;
-        PersistedDocument_1.PersistedDocument.decorate(object, documents);
+        Document_1.Document.decorate(object, documents);
         var persistedProtectedDocument = object;
         Object.defineProperties(persistedProtectedDocument, {
             "getACL": {

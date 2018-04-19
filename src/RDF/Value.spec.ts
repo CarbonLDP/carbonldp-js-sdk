@@ -1,5 +1,5 @@
 import { AbstractContext } from "../AbstractContext";
-import { PersistedDocument } from "../PersistedDocument";
+import { Document } from "../Document";
 import {
 	Pointer,
 	PointerLibrary,
@@ -173,7 +173,7 @@ describe( module( "carbonldp/RDF/Value" ), ():void => {
 			context = new MockedContext();
 
 			documentResource = RDFDocument.getDocumentResources( expandedObject )[ 0 ];
-			pointerLibrary = PersistedDocument.create( context.documents, expandedObject[ "@id" ] );
+			pointerLibrary = Document.create( context.documents, expandedObject[ "@id" ] );
 		} );
 
 		it( isDefined(), ():void => {

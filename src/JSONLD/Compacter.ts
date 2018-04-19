@@ -3,7 +3,7 @@ import {
 	DigestedObjectSchema,
 	ObjectSchemaResolver,
 } from "../ObjectSchema";
-import { PersistedDocument } from "../PersistedDocument";
+import { Document } from "../Document";
 import { PersistedResource } from "../PersistedResource";
 import {
 	Pointer,
@@ -39,15 +39,15 @@ export class JSONLDCompacter {
 		this.compactionMap = new Map();
 	}
 
-	compactDocument<T extends PersistedDocument>( rdfDocument:RDFDocument ):T {
+	compactDocument<T extends Document>( rdfDocument:RDFDocument ):T {
 		const rdfDocuments:RDFDocument[] = [ rdfDocument ];
 		return this.compactDocuments<T>( rdfDocuments )[ 0 ];
 	}
 
-	compactDocuments<T extends PersistedDocument>( rdfDocuments:RDFDocument[], mainDocuments:RDFDocument[] = rdfDocuments ):T[] {
+	compactDocuments<T extends Document>( rdfDocuments:RDFDocument[], mainDocuments:RDFDocument[] = rdfDocuments ):T[] {
 		rdfDocuments.forEach( rdfDocument => {
 			const [ [ documentNode ], fragmentNodes ] = RDFDocument.getNodes( rdfDocument );
-			const targetDocument:PersistedDocument = this.getResource( documentNode, this.documents, true );
+			const targetDocument:Document = this.getResource( documentNode, this.documents, true );
 
 			const fragmentsSet:Set<string> = new Set( targetDocument._fragmentsIndex.keys() );
 
@@ -61,7 +61,7 @@ export class JSONLDCompacter {
 			fragmentsSet.forEach( targetDocument._removeFragment, targetDocument );
 		} );
 
-		const compactedDocuments:PersistedDocument[] = rdfDocuments
+		const compactedDocuments:Document[] = rdfDocuments
 			.map( rdfDocument => rdfDocument[ "@id" ] )
 			.map( this.compactionMap.get, this.compactionMap )
 			.map( compactionNode => compactionNode.resource as any );
@@ -147,7 +147,7 @@ export class JSONLDCompacter {
 	private getResource<T extends PersistedResource>( node:RDFNode, containerLibrary:PointerLibrary, isDocument?:boolean ):T {
 		const resource:T = containerLibrary.getPointer( node[ "@id" ] ) as any;
 
-		if( isDocument ) containerLibrary = PersistedDocument.decorate( resource, this.documents );
+		if( isDocument ) containerLibrary = Document.decorate( resource, this.documents );
 		this.compactionMap.set( resource.id, { paths: [], node, resource, containerLibrary } );
 
 		return resource;

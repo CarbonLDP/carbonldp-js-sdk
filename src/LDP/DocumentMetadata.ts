@@ -1,6 +1,6 @@
 import { BlankNode } from "../BlankNode";
 import { ObjectSchema } from "../ObjectSchema";
-import { PersistedDocument } from "../PersistedDocument";
+import { Document } from "../Document";
 import * as Utils from "../Utils";
 import { C } from "../Vocabularies/C";
 import { XSD } from "../Vocabularies/XSD";
@@ -10,7 +10,7 @@ import { ModelFactory } from "../ModelFactory";
 import { ModelDecorator } from "../ModelDecorator";
 
 export interface DocumentMetadata extends VolatileResource {
-	relatedDocument:PersistedDocument;
+	relatedDocument:Document;
 	eTag?:string;
 	bNodesMap?:Map<BlankNode, BlankNode>;
 }

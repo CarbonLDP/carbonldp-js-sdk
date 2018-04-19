@@ -1,12 +1,12 @@
 import { BlankNode } from "../BlankNode";
 import { ObjectSchema } from "../ObjectSchema";
-import { PersistedDocument } from "../PersistedDocument";
+import { Document } from "../Document";
 import { Map } from "./Map";
 import { VolatileResource } from "./VolatileResource";
 import { ModelFactory } from "../ModelFactory";
 import { ModelDecorator } from "../ModelDecorator";
 export interface DocumentMetadata extends VolatileResource {
-    relatedDocument: PersistedDocument;
+    relatedDocument: Document;
     eTag?: string;
     bNodesMap?: Map<BlankNode, BlankNode>;
 }

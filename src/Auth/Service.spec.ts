@@ -7,7 +7,7 @@ import {
 import { Context } from "../Context";
 import { IllegalArgumentError } from "../Errors";
 import { RequestOptions } from "../HTTP/Request";
-import { PersistedDocument } from "../PersistedDocument";
+import { Document } from "../Document";
 import {
 	clazz,
 	constructor,

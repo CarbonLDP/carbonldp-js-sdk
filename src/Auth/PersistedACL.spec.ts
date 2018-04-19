@@ -26,7 +26,7 @@ describe( module( "carbonldp/Auth/PersistedACL" ), ():void => {
 		"Interface that represents a persisted Access Control List (ACL)."
 	), ():void => {
 
-		it( extendsClass( "CarbonLDP.PersistedDocument" ), ():void => {} );
+		it( extendsClass( "CarbonLDP.Document" ), ():void => {} );
 
 		it( hasProperty(
 			OBLIGATORY,

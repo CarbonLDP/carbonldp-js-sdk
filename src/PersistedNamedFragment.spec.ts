@@ -29,7 +29,7 @@ describe( module( "carbonldp/PersistedNamedFragment" ), ():void => {
 		it( hasProperty(
 			OBLIGATORY,
 			"_document",
-			"CarbonLDP.PersistedDocument",
+			"CarbonLDP.Document",
 			"A reference to the persisted document the current named fragment belongs to."
 		), ():void => {} );
 

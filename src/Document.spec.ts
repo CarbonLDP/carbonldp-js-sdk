@@ -7,7 +7,7 @@ import { Fragment } from "./Fragment";
 import { RequestOptions } from "./HTTP/Request";
 import { NamedFragment } from "./NamedFragment";
 
-import { PersistedDocument } from "./PersistedDocument";
+import { Document } from "./Document";
 
 import { PersistedFragment } from "./PersistedFragment";
 import { PersistedNamedFragment } from "./PersistedNamedFragment";
@@ -30,10 +30,10 @@ import {
 import * as Utils from "./Utils";
 
 
-describe( module( "carbonldp/PersistedDocument" ), ():void => {
+describe( module( "carbonldp/Document" ), ():void => {
 
 	describe( interfaze(
-		"CarbonLDP.PersistedDocument",
+		"CarbonLDP.Document",
 		"Interface that represents a persisted blank node of a persisted document."
 	), ():void => {
 
@@ -188,7 +188,7 @@ describe( module( "carbonldp/PersistedDocument" ), ():void => {
 			"refresh",
 			[ "T extends object" ],
 			"Sync the persisted document with the data in the server.",
-			{ type: "Promise<T & CarbonLDP.PersistedDocument>" }
+			{ type: "Promise<T & CarbonLDP.Document>" }
 		), ():void => {} );
 
 		it( hasMethod(
@@ -198,7 +198,7 @@ describe( module( "carbonldp/PersistedDocument" ), ():void => {
 			"Save the persisted document to the server.", [
 				{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for the request." },
 			],
-			{ type: "Promise<T & CarbonLDP.PersistedDocument>" }
+			{ type: "Promise<T & CarbonLDP.Document>" }
 		), ():void => {} );
 
 		it( hasMethod(
@@ -206,7 +206,7 @@ describe( module( "carbonldp/PersistedDocument" ), ():void => {
 			"saveAndRefresh",
 			[ "T extends object" ],
 			"Save and refresh the persisted document.",
-			{ type: "Promise<T & CarbonLDP.PersistedDocument>" }
+			{ type: "Promise<T & CarbonLDP.Document>" }
 		), ():void => {} );
 
 		it( hasMethod(
@@ -437,7 +437,7 @@ describe( module( "carbonldp/PersistedDocument" ), ():void => {
 				"Retrieves the empty children of the document.", [
 					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for the request." },
 				],
-				{ type: "Promise<(T & CarbonLDP.PersistedDocument)[]>" }
+				{ type: "Promise<(T & CarbonLDP.Document)[]>" }
 			), ():void => {} );
 
 		} );
@@ -450,7 +450,7 @@ describe( module( "carbonldp/PersistedDocument" ), ():void => {
 					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for the request." },
 					{ name: "queryBuilderFn", type: "( queryBuilder:CarbonLDP.SPARQL.QueryDocument.QueryDocumentsBuilder ) => CarbonLDP.SPARQL.QueryDocument.QueryDocumentsBuilder", optional: true, description: "Function that receives a the builder that helps you to construct the children retrieval query.\nThe same builder must be returned." },
 				],
-				{ type: "Promise<(T & CarbonLDP.PersistedDocument)[]>" }
+				{ type: "Promise<(T & CarbonLDP.Document)[]>" }
 			), ():void => {} );
 
 			it( hasSignature(
@@ -458,7 +458,7 @@ describe( module( "carbonldp/PersistedDocument" ), ():void => {
 				"Retrieves the children of the document, building a query on which one is able to specify the properties to be retrieve and sub-documents' properties and on and on.", [
 					{ name: "queryBuilderFn", type: "( queryBuilder:CarbonLDP.SPARQL.QueryDocument.QueryDocumentsBuilder ) => CarbonLDP.SPARQL.QueryDocument.QueryDocumentsBuilder", optional: true, description: "Function that receives a the builder that helps you to construct the children retrieval query.\nThe same builder must be returned." },
 				],
-				{ type: "Promise<(T & CarbonLDP.PersistedDocument)[]>" }
+				{ type: "Promise<(T & CarbonLDP.Document)[]>" }
 			), ():void => {} );
 
 		} );
@@ -471,7 +471,7 @@ describe( module( "carbonldp/PersistedDocument" ), ():void => {
 				"Retrieves the empty members of the document.", [
 					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for the request." },
 				],
-				{ type: "Promise<(T & CarbonLDP.PersistedDocument)[]>" }
+				{ type: "Promise<(T & CarbonLDP.Document)[]>" }
 			), ():void => {} );
 
 		} );
@@ -484,7 +484,7 @@ describe( module( "carbonldp/PersistedDocument" ), ():void => {
 					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for the request." },
 					{ name: "queryBuilderFn", type: "( queryBuilder:CarbonLDP.SPARQL.QueryDocument.QueryDocumentsBuilder ) => CarbonLDP.SPARQL.QueryDocument.QueryDocumentsBuilder", optional: true, description: "Function that receives a the builder that helps you to construct the members retrieval query.\nThe same builder must be returned." },
 				],
-				{ type: "Promise<(T & CarbonLDP.PersistedDocument)[]>" }
+				{ type: "Promise<(T & CarbonLDP.Document)[]>" }
 			), ():void => {} );
 
 			it( hasSignature(
@@ -492,7 +492,7 @@ describe( module( "carbonldp/PersistedDocument" ), ():void => {
 				"Retrieves the members of the document, building a query on which one is able to specify the properties to be retrieve and sub-documents' properties and on and on.", [
 					{ name: "queryBuilderFn", type: "( queryBuilder:CarbonLDP.SPARQL.QueryDocument.QueryDocumentsBuilder ) => CarbonLDP.SPARQL.QueryDocument.QueryDocumentsBuilder", optional: true, description: "Function that receives a the builder that helps you to construct the members retrieval query.\nThe same builder must be returned." },
 				],
-				{ type: "Promise<(T & CarbonLDP.PersistedDocument)[]>" }
+				{ type: "Promise<(T & CarbonLDP.Document)[]>" }
 			), ():void => {} );
 
 		} );
@@ -616,68 +616,68 @@ describe( module( "carbonldp/PersistedDocument" ), ():void => {
 	} );
 
 	describe( interfaze(
-		"CarbonLDP.PersistedDocumentFactory",
-		"Interface with factory, decorate and utils methods for `CarbonLDP.PersistedDocument` objects."
+		"CarbonLDP.DocumentFactory",
+		"Interface with factory, decorate and utils methods for `CarbonLDP.Document` objects."
 	), ():void => {
 
 		it( hasMethod(
 			OBLIGATORY,
 			"isDecorated",
-			"Returns true if the Document provided has the properties and methods of a `CarbonLDP.PersistedDocument` object.", [
+			"Returns true if the Document provided has the properties and methods of a `CarbonLDP.Document` object.", [
 				{ name: "object", type: "object" },
 			],
-			{ type: "object is CarbonLDP.PersistedDocument" }
+			{ type: "object is CarbonLDP.Document" }
 		), ():void => {} );
 
 		it( hasMethod(
 			OBLIGATORY,
 			"is",
-			"Returns true if the element provided is considered a `CarbonLDP.PersistedDocument` object.", [
+			"Returns true if the element provided is considered a `CarbonLDP.Document` object.", [
 				{ name: "object", type: "object" },
 			],
-			{ type: "object is CarbonLDP.PersistedDocument" }
+			{ type: "object is CarbonLDP.Document" }
 		), ():void => {} );
 
 		it( hasMethod(
 			OBLIGATORY,
 			"create",
-			"Creates an empty `CarbonLDP.PersistedDocument` object with the URI provided.", [
+			"Creates an empty `CarbonLDP.Document` object with the URI provided.", [
 				{ name: "documents", type: "CarbonLDP.Documents", description: "The Documents instance to which the persisted document belongs." },
 				{ name: "uri", type: "string" },
 			],
-			{ type: "CarbonLDP.PersistedDocument" }
+			{ type: "CarbonLDP.Document" }
 		), ():void => {} );
 
 		it( hasMethod(
 			OBLIGATORY,
 			"createFrom",
 			[ "T extends object" ],
-			"Creates a PersistedDocument object from the object and URI provided.", [
+			"Creates a Document object from the object and URI provided.", [
 				{ name: "object", type: "T" },
 				{ name: "documents", type: "CarbonLDP.Documents", description: "The Documents instance to which the persisted document belongs." },
 				{ name: "uri", type: "string" },
 			],
-			{ type: "T & CarbonLDP.PersistedDocument" }
+			{ type: "T & CarbonLDP.Document" }
 		), ():void => {} );
 
 		it( hasMethod(
 			OBLIGATORY,
 			"decorate",
 			[ "T extends object" ],
-			"Decorates the object provided with the properties and methods of a `CarbonLDP.PersistedDocument` object.", [
+			"Decorates the object provided with the properties and methods of a `CarbonLDP.Document` object.", [
 				{ name: "object", type: "T" },
 				{ name: "documents", type: "CarbonLDP.Documents", description: "The Documents instance to which the persisted document belongs." },
 			],
-			{ type: "T & CarbonLDP.PersistedDocument" }
+			{ type: "T & CarbonLDP.Document" }
 		), ():void => {} );
 
 	} );
 
 	describe( property(
 		STATIC,
-		"PersistedDocument",
-		"CarbonLDP.PersistedDocumentFactory",
-		"Constant that implements the `CarbonLDP.PersistedDocumentFactory` interface."
+		"Document",
+		"CarbonLDP.DocumentFactory",
+		"Constant that implements the `CarbonLDP.DocumentFactory` interface."
 	), ():void => {
 
 		let context:AbstractContext;
@@ -699,17 +699,17 @@ describe( module( "carbonldp/PersistedDocument" ), ():void => {
 		} );
 
 		it( isDefined(), ():void => {
-			expect( PersistedDocument ).toBeDefined();
-			expect( PersistedDocument ).toEqual( jasmine.any( Object ) );
+			expect( Document ).toBeDefined();
+			expect( Document ).toEqual( jasmine.any( Object ) );
 		} );
 
 		// TODO: Separate in different tests
-		it( "PersistedDocument.isDecorated", ():void => {
-			expect( PersistedDocument.isDecorated ).toBeDefined();
-			expect( Utils.isFunction( PersistedDocument.isDecorated ) ).toBe( true );
+		it( "Document.isDecorated", ():void => {
+			expect( Document.isDecorated ).toBeDefined();
+			expect( Utils.isFunction( Document.isDecorated ) ).toBe( true );
 
 			let document:any = undefined;
-			expect( PersistedDocument.isDecorated( document ) ).toBe( false );
+			expect( Document.isDecorated( document ) ).toBe( false );
 
 			document = {
 				created: null,
@@ -752,151 +752,151 @@ describe( module( "carbonldp/PersistedDocument" ), ():void => {
 
 				sparql: ():void => {},
 			};
-			expect( PersistedDocument.isDecorated( document ) ).toBe( true );
+			expect( Document.isDecorated( document ) ).toBe( true );
 
 			delete document.isLocallyOutDated;
-			expect( PersistedDocument.isDecorated( document ) ).toBe( false );
+			expect( Document.isDecorated( document ) ).toBe( false );
 			document.isLocallyOutDated = ():void => {};
 
 			delete document.accessPoints;
-			expect( PersistedDocument.isDecorated( document ) ).toBe( true );
+			expect( Document.isDecorated( document ) ).toBe( true );
 			document.accessPoints = null;
 
 			delete document.created;
-			expect( PersistedDocument.isDecorated( document ) ).toBe( true );
+			expect( Document.isDecorated( document ) ).toBe( true );
 			document.created = null;
 
 			delete document.modified;
-			expect( PersistedDocument.isDecorated( document ) ).toBe( true );
+			expect( Document.isDecorated( document ) ).toBe( true );
 			document.modified = null;
 
 			delete document.defaultInteractionModel;
-			expect( PersistedDocument.isDecorated( document ) ).toBe( true );
+			expect( Document.isDecorated( document ) ).toBe( true );
 			document.defaultInteractionModel = null;
 
 			delete document._eTag;
-			expect( PersistedDocument.isDecorated( document ) ).toBe( false );
+			expect( Document.isDecorated( document ) ).toBe( false );
 			document._eTag = null;
 
 			delete document.refresh;
-			expect( PersistedDocument.isDecorated( document ) ).toBe( false );
+			expect( Document.isDecorated( document ) ).toBe( false );
 			document.refresh = ():void => {};
 
 			delete document.save;
-			expect( PersistedDocument.isDecorated( document ) ).toBe( false );
+			expect( Document.isDecorated( document ) ).toBe( false );
 			document.save = ():void => {};
 
 			delete document.saveAndRefresh;
-			expect( PersistedDocument.isDecorated( document ) ).toBe( false );
+			expect( Document.isDecorated( document ) ).toBe( false );
 			document.saveAndRefresh = ():void => {};
 
 			delete document.delete;
-			expect( PersistedDocument.isDecorated( document ) ).toBe( false );
+			expect( Document.isDecorated( document ) ).toBe( false );
 			document.delete = ():void => {};
 
 			delete document.addMember;
-			expect( PersistedDocument.isDecorated( document ) ).toBe( false );
+			expect( Document.isDecorated( document ) ).toBe( false );
 			document.addMember = ():void => {};
 
 			delete document.addMembers;
-			expect( PersistedDocument.isDecorated( document ) ).toBe( false );
+			expect( Document.isDecorated( document ) ).toBe( false );
 			document.addMembers = ():void => {};
 
 			delete document.createAccessPoint;
-			expect( PersistedDocument.isDecorated( document ) ).toBe( false );
+			expect( Document.isDecorated( document ) ).toBe( false );
 			document.createAccessPoint = ():void => {};
 
 			delete document.createAccessPoints;
-			expect( PersistedDocument.isDecorated( document ) ).toBe( false );
+			expect( Document.isDecorated( document ) ).toBe( false );
 			document.createAccessPoints = ():void => {};
 
 			delete document.createChild;
-			expect( PersistedDocument.isDecorated( document ) ).toBe( false );
+			expect( Document.isDecorated( document ) ).toBe( false );
 			document.createChild = ():void => {};
 
 			delete document.createChildren;
-			expect( PersistedDocument.isDecorated( document ) ).toBe( false );
+			expect( Document.isDecorated( document ) ).toBe( false );
 			document.createChildren = ():void => {};
 
 			delete document.createChildAndRetrieve;
-			expect( PersistedDocument.isDecorated( document ) ).toBe( false );
+			expect( Document.isDecorated( document ) ).toBe( false );
 			document.createChildAndRetrieve = ():void => {};
 
 			delete document.createChildrenAndRetrieve;
-			expect( PersistedDocument.isDecorated( document ) ).toBe( false );
+			expect( Document.isDecorated( document ) ).toBe( false );
 			document.createChildrenAndRetrieve = ():void => {};
 
 			delete document.listChildren;
-			expect( PersistedDocument.isDecorated( document ) ).toBe( false );
+			expect( Document.isDecorated( document ) ).toBe( false );
 			document.listChildren = ():void => {};
 
 			delete document.getChildren;
-			expect( PersistedDocument.isDecorated( document ) ).toBe( false );
+			expect( Document.isDecorated( document ) ).toBe( false );
 			document.getChildren = ():void => {};
 
 			delete document.listMembers;
-			expect( PersistedDocument.isDecorated( document ) ).toBe( false );
+			expect( Document.isDecorated( document ) ).toBe( false );
 			document.listMembers = ():void => {};
 
 			delete document.getMembers;
-			expect( PersistedDocument.isDecorated( document ) ).toBe( false );
+			expect( Document.isDecorated( document ) ).toBe( false );
 			document.getMembers = ():void => {};
 
 			delete document.removeMember;
-			expect( PersistedDocument.isDecorated( document ) ).toBe( false );
+			expect( Document.isDecorated( document ) ).toBe( false );
 			document.removeMember = ():void => {};
 
 			delete document.removeMembers;
-			expect( PersistedDocument.isDecorated( document ) ).toBe( false );
+			expect( Document.isDecorated( document ) ).toBe( false );
 			document.removeMembers = ():void => {};
 
 			delete document.removeAllMembers;
-			expect( PersistedDocument.isDecorated( document ) ).toBe( false );
+			expect( Document.isDecorated( document ) ).toBe( false );
 			document.removeAllMembers = ():void => {};
 
 			delete document.executeRawASKQuery;
-			expect( PersistedDocument.isDecorated( document ) ).toBe( false );
+			expect( Document.isDecorated( document ) ).toBe( false );
 			document.executeRawASKQuery = ():void => {};
 
 			delete document.executeASKQuery;
-			expect( PersistedDocument.isDecorated( document ) ).toBe( false );
+			expect( Document.isDecorated( document ) ).toBe( false );
 			document.executeASKQuery = ():void => {};
 
 			delete document.executeRawSELECTQuery;
-			expect( PersistedDocument.isDecorated( document ) ).toBe( false );
+			expect( Document.isDecorated( document ) ).toBe( false );
 			document.executeRawSELECTQuery = ():void => {};
 
 			delete document.executeSELECTQuery;
-			expect( PersistedDocument.isDecorated( document ) ).toBe( false );
+			expect( Document.isDecorated( document ) ).toBe( false );
 			document.executeSELECTQuery = ():void => {};
 
 			delete document.executeRawDESCRIBEQuery;
-			expect( PersistedDocument.isDecorated( document ) ).toBe( false );
+			expect( Document.isDecorated( document ) ).toBe( false );
 			document.executeRawDESCRIBEQuery = ():void => {};
 
 			delete document.executeRawCONSTRUCTQuery;
-			expect( PersistedDocument.isDecorated( document ) ).toBe( false );
+			expect( Document.isDecorated( document ) ).toBe( false );
 			document.executeRawCONSTRUCTQuery = ():void => {};
 
 			delete document.executeUPDATE;
-			expect( PersistedDocument.isDecorated( document ) ).toBe( false );
+			expect( Document.isDecorated( document ) ).toBe( false );
 			document.executeUPDATE = ():void => {};
 
 			delete document.sparql;
-			expect( PersistedDocument.isDecorated( document ) ).toBe( false );
+			expect( Document.isDecorated( document ) ).toBe( false );
 			document.sparql = ():void => {};
 		} );
 
 		// TODO: Separate in different tests
-		it( "PersistedDocument.is", ():void => {
-			expect( PersistedDocument.is ).toBeDefined();
-			expect( Utils.isFunction( PersistedDocument.is ) ).toBe( true );
+		it( "Document.is", ():void => {
+			expect( Document.is ).toBeDefined();
+			expect( Utils.isFunction( Document.is ) ).toBe( true );
 
-			expect( PersistedDocument.is( undefined ) ).toBe( false );
-			expect( PersistedDocument.is( null ) ).toBe( false );
-			expect( PersistedDocument.is( <any> "a string" ) ).toBe( false );
-			expect( PersistedDocument.is( <any> 100 ) ).toBe( false );
-			expect( PersistedDocument.is( {} ) ).toBe( false );
+			expect( Document.is( undefined ) ).toBe( false );
+			expect( Document.is( null ) ).toBe( false );
+			expect( Document.is( <any> "a string" ) ).toBe( false );
+			expect( Document.is( <any> 100 ) ).toBe( false );
+			expect( Document.is( {} ) ).toBe( false );
 
 			let object:any = TransientDocument.createFrom( {
 				created: null,
@@ -952,49 +952,49 @@ describe( module( "carbonldp/PersistedDocument" ), ():void => {
 				onMemberAdded: ():void => {},
 				onMemberRemoved: ():void => {},
 			} );
-			expect( PersistedDocument.is( object ) ).toBe( true );
+			expect( Document.is( object ) ).toBe( true );
 		} );
 
 		// TODO: Separate in different tests
-		it( "PersistedDocument.create", ():void => {
-			expect( PersistedDocument.create ).toBeDefined();
-			expect( Utils.isFunction( PersistedDocument.create ) ).toBe( true );
+		it( "Document.create", ():void => {
+			expect( Document.create ).toBeDefined();
+			expect( Utils.isFunction( Document.create ) ).toBe( true );
 
-			let document:PersistedDocument;
-			document = PersistedDocument.create( context.documents, "http://example.com/document/" );
-			expect( PersistedDocument.is( document ) ).toBe( true );
+			let document:Document;
+			document = Document.create( context.documents, "http://example.com/document/" );
+			expect( Document.is( document ) ).toBe( true );
 
 			expect( document.id ).toBe( "http://example.com/document/" );
 			expect( document._documents ).toBe( context.documents );
 		} );
 
 		// TODO: Separate in different tests
-		it( "PersistedDocument.createFrom", ():void => {
-			expect( PersistedDocument.createFrom ).toBeDefined();
-			expect( Utils.isFunction( PersistedDocument.createFrom ) ).toBe( true );
+		it( "Document.createFrom", ():void => {
+			expect( Document.createFrom ).toBeDefined();
+			expect( Utils.isFunction( Document.createFrom ) ).toBe( true );
 
 			interface MyObject {
 				myProperty?:string;
 			}
 
-			interface MyPersistedDocument extends MyObject, PersistedDocument {}
+			interface MyPersistedDocument extends MyObject, Document {}
 
 			let persistedDocument:MyPersistedDocument;
 
-			persistedDocument = PersistedDocument.createFrom<MyObject>( {}, context.documents, "http://example.com/document/" );
-			expect( PersistedDocument.is( persistedDocument ) ).toBe( true );
+			persistedDocument = Document.createFrom<MyObject>( {}, context.documents, "http://example.com/document/" );
+			expect( Document.is( persistedDocument ) ).toBe( true );
 			expect( persistedDocument.id ).toBe( "http://example.com/document/" );
 
-			persistedDocument = PersistedDocument.createFrom<MyObject>( { myProperty: "a property" }, context.documents, "http://example.com/document/" );
-			expect( PersistedDocument.is( persistedDocument ) ).toBe( true );
+			persistedDocument = Document.createFrom<MyObject>( { myProperty: "a property" }, context.documents, "http://example.com/document/" );
+			expect( Document.is( persistedDocument ) ).toBe( true );
 			expect( persistedDocument.id ).toBe( "http://example.com/document/" );
 			expect( persistedDocument.myProperty ).toBe( "a property" );
 		} );
 
 		// TODO: Separate in different tests
-		it( "PersistedDocument.decorate", ():void => {
-			expect( PersistedDocument.decorate ).toBeDefined();
-			expect( Utils.isFunction( PersistedDocument.decorate ) ).toBe( true );
+		it( "Document.decorate", ():void => {
+			expect( Document.decorate ).toBeDefined();
+			expect( Utils.isFunction( Document.decorate ) ).toBe( true );
 
 			interface MyObject {
 				myProperty?:string;
@@ -1004,28 +1004,28 @@ describe( module( "carbonldp/PersistedDocument" ), ():void => {
 
 			let document:MyDocument;
 
-			interface MyPersistedDocument extends MyObject, PersistedDocument {
+			interface MyPersistedDocument extends MyObject, Document {
 			}
 
 			let persistedDocument:MyPersistedDocument;
 
 			document = TransientDocument.createFrom<MyObject>( {} );
-			persistedDocument = PersistedDocument.decorate<MyDocument>( document, context.documents );
-			expect( PersistedDocument.is( persistedDocument ) ).toBe( true );
+			persistedDocument = Document.decorate<MyDocument>( document, context.documents );
+			expect( Document.is( persistedDocument ) ).toBe( true );
 			expect( persistedDocument.myProperty ).toBeUndefined();
 			expect( persistedDocument._documents ).toBe( context.documents );
 
 			document = TransientDocument.createFrom<MyObject>( { myProperty: "a property" } );
-			persistedDocument = PersistedDocument.decorate<MyDocument>( document, context.documents );
-			expect( PersistedDocument.is( persistedDocument ) ).toBe( true );
+			persistedDocument = Document.decorate<MyDocument>( document, context.documents );
+			expect( Document.is( persistedDocument ) ).toBe( true );
 			expect( persistedDocument.myProperty ).toBeDefined();
 			expect( persistedDocument.myProperty ).toBe( "a property" );
 			expect( persistedDocument._documents ).toBe( context.documents );
 		} );
 
-		describe( "PersistedDocument instance", ():void => {
+		describe( "Document instance", ():void => {
 
-			let document:PersistedDocument;
+			let document:Document;
 			beforeEach( ():void => {
 				context.extendObjectSchema( {
 					"exTypes": "http://example.com/types#",
@@ -1034,28 +1034,28 @@ describe( module( "carbonldp/PersistedDocument" ), ():void => {
 
 				context.documents.getPointer( "http://example.com/in/documents/" );
 
-				document = PersistedDocument.create( context.documents, "http://example.com/document/" );
+				document = Document.create( context.documents, "http://example.com/document/" );
 				document.createNamedFragment( "fragment" );
 				document.createFragment( "_:BlankNode" );
 			} );
 
-			// TODO: Test in `PersistedDocument.decorate`
-			it( "PersistedDocument._eTag", ():void => {
+			// TODO: Test in `Document.decorate`
+			it( "Document._eTag", ():void => {
 				// By default, the ETag is undefined.
 				expect( document._eTag ).toBeUndefined();
 				// But property is declared
 				expect( document.hasOwnProperty( "_eTag" ) ).toBe( true );
 			} );
 
-			// TODO: Test in `PersistedDocument.decorate`
-			it( "PersistedDocument._documents", ():void => {
+			// TODO: Test in `Document.decorate`
+			it( "Document._documents", ():void => {
 				expect( document._documents ).toBeDefined();
 				expect( Utils.isObject( document._documents ) ).toBe( true );
 				expect( document._documents instanceof Documents ).toBe( true );
 			} );
 
 			// TODO: Separate in different tests
-			it( "PersistedDocument.addType", ():void => {
+			it( "Document.addType", ():void => {
 				expect( document.addType ).toBeDefined();
 				expect( Utils.isFunction( document.addType ) ).toBe( true );
 
@@ -1093,7 +1093,7 @@ describe( module( "carbonldp/PersistedDocument" ), ():void => {
 			} );
 
 			// TODO: Separate in different tests
-			it( "PersistedDocument.hasType", ():void => {
+			it( "Document.hasType", ():void => {
 				expect( document.hasType ).toBeDefined();
 				expect( Utils.isFunction( document.hasType ) ).toBe( true );
 
@@ -1135,7 +1135,7 @@ describe( module( "carbonldp/PersistedDocument" ), ():void => {
 			} );
 
 			// TODO: Separate in different tests
-			it( "PersistedDocument.removeType", ():void => {
+			it( "Document.removeType", ():void => {
 				expect( document.removeType ).toBeDefined();
 				expect( Utils.isFunction( document.removeType ) ).toBe( true );
 
@@ -1193,7 +1193,7 @@ describe( module( "carbonldp/PersistedDocument" ), ():void => {
 			} );
 
 			// TODO: Separate in different tests
-			it( "PersistedDocument.hasPointer", ():void => {
+			it( "Document.hasPointer", ():void => {
 
 				expect( document.hasPointer ).toBeDefined();
 				expect( Utils.isFunction( document.hasPointer ) ).toBe( true );
@@ -1210,7 +1210,7 @@ describe( module( "carbonldp/PersistedDocument" ), ():void => {
 			} );
 
 			// TODO: Separate in different tests
-			it( "PersistedDocument.getPointer", ():void => {
+			it( "Document.getPointer", ():void => {
 				expect( document.getPointer ).toBeDefined();
 				expect( Utils.isFunction( document.getPointer ) ).toBe( true );
 
@@ -1239,7 +1239,7 @@ describe( module( "carbonldp/PersistedDocument" ), ():void => {
 				expect( pointer.id ).toBe( "http://example.com/another-document/" );
 			} );
 
-			describe( "PersistedDocument.inScope", ():void => {
+			describe( "Document.inScope", ():void => {
 
 				// TODO: Separate in different tests
 				it( "should test when pointer", ():void => {
@@ -1298,7 +1298,7 @@ describe( module( "carbonldp/PersistedDocument" ), ():void => {
 
 			} );
 
-			describe( "PersistedDocument.createFragment", ():void => {
+			describe( "Document.createFragment", ():void => {
 
 				// TODO: Separate in different tests
 				it( "should test when object and slug", ():void => {
@@ -1444,7 +1444,7 @@ describe( module( "carbonldp/PersistedDocument" ), ():void => {
 
 			} );
 
-			describe( "PersistedDocument.createNamedFragment", ():void => {
+			describe( "Document.createNamedFragment", ():void => {
 
 				// TODO: Separate in different tests
 				it( "should test when slug", ():void => {
@@ -1510,7 +1510,7 @@ describe( module( "carbonldp/PersistedDocument" ), ():void => {
 			} );
 
 			// TODO: Separate in different tests
-			it( "PersistedDocument.refresh", ():void => {
+			it( "Document.refresh", ():void => {
 				expect( document.refresh ).toBeDefined();
 				expect( Utils.isFunction( document.refresh ) ).toBe( true );
 
@@ -1520,7 +1520,7 @@ describe( module( "carbonldp/PersistedDocument" ), ():void => {
 			} );
 
 			// TODO: Separate in different tests
-			it( "PersistedDocument.save", ():void => {
+			it( "Document.save", ():void => {
 				expect( document.save ).toBeDefined();
 				expect( Utils.isFunction( document.save ) ).toBe( true );
 
@@ -1534,7 +1534,7 @@ describe( module( "carbonldp/PersistedDocument" ), ():void => {
 			} );
 
 			// TODO: Separate in different tests
-			it( "PersistedDocument.saveAndRefresh", ():void => {
+			it( "Document.saveAndRefresh", ():void => {
 				expect( document.saveAndRefresh ).toBeDefined();
 				expect( Utils.isFunction( document.saveAndRefresh ) ).toBe( true );
 
@@ -1544,7 +1544,7 @@ describe( module( "carbonldp/PersistedDocument" ), ():void => {
 			} );
 
 			// TODO: Separate in different tests
-			it( "PersistedDocument.delete", ():void => {
+			it( "Document.delete", ():void => {
 				expect( document.delete ).toBeDefined();
 				expect( Utils.isFunction( document.delete ) ).toBe( true );
 
@@ -1553,7 +1553,7 @@ describe( module( "carbonldp/PersistedDocument" ), ():void => {
 				expect( spy ).toHaveBeenCalledWith( document.id, void 0 );
 			} );
 
-			describe( "PersistedDocument.addMember", ():void => {
+			describe( "Document.addMember", ():void => {
 
 				// TODO: Separate in different tests
 				it( "should test when pointer", ():void => {
@@ -1583,7 +1583,7 @@ describe( module( "carbonldp/PersistedDocument" ), ():void => {
 			} );
 
 			// TODO: Separate in different tests
-			it( "PersistedDocument.addMembers", ():void => {
+			it( "Document.addMembers", ():void => {
 				expect( document.addMembers ).toBeDefined();
 				expect( Utils.isFunction( document.addMembers ) ).toBeDefined();
 
@@ -1596,7 +1596,7 @@ describe( module( "carbonldp/PersistedDocument" ), ():void => {
 				expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", pointers, void 0 );
 			} );
 
-			describe( "PersistedDocument.createChild", ():void => {
+			describe( "Document.createChild", ():void => {
 
 				// TODO: Separate in different tests
 				it( "should test when object, slug and options", ():void => {
@@ -1683,7 +1683,7 @@ describe( module( "carbonldp/PersistedDocument" ), ():void => {
 
 			} );
 
-			describe( "PersistedDocument.createChildren", ():void => {
+			describe( "Document.createChildren", ():void => {
 
 				it( isDefined(), ():void => {
 					expect( document.createChildren ).toBeDefined();
@@ -1731,7 +1731,7 @@ describe( module( "carbonldp/PersistedDocument" ), ():void => {
 
 			} );
 
-			describe( "PersistedDocument.createChildAndRetrieve", ():void => {
+			describe( "Document.createChildAndRetrieve", ():void => {
 
 				it( isDefined(), ():void => {
 					expect( document.createChildAndRetrieve ).toBeDefined();
@@ -1811,7 +1811,7 @@ describe( module( "carbonldp/PersistedDocument" ), ():void => {
 
 			} );
 
-			describe( "PersistedDocument.createChildrenAndRetrieve", ():void => {
+			describe( "Document.createChildrenAndRetrieve", ():void => {
 
 				it( isDefined(), ():void => {
 					expect( document.createChildrenAndRetrieve ).toBeDefined();
@@ -1859,7 +1859,7 @@ describe( module( "carbonldp/PersistedDocument" ), ():void => {
 
 			} );
 
-			describe( "PersistedDocument.createAccessPoint", ():void => {
+			describe( "Document.createAccessPoint", ():void => {
 
 				// TODO: Separate in different tests
 				it( "should test when objects, slug and options", ():void => {
@@ -1885,7 +1885,7 @@ describe( module( "carbonldp/PersistedDocument" ), ():void => {
 
 			} );
 
-			describe( "PersistedDocument.createAccessPoints", ():void => {
+			describe( "Document.createAccessPoints", ():void => {
 
 				it( isDefined(), ():void => {
 					expect( document.createAccessPoints ).toBeDefined();
@@ -1931,7 +1931,7 @@ describe( module( "carbonldp/PersistedDocument" ), ():void => {
 
 			} );
 
-			describe( "PersistedDocument.getChildren", ():void => {
+			describe( "Document.getChildren", ():void => {
 
 				// TODO: Separate in different tests
 				it( "Should pass parameters to documents instance", ():void => {
@@ -1966,7 +1966,7 @@ describe( module( "carbonldp/PersistedDocument" ), ():void => {
 
 			} );
 
-			describe( "PersistedDocument.getMembers", ():void => {
+			describe( "Document.getMembers", ():void => {
 
 				// TODO: Separate in different tests
 				it( "Should pass parameters to documents instance", ():void => {
@@ -2001,7 +2001,7 @@ describe( module( "carbonldp/PersistedDocument" ), ():void => {
 
 			} );
 
-			describe( "PersistedDocument.removeMember", ():void => {
+			describe( "Document.removeMember", ():void => {
 
 				// TODO: Separate in different tests
 				it( "should test when pointer", ():void => {
@@ -2031,7 +2031,7 @@ describe( module( "carbonldp/PersistedDocument" ), ():void => {
 			} );
 
 			// TODO: Separate in different tests
-			it( "PersistedDocument.removeMembers", ():void => {
+			it( "Document.removeMembers", ():void => {
 				expect( document.removeMembers ).toBeDefined();
 				expect( Utils.isFunction( document.removeMembers ) ).toBeDefined();
 
@@ -2045,7 +2045,7 @@ describe( module( "carbonldp/PersistedDocument" ), ():void => {
 			} );
 
 			// TODO: Separate in different tests
-			it( "PersistedDocument.removeAllMembers", ():void => {
+			it( "Document.removeAllMembers", ():void => {
 				expect( document.removeAllMembers ).toBeDefined();
 				expect( Utils.isFunction( document.removeAllMembers ) ).toBeDefined();
 
@@ -2057,7 +2057,7 @@ describe( module( "carbonldp/PersistedDocument" ), ():void => {
 			} );
 
 			// TODO: Separate in different tests
-			it( "PersistedDocument.executeRawASKQuery", ():void => {
+			it( "Document.executeRawASKQuery", ():void => {
 				expect( document.executeRawASKQuery ).toBeDefined();
 				expect( Utils.isFunction( document.executeRawASKQuery ) ).toBe( true );
 
@@ -2067,7 +2067,7 @@ describe( module( "carbonldp/PersistedDocument" ), ():void => {
 			} );
 
 			// TODO: Separate in different tests
-			it( "PersistedDocument.executeASKQuery", ():void => {
+			it( "Document.executeASKQuery", ():void => {
 				expect( document.executeASKQuery ).toBeDefined();
 				expect( Utils.isFunction( document.executeASKQuery ) ).toBe( true );
 
@@ -2077,7 +2077,7 @@ describe( module( "carbonldp/PersistedDocument" ), ():void => {
 			} );
 
 			// TODO: Separate in different tests
-			it( "PersistedDocument.executeRawSELECTQuery", ():void => {
+			it( "Document.executeRawSELECTQuery", ():void => {
 				expect( document.executeRawSELECTQuery ).toBeDefined();
 				expect( Utils.isFunction( document.executeRawSELECTQuery ) ).toBe( true );
 
@@ -2087,7 +2087,7 @@ describe( module( "carbonldp/PersistedDocument" ), ():void => {
 			} );
 
 			// TODO: Separate in different tests
-			it( "PersistedDocument.executeSELECTQuery", ():void => {
+			it( "Document.executeSELECTQuery", ():void => {
 				expect( document.executeSELECTQuery ).toBeDefined();
 				expect( Utils.isFunction( document.executeSELECTQuery ) ).toBe( true );
 
@@ -2097,7 +2097,7 @@ describe( module( "carbonldp/PersistedDocument" ), ():void => {
 			} );
 
 			// TODO: Separate in different tests
-			it( "PersistedDocument.executeRawCONSTRUCTQuery", ():void => {
+			it( "Document.executeRawCONSTRUCTQuery", ():void => {
 				expect( document.executeRawCONSTRUCTQuery ).toBeDefined();
 				expect( Utils.isFunction( document.executeRawCONSTRUCTQuery ) ).toBe( true );
 
@@ -2107,7 +2107,7 @@ describe( module( "carbonldp/PersistedDocument" ), ():void => {
 			} );
 
 			// TODO: Separate in different tests
-			it( "PersistedDocument.executeRawDESCRIBEQuery", ():void => {
+			it( "Document.executeRawDESCRIBEQuery", ():void => {
 				expect( document.executeRawDESCRIBEQuery ).toBeDefined();
 				expect( Utils.isFunction( document.executeRawDESCRIBEQuery ) ).toBe( true );
 
@@ -2117,7 +2117,7 @@ describe( module( "carbonldp/PersistedDocument" ), ():void => {
 			} );
 
 			// TODO: Separate in different tests
-			it( "PersistedDocument.executeUPDATE", ():void => {
+			it( "Document.executeUPDATE", ():void => {
 				expect( document.executeUPDATE ).toBeDefined();
 				expect( Utils.isFunction( document.executeUPDATE ) ).toBe( true );
 
@@ -2127,7 +2127,7 @@ describe( module( "carbonldp/PersistedDocument" ), ():void => {
 			} );
 
 			// TODO: Separate in different tests
-			it( "PersistedDocument.sparql", ():void => {
+			it( "Document.sparql", ():void => {
 				expect( document.sparql ).toBeDefined();
 				expect( Utils.isFunction( document.sparql ) ).toBe( true );
 

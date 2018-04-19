@@ -4,7 +4,7 @@ import {
 	RequestOptions,
 	RequestUtils,
 } from "../HTTP/Request";
-import { PersistedDocument } from "../PersistedDocument";
+import { Document } from "../Document";
 import { Pointer } from "../Pointer";
 import { URI } from "../RDF/URI";
 import { SPARQLSelectResults } from "../SPARQL/SelectResults";
@@ -41,7 +41,7 @@ export class Class {
 			if( ! exists ) throw new Errors.IllegalArgumentError( "The parent role provided doesn't exist." );
 			return this.context.documents.createChild<T>( containerURI, role, slug, requestOptions );
 
-		} ).then( ( newRole:T & PersistedDocument ) => {
+		} ).then( ( newRole:T & Document ) => {
 			persistedRole = PersistedRole.Factory.decorate( newRole, this.context.documents );
 			return this.context.documents.addMember( parentURI, newRole );
 

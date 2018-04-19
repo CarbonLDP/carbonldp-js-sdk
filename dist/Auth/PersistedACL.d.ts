@@ -1,9 +1,9 @@
-import { PersistedDocument } from "../PersistedDocument";
+import { Document } from "../Document";
 import { Pointer } from "../Pointer";
 import { PersistedACE } from "./PersistedACE";
 import { ModelDecorator } from "../ModelDecorator";
 import { Documents } from "../Documents";
-export interface PersistedACL extends PersistedDocument {
+export interface PersistedACL extends Document {
     accessTo: Pointer;
     entries?: PersistedACE[];
     inheritableEntries?: PersistedACE[];

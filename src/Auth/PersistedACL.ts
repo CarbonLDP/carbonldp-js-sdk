@@ -1,4 +1,4 @@
-import { PersistedDocument } from "../PersistedDocument";
+import { Document } from "../Document";
 import { Pointer } from "../Pointer";
 import * as Utils from "../Utils";
 import { ACL } from "./ACL";
@@ -6,7 +6,7 @@ import { PersistedACE } from "./PersistedACE";
 import { ModelDecorator } from "../ModelDecorator";
 import { Documents } from "../Documents";
 
-export interface PersistedACL extends PersistedDocument {
+export interface PersistedACL extends Document {
 	accessTo:Pointer;
 	entries?:PersistedACE[];
 	inheritableEntries?:PersistedACE[];
@@ -72,7 +72,7 @@ export const PersistedACL:PersistedACLFactory = {
 		if( PersistedACL.isDecorated( object ) ) return object;
 
 		ACL.decorate( object );
-		PersistedDocument.decorate( object, documents );
+		Document.decorate( object, documents );
 
 		const acl:T & PersistedACL = object as T & PersistedACL;
 		Object.defineProperties( acl, {

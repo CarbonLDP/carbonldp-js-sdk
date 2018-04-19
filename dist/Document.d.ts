@@ -17,7 +17,7 @@ import { FinishSPARQLSelect } from "./SPARQL/Builder";
 import { QueryDocumentsBuilder } from "./SPARQL/QueryDocument/QueryDocumentsBuilder";
 import { SPARQLRawResults } from "./SPARQL/RawResults";
 import { SPARQLSelectResults } from "./SPARQL/SelectResults";
-export interface PersistedDocument extends TransientDocument, PersistedResource, ServiceAwareDocument, MessagingDocument {
+export interface Document extends TransientDocument, PersistedResource, ServiceAwareDocument, MessagingDocument {
     created?: Date;
     modified?: Date;
     defaultInteractionModel?: Pointer;
@@ -61,12 +61,12 @@ export interface PersistedDocument extends TransientDocument, PersistedResource,
     createAccessPoint<T extends object>(accessPoint: T & AccessPointBase, requestOptions?: RequestOptions): Promise<T & PersistedAccessPoint>;
     createAccessPoints<T extends object>(accessPoints: (T & AccessPointBase)[], slugs?: string[], requestOptions?: RequestOptions): Promise<(T & PersistedAccessPoint)[]>;
     createAccessPoints<T extends object>(accessPoints: (T & AccessPointBase)[], requestOptions?: RequestOptions): Promise<(T & PersistedAccessPoint)[]>;
-    listChildren<T extends object>(requestOptions?: RequestOptions): Promise<(T & PersistedDocument)[]>;
-    getChildren<T extends object>(requestOptions?: RequestOptions, queryBuilderFn?: (queryBuilder: QueryDocumentsBuilder) => QueryDocumentsBuilder): Promise<(T & PersistedDocument)[]>;
-    getChildren<T extends object>(queryBuilderFn?: (queryBuilder: QueryDocumentsBuilder) => QueryDocumentsBuilder): Promise<(T & PersistedDocument)[]>;
-    listMembers<T extends object>(requestOptions?: RequestOptions): Promise<(T & PersistedDocument)[]>;
-    getMembers<T extends object>(requestOptions?: RequestOptions, queryBuilderFn?: (queryBuilder: QueryDocumentsBuilder) => QueryDocumentsBuilder): Promise<(T & PersistedDocument)[]>;
-    getMembers<T extends object>(queryBuilderFn?: (queryBuilder: QueryDocumentsBuilder) => QueryDocumentsBuilder): Promise<(T & PersistedDocument)[]>;
+    listChildren<T extends object>(requestOptions?: RequestOptions): Promise<(T & Document)[]>;
+    getChildren<T extends object>(requestOptions?: RequestOptions, queryBuilderFn?: (queryBuilder: QueryDocumentsBuilder) => QueryDocumentsBuilder): Promise<(T & Document)[]>;
+    getChildren<T extends object>(queryBuilderFn?: (queryBuilder: QueryDocumentsBuilder) => QueryDocumentsBuilder): Promise<(T & Document)[]>;
+    listMembers<T extends object>(requestOptions?: RequestOptions): Promise<(T & Document)[]>;
+    getMembers<T extends object>(requestOptions?: RequestOptions, queryBuilderFn?: (queryBuilder: QueryDocumentsBuilder) => QueryDocumentsBuilder): Promise<(T & Document)[]>;
+    getMembers<T extends object>(queryBuilderFn?: (queryBuilder: QueryDocumentsBuilder) => QueryDocumentsBuilder): Promise<(T & Document)[]>;
     removeMember(member: Pointer, requestOptions?: RequestOptions): Promise<void>;
     removeMember(memberURI: string, requestOptions?: RequestOptions): Promise<void>;
     removeMembers(members: (Pointer | string)[], requestOptions?: RequestOptions): Promise<void>;
@@ -82,11 +82,11 @@ export interface PersistedDocument extends TransientDocument, PersistedResource,
     executeUPDATE(updateQuery: string, requestOptions?: RequestOptions): Promise<void>;
     sparql(): QueryClause<FinishSPARQLSelect>;
 }
-export interface PersistedDocumentFactory extends ModelFactory<PersistedDocument>, ModelDecorator<PersistedDocument> {
-    is(object: object): object is PersistedDocument;
-    isDecorated(object: object): object is PersistedDocument;
-    create(documents: Documents, uri: string): PersistedDocument;
-    createFrom<T extends object>(object: T, documents: Documents, uri: string): T & PersistedDocument;
-    decorate<T extends object>(object: T, documents: Documents): T & PersistedDocument;
+export interface DocumentFactory extends ModelFactory<Document>, ModelDecorator<Document> {
+    is(object: object): object is Document;
+    isDecorated(object: object): object is Document;
+    create(documents: Documents, uri: string): Document;
+    createFrom<T extends object>(object: T, documents: Documents, uri: string): T & Document;
+    decorate<T extends object>(object: T, documents: Documents): T & Document;
 }
-export declare const PersistedDocument: PersistedDocumentFactory;
+export declare const Document: DocumentFactory;

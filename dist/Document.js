@@ -18,7 +18,7 @@ var Pointer_1 = require("./Pointer");
 var URI_1 = require("./RDF/URI");
 var ServiceAwareDocument_1 = require("./ServiceAwareDocument");
 var Utils = __importStar(require("./Utils"));
-exports.PersistedDocument = {
+exports.Document = {
     isDecorated: function (object) {
         return Utils.hasPropertyDefined(object, "_eTag")
             && Utils.hasFunction(object, "isLocallyOutDated")
@@ -53,19 +53,19 @@ exports.PersistedDocument = {
     is: function (object) {
         return TransientDocument_1.TransientDocument.is(object)
             && Document_1.MessagingDocument.isDecorated(object)
-            && exports.PersistedDocument.isDecorated(object);
+            && exports.Document.isDecorated(object);
     },
     create: function (documents, uri) {
-        return exports.PersistedDocument.createFrom({}, documents, uri);
+        return exports.Document.createFrom({}, documents, uri);
     },
     createFrom: function (object, documents, uri) {
-        var document = exports.PersistedDocument.decorate(object, documents);
+        var document = exports.Document.decorate(object, documents);
         document.id = uri;
         TransientDocument_1.TransientDocument._convertNestedObjects(document, document);
         return document;
     },
     decorate: function (object, documents) {
-        if (exports.PersistedDocument.isDecorated(object))
+        if (exports.Document.isDecorated(object))
             return object;
         TransientDocument_1.TransientDocument.decorate(object);
         PersistedResource_1.PersistedResource.decorate(object);
@@ -519,4 +519,4 @@ function sparql() {
     return this._documents.sparql(this.id);
 }
 
-//# sourceMappingURL=PersistedDocument.js.map
+//# sourceMappingURL=Document.js.map

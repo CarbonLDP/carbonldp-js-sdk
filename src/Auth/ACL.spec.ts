@@ -1,7 +1,7 @@
 import { TransientDocument } from "../TransientDocument";
 import { Documents } from "../Documents";
 import { Fragment } from "../Fragment";
-import { PersistedDocument } from "../PersistedDocument";
+import { Document } from "../Document";
 import { Pointer } from "../Pointer";
 import {
 	extendsClass,
@@ -435,7 +435,7 @@ describe( module( "carbonldp/Auth/ACL" ), ():void => {
 			expect( ACL.decorate ).toBeDefined();
 			expect( Utils.isFunction( ACL.decorate ) ).toBe( true );
 
-			let document:PersistedDocument = PersistedDocument.create( new Documents(), "http://example.com/resource/~acl/" );
+			let document:Document = Document.create( new Documents(), "http://example.com/resource/~acl/" );
 			let acl:ACL = ACL.decorate( document );
 			acl.accessTo = acl.getPointer( "http://example.com/resource/" );
 
@@ -453,7 +453,7 @@ describe( module( "carbonldp/Auth/ACL" ), ():void => {
 			}
 
 			beforeEach( ():void => {
-				let document:PersistedDocument = PersistedDocument.create( new Documents(), "http://example.com/resource/~acl/" );
+				let document:Document = Document.create( new Documents(), "http://example.com/resource/~acl/" );
 				acl = ACL.decorate( document );
 				acl.accessTo = acl.getPointer( "http://example.com/resource/" );
 			} );

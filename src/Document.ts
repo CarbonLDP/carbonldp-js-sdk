@@ -29,7 +29,7 @@ import { SPARQLRawResults } from "./SPARQL/RawResults";
 import { SPARQLSelectResults } from "./SPARQL/SelectResults";
 import * as Utils from "./Utils";
 
-export interface PersistedDocument extends TransientDocument, PersistedResource, ServiceAwareDocument, MessagingDocument {
+export interface Document extends TransientDocument, PersistedResource, ServiceAwareDocument, MessagingDocument {
 	created?:Date;
 	modified?:Date;
 	defaultInteractionModel?:Pointer;
@@ -122,20 +122,20 @@ export interface PersistedDocument extends TransientDocument, PersistedResource,
 	createAccessPoints<T extends object>( accessPoints:(T & AccessPointBase)[], requestOptions?:RequestOptions ):Promise<(T & PersistedAccessPoint)[]>;
 
 
-	listChildren<T extends object>( requestOptions?:RequestOptions ):Promise<(T & PersistedDocument)[]>;
+	listChildren<T extends object>( requestOptions?:RequestOptions ):Promise<(T & Document)[]>;
 
 
-	getChildren<T extends object>( requestOptions?:RequestOptions, queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder ) => QueryDocumentsBuilder ):Promise<(T & PersistedDocument)[]>;
+	getChildren<T extends object>( requestOptions?:RequestOptions, queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder ) => QueryDocumentsBuilder ):Promise<(T & Document)[]>;
 
-	getChildren<T extends object>( queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder ) => QueryDocumentsBuilder ):Promise<(T & PersistedDocument)[]>;
-
-
-	listMembers<T extends object>( requestOptions?:RequestOptions ):Promise<(T & PersistedDocument)[]>;
+	getChildren<T extends object>( queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder ) => QueryDocumentsBuilder ):Promise<(T & Document)[]>;
 
 
-	getMembers<T extends object>( requestOptions?:RequestOptions, queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder ) => QueryDocumentsBuilder ):Promise<(T & PersistedDocument)[]>;
+	listMembers<T extends object>( requestOptions?:RequestOptions ):Promise<(T & Document)[]>;
 
-	getMembers<T extends object>( queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder ) => QueryDocumentsBuilder ):Promise<(T & PersistedDocument)[]>;
+
+	getMembers<T extends object>( requestOptions?:RequestOptions, queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder ) => QueryDocumentsBuilder ):Promise<(T & Document)[]>;
+
+	getMembers<T extends object>( queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder ) => QueryDocumentsBuilder ):Promise<(T & Document)[]>;
 
 
 	removeMember( member:Pointer, requestOptions?:RequestOptions ):Promise<void>;
@@ -170,22 +170,22 @@ export interface PersistedDocument extends TransientDocument, PersistedResource,
 }
 
 
-export interface PersistedDocumentFactory extends ModelFactory<PersistedDocument>, ModelDecorator<PersistedDocument> {
-	is( object:object ):object is PersistedDocument;
+export interface DocumentFactory extends ModelFactory<Document>, ModelDecorator<Document> {
+	is( object:object ):object is Document;
 
-	isDecorated( object:object ):object is PersistedDocument;
+	isDecorated( object:object ):object is Document;
 
 
-	create( documents:Documents, uri:string ):PersistedDocument;
+	create( documents:Documents, uri:string ):Document;
 
-	createFrom<T extends object>( object:T, documents:Documents, uri:string ):T & PersistedDocument;
+	createFrom<T extends object>( object:T, documents:Documents, uri:string ):T & Document;
 
-	decorate<T extends object>( object:T, documents:Documents ):T & PersistedDocument;
+	decorate<T extends object>( object:T, documents:Documents ):T & Document;
 }
 
 
-export const PersistedDocument:PersistedDocumentFactory = {
-	isDecorated( object:object ):object is PersistedDocument {
+export const Document:DocumentFactory = {
+	isDecorated( object:object ):object is Document {
 		return Utils.hasPropertyDefined( object, "_eTag" )
 			&& Utils.hasFunction( object, "isLocallyOutDated" )
 
@@ -222,19 +222,19 @@ export const PersistedDocument:PersistedDocumentFactory = {
 			;
 	},
 
-	is( object:object ):object is PersistedDocument {
+	is( object:object ):object is Document {
 		return TransientDocument.is( object )
 			&& MessagingDocument.isDecorated( object )
-			&& PersistedDocument.isDecorated( object )
+			&& Document.isDecorated( object )
 			;
 	},
 
-	create( documents:Documents, uri:string ):PersistedDocument {
-		return PersistedDocument.createFrom( {}, documents, uri );
+	create( documents:Documents, uri:string ):Document {
+		return Document.createFrom( {}, documents, uri );
 	},
 
-	createFrom<T extends object>( object:T, documents:Documents, uri:string ):T & PersistedDocument {
-		const document:T & PersistedDocument = PersistedDocument.decorate<T>( object, documents );
+	createFrom<T extends object>( object:T, documents:Documents, uri:string ):T & Document {
+		const document:T & Document = Document.decorate<T>( object, documents );
 
 		document.id = uri;
 		TransientDocument._convertNestedObjects( document, document );
@@ -242,15 +242,15 @@ export const PersistedDocument:PersistedDocumentFactory = {
 		return document;
 	},
 
-	decorate<T extends object>( object:T, documents:Documents ):T & PersistedDocument {
-		if( PersistedDocument.isDecorated( object ) ) return object;
+	decorate<T extends object>( object:T, documents:Documents ):T & Document {
+		if( Document.isDecorated( object ) ) return object;
 
 		TransientDocument.decorate( object );
 		PersistedResource.decorate( object );
 		ServiceAwareDocument.decorate( object, documents );
 		MessagingDocument.decorate( <T & ServiceAwareDocument> object );
 
-		const persistedDocument:T & PersistedDocument = <T & PersistedDocument> object;
+		const persistedDocument:T & Document = <T & Document> object;
 		return Object.defineProperties( persistedDocument, {
 			"_eTag": {
 				writable: true,
@@ -302,7 +302,7 @@ export const PersistedDocument:PersistedDocumentFactory = {
 				configurable: true,
 				value: (function():( id:string ) => boolean {
 					let superFunction:( id:string ) => boolean = persistedDocument.hasPointer;
-					return function( this:PersistedDocument, id:string ):boolean {
+					return function( this:Document, id:string ):boolean {
 						id = ObjectSchema.ObjectSchemaUtils.resolveURI( id, this._documents.getGeneralSchema() );
 
 						if( superFunction.call( this, id ) ) return true;
@@ -317,7 +317,7 @@ export const PersistedDocument:PersistedDocumentFactory = {
 				value: (function():( id:string ) => Pointer {
 					let superFunction:( id:string ) => Pointer = persistedDocument.getPointer;
 					let inScopeFunction:( id:string ) => boolean = persistedDocument.inScope;
-					return function( this:PersistedDocument, id:string ):Pointer {
+					return function( this:Document, id:string ):Pointer {
 						id = ObjectSchema.ObjectSchemaUtils.resolveURI( id, this._documents.getGeneralSchema() );
 
 						if( inScopeFunction.call( this, id ) ) return superFunction.call( this, id );
@@ -331,7 +331,7 @@ export const PersistedDocument:PersistedDocumentFactory = {
 				configurable: true,
 				value: (function():( idOrPointer:any ) => boolean {
 					let superFunction:( idOrPointer:any ) => boolean = persistedDocument.inScope;
-					return function( this:PersistedDocument, idOrPointer:any ):boolean {
+					return function( this:Document, idOrPointer:any ):boolean {
 						let id:string = Pointer.is( idOrPointer ) ? idOrPointer.id : idOrPointer;
 						id = ObjectSchema.ObjectSchemaUtils.resolveURI( id, this._documents.getGeneralSchema() );
 
@@ -543,7 +543,7 @@ function extendIsDirty( superFunction:() => boolean ):() => boolean {
 		let isDirty:boolean = superFunction.call( this );
 		if( isDirty ) return true;
 
-		let document:PersistedDocument = this;
+		let document:Document = this;
 
 		for( let fragment of document.getFragments() ) {
 			if( fragment.isDirty() ) return true;
@@ -558,13 +558,13 @@ function extendIsDirty( superFunction:() => boolean ):() => boolean {
 	};
 }
 
-function isLocallyOutDated( this:PersistedDocument ):boolean {
+function isLocallyOutDated( this:Document ):boolean {
 	return this._eTag === null;
 }
 
 function extendRevert( superFunction:() => void ):() => void {
 	return function():void {
-		let persistedDocument:PersistedDocument = this;
+		let persistedDocument:Document = this;
 		persistedDocument._fragmentsIndex.clear();
 		for( let fragment of persistedDocument._savedFragments ) {
 			let slug:string = "slug" in fragment ? (fragment as PersistedNamedFragment).slug : fragment.id;
@@ -577,7 +577,7 @@ function extendRevert( superFunction:() => void ):() => void {
 }
 
 function syncSavedFragments():void {
-	let document:PersistedDocument = this;
+	let document:Document = this;
 	document._savedFragments = Utils.ArrayUtils.from( document._fragmentsIndex.values() );
 }
 
@@ -632,35 +632,35 @@ function extendCreateNamedFragment( superFunction:( slugOrObject:any, slug?:stri
 	};
 }
 
-function refresh<T extends object>( this:T & PersistedDocument, requestOptions?:RequestOptions ):Promise<T & PersistedDocument> {
+function refresh<T extends object>( this:T & Document, requestOptions?:RequestOptions ):Promise<T & Document> {
 	return this._documents.refresh<T>( this, requestOptions );
 }
 
-function save<T extends object>( this:T & PersistedDocument, requestOptions?:RequestOptions ):Promise<T> {
+function save<T extends object>( this:T & Document, requestOptions?:RequestOptions ):Promise<T> {
 	return this._documents.save( this, requestOptions );
 }
 
-function saveAndRefresh<T extends object>( this:T & PersistedDocument, requestOptions?:RequestOptions ):Promise<T> {
+function saveAndRefresh<T extends object>( this:T & Document, requestOptions?:RequestOptions ):Promise<T> {
 	return this._documents.saveAndRefresh<T>( this, requestOptions );
 }
 
-function _delete( this:PersistedDocument, requestOptions?:RequestOptions ):Promise<void> {
+function _delete( this:Document, requestOptions?:RequestOptions ):Promise<void> {
 	return this._documents.delete( this.id, requestOptions );
 }
 
 function addMember( member:Pointer, requestOptions?:RequestOptions ):Promise<void>;
 function addMember( memberURI:string, requestOptions?:RequestOptions ):Promise<void>;
-function addMember( this:PersistedDocument, memberOrUri:any, requestOptions?:RequestOptions ):Promise<void> {
+function addMember( this:Document, memberOrUri:any, requestOptions?:RequestOptions ):Promise<void> {
 	return this._documents.addMember( this.id, memberOrUri, requestOptions );
 }
 
-function addMembers( this:PersistedDocument, members:(Pointer | string)[], requestOptions?:RequestOptions ):Promise<void> {
+function addMembers( this:Document, members:(Pointer | string)[], requestOptions?:RequestOptions ):Promise<void> {
 	return this._documents.addMembers( this.id, members, requestOptions );
 }
 
-function get<T extends object>( relativeURI:string, requestOptions?:GETOptions, queryBuilderFn?:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<T & PersistedDocument>;
-function get<T extends object>( relativeURI:string, queryBuilderFn?:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<T & PersistedDocument>;
-function get<T extends object>( this:PersistedDocument, relativeURI:string, optionsOrQueryBuilderFn:any, queryBuilderFn?:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<T & PersistedDocument> {
+function get<T extends object>( relativeURI:string, requestOptions?:GETOptions, queryBuilderFn?:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<T & Document>;
+function get<T extends object>( relativeURI:string, queryBuilderFn?:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<T & Document>;
+function get<T extends object>( this:Document, relativeURI:string, optionsOrQueryBuilderFn:any, queryBuilderFn?:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<T & Document> {
 	const uri:string = URI.resolve( this.id, relativeURI );
 	return this._documents
 		.get<T>( uri, optionsOrQueryBuilderFn, queryBuilderFn )
@@ -672,7 +672,7 @@ function createChild<T extends object>( object:T, slug:string, requestOptions?:R
 function createChild<T extends object>( object:T, requestOptions?:RequestOptions ):Promise<T & PersistedProtectedDocument>;
 function createChild( slug:string, requestOptions?:RequestOptions ):Promise<PersistedProtectedDocument>;
 function createChild( requestOptions?:RequestOptions ):Promise<PersistedProtectedDocument>;
-function createChild<T extends object>( this:PersistedDocument, objectOrSlugOrRequestOptions?:any, slugOrRequestOptions?:any, requestOptions?:RequestOptions ):Promise<T & PersistedProtectedDocument> {
+function createChild<T extends object>( this:Document, objectOrSlugOrRequestOptions?:any, slugOrRequestOptions?:any, requestOptions?:RequestOptions ):Promise<T & PersistedProtectedDocument> {
 	requestOptions = RequestUtils.isOptions( objectOrSlugOrRequestOptions ) ? objectOrSlugOrRequestOptions : RequestUtils.isOptions( slugOrRequestOptions ) ? slugOrRequestOptions : requestOptions;
 	let object:T = Utils.isString( objectOrSlugOrRequestOptions ) || RequestUtils.isOptions( objectOrSlugOrRequestOptions ) || ! objectOrSlugOrRequestOptions ? <T> {} : objectOrSlugOrRequestOptions;
 	let slug:string = Utils.isString( objectOrSlugOrRequestOptions ) ? objectOrSlugOrRequestOptions : Utils.isString( slugOrRequestOptions ) ? slugOrRequestOptions : null;
@@ -682,7 +682,7 @@ function createChild<T extends object>( this:PersistedDocument, objectOrSlugOrRe
 
 function createChildren<T extends object>( objects:T[], slugs:string[], requestOptions?:RequestOptions ):Promise<(T & PersistedProtectedDocument)[]>;
 function createChildren<T extends object>( objects:T[], requestOptions?:RequestOptions ):Promise<(T & PersistedProtectedDocument)[]>;
-function createChildren<T extends object>( this:PersistedDocument, objects:T[], slugsOrRequestOptions?:any, requestOptions?:RequestOptions ):Promise<(T & PersistedProtectedDocument)[]> {
+function createChildren<T extends object>( this:Document, objects:T[], slugsOrRequestOptions?:any, requestOptions?:RequestOptions ):Promise<(T & PersistedProtectedDocument)[]> {
 	return this._documents.createChildren<T>( this.id, objects, slugsOrRequestOptions, requestOptions );
 }
 
@@ -690,7 +690,7 @@ function createChildAndRetrieve<T extends object>( object:T, slug:string, reques
 function createChildAndRetrieve<T extends object>( object:T, requestOptions?:RequestOptions ):Promise<T & PersistedProtectedDocument>;
 function createChildAndRetrieve( slug:string, requestOptions?:RequestOptions ):Promise<PersistedProtectedDocument>;
 function createChildAndRetrieve( requestOptions?:RequestOptions ):Promise<PersistedProtectedDocument>;
-function createChildAndRetrieve<T extends object>( this:PersistedDocument, objectOrSlugOrRequestOptions?:any, slugOrRequestOptions?:any, requestOptions?:RequestOptions ):Promise<T & PersistedProtectedDocument> {
+function createChildAndRetrieve<T extends object>( this:Document, objectOrSlugOrRequestOptions?:any, slugOrRequestOptions?:any, requestOptions?:RequestOptions ):Promise<T & PersistedProtectedDocument> {
 	requestOptions = RequestUtils.isOptions( objectOrSlugOrRequestOptions ) ? objectOrSlugOrRequestOptions : RequestUtils.isOptions( slugOrRequestOptions ) ? slugOrRequestOptions : requestOptions;
 	let object:T = Utils.isString( objectOrSlugOrRequestOptions ) || RequestUtils.isOptions( objectOrSlugOrRequestOptions ) || ! objectOrSlugOrRequestOptions ? <T> {} : objectOrSlugOrRequestOptions;
 	let slug:string = Utils.isString( objectOrSlugOrRequestOptions ) ? objectOrSlugOrRequestOptions : Utils.isString( slugOrRequestOptions ) ? slugOrRequestOptions : null;
@@ -700,86 +700,86 @@ function createChildAndRetrieve<T extends object>( this:PersistedDocument, objec
 
 function createChildrenAndRetrieve<T extends object>( objects:T[], slugs:string[], requestOptions?:RequestOptions ):Promise<(T & PersistedProtectedDocument)[]>;
 function createChildrenAndRetrieve<T extends object>( objects:T[], requestOptions?:RequestOptions ):Promise<(T & PersistedProtectedDocument)[]>;
-function createChildrenAndRetrieve<T extends object>( this:PersistedDocument, objects:T[], slugsOrRequestOptions?:any, requestOptions?:RequestOptions ):Promise<(T & PersistedProtectedDocument)[]> {
+function createChildrenAndRetrieve<T extends object>( this:Document, objects:T[], slugsOrRequestOptions?:any, requestOptions?:RequestOptions ):Promise<(T & PersistedProtectedDocument)[]> {
 	return this._documents.createChildrenAndRetrieve<T>( this.id, objects, slugsOrRequestOptions, requestOptions );
 }
 
 function createAccessPoint<T extends object>( accessPoint:T & AccessPointBase, slug?:string, requestOptions?:RequestOptions ):Promise<T & PersistedAccessPoint>;
 function createAccessPoint<T extends object>( accessPoint:T & AccessPointBase, requestOptions?:RequestOptions ):Promise<T & PersistedAccessPoint>;
-function createAccessPoint<T extends object>( this:PersistedDocument, accessPoint:T & AccessPointBase, slugOrRequestOptions?:any, requestOptions?:RequestOptions ):Promise<T & PersistedAccessPoint> {
+function createAccessPoint<T extends object>( this:Document, accessPoint:T & AccessPointBase, slugOrRequestOptions?:any, requestOptions?:RequestOptions ):Promise<T & PersistedAccessPoint> {
 	return this._documents.createAccessPoint<T>( this.id, accessPoint, slugOrRequestOptions, requestOptions );
 }
 
 function createAccessPoints<T extends object>( accessPoints:(T & AccessPointBase)[], slugs?:string[], requestOptions?:RequestOptions ):Promise<(T & PersistedAccessPoint)[]>;
 function createAccessPoints<T extends object>( accessPoints:(T & AccessPointBase)[], requestOptions?:RequestOptions ):Promise<(T & PersistedAccessPoint)[]>;
-function createAccessPoints<T extends object>( this:PersistedDocument, accessPoints:(T & AccessPointBase)[], slugsOrRequestOptions?:any, requestOptions?:RequestOptions ):Promise<(T & PersistedAccessPoint)[]> {
+function createAccessPoints<T extends object>( this:Document, accessPoints:(T & AccessPointBase)[], slugsOrRequestOptions?:any, requestOptions?:RequestOptions ):Promise<(T & PersistedAccessPoint)[]> {
 	return this._documents.createAccessPoints<T>( this.id, accessPoints, slugsOrRequestOptions, requestOptions );
 }
 
 
-function listChildren( this:PersistedDocument, requestOptions?:RequestOptions ):Promise<PersistedDocument[]> {
+function listChildren( this:Document, requestOptions?:RequestOptions ):Promise<Document[]> {
 	return this._documents.listChildren( this.id, requestOptions );
 }
 
-function getChildren<T extends object>( this:PersistedDocument, requestOptions?:RequestOptions, childrenQuery?:( queryBuilder:QueryDocumentsBuilder ) => QueryDocumentsBuilder ):Promise<(T & PersistedDocument)[]>;
-function getChildren<T extends object>( this:PersistedDocument, queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder ) => QueryDocumentsBuilder ):Promise<(T & PersistedDocument)[]>;
-function getChildren<T extends object>( this:PersistedDocument, requestOptionsOrQueryBuilderFn?:any, queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder ) => QueryDocumentsBuilder ):Promise<(T & PersistedDocument)[]> {
+function getChildren<T extends object>( this:Document, requestOptions?:RequestOptions, childrenQuery?:( queryBuilder:QueryDocumentsBuilder ) => QueryDocumentsBuilder ):Promise<(T & Document)[]>;
+function getChildren<T extends object>( this:Document, queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder ) => QueryDocumentsBuilder ):Promise<(T & Document)[]>;
+function getChildren<T extends object>( this:Document, requestOptionsOrQueryBuilderFn?:any, queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder ) => QueryDocumentsBuilder ):Promise<(T & Document)[]> {
 	return this._documents.getChildren<T>( this.id, requestOptionsOrQueryBuilderFn, queryBuilderFn );
 }
 
 
-function listMembers( this:PersistedDocument, requestOptions?:RequestOptions ):Promise<PersistedDocument[]> {
+function listMembers( this:Document, requestOptions?:RequestOptions ):Promise<Document[]> {
 	return this._documents.listMembers( this.id, requestOptions );
 }
 
-function getMembers<T extends object>( this:PersistedDocument, requestOptions?:RequestOptions, queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder ) => QueryDocumentsBuilder ):Promise<(T & PersistedDocument)[]>;
-function getMembers<T extends object>( this:PersistedDocument, queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder ) => QueryDocumentsBuilder ):Promise<(T & PersistedDocument)[]>;
-function getMembers<T extends object>( this:PersistedDocument, requestOptionsOrQueryBuilderFn?:any, childrenQuery?:( queryBuilder:QueryDocumentsBuilder ) => QueryDocumentsBuilder ):Promise<(T & PersistedDocument)[]> {
+function getMembers<T extends object>( this:Document, requestOptions?:RequestOptions, queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder ) => QueryDocumentsBuilder ):Promise<(T & Document)[]>;
+function getMembers<T extends object>( this:Document, queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder ) => QueryDocumentsBuilder ):Promise<(T & Document)[]>;
+function getMembers<T extends object>( this:Document, requestOptionsOrQueryBuilderFn?:any, childrenQuery?:( queryBuilder:QueryDocumentsBuilder ) => QueryDocumentsBuilder ):Promise<(T & Document)[]> {
 	return this._documents.getMembers<T>( this.id, requestOptionsOrQueryBuilderFn, childrenQuery );
 }
 
 function removeMember( member:Pointer, requestOptions?:RequestOptions ):Promise<void>;
 function removeMember( memberURI:string, requestOptions?:RequestOptions ):Promise<void>;
-function removeMember( this:PersistedDocument, memberOrUri:any, requestOptions?:RequestOptions ):Promise<void> {
+function removeMember( this:Document, memberOrUri:any, requestOptions?:RequestOptions ):Promise<void> {
 	return this._documents.removeMember( this.id, memberOrUri, requestOptions );
 }
 
-function removeMembers( this:PersistedDocument, members:(Pointer | string)[], requestOptions?:RequestOptions ):Promise<void> {
+function removeMembers( this:Document, members:(Pointer | string)[], requestOptions?:RequestOptions ):Promise<void> {
 	return this._documents.removeMembers( this.id, members, requestOptions );
 }
 
-function removeAllMembers( this:PersistedDocument, requestOptions?:RequestOptions ):Promise<void> {
+function removeAllMembers( this:Document, requestOptions?:RequestOptions ):Promise<void> {
 	return this._documents.removeAllMembers( this.id, requestOptions );
 }
 
-function executeRawASKQuery( this:PersistedDocument, askQuery:string, requestOptions?:RequestOptions ):Promise<SPARQLRawResults> {
+function executeRawASKQuery( this:Document, askQuery:string, requestOptions?:RequestOptions ):Promise<SPARQLRawResults> {
 	return this._documents.executeRawASKQuery( this.id, askQuery, requestOptions );
 }
 
-function executeASKQuery( this:PersistedDocument, askQuery:string, requestOptions?:RequestOptions ):Promise<boolean> {
+function executeASKQuery( this:Document, askQuery:string, requestOptions?:RequestOptions ):Promise<boolean> {
 	return this._documents.executeASKQuery( this.id, askQuery, requestOptions );
 }
 
-function executeRawSELECTQuery( this:PersistedDocument, selectQuery:string, requestOptions?:RequestOptions ):Promise<SPARQLRawResults> {
+function executeRawSELECTQuery( this:Document, selectQuery:string, requestOptions?:RequestOptions ):Promise<SPARQLRawResults> {
 	return this._documents.executeRawSELECTQuery( this.id, selectQuery, requestOptions );
 }
 
-function executeSELECTQuery<T extends object>( this:PersistedDocument, selectQuery:string, requestOptions?:RequestOptions ):Promise<SPARQLSelectResults<T>> {
+function executeSELECTQuery<T extends object>( this:Document, selectQuery:string, requestOptions?:RequestOptions ):Promise<SPARQLSelectResults<T>> {
 	return this._documents.executeSELECTQuery<T>( this.id, selectQuery, requestOptions );
 }
 
-function executeRawCONSTRUCTQuery( this:PersistedDocument, constructQuery:string, requestOptions?:RequestOptions ):Promise<string> {
+function executeRawCONSTRUCTQuery( this:Document, constructQuery:string, requestOptions?:RequestOptions ):Promise<string> {
 	return this._documents.executeRawCONSTRUCTQuery( this.id, constructQuery, requestOptions );
 }
 
-function executeRawDESCRIBEQuery( this:PersistedDocument, describeQuery:string, requestOptions?:RequestOptions ):Promise<string> {
+function executeRawDESCRIBEQuery( this:Document, describeQuery:string, requestOptions?:RequestOptions ):Promise<string> {
 	return this._documents.executeRawDESCRIBEQuery( this.id, describeQuery, requestOptions );
 }
 
-function executeUPDATE( this:PersistedDocument, updateQuery:string, requestOptions?:RequestOptions ):Promise<void> {
+function executeUPDATE( this:Document, updateQuery:string, requestOptions?:RequestOptions ):Promise<void> {
 	return this._documents.executeUPDATE( this.id, updateQuery, requestOptions );
 }
 
-function sparql( this:PersistedDocument ):QueryClause<FinishSPARQLSelect> {
+function sparql( this:Document ):QueryClause<FinishSPARQLSelect> {
 	return this._documents.sparql( this.id );
 }

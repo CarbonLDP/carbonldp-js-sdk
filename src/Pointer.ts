@@ -2,7 +2,7 @@ import { IllegalStateError } from "./Errors/IllegalStateError";
 import { GETOptions } from "./HTTP/Request";
 import { ModelDecorator } from "./ModelDecorator";
 import { ModelFactory } from "./ModelFactory";
-import { PersistedDocument } from "./PersistedDocument";
+import { Document } from "./Document";
 import { QueryDocumentBuilder } from "./SPARQL/QueryDocument/QueryDocumentBuilder";
 import * as Utils from "./Utils";
 
@@ -15,8 +15,8 @@ export interface Pointer {
 
 	isResolved():boolean;
 
-	resolve<T extends object>( requestOptions?:GETOptions, queryBuilderFn?:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<T & this & PersistedDocument>;
-	resolve<T extends object>( queryBuilderFn?:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<T & this & PersistedDocument>;
+	resolve<T extends object>( requestOptions?:GETOptions, queryBuilderFn?:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<T & this & Document>;
+	resolve<T extends object>( queryBuilderFn?:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<T & this & Document>;
 }
 
 

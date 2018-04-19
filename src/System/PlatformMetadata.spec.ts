@@ -1,4 +1,4 @@
-import { PersistedDocument } from "../PersistedDocument";
+import { Document } from "../Document";
 import {
 	extendsClass,
 	hasProperty,
@@ -19,8 +19,8 @@ describe( module( "carbonldp/System/PlatformMetadata" ), ():void => {
 		"Interface that represents the document with the data of the Carbon LDP Platform instance."
 	), ():void => {
 
-		it( extendsClass( "CarbonLDP.PersistedDocument" ), ():void => {
-			const target:PersistedDocument = {} as PlatformMetadata;
+		it( extendsClass( "CarbonLDP.Document" ), ():void => {
+			const target:Document = {} as PlatformMetadata;
 			expect( target ).toBeDefined();
 		} );
 

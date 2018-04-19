@@ -26,7 +26,7 @@ import {
 	ObjectSchemaUtils,
 	PointerType,
 } from "./ObjectSchema";
-import { PersistedDocument } from "./PersistedDocument";
+import { Document } from "./Document";
 import { PersistedFragment } from "./PersistedFragment";
 import { PersistedNamedFragment } from "./PersistedNamedFragment";
 import { PersistedResource } from "./PersistedResource";
@@ -72,7 +72,7 @@ export class CarbonLDP extends AbstractContext {
 	static PointerType:typeof PointerType = PointerType;
 	static ContainerType:typeof ContainerType = ContainerType;
 	static DigestedObjectSchema:typeof DigestedObjectSchema = DigestedObjectSchema;
-	static PersistedDocument:typeof PersistedDocument = PersistedDocument;
+	static Document:typeof Document = Document;
 	static PersistedFragment:typeof PersistedFragment = PersistedFragment;
 	static PersistedNamedFragment:typeof PersistedNamedFragment = PersistedNamedFragment;
 	static PersistedProtectedDocument:typeof PersistedProtectedDocument = PersistedProtectedDocument;
