@@ -1,5 +1,5 @@
 import { NamedFragment } from "./NamedFragment";
-import { PersistedFragment } from "./PersistedFragment";
+import { Fragment } from "./Fragment";
 
 import { PersistedNamedFragment } from "./PersistedNamedFragment";
 
@@ -23,7 +23,7 @@ describe( module( "carbonldp/PersistedNamedFragment" ), ():void => {
 		"Interface that represents a persisted named fragment of a persisted document."
 	), ():void => {
 
-		it( extendsClass( "CarbonLDP.PersistedFragment" ), ():void => {} );
+		it( extendsClass( "CarbonLDP.Fragment" ), ():void => {} );
 		it( extendsClass( "CarbonLDP.NamedFragment" ), ():void => {} );
 
 		it( hasProperty(
@@ -75,7 +75,7 @@ describe( module( "carbonldp/PersistedNamedFragment" ), ():void => {
 			expect( PersistedNamedFragment.decorate ).toBeDefined();
 			expect( Utils.isFunction( PersistedNamedFragment.decorate ) ).toBe( true );
 
-			let spyPersistedDecorator:jasmine.Spy = spyOn( PersistedFragment, "decorate" ).and.callThrough();
+			let spyPersistedDecorator:jasmine.Spy = spyOn( Fragment, "decorate" ).and.callThrough();
 
 			let fragment:NamedFragment = NamedFragment.create( <any> { id: "http://example.com/resoruce/" }, "fragment-slug" );
 			let persistedFragment:PersistedNamedFragment = PersistedNamedFragment.decorate( fragment );

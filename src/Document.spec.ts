@@ -9,7 +9,7 @@ import { NamedFragment } from "./NamedFragment";
 
 import { Document } from "./Document";
 
-import { PersistedFragment } from "./PersistedFragment";
+import { Fragment } from "./Fragment";
 import { PersistedNamedFragment } from "./PersistedNamedFragment";
 import { Pointer } from "./Pointer";
 import { URI } from "./RDF/URI";
@@ -101,14 +101,14 @@ describe( module( "carbonldp/Document" ), ():void => {
 		it( hasProperty(
 			OBLIGATORY,
 			"_fragmentsIndex",
-			"Map<string, CarbonLDP.PersistedFragment>",
+			"Map<string, CarbonLDP.Fragment>",
 			"Map that stores the persisted fragments (named fragments and blank nodes) of the document."
 		), ():void => {} );
 
 		it( hasProperty(
 			OBLIGATORY,
 			"_savedFragments",
-			"CarbonLDP.PersistedFragment[]",
+			"CarbonLDP.Fragment[]",
 			"Array with a copy of every fragment that that is currently persisted in the server."
 		), ():void => {} );
 
@@ -135,7 +135,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 					{ name: "object", type: "T" },
 					{ name: "slug", type: "string" },
 				],
-				{ type: "T & CarbonLDP.PersistedFragment" }
+				{ type: "T & CarbonLDP.Fragment" }
 			), ():void => {} );
 
 			it( hasSignature(
@@ -143,19 +143,19 @@ describe( module( "carbonldp/Document" ), ():void => {
 				"Creates a PersistedBlankNode from the object provided, sing no slug was specified.", [
 					{ name: "object", type: "T" },
 				],
-				{ type: "T & CarbonLDP.PersistedFragment" }
+				{ type: "T & CarbonLDP.Fragment" }
 			), ():void => {} );
 
 			it( hasSignature(
 				"Creates a PersistedFragment with the slug provided.", [
 					{ name: "slug", type: "string" },
 				],
-				{ type: "CarbonLDP.PersistedFragment" }
+				{ type: "CarbonLDP.Fragment" }
 			), ():void => {} );
 
 			it( hasSignature(
 				"Creates a PersistedBlankNode, since no slug is provided",
-				{ type: "CarbonLDP.PersistedFragment" }
+				{ type: "CarbonLDP.Fragment" }
 			), ():void => {} );
 
 		} );
@@ -1311,7 +1311,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 					}
 
 					let object:MyInterface;
-					let fragment:PersistedFragment & MyInterface;
+					let fragment:Fragment & MyInterface;
 
 					object = {};
 					fragment = document.createFragment<MyInterface>( object, "my-fragment" );
@@ -1370,7 +1370,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 					}
 
 					let object:MyInterface;
-					let fragment:PersistedFragment & MyInterface;
+					let fragment:Fragment & MyInterface;
 
 					object = {};
 					fragment = document.createFragment<MyInterface>( object );
@@ -1402,7 +1402,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 					expect( document.createFragment ).toBeDefined();
 					expect( Utils.isFunction( document.createFragment ) ).toBe( true );
 
-					let fragment:PersistedFragment;
+					let fragment:Fragment;
 
 					fragment = document.createFragment( "my-fragment" );
 					expect( TransientFragment.isDecorated( fragment ) ).toBe( true );
@@ -1426,8 +1426,8 @@ describe( module( "carbonldp/Document" ), ():void => {
 					expect( document.createFragment ).toBeDefined();
 					expect( Utils.isFunction( document.createFragment ) ).toBe( true );
 
-					let fragment1:PersistedFragment;
-					let fragment2:PersistedFragment;
+					let fragment1:Fragment;
+					let fragment2:Fragment;
 
 					fragment1 = document.createFragment();
 					expect( TransientFragment.isDecorated( fragment1 ) ).toBe( true );
@@ -1480,7 +1480,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 					}
 
 					let object:MyInterface;
-					let fragment:PersistedFragment & MyInterface;
+					let fragment:Fragment & MyInterface;
 
 					object = {};
 					fragment = document.createNamedFragment<MyInterface>( object, "my-fragment" );

@@ -15,7 +15,7 @@ import { ModelFactory } from "./ModelFactory";
 import { NamedFragment } from "./NamedFragment";
 import * as ObjectSchema from "./ObjectSchema";
 import { AccessPoint } from "./AccessPoint";
-import { PersistedFragment } from "./PersistedFragment";
+import { Fragment } from "./Fragment";
 import { PersistedNamedFragment } from "./PersistedNamedFragment";
 import { PersistedProtectedDocument } from "./PersistedProtectedDocument";
 import { PersistedResource } from "./PersistedResource";
@@ -39,8 +39,8 @@ export interface Document extends TransientDocument, PersistedResource, ServiceA
 	contains?:Pointer[];
 
 	_eTag:string;
-	_fragmentsIndex:Map<string, PersistedFragment>;
-	_savedFragments:PersistedFragment[];
+	_fragmentsIndex:Map<string, Fragment>;
+	_savedFragments:Fragment[];
 
 	_syncSavedFragments():void;
 
@@ -48,18 +48,18 @@ export interface Document extends TransientDocument, PersistedResource, ServiceA
 	isLocallyOutDated():boolean;
 
 
-	getFragment<T extends object>( slug:string ):T & PersistedFragment;
+	getFragment<T extends object>( slug:string ):T & Fragment;
 
 	getNamedFragment<T extends object>( slug:string ):T & PersistedNamedFragment;
 
-	getFragments():PersistedFragment[];
+	getFragments():Fragment[];
 
 
-	createFragment( slug?:string ):PersistedFragment;
+	createFragment( slug?:string ):Fragment;
 
-	createFragment<T extends object>( object:T ):PersistedFragment & T;
+	createFragment<T extends object>( object:T ):Fragment & T;
 
-	createFragment<T extends object>( object:T, slug:string ):PersistedFragment & T;
+	createFragment<T extends object>( object:T, slug:string ):Fragment & T;
 
 
 	createNamedFragment( slug:string ):PersistedNamedFragment;
@@ -609,16 +609,16 @@ function extendRemoveType( superFunction:( type:string ) => void ):( type:string
 	};
 }
 
-function extendCreateFragment( superFunction:() => TransientFragment ):() => PersistedFragment;
-function extendCreateFragment( superFunction:( slug:string ) => TransientFragment ):( slug:string ) => PersistedFragment;
-function extendCreateFragment( superFunction:( object:object, slug:string ) => TransientFragment ):( slug:string, object:object ) => PersistedFragment;
-function extendCreateFragment( superFunction:( object:object ) => TransientFragment ):( object:object ) => PersistedFragment;
+function extendCreateFragment( superFunction:() => TransientFragment ):() => Fragment;
+function extendCreateFragment( superFunction:( slug:string ) => TransientFragment ):( slug:string ) => Fragment;
+function extendCreateFragment( superFunction:( object:object, slug:string ) => TransientFragment ):( slug:string, object:object ) => Fragment;
+function extendCreateFragment( superFunction:( object:object ) => TransientFragment ):( object:object ) => Fragment;
 function extendCreateFragment( superFunction:( slugOrObject?:any, slug?:string ) => TransientFragment ):any {
 	return function( slugOrObject?:any, slug?:string ):any {
 		let fragment:TransientFragment = superFunction.call( this, slugOrObject, slug );
 		let id:string = fragment.id;
 
-		if( URI.isBNodeID( id ) ) PersistedFragment.decorate( fragment );
+		if( URI.isBNodeID( id ) ) Fragment.decorate( fragment );
 		return fragment;
 	};
 }

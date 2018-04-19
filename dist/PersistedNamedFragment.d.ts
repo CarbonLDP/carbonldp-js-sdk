@@ -1,8 +1,8 @@
 import { ModelDecorator } from "./ModelDecorator";
 import { NamedFragment } from "./NamedFragment";
 import { Document } from "./Document";
-import { PersistedFragment } from "./PersistedFragment";
-export interface PersistedNamedFragment extends PersistedFragment, NamedFragment {
+import { Fragment } from "./Fragment";
+export interface PersistedNamedFragment extends Fragment, NamedFragment {
     _document: Document;
 }
 export interface PersistedNamedFragmentFactory extends ModelDecorator<PersistedNamedFragment> {

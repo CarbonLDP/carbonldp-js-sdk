@@ -1,3 +1,3 @@
-import { PersistedFragment } from "./PersistedFragment";
-export interface PersistedBlankNode extends PersistedFragment {
+import { Fragment } from "./Fragment";
+export interface PersistedBlankNode extends Fragment {
 }

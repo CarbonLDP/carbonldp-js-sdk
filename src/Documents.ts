@@ -73,7 +73,7 @@ import {
 import { AccessPoint } from "./AccessPoint";
 import { PersistedBlankNode } from "./PersistedBlankNode";
 import { Document } from "./Document";
-import { PersistedFragment } from "./PersistedFragment";
+import { Fragment } from "./Fragment";
 import { PersistedProtectedDocument } from "./PersistedProtectedDocument";
 import { PersistedResource } from "./PersistedResource";
 import {
@@ -940,8 +940,8 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 			parentAdder.addPattern( propertyPattern );
 
 			const propertyValues:any[] = Array.isArray( resource[ propertyName ] ) ? resource[ propertyName ] : [ resource[ propertyName ] ];
-			const propertyFragment:PersistedFragment = propertyValues
-				.filter( PersistedFragment.is )
+			const propertyFragment:Fragment = propertyValues
+				.filter( Fragment.is )
 				.find( fragment => fragment.isPartial() );
 			if( ! propertyFragment ) return;
 
@@ -1204,7 +1204,7 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 				this.pointers.set( localID, this._createPointerFrom( document, localID ) );
 
 				const persistedDocument:T & W & PersistedProtectedDocument = <T & W & PersistedProtectedDocument> PersistedProtectedDocument.decorate<T>( document, this );
-				persistedDocument.getFragments().forEach( PersistedFragment.decorate );
+				persistedDocument.getFragments().forEach( Fragment.decorate );
 
 				return this._applyResponseData( persistedDocument, response );
 			} ).catch( ( error ) => {

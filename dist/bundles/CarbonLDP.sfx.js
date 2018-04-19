@@ -4283,7 +4283,7 @@ var TransientDocument_1 = __webpack_require__(19);
 var Request_1 = __webpack_require__(30);
 var Document_1 = __webpack_require__(120);
 var ObjectSchema = __importStar(__webpack_require__(12));
-var PersistedFragment_1 = __webpack_require__(55);
+var Fragment_1 = __webpack_require__(55);
 var PersistedNamedFragment_1 = __webpack_require__(121);
 var PersistedResource_1 = __webpack_require__(56);
 var Pointer_1 = __webpack_require__(22);
@@ -4687,7 +4687,7 @@ function extendCreateFragment(superFunction) {
         var fragment = superFunction.call(this, slugOrObject, slug);
         var id = fragment.id;
         if (URI_1.URI.isBNodeID(id))
-            PersistedFragment_1.PersistedFragment.decorate(fragment);
+            Fragment_1.Fragment.decorate(fragment);
         return fragment;
     };
 }
@@ -5839,7 +5839,7 @@ function removeTypeInPersistedFragment(type) {
     type = resolveURI(this, type);
     return Resource_1.removeTypeInResource.call(this, type);
 }
-exports.PersistedFragment = {
+exports.Fragment = {
     isDecorated: function (object) {
         return Utils_1.isObject(object) &&
             object["addType"] === addTypeInPersistedFragment &&
@@ -5849,10 +5849,10 @@ exports.PersistedFragment = {
     is: function (object) {
         return TransientFragment_1.TransientFragment.is(object) &&
             PersistedResource_1.PersistedResource.isDecorated(object) &&
-            exports.PersistedFragment.isDecorated(object);
+            exports.Fragment.isDecorated(object);
     },
     decorate: function (object) {
-        if (exports.PersistedFragment.isDecorated(object))
+        if (exports.Fragment.isDecorated(object))
             return object;
         TransientFragment_1.TransientFragment.decorate(object);
         PersistedResource_1.PersistedResource.decorate(object);
@@ -5880,10 +5880,10 @@ exports.PersistedFragment = {
         return fragment;
     },
     create: function (document, id) {
-        return exports.PersistedFragment.createFrom({}, document, id);
+        return exports.Fragment.createFrom({}, document, id);
     },
     createFrom: function (object, document, id) {
-        var fragment = exports.PersistedFragment.decorate(object);
+        var fragment = exports.Fragment.decorate(object);
         fragment._document = document;
         if (id)
             fragment.id = id;
@@ -9789,16 +9789,16 @@ exports.MessagingDocument = {
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var NamedFragment_1 = __webpack_require__(74);
-var PersistedFragment_1 = __webpack_require__(55);
+var Fragment_1 = __webpack_require__(55);
 exports.PersistedNamedFragment = {
     isDecorated: function (object) {
-        return PersistedFragment_1.PersistedFragment.isDecorated(object);
+        return Fragment_1.Fragment.isDecorated(object);
     },
     decorate: function (object) {
         if (exports.PersistedNamedFragment.isDecorated(object))
             return object;
         var fragment = NamedFragment_1.NamedFragment.decorate(object);
-        return PersistedFragment_1.PersistedFragment.decorate(fragment);
+        return Fragment_1.Fragment.decorate(fragment);
     },
 };
 
@@ -10606,7 +10606,7 @@ var Event_1 = __webpack_require__(145);
 var Utils_1 = __webpack_require__(146);
 var ObjectSchema_1 = __webpack_require__(12);
 var Document_1 = __webpack_require__(42);
-var PersistedFragment_1 = __webpack_require__(55);
+var Fragment_1 = __webpack_require__(55);
 var PersistedProtectedDocument_1 = __webpack_require__(45);
 var PersistedResource_1 = __webpack_require__(56);
 var Pointer_1 = __webpack_require__(22);
@@ -11328,7 +11328,7 @@ var Documents = (function () {
             parentAdder.addPattern(propertyPattern);
             var propertyValues = Array.isArray(resource[propertyName]) ? resource[propertyName] : [resource[propertyName]];
             var propertyFragment = propertyValues
-                .filter(PersistedFragment_1.PersistedFragment.is)
+                .filter(Fragment_1.Fragment.is)
                 .find(function (fragment) { return fragment.isPartial(); });
             if (!propertyFragment)
                 return;
@@ -11553,7 +11553,7 @@ var Documents = (function () {
             var localID = _this._getPointerID(locationHeader.values[0].toString());
             _this.pointers.set(localID, _this._createPointerFrom(document, localID));
             var persistedDocument = PersistedProtectedDocument_1.PersistedProtectedDocument.decorate(document, _this);
-            persistedDocument.getFragments().forEach(PersistedFragment_1.PersistedFragment.decorate);
+            persistedDocument.getFragments().forEach(Fragment_1.Fragment.decorate);
             return _this._applyResponseData(persistedDocument, response);
         }).catch(function (error) {
             delete document["__CarbonSDK_InProgressOfPersisting"];
@@ -15202,7 +15202,7 @@ var Messaging = __importStar(__webpack_require__(297));
 var NamedFragment_1 = __webpack_require__(74);
 var ObjectSchema_1 = __webpack_require__(12);
 var Document_1 = __webpack_require__(42);
-var PersistedFragment_1 = __webpack_require__(55);
+var Fragment_1 = __webpack_require__(55);
 var PersistedNamedFragment_1 = __webpack_require__(121);
 var PersistedResource_1 = __webpack_require__(56);
 var Pointer_1 = __webpack_require__(22);
@@ -15306,7 +15306,7 @@ var CarbonLDP = (function (_super) {
     CarbonLDP.ContainerType = ObjectSchema_1.ContainerType;
     CarbonLDP.DigestedObjectSchema = ObjectSchema_1.DigestedObjectSchema;
     CarbonLDP.Document = Document_1.Document;
-    CarbonLDP.PersistedFragment = PersistedFragment_1.PersistedFragment;
+    CarbonLDP.Fragment = Fragment_1.Fragment;
     CarbonLDP.PersistedNamedFragment = PersistedNamedFragment_1.PersistedNamedFragment;
     CarbonLDP.PersistedProtectedDocument = PersistedProtectedDocument_1.PersistedProtectedDocument;
     CarbonLDP.PersistedResource = PersistedResource_1.PersistedResource;

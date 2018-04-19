@@ -34,7 +34,7 @@ var Event_1 = require("./Messaging/Event");
 var Utils_1 = require("./Messaging/Utils");
 var ObjectSchema_1 = require("./ObjectSchema");
 var Document_1 = require("./Document");
-var PersistedFragment_1 = require("./PersistedFragment");
+var Fragment_1 = require("./Fragment");
 var PersistedProtectedDocument_1 = require("./PersistedProtectedDocument");
 var PersistedResource_1 = require("./PersistedResource");
 var Pointer_1 = require("./Pointer");
@@ -756,7 +756,7 @@ var Documents = (function () {
             parentAdder.addPattern(propertyPattern);
             var propertyValues = Array.isArray(resource[propertyName]) ? resource[propertyName] : [resource[propertyName]];
             var propertyFragment = propertyValues
-                .filter(PersistedFragment_1.PersistedFragment.is)
+                .filter(Fragment_1.Fragment.is)
                 .find(function (fragment) { return fragment.isPartial(); });
             if (!propertyFragment)
                 return;
@@ -981,7 +981,7 @@ var Documents = (function () {
             var localID = _this._getPointerID(locationHeader.values[0].toString());
             _this.pointers.set(localID, _this._createPointerFrom(document, localID));
             var persistedDocument = PersistedProtectedDocument_1.PersistedProtectedDocument.decorate(document, _this);
-            persistedDocument.getFragments().forEach(PersistedFragment_1.PersistedFragment.decorate);
+            persistedDocument.getFragments().forEach(Fragment_1.Fragment.decorate);
             return _this._applyResponseData(persistedDocument, response);
         }).catch(function (error) {
             delete document["__CarbonSDK_InProgressOfPersisting"];

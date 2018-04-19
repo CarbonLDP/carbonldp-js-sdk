@@ -24,7 +24,7 @@ function removeTypeInPersistedFragment(type) {
     type = resolveURI(this, type);
     return Resource_1.removeTypeInResource.call(this, type);
 }
-exports.PersistedFragment = {
+exports.Fragment = {
     isDecorated: function (object) {
         return Utils_1.isObject(object) &&
             object["addType"] === addTypeInPersistedFragment &&
@@ -34,10 +34,10 @@ exports.PersistedFragment = {
     is: function (object) {
         return TransientFragment_1.TransientFragment.is(object) &&
             PersistedResource_1.PersistedResource.isDecorated(object) &&
-            exports.PersistedFragment.isDecorated(object);
+            exports.Fragment.isDecorated(object);
     },
     decorate: function (object) {
-        if (exports.PersistedFragment.isDecorated(object))
+        if (exports.Fragment.isDecorated(object))
             return object;
         TransientFragment_1.TransientFragment.decorate(object);
         PersistedResource_1.PersistedResource.decorate(object);
@@ -65,10 +65,10 @@ exports.PersistedFragment = {
         return fragment;
     },
     create: function (document, id) {
-        return exports.PersistedFragment.createFrom({}, document, id);
+        return exports.Fragment.createFrom({}, document, id);
     },
     createFrom: function (object, document, id) {
-        var fragment = exports.PersistedFragment.decorate(object);
+        var fragment = exports.Fragment.decorate(object);
         fragment._document = document;
         if (id)
             fragment.id = id;
@@ -76,4 +76,4 @@ exports.PersistedFragment = {
     },
 };
 
-//# sourceMappingURL=PersistedFragment.js.map
+//# sourceMappingURL=Fragment.js.map

@@ -11,7 +11,7 @@ var TransientDocument_1 = require("./TransientDocument");
 var Request_1 = require("./HTTP/Request");
 var Document_1 = require("./Messaging/Document");
 var ObjectSchema = __importStar(require("./ObjectSchema"));
-var PersistedFragment_1 = require("./PersistedFragment");
+var Fragment_1 = require("./Fragment");
 var PersistedNamedFragment_1 = require("./PersistedNamedFragment");
 var PersistedResource_1 = require("./PersistedResource");
 var Pointer_1 = require("./Pointer");
@@ -415,7 +415,7 @@ function extendCreateFragment(superFunction) {
         var fragment = superFunction.call(this, slugOrObject, slug);
         var id = fragment.id;
         if (URI_1.URI.isBNodeID(id))
-            PersistedFragment_1.PersistedFragment.decorate(fragment);
+            Fragment_1.Fragment.decorate(fragment);
         return fragment;
     };
 }

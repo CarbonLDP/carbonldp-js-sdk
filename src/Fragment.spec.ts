@@ -2,7 +2,7 @@ import { AbstractContext } from "./AbstractContext";
 import { TransientFragment } from "./TransientFragment";
 import { Document } from "./Document";
 
-import { PersistedFragment } from "./PersistedFragment";
+import { Fragment } from "./Fragment";
 
 import { PersistedResource } from "./PersistedResource";
 import {
@@ -18,10 +18,10 @@ import {
 } from "./test/JasmineExtender";
 import * as Utils from "./Utils";
 
-describe( module( "carbonldp/PersistedFragment" ), ():void => {
+describe( module( "carbonldp/Fragment" ), ():void => {
 
 	describe( interfaze(
-		"CarbonLDP.PersistedFragment",
+		"CarbonLDP.Fragment",
 		"Interface that represents a persisted fragment of a persisted document."
 	), ():void => {
 
@@ -38,8 +38,8 @@ describe( module( "carbonldp/PersistedFragment" ), ():void => {
 	} );
 
 	describe( interfaze(
-		"CarbonLDP.PersistedFragmentFactory",
-		"Interface with the factory, decorate and utils methods of a `CarbonLDP.PersistedFragment` object."
+		"CarbonLDP.FragmentFactory",
+		"Interface with the factory, decorate and utils methods of a `CarbonLDP.Fragment` object."
 	), ():void => {
 
 		it( hasMethod(
@@ -47,7 +47,7 @@ describe( module( "carbonldp/PersistedFragment" ), ():void => {
 			"isDecorated", [
 				{ name: "object", type: "object" },
 			],
-			{ type: "object is CarbonLDP.PersistedFragment" }
+			{ type: "object is CarbonLDP.Fragment" }
 		), ():void => {} );
 
 		it( hasMethod(
@@ -55,14 +55,14 @@ describe( module( "carbonldp/PersistedFragment" ), ():void => {
 			"is", [
 				{ name: "object", type: "object" },
 			],
-			{ type: "object is CarbonLDP.PersistedFragment" }
+			{ type: "object is CarbonLDP.Fragment" }
 		), ():void => {} );
 
 		it( hasMethod(
 			OBLIGATORY,
 			"decorate",
 			[ "T extends object" ],
-			"Decorates the object provided with the properties and methods of a `CarbonLDP.PersistedFragment` object.",
+			"Decorates the object provided with the properties and methods of a `CarbonLDP.Fragment` object.",
 			[
 				{ name: "object", type: "object", description: "The object to convert into a persisted fragment." },
 			]
@@ -75,7 +75,7 @@ describe( module( "carbonldp/PersistedFragment" ), ():void => {
 				{ name: "document", type: "CarbonLDP.Document" },
 				{ name: "id", type: "string", optional: true },
 			],
-			{ type: "CarbonLDP.PersistedFragment" }
+			{ type: "CarbonLDP.Fragment" }
 		), ():void => {} );
 
 		it( hasMethod(
@@ -87,16 +87,16 @@ describe( module( "carbonldp/PersistedFragment" ), ():void => {
 				{ name: "document", type: "CarbonLDP.Document" },
 				{ name: "id", type: "string", optional: true },
 			],
-			{ type: "T & CarbonLDP.PersistedFragment" }
+			{ type: "T & CarbonLDP.Fragment" }
 		), ():void => {} );
 
 	} );
 
-	describe( property( STATIC, "PersistedFragment", "CarbonLDP.PersistedFragmentFactory", "Constant that implements the `CarbonLDP.PersistedFragmentFactory` interface." ), ():void => {
+	describe( property( STATIC, "Fragment", "CarbonLDP.FragmentFactory", "Constant that implements the `CarbonLDP.FragmentFactory` interface." ), ():void => {
 
 		it( isDefined(), ():void => {
-			expect( PersistedFragment ).toBeDefined();
-			expect( PersistedFragment ).toEqual( jasmine.any( Object ) );
+			expect( Fragment ).toBeDefined();
+			expect( Fragment ).toEqual( jasmine.any( Object ) );
 		} );
 
 		// TODO: Test `PersistedFragment.isDecorated`
@@ -104,14 +104,14 @@ describe( module( "carbonldp/PersistedFragment" ), ():void => {
 		// TODO: Test `PersistedFragment.is`
 
 		// TODO: Separate in different tests
-		it( "PersistedFragment.decorate", ():void => {
-			expect( PersistedFragment.decorate ).toBeDefined();
-			expect( Utils.isFunction( PersistedFragment.decorate ) ).toBe( true );
+		it( "Fragment.decorate", ():void => {
+			expect( Fragment.decorate ).toBeDefined();
+			expect( Utils.isFunction( Fragment.decorate ) ).toBe( true );
 
 			let spyPersistedDecorator:jasmine.Spy = spyOn( PersistedResource, "decorate" );
 
 			let fragment:TransientFragment = TransientFragment.create( null, "_:01" );
-			let persistedFragment:PersistedFragment = PersistedFragment.decorate( fragment );
+			let persistedFragment:Fragment = Fragment.decorate( fragment );
 
 			expect( persistedFragment ).toBeTruthy();
 			expect( spyPersistedDecorator ).toHaveBeenCalledWith( fragment );
@@ -121,9 +121,9 @@ describe( module( "carbonldp/PersistedFragment" ), ():void => {
 
 		// TODO: Test `PersistedFragment.createFrom`
 
-		describe( "PersistedFragment instance", ():void => {
+		describe( "Fragment instance", ():void => {
 
-			let persistedFragment:PersistedFragment;
+			let persistedFragment:Fragment;
 			beforeEach( ():void => {
 				class MockedContext extends AbstractContext {
 					protected _baseURI:string;
@@ -149,11 +149,11 @@ describe( module( "carbonldp/PersistedFragment" ), ():void => {
 				let document:Document = Document.create( context.documents, "http://example.com/document/" );
 
 				let fragment:TransientFragment = TransientFragment.create( document );
-				persistedFragment = PersistedFragment.decorate( fragment );
+				persistedFragment = Fragment.decorate( fragment );
 			} );
 
 			// TODO: Separate in different tests
-			it( "PersistedFragment.addType", ():void => {
+			it( "Fragment.addType", ():void => {
 				expect( persistedFragment.addType ).toBeDefined();
 				expect( Utils.isFunction( persistedFragment.addType ) ).toBe( true );
 
@@ -191,7 +191,7 @@ describe( module( "carbonldp/PersistedFragment" ), ():void => {
 			} );
 
 			// TODO: Separate in different tests
-			it( "PersistedFragment.hasType", ():void => {
+			it( "Fragment.hasType", ():void => {
 				expect( persistedFragment.hasType ).toBeDefined();
 				expect( Utils.isFunction( persistedFragment.hasType ) ).toBe( true );
 
@@ -233,7 +233,7 @@ describe( module( "carbonldp/PersistedFragment" ), ():void => {
 			} );
 
 			// TODO: Separate in different tests
-			it( "PersistedFragment.removeType", ():void => {
+			it( "Fragment.removeType", ():void => {
 				expect( persistedFragment.removeType ).toBeDefined();
 				expect( Utils.isFunction( persistedFragment.removeType ) ).toBe( true );
 
