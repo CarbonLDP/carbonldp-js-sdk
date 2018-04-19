@@ -2,11 +2,11 @@ import { TransientDocument } from "./TransientDocument";
 import { ObjectSchema } from "./ObjectSchema";
 import { CS } from "./Vocabularies/CS";
 
-export interface ProtectedDocument extends TransientDocument {
+export interface TransientProtectedDocument extends TransientDocument {
 }
 
 
-export interface ProtectedDocumentFactory {
+export interface TransientProtectedDocumentFactory {
 	TYPE:string;
 	SCHEMA:ObjectSchema;
 }
@@ -19,7 +19,7 @@ const SCHEMA:ObjectSchema = {
 	},
 };
 
-export const ProtectedDocument:ProtectedDocumentFactory = {
+export const TransientProtectedDocument:TransientProtectedDocumentFactory = {
 	TYPE: CS.ProtectedDocument,
 	SCHEMA,
 };

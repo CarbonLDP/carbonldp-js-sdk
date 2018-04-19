@@ -7,9 +7,9 @@ var SCHEMA = {
         "@type": "@id",
     },
 };
-exports.ProtectedDocument = {
+exports.TransientProtectedDocument = {
     TYPE: CS_1.CS.ProtectedDocument,
     SCHEMA: SCHEMA,
 };
 
-//# sourceMappingURL=ProtectedDocument.js.map
+//# sourceMappingURL=TransientProtectedDocument.js.map

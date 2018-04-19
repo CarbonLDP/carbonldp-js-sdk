@@ -32,7 +32,7 @@ import { MemberAddedDetails } from "./Messaging/MemberAddedDetails";
 import { MemberRemoved } from "./Messaging/MemberRemoved";
 import { MemberRemovedDetails } from "./Messaging/MemberRemovedDetails";
 import * as ObjectSchema from "./ObjectSchema";
-import { ProtectedDocument } from "./ProtectedDocument";
+import { TransientProtectedDocument } from "./TransientProtectedDocument";
 import { URI } from "./RDF/URI";
 import * as Settings from "./Settings";
 import { ValidationReport } from "./SHACL/ValidationReport";
@@ -210,7 +210,7 @@ export class SDKContext implements Context {
 
 	private registerDefaultObjectSchemas():void {
 		this.extendObjectSchema( TransientDocument.TYPE, TransientDocument.SCHEMA );
-		this.extendObjectSchema( ProtectedDocument.TYPE, ProtectedDocument.SCHEMA );
+		this.extendObjectSchema( TransientProtectedDocument.TYPE, TransientProtectedDocument.SCHEMA );
 
 		this.extendObjectSchema( PlatformMetadata.TYPE, PlatformMetadata.SCHEMA );
 		this.extendObjectSchema( PlatformInstance.TYPE, PlatformInstance.SCHEMA );

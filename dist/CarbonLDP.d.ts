@@ -8,7 +8,7 @@ import * as Errors from "./Errors";
 import { TransientFragment } from "./TransientFragment";
 import { FreeResources } from "./FreeResources";
 import { PersistedProtectedDocument } from "./PersistedProtectedDocument";
-import { ProtectedDocument } from "./ProtectedDocument";
+import { TransientProtectedDocument } from "./TransientProtectedDocument";
 import { ServiceAwareDocument } from "./ServiceAwareDocument";
 import * as HTTP from "./HTTP";
 import * as JSONLD from "./JSONLD";
@@ -60,7 +60,7 @@ export declare class CarbonLDP extends AbstractContext {
     static PersistedProtectedDocument: typeof PersistedProtectedDocument;
     static PersistedResource: typeof PersistedResource;
     static Pointer: typeof Pointer;
-    static ProtectedDocument: typeof ProtectedDocument;
+    static TransientProtectedDocument: typeof TransientProtectedDocument;
     static RDF: typeof RDF;
     static Resource: typeof Resource;
     static SDKContext: typeof SDKContext;

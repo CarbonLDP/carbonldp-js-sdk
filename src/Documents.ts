@@ -81,7 +81,7 @@ import {
 	PointerLibrary,
 	PointerValidator,
 } from "./Pointer";
-import { ProtectedDocument } from "./ProtectedDocument";
+import { TransientProtectedDocument } from "./TransientProtectedDocument";
 import {
 	RDFDocument,
 	RDFDocumentParser,
@@ -153,7 +153,7 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 			if( parentDecorators ) decorators = this._documentDecorators = Utils.MapUtils.extend( decorators, parentDecorators );
 		} else {
 			decorators
-				.set( ProtectedDocument.TYPE, PersistedProtectedDocument.decorate )
+				.set( TransientProtectedDocument.TYPE, PersistedProtectedDocument.decorate )
 				.set( User.TYPE, PersistedUser.decorate )
 				.set( ACL.TYPE, PersistedACL.decorate )
 				.set( Auth.Role.RDF_CLASS, Auth.PersistedRole.Factory.decorate )

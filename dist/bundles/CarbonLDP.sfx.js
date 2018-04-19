@@ -7942,7 +7942,7 @@ var SCHEMA = {
         "@type": "@id",
     },
 };
-exports.ProtectedDocument = {
+exports.TransientProtectedDocument = {
     TYPE: CS_1.CS.ProtectedDocument,
     SCHEMA: SCHEMA,
 };
@@ -8417,7 +8417,7 @@ var MemberAddedDetails_1 = __webpack_require__(187);
 var MemberRemoved_1 = __webpack_require__(188);
 var MemberRemovedDetails_1 = __webpack_require__(189);
 var ObjectSchema = __importStar(__webpack_require__(12));
-var ProtectedDocument_1 = __webpack_require__(92);
+var TransientProtectedDocument_1 = __webpack_require__(92);
 var URI_1 = __webpack_require__(10);
 var ValidationReport_1 = __webpack_require__(190);
 var ValidationResult_1 = __webpack_require__(191);
@@ -8551,7 +8551,7 @@ var SDKContext = (function () {
     };
     SDKContext.prototype.registerDefaultObjectSchemas = function () {
         this.extendObjectSchema(TransientDocument_1.TransientDocument.TYPE, TransientDocument_1.TransientDocument.SCHEMA);
-        this.extendObjectSchema(ProtectedDocument_1.ProtectedDocument.TYPE, ProtectedDocument_1.ProtectedDocument.SCHEMA);
+        this.extendObjectSchema(TransientProtectedDocument_1.TransientProtectedDocument.TYPE, TransientProtectedDocument_1.TransientProtectedDocument.SCHEMA);
         this.extendObjectSchema(PlatformMetadata_1.PlatformMetadata.TYPE, PlatformMetadata_1.PlatformMetadata.SCHEMA);
         this.extendObjectSchema(PlatformInstance_1.PlatformInstance.TYPE, PlatformInstance_1.PlatformInstance.SCHEMA);
         this.extendObjectSchema(AddMemberAction_1.AddMemberAction.TYPE, AddMemberAction_1.AddMemberAction.SCHEMA);
@@ -10610,7 +10610,7 @@ var Fragment_1 = __webpack_require__(55);
 var PersistedProtectedDocument_1 = __webpack_require__(45);
 var PersistedResource_1 = __webpack_require__(56);
 var Pointer_1 = __webpack_require__(22);
-var ProtectedDocument_1 = __webpack_require__(92);
+var TransientProtectedDocument_1 = __webpack_require__(92);
 var Document_2 = __webpack_require__(39);
 var Node_1 = __webpack_require__(25);
 var URI_1 = __webpack_require__(10);
@@ -10648,7 +10648,7 @@ var Documents = (function () {
         }
         else {
             decorators
-                .set(ProtectedDocument_1.ProtectedDocument.TYPE, PersistedProtectedDocument_1.PersistedProtectedDocument.decorate)
+                .set(TransientProtectedDocument_1.TransientProtectedDocument.TYPE, PersistedProtectedDocument_1.PersistedProtectedDocument.decorate)
                 .set(User_1.User.TYPE, PersistedUser_1.PersistedUser.decorate)
                 .set(ACL_1.ACL.TYPE, PersistedACL_1.PersistedACL.decorate)
                 .set(Auth.Role.RDF_CLASS, Auth.PersistedRole.Factory.decorate);
@@ -15192,7 +15192,7 @@ var Errors = __importStar(__webpack_require__(9));
 var TransientFragment_1 = __webpack_require__(36);
 var FreeResources_1 = __webpack_require__(142);
 var PersistedProtectedDocument_1 = __webpack_require__(45);
-var ProtectedDocument_1 = __webpack_require__(92);
+var TransientProtectedDocument_1 = __webpack_require__(92);
 var ServiceAwareDocument_1 = __webpack_require__(122);
 var HTTP = __importStar(__webpack_require__(77));
 var JSONLD = __importStar(__webpack_require__(118));
@@ -15311,7 +15311,7 @@ var CarbonLDP = (function (_super) {
     CarbonLDP.PersistedProtectedDocument = PersistedProtectedDocument_1.PersistedProtectedDocument;
     CarbonLDP.PersistedResource = PersistedResource_1.PersistedResource;
     CarbonLDP.Pointer = Pointer_1.Pointer;
-    CarbonLDP.ProtectedDocument = ProtectedDocument_1.ProtectedDocument;
+    CarbonLDP.TransientProtectedDocument = TransientProtectedDocument_1.TransientProtectedDocument;
     CarbonLDP.RDF = RDF;
     CarbonLDP.Resource = Resource_1.Resource;
     CarbonLDP.SDKContext = SDKContext_1.SDKContext;

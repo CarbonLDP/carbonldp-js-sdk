@@ -30,7 +30,7 @@ import { NamedFragment } from "./NamedFragment";
 import { PersistedProtectedDocument } from "./PersistedProtectedDocument";
 import { PersistedResource } from "./PersistedResource";
 import { Pointer } from "./Pointer";
-import { ProtectedDocument } from "./ProtectedDocument";
+import { TransientProtectedDocument } from "./TransientProtectedDocument";
 import * as RDF from "./RDF";
 import { Resource } from "./Resource";
 import {
@@ -345,11 +345,11 @@ describe( module( "carbonldp/CarbonLDP" ), ():void => {
 
 		it( reexports(
 			STATIC,
-			"ProtectedDocument",
-			"carbonldp/ProtectedDocument#ProtectedDocument"
+			"TransientProtectedDocument",
+			"carbonldp/TransientProtectedDocument#TransientProtectedDocument"
 		), ():void => {
-			expect( CarbonLDP.CarbonLDP.ProtectedDocument ).toBeDefined();
-			expect( CarbonLDP.CarbonLDP.ProtectedDocument ).toBe( ProtectedDocument );
+			expect( CarbonLDP.CarbonLDP.TransientProtectedDocument ).toBeDefined();
+			expect( CarbonLDP.CarbonLDP.TransientProtectedDocument ).toBe( TransientProtectedDocument );
 		} );
 
 		it( reexports(
