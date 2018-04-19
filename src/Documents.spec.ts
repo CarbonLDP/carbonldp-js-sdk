@@ -28,6 +28,7 @@ import {
 } from "./AccessPoint";
 import { BlankNode } from "./BlankNode";
 import { CarbonLDP } from "./CarbonLDP";
+import { Context } from "./Context";
 import { Document } from "./Document";
 
 import { Documents } from "./Documents";
@@ -69,11 +70,31 @@ import { CS } from "./Vocabularies/CS";
 import { LDP } from "./Vocabularies/LDP";
 import { XSD } from "./Vocabularies/XSD";
 
+
 function createPartialMetadata( schema:ObjectSchema.ObjectSchema ):PartialMetadata {
 	const digestedSchema:ObjectSchema.DigestedObjectSchema = ObjectSchema.ObjectSchemaDigester.digestSchema( schema );
 	digestedSchema.properties.forEach( definition => ObjectSchema.ObjectSchemaUtils.resolveProperty( digestedSchema, definition, true ) );
 	return new PartialMetadata( digestedSchema );
 }
+
+function createMockPersistedProtectedDocument<T extends {
+	id:string,
+}>( data:{
+	context:Context,
+	properties:T,
+} ):PersistedProtectedDocument & T {
+	const document:PersistedDocument = data.context.documents.register( data.properties.id );
+	const extendedDocument:PersistedDocument & T = Object.assign<PersistedDocument, T>( document, data.properties );
+
+	Object
+		.keys( data.properties )
+		.filter( key => key.startsWith( "$" ) || key.startsWith( "_" ) )
+		.forEach( key => Object.defineProperty( extendedDocument, key, { enumerable: false, configurable: true } ) )
+	;
+
+	return PersistedProtectedDocument.decorate( extendedDocument, data.context.documents );
+}
+
 
 describe( module( "carbonldp/Documents" ), ():void => {
 
@@ -11397,7 +11418,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 
 		} );
 
-		xdescribe( method( INSTANCE, "refresh" ), ():void => {
+		describe( method( INSTANCE, "refresh" ), ():void => {
 
 			it( hasSignature(
 				[ "T extends object" ],
@@ -11708,6 +11729,16 @@ describe( module( "carbonldp/Documents" ), ():void => {
 										.addObject( variableHelper( "document" ) )
 									)
 								)
+								.addTriple( new SubjectToken( variableHelper( "accessPointsMetadata" ) )
+									.addPredicate( new PredicateToken( "a" )
+										.addObject( new IRIToken( C.VolatileResource ) )
+										.addObject( new IRIToken( C.AccessPointsMetadata ) )
+									)
+									.addPredicate( new PredicateToken( variableHelper( "document__accessPoints__hasMemberRelation" ) )
+										.addObject( variableHelper( "document__accessPoints" ) ) )
+									.addPredicate( new PredicateToken( variableHelper( "document__property2__accessPoints__hasMemberRelation" ) )
+										.addObject( variableHelper( "document__property2__accessPoints" ) ) )
+								)
 								.addTriple( new SubjectToken( variableHelper( "document" ) )
 									.addPredicate( new PredicateToken( "a" )
 										.addObject( variableHelper( "document__types" ) )
@@ -11738,6 +11769,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 								)
 
 								.addPattern( new BindToken( "BNODE()", variableHelper( "queryMetadata" ) ) )
+								.addPattern( `{ ${ new BindToken( "BNODE()", "?accessPointsMetadata" as any ) } }` as any )
 								.addPattern( new ValuesToken()
 									.addValues( variableHelper( "document" ), new IRIToken( persistedDocument.id ) )
 								)
@@ -11806,6 +11838,30 @@ describe( module( "carbonldp/Documents" ), ():void => {
 											)
 										)
 										.addPattern( new FilterToken( "datatype( ?document__property1 ) = <http://www.w3.org/2001/XMLSchema#string>" ) )
+								)
+								.addPattern( new OptionalToken()
+									.addPattern( new SubjectToken( variableHelper( "document" ) )
+										.addPredicate( new PredicateToken( new IRIToken( C.accessPoint ) )
+											.addObject( variableHelper( "document__accessPoints" ) )
+										)
+									)
+									.addPattern( new SubjectToken( variableHelper( "document__accessPoints" ) )
+										.addPredicate( new PredicateToken( new IRIToken( LDP.hasMemberRelation ) )
+											.addObject( variableHelper( "document__accessPoints__hasMemberRelation" ) )
+										)
+									)
+								)
+								.addPattern( new OptionalToken()
+									.addPattern( new SubjectToken( variableHelper( "document__property2" ) )
+										.addPredicate( new PredicateToken( new IRIToken( C.accessPoint ) )
+											.addObject( variableHelper( "document__property2__accessPoints" ) )
+										)
+									)
+									.addPattern( new SubjectToken( variableHelper( "document__property2__accessPoints" ) )
+										.addPredicate( new PredicateToken( new IRIToken( LDP.hasMemberRelation ) )
+											.addObject( variableHelper( "document__property2__accessPoints__hasMemberRelation" ) )
+										)
+									)
 								)
 							)
 
@@ -11897,6 +11953,16 @@ describe( module( "carbonldp/Documents" ), ():void => {
 											.addObject( variableHelper( "document" ) )
 										)
 									)
+									.addTriple( new SubjectToken( variableHelper( "accessPointsMetadata" ) )
+										.addPredicate( new PredicateToken( "a" )
+											.addObject( new IRIToken( C.VolatileResource ) )
+											.addObject( new IRIToken( C.AccessPointsMetadata ) )
+										)
+										.addPredicate( new PredicateToken( variableHelper( "document__accessPoints__hasMemberRelation" ) )
+											.addObject( variableHelper( "document__accessPoints" ) ) )
+										.addPredicate( new PredicateToken( variableHelper( "document__property2__accessPoints__hasMemberRelation" ) )
+											.addObject( variableHelper( "document__property2__accessPoints" ) ) )
+									)
 									.addTriple( new SubjectToken( variableHelper( "document" ) )
 										.addPredicate( new PredicateToken( "a" )
 											.addObject( variableHelper( "document__types" ) )
@@ -11918,6 +11984,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 									)
 
 									.addPattern( new BindToken( "BNODE()", variableHelper( "queryMetadata" ) ) )
+									.addPattern( `{ ${ new BindToken( "BNODE()", "?accessPointsMetadata" as any ) } }` as any )
 									.addPattern( new ValuesToken()
 										.addValues( variableHelper( "document" ), new IRIToken( persistedDocument.id ) )
 									)
@@ -11960,6 +12027,30 @@ describe( module( "carbonldp/Documents" ), ():void => {
 												)
 											)
 											.addPattern( new FilterToken( "datatype( ?document__property1 ) = <http://www.w3.org/2001/XMLSchema#string>" ) )
+									)
+									.addPattern( new OptionalToken()
+										.addPattern( new SubjectToken( variableHelper( "document" ) )
+											.addPredicate( new PredicateToken( new IRIToken( C.accessPoint ) )
+												.addObject( variableHelper( "document__accessPoints" ) )
+											)
+										)
+										.addPattern( new SubjectToken( variableHelper( "document__accessPoints" ) )
+											.addPredicate( new PredicateToken( new IRIToken( LDP.hasMemberRelation ) )
+												.addObject( variableHelper( "document__accessPoints__hasMemberRelation" ) )
+											)
+										)
+									)
+									.addPattern( new OptionalToken()
+										.addPattern( new SubjectToken( variableHelper( "document__property2" ) )
+											.addPredicate( new PredicateToken( new IRIToken( C.accessPoint ) )
+												.addObject( variableHelper( "document__property2__accessPoints" ) )
+											)
+										)
+										.addPattern( new SubjectToken( variableHelper( "document__property2__accessPoints" ) )
+											.addPredicate( new PredicateToken( new IRIToken( LDP.hasMemberRelation ) )
+												.addObject( variableHelper( "document__property2__accessPoints__hasMemberRelation" ) )
+											)
+										)
 									)
 								)
 
@@ -12283,6 +12374,127 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					} ).catch( done.fail );
 				} );
 
+
+				it( "should refresh access points from metadata", ( done:DoneFn ):void => {
+					jasmine.Ajax.stubRequest( "https://example.com/resource/" ).andReturn( {
+						status: 200,
+						responseText: `[ {
+							"@id":"_:1",
+							"@type": [
+								"${ C.VolatileResource }",
+								"${ C.QueryMetadata }"
+							],
+							"${ C.target }": [ {
+								"@id":"https://example.com/resource/"
+							} ]
+						}, {
+							"@id": "_:2",
+							"@type": [
+								"${ C.ResponseMetadata }",
+								"${ C.VolatileResource }"
+							],
+							"${ C.documentMetadata }": [ {
+								"@id": "_:3"
+							} ]
+						}, {
+							"@id": "_:3",
+							"@type": [
+								"${ C.DocumentMetadata }",
+								"${ C.VolatileResource }"
+							],
+							"${ C.eTag }": [ {
+								"@value": "\\"1-12345\\""
+							} ],
+							"${ C.relatedDocument }": [ {
+								"@id": "https://example.com/resource/"
+							} ]
+						}, {
+							"@id": "_:4",
+							"@type": [
+								"${ C.VolatileResource }",
+								"${ C.AccessPointsMetadata }"
+							],
+							"https://example.com/ns#relation-1": [ {
+								"@id": "https://example.com/resource/relation-1/"
+							} ],
+							"https://example.com/ns#relation3": {
+								"@id": "https://example.com/resource/relation-3/"
+							}
+						}, {
+							"@id": "https://example.com/resource/",
+							"@graph": [ {
+								"@id": "https://example.com/resource/",
+								"@type": [
+									"${ C.Document }",
+									"https://example.com/ns#Resource",
+									"${ LDP.BasicContainer }",
+									"${ LDP.RDFSource }"
+								]
+							} ]
+						} ]`,
+					} );
+
+					interface MyDocument {
+						$relation1?:PersistedAccessPoint;
+						$relation2?:PersistedAccessPoint;
+						$relation3?:PersistedAccessPoint;
+					}
+
+					context.extendObjectSchema( "https://example.com/ns#Resource", {
+						"relation1": {
+							"@id": "https://example.com/ns#relation-1",
+							"@type": "@id",
+							"@container": "@set",
+						},
+						"relation2": {
+							"@id": "https://example.com/ns#relation-2",
+							"@type": "@id",
+						},
+					} );
+
+					const persistedDocument:PersistedDocument & MyDocument = createMockPersistedProtectedDocument( {
+						context, properties: {
+							id: "https://example.com/resource/",
+							_partialMetadata: createPartialMetadata( {
+								"@vocab": "https://example.com/ns#",
+							} ),
+							$relation1: createMockPersistedProtectedDocument( {
+								context, properties: {
+									id: "https://example.com/resource/relation-1/",
+								},
+							} ),
+							$relation2: createMockPersistedProtectedDocument( {
+								context, properties: {
+									id: "https://example.com/resource/relation-2/",
+								},
+							} ),
+						},
+					} );
+
+					Utils.promiseMethod( () => {
+						return documents.refresh<MyDocument>( persistedDocument );
+					} ).then( ( document ) => {
+						expect( PersistedDocument.is( document ) ).toBe( true );
+
+						// Updated
+						expect( document ).toEqual( jasmine.objectContaining( {
+							$relation1: jasmine.objectContaining( { id: "https://example.com/resource/relation-1/" } ) as any,
+							$relation3: jasmine.objectContaining( { id: "https://example.com/resource/relation-3/" } ) as any,
+						} ) );
+
+						expect( document.$relation1 ).toEqual( anyThatMatches( PersistedProtectedDocument.is, "PersistedProtectedDocument" ) as any );
+						expect( document.$relation3 ).toEqual( anyThatMatches( PersistedProtectedDocument.is, "PersistedProtectedDocument" ) as any );
+
+
+						// Removed
+						expect( document ).not.toEqual( jasmine.objectContaining( {
+							$relation2: jasmine.objectContaining( { id: "https://example.com/resource/relation-2/" } ) as any,
+						} ) );
+
+						done();
+					} ).catch( done.fail );
+				} );
+
 			} );
 
 			describe( "When Documents does not have a context", ():void => {
@@ -12469,6 +12681,16 @@ describe( module( "carbonldp/Documents" ), ():void => {
 										.addObject( variableHelper( "document" ) )
 									)
 								)
+								.addTriple( new SubjectToken( variableHelper( "accessPointsMetadata" ) )
+									.addPredicate( new PredicateToken( "a" )
+										.addObject( new IRIToken( C.VolatileResource ) )
+										.addObject( new IRIToken( C.AccessPointsMetadata ) )
+									)
+									.addPredicate( new PredicateToken( variableHelper( "document__accessPoints__hasMemberRelation" ) )
+										.addObject( variableHelper( "document__accessPoints" ) ) )
+									.addPredicate( new PredicateToken( variableHelper( "document__property2__accessPoints__hasMemberRelation" ) )
+										.addObject( variableHelper( "document__property2__accessPoints" ) ) )
+								)
 								.addTriple( new SubjectToken( variableHelper( "document" ) )
 									.addPredicate( new PredicateToken( "a" )
 										.addObject( variableHelper( "document__types" ) )
@@ -12499,6 +12721,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 								)
 
 								.addPattern( new BindToken( "BNODE()", variableHelper( "queryMetadata" ) ) )
+								.addPattern( `{ ${ new BindToken( "BNODE()", "?accessPointsMetadata" as any ) } }` as any )
 								.addPattern( new ValuesToken()
 									.addValues( variableHelper( "document" ), new IRIToken( persistedDocument.id ) )
 								)
@@ -12568,6 +12791,30 @@ describe( module( "carbonldp/Documents" ), ():void => {
 										)
 										.addPattern( new FilterToken( "datatype( ?document__property1 ) = <http://www.w3.org/2001/XMLSchema#string>" ) )
 								)
+								.addPattern( new OptionalToken()
+									.addPattern( new SubjectToken( variableHelper( "document" ) )
+										.addPredicate( new PredicateToken( new IRIToken( C.accessPoint ) )
+											.addObject( variableHelper( "document__accessPoints" ) )
+										)
+									)
+									.addPattern( new SubjectToken( variableHelper( "document__accessPoints" ) )
+										.addPredicate( new PredicateToken( new IRIToken( LDP.hasMemberRelation ) )
+											.addObject( variableHelper( "document__accessPoints__hasMemberRelation" ) )
+										)
+									)
+								)
+								.addPattern( new OptionalToken()
+									.addPattern( new SubjectToken( variableHelper( "document__property2" ) )
+										.addPredicate( new PredicateToken( new IRIToken( C.accessPoint ) )
+											.addObject( variableHelper( "document__property2__accessPoints" ) )
+										)
+									)
+									.addPattern( new SubjectToken( variableHelper( "document__property2__accessPoints" ) )
+										.addPredicate( new PredicateToken( new IRIToken( LDP.hasMemberRelation ) )
+											.addObject( variableHelper( "document__property2__accessPoints__hasMemberRelation" ) )
+										)
+									)
+								)
 						) );
 
 						done();
@@ -12578,7 +12825,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 
 		} );
 
-		xdescribe( method( INSTANCE, "saveAndRefresh" ), ():void => {
+		describe( method( INSTANCE, "saveAndRefresh" ), ():void => {
 
 			it( hasSignature(
 				[ "T extends object" ],

@@ -1188,6 +1188,42 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 					.compactDocuments( rdfDocuments, targetDocuments );
 
 
+				const resources:Map<string, Resource> = new Map<string, Resource>();
+				const getResource:( resourceURI:string ) => Resource = resourceURI => {
+					if( resources.has( resourceURI ) ) return resources.get( resourceURI );
+					const resource:Resource = this.register( resourceURI );
+
+					// Delete existing access points
+					Object
+						.getOwnPropertyNames( resource )
+						.filter( key => key.startsWith( "$" ) )
+						.filter( key => ! resource.propertyIsEnumerable( key ) )
+						.forEach( key => delete resource[ key ] )
+					;
+
+					resources.set( resourceURI, resource );
+					return resource;
+				};
+
+				type ResourceData = { resource:Resource, schema:DigestedObjectSchema, uris:Map<string, string> };
+				const resourcesData:Map<string, ResourceData> = new Map();
+				const getResourcesData:( resourceURI:string ) => ResourceData = resourceURI => {
+					if( resourcesData.has( resourceURI ) ) return resourcesData.get( resourceURI );
+
+					const resource:Resource = getResource( resourceURI );
+					const schema:DigestedObjectSchema = this._getDigestedObjectSchema( resource.types, resource.id );
+					const uris:Map<string, string> = JSONLDConverter.getPropertyURINameMap( schema );
+
+					const resourceData:ResourceData = {
+						resource,
+						schema,
+						uris,
+					};
+
+					resourcesData.set( resourceURI, resourceData );
+					return resourceData;
+				};
+
 				freeResources
 					.filter( AccessPointsMetadata.is )
 					.forEach( metadata => {
@@ -1198,43 +1234,7 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 								const pointers:Pointer[] = Array.isArray( metadata[ relationURI ] ) ?
 									metadata[ relationURI ] : [ metadata[ relationURI ] ];
 
-								const resources:Map<string, Resource> = new Map<string, Resource>();
-								const getResource:( child:Pointer ) => Resource = child => {
-									if( resources.has( child.id ) ) return resources.get( child.id );
-
-									const pointer:Pointer = this.getPointer( child
-										.id
-										.split( "/" )
-										.slice( 0, - 2 )
-										.concat( "" )
-										.join( "/" )
-									);
-									const resource:Resource = Resource.decorate( pointer );
-
-									resources.set( child.id, resource );
-									return resource;
-								};
-
-								type ResourceData = { schema:DigestedObjectSchema, uris:Map<string, string> };
-								const resourcesData:Map<string, ResourceData> = new Map();
-								const getResourcesData:( resource:Resource ) => ResourceData = resource => {
-									if( resourcesData.has( resource.id ) ) return resourcesData.get( resource.id );
-
-									const resourceSchema:DigestedObjectSchema = this._getDigestedObjectSchema( resource.types, resource.id );
-									const resourceURIsMap:Map<string, string> = JSONLDConverter.getPropertyURINameMap( resourceSchema );
-
-									const resourceData:ResourceData = {
-										uris: resourceURIsMap,
-										schema: resourceSchema,
-									};
-									resourcesData.set( resource.id, resourceData );
-
-									return resourceData;
-								};
-
-								const compactRelation:( resource:Resource ) => string = ( resource ) => {
-									const { uris, schema } = getResourcesData( resource );
-
+								const compactRelation:( schema:DigestedObjectSchema, uris:Map<string, string> ) => string = ( schema, uris ) => {
 									if( uris.has( relationURI ) ) return uris.get( relationURI );
 									if( schema.vocab ) return URI.getRelativeURI( relationURI, schema.vocab );
 
@@ -1242,13 +1242,20 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 								};
 
 								pointers.forEach( pointer => {
-									const resource:Resource = getResource( pointer );
-									const relationName:string = compactRelation( resource );
+									const resourceURI:string = pointer.id
+										.split( "/" )
+										.slice( 0, - 2 )
+										.concat( "" )
+										.join( "/" );
+
+									const { resource, schema, uris } = getResourcesData( resourceURI );
+									const relationName:string = compactRelation( schema, uris );
 
 									const accessPoint:PersistedAccessPoint = PersistedProtectedDocument
 										.decorate( pointer, this );
 
 									Object.defineProperty( resource, "$" + relationName, {
+										enumerable: false,
 										configurable: true,
 										value: accessPoint,
 									} );

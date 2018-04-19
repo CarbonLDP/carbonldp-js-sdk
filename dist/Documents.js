@@ -43,7 +43,6 @@ var ProtectedDocument_1 = require("./ProtectedDocument");
 var Document_2 = require("./RDF/Document");
 var Node_1 = require("./RDF/Node");
 var URI_1 = require("./RDF/URI");
-var Resource_1 = require("./Resource");
 var Builder_1 = require("./SPARQL/Builder");
 var PartialMetadata_1 = require("./SPARQL/QueryDocument/PartialMetadata");
 var QueryContextBuilder_1 = require("./SPARQL/QueryDocument/QueryContextBuilder");
@@ -957,6 +956,34 @@ var Documents = (function () {
                 .filter(function (x) { return targetSet.has(x["@id"]); });
             var documents = new Compacter_1.JSONLDCompacter(_this, targetName, queryContext)
                 .compactDocuments(rdfDocuments, targetDocuments);
+            var resources = new Map();
+            var getResource = function (resourceURI) {
+                if (resources.has(resourceURI))
+                    return resources.get(resourceURI);
+                var resource = _this.register(resourceURI);
+                Object
+                    .getOwnPropertyNames(resource)
+                    .filter(function (key) { return key.startsWith("$"); })
+                    .filter(function (key) { return !resource.propertyIsEnumerable(key); })
+                    .forEach(function (key) { return delete resource[key]; });
+                resources.set(resourceURI, resource);
+                return resource;
+            };
+            var resourcesData = new Map();
+            var getResourcesData = function (resourceURI) {
+                if (resourcesData.has(resourceURI))
+                    return resourcesData.get(resourceURI);
+                var resource = getResource(resourceURI);
+                var schema = _this._getDigestedObjectSchema(resource.types, resource.id);
+                var uris = Converter_1.JSONLDConverter.getPropertyURINameMap(schema);
+                var resourceData = {
+                    resource: resource,
+                    schema: schema,
+                    uris: uris,
+                };
+                resourcesData.set(resourceURI, resourceData);
+                return resourceData;
+            };
             freeResources
                 .filter(LDP_1.AccessPointsMetadata.is)
                 .forEach(function (metadata) {
@@ -965,35 +992,7 @@ var Documents = (function () {
                     .forEach(function (relationURI) {
                     var pointers = Array.isArray(metadata[relationURI]) ?
                         metadata[relationURI] : [metadata[relationURI]];
-                    var resources = new Map();
-                    var getResource = function (child) {
-                        if (resources.has(child.id))
-                            return resources.get(child.id);
-                        var pointer = _this.getPointer(child
-                            .id
-                            .split("/")
-                            .slice(0, -2)
-                            .concat("")
-                            .join("/"));
-                        var resource = Resource_1.Resource.decorate(pointer);
-                        resources.set(child.id, resource);
-                        return resource;
-                    };
-                    var resourcesData = new Map();
-                    var getResourcesData = function (resource) {
-                        if (resourcesData.has(resource.id))
-                            return resourcesData.get(resource.id);
-                        var resourceSchema = _this._getDigestedObjectSchema(resource.types, resource.id);
-                        var resourceURIsMap = Converter_1.JSONLDConverter.getPropertyURINameMap(resourceSchema);
-                        var resourceData = {
-                            uris: resourceURIsMap,
-                            schema: resourceSchema,
-                        };
-                        resourcesData.set(resource.id, resourceData);
-                        return resourceData;
-                    };
-                    var compactRelation = function (resource) {
-                        var _a = getResourcesData(resource), uris = _a.uris, schema = _a.schema;
+                    var compactRelation = function (schema, uris) {
                         if (uris.has(relationURI))
                             return uris.get(relationURI);
                         if (schema.vocab)
@@ -1001,11 +1000,17 @@ var Documents = (function () {
                         return relationURI;
                     };
                     pointers.forEach(function (pointer) {
-                        var resource = getResource(pointer);
-                        var relationName = compactRelation(resource);
+                        var resourceURI = pointer.id
+                            .split("/")
+                            .slice(0, -2)
+                            .concat("")
+                            .join("/");
+                        var _a = getResourcesData(resourceURI), resource = _a.resource, schema = _a.schema, uris = _a.uris;
+                        var relationName = compactRelation(schema, uris);
                         var accessPoint = PersistedProtectedDocument_1.PersistedProtectedDocument
                             .decorate(pointer, _this);
                         Object.defineProperty(resource, "$" + relationName, {
+                            enumerable: false,
                             configurable: true,
                             value: accessPoint,
                         });
