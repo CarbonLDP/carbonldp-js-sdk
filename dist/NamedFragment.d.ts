@@ -1,8 +1,8 @@
 import { TransientDocument } from "./TransientDocument";
-import { Fragment } from "./Fragment";
+import { TransientFragment } from "./TransientFragment";
 import { ModelDecorator } from "./ModelDecorator";
 import { ModelFactory } from "./ModelFactory";
-export interface NamedFragment extends Fragment {
+export interface NamedFragment extends TransientFragment {
     slug: string;
 }
 export interface NamedFragmentFactory extends ModelFactory<NamedFragment>, ModelDecorator<NamedFragment> {

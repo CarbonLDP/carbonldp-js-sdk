@@ -7,7 +7,7 @@ import { BlankNode } from "./BlankNode";
 import { TransientDocument } from "./TransientDocument";
 import { Documents } from "./Documents";
 import * as Errors from "./Errors";
-import { Fragment } from "./Fragment";
+import { TransientFragment } from "./TransientFragment";
 import { FreeResources } from "./FreeResources";
 import { PersistedProtectedDocument } from "./PersistedProtectedDocument";
 import { ProtectedDocument } from "./ProtectedDocument";
@@ -57,7 +57,7 @@ export class CarbonLDP extends AbstractContext {
 	static TransientDocument:typeof TransientDocument = TransientDocument;
 	static Documents:typeof Documents = Documents;
 	static Errors:typeof Errors = Errors;
-	static Fragment:typeof Fragment = Fragment;
+	static TransientFragment:typeof TransientFragment = TransientFragment;
 	static FreeResources:typeof FreeResources = FreeResources;
 	static HTTP:typeof HTTP = HTTP;
 	static JSONLD:typeof JSONLD = JSONLD;

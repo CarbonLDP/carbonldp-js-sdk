@@ -1,6 +1,6 @@
 import { TransientDocument } from "../TransientDocument";
 import { Documents } from "../Documents";
-import { Fragment } from "../Fragment";
+import { TransientFragment } from "../TransientFragment";
 import { Document } from "../Document";
 import { Pointer } from "../Pointer";
 import {
@@ -445,7 +445,7 @@ describe( module( "carbonldp/Auth/ACL" ), ():void => {
 		describe( "ACL instance", ():void => {
 			let acl:ACL;
 
-			function getACEsOf( subject:string, fragments:Fragment[] ):ACE[] {
+			function getACEsOf( subject:string, fragments:TransientFragment[] ):ACE[] {
 				return <ACE[]> fragments.filter( fragment => {
 					let ids:string[] = Pointer.getIDs( (<ACE> fragment).subjects );
 					return ids.indexOf( subject ) !== - 1;
@@ -472,7 +472,7 @@ describe( module( "carbonldp/Auth/ACL" ), ():void => {
 
 				// TODO: Separate in different tests
 				it( "should test when subject, subjectClass and a permission", ():void => {
-					let fragments:Fragment[];
+					let fragments:TransientFragment[];
 					let aces:ACE[];
 					let ace:ACE;
 
@@ -535,7 +535,7 @@ describe( module( "carbonldp/Auth/ACL" ), ():void => {
 
 				// TODO: Separate in different tests
 				it( "should test when subject, subjectClass and permissions", ():void => {
-					let fragments:Fragment[];
+					let fragments:TransientFragment[];
 					let aces:ACE[];
 					let ace:ACE;
 
@@ -617,7 +617,7 @@ describe( module( "carbonldp/Auth/ACL" ), ():void => {
 
 				// TODO: Separate in different tests
 				it( "should test when subjects, subjectClass and a permission", ():void => {
-					let fragments:Fragment[];
+					let fragments:TransientFragment[];
 					let aces:ACE[];
 					let ace:ACE;
 
@@ -717,7 +717,7 @@ describe( module( "carbonldp/Auth/ACL" ), ():void => {
 
 				// TODO: Separate in different tests
 				it( "should test when subject, subjectClass and permissions", ():void => {
-					let fragments:Fragment[];
+					let fragments:TransientFragment[];
 					let aces:ACE[];
 					let ace:ACE;
 
@@ -983,7 +983,7 @@ describe( module( "carbonldp/Auth/ACL" ), ():void => {
 
 				// TODO: Separate in different tests
 				it( "should test when subject, subjectClass and a permission", ():void => {
-					let fragments:Fragment[];
+					let fragments:TransientFragment[];
 					let aces:ACE[];
 					let ace:ACE;
 
@@ -1046,7 +1046,7 @@ describe( module( "carbonldp/Auth/ACL" ), ():void => {
 
 				// TODO: Separate in different tests
 				it( "should test when subject, subjectClass and permissions", ():void => {
-					let fragments:Fragment[];
+					let fragments:TransientFragment[];
 					let aces:ACE[];
 					let ace:ACE;
 
@@ -1128,7 +1128,7 @@ describe( module( "carbonldp/Auth/ACL" ), ():void => {
 
 				// TODO: Separate in different tests
 				it( "should test when subjects, subjectClass and a permission", ():void => {
-					let fragments:Fragment[];
+					let fragments:TransientFragment[];
 					let aces:ACE[];
 					let ace:ACE;
 
@@ -1228,7 +1228,7 @@ describe( module( "carbonldp/Auth/ACL" ), ():void => {
 
 				// TODO: Separate in different tests
 				it( "should test when subjects, subjectClass and permissions", ():void => {
-					let fragments:Fragment[];
+					let fragments:TransientFragment[];
 					let aces:ACE[];
 					let ace:ACE;
 
@@ -1495,7 +1495,7 @@ describe( module( "carbonldp/Auth/ACL" ), ():void => {
 
 				// TODO: Separate in different tests
 				it( "should test when granting, subject, subjectClass and a permission", ():void => {
-					let fragments:Fragment[];
+					let fragments:TransientFragment[];
 					let aces:ACE[];
 					let ace:ACE;
 
@@ -1617,7 +1617,7 @@ describe( module( "carbonldp/Auth/ACL" ), ():void => {
 
 				// TODO: Separate in different tests
 				it( "should test when granting, subject, subjectClass and permissions", ():void => {
-					let fragments:Fragment[];
+					let fragments:TransientFragment[];
 					let aces:ACE[];
 					let ace:ACE;
 
@@ -1777,7 +1777,7 @@ describe( module( "carbonldp/Auth/ACL" ), ():void => {
 
 				// TODO: Separate in different tests
 				it( "should test when granting, subjects, subjectClass and a permission", ():void => {
-					let fragments:Fragment[];
+					let fragments:TransientFragment[];
 					let aces:ACE[];
 					let ace:ACE;
 
@@ -1973,7 +1973,7 @@ describe( module( "carbonldp/Auth/ACL" ), ():void => {
 
 				// TODO: Separate in different tests
 				it( "should test when granting, subjects, subjectClass and permissions", ():void => {
-					let fragments:Fragment[];
+					let fragments:TransientFragment[];
 					let aces:ACE[];
 					let ace:ACE;
 

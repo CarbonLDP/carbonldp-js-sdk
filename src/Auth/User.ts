@@ -1,5 +1,5 @@
 import { TransientDocument } from "../TransientDocument";
-import { Fragment } from "../Fragment";
+import { TransientFragment } from "../TransientFragment";
 import { ObjectSchema } from "../ObjectSchema";
 import {
 	hasFunction,
@@ -18,9 +18,9 @@ export interface UserBase {
 
 export interface User extends TransientDocument {
 	name?:string;
-	credentials?:Fragment & UsernameAndPasswordCredentials;
+	credentials?:TransientFragment & UsernameAndPasswordCredentials;
 
-	updateCredentials( username?:string, password?:string ):Fragment & UsernameAndPasswordCredentials;
+	updateCredentials( username?:string, password?:string ):TransientFragment & UsernameAndPasswordCredentials;
 }
 
 

@@ -8,7 +8,7 @@ import * as CarbonLDP from "./CarbonLDP";
 import { TransientDocument } from "./TransientDocument";
 import { Documents } from "./Documents";
 import * as Errors from "./Errors";
-import { Fragment } from "./Fragment";
+import { TransientFragment } from "./TransientFragment";
 import { FreeResources } from "./FreeResources";
 import * as HTTP from "./HTTP";
 import * as JSONLD from "./JSONLD";
@@ -156,11 +156,11 @@ describe( module( "carbonldp/CarbonLDP" ), ():void => {
 
 		it( reexports(
 			STATIC,
-			"Fragment",
-			"carbonldp/Fragment#Fragment"
+			"TransientFragment",
+			"carbonldp/TransientFragment#TransientFragment"
 		), ():void => {
-			expect( CarbonLDP.CarbonLDP.Fragment ).toBeDefined();
-			expect( CarbonLDP.CarbonLDP.Fragment ).toBe( Fragment );
+			expect( CarbonLDP.CarbonLDP.TransientFragment ).toBeDefined();
+			expect( CarbonLDP.CarbonLDP.TransientFragment ).toBe( TransientFragment );
 		} );
 
 		it( reexports(

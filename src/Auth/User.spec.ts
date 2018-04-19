@@ -2,7 +2,7 @@ import { anyThatMatches } from "../../test/helpers/jasmine-equalities";
 import { StrictMinus } from "../../test/helpers/types";
 import { BlankNode } from "../BlankNode";
 import { TransientDocument } from "../TransientDocument";
-import { Fragment } from "../Fragment";
+import { TransientFragment } from "../TransientFragment";
 import {
 	extendsClass,
 	hasMethod,
@@ -82,7 +82,7 @@ describe( module( "carbonldp/Auth/User" ), ():void => {
 			"credentials",
 			"CarbonLDP.Auth.UsernameAndPasswordCredentials"
 		), ():void => {
-			const target:User[ "credentials" ] = {} as Fragment & UsernameAndPasswordCredentials;
+			const target:User[ "credentials" ] = {} as TransientFragment & UsernameAndPasswordCredentials;
 			expect( target ).toBeDefined();
 		} );
 
@@ -95,7 +95,7 @@ describe( module( "carbonldp/Auth/User" ), ():void => {
 				{ name: "password", type: "string" },
 			]
 		), ():void => {
-			const target:User[ "updateCredentials" ] = ( username?:string, password?:string ):Fragment & UsernameAndPasswordCredentials => null;
+			const target:User[ "updateCredentials" ] = ( username?:string, password?:string ):TransientFragment & UsernameAndPasswordCredentials => null;
 			expect( target ).toBeDefined();
 		} );
 

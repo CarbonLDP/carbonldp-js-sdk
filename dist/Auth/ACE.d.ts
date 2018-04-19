@@ -1,8 +1,8 @@
-import { Fragment } from "../Fragment";
+import { TransientFragment } from "../TransientFragment";
 import { ModelFactory } from "../ModelFactory";
 import { ObjectSchema } from "../ObjectSchema";
 import { Pointer } from "../Pointer";
-export interface ACE extends Fragment {
+export interface ACE extends TransientFragment {
     granting: boolean;
     permissions: Pointer[];
     subjects: Pointer[];

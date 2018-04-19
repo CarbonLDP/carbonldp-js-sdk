@@ -3,7 +3,7 @@ import { QueryClause } from "sparqler/clauses";
 import { AccessPointBase } from "./TransientAccessPoint";
 import { TransientDocument } from "./TransientDocument";
 import { Documents } from "./Documents";
-import { Fragment } from "./Fragment";
+import { TransientFragment } from "./TransientFragment";
 import {
 	GETOptions,
 	RequestOptions,
@@ -609,13 +609,13 @@ function extendRemoveType( superFunction:( type:string ) => void ):( type:string
 	};
 }
 
-function extendCreateFragment( superFunction:() => Fragment ):() => PersistedFragment;
-function extendCreateFragment( superFunction:( slug:string ) => Fragment ):( slug:string ) => PersistedFragment;
-function extendCreateFragment( superFunction:( object:object, slug:string ) => Fragment ):( slug:string, object:object ) => PersistedFragment;
-function extendCreateFragment( superFunction:( object:object ) => Fragment ):( object:object ) => PersistedFragment;
-function extendCreateFragment( superFunction:( slugOrObject?:any, slug?:string ) => Fragment ):any {
+function extendCreateFragment( superFunction:() => TransientFragment ):() => PersistedFragment;
+function extendCreateFragment( superFunction:( slug:string ) => TransientFragment ):( slug:string ) => PersistedFragment;
+function extendCreateFragment( superFunction:( object:object, slug:string ) => TransientFragment ):( slug:string, object:object ) => PersistedFragment;
+function extendCreateFragment( superFunction:( object:object ) => TransientFragment ):( object:object ) => PersistedFragment;
+function extendCreateFragment( superFunction:( slugOrObject?:any, slug?:string ) => TransientFragment ):any {
 	return function( slugOrObject?:any, slug?:string ):any {
-		let fragment:Fragment = superFunction.call( this, slugOrObject, slug );
+		let fragment:TransientFragment = superFunction.call( this, slugOrObject, slug );
 		let id:string = fragment.id;
 
 		if( URI.isBNodeID( id ) ) PersistedFragment.decorate( fragment );

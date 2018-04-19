@@ -1,4 +1,4 @@
-import { Fragment } from "../Fragment";
+import { TransientFragment } from "../TransientFragment";
 import { Pointer } from "../Pointer";
 import {
 	extendsClass,
@@ -29,9 +29,9 @@ describe( module( "carbonldp/Auth/ACE" ), ():void => {
 		"Interface that represents an Access Control Entry (ACE) of an Access Control List (ACL)."
 	), ():void => {
 
-		it( extendsClass( "CarbonLDP.Fragment" ), ():void => {
+		it( extendsClass( "CarbonLDP.TransientFragment" ), ():void => {
 			let ace:ACE = <any> {};
-			let fragment:Fragment;
+			let fragment:TransientFragment;
 
 			fragment = ace;
 			expect( fragment ).toEqual( jasmine.any( Object ) );
@@ -207,7 +207,7 @@ describe( module( "carbonldp/Auth/ACE" ), ():void => {
 			let object:any;
 			expect( ACE.is( object ) ).toBe( false );
 
-			object = Fragment.createFrom( {
+			object = TransientFragment.createFrom( {
 				granting: null,
 				permissions: null,
 				subjects: null,

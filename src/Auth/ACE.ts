@@ -1,11 +1,11 @@
-import { Fragment } from "../Fragment";
+import { TransientFragment } from "../TransientFragment";
 import { ModelFactory } from "../ModelFactory";
 import { ObjectSchema } from "../ObjectSchema";
 import { Pointer } from "../Pointer";
 import { CS } from "../Vocabularies/CS";
 import { XSD } from "../Vocabularies/XSD";
 
-export interface ACE extends Fragment {
+export interface ACE extends TransientFragment {
 	granting:boolean;
 	permissions:Pointer[];
 	subjects:Pointer[];
@@ -52,7 +52,7 @@ export const ACE:ACEFactory = {
 	SCHEMA,
 
 	is( object:object ):object is ACE {
-		return Fragment.is( object )
+		return TransientFragment.is( object )
 			&& object.hasOwnProperty( "granting" )
 			&& object.hasOwnProperty( "permissions" )
 			&& object.hasOwnProperty( "subjects" )
@@ -67,7 +67,7 @@ export const ACE:ACEFactory = {
 	createFrom<T extends object>( object:T, granting:boolean, subjects:Pointer[], subjectClass:Pointer, permissions:Pointer[] ):T & ACE {
 		const ace:T & ACE = object as T & ACE;
 
-		Fragment.decorate( ace );
+		TransientFragment.decorate( ace );
 
 		ace.addType( ACE.TYPE );
 		ace.granting = granting;

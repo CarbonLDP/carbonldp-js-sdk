@@ -34,7 +34,7 @@ import { TransientDocument } from "./TransientDocument";
 import { Documents } from "./Documents";
 
 import * as Errors from "./Errors";
-import { Fragment } from "./Fragment";
+import { TransientFragment } from "./TransientFragment";
 import { HTTPError } from "./HTTP/Errors";
 import { Header } from "./HTTP/Header";
 import { RequestService } from "./HTTP/Request";
@@ -1008,7 +1008,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 
 						(():void => {
 
-							let fragment:Fragment;
+							let fragment:TransientFragment;
 							expect( document.getFragments().length ).toBe( 4 );
 
 							(():void => {

@@ -1,11 +1,11 @@
 import { TransientDocument } from "./TransientDocument";
-import { Fragment } from "./Fragment";
+import { TransientFragment } from "./TransientFragment";
 import { ModelDecorator } from "./ModelDecorator";
 import { ModelFactory } from "./ModelFactory";
 import { URI } from "./RDF/URI";
 import { isObject } from "./Utils";
 
-export interface NamedFragment extends Fragment {
+export interface NamedFragment extends TransientFragment {
 	slug:string;
 }
 
@@ -31,7 +31,7 @@ export const NamedFragment:NamedFragmentFactory = {
 	},
 
 	is( object:object ):object is NamedFragment {
-		return Fragment.is( object )
+		return TransientFragment.is( object )
 			&& NamedFragment.isDecorated( object )
 			;
 	},
@@ -42,7 +42,7 @@ export const NamedFragment:NamedFragmentFactory = {
 
 	createFrom<T extends object>( object:T, document:TransientDocument, slug:string ):T & NamedFragment {
 		const id:string = document.id + "#" + slug;
-		const fragment:T & Fragment = Fragment.createFrom( object, document, id );
+		const fragment:T & TransientFragment = TransientFragment.createFrom( object, document, id );
 
 		return NamedFragment.decorate( fragment );
 	},

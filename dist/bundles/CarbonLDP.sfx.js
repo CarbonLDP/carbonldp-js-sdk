@@ -3988,27 +3988,27 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var Errors_1 = __webpack_require__(9);
 var Resource_1 = __webpack_require__(15);
 var Utils_1 = __webpack_require__(0);
-exports.Fragment = {
+exports.TransientFragment = {
     isDecorated: function (object) {
         return Utils_1.isObject(object) &&
             object.hasOwnProperty("_document");
     },
     is: function (object) {
         return Resource_1.Resource.is(object) &&
-            exports.Fragment.isDecorated(object);
+            exports.TransientFragment.isDecorated(object);
     },
     create: function (document, id) {
         return this.createFrom({}, document, id);
     },
     createFrom: function (object, document, id) {
-        var fragment = exports.Fragment.decorate(object);
+        var fragment = exports.TransientFragment.decorate(object);
         if (id)
             fragment.id = id;
         fragment._document = document;
         return fragment;
     },
     decorate: function (object) {
-        if (exports.Fragment.isDecorated(object))
+        if (exports.TransientFragment.isDecorated(object))
             return object;
         Resource_1.Resource.decorate(object);
         var fragment = object;
@@ -5815,7 +5815,7 @@ exports.RDFLiteral = {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var Fragment_1 = __webpack_require__(36);
+var TransientFragment_1 = __webpack_require__(36);
 var ObjectSchema_1 = __webpack_require__(12);
 var PersistedResource_1 = __webpack_require__(56);
 var URI_1 = __webpack_require__(10);
@@ -5847,14 +5847,14 @@ exports.PersistedFragment = {
             object["removeType"] === removeTypeInPersistedFragment;
     },
     is: function (object) {
-        return Fragment_1.Fragment.is(object) &&
+        return TransientFragment_1.TransientFragment.is(object) &&
             PersistedResource_1.PersistedResource.isDecorated(object) &&
             exports.PersistedFragment.isDecorated(object);
     },
     decorate: function (object) {
         if (exports.PersistedFragment.isDecorated(object))
             return object;
-        Fragment_1.Fragment.decorate(object);
+        TransientFragment_1.TransientFragment.decorate(object);
         PersistedResource_1.PersistedResource.decorate(object);
         var fragment = object;
         Object.defineProperties(object, {
@@ -6614,7 +6614,7 @@ exports.Roles = Roles;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var Fragment_1 = __webpack_require__(36);
+var TransientFragment_1 = __webpack_require__(36);
 var CS_1 = __webpack_require__(18);
 var XSD_1 = __webpack_require__(8);
 var SCHEMA = {
@@ -6641,7 +6641,7 @@ exports.ACE = {
     TYPE: CS_1.CS.AccessControlEntry,
     SCHEMA: SCHEMA,
     is: function (object) {
-        return Fragment_1.Fragment.is(object)
+        return TransientFragment_1.TransientFragment.is(object)
             && object.hasOwnProperty("granting")
             && object.hasOwnProperty("permissions")
             && object.hasOwnProperty("subjects")
@@ -6652,7 +6652,7 @@ exports.ACE = {
     },
     createFrom: function (object, granting, subjects, subjectClass, permissions) {
         var ace = object;
-        Fragment_1.Fragment.decorate(ace);
+        TransientFragment_1.TransientFragment.decorate(ace);
         ace.addType(exports.ACE.TYPE);
         ace.granting = granting;
         ace.subjects = subjects;
@@ -7031,7 +7031,7 @@ var HTTPMethod;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var Fragment_1 = __webpack_require__(36);
+var TransientFragment_1 = __webpack_require__(36);
 var URI_1 = __webpack_require__(10);
 var Utils_1 = __webpack_require__(0);
 exports.NamedFragment = {
@@ -7040,7 +7040,7 @@ exports.NamedFragment = {
             object.hasOwnProperty("slug") && !object.propertyIsEnumerable("slug");
     },
     is: function (object) {
-        return Fragment_1.Fragment.is(object)
+        return TransientFragment_1.TransientFragment.is(object)
             && exports.NamedFragment.isDecorated(object);
     },
     create: function (document, slug) {
@@ -7048,7 +7048,7 @@ exports.NamedFragment = {
     },
     createFrom: function (object, document, slug) {
         var id = document.id + "#" + slug;
-        var fragment = Fragment_1.Fragment.createFrom(object, document, id);
+        var fragment = TransientFragment_1.TransientFragment.createFrom(object, document, id);
         return exports.NamedFragment.decorate(fragment);
     },
     decorate: function (object) {
@@ -8603,11 +8603,11 @@ exports.globalContext = new SDKContext();
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var Errors_1 = __webpack_require__(9);
-var Fragment_1 = __webpack_require__(36);
+var TransientFragment_1 = __webpack_require__(36);
 var URI_1 = __webpack_require__(10);
 exports.BlankNode = {
     is: function (object) {
-        return Fragment_1.Fragment.is(object) &&
+        return TransientFragment_1.TransientFragment.is(object) &&
             URI_1.URI.isBNodeID(object.id);
     },
     create: function (document, id) {
@@ -8618,7 +8618,7 @@ exports.BlankNode = {
             throw new Errors_1.IllegalArgumentError("The id \"" + id + "\" is not an blank node label");
         if (!id)
             id = URI_1.URI.generateBNodeID();
-        return Fragment_1.Fragment.createFrom(object, document, id);
+        return TransientFragment_1.TransientFragment.createFrom(object, document, id);
     },
 };
 
@@ -15189,7 +15189,7 @@ var BlankNode_1 = __webpack_require__(105);
 var TransientDocument_1 = __webpack_require__(19);
 var Documents_1 = __webpack_require__(140);
 var Errors = __importStar(__webpack_require__(9));
-var Fragment_1 = __webpack_require__(36);
+var TransientFragment_1 = __webpack_require__(36);
 var FreeResources_1 = __webpack_require__(142);
 var PersistedProtectedDocument_1 = __webpack_require__(45);
 var ProtectedDocument_1 = __webpack_require__(92);
@@ -15290,7 +15290,7 @@ var CarbonLDP = (function (_super) {
     CarbonLDP.TransientDocument = TransientDocument_1.TransientDocument;
     CarbonLDP.Documents = Documents_1.Documents;
     CarbonLDP.Errors = Errors;
-    CarbonLDP.Fragment = Fragment_1.Fragment;
+    CarbonLDP.TransientFragment = TransientFragment_1.TransientFragment;
     CarbonLDP.FreeResources = FreeResources_1.FreeResources;
     CarbonLDP.HTTP = HTTP;
     CarbonLDP.JSONLD = JSONLD;

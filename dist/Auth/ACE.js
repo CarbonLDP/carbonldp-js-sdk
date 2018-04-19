@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var Fragment_1 = require("../Fragment");
+var TransientFragment_1 = require("../TransientFragment");
 var CS_1 = require("../Vocabularies/CS");
 var XSD_1 = require("../Vocabularies/XSD");
 var SCHEMA = {
@@ -27,7 +27,7 @@ exports.ACE = {
     TYPE: CS_1.CS.AccessControlEntry,
     SCHEMA: SCHEMA,
     is: function (object) {
-        return Fragment_1.Fragment.is(object)
+        return TransientFragment_1.TransientFragment.is(object)
             && object.hasOwnProperty("granting")
             && object.hasOwnProperty("permissions")
             && object.hasOwnProperty("subjects")
@@ -38,7 +38,7 @@ exports.ACE = {
     },
     createFrom: function (object, granting, subjects, subjectClass, permissions) {
         var ace = object;
-        Fragment_1.Fragment.decorate(ace);
+        TransientFragment_1.TransientFragment.decorate(ace);
         ace.addType(exports.ACE.TYPE);
         ace.granting = granting;
         ace.subjects = subjects;

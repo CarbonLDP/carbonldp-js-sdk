@@ -1,5 +1,5 @@
 import { TransientDocument } from "../TransientDocument";
-import { Fragment } from "../Fragment";
+import { TransientFragment } from "../TransientFragment";
 import { ObjectSchema } from "../ObjectSchema";
 import { CS } from "../Vocabularies/CS";
 import { UsernameAndPasswordCredentials } from "./UsernameAndPasswordCredentials";
@@ -9,8 +9,8 @@ export interface UserBase {
 }
 export interface User extends TransientDocument {
     name?: string;
-    credentials?: Fragment & UsernameAndPasswordCredentials;
-    updateCredentials(username?: string, password?: string): Fragment & UsernameAndPasswordCredentials;
+    credentials?: TransientFragment & UsernameAndPasswordCredentials;
+    updateCredentials(username?: string, password?: string): TransientFragment & UsernameAndPasswordCredentials;
 }
 export interface UserFactory {
     TYPE: CS["User"];

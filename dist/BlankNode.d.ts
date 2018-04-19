@@ -1,7 +1,7 @@
 import { TransientDocument } from "./TransientDocument";
-import { Fragment } from "./Fragment";
+import { TransientFragment } from "./TransientFragment";
 import { ModelFactory } from "./ModelFactory";
-export interface BlankNode extends Fragment {
+export interface BlankNode extends TransientFragment {
 }
 export interface BlankNodeFactory extends ModelFactory<BlankNode> {
     is(object: object): object is BlankNode;

@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var Fragment_1 = require("./Fragment");
+var TransientFragment_1 = require("./TransientFragment");
 var ObjectSchema_1 = require("./ObjectSchema");
 var PersistedResource_1 = require("./PersistedResource");
 var URI_1 = require("./RDF/URI");
@@ -32,14 +32,14 @@ exports.PersistedFragment = {
             object["removeType"] === removeTypeInPersistedFragment;
     },
     is: function (object) {
-        return Fragment_1.Fragment.is(object) &&
+        return TransientFragment_1.TransientFragment.is(object) &&
             PersistedResource_1.PersistedResource.isDecorated(object) &&
             exports.PersistedFragment.isDecorated(object);
     },
     decorate: function (object) {
         if (exports.PersistedFragment.isDecorated(object))
             return object;
-        Fragment_1.Fragment.decorate(object);
+        TransientFragment_1.TransientFragment.decorate(object);
         PersistedResource_1.PersistedResource.decorate(object);
         var fragment = object;
         Object.defineProperties(object, {

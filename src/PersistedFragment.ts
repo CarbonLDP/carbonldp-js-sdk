@@ -1,4 +1,4 @@
-import { Fragment } from "./Fragment";
+import { TransientFragment } from "./TransientFragment";
 import { ModelDecorator } from "./ModelDecorator";
 import { ModelFactory } from "./ModelFactory";
 import {
@@ -15,7 +15,7 @@ import {
 } from "./Resource";
 import { isObject } from "./Utils";
 
-export interface PersistedFragment extends PersistedResource, Fragment {
+export interface PersistedFragment extends PersistedResource, TransientFragment {
 	_document:Document;
 
 	addType( type:string ):void;
@@ -72,7 +72,7 @@ export const PersistedFragment:PersistedFragmentFactory = {
 	},
 
 	is( object:object ):object is PersistedFragment {
-		return Fragment.is( object ) &&
+		return TransientFragment.is( object ) &&
 			PersistedResource.isDecorated( object ) &&
 			PersistedFragment.isDecorated( object )
 			;
@@ -82,7 +82,7 @@ export const PersistedFragment:PersistedFragmentFactory = {
 	decorate<T extends object>( object:T ):T & PersistedFragment {
 		if( PersistedFragment.isDecorated( object ) ) return object;
 
-		Fragment.decorate( object );
+		TransientFragment.decorate( object );
 		PersistedResource.decorate( object );
 
 		const fragment:T & PersistedFragment = object as T & PersistedFragment;

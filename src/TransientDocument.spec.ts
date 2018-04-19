@@ -5,7 +5,7 @@ import { TransientDocument } from "./TransientDocument";
 
 import { IDAlreadyInUseError } from "./Errors/IDAlreadyInUseError";
 import { IllegalArgumentError } from "./Errors/IllegalArgumentError";
-import { Fragment } from "./Fragment";
+import { TransientFragment } from "./TransientFragment";
 import * as JSONLDConverterModule from "./JSONLD/Converter";
 import { JSONLDConverter } from "./JSONLD/Converter";
 import { NamedFragment } from "./NamedFragment";
@@ -100,7 +100,7 @@ describe( module( "carbonldp/TransientDocument" ), ():void => {
 		it( hasProperty(
 			OBLIGATORY,
 			"_fragmentsIndex",
-			"Map<string, CarbonLDP.Fragment>",
+			"Map<string, CarbonLDP.TransientFragment>",
 			"Map that stores the fragments (named fragments and blank nodes) of the Document."
 		), ():void => {} );
 
@@ -167,7 +167,7 @@ describe( module( "carbonldp/TransientDocument" ), ():void => {
 			"Returns `null` if no fragment exists in the Document.", [
 				{ name: "id", type: "string" },
 			],
-			{ type: "T & CarbonLDP.Fragment" }
+			{ type: "T & CarbonLDP.TransientFragment" }
 		), ():void => {} );
 
 		it( hasMethod(
@@ -178,14 +178,14 @@ describe( module( "carbonldp/TransientDocument" ), ():void => {
 			"Returns `null` if no fragment exists in the Document.", [
 				{ name: "id", type: "string" },
 			],
-			{ type: "T & CarbonLDP.Fragment" }
+			{ type: "T & CarbonLDP.TransientFragment" }
 		), ():void => {} );
 
 		it( hasMethod(
 			OBLIGATORY,
 			"getFragments",
 			"Returns an array with all the fragments in the Document.",
-			{ type: "CarbonLDP.Fragment[]" }
+			{ type: "CarbonLDP.TransientFragment[]" }
 		), ():void => {} );
 
 		describe( method(
@@ -196,32 +196,32 @@ describe( module( "carbonldp/TransientDocument" ), ():void => {
 			it( hasSignature(
 				[ "T" ],
 				"Creates a `CarbonLDP.NamedFragment` from the object provided and the slug specified.\n" +
-				"If the slug has the form of a BlankNode ID, a `CarbonLDP.Fragment` is created instead.", [
+				"If the slug has the form of a BlankNode ID, a `CarbonLDP.TransientFragment` is created instead.", [
 					{ name: "object", type: "T" },
 					{ name: "slug", type: "string" },
 				],
-				{ type: "T & CarbonLDP.Fragment" }
+				{ type: "T & CarbonLDP.TransientFragment" }
 			), ():void => {} );
 
 			it( hasSignature(
 				[ "T" ],
-				"Creates a `CarbonLDP.Fragment` from the object provided, since no slug is specified.", [
+				"Creates a `CarbonLDP.TransientFragment` from the object provided, since no slug is specified.", [
 					{ name: "object", type: "object" },
 				],
-				{ type: "T & CarbonLDP.Fragment" }
+				{ type: "T & CarbonLDP.TransientFragment" }
 			), ():void => {} );
 
 			it( hasSignature(
 				"Creates an empty `CarbonLDP.NamedFragment` with the slug specified.\n" +
-				"If the slug has the form of a BlankNode ID, a `CarbonLDP.Fragment` is created instead.", [
+				"If the slug has the form of a BlankNode ID, a `CarbonLDP.TransientFragment` is created instead.", [
 					{ name: "slug", type: "string" },
 				],
-				{ type: "CarbonLDP.Fragment" }
+				{ type: "CarbonLDP.TransientFragment" }
 			), ():void => {} );
 
 			it( hasSignature(
-				"Creates an empty `CarbonLDP.Fragment`, since no slug is provided.",
-				{ type: "CarbonLDP.Fragment" }
+				"Creates an empty `CarbonLDP.TransientFragment`, since no slug is provided.",
+				{ type: "CarbonLDP.TransientFragment" }
 			), ():void => {} );
 
 		} );
@@ -257,8 +257,8 @@ describe( module( "carbonldp/TransientDocument" ), ():void => {
 		), ():void => {
 
 			it( hasSignature(
-				"Remove the fragment referenced by the `CarbonLDP.Fragment` provided from the Document.", [
-					{ name: "fragment", type: "CarbonLDP.Fragment" },
+				"Remove the fragment referenced by the `CarbonLDP.TransientFragment` provided from the Document.", [
+					{ name: "fragment", type: "CarbonLDP.TransientFragment" },
 				]
 			), ():void => {} );
 
@@ -757,7 +757,7 @@ describe( module( "carbonldp/TransientDocument" ), ():void => {
 
 				it( "should return fragment when relative fragment label and exits", ():void => {
 					const document:TransientDocument = createMockDocument();
-					const fragment:Fragment = {} as any;
+					const fragment:TransientFragment = {} as any;
 					document._fragmentsIndex.set( "fragment", fragment );
 
 					expect( document.getPointer( "#fragment" ) ).toBe( fragment );
@@ -775,7 +775,7 @@ describe( module( "carbonldp/TransientDocument" ), ():void => {
 
 				it( "should return fragment when absolute fragment label and exits", ():void => {
 					const document:TransientDocument = createMockDocument();
-					const fragment:Fragment = {} as any;
+					const fragment:TransientFragment = {} as any;
 					document._fragmentsIndex.set( "fragment", fragment );
 
 					expect( document.getPointer( "https://example.com/document/#fragment" ) ).toBe( fragment );
@@ -793,7 +793,7 @@ describe( module( "carbonldp/TransientDocument" ), ():void => {
 
 				it( "should return true when blank node label and exits", ():void => {
 					const document:TransientDocument = createMockDocument();
-					const fragment:Fragment = {} as any;
+					const fragment:TransientFragment = {} as any;
 					document._fragmentsIndex.set( "_:1", fragment );
 
 					expect( document.getPointer( "_:1" ) ).toBe( fragment );
@@ -1006,7 +1006,7 @@ describe( module( "carbonldp/TransientDocument" ), ():void => {
 
 				it( "should return fragment when relative fragment label and exits", ():void => {
 					const document:TransientDocument = createMockDocument();
-					const fragment:Fragment = {} as any;
+					const fragment:TransientFragment = {} as any;
 					document._fragmentsIndex.set( "fragment", fragment );
 
 					expect( document.getFragment( "#fragment" ) ).toBe( fragment );
@@ -1020,7 +1020,7 @@ describe( module( "carbonldp/TransientDocument" ), ():void => {
 
 				it( "should return fragment when absolute fragment label and exits", ():void => {
 					const document:TransientDocument = createMockDocument();
-					const fragment:Fragment = {} as any;
+					const fragment:TransientFragment = {} as any;
 					document._fragmentsIndex.set( "fragment", fragment );
 
 					expect( document.getFragment( "https://example.com/document/#fragment" ) ).toBe( fragment );
@@ -1034,7 +1034,7 @@ describe( module( "carbonldp/TransientDocument" ), ():void => {
 
 				it( "should return true when blank node label and exits", ():void => {
 					const document:TransientDocument = createMockDocument();
-					const fragment:Fragment = {} as any;
+					const fragment:TransientFragment = {} as any;
 					document._fragmentsIndex.set( "_:1", fragment );
 
 					expect( document.getFragment( "_:1" ) ).toBe( fragment );
@@ -1071,7 +1071,7 @@ describe( module( "carbonldp/TransientDocument" ), ():void => {
 
 				it( "should return fragment when relative fragment label and exits", ():void => {
 					const document:TransientDocument = createMockDocument();
-					const fragment:Fragment = {} as any;
+					const fragment:TransientFragment = {} as any;
 					document._fragmentsIndex.set( "fragment", fragment );
 
 					expect( document.getNamedFragment( "#fragment" ) ).toBe( fragment );
@@ -1079,7 +1079,7 @@ describe( module( "carbonldp/TransientDocument" ), ():void => {
 
 				it( "should return fragment when relative label and exits", ():void => {
 					const document:TransientDocument = createMockDocument();
-					const fragment:Fragment = {} as any;
+					const fragment:TransientFragment = {} as any;
 					document._fragmentsIndex.set( "fragment", fragment );
 
 					expect( document.getNamedFragment( "fragment" ) ).toBe( fragment );
@@ -1093,7 +1093,7 @@ describe( module( "carbonldp/TransientDocument" ), ():void => {
 
 				it( "should return fragment when absolute fragment label and exits", ():void => {
 					const document:TransientDocument = createMockDocument();
-					const fragment:Fragment = {} as any;
+					const fragment:TransientFragment = {} as any;
 					document._fragmentsIndex.set( "fragment", fragment );
 
 					expect( document.getNamedFragment( "https://example.com/document/#fragment" ) ).toBe( fragment );
@@ -1164,7 +1164,7 @@ describe( module( "carbonldp/TransientDocument" ), ():void => {
 
 					// TODO: Use `isNamedFragment`
 					expect( Resource.is( fragment ) ).toBe( true );
-					expect( Fragment.isDecorated( fragment ) ).toBe( true );
+					expect( TransientFragment.isDecorated( fragment ) ).toBe( true );
 
 					expect( fragment ).toEqual( {
 						string: "a string",
@@ -1173,21 +1173,21 @@ describe( module( "carbonldp/TransientDocument" ), ():void => {
 
 				it( "should create `NamedFragment` when only slug label provided", ():void => {
 					const document:TransientDocument = createMockDocument();
-					const fragment:Fragment = document.createFragment( "fragment" );
+					const fragment:TransientFragment = document.createFragment( "fragment" );
 
 					// TODO: Use `isNamedFragment`
 					expect( Resource.is( fragment ) ).toBe( true );
-					expect( Fragment.isDecorated( fragment ) ).toBe( true );
+					expect( TransientFragment.isDecorated( fragment ) ).toBe( true );
 				} );
 
 				it( "should create `NamedFragment` when object and absolute IRI provided", ():void => {
 					const document:TransientDocument = createMockDocument();
-					type TargetFragment = Fragment & { string:string };
+					type TargetFragment = TransientFragment & { string:string };
 					const fragment:TargetFragment = document.createFragment( { string: "a string" }, "https://example.com/document/#fragment" );
 
 					// TODO: Use `isNamedFragment`
 					expect( Resource.is( fragment ) ).toBe( true );
-					expect( Fragment.isDecorated( fragment ) ).toBe( true );
+					expect( TransientFragment.isDecorated( fragment ) ).toBe( true );
 
 					expect( fragment as { string:string } ).toEqual( {
 						string: "a string",
@@ -1196,31 +1196,31 @@ describe( module( "carbonldp/TransientDocument" ), ():void => {
 
 				it( "should create `NamedFragment` when only absolute IRI provided", ():void => {
 					const document:TransientDocument = createMockDocument();
-					const fragment:Fragment = document.createFragment( "https://example.com/document/#fragment" );
+					const fragment:TransientFragment = document.createFragment( "https://example.com/document/#fragment" );
 
 					// TODO: Use `isNamedFragment`
 					expect( Resource.is( fragment ) ).toBe( true );
-					expect( Fragment.isDecorated( fragment ) ).toBe( true );
+					expect( TransientFragment.isDecorated( fragment ) ).toBe( true );
 				} );
 
 				it( "should create `BlankNode` when no label provided", ():void => {
 					const document:TransientDocument = createMockDocument();
-					const fragment:Fragment = document.createFragment( {} );
+					const fragment:TransientFragment = document.createFragment( {} );
 
 					// TODO: Use `isBlankNode`
 					expect( Resource.is( fragment ) ).toBe( true );
-					expect( Fragment.isDecorated( fragment ) ).toBe( true );
+					expect( TransientFragment.isDecorated( fragment ) ).toBe( true );
 					expect( URI.isBNodeID( fragment.id ) ).toBe( true );
 				} );
 
 				it( "should create `BlankNode` when object and blank node label provided", ():void => {
 					const document:TransientDocument = createMockDocument();
-					type TargetFragment = Fragment & { string:string };
+					type TargetFragment = TransientFragment & { string:string };
 					const fragment:TargetFragment = document.createFragment( { string: "a string" }, "_:1" );
 
 					// TODO: Use `isBlankNode`
 					expect( Resource.is( fragment ) ).toBe( true );
-					expect( Fragment.isDecorated( fragment ) ).toBe( true );
+					expect( TransientFragment.isDecorated( fragment ) ).toBe( true );
 					expect( URI.isBNodeID( fragment.id ) ).toBe( true );
 
 					expect( fragment as { string:string } ).toEqual( {
@@ -1230,11 +1230,11 @@ describe( module( "carbonldp/TransientDocument" ), ():void => {
 
 				it( "should create `BlankNode` when only blank node label provided", ():void => {
 					const document:TransientDocument = createMockDocument();
-					const fragment:Fragment = document.createFragment( "_:1" );
+					const fragment:TransientFragment = document.createFragment( "_:1" );
 
 					// TODO: Use `isBlankNode`
 					expect( Resource.is( fragment ) ).toBe( true );
-					expect( Fragment.isDecorated( fragment ) ).toBe( true );
+					expect( TransientFragment.isDecorated( fragment ) ).toBe( true );
 					expect( URI.isBNodeID( fragment.id ) ).toBe( true );
 				} );
 
@@ -1303,12 +1303,12 @@ describe( module( "carbonldp/TransientDocument" ), ():void => {
 
 				it( "should create `NamedFragment` when object and slug label provided", ():void => {
 					const document:TransientDocument = createMockDocument();
-					type TargetFragment = Fragment & { string:string };
+					type TargetFragment = TransientFragment & { string:string };
 					const fragment:TargetFragment = document.createNamedFragment( { string: "a string" }, "fragment" );
 
 					// TODO: Use `isNamedFragment`
 					expect( Resource.is( fragment ) ).toBe( true );
-					expect( Fragment.isDecorated( fragment ) ).toBe( true );
+					expect( TransientFragment.isDecorated( fragment ) ).toBe( true );
 
 					expect( fragment as { string:string } ).toEqual( {
 						string: "a string",
@@ -1317,21 +1317,21 @@ describe( module( "carbonldp/TransientDocument" ), ():void => {
 
 				it( "should create `NamedFragment` when only slug label provided", ():void => {
 					const document:TransientDocument = createMockDocument();
-					const fragment:Fragment = document.createNamedFragment( "fragment" );
+					const fragment:TransientFragment = document.createNamedFragment( "fragment" );
 
 					// TODO: Use `isNamedFragment`
 					expect( Resource.is( fragment ) ).toBe( true );
-					expect( Fragment.isDecorated( fragment ) ).toBe( true );
+					expect( TransientFragment.isDecorated( fragment ) ).toBe( true );
 				} );
 
 				it( "should create `NamedFragment` when object and absolute IRI provided", ():void => {
 					const document:TransientDocument = createMockDocument();
-					type TargetFragment = Fragment & { string:string };
+					type TargetFragment = TransientFragment & { string:string };
 					const fragment:TargetFragment = document.createNamedFragment( { string: "a string" }, "https://example.com/document/#fragment" );
 
 					// TODO: Use `isNamedFragment`
 					expect( Resource.is( fragment ) ).toBe( true );
-					expect( Fragment.isDecorated( fragment ) ).toBe( true );
+					expect( TransientFragment.isDecorated( fragment ) ).toBe( true );
 
 					expect( fragment as { string:string } ).toEqual( {
 						string: "a string",
@@ -1340,11 +1340,11 @@ describe( module( "carbonldp/TransientDocument" ), ():void => {
 
 				it( "should create `NamedFragment` when only absolute IRI provided", ():void => {
 					const document:TransientDocument = createMockDocument();
-					const fragment:Fragment = document.createNamedFragment( "https://example.com/document/#fragment" );
+					const fragment:TransientFragment = document.createNamedFragment( "https://example.com/document/#fragment" );
 
 					// TODO: Use `isNamedFragment`
 					expect( Resource.is( fragment ) ).toBe( true );
-					expect( Fragment.isDecorated( fragment ) ).toBe( true );
+					expect( TransientFragment.isDecorated( fragment ) ).toBe( true );
 				} );
 
 				it( "should throw error when object and blank node label provided", ():void => {

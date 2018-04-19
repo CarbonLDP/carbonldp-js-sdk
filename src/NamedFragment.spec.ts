@@ -21,7 +21,7 @@ describe( module( "carbonldp/NamedFragment" ), ():void => {
 		"Interface that represents an in-memory named fragment from a Carbon LDP document."
 	), ():void => {
 
-		it( extendsClass( "CarbonLDP.Fragment" ), ():void => {} );
+		it( extendsClass( "CarbonLDP.TransientFragment" ), ():void => {} );
 
 		it( hasProperty(
 			OBLIGATORY,

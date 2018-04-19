@@ -1,5 +1,5 @@
 import { AbstractContext } from "./AbstractContext";
-import { Fragment } from "./Fragment";
+import { TransientFragment } from "./TransientFragment";
 import { Document } from "./Document";
 
 import { PersistedFragment } from "./PersistedFragment";
@@ -26,7 +26,7 @@ describe( module( "carbonldp/PersistedFragment" ), ():void => {
 	), ():void => {
 
 		it( extendsClass( "CarbonLDP.PersistedResource" ), ():void => {} );
-		it( extendsClass( "CarbonLDP.Fragment" ), ():void => {} );
+		it( extendsClass( "CarbonLDP.TransientFragment" ), ():void => {} );
 
 		it( hasProperty(
 			OBLIGATORY,
@@ -110,7 +110,7 @@ describe( module( "carbonldp/PersistedFragment" ), ():void => {
 
 			let spyPersistedDecorator:jasmine.Spy = spyOn( PersistedResource, "decorate" );
 
-			let fragment:Fragment = Fragment.create( null, "_:01" );
+			let fragment:TransientFragment = TransientFragment.create( null, "_:01" );
 			let persistedFragment:PersistedFragment = PersistedFragment.decorate( fragment );
 
 			expect( persistedFragment ).toBeTruthy();
@@ -148,7 +148,7 @@ describe( module( "carbonldp/PersistedFragment" ), ():void => {
 
 				let document:Document = Document.create( context.documents, "http://example.com/document/" );
 
-				let fragment:Fragment = Fragment.create( document );
+				let fragment:TransientFragment = TransientFragment.create( document );
 				persistedFragment = PersistedFragment.decorate( fragment );
 			} );
 

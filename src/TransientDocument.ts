@@ -1,7 +1,7 @@
 import { BlankNode } from "./BlankNode";
 import { IDAlreadyInUseError } from "./Errors/IDAlreadyInUseError";
 import { IllegalArgumentError } from "./Errors/IllegalArgumentError";
-import { Fragment } from "./Fragment";
+import { TransientFragment } from "./TransientFragment";
 import { JSONLDConverter } from "./JSONLD/Converter";
 import { ModelDecorator } from "./ModelDecorator";
 import { ModelFactory } from "./ModelFactory";
@@ -37,28 +37,28 @@ export interface TransientDocument extends Resource, PointerLibrary, PointerVali
 	isMemberOfRelation?:Pointer;
 	hasMemberRelation?:Pointer;
 
-	_fragmentsIndex:Map<string, Fragment>;
+	_fragmentsIndex:Map<string, TransientFragment>;
 
 	_normalize():void;
 
 
-	_removeFragment( slugOrFragment:string | Fragment ):void;
+	_removeFragment( slugOrFragment:string | TransientFragment ):void;
 
 
 	hasFragment( slug:string ):boolean;
 
 
-	getFragment<T>( slug:string ):T & Fragment;
+	getFragment<T>( slug:string ):T & TransientFragment;
 
 	getNamedFragment<T>( slug:string ):T & NamedFragment;
 
 
-	getFragments():Fragment[];
+	getFragments():TransientFragment[];
 
 
-	createFragment<T>( object:T, slug?:string ):T & Fragment;
+	createFragment<T>( object:T, slug?:string ):T & TransientFragment;
 
-	createFragment( slug?:string ):Fragment;
+	createFragment( slug?:string ):TransientFragment;
 
 
 	createNamedFragment<T>( object:T, slug:string ):T & NamedFragment;
@@ -181,7 +181,7 @@ export const TransientDocument:DocumentFactory = {
 		Object.defineProperties( object, {
 			"_fragmentsIndex": {
 				configurable: true,
-				value: new Map<string, Fragment>(),
+				value: new Map<string, TransientFragment>(),
 			},
 
 			"_normalize": {
@@ -270,13 +270,13 @@ export const TransientDocument:DocumentFactory = {
 			const idOrSlug:string = getNestedObjectId( next );
 			if( ! ! idOrSlug && ! inScope.call( parent, idOrSlug ) ) continue;
 
-			const parentFragment:Fragment = parent.getFragment( idOrSlug );
+			const parentFragment:TransientFragment = parent.getFragment( idOrSlug );
 			if( ! parentFragment ) {
-				const fragment:Fragment = parent.createFragment( <Object> next, idOrSlug );
+				const fragment:TransientFragment = parent.createFragment( <Object> next, idOrSlug );
 				TransientDocument._convertNestedObjects( parent, fragment, fragmentsTracker );
 
 			} else if( parentFragment !== next ) {
-				const fragment:Fragment = actual[ key ] = Object.assign( parentFragment, next );
+				const fragment:TransientFragment = actual[ key ] = Object.assign( parentFragment, next );
 				TransientDocument._convertNestedObjects( parent, fragment, fragmentsTracker );
 
 			} else if( ! fragmentsTracker.has( next.id ) ) {
@@ -336,7 +336,7 @@ function hasFragment( this:TransientDocument, id:string ):boolean {
 	return this._fragmentsIndex.has( id );
 }
 
-function getFragment( this:TransientDocument, id:string ):Fragment {
+function getFragment( this:TransientDocument, id:string ):TransientFragment {
 	if( ! URI.isBNodeID( id ) ) return this.getNamedFragment( id );
 	return this._fragmentsIndex.get( id ) || null;
 }
@@ -353,13 +353,13 @@ function getNamedFragment( this:TransientDocument, id:string ):NamedFragment {
 	return <NamedFragment> this._fragmentsIndex.get( id ) || null;
 }
 
-function getFragments( this:TransientDocument ):Fragment[] {
+function getFragments( this:TransientDocument ):TransientFragment[] {
 	return Array.from( this._fragmentsIndex.values() );
 }
 
-function createFragment<T extends object>( object:T, slug?:string ):T & Fragment;
-function createFragment( slug?:string ):Fragment;
-function createFragment<T extends object>( this:TransientDocument, slugOrObject?:any, slug?:string ):T & Fragment {
+function createFragment<T extends object>( object:T, slug?:string ):T & TransientFragment;
+function createFragment( slug?:string ):TransientFragment;
+function createFragment<T extends object>( this:TransientDocument, slugOrObject?:any, slug?:string ):T & TransientFragment {
 	slug = isString( slugOrObject ) ? slugOrObject : slug;
 	const object:T = ! isString( slugOrObject ) && ! ! slugOrObject ? slugOrObject : <T> {};
 
@@ -397,7 +397,7 @@ function createNamedFragment<T extends Object>( this:TransientDocument, slugOrOb
 	return fragment;
 }
 
-function removeFragment( this:TransientDocument, fragmentOrSlug:string | Fragment ):void {
+function removeFragment( this:TransientDocument, fragmentOrSlug:string | TransientFragment ):void {
 	let id:string = isString( fragmentOrSlug ) ? fragmentOrSlug : fragmentOrSlug.id;
 
 	if( URI.isAbsolute( id ) ) {
@@ -436,7 +436,7 @@ function toJSON( this:TransientDocument, keyOrObjectSchemaResolver?:string | Obj
 }
 
 function normalize( this:TransientDocument ):void {
-	const currentFragments:Fragment[] = this.getFragments()
+	const currentFragments:TransientFragment[] = this.getFragments()
 		.filter( fragment => URI.isBNodeID( fragment.id ) );
 	const usedFragmentsIDs:Set<string> = new Set();
 
