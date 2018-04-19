@@ -71,7 +71,7 @@ import {
 	ObjectSchemaUtils,
 } from "./ObjectSchema";
 import { AccessPoint } from "./AccessPoint";
-import { PersistedBlankNode } from "./PersistedBlankNode";
+import { BlankNode } from "./BlankNode";
 import { Document } from "./Document";
 import { Fragment } from "./Fragment";
 import { PersistedProtectedDocument } from "./PersistedProtectedDocument";
@@ -1426,7 +1426,7 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 		for( const documentMetadata of responseMetadata.documentsMetadata ) {
 			const document:Document = documentMetadata.relatedDocument as Document;
 			for( const { entryKey, entryValue } of documentMetadata.bNodesMap.entries ) {
-				const originalBNode:PersistedBlankNode = document.getFragment( entryKey.id );
+				const originalBNode:BlankNode = document.getFragment( entryKey.id );
 				originalBNode.id = entryValue.id;
 
 				document._fragmentsIndex.delete( entryKey.id );
