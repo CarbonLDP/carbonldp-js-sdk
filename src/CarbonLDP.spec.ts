@@ -27,7 +27,7 @@ import {
 import { Document } from "./Document";
 import { Fragment } from "./Fragment";
 import { NamedFragment } from "./NamedFragment";
-import { PersistedProtectedDocument } from "./PersistedProtectedDocument";
+import { ProtectedDocument } from "./ProtectedDocument";
 import { PersistedResource } from "./PersistedResource";
 import { Pointer } from "./Pointer";
 import { TransientProtectedDocument } from "./TransientProtectedDocument";
@@ -318,11 +318,11 @@ describe( module( "carbonldp/CarbonLDP" ), ():void => {
 
 		it( reexports(
 			STATIC,
-			"PersistedProtectedDocument",
-			"carbonldp/PersistedProtectedDocument#PersistedProtectedDocument"
+			"ProtectedDocument",
+			"carbonldp/ProtectedDocument#ProtectedDocument"
 		), ():void => {
-			expect( CarbonLDP.CarbonLDP.PersistedProtectedDocument ).toBeDefined();
-			expect( CarbonLDP.CarbonLDP.PersistedProtectedDocument ).toBe( PersistedProtectedDocument );
+			expect( CarbonLDP.CarbonLDP.ProtectedDocument ).toBeDefined();
+			expect( CarbonLDP.CarbonLDP.ProtectedDocument ).toBe( ProtectedDocument );
 		} );
 
 		it( reexports(

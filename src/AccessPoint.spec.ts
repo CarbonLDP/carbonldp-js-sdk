@@ -14,7 +14,7 @@ describe( module( "carbonldp/AccessPoint" ), ():void => {
 	), ():void => {
 
 		it( extendsClass( "CarbonLDP.TransientAccessPoint" ), ():void => {} );
-		it( extendsClass( "CarbonLDP.PersistedProtectedDocument" ), ():void => {} );
+		it( extendsClass( "CarbonLDP.ProtectedDocument" ), ():void => {} );
 
 		it( hasProperty(
 			OBLIGATORY,

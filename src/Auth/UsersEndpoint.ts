@@ -1,8 +1,8 @@
 import { Documents } from "../Documents";
-import { PersistedProtectedDocument } from "../PersistedProtectedDocument";
+import { ProtectedDocument } from "../ProtectedDocument";
 
 
-export interface UsersEndpoint extends PersistedProtectedDocument {
+export interface UsersEndpoint extends ProtectedDocument {
 }
 
 
@@ -14,12 +14,12 @@ export interface UsersEndpointFactory {
 
 export const UsersEndpoint:UsersEndpointFactory = {
 	is( value:any ):value is UsersEndpoint {
-		return PersistedProtectedDocument.is( value )
+		return ProtectedDocument.is( value )
 			;
 	},
 
 	decorate<T extends object>( object:T, documents:Documents ):T & UsersEndpoint {
-		PersistedProtectedDocument.decorate( object, documents );
+		ProtectedDocument.decorate( object, documents );
 
 		return object as T & UsersEndpoint;
 	},

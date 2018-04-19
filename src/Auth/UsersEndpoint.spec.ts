@@ -1,4 +1,4 @@
-import { PersistedProtectedDocument } from "../PersistedProtectedDocument";
+import { ProtectedDocument } from "../ProtectedDocument";
 import {
 	hasMethod,
 	interfaze,
@@ -67,7 +67,7 @@ describe( module( "carbonldp/Auth/UsersEndpoint" ), ():void => {
 			} );
 
 			it( "should call PersistedProtectedDocument.is", ():void => {
-				const spy:jasmine.Spy = spyOn( PersistedProtectedDocument, "is" )
+				const spy:jasmine.Spy = spyOn( ProtectedDocument, "is" )
 					.and.returnValue( false );
 
 				const value:any = { the: "object" };
@@ -77,7 +77,7 @@ describe( module( "carbonldp/Auth/UsersEndpoint" ), ():void => {
 			} );
 
 			it( "should return true if all dependencies are true", ():void => {
-				spyOn( PersistedProtectedDocument, "is" )
+				spyOn( ProtectedDocument, "is" )
 					.and.returnValue( true );
 
 				const returned:boolean = UsersEndpoint.is( {} );
@@ -94,7 +94,7 @@ describe( module( "carbonldp/Auth/UsersEndpoint" ), ():void => {
 			} );
 
 			it( "should call PersistedProtectedDocument.decorate", ():void => {
-				const spy:jasmine.Spy = spyOn( PersistedProtectedDocument, "decorate" )
+				const spy:jasmine.Spy = spyOn( ProtectedDocument, "decorate" )
 					.and.callThrough();
 
 				const object:{} = { the: "object" };

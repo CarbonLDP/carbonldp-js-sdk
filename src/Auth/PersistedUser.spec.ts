@@ -1,6 +1,6 @@
 import { StrictMinus } from "../../test/helpers/types";
 import { AbstractContext } from "../AbstractContext";
-import { PersistedProtectedDocument } from "../PersistedProtectedDocument";
+import { ProtectedDocument } from "../ProtectedDocument";
 import { Pointer } from "../Pointer";
 import {
 	extendsClass,
@@ -27,7 +27,7 @@ describe( module( "carbonldp/Auth/PersistedUser" ), ():void => {
 	), ():void => {
 
 		it( extendsClass( "CarbonLDP.Auth.User" ), ():void => {} );
-		it( extendsClass( "CarbonLDP.PersistedProtectedDocument" ), ():void => {} );
+		it( extendsClass( "CarbonLDP.ProtectedDocument" ), ():void => {} );
 
 		let context:AbstractContext;
 		let persistedUser:PersistedUser;
@@ -93,7 +93,7 @@ describe( module( "carbonldp/Auth/PersistedUser" ), ():void => {
 		"CarbonLDP.Auth.PersistedUserFactory"
 	), ():void => {
 
-		type MockPersistedUser = StrictMinus<PersistedUser, User & PersistedProtectedDocument>;
+		type MockPersistedUser = StrictMinus<PersistedUser, User & ProtectedDocument>;
 
 		it( isDefined(), ():void => {
 			expect( PersistedUser ).toBeDefined();
@@ -118,7 +118,7 @@ describe( module( "carbonldp/Auth/PersistedUser" ), ():void => {
 			it( "should call to `PersistedProtectedDocument.is`", ():void => {
 				spyOn( User, "isDecorated" )
 					.and.returnValue( true );
-				const spy:jasmine.Spy = spyOn( PersistedProtectedDocument, "is" );
+				const spy:jasmine.Spy = spyOn( ProtectedDocument, "is" );
 
 				const object:object = { the: "object" };
 				PersistedUser.is( object );
@@ -128,7 +128,7 @@ describe( module( "carbonldp/Auth/PersistedUser" ), ():void => {
 			it( "should return true when all verifications pass", ():void => {
 				spyOn( User, "isDecorated" )
 					.and.returnValue( true );
-				spyOn( PersistedProtectedDocument, "is" )
+				spyOn( ProtectedDocument, "is" )
 					.and.returnValue( true );
 
 				const object:object = { the: "object" };
@@ -170,7 +170,7 @@ describe( module( "carbonldp/Auth/PersistedUser" ), ():void => {
 			} );
 
 			it( "should call `PersistedProtectedDocument.decorate`", ():void => {
-				const spy:jasmine.Spy = spyOn( PersistedProtectedDocument, "decorate" );
+				const spy:jasmine.Spy = spyOn( ProtectedDocument, "decorate" );
 
 				const object:object = { the: "object" };
 				const fakeDocuments:any = { fake: "Documents" };

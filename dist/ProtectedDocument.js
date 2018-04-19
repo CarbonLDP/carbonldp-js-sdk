@@ -10,17 +10,17 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var Document_1 = require("./Document");
 var Utils = __importStar(require("./Utils"));
 var CS_1 = require("./Vocabularies/CS");
-exports.PersistedProtectedDocument = {
+exports.ProtectedDocument = {
     isDecorated: function (object) {
         return Utils.isObject(object)
             && Utils.hasFunction(object, "getACL");
     },
     is: function (object) {
-        return exports.PersistedProtectedDocument.isDecorated(object)
+        return exports.ProtectedDocument.isDecorated(object)
             && Document_1.Document.is(object);
     },
     decorate: function (object, documents) {
-        if (exports.PersistedProtectedDocument.isDecorated(object))
+        if (exports.ProtectedDocument.isDecorated(object))
             return object;
         Document_1.Document.decorate(object, documents);
         var persistedProtectedDocument = object;
@@ -46,4 +46,4 @@ function getACL(requestOptions) {
     });
 }
 
-//# sourceMappingURL=PersistedProtectedDocument.js.map
+//# sourceMappingURL=ProtectedDocument.js.map

@@ -1,10 +1,10 @@
 import { Documents } from "../Documents";
-import { PersistedProtectedDocument } from "../PersistedProtectedDocument";
+import { ProtectedDocument } from "../ProtectedDocument";
 import { User } from "./User";
 import { UsernameAndPasswordCredentials } from "./UsernameAndPasswordCredentials";
 
 
-export interface PersistedUser extends PersistedProtectedDocument {
+export interface PersistedUser extends ProtectedDocument {
 	name?:string;
 	credentials?:UsernameAndPasswordCredentials;
 }
@@ -20,13 +20,13 @@ export interface PersistedUserFactory {
 export const PersistedUser:PersistedUserFactory = {
 	is( value:any ):value is PersistedUser {
 		return User.isDecorated( value )
-			&& PersistedProtectedDocument.is( value )
+			&& ProtectedDocument.is( value )
 			;
 	},
 
 	decorate<T extends object>( object:T, documents:Documents ):PersistedUser & T {
 		User.decorate( object );
-		PersistedProtectedDocument.decorate( object, documents );
+		ProtectedDocument.decorate( object, documents );
 
 		const persistedUser:T & PersistedUser = object as T & PersistedUser;
 		persistedUser.addType( User.TYPE );

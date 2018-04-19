@@ -5022,17 +5022,17 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var Document_1 = __webpack_require__(42);
 var Utils = __importStar(__webpack_require__(0));
 var CS_1 = __webpack_require__(18);
-exports.PersistedProtectedDocument = {
+exports.ProtectedDocument = {
     isDecorated: function (object) {
         return Utils.isObject(object)
             && Utils.hasFunction(object, "getACL");
     },
     is: function (object) {
-        return exports.PersistedProtectedDocument.isDecorated(object)
+        return exports.ProtectedDocument.isDecorated(object)
             && Document_1.Document.is(object);
     },
     decorate: function (object, documents) {
-        if (exports.PersistedProtectedDocument.isDecorated(object))
+        if (exports.ProtectedDocument.isDecorated(object))
             return object;
         Document_1.Document.decorate(object, documents);
         var persistedProtectedDocument = object;
@@ -7463,16 +7463,16 @@ exports.QueryContext = QueryContext;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var PersistedProtectedDocument_1 = __webpack_require__(45);
+var ProtectedDocument_1 = __webpack_require__(45);
 var User_1 = __webpack_require__(57);
 exports.PersistedUser = {
     is: function (value) {
         return User_1.User.isDecorated(value)
-            && PersistedProtectedDocument_1.PersistedProtectedDocument.is(value);
+            && ProtectedDocument_1.ProtectedDocument.is(value);
     },
     decorate: function (object, documents) {
         User_1.User.decorate(object);
-        PersistedProtectedDocument_1.PersistedProtectedDocument.decorate(object, documents);
+        ProtectedDocument_1.ProtectedDocument.decorate(object, documents);
         var persistedUser = object;
         persistedUser.addType(User_1.User.TYPE);
         return persistedUser;
@@ -10237,7 +10237,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
 }
 Object.defineProperty(exports, "__esModule", { value: true });
 var Errors = __importStar(__webpack_require__(9));
-var PersistedProtectedDocument_1 = __webpack_require__(45);
+var ProtectedDocument_1 = __webpack_require__(45);
 var Utils = __importStar(__webpack_require__(0));
 var Factory = (function () {
     function Factory() {
@@ -10253,13 +10253,13 @@ var Factory = (function () {
     };
     Factory.is = function (object) {
         return Factory.hasClassProperties(object)
-            && PersistedProtectedDocument_1.PersistedProtectedDocument.is(object);
+            && ProtectedDocument_1.ProtectedDocument.is(object);
     };
     Factory.decorate = function (object, documents) {
         var persistedRole = object;
         if (Factory.hasClassProperties(persistedRole))
             return persistedRole;
-        PersistedProtectedDocument_1.PersistedProtectedDocument.decorate(persistedRole, documents);
+        ProtectedDocument_1.ProtectedDocument.decorate(persistedRole, documents);
         Object.defineProperties(persistedRole, {
             "_roles": {
                 writable: false,
@@ -10451,13 +10451,13 @@ exports.TokenAuthenticator = TokenAuthenticator;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var PersistedProtectedDocument_1 = __webpack_require__(45);
+var ProtectedDocument_1 = __webpack_require__(45);
 exports.UsersEndpoint = {
     is: function (value) {
-        return PersistedProtectedDocument_1.PersistedProtectedDocument.is(value);
+        return ProtectedDocument_1.ProtectedDocument.is(value);
     },
     decorate: function (object, documents) {
-        PersistedProtectedDocument_1.PersistedProtectedDocument.decorate(object, documents);
+        ProtectedDocument_1.ProtectedDocument.decorate(object, documents);
         return object;
     },
 };
@@ -10607,7 +10607,7 @@ var Utils_1 = __webpack_require__(146);
 var ObjectSchema_1 = __webpack_require__(12);
 var Document_1 = __webpack_require__(42);
 var Fragment_1 = __webpack_require__(55);
-var PersistedProtectedDocument_1 = __webpack_require__(45);
+var ProtectedDocument_1 = __webpack_require__(45);
 var PersistedResource_1 = __webpack_require__(56);
 var Pointer_1 = __webpack_require__(22);
 var TransientProtectedDocument_1 = __webpack_require__(92);
@@ -10648,7 +10648,7 @@ var Documents = (function () {
         }
         else {
             decorators
-                .set(TransientProtectedDocument_1.TransientProtectedDocument.TYPE, PersistedProtectedDocument_1.PersistedProtectedDocument.decorate)
+                .set(TransientProtectedDocument_1.TransientProtectedDocument.TYPE, ProtectedDocument_1.ProtectedDocument.decorate)
                 .set(User_1.User.TYPE, PersistedUser_1.PersistedUser.decorate)
                 .set(ACL_1.ACL.TYPE, PersistedACL_1.PersistedACL.decorate)
                 .set(Auth.Role.RDF_CLASS, Auth.PersistedRole.Factory.decorate);
@@ -11552,7 +11552,7 @@ var Documents = (function () {
                 throw new BadResponseError_1.BadResponseError("The response contains more than one Location header.", response);
             var localID = _this._getPointerID(locationHeader.values[0].toString());
             _this.pointers.set(localID, _this._createPointerFrom(document, localID));
-            var persistedDocument = PersistedProtectedDocument_1.PersistedProtectedDocument.decorate(document, _this);
+            var persistedDocument = ProtectedDocument_1.ProtectedDocument.decorate(document, _this);
             persistedDocument.getFragments().forEach(Fragment_1.Fragment.decorate);
             return _this._applyResponseData(persistedDocument, response);
         }).catch(function (error) {
@@ -15191,7 +15191,7 @@ var Documents_1 = __webpack_require__(140);
 var Errors = __importStar(__webpack_require__(9));
 var TransientFragment_1 = __webpack_require__(36);
 var FreeResources_1 = __webpack_require__(142);
-var PersistedProtectedDocument_1 = __webpack_require__(45);
+var ProtectedDocument_1 = __webpack_require__(45);
 var TransientProtectedDocument_1 = __webpack_require__(92);
 var ServiceAwareDocument_1 = __webpack_require__(122);
 var HTTP = __importStar(__webpack_require__(77));
@@ -15308,7 +15308,7 @@ var CarbonLDP = (function (_super) {
     CarbonLDP.Document = Document_1.Document;
     CarbonLDP.Fragment = Fragment_1.Fragment;
     CarbonLDP.NamedFragment = NamedFragment_1.NamedFragment;
-    CarbonLDP.PersistedProtectedDocument = PersistedProtectedDocument_1.PersistedProtectedDocument;
+    CarbonLDP.ProtectedDocument = ProtectedDocument_1.ProtectedDocument;
     CarbonLDP.PersistedResource = PersistedResource_1.PersistedResource;
     CarbonLDP.Pointer = Pointer_1.Pointer;
     CarbonLDP.TransientProtectedDocument = TransientProtectedDocument_1.TransientProtectedDocument;

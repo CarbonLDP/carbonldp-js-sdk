@@ -7,40 +7,40 @@ import { Pointer } from "./Pointer";
 import * as Utils from "./Utils";
 import { CS } from "./Vocabularies/CS";
 
-export interface PersistedProtectedDocument extends Document {
+export interface ProtectedDocument extends Document {
 	accessControlList?:Pointer;
 
 	getACL( requestOptions?:RequestOptions ):Promise<PersistedACL>;
 }
 
 
-export interface PersistedProtectedDocumentFactory extends ModelDecorator<PersistedProtectedDocument> {
-	isDecorated( object:object ):object is PersistedProtectedDocument;
+export interface ProtectedDocumentFactory extends ModelDecorator<ProtectedDocument> {
+	isDecorated( object:object ):object is ProtectedDocument;
 
-	is( object:object ):object is PersistedProtectedDocument;
+	is( object:object ):object is ProtectedDocument;
 
-	decorate<T extends object>( object:T, documents:Documents ):T & PersistedProtectedDocument;
+	decorate<T extends object>( object:T, documents:Documents ):T & ProtectedDocument;
 }
 
-export const PersistedProtectedDocument:PersistedProtectedDocumentFactory = {
-	isDecorated( object:object ):object is PersistedProtectedDocument {
+export const ProtectedDocument:ProtectedDocumentFactory = {
+	isDecorated( object:object ):object is ProtectedDocument {
 		return Utils.isObject( object )
 			&& Utils.hasFunction( object, "getACL" )
 			;
 	},
 
-	is( object:object ):object is PersistedProtectedDocument {
-		return PersistedProtectedDocument.isDecorated( object )
+	is( object:object ):object is ProtectedDocument {
+		return ProtectedDocument.isDecorated( object )
 			&& Document.is( object )
 			;
 	},
 
-	decorate<T extends object>( object:T, documents:Documents ):T & PersistedProtectedDocument {
-		if( PersistedProtectedDocument.isDecorated( object ) ) return object;
+	decorate<T extends object>( object:T, documents:Documents ):T & ProtectedDocument {
+		if( ProtectedDocument.isDecorated( object ) ) return object;
 
 		Document.decorate( object, documents );
 
-		const persistedProtectedDocument:T & PersistedProtectedDocument = object as T & PersistedProtectedDocument;
+		const persistedProtectedDocument:T & ProtectedDocument = object as T & ProtectedDocument;
 		Object.defineProperties( persistedProtectedDocument, {
 			"getACL": {
 				writable: false,
@@ -59,7 +59,7 @@ interface ACLResult {
 	acl:Pointer;
 }
 
-function getACL( this:PersistedProtectedDocument, requestOptions?:RequestOptions ):Promise<PersistedACL> {
+function getACL( this:ProtectedDocument, requestOptions?:RequestOptions ):Promise<PersistedACL> {
 	const aclPromise:Promise<Pointer> = this.isResolved() ?
 		Promise.resolve( this.accessControlList ) :
 		this.executeSELECTQuery<ACLResult>( `SELECT ?acl WHERE {<${ this.id }> <${ CS.accessControlList }> ?acl}` )

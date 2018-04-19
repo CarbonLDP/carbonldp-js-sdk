@@ -8,7 +8,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
 }
 Object.defineProperty(exports, "__esModule", { value: true });
 var Errors = __importStar(require("../Errors"));
-var PersistedProtectedDocument_1 = require("../PersistedProtectedDocument");
+var ProtectedDocument_1 = require("../ProtectedDocument");
 var Utils = __importStar(require("./../Utils"));
 var Factory = (function () {
     function Factory() {
@@ -24,13 +24,13 @@ var Factory = (function () {
     };
     Factory.is = function (object) {
         return Factory.hasClassProperties(object)
-            && PersistedProtectedDocument_1.PersistedProtectedDocument.is(object);
+            && ProtectedDocument_1.ProtectedDocument.is(object);
     };
     Factory.decorate = function (object, documents) {
         var persistedRole = object;
         if (Factory.hasClassProperties(persistedRole))
             return persistedRole;
-        PersistedProtectedDocument_1.PersistedProtectedDocument.decorate(persistedRole, documents);
+        ProtectedDocument_1.ProtectedDocument.decorate(persistedRole, documents);
         Object.defineProperties(persistedRole, {
             "_roles": {
                 writable: false,

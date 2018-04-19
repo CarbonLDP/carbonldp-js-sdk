@@ -35,7 +35,7 @@ var Utils_1 = require("./Messaging/Utils");
 var ObjectSchema_1 = require("./ObjectSchema");
 var Document_1 = require("./Document");
 var Fragment_1 = require("./Fragment");
-var PersistedProtectedDocument_1 = require("./PersistedProtectedDocument");
+var ProtectedDocument_1 = require("./ProtectedDocument");
 var PersistedResource_1 = require("./PersistedResource");
 var Pointer_1 = require("./Pointer");
 var TransientProtectedDocument_1 = require("./TransientProtectedDocument");
@@ -76,7 +76,7 @@ var Documents = (function () {
         }
         else {
             decorators
-                .set(TransientProtectedDocument_1.TransientProtectedDocument.TYPE, PersistedProtectedDocument_1.PersistedProtectedDocument.decorate)
+                .set(TransientProtectedDocument_1.TransientProtectedDocument.TYPE, ProtectedDocument_1.ProtectedDocument.decorate)
                 .set(User_1.User.TYPE, PersistedUser_1.PersistedUser.decorate)
                 .set(ACL_1.ACL.TYPE, PersistedACL_1.PersistedACL.decorate)
                 .set(Auth.Role.RDF_CLASS, Auth.PersistedRole.Factory.decorate);
@@ -980,7 +980,7 @@ var Documents = (function () {
                 throw new BadResponseError_1.BadResponseError("The response contains more than one Location header.", response);
             var localID = _this._getPointerID(locationHeader.values[0].toString());
             _this.pointers.set(localID, _this._createPointerFrom(document, localID));
-            var persistedDocument = PersistedProtectedDocument_1.PersistedProtectedDocument.decorate(document, _this);
+            var persistedDocument = ProtectedDocument_1.ProtectedDocument.decorate(document, _this);
             persistedDocument.getFragments().forEach(Fragment_1.Fragment.decorate);
             return _this._applyResponseData(persistedDocument, response);
         }).catch(function (error) {

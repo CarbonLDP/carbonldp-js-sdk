@@ -1,7 +1,7 @@
 import { Documents } from "../Documents";
-import { PersistedProtectedDocument } from "../PersistedProtectedDocument";
+import { ProtectedDocument } from "../ProtectedDocument";
 import { UsernameAndPasswordCredentials } from "./UsernameAndPasswordCredentials";
-export interface PersistedUser extends PersistedProtectedDocument {
+export interface PersistedUser extends ProtectedDocument {
     name?: string;
     credentials?: UsernameAndPasswordCredentials;
 }
