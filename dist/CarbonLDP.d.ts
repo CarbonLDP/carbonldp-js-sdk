@@ -1,7 +1,7 @@
 import { AbstractContext } from "./AbstractContext";
 import { TransientAccessPoint } from "./TransientAccessPoint";
 import * as Auth from "./Auth";
-import { BlankNode } from "./BlankNode";
+import { TransientBlankNode } from "./TransientBlankNode";
 import { TransientDocument } from "./TransientDocument";
 import { Documents } from "./Documents";
 import * as Errors from "./Errors";
@@ -35,7 +35,7 @@ export declare class CarbonLDP extends AbstractContext {
     static AbstractContext: typeof AbstractContext;
     static TransientAccessPoint: typeof TransientAccessPoint;
     static Auth: typeof Auth;
-    static BlankNode: typeof BlankNode;
+    static TransientBlankNode: typeof TransientBlankNode;
     static TransientDocument: typeof TransientDocument;
     static Documents: typeof Documents;
     static Errors: typeof Errors;

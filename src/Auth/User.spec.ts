@@ -1,6 +1,6 @@
 import { anyThatMatches } from "../../test/helpers/jasmine-equalities";
 import { StrictMinus } from "../../test/helpers/types";
-import { BlankNode } from "../BlankNode";
+import { TransientBlankNode } from "../TransientBlankNode";
 import { TransientDocument } from "../TransientDocument";
 import { TransientFragment } from "../TransientFragment";
 import {
@@ -301,7 +301,7 @@ describe( module( "carbonldp/Auth/User" ), ():void => {
 					} ),
 				} );
 
-				expect( user.credentials ).toEqual( anyThatMatches( BlankNode.is, "BlankNode" ) as any );
+				expect( user.credentials ).toEqual( anyThatMatches( TransientBlankNode.is, "BlankNode" ) as any );
 			} );
 
 		} );
@@ -399,7 +399,7 @@ describe( module( "carbonldp/Auth/User" ), ():void => {
 					user.updateCredentials( "username", "password" );
 
 					expect( user.credentials ).toBeDefined();
-					expect( user.credentials ).toEqual( anyThatMatches( BlankNode.is, "BlankNode" ) as any );
+					expect( user.credentials ).toEqual( anyThatMatches( TransientBlankNode.is, "BlankNode" ) as any );
 				} );
 
 			} );

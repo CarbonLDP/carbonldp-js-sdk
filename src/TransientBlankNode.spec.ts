@@ -1,4 +1,4 @@
-import { BlankNode } from "./BlankNode";
+import { TransientBlankNode } from "./TransientBlankNode";
 import { TransientDocument } from "./TransientDocument";
 import { URI } from "./RDF/URI";
 import {
@@ -11,56 +11,56 @@ import {
 	STATIC,
 } from "./test/JasmineExtender";
 
-describe( module( "carbonldp/BlankNode" ), ():void => {
+describe( module( "carbonldp/TransientBlankNode" ), ():void => {
 
 	describe( interfaze(
-		"CarbonLDP.BlankNode",
+		"CarbonLDP.TransientBlankNode",
 		"Interface that represents the basic data of a blank node."
 	), ():void => {} );
 
 	describe( interfaze(
-		"CarbonLDP.BlankNodeFactory",
-		"Interface with the factory, decorate and utils methods id a `CarbonLDP.BlankNode` object."
+		"CarbonLDP.TransientBlankNodeFactory",
+		"Interface with the factory, decorate and utils methods id a `CarbonLDP.TransientBlankNode` object."
 	), ():void => {
 
 		it( hasMethod(
 			OBLIGATORY,
 			"is",
-			"Returns true if the object provided is considered a `CarbonLDP.BlankNode`.", [
+			"Returns true if the object provided is considered a `CarbonLDP.TransientBlankNode`.", [
 				{ name: "object", type: "object" },
 			],
-			{ type: "object is CarbonLDP.BlankNode" }
+			{ type: "object is CarbonLDP.TransientBlankNode" }
 		), ():void => {} );
 
 		it( hasMethod(
 			OBLIGATORY,
 			"create",
-			"Creates a `CarbonLDP.BlankNode` object from the parameters specified.", [
+			"Creates a `CarbonLDP.TransientBlankNode` object from the parameters specified.", [
 				{ name: "document", type: "CarbonLDP.TransientDocument", description: "The `CarbonLDP.TransientDocument` object where the fragment is part of." },
 				{ name: "id", type: "string", optional: true, description: "The ID of the of the BlankNode to create. If no ID is provided, one will be created." },
 			],
-			{ type: "T & CarbonLDP.BlankNode" }
+			{ type: "T & CarbonLDP.TransientBlankNode" }
 		), ():void => {} );
 
 		it( hasMethod(
 			OBLIGATORY,
 			"createFrom",
 			[ "T extends object" ],
-			"Creates a `CarbonLDP.BlankNode` object from the object and parameters specified.", [
-				{ name: "object", type: "T", description: "Object to be converted into a `CarbonLDP.BlankNode`." },
+			"Creates a `CarbonLDP.TransientBlankNode` object from the object and parameters specified.", [
+				{ name: "object", type: "T", description: "Object to be converted into a `CarbonLDP.TransientBlankNode`." },
 				{ name: "document", type: "CarbonLDP.TransientDocument", description: "The `CarbonLDP.TransientDocument` object where the fragment is part of." },
 				{ name: "id", type: "string", optional: true, description: "The ID of the of the BlankNode to create. If no ID is provided, one will be created." },
 			],
-			{ type: "T & CarbonLDP.BlankNode" }
+			{ type: "T & CarbonLDP.TransientBlankNode" }
 		), ():void => {} );
 
 	} );
 
-	describe( property( STATIC, "BlankNode", "CarbonLDP.BlankNodeFactory", "Constant that implements the `CarbonLDP.BlankNodeFactory` interface." ), ():void => {
+	describe( property( STATIC, "TransientBlankNode", "CarbonLDP.TransientBlankNodeFactory", "Constant that implements the `CarbonLDP.TransientBlankNodeFactory` interface." ), ():void => {
 
 		it( isDefined(), ():void => {
-			expect( BlankNode ).toBeDefined();
-			expect( BlankNode ).toEqual( jasmine.any( Object ) );
+			expect( TransientBlankNode ).toBeDefined();
+			expect( TransientBlankNode ).toEqual( jasmine.any( Object ) );
 		} );
 
 		// TODO: Test `BlankNode.is`
@@ -68,11 +68,11 @@ describe( module( "carbonldp/BlankNode" ), ():void => {
 		// TODO: Test `BlankNode.create`
 
 
-		describe( "BlankNode.createFrom", ():void => {
+		describe( "TransientBlankNode.createFrom", ():void => {
 
 			it( isDefined(), ():void => {
-				expect( BlankNode.createFrom ).toBeDefined();
-				expect( BlankNode.createFrom ).toEqual( jasmine.any( Function ) );
+				expect( TransientBlankNode.createFrom ).toBeDefined();
+				expect( TransientBlankNode.createFrom ).toEqual( jasmine.any( Function ) );
 			} );
 
 			// TODO: Separate in different tests
@@ -83,15 +83,15 @@ describe( module( "carbonldp/BlankNode" ), ():void => {
 					property:string;
 				}
 
-				let blankNode:BlankNode & MyFragment;
+				let blankNode:TransientBlankNode & MyFragment;
 
-				blankNode = BlankNode.createFrom<MyFragment>( { property: "my property 1" }, document, "_:BlankNode-1" );
+				blankNode = TransientBlankNode.createFrom<MyFragment>( { property: "my property 1" }, document, "_:BlankNode-1" );
 				expect( blankNode ).toBeTruthy();
 				expect( blankNode._document ).toBe( document );
 				expect( blankNode.id ).toBe( "_:BlankNode-1" );
 				expect( blankNode.property ).toBe( "my property 1" );
 
-				let anotherBlankNode:BlankNode = BlankNode.createFrom<{}>( {}, document, "_:BlankNode-2" );
+				let anotherBlankNode:TransientBlankNode = TransientBlankNode.createFrom<{}>( {}, document, "_:BlankNode-2" );
 				expect( anotherBlankNode ).toBeTruthy();
 				expect( anotherBlankNode._document ).toBe( document );
 				expect( anotherBlankNode.id ).toBe( "_:BlankNode-2" );
@@ -106,15 +106,15 @@ describe( module( "carbonldp/BlankNode" ), ():void => {
 					property:string;
 				}
 
-				let blankNode:BlankNode & MyFragment;
+				let blankNode:TransientBlankNode & MyFragment;
 
-				blankNode = BlankNode.createFrom<MyFragment>( { property: "my property 3" }, document );
+				blankNode = TransientBlankNode.createFrom<MyFragment>( { property: "my property 3" }, document );
 				expect( blankNode ).toBeTruthy();
 				expect( blankNode._document ).toBe( document );
 				expect( URI.isBNodeID( blankNode.id ) ).toBe( true );
 				expect( blankNode.property ).toBe( "my property 3" );
 
-				let anotherBlankNode:BlankNode = BlankNode.createFrom<{}>( {}, document );
+				let anotherBlankNode:TransientBlankNode = TransientBlankNode.createFrom<{}>( {}, document );
 				expect( anotherBlankNode ).toBeTruthy();
 				expect( anotherBlankNode._document ).toBe( document );
 				expect( URI.isBNodeID( anotherBlankNode.id ) ).toBe( true );

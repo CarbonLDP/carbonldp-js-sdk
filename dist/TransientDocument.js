@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var BlankNode_1 = require("./BlankNode");
+var TransientBlankNode_1 = require("./TransientBlankNode");
 var IDAlreadyInUseError_1 = require("./Errors/IDAlreadyInUseError");
 var IllegalArgumentError_1 = require("./Errors/IllegalArgumentError");
 var Converter_1 = require("./JSONLD/Converter");
@@ -260,7 +260,7 @@ function createFragment(slugOrObject, slug) {
         if (this._fragmentsIndex.has(slug))
             throw new IDAlreadyInUseError_1.IDAlreadyInUseError("The slug provided is already being used by a fragment.");
     }
-    var fragment = BlankNode_1.BlankNode.createFrom(object, this, slug);
+    var fragment = TransientBlankNode_1.TransientBlankNode.createFrom(object, this, slug);
     this._fragmentsIndex.set(fragment.id, fragment);
     exports.TransientDocument._convertNestedObjects(this, fragment);
     return fragment;

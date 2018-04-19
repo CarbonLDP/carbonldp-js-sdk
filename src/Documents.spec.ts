@@ -26,7 +26,7 @@ import {
 	TransientAccessPoint,
 	AccessPointBase,
 } from "./TransientAccessPoint";
-import { BlankNode } from "./BlankNode";
+import { TransientBlankNode } from "./TransientBlankNode";
 import { CarbonLDP } from "./CarbonLDP";
 import { Context } from "./Context";
 import { TransientDocument } from "./TransientDocument";
@@ -2539,7 +2539,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 						]`,
 					} );
 
-					type RawBlankNode = Partial<BlankNode> & { value:string };
+					type RawBlankNode = Partial<TransientBlankNode> & { value:string };
 
 					interface RawDocument {
 						blankNode1:RawBlankNode;
@@ -3203,7 +3203,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 						]`,
 					} );
 
-					type RawBlankNode = Partial<BlankNode> & { value:string };
+					type RawBlankNode = Partial<TransientBlankNode> & { value:string };
 
 					interface RawDocument {
 						blankNode1:RawBlankNode;
@@ -6384,7 +6384,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 						]`,
 					} );
 
-					type RawBlankNode = Partial<BlankNode> & { value:string };
+					type RawBlankNode = Partial<TransientBlankNode> & { value:string };
 
 					interface RawDocument {
 						blankNode1:RawBlankNode;
@@ -10455,7 +10455,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 						]`,
 					} );
 
-					type RawBlankNode = Partial<BlankNode> & { value:string };
+					type RawBlankNode = Partial<TransientBlankNode> & { value:string };
 
 					interface RawDocument {
 						blankNode1:RawBlankNode;
@@ -12129,7 +12129,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 						]`,
 					} );
 
-					type RawBlankNode = Partial<BlankNode> & { value:string };
+					type RawBlankNode = Partial<TransientBlankNode> & { value:string };
 
 					interface RawDocument {
 						blankNode1:RawBlankNode;

@@ -1,5 +1,5 @@
 import { Minus } from "../test/helpers/types";
-import { BlankNode } from "./BlankNode";
+import { TransientBlankNode } from "./TransientBlankNode";
 
 import { TransientDocument } from "./TransientDocument";
 
@@ -785,9 +785,9 @@ describe( module( "carbonldp/TransientDocument" ), ():void => {
 					const document:TransientDocument = createMockDocument();
 					const pointer:Pointer = document.getPointer( "_:1" );
 
-					expect( BlankNode.is( pointer ) ).toBe( true );
+					expect( TransientBlankNode.is( pointer ) ).toBe( true );
 					expect( document._fragmentsIndex ).toEqual( new Map( [
-						[ "_:1", pointer as BlankNode ],
+						[ "_:1", pointer as TransientBlankNode ],
 					] ) );
 				} );
 
@@ -1420,7 +1420,7 @@ describe( module( "carbonldp/TransientDocument" ), ():void => {
 				it( "should remove providing a `BlankNode`", ():void => {
 					const document:TransientDocument = createMockDocument();
 
-					const fragment:BlankNode = BlankNode.create( document, "_:1" );
+					const fragment:TransientBlankNode = TransientBlankNode.create( document, "_:1" );
 					document._fragmentsIndex.set( "_:1", fragment );
 
 					document._removeFragment( fragment );
@@ -1486,7 +1486,7 @@ describe( module( "carbonldp/TransientDocument" ), ():void => {
 				it( "should throw error providing a `BlankNode`", ():void => {
 					const document:TransientDocument = createMockDocument();
 
-					const fragment:BlankNode = BlankNode.create( document, "_:1" );
+					const fragment:TransientBlankNode = TransientBlankNode.create( document, "_:1" );
 					document._fragmentsIndex.set( "_:1", fragment );
 
 					expect( () => document.removeNamedFragment( fragment as any ) ).toThrowError( IllegalArgumentError, "You can only remove NamedFragments." );

@@ -1742,7 +1742,7 @@ exports.CS = {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var BlankNode_1 = __webpack_require__(105);
+var TransientBlankNode_1 = __webpack_require__(105);
 var IDAlreadyInUseError_1 = __webpack_require__(70);
 var IllegalArgumentError_1 = __webpack_require__(13);
 var Converter_1 = __webpack_require__(71);
@@ -2002,7 +2002,7 @@ function createFragment(slugOrObject, slug) {
         if (this._fragmentsIndex.has(slug))
             throw new IDAlreadyInUseError_1.IDAlreadyInUseError("The slug provided is already being used by a fragment.");
     }
-    var fragment = BlankNode_1.BlankNode.createFrom(object, this, slug);
+    var fragment = TransientBlankNode_1.TransientBlankNode.createFrom(object, this, slug);
     this._fragmentsIndex.set(fragment.id, fragment);
     exports.TransientDocument._convertNestedObjects(this, fragment);
     return fragment;
@@ -8605,13 +8605,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var Errors_1 = __webpack_require__(9);
 var TransientFragment_1 = __webpack_require__(36);
 var URI_1 = __webpack_require__(10);
-exports.BlankNode = {
+exports.TransientBlankNode = {
     is: function (object) {
         return TransientFragment_1.TransientFragment.is(object) &&
             URI_1.URI.isBNodeID(object.id);
     },
     create: function (document, id) {
-        return exports.BlankNode.createFrom({}, document, id);
+        return exports.TransientBlankNode.createFrom({}, document, id);
     },
     createFrom: function (object, document, id) {
         if (id && !URI_1.URI.isBNodeID(id))
@@ -15185,7 +15185,7 @@ var iri_1 = __webpack_require__(28);
 var AbstractContext_1 = __webpack_require__(215);
 var TransientAccessPoint_1 = __webpack_require__(141);
 var Auth = __importStar(__webpack_require__(68));
-var BlankNode_1 = __webpack_require__(105);
+var TransientBlankNode_1 = __webpack_require__(105);
 var TransientDocument_1 = __webpack_require__(19);
 var Documents_1 = __webpack_require__(140);
 var Errors = __importStar(__webpack_require__(9));
@@ -15286,7 +15286,7 @@ var CarbonLDP = (function (_super) {
     CarbonLDP.AbstractContext = AbstractContext_1.AbstractContext;
     CarbonLDP.TransientAccessPoint = TransientAccessPoint_1.TransientAccessPoint;
     CarbonLDP.Auth = Auth;
-    CarbonLDP.BlankNode = BlankNode_1.BlankNode;
+    CarbonLDP.TransientBlankNode = TransientBlankNode_1.TransientBlankNode;
     CarbonLDP.TransientDocument = TransientDocument_1.TransientDocument;
     CarbonLDP.Documents = Documents_1.Documents;
     CarbonLDP.Errors = Errors;

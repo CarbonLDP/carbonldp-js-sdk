@@ -1,4 +1,4 @@
-import { BlankNode } from "../BlankNode";
+import { TransientBlankNode } from "../TransientBlankNode";
 import { ObjectSchema } from "../ObjectSchema";
 import { Document } from "../Document";
 import { Map } from "./Map";
@@ -8,7 +8,7 @@ import { ModelDecorator } from "../ModelDecorator";
 export interface DocumentMetadata extends VolatileResource {
     relatedDocument: Document;
     eTag?: string;
-    bNodesMap?: Map<BlankNode, BlankNode>;
+    bNodesMap?: Map<TransientBlankNode, TransientBlankNode>;
 }
 export interface DocumentMetadataFactory extends ModelFactory<DocumentMetadata>, ModelDecorator<DocumentMetadata> {
     TYPE: string;

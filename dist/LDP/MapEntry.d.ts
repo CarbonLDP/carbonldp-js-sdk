@@ -1,6 +1,6 @@
-import { BlankNode } from "../BlankNode";
+import { TransientBlankNode } from "../TransientBlankNode";
 import { ObjectSchema } from "../ObjectSchema";
-export interface MapEntry<K, V> extends BlankNode {
+export interface MapEntry<K, V> extends TransientBlankNode {
     entryKey: K;
     entryValue: V;
 }

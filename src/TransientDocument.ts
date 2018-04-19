@@ -1,4 +1,4 @@
-import { BlankNode } from "./BlankNode";
+import { TransientBlankNode } from "./TransientBlankNode";
 import { IDAlreadyInUseError } from "./Errors/IDAlreadyInUseError";
 import { IllegalArgumentError } from "./Errors/IllegalArgumentError";
 import { TransientFragment } from "./TransientFragment";
@@ -368,7 +368,7 @@ function createFragment<T extends object>( this:TransientDocument, slugOrObject?
 		if( this._fragmentsIndex.has( slug ) ) throw new IDAlreadyInUseError( "The slug provided is already being used by a fragment." );
 	}
 
-	const fragment:T & BlankNode = BlankNode.createFrom<T>( object, this, slug );
+	const fragment:T & TransientBlankNode = TransientBlankNode.createFrom<T>( object, this, slug );
 	this._fragmentsIndex.set( fragment.id, fragment );
 
 	TransientDocument._convertNestedObjects( this, fragment );
