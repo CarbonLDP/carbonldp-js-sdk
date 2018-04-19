@@ -15,7 +15,7 @@ import * as JSONLD from "./JSONLD";
 import * as LDP from "./LDP";
 import * as LDPatch from "./LDPatch";
 import * as Messaging from "./Messaging";
-import { NamedFragment } from "./NamedFragment";
+import { TransientNamedFragment } from "./TransientNamedFragment";
 import {
 	ContainerType,
 	DigestedObjectSchema,
@@ -219,11 +219,11 @@ describe( module( "carbonldp/CarbonLDP" ), ():void => {
 
 		it( reexports(
 			STATIC,
-			"NamedFragment",
-			"carbonldp/NamedFragment#NamedFragment"
+			"TransientNamedFragment",
+			"carbonldp/TransientNamedFragment#TransientNamedFragment"
 		), ():void => {
-			expect( CarbonLDP.CarbonLDP.NamedFragment ).toBeDefined();
-			expect( CarbonLDP.CarbonLDP.NamedFragment ).toBe( NamedFragment );
+			expect( CarbonLDP.CarbonLDP.TransientNamedFragment ).toBeDefined();
+			expect( CarbonLDP.CarbonLDP.TransientNamedFragment ).toBe( TransientNamedFragment );
 		} );
 
 		it( reexports(

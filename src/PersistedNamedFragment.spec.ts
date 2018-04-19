@@ -1,4 +1,4 @@
-import { NamedFragment } from "./NamedFragment";
+import { TransientNamedFragment } from "./TransientNamedFragment";
 import { Fragment } from "./Fragment";
 
 import { PersistedNamedFragment } from "./PersistedNamedFragment";
@@ -24,7 +24,7 @@ describe( module( "carbonldp/PersistedNamedFragment" ), ():void => {
 	), ():void => {
 
 		it( extendsClass( "CarbonLDP.Fragment" ), ():void => {} );
-		it( extendsClass( "CarbonLDP.NamedFragment" ), ():void => {} );
+		it( extendsClass( "CarbonLDP.TransientNamedFragment" ), ():void => {} );
 
 		it( hasProperty(
 			OBLIGATORY,
@@ -77,7 +77,7 @@ describe( module( "carbonldp/PersistedNamedFragment" ), ():void => {
 
 			let spyPersistedDecorator:jasmine.Spy = spyOn( Fragment, "decorate" ).and.callThrough();
 
-			let fragment:NamedFragment = NamedFragment.create( <any> { id: "http://example.com/resoruce/" }, "fragment-slug" );
+			let fragment:TransientNamedFragment = TransientNamedFragment.create( <any> { id: "http://example.com/resoruce/" }, "fragment-slug" );
 			let persistedFragment:PersistedNamedFragment = PersistedNamedFragment.decorate( fragment );
 
 			expect( persistedFragment ).toBeTruthy();

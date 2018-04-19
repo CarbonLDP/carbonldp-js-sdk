@@ -1,10 +1,10 @@
 import { ModelDecorator } from "./ModelDecorator";
-import { NamedFragment } from "./NamedFragment";
+import { TransientNamedFragment } from "./TransientNamedFragment";
 import { Document } from "./Document";
 import { Fragment } from "./Fragment";
 
 
-export interface PersistedNamedFragment extends Fragment, NamedFragment {
+export interface PersistedNamedFragment extends Fragment, TransientNamedFragment {
 	_document:Document;
 }
 
@@ -24,7 +24,7 @@ export const PersistedNamedFragment:PersistedNamedFragmentFactory = {
 	decorate<T extends object>( object:T ):T & PersistedNamedFragment {
 		if( PersistedNamedFragment.isDecorated( object ) ) return object;
 
-		const fragment:T & NamedFragment = NamedFragment.decorate( object );
+		const fragment:T & TransientNamedFragment = TransientNamedFragment.decorate( object );
 		return Fragment.decorate( fragment );
 	},
 };

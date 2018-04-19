@@ -5,7 +5,7 @@ import { TransientFragment } from "./TransientFragment";
 import { JSONLDConverter } from "./JSONLD/Converter";
 import { ModelDecorator } from "./ModelDecorator";
 import { ModelFactory } from "./ModelFactory";
-import { NamedFragment } from "./NamedFragment";
+import { TransientNamedFragment } from "./TransientNamedFragment";
 import {
 	DigestedObjectSchema,
 	ObjectSchema,
@@ -50,7 +50,7 @@ export interface TransientDocument extends Resource, PointerLibrary, PointerVali
 
 	getFragment<T>( slug:string ):T & TransientFragment;
 
-	getNamedFragment<T>( slug:string ):T & NamedFragment;
+	getNamedFragment<T>( slug:string ):T & TransientNamedFragment;
 
 
 	getFragments():TransientFragment[];
@@ -61,12 +61,12 @@ export interface TransientDocument extends Resource, PointerLibrary, PointerVali
 	createFragment( slug?:string ):TransientFragment;
 
 
-	createNamedFragment<T>( object:T, slug:string ):T & NamedFragment;
+	createNamedFragment<T>( object:T, slug:string ):T & TransientNamedFragment;
 
-	createNamedFragment( slug:string ):NamedFragment;
+	createNamedFragment( slug:string ):TransientNamedFragment;
 
 
-	removeNamedFragment( slugOrFragment:string | NamedFragment ):void;
+	removeNamedFragment( slugOrFragment:string | TransientNamedFragment ):void;
 
 
 	toJSON( objectSchemaResolver?:ObjectSchemaResolver, jsonldConverter?:JSONLDConverter ):RDFDocument;
@@ -341,7 +341,7 @@ function getFragment( this:TransientDocument, id:string ):TransientFragment {
 	return this._fragmentsIndex.get( id ) || null;
 }
 
-function getNamedFragment( this:TransientDocument, id:string ):NamedFragment {
+function getNamedFragment( this:TransientDocument, id:string ):TransientNamedFragment {
 	if( URI.isBNodeID( id ) ) throw new IllegalArgumentError( "Named fragments can't have a id that starts with '_:'." );
 	if( URI.isAbsolute( id ) ) {
 		if( ! URI.isFragmentOf( id, this.id ) ) throw new IllegalArgumentError( "The id is out of scope." );
@@ -350,7 +350,7 @@ function getNamedFragment( this:TransientDocument, id:string ):NamedFragment {
 		id = id.substring( 1 );
 	}
 
-	return <NamedFragment> this._fragmentsIndex.get( id ) || null;
+	return <TransientNamedFragment> this._fragmentsIndex.get( id ) || null;
 }
 
 function getFragments( this:TransientDocument ):TransientFragment[] {
@@ -375,9 +375,9 @@ function createFragment<T extends object>( this:TransientDocument, slugOrObject?
 	return fragment;
 }
 
-function createNamedFragment<T extends Object>( object:T, slug:string ):NamedFragment & T;
-function createNamedFragment( slug:string ):NamedFragment;
-function createNamedFragment<T extends Object>( this:TransientDocument, slugOrObject:any, slug?:string ):T & NamedFragment {
+function createNamedFragment<T extends Object>( object:T, slug:string ):TransientNamedFragment & T;
+function createNamedFragment( slug:string ):TransientNamedFragment;
+function createNamedFragment<T extends Object>( this:TransientDocument, slugOrObject:any, slug?:string ):T & TransientNamedFragment {
 	slug = isString( slugOrObject ) ? slugOrObject : slug;
 	const object:T = ! isString( slugOrObject ) && ! ! slugOrObject ? slugOrObject : <T> {};
 
@@ -390,7 +390,7 @@ function createNamedFragment<T extends Object>( this:TransientDocument, slugOrOb
 
 	if( this._fragmentsIndex.has( slug ) ) throw new IDAlreadyInUseError( "The slug provided is already being used by a fragment." );
 
-	const fragment:T & NamedFragment = NamedFragment.createFrom<T>( object, this, slug );
+	const fragment:T & TransientNamedFragment = TransientNamedFragment.createFrom<T>( object, this, slug );
 	this._fragmentsIndex.set( slug, fragment );
 
 	TransientDocument._convertNestedObjects( this, fragment );
@@ -410,7 +410,7 @@ function removeFragment( this:TransientDocument, fragmentOrSlug:string | Transie
 	this._fragmentsIndex.delete( id );
 }
 
-function removeNamedFragment( this:TransientDocument, fragmentOrSlug:NamedFragment | string ):void {
+function removeNamedFragment( this:TransientDocument, fragmentOrSlug:TransientNamedFragment | string ):void {
 	const id:string = isString( fragmentOrSlug ) ? fragmentOrSlug : fragmentOrSlug.id;
 
 	if( URI.isBNodeID( id ) ) throw new IllegalArgumentError( "You can only remove NamedFragments." );

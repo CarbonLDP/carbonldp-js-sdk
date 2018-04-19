@@ -4,7 +4,7 @@ var TransientBlankNode_1 = require("./TransientBlankNode");
 var IDAlreadyInUseError_1 = require("./Errors/IDAlreadyInUseError");
 var IllegalArgumentError_1 = require("./Errors/IllegalArgumentError");
 var Converter_1 = require("./JSONLD/Converter");
-var NamedFragment_1 = require("./NamedFragment");
+var TransientNamedFragment_1 = require("./TransientNamedFragment");
 var ObjectSchema_1 = require("./ObjectSchema");
 var URI_1 = require("./RDF/URI");
 var Resource_1 = require("./Resource");
@@ -279,7 +279,7 @@ function createNamedFragment(slugOrObject, slug) {
         slug = slug.substring(1);
     if (this._fragmentsIndex.has(slug))
         throw new IDAlreadyInUseError_1.IDAlreadyInUseError("The slug provided is already being used by a fragment.");
-    var fragment = NamedFragment_1.NamedFragment.createFrom(object, this, slug);
+    var fragment = TransientNamedFragment_1.TransientNamedFragment.createFrom(object, this, slug);
     this._fragmentsIndex.set(slug, fragment);
     exports.TransientDocument._convertNestedObjects(this, fragment);
     return fragment;

@@ -8,7 +8,7 @@ import { IllegalArgumentError } from "./Errors/IllegalArgumentError";
 import { TransientFragment } from "./TransientFragment";
 import * as JSONLDConverterModule from "./JSONLD/Converter";
 import { JSONLDConverter } from "./JSONLD/Converter";
-import { NamedFragment } from "./NamedFragment";
+import { TransientNamedFragment } from "./TransientNamedFragment";
 import {
 	DigestedObjectSchema,
 	ObjectSchemaDigester,
@@ -195,7 +195,7 @@ describe( module( "carbonldp/TransientDocument" ), ():void => {
 
 			it( hasSignature(
 				[ "T" ],
-				"Creates a `CarbonLDP.NamedFragment` from the object provided and the slug specified.\n" +
+				"Creates a `CarbonLDP.TransientNamedFragment` from the object provided and the slug specified.\n" +
 				"If the slug has the form of a BlankNode ID, a `CarbonLDP.TransientFragment` is created instead.", [
 					{ name: "object", type: "T" },
 					{ name: "slug", type: "string" },
@@ -212,7 +212,7 @@ describe( module( "carbonldp/TransientDocument" ), ():void => {
 			), ():void => {} );
 
 			it( hasSignature(
-				"Creates an empty `CarbonLDP.NamedFragment` with the slug specified.\n" +
+				"Creates an empty `CarbonLDP.TransientNamedFragment` with the slug specified.\n" +
 				"If the slug has the form of a BlankNode ID, a `CarbonLDP.TransientFragment` is created instead.", [
 					{ name: "slug", type: "string" },
 				],
@@ -232,21 +232,21 @@ describe( module( "carbonldp/TransientDocument" ), ():void => {
 		), ():void => {
 
 			it( hasSignature(
-				"Creates a `CarbonLDP.NamedFragment` with the slug provided.\n" +
+				"Creates a `CarbonLDP.TransientNamedFragment` with the slug provided.\n" +
 				"If the slug has the form of a BlankNode ID, an Error is thrown.", [
 					{ name: "slug", type: "string" },
 				],
-				{ type: "CarbonLDP.NamedFragment" }
+				{ type: "CarbonLDP.TransientNamedFragment" }
 			), ():void => {} );
 
 			it( hasSignature(
 				[ "T" ],
-				"Creates a `CarbonLDP.NamedFragment` from the object provided and the slug specified.\n" +
+				"Creates a `CarbonLDP.TransientNamedFragment` from the object provided and the slug specified.\n" +
 				"If the slug has the form of a BlankNode ID, an Error is thrown.", [
 					{ name: "object", type: "T" },
 					{ name: "slug", type: "string" },
 				],
-				{ type: "T & CarbonLDP.NamedFragment" }
+				{ type: "T & CarbonLDP.TransientNamedFragment" }
 			), ():void => {} );
 
 		} );
@@ -276,8 +276,8 @@ describe( module( "carbonldp/TransientDocument" ), ():void => {
 		), ():void => {
 
 			it( hasSignature(
-				"Remove the maned fragment referenced by the `CarbonLDP.NamedFragment` provided from the Document.", [
-					{ name: "fragment", type: "CarbonLDP.NamedFragment" },
+				"Remove the maned fragment referenced by the `CarbonLDP.TransientNamedFragment` provided from the Document.", [
+					{ name: "fragment", type: "CarbonLDP.TransientNamedFragment" },
 				]
 			), ():void => {} );
 
@@ -749,9 +749,9 @@ describe( module( "carbonldp/TransientDocument" ), ():void => {
 					const document:TransientDocument = createMockDocument();
 					const pointer:Pointer = document.getPointer( "#fragment" );
 
-					expect( NamedFragment.is( pointer ) ).toBe( true );
+					expect( TransientNamedFragment.is( pointer ) ).toBe( true );
 					expect( document._fragmentsIndex ).toEqual( new Map( [
-						[ "fragment", pointer as NamedFragment ],
+						[ "fragment", pointer as TransientNamedFragment ],
 					] ) );
 				} );
 
@@ -767,9 +767,9 @@ describe( module( "carbonldp/TransientDocument" ), ():void => {
 					const document:TransientDocument = createMockDocument();
 					const pointer:Pointer = document.getPointer( "https://example.com/document/#fragment" );
 
-					expect( NamedFragment.is( pointer ) ).toBe( true );
+					expect( TransientNamedFragment.is( pointer ) ).toBe( true );
 					expect( document._fragmentsIndex ).toEqual( new Map( [
-						[ "fragment", pointer as NamedFragment ],
+						[ "fragment", pointer as TransientNamedFragment ],
 					] ) );
 				} );
 
@@ -1410,7 +1410,7 @@ describe( module( "carbonldp/TransientDocument" ), ():void => {
 				it( "should remove providing a `NamedFragment`", ():void => {
 					const document:TransientDocument = createMockDocument();
 
-					const fragment:NamedFragment = NamedFragment.create( document, "fragment" );
+					const fragment:TransientNamedFragment = TransientNamedFragment.create( document, "fragment" );
 					document._fragmentsIndex.set( "fragment", fragment );
 
 					document._removeFragment( fragment );
@@ -1476,7 +1476,7 @@ describe( module( "carbonldp/TransientDocument" ), ():void => {
 				it( "should remove providing a `NamedFragment`", ():void => {
 					const document:TransientDocument = createMockDocument();
 
-					const fragment:NamedFragment = NamedFragment.create( document, "fragment" );
+					const fragment:TransientNamedFragment = TransientNamedFragment.create( document, "fragment" );
 					document._fragmentsIndex.set( "fragment", fragment );
 
 					document.removeNamedFragment( fragment );
@@ -1845,7 +1845,7 @@ describe( module( "carbonldp/TransientDocument" ), ():void => {
 				expect( document.object ).toEqual( { string: "new object" } );
 				// TODO: Use `isNamedFragment`
 				expect( Resource.is( document.object ) ).toBe( true );
-				expect( NamedFragment.isDecorated( document.object ) ).toBe( true );
+				expect( TransientNamedFragment.isDecorated( document.object ) ).toBe( true );
 
 				expect( document.hasFragment( "#fragment" ) ).toBe( true );
 				expect( document.object ).toBe( document.getFragment( "#fragment" ) );
@@ -1860,7 +1860,7 @@ describe( module( "carbonldp/TransientDocument" ), ():void => {
 				expect( document.object ).toEqual( { string: "new object" } );
 				// TODO: Use `isNamedFragment`
 				expect( Resource.is( document.object ) ).toBe( true );
-				expect( NamedFragment.isDecorated( document.object ) ).toBe( true );
+				expect( TransientNamedFragment.isDecorated( document.object ) ).toBe( true );
 
 				expect( document.hasFragment( "#1" ) ).toBe( true );
 				expect( document.object ).toBe( document.getFragment( "#1" ) );
@@ -1875,7 +1875,7 @@ describe( module( "carbonldp/TransientDocument" ), ():void => {
 				expect( document.object ).toEqual( { string: "new object" } );
 				// TODO: Use `isNamedFragment`
 				expect( Resource.is( document.object ) ).toBe( true );
-				expect( NamedFragment.isDecorated( document.object ) ).toBe( true );
+				expect( TransientNamedFragment.isDecorated( document.object ) ).toBe( true );
 
 				expect( document.hasFragment( "#fragment" ) ).toBe( true );
 				expect( document.object ).toBe( document.getFragment( "#fragment" ) );

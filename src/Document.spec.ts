@@ -5,7 +5,7 @@ import { Documents } from "./Documents";
 import * as Errors from "./Errors";
 import { TransientFragment } from "./TransientFragment";
 import { RequestOptions } from "./HTTP/Request";
-import { NamedFragment } from "./NamedFragment";
+import { TransientNamedFragment } from "./TransientNamedFragment";
 
 import { Document } from "./Document";
 
@@ -1454,7 +1454,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 					let fragment:PersistedNamedFragment;
 
 					fragment = document.createNamedFragment( "my-fragment" );
-					expect( NamedFragment.isDecorated( fragment ) ).toBe( true );
+					expect( TransientNamedFragment.isDecorated( fragment ) ).toBe( true );
 					expect( fragment.slug ).toBe( "my-fragment" );
 					expect( fragment.id ).toBe( "http://example.com/document/#my-fragment" );
 

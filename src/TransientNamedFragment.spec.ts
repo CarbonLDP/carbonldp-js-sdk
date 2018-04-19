@@ -1,6 +1,6 @@
 import { TransientDocument } from "./TransientDocument";
 
-import { NamedFragment } from "./NamedFragment";
+import { TransientNamedFragment } from "./TransientNamedFragment";
 
 import {
 	extendsClass,
@@ -14,10 +14,10 @@ import {
 	STATIC,
 } from "./test/JasmineExtender";
 
-describe( module( "carbonldp/NamedFragment" ), ():void => {
+describe( module( "carbonldp/TransientNamedFragment" ), ():void => {
 
 	describe( interfaze(
-		"CarbonLDP.NamedFragment",
+		"CarbonLDP.TransientNamedFragment",
 		"Interface that represents an in-memory named fragment from a Carbon LDP document."
 	), ():void => {
 
@@ -33,17 +33,17 @@ describe( module( "carbonldp/NamedFragment" ), ():void => {
 	} );
 
 	describe( interfaze(
-		"CarbonLDP.NamedFragmentFactory",
-		"Interface with the factory, decorate and utils methods of a `CarbonLDP.NamedFragment` object."
+		"CarbonLDP.TransientNamedFragmentFactory",
+		"Interface with the factory, decorate and utils methods of a `CarbonLDP.TransientNamedFragment` object."
 	), ():void => {
 
 		it( hasMethod(
 			OBLIGATORY,
 			"isDecorated",
-			"Returns true if the object provided has the properties and methods of a `CarbonLDP.NamedFragment` object.", [
+			"Returns true if the object provided has the properties and methods of a `CarbonLDP.TransientNamedFragment` object.", [
 				{ name: "object", type: "object" },
 			],
-			{ type: "object is CarbonLDP.NamedFragment" }
+			{ type: "object is CarbonLDP.TransientNamedFragment" }
 		), ():void => {} );
 
 		it( hasMethod(
@@ -65,7 +65,7 @@ describe( module( "carbonldp/NamedFragment" ), ():void => {
 				{ name: "document", type: "CarbonLDP.TransientDocument", description: "The document that the NamedFragment will be part of." },
 				{ name: "slug", type: "string", description: "The slug that will identify the NamedFragment." },
 			],
-			{ type: "T & CarbonLDP.NamedFragment" }
+			{ type: "T & CarbonLDP.TransientNamedFragment" }
 		), ():void => {} );
 
 		it( hasMethod(
@@ -75,16 +75,16 @@ describe( module( "carbonldp/NamedFragment" ), ():void => {
 			"Decorates the object provided with the properties and methods of a `CarbonLDP.Named.Fragment.NamedFragment` object.", [
 				{ name: "object", type: "T", description: "Object to be decorated." },
 			],
-			{ type: "T & CarbonLDP.NamedFragment" }
+			{ type: "T & CarbonLDP.TransientNamedFragment" }
 		), ():void => {} );
 
 	} );
 
-	describe( property( STATIC, "NamedFragment", "CarbonLDP.NamedFragmentFactory", "Constant that implements the `CarbonLDP.NamedFragment`, interface" ), ():void => {
+	describe( property( STATIC, "TransientNamedFragment", "CarbonLDP.TransientNamedFragmentFactory", "Constant that implements the `CarbonLDP.TransientNamedFragment`, interface" ), ():void => {
 
 		it( isDefined(), ():void => {
-			expect( NamedFragment ).toBeDefined();
-			expect( NamedFragment ).toEqual( jasmine.any( Object ) );
+			expect( TransientNamedFragment ).toBeDefined();
+			expect( TransientNamedFragment ).toEqual( jasmine.any( Object ) );
 		} );
 
 		let document:TransientDocument;
@@ -94,76 +94,76 @@ describe( module( "carbonldp/NamedFragment" ), ():void => {
 		} );
 
 		// TODO: Separate in different tests
-		it( "NamedFragment.isDecorated", ():void => {
-			expect( NamedFragment.isDecorated ).toBeDefined();
-			expect( NamedFragment.isDecorated ).toEqual( jasmine.any( Function ) );
+		it( "TransientNamedFragment.isDecorated", ():void => {
+			expect( TransientNamedFragment.isDecorated ).toBeDefined();
+			expect( TransientNamedFragment.isDecorated ).toEqual( jasmine.any( Function ) );
 
-			let namedFragment:Partial<NamedFragment> = undefined;
-			expect( NamedFragment.isDecorated( namedFragment ) ).toBe( false );
+			let namedFragment:Partial<TransientNamedFragment> = undefined;
+			expect( TransientNamedFragment.isDecorated( namedFragment ) ).toBe( false );
 
 			namedFragment = {
 				slug: null,
 			};
-			expect( NamedFragment.isDecorated( namedFragment ) ).toBe( false );
+			expect( TransientNamedFragment.isDecorated( namedFragment ) ).toBe( false );
 
 			Object.defineProperty( namedFragment, "slug", { enumerable: false } );
-			expect( NamedFragment.isDecorated( namedFragment ) ).toBe( true );
+			expect( TransientNamedFragment.isDecorated( namedFragment ) ).toBe( true );
 
 			delete namedFragment.slug;
-			expect( NamedFragment.isDecorated( namedFragment ) ).toBe( false );
+			expect( TransientNamedFragment.isDecorated( namedFragment ) ).toBe( false );
 			namedFragment.slug = null;
 		} );
 
 		// TODO: Create tests for `NamedFragment.is`
 
 		// TODO: Separate in different tests
-		it( "NamedFragment.create", ():void => {
-			expect( NamedFragment.create ).toBeDefined();
-			expect( NamedFragment.create ).toEqual( jasmine.any( Function ) );
+		it( "TransientNamedFragment.create", ():void => {
+			expect( TransientNamedFragment.create ).toBeDefined();
+			expect( TransientNamedFragment.create ).toEqual( jasmine.any( Function ) );
 
-			let fragment:NamedFragment;
+			let fragment:TransientNamedFragment;
 
-			fragment = NamedFragment.create( document, "fragment" );
+			fragment = TransientNamedFragment.create( document, "fragment" );
 			expect( fragment ).toBeTruthy();
-			expect( NamedFragment.isDecorated( fragment ) ).toBe( true );
+			expect( TransientNamedFragment.isDecorated( fragment ) ).toBe( true );
 			expect( fragment._document ).toBe( document );
 			expect( fragment.id ).toBe( "http://example.com/document/#fragment" );
 
-			fragment = NamedFragment.create( document, "another-fragment" );
+			fragment = TransientNamedFragment.create( document, "another-fragment" );
 			expect( fragment ).toBeTruthy();
-			expect( NamedFragment.isDecorated( fragment ) ).toBe( true );
+			expect( TransientNamedFragment.isDecorated( fragment ) ).toBe( true );
 			expect( fragment._document ).toBe( document );
 			expect( fragment.id ).toBe( "http://example.com/document/#another-fragment" );
 		} );
 
 		// TODO: Separate in different tests
-		it( "NamedFragment.createFrom", ():void => {
-			expect( NamedFragment.createFrom ).toBeDefined();
-			expect( NamedFragment.createFrom ).toEqual( jasmine.any( Function ) );
+		it( "TransientNamedFragment.createFrom", ():void => {
+			expect( TransientNamedFragment.createFrom ).toBeDefined();
+			expect( TransientNamedFragment.createFrom ).toEqual( jasmine.any( Function ) );
 
 			interface MyFragment {
 				property:string;
 			}
 
-			let fragment:NamedFragment & MyFragment;
+			let fragment:TransientNamedFragment & MyFragment;
 
-			fragment = NamedFragment.createFrom<MyFragment>( { property: "my property 1" }, document, "fragment" );
+			fragment = TransientNamedFragment.createFrom<MyFragment>( { property: "my property 1" }, document, "fragment" );
 			expect( fragment ).toBeTruthy();
-			expect( NamedFragment.isDecorated( fragment ) ).toBe( true );
+			expect( TransientNamedFragment.isDecorated( fragment ) ).toBe( true );
 			expect( fragment._document ).toBe( document );
 			expect( fragment.id ).toBe( "http://example.com/document/#fragment" );
 			expect( fragment.property ).toBe( "my property 1" );
 
-			fragment = NamedFragment.createFrom<MyFragment>( { property: "my property 2" }, document, "another-fragment" );
+			fragment = TransientNamedFragment.createFrom<MyFragment>( { property: "my property 2" }, document, "another-fragment" );
 			expect( fragment ).toBeTruthy();
-			expect( NamedFragment.isDecorated( fragment ) ).toBe( true );
+			expect( TransientNamedFragment.isDecorated( fragment ) ).toBe( true );
 			expect( fragment._document ).toBe( document );
 			expect( fragment.id ).toBe( "http://example.com/document/#another-fragment" );
 			expect( fragment.property ).toBe( "my property 2" );
 
-			let anotherFragment:NamedFragment = NamedFragment.createFrom<Object>( {}, document, "some-fragment" );
+			let anotherFragment:TransientNamedFragment = TransientNamedFragment.createFrom<Object>( {}, document, "some-fragment" );
 			expect( anotherFragment ).toBeTruthy();
-			expect( NamedFragment.isDecorated( anotherFragment ) ).toBe( true );
+			expect( TransientNamedFragment.isDecorated( anotherFragment ) ).toBe( true );
 			expect( anotherFragment._document ).toBe( document );
 			expect( anotherFragment.id ).toBe( "http://example.com/document/#some-fragment" );
 			expect( anotherFragment[ "property" ] ).toBeUndefined();

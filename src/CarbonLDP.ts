@@ -17,7 +17,7 @@ import * as JSONLD from "./JSONLD";
 import * as LDP from "./LDP";
 import * as LDPatch from "./LDPatch";
 import * as Messaging from "./Messaging";
-import { NamedFragment } from "./NamedFragment";
+import { TransientNamedFragment } from "./TransientNamedFragment";
 import {
 	ContainerType,
 	DigestedObjectSchema,
@@ -64,7 +64,7 @@ export class CarbonLDP extends AbstractContext {
 	static LDP:typeof LDP = LDP;
 	static LDPatch:typeof LDPatch = LDPatch;
 	static Messaging:typeof Messaging = Messaging;
-	static NamedFragment:typeof NamedFragment = NamedFragment;
+	static TransientNamedFragment:typeof TransientNamedFragment = TransientNamedFragment;
 	static Vocabularies:typeof Vocabularies = Vocabularies;
 	static ObjectSchemaUtils:typeof ObjectSchemaUtils = ObjectSchemaUtils;
 	static ObjectSchemaDigester:typeof ObjectSchemaDigester = ObjectSchemaDigester;

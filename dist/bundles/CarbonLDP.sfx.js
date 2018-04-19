@@ -1746,7 +1746,7 @@ var TransientBlankNode_1 = __webpack_require__(105);
 var IDAlreadyInUseError_1 = __webpack_require__(70);
 var IllegalArgumentError_1 = __webpack_require__(13);
 var Converter_1 = __webpack_require__(71);
-var NamedFragment_1 = __webpack_require__(74);
+var TransientNamedFragment_1 = __webpack_require__(74);
 var ObjectSchema_1 = __webpack_require__(12);
 var URI_1 = __webpack_require__(10);
 var Resource_1 = __webpack_require__(15);
@@ -2021,7 +2021,7 @@ function createNamedFragment(slugOrObject, slug) {
         slug = slug.substring(1);
     if (this._fragmentsIndex.has(slug))
         throw new IDAlreadyInUseError_1.IDAlreadyInUseError("The slug provided is already being used by a fragment.");
-    var fragment = NamedFragment_1.NamedFragment.createFrom(object, this, slug);
+    var fragment = TransientNamedFragment_1.TransientNamedFragment.createFrom(object, this, slug);
     this._fragmentsIndex.set(slug, fragment);
     exports.TransientDocument._convertNestedObjects(this, fragment);
     return fragment;
@@ -7034,14 +7034,14 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var TransientFragment_1 = __webpack_require__(36);
 var URI_1 = __webpack_require__(10);
 var Utils_1 = __webpack_require__(0);
-exports.NamedFragment = {
+exports.TransientNamedFragment = {
     isDecorated: function (object) {
         return Utils_1.isObject(object) &&
             object.hasOwnProperty("slug") && !object.propertyIsEnumerable("slug");
     },
     is: function (object) {
         return TransientFragment_1.TransientFragment.is(object)
-            && exports.NamedFragment.isDecorated(object);
+            && exports.TransientNamedFragment.isDecorated(object);
     },
     create: function (document, slug) {
         return this.createFrom({}, document, slug);
@@ -7049,10 +7049,10 @@ exports.NamedFragment = {
     createFrom: function (object, document, slug) {
         var id = document.id + "#" + slug;
         var fragment = TransientFragment_1.TransientFragment.createFrom(object, document, id);
-        return exports.NamedFragment.decorate(fragment);
+        return exports.TransientNamedFragment.decorate(fragment);
     },
     decorate: function (object) {
-        if (exports.NamedFragment.isDecorated(object))
+        if (exports.TransientNamedFragment.isDecorated(object))
             return object;
         var namedFragment = object;
         Object.defineProperties(namedFragment, {
@@ -9788,7 +9788,7 @@ exports.MessagingDocument = {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var NamedFragment_1 = __webpack_require__(74);
+var TransientNamedFragment_1 = __webpack_require__(74);
 var Fragment_1 = __webpack_require__(55);
 exports.PersistedNamedFragment = {
     isDecorated: function (object) {
@@ -9797,7 +9797,7 @@ exports.PersistedNamedFragment = {
     decorate: function (object) {
         if (exports.PersistedNamedFragment.isDecorated(object))
             return object;
-        var fragment = NamedFragment_1.NamedFragment.decorate(object);
+        var fragment = TransientNamedFragment_1.TransientNamedFragment.decorate(object);
         return Fragment_1.Fragment.decorate(fragment);
     },
 };
@@ -15199,7 +15199,7 @@ var JSONLD = __importStar(__webpack_require__(118));
 var LDP = __importStar(__webpack_require__(58));
 var LDPatch = __importStar(__webpack_require__(296));
 var Messaging = __importStar(__webpack_require__(297));
-var NamedFragment_1 = __webpack_require__(74);
+var TransientNamedFragment_1 = __webpack_require__(74);
 var ObjectSchema_1 = __webpack_require__(12);
 var Document_1 = __webpack_require__(42);
 var Fragment_1 = __webpack_require__(55);
@@ -15297,7 +15297,7 @@ var CarbonLDP = (function (_super) {
     CarbonLDP.LDP = LDP;
     CarbonLDP.LDPatch = LDPatch;
     CarbonLDP.Messaging = Messaging;
-    CarbonLDP.NamedFragment = NamedFragment_1.NamedFragment;
+    CarbonLDP.TransientNamedFragment = TransientNamedFragment_1.TransientNamedFragment;
     CarbonLDP.Vocabularies = Vocabularies;
     CarbonLDP.ObjectSchemaUtils = ObjectSchema_1.ObjectSchemaUtils;
     CarbonLDP.ObjectSchemaDigester = ObjectSchema_1.ObjectSchemaDigester;

@@ -2,7 +2,7 @@ import { TransientFragment } from "./TransientFragment";
 import { JSONLDConverter } from "./JSONLD/Converter";
 import { ModelDecorator } from "./ModelDecorator";
 import { ModelFactory } from "./ModelFactory";
-import { NamedFragment } from "./NamedFragment";
+import { TransientNamedFragment } from "./TransientNamedFragment";
 import { ObjectSchema, ObjectSchemaResolver } from "./ObjectSchema";
 import { Pointer, PointerLibrary, PointerValidator } from "./Pointer";
 import { RDFDocument } from "./RDF/Document";
@@ -16,13 +16,13 @@ export interface TransientDocument extends Resource, PointerLibrary, PointerVali
     _removeFragment(slugOrFragment: string | TransientFragment): void;
     hasFragment(slug: string): boolean;
     getFragment<T>(slug: string): T & TransientFragment;
-    getNamedFragment<T>(slug: string): T & NamedFragment;
+    getNamedFragment<T>(slug: string): T & TransientNamedFragment;
     getFragments(): TransientFragment[];
     createFragment<T>(object: T, slug?: string): T & TransientFragment;
     createFragment(slug?: string): TransientFragment;
-    createNamedFragment<T>(object: T, slug: string): T & NamedFragment;
-    createNamedFragment(slug: string): NamedFragment;
-    removeNamedFragment(slugOrFragment: string | NamedFragment): void;
+    createNamedFragment<T>(object: T, slug: string): T & TransientNamedFragment;
+    createNamedFragment(slug: string): TransientNamedFragment;
+    removeNamedFragment(slugOrFragment: string | TransientNamedFragment): void;
     toJSON(objectSchemaResolver?: ObjectSchemaResolver, jsonldConverter?: JSONLDConverter): RDFDocument;
 }
 export interface DocumentFactory extends ModelFactory<TransientDocument>, ModelDecorator<TransientDocument> {

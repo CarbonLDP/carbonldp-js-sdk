@@ -12,7 +12,7 @@ import {
 import { MessagingDocument } from "./Messaging/Document";
 import { ModelDecorator } from "./ModelDecorator";
 import { ModelFactory } from "./ModelFactory";
-import { NamedFragment } from "./NamedFragment";
+import { TransientNamedFragment } from "./TransientNamedFragment";
 import * as ObjectSchema from "./ObjectSchema";
 import { AccessPoint } from "./AccessPoint";
 import { Fragment } from "./Fragment";
@@ -623,11 +623,11 @@ function extendCreateFragment( superFunction:( slugOrObject?:any, slug?:string )
 	};
 }
 
-function extendCreateNamedFragment( superFunction:( slug:string ) => NamedFragment ):( slug:string ) => PersistedNamedFragment;
-function extendCreateNamedFragment( superFunction:( object:object, slug:string ) => NamedFragment ):( slug:string, object:object ) => PersistedNamedFragment;
-function extendCreateNamedFragment( superFunction:( slugOrObject:any, slug?:string ) => NamedFragment ):any {
+function extendCreateNamedFragment( superFunction:( slug:string ) => TransientNamedFragment ):( slug:string ) => PersistedNamedFragment;
+function extendCreateNamedFragment( superFunction:( object:object, slug:string ) => TransientNamedFragment ):( slug:string, object:object ) => PersistedNamedFragment;
+function extendCreateNamedFragment( superFunction:( slugOrObject:any, slug?:string ) => TransientNamedFragment ):any {
 	return function( slugOrObject:any, slug?:string ):PersistedNamedFragment {
-		let fragment:NamedFragment = superFunction.call( this, slugOrObject, slug );
+		let fragment:TransientNamedFragment = superFunction.call( this, slugOrObject, slug );
 		return PersistedNamedFragment.decorate( fragment );
 	};
 }
