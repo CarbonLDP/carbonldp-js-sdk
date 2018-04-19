@@ -115,6 +115,20 @@ var ObjectSchemaDigester = (function () {
         digestedSchemas.unshift(new DigestedObjectSchema());
         return ObjectSchemaDigester._combineSchemas(digestedSchemas);
     };
+    ObjectSchemaDigester._combineSchemas = function (digestedSchemas) {
+        var targetSchema = digestedSchemas[0], restSchemas = digestedSchemas.slice(1);
+        restSchemas.forEach(function (schema) {
+            if (schema.vocab !== void 0)
+                targetSchema.vocab = schema.vocab;
+            if (schema.base !== "")
+                targetSchema.base = schema.base;
+            if (schema.language !== null)
+                targetSchema.language = schema.language;
+            Utils.MapUtils.extend(targetSchema.prefixes, schema.prefixes);
+            Utils.MapUtils.extend(targetSchema.properties, schema.properties);
+        });
+        return targetSchema;
+    };
     ObjectSchemaDigester._digestSchema = function (schema) {
         var digestedSchema = new DigestedObjectSchema();
         for (var _i = 0, _a = ["@base", "@vocab"]; _i < _a.length; _i++) {
@@ -167,20 +181,6 @@ var ObjectSchemaDigester = (function () {
             }
         }
         return digestedSchema;
-    };
-    ObjectSchemaDigester._combineSchemas = function (digestedSchemas) {
-        var targetSchema = digestedSchemas[0], restSchemas = digestedSchemas.slice(1);
-        restSchemas.forEach(function (schema) {
-            if (schema.vocab !== void 0)
-                targetSchema.vocab = schema.vocab;
-            if (schema.base !== "")
-                targetSchema.base = schema.base;
-            if (schema.language !== null)
-                targetSchema.language = schema.language;
-            Utils.MapUtils.extend(targetSchema.prefixes, schema.prefixes);
-            Utils.MapUtils.extend(targetSchema.properties, schema.properties);
-        });
-        return targetSchema;
     };
     return ObjectSchemaDigester;
 }());

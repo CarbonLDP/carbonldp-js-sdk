@@ -1187,86 +1187,9 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 				const documents:(T & PersistedDocument)[] = new JSONLDCompacter( this, targetName, queryContext )
 					.compactDocuments( rdfDocuments, targetDocuments );
 
-
-				const resources:Map<string, Resource> = new Map<string, Resource>();
-				const getResource:( resourceURI:string ) => Resource = resourceURI => {
-					if( resources.has( resourceURI ) ) return resources.get( resourceURI );
-					const resource:Resource = this.register( resourceURI );
-
-					// Delete existing access points
-					Object
-						.getOwnPropertyNames( resource )
-						.filter( key => key.startsWith( "$" ) )
-						.filter( key => ! resource.propertyIsEnumerable( key ) )
-						.forEach( key => delete resource[ key ] )
-					;
-
-					resources.set( resourceURI, resource );
-					return resource;
-				};
-
-				type ResourceData = { resource:Resource, schema:DigestedObjectSchema, uris:Map<string, string> };
-				const resourcesData:Map<string, ResourceData> = new Map();
-				const getResourcesData:( resourceURI:string ) => ResourceData = resourceURI => {
-					if( resourcesData.has( resourceURI ) ) return resourcesData.get( resourceURI );
-
-					const resource:Resource = getResource( resourceURI );
-					const schema:DigestedObjectSchema = this._getDigestedObjectSchema( resource.types, resource.id );
-					const uris:Map<string, string> = JSONLDConverter.getPropertyURINameMap( schema );
-
-					const resourceData:ResourceData = {
-						resource,
-						schema,
-						uris,
-					};
-
-					resourcesData.set( resourceURI, resourceData );
-					return resourceData;
-				};
-
-				freeResources
-					.filter( AccessPointsMetadata.is )
-					.forEach( metadata => {
-						const relationURIs:string[] = Object.keys( metadata );
-
-						relationURIs
-							.forEach( relationURI => {
-								const pointers:Pointer[] = Array.isArray( metadata[ relationURI ] ) ?
-									metadata[ relationURI ] : [ metadata[ relationURI ] ];
-
-								const compactRelation:( schema:DigestedObjectSchema, uris:Map<string, string> ) => string = ( schema, uris ) => {
-									if( uris.has( relationURI ) ) return uris.get( relationURI );
-									if( schema.vocab ) return URI.getRelativeURI( relationURI, schema.vocab );
-
-									return relationURI;
-								};
-
-								pointers.forEach( pointer => {
-									const resourceURI:string = pointer.id
-										.split( "/" )
-										.slice( 0, - 2 )
-										.concat( "" )
-										.join( "/" );
-
-									const { resource, schema, uris } = getResourcesData( resourceURI );
-									const relationName:string = compactRelation( schema, uris );
-
-									const accessPoint:PersistedAccessPoint = PersistedProtectedDocument
-										.decorate( pointer, this );
-
-									Object.defineProperty( resource, "$" + relationName, {
-										enumerable: false,
-										configurable: true,
-										value: accessPoint,
-									} );
-								} );
-							} )
-						;
-
-
-					} )
-				;
-
+				const accessPointsMetadatas:AccessPointsMetadata[] = freeResources
+					.filter( AccessPointsMetadata.is );
+				this._applyAccessPointsMetadatas( accessPointsMetadatas );
 
 				return documents;
 			} );
@@ -1556,6 +1479,93 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 		}
 	}
 
+	private _applyAccessPointsMetadatas( accessPointsMetadatas:AccessPointsMetadata[] ):void {
+		if( ! accessPointsMetadatas.length ) return;
+
+		const getResourcesData:( resourceURI:string ) => MembershipResourceData = this
+			._createMembershipResourceDataGetter();
+
+		accessPointsMetadatas.forEach( metadata => {
+			const relationURIs:string[] = Object.keys( metadata );
+
+			relationURIs.forEach( relationURI => {
+				const pointers:Pointer[] = Array.isArray( metadata[ relationURI ] ) ?
+					metadata[ relationURI ] : [ metadata[ relationURI ] ];
+
+				const compactRelation:( schema:DigestedObjectSchema, uris:Map<string, string> ) => string = ( schema, uris ) => {
+					if( uris.has( relationURI ) ) return uris.get( relationURI );
+					if( schema.vocab ) return URI.getRelativeURI( relationURI, schema.vocab );
+
+					return relationURI;
+				};
+
+				pointers.forEach( pointer => {
+					const resourceURI:string = pointer.id
+						.split( "/" )
+						.slice( 0, - 2 )
+						.concat( "" )
+						.join( "/" );
+
+					const { resource, schema, uris } = getResourcesData( resourceURI );
+					const relationName:string = compactRelation( schema, uris );
+
+					const accessPoint:PersistedAccessPoint = PersistedProtectedDocument
+						.decorate( pointer, this );
+
+					Object.defineProperty( resource, "$" + relationName, {
+						enumerable: false,
+						configurable: true,
+						value: accessPoint,
+					} );
+				} );
+			} );
+		} );
+	}
+
+	private _createMembershipResourceGetter():( resourceURI:string ) => PersistedDocument {
+		const resources:Map<string, PersistedDocument> = new Map();
+		return resourceURI => {
+			if( resources.has( resourceURI ) ) return resources.get( resourceURI );
+			const resource:PersistedDocument = this.register( resourceURI );
+
+			// Delete existing access points
+			Object
+				.getOwnPropertyNames( resource )
+				.filter( key => key.startsWith( "$" ) )
+				.filter( key => ! resource.propertyIsEnumerable( key ) )
+				.forEach( key => delete resource[ key ] )
+			;
+
+			resources.set( resourceURI, resource );
+			return resource;
+		};
+	}
+
+	private _createMembershipResourceDataGetter():( resourceURI:string ) => MembershipResourceData {
+		const getResource:( resourceURI:string ) => PersistedDocument = this
+			._createMembershipResourceGetter();
+
+		const resourcesData:Map<string, MembershipResourceData> = new Map();
+		return resourceURI => {
+			if( resourcesData.has( resourceURI ) ) return resourcesData.get( resourceURI );
+			const resource:PersistedDocument = getResource( resourceURI );
+
+			const schema:DigestedObjectSchema = this._getDigestedObjectSchema( resource.types, resource.id );
+			if( resource.isPartial() ) ObjectSchemaDigester._combineSchemas( [ schema, resource._partialMetadata.schema ] );
+
+			const uris:Map<string, string> = JSONLDConverter.getPropertyURINameMap( schema );
+
+			const resourceData:MembershipResourceData = {
+				resource,
+				schema,
+				uris,
+			};
+
+			resourcesData.set( resourceURI, resourceData );
+			return resourceData;
+		};
+	}
+
 	private _sendRequest( method:HTTPMethod, uri:string, options:RequestOptions, body?:string | Blob | Buffer ):Promise<Response>;
 	private _sendRequest<T extends object>( method:HTTPMethod, uri:string, options:RequestOptions, body?:string | Blob | Buffer, parser?:Parser<T> ):Promise<[ T, Response ]>;
 	private _sendRequest( method:HTTPMethod, uri:string, options:RequestOptions, body?:string | Blob | Buffer, parser?:Parser<any> ):any {
@@ -1563,5 +1573,8 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 			.catch( this._parseErrorResponse.bind( this ) );
 	}
 }
+
+
+type MembershipResourceData = { resource:Resource, schema:DigestedObjectSchema, uris:Map<string, string> };
 
 const emptyQueryBuildFn:( queryBuilder:QueryDocumentsBuilder ) => QueryDocumentsBuilder = _ => _;

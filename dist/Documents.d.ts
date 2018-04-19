@@ -148,6 +148,9 @@ export declare class Documents implements PointerLibrary, PointerValidator, Obje
     private _parseMembers(pointers);
     private _applyResponseData<T>(persistedProtectedDocument, response);
     private _applyNodeMap(freeNodes);
+    private _applyAccessPointsMetadatas(accessPointsMetadatas);
+    private _createMembershipResourceGetter();
+    private _createMembershipResourceDataGetter();
     private _sendRequest(method, uri, options, body?);
     private _sendRequest<T>(method, uri, options, body?, parser?);
 }

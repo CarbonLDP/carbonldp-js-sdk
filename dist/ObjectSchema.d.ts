@@ -47,8 +47,8 @@ export declare class ObjectSchemaDigester {
     static digestSchema(schemas: ObjectSchema[]): DigestedObjectSchema;
     static digestProperty(name: string, definition: ObjectSchemaProperty, digestedSchema?: DigestedObjectSchema): DigestedObjectSchemaProperty;
     static combineDigestedObjectSchemas(digestedSchemas: DigestedObjectSchema[]): DigestedObjectSchema;
+    static _combineSchemas(digestedSchemas: DigestedObjectSchema[]): DigestedObjectSchema;
     private static _digestSchema(schema);
-    private static _combineSchemas(digestedSchemas);
 }
 export declare class ObjectSchemaUtils {
     static resolveURI(uri: string, schema: DigestedObjectSchema, relativeTo?: {

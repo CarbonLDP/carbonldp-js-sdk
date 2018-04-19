@@ -1326,6 +1326,20 @@ var ObjectSchemaDigester = (function () {
         digestedSchemas.unshift(new DigestedObjectSchema());
         return ObjectSchemaDigester._combineSchemas(digestedSchemas);
     };
+    ObjectSchemaDigester._combineSchemas = function (digestedSchemas) {
+        var targetSchema = digestedSchemas[0], restSchemas = digestedSchemas.slice(1);
+        restSchemas.forEach(function (schema) {
+            if (schema.vocab !== void 0)
+                targetSchema.vocab = schema.vocab;
+            if (schema.base !== "")
+                targetSchema.base = schema.base;
+            if (schema.language !== null)
+                targetSchema.language = schema.language;
+            Utils.MapUtils.extend(targetSchema.prefixes, schema.prefixes);
+            Utils.MapUtils.extend(targetSchema.properties, schema.properties);
+        });
+        return targetSchema;
+    };
     ObjectSchemaDigester._digestSchema = function (schema) {
         var digestedSchema = new DigestedObjectSchema();
         for (var _i = 0, _a = ["@base", "@vocab"]; _i < _a.length; _i++) {
@@ -1378,20 +1392,6 @@ var ObjectSchemaDigester = (function () {
             }
         }
         return digestedSchema;
-    };
-    ObjectSchemaDigester._combineSchemas = function (digestedSchemas) {
-        var targetSchema = digestedSchemas[0], restSchemas = digestedSchemas.slice(1);
-        restSchemas.forEach(function (schema) {
-            if (schema.vocab !== void 0)
-                targetSchema.vocab = schema.vocab;
-            if (schema.base !== "")
-                targetSchema.base = schema.base;
-            if (schema.language !== null)
-                targetSchema.language = schema.language;
-            Utils.MapUtils.extend(targetSchema.prefixes, schema.prefixes);
-            Utils.MapUtils.extend(targetSchema.properties, schema.properties);
-        });
-        return targetSchema;
     };
     return ObjectSchemaDigester;
 }());
@@ -11555,67 +11555,9 @@ var Documents = (function () {
                 .filter(function (x) { return targetSet.has(x["@id"]); });
             var documents = new Compacter_1.JSONLDCompacter(_this, targetName, queryContext)
                 .compactDocuments(rdfDocuments, targetDocuments);
-            var resources = new Map();
-            var getResource = function (resourceURI) {
-                if (resources.has(resourceURI))
-                    return resources.get(resourceURI);
-                var resource = _this.register(resourceURI);
-                Object
-                    .getOwnPropertyNames(resource)
-                    .filter(function (key) { return key.startsWith("$"); })
-                    .filter(function (key) { return !resource.propertyIsEnumerable(key); })
-                    .forEach(function (key) { return delete resource[key]; });
-                resources.set(resourceURI, resource);
-                return resource;
-            };
-            var resourcesData = new Map();
-            var getResourcesData = function (resourceURI) {
-                if (resourcesData.has(resourceURI))
-                    return resourcesData.get(resourceURI);
-                var resource = getResource(resourceURI);
-                var schema = _this._getDigestedObjectSchema(resource.types, resource.id);
-                var uris = Converter_1.JSONLDConverter.getPropertyURINameMap(schema);
-                var resourceData = {
-                    resource: resource,
-                    schema: schema,
-                    uris: uris,
-                };
-                resourcesData.set(resourceURI, resourceData);
-                return resourceData;
-            };
-            freeResources
-                .filter(LDP_1.AccessPointsMetadata.is)
-                .forEach(function (metadata) {
-                var relationURIs = Object.keys(metadata);
-                relationURIs
-                    .forEach(function (relationURI) {
-                    var pointers = Array.isArray(metadata[relationURI]) ?
-                        metadata[relationURI] : [metadata[relationURI]];
-                    var compactRelation = function (schema, uris) {
-                        if (uris.has(relationURI))
-                            return uris.get(relationURI);
-                        if (schema.vocab)
-                            return URI_1.URI.getRelativeURI(relationURI, schema.vocab);
-                        return relationURI;
-                    };
-                    pointers.forEach(function (pointer) {
-                        var resourceURI = pointer.id
-                            .split("/")
-                            .slice(0, -2)
-                            .concat("")
-                            .join("/");
-                        var _a = getResourcesData(resourceURI), resource = _a.resource, schema = _a.schema, uris = _a.uris;
-                        var relationName = compactRelation(schema, uris);
-                        var accessPoint = PersistedProtectedDocument_1.PersistedProtectedDocument
-                            .decorate(pointer, _this);
-                        Object.defineProperty(resource, "$" + relationName, {
-                            enumerable: false,
-                            configurable: true,
-                            value: accessPoint,
-                        });
-                    });
-                });
-            });
+            var accessPointsMetadatas = freeResources
+                .filter(LDP_1.AccessPointsMetadata.is);
+            _this._applyAccessPointsMetadatas(accessPointsMetadatas);
             return documents;
         });
         var _a, _b;
@@ -11869,6 +11811,81 @@ var Documents = (function () {
             }
             document_1._syncSavedFragments();
         }
+    };
+    Documents.prototype._applyAccessPointsMetadatas = function (accessPointsMetadatas) {
+        var _this = this;
+        if (!accessPointsMetadatas.length)
+            return;
+        var getResourcesData = this
+            ._createMembershipResourceDataGetter();
+        accessPointsMetadatas.forEach(function (metadata) {
+            var relationURIs = Object.keys(metadata);
+            relationURIs.forEach(function (relationURI) {
+                var pointers = Array.isArray(metadata[relationURI]) ?
+                    metadata[relationURI] : [metadata[relationURI]];
+                var compactRelation = function (schema, uris) {
+                    if (uris.has(relationURI))
+                        return uris.get(relationURI);
+                    if (schema.vocab)
+                        return URI_1.URI.getRelativeURI(relationURI, schema.vocab);
+                    return relationURI;
+                };
+                pointers.forEach(function (pointer) {
+                    var resourceURI = pointer.id
+                        .split("/")
+                        .slice(0, -2)
+                        .concat("")
+                        .join("/");
+                    var _a = getResourcesData(resourceURI), resource = _a.resource, schema = _a.schema, uris = _a.uris;
+                    var relationName = compactRelation(schema, uris);
+                    var accessPoint = PersistedProtectedDocument_1.PersistedProtectedDocument
+                        .decorate(pointer, _this);
+                    Object.defineProperty(resource, "$" + relationName, {
+                        enumerable: false,
+                        configurable: true,
+                        value: accessPoint,
+                    });
+                });
+            });
+        });
+    };
+    Documents.prototype._createMembershipResourceGetter = function () {
+        var _this = this;
+        var resources = new Map();
+        return function (resourceURI) {
+            if (resources.has(resourceURI))
+                return resources.get(resourceURI);
+            var resource = _this.register(resourceURI);
+            Object
+                .getOwnPropertyNames(resource)
+                .filter(function (key) { return key.startsWith("$"); })
+                .filter(function (key) { return !resource.propertyIsEnumerable(key); })
+                .forEach(function (key) { return delete resource[key]; });
+            resources.set(resourceURI, resource);
+            return resource;
+        };
+    };
+    Documents.prototype._createMembershipResourceDataGetter = function () {
+        var _this = this;
+        var getResource = this
+            ._createMembershipResourceGetter();
+        var resourcesData = new Map();
+        return function (resourceURI) {
+            if (resourcesData.has(resourceURI))
+                return resourcesData.get(resourceURI);
+            var resource = getResource(resourceURI);
+            var schema = _this._getDigestedObjectSchema(resource.types, resource.id);
+            if (resource.isPartial())
+                ObjectSchema_1.ObjectSchemaDigester._combineSchemas([schema, resource._partialMetadata.schema]);
+            var uris = Converter_1.JSONLDConverter.getPropertyURINameMap(schema);
+            var resourceData = {
+                resource: resource,
+                schema: schema,
+                uris: uris,
+            };
+            resourcesData.set(resourceURI, resourceData);
+            return resourceData;
+        };
     };
     Documents.prototype._sendRequest = function (method, uri, options, body, parser) {
         return Request_1.RequestService.send(method, uri, body || null, options, parser)

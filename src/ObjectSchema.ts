@@ -150,6 +150,21 @@ export class ObjectSchemaDigester {
 		return ObjectSchemaDigester._combineSchemas( digestedSchemas );
 	}
 
+	static _combineSchemas( digestedSchemas:DigestedObjectSchema[] ):DigestedObjectSchema {
+		const [ targetSchema, ...restSchemas ] = digestedSchemas;
+
+		restSchemas.forEach( schema => {
+			if( schema.vocab !== void 0 ) targetSchema.vocab = schema.vocab;
+			if( schema.base !== "" ) targetSchema.base = schema.base;
+			if( schema.language !== null ) targetSchema.language = schema.language;
+
+			Utils.MapUtils.extend( targetSchema.prefixes, schema.prefixes );
+			Utils.MapUtils.extend( targetSchema.properties, schema.properties );
+		} );
+
+		return targetSchema;
+	}
+
 	private static _digestSchema( schema:ObjectSchema ):DigestedObjectSchema {
 		const digestedSchema:DigestedObjectSchema = new DigestedObjectSchema();
 
@@ -198,21 +213,6 @@ export class ObjectSchemaDigester {
 		}
 
 		return digestedSchema;
-	}
-
-	private static _combineSchemas( digestedSchemas:DigestedObjectSchema[] ):DigestedObjectSchema {
-		const [ targetSchema, ...restSchemas ] = digestedSchemas;
-
-		restSchemas.forEach( schema => {
-			if( schema.vocab !== void 0 ) targetSchema.vocab = schema.vocab;
-			if( schema.base !== "" ) targetSchema.base = schema.base;
-			if( schema.language !== null ) targetSchema.language = schema.language;
-
-			Utils.MapUtils.extend( targetSchema.prefixes, schema.prefixes );
-			Utils.MapUtils.extend( targetSchema.properties, schema.properties );
-		} );
-
-		return targetSchema;
 	}
 
 }
