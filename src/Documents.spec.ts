@@ -45,7 +45,7 @@ import * as MessagingUtils from "./Messaging/Utils";
 import * as ObjectSchema from "./ObjectSchema";
 import { AccessPoint } from "./AccessPoint";
 import { Document } from "./Document";
-import { PersistedNamedFragment } from "./PersistedNamedFragment";
+import { NamedFragment } from "./NamedFragment";
 import { PersistedResource } from "./PersistedResource";
 import { Pointer } from "./Pointer";
 import { Resource } from "./Resource";
@@ -10949,7 +10949,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					);
 					document._normalize();
 
-					const fragment:PersistedNamedFragment = document.getFragment( "#1" );
+					const fragment:NamedFragment = document.getFragment( "#1" );
 
 					documents.refresh( document )
 						.then( ( returnedDocument ) => {
@@ -12373,7 +12373,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 						"https://example.com/resource/"
 					);
 
-					const fragment:PersistedNamedFragment = document.getFragment( "#1" );
+					const fragment:NamedFragment = document.getFragment( "#1" );
 
 					documents.saveAndRefresh( document )
 						.then( ( returnedDocument ) => {

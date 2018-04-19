@@ -26,7 +26,7 @@ import {
 } from "./ObjectSchema";
 import { Document } from "./Document";
 import { Fragment } from "./Fragment";
-import { PersistedNamedFragment } from "./PersistedNamedFragment";
+import { NamedFragment } from "./NamedFragment";
 import { PersistedProtectedDocument } from "./PersistedProtectedDocument";
 import { PersistedResource } from "./PersistedResource";
 import { Pointer } from "./Pointer";
@@ -309,11 +309,11 @@ describe( module( "carbonldp/CarbonLDP" ), ():void => {
 
 		it( reexports(
 			STATIC,
-			"PersistedNamedFragment",
-			"carbonldp/PersistedNamedFragment#PersistedNamedFragment"
+			"NamedFragment",
+			"carbonldp/NamedFragment#NamedFragment"
 		), ():void => {
-			expect( CarbonLDP.CarbonLDP.PersistedNamedFragment ).toBeDefined();
-			expect( CarbonLDP.CarbonLDP.PersistedNamedFragment ).toBe( PersistedNamedFragment );
+			expect( CarbonLDP.CarbonLDP.NamedFragment ).toBeDefined();
+			expect( CarbonLDP.CarbonLDP.NamedFragment ).toBe( NamedFragment );
 		} );
 
 		it( reexports(

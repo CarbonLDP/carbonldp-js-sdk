@@ -1,7 +1,7 @@
 import { TransientNamedFragment } from "./TransientNamedFragment";
 import { Fragment } from "./Fragment";
 
-import { PersistedNamedFragment } from "./PersistedNamedFragment";
+import { NamedFragment } from "./NamedFragment";
 
 import {
 	extendsClass,
@@ -16,10 +16,10 @@ import {
 } from "./test/JasmineExtender";
 import * as Utils from "./Utils";
 
-describe( module( "carbonldp/PersistedNamedFragment" ), ():void => {
+describe( module( "carbonldp/NamedFragment" ), ():void => {
 
 	describe( interfaze(
-		"CarbonLDP.PersistedNamedFragment",
+		"CarbonLDP.NamedFragment",
 		"Interface that represents a persisted named fragment of a persisted document."
 	), ():void => {
 
@@ -36,8 +36,8 @@ describe( module( "carbonldp/PersistedNamedFragment" ), ():void => {
 	} );
 
 	describe( interfaze(
-		"CarbonLDP.PersistedNamedFragmentFactory",
-		"Interface with the factory, decorate and utils methods of a `CarbonLDP.PersistedNamedFragment` object."
+		"CarbonLDP.NamedFragmentFactory",
+		"Interface with the factory, decorate and utils methods of a `CarbonLDP.NamedFragment` object."
 	), ():void => {
 
 		it( hasMethod(
@@ -46,14 +46,14 @@ describe( module( "carbonldp/PersistedNamedFragment" ), ():void => {
 			[
 				{ name: "object", type: "object" },
 			],
-			{ type: "object is CarbonLDP.PersistedNamedFragment" }
+			{ type: "object is CarbonLDP.NamedFragment" }
 		), ():void => {} );
 
 		it( hasMethod(
 			OBLIGATORY,
 			"decorate",
 			[ "T extends object" ],
-			"Decorates the object provided with the properties and methods of a `CarbonLDP.PersistedNamedFragment` object.",
+			"Decorates the object provided with the properties and methods of a `CarbonLDP.NamedFragment` object.",
 			[
 				{ name: "object", type: "T", description: "The object to convert into a persisted named fragment." },
 			]
@@ -61,24 +61,24 @@ describe( module( "carbonldp/PersistedNamedFragment" ), ():void => {
 
 	} );
 
-	describe( property( STATIC, "PersistedNamedFragment", "CarbonLDP.PersistedNamedFragmentFactory", "Constant that implements the `CarbonLDP.PersistedNamedFragmentFactory` interface." ), ():void => {
+	describe( property( STATIC, "NamedFragment", "CarbonLDP.NamedFragmentFactory", "Constant that implements the `CarbonLDP.NamedFragmentFactory` interface." ), ():void => {
 
 		it( isDefined(), ():void => {
-			expect( PersistedNamedFragment ).toBeDefined();
-			expect( PersistedNamedFragment ).toEqual( jasmine.any( Object ) );
+			expect( NamedFragment ).toBeDefined();
+			expect( NamedFragment ).toEqual( jasmine.any( Object ) );
 		} );
 
-		// TODO: Test `PersistedNamedFragment.isDecorated`
+		// TODO: Test `NamedFragment.isDecorated`
 
 		// TODO: Separate in different tests
-		it( "PersistedNamedFragment.decorate", ():void => {
-			expect( PersistedNamedFragment.decorate ).toBeDefined();
-			expect( Utils.isFunction( PersistedNamedFragment.decorate ) ).toBe( true );
+		it( "NamedFragment.decorate", ():void => {
+			expect( NamedFragment.decorate ).toBeDefined();
+			expect( Utils.isFunction( NamedFragment.decorate ) ).toBe( true );
 
 			let spyPersistedDecorator:jasmine.Spy = spyOn( Fragment, "decorate" ).and.callThrough();
 
 			let fragment:TransientNamedFragment = TransientNamedFragment.create( <any> { id: "http://example.com/resoruce/" }, "fragment-slug" );
-			let persistedFragment:PersistedNamedFragment = PersistedNamedFragment.decorate( fragment );
+			let persistedFragment:NamedFragment = NamedFragment.decorate( fragment );
 
 			expect( persistedFragment ).toBeTruthy();
 			expect( spyPersistedDecorator ).toHaveBeenCalledWith( fragment );

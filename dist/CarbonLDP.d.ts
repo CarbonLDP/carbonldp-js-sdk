@@ -19,7 +19,7 @@ import { TransientNamedFragment } from "./TransientNamedFragment";
 import { ContainerType, DigestedObjectSchema, DigestedObjectSchemaProperty, ObjectSchemaDigester, ObjectSchemaUtils, PointerType } from "./ObjectSchema";
 import { Document } from "./Document";
 import { Fragment } from "./Fragment";
-import { PersistedNamedFragment } from "./PersistedNamedFragment";
+import { NamedFragment } from "./NamedFragment";
 import { PersistedResource } from "./PersistedResource";
 import { Pointer } from "./Pointer";
 import * as RDF from "./RDF";
@@ -56,7 +56,7 @@ export declare class CarbonLDP extends AbstractContext {
     static DigestedObjectSchema: typeof DigestedObjectSchema;
     static Document: typeof Document;
     static Fragment: typeof Fragment;
-    static PersistedNamedFragment: typeof PersistedNamedFragment;
+    static NamedFragment: typeof NamedFragment;
     static PersistedProtectedDocument: typeof PersistedProtectedDocument;
     static PersistedResource: typeof PersistedResource;
     static Pointer: typeof Pointer;

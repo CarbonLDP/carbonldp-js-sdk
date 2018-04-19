@@ -10,7 +10,7 @@ import { TransientNamedFragment } from "./TransientNamedFragment";
 import { Document } from "./Document";
 
 import { Fragment } from "./Fragment";
-import { PersistedNamedFragment } from "./PersistedNamedFragment";
+import { NamedFragment } from "./NamedFragment";
 import { Pointer } from "./Pointer";
 import { URI } from "./RDF/URI";
 import {
@@ -169,7 +169,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 				"Creates a PersistedNamedFragment with the slug provided", [
 					{ name: "slug", type: "string" },
 				],
-				{ type: "CarbonLDP.PersistedNamedFragment" }
+				{ type: "CarbonLDP.NamedFragment" }
 			), ():void => {} );
 
 			it( hasSignature(
@@ -178,7 +178,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 					{ name: "object", type: "T" },
 					{ name: "slug", type: "string" },
 				],
-				{ type: "T & CarbonLDP.PersistedNamedFragment" }
+				{ type: "T & CarbonLDP.NamedFragment" }
 			), ():void => {} );
 
 		} );
@@ -1451,7 +1451,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 					expect( document.createNamedFragment ).toBeDefined();
 					expect( Utils.isFunction( document.createNamedFragment ) ).toBe( true );
 
-					let fragment:PersistedNamedFragment;
+					let fragment:NamedFragment;
 
 					fragment = document.createNamedFragment( "my-fragment" );
 					expect( TransientNamedFragment.isDecorated( fragment ) ).toBe( true );

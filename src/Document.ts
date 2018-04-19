@@ -16,7 +16,7 @@ import { TransientNamedFragment } from "./TransientNamedFragment";
 import * as ObjectSchema from "./ObjectSchema";
 import { AccessPoint } from "./AccessPoint";
 import { Fragment } from "./Fragment";
-import { PersistedNamedFragment } from "./PersistedNamedFragment";
+import { NamedFragment } from "./NamedFragment";
 import { PersistedProtectedDocument } from "./PersistedProtectedDocument";
 import { PersistedResource } from "./PersistedResource";
 import { Pointer } from "./Pointer";
@@ -50,7 +50,7 @@ export interface Document extends TransientDocument, PersistedResource, ServiceA
 
 	getFragment<T extends object>( slug:string ):T & Fragment;
 
-	getNamedFragment<T extends object>( slug:string ):T & PersistedNamedFragment;
+	getNamedFragment<T extends object>( slug:string ):T & NamedFragment;
 
 	getFragments():Fragment[];
 
@@ -62,9 +62,9 @@ export interface Document extends TransientDocument, PersistedResource, ServiceA
 	createFragment<T extends object>( object:T, slug:string ):Fragment & T;
 
 
-	createNamedFragment( slug:string ):PersistedNamedFragment;
+	createNamedFragment( slug:string ):NamedFragment;
 
-	createNamedFragment<T extends object>( object:T, slug:string ):PersistedNamedFragment & T;
+	createNamedFragment<T extends object>( object:T, slug:string ):NamedFragment & T;
 
 
 	refresh<T extends object>( requestOptions?:RequestOptions ):Promise<T & this>;
@@ -567,7 +567,7 @@ function extendRevert( superFunction:() => void ):() => void {
 		let persistedDocument:Document = this;
 		persistedDocument._fragmentsIndex.clear();
 		for( let fragment of persistedDocument._savedFragments ) {
-			let slug:string = "slug" in fragment ? (fragment as PersistedNamedFragment).slug : fragment.id;
+			let slug:string = "slug" in fragment ? (fragment as NamedFragment).slug : fragment.id;
 
 			fragment.revert();
 			persistedDocument._fragmentsIndex.set( slug, fragment );
@@ -623,12 +623,12 @@ function extendCreateFragment( superFunction:( slugOrObject?:any, slug?:string )
 	};
 }
 
-function extendCreateNamedFragment( superFunction:( slug:string ) => TransientNamedFragment ):( slug:string ) => PersistedNamedFragment;
-function extendCreateNamedFragment( superFunction:( object:object, slug:string ) => TransientNamedFragment ):( slug:string, object:object ) => PersistedNamedFragment;
+function extendCreateNamedFragment( superFunction:( slug:string ) => TransientNamedFragment ):( slug:string ) => NamedFragment;
+function extendCreateNamedFragment( superFunction:( object:object, slug:string ) => TransientNamedFragment ):( slug:string, object:object ) => NamedFragment;
 function extendCreateNamedFragment( superFunction:( slugOrObject:any, slug?:string ) => TransientNamedFragment ):any {
-	return function( slugOrObject:any, slug?:string ):PersistedNamedFragment {
+	return function( slugOrObject:any, slug?:string ):NamedFragment {
 		let fragment:TransientNamedFragment = superFunction.call( this, slugOrObject, slug );
-		return PersistedNamedFragment.decorate( fragment );
+		return NamedFragment.decorate( fragment );
 	};
 }
 

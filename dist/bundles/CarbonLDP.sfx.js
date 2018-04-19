@@ -4284,7 +4284,7 @@ var Request_1 = __webpack_require__(30);
 var Document_1 = __webpack_require__(120);
 var ObjectSchema = __importStar(__webpack_require__(12));
 var Fragment_1 = __webpack_require__(55);
-var PersistedNamedFragment_1 = __webpack_require__(121);
+var NamedFragment_1 = __webpack_require__(121);
 var PersistedResource_1 = __webpack_require__(56);
 var Pointer_1 = __webpack_require__(22);
 var URI_1 = __webpack_require__(10);
@@ -4694,7 +4694,7 @@ function extendCreateFragment(superFunction) {
 function extendCreateNamedFragment(superFunction) {
     return function (slugOrObject, slug) {
         var fragment = superFunction.call(this, slugOrObject, slug);
-        return PersistedNamedFragment_1.PersistedNamedFragment.decorate(fragment);
+        return NamedFragment_1.NamedFragment.decorate(fragment);
     };
 }
 function refresh(requestOptions) {
@@ -9790,12 +9790,12 @@ exports.MessagingDocument = {
 Object.defineProperty(exports, "__esModule", { value: true });
 var TransientNamedFragment_1 = __webpack_require__(74);
 var Fragment_1 = __webpack_require__(55);
-exports.PersistedNamedFragment = {
+exports.NamedFragment = {
     isDecorated: function (object) {
         return Fragment_1.Fragment.isDecorated(object);
     },
     decorate: function (object) {
-        if (exports.PersistedNamedFragment.isDecorated(object))
+        if (exports.NamedFragment.isDecorated(object))
             return object;
         var fragment = TransientNamedFragment_1.TransientNamedFragment.decorate(object);
         return Fragment_1.Fragment.decorate(fragment);
@@ -15203,7 +15203,7 @@ var TransientNamedFragment_1 = __webpack_require__(74);
 var ObjectSchema_1 = __webpack_require__(12);
 var Document_1 = __webpack_require__(42);
 var Fragment_1 = __webpack_require__(55);
-var PersistedNamedFragment_1 = __webpack_require__(121);
+var NamedFragment_1 = __webpack_require__(121);
 var PersistedResource_1 = __webpack_require__(56);
 var Pointer_1 = __webpack_require__(22);
 var RDF = __importStar(__webpack_require__(298));
@@ -15307,7 +15307,7 @@ var CarbonLDP = (function (_super) {
     CarbonLDP.DigestedObjectSchema = ObjectSchema_1.DigestedObjectSchema;
     CarbonLDP.Document = Document_1.Document;
     CarbonLDP.Fragment = Fragment_1.Fragment;
-    CarbonLDP.PersistedNamedFragment = PersistedNamedFragment_1.PersistedNamedFragment;
+    CarbonLDP.NamedFragment = NamedFragment_1.NamedFragment;
     CarbonLDP.PersistedProtectedDocument = PersistedProtectedDocument_1.PersistedProtectedDocument;
     CarbonLDP.PersistedResource = PersistedResource_1.PersistedResource;
     CarbonLDP.Pointer = Pointer_1.Pointer;
