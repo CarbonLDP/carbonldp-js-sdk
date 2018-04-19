@@ -1,4 +1,4 @@
-import { AccessPoint } from "./AccessPoint";
+import { TransientAccessPoint } from "./TransientAccessPoint";
 
 import { TransientDirectContainer } from "./LDP/TransientDirectContainer";
 import { Pointer } from "./Pointer";
@@ -16,11 +16,11 @@ import {
 } from "./test/JasmineExtender";
 import { C } from "./Vocabularies/C";
 
-describe( module( "carbonldp/AccessPoint" ), ():void => {
+describe( module( "carbonldp/TransientAccessPoint" ), ():void => {
 
 	describe( interfaze(
 		"CarbonLDP.AccessPointBase",
-		"Interface that represents the basic properties to construct a `CarbonLDP.AccessPoint`."
+		"Interface that represents the basic properties to construct a `CarbonLDP.TransientAccessPoint`."
 	), ():void => {
 
 		it( hasProperty(
@@ -47,7 +47,7 @@ describe( module( "carbonldp/AccessPoint" ), ():void => {
 	} );
 
 	describe( interfaze(
-		"CarbonLDP.AccessPoint",
+		"CarbonLDP.TransientAccessPoint",
 		"Interface that represents the document of an in-memory access point."
 	), ():void => {
 
@@ -77,8 +77,8 @@ describe( module( "carbonldp/AccessPoint" ), ():void => {
 	} );
 
 	describe( interfaze(
-		"CarbonLDP.AccessPointFactory",
-		"Interface with the factory, decorate and utils methods of a `CarbonLDP.AccessPointFactory` object."
+		"CarbonLDP.TransientAccessPointFactory",
+		"Interface with the factory, decorate and utils methods of a `CarbonLDP.TransientAccessPointFactory` object."
 	), ():void => {
 
 		it( hasProperty(
@@ -90,100 +90,100 @@ describe( module( "carbonldp/AccessPoint" ), ():void => {
 		it( hasMethod(
 			OBLIGATORY,
 			"is",
-			"Returns true if the object provided is considered a `CarbonLDP.AccessPoint` object", [
+			"Returns true if the object provided is considered a `CarbonLDP.TransientAccessPoint` object", [
 				{ name: "object", type: "object" },
 			],
-			{ type: "object is CarbonLDP.AccessPoint" }
+			{ type: "object is CarbonLDP.TransientAccessPoint" }
 		), ():void => {} );
 
 		it( hasMethod(
 			OBLIGATORY,
 			"create",
-			"Creates a `CarbonLDP.AccessPoint` object with the parameters specified.", [
+			"Creates a `CarbonLDP.TransientAccessPoint` object with the parameters specified.", [
 				{ name: "membershipResource", type: "CarbonLDP.Pointer", description: "A Pointer to the parent of the AccessPoint." },
 				{ name: "hasMemberRelation", type: "string | CarbonLDP.Pointer", description: "A URI or Pointer to the property in the parent resource managed by the AccessPoint." },
 				{ name: "isMemberOfRelation", type: "string | CarbonLDP.Pointer", optional: true, description: "A URI or Pointer to the property managed in the members added by the AccessPoint." },
 			],
-			{ type: "CarbonLDP.AccessPoint" }
+			{ type: "CarbonLDP.TransientAccessPoint" }
 		), ():void => {} );
 
 		it( hasMethod(
 			OBLIGATORY,
 			"createFrom",
 			[ "T extends object" ],
-			"Creates a `CarbonLDP.AccessPoint` object from the object and parameters specified.", [
+			"Creates a `CarbonLDP.TransientAccessPoint` object from the object and parameters specified.", [
 				{ name: "object", type: "T", description: "Object that will be converted into an AccessPoint." },
 				{ name: "membershipResource", type: "CarbonLDP.Pointer", description: "A Pointer to the parent of the AccessPoint." },
 				{ name: "hasMemberRelation", type: "string | CarbonLDP.Pointer", description: "A URI or Pointer to the property in the parent resource managed by the AccessPoint." },
 				{ name: "isMemberOfRelation", type: "string | CarbonLDP.Pointer", optional: true, description: "A URI or Pointer to the property managed in the members added by the AccessPoint." },
 			],
-			{ type: "T & CarbonLDP.AccessPoint" }
+			{ type: "T & CarbonLDP.TransientAccessPoint" }
 		), ():void => {} );
 
 	} );
 
-	describe( property( STATIC, "AccessPoint", "CarbonLDP.AccessPointFactory", "Constant that implements the `CarbonLDP.AccessPoint` interface." ), ():void => {
+	describe( property( STATIC, "TransientAccessPoint", "CarbonLDP.TransientAccessPointFactory", "Constant that implements the `CarbonLDP.TransientAccessPoint` interface." ), ():void => {
 
 		it( isDefined(), ():void => {
-			expect( AccessPoint ).toBeDefined();
-			expect( AccessPoint ).toEqual( jasmine.any( Object ) );
+			expect( TransientAccessPoint ).toBeDefined();
+			expect( TransientAccessPoint ).toEqual( jasmine.any( Object ) );
 		} );
 
 		// TODO: Separate in different tests
-		it( "AccessPoint.TYPE", ():void => {
-			expect( AccessPoint.TYPE ).toBeDefined();
-			expect( AccessPoint.TYPE ).toEqual( jasmine.any( String ) );
+		it( "TransientAccessPoint.TYPE", ():void => {
+			expect( TransientAccessPoint.TYPE ).toBeDefined();
+			expect( TransientAccessPoint.TYPE ).toEqual( jasmine.any( String ) );
 
-			expect( AccessPoint.TYPE ).toBe( C.AccessPoint );
+			expect( TransientAccessPoint.TYPE ).toBe( C.AccessPoint );
 		} );
 
 		// TODO: Test `AccessPoint.is`
 
 		// TODO: Separate in different tests
-		it( "AccessPoint.create", ():void => {
-			expect( AccessPoint.create ).toBeDefined();
-			expect( AccessPoint.create ).toEqual( jasmine.any( Function ) );
+		it( "TransientAccessPoint.create", ():void => {
+			expect( TransientAccessPoint.create ).toBeDefined();
+			expect( TransientAccessPoint.create ).toEqual( jasmine.any( Function ) );
 
-			let spy:jasmine.Spy = spyOn( AccessPoint, "createFrom" );
+			let spy:jasmine.Spy = spyOn( TransientAccessPoint, "createFrom" );
 			let pointer:Pointer = Pointer.create();
 
-			AccessPoint.create( pointer, "http://example.com/myNamespace#some-relation" );
+			TransientAccessPoint.create( pointer, "http://example.com/myNamespace#some-relation" );
 			expect( spy ).toHaveBeenCalledWith( {}, pointer, "http://example.com/myNamespace#some-relation", undefined );
 			spy.calls.reset();
 
-			AccessPoint.create( pointer, pointer );
+			TransientAccessPoint.create( pointer, pointer );
 			expect( spy ).toHaveBeenCalledWith( {}, pointer, pointer, undefined );
 			spy.calls.reset();
 
-			AccessPoint.create( pointer, "http://example.com/myNamespace#some-relation", "http://example.com/myNamespace#some-inverted-relation" );
+			TransientAccessPoint.create( pointer, "http://example.com/myNamespace#some-relation", "http://example.com/myNamespace#some-inverted-relation" );
 			expect( spy ).toHaveBeenCalledWith( {}, pointer, "http://example.com/myNamespace#some-relation", "http://example.com/myNamespace#some-inverted-relation" );
 			spy.calls.reset();
 
-			AccessPoint.create( pointer, pointer, pointer );
+			TransientAccessPoint.create( pointer, pointer, pointer );
 			expect( spy ).toHaveBeenCalledWith( {}, pointer, pointer, pointer );
 		} );
 
 		// TODO: Separate in different tests
-		it( "AccessPoint.createFrom", ():void => {
-			expect( AccessPoint.createFrom ).toBeDefined();
-			expect( AccessPoint.createFrom ).toEqual( jasmine.any( Function ) );
+		it( "TransientAccessPoint.createFrom", ():void => {
+			expect( TransientAccessPoint.createFrom ).toBeDefined();
+			expect( TransientAccessPoint.createFrom ).toEqual( jasmine.any( Function ) );
 
 			let spy:jasmine.Spy = spyOn( TransientDirectContainer, "createFrom" );
 			let pointer:Pointer = Pointer.create();
 
-			AccessPoint.createFrom( {}, pointer, "http://example.com/myNamespace#some-relation" );
+			TransientAccessPoint.createFrom( {}, pointer, "http://example.com/myNamespace#some-relation" );
 			expect( spy ).toHaveBeenCalledWith( {}, pointer, "http://example.com/myNamespace#some-relation", undefined );
 			spy.calls.reset();
 
-			AccessPoint.createFrom( {}, pointer, pointer );
+			TransientAccessPoint.createFrom( {}, pointer, pointer );
 			expect( spy ).toHaveBeenCalledWith( {}, pointer, pointer, undefined );
 			spy.calls.reset();
 
-			AccessPoint.createFrom( {}, pointer, "http://example.com/myNamespace#some-relation", "http://example.com/myNamespace#some-inverted-relation" );
+			TransientAccessPoint.createFrom( {}, pointer, "http://example.com/myNamespace#some-relation", "http://example.com/myNamespace#some-inverted-relation" );
 			expect( spy ).toHaveBeenCalledWith( {}, pointer, "http://example.com/myNamespace#some-relation", "http://example.com/myNamespace#some-inverted-relation" );
 			spy.calls.reset();
 
-			AccessPoint.createFrom( {}, pointer, pointer, pointer );
+			TransientAccessPoint.createFrom( {}, pointer, pointer, pointer );
 			expect( spy ).toHaveBeenCalledWith( {}, pointer, pointer, pointer );
 		} );
 

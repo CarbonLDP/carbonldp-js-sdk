@@ -1,7 +1,7 @@
 import { hasProtocol } from "sparqler/iri";
 
 import { AbstractContext } from "./AbstractContext";
-import { AccessPoint } from "./AccessPoint";
+import { TransientAccessPoint } from "./TransientAccessPoint";
 import * as Auth from "./Auth";
 import { BlankNode } from "./BlankNode";
 import { TransientDocument } from "./TransientDocument";
@@ -51,7 +51,7 @@ import * as Vocabularies from "./Vocabularies";
 export class CarbonLDP extends AbstractContext {
 
 	static AbstractContext:typeof AbstractContext = AbstractContext;
-	static AccessPoint:typeof AccessPoint = AccessPoint;
+	static TransientAccessPoint:typeof TransientAccessPoint = TransientAccessPoint;
 	static Auth:typeof Auth = Auth;
 	static BlankNode:typeof BlankNode = BlankNode;
 	static TransientDocument:typeof TransientDocument = TransientDocument;

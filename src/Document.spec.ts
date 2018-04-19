@@ -1,5 +1,5 @@
 import { AbstractContext } from "./AbstractContext";
-import { AccessPointBase } from "./AccessPoint";
+import { AccessPointBase } from "./TransientAccessPoint";
 import { TransientDocument } from "./TransientDocument";
 import { Documents } from "./Documents";
 import * as Errors from "./Errors";

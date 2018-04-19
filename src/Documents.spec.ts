@@ -23,9 +23,9 @@ import { createMockContext } from "../test/helpers/mocks";
 
 import { AbstractContext } from "./AbstractContext";
 import {
-	AccessPoint,
+	TransientAccessPoint,
 	AccessPointBase,
-} from "./AccessPoint";
+} from "./TransientAccessPoint";
 import { BlankNode } from "./BlankNode";
 import { CarbonLDP } from "./CarbonLDP";
 import { Context } from "./Context";
@@ -6446,7 +6446,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 
 
 				it( "should convert plain access-point into a document access-point before request", ( done:DoneFn ):void => {
-					const spy:jasmine.Spy = spyOn( AccessPoint, "createFrom" ).and.callThrough();
+					const spy:jasmine.Spy = spyOn( TransientAccessPoint, "createFrom" ).and.callThrough();
 					spyOn( documents, "_persistDocument" as any ).and.returnValue( Promise.resolve( [] ) );
 
 					const accessPoint:AccessPointBase = { hasMemberRelation: "member-relation" };
@@ -6475,7 +6475,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				} );
 
 				it( "should reject if access-point has incorrect membershipResource", ( done:DoneFn ):void => {
-					const accessPoint:AccessPointBase = AccessPoint.create( documents.getPointer( "NOT-parent-resource/" ), "member-relation" );
+					const accessPoint:AccessPointBase = TransientAccessPoint.create( documents.getPointer( "NOT-parent-resource/" ), "member-relation" );
 
 					documents.createAccessPoint( "https://example.com/parent-resource/", accessPoint )
 						.then( () => {
@@ -6740,7 +6740,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 
 
 				it( "should convert plain access-point into document access-point before requests", ( done:DoneFn ):void => {
-					const spy:jasmine.Spy = spyOn( AccessPoint, "createFrom" ).and.callThrough();
+					const spy:jasmine.Spy = spyOn( TransientAccessPoint, "createFrom" ).and.callThrough();
 					spyOn( documents, "_persistDocument" as any ).and.returnValue( Promise.resolve() );
 
 					const accessPoints:AccessPointBase[] = [
@@ -6783,9 +6783,9 @@ describe( module( "carbonldp/Documents" ), ():void => {
 
 				it( "should reject if access-point has incorrect membershipResource", ( done:DoneFn ):void => {
 					const accessPoints:AccessPointBase[] = [
-						AccessPoint.create( documents.getPointer( "parent-resource/" ), "member-relation-0" ),
-						AccessPoint.create( documents.getPointer( "NOT-parent-resource/" ), "member-relation-1" ),
-						AccessPoint.create( documents.getPointer( "NOT-parent-resource/" ), "member-relation-2" ),
+						TransientAccessPoint.create( documents.getPointer( "parent-resource/" ), "member-relation-0" ),
+						TransientAccessPoint.create( documents.getPointer( "NOT-parent-resource/" ), "member-relation-1" ),
+						TransientAccessPoint.create( documents.getPointer( "NOT-parent-resource/" ), "member-relation-2" ),
 					];
 
 					documents.createAccessPoints( "https://example.com/parent-resource/", accessPoints )

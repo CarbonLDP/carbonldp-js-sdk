@@ -1,6 +1,6 @@
 import { QueryClause } from "sparqler/clauses";
 
-import { AccessPointBase } from "./AccessPoint";
+import { AccessPointBase } from "./TransientAccessPoint";
 import { TransientDocument } from "./TransientDocument";
 import { Documents } from "./Documents";
 import { Fragment } from "./Fragment";

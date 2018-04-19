@@ -1,5 +1,5 @@
 import { AbstractContext } from "./AbstractContext";
-import { AccessPoint } from "./AccessPoint";
+import { TransientAccessPoint } from "./TransientAccessPoint";
 import * as Auth from "./Auth";
 import { BlankNode } from "./BlankNode";
 
@@ -102,11 +102,11 @@ describe( module( "carbonldp/CarbonLDP" ), ():void => {
 
 		it( reexports(
 			STATIC,
-			"AccessPoint",
-			"carbonldp/AccessPoint#AccessPoint"
+			"TransientAccessPoint",
+			"carbonldp/TransientAccessPoint#TransientAccessPoint"
 		), ():void => {
-			expect( CarbonLDP.CarbonLDP.AccessPoint ).toBeDefined();
-			expect( CarbonLDP.CarbonLDP.AccessPoint ).toBe( AccessPoint );
+			expect( CarbonLDP.CarbonLDP.TransientAccessPoint ).toBeDefined();
+			expect( CarbonLDP.CarbonLDP.TransientAccessPoint ).toBe( TransientAccessPoint );
 		} );
 
 		it( reexports(

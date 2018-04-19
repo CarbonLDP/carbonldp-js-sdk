@@ -10580,7 +10580,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
 }
 Object.defineProperty(exports, "__esModule", { value: true });
 var tokens_1 = __webpack_require__(3);
-var AccessPoint_1 = __webpack_require__(141);
+var TransientAccessPoint_1 = __webpack_require__(141);
 var Auth = __importStar(__webpack_require__(68));
 var ACL_1 = __webpack_require__(51);
 var PersistedACL_1 = __webpack_require__(139);
@@ -11517,8 +11517,8 @@ var Documents = (function () {
     Documents.prototype._persistAccessPoint = function (documentURI, accessPoint, slug, requestOptions) {
         if (Document_1.Document.is(accessPoint))
             throw new Errors.IllegalArgumentError("The access-point provided has been already persisted.");
-        var accessPointDocument = AccessPoint_1.AccessPoint.is(accessPoint) ?
-            accessPoint : AccessPoint_1.AccessPoint.createFrom(accessPoint, this.getPointer(documentURI), accessPoint.hasMemberRelation, accessPoint.isMemberOfRelation);
+        var accessPointDocument = TransientAccessPoint_1.TransientAccessPoint.is(accessPoint) ?
+            accessPoint : TransientAccessPoint_1.TransientAccessPoint.createFrom(accessPoint, this.getPointer(documentURI), accessPoint.hasMemberRelation, accessPoint.isMemberOfRelation);
         if (accessPointDocument.membershipResource.id !== documentURI)
             throw new Errors.IllegalArgumentError("The documentURI must be the same as the accessPoint's membershipResource.");
         this._setDefaultRequestOptions(requestOptions, LDP_1.LDP.RDFSource);
@@ -11776,13 +11776,13 @@ var emptyQueryBuildFn = function (_) { return _; };
 Object.defineProperty(exports, "__esModule", { value: true });
 var TransientDirectContainer_1 = __webpack_require__(127);
 var C_1 = __webpack_require__(2);
-exports.AccessPoint = {
+exports.TransientAccessPoint = {
     TYPE: C_1.C.AccessPoint,
     is: function (object) {
         return TransientDirectContainer_1.TransientDirectContainer.is(object);
     },
     create: function (membershipResource, hasMemberRelation, isMemberOfRelation) {
-        return exports.AccessPoint.createFrom({}, membershipResource, hasMemberRelation, isMemberOfRelation);
+        return exports.TransientAccessPoint.createFrom({}, membershipResource, hasMemberRelation, isMemberOfRelation);
     },
     createFrom: function (object, membershipResource, hasMemberRelation, isMemberOfRelation) {
         return TransientDirectContainer_1.TransientDirectContainer.createFrom(object, membershipResource, hasMemberRelation, isMemberOfRelation);
@@ -15183,7 +15183,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var iri_1 = __webpack_require__(28);
 var AbstractContext_1 = __webpack_require__(215);
-var AccessPoint_1 = __webpack_require__(141);
+var TransientAccessPoint_1 = __webpack_require__(141);
 var Auth = __importStar(__webpack_require__(68));
 var BlankNode_1 = __webpack_require__(105);
 var TransientDocument_1 = __webpack_require__(19);
@@ -15284,7 +15284,7 @@ var CarbonLDP = (function (_super) {
         });
     };
     CarbonLDP.AbstractContext = AbstractContext_1.AbstractContext;
-    CarbonLDP.AccessPoint = AccessPoint_1.AccessPoint;
+    CarbonLDP.TransientAccessPoint = TransientAccessPoint_1.TransientAccessPoint;
     CarbonLDP.Auth = Auth;
     CarbonLDP.BlankNode = BlankNode_1.BlankNode;
     CarbonLDP.TransientDocument = TransientDocument_1.TransientDocument;

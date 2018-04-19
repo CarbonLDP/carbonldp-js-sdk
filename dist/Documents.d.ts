@@ -1,5 +1,5 @@
 import { QueryClause } from "sparqler/clauses";
-import { AccessPointBase } from "./AccessPoint";
+import { AccessPointBase } from "./TransientAccessPoint";
 import { Context } from "./Context";
 import { FreeResources } from "./FreeResources";
 import { GETOptions, RequestOptions } from "./HTTP/Request";

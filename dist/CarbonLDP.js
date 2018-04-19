@@ -19,7 +19,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var iri_1 = require("sparqler/iri");
 var AbstractContext_1 = require("./AbstractContext");
-var AccessPoint_1 = require("./AccessPoint");
+var TransientAccessPoint_1 = require("./TransientAccessPoint");
 var Auth = __importStar(require("./Auth"));
 var BlankNode_1 = require("./BlankNode");
 var TransientDocument_1 = require("./TransientDocument");
@@ -120,7 +120,7 @@ var CarbonLDP = (function (_super) {
         });
     };
     CarbonLDP.AbstractContext = AbstractContext_1.AbstractContext;
-    CarbonLDP.AccessPoint = AccessPoint_1.AccessPoint;
+    CarbonLDP.TransientAccessPoint = TransientAccessPoint_1.TransientAccessPoint;
     CarbonLDP.Auth = Auth;
     CarbonLDP.BlankNode = BlankNode_1.BlankNode;
     CarbonLDP.TransientDocument = TransientDocument_1.TransientDocument;

@@ -14,9 +14,9 @@ import {
 } from "sparqler/tokens";
 
 import {
-	AccessPoint,
+	TransientAccessPoint,
 	AccessPointBase,
-} from "./AccessPoint";
+} from "./TransientAccessPoint";
 import * as Auth from "./Auth";
 import { ACL } from "./Auth/ACL";
 import { PersistedACL } from "./Auth/PersistedACL";
@@ -1164,13 +1164,13 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 	private _persistAccessPoint<T extends object>( documentURI:string, accessPoint:T & AccessPointBase, slug:string, requestOptions:RequestOptions ):Promise<T & PersistedAccessPoint> {
 		if( Document.is( accessPoint ) ) throw new Errors.IllegalArgumentError( "The access-point provided has been already persisted." );
 
-		const accessPointDocument:T & AccessPoint = AccessPoint.is( accessPoint ) ?
-			accessPoint : AccessPoint.createFrom<T>( accessPoint, this.getPointer( documentURI ), accessPoint.hasMemberRelation, accessPoint.isMemberOfRelation );
+		const accessPointDocument:T & TransientAccessPoint = TransientAccessPoint.is( accessPoint ) ?
+			accessPoint : TransientAccessPoint.createFrom<T>( accessPoint, this.getPointer( documentURI ), accessPoint.hasMemberRelation, accessPoint.isMemberOfRelation );
 
 		if( accessPointDocument.membershipResource.id !== documentURI ) throw new Errors.IllegalArgumentError( "The documentURI must be the same as the accessPoint's membershipResource." );
 
 		this._setDefaultRequestOptions( requestOptions, LDP.RDFSource );
-		return this._persistDocument<T & AccessPoint, PersistedAccessPoint>( documentURI, slug, accessPointDocument, requestOptions );
+		return this._persistDocument<T & TransientAccessPoint, PersistedAccessPoint>( documentURI, slug, accessPointDocument, requestOptions );
 	}
 
 	private _persistDocument<T extends TransientDocument, W extends PersistedProtectedDocument>( parentURI:string, slug:string, document:T, requestOptions:RequestOptions ):Promise<T & W> {

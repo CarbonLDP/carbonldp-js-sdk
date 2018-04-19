@@ -13,7 +13,7 @@ describe( module( "carbonldp/PersistedAccessPoint" ), ():void => {
 		"Interface that represents a persisted Carbon LDP AccessPoint."
 	), ():void => {
 
-		it( extendsClass( "CarbonLDP.AccessPoint" ), ():void => {} );
+		it( extendsClass( "CarbonLDP.TransientAccessPoint" ), ():void => {} );
 		it( extendsClass( "CarbonLDP.PersistedProtectedDocument" ), ():void => {} );
 
 		it( hasProperty(
