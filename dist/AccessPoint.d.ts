@@ -1,4 +1,4 @@
-import { DirectContainer } from "./LDP/DirectContainer";
+import { TransientDirectContainer } from "./LDP/TransientDirectContainer";
 import { ModelFactory } from "./ModelFactory";
 import { Pointer } from "./Pointer";
 export interface AccessPointBase {
@@ -6,7 +6,7 @@ export interface AccessPointBase {
     isMemberOfRelation?: string | Pointer;
     insertedContentRelation?: string | Pointer;
 }
-export interface AccessPoint extends DirectContainer {
+export interface AccessPoint extends TransientDirectContainer {
     hasMemberRelation: Pointer;
     isMemberOfRelation?: Pointer;
     insertedContentRelation?: Pointer;

@@ -2,7 +2,7 @@ export * from "./AddMemberAction";
 export * from "./Error";
 export * from "./Map";
 export * from "./MapEntry";
-export * from "./DirectContainer";
+export * from "./TransientDirectContainer";
 export * from "./DocumentMetadata";
 export * from "./ErrorResponse";
 export * from "./RemoveMemberAction";

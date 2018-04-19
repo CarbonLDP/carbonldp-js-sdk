@@ -1,4 +1,4 @@
-import { DirectContainer } from "./LDP/DirectContainer";
+import { TransientDirectContainer } from "./LDP/TransientDirectContainer";
 import { ModelFactory } from "./ModelFactory";
 import { Pointer } from "./Pointer";
 import { C } from "./Vocabularies/C";
@@ -10,7 +10,7 @@ export interface AccessPointBase {
 	insertedContentRelation?:string | Pointer;
 }
 
-export interface AccessPoint extends DirectContainer {
+export interface AccessPoint extends TransientDirectContainer {
 	hasMemberRelation:Pointer;
 	isMemberOfRelation?:Pointer;
 	insertedContentRelation?:Pointer;
@@ -32,7 +32,7 @@ export const AccessPoint:AccessPointFactory = {
 	TYPE: C.AccessPoint,
 
 	is( object:object ):object is AccessPoint {
-		return DirectContainer.is( object );
+		return TransientDirectContainer.is( object );
 	},
 
 	create( membershipResource:Pointer, hasMemberRelation:string | Pointer, isMemberOfRelation?:string | Pointer ):AccessPoint {
@@ -40,6 +40,6 @@ export const AccessPoint:AccessPointFactory = {
 	},
 
 	createFrom<T extends object>( object:T, membershipResource:Pointer, hasMemberRelation:string | Pointer, isMemberOfRelation?:string | Pointer ):T & AccessPoint {
-		return <any> DirectContainer.createFrom<T>( object, membershipResource, hasMemberRelation, isMemberOfRelation );
+		return <any> TransientDirectContainer.createFrom<T>( object, membershipResource, hasMemberRelation, isMemberOfRelation );
 	},
 };

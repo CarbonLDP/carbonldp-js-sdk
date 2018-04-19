@@ -1,6 +1,6 @@
 import { AccessPoint } from "./AccessPoint";
 
-import { DirectContainer } from "./LDP/DirectContainer";
+import { TransientDirectContainer } from "./LDP/TransientDirectContainer";
 import { Pointer } from "./Pointer";
 import {
 	extendsClass,
@@ -51,7 +51,7 @@ describe( module( "carbonldp/AccessPoint" ), ():void => {
 		"Interface that represents the document of an in-memory access point."
 	), ():void => {
 
-		it( extendsClass( "CarbonLDP.LDP.DirectContainer" ), ():void => {} );
+		it( extendsClass( "CarbonLDP.LDP.TransientDirectContainer" ), ():void => {} );
 
 		it( hasProperty(
 			OBLIGATORY,
@@ -168,7 +168,7 @@ describe( module( "carbonldp/AccessPoint" ), ():void => {
 			expect( AccessPoint.createFrom ).toBeDefined();
 			expect( AccessPoint.createFrom ).toEqual( jasmine.any( Function ) );
 
-			let spy:jasmine.Spy = spyOn( DirectContainer, "createFrom" );
+			let spy:jasmine.Spy = spyOn( TransientDirectContainer, "createFrom" );
 			let pointer:Pointer = Pointer.create();
 
 			AccessPoint.createFrom( {}, pointer, "http://example.com/myNamespace#some-relation" );

@@ -9957,18 +9957,18 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var TransientDocument_1 = __webpack_require__(19);
 var IllegalArgumentError_1 = __webpack_require__(13);
 var LDP_1 = __webpack_require__(41);
-exports.DirectContainer = {
+exports.TransientDirectContainer = {
     TYPE: LDP_1.LDP.DirectContainer,
     is: function (object) {
         return TransientDocument_1.TransientDocument.is(object)
-            && object.hasType(exports.DirectContainer.TYPE)
+            && object.hasType(exports.TransientDirectContainer.TYPE)
             && object.hasOwnProperty("membershipResource");
     },
     create: function (membershipResource, hasMemberRelation, isMemberOfRelation) {
-        return exports.DirectContainer.createFrom({}, membershipResource, hasMemberRelation, isMemberOfRelation);
+        return exports.TransientDirectContainer.createFrom({}, membershipResource, hasMemberRelation, isMemberOfRelation);
     },
     createFrom: function (object, membershipResource, hasMemberRelation, isMemberOfRelation) {
-        if (exports.DirectContainer.is(object))
+        if (exports.TransientDirectContainer.is(object))
             throw new IllegalArgumentError_1.IllegalArgumentError("The base object is already a DirectContainer.");
         if (!membershipResource)
             throw new IllegalArgumentError_1.IllegalArgumentError("The property membershipResource is required.");
@@ -9980,7 +9980,7 @@ exports.DirectContainer = {
         });
         var container = TransientDocument_1.TransientDocument.is(containerBase) ?
             containerBase : TransientDocument_1.TransientDocument.createFrom(containerBase);
-        container.addType(exports.DirectContainer.TYPE);
+        container.addType(exports.TransientDirectContainer.TYPE);
         if (isMemberOfRelation)
             container.isMemberOfRelation = isMemberOfRelation;
         return container;
@@ -11774,18 +11774,18 @@ var emptyQueryBuildFn = function (_) { return _; };
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var DirectContainer_1 = __webpack_require__(127);
+var TransientDirectContainer_1 = __webpack_require__(127);
 var C_1 = __webpack_require__(2);
 exports.AccessPoint = {
     TYPE: C_1.C.AccessPoint,
     is: function (object) {
-        return DirectContainer_1.DirectContainer.is(object);
+        return TransientDirectContainer_1.TransientDirectContainer.is(object);
     },
     create: function (membershipResource, hasMemberRelation, isMemberOfRelation) {
         return exports.AccessPoint.createFrom({}, membershipResource, hasMemberRelation, isMemberOfRelation);
     },
     createFrom: function (object, membershipResource, hasMemberRelation, isMemberOfRelation) {
-        return DirectContainer_1.DirectContainer.createFrom(object, membershipResource, hasMemberRelation, isMemberOfRelation);
+        return TransientDirectContainer_1.TransientDirectContainer.createFrom(object, membershipResource, hasMemberRelation, isMemberOfRelation);
     },
 };
 

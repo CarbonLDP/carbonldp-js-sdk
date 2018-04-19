@@ -1,17 +1,17 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var DirectContainer_1 = require("./LDP/DirectContainer");
+var TransientDirectContainer_1 = require("./LDP/TransientDirectContainer");
 var C_1 = require("./Vocabularies/C");
 exports.AccessPoint = {
     TYPE: C_1.C.AccessPoint,
     is: function (object) {
-        return DirectContainer_1.DirectContainer.is(object);
+        return TransientDirectContainer_1.TransientDirectContainer.is(object);
     },
     create: function (membershipResource, hasMemberRelation, isMemberOfRelation) {
         return exports.AccessPoint.createFrom({}, membershipResource, hasMemberRelation, isMemberOfRelation);
     },
     createFrom: function (object, membershipResource, hasMemberRelation, isMemberOfRelation) {
-        return DirectContainer_1.DirectContainer.createFrom(object, membershipResource, hasMemberRelation, isMemberOfRelation);
+        return TransientDirectContainer_1.TransientDirectContainer.createFrom(object, membershipResource, hasMemberRelation, isMemberOfRelation);
     },
 };
 
