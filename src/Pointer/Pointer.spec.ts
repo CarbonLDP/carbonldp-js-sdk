@@ -1,11 +1,4 @@
-import { IllegalStateError } from "./Errors";
-
-import * as Module from "./Pointer";
-import {
-	isPointerResolved,
-	Pointer,
-	resolveStandalonePointer
-} from "./Pointer";
+import { IllegalStateError } from "../Errors";
 
 import {
 	hasMethod,
@@ -18,7 +11,13 @@ import {
 	OBLIGATORY,
 	property,
 	STATIC,
-} from "./test/JasmineExtender";
+} from "../test/JasmineExtender";
+import * as Module from "./Pointer";
+import {
+	isPointerResolved,
+	Pointer,
+	resolveStandalonePointer
+} from "./Pointer";
 
 describe( module( "carbonldp/Pointer" ), ():void => {
 
@@ -80,59 +79,6 @@ describe( module( "carbonldp/Pointer" ), ():void => {
 					{ name: "queryBuilderFn", type: "( queryBuilder:CarbonLDP.SPARQL.QueryDocument.QueryDocumentBuilder ) => CarbonLDP.SPARQL.QueryDocument.QueryDocumentBuilder", optional: true, description: "Function that receives a the builder that helps you to construct the retrieval query.\nThe same builder must be returned." },
 				],
 				{ type: "Promise<T & this & CarbonLDP.Document>" }
-			), ():void => {} );
-
-		} );
-
-	} );
-
-	describe( interfaze(
-		"CarbonLDP.PointerLibrary",
-		"Interface that represents resources that can manage pointers."
-	), ():void => {
-
-		it( hasMethod(
-			OBLIGATORY,
-			"hasPointer",
-			"Returns true if the object that implements this interface has a pointer referenced by the URI provided.", [
-				{ name: "id", type: "string" },
-			],
-			{ type: "boolean" }
-		), ():void => {} );
-
-		it( hasMethod(
-			OBLIGATORY,
-			"getPointer",
-			"Returns the pointer referenced by the URI provided. If none exists, an empty pointer should be created.", [
-				{ name: "id", type: "string" },
-			],
-			{ type: "boolean" }
-		), ():void => {} );
-
-	} );
-
-	describe( interfaze(
-		"CarbonLDP.PointerValidator",
-		"Interface that represents resources that can validate pointers."
-	), ():void => {
-
-		describe( method(
-			OBLIGATORY,
-			"inScope"
-		), ():void => {
-
-			it( hasSignature(
-				"Returns true if the pointer provided is in the scope of the object that implements this interface.", [
-					{ name: "pointer", type: "CarbonLDP.Pointer" },
-				],
-				{ type: "boolean" }
-			), ():void => {} );
-
-			it( hasSignature(
-				"Returns true if the URI provided is in the scope of the object that implements this interface.", [
-					{ name: "id", type: "string" },
-				],
-				{ type: "boolean" }
 			), ():void => {} );
 
 		} );
@@ -220,20 +166,6 @@ describe( module( "carbonldp/Pointer" ), ():void => {
 			expect( Pointer ).toEqual( jasmine.any( Object ) );
 		} );
 
-		describe( "Pointer.TYPE", ():void => {
-
-			it( "should not exists", ():void => {
-				expect( Pointer.TYPE ).not.toBeDefined();
-			} );
-
-		} );
-
-		describe( "Pointer.SCHEMA", ():void => {
-
-			it( "should not exists", ():void => {
-				expect( Pointer.TYPE ).not.toBeDefined();
-			} );
-		} );
 
 		describe( "Pointer.isDecorated", ():void => {
 
@@ -311,14 +243,35 @@ describe( module( "carbonldp/Pointer" ), ():void => {
 				expect( Pointer.create ).toEqual( jasmine.any( Function ) );
 			} );
 
-			it( "should assign the provided ID in `Pointer._id`", ():void => {
-				const pointer:Pointer = Pointer.create( "https://example.com/pointer/" );
+
+			it( "should assign the `id` in `Pointer._id`", ():void => {
+				const pointer:Pointer = Pointer.create( { id: "https://example.com/pointer/" } );
 				expect( pointer._id ).toBe( "https://example.com/pointer/" );
 			} );
 
-			it( "should set empty string in `Pointer._id` if no ID provided", ():void => {
+			it( "should set empty string in `Pointer._id` if no id`` provided", ():void => {
+				const pointer:Pointer = Pointer.create( {} );
+				expect( pointer.id ).toBe( "" );
+			} );
+
+			it( "should set empty string in `Pointer._id` none provided", ():void => {
 				const pointer:Pointer = Pointer.create();
 				expect( pointer.id ).toBe( "" );
+			} );
+
+
+			it( "should return different reference", ():void => {
+				const object:{} = {};
+				const returned:Pointer = Pointer.create( {} );
+
+				expect( object ).not.toBe( returned );
+			} );
+
+			it( "should call Pointer.createFrom", ():void => {
+				const spy:jasmine.Spy = spyOn( Pointer, "createFrom" );
+
+				Pointer.create( { the: "data", id: "" } );
+				expect( spy ).toHaveBeenCalledWith( { the: "data", id: "" } );
 			} );
 
 		} );
@@ -330,25 +283,30 @@ describe( module( "carbonldp/Pointer" ), ():void => {
 				expect( Pointer.createFrom ).toEqual( jasmine.any( Function ) );
 			} );
 
-			// TODO: Separate in different tests
-			it( "should test method", ():void => {
-				interface MyInterface {
-					myProperty?:string;
-				}
 
-				let pointer:Pointer & MyInterface;
+			it( "should assign the `id` in `Pointer._id`", ():void => {
+				const pointer:Pointer = Pointer.createFrom( { id: "https://example.com/pointer/" } );
+				expect( pointer._id ).toBe( "https://example.com/pointer/" );
+			} );
 
-				pointer = Pointer.createFrom<MyInterface>( {} );
-				expect( pointer ).toBeTruthy();
-				expect( Pointer.isDecorated( pointer ) ).toBe( true );
+			it( "should set empty string in `Pointer._id` if no id`` provided", ():void => {
+				const pointer:Pointer = Pointer.createFrom( {} );
 				expect( pointer.id ).toBe( "" );
-				expect( pointer.myProperty ).not.toBeDefined();
+			} );
 
-				pointer = Pointer.createFrom( { myProperty: "My Property" }, "http://example.com/pointer/" );
-				expect( pointer ).toBeTruthy();
-				expect( Pointer.isDecorated( pointer ) ).toBe( true );
-				expect( pointer.id ).toBe( "http://example.com/pointer/" );
-				expect( pointer.myProperty ).toBe( "My Property" );
+
+			it( "should return same reference", ():void => {
+				const object:{} = {};
+				const returned:Pointer = Pointer.createFrom( object );
+
+				expect( object ).toBe( returned );
+			} );
+
+			it( "should call Pointer.decorate", ():void => {
+				const spy:jasmine.Spy = spyOn( Pointer, "decorate" );
+
+				Pointer.create( { the: "data", id: "" } );
+				expect( spy ).toHaveBeenCalledWith( { the: "data", id: "" } );
 			} );
 
 		} );
@@ -360,27 +318,10 @@ describe( module( "carbonldp/Pointer" ), ():void => {
 				expect( Pointer.decorate ).toEqual( jasmine.any( Function ) );
 			} );
 
-			// TODO: Separate in different tests
-			it( "should test method", ():void => {
-				interface MyResource {
-					myProperty?:string;
-				}
 
-				let pointer:Pointer & MyResource;
-
-				pointer = Pointer.decorate<MyResource>( {} );
+			it( "should work with Pointer.isDecorated", ():void => {
+				const pointer:Pointer = Pointer.decorate( {} );
 				expect( Pointer.isDecorated( pointer ) ).toBe( true );
-
-				pointer = Pointer.decorate<MyResource>( { myProperty: "a property" } );
-				expect( Pointer.isDecorated( pointer ) ).toBe( true );
-				expect( pointer.myProperty ).toBeDefined();
-				expect( pointer.myProperty ).toBe( "a property" );
-				expect( pointer.isResolved() ).toBe( false );
-
-
-				pointer._resolved = true;
-				pointer = Pointer.decorate<MyResource>( pointer );
-				expect( pointer.isResolved() ).toBe( true );
 			} );
 
 
@@ -453,9 +394,9 @@ describe( module( "carbonldp/Pointer" ), ():void => {
 
 			it( "should return the IDs", ():void => {
 				const pointers:Pointer[] = [
-					Pointer.create( "http://example.com/resource-1/" ),
-					Pointer.create( "http://example.com/resource-2/" ),
-					Pointer.create( "http://example.com/resource-3/" ),
+					Pointer.create( { id: "http://example.com/resource-1/" } ),
+					Pointer.create( { id: "http://example.com/resource-2/" } ),
+					Pointer.create( { id: "http://example.com/resource-3/" } ),
 				];
 
 				const ids:string[] = Pointer.getIDs( pointers );

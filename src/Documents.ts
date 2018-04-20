@@ -1253,8 +1253,8 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 	}
 
 	private _createPointerFrom<T extends object>( object:T, localID:string ):T & Pointer {
-		const id:string = ! ! this.context ? this.context.resolve( localID ) : localID;
-		const pointer:T & Pointer = Pointer.createFrom<T>( object, id );
+		const pointer:T & Pointer = Pointer.createFrom<T>( object );
+		pointer.id = this.context ? this.context.resolve( localID ) : localID;
 
 		const resolve:Pointer[ "resolve" ] = <W extends object>( requestOptionsOrQueryBuilderFn?:GETOptions | (( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder), queryBuilderFn?:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<W & T & Document> => {
 			let requestOptions:GETOptions;
@@ -1274,7 +1274,7 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 				};
 			}
 
-			return this.get( id, requestOptions, queryBuilderFn );
+			return this.get( pointer.id, requestOptions, queryBuilderFn );
 		};
 
 		Object.defineProperty( pointer, "resolve", {

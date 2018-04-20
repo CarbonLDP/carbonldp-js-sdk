@@ -129,7 +129,7 @@ describe( module( "carbonldp/LDP/RemoveMemberAction" ), ():void => {
 			expect( Utils.isFunction( RemoveMemberAction.create ) ).toBe( true );
 
 			const pointers:Pointer[] = [];
-			pointers.push( Pointer.create( "the-pointer/" ) );
+			pointers.push( Pointer.create( { id: "the-pointer/" } ) );
 
 			const removeMemberAction:RemoveMemberAction = RemoveMemberAction.create( pointers );
 

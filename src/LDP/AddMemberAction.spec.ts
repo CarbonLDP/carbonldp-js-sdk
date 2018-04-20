@@ -130,7 +130,7 @@ describe( module( "carbonldp/LDP/AddMemberAction" ), ():void => {
 			expect( Utils.isFunction( AddMemberAction.create ) ).toBe( true );
 
 			const pointers:Pointer[] = [];
-			pointers.push( Pointer.create( "the-pointer/" ) );
+			pointers.push( Pointer.create( { id: "the-pointer/" } ) );
 
 			const addMemberAction:AddMemberAction = AddMemberAction.create( pointers );
 

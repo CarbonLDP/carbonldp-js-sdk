@@ -1,14 +1,9 @@
 import { Minus } from "../test/helpers/types";
-import { TransientBlankNode } from "./TransientBlankNode";
-
-import { TransientDocument } from "./TransientDocument";
 
 import { IDAlreadyInUseError } from "./Errors/IDAlreadyInUseError";
 import { IllegalArgumentError } from "./Errors/IllegalArgumentError";
-import { TransientFragment } from "./TransientFragment";
 import * as JSONLDConverterModule from "./JSONLD/Converter";
 import { JSONLDConverter } from "./JSONLD/Converter";
-import { TransientNamedFragment } from "./TransientNamedFragment";
 import {
 	DigestedObjectSchema,
 	ObjectSchemaDigester,
@@ -17,7 +12,6 @@ import {
 import { Pointer } from "./Pointer";
 import { RDFDocument } from "./RDF/Document";
 import { URI } from "./RDF/URI";
-import { TransientResource } from "./TransientResource";
 import {
 	extendsClass,
 	hasMethod,
@@ -31,6 +25,13 @@ import {
 	property,
 	STATIC,
 } from "./test/JasmineExtender";
+import { TransientBlankNode } from "./TransientBlankNode";
+
+import { TransientDocument } from "./TransientDocument";
+
+import { TransientFragment } from "./TransientFragment";
+import { TransientNamedFragment } from "./TransientNamedFragment";
+import { TransientResource } from "./TransientResource";
 import { C } from "./Vocabularies/C";
 import { LDP } from "./Vocabularies/LDP";
 import { XSD } from "./Vocabularies/XSD";
@@ -863,44 +864,44 @@ describe( module( "carbonldp/TransientDocument" ), ():void => {
 					it( "should return true when IRI of the document", ():void => {
 						const document:TransientDocument = createMockDocument();
 
-						expect( document.inScope( Pointer.create( "https://example.com/document/" ) ) ).toBe( true );
+						expect( document.inScope( Pointer.create( { id: "https://example.com/document/" } ) ) ).toBe( true );
 					} );
 
 					it( "should return false when relative IRIs", ():void => {
 						const document:TransientDocument = createMockDocument();
 
-						expect( document.inScope( Pointer.create( "document/" ) ) ).toBe( false );
-						expect( document.inScope( Pointer.create( "another/document/" ) ) ).toBe( false );
+						expect( document.inScope( Pointer.create( { id: "document/" } ) ) ).toBe( false );
+						expect( document.inScope( Pointer.create( { id: "another/document/" } ) ) ).toBe( false );
 					} );
 
 					it( "should return false when another absolute IRIs", ():void => {
 						const document:TransientDocument = createMockDocument();
 
-						expect( document.inScope( Pointer.create( "https://example.com/another/document/" ) ) ).toBe( false );
+						expect( document.inScope( Pointer.create( { id: "https://example.com/another/document/" } ) ) ).toBe( false );
 					} );
 
 					it( "should return true when relative fragment label", ():void => {
 						const document:TransientDocument = createMockDocument();
 
-						expect( document.inScope( Pointer.create( "#fragment" ) ) ).toBe( true );
+						expect( document.inScope( Pointer.create( { id: "#fragment" } ) ) ).toBe( true );
 					} );
 
 					it( "should return true when absolute fragment label", ():void => {
 						const document:TransientDocument = createMockDocument();
 
-						expect( document.inScope( Pointer.create( "https://example.com/document/#fragment" ) ) ).toBe( true );
+						expect( document.inScope( Pointer.create( { id: "https://example.com/document/#fragment" } ) ) ).toBe( true );
 					} );
 
 					it( "should return false when another absolute fragment label", ():void => {
 						const document:TransientDocument = createMockDocument();
 
-						expect( document.inScope( Pointer.create( "https://example.com/another/document/#fragment" ) ) ).toBe( false );
+						expect( document.inScope( Pointer.create( { id: "https://example.com/another/document/#fragment" } ) ) ).toBe( false );
 					} );
 
 					it( "should return true when blank node label", ():void => {
 						const document:TransientDocument = createMockDocument();
 
-						expect( document.inScope( Pointer.create( "_:1" ) ) ).toBe( true );
+						expect( document.inScope( Pointer.create( { id: "_:1" } ) ) ).toBe( true );
 					} );
 
 				} );

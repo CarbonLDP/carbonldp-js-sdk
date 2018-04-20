@@ -164,9 +164,9 @@ describe( module( "carbonldp/LDP/TransientDirectContainer" ), ():void => {
 
 			interface MyDirectContainer extends TransientDirectContainer, TheDirectContainer {}
 
-			let membershipResource:Pointer = Pointer.create( "http://example.com/theResource/" );
-			let hasMemberRelation:Pointer = Pointer.create( "http://example.com/myNamespace#some-relation" );
-			let isMemberOfRelation:Pointer = Pointer.create( "http://example.com/myNamespace#some-inverted-relation" );
+			let membershipResource:Pointer = Pointer.create( { id: "http://example.com/theResource/" } );
+			let hasMemberRelation:Pointer = Pointer.create( { id: "http://example.com/myNamespace#some-relation" } );
+			let isMemberOfRelation:Pointer = Pointer.create( { id: "http://example.com/myNamespace#some-inverted-relation" } );
 
 			let directContainer:MyDirectContainer;
 

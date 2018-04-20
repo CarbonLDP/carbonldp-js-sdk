@@ -1,10 +1,9 @@
-import { IllegalStateError } from "./Errors/IllegalStateError";
-import { GETOptions } from "./HTTP/Request";
-import { ModelDecorator } from "./ModelDecorator";
-import { ModelFactory } from "./ModelFactory";
-import { Document } from "./Document";
-import { QueryDocumentBuilder } from "./SPARQL/QueryDocument/QueryDocumentBuilder";
-import * as Utils from "./Utils";
+import { Document } from "../Document";
+import { IllegalStateError } from "../Errors";
+import { GETOptions } from "../HTTP";
+import { QueryDocumentBuilder } from "../SPARQL/QueryDocument";
+import * as Utils from "../Utils";
+import { BasePointer } from "./BasePointer";
 
 
 export interface Pointer {
@@ -20,27 +19,15 @@ export interface Pointer {
 }
 
 
-export interface PointerLibrary {
-	hasPointer( id:string ):boolean;
-
-	getPointer( id:string ):Pointer;
-}
-
-
-export interface PointerValidator {
-	inScope( idOrPointer:string | Pointer ):boolean;
-}
-
-
-export interface PointerFactory extends ModelFactory<Pointer>, ModelDecorator<Pointer> {
+export interface PointerFactory {
 	isDecorated( object:object ):object is Pointer;
 
-	is( object:object ):object is Pointer;
+	is( value:any ):value is Pointer;
 
 
-	create( id?:string ):Pointer;
+	create<T extends BasePointer>( data?:T ):T & Pointer;
 
-	createFrom<T extends object>( object:T, id?:string ):T & Pointer;
+	createFrom<T extends BasePointer>( object:T ):T & Pointer;
 
 	decorate<T extends object>( object:T ):T & Pointer;
 
@@ -66,29 +53,27 @@ export const Pointer:PointerFactory = {
 			Utils.hasPropertyDefined( object, "_resolved" ) &&
 
 			Utils.hasPropertyDefined( object, "id" ) &&
+
 			Utils.hasFunction( object, "isResolved" ) &&
-			Utils.hasPropertyDefined( object, "resolve" )
+			Utils.hasFunction( object, "resolve" )
 		);
 	},
 
-	is( object:any ):object is Pointer {
+	is( value:any ):value is Pointer {
 		return (
-			Utils.isObject( object ) &&
-			Pointer.isDecorated( object )
+			Utils.isObject( value ) &&
+			Pointer.isDecorated( value )
 		);
 	},
 
 
-	create( id?:string ):Pointer {
-		return Pointer.createFrom( {}, id );
+	create<T extends BasePointer>( data:T ):T & Pointer {
+		const clone:T = Object.assign( {}, data );
+		return Pointer.createFrom<T>( clone );
 	},
 
-	createFrom<T extends object>( object:T, id?:string ):T & Pointer {
-		const pointer:T & Pointer = Pointer.decorate<T>( object );
-
-		if( id ) pointer.id = id;
-
-		return pointer;
+	createFrom<T extends BasePointer>( object:T ):T & Pointer {
+		return Pointer.decorate<T>( object );
 	},
 
 	decorate<T extends object>( object:T ):T & Pointer {

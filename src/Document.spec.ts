@@ -1252,27 +1252,27 @@ describe( module( "carbonldp/Document" ), ():void => {
 					expect( document.inScope.bind( document, null ) ).toThrowError();
 
 					expect( document.inScope( document ) ).toBe( true );
-					pointer = Pointer.create( "http://example.com/document/" );
+					pointer = Pointer.create( { id: "http://example.com/document/" } );
 					expect( document.inScope( pointer ) ).toBe( true );
-					pointer = Pointer.create( "http://example.com/document/#fragment" );
+					pointer = Pointer.create( { id: "http://example.com/document/#fragment" } );
 					expect( document.inScope( pointer ) ).toBe( true );
-					pointer = Pointer.create( "http://example.com/document/#another-fragment" );
+					pointer = Pointer.create( { id: "http://example.com/document/#another-fragment" } );
 					expect( document.inScope( pointer ) ).toBe( true );
-					pointer = Pointer.create( "_:BlankNode" );
+					pointer = Pointer.create( { id: "_:BlankNode" } );
 					expect( document.inScope( pointer ) ).toBe( true );
-					pointer = Pointer.create( "#fragment" );
+					pointer = Pointer.create( { id: "#fragment" } );
 					expect( document.inScope( pointer ) ).toBe( true );
 
 					// In Documents
-					pointer = Pointer.create( "this-uri-is-resolved-relative/" );
+					pointer = Pointer.create( { id: "this-uri-is-resolved-relative/" } );
 					expect( document.inScope( pointer ) ).toBe( true );
-					pointer = Pointer.create( "http://example.com/in/documents/" );
+					pointer = Pointer.create( { id: "http://example.com/in/documents/" } );
 					expect( document.inScope( pointer ) ).toBe( true );
-					pointer = Pointer.create( "http://example.com/document/child/" );
+					pointer = Pointer.create( { id: "http://example.com/document/child/" } );
 					expect( document.inScope( pointer ) ).toBe( true );
-					pointer = Pointer.create( "http://example.com/another-document/" );
+					pointer = Pointer.create( { id: "http://example.com/another-document/" } );
 					expect( document.inScope( pointer ) ).toBe( true );
-					pointer = Pointer.create( "http://example.org/document/" );
+					pointer = Pointer.create( { id: "http://example.org/document/" } );
 					expect( document.inScope( pointer ) ).toBe( true );
 				} );
 

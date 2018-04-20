@@ -1,4 +1,3 @@
-import { TransientFragment } from "../TransientFragment";
 import { Pointer } from "../Pointer";
 import {
 	extendsClass,
@@ -11,6 +10,7 @@ import {
 	property,
 	STATIC,
 } from "../test/JasmineExtender";
+import { TransientFragment } from "../TransientFragment";
 import { CS } from "../Vocabularies/CS";
 import { XSD } from "../Vocabularies/XSD";
 import * as Utils from "./../Utils";
@@ -243,7 +243,7 @@ describe( module( "carbonldp/Auth/TransientACE" ), ():void => {
 			let ace:TransientACE;
 
 			object = {};
-			ace = TransientACE.createFrom( object, true, [ Pointer.create( "1" ) ], Pointer.create( "2" ), [ Pointer.create( "3" ) ] );
+			ace = TransientACE.createFrom( object, true, [ Pointer.create( { id: "1" } ) ], Pointer.create( { id: "2" } ), [ Pointer.create( { id: "3" } ) ] );
 			expect( ace.types ).toContain( TransientACE.TYPE );
 			expect( ace.granting ).toBe( true );
 			expect( Pointer.getIDs( ace.subjects ) ).toContain( "1" );
@@ -252,7 +252,7 @@ describe( module( "carbonldp/Auth/TransientACE" ), ():void => {
 			expect( ace[ "some" ] ).toBeUndefined();
 
 			object = { some: "some" };
-			ace = TransientACE.createFrom( object, false, [ Pointer.create( "4" ) ], Pointer.create( "5" ), [ Pointer.create( "6" ) ] );
+			ace = TransientACE.createFrom( object, false, [ Pointer.create( { id: "4" } ) ], Pointer.create( { id: "5" } ), [ Pointer.create( { id: "6" } ) ] );
 			expect( ace.types ).toContain( TransientACE.TYPE );
 			expect( ace.granting ).toBe( false );
 			expect( Pointer.getIDs( ace.subjects ) ).toContain( "4" );

@@ -220,25 +220,25 @@ describe( module( "carbonldp/Documents" ), ():void => {
 
 				let pointer:Pointer;
 
-				pointer = Pointer.create( "https://example.com/document/child/" );
+				pointer = Pointer.create( { id: "https://example.com/document/child/" } );
 				expect( documents.inScope( pointer ) ).toBe( true );
-				pointer = Pointer.create( "https://example.com/another-document/" );
+				pointer = Pointer.create( { id: "https://example.com/another-document/" } );
 				expect( documents.inScope( pointer ) ).toBe( true );
-				pointer = Pointer.create( "https://example.com/document/" );
+				pointer = Pointer.create( { id: "https://example.com/document/" } );
 				expect( documents.inScope( pointer ) ).toBe( true );
-				pointer = Pointer.create( "a-relative-document/" );
-				expect( documents.inScope( pointer ) ).toBe( true );
-
-				pointer = Pointer.create( "https://example.com/document/#fragment" );
-				expect( documents.inScope( pointer ) ).toBe( true );
-				pointer = Pointer.create( "https://example.com/document/#another-fragment" );
+				pointer = Pointer.create( { id: "a-relative-document/" } );
 				expect( documents.inScope( pointer ) ).toBe( true );
 
-				pointer = Pointer.create( "_:BlankNode" );
+				pointer = Pointer.create( { id: "https://example.com/document/#fragment" } );
+				expect( documents.inScope( pointer ) ).toBe( true );
+				pointer = Pointer.create( { id: "https://example.com/document/#another-fragment" } );
+				expect( documents.inScope( pointer ) ).toBe( true );
+
+				pointer = Pointer.create( { id: "_:BlankNode" } );
 				expect( documents.inScope( pointer ) ).toBe( false );
 
 				// Asks to context.parentContext.documents
-				pointer = Pointer.create( "http://example.org/document/" );
+				pointer = Pointer.create( { id: "http://example.org/document/" } );
 				expect( documents.inScope( pointer ) ).toBe( true );
 			} );
 
@@ -313,15 +313,15 @@ describe( module( "carbonldp/Documents" ), ():void => {
 
 			context = new MockedContext();
 			documents = context.documents;
-			(<any> documents).pointers.set( "document/", Pointer.create( "https://example.com/document/" ) );
+			(<any> documents).pointers.set( "document/", Pointer.create( { id: "https://example.com/document/" } ) );
 			expect( documents.hasPointer( "https://example.com/document/" ) ).toBe( true );
 			expect( documents.hasPointer( "https://example.com/document/#fragment" ) ).toBe( false );
 			expect( documents.hasPointer( "document/" ) ).toBe( true );
 
 			expect( documents.hasPointer( "https://example.com/another-document/" ) ).toBe( false );
 
-			(<any> documents).pointers.set( "document/", Pointer.create( "https://example.com/document/" ) );
-			(<any> documents).pointers.set( "another-document/", Pointer.create( "https://example.com/another-document/" ) );
+			(<any> documents).pointers.set( "document/", Pointer.create( { id: "https://example.com/document/" } ) );
+			(<any> documents).pointers.set( "another-document/", Pointer.create( { id: "https://example.com/another-document/" } ) );
 			expect( documents.hasPointer( "https://example.com/document/" ) ).toBe( true );
 			expect( documents.hasPointer( "document/" ) ).toBe( true );
 			expect( documents.hasPointer( "https://example.com/another-document/" ) ).toBe( true );
@@ -380,7 +380,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 
 			expect( () => documents.getPointer( "_:BlankNode" ) ).toThrowError( Errors.IllegalArgumentError );
 
-			let anotherPointer:Pointer = Pointer.create( "https://example.com/document/" );
+			let anotherPointer:Pointer = Pointer.create( { id: "https://example.com/document/" } );
 			context = new MockedContext();
 			documents = context.documents;
 			(<any> documents).pointers.set( "document/", anotherPointer );
@@ -6505,7 +6505,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 						expect( document ).toEqual( jasmine.objectContaining( {
 							_resolved: false,
 							id: "https://example.com/parent-resource/new-resource/",
-							membershipResource: Pointer.create( "https://example.com/parent-resource/" ),
+							membershipResource: Pointer.create( { id: "https://example.com/parent-resource/" } ),
 							hasMemberRelation: "member-relation" as any,
 						} ) );
 

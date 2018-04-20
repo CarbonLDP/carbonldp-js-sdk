@@ -99,14 +99,6 @@ describe( module( "carbonldp/TransientFragment" ), ():void => {
 
 		} );
 
-		describe( "TransientFragment.SCHEMA", ():void => {
-
-			it( "should not exist", ():void => {
-				expect( TransientFragment.SCHEMA ).not.toBeDefined();
-			} );
-
-		} );
-
 		// TODO: Separate in different tests
 		it( "TransientFragment.isDecorated", ():void => {
 			expect( TransientFragment.isDecorated ).toBeDefined();
