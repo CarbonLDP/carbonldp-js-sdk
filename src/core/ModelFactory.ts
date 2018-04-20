@@ -1,4 +1,4 @@
-import { ObjectSchema } from "./ObjectSchema";
+import { ObjectSchema } from "../ObjectSchema";
 
 export interface ModelFactory<T extends object> {
 	TYPE?:string;

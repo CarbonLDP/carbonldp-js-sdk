@@ -1,4 +1,4 @@
-import { ModelDecorator } from "./ModelDecorator";
+import { ModelDecorator } from "./core/ModelDecorator";
 import { TransientResource } from "./TransientResource";
 import { PartialMetadata } from "./SPARQL/QueryDocument/PartialMetadata";
 import * as Utils from "./Utils";

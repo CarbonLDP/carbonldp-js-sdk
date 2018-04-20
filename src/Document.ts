@@ -10,8 +10,8 @@ import {
 	RequestUtils,
 } from "./HTTP/Request";
 import { MessagingDocument } from "./Messaging/Document";
-import { ModelDecorator } from "./ModelDecorator";
-import { ModelFactory } from "./ModelFactory";
+import { ModelDecorator } from "./core/ModelDecorator";
+import { ModelFactory } from "./core/ModelFactory";
 import { TransientNamedFragment } from "./TransientNamedFragment";
 import * as ObjectSchema from "./ObjectSchema";
 import { AccessPoint } from "./AccessPoint";

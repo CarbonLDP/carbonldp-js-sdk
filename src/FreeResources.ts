@@ -2,8 +2,8 @@ import { Documents } from "./Documents";
 import { IDAlreadyInUseError } from "./Errors/IDAlreadyInUseError";
 import { IllegalArgumentError } from "./Errors/IllegalArgumentError";
 import { JSONLDConverter } from "./JSONLD/Converter";
-import { ModelDecorator } from "./ModelDecorator";
-import { ModelFactory } from "./ModelFactory";
+import { ModelDecorator } from "./core/ModelDecorator";
+import { ModelFactory } from "./core/ModelFactory";
 import { DigestedObjectSchema } from "./ObjectSchema";
 import {
 	Pointer,

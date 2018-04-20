@@ -1,5 +1,5 @@
 import { VolatileResource } from "../../LDP/VolatileResource";
-import { ModelFactory } from "../../ModelFactory";
+import { ModelFactory } from "../../core/ModelFactory";
 import { ObjectSchema } from "../../ObjectSchema";
 import { Pointer } from "../../Pointer";
 import { C } from "../../Vocabularies/C";

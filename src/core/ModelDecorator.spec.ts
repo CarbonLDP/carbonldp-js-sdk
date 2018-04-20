@@ -6,7 +6,7 @@ import {
 	interfaze,
 	module,
 	OPTIONAL
-} from "./test/JasmineExtender";
+} from "../test/JasmineExtender";
 
 describe( module( "carbonldp/ModelDecorator" ), ():void => {
 

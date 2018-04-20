@@ -1,7 +1,7 @@
 import { TransientDocument } from "./TransientDocument";
 import { TransientFragment } from "./TransientFragment";
-import { ModelDecorator } from "./ModelDecorator";
-import { ModelFactory } from "./ModelFactory";
+import { ModelDecorator } from "./core/ModelDecorator";
+import { ModelFactory } from "./core/ModelFactory";
 import { URI } from "./RDF/URI";
 import { isObject } from "./Utils";
 

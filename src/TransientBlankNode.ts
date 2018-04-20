@@ -1,7 +1,7 @@
 import { TransientDocument } from "./TransientDocument";
 import { IllegalArgumentError } from "./Errors";
 import { TransientFragment } from "./TransientFragment";
-import { ModelFactory } from "./ModelFactory";
+import { ModelFactory } from "./core/ModelFactory";
 import { URI } from "./RDF/URI";
 
 export interface TransientBlankNode extends TransientFragment {

@@ -3,7 +3,7 @@ import { Pointer } from "../Pointer";
 import * as Utils from "../Utils";
 import { TransientACL } from "./TransientACL";
 import { ACE } from "./ACE";
-import { ModelDecorator } from "../ModelDecorator";
+import { ModelDecorator } from "../core/ModelDecorator";
 import { Documents } from "../Documents";
 
 export interface ACL extends Document {

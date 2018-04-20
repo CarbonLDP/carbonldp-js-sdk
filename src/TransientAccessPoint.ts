@@ -1,5 +1,5 @@
 import { TransientDirectContainer } from "./LDP/TransientDirectContainer";
-import { ModelFactory } from "./ModelFactory";
+import { ModelFactory } from "./core/ModelFactory";
 import { Pointer } from "./Pointer";
 import { C } from "./Vocabularies/C";
 

@@ -1,7 +1,7 @@
 import { ACL } from "./Auth/ACL";
 import { Documents } from "./Documents";
 import { RequestOptions } from "./HTTP/Request";
-import { ModelDecorator } from "./ModelDecorator";
+import { ModelDecorator } from "./core/ModelDecorator";
 import { Document } from "./Document";
 import { Pointer } from "./Pointer";
 import * as Utils from "./Utils";

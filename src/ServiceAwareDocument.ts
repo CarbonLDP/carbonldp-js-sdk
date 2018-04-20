@@ -1,6 +1,6 @@
 import { TransientDocument } from "./TransientDocument";
 import { Documents } from "./Documents";
-import { ModelDecorator } from "./ModelDecorator";
+import { ModelDecorator } from "./core/ModelDecorator";
 import { isObject } from "./Utils";
 
 

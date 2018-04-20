@@ -1,13 +1,13 @@
 import { ModelFactory } from "./ModelFactory";
 
-import * as ObjectSchema from "./ObjectSchema";
+import * as ObjectSchema from "../ObjectSchema";
 import {
 	hasMethod,
 	hasProperty,
 	interfaze,
 	module,
 	OPTIONAL
-} from "./test/JasmineExtender";
+} from "../test/JasmineExtender";
 
 describe( module( "carbonldp/ModelFactory" ), ():void => {
 

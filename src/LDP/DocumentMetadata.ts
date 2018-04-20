@@ -6,8 +6,8 @@ import { C } from "../Vocabularies/C";
 import { XSD } from "../Vocabularies/XSD";
 import { Map } from "./Map";
 import { VolatileResource } from "./VolatileResource";
-import { ModelFactory } from "../ModelFactory";
-import { ModelDecorator } from "../ModelDecorator";
+import { ModelFactory } from "../core/ModelFactory";
+import { ModelDecorator } from "../core/ModelDecorator";
 
 export interface DocumentMetadata extends VolatileResource {
 	relatedDocument:Document;

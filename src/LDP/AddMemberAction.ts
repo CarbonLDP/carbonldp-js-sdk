@@ -1,5 +1,5 @@
-import { ModelDecorator } from "../ModelDecorator";
-import { ModelFactory } from "../ModelFactory";
+import { ModelDecorator } from "../core/ModelDecorator";
+import { ModelFactory } from "../core/ModelFactory";
 import { ObjectSchema } from "../ObjectSchema";
 import { Pointer } from "../Pointer";
 import { TransientResource } from "../TransientResource";

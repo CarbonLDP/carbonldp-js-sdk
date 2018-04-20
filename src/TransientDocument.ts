@@ -3,8 +3,8 @@ import { IDAlreadyInUseError } from "./Errors/IDAlreadyInUseError";
 import { IllegalArgumentError } from "./Errors/IllegalArgumentError";
 import { TransientFragment } from "./TransientFragment";
 import { JSONLDConverter } from "./JSONLD/Converter";
-import { ModelDecorator } from "./ModelDecorator";
-import { ModelFactory } from "./ModelFactory";
+import { ModelDecorator } from "./core/ModelDecorator";
+import { ModelFactory } from "./core/ModelFactory";
 import { TransientNamedFragment } from "./TransientNamedFragment";
 import {
 	DigestedObjectSchema,
