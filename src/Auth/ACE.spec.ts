@@ -9,7 +9,7 @@ import {
 describe( module( "carbonldp/Auth/ACE" ), ():void => {
 
 	describe( interfaze(
-		"CarbonLDP.Auth.PersistedACE",
+		"CarbonLDP.Auth.ACE",
 		"Interface that represents a persisted Access Control Entry (ACE) of a persisted Access Control List (ACL)."
 	), ():void => {
 

@@ -38,14 +38,14 @@ describe( module( "carbonldp/Auth/ACL" ), ():void => {
 		it( hasProperty(
 			OPTIONAL,
 			"entries",
-			"CarbonLDP.Auth.PersistedACE[]",
+			"CarbonLDP.Auth.ACE[]",
 			"Array of persisted ACEs that only grants or denies permissions of the document the ACL belongs."
 		), ():void => {} );
 
 		it( hasProperty(
 			OPTIONAL,
 			"inheritableEntries",
-			"CarbonLDP.Auth.PersistedACE[]",
+			"CarbonLDP.Auth.ACE[]",
 			"Array of persisted ACEs that grants or denies permissions of the document's children the ACL belongs."
 		), ():void => {} );
 

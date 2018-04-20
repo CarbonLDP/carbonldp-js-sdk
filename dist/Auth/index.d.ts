@@ -10,7 +10,7 @@ export { BasicCredentials } from "./BasicCredentials";
 export { BasicToken } from "./BasicToken";
 export { CredentialsSet } from "./CredentialsSet";
 export { LDAPCredentials } from "./LDAPCredentials";
-export { PersistedACE } from "./PersistedACE";
+export { ACE } from "./ACE";
 export { ACL } from "./ACL";
 export { PersistedUser } from "./PersistedUser";
 export { TokenAuthenticator } from "./TokenAuthenticator";

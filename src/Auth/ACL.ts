@@ -2,14 +2,14 @@ import { Document } from "../Document";
 import { Pointer } from "../Pointer";
 import * as Utils from "../Utils";
 import { TransientACL } from "./TransientACL";
-import { PersistedACE } from "./PersistedACE";
+import { ACE } from "./ACE";
 import { ModelDecorator } from "../ModelDecorator";
 import { Documents } from "../Documents";
 
 export interface ACL extends Document {
 	accessTo:Pointer;
-	entries?:PersistedACE[];
-	inheritableEntries?:PersistedACE[];
+	entries?:ACE[];
+	inheritableEntries?:ACE[];
 
 	_parsePointer( element:string | Pointer ):Pointer;
 
@@ -86,7 +86,7 @@ export const ACL:ACLFactory = {
 
 		// Check consistency in ACE
 		// TODO: Possible removal when resolved: CarbonLDP/public-carbonldp-platform#2
-		let removeInvalidACE:( ace:PersistedACE ) => void = ( ace ) => {
+		let removeInvalidACE:( ace:ACE ) => void = ( ace ) => {
 			if( ! ace.subjects ) acl._removeFragment( ace );
 			return ! ! ace.subjects;
 		};

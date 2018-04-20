@@ -1,12 +1,12 @@
 import { Document } from "../Document";
 import { Pointer } from "../Pointer";
-import { PersistedACE } from "./PersistedACE";
+import { ACE } from "./ACE";
 import { ModelDecorator } from "../ModelDecorator";
 import { Documents } from "../Documents";
 export interface ACL extends Document {
     accessTo: Pointer;
-    entries?: PersistedACE[];
-    inheritableEntries?: PersistedACE[];
+    entries?: ACE[];
+    inheritableEntries?: ACE[];
     _parsePointer(element: string | Pointer): Pointer;
     grant(subject: string | Pointer, subjectClass: string | Pointer, permission: string | Pointer): void;
     grant(subject: string | Pointer, subjectClass: string | Pointer, permissions: (string | Pointer)[]): void;

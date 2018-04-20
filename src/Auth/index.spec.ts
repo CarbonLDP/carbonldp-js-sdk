@@ -19,7 +19,7 @@ import { BasicCredentials } from "./BasicCredentials";
 import { BasicToken } from "./BasicToken";
 import { CredentialsSet } from "./CredentialsSet";
 import { LDAPCredentials } from "./LDAPCredentials";
-import { PersistedACE } from "./PersistedACE";
+import { ACE } from "./ACE";
 import { ACL } from "./ACL";
 import * as PersistedRole from "./PersistedRole";
 import { PersistedUser } from "./PersistedUser";
@@ -170,10 +170,10 @@ describe( module( "carbonldp/Auth" ), ():void => {
 
 	it( reexports(
 		STATIC,
-		"PersistedACE",
-		"CarbonLDP.Auth.PersistedACE"
+		"ACE",
+		"CarbonLDP.Auth.ACE"
 	), ():void => {
-		const target:Auth.PersistedACE = {} as PersistedACE;
+		const target:Auth.ACE = {} as ACE;
 		expect( target ).toBeDefined();
 	} );
 
