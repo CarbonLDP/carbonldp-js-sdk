@@ -6,7 +6,7 @@ import {
 	ObjectSchemaUtils,
 } from "./ObjectSchema";
 import { Document } from "./Document";
-import { PersistedResource } from "./PersistedResource";
+import { Resource } from "./Resource";
 import { URI } from "./RDF/URI";
 import {
 	addTypeInResource,
@@ -15,7 +15,7 @@ import {
 } from "./TransientResource";
 import { isObject } from "./Utils";
 
-export interface Fragment extends PersistedResource, TransientFragment {
+export interface Fragment extends Resource, TransientFragment {
 	_document:Document;
 
 	addType( type:string ):void;
@@ -73,7 +73,7 @@ export const Fragment:FragmentFactory = {
 
 	is( object:object ):object is Fragment {
 		return TransientFragment.is( object ) &&
-			PersistedResource.isDecorated( object ) &&
+			Resource.isDecorated( object ) &&
 			Fragment.isDecorated( object )
 			;
 	},
@@ -83,7 +83,7 @@ export const Fragment:FragmentFactory = {
 		if( Fragment.isDecorated( object ) ) return object;
 
 		TransientFragment.decorate( object );
-		PersistedResource.decorate( object );
+		Resource.decorate( object );
 
 		const fragment:T & Fragment = object as T & Fragment;
 		Object.defineProperties( object, {

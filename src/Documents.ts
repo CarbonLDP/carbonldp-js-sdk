@@ -75,7 +75,7 @@ import { BlankNode } from "./BlankNode";
 import { Document } from "./Document";
 import { Fragment } from "./Fragment";
 import { ProtectedDocument } from "./ProtectedDocument";
-import { PersistedResource } from "./PersistedResource";
+import { Resource } from "./Resource";
 import {
 	Pointer,
 	PointerLibrary,
@@ -857,7 +857,7 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 
 		persistedDocument._normalize();
 		const deltaCreator:DeltaCreator = new DeltaCreator( this.jsonldConverter );
-		[ persistedDocument, ...persistedDocument.getFragments() ].forEach( ( resource:PersistedResource ) => {
+		[ persistedDocument, ...persistedDocument.getFragments() ].forEach( ( resource:Resource ) => {
 			const schema:DigestedObjectSchema = this.getSchemaFor( resource );
 			deltaCreator.addResource( schema, resource._snapshot, resource );
 		} );
@@ -919,7 +919,7 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 			.then<T & Document>( ( documents ) => documents[ 0 ] );
 	}
 
-	private _addRefreshQueryPatterns( queryContext:QueryContextPartial, parentAdder:OptionalToken, resource:PersistedResource, parentName:string ):void {
+	private _addRefreshQueryPatterns( queryContext:QueryContextPartial, parentAdder:OptionalToken, resource:Resource, parentName:string ):void {
 		if( resource._partialMetadata.schema === PartialMetadata.ALL ) {
 			parentAdder.addPattern( createAllPattern( queryContext, parentName ) );
 			return;
@@ -1319,7 +1319,7 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 	}
 
 	private _getDigestedObjectSchemaForDocument( document:TransientDocument ):DigestedObjectSchema {
-		if( PersistedResource.isDecorated( document ) && document.isPartial() ) {
+		if( Resource.isDecorated( document ) && document.isPartial() ) {
 			const schemas:DigestedObjectSchema[] = [ document._partialMetadata.schema ];
 			return this._getProcessedSchema( schemas );
 		} else {

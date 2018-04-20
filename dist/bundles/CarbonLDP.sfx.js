@@ -4285,7 +4285,7 @@ var Document_1 = __webpack_require__(120);
 var ObjectSchema = __importStar(__webpack_require__(12));
 var Fragment_1 = __webpack_require__(55);
 var NamedFragment_1 = __webpack_require__(121);
-var PersistedResource_1 = __webpack_require__(56);
+var Resource_1 = __webpack_require__(56);
 var Pointer_1 = __webpack_require__(22);
 var URI_1 = __webpack_require__(10);
 var ServiceAwareDocument_1 = __webpack_require__(122);
@@ -4340,7 +4340,7 @@ exports.Document = {
         if (exports.Document.isDecorated(object))
             return object;
         TransientDocument_1.TransientDocument.decorate(object);
-        PersistedResource_1.PersistedResource.decorate(object);
+        Resource_1.Resource.decorate(object);
         ServiceAwareDocument_1.ServiceAwareDocument.decorate(object, documents);
         Document_1.MessagingDocument.decorate(object);
         var persistedDocument = object;
@@ -5817,7 +5817,7 @@ exports.RDFLiteral = {
 Object.defineProperty(exports, "__esModule", { value: true });
 var TransientFragment_1 = __webpack_require__(36);
 var ObjectSchema_1 = __webpack_require__(12);
-var PersistedResource_1 = __webpack_require__(56);
+var Resource_1 = __webpack_require__(56);
 var URI_1 = __webpack_require__(10);
 var TransientResource_1 = __webpack_require__(15);
 var Utils_1 = __webpack_require__(0);
@@ -5848,14 +5848,14 @@ exports.Fragment = {
     },
     is: function (object) {
         return TransientFragment_1.TransientFragment.is(object) &&
-            PersistedResource_1.PersistedResource.isDecorated(object) &&
+            Resource_1.Resource.isDecorated(object) &&
             exports.Fragment.isDecorated(object);
     },
     decorate: function (object) {
         if (exports.Fragment.isDecorated(object))
             return object;
         TransientFragment_1.TransientFragment.decorate(object);
-        PersistedResource_1.PersistedResource.decorate(object);
+        Resource_1.Resource.decorate(object);
         var fragment = object;
         Object.defineProperties(object, {
             "addType": {
@@ -5934,7 +5934,7 @@ function revert() {
 function isPartial() {
     return !!this._partialMetadata;
 }
-exports.PersistedResource = {
+exports.Resource = {
     isDecorated: function (object) {
         return (Utils.hasPropertyDefined(object, "_snapshot")
             && Utils.hasFunction(object, "_syncSnapshot")
@@ -5943,7 +5943,7 @@ exports.PersistedResource = {
             && Utils.hasFunction(object, "revert"));
     },
     decorate: function (object) {
-        if (exports.PersistedResource.isDecorated(object))
+        if (exports.Resource.isDecorated(object))
             return object;
         TransientResource_1.TransientResource.decorate(object);
         var persistedResource = object;
@@ -10608,7 +10608,7 @@ var ObjectSchema_1 = __webpack_require__(12);
 var Document_1 = __webpack_require__(42);
 var Fragment_1 = __webpack_require__(55);
 var ProtectedDocument_1 = __webpack_require__(45);
-var PersistedResource_1 = __webpack_require__(56);
+var Resource_1 = __webpack_require__(56);
 var Pointer_1 = __webpack_require__(22);
 var TransientProtectedDocument_1 = __webpack_require__(92);
 var Document_2 = __webpack_require__(39);
@@ -11644,7 +11644,7 @@ var Documents = (function () {
         return this._getDigestedObjectSchema(types, expandedObject["@id"]);
     };
     Documents.prototype._getDigestedObjectSchemaForDocument = function (document) {
-        if (PersistedResource_1.PersistedResource.isDecorated(document) && document.isPartial()) {
+        if (Resource_1.Resource.isDecorated(document) && document.isPartial()) {
             var schemas = [document._partialMetadata.schema];
             return this._getProcessedSchema(schemas);
         }
@@ -15204,7 +15204,7 @@ var ObjectSchema_1 = __webpack_require__(12);
 var Document_1 = __webpack_require__(42);
 var Fragment_1 = __webpack_require__(55);
 var NamedFragment_1 = __webpack_require__(121);
-var PersistedResource_1 = __webpack_require__(56);
+var Resource_1 = __webpack_require__(56);
 var Pointer_1 = __webpack_require__(22);
 var RDF = __importStar(__webpack_require__(298));
 var TransientResource_1 = __webpack_require__(15);
@@ -15309,7 +15309,7 @@ var CarbonLDP = (function (_super) {
     CarbonLDP.Fragment = Fragment_1.Fragment;
     CarbonLDP.NamedFragment = NamedFragment_1.NamedFragment;
     CarbonLDP.ProtectedDocument = ProtectedDocument_1.ProtectedDocument;
-    CarbonLDP.PersistedResource = PersistedResource_1.PersistedResource;
+    CarbonLDP.Resource = Resource_1.Resource;
     CarbonLDP.Pointer = Pointer_1.Pointer;
     CarbonLDP.TransientProtectedDocument = TransientProtectedDocument_1.TransientProtectedDocument;
     CarbonLDP.RDF = RDF;

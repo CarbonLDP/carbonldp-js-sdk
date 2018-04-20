@@ -35,7 +35,7 @@ function revert() {
 function isPartial() {
     return !!this._partialMetadata;
 }
-exports.PersistedResource = {
+exports.Resource = {
     isDecorated: function (object) {
         return (Utils.hasPropertyDefined(object, "_snapshot")
             && Utils.hasFunction(object, "_syncSnapshot")
@@ -44,7 +44,7 @@ exports.PersistedResource = {
             && Utils.hasFunction(object, "revert"));
     },
     decorate: function (object) {
-        if (exports.PersistedResource.isDecorated(object))
+        if (exports.Resource.isDecorated(object))
             return object;
         TransientResource_1.TransientResource.decorate(object);
         var persistedResource = object;
@@ -89,4 +89,4 @@ exports.PersistedResource = {
     },
 };
 
-//# sourceMappingURL=PersistedResource.js.map
+//# sourceMappingURL=Resource.js.map

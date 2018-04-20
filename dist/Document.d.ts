@@ -10,14 +10,14 @@ import { AccessPoint } from "./AccessPoint";
 import { Fragment } from "./Fragment";
 import { NamedFragment } from "./NamedFragment";
 import { ProtectedDocument } from "./ProtectedDocument";
-import { PersistedResource } from "./PersistedResource";
+import { Resource } from "./Resource";
 import { Pointer } from "./Pointer";
 import { ServiceAwareDocument } from "./ServiceAwareDocument";
 import { FinishSPARQLSelect } from "./SPARQL/Builder";
 import { QueryDocumentsBuilder } from "./SPARQL/QueryDocument/QueryDocumentsBuilder";
 import { SPARQLRawResults } from "./SPARQL/RawResults";
 import { SPARQLSelectResults } from "./SPARQL/SelectResults";
-export interface Document extends TransientDocument, PersistedResource, ServiceAwareDocument, MessagingDocument {
+export interface Document extends TransientDocument, Resource, ServiceAwareDocument, MessagingDocument {
     created?: Date;
     modified?: Date;
     defaultInteractionModel?: Pointer;

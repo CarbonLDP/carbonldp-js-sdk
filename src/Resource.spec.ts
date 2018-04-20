@@ -1,4 +1,4 @@
-import { PersistedResource } from "./PersistedResource";
+import { Resource } from "./Resource";
 
 import { TransientResource } from "./TransientResource";
 import {
@@ -14,20 +14,20 @@ import {
 } from "./test/JasmineExtender";
 import * as Utils from "./Utils";
 
-describe( module( "carbonldp/PersistedResource" ), ():void => {
+describe( module( "carbonldp/Resource" ), ():void => {
 
 	it( isDefined(), ():void => {
-		expect( PersistedResource ).toBeDefined();
-		expect( Utils.isObject( PersistedResource ) ).toBe( true );
+		expect( Resource ).toBeDefined();
+		expect( Utils.isObject( Resource ) ).toBe( true );
 	} );
 
 	describe( interfaze(
-		"CarbonLDP.PersistedResource",
+		"CarbonLDP.Resource",
 		"Interface that represents any persisted resource in the SDK."
 	), ():void => {
 
 		it( extendsClass( "CarbonLDP.TransientResource" ), ():void => {
-			const target:TransientResource = {} as PersistedResource;
+			const target:TransientResource = {} as Resource;
 			expect( target ).toBeDefined();
 		} );
 
@@ -72,44 +72,44 @@ describe( module( "carbonldp/PersistedResource" ), ():void => {
 	} );
 
 	describe( interfaze(
-		"CarbonLDP.PersistedResourceFactory",
-		"Interface with the factory, decorate and utils methods of a `CarbonLDP.PersistedResource` object"
+		"CarbonLDP.ResourceFactory",
+		"Interface with the factory, decorate and utils methods of a `CarbonLDP.Resource` object"
 	), ():void => {
 
 		it( hasMethod(
 			OBLIGATORY,
 			"isDecorated",
-			"Returns true if the object provided has the properties and methods of a `CarbonLDP.PersistedResource` object.", [
+			"Returns true if the object provided has the properties and methods of a `CarbonLDP.Resource` object.", [
 				{ name: "object", type: "object" },
 			],
-			{ type: "object is CarbonLDP.PersistedResource" }
+			{ type: "object is CarbonLDP.Resource" }
 		), ():void => {} );
 
 		it( hasMethod(
 			OBLIGATORY,
 			"decorate",
 			[ "T extends object" ],
-			"Decorates the object provided with the properties and methods of a `CarbonLDP.PersistedResource` object.", [
+			"Decorates the object provided with the properties and methods of a `CarbonLDP.Resource` object.", [
 				{ name: "object", type: "T", description: "The object to convert into a persisted resource one." },
 			]
 		), ():void => {} );
 
 	} );
 
-	describe( property( STATIC, "PersistedResource", "CarbonLDP.PersistedResourceFactory", "Constant that implements the `CarbonLDP.PersistedResourceFactory` interface." ), ():void => {
+	describe( property( STATIC, "Resource", "CarbonLDP.ResourceFactory", "Constant that implements the `CarbonLDP.ResourceFactory` interface." ), ():void => {
 
 		it( isDefined(), ():void => {
-			expect( PersistedResource ).toBeDefined();
-			expect( PersistedResource ).toEqual( jasmine.any( Object ) );
+			expect( Resource ).toBeDefined();
+			expect( Resource ).toEqual( jasmine.any( Object ) );
 		} );
 
 		// TODO: Separate in different tests
-		it( "PersistedResource.isDecorated", ():void => {
-			expect( PersistedResource.isDecorated ).toBeDefined();
-			expect( Utils.isFunction( PersistedResource.isDecorated ) ).toBe( true );
+		it( "Resource.isDecorated", ():void => {
+			expect( Resource.isDecorated ).toBeDefined();
+			expect( Utils.isFunction( Resource.isDecorated ) ).toBe( true );
 
 			let object:any = undefined;
-			expect( PersistedResource.isDecorated( object ) ).toBe( false );
+			expect( Resource.isDecorated( object ) ).toBe( false );
 
 			object = {
 				_snapshot: null,
@@ -118,33 +118,33 @@ describe( module( "carbonldp/PersistedResource" ), ():void => {
 				revert: ():void => {},
 				isPartial: ():void => {},
 			};
-			expect( PersistedResource.isDecorated( object ) ).toBe( true );
+			expect( Resource.isDecorated( object ) ).toBe( true );
 
 			delete object._snapshot;
-			expect( PersistedResource.isDecorated( object ) ).toBe( false );
+			expect( Resource.isDecorated( object ) ).toBe( false );
 			object._snapshot = null;
 
 			delete object._syncSnapshot;
-			expect( PersistedResource.isDecorated( object ) ).toBe( false );
+			expect( Resource.isDecorated( object ) ).toBe( false );
 			object._syncSnapshot = () => {};
 
 			delete object.isDirty;
-			expect( PersistedResource.isDecorated( object ) ).toBe( false );
+			expect( Resource.isDecorated( object ) ).toBe( false );
 			object.isDirty = () => {};
 
 			delete object.revert;
-			expect( PersistedResource.isDecorated( object ) ).toBe( false );
+			expect( Resource.isDecorated( object ) ).toBe( false );
 			object.revert = () => {};
 
 			delete object.isPartial;
-			expect( PersistedResource.isDecorated( object ) ).toBe( false );
+			expect( Resource.isDecorated( object ) ).toBe( false );
 			object.isPartial = () => {};
 		} );
 
 		// TODO: Separate in different tests
-		it( "PersistedResource.decorate", ():void => {
-			expect( PersistedResource.decorate ).toBeDefined();
-			expect( Utils.isFunction( PersistedResource.decorate ) ).toBe( true );
+		it( "Resource.decorate", ():void => {
+			expect( Resource.decorate ).toBeDefined();
+			expect( Utils.isFunction( Resource.decorate ) ).toBe( true );
 
 			let fn:Function = ():void => {};
 			let object:any = {
@@ -154,37 +154,37 @@ describe( module( "carbonldp/PersistedResource" ), ():void => {
 				revert: fn,
 				isPartial: fn,
 			};
-			let persistedResource:PersistedResource;
+			let persistedResource:Resource;
 
-			persistedResource = PersistedResource.decorate( object );
+			persistedResource = Resource.decorate( object );
 			expect( persistedResource._snapshot ).toEqual( jasmine.any( Object ) );
 			expect( persistedResource._syncSnapshot ).toBe( fn );
 			expect( persistedResource.isDirty ).toBe( fn );
 
-			persistedResource = PersistedResource.decorate( {} as TransientResource );
+			persistedResource = Resource.decorate( {} as TransientResource );
 			expect( persistedResource._snapshot ).toEqual( jasmine.any( Object ) );
 			expect( persistedResource._syncSnapshot ).not.toBe( fn );
 			expect( persistedResource.isDirty ).not.toBe( fn );
 		} );
 
-		describe( "PersistedResource instance", ():void => {
+		describe( "Resource instance", ():void => {
 
 			// TODO: Mode to `PersistedResource.decorate`
-			it( "PersistedResource._snapshot", ():void => {
-				let persistedResource:PersistedResource;
+			it( "Resource._snapshot", ():void => {
+				let persistedResource:Resource;
 
-				persistedResource = PersistedResource.decorate( TransientResource.decorate( { some: "some" } ) );
+				persistedResource = Resource.decorate( TransientResource.decorate( { some: "some" } ) );
 				expect( persistedResource._snapshot ).toBeDefined();
 				expect( Utils.isObject( persistedResource._snapshot ) ).toBe( true );
 				expect( persistedResource._snapshot ).toEqual( jasmine.any( Object ) );
 			} );
 
 			// TODO: Separate in different tests
-			it( "PersistedResource._syncSnapshot", ():void => {
-				let persistedResource:PersistedResource;
+			it( "Resource._syncSnapshot", ():void => {
+				let persistedResource:Resource;
 				let snapshot:Object;
 
-				persistedResource = PersistedResource.decorate( TransientResource.decorate( { some: "some" } ) );
+				persistedResource = Resource.decorate( TransientResource.decorate( { some: "some" } ) );
 				expect( persistedResource._syncSnapshot ).toBeDefined();
 				expect( Utils.isFunction( persistedResource._syncSnapshot ) ).toBe( true );
 
@@ -212,7 +212,7 @@ describe( module( "carbonldp/PersistedResource" ), ():void => {
 				expect( snapshot ).toEqual( { id: "", types: [], another: "another" } );
 
 				let resource:TransientResource = TransientResource.createFrom( { another: "another" }, "http://example.com/resource/", [ "http://example.com/ns#Type" ] );
-				persistedResource = PersistedResource.decorate( resource );
+				persistedResource = Resource.decorate( resource );
 				expect( () => persistedResource._syncSnapshot() ).not.toThrow();
 
 				expect( persistedResource._snapshot ).not.toEqual( resource );
@@ -223,10 +223,10 @@ describe( module( "carbonldp/PersistedResource" ), ():void => {
 			} );
 
 			// TODO: Separate in different tests
-			it( "PersistedResource.isDirty", ():void => {
-				let persistedResource:PersistedResource;
+			it( "Resource.isDirty", ():void => {
+				let persistedResource:Resource;
 
-				persistedResource = PersistedResource.decorate( TransientResource.decorate( { some: "some" } ) );
+				persistedResource = Resource.decorate( TransientResource.decorate( { some: "some" } ) );
 				persistedResource._snapshot = TransientResource.decorate( { some: "some" } );
 
 				expect( persistedResource.isDirty ).toBeDefined();
@@ -266,7 +266,7 @@ describe( module( "carbonldp/PersistedResource" ), ():void => {
 				expect( persistedResource.isDirty() ).toBe( true );
 
 				let resource:TransientResource = TransientResource.createFrom( { another: "another" }, "http://example.com/resource/", [ "http://example.com/ns#Type" ] );
-				persistedResource = PersistedResource.decorate( resource );
+				persistedResource = Resource.decorate( resource );
 
 				persistedResource._syncSnapshot();
 				expect( persistedResource.isDirty() ).toBe( false );
@@ -283,9 +283,9 @@ describe( module( "carbonldp/PersistedResource" ), ():void => {
 			} );
 
 			// TODO: Separate in different tests
-			it( "PersistedResource.revert", ():void => {
+			it( "Resource.revert", ():void => {
 				let resource:TransientResource & { another:string, toDelete?:boolean } = TransientResource.createFrom( { another: "another" }, "http://example.com/resource/", [ "http://example.com/ns#Type" ] );
-				let persistedResource:PersistedResource = PersistedResource.decorate( resource );
+				let persistedResource:Resource = Resource.decorate( resource );
 				persistedResource._syncSnapshot();
 
 				resource.id = "http://example.com/another/";

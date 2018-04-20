@@ -2,8 +2,8 @@ import { TransientFragment } from "./TransientFragment";
 import { ModelDecorator } from "./ModelDecorator";
 import { ModelFactory } from "./ModelFactory";
 import { Document } from "./Document";
-import { PersistedResource } from "./PersistedResource";
-export interface Fragment extends PersistedResource, TransientFragment {
+import { Resource } from "./Resource";
+export interface Fragment extends Resource, TransientFragment {
     _document: Document;
     addType(type: string): void;
     hasType(type: string): boolean;

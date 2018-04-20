@@ -1,7 +1,7 @@
 import { ModelDecorator } from "./ModelDecorator";
 import { TransientResource } from "./TransientResource";
 import { PartialMetadata } from "./SPARQL/QueryDocument/PartialMetadata";
-export interface PersistedResource extends TransientResource {
+export interface Resource extends TransientResource {
     _snapshot: TransientResource;
     _partialMetadata?: PartialMetadata;
     _syncSnapshot(): void;
@@ -9,8 +9,8 @@ export interface PersistedResource extends TransientResource {
     revert(): void;
     isPartial(): boolean;
 }
-export interface PersistedResourceFactory extends ModelDecorator<PersistedResource> {
-    isDecorated(object: object): object is PersistedResource;
-    decorate<T extends object>(object: T): T & PersistedResource;
+export interface ResourceFactory extends ModelDecorator<Resource> {
+    isDecorated(object: object): object is Resource;
+    decorate<T extends object>(object: T): T & Resource;
 }
-export declare const PersistedResource: PersistedResourceFactory;
+export declare const Resource: ResourceFactory;

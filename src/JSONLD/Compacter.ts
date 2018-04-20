@@ -4,7 +4,7 @@ import {
 	ObjectSchemaResolver,
 } from "../ObjectSchema";
 import { Document } from "../Document";
-import { PersistedResource } from "../PersistedResource";
+import { Resource } from "../Resource";
 import {
 	Pointer,
 	PointerLibrary,
@@ -19,7 +19,7 @@ import { JSONLDConverter } from "./Converter";
 interface CompactionNode {
 	paths:string[];
 	node:RDFNode;
-	resource:PersistedResource;
+	resource:Resource;
 	containerLibrary:PointerLibrary;
 	processed?:boolean;
 }
@@ -99,7 +99,7 @@ export class JSONLDCompacter {
 		return mainCompactedDocuments;
 	}
 
-	private compactNode( node:RDFNode, resource:PersistedResource, containerLibrary:PointerLibrary, path:string ):string[] {
+	private compactNode( node:RDFNode, resource:Resource, containerLibrary:PointerLibrary, path:string ):string[] {
 		const schema:DigestedObjectSchema = this.resolver.getSchemaFor( node, path );
 
 		if( this.resolver instanceof QueryContextBuilder ) {
@@ -144,7 +144,7 @@ export class JSONLDCompacter {
 			;
 	}
 
-	private getResource<T extends PersistedResource>( node:RDFNode, containerLibrary:PointerLibrary, isDocument?:boolean ):T {
+	private getResource<T extends Resource>( node:RDFNode, containerLibrary:PointerLibrary, isDocument?:boolean ):T {
 		const resource:T = containerLibrary.getPointer( node[ "@id" ] ) as any;
 
 		if( isDocument ) containerLibrary = Document.decorate( resource, this.documents );

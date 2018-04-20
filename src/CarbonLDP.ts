@@ -29,7 +29,7 @@ import {
 import { Document } from "./Document";
 import { Fragment } from "./Fragment";
 import { NamedFragment } from "./NamedFragment";
-import { PersistedResource } from "./PersistedResource";
+import { Resource } from "./Resource";
 import { Pointer } from "./Pointer";
 import * as RDF from "./RDF";
 import { TransientResource } from "./TransientResource";
@@ -76,7 +76,7 @@ export class CarbonLDP extends AbstractContext {
 	static Fragment:typeof Fragment = Fragment;
 	static NamedFragment:typeof NamedFragment = NamedFragment;
 	static ProtectedDocument:typeof ProtectedDocument = ProtectedDocument;
-	static PersistedResource:typeof PersistedResource = PersistedResource;
+	static Resource:typeof Resource = Resource;
 	static Pointer:typeof Pointer = Pointer;
 	static TransientProtectedDocument:typeof TransientProtectedDocument = TransientProtectedDocument;
 	static RDF:typeof RDF = RDF;

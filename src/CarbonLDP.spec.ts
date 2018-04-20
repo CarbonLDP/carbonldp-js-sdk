@@ -28,7 +28,7 @@ import { Document } from "./Document";
 import { Fragment } from "./Fragment";
 import { NamedFragment } from "./NamedFragment";
 import { ProtectedDocument } from "./ProtectedDocument";
-import { PersistedResource } from "./PersistedResource";
+import { Resource } from "./Resource";
 import { Pointer } from "./Pointer";
 import { TransientProtectedDocument } from "./TransientProtectedDocument";
 import * as RDF from "./RDF";
@@ -327,11 +327,11 @@ describe( module( "carbonldp/CarbonLDP" ), ():void => {
 
 		it( reexports(
 			STATIC,
-			"PersistedResource",
-			"carbonldp/PersistedResource#PersistedResource"
+			"Resource",
+			"carbonldp/Resource#Resource"
 		), ():void => {
-			expect( CarbonLDP.CarbonLDP.PersistedResource ).toBeDefined();
-			expect( CarbonLDP.CarbonLDP.PersistedResource ).toBe( PersistedResource );
+			expect( CarbonLDP.CarbonLDP.Resource ).toBeDefined();
+			expect( CarbonLDP.CarbonLDP.Resource ).toBe( Resource );
 		} );
 
 		it( reexports(

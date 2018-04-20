@@ -1,7 +1,7 @@
 import { Context } from "../../Context";
 import { DigestedObjectSchema } from "../../ObjectSchema";
 import { Document } from "../../Document";
-import { PersistedResource } from "../../PersistedResource";
+import { Resource } from "../../Resource";
 import { QueryContext } from "./QueryContext";
 
 export class QueryContextPartial extends QueryContext {
@@ -17,7 +17,7 @@ export class QueryContextPartial extends QueryContext {
 		if( path === void 0 ) return super.getSchemaFor( object );
 
 		const parts:string[] = path.split( /\./g ).slice( 1 );
-		let schemaLibrary:PersistedResource = this._document;
+		let schemaLibrary:Resource = this._document;
 		while( parts.length ) {
 			const part:string = parts.shift();
 			const values:any[] = Array.isArray( schemaLibrary[ part ] ) ?

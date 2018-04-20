@@ -13,7 +13,7 @@ var Document_1 = require("./Messaging/Document");
 var ObjectSchema = __importStar(require("./ObjectSchema"));
 var Fragment_1 = require("./Fragment");
 var NamedFragment_1 = require("./NamedFragment");
-var PersistedResource_1 = require("./PersistedResource");
+var Resource_1 = require("./Resource");
 var Pointer_1 = require("./Pointer");
 var URI_1 = require("./RDF/URI");
 var ServiceAwareDocument_1 = require("./ServiceAwareDocument");
@@ -68,7 +68,7 @@ exports.Document = {
         if (exports.Document.isDecorated(object))
             return object;
         TransientDocument_1.TransientDocument.decorate(object);
-        PersistedResource_1.PersistedResource.decorate(object);
+        Resource_1.Resource.decorate(object);
         ServiceAwareDocument_1.ServiceAwareDocument.decorate(object, documents);
         Document_1.MessagingDocument.decorate(object);
         var persistedDocument = object;

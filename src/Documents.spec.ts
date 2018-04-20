@@ -46,7 +46,7 @@ import * as ObjectSchema from "./ObjectSchema";
 import { AccessPoint } from "./AccessPoint";
 import { Document } from "./Document";
 import { NamedFragment } from "./NamedFragment";
-import { PersistedResource } from "./PersistedResource";
+import { Resource } from "./Resource";
 import { Pointer } from "./Pointer";
 import { TransientResource } from "./TransientResource";
 import { ContextSettings } from "./Settings";
@@ -1490,7 +1490,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 
 					interface MyDocument {
 						property1:string;
-						property2:PersistedResource;
+						property2:Resource;
 					}
 
 					context.extendObjectSchema( "Resource", {
@@ -1552,7 +1552,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				it( "should merge partial metadata of a partial document", ( done:DoneFn ):void => {
 					interface MyDocument {
 						property1:string;
-						property2:PersistedResource;
+						property2:Resource;
 					}
 
 					context.extendObjectSchema( "Resource", {
@@ -1770,7 +1770,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					interface MyDocument {
 						property4:boolean;
 						property1:string;
-						property2:PersistedResource;
+						property2:Resource;
 					}
 
 					context.extendObjectSchema( "Resource", {
@@ -11031,7 +11031,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					interface MyDocument {
 						property4:boolean;
 						property1:string;
-						property2:PersistedResource;
+						property2:Resource;
 					}
 
 					context.extendObjectSchema( {
@@ -11439,7 +11439,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 
 					interface MyDocument {
 						property1:string;
-						property2:PersistedResource & {
+						property2:Resource & {
 							property2:number;
 							property3:string;
 							property5:Date;
@@ -11599,7 +11599,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 
 					interface MyDocument {
 						property1:string;
-						property2:PersistedResource & {
+						property2:Resource & {
 							property2:number;
 							property3:string;
 							property5:Date;
@@ -11796,7 +11796,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					interface MyDocument {
 						property4:boolean;
 						property1:string;
-						property2:PersistedResource;
+						property2:Resource;
 					}
 
 					const persistedDocument:Document & MyDocument = Document.createFrom(

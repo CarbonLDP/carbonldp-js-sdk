@@ -4,7 +4,7 @@ import { Document } from "./Document";
 
 import { Fragment } from "./Fragment";
 
-import { PersistedResource } from "./PersistedResource";
+import { Resource } from "./Resource";
 import {
 	extendsClass,
 	hasMethod,
@@ -25,7 +25,7 @@ describe( module( "carbonldp/Fragment" ), ():void => {
 		"Interface that represents a persisted fragment of a persisted document."
 	), ():void => {
 
-		it( extendsClass( "CarbonLDP.PersistedResource" ), ():void => {} );
+		it( extendsClass( "CarbonLDP.Resource" ), ():void => {} );
 		it( extendsClass( "CarbonLDP.TransientFragment" ), ():void => {} );
 
 		it( hasProperty(
@@ -108,7 +108,7 @@ describe( module( "carbonldp/Fragment" ), ():void => {
 			expect( Fragment.decorate ).toBeDefined();
 			expect( Utils.isFunction( Fragment.decorate ) ).toBe( true );
 
-			let spyPersistedDecorator:jasmine.Spy = spyOn( PersistedResource, "decorate" );
+			let spyPersistedDecorator:jasmine.Spy = spyOn( Resource, "decorate" );
 
 			let fragment:TransientFragment = TransientFragment.create( null, "_:01" );
 			let persistedFragment:Fragment = Fragment.decorate( fragment );

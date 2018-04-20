@@ -38,7 +38,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 	), ():void => {
 
 		it( extendsClass( "CarbonLDP.TransientDocument" ), ():void => {} );
-		it( extendsClass( "CarbonLDP.PersistedResource" ), ():void => {} );
+		it( extendsClass( "CarbonLDP.Resource" ), ():void => {} );
 		it( extendsClass( "CarbonLDP.ServiceAwareDocument" ), ():void => {} );
 		it( extendsClass( "CarbonLDP.Messaging.MessagingDocument" ), ():void => {} );
 

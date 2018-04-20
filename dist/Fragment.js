@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 var TransientFragment_1 = require("./TransientFragment");
 var ObjectSchema_1 = require("./ObjectSchema");
-var PersistedResource_1 = require("./PersistedResource");
+var Resource_1 = require("./Resource");
 var URI_1 = require("./RDF/URI");
 var TransientResource_1 = require("./TransientResource");
 var Utils_1 = require("./Utils");
@@ -33,14 +33,14 @@ exports.Fragment = {
     },
     is: function (object) {
         return TransientFragment_1.TransientFragment.is(object) &&
-            PersistedResource_1.PersistedResource.isDecorated(object) &&
+            Resource_1.Resource.isDecorated(object) &&
             exports.Fragment.isDecorated(object);
     },
     decorate: function (object) {
         if (exports.Fragment.isDecorated(object))
             return object;
         TransientFragment_1.TransientFragment.decorate(object);
-        PersistedResource_1.PersistedResource.decorate(object);
+        Resource_1.Resource.decorate(object);
         var fragment = object;
         Object.defineProperties(object, {
             "addType": {

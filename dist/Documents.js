@@ -36,7 +36,7 @@ var ObjectSchema_1 = require("./ObjectSchema");
 var Document_1 = require("./Document");
 var Fragment_1 = require("./Fragment");
 var ProtectedDocument_1 = require("./ProtectedDocument");
-var PersistedResource_1 = require("./PersistedResource");
+var Resource_1 = require("./Resource");
 var Pointer_1 = require("./Pointer");
 var TransientProtectedDocument_1 = require("./TransientProtectedDocument");
 var Document_2 = require("./RDF/Document");
@@ -1072,7 +1072,7 @@ var Documents = (function () {
         return this._getDigestedObjectSchema(types, expandedObject["@id"]);
     };
     Documents.prototype._getDigestedObjectSchemaForDocument = function (document) {
-        if (PersistedResource_1.PersistedResource.isDecorated(document) && document.isPartial()) {
+        if (Resource_1.Resource.isDecorated(document) && document.isPartial()) {
             var schemas = [document._partialMetadata.schema];
             return this._getProcessedSchema(schemas);
         }

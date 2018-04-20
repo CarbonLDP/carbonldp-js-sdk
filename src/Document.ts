@@ -18,7 +18,7 @@ import { AccessPoint } from "./AccessPoint";
 import { Fragment } from "./Fragment";
 import { NamedFragment } from "./NamedFragment";
 import { ProtectedDocument } from "./ProtectedDocument";
-import { PersistedResource } from "./PersistedResource";
+import { Resource } from "./Resource";
 import { Pointer } from "./Pointer";
 import { URI } from "./RDF/URI";
 import { ServiceAwareDocument } from "./ServiceAwareDocument";
@@ -29,7 +29,7 @@ import { SPARQLRawResults } from "./SPARQL/RawResults";
 import { SPARQLSelectResults } from "./SPARQL/SelectResults";
 import * as Utils from "./Utils";
 
-export interface Document extends TransientDocument, PersistedResource, ServiceAwareDocument, MessagingDocument {
+export interface Document extends TransientDocument, Resource, ServiceAwareDocument, MessagingDocument {
 	created?:Date;
 	modified?:Date;
 	defaultInteractionModel?:Pointer;
@@ -246,7 +246,7 @@ export const Document:DocumentFactory = {
 		if( Document.isDecorated( object ) ) return object;
 
 		TransientDocument.decorate( object );
-		PersistedResource.decorate( object );
+		Resource.decorate( object );
 		ServiceAwareDocument.decorate( object, documents );
 		MessagingDocument.decorate( <T & ServiceAwareDocument> object );
 
