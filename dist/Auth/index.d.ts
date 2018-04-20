@@ -1,4 +1,4 @@
-export { ACE } from "./ACE";
+export { TransientACE } from "./TransientACE";
 export { TransientACL } from "./TransientACL";
 export { AuthenticatedUserInformationAccessor } from "./AuthenticatedUserInformationAccessor";
 export { AuthenticatedUserMetadata } from "./AuthenticatedUserMetadata";

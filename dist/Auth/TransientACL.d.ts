@@ -2,11 +2,11 @@ import { ModelDecorator } from "../ModelDecorator";
 import { ObjectSchema } from "../ObjectSchema";
 import { Pointer } from "../Pointer";
 import { TransientDocument } from "../TransientDocument";
-import { ACE } from "./ACE";
+import { TransientACE } from "./TransientACE";
 export interface TransientACL extends TransientDocument {
     accessTo: Pointer;
-    entries?: ACE[];
-    inheritableEntries?: ACE[];
+    entries?: TransientACE[];
+    inheritableEntries?: TransientACE[];
     _parsePointer(element: string | Pointer): Pointer;
     grant(subject: string | Pointer, subjectClass: string | Pointer, permission: string | Pointer): void;
     grant(subject: string | Pointer, subjectClass: string | Pointer, permissions: (string | Pointer)[]): void;

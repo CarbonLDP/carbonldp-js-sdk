@@ -23,7 +23,7 @@ var SCHEMA = {
         "@type": "@id",
     },
 };
-exports.ACE = {
+exports.TransientACE = {
     TYPE: CS_1.CS.AccessControlEntry,
     SCHEMA: SCHEMA,
     is: function (object) {
@@ -34,12 +34,12 @@ exports.ACE = {
             && object.hasOwnProperty("subjectsClass");
     },
     create: function (granting, subjects, subjectClass, permissions) {
-        return exports.ACE.createFrom({}, granting, subjects, subjectClass, permissions);
+        return exports.TransientACE.createFrom({}, granting, subjects, subjectClass, permissions);
     },
     createFrom: function (object, granting, subjects, subjectClass, permissions) {
         var ace = object;
         TransientFragment_1.TransientFragment.decorate(ace);
-        ace.addType(exports.ACE.TYPE);
+        ace.addType(exports.TransientACE.TYPE);
         ace.granting = granting;
         ace.subjects = subjects;
         ace.subjectsClass = subjectClass;
@@ -48,4 +48,4 @@ exports.ACE = {
     },
 };
 
-//# sourceMappingURL=ACE.js.map
+//# sourceMappingURL=TransientACE.js.map

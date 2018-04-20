@@ -5,7 +5,7 @@ import { Pointer } from "../Pointer";
 import { CS } from "../Vocabularies/CS";
 import { XSD } from "../Vocabularies/XSD";
 
-export interface ACE extends TransientFragment {
+export interface TransientACE extends TransientFragment {
 	granting:boolean;
 	permissions:Pointer[];
 	subjects:Pointer[];
@@ -13,16 +13,16 @@ export interface ACE extends TransientFragment {
 }
 
 
-export interface ACEFactory extends ModelFactory<ACE> {
+export interface TransientACEFactory extends ModelFactory<TransientACE> {
 	TYPE:string;
 	SCHEMA:ObjectSchema;
 
-	is( object:object ):object is ACE;
+	is( object:object ):object is TransientACE;
 
 
-	create( granting:boolean, subjects:Pointer[], subjectClass:Pointer, permissions:Pointer[] ):ACE;
+	create( granting:boolean, subjects:Pointer[], subjectClass:Pointer, permissions:Pointer[] ):TransientACE;
 
-	createFrom<T extends object>( object:T, granting:boolean, subjects:Pointer[], subjectClass:Pointer, permissions:Pointer[] ):T & ACE;
+	createFrom<T extends object>( object:T, granting:boolean, subjects:Pointer[], subjectClass:Pointer, permissions:Pointer[] ):T & TransientACE;
 }
 
 
@@ -47,11 +47,11 @@ const SCHEMA:ObjectSchema = {
 	},
 };
 
-export const ACE:ACEFactory = {
+export const TransientACE:TransientACEFactory = {
 	TYPE: CS.AccessControlEntry,
 	SCHEMA,
 
-	is( object:object ):object is ACE {
+	is( object:object ):object is TransientACE {
 		return TransientFragment.is( object )
 			&& object.hasOwnProperty( "granting" )
 			&& object.hasOwnProperty( "permissions" )
@@ -60,16 +60,16 @@ export const ACE:ACEFactory = {
 			;
 	},
 
-	create( granting:boolean, subjects:Pointer[], subjectClass:Pointer, permissions:Pointer[] ):ACE {
-		return ACE.createFrom( {}, granting, subjects, subjectClass, permissions );
+	create( granting:boolean, subjects:Pointer[], subjectClass:Pointer, permissions:Pointer[] ):TransientACE {
+		return TransientACE.createFrom( {}, granting, subjects, subjectClass, permissions );
 	},
 
-	createFrom<T extends object>( object:T, granting:boolean, subjects:Pointer[], subjectClass:Pointer, permissions:Pointer[] ):T & ACE {
-		const ace:T & ACE = object as T & ACE;
+	createFrom<T extends object>( object:T, granting:boolean, subjects:Pointer[], subjectClass:Pointer, permissions:Pointer[] ):T & TransientACE {
+		const ace:T & TransientACE = object as T & TransientACE;
 
 		TransientFragment.decorate( ace );
 
-		ace.addType( ACE.TYPE );
+		ace.addType( TransientACE.TYPE );
 		ace.granting = granting;
 		ace.subjects = subjects;
 		ace.subjectsClass = subjectClass;

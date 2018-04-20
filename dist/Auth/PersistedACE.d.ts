@@ -1,6 +1,6 @@
 import { Fragment } from "../Fragment";
-import { ACE } from "./ACE";
+import { TransientACE } from "./TransientACE";
 import { ACL } from "./ACL";
-export interface PersistedACE extends ACE, Fragment {
+export interface PersistedACE extends TransientACE, Fragment {
     _document: ACL;
 }

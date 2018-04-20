@@ -11,7 +11,7 @@ var Pointer_1 = require("../Pointer");
 var Utils = __importStar(require("../Utils"));
 var CS_1 = require("../Vocabularies/CS");
 var TransientDocument_1 = require("../TransientDocument");
-var ACE_1 = require("./ACE");
+var TransientACE_1 = require("./TransientACE");
 var SCHEMA = {
     "entries": {
         "@id": CS_1.CS.accessControlEntry,
@@ -119,7 +119,7 @@ function configACE(granting, subject, subjectClass, permissions, aces) {
     var subjectACEs = aces.filter(function (_) { return _.subjects.length === 1 && _.granting === granting && Pointer_1.Pointer.areEqual(_.subjects[0], subject); });
     var ace;
     if (subjectACEs.length === 0) {
-        ace = ACE_1.ACE.createFrom(this.createFragment(), granting, [subject], subjectClass, []);
+        ace = TransientACE_1.TransientACE.createFrom(this.createFragment(), granting, [subject], subjectClass, []);
         aces.push(ace);
     }
     else {

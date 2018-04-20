@@ -5406,7 +5406,7 @@ var Pointer_1 = __webpack_require__(22);
 var Utils = __importStar(__webpack_require__(0));
 var CS_1 = __webpack_require__(18);
 var TransientDocument_1 = __webpack_require__(19);
-var ACE_1 = __webpack_require__(69);
+var TransientACE_1 = __webpack_require__(69);
 var SCHEMA = {
     "entries": {
         "@id": CS_1.CS.accessControlEntry,
@@ -5514,7 +5514,7 @@ function configACE(granting, subject, subjectClass, permissions, aces) {
     var subjectACEs = aces.filter(function (_) { return _.subjects.length === 1 && _.granting === granting && Pointer_1.Pointer.areEqual(_.subjects[0], subject); });
     var ace;
     if (subjectACEs.length === 0) {
-        ace = ACE_1.ACE.createFrom(this.createFragment(), granting, [subject], subjectClass, []);
+        ace = TransientACE_1.TransientACE.createFrom(this.createFragment(), granting, [subject], subjectClass, []);
         aces.push(ace);
     }
     else {
@@ -6560,8 +6560,8 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 }
 Object.defineProperty(exports, "__esModule", { value: true });
-var ACE_1 = __webpack_require__(69);
-exports.ACE = ACE_1.ACE;
+var TransientACE_1 = __webpack_require__(69);
+exports.TransientACE = TransientACE_1.TransientACE;
 var TransientACL_1 = __webpack_require__(51);
 exports.TransientACL = TransientACL_1.TransientACL;
 var AuthenticatedUserInformationAccessor_1 = __webpack_require__(115);
@@ -6637,7 +6637,7 @@ var SCHEMA = {
         "@type": "@id",
     },
 };
-exports.ACE = {
+exports.TransientACE = {
     TYPE: CS_1.CS.AccessControlEntry,
     SCHEMA: SCHEMA,
     is: function (object) {
@@ -6648,12 +6648,12 @@ exports.ACE = {
             && object.hasOwnProperty("subjectsClass");
     },
     create: function (granting, subjects, subjectClass, permissions) {
-        return exports.ACE.createFrom({}, granting, subjects, subjectClass, permissions);
+        return exports.TransientACE.createFrom({}, granting, subjects, subjectClass, permissions);
     },
     createFrom: function (object, granting, subjects, subjectClass, permissions) {
         var ace = object;
         TransientFragment_1.TransientFragment.decorate(ace);
-        ace.addType(exports.ACE.TYPE);
+        ace.addType(exports.TransientACE.TYPE);
         ace.granting = granting;
         ace.subjects = subjects;
         ace.subjectsClass = subjectClass;
@@ -8386,7 +8386,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
 }
 Object.defineProperty(exports, "__esModule", { value: true });
 var Auth = __importStar(__webpack_require__(68));
-var ACE_1 = __webpack_require__(69);
+var TransientACE_1 = __webpack_require__(69);
 var TransientACL_1 = __webpack_require__(51);
 var AuthenticatedUserInformationAccessor_1 = __webpack_require__(115);
 var AuthenticatedUserMetadata_1 = __webpack_require__(116);
@@ -8564,7 +8564,7 @@ var SDKContext = (function () {
         this.extendObjectSchema(ResponseMetadata_1.ResponseMetadata.TYPE, ResponseMetadata_1.ResponseMetadata.SCHEMA);
         this.extendObjectSchema(ValidationError_1.ValidationError.TYPE, ValidationError_1.ValidationError.SCHEMA);
         this.extendObjectSchema(Auth.Role.RDF_CLASS, Auth.Role.SCHEMA);
-        this.extendObjectSchema(ACE_1.ACE.TYPE, ACE_1.ACE.SCHEMA);
+        this.extendObjectSchema(TransientACE_1.TransientACE.TYPE, TransientACE_1.TransientACE.SCHEMA);
         this.extendObjectSchema(TransientACL_1.TransientACL.TYPE, TransientACL_1.TransientACL.SCHEMA);
         this.extendObjectSchema(AuthenticatedUserInformationAccessor_1.AuthenticatedUserInformationAccessor.TYPE, AuthenticatedUserInformationAccessor_1.AuthenticatedUserInformationAccessor.SCHEMA);
         this.extendObjectSchema(AuthenticatedUserMetadata_1.AuthenticatedUserMetadata.TYPE, AuthenticatedUserMetadata_1.AuthenticatedUserMetadata.SCHEMA);

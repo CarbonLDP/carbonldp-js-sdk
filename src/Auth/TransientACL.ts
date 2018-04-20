@@ -4,12 +4,12 @@ import { Pointer } from "../Pointer";
 import * as Utils from "../Utils";
 import { CS } from "../Vocabularies/CS";
 import { TransientDocument } from "../TransientDocument";
-import { ACE } from "./ACE";
+import { TransientACE } from "./TransientACE";
 
 export interface TransientACL extends TransientDocument {
 	accessTo:Pointer;
-	entries?:ACE[];
-	inheritableEntries?:ACE[];
+	entries?:TransientACE[];
+	inheritableEntries?:TransientACE[];
 
 	_parsePointer( element:string | Pointer ):Pointer;
 
@@ -175,12 +175,12 @@ function parsePointers( elements:string | Pointer | (string | Pointer)[] ):Point
 	return elementsArray.map( ( element:string | Pointer ) => (this as TransientACL)._parsePointer( element ) );
 }
 
-function configACE( granting:boolean, subject:Pointer, subjectClass:Pointer, permissions:Pointer[], aces:ACE[] ):ACE {
-	let subjectACEs:ACE[] = aces.filter( _ => _.subjects.length === 1 && _.granting === granting && Pointer.areEqual( _.subjects[ 0 ], subject ) );
+function configACE( granting:boolean, subject:Pointer, subjectClass:Pointer, permissions:Pointer[], aces:TransientACE[] ):TransientACE {
+	let subjectACEs:TransientACE[] = aces.filter( _ => _.subjects.length === 1 && _.granting === granting && Pointer.areEqual( _.subjects[ 0 ], subject ) );
 
-	let ace:ACE;
+	let ace:TransientACE;
 	if( subjectACEs.length === 0 ) {
-		ace = ACE.createFrom( (<TransientACL> this).createFragment(), granting, [ subject ], subjectClass, [] );
+		ace = TransientACE.createFrom( (<TransientACL> this).createFragment(), granting, [ subject ], subjectClass, [] );
 		aces.push( ace );
 	} else {
 		ace = subjectACEs[ 0 ];
@@ -190,7 +190,7 @@ function configACE( granting:boolean, subject:Pointer, subjectClass:Pointer, per
 	return ace;
 }
 
-function configACEs( granting:boolean, subjects:string | Pointer | (string | Pointer)[], subjectsClass:string | Pointer, permissions:string | Pointer | (string | Pointer)[], aces:ACE[] ):void {
+function configACEs( granting:boolean, subjects:string | Pointer | (string | Pointer)[], subjectsClass:string | Pointer, permissions:string | Pointer | (string | Pointer)[], aces:TransientACE[] ):void {
 	let subjectPointers:Pointer[] = parsePointers.call( this, subjects );
 	let subjectClassPointer:Pointer = (this as TransientACL)._parsePointer( subjectsClass );
 	let permissionPointers:Pointer[] = parsePointers.call( this, permissions );
@@ -231,8 +231,8 @@ function configureChildInheritance( granting:boolean, subjects:string | Pointer 
 	configACEs.call( this, granting, subjects, subjectsClass, permissions, acl.inheritableEntries );
 }
 
-function grantingFrom( subject:Pointer, permission:Pointer, aces:ACE[] ):boolean {
-	let subjectACEs:ACE[] = aces.filter( ace => Utils.ArrayUtils.indexOf( ace.subjects, subject, Pointer.areEqual ) !== - 1 );
+function grantingFrom( subject:Pointer, permission:Pointer, aces:TransientACE[] ):boolean {
+	let subjectACEs:TransientACE[] = aces.filter( ace => Utils.ArrayUtils.indexOf( ace.subjects, subject, Pointer.areEqual ) !== - 1 );
 
 	for( let ace of subjectACEs ) {
 		if( Utils.ArrayUtils.indexOf( ace.permissions, permission, Pointer.areEqual ) !== - 1 )
@@ -241,7 +241,7 @@ function grantingFrom( subject:Pointer, permission:Pointer, aces:ACE[] ):boolean
 	return null;
 }
 
-function getGranting( subject:string | Pointer, permission:string | Pointer, aces:ACE[] ):boolean {
+function getGranting( subject:string | Pointer, permission:string | Pointer, aces:TransientACE[] ):boolean {
 	if( ! aces ) return null;
 
 	let subjectPointer:Pointer = (this as TransientACL)._parsePointer( subject );
@@ -266,18 +266,18 @@ function getChildInheritance( subject:string | Pointer, permission:string | Poin
 	return getGranting.call( this, subject, permission, acl.inheritableEntries );
 }
 
-function removePermissionsFrom( subject:Pointer, permissions:Pointer[], aces:ACE[] ):void {
+function removePermissionsFrom( subject:Pointer, permissions:Pointer[], aces:TransientACE[] ):void {
 	if( ! aces ) return;
 
 	let acl:TransientACL = <TransientACL> this;
-	let opposedAces:ACE[] = acl.entries === aces ? acl.inheritableEntries : acl.entries;
+	let opposedAces:TransientACE[] = acl.entries === aces ? acl.inheritableEntries : acl.entries;
 
-	let subjectACEs:ACE[] = aces.filter( ace => Utils.ArrayUtils.indexOf( ace.subjects, subject, Pointer.areEqual ) !== - 1 );
+	let subjectACEs:TransientACE[] = aces.filter( ace => Utils.ArrayUtils.indexOf( ace.subjects, subject, Pointer.areEqual ) !== - 1 );
 	for( let ace of subjectACEs ) {
 		if( opposedAces && Utils.ArrayUtils.indexOf( opposedAces, ace, Pointer.areEqual ) !== - 1 ) {
 			aces.splice( Utils.ArrayUtils.indexOf( aces, ace, Pointer.areEqual ), 1 );
 
-			let newACE:ACE = configACE.call( this, ace.granting, subject, ace.subjectsClass, ace.permissions, aces );
+			let newACE:TransientACE = configACE.call( this, ace.granting, subject, ace.subjectsClass, ace.permissions, aces );
 			subjectACEs.push( newACE );
 			continue;
 		}
@@ -285,7 +285,7 @@ function removePermissionsFrom( subject:Pointer, permissions:Pointer[], aces:ACE
 		if( ace.subjects.length > 1 ) {
 			ace.subjects.splice( Utils.ArrayUtils.indexOf( ace.subjects, subject, Pointer.areEqual ), 1 );
 
-			let newACE:ACE = configACE.call( this, ace.granting, subject, ace.subjectsClass, ace.permissions, aces );
+			let newACE:TransientACE = configACE.call( this, ace.granting, subject, ace.subjectsClass, ace.permissions, aces );
 			subjectACEs.push( newACE );
 			continue;
 		}
@@ -304,7 +304,7 @@ function removePermissionsFrom( subject:Pointer, permissions:Pointer[], aces:ACE
 	}
 }
 
-function removePermissions( subject:string | Pointer, permissions:string | Pointer | (string | Pointer)[], aces:ACE[] ):void {
+function removePermissions( subject:string | Pointer, permissions:string | Pointer | (string | Pointer)[], aces:TransientACE[] ):void {
 	let subjectPointer:Pointer = (this as TransientACL)._parsePointer( subject );
 	let permissionPointers:Pointer[] = parsePointers.call( this, permissions );
 	removePermissionsFrom.call( this, subjectPointer, permissionPointers, aces );

@@ -7,8 +7,8 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 }
 Object.defineProperty(exports, "__esModule", { value: true });
-var ACE_1 = require("./ACE");
-exports.ACE = ACE_1.ACE;
+var TransientACE_1 = require("./TransientACE");
+exports.TransientACE = TransientACE_1.TransientACE;
 var TransientACL_1 = require("./TransientACL");
 exports.TransientACL = TransientACL_1.TransientACL;
 var AuthenticatedUserInformationAccessor_1 = require("./AuthenticatedUserInformationAccessor");
