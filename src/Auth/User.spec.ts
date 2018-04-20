@@ -14,15 +14,15 @@ import {
 	STATIC,
 } from "../test/JasmineExtender";
 
-import { PersistedUser } from "./PersistedUser";
+import { User } from "./User";
 
 import { TransientUser } from "./TransientUser";
 
 
-describe( module( "carbonldp/Auth/PersistedUser" ), ():void => {
+describe( module( "carbonldp/Auth/User" ), ():void => {
 
 	describe( interfaze(
-		"CarbonLDP.Auth.PersistedUser",
+		"CarbonLDP.Auth.User",
 		"Interface that represents the base of a persisted User in any context."
 	), ():void => {
 
@@ -30,14 +30,14 @@ describe( module( "carbonldp/Auth/PersistedUser" ), ():void => {
 		it( extendsClass( "CarbonLDP.ProtectedDocument" ), ():void => {} );
 
 		let context:AbstractContext;
-		let persistedUser:PersistedUser;
+		let persistedUser:User;
 		beforeEach( ():void => {
 			context = new class extends AbstractContext {
 				protected _baseURI:string = "https://example.com/";
 			};
 
 			const pointerUser:Pointer = context.documents.getPointer( "https://example.com/resource/" );
-			persistedUser = PersistedUser.decorate(
+			persistedUser = User.decorate(
 				Object.assign( pointerUser, {} ),
 				context.documents
 			);
@@ -46,17 +46,17 @@ describe( module( "carbonldp/Auth/PersistedUser" ), ():void => {
 	} );
 
 	describe( interfaze(
-		"CarbonLDP.Auth.PersistedUserFactory",
-		"Interface with the factory, decorate and utils for `CarbonLDP.Auth.PersistedUser` objects."
+		"CarbonLDP.Auth.UserFactory",
+		"Interface with the factory, decorate and utils for `CarbonLDP.Auth.User` objects."
 	), ():void => {
 
 		describe( method( OBLIGATORY, "isDecorated" ), ():void => {
 
 			it( hasSignature(
-				"Returns true if the object provided has the properties of a `CarbonLDP.Auth.PersistedUser` object.", [
+				"Returns true if the object provided has the properties of a `CarbonLDP.Auth.User` object.", [
 					{ name: "value", type: "any" },
 				],
-				{ type: "value is CarbonLDP.Auth.PersistedUser" }
+				{ type: "value is CarbonLDP.Auth.User" }
 			), ():void => {} );
 
 		} );
@@ -64,10 +64,10 @@ describe( module( "carbonldp/Auth/PersistedUser" ), ():void => {
 		describe( method( OBLIGATORY, "is" ), ():void => {
 
 			it( hasSignature(
-				"Returns true if the object provided is considered a `CarbonLDP.Auth.PersistedUser` object.", [
+				"Returns true if the object provided is considered a `CarbonLDP.Auth.User` object.", [
 					{ name: "value", type: "any" },
 				],
-				{ type: "value is CarbonLDP.Auth.PersistedUser" }
+				{ type: "value is CarbonLDP.Auth.User" }
 			), ():void => {} );
 
 		} );
@@ -76,11 +76,11 @@ describe( module( "carbonldp/Auth/PersistedUser" ), ():void => {
 
 			it( hasSignature(
 				[ "T extends object" ],
-				"Decorates the object provided with the properties and methods of a `CarbonLDP.Auth.PersistedUser` object.", [
+				"Decorates the object provided with the properties and methods of a `CarbonLDP.Auth.User` object.", [
 					{ name: "object", type: "T", description: "The object to decorate." },
 					{ name: "documents", type: "CarbonLDP.Documents", description: "The documents service the persisted belongs to." },
 				],
-				{ type: "T & CarbonLDP.Auth.PersistedUser" }
+				{ type: "T & CarbonLDP.Auth.User" }
 			), ():void => {} );
 
 		} );
@@ -89,29 +89,29 @@ describe( module( "carbonldp/Auth/PersistedUser" ), ():void => {
 
 	describe( property(
 		STATIC,
-		"PersistedUser",
-		"CarbonLDP.Auth.PersistedUserFactory"
+		"User",
+		"CarbonLDP.Auth.UserFactory"
 	), ():void => {
 
-		type MockPersistedUser = StrictMinus<PersistedUser, TransientUser & ProtectedDocument>;
+		type MockPersistedUser = StrictMinus<User, TransientUser & ProtectedDocument>;
 
 		it( isDefined(), ():void => {
-			expect( PersistedUser ).toBeDefined();
-			expect( PersistedUser ).toEqual( jasmine.any( Object ) );
+			expect( User ).toBeDefined();
+			expect( User ).toEqual( jasmine.any( Object ) );
 		} );
 
-		describe( "PersistedUser.is", ():void => {
+		describe( "User.is", ():void => {
 
 			it( "should exists", ():void => {
-				expect( PersistedUser.is ).toBeDefined();
-				expect( PersistedUser.is ).toEqual( jasmine.any( Function ) );
+				expect( User.is ).toBeDefined();
+				expect( User.is ).toEqual( jasmine.any( Function ) );
 			} );
 
 			it( "should call to `User.isDecorated`", ():void => {
 				const spy:jasmine.Spy = spyOn( TransientUser, "isDecorated" );
 
 				const object:object = { the: "object" };
-				PersistedUser.is( object );
+				User.is( object );
 				expect( spy ).toHaveBeenCalledWith( object );
 			} );
 
@@ -121,7 +121,7 @@ describe( module( "carbonldp/Auth/PersistedUser" ), ():void => {
 				const spy:jasmine.Spy = spyOn( ProtectedDocument, "is" );
 
 				const object:object = { the: "object" };
-				PersistedUser.is( object );
+				User.is( object );
 				expect( spy ).toHaveBeenCalledWith( object );
 			} );
 
@@ -132,7 +132,7 @@ describe( module( "carbonldp/Auth/PersistedUser" ), ():void => {
 					.and.returnValue( true );
 
 				const object:object = { the: "object" };
-				const returned:boolean = PersistedUser.is( object );
+				const returned:boolean = User.is( object );
 
 				expect( returned ).toBe( true );
 			} );
@@ -143,21 +143,21 @@ describe( module( "carbonldp/Auth/PersistedUser" ), ():void => {
 
 			it( hasSignature(
 				[ "T extends object" ],
-				"Decorates the object provided with the properties and methods of a `CarbonLDP.Auth.PersistedUser` object.", [
+				"Decorates the object provided with the properties and methods of a `CarbonLDP.Auth.User` object.", [
 					{ name: "object", type: "T", description: "The object to decorate." },
 					{ name: "documents", type: "CarbonLDP.Documents", description: "The documents service the persisted belongs to." },
 				],
-				{ type: "T & CarbonLDP.Auth.PersistedUser" }
+				{ type: "T & CarbonLDP.Auth.User" }
 			), ():void => {} );
 
 			it( "should exists", ():void => {
-				expect( PersistedUser.decorate ).toBeDefined();
-				expect( PersistedUser.decorate ).toEqual( jasmine.any( Function ) );
+				expect( User.decorate ).toBeDefined();
+				expect( User.decorate ).toEqual( jasmine.any( Function ) );
 			} );
 
 			it( "should return the same object", ():void => {
 				const object:object = {};
-				const returned:object = PersistedUser.decorate( object, null );
+				const returned:object = User.decorate( object, null );
 				expect( returned ).toBe( object );
 			} );
 
@@ -165,7 +165,7 @@ describe( module( "carbonldp/Auth/PersistedUser" ), ():void => {
 				const spy:jasmine.Spy = spyOn( TransientUser, "decorate" );
 
 				const object:object = { the: "object" };
-				PersistedUser.decorate( object, null );
+				User.decorate( object, null );
 				expect( spy ).toHaveBeenCalledWith( object );
 			} );
 
@@ -174,7 +174,7 @@ describe( module( "carbonldp/Auth/PersistedUser" ), ():void => {
 
 				const object:object = { the: "object" };
 				const fakeDocuments:any = { fake: "Documents" };
-				PersistedUser.decorate( object, fakeDocuments );
+				User.decorate( object, fakeDocuments );
 
 				expect( spy ).toHaveBeenCalledWith( object, fakeDocuments );
 			} );

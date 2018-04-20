@@ -7,7 +7,7 @@ var JSONLD_1 = require("../JSONLD");
 var Document_1 = require("../RDF/Document");
 var Utils_1 = require("../Utils");
 var LDP_1 = require("../Vocabularies/LDP");
-var PersistedUser_1 = require("./PersistedUser");
+var User_1 = require("./User");
 var Authenticator = (function () {
     function Authenticator(context) {
         this.context = context;
@@ -56,7 +56,7 @@ var Authenticator = (function () {
             _this._authenticatedUser = accessor
                 .authenticatedUserMetadata
                 .user;
-            return PersistedUser_1.PersistedUser
+            return User_1.User
                 .decorate(_this._authenticatedUser, _this.context.documents);
         });
     };

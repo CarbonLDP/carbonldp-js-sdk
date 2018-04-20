@@ -12,7 +12,7 @@ var TransientAccessPoint_1 = require("./TransientAccessPoint");
 var Auth = __importStar(require("./Auth"));
 var TransientACL_1 = require("./Auth/TransientACL");
 var ACL_1 = require("./Auth/ACL");
-var PersistedUser_1 = require("./Auth/PersistedUser");
+var User_1 = require("./Auth/User");
 var TransientUser_1 = require("./Auth/TransientUser");
 var TransientDocument_1 = require("./TransientDocument");
 var Errors = __importStar(require("./Errors"));
@@ -77,7 +77,7 @@ var Documents = (function () {
         else {
             decorators
                 .set(TransientProtectedDocument_1.TransientProtectedDocument.TYPE, ProtectedDocument_1.ProtectedDocument.decorate)
-                .set(TransientUser_1.TransientUser.TYPE, PersistedUser_1.PersistedUser.decorate)
+                .set(TransientUser_1.TransientUser.TYPE, User_1.User.decorate)
                 .set(TransientACL_1.TransientACL.TYPE, ACL_1.ACL.decorate)
                 .set(Auth.Role.RDF_CLASS, Auth.PersistedRole.Factory.decorate);
         }

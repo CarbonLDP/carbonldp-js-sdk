@@ -12,7 +12,7 @@ export { CredentialsSet } from "./CredentialsSet";
 export { LDAPCredentials } from "./LDAPCredentials";
 export { ACE } from "./ACE";
 export { ACL } from "./ACL";
-export { PersistedUser } from "./PersistedUser";
+export { User } from "./User";
 export { TokenAuthenticator } from "./TokenAuthenticator";
 export { TokenCredentials, TokenCredentialsBase } from "./TokenCredentials";
 export { TransientUser, UserBase } from "./TransientUser";

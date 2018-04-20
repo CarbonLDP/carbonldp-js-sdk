@@ -417,7 +417,7 @@ xdescribe( module( "carbonldp/Auth/Roles" ), ():void => {
 					{ name: "roleURI", type: "string", description: "The URI of the role to look for its users." },
 					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true },
 				],
-				{ type: "Promise<(T & CarbonLDP.Auth.PersistedUser)[]>" }
+				{ type: "Promise<(T & CarbonLDP.Auth.User)[]>" }
 			), ( done:{ ():void, fail:() => void } ):void => {
 				let spies:any = {
 					success: ( [ pointers, response ]:[ Pointer[], Response ] ):void => {

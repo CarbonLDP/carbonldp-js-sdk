@@ -6586,8 +6586,8 @@ var LDAPCredentials_1 = __webpack_require__(138);
 exports.LDAPCredentials = LDAPCredentials_1.LDAPCredentials;
 var ACL_1 = __webpack_require__(139);
 exports.ACL = ACL_1.ACL;
-var PersistedUser_1 = __webpack_require__(81);
-exports.PersistedUser = PersistedUser_1.PersistedUser;
+var User_1 = __webpack_require__(81);
+exports.User = User_1.User;
 var TokenAuthenticator_1 = __webpack_require__(135);
 exports.TokenAuthenticator = TokenAuthenticator_1.TokenAuthenticator;
 var TokenCredentials_1 = __webpack_require__(60);
@@ -7111,7 +7111,7 @@ var JSONLD_1 = __webpack_require__(118);
 var Document_1 = __webpack_require__(39);
 var Utils_1 = __webpack_require__(0);
 var LDP_1 = __webpack_require__(41);
-var PersistedUser_1 = __webpack_require__(81);
+var User_1 = __webpack_require__(81);
 var Authenticator = (function () {
     function Authenticator(context) {
         this.context = context;
@@ -7160,7 +7160,7 @@ var Authenticator = (function () {
             _this._authenticatedUser = accessor
                 .authenticatedUserMetadata
                 .user;
-            return PersistedUser_1.PersistedUser
+            return User_1.User
                 .decorate(_this._authenticatedUser, _this.context.documents);
         });
     };
@@ -7465,7 +7465,7 @@ exports.QueryContext = QueryContext;
 Object.defineProperty(exports, "__esModule", { value: true });
 var ProtectedDocument_1 = __webpack_require__(45);
 var TransientUser_1 = __webpack_require__(57);
-exports.PersistedUser = {
+exports.User = {
     is: function (value) {
         return TransientUser_1.TransientUser.isDecorated(value)
             && ProtectedDocument_1.ProtectedDocument.is(value);
@@ -10584,7 +10584,7 @@ var TransientAccessPoint_1 = __webpack_require__(141);
 var Auth = __importStar(__webpack_require__(68));
 var TransientACL_1 = __webpack_require__(51);
 var ACL_1 = __webpack_require__(139);
-var PersistedUser_1 = __webpack_require__(81);
+var User_1 = __webpack_require__(81);
 var TransientUser_1 = __webpack_require__(57);
 var TransientDocument_1 = __webpack_require__(19);
 var Errors = __importStar(__webpack_require__(9));
@@ -10649,7 +10649,7 @@ var Documents = (function () {
         else {
             decorators
                 .set(TransientProtectedDocument_1.TransientProtectedDocument.TYPE, ProtectedDocument_1.ProtectedDocument.decorate)
-                .set(TransientUser_1.TransientUser.TYPE, PersistedUser_1.PersistedUser.decorate)
+                .set(TransientUser_1.TransientUser.TYPE, User_1.User.decorate)
                 .set(TransientACL_1.TransientACL.TYPE, ACL_1.ACL.decorate)
                 .set(Auth.Role.RDF_CLASS, Auth.PersistedRole.Factory.decorate);
         }
