@@ -1,13 +1,7 @@
-import { ObjectSchema } from "../ObjectSchema";
+export interface ModelFactory<M extends object, B extends object = object> {
+	is( value:any ):value is M;
 
-export interface ModelFactory<T extends object> {
-	TYPE?:string;
-	SCHEMA?:ObjectSchema;
+	create<W extends B>( data:W ):W & M;
 
-
-	is?( object:object ):object is T;
-
-	create?( ...params:any[] ):T;
-
-	createFrom?<W extends object>( object:W, ...params:any[] ):W & T;
+	createFrom<W extends B>( object:W ):W & M;
 }
