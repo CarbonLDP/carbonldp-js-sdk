@@ -5423,7 +5423,7 @@ var SCHEMA = {
         "@container": "@set",
     },
 };
-exports.ACL = {
+exports.TransientACL = {
     TYPE: CS_1.CS.AccessControlList,
     SCHEMA: SCHEMA,
     isDecorated: function (object) {
@@ -5439,7 +5439,7 @@ exports.ACL = {
             && Utils.hasFunction(object, "removeChildInheritance");
     },
     decorate: function (object) {
-        if (exports.ACL.isDecorated(object))
+        if (exports.TransientACL.isDecorated(object))
             return object;
         TransientDocument_1.TransientDocument.decorate(object);
         var acl = object;
@@ -6562,8 +6562,8 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var ACE_1 = __webpack_require__(69);
 exports.ACE = ACE_1.ACE;
-var ACL_1 = __webpack_require__(51);
-exports.ACL = ACL_1.ACL;
+var TransientACL_1 = __webpack_require__(51);
+exports.TransientACL = TransientACL_1.TransientACL;
 var AuthenticatedUserInformationAccessor_1 = __webpack_require__(115);
 exports.AuthenticatedUserInformationAccessor = AuthenticatedUserInformationAccessor_1.AuthenticatedUserInformationAccessor;
 var AuthenticatedUserMetadata_1 = __webpack_require__(116);
@@ -8387,7 +8387,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var Auth = __importStar(__webpack_require__(68));
 var ACE_1 = __webpack_require__(69);
-var ACL_1 = __webpack_require__(51);
+var TransientACL_1 = __webpack_require__(51);
 var AuthenticatedUserInformationAccessor_1 = __webpack_require__(115);
 var AuthenticatedUserMetadata_1 = __webpack_require__(116);
 var CredentialsSet_1 = __webpack_require__(137);
@@ -8565,7 +8565,7 @@ var SDKContext = (function () {
         this.extendObjectSchema(ValidationError_1.ValidationError.TYPE, ValidationError_1.ValidationError.SCHEMA);
         this.extendObjectSchema(Auth.Role.RDF_CLASS, Auth.Role.SCHEMA);
         this.extendObjectSchema(ACE_1.ACE.TYPE, ACE_1.ACE.SCHEMA);
-        this.extendObjectSchema(ACL_1.ACL.TYPE, ACL_1.ACL.SCHEMA);
+        this.extendObjectSchema(TransientACL_1.TransientACL.TYPE, TransientACL_1.TransientACL.SCHEMA);
         this.extendObjectSchema(AuthenticatedUserInformationAccessor_1.AuthenticatedUserInformationAccessor.TYPE, AuthenticatedUserInformationAccessor_1.AuthenticatedUserInformationAccessor.SCHEMA);
         this.extendObjectSchema(AuthenticatedUserMetadata_1.AuthenticatedUserMetadata.TYPE, AuthenticatedUserMetadata_1.AuthenticatedUserMetadata.SCHEMA);
         this.extendObjectSchema(User_1.User.TYPE, User_1.User.SCHEMA);
@@ -10528,7 +10528,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var Document_1 = __webpack_require__(42);
 var Utils = __importStar(__webpack_require__(0));
-var ACL_1 = __webpack_require__(51);
+var TransientACL_1 = __webpack_require__(51);
 exports.PersistedACL = {
     isDecorated: function (object) {
         return Utils.hasPropertyDefined(object, "accessTo")
@@ -10537,7 +10537,7 @@ exports.PersistedACL = {
     decorate: function (object, documents) {
         if (exports.PersistedACL.isDecorated(object))
             return object;
-        ACL_1.ACL.decorate(object);
+        TransientACL_1.TransientACL.decorate(object);
         Document_1.Document.decorate(object, documents);
         var acl = object;
         Object.defineProperties(acl, {
@@ -10582,7 +10582,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var tokens_1 = __webpack_require__(3);
 var TransientAccessPoint_1 = __webpack_require__(141);
 var Auth = __importStar(__webpack_require__(68));
-var ACL_1 = __webpack_require__(51);
+var TransientACL_1 = __webpack_require__(51);
 var PersistedACL_1 = __webpack_require__(139);
 var PersistedUser_1 = __webpack_require__(81);
 var User_1 = __webpack_require__(57);
@@ -10650,7 +10650,7 @@ var Documents = (function () {
             decorators
                 .set(TransientProtectedDocument_1.TransientProtectedDocument.TYPE, ProtectedDocument_1.ProtectedDocument.decorate)
                 .set(User_1.User.TYPE, PersistedUser_1.PersistedUser.decorate)
-                .set(ACL_1.ACL.TYPE, PersistedACL_1.PersistedACL.decorate)
+                .set(TransientACL_1.TransientACL.TYPE, PersistedACL_1.PersistedACL.decorate)
                 .set(Auth.Role.RDF_CLASS, Auth.PersistedRole.Factory.decorate);
         }
         this._documentDecorators = decorators;

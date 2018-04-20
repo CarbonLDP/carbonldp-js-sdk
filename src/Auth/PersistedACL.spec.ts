@@ -15,7 +15,7 @@ import {
 } from "../test/JasmineExtender";
 import * as Utils from "./../Utils";
 
-import { ACL } from "./ACL";
+import { TransientACL } from "./TransientACL";
 
 import { PersistedACL } from "./PersistedACL";
 
@@ -288,7 +288,7 @@ describe( module( "carbonldp/Auth/PersistedACL" ), ():void => {
 			expect( PersistedACL.decorate ).toBeDefined();
 			expect( Utils.isFunction( PersistedACL.decorate ) ).toBe( true );
 
-			const spy:jasmine.Spy = spyOn( ACL, "decorate" ).and.callThrough();
+			const spy:jasmine.Spy = spyOn( TransientACL, "decorate" ).and.callThrough();
 
 			const documents:Documents = new Documents();
 			const object:object = {

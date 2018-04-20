@@ -9,7 +9,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var Document_1 = require("../Document");
 var Utils = __importStar(require("../Utils"));
-var ACL_1 = require("./ACL");
+var TransientACL_1 = require("./TransientACL");
 exports.PersistedACL = {
     isDecorated: function (object) {
         return Utils.hasPropertyDefined(object, "accessTo")
@@ -18,7 +18,7 @@ exports.PersistedACL = {
     decorate: function (object, documents) {
         if (exports.PersistedACL.isDecorated(object))
             return object;
-        ACL_1.ACL.decorate(object);
+        TransientACL_1.TransientACL.decorate(object);
         Document_1.Document.decorate(object, documents);
         var acl = object;
         Object.defineProperties(acl, {

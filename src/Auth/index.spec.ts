@@ -9,7 +9,7 @@ import * as Utils from "../Utils";
 import * as Auth from "./";
 
 import { ACE } from "./ACE";
-import { ACL } from "./ACL";
+import { TransientACL } from "./TransientACL";
 import { AuthenticatedUserInformationAccessor } from "./AuthenticatedUserInformationAccessor";
 import { AuthenticatedUserMetadata } from "./AuthenticatedUserMetadata";
 import { Authenticator } from "./Authenticator";
@@ -53,11 +53,11 @@ describe( module( "carbonldp/Auth" ), ():void => {
 
 	it( reexports(
 		STATIC,
-		"ACL",
-		"CarbonLDP.Auth.ACL"
+		"TransientACL",
+		"CarbonLDP.Auth.TransientACL"
 	), ():void => {
-		expect( Auth.ACL ).toBeDefined();
-		expect( Auth.ACL ).toBe( ACL );
+		expect( Auth.TransientACL ).toBeDefined();
+		expect( Auth.TransientACL ).toBe( TransientACL );
 	} );
 
 	it( reexports(

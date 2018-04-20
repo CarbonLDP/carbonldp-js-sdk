@@ -3,7 +3,7 @@ import { ObjectSchema } from "../ObjectSchema";
 import { Pointer } from "../Pointer";
 import { TransientDocument } from "../TransientDocument";
 import { ACE } from "./ACE";
-export interface ACL extends TransientDocument {
+export interface TransientACL extends TransientDocument {
     accessTo: Pointer;
     entries?: ACE[];
     inheritableEntries?: ACE[];
@@ -28,10 +28,10 @@ export interface ACL extends TransientDocument {
     removeChildInheritance(subject: string | Pointer, permission: string | Pointer): void;
     removeChildInheritance(subject: string | Pointer, permissions: (string | Pointer)[]): void;
 }
-export interface ACLFactory extends ModelDecorator<ACL> {
+export interface TransientACLFactory extends ModelDecorator<TransientACL> {
     TYPE: string;
     SCHEMA: ObjectSchema;
-    isDecorated(object: object): object is ACL;
-    decorate<T extends object>(object: T): T & ACL;
+    isDecorated(object: object): object is TransientACL;
+    decorate<T extends object>(object: T): T & TransientACL;
 }
-export declare const ACL: ACLFactory;
+export declare const TransientACL: TransientACLFactory;

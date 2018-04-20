@@ -9,8 +9,8 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var ACE_1 = require("./ACE");
 exports.ACE = ACE_1.ACE;
-var ACL_1 = require("./ACL");
-exports.ACL = ACL_1.ACL;
+var TransientACL_1 = require("./TransientACL");
+exports.TransientACL = TransientACL_1.TransientACL;
 var AuthenticatedUserInformationAccessor_1 = require("./AuthenticatedUserInformationAccessor");
 exports.AuthenticatedUserInformationAccessor = AuthenticatedUserInformationAccessor_1.AuthenticatedUserInformationAccessor;
 var AuthenticatedUserMetadata_1 = require("./AuthenticatedUserMetadata");

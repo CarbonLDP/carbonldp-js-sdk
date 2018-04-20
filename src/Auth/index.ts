@@ -1,5 +1,5 @@
 export { ACE } from "./ACE";
-export { ACL } from "./ACL";
+export { TransientACL } from "./TransientACL";
 export { AuthenticatedUserInformationAccessor } from "./AuthenticatedUserInformationAccessor";
 export { AuthenticatedUserMetadata } from "./AuthenticatedUserMetadata";
 export { Authenticator } from "./Authenticator";

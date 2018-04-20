@@ -28,7 +28,7 @@ var SCHEMA = {
         "@container": "@set",
     },
 };
-exports.ACL = {
+exports.TransientACL = {
     TYPE: CS_1.CS.AccessControlList,
     SCHEMA: SCHEMA,
     isDecorated: function (object) {
@@ -44,7 +44,7 @@ exports.ACL = {
             && Utils.hasFunction(object, "removeChildInheritance");
     },
     decorate: function (object) {
-        if (exports.ACL.isDecorated(object))
+        if (exports.TransientACL.isDecorated(object))
             return object;
         TransientDocument_1.TransientDocument.decorate(object);
         var acl = object;
@@ -229,4 +229,4 @@ function removeChildInheritance(subject, permissions) {
     removePermissions.call(this, subject, permissions, acl.inheritableEntries);
 }
 
-//# sourceMappingURL=ACL.js.map
+//# sourceMappingURL=TransientACL.js.map

@@ -21,17 +21,17 @@ import { CS } from "../Vocabularies/CS";
 import * as Utils from "./../Utils";
 import { ACE } from "./ACE";
 
-import { ACL } from "./ACL";
+import { TransientACL } from "./TransientACL";
 
-describe( module( "carbonldp/Auth/ACL" ), ():void => {
+describe( module( "carbonldp/Auth/TransientACL" ), ():void => {
 
 	describe( interfaze(
-		"CarbonLDP.Auth.ACL",
+		"CarbonLDP.Auth.TransientACL",
 		"Interface that represents an in-memory Access Control List (ACL)."
 	), ():void => {
 
 		it( extendsClass( "CarbonLDP.TransientDocument" ), ():void => {
-			let acl:ACL = <any> {};
+			let acl:TransientACL = <any> {};
 			let fragment:TransientDocument;
 
 			fragment = acl;
@@ -45,7 +45,7 @@ describe( module( "carbonldp/Auth/ACL" ), ():void => {
 			"Reference to the document the ACL belongs."
 		), ():void => {
 			let document:Pointer = Pointer.create();
-			let acl:ACL = <any> {};
+			let acl:TransientACL = <any> {};
 
 			acl.accessTo = document;
 			expect( Pointer.is( acl.accessTo ) ).toBe( true );
@@ -58,7 +58,7 @@ describe( module( "carbonldp/Auth/ACL" ), ():void => {
 			"Array of ACEs that only grants or denies permissions of the document the ACL belongs."
 		), ():void => {
 			let entries:ACE[] = [ <any> {} ];
-			let acl:ACL = <any> {};
+			let acl:TransientACL = <any> {};
 
 			acl.entries = entries;
 			expect( acl.entries ).toEqual( jasmine.any( Array ) );
@@ -72,7 +72,7 @@ describe( module( "carbonldp/Auth/ACL" ), ():void => {
 			"Array of ACEs that grants or denies permissions of the document's children the ACL belongs."
 		), ():void => {
 			let inheritableEntries:ACE[] = [ <any> {} ];
-			let acl:ACL = <any> {};
+			let acl:TransientACL = <any> {};
 
 			acl.inheritableEntries = inheritableEntries;
 			expect( acl.inheritableEntries ).toEqual( jasmine.any( Array ) );
@@ -88,7 +88,7 @@ describe( module( "carbonldp/Auth/ACL" ), ():void => {
 			{ type: "CarbonLDP.Pointer" }
 		), ():void => {
 			let parsePointer:( element:string | Pointer ) => Pointer = <any> new Function();
-			let acl:ACL = <any> {};
+			let acl:TransientACL = <any> {};
 
 			acl._parsePointer = parsePointer;
 			expect( acl._parsePointer ).toEqual( jasmine.any( Function ) );
@@ -274,8 +274,8 @@ describe( module( "carbonldp/Auth/ACL" ), ():void => {
 	} );
 
 	describe( interfaze(
-		"CarbonLDP.Auth.ACLFactory",
-		"Interface with factory, decorate and utils methods for `CarbonLDP.Auth.ACL` objects."
+		"CarbonLDP.Auth.TransientACLFactory",
+		"Interface with factory, decorate and utils methods for `CarbonLDP.Auth.TransientACL` objects."
 	), ():void => {
 
 		it( hasProperty(
@@ -293,17 +293,17 @@ describe( module( "carbonldp/Auth/ACL" ), ():void => {
 		it( hasMethod(
 			OBLIGATORY,
 			"isDecorated",
-			"Return true if the object provided has the properties and methods of a `CarbonLDP.Auth.ACL` object.", [
+			"Return true if the object provided has the properties and methods of a `CarbonLDP.Auth.TransientACL` object.", [
 				{ name: "object", type: "object", description: "The object to analise." },
 			],
-			{ type: "object is CarbonLDP.Auth.ACL" }
+			{ type: "object is CarbonLDP.Auth.TransientACL" }
 		), ():void => {} );
 
 		it( hasMethod(
 			OBLIGATORY,
 			"decorate",
 			[ "T extends object" ],
-			"Decorate the object with the methods o a `CarbonLDP.Auth.ACL` object.", [
+			"Decorate the object with the methods o a `CarbonLDP.Auth.TransientACL` object.", [
 				{ name: "object", type: "T", description: "The object to decorate." },
 			],
 			{ type: "T & CarbonLDP.Auth.ACl.Class" }
@@ -313,44 +313,44 @@ describe( module( "carbonldp/Auth/ACL" ), ():void => {
 
 	describe( property(
 		STATIC,
-		"ACL",
-		"CarbonLDP.Auth.ACLFactory",
-		"Constant that implements the `CarbonLDP.Auth.ACLFactory` interface."
+		"TransientACL",
+		"CarbonLDP.Auth.TransientACLFactory",
+		"Constant that implements the `CarbonLDP.Auth.TransientACLFactory` interface."
 	), ():void => {
 
 		it( isDefined(), ():void => {
-			expect( ACL ).toBeDefined();
-			expect( ACL ).toEqual( jasmine.any( Object ) );
+			expect( TransientACL ).toBeDefined();
+			expect( TransientACL ).toEqual( jasmine.any( Object ) );
 		} );
 
 		// TODO: Separate in different tests
-		it( "ACL.TYPE", ():void => {
-			expect( ACL.TYPE ).toBeDefined();
-			expect( Utils.isString( ACL.TYPE ) ).toBe( true );
+		it( "TransientACL.TYPE", ():void => {
+			expect( TransientACL.TYPE ).toBeDefined();
+			expect( Utils.isString( TransientACL.TYPE ) ).toBe( true );
 
-			expect( ACL.TYPE ).toBe( CS.AccessControlList );
+			expect( TransientACL.TYPE ).toBe( CS.AccessControlList );
 		} );
 
 		// TODO: Separate in different tests
-		it( "ACL.SCHEMA", ():void => {
-			expect( ACL.SCHEMA ).toBeDefined();
-			expect( Utils.isObject( ACL.SCHEMA ) ).toBe( true );
+		it( "TransientACL.SCHEMA", ():void => {
+			expect( TransientACL.SCHEMA ).toBeDefined();
+			expect( Utils.isObject( TransientACL.SCHEMA ) ).toBe( true );
 
-			expect( Utils.hasProperty( ACL.SCHEMA, "entries" ) ).toBe( true );
-			expect( ACL.SCHEMA[ "entries" ] ).toEqual( {
+			expect( Utils.hasProperty( TransientACL.SCHEMA, "entries" ) ).toBe( true );
+			expect( TransientACL.SCHEMA[ "entries" ] ).toEqual( {
 				"@id": CS.accessControlEntry,
 				"@type": "@id",
 				"@container": "@set",
 			} );
 
-			expect( Utils.hasProperty( ACL.SCHEMA, "accessTo" ) ).toBe( true );
-			expect( ACL.SCHEMA[ "accessTo" ] ).toEqual( {
+			expect( Utils.hasProperty( TransientACL.SCHEMA, "accessTo" ) ).toBe( true );
+			expect( TransientACL.SCHEMA[ "accessTo" ] ).toEqual( {
 				"@id": CS.accessTo,
 				"@type": "@id",
 			} );
 
-			expect( Utils.hasProperty( ACL.SCHEMA, "inheritableEntries" ) ).toBe( true );
-			expect( ACL.SCHEMA[ "inheritableEntries" ] ).toEqual( {
+			expect( Utils.hasProperty( TransientACL.SCHEMA, "inheritableEntries" ) ).toBe( true );
+			expect( TransientACL.SCHEMA[ "inheritableEntries" ] ).toEqual( {
 				"@id": CS.inheritableEntry,
 				"@type": "@id",
 				"@container": "@set",
@@ -358,12 +358,12 @@ describe( module( "carbonldp/Auth/ACL" ), ():void => {
 		} );
 
 		// TODO: Separate in different tests
-		it( "ACL.isDecorated", ():void => {
-			expect( ACL.isDecorated ).toBeDefined();
-			expect( Utils.isFunction( ACL.isDecorated ) ).toBe( true );
+		it( "TransientACL.isDecorated", ():void => {
+			expect( TransientACL.isDecorated ).toBeDefined();
+			expect( Utils.isFunction( TransientACL.isDecorated ) ).toBe( true );
 
 			let object:any = void 0;
-			expect( ACL.isDecorated( object ) ).toBe( false );
+			expect( TransientACL.isDecorated( object ) ).toBe( false );
 
 			object = {
 				entries: null,
@@ -379,71 +379,71 @@ describe( module( "carbonldp/Auth/ACL" ), ():void => {
 				remove: ():void => {},
 				removeChildInheritance: ():void => {},
 			};
-			expect( ACL.isDecorated( object ) ).toBe( true );
+			expect( TransientACL.isDecorated( object ) ).toBe( true );
 
 			delete object.accessTo;
-			expect( ACL.isDecorated( object ) ).toBe( false );
+			expect( TransientACL.isDecorated( object ) ).toBe( false );
 			object.accessTo = null;
 
 			delete object.entries;
-			expect( ACL.isDecorated( object ) ).toBe( true );
+			expect( TransientACL.isDecorated( object ) ).toBe( true );
 			object.entries = null;
 
 			delete object.inheritableEntries;
-			expect( ACL.isDecorated( object ) ).toBe( true );
+			expect( TransientACL.isDecorated( object ) ).toBe( true );
 			object.inheritableEntries = null;
 
 			delete object._parsePointer;
-			expect( ACL.isDecorated( object ) ).toBe( false );
+			expect( TransientACL.isDecorated( object ) ).toBe( false );
 			object._parsePointer = ():void => {};
 
 			delete object.grant;
-			expect( ACL.isDecorated( object ) ).toBe( false );
+			expect( TransientACL.isDecorated( object ) ).toBe( false );
 			object.grant = ():void => {};
 
 			delete object.deny;
-			expect( ACL.isDecorated( object ) ).toBe( false );
+			expect( TransientACL.isDecorated( object ) ).toBe( false );
 			object.deny = ():void => {};
 
 			delete object.configureChildInheritance;
-			expect( ACL.isDecorated( object ) ).toBe( false );
+			expect( TransientACL.isDecorated( object ) ).toBe( false );
 			object.configureChildInheritance = ():void => {};
 
 			delete object.grants;
-			expect( ACL.isDecorated( object ) ).toBe( false );
+			expect( TransientACL.isDecorated( object ) ).toBe( false );
 			object.grants = ():void => {};
 
 			delete object.denies;
-			expect( ACL.isDecorated( object ) ).toBe( false );
+			expect( TransientACL.isDecorated( object ) ).toBe( false );
 			object.denies = ():void => {};
 
 			delete object.getChildInheritance;
-			expect( ACL.isDecorated( object ) ).toBe( false );
+			expect( TransientACL.isDecorated( object ) ).toBe( false );
 			object.getChildInheritance = ():void => {};
 
 			delete object.remove;
-			expect( ACL.isDecorated( object ) ).toBe( false );
+			expect( TransientACL.isDecorated( object ) ).toBe( false );
 			object.remove = ():void => {};
 
 			delete object.removeChildInheritance;
-			expect( ACL.isDecorated( object ) ).toBe( false );
+			expect( TransientACL.isDecorated( object ) ).toBe( false );
 			object.removeChildInheritance = ():void => {};
 		} );
 
 		// TODO: Separate in different tests
-		it( "ACL.decorate", ():void => {
-			expect( ACL.decorate ).toBeDefined();
-			expect( Utils.isFunction( ACL.decorate ) ).toBe( true );
+		it( "TransientACL.decorate", ():void => {
+			expect( TransientACL.decorate ).toBeDefined();
+			expect( Utils.isFunction( TransientACL.decorate ) ).toBe( true );
 
 			let document:Document = Document.create( new Documents(), "http://example.com/resource/~acl/" );
-			let acl:ACL = ACL.decorate( document );
+			let acl:TransientACL = TransientACL.decorate( document );
 			acl.accessTo = acl.getPointer( "http://example.com/resource/" );
 
-			expect( ACL.isDecorated( acl ) );
+			expect( TransientACL.isDecorated( acl ) );
 		} );
 
-		describe( "ACL instance", ():void => {
-			let acl:ACL;
+		describe( "TransientACL instance", ():void => {
+			let acl:TransientACL;
 
 			function getACEsOf( subject:string, fragments:TransientFragment[] ):ACE[] {
 				return <ACE[]> fragments.filter( fragment => {
@@ -454,16 +454,16 @@ describe( module( "carbonldp/Auth/ACL" ), ():void => {
 
 			beforeEach( ():void => {
 				let document:Document = Document.create( new Documents(), "http://example.com/resource/~acl/" );
-				acl = ACL.decorate( document );
+				acl = TransientACL.decorate( document );
 				acl.accessTo = acl.getPointer( "http://example.com/resource/" );
 			} );
 
 			it( isDefined(), ():void => {
 				expect( acl ).toBeTruthy();
-				expect( ACL.isDecorated( acl ) ).toBe( true );
+				expect( TransientACL.isDecorated( acl ) ).toBe( true );
 			} );
 
-			describe( "ACL.grant", ():void => {
+			describe( "TransientACL.grant", ():void => {
 
 				it( isDefined(), ():void => {
 					expect( acl.grant ).toBeDefined();
@@ -974,7 +974,7 @@ describe( module( "carbonldp/Auth/ACL" ), ():void => {
 
 			} );
 
-			describe( "ACL.deny", ():void => {
+			describe( "TransientACL.deny", ():void => {
 
 				it( isDefined(), ():void => {
 					expect( acl.deny ).toBeDefined();
@@ -1486,7 +1486,7 @@ describe( module( "carbonldp/Auth/ACL" ), ():void => {
 
 			} );
 
-			describe( "ACL.configureChildInheritance", ():void => {
+			describe( "TransientACL.configureChildInheritance", ():void => {
 
 				it( isDefined(), ():void => {
 					expect( acl.configureChildInheritance ).toBeDefined();
@@ -2485,7 +2485,7 @@ describe( module( "carbonldp/Auth/ACL" ), ():void => {
 			} );
 
 			// TODO: Separate in different tests
-			it( "ACL.denies", ():void => {
+			it( "TransientACL.denies", ():void => {
 				expect( acl.denies ).toBeDefined();
 				expect( Utils.isFunction( acl.denies ) ).toBe( true );
 
@@ -2529,7 +2529,7 @@ describe( module( "carbonldp/Auth/ACL" ), ():void => {
 			} );
 
 			// TODO: Separate in different tests
-			it( "ACL.getChildInheritance", ():void => {
+			it( "TransientACL.getChildInheritance", ():void => {
 				expect( acl.getChildInheritance ).toBeDefined();
 				expect( Utils.isFunction( acl.getChildInheritance ) ).toBe( true );
 
@@ -2572,7 +2572,7 @@ describe( module( "carbonldp/Auth/ACL" ), ():void => {
 				expect( acl.getChildInheritance( acl.getPointer( "http://example.com/ns#Subject-02" ), acl.getPointer( "http://example.com/ns#READ" ) ) ).toBeNull();
 			} );
 
-			describe( "ACL.remove", ():void => {
+			describe( "TransientACL.remove", ():void => {
 
 				it( isDefined(), ():void => {
 					expect( acl.remove ).toBeDefined();
@@ -2693,7 +2693,7 @@ describe( module( "carbonldp/Auth/ACL" ), ():void => {
 
 			} );
 
-			describe( "ACL.removeChildInheritance", ():void => {
+			describe( "TransientACL.removeChildInheritance", ():void => {
 
 				it( isDefined(), ():void => {
 					expect( acl.removeChildInheritance ).toBeDefined();

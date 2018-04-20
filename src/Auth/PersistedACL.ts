@@ -1,7 +1,7 @@
 import { Document } from "../Document";
 import { Pointer } from "../Pointer";
 import * as Utils from "../Utils";
-import { ACL } from "./ACL";
+import { TransientACL } from "./TransientACL";
 import { PersistedACE } from "./PersistedACE";
 import { ModelDecorator } from "../ModelDecorator";
 import { Documents } from "../Documents";
@@ -71,7 +71,7 @@ export const PersistedACL:PersistedACLFactory = {
 	decorate<T extends object>( object:T, documents:Documents ):T & PersistedACL {
 		if( PersistedACL.isDecorated( object ) ) return object;
 
-		ACL.decorate( object );
+		TransientACL.decorate( object );
 		Document.decorate( object, documents );
 
 		const acl:T & PersistedACL = object as T & PersistedACL;
