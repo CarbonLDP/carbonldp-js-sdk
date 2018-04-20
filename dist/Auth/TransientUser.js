@@ -24,7 +24,7 @@ var SCHEMA = {
         "@type": "@id",
     },
 };
-exports.User = {
+exports.TransientUser = {
     TYPE: CS_1.CS.User,
     SCHEMA: SCHEMA,
     isDecorated: function (object) {
@@ -33,10 +33,10 @@ exports.User = {
     },
     is: function (value) {
         return TransientDocument_1.TransientDocument.is(value)
-            && exports.User.isDecorated(value);
+            && exports.TransientUser.isDecorated(value);
     },
     decorate: function (object) {
-        if (exports.User.isDecorated(object))
+        if (exports.TransientUser.isDecorated(object))
             return object;
         TransientDocument_1.TransientDocument.decorate(object);
         return Object.defineProperties(object, {
@@ -49,12 +49,12 @@ exports.User = {
         });
     },
     create: function (data) {
-        return exports.User.createFrom(__assign({}, data));
+        return exports.TransientUser.createFrom(__assign({}, data));
     },
     createFrom: function (object) {
-        var user = exports.User.decorate(object);
+        var user = exports.TransientUser.decorate(object);
         user._normalize();
-        user.addType(exports.User.TYPE);
+        user.addType(exports.TransientUser.TYPE);
         return user;
     },
 };
@@ -66,4 +66,4 @@ function updateCredentials(username, password) {
     return this.credentials;
 }
 
-//# sourceMappingURL=User.js.map
+//# sourceMappingURL=TransientUser.js.map

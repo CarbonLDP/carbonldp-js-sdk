@@ -31,7 +31,7 @@ import * as Roles from "./Roles";
 import { AuthService } from "./Service";
 
 import { TokenCredentials } from "./TokenCredentials";
-import { User } from "./User";
+import { TransientUser } from "./TransientUser";
 import { UsersEndpoint } from "./UsersEndpoint";
 
 
@@ -384,7 +384,7 @@ describe( module( "carbonldp/Auth/Service" ), ():void => {
 							expect( auth.authenticatedUser ).toBeDefined();
 							expect( auth.authenticatedUser ).toEqual( jasmine.objectContaining( {
 								_resolved: false,
-								types: jasmine.arrayContaining( [ User.TYPE ] ) as any,
+								types: jasmine.arrayContaining( [ TransientUser.TYPE ] ) as any,
 							} ) );
 
 							done();
@@ -465,7 +465,7 @@ describe( module( "carbonldp/Auth/Service" ), ():void => {
 							expect( auth.authenticatedUser ).toBeDefined();
 							expect( auth.authenticatedUser ).toEqual( jasmine.objectContaining( {
 								_resolved: false,
-								types: jasmine.arrayContaining( [ User.TYPE ] ) as any,
+								types: jasmine.arrayContaining( [ TransientUser.TYPE ] ) as any,
 							} ) );
 
 							done();
@@ -523,7 +523,7 @@ describe( module( "carbonldp/Auth/Service" ), ():void => {
 							expect( auth.authenticatedUser ).toBeDefined();
 							expect( auth.authenticatedUser ).toEqual( jasmine.objectContaining( {
 								_resolved: false,
-								types: jasmine.arrayContaining( [ User.TYPE ] ) as any,
+								types: jasmine.arrayContaining( [ TransientUser.TYPE ] ) as any,
 							} ) );
 
 							done();

@@ -1,6 +1,6 @@
 import { Documents } from "../Documents";
 import { ProtectedDocument } from "../ProtectedDocument";
-import { User } from "./User";
+import { TransientUser } from "./TransientUser";
 import { UsernameAndPasswordCredentials } from "./UsernameAndPasswordCredentials";
 
 
@@ -19,17 +19,17 @@ export interface PersistedUserFactory {
 
 export const PersistedUser:PersistedUserFactory = {
 	is( value:any ):value is PersistedUser {
-		return User.isDecorated( value )
+		return TransientUser.isDecorated( value )
 			&& ProtectedDocument.is( value )
 			;
 	},
 
 	decorate<T extends object>( object:T, documents:Documents ):PersistedUser & T {
-		User.decorate( object );
+		TransientUser.decorate( object );
 		ProtectedDocument.decorate( object, documents );
 
 		const persistedUser:T & PersistedUser = object as T & PersistedUser;
-		persistedUser.addType( User.TYPE );
+		persistedUser.addType( TransientUser.TYPE );
 
 		return persistedUser;
 	},

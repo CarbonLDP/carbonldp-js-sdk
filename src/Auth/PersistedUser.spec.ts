@@ -16,7 +16,7 @@ import {
 
 import { PersistedUser } from "./PersistedUser";
 
-import { User } from "./User";
+import { TransientUser } from "./TransientUser";
 
 
 describe( module( "carbonldp/Auth/PersistedUser" ), ():void => {
@@ -26,7 +26,7 @@ describe( module( "carbonldp/Auth/PersistedUser" ), ():void => {
 		"Interface that represents the base of a persisted User in any context."
 	), ():void => {
 
-		it( extendsClass( "CarbonLDP.Auth.User" ), ():void => {} );
+		it( extendsClass( "CarbonLDP.Auth.TransientUser" ), ():void => {} );
 		it( extendsClass( "CarbonLDP.ProtectedDocument" ), ():void => {} );
 
 		let context:AbstractContext;
@@ -93,7 +93,7 @@ describe( module( "carbonldp/Auth/PersistedUser" ), ():void => {
 		"CarbonLDP.Auth.PersistedUserFactory"
 	), ():void => {
 
-		type MockPersistedUser = StrictMinus<PersistedUser, User & ProtectedDocument>;
+		type MockPersistedUser = StrictMinus<PersistedUser, TransientUser & ProtectedDocument>;
 
 		it( isDefined(), ():void => {
 			expect( PersistedUser ).toBeDefined();
@@ -108,7 +108,7 @@ describe( module( "carbonldp/Auth/PersistedUser" ), ():void => {
 			} );
 
 			it( "should call to `User.isDecorated`", ():void => {
-				const spy:jasmine.Spy = spyOn( User, "isDecorated" );
+				const spy:jasmine.Spy = spyOn( TransientUser, "isDecorated" );
 
 				const object:object = { the: "object" };
 				PersistedUser.is( object );
@@ -116,7 +116,7 @@ describe( module( "carbonldp/Auth/PersistedUser" ), ():void => {
 			} );
 
 			it( "should call to `PersistedProtectedDocument.is`", ():void => {
-				spyOn( User, "isDecorated" )
+				spyOn( TransientUser, "isDecorated" )
 					.and.returnValue( true );
 				const spy:jasmine.Spy = spyOn( ProtectedDocument, "is" );
 
@@ -126,7 +126,7 @@ describe( module( "carbonldp/Auth/PersistedUser" ), ():void => {
 			} );
 
 			it( "should return true when all verifications pass", ():void => {
-				spyOn( User, "isDecorated" )
+				spyOn( TransientUser, "isDecorated" )
 					.and.returnValue( true );
 				spyOn( ProtectedDocument, "is" )
 					.and.returnValue( true );
@@ -162,7 +162,7 @@ describe( module( "carbonldp/Auth/PersistedUser" ), ():void => {
 			} );
 
 			it( "should call `User.decorate`", ():void => {
-				const spy:jasmine.Spy = spyOn( User, "decorate" );
+				const spy:jasmine.Spy = spyOn( TransientUser, "decorate" );
 
 				const object:object = { the: "object" };
 				PersistedUser.decorate( object, null );

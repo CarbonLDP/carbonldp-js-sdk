@@ -15,7 +15,7 @@ export { ACL } from "./ACL";
 export { PersistedUser } from "./PersistedUser";
 export { TokenAuthenticator } from "./TokenAuthenticator";
 export { TokenCredentials, TokenCredentialsBase } from "./TokenCredentials";
-export { User, UserBase } from "./User";
+export { TransientUser, UserBase } from "./TransientUser";
 export { UsernameAndPasswordCredentials } from "./UsernameAndPasswordCredentials";
 export { UsersEndpoint } from "./UsersEndpoint";
 import * as PersistedRole from "./PersistedRole";

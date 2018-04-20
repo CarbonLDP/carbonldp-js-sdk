@@ -7,7 +7,7 @@ import { CredentialsSet } from "./Auth/CredentialsSet";
 import { LDAPCredentials } from "./Auth/LDAPCredentials";
 import { AuthService } from "./Auth/Service";
 import { TokenCredentials } from "./Auth/TokenCredentials";
-import { User } from "./Auth/User";
+import { TransientUser } from "./Auth/TransientUser";
 import { UsernameAndPasswordCredentials } from "./Auth/UsernameAndPasswordCredentials";
 import { Context } from "./Context";
 import { TransientDocument } from "./TransientDocument";
@@ -230,7 +230,7 @@ export class SDKContext implements Context {
 		this.extendObjectSchema( TransientACL.TYPE, TransientACL.SCHEMA );
 		this.extendObjectSchema( AuthenticatedUserInformationAccessor.TYPE, AuthenticatedUserInformationAccessor.SCHEMA );
 		this.extendObjectSchema( AuthenticatedUserMetadata.TYPE, AuthenticatedUserMetadata.SCHEMA );
-		this.extendObjectSchema( User.TYPE, User.SCHEMA );
+		this.extendObjectSchema( TransientUser.TYPE, TransientUser.SCHEMA );
 		this.extendObjectSchema( TokenCredentials.TYPE, TokenCredentials.SCHEMA );
 		this.extendObjectSchema( CredentialsSet.TYPE, CredentialsSet.SCHEMA );
 		this.extendObjectSchema( UsernameAndPasswordCredentials.TYPE, UsernameAndPasswordCredentials.SCHEMA );

@@ -31,7 +31,7 @@ import {
 	TokenCredentials,
 	TokenCredentialsBase,
 } from "./TokenCredentials";
-import { User } from "./User";
+import { TransientUser } from "./TransientUser";
 import { UsernameAndPasswordCredentials } from "./UsernameAndPasswordCredentials";
 import { UsersEndpoint } from "./UsersEndpoint";
 
@@ -80,11 +80,11 @@ describe( module( "carbonldp/Auth" ), ():void => {
 
 	it( reexports(
 		STATIC,
-		"User",
-		"carbonldp/Auth/User"
+		"TransientUser",
+		"carbonldp/Auth/TransientUser"
 	), ():void => {
-		expect( Auth.User ).toBeDefined();
-		expect( Auth.User ).toBe( User );
+		expect( Auth.TransientUser ).toBeDefined();
+		expect( Auth.TransientUser ).toBe( TransientUser );
 	} );
 
 	it( reexports(

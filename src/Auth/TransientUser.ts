@@ -16,7 +16,7 @@ export interface UserBase {
 	credentials:UsernameAndPasswordCredentials;
 }
 
-export interface User extends TransientDocument {
+export interface TransientUser extends TransientDocument {
 	name?:string;
 	credentials?:TransientFragment & UsernameAndPasswordCredentials;
 
@@ -24,21 +24,21 @@ export interface User extends TransientDocument {
 }
 
 
-export interface UserFactory {
+export interface TransientUserFactory {
 	TYPE:CS[ "User" ];
 	SCHEMA:ObjectSchema;
 
 
-	isDecorated( object:object ):object is User;
+	isDecorated( object:object ):object is TransientUser;
 
-	is( value:any ):value is User;
+	is( value:any ):value is TransientUser;
 
 
-	decorate<T extends object>( object:T ):T & User;
+	decorate<T extends object>( object:T ):T & TransientUser;
 
-	create( data:UserBase ):User;
+	create( data:UserBase ):TransientUser;
 
-	createFrom<T extends UserBase>( object:T ):T & User;
+	createFrom<T extends UserBase>( object:T ):T & TransientUser;
 }
 
 const SCHEMA:ObjectSchema = {
@@ -52,26 +52,26 @@ const SCHEMA:ObjectSchema = {
 	},
 };
 
-export const User:UserFactory = {
+export const TransientUser:TransientUserFactory = {
 	TYPE: CS.User,
 	SCHEMA,
 
 
-	isDecorated( object:object ):object is User {
+	isDecorated( object:object ):object is TransientUser {
 		return isObject( object )
 			&& hasFunction( object, "updateCredentials" )
 			;
 	},
 
-	is( value:any ):value is User {
+	is( value:any ):value is TransientUser {
 		return TransientDocument.is( value )
-			&& User.isDecorated( value )
+			&& TransientUser.isDecorated( value )
 			;
 	},
 
 
-	decorate<T extends object>( object:T ):T & User {
-		if( User.isDecorated( object ) ) return object;
+	decorate<T extends object>( object:T ):T & TransientUser {
+		if( TransientUser.isDecorated( object ) ) return object;
 
 		TransientDocument.decorate( object );
 
@@ -85,21 +85,21 @@ export const User:UserFactory = {
 		} );
 	},
 
-	create( data:UserBase ):User {
-		return User.createFrom( { ...data } );
+	create( data:UserBase ):TransientUser {
+		return TransientUser.createFrom( { ...data } );
 	},
 
-	createFrom<T extends UserBase>( object:T ):T & User {
-		const user:T & User = User.decorate( object );
+	createFrom<T extends UserBase>( object:T ):T & TransientUser {
+		const user:T & TransientUser = TransientUser.decorate( object );
 		user._normalize();
 
-		user.addType( User.TYPE );
+		user.addType( TransientUser.TYPE );
 
 		return user;
 	},
 };
 
-function updateCredentials( this:User, username?:string, password?:string ):UsernameAndPasswordCredentials {
+function updateCredentials( this:TransientUser, username?:string, password?:string ):UsernameAndPasswordCredentials {
 	const credentials:UsernameAndPasswordCredentials = UsernameAndPasswordCredentials
 		.createFrom( { username, password } );
 

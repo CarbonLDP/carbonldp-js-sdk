@@ -6020,7 +6020,7 @@ var SCHEMA = {
         "@type": "@id",
     },
 };
-exports.User = {
+exports.TransientUser = {
     TYPE: CS_1.CS.User,
     SCHEMA: SCHEMA,
     isDecorated: function (object) {
@@ -6029,10 +6029,10 @@ exports.User = {
     },
     is: function (value) {
         return TransientDocument_1.TransientDocument.is(value)
-            && exports.User.isDecorated(value);
+            && exports.TransientUser.isDecorated(value);
     },
     decorate: function (object) {
-        if (exports.User.isDecorated(object))
+        if (exports.TransientUser.isDecorated(object))
             return object;
         TransientDocument_1.TransientDocument.decorate(object);
         return Object.defineProperties(object, {
@@ -6045,12 +6045,12 @@ exports.User = {
         });
     },
     create: function (data) {
-        return exports.User.createFrom(__assign({}, data));
+        return exports.TransientUser.createFrom(__assign({}, data));
     },
     createFrom: function (object) {
-        var user = exports.User.decorate(object);
+        var user = exports.TransientUser.decorate(object);
         user._normalize();
-        user.addType(exports.User.TYPE);
+        user.addType(exports.TransientUser.TYPE);
         return user;
     },
 };
@@ -6593,8 +6593,8 @@ exports.TokenAuthenticator = TokenAuthenticator_1.TokenAuthenticator;
 var TokenCredentials_1 = __webpack_require__(60);
 exports.TokenCredentials = TokenCredentials_1.TokenCredentials;
 exports.TokenCredentialsBase = TokenCredentials_1.TokenCredentialsBase;
-var User_1 = __webpack_require__(57);
-exports.User = User_1.User;
+var TransientUser_1 = __webpack_require__(57);
+exports.TransientUser = TransientUser_1.TransientUser;
 var UsernameAndPasswordCredentials_1 = __webpack_require__(82);
 exports.UsernameAndPasswordCredentials = UsernameAndPasswordCredentials_1.UsernameAndPasswordCredentials;
 var UsersEndpoint_1 = __webpack_require__(136);
@@ -7464,17 +7464,17 @@ exports.QueryContext = QueryContext;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var ProtectedDocument_1 = __webpack_require__(45);
-var User_1 = __webpack_require__(57);
+var TransientUser_1 = __webpack_require__(57);
 exports.PersistedUser = {
     is: function (value) {
-        return User_1.User.isDecorated(value)
+        return TransientUser_1.TransientUser.isDecorated(value)
             && ProtectedDocument_1.ProtectedDocument.is(value);
     },
     decorate: function (object, documents) {
-        User_1.User.decorate(object);
+        TransientUser_1.TransientUser.decorate(object);
         ProtectedDocument_1.ProtectedDocument.decorate(object, documents);
         var persistedUser = object;
-        persistedUser.addType(User_1.User.TYPE);
+        persistedUser.addType(TransientUser_1.TransientUser.TYPE);
         return persistedUser;
     },
 };
@@ -8393,7 +8393,7 @@ var AuthenticatedUserMetadata_1 = __webpack_require__(116);
 var CredentialsSet_1 = __webpack_require__(137);
 var LDAPCredentials_1 = __webpack_require__(138);
 var TokenCredentials_1 = __webpack_require__(60);
-var User_1 = __webpack_require__(57);
+var TransientUser_1 = __webpack_require__(57);
 var UsernameAndPasswordCredentials_1 = __webpack_require__(82);
 var TransientDocument_1 = __webpack_require__(19);
 var Documents_1 = __webpack_require__(140);
@@ -8568,7 +8568,7 @@ var SDKContext = (function () {
         this.extendObjectSchema(TransientACL_1.TransientACL.TYPE, TransientACL_1.TransientACL.SCHEMA);
         this.extendObjectSchema(AuthenticatedUserInformationAccessor_1.AuthenticatedUserInformationAccessor.TYPE, AuthenticatedUserInformationAccessor_1.AuthenticatedUserInformationAccessor.SCHEMA);
         this.extendObjectSchema(AuthenticatedUserMetadata_1.AuthenticatedUserMetadata.TYPE, AuthenticatedUserMetadata_1.AuthenticatedUserMetadata.SCHEMA);
-        this.extendObjectSchema(User_1.User.TYPE, User_1.User.SCHEMA);
+        this.extendObjectSchema(TransientUser_1.TransientUser.TYPE, TransientUser_1.TransientUser.SCHEMA);
         this.extendObjectSchema(TokenCredentials_1.TokenCredentials.TYPE, TokenCredentials_1.TokenCredentials.SCHEMA);
         this.extendObjectSchema(CredentialsSet_1.CredentialsSet.TYPE, CredentialsSet_1.CredentialsSet.SCHEMA);
         this.extendObjectSchema(UsernameAndPasswordCredentials_1.UsernameAndPasswordCredentials.TYPE, UsernameAndPasswordCredentials_1.UsernameAndPasswordCredentials.SCHEMA);
@@ -10585,7 +10585,7 @@ var Auth = __importStar(__webpack_require__(68));
 var TransientACL_1 = __webpack_require__(51);
 var ACL_1 = __webpack_require__(139);
 var PersistedUser_1 = __webpack_require__(81);
-var User_1 = __webpack_require__(57);
+var TransientUser_1 = __webpack_require__(57);
 var TransientDocument_1 = __webpack_require__(19);
 var Errors = __importStar(__webpack_require__(9));
 var FreeResources_1 = __webpack_require__(142);
@@ -10649,7 +10649,7 @@ var Documents = (function () {
         else {
             decorators
                 .set(TransientProtectedDocument_1.TransientProtectedDocument.TYPE, ProtectedDocument_1.ProtectedDocument.decorate)
-                .set(User_1.User.TYPE, PersistedUser_1.PersistedUser.decorate)
+                .set(TransientUser_1.TransientUser.TYPE, PersistedUser_1.PersistedUser.decorate)
                 .set(TransientACL_1.TransientACL.TYPE, ACL_1.ACL.decorate)
                 .set(Auth.Role.RDF_CLASS, Auth.PersistedRole.Factory.decorate);
         }

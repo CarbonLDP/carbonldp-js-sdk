@@ -3,7 +3,7 @@ import {
 	Authenticator,
 	AuthService,
 	PersistedUser,
-	User,
+	TransientUser,
 } from "../../src/Auth";
 import { Context } from "../../src/Context";
 import { Pointer } from "../../src/Pointer";
@@ -13,7 +13,7 @@ export function createMockPersistedUser( context:Context ):PersistedUser {
 	const pointer:Pointer = context.documents.getPointer( "https://example.com/users/my-user/" );
 
 	return PersistedUser.decorate( Object.assign( pointer, {
-		types: [ User.TYPE ],
+		types: [ TransientUser.TYPE ],
 		username: null,
 		enabled: true,
 		name: null,

@@ -1,17 +1,17 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var ProtectedDocument_1 = require("../ProtectedDocument");
-var User_1 = require("./User");
+var TransientUser_1 = require("./TransientUser");
 exports.PersistedUser = {
     is: function (value) {
-        return User_1.User.isDecorated(value)
+        return TransientUser_1.TransientUser.isDecorated(value)
             && ProtectedDocument_1.ProtectedDocument.is(value);
     },
     decorate: function (object, documents) {
-        User_1.User.decorate(object);
+        TransientUser_1.TransientUser.decorate(object);
         ProtectedDocument_1.ProtectedDocument.decorate(object, documents);
         var persistedUser = object;
-        persistedUser.addType(User_1.User.TYPE);
+        persistedUser.addType(TransientUser_1.TransientUser.TYPE);
         return persistedUser;
     },
 };
