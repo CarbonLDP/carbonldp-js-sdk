@@ -6006,7 +6006,6 @@ var __assign = (this && this.__assign) || Object.assign || function(t) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var TransientDocument_1 = __webpack_require__(19);
 var Utils_1 = __webpack_require__(0);
-var C_1 = __webpack_require__(2);
 var CS_1 = __webpack_require__(18);
 var XSD_1 = __webpack_require__(8);
 var UsernameAndPasswordCredentials_1 = __webpack_require__(82);
@@ -6058,7 +6057,6 @@ function updateCredentials(username, password) {
     var credentials = UsernameAndPasswordCredentials_1.UsernameAndPasswordCredentials
         .createFrom({ username: username, password: password });
     this.credentials = this.createFragment(credentials);
-    this.credentials.addType(C_1.C.VolatileResource);
     return this.credentials;
 }
 

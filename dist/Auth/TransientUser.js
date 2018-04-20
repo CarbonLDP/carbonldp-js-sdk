@@ -10,7 +10,6 @@ var __assign = (this && this.__assign) || Object.assign || function(t) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var TransientDocument_1 = require("../TransientDocument");
 var Utils_1 = require("../Utils");
-var C_1 = require("../Vocabularies/C");
 var CS_1 = require("../Vocabularies/CS");
 var XSD_1 = require("../Vocabularies/XSD");
 var UsernameAndPasswordCredentials_1 = require("./UsernameAndPasswordCredentials");
@@ -62,7 +61,6 @@ function updateCredentials(username, password) {
     var credentials = UsernameAndPasswordCredentials_1.UsernameAndPasswordCredentials
         .createFrom({ username: username, password: password });
     this.credentials = this.createFragment(credentials);
-    this.credentials.addType(C_1.C.VolatileResource);
     return this.credentials;
 }
 

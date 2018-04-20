@@ -5,7 +5,6 @@ import {
 	hasFunction,
 	isObject,
 } from "../Utils";
-import { C } from "../Vocabularies/C";
 import { CS } from "../Vocabularies/CS";
 import { XSD } from "../Vocabularies/XSD";
 import { UsernameAndPasswordCredentials } from "./UsernameAndPasswordCredentials";
@@ -104,7 +103,5 @@ function updateCredentials( this:TransientUser, username?:string, password?:stri
 		.createFrom( { username, password } );
 
 	this.credentials = this.createFragment( credentials );
-	this.credentials.addType( C.VolatileResource );
-
 	return this.credentials;
 }
