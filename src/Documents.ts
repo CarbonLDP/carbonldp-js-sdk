@@ -19,7 +19,7 @@ import {
 } from "./TransientAccessPoint";
 import * as Auth from "./Auth";
 import { TransientACL } from "./Auth/TransientACL";
-import { PersistedACL } from "./Auth/PersistedACL";
+import { ACL } from "./Auth/ACL";
 import { PersistedUser } from "./Auth/PersistedUser";
 import { User } from "./Auth/User";
 import { CarbonLDP } from "./CarbonLDP";
@@ -155,7 +155,7 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 			decorators
 				.set( TransientProtectedDocument.TYPE, ProtectedDocument.decorate )
 				.set( User.TYPE, PersistedUser.decorate )
-				.set( TransientACL.TYPE, PersistedACL.decorate )
+				.set( TransientACL.TYPE, ACL.decorate )
 				.set( Auth.Role.RDF_CLASS, Auth.PersistedRole.Factory.decorate )
 			;
 		}

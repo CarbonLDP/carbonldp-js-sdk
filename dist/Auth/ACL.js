@@ -10,13 +10,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var Document_1 = require("../Document");
 var Utils = __importStar(require("../Utils"));
 var TransientACL_1 = require("./TransientACL");
-exports.PersistedACL = {
+exports.ACL = {
     isDecorated: function (object) {
         return Utils.hasPropertyDefined(object, "accessTo")
             && object["_parsePointer"] === parsePointer;
     },
     decorate: function (object, documents) {
-        if (exports.PersistedACL.isDecorated(object))
+        if (exports.ACL.isDecorated(object))
             return object;
         TransientACL_1.TransientACL.decorate(object);
         Document_1.Document.decorate(object, documents);
@@ -45,4 +45,4 @@ function parsePointer(element) {
     return Utils.isObject(element) ? element : this.getPointer(element);
 }
 
-//# sourceMappingURL=PersistedACL.js.map
+//# sourceMappingURL=ACL.js.map

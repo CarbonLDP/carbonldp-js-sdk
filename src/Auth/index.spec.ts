@@ -20,7 +20,7 @@ import { BasicToken } from "./BasicToken";
 import { CredentialsSet } from "./CredentialsSet";
 import { LDAPCredentials } from "./LDAPCredentials";
 import { PersistedACE } from "./PersistedACE";
-import { PersistedACL } from "./PersistedACL";
+import { ACL } from "./ACL";
 import * as PersistedRole from "./PersistedRole";
 import { PersistedUser } from "./PersistedUser";
 import * as Role from "./Role";
@@ -179,11 +179,11 @@ describe( module( "carbonldp/Auth" ), ():void => {
 
 	it( reexports(
 		STATIC,
-		"PersistedACL",
-		"CarbonLDP.Auth.PersistedACL"
+		"ACL",
+		"CarbonLDP.Auth.ACL"
 	), ():void => {
-		expect( Auth.PersistedACL ).toBeDefined();
-		expect( Auth.PersistedACL ).toBe( PersistedACL );
+		expect( Auth.ACL ).toBeDefined();
+		expect( Auth.ACL ).toBe( ACL );
 	} );
 
 	it( reexports(

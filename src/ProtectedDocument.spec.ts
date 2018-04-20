@@ -1,5 +1,5 @@
 import { AbstractContext } from "./AbstractContext";
-import { PersistedACL } from "./Auth/PersistedACL";
+import { ACL } from "./Auth/ACL";
 import { TransientDocument } from "./TransientDocument";
 import { Documents } from "./Documents";
 import { Document } from "./Document";
@@ -42,7 +42,7 @@ describe( module( "carbonldp/ProtectedDocument" ), ():void => {
 			"Obtains and resolve the ACL of the actual document.", [
 				{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: " Customizable options for the request." },
 			],
-			{ type: "Promise<CarbonLDP.Auth.PersistedACL>" }
+			{ type: "Promise<CarbonLDP.Auth.ACL>" }
 		), ():void => {} );
 
 	} );
@@ -137,8 +137,8 @@ describe( module( "carbonldp/ProtectedDocument" ), ():void => {
 
 		// TODO: Separate in different tests
 		it( "ProtectedDocument.decorate", ():void => {
-			expect( PersistedACL.decorate ).toBeDefined();
-			expect( Utils.isFunction( PersistedACL.decorate ) ).toBe( true );
+			expect( ACL.decorate ).toBeDefined();
+			expect( Utils.isFunction( ACL.decorate ) ).toBe( true );
 
 			const persistedDocumentSpy:jasmine.Spy = spyOn( Document, "decorate" ).and.callThrough();
 
@@ -326,10 +326,10 @@ describe( module( "carbonldp/ProtectedDocument" ), ():void => {
 
 				let promises:Promise<any>[] = [];
 
-				promises.push( protectedDocument.getACL().then( ( acl:PersistedACL ) => {
+				promises.push( protectedDocument.getACL().then( ( acl:ACL ) => {
 					expect( acl ).toBeDefined();
 
-					expect( PersistedACL.isDecorated( acl ) ).toBe( true );
+					expect( ACL.isDecorated( acl ) ).toBe( true );
 					expect( acl.entries ).toBeDefined();
 					expect( acl.entries.length ).toBe( 1 );
 					expect( acl.inheritableEntries ).toBeDefined();
@@ -338,10 +338,10 @@ describe( module( "carbonldp/ProtectedDocument" ), ():void => {
 				} ) );
 
 				const unresolvedProtectedDocument:ProtectedDocument = ProtectedDocument.decorate( { id: "http://example.com/resource/" }, documents );
-				promises.push( unresolvedProtectedDocument.getACL().then( ( acl:PersistedACL ) => {
+				promises.push( unresolvedProtectedDocument.getACL().then( ( acl:ACL ) => {
 					expect( acl ).toBeDefined();
 
-					expect( PersistedACL.isDecorated( acl ) ).toBe( true );
+					expect( ACL.isDecorated( acl ) ).toBe( true );
 					expect( acl.entries ).toBeDefined();
 					expect( acl.entries.length ).toBe( 1 );
 					expect( acl.inheritableEntries ).toBeDefined();

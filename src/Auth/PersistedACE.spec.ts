@@ -19,7 +19,7 @@ describe( module( "carbonldp/Auth/ACE" ), ():void => {
 		it( hasProperty(
 			OBLIGATORY,
 			"document",
-			"CarbonLDP.Auth.PersistedACL",
+			"CarbonLDP.Auth.ACL",
 			"Reference to the persisted ACL where the current ACE belongs."
 		), ():void => {} );
 

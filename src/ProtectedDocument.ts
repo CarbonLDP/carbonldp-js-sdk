@@ -1,4 +1,4 @@
-import { PersistedACL } from "./Auth/PersistedACL";
+import { ACL } from "./Auth/ACL";
 import { Documents } from "./Documents";
 import { RequestOptions } from "./HTTP/Request";
 import { ModelDecorator } from "./ModelDecorator";
@@ -10,7 +10,7 @@ import { CS } from "./Vocabularies/CS";
 export interface ProtectedDocument extends Document {
 	accessControlList?:Pointer;
 
-	getACL( requestOptions?:RequestOptions ):Promise<PersistedACL>;
+	getACL( requestOptions?:RequestOptions ):Promise<ACL>;
 }
 
 
@@ -59,13 +59,13 @@ interface ACLResult {
 	acl:Pointer;
 }
 
-function getACL( this:ProtectedDocument, requestOptions?:RequestOptions ):Promise<PersistedACL> {
+function getACL( this:ProtectedDocument, requestOptions?:RequestOptions ):Promise<ACL> {
 	const aclPromise:Promise<Pointer> = this.isResolved() ?
 		Promise.resolve( this.accessControlList ) :
 		this.executeSELECTQuery<ACLResult>( `SELECT ?acl WHERE {<${ this.id }> <${ CS.accessControlList }> ?acl}` )
 			.then( results => results.bindings[ 0 ].acl );
 
 	return aclPromise.then( ( acl:Pointer ) => {
-		return this._documents.get<PersistedACL>( acl.id, requestOptions );
+		return this._documents.get<ACL>( acl.id, requestOptions );
 	} );
 }

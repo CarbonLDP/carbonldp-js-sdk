@@ -3,7 +3,7 @@ import { Pointer } from "../Pointer";
 import { PersistedACE } from "./PersistedACE";
 import { ModelDecorator } from "../ModelDecorator";
 import { Documents } from "../Documents";
-export interface PersistedACL extends Document {
+export interface ACL extends Document {
     accessTo: Pointer;
     entries?: PersistedACE[];
     inheritableEntries?: PersistedACE[];
@@ -28,8 +28,8 @@ export interface PersistedACL extends Document {
     removeChildInheritance(subject: string | Pointer, permission: string | Pointer): void;
     removeChildInheritance(subject: string | Pointer, permissions: (string | Pointer)[]): void;
 }
-export interface PersistedACLFactory extends ModelDecorator<PersistedACL> {
-    isDecorated(object: object): object is PersistedACL;
-    decorate<T extends object>(object: T, documents: Documents): T & PersistedACL;
+export interface ACLFactory extends ModelDecorator<ACL> {
+    isDecorated(object: object): object is ACL;
+    decorate<T extends object>(object: T, documents: Documents): T & ACL;
 }
-export declare const PersistedACL: PersistedACLFactory;
+export declare const ACL: ACLFactory;

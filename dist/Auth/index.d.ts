@@ -11,7 +11,7 @@ export { BasicToken } from "./BasicToken";
 export { CredentialsSet } from "./CredentialsSet";
 export { LDAPCredentials } from "./LDAPCredentials";
 export { PersistedACE } from "./PersistedACE";
-export { PersistedACL } from "./PersistedACL";
+export { ACL } from "./ACL";
 export { PersistedUser } from "./PersistedUser";
 export { TokenAuthenticator } from "./TokenAuthenticator";
 export { TokenCredentials, TokenCredentialsBase } from "./TokenCredentials";

@@ -6,7 +6,7 @@ import { PersistedACE } from "./PersistedACE";
 import { ModelDecorator } from "../ModelDecorator";
 import { Documents } from "../Documents";
 
-export interface PersistedACL extends Document {
+export interface ACL extends Document {
 	accessTo:Pointer;
 	entries?:PersistedACE[];
 	inheritableEntries?:PersistedACE[];
@@ -53,28 +53,28 @@ export interface PersistedACL extends Document {
 }
 
 
-export interface PersistedACLFactory extends ModelDecorator<PersistedACL> {
-	isDecorated( object:object ):object is PersistedACL;
+export interface ACLFactory extends ModelDecorator<ACL> {
+	isDecorated( object:object ):object is ACL;
 
 
-	decorate<T extends object>( object:T, documents:Documents ):T & PersistedACL;
+	decorate<T extends object>( object:T, documents:Documents ):T & ACL;
 }
 
 
-export const PersistedACL:PersistedACLFactory = {
-	isDecorated( object:object ):object is PersistedACL {
+export const ACL:ACLFactory = {
+	isDecorated( object:object ):object is ACL {
 		return Utils.hasPropertyDefined( object, "accessTo" )
 			&& object[ "_parsePointer" ] === parsePointer
 			;
 	},
 
-	decorate<T extends object>( object:T, documents:Documents ):T & PersistedACL {
-		if( PersistedACL.isDecorated( object ) ) return object;
+	decorate<T extends object>( object:T, documents:Documents ):T & ACL {
+		if( ACL.isDecorated( object ) ) return object;
 
 		TransientACL.decorate( object );
 		Document.decorate( object, documents );
 
-		const acl:T & PersistedACL = object as T & PersistedACL;
+		const acl:T & ACL = object as T & ACL;
 		Object.defineProperties( acl, {
 			"_parsePointer": {
 				writable: true,
@@ -98,6 +98,6 @@ export const PersistedACL:PersistedACLFactory = {
 	},
 };
 
-function parsePointer( this:PersistedACL, element:string | Pointer ):Pointer {
+function parsePointer( this:ACL, element:string | Pointer ):Pointer {
 	return Utils.isObject( element ) ? element : this.getPointer( element );
 }

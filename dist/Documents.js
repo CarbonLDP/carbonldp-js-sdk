@@ -11,7 +11,7 @@ var tokens_1 = require("sparqler/tokens");
 var TransientAccessPoint_1 = require("./TransientAccessPoint");
 var Auth = __importStar(require("./Auth"));
 var TransientACL_1 = require("./Auth/TransientACL");
-var PersistedACL_1 = require("./Auth/PersistedACL");
+var ACL_1 = require("./Auth/ACL");
 var PersistedUser_1 = require("./Auth/PersistedUser");
 var User_1 = require("./Auth/User");
 var TransientDocument_1 = require("./TransientDocument");
@@ -78,7 +78,7 @@ var Documents = (function () {
             decorators
                 .set(TransientProtectedDocument_1.TransientProtectedDocument.TYPE, ProtectedDocument_1.ProtectedDocument.decorate)
                 .set(User_1.User.TYPE, PersistedUser_1.PersistedUser.decorate)
-                .set(TransientACL_1.TransientACL.TYPE, PersistedACL_1.PersistedACL.decorate)
+                .set(TransientACL_1.TransientACL.TYPE, ACL_1.ACL.decorate)
                 .set(Auth.Role.RDF_CLASS, Auth.PersistedRole.Factory.decorate);
         }
         this._documentDecorators = decorators;

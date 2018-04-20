@@ -17,12 +17,12 @@ import * as Utils from "./../Utils";
 
 import { TransientACL } from "./TransientACL";
 
-import { PersistedACL } from "./PersistedACL";
+import { ACL } from "./ACL";
 
-describe( module( "carbonldp/Auth/PersistedACL" ), ():void => {
+describe( module( "carbonldp/Auth/ACL" ), ():void => {
 
 	describe( interfaze(
-		"CarbonLDP.Auth.PersistedACL",
+		"CarbonLDP.Auth.ACL",
 		"Interface that represents a persisted Access Control List (ACL)."
 	), ():void => {
 
@@ -238,55 +238,55 @@ describe( module( "carbonldp/Auth/PersistedACL" ), ():void => {
 	} );
 
 	describe( interfaze(
-		"CarbonLDP.Auth.PersistedACLFactory",
-		"Interface with factory, decorate and utils methods for `CarbonLDP.Auth.PersistedACL` objects."
+		"CarbonLDP.Auth.ACLFactory",
+		"Interface with factory, decorate and utils methods for `CarbonLDP.Auth.ACL` objects."
 	), ():void => {
 
 		it( hasMethod(
 			OBLIGATORY,
 			"isDecorated",
-			"Return true if the object provided has the properties and methods of a `CarbonLDP.Auth.PersistedACL` object.", [
+			"Return true if the object provided has the properties and methods of a `CarbonLDP.Auth.ACL` object.", [
 				{ name: "object", type: "object", description: "The object to analise." },
 			],
-			{ type: "object is CarbonLDP.Auth.PersistedACL" }
+			{ type: "object is CarbonLDP.Auth.ACL" }
 		), ():void => {} );
 
 		it( hasMethod(
 			OBLIGATORY,
 			"decorate",
 			[ "T extends object" ],
-			"Decorate the object with the properties and methods of a `CarbonLDP.Auth.PersistedACL` object.", [
+			"Decorate the object with the properties and methods of a `CarbonLDP.Auth.ACL` object.", [
 				{ name: "object", type: "T", description: "The object to decorate." },
 			],
-			{ type: "T & CarbonLDP.Auth.PersistedACL" }
+			{ type: "T & CarbonLDP.Auth.ACL" }
 		), ():void => {} );
 
 	} );
 
 	describe( property(
 		STATIC,
-		"PersistedACL",
-		"CarbonLDP.Auth.PersistedACLFactory",
-		"Constant that implements the `CarbonLDP.Auth.PersistedACLFactory` interface."
+		"ACL",
+		"CarbonLDP.Auth.ACLFactory",
+		"Constant that implements the `CarbonLDP.Auth.ACLFactory` interface."
 	), ():void => {
 
 		it( isDefined(), ():void => {
-			expect( PersistedACL ).toBeDefined();
-			expect( PersistedACL ).toEqual( jasmine.any( Object ) );
+			expect( ACL ).toBeDefined();
+			expect( ACL ).toEqual( jasmine.any( Object ) );
 		} );
 
 		// TODO: Separate in different tests
-		it( "PersistedACL.isDecorated", ():void => {
-			expect( PersistedACL.isDecorated ).toBeDefined();
-			expect( Utils.isFunction( PersistedACL.isDecorated ) ).toBe( true );
+		it( "ACL.isDecorated", ():void => {
+			expect( ACL.isDecorated ).toBeDefined();
+			expect( Utils.isFunction( ACL.isDecorated ) ).toBe( true );
 
 			// TODO: Figure out how to test assertion of internal function
 		} );
 
 		// TODO: Separate in different tests
-		it( "PersistedACL.decorate", ():void => {
-			expect( PersistedACL.decorate ).toBeDefined();
-			expect( Utils.isFunction( PersistedACL.decorate ) ).toBe( true );
+		it( "ACL.decorate", ():void => {
+			expect( ACL.decorate ).toBeDefined();
+			expect( Utils.isFunction( ACL.decorate ) ).toBe( true );
 
 			const spy:jasmine.Spy = spyOn( TransientACL, "decorate" ).and.callThrough();
 
@@ -296,7 +296,7 @@ describe( module( "carbonldp/Auth/PersistedACL" ), ():void => {
 				accessTo: documents.getPointer( "http://example.com/some/" ),
 			};
 
-			PersistedACL.decorate( object, documents );
+			ACL.decorate( object, documents );
 			expect( spy ).toHaveBeenCalledTimes( 1 );
 		} );
 
