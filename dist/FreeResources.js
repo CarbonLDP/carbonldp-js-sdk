@@ -10,7 +10,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var IDAlreadyInUseError_1 = require("./Errors/IDAlreadyInUseError");
 var IllegalArgumentError_1 = require("./Errors/IllegalArgumentError");
 var URI_1 = require("./RDF/URI");
-var Resource_1 = require("./Resource");
+var TransientResource_1 = require("./TransientResource");
 var Utils = __importStar(require("./Utils"));
 function hasPointer(id) {
     if (!inLocalScope(id)) {
@@ -54,7 +54,7 @@ function createResourceFrom(object, id) {
     else {
         id = URI_1.URI.generateBNodeID();
     }
-    var resource = Resource_1.Resource.createFrom(object, id);
+    var resource = TransientResource_1.TransientResource.createFrom(object, id);
     this._resourcesIndex.set(id, resource);
     return resource;
 }

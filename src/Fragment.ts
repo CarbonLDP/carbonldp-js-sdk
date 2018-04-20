@@ -12,7 +12,7 @@ import {
 	addTypeInResource,
 	hasTypeInResource,
 	removeTypeInResource,
-} from "./Resource";
+} from "./TransientResource";
 import { isObject } from "./Utils";
 
 export interface Fragment extends PersistedResource, TransientFragment {

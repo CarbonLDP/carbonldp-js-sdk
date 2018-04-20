@@ -1,4 +1,4 @@
-import { Resource } from "../Resource";
+import { TransientResource } from "../TransientResource";
 import {
 	extendsClass,
 	hasProperty,
@@ -24,8 +24,8 @@ describe( module( "carbonldp/LDP/ValidationError" ), ():void => {
 		"Interface that contains the properties that describe how the validation failed."
 	), ():void => {
 
-		it( extendsClass( "CarbonLDP.Resource" ), ():void => {
-			const target:Resource = {} as ValidationError;
+		it( extendsClass( "CarbonLDP.TransientResource" ), ():void => {
+			const target:TransientResource = {} as ValidationError;
 			expect( target ).toBeDefined();
 		} );
 

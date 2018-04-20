@@ -25,7 +25,7 @@ function removeTypeInResource(type) {
         this.types.splice(index, 1);
 }
 exports.removeTypeInResource = removeTypeInResource;
-exports.Resource = {
+exports.TransientResource = {
     isDecorated: function (object) {
         return (Utils.hasPropertyDefined(object, "types")
             && Utils.hasFunction(object, "addType")
@@ -34,13 +34,13 @@ exports.Resource = {
     },
     is: function (object) {
         return Pointer_1.Pointer.is(object)
-            && exports.Resource.isDecorated(object);
+            && exports.TransientResource.isDecorated(object);
     },
     create: function (id, types) {
-        return exports.Resource.createFrom({}, id, types);
+        return exports.TransientResource.createFrom({}, id, types);
     },
     createFrom: function (object, id, types) {
-        var resource = exports.Resource.decorate(object);
+        var resource = exports.TransientResource.decorate(object);
         if (id)
             resource.id = id;
         if (types)
@@ -49,7 +49,7 @@ exports.Resource = {
     },
     decorate: function (object) {
         var resource = object;
-        if (exports.Resource.isDecorated(object))
+        if (exports.TransientResource.isDecorated(object))
             return resource;
         Pointer_1.Pointer.decorate(resource);
         Object.defineProperties(resource, {
@@ -82,4 +82,4 @@ exports.Resource = {
     },
 };
 
-//# sourceMappingURL=Resource.js.map
+//# sourceMappingURL=TransientResource.js.map

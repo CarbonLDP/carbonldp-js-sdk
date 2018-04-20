@@ -14,7 +14,7 @@ import {
 	ObjectSchemaDigester,
 } from "../ObjectSchema";
 import { Pointer } from "../Pointer";
-import { Resource } from "../Resource";
+import { TransientResource } from "../TransientResource";
 import {
 	clazz,
 	constructor,
@@ -98,8 +98,8 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 				"Creates and adds the delta to the patch, of the provided old and new resource.",
 				[
 					{ name: "schema", type: "CarbonLDP.DigestedObjectSchema", description: "The schema of the resource to create its delta." },
-					{ name: "oldResource", type: "CarbonLDP.Resource", description: "The old representation of the resource to create the delta." },
-					{ name: "newResource", type: "CarbonLDP.Resource", description: "The current representation of the resource to create the delta." },
+					{ name: "oldResource", type: "CarbonLDP.TransientResource", description: "The old representation of the resource to create the delta." },
+					{ name: "newResource", type: "CarbonLDP.TransientResource", description: "The current representation of the resource to create the delta." },
 				]
 			), ():void => {
 			} );
@@ -122,11 +122,11 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 				it( "should guess deleted string", ():void => {
 					const deltaCreator:DeltaCreator = new DeltaCreator( jsonldConverter );
 
-					const oldResource:Resource = Resource.createFrom( {
+					const oldResource:TransientResource = TransientResource.createFrom( {
 						id: "http://example.org/resource/",
 						property: "string",
 					} );
-					const newResource:Resource = Resource.createFrom( {
+					const newResource:TransientResource = TransientResource.createFrom( {
 						id: "http://example.org/resource/",
 					} );
 
@@ -142,11 +142,11 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 				it( "should guess deleted number", ():void => {
 					const deltaCreator:DeltaCreator = new DeltaCreator( jsonldConverter );
 
-					const oldResource:Resource = Resource.createFrom( {
+					const oldResource:TransientResource = TransientResource.createFrom( {
 						id: "http://example.org/resource/",
 						property: 1,
 					} );
-					const newResource:Resource = Resource.createFrom( {
+					const newResource:TransientResource = TransientResource.createFrom( {
 						id: "http://example.org/resource/",
 					} );
 
@@ -162,11 +162,11 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 				it( "should guess deleted boolean", ():void => {
 					const deltaCreator:DeltaCreator = new DeltaCreator( jsonldConverter );
 
-					const oldResource:Resource = Resource.createFrom( {
+					const oldResource:TransientResource = TransientResource.createFrom( {
 						id: "http://example.org/resource/",
 						property: true,
 					} );
-					const newResource:Resource = Resource.createFrom( {
+					const newResource:TransientResource = TransientResource.createFrom( {
 						id: "http://example.org/resource/",
 					} );
 
@@ -182,11 +182,11 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 				it( "should guess deleted date", ():void => {
 					const deltaCreator:DeltaCreator = new DeltaCreator( jsonldConverter );
 
-					const oldResource:Resource = Resource.createFrom( {
+					const oldResource:TransientResource = TransientResource.createFrom( {
 						id: "http://example.org/resource/",
 						property: new Date( "2000-01-01" ),
 					} );
-					const newResource:Resource = Resource.createFrom( {
+					const newResource:TransientResource = TransientResource.createFrom( {
 						id: "http://example.org/resource/",
 					} );
 
@@ -202,11 +202,11 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 				it( "should guess deleted resource pointer", ():void => {
 					const deltaCreator:DeltaCreator = new DeltaCreator( jsonldConverter );
 
-					const oldResource:Resource = Resource.createFrom( {
+					const oldResource:TransientResource = TransientResource.createFrom( {
 						id: "http://example.org/resource/",
 						property: Pointer.create( "http://example.org/pointer/" ),
 					} );
-					const newResource:Resource = Resource.createFrom( {
+					const newResource:TransientResource = TransientResource.createFrom( {
 						id: "http://example.org/resource/",
 					} );
 
@@ -222,11 +222,11 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 				it( "should guess deleted blank node pointer", ():void => {
 					const deltaCreator:DeltaCreator = new DeltaCreator( jsonldConverter );
 
-					const oldResource:Resource = Resource.createFrom( {
+					const oldResource:TransientResource = TransientResource.createFrom( {
 						id: "http://example.org/resource/",
 						property: Pointer.create( "_:blank-node" ),
 					} );
-					const newResource:Resource = Resource.createFrom( {
+					const newResource:TransientResource = TransientResource.createFrom( {
 						id: "http://example.org/resource/",
 					} );
 
@@ -242,7 +242,7 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 				it( "should guess deleted array", ():void => {
 					const deltaCreator:DeltaCreator = new DeltaCreator( jsonldConverter );
 
-					const oldResource:Resource = Resource.createFrom( {
+					const oldResource:TransientResource = TransientResource.createFrom( {
 						id: "http://example.org/resource/",
 						property: [
 							"string",
@@ -252,7 +252,7 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 							Pointer.create( "http://example.org/pointer/" ),
 						],
 					} );
-					const newResource:Resource = Resource.createFrom( {
+					const newResource:TransientResource = TransientResource.createFrom( {
 						id: "http://example.org/resource/",
 					} );
 
@@ -272,7 +272,7 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 				it( "should ignore deleted functions", ():void => {
 					const deltaCreator:DeltaCreator = new DeltaCreator( jsonldConverter );
 
-					const oldResource:Resource = Resource.createFrom( {
+					const oldResource:TransientResource = TransientResource.createFrom( {
 						id: "http://example.org/resource/",
 						property: [
 							"valid value",
@@ -280,7 +280,7 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 						],
 						invalidFunction():void {},
 					} as object );
-					const newResource:Resource = Resource.createFrom( {
+					const newResource:TransientResource = TransientResource.createFrom( {
 						id: "http://example.org/resource/",
 					} );
 
@@ -296,7 +296,7 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 				it( "should ignore deleted unsupported elements", ():void => {
 					const deltaCreator:DeltaCreator = new DeltaCreator( jsonldConverter );
 
-					const oldResource:Resource = Resource.createFrom( {
+					const oldResource:TransientResource = TransientResource.createFrom( {
 						id: "http://example.org/resource/",
 						property: [
 							"valid value",
@@ -307,7 +307,7 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 						property2: new Map(),
 						property3: new Set(),
 					} as object );
-					const newResource:Resource = Resource.createFrom( {
+					const newResource:TransientResource = TransientResource.createFrom( {
 						id: "http://example.org/resource/",
 					} );
 
@@ -325,10 +325,10 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 					const deltaCreator:DeltaCreator = new DeltaCreator( jsonldConverter );
 
 
-					const oldResource:Resource = Resource.createFrom( {
+					const oldResource:TransientResource = TransientResource.createFrom( {
 						id: "http://example.org/resource/",
 					} );
-					const newResource:Resource = Resource.createFrom( {
+					const newResource:TransientResource = TransientResource.createFrom( {
 						id: "http://example.org/resource/",
 						property: "string",
 					} );
@@ -345,10 +345,10 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 				it( "should guess added number", ():void => {
 					const deltaCreator:DeltaCreator = new DeltaCreator( jsonldConverter );
 
-					const oldResource:Resource = Resource.createFrom( {
+					const oldResource:TransientResource = TransientResource.createFrom( {
 						id: "http://example.org/resource/",
 					} );
-					const newResource:Resource = Resource.createFrom( {
+					const newResource:TransientResource = TransientResource.createFrom( {
 						id: "http://example.org/resource/",
 						property: 1,
 					} );
@@ -365,10 +365,10 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 				it( "should guess added boolean", ():void => {
 					const deltaCreator:DeltaCreator = new DeltaCreator( jsonldConverter );
 
-					const oldResource:Resource = Resource.createFrom( {
+					const oldResource:TransientResource = TransientResource.createFrom( {
 						id: "http://example.org/resource/",
 					} );
-					const newResource:Resource = Resource.createFrom( {
+					const newResource:TransientResource = TransientResource.createFrom( {
 						id: "http://example.org/resource/",
 						property: true,
 					} );
@@ -384,10 +384,10 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 				it( "should guess added date", ():void => {
 					const deltaCreator:DeltaCreator = new DeltaCreator( jsonldConverter );
 
-					const oldResource:Resource = Resource.createFrom( {
+					const oldResource:TransientResource = TransientResource.createFrom( {
 						id: "http://example.org/resource/",
 					} );
-					const newResource:Resource = Resource.createFrom( {
+					const newResource:TransientResource = TransientResource.createFrom( {
 						id: "http://example.org/resource/",
 						property: new Date( "2000-01-01" ),
 					} );
@@ -403,10 +403,10 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 				it( "should guess added resource pointer", ():void => {
 					const deltaCreator:DeltaCreator = new DeltaCreator( jsonldConverter );
 
-					const oldResource:Resource = Resource.createFrom( {
+					const oldResource:TransientResource = TransientResource.createFrom( {
 						id: "http://example.org/resource/",
 					} );
-					const newResource:Resource = Resource.createFrom( {
+					const newResource:TransientResource = TransientResource.createFrom( {
 						id: "http://example.org/resource/",
 						property: Pointer.create( "http://example.org/pointer/" ),
 					} );
@@ -422,10 +422,10 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 				it( "should guess added blank node pointer", ():void => {
 					const deltaCreator:DeltaCreator = new DeltaCreator( jsonldConverter );
 
-					const oldResource:Resource = Resource.createFrom( {
+					const oldResource:TransientResource = TransientResource.createFrom( {
 						id: "http://example.org/resource/",
 					} );
-					const newResource:Resource = Resource.createFrom( {
+					const newResource:TransientResource = TransientResource.createFrom( {
 						id: "http://example.org/resource/",
 						property: Pointer.create( "_:blank-node" ),
 					} );
@@ -441,10 +441,10 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 				it( "should guess added array", ():void => {
 					const deltaCreator:DeltaCreator = new DeltaCreator( jsonldConverter );
 
-					const oldResource:Resource = Resource.createFrom( {
+					const oldResource:TransientResource = TransientResource.createFrom( {
 						id: "http://example.org/resource/",
 					} );
-					const newResource:Resource = Resource.createFrom( {
+					const newResource:TransientResource = TransientResource.createFrom( {
 						id: "http://example.org/resource/",
 						property: [
 							"string",
@@ -471,10 +471,10 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 				it( "should ignore added functions", ():void => {
 					const deltaCreator:DeltaCreator = new DeltaCreator( jsonldConverter );
 
-					const oldResource:Resource = Resource.createFrom( {
+					const oldResource:TransientResource = TransientResource.createFrom( {
 						id: "http://example.org/resource/",
 					} );
-					const newResource:Resource = Resource.createFrom( {
+					const newResource:TransientResource = TransientResource.createFrom( {
 						id: "http://example.org/resource/",
 						property: [
 							"valid value",
@@ -495,10 +495,10 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 				it( "should ignore added unsupported elements", ():void => {
 					const deltaCreator:DeltaCreator = new DeltaCreator( jsonldConverter );
 
-					const oldResource:Resource = Resource.createFrom( {
+					const oldResource:TransientResource = TransientResource.createFrom( {
 						id: "http://example.org/resource/",
 					} );
-					const newResource:Resource = Resource.createFrom( {
+					const newResource:TransientResource = TransientResource.createFrom( {
 						id: "http://example.org/resource/",
 						property: [
 							"valid value",
@@ -524,11 +524,11 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 				it( "should delete new property if set to null", ():void => {
 					const deltaCreator:DeltaCreator = new DeltaCreator( jsonldConverter );
 
-					const oldResource:Resource = Resource.createFrom( {
+					const oldResource:TransientResource = TransientResource.createFrom( {
 						id: "http://example.org/resource/",
 						property: "string",
 					} );
-					const newResource:Resource = Resource.createFrom( {
+					const newResource:TransientResource = TransientResource.createFrom( {
 						id: "http://example.org/resource/",
 						property: null,
 					} );
@@ -545,11 +545,11 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 				it( "should delete new property if set to undefined", ():void => {
 					const deltaCreator:DeltaCreator = new DeltaCreator( jsonldConverter );
 
-					const oldResource:Resource = Resource.createFrom( {
+					const oldResource:TransientResource = TransientResource.createFrom( {
 						id: "http://example.org/resource/",
 						property: "string",
 					} );
-					const newResource:Resource = Resource.createFrom( {
+					const newResource:TransientResource = TransientResource.createFrom( {
 						id: "http://example.org/resource/",
 						property: void 0,
 					} );
@@ -566,11 +566,11 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 				it( "should add old property if set to null", ():void => {
 					const deltaCreator:DeltaCreator = new DeltaCreator( jsonldConverter );
 
-					const oldResource:Resource = Resource.createFrom( {
+					const oldResource:TransientResource = TransientResource.createFrom( {
 						id: "http://example.org/resource/",
 						property: void 0,
 					} );
-					const newResource:Resource = Resource.createFrom( {
+					const newResource:TransientResource = TransientResource.createFrom( {
 						id: "http://example.org/resource/",
 						property: "string",
 					} );
@@ -587,11 +587,11 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 				it( "should add old property if set to undefined", ():void => {
 					const deltaCreator:DeltaCreator = new DeltaCreator( jsonldConverter );
 
-					const oldResource:Resource = Resource.createFrom( {
+					const oldResource:TransientResource = TransientResource.createFrom( {
 						id: "http://example.org/resource/",
 						property: void 0,
 					} );
-					const newResource:Resource = Resource.createFrom( {
+					const newResource:TransientResource = TransientResource.createFrom( {
 						id: "http://example.org/resource/",
 						property: "string",
 					} );
@@ -609,7 +609,7 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 				it( "should detect added and deleted elements from an array", ():void => {
 					const deltaCreator:DeltaCreator = new DeltaCreator( jsonldConverter );
 
-					const oldResource:Resource = Resource.createFrom( {
+					const oldResource:TransientResource = TransientResource.createFrom( {
 						property: [
 							"delete string",
 							10,
@@ -622,7 +622,7 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 							Pointer.create( "http://example.org/pointer/" ),
 						],
 					} );
-					const newResource:Resource = Resource.createFrom( {
+					const newResource:TransientResource = TransientResource.createFrom( {
 						id: "http://example.org/resource/",
 						property: [
 							Pointer.create( "http://example.org/pointer/" ),
@@ -656,11 +656,11 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 				it( "should detect deleted types", ():void => {
 					const deltaCreator:DeltaCreator = new DeltaCreator( jsonldConverter );
 
-					const oldResource:Resource = Resource.createFrom( {
+					const oldResource:TransientResource = TransientResource.createFrom( {
 						id: "http://example.org/resource/",
 						types: [ "http://example.org/vocab#Document", "Type-1", "Type-2" ],
 					} );
-					const newResource:Resource = Resource.createFrom( {
+					const newResource:TransientResource = TransientResource.createFrom( {
 						id: "http://example.org/resource/",
 						types: [ "Type-1" ],
 					} );
@@ -689,11 +689,11 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 						},
 					} );
 
-					const oldResource:Resource = Resource.createFrom( {
+					const oldResource:TransientResource = TransientResource.createFrom( {
 						id: "http://example.org/resource/",
 						property: "string",
 					} );
-					const newResource:Resource = Resource.createFrom( {
+					const newResource:TransientResource = TransientResource.createFrom( {
 						id: "http://example.org/resource/",
 					} );
 
@@ -717,11 +717,11 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 						},
 					} );
 
-					const oldResource:Resource = Resource.createFrom( {
+					const oldResource:TransientResource = TransientResource.createFrom( {
 						id: "http://example.org/resource/",
 						property: "string",
 					} );
-					const newResource:Resource = Resource.createFrom( {
+					const newResource:TransientResource = TransientResource.createFrom( {
 						id: "http://example.org/resource/",
 					} );
 
@@ -744,11 +744,11 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 						},
 					} );
 
-					const oldResource:Resource = Resource.createFrom( {
+					const oldResource:TransientResource = TransientResource.createFrom( {
 						id: "http://example.org/resource/",
 						property: 1,
 					} );
-					const newResource:Resource = Resource.createFrom( {
+					const newResource:TransientResource = TransientResource.createFrom( {
 						id: "http://example.org/resource/",
 					} );
 
@@ -771,11 +771,11 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 						},
 					} );
 
-					const oldResource:Resource = Resource.createFrom( {
+					const oldResource:TransientResource = TransientResource.createFrom( {
 						id: "http://example.org/resource/",
 						property: 10.01,
 					} );
-					const newResource:Resource = Resource.createFrom( {
+					const newResource:TransientResource = TransientResource.createFrom( {
 						id: "http://example.org/resource/",
 					} );
 
@@ -798,11 +798,11 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 						},
 					} );
 
-					const oldResource:Resource = Resource.createFrom( {
+					const oldResource:TransientResource = TransientResource.createFrom( {
 						id: "http://example.org/resource/",
 						property: true,
 					} );
-					const newResource:Resource = Resource.createFrom( {
+					const newResource:TransientResource = TransientResource.createFrom( {
 						id: "http://example.org/resource/",
 					} );
 
@@ -825,11 +825,11 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 						},
 					} );
 
-					const oldResource:Resource = Resource.createFrom( {
+					const oldResource:TransientResource = TransientResource.createFrom( {
 						id: "http://example.org/resource/",
 						property: new Date( "2000-01-01" ),
 					} );
-					const newResource:Resource = Resource.createFrom( {
+					const newResource:TransientResource = TransientResource.createFrom( {
 						id: "http://example.org/resource/",
 					} );
 
@@ -852,11 +852,11 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 						},
 					} );
 
-					const oldResource:Resource = Resource.createFrom( {
+					const oldResource:TransientResource = TransientResource.createFrom( {
 						id: "http://example.org/resource/",
 						property: Pointer.create( "http://example.org/pointer/" ),
 					} );
-					const newResource:Resource = Resource.createFrom( {
+					const newResource:TransientResource = TransientResource.createFrom( {
 						id: "http://example.org/resource/",
 					} );
 
@@ -879,11 +879,11 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 						},
 					} );
 
-					const oldResource:Resource = Resource.createFrom( {
+					const oldResource:TransientResource = TransientResource.createFrom( {
 						id: "http://example.org/resource/",
 						property: Pointer.create( "_:blank-node" ),
 					} );
-					const newResource:Resource = Resource.createFrom( {
+					const newResource:TransientResource = TransientResource.createFrom( {
 						id: "http://example.org/resource/",
 					} );
 
@@ -905,7 +905,7 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 						},
 					} );
 
-					const oldResource:Resource = Resource.createFrom( {
+					const oldResource:TransientResource = TransientResource.createFrom( {
 						id: "http://example.org/resource/",
 						property: [
 							"string",
@@ -915,7 +915,7 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 							Pointer.create( "http://example.org/pointer/" ),
 						],
 					} );
-					const newResource:Resource = Resource.createFrom( {
+					const newResource:TransientResource = TransientResource.createFrom( {
 						id: "http://example.org/resource/",
 					} );
 
@@ -938,7 +938,7 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 						},
 					} );
 
-					const oldResource:Resource = Resource.createFrom( {
+					const oldResource:TransientResource = TransientResource.createFrom( {
 						id: "http://example.org/resource/",
 						property: [
 							"string",
@@ -948,7 +948,7 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 							Pointer.create( "http://example.org/pointer/" ),
 						],
 					} );
-					const newResource:Resource = Resource.createFrom( {
+					const newResource:TransientResource = TransientResource.createFrom( {
 						id: "http://example.org/resource/",
 					} );
 
@@ -975,7 +975,7 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 						},
 					} );
 
-					const oldResource:Resource = Resource.createFrom( {
+					const oldResource:TransientResource = TransientResource.createFrom( {
 						id: "http://example.org/resource/",
 						property: [
 							"string 1",
@@ -983,7 +983,7 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 							"string 3",
 						],
 					} );
-					const newResource:Resource = Resource.createFrom( {
+					const newResource:TransientResource = TransientResource.createFrom( {
 						id: "http://example.org/resource/",
 					} );
 
@@ -1009,7 +1009,7 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 						},
 					} );
 
-					const oldResource:Resource = Resource.createFrom( {
+					const oldResource:TransientResource = TransientResource.createFrom( {
 						id: "http://example.org/resource/",
 						property: {
 							"en": "string",
@@ -1017,7 +1017,7 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 							"es": "cadena",
 						},
 					} );
-					const newResource:Resource = Resource.createFrom( {
+					const newResource:TransientResource = TransientResource.createFrom( {
 						id: "http://example.org/resource/",
 					} );
 
@@ -1042,7 +1042,7 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 						},
 					} );
 
-					const oldResource:Resource = Resource.createFrom( {
+					const oldResource:TransientResource = TransientResource.createFrom( {
 						id: "http://example.org/resource/",
 						property: [
 							"string",
@@ -1052,7 +1052,7 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 							Pointer.create( "http://example.org/pointer/" ),
 						],
 					} );
-					const newResource:Resource = Resource.createFrom( {
+					const newResource:TransientResource = TransientResource.createFrom( {
 						id: "http://example.org/resource/",
 					} );
 
@@ -1084,7 +1084,7 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 						},
 					} );
 
-					const oldResource:Resource = Resource.createFrom( {
+					const oldResource:TransientResource = TransientResource.createFrom( {
 						id: "http://example.org/resource/",
 						property: [
 							"string 1",
@@ -1092,7 +1092,7 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 							"string 3",
 						],
 					} );
-					const newResource:Resource = Resource.createFrom( {
+					const newResource:TransientResource = TransientResource.createFrom( {
 						id: "http://example.org/resource/",
 					} );
 
@@ -1124,10 +1124,10 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 						},
 					} );
 
-					const oldResource:Resource = Resource.createFrom( {
+					const oldResource:TransientResource = TransientResource.createFrom( {
 						id: "http://example.org/resource/",
 					} );
-					const newResource:Resource = Resource.createFrom( {
+					const newResource:TransientResource = TransientResource.createFrom( {
 						id: "http://example.org/resource/",
 						property: "string",
 					} );
@@ -1152,10 +1152,10 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 						},
 					} );
 
-					const oldResource:Resource = Resource.createFrom( {
+					const oldResource:TransientResource = TransientResource.createFrom( {
 						id: "http://example.org/resource/",
 					} );
-					const newResource:Resource = Resource.createFrom( {
+					const newResource:TransientResource = TransientResource.createFrom( {
 						id: "http://example.org/resource/",
 						property: "string",
 					} );
@@ -1179,10 +1179,10 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 						},
 					} );
 
-					const oldResource:Resource = Resource.createFrom( {
+					const oldResource:TransientResource = TransientResource.createFrom( {
 						id: "http://example.org/resource/",
 					} );
-					const newResource:Resource = Resource.createFrom( {
+					const newResource:TransientResource = TransientResource.createFrom( {
 						id: "http://example.org/resource/",
 						property: 1,
 					} );
@@ -1206,10 +1206,10 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 						},
 					} );
 
-					const oldResource:Resource = Resource.createFrom( {
+					const oldResource:TransientResource = TransientResource.createFrom( {
 						id: "http://example.org/resource/",
 					} );
-					const newResource:Resource = Resource.createFrom( {
+					const newResource:TransientResource = TransientResource.createFrom( {
 						id: "http://example.org/resource/",
 						property: 10.01,
 					} );
@@ -1233,10 +1233,10 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 						},
 					} );
 
-					const oldResource:Resource = Resource.createFrom( {
+					const oldResource:TransientResource = TransientResource.createFrom( {
 						id: "http://example.org/resource/",
 					} );
-					const newResource:Resource = Resource.createFrom( {
+					const newResource:TransientResource = TransientResource.createFrom( {
 						id: "http://example.org/resource/",
 						property: true,
 					} );
@@ -1260,10 +1260,10 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 						},
 					} );
 
-					const oldResource:Resource = Resource.createFrom( {
+					const oldResource:TransientResource = TransientResource.createFrom( {
 						id: "http://example.org/resource/",
 					} );
-					const newResource:Resource = Resource.createFrom( {
+					const newResource:TransientResource = TransientResource.createFrom( {
 						id: "http://example.org/resource/",
 						property: new Date( "2000-01-01" ),
 					} );
@@ -1287,10 +1287,10 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 						},
 					} );
 
-					const oldResource:Resource = Resource.createFrom( {
+					const oldResource:TransientResource = TransientResource.createFrom( {
 						id: "http://example.org/resource/",
 					} );
-					const newResource:Resource = Resource.createFrom( {
+					const newResource:TransientResource = TransientResource.createFrom( {
 						id: "http://example.org/resource/",
 						property: Pointer.create( "http://example.org/pointer/" ),
 					} );
@@ -1314,10 +1314,10 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 						},
 					} );
 
-					const oldResource:Resource = Resource.createFrom( {
+					const oldResource:TransientResource = TransientResource.createFrom( {
 						id: "http://example.org/resource/",
 					} );
-					const newResource:Resource = Resource.createFrom( {
+					const newResource:TransientResource = TransientResource.createFrom( {
 						id: "http://example.org/resource/",
 						property: Pointer.create( "_:blank-node" ),
 					} );
@@ -1340,10 +1340,10 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 						},
 					} );
 
-					const oldResource:Resource = Resource.createFrom( {
+					const oldResource:TransientResource = TransientResource.createFrom( {
 						id: "http://example.org/resource/",
 					} );
-					const newResource:Resource = Resource.createFrom( {
+					const newResource:TransientResource = TransientResource.createFrom( {
 						id: "http://example.org/resource/",
 						property: [
 							"string",
@@ -1373,10 +1373,10 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 						},
 					} );
 
-					const oldResource:Resource = Resource.createFrom( {
+					const oldResource:TransientResource = TransientResource.createFrom( {
 						id: "http://example.org/resource/",
 					} );
-					const newResource:Resource = Resource.createFrom( {
+					const newResource:TransientResource = TransientResource.createFrom( {
 						id: "http://example.org/resource/",
 						property: [
 							"string",
@@ -1410,10 +1410,10 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 						},
 					} );
 
-					const oldResource:Resource = Resource.createFrom( {
+					const oldResource:TransientResource = TransientResource.createFrom( {
 						id: "http://example.org/resource/",
 					} );
-					const newResource:Resource = Resource.createFrom( {
+					const newResource:TransientResource = TransientResource.createFrom( {
 						id: "http://example.org/resource/",
 						property: [
 							"string 1",
@@ -1444,10 +1444,10 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 						},
 					} );
 
-					const oldResource:Resource = Resource.createFrom( {
+					const oldResource:TransientResource = TransientResource.createFrom( {
 						id: "http://example.org/resource/",
 					} );
-					const newResource:Resource = Resource.createFrom( {
+					const newResource:TransientResource = TransientResource.createFrom( {
 						id: "http://example.org/resource/",
 						property: {
 							"en": "string",
@@ -1477,10 +1477,10 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 						},
 					} );
 
-					const oldResource:Resource = Resource.createFrom( {
+					const oldResource:TransientResource = TransientResource.createFrom( {
 						id: "http://example.org/resource/",
 					} );
-					const newResource:Resource = Resource.createFrom( {
+					const newResource:TransientResource = TransientResource.createFrom( {
 						id: "http://example.org/resource/",
 						property: [
 							"string",
@@ -1517,10 +1517,10 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 						},
 					} );
 
-					const oldResource:Resource = Resource.createFrom( {
+					const oldResource:TransientResource = TransientResource.createFrom( {
 						id: "http://example.org/resource/",
 					} );
-					const newResource:Resource = Resource.createFrom( {
+					const newResource:TransientResource = TransientResource.createFrom( {
 						id: "http://example.org/resource/",
 						property: [
 							"string 1",
@@ -1553,11 +1553,11 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 						},
 					} );
 
-					const oldResource:Resource = Resource.createFrom( {
+					const oldResource:TransientResource = TransientResource.createFrom( {
 						id: "http://example.org/resource/",
 						property: "string",
 					} );
-					const newResource:Resource = Resource.createFrom( {
+					const newResource:TransientResource = TransientResource.createFrom( {
 						id: "http://example.org/resource/",
 						property: null,
 					} );
@@ -1580,11 +1580,11 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 						},
 					} );
 
-					const oldResource:Resource = Resource.createFrom( {
+					const oldResource:TransientResource = TransientResource.createFrom( {
 						id: "http://example.org/resource/",
 						property: "string",
 					} );
-					const newResource:Resource = Resource.createFrom( {
+					const newResource:TransientResource = TransientResource.createFrom( {
 						id: "http://example.org/resource/",
 						property: void 0,
 					} );
@@ -1607,11 +1607,11 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 						},
 					} );
 
-					const oldResource:Resource = Resource.createFrom( {
+					const oldResource:TransientResource = TransientResource.createFrom( {
 						id: "http://example.org/resource/",
 						property: void 0,
 					} );
-					const newResource:Resource = Resource.createFrom( {
+					const newResource:TransientResource = TransientResource.createFrom( {
 						id: "http://example.org/resource/",
 						property: "string",
 					} );
@@ -1635,11 +1635,11 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 						},
 					} );
 
-					const oldResource:Resource = Resource.createFrom( {
+					const oldResource:TransientResource = TransientResource.createFrom( {
 						id: "http://example.org/resource/",
 						property: void 0,
 					} );
-					const newResource:Resource = Resource.createFrom( {
+					const newResource:TransientResource = TransientResource.createFrom( {
 						id: "http://example.org/resource/",
 						property: "string",
 					} );
@@ -1664,11 +1664,11 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 						},
 					} );
 
-					const oldResource:Resource = Resource.createFrom( {
+					const oldResource:TransientResource = TransientResource.createFrom( {
 						id: "http://example.org/resource/",
 						property: "pointer",
 					} );
-					const newResource:Resource = Resource.createFrom( {
+					const newResource:TransientResource = TransientResource.createFrom( {
 						id: "http://example.org/resource/",
 					} );
 
@@ -1690,11 +1690,11 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 						},
 					} );
 
-					const oldResource:Resource = Resource.createFrom( {
+					const oldResource:TransientResource = TransientResource.createFrom( {
 						id: "http://example.org/resource/",
 						property: "http://example.org/pointer",
 					} );
-					const newResource:Resource = Resource.createFrom( {
+					const newResource:TransientResource = TransientResource.createFrom( {
 						id: "http://example.org/resource/",
 					} );
 
@@ -1725,14 +1725,14 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 						},
 					} );
 
-					const oldResource:Resource = Resource.createFrom( {
+					const oldResource:TransientResource = TransientResource.createFrom( {
 						id: "http://example.org/resource/",
 						property1: {},
 						property2: 1,
 						property3: true,
 						property4: new Date(),
 					} );
-					const newResource:Resource = Resource.createFrom( {
+					const newResource:TransientResource = TransientResource.createFrom( {
 						id: "http://example.org/resource/",
 					} );
 
@@ -1753,7 +1753,7 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 						},
 					} );
 
-					const oldResource:Resource = Resource.createFrom( {
+					const oldResource:TransientResource = TransientResource.createFrom( {
 						id: "http://example.org/resource/",
 						property: [
 							1,
@@ -1762,7 +1762,7 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 							12345,
 						],
 					} );
-					const newResource:Resource = Resource.createFrom( {
+					const newResource:TransientResource = TransientResource.createFrom( {
 						id: "http://example.org/resource/",
 						property: [
 							1,
@@ -1796,7 +1796,7 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 						},
 					} );
 
-					const oldResource:Resource = Resource.createFrom( {
+					const oldResource:TransientResource = TransientResource.createFrom( {
 						id: "http://example.org/resource/",
 						property: [
 							1,
@@ -1805,7 +1805,7 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 							12345,
 						],
 					} );
-					const newResource:Resource = Resource.createFrom( {
+					const newResource:TransientResource = TransientResource.createFrom( {
 						id: "http://example.org/resource/",
 						property: [
 							10,
@@ -1859,7 +1859,7 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 						},
 					} );
 
-					const oldResource:Resource = Resource.createFrom( {
+					const oldResource:TransientResource = TransientResource.createFrom( {
 						id: "http://example.org/resource/",
 						property: [
 							1,
@@ -1868,7 +1868,7 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 							12345,
 						],
 					} );
-					const newResource:Resource = Resource.createFrom( {
+					const newResource:TransientResource = TransientResource.createFrom( {
 						id: "http://example.org/resource/",
 						property: [
 							10,
@@ -1915,11 +1915,11 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 						},
 					} );
 
-					const oldResource:Resource = Resource.createFrom( {
+					const oldResource:TransientResource = TransientResource.createFrom( {
 						id: "http://example.org/resource/",
 						property: [ 1, 2, 3, 4, 5, 6 ],
 					} );
-					const newResource:Resource = Resource.createFrom( {
+					const newResource:TransientResource = TransientResource.createFrom( {
 						id: "http://example.org/resource/",
 						property: [ 4, 1, 2, "s-1", "s-2", 6, "s-3", 3 ],
 					} );
@@ -1966,11 +1966,11 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 						"xsd": XSD.namespace,
 					} );
 
-					const oldResource:Resource = Resource.createFrom( {
+					const oldResource:TransientResource = TransientResource.createFrom( {
 						id: "http://example.org/resource/",
 						property: true,
 					} );
-					const newResource:Resource = Resource.createFrom( {
+					const newResource:TransientResource = TransientResource.createFrom( {
 						id: "http://example.org/resource/",
 					} );
 
@@ -1993,11 +1993,11 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 						"xsd": XSD.namespace,
 					} );
 
-					const oldResource:Resource = Resource.createFrom( {
+					const oldResource:TransientResource = TransientResource.createFrom( {
 						id: "http://example.org/resource/",
 						property: true,
 					} );
-					const newResource:Resource = Resource.createFrom( {
+					const newResource:TransientResource = TransientResource.createFrom( {
 						id: "http://example.org/resource/",
 					} );
 
@@ -2015,11 +2015,11 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 						"ex": "http://example.org/vocab#",
 					} );
 
-					const oldResource:Resource = Resource.createFrom( {
+					const oldResource:TransientResource = TransientResource.createFrom( {
 						id: "http://example.org/resource/",
 						property: true,
 					} );
-					const newResource:Resource = Resource.createFrom( {
+					const newResource:TransientResource = TransientResource.createFrom( {
 						id: "http://example.org/resource/",
 					} );
 
@@ -2042,11 +2042,11 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 						"ex": "http://example.org/vocab#",
 					} );
 
-					const oldResource:Resource = Resource.createFrom( {
+					const oldResource:TransientResource = TransientResource.createFrom( {
 						id: "http://example.org/resource/",
 						property: true,
 					} );
-					const newResource:Resource = Resource.createFrom( {
+					const newResource:TransientResource = TransientResource.createFrom( {
 						id: "http://example.org/resource/",
 					} );
 
@@ -2064,10 +2064,10 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 						"base": "http://example.org/",
 					} );
 
-					const oldResource:Resource = Resource.createFrom( {
+					const oldResource:TransientResource = TransientResource.createFrom( {
 						id: "http://example.org/resource/",
 					} );
-					const newResource:Resource = Resource.createFrom( {
+					const newResource:TransientResource = TransientResource.createFrom( {
 						id: "http://example.org/resource/",
 						property: Pointer.create( "http://example.org/pointer/" ),
 					} );
@@ -2092,10 +2092,10 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 						"base": "http://example.org/",
 					} );
 
-					const oldResource:Resource = Resource.createFrom( {
+					const oldResource:TransientResource = TransientResource.createFrom( {
 						id: "http://example.org/resource/",
 					} );
-					const newResource:Resource = Resource.createFrom( {
+					const newResource:TransientResource = TransientResource.createFrom( {
 						id: "http://example.org/resource/",
 						property: Pointer.create( "http://example.org/pointer/" ),
 					} );
@@ -2116,11 +2116,11 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 						"xsd": XSD.namespace,
 					} );
 
-					const oldResource:Resource = Resource.createFrom( {
+					const oldResource:TransientResource = TransientResource.createFrom( {
 						id: "http://example.org/resource/",
 						integers: [ 1 ],
 					} );
-					const newResource:Resource = Resource.createFrom( {
+					const newResource:TransientResource = TransientResource.createFrom( {
 						id: "http://example.org/resource/",
 						property: Pointer.create( "http://example.org/pointer/" ),
 						integers: [ 1, 2 ],
@@ -2142,11 +2142,11 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 						"xsd": XSD.namespace,
 					} );
 
-					const oldResource:Resource = Resource.createFrom( {
+					const oldResource:TransientResource = TransientResource.createFrom( {
 						id: "http://example.org/resource/",
 						integers: [ 1, 2 ],
 					} );
-					const newResource:Resource = Resource.createFrom( {
+					const newResource:TransientResource = TransientResource.createFrom( {
 						id: "http://example.org/resource/",
 						property: Pointer.create( "http://example.org/pointer/" ),
 						integers: [ 1, 2 ],
@@ -2172,11 +2172,11 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 						},
 					} );
 
-					const oldResource:Resource = Resource.createFrom( {
+					const oldResource:TransientResource = TransientResource.createFrom( {
 						id: "_:blank-node",
 						property: "string",
 					} );
-					const newResource:Resource = Resource.createFrom( {
+					const newResource:TransientResource = TransientResource.createFrom( {
 						id: "_:blank-node",
 					} );
 
@@ -2199,10 +2199,10 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 						},
 					} );
 
-					const oldResource:Resource = Resource.createFrom( {
+					const oldResource:TransientResource = TransientResource.createFrom( {
 						id: "_:blank-node",
 					} );
-					const newResource:Resource = Resource.createFrom( {
+					const newResource:TransientResource = TransientResource.createFrom( {
 						id: "_:blank-node",
 						property: "string",
 					} );
@@ -2226,10 +2226,10 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 						},
 					} );
 
-					const oldResource:Resource = Resource.createFrom( {
+					const oldResource:TransientResource = TransientResource.createFrom( {
 						id: "_:blank-node",
 					} );
-					const newResource:Resource = Resource.createFrom( {
+					const newResource:TransientResource = TransientResource.createFrom( {
 						id: "_:blank-node",
 						property: "string",
 					} );
@@ -2254,7 +2254,7 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 						},
 					} );
 
-					const oldResource:Resource = Resource.createFrom( {
+					const oldResource:TransientResource = TransientResource.createFrom( {
 						id: "_:blank-node",
 						property: [
 							"string 1",
@@ -2262,7 +2262,7 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 							"string 3",
 						],
 					} );
-					const newResource:Resource = Resource.createFrom( {
+					const newResource:TransientResource = TransientResource.createFrom( {
 						id: "_:blank-node",
 					} );
 
@@ -2294,10 +2294,10 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 						},
 					} );
 
-					const oldResource:Resource = Resource.createFrom( {
+					const oldResource:TransientResource = TransientResource.createFrom( {
 						id: "_:blank-node",
 					} );
-					const newResource:Resource = Resource.createFrom( {
+					const newResource:TransientResource = TransientResource.createFrom( {
 						id: "_:blank-node",
 						property: [
 							"string 1",
@@ -2329,10 +2329,10 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 					"property": {
 						"@type": XSD.string,
 					},
-				} ), Resource.createFrom( {
+				} ), TransientResource.createFrom( {
 					id: "http://example.org/resource/",
 					property: "string",
-				} ), Resource.createFrom( {
+				} ), TransientResource.createFrom( {
 					id: "http://example.org/resource/",
 				} ) );
 
@@ -2341,9 +2341,9 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 					"property": {
 						"@type": XSD.integer,
 					},
-				} ), Resource.createFrom( {
+				} ), TransientResource.createFrom( {
 					id: "http://example.org/resource/#fragment",
-				} ), Resource.createFrom( {
+				} ), TransientResource.createFrom( {
 					id: "http://example.org/resource/#fragment",
 					property: 10.01,
 				} ) );
@@ -2356,10 +2356,10 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 					"property2": {
 						"@type": XSD.string,
 					},
-				} ), Resource.createFrom( {
+				} ), TransientResource.createFrom( {
 					id: "_:blank-node",
 					property1: "delete string",
-				} ), Resource.createFrom( {
+				} ), TransientResource.createFrom( {
 					id: "_:blank-node",
 					property2: "add string",
 				} ) );
@@ -2416,11 +2416,11 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 					"property2": {
 						"@container": "@list",
 					},
-				} ), Resource.createFrom( {
+				} ), TransientResource.createFrom( {
 					id: "http://example.org/resource/",
 					property1: "string",
 					property2: [ "string", 1, new Date(), Pointer.create( "_:blank-node" ) ],
-				} ), Resource.createFrom( {
+				} ), TransientResource.createFrom( {
 					id: "http://example.org/resource/",
 				} ) );
 
@@ -2435,10 +2435,10 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 					"property2": {
 						"@container": "@list",
 					},
-				} ), Resource.createFrom( {
+				} ), TransientResource.createFrom( {
 					id: "http://example.org/resource/#fragment",
 					property2: [ 1, 2, 3, 4, 5 ],
-				} ), Resource.createFrom( {
+				} ), TransientResource.createFrom( {
 					id: "http://example.org/resource/#fragment",
 					property1: 10.01,
 					property2: [ 4, 1, 2, "s-1", "s-2", "s-3", 3 ],
@@ -2454,10 +2454,10 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 					"property2": {
 						"@type": XSD.string,
 					},
-				} ), Resource.createFrom( {
+				} ), TransientResource.createFrom( {
 					id: "_:blank-node",
 					property1: "delete string",
-				} ), Resource.createFrom( {
+				} ), TransientResource.createFrom( {
 					id: "_:blank-node",
 					property2: "add string",
 				} ) );

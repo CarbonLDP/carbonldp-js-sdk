@@ -19,7 +19,7 @@ import {
 import { RDFDocument } from "./RDF/Document";
 import { RDFNode } from "./RDF/Node";
 import { URI } from "./RDF/URI";
-import { Resource } from "./Resource";
+import { TransientResource } from "./TransientResource";
 import {
 	hasFunction,
 	hasPropertyDefined,
@@ -32,7 +32,7 @@ import { LDP } from "./Vocabularies/LDP";
 import { XSD } from "./Vocabularies/XSD";
 
 
-export interface TransientDocument extends Resource, PointerLibrary, PointerValidator {
+export interface TransientDocument extends TransientResource, PointerLibrary, PointerValidator {
 	defaultInteractionModel?:Pointer;
 	isMemberOfRelation?:Pointer;
 	hasMemberRelation?:Pointer;
@@ -168,7 +168,7 @@ export const TransientDocument:DocumentFactory = {
 	,
 
 	is: ( object ):object is TransientDocument =>
-		Resource.is( object ) &&
+		TransientResource.is( object ) &&
 		TransientDocument.isDecorated( object )
 	,
 
@@ -176,7 +176,7 @@ export const TransientDocument:DocumentFactory = {
 	decorate: <T extends object>( object:T ) => {
 		if( TransientDocument.isDecorated( object ) ) return object;
 
-		Resource.decorate( object );
+		TransientResource.decorate( object );
 
 		Object.defineProperties( object, {
 			"_fragmentsIndex": {

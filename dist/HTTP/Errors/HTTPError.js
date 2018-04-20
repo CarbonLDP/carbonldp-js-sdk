@@ -11,12 +11,12 @@ var __extends = (this && this.__extends) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 var Errors_1 = require("../../Errors");
-var Resource_1 = require("../../Resource");
+var TransientResource_1 = require("../../TransientResource");
 var HTTPError = (function (_super) {
     __extends(HTTPError, _super);
     function HTTPError(message, response) {
         var _this = _super.call(this, message) || this;
-        Resource_1.Resource.createFrom(_this);
+        TransientResource_1.TransientResource.createFrom(_this);
         _this.errors = [];
         _this.requestID = null;
         _this.response = response;

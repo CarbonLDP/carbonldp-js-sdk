@@ -23,7 +23,7 @@ import { NamedFragment } from "./NamedFragment";
 import { PersistedResource } from "./PersistedResource";
 import { Pointer } from "./Pointer";
 import * as RDF from "./RDF";
-import { Resource } from "./Resource";
+import { TransientResource } from "./TransientResource";
 import { globalContext, SDKContext } from "./SDKContext";
 import { CarbonLDPSettings, ContextSettings } from "./Settings";
 import * as SHACL from "./SHACL";
@@ -62,7 +62,7 @@ export declare class CarbonLDP extends AbstractContext {
     static Pointer: typeof Pointer;
     static TransientProtectedDocument: typeof TransientProtectedDocument;
     static RDF: typeof RDF;
-    static Resource: typeof Resource;
+    static TransientResource: typeof TransientResource;
     static SDKContext: typeof SDKContext;
     static globalContext: typeof globalContext;
     static ServiceAwareDocument: typeof ServiceAwareDocument;

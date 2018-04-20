@@ -32,7 +32,7 @@ import { PersistedResource } from "./PersistedResource";
 import { Pointer } from "./Pointer";
 import { TransientProtectedDocument } from "./TransientProtectedDocument";
 import * as RDF from "./RDF";
-import { Resource } from "./Resource";
+import { TransientResource } from "./TransientResource";
 import {
 	globalContext,
 	SDKContext,
@@ -363,11 +363,11 @@ describe( module( "carbonldp/CarbonLDP" ), ():void => {
 
 		it( reexports(
 			STATIC,
-			"Resource",
-			"carbonldp/Resource#Resource"
+			"TransientResource",
+			"carbonldp/TransientResource#TransientResource"
 		), ():void => {
-			expect( CarbonLDP.CarbonLDP.Resource ).toBeDefined();
-			expect( CarbonLDP.CarbonLDP.Resource ).toBe( Resource );
+			expect( CarbonLDP.CarbonLDP.TransientResource ).toBeDefined();
+			expect( CarbonLDP.CarbonLDP.TransientResource ).toBe( TransientResource );
 		} );
 
 		it( reexports(

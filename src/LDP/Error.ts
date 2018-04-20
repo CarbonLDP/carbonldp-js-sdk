@@ -1,11 +1,11 @@
 import { C } from "../Vocabularies/C";
 import { XSD } from "../Vocabularies/XSD";
 import { ObjectSchema } from "../ObjectSchema";
-import { Resource } from "../Resource";
+import { TransientResource } from "../TransientResource";
 import { Map } from "./Map";
 
 
-export interface Error extends Resource {
+export interface Error extends TransientResource {
 	errorCode:string;
 	errorMessage:string;
 	errorParameters:Map<string, any>;

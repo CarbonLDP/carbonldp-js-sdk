@@ -1,8 +1,8 @@
 import { ModelDecorator } from "./ModelDecorator";
-import { Resource } from "./Resource";
+import { TransientResource } from "./TransientResource";
 import { PartialMetadata } from "./SPARQL/QueryDocument/PartialMetadata";
-export interface PersistedResource extends Resource {
-    _snapshot: Resource;
+export interface PersistedResource extends TransientResource {
+    _snapshot: TransientResource;
     _partialMetadata?: PartialMetadata;
     _syncSnapshot(): void;
     isDirty(): boolean;

@@ -2,7 +2,7 @@ import { AbstractError } from "../../Errors";
 import { Error } from "../../LDP/Error";
 import { ErrorResponse } from "../../LDP/ErrorResponse";
 import { Document } from "../../Document";
-import { Resource } from "../../Resource";
+import { TransientResource } from "../../TransientResource";
 import { Response } from "../Response";
 
 export class HTTPError extends AbstractError implements ErrorResponse {
@@ -31,7 +31,7 @@ export class HTTPError extends AbstractError implements ErrorResponse {
 	constructor( message:string, response:Response ) {
 		super( message );
 
-		Resource.createFrom( this );
+		TransientResource.createFrom( this );
 
 		this.errors = [];
 		this.requestID = null;

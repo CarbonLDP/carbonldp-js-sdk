@@ -7,7 +7,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 }
 Object.defineProperty(exports, "__esModule", { value: true });
-var Resource_1 = require("./Resource");
+var TransientResource_1 = require("./TransientResource");
 var Utils = __importStar(require("./Utils"));
 function syncSnapshot() {
     this._snapshot = Utils.ObjectUtils.clone(this, { arrays: true });
@@ -46,7 +46,7 @@ exports.PersistedResource = {
     decorate: function (object) {
         if (exports.PersistedResource.isDecorated(object))
             return object;
-        Resource_1.Resource.decorate(object);
+        TransientResource_1.TransientResource.decorate(object);
         var persistedResource = object;
         Object.defineProperties(persistedResource, {
             "_snapshot": {

@@ -1,4 +1,4 @@
-import { Resource } from "../Resource";
+import { TransientResource } from "../TransientResource";
 import {
 	extendsClass,
 	hasMethod,
@@ -22,7 +22,7 @@ describe( module( "carbonldp/LDP/VolatileResource" ), ():void => {
 		"Interface that represents a free resource, i.e. a dynamic generated resource that does not have a persisted form."
 	), ():void => {
 
-		it( extendsClass( "CarbonLDP.Resource" ), ():void => {} );
+		it( extendsClass( "CarbonLDP.TransientResource" ), ():void => {} );
 
 	} );
 
@@ -97,7 +97,7 @@ describe( module( "carbonldp/LDP/VolatileResource" ), ():void => {
 			object = {};
 			expect( VolatileResource.is( object ) ).toBe( false );
 
-			Resource.decorate( object );
+			TransientResource.decorate( object );
 			expect( VolatileResource.is( object ) ).toBe( false );
 
 			object[ "types" ].push( C.VolatileResource );

@@ -1,6 +1,6 @@
 import { JSONLDConverter } from "../JSONLD/Converter";
 import { DigestedObjectSchema } from "../ObjectSchema";
-import { Resource } from "../Resource";
+import { TransientResource } from "../TransientResource";
 export declare class DeltaCreator {
     private prefixesMap;
     private jsonldConverter;
@@ -9,7 +9,7 @@ export declare class DeltaCreator {
     private updateLists;
     constructor(jsonldConverter: JSONLDConverter);
     getPatch(): string;
-    addResource(schema: DigestedObjectSchema, oldResource: Resource, newResource: Resource): void;
+    addResource(schema: DigestedObjectSchema, oldResource: TransientResource, newResource: TransientResource): void;
     private getPropertyIRI(schema, propertyName);
     private getObjects(value, schema, definition?);
     private expandValues(values, schema, definition?);

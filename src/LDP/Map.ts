@@ -1,11 +1,11 @@
 import { ModelFactory } from "../ModelFactory";
 import { ObjectSchema } from "../ObjectSchema";
-import { Resource } from "../Resource";
+import { TransientResource } from "../TransientResource";
 import { C } from "../Vocabularies/C";
 import { MapEntry } from "./MapEntry";
 
 
-export interface Map<K, V> extends Resource {
+export interface Map<K, V> extends TransientResource {
 	entries:MapEntry<K, V>[];
 }
 
@@ -30,7 +30,7 @@ export const Map:MapFactory = {
 	SCHEMA,
 
 	is( object:object ):object is Map<any, any> {
-		return Resource.is( object )
+		return TransientResource.is( object )
 			&& object.hasType( Map.TYPE )
 			&& object.hasOwnProperty( "entries" );
 	},

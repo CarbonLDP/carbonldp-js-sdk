@@ -48,7 +48,7 @@ import { Document } from "./Document";
 import { NamedFragment } from "./NamedFragment";
 import { PersistedResource } from "./PersistedResource";
 import { Pointer } from "./Pointer";
-import { Resource } from "./Resource";
+import { TransientResource } from "./TransientResource";
 import { ContextSettings } from "./Settings";
 import * as SPARQL from "./SPARQL";
 import { PartialMetadata } from "./SPARQL/QueryDocument/PartialMetadata";
@@ -14744,7 +14744,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 		} );
 
 		it( "should add types to query", ( done:DoneFn ):void => {
-			const resource:Resource = Resource.decorate( pointer );
+			const resource:TransientResource = TransientResource.decorate( pointer );
 			resource.addType( "https://example.com/ns#Type-1" );
 			resource.addType( "https://example.com/ns#Type-2" );
 

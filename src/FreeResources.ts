@@ -12,24 +12,24 @@ import {
 } from "./Pointer";
 import { RDFNode } from "./RDF/Node";
 import { URI } from "./RDF/URI";
-import { Resource } from "./Resource";
+import { TransientResource } from "./TransientResource";
 import * as Utils from "./Utils";
 
 export interface FreeResources extends PointerLibrary, PointerValidator {
 	_documents:Documents;
-	_resourcesIndex:Map<string, Resource>;
+	_resourcesIndex:Map<string, TransientResource>;
 
 	hasResource( id:string ):boolean;
 
-	getResource( id:string ):Resource;
+	getResource( id:string ):TransientResource;
 
-	getResources():Resource[];
+	getResources():TransientResource[];
 
-	getPointer( id:string ):Resource;
+	getPointer( id:string ):TransientResource;
 
-	createResource( id?:string ):Resource;
+	createResource( id?:string ):TransientResource;
 
-	createResourceFrom<T>( object:T, id?:string ):Resource & T;
+	createResourceFrom<T>( object:T, id?:string ):TransientResource & T;
 
 	toJSON():object;
 }
@@ -62,7 +62,7 @@ function getPointer( this:FreeResources, id:string ):Pointer {
 		return this._documents.getPointer( id );
 	}
 
-	let resource:Resource = this.getResource( id );
+	let resource:TransientResource = this.getResource( id );
 
 	return ! resource ? this.createResource( id ) : resource;
 }
@@ -81,19 +81,19 @@ function hasResource( this:FreeResources, id:string ):boolean {
 	return this._resourcesIndex.has( id );
 }
 
-function getResource( this:FreeResources, id:string ):Resource {
+function getResource( this:FreeResources, id:string ):TransientResource {
 	return this._resourcesIndex.get( id ) || null;
 }
 
-function getResources( this:FreeResources ):Resource[] {
+function getResources( this:FreeResources ):TransientResource[] {
 	return Utils.ArrayUtils.from( this._resourcesIndex.values() );
 }
 
-function createResource( this:FreeResources, id?:string ):Resource {
+function createResource( this:FreeResources, id?:string ):TransientResource {
 	return this.createResourceFrom( {}, id );
 }
 
-function createResourceFrom<T extends object>( this:FreeResources, object:T, id?:string ):Resource & T {
+function createResourceFrom<T extends object>( this:FreeResources, object:T, id?:string ):TransientResource & T {
 	if( id ) {
 		if( ! inLocalScope( id ) ) throw new IllegalArgumentError( `The id "${ id }" is out of scope.` );
 		if( this._resourcesIndex.has( id ) ) throw new IDAlreadyInUseError( `The id "${ id }" is already in use by another resource.` );
@@ -101,7 +101,7 @@ function createResourceFrom<T extends object>( this:FreeResources, object:T, id?
 		id = URI.generateBNodeID();
 	}
 
-	let resource:Resource & T = Resource.createFrom<T>( object, id );
+	let resource:TransientResource & T = TransientResource.createFrom<T>( object, id );
 	this._resourcesIndex.set( id, resource );
 
 	return resource;
@@ -167,7 +167,7 @@ export const FreeResources:FreeResourcesFactory = {
 				writable: false,
 				enumerable: false,
 				configurable: true,
-				value: new Map<string, Resource>(),
+				value: new Map<string, TransientResource>(),
 			},
 			"hasPointer": {
 				writable: false,

@@ -1,10 +1,10 @@
 import { ModelDecorator } from "./ModelDecorator";
-import { Resource } from "./Resource";
+import { TransientResource } from "./TransientResource";
 import { PartialMetadata } from "./SPARQL/QueryDocument/PartialMetadata";
 import * as Utils from "./Utils";
 
-export interface PersistedResource extends Resource {
-	_snapshot:Resource;
+export interface PersistedResource extends TransientResource {
+	_snapshot:TransientResource;
 
 	_partialMetadata?:PartialMetadata;
 
@@ -40,8 +40,8 @@ function isDirty( this:PersistedResource ):boolean {
 	if( ! Utils.ObjectUtils.areEqual( this, this._snapshot, { arrays: true } ) ) return true;
 
 	let response:boolean = false;
-	if( "id" in this ) response = response || (this._snapshot as Resource).id !== this.id;
-	if( "types" in this ) response = response || ! Utils.ObjectUtils.areEqual( (this._snapshot as Resource).types, this.types );
+	if( "id" in this ) response = response || (this._snapshot as TransientResource).id !== this.id;
+	if( "types" in this ) response = response || ! Utils.ObjectUtils.areEqual( (this._snapshot as TransientResource).types, this.types );
 
 	return response;
 }
@@ -72,7 +72,7 @@ export const PersistedResource:PersistedResourceFactory = {
 	decorate<T extends object>( object:T ):T & PersistedResource {
 		if( PersistedResource.isDecorated( object ) ) return object;
 
-		Resource.decorate( object );
+		TransientResource.decorate( object );
 
 		const persistedResource:T & PersistedResource = object as T & PersistedResource;
 		Object.defineProperties( persistedResource, {

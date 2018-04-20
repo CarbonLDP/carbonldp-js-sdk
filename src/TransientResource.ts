@@ -4,7 +4,7 @@ import { Pointer } from "./Pointer";
 import * as Utils from "./Utils";
 
 
-export interface Resource extends Pointer {
+export interface TransientResource extends Pointer {
 	types:string[];
 
 
@@ -15,37 +15,37 @@ export interface Resource extends Pointer {
 	removeType( type:string ):void;
 }
 
-export interface ResourceFactory extends ModelFactory<Resource>, ModelDecorator<Resource> {
-	isDecorated( object:object ):object is Resource;
+export interface TransientResourceFactory extends ModelFactory<TransientResource>, ModelDecorator<TransientResource> {
+	isDecorated( object:object ):object is TransientResource;
 
-	is( object:object ):object is Resource;
+	is( object:object ):object is TransientResource;
 
 
-	create( id?:string, types?:string[] ):Resource;
+	create( id?:string, types?:string[] ):TransientResource;
 
-	createFrom<T extends object>( object:T, id?:string, types?:string[] ):T & Resource;
+	createFrom<T extends object>( object:T, id?:string, types?:string[] ):T & TransientResource;
 
-	decorate<T extends object>( object:T ):T & Resource;
+	decorate<T extends object>( object:T ):T & TransientResource;
 }
 
 
-export function addTypeInResource( this:Resource, type:string ):void {
+export function addTypeInResource( this:TransientResource, type:string ):void {
 	if( this.types.indexOf( type ) !== - 1 ) return;
 
 	this.types.push( type );
 }
 
-export function hasTypeInResource( this:Resource, type:string ):boolean {
+export function hasTypeInResource( this:TransientResource, type:string ):boolean {
 	return this.types.indexOf( type ) !== - 1;
 }
 
-export function removeTypeInResource( this:Resource, type:string ):void {
+export function removeTypeInResource( this:TransientResource, type:string ):void {
 	const index:number = this.types.indexOf( type );
 	if( index !== - 1 ) this.types.splice( index, 1 );
 }
 
-export const Resource:ResourceFactory = {
-	isDecorated( object:object ):object is Resource {
+export const TransientResource:TransientResourceFactory = {
+	isDecorated( object:object ):object is TransientResource {
 		return (
 			Utils.hasPropertyDefined( object, "types" )
 
@@ -55,17 +55,17 @@ export const Resource:ResourceFactory = {
 		);
 	},
 
-	is( object:object ):object is Resource {
+	is( object:object ):object is TransientResource {
 		return Pointer.is( object )
-			&& Resource.isDecorated( object );
+			&& TransientResource.isDecorated( object );
 	},
 
-	create( id?:string, types?:string[] ):Resource {
-		return Resource.createFrom( {}, id, types );
+	create( id?:string, types?:string[] ):TransientResource {
+		return TransientResource.createFrom( {}, id, types );
 	},
 
-	createFrom<T extends object>( object:T, id?:string, types?:string[] ):T & Resource {
-		const resource:T & Resource = Resource.decorate<T>( object );
+	createFrom<T extends object>( object:T, id?:string, types?:string[] ):T & TransientResource {
+		const resource:T & TransientResource = TransientResource.decorate<T>( object );
 
 		if( id ) resource.id = id;
 		if( types ) resource.types = types;
@@ -73,9 +73,9 @@ export const Resource:ResourceFactory = {
 		return resource;
 	},
 
-	decorate<T extends object>( object:T ):T & Resource {
-		const resource:T & Resource = object as T & Resource;
-		if( Resource.isDecorated( object ) ) return resource;
+	decorate<T extends object>( object:T ):T & TransientResource {
+		const resource:T & TransientResource = object as T & TransientResource;
+		if( TransientResource.isDecorated( object ) ) return resource;
 
 		Pointer.decorate<T>( resource );
 

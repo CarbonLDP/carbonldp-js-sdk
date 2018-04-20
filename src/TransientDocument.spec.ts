@@ -17,7 +17,7 @@ import {
 import { Pointer } from "./Pointer";
 import { RDFDocument } from "./RDF/Document";
 import { URI } from "./RDF/URI";
-import { Resource } from "./Resource";
+import { TransientResource } from "./TransientResource";
 import {
 	extendsClass,
 	hasMethod,
@@ -36,7 +36,7 @@ import { LDP } from "./Vocabularies/LDP";
 import { XSD } from "./Vocabularies/XSD";
 
 
-type DocumentProperties = Minus<TransientDocument, Resource>;
+type DocumentProperties = Minus<TransientDocument, TransientResource>;
 
 function mockDocumentProperties():DocumentProperties {
 	return {
@@ -434,7 +434,7 @@ describe( module( "carbonldp/TransientDocument" ), ():void => {
 			} );
 
 			it( "should assert that is a `Resource`", ():void => {
-				const spy:jasmine.Spy = spyOn( Resource, "is" );
+				const spy:jasmine.Spy = spyOn( TransientResource, "is" );
 
 				const target:object = { the: "object" };
 				TransientDocument.is( target );
@@ -443,7 +443,7 @@ describe( module( "carbonldp/TransientDocument" ), ():void => {
 			} );
 
 			it( "should assert that is decorated", ():void => {
-				spyOn( Resource, "is" ).and.returnValue( true );
+				spyOn( TransientResource, "is" ).and.returnValue( true );
 				const spy:jasmine.Spy = spyOn( TransientDocument, "isDecorated" );
 
 				const target:object = { the: "object" };
@@ -453,7 +453,7 @@ describe( module( "carbonldp/TransientDocument" ), ():void => {
 			} );
 
 			it( "should assert that is a document", ():void => {
-				spyOn( Resource, "is" ).and.returnValue( true );
+				spyOn( TransientResource, "is" ).and.returnValue( true );
 				spyOn( TransientDocument, "isDecorated" ).and.returnValue( true );
 
 				expect( TransientDocument.is( {} ) ).toBe( true );
@@ -616,7 +616,7 @@ describe( module( "carbonldp/TransientDocument" ), ():void => {
 				const target:TargetDocument = TransientDocument.createFrom( { object: {} } );
 
 				// TODO use `isFragment` instead
-				expect( Resource.is( target.object ) ).toBe( true );
+				expect( TransientResource.is( target.object ) ).toBe( true );
 			} );
 
 		} );
@@ -629,8 +629,8 @@ describe( module( "carbonldp/TransientDocument" ), ():void => {
 			} );
 
 			it( "should add the `Resource` properties", ():void => {
-				const target:Resource = TransientDocument.decorate( {} );
-				expect( Resource.isDecorated( target ) ).toBe( true );
+				const target:TransientResource = TransientDocument.decorate( {} );
+				expect( TransientResource.isDecorated( target ) ).toBe( true );
 			} );
 
 			it( "should work with the `isDecorated` function", ():void => {
@@ -1163,7 +1163,7 @@ describe( module( "carbonldp/TransientDocument" ), ():void => {
 					const fragment:{ string:string } = document.createFragment( { string: "a string" }, "fragment" );
 
 					// TODO: Use `isNamedFragment`
-					expect( Resource.is( fragment ) ).toBe( true );
+					expect( TransientResource.is( fragment ) ).toBe( true );
 					expect( TransientFragment.isDecorated( fragment ) ).toBe( true );
 
 					expect( fragment ).toEqual( {
@@ -1176,7 +1176,7 @@ describe( module( "carbonldp/TransientDocument" ), ():void => {
 					const fragment:TransientFragment = document.createFragment( "fragment" );
 
 					// TODO: Use `isNamedFragment`
-					expect( Resource.is( fragment ) ).toBe( true );
+					expect( TransientResource.is( fragment ) ).toBe( true );
 					expect( TransientFragment.isDecorated( fragment ) ).toBe( true );
 				} );
 
@@ -1186,7 +1186,7 @@ describe( module( "carbonldp/TransientDocument" ), ():void => {
 					const fragment:TargetFragment = document.createFragment( { string: "a string" }, "https://example.com/document/#fragment" );
 
 					// TODO: Use `isNamedFragment`
-					expect( Resource.is( fragment ) ).toBe( true );
+					expect( TransientResource.is( fragment ) ).toBe( true );
 					expect( TransientFragment.isDecorated( fragment ) ).toBe( true );
 
 					expect( fragment as { string:string } ).toEqual( {
@@ -1199,7 +1199,7 @@ describe( module( "carbonldp/TransientDocument" ), ():void => {
 					const fragment:TransientFragment = document.createFragment( "https://example.com/document/#fragment" );
 
 					// TODO: Use `isNamedFragment`
-					expect( Resource.is( fragment ) ).toBe( true );
+					expect( TransientResource.is( fragment ) ).toBe( true );
 					expect( TransientFragment.isDecorated( fragment ) ).toBe( true );
 				} );
 
@@ -1208,7 +1208,7 @@ describe( module( "carbonldp/TransientDocument" ), ():void => {
 					const fragment:TransientFragment = document.createFragment( {} );
 
 					// TODO: Use `isBlankNode`
-					expect( Resource.is( fragment ) ).toBe( true );
+					expect( TransientResource.is( fragment ) ).toBe( true );
 					expect( TransientFragment.isDecorated( fragment ) ).toBe( true );
 					expect( URI.isBNodeID( fragment.id ) ).toBe( true );
 				} );
@@ -1219,7 +1219,7 @@ describe( module( "carbonldp/TransientDocument" ), ():void => {
 					const fragment:TargetFragment = document.createFragment( { string: "a string" }, "_:1" );
 
 					// TODO: Use `isBlankNode`
-					expect( Resource.is( fragment ) ).toBe( true );
+					expect( TransientResource.is( fragment ) ).toBe( true );
 					expect( TransientFragment.isDecorated( fragment ) ).toBe( true );
 					expect( URI.isBNodeID( fragment.id ) ).toBe( true );
 
@@ -1233,7 +1233,7 @@ describe( module( "carbonldp/TransientDocument" ), ():void => {
 					const fragment:TransientFragment = document.createFragment( "_:1" );
 
 					// TODO: Use `isBlankNode`
-					expect( Resource.is( fragment ) ).toBe( true );
+					expect( TransientResource.is( fragment ) ).toBe( true );
 					expect( TransientFragment.isDecorated( fragment ) ).toBe( true );
 					expect( URI.isBNodeID( fragment.id ) ).toBe( true );
 				} );
@@ -1307,7 +1307,7 @@ describe( module( "carbonldp/TransientDocument" ), ():void => {
 					const fragment:TargetFragment = document.createNamedFragment( { string: "a string" }, "fragment" );
 
 					// TODO: Use `isNamedFragment`
-					expect( Resource.is( fragment ) ).toBe( true );
+					expect( TransientResource.is( fragment ) ).toBe( true );
 					expect( TransientFragment.isDecorated( fragment ) ).toBe( true );
 
 					expect( fragment as { string:string } ).toEqual( {
@@ -1320,7 +1320,7 @@ describe( module( "carbonldp/TransientDocument" ), ():void => {
 					const fragment:TransientFragment = document.createNamedFragment( "fragment" );
 
 					// TODO: Use `isNamedFragment`
-					expect( Resource.is( fragment ) ).toBe( true );
+					expect( TransientResource.is( fragment ) ).toBe( true );
 					expect( TransientFragment.isDecorated( fragment ) ).toBe( true );
 				} );
 
@@ -1330,7 +1330,7 @@ describe( module( "carbonldp/TransientDocument" ), ():void => {
 					const fragment:TargetFragment = document.createNamedFragment( { string: "a string" }, "https://example.com/document/#fragment" );
 
 					// TODO: Use `isNamedFragment`
-					expect( Resource.is( fragment ) ).toBe( true );
+					expect( TransientResource.is( fragment ) ).toBe( true );
 					expect( TransientFragment.isDecorated( fragment ) ).toBe( true );
 
 					expect( fragment as { string:string } ).toEqual( {
@@ -1343,7 +1343,7 @@ describe( module( "carbonldp/TransientDocument" ), ():void => {
 					const fragment:TransientFragment = document.createNamedFragment( "https://example.com/document/#fragment" );
 
 					// TODO: Use `isNamedFragment`
-					expect( Resource.is( fragment ) ).toBe( true );
+					expect( TransientResource.is( fragment ) ).toBe( true );
 					expect( TransientFragment.isDecorated( fragment ) ).toBe( true );
 				} );
 
@@ -1731,7 +1731,7 @@ describe( module( "carbonldp/TransientDocument" ), ():void => {
 
 					expect( document.object ).toBeDefined();
 					// TODO: Use `isFragment`
-					expect( Resource.is( document.object ) ).toBe( true );
+					expect( TransientResource.is( document.object ) ).toBe( true );
 					expect( document.hasFragment( "_:1" ) ).toBe( true );
 					expect( document.object.self ).toBe( document.object );
 				} );
@@ -1756,7 +1756,7 @@ describe( module( "carbonldp/TransientDocument" ), ():void => {
 				expect( document.object ).toEqual( { string: "new object" } );
 
 				// TODO: Use `isFragment`
-				expect( Resource.is( document.object ) ).toBe( true );
+				expect( TransientResource.is( document.object ) ).toBe( true );
 				expect( document.hasFragment( document.object[ "id" ] ) ).toBe( true );
 			} );
 
@@ -1772,10 +1772,10 @@ describe( module( "carbonldp/TransientDocument" ), ():void => {
 				] );
 
 				// TODO: Use `isFragment`
-				expect( Resource.is( document.array[ 0 ] ) ).toBe( true );
+				expect( TransientResource.is( document.array[ 0 ] ) ).toBe( true );
 				expect( document.hasFragment( document.array[ 0 ][ "id" ] ) ).toBe( true );
 
-				expect( Resource.is( document.array[ 1 ] ) ).toBe( true );
+				expect( TransientResource.is( document.array[ 1 ] ) ).toBe( true );
 				expect( document.hasFragment( document.array[ 1 ][ "id" ] ) ).toBe( true );
 			} );
 
@@ -1788,10 +1788,10 @@ describe( module( "carbonldp/TransientDocument" ), ():void => {
 				expect( document.object ).toEqual( { object: { string: "new object" } } );
 
 				// TODO: Use `isFragment`
-				expect( Resource.is( document.object ) ).toBe( true );
+				expect( TransientResource.is( document.object ) ).toBe( true );
 				expect( document.hasFragment( document.object[ "id" ] ) ).toBe( true );
 
-				expect( Resource.is( document.object.object ) ).toBe( true );
+				expect( TransientResource.is( document.object.object ) ).toBe( true );
 				expect( document.hasFragment( document.object.object[ "id" ] ) ).toBe( true );
 			} );
 
@@ -1804,9 +1804,9 @@ describe( module( "carbonldp/TransientDocument" ), ():void => {
 				expect( document.object ).toEqual( { object: { string: "new object" } } );
 
 				// TODO: Use `isFragment`
-				expect( Resource.is( document.object ) ).toBe( false );
+				expect( TransientResource.is( document.object ) ).toBe( false );
 
-				expect( Resource.is( document.object.object ) ).toBe( true );
+				expect( TransientResource.is( document.object.object ) ).toBe( true );
 				expect( document.hasFragment( document.object.object[ "id" ] ) ).toBe( true );
 			} );
 
@@ -1844,7 +1844,7 @@ describe( module( "carbonldp/TransientDocument" ), ():void => {
 				TransientDocument._convertNestedObjects( document, document );
 				expect( document.object ).toEqual( { string: "new object" } );
 				// TODO: Use `isNamedFragment`
-				expect( Resource.is( document.object ) ).toBe( true );
+				expect( TransientResource.is( document.object ) ).toBe( true );
 				expect( TransientNamedFragment.isDecorated( document.object ) ).toBe( true );
 
 				expect( document.hasFragment( "#fragment" ) ).toBe( true );
@@ -1859,7 +1859,7 @@ describe( module( "carbonldp/TransientDocument" ), ():void => {
 				TransientDocument._convertNestedObjects( document, document );
 				expect( document.object ).toEqual( { string: "new object" } );
 				// TODO: Use `isNamedFragment`
-				expect( Resource.is( document.object ) ).toBe( true );
+				expect( TransientResource.is( document.object ) ).toBe( true );
 				expect( TransientNamedFragment.isDecorated( document.object ) ).toBe( true );
 
 				expect( document.hasFragment( "#1" ) ).toBe( true );
@@ -1874,7 +1874,7 @@ describe( module( "carbonldp/TransientDocument" ), ():void => {
 				TransientDocument._convertNestedObjects( document, document );
 				expect( document.object ).toEqual( { string: "new object" } );
 				// TODO: Use `isNamedFragment`
-				expect( Resource.is( document.object ) ).toBe( true );
+				expect( TransientResource.is( document.object ) ).toBe( true );
 				expect( TransientNamedFragment.isDecorated( document.object ) ).toBe( true );
 
 				expect( document.hasFragment( "#fragment" ) ).toBe( true );

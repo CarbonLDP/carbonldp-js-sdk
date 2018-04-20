@@ -2,7 +2,7 @@ import { IllegalArgumentError } from "../Errors";
 import { BadResponseError } from "../HTTP/Errors/ServerErrors";
 import { Header } from "../HTTP/Header";
 import { RequestOptions } from "../HTTP/Request";
-import { Resource } from "../Resource";
+import { TransientResource } from "../TransientResource";
 import { ContextSettings } from "../Settings";
 import {
 	clazz,
@@ -98,7 +98,7 @@ describe( module( "carbonldp/Auth/TokenAuthenticator" ), ():void => {
 				const expires:Date = new Date();
 				expires.setDate( expires.getDate() + 1 );
 
-				const credentials:TokenCredentials = Resource.createFrom( {
+				const credentials:TokenCredentials = TransientResource.createFrom( {
 					token: "token-value",
 					expires: expires,
 				} );
@@ -109,7 +109,7 @@ describe( module( "carbonldp/Auth/TokenAuthenticator" ), ():void => {
 
 			it( "should return true when expired credentials with by current time", ():void => {
 				const expires:Date = new Date();
-				const credentials:TokenCredentials = Resource.createFrom( {
+				const credentials:TokenCredentials = TransientResource.createFrom( {
 					token: "token-value",
 					expires: expires,
 				} );
@@ -122,7 +122,7 @@ describe( module( "carbonldp/Auth/TokenAuthenticator" ), ():void => {
 				const expires:Date = new Date();
 				expires.setDate( expires.getDate() - 1 );
 
-				const credentials:TokenCredentials = Resource.createFrom( {
+				const credentials:TokenCredentials = TransientResource.createFrom( {
 					token: "token-value",
 					expires: expires,
 				} );
@@ -431,7 +431,7 @@ describe( module( "carbonldp/Auth/TokenAuthenticator" ), ():void => {
 				const expires:Date = new Date();
 				expires.setDate( expires.getDate() + 1 );
 
-				const credentials:TokenCredentials = Resource.createFrom( {
+				const credentials:TokenCredentials = TransientResource.createFrom( {
 					token: "token-value",
 					expires: expires,
 				} );

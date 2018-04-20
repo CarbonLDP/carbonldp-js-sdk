@@ -6,8 +6,8 @@ import { TransientNamedFragment } from "./TransientNamedFragment";
 import { ObjectSchema, ObjectSchemaResolver } from "./ObjectSchema";
 import { Pointer, PointerLibrary, PointerValidator } from "./Pointer";
 import { RDFDocument } from "./RDF/Document";
-import { Resource } from "./Resource";
-export interface TransientDocument extends Resource, PointerLibrary, PointerValidator {
+import { TransientResource } from "./TransientResource";
+export interface TransientDocument extends TransientResource, PointerLibrary, PointerValidator {
     defaultInteractionModel?: Pointer;
     isMemberOfRelation?: Pointer;
     hasMemberRelation?: Pointer;

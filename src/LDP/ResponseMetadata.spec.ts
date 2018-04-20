@@ -1,4 +1,4 @@
-import { Resource } from "../Resource";
+import { TransientResource } from "../TransientResource";
 import {
 	extendsClass,
 	hasMethod,
@@ -130,7 +130,7 @@ describe( module( "carbonldp/LDP/ResponseMetadata" ), ():void => {
 			object = {};
 			expect( ResponseMetadata.is( object ) ).toBe( false );
 
-			object = Resource.decorate( {
+			object = TransientResource.decorate( {
 				types: [
 					C.VolatileResource,
 					C.ResponseMetadata,

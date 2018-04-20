@@ -607,12 +607,12 @@ var __extends = (this && this.__extends) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 var Errors_1 = __webpack_require__(9);
-var Resource_1 = __webpack_require__(15);
+var TransientResource_1 = __webpack_require__(15);
 var HTTPError = (function (_super) {
     __extends(HTTPError, _super);
     function HTTPError(message, response) {
         var _this = _super.call(this, message) || this;
-        Resource_1.Resource.createFrom(_this);
+        TransientResource_1.TransientResource.createFrom(_this);
         _this.errors = [];
         _this.requestID = null;
         _this.response = response;
@@ -1551,7 +1551,7 @@ function removeTypeInResource(type) {
         this.types.splice(index, 1);
 }
 exports.removeTypeInResource = removeTypeInResource;
-exports.Resource = {
+exports.TransientResource = {
     isDecorated: function (object) {
         return (Utils.hasPropertyDefined(object, "types")
             && Utils.hasFunction(object, "addType")
@@ -1560,13 +1560,13 @@ exports.Resource = {
     },
     is: function (object) {
         return Pointer_1.Pointer.is(object)
-            && exports.Resource.isDecorated(object);
+            && exports.TransientResource.isDecorated(object);
     },
     create: function (id, types) {
-        return exports.Resource.createFrom({}, id, types);
+        return exports.TransientResource.createFrom({}, id, types);
     },
     createFrom: function (object, id, types) {
-        var resource = exports.Resource.decorate(object);
+        var resource = exports.TransientResource.decorate(object);
         if (id)
             resource.id = id;
         if (types)
@@ -1575,7 +1575,7 @@ exports.Resource = {
     },
     decorate: function (object) {
         var resource = object;
-        if (exports.Resource.isDecorated(object))
+        if (exports.TransientResource.isDecorated(object))
             return resource;
         Pointer_1.Pointer.decorate(resource);
         Object.defineProperties(resource, {
@@ -1749,7 +1749,7 @@ var Converter_1 = __webpack_require__(71);
 var TransientNamedFragment_1 = __webpack_require__(74);
 var ObjectSchema_1 = __webpack_require__(12);
 var URI_1 = __webpack_require__(10);
-var Resource_1 = __webpack_require__(15);
+var TransientResource_1 = __webpack_require__(15);
 var Utils_1 = __webpack_require__(0);
 var C_1 = __webpack_require__(2);
 var LDP_1 = __webpack_require__(41);
@@ -1820,13 +1820,13 @@ exports.TransientDocument = {
             Utils_1.hasFunction(object, "toJSON");
     },
     is: function (object) {
-        return Resource_1.Resource.is(object) &&
+        return TransientResource_1.TransientResource.is(object) &&
             exports.TransientDocument.isDecorated(object);
     },
     decorate: function (object) {
         if (exports.TransientDocument.isDecorated(object))
             return object;
-        Resource_1.Resource.decorate(object);
+        TransientResource_1.TransientResource.decorate(object);
         Object.defineProperties(object, {
             "_fragmentsIndex": {
                 configurable: true,
@@ -3986,7 +3986,7 @@ exports.joinPatterns = function (patterns) {
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var Errors_1 = __webpack_require__(9);
-var Resource_1 = __webpack_require__(15);
+var TransientResource_1 = __webpack_require__(15);
 var Utils_1 = __webpack_require__(0);
 exports.TransientFragment = {
     isDecorated: function (object) {
@@ -3994,7 +3994,7 @@ exports.TransientFragment = {
             object.hasOwnProperty("_document");
     },
     is: function (object) {
-        return Resource_1.Resource.is(object) &&
+        return TransientResource_1.TransientResource.is(object) &&
             exports.TransientFragment.isDecorated(object);
     },
     create: function (document, id) {
@@ -4010,7 +4010,7 @@ exports.TransientFragment = {
     decorate: function (object) {
         if (exports.TransientFragment.isDecorated(object))
             return object;
-        Resource_1.Resource.decorate(object);
+        TransientResource_1.TransientResource.decorate(object);
         var fragment = object;
         Object.defineProperties(fragment, {
             "_document": {
@@ -5819,7 +5819,7 @@ var TransientFragment_1 = __webpack_require__(36);
 var ObjectSchema_1 = __webpack_require__(12);
 var PersistedResource_1 = __webpack_require__(56);
 var URI_1 = __webpack_require__(10);
-var Resource_1 = __webpack_require__(15);
+var TransientResource_1 = __webpack_require__(15);
 var Utils_1 = __webpack_require__(0);
 function resolveURI(fragment, uri) {
     if (URI_1.URI.isAbsolute(uri))
@@ -5829,15 +5829,15 @@ function resolveURI(fragment, uri) {
 }
 function addTypeInPersistedFragment(type) {
     type = resolveURI(this, type);
-    return Resource_1.addTypeInResource.call(this, type);
+    return TransientResource_1.addTypeInResource.call(this, type);
 }
 function hasTypeInPersistedFragment(type) {
     type = resolveURI(this, type);
-    return Resource_1.hasTypeInResource.call(this, type);
+    return TransientResource_1.hasTypeInResource.call(this, type);
 }
 function removeTypeInPersistedFragment(type) {
     type = resolveURI(this, type);
-    return Resource_1.removeTypeInResource.call(this, type);
+    return TransientResource_1.removeTypeInResource.call(this, type);
 }
 exports.Fragment = {
     isDecorated: function (object) {
@@ -5906,7 +5906,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 }
 Object.defineProperty(exports, "__esModule", { value: true });
-var Resource_1 = __webpack_require__(15);
+var TransientResource_1 = __webpack_require__(15);
 var Utils = __importStar(__webpack_require__(0));
 function syncSnapshot() {
     this._snapshot = Utils.ObjectUtils.clone(this, { arrays: true });
@@ -5945,7 +5945,7 @@ exports.PersistedResource = {
     decorate: function (object) {
         if (exports.PersistedResource.isDecorated(object))
             return object;
-        Resource_1.Resource.decorate(object);
+        TransientResource_1.TransientResource.decorate(object);
         var persistedResource = object;
         Object.defineProperties(persistedResource, {
             "_snapshot": {
@@ -6093,19 +6093,19 @@ __export(__webpack_require__(59));
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var Resource_1 = __webpack_require__(15);
+var TransientResource_1 = __webpack_require__(15);
 var C_1 = __webpack_require__(2);
 exports.VolatileResource = {
     TYPE: C_1.C.VolatileResource,
     is: function (object) {
-        return Resource_1.Resource.is(object)
+        return TransientResource_1.TransientResource.is(object)
             && object.hasType(exports.VolatileResource.TYPE);
     },
     create: function () {
         return exports.VolatileResource.createFrom({});
     },
     createFrom: function (object) {
-        var resource = Resource_1.Resource.createFrom(object);
+        var resource = TransientResource_1.TransientResource.createFrom(object);
         resource.addType(exports.VolatileResource.TYPE);
         return resource;
     },
@@ -7536,7 +7536,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 }
 Object.defineProperty(exports, "__esModule", { value: true });
-var Resource_1 = __webpack_require__(15);
+var TransientResource_1 = __webpack_require__(15);
 var C_1 = __webpack_require__(2);
 var Utils = __importStar(__webpack_require__(0));
 var SCHEMA = {
@@ -7553,7 +7553,7 @@ exports.AddMemberAction = {
         return Utils.hasPropertyDefined(object, "targetMembers");
     },
     create: function (targetMembers) {
-        return Resource_1.Resource.createFrom({
+        return TransientResource_1.TransientResource.createFrom({
             types: [exports.AddMemberAction.TYPE],
             targetMembers: targetMembers,
         });
@@ -7611,7 +7611,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 }
 Object.defineProperty(exports, "__esModule", { value: true });
-var Resource_1 = __webpack_require__(15);
+var TransientResource_1 = __webpack_require__(15);
 var C_1 = __webpack_require__(2);
 var Utils = __importStar(__webpack_require__(0));
 var SCHEMA = {
@@ -7628,7 +7628,7 @@ exports.RemoveMemberAction = {
         return Utils.hasPropertyDefined(object, "targetMembers");
     },
     create: function (targetMembers) {
-        return Resource_1.Resource.createFrom({
+        return TransientResource_1.TransientResource.createFrom({
             types: [exports.RemoveMemberAction.TYPE],
             targetMembers: targetMembers,
         });
@@ -9906,7 +9906,7 @@ exports.Error = {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var Resource_1 = __webpack_require__(15);
+var TransientResource_1 = __webpack_require__(15);
 var C_1 = __webpack_require__(2);
 var SCHEMA = {
     "entries": {
@@ -9919,7 +9919,7 @@ exports.Map = {
     TYPE: C_1.C.Map,
     SCHEMA: SCHEMA,
     is: function (object) {
-        return Resource_1.Resource.is(object)
+        return TransientResource_1.TransientResource.is(object)
             && object.hasType(exports.Map.TYPE)
             && object.hasOwnProperty("entries");
     },
@@ -11807,7 +11807,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var IDAlreadyInUseError_1 = __webpack_require__(70);
 var IllegalArgumentError_1 = __webpack_require__(13);
 var URI_1 = __webpack_require__(10);
-var Resource_1 = __webpack_require__(15);
+var TransientResource_1 = __webpack_require__(15);
 var Utils = __importStar(__webpack_require__(0));
 function hasPointer(id) {
     if (!inLocalScope(id)) {
@@ -11851,7 +11851,7 @@ function createResourceFrom(object, id) {
     else {
         id = URI_1.URI.generateBNodeID();
     }
-    var resource = Resource_1.Resource.createFrom(object, id);
+    var resource = TransientResource_1.TransientResource.createFrom(object, id);
     this._resourcesIndex.set(id, resource);
     return resource;
 }
@@ -15207,7 +15207,7 @@ var NamedFragment_1 = __webpack_require__(121);
 var PersistedResource_1 = __webpack_require__(56);
 var Pointer_1 = __webpack_require__(22);
 var RDF = __importStar(__webpack_require__(298));
-var Resource_1 = __webpack_require__(15);
+var TransientResource_1 = __webpack_require__(15);
 var SDKContext_1 = __webpack_require__(104);
 var SHACL = __importStar(__webpack_require__(299));
 var SPARQL = __importStar(__webpack_require__(300));
@@ -15313,7 +15313,7 @@ var CarbonLDP = (function (_super) {
     CarbonLDP.Pointer = Pointer_1.Pointer;
     CarbonLDP.TransientProtectedDocument = TransientProtectedDocument_1.TransientProtectedDocument;
     CarbonLDP.RDF = RDF;
-    CarbonLDP.Resource = Resource_1.Resource;
+    CarbonLDP.TransientResource = TransientResource_1.TransientResource;
     CarbonLDP.SDKContext = SDKContext_1.SDKContext;
     CarbonLDP.globalContext = SDKContext_1.globalContext;
     CarbonLDP.ServiceAwareDocument = ServiceAwareDocument_1.ServiceAwareDocument;

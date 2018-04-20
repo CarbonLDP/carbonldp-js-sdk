@@ -1,13 +1,13 @@
 import { ObjectSchema } from "../ObjectSchema";
 import { Pointer } from "../Pointer";
-import { Resource } from "../Resource";
+import { TransientResource } from "../TransientResource";
 import {
 	CS,
 	XSD,
 } from "../Vocabularies";
 
 
-export interface LDAPCredentials extends Resource {
+export interface LDAPCredentials extends TransientResource {
 	ldapServer:Pointer;
 	ldapUserDN:string;
 }

@@ -1,5 +1,5 @@
 import { Pointer } from "../Pointer";
-import { Resource } from "../Resource";
+import { TransientResource } from "../TransientResource";
 import {
 	extendsClass,
 	hasMethod,
@@ -23,7 +23,7 @@ describe( module( "carbonldp/LDP/RemoveMemberAction" ), ():void => {
 		"Interface that represents an object to be sent in a request that removes specific members to a container."
 	), ():void => {
 
-		it( extendsClass( "CarbonLDP.Resource" ), ():void => {} );
+		it( extendsClass( "CarbonLDP.TransientResource" ), ():void => {} );
 
 		it( hasProperty(
 			OBLIGATORY,
@@ -133,7 +133,7 @@ describe( module( "carbonldp/LDP/RemoveMemberAction" ), ():void => {
 
 			const removeMemberAction:RemoveMemberAction = RemoveMemberAction.create( pointers );
 
-			expect( Resource.is( removeMemberAction ) ).toBe( true );
+			expect( TransientResource.is( removeMemberAction ) ).toBe( true );
 			expect( RemoveMemberAction.isDecorated( removeMemberAction ) ).toBe( true );
 			expect( removeMemberAction.targetMembers ).toEqual( pointers );
 			expect( removeMemberAction.types ).toContain( RemoveMemberAction.TYPE );

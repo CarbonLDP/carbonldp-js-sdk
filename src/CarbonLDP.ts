@@ -32,7 +32,7 @@ import { NamedFragment } from "./NamedFragment";
 import { PersistedResource } from "./PersistedResource";
 import { Pointer } from "./Pointer";
 import * as RDF from "./RDF";
-import { Resource } from "./Resource";
+import { TransientResource } from "./TransientResource";
 import {
 	globalContext,
 	SDKContext,
@@ -80,7 +80,7 @@ export class CarbonLDP extends AbstractContext {
 	static Pointer:typeof Pointer = Pointer;
 	static TransientProtectedDocument:typeof TransientProtectedDocument = TransientProtectedDocument;
 	static RDF:typeof RDF = RDF;
-	static Resource:typeof Resource = Resource;
+	static TransientResource:typeof TransientResource = TransientResource;
 	static SDKContext:typeof SDKContext = SDKContext;
 	static globalContext:typeof globalContext = globalContext;
 	static ServiceAwareDocument:typeof ServiceAwareDocument = ServiceAwareDocument;

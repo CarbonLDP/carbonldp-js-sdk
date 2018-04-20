@@ -1,8 +1,8 @@
 import { ModelFactory } from "../ModelFactory";
 import { ObjectSchema } from "../ObjectSchema";
-import { Resource } from "../Resource";
+import { TransientResource } from "../TransientResource";
 import { Error } from "./Error";
-export interface ErrorResponse extends Resource {
+export interface ErrorResponse extends TransientResource {
     errors: Error[];
     requestID: string;
     statusCode: number;

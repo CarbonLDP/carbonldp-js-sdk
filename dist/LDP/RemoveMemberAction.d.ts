@@ -2,8 +2,8 @@ import { ModelDecorator } from "../ModelDecorator";
 import { ModelFactory } from "../ModelFactory";
 import { ObjectSchema } from "../ObjectSchema";
 import { Pointer } from "../Pointer";
-import { Resource } from "../Resource";
-export interface RemoveMemberAction extends Resource {
+import { TransientResource } from "../TransientResource";
+export interface RemoveMemberAction extends TransientResource {
     targetMembers: Pointer[];
 }
 export interface RemoveMemberActionFactory extends ModelDecorator<RemoveMemberAction>, ModelFactory<RemoveMemberAction> {

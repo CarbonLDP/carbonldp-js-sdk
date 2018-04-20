@@ -1,6 +1,6 @@
 import { ModelFactory } from "../ModelFactory";
-import { Resource } from "../Resource";
-export interface VolatileResource extends Resource {
+import { TransientResource } from "../TransientResource";
+export interface VolatileResource extends TransientResource {
 }
 export interface VolatileResourceFactory extends ModelFactory<VolatileResource> {
     TYPE: string;

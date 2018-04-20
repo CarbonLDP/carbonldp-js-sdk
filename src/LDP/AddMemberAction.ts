@@ -2,12 +2,12 @@ import { ModelDecorator } from "../ModelDecorator";
 import { ModelFactory } from "../ModelFactory";
 import { ObjectSchema } from "../ObjectSchema";
 import { Pointer } from "../Pointer";
-import { Resource } from "../Resource";
+import { TransientResource } from "../TransientResource";
 import { C } from "../Vocabularies/C";
 import * as Utils from "./../Utils";
 
 
-export interface AddMemberAction extends Resource {
+export interface AddMemberAction extends TransientResource {
 	targetMembers:Pointer[];
 }
 
@@ -38,7 +38,7 @@ export const AddMemberAction:AddMemberActionFactory = {
 	},
 
 	create( targetMembers:Pointer[] ):AddMemberAction {
-		return Resource.createFrom( {
+		return TransientResource.createFrom( {
 			types: [ AddMemberAction.TYPE ],
 			targetMembers,
 		} );

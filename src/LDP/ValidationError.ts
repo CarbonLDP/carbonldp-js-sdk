@@ -2,10 +2,10 @@ import { ModelFactory } from "../ModelFactory";
 import { C } from "../Vocabularies/C";
 import { ObjectSchema } from "../ObjectSchema";
 import { Pointer } from "../Pointer";
-import { Resource } from "../Resource";
+import { TransientResource } from "../TransientResource";
 
 
-export interface ValidationError extends Resource {
+export interface ValidationError extends TransientResource {
 	errorDetails:Pointer;
 }
 

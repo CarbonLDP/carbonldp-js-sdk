@@ -1,8 +1,8 @@
 import { ModelFactory } from "../ModelFactory";
 import { ObjectSchema } from "../ObjectSchema";
 import { Pointer } from "../Pointer";
-import { Resource } from "../Resource";
-export interface ValidationError extends Resource {
+import { TransientResource } from "../TransientResource";
+export interface ValidationError extends TransientResource {
     errorDetails: Pointer;
 }
 export interface ValidationErrorFactory extends ModelFactory<ValidationError> {

@@ -1,6 +1,6 @@
 import { VolatileResource } from "../../LDP/VolatileResource";
 import { Pointer } from "../../Pointer";
-import { Resource } from "../../Resource";
+import { TransientResource } from "../../TransientResource";
 import {
 	hasProperty,
 	hasSignature,
@@ -120,7 +120,7 @@ describe( module( "carbonldp/SPARQL/QueryDocument/QueryMetadata" ), ():void => {
 			} );
 
 			it( "should verify the resource TYPE", ():void => {
-				const target:QueryMetadata = Resource.createFrom( {
+				const target:QueryMetadata = TransientResource.createFrom( {
 					types: [ C.VolatileResource, C.QueryMetadata ],
 					"target": null,
 				} );

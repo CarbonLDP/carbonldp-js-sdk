@@ -1,6 +1,6 @@
 import { Pointer } from "./Pointer";
-import * as Module from "./Resource";
-import { Resource } from "./Resource";
+import * as Module from "./TransientResource";
+import { TransientResource } from "./TransientResource";
 
 import {
 	extendsClass,
@@ -17,7 +17,7 @@ import {
 import { LDP } from "./Vocabularies/LDP";
 
 
-describe( module( "carbonldp/Resource" ), ():void => {
+describe( module( "carbonldp/TransientResource" ), ():void => {
 
 	it( isDefined(), ():void => {
 		expect( Module ).toBeDefined();
@@ -25,7 +25,7 @@ describe( module( "carbonldp/Resource" ), ():void => {
 	} );
 
 	describe( interfaze(
-		"CarbonLDP.Resource",
+		"CarbonLDP.TransientResource",
 		"Interface that represents a persisted blank node of a persisted document."
 	), ():void => {
 
@@ -65,26 +65,26 @@ describe( module( "carbonldp/Resource" ), ():void => {
 	} );
 
 	describe( interfaze(
-		"CarbonLDP.ResourceFactory",
-		"Interface with the factory, decorate and utils methods of a `CarbonLDP.Resource` object."
+		"CarbonLDP.TransientResourceFactory",
+		"Interface with the factory, decorate and utils methods of a `CarbonLDP.TransientResource` object."
 	), ():void => {
 
 		it( hasMethod(
 			OBLIGATORY,
 			"isDecorated",
-			"Returns true if the object provided has the properties of a `CarbonLDP.Resource` object.", [
+			"Returns true if the object provided has the properties of a `CarbonLDP.TransientResource` object.", [
 				{ name: "object", type: "object" },
 			],
-			{ type: "object is CarbonLDP.Resource" }
+			{ type: "object is CarbonLDP.TransientResource" }
 		), ():void => {} );
 
 		it( hasMethod(
 			OBLIGATORY,
 			"is",
-			"Returns true if the object provided is considered a `CarbonLDP.Resource` object.", [
+			"Returns true if the object provided is considered a `CarbonLDP.TransientResource` object.", [
 				{ name: "object", type: "object" },
 			],
-			{ type: "object is CarbonLDP.Resource" }
+			{ type: "object is CarbonLDP.TransientResource" }
 		), ():void => {} );
 
 		it( hasMethod(
@@ -94,7 +94,7 @@ describe( module( "carbonldp/Resource" ), ():void => {
 				{ name: "id", type: "string", optional: true },
 				{ name: "types", type: "string[]", optional: true },
 			],
-			{ type: "CarbonLDP.Resource" }
+			{ type: "CarbonLDP.TransientResource" }
 		), ():void => {} );
 
 		it( hasMethod(
@@ -106,35 +106,35 @@ describe( module( "carbonldp/Resource" ), ():void => {
 				{ name: "id", type: "string", optional: true },
 				{ name: "types", type: "string[]", optional: true },
 			],
-			{ type: "T & CarbonLDP.Resource" }
+			{ type: "T & CarbonLDP.TransientResource" }
 		), ():void => {} );
 
 		it( hasMethod(
 			OBLIGATORY,
 			"decorate",
 			[ "T extends object" ],
-			"Decorates the object provided with the properties and methods of a `CarbonLDP.Resource` object.", [
+			"Decorates the object provided with the properties and methods of a `CarbonLDP.TransientResource` object.", [
 				{ name: "object", type: "T" },
 			],
-			{ type: "T & CarbonLDP.Resource" }
+			{ type: "T & CarbonLDP.TransientResource" }
 		), ():void => {} );
 
 	} );
 
-	describe( property( STATIC, "Resource", "CarbonLDP.ResourceFactory", "Constant that implements the `CarbonLDP.ResourceFactory` interface." ), ():void => {
+	describe( property( STATIC, "TransientResource", "CarbonLDP.TransientResourceFactory", "Constant that implements the `CarbonLDP.TransientResourceFactory` interface." ), ():void => {
 
 		it( isDefined(), ():void => {
-			expect( Resource ).toBeDefined();
-			expect( Resource ).toEqual( jasmine.any( Object ) );
+			expect( TransientResource ).toBeDefined();
+			expect( TransientResource ).toEqual( jasmine.any( Object ) );
 		} );
 
 		// TODO: Separate in different tests
-		it( "Resource.isDecorated", ():void => {
-			expect( Resource.isDecorated ).toBeDefined();
-			expect( Resource.isDecorated ).toEqual( jasmine.any( Function ) );
+		it( "TransientResource.isDecorated", ():void => {
+			expect( TransientResource.isDecorated ).toBeDefined();
+			expect( TransientResource.isDecorated ).toEqual( jasmine.any( Function ) );
 
 			let object:any = undefined;
-			expect( Resource.isDecorated( object ) ).toBe( false );
+			expect( TransientResource.isDecorated( object ) ).toBe( false );
 			object = {
 				types: null,
 
@@ -142,29 +142,29 @@ describe( module( "carbonldp/Resource" ), ():void => {
 				hasType: ():void => {},
 				removeType: ():void => {},
 			};
-			expect( Resource.isDecorated( object ) ).toBe( true );
+			expect( TransientResource.isDecorated( object ) ).toBe( true );
 
 			delete object.types;
-			expect( Resource.isDecorated( object ) ).toBe( false );
+			expect( TransientResource.isDecorated( object ) ).toBe( false );
 			object.types = null;
 
 			delete object.addType;
-			expect( Resource.isDecorated( object ) ).toBe( false );
+			expect( TransientResource.isDecorated( object ) ).toBe( false );
 			object.addType = ():void => {};
 
 			delete object.hasType;
-			expect( Resource.isDecorated( object ) ).toBe( false );
+			expect( TransientResource.isDecorated( object ) ).toBe( false );
 			object.hasType = ():void => {};
 
 			delete object.removeType;
-			expect( Resource.isDecorated( object ) ).toBe( false );
+			expect( TransientResource.isDecorated( object ) ).toBe( false );
 			object.removeType = ():void => {};
 		} );
 
 		// TODO: Separate in different tests
-		it( "Resource.is", ():void => {
+		it( "TransientResource.is", ():void => {
 			let object:Object = undefined;
-			expect( Resource.is( object ) ).toBe( false );
+			expect( TransientResource.is( object ) ).toBe( false );
 
 			object = {
 				types: null,
@@ -173,44 +173,44 @@ describe( module( "carbonldp/Resource" ), ():void => {
 				hasType: ():void => {},
 				removeType: ():void => {},
 			};
-			expect( Resource.is( object ) ).toBe( false );
+			expect( TransientResource.is( object ) ).toBe( false );
 
 			let resource:Pointer = Pointer.decorate( object );
-			expect( Resource.is( resource ) ).toBe( true );
+			expect( TransientResource.is( resource ) ).toBe( true );
 		} );
 
 		// TODO: Separate in different tests
-		it( "Resource.create", ():void => {
-			expect( Resource.create ).toBeDefined();
-			expect( Resource.create ).toEqual( jasmine.any( Function ) );
+		it( "TransientResource.create", ():void => {
+			expect( TransientResource.create ).toBeDefined();
+			expect( TransientResource.create ).toEqual( jasmine.any( Function ) );
 
-			let resource:Resource;
+			let resource:TransientResource;
 
-			resource = Resource.create();
+			resource = TransientResource.create();
 			expect( resource ).toBeTruthy();
-			expect( Resource.isDecorated( resource ) ).toBe( true );
+			expect( TransientResource.isDecorated( resource ) ).toBe( true );
 			expect( resource.id ).toBe( "" );
 			expect( resource.types ).toEqual( jasmine.any( Array ) );
 			expect( resource.types.length ).toBe( 0 );
 
-			resource = Resource.create( "http://example.com/resource/" );
+			resource = TransientResource.create( "http://example.com/resource/" );
 			expect( resource ).toBeTruthy();
-			expect( Resource.isDecorated( resource ) ).toBe( true );
+			expect( TransientResource.isDecorated( resource ) ).toBe( true );
 			expect( resource.id ).toBe( "http://example.com/resource/" );
 			expect( resource.types ).toEqual( jasmine.any( Array ) );
 			expect( resource.types.length ).toBe( 0 );
 
-			resource = Resource.create( "http://example.com/resource/", [ LDP.RDFSource ] );
+			resource = TransientResource.create( "http://example.com/resource/", [ LDP.RDFSource ] );
 			expect( resource ).toBeTruthy();
-			expect( Resource.isDecorated( resource ) ).toBe( true );
+			expect( TransientResource.isDecorated( resource ) ).toBe( true );
 			expect( resource.id ).toBe( "http://example.com/resource/" );
 			expect( resource.types ).toEqual( jasmine.any( Array ) );
 			expect( resource.types.length ).toBe( 1 );
 			expect( resource.types ).toEqual( [ LDP.RDFSource ] );
 
-			resource = Resource.create( null, [ LDP.RDFSource, LDP.Container ] );
+			resource = TransientResource.create( null, [ LDP.RDFSource, LDP.Container ] );
 			expect( resource ).toBeTruthy();
-			expect( Resource.isDecorated( resource ) ).toBe( true );
+			expect( TransientResource.isDecorated( resource ) ).toBe( true );
 			expect( resource.id ).toBe( "" );
 			expect( resource.types ).toEqual( jasmine.any( Array ) );
 			expect( resource.types.length ).toBe( 2 );
@@ -218,13 +218,13 @@ describe( module( "carbonldp/Resource" ), ():void => {
 		} );
 
 		// TODO: Separate in different tests
-		it( "Resource.createFrom", ():void => {
-			expect( Resource.createFrom ).toBeDefined();
-			expect( Resource.createFrom ).toEqual( jasmine.any( Function ) );
+		it( "TransientResource.createFrom", ():void => {
+			expect( TransientResource.createFrom ).toBeDefined();
+			expect( TransientResource.createFrom ).toEqual( jasmine.any( Function ) );
 
-			let simpleResource:Resource = Resource.createFrom( {}, "http://example.com/simple-resource/" );
+			let simpleResource:TransientResource = TransientResource.createFrom( {}, "http://example.com/simple-resource/" );
 			expect( simpleResource ).toBeTruthy();
-			expect( Resource.isDecorated( simpleResource ) ).toBe( true );
+			expect( TransientResource.isDecorated( simpleResource ) ).toBe( true );
 			expect( simpleResource.id ).toBe( "http://example.com/simple-resource/" );
 			expect( simpleResource.types ).toEqual( jasmine.any( Array ) );
 			expect( simpleResource.types.length ).toBe( 0 );
@@ -233,29 +233,29 @@ describe( module( "carbonldp/Resource" ), ():void => {
 				myProperty:string;
 			}
 
-			let resource:Resource & MyResource;
+			let resource:TransientResource & MyResource;
 
-			resource = Resource.createFrom<MyResource>( { myProperty: "a property" } );
+			resource = TransientResource.createFrom<MyResource>( { myProperty: "a property" } );
 			expect( resource ).toBeTruthy();
-			expect( Resource.isDecorated( resource ) ).toBe( true );
+			expect( TransientResource.isDecorated( resource ) ).toBe( true );
 			expect( resource.id ).toBe( "" );
 			expect( resource.types ).toEqual( jasmine.any( Array ) );
 			expect( resource.types.length ).toBe( 0 );
 			expect( resource.myProperty ).toBeDefined();
 			expect( resource.myProperty ).toBe( "a property" );
 
-			resource = Resource.createFrom<MyResource>( { myProperty: "a property" }, "http://example.com/resource/" );
+			resource = TransientResource.createFrom<MyResource>( { myProperty: "a property" }, "http://example.com/resource/" );
 			expect( resource ).toBeTruthy();
-			expect( Resource.isDecorated( resource ) ).toBe( true );
+			expect( TransientResource.isDecorated( resource ) ).toBe( true );
 			expect( resource.id ).toBe( "http://example.com/resource/" );
 			expect( resource.types ).toEqual( jasmine.any( Array ) );
 			expect( resource.types.length ).toBe( 0 );
 			expect( resource.myProperty ).toBeDefined();
 			expect( resource.myProperty ).toBe( "a property" );
 
-			resource = Resource.createFrom<MyResource>( { myProperty: "a property" }, "http://example.com/resource/", [ LDP.RDFSource ] );
+			resource = TransientResource.createFrom<MyResource>( { myProperty: "a property" }, "http://example.com/resource/", [ LDP.RDFSource ] );
 			expect( resource ).toBeTruthy();
-			expect( Resource.isDecorated( resource ) ).toBe( true );
+			expect( TransientResource.isDecorated( resource ) ).toBe( true );
 			expect( resource.id ).toBe( "http://example.com/resource/" );
 			expect( resource.types ).toEqual( jasmine.any( Array ) );
 			expect( resource.types.length ).toBe( 1 );
@@ -263,9 +263,9 @@ describe( module( "carbonldp/Resource" ), ():void => {
 			expect( resource.myProperty ).toBeDefined();
 			expect( resource.myProperty ).toBe( "a property" );
 
-			resource = Resource.createFrom<MyResource>( { myProperty: "a property" }, null, [ LDP.RDFSource, LDP.Container ] );
+			resource = TransientResource.createFrom<MyResource>( { myProperty: "a property" }, null, [ LDP.RDFSource, LDP.Container ] );
 			expect( resource ).toBeTruthy();
-			expect( Resource.isDecorated( resource ) ).toBe( true );
+			expect( TransientResource.isDecorated( resource ) ).toBe( true );
 			expect( resource.id ).toBe( "" );
 			expect( resource.types ).toEqual( jasmine.any( Array ) );
 			expect( resource.types.length ).toBe( 2 );
@@ -275,42 +275,42 @@ describe( module( "carbonldp/Resource" ), ():void => {
 		} );
 
 		// TODO: Separate in different tests
-		it( "Resource.decorate", ():void => {
-			expect( Resource.decorate ).toBeDefined();
-			expect( Resource.decorate ).toEqual( jasmine.any( Function ) );
+		it( "TransientResource.decorate", ():void => {
+			expect( TransientResource.decorate ).toBeDefined();
+			expect( TransientResource.decorate ).toEqual( jasmine.any( Function ) );
 
 
 			interface MyResource {
 				myProperty?:string;
 			}
 
-			let resource:Resource & MyResource;
+			let resource:TransientResource & MyResource;
 
-			resource = Resource.decorate<MyResource>( {} );
-			expect( Resource.isDecorated( resource ) ).toBe( true );
+			resource = TransientResource.decorate<MyResource>( {} );
+			expect( TransientResource.isDecorated( resource ) ).toBe( true );
 			expect( resource.types ).toEqual( [] );
 
-			resource = Resource.decorate<MyResource>( { myProperty: "a property" } );
-			expect( Resource.isDecorated( resource ) ).toBe( true );
+			resource = TransientResource.decorate<MyResource>( { myProperty: "a property" } );
+			expect( TransientResource.isDecorated( resource ) ).toBe( true );
 			expect( resource.myProperty ).toBeDefined();
 			expect( resource.myProperty ).toBe( "a property" );
 			expect( resource.types ).toEqual( [] );
 
 
 			resource.types = [ LDP.RDFSource ];
-			resource = Resource.decorate<MyResource>( resource );
+			resource = TransientResource.decorate<MyResource>( resource );
 			expect( resource.types ).toEqual( [ LDP.RDFSource ] );
 		} );
 
 		describe( "Decorated `Resource`", ():void => {
 
-			let resource:Resource;
+			let resource:TransientResource;
 			beforeEach( ():void => {
-				resource = Resource.create();
+				resource = TransientResource.create();
 			} );
 
 			// TODO: Separate in different tests
-			it( "Resource.addType", ():void => {
+			it( "TransientResource.addType", ():void => {
 				expect( resource.addType ).toBeDefined();
 				expect( resource.addType ).toEqual( jasmine.any( Function ) );
 
@@ -327,7 +327,7 @@ describe( module( "carbonldp/Resource" ), ():void => {
 			} );
 
 			// TODO: Separate in different tests
-			it( "Resource.hasType", ():void => {
+			it( "TransientResource.hasType", ():void => {
 				expect( resource.hasType ).toBeDefined();
 				expect( resource.hasType ).toEqual( jasmine.any( Function ) );
 
@@ -343,7 +343,7 @@ describe( module( "carbonldp/Resource" ), ():void => {
 			} );
 
 			// TODO: Separate in different tests
-			it( "Resource.removeType", ():void => {
+			it( "TransientResource.removeType", ():void => {
 				expect( resource.removeType ).toBeDefined();
 				expect( resource.removeType ).toEqual( jasmine.any( Function ) );
 

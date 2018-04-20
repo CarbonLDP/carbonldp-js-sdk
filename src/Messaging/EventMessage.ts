@@ -1,12 +1,12 @@
 import { ModelFactory } from "../ModelFactory";
 import { ObjectSchema } from "../ObjectSchema";
 import { Pointer } from "../Pointer";
-import { Resource } from "../Resource";
+import { TransientResource } from "../TransientResource";
 import { hasProperty } from "../Utils";
 import { C } from "../Vocabularies/C";
 
 
-export interface EventMessage extends Resource {
+export interface EventMessage extends TransientResource {
 	target:Pointer;
 }
 

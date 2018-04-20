@@ -1,8 +1,8 @@
 import { ModelFactory } from "../ModelFactory";
 import { ObjectSchema } from "../ObjectSchema";
-import { Resource } from "../Resource";
+import { TransientResource } from "../TransientResource";
 import { MapEntry } from "./MapEntry";
-export interface Map<K, V> extends Resource {
+export interface Map<K, V> extends TransientResource {
     entries: MapEntry<K, V>[];
 }
 export interface MapFactory extends ModelFactory<Map<any, any>> {

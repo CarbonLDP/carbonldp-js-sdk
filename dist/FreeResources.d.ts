@@ -2,16 +2,16 @@ import { Documents } from "./Documents";
 import { ModelDecorator } from "./ModelDecorator";
 import { ModelFactory } from "./ModelFactory";
 import { PointerLibrary, PointerValidator } from "./Pointer";
-import { Resource } from "./Resource";
+import { TransientResource } from "./TransientResource";
 export interface FreeResources extends PointerLibrary, PointerValidator {
     _documents: Documents;
-    _resourcesIndex: Map<string, Resource>;
+    _resourcesIndex: Map<string, TransientResource>;
     hasResource(id: string): boolean;
-    getResource(id: string): Resource;
-    getResources(): Resource[];
-    getPointer(id: string): Resource;
-    createResource(id?: string): Resource;
-    createResourceFrom<T>(object: T, id?: string): Resource & T;
+    getResource(id: string): TransientResource;
+    getResources(): TransientResource[];
+    getPointer(id: string): TransientResource;
+    createResource(id?: string): TransientResource;
+    createResourceFrom<T>(object: T, id?: string): TransientResource & T;
     toJSON(): object;
 }
 export interface FreeResourcesFactory extends ModelFactory<FreeResources>, ModelDecorator<FreeResources> {

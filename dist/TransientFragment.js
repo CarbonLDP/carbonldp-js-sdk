@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var Errors_1 = require("./Errors");
-var Resource_1 = require("./Resource");
+var TransientResource_1 = require("./TransientResource");
 var Utils_1 = require("./Utils");
 exports.TransientFragment = {
     isDecorated: function (object) {
@@ -9,7 +9,7 @@ exports.TransientFragment = {
             object.hasOwnProperty("_document");
     },
     is: function (object) {
-        return Resource_1.Resource.is(object) &&
+        return TransientResource_1.TransientResource.is(object) &&
             exports.TransientFragment.isDecorated(object);
     },
     create: function (document, id) {
@@ -25,7 +25,7 @@ exports.TransientFragment = {
     decorate: function (object) {
         if (exports.TransientFragment.isDecorated(object))
             return object;
-        Resource_1.Resource.decorate(object);
+        TransientResource_1.TransientResource.decorate(object);
         var fragment = object;
         Object.defineProperties(fragment, {
             "_document": {

@@ -88,7 +88,7 @@ import {
 } from "./RDF/Document";
 import { RDFNode } from "./RDF/Node";
 import { URI } from "./RDF/URI";
-import { Resource } from "./Resource";
+import { TransientResource } from "./TransientResource";
 import {
 	FinishSPARQLSelect,
 	SPARQLBuilder,
@@ -749,7 +749,7 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 	_getFreeResources( nodes:RDFNode[] ):FreeResources {
 		let freeResourcesDocument:FreeResources = FreeResources.create( this );
 
-		let resources:Resource[] = nodes.map( node => freeResourcesDocument.createResource( node[ "@id" ] ) );
+		let resources:TransientResource[] = nodes.map( node => freeResourcesDocument.createResource( node[ "@id" ] ) );
 		this._compact( nodes, resources, freeResourcesDocument );
 
 		return freeResourcesDocument;
@@ -1266,7 +1266,7 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 			}
 
 			if( queryBuilderFn && "types" in pointer ) {
-				const resource:Resource = pointer as Resource;
+				const resource:TransientResource = pointer as TransientResource;
 				const superQueryBuilderFn:typeof queryBuilderFn = queryBuilderFn;
 				queryBuilderFn = _ => {
 					resource.types.forEach( type => _.withType( type ) );

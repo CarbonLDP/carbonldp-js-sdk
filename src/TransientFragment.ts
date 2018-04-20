@@ -2,11 +2,11 @@ import { TransientDocument } from "./TransientDocument";
 import { IllegalActionError } from "./Errors";
 import { ModelDecorator } from "./ModelDecorator";
 import { ModelFactory } from "./ModelFactory";
-import { Resource } from "./Resource";
+import { TransientResource } from "./TransientResource";
 import { isObject } from "./Utils";
 
 
-export interface TransientFragment extends Resource {
+export interface TransientFragment extends TransientResource {
 	_document:TransientDocument;
 }
 
@@ -32,7 +32,7 @@ export const TransientFragment:TransientFragmentFactory = {
 	},
 
 	is( object:object ):object is TransientFragment {
-		return Resource.is( object ) &&
+		return TransientResource.is( object ) &&
 			TransientFragment.isDecorated( object )
 			;
 	},
@@ -53,7 +53,7 @@ export const TransientFragment:TransientFragmentFactory = {
 	decorate<T extends object>( object:T ):T & TransientFragment {
 		if( TransientFragment.isDecorated( object ) ) return object;
 
-		Resource.decorate( object );
+		TransientResource.decorate( object );
 
 		const fragment:T & TransientFragment = object as T & TransientFragment;
 		Object.defineProperties( fragment, {
