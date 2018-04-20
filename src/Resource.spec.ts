@@ -169,7 +169,7 @@ describe( module( "carbonldp/Resource" ), ():void => {
 
 		describe( "Resource instance", ():void => {
 
-			// TODO: Mode to `PersistedResource.decorate`
+			// TODO: Mode to `Resource.decorate`
 			it( "Resource._snapshot", ():void => {
 				let persistedResource:Resource;
 
@@ -324,7 +324,7 @@ describe( module( "carbonldp/Resource" ), ():void => {
 				expect( resource.toDelete ).toBeUndefined();
 			} );
 
-			// TODO: Test `PersistedResource.isPartial`
+			// TODO: Test `Resource.isPartial`
 
 		} );
 

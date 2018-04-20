@@ -25,7 +25,7 @@ describe( module( "carbonldp/System/PlatformInstance" ), ():void => {
 			expect( target ).toBeDefined();
 		} );
 
-		it( extendsClass( "CarbonLDP.Fragment.PersistedFragment" ), ():void => {
+		it( extendsClass( "CarbonLDP.Fragment" ), ():void => {
 			const target:Fragment = {} as PlatformInstance;
 			expect( target ).toBeDefined();
 		} );

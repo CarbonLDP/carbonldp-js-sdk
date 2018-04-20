@@ -17,7 +17,7 @@ export interface NamedFragmentFactory extends ModelDecorator<NamedFragment> {
 
 export const NamedFragment:NamedFragmentFactory = {
 	isDecorated( object:object ):object is NamedFragment {
-		// Fallback to `PersistedFragment.isDecorated` since it has not own properties
+		// Fallback to `Fragment.isDecorated` since it has not own properties
 		return Fragment.isDecorated( object );
 	},
 

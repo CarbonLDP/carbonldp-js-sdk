@@ -66,7 +66,7 @@ describe( module( "carbonldp/Auth/UsersEndpoint" ), ():void => {
 				expect( UsersEndpoint.is ).toEqual( jasmine.any( Function ) );
 			} );
 
-			it( "should call PersistedProtectedDocument.is", ():void => {
+			it( "should call ProtectedDocument.is", ():void => {
 				const spy:jasmine.Spy = spyOn( ProtectedDocument, "is" )
 					.and.returnValue( false );
 
@@ -93,7 +93,7 @@ describe( module( "carbonldp/Auth/UsersEndpoint" ), ():void => {
 				expect( UsersEndpoint.decorate ).toEqual( jasmine.any( Function ) );
 			} );
 
-			it( "should call PersistedProtectedDocument.decorate", ():void => {
+			it( "should call ProtectedDocument.decorate", ():void => {
 				const spy:jasmine.Spy = spyOn( ProtectedDocument, "decorate" )
 					.and.callThrough();
 

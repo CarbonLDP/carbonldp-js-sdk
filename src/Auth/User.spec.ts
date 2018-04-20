@@ -93,7 +93,7 @@ describe( module( "carbonldp/Auth/User" ), ():void => {
 		"CarbonLDP.Auth.UserFactory"
 	), ():void => {
 
-		type MockPersistedUser = StrictMinus<User, TransientUser & ProtectedDocument>;
+		type MockUser = StrictMinus<User, TransientUser & ProtectedDocument>;
 
 		it( isDefined(), ():void => {
 			expect( User ).toBeDefined();
@@ -115,7 +115,7 @@ describe( module( "carbonldp/Auth/User" ), ():void => {
 				expect( spy ).toHaveBeenCalledWith( object );
 			} );
 
-			it( "should call to `PersistedProtectedDocument.is`", ():void => {
+			it( "should call to `ProtectedDocument.is`", ():void => {
 				spyOn( TransientUser, "isDecorated" )
 					.and.returnValue( true );
 				const spy:jasmine.Spy = spyOn( ProtectedDocument, "is" );
@@ -169,7 +169,7 @@ describe( module( "carbonldp/Auth/User" ), ():void => {
 				expect( spy ).toHaveBeenCalledWith( object );
 			} );
 
-			it( "should call `PersistedProtectedDocument.decorate`", ():void => {
+			it( "should call `ProtectedDocument.decorate`", ():void => {
 				const spy:jasmine.Spy = spyOn( ProtectedDocument, "decorate" );
 
 				const object:object = { the: "object" };

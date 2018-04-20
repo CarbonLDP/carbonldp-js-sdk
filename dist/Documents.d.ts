@@ -115,7 +115,7 @@ export declare class Documents implements PointerLibrary, PointerValidator, Obje
     onDocumentDeleted(uriPattern: string, onEvent: (message: DocumentDeleted) => void, onError: (error: Error) => void): void;
     onMemberAdded(uriPattern: string, onEvent: (message: MemberAdded) => void, onError: (error: Error) => void): void;
     onMemberRemoved(uriPattern: string, onEvent: (message: MemberRemoved) => void, onError: (error: Error) => void): void;
-    _getPersistedDocument<T extends object>(rdfDocument: RDFDocument, response: Response): T & Document;
+    _convertRDFDocument<T extends object>(rdfDocument: RDFDocument, response: Response): T & Document;
     _getFreeResources(nodes: RDFNode[]): FreeResources;
     _parseErrorResponse<T extends object>(response: Response | Error): Promise<never>;
     private _getFullDocument<T>(uri, requestOptions);

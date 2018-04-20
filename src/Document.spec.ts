@@ -131,7 +131,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 
 			it( hasSignature(
 				[ "T extends object" ],
-				"Creates a PersistedFragment from the object provided and the slug specified.", [
+				"Creates a Fragment from the object provided and the slug specified.", [
 					{ name: "object", type: "T" },
 					{ name: "slug", type: "string" },
 				],
@@ -140,21 +140,21 @@ describe( module( "carbonldp/Document" ), ():void => {
 
 			it( hasSignature(
 				[ "T extends object" ],
-				"Creates a PersistedBlankNode from the object provided, sing no slug was specified.", [
+				"Creates a BlankNode from the object provided, sing no slug was specified.", [
 					{ name: "object", type: "T" },
 				],
 				{ type: "T & CarbonLDP.Fragment" }
 			), ():void => {} );
 
 			it( hasSignature(
-				"Creates a PersistedFragment with the slug provided.", [
+				"Creates a Fragment with the slug provided.", [
 					{ name: "slug", type: "string" },
 				],
 				{ type: "CarbonLDP.Fragment" }
 			), ():void => {} );
 
 			it( hasSignature(
-				"Creates a PersistedBlankNode, since no slug is provided",
+				"Creates a BlankNode, since no slug is provided",
 				{ type: "CarbonLDP.Fragment" }
 			), ():void => {} );
 
@@ -166,7 +166,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 		), ():void => {
 
 			it( hasSignature(
-				"Creates a PersistedNamedFragment with the slug provided", [
+				"Creates a NamedFragment with the slug provided", [
 					{ name: "slug", type: "string" },
 				],
 				{ type: "CarbonLDP.NamedFragment" }
@@ -174,7 +174,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 
 			it( hasSignature(
 				[ "T extends object" ],
-				"Creates a PersistedNamedFragment from the object provided and the slug specified.", [
+				"Creates a NamedFragment from the object provided and the slug specified.", [
 					{ name: "object", type: "T" },
 					{ name: "slug", type: "string" },
 				],
@@ -977,9 +977,9 @@ describe( module( "carbonldp/Document" ), ():void => {
 				myProperty?:string;
 			}
 
-			interface MyPersistedDocument extends MyObject, Document {}
+			interface MyDocument extends MyObject, Document {}
 
-			let persistedDocument:MyPersistedDocument;
+			let persistedDocument:MyDocument;
 
 			persistedDocument = Document.createFrom<MyObject>( {}, context.documents, "http://example.com/document/" );
 			expect( Document.is( persistedDocument ) ).toBe( true );
@@ -1000,23 +1000,23 @@ describe( module( "carbonldp/Document" ), ():void => {
 				myProperty?:string;
 			}
 
-			interface MyDocument extends MyObject, TransientDocument {}
+			interface MyTransientDocument extends MyObject, TransientDocument {}
 
-			let document:MyDocument;
+			let document:MyTransientDocument;
 
-			interface MyPersistedDocument extends MyObject, Document {
+			interface MyDocument extends MyObject, Document {
 			}
 
-			let persistedDocument:MyPersistedDocument;
+			let persistedDocument:MyDocument;
 
 			document = TransientDocument.createFrom<MyObject>( {} );
-			persistedDocument = Document.decorate<MyDocument>( document, context.documents );
+			persistedDocument = Document.decorate<MyTransientDocument>( document, context.documents );
 			expect( Document.is( persistedDocument ) ).toBe( true );
 			expect( persistedDocument.myProperty ).toBeUndefined();
 			expect( persistedDocument._documents ).toBe( context.documents );
 
 			document = TransientDocument.createFrom<MyObject>( { myProperty: "a property" } );
-			persistedDocument = Document.decorate<MyDocument>( document, context.documents );
+			persistedDocument = Document.decorate<MyTransientDocument>( document, context.documents );
 			expect( Document.is( persistedDocument ) ).toBe( true );
 			expect( persistedDocument.myProperty ).toBeDefined();
 			expect( persistedDocument.myProperty ).toBe( "a property" );

@@ -734,7 +734,7 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 	}
 
 
-	_getPersistedDocument<T extends object>( rdfDocument:RDFDocument, response:Response ):T & Document {
+	_convertRDFDocument<T extends object>( rdfDocument:RDFDocument, response:Response ):T & Document {
 		const [ documentResources ] = RDFDocument.getNodes( rdfDocument );
 		if( documentResources.length === 0 ) throw new BadResponseError( `The RDFDocument: ${ rdfDocument[ "@id" ] }, doesn't contain a document resource.`, response );
 		if( documentResources.length > 1 ) throw new BadResponseError( `The RDFDocument: ${ rdfDocument[ "@id" ] }, contains more than one document resource.`, response );
@@ -813,7 +813,7 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 				const rdfDocument:RDFDocument = this._getRDFDocument( targetURI, rdfDocuments, response );
 				if( rdfDocument === null ) throw new BadResponseError( "No document was returned.", response );
 
-				const document:T & Document = this._getPersistedDocument<T>( rdfDocument, response );
+				const document:T & Document = this._convertRDFDocument<T>( rdfDocument, response );
 				document._eTag = eTag;
 
 				this.documentsBeingResolved.delete( uri );
@@ -889,7 +889,7 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 				const rdfDocument:RDFDocument = this._getRDFDocument( uri, rdfDocuments, response );
 				if( rdfDocument === null ) throw new BadResponseError( "No document was returned.", response );
 
-				const updatedPersistedDocument:T & Document = this._getPersistedDocument( rdfDocument, response );
+				const updatedPersistedDocument:T & Document = this._convertRDFDocument( rdfDocument, response );
 				updatedPersistedDocument._eTag = eTag;
 
 				return updatedPersistedDocument;
@@ -1386,7 +1386,7 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 		const rdfDocument:RDFDocument = this._getRDFDocument( persistedDocument.id, rdfDocuments, response );
 		if( rdfDocument === null ) throw new BadResponseError( "No document was returned.", response );
 
-		persistedDocument = this._getPersistedDocument<T>( rdfDocument, response );
+		persistedDocument = this._convertRDFDocument<T>( rdfDocument, response );
 		persistedDocument._eTag = eTag;
 
 		return persistedDocument;

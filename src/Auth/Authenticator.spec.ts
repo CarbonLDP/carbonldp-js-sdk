@@ -305,7 +305,7 @@ describe( module( "carbonldp/Auth/Authenticator" ), ():void => {
 				authenticator
 					.getAuthenticatedUser()
 					.then( user => {
-						expect( user ).toEqual( anyThatMatches( User.is, "PersistedUser" ) as any );
+						expect( user ).toEqual( anyThatMatches( User.is, "User" ) as any );
 						expect( user ).toEqual( jasmine.objectContaining( {
 							_resolved: false,
 							types: jasmine.arrayContaining( [ CS.User ] ) as any as string[],

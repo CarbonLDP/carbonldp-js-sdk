@@ -99,9 +99,9 @@ describe( module( "carbonldp/Fragment" ), ():void => {
 			expect( Fragment ).toEqual( jasmine.any( Object ) );
 		} );
 
-		// TODO: Test `PersistedFragment.isDecorated`
+		// TODO: Test `Fragment.isDecorated`
 
-		// TODO: Test `PersistedFragment.is`
+		// TODO: Test `Fragment.is`
 
 		// TODO: Separate in different tests
 		it( "Fragment.decorate", ():void => {
@@ -117,9 +117,9 @@ describe( module( "carbonldp/Fragment" ), ():void => {
 			expect( spyPersistedDecorator ).toHaveBeenCalledWith( fragment );
 		} );
 
-		// TODO: Test `PersistedFragment.create`
+		// TODO: Test `Fragment.create`
 
-		// TODO: Test `PersistedFragment.createFrom`
+		// TODO: Test `Fragment.createFrom`
 
 		describe( "Fragment instance", ():void => {
 

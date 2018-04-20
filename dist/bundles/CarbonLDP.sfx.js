@@ -7170,7 +7170,7 @@ var Authenticator = (function () {
         if (metadataRDFs.length !== 1)
             throw new Errors_2.BadResponseError("No correct cs:UserMetadata was returned.", response);
         return this.context.documents
-            ._getPersistedDocument(metadataRDFs[0], response);
+            ._convertRDFDocument(metadataRDFs[0], response);
     };
     return Authenticator;
 }());
@@ -11154,7 +11154,7 @@ var Documents = (function () {
     Documents.prototype.onMemberRemoved = function (uriPattern, onEvent, onError) {
         return this.on(Event_1.Event.MEMBER_REMOVED, uriPattern, onEvent, onError);
     };
-    Documents.prototype._getPersistedDocument = function (rdfDocument, response) {
+    Documents.prototype._convertRDFDocument = function (rdfDocument, response) {
         var documentResources = Document_2.RDFDocument.getNodes(rdfDocument)[0];
         if (documentResources.length === 0)
             throw new BadResponseError_1.BadResponseError("The RDFDocument: " + rdfDocument["@id"] + ", doesn't contain a document resource.", response);
@@ -11228,7 +11228,7 @@ var Documents = (function () {
             var rdfDocument = _this._getRDFDocument(targetURI, rdfDocuments, response);
             if (rdfDocument === null)
                 throw new BadResponseError_1.BadResponseError("No document was returned.", response);
-            var document = _this._getPersistedDocument(rdfDocument, response);
+            var document = _this._convertRDFDocument(rdfDocument, response);
             document._eTag = eTag;
             _this.documentsBeingResolved.delete(uri);
             return document;
@@ -11291,7 +11291,7 @@ var Documents = (function () {
             var rdfDocument = _this._getRDFDocument(uri, rdfDocuments, response);
             if (rdfDocument === null)
                 throw new BadResponseError_1.BadResponseError("No document was returned.", response);
-            var updatedPersistedDocument = _this._getPersistedDocument(rdfDocument, response);
+            var updatedPersistedDocument = _this._convertRDFDocument(rdfDocument, response);
             updatedPersistedDocument._eTag = eTag;
             return updatedPersistedDocument;
         }).catch(function (error) {
@@ -11707,7 +11707,7 @@ var Documents = (function () {
         var rdfDocument = this._getRDFDocument(persistedDocument.id, rdfDocuments, response);
         if (rdfDocument === null)
             throw new BadResponseError_1.BadResponseError("No document was returned.", response);
-        persistedDocument = this._getPersistedDocument(rdfDocument, response);
+        persistedDocument = this._convertRDFDocument(rdfDocument, response);
         persistedDocument._eTag = eTag;
         return persistedDocument;
     };

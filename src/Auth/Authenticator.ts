@@ -92,7 +92,7 @@ export abstract class Authenticator<T extends object, W extends object> {
 		if( metadataRDFs.length !== 1 ) throw new BadResponseError( "No correct cs:UserMetadata was returned.", response );
 
 		return this.context.documents
-			._getPersistedDocument( metadataRDFs[ 0 ], response );
+			._convertRDFDocument( metadataRDFs[ 0 ], response );
 	}
 
 }

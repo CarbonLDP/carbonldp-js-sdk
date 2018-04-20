@@ -520,7 +520,7 @@ export const Document:DocumentFactory = {
 				value: extendCreateNamedFragment( persistedDocument.createNamedFragment ),
 			},
 
-			// Overwrite PersistedResource.isDirty to take into account fragments state
+			// Overwrite Resource.isDirty to take into account fragments state
 			"isDirty": {
 				writable: false,
 				enumerable: false,

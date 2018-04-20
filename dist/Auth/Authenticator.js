@@ -68,7 +68,7 @@ var Authenticator = (function () {
         if (metadataRDFs.length !== 1)
             throw new Errors_2.BadResponseError("No correct cs:UserMetadata was returned.", response);
         return this.context.documents
-            ._getPersistedDocument(metadataRDFs[0], response);
+            ._convertRDFDocument(metadataRDFs[0], response);
     };
     return Authenticator;
 }());

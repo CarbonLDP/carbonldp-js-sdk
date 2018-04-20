@@ -9,7 +9,7 @@ import { Context } from "../../src/Context";
 import { Pointer } from "../../src/Pointer";
 
 
-export function createMockPersistedUser( context:Context ):User {
+export function createMockUser( context:Context ):User {
 	const pointer:Pointer = context.documents.getPointer( "https://example.com/users/my-user/" );
 
 	return User.decorate( Object.assign( pointer, {
@@ -32,7 +32,7 @@ export function createMockAuthService( context:Context, data?:{
 			super( context );
 
 			if( data.user ) this._authenticatedUser = data.user === true ?
-				createMockPersistedUser( this.context ) : data.user;
+				createMockUser( this.context ) : data.user;
 
 			if( data.authenticator ) this.authenticator = data.authenticator;
 		}
