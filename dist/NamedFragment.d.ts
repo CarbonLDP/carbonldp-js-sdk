@@ -1,4 +1,4 @@
-import { ModelDecorator } from "./ModelDecorator";
+import { ModelDecorator } from "./core/ModelDecorator";
 import { TransientNamedFragment } from "./TransientNamedFragment";
 import { Document } from "./Document";
 import { Fragment } from "./Fragment";

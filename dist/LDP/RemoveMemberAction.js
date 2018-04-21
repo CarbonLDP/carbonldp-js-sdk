@@ -7,7 +7,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 }
 Object.defineProperty(exports, "__esModule", { value: true });
-var TransientResource_1 = require("../TransientResource");
+var Resource_1 = require("../Resource");
 var C_1 = require("../Vocabularies/C");
 var Utils = __importStar(require("./../Utils"));
 var SCHEMA = {
@@ -24,7 +24,7 @@ exports.RemoveMemberAction = {
         return Utils.hasPropertyDefined(object, "targetMembers");
     },
     create: function (targetMembers) {
-        return TransientResource_1.TransientResource.createFrom({
+        return Resource_1.TransientResource.createFrom({
             types: [exports.RemoveMemberAction.TYPE],
             targetMembers: targetMembers,
         });

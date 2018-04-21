@@ -7,7 +7,7 @@ var Converter_1 = require("./JSONLD/Converter");
 var TransientNamedFragment_1 = require("./TransientNamedFragment");
 var ObjectSchema_1 = require("./ObjectSchema");
 var URI_1 = require("./RDF/URI");
-var TransientResource_1 = require("./TransientResource");
+var Resource_1 = require("./Resource");
 var Utils_1 = require("./Utils");
 var C_1 = require("./Vocabularies/C");
 var LDP_1 = require("./Vocabularies/LDP");
@@ -78,13 +78,13 @@ exports.TransientDocument = {
             Utils_1.hasFunction(object, "toJSON");
     },
     is: function (object) {
-        return TransientResource_1.TransientResource.is(object) &&
+        return Resource_1.TransientResource.is(object) &&
             exports.TransientDocument.isDecorated(object);
     },
     decorate: function (object) {
         if (exports.TransientDocument.isDecorated(object))
             return object;
-        TransientResource_1.TransientResource.decorate(object);
+        Resource_1.TransientResource.decorate(object);
         Object.defineProperties(object, {
             "_fragmentsIndex": {
                 configurable: true,

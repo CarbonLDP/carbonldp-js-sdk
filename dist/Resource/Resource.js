@@ -7,8 +7,8 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 }
 Object.defineProperty(exports, "__esModule", { value: true });
+var Utils = __importStar(require("../Utils"));
 var TransientResource_1 = require("./TransientResource");
-var Utils = __importStar(require("./Utils"));
 function syncSnapshot() {
     this._snapshot = Utils.ObjectUtils.clone(this, { arrays: true });
     this._snapshot.id = this.id;
@@ -87,6 +87,12 @@ exports.Resource = {
         });
         return persistedResource;
     },
+    is: function (value) {
+        return TransientResource_1.TransientResource.is(value)
+            && exports.Resource.isDecorated(value);
+    },
+    create: TransientResource_1.TransientResource.create,
+    createFrom: TransientResource_1.TransientResource.createFrom,
 };
 
 //# sourceMappingURL=Resource.js.map

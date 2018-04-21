@@ -1,7 +1,7 @@
 import { ModelFactory } from "../core/ModelFactory";
 import { ObjectSchema } from "../ObjectSchema";
 import { Pointer } from "../Pointer";
-import { TransientResource } from "../TransientResource";
+import { TransientResource } from "../Resource";
 import { hasProperty } from "../Utils";
 import { C } from "../Vocabularies/C";
 

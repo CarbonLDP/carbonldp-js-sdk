@@ -32,7 +32,7 @@ import { Resource } from "./Resource";
 import { Pointer } from "./Pointer";
 import { TransientProtectedDocument } from "./TransientProtectedDocument";
 import * as RDF from "./RDF";
-import { TransientResource } from "./TransientResource";
+import { TransientResource } from "./Resource";
 import {
 	globalContext,
 	SDKContext,

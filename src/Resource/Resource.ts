@@ -1,7 +1,10 @@
-import { ModelDecorator } from "./core/ModelDecorator";
-import { TransientResource } from "./TransientResource";
-import { PartialMetadata } from "./SPARQL/QueryDocument/PartialMetadata";
-import * as Utils from "./Utils";
+import { PartialMetadata } from "../SPARQL/QueryDocument";
+import * as Utils from "../Utils";
+import {
+	TransientResource,
+	TransientResourceFactory,
+} from "./TransientResource";
+
 
 export interface Resource extends TransientResource {
 	_snapshot:TransientResource;
@@ -21,11 +24,13 @@ export interface Resource extends TransientResource {
 }
 
 
-export interface ResourceFactory extends ModelDecorator<Resource> {
+export interface ResourceFactory extends TransientResourceFactory {
 	isDecorated( object:object ):object is Resource;
 
-
 	decorate<T extends object>( object:T ):T & Resource;
+
+
+	is( value:any ):value is Resource;
 }
 
 
@@ -48,7 +53,7 @@ function isDirty( this:Resource ):boolean {
 
 function revert( this:Resource ):void {
 	for( let key of Object.keys( this ) ) {
-		if( ! ( key in this._snapshot ) ) delete this[ key ];
+		if( ! (key in this._snapshot) ) delete this[ key ];
 	}
 
 	Utils.ObjectUtils.extend( this, this._snapshot, { arrays: true } );
@@ -118,4 +123,14 @@ export const Resource:ResourceFactory = {
 
 		return persistedResource;
 	},
+
+
+	is( value:any ):value is Resource {
+		return TransientResource.is( value )
+			&& Resource.isDecorated( value )
+			;
+	},
+
+	create: TransientResource.create,
+	createFrom: TransientResource.createFrom,
 };

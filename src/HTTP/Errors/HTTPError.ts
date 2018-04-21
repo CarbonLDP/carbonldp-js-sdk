@@ -2,7 +2,7 @@ import { AbstractError } from "../../Errors";
 import { Error } from "../../LDP/Error";
 import { ErrorResponse } from "../../LDP/ErrorResponse";
 import { Document } from "../../Document";
-import { TransientResource } from "../../TransientResource";
+import { TransientResource } from "../../Resource";
 import { Response } from "../Response";
 
 export class HTTPError extends AbstractError implements ErrorResponse {

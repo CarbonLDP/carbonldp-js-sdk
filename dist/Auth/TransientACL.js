@@ -108,7 +108,7 @@ exports.TransientACL = {
     },
 };
 function parsePointer(element) {
-    return Utils.isObject(element) ? element : Pointer_1.Pointer.create(element);
+    return Pointer_1.Pointer.is(element) ? element : Pointer_1.Pointer.create({ id: element });
 }
 function parsePointers(elements) {
     var _this = this;

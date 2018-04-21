@@ -1,7 +1,7 @@
 import { C } from "../Vocabularies/C";
 import { XSD } from "../Vocabularies/XSD";
 import { ObjectSchema } from "../ObjectSchema";
-import { TransientResource } from "../TransientResource";
+import { TransientResource } from "../Resource";
 import { Map } from "./Map";
 
 

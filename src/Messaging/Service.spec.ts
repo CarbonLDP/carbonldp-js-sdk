@@ -4,7 +4,7 @@ import Frame from "webstomp-client/src/frame.js";
 import { CarbonLDP } from "../CarbonLDP";
 import { IllegalStateError } from "../Errors";
 import { Pointer } from "../Pointer";
-import { TransientResource } from "../TransientResource";
+import { TransientResource } from "../Resource";
 import {
 	clazz,
 	constructor,

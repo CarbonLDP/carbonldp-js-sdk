@@ -4,7 +4,7 @@ var TransientFragment_1 = require("./TransientFragment");
 var ObjectSchema_1 = require("./ObjectSchema");
 var Resource_1 = require("./Resource");
 var URI_1 = require("./RDF/URI");
-var TransientResource_1 = require("./TransientResource");
+var Resource_2 = require("./Resource");
 var Utils_1 = require("./Utils");
 function resolveURI(fragment, uri) {
     if (URI_1.URI.isAbsolute(uri))
@@ -14,15 +14,15 @@ function resolveURI(fragment, uri) {
 }
 function addTypeInPersistedFragment(type) {
     type = resolveURI(this, type);
-    return TransientResource_1.addTypeInResource.call(this, type);
+    return Resource_2.addTypeInResource.call(this, type);
 }
 function hasTypeInPersistedFragment(type) {
     type = resolveURI(this, type);
-    return TransientResource_1.hasTypeInResource.call(this, type);
+    return Resource_2.hasTypeInResource.call(this, type);
 }
 function removeTypeInPersistedFragment(type) {
     type = resolveURI(this, type);
-    return TransientResource_1.removeTypeInResource.call(this, type);
+    return Resource_2.removeTypeInResource.call(this, type);
 }
 exports.Fragment = {
     isDecorated: function (object) {

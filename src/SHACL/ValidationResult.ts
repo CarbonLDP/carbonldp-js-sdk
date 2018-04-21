@@ -1,6 +1,6 @@
 import { ObjectSchema } from "../ObjectSchema";
 import { Pointer } from "../Pointer";
-import { TransientResource } from "../TransientResource";
+import { TransientResource } from "../Resource";
 import { SHACL } from "../Vocabularies/SHACL";
 import { XSD } from "../Vocabularies/XSD";
 

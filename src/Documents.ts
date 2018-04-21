@@ -88,7 +88,7 @@ import {
 } from "./RDF/Document";
 import { RDFNode } from "./RDF/Node";
 import { URI } from "./RDF/URI";
-import { TransientResource } from "./TransientResource";
+import { TransientResource } from "./Resource";
 import {
 	FinishSPARQLSelect,
 	SPARQLBuilder,

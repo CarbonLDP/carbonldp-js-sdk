@@ -1,5 +1,5 @@
-import { ModelFactory } from "../ModelFactory";
-import { TransientResource } from "../TransientResource";
+import { ModelFactory } from "../core/ModelFactory";
+import { TransientResource } from "../Resource";
 export interface VolatileResource extends TransientResource {
 }
 export interface VolatileResourceFactory extends ModelFactory<VolatileResource> {

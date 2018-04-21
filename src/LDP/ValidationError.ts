@@ -2,7 +2,7 @@ import { ModelFactory } from "../core/ModelFactory";
 import { C } from "../Vocabularies/C";
 import { ObjectSchema } from "../ObjectSchema";
 import { Pointer } from "../Pointer";
-import { TransientResource } from "../TransientResource";
+import { TransientResource } from "../Resource";
 
 
 export interface ValidationError extends TransientResource {

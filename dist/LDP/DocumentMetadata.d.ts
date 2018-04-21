@@ -3,8 +3,8 @@ import { ObjectSchema } from "../ObjectSchema";
 import { Document } from "../Document";
 import { Map } from "./Map";
 import { VolatileResource } from "./VolatileResource";
-import { ModelFactory } from "../ModelFactory";
-import { ModelDecorator } from "../ModelDecorator";
+import { ModelFactory } from "../core/ModelFactory";
+import { ModelDecorator } from "../core/ModelDecorator";
 export interface DocumentMetadata extends VolatileResource {
     relatedDocument: Document;
     eTag?: string;

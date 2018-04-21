@@ -1,5 +1,5 @@
 import { ObjectSchema } from "../ObjectSchema";
-import { TransientResource } from "../TransientResource";
+import { TransientResource } from "../Resource";
 import { Map } from "./Map";
 export interface Error extends TransientResource {
     errorCode: string;

@@ -31,7 +31,7 @@ import { TransientDocument } from "./TransientDocument";
 
 import { TransientFragment } from "./TransientFragment";
 import { TransientNamedFragment } from "./TransientNamedFragment";
-import { TransientResource } from "./TransientResource";
+import { TransientResource } from "./Resource";
 import { C } from "./Vocabularies/C";
 import { LDP } from "./Vocabularies/LDP";
 import { XSD } from "./Vocabularies/XSD";

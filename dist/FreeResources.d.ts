@@ -1,8 +1,8 @@
 import { Documents } from "./Documents";
-import { ModelDecorator } from "./ModelDecorator";
-import { ModelFactory } from "./ModelFactory";
+import { ModelDecorator } from "./core/ModelDecorator";
+import { ModelFactory } from "./core/ModelFactory";
 import { PointerLibrary, PointerValidator } from "./Pointer";
-import { TransientResource } from "./TransientResource";
+import { TransientResource } from "./Resource";
 export interface FreeResources extends PointerLibrary, PointerValidator {
     _documents: Documents;
     _resourcesIndex: Map<string, TransientResource>;

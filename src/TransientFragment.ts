@@ -2,7 +2,7 @@ import { TransientDocument } from "./TransientDocument";
 import { IllegalActionError } from "./Errors";
 import { ModelDecorator } from "./core/ModelDecorator";
 import { ModelFactory } from "./core/ModelFactory";
-import { TransientResource } from "./TransientResource";
+import { TransientResource } from "./Resource";
 import { isObject } from "./Utils";
 
 

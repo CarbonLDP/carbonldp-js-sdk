@@ -48,7 +48,7 @@ import { Document } from "./Document";
 import { NamedFragment } from "./NamedFragment";
 import { Resource } from "./Resource";
 import { Pointer } from "./Pointer";
-import { TransientResource } from "./TransientResource";
+import { TransientResource } from "./Resource";
 import { ContextSettings } from "./Settings";
 import * as SPARQL from "./SPARQL";
 import { PartialMetadata } from "./SPARQL/QueryDocument/PartialMetadata";

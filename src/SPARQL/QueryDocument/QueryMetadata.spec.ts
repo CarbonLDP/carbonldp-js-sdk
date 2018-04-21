@@ -1,6 +1,6 @@
 import { VolatileResource } from "../../LDP/VolatileResource";
 import { Pointer } from "../../Pointer";
-import { TransientResource } from "../../TransientResource";
+import { TransientResource } from "../../Resource";
 import {
 	hasProperty,
 	hasSignature,

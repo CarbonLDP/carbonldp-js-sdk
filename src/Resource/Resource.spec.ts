@@ -1,6 +1,3 @@
-import { Resource } from "./Resource";
-
-import { TransientResource } from "./TransientResource";
 import {
 	extendsClass,
 	hasMethod,
@@ -11,15 +8,15 @@ import {
 	OBLIGATORY,
 	property,
 	STATIC,
-} from "./test/JasmineExtender";
-import * as Utils from "./Utils";
+} from "../test/JasmineExtender";
+import * as Utils from "../Utils";
+
+import { Resource } from "./Resource";
+
+import { TransientResource } from "./TransientResource";
+
 
 describe( module( "carbonldp/Resource" ), ():void => {
-
-	it( isDefined(), ():void => {
-		expect( Resource ).toBeDefined();
-		expect( Utils.isObject( Resource ) ).toBe( true );
-	} );
 
 	describe( interfaze(
 		"CarbonLDP.Resource",
@@ -167,6 +164,10 @@ describe( module( "carbonldp/Resource" ), ():void => {
 			expect( persistedResource.isDirty ).not.toBe( fn );
 		} );
 
+		// TODO: Test Resource.is
+		// TODO: Test Resource.create
+		// TODO: Test Resource.createFrom
+
 		describe( "Resource instance", ():void => {
 
 			// TODO: Mode to `Resource.decorate`
@@ -211,7 +212,7 @@ describe( module( "carbonldp/Resource" ), ():void => {
 				snapshot = persistedResource._snapshot;
 				expect( snapshot ).toEqual( { id: "", types: [], another: "another" } );
 
-				let resource:TransientResource = TransientResource.createFrom( { another: "another" }, "http://example.com/resource/", [ "http://example.com/ns#Type" ] );
+				let resource:TransientResource = TransientResource.createFrom( { another: "another", id: "http://example.com/resource/", types: [ "http://example.com/ns#Type" ] } );
 				persistedResource = Resource.decorate( resource );
 				expect( () => persistedResource._syncSnapshot() ).not.toThrow();
 
@@ -265,7 +266,7 @@ describe( module( "carbonldp/Resource" ), ():void => {
 				persistedResource[ "object" ] = { some: "some" };
 				expect( persistedResource.isDirty() ).toBe( true );
 
-				let resource:TransientResource = TransientResource.createFrom( { another: "another" }, "http://example.com/resource/", [ "http://example.com/ns#Type" ] );
+				let resource:TransientResource = TransientResource.createFrom( { another: "another", id: "http://example.com/resource/", types: [ "http://example.com/ns#Type" ] } );
 				persistedResource = Resource.decorate( resource );
 
 				persistedResource._syncSnapshot();
@@ -284,7 +285,7 @@ describe( module( "carbonldp/Resource" ), ():void => {
 
 			// TODO: Separate in different tests
 			it( "Resource.revert", ():void => {
-				let resource:TransientResource & { another:string, toDelete?:boolean } = TransientResource.createFrom( { another: "another" }, "http://example.com/resource/", [ "http://example.com/ns#Type" ] );
+				let resource:TransientResource & { another:string, toDelete?:boolean } = TransientResource.createFrom( { another: "another", id: "http://example.com/resource/", types: [ "http://example.com/ns#Type" ] } );
 				let persistedResource:Resource = Resource.decorate( resource );
 				persistedResource._syncSnapshot();
 

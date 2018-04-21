@@ -1,5 +1,5 @@
 import { Pointer } from "../Pointer";
-import { TransientResource } from "../TransientResource";
+import { TransientResource } from "../Resource";
 import {
 	extendsClass,
 	hasMethod,

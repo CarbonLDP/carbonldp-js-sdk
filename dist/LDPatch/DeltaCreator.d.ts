@@ -1,6 +1,6 @@
 import { JSONLDConverter } from "../JSONLD/Converter";
 import { DigestedObjectSchema } from "../ObjectSchema";
-import { TransientResource } from "../TransientResource";
+import { TransientResource } from "../Resource";
 export declare class DeltaCreator {
     private prefixesMap;
     private jsonldConverter;

@@ -23,7 +23,7 @@ import {
 	PointerType,
 } from "../ObjectSchema";
 import { Pointer } from "../Pointer";
-import { TransientResource } from "../TransientResource";
+import { TransientResource } from "../Resource";
 import { isString } from "../Utils";
 import { XSD } from "../Vocabularies/XSD";
 

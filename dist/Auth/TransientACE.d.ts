@@ -1,5 +1,5 @@
 import { TransientFragment } from "../TransientFragment";
-import { ModelFactory } from "../ModelFactory";
+import { ModelFactory } from "../core/ModelFactory";
 import { ObjectSchema } from "../ObjectSchema";
 import { Pointer } from "../Pointer";
 export interface TransientACE extends TransientFragment {

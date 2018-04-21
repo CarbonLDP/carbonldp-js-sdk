@@ -14,7 +14,7 @@ import {
 	ObjectSchemaDigester,
 } from "../ObjectSchema";
 import { Pointer } from "../Pointer";
-import { TransientResource } from "../TransientResource";
+import { TransientResource } from "../Resource";
 import {
 	clazz,
 	constructor,
@@ -610,6 +610,7 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 					const deltaCreator:DeltaCreator = new DeltaCreator( jsonldConverter );
 
 					const oldResource:TransientResource = TransientResource.createFrom( {
+						id: "http://example.org/resource/",
 						property: [
 							"delete string",
 							10,

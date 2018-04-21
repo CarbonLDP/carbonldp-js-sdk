@@ -7,8 +7,8 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 }
 Object.defineProperty(exports, "__esModule", { value: true });
-var Pointer_1 = require("./Pointer");
-var Utils = __importStar(require("./Utils"));
+var Pointer_1 = require("../Pointer");
+var Utils = __importStar(require("../Utils"));
 function addTypeInResource(type) {
     if (this.types.indexOf(type) !== -1)
         return;
@@ -32,25 +32,21 @@ exports.TransientResource = {
             && Utils.hasFunction(object, "hasType")
             && Utils.hasFunction(object, "removeType"));
     },
-    is: function (object) {
-        return Pointer_1.Pointer.is(object)
-            && exports.TransientResource.isDecorated(object);
+    is: function (value) {
+        return Pointer_1.Pointer.is(value)
+            && exports.TransientResource.isDecorated(value);
     },
-    create: function (id, types) {
-        return exports.TransientResource.createFrom({}, id, types);
+    create: function (data) {
+        var clone = Object.assign({}, data);
+        return exports.TransientResource.createFrom(clone);
     },
-    createFrom: function (object, id, types) {
-        var resource = exports.TransientResource.decorate(object);
-        if (id)
-            resource.id = id;
-        if (types)
-            resource.types = types;
-        return resource;
+    createFrom: function (object) {
+        return exports.TransientResource.decorate(object);
     },
     decorate: function (object) {
-        var resource = object;
         if (exports.TransientResource.isDecorated(object))
-            return resource;
+            return object;
+        var resource = object;
         Pointer_1.Pointer.decorate(resource);
         Object.defineProperties(resource, {
             "types": {

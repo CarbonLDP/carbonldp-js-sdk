@@ -12,7 +12,7 @@ import {
 } from "./Pointer";
 import { RDFNode } from "./RDF/Node";
 import { URI } from "./RDF/URI";
-import { TransientResource } from "./TransientResource";
+import { TransientResource } from "./Resource";
 import * as Utils from "./Utils";
 
 export interface FreeResources extends PointerLibrary, PointerValidator {
@@ -101,7 +101,9 @@ function createResourceFrom<T extends object>( this:FreeResources, object:T, id?
 		id = URI.generateBNodeID();
 	}
 
-	let resource:TransientResource & T = TransientResource.createFrom<T>( object, id );
+	let resource:TransientResource & T = TransientResource.createFrom<T>( object );
+	resource.id = id;
+
 	this._resourcesIndex.set( id, resource );
 
 	return resource;

@@ -1,12 +1,12 @@
 import { TransientFragment } from "./TransientFragment";
 import { JSONLDConverter } from "./JSONLD/Converter";
-import { ModelDecorator } from "./ModelDecorator";
-import { ModelFactory } from "./ModelFactory";
+import { ModelDecorator } from "./core/ModelDecorator";
+import { ModelFactory } from "./core/ModelFactory";
 import { TransientNamedFragment } from "./TransientNamedFragment";
 import { ObjectSchema, ObjectSchemaResolver } from "./ObjectSchema";
 import { Pointer, PointerLibrary, PointerValidator } from "./Pointer";
 import { RDFDocument } from "./RDF/Document";
-import { TransientResource } from "./TransientResource";
+import { TransientResource } from "./Resource";
 export interface TransientDocument extends TransientResource, PointerLibrary, PointerValidator {
     defaultInteractionModel?: Pointer;
     isMemberOfRelation?: Pointer;

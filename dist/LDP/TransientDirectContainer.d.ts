@@ -1,5 +1,5 @@
 import { TransientDocument } from "../TransientDocument";
-import { ModelFactory } from "../ModelFactory";
+import { ModelFactory } from "../core/ModelFactory";
 import { Pointer } from "../Pointer";
 export interface TransientDirectContainer extends TransientDocument {
     membershipResource: Pointer;

@@ -1,7 +1,4 @@
-import { Pointer } from "./Pointer";
-import * as Module from "./TransientResource";
-import { TransientResource } from "./TransientResource";
-
+import { Pointer } from "../Pointer";
 import {
 	extendsClass,
 	hasMethod,
@@ -12,17 +9,14 @@ import {
 	OBLIGATORY,
 	property,
 	STATIC,
-} from "./test/JasmineExtender";
+} from "../test/JasmineExtender";
+import { LDP } from "../Vocabularies";
+import { BaseResource } from "./BaseResource";
 
-import { LDP } from "./Vocabularies/LDP";
+import { TransientResource } from "./TransientResource";
 
 
 describe( module( "carbonldp/TransientResource" ), ():void => {
-
-	it( isDefined(), ():void => {
-		expect( Module ).toBeDefined();
-		expect( Module ).toEqual( jasmine.any( Object ) );
-	} );
 
 	describe( interfaze(
 		"CarbonLDP.TransientResource",
@@ -193,14 +187,14 @@ describe( module( "carbonldp/TransientResource" ), ():void => {
 			expect( resource.types ).toEqual( jasmine.any( Array ) );
 			expect( resource.types.length ).toBe( 0 );
 
-			resource = TransientResource.create( "http://example.com/resource/" );
+			resource = TransientResource.create( { id: "http://example.com/resource/" } );
 			expect( resource ).toBeTruthy();
 			expect( TransientResource.isDecorated( resource ) ).toBe( true );
 			expect( resource.id ).toBe( "http://example.com/resource/" );
 			expect( resource.types ).toEqual( jasmine.any( Array ) );
 			expect( resource.types.length ).toBe( 0 );
 
-			resource = TransientResource.create( "http://example.com/resource/", [ LDP.RDFSource ] );
+			resource = TransientResource.create( { id: "http://example.com/resource/", types: [ LDP.RDFSource ] } );
 			expect( resource ).toBeTruthy();
 			expect( TransientResource.isDecorated( resource ) ).toBe( true );
 			expect( resource.id ).toBe( "http://example.com/resource/" );
@@ -208,7 +202,7 @@ describe( module( "carbonldp/TransientResource" ), ():void => {
 			expect( resource.types.length ).toBe( 1 );
 			expect( resource.types ).toEqual( [ LDP.RDFSource ] );
 
-			resource = TransientResource.create( null, [ LDP.RDFSource, LDP.Container ] );
+			resource = TransientResource.create( { id: null, types: [ LDP.RDFSource, LDP.Container ] } );
 			expect( resource ).toBeTruthy();
 			expect( TransientResource.isDecorated( resource ) ).toBe( true );
 			expect( resource.id ).toBe( "" );
@@ -222,14 +216,14 @@ describe( module( "carbonldp/TransientResource" ), ():void => {
 			expect( TransientResource.createFrom ).toBeDefined();
 			expect( TransientResource.createFrom ).toEqual( jasmine.any( Function ) );
 
-			let simpleResource:TransientResource = TransientResource.createFrom( {}, "http://example.com/simple-resource/" );
+			let simpleResource:TransientResource = TransientResource.createFrom( { id: "http://example.com/simple-resource/" } );
 			expect( simpleResource ).toBeTruthy();
 			expect( TransientResource.isDecorated( simpleResource ) ).toBe( true );
 			expect( simpleResource.id ).toBe( "http://example.com/simple-resource/" );
 			expect( simpleResource.types ).toEqual( jasmine.any( Array ) );
 			expect( simpleResource.types.length ).toBe( 0 );
 
-			interface MyResource {
+			interface MyResource extends BaseResource {
 				myProperty:string;
 			}
 
@@ -244,7 +238,7 @@ describe( module( "carbonldp/TransientResource" ), ():void => {
 			expect( resource.myProperty ).toBeDefined();
 			expect( resource.myProperty ).toBe( "a property" );
 
-			resource = TransientResource.createFrom<MyResource>( { myProperty: "a property" }, "http://example.com/resource/" );
+			resource = TransientResource.createFrom<MyResource>( { myProperty: "a property", id: "http://example.com/resource/" } );
 			expect( resource ).toBeTruthy();
 			expect( TransientResource.isDecorated( resource ) ).toBe( true );
 			expect( resource.id ).toBe( "http://example.com/resource/" );
@@ -253,7 +247,7 @@ describe( module( "carbonldp/TransientResource" ), ():void => {
 			expect( resource.myProperty ).toBeDefined();
 			expect( resource.myProperty ).toBe( "a property" );
 
-			resource = TransientResource.createFrom<MyResource>( { myProperty: "a property" }, "http://example.com/resource/", [ LDP.RDFSource ] );
+			resource = TransientResource.createFrom<MyResource>( { myProperty: "a property", id: "http://example.com/resource/", types: [ LDP.RDFSource ] } );
 			expect( resource ).toBeTruthy();
 			expect( TransientResource.isDecorated( resource ) ).toBe( true );
 			expect( resource.id ).toBe( "http://example.com/resource/" );
@@ -263,7 +257,7 @@ describe( module( "carbonldp/TransientResource" ), ():void => {
 			expect( resource.myProperty ).toBeDefined();
 			expect( resource.myProperty ).toBe( "a property" );
 
-			resource = TransientResource.createFrom<MyResource>( { myProperty: "a property" }, null, [ LDP.RDFSource, LDP.Container ] );
+			resource = TransientResource.createFrom<MyResource>( { myProperty: "a property", id: null, types: [ LDP.RDFSource, LDP.Container ] } );
 			expect( resource ).toBeTruthy();
 			expect( TransientResource.isDecorated( resource ) ).toBe( true );
 			expect( resource.id ).toBe( "" );

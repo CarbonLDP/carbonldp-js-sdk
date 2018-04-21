@@ -1,23 +1,18 @@
 import { hasProtocol } from "sparqler/iri";
 
 import { AbstractContext } from "./AbstractContext";
-import { TransientAccessPoint } from "./TransientAccessPoint";
 import * as Auth from "./Auth";
-import { TransientBlankNode } from "./TransientBlankNode";
-import { TransientDocument } from "./TransientDocument";
+import { Document } from "./Document";
 import { Documents } from "./Documents";
 import * as Errors from "./Errors";
-import { TransientFragment } from "./TransientFragment";
+import { Fragment } from "./Fragment";
 import { FreeResources } from "./FreeResources";
-import { ProtectedDocument } from "./ProtectedDocument";
-import { TransientProtectedDocument } from "./TransientProtectedDocument";
-import { ServiceAwareDocument } from "./ServiceAwareDocument";
 import * as HTTP from "./HTTP";
 import * as JSONLD from "./JSONLD";
 import * as LDP from "./LDP";
 import * as LDPatch from "./LDPatch";
 import * as Messaging from "./Messaging";
-import { TransientNamedFragment } from "./TransientNamedFragment";
+import { NamedFragment } from "./NamedFragment";
 import {
 	ContainerType,
 	DigestedObjectSchema,
@@ -26,17 +21,18 @@ import {
 	ObjectSchemaUtils,
 	PointerType,
 } from "./ObjectSchema";
-import { Document } from "./Document";
-import { Fragment } from "./Fragment";
-import { NamedFragment } from "./NamedFragment";
-import { Resource } from "./Resource";
 import { Pointer } from "./Pointer";
+import { ProtectedDocument } from "./ProtectedDocument";
 import * as RDF from "./RDF";
-import { TransientResource } from "./TransientResource";
+import {
+	Resource,
+	TransientResource
+} from "./Resource";
 import {
 	globalContext,
 	SDKContext,
 } from "./SDKContext";
+import { ServiceAwareDocument } from "./ServiceAwareDocument";
 import {
 	CarbonLDPSettings,
 	ContextSettings,
@@ -45,6 +41,12 @@ import {
 import * as SHACL from "./SHACL";
 import * as SPARQL from "./SPARQL";
 import * as System from "./System";
+import { TransientAccessPoint } from "./TransientAccessPoint";
+import { TransientBlankNode } from "./TransientBlankNode";
+import { TransientDocument } from "./TransientDocument";
+import { TransientFragment } from "./TransientFragment";
+import { TransientNamedFragment } from "./TransientNamedFragment";
+import { TransientProtectedDocument } from "./TransientProtectedDocument";
 import * as Utils from "./Utils";
 import * as Vocabularies from "./Vocabularies";
 

@@ -7,14 +7,14 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 }
 Object.defineProperty(exports, "__esModule", { value: true });
-var IllegalStateError_1 = require("./Errors/IllegalStateError");
-var Utils = __importStar(require("./Utils"));
+var Errors_1 = require("../Errors");
+var Utils = __importStar(require("../Utils"));
 function isPointerResolved() {
     return this._resolved;
 }
 exports.isPointerResolved = isPointerResolved;
 function resolveStandalonePointer() {
-    return Promise.reject(new IllegalStateError_1.IllegalStateError("The pointer has not been assigned to a context."));
+    return Promise.reject(new Errors_1.IllegalStateError("The pointer has not been assigned to a context."));
 }
 exports.resolveStandalonePointer = resolveStandalonePointer;
 exports.Pointer = {
@@ -23,20 +23,18 @@ exports.Pointer = {
             Utils.hasPropertyDefined(object, "_resolved") &&
             Utils.hasPropertyDefined(object, "id") &&
             Utils.hasFunction(object, "isResolved") &&
-            Utils.hasPropertyDefined(object, "resolve"));
+            Utils.hasFunction(object, "resolve"));
     },
-    is: function (object) {
-        return (Utils.isObject(object) &&
-            exports.Pointer.isDecorated(object));
+    is: function (value) {
+        return (Utils.isObject(value) &&
+            exports.Pointer.isDecorated(value));
     },
-    create: function (id) {
-        return exports.Pointer.createFrom({}, id);
+    create: function (data) {
+        var clone = Object.assign({}, data);
+        return exports.Pointer.createFrom(clone);
     },
-    createFrom: function (object, id) {
-        var pointer = exports.Pointer.decorate(object);
-        if (id)
-            pointer.id = id;
-        return pointer;
+    createFrom: function (object) {
+        return exports.Pointer.decorate(object);
     },
     decorate: function (object) {
         if (exports.Pointer.isDecorated(object))

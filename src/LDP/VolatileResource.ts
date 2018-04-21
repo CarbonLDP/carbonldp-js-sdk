@@ -1,5 +1,5 @@
 import { ModelFactory } from "../core/ModelFactory";
-import { TransientResource } from "../TransientResource";
+import { TransientResource } from "../Resource";
 import { C } from "../Vocabularies/C";
 
 export interface VolatileResource extends TransientResource {

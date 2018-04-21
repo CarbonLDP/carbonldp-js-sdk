@@ -1,4 +1,4 @@
-import { ModelDecorator } from "../ModelDecorator";
+import { ModelDecorator } from "../core/ModelDecorator";
 import { ObjectSchema } from "../ObjectSchema";
 import { Pointer } from "../Pointer";
 import { TransientDocument } from "../TransientDocument";

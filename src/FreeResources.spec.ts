@@ -6,7 +6,10 @@ import { FreeResources } from "./FreeResources";
 
 import { Pointer } from "./Pointer";
 import { URI } from "./RDF/URI";
-import { TransientResource } from "./TransientResource";
+import {
+	Resource,
+	TransientResource
+} from "./Resource";
 import {
 	extendsClass,
 	hasMethod,
@@ -356,7 +359,7 @@ describe( module( "carbonldp/FreeResources" ), ():void => {
 
 				expect( freeResources.hasResource( "_:any..." ) ).toBe( false );
 
-				let resource:TransientResource & { val:string } = TransientResource.createFrom( { val: "The resource" } );
+				let resource:TransientResource & { val:string } = Resource.createFrom( { id: "_:1", val: "The resource" } );
 				freeResources._resourcesIndex.set( "_:some", resource );
 				expect( freeResources.hasResource( "_:some" ) ).toBe( true );
 
@@ -371,7 +374,7 @@ describe( module( "carbonldp/FreeResources" ), ():void => {
 
 				expect( freeResources.getResource( "_:any..." ) ).toBeNull();
 
-				let resource:TransientResource & { val:string } = TransientResource.createFrom( { val: "The resource" }, "_:some" );
+				let resource:TransientResource & { val:string } = TransientResource.createFrom( { id: "_:some", val: "The resource" } );
 				freeResources._resourcesIndex.set( "_:some", resource );
 				expect( freeResources.getResource( "_:some" ) ).toBe( resource );
 
@@ -389,8 +392,8 @@ describe( module( "carbonldp/FreeResources" ), ():void => {
 				expect( resources ).toEqual( jasmine.any( Array ) );
 				expect( resources.length ).toBe( 0 );
 
-				freeResources._resourcesIndex.set( "_:some", TransientResource.create( "_:some" ) );
-				freeResources._resourcesIndex.set( "_:another", TransientResource.create( "_:another" ) );
+				freeResources._resourcesIndex.set( "_:some", TransientResource.create( { id: "_:some" } ) );
+				freeResources._resourcesIndex.set( "_:another", TransientResource.create( { id: "_:another" } ) );
 				resources = freeResources.getResources();
 				expect( resources ).toEqual( jasmine.any( Array ) );
 				expect( resources.length ).toBe( 2 );
@@ -463,7 +466,7 @@ describe( module( "carbonldp/FreeResources" ), ():void => {
 
 				expect( freeResources.hasPointer( "_:some" ) ).toBe( false );
 
-				freeResources._resourcesIndex.set( "_:some", TransientResource.create( "_:some" ) );
+				freeResources._resourcesIndex.set( "_:some", TransientResource.create( { id: "_:some" } ) );
 				expect( freeResources.hasPointer( "_:some" ) ).toBe( true );
 
 				expect( freeResources.hasPointer( "http://example.com/some/" ) ).toBe( false );
@@ -477,7 +480,7 @@ describe( module( "carbonldp/FreeResources" ), ():void => {
 				expect( freeResources.getPointer ).toBeDefined();
 				expect( freeResources.getPointer ).toEqual( jasmine.any( Function ) );
 
-				let resource:TransientResource = TransientResource.create( "_:some" );
+				let resource:TransientResource = TransientResource.create( { id: "_:some" } );
 				freeResources._resourcesIndex.set( "_:some", resource );
 				expect( freeResources.getPointer( "_:some" ) ).toBe( resource );
 
@@ -522,10 +525,11 @@ describe( module( "carbonldp/FreeResources" ), ():void => {
 				} );
 
 				let resource:TransientResource = TransientResource.createFrom( {
+					id: "_:some",
 					types: [ "http://example.com/ns#MyType" ],
 					"http://example.com/ns#property": "A Property",
 					"anotherProperty": "Another Property",
-				}, "_:some" );
+				} );
 				freeResources._resourcesIndex.set( "_:some", resource );
 
 				let expandedResource:object = {
@@ -543,10 +547,11 @@ describe( module( "carbonldp/FreeResources" ), ():void => {
 				expect( freeResources.toJSON() ).toEqual( [ expandedResource ] );
 
 				let anotherResource:TransientResource = TransientResource.createFrom( {
+					id: "_:another",
 					types: [ "http://example.com/ns#MyType" ],
 					"http://example.com/ns#property": "A Property",
 					"anotherProperty": "Another Property",
-				}, "_:another" );
+				} );
 				freeResources._resourcesIndex.set( "_:another", anotherResource );
 
 				let anotherExpandedResource:object = {

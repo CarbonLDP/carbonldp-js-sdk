@@ -1,8 +1,7 @@
-import { GETOptions } from "./HTTP/Request";
-import { ModelDecorator } from "./ModelDecorator";
-import { ModelFactory } from "./ModelFactory";
-import { Document } from "./Document";
-import { QueryDocumentBuilder } from "./SPARQL/QueryDocument/QueryDocumentBuilder";
+import { Document } from "../Document";
+import { GETOptions } from "../HTTP";
+import { QueryDocumentBuilder } from "../SPARQL/QueryDocument";
+import { BasePointer } from "./BasePointer";
 export interface Pointer {
     _id: string;
     _resolved: boolean;
@@ -11,18 +10,11 @@ export interface Pointer {
     resolve<T extends object>(requestOptions?: GETOptions, queryBuilderFn?: (queryBuilder: QueryDocumentBuilder) => QueryDocumentBuilder): Promise<T & this & Document>;
     resolve<T extends object>(queryBuilderFn?: (queryBuilder: QueryDocumentBuilder) => QueryDocumentBuilder): Promise<T & this & Document>;
 }
-export interface PointerLibrary {
-    hasPointer(id: string): boolean;
-    getPointer(id: string): Pointer;
-}
-export interface PointerValidator {
-    inScope(idOrPointer: string | Pointer): boolean;
-}
-export interface PointerFactory extends ModelFactory<Pointer>, ModelDecorator<Pointer> {
+export interface PointerFactory {
     isDecorated(object: object): object is Pointer;
-    is(object: object): object is Pointer;
-    create(id?: string): Pointer;
-    createFrom<T extends object>(object: T, id?: string): T & Pointer;
+    is(value: any): value is Pointer;
+    create<T extends BasePointer>(data?: T): T & Pointer;
+    createFrom<T extends BasePointer>(object: T): T & Pointer;
     decorate<T extends object>(object: T): T & Pointer;
     areEqual(pointer1: Pointer, pointer2: Pointer): boolean;
     getIDs(pointers: Pointer[]): string[];

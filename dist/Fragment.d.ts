@@ -1,6 +1,6 @@
 import { TransientFragment } from "./TransientFragment";
-import { ModelDecorator } from "./ModelDecorator";
-import { ModelFactory } from "./ModelFactory";
+import { ModelDecorator } from "./core/ModelDecorator";
+import { ModelFactory } from "./core/ModelFactory";
 import { Document } from "./Document";
 import { Resource } from "./Resource";
 export interface Fragment extends Resource, TransientFragment {

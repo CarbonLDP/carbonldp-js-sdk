@@ -1,7 +1,6 @@
-import { ModelDecorator } from "./core/ModelDecorator";
-import { ModelFactory } from "./core/ModelFactory";
-import { Pointer } from "./Pointer";
-import * as Utils from "./Utils";
+import { Pointer } from "../Pointer";
+import * as Utils from "../Utils";
+import { BaseResource } from "./BaseResource";
 
 
 export interface TransientResource extends Pointer {
@@ -15,15 +14,15 @@ export interface TransientResource extends Pointer {
 	removeType( type:string ):void;
 }
 
-export interface TransientResourceFactory extends ModelFactory<TransientResource>, ModelDecorator<TransientResource> {
+export interface TransientResourceFactory {
 	isDecorated( object:object ):object is TransientResource;
 
-	is( object:object ):object is TransientResource;
+	is( value:any ):value is TransientResource;
 
 
-	create( id?:string, types?:string[] ):TransientResource;
+	create<T extends BaseResource>( data?:T ):T & TransientResource;
 
-	createFrom<T extends object>( object:T, id?:string, types?:string[] ):T & TransientResource;
+	createFrom<T extends BaseResource>( object:T ):T & TransientResource;
 
 	decorate<T extends object>( object:T ):T & TransientResource;
 }
@@ -55,28 +54,24 @@ export const TransientResource:TransientResourceFactory = {
 		);
 	},
 
-	is( object:object ):object is TransientResource {
-		return Pointer.is( object )
-			&& TransientResource.isDecorated( object );
+	is( value:any ):value is TransientResource {
+		return Pointer.is( value )
+			&& TransientResource.isDecorated( value );
 	},
 
-	create( id?:string, types?:string[] ):TransientResource {
-		return TransientResource.createFrom( {}, id, types );
+	create<T extends BaseResource>( data?:T ):T &TransientResource {
+		const clone:T = Object.assign( {}, data );
+		return TransientResource.createFrom<T>( clone );
 	},
 
-	createFrom<T extends object>( object:T, id?:string, types?:string[] ):T & TransientResource {
-		const resource:T & TransientResource = TransientResource.decorate<T>( object );
-
-		if( id ) resource.id = id;
-		if( types ) resource.types = types;
-
-		return resource;
+	createFrom<T extends object>( object:T ):T & TransientResource {
+		return TransientResource.decorate<T>( object );
 	},
 
 	decorate<T extends object>( object:T ):T & TransientResource {
-		const resource:T & TransientResource = object as T & TransientResource;
-		if( TransientResource.isDecorated( object ) ) return resource;
+		if( TransientResource.isDecorated( object ) ) return object;
 
+		const resource:T & TransientResource = object as T & TransientResource;
 		Pointer.decorate<T>( resource );
 
 		Object.defineProperties( resource, {
