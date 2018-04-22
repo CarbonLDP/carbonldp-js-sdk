@@ -1,26 +1,23 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var Errors_1 = require("./Errors");
-var Resource_1 = require("./Resource");
-var Utils_1 = require("./Utils");
+var Errors_1 = require("../Errors");
+var Resource_1 = require("../Resource");
+var Utils_1 = require("../Utils");
 exports.TransientFragment = {
     isDecorated: function (object) {
-        return Utils_1.isObject(object) &&
-            object.hasOwnProperty("_document");
+        return Utils_1.isObject(object)
+            && object.hasOwnProperty("_document") && !object.propertyIsEnumerable("_document");
     },
-    is: function (object) {
-        return Resource_1.TransientResource.is(object) &&
-            exports.TransientFragment.isDecorated(object);
+    is: function (value) {
+        return Resource_1.TransientResource.is(value) &&
+            exports.TransientFragment.isDecorated(value);
     },
-    create: function (document, id) {
-        return this.createFrom({}, document, id);
+    create: function (data) {
+        var copy = Object.assign({}, data);
+        return exports.TransientFragment.createFrom(copy);
     },
-    createFrom: function (object, document, id) {
-        var fragment = exports.TransientFragment.decorate(object);
-        if (id)
-            fragment.id = id;
-        fragment._document = document;
-        return fragment;
+    createFrom: function (object) {
+        return exports.TransientFragment.decorate(object);
     },
     decorate: function (object) {
         if (exports.TransientFragment.isDecorated(object))

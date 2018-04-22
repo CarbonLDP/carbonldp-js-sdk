@@ -3,7 +3,7 @@ import { AccessPointBase } from "./TransientAccessPoint";
 import { TransientDocument } from "./TransientDocument";
 import { Documents } from "./Documents";
 import * as Errors from "./Errors";
-import { TransientFragment } from "./TransientFragment";
+import { TransientFragment } from "./Fragment";
 import { RequestOptions } from "./HTTP/Request";
 import { TransientNamedFragment } from "./TransientNamedFragment";
 

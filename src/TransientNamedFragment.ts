@@ -1,5 +1,8 @@
 import { TransientDocument } from "./TransientDocument";
-import { TransientFragment } from "./TransientFragment";
+import {
+	BaseFragment,
+	TransientFragment
+} from "./Fragment";
 import { ModelDecorator } from "./core/ModelDecorator";
 import { ModelFactory } from "./core/ModelFactory";
 import { URI } from "./RDF/URI";
@@ -41,14 +44,18 @@ export const TransientNamedFragment:TransientNamedFragmentFactory = {
 	},
 
 	createFrom<T extends object>( object:T, document:TransientDocument, slug:string ):T & TransientNamedFragment {
-		const id:string = document.id + "#" + slug;
-		const fragment:T & TransientFragment = TransientFragment.createFrom( object, document, id );
+		const base:T & BaseFragment = Object.assign( object, {
+			_document: document,
+			id: document.id + "#" + slug,
+		} );
 
-		return TransientNamedFragment.decorate( fragment );
+		return TransientNamedFragment.decorate( base );
 	},
 
 	decorate<T extends object>( object:T ):T & TransientNamedFragment {
 		if( TransientNamedFragment.isDecorated( object ) ) return object;
+
+		TransientFragment.decorate( object );
 
 		const namedFragment:T & TransientNamedFragment = object as T & TransientNamedFragment;
 		Object.defineProperties( namedFragment, {

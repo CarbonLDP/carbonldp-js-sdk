@@ -1,8 +1,11 @@
-import { TransientDocument } from "./TransientDocument";
-import { IllegalArgumentError } from "./Errors";
-import { TransientFragment } from "./TransientFragment";
 import { ModelFactory } from "./core/ModelFactory";
-import { URI } from "./RDF/URI";
+import { IllegalArgumentError } from "./Errors";
+import {
+	BaseFragment,
+	TransientFragment
+} from "./Fragment";
+import { URI } from "./RDF";
+import { TransientDocument } from "./TransientDocument";
 
 export interface TransientBlankNode extends TransientFragment {
 }
@@ -32,6 +35,11 @@ export const TransientBlankNode:TransientBlankNodeFactory = {
 		if( id && ! URI.isBNodeID( id ) ) throw new IllegalArgumentError( `The id "${ id }" is not an blank node label` );
 		if( ! id ) id = URI.generateBNodeID();
 
-		return TransientFragment.createFrom<T>( object, document, id );
+		const base:T & BaseFragment = Object.assign( object, {
+			_document: document,
+			id,
+		} );
+
+		return TransientFragment.createFrom<T & BaseFragment>( base );
 	},
 };

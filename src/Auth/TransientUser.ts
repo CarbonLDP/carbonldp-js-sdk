@@ -1,5 +1,5 @@
 import { TransientDocument } from "../TransientDocument";
-import { TransientFragment } from "../TransientFragment";
+import { TransientFragment } from "../Fragment";
 import { ObjectSchema } from "../ObjectSchema";
 import {
 	hasFunction,

@@ -34,7 +34,7 @@ import { TransientDocument } from "./TransientDocument";
 import { Documents } from "./Documents";
 
 import * as Errors from "./Errors";
-import { TransientFragment } from "./TransientFragment";
+import { TransientFragment } from "./Fragment";
 import { HTTPError } from "./HTTP/Errors";
 import { Header } from "./HTTP/Header";
 import { RequestService } from "./HTTP/Request";

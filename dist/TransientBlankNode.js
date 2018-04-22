@@ -1,22 +1,26 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var Errors_1 = require("./Errors");
-var TransientFragment_1 = require("./TransientFragment");
-var URI_1 = require("./RDF/URI");
+var Fragment_1 = require("./Fragment");
+var RDF_1 = require("./RDF");
 exports.TransientBlankNode = {
     is: function (object) {
-        return TransientFragment_1.TransientFragment.is(object) &&
-            URI_1.URI.isBNodeID(object.id);
+        return Fragment_1.TransientFragment.is(object) &&
+            RDF_1.URI.isBNodeID(object.id);
     },
     create: function (document, id) {
         return exports.TransientBlankNode.createFrom({}, document, id);
     },
     createFrom: function (object, document, id) {
-        if (id && !URI_1.URI.isBNodeID(id))
+        if (id && !RDF_1.URI.isBNodeID(id))
             throw new Errors_1.IllegalArgumentError("The id \"" + id + "\" is not an blank node label");
         if (!id)
-            id = URI_1.URI.generateBNodeID();
-        return TransientFragment_1.TransientFragment.createFrom(object, document, id);
+            id = RDF_1.URI.generateBNodeID();
+        var base = Object.assign(object, {
+            _document: document,
+            id: id,
+        });
+        return Fragment_1.TransientFragment.createFrom(base);
     },
 };
 

@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var TransientFragment_1 = require("./TransientFragment");
+var Fragment_1 = require("./Fragment");
 var URI_1 = require("./RDF/URI");
 var Utils_1 = require("./Utils");
 exports.TransientNamedFragment = {
@@ -9,20 +9,23 @@ exports.TransientNamedFragment = {
             object.hasOwnProperty("slug") && !object.propertyIsEnumerable("slug");
     },
     is: function (object) {
-        return TransientFragment_1.TransientFragment.is(object)
+        return Fragment_1.TransientFragment.is(object)
             && exports.TransientNamedFragment.isDecorated(object);
     },
     create: function (document, slug) {
         return this.createFrom({}, document, slug);
     },
     createFrom: function (object, document, slug) {
-        var id = document.id + "#" + slug;
-        var fragment = TransientFragment_1.TransientFragment.createFrom(object, document, id);
-        return exports.TransientNamedFragment.decorate(fragment);
+        var base = Object.assign(object, {
+            _document: document,
+            id: document.id + "#" + slug,
+        });
+        return exports.TransientNamedFragment.decorate(base);
     },
     decorate: function (object) {
         if (exports.TransientNamedFragment.isDecorated(object))
             return object;
+        Fragment_1.TransientFragment.decorate(object);
         var namedFragment = object;
         Object.defineProperties(namedFragment, {
             "slug": {

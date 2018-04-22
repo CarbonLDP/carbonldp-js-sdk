@@ -1,19 +1,20 @@
-import { TransientFragment } from "./TransientFragment";
-import { ModelDecorator } from "./core/ModelDecorator";
-import { ModelFactory } from "./core/ModelFactory";
+import { Document } from "../Document";
 import {
 	DigestedObjectSchema,
 	ObjectSchemaUtils,
-} from "./ObjectSchema";
-import { Document } from "./Document";
-import { Resource } from "./Resource";
-import { URI } from "./RDF/URI";
+} from "../ObjectSchema";
+import { URI } from "../RDF";
 import {
 	addTypeInResource,
 	hasTypeInResource,
 	removeTypeInResource,
-} from "./Resource";
-import { isObject } from "./Utils";
+	Resource
+} from "../Resource";
+import { isObject } from "../Utils";
+import {
+	TransientFragment,
+	TransientFragmentFactory
+} from "./TransientFragment";
 
 export interface Fragment extends Resource, TransientFragment {
 	_document:Document;
@@ -26,17 +27,13 @@ export interface Fragment extends Resource, TransientFragment {
 }
 
 
-export interface FragmentFactory extends ModelFactory<Fragment>, ModelDecorator<Fragment> {
+export interface FragmentFactory extends TransientFragmentFactory {
 	isDecorated( object:object ):object is Fragment;
 
-	is( object:object ):object is Fragment;
+	is( value:any ):value is Fragment;
 
 
 	decorate<T extends object>( object:T ):T & Fragment;
-
-	create( document:Document, id?:string ):Fragment;
-
-	createFrom<T extends object>( object:T, document:Document, id?:string ):T & Fragment;
 }
 
 
@@ -71,10 +68,10 @@ export const Fragment:FragmentFactory = {
 			;
 	},
 
-	is( object:object ):object is Fragment {
-		return TransientFragment.is( object ) &&
-			Resource.isDecorated( object ) &&
-			Fragment.isDecorated( object )
+	is( value:any ):value is Fragment {
+		return TransientFragment.is( value ) &&
+			Resource.isDecorated( value ) &&
+			Fragment.isDecorated( value )
 			;
 	},
 
@@ -110,17 +107,6 @@ export const Fragment:FragmentFactory = {
 		return fragment;
 	},
 
-	create( document:Document, id?:string ):Fragment {
-		return Fragment.createFrom( {}, document, id );
-	},
-
-	createFrom<T extends object>( object:T, document:Document, id?:string ):T & Fragment {
-		const fragment:T & Fragment = Fragment.decorate( object );
-
-		fragment._document = document;
-		if( id ) fragment.id = id;
-
-		return fragment;
-	},
-
+	create: TransientFragment.create,
+	createFrom: TransientFragment.createFrom,
 };

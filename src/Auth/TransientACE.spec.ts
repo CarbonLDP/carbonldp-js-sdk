@@ -10,7 +10,7 @@ import {
 	property,
 	STATIC,
 } from "../test/JasmineExtender";
-import { TransientFragment } from "../TransientFragment";
+import { TransientFragment } from "../Fragment";
 import { CS } from "../Vocabularies/CS";
 import { XSD } from "../Vocabularies/XSD";
 import * as Utils from "./../Utils";
@@ -208,11 +208,12 @@ describe( module( "carbonldp/Auth/TransientACE" ), ():void => {
 			expect( TransientACE.is( object ) ).toBe( false );
 
 			object = TransientFragment.createFrom( {
+				_document: null,
 				granting: null,
 				permissions: null,
 				subjects: null,
 				subjectsClass: null,
-			}, null );
+			} );
 			expect( TransientACE.is( object ) ).toBe( true );
 
 			delete object.granting;

@@ -1,4 +1,4 @@
-import { TransientFragment } from "./TransientFragment";
+import { TransientFragment } from "./Fragment";
 import { JSONLDConverter } from "./JSONLD/Converter";
 import { ModelDecorator } from "./core/ModelDecorator";
 import { ModelFactory } from "./core/ModelFactory";

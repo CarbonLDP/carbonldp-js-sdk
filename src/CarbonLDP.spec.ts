@@ -8,7 +8,7 @@ import * as CarbonLDP from "./CarbonLDP";
 import { TransientDocument } from "./TransientDocument";
 import { Documents } from "./Documents";
 import * as Errors from "./Errors";
-import { TransientFragment } from "./TransientFragment";
+import { TransientFragment } from "./Fragment";
 import { FreeResources } from "./FreeResources";
 import * as HTTP from "./HTTP";
 import * as JSONLD from "./JSONLD";

@@ -29,7 +29,7 @@ import { TransientBlankNode } from "./TransientBlankNode";
 
 import { TransientDocument } from "./TransientDocument";
 
-import { TransientFragment } from "./TransientFragment";
+import { TransientFragment } from "./Fragment";
 import { TransientNamedFragment } from "./TransientNamedFragment";
 import { TransientResource } from "./Resource";
 import { C } from "./Vocabularies/C";

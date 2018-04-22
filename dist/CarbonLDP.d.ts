@@ -25,7 +25,7 @@ import * as System from "./System";
 import { TransientAccessPoint } from "./TransientAccessPoint";
 import { TransientBlankNode } from "./TransientBlankNode";
 import { TransientDocument } from "./TransientDocument";
-import { TransientFragment } from "./TransientFragment";
+import { TransientFragment } from "./Fragment";
 import { TransientNamedFragment } from "./TransientNamedFragment";
 import { TransientProtectedDocument } from "./TransientProtectedDocument";
 import * as Utils from "./Utils";

@@ -1,6 +1,6 @@
 import { TransientDocument } from "../TransientDocument";
 import { Documents } from "../Documents";
-import { TransientFragment } from "../TransientFragment";
+import { TransientFragment } from "../Fragment";
 import { Document } from "../Document";
 import { Pointer } from "../Pointer";
 import {

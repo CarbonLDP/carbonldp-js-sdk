@@ -1,7 +1,7 @@
 import { TransientBlankNode } from "./TransientBlankNode";
 import { IDAlreadyInUseError } from "./Errors/IDAlreadyInUseError";
 import { IllegalArgumentError } from "./Errors/IllegalArgumentError";
-import { TransientFragment } from "./TransientFragment";
+import { TransientFragment } from "./Fragment";
 import { JSONLDConverter } from "./JSONLD/Converter";
 import { ModelDecorator } from "./core/ModelDecorator";
 import { ModelFactory } from "./core/ModelFactory";

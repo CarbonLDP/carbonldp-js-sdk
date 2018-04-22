@@ -1,5 +1,5 @@
 import { TransientDocument } from "./TransientDocument";
-import { TransientFragment } from "./TransientFragment";
+import { TransientFragment } from "./Fragment";
 import { ModelDecorator } from "./core/ModelDecorator";
 import { ModelFactory } from "./core/ModelFactory";
 export interface TransientNamedFragment extends TransientFragment {

@@ -1,4 +1,4 @@
-import { TransientFragment } from "../TransientFragment";
+import { TransientFragment } from "../Fragment";
 import { ModelFactory } from "../core/ModelFactory";
 import { ObjectSchema } from "../ObjectSchema";
 import { Pointer } from "../Pointer";

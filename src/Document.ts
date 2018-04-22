@@ -3,7 +3,7 @@ import { QueryClause } from "sparqler/clauses";
 import { AccessPointBase } from "./TransientAccessPoint";
 import { TransientDocument } from "./TransientDocument";
 import { Documents } from "./Documents";
-import { TransientFragment } from "./TransientFragment";
+import { TransientFragment } from "./Fragment";
 import {
 	GETOptions,
 	RequestOptions,

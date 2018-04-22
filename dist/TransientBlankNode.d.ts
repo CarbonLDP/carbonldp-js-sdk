@@ -1,6 +1,6 @@
-import { TransientDocument } from "./TransientDocument";
-import { TransientFragment } from "./TransientFragment";
 import { ModelFactory } from "./core/ModelFactory";
+import { TransientFragment } from "./Fragment";
+import { TransientDocument } from "./TransientDocument";
 export interface TransientBlankNode extends TransientFragment {
 }
 export interface TransientBlankNodeFactory extends ModelFactory<TransientBlankNode> {

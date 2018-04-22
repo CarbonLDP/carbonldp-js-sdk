@@ -1,28 +1,27 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+var ObjectSchema_1 = require("../ObjectSchema");
+var RDF_1 = require("../RDF");
+var Resource_1 = require("../Resource");
+var Utils_1 = require("../Utils");
 var TransientFragment_1 = require("./TransientFragment");
-var ObjectSchema_1 = require("./ObjectSchema");
-var Resource_1 = require("./Resource");
-var URI_1 = require("./RDF/URI");
-var Resource_2 = require("./Resource");
-var Utils_1 = require("./Utils");
 function resolveURI(fragment, uri) {
-    if (URI_1.URI.isAbsolute(uri))
+    if (RDF_1.URI.isAbsolute(uri))
         return uri;
     var schema = fragment._document._documents.getGeneralSchema();
     return ObjectSchema_1.ObjectSchemaUtils.resolveURI(uri, schema, { vocab: true });
 }
 function addTypeInPersistedFragment(type) {
     type = resolveURI(this, type);
-    return Resource_2.addTypeInResource.call(this, type);
+    return Resource_1.addTypeInResource.call(this, type);
 }
 function hasTypeInPersistedFragment(type) {
     type = resolveURI(this, type);
-    return Resource_2.hasTypeInResource.call(this, type);
+    return Resource_1.hasTypeInResource.call(this, type);
 }
 function removeTypeInPersistedFragment(type) {
     type = resolveURI(this, type);
-    return Resource_2.removeTypeInResource.call(this, type);
+    return Resource_1.removeTypeInResource.call(this, type);
 }
 exports.Fragment = {
     isDecorated: function (object) {
@@ -31,10 +30,10 @@ exports.Fragment = {
             object["hasType"] === hasTypeInPersistedFragment &&
             object["removeType"] === removeTypeInPersistedFragment;
     },
-    is: function (object) {
-        return TransientFragment_1.TransientFragment.is(object) &&
-            Resource_1.Resource.isDecorated(object) &&
-            exports.Fragment.isDecorated(object);
+    is: function (value) {
+        return TransientFragment_1.TransientFragment.is(value) &&
+            Resource_1.Resource.isDecorated(value) &&
+            exports.Fragment.isDecorated(value);
     },
     decorate: function (object) {
         if (exports.Fragment.isDecorated(object))
@@ -64,16 +63,8 @@ exports.Fragment = {
         });
         return fragment;
     },
-    create: function (document, id) {
-        return exports.Fragment.createFrom({}, document, id);
-    },
-    createFrom: function (object, document, id) {
-        var fragment = exports.Fragment.decorate(object);
-        fragment._document = document;
-        if (id)
-            fragment.id = id;
-        return fragment;
-    },
+    create: TransientFragment_1.TransientFragment.create,
+    createFrom: TransientFragment_1.TransientFragment.createFrom,
 };
 
 //# sourceMappingURL=Fragment.js.map

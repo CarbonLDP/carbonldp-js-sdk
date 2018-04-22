@@ -1,10 +1,7 @@
-import { AbstractContext } from "./AbstractContext";
-import { TransientFragment } from "./TransientFragment";
-import { Document } from "./Document";
+import { AbstractContext } from "../AbstractContext";
+import { Document } from "../Document";
 
-import { Fragment } from "./Fragment";
-
-import { Resource } from "./Resource";
+import { Resource } from "../Resource";
 import {
 	extendsClass,
 	hasMethod,
@@ -15,8 +12,11 @@ import {
 	OBLIGATORY,
 	property,
 	STATIC,
-} from "./test/JasmineExtender";
-import * as Utils from "./Utils";
+} from "../test/JasmineExtender";
+import * as Utils from "../Utils";
+
+import { Fragment } from "./Fragment";
+import { TransientFragment } from "./TransientFragment";
 
 describe( module( "carbonldp/Fragment" ), ():void => {
 
@@ -30,7 +30,7 @@ describe( module( "carbonldp/Fragment" ), ():void => {
 
 		it( hasProperty(
 			OBLIGATORY,
-			"document",
+			"_document",
 			"CarbonLDP.Document",
 			"A reference to the persisted document the current fragment belongs to."
 		), ():void => {} );
@@ -53,9 +53,9 @@ describe( module( "carbonldp/Fragment" ), ():void => {
 		it( hasMethod(
 			OBLIGATORY,
 			"is", [
-				{ name: "object", type: "object" },
+				{ name: "value", type: "any" },
 			],
-			{ type: "object is CarbonLDP.Fragment" }
+			{ type: "value is CarbonLDP.Fragment" }
 		), ():void => {} );
 
 		it( hasMethod(
@@ -68,31 +68,14 @@ describe( module( "carbonldp/Fragment" ), ():void => {
 			]
 		), ():void => {} );
 
-		it( hasMethod(
-			OBLIGATORY,
-			"create",
-			[
-				{ name: "document", type: "CarbonLDP.Document" },
-				{ name: "id", type: "string", optional: true },
-			],
-			{ type: "CarbonLDP.Fragment" }
-		), ():void => {} );
-
-		it( hasMethod(
-			OBLIGATORY,
-			"createFrom",
-			[ "T extends object" ],
-			[
-				{ name: "object", type: "object" },
-				{ name: "document", type: "CarbonLDP.Document" },
-				{ name: "id", type: "string", optional: true },
-			],
-			{ type: "T & CarbonLDP.Fragment" }
-		), ():void => {} );
-
 	} );
 
-	describe( property( STATIC, "Fragment", "CarbonLDP.FragmentFactory", "Constant that implements the `CarbonLDP.FragmentFactory` interface." ), ():void => {
+	describe( property(
+		STATIC,
+		"Fragment",
+		"CarbonLDP.FragmentFactory",
+		"Constant that implements the `CarbonLDP.FragmentFactory` interface."
+	), ():void => {
 
 		it( isDefined(), ():void => {
 			expect( Fragment ).toBeDefined();
@@ -110,7 +93,10 @@ describe( module( "carbonldp/Fragment" ), ():void => {
 
 			let spyPersistedDecorator:jasmine.Spy = spyOn( Resource, "decorate" );
 
-			let fragment:TransientFragment = TransientFragment.create( null, "_:01" );
+			let fragment:TransientFragment = TransientFragment.create( {
+				_document: null,
+				id: "_:01",
+			} );
 			let persistedFragment:Fragment = Fragment.decorate( fragment );
 
 			expect( persistedFragment ).toBeTruthy();
@@ -146,9 +132,9 @@ describe( module( "carbonldp/Fragment" ), ():void => {
 
 				context.documents.getPointer( "http://example.com/in/documents/" );
 
-				let document:Document = Document.create( context.documents, "http://example.com/document/" );
-
-				let fragment:TransientFragment = TransientFragment.create( document );
+				let fragment:TransientFragment = TransientFragment.create( {
+					_document: Document.create( context.documents, "http://example.com/document/" ),
+				} );
 				persistedFragment = Fragment.decorate( fragment );
 			} );
 
