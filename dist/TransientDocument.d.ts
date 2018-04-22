@@ -1,8 +1,8 @@
-import { TransientFragment } from "./Fragment";
-import { JSONLDConverter } from "./JSONLD/Converter";
 import { ModelDecorator } from "./core/ModelDecorator";
 import { ModelFactory } from "./core/ModelFactory";
-import { TransientNamedFragment } from "./TransientNamedFragment";
+import { TransientFragment } from "./Fragment";
+import { JSONLDConverter } from "./JSONLD/Converter";
+import { TransientNamedFragment } from "./NamedFragment";
 import { ObjectSchema, ObjectSchemaResolver } from "./ObjectSchema";
 import { Pointer, PointerLibrary, PointerValidator } from "./Pointer";
 import { RDFDocument } from "./RDF/Document";

@@ -1,13 +1,13 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var TransientBlankNode_1 = require("./TransientBlankNode");
 var IDAlreadyInUseError_1 = require("./Errors/IDAlreadyInUseError");
 var IllegalArgumentError_1 = require("./Errors/IllegalArgumentError");
 var Converter_1 = require("./JSONLD/Converter");
-var TransientNamedFragment_1 = require("./TransientNamedFragment");
+var NamedFragment_1 = require("./NamedFragment");
 var ObjectSchema_1 = require("./ObjectSchema");
 var URI_1 = require("./RDF/URI");
 var Resource_1 = require("./Resource");
+var TransientBlankNode_1 = require("./TransientBlankNode");
 var Utils_1 = require("./Utils");
 var C_1 = require("./Vocabularies/C");
 var LDP_1 = require("./Vocabularies/LDP");
@@ -279,7 +279,11 @@ function createNamedFragment(slugOrObject, slug) {
         slug = slug.substring(1);
     if (this._fragmentsIndex.has(slug))
         throw new IDAlreadyInUseError_1.IDAlreadyInUseError("The slug provided is already being used by a fragment.");
-    var fragment = TransientNamedFragment_1.TransientNamedFragment.createFrom(object, this, slug);
+    var baseFragment = Object.assign(object, {
+        _document: this,
+        slug: slug,
+    });
+    var fragment = NamedFragment_1.TransientNamedFragment.createFrom(baseFragment);
     this._fragmentsIndex.set(slug, fragment);
     exports.TransientDocument._convertNestedObjects(this, fragment);
     return fragment;

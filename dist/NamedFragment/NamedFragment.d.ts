@@ -1,11 +1,10 @@
-import { ModelDecorator } from "./core/ModelDecorator";
-import { TransientNamedFragment } from "./TransientNamedFragment";
-import { Document } from "./Document";
-import { Fragment } from "./Fragment";
+import { Document } from "../Document";
+import { Fragment } from "../Fragment";
+import { TransientNamedFragment, TransientNamedFragmentFactory } from "./TransientNamedFragment";
 export interface NamedFragment extends Fragment, TransientNamedFragment {
     _document: Document;
 }
-export interface NamedFragmentFactory extends ModelDecorator<NamedFragment> {
+export interface NamedFragmentFactory extends TransientNamedFragmentFactory {
     isDecorated(object: object): object is NamedFragment;
     decorate<T extends object>(object: T): T & NamedFragment;
 }

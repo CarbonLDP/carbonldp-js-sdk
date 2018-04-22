@@ -2,8 +2,11 @@ import { Minus } from "../test/helpers/types";
 
 import { IDAlreadyInUseError } from "./Errors/IDAlreadyInUseError";
 import { IllegalArgumentError } from "./Errors/IllegalArgumentError";
+
+import { TransientFragment } from "./Fragment";
 import * as JSONLDConverterModule from "./JSONLD/Converter";
 import { JSONLDConverter } from "./JSONLD/Converter";
+import { TransientNamedFragment } from "./NamedFragment";
 import {
 	DigestedObjectSchema,
 	ObjectSchemaDigester,
@@ -12,6 +15,7 @@ import {
 import { Pointer } from "./Pointer";
 import { RDFDocument } from "./RDF/Document";
 import { URI } from "./RDF/URI";
+import { TransientResource } from "./Resource";
 import {
 	extendsClass,
 	hasMethod,
@@ -28,10 +32,6 @@ import {
 import { TransientBlankNode } from "./TransientBlankNode";
 
 import { TransientDocument } from "./TransientDocument";
-
-import { TransientFragment } from "./Fragment";
-import { TransientNamedFragment } from "./TransientNamedFragment";
-import { TransientResource } from "./Resource";
 import { C } from "./Vocabularies/C";
 import { LDP } from "./Vocabularies/LDP";
 import { XSD } from "./Vocabularies/XSD";
@@ -1411,7 +1411,10 @@ describe( module( "carbonldp/TransientDocument" ), ():void => {
 				it( "should remove providing a `NamedFragment`", ():void => {
 					const document:TransientDocument = createMockDocument();
 
-					const fragment:TransientNamedFragment = TransientNamedFragment.create( document, "fragment" );
+					const fragment:TransientNamedFragment = TransientNamedFragment.create( {
+						_document: document,
+						slug: "fragment",
+					} );
 					document._fragmentsIndex.set( "fragment", fragment );
 
 					document._removeFragment( fragment );
@@ -1477,7 +1480,10 @@ describe( module( "carbonldp/TransientDocument" ), ():void => {
 				it( "should remove providing a `NamedFragment`", ():void => {
 					const document:TransientDocument = createMockDocument();
 
-					const fragment:TransientNamedFragment = TransientNamedFragment.create( document, "fragment" );
+					const fragment:TransientNamedFragment = TransientNamedFragment.create( {
+						_document: document,
+						slug: "fragment",
+					} );
 					document._fragmentsIndex.set( "fragment", fragment );
 
 					document.removeNamedFragment( fragment );

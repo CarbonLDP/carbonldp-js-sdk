@@ -1,11 +1,13 @@
-import { TransientBlankNode } from "./TransientBlankNode";
+import { ModelDecorator } from "./core/ModelDecorator";
+import { ModelFactory } from "./core/ModelFactory";
 import { IDAlreadyInUseError } from "./Errors/IDAlreadyInUseError";
 import { IllegalArgumentError } from "./Errors/IllegalArgumentError";
 import { TransientFragment } from "./Fragment";
 import { JSONLDConverter } from "./JSONLD/Converter";
-import { ModelDecorator } from "./core/ModelDecorator";
-import { ModelFactory } from "./core/ModelFactory";
-import { TransientNamedFragment } from "./TransientNamedFragment";
+import {
+	BaseNamedFragment,
+	TransientNamedFragment
+} from "./NamedFragment";
 import {
 	DigestedObjectSchema,
 	ObjectSchema,
@@ -20,6 +22,7 @@ import { RDFDocument } from "./RDF/Document";
 import { RDFNode } from "./RDF/Node";
 import { URI } from "./RDF/URI";
 import { TransientResource } from "./Resource";
+import { TransientBlankNode } from "./TransientBlankNode";
 import {
 	hasFunction,
 	hasPropertyDefined,
@@ -390,7 +393,11 @@ function createNamedFragment<T extends Object>( this:TransientDocument, slugOrOb
 
 	if( this._fragmentsIndex.has( slug ) ) throw new IDAlreadyInUseError( "The slug provided is already being used by a fragment." );
 
-	const fragment:T & TransientNamedFragment = TransientNamedFragment.createFrom<T>( object, this, slug );
+	const baseFragment:T & BaseNamedFragment = Object.assign( object, {
+		_document: this,
+		slug,
+	} );
+	const fragment:T & TransientNamedFragment = TransientNamedFragment.createFrom( baseFragment );
 	this._fragmentsIndex.set( slug, fragment );
 
 	TransientDocument._convertNestedObjects( this, fragment );

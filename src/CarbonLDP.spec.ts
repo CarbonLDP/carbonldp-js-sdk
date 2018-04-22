@@ -1,21 +1,25 @@
 import { AbstractContext } from "./AbstractContext";
-import { TransientAccessPoint } from "./TransientAccessPoint";
 import * as Auth from "./Auth";
-import { TransientBlankNode } from "./TransientBlankNode";
 
 import * as CarbonLDP from "./CarbonLDP";
 
-import { TransientDocument } from "./TransientDocument";
+import { Document } from "./Document";
 import { Documents } from "./Documents";
 import * as Errors from "./Errors";
-import { TransientFragment } from "./Fragment";
+import {
+	Fragment,
+	TransientFragment
+} from "./Fragment";
 import { FreeResources } from "./FreeResources";
 import * as HTTP from "./HTTP";
 import * as JSONLD from "./JSONLD";
 import * as LDP from "./LDP";
 import * as LDPatch from "./LDPatch";
 import * as Messaging from "./Messaging";
-import { TransientNamedFragment } from "./TransientNamedFragment";
+import {
+	NamedFragment,
+	TransientNamedFragment
+} from "./NamedFragment";
 import {
 	ContainerType,
 	DigestedObjectSchema,
@@ -24,15 +28,13 @@ import {
 	ObjectSchemaUtils,
 	PointerType,
 } from "./ObjectSchema";
-import { Document } from "./Document";
-import { Fragment } from "./Fragment";
-import { NamedFragment } from "./NamedFragment";
-import { ProtectedDocument } from "./ProtectedDocument";
-import { Resource } from "./Resource";
 import { Pointer } from "./Pointer";
-import { TransientProtectedDocument } from "./TransientProtectedDocument";
+import { ProtectedDocument } from "./ProtectedDocument";
 import * as RDF from "./RDF";
-import { TransientResource } from "./Resource";
+import {
+	Resource,
+	TransientResource
+} from "./Resource";
 import {
 	globalContext,
 	SDKContext,
@@ -56,6 +58,10 @@ import {
 	reexports,
 	STATIC,
 } from "./test/JasmineExtender";
+import { TransientAccessPoint } from "./TransientAccessPoint";
+import { TransientBlankNode } from "./TransientBlankNode";
+import { TransientDocument } from "./TransientDocument";
+import { TransientProtectedDocument } from "./TransientProtectedDocument";
 
 import * as Utils from "./Utils";
 import * as Vocabularies from "./Vocabularies";

@@ -5,7 +5,7 @@ import { Documents } from "./Documents";
 import * as Errors from "./Errors";
 import { TransientFragment } from "./Fragment";
 import { RequestOptions } from "./HTTP/Request";
-import { TransientNamedFragment } from "./TransientNamedFragment";
+import { TransientNamedFragment } from "./NamedFragment";
 
 import { Document } from "./Document";
 
