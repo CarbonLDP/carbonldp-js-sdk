@@ -23,7 +23,7 @@ import * as SHACL from "./SHACL";
 import * as SPARQL from "./SPARQL";
 import * as System from "./System";
 import { TransientAccessPoint } from "./TransientAccessPoint";
-import { TransientBlankNode } from "./TransientBlankNode";
+import { TransientBlankNode } from "./BlankNode";
 import { TransientDocument } from "./TransientDocument";
 import { TransientFragment } from "./Fragment";
 import { TransientNamedFragment } from "./NamedFragment";

@@ -1,12 +1,12 @@
-import * as BlankNode from "./BlankNode";
-
 import {
 	extendsClass,
 	interfaze,
 	isDefined,
 	module,
-} from "./test/JasmineExtender";
-import * as Utils from "./Utils";
+} from "../test/JasmineExtender";
+import * as Utils from "../Utils";
+
+import * as BlankNode from "./BlankNode";
 
 describe( module( "carbonldp/BlankNode" ), ():void => {
 

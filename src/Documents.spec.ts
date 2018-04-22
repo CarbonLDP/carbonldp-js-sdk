@@ -26,7 +26,7 @@ import {
 	TransientAccessPoint,
 	AccessPointBase,
 } from "./TransientAccessPoint";
-import { TransientBlankNode } from "./TransientBlankNode";
+import { TransientBlankNode } from "./BlankNode";
 import { CarbonLDP } from "./CarbonLDP";
 import { Context } from "./Context";
 import { TransientDocument } from "./TransientDocument";

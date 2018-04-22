@@ -1,4 +1,5 @@
 import { Minus } from "../test/helpers/types";
+import { TransientBlankNode } from "./BlankNode";
 
 import { IDAlreadyInUseError } from "./Errors/IDAlreadyInUseError";
 import { IllegalArgumentError } from "./Errors/IllegalArgumentError";
@@ -29,7 +30,6 @@ import {
 	property,
 	STATIC,
 } from "./test/JasmineExtender";
-import { TransientBlankNode } from "./TransientBlankNode";
 
 import { TransientDocument } from "./TransientDocument";
 import { C } from "./Vocabularies/C";
@@ -1424,7 +1424,10 @@ describe( module( "carbonldp/TransientDocument" ), ():void => {
 				it( "should remove providing a `BlankNode`", ():void => {
 					const document:TransientDocument = createMockDocument();
 
-					const fragment:TransientBlankNode = TransientBlankNode.create( document, "_:1" );
+					const fragment:TransientBlankNode = TransientBlankNode.create( {
+						_document: document,
+						id: "_:1",
+					} );
 					document._fragmentsIndex.set( "_:1", fragment );
 
 					document._removeFragment( fragment );
@@ -1493,7 +1496,10 @@ describe( module( "carbonldp/TransientDocument" ), ():void => {
 				it( "should throw error providing a `BlankNode`", ():void => {
 					const document:TransientDocument = createMockDocument();
 
-					const fragment:TransientBlankNode = TransientBlankNode.create( document, "_:1" );
+					const fragment:TransientBlankNode = TransientBlankNode.create( {
+						_document: document,
+						id: "_:1",
+					} );
 					document._fragmentsIndex.set( "_:1", fragment );
 
 					expect( () => document.removeNamedFragment( fragment as any ) ).toThrowError( IllegalArgumentError, "You can only remove NamedFragments." );

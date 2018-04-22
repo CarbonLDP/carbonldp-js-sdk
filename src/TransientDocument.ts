@@ -1,3 +1,7 @@
+import {
+	BaseBlankNode,
+	TransientBlankNode,
+} from "./BlankNode";
 import { ModelDecorator } from "./core/ModelDecorator";
 import { ModelFactory } from "./core/ModelFactory";
 import { IDAlreadyInUseError } from "./Errors/IDAlreadyInUseError";
@@ -22,7 +26,6 @@ import { RDFDocument } from "./RDF/Document";
 import { RDFNode } from "./RDF/Node";
 import { URI } from "./RDF/URI";
 import { TransientResource } from "./Resource";
-import { TransientBlankNode } from "./TransientBlankNode";
 import {
 	hasFunction,
 	hasPropertyDefined,
@@ -371,7 +374,11 @@ function createFragment<T extends object>( this:TransientDocument, slugOrObject?
 		if( this._fragmentsIndex.has( slug ) ) throw new IDAlreadyInUseError( "The slug provided is already being used by a fragment." );
 	}
 
-	const fragment:T & TransientBlankNode = TransientBlankNode.createFrom<T>( object, this, slug );
+	const baseBNode:T & BaseBlankNode = Object.assign( object, {
+		_document: this,
+		id: slug,
+	} );
+	const fragment:T & TransientBlankNode = TransientBlankNode.createFrom( baseBNode );
 	this._fragmentsIndex.set( fragment.id, fragment );
 
 	TransientDocument._convertNestedObjects( this, fragment );

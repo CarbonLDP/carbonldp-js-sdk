@@ -1,4 +1,4 @@
-import { TransientBlankNode } from "../TransientBlankNode";
+import { TransientBlankNode } from "../BlankNode";
 import { ObjectSchema } from "../ObjectSchema";
 import { C } from "../Vocabularies/C";
 
