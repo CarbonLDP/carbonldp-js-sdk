@@ -16,7 +16,7 @@ import { BaseResource } from "./BaseResource";
 import { TransientResource } from "./TransientResource";
 
 
-describe( module( "carbonldp/TransientResource" ), ():void => {
+describe( module( "carbonldp/Resource" ), ():void => {
 
 	describe( interfaze(
 		"CarbonLDP.TransientResource",
