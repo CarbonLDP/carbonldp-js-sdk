@@ -31,7 +31,7 @@ import * as Roles from "./Roles";
 import { AuthService } from "./Service";
 
 import { TokenCredentials } from "./TokenCredentials";
-import { TransientUser } from "./TransientUser";
+import { TransientUser } from "./User";
 import { UsersEndpoint } from "./UsersEndpoint";
 
 

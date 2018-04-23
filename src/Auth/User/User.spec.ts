@@ -1,9 +1,10 @@
-import { StrictMinus } from "../../test/helpers/types";
-import { AbstractContext } from "../AbstractContext";
-import { ProtectedDocument } from "../ProtectedDocument";
-import { Pointer } from "../Pointer";
+import { StrictMinus } from "../../../test/helpers/types";
+import { AbstractContext } from "../../AbstractContext";
+import { Pointer } from "../../Pointer";
+import { ProtectedDocument } from "../../ProtectedDocument";
 import {
 	extendsClass,
+	hasProperty,
 	hasSignature,
 	interfaze,
 	isDefined,
@@ -12,11 +13,15 @@ import {
 	OBLIGATORY,
 	property,
 	STATIC,
-} from "../test/JasmineExtender";
+} from "../../test/JasmineExtender";
+import * as Utils from "../../Utils";
+import {
+	CS,
+	XSD
+} from "../../Vocabularies";
+import { TransientUser } from "./TransientUser";
 
 import { User } from "./User";
-
-import { TransientUser } from "./TransientUser";
 
 
 describe( module( "carbonldp/Auth/User" ), ():void => {
@@ -49,6 +54,18 @@ describe( module( "carbonldp/Auth/User" ), ():void => {
 		"CarbonLDP.Auth.UserFactory",
 		"Interface with the factory, decorate and utils for `CarbonLDP.Auth.User` objects."
 	), ():void => {
+
+		it( hasProperty(
+			OBLIGATORY,
+			"TYPE",
+			"CarbonLDP.Vocabularies.CS.User"
+		), ():void => {} );
+
+		it( hasProperty(
+			OBLIGATORY,
+			"SCHEMA",
+			"CarbonLDP.ObjectSchema"
+		), ():void => {} );
 
 		describe( method( OBLIGATORY, "isDecorated" ), ():void => {
 
@@ -100,6 +117,26 @@ describe( module( "carbonldp/Auth/User" ), ():void => {
 			expect( User ).toEqual( jasmine.any( Object ) );
 		} );
 
+		// TODO: Separate in different test
+		it( "User.TYPE", ():void => {
+			expect( User.TYPE ).toBeDefined();
+			expect( Utils.isString( User.TYPE ) ).toBe( true );
+
+			expect( User.TYPE ).toBe( CS.User );
+		} );
+
+		// TODO: Separate in different test
+		it( "User.SCHEMA", ():void => {
+			expect( User.SCHEMA ).toBeDefined();
+			expect( Utils.isObject( User.SCHEMA ) ).toBe( true );
+
+			expect( Utils.hasProperty( User.SCHEMA, "name" ) ).toBe( true );
+			expect( User.SCHEMA[ "name" ] ).toEqual( {
+				"@id": CS.name,
+				"@type": XSD.string,
+			} );
+		} );
+
 		describe( "User.is", ():void => {
 
 			it( "should exists", ():void => {
@@ -139,16 +176,7 @@ describe( module( "carbonldp/Auth/User" ), ():void => {
 
 		} );
 
-		describe( method( STATIC, "decorate" ), ():void => {
-
-			it( hasSignature(
-				[ "T extends object" ],
-				"Decorates the object provided with the properties and methods of a `CarbonLDP.Auth.User` object.", [
-					{ name: "object", type: "T", description: "The object to decorate." },
-					{ name: "documents", type: "CarbonLDP.Documents", description: "The documents service the persisted belongs to." },
-				],
-				{ type: "T & CarbonLDP.Auth.User" }
-			), ():void => {} );
+		describe( "User.decorate", ():void => {
 
 			it( "should exists", ():void => {
 				expect( User.decorate ).toBeDefined();

@@ -1,8 +1,8 @@
-import { anyThatMatches } from "../../test/helpers/jasmine-equalities";
-import { StrictMinus } from "../../test/helpers/types";
-import { TransientBlankNode } from "../BlankNode";
-import { TransientDocument } from "../Document";
-import { TransientFragment } from "../Fragment";
+import { anyThatMatches } from "../../../test/helpers/jasmine-equalities";
+import { StrictMinus } from "../../../test/helpers/types";
+import { TransientBlankNode } from "../../BlankNode";
+import { TransientDocument } from "../../Document";
+import { TransientFragment } from "../../Fragment";
 import {
 	extendsClass,
 	hasMethod,
@@ -13,43 +13,20 @@ import {
 	method,
 	module,
 	OBLIGATORY,
-	OPTIONAL,
 	property,
 	STATIC,
-} from "../test/JasmineExtender";
-import * as Utils from "../Utils";
-import { CS } from "../Vocabularies/CS";
-import { XSD } from "../Vocabularies/XSD";
-
+} from "../../test/JasmineExtender";
+import * as Utils from "../../Utils";
 import {
-	TransientUser,
-	UserBase
-} from "./TransientUser";
-import { UsernameAndPasswordCredentials } from "./UsernameAndPasswordCredentials";
+	CS,
+	XSD
+} from "../../Vocabularies";
+import { UsernameAndPasswordCredentials } from "../UsernameAndPasswordCredentials";
+import { BaseUser } from "./BaseUser";
+import { TransientUser } from "./TransientUser";
+
 
 describe( module( "carbonldp/Auth/TransientUser" ), ():void => {
-
-	describe( interfaze(
-		"CarbonLDP.Auth.UserBase",
-		"Interface that represents the basic properties for a User."
-	), ():void => {
-
-		it( hasProperty(
-			OPTIONAL,
-			"name",
-			"string",
-			"The optional name of the user."
-		), ():void => {} );
-
-		it( hasProperty(
-			OBLIGATORY,
-			"credentials",
-			"CarbonLDP.Auth.UsernameAndPasswordCredentials",
-			"A resource with the username and password for the basic credentials."
-		), ():void => {} );
-
-	} );
-
 
 	describe( interfaze(
 		"CarbonLDP.Auth.TransientUser",
@@ -112,12 +89,6 @@ describe( module( "carbonldp/Auth/TransientUser" ), ():void => {
 			"CarbonLDP.Vocabularies.CS.User"
 		), ():void => {} );
 
-		it( hasProperty(
-			OBLIGATORY,
-			"SCHEMA",
-			"CarbonLDP.ObjectSchema"
-		), ():void => {} );
-
 		describe( method( OBLIGATORY, "isDecorated" ), ():void => {
 
 			it( hasSignature(
@@ -145,7 +116,7 @@ describe( module( "carbonldp/Auth/TransientUser" ), ():void => {
 			it( hasSignature(
 				"Creates a `CarbonLDP.Auth.TransientUser` object.",
 				[
-					{ name: "data", type: "CarbonLDP.Auth.UserBase", description: "The data requited for creating a User document." },
+					{ name: "data", type: "CarbonLDP.Auth.BaseUser", description: "The data requited for creating a User document." },
 				],
 				{ type: "CarbonLDP.Auth.TransientUser" }
 			), ():void => {} );
@@ -155,7 +126,7 @@ describe( module( "carbonldp/Auth/TransientUser" ), ():void => {
 		describe( method( OBLIGATORY, "createFrom" ), ():void => {
 
 			it( hasSignature(
-				[ "T extends CarbonLDP.Auth.UserBase" ],
+				[ "T extends CarbonLDP.Auth.BaseUser" ],
 				"Creates a `CarbonLDP.Auth.TransientUser` object with the one provided.",
 				[
 					{ name: "object", type: "T" },
@@ -199,18 +170,6 @@ describe( module( "carbonldp/Auth/TransientUser" ), ():void => {
 			expect( Utils.isString( TransientUser.TYPE ) ).toBe( true );
 
 			expect( TransientUser.TYPE ).toBe( CS.User );
-		} );
-
-		// TODO: Separate in different test
-		it( "TransientUser.SCHEMA", ():void => {
-			expect( TransientUser.SCHEMA ).toBeDefined();
-			expect( Utils.isObject( TransientUser.SCHEMA ) ).toBe( true );
-
-			expect( Utils.hasProperty( TransientUser.SCHEMA, "name" ) ).toBe( true );
-			expect( TransientUser.SCHEMA[ "name" ] ).toEqual( {
-				"@id": CS.name,
-				"@type": XSD.string,
-			} );
 		} );
 
 		describe( "TransientUser.isDecorated", ():void => {
@@ -261,7 +220,7 @@ describe( module( "carbonldp/Auth/TransientUser" ), ():void => {
 			it( "should pass the base object properties in copy", ():void => {
 				const spy:jasmine.Spy = spyOn( TransientUser, "createFrom" );
 
-				const base:UserBase = { name: "TransientUser name", credentials: null };
+				const base:BaseUser = { name: "TransientUser name", credentials: null };
 				TransientUser.create( base );
 
 				expect( spy.calls.argsFor( 0 )[ 0 ] ).toEqual( base );
@@ -281,7 +240,7 @@ describe( module( "carbonldp/Auth/TransientUser" ), ():void => {
 				const spy:jasmine.Spy = spyOn( TransientUser, "decorate" )
 					.and.callThrough();
 
-				const object:{ the:string } & UserBase = { the: "object", credentials: null };
+				const object:{ the:string } & BaseUser = { the: "object", credentials: null };
 				TransientUser.createFrom( object );
 
 				expect( spy ).toHaveBeenCalledWith( object );

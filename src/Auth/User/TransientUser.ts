@@ -1,31 +1,24 @@
-import { TransientDocument } from "../Document";
-import { TransientFragment } from "../Fragment";
-import { ObjectSchema } from "../ObjectSchema";
+import { TransientDocument } from "../../Document";
+import { Documents } from "../../Documents";
 import {
 	hasFunction,
 	isObject,
-} from "../Utils";
-import { CS } from "../Vocabularies/CS";
-import { XSD } from "../Vocabularies/XSD";
-import { UsernameAndPasswordCredentials } from "./UsernameAndPasswordCredentials";
+} from "../../Utils";
+import { CS } from "../../Vocabularies";
+import { UsernameAndPasswordCredentials } from "../UsernameAndPasswordCredentials";
+import { BaseUser } from "./BaseUser";
 
-
-export interface UserBase {
-	name?:string;
-	credentials:UsernameAndPasswordCredentials;
-}
 
 export interface TransientUser extends TransientDocument {
 	name?:string;
-	credentials?:TransientFragment & UsernameAndPasswordCredentials;
+	credentials?:UsernameAndPasswordCredentials;
 
-	updateCredentials( username?:string, password?:string ):TransientFragment & UsernameAndPasswordCredentials;
+	updateCredentials( username?:string, password?:string ):UsernameAndPasswordCredentials;
 }
 
 
 export interface TransientUserFactory {
 	TYPE:CS[ "User" ];
-	SCHEMA:ObjectSchema;
 
 
 	isDecorated( object:object ):object is TransientUser;
@@ -33,27 +26,15 @@ export interface TransientUserFactory {
 	is( value:any ):value is TransientUser;
 
 
-	decorate<T extends object>( object:T ):T & TransientUser;
+	decorate<T extends object>( object:T, documents?:Documents ):T & TransientUser;
 
-	create( data:UserBase ):TransientUser;
+	create( data:BaseUser ):TransientUser;
 
-	createFrom<T extends UserBase>( object:T ):T & TransientUser;
+	createFrom<T extends BaseUser>( object:T ):T & TransientUser;
 }
-
-const SCHEMA:ObjectSchema = {
-	"name": {
-		"@id": CS.name,
-		"@type": XSD.string,
-	},
-	"credentials": {
-		"@id": CS.credentials,
-		"@type": "@id",
-	},
-};
 
 export const TransientUser:TransientUserFactory = {
 	TYPE: CS.User,
-	SCHEMA,
 
 
 	isDecorated( object:object ):object is TransientUser {
@@ -84,11 +65,11 @@ export const TransientUser:TransientUserFactory = {
 		} );
 	},
 
-	create( data:UserBase ):TransientUser {
+	create( data:BaseUser ):TransientUser {
 		return TransientUser.createFrom( { ...data } );
 	},
 
-	createFrom<T extends UserBase>( object:T ):T & TransientUser {
+	createFrom<T extends BaseUser>( object:T ):T & TransientUser {
 		const user:T & TransientUser = TransientUser.decorate( object );
 		user._normalize();
 
