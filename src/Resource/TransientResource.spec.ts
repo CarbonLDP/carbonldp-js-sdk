@@ -84,9 +84,9 @@ describe( module( "carbonldp/Resource" ), ():void => {
 		it( hasMethod(
 			OBLIGATORY,
 			"create",
-			[ "T extends CarbonLDP.BaseResource" ],
+			[ "T extends object" ],
 			"Creates a Resource object with the id and types provided.", [
-				{ name: "data", type: "T", description: "Data to be used in the creation of the resource." },
+				{ name: "data", type: "T & CarbonLDP.BaseResource", description: "Data to be used in the creation of the resource." },
 			],
 			{ type: "CarbonLDP.TransientResource" }
 		), ():void => {} );
@@ -94,9 +94,9 @@ describe( module( "carbonldp/Resource" ), ():void => {
 		it( hasMethod(
 			OBLIGATORY,
 			"createFrom",
-			[ "T extends CarbonLDP.BaseResource" ],
+			[ "T extends object" ],
 			"Creates a Resource object with the id and types provided.", [
-				{ name: "object", type: "T", description: "Object that will be converted into a resource." },
+				{ name: "object", type: "T & CarbonLDP.BaseResource", description: "Object that will be converted into a resource." },
 			],
 			{ type: "T & CarbonLDP.TransientResource" }
 		), ():void => {} );

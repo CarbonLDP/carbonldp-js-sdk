@@ -29,7 +29,7 @@ import {
 	property,
 	STATIC,
 } from "../test/JasmineExtender";
-import { BaseAccessPoint } from "../AccessPoint/BaseAccessPoint";
+import { BaseAccessPoint } from "../AccessPoint";
 import * as Utils from "../Utils";
 import { BaseDocument } from "./BaseDocument";
 import { Document } from "./Document";
@@ -642,6 +642,26 @@ describe( module( "carbonldp/Document" ), ():void => {
 				{ name: "value", type: "any" },
 			],
 			{ type: "value is CarbonLDP.Document" }
+		), ():void => {} );
+
+		it( hasMethod(
+			OBLIGATORY,
+			"create",
+			[ "T extends object" ],
+			"Creates a `CarbonLDP.TransientDocument` object with the data provided.", [
+				{ name: "data", type: "T & CarbonLDP.BaseDocument", description: "Data to be used in the creation of the document." },
+			],
+			{ type: "T & CarbonLDP.TransientDocument" }
+		), ():void => {} );
+
+		it( hasMethod(
+			OBLIGATORY,
+			"createFrom",
+			[ "T extends object" ],
+			"Creates a Document object from the object provided.", [
+				{ name: "object", type: "T & CarbonLDP.BaseDocument", description: "The object to be transformed in a document." },
+			],
+			{ type: "T & CarbonLDP.TransientDocument" }
 		), ():void => {} );
 
 		it( hasMethod(

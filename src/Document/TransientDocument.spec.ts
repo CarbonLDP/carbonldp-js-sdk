@@ -70,7 +70,7 @@ function createMockDocument<T extends {}>( origin:T = {} as T ):T & TransientDoc
 }
 
 
-describe( module( "carbonldp/TransientDocument" ), ():void => {
+describe( module( "carbonldp/Document" ), ():void => {
 
 	describe( interfaze(
 		"CarbonLDP.TransientDocument",
@@ -86,14 +86,14 @@ describe( module( "carbonldp/TransientDocument" ), ():void => {
 
 		it( hasProperty(
 			OPTIONAL,
-			"isMemberOfRelation",
+			"hasMemberRelation",
 			"CarbonLDP.Pointer",
 			"A Pointer with the member of relation of the document."
 		), ():void => {} );
 
 		it( hasProperty(
 			OPTIONAL,
-			"hasMemberRelation",
+			"isMemberOfRelation",
 			"CarbonLDP.Pointer",
 			"A Pointer with the inverted relation the document will have."
 		), ():void => {} );
@@ -336,9 +336,9 @@ describe( module( "carbonldp/TransientDocument" ), ():void => {
 		it( hasMethod(
 			OBLIGATORY,
 			"create",
-			[ "T extends CarbonLDP.BaseDocument" ],
+			[ "T extends object" ],
 			"Creates a `CarbonLDP.TransientDocument` object with the data provided.", [
-				{ name: "data", type: "T", description: "Data to be used in the creation of the document." },
+				{ name: "data", type: "T & CarbonLDP.BaseDocument", description: "Data to be used in the creation of the document." },
 			],
 			{ type: "T & CarbonLDP.TransientDocument" }
 		), ():void => {} );
@@ -346,9 +346,9 @@ describe( module( "carbonldp/TransientDocument" ), ():void => {
 		it( hasMethod(
 			OBLIGATORY,
 			"createFrom",
-			[ "T extends CarbonLDP.BaseDocument" ],
+			[ "T extends object" ],
 			"Creates a Document object from the object provided.", [
-				{ name: "object", type: "T", description: "The object to be transformed in a document." },
+				{ name: "object", type: "T & CarbonLDP.BaseDocument", description: "The object to be transformed in a document." },
 			],
 			{ type: "T & CarbonLDP.TransientDocument" }
 		), ():void => {} );

@@ -31,8 +31,8 @@ export interface TransientDocumentFactory extends ModelFactory<TransientDocument
     TYPE: C["Document"];
     is(value: any): value is TransientDocument;
     isDecorated(object: object): object is TransientDocument;
-    create<T extends BaseDocument>(data?: T): T & TransientDocument;
-    createFrom<T extends BaseDocument>(object: T): T & TransientDocument;
+    create<T extends object>(data?: T & BaseDocument): T & TransientDocument;
+    createFrom<T extends object>(object: T & BaseDocument): T & TransientDocument;
     decorate<T extends object>(object: T): T & TransientDocument;
     _convertNestedObjects(parent: TransientDocument, actual: any, fragmentsTracker?: Set<string>): void;
 }

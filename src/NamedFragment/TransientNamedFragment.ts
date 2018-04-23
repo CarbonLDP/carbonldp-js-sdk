@@ -14,9 +14,9 @@ export interface TransientNamedFragmentFactory {
 	is( value:any ):value is TransientNamedFragment;
 
 
-	create<T extends BaseNamedFragment>( base:T ):T & TransientNamedFragment;
+	create<T extends object>( base:T & BaseNamedFragment ):T & TransientNamedFragment;
 
-	createFrom<T extends BaseNamedFragment>( object:T ):T & TransientNamedFragment;
+	createFrom<T extends object>( object:T & BaseNamedFragment ):T & TransientNamedFragment;
 
 	decorate<T extends object>( object:T ):T & TransientNamedFragment;
 }
@@ -34,12 +34,12 @@ export const TransientNamedFragment:TransientNamedFragmentFactory = {
 			;
 	},
 
-	create<T extends BaseNamedFragment>( data:T ):T & TransientNamedFragment {
-		const copy:T = Object.assign( {}, data );
+	create<T extends object>( data:T & BaseNamedFragment ):T & TransientNamedFragment {
+		const copy:T & BaseNamedFragment = Object.assign( {}, data );
 		return TransientNamedFragment.createFrom( copy );
 	},
 
-	createFrom<T extends BaseNamedFragment>( object:T ):T & TransientNamedFragment {
+	createFrom<T extends object>( object:T & BaseNamedFragment ):T & TransientNamedFragment {
 		object.id = object._document.id + "#" + object.slug;
 		return TransientNamedFragment.decorate( object );
 	},

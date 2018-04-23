@@ -12,9 +12,9 @@ export interface TransientBlankNodeFactory {
 	is( value:any ):value is TransientBlankNode;
 
 
-	create<T extends BaseBlankNode>( data:T ):T & TransientBlankNode;
+	create<T extends object>( data:T & BaseBlankNode ):T & TransientBlankNode;
 
-	createFrom<T extends BaseBlankNode>( object:T ):T & TransientBlankNode;
+	createFrom<T extends object>( object:T & BaseBlankNode ):T & TransientBlankNode;
 }
 
 export const TransientBlankNode:TransientBlankNodeFactory = {
@@ -25,12 +25,12 @@ export const TransientBlankNode:TransientBlankNodeFactory = {
 	},
 
 
-	create<T extends BaseBlankNode>( data:T ):T & TransientBlankNode {
-		const copy:T = Object.assign( {}, data );
+	create<T extends object>( data:T & BaseBlankNode ):T & TransientBlankNode {
+		const copy:T & BaseBlankNode = Object.assign( {}, data );
 		return TransientBlankNode.createFrom( copy );
 	},
 
-	createFrom<T extends BaseBlankNode>( object:T ):T & TransientBlankNode {
+	createFrom<T extends object>( object:T & BaseBlankNode ):T & TransientBlankNode {
 		if( ! object.id ) {
 			object.id = URI.generateBNodeID();
 		} else if( ! URI.isBNodeID( object.id ) ) {

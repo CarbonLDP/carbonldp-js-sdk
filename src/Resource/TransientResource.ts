@@ -20,9 +20,9 @@ export interface TransientResourceFactory {
 	is( value:any ):value is TransientResource;
 
 
-	create<T extends BaseResource>( data?:T ):T & TransientResource;
+	create<T extends object>( data?:T & BaseResource ):T & TransientResource;
 
-	createFrom<T extends BaseResource>( object:T ):T & TransientResource;
+	createFrom<T extends object>( object:T & BaseResource ):T & TransientResource;
 
 	decorate<T extends object>( object:T ):T & TransientResource;
 }
@@ -59,12 +59,12 @@ export const TransientResource:TransientResourceFactory = {
 			&& TransientResource.isDecorated( value );
 	},
 
-	create<T extends BaseResource>( data?:T ):T &TransientResource {
+	create<T extends object>( data?:T & BaseResource ):T & TransientResource {
 		const clone:T = Object.assign( {}, data );
 		return TransientResource.createFrom<T>( clone );
 	},
 
-	createFrom<T extends object>( object:T ):T & TransientResource {
+	createFrom<T extends object>( object:T & BaseResource ):T & TransientResource {
 		return TransientResource.decorate<T>( object );
 	},
 

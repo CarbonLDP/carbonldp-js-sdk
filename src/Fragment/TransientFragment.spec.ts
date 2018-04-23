@@ -53,9 +53,9 @@ describe( module( "carbonldp/Fragment" ), ():void => {
 		it( hasMethod(
 			OBLIGATORY,
 			"create",
-			[ "T extends CarbonLDP.BaseFragment" ],
+			[ "T extends object" ],
 			"Creates a Fragment with the ID if provided.", [
-				{ name: "data", type: "T", description: "Data to be used in the creation of the fragment" },
+				{ name: "data", type: "T & CarbonLDP.BaseFragment", description: "Data to be used in the creation of the fragment" },
 			],
 			{ type: "T & CarbonLDP.TransientFragment" }
 		), ():void => {} );
@@ -63,9 +63,9 @@ describe( module( "carbonldp/Fragment" ), ():void => {
 		it( hasMethod(
 			OBLIGATORY,
 			"createFrom",
-			[ "T extends CarbonLDP.BaseFragment" ],
+			[ "T extends object" ],
 			"Creates a Fragment from an object with the ID if provided.", [
-				{ name: "object", type: "T", description: "Object that will be converted to a fragment." },
+				{ name: "object", type: "T & CarbonLDP.BaseFragment", description: "Object that will be converted to a fragment." },
 			],
 			{ type: "T & CarbonLDP.TransientFragment" }
 		), ():void => {} );

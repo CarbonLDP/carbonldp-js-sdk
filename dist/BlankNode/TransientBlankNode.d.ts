@@ -4,7 +4,7 @@ export interface TransientBlankNode extends TransientFragment {
 }
 export interface TransientBlankNodeFactory {
     is(value: any): value is TransientBlankNode;
-    create<T extends BaseBlankNode>(data: T): T & TransientBlankNode;
-    createFrom<T extends BaseBlankNode>(object: T): T & TransientBlankNode;
+    create<T extends object>(data: T & BaseBlankNode): T & TransientBlankNode;
+    createFrom<T extends object>(object: T & BaseBlankNode): T & TransientBlankNode;
 }
 export declare const TransientBlankNode: TransientBlankNodeFactory;

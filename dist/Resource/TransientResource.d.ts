@@ -9,8 +9,8 @@ export interface TransientResource extends Pointer {
 export interface TransientResourceFactory {
     isDecorated(object: object): object is TransientResource;
     is(value: any): value is TransientResource;
-    create<T extends BaseResource>(data?: T): T & TransientResource;
-    createFrom<T extends BaseResource>(object: T): T & TransientResource;
+    create<T extends object>(data?: T & BaseResource): T & TransientResource;
+    createFrom<T extends object>(object: T & BaseResource): T & TransientResource;
     decorate<T extends object>(object: T): T & TransientResource;
 }
 export declare function addTypeInResource(this: TransientResource, type: string): void;

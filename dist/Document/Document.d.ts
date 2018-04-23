@@ -1,5 +1,5 @@
 import { QueryClause } from "sparqler/clauses";
-import { AccessPoint } from "../AccessPoint";
+import { AccessPoint, BaseAccessPoint } from "../AccessPoint";
 import { ModelDecorator } from "../core/ModelDecorator";
 import { ModelSchema } from "../core/ModelSchema";
 import { Documents } from "../Documents";
@@ -13,7 +13,6 @@ import { Resource } from "../Resource";
 import { ServiceAwareDocument } from "../ServiceAwareDocument";
 import { FinishSPARQLSelect, SPARQLRawResults, SPARQLSelectResults } from "../SPARQL";
 import { QueryDocumentsBuilder } from "../SPARQL/QueryDocument";
-import { BaseAccessPoint } from "../AccessPoint/BaseAccessPoint";
 import { C } from "../Vocabularies";
 import { BaseDocument } from "./BaseDocument";
 import { TransientDocument } from "./TransientDocument";
@@ -86,8 +85,8 @@ export interface DocumentFactory extends ModelSchema, ModelDecorator<Document> {
     TYPE: C["Document"];
     is(object: object): object is Document;
     isDecorated(object: object): object is Document;
-    create<T extends BaseDocument>(data?: T): T & TransientDocument;
-    createFrom<T extends BaseDocument>(object: T): T & TransientDocument;
+    create<T extends object>(data?: T & BaseDocument): T & TransientDocument;
+    createFrom<T extends object>(object: T & BaseDocument): T & TransientDocument;
     decorate<T extends object>(object: T, documents: Documents): T & Document;
 }
 export declare const Document: DocumentFactory;

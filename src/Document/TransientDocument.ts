@@ -90,9 +90,9 @@ export interface TransientDocumentFactory extends ModelFactory<TransientDocument
 	isDecorated( object:object ):object is TransientDocument;
 
 
-	create<T extends BaseDocument>( data?:T ):T & TransientDocument;
+	create<T extends object>( data?:T & BaseDocument ):T & TransientDocument;
 
-	createFrom<T extends BaseDocument>( object:T ):T & TransientDocument;
+	createFrom<T extends object>( object:T & BaseDocument ):T & TransientDocument;
 
 	decorate<T extends object>( object:T ):T & TransientDocument;
 
@@ -202,7 +202,7 @@ export const TransientDocument:TransientDocumentFactory = {
 		return object as any;
 	},
 
-	createFrom: <T extends BaseDocument>( object:T ) => {
+	createFrom: <T extends object>( object:T & BaseDocument ) => {
 		if( TransientDocument.is( object ) ) throw new IllegalArgumentError( "The object provided is already a Document." );
 
 		const document:T & TransientDocument = TransientDocument.decorate<T>( object );
@@ -211,7 +211,7 @@ export const TransientDocument:TransientDocumentFactory = {
 		return document;
 	},
 
-	create: <T extends BaseDocument>( data?:T ) => {
+	create: <T extends object>( data?:T & BaseDocument ) => {
 		const copy:T = Object.assign( {}, data );
 		return TransientDocument.createFrom( copy );
 	},

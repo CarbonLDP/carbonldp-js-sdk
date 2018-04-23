@@ -50,9 +50,9 @@ describe( module( "carbonldp/NamedFragment" ), ():void => {
 		it( hasMethod(
 			OBLIGATORY,
 			"create",
-			[ "T extends CarbonLDP.BaseNamedFragment" ],
+			[ "T extends object" ],
 			"Creates a NamedFragment with the slug provided", [
-				{ name: "data", type: "T", description: "Data to be used in the creation of the named fragment." },
+				{ name: "data", type: "T & CarbonLDP.BaseNamedFragment", description: "Data to be used in the creation of the named fragment." },
 			],
 			{ type: "T & CarbonLDP.TransientNamedFragment" }
 		), ():void => {} );
@@ -60,9 +60,9 @@ describe( module( "carbonldp/NamedFragment" ), ():void => {
 		it( hasMethod(
 			OBLIGATORY,
 			"createFrom",
-			[ "T extends CarbonLDP.BaseNamedFragment" ],
+			[ "T extends object" ],
 			"Creates a NamedFragment from an object with the slug provided.", [
-				{ name: "object", type: "T", description: "Object that will be converted to a named fragment." },
+				{ name: "object", type: "T & CarbonLDP.BaseNamedFragment", description: "Object that will be converted to a named fragment." },
 			],
 			{ type: "T & CarbonLDP.TransientNamedFragment" }
 		), ():void => {} );

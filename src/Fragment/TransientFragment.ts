@@ -1,6 +1,6 @@
+import { TransientDocument } from "../Document";
 import { IllegalActionError } from "../Errors";
 import { TransientResource } from "../Resource";
-import { TransientDocument } from "../Document";
 import { isObject } from "../Utils";
 import { BaseFragment } from "./BaseFragment";
 
@@ -16,9 +16,9 @@ export interface TransientFragmentFactory {
 	is( value:any ):value is TransientFragment;
 
 
-	create<T extends BaseFragment>( data:T ):T & TransientFragment;
+	create<T extends object>( data:T & BaseFragment ):T & TransientFragment;
 
-	createFrom<T extends BaseFragment>( object:T ):T & TransientFragment;
+	createFrom<T extends object>( object:T & BaseFragment ):T & TransientFragment;
 
 	decorate<T extends object>( object:T ):T & TransientFragment;
 }
@@ -36,12 +36,12 @@ export const TransientFragment:TransientFragmentFactory = {
 			;
 	},
 
-	create<T extends BaseFragment>( data:T ):T & TransientFragment {
-		const copy:T = Object.assign( {}, data );
+	create<T extends object>( data:T & BaseFragment ):T & TransientFragment {
+		const copy:T & BaseFragment = Object.assign( {}, data );
 		return TransientFragment.createFrom<T>( copy );
 	},
 
-	createFrom<T extends BaseFragment>( object:T ):T & TransientFragment {
+	createFrom<T extends object>( object:T & BaseFragment ):T & TransientFragment {
 		return TransientFragment.decorate<T>( object );
 	},
 

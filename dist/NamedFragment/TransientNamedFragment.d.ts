@@ -6,8 +6,8 @@ export interface TransientNamedFragment extends TransientFragment {
 export interface TransientNamedFragmentFactory {
     isDecorated(object: object): object is TransientNamedFragment;
     is(value: any): value is TransientNamedFragment;
-    create<T extends BaseNamedFragment>(base: T): T & TransientNamedFragment;
-    createFrom<T extends BaseNamedFragment>(object: T): T & TransientNamedFragment;
+    create<T extends object>(base: T & BaseNamedFragment): T & TransientNamedFragment;
+    createFrom<T extends object>(object: T & BaseNamedFragment): T & TransientNamedFragment;
     decorate<T extends object>(object: T): T & TransientNamedFragment;
 }
 export declare const TransientNamedFragment: TransientNamedFragmentFactory;
