@@ -60,7 +60,7 @@ import {
 } from "./test/JasmineExtender";
 import { TransientAccessPoint } from "./TransientAccessPoint";
 import { TransientBlankNode } from "./BlankNode";
-import { TransientDocument } from "./TransientDocument";
+import { TransientDocument } from "./Document";
 import { TransientProtectedDocument } from "./TransientProtectedDocument";
 
 import * as Utils from "./Utils";

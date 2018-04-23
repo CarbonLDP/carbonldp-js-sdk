@@ -28,7 +28,7 @@ import {
 	module,
 	property,
 } from "../../test/JasmineExtender";
-import { TransientDocument } from "../../TransientDocument";
+import { TransientDocument } from "../../Document";
 import { QueryContextBuilder } from "./QueryContextBuilder";
 
 import * as Module from "./QueryDocumentBuilder";

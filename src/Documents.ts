@@ -24,7 +24,7 @@ import { User } from "./Auth/User";
 import { TransientUser } from "./Auth/TransientUser";
 import { CarbonLDP } from "./CarbonLDP";
 import { Context } from "./Context";
-import { TransientDocument } from "./TransientDocument";
+import { TransientDocument } from "./Document";
 import * as Errors from "./Errors";
 import { FreeResources } from "./FreeResources";
 import { statusCodeMap } from "./HTTP/Errors";

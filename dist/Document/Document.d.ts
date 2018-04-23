@@ -1,22 +1,22 @@
 import { QueryClause } from "sparqler/clauses";
-import { AccessPointBase } from "./TransientAccessPoint";
+import { AccessPoint } from "../AccessPoint";
+import { ModelDecorator } from "../core/ModelDecorator";
+import { ModelSchema } from "../core/ModelSchema";
+import { Documents } from "../Documents";
+import { Fragment } from "../Fragment";
+import { RequestOptions } from "../HTTP";
+import { MessagingDocument } from "../Messaging";
+import { NamedFragment } from "../NamedFragment";
+import { Pointer } from "../Pointer";
+import { ProtectedDocument } from "../ProtectedDocument";
+import { Resource } from "../Resource";
+import { ServiceAwareDocument } from "../ServiceAwareDocument";
+import { FinishSPARQLSelect, SPARQLRawResults, SPARQLSelectResults } from "../SPARQL";
+import { QueryDocumentsBuilder } from "../SPARQL/QueryDocument";
+import { AccessPointBase } from "../TransientAccessPoint";
+import { C } from "../Vocabularies";
+import { BaseDocument } from "./BaseDocument";
 import { TransientDocument } from "./TransientDocument";
-import { Documents } from "./Documents";
-import { RequestOptions } from "./HTTP/Request";
-import { MessagingDocument } from "./Messaging/Document";
-import { ModelDecorator } from "./core/ModelDecorator";
-import { ModelFactory } from "./core/ModelFactory";
-import { AccessPoint } from "./AccessPoint";
-import { Fragment } from "./Fragment";
-import { NamedFragment } from "./NamedFragment";
-import { ProtectedDocument } from "./ProtectedDocument";
-import { Resource } from "./Resource";
-import { Pointer } from "./Pointer";
-import { ServiceAwareDocument } from "./ServiceAwareDocument";
-import { FinishSPARQLSelect } from "./SPARQL/Builder";
-import { QueryDocumentsBuilder } from "./SPARQL/QueryDocument/QueryDocumentsBuilder";
-import { SPARQLRawResults } from "./SPARQL/RawResults";
-import { SPARQLSelectResults } from "./SPARQL/SelectResults";
 export interface Document extends TransientDocument, Resource, ServiceAwareDocument, MessagingDocument {
     created?: Date;
     modified?: Date;
@@ -82,11 +82,12 @@ export interface Document extends TransientDocument, Resource, ServiceAwareDocum
     executeUPDATE(updateQuery: string, requestOptions?: RequestOptions): Promise<void>;
     sparql(): QueryClause<FinishSPARQLSelect>;
 }
-export interface DocumentFactory extends ModelFactory<Document>, ModelDecorator<Document> {
+export interface DocumentFactory extends ModelSchema, ModelDecorator<Document> {
+    TYPE: C["Document"];
     is(object: object): object is Document;
     isDecorated(object: object): object is Document;
-    create(documents: Documents, uri: string): Document;
-    createFrom<T extends object>(object: T, documents: Documents, uri: string): T & Document;
+    create<T extends BaseDocument>(data?: T): T & TransientDocument;
+    createFrom<T extends BaseDocument>(object: T): T & TransientDocument;
     decorate<T extends object>(object: T, documents: Documents): T & Document;
 }
 export declare const Document: DocumentFactory;

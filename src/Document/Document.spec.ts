@@ -1,18 +1,20 @@
-import { AbstractContext } from "./AbstractContext";
-import { AccessPointBase } from "./TransientAccessPoint";
-import { TransientDocument } from "./TransientDocument";
-import { Documents } from "./Documents";
-import * as Errors from "./Errors";
-import { TransientFragment } from "./Fragment";
-import { RequestOptions } from "./HTTP/Request";
-import { TransientNamedFragment } from "./NamedFragment";
-
-import { Document } from "./Document";
-
-import { Fragment } from "./Fragment";
-import { NamedFragment } from "./NamedFragment";
-import { Pointer } from "./Pointer";
-import { URI } from "./RDF/URI";
+import { AbstractContext } from "../AbstractContext";
+import { Documents } from "../Documents";
+import {
+	IDAlreadyInUseError,
+	IllegalArgumentError
+} from "../Errors";
+import {
+	Fragment,
+	TransientFragment,
+} from "../Fragment";
+import { RequestOptions } from "../HTTP";
+import {
+	NamedFragment,
+	TransientNamedFragment,
+} from "../NamedFragment";
+import { Pointer } from "../Pointer";
+import { URI } from "../RDF";
 import {
 	extendsClass,
 	hasMethod,
@@ -26,8 +28,12 @@ import {
 	OPTIONAL,
 	property,
 	STATIC,
-} from "./test/JasmineExtender";
-import * as Utils from "./Utils";
+} from "../test/JasmineExtender";
+import { AccessPointBase } from "../TransientAccessPoint";
+import * as Utils from "../Utils";
+import { BaseDocument } from "./BaseDocument";
+import { Document } from "./Document";
+import { TransientDocument } from "./TransientDocument";
 
 
 describe( module( "carbonldp/Document" ), ():void => {
@@ -633,31 +639,9 @@ describe( module( "carbonldp/Document" ), ():void => {
 			OBLIGATORY,
 			"is",
 			"Returns true if the element provided is considered a `CarbonLDP.Document` object.", [
-				{ name: "object", type: "object" },
+				{ name: "value", type: "any" },
 			],
-			{ type: "object is CarbonLDP.Document" }
-		), ():void => {} );
-
-		it( hasMethod(
-			OBLIGATORY,
-			"create",
-			"Creates an empty `CarbonLDP.Document` object with the URI provided.", [
-				{ name: "documents", type: "CarbonLDP.Documents", description: "The Documents instance to which the persisted document belongs." },
-				{ name: "uri", type: "string" },
-			],
-			{ type: "CarbonLDP.Document" }
-		), ():void => {} );
-
-		it( hasMethod(
-			OBLIGATORY,
-			"createFrom",
-			[ "T extends object" ],
-			"Creates a Document object from the object and URI provided.", [
-				{ name: "object", type: "T" },
-				{ name: "documents", type: "CarbonLDP.Documents", description: "The Documents instance to which the persisted document belongs." },
-				{ name: "uri", type: "string" },
-			],
-			{ type: "T & CarbonLDP.Document" }
+			{ type: "value is CarbonLDP.Document" }
 		), ():void => {} );
 
 		it( hasMethod(
@@ -899,6 +883,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 			expect( Document.is( {} ) ).toBe( false );
 
 			let object:any = TransientDocument.createFrom( {
+				id: "",
 				created: null,
 				modified: null,
 				defaultInteractionModel: null,
@@ -956,42 +941,6 @@ describe( module( "carbonldp/Document" ), ():void => {
 		} );
 
 		// TODO: Separate in different tests
-		it( "Document.create", ():void => {
-			expect( Document.create ).toBeDefined();
-			expect( Utils.isFunction( Document.create ) ).toBe( true );
-
-			let document:Document;
-			document = Document.create( context.documents, "http://example.com/document/" );
-			expect( Document.is( document ) ).toBe( true );
-
-			expect( document.id ).toBe( "http://example.com/document/" );
-			expect( document._documents ).toBe( context.documents );
-		} );
-
-		// TODO: Separate in different tests
-		it( "Document.createFrom", ():void => {
-			expect( Document.createFrom ).toBeDefined();
-			expect( Utils.isFunction( Document.createFrom ) ).toBe( true );
-
-			interface MyObject {
-				myProperty?:string;
-			}
-
-			interface MyDocument extends MyObject, Document {}
-
-			let persistedDocument:MyDocument;
-
-			persistedDocument = Document.createFrom<MyObject>( {}, context.documents, "http://example.com/document/" );
-			expect( Document.is( persistedDocument ) ).toBe( true );
-			expect( persistedDocument.id ).toBe( "http://example.com/document/" );
-
-			persistedDocument = Document.createFrom<MyObject>( { myProperty: "a property" }, context.documents, "http://example.com/document/" );
-			expect( Document.is( persistedDocument ) ).toBe( true );
-			expect( persistedDocument.id ).toBe( "http://example.com/document/" );
-			expect( persistedDocument.myProperty ).toBe( "a property" );
-		} );
-
-		// TODO: Separate in different tests
 		it( "Document.decorate", ():void => {
 			expect( Document.decorate ).toBeDefined();
 			expect( Utils.isFunction( Document.decorate ) ).toBe( true );
@@ -1004,18 +953,18 @@ describe( module( "carbonldp/Document" ), ():void => {
 
 			let document:MyTransientDocument;
 
-			interface MyDocument extends MyObject, Document {
-			}
+
+			interface MyDocument extends MyObject, Document {}
 
 			let persistedDocument:MyDocument;
 
-			document = TransientDocument.createFrom<MyObject>( {} );
+			document = TransientDocument.createFrom<MyObject & BaseDocument>( {} );
 			persistedDocument = Document.decorate<MyTransientDocument>( document, context.documents );
 			expect( Document.is( persistedDocument ) ).toBe( true );
 			expect( persistedDocument.myProperty ).toBeUndefined();
 			expect( persistedDocument._documents ).toBe( context.documents );
 
-			document = TransientDocument.createFrom<MyObject>( { myProperty: "a property" } );
+			document = TransientDocument.createFrom<MyObject & BaseDocument>( { myProperty: "a property" } );
 			persistedDocument = Document.decorate<MyTransientDocument>( document, context.documents );
 			expect( Document.is( persistedDocument ) ).toBe( true );
 			expect( persistedDocument.myProperty ).toBeDefined();
@@ -1034,7 +983,9 @@ describe( module( "carbonldp/Document" ), ():void => {
 
 				context.documents.getPointer( "http://example.com/in/documents/" );
 
-				document = Document.create( context.documents, "http://example.com/document/" );
+				document = Document.decorate( {
+					id: "http://example.com/document/",
+				}, context.documents );
 				document.createNamedFragment( "fragment" );
 				document.createFragment( "_:BlankNode" );
 			} );
@@ -1354,9 +1305,9 @@ describe( module( "carbonldp/Document" ), ():void => {
 					expect( fragment.myPointer.myProperty ).toBeDefined();
 					expect( fragment.myPointer.myProperty ).toBe( "The Nested object" );
 
-					expect( () => document.createFragment( {}, "http://example.com/another-document/#fragment" ) ).toThrowError( Errors.IllegalArgumentError );
-					expect( () => document.createFragment( {}, "fragment" ) ).toThrowError( Errors.IDAlreadyInUseError );
-					expect( () => document.createFragment( {}, "_:BlankNode" ) ).toThrowError( Errors.IDAlreadyInUseError );
+					expect( () => document.createFragment( {}, "http://example.com/another-document/#fragment" ) ).toThrowError( IllegalArgumentError );
+					expect( () => document.createFragment( {}, "fragment" ) ).toThrowError( IDAlreadyInUseError );
+					expect( () => document.createFragment( {}, "_:BlankNode" ) ).toThrowError( IDAlreadyInUseError );
 				} );
 
 				// TODO: Separate in different tests
@@ -1416,9 +1367,9 @@ describe( module( "carbonldp/Document" ), ():void => {
 					expect( TransientFragment.isDecorated( fragment ) ).toBe( true );
 					expect( fragment.id ).toBe( "_:My-BlankNode" );
 
-					expect( () => document.createFragment( "http://example.com/another-document/#fragment" ) ).toThrowError( Errors.IllegalArgumentError );
-					expect( () => document.createFragment( "fragment" ) ).toThrowError( Errors.IDAlreadyInUseError );
-					expect( () => document.createFragment( "_:BlankNode" ) ).toThrowError( Errors.IDAlreadyInUseError );
+					expect( () => document.createFragment( "http://example.com/another-document/#fragment" ) ).toThrowError( IllegalArgumentError );
+					expect( () => document.createFragment( "fragment" ) ).toThrowError( IDAlreadyInUseError );
+					expect( () => document.createFragment( "_:BlankNode" ) ).toThrowError( IDAlreadyInUseError );
 				} );
 
 				// TODO: Separate in different tests
@@ -1463,9 +1414,9 @@ describe( module( "carbonldp/Document" ), ():void => {
 					expect( fragment.slug ).toBe( "another-fragment" );
 					expect( fragment.id ).toBe( "http://example.com/document/#another-fragment" );
 
-					expect( () => document.createNamedFragment( "_:BlankNode" ) ).toThrowError( Errors.IllegalArgumentError );
-					expect( () => document.createNamedFragment( "http://example.com/another-document/#fragment" ) ).toThrowError( Errors.IllegalArgumentError );
-					expect( () => document.createNamedFragment( "fragment" ) ).toThrowError( Errors.IDAlreadyInUseError );
+					expect( () => document.createNamedFragment( "_:BlankNode" ) ).toThrowError( IllegalArgumentError );
+					expect( () => document.createNamedFragment( "http://example.com/another-document/#fragment" ) ).toThrowError( IllegalArgumentError );
+					expect( () => document.createNamedFragment( "fragment" ) ).toThrowError( IDAlreadyInUseError );
 				} );
 
 				// TODO: Separate in different tests

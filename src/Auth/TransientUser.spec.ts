@@ -1,7 +1,7 @@
 import { anyThatMatches } from "../../test/helpers/jasmine-equalities";
 import { StrictMinus } from "../../test/helpers/types";
 import { TransientBlankNode } from "../BlankNode";
-import { TransientDocument } from "../TransientDocument";
+import { TransientDocument } from "../Document";
 import { TransientFragment } from "../Fragment";
 import {
 	extendsClass,

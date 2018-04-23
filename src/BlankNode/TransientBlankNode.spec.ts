@@ -9,7 +9,7 @@ import {
 	property,
 	STATIC,
 } from "../test/JasmineExtender";
-import { TransientDocument } from "../TransientDocument";
+import { TransientDocument } from "../Document";
 import { BaseBlankNode } from "./BaseBlankNode";
 import { TransientBlankNode } from "./TransientBlankNode";
 

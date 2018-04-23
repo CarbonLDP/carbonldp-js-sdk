@@ -3,7 +3,7 @@ import { ObjectSchema } from "../ObjectSchema";
 import { Pointer } from "../Pointer";
 import * as Utils from "../Utils";
 import { CS } from "../Vocabularies/CS";
-import { TransientDocument } from "../TransientDocument";
+import { TransientDocument } from "../Document";
 import { TransientACE } from "./TransientACE";
 
 export interface TransientACL extends TransientDocument {

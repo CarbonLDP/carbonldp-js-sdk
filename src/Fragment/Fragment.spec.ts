@@ -133,7 +133,7 @@ describe( module( "carbonldp/Fragment" ), ():void => {
 				context.documents.getPointer( "http://example.com/in/documents/" );
 
 				let fragment:TransientFragment = TransientFragment.create( {
-					_document: Document.create( context.documents, "http://example.com/document/" ),
+					_document: Document.decorate( { id: "http://example.com/document/" }, context.documents ),
 				} );
 				persistedFragment = Fragment.decorate( fragment );
 			} );

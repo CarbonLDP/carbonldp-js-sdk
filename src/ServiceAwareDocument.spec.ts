@@ -1,6 +1,6 @@
 import { Minus } from "../test/helpers/types";
 
-import { TransientDocument } from "./TransientDocument";
+import { TransientDocument } from "./Document";
 import { Documents } from "./Documents";
 import { ServiceAwareDocument } from "./ServiceAwareDocument";
 

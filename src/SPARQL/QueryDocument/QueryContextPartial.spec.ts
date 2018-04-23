@@ -38,10 +38,9 @@ describe( module( "carbonldp/SPARQL/QueryDocument/QueryContextPartial" ), ():voi
 				protected _baseURI:string = "https://example.com/";
 			};
 
-			persistedDocument = Document.createFrom(
+			persistedDocument = Document.decorate(
 				context.documents.getPointer( "https://example.com/resource/" ),
-				context.documents,
-				"https://example.com/resource/"
+				context.documents
 			);
 			persistedDocument._partialMetadata = new PartialMetadata( ObjectSchemaDigester.digestSchema( {
 				"documentProperty": {

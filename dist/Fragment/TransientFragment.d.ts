@@ -1,5 +1,5 @@
 import { TransientResource } from "../Resource";
-import { TransientDocument } from "../TransientDocument";
+import { TransientDocument } from "../Document";
 import { BaseFragment } from "./BaseFragment";
 export interface TransientFragment extends TransientResource {
     _document: TransientDocument;

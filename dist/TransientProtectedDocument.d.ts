@@ -1,4 +1,4 @@
-import { TransientDocument } from "./TransientDocument";
+import { TransientDocument } from "./Document";
 import { ObjectSchema } from "./ObjectSchema";
 export interface TransientProtectedDocument extends TransientDocument {
 }

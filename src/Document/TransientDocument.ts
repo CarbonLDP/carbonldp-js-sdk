@@ -1,41 +1,43 @@
 import {
 	BaseBlankNode,
 	TransientBlankNode,
-} from "./BlankNode";
-import { ModelDecorator } from "./core/ModelDecorator";
-import { ModelFactory } from "./core/ModelFactory";
-import { IDAlreadyInUseError } from "./Errors/IDAlreadyInUseError";
-import { IllegalArgumentError } from "./Errors/IllegalArgumentError";
-import { TransientFragment } from "./Fragment";
-import { JSONLDConverter } from "./JSONLD/Converter";
+} from "../BlankNode";
+import { ModelDecorator } from "../core/ModelDecorator";
+import { ModelFactory } from "../core/ModelFactory";
+import {
+	IDAlreadyInUseError,
+	IllegalArgumentError,
+} from "../Errors";
+import { TransientFragment } from "../Fragment";
+import { JSONLDConverter } from "../JSONLD";
 import {
 	BaseNamedFragment,
-	TransientNamedFragment
-} from "./NamedFragment";
+	TransientNamedFragment,
+} from "../NamedFragment";
 import {
 	DigestedObjectSchema,
-	ObjectSchema,
 	ObjectSchemaResolver,
-} from "./ObjectSchema";
+} from "../ObjectSchema";
 import {
 	Pointer,
 	PointerLibrary,
 	PointerValidator,
-} from "./Pointer";
-import { RDFDocument } from "./RDF/Document";
-import { RDFNode } from "./RDF/Node";
-import { URI } from "./RDF/URI";
-import { TransientResource } from "./Resource";
+} from "../Pointer";
+import {
+	RDFDocument,
+	RDFNode,
+	URI,
+} from "../RDF";
+import { TransientResource } from "../Resource";
 import {
 	hasFunction,
 	hasPropertyDefined,
 	isObject,
 	isPlainObject,
 	isString,
-} from "./Utils";
-import { C } from "./Vocabularies/C";
-import { LDP } from "./Vocabularies/LDP";
-import { XSD } from "./Vocabularies/XSD";
+} from "../Utils";
+import { C } from "../Vocabularies";
+import { BaseDocument } from "./BaseDocument";
 
 
 export interface TransientDocument extends TransientResource, PointerLibrary, PointerValidator {
@@ -79,19 +81,18 @@ export interface TransientDocument extends TransientResource, PointerLibrary, Po
 }
 
 
-export interface DocumentFactory extends ModelFactory<TransientDocument>, ModelDecorator<TransientDocument> {
-	TYPE:string;
-	SCHEMA:ObjectSchema;
+export interface TransientDocumentFactory extends ModelFactory<TransientDocument>, ModelDecorator<TransientDocument> {
+	TYPE:C[ "Document" ];
 
 
-	is( object:object ):object is TransientDocument;
+	is( value:any ):value is TransientDocument;
 
 	isDecorated( object:object ):object is TransientDocument;
 
 
-	create():TransientDocument;
+	create<T extends BaseDocument>( data?:T ):T & TransientDocument;
 
-	createFrom<T extends object>( object:T ):T & TransientDocument;
+	createFrom<T extends BaseDocument>( object:T ):T & TransientDocument;
 
 	decorate<T extends object>( object:T ):T & TransientDocument;
 
@@ -99,56 +100,8 @@ export interface DocumentFactory extends ModelFactory<TransientDocument>, ModelD
 	_convertNestedObjects( parent:TransientDocument, actual:any, fragmentsTracker?:Set<string> ):void;
 }
 
-
-const SCHEMA:ObjectSchema = {
-	"contains": {
-		"@id": LDP.contains,
-		"@container": "@set",
-		"@type": "@id",
-	},
-	"members": {
-		"@id": LDP.member,
-		"@container": "@set",
-		"@type": "@id",
-	},
-	"membershipResource": {
-		"@id": LDP.membershipResource,
-		"@type": "@id",
-	},
-	"isMemberOfRelation": {
-		"@id": LDP.isMemberOfRelation,
-		"@type": "@id",
-	},
-	"hasMemberRelation": {
-		"@id": LDP.hasMemberRelation,
-		"@type": "@id",
-	},
-	"insertedContentRelation": {
-		"@id": LDP.insertedContentRelation,
-		"@type": "@id",
-	},
-	"created": {
-		"@id": C.created,
-		"@type": XSD.dateTime,
-	},
-	"modified": {
-		"@id": C.modified,
-		"@type": XSD.dateTime,
-	},
-	"defaultInteractionModel": {
-		"@id": C.defaultInteractionModel,
-		"@type": "@id",
-	},
-	"accessPoints": {
-		"@id": C.accessPoint,
-		"@type": "@id",
-		"@container": "@set",
-	},
-};
-
-export const TransientDocument:DocumentFactory = {
+export const TransientDocument:TransientDocumentFactory = {
 	TYPE: C.Document,
-	SCHEMA,
 
 	isDecorated: ( object ):object is TransientDocument =>
 		isObject( object ) &&
@@ -173,9 +126,9 @@ export const TransientDocument:DocumentFactory = {
 		hasFunction( object, "toJSON" )
 	,
 
-	is: ( object ):object is TransientDocument =>
-		TransientResource.is( object ) &&
-		TransientDocument.isDecorated( object )
+	is: ( value ):value is TransientDocument =>
+		TransientResource.is( value ) &&
+		TransientDocument.isDecorated( value )
 	,
 
 
@@ -249,7 +202,7 @@ export const TransientDocument:DocumentFactory = {
 		return object as any;
 	},
 
-	createFrom: <T extends object>( object:T ) => {
+	createFrom: <T extends BaseDocument>( object:T ) => {
 		if( TransientDocument.is( object ) ) throw new IllegalArgumentError( "The object provided is already a Document." );
 
 		const document:T & TransientDocument = TransientDocument.decorate<T>( object );
@@ -258,7 +211,10 @@ export const TransientDocument:DocumentFactory = {
 		return document;
 	},
 
-	create: () => TransientDocument.createFrom( {} ),
+	create: <T extends BaseDocument>( data?:T ) => {
+		const copy:T = Object.assign( {}, data );
+		return TransientDocument.createFrom( copy );
+	},
 
 
 	_convertNestedObjects( parent:TransientDocument, actual:any, fragmentsTracker:Set<string> = new Set() ):void {
@@ -460,5 +416,3 @@ function normalize( this:TransientDocument ):void {
 		this._fragmentsIndex.delete( fragment.id );
 	} );
 }
-
-

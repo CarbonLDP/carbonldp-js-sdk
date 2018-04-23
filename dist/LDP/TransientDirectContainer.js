@@ -1,12 +1,12 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var TransientDocument_1 = require("../TransientDocument");
+var Document_1 = require("../Document");
 var IllegalArgumentError_1 = require("../Errors/IllegalArgumentError");
 var LDP_1 = require("../Vocabularies/LDP");
 exports.TransientDirectContainer = {
     TYPE: LDP_1.LDP.DirectContainer,
     is: function (object) {
-        return TransientDocument_1.TransientDocument.is(object)
+        return Document_1.TransientDocument.is(object)
             && object.hasType(exports.TransientDirectContainer.TYPE)
             && object.hasOwnProperty("membershipResource");
     },
@@ -24,8 +24,8 @@ exports.TransientDirectContainer = {
             membershipResource: membershipResource,
             hasMemberRelation: hasMemberRelation,
         });
-        var container = TransientDocument_1.TransientDocument.is(containerBase) ?
-            containerBase : TransientDocument_1.TransientDocument.createFrom(containerBase);
+        var container = Document_1.TransientDocument.is(containerBase) ?
+            containerBase : Document_1.TransientDocument.createFrom(containerBase);
         container.addType(exports.TransientDirectContainer.TYPE);
         if (isMemberOfRelation)
             container.isMemberOfRelation = isMemberOfRelation;

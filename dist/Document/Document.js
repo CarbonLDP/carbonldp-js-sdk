@@ -7,18 +7,65 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 }
 Object.defineProperty(exports, "__esModule", { value: true });
+var Fragment_1 = require("../Fragment");
+var HTTP_1 = require("../HTTP");
+var Messaging_1 = require("../Messaging");
+var NamedFragment_1 = require("../NamedFragment");
+var ObjectSchema_1 = require("../ObjectSchema");
+var Pointer_1 = require("../Pointer");
+var RDF_1 = require("../RDF");
+var Resource_1 = require("../Resource");
+var ServiceAwareDocument_1 = require("../ServiceAwareDocument");
+var Utils = __importStar(require("../Utils"));
+var Vocabularies_1 = require("../Vocabularies");
 var TransientDocument_1 = require("./TransientDocument");
-var Request_1 = require("./HTTP/Request");
-var Document_1 = require("./Messaging/Document");
-var ObjectSchema = __importStar(require("./ObjectSchema"));
-var Fragment_1 = require("./Fragment");
-var NamedFragment_1 = require("./NamedFragment");
-var Resource_1 = require("./Resource");
-var Pointer_1 = require("./Pointer");
-var URI_1 = require("./RDF/URI");
-var ServiceAwareDocument_1 = require("./ServiceAwareDocument");
-var Utils = __importStar(require("./Utils"));
 exports.Document = {
+    TYPE: Vocabularies_1.C.Document,
+    SCHEMA: {
+        "contains": {
+            "@id": Vocabularies_1.LDP.contains,
+            "@container": "@set",
+            "@type": "@id",
+        },
+        "members": {
+            "@id": Vocabularies_1.LDP.member,
+            "@container": "@set",
+            "@type": "@id",
+        },
+        "membershipResource": {
+            "@id": Vocabularies_1.LDP.membershipResource,
+            "@type": "@id",
+        },
+        "isMemberOfRelation": {
+            "@id": Vocabularies_1.LDP.isMemberOfRelation,
+            "@type": "@id",
+        },
+        "hasMemberRelation": {
+            "@id": Vocabularies_1.LDP.hasMemberRelation,
+            "@type": "@id",
+        },
+        "insertedContentRelation": {
+            "@id": Vocabularies_1.LDP.insertedContentRelation,
+            "@type": "@id",
+        },
+        "created": {
+            "@id": Vocabularies_1.C.created,
+            "@type": Vocabularies_1.XSD.dateTime,
+        },
+        "modified": {
+            "@id": Vocabularies_1.C.modified,
+            "@type": Vocabularies_1.XSD.dateTime,
+        },
+        "defaultInteractionModel": {
+            "@id": Vocabularies_1.C.defaultInteractionModel,
+            "@type": "@id",
+        },
+        "accessPoints": {
+            "@id": Vocabularies_1.C.accessPoint,
+            "@type": "@id",
+            "@container": "@set",
+        },
+    },
     isDecorated: function (object) {
         return Utils.hasPropertyDefined(object, "_eTag")
             && Utils.hasFunction(object, "isLocallyOutDated")
@@ -52,17 +99,8 @@ exports.Document = {
     },
     is: function (object) {
         return TransientDocument_1.TransientDocument.is(object)
-            && Document_1.MessagingDocument.isDecorated(object)
+            && Messaging_1.MessagingDocument.isDecorated(object)
             && exports.Document.isDecorated(object);
-    },
-    create: function (documents, uri) {
-        return exports.Document.createFrom({}, documents, uri);
-    },
-    createFrom: function (object, documents, uri) {
-        var document = exports.Document.decorate(object, documents);
-        document.id = uri;
-        TransientDocument_1.TransientDocument._convertNestedObjects(document, document);
-        return document;
     },
     decorate: function (object, documents) {
         if (exports.Document.isDecorated(object))
@@ -70,7 +108,7 @@ exports.Document = {
         TransientDocument_1.TransientDocument.decorate(object);
         Resource_1.Resource.decorate(object);
         ServiceAwareDocument_1.ServiceAwareDocument.decorate(object, documents);
-        Document_1.MessagingDocument.decorate(object);
+        Messaging_1.MessagingDocument.decorate(object);
         var persistedDocument = object;
         return Object.defineProperties(persistedDocument, {
             "_eTag": {
@@ -121,10 +159,10 @@ exports.Document = {
                 value: (function () {
                     var superFunction = persistedDocument.hasPointer;
                     return function (id) {
-                        id = ObjectSchema.ObjectSchemaUtils.resolveURI(id, this._documents.getGeneralSchema());
+                        id = ObjectSchema_1.ObjectSchemaUtils.resolveURI(id, this._documents.getGeneralSchema());
                         if (superFunction.call(this, id))
                             return true;
-                        return !URI_1.URI.isBNodeID(id) && this._documents.hasPointer(id);
+                        return !RDF_1.URI.isBNodeID(id) && this._documents.hasPointer(id);
                     };
                 })(),
             },
@@ -136,7 +174,7 @@ exports.Document = {
                     var superFunction = persistedDocument.getPointer;
                     var inScopeFunction = persistedDocument.inScope;
                     return function (id) {
-                        id = ObjectSchema.ObjectSchemaUtils.resolveURI(id, this._documents.getGeneralSchema());
+                        id = ObjectSchema_1.ObjectSchemaUtils.resolveURI(id, this._documents.getGeneralSchema());
                         if (inScopeFunction.call(this, id))
                             return superFunction.call(this, id);
                         return this._documents.getPointer(id);
@@ -151,7 +189,7 @@ exports.Document = {
                     var superFunction = persistedDocument.inScope;
                     return function (idOrPointer) {
                         var id = Pointer_1.Pointer.is(idOrPointer) ? idOrPointer.id : idOrPointer;
-                        id = ObjectSchema.ObjectSchemaUtils.resolveURI(id, this._documents.getGeneralSchema());
+                        id = ObjectSchema_1.ObjectSchemaUtils.resolveURI(id, this._documents.getGeneralSchema());
                         if (superFunction.call(this, id))
                             return true;
                         return this._documents.inScope(id);
@@ -346,6 +384,8 @@ exports.Document = {
             },
         });
     },
+    create: TransientDocument_1.TransientDocument.create,
+    createFrom: TransientDocument_1.TransientDocument.createFrom,
 };
 function extendIsDirty(superFunction) {
     return function () {
@@ -387,10 +427,10 @@ function syncSavedFragments() {
     document._savedFragments = Utils.ArrayUtils.from(document._fragmentsIndex.values());
 }
 function resolveURI(uri) {
-    if (URI_1.URI.isAbsolute(uri))
+    if (RDF_1.URI.isAbsolute(uri))
         return uri;
     var schema = this._documents.getGeneralSchema();
-    return ObjectSchema.ObjectSchemaUtils.resolveURI(uri, schema, { vocab: true });
+    return ObjectSchema_1.ObjectSchemaUtils.resolveURI(uri, schema, { vocab: true });
 }
 function extendAddType(superFunction) {
     return function (type) {
@@ -414,7 +454,7 @@ function extendCreateFragment(superFunction) {
     return function (slugOrObject, slug) {
         var fragment = superFunction.call(this, slugOrObject, slug);
         var id = fragment.id;
-        if (URI_1.URI.isBNodeID(id))
+        if (RDF_1.URI.isBNodeID(id))
             Fragment_1.Fragment.decorate(fragment);
         return fragment;
     };
@@ -444,14 +484,14 @@ function addMembers(members, requestOptions) {
     return this._documents.addMembers(this.id, members, requestOptions);
 }
 function get(relativeURI, optionsOrQueryBuilderFn, queryBuilderFn) {
-    var uri = URI_1.URI.resolve(this.id, relativeURI);
+    var uri = RDF_1.URI.resolve(this.id, relativeURI);
     return this._documents
         .get(uri, optionsOrQueryBuilderFn, queryBuilderFn)
         .then(function (data) { return data[0]; });
 }
 function createChild(objectOrSlugOrRequestOptions, slugOrRequestOptions, requestOptions) {
-    requestOptions = Request_1.RequestUtils.isOptions(objectOrSlugOrRequestOptions) ? objectOrSlugOrRequestOptions : Request_1.RequestUtils.isOptions(slugOrRequestOptions) ? slugOrRequestOptions : requestOptions;
-    var object = Utils.isString(objectOrSlugOrRequestOptions) || Request_1.RequestUtils.isOptions(objectOrSlugOrRequestOptions) || !objectOrSlugOrRequestOptions ? {} : objectOrSlugOrRequestOptions;
+    requestOptions = HTTP_1.RequestUtils.isOptions(objectOrSlugOrRequestOptions) ? objectOrSlugOrRequestOptions : HTTP_1.RequestUtils.isOptions(slugOrRequestOptions) ? slugOrRequestOptions : requestOptions;
+    var object = Utils.isString(objectOrSlugOrRequestOptions) || HTTP_1.RequestUtils.isOptions(objectOrSlugOrRequestOptions) || !objectOrSlugOrRequestOptions ? {} : objectOrSlugOrRequestOptions;
     var slug = Utils.isString(objectOrSlugOrRequestOptions) ? objectOrSlugOrRequestOptions : Utils.isString(slugOrRequestOptions) ? slugOrRequestOptions : null;
     return this._documents.createChild(this.id, object, slug, requestOptions);
 }
@@ -459,8 +499,8 @@ function createChildren(objects, slugsOrRequestOptions, requestOptions) {
     return this._documents.createChildren(this.id, objects, slugsOrRequestOptions, requestOptions);
 }
 function createChildAndRetrieve(objectOrSlugOrRequestOptions, slugOrRequestOptions, requestOptions) {
-    requestOptions = Request_1.RequestUtils.isOptions(objectOrSlugOrRequestOptions) ? objectOrSlugOrRequestOptions : Request_1.RequestUtils.isOptions(slugOrRequestOptions) ? slugOrRequestOptions : requestOptions;
-    var object = Utils.isString(objectOrSlugOrRequestOptions) || Request_1.RequestUtils.isOptions(objectOrSlugOrRequestOptions) || !objectOrSlugOrRequestOptions ? {} : objectOrSlugOrRequestOptions;
+    requestOptions = HTTP_1.RequestUtils.isOptions(objectOrSlugOrRequestOptions) ? objectOrSlugOrRequestOptions : HTTP_1.RequestUtils.isOptions(slugOrRequestOptions) ? slugOrRequestOptions : requestOptions;
+    var object = Utils.isString(objectOrSlugOrRequestOptions) || HTTP_1.RequestUtils.isOptions(objectOrSlugOrRequestOptions) || !objectOrSlugOrRequestOptions ? {} : objectOrSlugOrRequestOptions;
     var slug = Utils.isString(objectOrSlugOrRequestOptions) ? objectOrSlugOrRequestOptions : Utils.isString(slugOrRequestOptions) ? slugOrRequestOptions : null;
     return this._documents.createChildAndRetrieve(this.id, object, slug, requestOptions);
 }

@@ -1,4 +1,4 @@
-import { TransientDocument } from "../TransientDocument";
+import { TransientDocument } from "../Document";
 import { IllegalArgumentError } from "../Errors/IllegalArgumentError";
 import { CS } from "../Vocabularies/CS";
 import { XSD } from "../Vocabularies/XSD";
@@ -53,7 +53,7 @@ export class Factory {
 	}
 
 	static createFrom<T extends Object>( object:T, name:string, description?:string ):T & Class {
-		if( ! TransientDocument.isDecorated( object ) ) object = TransientDocument.createFrom( object );
+		if( ! TransientDocument.isDecorated( object ) ) object = TransientDocument.createFrom( object as any );
 
 		if( ! name ) throw new IllegalArgumentError( "The name cannot be empty." );
 

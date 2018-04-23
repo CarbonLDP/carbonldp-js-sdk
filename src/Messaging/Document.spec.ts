@@ -1,4 +1,4 @@
-import { TransientDocument } from "../TransientDocument";
+import { TransientDocument } from "../Document";
 import { Documents } from "../Documents";
 import { ServiceAwareDocument } from "../ServiceAwareDocument";
 import {
@@ -499,6 +499,7 @@ describe( module( "carbonldp/Messaging/Document" ), ():void => {
 
 				const methodsFunction:() => void = () => {};
 				const base:ServiceAwareDocument = ServiceAwareDocument.decorate( TransientDocument.createFrom( {
+					id: "",
 					on: methodsFunction,
 					off: methodsFunction,
 					one: methodsFunction,

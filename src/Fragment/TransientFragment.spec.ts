@@ -6,7 +6,7 @@ import {
 	OBLIGATORY,
 	STATIC,
 } from "../test/JasmineExtender";
-import { TransientDocument } from "../TransientDocument";
+import { TransientDocument } from "../Document";
 import { BaseFragment } from "./BaseFragment";
 import { TransientFragment } from "./TransientFragment";
 

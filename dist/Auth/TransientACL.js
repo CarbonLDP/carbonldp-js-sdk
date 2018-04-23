@@ -10,7 +10,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var Pointer_1 = require("../Pointer");
 var Utils = __importStar(require("../Utils"));
 var CS_1 = require("../Vocabularies/CS");
-var TransientDocument_1 = require("../TransientDocument");
+var Document_1 = require("../Document");
 var TransientACE_1 = require("./TransientACE");
 var SCHEMA = {
     "entries": {
@@ -46,7 +46,7 @@ exports.TransientACL = {
     decorate: function (object) {
         if (exports.TransientACL.isDecorated(object))
             return object;
-        TransientDocument_1.TransientDocument.decorate(object);
+        Document_1.TransientDocument.decorate(object);
         var acl = object;
         Object.defineProperties(acl, {
             "_parsePointer": {

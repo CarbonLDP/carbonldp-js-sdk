@@ -1,4 +1,4 @@
-import { TransientDocument } from "../TransientDocument";
+import { TransientDocument } from "../Document";
 import * as Errors from "../Errors";
 import { Pointer } from "../Pointer";
 import {

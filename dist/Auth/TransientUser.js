@@ -8,7 +8,7 @@ var __assign = (this && this.__assign) || Object.assign || function(t) {
     return t;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var TransientDocument_1 = require("../TransientDocument");
+var Document_1 = require("../Document");
 var Utils_1 = require("../Utils");
 var CS_1 = require("../Vocabularies/CS");
 var XSD_1 = require("../Vocabularies/XSD");
@@ -31,13 +31,13 @@ exports.TransientUser = {
             && Utils_1.hasFunction(object, "updateCredentials");
     },
     is: function (value) {
-        return TransientDocument_1.TransientDocument.is(value)
+        return Document_1.TransientDocument.is(value)
             && exports.TransientUser.isDecorated(value);
     },
     decorate: function (object) {
         if (exports.TransientUser.isDecorated(object))
             return object;
-        TransientDocument_1.TransientDocument.decorate(object);
+        Document_1.TransientDocument.decorate(object);
         return Object.defineProperties(object, {
             "updateCredentials": {
                 writable: false,

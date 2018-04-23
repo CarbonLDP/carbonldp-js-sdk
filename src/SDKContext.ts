@@ -10,7 +10,7 @@ import { TokenCredentials } from "./Auth/TokenCredentials";
 import { TransientUser } from "./Auth/TransientUser";
 import { UsernameAndPasswordCredentials } from "./Auth/UsernameAndPasswordCredentials";
 import { Context } from "./Context";
-import { TransientDocument } from "./TransientDocument";
+import { Document } from "./Document";
 import { Documents } from "./Documents";
 import * as Errors from "./Errors";
 import { AddMemberAction } from "./LDP/AddMemberAction";
@@ -209,7 +209,7 @@ export class SDKContext implements Context {
 	}
 
 	private registerDefaultObjectSchemas():void {
-		this.extendObjectSchema( TransientDocument.TYPE, TransientDocument.SCHEMA );
+		this.extendObjectSchema( Document.TYPE, Document.SCHEMA );
 		this.extendObjectSchema( TransientProtectedDocument.TYPE, TransientProtectedDocument.SCHEMA );
 
 		this.extendObjectSchema( PlatformMetadata.TYPE, PlatformMetadata.SCHEMA );

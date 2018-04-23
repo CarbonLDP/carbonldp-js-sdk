@@ -173,7 +173,7 @@ describe( module( "carbonldp/RDF/Value" ), ():void => {
 			context = new MockedContext();
 
 			documentResource = RDFDocument.getDocumentResources( expandedObject )[ 0 ];
-			pointerLibrary = Document.create( context.documents, expandedObject[ "@id" ] );
+			pointerLibrary = Document.decorate( { id: expandedObject[ "@id" ] }, context.documents );
 		} );
 
 		it( isDefined(), ():void => {

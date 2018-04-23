@@ -1,4 +1,4 @@
-import { TransientDocument } from "../TransientDocument";
+import { TransientDocument } from "../Document";
 import { BaseNamedFragment } from "./BaseNamedFragment";
 
 import { TransientNamedFragment } from "./TransientNamedFragment";

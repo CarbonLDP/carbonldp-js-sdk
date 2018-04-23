@@ -1,6 +1,6 @@
 import { CS } from "../Vocabularies/CS";
 import { XSD } from "../Vocabularies/XSD";
-import { TransientDocument } from "../TransientDocument";
+import { TransientDocument } from "../Document";
 import * as Errors from "../Errors";
 import {
 	clazz,

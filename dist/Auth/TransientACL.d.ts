@@ -1,7 +1,7 @@
 import { ModelDecorator } from "../core/ModelDecorator";
 import { ObjectSchema } from "../ObjectSchema";
 import { Pointer } from "../Pointer";
-import { TransientDocument } from "../TransientDocument";
+import { TransientDocument } from "../Document";
 import { TransientACE } from "./TransientACE";
 export interface TransientACL extends TransientDocument {
     accessTo: Pointer;

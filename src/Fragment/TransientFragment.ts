@@ -1,6 +1,6 @@
 import { IllegalActionError } from "../Errors";
 import { TransientResource } from "../Resource";
-import { TransientDocument } from "../TransientDocument";
+import { TransientDocument } from "../Document";
 import { isObject } from "../Utils";
 import { BaseFragment } from "./BaseFragment";
 

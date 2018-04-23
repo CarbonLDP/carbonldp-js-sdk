@@ -1,33 +1,51 @@
 import { QueryClause } from "sparqler/clauses";
 
-import { AccessPointBase } from "./TransientAccessPoint";
-import { TransientDocument } from "./TransientDocument";
-import { Documents } from "./Documents";
-import { TransientFragment } from "./Fragment";
+import { AccessPoint } from "../AccessPoint";
+import { ModelDecorator } from "../core/ModelDecorator";
+import { ModelSchema } from "../core/ModelSchema";
+import { Documents } from "../Documents";
+import {
+	Fragment,
+	TransientFragment,
+} from "../Fragment";
 import {
 	GETOptions,
 	RequestOptions,
 	RequestUtils,
-} from "./HTTP/Request";
-import { MessagingDocument } from "./Messaging/Document";
-import { ModelDecorator } from "./core/ModelDecorator";
-import { ModelFactory } from "./core/ModelFactory";
-import { TransientNamedFragment } from "./NamedFragment";
-import * as ObjectSchema from "./ObjectSchema";
-import { AccessPoint } from "./AccessPoint";
-import { Fragment } from "./Fragment";
-import { NamedFragment } from "./NamedFragment";
-import { ProtectedDocument } from "./ProtectedDocument";
-import { Resource } from "./Resource";
-import { Pointer } from "./Pointer";
-import { URI } from "./RDF/URI";
-import { ServiceAwareDocument } from "./ServiceAwareDocument";
-import { FinishSPARQLSelect } from "./SPARQL/Builder";
-import { QueryDocumentBuilder } from "./SPARQL/QueryDocument/QueryDocumentBuilder";
-import { QueryDocumentsBuilder } from "./SPARQL/QueryDocument/QueryDocumentsBuilder";
-import { SPARQLRawResults } from "./SPARQL/RawResults";
-import { SPARQLSelectResults } from "./SPARQL/SelectResults";
-import * as Utils from "./Utils";
+} from "../HTTP";
+import { MessagingDocument } from "../Messaging";
+import {
+	NamedFragment,
+	TransientNamedFragment,
+} from "../NamedFragment";
+import {
+	DigestedObjectSchema,
+	ObjectSchemaUtils,
+} from "../ObjectSchema";
+import { Pointer } from "../Pointer";
+import { ProtectedDocument } from "../ProtectedDocument";
+import { URI } from "../RDF";
+import { Resource } from "../Resource";
+import { ServiceAwareDocument } from "../ServiceAwareDocument";
+import {
+	FinishSPARQLSelect,
+	SPARQLRawResults,
+	SPARQLSelectResults,
+} from "../SPARQL";
+import {
+	QueryDocumentBuilder,
+	QueryDocumentsBuilder,
+} from "../SPARQL/QueryDocument";
+import { AccessPointBase } from "../TransientAccessPoint";
+import * as Utils from "../Utils";
+import {
+	C,
+	LDP,
+	XSD,
+} from "../Vocabularies";
+import { BaseDocument } from "./BaseDocument";
+import { TransientDocument } from "./TransientDocument";
+
 
 export interface Document extends TransientDocument, Resource, ServiceAwareDocument, MessagingDocument {
 	created?:Date;
@@ -170,21 +188,70 @@ export interface Document extends TransientDocument, Resource, ServiceAwareDocum
 }
 
 
-export interface DocumentFactory extends ModelFactory<Document>, ModelDecorator<Document> {
+export interface DocumentFactory extends ModelSchema, ModelDecorator<Document> {
+	TYPE:C[ "Document" ];
+
 	is( object:object ):object is Document;
 
 	isDecorated( object:object ):object is Document;
 
 
-	create( documents:Documents, uri:string ):Document;
+	create<T extends BaseDocument>( data?:T ):T & TransientDocument;
 
-	createFrom<T extends object>( object:T, documents:Documents, uri:string ):T & Document;
+	createFrom<T extends BaseDocument>( object:T ):T & TransientDocument;
 
 	decorate<T extends object>( object:T, documents:Documents ):T & Document;
 }
 
-
 export const Document:DocumentFactory = {
+	TYPE: C.Document,
+	SCHEMA: {
+		"contains": {
+			"@id": LDP.contains,
+			"@container": "@set",
+			"@type": "@id",
+		},
+		"members": {
+			"@id": LDP.member,
+			"@container": "@set",
+			"@type": "@id",
+		},
+		"membershipResource": {
+			"@id": LDP.membershipResource,
+			"@type": "@id",
+		},
+		"isMemberOfRelation": {
+			"@id": LDP.isMemberOfRelation,
+			"@type": "@id",
+		},
+		"hasMemberRelation": {
+			"@id": LDP.hasMemberRelation,
+			"@type": "@id",
+		},
+		"insertedContentRelation": {
+			"@id": LDP.insertedContentRelation,
+			"@type": "@id",
+		},
+		"created": {
+			"@id": C.created,
+			"@type": XSD.dateTime,
+		},
+		"modified": {
+			"@id": C.modified,
+			"@type": XSD.dateTime,
+		},
+		"defaultInteractionModel": {
+			"@id": C.defaultInteractionModel,
+			"@type": "@id",
+		},
+		"accessPoints": {
+			"@id": C.accessPoint,
+			"@type": "@id",
+			"@container": "@set",
+		},
+	},
+
+
 	isDecorated( object:object ):object is Document {
 		return Utils.hasPropertyDefined( object, "_eTag" )
 			&& Utils.hasFunction( object, "isLocallyOutDated" )
@@ -229,18 +296,6 @@ export const Document:DocumentFactory = {
 			;
 	},
 
-	create( documents:Documents, uri:string ):Document {
-		return Document.createFrom( {}, documents, uri );
-	},
-
-	createFrom<T extends object>( object:T, documents:Documents, uri:string ):T & Document {
-		const document:T & Document = Document.decorate<T>( object, documents );
-
-		document.id = uri;
-		TransientDocument._convertNestedObjects( document, document );
-
-		return document;
-	},
 
 	decorate<T extends object>( object:T, documents:Documents ):T & Document {
 		if( Document.isDecorated( object ) ) return object;
@@ -300,10 +355,10 @@ export const Document:DocumentFactory = {
 				writable: false,
 				enumerable: false,
 				configurable: true,
-				value: (function():( id:string ) => boolean {
+				value: (():( id:string ) => boolean => {
 					let superFunction:( id:string ) => boolean = persistedDocument.hasPointer;
 					return function( this:Document, id:string ):boolean {
-						id = ObjectSchema.ObjectSchemaUtils.resolveURI( id, this._documents.getGeneralSchema() );
+						id = ObjectSchemaUtils.resolveURI( id, this._documents.getGeneralSchema() );
 
 						if( superFunction.call( this, id ) ) return true;
 						return ! URI.isBNodeID( id ) && this._documents.hasPointer( id );
@@ -314,11 +369,11 @@ export const Document:DocumentFactory = {
 				writable: false,
 				enumerable: false,
 				configurable: true,
-				value: (function():( id:string ) => Pointer {
+				value: (():( id:string ) => Pointer => {
 					let superFunction:( id:string ) => Pointer = persistedDocument.getPointer;
 					let inScopeFunction:( id:string ) => boolean = persistedDocument.inScope;
 					return function( this:Document, id:string ):Pointer {
-						id = ObjectSchema.ObjectSchemaUtils.resolveURI( id, this._documents.getGeneralSchema() );
+						id = ObjectSchemaUtils.resolveURI( id, this._documents.getGeneralSchema() );
 
 						if( inScopeFunction.call( this, id ) ) return superFunction.call( this, id );
 						return this._documents.getPointer( id );
@@ -329,11 +384,11 @@ export const Document:DocumentFactory = {
 				writable: false,
 				enumerable: false,
 				configurable: true,
-				value: (function():( idOrPointer:any ) => boolean {
+				value: (():( idOrPointer:any ) => boolean => {
 					let superFunction:( idOrPointer:any ) => boolean = persistedDocument.inScope;
 					return function( this:Document, idOrPointer:any ):boolean {
 						let id:string = Pointer.is( idOrPointer ) ? idOrPointer.id : idOrPointer;
-						id = ObjectSchema.ObjectSchemaUtils.resolveURI( id, this._documents.getGeneralSchema() );
+						id = ObjectSchemaUtils.resolveURI( id, this._documents.getGeneralSchema() );
 
 						if( superFunction.call( this, id ) ) return true;
 						return this._documents.inScope( id );
@@ -535,6 +590,10 @@ export const Document:DocumentFactory = {
 			},
 		} );
 	},
+
+
+	create: TransientDocument.create,
+	createFrom: TransientDocument.createFrom,
 };
 
 
@@ -584,8 +643,8 @@ function syncSavedFragments():void {
 function resolveURI( uri:string ):string {
 	if( URI.isAbsolute( uri ) ) return uri;
 
-	let schema:ObjectSchema.DigestedObjectSchema = this._documents.getGeneralSchema();
-	return ObjectSchema.ObjectSchemaUtils.resolveURI( uri, schema, { vocab: true } );
+	let schema:DigestedObjectSchema = this._documents.getGeneralSchema();
+	return ObjectSchemaUtils.resolveURI( uri, schema, { vocab: true } );
 }
 
 function extendAddType( superFunction:( type:string ) => void ):( type:string ) => void {

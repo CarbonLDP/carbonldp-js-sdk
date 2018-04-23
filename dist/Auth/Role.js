@@ -7,7 +7,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 }
 Object.defineProperty(exports, "__esModule", { value: true });
-var TransientDocument_1 = require("../TransientDocument");
+var Document_1 = require("../Document");
 var IllegalArgumentError_1 = require("../Errors/IllegalArgumentError");
 var CS_1 = require("../Vocabularies/CS");
 var XSD_1 = require("../Vocabularies/XSD");
@@ -45,14 +45,14 @@ var Factory = (function () {
     };
     Factory.is = function (object) {
         return Factory.hasClassProperties(object)
-            && TransientDocument_1.TransientDocument.is(object);
+            && Document_1.TransientDocument.is(object);
     };
     Factory.create = function (name, description) {
         return Factory.createFrom({}, name, description);
     };
     Factory.createFrom = function (object, name, description) {
-        if (!TransientDocument_1.TransientDocument.isDecorated(object))
-            object = TransientDocument_1.TransientDocument.createFrom(object);
+        if (!Document_1.TransientDocument.isDecorated(object))
+            object = Document_1.TransientDocument.createFrom(object);
         if (!name)
             throw new IllegalArgumentError_1.IllegalArgumentError("The name cannot be empty.");
         var role = object;

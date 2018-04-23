@@ -24,7 +24,7 @@ import * as SPARQL from "./SPARQL";
 import * as System from "./System";
 import { TransientAccessPoint } from "./TransientAccessPoint";
 import { TransientBlankNode } from "./BlankNode";
-import { TransientDocument } from "./TransientDocument";
+import { TransientDocument } from "./Document";
 import { TransientFragment } from "./Fragment";
 import { TransientNamedFragment } from "./NamedFragment";
 import { TransientProtectedDocument } from "./TransientProtectedDocument";

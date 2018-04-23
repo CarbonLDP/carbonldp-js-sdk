@@ -1,6 +1,6 @@
 import { AbstractContext } from "./AbstractContext";
 import { ACL } from "./Auth/ACL";
-import { TransientDocument } from "./TransientDocument";
+import { TransientDocument } from "./Document";
 import { Documents } from "./Documents";
 import { Document } from "./Document";
 

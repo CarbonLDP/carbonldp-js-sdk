@@ -1,4 +1,4 @@
-import { TransientDocument } from "./TransientDocument";
+import { TransientDocument } from "./Document";
 import { ObjectSchema } from "./ObjectSchema";
 import { CS } from "./Vocabularies/CS";
 

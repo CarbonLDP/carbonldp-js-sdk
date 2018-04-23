@@ -1,4 +1,4 @@
-import { TransientDocument } from "./TransientDocument";
+import { TransientDocument } from "./Document";
 import { Documents } from "./Documents";
 import { ModelDecorator } from "./core/ModelDecorator";
 import { isObject } from "./Utils";

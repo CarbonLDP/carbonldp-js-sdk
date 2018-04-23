@@ -1,5 +1,5 @@
 import { BaseResource } from "../Resource";
-import { TransientDocument } from "../TransientDocument";
+import { TransientDocument } from "../Document";
 
 
 export interface BaseFragment extends BaseResource {

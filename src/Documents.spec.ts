@@ -19,17 +19,13 @@ import {
 	ValuesToken,
 	VariableToken
 } from "sparqler/tokens";
-import { createMockContext } from "../test/helpers/mocks";
 
 import { AbstractContext } from "./AbstractContext";
-import {
-	TransientAccessPoint,
-	AccessPointBase,
-} from "./TransientAccessPoint";
+import { AccessPoint } from "./AccessPoint";
 import { TransientBlankNode } from "./BlankNode";
 import { CarbonLDP } from "./CarbonLDP";
-import { Context } from "./Context";
-import { TransientDocument } from "./TransientDocument";
+import { Document } from "./Document";
+import { TransientDocument } from "./Document";
 
 import { Documents } from "./Documents";
 
@@ -42,13 +38,13 @@ import { Response } from "./HTTP/Response";
 import { JSONLDConverter } from "./JSONLD/Converter";
 import { Event } from "./Messaging/Event";
 import * as MessagingUtils from "./Messaging/Utils";
-import * as ObjectSchema from "./ObjectSchema";
-import { AccessPoint } from "./AccessPoint";
-import { Document } from "./Document";
 import { NamedFragment } from "./NamedFragment";
-import { Resource } from "./Resource";
+import * as ObjectSchema from "./ObjectSchema";
 import { Pointer } from "./Pointer";
-import { TransientResource } from "./Resource";
+import {
+	Resource,
+	TransientResource
+} from "./Resource";
 import { ContextSettings } from "./Settings";
 import * as SPARQL from "./SPARQL";
 import { PartialMetadata } from "./SPARQL/QueryDocument/PartialMetadata";
@@ -63,6 +59,10 @@ import {
 	method,
 	module,
 } from "./test/JasmineExtender";
+import {
+	AccessPointBase,
+	TransientAccessPoint,
+} from "./TransientAccessPoint";
 import * as Utils from "./Utils";
 import { C } from "./Vocabularies/C";
 import { CS } from "./Vocabularies/CS";
@@ -73,6 +73,30 @@ function createPartialMetadata( schema:ObjectSchema.ObjectSchema ):PartialMetada
 	const digestedSchema:ObjectSchema.DigestedObjectSchema = ObjectSchema.ObjectSchemaDigester.digestSchema( schema );
 	digestedSchema.properties.forEach( definition => ObjectSchema.ObjectSchemaUtils.resolveProperty( digestedSchema, definition, true ) );
 	return new PartialMetadata( digestedSchema );
+}
+
+function createMockDocument<T extends { id:string }>( data:{ documents:Documents, props:T } ):T & Document {
+	const pointer:Pointer = data.documents.getPointer( data.props.id );
+	const doc:T & Document = Document.decorate( Object.assign( pointer, data.props ), data.documents );
+
+	findNonEnumerableProps( doc );
+	doc._normalize();
+	return doc;
+}
+
+function findNonEnumerableProps( object:object ):void {
+	Object
+		.keys( object )
+		.filter( key => key.startsWith( "_" ) )
+		.forEach( key => Object.defineProperty( object, key, { enumerable: false, configurable: true } ) )
+	;
+
+	Object
+		.keys( object )
+		.filter( key => Array.isArray( object[ key ] ) || Utils.isPlainObject( object[ key ] ) )
+		.map( key => object[ key ] )
+		.forEach( findNonEnumerableProps )
+	;
 }
 
 describe( module( "carbonldp/Documents" ), ():void => {
@@ -1796,13 +1820,12 @@ describe( module( "carbonldp/Documents" ), ():void => {
 						},
 					} );
 
-					const persistedDocument:Document & MyDocument = Document.createFrom(
+					const persistedDocument:Document & MyDocument = Document.decorate(
 						Object.assign(
 							documents.getPointer( "https://example.com/resource/" ),
 							{ property4: true, property1: "value", property2: null }
 						),
-						documents,
-						"https://example.com/resource/"
+						documents
 					);
 					persistedDocument._partialMetadata = createPartialMetadata( {
 						"@vocab": "https://example.com/ns#",
@@ -2616,7 +2639,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				} );
 
 				it( "should reject if document is already persisted", ( done:DoneFn ):void => {
-					const childObject:Document = Document.create( documents, "https://example.com/some-resource/" );
+					const childObject:Document = Document.decorate( { id: "https://example.com/some-resource/" }, documents );
 					documents.createChild( "https://example.com/parent-resource/", childObject )
 						.then( () => {
 							done.fail( "Should not resolve" );
@@ -2892,8 +2915,8 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				it( "should reject if any document is already persisted", ( done:DoneFn ):void => {
 					const childObjects:(Document | object)[] = [
 						{},
-						Document.create( documents, "https://example.com/some-resource-1/" ),
-						Document.create( documents, "https://example.com/some-resource-2/" ),
+						Document.decorate( { id: "https://example.com/some-resource-1/" }, documents ),
+						Document.decorate( { id: "https://example.com/some-resource-2/" }, documents ),
 					];
 					documents.createChildren( "https://example.com/parent-resource/", childObjects )
 						.then( () => {
@@ -3282,7 +3305,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				} );
 
 				it( "should reject if document is already persisted", ( done:DoneFn ):void => {
-					const childObject:Document = Document.create( documents, "https://example.com/some-resource/" );
+					const childObject:Document = Document.decorate( { id: "https://example.com/some-resource/" }, documents );
 					documents.createChildAndRetrieve( "https://example.com/parent-resource/", childObject )
 						.then( () => {
 							done.fail( "Should not resolve" );
@@ -3611,8 +3634,8 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				it( "should reject if any document is already persisted", ( done:DoneFn ):void => {
 					const childObjects:(Document | object)[] = [
 						{},
-						Document.create( documents, "https://example.com/some-resource-1/" ),
-						Document.create( documents, "https://example.com/some-resource-2/" ),
+						Document.decorate( { id: "https://example.com/some-resource-1/" }, documents ),
+						Document.decorate( { id: "https://example.com/some-resource-2/" }, documents ),
 					];
 					documents.createChildrenAndRetrieve( "https://example.com/parent-resource/", childObjects )
 						.then( () => {
@@ -6461,7 +6484,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				} );
 
 				it( "should reject if access-point is already persisted", ( done:DoneFn ):void => {
-					const accessPoint:AccessPointBase & Document = Document.createFrom( { hasMemberRelation: "member-relation" }, documents, "https://example.com/some-resource/" );
+					const accessPoint:AccessPointBase & Document = Document.decorate( { id: "https://example.com/some-resource/", hasMemberRelation: "member-relation" }, documents );
 					documents.createAccessPoint( "https://example.com/parent-resource/", accessPoint )
 						.then( () => {
 							done.fail( "Should not resolve" );
@@ -6765,8 +6788,8 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				it( "should reject if any access-point is already persisted", ( done:DoneFn ):void => {
 					const accessPoints:(AccessPointBase | AccessPointBase & Document)[] = [
 						{ hasMemberRelation: "member-relation-0" },
-						Document.createFrom( { hasMemberRelation: "member-relation-1" }, documents, "https://example.com/some-resource-1/" ),
-						Document.createFrom( { hasMemberRelation: "member-relation-2" }, documents, "https://example.com/some-resource-2/" ),
+						Document.decorate( { id: "https://example.com/some-resource-1/", hasMemberRelation: "member-relation-1" }, documents ),
+						Document.decorate( { id: "https://example.com/some-resource-2/", hasMemberRelation: "member-relation-2" }, documents ),
 					];
 
 					documents.createAccessPoints( "https://example.com/parent-resource/", accessPoints )
@@ -10372,7 +10395,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				} );
 
 				it( "should reject promise if URI is not in the context base", ( done:DoneFn ):void => {
-					const document:Document = Document.create( documents, "https://not-example.com" );
+					const document:Document = Document.decorate( { id: "https://not-example.com" }, documents );
 
 					documents.save( document )
 						.then( () => {
@@ -10384,7 +10407,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				} );
 
 				it( "should reject promise if prefixed URI cannot be resolved", ( done:DoneFn ):void => {
-					const document:Document = Document.create( documents, "prefix:the-uri" );
+					const document:Document = Document.decorate( { id: "prefix:the-uri" }, documents );
 
 					documents.save( document )
 						.then( () => {
@@ -10507,7 +10530,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					const error:Error = new Error( "Error message" );
 					const spy:jasmine.Spy = spyOn( documents, "_parseErrorResponse" ).and.callFake( () => Promise.reject( error ) );
 
-					const document:Document = Document.create( documents, "https://example.com/" );
+					const document:Document = Document.decorate( { id: "https://example.com/" }, documents );
 					documents.save( document ).then( () => {
 						done.fail( "Should not resolve" );
 					} ).catch( _error => {
@@ -10522,12 +10545,11 @@ describe( module( "carbonldp/Documents" ), ():void => {
 
 
 				it( "should reject if document is outdated", ( done:DoneFn ):void => {
-					const document:Document = Document.createFrom(
+					const document:Document = Document.decorate(
 						Object.assign( documents.getPointer( "https://example.com/resource/" ), {
 							_eTag: null,
 						} ),
-						documents,
-						"https://example.com/resource/"
+						documents
 					);
 
 					documents.save( document )
@@ -10572,7 +10594,8 @@ describe( module( "carbonldp/Documents" ), ():void => {
 						},
 					} );
 
-					const persistedDocument:Document = Document.createFrom( {
+					const persistedDocument:Document = Document.decorate( {
+						id: "https://example.com/resource/",
 						types: [ "https://example.com/ns#Document" ],
 						list: [ 1, 2, 3, 4, 5 ],
 						pointer: {
@@ -10586,7 +10609,8 @@ describe( module( "carbonldp/Documents" ), ():void => {
 								number: 100,
 							} ],
 						},
-					}, documents, "https://example.com/resource/" );
+					}, documents );
+					persistedDocument._normalize();
 					persistedDocument._syncSnapshot();
 					persistedDocument.getFragments().forEach( fragment => fragment._syncSnapshot() );
 
@@ -10629,7 +10653,8 @@ describe( module( "carbonldp/Documents" ), ():void => {
 						"xsd": XSD.namespace,
 					} );
 
-					const persistedDocument:Document = Document.createFrom( {
+					const persistedDocument:Document = Document.decorate( {
+						id: "https://example.com/resource/",
 						types: [ "https://example.com/ns#Document" ],
 						list: [ 1, 2, 3, 4, 5 ],
 						pointer: {
@@ -10672,7 +10697,8 @@ describe( module( "carbonldp/Documents" ), ():void => {
 								"@type": "@id",
 							},
 						} ),
-					}, documents, "https://example.com/resource/" );
+					}, documents );
+					persistedDocument._normalize();
 					persistedDocument._syncSnapshot();
 					persistedDocument.getFragments().forEach( fragment => fragment._syncSnapshot() );
 
@@ -10712,12 +10738,11 @@ describe( module( "carbonldp/Documents" ), ():void => {
 						responseText: `[]`,
 					} );
 
-					const document:Document = Document.createFrom(
+					const document:Document = Document.decorate(
 						Object.assign( documents.getPointer( "https://example.com/resource/" ), {
 							_eTag: `"1-12345"`,
 						} ),
-						documents,
-						"https://example.com/resource/"
+						documents
 					);
 
 					documents.save( document )
@@ -10747,7 +10772,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				} );
 
 				it( "should reject if URI is relative", ( done:DoneFn ):void => {
-					const document:Document = Document.create( documents, "relative-uri/" );
+					const document:Document = Document.decorate( { id: "relative-uri/" }, documents );
 
 					documents.save( document )
 						.then( () => {
@@ -10760,7 +10785,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				} );
 
 				it( "should reject if URI is prefixed", ( done:DoneFn ):void => {
-					const document:Document = Document.create( documents, "prefix:the-uri" );
+					const document:Document = Document.decorate( { id: "prefix:the-uri" }, documents );
 
 					documents.save( document )
 						.then( () => {
@@ -10781,7 +10806,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					const error:Error = new Error( "Error message" );
 					const spy:jasmine.Spy = spyOn( documents, "_parseErrorResponse" ).and.callFake( () => Promise.reject( error ) );
 
-					const document:Document = Document.create( documents, "https://example.com/" );
+					const document:Document = Document.decorate( { id: "https://example.com/" }, documents );
 					documents.save( document ).then( () => {
 						done.fail( "Should not resolve" );
 					} ).catch( _error => {
@@ -10837,7 +10862,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				} );
 
 				it( "should reject promise if URI is not in the context base", ( done:DoneFn ):void => {
-					const persistedDocument:Document = Document.create( documents, "http://not-example.com" );
+					const persistedDocument:Document = Document.decorate( { id: "http://not-example.com" }, documents );
 					const promise:Promise<any> = documents.refresh( persistedDocument );
 					promise.then( () => {
 						done.fail( "Should not resolve promise." );
@@ -10848,7 +10873,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				} );
 
 				it( "should reject promise if prefixed URI cannot be resolved", ( done:DoneFn ):void => {
-					const persistedDocument:Document = Document.create( documents, "prefix:the-uri" );
+					const persistedDocument:Document = Document.decorate( { id: "prefix:the-uri" }, documents );
 					const promise:Promise<any> = documents.refresh( persistedDocument );
 					promise.then( () => {
 						done.fail( "Should not resolve promise." );
@@ -10867,7 +10892,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					const error:Error = new Error( "Error message" );
 					const spy:jasmine.Spy = spyOn( documents, "_parseErrorResponse" ).and.callFake( () => Promise.reject( error ) );
 
-					const document:Document = Document.create( documents, "https://example.com/" );
+					const document:Document = Document.decorate( { id: "https://example.com/" }, documents );
 					documents.refresh( document ).then( () => {
 						done.fail( "Should not resolve" );
 					} ).catch( _error => {
@@ -10886,12 +10911,11 @@ describe( module( "carbonldp/Documents" ), ():void => {
 						status: 304,
 					} );
 
-					const document:Document = Document.createFrom(
+					const document:Document = Document.decorate(
 						Object.assign( documents.getPointer( "https://example.com/resource/" ), {
 							_eTag: `"1-12345"`,
 						} ),
-						documents,
-						"https://example.com/resource/"
+						documents
 					);
 
 					documents.refresh( document )
@@ -10930,7 +10954,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 						} ]`,
 					} );
 
-					const document:Document = Document.createFrom(
+					const document:Document = Document.decorate(
 						Object.assign( documents.getPointer( "https://example.com/resource/" ), {
 							_eTag: `"1-12345"`,
 							_resolved: true,
@@ -10944,8 +10968,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 							],
 							"new-property": "A new property that will be erased at refresh",
 						} ),
-						documents,
-						"https://example.com/resource/"
+						documents
 					);
 					document._normalize();
 
@@ -11038,13 +11061,12 @@ describe( module( "carbonldp/Documents" ), ():void => {
 						"schema": "https://schema.org/",
 					} );
 
-					const persistedDocument:Document & MyDocument = Document.createFrom(
+					const persistedDocument:Document & MyDocument = Document.decorate(
 						Object.assign(
 							documents.getPointer( "https://example.com/resource/" ),
 							{ property4: true, property1: "value", property2: null }
 						),
-						documents,
-						"https://example.com/resource/"
+						documents
 					);
 					persistedDocument._partialMetadata = createPartialMetadata( {
 						"@vocab": "https://example.com/ns#",
@@ -11232,37 +11254,36 @@ describe( module( "carbonldp/Documents" ), ():void => {
 						"schema": "https://schema.org/",
 					} );
 
-					const persistedDocument:Document & MyDocument = Document.createFrom(
-						Object.assign( documents.getPointer( "https://example.com/resource/" ), {
+					const persistedDocument:Document & MyDocument = createMockDocument( {
+						documents, props: {
+							id: "https://example.com/resource/",
+							_partialMetadata: createPartialMetadata( {
+								"@vocab": "https://example.com/ns#",
+								"property4": {
+									"@id": "property-4",
+									"@type": XSD.boolean,
+								},
+								"property2": {
+									"@id": "https://schema.org/property-2",
+									"@type": "@id",
+								},
+								"property1": {
+									"@id": "property-1",
+									"@type": XSD.string,
+								},
+							} ),
 							_eTag: "\"1-12345\"",
 							property4: true,
 							property1: "value",
 							property2: {
+								_partialMetadata: new PartialMetadata( PartialMetadata.ALL ),
 								id: "_:1",
 								property3: "sub-value",
 								property5: new Date( "2000-01-01" ),
 								property2: 12345,
 							},
-						} ),
-						documents,
-						"https://example.com/resource/"
-					);
-					persistedDocument[ "_partialMetadata" ] = createPartialMetadata( {
-						"@vocab": "https://example.com/ns#",
-						"property4": {
-							"@id": "property-4",
-							"@type": XSD.boolean,
-						},
-						"property2": {
-							"@id": "https://schema.org/property-2",
-							"@type": "@id",
-						},
-						"property1": {
-							"@id": "property-1",
-							"@type": XSD.string,
 						},
 					} );
-					persistedDocument.property2[ "_partialMetadata" ] = new PartialMetadata( PartialMetadata.ALL );
 
 					const queryTokenClass:{ new( ...args:any[] ) } = QueryToken;
 					let query:QueryToken;
@@ -11452,7 +11473,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 						"schema": "https://schema.org/",
 					} );
 
-					const persistedDocument:Document & MyDocument = Document.createFrom(
+					const persistedDocument:Document & MyDocument = Document.decorate(
 						Object.assign( documents.getPointer( "https://example.com/resource/" ), {
 							property1: "value",
 							property2: null,
@@ -11474,8 +11495,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 								},
 							} ),
 						} ),
-						documents,
-						"https://example.com/resource/"
+						documents
 					);
 
 					persistedDocument.property2 = persistedDocument.createFragment(
@@ -11612,7 +11632,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 						"schema": "https://schema.org/",
 					} );
 
-					const persistedDocument:Document & MyDocument = Document.createFrom(
+					const persistedDocument:Document & MyDocument = Document.decorate(
 						Object.assign( documents.getPointer( "https://example.com/resource/" ), {
 							_eTag: "\"1-12345\"",
 							property1: "value",
@@ -11635,8 +11655,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 								},
 							} ),
 						} ),
-						documents,
-						"https://example.com/resource/"
+						documents
 					);
 
 					persistedDocument.property2 = persistedDocument.createFragment(
@@ -11704,7 +11723,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				} );
 
 				it( "should reject if URI is relative", ( done:DoneFn ):void => {
-					const persistedDocument:Document = Document.create( documents, "relative-uri/" );
+					const persistedDocument:Document = Document.decorate( { id: "relative-uri/" }, documents );
 					const promise:Promise<any> = documents.refresh( persistedDocument );
 					promise.then( () => {
 						done.fail( "Should not resolve promise." );
@@ -11715,7 +11734,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				} );
 
 				it( "should reject if URI is prefixed", ( done:DoneFn ):void => {
-					const persistedDocument:Document = Document.create( documents, "prefix:the-uri" );
+					const persistedDocument:Document = Document.decorate( { id: "prefix:the-uri" }, documents );
 					const promise:Promise<any> = documents.refresh( persistedDocument );
 					promise.then( () => {
 						done.fail( "Should not resolve promise." );
@@ -11734,7 +11753,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					const error:Error = new Error( "Error message" );
 					const spy:jasmine.Spy = spyOn( documents, "_parseErrorResponse" ).and.callFake( () => Promise.reject( error ) );
 
-					const document:Document = Document.create( documents, "https://example.com/" );
+					const document:Document = Document.decorate( { id: "https://example.com/" }, documents );
 					documents.refresh( document ).then( () => {
 						done.fail( "Should not resolve" );
 					} ).catch( _error => {
@@ -11799,13 +11818,12 @@ describe( module( "carbonldp/Documents" ), ():void => {
 						property2:Resource;
 					}
 
-					const persistedDocument:Document & MyDocument = Document.createFrom(
+					const persistedDocument:Document & MyDocument = Document.decorate(
 						Object.assign(
 							documents.getPointer( "https://example.com/resource/" ),
 							{ property4: true, property1: "value", property2: null }
 						),
-						documents,
-						"https://example.com/resource/"
+						documents
 					);
 					persistedDocument._partialMetadata = createPartialMetadata( {
 						"@vocab": "https://example.com/ns#",
@@ -12019,7 +12037,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				} );
 
 				it( "should reject promise if URI is not in the context base", ( done:DoneFn ):void => {
-					const document:Document = Document.create( documents, "https://not-example.com" );
+					const document:Document = Document.decorate( { id: "https://not-example.com" }, documents );
 
 					documents.saveAndRefresh( document )
 						.then( () => {
@@ -12031,7 +12049,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				} );
 
 				it( "should reject promise if prefixed URI cannot be resolved", ( done:DoneFn ):void => {
-					const document:Document = Document.create( documents, "prefix:the-uri" );
+					const document:Document = Document.decorate( { id: "prefix:the-uri" }, documents );
 
 					documents.saveAndRefresh( document )
 						.then( () => {
@@ -12181,7 +12199,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					const error:Error = new Error( "Error message" );
 					const spy:jasmine.Spy = spyOn( documents, "_parseErrorResponse" ).and.callFake( () => Promise.reject( error ) );
 
-					const document:Document = Document.create( documents, "https://example.com/" );
+					const document:Document = Document.decorate( { id: "https://example.com/" }, documents );
 					documents.saveAndRefresh( document ).then( () => {
 						done.fail( "Should not resolve" );
 					} ).catch( _error => {
@@ -12196,12 +12214,11 @@ describe( module( "carbonldp/Documents" ), ():void => {
 
 
 				it( "should reject if document is outdated", ( done:DoneFn ):void => {
-					const document:Document = Document.createFrom(
+					const document:Document = Document.decorate(
 						Object.assign( documents.getPointer( "https://example.com/resource/" ), {
 							_eTag: null,
 						} ),
-						documents,
-						"https://example.com/resource/"
+						documents
 					);
 
 					documents.saveAndRefresh( document )
@@ -12249,7 +12266,8 @@ describe( module( "carbonldp/Documents" ), ():void => {
 						},
 					} );
 
-					const persistedDocument:Document = Document.createFrom( {
+					const persistedDocument:Document = Document.decorate( {
+						id: "https://example.com/resource/",
 						types: [ "https://example.com/ns#Document" ],
 						list: [ 1, 2, 3, 4, 5 ],
 						pointer: {
@@ -12263,7 +12281,8 @@ describe( module( "carbonldp/Documents" ), ():void => {
 								number: 100,
 							} ],
 						},
-					}, documents, "https://example.com/resource/" );
+					}, documents );
+					persistedDocument._normalize();
 					persistedDocument._syncSnapshot();
 					persistedDocument.getFragments().forEach( fragment => fragment._syncSnapshot() );
 
@@ -12301,12 +12320,11 @@ describe( module( "carbonldp/Documents" ), ():void => {
 						responseText: `[]`,
 					} );
 
-					const document:Document = Document.createFrom(
+					const document:Document = Document.decorate(
 						Object.assign( documents.getPointer( "https://example.com/resource/" ), {
 							_eTag: `"1-12345"`,
 						} ),
-						documents,
-						"https://example.com/resource/"
+						documents
 					);
 
 					documents.saveAndRefresh( document )
@@ -12355,7 +12373,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 						} ]`,
 					} );
 
-					const document:Document = Document.createFrom(
+					const document:Document = Document.decorate(
 						Object.assign( documents.getPointer( "https://example.com/resource/" ), {
 							_eTag: `"1-12345"`,
 							_resolved: true,
@@ -12369,9 +12387,9 @@ describe( module( "carbonldp/Documents" ), ():void => {
 							],
 							"new-property": "A new property that will be erased at refresh",
 						} ),
-						documents,
-						"https://example.com/resource/"
+						documents
 					);
+					document._normalize();
 
 					const fragment:NamedFragment = document.getFragment( "#1" );
 
@@ -12487,7 +12505,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 						property4:boolean;
 					}
 
-					const persistedDocument:Document & MyDocument = Document.createFrom(
+					const persistedDocument:Document & MyDocument = Document.decorate(
 						Object.assign( documents.getPointer( `${ context.baseURI }resource/` ), {
 							_eTag: `"1-12345"`,
 							property1: "value",
@@ -12530,8 +12548,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 								},
 							} ),
 						} ),
-						documents,
-						`${ context.baseURI }resource/`
+						documents
 					);
 
 					Utils.promiseMethod( () => {
@@ -12573,7 +12590,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				} );
 
 				it( "should reject if URI is relative", ( done:DoneFn ):void => {
-					const document:Document = Document.create( documents, "relative-uri/" );
+					const document:Document = Document.decorate( { id: "relative-uri/" }, documents );
 
 					documents.saveAndRefresh( document )
 						.then( () => {
@@ -12586,7 +12603,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				} );
 
 				it( "should reject if URI is prefixed", ( done:DoneFn ):void => {
-					const document:Document = Document.create( documents, "prefix:the-uri" );
+					const document:Document = Document.decorate( { id: "prefix:the-uri" }, documents );
 
 					documents.saveAndRefresh( document )
 						.then( () => {
@@ -12607,7 +12624,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					const error:Error = new Error( "Error message" );
 					const spy:jasmine.Spy = spyOn( documents, "_parseErrorResponse" ).and.callFake( () => Promise.reject( error ) );
 
-					const document:Document = Document.create( documents, "https://example.com/" );
+					const document:Document = Document.decorate( { id: "https://example.com/" }, documents );
 					documents.saveAndRefresh( document ).then( () => {
 						done.fail( "Should not resolve" );
 					} ).catch( _error => {

@@ -1,22 +1,25 @@
-import { Minus } from "../test/helpers/types";
-import { TransientBlankNode } from "./BlankNode";
+import { Minus } from "../../test/helpers/types";
 
-import { IDAlreadyInUseError } from "./Errors/IDAlreadyInUseError";
-import { IllegalArgumentError } from "./Errors/IllegalArgumentError";
-
-import { TransientFragment } from "./Fragment";
-import * as JSONLDConverterModule from "./JSONLD/Converter";
-import { JSONLDConverter } from "./JSONLD/Converter";
-import { TransientNamedFragment } from "./NamedFragment";
+import { TransientBlankNode } from "../BlankNode";
+import {
+	IDAlreadyInUseError,
+	IllegalArgumentError,
+} from "../Errors";
+import { TransientFragment } from "../Fragment";
+import * as JSONLDModule from "../JSONLD";
+import { JSONLDConverter } from "../JSONLD";
+import { TransientNamedFragment } from "../NamedFragment";
 import {
 	DigestedObjectSchema,
 	ObjectSchemaDigester,
 	ObjectSchemaResolver,
-} from "./ObjectSchema";
-import { Pointer } from "./Pointer";
-import { RDFDocument } from "./RDF/Document";
-import { URI } from "./RDF/URI";
-import { TransientResource } from "./Resource";
+} from "../ObjectSchema";
+import { Pointer } from "../Pointer";
+import {
+	RDFDocument,
+	URI,
+} from "../RDF";
+import { TransientResource } from "../Resource";
 import {
 	extendsClass,
 	hasMethod,
@@ -29,12 +32,9 @@ import {
 	OPTIONAL,
 	property,
 	STATIC,
-} from "./test/JasmineExtender";
-
+} from "../test/JasmineExtender";
+import { C } from "../Vocabularies";
 import { TransientDocument } from "./TransientDocument";
-import { C } from "./Vocabularies/C";
-import { LDP } from "./Vocabularies/LDP";
-import { XSD } from "./Vocabularies/XSD";
 
 
 type DocumentProperties = Minus<TransientDocument, TransientResource>;
@@ -308,23 +308,71 @@ describe( module( "carbonldp/TransientDocument" ), ():void => {
 	} );
 
 	describe( interfaze(
-		"CarbonLDP.DocumentFactory",
+		"CarbonLDP.TransientDocumentFactory",
 		"Interface with the factory, decorate and utils for `CarbonLDP.TransientDocument` objects."
 	), ():void => {
 
 		it( extendsClass( "CarbonLDP.ModelFactory<CarbonLDP.TransientDocument>" ), ():void => {} );
 		it( extendsClass( "CarbonLDP.ModelDecorator<CarbonLDP.TransientDocument>" ), ():void => {} );
 
+		it( hasMethod(
+			OBLIGATORY,
+			"isDecorated",
+			"Returns true if the object provided has the properties and methods of a `CarbonLDP.TransientDocument` object.", [
+				{ name: "object", type: "object" },
+			],
+			{ type: "object is CarbonLDP.TransientDocument" }
+		), ():void => {} );
+
+		it( hasMethod(
+			OBLIGATORY,
+			"is",
+			"Returns true if the element provided is considered a `CarbonLDP.TransientDocument` object.", [
+				{ name: "value", type: "any" },
+			],
+			{ type: "value is CarbonLDP.TransientDocument" }
+		), ():void => {} );
+
+		it( hasMethod(
+			OBLIGATORY,
+			"create",
+			[ "T extends CarbonLDP.BaseDocument" ],
+			"Creates a `CarbonLDP.TransientDocument` object with the data provided.", [
+				{ name: "data", type: "T", description: "Data to be used in the creation of the document." },
+			],
+			{ type: "T & CarbonLDP.TransientDocument" }
+		), ():void => {} );
+
+		it( hasMethod(
+			OBLIGATORY,
+			"createFrom",
+			[ "T extends CarbonLDP.BaseDocument" ],
+			"Creates a Document object from the object provided.", [
+				{ name: "object", type: "T", description: "The object to be transformed in a document." },
+			],
+			{ type: "T & CarbonLDP.TransientDocument" }
+		), ():void => {} );
+
+		it( hasMethod(
+			OBLIGATORY,
+			"decorate",
+			[ "T extends object" ],
+			"Decorates the object provided with the properties and methods of a `CarbonLDP.TransientDocument` object.", [
+				{ name: "object", type: "T" },
+			],
+			{ type: "T & CarbonLDP.TransientDocument" }
+		), ():void => {} );
+
 	} );
 
 	describe( property(
 		STATIC,
-		"Document",
-		"CarbonLDP.DocumentFactory",
-		"Constant that implements the `CarbonLDP.DocumentFactory` interface."
+		"TransientDocument",
+		"CarbonLDP.TransientDocumentFactory",
+		"Constant that implements the `CarbonLDP.TransientDocumentFactory` interface."
 	), ():void => {
 
-		describe( "Document.TYPE", ():void => {
+		describe( "TransientDocument.TYPE", ():void => {
 
 			it( "should exists", ():void => {
 				expect( TransientDocument.TYPE ).toBeDefined();
@@ -337,89 +385,7 @@ describe( module( "carbonldp/TransientDocument" ), ():void => {
 
 		} );
 
-		describe( "Document.SCHEMA", ():void => {
-
-			it( "should exists", ():void => {
-				expect( TransientDocument.SCHEMA ).toBeDefined();
-				expect( TransientDocument.SCHEMA ).toEqual( jasmine.any( Object ) );
-			} );
-
-			it( "should have `contains` definition", ():void => {
-				expect( TransientDocument.SCHEMA[ "contains" ] ).toEqual( {
-					"@id": LDP.contains,
-					"@container": "@set",
-					"@type": "@id",
-				} );
-			} );
-
-			it( "should have `members` definition", ():void => {
-				expect( TransientDocument.SCHEMA[ "members" ] ).toEqual( {
-					"@id": LDP.member,
-					"@container": "@set",
-					"@type": "@id",
-				} );
-			} );
-
-			it( "should have `membershipResource` definition", ():void => {
-				expect( TransientDocument.SCHEMA[ "membershipResource" ] ).toEqual( {
-					"@id": LDP.membershipResource,
-					"@type": "@id",
-				} );
-			} );
-
-			it( "should have `isMemberOfRelation` definition", ():void => {
-				expect( TransientDocument.SCHEMA[ "isMemberOfRelation" ] ).toEqual( {
-					"@id": LDP.isMemberOfRelation,
-					"@type": "@id",
-				} );
-			} );
-
-			it( "should have `hasMemberRelation` definition", ():void => {
-				expect( TransientDocument.SCHEMA[ "hasMemberRelation" ] ).toEqual( {
-					"@id": LDP.hasMemberRelation,
-					"@type": "@id",
-				} );
-			} );
-
-			it( "should have `insertContentRelation` definition", ():void => {
-				expect( TransientDocument.SCHEMA[ "insertedContentRelation" ] ).toEqual( {
-					"@id": LDP.insertedContentRelation,
-					"@type": "@id",
-				} );
-			} );
-
-			it( "should have `created` definition", ():void => {
-				expect( TransientDocument.SCHEMA[ "created" ] ).toEqual( {
-					"@id": C.created,
-					"@type": XSD.dateTime,
-				} );
-			} );
-
-			it( "should have `modified` definition", ():void => {
-				expect( TransientDocument.SCHEMA[ "modified" ] ).toEqual( {
-					"@id": C.modified,
-					"@type": XSD.dateTime,
-				} );
-			} );
-
-			it( "should have `defaultInteractionModel` definition", ():void => {
-				expect( TransientDocument.SCHEMA[ "defaultInteractionModel" ] ).toEqual( {
-					"@id": C.defaultInteractionModel,
-					"@type": "@id",
-				} );
-			} );
-
-			it( "should have `accessPoints` definition", ():void => {
-				expect( TransientDocument.SCHEMA[ "accessPoints" ] ).toEqual( {
-					"@id": C.accessPoint,
-					"@type": "@id",
-					"@container": "@set",
-				} );
-			} );
-
-		} );
-
-		describe( "Document.is", ():void => {
+		describe( "TransientDocument.is", ():void => {
 
 			it( "should exists", ():void => {
 				expect( TransientDocument.is ).toBeDefined();
@@ -462,7 +428,7 @@ describe( module( "carbonldp/TransientDocument" ), ():void => {
 
 		} );
 
-		describe( "Document.isDecorated", ():void => {
+		describe( "TransientDocument.isDecorated", ():void => {
 
 			it( "should exists", ():void => {
 				expect( TransientDocument.isDecorated ).toBeDefined();
@@ -586,7 +552,7 @@ describe( module( "carbonldp/TransientDocument" ), ():void => {
 
 		} );
 
-		describe( "Document.create", ():void => {
+		describe( "TransientDocument.create", ():void => {
 
 			it( "should exists", ():void => {
 				expect( TransientDocument.create ).toBeDefined();
@@ -600,7 +566,7 @@ describe( module( "carbonldp/TransientDocument" ), ():void => {
 
 		} );
 
-		describe( "Document.createFrom", ():void => {
+		describe( "TransientDocument.createFrom", ():void => {
 
 			it( "should exists", ():void => {
 				expect( TransientDocument.createFrom ).toBeDefined();
@@ -614,15 +580,14 @@ describe( module( "carbonldp/TransientDocument" ), ():void => {
 
 			it( "should convert nested objects to `Fragment`s", ():void => {
 				type TargetDocument = TransientDocument & { object:object };
-				const target:TargetDocument = TransientDocument.createFrom( { object: {} } );
+				const target:TargetDocument = TransientDocument.createFrom( { id: "", object: {} } );
 
-				// TODO use `isFragment` instead
-				expect( TransientResource.is( target.object ) ).toBe( true );
+				expect( TransientFragment.is( target.object ) ).toBe( true );
 			} );
 
 		} );
 
-		describe( "Document.decorate", ():void => {
+		describe( "TransientDocument.decorate", ():void => {
 
 			it( "should exists", ():void => {
 				expect( TransientDocument.decorate ).toBeDefined();
@@ -646,9 +611,9 @@ describe( module( "carbonldp/TransientDocument" ), ():void => {
 
 		} );
 
-		describe( "Document instance", ():void => {
+		describe( "TransientDocument instance", ():void => {
 
-			describe( "Document.hasPointer", ():void => {
+			describe( "TransientDocument.hasPointer", ():void => {
 
 				it( "should exists", ():void => {
 					const document:TransientDocument = createMockDocument();
@@ -717,7 +682,7 @@ describe( module( "carbonldp/TransientDocument" ), ():void => {
 
 			} );
 
-			describe( "Document.getPointer", ():void => {
+			describe( "TransientDocument.getPointer", ():void => {
 
 				it( "should exists", ():void => {
 					const document:TransientDocument = createMockDocument();
@@ -803,7 +768,7 @@ describe( module( "carbonldp/TransientDocument" ), ():void => {
 			} );
 
 
-			describe( "Document.inScope", ():void => {
+			describe( "TransientDocument.inScope", ():void => {
 
 				it( "should exists", ():void => {
 					const document:TransientDocument = createMockDocument();
@@ -909,7 +874,7 @@ describe( module( "carbonldp/TransientDocument" ), ():void => {
 			} );
 
 
-			describe( "Document.hasFragment", ():void => {
+			describe( "TransientDocument.hasFragment", ():void => {
 
 				it( "should exists", ():void => {
 					const document:TransientDocument = createMockDocument();
@@ -978,7 +943,7 @@ describe( module( "carbonldp/TransientDocument" ), ():void => {
 
 			} );
 
-			describe( "Document.getFragment", ():void => {
+			describe( "TransientDocument.getFragment", ():void => {
 
 				it( "should exists", ():void => {
 					const document:TransientDocument = createMockDocument();
@@ -1043,7 +1008,7 @@ describe( module( "carbonldp/TransientDocument" ), ():void => {
 
 			} );
 
-			describe( "Document.getNamedFragment", ():void => {
+			describe( "TransientDocument.getNamedFragment", ():void => {
 
 				it( "should exists", ():void => {
 					const document:TransientDocument = createMockDocument();
@@ -1115,7 +1080,7 @@ describe( module( "carbonldp/TransientDocument" ), ():void => {
 			} );
 
 
-			describe( "Document.getFragments", ():void => {
+			describe( "TransientDocument.getFragments", ():void => {
 
 				it( "should exists", ():void => {
 					const document:TransientDocument = createMockDocument();
@@ -1150,7 +1115,7 @@ describe( module( "carbonldp/TransientDocument" ), ():void => {
 			} );
 
 
-			describe( "Document.createFragment", ():void => {
+			describe( "TransientDocument.createFragment", ():void => {
 
 				it( "should exists", ():void => {
 					const document:TransientDocument = createMockDocument();
@@ -1293,7 +1258,7 @@ describe( module( "carbonldp/TransientDocument" ), ():void => {
 
 			} );
 
-			describe( "Document.createNamedFragment", ():void => {
+			describe( "TransientDocument.createNamedFragment", ():void => {
 
 				it( "should exists", ():void => {
 					const document:TransientDocument = createMockDocument();
@@ -1399,7 +1364,7 @@ describe( module( "carbonldp/TransientDocument" ), ():void => {
 			} );
 
 
-			describe( "Document._removeFragment", ():void => {
+			describe( "TransientDocument._removeFragment", ():void => {
 
 				it( "should exists", ():void => {
 					const document:TransientDocument = createMockDocument();
@@ -1471,7 +1436,7 @@ describe( module( "carbonldp/TransientDocument" ), ():void => {
 
 			} );
 
-			describe( "Document.removeNamedFragment", ():void => {
+			describe( "TransientDocument.removeNamedFragment", ():void => {
 
 				it( "should exists", ():void => {
 					const document:TransientDocument = createMockDocument();
@@ -1542,7 +1507,7 @@ describe( module( "carbonldp/TransientDocument" ), ():void => {
 			} );
 
 
-			describe( "Document.toJSON", ():void => {
+			describe( "TransientDocument.toJSON", ():void => {
 
 				it( "should exists", ():void => {
 					const document:TransientDocument = createMockDocument();
@@ -1558,7 +1523,7 @@ describe( module( "carbonldp/TransientDocument" ), ():void => {
 
 					const jsonldConverter:jasmine.SpyObj<JSONLDConverter> = jasmine
 						.createSpyObj<JSONLDConverter>( "JSONLDConverter", [ "expand" ] );
-					spyOn( JSONLDConverterModule, "JSONLDConverter" ).and.returnValue( jsonldConverter );
+					spyOn( JSONLDModule, "JSONLDConverter" ).and.returnValue( jsonldConverter );
 
 					document.toJSON();
 					expect( jsonldConverter.expand ).toHaveBeenCalledWith( document, new DigestedObjectSchema(), new DigestedObjectSchema() );
@@ -1605,7 +1570,7 @@ describe( module( "carbonldp/TransientDocument" ), ():void => {
 
 					const jsonldConverter:jasmine.SpyObj<JSONLDConverter> = jasmine
 						.createSpyObj<JSONLDConverter>( "JSONLDConverter", [ "expand" ] );
-					spyOn( JSONLDConverterModule, "JSONLDConverter" ).and.returnValue( jsonldConverter );
+					spyOn( JSONLDModule, "JSONLDConverter" ).and.returnValue( jsonldConverter );
 
 					document.toJSON( schemaResolver );
 					expect( jsonldConverter.expand ).toHaveBeenCalledWith( document, generalSchema, resourceSchema );
@@ -1683,7 +1648,7 @@ describe( module( "carbonldp/TransientDocument" ), ():void => {
 			} );
 
 
-			describe( "Document._normalize", ():void => {
+			describe( "TransientDocument._normalize", ():void => {
 
 				it( "should exists", ():void => {
 					const document:TransientDocument = createMockDocument();
@@ -1753,7 +1718,7 @@ describe( module( "carbonldp/TransientDocument" ), ():void => {
 
 		} );
 
-		describe( "Document._convertNestedObjects", ():void => {
+		describe( "TransientDocument._convertNestedObjects", ():void => {
 
 			it( "should exists", ():void => {
 				expect( TransientDocument._convertNestedObjects ).toBeDefined();
