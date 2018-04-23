@@ -39,7 +39,7 @@ var MemberAddedDetails_1 = require("./Messaging/MemberAddedDetails");
 var MemberRemoved_1 = require("./Messaging/MemberRemoved");
 var MemberRemovedDetails_1 = require("./Messaging/MemberRemovedDetails");
 var ObjectSchema = __importStar(require("./ObjectSchema"));
-var TransientProtectedDocument_1 = require("./TransientProtectedDocument");
+var ProtectedDocument_1 = require("./ProtectedDocument");
 var URI_1 = require("./RDF/URI");
 var ValidationReport_1 = require("./SHACL/ValidationReport");
 var ValidationResult_1 = require("./SHACL/ValidationResult");
@@ -173,7 +173,7 @@ var SDKContext = (function () {
     };
     SDKContext.prototype.registerDefaultObjectSchemas = function () {
         this.extendObjectSchema(Document_1.Document.TYPE, Document_1.Document.SCHEMA);
-        this.extendObjectSchema(TransientProtectedDocument_1.TransientProtectedDocument.TYPE, TransientProtectedDocument_1.TransientProtectedDocument.SCHEMA);
+        this.extendObjectSchema(ProtectedDocument_1.ProtectedDocument.TYPE, ProtectedDocument_1.ProtectedDocument.SCHEMA);
         this.extendObjectSchema(PlatformMetadata_1.PlatformMetadata.TYPE, PlatformMetadata_1.PlatformMetadata.SCHEMA);
         this.extendObjectSchema(PlatformInstance_1.PlatformInstance.TYPE, PlatformInstance_1.PlatformInstance.SCHEMA);
         this.extendObjectSchema(AddMemberAction_1.AddMemberAction.TYPE, AddMemberAction_1.AddMemberAction.SCHEMA);

@@ -7,10 +7,18 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 }
 Object.defineProperty(exports, "__esModule", { value: true });
-var Document_1 = require("./Document");
-var Utils = __importStar(require("./Utils"));
-var CS_1 = require("./Vocabularies/CS");
+var Document_1 = require("../Document");
+var Utils = __importStar(require("../Utils"));
+var Vocabularies_1 = require("../Vocabularies");
+var TransientProtectedDocument_1 = require("./TransientProtectedDocument");
 exports.ProtectedDocument = {
+    TYPE: TransientProtectedDocument_1.TransientProtectedDocument.TYPE,
+    SCHEMA: {
+        "accessControlList": {
+            "@id": Vocabularies_1.CS.accessControlList,
+            "@type": "@id",
+        },
+    },
     isDecorated: function (object) {
         return Utils.isObject(object)
             && Utils.hasFunction(object, "getACL");
@@ -39,7 +47,7 @@ function getACL(requestOptions) {
     var _this = this;
     var aclPromise = this.isResolved() ?
         Promise.resolve(this.accessControlList) :
-        this.executeSELECTQuery("SELECT ?acl WHERE {<" + this.id + "> <" + CS_1.CS.accessControlList + "> ?acl}")
+        this.executeSELECTQuery("SELECT ?acl WHERE {<" + this.id + "> <" + Vocabularies_1.CS.accessControlList + "> ?acl}")
             .then(function (results) { return results.bindings[0].acl; });
     return aclPromise.then(function (acl) {
         return _this._documents.get(acl.id, requestOptions);

@@ -81,7 +81,7 @@ import {
 	PointerLibrary,
 	PointerValidator,
 } from "./Pointer";
-import { TransientProtectedDocument } from "./TransientProtectedDocument";
+import { TransientProtectedDocument } from "./ProtectedDocument";
 import {
 	RDFDocument,
 	RDFDocumentParser,

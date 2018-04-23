@@ -1,11 +1,10 @@
-import { AbstractContext } from "./AbstractContext";
-import { ACL } from "./Auth/ACL";
-import { TransientDocument } from "./Document";
-import { Documents } from "./Documents";
-import { Document } from "./Document";
-
-import { ProtectedDocument } from "./ProtectedDocument";
-
+import { AbstractContext } from "../AbstractContext";
+import { ACL } from "../Auth";
+import {
+	Document,
+	TransientDocument,
+} from "../Document";
+import { Documents } from "../Documents";
 import {
 	extendsClass,
 	hasMethod,
@@ -17,8 +16,12 @@ import {
 	OPTIONAL,
 	property,
 	STATIC,
-} from "./test/JasmineExtender";
-import * as Utils from "./Utils";
+} from "../test/JasmineExtender";
+import * as Utils from "../Utils";
+import { CS } from "../Vocabularies";
+
+import { ProtectedDocument } from "./ProtectedDocument";
+
 
 describe( module( "carbonldp/ProtectedDocument" ), ():void => {
 
@@ -92,6 +95,19 @@ describe( module( "carbonldp/ProtectedDocument" ), ():void => {
 		it( isDefined(), ():void => {
 			expect( ProtectedDocument ).toBeDefined();
 			expect( ProtectedDocument ).toEqual( jasmine.any( Object ) );
+		} );
+
+		// TODO: Separate in different errors
+		it( "ProtectedDocument.SCHEMA", ():void => {
+			expect( ProtectedDocument.SCHEMA ).toBeDefined();
+			expect( Utils.isObject( ProtectedDocument.SCHEMA ) ).toBe( true );
+
+			expect( Utils.hasProperty( ProtectedDocument.SCHEMA, "accessControlList" ) ).toBe( true );
+			expect( ProtectedDocument.SCHEMA[ "accessControlList" ] ).toEqual( {
+				"@id": CS.accessControlList,
+				"@type": "@id",
+			} );
+
 		} );
 
 		// TODO: Separate in different tests

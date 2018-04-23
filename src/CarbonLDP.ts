@@ -46,7 +46,7 @@ import { TransientBlankNode } from "./BlankNode";
 import { TransientDocument } from "./Document";
 import { TransientFragment } from "./Fragment";
 import { TransientNamedFragment } from "./NamedFragment";
-import { TransientProtectedDocument } from "./TransientProtectedDocument";
+import { TransientProtectedDocument } from "./ProtectedDocument";
 import * as Utils from "./Utils";
 import * as Vocabularies from "./Vocabularies";
 

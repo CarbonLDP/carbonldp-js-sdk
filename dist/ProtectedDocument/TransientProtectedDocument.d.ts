@@ -1,9 +1,8 @@
-import { TransientDocument } from "./Document";
-import { ObjectSchema } from "./ObjectSchema";
+import { TransientDocument } from "../Document";
+import { CS } from "../Vocabularies";
 export interface TransientProtectedDocument extends TransientDocument {
 }
 export interface TransientProtectedDocumentFactory {
-    TYPE: string;
-    SCHEMA: ObjectSchema;
+    TYPE: CS["ProtectedDocument"];
 }
 export declare const TransientProtectedDocument: TransientProtectedDocumentFactory;

@@ -61,7 +61,7 @@ import {
 import { TransientAccessPoint } from "./AccessPoint";
 import { TransientBlankNode } from "./BlankNode";
 import { TransientDocument } from "./Document";
-import { TransientProtectedDocument } from "./TransientProtectedDocument";
+import { TransientProtectedDocument } from "./ProtectedDocument";
 
 import * as Utils from "./Utils";
 import * as Vocabularies from "./Vocabularies";

@@ -1,5 +1,3 @@
-import { TransientProtectedDocument } from "./TransientProtectedDocument";
-
 import {
 	extendsClass,
 	hasProperty,
@@ -8,11 +6,13 @@ import {
 	OBLIGATORY,
 	property,
 	STATIC,
-} from "./test/JasmineExtender";
-import * as Utils from "./Utils";
-import { CS } from "./Vocabularies/CS";
+} from "../test/JasmineExtender";
+import * as Utils from "../Utils";
+import { CS } from "../Vocabularies";
+import { TransientProtectedDocument } from "./TransientProtectedDocument";
 
-describe( module( "carbonldp/TransientProtectedDocument" ), ():void => {
+
+describe( module( "carbonldp/ProtectedDocument" ), ():void => {
 
 	describe( interfaze(
 		"CarbonLDP.TransientProtectedDocument",
@@ -60,19 +60,6 @@ describe( module( "carbonldp/TransientProtectedDocument" ), ():void => {
 			expect( Utils.isString( TransientProtectedDocument.TYPE ) ).toBe( true );
 
 			expect( TransientProtectedDocument.TYPE ).toBe( CS.ProtectedDocument );
-		} );
-
-		// TODO: Separate in different errors
-		it( "TransientProtectedDocument.SCHEMA", ():void => {
-			expect( TransientProtectedDocument.SCHEMA ).toBeDefined();
-			expect( Utils.isObject( TransientProtectedDocument.SCHEMA ) ).toBe( true );
-
-			expect( Utils.hasProperty( TransientProtectedDocument.SCHEMA, "accessControlList" ) ).toBe( true );
-			expect( TransientProtectedDocument.SCHEMA[ "accessControlList" ] ).toEqual( {
-				"@id": CS.accessControlList,
-				"@type": "@id",
-			} );
-
 		} );
 
 	} );
