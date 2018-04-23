@@ -1,5 +1,5 @@
 import { QueryClause } from "sparqler/clauses";
-import { AccessPointBase } from "./TransientAccessPoint";
+import { BaseAccessPoint } from "./AccessPoint";
 import { Context } from "./Context";
 import { FreeResources } from "./FreeResources";
 import { GETOptions, RequestOptions } from "./HTTP/Request";
@@ -55,10 +55,10 @@ export declare class Documents implements PointerLibrary, PointerValidator, Obje
     listChildren<T extends object>(parentURI: string, requestOptions?: RequestOptions): Promise<(T & Document)[]>;
     getChildren<T extends object>(parentURI: string, requestOptions: RequestOptions, queryBuilderFn?: (queryBuilder: QueryDocumentsBuilder) => QueryDocumentsBuilder): Promise<(T & Document)[]>;
     getChildren<T extends object>(parentURI: string, queryBuilderFn?: (queryBuilder: QueryDocumentsBuilder) => QueryDocumentsBuilder): Promise<(T & Document)[]>;
-    createAccessPoint<T extends object>(documentURI: string, accessPoint: T & AccessPointBase, slug?: string, requestOptions?: RequestOptions): Promise<T & AccessPoint>;
-    createAccessPoint<T extends object>(documentURI: string, accessPoint: T & AccessPointBase, requestOptions?: RequestOptions): Promise<T & AccessPoint>;
-    createAccessPoints<T extends object>(documentURI: string, accessPoints: (T & AccessPointBase)[], slugs?: string[], requestOptions?: RequestOptions): Promise<(T & AccessPoint)[]>;
-    createAccessPoints<T extends object>(documentURI: string, accessPoints: (T & AccessPointBase)[], requestOptions?: RequestOptions): Promise<(T & AccessPoint)[]>;
+    createAccessPoint<T extends object>(documentURI: string, accessPoint: T & BaseAccessPoint, slug?: string, requestOptions?: RequestOptions): Promise<T & AccessPoint>;
+    createAccessPoint<T extends object>(documentURI: string, accessPoint: T & BaseAccessPoint, requestOptions?: RequestOptions): Promise<T & AccessPoint>;
+    createAccessPoints<T extends object>(documentURI: string, accessPoints: (T & BaseAccessPoint)[], slugs?: string[], requestOptions?: RequestOptions): Promise<(T & AccessPoint)[]>;
+    createAccessPoints<T extends object>(documentURI: string, accessPoints: (T & BaseAccessPoint)[], requestOptions?: RequestOptions): Promise<(T & AccessPoint)[]>;
     listMembers<T extends object>(uri: string, requestOptions?: RequestOptions): Promise<(T & Document)[]>;
     getMembers<T extends object>(uri: string, requestOptions: RequestOptions, queryBuilderFn?: (queryBuilder: QueryDocumentsBuilder) => QueryDocumentsBuilder): Promise<(T & Document)[]>;
     getMembers<T extends object>(uri: string, queryBuilderFn?: (queryBuilder: QueryDocumentsBuilder) => QueryDocumentsBuilder): Promise<(T & Document)[]>;

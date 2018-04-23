@@ -22,7 +22,7 @@ import { CarbonLDPSettings, ContextSettings } from "./Settings";
 import * as SHACL from "./SHACL";
 import * as SPARQL from "./SPARQL";
 import * as System from "./System";
-import { TransientAccessPoint } from "./TransientAccessPoint";
+import { TransientAccessPoint } from "./AccessPoint";
 import { TransientBlankNode } from "./BlankNode";
 import { TransientDocument } from "./Document";
 import { TransientFragment } from "./Fragment";

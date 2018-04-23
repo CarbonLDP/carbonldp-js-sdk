@@ -12,11 +12,11 @@ import {
 	ValuesToken,
 	VariableToken,
 } from "sparqler/tokens";
+import { BaseAccessPoint } from "./AccessPoint";
 
 import {
 	TransientAccessPoint,
-	AccessPointBase,
-} from "./TransientAccessPoint";
+	} from "./AccessPoint";
 import * as Auth from "./Auth";
 import { TransientACL } from "./Auth/TransientACL";
 import { ACL } from "./Auth/ACL";
@@ -346,9 +346,9 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 		return this._executeChildrenBuilder( parentURI, requestOptions, queryBuilderFn );
 	}
 
-	createAccessPoint<T extends object>( documentURI:string, accessPoint:T & AccessPointBase, slug?:string, requestOptions?:RequestOptions ):Promise<T & AccessPoint>;
-	createAccessPoint<T extends object>( documentURI:string, accessPoint:T & AccessPointBase, requestOptions?:RequestOptions ):Promise<T & AccessPoint>;
-	createAccessPoint<T extends object>( documentURI:string, accessPoint:T & AccessPointBase, slugOrRequestOptions:any, requestOptions:RequestOptions = {} ):Promise<T & AccessPoint> {
+	createAccessPoint<T extends object>( documentURI:string, accessPoint:T & BaseAccessPoint, slug?:string, requestOptions?:RequestOptions ):Promise<T & AccessPoint>;
+	createAccessPoint<T extends object>( documentURI:string, accessPoint:T & BaseAccessPoint, requestOptions?:RequestOptions ):Promise<T & AccessPoint>;
+	createAccessPoint<T extends object>( documentURI:string, accessPoint:T & BaseAccessPoint, slugOrRequestOptions:any, requestOptions:RequestOptions = {} ):Promise<T & AccessPoint> {
 		const slug:string = Utils.isString( slugOrRequestOptions ) ? slugOrRequestOptions : null;
 		requestOptions = ! Utils.isString( slugOrRequestOptions ) && ! ! slugOrRequestOptions ? slugOrRequestOptions : requestOptions;
 
@@ -360,9 +360,9 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 		} );
 	}
 
-	createAccessPoints<T extends object>( documentURI:string, accessPoints:(T & AccessPointBase)[], slugs?:string[], requestOptions?:RequestOptions ):Promise<(T & AccessPoint)[]>;
-	createAccessPoints<T extends object>( documentURI:string, accessPoints:(T & AccessPointBase)[], requestOptions?:RequestOptions ):Promise<(T & AccessPoint)[]>;
-	createAccessPoints<T extends object>( documentURI:string, accessPoints:(T & AccessPointBase)[], slugsOrRequestOptions:any, requestOptions:RequestOptions = {} ):Promise<(T & AccessPoint)[]> {
+	createAccessPoints<T extends object>( documentURI:string, accessPoints:(T & BaseAccessPoint)[], slugs?:string[], requestOptions?:RequestOptions ):Promise<(T & AccessPoint)[]>;
+	createAccessPoints<T extends object>( documentURI:string, accessPoints:(T & BaseAccessPoint)[], requestOptions?:RequestOptions ):Promise<(T & AccessPoint)[]>;
+	createAccessPoints<T extends object>( documentURI:string, accessPoints:(T & BaseAccessPoint)[], slugsOrRequestOptions:any, requestOptions:RequestOptions = {} ):Promise<(T & AccessPoint)[]> {
 		const slugs:string[] = Utils.isArray( slugsOrRequestOptions ) ? slugsOrRequestOptions : [];
 		requestOptions = ! Utils.isArray( slugsOrRequestOptions ) && ! ! slugsOrRequestOptions ? slugsOrRequestOptions : requestOptions;
 
@@ -371,7 +371,7 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 			RequestUtils.setPreferredRetrieval( "minimal", requestOptions );
 
 			const creationPromises:Promise<T & AccessPoint>[] = accessPoints
-				.map( ( accessPoint:T & AccessPointBase, index:number ) => {
+				.map( ( accessPoint:T & BaseAccessPoint, index:number ) => {
 					const cloneOptions:RequestOptions = RequestUtils.cloneOptions( requestOptions );
 					return this._persistAccessPoint<T>( documentURI, accessPoint, slugs[ index ], cloneOptions );
 				} );
@@ -1161,13 +1161,14 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 		return this._persistDocument<T & TransientDocument, ProtectedDocument>( parentURI, slug, childDocument, requestOptions );
 	}
 
-	private _persistAccessPoint<T extends object>( documentURI:string, accessPoint:T & AccessPointBase, slug:string, requestOptions:RequestOptions ):Promise<T & AccessPoint> {
+	private _persistAccessPoint<T extends object>( documentURI:string, accessPoint:T & BaseAccessPoint, slug:string, requestOptions:RequestOptions ):Promise<T & AccessPoint> {
 		if( Document.is( accessPoint ) ) throw new Errors.IllegalArgumentError( "The access-point provided has been already persisted." );
 
 		const accessPointDocument:T & TransientAccessPoint = TransientAccessPoint.is( accessPoint ) ?
-			accessPoint : TransientAccessPoint.createFrom<T>( accessPoint, this.getPointer( documentURI ), accessPoint.hasMemberRelation, accessPoint.isMemberOfRelation );
+			accessPoint : TransientAccessPoint.createFrom<T>( accessPoint );
 
-		if( accessPointDocument.membershipResource.id !== documentURI ) throw new Errors.IllegalArgumentError( "The documentURI must be the same as the accessPoint's membershipResource." );
+		if( ! accessPointDocument.membershipResource ) accessPointDocument.membershipResource = this.getPointer( documentURI );
+		else if( accessPointDocument.membershipResource.id !== documentURI ) throw new Errors.IllegalArgumentError( "The documentURI must be the same as the accessPoint's membershipResource." );
 
 		this._setDefaultRequestOptions( requestOptions, LDP.RDFSource );
 		return this._persistDocument<T & TransientAccessPoint, AccessPoint>( documentURI, slug, accessPointDocument, requestOptions );

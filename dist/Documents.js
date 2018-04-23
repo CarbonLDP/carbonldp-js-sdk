@@ -8,7 +8,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
 }
 Object.defineProperty(exports, "__esModule", { value: true });
 var tokens_1 = require("sparqler/tokens");
-var TransientAccessPoint_1 = require("./TransientAccessPoint");
+var AccessPoint_1 = require("./AccessPoint");
 var Auth = __importStar(require("./Auth"));
 var TransientACL_1 = require("./Auth/TransientACL");
 var ACL_1 = require("./Auth/ACL");
@@ -945,9 +945,11 @@ var Documents = (function () {
     Documents.prototype._persistAccessPoint = function (documentURI, accessPoint, slug, requestOptions) {
         if (Document_2.Document.is(accessPoint))
             throw new Errors.IllegalArgumentError("The access-point provided has been already persisted.");
-        var accessPointDocument = TransientAccessPoint_1.TransientAccessPoint.is(accessPoint) ?
-            accessPoint : TransientAccessPoint_1.TransientAccessPoint.createFrom(accessPoint, this.getPointer(documentURI), accessPoint.hasMemberRelation, accessPoint.isMemberOfRelation);
-        if (accessPointDocument.membershipResource.id !== documentURI)
+        var accessPointDocument = AccessPoint_1.TransientAccessPoint.is(accessPoint) ?
+            accessPoint : AccessPoint_1.TransientAccessPoint.createFrom(accessPoint);
+        if (!accessPointDocument.membershipResource)
+            accessPointDocument.membershipResource = this.getPointer(documentURI);
+        else if (accessPointDocument.membershipResource.id !== documentURI)
             throw new Errors.IllegalArgumentError("The documentURI must be the same as the accessPoint's membershipResource.");
         this._setDefaultRequestOptions(requestOptions, LDP_1.LDP.RDFSource);
         return this._persistDocument(documentURI, slug, accessPointDocument, requestOptions);

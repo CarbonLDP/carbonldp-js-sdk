@@ -36,7 +36,7 @@ import {
 	QueryDocumentBuilder,
 	QueryDocumentsBuilder,
 } from "../SPARQL/QueryDocument";
-import { AccessPointBase } from "../TransientAccessPoint";
+import { BaseAccessPoint } from "../AccessPoint/BaseAccessPoint";
 import * as Utils from "../Utils";
 import {
 	C,
@@ -130,14 +130,14 @@ export interface Document extends TransientDocument, Resource, ServiceAwareDocum
 	createChildrenAndRetrieve<T extends object>( objects:T[], requestOptions?:RequestOptions ):Promise<(T & ProtectedDocument)[]>;
 
 
-	createAccessPoint<T extends object>( accessPoint:T & AccessPointBase, slug?:string, requestOptions?:RequestOptions ):Promise<T & AccessPoint>;
+	createAccessPoint<T extends object>( accessPoint:T & BaseAccessPoint, slug?:string, requestOptions?:RequestOptions ):Promise<T & AccessPoint>;
 
-	createAccessPoint<T extends object>( accessPoint:T & AccessPointBase, requestOptions?:RequestOptions ):Promise<T & AccessPoint>;
+	createAccessPoint<T extends object>( accessPoint:T & BaseAccessPoint, requestOptions?:RequestOptions ):Promise<T & AccessPoint>;
 
 
-	createAccessPoints<T extends object>( accessPoints:(T & AccessPointBase)[], slugs?:string[], requestOptions?:RequestOptions ):Promise<(T & AccessPoint)[]>;
+	createAccessPoints<T extends object>( accessPoints:(T & BaseAccessPoint)[], slugs?:string[], requestOptions?:RequestOptions ):Promise<(T & AccessPoint)[]>;
 
-	createAccessPoints<T extends object>( accessPoints:(T & AccessPointBase)[], requestOptions?:RequestOptions ):Promise<(T & AccessPoint)[]>;
+	createAccessPoints<T extends object>( accessPoints:(T & BaseAccessPoint)[], requestOptions?:RequestOptions ):Promise<(T & AccessPoint)[]>;
 
 
 	listChildren<T extends object>( requestOptions?:RequestOptions ):Promise<(T & Document)[]>;
@@ -763,15 +763,15 @@ function createChildrenAndRetrieve<T extends object>( this:Document, objects:T[]
 	return this._documents.createChildrenAndRetrieve<T>( this.id, objects, slugsOrRequestOptions, requestOptions );
 }
 
-function createAccessPoint<T extends object>( accessPoint:T & AccessPointBase, slug?:string, requestOptions?:RequestOptions ):Promise<T & AccessPoint>;
-function createAccessPoint<T extends object>( accessPoint:T & AccessPointBase, requestOptions?:RequestOptions ):Promise<T & AccessPoint>;
-function createAccessPoint<T extends object>( this:Document, accessPoint:T & AccessPointBase, slugOrRequestOptions?:any, requestOptions?:RequestOptions ):Promise<T & AccessPoint> {
+function createAccessPoint<T extends object>( accessPoint:T & BaseAccessPoint, slug?:string, requestOptions?:RequestOptions ):Promise<T & AccessPoint>;
+function createAccessPoint<T extends object>( accessPoint:T & BaseAccessPoint, requestOptions?:RequestOptions ):Promise<T & AccessPoint>;
+function createAccessPoint<T extends object>( this:Document, accessPoint:T & BaseAccessPoint, slugOrRequestOptions?:any, requestOptions?:RequestOptions ):Promise<T & AccessPoint> {
 	return this._documents.createAccessPoint<T>( this.id, accessPoint, slugOrRequestOptions, requestOptions );
 }
 
-function createAccessPoints<T extends object>( accessPoints:(T & AccessPointBase)[], slugs?:string[], requestOptions?:RequestOptions ):Promise<(T & AccessPoint)[]>;
-function createAccessPoints<T extends object>( accessPoints:(T & AccessPointBase)[], requestOptions?:RequestOptions ):Promise<(T & AccessPoint)[]>;
-function createAccessPoints<T extends object>( this:Document, accessPoints:(T & AccessPointBase)[], slugsOrRequestOptions?:any, requestOptions?:RequestOptions ):Promise<(T & AccessPoint)[]> {
+function createAccessPoints<T extends object>( accessPoints:(T & BaseAccessPoint)[], slugs?:string[], requestOptions?:RequestOptions ):Promise<(T & AccessPoint)[]>;
+function createAccessPoints<T extends object>( accessPoints:(T & BaseAccessPoint)[], requestOptions?:RequestOptions ):Promise<(T & AccessPoint)[]>;
+function createAccessPoints<T extends object>( this:Document, accessPoints:(T & BaseAccessPoint)[], slugsOrRequestOptions?:any, requestOptions?:RequestOptions ):Promise<(T & AccessPoint)[]> {
 	return this._documents.createAccessPoints<T>( this.id, accessPoints, slugsOrRequestOptions, requestOptions );
 }
 

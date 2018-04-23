@@ -41,7 +41,7 @@ var ServiceAwareDocument_1 = require("./ServiceAwareDocument");
 var SHACL = __importStar(require("./SHACL"));
 var SPARQL = __importStar(require("./SPARQL"));
 var System = __importStar(require("./System"));
-var TransientAccessPoint_1 = require("./TransientAccessPoint");
+var AccessPoint_1 = require("./AccessPoint");
 var BlankNode_1 = require("./BlankNode");
 var Document_2 = require("./Document");
 var Fragment_2 = require("./Fragment");
@@ -119,7 +119,7 @@ var CarbonLDP = (function (_super) {
         });
     };
     CarbonLDP.AbstractContext = AbstractContext_1.AbstractContext;
-    CarbonLDP.TransientAccessPoint = TransientAccessPoint_1.TransientAccessPoint;
+    CarbonLDP.TransientAccessPoint = AccessPoint_1.TransientAccessPoint;
     CarbonLDP.Auth = Auth;
     CarbonLDP.TransientBlankNode = BlankNode_1.TransientBlankNode;
     CarbonLDP.TransientDocument = Document_2.TransientDocument;

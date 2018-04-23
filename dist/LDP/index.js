@@ -7,7 +7,7 @@ __export(require("./AddMemberAction"));
 __export(require("./Error"));
 __export(require("./Map"));
 __export(require("./MapEntry"));
-__export(require("./TransientDirectContainer"));
+__export(require("./DirectContainer"));
 __export(require("./DocumentMetadata"));
 __export(require("./ErrorResponse"));
 __export(require("./RemoveMemberAction"));

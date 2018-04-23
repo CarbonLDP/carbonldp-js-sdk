@@ -58,7 +58,7 @@ import {
 	reexports,
 	STATIC,
 } from "./test/JasmineExtender";
-import { TransientAccessPoint } from "./TransientAccessPoint";
+import { TransientAccessPoint } from "./AccessPoint";
 import { TransientBlankNode } from "./BlankNode";
 import { TransientDocument } from "./Document";
 import { TransientProtectedDocument } from "./TransientProtectedDocument";

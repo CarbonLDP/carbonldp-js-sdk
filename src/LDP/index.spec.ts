@@ -27,7 +27,7 @@ import {
 import {
 	TransientDirectContainer,
 	TransientDirectContainerFactory,
-} from "./TransientDirectContainer";
+} from "./DirectContainer";
 import {
 	DocumentMetadata,
 	DocumentMetadataFactory,
