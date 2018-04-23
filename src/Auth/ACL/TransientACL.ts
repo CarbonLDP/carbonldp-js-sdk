@@ -1,10 +1,10 @@
-import { ModelDecorator } from "../core/ModelDecorator";
-import { ObjectSchema } from "../ObjectSchema";
-import { Pointer } from "../Pointer";
-import * as Utils from "../Utils";
-import { CS } from "../Vocabularies/CS";
-import { TransientDocument } from "../Document";
-import { TransientACE } from "./TransientACE";
+import { ModelDecorator } from "../../core/ModelDecorator";
+import { TransientDocument } from "../../Document";
+import { Pointer } from "../../Pointer";
+import * as Utils from "../../Utils";
+import { CS } from "../../Vocabularies";
+import { TransientACE } from "../ACE";
+
 
 export interface TransientACL extends TransientDocument {
 	accessTo:Pointer;
@@ -13,29 +13,29 @@ export interface TransientACL extends TransientDocument {
 
 	_parsePointer( element:string | Pointer ):Pointer;
 
-	grant( subject:string | Pointer, subjectClass:string | Pointer, permission:string | Pointer ):void;
+	grant( subject:string | Pointer, subjectsClass:string | Pointer, permission:string | Pointer ):void;
 
-	grant( subject:string | Pointer, subjectClass:string | Pointer, permissions:(string | Pointer)[] ):void;
+	grant( subject:string | Pointer, subjectsClass:string | Pointer, permissions:(string | Pointer)[] ):void;
 
-	grant( subjects:(string | Pointer)[], subjectClass:string | Pointer, permission:string | Pointer ):void;
+	grant( subjects:(string | Pointer)[], subjectsClass:string | Pointer, permission:string | Pointer ):void;
 
-	grant( subjects:(string | Pointer)[], subjectClass:string | Pointer, permissions:(string | Pointer)[] ):void;
+	grant( subjects:(string | Pointer)[], subjectsClass:string | Pointer, permissions:(string | Pointer)[] ):void;
 
-	deny( subject:string | Pointer, subjectClass:string | Pointer, permission:string | Pointer ):void;
+	deny( subject:string | Pointer, subjectsClass:string | Pointer, permission:string | Pointer ):void;
 
-	deny( subject:string | Pointer, subjectClass:string | Pointer, permissions:(string | Pointer)[] ):void;
+	deny( subject:string | Pointer, subjectsClass:string | Pointer, permissions:(string | Pointer)[] ):void;
 
-	deny( subjects:(string | Pointer)[], subjectClass:string | Pointer, permission:string | Pointer ):void;
+	deny( subjects:(string | Pointer)[], subjectsClass:string | Pointer, permission:string | Pointer ):void;
 
-	deny( subjects:(string | Pointer)[], subjectClass:string | Pointer, permissions:(string | Pointer)[] ):void;
+	deny( subjects:(string | Pointer)[], subjectsClass:string | Pointer, permissions:(string | Pointer)[] ):void;
 
-	configureChildInheritance( granting:boolean, subject:string | Pointer, subjectClass:string | Pointer, permission:string | Pointer ):void;
+	configureChildInheritance( granting:boolean, subject:string | Pointer, subjectsClass:string | Pointer, permission:string | Pointer ):void;
 
-	configureChildInheritance( granting:boolean, subject:string | Pointer, subjectClass:string | Pointer, permissions:(string | Pointer)[] ):void;
+	configureChildInheritance( granting:boolean, subject:string | Pointer, subjectsClass:string | Pointer, permissions:(string | Pointer)[] ):void;
 
-	configureChildInheritance( granting:boolean, subjects:(string | Pointer)[], subjectClass:string | Pointer, permission:string | Pointer ):void;
+	configureChildInheritance( granting:boolean, subjects:(string | Pointer)[], subjectsClass:string | Pointer, permission:string | Pointer ):void;
 
-	configureChildInheritance( granting:boolean, subjects:(string | Pointer)[], subjectClass:string | Pointer, permissions:(string | Pointer)[] ):void;
+	configureChildInheritance( granting:boolean, subjects:(string | Pointer)[], subjectsClass:string | Pointer, permissions:(string | Pointer)[] ):void;
 
 	grants( subject:string | Pointer, permission:string | Pointer ):boolean;
 
@@ -54,8 +54,7 @@ export interface TransientACL extends TransientDocument {
 
 
 export interface TransientACLFactory extends ModelDecorator<TransientACL> {
-	TYPE:string;
-	SCHEMA:ObjectSchema;
+	TYPE:CS[ "AccessControlList" ];
 
 	isDecorated( object:object ):object is TransientACL;
 
@@ -64,26 +63,9 @@ export interface TransientACLFactory extends ModelDecorator<TransientACL> {
 }
 
 
-const SCHEMA:ObjectSchema = {
-	"entries": {
-		"@id": CS.accessControlEntry,
-		"@type": "@id",
-		"@container": "@set",
-	},
-	"accessTo": {
-		"@id": CS.accessTo,
-		"@type": "@id",
-	},
-	"inheritableEntries": {
-		"@id": CS.inheritableEntry,
-		"@type": "@id",
-		"@container": "@set",
-	},
-};
-
 export const TransientACL:TransientACLFactory = {
 	TYPE: CS.AccessControlList,
-	SCHEMA,
+
 
 	isDecorated( object:object ):object is TransientACL {
 		return Utils.hasPropertyDefined( object, "accessTo" )
@@ -175,13 +157,19 @@ function parsePointers( elements:string | Pointer | (string | Pointer)[] ):Point
 	return elementsArray.map( ( element:string | Pointer ) => (this as TransientACL)._parsePointer( element ) );
 }
 
-function configACE( granting:boolean, subject:Pointer, subjectClass:Pointer, permissions:Pointer[], aces:TransientACE[] ):TransientACE {
+function configACE( this:TransientACL, granting:boolean, subject:Pointer, subjectsClass:Pointer, permissions:Pointer[], aces:TransientACE[] ):TransientACE {
 	let subjectACEs:TransientACE[] = aces.filter( _ => _.subjects.length === 1 && _.granting === granting && Pointer.areEqual( _.subjects[ 0 ], subject ) );
 
 	let ace:TransientACE;
 	if( subjectACEs.length === 0 ) {
-		ace = TransientACE.createFrom( (<TransientACL> this).createFragment(), granting, [ subject ], subjectClass, [] );
-		aces.push( ace );
+		ace = TransientACE.createFrom( {
+			granting,
+			permissions: [],
+			subjects: [ subject ],
+			subjectsClass,
+		} );
+
+		aces.push( this.createFragment( ace ) );
 	} else {
 		ace = subjectACEs[ 0 ];
 	}
@@ -201,30 +189,30 @@ function configACEs( granting:boolean, subjects:string | Pointer | (string | Poi
 	}
 }
 
-function grant( subject:string | Pointer, subjectClass:string | Pointer, permission:string | Pointer ):void;
-function grant( subject:string | Pointer, subjectClass:string | Pointer, permissions:(string | Pointer)[] ):void;
-function grant( subjects:(string | Pointer)[], subjectClass:string | Pointer, permission:string | Pointer ):void;
-function grant( subjects:(string | Pointer)[], subjectClass:string | Pointer, permissions:(string | Pointer)[] ):void;
+function grant( subject:string | Pointer, subjectsClass:string | Pointer, permission:string | Pointer ):void;
+function grant( subject:string | Pointer, subjectsClass:string | Pointer, permissions:(string | Pointer)[] ):void;
+function grant( subjects:(string | Pointer)[], subjectsClass:string | Pointer, permission:string | Pointer ):void;
+function grant( subjects:(string | Pointer)[], subjectsClass:string | Pointer, permissions:(string | Pointer)[] ):void;
 function grant( subjects:string | Pointer | (string | Pointer)[], subjectsClass:string | Pointer, permissions:string | Pointer | (string | Pointer)[] ):void {
 	let acl:TransientACL = this;
 	acl.entries = acl.entries || [];
 	configACEs.call( this, true, subjects, subjectsClass, permissions, acl.entries );
 }
 
-function deny( subject:string | Pointer, subjectClass:string | Pointer, permission:string | Pointer ):void;
-function deny( subject:string | Pointer, subjectClass:string | Pointer, permissions:(string | Pointer)[] ):void;
-function deny( subjects:(string | Pointer)[], subjectClass:string | Pointer, permission:string | Pointer ):void;
-function deny( subjects:(string | Pointer)[], subjectClass:string | Pointer, permissions:(string | Pointer)[] ):void;
+function deny( subject:string | Pointer, subjectsClass:string | Pointer, permission:string | Pointer ):void;
+function deny( subject:string | Pointer, subjectsClass:string | Pointer, permissions:(string | Pointer)[] ):void;
+function deny( subjects:(string | Pointer)[], subjectsClass:string | Pointer, permission:string | Pointer ):void;
+function deny( subjects:(string | Pointer)[], subjectsClass:string | Pointer, permissions:(string | Pointer)[] ):void;
 function deny( subjects:string | Pointer | (string | Pointer)[], subjectsClass:string | Pointer, permissions:string | Pointer | (string | Pointer)[] ):void {
 	let acl:TransientACL = this;
 	acl.entries = acl.entries || [];
 	configACEs.call( this, false, subjects, subjectsClass, permissions, acl.entries );
 }
 
-function configureChildInheritance( granting:boolean, subject:string | Pointer, subjectClass:string | Pointer, permission:string | Pointer ):void;
-function configureChildInheritance( granting:boolean, subject:string | Pointer, subjectClass:string | Pointer, permissions:(string | Pointer)[] ):void;
-function configureChildInheritance( granting:boolean, subjects:(string | Pointer)[], subjectClass:string | Pointer, permission:string | Pointer ):void;
-function configureChildInheritance( granting:boolean, subjects:(string | Pointer)[], subjectClass:string | Pointer, permissions:(string | Pointer)[] ):void;
+function configureChildInheritance( granting:boolean, subject:string | Pointer, subjectsClass:string | Pointer, permission:string | Pointer ):void;
+function configureChildInheritance( granting:boolean, subject:string | Pointer, subjectsClass:string | Pointer, permissions:(string | Pointer)[] ):void;
+function configureChildInheritance( granting:boolean, subjects:(string | Pointer)[], subjectsClass:string | Pointer, permission:string | Pointer ):void;
+function configureChildInheritance( granting:boolean, subjects:(string | Pointer)[], subjectsClass:string | Pointer, permissions:(string | Pointer)[] ):void;
 function configureChildInheritance( granting:boolean, subjects:string | Pointer | (string | Pointer)[], subjectsClass:string | Pointer, permissions:string | Pointer | (string | Pointer)[] ):void {
 	let acl:TransientACL = this;
 	acl.inheritableEntries = acl.inheritableEntries || [];

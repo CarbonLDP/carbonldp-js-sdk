@@ -8,8 +8,8 @@ var __importStar = (this && this.__importStar) || function (mod) {
 }
 Object.defineProperty(exports, "__esModule", { value: true });
 var Auth = __importStar(require("./Auth"));
-var TransientACE_1 = require("./Auth/TransientACE");
-var TransientACL_1 = require("./Auth/TransientACL");
+var ACE_1 = require("./Auth/ACE");
+var ACL_1 = require("./Auth/ACL");
 var AuthenticatedUserInformationAccessor_1 = require("./Auth/AuthenticatedUserInformationAccessor");
 var AuthenticatedUserMetadata_1 = require("./Auth/AuthenticatedUserMetadata");
 var CredentialsSet_1 = require("./Auth/CredentialsSet");
@@ -186,8 +186,8 @@ var SDKContext = (function () {
         this.extendObjectSchema(ResponseMetadata_1.ResponseMetadata.TYPE, ResponseMetadata_1.ResponseMetadata.SCHEMA);
         this.extendObjectSchema(ValidationError_1.ValidationError.TYPE, ValidationError_1.ValidationError.SCHEMA);
         this.extendObjectSchema(Auth.Role.RDF_CLASS, Auth.Role.SCHEMA);
-        this.extendObjectSchema(TransientACE_1.TransientACE.TYPE, TransientACE_1.TransientACE.SCHEMA);
-        this.extendObjectSchema(TransientACL_1.TransientACL.TYPE, TransientACL_1.TransientACL.SCHEMA);
+        this.extendObjectSchema(ACE_1.ACE.TYPE, ACE_1.ACE.SCHEMA);
+        this.extendObjectSchema(ACL_1.ACL.TYPE, ACL_1.ACL.SCHEMA);
         this.extendObjectSchema(AuthenticatedUserInformationAccessor_1.AuthenticatedUserInformationAccessor.TYPE, AuthenticatedUserInformationAccessor_1.AuthenticatedUserInformationAccessor.SCHEMA);
         this.extendObjectSchema(AuthenticatedUserMetadata_1.AuthenticatedUserMetadata.TYPE, AuthenticatedUserMetadata_1.AuthenticatedUserMetadata.SCHEMA);
         this.extendObjectSchema(TransientUser_1.TransientUser.TYPE, TransientUser_1.TransientUser.SCHEMA);

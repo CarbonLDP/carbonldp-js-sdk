@@ -1,4 +1,5 @@
-import { Pointer } from "../Pointer";
+import { TransientFragment } from "../../Fragment";
+import { Pointer } from "../../Pointer";
 import {
 	extendsClass,
 	hasMethod,
@@ -9,20 +10,13 @@ import {
 	OBLIGATORY,
 	property,
 	STATIC,
-} from "../test/JasmineExtender";
-import { TransientFragment } from "../Fragment";
-import { CS } from "../Vocabularies/CS";
-import { XSD } from "../Vocabularies/XSD";
-import * as Utils from "./../Utils";
+} from "../../test/JasmineExtender";
+import * as Utils from "../../Utils";
+import { CS } from "../../Vocabularies";
 
 import { TransientACE } from "./TransientACE";
 
-describe( module( "carbonldp/Auth/TransientACE" ), ():void => {
-
-	it( isDefined(), ():void => {
-		expect( TransientACE ).toBeDefined();
-		expect( Utils.isObject( TransientACE ) ).toBe( true );
-	} );
+describe( module( "carbonldp/Auth/ACE" ), ():void => {
 
 	describe( interfaze(
 		"CarbonLDP.Auth.TransientACE",
@@ -95,19 +89,13 @@ describe( module( "carbonldp/Auth/TransientACE" ), ():void => {
 
 	describe( interfaze(
 		"CarbonLDP.Auth.TransientACEFactory",
-		"Interface with the factory, decorate and utils methods of a `CarbonLDP.Auth.TransientACE` object"
+		"Interface with the factory, decorate and utils methods for `CarbonLDP.Auth.TransientACE` objects."
 	), ():void => {
 
 		it( hasProperty(
 			OBLIGATORY,
 			"TYPE",
-			"string"
-		), ():void => {} );
-
-		it( hasProperty(
-			OBLIGATORY,
-			"SCHEMA",
-			"CarbonLDP.ObjectSchema"
+			"CarbonLDP.Vocabularies.CS.AccessControlEntry"
 		), ():void => {} );
 
 		it( hasMethod(
@@ -122,11 +110,9 @@ describe( module( "carbonldp/Auth/TransientACE" ), ():void => {
 		it( hasMethod(
 			OBLIGATORY,
 			"create",
+			[ "T extends object" ],
 			"Creates a `CarbonLDP.Auth.TransientACE` object with the parameters specified.", [
-				{ name: "granting", type: "boolean", description: "Indicates if the ACE is a granting or denying permissions." },
-				{ name: "subjects", type: "CarbonLDP.Pointer[]", description: "Subjects that will have the permissions specified." },
-				{ name: "subjectClass", type: "CarbonLDP.Pointer", description: "The type of the subjects provided." },
-				{ name: "permissions", type: "CarbonLDP.Pointer[]", description: "The permissions that will be granted or denied." },
+				{ name: "data", type: "T & CarbonLDP.Auth.BaseACE", description: "Data for creation an access control entry." },
 			],
 			{ type: "CarbonLDP.Auth.TransientACE" }
 		), ():void => {} );
@@ -136,11 +122,7 @@ describe( module( "carbonldp/Auth/TransientACE" ), ():void => {
 			"createFrom",
 			[ "T extends object" ],
 			"Creates a `CarbonLDP.Auth.TransientACE` object with the parameters specified.", [
-				{ name: "object", type: "T", description: "The object that will be converted into a `CarbonLDP.Auth.TransientACE`" },
-				{ name: "granting", type: "boolean", description: "Indicates if the ACE is a granting or denying permissions." },
-				{ name: "subjects", type: "CarbonLDP.Pointer[]", description: "Subjects that will have the permissions specified." },
-				{ name: "subjectClass", type: "CarbonLDP.Pointer", description: "The type of the subjects provided." },
-				{ name: "permissions", type: "CarbonLDP.Pointer[]", description: "The permissions that will be granted or denied." },
+				{ name: "object", type: "T & CarbonLDP.Auth.BaseACE", description: "The object that will be converted into a `CarbonLDP.Auth.TransientACE`" },
 			],
 			{ type: "T & CarbonLDP.Auth.TransientACE" }
 		), ():void => {} );
@@ -165,38 +147,6 @@ describe( module( "carbonldp/Auth/TransientACE" ), ():void => {
 			expect( Utils.isString( TransientACE.TYPE ) ).toBe( true );
 
 			expect( TransientACE.TYPE ).toBe( CS.AccessControlEntry );
-		} );
-
-		// TODO: Separate in different tests
-		it( "TransientACE.SCHEMA", ():void => {
-			expect( TransientACE.SCHEMA ).toBeDefined();
-			expect( Utils.isObject( TransientACE.SCHEMA ) ).toBe( true );
-
-			expect( Utils.hasProperty( TransientACE.SCHEMA, "granting" ) ).toBe( true );
-			expect( TransientACE.SCHEMA[ "granting" ] ).toEqual( {
-				"@id": CS.granting,
-				"@type": XSD.boolean,
-			} );
-
-			expect( Utils.hasProperty( TransientACE.SCHEMA, "permissions" ) ).toBe( true );
-			expect( TransientACE.SCHEMA[ "permissions" ] ).toEqual( {
-				"@id": CS.permission,
-				"@type": "@id",
-				"@container": "@set",
-			} );
-
-			expect( Utils.hasProperty( TransientACE.SCHEMA, "subjects" ) ).toBe( true );
-			expect( TransientACE.SCHEMA[ "subjects" ] ).toEqual( {
-				"@id": CS.subject,
-				"@type": "@id",
-				"@container": "@set",
-			} );
-
-			expect( Utils.hasProperty( TransientACE.SCHEMA, "subjectsClass" ) ).toBe( true );
-			expect( TransientACE.SCHEMA[ "subjectsClass" ] ).toEqual( {
-				"@id": CS.subjectClass,
-				"@type": "@id",
-			} );
 		} );
 
 		// TODO: Separate in different tests
@@ -243,8 +193,12 @@ describe( module( "carbonldp/Auth/TransientACE" ), ():void => {
 			let object:any;
 			let ace:TransientACE;
 
-			object = {};
-			ace = TransientACE.createFrom( object, true, [ Pointer.create( { id: "1" } ) ], Pointer.create( { id: "2" } ), [ Pointer.create( { id: "3" } ) ] );
+			ace = TransientACE.createFrom( {
+				granting: true,
+				permissions: [ Pointer.create( { id: "3" } ) ],
+				subjects: [ Pointer.create( { id: "1" } ) ],
+				subjectsClass: Pointer.create( { id: "2" } ),
+			} );
 			expect( ace.types ).toContain( TransientACE.TYPE );
 			expect( ace.granting ).toBe( true );
 			expect( Pointer.getIDs( ace.subjects ) ).toContain( "1" );
@@ -252,8 +206,13 @@ describe( module( "carbonldp/Auth/TransientACE" ), ():void => {
 			expect( Pointer.getIDs( ace.permissions ) ).toContain( "3" );
 			expect( ace[ "some" ] ).toBeUndefined();
 
-			object = { some: "some" };
-			ace = TransientACE.createFrom( object, false, [ Pointer.create( { id: "4" } ) ], Pointer.create( { id: "5" } ), [ Pointer.create( { id: "6" } ) ] );
+			ace = TransientACE.createFrom( {
+				some: "some",
+				granting: false,
+				permissions: [ Pointer.create( { id: "6" } ) ],
+				subjects: [ Pointer.create( { id: "4" } ) ],
+				subjectsClass: Pointer.create( { id: "5" } ),
+			} );
 			expect( ace.types ).toContain( TransientACE.TYPE );
 			expect( ace.granting ).toBe( false );
 			expect( Pointer.getIDs( ace.subjects ) ).toContain( "4" );

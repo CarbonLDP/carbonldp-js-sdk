@@ -1,10 +1,14 @@
-import { Document } from "../Document";
-import { Pointer } from "../Pointer";
-import * as Utils from "../Utils";
+import { ModelDecorator } from "../../core/ModelDecorator";
+import { ModelSchema } from "../../core/ModelSchema";
+import { Document } from "../../Document";
+import { Documents } from "../../Documents";
+import { ObjectSchema } from "../../ObjectSchema";
+import { Pointer } from "../../Pointer";
+import * as Utils from "../../Utils";
+import { CS } from "../../Vocabularies";
+import { ACE } from "../ACE";
 import { TransientACL } from "./TransientACL";
-import { ACE } from "./ACE";
-import { ModelDecorator } from "../core/ModelDecorator";
-import { Documents } from "../Documents";
+
 
 export interface ACL extends Document {
 	accessTo:Pointer;
@@ -53,7 +57,11 @@ export interface ACL extends Document {
 }
 
 
-export interface ACLFactory extends ModelDecorator<ACL> {
+export interface ACLFactory extends ModelDecorator<ACL>, ModelSchema {
+	TYPE:CS[ "AccessControlList" ];
+	SCHEMA:ObjectSchema;
+
+
 	isDecorated( object:object ):object is ACL;
 
 
@@ -62,6 +70,25 @@ export interface ACLFactory extends ModelDecorator<ACL> {
 
 
 export const ACL:ACLFactory = {
+	TYPE: CS.AccessControlList,
+	SCHEMA: {
+		"entries": {
+			"@id": CS.accessControlEntry,
+			"@type": "@id",
+			"@container": "@set",
+		},
+		"accessTo": {
+			"@id": CS.accessTo,
+			"@type": "@id",
+		},
+		"inheritableEntries": {
+			"@id": CS.inheritableEntry,
+			"@type": "@id",
+			"@container": "@set",
+		},
+	},
+
+
 	isDecorated( object:object ):object is ACL {
 		return Utils.hasPropertyDefined( object, "accessTo" )
 			&& object[ "_parsePointer" ] === parsePointer

@@ -1,6 +1,6 @@
 import * as Auth from "./Auth";
-import { TransientACE } from "./Auth/TransientACE";
-import { TransientACL } from "./Auth/TransientACL";
+import { ACE } from "./Auth/ACE";
+import { ACL } from "./Auth/ACL";
 import { AuthenticatedUserInformationAccessor } from "./Auth/AuthenticatedUserInformationAccessor";
 import { AuthenticatedUserMetadata } from "./Auth/AuthenticatedUserMetadata";
 import { CredentialsSet } from "./Auth/CredentialsSet";
@@ -226,8 +226,8 @@ export class SDKContext implements Context {
 		this.extendObjectSchema( ValidationError.TYPE, ValidationError.SCHEMA );
 
 		this.extendObjectSchema( Auth.Role.RDF_CLASS, Auth.Role.SCHEMA );
-		this.extendObjectSchema( TransientACE.TYPE, TransientACE.SCHEMA );
-		this.extendObjectSchema( TransientACL.TYPE, TransientACL.SCHEMA );
+		this.extendObjectSchema( ACE.TYPE, ACE.SCHEMA );
+		this.extendObjectSchema( ACL.TYPE, ACL.SCHEMA );
 		this.extendObjectSchema( AuthenticatedUserInformationAccessor.TYPE, AuthenticatedUserInformationAccessor.SCHEMA );
 		this.extendObjectSchema( AuthenticatedUserMetadata.TYPE, AuthenticatedUserMetadata.SCHEMA );
 		this.extendObjectSchema( TransientUser.TYPE, TransientUser.SCHEMA );

@@ -8,8 +8,8 @@ import * as Utils from "../Utils";
 
 import * as Auth from "./";
 
-import { TransientACE } from "./TransientACE";
-import { TransientACL } from "./TransientACL";
+import { TransientACE } from "./ACE";
+import { TransientACL } from "./ACL";
 import { AuthenticatedUserInformationAccessor } from "./AuthenticatedUserInformationAccessor";
 import { AuthenticatedUserMetadata } from "./AuthenticatedUserMetadata";
 import { Authenticator } from "./Authenticator";

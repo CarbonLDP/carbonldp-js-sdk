@@ -18,7 +18,6 @@ import {
 	TransientAccessPoint,
 	} from "./AccessPoint";
 import * as Auth from "./Auth";
-import { TransientACL } from "./Auth/TransientACL";
 import { ACL } from "./Auth/ACL";
 import { User } from "./Auth/User";
 import { TransientUser } from "./Auth/TransientUser";
@@ -153,9 +152,9 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 			if( parentDecorators ) decorators = this._documentDecorators = Utils.MapUtils.extend( decorators, parentDecorators );
 		} else {
 			decorators
-				.set( TransientProtectedDocument.TYPE, ProtectedDocument.decorate )
+				.set( ProtectedDocument.TYPE, ProtectedDocument.decorate )
 				.set( TransientUser.TYPE, User.decorate )
-				.set( TransientACL.TYPE, ACL.decorate )
+				.set( ACL.TYPE, ACL.decorate )
 				.set( Auth.Role.RDF_CLASS, Auth.PersistedRole.Factory.decorate )
 			;
 		}

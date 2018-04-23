@@ -7,10 +7,10 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 }
 Object.defineProperty(exports, "__esModule", { value: true });
-var TransientACE_1 = require("./TransientACE");
-exports.TransientACE = TransientACE_1.TransientACE;
-var TransientACL_1 = require("./TransientACL");
-exports.TransientACL = TransientACL_1.TransientACL;
+var ACE_1 = require("./ACE");
+exports.TransientACE = ACE_1.TransientACE;
+var ACL_1 = require("./ACL");
+exports.TransientACL = ACL_1.TransientACL;
 var AuthenticatedUserInformationAccessor_1 = require("./AuthenticatedUserInformationAccessor");
 exports.AuthenticatedUserInformationAccessor = AuthenticatedUserInformationAccessor_1.AuthenticatedUserInformationAccessor;
 var AuthenticatedUserMetadata_1 = require("./AuthenticatedUserMetadata");
@@ -31,8 +31,10 @@ var CredentialsSet_1 = require("./CredentialsSet");
 exports.CredentialsSet = CredentialsSet_1.CredentialsSet;
 var LDAPCredentials_1 = require("./LDAPCredentials");
 exports.LDAPCredentials = LDAPCredentials_1.LDAPCredentials;
-var ACL_1 = require("./ACL");
-exports.ACL = ACL_1.ACL;
+var ACE_2 = require("./ACE");
+exports.ACE = ACE_2.ACE;
+var ACL_2 = require("./ACL");
+exports.ACL = ACL_2.ACL;
 var User_1 = require("./User");
 exports.User = User_1.User;
 var TokenAuthenticator_1 = require("./TokenAuthenticator");

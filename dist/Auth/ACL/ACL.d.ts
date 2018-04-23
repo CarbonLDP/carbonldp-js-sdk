@@ -1,8 +1,11 @@
-import { Document } from "../Document";
-import { Pointer } from "../Pointer";
-import { ACE } from "./ACE";
-import { ModelDecorator } from "../core/ModelDecorator";
-import { Documents } from "../Documents";
+import { ModelDecorator } from "../../core/ModelDecorator";
+import { ModelSchema } from "../../core/ModelSchema";
+import { Document } from "../../Document";
+import { Documents } from "../../Documents";
+import { ObjectSchema } from "../../ObjectSchema";
+import { Pointer } from "../../Pointer";
+import { CS } from "../../Vocabularies";
+import { ACE } from "../ACE";
 export interface ACL extends Document {
     accessTo: Pointer;
     entries?: ACE[];
@@ -28,7 +31,9 @@ export interface ACL extends Document {
     removeChildInheritance(subject: string | Pointer, permission: string | Pointer): void;
     removeChildInheritance(subject: string | Pointer, permissions: (string | Pointer)[]): void;
 }
-export interface ACLFactory extends ModelDecorator<ACL> {
+export interface ACLFactory extends ModelDecorator<ACL>, ModelSchema {
+    TYPE: CS["AccessControlList"];
+    SCHEMA: ObjectSchema;
     isDecorated(object: object): object is ACL;
     decorate<T extends object>(object: T, documents: Documents): T & ACL;
 }

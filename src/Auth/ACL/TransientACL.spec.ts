@@ -1,8 +1,10 @@
-import { Document } from "../Document";
-import { TransientDocument } from "../Document";
-import { Documents } from "../Documents";
-import { TransientFragment } from "../Fragment";
-import { Pointer } from "../Pointer";
+import {
+	Document,
+	TransientDocument
+} from "../../Document";
+import { Documents } from "../../Documents";
+import { TransientFragment } from "../../Fragment";
+import { Pointer } from "../../Pointer";
 import {
 	extendsClass,
 	hasMethod,
@@ -16,14 +18,14 @@ import {
 	OPTIONAL,
 	property,
 	STATIC,
-} from "../test/JasmineExtender";
-import { CS } from "../Vocabularies/CS";
-import * as Utils from "./../Utils";
-import { TransientACE } from "./TransientACE";
+} from "../../test/JasmineExtender";
+import * as Utils from "../../Utils";
+import { CS } from "../../Vocabularies";
+import { TransientACE } from "../ACE";
 
 import { TransientACL } from "./TransientACL";
 
-describe( module( "carbonldp/Auth/TransientACL" ), ():void => {
+describe( module( "carbonldp/Auth/ACL" ), ():void => {
 
 	describe( interfaze(
 		"CarbonLDP.Auth.TransientACL",
@@ -281,13 +283,7 @@ describe( module( "carbonldp/Auth/TransientACL" ), ():void => {
 		it( hasProperty(
 			OBLIGATORY,
 			"TYPE",
-			"string"
-		), ():void => {} );
-
-		it( hasProperty(
-			OBLIGATORY,
-			"SCHEMA",
-			"CarbonLDP.ObjectSchema"
+			"CarbonLDP.Vocabulary.CS.AccessControlList"
 		), ():void => {} );
 
 		it( hasMethod(
@@ -329,32 +325,6 @@ describe( module( "carbonldp/Auth/TransientACL" ), ():void => {
 			expect( Utils.isString( TransientACL.TYPE ) ).toBe( true );
 
 			expect( TransientACL.TYPE ).toBe( CS.AccessControlList );
-		} );
-
-		// TODO: Separate in different tests
-		it( "TransientACL.SCHEMA", ():void => {
-			expect( TransientACL.SCHEMA ).toBeDefined();
-			expect( Utils.isObject( TransientACL.SCHEMA ) ).toBe( true );
-
-			expect( Utils.hasProperty( TransientACL.SCHEMA, "entries" ) ).toBe( true );
-			expect( TransientACL.SCHEMA[ "entries" ] ).toEqual( {
-				"@id": CS.accessControlEntry,
-				"@type": "@id",
-				"@container": "@set",
-			} );
-
-			expect( Utils.hasProperty( TransientACL.SCHEMA, "accessTo" ) ).toBe( true );
-			expect( TransientACL.SCHEMA[ "accessTo" ] ).toEqual( {
-				"@id": CS.accessTo,
-				"@type": "@id",
-			} );
-
-			expect( Utils.hasProperty( TransientACL.SCHEMA, "inheritableEntries" ) ).toBe( true );
-			expect( TransientACL.SCHEMA[ "inheritableEntries" ] ).toEqual( {
-				"@id": CS.inheritableEntry,
-				"@type": "@id",
-				"@container": "@set",
-			} );
 		} );
 
 		// TODO: Separate in different tests
@@ -856,22 +826,20 @@ describe( module( "carbonldp/Auth/TransientACL" ), ():void => {
 					acl.entries.forEach( forEachACE => acl._removeFragment( forEachACE.id ) );
 					acl.entries = [];
 
-					ace = TransientACE.createFrom(
-						acl.createFragment(),
-						false,
-						[ acl.getPointer( "http://example.com/ns#Subject" ), acl.getPointer( "http://example.com/ns#Subject-2" ) ],
-						acl.getPointer( "http://example.com/ns#SubjetClass" ),
-						[ acl.getPointer( "http://example.com/ns#CREATE" ), acl.getPointer( "http://example.com/ns#DELETE" ) ]
-					);
+					ace = TransientACE.createFrom( acl.createFragment( {
+						granting: false,
+						permissions: [ acl.getPointer( "http://example.com/ns#CREATE" ), acl.getPointer( "http://example.com/ns#DELETE" ) ],
+						subjects: [ acl.getPointer( "http://example.com/ns#Subject" ), acl.getPointer( "http://example.com/ns#Subject-2" ) ],
+						subjectsClass: acl.getPointer( "http://example.com/ns#SubjetClass" ),
+					} ) );
 					acl.entries.push( ace );
 
-					ace = TransientACE.createFrom(
-						acl.createFragment(),
-						true,
-						[ acl.getPointer( "http://example.com/ns#Subject-2" ), acl.getPointer( "http://example.com/ns#Subject-3" ) ],
-						acl.getPointer( "http://example.com/ns#SubjetClass" ),
-						[ acl.getPointer( "http://example.com/ns#READ" ), acl.getPointer( "http://example.com/ns#WRITE" ) ]
-					);
+					ace = TransientACE.createFrom( acl.createFragment( {
+						granting: true,
+						permissions: [ acl.getPointer( "http://example.com/ns#READ" ), acl.getPointer( "http://example.com/ns#WRITE" ) ],
+						subjects: [ acl.getPointer( "http://example.com/ns#Subject-2" ), acl.getPointer( "http://example.com/ns#Subject-3" ) ],
+						subjectsClass: acl.getPointer( "http://example.com/ns#SubjetClass" ),
+					} ) );
 					acl.entries.push( ace );
 
 					acl.grant( [ acl.getPointer( "http://example.com/ns#Subject" ), acl.getPointer( "http://example.com/ns#Subject-2" ), acl.getPointer( "http://example.com/ns#Subject-3" ) ], acl.getPointer( "http://example.com/ns#SubjetClass" ), [ "http://example.com/ns#UPDATE", acl.getPointer( "http://example.com/ns#CREATE" ), acl.getPointer( "http://example.com/ns#READ" ) ] );
@@ -938,13 +906,12 @@ describe( module( "carbonldp/Auth/TransientACL" ), ():void => {
 					acl.entries = [];
 					acl.inheritableEntries = [];
 
-					ace = TransientACE.createFrom(
-						acl.createFragment(),
-						true,
-						[ acl.getPointer( "http://example.com/ns#Subject" ) ],
-						acl.getPointer( "http://example.com/ns#SubjetClass" ),
-						[ acl.getPointer( "http://example.com/ns#READ" ), acl.getPointer( "http://example.com/ns#WRITE" ) ]
-					);
+					ace = TransientACE.createFrom( acl.createFragment( {
+						granting: true,
+						permissions: [ acl.getPointer( "http://example.com/ns#READ" ), acl.getPointer( "http://example.com/ns#WRITE" ) ],
+						subjects: [ acl.getPointer( "http://example.com/ns#Subject" ) ],
+						subjectsClass: acl.getPointer( "http://example.com/ns#SubjetClass" ),
+					} ) );
 					acl.entries.push( ace );
 					acl.inheritableEntries.push( ace );
 
@@ -1366,21 +1333,19 @@ describe( module( "carbonldp/Auth/TransientACL" ), ():void => {
 
 					acl.entries.forEach( forEachACE => acl._removeFragment( forEachACE.id ) );
 					acl.entries = [];
-					ace = TransientACE.createFrom(
-						acl.createFragment(),
-						false,
-						[ acl.getPointer( "http://example.com/ns#Subject" ), acl.getPointer( "http://example.com/ns#Subject-2" ) ],
-						acl.getPointer( "http://example.com/ns#SubjetClass" ),
-						[ acl.getPointer( "http://example.com/ns#CREATE" ), acl.getPointer( "http://example.com/ns#DELETE" ) ]
-					);
+					ace = TransientACE.createFrom( acl.createFragment( {
+						granting: false,
+						permissions: [ acl.getPointer( "http://example.com/ns#CREATE" ), acl.getPointer( "http://example.com/ns#DELETE" ) ],
+						subjects: [ acl.getPointer( "http://example.com/ns#Subject" ), acl.getPointer( "http://example.com/ns#Subject-2" ) ],
+						subjectsClass: acl.getPointer( "http://example.com/ns#SubjetClass" ),
+					} ) );
 					acl.entries.push( ace );
-					ace = TransientACE.createFrom(
-						acl.createFragment(),
-						true,
-						[ acl.getPointer( "http://example.com/ns#Subject-2" ), acl.getPointer( "http://example.com/ns#Subject-3" ) ],
-						acl.getPointer( "http://example.com/ns#SubjetClass" ),
-						[ acl.getPointer( "http://example.com/ns#READ" ), acl.getPointer( "http://example.com/ns#WRITE" ) ]
-					);
+					ace = TransientACE.createFrom( acl.createFragment( {
+						granting: true,
+						permissions: [ acl.getPointer( "http://example.com/ns#READ" ), acl.getPointer( "http://example.com/ns#WRITE" ) ],
+						subjects: [ acl.getPointer( "http://example.com/ns#Subject-2" ), acl.getPointer( "http://example.com/ns#Subject-3" ) ],
+						subjectsClass: acl.getPointer( "http://example.com/ns#SubjetClass" ),
+					} ) );
 					acl.entries.push( ace );
 
 					acl.deny( [ acl.getPointer( "http://example.com/ns#Subject" ), acl.getPointer( "http://example.com/ns#Subject-2" ), acl.getPointer( "http://example.com/ns#Subject-3" ) ], acl.getPointer( "http://example.com/ns#SubjetClass" ), [ "http://example.com/ns#UPDATE", acl.getPointer( "http://example.com/ns#CREATE" ), acl.getPointer( "http://example.com/ns#READ" ) ] );
@@ -1450,13 +1415,12 @@ describe( module( "carbonldp/Auth/TransientACL" ), ():void => {
 					acl.entries = [];
 					acl.inheritableEntries = [];
 
-					ace = TransientACE.createFrom(
-						acl.createFragment(),
-						false,
-						[ acl.getPointer( "http://example.com/ns#Subject" ) ],
-						acl.getPointer( "http://example.com/ns#SubjetClass" ),
-						[ acl.getPointer( "http://example.com/ns#READ" ), acl.getPointer( "http://example.com/ns#WRITE" ) ]
-					);
+					ace = TransientACE.createFrom( acl.createFragment( {
+						granting: false,
+						permissions: [ acl.getPointer( "http://example.com/ns#READ" ), acl.getPointer( "http://example.com/ns#WRITE" ) ],
+						subjects: [ acl.getPointer( "http://example.com/ns#Subject" ) ],
+						subjectsClass: acl.getPointer( "http://example.com/ns#SubjetClass" ),
+					} ) );
 					acl.entries.push( ace );
 					acl.inheritableEntries.push( ace );
 
@@ -2241,21 +2205,19 @@ describe( module( "carbonldp/Auth/TransientACL" ), ():void => {
 					acl.inheritableEntries.forEach( forEachACE => acl._removeFragment( forEachACE.id ) );
 					acl.inheritableEntries = [];
 
-					ace = TransientACE.createFrom(
-						acl.createFragment(),
-						false,
-						[ acl.getPointer( "http://example.com/ns#Subject" ), acl.getPointer( "http://example.com/ns#Subject-2" ) ],
-						acl.getPointer( "http://example.com/ns#SubjetClass" ),
-						[ acl.getPointer( "http://example.com/ns#CREATE" ), acl.getPointer( "http://example.com/ns#DELETE" ) ]
-					);
+					ace = TransientACE.createFrom( acl.createFragment( {
+						granting: false,
+						permissions: [ acl.getPointer( "http://example.com/ns#CREATE" ), acl.getPointer( "http://example.com/ns#DELETE" ) ],
+						subjects: [ acl.getPointer( "http://example.com/ns#Subject" ), acl.getPointer( "http://example.com/ns#Subject-2" ) ],
+						subjectsClass: acl.getPointer( "http://example.com/ns#SubjetClass" ),
+					} ) );
 					acl.inheritableEntries.push( ace );
-					ace = TransientACE.createFrom(
-						acl.createFragment(),
-						true,
-						[ acl.getPointer( "http://example.com/ns#Subject-2" ), acl.getPointer( "http://example.com/ns#Subject-3" ) ],
-						acl.getPointer( "http://example.com/ns#SubjetClass" ),
-						[ acl.getPointer( "http://example.com/ns#READ" ), acl.getPointer( "http://example.com/ns#WRITE" ) ]
-					);
+					ace = TransientACE.createFrom( acl.createFragment( {
+						granting: true,
+						permissions: [ acl.getPointer( "http://example.com/ns#READ" ), acl.getPointer( "http://example.com/ns#WRITE" ) ],
+						subjects: [ acl.getPointer( "http://example.com/ns#Subject-2" ), acl.getPointer( "http://example.com/ns#Subject-3" ) ],
+						subjectsClass: acl.getPointer( "http://example.com/ns#SubjetClass" ),
+					} ) );
 					acl.inheritableEntries.push( ace );
 
 					acl.configureChildInheritance( true, [ acl.getPointer( "http://example.com/ns#Subject" ), acl.getPointer( "http://example.com/ns#Subject-2" ), acl.getPointer( "http://example.com/ns#Subject-3" ) ], acl.getPointer( "http://example.com/ns#SubjetClass" ), [ "http://example.com/ns#UPDATE", acl.getPointer( "http://example.com/ns#CREATE" ), acl.getPointer( "http://example.com/ns#READ" ) ] );
@@ -2321,21 +2283,19 @@ describe( module( "carbonldp/Auth/TransientACL" ), ():void => {
 					acl.inheritableEntries.forEach( forEachACE => acl._removeFragment( forEachACE.id ) );
 					acl.inheritableEntries = [];
 
-					ace = TransientACE.createFrom(
-						acl.createFragment(),
-						false,
-						[ acl.getPointer( "http://example.com/ns#Subject" ), acl.getPointer( "http://example.com/ns#Subject-2" ) ],
-						acl.getPointer( "http://example.com/ns#SubjetClass" ),
-						[ acl.getPointer( "http://example.com/ns#CREATE" ), acl.getPointer( "http://example.com/ns#DELETE" ) ]
-					);
+					ace = TransientACE.createFrom( acl.createFragment( {
+						granting: false,
+						permissions: [ acl.getPointer( "http://example.com/ns#CREATE" ), acl.getPointer( "http://example.com/ns#DELETE" ) ],
+						subjects: [ acl.getPointer( "http://example.com/ns#Subject" ), acl.getPointer( "http://example.com/ns#Subject-2" ) ],
+						subjectsClass: acl.getPointer( "http://example.com/ns#SubjetClass" ),
+					} ) );
 					acl.inheritableEntries.push( ace );
-					ace = TransientACE.createFrom(
-						acl.createFragment(),
-						true,
-						[ acl.getPointer( "http://example.com/ns#Subject-2" ), acl.getPointer( "http://example.com/ns#Subject-3" ) ],
-						acl.getPointer( "http://example.com/ns#SubjetClass" ),
-						[ acl.getPointer( "http://example.com/ns#READ" ), acl.getPointer( "http://example.com/ns#WRITE" ) ]
-					);
+					ace = TransientACE.createFrom( acl.createFragment( {
+						granting: true,
+						permissions: [ acl.getPointer( "http://example.com/ns#READ" ), acl.getPointer( "http://example.com/ns#WRITE" ) ],
+						subjects: [ acl.getPointer( "http://example.com/ns#Subject-2" ), acl.getPointer( "http://example.com/ns#Subject-3" ) ],
+						subjectsClass: acl.getPointer( "http://example.com/ns#SubjetClass" ),
+					} ) );
 					acl.inheritableEntries.push( ace );
 
 					acl.configureChildInheritance( false, [ acl.getPointer( "http://example.com/ns#Subject" ), acl.getPointer( "http://example.com/ns#Subject-2" ), acl.getPointer( "http://example.com/ns#Subject-3" ) ], acl.getPointer( "http://example.com/ns#SubjetClass" ), [ "http://example.com/ns#UPDATE", acl.getPointer( "http://example.com/ns#CREATE" ), acl.getPointer( "http://example.com/ns#READ" ) ] );
@@ -2404,13 +2364,12 @@ describe( module( "carbonldp/Auth/TransientACL" ), ():void => {
 					acl.inheritableEntries = [];
 					acl.entries = [];
 
-					ace = TransientACE.createFrom(
-						acl.createFragment(),
-						true,
-						[ acl.getPointer( "http://example.com/ns#Subject" ) ],
-						acl.getPointer( "http://example.com/ns#SubjetClass" ),
-						[ acl.getPointer( "http://example.com/ns#READ" ), acl.getPointer( "http://example.com/ns#WRITE" ) ]
-					);
+					ace = TransientACE.createFrom( acl.createFragment( {
+						granting: true,
+						permissions: [ acl.getPointer( "http://example.com/ns#READ" ), acl.getPointer( "http://example.com/ns#WRITE" ) ],
+						subjects: [ acl.getPointer( "http://example.com/ns#Subject" ) ],
+						subjectsClass: acl.getPointer( "http://example.com/ns#SubjetClass" ),
+					} ) );
 					acl.inheritableEntries.push( ace );
 					acl.entries.push( ace );
 
@@ -2454,13 +2413,12 @@ describe( module( "carbonldp/Auth/TransientACL" ), ():void => {
 
 				let ace:TransientACE;
 
-				ace = TransientACE.createFrom(
-					acl.createFragment(),
-					true,
-					[ acl.getPointer( "http://example.com/ns#Subject" ) ],
-					acl.getPointer( "http://example.com/ns#SubjectClass" ),
-					[ acl.getPointer( "http://example.com/ns#READ" ), acl.getPointer( "http://example.com/ns#WRITE" ) ]
-				);
+				ace = TransientACE.createFrom( acl.createFragment( {
+					granting: true,
+					permissions: [ acl.getPointer( "http://example.com/ns#READ" ), acl.getPointer( "http://example.com/ns#WRITE" ) ],
+					subjects: [ acl.getPointer( "http://example.com/ns#Subject" ) ],
+					subjectsClass: acl.getPointer( "http://example.com/ns#SubjetClass" ),
+				} ) );
 				acl.entries = [ ace ];
 
 				expect( acl.grants( acl.getPointer( "http://example.com/ns#Subject" ), acl.getPointer( "http://example.com/ns#READ" ) ) ).toBe( true );
@@ -2469,13 +2427,12 @@ describe( module( "carbonldp/Auth/TransientACL" ), ():void => {
 				expect( acl.grants( acl.getPointer( "http://example.com/ns#Subject" ), acl.getPointer( "http://example.com/ns#ANOTHER" ) ) ).toBeNull();
 				expect( acl.grants( acl.getPointer( "http://example.com/ns#Subject-02" ), acl.getPointer( "http://example.com/ns#READ" ) ) ).toBeNull();
 
-				ace = TransientACE.createFrom(
-					acl.createFragment(),
-					false,
-					[ acl.getPointer( "http://example.com/ns#Subject" ) ],
-					acl.getPointer( "http://example.com/ns#SubjectClass" ),
-					[ acl.getPointer( "http://example.com/ns#CREATE" ), acl.getPointer( "http://example.com/ns#DELETE" ) ]
-				);
+				ace = TransientACE.createFrom( acl.createFragment( {
+					granting: false,
+					permissions: [ acl.getPointer( "http://example.com/ns#CREATE" ), acl.getPointer( "http://example.com/ns#DELETE" ) ],
+					subjects: [ acl.getPointer( "http://example.com/ns#Subject" ) ],
+					subjectsClass: acl.getPointer( "http://example.com/ns#SubjetClass" ),
+				} ) );
 				acl.entries.push( ace );
 
 				expect( acl.grants( acl.getPointer( "http://example.com/ns#Subject" ), acl.getPointer( "http://example.com/ns#READ" ) ) ).toBe( true );
@@ -2498,13 +2455,12 @@ describe( module( "carbonldp/Auth/TransientACL" ), ():void => {
 
 				let ace:TransientACE;
 
-				ace = TransientACE.createFrom(
-					acl.createFragment(),
-					false,
-					[ acl.getPointer( "http://example.com/ns#Subject" ) ],
-					acl.getPointer( "http://example.com/ns#SubjectClass" ),
-					[ acl.getPointer( "http://example.com/ns#READ" ), acl.getPointer( "http://example.com/ns#WRITE" ) ]
-				);
+				ace = TransientACE.createFrom( acl.createFragment( {
+					granting: false,
+					permissions: [ acl.getPointer( "http://example.com/ns#READ" ), acl.getPointer( "http://example.com/ns#WRITE" ) ],
+					subjects: [ acl.getPointer( "http://example.com/ns#Subject" ) ],
+					subjectsClass: acl.getPointer( "http://example.com/ns#SubjetClass" ),
+				} ) );
 				acl.entries = [ ace ];
 
 				expect( acl.denies( acl.getPointer( "http://example.com/ns#Subject" ), acl.getPointer( "http://example.com/ns#READ" ) ) ).toBe( true );
@@ -2513,13 +2469,12 @@ describe( module( "carbonldp/Auth/TransientACL" ), ():void => {
 				expect( acl.denies( acl.getPointer( "http://example.com/ns#Subject" ), acl.getPointer( "http://example.com/ns#ANOTHER" ) ) ).toBeNull();
 				expect( acl.denies( acl.getPointer( "http://example.com/ns#Subject-02" ), acl.getPointer( "http://example.com/ns#READ" ) ) ).toBeNull();
 
-				ace = TransientACE.createFrom(
-					acl.createFragment(),
-					true,
-					[ acl.getPointer( "http://example.com/ns#Subject" ) ],
-					acl.getPointer( "http://example.com/ns#SubjectClass" ),
-					[ acl.getPointer( "http://example.com/ns#CREATE" ), acl.getPointer( "http://example.com/ns#DELETE" ) ]
-				);
+				ace = TransientACE.createFrom( acl.createFragment( {
+					granting: true,
+					permissions: [ acl.getPointer( "http://example.com/ns#CREATE" ), acl.getPointer( "http://example.com/ns#DELETE" ) ],
+					subjects: [ acl.getPointer( "http://example.com/ns#Subject" ) ],
+					subjectsClass: acl.getPointer( "http://example.com/ns#SubjetClass" ),
+				} ) );
 				acl.entries.push( ace );
 
 				expect( acl.denies( acl.getPointer( "http://example.com/ns#Subject" ), acl.getPointer( "http://example.com/ns#READ" ) ) ).toBe( true );
@@ -2542,13 +2497,12 @@ describe( module( "carbonldp/Auth/TransientACL" ), ():void => {
 
 				let ace:TransientACE;
 
-				ace = TransientACE.createFrom(
-					acl.createFragment(),
-					true,
-					[ acl.getPointer( "http://example.com/ns#Subject" ) ],
-					acl.getPointer( "http://example.com/ns#SubjectClass" ),
-					[ acl.getPointer( "http://example.com/ns#READ" ), acl.getPointer( "http://example.com/ns#WRITE" ) ]
-				);
+				ace = TransientACE.createFrom( acl.createFragment( {
+					granting: true,
+					permissions: [ acl.getPointer( "http://example.com/ns#READ" ), acl.getPointer( "http://example.com/ns#WRITE" ) ],
+					subjects: [ acl.getPointer( "http://example.com/ns#Subject" ) ],
+					subjectsClass: acl.getPointer( "http://example.com/ns#SubjetClass" ),
+				} ) );
 				acl.inheritableEntries = [ ace ];
 
 				expect( acl.getChildInheritance( acl.getPointer( "http://example.com/ns#Subject" ), acl.getPointer( "http://example.com/ns#READ" ) ) ).toBe( true );
@@ -2557,13 +2511,12 @@ describe( module( "carbonldp/Auth/TransientACL" ), ():void => {
 				expect( acl.getChildInheritance( acl.getPointer( "http://example.com/ns#Subject" ), acl.getPointer( "http://example.com/ns#ANOTHER" ) ) ).toBeNull();
 				expect( acl.getChildInheritance( acl.getPointer( "http://example.com/ns#Subject-02" ), acl.getPointer( "http://example.com/ns#READ" ) ) ).toBeNull();
 
-				ace = TransientACE.createFrom(
-					acl.createFragment(),
-					false,
-					[ acl.getPointer( "http://example.com/ns#Subject" ) ],
-					acl.getPointer( "http://example.com/ns#SubjectClass" ),
-					[ acl.getPointer( "http://example.com/ns#CREATE" ), acl.getPointer( "http://example.com/ns#DELETE" ) ]
-				);
+				ace = TransientACE.createFrom( acl.createFragment( {
+					granting: false,
+					permissions: [ acl.getPointer( "http://example.com/ns#CREATE" ), acl.getPointer( "http://example.com/ns#DELETE" ) ],
+					subjects: [ acl.getPointer( "http://example.com/ns#Subject" ) ],
+					subjectsClass: acl.getPointer( "http://example.com/ns#SubjetClass" ),
+				} ) );
 				acl.inheritableEntries.push( ace );
 
 				expect( acl.getChildInheritance( acl.getPointer( "http://example.com/ns#Subject" ), acl.getPointer( "http://example.com/ns#READ" ) ) ).toBe( true );
@@ -2590,13 +2543,12 @@ describe( module( "carbonldp/Auth/TransientACL" ), ():void => {
 
 					let ace:TransientACE;
 
-					ace = TransientACE.createFrom(
-						acl.createFragment(),
-						true,
-						[ acl.getPointer( "http://example.com/ns#Subject" ) ],
-						acl.getPointer( "http://example.com/ns#SubjectClass" ),
-						[ acl.getPointer( "http://example.com/ns#READ" ), acl.getPointer( "http://example.com/ns#WRITE" ) ]
-					);
+					ace = TransientACE.createFrom( acl.createFragment( {
+						granting: true,
+						permissions: [ acl.getPointer( "http://example.com/ns#READ" ), acl.getPointer( "http://example.com/ns#WRITE" ) ],
+						subjects: [ acl.getPointer( "http://example.com/ns#Subject" ) ],
+						subjectsClass: acl.getPointer( "http://example.com/ns#SubjetClass" ),
+					} ) );
 					acl.entries = [ ace ];
 
 					expect( acl.grants( acl.getPointer( "http://example.com/ns#Subject" ), acl.getPointer( "http://example.com/ns#READ" ) ) ).toBe( true );
@@ -2620,13 +2572,12 @@ describe( module( "carbonldp/Auth/TransientACL" ), ():void => {
 
 					expect( acl.entries.length ).toBe( 0 );
 
-					ace = TransientACE.createFrom(
-						acl.createFragment(),
-						true,
-						[ acl.getPointer( "http://example.com/ns#Subject" ) ],
-						acl.getPointer( "http://example.com/ns#SubjectClass" ),
-						[ acl.getPointer( "http://example.com/ns#READ" ), acl.getPointer( "http://example.com/ns#WRITE" ) ]
-					);
+					ace = TransientACE.createFrom( acl.createFragment( {
+						granting: true,
+						permissions: [ acl.getPointer( "http://example.com/ns#READ" ), acl.getPointer( "http://example.com/ns#WRITE" ) ],
+						subjects: [ acl.getPointer( "http://example.com/ns#Subject" ) ],
+						subjectsClass: acl.getPointer( "http://example.com/ns#SubjetClass" ),
+					} ) );
 					acl.entries.push( ace );
 					acl.inheritableEntries = [ ace ];
 
@@ -2646,13 +2597,12 @@ describe( module( "carbonldp/Auth/TransientACL" ), ():void => {
 
 					let ace:TransientACE;
 
-					ace = TransientACE.createFrom(
-						acl.createFragment(),
-						true,
-						[ acl.getPointer( "http://example.com/ns#Subject" ) ],
-						acl.getPointer( "http://example.com/ns#SubjectClass" ),
-						[ acl.getPointer( "http://example.com/ns#READ" ), acl.getPointer( "http://example.com/ns#WRITE" ), acl.getPointer( "http://example.com/ns#CREATE" ) ]
-					);
+					ace = TransientACE.createFrom( acl.createFragment( {
+						granting: true,
+						permissions: [ acl.getPointer( "http://example.com/ns#READ" ), acl.getPointer( "http://example.com/ns#WRITE" ), acl.getPointer( "http://example.com/ns#CREATE" ) ],
+						subjects: [ acl.getPointer( "http://example.com/ns#Subject" ) ],
+						subjectsClass: acl.getPointer( "http://example.com/ns#SubjetClass" ),
+					} ) );
 					acl.entries = [ ace ];
 
 					expect( acl.grants( acl.getPointer( "http://example.com/ns#Subject" ), acl.getPointer( "http://example.com/ns#READ" ) ) ).toBe( true );
@@ -2674,13 +2624,12 @@ describe( module( "carbonldp/Auth/TransientACL" ), ():void => {
 
 					expect( acl.entries.length ).toBe( 0 );
 
-					ace = TransientACE.createFrom(
-						acl.createFragment(),
-						true,
-						[ acl.getPointer( "http://example.com/ns#Subject" ) ],
-						acl.getPointer( "http://example.com/ns#SubjectClass" ),
-						[ acl.getPointer( "http://example.com/ns#READ" ), acl.getPointer( "http://example.com/ns#WRITE" ), acl.getPointer( "http://example.com/ns#CREATE" ) ]
-					);
+					ace = TransientACE.createFrom( acl.createFragment( {
+						granting: true,
+						permissions: [ acl.getPointer( "http://example.com/ns#READ" ), acl.getPointer( "http://example.com/ns#WRITE" ), acl.getPointer( "http://example.com/ns#CREATE" ) ],
+						subjects: [ acl.getPointer( "http://example.com/ns#Subject" ) ],
+						subjectsClass: acl.getPointer( "http://example.com/ns#SubjetClass" ),
+					} ) );
 					acl.entries.push( ace );
 					acl.inheritableEntries = [ ace ];
 
@@ -2711,13 +2660,12 @@ describe( module( "carbonldp/Auth/TransientACL" ), ():void => {
 
 					let ace:TransientACE;
 
-					ace = TransientACE.createFrom(
-						acl.createFragment(),
-						true,
-						[ acl.getPointer( "http://example.com/ns#Subject" ) ],
-						acl.getPointer( "http://example.com/ns#SubjectClass" ),
-						[ acl.getPointer( "http://example.com/ns#READ" ), acl.getPointer( "http://example.com/ns#WRITE" ) ]
-					);
+					ace = TransientACE.createFrom( acl.createFragment( {
+						granting: true,
+						permissions: [ acl.getPointer( "http://example.com/ns#READ" ), acl.getPointer( "http://example.com/ns#WRITE" ) ],
+						subjects: [ acl.getPointer( "http://example.com/ns#Subject" ) ],
+						subjectsClass: acl.getPointer( "http://example.com/ns#SubjetClass" ),
+					} ) );
 					acl.inheritableEntries = [ ace ];
 
 					expect( acl.getChildInheritance( acl.getPointer( "http://example.com/ns#Subject" ), acl.getPointer( "http://example.com/ns#READ" ) ) ).toBe( true );
@@ -2741,13 +2689,12 @@ describe( module( "carbonldp/Auth/TransientACL" ), ():void => {
 
 					expect( acl.inheritableEntries.length ).toBe( 0 );
 
-					ace = TransientACE.createFrom(
-						acl.createFragment(),
-						true,
-						[ acl.getPointer( "http://example.com/ns#Subject" ) ],
-						acl.getPointer( "http://example.com/ns#SubjectClass" ),
-						[ acl.getPointer( "http://example.com/ns#READ" ), acl.getPointer( "http://example.com/ns#WRITE" ) ]
-					);
+					ace = TransientACE.createFrom( acl.createFragment( {
+						granting: true,
+						permissions: [ acl.getPointer( "http://example.com/ns#READ" ), acl.getPointer( "http://example.com/ns#WRITE" ) ],
+						subjects: [ acl.getPointer( "http://example.com/ns#Subject" ) ],
+						subjectsClass: acl.getPointer( "http://example.com/ns#SubjetClass" ),
+					} ) );
 					acl.inheritableEntries.push( ace );
 					acl.entries = [ ace ];
 
@@ -2767,13 +2714,12 @@ describe( module( "carbonldp/Auth/TransientACL" ), ():void => {
 
 					let ace:TransientACE;
 
-					ace = TransientACE.createFrom(
-						acl.createFragment(),
-						true,
-						[ acl.getPointer( "http://example.com/ns#Subject" ) ],
-						acl.getPointer( "http://example.com/ns#SubjectClass" ),
-						[ acl.getPointer( "http://example.com/ns#READ" ), acl.getPointer( "http://example.com/ns#WRITE" ), acl.getPointer( "http://example.com/ns#CREATE" ) ]
-					);
+					ace = TransientACE.createFrom( acl.createFragment( {
+						granting: true,
+						permissions: [ acl.getPointer( "http://example.com/ns#READ" ), acl.getPointer( "http://example.com/ns#WRITE" ), acl.getPointer( "http://example.com/ns#CREATE" ) ],
+						subjects: [ acl.getPointer( "http://example.com/ns#Subject" ) ],
+						subjectsClass: acl.getPointer( "http://example.com/ns#SubjetClass" ),
+					} ) );
 					acl.inheritableEntries = [ ace ];
 
 					expect( acl.getChildInheritance( acl.getPointer( "http://example.com/ns#Subject" ), acl.getPointer( "http://example.com/ns#READ" ) ) ).toBe( true );
@@ -2795,13 +2741,12 @@ describe( module( "carbonldp/Auth/TransientACL" ), ():void => {
 
 					expect( acl.inheritableEntries.length ).toBe( 0 );
 
-					ace = TransientACE.createFrom(
-						acl.createFragment(),
-						true,
-						[ acl.getPointer( "http://example.com/ns#Subject" ) ],
-						acl.getPointer( "http://example.com/ns#SubjectClass" ),
-						[ acl.getPointer( "http://example.com/ns#READ" ), acl.getPointer( "http://example.com/ns#WRITE" ), acl.getPointer( "http://example.com/ns#CREATE" ) ]
-					);
+					ace = TransientACE.createFrom( acl.createFragment( {
+						granting: true,
+						permissions: [ acl.getPointer( "http://example.com/ns#READ" ), acl.getPointer( "http://example.com/ns#WRITE" ), acl.getPointer( "http://example.com/ns#CREATE" ) ],
+						subjects: [ acl.getPointer( "http://example.com/ns#Subject" ) ],
+						subjectsClass: acl.getPointer( "http://example.com/ns#SubjetClass" ),
+					} ) );
 					acl.inheritableEntries.push( ace );
 					acl.entries = [ ace ];
 

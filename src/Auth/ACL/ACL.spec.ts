@@ -1,4 +1,4 @@
-import { Documents } from "../Documents";
+import { Documents } from "../../Documents";
 import {
 	extendsClass,
 	hasMethod,
@@ -12,12 +12,13 @@ import {
 	OPTIONAL,
 	property,
 	STATIC,
-} from "../test/JasmineExtender";
-import * as Utils from "./../Utils";
-
-import { TransientACL } from "./TransientACL";
+} from "../../test/JasmineExtender";
+import * as Utils from "../../Utils";
+import { CS } from "../../Vocabularies";
 
 import { ACL } from "./ACL";
+
+import { TransientACL } from "./TransientACL";
 
 describe( module( "carbonldp/Auth/ACL" ), ():void => {
 
@@ -242,6 +243,18 @@ describe( module( "carbonldp/Auth/ACL" ), ():void => {
 		"Interface with factory, decorate and utils methods for `CarbonLDP.Auth.ACL` objects."
 	), ():void => {
 
+		it( hasProperty(
+			OBLIGATORY,
+			"TYPE",
+			"CarbonLDP.Vocabulary.CS.AccessControlList"
+		), ():void => {} );
+
+		it( hasProperty(
+			OBLIGATORY,
+			"SCHEMA",
+			"CarbonLDP.ObjectSchema"
+		), ():void => {} );
+
 		it( hasMethod(
 			OBLIGATORY,
 			"isDecorated",
@@ -273,6 +286,40 @@ describe( module( "carbonldp/Auth/ACL" ), ():void => {
 		it( isDefined(), ():void => {
 			expect( ACL ).toBeDefined();
 			expect( ACL ).toEqual( jasmine.any( Object ) );
+		} );
+
+		// TODO: Separate in different tests
+		it( "ACL.TYPE", ():void => {
+			expect( ACL.TYPE ).toBeDefined();
+			expect( Utils.isString( ACL.TYPE ) ).toBe( true );
+
+			expect( ACL.TYPE ).toBe( CS.AccessControlList );
+		} );
+
+		// TODO: Separate in different tests
+		it( "ACL.SCHEMA", ():void => {
+			expect( ACL.SCHEMA ).toBeDefined();
+			expect( Utils.isObject( ACL.SCHEMA ) ).toBe( true );
+
+			expect( Utils.hasProperty( ACL.SCHEMA, "entries" ) ).toBe( true );
+			expect( ACL.SCHEMA[ "entries" ] ).toEqual( {
+				"@id": CS.accessControlEntry,
+				"@type": "@id",
+				"@container": "@set",
+			} );
+
+			expect( Utils.hasProperty( ACL.SCHEMA, "accessTo" ) ).toBe( true );
+			expect( ACL.SCHEMA[ "accessTo" ] ).toEqual( {
+				"@id": CS.accessTo,
+				"@type": "@id",
+			} );
+
+			expect( Utils.hasProperty( ACL.SCHEMA, "inheritableEntries" ) ).toBe( true );
+			expect( ACL.SCHEMA[ "inheritableEntries" ] ).toEqual( {
+				"@id": CS.inheritableEntry,
+				"@type": "@id",
+				"@container": "@set",
+			} );
 		} );
 
 		// TODO: Separate in different tests

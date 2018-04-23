@@ -7,30 +7,13 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 }
 Object.defineProperty(exports, "__esModule", { value: true });
-var Pointer_1 = require("../Pointer");
-var Utils = __importStar(require("../Utils"));
-var CS_1 = require("../Vocabularies/CS");
-var Document_1 = require("../Document");
-var TransientACE_1 = require("./TransientACE");
-var SCHEMA = {
-    "entries": {
-        "@id": CS_1.CS.accessControlEntry,
-        "@type": "@id",
-        "@container": "@set",
-    },
-    "accessTo": {
-        "@id": CS_1.CS.accessTo,
-        "@type": "@id",
-    },
-    "inheritableEntries": {
-        "@id": CS_1.CS.inheritableEntry,
-        "@type": "@id",
-        "@container": "@set",
-    },
-};
+var Document_1 = require("../../Document");
+var Pointer_1 = require("../../Pointer");
+var Utils = __importStar(require("../../Utils"));
+var Vocabularies_1 = require("../../Vocabularies");
+var ACE_1 = require("../ACE");
 exports.TransientACL = {
-    TYPE: CS_1.CS.AccessControlList,
-    SCHEMA: SCHEMA,
+    TYPE: Vocabularies_1.CS.AccessControlList,
     isDecorated: function (object) {
         return Utils.hasPropertyDefined(object, "accessTo")
             && Utils.hasFunction(object, "_parsePointer")
@@ -115,12 +98,17 @@ function parsePointers(elements) {
     var elementsArray = Utils.isArray(elements) ? elements : [elements];
     return elementsArray.map(function (element) { return _this._parsePointer(element); });
 }
-function configACE(granting, subject, subjectClass, permissions, aces) {
+function configACE(granting, subject, subjectsClass, permissions, aces) {
     var subjectACEs = aces.filter(function (_) { return _.subjects.length === 1 && _.granting === granting && Pointer_1.Pointer.areEqual(_.subjects[0], subject); });
     var ace;
     if (subjectACEs.length === 0) {
-        ace = TransientACE_1.TransientACE.createFrom(this.createFragment(), granting, [subject], subjectClass, []);
-        aces.push(ace);
+        ace = ACE_1.TransientACE.createFrom({
+            granting: granting,
+            permissions: [],
+            subjects: [subject],
+            subjectsClass: subjectsClass,
+        });
+        aces.push(this.createFragment(ace));
     }
     else {
         ace = subjectACEs[0];

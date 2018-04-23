@@ -10,7 +10,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var tokens_1 = require("sparqler/tokens");
 var AccessPoint_1 = require("./AccessPoint");
 var Auth = __importStar(require("./Auth"));
-var TransientACL_1 = require("./Auth/TransientACL");
 var ACL_1 = require("./Auth/ACL");
 var User_1 = require("./Auth/User");
 var TransientUser_1 = require("./Auth/TransientUser");
@@ -38,7 +37,6 @@ var Fragment_1 = require("./Fragment");
 var ProtectedDocument_1 = require("./ProtectedDocument");
 var Resource_1 = require("./Resource");
 var Pointer_1 = require("./Pointer");
-var ProtectedDocument_2 = require("./ProtectedDocument");
 var Document_3 = require("./RDF/Document");
 var Node_1 = require("./RDF/Node");
 var URI_1 = require("./RDF/URI");
@@ -76,9 +74,9 @@ var Documents = (function () {
         }
         else {
             decorators
-                .set(ProtectedDocument_2.TransientProtectedDocument.TYPE, ProtectedDocument_1.ProtectedDocument.decorate)
+                .set(ProtectedDocument_1.ProtectedDocument.TYPE, ProtectedDocument_1.ProtectedDocument.decorate)
                 .set(TransientUser_1.TransientUser.TYPE, User_1.User.decorate)
-                .set(TransientACL_1.TransientACL.TYPE, ACL_1.ACL.decorate)
+                .set(ACL_1.ACL.TYPE, ACL_1.ACL.decorate)
                 .set(Auth.Role.RDF_CLASS, Auth.PersistedRole.Factory.decorate);
         }
         this._documentDecorators = decorators;
