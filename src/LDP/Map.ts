@@ -1,4 +1,5 @@
 import { ModelFactory } from "../core/ModelFactory";
+import { ModelSchema } from "../core/ModelSchema";
 import { ObjectSchema } from "../ObjectSchema";
 import { TransientResource } from "../Resource";
 import { C } from "../Vocabularies/C";
@@ -10,8 +11,8 @@ export interface Map<K, V> extends TransientResource {
 }
 
 
-export interface MapFactory extends ModelFactory<Map<any, any>> {
-	TYPE:string;
+export interface MapFactory extends ModelSchema {
+	TYPE:C[ "Map" ];
 	SCHEMA:ObjectSchema;
 
 	is( object:object ):object is Map<any, any>;

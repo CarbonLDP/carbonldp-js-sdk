@@ -284,12 +284,12 @@ var Documents = (function () {
         var _this = this;
         if (requestOptions === void 0) { requestOptions = {}; }
         return Utils_3.promiseMethod(function () {
-            var pointers = _this._parseMembers(members);
+            var targetMembers = _this._parseMembers(members);
             documentURI = _this._getRequestURI(documentURI);
             _this._setDefaultRequestOptions(requestOptions, LDP_1.LDP.Container);
             Request_1.RequestUtils.setContentTypeHeader("application/ld+json", requestOptions);
-            var freeResources = FreeResources_1.FreeResources.create(_this);
-            freeResources.createResourceFrom(AddMemberAction_1.AddMemberAction.create(pointers));
+            var freeResources = FreeResources_1.FreeResources.createFrom({ _documents: _this });
+            freeResources.createResourceFrom(AddMemberAction_1.AddMemberAction.createFrom({ targetMembers: targetMembers }));
             var body = JSON.stringify(freeResources);
             return _this
                 ._sendRequest(HTTPMethod_1.HTTPMethod.PUT, documentURI, requestOptions, body)
@@ -304,7 +304,7 @@ var Documents = (function () {
         var _this = this;
         if (requestOptions === void 0) { requestOptions = {}; }
         return Utils_3.promiseMethod(function () {
-            var pointers = _this._parseMembers(members);
+            var targetMembers = _this._parseMembers(members);
             documentURI = _this._getRequestURI(documentURI);
             _this._setDefaultRequestOptions(requestOptions, LDP_1.LDP.Container);
             Request_1.RequestUtils.setContentTypeHeader("application/ld+json", requestOptions);
@@ -313,8 +313,8 @@ var Documents = (function () {
                 omit: [C_1.C.PreferMembershipTriples],
             };
             Request_1.RequestUtils.setRetrievalPreferences(containerRetrievalPreferences, requestOptions);
-            var freeResources = FreeResources_1.FreeResources.create(_this);
-            freeResources.createResourceFrom(RemoveMemberAction_1.RemoveMemberAction.create(pointers));
+            var freeResources = FreeResources_1.FreeResources.createFrom({ _documents: _this });
+            freeResources.createResourceFrom(RemoveMemberAction_1.RemoveMemberAction.createFrom({ targetMembers: targetMembers }));
             var body = JSON.stringify(freeResources);
             return _this
                 ._sendRequest(HTTPMethod_1.HTTPMethod.DELETE, documentURI, requestOptions, body)
@@ -593,7 +593,7 @@ var Documents = (function () {
         return persistedDocument;
     };
     Documents.prototype._getFreeResources = function (nodes) {
-        var freeResourcesDocument = FreeResources_1.FreeResources.create(this);
+        var freeResourcesDocument = FreeResources_1.FreeResources.createFrom({ _documents: this });
         var resources = nodes.map(function (node) { return freeResourcesDocument.createResource(node["@id"]); });
         this._compact(nodes, resources, freeResourcesDocument);
         return freeResourcesDocument;

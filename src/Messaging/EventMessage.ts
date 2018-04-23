@@ -1,9 +1,7 @@
-import { ModelFactory } from "../core/ModelFactory";
 import { ObjectSchema } from "../ObjectSchema";
 import { Pointer } from "../Pointer";
 import { TransientResource } from "../Resource";
-import { hasProperty } from "../Utils";
-import { C } from "../Vocabularies/C";
+import { C } from "../Vocabularies";
 
 
 export interface EventMessage extends TransientResource {
@@ -11,10 +9,10 @@ export interface EventMessage extends TransientResource {
 }
 
 
-export interface EventMessageFactory extends ModelFactory<EventMessage> {
+export interface EventMessageFactory {
 	SCHEMA:ObjectSchema;
 
-	isDecorated( object:object ):object is EventMessage;
+	is( value:any ):value is EventMessage;
 }
 
 const SCHEMA:ObjectSchema = {
@@ -27,8 +25,10 @@ const SCHEMA:ObjectSchema = {
 export const EventMessage:EventMessageFactory = {
 	SCHEMA,
 
-	isDecorated( object:object ):object is EventMessage {
-		return hasProperty( object, "target" );
+	is( value:any ):value is EventMessage {
+		return TransientResource.is( value )
+			&& value.hasOwnProperty( "target" )
+			;
 	},
 };
 

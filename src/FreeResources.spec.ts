@@ -25,6 +25,21 @@ import {
 describe( module( "carbonldp/FreeResources" ), ():void => {
 
 	describe( interfaze(
+		"CarbonLDP.BaseFreeResources",
+		"Interface for the basic properties to create a free resources container."
+	), ():void => {
+
+		it( hasProperty(
+			OBLIGATORY,
+			"_documents",
+			"CarbonLDP.Documents",
+			"A `CarbonLDP.Documents` object where the FreeResources scope is in."
+		), ():void => {
+		} );
+
+	} );
+
+	describe( interfaze(
 		"CarbonLDP.FreeResources",
 		"Interface that represents a set of free resources."
 	), ():void => {
@@ -135,8 +150,9 @@ describe( module( "carbonldp/FreeResources" ), ():void => {
 		it( hasMethod(
 			OBLIGATORY,
 			"create",
+			[ "T extends object" ],
 			"Creates a empty `CarbonLDP.FreeResources` object.", [
-				{ name: "documents", type: "CarbonLDP.Documents", description: "A `CarbonLDP.Documents` object where the FreeResources scope is in." },
+				{ name: "data", type: "T & CarbonLDP.BaseFreeResources", description: "Data to be used in the creation of the free resources container." },
 			],
 			{ type: "CarbonLDP.FreeResources" }
 		), ():void => {} );
@@ -146,8 +162,7 @@ describe( module( "carbonldp/FreeResources" ), ():void => {
 			"createFrom",
 			[ "T extends object" ],
 			"Creates a `CarbonLDP.FreeResources` object from the plain object provided.", [
-				{ name: "object", type: "T", description: "The object that wants be converted in a `CarbonLDP.FreeResources`." },
-				{ name: "documents", type: "CarbonLDP.Documents", description: "A `CarbonLDP.Documents` object where the FreeResources scope is in." },
+				{ name: "object", type: "T & CarbonLDP.BaseFreeResources", description: "The object that wants be converted in a `CarbonLDP.FreeResources`." },
 			],
 			{ type: "T & CarbonLDP.FreeResources" }
 		), ():void => {} );
@@ -248,7 +263,7 @@ describe( module( "carbonldp/FreeResources" ), ():void => {
 			expect( FreeResources.create ).toEqual( jasmine.any( Function ) );
 
 			let documents:Documents = new Documents();
-			let freeResources:FreeResources = FreeResources.create( documents );
+			let freeResources:FreeResources = FreeResources.create( { _documents: documents } );
 
 			expect( freeResources ).toBeTruthy();
 			expect( FreeResources.isDecorated( freeResources ) );
@@ -261,7 +276,7 @@ describe( module( "carbonldp/FreeResources" ), ():void => {
 
 			let documents:Documents = new Documents();
 
-			let freeResources:FreeResources = FreeResources.createFrom( {}, documents );
+			let freeResources:FreeResources = FreeResources.createFrom( { _documents: documents } );
 			expect( freeResources ).toBeTruthy();
 			expect( FreeResources.isDecorated( freeResources ) );
 
@@ -269,7 +284,7 @@ describe( module( "carbonldp/FreeResources" ), ():void => {
 				myProperty:string;
 			}
 
-			let myFreeResources:FreeResources & My = FreeResources.createFrom( { myProperty: "The property" }, documents );
+			let myFreeResources:FreeResources & My = FreeResources.createFrom( { myProperty: "The property", _documents: documents } );
 			expect( myFreeResources ).toBeTruthy();
 			expect( FreeResources.isDecorated( myFreeResources ) );
 			expect( myFreeResources.myProperty ).toBeDefined();
@@ -337,7 +352,7 @@ describe( module( "carbonldp/FreeResources" ), ():void => {
 				context = new MockedContext();
 				documents = new Documents( context );
 
-				freeResources = FreeResources.create( documents );
+				freeResources = FreeResources.create( { _documents: documents } );
 			} );
 
 			// TODO: Test in `FreeResources.decorate`

@@ -1,8 +1,11 @@
-import { Documents } from "./Documents";
 import { ModelDecorator } from "./core/ModelDecorator";
 import { ModelFactory } from "./core/ModelFactory";
+import { Documents } from "./Documents";
 import { PointerLibrary, PointerValidator } from "./Pointer";
 import { TransientResource } from "./Resource";
+export interface BaseFreeResources {
+    _documents: Documents;
+}
 export interface FreeResources extends PointerLibrary, PointerValidator {
     _documents: Documents;
     _resourcesIndex: Map<string, TransientResource>;
@@ -15,10 +18,10 @@ export interface FreeResources extends PointerLibrary, PointerValidator {
     toJSON(): object;
 }
 export interface FreeResourcesFactory extends ModelFactory<FreeResources>, ModelDecorator<FreeResources> {
-    is(object: object): object is FreeResources;
+    is(value: any): value is FreeResources;
     isDecorated(object: object): object is FreeResources;
-    create(documents: Documents): FreeResources;
-    createFrom<T extends object>(object: T, documents: Documents): T & FreeResources;
+    create<T extends object>(data: T & BaseFreeResources): T & FreeResources;
+    createFrom<T extends object>(object: T & BaseFreeResources): T & FreeResources;
     decorate<T extends object>(object: T, documents: Documents): T & FreeResources;
 }
 export declare const FreeResources: FreeResourcesFactory;

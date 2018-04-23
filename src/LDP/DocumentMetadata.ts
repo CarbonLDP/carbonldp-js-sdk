@@ -1,13 +1,11 @@
 import { TransientBlankNode } from "../BlankNode";
-import { ObjectSchema } from "../ObjectSchema";
+import { ModelSchema } from "../core/ModelSchema";
 import { Document } from "../Document";
-import * as Utils from "../Utils";
+import { ObjectSchema } from "../ObjectSchema";
 import { C } from "../Vocabularies/C";
 import { XSD } from "../Vocabularies/XSD";
 import { Map } from "./Map";
 import { VolatileResource } from "./VolatileResource";
-import { ModelFactory } from "../core/ModelFactory";
-import { ModelDecorator } from "../core/ModelDecorator";
 
 export interface DocumentMetadata extends VolatileResource {
 	relatedDocument:Document;
@@ -16,13 +14,9 @@ export interface DocumentMetadata extends VolatileResource {
 }
 
 
-export interface DocumentMetadataFactory extends ModelFactory<DocumentMetadata>, ModelDecorator<DocumentMetadata> {
-	TYPE:string;
+export interface DocumentMetadataFactory extends ModelSchema {
+	TYPE:C[ "DocumentMetadata" ];
 	SCHEMA:ObjectSchema;
-
-	isDecorated( object:object ):object is DocumentMetadata;
-
-	is( object:object ):object is DocumentMetadata;
 }
 
 const SCHEMA:ObjectSchema = {
@@ -43,16 +37,4 @@ const SCHEMA:ObjectSchema = {
 export const DocumentMetadata:DocumentMetadataFactory = {
 	TYPE: C.DocumentMetadata,
 	SCHEMA,
-
-	isDecorated( object:object ):object is DocumentMetadata {
-		return Utils.hasPropertyDefined( object, "relatedDocument" );
-	},
-
-	is( object:object ):object is DocumentMetadata {
-		return VolatileResource.is( object )
-			&& object.hasType( DocumentMetadata.TYPE )
-			&& DocumentMetadata.isDecorated( object )
-			;
-	},
-
 };

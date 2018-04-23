@@ -41,16 +41,19 @@ describe( module( "carbonldp/LDP/VolatileResource" ), ():void => {
 			OBLIGATORY,
 			"is",
 			"Return true if the object provided is considered a `CarbonLDP.LDP.VolatileResource` object.", [
-				{ name: "object", type: "object", description: "Object to check." },
+				{ name: "value", type: "any", description: "Object to check." },
 			],
-			{ type: "object is CarbonLDP.LDP.VolatileResource" }
+			{ type: "value is CarbonLDP.LDP.VolatileResource" }
 		), ():void => {} );
 
 		it( hasMethod(
 			OBLIGATORY,
 			"create",
-			"Creates empty `CarbonLDP.LDP.VolatileResource` object.",
-			{ type: "CarbonLDP.LDP.VolatileResource" }
+			[ "T extends object" ],
+			"Creates empty `CarbonLDP.LDP.VolatileResource` object.", [
+				{ name: "data", type: "T", optional: true },
+			],
+			{ type: "T & CarbonLDP.LDP.VolatileResource" }
 		), ():void => {} );
 
 		it( hasMethod(

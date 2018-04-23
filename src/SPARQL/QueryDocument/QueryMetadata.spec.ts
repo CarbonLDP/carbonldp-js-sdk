@@ -63,9 +63,9 @@ describe( module( "carbonldp/SPARQL/QueryDocument/QueryMetadata" ), ():void => {
 			it( hasSignature(
 				"Asserts if the provided object can be defined as a QueryMetadata resource.",
 				[
-					{ name: "object", type: "object", description: "The object to check." },
+					{ name: "value", type: "any", description: "The value to check." },
 				],
-				{ type: "object is CarbonLDP.SPARQL.QueryDocument.QueryMetadata" }
+				{ type: "value is CarbonLDP.SPARQL.QueryDocument.QueryMetadata" }
 			), ():void => {} );
 
 		} );

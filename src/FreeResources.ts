@@ -1,9 +1,9 @@
+import { ModelDecorator } from "./core/ModelDecorator";
+import { ModelFactory } from "./core/ModelFactory";
 import { Documents } from "./Documents";
 import { IDAlreadyInUseError } from "./Errors/IDAlreadyInUseError";
 import { IllegalArgumentError } from "./Errors/IllegalArgumentError";
 import { JSONLDConverter } from "./JSONLD/Converter";
-import { ModelDecorator } from "./core/ModelDecorator";
-import { ModelFactory } from "./core/ModelFactory";
 import { DigestedObjectSchema } from "./ObjectSchema";
 import {
 	Pointer,
@@ -14,6 +14,12 @@ import { RDFNode } from "./RDF/Node";
 import { URI } from "./RDF/URI";
 import { TransientResource } from "./Resource";
 import * as Utils from "./Utils";
+
+
+export interface BaseFreeResources {
+	_documents:Documents;
+}
+
 
 export interface FreeResources extends PointerLibrary, PointerValidator {
 	_documents:Documents;
@@ -36,14 +42,14 @@ export interface FreeResources extends PointerLibrary, PointerValidator {
 
 
 export interface FreeResourcesFactory extends ModelFactory<FreeResources>, ModelDecorator<FreeResources> {
-	is( object:object ):object is FreeResources;
+	is( value:any ):value is FreeResources;
 
 	isDecorated( object:object ):object is FreeResources;
 
 
-	create( documents:Documents ):FreeResources;
+	create<T extends object>( data:T & BaseFreeResources ):T & FreeResources;
 
-	createFrom<T extends object>( object:T, documents:Documents ):T & FreeResources;
+	createFrom<T extends object>( object:T & BaseFreeResources ):T & FreeResources;
 
 	decorate<T extends object>( object:T, documents:Documents ):T & FreeResources;
 }
@@ -123,8 +129,8 @@ function toJSON( this:FreeResources, key?:string ):RDFNode[] {
 }
 
 export const FreeResources:FreeResourcesFactory = {
-	is( object:object ):object is FreeResources {
-		return FreeResources.isDecorated( object )
+	is( value:any ):value is FreeResources {
+		return FreeResources.isDecorated( value )
 			;
 	},
 
@@ -149,12 +155,13 @@ export const FreeResources:FreeResourcesFactory = {
 	},
 
 
-	create( documents:Documents ):FreeResources {
-		return FreeResources.createFrom( {}, documents );
+	create<T extends object>( data:T & BaseFreeResources ):T &FreeResources {
+		const copy:T & BaseFreeResources = Object.assign( {}, data );
+		return FreeResources.createFrom( copy );
 	},
 
-	createFrom<T extends object>( object:T, documents:Documents ):T & FreeResources {
-		return FreeResources.decorate<T>( object, documents );
+	createFrom<T extends object>( object:T & BaseFreeResources ):T & FreeResources {
+		return FreeResources.decorate<T>( object, object._documents );
 	},
 
 	decorate<T extends object>( object:T, documents:Documents ):T & FreeResources {

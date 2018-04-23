@@ -19,6 +19,22 @@ import { AddMemberAction } from "./AddMemberAction";
 describe( module( "carbonldp/LDP/AddMemberAction" ), ():void => {
 
 	describe( interfaze(
+		"CarbonLDP.LDP.BaseAddMemberAction",
+		"Interface that represents an object to be sent in a request that add members to a container."
+	), ():void => {
+
+		it( hasProperty(
+			OBLIGATORY,
+			"targetMembers",
+			"CarbonLDP.Pointer[]",
+			"The target members to add in a `addMember` request."
+		), ():void => {
+		} );
+
+	} );
+
+
+	describe( interfaze(
 		"CarbonLDP.LDP.AddMemberAction",
 		"Interface that represents an object to be sent in a request that add members to a container."
 	), ():void => {
@@ -53,18 +69,29 @@ describe( module( "carbonldp/LDP/AddMemberAction" ), ():void => {
 
 		it( hasMethod(
 			STATIC,
-			"isDecorated",
-			"Returns true if the object has the properties of a `CarbonLDP.LDP.AddMemberAction` object.", [
-				{ name: "object", type: "object" },
+			"is",
+			"Returns true if the object is considered a `CarbonLDP.LDP.AddMemberAction` object.", [
+				{ name: "value", type: "any" },
 			],
-			{ type: "object is CarbonLDP.LDP.AddMemberAction" }
+			{ type: "value is CarbonLDP.LDP.AddMemberAction" }
 		), ():void => {} );
 
 		it( hasMethod(
 			STATIC,
 			"create",
+			[ "T extends object" ],
 			"Creates `CarbonLDP.LDP.AddMemberAction` resource for the specified targetMembers.", [
-				{ name: "targetMembers", type: "CarbonLDP.Pointer[]", description: "The target members to add in a `addMember` request." },
+				{ name: "data", type: "T & CarbonLDP.LDP.BaseAddMemberAction", description: "Data to be used in the creation of an add member action." },
+			],
+			{ type: "CarbonLDP.LDP.AddMemberAction" }
+		), ():void => {} );
+
+		it( hasMethod(
+			STATIC,
+			"createFrom",
+			[ "T extends object" ],
+			"Creates `CarbonLDP.LDP.AddMemberAction` resource for the specified targetMembers.", [
+				{ name: "object", type: "T & CarbonLDP.LDP.BaseAddMemberAction", description: "Object to be converted into an add member action." },
 			],
 			{ type: "CarbonLDP.LDP.AddMemberAction" }
 		), ():void => {} );
@@ -106,39 +133,25 @@ describe( module( "carbonldp/LDP/AddMemberAction" ), ():void => {
 		} );
 
 
-		// TODO: Separate in different tests
-		it( "AddMemberAction.isDecorated", ():void => {
-			expect( AddMemberAction.isDecorated ).toBeDefined();
-			expect( Utils.isFunction( AddMemberAction.isDecorated ) ).toBe( true );
-
-			let object:any = void 0;
-			expect( AddMemberAction.isDecorated( object ) ).toBe( false );
-
-			object = {
-				targetMembers: null,
-			};
-			expect( AddMemberAction.isDecorated( object ) ).toBe( true );
-
-			delete object.targetMembers;
-			expect( AddMemberAction.isDecorated( object ) ).toBe( false );
-			object.targetMembers = null;
-		} );
+		// TODO: Test `is`
 
 		// TODO: Separate in different tests
 		it( "AddMemberAction.create", ():void => {
 			expect( AddMemberAction.create ).toBeDefined();
 			expect( Utils.isFunction( AddMemberAction.create ) ).toBe( true );
 
-			const pointers:Pointer[] = [];
-			pointers.push( Pointer.create( { id: "the-pointer/" } ) );
+			const targetMembers:Pointer[] = [];
+			targetMembers.push( Pointer.create( { id: "the-pointer/" } ) );
 
-			const addMemberAction:AddMemberAction = AddMemberAction.create( pointers );
+			const addMemberAction:AddMemberAction = AddMemberAction.create( { targetMembers } );
 
 			expect( TransientResource.is( addMemberAction ) ).toBe( true );
-			expect( AddMemberAction.isDecorated( addMemberAction ) ).toBe( true );
-			expect( addMemberAction.targetMembers ).toEqual( pointers );
+			expect( AddMemberAction.is( addMemberAction ) ).toBe( true );
+			expect( addMemberAction.targetMembers ).toEqual( targetMembers );
 			expect( addMemberAction.types ).toContain( AddMemberAction.TYPE );
 		} );
+
+		// TODO: Test `createFrom`
 
 	} );
 

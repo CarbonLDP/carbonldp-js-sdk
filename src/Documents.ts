@@ -401,14 +401,14 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 	addMembers( documentURI:string, members:(Pointer | string)[], requestOptions?:RequestOptions ):Promise<void>;
 	addMembers( documentURI:string, members:(Pointer | string)[], requestOptions:RequestOptions = {} ):Promise<void> {
 		return promiseMethod( () => {
-			const pointers:Pointer[] = this._parseMembers( members );
+			const targetMembers:Pointer[] = this._parseMembers( members );
 
 			documentURI = this._getRequestURI( documentURI );
 			this._setDefaultRequestOptions( requestOptions, LDP.Container );
 			RequestUtils.setContentTypeHeader( "application/ld+json", requestOptions );
 
-			const freeResources:FreeResources = FreeResources.create( this );
-			freeResources.createResourceFrom( AddMemberAction.create( pointers ) );
+			const freeResources:FreeResources = FreeResources.createFrom( { _documents: this } );
+			freeResources.createResourceFrom( AddMemberAction.createFrom( { targetMembers } ) );
 
 			const body:string = JSON.stringify( freeResources );
 
@@ -426,7 +426,7 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 
 	removeMembers( documentURI:string, members:(Pointer | string)[], requestOptions:RequestOptions = {} ):Promise<void> {
 		return promiseMethod( () => {
-			const pointers:Pointer[] = this._parseMembers( members );
+			const targetMembers:Pointer[] = this._parseMembers( members );
 
 			documentURI = this._getRequestURI( documentURI );
 			this._setDefaultRequestOptions( requestOptions, LDP.Container );
@@ -438,8 +438,8 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 			};
 			RequestUtils.setRetrievalPreferences( containerRetrievalPreferences, requestOptions );
 
-			const freeResources:FreeResources = FreeResources.create( this );
-			freeResources.createResourceFrom( RemoveMemberAction.create( pointers ) );
+			const freeResources:FreeResources = FreeResources.createFrom( { _documents: this } );
+			freeResources.createResourceFrom( RemoveMemberAction.createFrom( { targetMembers } ) );
 
 			const body:string = JSON.stringify( freeResources );
 
@@ -745,7 +745,7 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 	}
 
 	_getFreeResources( nodes:RDFNode[] ):FreeResources {
-		let freeResourcesDocument:FreeResources = FreeResources.create( this );
+		let freeResourcesDocument:FreeResources = FreeResources.createFrom( { _documents: this } );
 
 		let resources:TransientResource[] = nodes.map( node => freeResourcesDocument.createResource( node[ "@id" ] ) );
 		this._compact( nodes, resources, freeResourcesDocument );

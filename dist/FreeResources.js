@@ -71,8 +71,8 @@ function toJSON(key) {
     });
 }
 exports.FreeResources = {
-    is: function (object) {
-        return exports.FreeResources.isDecorated(object);
+    is: function (value) {
+        return exports.FreeResources.isDecorated(value);
     },
     isDecorated: function (object) {
         return (Utils.hasPropertyDefined(object, "_documents") &&
@@ -87,11 +87,12 @@ exports.FreeResources = {
             Utils.hasFunction(object, "inScope") &&
             Utils.hasFunction(object, "toJSON"));
     },
-    create: function (documents) {
-        return exports.FreeResources.createFrom({}, documents);
+    create: function (data) {
+        var copy = Object.assign({}, data);
+        return exports.FreeResources.createFrom(copy);
     },
-    createFrom: function (object, documents) {
-        return exports.FreeResources.decorate(object, documents);
+    createFrom: function (object) {
+        return exports.FreeResources.decorate(object, object._documents);
     },
     decorate: function (object, documents) {
         if (exports.FreeResources.isDecorated(object))

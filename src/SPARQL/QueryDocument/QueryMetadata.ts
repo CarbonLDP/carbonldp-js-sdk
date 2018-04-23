@@ -1,8 +1,8 @@
-import { VolatileResource } from "../../LDP/VolatileResource";
-import { ModelFactory } from "../../core/ModelFactory";
+import { ModelSchema } from "../../core/ModelSchema";
+import { VolatileResource } from "../../LDP";
 import { ObjectSchema } from "../../ObjectSchema";
 import { Pointer } from "../../Pointer";
-import { C } from "../../Vocabularies/C";
+import { C } from "../../Vocabularies";
 
 
 export interface QueryMetadata extends VolatileResource {
@@ -10,11 +10,11 @@ export interface QueryMetadata extends VolatileResource {
 }
 
 
-export interface QueryMetadataFactory extends ModelFactory<QueryMetadata> {
+export interface QueryMetadataFactory extends ModelSchema {
 	TYPE:string;
 	SCHEMA:ObjectSchema;
 
-	is( object:object ):object is QueryMetadata;
+	is( value:any ):value is QueryMetadata;
 }
 
 const SCHEMA:ObjectSchema = {
@@ -29,9 +29,9 @@ export const QueryMetadata:QueryMetadataFactory = {
 	TYPE: C.QueryMetadata,
 	SCHEMA,
 
-	is( object:object ):object is QueryMetadata {
-		return VolatileResource.is( object )
-			&& object.hasType( QueryMetadata.TYPE );
+	is( value:any ):value is QueryMetadata {
+		return VolatileResource.is( value )
+			&& value.hasType( QueryMetadata.TYPE );
 	},
 
 };

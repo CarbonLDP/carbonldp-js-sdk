@@ -1,13 +1,13 @@
-import { VolatileResource } from "../../LDP/VolatileResource";
-import { ModelFactory } from "../../core/ModelFactory";
+import { ModelSchema } from "../../core/ModelSchema";
+import { VolatileResource } from "../../LDP";
 import { ObjectSchema } from "../../ObjectSchema";
 import { Pointer } from "../../Pointer";
 export interface QueryMetadata extends VolatileResource {
     target: Pointer;
 }
-export interface QueryMetadataFactory extends ModelFactory<QueryMetadata> {
+export interface QueryMetadataFactory extends ModelSchema {
     TYPE: string;
     SCHEMA: ObjectSchema;
-    is(object: object): object is QueryMetadata;
+    is(value: any): value is QueryMetadata;
 }
 export declare const QueryMetadata: QueryMetadataFactory;

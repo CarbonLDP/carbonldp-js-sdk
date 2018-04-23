@@ -1,4 +1,4 @@
-import { ModelFactory } from "../core/ModelFactory";
+import { ModelSchema } from "../core/ModelSchema";
 import { ObjectSchema } from "../ObjectSchema";
 import { TransientResource } from "../Resource";
 import { C } from "../Vocabularies/C";
@@ -13,8 +13,8 @@ export interface ErrorResponse extends TransientResource {
 }
 
 
-export interface ErrorResponseFactory extends ModelFactory<ErrorResponse> {
-	TYPE:string;
+export interface ErrorResponseFactory extends ModelSchema {
+	TYPE:C[ "ErrorResponse" ];
 	SCHEMA:ObjectSchema;
 
 	getMessage( errorResponse:ErrorResponse ):string;

@@ -1,4 +1,5 @@
-import { ModelFactory } from "../core/ModelFactory";
+import { TokenCredentials } from "../Auth";
+import { ModelSchema } from "../core/ModelSchema";
 import { ObjectSchema } from "../ObjectSchema";
 import {
 	C,
@@ -6,7 +7,6 @@ import {
 } from "../Vocabularies";
 import { DocumentMetadata } from "./DocumentMetadata";
 import { VolatileResource } from "./VolatileResource";
-import { TokenCredentials } from "../Auth";
 
 
 export interface ResponseMetadata extends VolatileResource {
@@ -15,8 +15,8 @@ export interface ResponseMetadata extends VolatileResource {
 }
 
 
-export interface ResponseMetadataFactory extends ModelFactory<ResponseMetadata> {
-	TYPE:string;
+export interface ResponseMetadataFactory extends ModelSchema {
+	TYPE:C[ "ResponseMetadata" ];
 	SCHEMA:ObjectSchema;
 
 	is( object:object ):object is ResponseMetadata;
