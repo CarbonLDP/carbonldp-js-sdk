@@ -23,7 +23,7 @@ import {
 
 import { Authenticator } from "./Authenticator";
 
-import { PersistedUser } from "./PersistedUser";
+import { User } from "./User";
 
 describe( module( "carbonldp/Auth/Authenticator" ), ():void => {
 
@@ -42,11 +42,11 @@ describe( module( "carbonldp/Auth/Authenticator" ), ():void => {
 		} );
 
 
-		function createMockAuthenticator( data?:{ credentials?:object, header?:string, user?:PersistedUser } ):Authenticator<object, object> {
+		function createMockAuthenticator( data?:{ credentials?:object, header?:string, user?:User } ):Authenticator<object, object> {
 			return new class extends Authenticator<object, object> {
 
 				protected _credentials:object = data && data.credentials;
-				protected _authenticatedUser:PersistedUser = data && data.user;
+				protected _authenticatedUser:User = data && data.user;
 
 				authenticate():Promise<object> {
 					throw new Error( "Method not implemented." );
@@ -241,7 +241,7 @@ describe( module( "carbonldp/Auth/Authenticator" ), ():void => {
 				"If the authenticator is authenticated, request the authenticated user using the st credentials.", [
 					{ name: "requestOptions", type: "CarbonLDP.HTTP.GETOptions", description: "The request options object where to add the authentication header." },
 				],
-				{ type: "CarbonLDP.Auth.PersistedUser" }
+				{ type: "CarbonLDP.Auth.User" }
 			), ():void => {} );
 
 			beforeEach( ():void => {
@@ -305,7 +305,7 @@ describe( module( "carbonldp/Auth/Authenticator" ), ():void => {
 				authenticator
 					.getAuthenticatedUser()
 					.then( user => {
-						expect( user ).toEqual( anyThatMatches( PersistedUser.is, "PersistedUser" ) as any );
+						expect( user ).toEqual( anyThatMatches( User.is, "User" ) as any );
 						expect( user ).toEqual( jasmine.objectContaining( {
 							_resolved: false,
 							types: jasmine.arrayContaining( [ CS.User ] ) as any as string[],
@@ -332,7 +332,7 @@ describe( module( "carbonldp/Auth/Authenticator" ), ():void => {
 			} );
 
 			it( "should retrieve user if already exists in the authenticator", ( done:DoneFn ):void => {
-				const mockUser:PersistedUser = { the: "user" } as any;
+				const mockUser:User = { the: "user" } as any;
 				const authenticator:Authenticator<any, any> = createMockAuthenticator( { credentials: {}, header: "the-header-value", user: mockUser } );
 
 				authenticator

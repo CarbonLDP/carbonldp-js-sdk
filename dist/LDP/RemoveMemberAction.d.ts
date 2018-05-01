@@ -1,15 +1,19 @@
-import { ModelDecorator } from "../ModelDecorator";
-import { ModelFactory } from "../ModelFactory";
+import { ModelFactory } from "../core/ModelFactory";
 import { ObjectSchema } from "../ObjectSchema";
 import { Pointer } from "../Pointer";
-import { Resource } from "../Resource";
-export interface RemoveMemberAction extends Resource {
+import { BaseResource, TransientResource } from "../Resource";
+import { C } from "../Vocabularies";
+export interface BaseRemoveMemberAction extends BaseResource {
     targetMembers: Pointer[];
 }
-export interface RemoveMemberActionFactory extends ModelDecorator<RemoveMemberAction>, ModelFactory<RemoveMemberAction> {
-    TYPE: string;
+export interface RemoveMemberAction extends TransientResource {
+    targetMembers: Pointer[];
+}
+export interface RemoveMemberActionFactory extends ModelFactory<RemoveMemberAction> {
+    TYPE: C["RemoveMemberAction"];
     SCHEMA: ObjectSchema;
-    isDecorated(object: object): object is RemoveMemberAction;
-    create(targetMembers: Pointer[]): RemoveMemberAction;
+    is(value: any): value is RemoveMemberAction;
+    create<T extends object>(data: T & BaseRemoveMemberAction): T & RemoveMemberAction;
+    createFrom<T extends object>(object: T & BaseRemoveMemberAction): T & RemoveMemberAction;
 }
 export declare const RemoveMemberAction: RemoveMemberActionFactory;

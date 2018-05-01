@@ -1,4 +1,4 @@
-import { Resource } from "../Resource";
+import { TransientResource } from "../Resource";
 import {
 	extendsClass,
 	hasMethod,
@@ -43,7 +43,7 @@ describe( module( "carbonldp/LDP/DocumentMetadata" ), ():void => {
 		it( hasProperty(
 			OBLIGATORY,
 			"bNodesMap",
-			"CarbonLDP.LDP.Map<CarbonLDP.BlankNode, CarbonLDP.BlankNode>",
+			"CarbonLDP.LDP.Map<CarbonLDP.TransientBlankNode, CarbonLDP.TransientBlankNode>",
 			"A `c:Map` object that contains the changes of persisted BNode IDs."
 		), ():void => {} );
 
@@ -65,24 +65,6 @@ describe( module( "carbonldp/LDP/DocumentMetadata" ), ():void => {
 			OBLIGATORY,
 			"SCHEMA",
 			"CarbonLDP.ObjectSchema"
-		), ():void => {} );
-
-		it( hasMethod(
-			OBLIGATORY,
-			"isDecorated",
-			"Return true if the object provided has the properties of a `CarbonLDP.LDP.DocumentMetadata` object.", [
-				{ name: "object", type: "object", description: "Object to check." },
-			],
-			{ type: "object is CarbonLDP.LDP.DocumentMetadata" }
-		), ():void => {} );
-
-		it( hasMethod(
-			OBLIGATORY,
-			"is",
-			"Return true if the object provided is considered a `CarbonLDP.LDP.DocumentMetadata` object.", [
-				{ name: "object", type: "object", description: "Object to check." },
-			],
-			{ type: "object is CarbonLDP.LDP.DocumentMetadata" }
 		), ():void => {} );
 
 	} );
@@ -132,75 +114,6 @@ describe( module( "carbonldp/LDP/DocumentMetadata" ), ():void => {
 				"@type": "@id",
 			} );
 
-		} );
-
-		// TODO: Separate in different tests
-		it( "DocumentMetadata.isDecorated", ():void => {
-			expect( DocumentMetadata.isDecorated ).toBeDefined();
-			expect( Utils.isFunction( DocumentMetadata.isDecorated ) ).toBe( true );
-
-			let object:Partial<DocumentMetadata> = void 0;
-			expect( DocumentMetadata.isDecorated( object ) ).toBe( false );
-
-			object = {
-				relatedDocument: null,
-				eTag: null,
-				bNodesMap: null,
-			};
-			expect( DocumentMetadata.isDecorated( object ) ).toBe( true );
-
-			delete object.relatedDocument;
-			expect( DocumentMetadata.isDecorated( object ) ).toBe( false );
-			object.relatedDocument = null;
-
-			delete object.eTag;
-			expect( DocumentMetadata.isDecorated( object ) ).toBe( true );
-			object.eTag = null;
-
-			delete object.bNodesMap;
-			expect( DocumentMetadata.isDecorated( object ) ).toBe( true );
-			object.bNodesMap = null;
-		} );
-
-		// TODO: Separate in different tests
-		it( "DocumentMetadata.is", ():void => {
-			expect( DocumentMetadata.is ).toBeDefined();
-			expect( Utils.isFunction( DocumentMetadata.is ) ).toBe( true );
-
-			let object:DocumentMetadata = void 0;
-			expect( DocumentMetadata.is( object ) ).toBe( false );
-			object = null;
-			expect( DocumentMetadata.is( object ) ).toBe( false );
-
-			object = Resource.decorate( {
-				types: [
-					C.VolatileResource,
-					C.DocumentMetadata,
-				],
-				relatedDocument: null,
-				eTag: null,
-				bNodesMap: null,
-			} );
-
-			delete object.relatedDocument;
-			expect( DocumentMetadata.is( object ) ).toBe( false );
-			object.relatedDocument = null;
-
-			delete object.eTag;
-			expect( DocumentMetadata.is( object ) ).toBe( true );
-			object.eTag = null;
-
-			delete object.bNodesMap;
-			expect( DocumentMetadata.is( object ) ).toBe( true );
-			object.bNodesMap = null;
-
-			object.removeType( C.VolatileResource );
-			expect( DocumentMetadata.is( object ) ).toBe( false );
-			object.hasType( C.VolatileResource );
-
-			object.removeType( C.DocumentMetadata );
-			expect( DocumentMetadata.is( object ) ).toBe( false );
-			object.addType( C.DocumentMetadata );
 		} );
 
 	} );

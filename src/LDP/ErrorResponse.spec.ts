@@ -20,7 +20,7 @@ describe( module( "carbonldp/LDP/ErrorResponse" ), ():void => {
 		"Interface that its used to represents part of an error (or multiple of them) thrown by the server."
 	), ():void => {
 
-		it( extendsClass( "CarbonLDP.Resource" ), ():void => {} );
+		it( extendsClass( "CarbonLDP.TransientResource" ), ():void => {} );
 
 		it( hasProperty(
 			OBLIGATORY,

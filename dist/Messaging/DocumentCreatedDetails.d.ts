@@ -1,7 +1,7 @@
 import { ObjectSchema } from "../ObjectSchema";
 import { Pointer } from "../Pointer";
-import { Resource } from "../Resource";
-export interface DocumentCreatedDetails extends Resource {
+import { TransientResource } from "../Resource";
+export interface DocumentCreatedDetails extends TransientResource {
     createdDocuments: Pointer[];
 }
 export interface DocumentCreatedDetailsFactory {

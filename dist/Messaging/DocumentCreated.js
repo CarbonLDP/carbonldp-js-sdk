@@ -8,10 +8,10 @@ var __assign = (this && this.__assign) || Object.assign || function(t) {
     return t;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var C_1 = require("../Vocabularies/C");
+var Vocabularies_1 = require("../Vocabularies");
 var EventMessage_1 = require("./EventMessage");
 var SCHEMA = __assign({}, EventMessage_1.EventMessage.SCHEMA, { "details": {
-        "@id": C_1.C.details,
+        "@id": Vocabularies_1.C.details,
         "@type": "@id",
     } });
 exports.DocumentCreated = {

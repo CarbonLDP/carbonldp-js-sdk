@@ -1,4 +1,4 @@
-import { Document } from "../Document";
+import { TransientDocument } from "../Document";
 import { IllegalArgumentError } from "../Errors/IllegalArgumentError";
 import { CS } from "../Vocabularies/CS";
 import { XSD } from "../Vocabularies/XSD";
@@ -32,7 +32,7 @@ export const SCHEMA:ObjectSchema.ObjectSchema = {
 	},
 };
 
-export interface Class extends Document {
+export interface Class extends TransientDocument {
 	name:string;
 	description?:string;
 }
@@ -44,7 +44,7 @@ export class Factory {
 
 	static is( object:Object ):boolean {
 		return Factory.hasClassProperties( object )
-			&& Document.is( object )
+			&& TransientDocument.is( object )
 			;
 	}
 
@@ -53,7 +53,7 @@ export class Factory {
 	}
 
 	static createFrom<T extends Object>( object:T, name:string, description?:string ):T & Class {
-		if( ! Document.isDecorated( object ) ) object = Document.createFrom( object );
+		if( ! TransientDocument.isDecorated( object ) ) object = TransientDocument.createFrom( object as any );
 
 		if( ! name ) throw new IllegalArgumentError( "The name cannot be empty." );
 

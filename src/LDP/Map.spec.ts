@@ -1,4 +1,4 @@
-import { Resource } from "../Resource";
+import { TransientResource } from "../Resource";
 import {
 	extendsClass,
 	hasMethod,
@@ -23,7 +23,7 @@ describe( module( "carbonldp/LDP/Map" ), ():void => {
 		"Interface that contains a set entries with a close relation in the form of a key/value pair."
 	), ():void => {
 
-		it( extendsClass( "CarbonLDP.Resource" ), ():void => {} );
+		it( extendsClass( "CarbonLDP.TransientResource" ), ():void => {} );
 
 		it( hasProperty(
 			OBLIGATORY,
@@ -108,7 +108,7 @@ describe( module( "carbonldp/LDP/Map" ), ():void => {
 			object = null;
 			expect( Map.is( object ) ).toBe( false );
 
-			object = Resource.decorate( {
+			object = TransientResource.decorate( {
 				types: [ C.Map ],
 				entries: null,
 			} );

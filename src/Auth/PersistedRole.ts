@@ -1,13 +1,13 @@
 import { Documents } from "../Documents";
 import * as Errors from "../Errors";
 import { RequestOptions } from "../HTTP/Request";
-import { PersistedProtectedDocument } from "../PersistedProtectedDocument";
+import { ProtectedDocument } from "../ProtectedDocument";
 import { Pointer } from "../Pointer";
 import * as Utils from "./../Utils";
 import * as Role from "./Role";
 import * as Roles from "./Roles";
 
-export interface Class extends PersistedProtectedDocument {
+export interface Class extends ProtectedDocument {
 	_roles:Roles.Class;
 
 	name?:string;
@@ -22,7 +22,7 @@ export interface Class extends PersistedProtectedDocument {
 
 	createChild<T extends object>( role:T & Role.Class, slug?:string, requestOptions?:RequestOptions ):Promise<T & Class>;
 
-	getUsers<T>( requestOptions?:RequestOptions ):Promise<(T & PersistedProtectedDocument)[]>;
+	getUsers<T>( requestOptions?:RequestOptions ):Promise<(T & ProtectedDocument)[]>;
 
 	addUser( user:Pointer | string, requestOptions?:RequestOptions ):Promise<void>;
 
@@ -48,14 +48,14 @@ export class Factory {
 
 	static is( object:Object ):object is Class {
 		return Factory.hasClassProperties( object )
-			&& PersistedProtectedDocument.is( object );
+			&& ProtectedDocument.is( object );
 	}
 
 	static decorate<T extends object>( object:T, documents:Documents ):T & Class {
 		let persistedRole:Class & T = <T & Class> object;
 		if( Factory.hasClassProperties( persistedRole ) ) return persistedRole;
 
-		PersistedProtectedDocument.decorate( persistedRole, documents );
+		ProtectedDocument.decorate( persistedRole, documents );
 
 		Object.defineProperties( persistedRole, {
 			"_roles": {
@@ -114,8 +114,8 @@ function createChild<T extends object>( this:Class, role:T & Role.Class, slugOrR
 	return this._roles.createChild( this.id, role, slugOrRequestOptions, requestOptions );
 }
 
-function getUsers<T>( requestOptions?:RequestOptions ):Promise<(T & PersistedProtectedDocument)[]>;
-function getUsers<T>( this:Class, requestOptions?:RequestOptions ):Promise<(T & PersistedProtectedDocument)[]> {
+function getUsers<T>( requestOptions?:RequestOptions ):Promise<(T & ProtectedDocument)[]>;
+function getUsers<T>( this:Class, requestOptions?:RequestOptions ):Promise<(T & ProtectedDocument)[]> {
 	checkState( this );
 	return this._roles.getUsers( this.id, requestOptions );
 }

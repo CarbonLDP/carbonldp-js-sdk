@@ -1,10 +1,10 @@
 import { Documents } from "../Documents";
 import { RequestOptions } from "../HTTP/Request";
-import { PersistedProtectedDocument } from "../PersistedProtectedDocument";
+import { ProtectedDocument } from "../ProtectedDocument";
 import { Pointer } from "../Pointer";
 import * as Role from "./Role";
 import * as Roles from "./Roles";
-export interface Class extends PersistedProtectedDocument {
+export interface Class extends ProtectedDocument {
     _roles: Roles.Class;
     name?: string;
     description?: string;
@@ -13,7 +13,7 @@ export interface Class extends PersistedProtectedDocument {
     users?: Pointer[];
     createChild<T extends object>(role: T & Role.Class, requestOptions?: RequestOptions): Promise<T & Class>;
     createChild<T extends object>(role: T & Role.Class, slug?: string, requestOptions?: RequestOptions): Promise<T & Class>;
-    getUsers<T>(requestOptions?: RequestOptions): Promise<(T & PersistedProtectedDocument)[]>;
+    getUsers<T>(requestOptions?: RequestOptions): Promise<(T & ProtectedDocument)[]>;
     addUser(user: Pointer | string, requestOptions?: RequestOptions): Promise<void>;
     addUsers(users: (Pointer | string)[], requestOptions?: RequestOptions): Promise<void>;
     removeUser(user: Pointer | string, requestOptions?: RequestOptions): Promise<void>;

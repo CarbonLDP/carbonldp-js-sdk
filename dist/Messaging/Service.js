@@ -137,7 +137,7 @@ var MessagingService = (function () {
                 .parse(message.body)
                 .then(function (data) {
                 var freeResources = _this.context.documents._getFreeResources(data);
-                return freeResources.getResources().find(EventMessage_1.EventMessage.isDecorated);
+                return freeResources.getResources().find(EventMessage_1.EventMessage.is);
             })
                 .then(eventCallback)
                 .catch(errorCallback);
