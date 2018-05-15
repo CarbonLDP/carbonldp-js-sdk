@@ -15,13 +15,14 @@ var __importStar = (this && this.__importStar) || function (mod) {
     if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
     result["default"] = mod;
     return result;
-}
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 var iri_1 = require("sparqler/iri");
 var AbstractContext_1 = require("./AbstractContext");
+var AccessPoint_1 = require("./AccessPoint");
 var Auth = __importStar(require("./Auth"));
+var BlankNode_1 = require("./BlankNode");
 var Document_1 = require("./Document");
-var Documents_1 = require("./Documents");
 var Errors = __importStar(require("./Errors"));
 var Fragment_1 = require("./Fragment");
 var FreeResources_1 = require("./FreeResources");
@@ -35,25 +36,19 @@ var ObjectSchema_1 = require("./ObjectSchema");
 var Pointer_1 = require("./Pointer");
 var ProtectedDocument_1 = require("./ProtectedDocument");
 var RDF = __importStar(require("./RDF"));
+var Registry_1 = require("./Registry");
 var Resource_1 = require("./Resource");
-var SDKContext_1 = require("./SDKContext");
-var ServiceAwareDocument_1 = require("./ServiceAwareDocument");
+var GlobalContext_1 = require("./GlobalContext");
 var SHACL = __importStar(require("./SHACL"));
 var SPARQL = __importStar(require("./SPARQL"));
 var System = __importStar(require("./System"));
-var AccessPoint_1 = require("./AccessPoint");
-var BlankNode_1 = require("./BlankNode");
-var Document_2 = require("./Document");
-var Fragment_2 = require("./Fragment");
-var NamedFragment_2 = require("./NamedFragment");
-var ProtectedDocument_2 = require("./ProtectedDocument");
 var Utils = __importStar(require("./Utils"));
 var Vocabularies = __importStar(require("./Vocabularies"));
 var CarbonLDP = (function (_super) {
     __extends(CarbonLDP, _super);
     function CarbonLDP(urlOrSettings) {
-        var _this = _super.call(this) || this;
-        _this.settings = {
+        var _this = _super.call(this, GlobalContext_1.GlobalContext.instance) || this;
+        _this._settings = {
             vocabulary: "vocabularies/main/#",
             paths: {
                 system: {
@@ -91,14 +86,16 @@ var CarbonLDP = (function (_super) {
                 _this._baseURI += ":" + urlOrSettings.port;
             }
             urlOrSettings.ssl = urlOrSettings.host = urlOrSettings.port = null;
-            var paths = mergePaths(_this.settings.paths, urlOrSettings.paths);
-            _this.settings = Utils.ObjectUtils.extend(_this.settings, urlOrSettings);
-            _this.settings.paths = paths;
+            var paths = mergePaths(_this._settings.paths, urlOrSettings.paths);
+            _this._settings = Utils.ObjectUtils.extend(_this._settings, urlOrSettings);
+            _this._settings.paths = paths;
         }
         if (!_this._baseURI.endsWith("/"))
             _this._baseURI = _this._baseURI + "/";
-        _this.auth = new Auth.AuthService(_this);
+        _this.registry = new Registry_1.DocumentsRegistry(_this);
         _this.messaging = new Messaging.MessagingService(_this);
+        _this.auth = new Auth.AuthService(_this);
+        _this.documents = ProtectedDocument_1.ProtectedDocument.decorate(_this.registry.register(_this._baseURI));
         return _this;
     }
     Object.defineProperty(CarbonLDP, "version", {
@@ -119,20 +116,16 @@ var CarbonLDP = (function (_super) {
         });
     };
     CarbonLDP.AbstractContext = AbstractContext_1.AbstractContext;
-    CarbonLDP.TransientAccessPoint = AccessPoint_1.TransientAccessPoint;
+    CarbonLDP.AccessPoint = AccessPoint_1.AccessPoint;
     CarbonLDP.Auth = Auth;
-    CarbonLDP.TransientBlankNode = BlankNode_1.TransientBlankNode;
-    CarbonLDP.TransientDocument = Document_2.TransientDocument;
-    CarbonLDP.Documents = Documents_1.Documents;
+    CarbonLDP.BlankNode = BlankNode_1.BlankNode;
     CarbonLDP.Errors = Errors;
-    CarbonLDP.TransientFragment = Fragment_2.TransientFragment;
     CarbonLDP.FreeResources = FreeResources_1.FreeResources;
     CarbonLDP.HTTP = HTTP;
     CarbonLDP.JSONLD = JSONLD;
     CarbonLDP.LDP = LDP;
     CarbonLDP.LDPatch = LDPatch;
     CarbonLDP.Messaging = Messaging;
-    CarbonLDP.TransientNamedFragment = NamedFragment_2.TransientNamedFragment;
     CarbonLDP.Vocabularies = Vocabularies;
     CarbonLDP.ObjectSchemaUtils = ObjectSchema_1.ObjectSchemaUtils;
     CarbonLDP.ObjectSchemaDigester = ObjectSchema_1.ObjectSchemaDigester;
@@ -144,14 +137,11 @@ var CarbonLDP = (function (_super) {
     CarbonLDP.Fragment = Fragment_1.Fragment;
     CarbonLDP.NamedFragment = NamedFragment_1.NamedFragment;
     CarbonLDP.ProtectedDocument = ProtectedDocument_1.ProtectedDocument;
-    CarbonLDP.Resource = Resource_1.Resource;
+    CarbonLDP.PersistedResource = Resource_1.PersistedResource;
     CarbonLDP.Pointer = Pointer_1.Pointer;
-    CarbonLDP.TransientProtectedDocument = ProtectedDocument_2.TransientProtectedDocument;
     CarbonLDP.RDF = RDF;
     CarbonLDP.TransientResource = Resource_1.TransientResource;
-    CarbonLDP.SDKContext = SDKContext_1.SDKContext;
-    CarbonLDP.globalContext = SDKContext_1.globalContext;
-    CarbonLDP.ServiceAwareDocument = ServiceAwareDocument_1.ServiceAwareDocument;
+    CarbonLDP.GlobalContext = GlobalContext_1.GlobalContext;
     CarbonLDP.SHACL = SHACL;
     CarbonLDP.SPARQL = SPARQL;
     CarbonLDP.System = System;

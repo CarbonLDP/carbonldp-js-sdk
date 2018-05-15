@@ -1,10 +1,10 @@
 import { RequestOptions } from "../HTTP/Request";
 import { Response } from "../HTTP/Response";
+import { AbstractAuthenticator } from "./AbstractAuthenticator";
 import { AuthenticatedUserInformationAccessor } from "./AuthenticatedUserInformationAccessor";
-import { Authenticator } from "./Authenticator";
 import { BasicToken } from "./BasicToken";
 import { TokenCredentials, TokenCredentialsBase } from "./TokenCredentials";
-export declare class TokenAuthenticator extends Authenticator<BasicToken, TokenCredentials> {
+export declare class TokenAuthenticator extends AbstractAuthenticator<BasicToken, TokenCredentials> {
     protected _credentials: TokenCredentials;
     isAuthenticated(): boolean;
     authenticate(tokenOrCredentials: BasicToken | TokenCredentialsBase): Promise<TokenCredentials>;

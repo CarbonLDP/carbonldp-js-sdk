@@ -1,12 +1,9 @@
 import { TransientDocument } from "../Document";
-import { BaseNamedFragment } from "./BaseNamedFragment";
-
-import { TransientNamedFragment } from "./TransientNamedFragment";
+import { TransientFragment } from "../Fragment";
 
 import {
 	extendsClass,
 	hasMethod,
-	hasProperty,
 	interfaze,
 	isDefined,
 	module,
@@ -14,6 +11,10 @@ import {
 	property,
 	STATIC,
 } from "../test/JasmineExtender";
+import { PickSelfProps } from "../Utils";
+import { BaseNamedFragment } from "./BaseNamedFragment";
+
+import { TransientNamedFragment } from "./TransientNamedFragment";
 
 describe( module( "carbonldp/NamedFragment" ), ():void => {
 
@@ -24,12 +25,64 @@ describe( module( "carbonldp/NamedFragment" ), ():void => {
 
 		it( extendsClass( "CarbonLDP.TransientFragment" ), ():void => {} );
 
-		it( hasProperty(
+		describe( property(
 			OBLIGATORY,
 			"slug",
 			"string",
 			"The slug of the current named fragment."
-		), ():void => {} );
+		), ():void => {
+
+			it( "should return null when empty object", ():void => {
+				const fragment:TransientNamedFragment = TransientNamedFragment.decorate( {} );
+				expect( fragment.slug ).toBeNull();
+			} );
+
+			it( "should return null when registry referenced", ():void => {
+				const fragment:TransientNamedFragment = TransientNamedFragment.decorate( {
+					_registry: TransientDocument.create( { id: "https://example.com/document/" } ),
+				} );
+
+				expect( fragment.slug ).toBeNull();
+			} );
+
+			it( "should return null even slug in object", ():void => {
+				const fragment:TransientNamedFragment = TransientNamedFragment.decorate( { slug: "fragment-name" } );
+				expect( fragment.slug ).toBeNull();
+			} );
+
+			it( "should return fragment from ID", ():void => {
+				const fragment:TransientNamedFragment = TransientNamedFragment.decorate( {
+					id: "https://example.com/document/#fragment-name",
+				} );
+
+				expect( fragment.slug ).toBe( "fragment-name" );
+			} );
+
+			it( "should return null when ID has no fragment", ():void => {
+				const fragment:TransientNamedFragment = TransientNamedFragment.decorate( {
+					id: "https://example.com/document/",
+				} );
+
+				expect( fragment.slug ).toBeNull();
+			} );
+
+			it( "should set ID when set slug and has registry", ():void => {
+				const fragment:TransientNamedFragment = TransientNamedFragment.decorate( {
+					_registry: TransientDocument.create( { id: "https://example.com/document/" } ),
+				} );
+
+				fragment.slug = "fragment-name";
+				expect( fragment.id ).toBe( "https://example.com/document/#fragment-name" );
+			} );
+
+			it( "should set relative ID when set slug and NO registry", ():void => {
+				const fragment:TransientNamedFragment = TransientNamedFragment.decorate( {} );
+
+				fragment.slug = "fragment-name";
+				expect( fragment.id ).toBe( "#fragment-name" );
+			} );
+
+		} );
 
 	} );
 
@@ -91,31 +144,46 @@ describe( module( "carbonldp/NamedFragment" ), ():void => {
 			expect( TransientNamedFragment ).toEqual( jasmine.any( Object ) );
 		} );
 
-		let document:TransientDocument;
-		beforeAll( ():void => {
-			document = TransientDocument.create();
-			document.id = "https://example.com/document/";
-		} );
+		describe( "TransientNamedFragment.isDecorated", ():void => {
 
-		// TODO: Separate in different tests
-		it( "TransientNamedFragment.isDecorated", ():void => {
-			expect( TransientNamedFragment.isDecorated ).toBeDefined();
-			expect( TransientNamedFragment.isDecorated ).toEqual( jasmine.any( Function ) );
+			it( "should exists", ():void => {
+				expect( TransientNamedFragment.isDecorated ).toBeDefined();
+				expect( TransientNamedFragment.isDecorated ).toEqual( jasmine.any( Function ) );
+			} );
 
-			let namedFragment:Partial<TransientNamedFragment> = undefined;
-			expect( TransientNamedFragment.isDecorated( namedFragment ) ).toBe( false );
 
-			namedFragment = {
-				slug: null,
-			};
-			expect( TransientNamedFragment.isDecorated( namedFragment ) ).toBe( false );
+			type Expected = PickSelfProps<TransientNamedFragment, TransientFragment>;
 
-			Object.defineProperty( namedFragment, "slug", { enumerable: false } );
-			expect( TransientNamedFragment.isDecorated( namedFragment ) ).toBe( true );
+			function createExpected():Expected {
+				const expected:Expected = {
+					slug: null,
+				};
 
-			delete namedFragment.slug;
-			expect( TransientNamedFragment.isDecorated( namedFragment ) ).toBe( false );
-			namedFragment.slug = null;
+				const descriptor:PropertyDescriptor = { enumerable: false, configurable: true };
+				Object.defineProperty( expected, "slug", descriptor );
+
+				return expected;
+			}
+
+			it( "should return true when required properties defined", ():void => {
+				const fragment:Expected = createExpected();
+				expect( TransientNamedFragment.isDecorated( fragment ) ).toBe( true );
+			} );
+
+			it( "should return false when slug is enumerable", ():void => {
+				const fragment:Expected = createExpected();
+				Object.defineProperty( fragment, "slug", { enumerable: true } );
+
+				expect( TransientNamedFragment.isDecorated( fragment ) ).toBe( false );
+			} );
+
+			it( "should return false when missing slug", ():void => {
+				const fragment:Expected = createExpected();
+				delete fragment.slug;
+
+				expect( TransientNamedFragment.isDecorated( fragment ) ).toBe( false );
+			} );
+
 		} );
 
 		// TODO: Create tests for `NamedFragment.is`
@@ -127,33 +195,15 @@ describe( module( "carbonldp/NamedFragment" ), ():void => {
 				expect( TransientNamedFragment.create ).toEqual( jasmine.any( Function ) );
 			} );
 
-			it( "should maintain the _document reference", ():void => {
-				const fragment:TransientNamedFragment = TransientNamedFragment.create( {
-					_document: document,
-					slug: null,
-				} );
-
-				expect( fragment._document ).toBe( document );
-			} );
-
-			it( "should convert slug in the fragment id", ():void => {
-				const fragment:TransientNamedFragment = TransientNamedFragment.create( {
-					_document: document,
-					slug: "fragment",
-				} );
-
-				expect( fragment.id ).toBe( "https://example.com/document/#fragment" );
-			} );
-
 			it( "should call TransientNamedFragment.createFrom", ():void => {
 				const spy:jasmine.Spy = spyOn( TransientNamedFragment, "createFrom" );
 
-				TransientNamedFragment.create( { the: "named fragment", _document: document, slug: "fragment" } );
-				expect( spy ).toHaveBeenCalledWith( { the: "named fragment", _document: document, slug: "fragment" } );
+				TransientNamedFragment.create( { the: "named fragment", slug: "fragment" } );
+				expect( spy ).toHaveBeenCalledWith( { the: "named fragment", slug: "fragment" } );
 			} );
 
 			it( "should return different reference", ():void => {
-				const object:BaseNamedFragment = { _document: document, slug: "" };
+				const object:BaseNamedFragment = { slug: "" };
 				const returned:TransientNamedFragment = TransientNamedFragment.create( object );
 
 				expect( object ).not.toBe( returned );
@@ -168,34 +218,25 @@ describe( module( "carbonldp/NamedFragment" ), ():void => {
 				expect( TransientNamedFragment.createFrom ).toEqual( jasmine.any( Function ) );
 			} );
 
-			it( "should maintain the _document reference", ():void => {
+			it( "should maintain slug", ():void => {
 				const fragment:TransientNamedFragment = TransientNamedFragment.createFrom( {
-					_document: document,
-					slug: null,
+					slug: "fragment-name",
 				} );
 
-				expect( fragment._document ).toBe( document );
-			} );
-
-			it( "should convert slug in the fragment id", ():void => {
-				const fragment:TransientNamedFragment = TransientNamedFragment.createFrom( {
-					_document: document,
-					slug: "fragment",
-				} );
-
-				expect( fragment.id ).toBe( "https://example.com/document/#fragment" );
+				expect( fragment.slug ).toBe( "fragment-name" );
 			} );
 
 			it( "should call TransientNamedFragment.decorate", ():void => {
-				const spy:jasmine.Spy = spyOn( TransientNamedFragment, "decorate" );
+				const spy:jasmine.Spy = spyOn( TransientNamedFragment, "decorate" )
+					.and.callThrough();
 
-				const object:{ the:string } & BaseNamedFragment = { the: "named fragment", _document: document, slug: "fragment" };
+				const object:{ the:string } & BaseNamedFragment = { the: "named fragment", slug: "fragment" };
 				TransientNamedFragment.createFrom( object );
 				expect( spy ).toHaveBeenCalledWith( object );
 			} );
 
 			it( "should return same reference", ():void => {
-				const object:BaseNamedFragment = { _document: document, slug: "" };
+				const object:BaseNamedFragment = { slug: "" };
 				const returned:TransientNamedFragment = TransientNamedFragment.createFrom( object );
 
 				expect( object ).toBe( returned );
@@ -203,8 +244,20 @@ describe( module( "carbonldp/NamedFragment" ), ():void => {
 
 		} );
 
+		describe( "TransientNamedFragment.decorate", ():void => {
 
-		// TODO: Create tests for `NamedFragment.decorate`
+			it( "should exists", ():void => {
+				expect( TransientNamedFragment.decorate ).toBeDefined();
+				expect( TransientNamedFragment.decorate ).toEqual( jasmine.any( Function ) );
+			} );
+
+
+			it( "should work with isDecorated", ():void => {
+				const fragment:TransientNamedFragment = TransientNamedFragment.decorate( {} );
+				expect( TransientNamedFragment.isDecorated( fragment ) ).toBe( true );
+			} );
+
+		} );
 
 	} );
 

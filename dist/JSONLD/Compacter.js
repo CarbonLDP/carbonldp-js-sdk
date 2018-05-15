@@ -1,18 +1,17 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var Document_1 = require("../Document");
+var Errors_1 = require("../Errors");
 var Pointer_1 = require("../Pointer");
-var Document_2 = require("../RDF/Document");
-var Node_1 = require("../RDF/Node");
-var PartialMetadata_1 = require("../SPARQL/QueryDocument/PartialMetadata");
-var QueryContextBuilder_1 = require("../SPARQL/QueryDocument/QueryContextBuilder");
-var QueryProperty_1 = require("../SPARQL/QueryDocument/QueryProperty");
+var RDF_1 = require("../RDF");
+var Registry_1 = require("../Registry");
+var Resource_1 = require("../Resource");
+var QueryDocument_1 = require("../SPARQL/QueryDocument");
 var JSONLDCompacter = (function () {
-    function JSONLDCompacter(documents, root, schemaResolver, jsonldConverter) {
-        this.documents = documents;
+    function JSONLDCompacter(registry, root, schemaResolver, jsonldConverter) {
+        this.registry = registry;
         this.root = root;
-        this.resolver = schemaResolver || documents;
-        this.converter = jsonldConverter || documents.jsonldConverter;
+        this.resolver = schemaResolver || registry;
+        this.converter = jsonldConverter || registry.jsonldConverter;
         this.compactionMap = new Map();
     }
     JSONLDCompacter.prototype.compactDocument = function (rdfDocument) {
@@ -23,16 +22,24 @@ var JSONLDCompacter = (function () {
         var _this = this;
         if (mainDocuments === void 0) { mainDocuments = rdfDocuments; }
         rdfDocuments.forEach(function (rdfDocument) {
-            var _a = Document_2.RDFDocument.getNodes(rdfDocument), documentNode = _a[0][0], fragmentNodes = _a[1];
-            var targetDocument = _this.getResource(documentNode, _this.documents, true);
-            var fragmentsSet = new Set(targetDocument._fragmentsIndex.keys());
+            var _a = RDF_1.RDFDocument.getNodes(rdfDocument), documentNodes = _a[0], fragmentNodes = _a[1];
+            if (documentNodes.length === 0)
+                throw new Errors_1.IllegalArgumentError("The RDFDocument \"" + rdfDocument["@id"] + "\" does not contain a document resource.");
+            if (documentNodes.length > 1)
+                throw new Errors_1.IllegalArgumentError("The RDFDocument \"" + rdfDocument["@id"] + "\" contains multiple document resources.");
+            var documentNode = documentNodes[0];
+            var targetDocument = _this._getResource(documentNode, _this.registry);
+            var currentFragments = targetDocument
+                .getPointers(true)
+                .map(function (pointer) { return pointer.id; });
+            var fragmentsSet = new Set(currentFragments);
             fragmentNodes.forEach(function (fragmentNode) {
-                var fragmentID = Node_1.RDFNode.getRelativeID(fragmentNode);
+                var fragmentID = RDF_1.RDFNode.getID(fragmentNode);
                 if (fragmentsSet.has(fragmentID))
                     fragmentsSet.delete(fragmentID);
-                _this.getResource(fragmentNode, targetDocument);
+                _this._getResource(fragmentNode, targetDocument);
             });
-            fragmentsSet.forEach(targetDocument._removeFragment, targetDocument);
+            fragmentsSet.forEach(targetDocument.removePointer, targetDocument);
         });
         var compactedDocuments = rdfDocuments
             .map(function (rdfDocument) { return rdfDocument["@id"]; })
@@ -48,7 +55,7 @@ var JSONLDCompacter = (function () {
             return compactionNode.resource;
         });
         while (compactionQueue.length) {
-            this.processCompactionQueue(compactionQueue);
+            this._processCompactionQueue(compactionQueue);
             this.compactionMap.forEach(function (node, key, map) {
                 if (node.processed)
                     map.delete(key);
@@ -60,25 +67,19 @@ var JSONLDCompacter = (function () {
         compactedDocuments.forEach(function (persistedDocument) {
             persistedDocument._syncSavedFragments();
             persistedDocument.types
-                .map(function (type) { return _this.documents.documentDecorators.get(type); })
-                .forEach(function (decorator) { return decorator && decorator.call(void 0, persistedDocument, _this.documents); });
+                .map(function (type) { return _this.registry.documentDecorators.get(type); })
+                .forEach(function (decorator) { return decorator && decorator.call(void 0, persistedDocument, _this.registry); });
         });
         return mainCompactedDocuments;
     };
-    JSONLDCompacter.prototype.compactNode = function (node, resource, containerLibrary, path) {
+    JSONLDCompacter.prototype._compactNode = function (node, resource, containerLibrary, path) {
         var schema = this.resolver.getSchemaFor(node, path);
-        if (this.resolver instanceof QueryContextBuilder_1.QueryContextBuilder) {
-            var type = this.resolver.hasProperty(path) ?
-                this.resolver.getProperty(path).getType() : void 0;
-            if (type === QueryProperty_1.QueryPropertyType.PARTIAL || type === QueryProperty_1.QueryPropertyType.ALL) {
-                resource._partialMetadata = new PartialMetadata_1.PartialMetadata(type === QueryProperty_1.QueryPropertyType.ALL ? PartialMetadata_1.PartialMetadata.ALL : schema, resource._partialMetadata);
-            }
-        }
-        var compactedData = this.converter.compact(node, {}, schema, containerLibrary, resource.isPartial());
+        var isPartial = this._setOrRemovePartial(resource, schema, path);
+        var compactedData = this.converter.compact(node, {}, schema, containerLibrary, isPartial);
         var addedProperties = [];
         new Set(Object.keys(resource).concat(Object.keys(compactedData))).forEach(function (key) {
             if (!compactedData.hasOwnProperty(key)) {
-                if (!resource.isPartial() || schema.properties.has(key))
+                if (!isPartial || schema.properties.has(key))
                     delete resource[key];
                 return;
             }
@@ -95,14 +96,15 @@ var JSONLDCompacter = (function () {
         return addedProperties
             .filter(function (x) { return schema.properties.has(x); });
     };
-    JSONLDCompacter.prototype.getResource = function (node, containerLibrary, isDocument) {
-        var resource = containerLibrary.getPointer(node["@id"]);
-        if (isDocument)
-            containerLibrary = Document_1.Document.decorate(resource, this.documents);
-        this.compactionMap.set(resource.id, { paths: [], node: node, resource: resource, containerLibrary: containerLibrary });
+    JSONLDCompacter.prototype._getResource = function (node, registry) {
+        var resource = registry.getPointer(node["@id"], true);
+        if (Registry_1.Registry.isDecorated(resource))
+            registry = resource;
+        this.compactionMap
+            .set(resource.id, { paths: [], node: node, resource: resource, registry: registry });
         return resource;
     };
-    JSONLDCompacter.prototype.processCompactionQueue = function (compactionQueue) {
+    JSONLDCompacter.prototype._processCompactionQueue = function (compactionQueue) {
         while (compactionQueue.length) {
             var targetNode = compactionQueue.shift();
             if (!this.compactionMap.has(targetNode))
@@ -110,8 +112,9 @@ var JSONLDCompacter = (function () {
             var compactionNode = this.compactionMap.get(targetNode);
             compactionNode.processed = true;
             var targetPath = compactionNode.paths.shift();
-            var addedProperties = this.compactNode(compactionNode.node, compactionNode.resource, compactionNode.containerLibrary, targetPath);
-            compactionNode.resource._syncSnapshot();
+            var addedProperties = this._compactNode(compactionNode.node, compactionNode.resource, compactionNode.registry, targetPath);
+            if (Resource_1.PersistedResource.is(compactionNode.resource))
+                compactionNode.resource._syncSnapshot();
             for (var _i = 0, addedProperties_1 = addedProperties; _i < addedProperties_1.length; _i++) {
                 var propertyName = addedProperties_1[_i];
                 if (!compactionNode.resource.hasOwnProperty(propertyName))
@@ -134,6 +137,25 @@ var JSONLDCompacter = (function () {
                 }
             }
         }
+    };
+    JSONLDCompacter.prototype._setOrRemovePartial = function (resource, schema, path) {
+        if (!Resource_1.PersistedResource.is(resource))
+            return false;
+        if (this._willBePartial(resource, schema, path))
+            return true;
+        if (resource._partialMetadata)
+            delete resource._partialMetadata;
+        return false;
+    };
+    JSONLDCompacter.prototype._willBePartial = function (resource, schema, path) {
+        if (!(this.resolver instanceof QueryDocument_1.QueryContextBuilder))
+            return false;
+        var type = this.resolver.hasProperty(path) ?
+            this.resolver.getProperty(path).getType() : void 0;
+        if (type !== QueryDocument_1.QueryPropertyType.PARTIAL && type !== QueryDocument_1.QueryPropertyType.ALL)
+            return false;
+        resource._partialMetadata = new QueryDocument_1.PartialMetadata(type === QueryDocument_1.QueryPropertyType.ALL ? QueryDocument_1.PartialMetadata.ALL : schema, resource._partialMetadata);
+        return true;
     };
     return JSONLDCompacter;
 }());

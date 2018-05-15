@@ -1,21 +1,13 @@
-import { Document } from "../Document";
-import { IllegalStateError } from "../Errors";
-import { GETOptions } from "../HTTP";
-import { QueryDocumentBuilder } from "../SPARQL/QueryDocument";
+import { Registry } from "../Registry";
 import * as Utils from "../Utils";
 import { BasePointer } from "./BasePointer";
 
 
 export interface Pointer {
+	_registry:Registry<Pointer> | undefined;
 	_id:string;
-	_resolved:boolean;
 
 	id:string;
-
-	isResolved():boolean;
-
-	resolve<T extends object>( requestOptions?:GETOptions, queryBuilderFn?:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<T & this & Document>;
-	resolve<T extends object>( queryBuilderFn?:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<T & this & Document>;
 }
 
 
@@ -25,9 +17,9 @@ export interface PointerFactory {
 	is( value:any ):value is Pointer;
 
 
-	create<T extends BasePointer>( data?:T ):T & Pointer;
+	create<T extends object>( data?:T & BasePointer ):T & Pointer;
 
-	createFrom<T extends BasePointer>( object:T ):T & Pointer;
+	createFrom<T extends object>( object:T & BasePointer ):T & Pointer;
 
 	decorate<T extends object>( object:T ):T & Pointer;
 
@@ -35,27 +27,15 @@ export interface PointerFactory {
 	areEqual( pointer1:Pointer, pointer2:Pointer ):boolean;
 
 	getIDs( pointers:Pointer[] ):string[];
-}
 
-
-export function isPointerResolved( this:Pointer ):boolean {
-	return this._resolved;
-}
-
-export function resolveStandalonePointer( this:Pointer ):Promise<never> {
-	return Promise.reject( new IllegalStateError( "The pointer has not been assigned to a context." ) );
+	getID( pointerOrIRI:Pointer | string ):string;
 }
 
 export const Pointer:PointerFactory = {
 	isDecorated( object:object ):object is Pointer {
 		return (
 			Utils.hasPropertyDefined( object, "_id" ) &&
-			Utils.hasPropertyDefined( object, "_resolved" ) &&
-
-			Utils.hasPropertyDefined( object, "id" ) &&
-
-			Utils.hasFunction( object, "isResolved" ) &&
-			Utils.hasFunction( object, "resolve" )
+			Utils.hasPropertyDefined( object, "id" )
 		);
 	},
 
@@ -67,12 +47,12 @@ export const Pointer:PointerFactory = {
 	},
 
 
-	create<T extends BasePointer>( data:T ):T & Pointer {
+	create<T extends object>( data?:T & BasePointer ):T & Pointer {
 		const clone:T = Object.assign( {}, data );
 		return Pointer.createFrom<T>( clone );
 	},
 
-	createFrom<T extends BasePointer>( object:T ):T & Pointer {
+	createFrom<T extends object>( object:T & BasePointer ):T & Pointer {
 		return Pointer.decorate<T>( object );
 	},
 
@@ -81,15 +61,17 @@ export const Pointer:PointerFactory = {
 
 		const pointer:T & Pointer = object as T & Pointer;
 		Object.defineProperties( pointer, {
+			"_registry": {
+				writable: true,
+				enumerable: false,
+				configurable: true,
+			},
+
 			"_id": {
 				writable: true,
+				enumerable: false,
 				configurable: true,
 				value: pointer.id || "",
-			},
-			"_resolved": {
-				writable: true,
-				configurable: true,
-				value: pointer._resolved || false,
 			},
 			"id": {
 				enumerable: false,
@@ -100,16 +82,6 @@ export const Pointer:PointerFactory = {
 				set( this:Pointer, value:string ):void {
 					this._id = value;
 				},
-			},
-			"isResolved": {
-				configurable: true,
-				value: isPointerResolved,
-			},
-			"resolve": {
-				writable: false,
-				enumerable: false,
-				configurable: true,
-				value: resolveStandalonePointer,
 			},
 		} );
 
@@ -125,6 +97,10 @@ export const Pointer:PointerFactory = {
 		return pointers
 			.map( pointer => pointer.id )
 			;
+	},
+
+	getID( pointerOrIRI:Pointer | string ):string {
+		return Utils.isString( pointerOrIRI ) ? pointerOrIRI : pointerOrIRI.id;
 	},
 };
 

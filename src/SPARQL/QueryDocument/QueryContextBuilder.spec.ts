@@ -1,5 +1,6 @@
+import { createMockContext } from "../../../test/helpers/mocks";
 import { AbstractContext } from "../../AbstractContext";
-import { IllegalArgumentError } from "../../Errors/IllegalArgumentError";
+import { IllegalArgumentError } from "../../Errors";
 import {
 	ContainerType,
 	DigestedObjectSchema,
@@ -39,11 +40,9 @@ describe( module( "carbonldp/SPARQL/QueryDocument/QueryContextBuilder" ), ():voi
 			expect( QueryContextBuilder ).toEqual( jasmine.any( Function ) );
 		} );
 
-		let context:AbstractContext;
+		let context:AbstractContext<any, any>;
 		beforeEach( ():void => {
-			context = new class extends AbstractContext {
-				protected _baseURI:string = "https://example.com/";
-			};
+			context = createMockContext();
 		} );
 
 		describe( constructor(), ():void => {
@@ -315,7 +314,7 @@ describe( module( "carbonldp/SPARQL/QueryDocument/QueryContextBuilder" ), ():voi
 			} );
 
 			it( "should find in parent context", ():void => {
-				context = new (context.constructor as { new( context:AbstractContext ) })( context );
+				context = createMockContext( { parentContext: context } );
 				context.parentContext.extendObjectSchema( "ex:Type", {
 					"xsd": "http://www.w3.org/2001/XMLSchema#",
 					"ex": "http://example.com/ns#",
@@ -342,7 +341,7 @@ describe( module( "carbonldp/SPARQL/QueryDocument/QueryContextBuilder" ), ():voi
 			} );
 
 			it( "should find first in the provided schema", ():void => {
-				context = new (context.constructor as { new( context:AbstractContext ) })( context );
+				context = createMockContext( { parentContext: context } );
 				context.parentContext.extendObjectSchema( "ex:Type", {
 					"xsd": "http://www.w3.org/2001/XMLSchema#",
 					"ex": "http://example.com/ns#",
@@ -420,7 +419,7 @@ describe( module( "carbonldp/SPARQL/QueryDocument/QueryContextBuilder" ), ():voi
 			it( "should return the schema from context when full", ():void => {
 				const queryContext:QueryContextBuilder = new QueryContextBuilder( context );
 
-				const spy:jasmine.Spy = spyOn( queryContext.context.documents, "getSchemaFor" ).and.returnValue( null );
+				const spy:jasmine.Spy = spyOn( queryContext.context.registry, "getSchemaFor" ).and.returnValue( null );
 				const helper:( name:string ) => void = name => {
 					queryContext
 						.addProperty( name )
@@ -464,7 +463,7 @@ describe( module( "carbonldp/SPARQL/QueryDocument/QueryContextBuilder" ), ():voi
 			it( "should return the schema from the context when not exits and parent is full", ():void => {
 				const queryContext:QueryContextBuilder = new QueryContextBuilder( context );
 
-				const spy:jasmine.Spy = spyOn( queryContext.context.documents, "getSchemaFor" ).and.returnValue( null );
+				const spy:jasmine.Spy = spyOn( queryContext.context.registry, "getSchemaFor" ).and.returnValue( null );
 				const helper:( parent:string, name:string ) => void = ( parent, child ) => {
 					queryContext
 						.addProperty( parent )

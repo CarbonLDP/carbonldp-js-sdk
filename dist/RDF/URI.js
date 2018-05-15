@@ -32,7 +32,8 @@ exports.URI = {
     isFragmentOf: function (fragmentURI, uri) {
         if (!exports.URI.hasFragment(fragmentURI))
             return false;
-        return exports.URI.getDocumentURI(fragmentURI) === uri;
+        var documentURI = exports.URI.getDocumentURI(fragmentURI);
+        return documentURI === "" || documentURI === uri;
     },
     isBaseOf: function (baseURI, uri) {
         if (baseURI === uri)

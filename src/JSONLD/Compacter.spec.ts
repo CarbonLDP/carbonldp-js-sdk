@@ -1,9 +1,10 @@
-import { Documents } from "../Documents";
+import { CarbonLDP } from "../CarbonLDP";
 import { ObjectSchemaDigester } from "../ObjectSchema";
 import { Document } from "../Document";
-import { RDFNode } from "../RDF/Node";
-import { QueryContextBuilder } from "../SPARQL/QueryDocument/QueryContextBuilder";
-import { QueryPropertyType } from "../SPARQL/QueryDocument/QueryProperty";
+import { RDFNode } from "../RDF";
+import { DocumentsRegistry } from "../Registry";
+import { QueryContextBuilder } from "../SPARQL/QueryDocument";
+import { QueryPropertyType } from "../SPARQL/QueryDocument";
 import {
 	clazz,
 	INSTANCE,
@@ -22,7 +23,7 @@ describe( module( "carbonldp/JSONLD/Compacter" ), ():void => {
 			expect( JSONLDCompacter ).toEqual( jasmine.any( Function ) );
 		} );
 
-		// TODO: Tests `JSONLDCompacter.constructor`
+		// TODO: Test `JSONLDCompacter.constructor`
 
 		// TODO: Test `JSONLDCompacter.compactDocument`
 
@@ -34,11 +35,11 @@ describe( module( "carbonldp/JSONLD/Compacter" ), ():void => {
 			} );
 
 			it( "should send root path when one level resources", ():void => {
-				const documents:Documents = new Documents();
-				const spy:jasmine.Spy = spyOn( documents, "getSchemaFor" ).and
+				const registry:DocumentsRegistry = new DocumentsRegistry();
+				const spy:jasmine.Spy = spyOn( registry, "getSchemaFor" ).and
 					.returnValue( ObjectSchemaDigester.digestSchema( {} ) );
 
-				const compacter:JSONLDCompacter = new JSONLDCompacter( documents, "target" );
+				const compacter:JSONLDCompacter = new JSONLDCompacter( registry, "target" );
 				compacter.compactDocuments( [
 					{
 						"@id": "https://example.com/resource-1/",
@@ -65,12 +66,12 @@ describe( module( "carbonldp/JSONLD/Compacter" ), ():void => {
 				);
 			} );
 
-			it( "should send root path for only main documents", ():void => {
-				const documents:Documents = new Documents();
-				const spy:jasmine.Spy = spyOn( documents, "getSchemaFor" ).and
+			it( "should send root path for only main registry", ():void => {
+				const registry:DocumentsRegistry = new DocumentsRegistry();
+				const spy:jasmine.Spy = spyOn( registry, "getSchemaFor" ).and
 					.returnValue( ObjectSchemaDigester.digestSchema( {} ) );
 
-				const compacter:JSONLDCompacter = new JSONLDCompacter( documents, "target" );
+				const compacter:JSONLDCompacter = new JSONLDCompacter( registry, "target" );
 				compacter.compactDocuments( [
 					{
 						"@id": "https://example.com/resource-1/",
@@ -107,10 +108,10 @@ describe( module( "carbonldp/JSONLD/Compacter" ), ():void => {
 			} );
 
 			it( "should send path of second level resources when schema is available", ():void => {
-				const documents:Documents = new Documents();
-				spyOn( documents, "hasSchemaFor" ).and
+				const registry:DocumentsRegistry = new DocumentsRegistry();
+				spyOn( registry, "hasSchemaFor" ).and
 					.returnValue( true );
-				const spy:jasmine.Spy = spyOn( documents, "getSchemaFor" ).and
+				const spy:jasmine.Spy = spyOn( registry, "getSchemaFor" ).and
 					.returnValue( ObjectSchemaDigester.digestSchema( {
 						"@vocab": "https://example.com/ns#",
 						"pointer1": {
@@ -123,7 +124,7 @@ describe( module( "carbonldp/JSONLD/Compacter" ), ():void => {
 						},
 					} ) );
 
-				const compacter:JSONLDCompacter = new JSONLDCompacter( documents, "target" );
+				const compacter:JSONLDCompacter = new JSONLDCompacter( registry, "target" );
 				compacter.compactDocuments( [
 					{
 						"@id": "https://example.com/resource-1/",
@@ -171,8 +172,8 @@ describe( module( "carbonldp/JSONLD/Compacter" ), ():void => {
 			} );
 
 			it( "should not send path of second level resources when schema is unavailable", ():void => {
-				const documents:Documents = new Documents();
-				const spy:jasmine.Spy = spyOn( documents, "getSchemaFor" ).and
+				const registry:DocumentsRegistry = new DocumentsRegistry();
+				const spy:jasmine.Spy = spyOn( registry, "getSchemaFor" ).and
 					.returnValue( ObjectSchemaDigester.digestSchema( {
 						"@vocab": "https://example.com/ns#",
 						"pointer1": {
@@ -185,7 +186,7 @@ describe( module( "carbonldp/JSONLD/Compacter" ), ():void => {
 						},
 					} ) );
 
-				const compacter:JSONLDCompacter = new JSONLDCompacter( documents, "target" );
+				const compacter:JSONLDCompacter = new JSONLDCompacter( registry, "target" );
 				compacter.compactDocuments( [
 					{
 						"@id": "https://example.com/resource-1/",
@@ -231,11 +232,11 @@ describe( module( "carbonldp/JSONLD/Compacter" ), ():void => {
 				);
 			} );
 
-			it( "should send path of second level of main documents when schema is available", ():void => {
-				const documents:Documents = new Documents();
-				spyOn( documents, "hasSchemaFor" ).and
+			it( "should send path of second level of main registry when schema is available", ():void => {
+				const registry:DocumentsRegistry = new DocumentsRegistry();
+				spyOn( registry, "hasSchemaFor" ).and
 					.returnValue( true );
-				const spy:jasmine.Spy = spyOn( documents, "getSchemaFor" ).and
+				const spy:jasmine.Spy = spyOn( registry, "getSchemaFor" ).and
 					.returnValue( ObjectSchemaDigester.digestSchema( {
 						"@vocab": "https://example.com/ns#",
 						"pointer1": {
@@ -248,7 +249,7 @@ describe( module( "carbonldp/JSONLD/Compacter" ), ():void => {
 						},
 					} ) );
 
-				const compacter:JSONLDCompacter = new JSONLDCompacter( documents, "target" );
+				const compacter:JSONLDCompacter = new JSONLDCompacter( registry, "target" );
 				compacter.compactDocuments( [
 					{
 						"@id": "https://example.com/resource-1/",
@@ -302,9 +303,9 @@ describe( module( "carbonldp/JSONLD/Compacter" ), ():void => {
 				);
 			} );
 
-			it( "should not send path of second level of main documents when schema is unavailable", ():void => {
-				const documents:Documents = new Documents();
-				const spy:jasmine.Spy = spyOn( documents, "getSchemaFor" ).and
+			it( "should not send path of second level of main registry when schema is unavailable", ():void => {
+				const registry:DocumentsRegistry = new DocumentsRegistry();
+				const spy:jasmine.Spy = spyOn( registry, "getSchemaFor" ).and
 					.returnValue( ObjectSchemaDigester.digestSchema( {
 						"@vocab": "https://example.com/ns#",
 						"pointer1": {
@@ -317,7 +318,7 @@ describe( module( "carbonldp/JSONLD/Compacter" ), ():void => {
 						},
 					} ) );
 
-				const compacter:JSONLDCompacter = new JSONLDCompacter( documents, "target" );
+				const compacter:JSONLDCompacter = new JSONLDCompacter( registry, "target" );
 				compacter.compactDocuments( [
 					{
 						"@id": "https://example.com/resource-1/",
@@ -372,8 +373,8 @@ describe( module( "carbonldp/JSONLD/Compacter" ), ():void => {
 			} );
 
 			it( "should compact a resource with a fragment with path", ():void => {
-				const documents:Documents = new Documents();
-				spyOn( documents, "getSchemaFor" ).and
+				const registry:DocumentsRegistry = new DocumentsRegistry();
+				spyOn( registry, "getSchemaFor" ).and
 					.returnValue( ObjectSchemaDigester.digestSchema( {
 						"pointer": {
 							"@id": "https://example.com/ns#pointer",
@@ -385,7 +386,7 @@ describe( module( "carbonldp/JSONLD/Compacter" ), ():void => {
 						},
 					} ) );
 
-				const compacter:JSONLDCompacter = new JSONLDCompacter( documents, "target" );
+				const compacter:JSONLDCompacter = new JSONLDCompacter( registry, "target" );
 
 				interface Expected {
 					pointer:{
@@ -421,8 +422,8 @@ describe( module( "carbonldp/JSONLD/Compacter" ), ():void => {
 			} );
 
 			it( "should compact a resource with a fragment with no path", ():void => {
-				const documents:Documents = new Documents();
-				spyOn( documents, "getSchemaFor" ).and
+				const registry:DocumentsRegistry = new DocumentsRegistry();
+				spyOn( registry, "getSchemaFor" ).and
 					.returnValue( ObjectSchemaDigester.digestSchema( {
 						"pointer": {
 							"@id": "https://example.com/ns#pointer",
@@ -434,7 +435,7 @@ describe( module( "carbonldp/JSONLD/Compacter" ), ():void => {
 						},
 					} ) );
 
-				const compacter:JSONLDCompacter = new JSONLDCompacter( documents );
+				const compacter:JSONLDCompacter = new JSONLDCompacter( registry );
 
 				interface Expected {
 					pointer:{
@@ -469,9 +470,9 @@ describe( module( "carbonldp/JSONLD/Compacter" ), ():void => {
 				} ] );
 			} );
 
-			it( "should send path of only fist level when related to each other when documents resolver", ():void => {
-				const documents:Documents = new Documents();
-				const spy:jasmine.Spy = spyOn( documents, "getSchemaFor" ).and
+			it( "should send path of only fist level when related to each other when registry resolver", ():void => {
+				const registry:DocumentsRegistry = new DocumentsRegistry();
+				const spy:jasmine.Spy = spyOn( registry, "getSchemaFor" ).and
 					.returnValue( ObjectSchemaDigester.digestSchema( {
 						"@vocab": "https://example.com/ns#",
 						"pointer1": {
@@ -484,7 +485,7 @@ describe( module( "carbonldp/JSONLD/Compacter" ), ():void => {
 						},
 					} ) );
 
-				const compacter:JSONLDCompacter = new JSONLDCompacter( documents, "target" );
+				const compacter:JSONLDCompacter = new JSONLDCompacter( registry, "target" );
 				compacter.compactDocuments( [
 					{
 						"@id": "https://example.com/resource-1/",
@@ -526,7 +527,7 @@ describe( module( "carbonldp/JSONLD/Compacter" ), ():void => {
 			} );
 
 			it( "should send path of only fist level when related to each other when query resolver", ():void => {
-				const documents:Documents = new Documents();
+				const registry:DocumentsRegistry = new DocumentsRegistry();
 				const queryResolver:QueryContextBuilder = new QueryContextBuilder();
 				queryResolver
 					.addProperty( "target" )
@@ -546,7 +547,7 @@ describe( module( "carbonldp/JSONLD/Compacter" ), ():void => {
 						},
 					} ) );
 
-				const compacter:JSONLDCompacter = new JSONLDCompacter( documents, "target", queryResolver );
+				const compacter:JSONLDCompacter = new JSONLDCompacter( registry, "target", queryResolver );
 				compacter.compactDocuments( [
 					{
 						"@id": "https://example.com/resource-1/",
@@ -588,7 +589,7 @@ describe( module( "carbonldp/JSONLD/Compacter" ), ():void => {
 			} );
 
 			it( "should send path of only second level when related to each other by partial property when query resolver", ():void => {
-				const documents:Documents = new Documents();
+				const registry:DocumentsRegistry = new DocumentsRegistry();
 				const queryResolver:QueryContextBuilder = new QueryContextBuilder();
 				queryResolver
 					.addProperty( "target" )
@@ -612,7 +613,7 @@ describe( module( "carbonldp/JSONLD/Compacter" ), ():void => {
 						},
 					} ) );
 
-				const compacter:JSONLDCompacter = new JSONLDCompacter( documents, "target", queryResolver );
+				const compacter:JSONLDCompacter = new JSONLDCompacter( registry, "target", queryResolver );
 				compacter.compactDocuments( [
 					{
 						"@id": "https://example.com/resource-1/",
@@ -662,7 +663,7 @@ describe( module( "carbonldp/JSONLD/Compacter" ), ():void => {
 			} );
 
 			it( "should compact every level from related to each other by partial property when query resolver", ():void => {
-				const documents:Documents = new Documents();
+				const registry:DocumentsRegistry = new DocumentsRegistry();
 				const queryResolver:QueryContextBuilder = new QueryContextBuilder();
 				queryResolver
 					.addProperty( "target" )
@@ -690,7 +691,7 @@ describe( module( "carbonldp/JSONLD/Compacter" ), ():void => {
 							} );
 					} );
 
-				const compacter:JSONLDCompacter = new JSONLDCompacter( documents, "target", queryResolver );
+				const compacter:JSONLDCompacter = new JSONLDCompacter( registry, "target", queryResolver );
 
 				interface Expected {
 					pointer1:Expected;
@@ -737,7 +738,7 @@ describe( module( "carbonldp/JSONLD/Compacter" ), ():void => {
 			} );
 
 			it( "should compact every level from related to each other by partial property when query resolver", ():void => {
-				const documents:Documents = new Documents();
+				const registry:DocumentsRegistry = new DocumentsRegistry();
 				const queryResolver:QueryContextBuilder = new QueryContextBuilder();
 				queryResolver
 					.addProperty( "target" )
@@ -765,7 +766,7 @@ describe( module( "carbonldp/JSONLD/Compacter" ), ():void => {
 							} );
 					} );
 
-				const compacter:JSONLDCompacter = new JSONLDCompacter( documents, "target", queryResolver );
+				const compacter:JSONLDCompacter = new JSONLDCompacter( registry, "target", queryResolver );
 
 				interface Expected {
 					pointer1:Expected;
@@ -812,7 +813,7 @@ describe( module( "carbonldp/JSONLD/Compacter" ), ():void => {
 			} );
 
 			it( "should merge every level schema from related to each other by partial property when query resolver", ():void => {
-				const documents:Documents = new Documents();
+				const registry:DocumentsRegistry = new DocumentsRegistry();
 				const queryResolver:QueryContextBuilder = new QueryContextBuilder();
 				queryResolver
 					.addProperty( "target" )
@@ -842,7 +843,7 @@ describe( module( "carbonldp/JSONLD/Compacter" ), ():void => {
 							} );
 					} );
 
-				const compacter:JSONLDCompacter = new JSONLDCompacter( documents, "target", queryResolver );
+				const compacter:JSONLDCompacter = new JSONLDCompacter( registry, "target", queryResolver );
 				const compacted:Document[] = compacter.compactDocuments( [
 					{
 						"@id": "https://example.com/resource-1/",
@@ -894,7 +895,7 @@ describe( module( "carbonldp/JSONLD/Compacter" ), ():void => {
 			} );
 
 			it( "should compact same related document by partial property when query resolver", ():void => {
-				const documents:Documents = new Documents();
+				const registry:DocumentsRegistry = new DocumentsRegistry();
 				const queryResolver:QueryContextBuilder = new QueryContextBuilder();
 				queryResolver
 					.addProperty( "target" )
@@ -922,7 +923,7 @@ describe( module( "carbonldp/JSONLD/Compacter" ), ():void => {
 							} );
 					} );
 
-				const compacter:JSONLDCompacter = new JSONLDCompacter( documents, "target", queryResolver );
+				const compacter:JSONLDCompacter = new JSONLDCompacter( registry, "target", queryResolver );
 
 				interface Expected {
 					pointer:{
@@ -938,7 +939,7 @@ describe( module( "carbonldp/JSONLD/Compacter" ), ():void => {
 							"https://example.com/ns#pointer": [ {
 								"@id": "https://example.com/shared-resource/",
 							} ],
-						} as RDFNode ],
+						} ],
 					},
 					{
 						"@id": "https://example.com/resource-2/",
@@ -947,7 +948,7 @@ describe( module( "carbonldp/JSONLD/Compacter" ), ():void => {
 							"https://example.com/ns#pointer": [ {
 								"@id": "https://example.com/shared-resource/",
 							} ],
-						} as RDFNode ],
+						} ],
 					},
 					{
 						"@id": "https://example.com/shared-resource/",
@@ -956,7 +957,7 @@ describe( module( "carbonldp/JSONLD/Compacter" ), ():void => {
 							"https://example.com/ns#string": [ {
 								"@value": "shared value",
 							} ],
-						} as RDFNode ],
+						} ],
 					},
 				], [
 					{ "@id": "https://example.com/resource-1/" } as any,

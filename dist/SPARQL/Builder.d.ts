@@ -1,6 +1,6 @@
 import { SPARQLER } from "sparqler";
 import { FinishClause } from "sparqler/clauses";
-import { Documents } from "../Documents";
+import { SPARQLDocument } from "../Document/SPARQLDocument";
 import { SPARQLRawResults } from "./RawResults";
 import { SPARQLSelectResults } from "./SelectResults";
 export interface FinishSPARQLSelect extends FinishClause {
@@ -8,5 +8,5 @@ export interface FinishSPARQLSelect extends FinishClause {
     executeRaw(): Promise<SPARQLRawResults>;
 }
 export declare class SPARQLBuilder extends SPARQLER<FinishSPARQLSelect> {
-    constructor(documents: Documents, entryPoint: string);
+    constructor(repository: SPARQLDocument, entryPoint: string);
 }

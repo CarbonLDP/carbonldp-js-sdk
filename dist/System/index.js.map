@@ -1,1 +1,1 @@
-{"version":3,"sources":["System/index.ts"],"names":[],"mappings":";;;;;AAAA,wCAAmC","file":"index.js","sourcesContent":["export * from \"./PlatformMetadata\";\n"]}
+{"version":3,"sources":["System/index.ts"],"names":[],"mappings":";;;;;AAAA,wCAAmC;AACnC,wCAAmC","file":"index.js","sourcesContent":["export * from \"./PlatformMetadata\";\nexport * from \"./PlatformInstance\";\n"]}

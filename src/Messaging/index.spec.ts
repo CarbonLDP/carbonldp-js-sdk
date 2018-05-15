@@ -18,7 +18,7 @@ import {
 import {
 	MessagingDocument,
 	MessagingDocumentFactory,
-} from "./Document";
+} from "./MessagingDocument";
 import {
 	DocumentCreated,
 	DocumentCreatedFactory,
@@ -65,7 +65,6 @@ import { MessagingService } from "./Service";
 import {
 	createDestination,
 	parseURIPattern,
-	validateEventContext,
 	validateEventType,
 } from "./Utils";
 
@@ -341,7 +340,7 @@ describe( module( "carbonldp/Messaging" ), ():void => {
 	it( reexports(
 		STATIC,
 		"validateEventType",
-		"CarbonLDP.Messaging#validateEventType"
+		"carbonldp/Messaging/Utils#validateEventType"
 	), ():void => {
 		expect( Messaging.validateEventType ).toBeDefined();
 		expect( Messaging.validateEventType ).toBe( validateEventType );
@@ -349,17 +348,8 @@ describe( module( "carbonldp/Messaging" ), ():void => {
 
 	it( reexports(
 		STATIC,
-		"validateEventContext",
-		"CarbonLDP.Messaging#validateEventContext"
-	), ():void => {
-		expect( Messaging.validateEventContext ).toBeDefined();
-		expect( Messaging.validateEventContext ).toBe( validateEventContext );
-	} );
-
-	it( reexports(
-		STATIC,
 		"parseURIPattern",
-		"CarbonLDP.Messaging#parseURIPattern"
+		"carbonldp/Messaging/Utils#parseURIPattern"
 	), ():void => {
 		expect( Messaging.parseURIPattern ).toBeDefined();
 		expect( Messaging.parseURIPattern ).toBe( parseURIPattern );
@@ -368,7 +358,7 @@ describe( module( "carbonldp/Messaging" ), ():void => {
 	it( reexports(
 		STATIC,
 		"createDestination",
-		"CarbonLDP.Messaging#createDestination"
+		"carbonldp/Messaging/Utils#createDestination"
 	), ():void => {
 		expect( Messaging.createDestination ).toBeDefined();
 		expect( Messaging.createDestination ).toBe( createDestination );

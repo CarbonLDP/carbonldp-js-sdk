@@ -28,8 +28,6 @@ import { CarbonLDP } from "./CarbonLDP";
 import { Document } from "./Document";
 import { TransientDocument } from "./Document";
 
-import { Documents } from "./Documents";
-
 import * as Errors from "./Errors";
 import { TransientFragment } from "./Fragment";
 import { HTTPError } from "./HTTP/Errors";
@@ -43,7 +41,7 @@ import { NamedFragment } from "./NamedFragment";
 import * as ObjectSchema from "./ObjectSchema";
 import { Pointer } from "./Pointer";
 import {
-	Resource,
+	PersistedResource,
 	TransientResource
 } from "./Resource";
 import { ContextSettings } from "./Settings";
@@ -69,6 +67,9 @@ import { CS } from "./Vocabularies/CS";
 import { LDP } from "./Vocabularies/LDP";
 import { XSD } from "./Vocabularies/XSD";
 
+type Documents = any;
+const Documents:Documents = {};
+
 function createPartialMetadata( schema:ObjectSchema.ObjectSchema ):PartialMetadata {
 	const digestedSchema:ObjectSchema.DigestedObjectSchema = ObjectSchema.ObjectSchemaDigester.digestSchema( schema );
 	digestedSchema.properties.forEach( definition => ObjectSchema.ObjectSchemaUtils.resolveProperty( digestedSchema, definition, true ) );
@@ -77,7 +78,7 @@ function createPartialMetadata( schema:ObjectSchema.ObjectSchema ):PartialMetada
 
 function createMockDocument<T extends { id:string }>( data:{ documents:Documents, props:T } ):T & Document {
 	const pointer:Pointer = data.documents.getPointer( data.props.id );
-	const doc:T & Document = Document.decorate( Object.assign( pointer, data.props ), data.documents );
+	const doc:T & Document = Document.decorate( Object.assign( pointer, data.props ) );
 
 	findNonEnumerableProps( doc );
 	doc._normalize();
@@ -99,7 +100,7 @@ function findNonEnumerableProps( object:object ):void {
 	;
 }
 
-describe( module( "carbonldp/Documents" ), ():void => {
+/*describe( module( "carbonldp/Documents" ), ():void => {
 
 	describe( clazz(
 		"CarbonLDP.Documents",
@@ -132,7 +133,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				constructor() {
 					super();
 					this._baseURI = "https://example.com/";
-					this.settings = { paths: { system: ".system/" } };
+					this._settings = { paths: { system: ".system/" } };
 				}
 			}
 
@@ -159,7 +160,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				constructor() {
 					super();
 					this._baseURI = "https://example.com/";
-					this.settings = { paths: { system: ".system/" } };
+					this._settings = { paths: { system: ".system/" } };
 				}
 			}
 
@@ -182,7 +183,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				constructor() {
 					super();
 					this._baseURI = "https://example.com/";
-					this.settings = { paths: { system: ".system/" } };
+					this._settings = { paths: { system: ".system/" } };
 				}
 			}
 
@@ -212,7 +213,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					constructor() {
 						super();
 						this._baseURI = "https://example.com/";
-						this.settings = { paths: { system: ".system/" } };
+						this._settings = { paths: { system: ".system/" } };
 					}
 				}
 
@@ -235,7 +236,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					constructor() {
 						super();
 						this._baseURI = "https://example.com/";
-						this.settings = { paths: { system: ".system/" } };
+						this._settings = { paths: { system: ".system/" } };
 					}
 				}
 
@@ -278,7 +279,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					constructor() {
 						super();
 						this._baseURI = "https://example.com/";
-						this.settings = { paths: { system: ".system/" } };
+						this._settings = { paths: { system: ".system/" } };
 					}
 				}
 
@@ -318,7 +319,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				constructor() {
 					super();
 					this._baseURI = "https://example.com/";
-					this.settings = { paths: { system: ".system/" } };
+					this._settings = { paths: { system: ".system/" } };
 				}
 			}
 
@@ -369,7 +370,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				constructor() {
 					super();
 					this._baseURI = "https://example.com/";
-					this.settings = { paths: { system: ".system/" } };
+					this._settings = { paths: { system: ".system/" } };
 				}
 			}
 
@@ -890,7 +891,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				beforeEach( ():void => {
 					context = new class extends AbstractContext {
 						_baseURI:string = "https://example.com/";
-						settings:ContextSettings = { vocabulary: "https://example.com/ns#" };
+						_settings:ContextSettings = { vocabulary: "https://example.com/ns#" };
 					};
 					documents = context.documents;
 				} );
@@ -1514,7 +1515,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 
 					interface MyDocument {
 						property1:string;
-						property2:Resource;
+						property2:PersistedResource;
 					}
 
 					context.extendObjectSchema( "Resource", {
@@ -1576,7 +1577,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				it( "should merge partial metadata of a partial document", ( done:DoneFn ):void => {
 					interface MyDocument {
 						property1:string;
-						property2:Resource;
+						property2:PersistedResource;
 					}
 
 					context.extendObjectSchema( "Resource", {
@@ -1794,7 +1795,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					interface MyDocument {
 						property4:boolean;
 						property1:string;
-						property2:Resource;
+						property2:PersistedResource;
 					}
 
 					context.extendObjectSchema( "Resource", {
@@ -2282,7 +2283,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					constructor() {
 						super();
 						this._baseURI = "https://example.com/";
-						this.settings = { paths: { system: ".system/" } };
+						this._settings = { paths: { system: ".system/" } };
 					}
 				}
 
@@ -2477,7 +2478,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				beforeEach( ():void => {
 					context = new class extends AbstractContext {
 						_baseURI:string = "https://example.com/";
-						settings:ContextSettings = { vocabulary: "https://example.com/ns#" };
+						_settings:ContextSettings = { vocabulary: "https://example.com/ns#" };
 					};
 					documents = context.documents;
 				} );
@@ -2848,7 +2849,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				beforeEach( ():void => {
 					context = new class extends AbstractContext {
 						_baseURI:string = "https://example.com/";
-						settings:ContextSettings = { vocabulary: "https://example.com/ns#" };
+						_settings:ContextSettings = { vocabulary: "https://example.com/ns#" };
 					};
 					documents = context.documents;
 				} );
@@ -3114,7 +3115,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				beforeEach( ():void => {
 					context = new class extends AbstractContext {
 						_baseURI:string = "https://example.com/";
-						settings:ContextSettings = { vocabulary: "https://example.com/ns#" };
+						_settings:ContextSettings = { vocabulary: "https://example.com/ns#" };
 					};
 					documents = context.documents;
 				} );
@@ -3567,7 +3568,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				beforeEach( ():void => {
 					context = new class extends AbstractContext {
 						_baseURI:string = "https://example.com/";
-						settings:ContextSettings = { vocabulary: "https://example.com/ns#" };
+						_settings:ContextSettings = { vocabulary: "https://example.com/ns#" };
 					};
 					documents = context.documents;
 				} );
@@ -3878,7 +3879,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				beforeEach( () => {
 					context = new class extends AbstractContext {
 						_baseURI:string = "https://example.com/";
-						settings:ContextSettings = { vocabulary: "https://example.com/ns#" };
+						_settings:ContextSettings = { vocabulary: "https://example.com/ns#" };
 					};
 					documents = context.documents;
 				} );
@@ -4387,7 +4388,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				beforeEach( () => {
 					context = new class extends AbstractContext {
 						_baseURI:string = "https://example.com/";
-						settings:ContextSettings = { vocabulary: "https://example.com/ns#" };
+						_settings:ContextSettings = { vocabulary: "https://example.com/ns#" };
 					};
 					documents = context.documents;
 				} );
@@ -6320,7 +6321,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				beforeEach( ():void => {
 					context = new class extends AbstractContext {
 						_baseURI:string = "https://example.com/";
-						settings:ContextSettings = { vocabulary: "https://example.com/ns#" };
+						_settings:ContextSettings = { vocabulary: "https://example.com/ns#" };
 					};
 					documents = context.documents;
 				} );
@@ -6716,7 +6717,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				beforeEach( ():void => {
 					context = new class extends AbstractContext {
 						_baseURI:string = "https://example.com/";
-						settings:ContextSettings = { vocabulary: "https://example.com/ns#" };
+						_settings:ContextSettings = { vocabulary: "https://example.com/ns#" };
 					};
 					documents = context.documents;
 				} );
@@ -7012,7 +7013,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				beforeEach( () => {
 					context = new class extends AbstractContext {
 						_baseURI:string = "https://example.com/";
-						settings:ContextSettings = { vocabulary: "https://example.com/ns#" };
+						_settings:ContextSettings = { vocabulary: "https://example.com/ns#" };
 					};
 					documents = context.documents;
 				} );
@@ -7526,7 +7527,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				beforeEach( () => {
 					context = new class extends AbstractContext {
 						_baseURI:string = "https://example.com/";
-						settings:ContextSettings = { vocabulary: "https://example.com/ns#" };
+						_settings:ContextSettings = { vocabulary: "https://example.com/ns#" };
 					};
 					documents = context.documents;
 				} );
@@ -9451,7 +9452,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				constructor() {
 					super();
 					this._baseURI = "https://example.com/";
-					this.settings = { paths: { system: ".system/" } };
+					this._settings = { paths: { system: ".system/" } };
 				}
 			}
 
@@ -9647,7 +9648,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					constructor() {
 						super();
 						this._baseURI = "https://example.com/";
-						this.settings = { paths: { system: ".system/" } };
+						this._settings = { paths: { system: ".system/" } };
 					}
 				}
 
@@ -9829,7 +9830,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				constructor() {
 					super();
 					this._baseURI = "https://example.com/";
-					this.settings = { paths: { system: ".system/" } };
+					this._settings = { paths: { system: ".system/" } };
 				}
 			}
 
@@ -10025,7 +10026,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					constructor() {
 						super();
 						this._baseURI = "https://example.com/";
-						this.settings = { paths: { system: ".system/" } };
+						this._settings = { paths: { system: ".system/" } };
 					}
 				}
 
@@ -10214,7 +10215,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					constructor() {
 						super();
 						this._baseURI = "https://example.com/";
-						this.settings = { paths: { system: ".system/" } };
+						this._settings = { paths: { system: ".system/" } };
 					}
 				}
 
@@ -10381,7 +10382,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				beforeEach( () => {
 					context = new class extends AbstractContext {
 						_baseURI:string = "https://example.com/";
-						settings:ContextSettings = { vocabulary: "https://example.com/ns#" };
+						_settings:ContextSettings = { vocabulary: "https://example.com/ns#" };
 					};
 					documents = context.documents;
 				} );
@@ -10848,7 +10849,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				beforeEach( ():void => {
 					context = new class extends AbstractContext {
 						_baseURI:string = "https://example.com/";
-						settings:ContextSettings = { vocabulary: "https://example.com/ns#" };
+						_settings:ContextSettings = { vocabulary: "https://example.com/ns#" };
 					};
 					documents = context.documents;
 				} );
@@ -11056,7 +11057,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					interface MyDocument {
 						property4:boolean;
 						property1:string;
-						property2:Resource;
+						property2:PersistedResource;
 					}
 
 					context.extendObjectSchema( {
@@ -11462,7 +11463,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 
 					interface MyDocument {
 						property1:string;
-						property2:Resource & {
+						property2:PersistedResource & {
 							property2:number;
 							property3:string;
 							property5:Date;
@@ -11621,7 +11622,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 
 					interface MyDocument {
 						property1:string;
-						property2:Resource & {
+						property2:PersistedResource & {
 							property2:number;
 							property3:string;
 							property5:Date;
@@ -11817,7 +11818,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					interface MyDocument {
 						property4:boolean;
 						property1:string;
-						property2:Resource;
+						property2:PersistedResource;
 					}
 
 					const persistedDocument:Document & MyDocument = Document.decorate(
@@ -12023,7 +12024,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				beforeEach( ():void => {
 					context = new class extends AbstractContext {
 						_baseURI:string = "https://example.com/";
-						settings:ContextSettings = { vocabulary: "https://example.com/ns#" };
+						_settings:ContextSettings = { vocabulary: "https://example.com/ns#" };
 					};
 					documents = context.documents;
 				} );
@@ -12662,7 +12663,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					constructor() {
 						super();
 						this._baseURI = "https://example.com/";
-						this.settings = { paths: { system: ".system/" } };
+						this._settings = { paths: { system: ".system/" } };
 					}
 				}
 
@@ -13926,7 +13927,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				constructor() {
 					super();
 					this._baseURI = "https://example.com/";
-					this.settings = { paths: { system: ".system/" } };
+					this._settings = { paths: { system: ".system/" } };
 				}
 			}
 
@@ -14112,7 +14113,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				const createDestinationSpy:jasmine.Spy = spyOn( MessagingUtils, "createDestination" );
 
 				const event:string = "*.*";
-				const uriPattern:string = "resource/*";
+				const uriPattern:string = "resource/!*";
 				carbon.documents.on( event, uriPattern, () => {
 					done.fail( "Should not enter here." );
 				}, () => {
@@ -14124,7 +14125,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 			} );
 
 			it( "should subscribe with the Messaging Service", ( done:DoneFn ):void => {
-				const destinationString:string = "destination/*";
+				const destinationString:string = "destination/!*";
 				spyOn( MessagingUtils, "createDestination" ).and.returnValue( destinationString );
 
 				const carbon:CarbonLDP = new CarbonLDP( "https://example.com" );
@@ -14137,7 +14138,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				const onError:( error:Error ) => void = () => {
 					done.fail( "Should not enter here." );
 				};
-				carbon.documents.on( "*.*", "resource/*", onEvent, onError );
+				carbon.documents.on( "*.*", "resource/!*", onEvent, onError );
 
 				expect( subscribeSpy ).toHaveBeenCalledWith( destinationString, onEvent, onError );
 				done();
@@ -14278,7 +14279,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				const createDestinationSpy:jasmine.Spy = spyOn( MessagingUtils, "createDestination" );
 
 				const event:string = "*.*";
-				const uriPattern:string = "resource/*";
+				const uriPattern:string = "resource/!*";
 				carbon.documents.off( event, uriPattern, () => {
 					done.fail( "Should not enter here." );
 				}, () => {
@@ -14290,7 +14291,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 			} );
 
 			it( "should unsubscribe with the Messaging Service", ( done:DoneFn ):void => {
-				const destinationString:string = "destination/*";
+				const destinationString:string = "destination/!*";
 				spyOn( MessagingUtils, "createDestination" ).and.returnValue( destinationString );
 
 				const carbon:CarbonLDP = new CarbonLDP( "https://example.com" );
@@ -14303,7 +14304,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				const onError:( error:Error ) => void = () => {
 					done.fail( "Should not enter here." );
 				};
-				carbon.documents.off( "*.*", "resource/*", onEvent, onError );
+				carbon.documents.off( "*.*", "resource/!*", onEvent, onError );
 
 				expect( unsubscribeSpy ).toHaveBeenCalledWith( destinationString, onEvent );
 				done();
@@ -14408,7 +14409,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				};
 
 				const event:string = "*.*";
-				const uriPattern:string = "resource/*";
+				const uriPattern:string = "resource/!*";
 				carbon.documents.one( event, uriPattern, onEvent, onError );
 
 				expect( onSpy ).toHaveBeenCalledWith( event, uriPattern, jasmine.any( Function ), onError );
@@ -14432,7 +14433,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				};
 
 				const event:string = "*.*";
-				const uriPattern:string = "resource/*";
+				const uriPattern:string = "resource/!*";
 				carbon.documents.one( event, uriPattern, onEvent, onError );
 
 				expect( onSpy ).toHaveBeenCalled();
@@ -14446,7 +14447,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					.and.callFake( ( destination:string, onEvent:() => void ) => onEvent() );
 				const unsubscribeSpy:jasmine.Spy = spyOn( carbon.messaging, "unsubscribe" );
 
-				carbon.documents.one( "*.*", "resource/*", () => void 0, done.fail );
+				carbon.documents.one( "*.*", "resource/!*", () => void 0, done.fail );
 
 				expect( subscribeSpy ).toHaveBeenCalled();
 				expect( unsubscribeSpy ).toHaveBeenCalled();
@@ -14490,7 +14491,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					done.fail( "Should not enter here." );
 				};
 
-				const uriPattern:string = "resource/*";
+				const uriPattern:string = "resource/!*";
 				carbon.documents.onDocumentCreated( uriPattern, onEvent, onError );
 
 				expect( onSpy ).toHaveBeenCalledWith( Event.DOCUMENT_CREATED, uriPattern, onEvent, onError );
@@ -14531,7 +14532,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					done.fail( "Should not enter here." );
 				};
 
-				const uriPattern:string = "resource/*";
+				const uriPattern:string = "resource/!*";
 				carbon.documents.onChildCreated( uriPattern, onEvent, onError );
 
 				expect( onSpy ).toHaveBeenCalledWith( Event.CHILD_CREATED, uriPattern, onEvent, onError );
@@ -14572,7 +14573,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					done.fail( "Should not enter here." );
 				};
 
-				const uriPattern:string = "resource/*";
+				const uriPattern:string = "resource/!*";
 				carbon.documents.onAccessPointCreated( uriPattern, onEvent, onError );
 
 				expect( onSpy ).toHaveBeenCalledWith( Event.ACCESS_POINT_CREATED, uriPattern, onEvent, onError );
@@ -14613,7 +14614,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					done.fail( "Should not enter here." );
 				};
 
-				const uriPattern:string = "resource/*";
+				const uriPattern:string = "resource/!*";
 				carbon.documents.onDocumentModified( uriPattern, onEvent, onError );
 
 				expect( onSpy ).toHaveBeenCalledWith( Event.DOCUMENT_MODIFIED, uriPattern, onEvent, onError );
@@ -14654,7 +14655,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					done.fail( "Should not enter here." );
 				};
 
-				const uriPattern:string = "resource/*";
+				const uriPattern:string = "resource/!*";
 				carbon.documents.onDocumentDeleted( uriPattern, onEvent, onError );
 
 				expect( onSpy ).toHaveBeenCalledWith( Event.DOCUMENT_DELETED, uriPattern, onEvent, onError );
@@ -14695,7 +14696,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					done.fail( "Should not enter here." );
 				};
 
-				const uriPattern:string = "resource/*";
+				const uriPattern:string = "resource/!*";
 				carbon.documents.onMemberAdded( uriPattern, onEvent, onError );
 
 				expect( onSpy ).toHaveBeenCalledWith( Event.MEMBER_ADDED, uriPattern, onEvent, onError );
@@ -14736,7 +14737,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					done.fail( "Should not enter here." );
 				};
 
-				const uriPattern:string = "resource/*";
+				const uriPattern:string = "resource/!*";
 				carbon.documents.onMemberRemoved( uriPattern, onEvent, onError );
 
 				expect( onSpy ).toHaveBeenCalledWith( Event.MEMBER_REMOVED, uriPattern, onEvent, onError );
@@ -14755,7 +14756,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 		beforeEach( () => {
 			context = new class extends AbstractContext {
 				_baseURI:string = "https://example.com/";
-				settings:ContextSettings = { vocabulary: "https://example.com/ns#" };
+				_settings:ContextSettings = { vocabulary: "https://example.com/ns#" };
 			};
 			documents = context.documents;
 
@@ -14817,4 +14818,4 @@ describe( module( "carbonldp/Documents" ), ():void => {
 
 	} );
 
-} );
+} );*/

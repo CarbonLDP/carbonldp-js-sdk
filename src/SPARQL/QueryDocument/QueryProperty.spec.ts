@@ -4,12 +4,12 @@ import {
 	VariableToken,
 } from "sparqler/tokens";
 
+import { createMockContext } from "../../../test/helpers/mocks";
 import { AbstractContext } from "../../AbstractContext";
 import {
 	DigestedObjectSchema,
 	ObjectSchemaDigester,
 } from "../../ObjectSchema";
-import { ContextSettings } from "../../Settings";
 import {
 	clazz,
 	constructor,
@@ -40,13 +40,10 @@ describe( module( "carbonldp/SPARQL/QueryDocument/QueryProperty" ), ():void => {
 			expect( QueryProperty ).toEqual( jasmine.any( Function ) );
 		} );
 
-		let context:AbstractContext;
+		let context:AbstractContext<any, any>;
 		let queryContext:QueryContext;
 		beforeEach( ():void => {
-			context = new class extends AbstractContext {
-				protected _baseURI:string = "https://example.com/";
-				protected settings:ContextSettings = { vocabulary: "http://example.com/vocab#" };
-			};
+			context = createMockContext( { settings: { vocabulary: "http://example.com/vocab#" } } );
 
 			queryContext = new QueryContext( context );
 		} );

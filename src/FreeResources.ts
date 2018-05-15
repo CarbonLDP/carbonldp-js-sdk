@@ -1,47 +1,98 @@
-import { ModelDecorator } from "./core/ModelDecorator";
-import { ModelFactory } from "./core/ModelFactory";
-import { Documents } from "./Documents";
-import { IDAlreadyInUseError } from "./Errors/IDAlreadyInUseError";
-import { IllegalArgumentError } from "./Errors/IllegalArgumentError";
-import { JSONLDConverter } from "./JSONLD/Converter";
-import { DigestedObjectSchema } from "./ObjectSchema";
+import { AbstractContext } from "./AbstractContext";
 import {
-	Pointer,
-	PointerLibrary,
-	PointerValidator,
-} from "./Pointer";
-import { RDFNode } from "./RDF/Node";
-import { URI } from "./RDF/URI";
+	ModelDecorator,
+	ModelFactory,
+} from "./core";
+import { JSONLDConverter } from "./JSONLD";
+import { DigestedObjectSchema } from "./ObjectSchema";
+import { Pointer } from "./Pointer";
+import {
+	RDFNode,
+	URI,
+} from "./RDF";
+import {
+	Registry,
+	RegistryService,
+} from "./Registry";
 import { TransientResource } from "./Resource";
-import * as Utils from "./Utils";
+import {
+	isObject,
+	PickSelfProps
+} from "./Utils";
 
 
 export interface BaseFreeResources {
-	_documents:Documents;
+	_registry:RegistryService<Pointer, any>;
+	_context:AbstractContext<Pointer, any>;
 }
 
 
-export interface FreeResources extends PointerLibrary, PointerValidator {
-	_documents:Documents;
-	_resourcesIndex:Map<string, TransientResource>;
+export interface FreeResources extends Registry<TransientResource> {
+	_context:AbstractContext<Pointer, any> | undefined;
+	_registry:RegistryService<Pointer, any> | undefined;
 
-	hasResource( id:string ):boolean;
 
-	getResource( id:string ):TransientResource;
+	_getLocalID( id:string ):string | null;
 
-	getResources():TransientResource[];
+	_register<T extends object>( base:T & { id?:string } ):T & TransientResource;
 
-	getPointer( id:string ):TransientResource;
 
-	createResource( id?:string ):TransientResource;
-
-	createResourceFrom<T>( object:T, id?:string ):TransientResource & T;
-
-	toJSON():object;
+	toJSON():RDFNode[];
 }
 
+type OverloadedProps =
+	| "_context"
+	| "_registry"
+	| "_getLocalID"
+	| "_register"
+	;
 
-export interface FreeResourcesFactory extends ModelFactory<FreeResources>, ModelDecorator<FreeResources> {
+const PROTOTYPE:PickSelfProps<FreeResources, Registry<TransientResource>, OverloadedProps> = {
+	_context: void 0,
+	_registry: void 0,
+
+
+	_getLocalID( id:string ):string | null {
+		if( URI.isBNodeID( id ) ) return id;
+		return null;
+	},
+
+	_register<T extends object>( base:T & { id?:string } ):T & TransientResource {
+		if( ! base.id ) base.id = URI.generateBNodeID();
+		const pointer:T & Pointer = Registry.PROTOTYPE._register.call( this, base );
+
+		return TransientResource.decorate( pointer );
+	},
+
+
+	toJSON( this:FreeResources ):RDFNode[] {
+		const generalSchema:DigestedObjectSchema = this._registry ?
+			this._registry.getGeneralSchema() : new DigestedObjectSchema();
+		const jsonldConverter:JSONLDConverter = this._registry ?
+			this._registry.jsonldConverter : new JSONLDConverter();
+
+		return this
+			.getPointers( true )
+			.map( resource => {
+				const resourceSchema:DigestedObjectSchema = this._registry ?
+					this._registry.getSchemaFor( resource ) : generalSchema;
+
+				return jsonldConverter.expand( resource, generalSchema, resourceSchema );
+			} )
+			;
+	},
+};
+
+
+export interface FreeResourcesFactory extends ModelFactory<FreeResources>, ModelDecorator<FreeResources, BaseFreeResources> {
+	PROTOTYPE:PickSelfProps<FreeResources,
+		Registry<TransientResource>,
+		| "_context"
+		| "_registry"
+		| "_getLocalID"
+		| "_register">;
+
+
 	is( value:any ):value is FreeResources;
 
 	isDecorated( object:object ):object is FreeResources;
@@ -51,190 +102,42 @@ export interface FreeResourcesFactory extends ModelFactory<FreeResources>, Model
 
 	createFrom<T extends object>( object:T & BaseFreeResources ):T & FreeResources;
 
-	decorate<T extends object>( object:T, documents:Documents ):T & FreeResources;
-}
-
-
-function hasPointer( this:FreeResources, id:string ):boolean {
-	if( ! inLocalScope( id ) ) {
-		return this._documents.hasPointer( id );
-	}
-
-	return this.hasResource( id );
-}
-
-function getPointer( this:FreeResources, id:string ):Pointer {
-	if( ! inLocalScope( id ) ) {
-		return this._documents.getPointer( id );
-	}
-
-	let resource:TransientResource = this.getResource( id );
-
-	return ! resource ? this.createResource( id ) : resource;
-}
-
-function inLocalScope( id:string ):boolean {
-	return URI.isBNodeID( id );
-}
-
-function inScope( this:FreeResources, idOrPointer:string | Pointer ):boolean {
-	let id:string = Utils.isString( idOrPointer ) ? idOrPointer : idOrPointer.id;
-
-	return inLocalScope( id ) || this._documents.inScope( id );
-}
-
-function hasResource( this:FreeResources, id:string ):boolean {
-	return this._resourcesIndex.has( id );
-}
-
-function getResource( this:FreeResources, id:string ):TransientResource {
-	return this._resourcesIndex.get( id ) || null;
-}
-
-function getResources( this:FreeResources ):TransientResource[] {
-	return Utils.ArrayUtils.from( this._resourcesIndex.values() );
-}
-
-function createResource( this:FreeResources, id?:string ):TransientResource {
-	return this.createResourceFrom( {}, id );
-}
-
-function createResourceFrom<T extends object>( this:FreeResources, object:T, id?:string ):TransientResource & T {
-	if( id ) {
-		if( ! inLocalScope( id ) ) throw new IllegalArgumentError( `The id "${ id }" is out of scope.` );
-		if( this._resourcesIndex.has( id ) ) throw new IDAlreadyInUseError( `The id "${ id }" is already in use by another resource.` );
-	} else {
-		id = URI.generateBNodeID();
-	}
-
-	let resource:TransientResource & T = TransientResource.createFrom<T>( object );
-	resource.id = id;
-
-	this._resourcesIndex.set( id, resource );
-
-	return resource;
-}
-
-function toJSON( this:FreeResources, key?:string ):RDFNode[] {
-	const generalSchema:DigestedObjectSchema = this._documents.getGeneralSchema();
-	const jsonldConverter:JSONLDConverter = this._documents.jsonldConverter;
-
-	return this
-		.getResources()
-		.map( resource => {
-			const resourceSchema:DigestedObjectSchema = this._documents.getSchemaFor( resource );
-			return jsonldConverter.expand( resource, generalSchema, resourceSchema );
-		} )
-		;
+	decorate<T extends object>( object:T ):T & FreeResources;
 }
 
 export const FreeResources:FreeResourcesFactory = {
+	PROTOTYPE,
+
+
 	is( value:any ):value is FreeResources {
-		return FreeResources.isDecorated( value )
+		return isObject( value )
+			&& FreeResources.isDecorated( value )
 			;
 	},
 
 	isDecorated( object:object ):object is FreeResources {
-		return (
-			Utils.hasPropertyDefined( object, "_documents" ) &&
-			Utils.hasPropertyDefined( object, "_resourcesIndex" ) &&
-
-			Utils.hasFunction( object, "hasResource" ) &&
-			Utils.hasFunction( object, "getResource" ) &&
-			Utils.hasFunction( object, "getResources" ) &&
-			Utils.hasFunction( object, "createResource" ) &&
-			Utils.hasFunction( object, "createResourceFrom" ) &&
-
-			Utils.hasFunction( object, "hasPointer" ) &&
-			Utils.hasFunction( object, "getPointer" ) &&
-
-			Utils.hasFunction( object, "inScope" ) &&
-
-			Utils.hasFunction( object, "toJSON" )
-		);
+		return isObject( object )
+			&& ModelDecorator
+				.hasPropertiesFrom( PROTOTYPE, object )
+			;
 	},
 
 
-	create<T extends object>( data:T & BaseFreeResources ):T &FreeResources {
+	create<T extends object>( data:T & BaseFreeResources ):T & FreeResources {
 		const copy:T & BaseFreeResources = Object.assign( {}, data );
 		return FreeResources.createFrom( copy );
 	},
 
 	createFrom<T extends object>( object:T & BaseFreeResources ):T & FreeResources {
-		return FreeResources.decorate<T>( object, object._documents );
+		return FreeResources.decorate( object );
 	},
 
-	decorate<T extends object>( object:T, documents:Documents ):T & FreeResources {
+	decorate<T extends object>( object:T ):T & FreeResources {
 		if( FreeResources.isDecorated( object ) ) return object;
 
-		Object.defineProperties( object, {
-			"_documents": {
-				configurable: true,
-				value: documents,
-			},
-			"_resourcesIndex": {
-				writable: false,
-				enumerable: false,
-				configurable: true,
-				value: new Map<string, TransientResource>(),
-			},
-			"hasPointer": {
-				writable: false,
-				enumerable: false,
-				configurable: true,
-				value: hasPointer,
-			},
-			"getPointer": {
-				writable: false,
-				enumerable: false,
-				configurable: true,
-				value: getPointer,
-			},
-			"inScope": {
-				writable: false,
-				enumerable: false,
-				configurable: true,
-				value: inScope,
-			},
-			"hasResource": {
-				writable: false,
-				enumerable: false,
-				configurable: true,
-				value: hasResource,
-			},
-			"getResource": {
-				writable: false,
-				enumerable: false,
-				configurable: true,
-				value: getResource,
-			},
-			"getResources": {
-				writable: false,
-				enumerable: false,
-				configurable: true,
-				value: getResources,
-			},
-			"createResource": {
-				writable: false,
-				enumerable: false,
-				configurable: true,
-				value: createResource,
-			},
-			"createResourceFrom": {
-				writable: false,
-				enumerable: false,
-				configurable: true,
-				value: createResourceFrom,
-			},
-			"toJSON": {
-				writable: false,
-				enumerable: false,
-				configurable: true,
-				value: toJSON,
-			},
-		} );
-
-		return <any> object;
+		const resource:T & Registry<TransientResource> = Registry.decorate( object );
+		return ModelDecorator
+			.definePropertiesFrom( PROTOTYPE, resource );
 	},
 };
 

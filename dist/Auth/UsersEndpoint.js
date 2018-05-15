@@ -5,8 +5,8 @@ exports.UsersEndpoint = {
     is: function (value) {
         return ProtectedDocument_1.ProtectedDocument.is(value);
     },
-    decorate: function (object, documents) {
-        ProtectedDocument_1.ProtectedDocument.decorate(object, documents);
+    decorate: function (object) {
+        ProtectedDocument_1.ProtectedDocument.decorate(object);
         return object;
     },
 };

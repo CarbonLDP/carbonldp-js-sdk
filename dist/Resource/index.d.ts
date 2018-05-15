@@ -1,3 +1,3 @@
-export * from "./BaseResource";
-export * from "./Resource";
-export * from "./TransientResource";
+export { BaseResource } from "./BaseResource";
+export { PersistedResource } from "./PersistedResource";
+export { TransientResource } from "./TransientResource";

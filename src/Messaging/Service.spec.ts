@@ -47,7 +47,9 @@ describe( module( "carbonldp/Messaging/Service" ), ():void => {
 				[
 					{ name: "context", type: "CarbonLDP" },
 				]
-			), ():void => {
+			), ():void => {} );
+
+			it( "should be instantiable", ():void => {
 				expect( service ).toEqual( jasmine.any( MessagingService.MessagingService ) );
 			} );
 

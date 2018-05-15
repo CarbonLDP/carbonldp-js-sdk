@@ -1,12 +1,11 @@
-import { TransientDocument } from "../Document";
-import { IllegalActionError } from "../Errors";
+import { Pointer } from "../Pointer";
+import { Registry } from "../Registry";
 import { TransientResource } from "../Resource";
-import { isObject } from "../Utils";
 import { BaseFragment } from "./BaseFragment";
 
 
 export interface TransientFragment extends TransientResource {
-	_document:TransientDocument;
+	_registry:Registry<TransientFragment> & Pointer | undefined;
 }
 
 
@@ -25,14 +24,12 @@ export interface TransientFragmentFactory {
 
 export const TransientFragment:TransientFragmentFactory = {
 	isDecorated( object:object ):object is TransientFragment {
-		return isObject( object )
-			&& object.hasOwnProperty( "_document" ) && ! object.propertyIsEnumerable( "_document" )
+		return TransientResource.isDecorated( object )
 			;
 	},
 
 	is( value:any ):value is TransientFragment {
-		return TransientResource.is( value ) &&
-			TransientFragment.isDecorated( value )
+		return TransientResource.is( value )
 			;
 	},
 
@@ -50,23 +47,6 @@ export const TransientFragment:TransientFragmentFactory = {
 
 		TransientResource.decorate( object );
 
-		const fragment:T & TransientFragment = object as T & TransientFragment;
-		Object.defineProperties( fragment, {
-			"_document": {
-				writable: true,
-				enumerable: false,
-				configurable: true,
-			},
-			"resolve": {
-				configurable: true,
-				value: resolveFragment,
-			},
-		} );
-
-		return fragment;
+		return object as T & TransientFragment;
 	},
 };
-
-function resolveFragment():never {
-	throw new IllegalActionError( "A fragment cannot be resolved by itself." );
-}

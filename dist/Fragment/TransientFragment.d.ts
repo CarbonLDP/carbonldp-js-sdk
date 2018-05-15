@@ -1,8 +1,9 @@
-import { TransientDocument } from "../Document";
+import { Pointer } from "../Pointer";
+import { Registry } from "../Registry";
 import { TransientResource } from "../Resource";
 import { BaseFragment } from "./BaseFragment";
 export interface TransientFragment extends TransientResource {
-    _document: TransientDocument;
+    _registry: Registry<TransientFragment> & Pointer | undefined;
 }
 export interface TransientFragmentFactory {
     isDecorated(object: object): object is TransientFragment;

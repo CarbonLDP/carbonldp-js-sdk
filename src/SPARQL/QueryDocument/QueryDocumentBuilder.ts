@@ -60,7 +60,7 @@ export class QueryDocumentBuilder {
 		this._typesTriple = new SubjectToken( property.variable ).addPredicate( new PredicateToken( "a" ) );
 		this._values = new ValuesToken().addValues( property.variable );
 
-		this._schema = this._context.getSchemaFor( { id: "" } );
+		this._schema = this._context.getGeneralSchema();
 	}
 
 	property( name?:string ):QueryProperty {
@@ -99,7 +99,7 @@ export class QueryDocumentBuilder {
 	withType( type:string ):this {
 		if( this._context.hasProperties( this._document.name ) ) throw new IllegalStateError( "Types must be specified before the properties." );
 
-		type = ObjectSchemaUtils.resolveURI( type, this._schema, { vocab: true, base: true } );
+		type = ObjectSchemaUtils.resolveURI( type, this._schema, { vocab: true } );
 		if( ! this._typesTriple.predicates[ 0 ].objects.length )
 			this._document.addPattern( this._typesTriple );
 
@@ -107,10 +107,11 @@ export class QueryDocumentBuilder {
 
 		if( ! this._context.context ) return this;
 
-		const schema:DigestedObjectSchema = this._context.context.getObjectSchema( type );
-		if( schema ) {
-			this._schema = ObjectSchemaDigester.combineDigestedObjectSchemas( [ this._schema, schema ] );
-		}
+		if( this._context.context.hasObjectSchema( type ) )
+			ObjectSchemaDigester._combineSchemas( [
+				this._schema,
+				this._context.context.getObjectSchema( type ),
+			] );
 
 		return this;
 	}
@@ -140,8 +141,8 @@ export class QueryDocumentBuilder {
 		return this;
 	}
 
-	values( ...values:( QueryValue | QueryObject )[] ):this {
-		const termTokens:( LiteralToken | IRIToken | PrefixedNameToken )[] = values.map( value => {
+	values( ...values:(QueryValue | QueryObject)[] ):this {
+		const termTokens:(LiteralToken | IRIToken | PrefixedNameToken)[] = values.map( value => {
 			const token:TermToken = value.getToken();
 			if( token.token === "blankNode" ) throw new IllegalArgumentError( `Blank node "${ token.label }" is not a valid value.` );
 

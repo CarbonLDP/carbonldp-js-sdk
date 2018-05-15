@@ -1,4 +1,4 @@
-import { Context } from "../../Context";
+import { AbstractContext } from "../../AbstractContext";
 import { IllegalArgumentError } from "../../Errors";
 import {
 	DigestedObjectSchema,
@@ -21,7 +21,7 @@ export class QueryContextBuilder extends QueryContext {
 	private _propertiesMap:Map<string, QueryProperty>;
 	private _schemas:DigestedObjectSchema[];
 
-	constructor( context?:Context ) {
+	constructor( context?:AbstractContext<any, any> ) {
 		super( context );
 		this._propertiesMap = new Map();
 	}
@@ -107,17 +107,7 @@ export class QueryContextBuilder extends QueryContext {
 
 	private _getTypeSchemas():DigestedObjectSchema[] {
 		if( this._schemas ) return this._schemas;
-
-		const schemasTypes:Set<string> = new Set();
-		(function addSchemasTypes( context:Context ):void {
-			if( ! context ) return;
-			Array.from( context[ "typeObjectSchemaMap" ].keys() ).forEach( schemasTypes.add, schemasTypes );
-			addSchemasTypes( context.parentContext );
-		})( this.context );
-
-		this._schemas = [];
-		schemasTypes.forEach( type => this._schemas.push( this.context.getObjectSchema( type ) ) );
-		return this._schemas;
+		return this._schemas = this.context._getTypeObjectSchemas();
 	}
 
 }

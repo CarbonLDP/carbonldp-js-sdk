@@ -52,7 +52,7 @@ export class DigestedObjectSchema {
 
 	constructor() {
 		this.base = "";
-		this.vocab = null;
+		this.vocab = void 0;
 		this.language = null;
 		this.prefixes = new Map<string, string>();
 		this.properties = new Map<string, DigestedObjectSchemaProperty>();
@@ -151,7 +151,7 @@ export class ObjectSchemaDigester {
 		return ObjectSchemaDigester._combineSchemas( digestedSchemas );
 	}
 
-	private static _digestSchema( schema:ObjectSchema ):DigestedObjectSchema {
+	static _digestSchema( schema:ObjectSchema ):DigestedObjectSchema {
 		const digestedSchema:DigestedObjectSchema = new DigestedObjectSchema();
 
 		for( const propertyName of [ "@base", "@vocab" ] as [ "@base", "@vocab" ] ) {
@@ -198,11 +198,11 @@ export class ObjectSchemaDigester {
 		return digestedSchema;
 	}
 
-	private static _combineSchemas( digestedSchemas:DigestedObjectSchema[] ):DigestedObjectSchema {
+	static _combineSchemas( digestedSchemas:DigestedObjectSchema[] ):DigestedObjectSchema {
 		const [ targetSchema, ...restSchemas ] = digestedSchemas;
 
 		restSchemas.forEach( schema => {
-			if( schema.vocab !== null ) targetSchema.vocab = schema.vocab;
+			if( schema.vocab !== void 0 ) targetSchema.vocab = schema.vocab;
 			if( schema.base !== "" ) targetSchema.base = schema.base;
 			if( schema.language !== null ) targetSchema.language = schema.language;
 
@@ -232,7 +232,7 @@ export class ObjectSchemaUtils {
 
 		if( localName ) return uri;
 
-		if( relativeTo.vocab && schema.vocab !== null ) return schema.vocab + uri;
+		if( relativeTo.vocab && schema.vocab ) return schema.vocab + uri;
 		if( relativeTo.base ) return URI.resolve( schema.base, uri );
 
 		return uri;

@@ -10,12 +10,12 @@ import {
 	VariableToken
 } from "sparqler/tokens";
 
+import { createMockContext } from "../../../test/helpers/mocks";
 import { AbstractContext } from "../../AbstractContext";
 import {
 	IllegalArgumentError,
 	IllegalStateError
 } from "../../Errors";
-import { ContextSettings } from "../../Settings";
 import {
 	clazz,
 	extendsClass,
@@ -48,15 +48,15 @@ describe( module( "carbonldp/SPARQL/QueryDocument/QueryDocumentsBuilder" ), ():v
 			expect( QueryDocumentsBuilder ).toEqual( jasmine.any( Function ) );
 		} );
 
-		let context:AbstractContext;
+		let context:AbstractContext<any, any>;
 		let queryContext:QueryContextBuilder;
 		let baseProperty:QueryProperty;
 		let selectToken:SelectToken;
 		beforeEach( ():void => {
-			context = new class extends AbstractContext {
-				protected _baseURI:string = "http://example.com";
-				protected settings:ContextSettings = { vocabulary: "http://example.com/vocab#" };
-			};
+			context = createMockContext( {
+				uri: "http://example.com",
+				settings: { vocabulary: "http://example.com/vocab#" },
+			} );
 			context.extendObjectSchema( {
 				"ex": "http://example.com/ns#",
 			} );

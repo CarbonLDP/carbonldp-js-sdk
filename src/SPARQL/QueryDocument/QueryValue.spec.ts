@@ -3,6 +3,7 @@ import {
 	LiteralToken
 } from "sparqler/tokens";
 
+import { createMockContext } from "../../../test/helpers/mocks";
 import { AbstractContext } from "../../AbstractContext";
 import { IllegalArgumentError } from "../../Errors";
 import {
@@ -33,12 +34,10 @@ describe( module( "carbonldp/SPARQL/QueryDocument/QueryValue" ), ():void => {
 			expect( QueryValue ).toEqual( jasmine.any( Function ) );
 		} );
 
-		let context:AbstractContext;
+		let context:AbstractContext<any, any>;
 		let queryContext:QueryContext;
 		beforeEach( ():void => {
-			context = new class extends AbstractContext {
-				protected _baseURI:string = "https://example.com/";
-			};
+			context = createMockContext();
 			queryContext = new QueryContext( context );
 		} );
 

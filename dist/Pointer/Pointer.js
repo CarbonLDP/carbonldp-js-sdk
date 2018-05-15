@@ -5,25 +5,13 @@ var __importStar = (this && this.__importStar) || function (mod) {
     if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
     result["default"] = mod;
     return result;
-}
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-var Errors_1 = require("../Errors");
 var Utils = __importStar(require("../Utils"));
-function isPointerResolved() {
-    return this._resolved;
-}
-exports.isPointerResolved = isPointerResolved;
-function resolveStandalonePointer() {
-    return Promise.reject(new Errors_1.IllegalStateError("The pointer has not been assigned to a context."));
-}
-exports.resolveStandalonePointer = resolveStandalonePointer;
 exports.Pointer = {
     isDecorated: function (object) {
         return (Utils.hasPropertyDefined(object, "_id") &&
-            Utils.hasPropertyDefined(object, "_resolved") &&
-            Utils.hasPropertyDefined(object, "id") &&
-            Utils.hasFunction(object, "isResolved") &&
-            Utils.hasFunction(object, "resolve"));
+            Utils.hasPropertyDefined(object, "id"));
     },
     is: function (value) {
         return (Utils.isObject(value) &&
@@ -41,15 +29,16 @@ exports.Pointer = {
             return object;
         var pointer = object;
         Object.defineProperties(pointer, {
+            "_registry": {
+                writable: true,
+                enumerable: false,
+                configurable: true,
+            },
             "_id": {
                 writable: true,
+                enumerable: false,
                 configurable: true,
                 value: pointer.id || "",
-            },
-            "_resolved": {
-                writable: true,
-                configurable: true,
-                value: pointer._resolved || false,
             },
             "id": {
                 enumerable: false,
@@ -61,16 +50,6 @@ exports.Pointer = {
                     this._id = value;
                 },
             },
-            "isResolved": {
-                configurable: true,
-                value: isPointerResolved,
-            },
-            "resolve": {
-                writable: false,
-                enumerable: false,
-                configurable: true,
-                value: resolveStandalonePointer,
-            },
         });
         return pointer;
     },
@@ -80,6 +59,9 @@ exports.Pointer = {
     getIDs: function (pointers) {
         return pointers
             .map(function (pointer) { return pointer.id; });
+    },
+    getID: function (pointerOrIRI) {
+        return Utils.isString(pointerOrIRI) ? pointerOrIRI : pointerOrIRI.id;
     },
 };
 

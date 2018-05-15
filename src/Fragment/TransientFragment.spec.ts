@@ -1,12 +1,13 @@
+import { TransientResource } from "../Resource";
 import {
 	hasMethod,
 	hasProperty,
 	interfaze,
 	module,
 	OBLIGATORY,
+	OPTIONAL,
 	STATIC,
 } from "../test/JasmineExtender";
-import { TransientDocument } from "../Document";
 import { BaseFragment } from "./BaseFragment";
 import { TransientFragment } from "./TransientFragment";
 
@@ -19,10 +20,10 @@ describe( module( "carbonldp/Fragment" ), ():void => {
 	), ():void => {
 
 		it( hasProperty(
-			OBLIGATORY,
-			"_document",
-			"CarbonLDP.TransientDocument",
-			"The document the fragment belongs to."
+			OPTIONAL,
+			"_registry",
+			"CarbonLDP.Registry & CarbonLDP.Pointer",
+			"The pointer registry where the fragment belongs to."
 		), ():void => {} );
 
 	} );
@@ -94,34 +95,23 @@ describe( module( "carbonldp/Fragment" ), ():void => {
 			expect( TransientFragment ).toEqual( jasmine.any( Object ) );
 		} );
 
-		// TODO: Separate in different tests
-		it( "TransientFragment.isDecorated", ():void => {
-			expect( TransientFragment.isDecorated ).toBeDefined();
-			expect( TransientFragment.isDecorated ).toEqual( jasmine.any( Function ) );
+		describe( "TransientFragment.isDecorated", ():void => {
 
-			let resource:Partial<TransientFragment> = undefined;
-			expect( TransientFragment.isDecorated( resource ) ).toBe( false );
-
-			resource = Object.defineProperty( {}, "_document", {
-				writable: true,
-				configurable: true,
-				enumerable: false,
-				value: null,
+			it( "should exists", ():void => {
+				expect( TransientFragment.isDecorated ).toBeDefined();
+				expect( TransientFragment.isDecorated ).toEqual( jasmine.any( Function ) );
 			} );
-			expect( TransientFragment.isDecorated( resource ) ).toBe( true );
 
-			delete resource._document;
-			expect( TransientFragment.isDecorated( resource ) ).toBe( false );
-			resource._document = null;
+			it( "should call TransientResource.isDecorated", ():void => {
+				const spy:jasmine.Spy = spyOn( TransientResource, "isDecorated" );
+
+				TransientFragment.isDecorated( { the: "object" } );
+				expect( spy ).toHaveBeenCalledWith( { the: "object" } );
+			} );
+
 		} );
 
 		// TODO: Add tests for `Fragment.is`
-
-		let document:TransientDocument;
-		beforeAll( ():void => {
-			document = TransientDocument.create();
-			document.id = "http://example.com/document/";
-		} );
 
 		describe( "TransientFragment.create", ():void => {
 
@@ -130,18 +120,8 @@ describe( module( "carbonldp/Fragment" ), ():void => {
 				expect( TransientFragment.create ).toEqual( jasmine.any( Function ) );
 			} );
 
-			it( "should maintain _document property", ():void => {
-				const fragment:TransientFragment = TransientFragment.create( {
-					_document: document,
-				} );
-
-				expect( fragment._document ).toBe( document );
-			} );
-
 			it( "should fill empty id when no provided", ():void => {
-				const fragment:TransientFragment = TransientFragment.create( {
-					_document: document,
-				} );
+				const fragment:TransientFragment = TransientFragment.create( {} );
 
 				expect( fragment.id ).toBe( "" );
 			} );
@@ -149,7 +129,6 @@ describe( module( "carbonldp/Fragment" ), ():void => {
 			it( "should maintain id when provided", ():void => {
 				const fragment:TransientFragment = TransientFragment.create( {
 					id: "#fragment",
-					_document: document,
 				} );
 
 				expect( fragment.id ).toBe( "#fragment" );
@@ -158,12 +137,12 @@ describe( module( "carbonldp/Fragment" ), ():void => {
 			it( "should call TransientFragment.createFrom", ():void => {
 				const spy:jasmine.Spy = spyOn( TransientFragment, "createFrom" );
 
-				TransientFragment.create( { the: "fragment", _document: document } );
-				expect( spy ).toHaveBeenCalledWith( { the: "fragment", _document: document } );
+				TransientFragment.create( { the: "fragment" } );
+				expect( spy ).toHaveBeenCalledWith( { the: "fragment" } );
 			} );
 
 			it( "should return different reference", ():void => {
-				const object:BaseFragment = { _document: document };
+				const object:BaseFragment = {};
 				const returned:TransientFragment = TransientFragment.create( object );
 
 				expect( object ).not.toBe( returned );
@@ -176,14 +155,6 @@ describe( module( "carbonldp/Fragment" ), ():void => {
 			it( "should exists", ():void => {
 				expect( TransientFragment.createFrom ).toBeDefined();
 				expect( TransientFragment.createFrom ).toEqual( jasmine.any( Function ) );
-			} );
-
-			it( "should maintain _document property", ():void => {
-				const fragment:TransientFragment = TransientFragment.createFrom( {
-					_document: document,
-				} );
-
-				expect( fragment._document ).toBe( document );
 			} );
 
 			it( "should fill empty id when no provided", ():void => {
@@ -211,7 +182,7 @@ describe( module( "carbonldp/Fragment" ), ():void => {
 			} );
 
 			it( "should return same reference", ():void => {
-				const object:BaseFragment = { _document: document };
+				const object:BaseFragment = {};
 				const returned:TransientFragment = TransientFragment.createFrom( object );
 
 				expect( object ).toBe( returned );
@@ -219,7 +190,21 @@ describe( module( "carbonldp/Fragment" ), ():void => {
 
 		} );
 
-		// TODO: Add tests for `Fragment.decorate`
+		describe( "TransientFragment.decorate", ():void => {
+
+			it( "should exists", ():void => {
+				expect( TransientFragment.decorate ).toBeDefined();
+				expect( TransientFragment.decorate ).toEqual( jasmine.any( Function ) );
+			} );
+
+			it( "should call TransientResource.decorate", ():void => {
+				const spy:jasmine.Spy = spyOn( TransientResource, "decorate" );
+
+				TransientFragment.decorate( { the: "object" } );
+				expect( spy ).toHaveBeenCalledWith( { the: "object" } );
+			} );
+
+		} );
 
 	} );
 

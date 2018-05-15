@@ -1,7 +1,5 @@
-import { ModelDecorator } from "../../core/ModelDecorator";
-import { ModelSchema } from "../../core/ModelSchema";
+import { ModelDecorator, ModelSchema } from "../../core";
 import { Document } from "../../Document";
-import { Documents } from "../../Documents";
 import { ObjectSchema } from "../../ObjectSchema";
 import { Pointer } from "../../Pointer";
 import * as Utils from "../../Utils";
@@ -65,7 +63,7 @@ export interface ACLFactory extends ModelDecorator<ACL>, ModelSchema {
 	isDecorated( object:object ):object is ACL;
 
 
-	decorate<T extends object>( object:T, documents:Documents ):T & ACL;
+	decorate<T extends object>( object:T ):T & ACL;
 }
 
 
@@ -95,11 +93,11 @@ export const ACL:ACLFactory = {
 			;
 	},
 
-	decorate<T extends object>( object:T, documents:Documents ):T & ACL {
+	decorate<T extends object>( object:T ):T & ACL {
 		if( ACL.isDecorated( object ) ) return object;
 
 		TransientACL.decorate( object );
-		Document.decorate( object, documents );
+		Document.decorate( object );
 
 		const acl:T & ACL = object as T & ACL;
 		Object.defineProperties( acl, {

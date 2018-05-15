@@ -1,4 +1,7 @@
-import { IllegalArgumentError } from "../Errors";
+import {
+	IllegalActionError,
+	IllegalArgumentError
+} from "../Errors";
 import { TransientFragment, } from "../Fragment";
 import { URI } from "../RDF";
 import { BaseBlankNode } from "./BaseBlankNode";
@@ -15,6 +18,8 @@ export interface TransientBlankNodeFactory {
 	create<T extends object>( data:T & BaseBlankNode ):T & TransientBlankNode;
 
 	createFrom<T extends object>( object:T & BaseBlankNode ):T & TransientBlankNode;
+
+	decorate<T extends object>( object:T ):T & TransientBlankNode;
 }
 
 export const TransientBlankNode:TransientBlankNodeFactory = {
@@ -37,6 +42,26 @@ export const TransientBlankNode:TransientBlankNodeFactory = {
 			throw new IllegalArgumentError( `The id "${ object.id }" is not a blank node label.` );
 		}
 
-		return TransientFragment.createFrom( object );
+		return TransientBlankNode.decorate( object );
+	},
+
+	decorate<T extends object>( object:T ):T & TransientBlankNode {
+		const resource:T & TransientFragment = TransientFragment.decorate( object );
+
+		Object.defineProperties( resource, {
+			"id": {
+				enumerable: false,
+				configurable: true,
+				get( this:TransientBlankNode ):string {
+					return this._id;
+				},
+				set( this:TransientBlankNode, value:string ):void {
+					if( ! URI.isBNodeID( value ) ) throw new IllegalActionError( `Cannot assign "${ value }" as a blank node ID.` );
+					this._id = value;
+				},
+			},
+		} );
+
+		return resource;
 	},
 };

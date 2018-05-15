@@ -1,20 +1,6 @@
+import { createMockContext } from "../../test/helpers/mocks";
 import { AbstractContext } from "../AbstractContext";
-import { Documents } from "../Documents";
-import {
-	IDAlreadyInUseError,
-	IllegalArgumentError
-} from "../Errors";
-import {
-	Fragment,
-	TransientFragment,
-} from "../Fragment";
-import { RequestOptions } from "../HTTP";
-import {
-	NamedFragment,
-	TransientNamedFragment,
-} from "../NamedFragment";
-import { Pointer } from "../Pointer";
-import { URI } from "../RDF";
+import { MessagingDocument } from "../Messaging";
 import {
 	extendsClass,
 	hasMethod,
@@ -29,11 +15,11 @@ import {
 	property,
 	STATIC,
 } from "../test/JasmineExtender";
-import { BaseAccessPoint } from "../AccessPoint";
-import * as Utils from "../Utils";
-import { BaseDocument } from "./BaseDocument";
+import { CRUDDocument } from "./CRUDDocument";
 import { Document } from "./Document";
-import { TransientDocument } from "./TransientDocument";
+import { MembersDocument } from "./MembersDocument";
+import { QueryDocumentDocument } from "./QueryDocumentDocument";
+import { SPARQLDocument } from "./SPARQLDocument";
 
 
 describe( module( "carbonldp/Document" ), ():void => {
@@ -45,7 +31,6 @@ describe( module( "carbonldp/Document" ), ():void => {
 
 		it( extendsClass( "CarbonLDP.TransientDocument" ), ():void => {} );
 		it( extendsClass( "CarbonLDP.Resource" ), ():void => {} );
-		it( extendsClass( "CarbonLDP.ServiceAwareDocument" ), ():void => {} );
 		it( extendsClass( "CarbonLDP.Messaging.MessagingDocument" ), ():void => {} );
 
 		it( hasProperty(
@@ -670,7 +655,6 @@ describe( module( "carbonldp/Document" ), ():void => {
 			[ "T extends object" ],
 			"Decorates the object provided with the properties and methods of a `CarbonLDP.Document` object.", [
 				{ name: "object", type: "T" },
-				{ name: "documents", type: "CarbonLDP.Documents", description: "The Documents instance to which the persisted document belongs." },
 			],
 			{ type: "T & CarbonLDP.Document" }
 		), ():void => {} );
@@ -684,22 +668,9 @@ describe( module( "carbonldp/Document" ), ():void => {
 		"Constant that implements the `CarbonLDP.DocumentFactory` interface."
 	), ():void => {
 
-		let context:AbstractContext;
+		let context:AbstractContext<any, any>;
 		beforeEach( ():void => {
-			class MockedContext extends AbstractContext {
-				protected _baseURI:string;
-
-				constructor() {
-					super();
-					this._baseURI = "http://example.com/";
-					this.settings = {
-						vocabulary: "vocab#",
-						paths: { system: ".system/" },
-					};
-				}
-			}
-
-			context = new MockedContext();
+			context = createMockContext( { uri: "http://example.com/" } );
 		} );
 
 		it( isDefined(), ():void => {
@@ -707,1407 +678,201 @@ describe( module( "carbonldp/Document" ), ():void => {
 			expect( Document ).toEqual( jasmine.any( Object ) );
 		} );
 
-		// TODO: Separate in different tests
-		it( "Document.isDecorated", ():void => {
-			expect( Document.isDecorated ).toBeDefined();
-			expect( Utils.isFunction( Document.isDecorated ) ).toBe( true );
+		describe( "Document.isDecorated", ():void => {
 
-			let document:any = undefined;
-			expect( Document.isDecorated( document ) ).toBe( false );
-
-			document = {
-				created: null,
-				modified: null,
-				defaultInteractionModel: null,
-				accessPoints: null,
-
-				_eTag: null,
-				isLocallyOutDated: ():void => {},
-
-				refresh: ():void => {},
-				save: ():void => {},
-				saveAndRefresh: ():void => {},
-				delete: ():void => {},
-
-				addMember: ():void => {},
-				addMembers: ():void => {},
-
-				createAccessPoint: ():void => {},
-				createAccessPoints: ():void => {},
-				createChild: ():void => {},
-				createChildren: ():void => {},
-				createChildAndRetrieve: ():void => {},
-				createChildrenAndRetrieve: ():void => {},
-				listChildren: ():void => {},
-				getChildren: ():void => {},
-				listMembers: ():void => {},
-				getMembers: ():void => {},
-				removeMember: ():void => {},
-				removeMembers: ():void => {},
-				removeAllMembers: ():void => {},
-
-				executeRawASKQuery: ():void => {},
-				executeASKQuery: ():void => {},
-				executeRawSELECTQuery: ():void => {},
-				executeSELECTQuery: ():void => {},
-				executeRawDESCRIBEQuery: ():void => {},
-				executeRawCONSTRUCTQuery: ():void => {},
-				executeUPDATE: ():void => {},
-
-				sparql: ():void => {},
-			};
-			expect( Document.isDecorated( document ) ).toBe( true );
-
-			delete document.isLocallyOutDated;
-			expect( Document.isDecorated( document ) ).toBe( false );
-			document.isLocallyOutDated = ():void => {};
-
-			delete document.accessPoints;
-			expect( Document.isDecorated( document ) ).toBe( true );
-			document.accessPoints = null;
-
-			delete document.created;
-			expect( Document.isDecorated( document ) ).toBe( true );
-			document.created = null;
-
-			delete document.modified;
-			expect( Document.isDecorated( document ) ).toBe( true );
-			document.modified = null;
-
-			delete document.defaultInteractionModel;
-			expect( Document.isDecorated( document ) ).toBe( true );
-			document.defaultInteractionModel = null;
-
-			delete document._eTag;
-			expect( Document.isDecorated( document ) ).toBe( false );
-			document._eTag = null;
-
-			delete document.refresh;
-			expect( Document.isDecorated( document ) ).toBe( false );
-			document.refresh = ():void => {};
-
-			delete document.save;
-			expect( Document.isDecorated( document ) ).toBe( false );
-			document.save = ():void => {};
-
-			delete document.saveAndRefresh;
-			expect( Document.isDecorated( document ) ).toBe( false );
-			document.saveAndRefresh = ():void => {};
-
-			delete document.delete;
-			expect( Document.isDecorated( document ) ).toBe( false );
-			document.delete = ():void => {};
-
-			delete document.addMember;
-			expect( Document.isDecorated( document ) ).toBe( false );
-			document.addMember = ():void => {};
-
-			delete document.addMembers;
-			expect( Document.isDecorated( document ) ).toBe( false );
-			document.addMembers = ():void => {};
-
-			delete document.createAccessPoint;
-			expect( Document.isDecorated( document ) ).toBe( false );
-			document.createAccessPoint = ():void => {};
-
-			delete document.createAccessPoints;
-			expect( Document.isDecorated( document ) ).toBe( false );
-			document.createAccessPoints = ():void => {};
-
-			delete document.createChild;
-			expect( Document.isDecorated( document ) ).toBe( false );
-			document.createChild = ():void => {};
-
-			delete document.createChildren;
-			expect( Document.isDecorated( document ) ).toBe( false );
-			document.createChildren = ():void => {};
-
-			delete document.createChildAndRetrieve;
-			expect( Document.isDecorated( document ) ).toBe( false );
-			document.createChildAndRetrieve = ():void => {};
-
-			delete document.createChildrenAndRetrieve;
-			expect( Document.isDecorated( document ) ).toBe( false );
-			document.createChildrenAndRetrieve = ():void => {};
-
-			delete document.listChildren;
-			expect( Document.isDecorated( document ) ).toBe( false );
-			document.listChildren = ():void => {};
-
-			delete document.getChildren;
-			expect( Document.isDecorated( document ) ).toBe( false );
-			document.getChildren = ():void => {};
-
-			delete document.listMembers;
-			expect( Document.isDecorated( document ) ).toBe( false );
-			document.listMembers = ():void => {};
-
-			delete document.getMembers;
-			expect( Document.isDecorated( document ) ).toBe( false );
-			document.getMembers = ():void => {};
-
-			delete document.removeMember;
-			expect( Document.isDecorated( document ) ).toBe( false );
-			document.removeMember = ():void => {};
-
-			delete document.removeMembers;
-			expect( Document.isDecorated( document ) ).toBe( false );
-			document.removeMembers = ():void => {};
-
-			delete document.removeAllMembers;
-			expect( Document.isDecorated( document ) ).toBe( false );
-			document.removeAllMembers = ():void => {};
-
-			delete document.executeRawASKQuery;
-			expect( Document.isDecorated( document ) ).toBe( false );
-			document.executeRawASKQuery = ():void => {};
-
-			delete document.executeASKQuery;
-			expect( Document.isDecorated( document ) ).toBe( false );
-			document.executeASKQuery = ():void => {};
-
-			delete document.executeRawSELECTQuery;
-			expect( Document.isDecorated( document ) ).toBe( false );
-			document.executeRawSELECTQuery = ():void => {};
-
-			delete document.executeSELECTQuery;
-			expect( Document.isDecorated( document ) ).toBe( false );
-			document.executeSELECTQuery = ():void => {};
-
-			delete document.executeRawDESCRIBEQuery;
-			expect( Document.isDecorated( document ) ).toBe( false );
-			document.executeRawDESCRIBEQuery = ():void => {};
-
-			delete document.executeRawCONSTRUCTQuery;
-			expect( Document.isDecorated( document ) ).toBe( false );
-			document.executeRawCONSTRUCTQuery = ():void => {};
-
-			delete document.executeUPDATE;
-			expect( Document.isDecorated( document ) ).toBe( false );
-			document.executeUPDATE = ():void => {};
-
-			delete document.sparql;
-			expect( Document.isDecorated( document ) ).toBe( false );
-			document.sparql = ():void => {};
-		} );
-
-		// TODO: Separate in different tests
-		it( "Document.is", ():void => {
-			expect( Document.is ).toBeDefined();
-			expect( Utils.isFunction( Document.is ) ).toBe( true );
-
-			expect( Document.is( undefined ) ).toBe( false );
-			expect( Document.is( null ) ).toBe( false );
-			expect( Document.is( <any> "a string" ) ).toBe( false );
-			expect( Document.is( <any> 100 ) ).toBe( false );
-			expect( Document.is( {} ) ).toBe( false );
-
-			let object:any = TransientDocument.createFrom( {
-				id: "",
-				created: null,
-				modified: null,
-				defaultInteractionModel: null,
-				accessPoints: null,
-
-				_documents: null,
-				_eTag: void 0,
-				isLocallyOutDated: ():void => {},
-
-				refresh: ():void => {},
-				save: ():void => {},
-				saveAndRefresh: ():void => {},
-				delete: ():void => {},
-
-				addMember: ():void => {},
-				addMembers: ():void => {},
-
-				createAccessPoint: ():void => {},
-				createAccessPoints: ():void => {},
-				createChild: ():void => {},
-				createChildren: ():void => {},
-				createChildAndRetrieve: ():void => {},
-				createChildrenAndRetrieve: ():void => {},
-				listChildren: ():void => {},
-				getChildren: ():void => {},
-				listMembers: ():void => {},
-				getMembers: ():void => {},
-				removeMember: ():void => {},
-				removeMembers: ():void => {},
-				removeAllMembers: ():void => {},
-
-				executeRawASKQuery: ():void => {},
-				executeASKQuery: ():void => {},
-				executeRawSELECTQuery: ():void => {},
-				executeSELECTQuery: ():void => {},
-				executeRawDESCRIBEQuery: ():void => {},
-				executeRawCONSTRUCTQuery: ():void => {},
-				executeUPDATE: ():void => {},
-
-				sparql: ():void => {},
-
-				// Messaging methods
-				on: ():void => {},
-				off: ():void => {},
-				one: ():void => {},
-				onDocumentCreated: ():void => {},
-				onChildCreated: ():void => {},
-				onAccessPointCreated: ():void => {},
-				onDocumentModified: ():void => {},
-				onDocumentDeleted: ():void => {},
-				onMemberAdded: ():void => {},
-				onMemberRemoved: ():void => {},
+			it( "should exists", ():void => {
+				expect( Document.isDecorated ).toBeDefined();
+				expect( Document.isDecorated ).toEqual( jasmine.any( Function ) );
 			} );
-			expect( Document.is( object ) ).toBe( true );
+
+
+			let object:typeof Document.PROTOTYPE;
+			beforeEach( ():void => {
+				object = {
+					created: null,
+					modified: null,
+					accessPoints: null,
+
+					_savedFragments: null,
+					_syncSavedFragments: ():any => {},
+
+					isDirty: ():any => {},
+					revert: ():any => {},
+
+					get: ():any => {},
+					resolve: ():any => {},
+
+					refresh: ():any => {},
+					save: ():any => {},
+					saveAndRefresh: ():any => {},
+				};
+			} );
+
+
+			it( "should return false when `undefined`", ():void => {
+				expect( Document.isDecorated( void 0 ) ).toBe( false );
+			} );
+
+			it( "should return false when `null`", ():void => {
+				expect( Document.isDecorated( null ) ).toBe( false );
+			} );
+
+			it( "should return true when prototype properties", ():void => {
+				expect( Document.isDecorated( object ) ).toBe( true );
+			} );
+
+
+			it( "should return true when no accessPoints", ():void => {
+				delete object.accessPoints;
+				expect( Document.isDecorated( object ) ).toBe( true );
+			} );
+
+			it( "should return true when no created", ():void => {
+				delete object.created;
+				expect( Document.isDecorated( object ) ).toBe( true );
+			} );
+
+			it( "should return true when no modified", ():void => {
+				delete object.modified;
+				expect( Document.isDecorated( object ) ).toBe( true );
+			} );
+
+
+			it( "should return false when no _savedFragments", ():void => {
+				delete object._savedFragments;
+				expect( Document.isDecorated( object ) ).toBe( false );
+			} );
+
+			it( "should return false when no _syncSavedFragments", ():void => {
+				delete object._syncSavedFragments;
+				expect( Document.isDecorated( object ) ).toBe( false );
+			} );
+
+
+			it( "should return false when no isDirty", ():void => {
+				delete object.isDirty;
+				expect( Document.isDecorated( object ) ).toBe( false );
+			} );
+
+			it( "should return false when no revert", ():void => {
+				delete object.revert;
+				expect( Document.isDecorated( object ) ).toBe( false );
+			} );
+
+
+			it( "should return false when no refresh", ():void => {
+				delete object.refresh;
+				expect( Document.isDecorated( object ) ).toBe( false );
+			} );
+
+			it( "should return false when no save", ():void => {
+				delete object.save;
+				expect( Document.isDecorated( object ) ).toBe( false );
+			} );
+
+			it( "should return false when no saveAndRefresh", ():void => {
+				delete object.saveAndRefresh;
+				expect( Document.isDecorated( object ) ).toBe( false );
+			} );
+
 		} );
 
-		// TODO: Separate in different tests
-		it( "Document.decorate", ():void => {
-			expect( Document.decorate ).toBeDefined();
-			expect( Utils.isFunction( Document.decorate ) ).toBe( true );
+		describe( "Document.is", ():void => {
 
-			interface MyObject {
-				myProperty?:string;
-			}
-
-			interface MyTransientDocument extends MyObject, TransientDocument {}
-
-			let document:MyTransientDocument;
+			it( "should exists", ():void => {
+				expect( Document.is ).toBeDefined();
+				expect( Document.is ).toEqual( jasmine.any( Function ) );
+			} );
 
 
-			interface MyDocument extends MyObject, Document {}
+			let isCRUDDocument:jasmine.Spy;
+			let isMembersDocument:jasmine.Spy;
+			let isSPARQLDocument:jasmine.Spy;
+			let isMessagingDocument:jasmine.Spy;
+			let isQueryDocumentDocument:jasmine.Spy;
+			beforeEach( ():void => {
+				isCRUDDocument = spyOn( CRUDDocument, "is" )
+					.and.returnValue( true );
+				isMembersDocument = spyOn( MembersDocument, "isDecorated" )
+					.and.returnValue( true );
+				isSPARQLDocument = spyOn( SPARQLDocument, "isDecorated" )
+					.and.returnValue( true );
+				isMessagingDocument = spyOn( MessagingDocument, "isDecorated" )
+					.and.returnValue( true );
+				isQueryDocumentDocument = spyOn( QueryDocumentDocument, "isDecorated" )
+					.and.returnValue( true );
+			} );
 
-			let persistedDocument:MyDocument;
+			it( "should assert that is a CURDDocument", ():void => {
+				Document.is( { the: "document" } );
+				expect( isCRUDDocument ).toHaveBeenCalledWith( { the: "document" } );
+			} );
 
-			document = TransientDocument.createFrom<MyObject & BaseDocument>( {} );
-			persistedDocument = Document.decorate<MyTransientDocument>( document, context.documents );
-			expect( Document.is( persistedDocument ) ).toBe( true );
-			expect( persistedDocument.myProperty ).toBeUndefined();
-			expect( persistedDocument._documents ).toBe( context.documents );
+			it( "should assert that is a MembersDocument", ():void => {
+				Document.is( { the: "document" } );
+				expect( isMembersDocument ).toHaveBeenCalledWith( { the: "document" } );
+			} );
 
-			document = TransientDocument.createFrom<MyObject & BaseDocument>( { myProperty: "a property" } );
-			persistedDocument = Document.decorate<MyTransientDocument>( document, context.documents );
-			expect( Document.is( persistedDocument ) ).toBe( true );
-			expect( persistedDocument.myProperty ).toBeDefined();
-			expect( persistedDocument.myProperty ).toBe( "a property" );
-			expect( persistedDocument._documents ).toBe( context.documents );
+			it( "should assert that is SPARQLDocument", ():void => {
+				Document.is( { the: "document" } );
+				expect( isSPARQLDocument ).toHaveBeenCalledWith( { the: "document" } );
+			} );
+
+			it( "should assert that is MessagingDocument", ():void => {
+				Document.is( { the: "document" } );
+				expect( isMessagingDocument ).toHaveBeenCalledWith( { the: "document" } );
+			} );
+
+			it( "should assert that is QueryDocumentDocument", ():void => {
+				Document.is( { the: "document" } );
+				expect( isQueryDocumentDocument ).toHaveBeenCalledWith( { the: "document" } );
+			} );
+
+			it( "should assert is been decorated", ():void => {
+				const spy:jasmine.Spy = spyOn( Document, "isDecorated" );
+
+				Document.is( { the: "document" } );
+				expect( spy ).toHaveBeenCalledWith( { the: "document" } );
+			} );
+
+			it( "should return true when all assertions passed", ():void => {
+				spyOn( Document, "isDecorated" )
+					.and.returnValue( true );
+
+				const returned:boolean = Document.is( { the: "document" } );
+				expect( returned ).toBe( true );
+			} );
+
 		} );
+
+		describe( "Document.decorate", ():void => {
+
+			it( "should exists", ():void => {
+				expect( Document.decorate ).toBeDefined();
+				expect( Document.decorate ).toEqual( jasmine.any( Function ) );
+			} );
+
+
+			it( "should decorate self properties", ():void => {
+				const resource:Document = Document.decorate( {} );
+				expect( Document.isDecorated( resource ) ).toBe( true );
+			} );
+
+			it( "should decorate fully properties", ():void => {
+				const resource:Document = Document.decorate( {} );
+				expect( Document.is( resource ) ).toBe( true );
+			} );
+
+			it( "should return same object reference", ():void => {
+				const object:object = { the: "object" };
+				const resource:Document = Document.decorate( object );
+				expect( object ).toBe( resource );
+			} );
+
+		} );
+
 
 		describe( "Document instance", ():void => {
-
-			let document:Document;
-			beforeEach( ():void => {
-				context.extendObjectSchema( {
-					"exTypes": "http://example.com/types#",
-					"another": "http://example.com/another-url/ns#",
-				} );
-
-				context.documents.getPointer( "http://example.com/in/documents/" );
-
-				document = Document.decorate( {
-					id: "http://example.com/document/",
-				}, context.documents );
-				document.createNamedFragment( "fragment" );
-				document.createFragment( "_:BlankNode" );
-			} );
-
-			// TODO: Test in `Document.decorate`
-			it( "Document._eTag", ():void => {
-				// By default, the ETag is undefined.
-				expect( document._eTag ).toBeUndefined();
-				// But property is declared
-				expect( document.hasOwnProperty( "_eTag" ) ).toBe( true );
-			} );
-
-			// TODO: Test in `Document.decorate`
-			it( "Document._documents", ():void => {
-				expect( document._documents ).toBeDefined();
-				expect( Utils.isObject( document._documents ) ).toBe( true );
-				expect( document._documents instanceof Documents ).toBe( true );
-			} );
-
-			// TODO: Separate in different tests
-			it( "Document.addType", ():void => {
-				expect( document.addType ).toBeDefined();
-				expect( Utils.isFunction( document.addType ) ).toBe( true );
-
-				expect( document.types.length ).toBe( 0 );
-
-				document.addType( "http://example.com/types#Type-1" );
-				expect( document.types.length ).toBe( 1 );
-				expect( document.types ).toContain( "http://example.com/types#Type-1" );
-
-				document.addType( "http://example.com/types#Type-2" );
-				expect( document.types.length ).toBe( 2 );
-				expect( document.types ).toContain( "http://example.com/types#Type-1" );
-				expect( document.types ).toContain( "http://example.com/types#Type-2" );
-
-				document.addType( "exTypes:Type-3" );
-				expect( document.types.length ).toBe( 3 );
-				expect( document.types ).toContain( "http://example.com/types#Type-1" );
-				expect( document.types ).toContain( "http://example.com/types#Type-2" );
-				expect( document.types ).toContain( "http://example.com/types#Type-3" );
-
-				document.addType( "another:Type-0" );
-				expect( document.types.length ).toBe( 4 );
-				expect( document.types ).toContain( "http://example.com/types#Type-1" );
-				expect( document.types ).toContain( "http://example.com/types#Type-2" );
-				expect( document.types ).toContain( "http://example.com/types#Type-3" );
-				expect( document.types ).toContain( "http://example.com/another-url/ns#Type-0" );
-
-				document.addType( "Current-Type" );
-				expect( document.types.length ).toBe( 5 );
-				expect( document.types ).toContain( "http://example.com/types#Type-1" );
-				expect( document.types ).toContain( "http://example.com/types#Type-2" );
-				expect( document.types ).toContain( "http://example.com/types#Type-3" );
-				expect( document.types ).toContain( "http://example.com/another-url/ns#Type-0" );
-				expect( document.types ).toContain( "http://example.com/vocab#Current-Type" );
-			} );
-
-			// TODO: Separate in different tests
-			it( "Document.hasType", ():void => {
-				expect( document.hasType ).toBeDefined();
-				expect( Utils.isFunction( document.hasType ) ).toBe( true );
-
-				document.types = [ "http://example.com/types#Type-1" ];
-				expect( document.hasType( "http://example.com/types#Type-1" ) ).toBe( true );
-				expect( document.hasType( "exTypes:Type-1" ) ).toBe( true );
-				expect( document.hasType( "http://example.com/types#Type-2" ) ).toBe( false );
-
-
-				document.types = [ "http://example.com/types#Type-1", "http://example.com/types#Type-2" ];
-				expect( document.hasType( "http://example.com/types#Type-1" ) ).toBe( true );
-				expect( document.hasType( "exTypes:Type-1" ) ).toBe( true );
-				expect( document.hasType( "http://example.com/types#Type-2" ) ).toBe( true );
-				expect( document.hasType( "exTypes:Type-2" ) ).toBe( true );
-				expect( document.hasType( "http://example.com/types#Type-3" ) ).toBe( false );
-				expect( document.hasType( "exTypes:#Type-3" ) ).toBe( false );
-
-				document.types = [ "http://example.com/types#Type-1", "http://example.com/another-url/ns#Type-2" ];
-				expect( document.hasType( "http://example.com/types#Type-1" ) ).toBe( true );
-				expect( document.hasType( "exTypes:Type-1" ) ).toBe( true );
-				expect( document.hasType( "another:Type-1" ) ).toBe( false );
-				expect( document.hasType( "http://example.com/another-url/ns#Type-2" ) ).toBe( true );
-				expect( document.hasType( "exTypes:Type-2" ) ).toBe( false );
-				expect( document.hasType( "another:Type-2" ) ).toBe( true );
-
-				document.types = [ "http://example.com/types#Type-1", "http://example.com/another-url/ns#Type-2", "http://example.com/vocab#Current-Type" ];
-				expect( document.hasType( "http://example.com/types#Type-1" ) ).toBe( true );
-				expect( document.hasType( "exTypes:Type-1" ) ).toBe( true );
-				expect( document.hasType( "another:Type-1" ) ).toBe( false );
-				expect( document.hasType( "Type-1" ) ).toBe( false );
-				expect( document.hasType( "http://example.com/another-url/ns#Type-2" ) ).toBe( true );
-				expect( document.hasType( "exTypes:Type-2" ) ).toBe( false );
-				expect( document.hasType( "another:Type-2" ) ).toBe( true );
-				expect( document.hasType( "Type-2" ) ).toBe( false );
-				expect( document.hasType( "http://example.com/vocab#Current-Type" ) ).toBe( true );
-				expect( document.hasType( "exTypes:Current-Type" ) ).toBe( false );
-				expect( document.hasType( "another:Current-Type" ) ).toBe( false );
-				expect( document.hasType( "Current-Type" ) ).toBe( true );
-			} );
-
-			// TODO: Separate in different tests
-			it( "Document.removeType", ():void => {
-				expect( document.removeType ).toBeDefined();
-				expect( Utils.isFunction( document.removeType ) ).toBe( true );
-
-				document.types = [ "http://example.com/types#Type-1" ];
-				document.removeType( "http://example.com/types#Type-2" );
-				expect( document.types.length ).toBe( 1 );
-				expect( document.types ).toContain( "http://example.com/types#Type-1" );
-				document.removeType( "another:Type-1" );
-				expect( document.types.length ).toBe( 1 );
-				expect( document.types ).toContain( "http://example.com/types#Type-1" );
-				document.removeType( "Type-1" );
-				expect( document.types.length ).toBe( 1 );
-				expect( document.types ).toContain( "http://example.com/types#Type-1" );
-
-				document.types = [ "http://example.com/types#Type-1" ];
-				document.removeType( "http://example.com/types#Type-1" );
-				expect( document.types.length ).toBe( 0 );
-				document.types = [ "http://example.com/types#Type-1" ];
-				document.removeType( "exTypes:Type-1" );
-				expect( document.types.length ).toBe( 0 );
-
-				document.types = [ "http://example.com/types#Type-1", "http://example.com/types#Type-2" ];
-				document.removeType( "http://example.com/types#Type-1" );
-				expect( document.types.length ).toBe( 1 );
-				expect( document.types ).toContain( "http://example.com/types#Type-2" );
-				document.removeType( "exTypes:Type-2" );
-				expect( document.types.length ).toBe( 0 );
-
-				document.types = [ "http://example.com/types#Type-1", "http://example.com/types#Type-2", "http://example.com/another-url/ns#Type-3" ];
-				document.removeType( "http://example.com/types#Type-1" );
-				expect( document.types.length ).toBe( 2 );
-				expect( document.types ).toContain( "http://example.com/types#Type-2" );
-				expect( document.types ).toContain( "http://example.com/another-url/ns#Type-3" );
-				document.removeType( "exTypes:Type-2" );
-				expect( document.types.length ).toBe( 1 );
-				expect( document.types ).toContain( "http://example.com/another-url/ns#Type-3" );
-				document.removeType( "another:Type-3" );
-				expect( document.types.length ).toBe( 0 );
-
-				document.types = [ "http://example.com/types#Type-1", "http://example.com/types#Type-2", "http://example.com/another-url/ns#Type-3", "http://example.com/vocab#Type-4" ];
-				document.removeType( "http://example.com/types#Type-1" );
-				expect( document.types.length ).toBe( 3 );
-				expect( document.types ).toContain( "http://example.com/types#Type-2" );
-				expect( document.types ).toContain( "http://example.com/another-url/ns#Type-3" );
-				expect( document.types ).toContain( "http://example.com/vocab#Type-4" );
-				document.removeType( "exTypes:Type-2" );
-				expect( document.types.length ).toBe( 2 );
-				expect( document.types ).toContain( "http://example.com/another-url/ns#Type-3" );
-				expect( document.types ).toContain( "http://example.com/vocab#Type-4" );
-				document.removeType( "another:Type-3" );
-				expect( document.types.length ).toBe( 1 );
-				expect( document.types ).toContain( "http://example.com/vocab#Type-4" );
-				document.removeType( "Type-4" );
-				expect( document.types.length ).toBe( 0 );
-			} );
-
-			// TODO: Separate in different tests
-			it( "Document.hasPointer", ():void => {
-
-				expect( document.hasPointer ).toBeDefined();
-				expect( Utils.isFunction( document.hasPointer ) ).toBe( true );
-
-				expect( document.hasPointer( "http://example.com/document/" ) ).toBe( true );
-				expect( document.hasPointer( "http://example.com/document/#fragment" ) ).toBe( true );
-				expect( document.hasPointer( "_:BlankNode" ) ).toBe( true );
-				expect( document.hasPointer( "http://example.com/in/documents/" ) ).toBe( true );
-
-				expect( document.hasPointer( "this-uri-is-resolved-relative/" ) ).toBe( false );
-				expect( document.hasPointer( "http://example.com/document/#another-fragment" ) ).toBe( false );
-				expect( document.hasPointer( "_:AnotherBlankNode" ) ).toBe( false );
-				expect( document.hasPointer( "http://example.com/another-document/" ) ).toBe( false );
-			} );
-
-			// TODO: Separate in different tests
-			it( "Document.getPointer", ():void => {
-				expect( document.getPointer ).toBeDefined();
-				expect( Utils.isFunction( document.getPointer ) ).toBe( true );
-
-				let pointer:Pointer;
-
-				pointer = document.getPointer( "http://example.com/document/" );
-				expect( pointer ).toBe( document );
-				pointer = document.getPointer( "http://example.com/document/#fragment" );
-				expect( pointer.id ).toBe( "http://example.com/document/#fragment" );
-				pointer = document.getPointer( "_:BlankNode" );
-				expect( pointer.id ).toBe( "_:BlankNode" );
-				pointer = document.getPointer( "#fragment" );
-				expect( pointer.id ).toBe( "http://example.com/document/#fragment" );
-
-				pointer = document.getPointer( "http://example.com/document/#another-fragment" );
-				expect( pointer.id ).toBe( "http://example.com/document/#another-fragment" );
-				pointer = document.getPointer( "_:AnotherBlankNode" );
-				expect( pointer.id ).toBe( "_:AnotherBlankNode" );
-
-				// Ask to the Documents document.
-				pointer = document.getPointer( "this-uri-is-resolved-relative/" );
-				expect( pointer.id ).toBe( "http://example.com/this-uri-is-resolved-relative/" );
-				pointer = document.getPointer( "http://example.com/in/documents/" );
-				expect( pointer.id ).toBe( "http://example.com/in/documents/" );
-				pointer = document.getPointer( "http://example.com/another-document/" );
-				expect( pointer.id ).toBe( "http://example.com/another-document/" );
-			} );
-
-			describe( "Document.inScope", ():void => {
-
-				// TODO: Separate in different tests
-				it( "should test when pointer", ():void => {
-					expect( document.inScope ).toBeDefined();
-					expect( Utils.isFunction( document.inScope ) ).toBe( true );
-
-					let pointer:Pointer;
-
-					expect( document.inScope.bind( document, undefined ) ).toThrowError();
-					expect( document.inScope.bind( document, null ) ).toThrowError();
-
-					expect( document.inScope( document ) ).toBe( true );
-					pointer = Pointer.create( { id: "http://example.com/document/" } );
-					expect( document.inScope( pointer ) ).toBe( true );
-					pointer = Pointer.create( { id: "http://example.com/document/#fragment" } );
-					expect( document.inScope( pointer ) ).toBe( true );
-					pointer = Pointer.create( { id: "http://example.com/document/#another-fragment" } );
-					expect( document.inScope( pointer ) ).toBe( true );
-					pointer = Pointer.create( { id: "_:BlankNode" } );
-					expect( document.inScope( pointer ) ).toBe( true );
-					pointer = Pointer.create( { id: "#fragment" } );
-					expect( document.inScope( pointer ) ).toBe( true );
-
-					// In Documents
-					pointer = Pointer.create( { id: "this-uri-is-resolved-relative/" } );
-					expect( document.inScope( pointer ) ).toBe( true );
-					pointer = Pointer.create( { id: "http://example.com/in/documents/" } );
-					expect( document.inScope( pointer ) ).toBe( true );
-					pointer = Pointer.create( { id: "http://example.com/document/child/" } );
-					expect( document.inScope( pointer ) ).toBe( true );
-					pointer = Pointer.create( { id: "http://example.com/another-document/" } );
-					expect( document.inScope( pointer ) ).toBe( true );
-					pointer = Pointer.create( { id: "http://example.org/document/" } );
-					expect( document.inScope( pointer ) ).toBe( true );
-				} );
-
-				// TODO: Separate in different tests
-				it( "should test when id", ():void => {
-					expect( document.inScope ).toBeDefined();
-					expect( Utils.isFunction( document.inScope ) ).toBe( true );
-
-					expect( document.inScope( document.id ) ).toBe( true );
-					expect( document.inScope( "http://example.com/document/" ) ).toBe( true );
-					expect( document.inScope( "http://example.com/document/#fragment" ) ).toBe( true );
-					expect( document.inScope( "http://example.com/document/#another-fragment" ) ).toBe( true );
-					expect( document.inScope( "_:BlankNode" ) ).toBe( true );
-					expect( document.inScope( "#fragment" ) ).toBe( true );
-
-					// In Documents
-					expect( document.inScope( "this-uri-is-resolved-relative/" ) ).toBe( true );
-					expect( document.inScope( "http://example.com/in/documents/" ) ).toBe( true );
-					expect( document.inScope( "http://example.com/document/child/" ) ).toBe( true );
-					expect( document.inScope( "http://example.com/another-document/" ) ).toBe( true );
-					expect( document.inScope( "http://example.org/document/" ) ).toBe( true );
-				} );
-
-			} );
-
-			describe( "Document.createFragment", ():void => {
-
-				// TODO: Separate in different tests
-				it( "should test when object and slug", ():void => {
-					expect( document.createFragment ).toBeDefined();
-					expect( Utils.isFunction( document.createFragment ) ).toBe( true );
-
-					interface MyInterface {
-						myProperty?:string;
-						myPointer?:MyInterface;
-					}
-
-					let object:MyInterface;
-					let fragment:Fragment & MyInterface;
-
-					object = {};
-					fragment = document.createFragment<MyInterface>( object, "my-fragment" );
-					expect( object ).toBe( fragment );
-					expect( TransientFragment.isDecorated( fragment ) ).toBe( true );
-					expect( fragment.id ).toBe( "http://example.com/document/#my-fragment" );
-					expect( fragment.myProperty ).toBeUndefined();
-
-					object = { myProperty: "The property" };
-					fragment = document.createFragment<MyInterface>( object, "http://example.com/document/#another-fragment" );
-					expect( TransientFragment.isDecorated( fragment ) ).toBe( true );
-					expect( fragment.id ).toBe( "http://example.com/document/#another-fragment" );
-					expect( fragment.myProperty ).toBe( "The property" );
-
-					object = { myProperty: "The BlankNode property" };
-					fragment = document.createFragment<MyInterface>( object, "_:My-BlankNode" );
-					expect( TransientFragment.isDecorated( fragment ) ).toBe( true );
-					expect( fragment.id ).toBe( "_:My-BlankNode" );
-					expect( fragment.myProperty ).toBe( "The BlankNode property" );
-
-					object = { myProperty: "Fragment with nested object", myPointer: { myProperty: "The Nested object" } };
-					fragment = document.createFragment<MyInterface>( object, "#another-another-fragment" );
-					expect( TransientFragment.isDecorated( fragment ) ).toBe( true );
-					expect( fragment.id ).toBe( "http://example.com/document/#another-another-fragment" );
-					expect( fragment.myProperty ).toBe( "Fragment with nested object" );
-					expect( fragment.myPointer ).toBeDefined();
-					expect( TransientFragment.isDecorated( fragment.myPointer ) ).toBe( true );
-					expect( URI.isBNodeID( (<TransientFragment> fragment.myPointer).id ) ).toBe( true );
-					expect( fragment.myPointer.myProperty ).toBeDefined();
-					expect( fragment.myPointer.myProperty ).toBe( "The Nested object" );
-
-					object = { myProperty: "Fragment with nested object", myPointer: { myProperty: "The Nested object" } };
-					fragment = document.createFragment<MyInterface>( object, "_:AnotherBlankNode" );
-					expect( TransientFragment.isDecorated( fragment ) ).toBe( true );
-					expect( fragment.id ).toBe( "_:AnotherBlankNode" );
-					expect( fragment.myProperty ).toBe( "Fragment with nested object" );
-					expect( fragment.myPointer ).toBeDefined();
-					expect( TransientFragment.isDecorated( fragment.myPointer ) ).toBe( true );
-					expect( URI.isBNodeID( (<TransientFragment> fragment.myPointer).id ) ).toBe( true );
-					expect( fragment.myPointer.myProperty ).toBeDefined();
-					expect( fragment.myPointer.myProperty ).toBe( "The Nested object" );
-
-					expect( () => document.createFragment( {}, "http://example.com/another-document/#fragment" ) ).toThrowError( IllegalArgumentError );
-					expect( () => document.createFragment( {}, "fragment" ) ).toThrowError( IDAlreadyInUseError );
-					expect( () => document.createFragment( {}, "_:BlankNode" ) ).toThrowError( IDAlreadyInUseError );
-				} );
-
-				// TODO: Separate in different tests
-				it( "should test when object", ():void => {
-					expect( document.createFragment ).toBeDefined();
-					expect( Utils.isFunction( document.createFragment ) ).toBe( true );
-
-					interface MyInterface {
-						myProperty?:string;
-						myPointer?:MyInterface;
-					}
-
-					let object:MyInterface;
-					let fragment:Fragment & MyInterface;
-
-					object = {};
-					fragment = document.createFragment<MyInterface>( object );
-					expect( object ).toBe( fragment );
-					expect( TransientFragment.isDecorated( fragment ) ).toBe( true );
-					expect( URI.isBNodeID( fragment.id ) ).toBe( true );
-					expect( fragment.myProperty ).toBeUndefined();
-
-					object = { myProperty: "The property" };
-					fragment = document.createFragment<MyInterface>( object );
-					expect( TransientFragment.isDecorated( fragment ) ).toBe( true );
-					expect( URI.isBNodeID( fragment.id ) ).toBe( true );
-					expect( fragment.myProperty ).toBe( "The property" );
-
-					object = { myProperty: "Fragment with nested object", myPointer: { myProperty: "The Nested object" } };
-					fragment = document.createFragment<MyInterface>( object );
-					expect( TransientFragment.isDecorated( fragment ) ).toBe( true );
-					expect( URI.isBNodeID( fragment.id ) ).toBe( true );
-					expect( fragment.myProperty ).toBe( "Fragment with nested object" );
-					expect( fragment.myPointer ).toBeDefined();
-					expect( TransientFragment.isDecorated( fragment.myPointer ) ).toBe( true );
-					expect( URI.isBNodeID( (<TransientFragment> fragment.myPointer).id ) ).toBe( true );
-					expect( fragment.myPointer.myProperty ).toBeDefined();
-					expect( fragment.myPointer.myProperty ).toBe( "The Nested object" );
-				} );
-
-				// TODO: Separate in different tests
-				it( "should test when slug", ():void => {
-					expect( document.createFragment ).toBeDefined();
-					expect( Utils.isFunction( document.createFragment ) ).toBe( true );
-
-					let fragment:Fragment;
-
-					fragment = document.createFragment( "my-fragment" );
-					expect( TransientFragment.isDecorated( fragment ) ).toBe( true );
-					expect( fragment.id ).toBe( "http://example.com/document/#my-fragment" );
-
-					fragment = document.createFragment( "http://example.com/document/#another-fragment" );
-					expect( TransientFragment.isDecorated( fragment ) ).toBe( true );
-					expect( fragment.id ).toBe( "http://example.com/document/#another-fragment" );
-
-					fragment = document.createFragment( "_:My-BlankNode" );
-					expect( TransientFragment.isDecorated( fragment ) ).toBe( true );
-					expect( fragment.id ).toBe( "_:My-BlankNode" );
-
-					expect( () => document.createFragment( "http://example.com/another-document/#fragment" ) ).toThrowError( IllegalArgumentError );
-					expect( () => document.createFragment( "fragment" ) ).toThrowError( IDAlreadyInUseError );
-					expect( () => document.createFragment( "_:BlankNode" ) ).toThrowError( IDAlreadyInUseError );
-				} );
-
-				// TODO: Separate in different tests
-				it( "should test when empty", ():void => {
-					expect( document.createFragment ).toBeDefined();
-					expect( Utils.isFunction( document.createFragment ) ).toBe( true );
-
-					let fragment1:Fragment;
-					let fragment2:Fragment;
-
-					fragment1 = document.createFragment();
-					expect( TransientFragment.isDecorated( fragment1 ) ).toBe( true );
-					expect( Utils.isString( fragment1.id ) ).toBe( true );
-					expect( URI.isBNodeID( fragment1.id ) ).toBe( true );
-
-					fragment2 = document.createFragment();
-					expect( TransientFragment.isDecorated( fragment2 ) ).toBe( true );
-					expect( Utils.isString( fragment2.id ) ).toBe( true );
-					expect( URI.isBNodeID( fragment2.id ) ).toBe( true );
-
-					expect( fragment1.id ).not.toBe( fragment2.id );
-				} );
-
-			} );
-
-			describe( "Document.createNamedFragment", ():void => {
-
-				// TODO: Separate in different tests
-				it( "should test when slug", ():void => {
-					expect( document.createNamedFragment ).toBeDefined();
-					expect( Utils.isFunction( document.createNamedFragment ) ).toBe( true );
-
-					let fragment:NamedFragment;
-
-					fragment = document.createNamedFragment( "my-fragment" );
-					expect( TransientNamedFragment.isDecorated( fragment ) ).toBe( true );
-					expect( fragment.slug ).toBe( "my-fragment" );
-					expect( fragment.id ).toBe( "http://example.com/document/#my-fragment" );
-
-					fragment = document.createNamedFragment( "http://example.com/document/#another-fragment" );
-					expect( TransientFragment.isDecorated( fragment ) ).toBe( true );
-					expect( fragment.slug ).toBe( "another-fragment" );
-					expect( fragment.id ).toBe( "http://example.com/document/#another-fragment" );
-
-					expect( () => document.createNamedFragment( "_:BlankNode" ) ).toThrowError( IllegalArgumentError );
-					expect( () => document.createNamedFragment( "http://example.com/another-document/#fragment" ) ).toThrowError( IllegalArgumentError );
-					expect( () => document.createNamedFragment( "fragment" ) ).toThrowError( IDAlreadyInUseError );
-				} );
-
-				// TODO: Separate in different tests
-				it( "should test when object and slug", ():void => {
-
-					expect( document.createNamedFragment ).toBeDefined();
-					expect( Utils.isFunction( document.createNamedFragment ) ).toBe( true );
-
-					interface MyInterface {
-						myProperty?:string;
-						myPointer?:MyInterface;
-					}
-
-					let object:MyInterface;
-					let fragment:Fragment & MyInterface;
-
-					object = {};
-					fragment = document.createNamedFragment<MyInterface>( object, "my-fragment" );
-					expect( object ).toBe( fragment );
-					expect( TransientFragment.isDecorated( fragment ) ).toBe( true );
-					expect( fragment.id ).toBe( "http://example.com/document/#my-fragment" );
-					expect( fragment.myProperty ).toBeUndefined();
-
-					object = { myProperty: "The property" };
-					fragment = document.createNamedFragment<MyInterface>( object, "http://example.com/document/#another-fragment" );
-					expect( TransientFragment.isDecorated( fragment ) ).toBe( true );
-					expect( fragment.id ).toBe( "http://example.com/document/#another-fragment" );
-					expect( fragment.myProperty ).toBe( "The property" );
-
-					object = { myProperty: "Fragment with nested object", myPointer: { myProperty: "The Nested object" } };
-					fragment = document.createNamedFragment<MyInterface>( object, "#another-another-fragment" );
-					expect( TransientFragment.isDecorated( fragment ) ).toBe( true );
-					expect( fragment.id ).toBe( "http://example.com/document/#another-another-fragment" );
-					expect( fragment.myProperty ).toBe( "Fragment with nested object" );
-					expect( fragment.myPointer ).toBeDefined();
-					expect( TransientFragment.isDecorated( fragment.myPointer ) ).toBe( true );
-					expect( URI.isBNodeID( (<TransientFragment> fragment.myPointer).id ) ).toBe( true );
-					expect( fragment.myPointer.myProperty ).toBeDefined();
-					expect( fragment.myPointer.myProperty ).toBe( "The Nested object" );
-				} );
-
-			} );
-
-			// TODO: Separate in different tests
-			it( "Document.refresh", ():void => {
-				expect( document.refresh ).toBeDefined();
-				expect( Utils.isFunction( document.refresh ) ).toBe( true );
-
-				let spy:jasmine.Spy = spyOn( context.documents, "refresh" );
-				document.refresh();
-				expect( spy ).toHaveBeenCalledWith( document, void 0 );
-			} );
-
-			// TODO: Separate in different tests
-			it( "Document.save", ():void => {
-				expect( document.save ).toBeDefined();
-				expect( Utils.isFunction( document.save ) ).toBe( true );
-
-				let spy:jasmine.Spy = spyOn( context.documents, "save" );
-				document.save();
-				expect( spy ).toHaveBeenCalledWith( document, void 0 );
-
-				const requestOptions:RequestOptions = { timeout: 5555 };
-				document.save( requestOptions );
-				expect( spy ).toHaveBeenCalledWith( document, requestOptions );
-			} );
-
-			// TODO: Separate in different tests
-			it( "Document.saveAndRefresh", ():void => {
-				expect( document.saveAndRefresh ).toBeDefined();
-				expect( Utils.isFunction( document.saveAndRefresh ) ).toBe( true );
-
-				let spy:jasmine.Spy = spyOn( context.documents, "saveAndRefresh" );
-				document.saveAndRefresh();
-				expect( spy ).toHaveBeenCalledWith( document, void 0 );
-			} );
-
-			// TODO: Separate in different tests
-			it( "Document.delete", ():void => {
-				expect( document.delete ).toBeDefined();
-				expect( Utils.isFunction( document.delete ) ).toBe( true );
-
-				let spy:jasmine.Spy = spyOn( context.documents, "delete" );
-				document.delete();
-				expect( spy ).toHaveBeenCalledWith( document.id, void 0 );
-			} );
-
-			describe( "Document.addMember", ():void => {
-
-				// TODO: Separate in different tests
-				it( "should test when pointer", ():void => {
-					expect( document.addMember ).toBeDefined();
-					expect( Utils.isFunction( document.addMember ) ).toBeDefined();
-
-					let spy:jasmine.Spy = spyOn( document._documents, "addMember" );
-
-					let pointer:Pointer = context.documents.getPointer( "new-member/" );
-					document.addMember( pointer );
-
-					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", pointer, void 0 );
-				} );
-
-				// TODO: Separate in different tests
-				it( "should test when uri", ():void => {
-					expect( document.addMember ).toBeDefined();
-					expect( Utils.isFunction( document.addMember ) ).toBeDefined();
-
-					let spy:jasmine.Spy = spyOn( document._documents, "addMember" );
-
-					document.addMember( "new-member/" );
-
-					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", "new-member/", void 0 );
-				} );
-
-			} );
-
-			// TODO: Separate in different tests
-			it( "Document.addMembers", ():void => {
-				expect( document.addMembers ).toBeDefined();
-				expect( Utils.isFunction( document.addMembers ) ).toBeDefined();
-
-				let spy:jasmine.Spy = spyOn( document._documents, "addMembers" );
-
-				let pointers:Pointer[] = [];
-				pointers.push( context.documents.getPointer( "new-member/" ) );
-				document.addMembers( pointers );
-
-				expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", pointers, void 0 );
-			} );
-
-			describe( "Document.createChild", ():void => {
-
-				// TODO: Separate in different tests
-				it( "should test when object, slug and options", ():void => {
-					expect( document.createChild ).toBeDefined();
-					expect( Utils.isFunction( document.createChild ) ).toBeDefined();
-
-					let spy:jasmine.Spy = spyOn( document._documents, "createChild" );
-
-					let childDocument:TransientDocument = TransientDocument.create();
-					document.createChild( childDocument, "child" );
-
-					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", childDocument, "child", void 0 );
-					spy.calls.reset();
-
-					let object:Object;
-					let options:RequestOptions;
-
-					object = { my: "object" };
-					options = { timeout: 5050 };
-					document.createChild( object, "child", options );
-					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", object, "child", options );
-					spy.calls.reset();
-
-					object = { my: "object" };
-					document.createChild( object, "child" );
-					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", object, "child", void 0 );
-				} );
-
-				// TODO: Separate in different tests
-				it( "should test when object and options", ():void => {
-					expect( document.createChild ).toBeDefined();
-					expect( Utils.isFunction( document.createChild ) ).toBeDefined();
-
-					let spy:jasmine.Spy = spyOn( document._documents, "createChild" );
-
-					let childDocument:TransientDocument = TransientDocument.create();
-					document.createChild( childDocument );
-
-					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", childDocument, null, void 0 );
-					spy.calls.reset();
-
-					let object:Object = { my: "object" };
-					document.createChild( object );
-					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", object, null, void 0 );
-					spy.calls.reset();
-
-					object = { my: "object" };
-					let options:RequestOptions = { timeout: 5050 };
-					document.createChild( object, options );
-					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", object, null, options );
-				} );
-
-				// TODO: Separate in different tests
-				it( "should test when slug and options", ():void => {
-					expect( document.createChild ).toBeDefined();
-					expect( Utils.isFunction( document.createChild ) ).toBeDefined();
-
-					let spy:jasmine.Spy = spyOn( document._documents, "createChild" );
-
-					document.createChild( "child" );
-					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", {}, "child", void 0 );
-					spy.calls.reset();
-
-					let options:RequestOptions = { timeout: 5050 };
-					document.createChild( "child", options );
-					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", {}, "child", options );
-				} );
-
-				// TODO: Separate in different tests
-				it( "should test when options", ():void => {
-					expect( document.createChild ).toBeDefined();
-					expect( Utils.isFunction( document.createChild ) ).toBeDefined();
-
-					let spy:jasmine.Spy = spyOn( document._documents, "createChild" );
-
-					document.createChild();
-					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", {}, null, void 0 );
-					spy.calls.reset();
-
-					let options:RequestOptions = { timeout: 5050 };
-					document.createChild( options );
-					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", {}, null, options );
-				} );
-
-			} );
-
-			describe( "Document.createChildren", ():void => {
-
-				it( isDefined(), ():void => {
-					expect( document.createChildren ).toBeDefined();
-					expect( Utils.isFunction( document.createChildren ) ).toBeDefined();
-				} );
-
-				// TODO: Separate in different tests
-				it( "should test when objects slug and options", ():void => {
-					let spy:jasmine.Spy = spyOn( document._documents, "createChildren" );
-
-					let objects:Object[];
-					let slugs:string[];
-					let options:RequestOptions;
-
-					objects = [ { my: "first object" }, { my: "second object" }, { my: "third object" } ];
-					slugs = [ "first", "second", "third" ];
-					options = { timeout: 5050 };
-					document.createChildren( objects, slugs, options );
-					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", objects, slugs, options );
-					spy.calls.reset();
-
-					objects = [ { my: "first object" }, { my: "second object" }, { my: "third object" } ];
-					slugs = [ "first", "second", "third" ];
-					document.createChildren( objects, slugs );
-					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", objects, slugs, undefined );
-				} );
-
-				// TODO: Separate in different tests
-				it( "should test when object and options", ():void => {
-					let spy:jasmine.Spy = spyOn( document._documents, "createChildren" );
-
-					let objects:Object[];
-					let options:RequestOptions;
-
-					objects = [ { my: "first object" }, { my: "second object" }, { my: "third object" } ];
-					options = { timeout: 5050 };
-					document.createChildren( objects, options );
-					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", objects, options, undefined );
-					spy.calls.reset();
-
-					objects = [ { my: "first object" }, { my: "second object" }, { my: "third object" } ];
-					document.createChildren( objects );
-					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", objects, undefined, undefined );
-				} );
-
-			} );
-
-			describe( "Document.createChildAndRetrieve", ():void => {
-
-				it( isDefined(), ():void => {
-					expect( document.createChildAndRetrieve ).toBeDefined();
-					expect( Utils.isFunction( document.createChildAndRetrieve ) ).toBeDefined();
-				} );
-
-				// TODO: Separate in different tests
-				it( "should test when object, slug and options", ():void => {
-					let spy:jasmine.Spy = spyOn( document._documents, "createChildAndRetrieve" );
-
-					let childDocument:TransientDocument = TransientDocument.create();
-					document.createChildAndRetrieve( childDocument, "child" );
-
-					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", childDocument, "child", void 0 );
-					spy.calls.reset();
-
-					let object:Object;
-					let options:RequestOptions;
-
-					object = { my: "object" };
-					options = { timeout: 5050 };
-					document.createChildAndRetrieve( object, "child", options );
-					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", object, "child", options );
-					spy.calls.reset();
-
-					object = { my: "object" };
-					document.createChildAndRetrieve( object, "child" );
-					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", object, "child", void 0 );
-				} );
-
-				// TODO: Separate in different tests
-				it( "should test when object and options", ():void => {
-					let spy:jasmine.Spy = spyOn( document._documents, "createChildAndRetrieve" );
-
-					let childDocument:TransientDocument = TransientDocument.create();
-					document.createChildAndRetrieve( childDocument );
-
-					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", childDocument, null, void 0 );
-					spy.calls.reset();
-
-					let object:Object = { my: "object" };
-					document.createChildAndRetrieve( object );
-					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", object, null, void 0 );
-					spy.calls.reset();
-
-					object = { my: "object" };
-					let options:RequestOptions = { timeout: 5050 };
-					document.createChildAndRetrieve( object, options );
-					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", object, null, options );
-				} );
-
-				// TODO: Separate in different tests
-				it( "should test when slug and options", ():void => {
-					let spy:jasmine.Spy = spyOn( document._documents, "createChildAndRetrieve" );
-
-					document.createChildAndRetrieve( "child" );
-					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", {}, "child", void 0 );
-					spy.calls.reset();
-
-					let options:RequestOptions = { timeout: 5050 };
-					document.createChildAndRetrieve( "child", options );
-					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", {}, "child", options );
-				} );
-
-				// TODO: Separate in different tests
-				it( "should test when options", ():void => {
-					let spy:jasmine.Spy = spyOn( document._documents, "createChildAndRetrieve" );
-
-					document.createChildAndRetrieve();
-					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", {}, null, void 0 );
-					spy.calls.reset();
-
-					let options:RequestOptions = { timeout: 5050 };
-					document.createChildAndRetrieve( options );
-					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", {}, null, options );
-				} );
-
-			} );
-
-			describe( "Document.createChildrenAndRetrieve", ():void => {
-
-				it( isDefined(), ():void => {
-					expect( document.createChildrenAndRetrieve ).toBeDefined();
-					expect( Utils.isFunction( document.createChildrenAndRetrieve ) ).toBeDefined();
-				} );
-
-				// TODO: Separate in different tests
-				it( "test when objects, slugs and options", ():void => {
-					let spy:jasmine.Spy = spyOn( document._documents, "createChildrenAndRetrieve" );
-
-					let objects:Object[];
-					let slugs:string[];
-					let options:RequestOptions;
-
-					objects = [ { my: "first object" }, { my: "second object" }, { my: "third object" } ];
-					slugs = [ "first", "second", "third" ];
-					options = { timeout: 5050 };
-					document.createChildrenAndRetrieve( objects, slugs, options );
-					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", objects, slugs, options );
-					spy.calls.reset();
-
-					objects = [ { my: "first object" }, { my: "second object" }, { my: "third object" } ];
-					slugs = [ "first", "second", "third" ];
-					document.createChildrenAndRetrieve( objects, slugs );
-					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", objects, slugs, undefined );
-				} );
-
-				// TODO: Separate in different tests
-				it( "test when objects and options", ():void => {
-					let spy:jasmine.Spy = spyOn( document._documents, "createChildrenAndRetrieve" );
-
-					let objects:Object[];
-					let options:RequestOptions;
-
-					objects = [ { my: "first object" }, { my: "second object" }, { my: "third object" } ];
-					options = { timeout: 5050 };
-					document.createChildrenAndRetrieve( objects, options );
-					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", objects, options, undefined );
-					spy.calls.reset();
-
-					objects = [ { my: "first object" }, { my: "second object" }, { my: "third object" } ];
-					document.createChildrenAndRetrieve( objects );
-					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", objects, undefined, undefined );
-				} );
-
-			} );
-
-			describe( "Document.createAccessPoint", ():void => {
-
-				// TODO: Separate in different tests
-				it( "should test when objects, slug and options", ():void => {
-					expect( document.createAccessPoint ).toBeDefined();
-					expect( Utils.isFunction( document.createAccessPoint ) ).toBeDefined();
-
-					let spy:jasmine.Spy = spyOn( document._documents, "createAccessPoint" );
-
-					document.createAccessPoint( { hasMemberRelation: "http://example.com/ns#member-relation" }, "my-new-access-point" );
-					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", { hasMemberRelation: "http://example.com/ns#member-relation" }, "my-new-access-point", undefined );
-				} );
-
-				// TODO: Separate in different tests
-				it( "should test when object and options", ():void => {
-					expect( document.createAccessPoint ).toBeDefined();
-					expect( Utils.isFunction( document.createAccessPoint ) ).toBeDefined();
-
-					let spy:jasmine.Spy = spyOn( document._documents, "createAccessPoint" );
-
-					document.createAccessPoint( { hasMemberRelation: "http://example.com/ns#member-relation" } );
-					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", { hasMemberRelation: "http://example.com/ns#member-relation" }, undefined, undefined );
-				} );
-
-			} );
-
-			describe( "Document.createAccessPoints", ():void => {
-
-				it( isDefined(), ():void => {
-					expect( document.createAccessPoints ).toBeDefined();
-					expect( Utils.isFunction( document.createAccessPoints ) ).toBeDefined();
-				} );
-
-				// TODO: Separate in different tests
-				it( "should test when objects, slugs and options", ():void => {
-					let spy:jasmine.Spy = spyOn( document._documents, "createAccessPoints" );
-
-					let accessPoints:BaseAccessPoint[] = [
-						{
-							hasMemberRelation: "http://example.com/ns#member-relation",
-						},
-						{
-							hasMemberRelation: "http://example.com/ns#some-relation",
-							isMemberOfRelation: "http://example.com/ns#some-inverted-relation",
-						},
-					];
-					let slugs:string[] = [ null, "second" ];
-
-					document.createAccessPoints( accessPoints, slugs );
-					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", accessPoints, slugs, undefined );
-				} );
-
-				// TODO: Separate in different tests
-				it( "should test when objects and options", ():void => {
-					let spy:jasmine.Spy = spyOn( document._documents, "createAccessPoints" );
-
-					let accessPoints:BaseAccessPoint[] = [
-						{
-							hasMemberRelation: "http://example.com/ns#member-relation",
-						},
-						{
-							hasMemberRelation: "http://example.com/ns#some-relation",
-							isMemberOfRelation: "http://example.com/ns#some-inverted-relation",
-						},
-					];
-
-					document.createAccessPoints( accessPoints );
-					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", accessPoints, undefined, undefined );
-				} );
-
-			} );
-
-			describe( "Document.getChildren", ():void => {
-
-				// TODO: Separate in different tests
-				it( "Should pass parameters to documents instance", ():void => {
-					expect( document.getChildren ).toBeDefined();
-					expect( Utils.isFunction( document.getChildren ) ).toBeDefined();
-
-					const spy:jasmine.Spy = spyOn( document._documents, "getChildren" );
-
-					// noinspection JSIgnoredPromiseFromCall
-					document.getChildren();
-					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", void 0, void 0 );
-					spy.calls.reset();
-
-					// noinspection JSIgnoredPromiseFromCall
-					document.getChildren( { timeout: 5000 } );
-					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", { timeout: 5000 }, void 0 );
-					spy.calls.reset();
-
-					let query:( queryBuilder:any ) => any;
-
-					query = _ => _;
-					// noinspection JSIgnoredPromiseFromCall
-					document.getChildren( { timeout: 5000 }, query );
-					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", { timeout: 5000 }, query );
-					spy.calls.reset();
-
-					query = _ => _;
-					// noinspection JSIgnoredPromiseFromCall
-					document.getChildren( query );
-					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", query, void 0 );
-				} );
-
-			} );
-
-			describe( "Document.getMembers", ():void => {
-
-				// TODO: Separate in different tests
-				it( "Should pass parameters to documents instance", ():void => {
-					expect( document.getMembers ).toBeDefined();
-					expect( Utils.isFunction( document.getMembers ) ).toBeDefined();
-
-					const spy:jasmine.Spy = spyOn( document._documents, "getMembers" );
-
-					// noinspection JSIgnoredPromiseFromCall
-					document.getMembers();
-					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", void 0, void 0 );
-					spy.calls.reset();
-
-					// noinspection JSIgnoredPromiseFromCall
-					document.getMembers( { timeout: 5000 } );
-					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", { timeout: 5000 }, void 0 );
-					spy.calls.reset();
-
-					let query:( queryBuilder:any ) => any;
-
-					query = _ => _;
-					// noinspection JSIgnoredPromiseFromCall
-					document.getMembers( { timeout: 5000 }, query );
-					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", { timeout: 5000 }, query );
-					spy.calls.reset();
-
-					query = _ => _;
-					// noinspection JSIgnoredPromiseFromCall
-					document.getMembers( query );
-					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", query, void 0 );
-				} );
-
-			} );
-
-			describe( "Document.removeMember", ():void => {
-
-				// TODO: Separate in different tests
-				it( "should test when pointer", ():void => {
-					expect( document.removeMember ).toBeDefined();
-					expect( Utils.isFunction( document.removeMember ) ).toBeDefined();
-
-					let spy:jasmine.Spy = spyOn( document._documents, "removeMember" );
-
-					let pointer:Pointer = context.documents.getPointer( "remove-member/" );
-					document.removeMember( pointer );
-
-					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", pointer, void 0 );
-				} );
-
-				// TODO: Separate in different tests
-				it( "should test when uri", ():void => {
-					expect( document.removeMember ).toBeDefined();
-					expect( Utils.isFunction( document.removeMember ) ).toBeDefined();
-
-					let spy:jasmine.Spy = spyOn( document._documents, "removeMember" );
-
-					document.removeMember( "remove-member/" );
-
-					expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", "remove-member/", void 0 );
-				} );
-
-			} );
-
-			// TODO: Separate in different tests
-			it( "Document.removeMembers", ():void => {
-				expect( document.removeMembers ).toBeDefined();
-				expect( Utils.isFunction( document.removeMembers ) ).toBeDefined();
-
-				let spy:jasmine.Spy = spyOn( document._documents, "removeMembers" );
-
-				let pointers:Pointer[] = [];
-				pointers.push( context.documents.getPointer( "remove-member/" ) );
-				document.removeMembers( pointers );
-
-				expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", pointers, void 0 );
-			} );
-
-			// TODO: Separate in different tests
-			it( "Document.removeAllMembers", ():void => {
-				expect( document.removeAllMembers ).toBeDefined();
-				expect( Utils.isFunction( document.removeAllMembers ) ).toBeDefined();
-
-				let spy:jasmine.Spy = spyOn( document._documents, "removeAllMembers" );
-
-				document.removeAllMembers();
-
-				expect( spy ).toHaveBeenCalledWith( "http://example.com/document/", void 0 );
-			} );
-
-			// TODO: Separate in different tests
-			it( "Document.executeRawASKQuery", ():void => {
-				expect( document.executeRawASKQuery ).toBeDefined();
-				expect( Utils.isFunction( document.executeRawASKQuery ) ).toBe( true );
-
-				let spy:jasmine.Spy = spyOn( context.documents, "executeRawASKQuery" );
-				document.executeRawASKQuery( "ASK { ?subject, ?predicate, ?object }" );
-				expect( spy ).toHaveBeenCalledWith( document.id, "ASK { ?subject, ?predicate, ?object }", void 0 );
-			} );
-
-			// TODO: Separate in different tests
-			it( "Document.executeASKQuery", ():void => {
-				expect( document.executeASKQuery ).toBeDefined();
-				expect( Utils.isFunction( document.executeASKQuery ) ).toBe( true );
-
-				let spy:jasmine.Spy = spyOn( context.documents, "executeASKQuery" );
-				document.executeASKQuery( "ASK { ?subject, ?predicate, ?object }" );
-				expect( spy ).toHaveBeenCalledWith( document.id, "ASK { ?subject, ?predicate, ?object }", void 0 );
-			} );
-
-			// TODO: Separate in different tests
-			it( "Document.executeRawSELECTQuery", ():void => {
-				expect( document.executeRawSELECTQuery ).toBeDefined();
-				expect( Utils.isFunction( document.executeRawSELECTQuery ) ).toBe( true );
-
-				let spy:jasmine.Spy = spyOn( context.documents, "executeRawSELECTQuery" );
-				document.executeRawSELECTQuery( "SELECT ?book ?title WHERE { <http://example.com/some-document/> ?book ?title }" );
-				expect( spy ).toHaveBeenCalledWith( document.id, "SELECT ?book ?title WHERE { <http://example.com/some-document/> ?book ?title }", void 0 );
-			} );
-
-			// TODO: Separate in different tests
-			it( "Document.executeSELECTQuery", ():void => {
-				expect( document.executeSELECTQuery ).toBeDefined();
-				expect( Utils.isFunction( document.executeSELECTQuery ) ).toBe( true );
-
-				let spy:jasmine.Spy = spyOn( context.documents, "executeSELECTQuery" );
-				document.executeSELECTQuery( "SELECT ?book ?title WHERE { <http://example.com/some-document/> ?book ?title }" );
-				expect( spy ).toHaveBeenCalledWith( document.id, "SELECT ?book ?title WHERE { <http://example.com/some-document/> ?book ?title }", void 0 );
-			} );
-
-			// TODO: Separate in different tests
-			it( "Document.executeRawCONSTRUCTQuery", ():void => {
-				expect( document.executeRawCONSTRUCTQuery ).toBeDefined();
-				expect( Utils.isFunction( document.executeRawCONSTRUCTQuery ) ).toBe( true );
-
-				let spy:jasmine.Spy = spyOn( context.documents, "executeRawCONSTRUCTQuery" );
-				document.executeRawCONSTRUCTQuery( "CONSTRUCT { ?subject ?predicate ?object } WHERE { ?subject ?predicate ?object }" );
-				expect( spy ).toHaveBeenCalledWith( document.id, "CONSTRUCT { ?subject ?predicate ?object } WHERE { ?subject ?predicate ?object }", void 0 );
-			} );
-
-			// TODO: Separate in different tests
-			it( "Document.executeRawDESCRIBEQuery", ():void => {
-				expect( document.executeRawDESCRIBEQuery ).toBeDefined();
-				expect( Utils.isFunction( document.executeRawDESCRIBEQuery ) ).toBe( true );
-
-				let spy:jasmine.Spy = spyOn( context.documents, "executeRawDESCRIBEQuery" );
-				document.executeRawDESCRIBEQuery( "DESCRIBE { ?subject ?predicate ?object } WHERE { ?subject ?predicate ?object }" );
-				expect( spy ).toHaveBeenCalledWith( document.id, "DESCRIBE { ?subject ?predicate ?object } WHERE { ?subject ?predicate ?object }", void 0 );
-			} );
-
-			// TODO: Separate in different tests
-			it( "Document.executeUPDATE", ():void => {
-				expect( document.executeUPDATE ).toBeDefined();
-				expect( Utils.isFunction( document.executeUPDATE ) ).toBe( true );
-
-				let spy:jasmine.Spy = spyOn( context.documents, "executeUPDATE" );
-				document.executeUPDATE( `INSERT DATA { GRAPH <http://example.com/some-document/> { <http://example.com/some-document/> <http://example.com/ns#propertyString> "Property Value" } }` );
-				expect( spy ).toHaveBeenCalledWith( document.id, `INSERT DATA { GRAPH <http://example.com/some-document/> { <http://example.com/some-document/> <http://example.com/ns#propertyString> "Property Value" } }`, void 0 );
-			} );
-
-			// TODO: Separate in different tests
-			it( "Document.sparql", ():void => {
-				expect( document.sparql ).toBeDefined();
-				expect( Utils.isFunction( document.sparql ) ).toBe( true );
-
-				let spy:jasmine.Spy = spyOn( context.documents, "sparql" );
-
-				document.sparql();
-				expect( spy ).toHaveBeenCalledWith( document.id );
-			} );
-
 		} );
 
 	} );

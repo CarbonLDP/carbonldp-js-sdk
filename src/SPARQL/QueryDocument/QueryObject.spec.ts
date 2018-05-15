@@ -4,6 +4,7 @@ import {
 	PrefixedNameToken
 } from "sparqler/tokens";
 
+import { createMockContext } from "../../../test/helpers/mocks";
 import { AbstractContext } from "../../AbstractContext";
 import { Pointer } from "../../Pointer";
 import {
@@ -33,12 +34,10 @@ describe( module( "carbonldp/SPARQL/QueryDocument/QueryObject" ), ():void => {
 			expect( QueryObject ).toEqual( jasmine.any( Function ) );
 		} );
 
-		let context:AbstractContext;
+		let context:AbstractContext<any, any>;
 		let queryContext:QueryContext;
 		beforeEach( ():void => {
-			context = new class extends AbstractContext {
-				protected _baseURI:string = "https://example.com/";
-			};
+			context = createMockContext( { uri: "https://example.com/" } );
 			context.extendObjectSchema( {
 				"ex": "http://example.com/ns#",
 			} );

@@ -1,11 +1,9 @@
-import { Document } from "../Document";
-import { Resource } from "../Resource";
+import { Pointer } from "../Pointer";
+import { Registry } from "../Registry";
+import { PersistedResource } from "../Resource";
 import { TransientFragment, TransientFragmentFactory } from "./TransientFragment";
-export interface Fragment extends Resource, TransientFragment {
-    _document: Document;
-    addType(type: string): void;
-    hasType(type: string): boolean;
-    removeType(type: string): void;
+export interface Fragment extends TransientFragment, PersistedResource {
+    _registry: Registry<TransientFragment> & Pointer | undefined;
 }
 export interface FragmentFactory extends TransientFragmentFactory {
     isDecorated(object: object): object is Fragment;

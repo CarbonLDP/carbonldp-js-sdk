@@ -95,19 +95,9 @@ var QueryContextBuilder = (function (_super) {
         return _super.prototype.getSchemaFor.call(this, object);
     };
     QueryContextBuilder.prototype._getTypeSchemas = function () {
-        var _this = this;
         if (this._schemas)
             return this._schemas;
-        var schemasTypes = new Set();
-        (function addSchemasTypes(context) {
-            if (!context)
-                return;
-            Array.from(context["typeObjectSchemaMap"].keys()).forEach(schemasTypes.add, schemasTypes);
-            addSchemasTypes(context.parentContext);
-        })(this.context);
-        this._schemas = [];
-        schemasTypes.forEach(function (type) { return _this._schemas.push(_this.context.getObjectSchema(type)); });
-        return this._schemas;
+        return this._schemas = this.context._getTypeObjectSchemas();
     };
     return QueryContextBuilder;
 }(QueryContext_1.QueryContext));

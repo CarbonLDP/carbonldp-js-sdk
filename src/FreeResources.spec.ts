@@ -1,15 +1,13 @@
-import { AbstractContext } from "./AbstractContext";
-import { Documents } from "./Documents";
-import * as Errors from "./Errors";
-
-import { FreeResources } from "./FreeResources";
-
-import { Pointer } from "./Pointer";
-import { URI } from "./RDF/URI";
+import { anyThatMatches } from "../test/helpers/jasmine-equalities";
+import { createMockRegistry } from "../test/helpers/mocks";
 import {
-	Resource,
-	TransientResource
-} from "./Resource";
+	FreeResources,
+	FreeResourcesFactory
+} from "./FreeResources";
+import { Pointer } from "./Pointer";
+import { RDFNode } from "./RDF";
+import { RegistryService } from "./Registry";
+import { TransientResource } from "./Resource";
 import {
 	extendsClass,
 	hasMethod,
@@ -22,6 +20,7 @@ import {
 	STATIC,
 } from "./test/JasmineExtender";
 
+
 describe( module( "carbonldp/FreeResources" ), ():void => {
 
 	describe( interfaze(
@@ -31,9 +30,9 @@ describe( module( "carbonldp/FreeResources" ), ():void => {
 
 		it( hasProperty(
 			OBLIGATORY,
-			"_documents",
-			"CarbonLDP.Documents",
-			"A `CarbonLDP.Documents` object where the FreeResources scope is in."
+			"_registry",
+			"CarbonLDP.AbstractRegistry<any, any>",
+			"The registry where the FreeResources scope is in."
 		), ():void => {
 		} );
 
@@ -173,6 +172,7 @@ describe( module( "carbonldp/FreeResources" ), ():void => {
 			[ "T extends object" ],
 			"Decorates the object provided with the properties and methods of a `CarbonLDP.FreeResources` object.", [
 				{ name: "object", type: "T" },
+				{ name: "registry", type: "CarbonLDP.AbstractRegistry<any, any>" },
 			],
 			{ type: "T & CarbonLDP.FreeResources" }
 		), ():void => {} );
@@ -191,64 +191,34 @@ describe( module( "carbonldp/FreeResources" ), ():void => {
 			expect( FreeResources.isDecorated ).toBeDefined();
 			expect( FreeResources.isDecorated ).toEqual( jasmine.any( Function ) );
 
-			let object:any = void 0;
+			let object:FreeResourcesFactory[ "PROTOTYPE" ] = void 0;
 			expect( FreeResources.isDecorated( object ) ).toBe( false );
 
-			let fx:Function = () => {};
+			let fx:() => any = () => {};
 			object = {
-				_documents: null,
-				_resourcesIndex: null,
-				hasResource: fx,
-				getResource: fx,
-				getResources: fx,
-				createResource: fx,
-				createResourceFrom: fx,
-				hasPointer: fx,
-				getPointer: fx,
-				inScope: fx,
+				_registry: null,
+				_context: null,
+				_getLocalID: fx,
+				_register: fx,
 				toJSON: fx,
 			};
 			expect( FreeResources.isDecorated( object ) ).toBe( true );
 
-			delete object._documents;
+			delete object._registry;
 			expect( FreeResources.isDecorated( object ) ).toBe( false );
-			object._documents = null;
+			object._registry = null;
 
-			delete object._resourcesIndex;
+			delete object._context;
 			expect( FreeResources.isDecorated( object ) ).toBe( false );
-			object._resourcesIndex = null;
+			object._context = null;
 
-			delete object.hasResource;
+			delete object._getLocalID;
 			expect( FreeResources.isDecorated( object ) ).toBe( false );
-			object.hasResource = fx;
+			object._getLocalID = fx;
 
-			delete object.getResource;
+			delete object._register;
 			expect( FreeResources.isDecorated( object ) ).toBe( false );
-			object.getResource = fx;
-
-			delete object.getResources;
-			expect( FreeResources.isDecorated( object ) ).toBe( false );
-			object.getResources = fx;
-
-			delete object.createResource;
-			expect( FreeResources.isDecorated( object ) ).toBe( false );
-			object.createResource = fx;
-
-			delete object.createResourceFrom;
-			expect( FreeResources.isDecorated( object ) ).toBe( false );
-			object.createResourceFrom = fx;
-
-			delete object.hasPointer;
-			expect( FreeResources.isDecorated( object ) ).toBe( false );
-			object.hasPointer = fx;
-
-			delete object.getPointer;
-			expect( FreeResources.isDecorated( object ) ).toBe( false );
-			object.getPointer = fx;
-
-			delete object.inScope;
-			expect( FreeResources.isDecorated( object ) ).toBe( false );
-			object.inScope = fx;
+			object._register = fx;
 
 			delete object.toJSON;
 			expect( FreeResources.isDecorated( object ) ).toBe( false );
@@ -262,8 +232,8 @@ describe( module( "carbonldp/FreeResources" ), ():void => {
 			expect( FreeResources.create ).toBeDefined();
 			expect( FreeResources.create ).toEqual( jasmine.any( Function ) );
 
-			let documents:Documents = new Documents();
-			let freeResources:FreeResources = FreeResources.create( { _documents: documents } );
+			const registry:RegistryService<any, any> = createMockRegistry();
+			let freeResources:FreeResources = FreeResources.create( { _registry: registry, _context: registry._context } );
 
 			expect( freeResources ).toBeTruthy();
 			expect( FreeResources.isDecorated( freeResources ) );
@@ -274,9 +244,8 @@ describe( module( "carbonldp/FreeResources" ), ():void => {
 			expect( FreeResources.createFrom ).toBeDefined();
 			expect( FreeResources.createFrom ).toEqual( jasmine.any( Function ) );
 
-			let documents:Documents = new Documents();
-
-			let freeResources:FreeResources = FreeResources.createFrom( { _documents: documents } );
+			const registry:RegistryService<any, any> = createMockRegistry();
+			let freeResources:FreeResources = FreeResources.create( { _registry: registry, _context: registry._context } );
 			expect( freeResources ).toBeTruthy();
 			expect( FreeResources.isDecorated( freeResources ) );
 
@@ -284,7 +253,7 @@ describe( module( "carbonldp/FreeResources" ), ():void => {
 				myProperty:string;
 			}
 
-			let myFreeResources:FreeResources & My = FreeResources.createFrom( { myProperty: "The property", _documents: documents } );
+			let myFreeResources:FreeResources & My = FreeResources.createFrom( { myProperty: "The property", _registry: registry, _context: registry._context } );
 			expect( myFreeResources ).toBeTruthy();
 			expect( FreeResources.isDecorated( myFreeResources ) );
 			expect( myFreeResources.myProperty ).toBeDefined();
@@ -296,38 +265,25 @@ describe( module( "carbonldp/FreeResources" ), ():void => {
 			expect( FreeResources.decorate ).toBeDefined();
 			expect( FreeResources.decorate ).toEqual( jasmine.any( Function ) );
 
-			let documents:Documents = new Documents();
-			let fx:Function = () => null;
-			let object:any = {
-				_documents: null,
-				_resourcesIndex: null,
-				hasResource: fx,
-				getResource: fx,
-				getResources: fx,
-				createResource: fx,
-				createResourceFrom: fx,
-				hasPointer: fx,
-				getPointer: fx,
-				inScope: fx,
+			let fx:() => any = () => null;
+			let object:FreeResourcesFactory[ "PROTOTYPE" ] = {
+				_registry: null,
+				_context: null,
+				_getLocalID: fx,
+				_register: fx,
 				toJSON: fx,
 			};
 
-			let freeResources:FreeResources = FreeResources.decorate( object, documents );
+			let freeResources:FreeResources = FreeResources.decorate( object );
 			expect( freeResources ).toBeTruthy();
 			expect( FreeResources.isDecorated( freeResources ) ).toBe( true );
-			expect( freeResources._resourcesIndex ).toBeNull();
-			expect( freeResources.hasResource ).toBe( fx );
-			expect( freeResources.getResources ).toBe( fx );
 
 			interface My {
 				myProperty:string;
 			}
 
-			let anotherFreeResources:FreeResources & My = FreeResources.decorate<My>( { myProperty: "The property" }, documents );
+			let anotherFreeResources:FreeResources & My = FreeResources.decorate<My>( { myProperty: "The property" } );
 			expect( anotherFreeResources ).toBeTruthy();
-			expect( anotherFreeResources._resourcesIndex ).not.toBeNull();
-			expect( anotherFreeResources.hasResource ).not.toBe( fx );
-			expect( anotherFreeResources.getResources ).not.toBe( fx );
 			expect( FreeResources.isDecorated( anotherFreeResources ) ).toBe( true );
 		} );
 
@@ -336,177 +292,71 @@ describe( module( "carbonldp/FreeResources" ), ():void => {
 		describe( "Decorated FreeResources object", ():void => {
 
 			let freeResources:FreeResources;
-			let context:AbstractContext;
-			let documents:Documents;
+			let registry:RegistryService<any, any>;
 			beforeEach( ():void => {
-				class MockedContext extends AbstractContext {
-					protected _baseURI:string;
-
-					constructor() {
-						super();
-						this._baseURI = "http://example.com/";
-						this.settings = { paths: { system: ".system/" } };
-					}
-				}
-
-				context = new MockedContext();
-				documents = new Documents( context );
-
-				freeResources = FreeResources.create( { _documents: documents } );
+				registry = createMockRegistry();
+				freeResources = FreeResources.create( { _registry: registry, _context: registry._context } );
 			} );
 
 			// TODO: Test in `FreeResources.decorate`
 			it( "FreeResources._documents", ():void => {
-				expect( freeResources._documents ).toBeDefined();
-				expect( freeResources._documents instanceof Documents ).toBe( true );
+				expect( freeResources._registry ).toBeDefined();
+				expect( freeResources._registry ).toEqual( jasmine.any( RegistryService ) );
 			} );
 
-			// TODO: Test in `FreeResources.decorate`
-			it( "FreeResources._resourcesIndex", ():void => {
-				expect( freeResources._resourcesIndex ).toBeDefined();
-				expect( freeResources._resourcesIndex instanceof Map ).toBe( true );
+			describe( "FreeResource.hasPointer", ():void => {
+
+				it( "should exists", ():void => {
+					expect( freeResources.hasPointer ).toBeDefined();
+					expect( freeResources.hasPointer ).toEqual( jasmine.any( Function ) );
+				} );
+
+				it( "should return false when no resource local ID", ():void => {
+					expect( freeResources.hasPointer( "_:some" ) ).toBe( false );
+				} );
+
+				it( "should return true when has resource local ID", ():void => {
+					freeResources._register( { id: "_:some" } );
+					expect( freeResources.hasPointer( "_:some" ) ).toBe( true );
+				} );
+
+				it( "should return false when no resource in parent registry", ():void => {
+					expect( freeResources.hasPointer( "https://example.com/some/" ) ).toBe( false );
+				} );
+
+				it( "should return true when resource in parent registry", ():void => {
+					registry._register( { id: "https://example.com/some/" } );
+					expect( freeResources.hasPointer( "https://example.com/some/" ) ).toBe( true );
+				} );
+
 			} );
 
-			// TODO: Separate in different tests
-			it( "FreeResources.hasResources", ():void => {
-				expect( freeResources.hasResource ).toBeDefined();
-				expect( freeResources.hasResource ).toEqual( jasmine.any( Function ) );
+			describe( "FreeResources.getPointer", ():void => {
 
-				expect( freeResources.hasResource( "_:any..." ) ).toBe( false );
+				it( "should exists", ():void => {
+					expect( freeResources.getPointer ).toBeDefined();
+					expect( freeResources.getPointer ).toEqual( jasmine.any( Function ) );
+				} );
 
-				let resource:TransientResource & { val:string } = Resource.createFrom( { id: "_:1", val: "The resource" } );
-				freeResources._resourcesIndex.set( "_:some", resource );
-				expect( freeResources.hasResource( "_:some" ) ).toBe( true );
+				it( "should return existing resource", ():void => {
+					const resource:TransientResource = freeResources._register( { id: "_:some" } );
+					expect( freeResources.getPointer( "_:some" ) ).toBe( resource );
+				} );
 
-				expect( freeResources.hasResource( "_:any..." ) ).toBe( false );
-			} );
+				it( "should create non-existing resource", ():void => {
+					const resource:Pointer = freeResources.getPointer( "_:another" );
 
-			// TODO: Separate in different tests
-			it( "FreeResources.getResource", ():void => {
-				expect( freeResources.getResource ).toBeDefined();
-				expect( freeResources.getResource ).toEqual( jasmine.any( Function ) );
+					expect( resource.id ).toBe( "_:another" );
+					expect( resource ).toEqual( anyThatMatches( TransientResource.is, "Resource" ) as any );
+				} );
 
+				it( "should return from parent resource", ():void => {
+					const parentResource:Pointer = registry.getPointer( "https://example.com/some/" );
 
-				expect( freeResources.getResource( "_:any..." ) ).toBeNull();
+					const resource:Pointer = freeResources.getPointer( "https://example.com/some/" );
+					expect( resource ).toBe( parentResource );
+				} );
 
-				let resource:TransientResource & { val:string } = TransientResource.createFrom( { id: "_:some", val: "The resource" } );
-				freeResources._resourcesIndex.set( "_:some", resource );
-				expect( freeResources.getResource( "_:some" ) ).toBe( resource );
-
-				expect( freeResources.getResource( "_:any..." ) ).toBeNull();
-			} );
-
-			// TODO: Separate in different tests
-			it( "FreeResources.getResources", ():void => {
-				expect( freeResources.getResources ).toBeDefined();
-				expect( freeResources.getResources ).toEqual( jasmine.any( Function ) );
-
-				let resources:TransientResource[];
-
-				resources = freeResources.getResources();
-				expect( resources ).toEqual( jasmine.any( Array ) );
-				expect( resources.length ).toBe( 0 );
-
-				freeResources._resourcesIndex.set( "_:some", TransientResource.create( { id: "_:some" } ) );
-				freeResources._resourcesIndex.set( "_:another", TransientResource.create( { id: "_:another" } ) );
-				resources = freeResources.getResources();
-				expect( resources ).toEqual( jasmine.any( Array ) );
-				expect( resources.length ).toBe( 2 );
-				expect( resources[ 0 ].id ).toBe( "_:some" );
-				expect( resources[ 1 ].id ).toBe( "_:another" );
-			} );
-
-			// TODO: Separate in different tests
-			it( "FreeResources.createResource", ():void => {
-				expect( freeResources.createResource ).toBeDefined();
-				expect( freeResources.createResource ).toEqual( jasmine.any( Function ) );
-
-				let resource00:TransientResource;
-				resource00 = freeResources.createResource();
-				expect( resource00 ).toBeTruthy();
-				expect( URI.isBNodeID( resource00.id ) ).toBe( true );
-
-				let resource01:TransientResource;
-				resource01 = freeResources.createResource();
-				expect( resource01 ).toBeTruthy();
-				expect( URI.isBNodeID( resource01.id ) ).toBe( true );
-				expect( resource00.id ).not.toBe( resource01.id );
-
-				let resource02:TransientResource;
-				resource02 = freeResources.createResource( "_:some" );
-				expect( resource02 ).toBeTruthy();
-				expect( URI.isBNodeID( resource02.id ) ).toBe( true );
-				expect( resource02.id ).toBe( "_:some" );
-
-				expect( () => freeResources.createResource( "no-valid-id" ) ).toThrowError( Errors.IllegalArgumentError );
-				expect( () => freeResources.createResource( "_:some" ) ).toThrowError( Errors.IDAlreadyInUseError );
-			} );
-
-			// TODO: Separate in different tests
-			it( "FreeResources.createResourceFrom", ():void => {
-				expect( freeResources.createResourceFrom ).toBeDefined();
-				expect( freeResources.createResourceFrom ).toEqual( jasmine.any( Function ) );
-
-				let resourceObject00:Object = {};
-				let resource00:TransientResource;
-				resource00 = freeResources.createResourceFrom( resourceObject00 );
-				expect( resource00 ).toBeTruthy();
-				expect( URI.isBNodeID( resource00.id ) ).toBe( true );
-				expect( resource00 ).toEqual( resourceObject00 as TransientResource );
-
-				let resourceObject01:Object = {};
-				let resource01:TransientResource;
-				resource01 = freeResources.createResourceFrom( resourceObject01 );
-				expect( resource01 ).toBeTruthy();
-				expect( URI.isBNodeID( resource01.id ) ).toBe( true );
-				expect( resource00.id ).not.toBe( resource01.id );
-				expect( resource01 ).toEqual( resourceObject01 as TransientResource );
-
-				let resourceObject02:Object = {};
-				let resource02:TransientResource;
-				resource02 = freeResources.createResourceFrom( resourceObject02, "_:some" );
-				expect( resource02 ).toBeTruthy();
-				expect( URI.isBNodeID( resource02.id ) ).toBe( true );
-				expect( resource02.id ).toBe( "_:some" );
-				expect( resource02 ).toEqual( resourceObject02 as TransientResource );
-
-				expect( () => freeResources.createResourceFrom( {}, "no-valid-id" ) ).toThrowError( Errors.IllegalArgumentError );
-				expect( () => freeResources.createResourceFrom( {}, "_:some" ) ).toThrowError( Errors.IDAlreadyInUseError );
-			} );
-
-			// TODO: Separate in different tests
-			it( "FreeResources.hasPointer", ():void => {
-				expect( freeResources.hasPointer ).toBeDefined();
-				expect( freeResources.hasPointer ).toEqual( jasmine.any( Function ) );
-
-				expect( freeResources.hasPointer( "_:some" ) ).toBe( false );
-
-				freeResources._resourcesIndex.set( "_:some", TransientResource.create( { id: "_:some" } ) );
-				expect( freeResources.hasPointer( "_:some" ) ).toBe( true );
-
-				expect( freeResources.hasPointer( "http://example.com/some/" ) ).toBe( false );
-
-				documents.getPointer( "http://example.com/some/" );
-				expect( freeResources.hasPointer( "http://example.com/some/" ) ).toBe( true );
-			} );
-
-			// TODO: Separate in different tests
-			it( "FreeResources.getPointer", ():void => {
-				expect( freeResources.getPointer ).toBeDefined();
-				expect( freeResources.getPointer ).toEqual( jasmine.any( Function ) );
-
-				let resource:TransientResource = TransientResource.create( { id: "_:some" } );
-				freeResources._resourcesIndex.set( "_:some", resource );
-				expect( freeResources.getPointer( "_:some" ) ).toBe( resource );
-
-				let pointer:Pointer = freeResources.getPointer( "_:another" );
-				expect( pointer ).toBeTruthy();
-				expect( pointer.id ).toBe( "_:another" );
-				expect( freeResources._resourcesIndex.get( "_:another" ) ).toBe( pointer as TransientResource );
-
-				pointer = freeResources.getPointer( "http://example.com/some/" );
-				expect( pointer ).toBeTruthy();
-				expect( documents.getPointer( "http://example.com/some/" ) ).toBe( pointer );
 			} );
 
 			describe( "FreeResources.inScope", ():void => {
@@ -516,13 +366,16 @@ describe( module( "carbonldp/FreeResources" ), ():void => {
 					expect( freeResources.inScope ).toEqual( jasmine.any( Function ) );
 				} );
 
-				// TODO: Separate in different tests
-				it( "should test method", ():void => {
+				it( "should accept blank nodes labels", ():void => {
 					expect( freeResources.inScope( "_:some" ) ).toBe( true );
+				} );
 
-					// Asks to its documents instance
-					expect( freeResources.inScope( "http://example.com/some/" ) ).toBe( true );
-					expect( freeResources.inScope( "relative-document/" ) ).toBe( true );
+				it( "should reject absolute IRIs", ():void => {
+					expect( freeResources.inScope( "https://example.com/" ) ).toBe( false );
+				} );
+
+				it( "should reject relative IRIs", ():void => {
+					expect( freeResources.inScope( "resource/" ) ).toBe( false );
 				} );
 
 			} );
@@ -532,7 +385,7 @@ describe( module( "carbonldp/FreeResources" ), ():void => {
 				expect( freeResources.toJSON ).toBeDefined();
 				expect( freeResources.toJSON ).toEqual( jasmine.any( Function ) );
 
-				context.extendObjectSchema( "http://example.com/ns#MyType", {
+				registry._context.extendObjectSchema( "http://example.com/ns#MyType", {
 					"anotherProperty": {
 						"@id": "http://example.com/ns#another-property",
 						"@type": "http://www.w3.org/2001/XMLSchema#string",
@@ -545,9 +398,9 @@ describe( module( "carbonldp/FreeResources" ), ():void => {
 					"http://example.com/ns#property": "A Property",
 					"anotherProperty": "Another Property",
 				} );
-				freeResources._resourcesIndex.set( "_:some", resource );
+				freeResources._resourcesMap.set( "_:some", resource );
 
-				let expandedResource:object = {
+				let expandedResource:RDFNode = {
 					"@id": "_:some",
 					"@type": [ "http://example.com/ns#MyType" ],
 					"http://example.com/ns#property": [ {
@@ -567,9 +420,9 @@ describe( module( "carbonldp/FreeResources" ), ():void => {
 					"http://example.com/ns#property": "A Property",
 					"anotherProperty": "Another Property",
 				} );
-				freeResources._resourcesIndex.set( "_:another", anotherResource );
+				freeResources._resourcesMap.set( "_:another", anotherResource );
 
-				let anotherExpandedResource:object = {
+				let anotherExpandedResource:RDFNode = {
 					"@id": "_:another",
 					"@type": [ "http://example.com/ns#MyType" ],
 					"http://example.com/ns#property": [ {

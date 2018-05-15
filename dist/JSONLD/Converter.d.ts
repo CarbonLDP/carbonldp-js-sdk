@@ -3,7 +3,7 @@ import { Serializer } from "../RDF/Literal/Serializer";
 import { RDFNode } from "../RDF/Node";
 import * as ObjectSchema from "./../ObjectSchema";
 export declare class JSONLDConverter {
-    private _literalSerializers;
+    private readonly _literalSerializers;
     readonly literalSerializers: Map<string, Serializer>;
     private static getDefaultSerializers();
     constructor(literalSerializers?: Map<string, Serializer>);

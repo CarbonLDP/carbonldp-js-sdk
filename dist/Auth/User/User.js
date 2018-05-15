@@ -23,9 +23,9 @@ exports.User = {
         return TransientUser_1.TransientUser.isDecorated(value)
             && ProtectedDocument_1.ProtectedDocument.is(value);
     },
-    decorate: function (object, documents) {
+    decorate: function (object) {
         TransientUser_1.TransientUser.decorate(object);
-        ProtectedDocument_1.ProtectedDocument.decorate(object, documents);
+        ProtectedDocument_1.ProtectedDocument.decorate(object);
         var persistedUser = object;
         persistedUser.addType(TransientUser_1.TransientUser.TYPE);
         return persistedUser;

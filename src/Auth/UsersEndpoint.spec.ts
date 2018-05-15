@@ -98,15 +98,15 @@ describe( module( "carbonldp/Auth/UsersEndpoint" ), ():void => {
 					.and.callThrough();
 
 				const object:{} = { the: "object" };
-				UsersEndpoint.decorate( object, null );
+				UsersEndpoint.decorate( object );
 
-				expect( spy ).toHaveBeenCalledWith( object, null );
+				expect( spy ).toHaveBeenCalledWith( object );
 			} );
 
 			it( "should return object provided", ():void => {
 				const object:{} = { the: "object" };
 
-				const returned:{} = UsersEndpoint.decorate( object, null );
+				const returned:{} = UsersEndpoint.decorate( object );
 
 				expect( returned ).toBe( object );
 			} );

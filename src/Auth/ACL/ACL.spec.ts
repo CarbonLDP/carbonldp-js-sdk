@@ -1,4 +1,4 @@
-import { Documents } from "../../Documents";
+import { Pointer } from "../../Pointer";
 import {
 	extendsClass,
 	hasMethod,
@@ -337,13 +337,12 @@ describe( module( "carbonldp/Auth/ACL" ), ():void => {
 
 			const spy:jasmine.Spy = spyOn( TransientACL, "decorate" ).and.callThrough();
 
-			const documents:Documents = new Documents();
 			const object:object = {
 				id: "http://example.com/some/acl/",
-				accessTo: documents.getPointer( "http://example.com/some/" ),
+				accessTo: Pointer.createFrom( { id: "http://example.com/some/" } ),
 			};
 
-			ACL.decorate( object, documents );
+			ACL.decorate( object );
 			expect( spy ).toHaveBeenCalledTimes( 1 );
 		} );
 

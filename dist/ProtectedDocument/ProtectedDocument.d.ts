@@ -1,7 +1,6 @@
 import { ACL } from "../Auth";
-import { ModelDecorator } from "../core/ModelDecorator";
+import { ModelDecorator } from "../core";
 import { Document } from "../Document";
-import { Documents } from "../Documents";
 import { RequestOptions } from "../HTTP";
 import { ObjectSchema } from "../ObjectSchema";
 import { Pointer } from "../Pointer";
@@ -16,6 +15,6 @@ export interface ProtectedDocumentFactory extends ModelDecorator<ProtectedDocume
     SCHEMA: ObjectSchema;
     isDecorated(object: object): object is ProtectedDocument;
     is(object: object): object is ProtectedDocument;
-    decorate<T extends object>(object: T, documents: Documents): T & ProtectedDocument;
+    decorate<T extends object>(object: T): T & ProtectedDocument;
 }
 export declare const ProtectedDocument: ProtectedDocumentFactory;

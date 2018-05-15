@@ -5,7 +5,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
     if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
     result["default"] = mod;
     return result;
-}
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 var Errors_1 = require("./Errors");
 var URI_1 = require("./RDF/URI");
@@ -36,7 +36,7 @@ exports.DigestedObjectSchemaProperty = DigestedObjectSchemaProperty;
 var DigestedObjectSchema = (function () {
     function DigestedObjectSchema() {
         this.base = "";
-        this.vocab = null;
+        this.vocab = void 0;
         this.language = null;
         this.prefixes = new Map();
         this.properties = new Map();
@@ -168,7 +168,7 @@ var ObjectSchemaDigester = (function () {
     ObjectSchemaDigester._combineSchemas = function (digestedSchemas) {
         var targetSchema = digestedSchemas[0], restSchemas = digestedSchemas.slice(1);
         restSchemas.forEach(function (schema) {
-            if (schema.vocab !== null)
+            if (schema.vocab !== void 0)
                 targetSchema.vocab = schema.vocab;
             if (schema.base !== "")
                 targetSchema.base = schema.base;
@@ -199,7 +199,7 @@ var ObjectSchemaUtils = (function () {
         }
         if (localName)
             return uri;
-        if (relativeTo.vocab && schema.vocab !== null)
+        if (relativeTo.vocab && schema.vocab)
             return schema.vocab + uri;
         if (relativeTo.base)
             return URI_1.URI.resolve(schema.base, uri);

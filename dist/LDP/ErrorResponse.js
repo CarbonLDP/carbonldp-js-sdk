@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+var Resource_1 = require("../Resource");
 var C_1 = require("../Vocabularies/C");
 var XSD_1 = require("../Vocabularies/XSD");
 var SCHEMA = {
@@ -20,6 +21,10 @@ var SCHEMA = {
 exports.ErrorResponse = {
     TYPE: C_1.C.ErrorResponse,
     SCHEMA: SCHEMA,
+    is: function (value) {
+        return Resource_1.TransientResource.is(value)
+            && value.hasType(exports.ErrorResponse.TYPE);
+    },
     getMessage: function (errorResponse) {
         return errorResponse
             .errors

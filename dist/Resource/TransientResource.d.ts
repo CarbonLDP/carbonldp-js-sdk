@@ -13,7 +13,4 @@ export interface TransientResourceFactory {
     createFrom<T extends object>(object: T & BaseResource): T & TransientResource;
     decorate<T extends object>(object: T): T & TransientResource;
 }
-export declare function addTypeInResource(this: TransientResource, type: string): void;
-export declare function hasTypeInResource(this: TransientResource, type: string): boolean;
-export declare function removeTypeInResource(this: TransientResource, type: string): void;
 export declare const TransientResource: TransientResourceFactory;

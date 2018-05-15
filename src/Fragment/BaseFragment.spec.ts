@@ -2,7 +2,7 @@ import {
 	hasProperty,
 	interfaze,
 	module,
-	OBLIGATORY
+	OPTIONAL
 } from "../test/JasmineExtender";
 
 describe( module( "carbonldp/Fragment" ), ():void => {
@@ -13,10 +13,10 @@ describe( module( "carbonldp/Fragment" ), ():void => {
 	), ():void => {
 
 		it( hasProperty(
-			OBLIGATORY,
-			"_document",
-			"CarbonLDP.TransientDocument",
-			"The document the fragment belongs to."
+			OPTIONAL,
+			"_registry",
+			"CarbonLDP.Registry & CarbonLDP.Pointer",
+			"The pointer registry where the fragment will belong to."
 		), ():void => {} );
 
 	} );

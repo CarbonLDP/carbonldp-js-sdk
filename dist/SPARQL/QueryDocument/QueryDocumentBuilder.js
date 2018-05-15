@@ -19,7 +19,7 @@ var QueryDocumentBuilder = (function () {
         this._document = property;
         this._typesTriple = new tokens_1.SubjectToken(property.variable).addPredicate(new tokens_1.PredicateToken("a"));
         this._values = new tokens_1.ValuesToken().addValues(property.variable);
-        this._schema = this._context.getSchemaFor({ id: "" });
+        this._schema = this._context.getGeneralSchema();
     }
     QueryDocumentBuilder.prototype.property = function (name) {
         if (name === void 0)
@@ -51,16 +51,17 @@ var QueryDocumentBuilder = (function () {
     QueryDocumentBuilder.prototype.withType = function (type) {
         if (this._context.hasProperties(this._document.name))
             throw new IllegalStateError_1.IllegalStateError("Types must be specified before the properties.");
-        type = ObjectSchema_1.ObjectSchemaUtils.resolveURI(type, this._schema, { vocab: true, base: true });
+        type = ObjectSchema_1.ObjectSchemaUtils.resolveURI(type, this._schema, { vocab: true });
         if (!this._typesTriple.predicates[0].objects.length)
             this._document.addPattern(this._typesTriple);
         this._typesTriple.predicates[0].addObject(this._context.compactIRI(type));
         if (!this._context.context)
             return this;
-        var schema = this._context.context.getObjectSchema(type);
-        if (schema) {
-            this._schema = ObjectSchema_1.ObjectSchemaDigester.combineDigestedObjectSchemas([this._schema, schema]);
-        }
+        if (this._context.context.hasObjectSchema(type))
+            ObjectSchema_1.ObjectSchemaDigester._combineSchemas([
+                this._schema,
+                this._context.context.getObjectSchema(type),
+            ]);
         return this;
     };
     QueryDocumentBuilder.prototype.properties = function (propertiesSchema) {

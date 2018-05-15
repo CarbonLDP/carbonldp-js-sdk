@@ -1,10 +1,6 @@
-import { AbstractContext } from "../AbstractContext";
 import { ACL } from "../Auth";
-import {
-	Document,
-	TransientDocument,
-} from "../Document";
-import { Documents } from "../Documents";
+import { Document } from "../Document";
+import { Pointer } from "../Pointer";
 import {
 	extendsClass,
 	hasMethod,
@@ -147,7 +143,7 @@ describe( module( "carbonldp/ProtectedDocument" ), ():void => {
 			};
 			expect( ProtectedDocument.is( object ) ).toBe( false );
 
-			let document:Document = Document.decorate( object, new Documents() );
+			let document:Document = Document.decorate( object );
 			expect( ProtectedDocument.is( document ) ).toBe( true );
 		} );
 
@@ -166,14 +162,14 @@ describe( module( "carbonldp/ProtectedDocument" ), ():void => {
 				accessControlList: null,
 				getACL: fn,
 			};
-			protectedDocument = ProtectedDocument.decorate( document, new Documents() );
+			protectedDocument = ProtectedDocument.decorate( document );
 			expect( ProtectedDocument.isDecorated( protectedDocument ) ).toBe( true );
 			expect( protectedDocument.getACL ).toBe( fn );
 
 			document = {
 				accessControlList: null,
 			};
-			protectedDocument = ProtectedDocument.decorate( document, new Documents() );
+			protectedDocument = ProtectedDocument.decorate( document );
 			expect( ProtectedDocument.isDecorated( protectedDocument ) ).toBe( true );
 			expect( protectedDocument.getACL ).not.toBe( fn );
 
@@ -181,166 +177,64 @@ describe( module( "carbonldp/ProtectedDocument" ), ():void => {
 		} );
 
 		describe( "ProtectedDocument instance", ():void => {
-			let protectedDocument:ProtectedDocument;
-			let documents:Documents;
-
-			beforeAll( ():void => {
-				jasmine.Ajax.install();
-			} );
-
-			beforeEach( ():void => {
-				class MockContext extends AbstractContext {
-					protected _baseURI:string;
-
-					constructor() {
-						super();
-						this._baseURI = "http://example.com/";
-						this.settings = { vocabulary: "http://example.com/vocab#" };
-					}
-				}
-
-				let context:AbstractContext = new MockContext();
-				documents = context.documents;
-
-				let document:TransientDocument = TransientDocument.createFrom( {
-					id: "http://example.com/resource/",
-					accessControlList: documents.getPointer( "http://example.com/resource/~acl/" ),
-					_resolved: true,
-				} );
-				protectedDocument = ProtectedDocument.decorate( document, documents );
-			} );
-
-			afterAll( ():void => {
-				jasmine.Ajax.uninstall();
-			} );
 
 			// TODO: Separate in different tests
 			it( "ProtectedDocument.getACL", ( done:{ ():void, fail:() => void } ):void => {
+				const protectedDocument:ProtectedDocument = ProtectedDocument.decorate( {
+					id: "http://example.com/resource/",
+					accessControlList: Pointer.create( { id: "http://example.com/resource/~acl/" } ),
+					_resolved: true,
+				} );
+
+				const mockACL:ACL = ACL.decorate( {
+					_eTag: `"1234567890"`,
+
+					id: "http://example.com/resource/~acl/",
+					types: [ CS.AccessControlList ],
+
+					accessTo: protectedDocument,
+					entries: [
+						{
+							id: "_:1",
+							types: [ CS.AccessControlEntry ],
+
+							granting: true,
+							permissions: [
+								Pointer.create( { id: "http://example.com/ns#READ" } ),
+								Pointer.create( { id: "http://example.com/ns#WRITE" } ),
+								Pointer.create( { id: "http://example.com/ns#CREATE" } ),
+								Pointer.create( { id: "http://example.com/ns#DELETE" } ),
+							],
+							subjects: [ Pointer.create( { id: "https://example.com/.system/roles/my-role/" } ) ],
+							subjectClass: Pointer.create( { id: CS.Role } ),
+						},
+					],
+					inheritableEntries: [
+						{
+							id: "_:2",
+							types: [ CS.AccessControlEntry ],
+
+							granting: true,
+							permissions: [
+								Pointer.create( { id: "http://example.com/ns#READ" } ),
+								Pointer.create( { id: "http://example.com/ns#WRITE" } ),
+							],
+							subjects: [ Pointer.create( { id: "https://example.com/.system/roles/my-role/" } ) ],
+							subjectClass: Pointer.create( { id: CS.Role } ),
+						},
+					],
+				} );
+				mockACL._normalize();
+
+				const promises:Promise<any>[] = [];
+
+
 				expect( protectedDocument.getACL ).toBeDefined();
 				expect( Utils.isFunction( protectedDocument.getACL ) ).toBe( true );
 
-				jasmine.Ajax.stubRequest( "http://example.com/resource/", null, "POST" ).andReturn( {
-					status: 200,
-					responseText: `{
-						"head": {
-							"vars": [
-								"acl"
-							]
-						},
-						"results": {
-							"bindings": [
-								{
-									"acl": {
-										"type": "uri",
-										"value": "http://example.com/resource/~acl/"
-									}
-								}
-							]
-						}
-					}`,
-				} );
-				jasmine.Ajax.stubRequest( "http://example.com/resource/~acl/" ).andReturn( {
-					responseHeaders: {
-						"ETag": `"1234567890"`,
-						"Content-Location": "http://example.com/resource/~acl/",
-					},
-					responseText: `[
-						{
-							"@graph": [
-								{
-									"@id": "_:1",
-									"@type": [
-										"https://carbonldp.com/ns/v1/security#AccessControlEntry"
-									],
-									"https://carbonldp.com/ns/v1/security#granting": [
-										{
-											"@type": "http://www.w3.org/2001/XMLSchema#boolean",
-											"@value": "true"
-										}
-									],
-									"https://carbonldp.com/ns/v1/security#permission": [
-										{
-											"@id": "http://example.com/ns#READ"
-										},
-										{
-											"@id": "http://example.com/ns#WRITE"
-										},
-										{
-											"@id": "http://example.com/ns#CREATE"
-										},
-										{
-											"@id": "http://example.com/ns#DELETE"
-										}
-									],
-									"https://carbonldp.com/ns/v1/security#subject": [
-										{
-											"@id": "https://example.com/.system/roles/my-role/"
-										}
-									],
-									"https://carbonldp.com/ns/v1/security#subjectClass": [
-										{
-											"@id": "https://carbonldp.com/ns/v1/security#Role"
-										}
-									]
-								},
-								{
-									"@id": "_:2",
-									"@type": [
-										"https://carbonldp.com/ns/v1/security#AccessControlEntry"
-									],
-									"https://carbonldp.com/ns/v1/security#granting": [
-										{
-											"@type": "http://www.w3.org/2001/XMLSchema#boolean",
-											"@value": "true"
-										}
-									],
-									"https://carbonldp.com/ns/v1/security#permission": [
-										{
-											"@id": "http://example.com/ns#READ"
-										},
-										{
-											"@id": "http://example.com/ns#WRITE"
-										}
-									],
-									"https://carbonldp.com/ns/v1/security#subject": [
-										{
-											"@id": "https://example.com/.system/roles/my-role/"
-										}
-									],
-									"https://carbonldp.com/ns/v1/security#subjectClass": [
-										{
-											"@id": "https://carbonldp.com/ns/v1/security#Role"
-										}
-									]
-								},
-								{
-									"@id": "http://example.com/resource/~acl/",
-									"@type": [
-										"https://carbonldp.com/ns/v1/security#AccessControlList"
-									],
-									"https://carbonldp.com/ns/v1/security#accessControlEntry": [
-										{
-											"@id": "_:1"
-										}
-									],
-									"https://carbonldp.com/ns/v1/security#accessTo": [
-										{
-											"@id": "http://example.com/resource/"
-										}
-									],
-									"https://carbonldp.com/ns/v1/security#inheritableEntry": [
-										{
-											"@id": "_:2"
-										}
-									]
-								}
-							],
-							"@id": "http://example.com/resource/~acl/"
-						}
-					]`,
-				} );
-
-				let promises:Promise<any>[] = [];
+				Object.defineProperty( protectedDocument, "get", { writable: true } );
+				spyOn( protectedDocument, "get" ).and
+					.returnValue( Promise.resolve( mockACL ) );
 
 				promises.push( protectedDocument.getACL().then( ( acl:ACL ) => {
 					expect( acl ).toBeDefined();
@@ -353,7 +247,21 @@ describe( module( "carbonldp/ProtectedDocument" ), ():void => {
 					expect( acl.accessTo.id ).toBe( protectedDocument.id );
 				} ) );
 
-				const unresolvedProtectedDocument:ProtectedDocument = ProtectedDocument.decorate( { id: "http://example.com/resource/" }, documents );
+
+				const unresolvedProtectedDocument:ProtectedDocument = ProtectedDocument.decorate( { id: "http://example.com/resource/" } );
+
+				Object.defineProperty( unresolvedProtectedDocument, "executeSELECTQuery", { writable: true } );
+				spyOn( unresolvedProtectedDocument, "executeSELECTQuery" ).and
+					.returnValue( Promise.resolve( {
+						bindings: [ {
+							acl: Pointer.create( { id: "http://example.com/resource/~acl/" } ),
+						} ],
+					} ) );
+
+				Object.defineProperty( unresolvedProtectedDocument, "get", { writable: true } );
+				spyOn( unresolvedProtectedDocument, "get" ).and
+					.returnValue( Promise.resolve( mockACL ) );
+
 				promises.push( unresolvedProtectedDocument.getACL().then( ( acl:ACL ) => {
 					expect( acl ).toBeDefined();
 

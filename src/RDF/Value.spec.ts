@@ -4,6 +4,7 @@ import {
 	Pointer,
 	PointerLibrary,
 } from "../Pointer";
+import { Registry } from "../Registry";
 import {
 	hasMethod,
 	hasProperty,
@@ -75,13 +76,11 @@ describe( module( "carbonldp/RDF/Value" ), ():void => {
 		"Class with useful functions to manage `CarbonLDP.RDF.RDFValue` objects."
 	), ():void => {
 
-		let expandedObject:any;
 		let documentResource:any;
 		let pointerLibrary:PointerLibrary;
 		let result:any;
-		let context:AbstractContext;
 		beforeEach( ():void => {
-			expandedObject = [ {
+			let expandedObject:any = [ {
 				"@id": "http://example.com/resource/",
 				"@graph": [
 					{
@@ -160,20 +159,8 @@ describe( module( "carbonldp/RDF/Value" ), ():void => {
 				],
 			} ];
 
-			class MockedContext extends AbstractContext {
-				protected _baseURI:string;
-
-				constructor() {
-					super();
-					this._baseURI = "http://example.com/";
-					this.settings = { vocabulary: "http://example.com/vocab#" };
-				}
-			}
-
-			context = new MockedContext();
-
 			documentResource = RDFDocument.getDocumentResources( expandedObject )[ 0 ];
-			pointerLibrary = Document.decorate( { id: expandedObject[ "@id" ] }, context.documents );
+			pointerLibrary = Registry.create( { _model: Pointer } );
 		} );
 
 		it( isDefined(), ():void => {

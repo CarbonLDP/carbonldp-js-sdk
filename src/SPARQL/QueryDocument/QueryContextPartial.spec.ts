@@ -1,7 +1,12 @@
+import {
+	createMockContext,
+	createMockDocument,
+	createPartialMetadata
+} from "../../../test/helpers/mocks";
 import { AbstractContext } from "../../AbstractContext";
-import { ObjectSchemaDigester } from "../../ObjectSchema";
 import { Document } from "../../Document";
-import { Fragment } from "../../Fragment";
+import { Pointer } from "../../Pointer";
+import { PersistedResource } from "../../Resource";
 import {
 	clazz,
 	constructor,
@@ -11,7 +16,6 @@ import {
 	method,
 	module
 } from "../../test/JasmineExtender";
-import { PartialMetadata } from "./PartialMetadata";
 import { QueryContext } from "./QueryContext";
 
 import * as Module from "./QueryContextPartial";
@@ -31,22 +35,20 @@ describe( module( "carbonldp/SPARQL/QueryDocument/QueryContextPartial" ), ():voi
 			expect( QueryContextPartial ).toEqual( jasmine.any( Function ) );
 		} );
 
-		let context:AbstractContext;
+		let context:AbstractContext<Pointer, any>;
 		let persistedDocument:Document;
 		beforeEach( ():void => {
-			context = new class extends AbstractContext {
-				protected _baseURI:string = "https://example.com/";
-			};
+			context = createMockContext();
 
-			persistedDocument = Document.decorate(
-				context.documents.getPointer( "https://example.com/resource/" ),
-				context.documents
-			);
-			persistedDocument._partialMetadata = new PartialMetadata( ObjectSchemaDigester.digestSchema( {
-				"documentProperty": {
-					"@id": "https://example.com/ns#document-property",
-				},
-			} ) );
+			persistedDocument = createMockDocument( {
+				_registry: context.registry,
+				_partialMetadata: createPartialMetadata( {
+					"documentProperty": {
+						"@id": "https://example.com/ns#document-property",
+					},
+				} ),
+				id: "https://example.com/resource/",
+			} );
 		} );
 
 		describe( constructor(), ():void => {
@@ -63,11 +65,6 @@ describe( module( "carbonldp/SPARQL/QueryDocument/QueryContextPartial" ), ():voi
 				const queryContext:QueryContextPartial = new QueryContextPartial( persistedDocument, context );
 				expect( queryContext ).toBeDefined();
 				expect( queryContext ).toEqual( jasmine.any( QueryContextPartial ) );
-			} );
-
-			it( "should add the document", ():void => {
-				const queryContext:QueryContextPartial = new QueryContextPartial( persistedDocument, context );
-				expect( queryContext[ "_document" ] ).toBe( persistedDocument );
 			} );
 
 		} );
@@ -110,12 +107,14 @@ describe( module( "carbonldp/SPARQL/QueryDocument/QueryContextPartial" ), ():voi
 
 			it( "should return the schema of a document property", ():void => {
 				const queryContext:QueryContextPartial = new QueryContextPartial( persistedDocument, context );
-				const fragment:Fragment = persistedDocument.createFragment();
-				fragment._partialMetadata = new PartialMetadata( ObjectSchemaDigester.digestSchema( {
-					"fragmentProperty": {
-						"@id": "https://example.com/ns#fragment-property",
-					},
+				const fragment:PersistedResource = persistedDocument._register( PersistedResource.decorate( {
+					_partialMetadata: createPartialMetadata( {
+						"fragmentProperty": {
+							"@id": "https://example.com/ns#fragment-property",
+						},
+					} ),
 				} ) );
+
 
 				persistedDocument[ "property" ] = fragment;
 				persistedDocument[ "propertyArray" ] = [ fragment ];
@@ -144,7 +143,7 @@ describe( module( "carbonldp/SPARQL/QueryDocument/QueryContextPartial" ), ():voi
 				persistedDocument[ "property5" ] = [];
 				persistedDocument[ "property6" ] = [ {} ];
 
-				const spy:jasmine.Spy = spyOn( context.documents, "getSchemaFor" )
+				const spy:jasmine.Spy = spyOn( context.registry, "getSchemaFor" )
 					.and.returnValue( null );
 
 				const helper:( name:string ) => void = name => {

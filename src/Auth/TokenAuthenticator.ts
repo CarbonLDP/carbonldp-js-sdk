@@ -1,16 +1,16 @@
-import * as Errors from "../Errors";
-import { FreeResources } from "../FreeResources";
+import { IllegalArgumentError } from "../Errors";
 import { RequestUtils } from "../HTTP";
 import { BadResponseError } from "../HTTP/Errors";
 import { Header } from "../HTTP/Header";
 import { RequestOptions } from "../HTTP/Request";
 import { Response } from "../HTTP/Response";
 import { ResponseMetadata } from "../LDP";
-import { RDFNode } from "../RDF/Node";
+import { RDFNode } from "../RDF";
+import { FreeResources } from "../FreeResources";
 import { promiseMethod } from "../Utils";
 import { CS } from "../Vocabularies";
+import { AbstractAuthenticator } from "./AbstractAuthenticator";
 import { AuthenticatedUserInformationAccessor } from "./AuthenticatedUserInformationAccessor";
-import { Authenticator } from "./Authenticator";
 import { BasicAuthenticator } from "./BasicAuthenticator";
 import { BasicToken } from "./BasicToken";
 import {
@@ -19,7 +19,7 @@ import {
 } from "./TokenCredentials";
 
 
-export class TokenAuthenticator extends Authenticator<BasicToken, TokenCredentials> {
+export class TokenAuthenticator extends AbstractAuthenticator<BasicToken, TokenCredentials> {
 
 	protected _credentials:TokenCredentials;
 
@@ -42,7 +42,7 @@ export class TokenAuthenticator extends Authenticator<BasicToken, TokenCredentia
 		return promiseMethod( () => {
 			const credentials:TokenCredentials = TokenCredentials.createFrom( credentialsBase );
 
-			if( credentials.expires <= new Date() ) throw new Errors.IllegalArgumentError( "The token has already expired." );
+			if( credentials.expires <= new Date() ) throw new IllegalArgumentError( "The token has already expired." );
 
 			return this._credentials = credentials;
 		} );
@@ -85,11 +85,10 @@ export class TokenAuthenticator extends Authenticator<BasicToken, TokenCredentia
 	protected _parseRDFCredentials( rdfData:object[], response:Response ):TokenCredentials {
 		const freeNodes:RDFNode[] = RDFNode.getFreeNodes( rdfData );
 
-		const freeResources:FreeResources = this.context.documents
-			._getFreeResources( freeNodes );
+		const freeResources:FreeResources = this.context.registry
+			._parseFreeNodes( freeNodes );
 
-		const responseMetadata:ResponseMetadata = freeResources
-			.getResources()
+		const responseMetadata:ResponseMetadata = freeResources.getPointers()
 			.find( ResponseMetadata.is );
 		if( ! responseMetadata ) throw new BadResponseError( `No "${ ResponseMetadata.TYPE }" was returned.`, response );
 

@@ -25,16 +25,16 @@ describe( module( "carbonldp/Context" ), ():void => {
 
 		it( hasProperty(
 			OBLIGATORY,
-			"auth",
-			"CarbonLDP.Auth.AuthService",
-			"The authentication and authorization class of the context."
+			"registry",
+			"CarbonLDP.Registry",
+			"The registry the context stores its resources."
 		), ():void => {} );
 
 		it( hasProperty(
 			OBLIGATORY,
-			"documents",
-			"CarbonLDP.Documents",
-			"The documents class of the context."
+			"repository",
+			"CarbonLDP.Repository",
+			"The repository the context can fetch its resources."
 		), ():void => {} );
 
 		it( hasProperty(

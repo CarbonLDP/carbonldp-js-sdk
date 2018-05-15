@@ -5,7 +5,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
     if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
     result["default"] = mod;
     return result;
-}
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 var IllegalArgumentError_1 = require("../Errors/IllegalArgumentError");
 var Pointer_1 = require("../Pointer");
@@ -19,7 +19,9 @@ var Utils = __importStar(require("./../Utils"));
 var Utils_1 = require("./Utils");
 var JSONLDConverter = (function () {
     function JSONLDConverter(literalSerializers) {
-        this._literalSerializers = !!literalSerializers ? literalSerializers : JSONLDConverter.getDefaultSerializers();
+        this._literalSerializers = literalSerializers ?
+            Utils.MapUtils.extend(new Map(), literalSerializers) :
+            JSONLDConverter.getDefaultSerializers();
     }
     Object.defineProperty(JSONLDConverter.prototype, "literalSerializers", {
         get: function () { return this._literalSerializers; },
@@ -66,8 +68,13 @@ var JSONLDConverter = (function () {
         var _this = this;
         var expandedObject = {};
         expandedObject["@id"] = !!compactedObject["id"] ? compactedObject["id"] : "";
-        if (!!compactedObject["types"])
-            expandedObject["@type"] = compactedObject["types"].map(function (type) { return ObjectSchema.ObjectSchemaUtils.resolveURI(type, generalSchema, { vocab: true, base: true }); });
+        if (compactedObject["types"]) {
+            var types = Array.isArray(compactedObject["types"]) ?
+                compactedObject["types"] : [compactedObject["types"]];
+            if (types.length)
+                expandedObject["@type"] = types
+                    .map(function (type) { return ObjectSchema.ObjectSchemaUtils.resolveURI(type, generalSchema, { vocab: true, base: true }); });
+        }
         Utils.forEachOwnProperty(compactedObject, function (propertyName, value) {
             if (propertyName === "id")
                 return;

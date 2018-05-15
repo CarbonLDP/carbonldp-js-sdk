@@ -12,48 +12,6 @@ describe( module( "carbonldp/Messaging/Utils" ), ():void => {
 
 	describe( method(
 		STATIC,
-		"validateEventContext"
-	), ():void => {
-
-		it( hasSignature(
-			"Test if the provided context has a valid `CarbonLDP.Messaging.MessagingService` instance. If don't an error will be thrown.",
-			[
-				{ name: "context", type: "CarbonLDP.Context", description: "The context to be evaluated." },
-			] ), ():void => {
-		} );
-
-		it( "should exists", ():void => {
-			expect( MessagingUtils.validateEventContext ).toBeDefined();
-			expect( MessagingUtils.validateEventContext ).toEqual( jasmine.any( Function ) );
-		} );
-
-		it( "should throw error when falsy context", ():void => {
-			expect( () => MessagingUtils.validateEventContext( void 0 ) ).toThrowError( IllegalStateError, "This instance does not support messaging subscriptions." );
-			expect( () => MessagingUtils.validateEventContext( null ) ).toThrowError( IllegalStateError, "This instance does not support messaging subscriptions." );
-		} );
-
-		it( "should accept CarbonLDP contexts", ():void => {
-			const carbon:CarbonLDP = new CarbonLDP( "http://example.com" );
-			expect( () => MessagingUtils.validateEventContext( carbon ) ).not.toThrowError();
-		} );
-
-		it( "should throw error if messaging service does not exists in the context", ():void => {
-			const carbon:CarbonLDP = new CarbonLDP( "http://example.com" );
-
-			delete carbon.messaging;
-			expect( () => MessagingUtils.validateEventContext( carbon ) ).toThrowError( IllegalStateError, "This instance does not support messaging subscriptions." );
-
-			carbon.messaging = null;
-			expect( () => MessagingUtils.validateEventContext( carbon ) ).toThrowError( IllegalStateError, "This instance does not support messaging subscriptions." );
-
-			carbon.messaging = void 0;
-			expect( () => MessagingUtils.validateEventContext( carbon ) ).toThrowError( IllegalStateError, "This instance does not support messaging subscriptions." );
-		} );
-
-	} );
-
-	describe( method(
-		STATIC,
 		"validaEventType"
 	), ():void => {
 

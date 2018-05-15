@@ -1,7 +1,6 @@
 import { ACL } from "../Auth";
-import { ModelDecorator } from "../core/ModelDecorator";
+import { ModelDecorator } from "../core";
 import { Document } from "../Document";
-import { Documents } from "../Documents";
 import { RequestOptions } from "../HTTP";
 import { ObjectSchema } from "../ObjectSchema";
 import { Pointer } from "../Pointer";
@@ -30,7 +29,7 @@ export interface ProtectedDocumentFactory extends ModelDecorator<ProtectedDocume
 	is( object:object ):object is ProtectedDocument;
 
 
-	decorate<T extends object>( object:T, documents:Documents ):T & ProtectedDocument;
+	decorate<T extends object>( object:T ):T & ProtectedDocument;
 }
 
 export const ProtectedDocument:ProtectedDocumentFactory = {
@@ -54,10 +53,10 @@ export const ProtectedDocument:ProtectedDocumentFactory = {
 			;
 	},
 
-	decorate<T extends object>( object:T, documents:Documents ):T & ProtectedDocument {
+	decorate<T extends object>( object:T ):T & ProtectedDocument {
 		if( ProtectedDocument.isDecorated( object ) ) return object;
 
-		Document.decorate( object, documents );
+		Document.decorate( object );
 
 		const persistedProtectedDocument:T & ProtectedDocument = object as T & ProtectedDocument;
 		Object.defineProperties( persistedProtectedDocument, {
@@ -85,6 +84,6 @@ function getACL( this:ProtectedDocument, requestOptions?:RequestOptions ):Promis
 			.then( results => results.bindings[ 0 ].acl );
 
 	return aclPromise.then( ( acl:Pointer ) => {
-		return this._documents.get<ACL>( acl.id, requestOptions );
+		return this.get<ACL>( acl.id, requestOptions );
 	} );
 }

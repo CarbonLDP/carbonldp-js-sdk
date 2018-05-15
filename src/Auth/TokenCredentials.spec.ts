@@ -1,4 +1,3 @@
-import { Minus } from "../../test/helpers/types";
 import { VolatileResource } from "../LDP";
 import {
 	extendsClass,
@@ -88,7 +87,7 @@ describe( module( "Carbon/Auth/TokenCredentials" ), ():void => {
 
 			describe( "When check properties", ():void => {
 
-				let target:Minus<TokenCredentialsBase, object>;
+				let target:TokenCredentialsBase;
 				beforeEach( ():void => {
 					target = {
 						token: null,

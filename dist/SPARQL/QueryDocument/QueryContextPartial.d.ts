@@ -1,9 +1,10 @@
-import { Context } from "../../Context";
+import { AbstractContext } from "../../AbstractContext";
 import { DigestedObjectSchema } from "../../ObjectSchema";
-import { Document } from "../../Document";
+import { Pointer } from "../../Pointer";
+import { PersistedResource } from "../../Resource";
 import { QueryContext } from "./QueryContext";
 export declare class QueryContextPartial extends QueryContext {
-    private _document;
-    constructor(document: Document, context?: Context);
+    private readonly _resource;
+    constructor(resource: PersistedResource, context?: AbstractContext<Pointer, any>);
     getSchemaFor(object: object, path?: string): DigestedObjectSchema;
 }

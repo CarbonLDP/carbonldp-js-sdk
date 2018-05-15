@@ -1,9 +1,10 @@
 import { hasProtocol } from "sparqler/iri";
 
 import { AbstractContext } from "./AbstractContext";
+import { AccessPoint } from "./AccessPoint";
 import * as Auth from "./Auth";
+import { BlankNode } from "./BlankNode";
 import { Document } from "./Document";
-import { Documents } from "./Documents";
 import * as Errors from "./Errors";
 import { Fragment } from "./Fragment";
 import { FreeResources } from "./FreeResources";
@@ -24,15 +25,12 @@ import {
 import { Pointer } from "./Pointer";
 import { ProtectedDocument } from "./ProtectedDocument";
 import * as RDF from "./RDF";
+import { DocumentsRegistry } from "./Registry";
 import {
-	Resource,
-	TransientResource
+	PersistedResource,
+	TransientResource,
 } from "./Resource";
-import {
-	globalContext,
-	SDKContext,
-} from "./SDKContext";
-import { ServiceAwareDocument } from "./ServiceAwareDocument";
+import { GlobalContext } from "./GlobalContext";
 import {
 	CarbonLDPSettings,
 	ContextSettings,
@@ -41,32 +39,22 @@ import {
 import * as SHACL from "./SHACL";
 import * as SPARQL from "./SPARQL";
 import * as System from "./System";
-import { TransientAccessPoint } from "./AccessPoint";
-import { TransientBlankNode } from "./BlankNode";
-import { TransientDocument } from "./Document";
-import { TransientFragment } from "./Fragment";
-import { TransientNamedFragment } from "./NamedFragment";
-import { TransientProtectedDocument } from "./ProtectedDocument";
 import * as Utils from "./Utils";
 import * as Vocabularies from "./Vocabularies";
 
-export class CarbonLDP extends AbstractContext {
+export class CarbonLDP extends AbstractContext<Document, GlobalContext> {
 
 	static AbstractContext:typeof AbstractContext = AbstractContext;
-	static TransientAccessPoint:typeof TransientAccessPoint = TransientAccessPoint;
+	static AccessPoint:typeof AccessPoint = AccessPoint;
 	static Auth:typeof Auth = Auth;
-	static TransientBlankNode:typeof TransientBlankNode = TransientBlankNode;
-	static TransientDocument:typeof TransientDocument = TransientDocument;
-	static Documents:typeof Documents = Documents;
+	static BlankNode:typeof BlankNode = BlankNode;
 	static Errors:typeof Errors = Errors;
-	static TransientFragment:typeof TransientFragment = TransientFragment;
 	static FreeResources:typeof FreeResources = FreeResources;
 	static HTTP:typeof HTTP = HTTP;
 	static JSONLD:typeof JSONLD = JSONLD;
 	static LDP:typeof LDP = LDP;
 	static LDPatch:typeof LDPatch = LDPatch;
 	static Messaging:typeof Messaging = Messaging;
-	static TransientNamedFragment:typeof TransientNamedFragment = TransientNamedFragment;
 	static Vocabularies:typeof Vocabularies = Vocabularies;
 	static ObjectSchemaUtils:typeof ObjectSchemaUtils = ObjectSchemaUtils;
 	static ObjectSchemaDigester:typeof ObjectSchemaDigester = ObjectSchemaDigester;
@@ -78,14 +66,11 @@ export class CarbonLDP extends AbstractContext {
 	static Fragment:typeof Fragment = Fragment;
 	static NamedFragment:typeof NamedFragment = NamedFragment;
 	static ProtectedDocument:typeof ProtectedDocument = ProtectedDocument;
-	static Resource:typeof Resource = Resource;
+	static PersistedResource:typeof PersistedResource = PersistedResource;
 	static Pointer:typeof Pointer = Pointer;
-	static TransientProtectedDocument:typeof TransientProtectedDocument = TransientProtectedDocument;
 	static RDF:typeof RDF = RDF;
 	static TransientResource:typeof TransientResource = TransientResource;
-	static SDKContext:typeof SDKContext = SDKContext;
-	static globalContext:typeof globalContext = globalContext;
-	static ServiceAwareDocument:typeof ServiceAwareDocument = ServiceAwareDocument;
+	static GlobalContext:typeof GlobalContext = GlobalContext;
 	static SHACL:typeof SHACL = SHACL;
 	static SPARQL:typeof SPARQL = SPARQL;
 	static System:typeof System = System;
@@ -98,7 +83,7 @@ export class CarbonLDP extends AbstractContext {
 	get version():string { return CarbonLDP.version; }
 
 	protected _baseURI:string;
-	protected settings:ContextSettings = {
+	protected _settings:ContextSettings = {
 		vocabulary: "vocabularies/main/#",
 		paths: {
 			system: {
@@ -118,12 +103,16 @@ export class CarbonLDP extends AbstractContext {
 		},
 	};
 
-	messaging:Messaging.MessagingService;
+	readonly registry:DocumentsRegistry;
+	readonly messaging:Messaging.MessagingService;
+	readonly auth:Auth.AuthService;
+
+	readonly documents:ProtectedDocument;
 
 	constructor( url:string );
 	constructor( settings:CarbonLDPSettings );
 	constructor( urlOrSettings:string | CarbonLDPSettings ) {
-		super();
+		super( GlobalContext.instance );
 
 		if( Utils.isString( urlOrSettings ) ) {
 			if( ! RDF.URI.hasProtocol( urlOrSettings ) ) throw new Errors.IllegalArgumentError( `The URL must contain a valid protocol: "http://", "https://".` );
@@ -143,16 +132,22 @@ export class CarbonLDP extends AbstractContext {
 
 			urlOrSettings.ssl = urlOrSettings.host = urlOrSettings.port = null;
 
-			const paths:ContextSettings[ "paths" ] = mergePaths( this.settings.paths, urlOrSettings.paths );
+			const paths:ContextSettings[ "paths" ] = mergePaths( this._settings.paths, urlOrSettings.paths );
 
-			this.settings = Utils.ObjectUtils.extend( this.settings, urlOrSettings );
-			this.settings.paths = paths;
+			this._settings = Utils.ObjectUtils.extend( this._settings, urlOrSettings );
+			this._settings.paths = paths;
 		}
 
 		if( ! this._baseURI.endsWith( "/" ) ) this._baseURI = this._baseURI + "/";
 
-		this.auth = new Auth.AuthService( this );
+		this.registry = new DocumentsRegistry( this );
 		this.messaging = new Messaging.MessagingService( this );
+		this.auth = new Auth.AuthService( this );
+
+		// Root document
+		this.documents = ProtectedDocument.decorate(
+			this.registry.register( this._baseURI )
+		);
 	}
 
 	/**

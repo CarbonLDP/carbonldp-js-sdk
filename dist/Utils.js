@@ -326,6 +326,8 @@ var MapUtils = (function () {
         }
         for (var i = 0, length_3 = extenders.length; i < length_3; i++) {
             var extender = extenders[i];
+            if (!extender)
+                continue;
             var values = extender.entries();
             var next = values.next();
             while (!next.done) {

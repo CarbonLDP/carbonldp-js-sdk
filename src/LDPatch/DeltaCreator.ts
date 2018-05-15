@@ -14,7 +14,7 @@ import {
 	VariableOrIRI,
 } from "sparqler/tokens";
 
-import { JSONLDConverter } from "../JSONLD/Converter";
+import { JSONLDConverter } from "../JSONLD";
 import { guessXSDType } from "../JSONLD/Utils";
 import {
 	ContainerType,
@@ -23,9 +23,8 @@ import {
 	PointerType,
 } from "../ObjectSchema";
 import { Pointer } from "../Pointer";
-import { TransientResource } from "../Resource";
 import { isString } from "../Utils";
-import { XSD } from "../Vocabularies/XSD";
+import { XSD } from "../Vocabularies";
 
 import {
 	AddToken,
@@ -56,9 +55,9 @@ export class DeltaCreator {
 	private prefixesMap:Map<string, PrefixToken>;
 	private jsonldConverter:JSONLDConverter;
 
-	private addToken:AddToken;
-	private deleteToken:DeleteToken;
-	private updateLists:UpdateListToken[];
+	private readonly addToken:AddToken;
+	private readonly deleteToken:DeleteToken;
+	private readonly updateLists:UpdateListToken[];
 
 	constructor( jsonldConverter:JSONLDConverter ) {
 		this.prefixesMap = new Map();
@@ -81,10 +80,9 @@ export class DeltaCreator {
 		return `${ patch }`;
 	}
 
-	addResource( schema:DigestedObjectSchema, oldResource:TransientResource, newResource:TransientResource ):void {
-		const id:string = newResource.id;
+	addResource( schema:DigestedObjectSchema, id:string, previousResource:object, currentResource:object ):void {
 		const resource:IRIToken | PrefixedNameToken | BlankNodeToken = isBNodeLabel( id ) ?
-			new BlankNodeToken( id ) : this.compactIRI( schema, id );
+			new BlankNodeToken( id ) : this._compactIRI( schema, id );
 
 		const updateLists:UpdateListToken[] = [];
 		const addTriples:SubjectToken = new SubjectToken( resource );
@@ -92,19 +90,19 @@ export class DeltaCreator {
 
 		new Set( [
 			"types",
-			...Object.keys( oldResource ),
-			...Object.keys( newResource ),
+			...Object.keys( previousResource ),
+			...Object.keys( currentResource ),
 		] ).forEach( propertyName => {
 			if( propertyName === "id" ) return;
 
 			const predicateURI:IRIToken | PrefixedNameToken | "a" = propertyName === "types" ?
-				"a" : this.getPropertyIRI( schema, propertyName );
+				"a" : this._getPropertyIRI( schema, propertyName );
 
 			const definition:DigestedObjectSchemaProperty = predicateURI === "a" ?
 				typesDefinition : schema.properties.get( propertyName );
 
-			const oldValue:any = oldResource[ propertyName ];
-			const newValue:any = newResource[ propertyName ];
+			const oldValue:any = previousResource[ propertyName ];
+			const newValue:any = currentResource[ propertyName ];
 
 			if( definition && definition.containerType === ContainerType.LIST && isValidValue( oldValue ) ) {
 				const listUpdates:UpdateDelta[] = [];
@@ -117,20 +115,20 @@ export class DeltaCreator {
 					const tempDefinition:DigestedObjectSchemaProperty = { ...definition, containerType: ContainerType.SET };
 
 					listUpdates.push( ...getListDelta(
-						this.getObjects( oldValue, schema, tempDefinition ),
-						this.getObjects( newValue, schema, tempDefinition )
+						this._getObjects( oldValue, schema, tempDefinition ),
+						this._getObjects( newValue, schema, tempDefinition )
 					) );
 				}
 
 				if( ! listUpdates.length ) return;
 
-				this.addPrefixFrom( predicateURI, schema );
+				this._addPrefixFrom( predicateURI, schema );
 				listUpdates.forEach( updateDelta => {
 					const collection:CollectionToken = new CollectionToken();
 
 					updateDelta.objects.forEach( object => {
 						collection.addObject( object );
-						this.addPrefixFrom( object, schema );
+						this._addPrefixFrom( object, schema );
 					} );
 
 					updateLists.push( new UpdateListToken(
@@ -144,8 +142,8 @@ export class DeltaCreator {
 				} );
 
 			} else {
-				const oldObjects:ObjectToken[] = this.getObjects( oldValue, schema, definition );
-				const newObjects:ObjectToken[] = this.getObjects( newValue, schema, definition );
+				const oldObjects:ObjectToken[] = this._getObjects( oldValue, schema, definition );
+				const newObjects:ObjectToken[] = this._getObjects( newValue, schema, definition );
 
 				const setDelta:ArrayDelta = getArrayDelta( oldObjects, newObjects );
 
@@ -155,7 +153,7 @@ export class DeltaCreator {
 					const predicate:PredicateToken = new PredicateToken( predicateURI );
 					objects.forEach( object => {
 						predicate.addObject( object );
-						this.addPrefixFrom( object, schema );
+						this._addPrefixFrom( object, schema );
 					} );
 
 					triple.addPredicate( predicate );
@@ -177,20 +175,20 @@ export class DeltaCreator {
 		];
 		if( ! predicates.length ) return;
 
-		this.addPrefixFrom( resource, schema );
-		predicates.forEach( x => this.addPrefixFrom( x.predicate, schema ) );
+		this._addPrefixFrom( resource, schema );
+		predicates.forEach( x => this._addPrefixFrom( x.predicate, schema ) );
 	}
 
-	private getPropertyIRI( schema:DigestedObjectSchema, propertyName:string ):IRIToken | PrefixedNameToken {
+	private _getPropertyIRI( schema:DigestedObjectSchema, propertyName:string ):IRIToken | PrefixedNameToken {
 		const propertyDefinition:DigestedObjectSchemaProperty = schema.properties.get( propertyName );
 		const uri:string = propertyDefinition && propertyDefinition.uri ?
 			propertyDefinition.uri :
 			propertyName;
 
-		return this.compactIRI( schema, uri );
+		return this._compactIRI( schema, uri );
 	}
 
-	private getObjects( value:any, schema:DigestedObjectSchema, definition?:DigestedObjectSchemaProperty ):ObjectToken[] {
+	private _getObjects( value:any, schema:DigestedObjectSchema, definition?:DigestedObjectSchemaProperty ):ObjectToken[] {
 		const values:any[] = (Array.isArray( value ) ?
 				! definition || definition.containerType !== null ? value : value.slice( 0, 1 ) :
 				[ value ]
@@ -200,29 +198,29 @@ export class DeltaCreator {
 			if( ! isValidValue( value ) ) return [];
 
 			const collection:CollectionToken = new CollectionToken();
-			collection.objects.push( ...this.expandValues( values, schema, definition ) );
+			collection.objects.push( ...this._expandValues( values, schema, definition ) );
 
 			return [ collection ];
 		}
 
 		if( definition && definition.containerType === ContainerType.LANGUAGE ) {
-			return this.expandLanguageMap( values, schema );
+			return this._expandLanguageMap( values, schema );
 		}
 
-		return this.expandValues( values, schema, definition );
+		return this._expandValues( values, schema, definition );
 	}
 
-	private expandValues( values:any[], schema:DigestedObjectSchema, definition?:DigestedObjectSchemaProperty ):ObjectToken[] {
+	private _expandValues( values:any[], schema:DigestedObjectSchema, definition?:DigestedObjectSchemaProperty ):ObjectToken[] {
 		const areDefinedLiteral:boolean = definition && definition.literal !== null ? definition.literal : null;
 		return values.map( value => {
 			const isLiteral:boolean = areDefinedLiteral !== null ? areDefinedLiteral : ! Pointer.is( value );
 
-			if( isLiteral ) return this.expandLiteral( value, schema, definition );
-			return this.expandPointer( value, schema );
+			if( isLiteral ) return this._expandLiteral( value, schema, definition );
+			return this._expandPointer( value, schema );
 		} ).filter( isValidValue );
 	}
 
-	private expandLanguageMap( values:any[], schema:DigestedObjectSchema ):ObjectToken[] {
+	private _expandLanguageMap( values:any[], schema:DigestedObjectSchema ):ObjectToken[] {
 		if( ! values.length ) return [];
 		const languageMap:object = values[ 0 ];
 
@@ -233,20 +231,20 @@ export class DeltaCreator {
 			tempDefinition.language = key;
 			tempDefinition.literalType = XSD.string;
 
-			return this.expandLiteral( value, schema, tempDefinition );
+			return this._expandLiteral( value, schema, tempDefinition );
 		} ).filter( isValidValue );
 	}
 
-	private expandPointer( value:any, schema:DigestedObjectSchema ):IRIToken | PrefixedNameToken | BlankNodeToken {
+	private _expandPointer( value:any, schema:DigestedObjectSchema ):IRIToken | PrefixedNameToken | BlankNodeToken {
 		let id:string = Pointer.is( value ) ? value.id : value;
 		if( ! isString( id ) ) return null;
 
 		return isBNodeLabel( id ) ?
 			new BlankNodeToken( id ) :
-			this.compactIRI( schema, id );
+			this._compactIRI( schema, id );
 	}
 
-	private expandLiteral( value:any, schema:DigestedObjectSchema, definition?:DigestedObjectSchemaProperty ):LiteralToken {
+	private _expandLiteral( value:any, schema:DigestedObjectSchema, definition?:DigestedObjectSchemaProperty ):LiteralToken {
 		const type:string = definition && definition.literalType ?
 			definition.literalType :
 			guessXSDType( value );
@@ -256,13 +254,13 @@ export class DeltaCreator {
 		value = this.jsonldConverter.literalSerializers.get( type ).serialize( value );
 		const literal:LiteralToken = new LiteralToken( value );
 
-		if( type !== XSD.string ) literal.setType( this.compactIRI( schema, type ) );
+		if( type !== XSD.string ) literal.setType( this._compactIRI( schema, type ) );
 		if( definition && definition.language !== void 0 ) literal.setLanguage( definition.language );
 
 		return literal;
 	}
 
-	private compactIRI( schema:DigestedObjectSchema, iri:string ):IRIToken | PrefixedNameToken {
+	private _compactIRI( schema:DigestedObjectSchema, iri:string ):IRIToken | PrefixedNameToken {
 		if( isRelative( iri ) && schema.vocab ) iri = schema.vocab + iri;
 
 		const matchPrefix:[ string, string ] = Array.from( schema.prefixes.entries() )
@@ -273,14 +271,14 @@ export class DeltaCreator {
 		return new PrefixedNameToken( matchPrefix[ 0 ], iri.substr( matchPrefix[ 1 ].length ) );
 	}
 
-	private addPrefixFrom( object:ObjectToken | "a", schema:DigestedObjectSchema ):void {
+	private _addPrefixFrom( object:ObjectToken | "a", schema:DigestedObjectSchema ):void {
 		if( object instanceof CollectionToken )
 			return object.objects.forEach( collectionObject => {
-				this.addPrefixFrom( collectionObject, schema );
+				this._addPrefixFrom( collectionObject, schema );
 			} );
 
 		if( object instanceof LiteralToken )
-			return this.addPrefixFrom( object.type, schema );
+			return this._addPrefixFrom( object.type, schema );
 
 		if( ! (object instanceof PrefixedNameToken) ) return;
 

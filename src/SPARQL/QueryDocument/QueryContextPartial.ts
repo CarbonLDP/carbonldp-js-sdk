@@ -1,29 +1,29 @@
-import { Context } from "../../Context";
+import { AbstractContext } from "../../AbstractContext";
 import { DigestedObjectSchema } from "../../ObjectSchema";
-import { Document } from "../../Document";
-import { Resource } from "../../Resource";
+import { Pointer } from "../../Pointer";
+import { PersistedResource } from "../../Resource";
 import { QueryContext } from "./QueryContext";
 
 export class QueryContextPartial extends QueryContext {
 
-	private _document:Document;
+	private readonly _resource:PersistedResource;
 
-	constructor( document:Document, context?:Context ) {
+	constructor( resource:PersistedResource, context?:AbstractContext<Pointer, any> ) {
 		super( context );
-		this._document = document;
+		this._resource = resource;
 	}
 
 	getSchemaFor( object:object, path?:string ):DigestedObjectSchema {
 		if( path === void 0 ) return super.getSchemaFor( object );
 
 		const parts:string[] = path.split( /\./g ).slice( 1 );
-		let schemaLibrary:Resource = this._document;
+		let schemaLibrary:PersistedResource = this._resource;
 		while( parts.length ) {
 			const part:string = parts.shift();
 			const values:any[] = Array.isArray( schemaLibrary[ part ] ) ?
 				schemaLibrary[ part ] : [ schemaLibrary[ part ] ];
 
-			schemaLibrary = values.find( value => value && "_partialMetadata" in value );
+			schemaLibrary = values.find( PersistedResource.is );
 			if( ! schemaLibrary ) return super.getSchemaFor( object );
 		}
 

@@ -1,7 +1,5 @@
-import { ModelDecorator } from "../../core/ModelDecorator";
-import { ModelSchema } from "../../core/ModelSchema";
+import { ModelDecorator, ModelSchema } from "../../core";
 import { Document } from "../../Document";
-import { Documents } from "../../Documents";
 import { ObjectSchema } from "../../ObjectSchema";
 import { Pointer } from "../../Pointer";
 import { CS } from "../../Vocabularies";
@@ -35,6 +33,6 @@ export interface ACLFactory extends ModelDecorator<ACL>, ModelSchema {
     TYPE: CS["AccessControlList"];
     SCHEMA: ObjectSchema;
     isDecorated(object: object): object is ACL;
-    decorate<T extends object>(object: T, documents: Documents): T & ACL;
+    decorate<T extends object>(object: T): T & ACL;
 }
 export declare const ACL: ACLFactory;

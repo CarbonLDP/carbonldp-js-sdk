@@ -1,4 +1,3 @@
-import { Document } from "../Document";
 import { Fragment } from "../Fragment";
 import {
 	TransientNamedFragment,
@@ -7,7 +6,6 @@ import {
 
 
 export interface NamedFragment extends Fragment, TransientNamedFragment {
-	_document:Document;
 }
 
 

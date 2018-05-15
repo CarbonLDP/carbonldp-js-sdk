@@ -1,9 +1,7 @@
-import { AbstractContext } from "../AbstractContext";
-import { Context } from "../Context";
+import { CarbonLDP } from "../CarbonLDP";
 import * as Errors from "../Errors";
 import { Header } from "../HTTP/Header";
 import { RequestOptions } from "../HTTP/Request";
-import { ContextSettings } from "../Settings";
 import {
 	clazz,
 	extendsClass,
@@ -13,7 +11,7 @@ import {
 	isDefined,
 	module,
 } from "../test/JasmineExtender";
-import { Authenticator } from "./Authenticator";
+import { AbstractAuthenticator } from "./AbstractAuthenticator";
 
 import { BasicAuthenticator } from "./BasicAuthenticator";
 
@@ -22,19 +20,9 @@ import { BasicToken } from "./BasicToken";
 
 describe( module( "carbonldp/Auth/BasicAuthenticator" ), ():void => {
 
-	let context:Context;
+	let context:CarbonLDP;
 	beforeEach( ():void => {
-		context = new class extends AbstractContext {
-			protected _baseURI:string = "https://example.com";
-			protected settings:ContextSettings = {
-				paths: {
-					users: {
-						slug: "users/",
-						paths: { me: "me/" },
-					},
-				},
-			};
-		};
+		context = new CarbonLDP( "https://example.com" );
 	} );
 
 	describe( clazz(
@@ -56,7 +44,7 @@ describe( module( "carbonldp/Auth/BasicAuthenticator" ), ():void => {
 
 		it( extendsClass( "CarbonLDP.Auth.Authenticator<CarbonLDP.Auth.UsernameAndPasswordToken>" ), ():void => {
 			const authenticator:BasicAuthenticator = new BasicAuthenticator( context );
-			expect( authenticator ).toEqual( jasmine.any( Authenticator ) );
+			expect( authenticator ).toEqual( jasmine.any( AbstractAuthenticator ) );
 		} );
 
 		it( hasMethod(

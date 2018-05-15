@@ -10,24 +10,25 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
+var Resource_1 = require("../../Resource");
 var QueryContext_1 = require("./QueryContext");
 var QueryContextPartial = (function (_super) {
     __extends(QueryContextPartial, _super);
-    function QueryContextPartial(document, context) {
+    function QueryContextPartial(resource, context) {
         var _this = _super.call(this, context) || this;
-        _this._document = document;
+        _this._resource = resource;
         return _this;
     }
     QueryContextPartial.prototype.getSchemaFor = function (object, path) {
         if (path === void 0)
             return _super.prototype.getSchemaFor.call(this, object);
         var parts = path.split(/\./g).slice(1);
-        var schemaLibrary = this._document;
+        var schemaLibrary = this._resource;
         while (parts.length) {
             var part = parts.shift();
             var values = Array.isArray(schemaLibrary[part]) ?
                 schemaLibrary[part] : [schemaLibrary[part]];
-            schemaLibrary = values.find(function (value) { return value && "_partialMetadata" in value; });
+            schemaLibrary = values.find(Resource_1.PersistedResource.is);
             if (!schemaLibrary)
                 return _super.prototype.getSchemaFor.call(this, object);
         }

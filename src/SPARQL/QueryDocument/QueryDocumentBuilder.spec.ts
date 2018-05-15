@@ -9,15 +9,13 @@ import {
 	ValuesToken,
 } from "sparqler/tokens";
 
+import { createMockContext } from "../../../test/helpers/mocks";
 import { AbstractContext } from "../../AbstractContext";
 import {
 	IllegalArgumentError,
 	IllegalStateError
 } from "../../Errors";
-import {
-	DigestedObjectSchema,
-	ObjectSchemaDigester,
-} from "../../ObjectSchema";
+import { DigestedObjectSchema } from "../../ObjectSchema";
 import { Pointer } from "../../Pointer";
 import {
 	clazz,
@@ -28,7 +26,6 @@ import {
 	module,
 	property,
 } from "../../test/JasmineExtender";
-import { TransientDocument } from "../../Document";
 import { QueryContextBuilder } from "./QueryContextBuilder";
 
 import * as Module from "./QueryDocumentBuilder";
@@ -55,13 +52,11 @@ describe( module( "carbonldp/SPARQL/QueryDocument/QueryDocumentBuilder" ), ():vo
 			expect( QueryDocumentBuilder ).toEqual( jasmine.any( Function ) );
 		} );
 
-		let context:AbstractContext;
+		let context:AbstractContext<any, any>;
 		let queryContext:QueryContextBuilder;
 		let baseProperty:QueryProperty;
 		beforeEach( ():void => {
-			context = new class extends AbstractContext {
-				protected _baseURI:string = "http://example.com";
-			};
+			context = createMockContext( { uri: "http://example.com" } );
 			context.extendObjectSchema( {
 				"@vocab": "http://example.com/vocab#",
 				"ex": "http://example.com/ns#",
@@ -86,15 +81,10 @@ describe( module( "carbonldp/SPARQL/QueryDocument/QueryDocumentBuilder" ), ():vo
 				expect( builder[ "_document" ] ).toEqual( baseProperty );
 			} );
 
-			it( "should initialize the schema with a general document schema", ():void => {
+			it( "should initialize the schema with a general schema", ():void => {
 				const builder:QueryDocumentBuilder = new QueryDocumentBuilder( queryContext, baseProperty );
 
-				const schema:DigestedObjectSchema = ObjectSchemaDigester.combineDigestedObjectSchemas( [
-					context.getObjectSchema(),
-					context.getObjectSchema( TransientDocument.TYPE ),
-				] );
-				schema.vocab = "http://example.com/vocab#";
-
+				const schema:DigestedObjectSchema = context.getObjectSchema();
 				expect( builder[ "_schema" ] ).toEqual( schema );
 			} );
 
@@ -281,7 +271,7 @@ describe( module( "carbonldp/SPARQL/QueryDocument/QueryDocumentBuilder" ), ():vo
 				builder.object( "http://example.com/resource/" );
 				expect( spy ).toHaveBeenCalledWith( queryContext, "http://example.com/resource/" );
 
-				const pointer:Pointer = context.documents.getPointer( "http://example.com/resource/" );
+				const pointer:Pointer = context.registry.getPointer( "http://example.com/resource/" );
 				builder.object( pointer );
 				expect( spy ).toHaveBeenCalledWith( queryContext, pointer );
 			} );
@@ -289,7 +279,7 @@ describe( module( "carbonldp/SPARQL/QueryDocument/QueryDocumentBuilder" ), ():vo
 			it( "should return a QueryObject", ():void => {
 				const builder:QueryDocumentBuilder = new QueryDocumentBuilder( queryContext, baseProperty );
 				expect( builder.object( "http://example.com/resource/" ) ).toEqual( jasmine.any( QueryObject ) );
-				expect( builder.object( context.documents.getPointer( "http://example.com/resource/" ) ) ).toEqual( jasmine.any( QueryObject ) );
+				expect( builder.object( context.registry.getPointer( "http://example.com/resource/" ) ) ).toEqual( jasmine.any( QueryObject ) );
 			} );
 
 		} );

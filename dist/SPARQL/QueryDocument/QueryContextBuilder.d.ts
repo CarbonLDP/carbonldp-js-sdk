@@ -1,11 +1,11 @@
-import { Context } from "../../Context";
+import { AbstractContext } from "../../AbstractContext";
 import { DigestedObjectSchema, DigestedObjectSchemaProperty } from "../../ObjectSchema";
 import { QueryContext } from "./QueryContext";
 import { QueryProperty } from "./QueryProperty";
 export declare class QueryContextBuilder extends QueryContext {
     private _propertiesMap;
     private _schemas;
-    constructor(context?: Context);
+    constructor(context?: AbstractContext<any, any>);
     hasProperty(name: string): boolean;
     hasProperties(name: string): boolean;
     addProperty(name: string): QueryProperty;

@@ -1,9 +1,8 @@
-import { AbstractContext } from "../AbstractContext";
-import { Document } from "../Document";
 import {
 	Pointer,
 	PointerLibrary,
 } from "../Pointer";
+import { Registry } from "../Registry";
 import {
 	hasMethod,
 	hasProperty,
@@ -14,7 +13,7 @@ import {
 	property,
 	STATIC,
 } from "../test/JasmineExtender";
-import { XSD } from "../Vocabularies/XSD";
+import { XSD } from "../Vocabularies";
 import * as Utils from "./../Utils";
 import { RDFDocument } from "./Document";
 import { RDFList } from "./List";
@@ -220,14 +219,11 @@ describe( module( "carbonldp/RDF/Node" ), ():void => {
 			expect( RDFNode.create( "some thing that is not an URI, but works" ) ).toEqual( { "@id": "some thing that is not an URI, but works" } );
 		} );
 
-		let expandedObject:any;
 		let documentResource:any;
 		let pointerLibrary:PointerLibrary;
 		let result:any;
-		let context:AbstractContext;
-
 		beforeEach( ():void => {
-			expandedObject = [ {
+			let expandedObject:any = [ {
 				"@id": "http://example.com/resource/",
 				"@graph": [
 					{
@@ -306,20 +302,8 @@ describe( module( "carbonldp/RDF/Node" ), ():void => {
 				],
 			} ];
 
-			class MockedContext extends AbstractContext {
-				protected _baseURI:string;
-
-				constructor() {
-					super();
-					this._baseURI = "http://example.com/";
-					this.settings = { vocabulary: "http://example.com/vocab#" };
-				}
-			}
-
-			context = new MockedContext();
-
 			documentResource = RDFDocument.getDocumentResources( expandedObject )[ 0 ];
-			pointerLibrary = Document.decorate( { id: expandedObject[ "@id" ] }, context.documents );
+			pointerLibrary = Registry.create( { _model: Pointer } );
 		} );
 
 		// TODO: Test `RDFNode.getID`

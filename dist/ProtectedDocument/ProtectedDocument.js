@@ -5,7 +5,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
     if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
     result["default"] = mod;
     return result;
-}
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 var Document_1 = require("../Document");
 var Utils = __importStar(require("../Utils"));
@@ -27,10 +27,10 @@ exports.ProtectedDocument = {
         return exports.ProtectedDocument.isDecorated(object)
             && Document_1.Document.is(object);
     },
-    decorate: function (object, documents) {
+    decorate: function (object) {
         if (exports.ProtectedDocument.isDecorated(object))
             return object;
-        Document_1.Document.decorate(object, documents);
+        Document_1.Document.decorate(object);
         var persistedProtectedDocument = object;
         Object.defineProperties(persistedProtectedDocument, {
             "getACL": {
@@ -50,7 +50,7 @@ function getACL(requestOptions) {
         this.executeSELECTQuery("SELECT ?acl WHERE {<" + this.id + "> <" + Vocabularies_1.CS.accessControlList + "> ?acl}")
             .then(function (results) { return results.bindings[0].acl; });
     return aclPromise.then(function (acl) {
-        return _this._documents.get(acl.id, requestOptions);
+        return _this.get(acl.id, requestOptions);
     });
 }
 

@@ -1,64 +1,83 @@
-import { Documents } from "../Documents";
+import { Document } from "../Document";
+import { IllegalArgumentError } from "../Errors";
 import {
 	DigestedObjectSchema,
 	ObjectSchemaResolver,
 } from "../ObjectSchema";
-import { Document } from "../Document";
-import { Resource } from "../Resource";
 import {
 	Pointer,
 	PointerLibrary,
 } from "../Pointer";
-import { RDFDocument } from "../RDF/Document";
-import { RDFNode } from "../RDF/Node";
-import { PartialMetadata } from "../SPARQL/QueryDocument/PartialMetadata";
-import { QueryContextBuilder } from "../SPARQL/QueryDocument/QueryContextBuilder";
-import { QueryPropertyType } from "../SPARQL/QueryDocument/QueryProperty";
+import {
+	RDFDocument,
+	RDFNode,
+} from "../RDF";
+import {
+	Registry,
+	RegistryService
+} from "../Registry";
+import { PersistedResource } from "../Resource";
+import {
+	PartialMetadata,
+	QueryContextBuilder,
+	QueryPropertyType,
+} from "../SPARQL/QueryDocument";
 import { JSONLDConverter } from "./Converter";
+
 
 interface CompactionNode {
 	paths:string[];
 	node:RDFNode;
-	resource:Resource;
-	containerLibrary:PointerLibrary;
+	resource:Pointer;
+	registry:Registry<any>;
 	processed?:boolean;
 }
 
 export class JSONLDCompacter {
-	private documents:Documents;
-	private root?:string;
-	private resolver?:ObjectSchemaResolver;
-	private converter?:JSONLDConverter;
-	private compactionMap:Map<string, CompactionNode>;
+	private readonly registry:RegistryService<Document, any>;
+	private readonly root?:string;
+	private readonly resolver?:ObjectSchemaResolver;
+	private readonly converter?:JSONLDConverter;
+	private readonly compactionMap:Map<string, CompactionNode>;
 
-	constructor( documents:Documents, root?:string, schemaResolver?:ObjectSchemaResolver, jsonldConverter?:JSONLDConverter ) {
-		this.documents = documents;
+
+	constructor( registry:RegistryService<Document, any>, root?:string, schemaResolver?:ObjectSchemaResolver, jsonldConverter?:JSONLDConverter ) {
+		this.registry = registry;
 		this.root = root;
-		this.resolver = schemaResolver || documents;
-		this.converter = jsonldConverter || documents.jsonldConverter;
+		this.resolver = schemaResolver || registry;
+		this.converter = jsonldConverter || registry.jsonldConverter;
 		this.compactionMap = new Map();
 	}
 
-	compactDocument<T extends Document>( rdfDocument:RDFDocument ):T {
+	compactDocument<T extends object>( rdfDocument:RDFDocument ):T & Document {
 		const rdfDocuments:RDFDocument[] = [ rdfDocument ];
 		return this.compactDocuments<T>( rdfDocuments )[ 0 ];
 	}
 
-	compactDocuments<T extends Document>( rdfDocuments:RDFDocument[], mainDocuments:RDFDocument[] = rdfDocuments ):T[] {
+	compactDocuments<T extends object>( rdfDocuments:RDFDocument[], mainDocuments:RDFDocument[] = rdfDocuments ):(T & Document)[] {
 		rdfDocuments.forEach( rdfDocument => {
-			const [ [ documentNode ], fragmentNodes ] = RDFDocument.getNodes( rdfDocument );
-			const targetDocument:Document = this.getResource( documentNode, this.documents, true );
+			const [ documentNodes, fragmentNodes ] = RDFDocument.getNodes( rdfDocument );
 
-			const fragmentsSet:Set<string> = new Set( targetDocument._fragmentsIndex.keys() );
+			if( documentNodes.length === 0 ) throw new IllegalArgumentError( `The RDFDocument "${ rdfDocument[ "@id" ] }" does not contain a document resource.` );
+			if( documentNodes.length > 1 ) throw new IllegalArgumentError( `The RDFDocument "${ rdfDocument[ "@id" ] }" contains multiple document resources.` );
+			const documentNode:RDFNode = documentNodes[ 0 ];
+
+			const targetDocument:Document = this._getResource( documentNode, this.registry );
+
+			const currentFragments:string[] = targetDocument
+				.getPointers( true )
+				.map( pointer => pointer.id )
+			;
+			const fragmentsSet:Set<string> = new Set( currentFragments );
 
 			fragmentNodes.forEach( fragmentNode => {
-				const fragmentID:string = RDFNode.getRelativeID( fragmentNode );
+				const fragmentID:string = RDFNode.getID( fragmentNode );
 				if( fragmentsSet.has( fragmentID ) ) fragmentsSet.delete( fragmentID );
 
-				this.getResource( fragmentNode, targetDocument );
+				this._getResource( fragmentNode, targetDocument );
 			} );
 
-			fragmentsSet.forEach( targetDocument._removeFragment, targetDocument );
+			fragmentsSet.forEach( targetDocument.removePointer, targetDocument );
 		} );
 
 		const compactedDocuments:Document[] = rdfDocuments
@@ -69,7 +88,7 @@ export class JSONLDCompacter {
 		const compactionQueue:string[] = mainDocuments
 			.map( rdfDocument => rdfDocument[ "@id" ] );
 
-		const mainCompactedDocuments:T[] = compactionQueue
+		const mainCompactedDocuments:(T & Document)[] = compactionQueue
 			.map( this.compactionMap.get, this.compactionMap )
 			.map( compactionNode => {
 				if( this.root ) compactionNode.paths.push( this.root );
@@ -78,7 +97,7 @@ export class JSONLDCompacter {
 			} );
 
 		while( compactionQueue.length ) {
-			this.processCompactionQueue( compactionQueue );
+			this._processCompactionQueue( compactionQueue );
 
 			this.compactionMap.forEach( ( node, key, map ) => {
 				if( node.processed ) map.delete( key );
@@ -92,38 +111,28 @@ export class JSONLDCompacter {
 			persistedDocument._syncSavedFragments();
 
 			persistedDocument.types
-				.map( type => this.documents.documentDecorators.get( type ) )
-				.forEach( decorator => decorator && decorator.call( void 0, persistedDocument, this.documents ) );
+				.map( type => this.registry.documentDecorators.get( type ) )
+				.forEach( decorator => decorator && decorator.call( void 0, persistedDocument, this.registry ) );
 		} );
 
 		return mainCompactedDocuments;
 	}
 
-	private compactNode( node:RDFNode, resource:Resource, containerLibrary:PointerLibrary, path:string ):string[] {
+
+	private _compactNode( node:RDFNode, resource:Pointer, containerLibrary:PointerLibrary, path:string ):string[] {
 		const schema:DigestedObjectSchema = this.resolver.getSchemaFor( node, path );
 
-		if( this.resolver instanceof QueryContextBuilder ) {
-			const type:QueryPropertyType = this.resolver.hasProperty( path ) ?
-				this.resolver.getProperty( path ).getType() : void 0;
+		const isPartial:boolean = this._setOrRemovePartial( resource, schema, path );
 
-			if( type === QueryPropertyType.PARTIAL || type === QueryPropertyType.ALL ) {
-				resource._partialMetadata = new PartialMetadata(
-					type === QueryPropertyType.ALL ? PartialMetadata.ALL : schema,
-					resource._partialMetadata
-				);
-			}
-		}
-
-		const compactedData:object = this.converter.compact( node, {}, schema, containerLibrary, resource.isPartial() );
+		const compactedData:object = this.converter.compact( node, {}, schema, containerLibrary, isPartial );
 
 		const addedProperties:string[] = [];
-
 		new Set( [
 			...Object.keys( resource ),
 			...Object.keys( compactedData ),
 		] ).forEach( key => {
 			if( ! compactedData.hasOwnProperty( key ) ) {
-				if( ! resource.isPartial() || schema.properties.has( key ) ) delete resource[ key ];
+				if( ! isPartial || schema.properties.has( key ) ) delete resource[ key ];
 				return;
 			}
 
@@ -144,16 +153,18 @@ export class JSONLDCompacter {
 			;
 	}
 
-	private getResource<T extends Resource>( node:RDFNode, containerLibrary:PointerLibrary, isDocument?:boolean ):T {
-		const resource:T = containerLibrary.getPointer( node[ "@id" ] ) as any;
+	private _getResource<M extends Pointer>( node:RDFNode, registry:Registry<M> ):M {
+		const resource:M = registry.getPointer( node[ "@id" ], true );
 
-		if( isDocument ) containerLibrary = Document.decorate( resource, this.documents );
-		this.compactionMap.set( resource.id, { paths: [], node, resource, containerLibrary } );
+		if( Registry.isDecorated( resource ) ) registry = resource;
+
+		this.compactionMap
+			.set( resource.id, { paths: [], node, resource, registry } );
 
 		return resource;
 	}
 
-	private processCompactionQueue( compactionQueue:string[] ):void {
+	private _processCompactionQueue( compactionQueue:string[] ):void {
 		while( compactionQueue.length ) {
 			const targetNode:string = compactionQueue.shift();
 
@@ -163,8 +174,8 @@ export class JSONLDCompacter {
 
 			const targetPath:string = compactionNode.paths.shift();
 
-			const addedProperties:string[] = this.compactNode( compactionNode.node, compactionNode.resource, compactionNode.containerLibrary, targetPath );
-			compactionNode.resource._syncSnapshot();
+			const addedProperties:string[] = this._compactNode( compactionNode.node, compactionNode.resource, compactionNode.registry, targetPath );
+			if( PersistedResource.is( compactionNode.resource ) ) compactionNode.resource._syncSnapshot();
 
 			for( const propertyName of addedProperties ) {
 				if( ! compactionNode.resource.hasOwnProperty( propertyName ) ) continue;
@@ -187,6 +198,31 @@ export class JSONLDCompacter {
 				}
 			}
 		}
+	}
+
+
+	private _setOrRemovePartial( resource:Pointer, schema:DigestedObjectSchema, path:string ):boolean {
+		if( ! PersistedResource.is( resource ) ) return false;
+
+		if( this._willBePartial( resource, schema, path ) ) return true;
+
+		if( resource._partialMetadata ) delete resource._partialMetadata;
+		return false;
+	}
+
+	private _willBePartial( resource:PersistedResource, schema:DigestedObjectSchema, path:string ):boolean {
+		if( ! (this.resolver instanceof QueryContextBuilder) ) return false;
+
+		const type:QueryPropertyType = this.resolver.hasProperty( path ) ?
+			this.resolver.getProperty( path ).getType() : void 0;
+
+		if( type !== QueryPropertyType.PARTIAL && type !== QueryPropertyType.ALL ) return false;
+
+		resource._partialMetadata = new PartialMetadata(
+			type === QueryPropertyType.ALL ? PartialMetadata.ALL : schema,
+			resource._partialMetadata
+		);
+		return true;
 	}
 
 }

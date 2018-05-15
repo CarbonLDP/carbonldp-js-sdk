@@ -1,14 +1,6 @@
-import { CarbonLDP } from "../CarbonLDP";
-import { Context } from "../Context";
-import { IllegalArgumentError } from "../Errors/IllegalArgumentError";
-import { IllegalStateError } from "../Errors/IllegalStateError";
-import { URI } from "../RDF/URI";
-import { MessagingService } from "./Service";
+import { IllegalArgumentError } from "../Errors";
+import { URI } from "../RDF";
 
-export function validateEventContext( context:Context ):void {
-	if( ! ( context && (context as CarbonLDP).messaging instanceof MessagingService ) )
-		throw new IllegalStateError( "This instance does not support messaging subscriptions." );
-}
 
 export function validateEventType( event:string ):void {
 	if( ! /(access-point|child|\*)\.(created|\*)|(document|\*)\.(modified|deleted|\*)|(member|\*)\.(added|removed|\*)/.test( event ) ) throw new IllegalArgumentError( `Provided event type "${ event }" is invalid.` );

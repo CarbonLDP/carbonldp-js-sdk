@@ -1,11 +1,11 @@
 import { IllegalArgumentError } from "../Errors";
 import { promiseMethod } from "../Utils";
-import { Authenticator } from "./Authenticator";
+import { AbstractAuthenticator } from "./AbstractAuthenticator";
 import { BasicCredentials } from "./BasicCredentials";
 import { BasicToken } from "./BasicToken";
 
 
-export class BasicAuthenticator extends Authenticator<BasicToken, BasicCredentials> {
+export class BasicAuthenticator extends AbstractAuthenticator<BasicToken, BasicCredentials> {
 
 	protected _credentials:BasicCredentials;
 

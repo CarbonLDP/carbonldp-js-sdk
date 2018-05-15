@@ -206,11 +206,9 @@ describe( module( "carbonldp/SPARQL/Service" ), ():void => {
 
 					getPointer( id:string ):Pointer {
 						return {
+							_registry: void 0,
 							_id: id,
-							_resolved: false,
 							id: id,
-							isResolved: ():any => { return false; },
-							resolve: ():any => { throw new Error(); },
 						};
 					}
 				}
@@ -293,11 +291,9 @@ describe( module( "carbonldp/SPARQL/Service" ), ():void => {
 
 					getPointer( id:string ):Pointer {
 						return {
+							_registry: void 0,
 							_id: id,
-							_resolved: false,
 							id: id,
-							isResolved: ():any => { return false; },
-							resolve: ():any => { throw new Error(); },
 						};
 					}
 				}

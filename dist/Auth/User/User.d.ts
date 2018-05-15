@@ -1,4 +1,3 @@
-import { Documents } from "../../Documents";
 import { ObjectSchema } from "../../ObjectSchema";
 import { ProtectedDocument } from "../../ProtectedDocument";
 import { CS } from "../../Vocabularies";
@@ -14,6 +13,6 @@ export interface UserFactory extends TransientUserFactory {
     SCHEMA: ObjectSchema;
     is(value: any): value is User;
     isDecorated(object: object): object is User;
-    decorate<T extends object>(object: T, documents: Documents): User & T;
+    decorate<T extends object>(object: T): User & T;
 }
 export declare const User: UserFactory;

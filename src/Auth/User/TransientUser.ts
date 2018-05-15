@@ -1,5 +1,4 @@
 import { TransientDocument } from "../../Document";
-import { Documents } from "../../Documents";
 import {
 	hasFunction,
 	isObject,
@@ -26,11 +25,11 @@ export interface TransientUserFactory {
 	is( value:any ):value is TransientUser;
 
 
-	decorate<T extends object>( object:T, documents?:Documents ):T & TransientUser;
+	decorate<T extends object>( object:T ):T & TransientUser;
 
-	create( data:BaseUser ):TransientUser;
+	create<T extends object>( data:T & BaseUser ):T & TransientUser;
 
-	createFrom<T extends BaseUser>( object:T ):T & TransientUser;
+	createFrom<T extends object>( object:T & BaseUser ):T & TransientUser;
 }
 
 export const TransientUser:TransientUserFactory = {
@@ -65,11 +64,12 @@ export const TransientUser:TransientUserFactory = {
 		} );
 	},
 
-	create( data:BaseUser ):TransientUser {
-		return TransientUser.createFrom( { ...data } );
+	create<T extends object>( data:T & BaseUser ):T & TransientUser {
+		const copy:T & BaseUser = Object.assign( {}, data );
+		return TransientUser.createFrom( copy );
 	},
 
-	createFrom<T extends BaseUser>( object:T ):T & TransientUser {
+	createFrom<T extends object>( object:T & BaseUser ):T & TransientUser {
 		const user:T & TransientUser = TransientUser.decorate( object );
 		user._normalize();
 

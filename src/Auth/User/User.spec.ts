@@ -1,6 +1,5 @@
-import { StrictMinus } from "../../../test/helpers/types";
-import { AbstractContext } from "../../AbstractContext";
-import { Pointer } from "../../Pointer";
+import { CarbonLDP } from "../../CarbonLDP";
+import { Document } from "../../Document";
 import { ProtectedDocument } from "../../ProtectedDocument";
 import {
 	extendsClass,
@@ -34,18 +33,11 @@ describe( module( "carbonldp/Auth/User" ), ():void => {
 		it( extendsClass( "CarbonLDP.Auth.TransientUser" ), ():void => {} );
 		it( extendsClass( "CarbonLDP.ProtectedDocument" ), ():void => {} );
 
-		let context:AbstractContext;
 		let persistedUser:User;
 		beforeEach( ():void => {
-			context = new class extends AbstractContext {
-				protected _baseURI:string = "https://example.com/";
-			};
-
-			const pointerUser:Pointer = context.documents.getPointer( "https://example.com/resource/" );
-			persistedUser = User.decorate(
-				Object.assign( pointerUser, {} ),
-				context.documents
-			);
+			const context:CarbonLDP = new CarbonLDP( "https://example.com/" );
+			const userDoc:Document = context.registry.register( "https://example.com/resource/" );
+			persistedUser = User.decorate( userDoc );
 		} );
 
 	} );
@@ -95,7 +87,6 @@ describe( module( "carbonldp/Auth/User" ), ():void => {
 				[ "T extends object" ],
 				"Decorates the object provided with the properties and methods of a `CarbonLDP.Auth.User` object.", [
 					{ name: "object", type: "T", description: "The object to decorate." },
-					{ name: "documents", type: "CarbonLDP.Documents", description: "The documents service the persisted belongs to." },
 				],
 				{ type: "T & CarbonLDP.Auth.User" }
 			), ():void => {} );
@@ -109,8 +100,6 @@ describe( module( "carbonldp/Auth/User" ), ():void => {
 		"User",
 		"CarbonLDP.Auth.UserFactory"
 	), ():void => {
-
-		type MockUser = StrictMinus<User, TransientUser & ProtectedDocument>;
 
 		it( isDefined(), ():void => {
 			expect( User ).toBeDefined();
@@ -185,15 +174,15 @@ describe( module( "carbonldp/Auth/User" ), ():void => {
 
 			it( "should return the same object", ():void => {
 				const object:object = {};
-				const returned:object = User.decorate( object, null );
+				const returned:object = User.decorate( object );
 				expect( returned ).toBe( object );
 			} );
 
-			it( "should call `User.decorate`", ():void => {
+			it( "should call `TransientUser.decorate`", ():void => {
 				const spy:jasmine.Spy = spyOn( TransientUser, "decorate" );
 
 				const object:object = { the: "object" };
-				User.decorate( object, null );
+				User.decorate( object );
 				expect( spy ).toHaveBeenCalledWith( object );
 			} );
 
@@ -201,10 +190,9 @@ describe( module( "carbonldp/Auth/User" ), ():void => {
 				const spy:jasmine.Spy = spyOn( ProtectedDocument, "decorate" );
 
 				const object:object = { the: "object" };
-				const fakeDocuments:any = { fake: "Documents" };
-				User.decorate( object, fakeDocuments );
+				User.decorate( object );
 
-				expect( spy ).toHaveBeenCalledWith( object, fakeDocuments );
+				expect( spy ).toHaveBeenCalledWith( object );
 			} );
 
 		} );

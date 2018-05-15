@@ -4,8 +4,9 @@ import {
 	PrefixToken
 } from "sparqler/tokens";
 
+import { createMockContext } from "../../../test/helpers/mocks";
 import { AbstractContext } from "../../AbstractContext";
-import { IllegalArgumentError } from "../../Errors/IllegalArgumentError";
+import { IllegalArgumentError } from "../../Errors";
 import {
 	clazz,
 	constructor,
@@ -34,11 +35,9 @@ describe( module( "carbonldp/SPARQL/QueryDocument/QueryContext" ), ():void => {
 			expect( QueryContext ).toEqual( jasmine.any( Function ) );
 		} );
 
-		let context:AbstractContext;
+		let context:AbstractContext<any, any>;
 		beforeEach( ():void => {
-			context = new class extends AbstractContext {
-				protected _baseURI:string = "https://example.com/";
-			};
+			context = createMockContext();
 		} );
 
 		describe( constructor(), ():void => {
@@ -126,7 +125,7 @@ describe( module( "carbonldp/SPARQL/QueryDocument/QueryContext" ), ():void => {
 
 			it( "should use the literal serializers of carbon", ():void => {
 				const queryContext:QueryContext = new QueryContext( context );
-				const spy:jasmine.Spy = spyOnProperty( context.documents.jsonldConverter, "literalSerializers", "get" ).and.callThrough();
+				const spy:jasmine.Spy = spyOnProperty( context.registry.jsonldConverter, "literalSerializers", "get" ).and.callThrough();
 
 				queryContext.serializeLiteral( "http://www.w3.org/2001/XMLSchema#string", "value" );
 				expect( spy ).toHaveBeenCalled();
@@ -134,7 +133,7 @@ describe( module( "carbonldp/SPARQL/QueryDocument/QueryContext" ), ():void => {
 
 			it( "should get the correct literal serializer", ():void => {
 				const queryContext:QueryContext = new QueryContext( context );
-				const spy:jasmine.Spy = spyOn( context.documents.jsonldConverter.literalSerializers, "get" ).and.callThrough();
+				const spy:jasmine.Spy = spyOn( context.registry.jsonldConverter.literalSerializers, "get" ).and.callThrough();
 
 				queryContext.serializeLiteral( "http://www.w3.org/2001/XMLSchema#string", "value" );
 				expect( spy ).toHaveBeenCalledWith( "http://www.w3.org/2001/XMLSchema#string" );
@@ -286,9 +285,9 @@ describe( module( "carbonldp/SPARQL/QueryDocument/QueryContext" ), ():void => {
 				expect( QueryContext.prototype.getGeneralSchema ).toEqual( jasmine.any( Function ) );
 			} );
 
-			it( "should call to the documents `getGeneralSchema` method", ():void => {
+			it( "should call to the registry `getGeneralSchema` method", ():void => {
 				const queryContext:QueryContext = new QueryContext( context );
-				const spy:jasmine.Spy = spyOn( context.documents, "getGeneralSchema" ).and.returnValue( null );
+				const spy:jasmine.Spy = spyOn( context.registry, "getGeneralSchema" ).and.returnValue( null );
 
 				const returnedValue:any = queryContext.getGeneralSchema();
 				expect( spy ).toHaveBeenCalled();
@@ -316,9 +315,9 @@ describe( module( "carbonldp/SPARQL/QueryDocument/QueryContext" ), ():void => {
 			} );
 
 
-			it( "should call to the documents `getSchemaFor` method", ():void => {
+			it( "should call to the registry `getSchemaFor` method", ():void => {
 				const queryContext:QueryContext = new QueryContext( context );
-				const spy:jasmine.Spy = spyOn( context.documents, "getSchemaFor" ).and.returnValue( null );
+				const spy:jasmine.Spy = spyOn( context.registry, "getSchemaFor" ).and.returnValue( null );
 
 				const object:object = { id: "http://example.com/", types: [ "http://example.com/Type" ] };
 

@@ -189,7 +189,6 @@ describe( module( "carbonldp/JSONLD/Converter" ), ():void => {
 					},
 					getPointer: ( id:string ):Pointer => {
 						let pointer:Pointer = Pointer.createFrom( { id } );
-						pointer._resolved = true;
 						return pointer;
 					},
 				};

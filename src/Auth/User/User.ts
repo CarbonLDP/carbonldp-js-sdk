@@ -1,4 +1,3 @@
-import { Documents } from "../../Documents";
 import { ObjectSchema } from "../../ObjectSchema";
 import { ProtectedDocument } from "../../ProtectedDocument";
 import {
@@ -29,7 +28,7 @@ export interface UserFactory extends TransientUserFactory {
 	isDecorated( object:object ):object is User;
 
 
-	decorate<T extends object>( object:T, documents:Documents ):User & T;
+	decorate<T extends object>( object:T ):User & T;
 }
 
 
@@ -60,9 +59,9 @@ export const User:UserFactory = {
 	},
 
 
-	decorate<T extends object>( object:T, documents:Documents ):User & T {
+	decorate<T extends object>( object:T ):User & T {
 		TransientUser.decorate( object );
-		ProtectedDocument.decorate( object, documents );
+		ProtectedDocument.decorate( object );
 
 		const persistedUser:T & User = object as T & User;
 		persistedUser.addType( TransientUser.TYPE );

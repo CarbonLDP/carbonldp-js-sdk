@@ -15,7 +15,7 @@ import { guessXSDType } from "./Utils";
 
 // TODO: Use Literal.Parsers to parse literals
 export class JSONLDConverter {
-	private _literalSerializers:Map<string, Serializer>;
+	private readonly _literalSerializers:Map<string, Serializer>;
 
 	get literalSerializers():Map<string, Serializer> { return this._literalSerializers; }
 
@@ -39,7 +39,10 @@ export class JSONLDConverter {
 	}
 
 	constructor( literalSerializers?:Map<string, Serializer> ) {
-		this._literalSerializers = ! ! literalSerializers ? literalSerializers : JSONLDConverter.getDefaultSerializers();
+		this._literalSerializers = literalSerializers ?
+			Utils.MapUtils.extend( new Map(), literalSerializers ) :
+			JSONLDConverter.getDefaultSerializers()
+		;
 	}
 
 	compact( expandedObjects:Object[], targetObjects:Object[], digestedSchema:ObjectSchema.DigestedObjectSchema, pointerLibrary:PointerLibrary ):Object[];
@@ -75,7 +78,15 @@ export class JSONLDConverter {
 		let expandedObject:any = {};
 
 		expandedObject[ "@id" ] = ! ! compactedObject[ "id" ] ? compactedObject[ "id" ] : "";
-		if( ! ! compactedObject[ "types" ] ) expandedObject[ "@type" ] = compactedObject[ "types" ].map( ( type:string ) => ObjectSchema.ObjectSchemaUtils.resolveURI( type, generalSchema, { vocab: true, base: true } ) );
+
+		if( compactedObject[ "types" ] ) {
+			const types:string[] = Array.isArray( compactedObject[ "types" ] ) ?
+				compactedObject[ "types" ] : [ compactedObject[ "types" ] ];
+
+			if( types.length )
+				expandedObject[ "@type" ] = types
+					.map( type => ObjectSchema.ObjectSchemaUtils.resolveURI( type, generalSchema, { vocab: true, base: true } ) );
+		}
 
 		Utils.forEachOwnProperty( compactedObject, ( propertyName:string, value:any ):void => {
 			if( propertyName === "id" ) return;

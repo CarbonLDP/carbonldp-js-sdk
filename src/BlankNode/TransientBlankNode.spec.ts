@@ -85,17 +85,8 @@ describe( module( "carbonldp/BlankNode" ), ():void => {
 				expect( TransientBlankNode.createFrom ).toEqual( jasmine.any( Function ) );
 			} );
 
-			it( "should maintain the _document reference", ():void => {
-				const bNode:TransientBlankNode = TransientBlankNode.create( {
-					_document: document,
-				} );
-
-				expect( bNode._document ).toBe( document );
-			} );
-
 			it( "should throw error if id not a blank node label", ():void => {
 				const object:BaseBlankNode = {
-					_document: document,
 					id: "not a blank-node label",
 				};
 				expect( () => TransientBlankNode.create( object ) ).toThrowError( IllegalArgumentError, `The id "not a blank-node label" is not a blank node label.` );
@@ -103,7 +94,6 @@ describe( module( "carbonldp/BlankNode" ), ():void => {
 
 			it( "should maintain the blank node label id", ():void => {
 				const bNode:TransientBlankNode = TransientBlankNode.create( {
-					_document: document,
 					id: "_:blank-node-label",
 				} );
 
@@ -111,7 +101,7 @@ describe( module( "carbonldp/BlankNode" ), ():void => {
 			} );
 
 			it( "should create a blank node label id not provided", ():void => {
-				const bNode:TransientBlankNode = TransientBlankNode.create( { _document: document } );
+				const bNode:TransientBlankNode = TransientBlankNode.create( {} );
 				expect( URI.isBNodeID( bNode.id ) ).toBe( true );
 			} );
 

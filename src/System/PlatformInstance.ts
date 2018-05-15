@@ -3,9 +3,12 @@ import { ObjectSchema } from "../ObjectSchema";
 import { Fragment } from "../Fragment";
 import { C } from "../Vocabularies/C";
 import { XSD } from "../Vocabularies/XSD";
+import { PlatformMetadata } from "./PlatformMetadata";
 
 
 export interface PlatformInstance extends VolatileResource, Fragment {
+	_registry:PlatformMetadata;
+
 	buildDate:Date;
 	version:string;
 }

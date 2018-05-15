@@ -1,11 +1,12 @@
+import { Document } from "../../Document";
 import { AbstractError } from "../../Errors";
 import { Error } from "../../LDP/Error";
 import { ErrorResponse } from "../../LDP/ErrorResponse";
-import { Document } from "../../Document";
 import { Response } from "../Response";
 export declare class HTTPError extends AbstractError implements ErrorResponse {
     static readonly statusCode: number;
     readonly name: string;
+    _registry: undefined;
     _id: string;
     _resolved: boolean;
     id: string;

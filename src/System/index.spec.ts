@@ -6,6 +6,7 @@ import {
 
 import * as System from "./";
 
+import { PlatformInstance } from "./PlatformInstance";
 import {
 	PlatformMetadata,
 	PlatformMetadataFactory,
@@ -34,6 +35,15 @@ describe( module( "carbonldp/System" ), () => {
 	), ():void => {
 		const target:System.PlatformMetadataFactory = {} as PlatformMetadataFactory;
 		expect( target ).toBeDefined();
+	} );
+
+	it( reexports(
+		INSTANCE,
+		"PlatformInstance",
+		"CarbonLDP.System.PlatformInstance"
+	), ():void => {
+		expect( System.PlatformInstance ).toBeDefined();
+		expect( System.PlatformInstance ).toBe( PlatformInstance );
 	} );
 
 } );

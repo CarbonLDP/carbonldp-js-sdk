@@ -17,6 +17,10 @@ export interface ErrorResponseFactory extends ModelSchema {
 	TYPE:C[ "ErrorResponse" ];
 	SCHEMA:ObjectSchema;
 
+
+	is( value:any ):value is ErrorResponse;
+
+
 	getMessage( errorResponse:ErrorResponse ):string;
 }
 
@@ -39,6 +43,14 @@ const SCHEMA:ObjectSchema = {
 export const ErrorResponse:ErrorResponseFactory = {
 	TYPE: C.ErrorResponse,
 	SCHEMA,
+
+
+	is( value:any ):value is ErrorResponse {
+		return TransientResource.is( value )
+			&& value.hasType( ErrorResponse.TYPE )
+			;
+	},
+
 
 	getMessage( errorResponse:ErrorResponse ):string {
 		return errorResponse

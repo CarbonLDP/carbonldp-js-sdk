@@ -1,30 +1,19 @@
-import { IllegalStateError } from "../Errors";
-
 import {
 	hasMethod,
 	hasProperty,
 	hasSignature,
 	interfaze,
-	isDefined,
 	method,
 	module,
 	OBLIGATORY,
 	property,
 	STATIC,
 } from "../test/JasmineExtender";
-import * as Module from "./Pointer";
-import {
-	isPointerResolved,
-	Pointer,
-	resolveStandalonePointer
-} from "./Pointer";
+
+import { Pointer } from "./Pointer";
+
 
 describe( module( "carbonldp/Pointer" ), ():void => {
-
-	it( isDefined(), ():void => {
-		expect( Module ).toBeDefined();
-		expect( Module ).toEqual( jasmine.any( Object ) );
-	} );
 
 	describe( interfaze(
 		"CarbonLDP.Pointer",
@@ -38,6 +27,7 @@ describe( module( "carbonldp/Pointer" ), ():void => {
 			"Private variable for the URI that identifies the pointer."
 		), ():void => {} );
 
+		// TODO: Mode to CRUDDocument
 		it( hasProperty(
 			OBLIGATORY,
 			"_resolved",
@@ -52,6 +42,7 @@ describe( module( "carbonldp/Pointer" ), ():void => {
 			"Accessor for the _id variable."
 		), ():void => {} );
 
+		// TODO: Mode to CRUDDocument
 		it( hasMethod(
 			OBLIGATORY,
 			"isResolved",
@@ -60,6 +51,7 @@ describe( module( "carbonldp/Pointer" ), ():void => {
 		), ():void => {} );
 
 
+		// TODO: Mode to CRUDDocument
 		describe( method( OBLIGATORY, "resolve" ), ():void => {
 
 			it( hasSignature(
@@ -176,37 +168,27 @@ describe( module( "carbonldp/Pointer" ), ():void => {
 
 			// TODO: Separate in different tests
 			it( "should test method", ():void => {
-				let pointer:any = undefined;
+				let pointer:Pointer | undefined = undefined;
 				expect( Pointer.isDecorated( pointer ) ).toBe( false );
 
 				pointer = {
+					_registry: void 0,
 					_id: null,
-					_resolved: null,
 					id: null,
-					isResolved: ():void => {},
-					resolve: ():void => {},
 				};
 				expect( Pointer.isDecorated( pointer ) ).toBe( true );
+
+				delete pointer._registry;
+				expect( Pointer.isDecorated( pointer ) ).toBe( true );
+				pointer._registry = void 0;
 
 				delete pointer._id;
 				expect( Pointer.isDecorated( pointer ) ).toBe( false );
 				pointer._id = null;
 
-				delete pointer._resolved;
-				expect( Pointer.isDecorated( pointer ) ).toBe( false );
-				pointer._resolved = null;
-
 				delete pointer.id;
 				expect( Pointer.isDecorated( pointer ) ).toBe( false );
 				pointer.id = null;
-
-				delete pointer.isResolved;
-				expect( Pointer.isDecorated( pointer ) ).toBe( false );
-				pointer.isResolved = ():void => {};
-
-				delete pointer.resolve;
-				expect( Pointer.isDecorated( pointer ) ).toBe( false );
-				pointer.resolve = ():void => {};
 			} );
 
 		} );
@@ -225,11 +207,9 @@ describe( module( "carbonldp/Pointer" ), ():void => {
 				expect( Pointer.is( {} ) ).toBe( false );
 
 				const target:Pointer = {
+					_registry: void 0,
 					_id: null,
-					_resolved: null,
 					id: null,
-					isResolved():any {},
-					resolve():any {},
 				};
 				expect( Pointer.is( target ) ).toBe( true );
 			} );
@@ -335,18 +315,6 @@ describe( module( "carbonldp/Pointer" ), ():void => {
 				expect( pointer._id ).toBe( "https://example.com/pointer/" );
 			} );
 
-
-			it( "should assign false to `Pointer._resolved` when not exists", ():void => {
-				const pointer:Pointer = Pointer.decorate( {} );
-				expect( pointer._resolved ).toBe( false );
-			} );
-
-			it( "should keep resolved in `Pointer._resolved` when already set", ():void => {
-				const pointer:Pointer = Pointer.decorate( { _resolved: true } );
-				expect( pointer._resolved ).toBe( true );
-			} );
-
-
 			it( "should set getter as `Pointer.id` of `Pointer._id` ", ():void => {
 				const pointer:Pointer = Pointer.decorate( {} );
 
@@ -359,17 +327,6 @@ describe( module( "carbonldp/Pointer" ), ():void => {
 
 				pointer.id = "https://example.com/pointer/";
 				expect( pointer._id ).toBe( "https://example.com/pointer/" );
-			} );
-
-
-			it( "should assign `isPointerResolved` as `Pointer.resolved`", ():void => {
-				const pointer:Pointer = Pointer.decorate( {} );
-				expect( pointer.isResolved ).toBe( isPointerResolved );
-			} );
-
-			it( "should assign `resolveStandalonePointer` as `Pointer.resolve`", ():void => {
-				const pointer:Pointer = Pointer.decorate( {} );
-				expect( pointer.resolve ).toBe( resolveStandalonePointer );
 			} );
 
 		} );
@@ -406,55 +363,6 @@ describe( module( "carbonldp/Pointer" ), ():void => {
 				expect( ids ).toContain( "http://example.com/resource-3/" );
 			} );
 
-		} );
-
-	} );
-
-
-	function createMockPointer<T extends {}>( base:T = {} as T ):T & Pointer {
-		base = Object.assign( base, { id: "https://example.com/pointer/" } );
-		return Pointer.decorate( base );
-	}
-
-	describe( "isPointerResolved", ():void => {
-
-		it( "should exist", ():void => {
-			expect( isPointerResolved ).toBeDefined();
-			expect( isPointerResolved ).toEqual( jasmine.any( Function ) );
-		} );
-
-		it( "should return false when `_resolved` is set to false", ():void => {
-			const pointer:Pointer = createMockPointer( { _resolved: false } );
-			expect( isPointerResolved.call( pointer ) ).toBe( false );
-		} );
-
-		it( "should return true when `_resolved` is set to true", ():void => {
-			const pointer:Pointer = createMockPointer( { _resolved: true } );
-			expect( isPointerResolved.call( pointer ) ).toBe( true );
-		} );
-
-	} );
-
-	describe( "resolveStandalonePointer", ():void => {
-
-		it( "should exist", ():void => {
-			expect( resolveStandalonePointer ).toBeDefined();
-			expect( resolveStandalonePointer ).toEqual( jasmine.any( Function ) );
-		} );
-
-		it( "should always return rejected promise", ( done:DoneFn ) => {
-			const pointer:Pointer = createMockPointer();
-
-			const promise:Promise<any> = resolveStandalonePointer.call( pointer );
-			expect( promise ).toEqual( jasmine.any( Promise ) );
-
-			promise
-				.then( () => done.fail( "Should not resolve." ) )
-				.catch( error => {
-					expect( () => { throw error; } ).toThrowError( IllegalStateError, "The pointer has not been assigned to a context." );
-					done();
-				} )
-			;
 		} );
 
 	} );

@@ -5,23 +5,25 @@ import {
 	PrefixToken
 } from "sparqler/tokens";
 
-import { Context } from "../../Context";
-import { IllegalArgumentError } from "../../Errors/IllegalArgumentError";
+import { AbstractContext } from "../../AbstractContext";
+import { IllegalArgumentError } from "../../Errors";
 import {
 	DigestedObjectSchema,
 	ObjectSchemaResolver,
 } from "../../ObjectSchema";
+import { Pointer } from "../../Pointer";
 import { QueryVariable } from "./QueryVariable";
 
+
 export class QueryContext implements ObjectSchemaResolver {
-	readonly context?:Context;
+	readonly context?:AbstractContext<Pointer, any>;
 
 	private _variablesCounter:number;
 	private _variablesMap:Map<string, QueryVariable>;
 
 	private _prefixesMap:Map<string, PrefixToken>;
 
-	constructor( context?:Context ) {
+	constructor( context?:AbstractContext<Pointer, any> ) {
 		this.context = context;
 
 		this._variablesCounter = 0;
@@ -39,8 +41,8 @@ export class QueryContext implements ObjectSchemaResolver {
 	}
 
 	serializeLiteral( type:string, value:any ):string {
-		if( ! this.context || ! this.context.documents.jsonldConverter.literalSerializers.has( type ) ) return "" + value;
-		return this.context.documents.jsonldConverter.literalSerializers.get( type ).serialize( value );
+		if( ! this.context || ! this.context.registry.jsonldConverter.literalSerializers.has( type ) ) return "" + value;
+		return this.context.registry.jsonldConverter.literalSerializers.get( type ).serialize( value );
 	}
 
 	compactIRI( iri:string ):IRIToken | PrefixedNameToken {
@@ -81,17 +83,17 @@ export class QueryContext implements ObjectSchemaResolver {
 
 	getGeneralSchema():DigestedObjectSchema {
 		if( ! this.context ) return new DigestedObjectSchema();
-		return this.context.documents.getGeneralSchema();
+		return this.context.registry.getGeneralSchema();
 	}
 
 	hasSchemaFor( object:object, path?:string ):boolean {
 		if( ! this.context ) return false;
-		return this.context.documents.hasSchemaFor( object );
+		return this.context.registry.hasSchemaFor( object );
 	}
 
 	getSchemaFor( object:object, path?:string ):DigestedObjectSchema {
 		if( ! this.context ) return new DigestedObjectSchema();
-		return this.context.documents.getSchemaFor( object );
+		return this.context.registry.getSchemaFor( object );
 	}
 
 }

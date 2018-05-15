@@ -19,7 +19,25 @@ exports.TransientBlankNode = {
         else if (!RDF_1.URI.isBNodeID(object.id)) {
             throw new Errors_1.IllegalArgumentError("The id \"" + object.id + "\" is not a blank node label.");
         }
-        return Fragment_1.TransientFragment.createFrom(object);
+        return exports.TransientBlankNode.decorate(object);
+    },
+    decorate: function (object) {
+        var resource = Fragment_1.TransientFragment.decorate(object);
+        Object.defineProperties(resource, {
+            "id": {
+                enumerable: false,
+                configurable: true,
+                get: function () {
+                    return this._id;
+                },
+                set: function (value) {
+                    if (!RDF_1.URI.isBNodeID(value))
+                        throw new Errors_1.IllegalActionError("Cannot assign \"" + value + "\" as a blank node ID.");
+                    this._id = value;
+                },
+            },
+        });
+        return resource;
     },
 };
 

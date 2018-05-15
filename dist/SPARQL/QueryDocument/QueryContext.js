@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 var iri_1 = require("sparqler/iri");
 var tokens_1 = require("sparqler/tokens");
-var IllegalArgumentError_1 = require("../../Errors/IllegalArgumentError");
+var Errors_1 = require("../../Errors");
 var ObjectSchema_1 = require("../../ObjectSchema");
 var QueryVariable_1 = require("./QueryVariable");
 var QueryContext = (function () {
@@ -20,9 +20,9 @@ var QueryContext = (function () {
         return variable;
     };
     QueryContext.prototype.serializeLiteral = function (type, value) {
-        if (!this.context || !this.context.documents.jsonldConverter.literalSerializers.has(type))
+        if (!this.context || !this.context.registry.jsonldConverter.literalSerializers.has(type))
             return "" + value;
-        return this.context.documents.jsonldConverter.literalSerializers.get(type).serialize(value);
+        return this.context.registry.jsonldConverter.literalSerializers.get(type).serialize(value);
     };
     QueryContext.prototype.compactIRI = function (iri) {
         if (!this.context) {
@@ -49,7 +49,7 @@ var QueryContext = (function () {
         namespace = prefixedName.namespace;
         if (!this._prefixesMap.has(namespace)) {
             if (!schema.prefixes.has(namespace))
-                throw new IllegalArgumentError_1.IllegalArgumentError("Prefix \"" + namespace + "\" has not been declared.");
+                throw new Errors_1.IllegalArgumentError("Prefix \"" + namespace + "\" has not been declared.");
             var prefixIRI = new tokens_1.IRIToken(schema.prefixes.get(namespace));
             this._prefixesMap.set(namespace, new tokens_1.PrefixToken(namespace, prefixIRI));
         }
@@ -61,17 +61,17 @@ var QueryContext = (function () {
     QueryContext.prototype.getGeneralSchema = function () {
         if (!this.context)
             return new ObjectSchema_1.DigestedObjectSchema();
-        return this.context.documents.getGeneralSchema();
+        return this.context.registry.getGeneralSchema();
     };
     QueryContext.prototype.hasSchemaFor = function (object, path) {
         if (!this.context)
             return false;
-        return this.context.documents.hasSchemaFor(object);
+        return this.context.registry.hasSchemaFor(object);
     };
     QueryContext.prototype.getSchemaFor = function (object, path) {
         if (!this.context)
             return new ObjectSchema_1.DigestedObjectSchema();
-        return this.context.documents.getSchemaFor(object);
+        return this.context.registry.getSchemaFor(object);
     };
     return QueryContext;
 }());

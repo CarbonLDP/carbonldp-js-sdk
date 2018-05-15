@@ -5,7 +5,7 @@ function __export(m) {
 Object.defineProperty(exports, "__esModule", { value: true });
 __export(require("./AccessPointCreated"));
 __export(require("./ChildCreated"));
-__export(require("./Document"));
+__export(require("./MessagingDocument"));
 __export(require("./DocumentCreated"));
 __export(require("./DocumentCreatedDetails"));
 __export(require("./DocumentDeleted"));

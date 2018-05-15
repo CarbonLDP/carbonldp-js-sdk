@@ -1,6 +1,6 @@
 export * from "./AccessPointCreated";
 export * from "./ChildCreated";
-export * from "./Document";
+export * from "./MessagingDocument";
 export * from "./DocumentCreated";
 export * from "./DocumentCreatedDetails";
 export * from "./DocumentDeleted";

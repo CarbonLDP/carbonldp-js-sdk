@@ -9,22 +9,15 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
-    result["default"] = mod;
-    return result;
-}
 Object.defineProperty(exports, "__esModule", { value: true });
-var Errors = __importStar(require("../Errors"));
+var Errors_1 = require("../Errors");
 var HTTP_1 = require("../HTTP");
-var Errors_1 = require("../HTTP/Errors");
+var Errors_2 = require("../HTTP/Errors");
 var LDP_1 = require("../LDP");
-var Node_1 = require("../RDF/Node");
+var RDF_1 = require("../RDF");
 var Utils_1 = require("../Utils");
 var Vocabularies_1 = require("../Vocabularies");
-var Authenticator_1 = require("./Authenticator");
+var AbstractAuthenticator_1 = require("./AbstractAuthenticator");
 var BasicAuthenticator_1 = require("./BasicAuthenticator");
 var TokenCredentials_1 = require("./TokenCredentials");
 var TokenAuthenticator = (function (_super) {
@@ -48,7 +41,7 @@ var TokenAuthenticator = (function (_super) {
         return Utils_1.promiseMethod(function () {
             var credentials = TokenCredentials_1.TokenCredentials.createFrom(credentialsBase);
             if (credentials.expires <= new Date())
-                throw new Errors.IllegalArgumentError("The token has already expired.");
+                throw new Errors_1.IllegalArgumentError("The token has already expired.");
             return _this._credentials = credentials;
         });
     };
@@ -75,26 +68,25 @@ var TokenAuthenticator = (function (_super) {
             return accessor;
         var preference = response.getHeader("preference-applied");
         if (!preference || !preference.hasValue(authTokenPrefer))
-            throw new Errors_1.BadResponseError("Preference \"" + authTokenPrefer + "\" was not applied.", response);
+            throw new Errors_2.BadResponseError("Preference \"" + authTokenPrefer + "\" was not applied.", response);
         this._parseRDFCredentials(rdfData, response);
         return accessor;
     };
     TokenAuthenticator.prototype._parseRDFCredentials = function (rdfData, response) {
-        var freeNodes = Node_1.RDFNode.getFreeNodes(rdfData);
-        var freeResources = this.context.documents
-            ._getFreeResources(freeNodes);
-        var responseMetadata = freeResources
-            .getResources()
+        var freeNodes = RDF_1.RDFNode.getFreeNodes(rdfData);
+        var freeResources = this.context.registry
+            ._parseFreeNodes(freeNodes);
+        var responseMetadata = freeResources.getPointers()
             .find(LDP_1.ResponseMetadata.is);
         if (!responseMetadata)
-            throw new Errors_1.BadResponseError("No \"" + LDP_1.ResponseMetadata.TYPE + "\" was returned.", response);
+            throw new Errors_2.BadResponseError("No \"" + LDP_1.ResponseMetadata.TYPE + "\" was returned.", response);
         var tokenCredentials = responseMetadata.authToken;
         if (!tokenCredentials)
-            throw new Errors_1.BadResponseError("No \"" + TokenCredentials_1.TokenCredentials.TYPE + "\" was returned.", response);
+            throw new Errors_2.BadResponseError("No \"" + TokenCredentials_1.TokenCredentials.TYPE + "\" was returned.", response);
         return this._credentials = tokenCredentials;
     };
     return TokenAuthenticator;
-}(Authenticator_1.Authenticator));
+}(AbstractAuthenticator_1.AbstractAuthenticator));
 exports.TokenAuthenticator = TokenAuthenticator;
 
 //# sourceMappingURL=TokenAuthenticator.js.map

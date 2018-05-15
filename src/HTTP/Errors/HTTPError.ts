@@ -1,7 +1,7 @@
+import { Document } from "../../Document";
 import { AbstractError } from "../../Errors";
 import { Error } from "../../LDP/Error";
 import { ErrorResponse } from "../../LDP/ErrorResponse";
-import { Document } from "../../Document";
 import { TransientResource } from "../../Resource";
 import { Response } from "../Response";
 
@@ -9,6 +9,8 @@ export class HTTPError extends AbstractError implements ErrorResponse {
 	static get statusCode():number { return null; }
 
 	get name():string { return "HTTPError"; }
+
+	_registry:undefined;
 
 	_id:string;
 	_resolved:boolean;

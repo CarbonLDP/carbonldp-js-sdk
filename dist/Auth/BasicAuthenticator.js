@@ -12,7 +12,7 @@ var __extends = (this && this.__extends) || (function () {
 Object.defineProperty(exports, "__esModule", { value: true });
 var Errors_1 = require("../Errors");
 var Utils_1 = require("../Utils");
-var Authenticator_1 = require("./Authenticator");
+var AbstractAuthenticator_1 = require("./AbstractAuthenticator");
 var BasicCredentials_1 = require("./BasicCredentials");
 var BasicAuthenticator = (function (_super) {
     __extends(BasicAuthenticator, _super);
@@ -36,7 +36,7 @@ var BasicAuthenticator = (function (_super) {
         return "Basic " + toB64(this._credentials.username + ":" + this._credentials.password);
     };
     return BasicAuthenticator;
-}(Authenticator_1.Authenticator));
+}(AbstractAuthenticator_1.AbstractAuthenticator));
 exports.BasicAuthenticator = BasicAuthenticator;
 function toB64(str) {
     return (typeof btoa !== "undefined") ? btoa(str) : new Buffer(str).toString("base64");

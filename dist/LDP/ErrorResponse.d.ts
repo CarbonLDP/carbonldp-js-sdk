@@ -11,6 +11,7 @@ export interface ErrorResponse extends TransientResource {
 export interface ErrorResponseFactory extends ModelSchema {
     TYPE: C["ErrorResponse"];
     SCHEMA: ObjectSchema;
+    is(value: any): value is ErrorResponse;
     getMessage(errorResponse: ErrorResponse): string;
 }
 export declare const ErrorResponse: ErrorResponseFactory;

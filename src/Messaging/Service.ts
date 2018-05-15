@@ -1,12 +1,15 @@
 import SockJS from "sockjs-client";
 import * as webstomp from "webstomp-client";
-import { Client, Frame } from "webstomp-client";
+import {
+	Client,
+	Frame
+} from "webstomp-client";
 
 import { CarbonLDP } from "../CarbonLDP";
 import { IllegalStateError } from "../Errors";
 import { FreeResources } from "../FreeResources";
-import { JSONLDParser } from "../JSONLD/Parser";
-import { RDFNode } from "../RDF/Node";
+import { JSONLDParser } from "../JSONLD";
+import { RDFNode } from "../RDF";
 import { UUIDUtils } from "../Utils";
 import { EventMessage } from "./EventMessage";
 import { MessagingOptions } from "./Options";
@@ -54,7 +57,7 @@ export class MessagingService {
 		this.reconnect( onConnect, onError );
 	}
 
-	reconnect( onConnect?:() => void, onError:( error:Error ) => void = this.broadcastError.bind( this ) ):void {
+	reconnect( onConnect?:() => void, onError:( error:Error ) => void = this._broadcastError.bind( this ) ):void {
 		if( ! this._client ) this._attempts = 0;
 		else if( this._client.connected ) this._client.disconnect();
 		if( ! this._subscriptionsMap ) this._subscriptionsMap = new Map();
@@ -76,7 +79,7 @@ export class MessagingService {
 			let errorMessage:string;
 			if( "reason" in errorFrameOrEvent ) {
 				if( canReconnect ) {
-					if( ++ this._attempts === 1 ) this.storeSubscriptions();
+					if( ++ this._attempts === 1 ) this._saveSubscriptions();
 					setTimeout( () => this.reconnect( onConnect, onError ), this._options.reconnectDelay );
 					return;
 				}
@@ -105,7 +108,7 @@ export class MessagingService {
 			errorCallback: onError,
 		} );
 
-		const subscribeTo:() => void = this.makeSubscription( subscriptionID, destination, onEvent, onError );
+		const subscribeTo:() => void = this._makeSubscription( subscriptionID, destination, onEvent, onError );
 		if( this._client.connected ) return subscribeTo();
 		this._subscriptionsQueue.push( subscribeTo );
 	}
@@ -124,30 +127,40 @@ export class MessagingService {
 		this._client.unsubscribe( subscriptionID );
 	}
 
-	private broadcastError( error:Error ):void {
+	private _broadcastError( error:Error ):void {
 		if( ! this._subscriptionsMap ) return;
 		this._subscriptionsMap.forEach( callbacksMap => callbacksMap.forEach( subscription => {
 			subscription.errorCallback( error );
 		} ) );
 	}
 
-	private makeSubscription( id:string, destination:string, eventCallback:( data:EventMessage ) => void, errorCallback:( error:Error ) => void ):() => void {
+	private _makeSubscription( id:string, destination:string, eventCallback:( data:EventMessage ) => void, errorCallback:( error:Error ) => void ):() => void {
 		return () => this._client.subscribe( destination, message => {
 			new JSONLDParser()
 				.parse( message.body )
 				.then( ( data:RDFNode[] ) => {
-					const freeResources:FreeResources = this.context.documents._getFreeResources( data );
-					return freeResources.getResources().find( EventMessage.is );
+					const freeResources:FreeResources = this.context
+						.registry._parseFreeNodes( data );
+
+					const eventMessage:EventMessage | undefined = freeResources
+						.getPointers( true )
+						.find( EventMessage.is );
+
+					// TODO: Implement specific error
+					if( ! eventMessage )
+						throw new Error( "No message was returned by the notification." );
+
+					return eventMessage;
 				} )
 				.then( eventCallback )
 				.catch( errorCallback );
 		}, { id } );
 	}
 
-	private storeSubscriptions():void {
+	private _saveSubscriptions():void {
 		if( this._subscriptionsQueue.length || ! this._subscriptionsMap ) return;
 		this._subscriptionsMap.forEach( ( callbackMap, destination ) => callbackMap.forEach( ( subscription, eventCallback ) => {
-			const subscribeTo:() => void = this.makeSubscription( subscription.id, destination, eventCallback, subscription.errorCallback );
+			const subscribeTo:() => void = this._makeSubscription( subscription.id, destination, eventCallback, subscription.errorCallback );
 			this._subscriptionsQueue.push( subscribeTo );
 		} ) );
 	}

@@ -2,9 +2,12 @@ import {
 	Document,
 	TransientDocument
 } from "../../Document";
-import { Documents } from "../../Documents";
 import { TransientFragment } from "../../Fragment";
 import { Pointer } from "../../Pointer";
+import {
+	DocumentsRegistry,
+	RegistryService
+} from "../../Registry";
 import {
 	extendsClass,
 	hasMethod,
@@ -405,11 +408,11 @@ describe( module( "carbonldp/Auth/ACL" ), ():void => {
 			expect( TransientACL.decorate ).toBeDefined();
 			expect( Utils.isFunction( TransientACL.decorate ) ).toBe( true );
 
-			let document:Document = Document.decorate( {
+			let document:TransientDocument = Document.create( {
 				id: "http://example.com/resource/~acl/",
-			}, new Documents() );
+				accessTo: null,
+			} );
 			let acl:TransientACL = TransientACL.decorate( document );
-			acl.accessTo = acl.getPointer( "http://example.com/resource/" );
 
 			expect( TransientACL.isDecorated( acl ) );
 		} );
@@ -425,9 +428,10 @@ describe( module( "carbonldp/Auth/ACL" ), ():void => {
 			}
 
 			beforeEach( ():void => {
-				let document:Document = Document.decorate( {
+				const document:TransientDocument = Document.create( {
+					_registry: new RegistryService( Pointer ),
 					id: "http://example.com/resource/~acl/",
-				}, new Documents() );
+				} );
 				acl = TransientACL.decorate( document );
 				acl.accessTo = acl.getPointer( "http://example.com/resource/" );
 			} );

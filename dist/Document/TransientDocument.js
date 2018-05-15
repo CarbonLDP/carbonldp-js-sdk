@@ -1,100 +1,146 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var BlankNode_1 = require("../BlankNode");
+var core_1 = require("../core");
 var Errors_1 = require("../Errors");
 var JSONLD_1 = require("../JSONLD");
 var NamedFragment_1 = require("../NamedFragment");
 var ObjectSchema_1 = require("../ObjectSchema");
+var Pointer_1 = require("../Pointer");
 var RDF_1 = require("../RDF");
+var Registry_1 = require("../Registry");
 var Resource_1 = require("../Resource");
 var Utils_1 = require("../Utils");
 var Vocabularies_1 = require("../Vocabularies");
+var PROTOTYPE = {
+    _context: void 0,
+    _registry: void 0,
+    _normalize: function () {
+        var _this = this;
+        var currentBNodes = this.getFragments()
+            .map(Pointer_1.Pointer.getID)
+            .filter(RDF_1.URI.isBNodeID);
+        var usedFragmentsIDs = new Set();
+        exports.TransientDocument._convertNestedObjects(this, this, usedFragmentsIDs);
+        currentBNodes.forEach(function (bNode) {
+            if (usedFragmentsIDs.has(bNode))
+                return;
+            _this._resourcesMap.delete(bNode);
+        });
+    },
+    _getLocalID: function (id) {
+        id = Registry_1.Registry.PROTOTYPE._getLocalID.call(this, id);
+        if (RDF_1.URI.isBNodeID(id))
+            return id;
+        if (RDF_1.URI.isFragmentOf(id, this.id))
+            return RDF_1.URI.getFragment(id);
+        if (RDF_1.URI.isRelative(id))
+            return id;
+        return null;
+    },
+    _register: function (base) {
+        if (base.slug)
+            base.id = base.slug;
+        if (!base.id)
+            base.id = RDF_1.URI.generateBNodeID();
+        var pointer = Registry_1.Registry.PROTOTYPE._register.call(this, base);
+        exports.TransientDocument._convertNestedObjects(this, pointer);
+        if (RDF_1.URI.isBNodeID(pointer.id))
+            return BlankNode_1.TransientBlankNode.decorate(pointer);
+        var resource = NamedFragment_1.TransientNamedFragment.decorate(pointer);
+        resource.slug = this._getLocalID(resource._id);
+        return resource;
+    },
+    hasFragment: function (id) {
+        if (!this.inScope(id))
+            return false;
+        var localID = this._getLocalID(id);
+        return this._resourcesMap.has(localID);
+    },
+    getFragment: function (id) {
+        if (!this.inScope(id))
+            throw new Errors_1.IllegalArgumentError("\"" + id + "\" is outside the scope of the registry.");
+        var localID = this._getLocalID(id);
+        var resource = this._resourcesMap.get(localID);
+        if (!resource)
+            return null;
+        return resource;
+    },
+    getNamedFragment: function (slug) {
+        if (RDF_1.URI.isBNodeID(slug))
+            throw new Errors_1.IllegalArgumentError("Invalid named fragment slug \"" + slug + "\", it can't start with \"_:\".");
+        return this.getFragment(slug);
+    },
+    getFragments: function () {
+        return Array.from(this._resourcesMap.values());
+    },
+    createFragment: function (isOrObject, id) {
+        var object = Utils_1.isObject(isOrObject) ? isOrObject : {};
+        id = Utils_1.isString(isOrObject) ? isOrObject : id;
+        if (id)
+            object.id = id;
+        return this._register(object);
+    },
+    createNamedFragment: function (slugOrObject, slug) {
+        slug = Utils_1.isString(slugOrObject) ? slugOrObject : slug;
+        if (!slug)
+            throw new Errors_1.IllegalArgumentError("The slug can't be empty.");
+        if (RDF_1.URI.isBNodeID(slug))
+            throw new Errors_1.IllegalArgumentError("Invalid named fragment slug \"" + slug + "\", it can't start with \"_:\".");
+        var object = Utils_1.isObject(slugOrObject) ? slugOrObject : {};
+        var base = Object.assign(object, { slug: slug });
+        return this._register(base);
+    },
+    removeNamedFragment: function (fragmentOrSlug) {
+        var id = Pointer_1.Pointer.getID(fragmentOrSlug);
+        if (RDF_1.URI.isBNodeID(id))
+            throw new Errors_1.IllegalArgumentError("\"" + id + "\" is not a valid named fragment.");
+        return this._removeFragment(id);
+    },
+    _removeFragment: function (fragmentOrSlug) {
+        if (!this.inScope(fragmentOrSlug))
+            return false;
+        return this.removePointer(fragmentOrSlug);
+    },
+    toJSON: function (registryOrKey) {
+        var registry = Utils_1.isObject(registryOrKey) ?
+            registryOrKey : this._registry;
+        var generalSchema = registry ?
+            registry.getGeneralSchema() : new ObjectSchema_1.DigestedObjectSchema();
+        var jsonldConverter = registry ?
+            registry.jsonldConverter : new JSONLD_1.JSONLDConverter();
+        var expandedResources = [this].concat(this.getFragments()).map(function (resource) {
+            var resourceSchema = registry ?
+                registry.getSchemaFor(resource) :
+                new ObjectSchema_1.DigestedObjectSchema();
+            return jsonldConverter.expand(resource, generalSchema, resourceSchema);
+        });
+        return {
+            "@id": this.id,
+            "@graph": expandedResources,
+        };
+    },
+};
 exports.TransientDocument = {
+    PROTOTYPE: PROTOTYPE,
     TYPE: Vocabularies_1.C.Document,
     isDecorated: function (object) {
-        return Utils_1.isObject(object) &&
-            Utils_1.hasPropertyDefined(object, "_fragmentsIndex") &&
-            Utils_1.hasFunction(object, "_normalize") &&
-            Utils_1.hasFunction(object, "_removeFragment") &&
-            Utils_1.hasFunction(object, "hasPointer") &&
-            Utils_1.hasFunction(object, "getPointer") &&
-            Utils_1.hasFunction(object, "inScope") &&
-            Utils_1.hasFunction(object, "hasFragment") &&
-            Utils_1.hasFunction(object, "getFragment") &&
-            Utils_1.hasFunction(object, "getNamedFragment") &&
-            Utils_1.hasFunction(object, "getFragments") &&
-            Utils_1.hasFunction(object, "createFragment") &&
-            Utils_1.hasFunction(object, "createNamedFragment") &&
-            Utils_1.hasFunction(object, "removeNamedFragment") &&
-            Utils_1.hasFunction(object, "toJSON");
+        return Utils_1.isObject(object)
+            && core_1.ModelDecorator
+                .hasPropertiesFrom(PROTOTYPE, object);
     },
     is: function (value) {
         return Resource_1.TransientResource.is(value) &&
+            Registry_1.Registry.isDecorated(value) &&
             exports.TransientDocument.isDecorated(value);
     },
     decorate: function (object) {
         if (exports.TransientDocument.isDecorated(object))
             return object;
-        Resource_1.TransientResource.decorate(object);
-        Object.defineProperties(object, {
-            "_fragmentsIndex": {
-                configurable: true,
-                value: new Map(),
-            },
-            "_normalize": {
-                configurable: true,
-                value: normalize,
-            },
-            "_removeFragment": {
-                configurable: true,
-                value: removeFragment,
-            },
-            "hasPointer": {
-                configurable: true,
-                value: hasPointer,
-            },
-            "getPointer": {
-                configurable: true,
-                value: getPointer,
-            },
-            "inScope": {
-                configurable: true,
-                value: inScope,
-            },
-            "hasFragment": {
-                configurable: true,
-                value: hasFragment,
-            },
-            "getFragment": {
-                configurable: true,
-                value: getFragment,
-            },
-            "getNamedFragment": {
-                configurable: true,
-                value: getNamedFragment,
-            },
-            "getFragments": {
-                configurable: true,
-                value: getFragments,
-            },
-            "createFragment": {
-                configurable: true,
-                value: createFragment,
-            },
-            "createNamedFragment": {
-                configurable: true,
-                value: createNamedFragment,
-            },
-            "removeNamedFragment": {
-                configurable: true,
-                value: removeNamedFragment,
-            },
-            "toJSON": {
-                configurable: true,
-                value: toJSON,
-            },
-        });
-        return object;
+        var resource = core_1.ModelDecorator
+            .decorateMultiple(object, Resource_1.TransientResource, Registry_1.Registry);
+        return core_1.ModelDecorator
+            .definePropertiesFrom(PROTOTYPE, resource);
     },
     createFrom: function (object) {
         if (exports.TransientDocument.is(object))
@@ -118,10 +164,12 @@ exports.TransientDocument = {
             }
             if (!Utils_1.isPlainObject(next))
                 continue;
+            if (next._registry)
+                continue;
             if (exports.TransientDocument.is(next))
                 continue;
             var idOrSlug = getNestedObjectId(next);
-            if (!!idOrSlug && !inScope.call(parent, idOrSlug))
+            if (!!idOrSlug && !parent.inScope(idOrSlug))
                 continue;
             var parentFragment = parent.getFragment(idOrSlug);
             if (!parentFragment) {
@@ -137,6 +185,7 @@ exports.TransientDocument = {
                 exports.TransientDocument._convertNestedObjects(parent, next, fragmentsTracker);
             }
         }
+        return actual;
     },
 };
 function getNestedObjectId(object) {
@@ -146,151 +195,6 @@ function getNestedObjectId(object) {
         return RDF_1.URI.hasFragment(object.slug) ?
             object.slug : "#" + object.slug;
     return "";
-}
-function hasPointer(id) {
-    if (id === this.id)
-        return true;
-    if (!this.inScope(id))
-        return false;
-    return this.hasFragment(id);
-}
-function getPointer(id) {
-    if (!this.inScope(id))
-        return null;
-    if (id === this.id)
-        return this;
-    return this.hasFragment(id) ?
-        this.getFragment(id) :
-        this.createFragment(id);
-}
-function inScope(idOrPointer) {
-    var id = Utils_1.isString(idOrPointer) ? idOrPointer : idOrPointer.id;
-    if (id === this.id)
-        return true;
-    if (RDF_1.URI.isBNodeID(id))
-        return true;
-    if (RDF_1.URI.isFragmentOf(id, this.id))
-        return true;
-    return id.startsWith("#");
-}
-function hasFragment(id) {
-    if (RDF_1.URI.isAbsolute(id)) {
-        if (!RDF_1.URI.isFragmentOf(id, this.id))
-            return false;
-        id = RDF_1.URI.hasFragment(id) ? RDF_1.URI.getFragment(id) : id;
-    }
-    else if (id.startsWith("#")) {
-        id = id.substring(1);
-    }
-    return this._fragmentsIndex.has(id);
-}
-function getFragment(id) {
-    if (!RDF_1.URI.isBNodeID(id))
-        return this.getNamedFragment(id);
-    return this._fragmentsIndex.get(id) || null;
-}
-function getNamedFragment(id) {
-    if (RDF_1.URI.isBNodeID(id))
-        throw new Errors_1.IllegalArgumentError("Named fragments can't have a id that starts with '_:'.");
-    if (RDF_1.URI.isAbsolute(id)) {
-        if (!RDF_1.URI.isFragmentOf(id, this.id))
-            throw new Errors_1.IllegalArgumentError("The id is out of scope.");
-        id = RDF_1.URI.hasFragment(id) ? RDF_1.URI.getFragment(id) : id;
-    }
-    else if (id.startsWith("#")) {
-        id = id.substring(1);
-    }
-    return this._fragmentsIndex.get(id) || null;
-}
-function getFragments() {
-    return Array.from(this._fragmentsIndex.values());
-}
-function createFragment(slugOrObject, slug) {
-    slug = Utils_1.isString(slugOrObject) ? slugOrObject : slug;
-    var object = !Utils_1.isString(slugOrObject) && !!slugOrObject ? slugOrObject : {};
-    if (slug) {
-        if (!RDF_1.URI.isBNodeID(slug))
-            return this.createNamedFragment(object, slug);
-        if (this._fragmentsIndex.has(slug))
-            throw new Errors_1.IDAlreadyInUseError("The slug provided is already being used by a fragment.");
-    }
-    var baseBNode = Object.assign(object, {
-        _document: this,
-        id: slug,
-    });
-    var fragment = BlankNode_1.TransientBlankNode.createFrom(baseBNode);
-    this._fragmentsIndex.set(fragment.id, fragment);
-    exports.TransientDocument._convertNestedObjects(this, fragment);
-    return fragment;
-}
-function createNamedFragment(slugOrObject, slug) {
-    slug = Utils_1.isString(slugOrObject) ? slugOrObject : slug;
-    var object = !Utils_1.isString(slugOrObject) && !!slugOrObject ? slugOrObject : {};
-    if (RDF_1.URI.isBNodeID(slug))
-        throw new Errors_1.IllegalArgumentError("Named fragments can't have a slug that starts with '_:'.");
-    if (RDF_1.URI.isAbsolute(slug)) {
-        if (!RDF_1.URI.isFragmentOf(slug, this.id))
-            throw new Errors_1.IllegalArgumentError("The slug is out of scope.");
-        slug = RDF_1.URI.hasFragment(slug) ? RDF_1.URI.getFragment(slug) : slug;
-    }
-    else if (slug.startsWith("#"))
-        slug = slug.substring(1);
-    if (this._fragmentsIndex.has(slug))
-        throw new Errors_1.IDAlreadyInUseError("The slug provided is already being used by a fragment.");
-    var baseFragment = Object.assign(object, {
-        _document: this,
-        slug: slug,
-    });
-    var fragment = NamedFragment_1.TransientNamedFragment.createFrom(baseFragment);
-    this._fragmentsIndex.set(slug, fragment);
-    exports.TransientDocument._convertNestedObjects(this, fragment);
-    return fragment;
-}
-function removeFragment(fragmentOrSlug) {
-    var id = Utils_1.isString(fragmentOrSlug) ? fragmentOrSlug : fragmentOrSlug.id;
-    if (RDF_1.URI.isAbsolute(id)) {
-        if (!RDF_1.URI.isFragmentOf(id, this.id))
-            return;
-        id = RDF_1.URI.hasFragment(id) ? RDF_1.URI.getFragment(id) : id;
-    }
-    else if (id.startsWith("#")) {
-        id = id.substring(1);
-    }
-    this._fragmentsIndex.delete(id);
-}
-function removeNamedFragment(fragmentOrSlug) {
-    var id = Utils_1.isString(fragmentOrSlug) ? fragmentOrSlug : fragmentOrSlug.id;
-    if (RDF_1.URI.isBNodeID(id))
-        throw new Errors_1.IllegalArgumentError("You can only remove NamedFragments.");
-    this._removeFragment(id);
-}
-function toJSON(keyOrObjectSchemaResolver, jsonldConverter) {
-    if (jsonldConverter === void 0) { jsonldConverter = new JSONLD_1.JSONLDConverter(); }
-    var objectSchemaResolver = Utils_1.isObject(keyOrObjectSchemaResolver) ?
-        keyOrObjectSchemaResolver : null;
-    var generalSchema = objectSchemaResolver ?
-        objectSchemaResolver.getGeneralSchema() : new ObjectSchema_1.DigestedObjectSchema();
-    var resources = [this].concat(this.getFragments());
-    var expandedResources = resources.map(function (resource) {
-        var resourceSchema = objectSchemaResolver ? objectSchemaResolver.getSchemaFor(resource) : new ObjectSchema_1.DigestedObjectSchema();
-        return jsonldConverter.expand(resource, generalSchema, resourceSchema);
-    });
-    return {
-        "@id": this.id,
-        "@graph": expandedResources,
-    };
-}
-function normalize() {
-    var _this = this;
-    var currentFragments = this.getFragments()
-        .filter(function (fragment) { return RDF_1.URI.isBNodeID(fragment.id); });
-    var usedFragmentsIDs = new Set();
-    exports.TransientDocument._convertNestedObjects(this, this, usedFragmentsIDs);
-    currentFragments.forEach(function (fragment) {
-        if (usedFragmentsIDs.has(fragment.id))
-            return;
-        _this._fragmentsIndex.delete(fragment.id);
-    });
 }
 
 //# sourceMappingURL=TransientDocument.js.map

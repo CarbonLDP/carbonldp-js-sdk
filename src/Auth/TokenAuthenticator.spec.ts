@@ -1,9 +1,9 @@
+import { CarbonLDP } from "../CarbonLDP";
 import { IllegalArgumentError } from "../Errors";
 import { BadResponseError } from "../HTTP/Errors/ServerErrors";
 import { Header } from "../HTTP/Header";
 import { RequestOptions } from "../HTTP/Request";
-import { Resource } from "../Resource";
-import { ContextSettings } from "../Settings";
+import { TransientResource } from "../Resource";
 import {
 	clazz,
 	hasSignature,
@@ -15,7 +15,6 @@ import {
 import { C } from "../Vocabularies/C";
 import { CS } from "../Vocabularies/CS";
 import { XSD } from "../Vocabularies/XSD";
-import { AbstractContext } from "./../AbstractContext";
 import * as Utils from "./../Utils";
 import { BasicToken } from "./BasicToken";
 
@@ -36,28 +35,18 @@ describe( module( "carbonldp/Auth/TokenAuthenticator" ), ():void => {
 		]
 	), ():void => {
 
-		let context:AbstractContext;
+		let context:CarbonLDP;
 		beforeEach( function():void {
 			jasmine.Ajax.install();
 
-			context = new class extends AbstractContext {
-				protected _baseURI:string = "https://example.com/";
-				protected settings:ContextSettings = {
-					paths: {
-						users: {
-							slug: "users/",
-							paths: { me: "me/" },
-						},
-					},
-				};
-			};
+			context = new CarbonLDP( "https://example.com/" );
 		} );
 
 		afterEach( function():void {
 			jasmine.Ajax.uninstall();
 		} );
 
-		function createAuthenticatorWith( credentials?:TokenCredentials ):TokenAuthenticator {
+		function createMockTokenAuthenticator( credentials?:TokenCredentials ):TokenAuthenticator {
 			return new class extends TokenAuthenticator {
 				constructor() {
 					super( context );
@@ -85,12 +74,12 @@ describe( module( "carbonldp/Auth/TokenAuthenticator" ), ():void => {
 			} );
 
 			it( "should return false when no credentials", ():void => {
-				const authenticator:TokenAuthenticator = createAuthenticatorWith();
+				const authenticator:TokenAuthenticator = createMockTokenAuthenticator();
 				expect( authenticator.isAuthenticated() ).toBe( false );
 			} );
 
 			it( "should return false when null credentials", ():void => {
-				const authenticator:TokenAuthenticator = createAuthenticatorWith( null );
+				const authenticator:TokenAuthenticator = createMockTokenAuthenticator( null );
 				expect( authenticator.isAuthenticated() ).toBe( false );
 			} );
 
@@ -98,25 +87,25 @@ describe( module( "carbonldp/Auth/TokenAuthenticator" ), ():void => {
 				const expires:Date = new Date();
 				expires.setDate( expires.getDate() + 1 );
 
-				const credentials:TokenCredentials = Resource.createFrom( {
+				const credentials:TokenCredentials = TransientResource.createFrom( {
 					id: "_:1",
 					token: "token-value",
 					expires: expires,
 				} );
 
-				const authenticator:TokenAuthenticator = createAuthenticatorWith( credentials );
+				const authenticator:TokenAuthenticator = createMockTokenAuthenticator( credentials );
 				expect( authenticator.isAuthenticated() ).toBe( true );
 			} );
 
 			it( "should return true when expired credentials with by current time", ():void => {
 				const expires:Date = new Date();
-				const credentials:TokenCredentials = Resource.createFrom( {
+				const credentials:TokenCredentials = TransientResource.createFrom( {
 					id: "_:1",
 					token: "token-value",
 					expires: expires,
 				} );
 
-				const authenticator:TokenAuthenticator = createAuthenticatorWith( credentials );
+				const authenticator:TokenAuthenticator = createMockTokenAuthenticator( credentials );
 				expect( authenticator.isAuthenticated() ).toBe( false );
 			} );
 
@@ -124,13 +113,13 @@ describe( module( "carbonldp/Auth/TokenAuthenticator" ), ():void => {
 				const expires:Date = new Date();
 				expires.setDate( expires.getDate() - 1 );
 
-				const credentials:TokenCredentials = Resource.createFrom( {
+				const credentials:TokenCredentials = TransientResource.createFrom( {
 					id: "_:1",
 					token: "token-value",
 					expires: expires,
 				} );
 
-				const authenticator:TokenAuthenticator = createAuthenticatorWith( credentials );
+				const authenticator:TokenAuthenticator = createMockTokenAuthenticator( credentials );
 				expect( authenticator.isAuthenticated() ).toBe( false );
 			} );
 
@@ -256,7 +245,7 @@ describe( module( "carbonldp/Auth/TokenAuthenticator" ), ():void => {
 				} );
 
 				const expectedError:Error = new Error( "Error message" );
-				const spy:jasmine.Spy = spyOn( context.documents, "_parseErrorResponse" )
+				const spy:jasmine.Spy = spyOn( context.registry, "_parseErrorResponse" )
 					.and.callFake( () => Promise.reject( expectedError ) );
 
 				const authenticator:TokenAuthenticator = new TokenAuthenticator( context );
@@ -434,13 +423,13 @@ describe( module( "carbonldp/Auth/TokenAuthenticator" ), ():void => {
 				const expires:Date = new Date();
 				expires.setDate( expires.getDate() + 1 );
 
-				const credentials:TokenCredentials = Resource.createFrom( {
+				const credentials:TokenCredentials = TransientResource.createFrom( {
 					id: "_:1",
 					token: "token-value",
 					expires: expires,
 				} );
 
-				const authenticator:TokenAuthenticator = createAuthenticatorWith( credentials );
+				const authenticator:TokenAuthenticator = createMockTokenAuthenticator( credentials );
 
 				const options:RequestOptions = {};
 				authenticator.addAuthentication( options );
