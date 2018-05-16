@@ -9142,7 +9142,7 @@ var RDF_1 = __webpack_require__(13);
 var Resource_1 = __webpack_require__(9);
 var Utils_1 = __webpack_require__(0);
 var Vocabularies_1 = __webpack_require__(2);
-var ResolvableDocument_1 = __webpack_require__(132);
+var PersistedDocument_1 = __webpack_require__(132);
 var TransientDocument_1 = __webpack_require__(38);
 function getTargetID(uri, response) {
     var locationHeader = response.getHeader("Content-Location");
@@ -9539,13 +9539,13 @@ exports.CRUDDocument = {
         if (exports.CRUDDocument.isDecorated(object))
             return object;
         var resource = core_1.ModelDecorator
-            .decorateMultiple(object, ResolvableDocument_1.ResolvableDocument);
+            .decorateMultiple(object, PersistedDocument_1.PersistedDocument);
         return core_1.ModelDecorator
             .definePropertiesFrom(PROTOTYPE, resource);
     },
     is: function (value) {
         return Utils_1.isObject(value)
-            && ResolvableDocument_1.ResolvableDocument.is(value)
+            && PersistedDocument_1.PersistedDocument.is(value)
             && exports.CRUDDocument.isDecorated(value);
     },
 };
@@ -9695,7 +9695,7 @@ var PROTOTYPE = {
         return this._eTag === null;
     },
 };
-exports.ResolvableDocument = {
+exports.PersistedDocument = {
     PROTOTYPE: PROTOTYPE,
     isDecorated: function (object) {
         return Utils_1.isObject(object)
@@ -9703,7 +9703,7 @@ exports.ResolvableDocument = {
                 .hasPropertiesFrom(PROTOTYPE, object);
     },
     decorate: function (object) {
-        if (exports.ResolvableDocument.isDecorated(object))
+        if (exports.PersistedDocument.isDecorated(object))
             return object;
         var resource = core_1.ModelDecorator
             .decorateMultiple(object, TransientDocument_1.TransientDocument, Resource_1.PersistedResource);
@@ -9712,7 +9712,8 @@ exports.ResolvableDocument = {
     },
     is: function (value) {
         return TransientDocument_1.TransientDocument.is(value)
-            && Resource_1.PersistedResource.isDecorated(value);
+            && Resource_1.PersistedResource.isDecorated(value)
+            && exports.PersistedDocument.isDecorated(value);
     },
 };
 
@@ -20306,7 +20307,7 @@ var Utils_1 = __webpack_require__(47);
 var Utils_2 = __webpack_require__(0);
 var Vocabularies_1 = __webpack_require__(2);
 var CRUDDocument_1 = __webpack_require__(128);
-var ResolvableDocument_1 = __webpack_require__(132);
+var PersistedDocument_1 = __webpack_require__(132);
 var emptyQueryBuildFn = function (_) { return _; };
 function getRegistry(repository) {
     if (repository._registry)
@@ -20638,7 +20639,7 @@ exports.QueryDocumentDocument = {
         if (exports.QueryDocumentDocument.isDecorated(object))
             return object;
         var resource = core_1.ModelDecorator
-            .decorateMultiple(object, ResolvableDocument_1.ResolvableDocument);
+            .decorateMultiple(object, PersistedDocument_1.PersistedDocument);
         return core_1.ModelDecorator.definePropertiesFrom(PROTOTYPE, resource);
     },
 };

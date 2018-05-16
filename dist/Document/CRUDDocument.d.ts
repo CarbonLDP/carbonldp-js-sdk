@@ -3,8 +3,8 @@ import { GETOptions, RequestOptions } from "../HTTP";
 import { ProtectedDocument } from "../ProtectedDocument";
 import { PickSelfProps } from "../Utils";
 import { Document } from "./Document";
-import { ResolvableDocument } from "./ResolvableDocument";
-export interface CRUDDocument extends ResolvableDocument {
+import { PersistedDocument } from "./PersistedDocument";
+export interface CRUDDocument extends PersistedDocument {
     get<T extends object>(requestOptions?: GETOptions): Promise<T & Document>;
     get<T extends object>(uri: string, requestOptions?: GETOptions): Promise<T & Document>;
     resolve<T extends object>(requestOptions?: GETOptions): Promise<T & Document>;
@@ -52,7 +52,7 @@ export interface CRUDDocument extends ResolvableDocument {
     delete(uri: string, requestOptions?: RequestOptions): Promise<void>;
 }
 export interface CRUDDocumentFactory {
-    PROTOTYPE: PickSelfProps<CRUDDocument, ResolvableDocument>;
+    PROTOTYPE: PickSelfProps<CRUDDocument, PersistedDocument>;
     isDecorated(object: object): object is CRUDDocument;
     decorate<T extends object>(object: T): T & CRUDDocument;
     is(value: any): value is CRUDDocument;

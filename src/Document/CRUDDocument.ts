@@ -47,11 +47,11 @@ import {
 } from "../Utils";
 import { LDP } from "../Vocabularies";
 import { Document } from "./Document";
-import { ResolvableDocument } from "./ResolvableDocument";
+import { PersistedDocument } from "./PersistedDocument";
 import { TransientDocument } from "./TransientDocument";
 
 
-export interface CRUDDocument extends ResolvableDocument {
+export interface CRUDDocument extends PersistedDocument {
 	get<T extends object>( requestOptions?:GETOptions ):Promise<T & Document>;
 	get<T extends object>( uri:string, requestOptions?:GETOptions ):Promise<T & Document>;
 
@@ -462,7 +462,7 @@ function sendPatch<T extends CRUDDocument>( registry:DocumentsRegistry, resource
 }
 
 
-const PROTOTYPE:PickSelfProps<CRUDDocument, ResolvableDocument> = {
+const PROTOTYPE:PickSelfProps<CRUDDocument, PersistedDocument> = {
 	get<T extends object>( this:CRUDDocument, uriOrOptions:string | GETOptions, requestOptions?:RequestOptions ):Promise<T & Document> {
 		return promiseMethod( () => {
 			const registry:DocumentsRegistry = getRegistry( this );
@@ -581,7 +581,7 @@ const PROTOTYPE:PickSelfProps<CRUDDocument, ResolvableDocument> = {
 };
 
 export interface CRUDDocumentFactory {
-	PROTOTYPE:PickSelfProps<CRUDDocument, ResolvableDocument>;
+	PROTOTYPE:PickSelfProps<CRUDDocument, PersistedDocument>;
 
 	isDecorated( object:object ):object is CRUDDocument;
 
@@ -604,8 +604,8 @@ export const CRUDDocument:CRUDDocumentFactory = {
 	decorate<T extends object>( object:T ):T & CRUDDocument {
 		if( CRUDDocument.isDecorated( object ) ) return object;
 
-		const resource:T & ResolvableDocument = ModelDecorator
-			.decorateMultiple( object, ResolvableDocument );
+		const resource:T & PersistedDocument = ModelDecorator
+			.decorateMultiple( object, PersistedDocument );
 
 		return ModelDecorator
 			.definePropertiesFrom( PROTOTYPE, resource );
@@ -614,7 +614,7 @@ export const CRUDDocument:CRUDDocumentFactory = {
 
 	is( value:any ):value is CRUDDocument {
 		return isObject( value )
-			&& ResolvableDocument.is( value )
+			&& PersistedDocument.is( value )
 			&& CRUDDocument.isDecorated( value )
 		;
 	},

@@ -14,7 +14,7 @@ var PROTOTYPE = {
         return this._eTag === null;
     },
 };
-exports.ResolvableDocument = {
+exports.PersistedDocument = {
     PROTOTYPE: PROTOTYPE,
     isDecorated: function (object) {
         return Utils_1.isObject(object)
@@ -22,7 +22,7 @@ exports.ResolvableDocument = {
                 .hasPropertiesFrom(PROTOTYPE, object);
     },
     decorate: function (object) {
-        if (exports.ResolvableDocument.isDecorated(object))
+        if (exports.PersistedDocument.isDecorated(object))
             return object;
         var resource = core_1.ModelDecorator
             .decorateMultiple(object, TransientDocument_1.TransientDocument, Resource_1.PersistedResource);
@@ -31,8 +31,9 @@ exports.ResolvableDocument = {
     },
     is: function (value) {
         return TransientDocument_1.TransientDocument.is(value)
-            && Resource_1.PersistedResource.isDecorated(value);
+            && Resource_1.PersistedResource.isDecorated(value)
+            && exports.PersistedDocument.isDecorated(value);
     },
 };
 
-//# sourceMappingURL=ResolvableDocument.js.map
+//# sourceMappingURL=PersistedDocument.js.map

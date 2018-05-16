@@ -14,7 +14,7 @@ var RDF_1 = require("../RDF");
 var Resource_1 = require("../Resource");
 var Utils_1 = require("../Utils");
 var Vocabularies_1 = require("../Vocabularies");
-var ResolvableDocument_1 = require("./ResolvableDocument");
+var PersistedDocument_1 = require("./PersistedDocument");
 var TransientDocument_1 = require("./TransientDocument");
 function getTargetID(uri, response) {
     var locationHeader = response.getHeader("Content-Location");
@@ -411,13 +411,13 @@ exports.CRUDDocument = {
         if (exports.CRUDDocument.isDecorated(object))
             return object;
         var resource = core_1.ModelDecorator
-            .decorateMultiple(object, ResolvableDocument_1.ResolvableDocument);
+            .decorateMultiple(object, PersistedDocument_1.PersistedDocument);
         return core_1.ModelDecorator
             .definePropertiesFrom(PROTOTYPE, resource);
     },
     is: function (value) {
         return Utils_1.isObject(value)
-            && ResolvableDocument_1.ResolvableDocument.is(value)
+            && PersistedDocument_1.PersistedDocument.is(value)
             && exports.CRUDDocument.isDecorated(value);
     },
 };

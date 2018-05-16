@@ -9,56 +9,56 @@ import {
 } from "../Utils";
 
 
-export interface ResolvableDocument extends TransientDocument, PersistedResource {
+export interface PersistedDocument extends TransientDocument, PersistedResource {
 	_context:CarbonLDP | undefined;
 	_registry:DocumentsRegistry | undefined;
 
 	_resolved:boolean | undefined;
-	_eTag:string | undefined;
+	_eTag:string | undefined | null;
 
 	isResolved():boolean;
 	isOutdated():boolean;
 }
 
 
-const PROTOTYPE:PickSelfProps<ResolvableDocument, TransientDocument & PersistedResource> = {
+const PROTOTYPE:PickSelfProps<PersistedDocument, TransientDocument & PersistedResource> = {
 	_resolved: false,
 	_eTag: void 0,
 
 
-	isResolved( this:ResolvableDocument ):boolean {
+	isResolved( this:PersistedDocument ):boolean {
 		return ! ! this._resolved;
 	},
 
-	isOutdated( this:ResolvableDocument ):boolean {
+	isOutdated( this:PersistedDocument ):boolean {
 		return this._eTag === null;
 	},
 };
 
-export interface ResolvableDocumentFactory {
-	PROTOTYPE:PickSelfProps<ResolvableDocument, TransientDocument & PersistedResource>;
+export interface PersistedDocumentFactory {
+	PROTOTYPE:PickSelfProps<PersistedDocument, TransientDocument & PersistedResource>;
 
 
-	isDecorated( object:object ):object is ResolvableDocument;
+	isDecorated( object:object ):object is PersistedDocument;
 
-	decorate<T extends object>( object:T ):T & ResolvableDocument;
+	decorate<T extends object>( object:T ):T & PersistedDocument;
 
 
-	is( value:any ):value is ResolvableDocument;
+	is( value:any ):value is PersistedDocument;
 }
 
-export const ResolvableDocument:ResolvableDocumentFactory = {
+export const PersistedDocument:PersistedDocumentFactory = {
 	PROTOTYPE,
 
-	isDecorated( object:object ):object is ResolvableDocument {
+	isDecorated( object:object ):object is PersistedDocument {
 		return isObject( object )
 			&& ModelDecorator
 				.hasPropertiesFrom( PROTOTYPE, object )
 			;
 	},
 
-	decorate<T extends object>( object:T ):T & ResolvableDocument {
-		if( ResolvableDocument.isDecorated( object ) ) return object;
+	decorate<T extends object>( object:T ):T & PersistedDocument {
+		if( PersistedDocument.isDecorated( object ) ) return object;
 
 		const resource:T & TransientDocument & PersistedResource = ModelDecorator
 			.decorateMultiple( object, TransientDocument, PersistedResource );
@@ -68,9 +68,10 @@ export const ResolvableDocument:ResolvableDocumentFactory = {
 	},
 
 
-	is( value:any ):value is ResolvableDocument {
+	is( value:any ):value is PersistedDocument {
 		return TransientDocument.is( value )
 			&& PersistedResource.isDecorated( value )
+			&& PersistedDocument.isDecorated( value )
 			;
 	},
 };

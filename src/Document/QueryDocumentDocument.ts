@@ -74,10 +74,10 @@ import {
 } from "../Vocabularies";
 import { CRUDDocument } from "./CRUDDocument";
 import { Document } from "./Document";
-import { ResolvableDocument } from "./ResolvableDocument";
+import { PersistedDocument } from "./PersistedDocument";
 
 
-export interface QueryDocumentDocument extends ResolvableDocument {
+export interface QueryDocumentDocument extends PersistedDocument {
 	get<T extends object>( queryBuilderFn:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<T & Document>;
 	get<T extends object>( requestOptions:RequestOptions, queryBuilderFn:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<T & Document>;
 	get<T extends object>( uri:string, queryBuilderFn:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<T & Document>;
@@ -402,7 +402,7 @@ function executeMembersBuilder<T extends object>( repository:QueryDocumentDocume
 }
 
 
-const PROTOTYPE:PickSelfProps<QueryDocumentDocument, ResolvableDocument> = {
+const PROTOTYPE:PickSelfProps<QueryDocumentDocument, PersistedDocument> = {
 	get<T extends object>( this:QueryDocumentDocument, uriOrOptionsOrQueryBuilderFn:string | RequestOptions | QueryBuilderFn, optionsOrQueryBuilderFn?:RequestOptions | QueryBuilderFn, queryBuilderFn?:QueryBuilderFn ):Promise<T & Document> {
 		return promiseMethod( () => {
 			const registry:DocumentsRegistry = getRegistry( this );
@@ -517,7 +517,7 @@ const PROTOTYPE:PickSelfProps<QueryDocumentDocument, ResolvableDocument> = {
 };
 
 export interface QueryDocumentDocumentFactory {
-	PROTOTYPE:PickSelfProps<QueryDocumentDocument, ResolvableDocument>;
+	PROTOTYPE:PickSelfProps<QueryDocumentDocument, PersistedDocument>;
 
 	isDecorated( object:object ):object is QueryDocumentDocument;
 
@@ -537,8 +537,8 @@ export const QueryDocumentDocument:QueryDocumentDocumentFactory = {
 	decorate<T extends object>( object:T ):T & QueryDocumentDocument {
 		if( QueryDocumentDocument.isDecorated( object ) ) return object;
 
-		const resource:T & ResolvableDocument = ModelDecorator
-			.decorateMultiple( object, ResolvableDocument );
+		const resource:T & PersistedDocument = ModelDecorator
+			.decorateMultiple( object, PersistedDocument );
 
 		return ModelDecorator.definePropertiesFrom( PROTOTYPE, resource );
 	},

@@ -15,7 +15,7 @@ var Utils_1 = require("../SPARQL/QueryDocument/Utils");
 var Utils_2 = require("../Utils");
 var Vocabularies_1 = require("../Vocabularies");
 var CRUDDocument_1 = require("./CRUDDocument");
-var ResolvableDocument_1 = require("./ResolvableDocument");
+var PersistedDocument_1 = require("./PersistedDocument");
 var emptyQueryBuildFn = function (_) { return _; };
 function getRegistry(repository) {
     if (repository._registry)
@@ -347,7 +347,7 @@ exports.QueryDocumentDocument = {
         if (exports.QueryDocumentDocument.isDecorated(object))
             return object;
         var resource = core_1.ModelDecorator
-            .decorateMultiple(object, ResolvableDocument_1.ResolvableDocument);
+            .decorateMultiple(object, PersistedDocument_1.PersistedDocument);
         return core_1.ModelDecorator.definePropertiesFrom(PROTOTYPE, resource);
     },
 };
