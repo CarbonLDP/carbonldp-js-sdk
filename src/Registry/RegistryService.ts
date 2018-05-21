@@ -118,10 +118,8 @@ export class RegistryService<M extends Pointer, C extends AbstractContext<M, any
 			.map( type => this._context.getObjectSchema( type ) )
 		;
 
-		if( ! objectSchemas.length ) return new DigestedObjectSchema();
-
 		return ObjectSchemaDigester
-			.combineDigestedObjectSchemas( [
+			._combineSchemas( [
 				this._context.getObjectSchema(),
 				...objectSchemas,
 			] );

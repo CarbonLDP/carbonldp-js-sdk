@@ -42,9 +42,6 @@ export interface Document extends CRUDDocument, MembersDocument, SPARQLDocument,
 	isMemberOfRelation?:Pointer;
 	contains?:Pointer[];
 
-	_savedFragments:(BlankNode | NamedFragment)[];
-	_syncSavedFragments():void;
-
 
 	get<T extends object>( queryBuilderFn:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<T & Document>;
 	get<T extends object>( requestOptions?:GETOptions, queryBuilderFn?:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<T & Document>;
@@ -76,18 +73,6 @@ type OverloadedProps =
 	| "revert"
 	;
 const PROTOTYPE:PickSelfProps<Document, CRUDDocument & MembersDocument & SPARQLDocument & MessagingDocument & QueryDocumentDocument, OverloadedProps> = {
-	get _savedFragments():Fragment[] { return []; },
-
-	_syncSavedFragments( this:Document ):void {
-		this._savedFragments = Utils.ArrayUtils
-			.from( this._resourcesMap.values() )
-			.map( Fragment.decorate )
-		;
-
-		this._savedFragments
-			.forEach( fragment => fragment._syncSnapshot() )
-		;
-	},
 
 
 	get<T extends object>( this:Document, uriOrOptionsOrQueryBuilderFn:string | GETOptions | QueryBuilderFn, optionsOrQueryBuilderFn?:GETOptions | QueryBuilderFn, queryBuilderFn?:QueryBuilderFn ):Promise<T & Document> {

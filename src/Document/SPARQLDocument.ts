@@ -68,7 +68,7 @@ function parseParams( resource:SPARQLDocument, uriOrQuery:string, queryOrOptions
 	}
 
 
-	iri = registry._resolveIRIFor( resource, iri );
+	iri = registry._requestURLFor( resource, iri );
 	registry._context.auth.addAuthentication( options );
 
 	return { iri, query, options };
@@ -159,7 +159,7 @@ const PROTOTYPE:PickSelfProps<SPARQLDocument, TransientDocument> = {
 
 	sparql( this:SPARQLDocument, uri?:string ):QueryClause<FinishSPARQLSelect> {
 		const registry:DocumentsRegistry = getRegistry( this );
-		const iri:string = registry._resolveIRIFor( this, uri );
+		const iri:string = registry._requestURLFor( this, uri );
 
 		const schema:DigestedObjectSchema = registry.getGeneralSchema();
 		let builder:QueryClause<FinishSPARQLSelect> = new SPARQLBuilder( this, iri )

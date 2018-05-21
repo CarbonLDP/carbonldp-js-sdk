@@ -324,7 +324,7 @@ function getPartial<T extends object>( registry:DocumentsRegistry, uri:string, r
 }
 
 function refreshPartial<T extends QueryDocumentDocument>( registry:DocumentsRegistry, resource:T, requestOptions:RequestOptions ):Promise<T & QueryDocumentDocument> {
-	const uri:string = registry._resolveIRIFor( resource );
+	const uri:string = registry._requestURLFor( resource );
 	const queryContext:QueryContextPartial = new QueryContextPartial( resource, registry._context );
 
 	const targetName:string = "document";
@@ -346,7 +346,7 @@ function refreshPartial<T extends QueryDocumentDocument>( registry:DocumentsRegi
 function executeChildrenBuilder<T extends object>( repository:QueryDocumentDocument, uri:string | undefined, requestOptions:RequestOptions, queryBuilderFn?:QueryBuilderFn ):Promise<(T & Document)[]> {
 	return promiseMethod( () => {
 		const registry:DocumentsRegistry = getRegistry( this );
-		uri = registry._resolveIRIFor( repository, uri );
+		uri = registry._requestURLFor( repository, uri );
 
 		const queryContext:QueryContextBuilder = new QueryContextBuilder( registry._context );
 		const childrenProperty:QueryProperty = queryContext
@@ -370,7 +370,7 @@ function executeChildrenBuilder<T extends object>( repository:QueryDocumentDocum
 function executeMembersBuilder<T extends object>( repository:QueryDocumentDocument, uri:string | undefined, requestOptions:RequestOptions, queryBuilderFn?:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<(T & Document)[]> {
 	return promiseMethod( () => {
 		const registry:DocumentsRegistry = getRegistry( this );
-		uri = registry._resolveIRIFor( repository, uri );
+		uri = registry._requestURLFor( repository, uri );
 
 		const queryContext:QueryContextBuilder = new QueryContextBuilder( registry._context );
 		const membersProperty:QueryProperty = queryContext
@@ -407,7 +407,7 @@ const PROTOTYPE:PickSelfProps<QueryDocumentDocument, PersistedDocument> = {
 		return promiseMethod( () => {
 			const registry:DocumentsRegistry = getRegistry( this );
 
-			const iri:string = registry._resolveIRIFor( this, isString( uriOrOptionsOrQueryBuilderFn ) ? uriOrOptionsOrQueryBuilderFn : void 0 );
+			const iri:string = registry._requestURLFor( this, isString( uriOrOptionsOrQueryBuilderFn ) ? uriOrOptionsOrQueryBuilderFn : void 0 );
 
 			const requestOptions:RequestOptions = isObject( uriOrOptionsOrQueryBuilderFn ) ?
 				uriOrOptionsOrQueryBuilderFn : isObject( optionsOrQueryBuilderFn ) ? optionsOrQueryBuilderFn : {};
@@ -422,7 +422,7 @@ const PROTOTYPE:PickSelfProps<QueryDocumentDocument, PersistedDocument> = {
 	resolve<T extends object>( this:QueryDocumentDocument, optionsOrQueryBuilderFn:RequestOptions | QueryBuilderFn, queryBuilderFn?:QueryBuilderFn ):Promise<T & Document> {
 		return promiseMethod( () => {
 			const registry:DocumentsRegistry = getRegistry( this );
-			const iri:string = registry._resolveIRIFor( this );
+			const iri:string = registry._requestURLFor( this );
 
 			const requestOptions:RequestOptions = isObject( optionsOrQueryBuilderFn ) ? optionsOrQueryBuilderFn : {};
 			if( isFunction( optionsOrQueryBuilderFn ) ) queryBuilderFn = optionsOrQueryBuilderFn;

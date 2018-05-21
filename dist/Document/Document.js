@@ -8,7 +8,6 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var core_1 = require("../core");
-var Fragment_1 = require("../Fragment");
 var Messaging_1 = require("../Messaging");
 var Resource_1 = require("../Resource");
 var Utils = __importStar(require("../Utils"));
@@ -20,14 +19,6 @@ var QueryDocumentDocument_1 = require("./QueryDocumentDocument");
 var SPARQLDocument_1 = require("./SPARQLDocument");
 var TransientDocument_1 = require("./TransientDocument");
 var PROTOTYPE = {
-    get _savedFragments() { return []; },
-    _syncSavedFragments: function () {
-        this._savedFragments = Utils.ArrayUtils
-            .from(this._resourcesMap.values())
-            .map(Fragment_1.Fragment.decorate);
-        this._savedFragments
-            .forEach(function (fragment) { return fragment._syncSnapshot(); });
-    },
     get: function (uriOrOptionsOrQueryBuilderFn, optionsOrQueryBuilderFn, queryBuilderFn) {
         var iri = Utils_1.isString(uriOrOptionsOrQueryBuilderFn) ? uriOrOptionsOrQueryBuilderFn : "";
         var requestOptions = Utils_1.isObject(uriOrOptionsOrQueryBuilderFn) ?

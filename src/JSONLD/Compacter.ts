@@ -68,16 +68,17 @@ export class JSONLDCompacter {
 				.getPointers( true )
 				.map( pointer => pointer.id )
 			;
-			const fragmentsSet:Set<string> = new Set( currentFragments );
 
-			fragmentNodes.forEach( fragmentNode => {
-				const fragmentID:string = RDFNode.getID( fragmentNode );
-				if( fragmentsSet.has( fragmentID ) ) fragmentsSet.delete( fragmentID );
+			const newFragments:string[] = fragmentNodes
+				.map( fragmentNode => this._getResource( fragmentNode, targetDocument ) )
+				.map( fragment => fragment.id )
+			;
 
-				this._getResource( fragmentNode, targetDocument );
-			} );
-
-			fragmentsSet.forEach( targetDocument.removePointer, targetDocument );
+			const newFragmentsSet:Set<string> = new Set( newFragments );
+			currentFragments
+				.filter( id => ! newFragmentsSet.has( id ) )
+				.forEach( id => targetDocument.removePointer( id ) )
+			;
 		} );
 
 		const compactedDocuments:Document[] = rdfDocuments

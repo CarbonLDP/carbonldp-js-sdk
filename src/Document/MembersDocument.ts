@@ -75,7 +75,7 @@ function sendAddAction( repository:MembersDocument, uri:string | undefined, memb
 	return promiseMethod( () => {
 		const registry:DocumentsRegistry = getRegistry( repository );
 
-		const iri:string = registry._resolveIRIFor( repository, uri );
+		const iri:string = registry._requestURLFor( repository, uri );
 		const targetMembers:Pointer[] = parseMembers( registry, members );
 
 		setDefaultRequestOptions( registry, requestOptions, LDP.Container );
@@ -101,7 +101,7 @@ function sendRemoveAction( repository:MembersDocument, uri:string | undefined, m
 	return promiseMethod( () => {
 		const registry:DocumentsRegistry = getRegistry( repository );
 
-		const iri:string = registry._resolveIRIFor( repository, uri );
+		const iri:string = registry._requestURLFor( repository, uri );
 		const targetMembers:Pointer[] = parseMembers( registry, members );
 
 		setDefaultRequestOptions( registry, requestOptions, LDP.Container );
@@ -205,7 +205,7 @@ const PROTOTYPE:PickSelfProps<MembersDocument, TransientDocument> = {
 
 		return promiseMethod( () => {
 			const registry:DocumentsRegistry = getRegistry( this );
-			const iri:string = registry._resolveIRIFor( this, uri );
+			const iri:string = registry._requestURLFor( this, uri );
 
 			setDefaultRequestOptions( registry, requestOptions, LDP.Container );
 			RequestUtils.setRetrievalPreferences( {

@@ -150,7 +150,7 @@ var JSONLDConverter = (function () {
                 null;
         if (!id)
             return null;
-        var resolved = ObjectSchema.ObjectSchemaUtils.resolveURI(id, generalSchema, { vocab: isString, base: true });
+        var resolved = ObjectSchema.ObjectSchemaUtils.resolveURI(id, generalSchema, { vocab: isString });
         return { "@id": resolved };
     };
     JSONLDConverter.prototype.expandValue = function (propertyValue, digestedSchema, generalSchema) {

@@ -20,7 +20,7 @@ var PROTOTYPE = {
     },
     hasPointer: function (id, local) {
         if (!this.inScope(id)) {
-            if (local || !this._registry)
+            if (local === true || !this._registry)
                 return false;
             return this._registry.hasPointer(id);
         }
@@ -29,7 +29,7 @@ var PROTOTYPE = {
     },
     getPointer: function (id, local) {
         if (!this.inScope(id)) {
-            if (local || !this._registry)
+            if (local === true || !this._registry)
                 throw new Errors_1.IllegalArgumentError("\"" + id + "\" is outside scope.");
             return this._registry.getPointer(id);
         }
@@ -40,14 +40,14 @@ var PROTOTYPE = {
     },
     getPointers: function (local) {
         var pointers = Array.from(this._resourcesMap.values());
-        if (local || !this._registry)
+        if (local === true || !this._registry)
             return pointers;
         return this._registry.getPointers().concat(pointers);
     },
     removePointer: function (idOrPointer, local) {
         var id = Pointer_1.Pointer.getID(idOrPointer);
         if (!this.inScope(id)) {
-            if (local || !this._registry)
+            if (local === true || !this._registry)
                 return false;
             return this._registry.removePointer(idOrPointer);
         }

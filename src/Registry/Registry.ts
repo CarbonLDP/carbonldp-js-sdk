@@ -73,7 +73,7 @@ const PROTOTYPE:PickSelfProps<Registry<Pointer>, {}> = {
 
 	hasPointer( this:Registry<Pointer>, id:string, local?:true ):boolean {
 		if( ! this.inScope( id ) ) {
-			if( local || ! this._registry ) return false;
+			if( local === true || ! this._registry ) return false;
 			return this._registry.hasPointer( id );
 		}
 
@@ -83,7 +83,7 @@ const PROTOTYPE:PickSelfProps<Registry<Pointer>, {}> = {
 
 	getPointer( this:Registry<Pointer>, id:string, local?:true ):Pointer {
 		if( ! this.inScope( id ) ) {
-			if( local || ! this._registry ) throw new IllegalArgumentError( `"${ id }" is outside scope.` );
+			if( local === true || ! this._registry ) throw new IllegalArgumentError( `"${ id }" is outside scope.` );
 			return this._registry.getPointer( id );
 		}
 
@@ -95,7 +95,7 @@ const PROTOTYPE:PickSelfProps<Registry<Pointer>, {}> = {
 
 	getPointers( this:Registry<Pointer>, local?:true ):Pointer[] {
 		const pointers:Pointer[] = Array.from( this._resourcesMap.values() );
-		if( local || ! this._registry ) return pointers;
+		if( local === true || ! this._registry ) return pointers;
 
 		return [
 			...this._registry.getPointers(),
@@ -107,7 +107,7 @@ const PROTOTYPE:PickSelfProps<Registry<Pointer>, {}> = {
 		const id:string = Pointer.getID( idOrPointer );
 
 		if( ! this.inScope( id ) ) {
-			if( local || ! this._registry ) return false;
+			if( local === true || ! this._registry ) return false;
 			return this._registry.removePointer( idOrPointer );
 		}
 

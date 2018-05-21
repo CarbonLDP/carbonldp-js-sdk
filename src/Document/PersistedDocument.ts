@@ -1,7 +1,12 @@
+import { BlankNode } from "../BlankNode";
 import { CarbonLDP } from "../CarbonLDP";
 import { ModelDecorator } from "../core";
+import { Fragment } from "../Fragment";
+import { NamedFragment } from "../NamedFragment";
 import { DocumentsRegistry } from "../Registry";
 import { PersistedResource } from "../Resource";
+import * as Utils from "../Utils";
+import { Document } from "./Document";
 import { TransientDocument } from "./TransientDocument";
 import {
 	isObject,
@@ -16,14 +21,22 @@ export interface PersistedDocument extends TransientDocument, PersistedResource 
 	_resolved:boolean | undefined;
 	_eTag:string | undefined | null;
 
+	_savedFragments:(BlankNode | NamedFragment)[];
+
+
 	isResolved():boolean;
 	isOutdated():boolean;
+
+
+	_syncSavedFragments():void;
 }
 
 
 const PROTOTYPE:PickSelfProps<PersistedDocument, TransientDocument & PersistedResource> = {
 	_resolved: false,
 	_eTag: void 0,
+
+	get _savedFragments():Fragment[] { return []; },
 
 
 	isResolved( this:PersistedDocument ):boolean {
@@ -32,6 +45,18 @@ const PROTOTYPE:PickSelfProps<PersistedDocument, TransientDocument & PersistedRe
 
 	isOutdated( this:PersistedDocument ):boolean {
 		return this._eTag === null;
+	},
+
+
+	_syncSavedFragments( this:Document ):void {
+		this._savedFragments = Utils.ArrayUtils
+			.from( this._resourcesMap.values() )
+			.map( Fragment.decorate )
+		;
+
+		this._savedFragments
+			.forEach( fragment => fragment._syncSnapshot() )
+		;
 	},
 };
 

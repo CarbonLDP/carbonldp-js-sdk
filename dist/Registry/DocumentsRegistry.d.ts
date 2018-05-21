@@ -11,6 +11,6 @@ export declare class DocumentsRegistry extends RegistryService<Document, CarbonL
         id: string;
     }): T & Document;
     _getLocalID(id: string): string | null;
-    _resolveIRIFor(pointer: Pointer, iri?: string): string;
-    _parseErrorResponse<T extends object>(response: Response | Error): Promise<never>;
+    _requestURLFor(pointer: Pointer, uri?: string): string;
+    _parseErrorResponse<T extends object>(response: Response | Error | null): Promise<never>;
 }

@@ -78,6 +78,47 @@ export interface TransientDocument extends TransientResource, Registry<Transient
 	toJSON( registry?:DocumentsRegistry ):RDFDocument;
 }
 
+
+function getNestedObjectId( object:any ):string {
+	if( "id" in object ) return object.id;
+
+	if( "slug" in object ) return URI.hasFragment( object.slug ) ?
+		object.slug : "#" + object.slug;
+
+	return "";
+}
+
+function internalConverter( resource:TransientDocument, target:object, tracker:Set<string> = new Set() ):void {
+	Object
+		.keys( target )
+		.map( key => target[ key ] )
+		.forEach( next => {
+			if( Array.isArray( next ) )
+				return internalConverter( resource, next, tracker );
+
+
+			if( ! isPlainObject( next ) ) return;
+			if( TransientDocument.is( next ) ) return;
+			if( next._registry && next._registry !== resource ) return;
+
+
+			const idOrSlug:string = getNestedObjectId( next );
+			if( tracker.has( idOrSlug ) ) return;
+			if( ! ! idOrSlug && ! resource.inScope( idOrSlug ) ) return;
+
+
+			const fragment:TransientFragment = resource.hasPointer( idOrSlug, true ) ?
+				resource.getPointer( idOrSlug, true ) :
+				resource._register( next )
+			;
+
+			tracker.add( fragment.id );
+			internalConverter( resource, fragment, tracker );
+		} )
+	;
+}
+
+
 type OverloadedProps =
 	| "_context"
 	| "_registry"
@@ -89,18 +130,17 @@ const PROTOTYPE:PickSelfProps<TransientDocument, TransientResource & Registry<Tr
 	_context: void 0,
 	_registry: void 0,
 
+
 	_normalize( this:TransientDocument ):void {
-		const currentBNodes:string[] = this.getFragments()
+		const usedFragments:Set<string> = new Set();
+		internalConverter( this, this, usedFragments );
+
+		this.getPointers( true )
 			.map( Pointer.getID )
-			.filter( URI.isBNodeID );
-
-		const usedFragmentsIDs:Set<string> = new Set();
-		TransientDocument._convertNestedObjects( this, this, usedFragmentsIDs );
-
-		currentBNodes.forEach( bNode => {
-			if( usedFragmentsIDs.has( bNode ) ) return;
-			this._resourcesMap.delete( bNode );
-		} );
+			.filter( URI.isBNodeID )
+			.filter( id => ! usedFragments.has( id ) )
+			.forEach( this.removePointer, this )
+		;
 	},
 
 
@@ -121,7 +161,7 @@ const PROTOTYPE:PickSelfProps<TransientDocument, TransientResource & Registry<Tr
 		if( ! base.id ) base.id = URI.generateBNodeID();
 
 		const pointer:T & Pointer = Registry.PROTOTYPE._register.call( this, base );
-		TransientDocument._convertNestedObjects( this, pointer );
+
 
 		if( URI.isBNodeID( pointer.id ) )
 			return TransientBlankNode.decorate( pointer );
@@ -168,7 +208,10 @@ const PROTOTYPE:PickSelfProps<TransientDocument, TransientResource & Registry<Tr
 		id = isString( isOrObject ) ? isOrObject : id;
 		if( id ) object.id = id;
 
-		return this._register( object );
+		const fragment:T & TransientFragment = this._register( object );
+
+		TransientDocument._convertNestedObjects( this, fragment );
+		return fragment;
 	},
 
 	createNamedFragment<T extends object>( this:TransientDocument, slugOrObject:string | T, slug?:string ):T & TransientNamedFragment {
@@ -179,7 +222,10 @@ const PROTOTYPE:PickSelfProps<TransientDocument, TransientResource & Registry<Tr
 
 		const object:T = isObject( slugOrObject ) ? slugOrObject : {} as T;
 		const base:T & BaseNamedFragment = Object.assign( object, { slug } );
-		return this._register( base );
+		const fragment:T & TransientNamedFragment = this._register( base );
+
+		TransientDocument._convertNestedObjects( this, fragment );
+		return fragment;
 	},
 
 
@@ -248,7 +294,7 @@ export interface TransientDocumentFactory extends ModelFactory<TransientDocument
 	decorate<T extends object>( object:T ):T & TransientDocument;
 
 
-	_convertNestedObjects<T extends object>( parent:TransientDocument, actual:T, fragmentsTracker?:Set<string> ):T;
+	_convertNestedObjects<T extends object>( resource:TransientDocument, target:T ):T;
 }
 
 export const TransientDocument:TransientDocumentFactory = {
@@ -295,47 +341,8 @@ export const TransientDocument:TransientDocumentFactory = {
 	},
 
 
-	_convertNestedObjects<T extends object>( parent:TransientDocument, actual:T, fragmentsTracker:Set<string> = new Set() ):T {
-		for( let key of Object.keys( actual ) ) {
-			const next:any = actual[ key ];
-
-			if( Array.isArray( next ) ) {
-				TransientDocument._convertNestedObjects( parent, next, fragmentsTracker );
-				continue;
-			}
-
-			if( ! isPlainObject( next ) ) continue;
-			if( next._registry ) continue;
-			if( TransientDocument.is( next ) ) continue;
-
-			const idOrSlug:string = getNestedObjectId( next );
-			if( ! ! idOrSlug && ! parent.inScope( idOrSlug ) ) continue;
-
-			const parentFragment:TransientFragment = parent.getFragment( idOrSlug );
-			if( ! parentFragment ) {
-				const fragment:TransientFragment = parent.createFragment( <Object> next, idOrSlug );
-				TransientDocument._convertNestedObjects( parent, fragment, fragmentsTracker );
-
-			} else if( parentFragment !== next ) {
-				const fragment:TransientFragment = actual[ key ] = Object.assign( parentFragment, next );
-				TransientDocument._convertNestedObjects( parent, fragment, fragmentsTracker );
-
-			} else if( ! fragmentsTracker.has( next.id ) ) {
-				fragmentsTracker.add( next.id );
-				TransientDocument._convertNestedObjects( parent, next, fragmentsTracker );
-			}
-
-		}
-
-		return actual;
+	_convertNestedObjects<T extends object>( resource:TransientDocument, target:T ):T {
+		internalConverter( resource, target );
+		return target;
 	},
 };
-
-function getNestedObjectId( object:any ):string {
-	if( "id" in object ) return object.id;
-
-	if( "slug" in object ) return URI.hasFragment( object.slug ) ?
-		object.slug : "#" + object.slug;
-
-	return "";
-}

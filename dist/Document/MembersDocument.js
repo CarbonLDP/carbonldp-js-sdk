@@ -33,7 +33,7 @@ function parseMembers(registry, pointers) {
 function sendAddAction(repository, uri, members, requestOptions) {
     return Utils_1.promiseMethod(function () {
         var registry = getRegistry(repository);
-        var iri = registry._resolveIRIFor(repository, uri);
+        var iri = registry._requestURLFor(repository, uri);
         var targetMembers = parseMembers(registry, members);
         setDefaultRequestOptions(registry, requestOptions, Vocabularies_1.LDP.Container);
         HTTP_1.RequestUtils.setContentTypeHeader("application/ld+json", requestOptions);
@@ -52,7 +52,7 @@ function sendAddAction(repository, uri, members, requestOptions) {
 function sendRemoveAction(repository, uri, members, requestOptions) {
     return Utils_1.promiseMethod(function () {
         var registry = getRegistry(repository);
-        var iri = registry._resolveIRIFor(repository, uri);
+        var iri = registry._requestURLFor(repository, uri);
         var targetMembers = parseMembers(registry, members);
         setDefaultRequestOptions(registry, requestOptions, Vocabularies_1.LDP.Container);
         HTTP_1.RequestUtils.setContentTypeHeader("application/ld+json", requestOptions);
@@ -130,7 +130,7 @@ var PROTOTYPE = {
             "";
         return Utils_1.promiseMethod(function () {
             var registry = getRegistry(_this);
-            var iri = registry._resolveIRIFor(_this, uri);
+            var iri = registry._requestURLFor(_this, uri);
             setDefaultRequestOptions(registry, requestOptions, Vocabularies_1.LDP.Container);
             HTTP_1.RequestUtils.setRetrievalPreferences({
                 include: [

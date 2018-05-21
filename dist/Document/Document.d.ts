@@ -1,8 +1,6 @@
-import { BlankNode } from "../BlankNode";
 import { ModelDecorator, ModelSchema } from "../core";
 import { GETOptions, RequestOptions } from "../HTTP";
 import { MessagingDocument } from "../Messaging";
-import { NamedFragment } from "../NamedFragment";
 import { Pointer } from "../Pointer";
 import { QueryDocumentBuilder } from "../SPARQL/QueryDocument";
 import { PickSelfProps } from "../Utils";
@@ -21,8 +19,6 @@ export interface Document extends CRUDDocument, MembersDocument, SPARQLDocument,
     hasMemberRelation?: Pointer;
     isMemberOfRelation?: Pointer;
     contains?: Pointer[];
-    _savedFragments: (BlankNode | NamedFragment)[];
-    _syncSavedFragments(): void;
     get<T extends object>(queryBuilderFn: (queryBuilder: QueryDocumentBuilder) => QueryDocumentBuilder): Promise<T & Document>;
     get<T extends object>(requestOptions?: GETOptions, queryBuilderFn?: (queryBuilder: QueryDocumentBuilder) => QueryDocumentBuilder): Promise<T & Document>;
     get<T extends object>(uri: string, queryBuilderFn: (queryBuilder: QueryDocumentBuilder) => QueryDocumentBuilder): Promise<T & Document>;

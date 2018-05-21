@@ -95,7 +95,8 @@ var CarbonLDP = (function (_super) {
         _this.registry = new Registry_1.DocumentsRegistry(_this);
         _this.messaging = new Messaging.MessagingService(_this);
         _this.auth = new Auth.AuthService(_this);
-        _this.documents = ProtectedDocument_1.ProtectedDocument.decorate(_this.registry.register(_this._baseURI));
+        _this.documents = ProtectedDocument_1.ProtectedDocument
+            .decorate(_this.registry.getPointer(_this._baseURI, true));
         return _this;
     }
     Object.defineProperty(CarbonLDP, "version", {

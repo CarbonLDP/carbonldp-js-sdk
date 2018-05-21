@@ -35,20 +35,22 @@ var DocumentsRegistry = (function (_super) {
             return null;
         return _super.prototype._getLocalID.call(this, id);
     };
-    DocumentsRegistry.prototype._resolveIRIFor = function (pointer, iri) {
-        iri = iri ? RDF_1.URI.resolve(pointer.id, iri) : pointer.id;
-        if (RDF_1.URI.isBNodeID(iri))
-            throw new Errors_1.IllegalArgumentError("Blank nodes cannot be fetched directly.");
-        if (RDF_1.URI.hasFragment(iri))
-            throw new Errors_1.IllegalArgumentError("Named fragments cannot be fetched directly.");
-        var localIRI = this._getLocalID(iri);
+    DocumentsRegistry.prototype._requestURLFor = function (pointer, uri) {
+        uri = uri ? RDF_1.URI.resolve(pointer.id, uri) : pointer.id;
+        if (RDF_1.URI.isBNodeID(uri))
+            throw new Errors_1.IllegalArgumentError("\"" + uri + "\" (Blank Node) can't be fetched directly.");
+        if (RDF_1.URI.hasFragment(uri))
+            throw new Errors_1.IllegalArgumentError("\"" + uri + "\" (Named Fragment) can't be fetched directly.");
+        var localIRI = this._getLocalID(uri);
         if (localIRI === null)
-            throw new Errors_1.IllegalArgumentError("The IRI \"" + iri + "\" is outside the scope of this registry.");
+            throw new Errors_1.IllegalArgumentError("\"" + uri + "\" is outside " + (this._context ? "\"" + this._context.baseURI + "\" " : "") + "scope.");
+        if (!this._context)
+            return localIRI;
         return RDF_1.URI.resolve(this._context.baseURI, localIRI);
     };
     DocumentsRegistry.prototype._parseErrorResponse = function (response) {
         var _this = this;
-        if (response instanceof Error)
+        if (!response || response instanceof Error)
             return Promise.reject(response);
         if (!(response.status >= 400 && response.status < 600 && Errors_2.statusCodeMap.has(response.status)))
             return Promise.reject(new Errors_2.UnknownError(response.data, response));

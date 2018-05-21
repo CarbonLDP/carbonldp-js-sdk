@@ -41,6 +41,6 @@ export interface TransientDocumentFactory extends ModelFactory<TransientDocument
     create<T extends object>(data?: T & BaseDocument): T & TransientDocument;
     createFrom<T extends object>(object: T & BaseDocument): T & TransientDocument;
     decorate<T extends object>(object: T): T & TransientDocument;
-    _convertNestedObjects<T extends object>(parent: TransientDocument, actual: T, fragmentsTracker?: Set<string>): T;
+    _convertNestedObjects<T extends object>(resource: TransientDocument, target: T): T;
 }
 export declare const TransientDocument: TransientDocumentFactory;

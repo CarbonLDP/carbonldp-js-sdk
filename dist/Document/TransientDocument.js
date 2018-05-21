@@ -12,21 +12,51 @@ var Registry_1 = require("../Registry");
 var Resource_1 = require("../Resource");
 var Utils_1 = require("../Utils");
 var Vocabularies_1 = require("../Vocabularies");
+function getNestedObjectId(object) {
+    if ("id" in object)
+        return object.id;
+    if ("slug" in object)
+        return RDF_1.URI.hasFragment(object.slug) ?
+            object.slug : "#" + object.slug;
+    return "";
+}
+function internalConverter(resource, target, tracker) {
+    if (tracker === void 0) { tracker = new Set(); }
+    Object
+        .keys(target)
+        .map(function (key) { return target[key]; })
+        .forEach(function (next) {
+        if (Array.isArray(next))
+            return internalConverter(resource, next, tracker);
+        if (!Utils_1.isPlainObject(next))
+            return;
+        if (exports.TransientDocument.is(next))
+            return;
+        if (next._registry && next._registry !== resource)
+            return;
+        var idOrSlug = getNestedObjectId(next);
+        if (tracker.has(idOrSlug))
+            return;
+        if (!!idOrSlug && !resource.inScope(idOrSlug))
+            return;
+        var fragment = resource.hasPointer(idOrSlug, true) ?
+            resource.getPointer(idOrSlug, true) :
+            resource._register(next);
+        tracker.add(fragment.id);
+        internalConverter(resource, fragment, tracker);
+    });
+}
 var PROTOTYPE = {
     _context: void 0,
     _registry: void 0,
     _normalize: function () {
-        var _this = this;
-        var currentBNodes = this.getFragments()
+        var usedFragments = new Set();
+        internalConverter(this, this, usedFragments);
+        this.getPointers(true)
             .map(Pointer_1.Pointer.getID)
-            .filter(RDF_1.URI.isBNodeID);
-        var usedFragmentsIDs = new Set();
-        exports.TransientDocument._convertNestedObjects(this, this, usedFragmentsIDs);
-        currentBNodes.forEach(function (bNode) {
-            if (usedFragmentsIDs.has(bNode))
-                return;
-            _this._resourcesMap.delete(bNode);
-        });
+            .filter(RDF_1.URI.isBNodeID)
+            .filter(function (id) { return !usedFragments.has(id); })
+            .forEach(this.removePointer, this);
     },
     _getLocalID: function (id) {
         id = Registry_1.Registry.PROTOTYPE._getLocalID.call(this, id);
@@ -44,7 +74,6 @@ var PROTOTYPE = {
         if (!base.id)
             base.id = RDF_1.URI.generateBNodeID();
         var pointer = Registry_1.Registry.PROTOTYPE._register.call(this, base);
-        exports.TransientDocument._convertNestedObjects(this, pointer);
         if (RDF_1.URI.isBNodeID(pointer.id))
             return BlankNode_1.TransientBlankNode.decorate(pointer);
         var resource = NamedFragment_1.TransientNamedFragment.decorate(pointer);
@@ -79,7 +108,9 @@ var PROTOTYPE = {
         id = Utils_1.isString(isOrObject) ? isOrObject : id;
         if (id)
             object.id = id;
-        return this._register(object);
+        var fragment = this._register(object);
+        exports.TransientDocument._convertNestedObjects(this, fragment);
+        return fragment;
     },
     createNamedFragment: function (slugOrObject, slug) {
         slug = Utils_1.isString(slugOrObject) ? slugOrObject : slug;
@@ -89,7 +120,9 @@ var PROTOTYPE = {
             throw new Errors_1.IllegalArgumentError("Invalid named fragment slug \"" + slug + "\", it can't start with \"_:\".");
         var object = Utils_1.isObject(slugOrObject) ? slugOrObject : {};
         var base = Object.assign(object, { slug: slug });
-        return this._register(base);
+        var fragment = this._register(base);
+        exports.TransientDocument._convertNestedObjects(this, fragment);
+        return fragment;
     },
     removeNamedFragment: function (fragmentOrSlug) {
         var id = Pointer_1.Pointer.getID(fragmentOrSlug);
@@ -153,48 +186,10 @@ exports.TransientDocument = {
         var copy = Object.assign({}, data);
         return exports.TransientDocument.createFrom(copy);
     },
-    _convertNestedObjects: function (parent, actual, fragmentsTracker) {
-        if (fragmentsTracker === void 0) { fragmentsTracker = new Set(); }
-        for (var _i = 0, _a = Object.keys(actual); _i < _a.length; _i++) {
-            var key = _a[_i];
-            var next = actual[key];
-            if (Array.isArray(next)) {
-                exports.TransientDocument._convertNestedObjects(parent, next, fragmentsTracker);
-                continue;
-            }
-            if (!Utils_1.isPlainObject(next))
-                continue;
-            if (next._registry)
-                continue;
-            if (exports.TransientDocument.is(next))
-                continue;
-            var idOrSlug = getNestedObjectId(next);
-            if (!!idOrSlug && !parent.inScope(idOrSlug))
-                continue;
-            var parentFragment = parent.getFragment(idOrSlug);
-            if (!parentFragment) {
-                var fragment = parent.createFragment(next, idOrSlug);
-                exports.TransientDocument._convertNestedObjects(parent, fragment, fragmentsTracker);
-            }
-            else if (parentFragment !== next) {
-                var fragment = actual[key] = Object.assign(parentFragment, next);
-                exports.TransientDocument._convertNestedObjects(parent, fragment, fragmentsTracker);
-            }
-            else if (!fragmentsTracker.has(next.id)) {
-                fragmentsTracker.add(next.id);
-                exports.TransientDocument._convertNestedObjects(parent, next, fragmentsTracker);
-            }
-        }
-        return actual;
+    _convertNestedObjects: function (resource, target) {
+        internalConverter(resource, target);
+        return target;
     },
 };
-function getNestedObjectId(object) {
-    if ("id" in object)
-        return object.id;
-    if ("slug" in object)
-        return RDF_1.URI.hasFragment(object.slug) ?
-            object.slug : "#" + object.slug;
-    return "";
-}
 
 //# sourceMappingURL=TransientDocument.js.map

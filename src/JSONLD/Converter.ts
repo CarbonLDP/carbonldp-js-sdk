@@ -176,7 +176,7 @@ export class JSONLDConverter {
 		// TODO: Warn of data loss
 		if( ! id ) return null;
 
-		const resolved:string = ObjectSchema.ObjectSchemaUtils.resolveURI( id, generalSchema, { vocab: isString, base: true } );
+		const resolved:string = ObjectSchema.ObjectSchemaUtils.resolveURI( id, generalSchema, { vocab: isString } );
 		return { "@id": resolved };
 	}
 

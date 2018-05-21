@@ -483,10 +483,10 @@ function __export(m) {
 Object.defineProperty(exports, "__esModule", { value: true });
 __export(__webpack_require__(10));
 __export(__webpack_require__(66));
+__export(__webpack_require__(227));
 __export(__webpack_require__(228));
-__export(__webpack_require__(229));
 __export(__webpack_require__(67));
-__export(__webpack_require__(230));
+__export(__webpack_require__(229));
 __export(__webpack_require__(12));
 
 
@@ -700,7 +700,7 @@ module.exports = g;
  * Expose `debug()` as the module.
  */
 
-exports = module.exports = __webpack_require__(247);
+exports = module.exports = __webpack_require__(246);
 exports.log = log;
 exports.formatArgs = formatArgs;
 exports.save = save;
@@ -1263,7 +1263,7 @@ __export(__webpack_require__(100));
 
 
 var inherits = __webpack_require__(1)
-  , EventTarget = __webpack_require__(106)
+  , EventTarget = __webpack_require__(105)
   ;
 
 function EventEmitter() {
@@ -1339,7 +1339,7 @@ __export(__webpack_require__(199));
 "use strict";
 
 
-var URL = __webpack_require__(105);
+var URL = __webpack_require__(104);
 
 var debug = function() {};
 if (true) {
@@ -1423,17 +1423,17 @@ function __export(m) {
     for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
 }
 Object.defineProperty(exports, "__esModule", { value: true });
+__export(__webpack_require__(275));
 __export(__webpack_require__(276));
 __export(__webpack_require__(277));
 __export(__webpack_require__(278));
 __export(__webpack_require__(279));
-__export(__webpack_require__(280));
+__export(__webpack_require__(281));
 __export(__webpack_require__(282));
 __export(__webpack_require__(283));
 __export(__webpack_require__(284));
 __export(__webpack_require__(285));
-__export(__webpack_require__(286));
-__export(__webpack_require__(122));
+__export(__webpack_require__(121));
 
 
 /***/ }),
@@ -1501,25 +1501,11 @@ __export(__webpack_require__(312));
 /* 22 */
 /***/ (function(module, exports, __webpack_require__) {
 
-"use strict";
-
-function __export(m) {
-    for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
-}
-Object.defineProperty(exports, "__esModule", { value: true });
-__export(__webpack_require__(226));
-__export(__webpack_require__(102));
-
-
-/***/ }),
-/* 23 */
-/***/ (function(module, exports, __webpack_require__) {
-
 /* WEBPACK VAR INJECTION */(function(module, global) {var __WEBPACK_AMD_DEFINE_RESULT__;/*! JSON v3.3.2 | http://bestiejs.github.io/json3 | Copyright 2012-2014, Kit Cambridge | http://kit.mit-license.org */
 ;(function () {
   // Detect the `define` function exposed by asynchronous module loaders. The
   // strict `define` check is necessary for compatibility with `r.js`.
-  var isLoader = "function" === "function" && __webpack_require__(255);
+  var isLoader = "function" === "function" && __webpack_require__(254);
 
   // A set of types used to distinguish objects from primitives.
   var objectTypes = {
@@ -2419,7 +2405,23 @@ __export(__webpack_require__(102));
   }
 }).call(this);
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(254)(module), __webpack_require__(7)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(253)(module), __webpack_require__(7)))
+
+/***/ }),
+/* 23 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+function __export(m) {
+    for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
+}
+Object.defineProperty(exports, "__esModule", { value: true });
+__export(__webpack_require__(273));
+__export(__webpack_require__(291));
+__export(__webpack_require__(91));
+__export(__webpack_require__(92));
+
 
 /***/ }),
 /* 24 */
@@ -2431,10 +2433,8 @@ function __export(m) {
     for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
 }
 Object.defineProperty(exports, "__esModule", { value: true });
-__export(__webpack_require__(274));
 __export(__webpack_require__(292));
-__export(__webpack_require__(91));
-__export(__webpack_require__(92));
+__export(__webpack_require__(128));
 
 
 /***/ }),
@@ -2934,7 +2934,7 @@ __export(__webpack_require__(150));
 
 
 /* global crypto:true */
-var crypto = __webpack_require__(244);
+var crypto = __webpack_require__(243);
 
 // This string has length 32, a power of 2, so the modulus doesn't introduce a
 // bias.
@@ -2971,7 +2971,7 @@ module.exports = {
 
 var inherits = __webpack_require__(1)
   , urlUtils = __webpack_require__(16)
-  , SenderReceiver = __webpack_require__(107)
+  , SenderReceiver = __webpack_require__(106)
   ;
 
 var debug = function() {};
@@ -3056,7 +3056,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var BlankNode_1 = __webpack_require__(133);
 var core_1 = __webpack_require__(15);
 var Errors_1 = __webpack_require__(3);
-var JSONLD_1 = __webpack_require__(24);
+var JSONLD_1 = __webpack_require__(23);
 var NamedFragment_1 = __webpack_require__(135);
 var ObjectSchema_1 = __webpack_require__(11);
 var Pointer_1 = __webpack_require__(17);
@@ -3065,21 +3065,51 @@ var Registry_1 = __webpack_require__(46);
 var Resource_1 = __webpack_require__(9);
 var Utils_1 = __webpack_require__(0);
 var Vocabularies_1 = __webpack_require__(2);
+function getNestedObjectId(object) {
+    if ("id" in object)
+        return object.id;
+    if ("slug" in object)
+        return RDF_1.URI.hasFragment(object.slug) ?
+            object.slug : "#" + object.slug;
+    return "";
+}
+function internalConverter(resource, target, tracker) {
+    if (tracker === void 0) { tracker = new Set(); }
+    Object
+        .keys(target)
+        .map(function (key) { return target[key]; })
+        .forEach(function (next) {
+        if (Array.isArray(next))
+            return internalConverter(resource, next, tracker);
+        if (!Utils_1.isPlainObject(next))
+            return;
+        if (exports.TransientDocument.is(next))
+            return;
+        if (next._registry && next._registry !== resource)
+            return;
+        var idOrSlug = getNestedObjectId(next);
+        if (tracker.has(idOrSlug))
+            return;
+        if (!!idOrSlug && !resource.inScope(idOrSlug))
+            return;
+        var fragment = resource.hasPointer(idOrSlug, true) ?
+            resource.getPointer(idOrSlug, true) :
+            resource._register(next);
+        tracker.add(fragment.id);
+        internalConverter(resource, fragment, tracker);
+    });
+}
 var PROTOTYPE = {
     _context: void 0,
     _registry: void 0,
     _normalize: function () {
-        var _this = this;
-        var currentBNodes = this.getFragments()
+        var usedFragments = new Set();
+        internalConverter(this, this, usedFragments);
+        this.getPointers(true)
             .map(Pointer_1.Pointer.getID)
-            .filter(RDF_1.URI.isBNodeID);
-        var usedFragmentsIDs = new Set();
-        exports.TransientDocument._convertNestedObjects(this, this, usedFragmentsIDs);
-        currentBNodes.forEach(function (bNode) {
-            if (usedFragmentsIDs.has(bNode))
-                return;
-            _this._resourcesMap.delete(bNode);
-        });
+            .filter(RDF_1.URI.isBNodeID)
+            .filter(function (id) { return !usedFragments.has(id); })
+            .forEach(this.removePointer, this);
     },
     _getLocalID: function (id) {
         id = Registry_1.Registry.PROTOTYPE._getLocalID.call(this, id);
@@ -3097,7 +3127,6 @@ var PROTOTYPE = {
         if (!base.id)
             base.id = RDF_1.URI.generateBNodeID();
         var pointer = Registry_1.Registry.PROTOTYPE._register.call(this, base);
-        exports.TransientDocument._convertNestedObjects(this, pointer);
         if (RDF_1.URI.isBNodeID(pointer.id))
             return BlankNode_1.TransientBlankNode.decorate(pointer);
         var resource = NamedFragment_1.TransientNamedFragment.decorate(pointer);
@@ -3132,7 +3161,9 @@ var PROTOTYPE = {
         id = Utils_1.isString(isOrObject) ? isOrObject : id;
         if (id)
             object.id = id;
-        return this._register(object);
+        var fragment = this._register(object);
+        exports.TransientDocument._convertNestedObjects(this, fragment);
+        return fragment;
     },
     createNamedFragment: function (slugOrObject, slug) {
         slug = Utils_1.isString(slugOrObject) ? slugOrObject : slug;
@@ -3142,7 +3173,9 @@ var PROTOTYPE = {
             throw new Errors_1.IllegalArgumentError("Invalid named fragment slug \"" + slug + "\", it can't start with \"_:\".");
         var object = Utils_1.isObject(slugOrObject) ? slugOrObject : {};
         var base = Object.assign(object, { slug: slug });
-        return this._register(base);
+        var fragment = this._register(base);
+        exports.TransientDocument._convertNestedObjects(this, fragment);
+        return fragment;
     },
     removeNamedFragment: function (fragmentOrSlug) {
         var id = Pointer_1.Pointer.getID(fragmentOrSlug);
@@ -3206,49 +3239,11 @@ exports.TransientDocument = {
         var copy = Object.assign({}, data);
         return exports.TransientDocument.createFrom(copy);
     },
-    _convertNestedObjects: function (parent, actual, fragmentsTracker) {
-        if (fragmentsTracker === void 0) { fragmentsTracker = new Set(); }
-        for (var _i = 0, _a = Object.keys(actual); _i < _a.length; _i++) {
-            var key = _a[_i];
-            var next = actual[key];
-            if (Array.isArray(next)) {
-                exports.TransientDocument._convertNestedObjects(parent, next, fragmentsTracker);
-                continue;
-            }
-            if (!Utils_1.isPlainObject(next))
-                continue;
-            if (next._registry)
-                continue;
-            if (exports.TransientDocument.is(next))
-                continue;
-            var idOrSlug = getNestedObjectId(next);
-            if (!!idOrSlug && !parent.inScope(idOrSlug))
-                continue;
-            var parentFragment = parent.getFragment(idOrSlug);
-            if (!parentFragment) {
-                var fragment = parent.createFragment(next, idOrSlug);
-                exports.TransientDocument._convertNestedObjects(parent, fragment, fragmentsTracker);
-            }
-            else if (parentFragment !== next) {
-                var fragment = actual[key] = Object.assign(parentFragment, next);
-                exports.TransientDocument._convertNestedObjects(parent, fragment, fragmentsTracker);
-            }
-            else if (!fragmentsTracker.has(next.id)) {
-                fragmentsTracker.add(next.id);
-                exports.TransientDocument._convertNestedObjects(parent, next, fragmentsTracker);
-            }
-        }
-        return actual;
+    _convertNestedObjects: function (resource, target) {
+        internalConverter(resource, target);
+        return target;
     },
 };
-function getNestedObjectId(object) {
-    if ("id" in object)
-        return object.id;
-    if ("slug" in object)
-        return RDF_1.URI.hasFragment(object.slug) ?
-            object.slug : "#" + object.slug;
-    return "";
-}
 
 
 /***/ }),
@@ -3390,7 +3385,7 @@ exports.RDFList = {
 
 
 var inherits = __webpack_require__(1)
-  , XhrDriver = __webpack_require__(108)
+  , XhrDriver = __webpack_require__(107)
   ;
 
 function XHRLocalObject(method, url, payload /*, opts */) {
@@ -3449,7 +3444,7 @@ module.exports = {
 /* WEBPACK VAR INJECTION */(function(global) {
 
 var eventUtils = __webpack_require__(26)
-  , JSON3 = __webpack_require__(23)
+  , JSON3 = __webpack_require__(22)
   , browser = __webpack_require__(44)
   ;
 
@@ -3645,9 +3640,9 @@ function __export(m) {
     for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
 }
 Object.defineProperty(exports, "__esModule", { value: true });
+__export(__webpack_require__(118));
 __export(__webpack_require__(119));
-__export(__webpack_require__(120));
-__export(__webpack_require__(275));
+__export(__webpack_require__(274));
 
 
 /***/ }),
@@ -4193,7 +4188,7 @@ module.exports = XhrReceiver;
 
 
 var inherits = __webpack_require__(1)
-  , XhrDriver = __webpack_require__(108)
+  , XhrDriver = __webpack_require__(107)
   ;
 
 function XHRCorsObject(method, url, payload, opts) {
@@ -4217,17 +4212,17 @@ function __export(m) {
     for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
 }
 Object.defineProperty(exports, "__esModule", { value: true });
-__export(__webpack_require__(287));
+__export(__webpack_require__(286));
 __export(__webpack_require__(74));
+__export(__webpack_require__(287));
 __export(__webpack_require__(288));
-__export(__webpack_require__(289));
-__export(__webpack_require__(124));
-__export(__webpack_require__(290));
-__export(__webpack_require__(291));
-__export(__webpack_require__(125));
-__export(__webpack_require__(75));
-__export(__webpack_require__(126));
 __export(__webpack_require__(123));
+__export(__webpack_require__(289));
+__export(__webpack_require__(290));
+__export(__webpack_require__(124));
+__export(__webpack_require__(75));
+__export(__webpack_require__(125));
+__export(__webpack_require__(122));
 
 
 /***/ }),
@@ -4943,22 +4938,22 @@ function __export(m) {
     for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
 }
 Object.defineProperty(exports, "__esModule", { value: true });
-__export(__webpack_require__(227));
+__export(__webpack_require__(226));
+__export(__webpack_require__(230));
 __export(__webpack_require__(231));
-__export(__webpack_require__(232));
 __export(__webpack_require__(65));
+__export(__webpack_require__(232));
 __export(__webpack_require__(233));
 __export(__webpack_require__(234));
-__export(__webpack_require__(235));
-__export(__webpack_require__(103));
+__export(__webpack_require__(102));
 __export(__webpack_require__(30));
+__export(__webpack_require__(235));
 __export(__webpack_require__(236));
-__export(__webpack_require__(237));
 __export(__webpack_require__(68));
+__export(__webpack_require__(237));
 __export(__webpack_require__(238));
 __export(__webpack_require__(239));
-__export(__webpack_require__(240));
-__export(__webpack_require__(104));
+__export(__webpack_require__(103));
 
 
 /***/ }),
@@ -5216,7 +5211,7 @@ module.exports = XDRObject;
 /* WEBPACK VAR INJECTION */(function(global) {
 
 var inherits = __webpack_require__(1)
-  , IframeTransport = __webpack_require__(112)
+  , IframeTransport = __webpack_require__(111)
   , objectUtils = __webpack_require__(71)
   ;
 
@@ -5317,7 +5312,7 @@ module.exports = Event;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var core_1 = __webpack_require__(15);
-var JSONLD_1 = __webpack_require__(24);
+var JSONLD_1 = __webpack_require__(23);
 var ObjectSchema_1 = __webpack_require__(11);
 var RDF_1 = __webpack_require__(13);
 var Registry_1 = __webpack_require__(46);
@@ -5391,7 +5386,7 @@ var iri_1 = __webpack_require__(31);
 var tokens_1 = __webpack_require__(4);
 var Errors_1 = __webpack_require__(3);
 var ObjectSchema_1 = __webpack_require__(11);
-var QueryVariable_1 = __webpack_require__(123);
+var QueryVariable_1 = __webpack_require__(122);
 var QueryContext = (function () {
     function QueryContext(context) {
         this.context = context;
@@ -5605,7 +5600,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var Errors_1 = __webpack_require__(3);
 var HTTP_1 = __webpack_require__(37);
 var Errors_2 = __webpack_require__(29);
-var JSONLD_1 = __webpack_require__(24);
+var JSONLD_1 = __webpack_require__(23);
 var RDF_1 = __webpack_require__(13);
 var Utils_1 = __webpack_require__(0);
 var Vocabularies_1 = __webpack_require__(2);
@@ -7300,37 +7295,6 @@ __export(__webpack_require__(151));
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var Resource_1 = __webpack_require__(9);
-exports.TransientFragment = {
-    isDecorated: function (object) {
-        return Resource_1.TransientResource.isDecorated(object);
-    },
-    is: function (value) {
-        return Resource_1.TransientResource.is(value);
-    },
-    create: function (data) {
-        var copy = Object.assign({}, data);
-        return exports.TransientFragment.createFrom(copy);
-    },
-    createFrom: function (object) {
-        return exports.TransientFragment.decorate(object);
-    },
-    decorate: function (object) {
-        if (exports.TransientFragment.isDecorated(object))
-            return object;
-        Resource_1.TransientResource.decorate(object);
-        return object;
-    },
-};
-
-
-/***/ }),
-/* 103 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
 var Event;
 (function (Event) {
     Event["CHILD_CREATED"] = "child.created";
@@ -7344,7 +7308,7 @@ var Event;
 
 
 /***/ }),
-/* 104 */
+/* 103 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7383,14 +7347,14 @@ exports.createDestination = createDestination;
 
 
 /***/ }),
-/* 105 */
+/* 104 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(global) {
 
-var required = __webpack_require__(245)
-  , qs = __webpack_require__(246)
+var required = __webpack_require__(244)
+  , qs = __webpack_require__(245)
   , protocolre = /^([a-z][a-z0-9.+-]*:)?(\/\/)?([\S\s]*)/i
   , slashes = /^[A-Za-z][A-Za-z0-9+-.]*:\/\//;
 
@@ -7803,7 +7767,7 @@ module.exports = URL;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(7)))
 
 /***/ }),
-/* 106 */
+/* 105 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7872,7 +7836,7 @@ module.exports = EventTarget;
 
 
 /***/ }),
-/* 107 */
+/* 106 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7880,8 +7844,8 @@ module.exports = EventTarget;
 
 var inherits = __webpack_require__(1)
   , urlUtils = __webpack_require__(16)
-  , BufferedSender = __webpack_require__(251)
-  , Polling = __webpack_require__(252)
+  , BufferedSender = __webpack_require__(250)
+  , Polling = __webpack_require__(251)
   ;
 
 var debug = function() {};
@@ -7924,7 +7888,7 @@ module.exports = SenderReceiver;
 
 
 /***/ }),
-/* 108 */
+/* 107 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8125,7 +8089,7 @@ module.exports = AbstractXHRObject;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(7)))
 
 /***/ }),
-/* 109 */
+/* 108 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8164,7 +8128,7 @@ module.exports = XdrStreamingTransport;
 
 
 /***/ }),
-/* 110 */
+/* 109 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8172,9 +8136,9 @@ module.exports = XdrStreamingTransport;
 
 var inherits = __webpack_require__(1)
   , AjaxBasedTransport = __webpack_require__(36)
-  , EventSourceReceiver = __webpack_require__(253)
+  , EventSourceReceiver = __webpack_require__(252)
   , XHRCorsObject = __webpack_require__(54)
-  , EventSourceDriver = __webpack_require__(111)
+  , EventSourceDriver = __webpack_require__(110)
   ;
 
 function EventSourceTransport(transUrl) {
@@ -8198,7 +8162,7 @@ module.exports = EventSourceTransport;
 
 
 /***/ }),
-/* 111 */
+/* 110 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(global) {module.exports = global.EventSource;
@@ -8206,7 +8170,7 @@ module.exports = EventSourceTransport;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(7)))
 
 /***/ }),
-/* 112 */
+/* 111 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8221,9 +8185,9 @@ module.exports = EventSourceTransport;
 //    http://stevesouders.com/misc/test-postmessage.php
 
 var inherits = __webpack_require__(1)
-  , JSON3 = __webpack_require__(23)
+  , JSON3 = __webpack_require__(22)
   , EventEmitter = __webpack_require__(14).EventEmitter
-  , version = __webpack_require__(113)
+  , version = __webpack_require__(112)
   , urlUtils = __webpack_require__(16)
   , iframeUtils = __webpack_require__(45)
   , eventUtils = __webpack_require__(26)
@@ -8354,21 +8318,21 @@ module.exports = IframeTransport;
 
 
 /***/ }),
-/* 113 */
+/* 112 */
 /***/ (function(module, exports) {
 
 module.exports = '1.1.4';
 
 
 /***/ }),
-/* 114 */
+/* 113 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
 var inherits = __webpack_require__(1)
-  , HtmlfileReceiver = __webpack_require__(256)
+  , HtmlfileReceiver = __webpack_require__(255)
   , XHRLocalObject = __webpack_require__(43)
   , AjaxBasedTransport = __webpack_require__(36)
   ;
@@ -8393,7 +8357,7 @@ module.exports = HtmlFileTransport;
 
 
 /***/ }),
-/* 115 */
+/* 114 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8433,7 +8397,7 @@ module.exports = XhrPollingTransport;
 
 
 /***/ }),
-/* 116 */
+/* 115 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8451,7 +8415,7 @@ module.exports = global.location || {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(7)))
 
 /***/ }),
-/* 117 */
+/* 116 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8459,9 +8423,9 @@ module.exports = global.location || {
 
 var inherits = __webpack_require__(1)
   , EventEmitter = __webpack_require__(14).EventEmitter
-  , JSON3 = __webpack_require__(23)
+  , JSON3 = __webpack_require__(22)
   , XHRLocalObject = __webpack_require__(43)
-  , InfoAjax = __webpack_require__(118)
+  , InfoAjax = __webpack_require__(117)
   ;
 
 function InfoReceiverIframe(transUrl) {
@@ -8491,7 +8455,7 @@ module.exports = InfoReceiverIframe;
 
 
 /***/ }),
-/* 118 */
+/* 117 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8499,7 +8463,7 @@ module.exports = InfoReceiverIframe;
 
 var EventEmitter = __webpack_require__(14).EventEmitter
   , inherits = __webpack_require__(1)
-  , JSON3 = __webpack_require__(23)
+  , JSON3 = __webpack_require__(22)
   , objectUtils = __webpack_require__(71)
   ;
 
@@ -8547,7 +8511,7 @@ module.exports = InfoAjax;
 
 
 /***/ }),
-/* 119 */
+/* 118 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8573,7 +8537,7 @@ var PROTOTYPE = {
     },
     hasPointer: function (id, local) {
         if (!this.inScope(id)) {
-            if (local || !this._registry)
+            if (local === true || !this._registry)
                 return false;
             return this._registry.hasPointer(id);
         }
@@ -8582,7 +8546,7 @@ var PROTOTYPE = {
     },
     getPointer: function (id, local) {
         if (!this.inScope(id)) {
-            if (local || !this._registry)
+            if (local === true || !this._registry)
                 throw new Errors_1.IllegalArgumentError("\"" + id + "\" is outside scope.");
             return this._registry.getPointer(id);
         }
@@ -8593,14 +8557,14 @@ var PROTOTYPE = {
     },
     getPointers: function (local) {
         var pointers = Array.from(this._resourcesMap.values());
-        if (local || !this._registry)
+        if (local === true || !this._registry)
             return pointers;
         return this._registry.getPointers().concat(pointers);
     },
     removePointer: function (idOrPointer, local) {
         var id = Pointer_1.Pointer.getID(idOrPointer);
         if (!this.inScope(id)) {
-            if (local || !this._registry)
+            if (local === true || !this._registry)
                 return false;
             return this._registry.removePointer(idOrPointer);
         }
@@ -8647,7 +8611,7 @@ exports.Registry = {
 
 
 /***/ }),
-/* 120 */
+/* 119 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8655,12 +8619,12 @@ exports.Registry = {
 Object.defineProperty(exports, "__esModule", { value: true });
 var Document_1 = __webpack_require__(18);
 var FreeResources_1 = __webpack_require__(73);
-var JSONLD_1 = __webpack_require__(24);
+var JSONLD_1 = __webpack_require__(23);
 var ObjectSchema_1 = __webpack_require__(11);
 var RDF_1 = __webpack_require__(13);
 var Resource_1 = __webpack_require__(9);
 var Utils_1 = __webpack_require__(0);
-var Registry_1 = __webpack_require__(119);
+var Registry_1 = __webpack_require__(118);
 var RegistryService = (function () {
     function RegistryService(model, context) {
         this.inScope = Registry_1.Registry.PROTOTYPE.inScope;
@@ -8737,10 +8701,8 @@ var RegistryService = (function () {
         var objectSchemas = objectTypes
             .filter(function (type) { return _this._context.hasObjectSchema(type); })
             .map(function (type) { return _this._context.getObjectSchema(type); });
-        if (!objectSchemas.length)
-            return new ObjectSchema_1.DigestedObjectSchema();
         return ObjectSchema_1.ObjectSchemaDigester
-            .combineDigestedObjectSchemas([
+            ._combineSchemas([
             this._context.getObjectSchema()
         ].concat(objectSchemas));
     };
@@ -8769,7 +8731,7 @@ exports.RegistryService = RegistryService;
 
 
 /***/ }),
-/* 121 */
+/* 120 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8803,7 +8765,7 @@ exports.TransientDirectContainer = {
 
 
 /***/ }),
-/* 122 */
+/* 121 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8830,7 +8792,7 @@ exports.VolatileResource = {
 
 
 /***/ }),
-/* 123 */
+/* 122 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8867,7 +8829,7 @@ exports.QueryVariable = QueryVariable;
 
 
 /***/ }),
-/* 124 */
+/* 123 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8878,9 +8840,9 @@ var IllegalArgumentError_1 = __webpack_require__(28);
 var IllegalStateError_1 = __webpack_require__(61);
 var ObjectSchema_1 = __webpack_require__(11);
 var Utils_1 = __webpack_require__(0);
-var QueryObject_1 = __webpack_require__(125);
+var QueryObject_1 = __webpack_require__(124);
 var QueryProperty_1 = __webpack_require__(75);
-var QueryValue_1 = __webpack_require__(126);
+var QueryValue_1 = __webpack_require__(125);
 var Utils_2 = __webpack_require__(47);
 var INHERIT = Object.freeze({});
 var QueryDocumentBuilder = (function () {
@@ -9020,7 +8982,7 @@ exports.QueryDocumentBuilder = QueryDocumentBuilder;
 
 
 /***/ }),
-/* 125 */
+/* 124 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9047,7 +9009,7 @@ exports.QueryObject = QueryObject;
 
 
 /***/ }),
-/* 126 */
+/* 125 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9097,7 +9059,7 @@ exports.QueryValue = QueryValue;
 
 
 /***/ }),
-/* 127 */
+/* 126 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9122,7 +9084,7 @@ exports.guessXSDType = guessXSDType;
 
 
 /***/ }),
-/* 128 */
+/* 127 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9131,10 +9093,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var AccessPoint_1 = __webpack_require__(101);
 var core_1 = __webpack_require__(15);
 var Errors_1 = __webpack_require__(3);
-var Fragment_1 = __webpack_require__(22);
+var Fragment_1 = __webpack_require__(24);
 var HTTP_1 = __webpack_require__(37);
 var Errors_2 = __webpack_require__(29);
-var JSONLD_1 = __webpack_require__(24);
+var JSONLD_1 = __webpack_require__(23);
 var LDP_1 = __webpack_require__(19);
 var LDPatch_1 = __webpack_require__(130);
 var ProtectedDocument_1 = __webpack_require__(34);
@@ -9162,8 +9124,13 @@ function parseRDFDocument(registry, rdfDocument, eTag) {
     resource._resolved = true;
     return resource;
 }
-function setDefaultRequestOptions(registry, requestOptions, interactionModel) {
+function addAuthentication(registry, requestOptions) {
+    if (!registry._context || !registry._context.auth)
+        return;
     registry._context.auth.addAuthentication(requestOptions);
+}
+function setDefaultRequestOptions(registry, requestOptions, interactionModel) {
+    addAuthentication(registry, requestOptions);
     if (interactionModel)
         HTTP_1.RequestUtils.setPreferredInteractionModel(interactionModel, requestOptions);
     HTTP_1.RequestUtils.setAcceptHeader("application/ld+json", requestOptions);
@@ -9177,9 +9144,11 @@ function getRegistry(repository) {
 function getFullResource(registry, uri, requestOptions) {
     if (registry.hasPointer(uri)) {
         var resource = registry.getPointer(uri);
-        if (!requestOptions.ensureLatest && resource.isResolved())
-            return resource;
-        HTTP_1.RequestUtils.setIfMatchHeader(resource._eTag, requestOptions);
+        if (resource.isResolved()) {
+            if (!requestOptions.ensureLatest)
+                return resource;
+            HTTP_1.RequestUtils.setIfNoneMatchHeader(resource._eTag, requestOptions);
+        }
     }
     setDefaultRequestOptions(registry, requestOptions, Vocabularies_1.LDP.RDFSource);
     return HTTP_1.RequestService
@@ -9195,7 +9164,7 @@ function getFullResource(registry, uri, requestOptions) {
     })
         .catch(registry._parseErrorResponse.bind(registry));
 }
-function applyFreeNodes(registry, freeNodes) {
+function applyResponseMetadata(registry, freeNodes) {
     if (!freeNodes.length)
         return;
     var freeResources = registry._parseFreeNodes(freeNodes);
@@ -9219,7 +9188,7 @@ function applyResponseRepresentation(registry, resource, response) {
         .parse(response.data)
         .then(function (expandedResult) {
         var freeNodes = RDF_1.RDFNode.getFreeNodes(expandedResult);
-        applyFreeNodes(registry, freeNodes);
+        applyResponseMetadata(registry, freeNodes);
         var preferenceHeader = response.getHeader("Preference-Applied");
         if (preferenceHeader === null || preferenceHeader.toString() !== "return=representation")
             return resource;
@@ -9268,7 +9237,7 @@ function persistResource(registry, parentURI, slug, resource, requestOptions) {
 }
 function persistChild(registry, parentURI, requestOptions, child, slug) {
     if (Resource_1.PersistedResource.is(child))
-        throw new Errors_1.IllegalArgumentError("The child provided has been already persisted.");
+        throw new Errors_1.IllegalArgumentError("The child provided has already been persisted.");
     var childDocument;
     if (TransientDocument_1.TransientDocument.is(child)) {
         childDocument = child;
@@ -9282,28 +9251,25 @@ function persistChild(registry, parentURI, requestOptions, child, slug) {
     setDefaultRequestOptions(registry, requestOptions, Vocabularies_1.LDP.Container);
     return persistResource(registry, parentURI, slug, childDocument, requestOptions);
 }
-function createChildren(retrievalType, repository, uriOrChildrenOrSlugOrOptions, childrenOrSlugsOrOptions, slugsOrOptions, requestOptions) {
-    if (requestOptions === void 0) { requestOptions = {}; }
+function createChildren(retrievalType, repository, uriOrChildren, childrenOrSlugsOrOptions, slugsOrOptions, requestOptions) {
     return Utils_1.promiseMethod(function () {
         var registry = getRegistry(repository);
-        requestOptions = HTTP_1.RequestUtils.isOptions(uriOrChildrenOrSlugOrOptions) ? uriOrChildrenOrSlugOrOptions :
-            HTTP_1.RequestUtils.isOptions(childrenOrSlugsOrOptions) ? childrenOrSlugsOrOptions :
-                HTTP_1.RequestUtils.isOptions(slugsOrOptions) ? slugsOrOptions :
-                    requestOptions;
-        var iri = Utils_1.isString(uriOrChildrenOrSlugOrOptions) && (!childrenOrSlugsOrOptions || childrenOrSlugsOrOptions === requestOptions) ?
-            registry._resolveIRIFor(repository, uriOrChildrenOrSlugOrOptions) : "";
-        var slugs = Utils_1.isString(uriOrChildrenOrSlugOrOptions) && iri !== uriOrChildrenOrSlugOrOptions ? uriOrChildrenOrSlugOrOptions :
-            Utils_1.isString(childrenOrSlugsOrOptions) ? childrenOrSlugsOrOptions :
-                Utils_1.isString(slugsOrOptions) ? slugsOrOptions :
-                    Array.isArray(slugsOrOptions) ? slugsOrOptions :
-                        Array.isArray(childrenOrSlugsOrOptions) && childrenOrSlugsOrOptions.some(Utils_1.isString) ? childrenOrSlugsOrOptions :
-                            null;
-        var children = Array.isArray(uriOrChildrenOrSlugOrOptions) ? uriOrChildrenOrSlugOrOptions :
-            Utils_1.isObject(uriOrChildrenOrSlugOrOptions) && !uriOrChildrenOrSlugOrOptions !== requestOptions ? uriOrChildrenOrSlugOrOptions :
-                Utils_1.isObject(childrenOrSlugsOrOptions) ?
-                    Array.isArray(childrenOrSlugsOrOptions) && childrenOrSlugsOrOptions !== slugs ? childrenOrSlugsOrOptions :
-                        !Array.isArray(childrenOrSlugsOrOptions) && childrenOrSlugsOrOptions !== requestOptions ? childrenOrSlugsOrOptions :
-                            null : null;
+        requestOptions = HTTP_1.RequestUtils.isOptions(childrenOrSlugsOrOptions) ?
+            childrenOrSlugsOrOptions :
+            HTTP_1.RequestUtils.isOptions(slugsOrOptions) ?
+                slugsOrOptions :
+                requestOptions ? requestOptions : {};
+        var iri = registry._requestURLFor(repository, Utils_1.isString(uriOrChildren) ? uriOrChildren : void 0);
+        var slugs = Utils_1.isString(childrenOrSlugsOrOptions) ?
+            childrenOrSlugsOrOptions :
+            Utils_1.isString(slugsOrOptions) || Array.isArray(slugsOrOptions) ?
+                slugsOrOptions :
+                Array.isArray(childrenOrSlugsOrOptions) && Array.isArray(uriOrChildren) ?
+                    childrenOrSlugsOrOptions :
+                    null;
+        var children = Array.isArray(uriOrChildren) || Utils_1.isObject(uriOrChildren) ?
+            uriOrChildren :
+            childrenOrSlugsOrOptions;
         HTTP_1.RequestUtils.setPreferredRetrieval(retrievalType, requestOptions);
         if (!Array.isArray(slugs) && !Array.isArray(children))
             return persistChild(registry, iri, requestOptions, children, slugs);
@@ -9322,7 +9288,7 @@ function createChildren(retrievalType, repository, uriOrChildrenOrSlugOrOptions,
 }
 function persistAccessPoint(registry, documentURI, requestOptions, accessPoint, slug) {
     if (Resource_1.PersistedResource.is(accessPoint))
-        throw new Errors_1.IllegalArgumentError("The access-point provided has been already persisted.");
+        throw new Errors_1.IllegalArgumentError("The access-point provided has already been persisted.");
     var accessPointDocument;
     if (AccessPoint_1.TransientAccessPoint.is(accessPoint)) {
         accessPointDocument = accessPoint;
@@ -9342,8 +9308,8 @@ function createAccessPoint(retrievalType, repository, uriOrAccessPoint, accessPo
     if (requestOptions === void 0) { requestOptions = {}; }
     return Utils_1.promiseMethod(function () {
         var registry = getRegistry(repository);
-        var iri = Utils_1.isString(uriOrAccessPoint) ?
-            registry._resolveIRIFor(repository, uriOrAccessPoint) : "";
+        var iri = registry
+            ._requestURLFor(repository, Utils_1.isString(uriOrAccessPoint) ? uriOrAccessPoint : void 0);
         var accessPoint = Utils_1.isObject(uriOrAccessPoint) ? uriOrAccessPoint :
             accessPointOrSlugOrRequestOptions;
         var slug = Utils_1.isString(accessPointOrSlugOrRequestOptions) ? accessPointOrSlugOrRequestOptions :
@@ -9359,7 +9325,7 @@ function createAccessPoints(retrievalType, repository, uriOrAccessPoints, access
     return Utils_1.promiseMethod(function () {
         var registry = getRegistry(repository);
         var iri = Utils_1.isString(uriOrAccessPoints) ?
-            registry._resolveIRIFor(repository, uriOrAccessPoints) : repository.id;
+            registry._requestURLFor(repository, uriOrAccessPoints) : repository.id;
         var accessPoints = Array.isArray(uriOrAccessPoints) ? uriOrAccessPoints :
             accessPointOrSlugsOrRequestOptions;
         var slugs = Array.isArray(accessPointOrSlugsOrRequestOptions) && accessPointOrSlugsOrRequestOptions !== accessPoints ?
@@ -9380,7 +9346,7 @@ function createAccessPoints(retrievalType, repository, uriOrAccessPoints, access
     });
 }
 function refreshResource(registry, resource, requestOptions) {
-    var uri = registry._resolveIRIFor(resource);
+    var uri = registry._requestURLFor(resource);
     setDefaultRequestOptions(registry, requestOptions, Vocabularies_1.LDP.RDFSource);
     HTTP_1.RequestUtils.setIfNoneMatchHeader(resource._eTag, requestOptions);
     return HTTP_1.RequestService
@@ -9401,20 +9367,30 @@ function refreshResource(registry, resource, requestOptions) {
         return resource._registry._parseErrorResponse(response);
     });
 }
+function addResourcePatch(registry, deltaCreator, pointer, current, snapshot) {
+    var schema = registry.getSchemaFor(pointer);
+    deltaCreator.addResource(schema, pointer.id, snapshot, current);
+}
 function sendPatch(registry, resource, requestOptions) {
+    var uri = registry._requestURLFor(resource);
     if (!resource.isDirty())
         return Promise.resolve(resource);
-    var uri = registry._resolveIRIFor(resource);
+    resource._normalize();
     setDefaultRequestOptions(registry, requestOptions);
     HTTP_1.RequestUtils.setContentTypeHeader("text/ldpatch", requestOptions);
     HTTP_1.RequestUtils.setIfMatchHeader(resource._eTag, requestOptions);
-    resource._normalize();
-    var resources = [resource].concat(resource.getPointers());
     var deltaCreator = new LDPatch_1.DeltaCreator(resource._registry.jsonldConverter);
-    resources.forEach(function (pointer) {
-        var schema = registry.getSchemaFor(pointer);
+    addResourcePatch(registry, deltaCreator, resource, resource, resource._snapshot);
+    resource
+        .getPointers(true)
+        .forEach(function (pointer) {
         var snapshot = Resource_1.PersistedResource.is(pointer) ? pointer._snapshot : {};
-        deltaCreator.addResource(schema, pointer.id, snapshot, pointer);
+        addResourcePatch(registry, deltaCreator, pointer, pointer, snapshot);
+    });
+    resource._savedFragments
+        .filter(function (pointer) { return !resource.hasPointer(pointer.id); })
+        .forEach(function (pointer) {
+        addResourcePatch(registry, deltaCreator, pointer, {}, pointer._snapshot);
     });
     var body = deltaCreator.getPatch();
     return HTTP_1.RequestService
@@ -9429,7 +9405,7 @@ var PROTOTYPE = {
         var _this = this;
         return Utils_1.promiseMethod(function () {
             var registry = getRegistry(_this);
-            var iri = registry._resolveIRIFor(_this, Utils_1.isString(uriOrOptions) ? uriOrOptions : "");
+            var iri = registry._requestURLFor(_this, Utils_1.isString(uriOrOptions) ? uriOrOptions : void 0);
             requestOptions = Utils_1.isObject(uriOrOptions) ? uriOrOptions :
                 requestOptions ? requestOptions : {};
             return getFullResource(registry, iri, requestOptions);
@@ -9440,7 +9416,7 @@ var PROTOTYPE = {
         if (requestOptions === void 0) { requestOptions = {}; }
         return Utils_1.promiseMethod(function () {
             var registry = getRegistry(_this);
-            var iri = registry._resolveIRIFor(_this, _this.id);
+            var iri = registry._requestURLFor(_this);
             return getFullResource(registry, iri, requestOptions);
         });
     },
@@ -9449,7 +9425,7 @@ var PROTOTYPE = {
         if (requestOptions === void 0) { requestOptions = {}; }
         return Utils_1.promiseMethod(function () {
             var registry = getRegistry(_this);
-            var iri = registry._resolveIRIFor(_this, uri);
+            var iri = registry._requestURLFor(_this, uri);
             setDefaultRequestOptions(registry, requestOptions, Vocabularies_1.LDP.RDFSource);
             return HTTP_1.RequestService
                 .head(iri, requestOptions)
@@ -9461,12 +9437,12 @@ var PROTOTYPE = {
             });
         });
     },
-    create: function (uriOrChildrenOrSlugOrOptions, childrenOrSlugsOrOptions, slugsOrOptions, requestOptions) {
-        return createChildren("minimal", this, uriOrChildrenOrSlugOrOptions, childrenOrSlugsOrOptions, slugsOrOptions, requestOptions);
+    create: function (uriOrChildren, childrenOrSlugsOrOptions, slugsOrOptions, requestOptions) {
+        return createChildren("minimal", this, uriOrChildren, childrenOrSlugsOrOptions, slugsOrOptions, requestOptions);
     },
-    createAndRetrieve: function (uriOrChildrenOrSlugOrOptions, childrenOrSlugsOrOptions, slugsOrOptions, requestOptions) {
+    createAndRetrieve: function (uriOrChildren, childrenOrSlugsOrOptions, slugsOrOptions, requestOptions) {
         if (requestOptions === void 0) { requestOptions = {}; }
-        return createChildren("representation", this, uriOrChildrenOrSlugOrOptions, childrenOrSlugsOrOptions, slugsOrOptions, requestOptions);
+        return createChildren("representation", this, uriOrChildren, childrenOrSlugsOrOptions, slugsOrOptions, requestOptions);
     },
     createAccessPoint: function (uriOrAccessPoint, accessPointOrSlugOrRequestOptions, slugOrRequestOptions, requestOptions) {
         return createAccessPoint("minimal", this, uriOrAccessPoint, accessPointOrSlugOrRequestOptions, slugOrRequestOptions, requestOptions);
@@ -9517,7 +9493,7 @@ var PROTOTYPE = {
         if (requestOptions === void 0) { requestOptions = {}; }
         return Utils_1.promiseMethod(function () {
             var registry = getRegistry(_this);
-            var iri = registry._resolveIRIFor(_this, Utils_1.isString(uriOrOptions) ? uriOrOptions : "");
+            var iri = registry._requestURLFor(_this, Utils_1.isString(uriOrOptions) ? uriOrOptions : "");
             setDefaultRequestOptions(registry, requestOptions, Vocabularies_1.LDP.RDFSource);
             return HTTP_1.RequestService
                 .delete(iri, requestOptions)
@@ -9547,6 +9523,37 @@ exports.CRUDDocument = {
         return Utils_1.isObject(value)
             && PersistedDocument_1.PersistedDocument.is(value)
             && exports.CRUDDocument.isDecorated(value);
+    },
+};
+
+
+/***/ }),
+/* 128 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var Resource_1 = __webpack_require__(9);
+exports.TransientFragment = {
+    isDecorated: function (object) {
+        return Resource_1.TransientResource.isDecorated(object);
+    },
+    is: function (value) {
+        return Resource_1.TransientResource.is(value);
+    },
+    create: function (data) {
+        var copy = Object.assign({}, data);
+        return exports.TransientFragment.createFrom(copy);
+    },
+    createFrom: function (object) {
+        return exports.TransientFragment.decorate(object);
+    },
+    decorate: function (object) {
+        if (exports.TransientFragment.isDecorated(object))
+            return object;
+        Resource_1.TransientResource.decorate(object);
+        return object;
     },
 };
 
@@ -9680,19 +9687,36 @@ exports.SliceToken = SliceToken;
 
 "use strict";
 
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
+    result["default"] = mod;
+    return result;
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 var core_1 = __webpack_require__(15);
+var Fragment_1 = __webpack_require__(24);
 var Resource_1 = __webpack_require__(9);
+var Utils = __importStar(__webpack_require__(0));
 var TransientDocument_1 = __webpack_require__(38);
 var Utils_1 = __webpack_require__(0);
 var PROTOTYPE = {
     _resolved: false,
     _eTag: void 0,
+    get _savedFragments() { return []; },
     isResolved: function () {
         return !!this._resolved;
     },
     isOutdated: function () {
         return this._eTag === null;
+    },
+    _syncSavedFragments: function () {
+        this._savedFragments = Utils.ArrayUtils
+            .from(this._resourcesMap.values())
+            .map(Fragment_1.Fragment.decorate);
+        this._savedFragments
+            .forEach(function (fragment) { return fragment._syncSnapshot(); });
     },
 };
 exports.PersistedDocument = {
@@ -9740,7 +9764,7 @@ __export(__webpack_require__(134));
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var Errors_1 = __webpack_require__(3);
-var Fragment_1 = __webpack_require__(22);
+var Fragment_1 = __webpack_require__(24);
 var RDF_1 = __webpack_require__(13);
 exports.TransientBlankNode = {
     is: function (value) {
@@ -9803,7 +9827,7 @@ __export(__webpack_require__(136));
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var Errors_1 = __webpack_require__(3);
-var Fragment_1 = __webpack_require__(22);
+var Fragment_1 = __webpack_require__(24);
 var RDF_1 = __webpack_require__(13);
 var Utils_1 = __webpack_require__(0);
 exports.TransientNamedFragment = {
@@ -10709,7 +10733,7 @@ exports.UsersEndpoint = UsersEndpoint_1.UsersEndpoint;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var Fragment_1 = __webpack_require__(22);
+var Fragment_1 = __webpack_require__(24);
 var Vocabularies_1 = __webpack_require__(2);
 exports.TransientACE = {
     TYPE: Vocabularies_1.CS.AccessControlEntry,
@@ -11320,10 +11344,10 @@ var Auth = __importStar(__webpack_require__(152));
 var BlankNode_1 = __webpack_require__(133);
 var Document_1 = __webpack_require__(18);
 var Errors = __importStar(__webpack_require__(3));
-var Fragment_1 = __webpack_require__(22);
+var Fragment_1 = __webpack_require__(24);
 var FreeResources_1 = __webpack_require__(73);
 var HTTP = __importStar(__webpack_require__(37));
-var JSONLD = __importStar(__webpack_require__(24));
+var JSONLD = __importStar(__webpack_require__(23));
 var LDP = __importStar(__webpack_require__(19));
 var LDPatch = __importStar(__webpack_require__(130));
 var Messaging = __importStar(__webpack_require__(64));
@@ -11391,7 +11415,8 @@ var CarbonLDP = (function (_super) {
         _this.registry = new Registry_1.DocumentsRegistry(_this);
         _this.messaging = new Messaging.MessagingService(_this);
         _this.auth = new Auth.AuthService(_this);
-        _this.documents = ProtectedDocument_1.ProtectedDocument.decorate(_this.registry.register(_this._baseURI));
+        _this.documents = ProtectedDocument_1.ProtectedDocument
+            .decorate(_this.registry.getPointer(_this._baseURI, true));
         return _this;
     }
     Object.defineProperty(CarbonLDP, "version", {
@@ -14103,26 +14128,17 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var core_1 = __webpack_require__(15);
-var Fragment_1 = __webpack_require__(22);
 var Messaging_1 = __webpack_require__(64);
 var Resource_1 = __webpack_require__(9);
 var Utils = __importStar(__webpack_require__(0));
 var Utils_1 = __webpack_require__(0);
 var Vocabularies_1 = __webpack_require__(2);
-var CRUDDocument_1 = __webpack_require__(128);
+var CRUDDocument_1 = __webpack_require__(127);
 var MembersDocument_1 = __webpack_require__(297);
 var QueryDocumentDocument_1 = __webpack_require__(298);
 var SPARQLDocument_1 = __webpack_require__(314);
 var TransientDocument_1 = __webpack_require__(38);
 var PROTOTYPE = {
-    get _savedFragments() { return []; },
-    _syncSavedFragments: function () {
-        this._savedFragments = Utils.ArrayUtils
-            .from(this._resourcesMap.values())
-            .map(Fragment_1.Fragment.decorate);
-        this._savedFragments
-            .forEach(function (fragment) { return fragment._syncSnapshot(); });
-    },
     get: function (uriOrOptionsOrQueryBuilderFn, optionsOrQueryBuilderFn, queryBuilderFn) {
         var iri = Utils_1.isString(uriOrOptionsOrQueryBuilderFn) ? uriOrOptionsOrQueryBuilderFn : "";
         var requestOptions = Utils_1.isObject(uriOrOptionsOrQueryBuilderFn) ?
@@ -14270,36 +14286,6 @@ exports.Document = {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var Resource_1 = __webpack_require__(9);
-var TransientFragment_1 = __webpack_require__(102);
-exports.Fragment = {
-    isDecorated: function (object) {
-        return TransientFragment_1.TransientFragment.isDecorated(object)
-            && Resource_1.PersistedResource.isDecorated(object);
-    },
-    is: function (value) {
-        return TransientFragment_1.TransientFragment.is(value) &&
-            Resource_1.PersistedResource.isDecorated(value);
-    },
-    decorate: function (object) {
-        if (exports.Fragment.isDecorated(object))
-            return object;
-        TransientFragment_1.TransientFragment.decorate(object);
-        Resource_1.PersistedResource.decorate(object);
-        return object;
-    },
-    create: TransientFragment_1.TransientFragment.create,
-    createFrom: TransientFragment_1.TransientFragment.createFrom,
-};
-
-
-/***/ }),
-/* 227 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
 var C_1 = __webpack_require__(10);
 var DocumentCreated_1 = __webpack_require__(65);
 var SCHEMA = DocumentCreated_1.DocumentCreated.SCHEMA;
@@ -14310,7 +14296,7 @@ exports.AccessPointCreated = {
 
 
 /***/ }),
-/* 228 */
+/* 227 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14349,7 +14335,7 @@ exports.LDP = {
 
 
 /***/ }),
-/* 229 */
+/* 228 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14362,7 +14348,7 @@ exports.RDF = {
 
 
 /***/ }),
-/* 230 */
+/* 229 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14375,7 +14361,7 @@ exports.VCARD = {
 
 
 /***/ }),
-/* 231 */
+/* 230 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14392,7 +14378,7 @@ exports.ChildCreated = {
 
 
 /***/ }),
-/* 232 */
+/* 231 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14402,8 +14388,8 @@ var core_1 = __webpack_require__(15);
 var Document_1 = __webpack_require__(18);
 var Errors_1 = __webpack_require__(3);
 var Utils_1 = __webpack_require__(0);
-var Event_1 = __webpack_require__(103);
-var Utils_2 = __webpack_require__(104);
+var Event_1 = __webpack_require__(102);
+var Utils_2 = __webpack_require__(103);
 function getMessagingService(repository) {
     if (!repository._context || !repository._context.messaging)
         throw new Errors_1.IllegalActionError("\"" + repository.id + "\" does't support messaging subscriptions.");
@@ -14507,7 +14493,7 @@ exports.MessagingDocument = {
 
 
 /***/ }),
-/* 233 */
+/* 232 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14528,7 +14514,7 @@ exports.DocumentCreatedDetails = {
 
 
 /***/ }),
-/* 234 */
+/* 233 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14545,7 +14531,7 @@ exports.DocumentDeleted = {
 
 
 /***/ }),
-/* 235 */
+/* 234 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14562,7 +14548,7 @@ exports.DocumentModified = {
 
 
 /***/ }),
-/* 236 */
+/* 235 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14590,7 +14576,7 @@ exports.MemberAdded = {
 
 
 /***/ }),
-/* 237 */
+/* 236 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14607,7 +14593,7 @@ exports.MemberAddedDetails = {
 
 
 /***/ }),
-/* 238 */
+/* 237 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14635,7 +14621,7 @@ exports.MemberRemoved = {
 
 
 /***/ }),
-/* 239 */
+/* 238 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14652,7 +14638,7 @@ exports.MemberRemovedDetails = {
 
 
 /***/ }),
-/* 240 */
+/* 239 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14676,10 +14662,10 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var sockjs_client_1 = __importDefault(__webpack_require__(241));
-var webstomp = __importStar(__webpack_require__(273));
+var sockjs_client_1 = __importDefault(__webpack_require__(240));
+var webstomp = __importStar(__webpack_require__(272));
 var Errors_1 = __webpack_require__(3);
-var JSONLD_1 = __webpack_require__(24);
+var JSONLD_1 = __webpack_require__(23);
 var Utils_1 = __webpack_require__(0);
 var EventMessage_1 = __webpack_require__(30);
 var DEFAULT_OPTIONS = {
@@ -14822,15 +14808,15 @@ exports.MessagingService = MessagingService;
 
 
 /***/ }),
-/* 241 */
+/* 240 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(global) {
 
-var transportList = __webpack_require__(242);
+var transportList = __webpack_require__(241);
 
-module.exports = __webpack_require__(261)(transportList);
+module.exports = __webpack_require__(260)(transportList);
 
 // TODO can't get rid of this until all servers do
 if ('_sockjs_onload' in global) {
@@ -14840,7 +14826,7 @@ if ('_sockjs_onload' in global) {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(7)))
 
 /***/ }),
-/* 242 */
+/* 241 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14848,24 +14834,24 @@ if ('_sockjs_onload' in global) {
 
 module.exports = [
   // streaming transports
-  __webpack_require__(243)
-, __webpack_require__(250)
+  __webpack_require__(242)
+, __webpack_require__(249)
+, __webpack_require__(108)
 , __webpack_require__(109)
-, __webpack_require__(110)
-, __webpack_require__(70)(__webpack_require__(110))
+, __webpack_require__(70)(__webpack_require__(109))
 
   // polling transports
+, __webpack_require__(113)
+, __webpack_require__(70)(__webpack_require__(113))
 , __webpack_require__(114)
+, __webpack_require__(256)
 , __webpack_require__(70)(__webpack_require__(114))
-, __webpack_require__(115)
 , __webpack_require__(257)
-, __webpack_require__(70)(__webpack_require__(115))
-, __webpack_require__(258)
 ];
 
 
 /***/ }),
-/* 243 */
+/* 242 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14875,7 +14861,7 @@ var utils = __webpack_require__(26)
   , urlUtils = __webpack_require__(16)
   , inherits = __webpack_require__(1)
   , EventEmitter = __webpack_require__(14).EventEmitter
-  , WebsocketDriver = __webpack_require__(249)
+  , WebsocketDriver = __webpack_require__(248)
   ;
 
 var debug = function() {};
@@ -14971,7 +14957,7 @@ module.exports = WebSocketTransport;
 
 
 /***/ }),
-/* 244 */
+/* 243 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14996,7 +14982,7 @@ if (global.crypto && global.crypto.getRandomValues) {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(7)))
 
 /***/ }),
-/* 245 */
+/* 244 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -15041,7 +15027,7 @@ module.exports = function required(port, protocol) {
 
 
 /***/ }),
-/* 246 */
+/* 245 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -15120,7 +15106,7 @@ exports.parse = querystring;
 
 
 /***/ }),
-/* 247 */
+/* 246 */
 /***/ (function(module, exports, __webpack_require__) {
 
 
@@ -15136,7 +15122,7 @@ exports.coerce = coerce;
 exports.disable = disable;
 exports.enable = enable;
 exports.enabled = enabled;
-exports.humanize = __webpack_require__(248);
+exports.humanize = __webpack_require__(247);
 
 /**
  * The currently active debug mode names, and names to skip.
@@ -15328,7 +15314,7 @@ function coerce(val) {
 
 
 /***/ }),
-/* 248 */
+/* 247 */
 /***/ (function(module, exports) {
 
 /**
@@ -15486,7 +15472,7 @@ function plural(ms, n, name) {
 
 
 /***/ }),
-/* 249 */
+/* 248 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -15504,7 +15490,7 @@ if (Driver) {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(7)))
 
 /***/ }),
-/* 250 */
+/* 249 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -15553,7 +15539,7 @@ module.exports = XhrStreamingTransport;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(7)))
 
 /***/ }),
-/* 251 */
+/* 250 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -15647,7 +15633,7 @@ module.exports = BufferedSender;
 
 
 /***/ }),
-/* 252 */
+/* 251 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -15711,7 +15697,7 @@ module.exports = Polling;
 
 
 /***/ }),
-/* 253 */
+/* 252 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -15719,7 +15705,7 @@ module.exports = Polling;
 
 var inherits = __webpack_require__(1)
   , EventEmitter = __webpack_require__(14).EventEmitter
-  , EventSourceDriver = __webpack_require__(111)
+  , EventSourceDriver = __webpack_require__(110)
   ;
 
 var debug = function() {};
@@ -15781,7 +15767,7 @@ module.exports = EventSourceReceiver;
 
 
 /***/ }),
-/* 254 */
+/* 253 */
 /***/ (function(module, exports) {
 
 module.exports = function(module) {
@@ -15809,7 +15795,7 @@ module.exports = function(module) {
 
 
 /***/ }),
-/* 255 */
+/* 254 */
 /***/ (function(module, exports) {
 
 /* WEBPACK VAR INJECTION */(function(__webpack_amd_options__) {/* globals __webpack_amd_options__ */
@@ -15818,7 +15804,7 @@ module.exports = __webpack_amd_options__;
 /* WEBPACK VAR INJECTION */}.call(exports, {}))
 
 /***/ }),
-/* 256 */
+/* 255 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -15913,7 +15899,7 @@ module.exports = HtmlfileReceiver;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(7)))
 
 /***/ }),
-/* 257 */
+/* 256 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -15921,7 +15907,7 @@ module.exports = HtmlfileReceiver;
 
 var inherits = __webpack_require__(1)
   , AjaxBasedTransport = __webpack_require__(36)
-  , XdrStreamingTransport = __webpack_require__(109)
+  , XdrStreamingTransport = __webpack_require__(108)
   , XhrReceiver = __webpack_require__(53)
   , XDRObject = __webpack_require__(69)
   ;
@@ -15943,7 +15929,7 @@ module.exports = XdrPollingTransport;
 
 
 /***/ }),
-/* 258 */
+/* 257 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -15958,9 +15944,9 @@ module.exports = XdrPollingTransport;
 //   o for Konqueror a dumb timer is needed to detect errors
 
 var inherits = __webpack_require__(1)
-  , SenderReceiver = __webpack_require__(107)
-  , JsonpReceiver = __webpack_require__(259)
-  , jsonpSender = __webpack_require__(260)
+  , SenderReceiver = __webpack_require__(106)
+  , JsonpReceiver = __webpack_require__(258)
+  , jsonpSender = __webpack_require__(259)
   ;
 
 function JsonPTransport(transUrl) {
@@ -15985,7 +15971,7 @@ module.exports = JsonPTransport;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(7)))
 
 /***/ }),
-/* 259 */
+/* 258 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16176,7 +16162,7 @@ module.exports = JsonpReceiver;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(7)))
 
 /***/ }),
-/* 260 */
+/* 259 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16283,31 +16269,31 @@ module.exports = function(url, payload, callback) {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(7)))
 
 /***/ }),
-/* 261 */
+/* 260 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(global) {
 
-__webpack_require__(262);
+__webpack_require__(261);
 
-var URL = __webpack_require__(105)
+var URL = __webpack_require__(104)
   , inherits = __webpack_require__(1)
-  , JSON3 = __webpack_require__(23)
+  , JSON3 = __webpack_require__(22)
   , random = __webpack_require__(35)
-  , escape = __webpack_require__(263)
+  , escape = __webpack_require__(262)
   , urlUtils = __webpack_require__(16)
   , eventUtils = __webpack_require__(26)
-  , transport = __webpack_require__(264)
+  , transport = __webpack_require__(263)
   , objectUtils = __webpack_require__(71)
   , browser = __webpack_require__(44)
-  , log = __webpack_require__(265)
+  , log = __webpack_require__(264)
   , Event = __webpack_require__(72)
-  , EventTarget = __webpack_require__(106)
-  , loc = __webpack_require__(116)
-  , CloseEvent = __webpack_require__(266)
-  , TransportMessageEvent = __webpack_require__(267)
-  , InfoReceiver = __webpack_require__(268)
+  , EventTarget = __webpack_require__(105)
+  , loc = __webpack_require__(115)
+  , CloseEvent = __webpack_require__(265)
+  , TransportMessageEvent = __webpack_require__(266)
+  , InfoReceiver = __webpack_require__(267)
   ;
 
 var debug = function() {};
@@ -16452,7 +16438,7 @@ SockJS.prototype.send = function(data) {
   this._transport.send(escape.quote(data));
 };
 
-SockJS.version = __webpack_require__(113);
+SockJS.version = __webpack_require__(112);
 
 SockJS.CONNECTING = 0;
 SockJS.OPEN = 1;
@@ -16665,14 +16651,14 @@ SockJS.prototype.countRTO = function(rtt) {
 
 module.exports = function(availableTransports) {
   transports = transport(availableTransports);
-  __webpack_require__(271)(SockJS, availableTransports);
+  __webpack_require__(270)(SockJS, availableTransports);
   return SockJS;
 };
 
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(7)))
 
 /***/ }),
-/* 262 */
+/* 261 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17131,13 +17117,13 @@ defineProperties(StringPrototype, {
 
 
 /***/ }),
-/* 263 */
+/* 262 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var JSON3 = __webpack_require__(23);
+var JSON3 = __webpack_require__(22);
 
 // Some extra characters that Chrome gets wrong, and substitutes with
 // something else on the wire.
@@ -17188,7 +17174,7 @@ module.exports = {
 
 
 /***/ }),
-/* 264 */
+/* 263 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17245,7 +17231,7 @@ module.exports = function(availableTransports) {
 
 
 /***/ }),
-/* 265 */
+/* 264 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17271,7 +17257,7 @@ module.exports = logObject;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(7)))
 
 /***/ }),
-/* 266 */
+/* 265 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17295,7 +17281,7 @@ module.exports = CloseEvent;
 
 
 /***/ }),
-/* 267 */
+/* 266 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17317,7 +17303,7 @@ module.exports = TransportMessageEvent;
 
 
 /***/ }),
-/* 268 */
+/* 267 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17329,9 +17315,9 @@ var EventEmitter = __webpack_require__(14).EventEmitter
   , XDR = __webpack_require__(69)
   , XHRCors = __webpack_require__(54)
   , XHRLocal = __webpack_require__(43)
-  , XHRFake = __webpack_require__(269)
-  , InfoIframe = __webpack_require__(270)
-  , InfoAjax = __webpack_require__(118)
+  , XHRFake = __webpack_require__(268)
+  , InfoIframe = __webpack_require__(269)
+  , InfoAjax = __webpack_require__(117)
   ;
 
 var debug = function() {};
@@ -17413,7 +17399,7 @@ module.exports = InfoReceiver;
 
 
 /***/ }),
-/* 269 */
+/* 268 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17444,7 +17430,7 @@ module.exports = XHRFake;
 
 
 /***/ }),
-/* 270 */
+/* 269 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17452,10 +17438,10 @@ module.exports = XHRFake;
 
 var EventEmitter = __webpack_require__(14).EventEmitter
   , inherits = __webpack_require__(1)
-  , JSON3 = __webpack_require__(23)
+  , JSON3 = __webpack_require__(22)
   , utils = __webpack_require__(26)
-  , IframeTransport = __webpack_require__(112)
-  , InfoReceiverIframe = __webpack_require__(117)
+  , IframeTransport = __webpack_require__(111)
+  , InfoReceiverIframe = __webpack_require__(116)
   ;
 
 var debug = function() {};
@@ -17521,7 +17507,7 @@ module.exports = InfoIframe;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(7)))
 
 /***/ }),
-/* 271 */
+/* 270 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17529,11 +17515,11 @@ module.exports = InfoIframe;
 
 var urlUtils = __webpack_require__(16)
   , eventUtils = __webpack_require__(26)
-  , JSON3 = __webpack_require__(23)
-  , FacadeJS = __webpack_require__(272)
-  , InfoIframeReceiver = __webpack_require__(117)
+  , JSON3 = __webpack_require__(22)
+  , FacadeJS = __webpack_require__(271)
+  , InfoIframeReceiver = __webpack_require__(116)
   , iframeUtils = __webpack_require__(45)
-  , loc = __webpack_require__(116)
+  , loc = __webpack_require__(115)
   ;
 
 var debug = function() {};
@@ -17630,13 +17616,13 @@ module.exports = function(SockJS, availableTransports) {
 
 
 /***/ }),
-/* 272 */
+/* 271 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var JSON3 = __webpack_require__(23)
+var JSON3 = __webpack_require__(22)
   , iframeUtils = __webpack_require__(45)
   ;
 
@@ -17664,7 +17650,7 @@ module.exports = FacadeJS;
 
 
 /***/ }),
-/* 273 */
+/* 272 */
 /***/ (function(module, exports, __webpack_require__) {
 
 (function webpackUniversalModuleDefinition(root, factory) {
@@ -18570,7 +18556,7 @@ module.exports = exports['default'];
 });
 
 /***/ }),
-/* 274 */
+/* 273 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18608,14 +18594,13 @@ var JSONLDCompacter = (function () {
             var currentFragments = targetDocument
                 .getPointers(true)
                 .map(function (pointer) { return pointer.id; });
-            var fragmentsSet = new Set(currentFragments);
-            fragmentNodes.forEach(function (fragmentNode) {
-                var fragmentID = RDF_1.RDFNode.getID(fragmentNode);
-                if (fragmentsSet.has(fragmentID))
-                    fragmentsSet.delete(fragmentID);
-                _this._getResource(fragmentNode, targetDocument);
-            });
-            fragmentsSet.forEach(targetDocument.removePointer, targetDocument);
+            var newFragments = fragmentNodes
+                .map(function (fragmentNode) { return _this._getResource(fragmentNode, targetDocument); })
+                .map(function (fragment) { return fragment.id; });
+            var newFragmentsSet = new Set(newFragments);
+            currentFragments
+                .filter(function (id) { return !newFragmentsSet.has(id); })
+                .forEach(function (id) { return targetDocument.removePointer(id); });
         });
         var compactedDocuments = rdfDocuments
             .map(function (rdfDocument) { return rdfDocument["@id"]; })
@@ -18739,7 +18724,7 @@ exports.JSONLDCompacter = JSONLDCompacter;
 
 
 /***/ }),
-/* 275 */
+/* 274 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18758,10 +18743,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var Document_1 = __webpack_require__(18);
 var Errors_1 = __webpack_require__(3);
 var Errors_2 = __webpack_require__(29);
-var JSONLD_1 = __webpack_require__(24);
+var JSONLD_1 = __webpack_require__(23);
 var LDP_1 = __webpack_require__(19);
 var RDF_1 = __webpack_require__(13);
-var RegistryService_1 = __webpack_require__(120);
+var RegistryService_1 = __webpack_require__(119);
 var DocumentsRegistry = (function (_super) {
     __extends(DocumentsRegistry, _super);
     function DocumentsRegistry(context) {
@@ -18780,20 +18765,22 @@ var DocumentsRegistry = (function (_super) {
             return null;
         return _super.prototype._getLocalID.call(this, id);
     };
-    DocumentsRegistry.prototype._resolveIRIFor = function (pointer, iri) {
-        iri = iri ? RDF_1.URI.resolve(pointer.id, iri) : pointer.id;
-        if (RDF_1.URI.isBNodeID(iri))
-            throw new Errors_1.IllegalArgumentError("Blank nodes cannot be fetched directly.");
-        if (RDF_1.URI.hasFragment(iri))
-            throw new Errors_1.IllegalArgumentError("Named fragments cannot be fetched directly.");
-        var localIRI = this._getLocalID(iri);
+    DocumentsRegistry.prototype._requestURLFor = function (pointer, uri) {
+        uri = uri ? RDF_1.URI.resolve(pointer.id, uri) : pointer.id;
+        if (RDF_1.URI.isBNodeID(uri))
+            throw new Errors_1.IllegalArgumentError("\"" + uri + "\" (Blank Node) can't be fetched directly.");
+        if (RDF_1.URI.hasFragment(uri))
+            throw new Errors_1.IllegalArgumentError("\"" + uri + "\" (Named Fragment) can't be fetched directly.");
+        var localIRI = this._getLocalID(uri);
         if (localIRI === null)
-            throw new Errors_1.IllegalArgumentError("The IRI \"" + iri + "\" is outside the scope of this registry.");
+            throw new Errors_1.IllegalArgumentError("\"" + uri + "\" is outside " + (this._context ? "\"" + this._context.baseURI + "\" " : "") + "scope.");
+        if (!this._context)
+            return localIRI;
         return RDF_1.URI.resolve(this._context.baseURI, localIRI);
     };
     DocumentsRegistry.prototype._parseErrorResponse = function (response) {
         var _this = this;
-        if (response instanceof Error)
+        if (!response || response instanceof Error)
             return Promise.reject(response);
         if (!(response.status >= 400 && response.status < 600 && Errors_2.statusCodeMap.has(response.status)))
             return Promise.reject(new Errors_2.UnknownError(response.data, response));
@@ -18824,7 +18811,7 @@ exports.DocumentsRegistry = DocumentsRegistry;
 
 
 /***/ }),
-/* 276 */
+/* 275 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18859,7 +18846,7 @@ exports.AddMemberAction = {
 
 
 /***/ }),
-/* 277 */
+/* 276 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18888,7 +18875,7 @@ exports.Error = {
 
 
 /***/ }),
-/* 278 */
+/* 277 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18915,7 +18902,7 @@ exports.Map = {
 
 
 /***/ }),
-/* 279 */
+/* 278 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18936,7 +18923,7 @@ exports.MapEntry = {
 
 
 /***/ }),
-/* 280 */
+/* 279 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18945,19 +18932,19 @@ function __export(m) {
     for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
 }
 Object.defineProperty(exports, "__esModule", { value: true });
-__export(__webpack_require__(281));
-__export(__webpack_require__(121));
+__export(__webpack_require__(280));
+__export(__webpack_require__(120));
 
 
 /***/ }),
-/* 281 */
+/* 280 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var Document_1 = __webpack_require__(18);
-var TransientDirectContainer_1 = __webpack_require__(121);
+var TransientDirectContainer_1 = __webpack_require__(120);
 exports.DirectContainer = {
     TYPE: TransientDirectContainer_1.TransientDirectContainer.TYPE,
     is: function (value) {
@@ -18970,7 +18957,7 @@ exports.DirectContainer = {
 
 
 /***/ }),
-/* 282 */
+/* 281 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18999,7 +18986,7 @@ exports.DocumentMetadata = {
 
 
 /***/ }),
-/* 283 */
+/* 282 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19040,7 +19027,7 @@ exports.ErrorResponse = {
 
 
 /***/ }),
-/* 284 */
+/* 283 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19075,14 +19062,14 @@ exports.RemoveMemberAction = {
 
 
 /***/ }),
-/* 285 */
+/* 284 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var Vocabularies_1 = __webpack_require__(2);
-var VolatileResource_1 = __webpack_require__(122);
+var VolatileResource_1 = __webpack_require__(121);
 var SCHEMA = {
     "documentsMetadata": {
         "@id": Vocabularies_1.C.documentMetadata,
@@ -19105,7 +19092,7 @@ exports.ResponseMetadata = {
 
 
 /***/ }),
-/* 286 */
+/* 285 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19125,7 +19112,7 @@ exports.ValidationError = {
 
 
 /***/ }),
-/* 287 */
+/* 286 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19168,7 +19155,7 @@ exports.PartialMetadata = PartialMetadata;
 
 
 /***/ }),
-/* 288 */
+/* 287 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19279,7 +19266,7 @@ exports.QueryContextBuilder = QueryContextBuilder;
 
 
 /***/ }),
-/* 289 */
+/* 288 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19325,7 +19312,7 @@ exports.QueryContextPartial = QueryContextPartial;
 
 
 /***/ }),
-/* 290 */
+/* 289 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19344,7 +19331,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var tokens_1 = __webpack_require__(4);
 var IllegalArgumentError_1 = __webpack_require__(28);
 var IllegalStateError_1 = __webpack_require__(61);
-var QueryDocumentBuilder_1 = __webpack_require__(124);
+var QueryDocumentBuilder_1 = __webpack_require__(123);
 var Utils_1 = __webpack_require__(47);
 var QueryDocumentsBuilder = (function (_super) {
     __extends(QueryDocumentsBuilder, _super);
@@ -19431,7 +19418,7 @@ function parseFlowString(flow) {
 
 
 /***/ }),
-/* 291 */
+/* 290 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19457,7 +19444,7 @@ exports.QueryMetadata = {
 
 
 /***/ }),
-/* 292 */
+/* 291 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19479,7 +19466,7 @@ var URI_1 = __webpack_require__(33);
 var XSD_1 = __webpack_require__(12);
 var ObjectSchema = __importStar(__webpack_require__(11));
 var Utils = __importStar(__webpack_require__(0));
-var Utils_1 = __webpack_require__(127);
+var Utils_1 = __webpack_require__(126);
 var JSONLDConverter = (function () {
     function JSONLDConverter(literalSerializers) {
         this._literalSerializers = literalSerializers ?
@@ -19613,7 +19600,7 @@ var JSONLDConverter = (function () {
                 null;
         if (!id)
             return null;
-        var resolved = ObjectSchema.ObjectSchemaUtils.resolveURI(id, generalSchema, { vocab: isString, base: true });
+        var resolved = ObjectSchema.ObjectSchemaUtils.resolveURI(id, generalSchema, { vocab: isString });
         return { "@id": resolved };
     };
     JSONLDConverter.prototype.expandValue = function (propertyValue, digestedSchema, generalSchema) {
@@ -19721,6 +19708,36 @@ exports.JSONLDConverter = JSONLDConverter;
 
 
 /***/ }),
+/* 292 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var Resource_1 = __webpack_require__(9);
+var TransientFragment_1 = __webpack_require__(128);
+exports.Fragment = {
+    isDecorated: function (object) {
+        return TransientFragment_1.TransientFragment.isDecorated(object)
+            && Resource_1.PersistedResource.isDecorated(object);
+    },
+    is: function (value) {
+        return TransientFragment_1.TransientFragment.is(value) &&
+            Resource_1.PersistedResource.isDecorated(value);
+    },
+    decorate: function (object) {
+        if (exports.Fragment.isDecorated(object))
+            return object;
+        TransientFragment_1.TransientFragment.decorate(object);
+        Resource_1.PersistedResource.decorate(object);
+        return object;
+    },
+    create: TransientFragment_1.TransientFragment.create,
+    createFrom: TransientFragment_1.TransientFragment.createFrom,
+};
+
+
+/***/ }),
 /* 293 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -19789,7 +19806,7 @@ var __assign = (this && this.__assign) || Object.assign || function(t) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var iri_1 = __webpack_require__(31);
 var tokens_1 = __webpack_require__(4);
-var Utils_1 = __webpack_require__(127);
+var Utils_1 = __webpack_require__(126);
 var ObjectSchema_1 = __webpack_require__(11);
 var Pointer_1 = __webpack_require__(17);
 var Utils_2 = __webpack_require__(0);
@@ -20066,7 +20083,7 @@ function isValidValue(value) {
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var core_1 = __webpack_require__(15);
-var Fragment_1 = __webpack_require__(22);
+var Fragment_1 = __webpack_require__(24);
 var Resource_1 = __webpack_require__(9);
 var TransientBlankNode_1 = __webpack_require__(134);
 exports.BlankNode = {
@@ -20090,7 +20107,7 @@ exports.BlankNode = {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var Fragment_1 = __webpack_require__(22);
+var Fragment_1 = __webpack_require__(24);
 var TransientNamedFragment_1 = __webpack_require__(136);
 exports.NamedFragment = {
     isDecorated: function (object) {
@@ -20150,7 +20167,7 @@ function parseMembers(registry, pointers) {
 function sendAddAction(repository, uri, members, requestOptions) {
     return Utils_1.promiseMethod(function () {
         var registry = getRegistry(repository);
-        var iri = registry._resolveIRIFor(repository, uri);
+        var iri = registry._requestURLFor(repository, uri);
         var targetMembers = parseMembers(registry, members);
         setDefaultRequestOptions(registry, requestOptions, Vocabularies_1.LDP.Container);
         HTTP_1.RequestUtils.setContentTypeHeader("application/ld+json", requestOptions);
@@ -20169,7 +20186,7 @@ function sendAddAction(repository, uri, members, requestOptions) {
 function sendRemoveAction(repository, uri, members, requestOptions) {
     return Utils_1.promiseMethod(function () {
         var registry = getRegistry(repository);
-        var iri = registry._resolveIRIFor(repository, uri);
+        var iri = registry._requestURLFor(repository, uri);
         var targetMembers = parseMembers(registry, members);
         setDefaultRequestOptions(registry, requestOptions, Vocabularies_1.LDP.Container);
         HTTP_1.RequestUtils.setContentTypeHeader("application/ld+json", requestOptions);
@@ -20247,7 +20264,7 @@ var PROTOTYPE = {
             "";
         return Utils_1.promiseMethod(function () {
             var registry = getRegistry(_this);
-            var iri = registry._resolveIRIFor(_this, uri);
+            var iri = registry._requestURLFor(_this, uri);
             setDefaultRequestOptions(registry, requestOptions, Vocabularies_1.LDP.Container);
             HTTP_1.RequestUtils.setRetrievalPreferences({
                 include: [
@@ -20296,7 +20313,7 @@ var tokens_1 = __webpack_require__(4);
 var core_1 = __webpack_require__(15);
 var Errors_1 = __webpack_require__(3);
 var HTTP_1 = __webpack_require__(37);
-var JSONLD_1 = __webpack_require__(24);
+var JSONLD_1 = __webpack_require__(23);
 var LDP_1 = __webpack_require__(19);
 var Pointer_1 = __webpack_require__(17);
 var index_1 = __webpack_require__(13);
@@ -20306,7 +20323,7 @@ var QueryDocument_1 = __webpack_require__(55);
 var Utils_1 = __webpack_require__(47);
 var Utils_2 = __webpack_require__(0);
 var Vocabularies_1 = __webpack_require__(2);
-var CRUDDocument_1 = __webpack_require__(128);
+var CRUDDocument_1 = __webpack_require__(127);
 var PersistedDocument_1 = __webpack_require__(132);
 var emptyQueryBuildFn = function (_) { return _; };
 function getRegistry(repository) {
@@ -20483,7 +20500,7 @@ function getPartial(registry, uri, requestOptions, queryBuilderFn) {
         .then(function (documents) { return documents[0]; });
 }
 function refreshPartial(registry, resource, requestOptions) {
-    var uri = registry._resolveIRIFor(resource);
+    var uri = registry._requestURLFor(resource);
     var queryContext = new QueryDocument_1.QueryContextPartial(resource, registry._context);
     var targetName = "document";
     var constructPatterns = new tokens_1.OptionalToken()
@@ -20498,7 +20515,7 @@ function executeChildrenBuilder(repository, uri, requestOptions, queryBuilderFn)
     var _this = this;
     return Utils_2.promiseMethod(function () {
         var registry = getRegistry(_this);
-        uri = registry._resolveIRIFor(repository, uri);
+        uri = registry._requestURLFor(repository, uri);
         var queryContext = new QueryDocument_1.QueryContextBuilder(registry._context);
         var childrenProperty = queryContext
             .addProperty("child")
@@ -20516,7 +20533,7 @@ function executeMembersBuilder(repository, uri, requestOptions, queryBuilderFn) 
     var _this = this;
     return Utils_2.promiseMethod(function () {
         var registry = getRegistry(_this);
-        uri = registry._resolveIRIFor(repository, uri);
+        uri = registry._requestURLFor(repository, uri);
         var queryContext = new QueryDocument_1.QueryContextBuilder(registry._context);
         var membersProperty = queryContext
             .addProperty("member")
@@ -20542,7 +20559,7 @@ var PROTOTYPE = {
         var _this = this;
         return Utils_2.promiseMethod(function () {
             var registry = getRegistry(_this);
-            var iri = registry._resolveIRIFor(_this, Utils_2.isString(uriOrOptionsOrQueryBuilderFn) ? uriOrOptionsOrQueryBuilderFn : void 0);
+            var iri = registry._requestURLFor(_this, Utils_2.isString(uriOrOptionsOrQueryBuilderFn) ? uriOrOptionsOrQueryBuilderFn : void 0);
             var requestOptions = Utils_2.isObject(uriOrOptionsOrQueryBuilderFn) ?
                 uriOrOptionsOrQueryBuilderFn : Utils_2.isObject(optionsOrQueryBuilderFn) ? optionsOrQueryBuilderFn : {};
             queryBuilderFn = Utils_2.isFunction(uriOrOptionsOrQueryBuilderFn) ? uriOrOptionsOrQueryBuilderFn :
@@ -20554,7 +20571,7 @@ var PROTOTYPE = {
         var _this = this;
         return Utils_2.promiseMethod(function () {
             var registry = getRegistry(_this);
-            var iri = registry._resolveIRIFor(_this);
+            var iri = registry._requestURLFor(_this);
             var requestOptions = Utils_2.isObject(optionsOrQueryBuilderFn) ? optionsOrQueryBuilderFn : {};
             if (Utils_2.isFunction(optionsOrQueryBuilderFn))
                 queryBuilderFn = optionsOrQueryBuilderFn;
@@ -21315,7 +21332,7 @@ function parseParams(resource, uriOrQuery, queryOrOptions, options) {
         query = queryOrOptions;
         iri = uriOrQuery;
     }
-    iri = registry._resolveIRIFor(resource, iri);
+    iri = registry._requestURLFor(resource, iri);
     registry._context.auth.addAuthentication(options);
     return { iri: iri, query: query, options: options };
 }
@@ -21410,7 +21427,7 @@ var PROTOTYPE = {
     },
     sparql: function (uri) {
         var registry = getRegistry(this);
-        var iri = registry._resolveIRIFor(this, uri);
+        var iri = registry._requestURLFor(this, uri);
         var schema = registry.getGeneralSchema();
         var builder = new SPARQL_1.SPARQLBuilder(this, iri)
             .base(schema.base)
@@ -21446,7 +21463,7 @@ exports.SPARQLDocument = {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var Fragment_1 = __webpack_require__(22);
+var Fragment_1 = __webpack_require__(24);
 var Vocabularies_1 = __webpack_require__(2);
 var TransientACE_1 = __webpack_require__(153);
 exports.ACE = {

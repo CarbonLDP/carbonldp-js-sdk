@@ -84,10 +84,8 @@ var RegistryService = (function () {
         var objectSchemas = objectTypes
             .filter(function (type) { return _this._context.hasObjectSchema(type); })
             .map(function (type) { return _this._context.getObjectSchema(type); });
-        if (!objectSchemas.length)
-            return new ObjectSchema_1.DigestedObjectSchema();
         return ObjectSchema_1.ObjectSchemaDigester
-            .combineDigestedObjectSchemas([
+            ._combineSchemas([
             this._context.getObjectSchema()
         ].concat(objectSchemas));
     };

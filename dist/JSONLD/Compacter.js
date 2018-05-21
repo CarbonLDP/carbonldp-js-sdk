@@ -32,14 +32,13 @@ var JSONLDCompacter = (function () {
             var currentFragments = targetDocument
                 .getPointers(true)
                 .map(function (pointer) { return pointer.id; });
-            var fragmentsSet = new Set(currentFragments);
-            fragmentNodes.forEach(function (fragmentNode) {
-                var fragmentID = RDF_1.RDFNode.getID(fragmentNode);
-                if (fragmentsSet.has(fragmentID))
-                    fragmentsSet.delete(fragmentID);
-                _this._getResource(fragmentNode, targetDocument);
-            });
-            fragmentsSet.forEach(targetDocument.removePointer, targetDocument);
+            var newFragments = fragmentNodes
+                .map(function (fragmentNode) { return _this._getResource(fragmentNode, targetDocument); })
+                .map(function (fragment) { return fragment.id; });
+            var newFragmentsSet = new Set(newFragments);
+            currentFragments
+                .filter(function (id) { return !newFragmentsSet.has(id); })
+                .forEach(function (id) { return targetDocument.removePointer(id); });
         });
         var compactedDocuments = rdfDocuments
             .map(function (rdfDocument) { return rdfDocument["@id"]; })

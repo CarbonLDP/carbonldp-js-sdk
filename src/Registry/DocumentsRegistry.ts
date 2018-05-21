@@ -45,21 +45,23 @@ export class DocumentsRegistry extends RegistryService<Document, CarbonLDP> {
 		return super._getLocalID( id );
 	}
 
-	_resolveIRIFor( pointer:Pointer, iri?:string ):string {
-		iri = iri ? URI.resolve( pointer.id, iri ) : pointer.id;
 
-		if( URI.isBNodeID( iri ) ) throw new IllegalArgumentError( "Blank nodes cannot be fetched directly." );
-		if( URI.hasFragment( iri ) ) throw new IllegalArgumentError( "Named fragments cannot be fetched directly." );
+	_requestURLFor( pointer:Pointer, uri?:string ):string {
+		uri = uri ? URI.resolve( pointer.id, uri ) : pointer.id;
 
-		const localIRI:string = this._getLocalID( iri );
-		if( localIRI === null ) throw new IllegalArgumentError( `The IRI "${ iri }" is outside the scope of this registry.` );
+		if( URI.isBNodeID( uri ) ) throw new IllegalArgumentError( `"${ uri }" (Blank Node) can't be fetched directly.` );
+		if( URI.hasFragment( uri ) ) throw new IllegalArgumentError( `"${ uri }" (Named Fragment) can't be fetched directly.` );
 
+		const localIRI:string = this._getLocalID( uri );
+		if( localIRI === null ) throw new IllegalArgumentError( `"${ uri }" is outside ${ this._context ? `"${ this._context.baseURI }" ` : "" }scope.` );
+
+		if( ! this._context ) return localIRI;
 		return URI.resolve( this._context.baseURI, localIRI );
 	}
 
 
-	_parseErrorResponse<T extends object>( response:Response | Error ):Promise<never> {
-		if( response instanceof Error ) return Promise.reject( response );
+	_parseErrorResponse<T extends object>( response:Response | Error | null ):Promise<never> {
+		if( ! response || response instanceof Error ) return Promise.reject( response );
 
 		if( ! (response.status >= 400 && response.status < 600 && statusCodeMap.has( response.status )) )
 			return Promise.reject( new UnknownError( response.data, response ) );
@@ -84,4 +86,5 @@ export class DocumentsRegistry extends RegistryService<Document, CarbonLDP> {
 				return Promise.reject( error );
 			} );
 	}
+
 }

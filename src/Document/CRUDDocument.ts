@@ -61,57 +61,51 @@ export interface CRUDDocument extends PersistedDocument {
 	exists( uri:string, requestOptions?:RequestOptions ):Promise<boolean>;
 
 
-	create<T extends object>( requestOptions?:RequestOptions ):Promise<T & Document>;
-	create<T extends object>( slug?:string, requestOptions?:RequestOptions ):Promise<T & Document>;
-	create<T extends object>( childObject:T, requestOptions?:RequestOptions ):Promise<T & Document>;
-	create<T extends object>( childObject:T, slug?:string, requestOptions?:RequestOptions ):Promise<T & Document>;
-	create<T extends object>( childrenObjects:T[], requestOptions?:RequestOptions ):Promise<T & Document>;
-	create<T extends object>( childrenObjects:T[], slugs?:string[], requestOptions?:RequestOptions ):Promise<T & Document>;
-	create<T extends object>( uri:string, childObject:T, requestOptions?:RequestOptions ):Promise<T & Document>;
-	create<T extends object>( uri:string, childObject:T, slug?:string, requestOptions?:RequestOptions ):Promise<T & Document>;
-	create<T extends object>( uri:string, childrenObjects:T[], requestOptions?:RequestOptions ):Promise<T & Document>;
-	create<T extends object>( uri:string, childrenObjects:T[], slugs?:string[], requestOptions?:RequestOptions ):Promise<T & Document>;
+	create<T extends object>( children:T[], requestOptions?:RequestOptions ):Promise<(T & ProtectedDocument)[]>;
+	create<T extends object>( children:T[], slugs?:string[], requestOptions?:RequestOptions ):Promise<(T & ProtectedDocument)[]>;
+	create<T extends object>( child:T, requestOptions?:RequestOptions ):Promise<T & ProtectedDocument>;
+	create<T extends object>( child:T, slug?:string, requestOptions?:RequestOptions ):Promise<T & ProtectedDocument>;
+	create<T extends object>( uri:string, children:T[], requestOptions?:RequestOptions ):Promise<(T & ProtectedDocument)[]>;
+	create<T extends object>( uri:string, children:T[], slugs?:string[], requestOptions?:RequestOptions ):Promise<(T & ProtectedDocument)[]>;
+	create<T extends object>( uri:string, child:T, requestOptions?:RequestOptions ):Promise<T & ProtectedDocument>;
+	create<T extends object>( uri:string, child:T, slug?:string, requestOptions?:RequestOptions ):Promise<T & ProtectedDocument>;
+
+	createAndRetrieve<T extends object>( children:T[], requestOptions?:RequestOptions ):Promise<(T & ProtectedDocument)[]>;
+	createAndRetrieve<T extends object>( children:T[], slugs?:string[], requestOptions?:RequestOptions ):Promise<(T & ProtectedDocument)[]>;
+	createAndRetrieve<T extends object>( child:T, requestOptions?:RequestOptions ):Promise<T & ProtectedDocument>;
+	createAndRetrieve<T extends object>( child:T, slug?:string, requestOptions?:RequestOptions ):Promise<T & ProtectedDocument>;
+	createAndRetrieve<T extends object>( uri:string, children:T[], requestOptions?:RequestOptions ):Promise<(T & ProtectedDocument)[]>;
+	createAndRetrieve<T extends object>( uri:string, children:T[], slugs?:string[], requestOptions?:RequestOptions ):Promise<(T & ProtectedDocument)[]>;
+	createAndRetrieve<T extends object>( uri:string, child:T, requestOptions?:RequestOptions ):Promise<T & ProtectedDocument>;
+	createAndRetrieve<T extends object>( uri:string, child:T, slug?:string, requestOptions?:RequestOptions ):Promise<T & ProtectedDocument>;
 
 
-	createAndRetrieve<T extends object>( requestOptions?:RequestOptions ):Promise<T & Document>;
-	createAndRetrieve<T extends object>( slug?:string, requestOptions?:RequestOptions ):Promise<T & Document>;
-	createAndRetrieve<T extends object>( child:T, requestOptions?:RequestOptions ):Promise<T & Document>;
-	createAndRetrieve<T extends object>( child:T, slug?:string, requestOptions?:RequestOptions ):Promise<T & Document>;
-	createAndRetrieve<T extends object>( children:T[], requestOptions?:RequestOptions ):Promise<T & Document>;
-	createAndRetrieve<T extends object>( children:T[], slugs?:string[], requestOptions?:RequestOptions ):Promise<T & Document>;
-	createAndRetrieve<T extends object>( uri:string, child:T, requestOptions?:RequestOptions ):Promise<T & Document>;
-	createAndRetrieve<T extends object>( uri:string, child:T, slug?:string, requestOptions?:RequestOptions ):Promise<T & Document>;
-	createAndRetrieve<T extends object>( uri:string, children:T[], requestOptions?:RequestOptions ):Promise<T & Document>;
-	createAndRetrieve<T extends object>( uri:string, children:T[], slugs?:string[], requestOptions?:RequestOptions ):Promise<T & Document>;
+	createAccessPoint<T extends object>( accessPoint:T & BaseAccessPoint, requestOptions?:RequestOptions ):Promise<T & AccessPoint>;
+	createAccessPoint<T extends object>( accessPoint:T & BaseAccessPoint, slug?:string, requestOptions?:RequestOptions ):Promise<T & AccessPoint>;
+	createAccessPoint<T extends object>( uri:string, accessPoint:T & BaseAccessPoint, requestOptions?:RequestOptions ):Promise<T & AccessPoint>;
+	createAccessPoint<T extends object>( uri:string, accessPoint:T & BaseAccessPoint, slug?:string, requestOptions?:RequestOptions ):Promise<T & AccessPoint>;
+
+	createAccessPointAndRetrieve<T extends object>( accessPoint:T & BaseAccessPoint, requestOptions?:RequestOptions ):Promise<T & AccessPoint>;
+	createAccessPointAndRetrieve<T extends object>( accessPoint:T & BaseAccessPoint, slug?:string, requestOptions?:RequestOptions ):Promise<T & AccessPoint>;
+	createAccessPointAndRetrieve<T extends object>( uri:string, accessPoint:T & BaseAccessPoint, requestOptions?:RequestOptions ):Promise<T & AccessPoint>;
+	createAccessPointAndRetrieve<T extends object>( uri:string, accessPoint:T & BaseAccessPoint, slug?:string, requestOptions?:RequestOptions ):Promise<T & AccessPoint>;
+
+	createAccessPoints<T extends object>( accessPoints:(T & BaseAccessPoint)[], requestOptions?:RequestOptions ):Promise<(T & AccessPoint)[]>;
+	createAccessPoints<T extends object>( accessPoints:(T & BaseAccessPoint)[], slugs?:string[], requestOptions?:RequestOptions ):Promise<(T & AccessPoint)[]>;
+	createAccessPoints<T extends object>( uri:string, accessPoints:(T & BaseAccessPoint)[], requestOptions?:RequestOptions ):Promise<(T & AccessPoint)[]>;
+	createAccessPoints<T extends object>( uri:string, accessPoints:(T & BaseAccessPoint)[], slugs?:string[], requestOptions?:RequestOptions ):Promise<(T & AccessPoint)[]>;
+
+	createAccessPointsAndRetrieve<T extends object>( accessPoints:(T & BaseAccessPoint)[], requestOptions?:RequestOptions ):Promise<(T & AccessPoint)[]>;
+	createAccessPointsAndRetrieve<T extends object>( accessPoints:(T & BaseAccessPoint)[], slugs?:string[], requestOptions?:RequestOptions ):Promise<(T & AccessPoint)[]>;
+	createAccessPointsAndRetrieve<T extends object>( uri:string, accessPoints:(T & BaseAccessPoint)[], requestOptions?:RequestOptions ):Promise<(T & AccessPoint)[]>;
+	createAccessPointsAndRetrieve<T extends object>( uri:string, accessPoints:(T & BaseAccessPoint)[], slugs?:string[], requestOptions?:RequestOptions ):Promise<(T & AccessPoint)[]>;
 
 
-	createAccessPoint<T extends object>( accessPoint:T & BaseAccessPoint, requestOptions?:RequestOptions ):Promise<T & ProtectedDocument>;
-	createAccessPoint<T extends object>( accessPoint:T & BaseAccessPoint, slug?:string, requestOptions?:RequestOptions ):Promise<T & ProtectedDocument>;
-	createAccessPoint<T extends object>( uri:string, accessPoint:T & BaseAccessPoint, requestOptions?:RequestOptions ):Promise<T & ProtectedDocument>;
-	createAccessPoint<T extends object>( uri:string, accessPoint:T & BaseAccessPoint, slug?:string, requestOptions?:RequestOptions ):Promise<T & ProtectedDocument>;
+	refresh<T extends object>( requestOptions?:RequestOptions ):Promise<T & this & Document>;
 
-	createAccessPointAndRetrieve<T extends object>( accessPoint:T & BaseAccessPoint, requestOptions?:RequestOptions ):Promise<T & ProtectedDocument>;
-	createAccessPointAndRetrieve<T extends object>( accessPoint:T & BaseAccessPoint, slug?:string, requestOptions?:RequestOptions ):Promise<T & ProtectedDocument>;
-	createAccessPointAndRetrieve<T extends object>( uri:string, accessPoint:T & BaseAccessPoint, requestOptions?:RequestOptions ):Promise<T & ProtectedDocument>;
-	createAccessPointAndRetrieve<T extends object>( uri:string, accessPoint:T & BaseAccessPoint, slug?:string, requestOptions?:RequestOptions ):Promise<T & ProtectedDocument>;
+	save<T extends object>( requestOptions?:RequestOptions ):Promise<T & this & Document>;
 
-
-	createAccessPoints<T extends object>( accessPoints:(T & BaseAccessPoint)[], requestOptions?:RequestOptions ):Promise<T & ProtectedDocument>;
-	createAccessPoints<T extends object>( accessPoints:(T & BaseAccessPoint)[], slugs?:string[], requestOptions?:RequestOptions ):Promise<T & ProtectedDocument>;
-	createAccessPoints<T extends object>( uri:string, accessPoints:(T & BaseAccessPoint)[], requestOptions?:RequestOptions ):Promise<T & ProtectedDocument>;
-	createAccessPoints<T extends object>( uri:string, accessPoints:(T & BaseAccessPoint)[], slugs?:string[], requestOptions?:RequestOptions ):Promise<T & ProtectedDocument>;
-
-	createAccessPointsAndRetrieve<T extends object>( accessPoints:(T & BaseAccessPoint)[], requestOptions?:RequestOptions ):Promise<T & ProtectedDocument>;
-	createAccessPointsAndRetrieve<T extends object>( accessPoints:(T & BaseAccessPoint)[], slugs?:string[], requestOptions?:RequestOptions ):Promise<T & ProtectedDocument>;
-	createAccessPointsAndRetrieve<T extends object>( uri:string, accessPoints:(T & BaseAccessPoint)[], requestOptions?:RequestOptions ):Promise<T & ProtectedDocument>;
-	createAccessPointsAndRetrieve<T extends object>( uri:string, accessPoints:(T & BaseAccessPoint)[], slugs?:string[], requestOptions?:RequestOptions ):Promise<T & ProtectedDocument>;
-
-
-	refresh<T extends object>( requestOptions?:RequestOptions ):Promise<T & Document>;
-
-	save<T extends object>( requestOptions?:RequestOptions ):Promise<T & Document>;
-
-	saveAndRefresh<T extends object>( requestOptions?:RequestOptions ):Promise<T & Document>;
+	saveAndRefresh<T extends object>( requestOptions?:RequestOptions ):Promise<T & this & Document>;
 
 
 	delete( requestOptions?:RequestOptions ):Promise<void>;
@@ -140,8 +134,13 @@ function parseRDFDocument<T extends object>( registry:DocumentsRegistry, rdfDocu
 	return resource;
 }
 
-function setDefaultRequestOptions( registry:DocumentsRegistry, requestOptions:RequestOptions, interactionModel?:string ):RequestOptions {
+function addAuthentication( registry:DocumentsRegistry, requestOptions:RequestOptions ):void {
+	if( ! registry._context || ! registry._context.auth ) return;
 	registry._context.auth.addAuthentication( requestOptions );
+}
+
+function setDefaultRequestOptions( registry:DocumentsRegistry, requestOptions:RequestOptions, interactionModel?:string ):RequestOptions {
+	addAuthentication( registry, requestOptions );
 
 	if( interactionModel ) RequestUtils.setPreferredInteractionModel( interactionModel, requestOptions );
 	RequestUtils.setAcceptHeader( "application/ld+json", requestOptions );
@@ -158,9 +157,10 @@ function getRegistry( repository:CRUDDocument ):DocumentsRegistry {
 function getFullResource<T extends object>( this:void, registry:DocumentsRegistry, uri:string, requestOptions:GETOptions ):T & Document | Promise<T & Document> {
 	if( registry.hasPointer( uri ) ) {
 		const resource:T & Document = registry.getPointer( uri ) as any;
-		if( ! requestOptions.ensureLatest && resource.isResolved() ) return resource;
-
-		RequestUtils.setIfMatchHeader( resource._eTag, requestOptions );
+		if( resource.isResolved() ) {
+			if( ! requestOptions.ensureLatest ) return resource;
+			RequestUtils.setIfNoneMatchHeader( resource._eTag, requestOptions );
+		}
 	}
 
 	setDefaultRequestOptions( registry, requestOptions, LDP.RDFSource );
@@ -181,7 +181,7 @@ function getFullResource<T extends object>( this:void, registry:DocumentsRegistr
 }
 
 
-function applyFreeNodes( registry:DocumentsRegistry, freeNodes:RDFNode[] ):void {
+function applyResponseMetadata( registry:DocumentsRegistry, freeNodes:RDFNode[] ):void {
 	if( ! freeNodes.length ) return;
 	const freeResources:FreeResources = registry._parseFreeNodes( freeNodes );
 	const responseMetadata:ResponseMetadata = freeResources.getPointers().find( ResponseMetadata.is );
@@ -205,7 +205,7 @@ function applyResponseRepresentation<T extends Pointer>( registry:DocumentsRegis
 		.parse( response.data )
 		.then<T>( ( expandedResult:object[] ) => {
 			const freeNodes:RDFNode[] = RDFNode.getFreeNodes( expandedResult );
-			applyFreeNodes( registry, freeNodes );
+			applyResponseMetadata( registry, freeNodes );
 
 			const preferenceHeader:Header = response.getHeader( "Preference-Applied" );
 			if( preferenceHeader === null || preferenceHeader.toString() !== "return=representation" ) return resource;
@@ -264,7 +264,7 @@ function persistResource<T extends object>( registry:DocumentsRegistry, parentUR
 
 
 function persistChild<T extends object>( registry:DocumentsRegistry, parentURI:string, requestOptions:RequestOptions, child?:T, slug?:string ):Promise<T & ProtectedDocument> {
-	if( PersistedResource.is( child ) ) throw new IllegalArgumentError( "The child provided has been already persisted." );
+	if( PersistedResource.is( child ) ) throw new IllegalArgumentError( "The child provided has already been persisted." );
 
 	let childDocument:T & TransientDocument;
 	if( TransientDocument.is( child ) ) {
@@ -279,38 +279,38 @@ function persistChild<T extends object>( registry:DocumentsRegistry, parentURI:s
 	return persistResource<T>( registry, parentURI, slug, childDocument, requestOptions );
 }
 
-function createChildren<T extends object>( retrievalType:"minimal" | "representation", repository:CRUDDocument, uriOrChildrenOrSlugOrOptions?:string | T | T[] | string | RequestOptions, childrenOrSlugsOrOptions?:T | T[] | string | string[] | RequestOptions, slugsOrOptions?:string | string[] | RequestOptions, requestOptions:RequestOptions = {} ):Promise<(T & ProtectedDocument) | (T & ProtectedDocument)[]> {
+function createChildren<T extends object>( retrievalType:"minimal" | "representation", repository:CRUDDocument, uriOrChildren?:string | T | T[], childrenOrSlugsOrOptions?:T | T[] | string | string[] | RequestOptions, slugsOrOptions?:string | string[] | RequestOptions, requestOptions?:RequestOptions ):Promise<(T & ProtectedDocument) | (T & ProtectedDocument)[]> {
 	return promiseMethod<(T & ProtectedDocument) | (T & ProtectedDocument)[]>( () => {
 		const registry:DocumentsRegistry = getRegistry( repository );
 
-		requestOptions = RequestUtils.isOptions( uriOrChildrenOrSlugOrOptions ) ? uriOrChildrenOrSlugOrOptions :
-			RequestUtils.isOptions( childrenOrSlugsOrOptions ) ? childrenOrSlugsOrOptions :
-				RequestUtils.isOptions( slugsOrOptions ) ? slugsOrOptions :
-					requestOptions
+		requestOptions = RequestUtils.isOptions( childrenOrSlugsOrOptions ) ?
+			childrenOrSlugsOrOptions :
+			RequestUtils.isOptions( slugsOrOptions ) ?
+				slugsOrOptions :
+				requestOptions ? requestOptions : {}
 		;
 
-		const iri:string = isString( uriOrChildrenOrSlugOrOptions ) && (! childrenOrSlugsOrOptions || childrenOrSlugsOrOptions === requestOptions) ?
-			registry._resolveIRIFor( repository, uriOrChildrenOrSlugOrOptions ) : "";
+		const iri:string = registry._requestURLFor( repository, isString( uriOrChildren ) ? uriOrChildren : void 0 );
 
-		const slugs:string[] | string | null = isString( uriOrChildrenOrSlugOrOptions ) && iri !== uriOrChildrenOrSlugOrOptions ? uriOrChildrenOrSlugOrOptions :
-			isString( childrenOrSlugsOrOptions ) ? childrenOrSlugsOrOptions :
-				isString( slugsOrOptions ) ? slugsOrOptions :
-					Array.isArray( slugsOrOptions ) ? slugsOrOptions :
-						Array.isArray( childrenOrSlugsOrOptions ) && (childrenOrSlugsOrOptions as (string | T)[]).some( isString ) ? childrenOrSlugsOrOptions as string[] :
-							null;
+		const slugs:string[] | string | null = isString( childrenOrSlugsOrOptions ) ?
+			childrenOrSlugsOrOptions :
+			isString( slugsOrOptions ) || Array.isArray( slugsOrOptions ) ?
+				slugsOrOptions :
+				Array.isArray( childrenOrSlugsOrOptions ) && Array.isArray( uriOrChildren ) ?
+					childrenOrSlugsOrOptions as string[] :
+					null
+		;
 
-		const children:T[] | T | null = Array.isArray( uriOrChildrenOrSlugOrOptions ) ? uriOrChildrenOrSlugOrOptions :
-			isObject( uriOrChildrenOrSlugOrOptions ) && ! uriOrChildrenOrSlugOrOptions !== requestOptions ? uriOrChildrenOrSlugOrOptions as T :
-				isObject( childrenOrSlugsOrOptions ) ?
-					Array.isArray( childrenOrSlugsOrOptions ) && childrenOrSlugsOrOptions !== slugs ? childrenOrSlugsOrOptions as T[] :
-						! Array.isArray( childrenOrSlugsOrOptions ) && childrenOrSlugsOrOptions !== requestOptions ? childrenOrSlugsOrOptions as T :
-							null : null
+		const children:T[] | T = Array.isArray( uriOrChildren ) || isObject( uriOrChildren ) ?
+			uriOrChildren :
+			childrenOrSlugsOrOptions as T[] | T
 		;
 
 		RequestUtils.setPreferredRetrieval( retrievalType, requestOptions );
 
 		if( ! Array.isArray( slugs ) && ! Array.isArray( children ) )
 			return persistChild<T>( registry, iri, requestOptions, children, slugs );
+
 
 		const slugsLength:number | undefined = Array.isArray( slugs ) ? slugs.length : 0;
 		const childrenLength:number | undefined = Array.isArray( children ) ? children.length : 0;
@@ -332,7 +332,7 @@ function createChildren<T extends object>( retrievalType:"minimal" | "representa
 
 
 function persistAccessPoint<T extends object>( registry:DocumentsRegistry, documentURI:string, requestOptions:RequestOptions, accessPoint:T & BaseAccessPoint, slug?:string ):Promise<T & AccessPoint> {
-	if( PersistedResource.is( accessPoint ) ) throw new IllegalArgumentError( "The access-point provided has been already persisted." );
+	if( PersistedResource.is( accessPoint ) ) throw new IllegalArgumentError( "The access-point provided has already been persisted." );
 
 	let accessPointDocument:T & TransientAccessPoint;
 	if( TransientAccessPoint.is( accessPoint ) ) {
@@ -353,8 +353,8 @@ function createAccessPoint<T extends object>( retrievalType:"minimal" | "represe
 	return promiseMethod( () => {
 		const registry:DocumentsRegistry = getRegistry( repository );
 
-		const iri:string = isString( uriOrAccessPoint ) ?
-			registry._resolveIRIFor( repository, uriOrAccessPoint ) : "";
+		const iri:string = registry
+			._requestURLFor( repository, isString( uriOrAccessPoint ) ? uriOrAccessPoint : void 0 );
 
 		const accessPoint:T & BaseAccessPoint = isObject( uriOrAccessPoint ) ? uriOrAccessPoint :
 			accessPointOrSlugOrRequestOptions as T & BaseAccessPoint;
@@ -376,7 +376,7 @@ function createAccessPoints<T extends object>( retrievalType:"minimal" | "repres
 		const registry:DocumentsRegistry = getRegistry( repository );
 
 		const iri:string = isString( uriOrAccessPoints ) ?
-			registry._resolveIRIFor( repository, uriOrAccessPoints ) : repository.id;
+			registry._requestURLFor( repository, uriOrAccessPoints ) : repository.id;
 
 		const accessPoints:(T & BaseAccessPoint)[] = Array.isArray( uriOrAccessPoints ) ? uriOrAccessPoints :
 			accessPointOrSlugsOrRequestOptions as (T & BaseAccessPoint)[];
@@ -407,7 +407,7 @@ function createAccessPoints<T extends object>( retrievalType:"minimal" | "repres
 
 
 function refreshResource<T extends CRUDDocument>( registry:DocumentsRegistry, resource:T, requestOptions:RequestOptions ):Promise<T & CRUDDocument> {
-	const uri:string = registry._resolveIRIFor( resource );
+	const uri:string = registry._requestURLFor( resource );
 
 	setDefaultRequestOptions( registry, requestOptions, LDP.RDFSource );
 	RequestUtils.setIfNoneMatchHeader( resource._eTag, requestOptions );
@@ -430,25 +430,44 @@ function refreshResource<T extends CRUDDocument>( registry:DocumentsRegistry, re
 		} );
 }
 
-function sendPatch<T extends CRUDDocument>( registry:DocumentsRegistry, resource:T, requestOptions:RequestOptions ):Promise<T> {
-	if( ! resource.isDirty() ) return Promise.resolve( resource );
+function addResourcePatch( registry:DocumentsRegistry, deltaCreator:DeltaCreator, pointer:Pointer, current:object, snapshot:object ):void {
+	const schema:DigestedObjectSchema = registry.getSchemaFor( pointer );
+	deltaCreator.addResource( schema, pointer.id, snapshot, current );
+}
 
-	const uri:string = registry._resolveIRIFor( resource );
+function sendPatch<T extends CRUDDocument>( registry:DocumentsRegistry, resource:T, requestOptions:RequestOptions ):Promise<T> {
+	const uri:string = registry._requestURLFor( resource );
+
+	if( ! resource.isDirty() ) return Promise.resolve( resource );
+	resource._normalize();
 
 	setDefaultRequestOptions( registry, requestOptions );
 	RequestUtils.setContentTypeHeader( "text/ldpatch", requestOptions );
 	RequestUtils.setIfMatchHeader( resource._eTag, requestOptions );
 
-	resource._normalize();
-	const resources:Pointer[] = [ resource, ...resource.getPointers() ];
 
-	// TODO: Missing DELETE patch from removed fragments
 	const deltaCreator:DeltaCreator = new DeltaCreator( resource._registry.jsonldConverter );
-	resources.forEach( ( pointer:Pointer ) => {
-		const schema:DigestedObjectSchema = registry.getSchemaFor( pointer );
-		const snapshot:object = PersistedResource.is( pointer ) ? pointer._snapshot : {};
-		deltaCreator.addResource( schema, pointer.id, snapshot, pointer );
-	} );
+
+	// Document resource
+	addResourcePatch( registry, deltaCreator, resource, resource, resource._snapshot );
+
+	// Current fragments
+	resource
+		.getPointers( true )
+		.forEach( pointer => {
+			const snapshot:object = PersistedResource.is( pointer ) ? pointer._snapshot : {};
+			addResourcePatch( registry, deltaCreator, pointer, pointer, snapshot );
+		} )
+	;
+
+	// Deleted fragments
+	resource._savedFragments
+		.filter( pointer => ! resource.hasPointer( pointer.id ) )
+		.forEach( pointer => {
+			addResourcePatch( registry, deltaCreator, pointer, {}, pointer._snapshot );
+		} )
+	;
+
 
 	const body:string = deltaCreator.getPatch();
 
@@ -467,7 +486,7 @@ const PROTOTYPE:PickSelfProps<CRUDDocument, PersistedDocument> = {
 		return promiseMethod( () => {
 			const registry:DocumentsRegistry = getRegistry( this );
 
-			const iri:string = registry._resolveIRIFor( this, isString( uriOrOptions ) ? uriOrOptions : "" );
+			const iri:string = registry._requestURLFor( this, isString( uriOrOptions ) ? uriOrOptions : void 0 );
 
 			requestOptions = isObject( uriOrOptions ) ? uriOrOptions :
 				requestOptions ? requestOptions : {};
@@ -480,7 +499,7 @@ const PROTOTYPE:PickSelfProps<CRUDDocument, PersistedDocument> = {
 		return promiseMethod( () => {
 			const registry:DocumentsRegistry = getRegistry( this );
 
-			const iri:string = registry._resolveIRIFor( this, this.id );
+			const iri:string = registry._requestURLFor( this );
 			return getFullResource<T>( registry, iri, requestOptions );
 		} );
 	},
@@ -490,7 +509,7 @@ const PROTOTYPE:PickSelfProps<CRUDDocument, PersistedDocument> = {
 		return promiseMethod( () => {
 			const registry:DocumentsRegistry = getRegistry( this );
 
-			const iri:string = registry._resolveIRIFor( this, uri );
+			const iri:string = registry._requestURLFor( this, uri );
 			setDefaultRequestOptions( registry, requestOptions, LDP.RDFSource );
 
 			return RequestService
@@ -504,12 +523,12 @@ const PROTOTYPE:PickSelfProps<CRUDDocument, PersistedDocument> = {
 	},
 
 
-	create<T extends object>( this:CRUDDocument, uriOrChildrenOrSlugOrOptions?:string | T | T[] | string | RequestOptions, childrenOrSlugsOrOptions?:T | T[] | string | string[] | RequestOptions, slugsOrOptions?:string | string[] | RequestOptions, requestOptions?:RequestOptions ):Promise<(T & ProtectedDocument) | (T & ProtectedDocument)[]> {
-		return createChildren( "minimal", this, uriOrChildrenOrSlugOrOptions, childrenOrSlugsOrOptions, slugsOrOptions, requestOptions );
+	create<T extends object>( this:CRUDDocument, uriOrChildren?:string | T | T[], childrenOrSlugsOrOptions?:T | T[] | string | string[] | RequestOptions, slugsOrOptions?:string | string[] | RequestOptions, requestOptions?:RequestOptions ):Promise<(T & ProtectedDocument) | (T & ProtectedDocument)[]> {
+		return createChildren( "minimal", this, uriOrChildren, childrenOrSlugsOrOptions, slugsOrOptions, requestOptions );
 	},
 
-	createAndRetrieve<T extends object>( this:CRUDDocument, uriOrChildrenOrSlugOrOptions?:string | T | T[] | string | RequestOptions, childrenOrSlugsOrOptions?:T | T[] | string | string[] | RequestOptions, slugsOrOptions?:string | string[] | RequestOptions, requestOptions:RequestOptions = {} ):Promise<(T & ProtectedDocument) | (T & ProtectedDocument)[]> {
-		return createChildren( "representation", this, uriOrChildrenOrSlugOrOptions, childrenOrSlugsOrOptions, slugsOrOptions, requestOptions );
+	createAndRetrieve<T extends object>( this:CRUDDocument, uriOrChildren?:string | T | T[], childrenOrSlugsOrOptions?:T | T[] | string | string[] | RequestOptions, slugsOrOptions?:string | string[] | RequestOptions, requestOptions:RequestOptions = {} ):Promise<(T & ProtectedDocument) | (T & ProtectedDocument)[]> {
+		return createChildren( "representation", this, uriOrChildren, childrenOrSlugsOrOptions, slugsOrOptions, requestOptions );
 	},
 
 
@@ -520,7 +539,6 @@ const PROTOTYPE:PickSelfProps<CRUDDocument, PersistedDocument> = {
 	createAccessPointAndRetrieve<T extends object>( this:CRUDDocument, uriOrAccessPoint:string | (T & BaseAccessPoint), accessPointOrSlugOrRequestOptions?:(T & BaseAccessPoint) | string | RequestOptions, slugOrRequestOptions?:string | RequestOptions, requestOptions?:RequestOptions ):Promise<T & AccessPoint> {
 		return createAccessPoint( "representation", this, uriOrAccessPoint, accessPointOrSlugOrRequestOptions, slugOrRequestOptions, requestOptions );
 	},
-
 
 	createAccessPoints<T extends object>( this:CRUDDocument, uriOrAccessPoints:string | (T & BaseAccessPoint)[], accessPointsOrSlugsOrRequestOptions?:(T & BaseAccessPoint)[] | string[] | RequestOptions, slugsOrRequestOptions?:string[] | RequestOptions, requestOptions?:RequestOptions ):Promise<(T & AccessPoint)[]> {
 		return createAccessPoints( "minimal", this, uriOrAccessPoints, accessPointsOrSlugsOrRequestOptions, slugsOrRequestOptions, requestOptions );
@@ -565,7 +583,7 @@ const PROTOTYPE:PickSelfProps<CRUDDocument, PersistedDocument> = {
 		return promiseMethod( () => {
 			const registry:DocumentsRegistry = getRegistry( this );
 
-			const iri:string = registry._resolveIRIFor( this, isString( uriOrOptions ) ? uriOrOptions : "" );
+			const iri:string = registry._requestURLFor( this, isString( uriOrOptions ) ? uriOrOptions : "" );
 
 			setDefaultRequestOptions( registry, requestOptions, LDP.RDFSource );
 
@@ -616,6 +634,6 @@ export const CRUDDocument:CRUDDocumentFactory = {
 		return isObject( value )
 			&& PersistedDocument.is( value )
 			&& CRUDDocument.isDecorated( value )
-		;
+			;
 	},
 };

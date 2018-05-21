@@ -22,7 +22,7 @@ function parseParams(resource, uriOrQuery, queryOrOptions, options) {
         query = queryOrOptions;
         iri = uriOrQuery;
     }
-    iri = registry._resolveIRIFor(resource, iri);
+    iri = registry._requestURLFor(resource, iri);
     registry._context.auth.addAuthentication(options);
     return { iri: iri, query: query, options: options };
 }
@@ -117,7 +117,7 @@ var PROTOTYPE = {
     },
     sparql: function (uri) {
         var registry = getRegistry(this);
-        var iri = registry._resolveIRIFor(this, uri);
+        var iri = registry._requestURLFor(this, uri);
         var schema = registry.getGeneralSchema();
         var builder = new SPARQL_1.SPARQLBuilder(this, iri)
             .base(schema.base)

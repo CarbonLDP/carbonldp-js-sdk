@@ -24,7 +24,7 @@ function createMock( data?:Partial<PersistedDocument> ):PersistedDocument {
 }
 
 
-fdescribe( module( "carbonldp/Document" ), ():void => {
+describe( module( "carbonldp/Document" ), ():void => {
 
 	describe( interfaze(
 		"CarbonLDP.PersistedDocument",

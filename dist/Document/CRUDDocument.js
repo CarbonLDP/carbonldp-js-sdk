@@ -34,8 +34,13 @@ function parseRDFDocument(registry, rdfDocument, eTag) {
     resource._resolved = true;
     return resource;
 }
-function setDefaultRequestOptions(registry, requestOptions, interactionModel) {
+function addAuthentication(registry, requestOptions) {
+    if (!registry._context || !registry._context.auth)
+        return;
     registry._context.auth.addAuthentication(requestOptions);
+}
+function setDefaultRequestOptions(registry, requestOptions, interactionModel) {
+    addAuthentication(registry, requestOptions);
     if (interactionModel)
         HTTP_1.RequestUtils.setPreferredInteractionModel(interactionModel, requestOptions);
     HTTP_1.RequestUtils.setAcceptHeader("application/ld+json", requestOptions);
@@ -49,9 +54,11 @@ function getRegistry(repository) {
 function getFullResource(registry, uri, requestOptions) {
     if (registry.hasPointer(uri)) {
         var resource = registry.getPointer(uri);
-        if (!requestOptions.ensureLatest && resource.isResolved())
-            return resource;
-        HTTP_1.RequestUtils.setIfMatchHeader(resource._eTag, requestOptions);
+        if (resource.isResolved()) {
+            if (!requestOptions.ensureLatest)
+                return resource;
+            HTTP_1.RequestUtils.setIfNoneMatchHeader(resource._eTag, requestOptions);
+        }
     }
     setDefaultRequestOptions(registry, requestOptions, Vocabularies_1.LDP.RDFSource);
     return HTTP_1.RequestService
@@ -67,7 +74,7 @@ function getFullResource(registry, uri, requestOptions) {
     })
         .catch(registry._parseErrorResponse.bind(registry));
 }
-function applyFreeNodes(registry, freeNodes) {
+function applyResponseMetadata(registry, freeNodes) {
     if (!freeNodes.length)
         return;
     var freeResources = registry._parseFreeNodes(freeNodes);
@@ -91,7 +98,7 @@ function applyResponseRepresentation(registry, resource, response) {
         .parse(response.data)
         .then(function (expandedResult) {
         var freeNodes = RDF_1.RDFNode.getFreeNodes(expandedResult);
-        applyFreeNodes(registry, freeNodes);
+        applyResponseMetadata(registry, freeNodes);
         var preferenceHeader = response.getHeader("Preference-Applied");
         if (preferenceHeader === null || preferenceHeader.toString() !== "return=representation")
             return resource;
@@ -140,7 +147,7 @@ function persistResource(registry, parentURI, slug, resource, requestOptions) {
 }
 function persistChild(registry, parentURI, requestOptions, child, slug) {
     if (Resource_1.PersistedResource.is(child))
-        throw new Errors_1.IllegalArgumentError("The child provided has been already persisted.");
+        throw new Errors_1.IllegalArgumentError("The child provided has already been persisted.");
     var childDocument;
     if (TransientDocument_1.TransientDocument.is(child)) {
         childDocument = child;
@@ -154,28 +161,25 @@ function persistChild(registry, parentURI, requestOptions, child, slug) {
     setDefaultRequestOptions(registry, requestOptions, Vocabularies_1.LDP.Container);
     return persistResource(registry, parentURI, slug, childDocument, requestOptions);
 }
-function createChildren(retrievalType, repository, uriOrChildrenOrSlugOrOptions, childrenOrSlugsOrOptions, slugsOrOptions, requestOptions) {
-    if (requestOptions === void 0) { requestOptions = {}; }
+function createChildren(retrievalType, repository, uriOrChildren, childrenOrSlugsOrOptions, slugsOrOptions, requestOptions) {
     return Utils_1.promiseMethod(function () {
         var registry = getRegistry(repository);
-        requestOptions = HTTP_1.RequestUtils.isOptions(uriOrChildrenOrSlugOrOptions) ? uriOrChildrenOrSlugOrOptions :
-            HTTP_1.RequestUtils.isOptions(childrenOrSlugsOrOptions) ? childrenOrSlugsOrOptions :
-                HTTP_1.RequestUtils.isOptions(slugsOrOptions) ? slugsOrOptions :
-                    requestOptions;
-        var iri = Utils_1.isString(uriOrChildrenOrSlugOrOptions) && (!childrenOrSlugsOrOptions || childrenOrSlugsOrOptions === requestOptions) ?
-            registry._resolveIRIFor(repository, uriOrChildrenOrSlugOrOptions) : "";
-        var slugs = Utils_1.isString(uriOrChildrenOrSlugOrOptions) && iri !== uriOrChildrenOrSlugOrOptions ? uriOrChildrenOrSlugOrOptions :
-            Utils_1.isString(childrenOrSlugsOrOptions) ? childrenOrSlugsOrOptions :
-                Utils_1.isString(slugsOrOptions) ? slugsOrOptions :
-                    Array.isArray(slugsOrOptions) ? slugsOrOptions :
-                        Array.isArray(childrenOrSlugsOrOptions) && childrenOrSlugsOrOptions.some(Utils_1.isString) ? childrenOrSlugsOrOptions :
-                            null;
-        var children = Array.isArray(uriOrChildrenOrSlugOrOptions) ? uriOrChildrenOrSlugOrOptions :
-            Utils_1.isObject(uriOrChildrenOrSlugOrOptions) && !uriOrChildrenOrSlugOrOptions !== requestOptions ? uriOrChildrenOrSlugOrOptions :
-                Utils_1.isObject(childrenOrSlugsOrOptions) ?
-                    Array.isArray(childrenOrSlugsOrOptions) && childrenOrSlugsOrOptions !== slugs ? childrenOrSlugsOrOptions :
-                        !Array.isArray(childrenOrSlugsOrOptions) && childrenOrSlugsOrOptions !== requestOptions ? childrenOrSlugsOrOptions :
-                            null : null;
+        requestOptions = HTTP_1.RequestUtils.isOptions(childrenOrSlugsOrOptions) ?
+            childrenOrSlugsOrOptions :
+            HTTP_1.RequestUtils.isOptions(slugsOrOptions) ?
+                slugsOrOptions :
+                requestOptions ? requestOptions : {};
+        var iri = registry._requestURLFor(repository, Utils_1.isString(uriOrChildren) ? uriOrChildren : void 0);
+        var slugs = Utils_1.isString(childrenOrSlugsOrOptions) ?
+            childrenOrSlugsOrOptions :
+            Utils_1.isString(slugsOrOptions) || Array.isArray(slugsOrOptions) ?
+                slugsOrOptions :
+                Array.isArray(childrenOrSlugsOrOptions) && Array.isArray(uriOrChildren) ?
+                    childrenOrSlugsOrOptions :
+                    null;
+        var children = Array.isArray(uriOrChildren) || Utils_1.isObject(uriOrChildren) ?
+            uriOrChildren :
+            childrenOrSlugsOrOptions;
         HTTP_1.RequestUtils.setPreferredRetrieval(retrievalType, requestOptions);
         if (!Array.isArray(slugs) && !Array.isArray(children))
             return persistChild(registry, iri, requestOptions, children, slugs);
@@ -194,7 +198,7 @@ function createChildren(retrievalType, repository, uriOrChildrenOrSlugOrOptions,
 }
 function persistAccessPoint(registry, documentURI, requestOptions, accessPoint, slug) {
     if (Resource_1.PersistedResource.is(accessPoint))
-        throw new Errors_1.IllegalArgumentError("The access-point provided has been already persisted.");
+        throw new Errors_1.IllegalArgumentError("The access-point provided has already been persisted.");
     var accessPointDocument;
     if (AccessPoint_1.TransientAccessPoint.is(accessPoint)) {
         accessPointDocument = accessPoint;
@@ -214,8 +218,8 @@ function createAccessPoint(retrievalType, repository, uriOrAccessPoint, accessPo
     if (requestOptions === void 0) { requestOptions = {}; }
     return Utils_1.promiseMethod(function () {
         var registry = getRegistry(repository);
-        var iri = Utils_1.isString(uriOrAccessPoint) ?
-            registry._resolveIRIFor(repository, uriOrAccessPoint) : "";
+        var iri = registry
+            ._requestURLFor(repository, Utils_1.isString(uriOrAccessPoint) ? uriOrAccessPoint : void 0);
         var accessPoint = Utils_1.isObject(uriOrAccessPoint) ? uriOrAccessPoint :
             accessPointOrSlugOrRequestOptions;
         var slug = Utils_1.isString(accessPointOrSlugOrRequestOptions) ? accessPointOrSlugOrRequestOptions :
@@ -231,7 +235,7 @@ function createAccessPoints(retrievalType, repository, uriOrAccessPoints, access
     return Utils_1.promiseMethod(function () {
         var registry = getRegistry(repository);
         var iri = Utils_1.isString(uriOrAccessPoints) ?
-            registry._resolveIRIFor(repository, uriOrAccessPoints) : repository.id;
+            registry._requestURLFor(repository, uriOrAccessPoints) : repository.id;
         var accessPoints = Array.isArray(uriOrAccessPoints) ? uriOrAccessPoints :
             accessPointOrSlugsOrRequestOptions;
         var slugs = Array.isArray(accessPointOrSlugsOrRequestOptions) && accessPointOrSlugsOrRequestOptions !== accessPoints ?
@@ -252,7 +256,7 @@ function createAccessPoints(retrievalType, repository, uriOrAccessPoints, access
     });
 }
 function refreshResource(registry, resource, requestOptions) {
-    var uri = registry._resolveIRIFor(resource);
+    var uri = registry._requestURLFor(resource);
     setDefaultRequestOptions(registry, requestOptions, Vocabularies_1.LDP.RDFSource);
     HTTP_1.RequestUtils.setIfNoneMatchHeader(resource._eTag, requestOptions);
     return HTTP_1.RequestService
@@ -273,20 +277,30 @@ function refreshResource(registry, resource, requestOptions) {
         return resource._registry._parseErrorResponse(response);
     });
 }
+function addResourcePatch(registry, deltaCreator, pointer, current, snapshot) {
+    var schema = registry.getSchemaFor(pointer);
+    deltaCreator.addResource(schema, pointer.id, snapshot, current);
+}
 function sendPatch(registry, resource, requestOptions) {
+    var uri = registry._requestURLFor(resource);
     if (!resource.isDirty())
         return Promise.resolve(resource);
-    var uri = registry._resolveIRIFor(resource);
+    resource._normalize();
     setDefaultRequestOptions(registry, requestOptions);
     HTTP_1.RequestUtils.setContentTypeHeader("text/ldpatch", requestOptions);
     HTTP_1.RequestUtils.setIfMatchHeader(resource._eTag, requestOptions);
-    resource._normalize();
-    var resources = [resource].concat(resource.getPointers());
     var deltaCreator = new LDPatch_1.DeltaCreator(resource._registry.jsonldConverter);
-    resources.forEach(function (pointer) {
-        var schema = registry.getSchemaFor(pointer);
+    addResourcePatch(registry, deltaCreator, resource, resource, resource._snapshot);
+    resource
+        .getPointers(true)
+        .forEach(function (pointer) {
         var snapshot = Resource_1.PersistedResource.is(pointer) ? pointer._snapshot : {};
-        deltaCreator.addResource(schema, pointer.id, snapshot, pointer);
+        addResourcePatch(registry, deltaCreator, pointer, pointer, snapshot);
+    });
+    resource._savedFragments
+        .filter(function (pointer) { return !resource.hasPointer(pointer.id); })
+        .forEach(function (pointer) {
+        addResourcePatch(registry, deltaCreator, pointer, {}, pointer._snapshot);
     });
     var body = deltaCreator.getPatch();
     return HTTP_1.RequestService
@@ -301,7 +315,7 @@ var PROTOTYPE = {
         var _this = this;
         return Utils_1.promiseMethod(function () {
             var registry = getRegistry(_this);
-            var iri = registry._resolveIRIFor(_this, Utils_1.isString(uriOrOptions) ? uriOrOptions : "");
+            var iri = registry._requestURLFor(_this, Utils_1.isString(uriOrOptions) ? uriOrOptions : void 0);
             requestOptions = Utils_1.isObject(uriOrOptions) ? uriOrOptions :
                 requestOptions ? requestOptions : {};
             return getFullResource(registry, iri, requestOptions);
@@ -312,7 +326,7 @@ var PROTOTYPE = {
         if (requestOptions === void 0) { requestOptions = {}; }
         return Utils_1.promiseMethod(function () {
             var registry = getRegistry(_this);
-            var iri = registry._resolveIRIFor(_this, _this.id);
+            var iri = registry._requestURLFor(_this);
             return getFullResource(registry, iri, requestOptions);
         });
     },
@@ -321,7 +335,7 @@ var PROTOTYPE = {
         if (requestOptions === void 0) { requestOptions = {}; }
         return Utils_1.promiseMethod(function () {
             var registry = getRegistry(_this);
-            var iri = registry._resolveIRIFor(_this, uri);
+            var iri = registry._requestURLFor(_this, uri);
             setDefaultRequestOptions(registry, requestOptions, Vocabularies_1.LDP.RDFSource);
             return HTTP_1.RequestService
                 .head(iri, requestOptions)
@@ -333,12 +347,12 @@ var PROTOTYPE = {
             });
         });
     },
-    create: function (uriOrChildrenOrSlugOrOptions, childrenOrSlugsOrOptions, slugsOrOptions, requestOptions) {
-        return createChildren("minimal", this, uriOrChildrenOrSlugOrOptions, childrenOrSlugsOrOptions, slugsOrOptions, requestOptions);
+    create: function (uriOrChildren, childrenOrSlugsOrOptions, slugsOrOptions, requestOptions) {
+        return createChildren("minimal", this, uriOrChildren, childrenOrSlugsOrOptions, slugsOrOptions, requestOptions);
     },
-    createAndRetrieve: function (uriOrChildrenOrSlugOrOptions, childrenOrSlugsOrOptions, slugsOrOptions, requestOptions) {
+    createAndRetrieve: function (uriOrChildren, childrenOrSlugsOrOptions, slugsOrOptions, requestOptions) {
         if (requestOptions === void 0) { requestOptions = {}; }
-        return createChildren("representation", this, uriOrChildrenOrSlugOrOptions, childrenOrSlugsOrOptions, slugsOrOptions, requestOptions);
+        return createChildren("representation", this, uriOrChildren, childrenOrSlugsOrOptions, slugsOrOptions, requestOptions);
     },
     createAccessPoint: function (uriOrAccessPoint, accessPointOrSlugOrRequestOptions, slugOrRequestOptions, requestOptions) {
         return createAccessPoint("minimal", this, uriOrAccessPoint, accessPointOrSlugOrRequestOptions, slugOrRequestOptions, requestOptions);
@@ -389,7 +403,7 @@ var PROTOTYPE = {
         if (requestOptions === void 0) { requestOptions = {}; }
         return Utils_1.promiseMethod(function () {
             var registry = getRegistry(_this);
-            var iri = registry._resolveIRIFor(_this, Utils_1.isString(uriOrOptions) ? uriOrOptions : "");
+            var iri = registry._requestURLFor(_this, Utils_1.isString(uriOrOptions) ? uriOrOptions : "");
             setDefaultRequestOptions(registry, requestOptions, Vocabularies_1.LDP.RDFSource);
             return HTTP_1.RequestService
                 .delete(iri, requestOptions)

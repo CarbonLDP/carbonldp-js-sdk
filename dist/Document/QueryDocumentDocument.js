@@ -191,7 +191,7 @@ function getPartial(registry, uri, requestOptions, queryBuilderFn) {
         .then(function (documents) { return documents[0]; });
 }
 function refreshPartial(registry, resource, requestOptions) {
-    var uri = registry._resolveIRIFor(resource);
+    var uri = registry._requestURLFor(resource);
     var queryContext = new QueryDocument_1.QueryContextPartial(resource, registry._context);
     var targetName = "document";
     var constructPatterns = new tokens_1.OptionalToken()
@@ -206,7 +206,7 @@ function executeChildrenBuilder(repository, uri, requestOptions, queryBuilderFn)
     var _this = this;
     return Utils_2.promiseMethod(function () {
         var registry = getRegistry(_this);
-        uri = registry._resolveIRIFor(repository, uri);
+        uri = registry._requestURLFor(repository, uri);
         var queryContext = new QueryDocument_1.QueryContextBuilder(registry._context);
         var childrenProperty = queryContext
             .addProperty("child")
@@ -224,7 +224,7 @@ function executeMembersBuilder(repository, uri, requestOptions, queryBuilderFn) 
     var _this = this;
     return Utils_2.promiseMethod(function () {
         var registry = getRegistry(_this);
-        uri = registry._resolveIRIFor(repository, uri);
+        uri = registry._requestURLFor(repository, uri);
         var queryContext = new QueryDocument_1.QueryContextBuilder(registry._context);
         var membersProperty = queryContext
             .addProperty("member")
@@ -250,7 +250,7 @@ var PROTOTYPE = {
         var _this = this;
         return Utils_2.promiseMethod(function () {
             var registry = getRegistry(_this);
-            var iri = registry._resolveIRIFor(_this, Utils_2.isString(uriOrOptionsOrQueryBuilderFn) ? uriOrOptionsOrQueryBuilderFn : void 0);
+            var iri = registry._requestURLFor(_this, Utils_2.isString(uriOrOptionsOrQueryBuilderFn) ? uriOrOptionsOrQueryBuilderFn : void 0);
             var requestOptions = Utils_2.isObject(uriOrOptionsOrQueryBuilderFn) ?
                 uriOrOptionsOrQueryBuilderFn : Utils_2.isObject(optionsOrQueryBuilderFn) ? optionsOrQueryBuilderFn : {};
             queryBuilderFn = Utils_2.isFunction(uriOrOptionsOrQueryBuilderFn) ? uriOrOptionsOrQueryBuilderFn :
@@ -262,7 +262,7 @@ var PROTOTYPE = {
         var _this = this;
         return Utils_2.promiseMethod(function () {
             var registry = getRegistry(_this);
-            var iri = registry._resolveIRIFor(_this);
+            var iri = registry._requestURLFor(_this);
             var requestOptions = Utils_2.isObject(optionsOrQueryBuilderFn) ? optionsOrQueryBuilderFn : {};
             if (Utils_2.isFunction(optionsOrQueryBuilderFn))
                 queryBuilderFn = optionsOrQueryBuilderFn;

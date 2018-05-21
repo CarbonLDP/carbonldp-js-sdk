@@ -145,9 +145,8 @@ export class CarbonLDP extends AbstractContext<Document, GlobalContext> {
 		this.auth = new Auth.AuthService( this );
 
 		// Root document
-		this.documents = ProtectedDocument.decorate(
-			this.registry.register( this._baseURI )
-		);
+		this.documents = ProtectedDocument
+			.decorate( this.registry.getPointer( this._baseURI, true ) );
 	}
 
 	/**
