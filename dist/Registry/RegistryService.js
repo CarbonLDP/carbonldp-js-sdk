@@ -61,11 +61,16 @@ var RegistryService = (function () {
         return !path;
     };
     RegistryService.prototype.getSchemaFor = function (object) {
-        if (Resource_1.PersistedResource.isDecorated(object) && object.isPartial())
-            return object._partialMetadata.schema;
-        return "types" in object ?
+        var schema = "types" in object ?
             this._getSchemaForResource(object) :
             this._getSchemaForNode(object);
+        if (!Resource_1.PersistedResource.isDecorated(object) || !object.isPartial())
+            return schema;
+        return ObjectSchema_1.ObjectSchemaDigester
+            ._combineSchemas([
+            schema,
+            object._partialMetadata.schema,
+        ]);
     };
     RegistryService.prototype._getSchemaForNode = function (node) {
         var types = RDF_1.RDFNode.getTypes(node);

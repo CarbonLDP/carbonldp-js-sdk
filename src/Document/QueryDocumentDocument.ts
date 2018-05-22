@@ -87,11 +87,11 @@ export interface QueryDocumentDocument extends PersistedDocument {
 	resolve<T extends object>( requestOptions:RequestOptions, queryBuilderFn:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<T & Document>;
 
 
-	refresh<T extends object>( requestOptions?:RequestOptions ):Promise<T & Document>;
+	refresh<T extends object>( requestOptions?:RequestOptions ):Promise<T & this & Document>;
 
-	save<T extends object>( requestOptions?:RequestOptions ):Promise<T & Document>;
+	save<T extends object>( requestOptions?:RequestOptions ):Promise<T & this & Document>;
 
-	saveAndRefresh<T extends object>( requestOptions?:RequestOptions ):Promise<T & Document>;
+	saveAndRefresh<T extends object>( requestOptions?:RequestOptions ):Promise<T & this & Document>;
 
 
 	getChildren<T extends object>( requestOptions:RequestOptions, queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder ) => QueryDocumentsBuilder ):Promise<(T & Document)[]>;
@@ -120,7 +120,7 @@ const emptyQueryBuildFn:QueryBuilderFn = _ => _;
 
 function getRegistry( repository:QueryDocumentDocument ):DocumentsRegistry {
 	if( repository._registry ) return repository._registry;
-	throw new IllegalActionError( `"${ repository.id }" does't support query documents requests.` );
+	throw new IllegalActionError( `"${ repository.id }" does't support Querying requests.` );
 }
 
 
@@ -188,7 +188,7 @@ function executePatterns<T extends object>( registry:DocumentsRegistry, uri:stri
 					if( relatedDocument._eTag !== eTag ) relatedDocument._eTag = null;
 				} ) );
 
-			if( target && targetETag === target._eTag )
+			if( targetETag && targetETag === target._eTag )
 				return [ target ];
 
 			const rdfDocuments:RDFDocument[] = rdfNodes
@@ -323,7 +323,7 @@ function getPartial<T extends object>( registry:DocumentsRegistry, uri:string, r
 		.then( ( documents ) => documents[ 0 ] );
 }
 
-function refreshPartial<T extends QueryDocumentDocument>( registry:DocumentsRegistry, resource:T, requestOptions:RequestOptions ):Promise<T & QueryDocumentDocument> {
+function refreshPartial<T extends object>( registry:DocumentsRegistry, resource:QueryDocumentDocument, requestOptions:RequestOptions ):Promise<T & QueryDocumentDocument> {
 	const uri:string = registry._requestURLFor( resource );
 	const queryContext:QueryContextPartial = new QueryContextPartial( resource, registry._context );
 
@@ -338,14 +338,14 @@ function refreshPartial<T extends QueryDocumentDocument>( registry:DocumentsRegi
 
 	RequestUtils.setRetrievalPreferences( { include: [ C.PreferDocumentETags ] }, requestOptions );
 
-	return executePatterns<T>( registry, uri, requestOptions, queryContext, targetName, constructPatterns.patterns, resource )
+	return executePatterns<T>( registry, uri, requestOptions, queryContext, targetName, constructPatterns.patterns, resource as any )
 		.then( ( documents ) => documents[ 0 ] );
 }
 
 
-function executeChildrenBuilder<T extends object>( repository:QueryDocumentDocument, uri:string | undefined, requestOptions:RequestOptions, queryBuilderFn?:QueryBuilderFn ):Promise<(T & Document)[]> {
+function executeChildrenBuilder<T extends object>( this:void, repository:QueryDocumentDocument, uri:string | undefined, requestOptions:RequestOptions, queryBuilderFn?:QueryBuilderFn ):Promise<(T & Document)[]> {
 	return promiseMethod( () => {
-		const registry:DocumentsRegistry = getRegistry( this );
+		const registry:DocumentsRegistry = getRegistry( repository );
 		uri = registry._requestURLFor( repository, uri );
 
 		const queryContext:QueryContextBuilder = new QueryContextBuilder( registry._context );
@@ -367,9 +367,9 @@ function executeChildrenBuilder<T extends object>( repository:QueryDocumentDocum
 	} );
 }
 
-function executeMembersBuilder<T extends object>( repository:QueryDocumentDocument, uri:string | undefined, requestOptions:RequestOptions, queryBuilderFn?:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<(T & Document)[]> {
+function executeMembersBuilder<T extends object>( this:void, repository:QueryDocumentDocument, uri:string | undefined, requestOptions:RequestOptions, queryBuilderFn?:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<(T & Document)[]> {
 	return promiseMethod( () => {
-		const registry:DocumentsRegistry = getRegistry( this );
+		const registry:DocumentsRegistry = getRegistry( repository );
 		uri = registry._requestURLFor( repository, uri );
 
 		const queryContext:QueryContextBuilder = new QueryContextBuilder( registry._context );
@@ -437,29 +437,29 @@ const PROTOTYPE:PickSelfProps<QueryDocumentDocument, PersistedDocument> = {
 
 	refresh<T extends object>( this:T & Document, requestOptions:RequestOptions = {} ):Promise<T & Document> {
 		return promiseMethod( () => {
-			if( ! this.isPartial() ) throw new IllegalArgumentError( `"${ this.id }" isn't a partial resource.` );
 			const registry:DocumentsRegistry = getRegistry( this );
+			if( ! this.isPartial() ) throw new IllegalArgumentError( `"${ this.id }" isn't a partial resource.` );
 
 			return refreshPartial<T & Document>( registry, this, requestOptions );
 		} );
 	},
 
 	save<T extends object>( this:QueryDocumentDocument, requestOptions:RequestOptions = {} ):Promise<T & Document> {
+		getRegistry( this );
 		if( this.isOutdated() ) return Promise.reject( new IllegalStateError( `"${ this.id }" is outdated and cannot be saved.` ) );
 
-		getRegistry( this );
 		return CRUDDocument.PROTOTYPE.save.call( this, requestOptions );
 	},
 
 	saveAndRefresh<T extends object>( this:QueryDocumentDocument, requestOptions:RequestOptions = {} ):Promise<T & Document> {
 		return promiseMethod( () => {
-			if( ! this.isPartial() ) throw new IllegalArgumentError( `"${ this.id }" isn't a valid partial resource.` );
-
 			const registry:DocumentsRegistry = getRegistry( this );
 
-			const cloneOptions:RequestOptions = RequestUtils.cloneOptions( requestOptions );
-			RequestUtils.setPreferredRetrieval( "minimal", cloneOptions );
+			if( ! this.isPartial() ) throw new IllegalArgumentError( `"${ this.id }" isn't a valid partial resource.` );
 
+			if( ! this.isDirty() ) return refreshPartial<T & Document>( registry, this, requestOptions );
+
+			const cloneOptions:RequestOptions = RequestUtils.cloneOptions( requestOptions );
 			return this.save<T & Document>( cloneOptions )
 				.then<T & Document>( doc => {
 					return refreshPartial( registry, doc, requestOptions );

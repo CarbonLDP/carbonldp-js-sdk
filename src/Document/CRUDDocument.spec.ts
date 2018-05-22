@@ -43,7 +43,7 @@ function createMock<T extends object>( data?:T & Partial<CRUDDocument> ):T & CRU
 	}, data ) );
 }
 
-fdescribe( module( "carbonldp/Document" ), ():void => {
+describe( module( "carbonldp/Document" ), ():void => {
 
 	describe( interfaze(
 		"CarbonLDP.CRUDDocument",

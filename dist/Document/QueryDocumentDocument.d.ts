@@ -10,9 +10,9 @@ export interface QueryDocumentDocument extends PersistedDocument {
     get<T extends object>(uri: string, requestOptions: RequestOptions, queryBuilderFn: (queryBuilder: QueryDocumentBuilder) => QueryDocumentBuilder): Promise<T & Document>;
     resolve<T extends object>(queryBuilderFn: (queryBuilder: QueryDocumentBuilder) => QueryDocumentBuilder): Promise<T & Document>;
     resolve<T extends object>(requestOptions: RequestOptions, queryBuilderFn: (queryBuilder: QueryDocumentBuilder) => QueryDocumentBuilder): Promise<T & Document>;
-    refresh<T extends object>(requestOptions?: RequestOptions): Promise<T & Document>;
-    save<T extends object>(requestOptions?: RequestOptions): Promise<T & Document>;
-    saveAndRefresh<T extends object>(requestOptions?: RequestOptions): Promise<T & Document>;
+    refresh<T extends object>(requestOptions?: RequestOptions): Promise<T & this & Document>;
+    save<T extends object>(requestOptions?: RequestOptions): Promise<T & this & Document>;
+    saveAndRefresh<T extends object>(requestOptions?: RequestOptions): Promise<T & this & Document>;
     getChildren<T extends object>(requestOptions: RequestOptions, queryBuilderFn?: (queryBuilder: QueryDocumentsBuilder) => QueryDocumentsBuilder): Promise<(T & Document)[]>;
     getChildren<T extends object>(queryBuilderFn?: (queryBuilder: QueryDocumentsBuilder) => QueryDocumentsBuilder): Promise<(T & Document)[]>;
     getChildren<T extends object>(uri: string, requestOptions: RequestOptions, queryBuilderFn?: (queryBuilder: QueryDocumentsBuilder) => QueryDocumentsBuilder): Promise<(T & Document)[]>;

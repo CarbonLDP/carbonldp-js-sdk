@@ -111,7 +111,7 @@ export function createMockDocument<T extends {
 	return doc;
 }
 
-function defineNonEnumerableProps( object:object ):void {
+export function defineNonEnumerableProps( object:object ):void {
 	Object
 		.keys( object )
 		.filter( key => key.startsWith( "_" ) )

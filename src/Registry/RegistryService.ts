@@ -89,12 +89,18 @@ export class RegistryService<M extends Pointer, C extends AbstractContext<M, any
 	}
 
 	getSchemaFor( object:object ):DigestedObjectSchema {
-		if( PersistedResource.isDecorated( object ) && object.isPartial() )
-			return object._partialMetadata.schema;
-
-		return "types" in object ?
+		const schema:DigestedObjectSchema = "types" in object ?
 			this._getSchemaForResource( object ) :
 			this._getSchemaForNode( object );
+
+		if( ! PersistedResource.isDecorated( object ) || ! object.isPartial() )
+			return schema;
+
+		return ObjectSchemaDigester
+			._combineSchemas( [
+				schema,
+				object._partialMetadata.schema,
+			] );
 	}
 
 	protected _getSchemaForNode( node:{ "@id"?:string, "@type"?:string[] } ):DigestedObjectSchema {

@@ -20,7 +20,7 @@ var emptyQueryBuildFn = function (_) { return _; };
 function getRegistry(repository) {
     if (repository._registry)
         return repository._registry;
-    throw new Errors_1.IllegalActionError("\"" + repository.id + "\" does't support query documents requests.");
+    throw new Errors_1.IllegalActionError("\"" + repository.id + "\" does't support Querying requests.");
 }
 function executePatterns(registry, uri, requestOptions, queryContext, targetName, constructPatterns, target) {
     var metadataVar = queryContext.getVariable("metadata");
@@ -76,7 +76,7 @@ function executePatterns(registry, uri, requestOptions, queryContext, targetName
             if (relatedDocument._eTag !== eTag)
                 relatedDocument._eTag = null;
         }); });
-        if (target && targetETag === target._eTag)
+        if (targetETag && targetETag === target._eTag)
             return [target];
         var rdfDocuments = rdfNodes
             .filter(index_1.RDFDocument.is);
@@ -203,9 +203,8 @@ function refreshPartial(registry, resource, requestOptions) {
         .then(function (documents) { return documents[0]; });
 }
 function executeChildrenBuilder(repository, uri, requestOptions, queryBuilderFn) {
-    var _this = this;
     return Utils_2.promiseMethod(function () {
-        var registry = getRegistry(_this);
+        var registry = getRegistry(repository);
         uri = registry._requestURLFor(repository, uri);
         var queryContext = new QueryDocument_1.QueryContextBuilder(registry._context);
         var childrenProperty = queryContext
@@ -221,9 +220,8 @@ function executeChildrenBuilder(repository, uri, requestOptions, queryBuilderFn)
     });
 }
 function executeMembersBuilder(repository, uri, requestOptions, queryBuilderFn) {
-    var _this = this;
     return Utils_2.promiseMethod(function () {
-        var registry = getRegistry(_this);
+        var registry = getRegistry(repository);
         uri = registry._requestURLFor(repository, uri);
         var queryContext = new QueryDocument_1.QueryContextBuilder(registry._context);
         var membersProperty = queryContext
@@ -277,28 +275,29 @@ var PROTOTYPE = {
         var _this = this;
         if (requestOptions === void 0) { requestOptions = {}; }
         return Utils_2.promiseMethod(function () {
+            var registry = getRegistry(_this);
             if (!_this.isPartial())
                 throw new Errors_1.IllegalArgumentError("\"" + _this.id + "\" isn't a partial resource.");
-            var registry = getRegistry(_this);
             return refreshPartial(registry, _this, requestOptions);
         });
     },
     save: function (requestOptions) {
         if (requestOptions === void 0) { requestOptions = {}; }
+        getRegistry(this);
         if (this.isOutdated())
             return Promise.reject(new Errors_1.IllegalStateError("\"" + this.id + "\" is outdated and cannot be saved."));
-        getRegistry(this);
         return CRUDDocument_1.CRUDDocument.PROTOTYPE.save.call(this, requestOptions);
     },
     saveAndRefresh: function (requestOptions) {
         var _this = this;
         if (requestOptions === void 0) { requestOptions = {}; }
         return Utils_2.promiseMethod(function () {
+            var registry = getRegistry(_this);
             if (!_this.isPartial())
                 throw new Errors_1.IllegalArgumentError("\"" + _this.id + "\" isn't a valid partial resource.");
-            var registry = getRegistry(_this);
+            if (!_this.isDirty())
+                return refreshPartial(registry, _this, requestOptions);
             var cloneOptions = HTTP_1.RequestUtils.cloneOptions(requestOptions);
-            HTTP_1.RequestUtils.setPreferredRetrieval("minimal", cloneOptions);
             return _this.save(cloneOptions)
                 .then(function (doc) {
                 return refreshPartial(registry, doc, requestOptions);

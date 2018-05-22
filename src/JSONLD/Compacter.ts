@@ -22,6 +22,7 @@ import {
 	QueryContextBuilder,
 	QueryPropertyType,
 } from "../SPARQL/QueryDocument";
+import { QueryContextPartial } from "../SPARQL/QueryDocument/QueryContextPartial";
 import { JSONLDConverter } from "./Converter";
 
 
@@ -203,15 +204,15 @@ export class JSONLDCompacter {
 
 
 	private _setOrRemovePartial( resource:Pointer, schema:DigestedObjectSchema, path:string ):boolean {
-		if( ! PersistedResource.is( resource ) ) return false;
+		const persisted:PersistedResource = PersistedResource.decorate( resource );
+		if( this._willBePartial( persisted, schema, path ) ) return true;
 
-		if( this._willBePartial( resource, schema, path ) ) return true;
-
-		if( resource._partialMetadata ) delete resource._partialMetadata;
+		if( persisted._partialMetadata ) delete persisted._partialMetadata;
 		return false;
 	}
 
 	private _willBePartial( resource:PersistedResource, schema:DigestedObjectSchema, path:string ):boolean {
+		if( this.resolver instanceof QueryContextPartial ) return true;
 		if( ! (this.resolver instanceof QueryContextBuilder) ) return false;
 
 		const type:QueryPropertyType = this.resolver.hasProperty( path ) ?
