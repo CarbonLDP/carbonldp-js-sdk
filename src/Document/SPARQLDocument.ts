@@ -54,8 +54,8 @@ function getRegistry( repository:SPARQLDocument ):DocumentsRegistry {
 	throw new IllegalActionError( `"${ repository.id }" does't support SPARQL requests.` );
 }
 
-function parseParams( resource:SPARQLDocument, uriOrQuery:string, queryOrOptions?:string | RequestOptions, options:RequestOptions = {} ):{ iri:string | undefined, query:string, options:RequestOptions } {
-	const registry:DocumentsRegistry = getRegistry( this );
+function parseParams( this:void, resource:SPARQLDocument, uriOrQuery:string, queryOrOptions?:string | RequestOptions, options:RequestOptions = {} ):{ iri:string | undefined, query:string, options:RequestOptions } {
+	const registry:DocumentsRegistry = getRegistry( resource );
 
 	let iri:string | undefined;
 	let query:string = uriOrQuery;
@@ -69,7 +69,9 @@ function parseParams( resource:SPARQLDocument, uriOrQuery:string, queryOrOptions
 
 
 	iri = registry._requestURLFor( resource, iri );
-	registry._context.auth.addAuthentication( options );
+
+	if( registry._context && registry._context.auth )
+		registry._context.auth.addAuthentication( options );
 
 	return { iri, query, options };
 }

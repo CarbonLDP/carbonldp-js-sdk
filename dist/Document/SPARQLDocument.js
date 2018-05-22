@@ -12,7 +12,7 @@ function getRegistry(repository) {
 }
 function parseParams(resource, uriOrQuery, queryOrOptions, options) {
     if (options === void 0) { options = {}; }
-    var registry = getRegistry(this);
+    var registry = getRegistry(resource);
     var iri;
     var query = uriOrQuery;
     if (Utils_1.isObject(queryOrOptions)) {
@@ -23,7 +23,8 @@ function parseParams(resource, uriOrQuery, queryOrOptions, options) {
         iri = uriOrQuery;
     }
     iri = registry._requestURLFor(resource, iri);
-    registry._context.auth.addAuthentication(options);
+    if (registry._context && registry._context.auth)
+        registry._context.auth.addAuthentication(options);
     return { iri: iri, query: query, options: options };
 }
 var PROTOTYPE = {

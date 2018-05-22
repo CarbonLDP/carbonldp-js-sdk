@@ -84,7 +84,7 @@ const variableHelper:( name:string ) => VariableToken = name => {
 };
 
 
-fdescribe( module( "carbonldp/Document" ), ():void => {
+describe( module( "carbonldp/Document" ), ():void => {
 
 	describe( interfaze(
 		"CarbonLDP.QueryDocumentDocument",

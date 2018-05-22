@@ -18827,9 +18827,11 @@ var DocumentsRegistry = (function (_super) {
         var localIRI = this._getLocalID(uri);
         if (localIRI === null)
             throw new Errors_1.IllegalArgumentError("\"" + uri + "\" is outside " + (this._context ? "\"" + this._context.baseURI + "\" " : "") + "scope.");
-        if (!this._context)
-            return localIRI;
-        return RDF_1.URI.resolve(this._context.baseURI, localIRI);
+        if (this._context)
+            return RDF_1.URI.resolve(this._context.baseURI, localIRI);
+        if (RDF_1.URI.isRelative(uri))
+            throw new Errors_1.IllegalArgumentError("\"" + uri + "\" isn't a supported URI.");
+        return localIRI;
     };
     DocumentsRegistry.prototype._parseErrorResponse = function (response) {
         var _this = this;
@@ -21328,7 +21330,7 @@ function getRegistry(repository) {
 }
 function parseParams(resource, uriOrQuery, queryOrOptions, options) {
     if (options === void 0) { options = {}; }
-    var registry = getRegistry(this);
+    var registry = getRegistry(resource);
     var iri;
     var query = uriOrQuery;
     if (Utils_1.isObject(queryOrOptions)) {
@@ -21339,7 +21341,8 @@ function parseParams(resource, uriOrQuery, queryOrOptions, options) {
         iri = uriOrQuery;
     }
     iri = registry._requestURLFor(resource, iri);
-    registry._context.auth.addAuthentication(options);
+    if (registry._context && registry._context.auth)
+        registry._context.auth.addAuthentication(options);
     return { iri: iri, query: query, options: options };
 }
 var PROTOTYPE = {

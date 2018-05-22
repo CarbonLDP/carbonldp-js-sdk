@@ -49,14 +49,22 @@ export class DocumentsRegistry extends RegistryService<Document, CarbonLDP> {
 	_requestURLFor( pointer:Pointer, uri?:string ):string {
 		uri = uri ? URI.resolve( pointer.id, uri ) : pointer.id;
 
-		if( URI.isBNodeID( uri ) ) throw new IllegalArgumentError( `"${ uri }" (Blank Node) can't be fetched directly.` );
-		if( URI.hasFragment( uri ) ) throw new IllegalArgumentError( `"${ uri }" (Named Fragment) can't be fetched directly.` );
+		if( URI.isBNodeID( uri ) )
+			throw new IllegalArgumentError( `"${ uri }" (Blank Node) can't be fetched directly.` );
+		if( URI.hasFragment( uri ) )
+			throw new IllegalArgumentError( `"${ uri }" (Named Fragment) can't be fetched directly.` );
 
 		const localIRI:string = this._getLocalID( uri );
-		if( localIRI === null ) throw new IllegalArgumentError( `"${ uri }" is outside ${ this._context ? `"${ this._context.baseURI }" ` : "" }scope.` );
+		if( localIRI === null )
+			throw new IllegalArgumentError( `"${ uri }" is outside ${ this._context ? `"${ this._context.baseURI }" ` : "" }scope.` );
 
-		if( ! this._context ) return localIRI;
-		return URI.resolve( this._context.baseURI, localIRI );
+		if( this._context )
+			return URI.resolve( this._context.baseURI, localIRI );
+
+		if( URI.isRelative( uri ) )
+			throw new IllegalArgumentError( `"${ uri }" isn't a supported URI.` );
+
+		return localIRI;
 	}
 
 
