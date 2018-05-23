@@ -79,6 +79,13 @@ describe( module( "carbonldp/Document" ), () => {
 				], { type: "Promise<CarbonLDP.SPARQL.SPARQLRawResults>" }
 			), () => {} );
 
+			it( hasSignature(
+				"Executes an ASK query on the current document and returns a raw application/sparql-results+json object.", [
+					{ name: "askQuery", type: "string", description: "ASK query to execute in the selected endpoint." },
+					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for the request." },
+				], { type: "Promise<CarbonLDP.SPARQL.SPARQLRawResults>" }
+			), () => {} );
+
 			it( "should exists", () => {
 				const resource:SPARQLDocument = createMock();
 
@@ -408,6 +415,13 @@ describe( module( "carbonldp/Document" ), () => {
 				], { type: "Promise<boolean>" }
 			), () => {} );
 
+			it( hasSignature(
+				"Executes an ASK query on the current document and returns the response of the query in form of a boolean.", [
+					{ name: "askQuery", type: "string", description: "ASK query to execute in the selected endpoint." },
+					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for the request." },
+				], { type: "Promise<boolean>" }
+			), () => {} );
+
 			it( "should exists", () => {
 				const resource:SPARQLDocument = createMock();
 
@@ -730,6 +744,13 @@ describe( module( "carbonldp/Document" ), () => {
 			it( hasSignature(
 				"Executes a SELECT query on a document and returns a raw application/sparql-results+json object.", [
 					{ name: "uri", type: "string", description: "URI of the document that works as a SPARQL endpoint where to execute the SPARQL query." },
+					{ name: "selectQuery", type: "string", description: "SELECT query to execute in the selected endpoint." },
+					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for the request." },
+				], { type: "Promise<CarbonLDP.SPARQL.SPARQLRawResults>" }
+			), () => {} );
+
+			it( hasSignature(
+				"Executes a SELECT query on the current document and returns a raw application/sparql-results+json object.", [
 					{ name: "selectQuery", type: "string", description: "SELECT query to execute in the selected endpoint." },
 					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for the request." },
 				], { type: "Promise<CarbonLDP.SPARQL.SPARQLRawResults>" }
@@ -1063,6 +1084,14 @@ describe( module( "carbonldp/Document" ), () => {
 				], { type: "Promise<CarbonLDP.SPARQL.SPARQLSelectResults<T>>" }
 			), () => {} );
 
+			it( hasSignature(
+				[ "T extends object" ],
+				"Executes a SELECT query on the current document and returns a parsed response object.", [
+					{ name: "selectQuery", type: "string", description: "SELECT query to execute in the selected endpoint." },
+					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for the request." },
+				], { type: "Promise<CarbonLDP.SPARQL.SPARQLSelectResults<T>>" }
+			), () => {} );
+
 			it( "should exists", () => {
 				const resource:SPARQLDocument = createMock();
 
@@ -1391,6 +1420,13 @@ describe( module( "carbonldp/Document" ), () => {
 				], { type: "Promise<string>" }
 			), () => {} );
 
+			it( hasSignature(
+				"Executes a CONSTRUCT query on the current document and returns a string with the resulting model.", [
+					{ name: "constructQuery", type: "string", description: "CONSTRUCT query to execute in the selected endpoint." },
+					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for the request." },
+				], { type: "Promise<string>" }
+			), () => {} );
+
 			it( "should exists", () => {
 				const resource:SPARQLDocument = createMock();
 
@@ -1712,8 +1748,15 @@ describe( module( "carbonldp/Document" ), () => {
 		describe( method( OBLIGATORY, "executeRawDESCRIBEQuery" ), () => {
 
 			it( hasSignature(
-				"Executes a DESCRIBE query and returns a string with the resulting model.", [
+				"Executes a DESCRIBE query on a document and returns a string with the resulting model.", [
 					{ name: "uri", type: "string", description: "URI of the document that works as a SPARQL endpoint where to execute the SPARQL query." },
+					{ name: "describeQuery", type: "string", description: "DESCRIBE query to execute in the selected endpoint." },
+					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for the request." },
+				], { type: "Promise<string>" }
+			), () => {} );
+
+			it( hasSignature(
+				"Executes a DESCRIBE query on hte current document and returns a string with the resulting model.", [
 					{ name: "describeQuery", type: "string", description: "DESCRIBE query to execute in the selected endpoint." },
 					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for the request." },
 				], { type: "Promise<string>" }
@@ -2040,8 +2083,15 @@ describe( module( "carbonldp/Document" ), () => {
 		describe( method( OBLIGATORY, "executeUPDATE" ), () => {
 
 			it( hasSignature(
-				"Executes a DESCRIBE query and returns a string with the resulting model.", [
+				"Executes a DESCRIBE query on a document and returns a string with the resulting model.", [
 					{ name: "uri", type: "string", description: "URI of the document that works as a SPARQL endpoint where to execute the SPARQL query." },
+					{ name: "update", type: "string", description: "UPDATE query to execute in the selected endpoint." },
+					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for the request." },
+				], { type: "Promise<void>" }
+			), () => {} );
+
+			it( hasSignature(
+				"Executes a DESCRIBE query on the current document and returns a string with the resulting model.", [
 					{ name: "update", type: "string", description: "UPDATE query to execute in the selected endpoint." },
 					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for the request." },
 				], { type: "Promise<void>" }
@@ -2369,9 +2419,9 @@ describe( module( "carbonldp/Document" ), () => {
 		describe( method( OBLIGATORY, "sparql" ), () => {
 
 			it( hasSignature(
-				"Method that creates an instance of SPARQLER for the provided document end-point.",
+				"Method that creates an instance of SPARQLER for the specified document, or the current document if no URI is provided.",
 				[
-					{ name: "uri", type: "string", description: "URI of the document where to execute the SPARQL query." },
+					{ name: "uri", type: "string", optional: true, description: "URI of the document where to execute the SPARQL query." },
 				],
 				{ type: "SPARQLER/Clauses/QueryClause<CarbonLDP.SPARQL.Builder.FinishSPARQLSelect>" }
 			), () => {} );
