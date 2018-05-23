@@ -43,7 +43,7 @@ function createMock<T extends object>( data?:T & Partial<MembersDocument> ):T & 
 }
 
 
-fdescribe( module( "carbonldp/Document" ), () => {
+describe( module( "carbonldp/Document" ), () => {
 
 	describe( interfaze(
 		"CarbonLDP.MembersDocument",

@@ -12,6 +12,7 @@ import {
 	property,
 	STATIC
 } from "../test/JasmineExtender";
+import { Document } from "./Document";
 import {
 	PersistedDocument,
 	PersistedDocumentFactory
@@ -193,6 +194,9 @@ describe( module( "carbonldp/Document" ), ():void => {
 
 					isOutdated: fn,
 					isResolved: fn,
+
+					_savedFragments: [],
+					_syncSavedFragments: fn,
 				};
 			} );
 
@@ -227,6 +231,17 @@ describe( module( "carbonldp/Document" ), ():void => {
 
 				const returned:boolean = PersistedDocument.isDecorated( object );
 				expect( returned ).toBe( false );
+			} );
+
+
+			it( "should return false when no _savedFragments", ():void => {
+				delete object._savedFragments;
+				expect( Document.isDecorated( object ) ).toBe( false );
+			} );
+
+			it( "should return false when no _syncSavedFragments", ():void => {
+				delete object._syncSavedFragments;
+				expect( Document.isDecorated( object ) ).toBe( false );
 			} );
 
 		} );

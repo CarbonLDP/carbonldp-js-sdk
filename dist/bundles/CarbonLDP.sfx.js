@@ -18837,7 +18837,7 @@ var DocumentsRegistry = (function (_super) {
         if (this._context)
             return RDF_1.URI.resolve(this._context.baseURI, localIRI);
         if (RDF_1.URI.isRelative(uri))
-            throw new Errors_1.IllegalArgumentError("\"" + uri + "\" S\u00ED");
+            throw new Errors_1.IllegalArgumentError("\"" + uri + "\" isn't a supported URI.");
         return localIRI;
     };
     DocumentsRegistry.prototype._parseErrorResponse = function (response) {

@@ -70,7 +70,7 @@ export class DocumentsRegistry extends RegistryService<Document, CarbonLDP> {
 			return URI.resolve( this._context.baseURI, localIRI );
 
 		if( URI.isRelative( uri ) )
-			throw new IllegalArgumentError( `"${ uri }" Sí` );
+			throw new IllegalArgumentError( `"${ uri }" isn't a supported URI.` );
 
 		return localIRI;
 	}

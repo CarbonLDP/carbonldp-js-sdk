@@ -478,9 +478,6 @@ describe( module( "carbonldp/Document" ), ():void => {
 					modified: null,
 					accessPoints: null,
 
-					_savedFragments: null,
-					_syncSavedFragments: ():any => {},
-
 					isDirty: ():any => {},
 					revert: ():any => {},
 
@@ -520,17 +517,6 @@ describe( module( "carbonldp/Document" ), ():void => {
 			it( "should return true when no modified", ():void => {
 				delete object.modified;
 				expect( Document.isDecorated( object ) ).toBe( true );
-			} );
-
-
-			it( "should return false when no _savedFragments", ():void => {
-				delete object._savedFragments;
-				expect( Document.isDecorated( object ) ).toBe( false );
-			} );
-
-			it( "should return false when no _syncSavedFragments", ():void => {
-				delete object._syncSavedFragments;
-				expect( Document.isDecorated( object ) ).toBe( false );
 			} );
 
 
