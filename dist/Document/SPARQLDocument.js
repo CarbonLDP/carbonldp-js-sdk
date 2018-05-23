@@ -8,7 +8,7 @@ var TransientDocument_1 = require("./TransientDocument");
 function getRegistry(repository) {
     if (repository._registry)
         return repository._registry;
-    throw new Errors_1.IllegalActionError("\"" + repository.id + "\" does't support SPARQL requests.");
+    throw new Errors_1.IllegalActionError("\"" + repository.id + "\" doesn't support SPARQL requests.");
 }
 function parseParams(resource, uriOrQuery, queryOrOptions, options) {
     if (options === void 0) { options = {}; }

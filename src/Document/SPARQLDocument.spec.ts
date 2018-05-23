@@ -47,7 +47,7 @@ function createMock<T extends object>( data?:T & Partial<SPARQLDocument> ):T & S
 }
 
 
-fdescribe( module( "carbonldp/Document" ), () => {
+describe( module( "carbonldp/Document" ), () => {
 
 	describe( interfaze(
 		"CarbonLDP.SPARQLDocument",

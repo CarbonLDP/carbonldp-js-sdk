@@ -10,14 +10,14 @@ var Utils_1 = require("../Utils");
 var Vocabularies_1 = require("../Vocabularies");
 var TransientDocument_1 = require("./TransientDocument");
 function getRegistry(repository) {
-    if (repository._registry)
+    if (repository._registry && repository._registry._context)
         return repository._registry;
-    throw new Errors_1.IllegalActionError("\"" + repository.id + "\" does't support members management requests.");
+    throw new Errors_1.IllegalActionError("\"" + repository.id + "\" doesn't support Members management requests.");
 }
-function setDefaultRequestOptions(registry, requestOptions, interactionModel) {
-    registry._context.auth.addAuthentication(requestOptions);
-    if (interactionModel)
-        HTTP_1.RequestUtils.setPreferredInteractionModel(interactionModel, requestOptions);
+function setDefaultRequestOptions(registry, requestOptions) {
+    if (registry._context && registry._context.auth)
+        registry._context.auth.addAuthentication(requestOptions);
+    HTTP_1.RequestUtils.setPreferredInteractionModel(Vocabularies_1.LDP.Container, requestOptions);
     HTTP_1.RequestUtils.setAcceptHeader("application/ld+json", requestOptions);
     return requestOptions;
 }
@@ -31,11 +31,12 @@ function parseMembers(registry, pointers) {
     });
 }
 function sendAddAction(repository, uri, members, requestOptions) {
+    if (requestOptions === void 0) { requestOptions = {}; }
     return Utils_1.promiseMethod(function () {
         var registry = getRegistry(repository);
         var iri = registry._requestURLFor(repository, uri);
         var targetMembers = parseMembers(registry, members);
-        setDefaultRequestOptions(registry, requestOptions, Vocabularies_1.LDP.Container);
+        setDefaultRequestOptions(registry, requestOptions);
         HTTP_1.RequestUtils.setContentTypeHeader("application/ld+json", requestOptions);
         var freeResources = FreeResources_1.FreeResources.createFrom({
             _registry: registry,
@@ -50,11 +51,12 @@ function sendAddAction(repository, uri, members, requestOptions) {
     });
 }
 function sendRemoveAction(repository, uri, members, requestOptions) {
+    if (requestOptions === void 0) { requestOptions = {}; }
     return Utils_1.promiseMethod(function () {
         var registry = getRegistry(repository);
         var iri = registry._requestURLFor(repository, uri);
         var targetMembers = parseMembers(registry, members);
-        setDefaultRequestOptions(registry, requestOptions, Vocabularies_1.LDP.Container);
+        setDefaultRequestOptions(registry, requestOptions);
         HTTP_1.RequestUtils.setContentTypeHeader("application/ld+json", requestOptions);
         HTTP_1.RequestUtils.setRetrievalPreferences({
             include: [Vocabularies_1.C.PreferSelectedMembershipTriples],
@@ -82,7 +84,7 @@ var PROTOTYPE = {
             uriOrMember;
         var uri = member !== uriOrMember ?
             uriOrMember :
-            "";
+            void 0;
         return sendAddAction(this, uri, [member], requestOptions);
     },
     addMembers: function (uriOrMembers, membersOrOptions, requestOptions) {
@@ -94,31 +96,31 @@ var PROTOTYPE = {
             uriOrMembers;
         var uri = members !== uriOrMembers ?
             uriOrMembers :
-            "";
+            void 0;
         return sendAddAction(this, uri, members, requestOptions);
     },
     removeMember: function (uriOrMember, memberOrOptions, requestOptions) {
         requestOptions = Utils_1.isObject(memberOrOptions) && !Pointer_1.Pointer.is(memberOrOptions) ?
             memberOrOptions :
-            requestOptions ? requestOptions : {};
+            requestOptions;
         var member = memberOrOptions !== requestOptions ?
             memberOrOptions :
             uriOrMember;
         var uri = member !== uriOrMember ?
             uriOrMember :
-            "";
+            void 0;
         return sendRemoveAction(this, uri, [member], requestOptions);
     },
     removeMembers: function (uriOrMembers, membersOrOptions, requestOptions) {
         requestOptions = !Array.isArray(membersOrOptions) ?
             membersOrOptions :
-            requestOptions ? requestOptions : {};
+            requestOptions;
         var members = membersOrOptions !== requestOptions ?
             membersOrOptions :
             uriOrMembers;
         var uri = members !== uriOrMembers ?
             uriOrMembers :
-            "";
+            void 0;
         return sendRemoveAction(this, uri, members, requestOptions);
     },
     removeAllMembers: function (uriOrOptions, requestOptions) {
@@ -127,11 +129,11 @@ var PROTOTYPE = {
             requestOptions ? requestOptions : {};
         var uri = uriOrOptions !== requestOptions ?
             uriOrOptions :
-            "";
+            void 0;
         return Utils_1.promiseMethod(function () {
             var registry = getRegistry(_this);
             var iri = registry._requestURLFor(_this, uri);
-            setDefaultRequestOptions(registry, requestOptions, Vocabularies_1.LDP.Container);
+            setDefaultRequestOptions(registry, requestOptions);
             HTTP_1.RequestUtils.setRetrievalPreferences({
                 include: [
                     Vocabularies_1.C.PreferMembershipTriples,

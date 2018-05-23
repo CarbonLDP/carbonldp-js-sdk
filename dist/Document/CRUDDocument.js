@@ -49,7 +49,7 @@ function setDefaultRequestOptions(registry, requestOptions, interactionModel) {
 function getRegistry(repository) {
     if (repository._registry)
         return repository._registry;
-    throw new Errors_1.IllegalActionError("\"" + repository.id + "\" does't support CRUD requests.");
+    throw new Errors_1.IllegalActionError("\"" + repository.id + "\" doesn't support CRUD requests.");
 }
 function getFullResource(registry, uri, requestOptions) {
     if (registry.hasPointer(uri)) {

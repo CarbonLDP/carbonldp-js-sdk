@@ -144,7 +144,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 					await resource.get( "some/" );
 				} catch( e ) {
 					expect( () => { throw e; } )
-						.toThrowError( IllegalActionError, `"https://example.com/" does't support CRUD requests.` );
+						.toThrowError( IllegalActionError, `"https://example.com/" doesn't support CRUD requests.` );
 				}
 			} );
 
@@ -570,7 +570,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 					await resource.resolve();
 				} catch( e ) {
 					expect( () => { throw e; } )
-						.toThrowError( IllegalActionError, `"https://example.com/" does't support CRUD requests.` );
+						.toThrowError( IllegalActionError, `"https://example.com/" doesn't support CRUD requests.` );
 				}
 			} );
 
@@ -850,7 +850,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 					await resource.exists( "resource/" );
 				} catch( e ) {
 					expect( () => { throw e; } )
-						.toThrowError( IllegalActionError, `"https://example.com/" does't support CRUD requests.` );
+						.toThrowError( IllegalActionError, `"https://example.com/" doesn't support CRUD requests.` );
 				}
 			} );
 
@@ -1148,7 +1148,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 					await resource.create( {} );
 				} catch( e ) {
 					expect( () => { throw e; } )
-						.toThrowError( IllegalActionError, `"https://example.com/" does't support CRUD requests.` );
+						.toThrowError( IllegalActionError, `"https://example.com/" doesn't support CRUD requests.` );
 				}
 			} );
 
@@ -2081,7 +2081,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 					await resource.createAndRetrieve( {} );
 				} catch( e ) {
 					expect( () => { throw e; } )
-						.toThrowError( IllegalActionError, `"https://example.com/" does't support CRUD requests.` );
+						.toThrowError( IllegalActionError, `"https://example.com/" doesn't support CRUD requests.` );
 				}
 			} );
 
@@ -3166,7 +3166,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 					await resource.createAccessPoint( { hasMemberRelation: "relation" } );
 				} catch( e ) {
 					expect( () => { throw e; } )
-						.toThrowError( IllegalActionError, `"https://example.com/" does't support CRUD requests.` );
+						.toThrowError( IllegalActionError, `"https://example.com/" doesn't support CRUD requests.` );
 				}
 			} );
 
@@ -3782,7 +3782,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 					await resource.createAccessPoints( [ { hasMemberRelation: "relation" } ] );
 				} catch( e ) {
 					expect( () => { throw e; } )
-						.toThrowError( IllegalActionError, `"https://example.com/" does't support CRUD requests.` );
+						.toThrowError( IllegalActionError, `"https://example.com/" doesn't support CRUD requests.` );
 				}
 			} );
 
@@ -4501,7 +4501,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 					await resource.createAccessPointAndRetrieve( { hasMemberRelation: "relation" } );
 				} catch( e ) {
 					expect( () => { throw e; } )
-						.toThrowError( IllegalActionError, `"https://example.com/" does't support CRUD requests.` );
+						.toThrowError( IllegalActionError, `"https://example.com/" doesn't support CRUD requests.` );
 				}
 			} );
 
@@ -5238,7 +5238,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 					await resource.createAccessPointsAndRetrieve( [ { hasMemberRelation: "relation" } ] );
 				} catch( e ) {
 					expect( () => { throw e; } )
-						.toThrowError( IllegalActionError, `"https://example.com/" does't support CRUD requests.` );
+						.toThrowError( IllegalActionError, `"https://example.com/" doesn't support CRUD requests.` );
 				}
 			} );
 
@@ -5965,7 +5965,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 					await resource.save();
 				} catch( e ) {
 					expect( () => { throw e; } )
-						.toThrowError( IllegalActionError, `"https://example.com/" does't support CRUD requests.` );
+						.toThrowError( IllegalActionError, `"https://example.com/" doesn't support CRUD requests.` );
 				}
 			} );
 
@@ -6369,7 +6369,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 					await resource.saveAndRefresh();
 				} catch( e ) {
 					expect( () => { throw e; } )
-						.toThrowError( IllegalActionError, `"https://example.com/" does't support CRUD requests.` );
+						.toThrowError( IllegalActionError, `"https://example.com/" doesn't support CRUD requests.` );
 				}
 			} );
 
@@ -6829,7 +6829,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 					await resource.refresh();
 				} catch( e ) {
 					expect( () => { throw e; } )
-						.toThrowError( IllegalActionError, `"https://example.com/" does't support CRUD requests.` );
+						.toThrowError( IllegalActionError, `"https://example.com/" doesn't support CRUD requests.` );
 				}
 			} );
 
@@ -7203,7 +7203,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 					await resource.delete();
 				} catch( e ) {
 					expect( () => { throw e; } )
-						.toThrowError( IllegalActionError, `"https://example.com/" does't support CRUD requests.` );
+						.toThrowError( IllegalActionError, `"https://example.com/" doesn't support CRUD requests.` );
 				}
 			} );
 

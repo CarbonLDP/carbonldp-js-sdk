@@ -51,7 +51,7 @@ export interface SPARQLDocument extends TransientDocument {
 
 function getRegistry( repository:SPARQLDocument ):DocumentsRegistry {
 	if( repository._registry ) return repository._registry;
-	throw new IllegalActionError( `"${ repository.id }" does't support SPARQL requests.` );
+	throw new IllegalActionError( `"${ repository.id }" doesn't support SPARQL requests.` );
 }
 
 function parseParams( this:void, resource:SPARQLDocument, uriOrQuery:string, queryOrOptions?:string | RequestOptions, options:RequestOptions = {} ):{ iri:string | undefined, query:string, options:RequestOptions } {

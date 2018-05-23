@@ -17,10 +17,11 @@ export declare class RegistryService<M extends Pointer, C extends AbstractContex
     readonly jsonldConverter: JSONLDConverter;
     inScope: Registry<M>["inScope"];
     hasPointer: Registry<M>["hasPointer"];
-    getPointer: Registry<M>["getPointer"];
     getPointers: Registry<M>["getPointers"];
     removePointer: Registry<M>["removePointer"];
     constructor(model: ModelDecorator<M>, context?: C);
+    getPointer(id: string): Pointer;
+    getPointer(id: string, local: true): M;
     _getLocalID(id: string): string | null;
     _register<T extends object>(base: T & {
         id: string;

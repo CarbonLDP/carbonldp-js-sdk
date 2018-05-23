@@ -14,7 +14,10 @@ import {
 	RemoveMemberAction
 } from "../LDP";
 import { Pointer } from "../Pointer";
-import { DocumentsRegistry } from "../Registry";
+import {
+	DocumentsRegistry,
+	Registry
+} from "../Registry";
 import {
 	isObject,
 	isString,
@@ -48,20 +51,21 @@ export interface MembersDocument extends TransientDocument {
 
 
 function getRegistry( repository:MembersDocument ):DocumentsRegistry {
-	if( repository._registry ) return repository._registry;
-	throw new IllegalActionError( `"${ repository.id }" does't support members management requests.` );
+	if( repository._registry && repository._registry._context ) return repository._registry;
+	throw new IllegalActionError( `"${ repository.id }" doesn't support Members management requests.` );
 }
 
-function setDefaultRequestOptions( registry:DocumentsRegistry, requestOptions:RequestOptions, interactionModel?:string ):RequestOptions {
-	registry._context.auth.addAuthentication( requestOptions );
+function setDefaultRequestOptions( registry:DocumentsRegistry, requestOptions:RequestOptions ):RequestOptions {
+	if( registry._context && registry._context.auth )
+		registry._context.auth.addAuthentication( requestOptions );
 
-	if( interactionModel ) RequestUtils.setPreferredInteractionModel( interactionModel, requestOptions );
+	RequestUtils.setPreferredInteractionModel( LDP.Container, requestOptions );
 	RequestUtils.setAcceptHeader( "application/ld+json", requestOptions );
 
 	return requestOptions;
 }
 
-function parseMembers( registry:DocumentsRegistry, pointers:(string | Pointer)[] ):Pointer[] {
+function parseMembers( registry:Registry<Pointer>, pointers:(string | Pointer)[] ):Pointer[] {
 	return pointers.map( pointer => {
 		if( isString( pointer ) ) return registry.getPointer( pointer );
 		if( Pointer.is( pointer ) ) return pointer;
@@ -71,14 +75,14 @@ function parseMembers( registry:DocumentsRegistry, pointers:(string | Pointer)[]
 }
 
 
-function sendAddAction( repository:MembersDocument, uri:string | undefined, members:(string | Pointer)[], requestOptions:RequestOptions ):Promise<void> {
+function sendAddAction( repository:MembersDocument, uri:string | undefined, members:(string | Pointer)[], requestOptions:RequestOptions = {} ):Promise<void> {
 	return promiseMethod( () => {
 		const registry:DocumentsRegistry = getRegistry( repository );
 
 		const iri:string = registry._requestURLFor( repository, uri );
 		const targetMembers:Pointer[] = parseMembers( registry, members );
 
-		setDefaultRequestOptions( registry, requestOptions, LDP.Container );
+		setDefaultRequestOptions( registry, requestOptions );
 		RequestUtils.setContentTypeHeader( "application/ld+json", requestOptions );
 
 		const freeResources:FreeResources = FreeResources.createFrom( {
@@ -97,14 +101,14 @@ function sendAddAction( repository:MembersDocument, uri:string | undefined, memb
 	} );
 }
 
-function sendRemoveAction( repository:MembersDocument, uri:string | undefined, members:(string | Pointer)[], requestOptions:RequestOptions ):Promise<void> {
+function sendRemoveAction( repository:MembersDocument, uri:string | undefined, members:(string | Pointer)[], requestOptions:RequestOptions = {} ):Promise<void> {
 	return promiseMethod( () => {
 		const registry:DocumentsRegistry = getRegistry( repository );
 
 		const iri:string = registry._requestURLFor( repository, uri );
 		const targetMembers:Pointer[] = parseMembers( registry, members );
 
-		setDefaultRequestOptions( registry, requestOptions, LDP.Container );
+		setDefaultRequestOptions( registry, requestOptions );
 		RequestUtils.setContentTypeHeader( "application/ld+json", requestOptions );
 		RequestUtils.setRetrievalPreferences( {
 			include: [ C.PreferSelectedMembershipTriples ],
@@ -129,7 +133,7 @@ function sendRemoveAction( repository:MembersDocument, uri:string | undefined, m
 
 
 const PROTOTYPE:PickSelfProps<MembersDocument, TransientDocument> = {
-	addMember( this:MembersDocument, uriOrMember:string | (Pointer | string), memberOrOptions:(Pointer | string) | RequestOptions, requestOptions?:RequestOptions ):Promise<void> {
+	addMember( this:MembersDocument, uriOrMember:string | (Pointer | string), memberOrOptions?:(Pointer | string) | RequestOptions, requestOptions?:RequestOptions ):Promise<void> {
 		requestOptions = isObject( memberOrOptions ) && ! Pointer.is( memberOrOptions ) ?
 			memberOrOptions :
 			requestOptions;
@@ -138,9 +142,9 @@ const PROTOTYPE:PickSelfProps<MembersDocument, TransientDocument> = {
 			memberOrOptions as (Pointer | string) :
 			uriOrMember as (Pointer | string);
 
-		const uri:string = member !== uriOrMember ?
+		const uri:string | undefined = member !== uriOrMember ?
 			uriOrMember as string :
-			"";
+			void 0;
 
 		return sendAddAction( this, uri, [ member ], requestOptions );
 	},
@@ -154,9 +158,9 @@ const PROTOTYPE:PickSelfProps<MembersDocument, TransientDocument> = {
 			membersOrOptions as (Pointer | string)[] :
 			uriOrMembers as (Pointer | string)[];
 
-		const uri:string = members !== uriOrMembers ?
+		const uri:string | undefined = members !== uriOrMembers ?
 			uriOrMembers as string :
-			"";
+			void 0;
 
 		return sendAddAction( this, uri, members, requestOptions );
 	},
@@ -165,15 +169,15 @@ const PROTOTYPE:PickSelfProps<MembersDocument, TransientDocument> = {
 	removeMember( this:MembersDocument, uriOrMember:string | (Pointer | string), memberOrOptions:(Pointer | string) | RequestOptions, requestOptions?:RequestOptions ):Promise<void> {
 		requestOptions = isObject( memberOrOptions ) && ! Pointer.is( memberOrOptions ) ?
 			memberOrOptions :
-			requestOptions ? requestOptions : {};
+			requestOptions;
 
 		const member:(Pointer | string) = memberOrOptions !== requestOptions ?
 			memberOrOptions as (Pointer | string) :
 			uriOrMember as (Pointer | string);
 
-		const uri:string = member !== uriOrMember ?
+		const uri:string | undefined = member !== uriOrMember ?
 			uriOrMember as string :
-			"";
+			void 0;
 
 		return sendRemoveAction( this, uri, [ member ], requestOptions );
 	},
@@ -181,15 +185,15 @@ const PROTOTYPE:PickSelfProps<MembersDocument, TransientDocument> = {
 	removeMembers( this:MembersDocument, uriOrMembers:string | (Pointer | string)[], membersOrOptions:(Pointer | string)[] | RequestOptions, requestOptions?:RequestOptions ):Promise<void> {
 		requestOptions = ! Array.isArray( membersOrOptions ) ?
 			membersOrOptions :
-			requestOptions ? requestOptions : {};
+			requestOptions;
 
 		const members:(Pointer | string)[] = membersOrOptions !== requestOptions ?
 			membersOrOptions as (Pointer | string)[] :
 			uriOrMembers as (Pointer | string)[];
 
-		const uri:string = members !== uriOrMembers ?
+		const uri:string | undefined = members !== uriOrMembers ?
 			uriOrMembers as string :
-			"";
+			void 0;
 
 		return sendRemoveAction( this, uri, members, requestOptions );
 	},
@@ -199,15 +203,15 @@ const PROTOTYPE:PickSelfProps<MembersDocument, TransientDocument> = {
 		requestOptions = isObject( uriOrOptions ) ? uriOrOptions :
 			requestOptions ? requestOptions : {};
 
-		const uri:string = uriOrOptions !== requestOptions ?
+		const uri:string | undefined = uriOrOptions !== requestOptions ?
 			uriOrOptions as string :
-			"";
+			void 0;
 
 		return promiseMethod( () => {
 			const registry:DocumentsRegistry = getRegistry( this );
 			const iri:string = registry._requestURLFor( this, uri );
 
-			setDefaultRequestOptions( registry, requestOptions, LDP.Container );
+			setDefaultRequestOptions( registry, requestOptions );
 			RequestUtils.setRetrievalPreferences( {
 				include: [
 					C.PreferMembershipTriples,

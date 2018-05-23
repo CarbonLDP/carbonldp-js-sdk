@@ -8629,7 +8629,6 @@ var RegistryService = (function () {
     function RegistryService(model, context) {
         this.inScope = Registry_1.Registry.PROTOTYPE.inScope;
         this.hasPointer = Registry_1.Registry.PROTOTYPE.hasPointer;
-        this.getPointer = Registry_1.Registry.PROTOTYPE.getPointer;
         this.getPointers = Registry_1.Registry.PROTOTYPE.getPointers;
         this.removePointer = Registry_1.Registry.PROTOTYPE.removePointer;
         this._context = context;
@@ -8657,6 +8656,14 @@ var RegistryService = (function () {
         enumerable: true,
         configurable: true
     });
+    RegistryService.prototype.getPointer = function (id, local) {
+        var pointer = Registry_1.Registry.PROTOTYPE.getPointer.call(this, id, local);
+        if (!this._context)
+            return pointer;
+        pointer.id = ObjectSchema_1.ObjectSchemaUtils
+            .resolveURI(pointer.id, this._context.getObjectSchema(), { base: true });
+        return pointer;
+    };
     RegistryService.prototype._getLocalID = function (id) {
         if (!this._context)
             return id;
@@ -9190,7 +9197,7 @@ function setDefaultRequestOptions(registry, requestOptions, interactionModel) {
 function getRegistry(repository) {
     if (repository._registry)
         return repository._registry;
-    throw new Errors_1.IllegalActionError("\"" + repository.id + "\" does't support CRUD requests.");
+    throw new Errors_1.IllegalActionError("\"" + repository.id + "\" doesn't support CRUD requests.");
 }
 function getFullResource(registry, uri, requestOptions) {
     if (registry.hasPointer(uri)) {
@@ -14443,7 +14450,7 @@ var Event_1 = __webpack_require__(102);
 var Utils_2 = __webpack_require__(103);
 function getMessagingService(repository) {
     if (!repository._context || !repository._context.messaging)
-        throw new Errors_1.IllegalActionError("\"" + repository.id + "\" does't support messaging subscriptions.");
+        throw new Errors_1.IllegalActionError("\"" + repository.id + "\" doesn't support messaging subscriptions.");
     return repository._context.messaging;
 }
 function parseParams(uriPatternOROnEvent, onEventOrOnError, onError) {
@@ -18830,7 +18837,7 @@ var DocumentsRegistry = (function (_super) {
         if (this._context)
             return RDF_1.URI.resolve(this._context.baseURI, localIRI);
         if (RDF_1.URI.isRelative(uri))
-            throw new Errors_1.IllegalArgumentError("\"" + uri + "\" isn't a supported URI.");
+            throw new Errors_1.IllegalArgumentError("\"" + uri + "\" S\u00ED");
         return localIRI;
     };
     DocumentsRegistry.prototype._parseErrorResponse = function (response) {
@@ -20153,14 +20160,14 @@ var Utils_1 = __webpack_require__(0);
 var Vocabularies_1 = __webpack_require__(2);
 var TransientDocument_1 = __webpack_require__(38);
 function getRegistry(repository) {
-    if (repository._registry)
+    if (repository._registry && repository._registry._context)
         return repository._registry;
-    throw new Errors_1.IllegalActionError("\"" + repository.id + "\" does't support members management requests.");
+    throw new Errors_1.IllegalActionError("\"" + repository.id + "\" doesn't support Members management requests.");
 }
-function setDefaultRequestOptions(registry, requestOptions, interactionModel) {
-    registry._context.auth.addAuthentication(requestOptions);
-    if (interactionModel)
-        HTTP_1.RequestUtils.setPreferredInteractionModel(interactionModel, requestOptions);
+function setDefaultRequestOptions(registry, requestOptions) {
+    if (registry._context && registry._context.auth)
+        registry._context.auth.addAuthentication(requestOptions);
+    HTTP_1.RequestUtils.setPreferredInteractionModel(Vocabularies_1.LDP.Container, requestOptions);
     HTTP_1.RequestUtils.setAcceptHeader("application/ld+json", requestOptions);
     return requestOptions;
 }
@@ -20174,11 +20181,12 @@ function parseMembers(registry, pointers) {
     });
 }
 function sendAddAction(repository, uri, members, requestOptions) {
+    if (requestOptions === void 0) { requestOptions = {}; }
     return Utils_1.promiseMethod(function () {
         var registry = getRegistry(repository);
         var iri = registry._requestURLFor(repository, uri);
         var targetMembers = parseMembers(registry, members);
-        setDefaultRequestOptions(registry, requestOptions, Vocabularies_1.LDP.Container);
+        setDefaultRequestOptions(registry, requestOptions);
         HTTP_1.RequestUtils.setContentTypeHeader("application/ld+json", requestOptions);
         var freeResources = FreeResources_1.FreeResources.createFrom({
             _registry: registry,
@@ -20193,11 +20201,12 @@ function sendAddAction(repository, uri, members, requestOptions) {
     });
 }
 function sendRemoveAction(repository, uri, members, requestOptions) {
+    if (requestOptions === void 0) { requestOptions = {}; }
     return Utils_1.promiseMethod(function () {
         var registry = getRegistry(repository);
         var iri = registry._requestURLFor(repository, uri);
         var targetMembers = parseMembers(registry, members);
-        setDefaultRequestOptions(registry, requestOptions, Vocabularies_1.LDP.Container);
+        setDefaultRequestOptions(registry, requestOptions);
         HTTP_1.RequestUtils.setContentTypeHeader("application/ld+json", requestOptions);
         HTTP_1.RequestUtils.setRetrievalPreferences({
             include: [Vocabularies_1.C.PreferSelectedMembershipTriples],
@@ -20225,7 +20234,7 @@ var PROTOTYPE = {
             uriOrMember;
         var uri = member !== uriOrMember ?
             uriOrMember :
-            "";
+            void 0;
         return sendAddAction(this, uri, [member], requestOptions);
     },
     addMembers: function (uriOrMembers, membersOrOptions, requestOptions) {
@@ -20237,31 +20246,31 @@ var PROTOTYPE = {
             uriOrMembers;
         var uri = members !== uriOrMembers ?
             uriOrMembers :
-            "";
+            void 0;
         return sendAddAction(this, uri, members, requestOptions);
     },
     removeMember: function (uriOrMember, memberOrOptions, requestOptions) {
         requestOptions = Utils_1.isObject(memberOrOptions) && !Pointer_1.Pointer.is(memberOrOptions) ?
             memberOrOptions :
-            requestOptions ? requestOptions : {};
+            requestOptions;
         var member = memberOrOptions !== requestOptions ?
             memberOrOptions :
             uriOrMember;
         var uri = member !== uriOrMember ?
             uriOrMember :
-            "";
+            void 0;
         return sendRemoveAction(this, uri, [member], requestOptions);
     },
     removeMembers: function (uriOrMembers, membersOrOptions, requestOptions) {
         requestOptions = !Array.isArray(membersOrOptions) ?
             membersOrOptions :
-            requestOptions ? requestOptions : {};
+            requestOptions;
         var members = membersOrOptions !== requestOptions ?
             membersOrOptions :
             uriOrMembers;
         var uri = members !== uriOrMembers ?
             uriOrMembers :
-            "";
+            void 0;
         return sendRemoveAction(this, uri, members, requestOptions);
     },
     removeAllMembers: function (uriOrOptions, requestOptions) {
@@ -20270,11 +20279,11 @@ var PROTOTYPE = {
             requestOptions ? requestOptions : {};
         var uri = uriOrOptions !== requestOptions ?
             uriOrOptions :
-            "";
+            void 0;
         return Utils_1.promiseMethod(function () {
             var registry = getRegistry(_this);
             var iri = registry._requestURLFor(_this, uri);
-            setDefaultRequestOptions(registry, requestOptions, Vocabularies_1.LDP.Container);
+            setDefaultRequestOptions(registry, requestOptions);
             HTTP_1.RequestUtils.setRetrievalPreferences({
                 include: [
                     Vocabularies_1.C.PreferMembershipTriples,
@@ -20338,7 +20347,7 @@ var emptyQueryBuildFn = function (_) { return _; };
 function getRegistry(repository) {
     if (repository._registry)
         return repository._registry;
-    throw new Errors_1.IllegalActionError("\"" + repository.id + "\" does't support Querying requests.");
+    throw new Errors_1.IllegalActionError("\"" + repository.id + "\" doesn't support Querying requests.");
 }
 function executePatterns(registry, uri, requestOptions, queryContext, targetName, constructPatterns, target) {
     var metadataVar = queryContext.getVariable("metadata");
@@ -21326,7 +21335,7 @@ var TransientDocument_1 = __webpack_require__(38);
 function getRegistry(repository) {
     if (repository._registry)
         return repository._registry;
-    throw new Errors_1.IllegalActionError("\"" + repository.id + "\" does't support SPARQL requests.");
+    throw new Errors_1.IllegalActionError("\"" + repository.id + "\" doesn't support SPARQL requests.");
 }
 function parseParams(resource, uriOrQuery, queryOrOptions, options) {
     if (options === void 0) { options = {}; }

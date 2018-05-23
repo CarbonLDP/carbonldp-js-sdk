@@ -100,7 +100,7 @@ type OnError = ( error:Error ) => void;
 
 function getMessagingService( repository:MessagingDocument ):MessagingService {
 	if( ! repository._context || ! repository._context.messaging )
-		throw new IllegalActionError( `"${ repository.id }" does't support messaging subscriptions.` );
+		throw new IllegalActionError( `"${ repository.id }" doesn't support messaging subscriptions.` );
 
 	return repository._context.messaging;
 }

@@ -48,7 +48,6 @@ export class RegistryService<M extends Pointer, C extends AbstractContext<M, any
 	inScope:Registry<M>[ "inScope" ] = Registry.PROTOTYPE.inScope;
 
 	hasPointer:Registry<M>[ "hasPointer" ] = Registry.PROTOTYPE.hasPointer;
-	getPointer:Registry<M>[ "getPointer" ] = Registry.PROTOTYPE.getPointer as Registry<M>[ "getPointer" ];
 	getPointers:Registry<M>[ "getPointers" ] = Registry.PROTOTYPE.getPointers as Registry<M>[ "getPointers" ];
 	removePointer:Registry<M>[ "removePointer" ] = Registry.PROTOTYPE.removePointer;
 
@@ -61,6 +60,19 @@ export class RegistryService<M extends Pointer, C extends AbstractContext<M, any
 
 		this._documentDecorators = MapUtils.extend( new Map(), context && context.parentContext && context.parentContext.registry.documentDecorators );
 		this._jsonldConverter = new JSONLDConverter( context && context.parentContext && context.parentContext.registry.jsonldConverter.literalSerializers );
+	}
+
+
+	getPointer( id:string ):Pointer;
+	getPointer( id:string, local:true ):M;
+	getPointer( id:string, local?:true ):any {
+		const pointer:Pointer | M = Registry.PROTOTYPE.getPointer.call( this, id, local );
+		if( ! this._context ) return pointer;
+
+		pointer.id = ObjectSchemaUtils
+			.resolveURI( pointer.id, this._context.getObjectSchema(), { base: true } );
+
+		return pointer;
 	}
 
 

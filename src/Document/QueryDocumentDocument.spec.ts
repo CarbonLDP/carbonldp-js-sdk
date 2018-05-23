@@ -185,7 +185,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 					.get( _ => _ )
 					.catch( error => {
 						expect( () => { throw error; } )
-							.toThrowError( IllegalActionError, `"https://example.com/" does't support Querying requests.` );
+							.toThrowError( IllegalActionError, `"https://example.com/" doesn't support Querying requests.` );
 					} )
 				;
 			} );
@@ -1599,7 +1599,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 					.resolve( _ => _ )
 					.catch( error => {
 						expect( () => { throw error; } )
-							.toThrowError( IllegalActionError, `"https://example.com/" does't support Querying requests.` );
+							.toThrowError( IllegalActionError, `"https://example.com/" doesn't support Querying requests.` );
 					} )
 				;
 			} );
@@ -2820,7 +2820,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 					.refresh()
 					.catch( error => {
 						expect( () => { throw error; } )
-							.toThrowError( IllegalActionError, `"https://example.com/" does't support Querying requests.` );
+							.toThrowError( IllegalActionError, `"https://example.com/" doesn't support Querying requests.` );
 					} )
 				;
 			} );
@@ -3475,7 +3475,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 					await resource.save();
 				} catch( e ) {
 					expect( () => { throw e; } )
-						.toThrowError( IllegalActionError, `"https://example.com/" does't support Querying requests.` );
+						.toThrowError( IllegalActionError, `"https://example.com/" doesn't support Querying requests.` );
 				}
 			} );
 
@@ -3846,7 +3846,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 					await resource.saveAndRefresh();
 				} catch( e ) {
 					expect( () => { throw e; } )
-						.toThrowError( IllegalActionError, `"https://example.com/" does't support Querying requests.` );
+						.toThrowError( IllegalActionError, `"https://example.com/" doesn't support Querying requests.` );
 				}
 			} );
 
@@ -4392,7 +4392,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 					.then( () => fail( "Should not resolve." ) )
 					.catch( error => {
 						expect( () => { throw error; } )
-							.toThrowError( IllegalActionError, `"https://example.com/" does't support Querying requests.` );
+							.toThrowError( IllegalActionError, `"https://example.com/" doesn't support Querying requests.` );
 					} )
 				;
 			} );
@@ -6347,7 +6347,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 					.then( () => fail( "Should not resolve." ) )
 					.catch( error => {
 						expect( () => { throw error; } )
-							.toThrowError( IllegalActionError, `"https://example.com/" does't support Querying requests.` );
+							.toThrowError( IllegalActionError, `"https://example.com/" doesn't support Querying requests.` );
 					} )
 				;
 			} );
@@ -8310,7 +8310,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 					.then( () => fail( "Should not resolve." ) )
 					.catch( error => {
 						expect( () => { throw error; } )
-							.toThrowError( IllegalActionError, `"https://example.com/" does't support Querying requests.` );
+							.toThrowError( IllegalActionError, `"https://example.com/" doesn't support Querying requests.` );
 					} )
 				;
 			} );
@@ -8789,7 +8789,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 					.then( () => fail( "Should not resolve." ) )
 					.catch( error => {
 						expect( () => { throw error; } )
-							.toThrowError( IllegalActionError, `"https://example.com/" does't support Querying requests.` );
+							.toThrowError( IllegalActionError, `"https://example.com/" doesn't support Querying requests.` );
 					} )
 				;
 			} );

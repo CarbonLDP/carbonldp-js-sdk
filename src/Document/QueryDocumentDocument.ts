@@ -120,7 +120,7 @@ const emptyQueryBuildFn:QueryBuilderFn = _ => _;
 
 function getRegistry( repository:QueryDocumentDocument ):DocumentsRegistry {
 	if( repository._registry ) return repository._registry;
-	throw new IllegalActionError( `"${ repository.id }" does't support Querying requests.` );
+	throw new IllegalActionError( `"${ repository.id }" doesn't support Querying requests.` );
 }
 
 

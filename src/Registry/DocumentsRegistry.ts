@@ -1,6 +1,10 @@
 import { CarbonLDP } from "../CarbonLDP";
-import { Document, } from "../Document";
+import {
+	Document,
+	TransientDocument,
+} from "../Document";
 import { IllegalArgumentError } from "../Errors";
+import { GlobalContext } from "../GlobalContext";
 import { Response } from "../HTTP";
 import {
 	HTTPError,
@@ -9,6 +13,10 @@ import {
 } from "../HTTP/Errors";
 import { JSONLDParser } from "../JSONLD";
 import { ErrorResponse } from "../LDP";
+import {
+	DigestedObjectSchema,
+	ObjectSchemaDigester
+} from "../ObjectSchema";
 import { Pointer } from "../Pointer";
 import {
 	RDFNode,
@@ -62,7 +70,7 @@ export class DocumentsRegistry extends RegistryService<Document, CarbonLDP> {
 			return URI.resolve( this._context.baseURI, localIRI );
 
 		if( URI.isRelative( uri ) )
-			throw new IllegalArgumentError( `"${ uri }" isn't a supported URI.` );
+			throw new IllegalArgumentError( `"${ uri }" Sí` );
 
 		return localIRI;
 	}

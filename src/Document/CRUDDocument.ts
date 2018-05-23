@@ -150,7 +150,7 @@ function setDefaultRequestOptions( registry:DocumentsRegistry, requestOptions:Re
 
 function getRegistry( repository:CRUDDocument ):DocumentsRegistry {
 	if( repository._registry ) return repository._registry;
-	throw new IllegalActionError( `"${ repository.id }" does't support CRUD requests.` );
+	throw new IllegalActionError( `"${ repository.id }" doesn't support CRUD requests.` );
 }
 
 

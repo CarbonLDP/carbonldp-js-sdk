@@ -8,7 +8,7 @@ var Event_1 = require("./Event");
 var Utils_2 = require("./Utils");
 function getMessagingService(repository) {
     if (!repository._context || !repository._context.messaging)
-        throw new Errors_1.IllegalActionError("\"" + repository.id + "\" does't support messaging subscriptions.");
+        throw new Errors_1.IllegalActionError("\"" + repository.id + "\" doesn't support messaging subscriptions.");
     return repository._context.messaging;
 }
 function parseParams(uriPatternOROnEvent, onEventOrOnError, onError) {

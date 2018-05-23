@@ -88,8 +88,8 @@ const PROTOTYPE:PickSelfProps<Registry<Pointer>, {}> = {
 		}
 
 		const localID:string = this._getLocalID( id );
-
 		if( this._resourcesMap.has( localID ) ) return this._resourcesMap.get( localID );
+
 		return this._register( { id } );
 	},
 

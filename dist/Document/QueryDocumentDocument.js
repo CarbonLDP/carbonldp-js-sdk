@@ -20,7 +20,7 @@ var emptyQueryBuildFn = function (_) { return _; };
 function getRegistry(repository) {
     if (repository._registry)
         return repository._registry;
-    throw new Errors_1.IllegalActionError("\"" + repository.id + "\" does't support Querying requests.");
+    throw new Errors_1.IllegalActionError("\"" + repository.id + "\" doesn't support Querying requests.");
 }
 function executePatterns(registry, uri, requestOptions, queryContext, targetName, constructPatterns, target) {
     var metadataVar = queryContext.getVariable("metadata");
