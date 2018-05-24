@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var core_1 = require("../core");
 var Document_1 = require("../Document");
 var Errors_1 = require("../Errors");
+var RDF_1 = require("../RDF");
 var Utils_1 = require("../Utils");
 var Event_1 = require("./Event");
 var Utils_2 = require("./Utils");
@@ -11,9 +12,9 @@ function getMessagingService(repository) {
         throw new Errors_1.IllegalActionError("\"" + repository.id + "\" doesn't support messaging subscriptions.");
     return repository._context.messaging;
 }
-function parseParams(uriPatternOROnEvent, onEventOrOnError, onError) {
+function parseParams(resource, uriPatternOROnEvent, onEventOrOnError, onError) {
     var uriPattern = Utils_1.isString(uriPatternOROnEvent) ?
-        uriPatternOROnEvent : "";
+        RDF_1.URI.resolve(resource.id, uriPatternOROnEvent) : resource.id;
     var onEvent = Utils_1.isFunction(uriPatternOROnEvent) ?
         uriPatternOROnEvent : onEventOrOnError;
     if (onEvent !== onEventOrOnError)
@@ -25,8 +26,8 @@ var PROTOTYPE = {
         try {
             var messaging = getMessagingService(this);
             var uriPattern = void 0, onEvent = void 0;
-            (_a = parseParams(uriPatternOROnEvent, onEventOrOnError, onError), uriPattern = _a.uriPattern, onEvent = _a.onEvent, onError = _a.onError);
-            var destination = Utils_2.createDestination(event, uriPattern, this.id);
+            (_a = parseParams(this, uriPatternOROnEvent, onEventOrOnError, onError), uriPattern = _a.uriPattern, onEvent = _a.onEvent, onError = _a.onError);
+            var destination = Utils_2.createDestination(event, uriPattern, this._context.baseURI);
             messaging.subscribe(destination, onEvent, onError);
         }
         catch (error) {
@@ -40,8 +41,8 @@ var PROTOTYPE = {
         try {
             var messaging = getMessagingService(this);
             var uriPattern = void 0, onEvent = void 0;
-            (_a = parseParams(uriPatternOROnEvent, onEventOrOnError, onError), uriPattern = _a.uriPattern, onEvent = _a.onEvent, onError = _a.onError);
-            var destination = Utils_2.createDestination(event, uriPattern, this.id);
+            (_a = parseParams(this, uriPatternOROnEvent, onEventOrOnError, onError), uriPattern = _a.uriPattern, onEvent = _a.onEvent, onError = _a.onError);
+            var destination = Utils_2.createDestination(event, uriPattern, this._context.baseURI);
             messaging.unsubscribe(destination, onEvent);
         }
         catch (error) {
@@ -55,8 +56,8 @@ var PROTOTYPE = {
         try {
             var messaging_1 = getMessagingService(this);
             var uriPattern = void 0, onEvent_1;
-            (_a = parseParams(uriPatternOROnEvent, onEventOrOnError, onError), uriPattern = _a.uriPattern, onEvent_1 = _a.onEvent, onError = _a.onError);
-            var destination_1 = Utils_2.createDestination(event, uriPattern, this.id);
+            (_a = parseParams(this, uriPatternOROnEvent, onEventOrOnError, onError), uriPattern = _a.uriPattern, onEvent_1 = _a.onEvent, onError = _a.onError);
+            var destination_1 = Utils_2.createDestination(event, uriPattern, this._context.baseURI);
             messaging_1.subscribe(destination_1, function onEventWrapper(message) {
                 onEvent_1(message);
                 messaging_1.unsubscribe(destination_1, onEventWrapper);

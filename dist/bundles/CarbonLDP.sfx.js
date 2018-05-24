@@ -487,7 +487,7 @@ __export(__webpack_require__(228));
 __export(__webpack_require__(229));
 __export(__webpack_require__(67));
 __export(__webpack_require__(230));
-__export(__webpack_require__(12));
+__export(__webpack_require__(13));
 
 
 /***/ }),
@@ -985,7 +985,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var Errors_1 = __webpack_require__(3);
 var URI_1 = __webpack_require__(33);
 var Utils = __importStar(__webpack_require__(0));
-var XSD_1 = __webpack_require__(12);
+var XSD_1 = __webpack_require__(13);
 var ContainerType;
 (function (ContainerType) {
     ContainerType[ContainerType["SET"] = 0] = "SET";
@@ -1203,6 +1203,24 @@ exports.ObjectSchemaUtils = ObjectSchemaUtils;
 
 "use strict";
 
+function __export(m) {
+    for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
+}
+Object.defineProperty(exports, "__esModule", { value: true });
+__export(__webpack_require__(90));
+__export(__webpack_require__(42));
+__export(__webpack_require__(52));
+__export(__webpack_require__(51));
+__export(__webpack_require__(33));
+__export(__webpack_require__(100));
+
+
+/***/ }),
+/* 13 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.XSD = {
     namespace: "http://www.w3.org/2001/XMLSchema#",
@@ -1235,24 +1253,6 @@ exports.XSD = {
     unsignedLong: "http://www.w3.org/2001/XMLSchema#unsignedLong",
     unsignedShort: "http://www.w3.org/2001/XMLSchema#unsignedShort",
 };
-
-
-/***/ }),
-/* 13 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-function __export(m) {
-    for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
-}
-Object.defineProperty(exports, "__esModule", { value: true });
-__export(__webpack_require__(90));
-__export(__webpack_require__(42));
-__export(__webpack_require__(52));
-__export(__webpack_require__(51));
-__export(__webpack_require__(33));
-__export(__webpack_require__(100));
 
 
 /***/ }),
@@ -3060,7 +3060,7 @@ var JSONLD_1 = __webpack_require__(23);
 var NamedFragment_1 = __webpack_require__(136);
 var ObjectSchema_1 = __webpack_require__(11);
 var Pointer_1 = __webpack_require__(17);
-var RDF_1 = __webpack_require__(13);
+var RDF_1 = __webpack_require__(12);
 var Registry_1 = __webpack_require__(46);
 var Resource_1 = __webpack_require__(9);
 var Utils_1 = __webpack_require__(0);
@@ -3874,7 +3874,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var XSD_1 = __webpack_require__(12);
+var XSD_1 = __webpack_require__(13);
 var Utils = __importStar(__webpack_require__(0));
 var Document_1 = __webpack_require__(90);
 var List_1 = __webpack_require__(42);
@@ -3985,7 +3985,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var Errors = __importStar(__webpack_require__(3));
-var XSD_1 = __webpack_require__(12);
+var XSD_1 = __webpack_require__(13);
 var Utils = __importStar(__webpack_require__(0));
 var Serializers = __importStar(__webpack_require__(223));
 exports.Serializers = Serializers;
@@ -5314,7 +5314,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var core_1 = __webpack_require__(15);
 var JSONLD_1 = __webpack_require__(23);
 var ObjectSchema_1 = __webpack_require__(11);
-var RDF_1 = __webpack_require__(13);
+var RDF_1 = __webpack_require__(12);
 var Registry_1 = __webpack_require__(46);
 var Resource_1 = __webpack_require__(9);
 var Utils_1 = __webpack_require__(0);
@@ -5601,7 +5601,7 @@ var Errors_1 = __webpack_require__(3);
 var HTTP_1 = __webpack_require__(37);
 var Errors_2 = __webpack_require__(29);
 var JSONLD_1 = __webpack_require__(23);
-var RDF_1 = __webpack_require__(13);
+var RDF_1 = __webpack_require__(12);
 var Utils_1 = __webpack_require__(0);
 var Vocabularies_1 = __webpack_require__(2);
 var User_1 = __webpack_require__(79);
@@ -5749,7 +5749,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var LDP_1 = __webpack_require__(19);
 var Utils_1 = __webpack_require__(0);
 var CS_1 = __webpack_require__(66);
-var XSD_1 = __webpack_require__(12);
+var XSD_1 = __webpack_require__(13);
 exports.TokenCredentialsBase = {
     is: function (value) {
         return Utils_1.isObject(value)
@@ -5992,7 +5992,7 @@ exports.StringToken = StringToken;
 Object.defineProperty(exports, "__esModule", { value: true });
 var Errors_1 = __webpack_require__(3);
 var ObjectSchema_1 = __webpack_require__(11);
-var RDF_1 = __webpack_require__(13);
+var RDF_1 = __webpack_require__(12);
 var Utils_1 = __webpack_require__(0);
 var AbstractContext = (function () {
     function AbstractContext(parentContext) {
@@ -6947,7 +6947,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var core_1 = __webpack_require__(15);
 var ObjectSchema_1 = __webpack_require__(11);
 var Pointer_1 = __webpack_require__(17);
-var RDF_1 = __webpack_require__(13);
+var RDF_1 = __webpack_require__(12);
 var Utils_1 = __webpack_require__(0);
 function resolveURI(resource, uri) {
     if (RDF_1.URI.isAbsolute(uri))
@@ -7315,7 +7315,7 @@ var Event;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var Errors_1 = __webpack_require__(3);
-var RDF_1 = __webpack_require__(13);
+var RDF_1 = __webpack_require__(12);
 function validateEventType(event) {
     if (!/(access-point|child|\*)\.(created|\*)|(document|\*)\.(modified|deleted|\*)|(member|\*)\.(added|removed|\*)/.test(event))
         throw new Errors_1.IllegalArgumentError("Provided event type \"" + event + "\" is invalid.");
@@ -8621,7 +8621,7 @@ var Document_1 = __webpack_require__(18);
 var FreeResources_1 = __webpack_require__(73);
 var JSONLD_1 = __webpack_require__(23);
 var ObjectSchema_1 = __webpack_require__(11);
-var RDF_1 = __webpack_require__(13);
+var RDF_1 = __webpack_require__(12);
 var Resource_1 = __webpack_require__(9);
 var Utils_1 = __webpack_require__(0);
 var Registry_1 = __webpack_require__(118);
@@ -9077,7 +9077,7 @@ var iri_1 = __webpack_require__(31);
 var tokens_1 = __webpack_require__(4);
 var IllegalArgumentError_1 = __webpack_require__(28);
 var Utils_1 = __webpack_require__(0);
-var XSD_1 = __webpack_require__(12);
+var XSD_1 = __webpack_require__(13);
 var QueryValue = (function () {
     function QueryValue(context, value) {
         this._value = value;
@@ -9124,7 +9124,7 @@ exports.QueryValue = QueryValue;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var Utils_1 = __webpack_require__(0);
-var XSD_1 = __webpack_require__(12);
+var XSD_1 = __webpack_require__(13);
 function guessXSDType(value) {
     if (Utils_1.isFunction(value))
         return null;
@@ -9158,7 +9158,7 @@ var JSONLD_1 = __webpack_require__(23);
 var LDP_1 = __webpack_require__(19);
 var LDPatch_1 = __webpack_require__(131);
 var ProtectedDocument_1 = __webpack_require__(34);
-var RDF_1 = __webpack_require__(13);
+var RDF_1 = __webpack_require__(12);
 var Resource_1 = __webpack_require__(9);
 var Utils_1 = __webpack_require__(0);
 var Vocabularies_1 = __webpack_require__(2);
@@ -9823,7 +9823,7 @@ __export(__webpack_require__(135));
 Object.defineProperty(exports, "__esModule", { value: true });
 var Errors_1 = __webpack_require__(3);
 var Fragment_1 = __webpack_require__(24);
-var RDF_1 = __webpack_require__(13);
+var RDF_1 = __webpack_require__(12);
 exports.TransientBlankNode = {
     is: function (value) {
         return Fragment_1.TransientFragment.is(value) &&
@@ -9886,7 +9886,7 @@ __export(__webpack_require__(137));
 Object.defineProperty(exports, "__esModule", { value: true });
 var Errors_1 = __webpack_require__(3);
 var Fragment_1 = __webpack_require__(24);
-var RDF_1 = __webpack_require__(13);
+var RDF_1 = __webpack_require__(12);
 var Utils_1 = __webpack_require__(0);
 exports.TransientNamedFragment = {
     isDecorated: function (object) {
@@ -11124,7 +11124,7 @@ var __assign = (this && this.__assign) || Object.assign || function(t) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var LDP_1 = __webpack_require__(19);
 var CS_1 = __webpack_require__(66);
-var XSD_1 = __webpack_require__(12);
+var XSD_1 = __webpack_require__(13);
 var SCHEMA = {
     "username": {
         "@id": CS_1.CS.username,
@@ -11238,7 +11238,7 @@ var Errors_1 = __webpack_require__(3);
 var HTTP_1 = __webpack_require__(37);
 var Errors_2 = __webpack_require__(29);
 var LDP_1 = __webpack_require__(19);
-var RDF_1 = __webpack_require__(13);
+var RDF_1 = __webpack_require__(12);
 var Utils_1 = __webpack_require__(0);
 var Vocabularies_1 = __webpack_require__(2);
 var AbstractAuthenticator_1 = __webpack_require__(78);
@@ -11413,7 +11413,7 @@ var NamedFragment_1 = __webpack_require__(136);
 var ObjectSchema_1 = __webpack_require__(11);
 var Pointer_1 = __webpack_require__(17);
 var ProtectedDocument_1 = __webpack_require__(34);
-var RDF = __importStar(__webpack_require__(13));
+var RDF = __importStar(__webpack_require__(12));
 var Registry_1 = __webpack_require__(46);
 var Resource_1 = __webpack_require__(9);
 var GlobalContext_1 = __webpack_require__(323);
@@ -14445,6 +14445,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var core_1 = __webpack_require__(15);
 var Document_1 = __webpack_require__(18);
 var Errors_1 = __webpack_require__(3);
+var RDF_1 = __webpack_require__(12);
 var Utils_1 = __webpack_require__(0);
 var Event_1 = __webpack_require__(102);
 var Utils_2 = __webpack_require__(103);
@@ -14453,9 +14454,9 @@ function getMessagingService(repository) {
         throw new Errors_1.IllegalActionError("\"" + repository.id + "\" doesn't support messaging subscriptions.");
     return repository._context.messaging;
 }
-function parseParams(uriPatternOROnEvent, onEventOrOnError, onError) {
+function parseParams(resource, uriPatternOROnEvent, onEventOrOnError, onError) {
     var uriPattern = Utils_1.isString(uriPatternOROnEvent) ?
-        uriPatternOROnEvent : "";
+        RDF_1.URI.resolve(resource.id, uriPatternOROnEvent) : resource.id;
     var onEvent = Utils_1.isFunction(uriPatternOROnEvent) ?
         uriPatternOROnEvent : onEventOrOnError;
     if (onEvent !== onEventOrOnError)
@@ -14467,8 +14468,8 @@ var PROTOTYPE = {
         try {
             var messaging = getMessagingService(this);
             var uriPattern = void 0, onEvent = void 0;
-            (_a = parseParams(uriPatternOROnEvent, onEventOrOnError, onError), uriPattern = _a.uriPattern, onEvent = _a.onEvent, onError = _a.onError);
-            var destination = Utils_2.createDestination(event, uriPattern, this.id);
+            (_a = parseParams(this, uriPatternOROnEvent, onEventOrOnError, onError), uriPattern = _a.uriPattern, onEvent = _a.onEvent, onError = _a.onError);
+            var destination = Utils_2.createDestination(event, uriPattern, this._context.baseURI);
             messaging.subscribe(destination, onEvent, onError);
         }
         catch (error) {
@@ -14482,8 +14483,8 @@ var PROTOTYPE = {
         try {
             var messaging = getMessagingService(this);
             var uriPattern = void 0, onEvent = void 0;
-            (_a = parseParams(uriPatternOROnEvent, onEventOrOnError, onError), uriPattern = _a.uriPattern, onEvent = _a.onEvent, onError = _a.onError);
-            var destination = Utils_2.createDestination(event, uriPattern, this.id);
+            (_a = parseParams(this, uriPatternOROnEvent, onEventOrOnError, onError), uriPattern = _a.uriPattern, onEvent = _a.onEvent, onError = _a.onError);
+            var destination = Utils_2.createDestination(event, uriPattern, this._context.baseURI);
             messaging.unsubscribe(destination, onEvent);
         }
         catch (error) {
@@ -14497,8 +14498,8 @@ var PROTOTYPE = {
         try {
             var messaging_1 = getMessagingService(this);
             var uriPattern = void 0, onEvent_1;
-            (_a = parseParams(uriPatternOROnEvent, onEventOrOnError, onError), uriPattern = _a.uriPattern, onEvent_1 = _a.onEvent, onError = _a.onError);
-            var destination_1 = Utils_2.createDestination(event, uriPattern, this.id);
+            (_a = parseParams(this, uriPatternOROnEvent, onEventOrOnError, onError), uriPattern = _a.uriPattern, onEvent_1 = _a.onEvent, onError = _a.onError);
+            var destination_1 = Utils_2.createDestination(event, uriPattern, this._context.baseURI);
             messaging_1.subscribe(destination_1, function onEventWrapper(message) {
                 onEvent_1(message);
                 messaging_1.unsubscribe(destination_1, onEventWrapper);
@@ -18622,7 +18623,7 @@ module.exports = exports['default'];
 Object.defineProperty(exports, "__esModule", { value: true });
 var Errors_1 = __webpack_require__(3);
 var Pointer_1 = __webpack_require__(17);
-var RDF_1 = __webpack_require__(13);
+var RDF_1 = __webpack_require__(12);
 var Registry_1 = __webpack_require__(46);
 var Resource_1 = __webpack_require__(9);
 var QueryDocument_1 = __webpack_require__(55);
@@ -18805,7 +18806,7 @@ var Errors_1 = __webpack_require__(3);
 var Errors_2 = __webpack_require__(29);
 var JSONLD_1 = __webpack_require__(23);
 var LDP_1 = __webpack_require__(19);
-var RDF_1 = __webpack_require__(13);
+var RDF_1 = __webpack_require__(12);
 var RegistryService_1 = __webpack_require__(119);
 var DocumentsRegistry = (function (_super) {
     __extends(DocumentsRegistry, _super);
@@ -18915,7 +18916,7 @@ exports.AddMemberAction = {
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var C_1 = __webpack_require__(10);
-var XSD_1 = __webpack_require__(12);
+var XSD_1 = __webpack_require__(13);
 var SCHEMA = {
     "errorCode": {
         "@id": C_1.C.errorCode,
@@ -19026,7 +19027,7 @@ exports.DirectContainer = {
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var C_1 = __webpack_require__(10);
-var XSD_1 = __webpack_require__(12);
+var XSD_1 = __webpack_require__(13);
 var SCHEMA = {
     "relatedDocument": {
         "@id": C_1.C.relatedDocument,
@@ -19056,7 +19057,7 @@ exports.DocumentMetadata = {
 Object.defineProperty(exports, "__esModule", { value: true });
 var Resource_1 = __webpack_require__(9);
 var C_1 = __webpack_require__(10);
-var XSD_1 = __webpack_require__(12);
+var XSD_1 = __webpack_require__(13);
 var SCHEMA = {
     "errors": {
         "@id": C_1.C.error,
@@ -19479,7 +19480,7 @@ var List_1 = __webpack_require__(42);
 var XSDSerializers = __importStar(__webpack_require__(99));
 var Node_1 = __webpack_require__(51);
 var URI_1 = __webpack_require__(33);
-var XSD_1 = __webpack_require__(12);
+var XSD_1 = __webpack_require__(13);
 var ObjectSchema = __importStar(__webpack_require__(11));
 var Utils = __importStar(__webpack_require__(0));
 var Utils_1 = __webpack_require__(127);
@@ -20334,7 +20335,7 @@ var HTTP_1 = __webpack_require__(37);
 var JSONLD_1 = __webpack_require__(23);
 var LDP_1 = __webpack_require__(19);
 var Pointer_1 = __webpack_require__(17);
-var index_1 = __webpack_require__(13);
+var index_1 = __webpack_require__(12);
 var Resource_1 = __webpack_require__(9);
 var SPARQL_1 = __webpack_require__(76);
 var QueryDocument_1 = __webpack_require__(55);
@@ -21915,7 +21916,7 @@ exports.GlobalContext = GlobalContext;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var SHACL_1 = __webpack_require__(67);
-var XSD_1 = __webpack_require__(12);
+var XSD_1 = __webpack_require__(13);
 var SCHEMA = {
     "conforms": {
         "@id": SHACL_1.SHACL.conforms,
@@ -21945,7 +21946,7 @@ exports.ValidationReport = {
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var SHACL_1 = __webpack_require__(67);
-var XSD_1 = __webpack_require__(12);
+var XSD_1 = __webpack_require__(13);
 var SCHEMA = {
     "focusNode": {
         "@id": SHACL_1.SHACL.focusNode,
@@ -22013,7 +22014,7 @@ exports.PlatformMetadata = {
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var C_1 = __webpack_require__(10);
-var XSD_1 = __webpack_require__(12);
+var XSD_1 = __webpack_require__(13);
 var SCHEMA = {
     "buildDate": {
         "@id": C_1.C.buildDate,

@@ -1,6 +1,8 @@
 import { ModelDecorator } from "../core";
 import { TransientDocument } from "../Document";
 import { IllegalActionError } from "../Errors";
+import { Pointer } from "../Pointer";
+import { URI } from "../RDF";
 import {
 	isFunction,
 	isObject,
@@ -105,9 +107,9 @@ function getMessagingService( repository:MessagingDocument ):MessagingService {
 	return repository._context.messaging;
 }
 
-function parseParams<T extends EventMessage>( uriPatternOROnEvent:string | OnEvent<T>, onEventOrOnError:OnEvent<T> | OnError, onError:OnError | undefined ):{ uriPattern:string, onEvent:OnEvent<T>, onError:OnError | undefined } {
+function parseParams<T extends EventMessage>( resource:Pointer, uriPatternOROnEvent:string | OnEvent<T>, onEventOrOnError:OnEvent<T> | OnError, onError:OnError | undefined ):{ uriPattern:string, onEvent:OnEvent<T>, onError:OnError | undefined } {
 	const uriPattern:string = isString( uriPatternOROnEvent ) ?
-		uriPatternOROnEvent : "";
+		URI.resolve( resource.id, uriPatternOROnEvent ) : resource.id;
 
 	const onEvent:OnEvent<T> = isFunction( uriPatternOROnEvent ) ?
 		uriPatternOROnEvent : onEventOrOnError as OnEvent<T>;
@@ -123,9 +125,9 @@ const PROTOTYPE:PickSelfProps<MessagingDocument, TransientDocument> = {
 			const messaging:MessagingService = getMessagingService( this );
 
 			let uriPattern:string, onEvent:OnEvent<T>;
-			({ uriPattern, onEvent, onError } = parseParams( uriPatternOROnEvent, onEventOrOnError, onError ));
+			({ uriPattern, onEvent, onError } = parseParams( this, uriPatternOROnEvent, onEventOrOnError, onError ));
 
-			const destination:string = createDestination( event, uriPattern, this.id );
+			const destination:string = createDestination( event, uriPattern, this._context.baseURI );
 			messaging.subscribe( destination, onEvent, onError );
 
 		} catch( error ) {
@@ -139,9 +141,9 @@ const PROTOTYPE:PickSelfProps<MessagingDocument, TransientDocument> = {
 			const messaging:MessagingService = getMessagingService( this );
 
 			let uriPattern:string, onEvent:OnEvent<T>;
-			({ uriPattern, onEvent, onError } = parseParams( uriPatternOROnEvent, onEventOrOnError, onError ));
+			({ uriPattern, onEvent, onError } = parseParams( this, uriPatternOROnEvent, onEventOrOnError, onError ));
 
-			const destination:string = createDestination( event, uriPattern, this.id );
+			const destination:string = createDestination( event, uriPattern, this._context.baseURI );
 			messaging.unsubscribe( destination, onEvent );
 
 		} catch( error ) {
@@ -155,9 +157,9 @@ const PROTOTYPE:PickSelfProps<MessagingDocument, TransientDocument> = {
 			const messaging:MessagingService = getMessagingService( this );
 
 			let uriPattern:string, onEvent:OnEvent<T>;
-			({ uriPattern, onEvent, onError } = parseParams( uriPatternOROnEvent, onEventOrOnError, onError ));
+			({ uriPattern, onEvent, onError } = parseParams( this, uriPatternOROnEvent, onEventOrOnError, onError ));
 
-			const destination:string = createDestination( event, uriPattern, this.id );
+			const destination:string = createDestination( event, uriPattern, this._context.baseURI );
 			messaging.subscribe( destination, function onEventWrapper( message:T ):void {
 				onEvent( message );
 				messaging.unsubscribe( destination, onEventWrapper );

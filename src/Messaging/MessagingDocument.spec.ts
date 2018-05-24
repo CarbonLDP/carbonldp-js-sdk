@@ -1,5 +1,7 @@
+import { defineNonEnumerableProps } from "../../test/helpers/mocks";
+import { CarbonLDP } from "../CarbonLDP";
 import { TransientDocument } from "../Document";
-import { Pointer } from "../Pointer";
+import { IllegalActionError } from "../Errors";
 import {
 	extendsClass,
 	hasMethod,
@@ -13,12 +15,29 @@ import {
 	STATIC
 } from "../test/JasmineExtender";
 import { PickSelfProps } from "../Utils";
+import { Event } from "./Event";
 
 import { MessagingDocument } from "./MessagingDocument";
 
-describe( module( "carbonldp/Messaging/Document" ), ():void => {
 
-	describe( interfaze(
+function createMock<T extends object>( data?:T & Partial<MessagingDocument> ):T & MessagingDocument {
+	const _context:CarbonLDP | undefined = data && "_context" in data ?
+		data._context : new CarbonLDP( "https://example.com/resource/" );
+
+	const mock:T & MessagingDocument = MessagingDocument.decorate( Object.assign( {
+		_context,
+		id: "https://example.com/resource/",
+	}, data ) );
+
+	defineNonEnumerableProps( mock );
+	mock._normalize();
+
+	return mock;
+}
+
+describe( module( "carbonldp/Messaging/MessagingDocument" ), ():void => {
+
+	fdescribe( interfaze(
 		"CarbonLDP.Messaging.MessagingDocument",
 		"Interface with the methods required to have messaging/real-time capabilities."
 	), ():void => {
@@ -28,10 +47,11 @@ describe( module( "carbonldp/Messaging/Document" ), ():void => {
 			expect( target ).toBeDefined();
 		} );
 
-		it( extendsClass( "CarbonLDP.Pointer" ), ():void => {
-			const target:Pointer = {} as MessagingDocument;
+		it( extendsClass( "CarbonLDP.TransientDocument" ), ():void => {
+			const target:TransientDocument = {} as MessagingDocument;
 			expect( target ).toBeDefined();
 		} );
+
 
 		describe( method( OBLIGATORY, "on" ), ():void => {
 
@@ -188,8 +208,89 @@ describe( module( "carbonldp/Messaging/Document" ), ():void => {
 			), ():void => {} );
 
 			it( "should exists", ():void => {
-				const target:MessagingDocument[ "on" ] = ( event:string, pattern:string | Function, onEvent:Function, onError?:Function ) => void 0;
-				expect( target ).toBeDefined();
+				const resource:MessagingDocument = createMock();
+
+				expect( resource.on ).toBeDefined();
+				expect( resource.on ).toEqual( jasmine.any( Function ) );
+			} );
+
+
+			it( "should throw error in callback when does not have context", ( done:DoneFn ):void => {
+				const resource:MessagingDocument = createMock( { _context: void 0 } );
+
+				resource.on( "*.*", "resource/", () => {
+					done.fail( "Should not enter here" );
+				}, ( error:Error ) => {
+					expect( error ).toEqual( jasmine.any( IllegalActionError ) );
+					expect( error.message ).toBe( `"https://example.com/resource/" doesn't support messaging subscriptions.` );
+					done();
+				} );
+			} );
+
+			it( "should throw error when context does not have a messaging service", ( done:DoneFn ):void => {
+				const resource:MessagingDocument = createMock( { _context: { messaging: void 0 } as any } );
+
+				resource.on( "*.*", "resource/", () => {
+					done.fail( "Should not enter here" );
+				}, ( error:Error ) => {
+					expect( error ).toEqual( jasmine.any( IllegalActionError ) );
+					expect( error.message ).toBe( `"https://example.com/resource/" doesn't support messaging subscriptions.` );
+					done();
+				} );
+			} );
+
+			it( "should throw error when does not have context and no valid onError is provided", ( done:DoneFn ):void => {
+				const resource:MessagingDocument = createMock( { _context: void 0 } );
+
+				expect( () => resource.on( "*.*", "resource/", () => done.fail( "Should not enter here" ), null ) )
+					.toThrowError( IllegalActionError, `"https://example.com/resource/" doesn't support messaging subscriptions.` );
+				done();
+			} );
+
+
+			it( "should subscribe with the Messaging Service for self", ( done:DoneFn ):void => {
+				const context:CarbonLDP = new CarbonLDP( "https://example.com" );
+
+				const subscribeSpy:jasmine.Spy = spyOn( context.messaging, "subscribe" );
+
+				const onEvent:( data:any ) => void = () => done.fail( "Should not enter here." );
+				const onError:( error:Error ) => void = done.fail;
+
+				const resource:MessagingDocument = createMock( { _context: context } );
+				resource.on( "*.*", onEvent, onError );
+
+				expect( subscribeSpy ).toHaveBeenCalledWith( "/topic/*.*.resource", onEvent, onError );
+				done();
+			} );
+
+			it( "should subscribe with the Messaging Service for relative uriPattern", ( done:DoneFn ):void => {
+				const context:CarbonLDP = new CarbonLDP( "https://example.com" );
+
+				const subscribeSpy:jasmine.Spy = spyOn( context.messaging, "subscribe" );
+
+				const onEvent:( data:any ) => void = () => done.fail( "Should not enter here." );
+				const onError:( error:Error ) => void = done.fail;
+
+				const resource:MessagingDocument = createMock( { _context: context } );
+				resource.on( "*.*", "child/!*", onEvent, onError );
+
+				expect( subscribeSpy ).toHaveBeenCalledWith( "/topic/*.*.resource.child.!*", onEvent, onError );
+				done();
+			} );
+
+			it( "should subscribe with the Messaging Service for absolute uriPattern", ( done:DoneFn ):void => {
+				const context:CarbonLDP = new CarbonLDP( "https://example.com" );
+
+				const subscribeSpy:jasmine.Spy = spyOn( context.messaging, "subscribe" );
+
+				const onEvent:( data:any ) => void = () => done.fail( "Should not enter here." );
+				const onError:( error:Error ) => void = done.fail;
+
+				const resource:MessagingDocument = createMock( { _context: context } );
+				resource.on( "*.*", "https://example.com/another-resource/!*", onEvent, onError );
+
+				expect( subscribeSpy ).toHaveBeenCalledWith( "/topic/*.*.another-resource.!*", onEvent, onError );
+				done();
 			} );
 
 		} );
@@ -349,8 +450,97 @@ describe( module( "carbonldp/Messaging/Document" ), ():void => {
 			), ():void => {} );
 
 			it( "should exists", ():void => {
-				const target:MessagingDocument[ "off" ] = ( event:string, pattern:string | Function, onEvent:Function, onError?:Function ) => void 0;
-				expect( target ).toBeDefined();
+				const resource:MessagingDocument = createMock();
+
+				expect( resource.off ).toBeDefined();
+				expect( resource.off ).toEqual( jasmine.any( Function ) );
+			} );
+
+
+			it( "should return error when does not have context", ( done:DoneFn ):void => {
+				const resource:MessagingDocument = createMock( { _context: void 0 } );
+
+				resource.off( "*.*", "resource/", () => {
+					done.fail( "Should not enter here" );
+				}, ( error:Error ) => {
+					expect( error ).toEqual( jasmine.any( IllegalActionError ) );
+					expect( error.message ).toBe( `"https://example.com/resource/" doesn't support messaging subscriptions.` );
+					done();
+				} );
+			} );
+
+			it( "should throw error when does not have context and no valid onError is provided", ( done:DoneFn ):void => {
+				const resource:MessagingDocument = createMock( { _context: void 0 } );
+
+				expect( () => resource.off( "*.*", "resource/", () => done.fail( "Should not enter here" ), null ) )
+					.toThrowError( IllegalActionError, `"https://example.com/resource/" doesn't support messaging subscriptions.` );
+				done();
+			} );
+
+			it( "should return error when does not have context.messaging", ( done:DoneFn ):void => {
+				const resource:MessagingDocument = createMock( { _context: { messaging: void 0 } as any } );
+
+				resource.off( "*.*", "resource/", () => {
+					done.fail( "Should not enter here" );
+				}, ( error:Error ) => {
+					expect( error ).toEqual( jasmine.any( IllegalActionError ) );
+					expect( error.message ).toBe( `"https://example.com/resource/" doesn't support messaging subscriptions.` );
+					done();
+				} );
+			} );
+
+			it( "should throw error when does not have context.messaging and no valid onError is provided", ( done:DoneFn ):void => {
+				const resource:MessagingDocument = createMock( { _context: { messaging: void 0 } as any } );
+
+				expect( () => resource.off( "*.*", "resource/", () => done.fail( "Should not enter here" ), null ) )
+					.toThrowError( IllegalActionError, `"https://example.com/resource/" doesn't support messaging subscriptions.` );
+				done();
+			} );
+
+
+			it( "should unsubscribe with the Messaging Service for self", ( done:DoneFn ):void => {
+				const context:CarbonLDP = new CarbonLDP( "https://example.com" );
+
+				const unsubscribeSpy:jasmine.Spy = spyOn( context.messaging, "unsubscribe" );
+
+				const onEvent:( data:any ) => void = () => done.fail( "Should not enter here." );
+				const onError:( error:Error ) => void = done.fail;
+
+				const resource:MessagingDocument = createMock( { _context: context } );
+				resource.off( "*.*", onEvent, onError );
+
+				expect( unsubscribeSpy ).toHaveBeenCalledWith( "/topic/*.*.resource", onEvent );
+				done();
+			} );
+
+			it( "should unsubscribe with the Messaging Service for relative uriPattern", ( done:DoneFn ):void => {
+				const context:CarbonLDP = new CarbonLDP( "https://example.com" );
+
+				const unsubscribeSpy:jasmine.Spy = spyOn( context.messaging, "unsubscribe" );
+
+				const onEvent:( data:any ) => void = () => done.fail( "Should not enter here." );
+				const onError:( error:Error ) => void = done.fail;
+
+				const resource:MessagingDocument = createMock( { _context: context } );
+				resource.off( "*.*", "child/!*", onEvent, onError );
+
+				expect( unsubscribeSpy ).toHaveBeenCalledWith( "/topic/*.*.resource.child.!*", onEvent );
+				done();
+			} );
+
+			it( "should unsubscribe with the Messaging Service for absolute uriPattern", ( done:DoneFn ):void => {
+				const context:CarbonLDP = new CarbonLDP( "https://example.com" );
+
+				const unsubscribeSpy:jasmine.Spy = spyOn( context.messaging, "unsubscribe" );
+
+				const onEvent:( data:any ) => void = () => done.fail( "Should not enter here." );
+				const onError:( error:Error ) => void = done.fail;
+
+				const resource:MessagingDocument = createMock( { _context: context } );
+				resource.off( "*.*", "https://example.com/another-resource/!*", onEvent, onError );
+
+				expect( unsubscribeSpy ).toHaveBeenCalledWith( "/topic/*.*.another-resource.!*", onEvent );
+				done();
 			} );
 
 		} );
@@ -510,9 +700,210 @@ describe( module( "carbonldp/Messaging/Document" ), ():void => {
 			), ():void => {} );
 
 			it( "should exists", ():void => {
-				const target:MessagingDocument[ "one" ] = ( event:string, pattern:string | Function, onEvent:Function, onError?:Function ) => void 0;
-				expect( target ).toBeDefined();
+				const resource:MessagingDocument = createMock();
+
+				expect( resource.one ).toBeDefined();
+				expect( resource.one ).toEqual( jasmine.any( Function ) );
 			} );
+
+
+			it( "should return error when does not have context", ( done:DoneFn ):void => {
+				const resource:MessagingDocument = createMock( { _context: void 0 } );
+
+				resource.one( "*.*", "resource/", () => {
+					done.fail( "Should not enter here" );
+				}, ( error:Error ) => {
+					expect( error ).toEqual( jasmine.any( IllegalActionError ) );
+					expect( error.message ).toBe( `"https://example.com/resource/" doesn't support messaging subscriptions.` );
+					done();
+				} );
+			} );
+
+			it( "should throw error when does not have context and no valid onError is provided", ( done:DoneFn ):void => {
+				const resource:MessagingDocument = createMock( { _context: void 0 } );
+
+				expect( () => resource.one( "*.*", "resource/", () => done.fail( "Should not enter here" ), null ) )
+					.toThrowError( IllegalActionError, `"https://example.com/resource/" doesn't support messaging subscriptions.` );
+				done();
+			} );
+
+			it( "should return error when does not have context.messaging", ( done:DoneFn ):void => {
+				const resource:MessagingDocument = createMock( { _context: { messaging: void 0 } as any } );
+
+				resource.one( "*.*", "resource/", () => {
+					done.fail( "Should not enter here" );
+				}, ( error:Error ) => {
+					expect( error ).toEqual( jasmine.any( IllegalActionError ) );
+					expect( error.message ).toBe( `"https://example.com/resource/" doesn't support messaging subscriptions.` );
+					done();
+				} );
+			} );
+
+			it( "should throw error when does not have context.messaging and no valid onError is provided", ( done:DoneFn ):void => {
+				const resource:MessagingDocument = createMock( { _context: { messaging: void 0 } as any } );
+
+				expect( () => resource.one( "*.*", "resource/", () => done.fail( "Should not enter here" ), null ) )
+					.toThrowError( IllegalActionError, `"https://example.com/resource/" doesn't support messaging subscriptions.` );
+				done();
+			} );
+
+
+			it( "should subscribe with the Messaging Service for self", ( done:DoneFn ):void => {
+				const context:CarbonLDP = new CarbonLDP( "https://example.com" );
+
+				const subscribeSpy:jasmine.Spy = spyOn( context.messaging, "subscribe" );
+
+				const onEvent:( data:any ) => void = () => done.fail( "Should not enter here." );
+				const onError:( error:Error ) => void = done.fail;
+
+				const resource:MessagingDocument = createMock( { _context: context } );
+				resource.one( "*.*", onEvent, onError );
+
+				expect( subscribeSpy ).not.toHaveBeenCalledWith( "/topic/*.*.resource", onEvent, onError );
+
+				const actualOnEvent:Function = subscribeSpy.calls.mostRecent().args[ 1 ];
+				expect( subscribeSpy ).toHaveBeenCalledWith( "/topic/*.*.resource", actualOnEvent, onError );
+				done();
+			} );
+
+			it( "should subscribe with the Messaging Service for relative uriPattern", ( done:DoneFn ):void => {
+				const context:CarbonLDP = new CarbonLDP( "https://example.com" );
+
+				const subscribeSpy:jasmine.Spy = spyOn( context.messaging, "subscribe" );
+
+				const onEvent:( data:any ) => void = () => done.fail( "Should not enter here." );
+				const onError:( error:Error ) => void = done.fail;
+
+				const resource:MessagingDocument = createMock( { _context: context } );
+				resource.one( "*.*", "child/!*", onEvent, onError );
+
+				expect( subscribeSpy ).not.toHaveBeenCalledWith( "/topic/*.*.resource.child.!*", onEvent, onError );
+
+				const actualOnEvent:Function = subscribeSpy.calls.mostRecent().args[ 1 ];
+				expect( subscribeSpy ).toHaveBeenCalledWith( "/topic/*.*.resource.child.!*", actualOnEvent, onError );
+				done();
+			} );
+
+			it( "should subscribe with the Messaging Service for absolute uriPattern", ( done:DoneFn ):void => {
+				const context:CarbonLDP = new CarbonLDP( "https://example.com" );
+
+				const subscribeSpy:jasmine.Spy = spyOn( context.messaging, "subscribe" );
+
+				const onEvent:( data:any ) => void = () => done.fail( "Should not enter here." );
+				const onError:( error:Error ) => void = done.fail;
+
+				const resource:MessagingDocument = createMock( { _context: context } );
+				resource.one( "*.*", "https://example.com/another-resource/!*", onEvent, onError );
+
+				expect( subscribeSpy ).not.toHaveBeenCalledWith( "/topic/*.*.another-resource.!*", onEvent, onError );
+
+				const actualOnEvent:Function = subscribeSpy.calls.mostRecent().args[ 1 ];
+				expect( subscribeSpy ).toHaveBeenCalledWith( "/topic/*.*.another-resource.!*", actualOnEvent, onError );
+				done();
+			} );
+
+
+			it( "should call user onEvent after message when self", ( done:DoneFn ):void => {
+				const context:CarbonLDP = new CarbonLDP( "https://example.com" );
+				const subscribeSpy:jasmine.Spy = spyOn( context.messaging, "subscribe" );
+
+
+				const onEvent:jasmine.Spy = jasmine.createSpy( "onEvent" );
+				const onError:( error:Error ) => void = () => {};
+
+				const resource:MessagingDocument = createMock( { _context: context } );
+				resource.one( "*.*", onEvent, onError );
+
+				const actualOnEvent:Function = subscribeSpy.calls.mostRecent().args[ 1 ];
+				actualOnEvent.call( void 0, { the: "message" } );
+
+				expect( onEvent ).not.toBe( actualOnEvent );
+				expect( onEvent ).toHaveBeenCalledWith( { the: "message" } );
+
+				done();
+			} );
+
+			it( "should call user onEvent after message when uriPattern", ( done:DoneFn ):void => {
+				const context:CarbonLDP = new CarbonLDP( "https://example.com" );
+				const subscribeSpy:jasmine.Spy = spyOn( context.messaging, "subscribe" );
+
+
+				const onEvent:jasmine.Spy = jasmine.createSpy( "onEvent" );
+				const onError:( error:Error ) => void = () => {};
+
+				const resource:MessagingDocument = createMock( { _context: context } );
+				resource.one( "*.*", "child/!*", onEvent, onError );
+
+				const actualOnEvent:Function = subscribeSpy.calls.mostRecent().args[ 1 ];
+				actualOnEvent.call( void 0, { the: "message" } );
+
+				expect( onEvent ).not.toBe( actualOnEvent );
+				expect( onEvent ).toHaveBeenCalledWith( { the: "message" } );
+
+				done();
+			} );
+
+
+			it( "should subscribe with the Messaging Service for self", ( done:DoneFn ):void => {
+				const context:CarbonLDP = new CarbonLDP( "https://example.com" );
+
+				const subscribeSpy:jasmine.Spy = spyOn( context.messaging, "subscribe" );
+				const unsubscribeSpy:jasmine.Spy = spyOn( context.messaging, "unsubscribe" );
+
+				const onEvent:( data:any ) => void = () => {};
+				const onError:( error:Error ) => void = done.fail;
+
+				const resource:MessagingDocument = createMock( { _context: context } );
+				resource.one( "*.*", onEvent, onError );
+
+				const actualOnEvent:Function = subscribeSpy.calls.mostRecent().args[ 1 ];
+				actualOnEvent.call( void 0, null );
+
+				expect( unsubscribeSpy ).not.toHaveBeenCalledWith( "/topic/*.*.resource", onEvent );
+				expect( unsubscribeSpy ).toHaveBeenCalledWith( "/topic/*.*.resource", actualOnEvent );
+				done();
+			} );
+
+			it( "should subscribe with the Messaging Service for relative uriPattern", ( done:DoneFn ):void => {
+				const context:CarbonLDP = new CarbonLDP( "https://example.com" );
+
+				const subscribeSpy:jasmine.Spy = spyOn( context.messaging, "subscribe" );
+				const unsubscribeSpy:jasmine.Spy = spyOn( context.messaging, "unsubscribe" );
+
+				const onEvent:( data:any ) => void = () => {};
+				const onError:( error:Error ) => void = done.fail;
+
+				const resource:MessagingDocument = createMock( { _context: context } );
+				resource.one( "*.*", "child/!*", onEvent, onError );
+
+				const actualOnEvent:Function = subscribeSpy.calls.mostRecent().args[ 1 ];
+				actualOnEvent.call( void 0, null );
+
+				expect( unsubscribeSpy ).not.toHaveBeenCalledWith( "/topic/*.*.resource.child.!*", onEvent );
+				expect( unsubscribeSpy ).toHaveBeenCalledWith( "/topic/*.*.resource.child.!*", actualOnEvent );
+				done();
+			} );
+
+			it( "should subscribe with the Messaging Service for absolute uriPattern", ( done:DoneFn ):void => {
+				const context:CarbonLDP = new CarbonLDP( "https://example.com" );
+
+				const subscribeSpy:jasmine.Spy = spyOn( context.messaging, "subscribe" );
+				const unsubscribeSpy:jasmine.Spy = spyOn( context.messaging, "unsubscribe" );
+
+				const onEvent:( data:any ) => void = () => {};
+				const onError:( error:Error ) => void = done.fail;
+
+				const resource:MessagingDocument = createMock( { _context: context } );
+				resource.one( "*.*", "https://example.com/another-resource/!*", onEvent, onError );
+
+				const actualOnEvent:Function = subscribeSpy.calls.mostRecent().args[ 1 ];
+				actualOnEvent.call( void 0, null );
+
+				expect( unsubscribeSpy ).not.toHaveBeenCalledWith( "/topic/*.*.another-resource.!*", onEvent );
+				expect( unsubscribeSpy ).toHaveBeenCalledWith( "/topic/*.*.another-resource.!*", actualOnEvent );
+				done();
+			} );
+
 
 		} );
 
@@ -536,9 +927,35 @@ describe( module( "carbonldp/Messaging/Document" ), ():void => {
 				]
 			), ():void => {} );
 
+
 			it( "should exists", ():void => {
-				const target:MessagingDocument[ "onAccessPointCreated" ] = ( pattern:string | Function, onEvent:Function, onError?:Function ) => void 0;
-				expect( target ).toBeDefined();
+				const resource:MessagingDocument = createMock();
+
+				expect( resource.onAccessPointCreated ).toBeDefined();
+				expect( resource.onAccessPointCreated ).toEqual( jasmine.any( Function ) );
+			} );
+
+
+			it( "should should call .on when self", () => {
+				const resource:MessagingDocument = createMock();
+
+				Object.defineProperty( resource, "on", { writable: true } );
+				const spy:jasmine.Spy = spyOn( resource, "on" );
+
+				resource.onAccessPointCreated( () => fail( "Should not resolve." ), fail );
+
+				expect( spy ).toHaveBeenCalledWith( Event.ACCESS_POINT_CREATED, jasmine.any( Function ), jasmine.any( Function ), void 0 );
+			} );
+
+			it( "should should call .on when uriPatter", () => {
+				const resource:MessagingDocument = createMock();
+
+				Object.defineProperty( resource, "on", { writable: true } );
+				const spy:jasmine.Spy = spyOn( resource, "on" );
+
+				resource.onAccessPointCreated( "child/!*", () => fail( "Should not resolve." ), fail );
+
+				expect( spy ).toHaveBeenCalledWith( Event.ACCESS_POINT_CREATED, "child/!*", jasmine.any( Function ), jasmine.any( Function ) );
 			} );
 
 		} );
@@ -562,9 +979,35 @@ describe( module( "carbonldp/Messaging/Document" ), ():void => {
 				]
 			), ():void => {} );
 
+
 			it( "should exists", ():void => {
-				const target:MessagingDocument[ "onChildCreated" ] = ( pattern:string | Function, onEvent:Function, onError?:Function ) => void 0;
-				expect( target ).toBeDefined();
+				const resource:MessagingDocument = createMock();
+
+				expect( resource.onChildCreated ).toBeDefined();
+				expect( resource.onChildCreated ).toEqual( jasmine.any( Function ) );
+			} );
+
+
+			it( "should should call .on when self", () => {
+				const resource:MessagingDocument = createMock();
+
+				Object.defineProperty( resource, "on", { writable: true } );
+				const spy:jasmine.Spy = spyOn( resource, "on" );
+
+				resource.onChildCreated( () => fail( "Should not resolve." ), fail );
+
+				expect( spy ).toHaveBeenCalledWith( Event.CHILD_CREATED, jasmine.any( Function ), jasmine.any( Function ), void 0 );
+			} );
+
+			it( "should should call .on when uriPatter", () => {
+				const resource:MessagingDocument = createMock();
+
+				Object.defineProperty( resource, "on", { writable: true } );
+				const spy:jasmine.Spy = spyOn( resource, "on" );
+
+				resource.onChildCreated( "child/!*", () => fail( "Should not resolve." ), fail );
+
+				expect( spy ).toHaveBeenCalledWith( Event.CHILD_CREATED, "child/!*", jasmine.any( Function ), jasmine.any( Function ) );
 			} );
 
 		} );
@@ -588,9 +1031,35 @@ describe( module( "carbonldp/Messaging/Document" ), ():void => {
 				]
 			), ():void => {} );
 
+
 			it( "should exists", ():void => {
-				const target:MessagingDocument[ "onDocumentCreated" ] = ( pattern:string | Function, onEvent:Function, onError?:Function ) => void 0;
-				expect( target ).toBeDefined();
+				const resource:MessagingDocument = createMock();
+
+				expect( resource.onDocumentCreated ).toBeDefined();
+				expect( resource.onDocumentCreated ).toEqual( jasmine.any( Function ) );
+			} );
+
+
+			it( "should should call .on when self", () => {
+				const resource:MessagingDocument = createMock();
+
+				Object.defineProperty( resource, "on", { writable: true } );
+				const spy:jasmine.Spy = spyOn( resource, "on" );
+
+				resource.onDocumentCreated( () => fail( "Should not resolve." ), fail );
+
+				expect( spy ).toHaveBeenCalledWith( Event.DOCUMENT_CREATED, jasmine.any( Function ), jasmine.any( Function ), void 0 );
+			} );
+
+			it( "should should call .on when uriPatter", () => {
+				const resource:MessagingDocument = createMock();
+
+				Object.defineProperty( resource, "on", { writable: true } );
+				const spy:jasmine.Spy = spyOn( resource, "on" );
+
+				resource.onDocumentCreated( "child/!*", () => fail( "Should not resolve." ), fail );
+
+				expect( spy ).toHaveBeenCalledWith( Event.DOCUMENT_CREATED, "child/!*", jasmine.any( Function ), jasmine.any( Function ) );
 			} );
 
 		} );
@@ -614,9 +1083,35 @@ describe( module( "carbonldp/Messaging/Document" ), ():void => {
 				]
 			), ():void => {} );
 
+
 			it( "should exists", ():void => {
-				const target:MessagingDocument[ "onDocumentModified" ] = ( pattern:string | Function, onEvent:Function, onError?:Function ) => void 0;
-				expect( target ).toBeDefined();
+				const resource:MessagingDocument = createMock();
+
+				expect( resource.onDocumentModified ).toBeDefined();
+				expect( resource.onDocumentModified ).toEqual( jasmine.any( Function ) );
+			} );
+
+
+			it( "should should call .on when self", () => {
+				const resource:MessagingDocument = createMock();
+
+				Object.defineProperty( resource, "on", { writable: true } );
+				const spy:jasmine.Spy = spyOn( resource, "on" );
+
+				resource.onDocumentModified( () => fail( "Should not resolve." ), fail );
+
+				expect( spy ).toHaveBeenCalledWith( Event.DOCUMENT_MODIFIED, jasmine.any( Function ), jasmine.any( Function ), void 0 );
+			} );
+
+			it( "should should call .on when uriPatter", () => {
+				const resource:MessagingDocument = createMock();
+
+				Object.defineProperty( resource, "on", { writable: true } );
+				const spy:jasmine.Spy = spyOn( resource, "on" );
+
+				resource.onDocumentModified( "child/!*", () => fail( "Should not resolve." ), fail );
+
+				expect( spy ).toHaveBeenCalledWith( Event.DOCUMENT_MODIFIED, "child/!*", jasmine.any( Function ), jasmine.any( Function ) );
 			} );
 
 		} );
@@ -640,9 +1135,35 @@ describe( module( "carbonldp/Messaging/Document" ), ():void => {
 				]
 			), ():void => {} );
 
+
 			it( "should exists", ():void => {
-				const target:MessagingDocument[ "onDocumentDeleted" ] = ( pattern:string | Function, onEvent:Function, onError?:Function ) => void 0;
-				expect( target ).toBeDefined();
+				const resource:MessagingDocument = createMock();
+
+				expect( resource.onDocumentDeleted ).toBeDefined();
+				expect( resource.onDocumentDeleted ).toEqual( jasmine.any( Function ) );
+			} );
+
+
+			it( "should should call .on when self", () => {
+				const resource:MessagingDocument = createMock();
+
+				Object.defineProperty( resource, "on", { writable: true } );
+				const spy:jasmine.Spy = spyOn( resource, "on" );
+
+				resource.onDocumentDeleted( () => fail( "Should not resolve." ), fail );
+
+				expect( spy ).toHaveBeenCalledWith( Event.DOCUMENT_DELETED, jasmine.any( Function ), jasmine.any( Function ), void 0 );
+			} );
+
+			it( "should should call .on when uriPatter", () => {
+				const resource:MessagingDocument = createMock();
+
+				Object.defineProperty( resource, "on", { writable: true } );
+				const spy:jasmine.Spy = spyOn( resource, "on" );
+
+				resource.onDocumentDeleted( "child/!*", () => fail( "Should not resolve." ), fail );
+
+				expect( spy ).toHaveBeenCalledWith( Event.DOCUMENT_DELETED, "child/!*", jasmine.any( Function ), jasmine.any( Function ) );
 			} );
 
 		} );
@@ -666,9 +1187,35 @@ describe( module( "carbonldp/Messaging/Document" ), ():void => {
 				]
 			), ():void => {} );
 
+
 			it( "should exists", ():void => {
-				const target:MessagingDocument[ "onMemberAdded" ] = ( pattern:string | Function, onEvent:Function, onError?:Function ) => void 0;
-				expect( target ).toBeDefined();
+				const resource:MessagingDocument = createMock();
+
+				expect( resource.onMemberAdded ).toBeDefined();
+				expect( resource.onMemberAdded ).toEqual( jasmine.any( Function ) );
+			} );
+
+
+			it( "should should call .on when self", () => {
+				const resource:MessagingDocument = createMock();
+
+				Object.defineProperty( resource, "on", { writable: true } );
+				const spy:jasmine.Spy = spyOn( resource, "on" );
+
+				resource.onMemberAdded( () => fail( "Should not resolve." ), fail );
+
+				expect( spy ).toHaveBeenCalledWith( Event.MEMBER_ADDED, jasmine.any( Function ), jasmine.any( Function ), void 0 );
+			} );
+
+			it( "should should call .on when uriPatter", () => {
+				const resource:MessagingDocument = createMock();
+
+				Object.defineProperty( resource, "on", { writable: true } );
+				const spy:jasmine.Spy = spyOn( resource, "on" );
+
+				resource.onMemberAdded( "child/!*", () => fail( "Should not resolve." ), fail );
+
+				expect( spy ).toHaveBeenCalledWith( Event.MEMBER_ADDED, "child/!*", jasmine.any( Function ), jasmine.any( Function ) );
 			} );
 
 		} );
@@ -692,9 +1239,35 @@ describe( module( "carbonldp/Messaging/Document" ), ():void => {
 				]
 			), ():void => {} );
 
+
 			it( "should exists", ():void => {
-				const target:MessagingDocument[ "onMemberRemoved" ] = ( pattern:string | Function, onEvent:Function, onError?:Function ) => void 0;
-				expect( target ).toBeDefined();
+				const resource:MessagingDocument = createMock();
+
+				expect( resource.onMemberRemoved ).toBeDefined();
+				expect( resource.onMemberRemoved ).toEqual( jasmine.any( Function ) );
+			} );
+
+
+			it( "should should call .on when self", () => {
+				const resource:MessagingDocument = createMock();
+
+				Object.defineProperty( resource, "on", { writable: true } );
+				const spy:jasmine.Spy = spyOn( resource, "on" );
+
+				resource.onMemberRemoved( () => fail( "Should not resolve." ), fail );
+
+				expect( spy ).toHaveBeenCalledWith( Event.MEMBER_REMOVED, jasmine.any( Function ), jasmine.any( Function ), void 0 );
+			} );
+
+			it( "should should call .on when uriPatter", () => {
+				const resource:MessagingDocument = createMock();
+
+				Object.defineProperty( resource, "on", { writable: true } );
+				const spy:jasmine.Spy = spyOn( resource, "on" );
+
+				resource.onMemberRemoved( "child/!*", () => fail( "Should not resolve." ), fail );
+
+				expect( spy ).toHaveBeenCalledWith( Event.MEMBER_REMOVED, "child/!*", jasmine.any( Function ), jasmine.any( Function ) );
 			} );
 
 		} );
