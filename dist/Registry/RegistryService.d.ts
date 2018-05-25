@@ -8,7 +8,7 @@ import { RDFNode } from "../RDF";
 import { Registry } from "./Registry";
 export declare class RegistryService<M extends Pointer, C extends AbstractContext<M, any> = undefined> implements Registry<M>, ObjectSchemaResolver {
     readonly _context: C | undefined;
-    readonly _registry: Registry<any>;
+    readonly _registry: Registry<any> | undefined;
     readonly _model: ModelDecorator<M>;
     readonly _resourcesMap: Map<string, M>;
     protected readonly _documentDecorators: Map<string, (object: object) => object>;
@@ -22,7 +22,7 @@ export declare class RegistryService<M extends Pointer, C extends AbstractContex
     constructor(model: ModelDecorator<M>, context?: C);
     getPointer(id: string): Pointer;
     getPointer(id: string, local: true): M;
-    _getLocalID(id: string): string | null;
+    _getLocalID(id: string): string;
     _register<T extends object>(base: T & {
         id: string;
     }): T & M;

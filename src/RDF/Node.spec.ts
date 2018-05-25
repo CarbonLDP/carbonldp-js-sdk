@@ -303,7 +303,10 @@ describe( module( "carbonldp/RDF/Node" ), ():void => {
 			} ];
 
 			documentResource = RDFDocument.getDocumentResources( expandedObject )[ 0 ];
-			pointerLibrary = Registry.create( { _model: Pointer } );
+			pointerLibrary = {
+				hasPointer: () => { throw new Error( "Not implemented." ); },
+				getPointer: id => Pointer.create( { id } ),
+			};
 		} );
 
 		// TODO: Test `RDFNode.getID`

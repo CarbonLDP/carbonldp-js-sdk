@@ -1,4 +1,4 @@
-import { anyThatMatches } from "../../test/helpers/jasmine-equalities";
+import { anyThatMatches } from "../../test/helpers/jasmine/equalities";
 import { createMockAuthService, } from "../../test/helpers/mocks";
 import { CarbonLDP } from "../CarbonLDP";
 import { IllegalArgumentError } from "../Errors";

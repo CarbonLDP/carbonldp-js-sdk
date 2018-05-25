@@ -16,6 +16,7 @@ var Errors_2 = require("../HTTP/Errors");
 var JSONLD_1 = require("../JSONLD");
 var LDP_1 = require("../LDP");
 var RDF_1 = require("../RDF");
+var Registry_1 = require("./Registry");
 var RegistryService_1 = require("./RegistryService");
 var DocumentsRegistry = (function (_super) {
     __extends(DocumentsRegistry, _super);
@@ -32,7 +33,7 @@ var DocumentsRegistry = (function (_super) {
     };
     DocumentsRegistry.prototype._getLocalID = function (id) {
         if (RDF_1.URI.isBNodeID(id) || RDF_1.URI.hasFragment(id))
-            return null;
+            return Registry_1.Registry.PROTOTYPE._getLocalID.call(this, id);
         return _super.prototype._getLocalID.call(this, id);
     };
     DocumentsRegistry.prototype._requestURLFor = function (pointer, uri) {

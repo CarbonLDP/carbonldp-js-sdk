@@ -168,7 +168,7 @@ describe( module( "carbonldp/Document" ), () => {
 						.then( () => fail( "Should not resolve." ) )
 						.catch( error => {
 							expect( () => { throw error; } )
-								.toThrowError( IllegalArgumentError, `"http://not-example.com" is outside "https://example.com/" scope.` );
+								.toThrowError( IllegalArgumentError, `"http://not-example.com" is out of scope.` );
 						} )
 					;
 				} );
@@ -179,7 +179,7 @@ describe( module( "carbonldp/Document" ), () => {
 						.then( () => fail( "Should not resolve." ) )
 						.catch( error => {
 							expect( () => { throw error; } )
-								.toThrowError( IllegalArgumentError, `"prefix:the-uri" is outside "https://example.com/" scope.` );
+								.toThrowError( IllegalArgumentError, `"prefix:the-uri" is out of scope.` );
 						} )
 					;
 				} );
@@ -503,7 +503,7 @@ describe( module( "carbonldp/Document" ), () => {
 						.then( () => fail( "Should not resolve." ) )
 						.catch( error => {
 							expect( () => { throw error; } )
-								.toThrowError( IllegalArgumentError, `"http://not-example.com" is outside "https://example.com/" scope.` );
+								.toThrowError( IllegalArgumentError, `"http://not-example.com" is out of scope.` );
 						} )
 					;
 				} );
@@ -514,7 +514,7 @@ describe( module( "carbonldp/Document" ), () => {
 						.then( () => fail( "Should not resolve." ) )
 						.catch( error => {
 							expect( () => { throw error; } )
-								.toThrowError( IllegalArgumentError, `"prefix:the-uri" is outside "https://example.com/" scope.` );
+								.toThrowError( IllegalArgumentError, `"prefix:the-uri" is out of scope.` );
 						} )
 					;
 				} );
@@ -837,7 +837,7 @@ describe( module( "carbonldp/Document" ), () => {
 						.then( () => fail( "Should not resolve." ) )
 						.catch( error => {
 							expect( () => { throw error; } )
-								.toThrowError( IllegalArgumentError, `"http://not-example.com" is outside "https://example.com/" scope.` );
+								.toThrowError( IllegalArgumentError, `"http://not-example.com" is out of scope.` );
 						} )
 					;
 				} );
@@ -848,7 +848,7 @@ describe( module( "carbonldp/Document" ), () => {
 						.then( () => fail( "Should not resolve." ) )
 						.catch( error => {
 							expect( () => { throw error; } )
-								.toThrowError( IllegalArgumentError, `"prefix:the-uri" is outside "https://example.com/" scope.` );
+								.toThrowError( IllegalArgumentError, `"prefix:the-uri" is out of scope.` );
 						} )
 					;
 				} );
@@ -1173,7 +1173,7 @@ describe( module( "carbonldp/Document" ), () => {
 						.then( () => fail( "Should not resolve." ) )
 						.catch( error => {
 							expect( () => { throw error; } )
-								.toThrowError( IllegalArgumentError, `"http://not-example.com" is outside "https://example.com/" scope.` );
+								.toThrowError( IllegalArgumentError, `"http://not-example.com" is out of scope.` );
 						} )
 					;
 				} );
@@ -1184,7 +1184,7 @@ describe( module( "carbonldp/Document" ), () => {
 						.then( () => fail( "Should not resolve." ) )
 						.catch( error => {
 							expect( () => { throw error; } )
-								.toThrowError( IllegalArgumentError, `"prefix:the-uri" is outside "https://example.com/" scope.` );
+								.toThrowError( IllegalArgumentError, `"prefix:the-uri" is out of scope.` );
 						} )
 					;
 				} );
@@ -1508,7 +1508,7 @@ describe( module( "carbonldp/Document" ), () => {
 						.then( () => fail( "Should not resolve." ) )
 						.catch( error => {
 							expect( () => { throw error; } )
-								.toThrowError( IllegalArgumentError, `"http://not-example.com" is outside "https://example.com/" scope.` );
+								.toThrowError( IllegalArgumentError, `"http://not-example.com" is out of scope.` );
 						} )
 					;
 				} );
@@ -1519,7 +1519,7 @@ describe( module( "carbonldp/Document" ), () => {
 						.then( () => fail( "Should not resolve." ) )
 						.catch( error => {
 							expect( () => { throw error; } )
-								.toThrowError( IllegalArgumentError, `"prefix:the-uri" is outside "https://example.com/" scope.` );
+								.toThrowError( IllegalArgumentError, `"prefix:the-uri" is out of scope.` );
 						} )
 					;
 				} );
@@ -1843,7 +1843,7 @@ describe( module( "carbonldp/Document" ), () => {
 						.then( () => fail( "Should not resolve." ) )
 						.catch( error => {
 							expect( () => { throw error; } )
-								.toThrowError( IllegalArgumentError, `"http://not-example.com" is outside "https://example.com/" scope.` );
+								.toThrowError( IllegalArgumentError, `"http://not-example.com" is out of scope.` );
 						} )
 					;
 				} );
@@ -1854,7 +1854,7 @@ describe( module( "carbonldp/Document" ), () => {
 						.then( () => fail( "Should not resolve." ) )
 						.catch( error => {
 							expect( () => { throw error; } )
-								.toThrowError( IllegalArgumentError, `"prefix:the-uri" is outside "https://example.com/" scope.` );
+								.toThrowError( IllegalArgumentError, `"prefix:the-uri" is out of scope.` );
 						} )
 					;
 				} );
@@ -2178,7 +2178,7 @@ describe( module( "carbonldp/Document" ), () => {
 						.then( () => fail( "Should not resolve." ) )
 						.catch( error => {
 							expect( () => { throw error; } )
-								.toThrowError( IllegalArgumentError, `"http://not-example.com" is outside "https://example.com/" scope.` );
+								.toThrowError( IllegalArgumentError, `"http://not-example.com" is out of scope.` );
 						} )
 					;
 				} );
@@ -2189,7 +2189,7 @@ describe( module( "carbonldp/Document" ), () => {
 						.then( () => fail( "Should not resolve." ) )
 						.catch( error => {
 							expect( () => { throw error; } )
-								.toThrowError( IllegalArgumentError, `"prefix:the-uri" is outside "https://example.com/" scope.` );
+								.toThrowError( IllegalArgumentError, `"prefix:the-uri" is out of scope.` );
 						} )
 					;
 				} );

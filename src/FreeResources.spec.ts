@@ -1,4 +1,4 @@
-import { anyThatMatches } from "../test/helpers/jasmine-equalities";
+import { anyThatMatches } from "../test/helpers/jasmine/equalities";
 import { createMockRegistry } from "../test/helpers/mocks";
 import {
 	FreeResources,
@@ -370,12 +370,20 @@ describe( module( "carbonldp/FreeResources" ), ():void => {
 					expect( freeResources.inScope( "_:some" ) ).toBe( true );
 				} );
 
-				it( "should reject absolute IRIs", ():void => {
-					expect( freeResources.inScope( "https://example.com/" ) ).toBe( false );
+				it( "should reject absolute IRIs when local", ():void => {
+					expect( freeResources.inScope( "https://example.com/", true ) ).toBe( false );
 				} );
 
-				it( "should reject relative IRIs", ():void => {
-					expect( freeResources.inScope( "resource/" ) ).toBe( false );
+				it( "should accept absolute IRIs when global", ():void => {
+					expect( freeResources.inScope( "https://example.com/" ) ).toBe( true );
+				} );
+
+				it( "should reject relative IRIs, when local", ():void => {
+					expect( freeResources.inScope( "resource/", true ) ).toBe( false );
+				} );
+
+				it( "should reject relative IRIs, when global", ():void => {
+					expect( freeResources.inScope( "resource/" ) ).toBe( true );
 				} );
 
 			} );

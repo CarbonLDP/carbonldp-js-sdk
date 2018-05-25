@@ -733,7 +733,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 
 					expect( () => {
 						document.getPointer( "https://example.com/document/" );
-					} ).toThrowError( IllegalArgumentError, `"https://example.com/document/" is outside scope.` );
+					} ).toThrowError( IllegalArgumentError, `"https://example.com/document/" is out of scope.` );
 				} );
 
 				it( "should throw error when another absolute IRIs and no parent registry", ():void => {
@@ -742,7 +742,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 
 					expect( () => {
 						document.getPointer( "https://example.com/another/document/" );
-					} ).toThrowError( IllegalArgumentError, `"https://example.com/another/document/" is outside scope.` );
+					} ).toThrowError( IllegalArgumentError, `"https://example.com/another/document/" is out of scope.` );
 				} );
 
 				it( "should return from parent registry when document has one", ():void => {
@@ -1013,13 +1013,13 @@ describe( module( "carbonldp/Document" ), ():void => {
 				it( "should throw error when IRI of the document", ():void => {
 					const document:TransientDocument = createMockDocument();
 
-					expect( () => document.getFragment( "https://example.com/document/" ) ).toThrowError( IllegalArgumentError, `"https://example.com/document/" is outside the scope of the registry.` );
+					expect( () => document.getFragment( "https://example.com/document/" ) ).toThrowError( IllegalArgumentError, `"https://example.com/document/" is out of scope.` );
 				} );
 
 				it( "should throw error when another absolute IRIs", ():void => {
 					const document:TransientDocument = createMockDocument();
 
-					expect( () => document.getFragment( "https://example.com/another/document/" ) ).toThrowError( IllegalArgumentError, `"https://example.com/another/document/" is outside the scope of the registry.` );
+					expect( () => document.getFragment( "https://example.com/another/document/" ) ).toThrowError( IllegalArgumentError, `"https://example.com/another/document/" is out of scope.` );
 				} );
 
 				it( "should return null when relative fragment label and not exits", ():void => {
@@ -1078,13 +1078,13 @@ describe( module( "carbonldp/Document" ), ():void => {
 				it( "should throw error when IRI of the document", ():void => {
 					const document:TransientDocument = createMockDocument();
 
-					expect( () => document.getNamedFragment( "https://example.com/document/" ) ).toThrowError( IllegalArgumentError, `"https://example.com/document/" is outside the scope of the registry.` );
+					expect( () => document.getNamedFragment( "https://example.com/document/" ) ).toThrowError( IllegalArgumentError, `"https://example.com/document/" is out of scope.` );
 				} );
 
 				it( "should throw error when another absolute IRIs", ():void => {
 					const document:TransientDocument = createMockDocument();
 
-					expect( () => document.getNamedFragment( "https://example.com/another/document/" ) ).toThrowError( IllegalArgumentError, `"https://example.com/another/document/" is outside the scope of the registry.` );
+					expect( () => document.getNamedFragment( "https://example.com/another/document/" ) ).toThrowError( IllegalArgumentError, `"https://example.com/another/document/" is out of scope.` );
 				} );
 
 				it( "should return null when relative fragment label and not exits", ():void => {
@@ -1126,7 +1126,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 				it( "should throw error when another absolute fragment label", ():void => {
 					const document:TransientDocument = createMockDocument();
 
-					expect( () => document.getNamedFragment( "https://example.com/anotherdocument/#fragment" ) ).toThrowError( IllegalArgumentError, `"https://example.com/anotherdocument/#fragment" is outside the scope of the registry.` );
+					expect( () => document.getNamedFragment( "https://example.com/anotherdocument/#fragment" ) ).toThrowError( IllegalArgumentError, `"https://example.com/anotherdocument/#fragment" is out of scope.` );
 				} );
 
 				it( "should throw error when blank node label and not exists", ():void => {

@@ -37,7 +37,7 @@ function createMock<T extends object>( data?:T & Partial<MessagingDocument> ):T 
 
 describe( module( "carbonldp/Messaging/MessagingDocument" ), ():void => {
 
-	fdescribe( interfaze(
+	describe( interfaze(
 		"CarbonLDP.Messaging.MessagingDocument",
 		"Interface with the methods required to have messaging/real-time capabilities."
 	), ():void => {

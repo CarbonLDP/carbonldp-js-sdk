@@ -6,7 +6,7 @@ var RDF_1 = require("../RDF");
 var Registry_1 = require("../Registry");
 var Resource_1 = require("../Resource");
 var QueryDocument_1 = require("../SPARQL/QueryDocument");
-var QueryContextPartial_1 = require("../SPARQL/QueryDocument/QueryContextPartial");
+var _1 = require("../SPARQL/QueryDocument/");
 var JSONLDCompacter = (function () {
     function JSONLDCompacter(registry, root, schemaResolver, jsonldConverter) {
         this.registry = registry;
@@ -147,7 +147,7 @@ var JSONLDCompacter = (function () {
         return false;
     };
     JSONLDCompacter.prototype._willBePartial = function (resource, schema, path) {
-        if (this.resolver instanceof QueryContextPartial_1.QueryContextPartial)
+        if (this.resolver instanceof _1.QueryContextPartial)
             return true;
         if (!(this.resolver instanceof QueryDocument_1.QueryContextBuilder))
             return false;

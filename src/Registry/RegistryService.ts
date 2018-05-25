@@ -28,7 +28,7 @@ import { Registry } from "./Registry";
 export class RegistryService<M extends Pointer, C extends AbstractContext<M, any> = undefined> implements Registry<M>, ObjectSchemaResolver {
 	readonly _context:C | undefined;
 
-	get _registry():Registry<any> {
+	get _registry():Registry<any> | undefined {
 		return this._context
 			&& this._context.parentContext
 			&& this._context.parentContext.registry
@@ -76,11 +76,14 @@ export class RegistryService<M extends Pointer, C extends AbstractContext<M, any
 	}
 
 
-	_getLocalID( id:string ):string | null {
+	_getLocalID( id:string ):string {
 		if( ! this._context ) return id;
 
-		const iri:string = ObjectSchemaUtils.resolveURI( id, this._context.getObjectSchema() );
-		if( ! URI.isBaseOf( this._context.baseURI, iri ) ) return null;
+		const schema:DigestedObjectSchema = this._context.getObjectSchema();
+		const iri:string = ObjectSchemaUtils.resolveURI( id, schema );
+
+		if( ! URI.isBaseOf( this._context.baseURI, iri ) )
+			return Registry.PROTOTYPE._getLocalID.call( this, id );
 
 		return URI.getRelativeURI( iri, this._context.baseURI );
 	}

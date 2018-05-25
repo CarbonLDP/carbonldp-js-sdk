@@ -1,10 +1,7 @@
 import { CarbonLDP } from "../CarbonLDP";
-import {
-	Document,
-	TransientDocument,
-} from "../Document";
+import { Document } from "../Document";
 import { IllegalArgumentError } from "../Errors";
-import { GlobalContext } from "../GlobalContext";
+import { FreeResources } from "../FreeResources";
 import { Response } from "../HTTP";
 import {
 	HTTPError,
@@ -13,16 +10,12 @@ import {
 } from "../HTTP/Errors";
 import { JSONLDParser } from "../JSONLD";
 import { ErrorResponse } from "../LDP";
-import {
-	DigestedObjectSchema,
-	ObjectSchemaDigester
-} from "../ObjectSchema";
 import { Pointer } from "../Pointer";
 import {
 	RDFNode,
 	URI
 } from "../RDF";
-import { FreeResources } from "../FreeResources";
+import { Registry } from "./Registry";
 import { RegistryService } from "./RegistryService";
 
 
@@ -47,8 +40,9 @@ export class DocumentsRegistry extends RegistryService<Document, CarbonLDP> {
 	}
 
 
-	_getLocalID( id:string ):string | null {
-		if( URI.isBNodeID( id ) || URI.hasFragment( id ) ) return null;
+	_getLocalID( id:string ):string {
+		if( URI.isBNodeID( id ) || URI.hasFragment( id ) )
+			return Registry.PROTOTYPE._getLocalID.call( this, id );
 
 		return super._getLocalID( id );
 	}

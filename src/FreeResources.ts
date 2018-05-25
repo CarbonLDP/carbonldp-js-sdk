@@ -32,7 +32,7 @@ export interface FreeResources extends Registry<TransientResource> {
 	_registry:RegistryService<Pointer, any> | undefined;
 
 
-	_getLocalID( id:string ):string | null;
+	_getLocalID( id:string ):string;
 
 	_register<T extends object>( base:T & { id?:string } ):T & TransientResource;
 
@@ -52,12 +52,12 @@ const PROTOTYPE:PickSelfProps<FreeResources, Registry<TransientResource>, Overlo
 	_registry: void 0,
 
 
-	_getLocalID( id:string ):string | null {
+	_getLocalID( this:FreeResources, id:string ):string {
 		if( URI.isBNodeID( id ) ) return id;
-		return null;
+		return Registry.PROTOTYPE._getLocalID.call( this, id );
 	},
 
-	_register<T extends object>( base:T & { id?:string } ):T & TransientResource {
+	_register<T extends object>( this:FreeResources, base:T & { id?:string } ):T & TransientResource {
 		if( ! base.id ) base.id = URI.generateBNodeID();
 		const pointer:T & Pointer = Registry.PROTOTYPE._register.call( this, base );
 

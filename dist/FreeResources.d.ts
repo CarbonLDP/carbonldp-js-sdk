@@ -12,7 +12,7 @@ export interface BaseFreeResources {
 export interface FreeResources extends Registry<TransientResource> {
     _context: AbstractContext<Pointer, any> | undefined;
     _registry: RegistryService<Pointer, any> | undefined;
-    _getLocalID(id: string): string | null;
+    _getLocalID(id: string): string;
     _register<T extends object>(base: T & {
         id?: string;
     }): T & TransientResource;

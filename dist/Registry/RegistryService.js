@@ -50,9 +50,10 @@ var RegistryService = (function () {
     RegistryService.prototype._getLocalID = function (id) {
         if (!this._context)
             return id;
-        var iri = ObjectSchema_1.ObjectSchemaUtils.resolveURI(id, this._context.getObjectSchema());
+        var schema = this._context.getObjectSchema();
+        var iri = ObjectSchema_1.ObjectSchemaUtils.resolveURI(id, schema);
         if (!RDF_1.URI.isBaseOf(this._context.baseURI, iri))
-            return null;
+            return Registry_1.Registry.PROTOTYPE._getLocalID.call(this, id);
         return RDF_1.URI.getRelativeURI(iri, this._context.baseURI);
     };
     RegistryService.prototype._register = function (base) {

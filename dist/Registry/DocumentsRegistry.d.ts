@@ -10,7 +10,7 @@ export declare class DocumentsRegistry extends RegistryService<Document, CarbonL
     _register<T extends object>(base: T & {
         id: string;
     }): T & Document;
-    _getLocalID(id: string): string | null;
+    _getLocalID(id: string): string;
     _requestURLFor(pointer: Pointer, uri?: string): string;
     _parseErrorResponse<T extends object>(response: Response | Error | null): Promise<never>;
 }

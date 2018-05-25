@@ -13,7 +13,7 @@ var PROTOTYPE = {
     _getLocalID: function (id) {
         if (RDF_1.URI.isBNodeID(id))
             return id;
-        return null;
+        return Registry_1.Registry.PROTOTYPE._getLocalID.call(this, id);
     },
     _register: function (base) {
         if (!base.id)

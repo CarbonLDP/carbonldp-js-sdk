@@ -22,7 +22,7 @@ import {
 	QueryContextBuilder,
 	QueryPropertyType,
 } from "../SPARQL/QueryDocument";
-import { QueryContextPartial } from "../SPARQL/QueryDocument/QueryContextPartial";
+import { QueryContextPartial } from "../SPARQL/QueryDocument/";
 import { JSONLDConverter } from "./Converter";
 
 

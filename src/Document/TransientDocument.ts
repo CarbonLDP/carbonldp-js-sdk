@@ -104,7 +104,7 @@ function internalConverter( resource:TransientDocument, target:object, tracker:S
 
 			const idOrSlug:string = getNestedObjectId( next );
 			if( tracker.has( idOrSlug ) ) return;
-			if( ! ! idOrSlug && ! resource.inScope( idOrSlug ) ) return;
+			if( ! ! idOrSlug && ! resource.inScope( idOrSlug, true ) ) return;
 
 
 			const fragment:TransientFragment = resource.hasPointer( idOrSlug, true ) ?
@@ -144,16 +144,14 @@ const PROTOTYPE:PickSelfProps<TransientDocument, TransientResource & Registry<Tr
 	},
 
 
-	_getLocalID( this:TransientDocument, id:string ):string | null {
-		id = Registry.PROTOTYPE._getLocalID.call( this, id );
-
+	_getLocalID( this:TransientDocument, id:string ):string {
 		if( URI.isBNodeID( id ) ) return id;
 
 		if( URI.isFragmentOf( id, this.id ) ) return URI.getFragment( id );
 
 		if( URI.isRelative( id ) ) return id;
 
-		return null;
+		return Registry.PROTOTYPE._getLocalID.call( this, id );
 	},
 
 	_register<T extends object>( this:TransientDocument, base:T & { id?:string, slug?:string } ):T & TransientFragment {
@@ -174,7 +172,7 @@ const PROTOTYPE:PickSelfProps<TransientDocument, TransientResource & Registry<Tr
 
 
 	hasFragment( this:TransientDocument, id:string ):boolean {
-		if( ! this.inScope( id ) ) return false;
+		if( ! this.inScope( id, true ) ) return false;
 
 		const localID:string = this._getLocalID( id );
 		return this._resourcesMap.has( localID );
@@ -182,7 +180,7 @@ const PROTOTYPE:PickSelfProps<TransientDocument, TransientResource & Registry<Tr
 
 
 	getFragment<T extends object>( this:TransientDocument, id:string ):(T & TransientFragment) | null {
-		if( ! this.inScope( id ) ) throw new IllegalArgumentError( `"${ id }" is outside the scope of the registry.` );
+		if( ! this.inScope( id, true ) ) throw new IllegalArgumentError( `"${ id }" is out of scope.` );
 
 		const localID:string = this._getLocalID( id );
 
@@ -237,7 +235,7 @@ const PROTOTYPE:PickSelfProps<TransientDocument, TransientResource & Registry<Tr
 	},
 
 	_removeFragment( this:TransientDocument, fragmentOrSlug:string | TransientFragment ):boolean {
-		if( ! this.inScope( fragmentOrSlug ) ) return false;
+		if( ! this.inScope( fragmentOrSlug, true ) ) return false;
 		return this.removePointer( fragmentOrSlug );
 	},
 

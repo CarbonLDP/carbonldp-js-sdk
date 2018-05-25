@@ -182,7 +182,7 @@ describe( module( "carbonldp/Document" ), () => {
 						.addMember( "https://example.org/resource/", "member/" )
 						.catch( error => {
 							expect( () => { throw error; } )
-								.toThrowError( IllegalArgumentError, `"https://example.org/resource/" is outside "https://example.com/" scope.` );
+								.toThrowError( IllegalArgumentError, `"https://example.org/resource/" is out of scope.` );
 						} )
 					;
 				} );
@@ -212,7 +212,7 @@ describe( module( "carbonldp/Document" ), () => {
 						.addMember( "ex:resource/", "member/" )
 						.catch( error => {
 							expect( () => { throw error; } )
-								.toThrowError( IllegalArgumentError, `"ex:resource/" is outside "https://example.com/" scope.` );
+								.toThrowError( IllegalArgumentError, `"ex:resource/" is out of scope.` );
 						} )
 					;
 				} );
@@ -568,7 +568,7 @@ describe( module( "carbonldp/Document" ), () => {
 						.addMembers( "https://example.org/resource/", [] )
 						.catch( error => {
 							expect( () => { throw error; } )
-								.toThrowError( IllegalArgumentError, `"https://example.org/resource/" is outside "https://example.com/" scope.` );
+								.toThrowError( IllegalArgumentError, `"https://example.org/resource/" is out of scope.` );
 						} )
 					;
 				} );
@@ -598,7 +598,7 @@ describe( module( "carbonldp/Document" ), () => {
 						.addMembers( "ex:resource/", [] )
 						.catch( error => {
 							expect( () => { throw error; } )
-								.toThrowError( IllegalArgumentError, `"ex:resource/" is outside "https://example.com/" scope.` );
+								.toThrowError( IllegalArgumentError, `"ex:resource/" is out of scope.` );
 						} )
 					;
 				} );
@@ -1023,7 +1023,7 @@ describe( module( "carbonldp/Document" ), () => {
 						.removeMember( "https://example.org/resource/", "member/" )
 						.catch( error => {
 							expect( () => { throw error; } )
-								.toThrowError( IllegalArgumentError, `"https://example.org/resource/" is outside "https://example.com/" scope.` );
+								.toThrowError( IllegalArgumentError, `"https://example.org/resource/" is out of scope.` );
 						} )
 					;
 				} );
@@ -1053,7 +1053,7 @@ describe( module( "carbonldp/Document" ), () => {
 						.removeMember( "ex:resource/", "member/" )
 						.catch( error => {
 							expect( () => { throw error; } )
-								.toThrowError( IllegalArgumentError, `"ex:resource/" is outside "https://example.com/" scope.` );
+								.toThrowError( IllegalArgumentError, `"ex:resource/" is out of scope.` );
 						} )
 					;
 				} );
@@ -1413,7 +1413,7 @@ describe( module( "carbonldp/Document" ), () => {
 						.removeMembers( "https://example.org/resource/", [] )
 						.catch( error => {
 							expect( () => { throw error; } )
-								.toThrowError( IllegalArgumentError, `"https://example.org/resource/" is outside "https://example.com/" scope.` );
+								.toThrowError( IllegalArgumentError, `"https://example.org/resource/" is out of scope.` );
 						} )
 					;
 				} );
@@ -1443,7 +1443,7 @@ describe( module( "carbonldp/Document" ), () => {
 						.removeMembers( "ex:resource/", [] )
 						.catch( error => {
 							expect( () => { throw error; } )
-								.toThrowError( IllegalArgumentError, `"ex:resource/" is outside "https://example.com/" scope.` );
+								.toThrowError( IllegalArgumentError, `"ex:resource/" is out of scope.` );
 						} )
 					;
 				} );
@@ -1870,7 +1870,7 @@ describe( module( "carbonldp/Document" ), () => {
 						.removeAllMembers( "https://example.org/resource/" )
 						.catch( error => {
 							expect( () => { throw error; } )
-								.toThrowError( IllegalArgumentError, `"https://example.org/resource/" is outside "https://example.com/" scope.` );
+								.toThrowError( IllegalArgumentError, `"https://example.org/resource/" is out of scope.` );
 						} )
 					;
 				} );
@@ -1900,7 +1900,7 @@ describe( module( "carbonldp/Document" ), () => {
 						.removeAllMembers( "ex:resource/" )
 						.catch( error => {
 							expect( () => { throw error; } )
-								.toThrowError( IllegalArgumentError, `"ex:resource/" is outside "https://example.com/" scope.` );
+								.toThrowError( IllegalArgumentError, `"ex:resource/" is out of scope.` );
 						} )
 					;
 				} );

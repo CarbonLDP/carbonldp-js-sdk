@@ -37,7 +37,7 @@ function internalConverter(resource, target, tracker) {
         var idOrSlug = getNestedObjectId(next);
         if (tracker.has(idOrSlug))
             return;
-        if (!!idOrSlug && !resource.inScope(idOrSlug))
+        if (!!idOrSlug && !resource.inScope(idOrSlug, true))
             return;
         var fragment = resource.hasPointer(idOrSlug, true) ?
             resource.getPointer(idOrSlug, true) :
@@ -59,14 +59,13 @@ var PROTOTYPE = {
             .forEach(this.removePointer, this);
     },
     _getLocalID: function (id) {
-        id = Registry_1.Registry.PROTOTYPE._getLocalID.call(this, id);
         if (RDF_1.URI.isBNodeID(id))
             return id;
         if (RDF_1.URI.isFragmentOf(id, this.id))
             return RDF_1.URI.getFragment(id);
         if (RDF_1.URI.isRelative(id))
             return id;
-        return null;
+        return Registry_1.Registry.PROTOTYPE._getLocalID.call(this, id);
     },
     _register: function (base) {
         if (base.slug)
@@ -81,14 +80,14 @@ var PROTOTYPE = {
         return resource;
     },
     hasFragment: function (id) {
-        if (!this.inScope(id))
+        if (!this.inScope(id, true))
             return false;
         var localID = this._getLocalID(id);
         return this._resourcesMap.has(localID);
     },
     getFragment: function (id) {
-        if (!this.inScope(id))
-            throw new Errors_1.IllegalArgumentError("\"" + id + "\" is outside the scope of the registry.");
+        if (!this.inScope(id, true))
+            throw new Errors_1.IllegalArgumentError("\"" + id + "\" is out of scope.");
         var localID = this._getLocalID(id);
         var resource = this._resourcesMap.get(localID);
         if (!resource)
@@ -131,7 +130,7 @@ var PROTOTYPE = {
         return this._removeFragment(id);
     },
     _removeFragment: function (fragmentOrSlug) {
-        if (!this.inScope(fragmentOrSlug))
+        if (!this.inScope(fragmentOrSlug, true))
             return false;
         return this.removePointer(fragmentOrSlug);
     },

@@ -17,14 +17,6 @@ import {
 } from "../Utils";
 
 
-export interface BaseRegistry<M extends Pointer> {
-	_context?:Context;
-	_registry?:Registry<any>;
-
-	_model:ModelDecorator<M>;
-}
-
-
 export interface Registry<M extends Pointer> extends PointerLibrary, PointerValidator {
 	_context:Context | undefined;
 	_registry:Registry<any> | undefined;
@@ -33,6 +25,7 @@ export interface Registry<M extends Pointer> extends PointerLibrary, PointerVali
 
 
 	inScope( idOrPointer:string | Pointer ):boolean;
+	inScope( idOrPointer:string | Pointer, local:true ):boolean;
 
 
 	hasPointer( id:string ):boolean;
@@ -48,7 +41,7 @@ export interface Registry<M extends Pointer> extends PointerLibrary, PointerVali
 	removePointer( idOrPointer:string | Pointer, local:true ):boolean;
 
 
-	_getLocalID( id:string ):string | null;
+	_getLocalID( id:string ):string;
 
 	_register<T extends object>( base:T & { id:string } ):T & M;
 }
@@ -61,34 +54,39 @@ const PROTOTYPE:PickSelfProps<Registry<Pointer>, {}> = {
 	_registry: void 0,
 
 
-	inScope( this:Registry<Pointer>, idOrPointer:string | Pointer ):boolean {
+	inScope( this:Registry<Pointer>, idOrPointer:string | Pointer, local?:true ):boolean {
 		try {
 			const id:string = Pointer.getID( idOrPointer );
-			return this._getLocalID( id ) !== null;
+			this._getLocalID( id );
+			return true;
 		} catch {
-			return false;
+			if( local === true || ! this._registry ) return false;
+			return this._registry.inScope( idOrPointer );
 		}
 	},
 
 
 	hasPointer( this:Registry<Pointer>, id:string, local?:true ):boolean {
-		if( ! this.inScope( id ) ) {
-			if( local === true || ! this._registry ) return false;
-			return this._registry.hasPointer( id );
+		if( this.inScope( id, true ) ) {
+			const localID:string = this._getLocalID( id );
+			if( this._resourcesMap.has( localID ) ) return true;
 		}
 
-		const localID:string = this._getLocalID( id );
-		return this._resourcesMap.has( localID );
+		if( local === true || ! this._registry ) return false;
+		return this._registry.hasPointer( id );
 	},
 
 	getPointer( this:Registry<Pointer>, id:string, local?:true ):Pointer {
-		if( ! this.inScope( id ) ) {
-			if( local === true || ! this._registry ) throw new IllegalArgumentError( `"${ id }" is outside scope.` );
+		if( ! this.inScope( id, true ) ) {
+			if( local === true || ! this._registry ) throw new IllegalArgumentError( `"${ id }" is out of scope.` );
 			return this._registry.getPointer( id );
 		}
 
 		const localID:string = this._getLocalID( id );
 		if( this._resourcesMap.has( localID ) ) return this._resourcesMap.get( localID );
+
+		if( local !== true && this._registry && this._registry.hasPointer( id ) )
+			return this._registry.getPointer( id );
 
 		return this._register( { id } );
 	},
@@ -106,27 +104,24 @@ const PROTOTYPE:PickSelfProps<Registry<Pointer>, {}> = {
 	removePointer( this:Registry<Pointer>, idOrPointer:string | Pointer, local?:true ):boolean {
 		const id:string = Pointer.getID( idOrPointer );
 
-		if( ! this.inScope( id ) ) {
-			if( local === true || ! this._registry ) return false;
-			return this._registry.removePointer( idOrPointer );
+		if( this.inScope( id, true ) ) {
+			const localID:string = this._getLocalID( id );
+			if( this._resourcesMap.delete( localID ) ) return true;
 		}
 
-		const localID:string = this._getLocalID( id );
-		return this._resourcesMap.delete( localID );
+		if( local === true || ! this._registry ) return false;
+		return this._registry.removePointer( idOrPointer );
 	},
 
 
-	_getLocalID( this:Registry<Pointer>, id:string ):string | null {
-		if( ! this._context ) return id;
-		return ObjectSchemaUtils.resolveURI( id, this._context.getObjectSchema() );
+	_getLocalID( this:Registry<Pointer>, id:string ):string {
+		throw new IllegalArgumentError( `"${ id }" is out of scope.` );
 	},
 
 	_register<T extends object>( this:Registry<Pointer>, base:T & { id:string } ):T & Pointer {
 		if( ! base.id ) throw new IllegalArgumentError( "The resource ID is required." );
 
 		const localID:string = this._getLocalID( base.id );
-
-		if( localID === null ) throw new IllegalArgumentError( `"${ base.id }" is outside scope.` );
 		if( this._resourcesMap.has( localID ) ) throw new IDAlreadyInUseError( `"${ base.id }" is already being used.` );
 
 		const resource:T & Pointer = Pointer.decorate( base );
@@ -144,9 +139,6 @@ export interface RegistryFactory {
 	isDecorated( object:object ):object is Registry<any>;
 
 	decorate<T extends object>( object:T ):T & Registry<any>;
-
-
-	create<T extends object, M extends Pointer>( base:T & BaseRegistry<M> ):T & Registry<M>;
 }
 
 export const Registry:RegistryFactory = {
@@ -164,10 +156,5 @@ export const Registry:RegistryFactory = {
 
 		return ModelDecorator
 			.definePropertiesFrom( PROTOTYPE, object );
-	},
-
-	create<T extends object, M extends Pointer>( base:T & BaseRegistry<M> ):T & Registry<M> {
-		const copy:T & BaseRegistry<M> = Object.assign( {}, base );
-		return Registry.decorate( copy );
 	},
 };

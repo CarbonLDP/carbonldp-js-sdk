@@ -2,40 +2,45 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 var core_1 = require("../core");
 var Errors_1 = require("../Errors");
-var ObjectSchema_1 = require("../ObjectSchema");
 var Pointer_1 = require("../Pointer");
 var Utils_1 = require("../Utils");
 var PROTOTYPE = {
     get _resourcesMap() { return new Map(); },
     _context: void 0,
     _registry: void 0,
-    inScope: function (idOrPointer) {
+    inScope: function (idOrPointer, local) {
         try {
             var id = Pointer_1.Pointer.getID(idOrPointer);
-            return this._getLocalID(id) !== null;
+            this._getLocalID(id);
+            return true;
         }
         catch (_a) {
-            return false;
+            if (local === true || !this._registry)
+                return false;
+            return this._registry.inScope(idOrPointer);
         }
     },
     hasPointer: function (id, local) {
-        if (!this.inScope(id)) {
-            if (local === true || !this._registry)
-                return false;
-            return this._registry.hasPointer(id);
+        if (this.inScope(id, true)) {
+            var localID = this._getLocalID(id);
+            if (this._resourcesMap.has(localID))
+                return true;
         }
-        var localID = this._getLocalID(id);
-        return this._resourcesMap.has(localID);
+        if (local === true || !this._registry)
+            return false;
+        return this._registry.hasPointer(id);
     },
     getPointer: function (id, local) {
-        if (!this.inScope(id)) {
+        if (!this.inScope(id, true)) {
             if (local === true || !this._registry)
-                throw new Errors_1.IllegalArgumentError("\"" + id + "\" is outside scope.");
+                throw new Errors_1.IllegalArgumentError("\"" + id + "\" is out of scope.");
             return this._registry.getPointer(id);
         }
         var localID = this._getLocalID(id);
         if (this._resourcesMap.has(localID))
             return this._resourcesMap.get(localID);
+        if (local !== true && this._registry && this._registry.hasPointer(id))
+            return this._registry.getPointer(id);
         return this._register({ id: id });
     },
     getPointers: function (local) {
@@ -46,25 +51,22 @@ var PROTOTYPE = {
     },
     removePointer: function (idOrPointer, local) {
         var id = Pointer_1.Pointer.getID(idOrPointer);
-        if (!this.inScope(id)) {
-            if (local === true || !this._registry)
-                return false;
-            return this._registry.removePointer(idOrPointer);
+        if (this.inScope(id, true)) {
+            var localID = this._getLocalID(id);
+            if (this._resourcesMap.delete(localID))
+                return true;
         }
-        var localID = this._getLocalID(id);
-        return this._resourcesMap.delete(localID);
+        if (local === true || !this._registry)
+            return false;
+        return this._registry.removePointer(idOrPointer);
     },
     _getLocalID: function (id) {
-        if (!this._context)
-            return id;
-        return ObjectSchema_1.ObjectSchemaUtils.resolveURI(id, this._context.getObjectSchema());
+        throw new Errors_1.IllegalArgumentError("\"" + id + "\" is out of scope.");
     },
     _register: function (base) {
         if (!base.id)
             throw new Errors_1.IllegalArgumentError("The resource ID is required.");
         var localID = this._getLocalID(base.id);
-        if (localID === null)
-            throw new Errors_1.IllegalArgumentError("\"" + base.id + "\" is outside scope.");
         if (this._resourcesMap.has(localID))
             throw new Errors_1.IDAlreadyInUseError("\"" + base.id + "\" is already being used.");
         var resource = Pointer_1.Pointer.decorate(base);
@@ -85,10 +87,6 @@ exports.Registry = {
             return object;
         return core_1.ModelDecorator
             .definePropertiesFrom(PROTOTYPE, object);
-    },
-    create: function (base) {
-        var copy = Object.assign({}, base);
-        return exports.Registry.decorate(copy);
     },
 };
 

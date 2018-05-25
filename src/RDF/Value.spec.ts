@@ -1,5 +1,3 @@
-import { AbstractContext } from "../AbstractContext";
-import { Document } from "../Document";
 import {
 	Pointer,
 	PointerLibrary,
@@ -160,7 +158,10 @@ describe( module( "carbonldp/RDF/Value" ), ():void => {
 			} ];
 
 			documentResource = RDFDocument.getDocumentResources( expandedObject )[ 0 ];
-			pointerLibrary = Registry.create( { _model: Pointer } );
+			pointerLibrary = {
+				hasPointer: () => { throw new Error( "Not implemented." ); },
+				getPointer: id => Pointer.create( { id } ),
+			};
 		} );
 
 		it( isDefined(), ():void => {
