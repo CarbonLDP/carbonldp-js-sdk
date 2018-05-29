@@ -14147,9 +14147,18 @@ var MembersDocument_1 = __webpack_require__(297);
 var QueryDocumentDocument_1 = __webpack_require__(298);
 var SPARQLDocument_1 = __webpack_require__(314);
 var TransientDocument_1 = __webpack_require__(38);
+function addEnsureIfPartial(iri, resource, requestOptions) {
+    if (requestOptions.ensureLatest)
+        return;
+    if (!resource._registry || !resource._registry.hasPointer(iri, true))
+        return;
+    var target = resource._registry.getPointer(iri, true);
+    if (target.isPartial())
+        requestOptions.ensureLatest = true;
+}
 var PROTOTYPE = {
     get: function (uriOrOptionsOrQueryBuilderFn, optionsOrQueryBuilderFn, queryBuilderFn) {
-        var iri = Utils_1.isString(uriOrOptionsOrQueryBuilderFn) ? uriOrOptionsOrQueryBuilderFn : "";
+        var iri = Utils_1.isString(uriOrOptionsOrQueryBuilderFn) ? uriOrOptionsOrQueryBuilderFn : this.id;
         var requestOptions = Utils_1.isObject(uriOrOptionsOrQueryBuilderFn) ?
             uriOrOptionsOrQueryBuilderFn : Utils_1.isObject(optionsOrQueryBuilderFn) ? optionsOrQueryBuilderFn : {};
         queryBuilderFn = Utils_1.isFunction(uriOrOptionsOrQueryBuilderFn) ? uriOrOptionsOrQueryBuilderFn :
@@ -14157,15 +14166,18 @@ var PROTOTYPE = {
         if (queryBuilderFn)
             return QueryDocumentDocument_1.QueryDocumentDocument.PROTOTYPE
                 .get.call(this, iri, requestOptions, queryBuilderFn);
-        if (this._registry.hasPointer(iri) && !requestOptions.ensureLatest) {
-            var resource = this._registry.getPointer(iri);
-            if (resource.isPartial())
-                requestOptions.ensureLatest = true;
-        }
-        return CRUDDocument_1.CRUDDocument.PROTOTYPE.get.call(this, uriOrOptionsOrQueryBuilderFn, optionsOrQueryBuilderFn);
+        addEnsureIfPartial(iri, this, requestOptions);
+        return CRUDDocument_1.CRUDDocument.PROTOTYPE.get.call(this, iri, requestOptions);
     },
     resolve: function (optionsOrQueryBuilderFn, queryBuilderFn) {
-        return this.get(optionsOrQueryBuilderFn, queryBuilderFn);
+        var requestOptions = Utils_1.isObject(optionsOrQueryBuilderFn) ?
+            optionsOrQueryBuilderFn : {};
+        if (Utils_1.isFunction(optionsOrQueryBuilderFn))
+            queryBuilderFn = optionsOrQueryBuilderFn;
+        if (queryBuilderFn)
+            return QueryDocumentDocument_1.QueryDocumentDocument.PROTOTYPE.resolve.call(this, requestOptions, queryBuilderFn);
+        addEnsureIfPartial(this.id, this, requestOptions);
+        return CRUDDocument_1.CRUDDocument.PROTOTYPE.resolve.call(this, requestOptions);
     },
     refresh: function (requestOptions) {
         if (this.isPartial())

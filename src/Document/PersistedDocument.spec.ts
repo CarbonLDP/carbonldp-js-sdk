@@ -3,6 +3,7 @@ import { DocumentsRegistry } from "../Registry";
 import { PersistedResource } from "../Resource";
 import {
 	extendsClass,
+	hasMethod,
 	hasProperty,
 	hasSignature,
 	interfaze,
@@ -61,6 +62,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 			expect( target ).toBeDefined();
 		} );
 
+
 		it( hasProperty(
 			OBLIGATORY,
 			"_resolved",
@@ -73,11 +75,20 @@ describe( module( "carbonldp/Document" ), ():void => {
 		it( hasProperty(
 			OBLIGATORY,
 			"_eTag",
-			"string | undefined"
+			"string | undefined",
+			"The ETag (entity tag) of the persisted document."
 		), ():void => {
 			const target:PersistedDocument[ "_eTag" ] = "" as string | undefined;
 			expect( target ).toBeDefined();
 		} );
+
+
+		it( hasProperty(
+			OBLIGATORY,
+			"_savedFragments",
+			"CarbonLDP.Fragment[]",
+			"Array with a copy of every fragment that that is currently persisted in the server."
+		), ():void => {} );
 
 
 		describe( method(
@@ -122,7 +133,8 @@ describe( module( "carbonldp/Document" ), ():void => {
 
 		describe( method(
 			OBLIGATORY,
-			"isOutdated"
+			"isOutdated",
+			"Returns true when the document contains data of multiple requests with different versions of the resource."
 		), ():void => {
 
 			it( hasSignature(
@@ -159,6 +171,13 @@ describe( module( "carbonldp/Document" ), ():void => {
 			} );
 
 		} );
+
+
+		it( hasMethod(
+			OBLIGATORY,
+			"_syncSavedFragments",
+			"Set all the current fragments in the document as fragments that has been saved in the server."
+		), ():void => {} );
 
 	} );
 

@@ -1,15 +1,12 @@
-import { BlankNode } from "../BlankNode";
 import {
 	ModelDecorator,
 	ModelSchema,
 } from "../core";
-import { Fragment } from "../Fragment";
 import {
 	GETOptions,
 	RequestOptions
 } from "../HTTP";
 import { MessagingDocument } from "../Messaging";
-import { NamedFragment } from "../NamedFragment";
 import { Pointer } from "../Pointer";
 import { PersistedResource } from "../Resource";
 import { QueryDocumentBuilder } from "../SPARQL/QueryDocument";
@@ -62,6 +59,14 @@ export interface Document extends CRUDDocument, MembersDocument, SPARQLDocument,
 
 type QueryBuilderFn = Function & (( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder);
 
+function addEnsureIfPartial( this:void, iri:string, resource:Document, requestOptions:GETOptions ):void {
+	if( requestOptions.ensureLatest ) return;
+	if( ! resource._registry || ! resource._registry.hasPointer( iri, true ) ) return;
+
+	const target:Document = resource._registry.getPointer( iri, true );
+	if( target.isPartial() ) requestOptions.ensureLatest = true;
+}
+
 
 type OverloadedProps =
 	| "get"
@@ -75,7 +80,7 @@ type OverloadedProps =
 const PROTOTYPE:PickSelfProps<Document, CRUDDocument & MembersDocument & SPARQLDocument & MessagingDocument & QueryDocumentDocument, OverloadedProps> = {
 
 	get<T extends object>( this:Document, uriOrOptionsOrQueryBuilderFn:string | GETOptions | QueryBuilderFn, optionsOrQueryBuilderFn?:GETOptions | QueryBuilderFn, queryBuilderFn?:QueryBuilderFn ):Promise<T & Document> {
-		const iri:string = isString( uriOrOptionsOrQueryBuilderFn ) ? uriOrOptionsOrQueryBuilderFn : "";
+		const iri:string = isString( uriOrOptionsOrQueryBuilderFn ) ? uriOrOptionsOrQueryBuilderFn : this.id;
 
 		const requestOptions:GETOptions = isObject( uriOrOptionsOrQueryBuilderFn ) ?
 			uriOrOptionsOrQueryBuilderFn : isObject( optionsOrQueryBuilderFn ) ? optionsOrQueryBuilderFn : {};
@@ -88,17 +93,21 @@ const PROTOTYPE:PickSelfProps<Document, CRUDDocument & MembersDocument & SPARQLD
 			return QueryDocumentDocument.PROTOTYPE
 				.get.call( this, iri, requestOptions, queryBuilderFn );
 
-
-		if( this._registry.hasPointer( iri ) && ! requestOptions.ensureLatest ) {
-			const resource:T & Document = this._registry.getPointer( iri ) as any;
-			if( resource.isPartial() ) requestOptions.ensureLatest = true;
-		}
-
-		return CRUDDocument.PROTOTYPE.get.call( this, uriOrOptionsOrQueryBuilderFn as string, optionsOrQueryBuilderFn as GETOptions );
+		addEnsureIfPartial( iri, this, requestOptions );
+		return CRUDDocument.PROTOTYPE.get.call( this, iri, requestOptions );
 	},
 
 	resolve<T extends object>( this:Document, optionsOrQueryBuilderFn?:GETOptions | QueryBuilderFn, queryBuilderFn?:QueryBuilderFn ):Promise<T & Document> {
-		return this.get( optionsOrQueryBuilderFn, queryBuilderFn );
+		const requestOptions:GETOptions = isObject( optionsOrQueryBuilderFn ) ?
+			optionsOrQueryBuilderFn : {};
+
+		if( isFunction( optionsOrQueryBuilderFn ) ) queryBuilderFn = optionsOrQueryBuilderFn;
+
+		if( queryBuilderFn )
+			return QueryDocumentDocument.PROTOTYPE.resolve.call( this, requestOptions, queryBuilderFn );
+
+		addEnsureIfPartial( this.id, this, requestOptions );
+		return CRUDDocument.PROTOTYPE.resolve.call( this, requestOptions );
 	},
 
 
