@@ -21910,8 +21910,8 @@ var GlobalContext = (function (_super) {
     GlobalContext.prototype._registerDefaultDecorators = function () {
         this.registry.documentDecorators
             .set(ProtectedDocument_1.ProtectedDocument.TYPE, ProtectedDocument_1.ProtectedDocument.decorate)
-            .set(Auth_1.User.TYPE, Auth_1.User.decorate)
-            .set(Auth_1.ACL.TYPE, Auth_1.ACL.decorate);
+            .set(Auth_1.ACL.TYPE, Auth_1.ACL.decorate)
+            .set(Auth_1.User.TYPE, Auth_1.User.decorate);
     };
     GlobalContext.instance = new GlobalContext();
     return GlobalContext;

@@ -117,8 +117,8 @@ export class GlobalContext extends AbstractContext<Pointer, undefined> {
 	private _registerDefaultDecorators():void {
 		this.registry.documentDecorators
 			.set( ProtectedDocument.TYPE, ProtectedDocument.decorate )
-			.set( User.TYPE, User.decorate )
 			.set( ACL.TYPE, ACL.decorate )
+			.set( User.TYPE, User.decorate )
 		;
 	}
 }

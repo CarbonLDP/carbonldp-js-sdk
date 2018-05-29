@@ -11,6 +11,7 @@ import {
 	property,
 	STATIC,
 } from "./test/JasmineExtender";
+import { CS } from "./Vocabularies/CS";
 
 
 describe( module( "carbonldp/GlobalContext" ), ():void => {
@@ -67,6 +68,14 @@ describe( module( "carbonldp/GlobalContext" ), ():void => {
 
 			it( "should have parentContext as undefined", ():void => {
 				expect( GlobalContext.instance.parentContext ).toBeUndefined();
+			} );
+
+			it( "should has default decorators", () => {
+				expect( GlobalContext.instance.registry.documentDecorators ).toEqual( new Map( [
+					[ CS.ProtectedDocument, jasmine.any( Function ) ],
+					[ CS.AccessControlList, jasmine.any( Function ) ],
+					[ CS.User, jasmine.any( Function ) ],
+				] ) );
 			} );
 
 		} );
