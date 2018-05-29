@@ -322,7 +322,7 @@ describe( module( "carbonldp/Document" ), () => {
 						.then( () => fail( "Should not resolve." ) )
 						.catch( error => {
 							expect( () => { throw error; } )
-								.toThrowError( IllegalArgumentError, `"prefix:the-uri" isn't a supported URI.` );
+								.toThrowError( IllegalArgumentError, `"prefix:the-uri" cannot be resolved.` );
 						} )
 					;
 				} );
@@ -657,7 +657,7 @@ describe( module( "carbonldp/Document" ), () => {
 						.then( () => fail( "Should not resolve." ) )
 						.catch( error => {
 							expect( () => { throw error; } )
-								.toThrowError( IllegalArgumentError, `"prefix:the-uri" isn't a supported URI.` );
+								.toThrowError( IllegalArgumentError, `"prefix:the-uri" cannot be resolved.` );
 						} )
 					;
 				} );
@@ -991,7 +991,7 @@ describe( module( "carbonldp/Document" ), () => {
 						.then( () => fail( "Should not resolve." ) )
 						.catch( error => {
 							expect( () => { throw error; } )
-								.toThrowError( IllegalArgumentError, `"prefix:the-uri" isn't a supported URI.` );
+								.toThrowError( IllegalArgumentError, `"prefix:the-uri" cannot be resolved.` );
 						} )
 					;
 				} );
@@ -1327,7 +1327,7 @@ describe( module( "carbonldp/Document" ), () => {
 						.then( () => fail( "Should not resolve." ) )
 						.catch( error => {
 							expect( () => { throw error; } )
-								.toThrowError( IllegalArgumentError, `"prefix:the-uri" isn't a supported URI.` );
+								.toThrowError( IllegalArgumentError, `"prefix:the-uri" cannot be resolved.` );
 						} )
 					;
 				} );
@@ -1662,7 +1662,7 @@ describe( module( "carbonldp/Document" ), () => {
 						.then( () => fail( "Should not resolve." ) )
 						.catch( error => {
 							expect( () => { throw error; } )
-								.toThrowError( IllegalArgumentError, `"prefix:the-uri" isn't a supported URI.` );
+								.toThrowError( IllegalArgumentError, `"prefix:the-uri" cannot be resolved.` );
 						} )
 					;
 				} );
@@ -1997,7 +1997,7 @@ describe( module( "carbonldp/Document" ), () => {
 						.then( () => fail( "Should not resolve." ) )
 						.catch( error => {
 							expect( () => { throw error; } )
-								.toThrowError( IllegalArgumentError, `"prefix:the-uri" isn't a supported URI.` );
+								.toThrowError( IllegalArgumentError, `"prefix:the-uri" cannot be resolved.` );
 						} )
 					;
 				} );
@@ -2332,7 +2332,7 @@ describe( module( "carbonldp/Document" ), () => {
 						.then( () => fail( "Should not resolve." ) )
 						.catch( error => {
 							expect( () => { throw error; } )
-								.toThrowError( IllegalArgumentError, `"prefix:the-uri" isn't a supported URI.` );
+								.toThrowError( IllegalArgumentError, `"prefix:the-uri" cannot be resolved.` );
 						} )
 					;
 				} );

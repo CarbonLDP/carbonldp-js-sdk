@@ -15,6 +15,7 @@ var Errors_1 = require("../Errors");
 var Errors_2 = require("../HTTP/Errors");
 var JSONLD_1 = require("../JSONLD");
 var LDP_1 = require("../LDP");
+var ObjectSchema_1 = require("../ObjectSchema");
 var RDF_1 = require("../RDF");
 var Registry_1 = require("./Registry");
 var RegistryService_1 = require("./RegistryService");
@@ -37,19 +38,17 @@ var DocumentsRegistry = (function (_super) {
         return _super.prototype._getLocalID.call(this, id);
     };
     DocumentsRegistry.prototype._requestURLFor = function (pointer, uri) {
-        uri = uri ? RDF_1.URI.resolve(pointer.id, uri) : pointer.id;
-        if (RDF_1.URI.isBNodeID(uri))
-            throw new Errors_1.IllegalArgumentError("\"" + uri + "\" (Blank Node) can't be fetched directly.");
-        if (RDF_1.URI.hasFragment(uri))
-            throw new Errors_1.IllegalArgumentError("\"" + uri + "\" (Named Fragment) can't be fetched directly.");
-        var localIRI = this._getLocalID(uri);
-        if (localIRI === null)
-            throw new Errors_1.IllegalArgumentError("\"" + uri + "\" is outside " + (this._context ? "\"" + this._context.baseURI + "\" " : "") + "scope.");
+        if (uri && this._context) {
+            var schema = this.getGeneralSchema();
+            uri = ObjectSchema_1.ObjectSchemaUtils.resolveURI(uri, schema);
+        }
+        var id = uri ? RDF_1.URI.resolve(pointer.id, uri) : pointer.id;
+        var localIRI = this._getLocalID(id);
         if (this._context)
             return RDF_1.URI.resolve(this._context.baseURI, localIRI);
-        if (RDF_1.URI.isRelative(uri))
-            throw new Errors_1.IllegalArgumentError("\"" + uri + "\" isn't a supported URI.");
-        return localIRI;
+        if (RDF_1.URI.isRelative(id))
+            throw new Errors_1.IllegalArgumentError("\"" + id + "\" cannot be resolved.");
+        return id;
     };
     DocumentsRegistry.prototype._parseErrorResponse = function (response) {
         var _this = this;
@@ -65,7 +64,7 @@ var DocumentsRegistry = (function (_super) {
             .then(function (freeNodes) {
             var freeResources = _this._parseFreeNodes(freeNodes);
             var errorResponses = freeResources
-                .getPointers()
+                .getPointers(true)
                 .filter(LDP_1.ErrorResponse.is);
             if (errorResponses.length === 0)
                 return Promise.reject(new Errors_1.IllegalArgumentError("The response string does not contains a c:ErrorResponse."));

@@ -9,7 +9,7 @@ import { Registry } from "./Registry";
 export declare class RegistryService<M extends Pointer, C extends AbstractContext<M, any> = undefined> implements Registry<M>, ObjectSchemaResolver {
     readonly _context: C | undefined;
     readonly _registry: Registry<any> | undefined;
-    readonly _model: ModelDecorator<M>;
+    protected readonly _model: ModelDecorator<M>;
     readonly _resourcesMap: Map<string, M>;
     protected readonly _documentDecorators: Map<string, (object: object) => object>;
     readonly documentDecorators: Map<string, (object: object) => object>;
@@ -17,11 +17,10 @@ export declare class RegistryService<M extends Pointer, C extends AbstractContex
     readonly jsonldConverter: JSONLDConverter;
     inScope: Registry<M>["inScope"];
     hasPointer: Registry<M>["hasPointer"];
+    getPointer: Registry<M>["getPointer"];
     getPointers: Registry<M>["getPointers"];
     removePointer: Registry<M>["removePointer"];
     constructor(model: ModelDecorator<M>, context?: C);
-    getPointer(id: string): Pointer;
-    getPointer(id: string, local: true): M;
     _getLocalID(id: string): string;
     _register<T extends object>(base: T & {
         id: string;

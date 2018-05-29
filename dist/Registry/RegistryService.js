@@ -12,6 +12,7 @@ var RegistryService = (function () {
     function RegistryService(model, context) {
         this.inScope = Registry_1.Registry.PROTOTYPE.inScope;
         this.hasPointer = Registry_1.Registry.PROTOTYPE.hasPointer;
+        this.getPointer = Registry_1.Registry.PROTOTYPE.getPointer;
         this.getPointers = Registry_1.Registry.PROTOTYPE.getPointers;
         this.removePointer = Registry_1.Registry.PROTOTYPE.removePointer;
         this._context = context;
@@ -39,14 +40,6 @@ var RegistryService = (function () {
         enumerable: true,
         configurable: true
     });
-    RegistryService.prototype.getPointer = function (id, local) {
-        var pointer = Registry_1.Registry.PROTOTYPE.getPointer.call(this, id, local);
-        if (!this._context)
-            return pointer;
-        pointer.id = ObjectSchema_1.ObjectSchemaUtils
-            .resolveURI(pointer.id, this._context.getObjectSchema(), { base: true });
-        return pointer;
-    };
     RegistryService.prototype._getLocalID = function (id) {
         if (!this._context)
             return id;
@@ -58,7 +51,13 @@ var RegistryService = (function () {
     };
     RegistryService.prototype._register = function (base) {
         var pointer = Registry_1.Registry.PROTOTYPE._register.call(this, base);
-        return this._model.decorate(pointer);
+        var resource = this._model.decorate(pointer);
+        if (!this._context)
+            return resource;
+        var schema = this._context.getObjectSchema();
+        resource.id = ObjectSchema_1.ObjectSchemaUtils
+            .resolveURI(resource.id, schema, { base: true });
+        return resource;
     };
     RegistryService.prototype.getGeneralSchema = function () {
         if (!this._context)

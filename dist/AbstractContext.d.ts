@@ -4,7 +4,7 @@ import { DigestedObjectSchema, ObjectSchema } from "./ObjectSchema";
 import { Pointer } from "./Pointer";
 import { RegistryService } from "./Registry";
 import { ContextSettings } from "./Settings";
-export declare abstract class AbstractContext<M extends Pointer, P extends AbstractContext<any, any>> implements Context {
+export declare abstract class AbstractContext<M extends Pointer, P extends AbstractContext<any, any> = undefined> implements Context {
     readonly abstract registry: RegistryService<M, AbstractContext<M, P>>;
     readonly abstract auth: Authenticator<any> | undefined;
     protected abstract _baseURI: string;

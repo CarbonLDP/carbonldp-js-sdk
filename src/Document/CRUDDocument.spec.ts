@@ -227,7 +227,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 					.get( "_:1" )
 					.catch( error => {
 						expect( () => { throw error; } )
-							.toThrowError( IllegalArgumentError, `"_:1" (Blank Node) can't be fetched directly.` );
+							.toThrowError( IllegalArgumentError, `"_:1" is out of scope.` );
 					} )
 				;
 			} );
@@ -239,7 +239,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 					.get( "#fragment" )
 					.catch( error => {
 						expect( () => { throw error; } )
-							.toThrowError( IllegalArgumentError, `"https://example.com/#fragment" (Named Fragment) can't be fetched directly.` );
+							.toThrowError( IllegalArgumentError, `"https://example.com/#fragment" is out of scope.` );
 					} )
 				;
 			} );
@@ -923,7 +923,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 					.exists( "_:1" )
 					.catch( error => {
 						expect( () => { throw error; } )
-							.toThrowError( IllegalArgumentError, `"_:1" (Blank Node) can't be fetched directly.` );
+							.toThrowError( IllegalArgumentError, `"_:1" is out of scope.` );
 					} )
 				;
 			} );
@@ -935,7 +935,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 					.exists( "#fragment" )
 					.catch( error => {
 						expect( () => { throw error; } )
-							.toThrowError( IllegalArgumentError, `"https://example.com/#fragment" (Named Fragment) can't be fetched directly.` );
+							.toThrowError( IllegalArgumentError, `"https://example.com/#fragment" is out of scope.` );
 					} )
 				;
 			} );
@@ -1231,7 +1231,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 					.create( "_:1", {} )
 					.catch( error => {
 						expect( () => { throw error; } )
-							.toThrowError( IllegalArgumentError, `"_:1" (Blank Node) can't be fetched directly.` );
+							.toThrowError( IllegalArgumentError, `"_:1" is out of scope.` );
 					} )
 				;
 			} );
@@ -1243,7 +1243,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 					.create( "#fragment", {} )
 					.catch( error => {
 						expect( () => { throw error; } )
-							.toThrowError( IllegalArgumentError, `"https://example.com/#fragment" (Named Fragment) can't be fetched directly.` );
+							.toThrowError( IllegalArgumentError, `"https://example.com/#fragment" is out of scope.` );
 					} )
 				;
 			} );
@@ -2164,7 +2164,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 					.createAndRetrieve( "_:1", {} )
 					.catch( error => {
 						expect( () => { throw error; } )
-							.toThrowError( IllegalArgumentError, `"_:1" (Blank Node) can't be fetched directly.` );
+							.toThrowError( IllegalArgumentError, `"_:1" is out of scope.` );
 					} )
 				;
 			} );
@@ -2176,7 +2176,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 					.createAndRetrieve( "#fragment", {} )
 					.catch( error => {
 						expect( () => { throw error; } )
-							.toThrowError( IllegalArgumentError, `"https://example.com/#fragment" (Named Fragment) can't be fetched directly.` );
+							.toThrowError( IllegalArgumentError, `"https://example.com/#fragment" is out of scope.` );
 					} )
 				;
 			} );
@@ -3233,7 +3233,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 					.createAccessPoint( "_:1", { hasMemberRelation: "relation" } )
 					.catch( error => {
 						expect( () => { throw error; } )
-							.toThrowError( IllegalArgumentError, `"_:1" (Blank Node) can't be fetched directly.` );
+							.toThrowError( IllegalArgumentError, `"_:1" is out of scope.` );
 					} )
 				;
 			} );
@@ -3245,7 +3245,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 					.createAccessPoint( "#fragment", { hasMemberRelation: "relation" } )
 					.catch( error => {
 						expect( () => { throw error; } )
-							.toThrowError( IllegalArgumentError, `"https://example.com/#fragment" (Named Fragment) can't be fetched directly.` );
+							.toThrowError( IllegalArgumentError, `"https://example.com/#fragment" is out of scope.` );
 					} )
 				;
 			} );
@@ -3865,7 +3865,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 					.createAccessPoints( "_:1", [ { hasMemberRelation: "relation" } ] )
 					.catch( error => {
 						expect( () => { throw error; } )
-							.toThrowError( IllegalArgumentError, `"_:1" (Blank Node) can't be fetched directly.` );
+							.toThrowError( IllegalArgumentError, `"_:1" is out of scope.` );
 					} )
 				;
 			} );
@@ -3877,7 +3877,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 					.createAccessPoints( "#fragment", [ { hasMemberRelation: "relation" } ] )
 					.catch( error => {
 						expect( () => { throw error; } )
-							.toThrowError( IllegalArgumentError, `"https://example.com/#fragment" (Named Fragment) can't be fetched directly.` );
+							.toThrowError( IllegalArgumentError, `"https://example.com/#fragment" is out of scope.` );
 					} )
 				;
 			} );
@@ -4568,7 +4568,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 					.createAccessPointAndRetrieve( "_:1", { hasMemberRelation: "relation" } )
 					.catch( error => {
 						expect( () => { throw error; } )
-							.toThrowError( IllegalArgumentError, `"_:1" (Blank Node) can't be fetched directly.` );
+							.toThrowError( IllegalArgumentError, `"_:1" is out of scope.` );
 					} )
 				;
 			} );
@@ -4580,7 +4580,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 					.createAccessPointAndRetrieve( "#fragment", { hasMemberRelation: "relation" } )
 					.catch( error => {
 						expect( () => { throw error; } )
-							.toThrowError( IllegalArgumentError, `"https://example.com/#fragment" (Named Fragment) can't be fetched directly.` );
+							.toThrowError( IllegalArgumentError, `"https://example.com/#fragment" is out of scope.` );
 					} )
 				;
 			} );
@@ -5321,7 +5321,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 					.createAccessPointsAndRetrieve( "_:1", [ { hasMemberRelation: "relation" } ] )
 					.catch( error => {
 						expect( () => { throw error; } )
-							.toThrowError( IllegalArgumentError, `"_:1" (Blank Node) can't be fetched directly.` );
+							.toThrowError( IllegalArgumentError, `"_:1" is out of scope.` );
 					} )
 				;
 			} );
@@ -5333,7 +5333,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 					.createAccessPointsAndRetrieve( "#fragment", [ { hasMemberRelation: "relation" } ] )
 					.catch( error => {
 						expect( () => { throw error; } )
-							.toThrowError( IllegalArgumentError, `"https://example.com/#fragment" (Named Fragment) can't be fetched directly.` );
+							.toThrowError( IllegalArgumentError, `"https://example.com/#fragment" is out of scope.` );
 					} )
 				;
 			} );
@@ -5989,7 +5989,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 					.save()
 					.catch( error => {
 						expect( () => { throw error; } )
-							.toThrowError( IllegalArgumentError, `"_:1" (Blank Node) can't be fetched directly.` );
+							.toThrowError( IllegalArgumentError, `"_:1" is out of scope.` );
 					} )
 				;
 			} );
@@ -6001,7 +6001,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 					.save()
 					.catch( error => {
 						expect( () => { throw error; } )
-							.toThrowError( IllegalArgumentError, `"https://example.com/#fragment" (Named Fragment) can't be fetched directly.` );
+							.toThrowError( IllegalArgumentError, `"https://example.com/#fragment" is out of scope.` );
 					} )
 				;
 			} );
@@ -6393,7 +6393,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 					.saveAndRefresh()
 					.catch( error => {
 						expect( () => { throw error; } )
-							.toThrowError( IllegalArgumentError, `"_:1" (Blank Node) can't be fetched directly.` );
+							.toThrowError( IllegalArgumentError, `"_:1" is out of scope.` );
 					} )
 				;
 			} );
@@ -6405,7 +6405,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 					.saveAndRefresh()
 					.catch( error => {
 						expect( () => { throw error; } )
-							.toThrowError( IllegalArgumentError, `"https://example.com/#fragment" (Named Fragment) can't be fetched directly.` );
+							.toThrowError( IllegalArgumentError, `"https://example.com/#fragment" is out of scope.` );
 					} )
 				;
 			} );
@@ -6853,7 +6853,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 					.refresh()
 					.catch( error => {
 						expect( () => { throw error; } )
-							.toThrowError( IllegalArgumentError, `"_:1" (Blank Node) can't be fetched directly.` );
+							.toThrowError( IllegalArgumentError, `"_:1" is out of scope.` );
 					} )
 				;
 			} );
@@ -6865,7 +6865,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 					.refresh()
 					.catch( error => {
 						expect( () => { throw error; } )
-							.toThrowError( IllegalArgumentError, `"https://example.com/#fragment" (Named Fragment) can't be fetched directly.` );
+							.toThrowError( IllegalArgumentError, `"https://example.com/#fragment" is out of scope.` );
 					} )
 				;
 			} );
@@ -7270,7 +7270,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 					.delete( "_:1" )
 					.catch( error => {
 						expect( () => { throw error; } )
-							.toThrowError( IllegalArgumentError, `"_:1" (Blank Node) can't be fetched directly.` );
+							.toThrowError( IllegalArgumentError, `"_:1" is out of scope.` );
 					} )
 				;
 			} );
@@ -7282,7 +7282,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 					.delete( "#fragment" )
 					.catch( error => {
 						expect( () => { throw error; } )
-							.toThrowError( IllegalArgumentError, `"https://example.com/#fragment" (Named Fragment) can't be fetched directly.` );
+							.toThrowError( IllegalArgumentError, `"https://example.com/#fragment" is out of scope.` );
 					} )
 				;
 			} );

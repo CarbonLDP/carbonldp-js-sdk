@@ -26,11 +26,25 @@ exports.ErrorResponse = {
             && value.hasType(exports.ErrorResponse.TYPE);
     },
     getMessage: function (errorResponse) {
-        return errorResponse
-            .errors
-            .map(function (error) { return error.errorMessage; })
+        var errors = getErrors(errorResponse);
+        return errors
+            .map(getErrorMessage)
             .join(", ");
     },
 };
+function getErrors(errorResponse) {
+    if (errorResponse.errors && errorResponse.errors.length)
+        return errorResponse.errors;
+    if (!errorResponse[C_1.C.error])
+        return [];
+    if (Array.isArray(errorResponse[C_1.C.error]))
+        return errorResponse[C_1.C.error];
+    return [errorResponse[C_1.C.error]];
+}
+function getErrorMessage(error) {
+    if ("errorMessage" in error)
+        return error.errorMessage;
+    return error[C_1.C.errorMessage];
+}
 
 //# sourceMappingURL=ErrorResponse.js.map

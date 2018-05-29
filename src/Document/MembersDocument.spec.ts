@@ -192,7 +192,7 @@ describe( module( "carbonldp/Document" ), () => {
 						.addMember( "_:1", "member/" )
 						.catch( error => {
 							expect( () => { throw error; } )
-								.toThrowError( IllegalArgumentError, `"_:1" (Blank Node) can't be fetched directly.` );
+								.toThrowError( IllegalArgumentError, `"_:1" is out of scope.` );
 						} )
 					;
 				} );
@@ -202,7 +202,7 @@ describe( module( "carbonldp/Document" ), () => {
 						.addMember( "#fragment", "member/" )
 						.catch( error => {
 							expect( () => { throw error; } )
-								.toThrowError( IllegalArgumentError, `"https://example.com/#fragment" (Named Fragment) can't be fetched directly.` );
+								.toThrowError( IllegalArgumentError, `"https://example.com/#fragment" is out of scope.` );
 						} )
 					;
 				} );
@@ -578,7 +578,7 @@ describe( module( "carbonldp/Document" ), () => {
 						.addMembers( "_:1", [] )
 						.catch( error => {
 							expect( () => { throw error; } )
-								.toThrowError( IllegalArgumentError, `"_:1" (Blank Node) can't be fetched directly.` );
+								.toThrowError( IllegalArgumentError, `"_:1" is out of scope.` );
 						} )
 					;
 				} );
@@ -588,7 +588,7 @@ describe( module( "carbonldp/Document" ), () => {
 						.addMembers( "#fragment", [] )
 						.catch( error => {
 							expect( () => { throw error; } )
-								.toThrowError( IllegalArgumentError, `"https://example.com/#fragment" (Named Fragment) can't be fetched directly.` );
+								.toThrowError( IllegalArgumentError, `"https://example.com/#fragment" is out of scope.` );
 						} )
 					;
 				} );
@@ -1033,7 +1033,7 @@ describe( module( "carbonldp/Document" ), () => {
 						.removeMember( "_:1", "member/" )
 						.catch( error => {
 							expect( () => { throw error; } )
-								.toThrowError( IllegalArgumentError, `"_:1" (Blank Node) can't be fetched directly.` );
+								.toThrowError( IllegalArgumentError, `"_:1" is out of scope.` );
 						} )
 					;
 				} );
@@ -1043,7 +1043,7 @@ describe( module( "carbonldp/Document" ), () => {
 						.removeMember( "#fragment", "member/" )
 						.catch( error => {
 							expect( () => { throw error; } )
-								.toThrowError( IllegalArgumentError, `"https://example.com/#fragment" (Named Fragment) can't be fetched directly.` );
+								.toThrowError( IllegalArgumentError, `"https://example.com/#fragment" is out of scope.` );
 						} )
 					;
 				} );
@@ -1423,7 +1423,7 @@ describe( module( "carbonldp/Document" ), () => {
 						.removeMembers( "_:1", [] )
 						.catch( error => {
 							expect( () => { throw error; } )
-								.toThrowError( IllegalArgumentError, `"_:1" (Blank Node) can't be fetched directly.` );
+								.toThrowError( IllegalArgumentError, `"_:1" is out of scope.` );
 						} )
 					;
 				} );
@@ -1433,7 +1433,7 @@ describe( module( "carbonldp/Document" ), () => {
 						.removeMembers( "#fragment", [] )
 						.catch( error => {
 							expect( () => { throw error; } )
-								.toThrowError( IllegalArgumentError, `"https://example.com/#fragment" (Named Fragment) can't be fetched directly.` );
+								.toThrowError( IllegalArgumentError, `"https://example.com/#fragment" is out of scope.` );
 						} )
 					;
 				} );
@@ -1880,7 +1880,7 @@ describe( module( "carbonldp/Document" ), () => {
 						.removeAllMembers( "_:1" )
 						.catch( error => {
 							expect( () => { throw error; } )
-								.toThrowError( IllegalArgumentError, `"_:1" (Blank Node) can't be fetched directly.` );
+								.toThrowError( IllegalArgumentError, `"_:1" is out of scope.` );
 						} )
 					;
 				} );
@@ -1890,7 +1890,7 @@ describe( module( "carbonldp/Document" ), () => {
 						.removeAllMembers( "#fragment" )
 						.catch( error => {
 							expect( () => { throw error; } )
-								.toThrowError( IllegalArgumentError, `"https://example.com/#fragment" (Named Fragment) can't be fetched directly.` );
+								.toThrowError( IllegalArgumentError, `"https://example.com/#fragment" is out of scope.` );
 						} )
 					;
 				} );

@@ -23,7 +23,7 @@ import {
 } from "./Utils";
 
 
-export abstract class AbstractContext<M extends Pointer, P extends AbstractContext<any, any>> implements Context {
+export abstract class AbstractContext<M extends Pointer, P extends AbstractContext<any, any> = undefined> implements Context {
 	abstract readonly registry:RegistryService<M, AbstractContext<M, P>>;
 	abstract readonly auth:Authenticator<any> | undefined;
 

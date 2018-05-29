@@ -35,7 +35,7 @@ export class RegistryService<M extends Pointer, C extends AbstractContext<M, any
 			;
 	}
 
-	readonly _model:ModelDecorator<M>;
+	protected readonly _model:ModelDecorator<M>;
 	readonly _resourcesMap:Map<string, M>;
 
 	protected readonly _documentDecorators:Map<string, ( object:object ) => object>;
@@ -48,6 +48,7 @@ export class RegistryService<M extends Pointer, C extends AbstractContext<M, any
 	inScope:Registry<M>[ "inScope" ] = Registry.PROTOTYPE.inScope;
 
 	hasPointer:Registry<M>[ "hasPointer" ] = Registry.PROTOTYPE.hasPointer;
+	getPointer:Registry<M>[ "getPointer" ] = Registry.PROTOTYPE.getPointer as Registry<M>[ "getPointer" ];
 	getPointers:Registry<M>[ "getPointers" ] = Registry.PROTOTYPE.getPointers as Registry<M>[ "getPointers" ];
 	removePointer:Registry<M>[ "removePointer" ] = Registry.PROTOTYPE.removePointer;
 
@@ -60,19 +61,6 @@ export class RegistryService<M extends Pointer, C extends AbstractContext<M, any
 
 		this._documentDecorators = MapUtils.extend( new Map(), context && context.parentContext && context.parentContext.registry.documentDecorators );
 		this._jsonldConverter = new JSONLDConverter( context && context.parentContext && context.parentContext.registry.jsonldConverter.literalSerializers );
-	}
-
-
-	getPointer( id:string ):Pointer;
-	getPointer( id:string, local:true ):M;
-	getPointer( id:string, local?:true ):any {
-		const pointer:Pointer | M = Registry.PROTOTYPE.getPointer.call( this, id, local );
-		if( ! this._context ) return pointer;
-
-		pointer.id = ObjectSchemaUtils
-			.resolveURI( pointer.id, this._context.getObjectSchema(), { base: true } );
-
-		return pointer;
 	}
 
 
@@ -90,7 +78,15 @@ export class RegistryService<M extends Pointer, C extends AbstractContext<M, any
 
 	_register<T extends object>( base:T & { id:string } ):T & M {
 		const pointer:T & Pointer = Registry.PROTOTYPE._register.call( this, base );
-		return this._model.decorate( pointer );
+		const resource:T & M = this._model.decorate( pointer );
+
+		if( ! this._context ) return resource;
+
+		const schema:DigestedObjectSchema = this._context.getObjectSchema();
+		resource.id = ObjectSchemaUtils
+			.resolveURI( resource.id, schema, { base: true } );
+
+		return resource;
 	}
 
 
