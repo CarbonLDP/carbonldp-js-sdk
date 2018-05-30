@@ -159,7 +159,6 @@ describe( module( "carbonldp/Fragment" ), ():void => {
 
 			it( "should fill empty id when no provided", ():void => {
 				const fragment:TransientFragment = TransientFragment.createFrom( {
-					_document: document,
 				} );
 
 				expect( fragment.id ).toBe( "" );
@@ -168,7 +167,6 @@ describe( module( "carbonldp/Fragment" ), ():void => {
 			it( "should maintain id when provided", ():void => {
 				const fragment:TransientFragment = TransientFragment.createFrom( {
 					id: "#fragment",
-					_document: document,
 				} );
 
 				expect( fragment.id ).toBe( "#fragment" );
@@ -177,8 +175,8 @@ describe( module( "carbonldp/Fragment" ), ():void => {
 			it( "should call TransientFragment.decorate", ():void => {
 				const spy:jasmine.Spy = spyOn( TransientFragment, "decorate" );
 
-				TransientFragment.createFrom( { the: "fragment", _document: document } );
-				expect( spy ).toHaveBeenCalledWith( { the: "fragment", _document: document } );
+				TransientFragment.createFrom( { the: "fragment" } );
+				expect( spy ).toHaveBeenCalledWith( { the: "fragment" } );
 			} );
 
 			it( "should return same reference", ():void => {
