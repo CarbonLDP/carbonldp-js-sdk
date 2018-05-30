@@ -14,7 +14,7 @@ var RDF_1 = require("../RDF");
 var Resource_1 = require("../Resource");
 var Utils_1 = require("../Utils");
 var Vocabularies_1 = require("../Vocabularies");
-var PersistedDocument_1 = require("./PersistedDocument");
+var BasePersistedDocument_1 = require("./BasePersistedDocument");
 var TransientDocument_1 = require("./TransientDocument");
 function getTargetID(uri, response) {
     var locationHeader = response.getHeader("Content-Location");
@@ -72,7 +72,7 @@ function getFullResource(registry, uri, requestOptions) {
         var eTag = response.getETag();
         return parseRDFDocument(registry, rdfDocument, eTag);
     })
-        .catch(registry._parseErrorResponse.bind(registry));
+        .catch(registry._parseErrorFromResponse.bind(registry));
 }
 function applyResponseMetadata(registry, freeNodes) {
     if (!freeNodes.length)
@@ -142,7 +142,7 @@ function persistResource(registry, parentURI, slug, resource, requestOptions) {
     })
         .catch(function (error) {
         delete resource["__CarbonLDP_persisting__"];
-        return registry._parseErrorResponse(error);
+        return registry._parseErrorFromResponse(error);
     });
 }
 function persistChild(registry, parentURI, requestOptions, child, slug) {
@@ -169,7 +169,8 @@ function createChildren(retrievalType, repository, uriOrChildren, childrenOrSlug
             HTTP_1.RequestUtils.isOptions(slugsOrOptions) ?
                 slugsOrOptions :
                 requestOptions ? requestOptions : {};
-        var iri = registry._requestURLFor(repository, Utils_1.isString(uriOrChildren) ? uriOrChildren : void 0);
+        var uri = Utils_1.isString(uriOrChildren) ? uriOrChildren : void 0;
+        var url = HTTP_1.RequestUtils.getRequestURLFor(registry, repository, uri);
         var slugs = Utils_1.isString(childrenOrSlugsOrOptions) ?
             childrenOrSlugsOrOptions :
             Utils_1.isString(slugsOrOptions) || Array.isArray(slugsOrOptions) ?
@@ -182,7 +183,7 @@ function createChildren(retrievalType, repository, uriOrChildren, childrenOrSlug
             childrenOrSlugsOrOptions;
         HTTP_1.RequestUtils.setPreferredRetrieval(retrievalType, requestOptions);
         if (!Array.isArray(slugs) && !Array.isArray(children))
-            return persistChild(registry, iri, requestOptions, children, slugs);
+            return persistChild(registry, url, requestOptions, children, slugs);
         var slugsLength = Array.isArray(slugs) ? slugs.length : 0;
         var childrenLength = Array.isArray(children) ? children.length : 0;
         var total = Math.max(slugsLength, childrenLength);
@@ -191,7 +192,7 @@ function createChildren(retrievalType, repository, uriOrChildren, childrenOrSlug
             var cloneOptions = HTTP_1.RequestUtils.cloneOptions(requestOptions);
             var child = index < childrenLength ? children[index] : void 0;
             var slug = index < slugsLength ? slugs[index] : void 0;
-            promises[index] = persistChild(registry, iri, cloneOptions, child, slug);
+            promises[index] = persistChild(registry, url, cloneOptions, child, slug);
         }
         return Promise.all(promises);
     });
@@ -218,8 +219,8 @@ function createAccessPoint(retrievalType, repository, uriOrAccessPoint, accessPo
     if (requestOptions === void 0) { requestOptions = {}; }
     return Utils_1.promiseMethod(function () {
         var registry = getRegistry(repository);
-        var iri = registry
-            ._requestURLFor(repository, Utils_1.isString(uriOrAccessPoint) ? uriOrAccessPoint : void 0);
+        var uri = Utils_1.isString(uriOrAccessPoint) ? uriOrAccessPoint : void 0;
+        var url = HTTP_1.RequestUtils.getRequestURLFor(registry, repository, uri);
         var accessPoint = Utils_1.isObject(uriOrAccessPoint) ? uriOrAccessPoint :
             accessPointOrSlugOrRequestOptions;
         var slug = Utils_1.isString(accessPointOrSlugOrRequestOptions) ? accessPointOrSlugOrRequestOptions :
@@ -227,15 +228,15 @@ function createAccessPoint(retrievalType, repository, uriOrAccessPoint, accessPo
         requestOptions = HTTP_1.RequestUtils.isOptions(accessPointOrSlugOrRequestOptions) ? accessPointOrSlugOrRequestOptions :
             Utils_1.isObject(slugOrRequestOptions) ? slugOrRequestOptions : requestOptions;
         HTTP_1.RequestUtils.setPreferredRetrieval(retrievalType, requestOptions);
-        return persistAccessPoint(registry, iri, requestOptions, accessPoint, slug);
+        return persistAccessPoint(registry, url, requestOptions, accessPoint, slug);
     });
 }
 function createAccessPoints(retrievalType, repository, uriOrAccessPoints, accessPointOrSlugsOrRequestOptions, slugsOrRequestOptions, requestOptions) {
     if (requestOptions === void 0) { requestOptions = {}; }
     return Utils_1.promiseMethod(function () {
         var registry = getRegistry(repository);
-        var iri = Utils_1.isString(uriOrAccessPoints) ?
-            registry._requestURLFor(repository, uriOrAccessPoints) : repository.id;
+        var uri = Utils_1.isString(uriOrAccessPoints) ? uriOrAccessPoints : void 0;
+        var url = HTTP_1.RequestUtils.getRequestURLFor(registry, repository, uri);
         var accessPoints = Array.isArray(uriOrAccessPoints) ? uriOrAccessPoints :
             accessPointOrSlugsOrRequestOptions;
         var slugs = Array.isArray(accessPointOrSlugsOrRequestOptions) && accessPointOrSlugsOrRequestOptions !== accessPoints ?
@@ -250,22 +251,22 @@ function createAccessPoints(retrievalType, repository, uriOrAccessPoints, access
         for (var index = 0; index < total; ++index) {
             var cloneOptions = HTTP_1.RequestUtils.cloneOptions(requestOptions);
             var slug = index < slugsLength ? slugs[index] : void 0;
-            promises[index] = persistAccessPoint(registry, iri, cloneOptions, accessPoints[index], slug);
+            promises[index] = persistAccessPoint(registry, url, cloneOptions, accessPoints[index], slug);
         }
         return Promise.all(promises);
     });
 }
 function refreshResource(registry, resource, requestOptions) {
-    var uri = registry._requestURLFor(resource);
+    var url = HTTP_1.RequestUtils.getRequestURLFor(registry, resource);
     setDefaultRequestOptions(registry, requestOptions, Vocabularies_1.LDP.RDFSource);
     HTTP_1.RequestUtils.setIfNoneMatchHeader(resource._eTag, requestOptions);
     return HTTP_1.RequestService
-        .get(uri, requestOptions, new RDF_1.RDFDocumentParser())
+        .get(url, requestOptions, new RDF_1.RDFDocumentParser())
         .then(function (_a) {
         var rdfDocuments = _a[0], response = _a[1];
         if (response === null)
             return resource;
-        var rdfDocument = rdfDocuments.find(function (node) { return node["@id"] === uri; });
+        var rdfDocument = rdfDocuments.find(function (node) { return node["@id"] === url; });
         if (rdfDocument === null)
             throw new Errors_2.BadResponseError("No document was returned.", response);
         var eTag = response.getETag();
@@ -274,7 +275,7 @@ function refreshResource(registry, resource, requestOptions) {
         .catch(function (response) {
         if (response.status === 304)
             return resource;
-        return resource._registry._parseErrorResponse(response);
+        return resource._registry._parseErrorFromResponse(response);
     });
 }
 function addResourcePatch(registry, deltaCreator, pointer, current, snapshot) {
@@ -282,7 +283,7 @@ function addResourcePatch(registry, deltaCreator, pointer, current, snapshot) {
     deltaCreator.addResource(schema, pointer.id, snapshot, current);
 }
 function sendPatch(registry, resource, requestOptions) {
-    var uri = registry._requestURLFor(resource);
+    var url = HTTP_1.RequestUtils.getRequestURLFor(registry, resource);
     if (!resource.isDirty())
         return Promise.resolve(resource);
     resource._normalize();
@@ -304,21 +305,22 @@ function sendPatch(registry, resource, requestOptions) {
     });
     var body = deltaCreator.getPatch();
     return HTTP_1.RequestService
-        .patch(uri, body, requestOptions)
+        .patch(url, body, requestOptions)
         .then(function (response) {
         return applyResponseRepresentation(registry, resource, response);
     })
-        .catch(registry._parseErrorResponse.bind(resource));
+        .catch(registry._parseErrorFromResponse.bind(resource));
 }
 var PROTOTYPE = {
     get: function (uriOrOptions, requestOptions) {
         var _this = this;
         return Utils_1.promiseMethod(function () {
             var registry = getRegistry(_this);
-            var iri = registry._requestURLFor(_this, Utils_1.isString(uriOrOptions) ? uriOrOptions : void 0);
+            var uri = Utils_1.isString(uriOrOptions) ? uriOrOptions : void 0;
+            var url = HTTP_1.RequestUtils.getRequestURLFor(registry, _this, uri);
             requestOptions = Utils_1.isObject(uriOrOptions) ? uriOrOptions :
                 requestOptions ? requestOptions : {};
-            return getFullResource(registry, iri, requestOptions);
+            return getFullResource(registry, url, requestOptions);
         });
     },
     resolve: function (requestOptions) {
@@ -326,8 +328,8 @@ var PROTOTYPE = {
         if (requestOptions === void 0) { requestOptions = {}; }
         return Utils_1.promiseMethod(function () {
             var registry = getRegistry(_this);
-            var iri = registry._requestURLFor(_this);
-            return getFullResource(registry, iri, requestOptions);
+            var url = HTTP_1.RequestUtils.getRequestURLFor(registry, _this);
+            return getFullResource(registry, url, requestOptions);
         });
     },
     exists: function (uri, requestOptions) {
@@ -335,15 +337,15 @@ var PROTOTYPE = {
         if (requestOptions === void 0) { requestOptions = {}; }
         return Utils_1.promiseMethod(function () {
             var registry = getRegistry(_this);
-            var iri = registry._requestURLFor(_this, uri);
+            var url = HTTP_1.RequestUtils.getRequestURLFor(registry, _this, uri);
             setDefaultRequestOptions(registry, requestOptions, Vocabularies_1.LDP.RDFSource);
             return HTTP_1.RequestService
-                .head(iri, requestOptions)
+                .head(url, requestOptions)
                 .then(function () { return true; })
                 .catch(function (response) {
                 if (response.status === 404)
                     return false;
-                return registry._parseErrorResponse(response);
+                return registry._parseErrorFromResponse(response);
             });
         });
     },
@@ -403,14 +405,15 @@ var PROTOTYPE = {
         if (requestOptions === void 0) { requestOptions = {}; }
         return Utils_1.promiseMethod(function () {
             var registry = getRegistry(_this);
-            var iri = registry._requestURLFor(_this, Utils_1.isString(uriOrOptions) ? uriOrOptions : "");
+            var uri = Utils_1.isString(uriOrOptions) ? uriOrOptions : void 0;
+            var url = HTTP_1.RequestUtils.getRequestURLFor(registry, _this, uri);
             setDefaultRequestOptions(registry, requestOptions, Vocabularies_1.LDP.RDFSource);
             return HTTP_1.RequestService
-                .delete(iri, requestOptions)
+                .delete(url, requestOptions)
                 .then(function () {
-                _this._registry.removePointer(iri);
+                _this._registry.removePointer(url);
             })
-                .catch(_this._registry._parseErrorResponse.bind(_this));
+                .catch(_this._registry._parseErrorFromResponse.bind(_this));
         });
     },
 };
@@ -425,13 +428,13 @@ exports.CRUDDocument = {
         if (exports.CRUDDocument.isDecorated(object))
             return object;
         var resource = core_1.ModelDecorator
-            .decorateMultiple(object, PersistedDocument_1.PersistedDocument);
+            .decorateMultiple(object, BasePersistedDocument_1.BasePersistedDocument);
         return core_1.ModelDecorator
             .definePropertiesFrom(PROTOTYPE, resource);
     },
     is: function (value) {
         return Utils_1.isObject(value)
-            && PersistedDocument_1.PersistedDocument.is(value)
+            && BasePersistedDocument_1.BasePersistedDocument.is(value)
             && exports.CRUDDocument.isDecorated(value);
     },
 };

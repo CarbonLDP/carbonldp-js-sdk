@@ -1,25 +1,32 @@
 import { QueryClause } from "sparqler/clauses";
+import { AbstractContext } from "../AbstractContext";
 import { ModelDecorator } from "../core";
 import { IllegalActionError } from "../Errors";
-import { RequestOptions } from "../HTTP";
-import { DigestedObjectSchema } from "../ObjectSchema";
-import { DocumentsRegistry } from "../Registry";
 import {
-	FinishSPARQLSelect,
-	SPARQLBuilder,
-	SPARQLRawResults,
-	SPARQLSelectResults,
-	SPARQLService,
-} from "../SPARQL";
+	RequestOptions,
+	RequestUtils
+} from "../HTTP";
+import { DigestedObjectSchema } from "../ObjectSchema";
+import { RegistryService } from "../Registry";
+import { TransientResource } from "../Resource";
 import {
 	isObject,
 	PickSelfProps,
 	promiseMethod,
 } from "../Utils";
-import { TransientDocument } from "./TransientDocument";
+import {
+	FinishSPARQLSelect,
+	SPARQLBuilder
+} from "./Builder";
+import { SPARQLRawResults } from "./RawResults";
+import { SPARQLSelectResults } from "./SelectResults";
+import { SPARQLService } from "./Service";
 
 
-export interface SPARQLDocument extends TransientDocument {
+export interface SPARQLDocument extends TransientResource {
+	_registry:RegistryService<SPARQLDocument, AbstractContext<SPARQLDocument, any> | undefined> | undefined;
+
+
 	executeRawASKQuery( uri:string, askQuery:string, requestOptions?:RequestOptions ):Promise<SPARQLRawResults>;
 	executeRawASKQuery( askQuery:string, requestOptions?:RequestOptions ):Promise<SPARQLRawResults>;
 
@@ -49,14 +56,12 @@ export interface SPARQLDocument extends TransientDocument {
 }
 
 
-function getRegistry( repository:SPARQLDocument ):DocumentsRegistry {
+function getRegistry( repository:SPARQLDocument ):RegistryService<SPARQLDocument, AbstractContext<SPARQLDocument> | undefined> {
 	if( repository._registry ) return repository._registry;
 	throw new IllegalActionError( `"${ repository.id }" doesn't support SPARQL requests.` );
 }
 
-function parseParams( this:void, resource:SPARQLDocument, uriOrQuery:string, queryOrOptions?:string | RequestOptions, options:RequestOptions = {} ):{ iri:string | undefined, query:string, options:RequestOptions } {
-	const registry:DocumentsRegistry = getRegistry( resource );
-
+function parseParams( this:void, resource:SPARQLDocument, registry:RegistryService<SPARQLDocument, AbstractContext<SPARQLDocument> | undefined>, uriOrQuery:string, queryOrOptions?:string | RequestOptions, options:RequestOptions = {} ):{ url:string, query:string, options:RequestOptions } {
 	let iri:string | undefined;
 	let query:string = uriOrQuery;
 
@@ -68,100 +73,110 @@ function parseParams( this:void, resource:SPARQLDocument, uriOrQuery:string, que
 	}
 
 
-	iri = registry._requestURLFor( resource, iri );
+	const url:string = RequestUtils.getRequestURLFor( registry, resource, iri );
 
 	if( registry._context && registry._context.auth )
 		registry._context.auth.addAuthentication( options );
 
-	return { iri, query, options };
+	return { url, query, options };
 }
 
-const PROTOTYPE:PickSelfProps<SPARQLDocument, TransientDocument> = {
+const PROTOTYPE:PickSelfProps<SPARQLDocument, TransientResource, "_registry"> = {
+	_registry: void 0,
+
+
 	executeRawASKQuery( this:SPARQLDocument, uriOrQuery:string, queryOrOptions?:string | RequestOptions, requestOptions?:RequestOptions ):Promise<SPARQLRawResults> {
 		return promiseMethod( () => {
-			const { iri, query, options } = parseParams( this, uriOrQuery, queryOrOptions, requestOptions );
+			const registry:RegistryService<SPARQLDocument, AbstractContext<SPARQLDocument> | undefined> = getRegistry( this );
+			const { url, query, options } = parseParams( this, registry, uriOrQuery, queryOrOptions, requestOptions );
 
 			return SPARQLService
-				.executeRawASKQuery( iri, query, options )
+				.executeRawASKQuery( url, query, options )
 				.then( ( [ rawResults ] ) => rawResults )
-				.catch( this._registry._parseErrorResponse.bind( this ) );
+				.catch( registry._parseErrorFromResponse.bind( this ) );
 		} );
 	},
 
 	executeASKQuery( this:SPARQLDocument, uriOrQuery:string, queryOrOptions?:string | RequestOptions, requestOptions?:RequestOptions ):Promise<boolean> {
 		return promiseMethod( () => {
-			const { iri, query, options } = parseParams( this, uriOrQuery, queryOrOptions, requestOptions );
+			const registry:RegistryService<SPARQLDocument, AbstractContext<SPARQLDocument> | undefined> = getRegistry( this );
+			const { url, query, options } = parseParams( this, registry, uriOrQuery, queryOrOptions, requestOptions );
 
 			return SPARQLService
-				.executeASKQuery( iri, query, options )
+				.executeASKQuery( url, query, options )
 				.then( ( [ rawResults ] ) => rawResults )
-				.catch( this._registry._parseErrorResponse.bind( this ) );
+				.catch( registry._parseErrorFromResponse.bind( this ) );
 		} );
 	},
 
 
 	executeRawSELECTQuery( this:SPARQLDocument, uriOrQuery:string, queryOrOptions?:string | RequestOptions, requestOptions?:RequestOptions ):Promise<SPARQLRawResults> {
 		return promiseMethod( () => {
-			const { iri, query, options } = parseParams( this, uriOrQuery, queryOrOptions, requestOptions );
+			const registry:RegistryService<SPARQLDocument, AbstractContext<SPARQLDocument> | undefined> = getRegistry( this );
+			const { url, query, options } = parseParams( this, registry, uriOrQuery, queryOrOptions, requestOptions );
 
 			return SPARQLService
-				.executeRawSELECTQuery( iri, query, options )
+				.executeRawSELECTQuery( url, query, options )
 				.then( ( [ rawResults ] ) => rawResults )
-				.catch( this._registry._parseErrorResponse.bind( this ) );
+				.catch( registry._parseErrorFromResponse.bind( this ) );
 		} );
 	},
 
 	executeSELECTQuery<T extends object>( this:SPARQLDocument, uriOrQuery:string, queryOrOptions?:string | RequestOptions, requestOptions?:RequestOptions ):Promise<SPARQLSelectResults<T>> {
 		return promiseMethod( () => {
-			const { iri, query, options } = parseParams( this, uriOrQuery, queryOrOptions, requestOptions );
+			const registry:RegistryService<SPARQLDocument, AbstractContext<SPARQLDocument> | undefined> = getRegistry( this );
+			const { url, query, options } = parseParams( this, registry, uriOrQuery, queryOrOptions, requestOptions );
 
 			return SPARQLService
-				.executeSELECTQuery<T>( iri, query, this._registry, options )
+				.executeSELECTQuery<T>( url, query, this._registry, options )
 				.then( ( [ selectResults ] ) => selectResults )
-				.catch( this._registry._parseErrorResponse.bind( this ) );
+				.catch( registry._parseErrorFromResponse.bind( this ) );
 		} );
 	},
 
 
 	executeRawCONSTRUCTQuery( this:SPARQLDocument, uriOrQuery:string, queryOrOptions?:string | RequestOptions, requestOptions?:RequestOptions ):Promise<string> {
 		return promiseMethod( () => {
-			const { iri, query, options } = parseParams( this, uriOrQuery, queryOrOptions, requestOptions );
+			const registry:RegistryService<SPARQLDocument, AbstractContext<SPARQLDocument> | undefined> = getRegistry( this );
+			const { url, query, options } = parseParams( this, registry, uriOrQuery, queryOrOptions, requestOptions );
 
 			return SPARQLService
-				.executeRawCONSTRUCTQuery( iri, query, options )
+				.executeRawCONSTRUCTQuery( url, query, options )
 				.then( ( [ strConstruct ] ) => strConstruct )
-				.catch( this._registry._parseErrorResponse.bind( this ) );
+				.catch( registry._parseErrorFromResponse.bind( this ) );
 		} );
 	},
 
 
 	executeRawDESCRIBEQuery( this:SPARQLDocument, uriOrQuery:string, queryOrOptions?:string | RequestOptions, requestOptions?:RequestOptions ):Promise<string> {
 		return promiseMethod( () => {
-			const { iri, query, options } = parseParams( this, uriOrQuery, queryOrOptions, requestOptions );
+			const registry:RegistryService<SPARQLDocument, AbstractContext<SPARQLDocument> | undefined> = getRegistry( this );
+			const { url, query, options } = parseParams( this, registry, uriOrQuery, queryOrOptions, requestOptions );
 
 			return SPARQLService
-				.executeRawDESCRIBEQuery( iri, query, options )
+				.executeRawDESCRIBEQuery( url, query, options )
 				.then( ( [ strDescribe ] ) => strDescribe )
-				.catch( this._registry._parseErrorResponse.bind( this ) );
+				.catch( registry._parseErrorFromResponse.bind( this ) );
 		} );
 	},
 
 
 	executeUPDATE( this:SPARQLDocument, uriOrQuery:string, updateOrOptions?:string | RequestOptions, requestOptions?:RequestOptions ):Promise<void> {
 		return promiseMethod( () => {
-			const { iri, query: update, options } = parseParams( this, uriOrQuery, updateOrOptions, requestOptions );
+			const registry:RegistryService<SPARQLDocument, AbstractContext<SPARQLDocument> | undefined> = getRegistry( this );
+			const { url, query: update, options } = parseParams( this, registry, uriOrQuery, updateOrOptions, requestOptions );
 
 			return SPARQLService
-				.executeUPDATE( iri, update, options )
+				.executeUPDATE( url, update, options )
 				.then( () => {} )
-				.catch( this._registry._parseErrorResponse.bind( this ) );
+				.catch( registry._parseErrorFromResponse.bind( this ) );
 		} );
 	},
 
 
 	sparql( this:SPARQLDocument, uri?:string ):QueryClause<FinishSPARQLSelect> {
-		const registry:DocumentsRegistry = getRegistry( this );
-		const iri:string = registry._requestURLFor( this, uri );
+		const registry:RegistryService<SPARQLDocument, AbstractContext<SPARQLDocument> | undefined> = getRegistry( this );
+		const iri:string = RequestUtils.getRequestURLFor( registry, this, uri );
 
 		const schema:DigestedObjectSchema = registry.getGeneralSchema();
 		let builder:QueryClause<FinishSPARQLSelect> = new SPARQLBuilder( this, iri )
@@ -178,7 +193,7 @@ const PROTOTYPE:PickSelfProps<SPARQLDocument, TransientDocument> = {
 
 
 export interface SPARQLDocumentFactory {
-	PROTOTYPE:PickSelfProps<SPARQLDocument, TransientDocument>;
+	PROTOTYPE:PickSelfProps<SPARQLDocument, TransientResource, "_registry">;
 
 	isDecorated( object:object ):object is SPARQLDocument;
 
@@ -198,8 +213,8 @@ export const SPARQLDocument:SPARQLDocumentFactory = {
 	decorate<T extends object>( object:T ):T & SPARQLDocument {
 		if( SPARQLDocument.isDecorated( object ) ) return object;
 
-		const resource:T & TransientDocument = ModelDecorator
-			.decorateMultiple( object, TransientDocument );
+		const resource:T & TransientResource = ModelDecorator
+			.decorateMultiple( object, TransientResource );
 
 		return ModelDecorator
 			.definePropertiesFrom( PROTOTYPE, resource );

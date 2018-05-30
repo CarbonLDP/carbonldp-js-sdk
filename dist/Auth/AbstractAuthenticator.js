@@ -49,7 +49,7 @@ var AbstractAuthenticator = (function () {
             localOptions.ensureLatest = true;
             return HTTP_1.RequestService
                 .get(metadataURI, localOptions, new JSONLD_1.JSONLDParser())
-                .catch(_this.context.registry._parseErrorResponse);
+                .catch(_this.context.registry._parseErrorFromResponse);
         }).then(function (_a) {
             var rdfData = _a[0], response = _a[1];
             var accessor = _this._parseRDFMetadata(rdfData, response, requestOptions);

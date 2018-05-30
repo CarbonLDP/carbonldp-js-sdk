@@ -1,4 +1,3 @@
-import { defineNonEnumerableProps } from "../../test/helpers/mocks";
 import { CarbonLDP } from "../CarbonLDP";
 import {
 	IllegalActionError,
@@ -7,6 +6,7 @@ import {
 import { Header } from "../HTTP";
 import { Pointer } from "../Pointer";
 import { DocumentsRegistry } from "../Registry";
+import { TransientResource } from "../Resource";
 import {
 	extendsClass,
 	hasSignature,
@@ -20,38 +20,25 @@ import {
 	LDP
 } from "../Vocabularies";
 import { MembersDocument } from "./MembersDocument";
-import { TransientDocument } from "./TransientDocument";
 
 
 function createMock<T extends object>( data?:T & Partial<MembersDocument> ):T & MembersDocument {
-	const _context:CarbonLDP | undefined = data && "_context" in data ?
-		data._context : new CarbonLDP( "https://example.com/" );
-
-	const _registry:DocumentsRegistry = _context ?
-		_context.registry : new DocumentsRegistry();
-
-	const mock:T & MembersDocument = MembersDocument.decorate( Object.assign( {
-		_registry,
-		_context,
+	return MembersDocument.decorate( Object.assign( {
+		_registry: new DocumentsRegistry(),
 		id: "https://example.com/",
 	}, data ) );
-
-	defineNonEnumerableProps( mock );
-	mock._normalize();
-
-	return mock;
 }
 
 
-describe( module( "carbonldp/Document" ), () => {
+describe( module( "carbonldp/Members/MembersDocument" ), () => {
 
 	describe( interfaze(
-		"CarbonLDP.MembersDocument",
+		"CarbonLDP.Members.MembersDocument",
 		"Document that contains methods to apply SPARQL queries."
 	), () => {
 
-		it( extendsClass( "CarbonLDP.TransientDocument" ), () => {
-			const target:TransientDocument = {} as MembersDocument;
+		it( extendsClass( "CarbonLDP.TransientResource" ), () => {
+			const target:TransientResource = {} as MembersDocument;
 			expect( target ).toBeDefined();
 		} );
 
@@ -116,7 +103,7 @@ describe( module( "carbonldp/Document" ), () => {
 				beforeEach( ():void => {
 					context = new CarbonLDP( "https://example.com/" );
 					resource = createMock( {
-						_context: context,
+						_registry: context.registry,
 						id: "https://example.com/",
 					} );
 
@@ -329,7 +316,7 @@ describe( module( "carbonldp/Document" ), () => {
 				} );
 
 				it( "should add authentication header when no IRI", async () => {
-					const spy:jasmine.Spy = spyOn( resource._context.auth, "addAuthentication" );
+					const spy:jasmine.Spy = spyOn( context.auth, "addAuthentication" );
 
 					await resource
 						.addMember( "member/" );
@@ -368,7 +355,7 @@ describe( module( "carbonldp/Document" ), () => {
 				it( "should add authentication header when specified IRI", async () => {
 					stubRequest( "https://example.com/resource/" );
 
-					const spy:jasmine.Spy = spyOn( resource._context.auth, "addAuthentication" );
+					const spy:jasmine.Spy = spyOn( context.auth, "addAuthentication" );
 
 					await resource
 						.addMember( "resource/", "member/" );
@@ -395,7 +382,7 @@ describe( module( "carbonldp/Document" ), () => {
 				it( "should parse error response", async () => {
 					stubRequest( "https://example.com/", { status: 500 } );
 
-					const spy:jasmine.Spy = spyOn( resource._registry, "_parseErrorResponse" )
+					const spy:jasmine.Spy = spyOn( resource._registry, "_parseErrorFromResponse" )
 						.and.callFake( () => Promise.reject( null ) );
 
 					await resource
@@ -502,7 +489,7 @@ describe( module( "carbonldp/Document" ), () => {
 				beforeEach( ():void => {
 					context = new CarbonLDP( "https://example.com/" );
 					resource = createMock( {
-						_context: context,
+						_registry: context.registry,
 						id: "https://example.com/",
 					} );
 
@@ -783,7 +770,7 @@ describe( module( "carbonldp/Document" ), () => {
 				} );
 
 				it( "should add authentication header when no IRI", async () => {
-					const spy:jasmine.Spy = spyOn( resource._context.auth, "addAuthentication" );
+					const spy:jasmine.Spy = spyOn( context.auth, "addAuthentication" );
 
 					await resource
 						.addMembers( [ "member/" ] );
@@ -822,7 +809,7 @@ describe( module( "carbonldp/Document" ), () => {
 				it( "should add authentication header when specified IRI", async () => {
 					stubRequest( "https://example.com/resource/" );
 
-					const spy:jasmine.Spy = spyOn( resource._context.auth, "addAuthentication" );
+					const spy:jasmine.Spy = spyOn( context.auth, "addAuthentication" );
 
 					await resource
 						.addMembers( "resource/", [ "member/" ] );
@@ -849,7 +836,7 @@ describe( module( "carbonldp/Document" ), () => {
 				it( "should parse error response", async () => {
 					stubRequest( "https://example.com/", { status: 500 } );
 
-					const spy:jasmine.Spy = spyOn( resource._registry, "_parseErrorResponse" )
+					const spy:jasmine.Spy = spyOn( resource._registry, "_parseErrorFromResponse" )
 						.and.callFake( () => Promise.reject( null ) );
 
 					await resource
@@ -957,7 +944,7 @@ describe( module( "carbonldp/Document" ), () => {
 				beforeEach( ():void => {
 					context = new CarbonLDP( "https://example.com/" );
 					resource = createMock( {
-						_context: context,
+						_registry: context.registry,
 						id: "https://example.com/",
 					} );
 
@@ -1172,7 +1159,7 @@ describe( module( "carbonldp/Document" ), () => {
 				} );
 
 				it( "should add authentication header when no IRI", async () => {
-					const spy:jasmine.Spy = spyOn( resource._context.auth, "addAuthentication" );
+					const spy:jasmine.Spy = spyOn( context.auth, "addAuthentication" );
 
 					await resource
 						.removeMember( "member/" );
@@ -1213,7 +1200,7 @@ describe( module( "carbonldp/Document" ), () => {
 				it( "should add authentication header when specified IRI", async () => {
 					stubRequest( "https://example.com/resource/" );
 
-					const spy:jasmine.Spy = spyOn( resource._context.auth, "addAuthentication" );
+					const spy:jasmine.Spy = spyOn( context.auth, "addAuthentication" );
 
 					await resource
 						.removeMember( "resource/", "member/" );
@@ -1240,7 +1227,7 @@ describe( module( "carbonldp/Document" ), () => {
 				it( "should parse error response", async () => {
 					stubRequest( "https://example.com/", { status: 500 } );
 
-					const spy:jasmine.Spy = spyOn( resource._registry, "_parseErrorResponse" )
+					const spy:jasmine.Spy = spyOn( resource._registry, "_parseErrorFromResponse" )
 						.and.callFake( () => Promise.reject( null ) );
 
 					await resource
@@ -1347,7 +1334,7 @@ describe( module( "carbonldp/Document" ), () => {
 				beforeEach( ():void => {
 					context = new CarbonLDP( "https://example.com/" );
 					resource = createMock( {
-						_context: context,
+						_registry: context.registry,
 						id: "https://example.com/",
 					} );
 
@@ -1630,7 +1617,7 @@ describe( module( "carbonldp/Document" ), () => {
 				} );
 
 				it( "should add authentication header when no IRI", async () => {
-					const spy:jasmine.Spy = spyOn( resource._context.auth, "addAuthentication" );
+					const spy:jasmine.Spy = spyOn( context.auth, "addAuthentication" );
 
 					await resource
 						.removeMembers( [ "member/" ] );
@@ -1671,7 +1658,7 @@ describe( module( "carbonldp/Document" ), () => {
 				it( "should add authentication header when specified IRI", async () => {
 					stubRequest( "https://example.com/resource/" );
 
-					const spy:jasmine.Spy = spyOn( resource._context.auth, "addAuthentication" );
+					const spy:jasmine.Spy = spyOn( context.auth, "addAuthentication" );
 
 					await resource
 						.removeMembers( "resource/", [ "member/" ] );
@@ -1698,7 +1685,7 @@ describe( module( "carbonldp/Document" ), () => {
 				it( "should parse error response", async () => {
 					stubRequest( "https://example.com/", { status: 500 } );
 
-					const spy:jasmine.Spy = spyOn( resource._registry, "_parseErrorResponse" )
+					const spy:jasmine.Spy = spyOn( resource._registry, "_parseErrorFromResponse" )
 						.and.callFake( () => Promise.reject( null ) );
 
 					await resource
@@ -1804,7 +1791,7 @@ describe( module( "carbonldp/Document" ), () => {
 				beforeEach( ():void => {
 					context = new CarbonLDP( "https://example.com/" );
 					resource = createMock( {
-						_context: context,
+						_registry: context.registry,
 						id: "https://example.com/",
 					} );
 
@@ -1907,7 +1894,7 @@ describe( module( "carbonldp/Document" ), () => {
 
 
 				it( "should NOT send body when no URI", async () => {
-					resource
+					await resource
 						.removeAllMembers();
 
 					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
@@ -1943,7 +1930,7 @@ describe( module( "carbonldp/Document" ), () => {
 				} );
 
 				it( "should add authentication header when no IRI", async () => {
-					const spy:jasmine.Spy = spyOn( resource._context.auth, "addAuthentication" );
+					const spy:jasmine.Spy = spyOn( context.auth, "addAuthentication" );
 
 					await resource
 						.removeAllMembers();
@@ -1988,7 +1975,7 @@ describe( module( "carbonldp/Document" ), () => {
 				it( "should add authentication header when specified IRI", async () => {
 					stubRequest( "https://example.com/resource/" );
 
-					const spy:jasmine.Spy = spyOn( resource._context.auth, "addAuthentication" );
+					const spy:jasmine.Spy = spyOn( context.auth, "addAuthentication" );
 
 					await resource
 						.removeAllMembers();
@@ -2015,7 +2002,7 @@ describe( module( "carbonldp/Document" ), () => {
 				it( "should parse error response", async () => {
 					stubRequest( "https://example.com/", { status: 500 } );
 
-					const spy:jasmine.Spy = spyOn( resource._registry, "_parseErrorResponse" )
+					const spy:jasmine.Spy = spyOn( resource._registry, "_parseErrorFromResponse" )
 						.and.callFake( () => Promise.reject( null ) );
 
 					await resource

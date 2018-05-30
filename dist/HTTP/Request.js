@@ -21,8 +21,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var http_1 = __importDefault(require("http"));
 var https_1 = __importDefault(require("https"));
 var url_1 = __importDefault(require("url"));
+var Errors_1 = require("../Errors");
+var ObjectSchema_1 = require("../ObjectSchema");
+var RDF_1 = require("../RDF");
 var Utils = __importStar(require("./../Utils"));
-var Errors_1 = require("./Errors");
+var Errors_2 = require("./Errors");
 var Header_1 = require("./Header");
 var HTTPMethod_1 = require("./HTTPMethod");
 var Response_1 = require("./Response");
@@ -206,7 +209,7 @@ var RequestService = (function () {
             return sendRequest("GET", url, null, requestOptions)
                 .then(function (noCachedResponse) {
                 if (!_this._contentTypeIsAccepted(requestOptions, response)) {
-                    throw new Errors_1.BadResponseError("The server responded with an unacceptable Content-Type", response);
+                    throw new Errors_2.BadResponseError("The server responded with an unacceptable Content-Type", response);
                 }
                 return noCachedResponse;
             });
@@ -315,6 +318,19 @@ var RequestUtils = (function () {
             options.headers
                 .forEach(function (value, key) { return clone.headers.set(key, new Header_1.Header(value.values.slice())); });
         return clone;
+    };
+    RequestUtils.getRequestURLFor = function (registry, resource, uri) {
+        if (uri && registry._context) {
+            var schema = registry.getGeneralSchema();
+            uri = ObjectSchema_1.ObjectSchemaUtils.resolveURI(uri, schema);
+        }
+        var url = uri ? RDF_1.URI.resolve(resource.id, uri) : resource.id;
+        var localIRI = registry._getLocalID(url);
+        if (registry._context)
+            return RDF_1.URI.resolve(registry._context.baseURI, localIRI);
+        if (RDF_1.URI.isRelative(url))
+            throw new Errors_1.IllegalArgumentError("\"" + url + "\" cannot be used as URL for the request.");
+        return url;
     };
     return RequestUtils;
 }());

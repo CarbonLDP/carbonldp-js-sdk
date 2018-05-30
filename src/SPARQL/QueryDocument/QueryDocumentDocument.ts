@@ -11,53 +11,36 @@ import {
 	ValuesToken,
 	VariableToken,
 } from "sparqler/tokens";
-import { ModelDecorator } from "../core";
+import { ModelDecorator } from "../../core";
+import { Document } from "../../Document";
+import { BasePersistedDocument } from "../../Document/BasePersistedDocument";
+import { CRUDDocument } from "../../Document/CRUDDocument";
 import {
 	IllegalActionError,
 	IllegalArgumentError,
 	IllegalStateError
-} from "../Errors";
-import { FreeResources } from "../FreeResources";
+} from "../../Errors";
+import { FreeResources } from "../../FreeResources";
 import {
 	RequestOptions,
 	RequestUtils
-} from "../HTTP";
+} from "../../HTTP";
 import {
 	JSONLDCompacter,
 	JSONLDParser
-} from "../JSONLD";
+} from "../../JSONLD";
 import {
 	DocumentMetadata,
 	ResponseMetadata
-} from "../LDP";
-import { Pointer } from "../Pointer";
+} from "../../LDP";
+import { Pointer } from "../../Pointer";
 import {
 	RDFDocument,
 	RDFNode,
 	URI
-} from "../RDF/index";
-import { DocumentsRegistry } from "../Registry";
-import { PersistedResource } from "../Resource";
-import { SPARQLService } from "../SPARQL";
-import {
-	PartialMetadata,
-	QueryContext,
-	QueryContextBuilder,
-	QueryContextPartial,
-	QueryDocumentBuilder,
-	QueryDocumentsBuilder,
-	QueryMetadata,
-	QueryProperty,
-	QueryPropertyType
-} from "../SPARQL/QueryDocument";
-import {
-	areDifferentType,
-	createAllPattern,
-	createPropertyPatterns,
-	createTypesPattern,
-	getAllTriples,
-	getPathProperty
-} from "../SPARQL/QueryDocument/Utils";
+} from "../../RDF";
+import { DocumentsRegistry } from "../../Registry";
+import { PersistedResource } from "../../Resource";
 import {
 	isBoolean,
 	isDate,
@@ -67,17 +50,34 @@ import {
 	isString,
 	PickSelfProps,
 	promiseMethod
-} from "../Utils";
+} from "../../Utils";
 import {
 	C,
 	LDP
-} from "../Vocabularies";
-import { CRUDDocument } from "./CRUDDocument";
-import { Document } from "./Document";
-import { PersistedDocument } from "./PersistedDocument";
+} from "../../Vocabularies";
+import { SPARQLService } from "../Service";
+import { PartialMetadata } from "./PartialMetadata";
+import { QueryContext } from "./QueryContext";
+import { QueryContextBuilder } from "./QueryContextBuilder";
+import { QueryContextPartial } from "./QueryContextPartial";
+import { QueryDocumentBuilder } from "./QueryDocumentBuilder";
+import { QueryDocumentsBuilder } from "./QueryDocumentsBuilder";
+import { QueryMetadata } from "./QueryMetadata";
+import {
+	QueryProperty,
+	QueryPropertyType
+} from "./QueryProperty";
+import {
+	areDifferentType,
+	createAllPattern,
+	createPropertyPatterns,
+	createTypesPattern,
+	getAllTriples,
+	getPathProperty
+} from "./Utils";
 
 
-export interface QueryDocumentDocument extends PersistedDocument {
+export interface QueryDocumentDocument extends BasePersistedDocument {
 	get<T extends object>( queryBuilderFn:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<T & Document>;
 	get<T extends object>( requestOptions:RequestOptions, queryBuilderFn:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<T & Document>;
 	get<T extends object>( uri:string, queryBuilderFn:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<T & Document>;
@@ -124,7 +124,7 @@ function getRegistry( repository:QueryDocumentDocument ):DocumentsRegistry {
 }
 
 
-function executePatterns<T extends object>( registry:DocumentsRegistry, uri:string, requestOptions:RequestOptions, queryContext:QueryContext, targetName:string, constructPatterns:PatternToken[], target?:T & QueryDocumentDocument ):Promise<(T & QueryDocumentDocument)[]> {
+function executePatterns<T extends object>( registry:DocumentsRegistry, url:string, requestOptions:RequestOptions, queryContext:QueryContext, targetName:string, constructPatterns:PatternToken[], target?:T & QueryDocumentDocument ):Promise<(T & QueryDocumentDocument)[]> {
 	const metadataVar:VariableToken = queryContext.getVariable( "metadata" );
 	const construct:ConstructToken = new ConstructToken()
 		.addTriple( new SubjectToken( metadataVar )
@@ -149,7 +149,7 @@ function executePatterns<T extends object>( registry:DocumentsRegistry, uri:stri
 	registry._context.auth.addAuthentication( requestOptions );
 
 	return SPARQLService
-		.executeRawCONSTRUCTQuery( uri, query.toString(), requestOptions )
+		.executeRawCONSTRUCTQuery( url, query.toString(), requestOptions )
 		.then( ( [ strConstruct ] ) => strConstruct )
 		.then( ( jsonldString ) => {
 			return new JSONLDParser().parse( jsonldString );
@@ -200,11 +200,11 @@ function executePatterns<T extends object>( registry:DocumentsRegistry, uri:stri
 			return new JSONLDCompacter( registry, targetName, queryContext )
 				.compactDocuments<T & QueryDocumentDocument>( rdfDocuments, targetDocuments );
 		} )
-		.catch( registry._parseErrorResponse.bind( this ) )
+		.catch( registry._parseErrorFromResponse.bind( this ) )
 		;
 }
 
-function executeBuilder<T extends object>( registry:DocumentsRegistry, uri:string, requestOptions:RequestOptions, queryContext:QueryContextBuilder, targetProperty:QueryProperty, queryBuilderFn?:QueryBuilderFn, target?:T & QueryDocumentDocument ):Promise<(T & QueryDocumentDocument)[]> {
+function executeBuilder<T extends object>( registry:DocumentsRegistry, url:string, requestOptions:RequestOptions, queryContext:QueryContextBuilder, targetProperty:QueryProperty, queryBuilderFn?:QueryBuilderFn, target?:T & QueryDocumentDocument ):Promise<(T & QueryDocumentDocument)[]> {
 	const Builder:typeof QueryDocumentBuilder = targetProperty.name === "document" ?
 		QueryDocumentBuilder : QueryDocumentsBuilder;
 	const queryBuilder:QueryDocumentBuilder | QueryDocumentBuilder = new Builder( queryContext, targetProperty );
@@ -220,7 +220,7 @@ function executeBuilder<T extends object>( registry:DocumentsRegistry, uri:strin
 		throw new IllegalArgumentError( "The provided query builder was not returned" );
 
 	const constructPatterns:PatternToken[] = targetProperty.getPatterns();
-	return executePatterns<T>( registry, uri, requestOptions, queryContext, targetProperty.name, constructPatterns, target )
+	return executePatterns<T>( registry, url, requestOptions, queryContext, targetProperty.name, constructPatterns, target )
 		.then( ( documents ) => {
 			if( ! (queryBuilder instanceof QueryDocumentsBuilder && queryBuilder._orderData) )
 				return documents;
@@ -324,13 +324,13 @@ function getPartial<T extends object>( registry:DocumentsRegistry, uri:string, r
 }
 
 function refreshPartial<T extends object>( registry:DocumentsRegistry, resource:QueryDocumentDocument, requestOptions:RequestOptions ):Promise<T & QueryDocumentDocument> {
-	const uri:string = registry._requestURLFor( resource );
+	const url:string = RequestUtils.getRequestURLFor( registry, resource );
 	const queryContext:QueryContextPartial = new QueryContextPartial( resource, registry._context );
 
 	const targetName:string = "document";
 	const constructPatterns:OptionalToken = new OptionalToken()
 		.addPattern( new ValuesToken()
-			.addValues( queryContext.getVariable( targetName ), new IRIToken( uri ) )
+			.addValues( queryContext.getVariable( targetName ), new IRIToken( url ) )
 		)
 	;
 
@@ -338,7 +338,7 @@ function refreshPartial<T extends object>( registry:DocumentsRegistry, resource:
 
 	RequestUtils.setRetrievalPreferences( { include: [ C.PreferDocumentETags ] }, requestOptions );
 
-	return executePatterns<T>( registry, uri, requestOptions, queryContext, targetName, constructPatterns.patterns, resource as any )
+	return executePatterns<T>( registry, url, requestOptions, queryContext, targetName, constructPatterns.patterns, resource as any )
 		.then( ( documents ) => documents[ 0 ] );
 }
 
@@ -346,7 +346,7 @@ function refreshPartial<T extends object>( registry:DocumentsRegistry, resource:
 function executeChildrenBuilder<T extends object>( this:void, repository:QueryDocumentDocument, uri:string | undefined, requestOptions:RequestOptions, queryBuilderFn?:QueryBuilderFn ):Promise<(T & Document)[]> {
 	return promiseMethod( () => {
 		const registry:DocumentsRegistry = getRegistry( repository );
-		uri = registry._requestURLFor( repository, uri );
+		const url:string = RequestUtils.getRequestURLFor( registry, repository, uri );
 
 		const queryContext:QueryContextBuilder = new QueryContextBuilder( registry._context );
 		const childrenProperty:QueryProperty = queryContext
@@ -355,7 +355,7 @@ function executeChildrenBuilder<T extends object>( this:void, repository:QueryDo
 
 		const selectChildren:SelectToken = new SelectToken( "DISTINCT" )
 			.addVariable( childrenProperty.variable )
-			.addPattern( new SubjectToken( queryContext.compactIRI( uri ) )
+			.addPattern( new SubjectToken( queryContext.compactIRI( url ) )
 				.addPredicate( new PredicateToken( queryContext.compactIRI( LDP.contains ) )
 					.addObject( childrenProperty.variable )
 				)
@@ -363,14 +363,14 @@ function executeChildrenBuilder<T extends object>( this:void, repository:QueryDo
 		;
 		childrenProperty.addPattern( selectChildren );
 
-		return executeBuilder<T & Document>( registry, uri, requestOptions, queryContext, childrenProperty, queryBuilderFn );
+		return executeBuilder<T & Document>( registry, url, requestOptions, queryContext, childrenProperty, queryBuilderFn );
 	} );
 }
 
 function executeMembersBuilder<T extends object>( this:void, repository:QueryDocumentDocument, uri:string | undefined, requestOptions:RequestOptions, queryBuilderFn?:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<(T & Document)[]> {
 	return promiseMethod( () => {
 		const registry:DocumentsRegistry = getRegistry( repository );
-		uri = registry._requestURLFor( repository, uri );
+		const url:string = RequestUtils.getRequestURLFor( registry, repository, uri );
 
 		const queryContext:QueryContextBuilder = new QueryContextBuilder( registry._context );
 		const membersProperty:QueryProperty = queryContext
@@ -381,7 +381,7 @@ function executeMembersBuilder<T extends object>( this:void, repository:QueryDoc
 		const hasMemberRelation:VariableToken = queryContext.getVariable( "hasMemberRelation" );
 		const selectMembers:SelectToken = new SelectToken( "DISTINCT" )
 			.addVariable( membersProperty.variable )
-			.addPattern( new SubjectToken( queryContext.compactIRI( uri ) )
+			.addPattern( new SubjectToken( queryContext.compactIRI( url ) )
 				.addPredicate( new PredicateToken( queryContext.compactIRI( LDP.membershipResource ) )
 					.addObject( membershipResource )
 				)
@@ -397,17 +397,18 @@ function executeMembersBuilder<T extends object>( this:void, repository:QueryDoc
 		;
 		membersProperty.addPattern( selectMembers );
 
-		return executeBuilder<T & Document>( registry, uri, requestOptions, queryContext, membersProperty, queryBuilderFn );
+		return executeBuilder<T & Document>( registry, url, requestOptions, queryContext, membersProperty, queryBuilderFn );
 	} );
 }
 
 
-const PROTOTYPE:PickSelfProps<QueryDocumentDocument, PersistedDocument> = {
+const PROTOTYPE:PickSelfProps<QueryDocumentDocument, BasePersistedDocument> = {
 	get<T extends object>( this:QueryDocumentDocument, uriOrOptionsOrQueryBuilderFn:string | RequestOptions | QueryBuilderFn, optionsOrQueryBuilderFn?:RequestOptions | QueryBuilderFn, queryBuilderFn?:QueryBuilderFn ):Promise<T & Document> {
 		return promiseMethod( () => {
 			const registry:DocumentsRegistry = getRegistry( this );
 
-			const iri:string = registry._requestURLFor( this, isString( uriOrOptionsOrQueryBuilderFn ) ? uriOrOptionsOrQueryBuilderFn : void 0 );
+			const uri:string | undefined = isString( uriOrOptionsOrQueryBuilderFn ) ? uriOrOptionsOrQueryBuilderFn : void 0;
+			const url:string = RequestUtils.getRequestURLFor( registry, this, uri );
 
 			const requestOptions:RequestOptions = isObject( uriOrOptionsOrQueryBuilderFn ) ?
 				uriOrOptionsOrQueryBuilderFn : isObject( optionsOrQueryBuilderFn ) ? optionsOrQueryBuilderFn : {};
@@ -415,19 +416,19 @@ const PROTOTYPE:PickSelfProps<QueryDocumentDocument, PersistedDocument> = {
 			queryBuilderFn = isFunction( uriOrOptionsOrQueryBuilderFn ) ? uriOrOptionsOrQueryBuilderFn :
 				isFunction( optionsOrQueryBuilderFn ) ? optionsOrQueryBuilderFn : queryBuilderFn;
 
-			return getPartial<T & Document>( registry, iri, requestOptions, queryBuilderFn );
+			return getPartial<T & Document>( registry, url, requestOptions, queryBuilderFn );
 		} );
 	},
 
 	resolve<T extends object>( this:QueryDocumentDocument, optionsOrQueryBuilderFn:RequestOptions | QueryBuilderFn, queryBuilderFn?:QueryBuilderFn ):Promise<T & Document> {
 		return promiseMethod( () => {
 			const registry:DocumentsRegistry = getRegistry( this );
-			const iri:string = registry._requestURLFor( this );
+			const url:string = RequestUtils.getRequestURLFor( registry, this );
 
 			const requestOptions:RequestOptions = isObject( optionsOrQueryBuilderFn ) ? optionsOrQueryBuilderFn : {};
 			if( isFunction( optionsOrQueryBuilderFn ) ) queryBuilderFn = optionsOrQueryBuilderFn;
 
-			return getPartial<T & Document>( registry, iri, requestOptions, _ => {
+			return getPartial<T & Document>( registry, url, requestOptions, _ => {
 				if( "types" in this ) this.types.forEach( type => _.withType( type ) );
 				return queryBuilderFn.call( void 0, _ );
 			} );
@@ -498,26 +499,26 @@ const PROTOTYPE:PickSelfProps<QueryDocumentDocument, PersistedDocument> = {
 
 
 	listChildren<T extends object>( this:QueryDocumentDocument, uriOrOptions:string | RequestOptions, requestOptions?:RequestOptions ):Promise<(T & Document)[]> {
-		const iri:string = isString( uriOrOptions ) ? uriOrOptions : this.id;
+		const uri:string | undefined = isString( uriOrOptions ) ? uriOrOptions : void 0;
 
 		requestOptions = isObject( uriOrOptions ) ? uriOrOptions :
 			requestOptions ? requestOptions : {};
 
-		return executeChildrenBuilder( this, iri, requestOptions, emptyQueryBuildFn );
+		return executeChildrenBuilder( this, uri, requestOptions, emptyQueryBuildFn );
 	},
 
 	listMembers<T extends object>( this:QueryDocumentDocument, uriOrOptions:string | RequestOptions, requestOptions?:RequestOptions ):Promise<(T & Document)[]> {
-		const iri:string = isString( uriOrOptions ) ? uriOrOptions : this.id;
+		const uri:string | undefined = isString( uriOrOptions ) ? uriOrOptions : void 0;
 
 		requestOptions = isObject( uriOrOptions ) ? uriOrOptions :
 			requestOptions ? requestOptions : {};
 
-		return executeMembersBuilder( this, iri, requestOptions, emptyQueryBuildFn );
+		return executeMembersBuilder( this, uri, requestOptions, emptyQueryBuildFn );
 	},
 };
 
 export interface QueryDocumentDocumentFactory {
-	PROTOTYPE:PickSelfProps<QueryDocumentDocument, PersistedDocument>;
+	PROTOTYPE:PickSelfProps<QueryDocumentDocument, BasePersistedDocument>;
 
 	isDecorated( object:object ):object is QueryDocumentDocument;
 
@@ -537,8 +538,8 @@ export const QueryDocumentDocument:QueryDocumentDocumentFactory = {
 	decorate<T extends object>( object:T ):T & QueryDocumentDocument {
 		if( QueryDocumentDocument.isDecorated( object ) ) return object;
 
-		const resource:T & PersistedDocument = ModelDecorator
-			.decorateMultiple( object, PersistedDocument );
+		const resource:T & BasePersistedDocument = ModelDecorator
+			.decorateMultiple( object, BasePersistedDocument );
 
 		return ModelDecorator.definePropertiesFrom( PROTOTYPE, resource );
 	},

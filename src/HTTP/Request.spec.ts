@@ -1,3 +1,8 @@
+import { CarbonLDP } from "../CarbonLDP";
+import { IllegalArgumentError } from "../Errors";
+import { Pointer } from "../Pointer";
+import { DocumentsRegistry } from "../Registry/DocumentsRegistry";
+import { INSTANCE } from "../test/JasmineExtender";
 import { C } from "../Vocabularies/C";
 import { LDP } from "../Vocabularies/LDP";
 import {
@@ -1392,6 +1397,148 @@ describe( module( "carbonldp/HTTP/Request" ), function():void {
 				sendCredentialsOnCORS: false,
 			};
 		}
+
+
+		describe( method( STATIC, "requestURLFor" ), () => {
+
+			it( hasSignature(
+				"Generates the URL for the pointer and the relative uri provided.\n" +
+				"When no URI specified, the ID for the pointer would be used as the URI.",
+				[
+					{ name: "registry", type: "CarbonLDP.RegistryService<CarbonLDP.Pointer, CarbonLDP.AbstractContext<CarbonLDP.Pointer, any> | undefined>", description: "The registry use to validate or resolve relative/prefixed URI if needed." },
+					{ name: "pointer", type: "CarbonLDP.Pointer", description: "Base pointer for resolve the relative uri provided." },
+					{ name: "uri", type: "string", optional: true, description: "relative uri to be resolved using the pointer specified." },
+				]
+			), () => {} );
+
+			it( "should exists", ():void => {
+				expect( RequestUtils.getRequestURLFor ).toBeDefined();
+				expect( RequestUtils.getRequestURLFor ).toEqual( jasmine.any( Function ) );
+			} );
+
+
+			describe( "When registry has a context", () => {
+
+				let context:CarbonLDP;
+				let registry:DocumentsRegistry;
+				beforeEach( ():void => {
+					context = new CarbonLDP( "https://example.com/" );
+					registry = new DocumentsRegistry( context );
+				} );
+
+
+				it( "should return pointer ID with absolute URI when no URI", () => {
+					const pointer:Pointer = Pointer.create( { id: "https://example.com/" } );
+
+					const returned:string = RequestUtils.getRequestURLFor( registry, pointer );
+
+					expect( returned ).toBe( "https://example.com/" );
+				} );
+
+				it( "should return absolute URI when provided", () => {
+					const pointer:Pointer = Pointer.create( { id: "https://example.com/" } );
+
+					const returned:string = RequestUtils.getRequestURLFor( registry, pointer, "https://example.com/resource/" );
+
+					expect( returned ).toBe( "https://example.com/resource/" );
+				} );
+
+				it( "should resolve relative URI with the pointer ID", () => {
+					const pointer:Pointer = Pointer.create( { id: "https://example.com/" } );
+
+					const returned:string = RequestUtils.getRequestURLFor( registry, pointer, "resource/" );
+
+					expect( returned ).toBe( "https://example.com/resource/" );
+				} );
+
+				it( "should resolve prefixed named provided", () => {
+					context.extendObjectSchema( { ex: "https://example.com/" } );
+					const pointer:Pointer = Pointer.create( { id: "https://example.com/" } );
+
+					const returned:string = RequestUtils.getRequestURLFor( registry, pointer, "ex:resource/" );
+
+					expect( returned ).toBe( "https://example.com/resource/" );
+				} );
+
+
+				it( "should throw error pointer ID out of scope when no URI", () => {
+					const pointer:Pointer = Pointer.create( { id: "http://example.org/" } );
+
+					expect( () => {
+						RequestUtils.getRequestURLFor( registry, pointer );
+					} ).toThrowError( IllegalArgumentError, `"http://example.org/" is out of scope.` );
+				} );
+
+				it( "should throw error when URI is out of scope", () => {
+					const pointer:Pointer = Pointer.create( { id: "https://example.com/" } );
+
+					expect( () => {
+						RequestUtils.getRequestURLFor( registry, pointer, "http://example.org/resource/" );
+					} ).toThrowError( IllegalArgumentError, `"http://example.org/resource/" is out of scope.` );
+				} );
+
+				it( "should throw error when prefixed named cannot be resolved", () => {
+					const pointer:Pointer = Pointer.create( { id: "https://example.com/" } );
+
+					expect( () => {
+						RequestUtils.getRequestURLFor( registry, pointer, "ex:resource/" );
+					} ).toThrowError( IllegalArgumentError, `"ex:resource/" is out of scope.` );
+				} );
+
+				it( "should throw error pointer ID out of scope when relative URI", () => {
+					const pointer:Pointer = Pointer.create( { id: "http://example.org/" } );
+
+					expect( () => {
+						RequestUtils.getRequestURLFor( registry, pointer, "resource/" );
+					} ).toThrowError( IllegalArgumentError, `"http://example.org/resource/" is out of scope.` );
+				} );
+
+			} );
+
+			describe( "When registry has NO context", () => {
+
+				let registry:DocumentsRegistry;
+				beforeEach( ():void => {
+					registry = new DocumentsRegistry();
+				} );
+
+
+				it( "should return pointer ID with absolute URI when no URI", () => {
+					const pointer:Pointer = Pointer.create( { id: "https://example.com/" } );
+
+					const returned:string = RequestUtils.getRequestURLFor( registry, pointer );
+
+					expect( returned ).toBe( "https://example.com/" );
+				} );
+
+				it( "should return absolute URI when provided", () => {
+					const pointer:Pointer = Pointer.create( { id: "https://example.com/" } );
+
+					const returned:string = RequestUtils.getRequestURLFor( registry, pointer, "https://example.com/resource/" );
+
+					expect( returned ).toBe( "https://example.com/resource/" );
+				} );
+
+				it( "should resolve relative URI with the pointer ID", () => {
+					const pointer:Pointer = Pointer.create( { id: "https://example.com/" } );
+
+					const returned:string = RequestUtils.getRequestURLFor( registry, pointer, "resource/" );
+
+					expect( returned ).toBe( "https://example.com/resource/" );
+				} );
+
+
+				it( "should throw error when prefixed named cannot be resolved", () => {
+					const pointer:Pointer = Pointer.create( { id: "https://example.com/" } );
+
+					expect( () => {
+						RequestUtils.getRequestURLFor( registry, pointer, "ex:resource/" );
+					} ).toThrowError( IllegalArgumentError, `"ex:resource/" cannot be used as URL for the request.` );
+				} );
+
+			} );
+
+		} );
 
 	} );
 

@@ -2,18 +2,11 @@ import {
 	FinishClause,
 	QueryClause
 } from "sparqler/clauses";
-import {
-	createPartialMetadata,
-	defineNonEnumerableProps
-} from "../../test/helpers/mocks";
 import { CarbonLDP } from "../CarbonLDP";
 import { IllegalArgumentError } from "../Errors";
 import { RequestOptions } from "../HTTP";
 import { DocumentsRegistry } from "../Registry";
-import {
-	FinishSPARQLSelect,
-	SPARQLService
-} from "../SPARQL";
+import { TransientResource } from "../Resource";
 import {
 	extendsClass,
 	hasSignature,
@@ -22,40 +15,28 @@ import {
 	module,
 	OBLIGATORY
 } from "../test/JasmineExtender";
+import { FinishSPARQLSelect } from "./Builder";
+import { SPARQLService } from "./Service";
 import { SPARQLDocument } from "./SPARQLDocument";
-import { TransientDocument } from "./TransientDocument";
 
 
 function createMock<T extends object>( data?:T & Partial<SPARQLDocument> ):T & SPARQLDocument {
-	const _context:CarbonLDP | undefined = data && "_context" in data ?
-		data._context : new CarbonLDP( "https://example.com/" );
-
-	const _registry:DocumentsRegistry = _context ?
-		_context.registry : new DocumentsRegistry();
-
-	const mock:T & SPARQLDocument = SPARQLDocument.decorate( Object.assign( {
-		_registry,
-		_context,
-		_partialMetadata: createPartialMetadata( {} ),
+	return SPARQLDocument.decorate( Object.assign( {
+		_registry: new DocumentsRegistry(),
 		id: "https://example.com/",
 	}, data ) );
-
-	defineNonEnumerableProps( mock );
-	mock._normalize();
-
-	return mock;
 }
 
 
-describe( module( "carbonldp/Document" ), () => {
+describe( module( "carbonldp/SPARQL/SPARQLDocument" ), () => {
 
 	describe( interfaze(
-		"CarbonLDP.SPARQLDocument",
+		"CarbonLDP.SPARQL.SPARQLDocument",
 		"Document that contains methods to apply SPARQL queries."
 	), () => {
 
-		it( extendsClass( "CarbonLDP.TransientDocument" ), () => {
-			const target:TransientDocument = {} as SPARQLDocument;
+		it( extendsClass( "CarbonLDP.TransientResource" ), () => {
+			const target:TransientResource = {} as SPARQLDocument;
 			expect( target ).toBeDefined();
 		} );
 
@@ -102,7 +83,7 @@ describe( module( "carbonldp/Document" ), () => {
 					context = new CarbonLDP( "https://example.com/" );
 
 					resource = createMock( {
-						_context: context,
+						_registry: context.registry,
 						id: "https://example.com/",
 					} );
 				} );
@@ -251,7 +232,7 @@ describe( module( "carbonldp/Document" ), () => {
 						status: 500,
 					} );
 
-					const spy:jasmine.Spy = spyOn( resource._registry, "_parseErrorResponse" )
+					const spy:jasmine.Spy = spyOn( resource._registry, "_parseErrorFromResponse" )
 						.and.returnValue( Promise.reject( null ) );
 
 					await resource
@@ -322,7 +303,7 @@ describe( module( "carbonldp/Document" ), () => {
 						.then( () => fail( "Should not resolve." ) )
 						.catch( error => {
 							expect( () => { throw error; } )
-								.toThrowError( IllegalArgumentError, `"prefix:the-uri" cannot be resolved.` );
+								.toThrowError( IllegalArgumentError, `"prefix:the-uri" cannot be used as URL for the request.` );
 						} )
 					;
 				} );
@@ -387,7 +368,7 @@ describe( module( "carbonldp/Document" ), () => {
 						status: 500,
 					} );
 
-					const spy:jasmine.Spy = spyOn( resource._registry, "_parseErrorResponse" )
+					const spy:jasmine.Spy = spyOn( resource._registry, "_parseErrorFromResponse" )
 						.and.returnValue( Promise.reject( null ) );
 
 					await resource
@@ -437,7 +418,7 @@ describe( module( "carbonldp/Document" ), () => {
 					context = new CarbonLDP( "https://example.com/" );
 
 					resource = createMock( {
-						_context: context,
+						_registry: context.registry,
 						id: "https://example.com/",
 					} );
 				} );
@@ -586,7 +567,7 @@ describe( module( "carbonldp/Document" ), () => {
 						status: 500,
 					} );
 
-					const spy:jasmine.Spy = spyOn( resource._registry, "_parseErrorResponse" )
+					const spy:jasmine.Spy = spyOn( resource._registry, "_parseErrorFromResponse" )
 						.and.returnValue( Promise.reject( null ) );
 
 					await resource
@@ -657,7 +638,7 @@ describe( module( "carbonldp/Document" ), () => {
 						.then( () => fail( "Should not resolve." ) )
 						.catch( error => {
 							expect( () => { throw error; } )
-								.toThrowError( IllegalArgumentError, `"prefix:the-uri" cannot be resolved.` );
+								.toThrowError( IllegalArgumentError, `"prefix:the-uri" cannot be used as URL for the request.` );
 						} )
 					;
 				} );
@@ -721,7 +702,7 @@ describe( module( "carbonldp/Document" ), () => {
 						status: 500,
 					} );
 
-					const spy:jasmine.Spy = spyOn( resource._registry, "_parseErrorResponse" )
+					const spy:jasmine.Spy = spyOn( resource._registry, "_parseErrorFromResponse" )
 						.and.returnValue( Promise.reject( null ) );
 
 					await resource
@@ -771,7 +752,7 @@ describe( module( "carbonldp/Document" ), () => {
 					context = new CarbonLDP( "https://example.com/" );
 
 					resource = createMock( {
-						_context: context,
+						_registry: context.registry,
 						id: "https://example.com/",
 					} );
 				} );
@@ -920,7 +901,7 @@ describe( module( "carbonldp/Document" ), () => {
 						status: 500,
 					} );
 
-					const spy:jasmine.Spy = spyOn( resource._registry, "_parseErrorResponse" )
+					const spy:jasmine.Spy = spyOn( resource._registry, "_parseErrorFromResponse" )
 						.and.returnValue( Promise.reject( null ) );
 
 					await resource
@@ -991,7 +972,7 @@ describe( module( "carbonldp/Document" ), () => {
 						.then( () => fail( "Should not resolve." ) )
 						.catch( error => {
 							expect( () => { throw error; } )
-								.toThrowError( IllegalArgumentError, `"prefix:the-uri" cannot be resolved.` );
+								.toThrowError( IllegalArgumentError, `"prefix:the-uri" cannot be used as URL for the request.` );
 						} )
 					;
 				} );
@@ -1055,7 +1036,7 @@ describe( module( "carbonldp/Document" ), () => {
 						status: 500,
 					} );
 
-					const spy:jasmine.Spy = spyOn( resource._registry, "_parseErrorResponse" )
+					const spy:jasmine.Spy = spyOn( resource._registry, "_parseErrorFromResponse" )
 						.and.returnValue( Promise.reject( null ) );
 
 					await resource
@@ -1107,7 +1088,7 @@ describe( module( "carbonldp/Document" ), () => {
 					context = new CarbonLDP( "https://example.com/" );
 
 					resource = createMock( {
-						_context: context,
+						_registry: context.registry,
 						id: "https://example.com/",
 					} );
 				} );
@@ -1256,7 +1237,7 @@ describe( module( "carbonldp/Document" ), () => {
 						status: 500,
 					} );
 
-					const spy:jasmine.Spy = spyOn( resource._registry, "_parseErrorResponse" )
+					const spy:jasmine.Spy = spyOn( resource._registry, "_parseErrorFromResponse" )
 						.and.returnValue( Promise.reject( null ) );
 
 					await resource
@@ -1327,7 +1308,7 @@ describe( module( "carbonldp/Document" ), () => {
 						.then( () => fail( "Should not resolve." ) )
 						.catch( error => {
 							expect( () => { throw error; } )
-								.toThrowError( IllegalArgumentError, `"prefix:the-uri" cannot be resolved.` );
+								.toThrowError( IllegalArgumentError, `"prefix:the-uri" cannot be used as URL for the request.` );
 						} )
 					;
 				} );
@@ -1392,7 +1373,7 @@ describe( module( "carbonldp/Document" ), () => {
 						status: 500,
 					} );
 
-					const spy:jasmine.Spy = spyOn( resource._registry, "_parseErrorResponse" )
+					const spy:jasmine.Spy = spyOn( resource._registry, "_parseErrorFromResponse" )
 						.and.returnValue( Promise.reject( null ) );
 
 					await resource
@@ -1442,7 +1423,7 @@ describe( module( "carbonldp/Document" ), () => {
 					context = new CarbonLDP( "https://example.com/" );
 
 					resource = createMock( {
-						_context: context,
+						_registry: context.registry,
 						id: "https://example.com/",
 					} );
 				} );
@@ -1591,7 +1572,7 @@ describe( module( "carbonldp/Document" ), () => {
 						status: 500,
 					} );
 
-					const spy:jasmine.Spy = spyOn( resource._registry, "_parseErrorResponse" )
+					const spy:jasmine.Spy = spyOn( resource._registry, "_parseErrorFromResponse" )
 						.and.returnValue( Promise.reject( null ) );
 
 					await resource
@@ -1662,7 +1643,7 @@ describe( module( "carbonldp/Document" ), () => {
 						.then( () => fail( "Should not resolve." ) )
 						.catch( error => {
 							expect( () => { throw error; } )
-								.toThrowError( IllegalArgumentError, `"prefix:the-uri" cannot be resolved.` );
+								.toThrowError( IllegalArgumentError, `"prefix:the-uri" cannot be used as URL for the request.` );
 						} )
 					;
 				} );
@@ -1727,7 +1708,7 @@ describe( module( "carbonldp/Document" ), () => {
 						status: 500,
 					} );
 
-					const spy:jasmine.Spy = spyOn( resource._registry, "_parseErrorResponse" )
+					const spy:jasmine.Spy = spyOn( resource._registry, "_parseErrorFromResponse" )
 						.and.returnValue( Promise.reject( null ) );
 
 					await resource
@@ -1777,7 +1758,7 @@ describe( module( "carbonldp/Document" ), () => {
 					context = new CarbonLDP( "https://example.com/" );
 
 					resource = createMock( {
-						_context: context,
+						_registry: context.registry,
 						id: "https://example.com/",
 					} );
 				} );
@@ -1926,7 +1907,7 @@ describe( module( "carbonldp/Document" ), () => {
 						status: 500,
 					} );
 
-					const spy:jasmine.Spy = spyOn( resource._registry, "_parseErrorResponse" )
+					const spy:jasmine.Spy = spyOn( resource._registry, "_parseErrorFromResponse" )
 						.and.returnValue( Promise.reject( null ) );
 
 					await resource
@@ -1997,7 +1978,7 @@ describe( module( "carbonldp/Document" ), () => {
 						.then( () => fail( "Should not resolve." ) )
 						.catch( error => {
 							expect( () => { throw error; } )
-								.toThrowError( IllegalArgumentError, `"prefix:the-uri" cannot be resolved.` );
+								.toThrowError( IllegalArgumentError, `"prefix:the-uri" cannot be used as URL for the request.` );
 						} )
 					;
 				} );
@@ -2062,7 +2043,7 @@ describe( module( "carbonldp/Document" ), () => {
 						status: 500,
 					} );
 
-					const spy:jasmine.Spy = spyOn( resource._registry, "_parseErrorResponse" )
+					const spy:jasmine.Spy = spyOn( resource._registry, "_parseErrorFromResponse" )
 						.and.returnValue( Promise.reject( null ) );
 
 					await resource
@@ -2112,7 +2093,7 @@ describe( module( "carbonldp/Document" ), () => {
 					context = new CarbonLDP( "https://example.com/" );
 
 					resource = createMock( {
-						_context: context,
+						_registry: context.registry,
 						id: "https://example.com/",
 					} );
 				} );
@@ -2261,7 +2242,7 @@ describe( module( "carbonldp/Document" ), () => {
 						status: 500,
 					} );
 
-					const spy:jasmine.Spy = spyOn( resource._registry, "_parseErrorResponse" )
+					const spy:jasmine.Spy = spyOn( resource._registry, "_parseErrorFromResponse" )
 						.and.returnValue( Promise.reject( null ) );
 
 					await resource
@@ -2332,7 +2313,7 @@ describe( module( "carbonldp/Document" ), () => {
 						.then( () => fail( "Should not resolve." ) )
 						.catch( error => {
 							expect( () => { throw error; } )
-								.toThrowError( IllegalArgumentError, `"prefix:the-uri" cannot be resolved.` );
+								.toThrowError( IllegalArgumentError, `"prefix:the-uri" cannot be used as URL for the request.` );
 						} )
 					;
 				} );
@@ -2397,7 +2378,7 @@ describe( module( "carbonldp/Document" ), () => {
 						status: 500,
 					} );
 
-					const spy:jasmine.Spy = spyOn( resource._registry, "_parseErrorResponse" )
+					const spy:jasmine.Spy = spyOn( resource._registry, "_parseErrorFromResponse" )
 						.and.returnValue( Promise.reject( null ) );
 
 					await resource
@@ -2440,7 +2421,7 @@ describe( module( "carbonldp/Document" ), () => {
 				beforeEach( ():void => {
 					context = new CarbonLDP( "https://example.com/" );
 					resource = createMock( {
-						_context: context,
+						_registry: context.registry,
 						id: "https://example.com/",
 					} );
 				} );

@@ -5,7 +5,7 @@ import {
 } from "sparqler/clauses";
 import { finishDecorator } from "sparqler/clauses/decorators";
 
-import { SPARQLDocument } from "../Document/SPARQLDocument";
+import { SPARQLDocument } from "./SPARQLDocument";
 import { SPARQLRawResults } from "./RawResults";
 import { SPARQLSelectResults } from "./SelectResults";
 

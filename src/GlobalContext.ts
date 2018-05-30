@@ -12,16 +12,18 @@ import {
 } from "./Auth";
 import { Document } from "./Document";
 import {
-	AddMemberAction,
 	DocumentMetadata,
 	Error,
 	ErrorResponse,
 	Map,
 	MapEntry,
-	RemoveMemberAction,
 	ResponseMetadata,
 	ValidationError
 } from "./LDP";
+import {
+	AddMemberAction,
+	RemoveMemberAction
+} from "./Members";
 import {
 	AccessPointCreated,
 	ChildCreated,
@@ -78,12 +80,13 @@ export class GlobalContext extends AbstractContext<Pointer, undefined> {
 			.extendObjectSchema( PlatformInstance.TYPE, PlatformInstance.SCHEMA )
 
 			.extendObjectSchema( AddMemberAction.TYPE, AddMemberAction.SCHEMA )
+			.extendObjectSchema( RemoveMemberAction.TYPE, RemoveMemberAction.SCHEMA )
+
 			.extendObjectSchema( Error.TYPE, Error.SCHEMA )
 			.extendObjectSchema( Map.TYPE, Map.SCHEMA )
 			.extendObjectSchema( MapEntry.SCHEMA )
 			.extendObjectSchema( DocumentMetadata.TYPE, DocumentMetadata.SCHEMA )
 			.extendObjectSchema( ErrorResponse.TYPE, ErrorResponse.SCHEMA )
-			.extendObjectSchema( RemoveMemberAction.TYPE, RemoveMemberAction.SCHEMA )
 			.extendObjectSchema( ResponseMetadata.TYPE, ResponseMetadata.SCHEMA )
 			.extendObjectSchema( ValidationError.TYPE, ValidationError.SCHEMA )
 

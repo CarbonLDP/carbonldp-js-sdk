@@ -1,5 +1,5 @@
-import { Pointer } from "../Pointer";
-import { TransientResource } from "../Resource";
+import { Pointer } from "../Pointer/index";
+import { TransientResource } from "../Resource/index";
 import {
 	extendsClass,
 	hasMethod,
@@ -12,14 +12,14 @@ import {
 	STATIC,
 } from "../test/JasmineExtender";
 import { C } from "../Vocabularies/C";
-import * as Utils from "./../Utils";
+import * as Utils from "../Utils";
 
 import { AddMemberAction } from "./AddMemberAction";
 
-describe( module( "carbonldp/LDP/AddMemberAction" ), ():void => {
+describe( module( "carbonldp/Members/AddMemberAction" ), ():void => {
 
 	describe( interfaze(
-		"CarbonLDP.LDP.BaseAddMemberAction",
+		"CarbonLDP.Members.BaseAddMemberAction",
 		"Interface that represents an object to be sent in a request that add members to a container."
 	), ():void => {
 
@@ -35,7 +35,7 @@ describe( module( "carbonldp/LDP/AddMemberAction" ), ():void => {
 
 
 	describe( interfaze(
-		"CarbonLDP.LDP.AddMemberAction",
+		"CarbonLDP.Members.AddMemberAction",
 		"Interface that represents an object to be sent in a request that add members to a container."
 	), ():void => {
 
@@ -51,8 +51,8 @@ describe( module( "carbonldp/LDP/AddMemberAction" ), ():void => {
 	} );
 
 	describe( interfaze(
-		"CarbonLDP.LDP.AddMemberActionFactory",
-		"Interface with the factory, decorate and utils methods of `CarbonLDP.LDP.AddMemberAction` objects"
+		"CarbonLDP.Members.AddMemberActionFactory",
+		"Interface with the factory, decorate and utils methods of `CarbonLDP.Members.AddMemberAction` objects"
 	), ():void => {
 
 		it( hasProperty(
@@ -70,30 +70,30 @@ describe( module( "carbonldp/LDP/AddMemberAction" ), ():void => {
 		it( hasMethod(
 			STATIC,
 			"is",
-			"Returns true if the object is considered a `CarbonLDP.LDP.AddMemberAction` object.", [
+			"Returns true if the object is considered a `CarbonLDP.Members.AddMemberAction` object.", [
 				{ name: "value", type: "any" },
 			],
-			{ type: "value is CarbonLDP.LDP.AddMemberAction" }
+			{ type: "value is CarbonLDP.Members.AddMemberAction" }
 		), ():void => {} );
 
 		it( hasMethod(
 			STATIC,
 			"create",
 			[ "T extends object" ],
-			"Creates `CarbonLDP.LDP.AddMemberAction` resource for the specified targetMembers.", [
-				{ name: "data", type: "T & CarbonLDP.LDP.BaseAddMemberAction", description: "Data to be used in the creation of an add member action." },
+			"Creates `CarbonLDP.Members.AddMemberAction` resource for the specified targetMembers.", [
+				{ name: "data", type: "T & CarbonLDP.Members.BaseAddMemberAction", description: "Data to be used in the creation of an add member action." },
 			],
-			{ type: "CarbonLDP.LDP.AddMemberAction" }
+			{ type: "CarbonLDP.Members.AddMemberAction" }
 		), ():void => {} );
 
 		it( hasMethod(
 			STATIC,
 			"createFrom",
 			[ "T extends object" ],
-			"Creates `CarbonLDP.LDP.AddMemberAction` resource for the specified targetMembers.", [
-				{ name: "object", type: "T & CarbonLDP.LDP.BaseAddMemberAction", description: "Object to be converted into an add member action." },
+			"Creates `CarbonLDP.Members.AddMemberAction` resource for the specified targetMembers.", [
+				{ name: "object", type: "T & CarbonLDP.Members.BaseAddMemberAction", description: "Object to be converted into an add member action." },
 			],
-			{ type: "CarbonLDP.LDP.AddMemberAction" }
+			{ type: "CarbonLDP.Members.AddMemberAction" }
 		), ():void => {} );
 
 	} );
@@ -101,8 +101,8 @@ describe( module( "carbonldp/LDP/AddMemberAction" ), ():void => {
 	describe( property(
 		STATIC,
 		"AddMemberAction",
-		"CarbonLDP.LDP.AddMemberActionFactory",
-		"Constant that implements the `CarbonLDP.LDP.AddMemberActionFactory` instance."
+		"CarbonLDP.Members.AddMemberActionFactory",
+		"Constant that implements the `CarbonLDP.Members.AddMemberActionFactory` instance."
 	), ():void => {
 
 		it( isDefined(), ():void => {

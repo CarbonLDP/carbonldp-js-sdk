@@ -2,9 +2,9 @@ import { AccessPoint, BaseAccessPoint } from "../AccessPoint";
 import { GETOptions, RequestOptions } from "../HTTP";
 import { ProtectedDocument } from "../ProtectedDocument";
 import { PickSelfProps } from "../Utils";
+import { BasePersistedDocument } from "./BasePersistedDocument";
 import { Document } from "./Document";
-import { PersistedDocument } from "./PersistedDocument";
-export interface CRUDDocument extends PersistedDocument {
+export interface CRUDDocument extends BasePersistedDocument {
     get<T extends object>(requestOptions?: GETOptions): Promise<T & Document>;
     get<T extends object>(uri: string, requestOptions?: GETOptions): Promise<T & Document>;
     resolve<T extends object>(requestOptions?: GETOptions): Promise<T & Document>;
@@ -48,7 +48,7 @@ export interface CRUDDocument extends PersistedDocument {
     delete(uri: string, requestOptions?: RequestOptions): Promise<void>;
 }
 export interface CRUDDocumentFactory {
-    PROTOTYPE: PickSelfProps<CRUDDocument, PersistedDocument>;
+    PROTOTYPE: PickSelfProps<CRUDDocument, BasePersistedDocument>;
     isDecorated(object: object): object is CRUDDocument;
     decorate<T extends object>(object: T): T & CRUDDocument;
     is(value: any): value is CRUDDocument;

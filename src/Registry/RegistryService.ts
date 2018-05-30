@@ -2,6 +2,12 @@ import { AbstractContext } from "../AbstractContext";
 import { ModelDecorator } from "../core";
 import { TransientDocument } from "../Document";
 import { FreeResources } from "../FreeResources";
+import { Response } from "../HTTP";
+import {
+	HTTPError,
+	statusCodeMap,
+	UnknownError
+} from "../HTTP/Errors";
 import { JSONLDConverter, } from "../JSONLD";
 import {
 	DigestedObjectSchema,
@@ -166,5 +172,16 @@ export class RegistryService<M extends Pointer, C extends AbstractContext<M, any
 	protected _compactRDFNode( node:RDFNode, target:object, library:PointerLibrary ):void {
 		const digestedSchema:DigestedObjectSchema = this.getSchemaFor( node );
 		this.jsonldConverter.compact( node, target, digestedSchema, library );
+	}
+
+
+	_parseErrorFromResponse<T extends object>( response:Response | Error | null ):Promise<never> {
+		if( ! response || response instanceof Error ) return Promise.reject( response );
+
+		if( ! (response.status >= 400 && response.status < 600 && statusCodeMap.has( response.status )) )
+			return Promise.reject( new UnknownError( response.data, response ) );
+
+		const error:HTTPError = new (statusCodeMap.get( response.status ))( response.data, response );
+		return Promise.reject( error );
 	}
 }

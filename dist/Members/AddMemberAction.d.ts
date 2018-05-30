@@ -1,4 +1,4 @@
-import { ModelFactory } from "../core/ModelFactory";
+import { ModelFactory } from "../core";
 import { ObjectSchema } from "../ObjectSchema";
 import { Pointer } from "../Pointer";
 import { BaseResource, TransientResource } from "../Resource";

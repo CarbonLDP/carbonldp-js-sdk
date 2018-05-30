@@ -1,4 +1,7 @@
 /// <reference types="node" />
+import { AbstractContext } from "../AbstractContext";
+import { Pointer } from "../Pointer";
+import { RegistryService } from "../Registry";
 import { Header } from "./Header";
 import { HTTPMethod } from "./HTTPMethod";
 import { Parser } from "./Parser";
@@ -59,4 +62,5 @@ export declare class RequestUtils {
     static setSlug(slug: string, requestOptions: RequestOptions): RequestOptions;
     static isOptions(object: Object): object is RequestOptions;
     static cloneOptions(options: RequestOptions): RequestOptions;
+    static getRequestURLFor(this: void, registry: RegistryService<Pointer, AbstractContext<Pointer, any> | undefined>, resource: Pointer, uri?: string): string;
 }

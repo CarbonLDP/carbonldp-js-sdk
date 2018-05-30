@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 var Document_1 = require("../Document");
 var FreeResources_1 = require("../FreeResources");
+var Errors_1 = require("../HTTP/Errors");
 var JSONLD_1 = require("../JSONLD");
 var ObjectSchema_1 = require("../ObjectSchema");
 var RDF_1 = require("../RDF");
@@ -119,6 +120,14 @@ var RegistryService = (function () {
     RegistryService.prototype._compactRDFNode = function (node, target, library) {
         var digestedSchema = this.getSchemaFor(node);
         this.jsonldConverter.compact(node, target, digestedSchema, library);
+    };
+    RegistryService.prototype._parseErrorFromResponse = function (response) {
+        if (!response || response instanceof Error)
+            return Promise.reject(response);
+        if (!(response.status >= 400 && response.status < 600 && Errors_1.statusCodeMap.has(response.status)))
+            return Promise.reject(new Errors_1.UnknownError(response.data, response));
+        var error = new (Errors_1.statusCodeMap.get(response.status))(response.data, response);
+        return Promise.reject(error);
     };
     return RegistryService;
 }());

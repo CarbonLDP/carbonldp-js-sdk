@@ -8,15 +8,15 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var core_1 = require("../core");
+var Members_1 = require("../Members");
 var Messaging_1 = require("../Messaging");
 var Resource_1 = require("../Resource");
+var SPARQL_1 = require("../SPARQL");
+var QueryDocument_1 = require("../SPARQL/QueryDocument");
 var Utils = __importStar(require("../Utils"));
 var Utils_1 = require("../Utils");
 var Vocabularies_1 = require("../Vocabularies");
 var CRUDDocument_1 = require("./CRUDDocument");
-var MembersDocument_1 = require("./MembersDocument");
-var QueryDocumentDocument_1 = require("./QueryDocumentDocument");
-var SPARQLDocument_1 = require("./SPARQLDocument");
 var TransientDocument_1 = require("./TransientDocument");
 function addEnsureIfPartial(iri, resource, requestOptions) {
     if (requestOptions.ensureLatest)
@@ -35,7 +35,7 @@ var PROTOTYPE = {
         queryBuilderFn = Utils_1.isFunction(uriOrOptionsOrQueryBuilderFn) ? uriOrOptionsOrQueryBuilderFn :
             Utils_1.isFunction(optionsOrQueryBuilderFn) ? optionsOrQueryBuilderFn : queryBuilderFn;
         if (queryBuilderFn)
-            return QueryDocumentDocument_1.QueryDocumentDocument.PROTOTYPE
+            return QueryDocument_1.QueryDocumentDocument.PROTOTYPE
                 .get.call(this, iri, requestOptions, queryBuilderFn);
         addEnsureIfPartial(iri, this, requestOptions);
         return CRUDDocument_1.CRUDDocument.PROTOTYPE.get.call(this, iri, requestOptions);
@@ -46,23 +46,23 @@ var PROTOTYPE = {
         if (Utils_1.isFunction(optionsOrQueryBuilderFn))
             queryBuilderFn = optionsOrQueryBuilderFn;
         if (queryBuilderFn)
-            return QueryDocumentDocument_1.QueryDocumentDocument.PROTOTYPE.resolve.call(this, requestOptions, queryBuilderFn);
+            return QueryDocument_1.QueryDocumentDocument.PROTOTYPE.resolve.call(this, requestOptions, queryBuilderFn);
         addEnsureIfPartial(this.id, this, requestOptions);
         return CRUDDocument_1.CRUDDocument.PROTOTYPE.resolve.call(this, requestOptions);
     },
     refresh: function (requestOptions) {
         if (this.isPartial())
-            return QueryDocumentDocument_1.QueryDocumentDocument.PROTOTYPE.refresh.call(this, requestOptions);
+            return QueryDocument_1.QueryDocumentDocument.PROTOTYPE.refresh.call(this, requestOptions);
         return CRUDDocument_1.CRUDDocument.PROTOTYPE.refresh.call(this, requestOptions);
     },
     save: function (requestOptions) {
         if (this.isPartial())
-            return QueryDocumentDocument_1.QueryDocumentDocument.PROTOTYPE.save.call(this, requestOptions);
+            return QueryDocument_1.QueryDocumentDocument.PROTOTYPE.save.call(this, requestOptions);
         return CRUDDocument_1.CRUDDocument.PROTOTYPE.save.call(this, requestOptions);
     },
     saveAndRefresh: function (requestOptions) {
         if (this.isPartial())
-            return QueryDocumentDocument_1.QueryDocumentDocument.PROTOTYPE.saveAndRefresh.call(this, requestOptions);
+            return QueryDocument_1.QueryDocumentDocument.PROTOTYPE.saveAndRefresh.call(this, requestOptions);
         return CRUDDocument_1.CRUDDocument.PROTOTYPE.saveAndRefresh.call(this, requestOptions);
     },
     isDirty: function () {
@@ -152,17 +152,17 @@ exports.Document = {
     },
     is: function (object) {
         return CRUDDocument_1.CRUDDocument.is(object)
-            && MembersDocument_1.MembersDocument.isDecorated(object)
-            && SPARQLDocument_1.SPARQLDocument.isDecorated(object)
+            && Members_1.MembersDocument.isDecorated(object)
+            && SPARQL_1.SPARQLDocument.isDecorated(object)
             && Messaging_1.MessagingDocument.isDecorated(object)
-            && QueryDocumentDocument_1.QueryDocumentDocument.isDecorated(object)
+            && QueryDocument_1.QueryDocumentDocument.isDecorated(object)
             && exports.Document.isDecorated(object);
     },
     decorate: function (object) {
         if (exports.Document.isDecorated(object))
             return object;
         var resource = core_1.ModelDecorator
-            .decorateMultiple(object, CRUDDocument_1.CRUDDocument, MembersDocument_1.MembersDocument, SPARQLDocument_1.SPARQLDocument, Messaging_1.MessagingDocument, QueryDocumentDocument_1.QueryDocumentDocument);
+            .decorateMultiple(object, CRUDDocument_1.CRUDDocument, Members_1.MembersDocument, SPARQL_1.SPARQLDocument, Messaging_1.MessagingDocument, QueryDocument_1.QueryDocumentDocument);
         return core_1.ModelDecorator
             .definePropertiesFrom(PROTOTYPE, resource);
     },

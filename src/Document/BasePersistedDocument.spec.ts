@@ -13,33 +13,33 @@ import {
 	property,
 	STATIC
 } from "../test/JasmineExtender";
-import { Document } from "./Document";
 import {
-	PersistedDocument,
-	PersistedDocumentFactory
-} from "./PersistedDocument";
+	BasePersistedDocument,
+	BasePersistedDocumentFactory
+} from "./BasePersistedDocument";
+import { Document } from "./Document";
 import { TransientDocument } from "./TransientDocument";
 
 
-function createMock( data?:Partial<PersistedDocument> ):PersistedDocument {
-	return PersistedDocument.decorate( Object.assign( {}, data ) );
+function createMock( data?:Partial<BasePersistedDocument> ):BasePersistedDocument {
+	return BasePersistedDocument.decorate( Object.assign( {}, data ) );
 }
 
 
 describe( module( "carbonldp/Document" ), ():void => {
 
 	describe( interfaze(
-		"CarbonLDP.PersistedDocument",
+		"CarbonLDP.BasePersistedDocument",
 		"Document that contains base data and methods of a persisted document that can be resolved."
 	), ():void => {
 
 		it( extendsClass( "CarbonLDP.TransientDocument" ), ():void => {
-			const target:TransientDocument = {} as PersistedDocument;
+			const target:TransientDocument = {} as BasePersistedDocument;
 			expect( target ).toBeDefined();
 		} );
 
 		it( extendsClass( "CarbonLDP.PersistedResource" ), ():void => {
-			const target:PersistedResource = {} as PersistedDocument;
+			const target:PersistedResource = {} as BasePersistedDocument;
 			expect( target ).toBeDefined();
 		} );
 
@@ -49,7 +49,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 			"_context",
 			"CarbonLDP.CarbonLDP | undefined"
 		), ():void => {
-			const target:PersistedDocument[ "_context" ] = {} as CarbonLDP | undefined;
+			const target:BasePersistedDocument[ "_context" ] = {} as CarbonLDP | undefined;
 			expect( target ).toBeDefined();
 		} );
 
@@ -58,7 +58,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 			"_registry",
 			"CarbonLDP.DocumentsRegistry | undefined"
 		), ():void => {
-			const target:PersistedDocument[ "_registry" ] = {} as DocumentsRegistry | undefined;
+			const target:BasePersistedDocument[ "_registry" ] = {} as DocumentsRegistry | undefined;
 			expect( target ).toBeDefined();
 		} );
 
@@ -68,7 +68,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 			"_resolved",
 			"boolean | undefined"
 		), ():void => {
-			const target:PersistedDocument[ "_resolved" ] = {} as boolean | undefined;
+			const target:BasePersistedDocument[ "_resolved" ] = {} as boolean | undefined;
 			expect( target ).toBeDefined();
 		} );
 
@@ -78,7 +78,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 			"string | undefined",
 			"The ETag (entity tag) of the persisted document."
 		), ():void => {
-			const target:PersistedDocument[ "_eTag" ] = "" as string | undefined;
+			const target:BasePersistedDocument[ "_eTag" ] = "" as string | undefined;
 			expect( target ).toBeDefined();
 		} );
 
@@ -101,7 +101,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 			), ():void => {} );
 
 			it( "should exists", ():void => {
-				const resource:PersistedDocument = createMock();
+				const resource:BasePersistedDocument = createMock();
 
 				expect( resource.isResolved ).toBeDefined();
 				expect( resource.isResolved ).toEqual( jasmine.any( Function ) );
@@ -109,21 +109,21 @@ describe( module( "carbonldp/Document" ), ():void => {
 
 
 			it( "should return false when _resolved undefined", ():void => {
-				const resource:PersistedDocument = createMock();
+				const resource:BasePersistedDocument = createMock();
 
 				const returned:boolean = resource.isResolved();
 				expect( returned ).toBe( false );
 			} );
 
 			it( "should return false when _resolved false", ():void => {
-				const resource:PersistedDocument = createMock( { _resolved: false } );
+				const resource:BasePersistedDocument = createMock( { _resolved: false } );
 
 				const returned:boolean = resource.isResolved();
 				expect( returned ).toBe( false );
 			} );
 
 			it( "should return true when _resolved true", ():void => {
-				const resource:PersistedDocument = createMock( { _resolved: true } );
+				const resource:BasePersistedDocument = createMock( { _resolved: true } );
 
 				const returned:boolean = resource.isResolved();
 				expect( returned ).toBe( true );
@@ -142,7 +142,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 			), ():void => {} );
 
 			it( "should exists", ():void => {
-				const resource:PersistedDocument = createMock();
+				const resource:BasePersistedDocument = createMock();
 
 				expect( resource.isOutdated ).toBeDefined();
 				expect( resource.isOutdated ).toEqual( jasmine.any( Function ) );
@@ -150,21 +150,21 @@ describe( module( "carbonldp/Document" ), ():void => {
 
 
 			it( "should return false if _eTag undefined", ():void => {
-				const resource:PersistedDocument = createMock();
+				const resource:BasePersistedDocument = createMock();
 
 				const returned:boolean = resource.isOutdated();
 				expect( returned ).toBe( false );
 			} );
 
 			it( "should return false if _eTag defined", ():void => {
-				const resource:PersistedDocument = createMock( { _eTag: "" } );
+				const resource:BasePersistedDocument = createMock( { _eTag: "" } );
 
 				const returned:boolean = resource.isOutdated();
 				expect( returned ).toBe( false );
 			} );
 
 			it( "should return true if _eTag is null", ():void => {
-				const resource:PersistedDocument = createMock( { _eTag: null } );
+				const resource:BasePersistedDocument = createMock( { _eTag: null } );
 
 				const returned:boolean = resource.isOutdated();
 				expect( returned ).toBe( true );
@@ -184,7 +184,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 
 	describe( interfaze(
 		"CarbonLDP.PersistedDocumentFactory",
-		"Interface with the factory and utils for `CarbonLDP.PersistedDocument` objects."
+		"Interface with the factory and utils for `CarbonLDP.BasePersistedDocument` objects."
 	), ():void => {
 
 		describe( method( OBLIGATORY, "isDecorated" ), ():void => {
@@ -193,17 +193,17 @@ describe( module( "carbonldp/Document" ), ():void => {
 				[
 					{ name: "object", type: "object" },
 				],
-				{ type: "object is CarbonLDP.PersistedDocument" }
+				{ type: "object is CarbonLDP.BasePersistedDocument" }
 			), ():void => {} );
 
 
 			it( "should exists", ():void => {
-				expect( PersistedDocument.isDecorated ).toBeDefined();
-				expect( PersistedDocument.isDecorated ).toEqual( jasmine.any( Function ) );
+				expect( BasePersistedDocument.isDecorated ).toBeDefined();
+				expect( BasePersistedDocument.isDecorated ).toEqual( jasmine.any( Function ) );
 			} );
 
 
-			let object:PersistedDocumentFactory[ "PROTOTYPE" ];
+			let object:BasePersistedDocumentFactory[ "PROTOTYPE" ];
 			beforeEach( ():void => {
 				const fn:() => any = () => {};
 
@@ -220,35 +220,35 @@ describe( module( "carbonldp/Document" ), ():void => {
 			} );
 
 			it( "should return true when all prototype properties", ():void => {
-				const returned:boolean = PersistedDocument.isDecorated( object );
+				const returned:boolean = BasePersistedDocument.isDecorated( object );
 				expect( returned ).toBe( true );
 			} );
 
 			it( "should return false when missing _eTag", ():void => {
 				delete object._eTag;
 
-				const returned:boolean = PersistedDocument.isDecorated( object );
+				const returned:boolean = BasePersistedDocument.isDecorated( object );
 				expect( returned ).toBe( false );
 			} );
 
 			it( "should return false when missing _resolved", ():void => {
 				delete object._resolved;
 
-				const returned:boolean = PersistedDocument.isDecorated( object );
+				const returned:boolean = BasePersistedDocument.isDecorated( object );
 				expect( returned ).toBe( false );
 			} );
 
 			it( "should return false when missing isOutdated", ():void => {
 				delete object.isOutdated;
 
-				const returned:boolean = PersistedDocument.isDecorated( object );
+				const returned:boolean = BasePersistedDocument.isDecorated( object );
 				expect( returned ).toBe( false );
 			} );
 
 			it( "should return false when missing isResolved", ():void => {
 				delete object.isResolved;
 
-				const returned:boolean = PersistedDocument.isDecorated( object );
+				const returned:boolean = BasePersistedDocument.isDecorated( object );
 				expect( returned ).toBe( false );
 			} );
 
@@ -272,37 +272,37 @@ describe( module( "carbonldp/Document" ), ():void => {
 				[
 					{ name: "object", type: "T" },
 				],
-				{ type: "T & CarbonLDP.PersistedDocument" }
+				{ type: "T & CarbonLDP.BasePersistedDocument" }
 			), ():void => {} );
 
 			it( "should exists", ():void => {
-				expect( PersistedDocument.decorate ).toBeDefined();
-				expect( PersistedDocument.decorate ).toEqual( jasmine.any( Function ) );
+				expect( BasePersistedDocument.decorate ).toBeDefined();
+				expect( BasePersistedDocument.decorate ).toEqual( jasmine.any( Function ) );
 			} );
 
 
 			it( "should return add prototype properties", ():void => {
-				const resource:PersistedDocument = PersistedDocument.decorate( {} );
-				expect( PersistedDocument.isDecorated( resource ) ).toBe( true );
+				const resource:BasePersistedDocument = BasePersistedDocument.decorate( {} );
+				expect( BasePersistedDocument.isDecorated( resource ) ).toBe( true );
 			} );
 
 			it( "should return self object reference", ():void => {
 				const object:{} = {};
-				const returned:PersistedDocument = PersistedDocument.decorate( object );
+				const returned:BasePersistedDocument = BasePersistedDocument.decorate( object );
 				expect( object ).toBe( returned );
 			} );
 
 			it( "should decorate with TransientDocument", ():void => {
 				const spy:jasmine.Spy = spyOn( TransientDocument, "decorate" );
 
-				PersistedDocument.decorate( { the: "document" } );
+				BasePersistedDocument.decorate( { the: "document" } );
 				expect( spy ).toHaveBeenCalledWith( { the: "document" } );
 			} );
 
 			it( "should decorate with PersistedResource", ():void => {
 				const spy:jasmine.Spy = spyOn( PersistedResource, "decorate" );
 
-				PersistedDocument.decorate( { the: "document" } );
+				BasePersistedDocument.decorate( { the: "document" } );
 				expect( spy ).toHaveBeenCalledWith( { the: "document" } );
 			} );
 
@@ -314,7 +314,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 				[
 					{ name: "value", type: "any" },
 				],
-				{ type: "value is CarbonLDP.PersistedDocument" }
+				{ type: "value is CarbonLDP.BasePersistedDocument" }
 			), ():void => {} );
 
 			it( "should exists", ():void => {
@@ -333,27 +333,27 @@ describe( module( "carbonldp/Document" ), ():void => {
 			} );
 
 			it( "should assert if is a TransientDocument", ():void => {
-				PersistedDocument.is( { the: "document" } );
+				BasePersistedDocument.is( { the: "document" } );
 				expect( isTransientDocument ).toHaveBeenCalledWith( { the: "document" } );
 			} );
 
 			it( "should assert if is a PersistedResource", ():void => {
-				PersistedDocument.is( { the: "document" } );
+				BasePersistedDocument.is( { the: "document" } );
 				expect( isPersistedResource ).toHaveBeenCalledWith( { the: "document" } );
 			} );
 
 			it( "should assert has prototype properties", ():void => {
-				const spy:jasmine.Spy = spyOn( PersistedDocument, "isDecorated" );
+				const spy:jasmine.Spy = spyOn( BasePersistedDocument, "isDecorated" );
 
-				PersistedDocument.is( { the: "document" } );
+				BasePersistedDocument.is( { the: "document" } );
 				expect( spy ).toHaveBeenCalledWith( { the: "document" } );
 			} );
 
 			it( "should return true when all assertions pass", ():void => {
-				spyOn( PersistedDocument, "isDecorated" )
+				spyOn( BasePersistedDocument, "isDecorated" )
 					.and.returnValue( true );
 
-				const returned:boolean = PersistedDocument.is( { the: "document" } );
+				const returned:boolean = BasePersistedDocument.is( { the: "document" } );
 				expect( returned ).toBe( true );
 			} );
 
@@ -364,13 +364,13 @@ describe( module( "carbonldp/Document" ), ():void => {
 
 	describe( property(
 		STATIC,
-		"PersistedDocument",
-		"CarbonLDP.PersistedDocumentFactory"
+		"BasePersistedDocument",
+		"CarbonLDP.BasePersistedDocumentFactory"
 	), ():void => {
 
 		it( "should exists", ():void => {
-			expect( PersistedDocument ).toBeDefined();
-			expect( PersistedDocument ).toEqual( jasmine.any( Object ) );
+			expect( BasePersistedDocument ).toBeDefined();
+			expect( BasePersistedDocument ).toEqual( jasmine.any( Object ) );
 		} );
 
 	} );

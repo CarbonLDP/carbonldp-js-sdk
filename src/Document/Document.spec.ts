@@ -4,8 +4,11 @@ import {
 	defineNonEnumerableProps
 } from "../../test/helpers/mocks";
 import { AbstractContext } from "../AbstractContext";
+import { MembersDocument } from "../Members";
 import { MessagingDocument } from "../Messaging";
 import { DocumentsRegistry } from "../Registry";
+import { SPARQLDocument } from "../SPARQL";
+import { QueryDocumentDocument } from "../SPARQL/QueryDocument";
 import {
 	extendsClass,
 	hasMethod,
@@ -22,9 +25,6 @@ import {
 } from "../test/JasmineExtender";
 import { CRUDDocument } from "./CRUDDocument";
 import { Document } from "./Document";
-import { MembersDocument } from "./MembersDocument";
-import { QueryDocumentDocument } from "./QueryDocumentDocument";
-import { SPARQLDocument } from "./SPARQLDocument";
 
 
 function createMock<T extends object>( data?:T & Partial<Document> ):T & Document {
@@ -49,7 +49,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 		it( extendsClass( "CarbonLDP.Members.MembersDocument" ), ():void => {} );
 		it( extendsClass( "CarbonLDP.SPARQL.SPARQLDocument" ), ():void => {} );
 		it( extendsClass( "CarbonLDP.Messaging.MessagingDocument" ), ():void => {} );
-		it( extendsClass( "CarbonLDP.QueryDocument.QueryDocumentDocument" ), ():void => {} );
+		it( extendsClass( "CarbonLDP.SPARQL.QueryDocument.QueryDocumentDocument" ), ():void => {} );
 
 		it( hasProperty(
 			OPTIONAL,

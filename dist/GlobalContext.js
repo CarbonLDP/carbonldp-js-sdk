@@ -14,6 +14,7 @@ var AbstractContext_1 = require("./AbstractContext");
 var Auth_1 = require("./Auth");
 var Document_1 = require("./Document");
 var LDP_1 = require("./LDP");
+var Members_1 = require("./Members");
 var Messaging_1 = require("./Messaging");
 var ObjectSchema_1 = require("./ObjectSchema");
 var Pointer_1 = require("./Pointer");
@@ -42,13 +43,13 @@ var GlobalContext = (function (_super) {
             .extendObjectSchema(ProtectedDocument_1.ProtectedDocument.TYPE, ProtectedDocument_1.ProtectedDocument.SCHEMA)
             .extendObjectSchema(System_1.PlatformMetadata.TYPE, System_1.PlatformMetadata.SCHEMA)
             .extendObjectSchema(System_1.PlatformInstance.TYPE, System_1.PlatformInstance.SCHEMA)
-            .extendObjectSchema(LDP_1.AddMemberAction.TYPE, LDP_1.AddMemberAction.SCHEMA)
+            .extendObjectSchema(Members_1.AddMemberAction.TYPE, Members_1.AddMemberAction.SCHEMA)
+            .extendObjectSchema(Members_1.RemoveMemberAction.TYPE, Members_1.RemoveMemberAction.SCHEMA)
             .extendObjectSchema(LDP_1.Error.TYPE, LDP_1.Error.SCHEMA)
             .extendObjectSchema(LDP_1.Map.TYPE, LDP_1.Map.SCHEMA)
             .extendObjectSchema(LDP_1.MapEntry.SCHEMA)
             .extendObjectSchema(LDP_1.DocumentMetadata.TYPE, LDP_1.DocumentMetadata.SCHEMA)
             .extendObjectSchema(LDP_1.ErrorResponse.TYPE, LDP_1.ErrorResponse.SCHEMA)
-            .extendObjectSchema(LDP_1.RemoveMemberAction.TYPE, LDP_1.RemoveMemberAction.SCHEMA)
             .extendObjectSchema(LDP_1.ResponseMetadata.TYPE, LDP_1.ResponseMetadata.SCHEMA)
             .extendObjectSchema(LDP_1.ValidationError.TYPE, LDP_1.ValidationError.SCHEMA)
             .extendObjectSchema(Auth_1.ACE.TYPE, Auth_1.ACE.SCHEMA)

@@ -6,10 +6,16 @@ import {
 	GETOptions,
 	RequestOptions
 } from "../HTTP";
+import { MembersDocument } from "../Members";
 import { MessagingDocument } from "../Messaging";
 import { Pointer } from "../Pointer";
+import { DocumentsRegistry } from "../Registry";
 import { PersistedResource } from "../Resource";
-import { QueryDocumentBuilder } from "../SPARQL/QueryDocument";
+import { SPARQLDocument } from "../SPARQL";
+import {
+	QueryDocumentBuilder,
+	QueryDocumentDocument
+} from "../SPARQL/QueryDocument";
 import * as Utils from "../Utils";
 import {
 	isFunction,
@@ -24,13 +30,12 @@ import {
 } from "../Vocabularies";
 import { BaseDocument } from "./BaseDocument";
 import { CRUDDocument } from "./CRUDDocument";
-import { MembersDocument } from "./MembersDocument";
-import { QueryDocumentDocument } from "./QueryDocumentDocument";
-import { SPARQLDocument } from "./SPARQLDocument";
 import { TransientDocument } from "./TransientDocument";
 
 
 export interface Document extends CRUDDocument, MembersDocument, SPARQLDocument, MessagingDocument, QueryDocumentDocument {
+	_registry:DocumentsRegistry;
+
 	created?:Date;
 	modified?:Date;
 	defaultInteractionModel?:Pointer;

@@ -5,16 +5,15 @@ import { Fragment } from "../Fragment";
 import { NamedFragment } from "../NamedFragment";
 import { DocumentsRegistry } from "../Registry";
 import { PersistedResource } from "../Resource";
-import * as Utils from "../Utils";
-import { Document } from "./Document";
-import { TransientDocument } from "./TransientDocument";
 import {
 	isObject,
 	PickSelfProps
 } from "../Utils";
+import { Document } from "./Document";
+import { TransientDocument } from "./TransientDocument";
 
 
-export interface PersistedDocument extends TransientDocument, PersistedResource {
+export interface BasePersistedDocument extends TransientDocument, PersistedResource {
 	_context:CarbonLDP | undefined;
 	_registry:DocumentsRegistry | undefined;
 
@@ -32,24 +31,24 @@ export interface PersistedDocument extends TransientDocument, PersistedResource 
 }
 
 
-const PROTOTYPE:PickSelfProps<PersistedDocument, TransientDocument & PersistedResource> = {
+const PROTOTYPE:PickSelfProps<BasePersistedDocument, TransientDocument & PersistedResource> = {
 	_resolved: false,
 	_eTag: void 0,
 
 	get _savedFragments():Fragment[] { return []; },
 
 
-	isResolved( this:PersistedDocument ):boolean {
+	isResolved( this:BasePersistedDocument ):boolean {
 		return ! ! this._resolved;
 	},
 
-	isOutdated( this:PersistedDocument ):boolean {
+	isOutdated( this:BasePersistedDocument ):boolean {
 		return this._eTag === null;
 	},
 
 
 	_syncSavedFragments( this:Document ):void {
-		this._savedFragments = Utils.ArrayUtils
+		this._savedFragments = Array
 			.from( this._resourcesMap.values() )
 			.map( Fragment.decorate )
 		;
@@ -60,30 +59,30 @@ const PROTOTYPE:PickSelfProps<PersistedDocument, TransientDocument & PersistedRe
 	},
 };
 
-export interface PersistedDocumentFactory {
-	PROTOTYPE:PickSelfProps<PersistedDocument, TransientDocument & PersistedResource>;
+export interface BasePersistedDocumentFactory {
+	PROTOTYPE:PickSelfProps<BasePersistedDocument, TransientDocument & PersistedResource>;
 
 
-	isDecorated( object:object ):object is PersistedDocument;
+	isDecorated( object:object ):object is BasePersistedDocument;
 
-	decorate<T extends object>( object:T ):T & PersistedDocument;
+	decorate<T extends object>( object:T ):T & BasePersistedDocument;
 
 
-	is( value:any ):value is PersistedDocument;
+	is( value:any ):value is BasePersistedDocument;
 }
 
-export const PersistedDocument:PersistedDocumentFactory = {
+export const BasePersistedDocument:BasePersistedDocumentFactory = {
 	PROTOTYPE,
 
-	isDecorated( object:object ):object is PersistedDocument {
+	isDecorated( object:object ):object is BasePersistedDocument {
 		return isObject( object )
 			&& ModelDecorator
 				.hasPropertiesFrom( PROTOTYPE, object )
 			;
 	},
 
-	decorate<T extends object>( object:T ):T & PersistedDocument {
-		if( PersistedDocument.isDecorated( object ) ) return object;
+	decorate<T extends object>( object:T ):T & BasePersistedDocument {
+		if( BasePersistedDocument.isDecorated( object ) ) return object;
 
 		const resource:T & TransientDocument & PersistedResource = ModelDecorator
 			.decorateMultiple( object, TransientDocument, PersistedResource );
@@ -93,10 +92,10 @@ export const PersistedDocument:PersistedDocumentFactory = {
 	},
 
 
-	is( value:any ):value is PersistedDocument {
+	is( value:any ):value is BasePersistedDocument {
 		return TransientDocument.is( value )
 			&& PersistedResource.isDecorated( value )
-			&& PersistedDocument.isDecorated( value )
+			&& BasePersistedDocument.isDecorated( value )
 			;
 	},
 };

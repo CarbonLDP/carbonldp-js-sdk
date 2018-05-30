@@ -4,11 +4,12 @@ var core_1 = require("../core");
 var Errors_1 = require("../Errors");
 var FreeResources_1 = require("../FreeResources");
 var HTTP_1 = require("../HTTP");
-var LDP_1 = require("../LDP");
 var Pointer_1 = require("../Pointer");
+var Resource_1 = require("../Resource");
 var Utils_1 = require("../Utils");
 var Vocabularies_1 = require("../Vocabularies");
-var TransientDocument_1 = require("./TransientDocument");
+var AddMemberAction_1 = require("./AddMemberAction");
+var RemoveMemberAction_1 = require("./RemoveMemberAction");
 function getRegistry(repository) {
     if (repository._registry && repository._registry._context)
         return repository._registry;
@@ -34,7 +35,7 @@ function sendAddAction(repository, uri, members, requestOptions) {
     if (requestOptions === void 0) { requestOptions = {}; }
     return Utils_1.promiseMethod(function () {
         var registry = getRegistry(repository);
-        var iri = registry._requestURLFor(repository, uri);
+        var url = HTTP_1.RequestUtils.getRequestURLFor(registry, repository, uri);
         var targetMembers = parseMembers(registry, members);
         setDefaultRequestOptions(registry, requestOptions);
         HTTP_1.RequestUtils.setContentTypeHeader("application/ld+json", requestOptions);
@@ -42,19 +43,19 @@ function sendAddAction(repository, uri, members, requestOptions) {
             _registry: registry,
             _context: registry._context,
         });
-        freeResources._register(LDP_1.AddMemberAction.createFrom({ targetMembers: targetMembers }));
+        freeResources._register(AddMemberAction_1.AddMemberAction.createFrom({ targetMembers: targetMembers }));
         var body = JSON.stringify(freeResources);
         return HTTP_1.RequestService
-            .put(iri, body, requestOptions)
+            .put(url, body, requestOptions)
             .then(function () { })
-            .catch(registry._parseErrorResponse.bind(registry));
+            .catch(registry._parseErrorFromResponse.bind(registry));
     });
 }
 function sendRemoveAction(repository, uri, members, requestOptions) {
     if (requestOptions === void 0) { requestOptions = {}; }
     return Utils_1.promiseMethod(function () {
         var registry = getRegistry(repository);
-        var iri = registry._requestURLFor(repository, uri);
+        var url = HTTP_1.RequestUtils.getRequestURLFor(registry, repository, uri);
         var targetMembers = parseMembers(registry, members);
         setDefaultRequestOptions(registry, requestOptions);
         HTTP_1.RequestUtils.setContentTypeHeader("application/ld+json", requestOptions);
@@ -66,15 +67,16 @@ function sendRemoveAction(repository, uri, members, requestOptions) {
             _registry: registry,
             _context: registry._context,
         });
-        freeResources._register(LDP_1.RemoveMemberAction.createFrom({ targetMembers: targetMembers }));
+        freeResources._register(RemoveMemberAction_1.RemoveMemberAction.createFrom({ targetMembers: targetMembers }));
         var body = JSON.stringify(freeResources);
         return HTTP_1.RequestService
-            .delete(iri, body, requestOptions)
+            .delete(url, body, requestOptions)
             .then(function () { })
-            .catch(registry._parseErrorResponse.bind(registry));
+            .catch(registry._parseErrorFromResponse.bind(registry));
     });
 }
 var PROTOTYPE = {
+    _registry: void 0,
     addMember: function (uriOrMember, memberOrOptions, requestOptions) {
         requestOptions = Utils_1.isObject(memberOrOptions) && !Pointer_1.Pointer.is(memberOrOptions) ?
             memberOrOptions :
@@ -132,7 +134,7 @@ var PROTOTYPE = {
             void 0;
         return Utils_1.promiseMethod(function () {
             var registry = getRegistry(_this);
-            var iri = registry._requestURLFor(_this, uri);
+            var url = HTTP_1.RequestUtils.getRequestURLFor(registry, _this, uri);
             setDefaultRequestOptions(registry, requestOptions);
             HTTP_1.RequestUtils.setRetrievalPreferences({
                 include: [
@@ -146,9 +148,9 @@ var PROTOTYPE = {
                 ],
             }, requestOptions);
             return HTTP_1.RequestService
-                .delete(iri, requestOptions)
+                .delete(url, requestOptions)
                 .then(function () { })
-                .catch(registry._parseErrorResponse.bind(registry));
+                .catch(registry._parseErrorFromResponse.bind(registry));
         });
     },
 };
@@ -163,7 +165,7 @@ exports.MembersDocument = {
         if (exports.MembersDocument.isDecorated(object))
             return object;
         var resource = core_1.ModelDecorator
-            .decorateMultiple(object, TransientDocument_1.TransientDocument);
+            .decorateMultiple(object, Resource_1.TransientResource);
         return core_1.ModelDecorator
             .definePropertiesFrom(PROTOTYPE, resource);
     },

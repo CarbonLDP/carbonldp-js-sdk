@@ -11,7 +11,7 @@ import * as LDP from "./";
 import {
 	AddMemberAction,
 	AddMemberActionFactory,
-} from "./AddMemberAction";
+} from "../Members/AddMemberAction";
 import {
 	Error,
 	ErrorFactory,
@@ -39,7 +39,7 @@ import {
 import {
 	RemoveMemberAction,
 	RemoveMemberActionFactory,
-} from "./RemoveMemberAction";
+} from "../Members/RemoveMemberAction";
 import {
 	ResponseMetadata,
 	ResponseMetadataFactory,
@@ -58,24 +58,6 @@ describe( module( "carbonldp/LDP" ), ():void => {
 	it( isDefined(), ():void => {
 		expect( LDP ).toBeDefined();
 		expect( Utils.isObject( LDP ) ).toBe( true );
-	} );
-
-	it( reexports(
-		STATIC,
-		"AddMemberAction",
-		"CarbonLDP.LDP.AddMemberAction"
-	), ():void => {
-		expect( LDP.AddMemberAction ).toBeDefined();
-		expect( LDP.AddMemberAction ).toBe( AddMemberAction );
-	} );
-
-	it( reexports(
-		STATIC,
-		"AddMemberActionFactory",
-		"CarbonLDP.LDP.AddMemberActionFactory"
-	), ():void => {
-		const target:LDP.AddMemberActionFactory = {} as AddMemberActionFactory;
-		expect( target ).toBeDefined();
 	} );
 
 	it( reexports(
@@ -147,24 +129,6 @@ describe( module( "carbonldp/LDP" ), ():void => {
 		"CarbonLDP.LDP.ErrorFactory"
 	), ():void => {
 		const target:LDP.ErrorFactory = {} as ErrorFactory;
-		expect( target ).toBeDefined();
-	} );
-
-	it( reexports(
-		STATIC,
-		"RemoveMemberAction",
-		"CarbonLDP.LDP.RemoveMemberAction"
-	), ():void => {
-		expect( LDP.RemoveMemberAction ).toBeDefined();
-		expect( LDP.RemoveMemberAction ).toBe( RemoveMemberAction );
-	} );
-
-	it( reexports(
-		STATIC,
-		"RemoveMemberActionFactory",
-		"CarbonLDP.LDP.RemoveMemberActionFactory"
-	), ():void => {
-		const target:LDP.RemoveMemberActionFactory = {} as RemoveMemberActionFactory;
 		expect( target ).toBeDefined();
 	} );
 

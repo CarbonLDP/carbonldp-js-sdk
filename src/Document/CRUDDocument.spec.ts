@@ -26,7 +26,7 @@ import {
 	XSD
 } from "../Vocabularies";
 import { CRUDDocument } from "./CRUDDocument";
-import { PersistedDocument } from "./PersistedDocument";
+import { BasePersistedDocument } from "./BasePersistedDocument";
 
 
 function createMock<T extends object>( data?:T & Partial<CRUDDocument> ):T & CRUDDocument {
@@ -50,8 +50,8 @@ describe( module( "carbonldp/Document" ), ():void => {
 		"Document that contains the CRUD based request methods."
 	), ():void => {
 
-		it( extendsClass( "CarbonLDP.PersistedDocument" ), ():void => {
-			const target:PersistedDocument = {} as CRUDDocument;
+		it( extendsClass( "CarbonLDP.BasePersistedDocument" ), ():void => {
+			const target:BasePersistedDocument = {} as CRUDDocument;
 			expect( target ).toBeDefined();
 		} );
 
@@ -151,7 +151,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 			it( "should parse error response", async () => {
 				const resource:CRUDDocument = createMock();
 
-				const spy:jasmine.Spy = spyOn( resource._registry, "_parseErrorResponse" )
+				const spy:jasmine.Spy = spyOn( resource._registry, "_parseErrorFromResponse" )
 					.and.callFake( () => Promise.reject( null ) );
 
 				try {
@@ -490,7 +490,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 				expect( registry.getPointer( retrieved.id ) ).toBe( retrieved );
 			} );
 
-			it( "should add PersistedDocument values", async () => {
+			it( "should add BasePersistedDocument values", async () => {
 				stubRequest( "https://example.com/" );
 
 				const resource:CRUDDocument = createMock( {} );
@@ -577,7 +577,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 			it( "should parse error response", async () => {
 				const resource:CRUDDocument = createMock( { id: "https://example.com/500/" } );
 
-				const spy:jasmine.Spy = spyOn( resource._registry, "_parseErrorResponse" )
+				const spy:jasmine.Spy = spyOn( resource._registry, "_parseErrorFromResponse" )
 					.and.callFake( () => Promise.reject( null ) );
 
 				try {
@@ -790,7 +790,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 				expect( registry.getPointer( retrieved.id ) ).toBe( retrieved );
 			} );
 
-			it( "should add PersistedDocument values", async () => {
+			it( "should add BasePersistedDocument values", async () => {
 				stubRequest( "https://example.com/" );
 
 				const resource:CRUDDocument = createMock( {} );
@@ -857,7 +857,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 			it( "should parse error response", async () => {
 				const resource:CRUDDocument = createMock();
 
-				const spy:jasmine.Spy = spyOn( resource._registry, "_parseErrorResponse" )
+				const spy:jasmine.Spy = spyOn( resource._registry, "_parseErrorFromResponse" )
 					.and.callFake( () => Promise.reject( null ) );
 
 				try {
@@ -1155,7 +1155,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 			it( "should parse error response", async () => {
 				const resource:CRUDDocument = createMock( { id: "https://example.com/500/" } );
 
-				const spy:jasmine.Spy = spyOn( resource._registry, "_parseErrorResponse" )
+				const spy:jasmine.Spy = spyOn( resource._registry, "_parseErrorFromResponse" )
 					.and.callFake( () => Promise.reject( null ) );
 
 				try {
@@ -1826,7 +1826,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 			} );
 
 
-			it( "should add unresolved PersistedDocument data to the child", async () => {
+			it( "should add unresolved BasePersistedDocument data to the child", async () => {
 				stubRequest( "https://example.com/" );
 
 				const resource:CRUDDocument = createMock();
@@ -1838,7 +1838,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 				} ) );
 			} );
 
-			it( "should add unresolved PersistedDocument data to the children", async () => {
+			it( "should add unresolved BasePersistedDocument data to the children", async () => {
 				stubRequest( "https://example.com/" );
 
 				const resource:CRUDDocument = createMock();
@@ -2088,7 +2088,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 			it( "should parse error response", async () => {
 				const resource:CRUDDocument = createMock( { id: "https://example.com/500/" } );
 
-				const spy:jasmine.Spy = spyOn( resource._registry, "_parseErrorResponse" )
+				const spy:jasmine.Spy = spyOn( resource._registry, "_parseErrorFromResponse" )
 					.and.callFake( () => Promise.reject( null ) );
 
 				try {
@@ -2769,7 +2769,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 			} );
 
 
-			it( "should add resolved PersistedDocument data to the child", async () => {
+			it( "should add resolved BasePersistedDocument data to the child", async () => {
 				stubRequest( "https://example.com/" );
 
 				const resource:CRUDDocument = createMock();
@@ -2782,7 +2782,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 				} ) );
 			} );
 
-			it( "should add resolved PersistedDocument data to the children", async () => {
+			it( "should add resolved BasePersistedDocument data to the children", async () => {
 				const resource:CRUDDocument = createMock();
 				const promise:Promise<CRUDDocument[]> = resource.create( [ {}, {} ] );
 
@@ -3266,7 +3266,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 				stubRequest( "https://example.com/500/", { status: 500 } );
 				const resource:CRUDDocument = createMock( { id: "https://example.com/500/" } );
 
-				const spy:jasmine.Spy = spyOn( resource._registry, "_parseErrorResponse" )
+				const spy:jasmine.Spy = spyOn( resource._registry, "_parseErrorFromResponse" )
 					.and.callFake( () => Promise.reject( null ) );
 
 				try {
@@ -3584,7 +3584,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 			} );
 
 
-			it( "should add unresolved PersistedDocument data", async () => {
+			it( "should add unresolved BasePersistedDocument data", async () => {
 				stubRequest( "https://example.com/" );
 
 				const resource:CRUDDocument = createMock();
@@ -3789,7 +3789,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 			it( "should parse error response", async () => {
 				const resource:CRUDDocument = createMock( { id: "https://example.com/500/" } );
 
-				const spy:jasmine.Spy = spyOn( resource._registry, "_parseErrorResponse" )
+				const spy:jasmine.Spy = spyOn( resource._registry, "_parseErrorFromResponse" )
 					.and.callFake( () => Promise.reject( null ) );
 
 				try {
@@ -4270,7 +4270,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 			} );
 
 
-			it( "should add unresolved PersistedDocument data", async () => {
+			it( "should add unresolved BasePersistedDocument data", async () => {
 				stubRequest( "https://example.com/" );
 
 				const resource:CRUDDocument = createMock();
@@ -4601,7 +4601,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 				stubRequest( "https://example.com/500/", { status: 500 } );
 				const resource:CRUDDocument = createMock( { id: "https://example.com/500/" } );
 
-				const spy:jasmine.Spy = spyOn( resource._registry, "_parseErrorResponse" )
+				const spy:jasmine.Spy = spyOn( resource._registry, "_parseErrorFromResponse" )
 					.and.callFake( () => Promise.reject( null ) );
 
 				try {
@@ -4918,7 +4918,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 				}
 			} );
 
-			it( "should add resolved PersistedDocument data", async () => {
+			it( "should add resolved BasePersistedDocument data", async () => {
 				stubRequest( "https://example.com/" );
 
 				const resource:CRUDDocument = createMock();
@@ -5245,7 +5245,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 			it( "should parse error response", async () => {
 				const resource:CRUDDocument = createMock( { id: "https://example.com/500/" } );
 
-				const spy:jasmine.Spy = spyOn( resource._registry, "_parseErrorResponse" )
+				const spy:jasmine.Spy = spyOn( resource._registry, "_parseErrorFromResponse" )
 					.and.callFake( () => Promise.reject( null ) );
 
 				try {
@@ -5742,7 +5742,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 			} );
 
 
-			it( "should add resolved PersistedDocument data", async () => {
+			it( "should add resolved BasePersistedDocument data", async () => {
 				const resource:CRUDDocument = createMock();
 
 				const child1:BaseAccessPoint = { hasMemberRelation: "relation1" };
@@ -6048,7 +6048,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 				Object.defineProperty( resource, "isDirty", { writable: true } );
 				spyOn( resource, "isDirty" ).and.returnValue( true );
 
-				const spy:jasmine.Spy = spyOn( resource._registry, "_parseErrorResponse" )
+				const spy:jasmine.Spy = spyOn( resource._registry, "_parseErrorFromResponse" )
 					.and.callFake( () => Promise.reject( null ) );
 
 				try {
@@ -6452,7 +6452,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 				Object.defineProperty( resource, "isDirty", { writable: true } );
 				spyOn( resource, "isDirty" ).and.returnValue( true );
 
-				const spy:jasmine.Spy = spyOn( resource._registry, "_parseErrorResponse" )
+				const spy:jasmine.Spy = spyOn( resource._registry, "_parseErrorFromResponse" )
 					.and.callFake( () => Promise.reject( null ) );
 
 				try {
@@ -6650,7 +6650,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 				} );
 			} );
 
-			it( "should update PersistedDocument data", async () => {
+			it( "should update BasePersistedDocument data", async () => {
 				stubRequest( "https://example.com/", {} );
 
 				const resource:CRUDDocument = createMock( {
@@ -6891,7 +6891,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 				Object.defineProperty( resource, "isDirty", { writable: true } );
 				spyOn( resource, "isDirty" ).and.returnValue( true );
 
-				const spy:jasmine.Spy = spyOn( resource._registry, "_parseErrorResponse" )
+				const spy:jasmine.Spy = spyOn( resource._registry, "_parseErrorFromResponse" )
 					.and.callFake( () => Promise.reject( null ) );
 
 				try {
@@ -7041,7 +7041,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 				} );
 			} );
 
-			it( "should update PersistedDocument data", async () => {
+			it( "should update BasePersistedDocument data", async () => {
 				stubRequest( "https://example.com/", {} );
 
 				const resource:CRUDDocument = createMock( {
@@ -7303,7 +7303,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 				stubRequest( "https://example.com/", { status: 500 } );
 				const resource:CRUDDocument = createMock( { id: "https://example.com/" } );
 
-				const spy:jasmine.Spy = spyOn( resource._registry, "_parseErrorResponse" )
+				const spy:jasmine.Spy = spyOn( resource._registry, "_parseErrorFromResponse" )
 					.and.callFake( () => Promise.reject( null ) );
 
 				try {

@@ -15,5 +15,7 @@ exports.QueryDocument = QueryDocument;
 __export(require("./Builder"));
 __export(require("./RawResultsParser"));
 __export(require("./Service"));
+var SPARQLDocument_1 = require("./SPARQLDocument");
+exports.SPARQLDocument = SPARQLDocument_1.SPARQLDocument;
 
 //# sourceMappingURL=index.js.map

@@ -46,12 +46,12 @@ import {
 	promiseMethod,
 } from "../Utils";
 import { LDP } from "../Vocabularies";
+import { BasePersistedDocument } from "./BasePersistedDocument";
 import { Document } from "./Document";
-import { PersistedDocument } from "./PersistedDocument";
 import { TransientDocument } from "./TransientDocument";
 
 
-export interface CRUDDocument extends PersistedDocument {
+export interface CRUDDocument extends BasePersistedDocument {
 	get<T extends object>( requestOptions?:GETOptions ):Promise<T & Document>;
 	get<T extends object>( uri:string, requestOptions?:GETOptions ):Promise<T & Document>;
 
@@ -176,7 +176,7 @@ function getFullResource<T extends object>( this:void, registry:DocumentsRegistr
 			const eTag:string = response.getETag();
 			return parseRDFDocument<T>( registry, rdfDocument, eTag );
 		} )
-		.catch( registry._parseErrorResponse.bind( registry ) )
+		.catch( registry._parseErrorFromResponse.bind( registry ) )
 		;
 }
 
@@ -258,7 +258,7 @@ function persistResource<T extends object>( registry:DocumentsRegistry, parentUR
 		} )
 		.catch( ( error ) => {
 			delete resource[ "__CarbonLDP_persisting__" ];
-			return registry._parseErrorResponse( error );
+			return registry._parseErrorFromResponse( error );
 		} );
 }
 
@@ -290,7 +290,8 @@ function createChildren<T extends object>( retrievalType:"minimal" | "representa
 				requestOptions ? requestOptions : {}
 		;
 
-		const iri:string = registry._requestURLFor( repository, isString( uriOrChildren ) ? uriOrChildren : void 0 );
+		const uri:string | undefined = isString( uriOrChildren ) ? uriOrChildren : void 0;
+		const url:string = RequestUtils.getRequestURLFor( registry, repository, uri );
 
 		const slugs:string[] | string | null = isString( childrenOrSlugsOrOptions ) ?
 			childrenOrSlugsOrOptions :
@@ -309,7 +310,7 @@ function createChildren<T extends object>( retrievalType:"minimal" | "representa
 		RequestUtils.setPreferredRetrieval( retrievalType, requestOptions );
 
 		if( ! Array.isArray( slugs ) && ! Array.isArray( children ) )
-			return persistChild<T>( registry, iri, requestOptions, children, slugs );
+			return persistChild<T>( registry, url, requestOptions, children, slugs );
 
 
 		const slugsLength:number | undefined = Array.isArray( slugs ) ? slugs.length : 0;
@@ -323,7 +324,7 @@ function createChildren<T extends object>( retrievalType:"minimal" | "representa
 			const child:T | undefined = index < childrenLength ? children[ index ] : void 0;
 			const slug:string | undefined = index < slugsLength ? slugs[ index ] : void 0;
 
-			promises[ index ] = persistChild<T>( registry, iri, cloneOptions, child, slug );
+			promises[ index ] = persistChild<T>( registry, url, cloneOptions, child, slug );
 		}
 
 		return Promise.all( promises );
@@ -353,8 +354,8 @@ function createAccessPoint<T extends object>( retrievalType:"minimal" | "represe
 	return promiseMethod( () => {
 		const registry:DocumentsRegistry = getRegistry( repository );
 
-		const iri:string = registry
-			._requestURLFor( repository, isString( uriOrAccessPoint ) ? uriOrAccessPoint : void 0 );
+		const uri:string | undefined = isString( uriOrAccessPoint ) ? uriOrAccessPoint : void 0;
+		const url:string = RequestUtils.getRequestURLFor( registry, repository, uri );
 
 		const accessPoint:T & BaseAccessPoint = isObject( uriOrAccessPoint ) ? uriOrAccessPoint :
 			accessPointOrSlugOrRequestOptions as T & BaseAccessPoint;
@@ -367,7 +368,7 @@ function createAccessPoint<T extends object>( retrievalType:"minimal" | "represe
 
 		RequestUtils.setPreferredRetrieval( retrievalType, requestOptions );
 
-		return persistAccessPoint( registry, iri, requestOptions, accessPoint, slug );
+		return persistAccessPoint( registry, url, requestOptions, accessPoint, slug );
 	} );
 }
 
@@ -375,8 +376,8 @@ function createAccessPoints<T extends object>( retrievalType:"minimal" | "repres
 	return promiseMethod( () => {
 		const registry:DocumentsRegistry = getRegistry( repository );
 
-		const iri:string = isString( uriOrAccessPoints ) ?
-			registry._requestURLFor( repository, uriOrAccessPoints ) : repository.id;
+		const uri:string | undefined = isString( uriOrAccessPoints ) ? uriOrAccessPoints : void 0;
+		const url:string = RequestUtils.getRequestURLFor( registry, repository, uri );
 
 		const accessPoints:(T & BaseAccessPoint)[] = Array.isArray( uriOrAccessPoints ) ? uriOrAccessPoints :
 			accessPointOrSlugsOrRequestOptions as (T & BaseAccessPoint)[];
@@ -398,7 +399,7 @@ function createAccessPoints<T extends object>( retrievalType:"minimal" | "repres
 			const cloneOptions:RequestOptions = RequestUtils.cloneOptions( requestOptions );
 			const slug:string | undefined = index < slugsLength ? slugs[ index ] : void 0;
 
-			promises[ index ] = persistAccessPoint<T>( registry, iri, cloneOptions, accessPoints[ index ], slug );
+			promises[ index ] = persistAccessPoint<T>( registry, url, cloneOptions, accessPoints[ index ], slug );
 		}
 
 		return Promise.all( promises );
@@ -407,17 +408,17 @@ function createAccessPoints<T extends object>( retrievalType:"minimal" | "repres
 
 
 function refreshResource<T extends CRUDDocument>( registry:DocumentsRegistry, resource:T, requestOptions:RequestOptions ):Promise<T & CRUDDocument> {
-	const uri:string = registry._requestURLFor( resource );
+	const url:string = RequestUtils.getRequestURLFor( registry, resource );
 
 	setDefaultRequestOptions( registry, requestOptions, LDP.RDFSource );
 	RequestUtils.setIfNoneMatchHeader( resource._eTag, requestOptions );
 
 	return RequestService
-		.get( uri, requestOptions, new RDFDocumentParser() )
+		.get( url, requestOptions, new RDFDocumentParser() )
 		.then( ( [ rdfDocuments, response ]:[ RDFDocument[], Response ] ) => {
 			if( response === null ) return resource;
 
-			const rdfDocument:RDFDocument | undefined = rdfDocuments.find( node => node[ "@id" ] === uri );
+			const rdfDocument:RDFDocument | undefined = rdfDocuments.find( node => node[ "@id" ] === url );
 			if( rdfDocument === null ) throw new BadResponseError( "No document was returned.", response );
 
 			const eTag:string = response.getETag();
@@ -426,7 +427,7 @@ function refreshResource<T extends CRUDDocument>( registry:DocumentsRegistry, re
 		.catch<T & CRUDDocument>( ( response:Response ) => {
 			if( response.status === 304 ) return resource;
 
-			return resource._registry._parseErrorResponse( response );
+			return resource._registry._parseErrorFromResponse( response );
 		} );
 }
 
@@ -436,7 +437,7 @@ function addResourcePatch( registry:DocumentsRegistry, deltaCreator:DeltaCreator
 }
 
 function sendPatch<T extends CRUDDocument>( registry:DocumentsRegistry, resource:T, requestOptions:RequestOptions ):Promise<T> {
-	const uri:string = registry._requestURLFor( resource );
+	const url:string = RequestUtils.getRequestURLFor( registry, resource );
 
 	if( ! resource.isDirty() ) return Promise.resolve( resource );
 	resource._normalize();
@@ -472,26 +473,27 @@ function sendPatch<T extends CRUDDocument>( registry:DocumentsRegistry, resource
 	const body:string = deltaCreator.getPatch();
 
 	return RequestService
-		.patch( uri, body, requestOptions )
+		.patch( url, body, requestOptions )
 		.then( ( response:Response ) => {
 			return applyResponseRepresentation<T>( registry, resource, response );
 		} )
-		.catch( registry._parseErrorResponse.bind( resource ) )
+		.catch( registry._parseErrorFromResponse.bind( resource ) )
 		;
 }
 
 
-const PROTOTYPE:PickSelfProps<CRUDDocument, PersistedDocument> = {
+const PROTOTYPE:PickSelfProps<CRUDDocument, BasePersistedDocument> = {
 	get<T extends object>( this:CRUDDocument, uriOrOptions:string | GETOptions, requestOptions?:RequestOptions ):Promise<T & Document> {
 		return promiseMethod( () => {
 			const registry:DocumentsRegistry = getRegistry( this );
 
-			const iri:string = registry._requestURLFor( this, isString( uriOrOptions ) ? uriOrOptions : void 0 );
+			const uri:string | undefined = isString( uriOrOptions ) ? uriOrOptions : void 0;
+			const url:string = RequestUtils.getRequestURLFor( registry, this, uri );
 
 			requestOptions = isObject( uriOrOptions ) ? uriOrOptions :
 				requestOptions ? requestOptions : {};
 
-			return getFullResource<T>( registry, iri, requestOptions );
+			return getFullResource<T>( registry, url, requestOptions );
 		} );
 	},
 
@@ -499,8 +501,8 @@ const PROTOTYPE:PickSelfProps<CRUDDocument, PersistedDocument> = {
 		return promiseMethod( () => {
 			const registry:DocumentsRegistry = getRegistry( this );
 
-			const iri:string = registry._requestURLFor( this );
-			return getFullResource<T>( registry, iri, requestOptions );
+			const url:string = RequestUtils.getRequestURLFor( registry, this );
+			return getFullResource<T>( registry, url, requestOptions );
 		} );
 	},
 
@@ -509,15 +511,15 @@ const PROTOTYPE:PickSelfProps<CRUDDocument, PersistedDocument> = {
 		return promiseMethod( () => {
 			const registry:DocumentsRegistry = getRegistry( this );
 
-			const iri:string = registry._requestURLFor( this, uri );
+			const url:string = RequestUtils.getRequestURLFor( registry, this, uri );
 			setDefaultRequestOptions( registry, requestOptions, LDP.RDFSource );
 
 			return RequestService
-				.head( iri, requestOptions )
+				.head( url, requestOptions )
 				.then( () => true )
 				.catch<boolean>( ( response:Response ) => {
 					if( response.status === 404 ) return false;
-					return registry._parseErrorResponse( response );
+					return registry._parseErrorFromResponse( response );
 				} );
 		} );
 	},
@@ -583,23 +585,24 @@ const PROTOTYPE:PickSelfProps<CRUDDocument, PersistedDocument> = {
 		return promiseMethod( () => {
 			const registry:DocumentsRegistry = getRegistry( this );
 
-			const iri:string = registry._requestURLFor( this, isString( uriOrOptions ) ? uriOrOptions : "" );
+			const uri:string | undefined = isString( uriOrOptions ) ? uriOrOptions : void 0;
+			const url:string = RequestUtils.getRequestURLFor( registry, this, uri );
 
 			setDefaultRequestOptions( registry, requestOptions, LDP.RDFSource );
 
 			return RequestService
-				.delete( iri, requestOptions )
+				.delete( url, requestOptions )
 				.then( () => {
-					this._registry.removePointer( iri );
+					this._registry.removePointer( url );
 				} )
-				.catch( this._registry._parseErrorResponse.bind( this ) )
+				.catch( this._registry._parseErrorFromResponse.bind( this ) )
 				;
 		} );
 	},
 };
 
 export interface CRUDDocumentFactory {
-	PROTOTYPE:PickSelfProps<CRUDDocument, PersistedDocument>;
+	PROTOTYPE:PickSelfProps<CRUDDocument, BasePersistedDocument>;
 
 	isDecorated( object:object ):object is CRUDDocument;
 
@@ -622,8 +625,8 @@ export const CRUDDocument:CRUDDocumentFactory = {
 	decorate<T extends object>( object:T ):T & CRUDDocument {
 		if( CRUDDocument.isDecorated( object ) ) return object;
 
-		const resource:T & PersistedDocument = ModelDecorator
-			.decorateMultiple( object, PersistedDocument );
+		const resource:T & BasePersistedDocument = ModelDecorator
+			.decorateMultiple( object, BasePersistedDocument );
 
 		return ModelDecorator
 			.definePropertiesFrom( PROTOTYPE, resource );
@@ -632,7 +635,7 @@ export const CRUDDocument:CRUDDocumentFactory = {
 
 	is( value:any ):value is CRUDDocument {
 		return isObject( value )
-			&& PersistedDocument.is( value )
+			&& BasePersistedDocument.is( value )
 			&& CRUDDocument.isDecorated( value )
 			;
 	},

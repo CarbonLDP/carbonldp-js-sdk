@@ -1,7 +1,6 @@
 import { CarbonLDP } from "../CarbonLDP";
 import { Document } from "../Document";
 import { Response } from "../HTTP";
-import { Pointer } from "../Pointer";
 import { RegistryService } from "./RegistryService";
 export declare class DocumentsRegistry extends RegistryService<Document, CarbonLDP> {
     readonly _context: CarbonLDP | undefined;
@@ -11,6 +10,6 @@ export declare class DocumentsRegistry extends RegistryService<Document, CarbonL
         id: string;
     }): T & Document;
     _getLocalID(id: string): string;
-    _requestURLFor(pointer: Pointer, uri?: string): string;
-    _parseErrorResponse<T extends object>(response: Response | Error | null): Promise<never>;
+    _parseErrorFromResponse<T extends object>(response: Response | Error | null): Promise<never>;
+    protected _addErrorResponseData(response: Response, error: Error): Promise<never>;
 }

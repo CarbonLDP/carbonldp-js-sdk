@@ -1,3 +1,4 @@
+import { AbstractContext } from "../AbstractContext";
 import { ModelDecorator } from "../core";
 import {
 	IllegalActionError,
@@ -9,15 +10,9 @@ import {
 	RequestService,
 	RequestUtils
 } from "../HTTP";
-import {
-	AddMemberAction,
-	RemoveMemberAction
-} from "../LDP";
 import { Pointer } from "../Pointer";
-import {
-	DocumentsRegistry,
-	Registry
-} from "../Registry";
+import { RegistryService } from "../Registry";
+import { TransientResource } from "../Resource";
 import {
 	isObject,
 	isString,
@@ -28,10 +23,14 @@ import {
 	C,
 	LDP
 } from "../Vocabularies";
-import { TransientDocument } from "./TransientDocument";
+import { AddMemberAction } from "./AddMemberAction";
+import { RemoveMemberAction } from "./RemoveMemberAction";
 
 
-export interface MembersDocument extends TransientDocument {
+export interface MembersDocument extends TransientResource {
+	_registry:RegistryService<MembersDocument, AbstractContext<MembersDocument, any> | undefined> | undefined;
+
+
 	addMember( member:string | Pointer, requestOptions?:RequestOptions ):Promise<void>;
 	addMember( uri:string, member:string | Pointer, requestOptions?:RequestOptions ):Promise<void>;
 
@@ -50,12 +49,12 @@ export interface MembersDocument extends TransientDocument {
 }
 
 
-function getRegistry( repository:MembersDocument ):DocumentsRegistry {
+function getRegistry( repository:MembersDocument ):RegistryService<MembersDocument, AbstractContext<MembersDocument, any> | undefined> {
 	if( repository._registry && repository._registry._context ) return repository._registry;
 	throw new IllegalActionError( `"${ repository.id }" doesn't support Members management requests.` );
 }
 
-function setDefaultRequestOptions( registry:DocumentsRegistry, requestOptions:RequestOptions ):RequestOptions {
+function setDefaultRequestOptions( registry:RegistryService<MembersDocument, AbstractContext<MembersDocument, any> | undefined>, requestOptions:RequestOptions ):RequestOptions {
 	if( registry._context && registry._context.auth )
 		registry._context.auth.addAuthentication( requestOptions );
 
@@ -65,7 +64,7 @@ function setDefaultRequestOptions( registry:DocumentsRegistry, requestOptions:Re
 	return requestOptions;
 }
 
-function parseMembers( registry:Registry<Pointer>, pointers:(string | Pointer)[] ):Pointer[] {
+function parseMembers( registry:RegistryService<Pointer, any>, pointers:(string | Pointer)[] ):Pointer[] {
 	return pointers.map( pointer => {
 		if( isString( pointer ) ) return registry.getPointer( pointer );
 		if( Pointer.is( pointer ) ) return pointer;
@@ -77,9 +76,9 @@ function parseMembers( registry:Registry<Pointer>, pointers:(string | Pointer)[]
 
 function sendAddAction( repository:MembersDocument, uri:string | undefined, members:(string | Pointer)[], requestOptions:RequestOptions = {} ):Promise<void> {
 	return promiseMethod( () => {
-		const registry:DocumentsRegistry = getRegistry( repository );
+		const registry:RegistryService<MembersDocument, AbstractContext<MembersDocument, any> | undefined> = getRegistry( repository );
 
-		const iri:string = registry._requestURLFor( repository, uri );
+		const url:string = RequestUtils.getRequestURLFor( registry, repository, uri );
 		const targetMembers:Pointer[] = parseMembers( registry, members );
 
 		setDefaultRequestOptions( registry, requestOptions );
@@ -94,18 +93,18 @@ function sendAddAction( repository:MembersDocument, uri:string | undefined, memb
 		const body:string = JSON.stringify( freeResources );
 
 		return RequestService
-			.put( iri, body, requestOptions )
+			.put( url, body, requestOptions )
 			.then( () => {} )
-			.catch( registry._parseErrorResponse.bind( registry ) )
+			.catch( registry._parseErrorFromResponse.bind( registry ) )
 			;
 	} );
 }
 
 function sendRemoveAction( repository:MembersDocument, uri:string | undefined, members:(string | Pointer)[], requestOptions:RequestOptions = {} ):Promise<void> {
 	return promiseMethod( () => {
-		const registry:DocumentsRegistry = getRegistry( repository );
+		const registry:RegistryService<MembersDocument, AbstractContext<MembersDocument, any> | undefined> = getRegistry( repository );
 
-		const iri:string = registry._requestURLFor( repository, uri );
+		const url:string = RequestUtils.getRequestURLFor( registry, repository, uri );
 		const targetMembers:Pointer[] = parseMembers( registry, members );
 
 		setDefaultRequestOptions( registry, requestOptions );
@@ -124,15 +123,18 @@ function sendRemoveAction( repository:MembersDocument, uri:string | undefined, m
 		const body:string = JSON.stringify( freeResources );
 
 		return RequestService
-			.delete( iri, body, requestOptions )
+			.delete( url, body, requestOptions )
 			.then( () => {} )
-			.catch( registry._parseErrorResponse.bind( registry ) )
+			.catch( registry._parseErrorFromResponse.bind( registry ) )
 			;
 	} );
 }
 
 
-const PROTOTYPE:PickSelfProps<MembersDocument, TransientDocument> = {
+const PROTOTYPE:PickSelfProps<MembersDocument, TransientResource, "_registry"> = {
+	_registry: void 0,
+
+
 	addMember( this:MembersDocument, uriOrMember:string | (Pointer | string), memberOrOptions?:(Pointer | string) | RequestOptions, requestOptions?:RequestOptions ):Promise<void> {
 		requestOptions = isObject( memberOrOptions ) && ! Pointer.is( memberOrOptions ) ?
 			memberOrOptions :
@@ -208,8 +210,8 @@ const PROTOTYPE:PickSelfProps<MembersDocument, TransientDocument> = {
 			void 0;
 
 		return promiseMethod( () => {
-			const registry:DocumentsRegistry = getRegistry( this );
-			const iri:string = registry._requestURLFor( this, uri );
+			const registry:RegistryService<MembersDocument, AbstractContext<MembersDocument, any> | undefined> = getRegistry( this );
+			const url:string = RequestUtils.getRequestURLFor( registry, this, uri );
 
 			setDefaultRequestOptions( registry, requestOptions );
 			RequestUtils.setRetrievalPreferences( {
@@ -225,16 +227,16 @@ const PROTOTYPE:PickSelfProps<MembersDocument, TransientDocument> = {
 			}, requestOptions );
 
 			return RequestService
-				.delete( iri, requestOptions )
+				.delete( url, requestOptions )
 				.then( () => {} )
-				.catch( registry._parseErrorResponse.bind( registry ) )
+				.catch( registry._parseErrorFromResponse.bind( registry ) )
 				;
 		} );
 	},
 };
 
 export interface MembersDocumentFactory {
-	PROTOTYPE:PickSelfProps<MembersDocument, TransientDocument>;
+	PROTOTYPE:PickSelfProps<MembersDocument, TransientResource, "_registry">;
 
 
 	isDecorated( object:object ):object is MembersDocument;
@@ -256,8 +258,8 @@ export const MembersDocument:MembersDocumentFactory = {
 	decorate<T extends object>( object:T ):T & MembersDocument {
 		if( MembersDocument.isDecorated( object ) ) return object;
 
-		const resource:T & TransientDocument = ModelDecorator
-			.decorateMultiple( object, TransientDocument );
+		const resource:T & TransientResource = ModelDecorator
+			.decorateMultiple( object, TransientResource );
 
 		return ModelDecorator
 			.definePropertiesFrom( PROTOTYPE, resource );

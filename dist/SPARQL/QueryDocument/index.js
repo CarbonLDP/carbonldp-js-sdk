@@ -8,6 +8,8 @@ __export(require("./QueryContext"));
 __export(require("./QueryContextBuilder"));
 __export(require("./QueryContextPartial"));
 __export(require("./QueryDocumentBuilder"));
+var QueryDocumentDocument_1 = require("./QueryDocumentDocument");
+exports.QueryDocumentDocument = QueryDocumentDocument_1.QueryDocumentDocument;
 __export(require("./QueryDocumentsBuilder"));
 __export(require("./QueryMetadata"));
 __export(require("./QueryObject"));

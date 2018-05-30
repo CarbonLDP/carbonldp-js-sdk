@@ -2,10 +2,8 @@ import { Context } from "../Context";
 import { ModelDecorator } from "../core";
 import {
 	IDAlreadyInUseError,
-	IllegalStateError,
 	IllegalArgumentError,
 } from "../Errors";
-import { ObjectSchemaUtils } from "../ObjectSchema";
 import {
 	Pointer,
 	PointerLibrary,

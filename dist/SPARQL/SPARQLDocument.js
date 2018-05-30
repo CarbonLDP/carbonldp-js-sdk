@@ -2,17 +2,18 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 var core_1 = require("../core");
 var Errors_1 = require("../Errors");
-var SPARQL_1 = require("../SPARQL");
+var HTTP_1 = require("../HTTP");
+var Resource_1 = require("../Resource");
 var Utils_1 = require("../Utils");
-var TransientDocument_1 = require("./TransientDocument");
+var Builder_1 = require("./Builder");
+var Service_1 = require("./Service");
 function getRegistry(repository) {
     if (repository._registry)
         return repository._registry;
     throw new Errors_1.IllegalActionError("\"" + repository.id + "\" doesn't support SPARQL requests.");
 }
-function parseParams(resource, uriOrQuery, queryOrOptions, options) {
+function parseParams(resource, registry, uriOrQuery, queryOrOptions, options) {
     if (options === void 0) { options = {}; }
-    var registry = getRegistry(resource);
     var iri;
     var query = uriOrQuery;
     if (Utils_1.isObject(queryOrOptions)) {
@@ -22,105 +23,113 @@ function parseParams(resource, uriOrQuery, queryOrOptions, options) {
         query = queryOrOptions;
         iri = uriOrQuery;
     }
-    iri = registry._requestURLFor(resource, iri);
+    var url = HTTP_1.RequestUtils.getRequestURLFor(registry, resource, iri);
     if (registry._context && registry._context.auth)
         registry._context.auth.addAuthentication(options);
-    return { iri: iri, query: query, options: options };
+    return { url: url, query: query, options: options };
 }
 var PROTOTYPE = {
+    _registry: void 0,
     executeRawASKQuery: function (uriOrQuery, queryOrOptions, requestOptions) {
         var _this = this;
         return Utils_1.promiseMethod(function () {
-            var _a = parseParams(_this, uriOrQuery, queryOrOptions, requestOptions), iri = _a.iri, query = _a.query, options = _a.options;
-            return SPARQL_1.SPARQLService
-                .executeRawASKQuery(iri, query, options)
+            var registry = getRegistry(_this);
+            var _a = parseParams(_this, registry, uriOrQuery, queryOrOptions, requestOptions), url = _a.url, query = _a.query, options = _a.options;
+            return Service_1.SPARQLService
+                .executeRawASKQuery(url, query, options)
                 .then(function (_a) {
                 var rawResults = _a[0];
                 return rawResults;
             })
-                .catch(_this._registry._parseErrorResponse.bind(_this));
+                .catch(registry._parseErrorFromResponse.bind(_this));
         });
     },
     executeASKQuery: function (uriOrQuery, queryOrOptions, requestOptions) {
         var _this = this;
         return Utils_1.promiseMethod(function () {
-            var _a = parseParams(_this, uriOrQuery, queryOrOptions, requestOptions), iri = _a.iri, query = _a.query, options = _a.options;
-            return SPARQL_1.SPARQLService
-                .executeASKQuery(iri, query, options)
+            var registry = getRegistry(_this);
+            var _a = parseParams(_this, registry, uriOrQuery, queryOrOptions, requestOptions), url = _a.url, query = _a.query, options = _a.options;
+            return Service_1.SPARQLService
+                .executeASKQuery(url, query, options)
                 .then(function (_a) {
                 var rawResults = _a[0];
                 return rawResults;
             })
-                .catch(_this._registry._parseErrorResponse.bind(_this));
+                .catch(registry._parseErrorFromResponse.bind(_this));
         });
     },
     executeRawSELECTQuery: function (uriOrQuery, queryOrOptions, requestOptions) {
         var _this = this;
         return Utils_1.promiseMethod(function () {
-            var _a = parseParams(_this, uriOrQuery, queryOrOptions, requestOptions), iri = _a.iri, query = _a.query, options = _a.options;
-            return SPARQL_1.SPARQLService
-                .executeRawSELECTQuery(iri, query, options)
+            var registry = getRegistry(_this);
+            var _a = parseParams(_this, registry, uriOrQuery, queryOrOptions, requestOptions), url = _a.url, query = _a.query, options = _a.options;
+            return Service_1.SPARQLService
+                .executeRawSELECTQuery(url, query, options)
                 .then(function (_a) {
                 var rawResults = _a[0];
                 return rawResults;
             })
-                .catch(_this._registry._parseErrorResponse.bind(_this));
+                .catch(registry._parseErrorFromResponse.bind(_this));
         });
     },
     executeSELECTQuery: function (uriOrQuery, queryOrOptions, requestOptions) {
         var _this = this;
         return Utils_1.promiseMethod(function () {
-            var _a = parseParams(_this, uriOrQuery, queryOrOptions, requestOptions), iri = _a.iri, query = _a.query, options = _a.options;
-            return SPARQL_1.SPARQLService
-                .executeSELECTQuery(iri, query, _this._registry, options)
+            var registry = getRegistry(_this);
+            var _a = parseParams(_this, registry, uriOrQuery, queryOrOptions, requestOptions), url = _a.url, query = _a.query, options = _a.options;
+            return Service_1.SPARQLService
+                .executeSELECTQuery(url, query, _this._registry, options)
                 .then(function (_a) {
                 var selectResults = _a[0];
                 return selectResults;
             })
-                .catch(_this._registry._parseErrorResponse.bind(_this));
+                .catch(registry._parseErrorFromResponse.bind(_this));
         });
     },
     executeRawCONSTRUCTQuery: function (uriOrQuery, queryOrOptions, requestOptions) {
         var _this = this;
         return Utils_1.promiseMethod(function () {
-            var _a = parseParams(_this, uriOrQuery, queryOrOptions, requestOptions), iri = _a.iri, query = _a.query, options = _a.options;
-            return SPARQL_1.SPARQLService
-                .executeRawCONSTRUCTQuery(iri, query, options)
+            var registry = getRegistry(_this);
+            var _a = parseParams(_this, registry, uriOrQuery, queryOrOptions, requestOptions), url = _a.url, query = _a.query, options = _a.options;
+            return Service_1.SPARQLService
+                .executeRawCONSTRUCTQuery(url, query, options)
                 .then(function (_a) {
                 var strConstruct = _a[0];
                 return strConstruct;
             })
-                .catch(_this._registry._parseErrorResponse.bind(_this));
+                .catch(registry._parseErrorFromResponse.bind(_this));
         });
     },
     executeRawDESCRIBEQuery: function (uriOrQuery, queryOrOptions, requestOptions) {
         var _this = this;
         return Utils_1.promiseMethod(function () {
-            var _a = parseParams(_this, uriOrQuery, queryOrOptions, requestOptions), iri = _a.iri, query = _a.query, options = _a.options;
-            return SPARQL_1.SPARQLService
-                .executeRawDESCRIBEQuery(iri, query, options)
+            var registry = getRegistry(_this);
+            var _a = parseParams(_this, registry, uriOrQuery, queryOrOptions, requestOptions), url = _a.url, query = _a.query, options = _a.options;
+            return Service_1.SPARQLService
+                .executeRawDESCRIBEQuery(url, query, options)
                 .then(function (_a) {
                 var strDescribe = _a[0];
                 return strDescribe;
             })
-                .catch(_this._registry._parseErrorResponse.bind(_this));
+                .catch(registry._parseErrorFromResponse.bind(_this));
         });
     },
     executeUPDATE: function (uriOrQuery, updateOrOptions, requestOptions) {
         var _this = this;
         return Utils_1.promiseMethod(function () {
-            var _a = parseParams(_this, uriOrQuery, updateOrOptions, requestOptions), iri = _a.iri, update = _a.query, options = _a.options;
-            return SPARQL_1.SPARQLService
-                .executeUPDATE(iri, update, options)
+            var registry = getRegistry(_this);
+            var _a = parseParams(_this, registry, uriOrQuery, updateOrOptions, requestOptions), url = _a.url, update = _a.query, options = _a.options;
+            return Service_1.SPARQLService
+                .executeUPDATE(url, update, options)
                 .then(function () { })
-                .catch(_this._registry._parseErrorResponse.bind(_this));
+                .catch(registry._parseErrorFromResponse.bind(_this));
         });
     },
     sparql: function (uri) {
         var registry = getRegistry(this);
-        var iri = registry._requestURLFor(this, uri);
+        var iri = HTTP_1.RequestUtils.getRequestURLFor(registry, this, uri);
         var schema = registry.getGeneralSchema();
-        var builder = new SPARQL_1.SPARQLBuilder(this, iri)
+        var builder = new Builder_1.SPARQLBuilder(this, iri)
             .base(schema.base)
             .vocab(schema.vocab);
         schema.prefixes.forEach(function (name, prefix) {
@@ -140,7 +149,7 @@ exports.SPARQLDocument = {
         if (exports.SPARQLDocument.isDecorated(object))
             return object;
         var resource = core_1.ModelDecorator
-            .decorateMultiple(object, TransientDocument_1.TransientDocument);
+            .decorateMultiple(object, Resource_1.TransientResource);
         return core_1.ModelDecorator
             .definePropertiesFrom(PROTOTYPE, resource);
     },

@@ -1,9 +1,10 @@
-import { RequestOptions } from "../HTTP";
-import { QueryDocumentBuilder, QueryDocumentsBuilder } from "../SPARQL/QueryDocument";
-import { PickSelfProps } from "../Utils";
-import { Document } from "./Document";
-import { PersistedDocument } from "./PersistedDocument";
-export interface QueryDocumentDocument extends PersistedDocument {
+import { Document } from "../../Document";
+import { BasePersistedDocument } from "../../Document/BasePersistedDocument";
+import { RequestOptions } from "../../HTTP";
+import { PickSelfProps } from "../../Utils";
+import { QueryDocumentBuilder } from "./QueryDocumentBuilder";
+import { QueryDocumentsBuilder } from "./QueryDocumentsBuilder";
+export interface QueryDocumentDocument extends BasePersistedDocument {
     get<T extends object>(queryBuilderFn: (queryBuilder: QueryDocumentBuilder) => QueryDocumentBuilder): Promise<T & Document>;
     get<T extends object>(requestOptions: RequestOptions, queryBuilderFn: (queryBuilder: QueryDocumentBuilder) => QueryDocumentBuilder): Promise<T & Document>;
     get<T extends object>(uri: string, queryBuilderFn: (queryBuilder: QueryDocumentBuilder) => QueryDocumentBuilder): Promise<T & Document>;
@@ -27,7 +28,7 @@ export interface QueryDocumentDocument extends PersistedDocument {
     listMembers<T extends object>(uri: string, requestOptions?: RequestOptions): Promise<(T & Document)[]>;
 }
 export interface QueryDocumentDocumentFactory {
-    PROTOTYPE: PickSelfProps<QueryDocumentDocument, PersistedDocument>;
+    PROTOTYPE: PickSelfProps<QueryDocumentDocument, BasePersistedDocument>;
     isDecorated(object: object): object is QueryDocumentDocument;
     decorate<T extends object>(object: T): T & QueryDocumentDocument;
 }

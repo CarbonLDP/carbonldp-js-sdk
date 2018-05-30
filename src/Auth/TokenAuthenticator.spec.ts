@@ -245,7 +245,7 @@ describe( module( "carbonldp/Auth/TokenAuthenticator" ), ():void => {
 				} );
 
 				const expectedError:Error = new Error( "Error message" );
-				const spy:jasmine.Spy = spyOn( context.registry, "_parseErrorResponse" )
+				const spy:jasmine.Spy = spyOn( context.registry, "_parseErrorFromResponse" )
 					.and.callFake( () => Promise.reject( expectedError ) );
 
 				const authenticator:TokenAuthenticator = new TokenAuthenticator( context );

@@ -1,3 +1,4 @@
+import * as TokensModule from "sparqler/tokens";
 import {
 	BindToken,
 	ConstructToken,
@@ -11,33 +12,35 @@ import {
 	PredicateToken,
 	PrefixedNameToken,
 	PrefixToken,
+	QueryToken,
 	SelectToken,
 	SubjectToken,
 	ValuesToken,
 	VariableToken
 } from "sparqler/tokens";
-import * as TokensModule from "sparqler/tokens";
-import { QueryToken } from "sparqler/tokens";
 import {
 	createPartialMetadata,
 	defineNonEnumerableProps
-} from "../../test/helpers/mocks";
-import { CarbonLDP } from "../CarbonLDP";
+} from "../../../test/helpers/mocks";
+import { CarbonLDP } from "../../CarbonLDP";
+import {
+	BasePersistedDocument,
+	Document
+} from "../../Document";
 import {
 	IllegalActionError,
 	IllegalArgumentError,
 	IllegalStateError
-} from "../Errors";
-import { BaseFragment } from "../Fragment";
-import { Header } from "../HTTP";
-import * as ObjectSchema from "../ObjectSchema";
-import { ObjectSchemaDigester } from "../ObjectSchema";
-import { DocumentsRegistry } from "../Registry";
+} from "../../Errors";
+import { BaseFragment } from "../../Fragment";
+import { Header } from "../../HTTP";
+import * as ObjectSchema from "../../ObjectSchema";
+import { ObjectSchemaDigester } from "../../ObjectSchema";
+import { DocumentsRegistry } from "../../Registry";
 import {
 	BaseResource,
 	PersistedResource
-} from "../Resource";
-import { PartialMetadata } from "../SPARQL/QueryDocument";
+} from "../../Resource";
 import {
 	extendsClass,
 	hasSignature,
@@ -45,14 +48,13 @@ import {
 	method,
 	module,
 	OBLIGATORY
-} from "../test/JasmineExtender";
+} from "../../test/JasmineExtender";
 import {
 	C,
 	LDP,
 	XSD
-} from "../Vocabularies";
-import { Document } from "./index";
-import { PersistedDocument } from "./PersistedDocument";
+} from "../../Vocabularies";
+import { PartialMetadata } from "./PartialMetadata";
 import { QueryDocumentDocument } from "./QueryDocumentDocument";
 
 
@@ -84,15 +86,15 @@ const variableHelper:( name:string ) => VariableToken = name => {
 };
 
 
-describe( module( "carbonldp/Document" ), ():void => {
+describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => {
 
 	describe( interfaze(
-		"CarbonLDP.QueryDocumentDocument",
+		"CarbonLDP.QueryDocument.QueryDocumentDocument",
 		"Document that contains the methods supported by the querying features."
 	), ():void => {
 
-		it( extendsClass( "CarbonLDP.PersistedDocument" ), ():void => {
-			const target:PersistedDocument = {} as QueryDocumentDocument;
+		it( extendsClass( "CarbonLDP.BasePersistedDocument" ), ():void => {
+			const target:BasePersistedDocument = {} as QueryDocumentDocument;
 			expect( target ).toBeDefined();
 		} );
 
@@ -283,7 +285,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 
 				const resource:QueryDocumentDocument = createMock( { id: "https://example.com/" } );
 
-				const spy:jasmine.Spy = spyOn( resource._registry, "_parseErrorResponse" )
+				const spy:jasmine.Spy = spyOn( resource._registry, "_parseErrorFromResponse" )
 					.and.callFake( () => Promise.reject( null ) );
 
 				await resource
@@ -1618,7 +1620,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 
 				const resource:QueryDocumentDocument = createMock( { id: "https://example.com/" } );
 
-				const spy:jasmine.Spy = spyOn( resource._registry, "_parseErrorResponse" )
+				const spy:jasmine.Spy = spyOn( resource._registry, "_parseErrorFromResponse" )
 					.and.callFake( () => Promise.reject( null ) );
 
 				await resource
@@ -2859,7 +2861,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 					id: "https://example.com/",
 				} );
 
-				const spy:jasmine.Spy = spyOn( resource._registry, "_parseErrorResponse" )
+				const spy:jasmine.Spy = spyOn( resource._registry, "_parseErrorFromResponse" )
 					.and.callFake( () => Promise.reject( null ) );
 
 				await resource
@@ -3539,7 +3541,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 				Object.defineProperty( resource, "isDirty", { writable: true } );
 				spyOn( resource, "isDirty" ).and.returnValue( true );
 
-				const spy:jasmine.Spy = spyOn( resource._registry, "_parseErrorResponse" )
+				const spy:jasmine.Spy = spyOn( resource._registry, "_parseErrorFromResponse" )
 					.and.callFake( () => Promise.reject( null ) );
 
 				try {
@@ -3954,7 +3956,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 				Object.defineProperty( resource, "isDirty", { writable: true } );
 				spyOn( resource, "isDirty" ).and.returnValue( true );
 
-				const spy:jasmine.Spy = spyOn( resource._registry, "_parseErrorResponse" )
+				const spy:jasmine.Spy = spyOn( resource._registry, "_parseErrorFromResponse" )
 					.and.callFake( () => Promise.reject( null ) );
 
 				try {
@@ -4246,7 +4248,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 				);
 			} );
 
-			it( "should update PersistedDocument data", async () => {
+			it( "should update BasePersistedDocument data", async () => {
 				stubRequest( "https://example.com/", {
 					resources: [
 						{
@@ -4489,7 +4491,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 
 				const resource:QueryDocumentDocument = createMock( { id: "https://example.com/" } );
 
-				const spy:jasmine.Spy = spyOn( resource._registry, "_parseErrorResponse" )
+				const spy:jasmine.Spy = spyOn( resource._registry, "_parseErrorFromResponse" )
 					.and.callFake( () => Promise.reject( null ) );
 
 				await resource
@@ -6444,7 +6446,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 
 				const resource:QueryDocumentDocument = createMock( { id: "https://example.com/" } );
 
-				const spy:jasmine.Spy = spyOn( resource._registry, "_parseErrorResponse" )
+				const spy:jasmine.Spy = spyOn( resource._registry, "_parseErrorFromResponse" )
 					.and.callFake( () => Promise.reject( null ) );
 
 				await resource
@@ -8407,7 +8409,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 
 				const resource:QueryDocumentDocument = createMock( { id: "https://example.com/" } );
 
-				const spy:jasmine.Spy = spyOn( resource._registry, "_parseErrorResponse" )
+				const spy:jasmine.Spy = spyOn( resource._registry, "_parseErrorFromResponse" )
 					.and.callFake( () => Promise.reject( null ) );
 
 				await resource
@@ -8886,7 +8888,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 
 				const resource:QueryDocumentDocument = createMock( { id: "https://example.com/" } );
 
-				const spy:jasmine.Spy = spyOn( resource._registry, "_parseErrorResponse" )
+				const spy:jasmine.Spy = spyOn( resource._registry, "_parseErrorFromResponse" )
 					.and.callFake( () => Promise.reject( null ) );
 
 				await resource

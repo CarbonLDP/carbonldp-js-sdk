@@ -3,6 +3,7 @@ export * from "./QueryContext";
 export * from "./QueryContextBuilder";
 export * from "./QueryContextPartial";
 export * from "./QueryDocumentBuilder";
+export { QueryDocumentDocument } from "./QueryDocumentDocument";
 export * from "./QueryDocumentsBuilder";
 export * from "./QueryMetadata";
 export * from "./QueryObject";

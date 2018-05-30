@@ -1,9 +1,14 @@
 import { QueryClause } from "sparqler/clauses";
+import { AbstractContext } from "../AbstractContext";
 import { RequestOptions } from "../HTTP";
-import { FinishSPARQLSelect, SPARQLRawResults, SPARQLSelectResults } from "../SPARQL";
+import { RegistryService } from "../Registry";
+import { TransientResource } from "../Resource";
 import { PickSelfProps } from "../Utils";
-import { TransientDocument } from "./TransientDocument";
-export interface SPARQLDocument extends TransientDocument {
+import { FinishSPARQLSelect } from "./Builder";
+import { SPARQLRawResults } from "./RawResults";
+import { SPARQLSelectResults } from "./SelectResults";
+export interface SPARQLDocument extends TransientResource {
+    _registry: RegistryService<SPARQLDocument, AbstractContext<SPARQLDocument, any> | undefined> | undefined;
     executeRawASKQuery(uri: string, askQuery: string, requestOptions?: RequestOptions): Promise<SPARQLRawResults>;
     executeRawASKQuery(askQuery: string, requestOptions?: RequestOptions): Promise<SPARQLRawResults>;
     executeASKQuery(uri: string, askQuery: string, requestOptions?: RequestOptions): Promise<boolean>;
@@ -21,7 +26,7 @@ export interface SPARQLDocument extends TransientDocument {
     sparql(uri?: string): QueryClause<FinishSPARQLSelect>;
 }
 export interface SPARQLDocumentFactory {
-    PROTOTYPE: PickSelfProps<SPARQLDocument, TransientDocument>;
+    PROTOTYPE: PickSelfProps<SPARQLDocument, TransientResource, "_registry">;
     isDecorated(object: object): object is SPARQLDocument;
     decorate<T extends object>(object: T): T & SPARQLDocument;
 }

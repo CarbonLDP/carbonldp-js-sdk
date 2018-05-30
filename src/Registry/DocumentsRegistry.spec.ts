@@ -133,146 +133,6 @@ describe( module( "carbonldp/Registry" ), () => {
 
 		} );
 
-		describe( method( INSTANCE, "_requestURLFor" ), () => {
-
-			it( hasSignature(
-				"Obtains the URL for the pointer and the relative uri provided.\n" +
-				"When no URI specified, the ID for the pointer would be used.",
-				[
-					{ name: "pointer", type: "CarbonLDP.Pointer", description: "Base pointer for resolve the relative uri provided." },
-					{ name: "uri", type: "string", optional: true, description: "relative uri to be resolved using the pointer specified." },
-				]
-			), () => {} );
-
-			it( "should exists", ():void => {
-				expect( DocumentsRegistry.prototype._requestURLFor ).toBeDefined();
-				expect( DocumentsRegistry.prototype._requestURLFor ).toEqual( jasmine.any( Function ) );
-			} );
-
-
-			describe( "When has a context", () => {
-
-				let context:CarbonLDP;
-				let registry:DocumentsRegistry;
-				beforeEach( ():void => {
-					context = new CarbonLDP( "https://example.com/" );
-					registry = new DocumentsRegistry( context );
-				} );
-
-
-				it( "should return pointer ID with absolute URI when no URI", () => {
-					const pointer:Pointer = Pointer.create( { id: "https://example.com/" } );
-
-					const returned:string = registry._requestURLFor( pointer );
-
-					expect( returned ).toBe( "https://example.com/" );
-				} );
-
-				it( "should return absolute URI when provided", () => {
-					const pointer:Pointer = Pointer.create( { id: "https://example.com/" } );
-
-					const returned:string = registry._requestURLFor( pointer, "https://example.com/resource/" );
-
-					expect( returned ).toBe( "https://example.com/resource/" );
-				} );
-
-				it( "should resolve relative URI with the pointer ID", () => {
-					const pointer:Pointer = Pointer.create( { id: "https://example.com/" } );
-
-					const returned:string = registry._requestURLFor( pointer, "resource/" );
-
-					expect( returned ).toBe( "https://example.com/resource/" );
-				} );
-
-				it( "should resolve prefixed named provided", () => {
-					context.extendObjectSchema( { ex: "https://example.com/" } );
-					const pointer:Pointer = Pointer.create( { id: "https://example.com/" } );
-
-					const returned:string = registry._requestURLFor( pointer, "ex:resource/" );
-
-					expect( returned ).toBe( "https://example.com/resource/" );
-				} );
-
-
-				it( "should throw error pointer ID out of scope when no URI", () => {
-					const pointer:Pointer = Pointer.create( { id: "http://example.org/" } );
-
-					expect( () => {
-						registry._requestURLFor( pointer );
-					} ).toThrowError( IllegalArgumentError, `"http://example.org/" is out of scope.` );
-				} );
-
-				it( "should throw error when URI is out of scope", () => {
-					const pointer:Pointer = Pointer.create( { id: "https://example.com/" } );
-
-					expect( () => {
-						registry._requestURLFor( pointer, "http://example.org/resource/" );
-					} ).toThrowError( IllegalArgumentError, `"http://example.org/resource/" is out of scope.` );
-				} );
-
-				it( "should throw error when prefixed named cannot be resolved", () => {
-					const pointer:Pointer = Pointer.create( { id: "https://example.com/" } );
-
-					expect( () => {
-						registry._requestURLFor( pointer, "ex:resource/" );
-					} ).toThrowError( IllegalArgumentError, `"ex:resource/" is out of scope.` );
-				} );
-
-				it( "should throw error pointer ID out of scope when relative URI", () => {
-					const pointer:Pointer = Pointer.create( { id: "http://example.org/" } );
-
-					expect( () => {
-						registry._requestURLFor( pointer, "resource/" );
-					} ).toThrowError( IllegalArgumentError, `"http://example.org/resource/" is out of scope.` );
-				} );
-
-			} );
-
-			describe( "When has NO context", () => {
-
-				let registry:DocumentsRegistry;
-				beforeEach( ():void => {
-					registry = new DocumentsRegistry();
-				} );
-
-
-				it( "should return pointer ID with absolute URI when no URI", () => {
-					const pointer:Pointer = Pointer.create( { id: "https://example.com/" } );
-
-					const returned:string = registry._requestURLFor( pointer );
-
-					expect( returned ).toBe( "https://example.com/" );
-				} );
-
-				it( "should return absolute URI when provided", () => {
-					const pointer:Pointer = Pointer.create( { id: "https://example.com/" } );
-
-					const returned:string = registry._requestURLFor( pointer, "https://example.com/resource/" );
-
-					expect( returned ).toBe( "https://example.com/resource/" );
-				} );
-
-				it( "should resolve relative URI with the pointer ID", () => {
-					const pointer:Pointer = Pointer.create( { id: "https://example.com/" } );
-
-					const returned:string = registry._requestURLFor( pointer, "resource/" );
-
-					expect( returned ).toBe( "https://example.com/resource/" );
-				} );
-
-
-				it( "should throw error when prefixed named cannot be resolved", () => {
-					const pointer:Pointer = Pointer.create( { id: "https://example.com/" } );
-
-					expect( () => {
-						registry._requestURLFor( pointer, "ex:resource/" );
-					} ).toThrowError( IllegalArgumentError, `"ex:resource/" cannot be resolved.` );
-				} );
-
-			} );
-
-		} );
-
 
 		describe( method( INSTANCE, "_parseErrorResponse" ), ():void => {
 
@@ -362,7 +222,7 @@ describe( module( "carbonldp/Registry" ), () => {
 						} as any
 					);
 
-					await registry._parseErrorResponse( response )
+					await registry._parseErrorFromResponse( response )
 						.then( () => fail( "Should not resolve" ) )
 						.catch( ( error:HTTPError ) => {
 							expect( error ).toBeDefined();
@@ -420,7 +280,7 @@ describe( module( "carbonldp/Registry" ), () => {
 						} as any
 					);
 
-					await registry._parseErrorResponse( response )
+					await registry._parseErrorFromResponse( response )
 						.then( () => fail( "Should not resolve" ) )
 						.catch( ( error:HTTPError ) => {
 							expect( error ).toEqual( jasmine.any( Errors.IllegalArgumentError ) );
@@ -466,7 +326,7 @@ describe( module( "carbonldp/Registry" ), () => {
 						} as any
 					);
 
-					await registry._parseErrorResponse( response )
+					await registry._parseErrorFromResponse( response )
 						.then( () => fail( "Should not resolve" ) )
 						.catch( ( error:HTTPError ) => {
 							expect( error ).toEqual( jasmine.any( Errors.IllegalArgumentError ) );
@@ -485,7 +345,7 @@ describe( module( "carbonldp/Registry" ), () => {
 						} as any
 					);
 
-					await registry._parseErrorResponse( response )
+					await registry._parseErrorFromResponse( response )
 						.then( () => fail( "Should not resolve" ) )
 						.catch( ( error:HTTPError ) => {
 							expect( error ).toEqual( jasmine.any( HTTPError ) );
@@ -580,7 +440,7 @@ describe( module( "carbonldp/Registry" ), () => {
 						} as any
 					);
 
-					await registry._parseErrorResponse( response )
+					await registry._parseErrorFromResponse( response )
 						.then( () => fail( "Should not resolve" ) )
 						.catch( ( error:HTTPError ) => {
 							expect( error ).toBeDefined();

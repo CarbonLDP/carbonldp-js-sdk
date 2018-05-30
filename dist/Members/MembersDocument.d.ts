@@ -1,8 +1,11 @@
+import { AbstractContext } from "../AbstractContext";
 import { RequestOptions } from "../HTTP";
 import { Pointer } from "../Pointer";
+import { RegistryService } from "../Registry";
+import { TransientResource } from "../Resource";
 import { PickSelfProps } from "../Utils";
-import { TransientDocument } from "./TransientDocument";
-export interface MembersDocument extends TransientDocument {
+export interface MembersDocument extends TransientResource {
+    _registry: RegistryService<MembersDocument, AbstractContext<MembersDocument, any> | undefined> | undefined;
     addMember(member: string | Pointer, requestOptions?: RequestOptions): Promise<void>;
     addMember(uri: string, member: string | Pointer, requestOptions?: RequestOptions): Promise<void>;
     addMembers(members: (string | Pointer)[], requestOptions?: RequestOptions): Promise<void>;
@@ -15,7 +18,7 @@ export interface MembersDocument extends TransientDocument {
     removeAllMembers(uri: string, requestOptions?: RequestOptions): Promise<void>;
 }
 export interface MembersDocumentFactory {
-    PROTOTYPE: PickSelfProps<MembersDocument, TransientDocument>;
+    PROTOTYPE: PickSelfProps<MembersDocument, TransientResource, "_registry">;
     isDecorated(object: object): object is MembersDocument;
     decorate<T extends object>(object: T): T & MembersDocument;
 }

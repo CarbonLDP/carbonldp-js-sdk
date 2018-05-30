@@ -1,6 +1,6 @@
 import { SPARQLER } from "sparqler";
 import { FinishClause } from "sparqler/clauses";
-import { SPARQLDocument } from "../Document/SPARQLDocument";
+import { SPARQLDocument } from "./SPARQLDocument";
 import { SPARQLRawResults } from "./RawResults";
 import { SPARQLSelectResults } from "./SelectResults";
 export interface FinishSPARQLSelect extends FinishClause {
