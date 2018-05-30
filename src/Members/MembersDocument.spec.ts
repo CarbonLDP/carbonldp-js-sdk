@@ -145,7 +145,7 @@ describe( module( "carbonldp/Members/MembersDocument" ), () => {
 				it( "should request relative URI provided", async () => {
 					stubRequest( "https://example.com/relative/" );
 
-					resource
+					await resource
 						.addMember( "relative/", "member/" );
 
 					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
@@ -206,7 +206,9 @@ describe( module( "carbonldp/Members/MembersDocument" ), () => {
 
 
 				it( "should send add action when no URI", async () => {
-					resource
+					stubRequest( "https://example.com/" );
+
+					await resource
 						.addMember( "https://example.com/member/" );
 
 					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
@@ -222,7 +224,9 @@ describe( module( "carbonldp/Members/MembersDocument" ), () => {
 				} );
 
 				it( "should send add action when no URI and relative member", async () => {
-					resource
+					stubRequest( "https://example.com/" );
+
+					await resource
 						.addMember( "member/" );
 
 					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
@@ -238,7 +242,9 @@ describe( module( "carbonldp/Members/MembersDocument" ), () => {
 				} );
 
 				it( "should send add action when no URI and Pointer member", async () => {
-					resource
+					stubRequest( "https://example.com/" );
+
+					await resource
 						.addMember( Pointer.create( { id: "https://example.com/member/" } ) );
 
 					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
@@ -254,7 +260,9 @@ describe( module( "carbonldp/Members/MembersDocument" ), () => {
 				} );
 
 				it( "should send add action when specified URI and relative member", async () => {
-					resource
+					stubRequest( "https://example.com/resource/" );
+
+					await resource
 						.addMember( "resource/", "member/" );
 
 					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
@@ -270,7 +278,9 @@ describe( module( "carbonldp/Members/MembersDocument" ), () => {
 				} );
 
 				it( "should send add action when specified URI", async () => {
-					resource
+					stubRequest( "https://example.com/resource/" );
+
+					await resource
 						.addMember( "resource/", "https://example.com/member/" );
 
 					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
@@ -286,7 +296,9 @@ describe( module( "carbonldp/Members/MembersDocument" ), () => {
 				} );
 
 				it( "should send add action when specified URI and Pointer member", async () => {
-					resource
+					stubRequest( "https://example.com/resource/" );
+
+					await resource
 						.addMember( "resource/", Pointer.create( { id: "https://example.com/member/" } ) );
 
 					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
@@ -531,7 +543,7 @@ describe( module( "carbonldp/Members/MembersDocument" ), () => {
 				it( "should request relative URI provided", async () => {
 					stubRequest( "https://example.com/relative/" );
 
-					resource
+					await resource
 						.addMembers( "relative/", [ "member/" ] );
 
 					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
@@ -592,7 +604,9 @@ describe( module( "carbonldp/Members/MembersDocument" ), () => {
 
 
 				it( "should send add action when no URI", async () => {
-					resource
+					stubRequest( "https://example.com/" );
+
+					await resource
 						.addMembers( [
 							"https://example.com/member-1/",
 							"https://example.com/member-2/",
@@ -612,7 +626,9 @@ describe( module( "carbonldp/Members/MembersDocument" ), () => {
 				} );
 
 				it( "should send add action when no URI and relative member", async () => {
-					resource
+					stubRequest( "https://example.com/" );
+
+					await resource
 						.addMembers( [
 							"member-1/",
 							"resource/member-2/",
@@ -632,7 +648,9 @@ describe( module( "carbonldp/Members/MembersDocument" ), () => {
 				} );
 
 				it( "should send add action when no URI and Pointer member", async () => {
-					resource
+					stubRequest( "https://example.com/" );
+
+					await resource
 						.addMembers( [
 							Pointer.create( { id: "https://example.com/member-1/" } ),
 							Pointer.create( { id: "https://example.com/member-2/" } ),
@@ -652,7 +670,9 @@ describe( module( "carbonldp/Members/MembersDocument" ), () => {
 				} );
 
 				it( "should send add action when no URI and Pointer & string member", async () => {
-					resource
+					stubRequest( "https://example.com/" );
+
+					await resource
 						.addMembers( [
 							"https://example.com/member-1/",
 							Pointer.create( { id: "https://example.com/member-2/" } ),
@@ -674,7 +694,9 @@ describe( module( "carbonldp/Members/MembersDocument" ), () => {
 				} );
 
 				it( "should send add action when specified URI", async () => {
-					resource
+					stubRequest( "https://example.com/resource/" );
+
+					await resource
 						.addMembers( "resource/", [
 							"https://example.com/member-1/",
 							"https://example.com/member-2/",
@@ -694,7 +716,9 @@ describe( module( "carbonldp/Members/MembersDocument" ), () => {
 				} );
 
 				it( "should send add action when specified URI and relative member", async () => {
-					resource
+					stubRequest( "https://example.com/resource/" );
+
+					await resource
 						.addMembers( "resource/", [
 							"member-1/",
 							"resource/member-2/",
@@ -714,7 +738,9 @@ describe( module( "carbonldp/Members/MembersDocument" ), () => {
 				} );
 
 				it( "should send add action when specified URI and Pointer member", async () => {
-					resource
+					stubRequest( "https://example.com/resource/" );
+
+					await resource
 						.addMembers( "resource/", [
 							Pointer.create( { id: "https://example.com/member-1/" } ),
 							Pointer.create( { id: "https://example.com/member-2/" } ),
@@ -734,7 +760,9 @@ describe( module( "carbonldp/Members/MembersDocument" ), () => {
 				} );
 
 				it( "should send add action when specified URI and Pointer & string member", async () => {
-					resource
+					stubRequest( "https://example.com/resource/" );
+
+					await resource
 						.addMembers( "resource/", [
 							"https://example.com/member-1/",
 							Pointer.create( { id: "https://example.com/member-2/" } ),
@@ -986,7 +1014,7 @@ describe( module( "carbonldp/Members/MembersDocument" ), () => {
 				it( "should request relative URI provided", async () => {
 					stubRequest( "https://example.com/relative/" );
 
-					resource
+					await resource
 						.removeMember( "relative/", "member/" );
 
 					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
@@ -1047,7 +1075,9 @@ describe( module( "carbonldp/Members/MembersDocument" ), () => {
 
 
 				it( "should send add action when no URI", async () => {
-					resource
+					stubRequest( "https://example.com/" );
+
+					await resource
 						.removeMember( "https://example.com/member/" );
 
 					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
@@ -1063,7 +1093,9 @@ describe( module( "carbonldp/Members/MembersDocument" ), () => {
 				} );
 
 				it( "should send add action when no URI and relative member", async () => {
-					resource
+					stubRequest( "https://example.com/" );
+
+					await resource
 						.removeMember( "member/" );
 
 					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
@@ -1079,7 +1111,9 @@ describe( module( "carbonldp/Members/MembersDocument" ), () => {
 				} );
 
 				it( "should send add action when no URI and Pointer member", async () => {
-					resource
+					stubRequest( "https://example.com/" );
+
+					await resource
 						.removeMember( Pointer.create( { id: "https://example.com/member/" } ) );
 
 					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
@@ -1095,7 +1129,9 @@ describe( module( "carbonldp/Members/MembersDocument" ), () => {
 				} );
 
 				it( "should send add action when specified URI and relative member", async () => {
-					resource
+					stubRequest( "https://example.com/resource/" );
+
+					await resource
 						.removeMember( "resource/", "member/" );
 
 					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
@@ -1111,7 +1147,9 @@ describe( module( "carbonldp/Members/MembersDocument" ), () => {
 				} );
 
 				it( "should send add action when specified URI", async () => {
-					resource
+					stubRequest( "https://example.com/resource/" );
+
+					await resource
 						.removeMember( "resource/", "https://example.com/member/" );
 
 					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
@@ -1127,7 +1165,9 @@ describe( module( "carbonldp/Members/MembersDocument" ), () => {
 				} );
 
 				it( "should send add action when specified URI and Pointer member", async () => {
-					resource
+					stubRequest( "https://example.com/resource/" );
+
+					await resource
 						.removeMember( "resource/", Pointer.create( { id: "https://example.com/member/" } ) );
 
 					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
@@ -1376,7 +1416,7 @@ describe( module( "carbonldp/Members/MembersDocument" ), () => {
 				it( "should request relative URI provided", async () => {
 					stubRequest( "https://example.com/relative/" );
 
-					resource
+					await resource
 						.removeMembers( "relative/", [ "member/" ] );
 
 					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
@@ -1437,7 +1477,9 @@ describe( module( "carbonldp/Members/MembersDocument" ), () => {
 
 
 				it( "should send add action when no URI", async () => {
-					resource
+					stubRequest( "https://example.com/" );
+
+					await resource
 						.removeMembers( [
 							"https://example.com/member-1/",
 							"https://example.com/member-2/",
@@ -1457,7 +1499,9 @@ describe( module( "carbonldp/Members/MembersDocument" ), () => {
 				} );
 
 				it( "should send add action when no URI and relative member", async () => {
-					resource
+					stubRequest( "https://example.com/" );
+
+					await resource
 						.removeMembers( [
 							"member-1/",
 							"resource/member-2/",
@@ -1477,7 +1521,9 @@ describe( module( "carbonldp/Members/MembersDocument" ), () => {
 				} );
 
 				it( "should send add action when no URI and Pointer member", async () => {
-					resource
+					stubRequest( "https://example.com/" );
+
+					await resource
 						.removeMembers( [
 							Pointer.create( { id: "https://example.com/member-1/" } ),
 							Pointer.create( { id: "https://example.com/member-2/" } ),
@@ -1497,7 +1543,9 @@ describe( module( "carbonldp/Members/MembersDocument" ), () => {
 				} );
 
 				it( "should send add action when no URI and Pointer & string member", async () => {
-					resource
+					stubRequest( "https://example.com/" );
+
+					await resource
 						.removeMembers( [
 							"https://example.com/member-1/",
 							Pointer.create( { id: "https://example.com/member-2/" } ),
@@ -1519,7 +1567,9 @@ describe( module( "carbonldp/Members/MembersDocument" ), () => {
 				} );
 
 				it( "should send add action when specified URI", async () => {
-					resource
+					stubRequest( "https://example.com/resource/" );
+
+					await resource
 						.removeMembers( "resource/", [
 							"https://example.com/member-1/",
 							"https://example.com/member-2/",
@@ -1539,7 +1589,9 @@ describe( module( "carbonldp/Members/MembersDocument" ), () => {
 				} );
 
 				it( "should send add action when specified URI and relative member", async () => {
-					resource
+					stubRequest( "https://example.com/resource/" );
+
+					await resource
 						.removeMembers( "resource/", [
 							"member-1/",
 							"resource/member-2/",
@@ -1559,7 +1611,9 @@ describe( module( "carbonldp/Members/MembersDocument" ), () => {
 				} );
 
 				it( "should send add action when specified URI and Pointer member", async () => {
-					resource
+					stubRequest( "https://example.com/resource/" );
+
+					await resource
 						.removeMembers( "resource/", [
 							Pointer.create( { id: "https://example.com/member-1/" } ),
 							Pointer.create( { id: "https://example.com/member-2/" } ),
@@ -1579,7 +1633,9 @@ describe( module( "carbonldp/Members/MembersDocument" ), () => {
 				} );
 
 				it( "should send add action when specified URI and Pointer & string member", async () => {
-					resource
+					stubRequest( "https://example.com/resource/" );
+
+					await resource
 						.removeMembers( "resource/", [
 							"https://example.com/member-1/",
 							Pointer.create( { id: "https://example.com/member-2/" } ),
@@ -1833,7 +1889,7 @@ describe( module( "carbonldp/Members/MembersDocument" ), () => {
 				it( "should request relative URI provided", async () => {
 					stubRequest( "https://example.com/relative/" );
 
-					resource
+					await resource
 						.removeAllMembers( "relative/" );
 
 					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
@@ -1902,7 +1958,9 @@ describe( module( "carbonldp/Members/MembersDocument" ), () => {
 				} );
 
 				it( "should NOT send body when specified URI", async () => {
-					resource
+					stubRequest( "https://example.com/resource/" );
+
+					await resource
 						.removeAllMembers( "resource/" );
 
 					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();

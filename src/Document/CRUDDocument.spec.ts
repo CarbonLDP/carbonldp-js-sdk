@@ -25,8 +25,8 @@ import {
 	LDP,
 	XSD
 } from "../Vocabularies";
-import { CRUDDocument } from "./CRUDDocument";
 import { BasePersistedDocument } from "./BasePersistedDocument";
+import { CRUDDocument } from "./CRUDDocument";
 
 
 function createMock<T extends object>( data?:T & Partial<CRUDDocument> ):T & CRUDDocument {
@@ -2074,6 +2074,16 @@ describe( module( "carbonldp/Document" ), ():void => {
 					.andReturn( generateResponseOptions( url, responseOptions ) );
 			}
 
+			function stubWaitingRequests( url:string ):void {
+				jasmine.Ajax
+					.requests
+					.filter( url )
+					.forEach( ( request, index ) => {
+						request.respondWith( generateResponseOptions( url, { index } ) );
+					} )
+				;
+			}
+
 
 			it( "should throw error when _registry undefined", async () => {
 				try {
@@ -2231,8 +2241,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 			it( "should send basic request headers in multiple self children", async () => {
 				const resource:CRUDDocument = createMock();
 
-				// noinspection JSIgnoredPromiseFromCall
-				resource.createAndRetrieve( [ {}, {} ] );
+				const promises:Promise<{}[]> = resource.createAndRetrieve( [ {}, {} ] );
 
 				const request1:JasmineAjaxRequest = jasmine.Ajax.requests.at( 0 );
 				expect( request1.requestHeaders ).toEqual( {
@@ -2253,13 +2262,16 @@ describe( module( "carbonldp/Document" ), ():void => {
 						`${ LDP.Container }; rel=interaction-model`,
 					].join( ", " ),
 				} );
+
+
+				stubWaitingRequests( "https://example.com/" );
+				await promises;
 			} );
 
 			it( "should send basic request headers in multiple URI child", async () => {
 				const resource:CRUDDocument = createMock();
 
-				// noinspection JSIgnoredPromiseFromCall
-				resource.createAndRetrieve( "resource/", [ {}, {} ] );
+				const promises:Promise<{}[]> = resource.createAndRetrieve( "resource/", [ {}, {} ] );
 
 
 				const request1:JasmineAjaxRequest = jasmine.Ajax.requests.at( 0 );
@@ -2281,6 +2293,10 @@ describe( module( "carbonldp/Document" ), ():void => {
 						`${ LDP.Container }; rel=interaction-model`,
 					].join( ", " ),
 				} );
+
+
+				stubWaitingRequests( "https://example.com/resource/" );
+				await promises;
 			} );
 
 			it( "should add authentication header", async () => {
@@ -2332,8 +2348,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 			it( "should send basic request headers in multiple self children", async () => {
 				const resource:CRUDDocument = createMock();
 
-				// noinspection JSIgnoredPromiseFromCall
-				resource.createAndRetrieve( [ {}, {} ], {
+				const promises:Promise<{}[]> = resource.createAndRetrieve( [ {}, {} ], {
 					headers: new Map()
 						.set( "custom", new Header( "custom value" ) )
 					,
@@ -2348,13 +2363,16 @@ describe( module( "carbonldp/Document" ), ():void => {
 				expect( request2.requestHeaders ).toEqual( jasmine.objectContaining( {
 					"custom": "custom value",
 				} ) );
+
+
+				stubWaitingRequests( "https://example.com/" );
+				await promises;
 			} );
 
 			it( "should send basic request headers in multiple URI children", async () => {
 				const resource:CRUDDocument = createMock();
 
-				// noinspection JSIgnoredPromiseFromCall
-				resource.createAndRetrieve( "resource/", [ {}, {} ], {
+				const promises:Promise<{}[]> = resource.createAndRetrieve( "resource/", [ {}, {} ], {
 					headers: new Map()
 						.set( "custom", new Header( "custom value" ) )
 					,
@@ -2369,6 +2387,10 @@ describe( module( "carbonldp/Document" ), ():void => {
 				expect( request2.requestHeaders ).toEqual( jasmine.objectContaining( {
 					"custom": "custom value",
 				} ) );
+
+
+				stubWaitingRequests( "https://example.com/resource/" );
+				await promises;
 			} );
 
 			it( "should add slug header when single self child", async () => {
@@ -2400,8 +2422,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 			it( "should add slug header when multiple self child", async () => {
 				const resource:CRUDDocument = createMock();
 
-				// noinspection JSIgnoredPromiseFromCall
-				resource.createAndRetrieve( [ {}, {} ], [ "child-slug-1", "child-slug-2" ] );
+				const promises:Promise<{}[]> = resource.createAndRetrieve( [ {}, {} ], [ "child-slug-1", "child-slug-2" ] );
 
 				const request1:JasmineAjaxRequest = jasmine.Ajax.requests.at( 0 );
 				expect( request1.requestHeaders ).toEqual( jasmine.objectContaining( {
@@ -2412,13 +2433,16 @@ describe( module( "carbonldp/Document" ), ():void => {
 				expect( request2.requestHeaders ).toEqual( jasmine.objectContaining( {
 					"slug": "child-slug-2",
 				} ) );
+
+
+				stubWaitingRequests( "https://example.com/" );
+				await promises;
 			} );
 
 			it( "should add slug header when multiple URI child", async () => {
 				const resource:CRUDDocument = createMock();
 
-				// noinspection JSIgnoredPromiseFromCall
-				resource.createAndRetrieve( "resource/", [ {}, {} ], [ "child-slug-1", "child-slug-2" ] );
+				const promises:Promise<{}[]> = resource.createAndRetrieve( "resource/", [ {}, {} ], [ "child-slug-1", "child-slug-2" ] );
 
 				const request1:JasmineAjaxRequest = jasmine.Ajax.requests.at( 0 );
 				expect( request1.requestHeaders ).toEqual( jasmine.objectContaining( {
@@ -2429,13 +2453,15 @@ describe( module( "carbonldp/Document" ), ():void => {
 				expect( request2.requestHeaders ).toEqual( jasmine.objectContaining( {
 					"slug": "child-slug-2",
 				} ) );
+
+				stubWaitingRequests( "https://example.com/resource/" );
+				await promises;
 			} );
 
 			it( "should add slug header if defined when multiple child", async () => {
 				const resource:CRUDDocument = createMock();
 
-				// noinspection JSIgnoredPromiseFromCall
-				resource.createAndRetrieve( [ {}, {}, {} ], [ null, undefined, "child-slug" ] );
+				const promises:Promise<{}[]> = resource.createAndRetrieve( [ {}, {}, {} ], [ null, undefined, "child-slug" ] );
 
 				const request1:JasmineAjaxRequest = jasmine.Ajax.requests.at( 0 );
 				expect( request1.requestHeaders ).not.toEqual( jasmine.objectContaining( {
@@ -2451,13 +2477,16 @@ describe( module( "carbonldp/Document" ), ():void => {
 				expect( request3.requestHeaders ).toEqual( jasmine.objectContaining( {
 					"slug": "child-slug",
 				} ) );
+
+
+				stubWaitingRequests( "https://example.com/" );
+				await promises;
 			} );
 
 			it( "should not add slug header when multiple but less slugs than children", async () => {
 				const resource:CRUDDocument = createMock();
 
-				// noinspection JSIgnoredPromiseFromCall
-				resource.createAndRetrieve( [ {}, {} ], [ "child-slug" ] );
+				const promises:Promise<{}[]> = resource.createAndRetrieve( [ {}, {} ], [ "child-slug" ] );
 
 				const request1:JasmineAjaxRequest = jasmine.Ajax.requests.at( 0 );
 				expect( request1.requestHeaders ).toEqual( jasmine.objectContaining( {
@@ -2468,6 +2497,10 @@ describe( module( "carbonldp/Document" ), ():void => {
 				expect( request2.requestHeaders ).not.toEqual( jasmine.objectContaining( {
 					"slug": jasmine.anything() as any,
 				} ) );
+
+
+				stubWaitingRequests( "https://example.com/" );
+				await promises;
 			} );
 
 
@@ -2575,8 +2608,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 					} )
 				;
 
-				// noinspection JSIgnoredPromiseFromCall
-				resource.createAndRetrieve( [ {
+				const promises:Promise<CRUDDocument[]> = resource.createAndRetrieve( [ {
 					string: "my object 1",
 				}, {
 					string: "my object 2",
@@ -2605,6 +2637,9 @@ describe( module( "carbonldp/Document" ), ():void => {
 						} ],
 					} ],
 				} ) );
+
+				stubWaitingRequests( "https://example.com/" );
+				await promises;
 			} );
 
 			it( "should send converted JSONLD when multiple URI children", async () => {
@@ -2615,8 +2650,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 					} )
 				;
 
-				// noinspection JSIgnoredPromiseFromCall
-				resource.createAndRetrieve( "resource/", [ {
+				const promises:Promise<CRUDDocument[]> = resource.createAndRetrieve( "resource/", [ {
 					string: "my object 1",
 				}, {
 					string: "my object 2",
@@ -2645,6 +2679,10 @@ describe( module( "carbonldp/Document" ), ():void => {
 						} ],
 					} ],
 				} ) );
+
+
+				stubWaitingRequests( "https://example.com/resource/" );
+				await promises;
 			} );
 
 			it( "should return same child object reference", async () => {
@@ -5231,6 +5269,16 @@ describe( module( "carbonldp/Document" ), ():void => {
 					.andReturn( generateResponseOptions( url, responseOptions ) );
 			}
 
+			function stubWaitingRequests( url:string ):void {
+				jasmine.Ajax
+					.requests
+					.filter( url )
+					.forEach( ( request, index ) => {
+						request.respondWith( generateResponseOptions( url, { index } ) );
+					} )
+				;
+			}
+
 
 			it( "should throw error when _registry undefined", async () => {
 				try {
@@ -5370,8 +5418,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 			it( "should send basic request headers when from self", async () => {
 				const resource:CRUDDocument = createMock();
 
-				// noinspection JSIgnoredPromiseFromCall
-				resource.createAccessPointsAndRetrieve( [ { hasMemberRelation: "relation" }, { hasMemberRelation: "relation" } ] );
+				const promises:Promise<{}[]> = resource.createAccessPointsAndRetrieve( [ { hasMemberRelation: "relation" }, { hasMemberRelation: "relation" } ] );
 
 				const firstRequest:JasmineAjaxRequest = jasmine.Ajax.requests.at( 0 );
 				expect( firstRequest.requestHeaders ).toEqual( {
@@ -5392,13 +5439,16 @@ describe( module( "carbonldp/Document" ), ():void => {
 						`${ LDP.RDFSource }; rel=interaction-model`,
 					].join( ", " ),
 				} );
+
+
+				stubWaitingRequests( "https://example.com/" );
+				await promises;
 			} );
 
 			it( "should send basic request headers when from URI", async () => {
 				const resource:CRUDDocument = createMock();
 
-				// noinspection JSIgnoredPromiseFromCall
-				resource.createAccessPointsAndRetrieve( "resource/", [ { hasMemberRelation: "relation" }, { hasMemberRelation: "relation" } ] );
+				const promises:Promise<{}[]> = resource.createAccessPointsAndRetrieve( "resource/", [ { hasMemberRelation: "relation" }, { hasMemberRelation: "relation" } ] );
 
 
 				const firstRequest:JasmineAjaxRequest = jasmine.Ajax.requests.at( 0 );
@@ -5420,6 +5470,10 @@ describe( module( "carbonldp/Document" ), ():void => {
 						`${ LDP.RDFSource }; rel=interaction-model`,
 					].join( ", " ),
 				} );
+
+
+				stubWaitingRequests( "https://example.com/resource/" );
+				await promises;
 			} );
 
 			it( "should add authentication header", async () => {
@@ -5437,8 +5491,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 			it( "should send custom request headers when from self", async () => {
 				const resource:CRUDDocument = createMock();
 
-				// noinspection JSIgnoredPromiseFromCall
-				resource.createAccessPointsAndRetrieve( [ { hasMemberRelation: "relation" }, { hasMemberRelation: "relation" } ], {
+				const promises:Promise<{}[]> = resource.createAccessPointsAndRetrieve( [ { hasMemberRelation: "relation" }, { hasMemberRelation: "relation" } ], {
 					headers: new Map()
 						.set( "custom", new Header( "custom value" ) )
 					,
@@ -5453,13 +5506,16 @@ describe( module( "carbonldp/Document" ), ():void => {
 				expect( secondRequest.requestHeaders ).toEqual( jasmine.objectContaining( {
 					"custom": "custom value",
 				} ) );
+
+
+				stubWaitingRequests( "https://example.com/" );
+				await promises;
 			} );
 
 			it( "should send custom request headers when from URI", async () => {
 				const resource:CRUDDocument = createMock();
 
-				// noinspection JSIgnoredPromiseFromCall
-				resource.createAccessPointsAndRetrieve( "resource/", [ { hasMemberRelation: "relation" }, { hasMemberRelation: "relation" } ], {
+				const promises:Promise<{}[]> = resource.createAccessPointsAndRetrieve( "resource/", [ { hasMemberRelation: "relation" }, { hasMemberRelation: "relation" } ], {
 					headers: new Map()
 						.set( "custom", new Header( "custom value" ) )
 					,
@@ -5474,13 +5530,16 @@ describe( module( "carbonldp/Document" ), ():void => {
 				expect( secondRequest.requestHeaders ).toEqual( jasmine.objectContaining( {
 					"custom": "custom value",
 				} ) );
+
+
+				stubWaitingRequests( "https://example.com/resource/" );
+				await promises;
 			} );
 
 			it( "should add slug header when from self", async () => {
 				const resource:CRUDDocument = createMock();
 
-				// noinspection JSIgnoredPromiseFromCall
-				resource.createAccessPointsAndRetrieve( [ { hasMemberRelation: "relation" }, { hasMemberRelation: "relation" } ], [ "child-slug-1", "child-slug-2" ] );
+				const promises:Promise<{}[]> = resource.createAccessPointsAndRetrieve( [ { hasMemberRelation: "relation" }, { hasMemberRelation: "relation" } ], [ "child-slug-1", "child-slug-2" ] );
 
 				const firstRequest:JasmineAjaxRequest = jasmine.Ajax.requests.at( 0 );
 				expect( firstRequest.requestHeaders ).toEqual( jasmine.objectContaining( {
@@ -5491,13 +5550,16 @@ describe( module( "carbonldp/Document" ), ():void => {
 				expect( secondRequest.requestHeaders ).toEqual( jasmine.objectContaining( {
 					"slug": "child-slug-2",
 				} ) );
+
+
+				stubWaitingRequests( "https://example.com/" );
+				await promises;
 			} );
 
 			it( "should add slug header when from URI", async () => {
 				const resource:CRUDDocument = createMock();
 
-				// noinspection JSIgnoredPromiseFromCall
-				resource.createAccessPointsAndRetrieve( "resource/", [ { hasMemberRelation: "relation" }, { hasMemberRelation: "relation" } ], [ "child-slug-1", "child-slug-2" ] );
+				const promises:Promise<{}[]> = resource.createAccessPointsAndRetrieve( "resource/", [ { hasMemberRelation: "relation" }, { hasMemberRelation: "relation" } ], [ "child-slug-1", "child-slug-2" ] );
 
 				const firstRequest:JasmineAjaxRequest = jasmine.Ajax.requests.at( 0 );
 				expect( firstRequest.requestHeaders ).toEqual( jasmine.objectContaining( {
@@ -5508,13 +5570,16 @@ describe( module( "carbonldp/Document" ), ():void => {
 				expect( secondRequest.requestHeaders ).toEqual( jasmine.objectContaining( {
 					"slug": "child-slug-2",
 				} ) );
+
+
+				stubWaitingRequests( "https://example.com/resource/" );
+				await promises;
 			} );
 
 			it( "should add slug header if defined", async () => {
 				const resource:CRUDDocument = createMock();
 
-				// noinspection JSIgnoredPromiseFromCall
-				resource.createAccessPointsAndRetrieve( [ { hasMemberRelation: "relation" }, { hasMemberRelation: "relation" }, { hasMemberRelation: "relation" } ], [ null, undefined, "child-slug" ] );
+				const promises:Promise<{}[]> = resource.createAccessPointsAndRetrieve( [ { hasMemberRelation: "relation" }, { hasMemberRelation: "relation" }, { hasMemberRelation: "relation" } ], [ null, undefined, "child-slug" ] );
 
 				const firstRequest:JasmineAjaxRequest = jasmine.Ajax.requests.at( 0 );
 				expect( firstRequest.requestHeaders ).not.toEqual( jasmine.objectContaining( {
@@ -5530,13 +5595,16 @@ describe( module( "carbonldp/Document" ), ():void => {
 				expect( thirdRequest.requestHeaders ).toEqual( jasmine.objectContaining( {
 					"slug": "child-slug",
 				} ) );
+
+
+				stubWaitingRequests( "https://example.com/" );
+				await promises;
 			} );
 
 			it( "should not add slug header when less slugs than access points", async () => {
 				const resource:CRUDDocument = createMock();
 
-				// noinspection JSIgnoredPromiseFromCall
-				resource.createAccessPointsAndRetrieve( [ { hasMemberRelation: "relation" }, { hasMemberRelation: "relation" } ], [ "child-slug" ] );
+				const promises:Promise<{}[]> = resource.createAccessPointsAndRetrieve( [ { hasMemberRelation: "relation" }, { hasMemberRelation: "relation" } ], [ "child-slug" ] );
 
 				const firstRequest:JasmineAjaxRequest = jasmine.Ajax.requests.at( 0 );
 				expect( firstRequest.requestHeaders ).toEqual( jasmine.objectContaining( {
@@ -5547,12 +5615,14 @@ describe( module( "carbonldp/Document" ), ():void => {
 				expect( secondRequest.requestHeaders ).not.toEqual( jasmine.objectContaining( {
 					"slug": jasmine.anything() as any,
 				} ) );
+
+
+				stubWaitingRequests( "https://example.com/" );
+				await promises;
 			} );
 
 
 			it( "should send converted JSONLD when from self", async () => {
-				stubRequest( "https://example.com/" );
-
 				const resource:CRUDDocument = createMock();
 				resource._context
 					.extendObjectSchema( {
@@ -5560,8 +5630,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 					} )
 				;
 
-				// noinspection JSIgnoredPromiseFromCall
-				resource.createAccessPointsAndRetrieve( [ {
+				const promises:Promise<{}[]> = resource.createAccessPointsAndRetrieve( [ {
 					hasMemberRelation: "relation1",
 					string: "my object 1",
 				}, {
@@ -5606,11 +5675,13 @@ describe( module( "carbonldp/Document" ), ():void => {
 						} ],
 					} ],
 				} );
+
+
+				stubWaitingRequests( "https://example.com/" );
+				await promises;
 			} );
 
 			it( "should send converted JSONLD when from URI", async () => {
-				stubRequest( "https://example.com/resource/" );
-
 				const resource:CRUDDocument = createMock();
 				resource._context
 					.extendObjectSchema( {
@@ -5618,8 +5689,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 					} )
 				;
 
-				// noinspection JSIgnoredPromiseFromCall
-				resource.createAccessPointsAndRetrieve( "resource/", [ {
+				const promises:Promise<{}[]> = resource.createAccessPointsAndRetrieve( "resource/", [ {
 					hasMemberRelation: "relation1",
 					string: "my object 1",
 				}, {
@@ -5664,6 +5734,10 @@ describe( module( "carbonldp/Document" ), ():void => {
 						} ],
 					} ],
 				} );
+
+
+				stubWaitingRequests( "https://example.com/resource/" );
+				await promises;
 			} );
 
 			it( "should return same access point object references", async () => {
@@ -6027,13 +6101,14 @@ describe( module( "carbonldp/Document" ), ():void => {
 			} );
 
 			it( "should send PATCH to self when dirty", async () => {
+				stubRequest( "https://example.com/" );
+
 				const resource:CRUDDocument = createMock( { id: "https://example.com/" } );
 
 				Object.defineProperty( resource, "isDirty", { writable: true } );
 				spyOn( resource, "isDirty" ).and.returnValue( true );
 
-				// noinspection JSIgnoredPromiseFromCall
-				resource.save();
+				await resource.save();
 
 				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
 				expect( request.url ).toBe( "https://example.com/" );
@@ -6063,6 +6138,8 @@ describe( module( "carbonldp/Document" ), ():void => {
 
 
 			it( "should send basic request headers", async () => {
+				stubRequest( "https://example.com/" );
+
 				const resource:CRUDDocument = createMock( {
 					_eTag: "\"1-12345\"",
 					id: "https://example.com/",
@@ -6071,8 +6148,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 				Object.defineProperty( resource, "isDirty", { writable: true } );
 				spyOn( resource, "isDirty" ).and.returnValue( true );
 
-				// noinspection JSIgnoredPromiseFromCall
-				resource.save();
+				await resource.save();
 
 				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
 				expect( request.requestHeaders ).toEqual( {
@@ -6084,6 +6160,8 @@ describe( module( "carbonldp/Document" ), ():void => {
 			} );
 
 			it( "should add authentication header", async () => {
+				stubRequest( "https://example.com/" );
+
 				const resource:CRUDDocument = createMock();
 
 				Object.defineProperty( resource, "isDirty", { writable: true } );
@@ -6092,21 +6170,21 @@ describe( module( "carbonldp/Document" ), ():void => {
 
 				const spy:jasmine.Spy = spyOn( resource._context.auth, "addAuthentication" );
 
-				// noinspection JSIgnoredPromiseFromCall
-				resource.save();
+				await resource.save();
 
 				expect( spy ).toHaveBeenCalled();
 			} );
 
 			it( "should add custom headers in single self child", async () => {
+				stubRequest( "https://example.com/" );
+
 				const resource:CRUDDocument = createMock();
 
 				Object.defineProperty( resource, "isDirty", { writable: true } );
 				spyOn( resource, "isDirty" ).and.returnValue( true );
 
 
-				// noinspection JSIgnoredPromiseFromCall
-				resource.save( {
+				await resource.save( {
 					headers: new Map()
 						.set( "custom", new Header( "custom value" ) )
 					,
@@ -6431,13 +6509,14 @@ describe( module( "carbonldp/Document" ), ():void => {
 			} );
 
 			it( "should send PATCH to self when dirty", async () => {
+				stubRequest( "https://example.com/" );
+
 				const resource:CRUDDocument = createMock( { id: "https://example.com/" } );
 
 				Object.defineProperty( resource, "isDirty", { writable: true } );
 				spyOn( resource, "isDirty" ).and.returnValue( true );
 
-				// noinspection JSIgnoredPromiseFromCall
-				resource.saveAndRefresh();
+				await resource.saveAndRefresh();
 
 				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
 				expect( request.url ).toBe( "https://example.com/" );
@@ -6467,6 +6546,8 @@ describe( module( "carbonldp/Document" ), ():void => {
 
 
 			it( "should send basic request headers", async () => {
+				stubRequest( "https://example.com/" );
+
 				const resource:CRUDDocument = createMock( {
 					_eTag: "\"1-12345\"",
 					id: "https://example.com/",
@@ -6475,8 +6556,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 				Object.defineProperty( resource, "isDirty", { writable: true } );
 				spyOn( resource, "isDirty" ).and.returnValue( true );
 
-				// noinspection JSIgnoredPromiseFromCall
-				resource.saveAndRefresh();
+				await resource.saveAndRefresh();
 
 				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
 				expect( request.requestHeaders ).toEqual( {
@@ -6488,6 +6568,8 @@ describe( module( "carbonldp/Document" ), ():void => {
 			} );
 
 			it( "should add authentication header", async () => {
+				stubRequest( "https://example.com/" );
+
 				const resource:CRUDDocument = createMock();
 
 				Object.defineProperty( resource, "isDirty", { writable: true } );
@@ -6496,21 +6578,21 @@ describe( module( "carbonldp/Document" ), ():void => {
 
 				const spy:jasmine.Spy = spyOn( resource._context.auth, "addAuthentication" );
 
-				// noinspection JSIgnoredPromiseFromCall
-				resource.saveAndRefresh();
+				await resource.saveAndRefresh();
 
 				expect( spy ).toHaveBeenCalled();
 			} );
 
 			it( "should add custom headers in single self child", async () => {
+				stubRequest( "https://example.com/" );
+
 				const resource:CRUDDocument = createMock();
 
 				Object.defineProperty( resource, "isDirty", { writable: true } );
 				spyOn( resource, "isDirty" ).and.returnValue( true );
 
 
-				// noinspection JSIgnoredPromiseFromCall
-				resource.saveAndRefresh( {
+				await resource.saveAndRefresh( {
 					headers: new Map()
 						.set( "custom", new Header( "custom value" ) )
 					,
@@ -6766,7 +6848,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 
 			it( hasSignature(
 				[ "T extends object" ],
-				"Update the document with the latests changes from the server.", [
+				"Update the document with the latest changes from the server.", [
 					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for the request." },
 				],
 				{ type: "Promise<T & CarbonLDP.Document>" }
@@ -6915,6 +6997,8 @@ describe( module( "carbonldp/Document" ), ():void => {
 
 
 			it( "should send basic request headers", async () => {
+				stubRequest( "https://example.com/" );
+
 				const resource:CRUDDocument = createMock( {
 					_eTag: "\"1-12345\"",
 					id: "https://example.com/",
@@ -6923,8 +7007,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 				Object.defineProperty( resource, "isDirty", { writable: true } );
 				spyOn( resource, "isDirty" ).and.returnValue( true );
 
-				// noinspection JSIgnoredPromiseFromCall
-				resource.refresh();
+				await resource.refresh();
 
 				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
 				expect( request.requestHeaders ).toEqual( {
@@ -6935,6 +7018,8 @@ describe( module( "carbonldp/Document" ), ():void => {
 			} );
 
 			it( "should add authentication header", async () => {
+				stubRequest( "https://example.com/" );
+
 				const resource:CRUDDocument = createMock();
 
 				Object.defineProperty( resource, "isDirty", { writable: true } );
@@ -6943,21 +7028,21 @@ describe( module( "carbonldp/Document" ), ():void => {
 
 				const spy:jasmine.Spy = spyOn( resource._context.auth, "addAuthentication" );
 
-				// noinspection JSIgnoredPromiseFromCall
-				resource.refresh();
+				await resource.refresh();
 
 				expect( spy ).toHaveBeenCalled();
 			} );
 
 			it( "should add custom headers in single self child", async () => {
+				stubRequest( "https://example.com/" );
+
 				const resource:CRUDDocument = createMock();
 
 				Object.defineProperty( resource, "isDirty", { writable: true } );
 				spyOn( resource, "isDirty" ).and.returnValue( true );
 
 
-				// noinspection JSIgnoredPromiseFromCall
-				resource.refresh( {
+				await resource.refresh( {
 					headers: new Map()
 						.set( "custom", new Header( "custom value" ) )
 					,
@@ -7209,43 +7294,47 @@ describe( module( "carbonldp/Document" ), ():void => {
 
 
 			it( "should request from self when no URI", async () => {
+				stubRequest( "https://example.com/" );
+
 				const resource:CRUDDocument = createMock();
 
-				// noinspection JSIgnoredPromiseFromCall
-				resource.delete();
+				await resource.delete();
 
 				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
 				expect( request.url ).toBe( "https://example.com/" );
 			} );
 
 			it( "should request from URI", async () => {
+				stubRequest( "https://example.com/another-resource/" );
+
 				const resource:CRUDDocument = createMock();
 
-				// noinspection JSIgnoredPromiseFromCall
-				resource.delete( "https://example.com/another-resource/" );
+				await resource.delete( "https://example.com/another-resource/" );
 
 				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
 				expect( request.url ).toBe( "https://example.com/another-resource/" );
 			} );
 
 			it( "should request from relative URI", async () => {
+				stubRequest( "https://example.com/relative/" );
+
 				const resource:CRUDDocument = createMock();
 
-				// noinspection JSIgnoredPromiseFromCall
-				resource.delete( "relative/" );
+				await resource.delete( "relative/" );
 
 				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
 				expect( request.url ).toBe( "https://example.com/relative/" );
 			} );
 
 			it( "should request from resolved prefixed name", async () => {
+				stubRequest( "https://example.com/resource/" );
+
 				const _context:CarbonLDP = new CarbonLDP( "https://example.com/" );
 				_context.extendObjectSchema( { "ex": "https://example.com/" } );
 
 				const resource:CRUDDocument = createMock( { _context } );
 
-				// noinspection JSIgnoredPromiseFromCall
-				resource.delete( "ex:resource/" );
+				await resource.delete( "ex:resource/" );
 
 				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
 				expect( request.url ).toBe( "https://example.com/resource/" );

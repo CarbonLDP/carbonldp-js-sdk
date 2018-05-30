@@ -220,9 +220,12 @@ describe( module( "carbonldp/SPARQL/SPARQLDocument" ), () => {
 				} );
 
 				it( "should add authentication header", async () => {
+					spyOn( SPARQLService, "executeRawASKQuery" )
+						.and.returnValue( Promise.resolve( [] ) );
+
 					const spy:jasmine.Spy = spyOn( context.auth, "addAuthentication" );
 
-					resource.executeRawASKQuery( "query" );
+					await resource.executeRawASKQuery( "query" );
 					expect( spy ).toHaveBeenCalled();
 				} );
 
@@ -233,7 +236,7 @@ describe( module( "carbonldp/SPARQL/SPARQLDocument" ), () => {
 					} );
 
 					const spy:jasmine.Spy = spyOn( resource._registry, "_parseErrorFromResponse" )
-						.and.returnValue( Promise.reject( null ) );
+						.and.callFake( () => Promise.reject( null ) );
 
 					await resource
 						.executeRawASKQuery( "https://example.com/", "" )
@@ -369,7 +372,7 @@ describe( module( "carbonldp/SPARQL/SPARQLDocument" ), () => {
 					} );
 
 					const spy:jasmine.Spy = spyOn( resource._registry, "_parseErrorFromResponse" )
-						.and.returnValue( Promise.reject( null ) );
+						.and.callFake( () => Promise.reject( null ) );
 
 					await resource
 						.executeRawASKQuery( "https://example.com/", "" )
@@ -555,9 +558,12 @@ describe( module( "carbonldp/SPARQL/SPARQLDocument" ), () => {
 				} );
 
 				it( "should add authentication header", async () => {
+					spyOn( SPARQLService, "executeASKQuery" )
+						.and.returnValue( Promise.resolve( [] ) );
+
 					const spy:jasmine.Spy = spyOn( context.auth, "addAuthentication" );
 
-					resource.executeASKQuery( "query" );
+					await resource.executeASKQuery( "query" );
 					expect( spy ).toHaveBeenCalled();
 				} );
 
@@ -568,7 +574,7 @@ describe( module( "carbonldp/SPARQL/SPARQLDocument" ), () => {
 					} );
 
 					const spy:jasmine.Spy = spyOn( resource._registry, "_parseErrorFromResponse" )
-						.and.returnValue( Promise.reject( null ) );
+						.and.callFake( () => Promise.reject( null ) );
 
 					await resource
 						.executeASKQuery( "https://example.com/", "" )
@@ -703,7 +709,7 @@ describe( module( "carbonldp/SPARQL/SPARQLDocument" ), () => {
 					} );
 
 					const spy:jasmine.Spy = spyOn( resource._registry, "_parseErrorFromResponse" )
-						.and.returnValue( Promise.reject( null ) );
+						.and.callFake( () => Promise.reject( null ) );
 
 					await resource
 						.executeASKQuery( "https://example.com/", "" )
@@ -889,9 +895,12 @@ describe( module( "carbonldp/SPARQL/SPARQLDocument" ), () => {
 				} );
 
 				it( "should add authentication header", async () => {
+					spyOn( SPARQLService, "executeRawSELECTQuery" )
+						.and.returnValue( Promise.resolve( [] ) );
+
 					const spy:jasmine.Spy = spyOn( context.auth, "addAuthentication" );
 
-					resource.executeRawSELECTQuery( "query" );
+					await resource.executeRawSELECTQuery( "query" );
 					expect( spy ).toHaveBeenCalled();
 				} );
 
@@ -902,7 +911,7 @@ describe( module( "carbonldp/SPARQL/SPARQLDocument" ), () => {
 					} );
 
 					const spy:jasmine.Spy = spyOn( resource._registry, "_parseErrorFromResponse" )
-						.and.returnValue( Promise.reject( null ) );
+						.and.callFake( () => Promise.reject( null ) );
 
 					await resource
 						.executeRawSELECTQuery( "https://example.com/", "" )
@@ -1037,7 +1046,7 @@ describe( module( "carbonldp/SPARQL/SPARQLDocument" ), () => {
 					} );
 
 					const spy:jasmine.Spy = spyOn( resource._registry, "_parseErrorFromResponse" )
-						.and.returnValue( Promise.reject( null ) );
+						.and.callFake( () => Promise.reject( null ) );
 
 					await resource
 						.executeRawSELECTQuery( "https://example.com/", "" )
@@ -1225,9 +1234,12 @@ describe( module( "carbonldp/SPARQL/SPARQLDocument" ), () => {
 				} );
 
 				it( "should add authentication header", async () => {
+					spyOn( SPARQLService, "executeSELECTQuery" )
+						.and.returnValue( Promise.resolve( [] ) );
+
 					const spy:jasmine.Spy = spyOn( context.auth, "addAuthentication" );
 
-					resource.executeSELECTQuery( "query" );
+					await resource.executeSELECTQuery( "query" );
 					expect( spy ).toHaveBeenCalled();
 				} );
 
@@ -1238,7 +1250,7 @@ describe( module( "carbonldp/SPARQL/SPARQLDocument" ), () => {
 					} );
 
 					const spy:jasmine.Spy = spyOn( resource._registry, "_parseErrorFromResponse" )
-						.and.returnValue( Promise.reject( null ) );
+						.and.callFake( () => Promise.reject( null ) );
 
 					await resource
 						.executeSELECTQuery( "https://example.com/", "" )
@@ -1374,7 +1386,7 @@ describe( module( "carbonldp/SPARQL/SPARQLDocument" ), () => {
 					} );
 
 					const spy:jasmine.Spy = spyOn( resource._registry, "_parseErrorFromResponse" )
-						.and.returnValue( Promise.reject( null ) );
+						.and.callFake( () => Promise.reject( null ) );
 
 					await resource
 						.executeSELECTQuery( "https://example.com/", "" )
@@ -1560,9 +1572,12 @@ describe( module( "carbonldp/SPARQL/SPARQLDocument" ), () => {
 				} );
 
 				it( "should add authentication header", async () => {
+					spyOn( SPARQLService, "executeRawCONSTRUCTQuery" )
+						.and.returnValue( Promise.resolve( [] ) );
+
 					const spy:jasmine.Spy = spyOn( context.auth, "addAuthentication" );
 
-					resource.executeRawCONSTRUCTQuery( "query" );
+					await resource.executeRawCONSTRUCTQuery( "query" );
 					expect( spy ).toHaveBeenCalled();
 				} );
 
@@ -1573,7 +1588,7 @@ describe( module( "carbonldp/SPARQL/SPARQLDocument" ), () => {
 					} );
 
 					const spy:jasmine.Spy = spyOn( resource._registry, "_parseErrorFromResponse" )
-						.and.returnValue( Promise.reject( null ) );
+						.and.callFake( () => Promise.reject( null ) );
 
 					await resource
 						.executeRawCONSTRUCTQuery( "https://example.com/", "" )
@@ -1709,7 +1724,7 @@ describe( module( "carbonldp/SPARQL/SPARQLDocument" ), () => {
 					} );
 
 					const spy:jasmine.Spy = spyOn( resource._registry, "_parseErrorFromResponse" )
-						.and.returnValue( Promise.reject( null ) );
+						.and.callFake( () => Promise.reject( null ) );
 
 					await resource
 						.executeRawCONSTRUCTQuery( "https://example.com/", "" )
@@ -1895,9 +1910,12 @@ describe( module( "carbonldp/SPARQL/SPARQLDocument" ), () => {
 				} );
 
 				it( "should add authentication header", async () => {
+					spyOn( SPARQLService, "executeRawDESCRIBEQuery" )
+						.and.returnValue( Promise.resolve( [] ) );
+
 					const spy:jasmine.Spy = spyOn( context.auth, "addAuthentication" );
 
-					resource.executeRawDESCRIBEQuery( "query" );
+					await resource.executeRawDESCRIBEQuery( "query" );
 					expect( spy ).toHaveBeenCalled();
 				} );
 
@@ -1908,7 +1926,7 @@ describe( module( "carbonldp/SPARQL/SPARQLDocument" ), () => {
 					} );
 
 					const spy:jasmine.Spy = spyOn( resource._registry, "_parseErrorFromResponse" )
-						.and.returnValue( Promise.reject( null ) );
+						.and.callFake( () => Promise.reject( null ) );
 
 					await resource
 						.executeRawDESCRIBEQuery( "https://example.com/", "" )
@@ -2044,7 +2062,7 @@ describe( module( "carbonldp/SPARQL/SPARQLDocument" ), () => {
 					} );
 
 					const spy:jasmine.Spy = spyOn( resource._registry, "_parseErrorFromResponse" )
-						.and.returnValue( Promise.reject( null ) );
+						.and.callFake( () => Promise.reject( null ) );
 
 					await resource
 						.executeRawDESCRIBEQuery( "https://example.com/", "" )
@@ -2230,9 +2248,12 @@ describe( module( "carbonldp/SPARQL/SPARQLDocument" ), () => {
 				} );
 
 				it( "should add authentication header", async () => {
+					spyOn( SPARQLService, "executeUPDATE" )
+						.and.returnValue( Promise.resolve( [] ) );
+
 					const spy:jasmine.Spy = spyOn( context.auth, "addAuthentication" );
 
-					resource.executeUPDATE( "query" );
+					await resource.executeUPDATE( "query" );
 					expect( spy ).toHaveBeenCalled();
 				} );
 
@@ -2243,7 +2264,7 @@ describe( module( "carbonldp/SPARQL/SPARQLDocument" ), () => {
 					} );
 
 					const spy:jasmine.Spy = spyOn( resource._registry, "_parseErrorFromResponse" )
-						.and.returnValue( Promise.reject( null ) );
+						.and.callFake( () => Promise.reject( null ) );
 
 					await resource
 						.executeUPDATE( "https://example.com/", "" )
@@ -2379,7 +2400,7 @@ describe( module( "carbonldp/SPARQL/SPARQLDocument" ), () => {
 					} );
 
 					const spy:jasmine.Spy = spyOn( resource._registry, "_parseErrorFromResponse" )
-						.and.returnValue( Promise.reject( null ) );
+						.and.callFake( () => Promise.reject( null ) );
 
 					await resource
 						.executeUPDATE( "https://example.com/", "" )

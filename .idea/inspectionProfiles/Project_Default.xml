@@ -3,7 +3,7 @@
     <option name="myName" value="Project Default" />
     <inspection_tool class="ExceptionCaughtLocallyJS" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="JSIgnoredPromiseFromCall" enabled="true" level="WEAK WARNING" enabled_by_default="true">
-      <scope name="TEST" level="INFORMATION" enabled="true" />
+      <scope name="TEST" level="WARNING" enabled="true" />
       <scope name="Tests" level="INFORMATION" enabled="false" />
     </inspection_tool>
     <inspection_tool class="ReservedWordUsedAsNameJS" enabled="false" level="WARNING" enabled_by_default="false" />
