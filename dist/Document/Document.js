@@ -38,11 +38,11 @@ exports.Document = {
         },
         "isMemberOfRelation": {
             "@id": Vocabularies_1.LDP.isMemberOfRelation,
-            "@type": "@id",
+            "@type": "@vocab",
         },
         "hasMemberRelation": {
             "@id": Vocabularies_1.LDP.hasMemberRelation,
-            "@type": "@id",
+            "@type": "@vocab",
         },
         "insertedContentRelation": {
             "@id": Vocabularies_1.LDP.insertedContentRelation,

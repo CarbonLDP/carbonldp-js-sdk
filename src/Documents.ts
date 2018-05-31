@@ -1177,7 +1177,6 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 
 		if( document.id ) {
 			let childURI:string = document.id;
-			if( ! ! this.context ) childURI = this.context.resolve( childURI );
 			if( ! URI.isBaseOf( parentURI, childURI ) ) {
 				return Promise.reject( new Errors.IllegalArgumentError( "The document's URI is not relative to the parentURI specified" ) );
 			}

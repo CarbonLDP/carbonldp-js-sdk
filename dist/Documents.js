@@ -954,8 +954,6 @@ var Documents = (function () {
         Request_1.RequestUtils.setContentTypeHeader("application/ld+json", requestOptions);
         if (document.id) {
             var childURI = document.id;
-            if (!!this.context)
-                childURI = this.context.resolve(childURI);
             if (!URI_1.URI.isBaseOf(parentURI, childURI)) {
                 return Promise.reject(new Errors.IllegalArgumentError("The document's URI is not relative to the parentURI specified"));
             }

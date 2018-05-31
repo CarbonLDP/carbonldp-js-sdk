@@ -19,11 +19,10 @@ import {
 import { Role } from "./Role";
 import { TransientRoleFactory } from "./TransientRole";
 
-xdescribe( module( "carbonldp/Auth/PersistedRole" ), ():void => {
-
+describe( module( "carbonldp/Auth/Role" ), ():void => {
 
 	describe( interfaze(
-		"CarbonLDP.PersistedRole",
+		"CarbonLDP.Role",
 		"Specific interface that represents a persisted role of an application."
 	), ():void => {
 
@@ -138,7 +137,7 @@ xdescribe( module( "carbonldp/Auth/PersistedRole" ), ():void => {
 		} );
 
 
-		it( method( OBLIGATORY, "is" ), ():void => {
+		describe( method( OBLIGATORY, "is" ), ():void => {
 
 			it( hasSignature(
 				"Returns true if the object provided is considered a `CarbonLDP.Auth.TransientRole` object",
