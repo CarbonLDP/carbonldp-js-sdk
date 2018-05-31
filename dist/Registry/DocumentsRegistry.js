@@ -31,11 +31,11 @@ var DocumentsRegistry = (function (_super) {
             return Registry_1.Registry.PROTOTYPE._getLocalID.call(this, id);
         return _super.prototype._getLocalID.call(this, id);
     };
-    DocumentsRegistry.prototype._parseErrorFromResponse = function (response) {
+    DocumentsRegistry.prototype._parseFailedResponse = function (response) {
         var _this = this;
         if (!(response instanceof HTTP_1.Response))
-            return _super.prototype._parseErrorFromResponse.call(this, response);
-        return _super.prototype._parseErrorFromResponse.call(this, response)
+            return _super.prototype._parseFailedResponse.call(this, response);
+        return _super.prototype._parseFailedResponse.call(this, response)
             .catch(function (error) { return _this._addErrorResponseData(response, error); });
     };
     DocumentsRegistry.prototype._addErrorResponseData = function (response, error) {

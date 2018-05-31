@@ -5459,7 +5459,7 @@ function getFullResource(registry, uri, requestOptions) {
         var eTag = response.getETag();
         return parseRDFDocument(registry, rdfDocument, eTag);
     })
-        .catch(registry._parseErrorFromResponse.bind(registry));
+        .catch(registry._parseFailedResponse.bind(registry));
 }
 function applyResponseMetadata(registry, freeNodes) {
     if (!freeNodes.length)
@@ -5529,7 +5529,7 @@ function persistResource(registry, parentURI, slug, resource, requestOptions) {
     })
         .catch(function (error) {
         delete resource["__CarbonLDP_persisting__"];
-        return registry._parseErrorFromResponse(error);
+        return registry._parseFailedResponse(error);
     });
 }
 function persistChild(registry, parentURI, requestOptions, child, slug) {
@@ -5662,7 +5662,7 @@ function refreshResource(registry, resource, requestOptions) {
         .catch(function (response) {
         if (response.status === 304)
             return resource;
-        return resource._registry._parseErrorFromResponse(response);
+        return resource._registry._parseFailedResponse(response);
     });
 }
 function addResourcePatch(registry, deltaCreator, pointer, current, snapshot) {
@@ -5696,7 +5696,7 @@ function sendPatch(registry, resource, requestOptions) {
         .then(function (response) {
         return applyResponseRepresentation(registry, resource, response);
     })
-        .catch(registry._parseErrorFromResponse.bind(resource));
+        .catch(registry._parseFailedResponse.bind(resource));
 }
 var PROTOTYPE = {
     get: function (uriOrOptions, requestOptions) {
@@ -5732,7 +5732,7 @@ var PROTOTYPE = {
                 .catch(function (response) {
                 if (response.status === 404)
                     return false;
-                return registry._parseErrorFromResponse(response);
+                return registry._parseFailedResponse(response);
             });
         });
     },
@@ -5802,7 +5802,7 @@ var PROTOTYPE = {
                 .then(function () {
                 _this._registry.removePointer(url);
             })
-                .catch(_this._registry._parseErrorFromResponse.bind(_this));
+                .catch(_this._registry._parseFailedResponse.bind(_this));
         });
     },
 };
@@ -6305,7 +6305,7 @@ var AbstractAuthenticator = (function () {
             localOptions.ensureLatest = true;
             return HTTP_1.RequestService
                 .get(metadataURI, localOptions, new JSONLD_1.JSONLDParser())
-                .catch(_this.context.registry._parseErrorFromResponse);
+                .catch(_this.context.registry._parseFailedResponse);
         }).then(function (_a) {
             var rdfData = _a[0], response = _a[1];
             var accessor = _this._parseRDFMetadata(rdfData, response, requestOptions);
@@ -8302,7 +8302,7 @@ var RegistryService = (function () {
         var digestedSchema = this.getSchemaFor(node);
         this.jsonldConverter.compact(node, target, digestedSchema, library);
     };
-    RegistryService.prototype._parseErrorFromResponse = function (response) {
+    RegistryService.prototype._parseFailedResponse = function (response) {
         if (!response || response instanceof Error)
             return Promise.reject(response);
         if (!(response.status >= 400 && response.status < 600 && Errors_1.statusCodeMap.has(response.status)))
@@ -15161,11 +15161,11 @@ var DocumentsRegistry = (function (_super) {
             return Registry_1.Registry.PROTOTYPE._getLocalID.call(this, id);
         return _super.prototype._getLocalID.call(this, id);
     };
-    DocumentsRegistry.prototype._parseErrorFromResponse = function (response) {
+    DocumentsRegistry.prototype._parseFailedResponse = function (response) {
         var _this = this;
         if (!(response instanceof HTTP_1.Response))
-            return _super.prototype._parseErrorFromResponse.call(this, response);
-        return _super.prototype._parseErrorFromResponse.call(this, response)
+            return _super.prototype._parseFailedResponse.call(this, response);
+        return _super.prototype._parseFailedResponse.call(this, response)
             .catch(function (error) { return _this._addErrorResponseData(response, error); });
     };
     DocumentsRegistry.prototype._addErrorResponseData = function (response, error) {
@@ -15595,7 +15595,7 @@ function executePatterns(registry, url, requestOptions, queryContext, targetName
         return new JSONLD_1.JSONLDCompacter(registry, targetName, queryContext)
             .compactDocuments(rdfDocuments, targetDocuments);
     })
-        .catch(registry._parseErrorFromResponse.bind(this));
+        .catch(registry._parseFailedResponse.bind(this));
     var _a, _b;
 }
 function executeBuilder(registry, url, requestOptions, queryContext, targetProperty, queryBuilderFn, target) {
@@ -16672,7 +16672,7 @@ function sendAddAction(repository, uri, members, requestOptions) {
         return HTTP_1.RequestService
             .put(url, body, requestOptions)
             .then(function () { })
-            .catch(registry._parseErrorFromResponse.bind(registry));
+            .catch(registry._parseFailedResponse.bind(registry));
     });
 }
 function sendRemoveAction(repository, uri, members, requestOptions) {
@@ -16695,7 +16695,7 @@ function sendRemoveAction(repository, uri, members, requestOptions) {
         return HTTP_1.RequestService
             .delete(url, body, requestOptions)
             .then(function () { })
-            .catch(registry._parseErrorFromResponse.bind(registry));
+            .catch(registry._parseFailedResponse.bind(registry));
     });
 }
 var PROTOTYPE = {
@@ -16773,7 +16773,7 @@ var PROTOTYPE = {
             return HTTP_1.RequestService
                 .delete(url, requestOptions)
                 .then(function () { })
-                .catch(registry._parseErrorFromResponse.bind(registry));
+                .catch(registry._parseFailedResponse.bind(registry));
         });
     },
 };
@@ -21537,7 +21537,7 @@ var PROTOTYPE = {
                 var rawResults = _a[0];
                 return rawResults;
             })
-                .catch(registry._parseErrorFromResponse.bind(_this));
+                .catch(registry._parseFailedResponse.bind(_this));
         });
     },
     executeASKQuery: function (uriOrQuery, queryOrOptions, requestOptions) {
@@ -21551,7 +21551,7 @@ var PROTOTYPE = {
                 var rawResults = _a[0];
                 return rawResults;
             })
-                .catch(registry._parseErrorFromResponse.bind(_this));
+                .catch(registry._parseFailedResponse.bind(_this));
         });
     },
     executeRawSELECTQuery: function (uriOrQuery, queryOrOptions, requestOptions) {
@@ -21565,7 +21565,7 @@ var PROTOTYPE = {
                 var rawResults = _a[0];
                 return rawResults;
             })
-                .catch(registry._parseErrorFromResponse.bind(_this));
+                .catch(registry._parseFailedResponse.bind(_this));
         });
     },
     executeSELECTQuery: function (uriOrQuery, queryOrOptions, requestOptions) {
@@ -21579,7 +21579,7 @@ var PROTOTYPE = {
                 var selectResults = _a[0];
                 return selectResults;
             })
-                .catch(registry._parseErrorFromResponse.bind(_this));
+                .catch(registry._parseFailedResponse.bind(_this));
         });
     },
     executeRawCONSTRUCTQuery: function (uriOrQuery, queryOrOptions, requestOptions) {
@@ -21593,7 +21593,7 @@ var PROTOTYPE = {
                 var strConstruct = _a[0];
                 return strConstruct;
             })
-                .catch(registry._parseErrorFromResponse.bind(_this));
+                .catch(registry._parseFailedResponse.bind(_this));
         });
     },
     executeRawDESCRIBEQuery: function (uriOrQuery, queryOrOptions, requestOptions) {
@@ -21607,7 +21607,7 @@ var PROTOTYPE = {
                 var strDescribe = _a[0];
                 return strDescribe;
             })
-                .catch(registry._parseErrorFromResponse.bind(_this));
+                .catch(registry._parseFailedResponse.bind(_this));
         });
     },
     executeUPDATE: function (uriOrQuery, updateOrOptions, requestOptions) {
@@ -21618,7 +21618,7 @@ var PROTOTYPE = {
             return Service_1.SPARQLService
                 .executeUPDATE(url, update, options)
                 .then(function () { })
-                .catch(registry._parseErrorFromResponse.bind(_this));
+                .catch(registry._parseFailedResponse.bind(_this));
         });
     },
     sparql: function (uri) {

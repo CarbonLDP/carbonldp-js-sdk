@@ -47,7 +47,7 @@ function sendAddAction(repository, uri, members, requestOptions) {
         return HTTP_1.RequestService
             .put(url, body, requestOptions)
             .then(function () { })
-            .catch(registry._parseErrorFromResponse.bind(registry));
+            .catch(registry._parseFailedResponse.bind(registry));
     });
 }
 function sendRemoveAction(repository, uri, members, requestOptions) {
@@ -70,7 +70,7 @@ function sendRemoveAction(repository, uri, members, requestOptions) {
         return HTTP_1.RequestService
             .delete(url, body, requestOptions)
             .then(function () { })
-            .catch(registry._parseErrorFromResponse.bind(registry));
+            .catch(registry._parseFailedResponse.bind(registry));
     });
 }
 var PROTOTYPE = {
@@ -148,7 +148,7 @@ var PROTOTYPE = {
             return HTTP_1.RequestService
                 .delete(url, requestOptions)
                 .then(function () { })
-                .catch(registry._parseErrorFromResponse.bind(registry));
+                .catch(registry._parseFailedResponse.bind(registry));
         });
     },
 };

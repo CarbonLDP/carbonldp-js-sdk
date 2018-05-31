@@ -34,11 +34,11 @@ export class DocumentsRegistry extends RegistryService<Document, CarbonLDP> {
 	}
 
 
-	_parseErrorFromResponse<T extends object>( response:Response | Error | null ):Promise<never> {
-		if( ! (response instanceof Response) ) return super._parseErrorFromResponse( response );
+	_parseFailedResponse<T extends object>( response:Response | Error | null ):Promise<never> {
+		if( ! (response instanceof Response) ) return super._parseFailedResponse( response );
 
 		return super
-			._parseErrorFromResponse( response )
+			._parseFailedResponse( response )
 			.catch( error => this._addErrorResponseData( response, error ) )
 			;
 	}

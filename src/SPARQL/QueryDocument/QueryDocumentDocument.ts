@@ -205,7 +205,7 @@ function executePatterns<T extends object>( registry:DocumentsRegistry, url:stri
 			return new JSONLDCompacter( registry, targetName, queryContext )
 				.compactDocuments<T & QueryDocumentDocument>( rdfDocuments, targetDocuments );
 		} )
-		.catch( registry._parseErrorFromResponse.bind( this ) )
+		.catch( registry._parseFailedResponse.bind( this ) )
 		;
 }
 

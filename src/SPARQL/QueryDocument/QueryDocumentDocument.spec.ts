@@ -269,7 +269,7 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 				it( "should parse error response", async () => {
 					stubRequest( "https://example.com/", { status: 500 } );
 
-					const spy:jasmine.Spy = spyOn( resource._registry, "_parseErrorFromResponse" )
+					const spy:jasmine.Spy = spyOn( resource._registry, "_parseFailedResponse" )
 						.and.callFake( () => Promise.reject( null ) );
 
 					await resource
@@ -1591,7 +1591,7 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 				it( "should parse error response", async () => {
 					stubRequest( "https://example.com/", { status: 500 } );
 
-					const spy:jasmine.Spy = spyOn( resource._registry, "_parseErrorFromResponse" )
+					const spy:jasmine.Spy = spyOn( resource._registry, "_parseFailedResponse" )
 						.and.callFake( () => Promise.reject( null ) );
 
 					await resource
@@ -2819,7 +2819,7 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 				it( "should parse error response", async () => {
 					stubRequest( "https://example.com/", { status: 500 } );
 
-					const spy:jasmine.Spy = spyOn( resource._registry, "_parseErrorFromResponse" )
+					const spy:jasmine.Spy = spyOn( resource._registry, "_parseFailedResponse" )
 						.and.callFake( () => Promise.reject( null ) );
 
 					await resource
@@ -3510,7 +3510,7 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 					Object.defineProperty( resource, "isDirty", { writable: true } );
 					spyOn( resource, "isDirty" ).and.returnValue( true );
 
-					const spy:jasmine.Spy = spyOn( resource._registry, "_parseErrorFromResponse" )
+					const spy:jasmine.Spy = spyOn( resource._registry, "_parseFailedResponse" )
 						.and.callFake( () => Promise.reject( null ) );
 
 					try {
@@ -3947,7 +3947,7 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 					Object.defineProperty( resource, "isDirty", { writable: true } );
 					spyOn( resource, "isDirty" ).and.returnValue( true );
 
-					const spy:jasmine.Spy = spyOn( resource._registry, "_parseErrorFromResponse" )
+					const spy:jasmine.Spy = spyOn( resource._registry, "_parseFailedResponse" )
 						.and.callFake( () => Promise.reject( null ) );
 
 					try {
@@ -4477,7 +4477,7 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 				it( "should parse error response", async () => {
 					stubRequest( "https://example.com/", { status: 500 } );
 
-					const spy:jasmine.Spy = spyOn( resource._registry, "_parseErrorFromResponse" )
+					const spy:jasmine.Spy = spyOn( resource._registry, "_parseFailedResponse" )
 						.and.callFake( () => Promise.reject( null ) );
 
 					await resource
@@ -6288,7 +6288,7 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 				it( "should parse error response", async () => {
 					stubRequest( "https://example.com/", { status: 500 } );
 
-					const spy:jasmine.Spy = spyOn( resource._registry, "_parseErrorFromResponse" )
+					const spy:jasmine.Spy = spyOn( resource._registry, "_parseFailedResponse" )
 						.and.callFake( () => Promise.reject( null ) );
 
 					await resource
@@ -8209,7 +8209,7 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 				it( "should parse error response", async () => {
 					stubRequest( "https://example.com/", { status: 500 } );
 
-					const spy:jasmine.Spy = spyOn( resource._registry, "_parseErrorFromResponse" )
+					const spy:jasmine.Spy = spyOn( resource._registry, "_parseFailedResponse" )
 						.and.callFake( () => Promise.reject( null ) );
 
 					await resource
@@ -8664,7 +8664,7 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 				it( "should parse error response", async () => {
 					stubRequest( "https://example.com/", { status: 500 } );
 
-					const spy:jasmine.Spy = spyOn( resource._registry, "_parseErrorFromResponse" )
+					const spy:jasmine.Spy = spyOn( resource._registry, "_parseFailedResponse" )
 						.and.callFake( () => Promise.reject( null ) );
 
 					await resource

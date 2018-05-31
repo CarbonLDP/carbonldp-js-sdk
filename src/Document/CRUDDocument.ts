@@ -176,7 +176,7 @@ function getFullResource<T extends object>( this:void, registry:DocumentsRegistr
 			const eTag:string = response.getETag();
 			return parseRDFDocument<T>( registry, rdfDocument, eTag );
 		} )
-		.catch( registry._parseErrorFromResponse.bind( registry ) )
+		.catch( registry._parseFailedResponse.bind( registry ) )
 		;
 }
 
@@ -258,7 +258,7 @@ function persistResource<T extends object>( registry:DocumentsRegistry, parentUR
 		} )
 		.catch( ( error ) => {
 			delete resource[ "__CarbonLDP_persisting__" ];
-			return registry._parseErrorFromResponse( error );
+			return registry._parseFailedResponse( error );
 		} );
 }
 
@@ -427,7 +427,7 @@ function refreshResource<T extends CRUDDocument>( registry:DocumentsRegistry, re
 		.catch<T & CRUDDocument>( ( response:Response ) => {
 			if( response.status === 304 ) return resource;
 
-			return resource._registry._parseErrorFromResponse( response );
+			return resource._registry._parseFailedResponse( response );
 		} );
 }
 
@@ -477,7 +477,7 @@ function sendPatch<T extends CRUDDocument>( registry:DocumentsRegistry, resource
 		.then( ( response:Response ) => {
 			return applyResponseRepresentation<T>( registry, resource, response );
 		} )
-		.catch( registry._parseErrorFromResponse.bind( resource ) )
+		.catch( registry._parseFailedResponse.bind( resource ) )
 		;
 }
 
@@ -519,7 +519,7 @@ const PROTOTYPE:PickSelfProps<CRUDDocument, BasePersistedDocument> = {
 				.then( () => true )
 				.catch<boolean>( ( response:Response ) => {
 					if( response.status === 404 ) return false;
-					return registry._parseErrorFromResponse( response );
+					return registry._parseFailedResponse( response );
 				} );
 		} );
 	},
@@ -599,7 +599,7 @@ const PROTOTYPE:PickSelfProps<CRUDDocument, BasePersistedDocument> = {
 				.then( () => {
 					this._registry.removePointer( url );
 				} )
-				.catch( this._registry._parseErrorFromResponse.bind( this ) )
+				.catch( this._registry._parseFailedResponse.bind( this ) )
 				;
 		} );
 	},

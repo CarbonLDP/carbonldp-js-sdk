@@ -393,7 +393,7 @@ describe( module( "carbonldp/Members/MembersDocument" ), () => {
 				it( "should parse error response", async () => {
 					stubRequest( "https://example.com/", { status: 500 } );
 
-					const spy:jasmine.Spy = spyOn( resource._registry, "_parseErrorFromResponse" )
+					const spy:jasmine.Spy = spyOn( resource._registry, "_parseFailedResponse" )
 						.and.callFake( () => Promise.reject( null ) );
 
 					await resource
@@ -863,7 +863,7 @@ describe( module( "carbonldp/Members/MembersDocument" ), () => {
 				it( "should parse error response", async () => {
 					stubRequest( "https://example.com/", { status: 500 } );
 
-					const spy:jasmine.Spy = spyOn( resource._registry, "_parseErrorFromResponse" )
+					const spy:jasmine.Spy = spyOn( resource._registry, "_parseFailedResponse" )
 						.and.callFake( () => Promise.reject( null ) );
 
 					await resource
@@ -1266,7 +1266,7 @@ describe( module( "carbonldp/Members/MembersDocument" ), () => {
 				it( "should parse error response", async () => {
 					stubRequest( "https://example.com/", { status: 500 } );
 
-					const spy:jasmine.Spy = spyOn( resource._registry, "_parseErrorFromResponse" )
+					const spy:jasmine.Spy = spyOn( resource._registry, "_parseFailedResponse" )
 						.and.callFake( () => Promise.reject( null ) );
 
 					await resource
@@ -1740,7 +1740,7 @@ describe( module( "carbonldp/Members/MembersDocument" ), () => {
 				it( "should parse error response", async () => {
 					stubRequest( "https://example.com/", { status: 500 } );
 
-					const spy:jasmine.Spy = spyOn( resource._registry, "_parseErrorFromResponse" )
+					const spy:jasmine.Spy = spyOn( resource._registry, "_parseFailedResponse" )
 						.and.callFake( () => Promise.reject( null ) );
 
 					await resource
@@ -2059,7 +2059,7 @@ describe( module( "carbonldp/Members/MembersDocument" ), () => {
 				it( "should parse error response", async () => {
 					stubRequest( "https://example.com/", { status: 500 } );
 
-					const spy:jasmine.Spy = spyOn( resource._registry, "_parseErrorFromResponse" )
+					const spy:jasmine.Spy = spyOn( resource._registry, "_parseFailedResponse" )
 						.and.callFake( () => Promise.reject( null ) );
 
 					await resource

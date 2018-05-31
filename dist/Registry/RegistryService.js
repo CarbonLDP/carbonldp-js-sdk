@@ -121,7 +121,7 @@ var RegistryService = (function () {
         var digestedSchema = this.getSchemaFor(node);
         this.jsonldConverter.compact(node, target, digestedSchema, library);
     };
-    RegistryService.prototype._parseErrorFromResponse = function (response) {
+    RegistryService.prototype._parseFailedResponse = function (response) {
         if (!response || response instanceof Error)
             return Promise.reject(response);
         if (!(response.status >= 400 && response.status < 600 && Errors_1.statusCodeMap.has(response.status)))

@@ -7,6 +7,6 @@ export declare class DocumentsRegistry extends RegistryService<Document, CarbonL
     constructor(context?: CarbonLDP);
     register(id: string): Document;
     _getLocalID(id: string): string;
-    _parseErrorFromResponse<T extends object>(response: Response | Error | null): Promise<never>;
+    _parseFailedResponse<T extends object>(response: Response | Error | null): Promise<never>;
     protected _addErrorResponseData(response: Response, error: Error): Promise<never>;
 }

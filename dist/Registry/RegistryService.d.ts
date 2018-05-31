@@ -41,5 +41,5 @@ export declare class RegistryService<M extends Pointer, C extends AbstractContex
     _parseFreeNodes(freeNodes: RDFNode[]): FreeResources;
     protected _compactRDFNodes(nodes: RDFNode[], targets: object[], library: PointerLibrary): void;
     protected _compactRDFNode(node: RDFNode, target: object, library: PointerLibrary): void;
-    _parseErrorFromResponse<T extends object>(response: Response | Error | null): Promise<never>;
+    _parseFailedResponse<T extends object>(response: Response | Error | null): Promise<never>;
 }

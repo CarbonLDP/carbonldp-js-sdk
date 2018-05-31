@@ -71,7 +71,7 @@ export abstract class AbstractAuthenticator<T extends object, W extends object> 
 
 			return RequestService
 				.get( metadataURI, localOptions, new JSONLDParser() )
-				.catch( this.context.registry._parseErrorFromResponse )
+				.catch( this.context.registry._parseFailedResponse )
 				;
 		} ).then( ( [ rdfData, response ] ) => {
 			const accessor:AuthenticatedUserInformationAccessor = this._parseRDFMetadata( rdfData, response, requestOptions );

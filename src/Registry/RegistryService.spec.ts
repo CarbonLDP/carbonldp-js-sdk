@@ -47,6 +47,23 @@ describe( module( "carbonldp/Registry" ), () => {
 				expect( registry ).toEqual( jasmine.any( RegistryService ) );
 			} );
 
+
+			it( "should initialize context be undefined when no context provided", () => {
+				const registry:RegistryService<any> = new RegistryService( null as any );
+				expect( registry.context ).toBeUndefined();
+			} );
+
+			it( "should initialize then context when provided", () => {
+				const context:AbstractContext<any> = createMockContext();
+				const registry:RegistryService<any, any> = new RegistryService( null as any, context );
+				expect( registry.context ).toBe( context );
+			} );
+
+			it( "should initialize resources map", () => {
+				const registry:RegistryService<any> = new RegistryService( null as any );
+				expect( registry._resourcesMap ).toEqual( new Map() );
+			} );
+
 		} );
 
 		it( hasProperty(
@@ -334,6 +351,7 @@ describe( module( "carbonldp/Registry" ), () => {
 
 
 		// TODO: Test ._parseFreeNodes
+		// TODO: Test ._parseFailedResponse
 
 	} );
 

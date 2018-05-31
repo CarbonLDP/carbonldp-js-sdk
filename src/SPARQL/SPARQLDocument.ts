@@ -93,7 +93,7 @@ const PROTOTYPE:PickSelfProps<SPARQLDocument, TransientResource, "_registry"> = 
 			return SPARQLService
 				.executeRawASKQuery( url, query, options )
 				.then( ( [ rawResults ] ) => rawResults )
-				.catch( registry._parseErrorFromResponse.bind( this ) );
+				.catch( registry._parseFailedResponse.bind( this ) );
 		} );
 	},
 
@@ -105,7 +105,7 @@ const PROTOTYPE:PickSelfProps<SPARQLDocument, TransientResource, "_registry"> = 
 			return SPARQLService
 				.executeASKQuery( url, query, options )
 				.then( ( [ rawResults ] ) => rawResults )
-				.catch( registry._parseErrorFromResponse.bind( this ) );
+				.catch( registry._parseFailedResponse.bind( this ) );
 		} );
 	},
 
@@ -118,7 +118,7 @@ const PROTOTYPE:PickSelfProps<SPARQLDocument, TransientResource, "_registry"> = 
 			return SPARQLService
 				.executeRawSELECTQuery( url, query, options )
 				.then( ( [ rawResults ] ) => rawResults )
-				.catch( registry._parseErrorFromResponse.bind( this ) );
+				.catch( registry._parseFailedResponse.bind( this ) );
 		} );
 	},
 
@@ -130,7 +130,7 @@ const PROTOTYPE:PickSelfProps<SPARQLDocument, TransientResource, "_registry"> = 
 			return SPARQLService
 				.executeSELECTQuery<T>( url, query, this._registry, options )
 				.then( ( [ selectResults ] ) => selectResults )
-				.catch( registry._parseErrorFromResponse.bind( this ) );
+				.catch( registry._parseFailedResponse.bind( this ) );
 		} );
 	},
 
@@ -143,7 +143,7 @@ const PROTOTYPE:PickSelfProps<SPARQLDocument, TransientResource, "_registry"> = 
 			return SPARQLService
 				.executeRawCONSTRUCTQuery( url, query, options )
 				.then( ( [ strConstruct ] ) => strConstruct )
-				.catch( registry._parseErrorFromResponse.bind( this ) );
+				.catch( registry._parseFailedResponse.bind( this ) );
 		} );
 	},
 
@@ -156,7 +156,7 @@ const PROTOTYPE:PickSelfProps<SPARQLDocument, TransientResource, "_registry"> = 
 			return SPARQLService
 				.executeRawDESCRIBEQuery( url, query, options )
 				.then( ( [ strDescribe ] ) => strDescribe )
-				.catch( registry._parseErrorFromResponse.bind( this ) );
+				.catch( registry._parseFailedResponse.bind( this ) );
 		} );
 	},
 
@@ -169,7 +169,7 @@ const PROTOTYPE:PickSelfProps<SPARQLDocument, TransientResource, "_registry"> = 
 			return SPARQLService
 				.executeUPDATE( url, update, options )
 				.then( () => {} )
-				.catch( registry._parseErrorFromResponse.bind( this ) );
+				.catch( registry._parseFailedResponse.bind( this ) );
 		} );
 	},
 

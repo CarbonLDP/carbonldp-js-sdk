@@ -72,7 +72,7 @@ function getFullResource(registry, uri, requestOptions) {
         var eTag = response.getETag();
         return parseRDFDocument(registry, rdfDocument, eTag);
     })
-        .catch(registry._parseErrorFromResponse.bind(registry));
+        .catch(registry._parseFailedResponse.bind(registry));
 }
 function applyResponseMetadata(registry, freeNodes) {
     if (!freeNodes.length)
@@ -142,7 +142,7 @@ function persistResource(registry, parentURI, slug, resource, requestOptions) {
     })
         .catch(function (error) {
         delete resource["__CarbonLDP_persisting__"];
-        return registry._parseErrorFromResponse(error);
+        return registry._parseFailedResponse(error);
     });
 }
 function persistChild(registry, parentURI, requestOptions, child, slug) {
@@ -275,7 +275,7 @@ function refreshResource(registry, resource, requestOptions) {
         .catch(function (response) {
         if (response.status === 304)
             return resource;
-        return resource._registry._parseErrorFromResponse(response);
+        return resource._registry._parseFailedResponse(response);
     });
 }
 function addResourcePatch(registry, deltaCreator, pointer, current, snapshot) {
@@ -309,7 +309,7 @@ function sendPatch(registry, resource, requestOptions) {
         .then(function (response) {
         return applyResponseRepresentation(registry, resource, response);
     })
-        .catch(registry._parseErrorFromResponse.bind(resource));
+        .catch(registry._parseFailedResponse.bind(resource));
 }
 var PROTOTYPE = {
     get: function (uriOrOptions, requestOptions) {
@@ -345,7 +345,7 @@ var PROTOTYPE = {
                 .catch(function (response) {
                 if (response.status === 404)
                     return false;
-                return registry._parseErrorFromResponse(response);
+                return registry._parseFailedResponse(response);
             });
         });
     },
@@ -415,7 +415,7 @@ var PROTOTYPE = {
                 .then(function () {
                 _this._registry.removePointer(url);
             })
-                .catch(_this._registry._parseErrorFromResponse.bind(_this));
+                .catch(_this._registry._parseFailedResponse.bind(_this));
         });
     },
 };

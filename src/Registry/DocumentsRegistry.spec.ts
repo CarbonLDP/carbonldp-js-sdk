@@ -118,7 +118,7 @@ describe( module( "carbonldp/Registry" ), () => {
 		} );
 
 
-		describe( method( INSTANCE, "_parseErrorResponse" ), ():void => {
+		describe( method( INSTANCE, "_parseFailedResponse" ), ():void => {
 
 
 			describe( "When has a context", ():void => {
@@ -206,7 +206,7 @@ describe( module( "carbonldp/Registry" ), () => {
 						} as any
 					);
 
-					await registry._parseErrorFromResponse( response )
+					await registry._parseFailedResponse( response )
 						.then( () => fail( "Should not resolve" ) )
 						.catch( ( error:HTTPError ) => {
 							expect( error ).toBeDefined();
@@ -264,7 +264,7 @@ describe( module( "carbonldp/Registry" ), () => {
 						} as any
 					);
 
-					await registry._parseErrorFromResponse( response )
+					await registry._parseFailedResponse( response )
 						.then( () => fail( "Should not resolve" ) )
 						.catch( ( error:HTTPError ) => {
 							expect( error ).toEqual( jasmine.any( Errors.IllegalArgumentError ) );
@@ -310,7 +310,7 @@ describe( module( "carbonldp/Registry" ), () => {
 						} as any
 					);
 
-					await registry._parseErrorFromResponse( response )
+					await registry._parseFailedResponse( response )
 						.then( () => fail( "Should not resolve" ) )
 						.catch( ( error:HTTPError ) => {
 							expect( error ).toEqual( jasmine.any( Errors.IllegalArgumentError ) );
@@ -329,7 +329,7 @@ describe( module( "carbonldp/Registry" ), () => {
 						} as any
 					);
 
-					await registry._parseErrorFromResponse( response )
+					await registry._parseFailedResponse( response )
 						.then( () => fail( "Should not resolve" ) )
 						.catch( ( error:HTTPError ) => {
 							expect( error ).toEqual( jasmine.any( HTTPError ) );
@@ -424,7 +424,7 @@ describe( module( "carbonldp/Registry" ), () => {
 						} as any
 					);
 
-					await registry._parseErrorFromResponse( response )
+					await registry._parseFailedResponse( response )
 						.then( () => fail( "Should not resolve" ) )
 						.catch( ( error:HTTPError ) => {
 							expect( error ).toBeDefined();

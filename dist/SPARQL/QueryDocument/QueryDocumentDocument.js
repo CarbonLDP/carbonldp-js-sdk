@@ -96,7 +96,7 @@ function executePatterns(registry, url, requestOptions, queryContext, targetName
         return new JSONLD_1.JSONLDCompacter(registry, targetName, queryContext)
             .compactDocuments(rdfDocuments, targetDocuments);
     })
-        .catch(registry._parseErrorFromResponse.bind(this));
+        .catch(registry._parseFailedResponse.bind(this));
     var _a, _b;
 }
 function executeBuilder(registry, url, requestOptions, queryContext, targetProperty, queryBuilderFn, target) {

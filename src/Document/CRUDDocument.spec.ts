@@ -144,7 +144,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 			it( "should parse error response", async () => {
 				const resource:CRUDDocument = createMock();
 
-				const spy:jasmine.Spy = spyOn( resource._registry, "_parseErrorFromResponse" )
+				const spy:jasmine.Spy = spyOn( resource._registry, "_parseFailedResponse" )
 					.and.callFake( () => Promise.reject( null ) );
 
 				try {
@@ -550,7 +550,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 			it( "should parse error response", async () => {
 				const resource:CRUDDocument = createMock( { id: "https://example.com/500/" } );
 
-				const spy:jasmine.Spy = spyOn( resource._registry, "_parseErrorFromResponse" )
+				const spy:jasmine.Spy = spyOn( resource._registry, "_parseFailedResponse" )
 					.and.callFake( () => Promise.reject( null ) );
 
 				try {
@@ -820,7 +820,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 			it( "should parse error response", async () => {
 				const resource:CRUDDocument = createMock();
 
-				const spy:jasmine.Spy = spyOn( resource._registry, "_parseErrorFromResponse" )
+				const spy:jasmine.Spy = spyOn( resource._registry, "_parseFailedResponse" )
 					.and.callFake( () => Promise.reject( null ) );
 
 				try {
@@ -1108,7 +1108,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 			it( "should parse error response", async () => {
 				const resource:CRUDDocument = createMock( { id: "https://example.com/500/" } );
 
-				const spy:jasmine.Spy = spyOn( resource._registry, "_parseErrorFromResponse" )
+				const spy:jasmine.Spy = spyOn( resource._registry, "_parseFailedResponse" )
 					.and.callFake( () => Promise.reject( null ) );
 
 				try {
@@ -2007,7 +2007,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 			it( "should parse error response", async () => {
 				const resource:CRUDDocument = createMock( { id: "https://example.com/500/" } );
 
-				const spy:jasmine.Spy = spyOn( resource._registry, "_parseErrorFromResponse" )
+				const spy:jasmine.Spy = spyOn( resource._registry, "_parseFailedResponse" )
 					.and.callFake( () => Promise.reject( null ) );
 
 				try {
@@ -3160,7 +3160,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 				it( "should parse error response", async () => {
 					stubRequest( "https://example.com/", { status: 500 } );
 
-					const spy:jasmine.Spy = spyOn( resource._registry, "_parseErrorFromResponse" )
+					const spy:jasmine.Spy = spyOn( resource._registry, "_parseFailedResponse" )
 						.and.callFake( () => Promise.reject( null ) );
 
 					try {
@@ -3664,7 +3664,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 			it( "should parse error response", async () => {
 				const resource:CRUDDocument = createMock( { id: "https://example.com/500/" } );
 
-				const spy:jasmine.Spy = spyOn( resource._registry, "_parseErrorFromResponse" )
+				const spy:jasmine.Spy = spyOn( resource._registry, "_parseFailedResponse" )
 					.and.callFake( () => Promise.reject( null ) );
 
 				try {
@@ -4429,7 +4429,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 				it( "should parse error response", async () => {
 					stubRequest( "https://example.com/", { status: 500 } );
 
-					const spy:jasmine.Spy = spyOn( resource._registry, "_parseErrorFromResponse" )
+					const spy:jasmine.Spy = spyOn( resource._registry, "_parseFailedResponse" )
 						.and.callFake( () => Promise.reject( null ) );
 
 					try {
@@ -5060,7 +5060,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 			it( "should parse error response", async () => {
 				const resource:CRUDDocument = createMock( { id: "https://example.com/500/" } );
 
-				const spy:jasmine.Spy = spyOn( resource._registry, "_parseErrorFromResponse" )
+				const spy:jasmine.Spy = spyOn( resource._registry, "_parseFailedResponse" )
 					.and.callFake( () => Promise.reject( null ) );
 
 				try {
@@ -5836,7 +5836,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 					Object.defineProperty( resource, "isDirty", { writable: true } );
 					spyOn( resource, "isDirty" ).and.returnValue( true );
 
-					const spy:jasmine.Spy = spyOn( resource._registry, "_parseErrorFromResponse" )
+					const spy:jasmine.Spy = spyOn( resource._registry, "_parseFailedResponse" )
 						.and.callFake( () => Promise.reject( null ) );
 
 					try {
@@ -6254,7 +6254,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 					Object.defineProperty( resource, "isDirty", { writable: true } );
 					spyOn( resource, "isDirty" ).and.returnValue( true );
 
-					const spy:jasmine.Spy = spyOn( resource._registry, "_parseErrorFromResponse" )
+					const spy:jasmine.Spy = spyOn( resource._registry, "_parseFailedResponse" )
 						.and.callFake( () => Promise.reject( null ) );
 
 					try {
@@ -6727,7 +6727,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 					Object.defineProperty( resource, "isDirty", { writable: true } );
 					spyOn( resource, "isDirty" ).and.returnValue( true );
 
-					const spy:jasmine.Spy = spyOn( resource._registry, "_parseErrorFromResponse" )
+					const spy:jasmine.Spy = spyOn( resource._registry, "_parseFailedResponse" )
 						.and.callFake( () => Promise.reject( null ) );
 
 					try {
@@ -7125,7 +7125,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 				it( "should parse error response", async () => {
 					stubRequest( "https://example.com/", { status: 500 } );
 
-					const spy:jasmine.Spy = spyOn( resource._registry, "_parseErrorFromResponse" )
+					const spy:jasmine.Spy = spyOn( resource._registry, "_parseFailedResponse" )
 						.and.callFake( () => Promise.reject( null ) );
 
 					try {

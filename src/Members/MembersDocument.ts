@@ -94,7 +94,7 @@ function sendAddAction( repository:MembersDocument, uri:string | undefined, memb
 		return RequestService
 			.put( url, body, requestOptions )
 			.then( () => {} )
-			.catch( registry._parseErrorFromResponse.bind( registry ) )
+			.catch( registry._parseFailedResponse.bind( registry ) )
 			;
 	} );
 }
@@ -123,7 +123,7 @@ function sendRemoveAction( repository:MembersDocument, uri:string | undefined, m
 		return RequestService
 			.delete( url, body, requestOptions )
 			.then( () => {} )
-			.catch( registry._parseErrorFromResponse.bind( registry ) )
+			.catch( registry._parseFailedResponse.bind( registry ) )
 			;
 	} );
 }
@@ -227,7 +227,7 @@ const PROTOTYPE:PickSelfProps<MembersDocument, TransientResource, "_registry"> =
 			return RequestService
 				.delete( url, requestOptions )
 				.then( () => {} )
-				.catch( registry._parseErrorFromResponse.bind( registry ) )
+				.catch( registry._parseFailedResponse.bind( registry ) )
 				;
 		} );
 	},

@@ -41,7 +41,7 @@ var PROTOTYPE = {
                 var rawResults = _a[0];
                 return rawResults;
             })
-                .catch(registry._parseErrorFromResponse.bind(_this));
+                .catch(registry._parseFailedResponse.bind(_this));
         });
     },
     executeASKQuery: function (uriOrQuery, queryOrOptions, requestOptions) {
@@ -55,7 +55,7 @@ var PROTOTYPE = {
                 var rawResults = _a[0];
                 return rawResults;
             })
-                .catch(registry._parseErrorFromResponse.bind(_this));
+                .catch(registry._parseFailedResponse.bind(_this));
         });
     },
     executeRawSELECTQuery: function (uriOrQuery, queryOrOptions, requestOptions) {
@@ -69,7 +69,7 @@ var PROTOTYPE = {
                 var rawResults = _a[0];
                 return rawResults;
             })
-                .catch(registry._parseErrorFromResponse.bind(_this));
+                .catch(registry._parseFailedResponse.bind(_this));
         });
     },
     executeSELECTQuery: function (uriOrQuery, queryOrOptions, requestOptions) {
@@ -83,7 +83,7 @@ var PROTOTYPE = {
                 var selectResults = _a[0];
                 return selectResults;
             })
-                .catch(registry._parseErrorFromResponse.bind(_this));
+                .catch(registry._parseFailedResponse.bind(_this));
         });
     },
     executeRawCONSTRUCTQuery: function (uriOrQuery, queryOrOptions, requestOptions) {
@@ -97,7 +97,7 @@ var PROTOTYPE = {
                 var strConstruct = _a[0];
                 return strConstruct;
             })
-                .catch(registry._parseErrorFromResponse.bind(_this));
+                .catch(registry._parseFailedResponse.bind(_this));
         });
     },
     executeRawDESCRIBEQuery: function (uriOrQuery, queryOrOptions, requestOptions) {
@@ -111,7 +111,7 @@ var PROTOTYPE = {
                 var strDescribe = _a[0];
                 return strDescribe;
             })
-                .catch(registry._parseErrorFromResponse.bind(_this));
+                .catch(registry._parseFailedResponse.bind(_this));
         });
     },
     executeUPDATE: function (uriOrQuery, updateOrOptions, requestOptions) {
@@ -122,7 +122,7 @@ var PROTOTYPE = {
             return Service_1.SPARQLService
                 .executeUPDATE(url, update, options)
                 .then(function () { })
-                .catch(registry._parseErrorFromResponse.bind(_this));
+                .catch(registry._parseFailedResponse.bind(_this));
         });
     },
     sparql: function (uri) {
