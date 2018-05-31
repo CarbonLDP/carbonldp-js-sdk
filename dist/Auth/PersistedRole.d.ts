@@ -1,11 +1,11 @@
 import { Documents } from "../Documents";
 import { RequestOptions } from "../HTTP/Request";
-import { PersistedProtectedDocument } from "../PersistedProtectedDocument";
+import { ProtectedDocument } from "../ProtectedDocument";
 import { Pointer } from "../Pointer";
 import { QueryDocumentsBuilder } from "../SPARQL/QueryDocument";
-import { PersistedUser } from "./PersistedUser";
+import { User } from "./User";
 import { RoleBase } from "./Role";
-export interface Class extends PersistedProtectedDocument {
+export interface Class extends ProtectedDocument {
     name?: string;
     description?: string;
     parent?: Pointer;
@@ -13,8 +13,8 @@ export interface Class extends PersistedProtectedDocument {
     users?: Pointer[];
     createChild<T extends object>(role: T & RoleBase, slug?: string, requestOptions?: RequestOptions): Promise<T & Class>;
     createChild<T extends object>(role: T & RoleBase, requestOptions?: RequestOptions): Promise<T & Class>;
-    getUsers<T>(requestOptions?: RequestOptions, queryBuilderFn?: (queryBuilder: QueryDocumentsBuilder) => QueryDocumentsBuilder): Promise<(T & PersistedUser)[]>;
-    getUsers<T>(queryBuilderFn?: (queryBuilder: QueryDocumentsBuilder) => QueryDocumentsBuilder): Promise<(T & PersistedUser)[]>;
+    getUsers<T>(requestOptions?: RequestOptions, queryBuilderFn?: (queryBuilder: QueryDocumentsBuilder) => QueryDocumentsBuilder): Promise<(T & User)[]>;
+    getUsers<T>(queryBuilderFn?: (queryBuilder: QueryDocumentsBuilder) => QueryDocumentsBuilder): Promise<(T & User)[]>;
     addUser(user: Pointer | string, requestOptions?: RequestOptions): Promise<void>;
     addUsers(users: (Pointer | string)[], requestOptions?: RequestOptions): Promise<void>;
     removeUser(user: Pointer | string, requestOptions?: RequestOptions): Promise<void>;

@@ -1,24 +1,33 @@
-import { ModelDecorator } from "../ModelDecorator";
-import { ModelFactory } from "../ModelFactory";
+import { ModelFactory } from "../core/ModelFactory";
 import { ObjectSchema } from "../ObjectSchema";
 import { Pointer } from "../Pointer";
-import { Resource } from "../Resource";
-import { C } from "../Vocabularies/C";
-import * as Utils from "./../Utils";
+import {
+	BaseResource,
+	TransientResource
+} from "../Resource";
+import { C } from "../Vocabularies";
 
 
-export interface AddMemberAction extends Resource {
+export interface BaseAddMemberAction extends BaseResource {
 	targetMembers:Pointer[];
 }
 
 
-export interface AddMemberActionFactory extends ModelFactory<AddMemberAction>, ModelDecorator<AddMemberAction> {
-	TYPE:string;
+export interface AddMemberAction extends TransientResource {
+	targetMembers:Pointer[];
+}
+
+
+export interface AddMemberActionFactory extends ModelFactory<AddMemberAction> {
+	TYPE:C[ "AddMemberAction" ];
 	SCHEMA:ObjectSchema;
 
-	isDecorated( object:object ):object is AddMemberAction;
+	is( value:any ):value is AddMemberAction;
 
-	create( targetMembers:Pointer[] ):AddMemberAction;
+
+	create<T extends object>( data:T & BaseAddMemberAction ):T & AddMemberAction;
+
+	createFrom<T extends object>( data:T & BaseAddMemberAction ):T & AddMemberAction;
 }
 
 const SCHEMA:ObjectSchema = {
@@ -33,14 +42,23 @@ export const AddMemberAction:AddMemberActionFactory = {
 	TYPE: C.AddMemberAction,
 	SCHEMA,
 
-	isDecorated( object:object ):object is AddMemberAction {
-		return Utils.hasPropertyDefined( object, "targetMembers" );
+	is( value:any ):value is AddMemberAction {
+		return TransientResource.is( value )
+			&& value.hasOwnProperty( "targetMembers" )
+			;
 	},
 
-	create( targetMembers:Pointer[] ):AddMemberAction {
-		return Resource.createFrom( {
-			types: [ AddMemberAction.TYPE ],
-			targetMembers,
-		} );
+
+	create<T extends object>( data:T & BaseAddMemberAction ):T & AddMemberAction {
+		const copy:T & BaseAddMemberAction = Object.assign( {}, data );
+		return AddMemberAction.createFrom( copy );
+	},
+
+	createFrom<T extends object>( object:T & BaseAddMemberAction ):T & AddMemberAction {
+		const resource:T & AddMemberAction = TransientResource.createFrom( object );
+
+		resource.addType( AddMemberAction.TYPE );
+
+		return resource;
 	},
 };

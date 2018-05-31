@@ -1,14 +1,14 @@
 import { Context } from "../../Context";
 import { DigestedObjectSchema } from "../../ObjectSchema";
-import { PersistedDocument } from "../../PersistedDocument";
-import { PersistedResource } from "../../PersistedResource";
+import { Document } from "../../Document";
+import { Resource } from "../../Resource";
 import { QueryContext } from "./QueryContext";
 
 export class QueryContextPartial extends QueryContext {
 
-	private _document:PersistedDocument;
+	private _document:Document;
 
-	constructor( document:PersistedDocument, context?:Context ) {
+	constructor( document:Document, context?:Context ) {
 		super( context );
 		this._document = document;
 	}
@@ -17,7 +17,7 @@ export class QueryContextPartial extends QueryContext {
 		if( path === void 0 ) return super.getSchemaFor( object );
 
 		const parts:string[] = path.split( /\./g ).slice( 1 );
-		let schemaLibrary:PersistedResource = this._document;
+		let schemaLibrary:Resource = this._document;
 		while( parts.length ) {
 			const part:string = parts.shift();
 			const values:any[] = Array.isArray( schemaLibrary[ part ] ) ?

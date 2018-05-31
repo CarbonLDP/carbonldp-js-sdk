@@ -1,7 +1,7 @@
 import { anyThatMatches } from "../../test/helpers/jasmine-equalities";
 import { createMockRole } from "../../test/helpers/mocks";
 
-import { Document } from "../Document";
+import { TransientDocument } from "../Document";
 import { ObjectSchema } from "../ObjectSchema";
 import {
 	extendsClass,
@@ -31,9 +31,9 @@ describe( module( "carbonldp/Auth/Role" ), ():void => {
 		"Specific interface that represents the base of an in-memory role for any context."
 	), ():void => {
 
-		it( extendsClass( "CarbonLDP.Document" ), ():void => {
+		it( extendsClass( "CarbonLDP.TransientDocument" ), ():void => {
 			let role:Role = <any> {};
-			let document:Document;
+			let document:TransientDocument;
 
 			document = role;
 			expect( document ).toEqual( jasmine.any( Object ) );
@@ -198,8 +198,8 @@ describe( module( "carbonldp/Auth/Role" ), ():void => {
 			} );
 
 
-			it( "should call Document.is", ():void => {
-				const spy:jasmine.Spy = spyOn( Document, "is" )
+			it( "should call TransientDocument.is", ():void => {
+				const spy:jasmine.Spy = spyOn( TransientDocument, "is" )
 					.and.returnValue( false );
 
 				Role.is( { the: "role" } );
@@ -207,7 +207,7 @@ describe( module( "carbonldp/Auth/Role" ), ():void => {
 				expect( spy ).toHaveBeenCalledWith( { the: "role" } );
 			} );
 
-			it( "should return true when Document with Roles properties", ():void => {
+			it( "should return true when TransientDocument with Roles properties", ():void => {
 				const role:Role = createMockRole();
 
 				const returned:boolean = Role.is( role );
@@ -269,10 +269,10 @@ describe( module( "carbonldp/Auth/Role" ), ():void => {
 				expect( role.types ).toContain( CS.Role );
 			} );
 
-			it( "should return a Document", ():void => {
+			it( "should return a TransientDocument", ():void => {
 				const role:Role = Role.createFrom( { name: "Role name" } );
 
-				expect( role ).toEqual( anyThatMatches( Document.is, "Document" ) as any );
+				expect( role ).toEqual( anyThatMatches( TransientDocument.is, "TransientDocument" ) as any );
 			} );
 
 			it( "should return the same reference", ():void => {

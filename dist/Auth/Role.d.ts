@@ -1,11 +1,11 @@
-import { Document } from "../Document";
+import { BaseDocument, TransientDocument } from "../Document";
 import { ObjectSchema } from "../ObjectSchema";
-import { CS } from "../Vocabularies/CS";
-export interface RoleBase {
+import { CS } from "../Vocabularies";
+export interface RoleBase extends BaseDocument {
     name: string;
     description?: string;
 }
-export interface Role extends Document {
+export interface Role extends TransientDocument {
     name: string;
     description?: string;
 }

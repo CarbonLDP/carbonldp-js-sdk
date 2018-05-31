@@ -1,7 +1,6 @@
 import {
 	Authenticator,
 	AuthService,
-	PersistedUser,
 	Role,
 	User,
 } from "../../../src/Auth";
@@ -14,7 +13,7 @@ import { createMockContext } from "./core";
 
 export function createMockAuthService( data?:{
 	context?:Context;
-	user?:PersistedUser | true,
+	user?:User | true,
 	authenticator?:Authenticator<any, any>,
 } ):AuthService {
 	data = Object.assign( {}, data );
@@ -36,7 +35,7 @@ export function createMockAuthService( data?:{
 
 export function createMockPersistedUser( data?:{
 	context:Context;
-} ):PersistedUser {
+} ):User {
 	data = Object.assign( {}, data );
 
 	if( ! data.context ) data.context = createMockContext();
@@ -44,7 +43,7 @@ export function createMockPersistedUser( data?:{
 	const pointer:Pointer = data.context.documents
 		.getPointer( "users/my-user/" );
 
-	return PersistedUser.decorate( Object.assign( pointer, {
+	return User.decorate( Object.assign( pointer, {
 		types: [ User.TYPE ],
 		username: null,
 		enabled: true,

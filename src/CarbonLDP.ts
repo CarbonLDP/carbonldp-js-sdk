@@ -1,17 +1,12 @@
 import { hasProtocol } from "sparqler/iri";
 
 import { AbstractContext } from "./AbstractContext";
-import { AccessPoint } from "./AccessPoint";
 import * as Auth from "./Auth";
-import { BlankNode } from "./BlankNode";
 import { Document } from "./Document";
 import { Documents } from "./Documents";
 import * as Errors from "./Errors";
 import { Fragment } from "./Fragment";
 import { FreeResources } from "./FreeResources";
-import { PersistedProtectedDocument } from "./PersistedProtectedDocument";
-import { ProtectedDocument } from "./ProtectedDocument";
-import { ServiceAwareDocument } from "./ServiceAwareDocument";
 import * as HTTP from "./HTTP";
 import * as JSONLD from "./JSONLD";
 import * as LDP from "./LDP";
@@ -26,17 +21,18 @@ import {
 	ObjectSchemaUtils,
 	PointerType,
 } from "./ObjectSchema";
-import { PersistedDocument } from "./PersistedDocument";
-import { PersistedFragment } from "./PersistedFragment";
-import { PersistedNamedFragment } from "./PersistedNamedFragment";
-import { PersistedResource } from "./PersistedResource";
 import { Pointer } from "./Pointer";
+import { ProtectedDocument } from "./ProtectedDocument";
 import * as RDF from "./RDF";
-import { Resource } from "./Resource";
+import {
+	Resource,
+	TransientResource
+} from "./Resource";
 import {
 	globalContext,
 	SDKContext,
 } from "./SDKContext";
+import { ServiceAwareDocument } from "./ServiceAwareDocument";
 import {
 	CarbonLDPSettings,
 	ContextSettings,
@@ -45,26 +41,32 @@ import {
 import * as SHACL from "./SHACL";
 import * as SPARQL from "./SPARQL";
 import * as System from "./System";
+import { TransientAccessPoint } from "./AccessPoint";
+import { TransientBlankNode } from "./BlankNode";
+import { TransientDocument } from "./Document";
+import { TransientFragment } from "./Fragment";
+import { TransientNamedFragment } from "./NamedFragment";
+import { TransientProtectedDocument } from "./ProtectedDocument";
 import * as Utils from "./Utils";
 import * as Vocabularies from "./Vocabularies";
 
 export class CarbonLDP extends AbstractContext {
 
 	static AbstractContext:typeof AbstractContext = AbstractContext;
-	static AccessPoint:typeof AccessPoint = AccessPoint;
+	static TransientAccessPoint:typeof TransientAccessPoint = TransientAccessPoint;
 	static Auth:typeof Auth = Auth;
-	static BlankNode:typeof BlankNode = BlankNode;
-	static Document:typeof Document = Document;
+	static TransientBlankNode:typeof TransientBlankNode = TransientBlankNode;
+	static TransientDocument:typeof TransientDocument = TransientDocument;
 	static Documents:typeof Documents = Documents;
 	static Errors:typeof Errors = Errors;
-	static Fragment:typeof Fragment = Fragment;
+	static TransientFragment:typeof TransientFragment = TransientFragment;
 	static FreeResources:typeof FreeResources = FreeResources;
 	static HTTP:typeof HTTP = HTTP;
 	static JSONLD:typeof JSONLD = JSONLD;
 	static LDP:typeof LDP = LDP;
 	static LDPatch:typeof LDPatch = LDPatch;
 	static Messaging:typeof Messaging = Messaging;
-	static NamedFragment:typeof NamedFragment = NamedFragment;
+	static TransientNamedFragment:typeof TransientNamedFragment = TransientNamedFragment;
 	static Vocabularies:typeof Vocabularies = Vocabularies;
 	static ObjectSchemaUtils:typeof ObjectSchemaUtils = ObjectSchemaUtils;
 	static ObjectSchemaDigester:typeof ObjectSchemaDigester = ObjectSchemaDigester;
@@ -72,15 +74,15 @@ export class CarbonLDP extends AbstractContext {
 	static PointerType:typeof PointerType = PointerType;
 	static ContainerType:typeof ContainerType = ContainerType;
 	static DigestedObjectSchema:typeof DigestedObjectSchema = DigestedObjectSchema;
-	static PersistedDocument:typeof PersistedDocument = PersistedDocument;
-	static PersistedFragment:typeof PersistedFragment = PersistedFragment;
-	static PersistedNamedFragment:typeof PersistedNamedFragment = PersistedNamedFragment;
-	static PersistedProtectedDocument:typeof PersistedProtectedDocument = PersistedProtectedDocument;
-	static PersistedResource:typeof PersistedResource = PersistedResource;
-	static Pointer:typeof Pointer = Pointer;
+	static Document:typeof Document = Document;
+	static Fragment:typeof Fragment = Fragment;
+	static NamedFragment:typeof NamedFragment = NamedFragment;
 	static ProtectedDocument:typeof ProtectedDocument = ProtectedDocument;
-	static RDF:typeof RDF = RDF;
 	static Resource:typeof Resource = Resource;
+	static Pointer:typeof Pointer = Pointer;
+	static TransientProtectedDocument:typeof TransientProtectedDocument = TransientProtectedDocument;
+	static RDF:typeof RDF = RDF;
+	static TransientResource:typeof TransientResource = TransientResource;
 	static SDKContext:typeof SDKContext = SDKContext;
 	static globalContext:typeof globalContext = globalContext;
 	static ServiceAwareDocument:typeof ServiceAwareDocument = ServiceAwareDocument;

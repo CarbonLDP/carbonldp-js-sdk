@@ -1,8 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var PersistedDocument_1 = require("../PersistedDocument");
+var Document_1 = require("../Document");
 var Pointer_1 = require("../Pointer");
-var Document_1 = require("../RDF/Document");
+var Document_2 = require("../RDF/Document");
 var Node_1 = require("../RDF/Node");
 var PartialMetadata_1 = require("../SPARQL/QueryDocument/PartialMetadata");
 var QueryContextBuilder_1 = require("../SPARQL/QueryDocument/QueryContextBuilder");
@@ -23,7 +23,7 @@ var JSONLDCompacter = (function () {
         var _this = this;
         if (mainDocuments === void 0) { mainDocuments = rdfDocuments; }
         rdfDocuments.forEach(function (rdfDocument) {
-            var _a = Document_1.RDFDocument.getNodes(rdfDocument), documentNode = _a[0][0], fragmentNodes = _a[1];
+            var _a = Document_2.RDFDocument.getNodes(rdfDocument), documentNode = _a[0][0], fragmentNodes = _a[1];
             var targetDocument = _this.getResource(documentNode, _this.documents, true);
             var fragmentsSet = new Set(targetDocument._fragmentsIndex.keys());
             fragmentNodes.forEach(function (fragmentNode) {
@@ -98,7 +98,7 @@ var JSONLDCompacter = (function () {
     JSONLDCompacter.prototype.getResource = function (node, containerLibrary, isDocument) {
         var resource = containerLibrary.getPointer(node["@id"]);
         if (isDocument)
-            containerLibrary = PersistedDocument_1.PersistedDocument.decorate(resource, this.documents);
+            containerLibrary = Document_1.Document.decorate(resource, this.documents);
         this.compactionMap.set(resource.id, { paths: [], node: node, resource: resource, containerLibrary: containerLibrary });
         return resource;
     };

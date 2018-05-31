@@ -5,7 +5,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
     if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
     result["default"] = mod;
     return result;
-}
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 var IDAlreadyInUseError_1 = require("./Errors/IDAlreadyInUseError");
 var IllegalArgumentError_1 = require("./Errors/IllegalArgumentError");
@@ -54,7 +54,8 @@ function createResourceFrom(object, id) {
     else {
         id = URI_1.URI.generateBNodeID();
     }
-    var resource = Resource_1.Resource.createFrom(object, id);
+    var resource = Resource_1.TransientResource.createFrom(object);
+    resource.id = id;
     this._resourcesIndex.set(id, resource);
     return resource;
 }
@@ -70,8 +71,8 @@ function toJSON(key) {
     });
 }
 exports.FreeResources = {
-    is: function (object) {
-        return exports.FreeResources.isDecorated(object);
+    is: function (value) {
+        return exports.FreeResources.isDecorated(value);
     },
     isDecorated: function (object) {
         return (Utils.hasPropertyDefined(object, "_documents") &&
@@ -86,11 +87,12 @@ exports.FreeResources = {
             Utils.hasFunction(object, "inScope") &&
             Utils.hasFunction(object, "toJSON"));
     },
-    create: function (documents) {
-        return exports.FreeResources.createFrom({}, documents);
+    create: function (data) {
+        var copy = Object.assign({}, data);
+        return exports.FreeResources.createFrom(copy);
     },
-    createFrom: function (object, documents) {
-        return exports.FreeResources.decorate(object, documents);
+    createFrom: function (object) {
+        return exports.FreeResources.decorate(object, object._documents);
     },
     decorate: function (object, documents) {
         if (exports.FreeResources.isDecorated(object))

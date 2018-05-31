@@ -24,15 +24,13 @@ import { CS } from "../Vocabularies/CS";
 import { XSD } from "../Vocabularies/XSD";
 import { Authenticator } from "./Authenticator";
 import { AuthMethod } from "./AuthMethod";
-import { PersistedUser } from "./PersistedUser";
-import * as Roles from "./RolesEndpoint";
+import { RolesEndpoint } from "./RolesEndpoint";
 
 import { AuthService } from "./Service";
 
 import { TokenCredentials } from "./TokenCredentials";
 import { User } from "./User";
 import { UsersEndpoint } from "./UsersEndpoint";
-import { RolesEndpoint } from "./RolesEndpoint";
 
 
 describe( module( "carbonldp/Auth/Service" ), ():void => {
@@ -109,7 +107,7 @@ describe( module( "carbonldp/Auth/Service" ), ():void => {
 		it( hasProperty(
 			INSTANCE,
 			"authenticatedUser",
-			"CarbonLDP.Auth.PersistedUser",
+			"CarbonLDP.Auth.User",
 			"The user of the user that has been authenticated.\n" +
 			"Returns `null` if the user it not authenticated."
 		), ():void => {
@@ -123,7 +121,7 @@ describe( module( "carbonldp/Auth/Service" ), ():void => {
 				// Authenticated Auth
 				let auth:AuthService = createMockAuthService( { context, user: true } );
 				expect( auth.authenticatedUser ).toBeTruthy();
-				expect( PersistedUser.is( auth.authenticatedUser ) ).toBe( true );
+				expect( User.is( auth.authenticatedUser ) ).toBe( true );
 			})();
 
 			(() => {
@@ -132,10 +130,10 @@ describe( module( "carbonldp/Auth/Service" ), ():void => {
 				let contextWithParent:Context = createMockContext( { parentContext: context, auth: true } );
 
 				expect( context.auth.authenticatedUser ).toBeTruthy();
-				expect( PersistedUser.is( context.auth.authenticatedUser ) ).toBe( true );
+				expect( User.is( context.auth.authenticatedUser ) ).toBe( true );
 
 				expect( contextWithParent.auth.authenticatedUser ).toBeTruthy();
-				expect( PersistedUser.is( contextWithParent.auth.authenticatedUser ) ).toBe( true );
+				expect( User.is( contextWithParent.auth.authenticatedUser ) ).toBe( true );
 
 				expect( context.auth.authenticatedUser ).toBe( contextWithParent.auth.authenticatedUser );
 			})();
@@ -147,10 +145,10 @@ describe( module( "carbonldp/Auth/Service" ), ():void => {
 				childContext.auth = createMockAuthService( { context: childContext, user: true } );
 
 				expect( context.auth.authenticatedUser ).toBeTruthy();
-				expect( PersistedUser.is( context.auth.authenticatedUser ) ).toBe( true );
+				expect( User.is( context.auth.authenticatedUser ) ).toBe( true );
 
 				expect( childContext.auth.authenticatedUser ).toBeTruthy();
-				expect( PersistedUser.is( childContext.auth.authenticatedUser ) ).toBe( true );
+				expect( User.is( childContext.auth.authenticatedUser ) ).toBe( true );
 
 				expect( context.auth.authenticatedUser ).not.toBe( childContext.auth.authenticatedUser );
 			})();

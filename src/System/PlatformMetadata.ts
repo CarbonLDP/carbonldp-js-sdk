@@ -1,10 +1,10 @@
 import { ObjectSchema } from "../ObjectSchema";
-import { PersistedDocument } from "../PersistedDocument";
+import { Document } from "../Document";
 import { C } from "../Vocabularies/C";
 import { PlatformInstance } from "./PlatformInstance";
 
 
-export interface PlatformMetadata extends PersistedDocument {
+export interface PlatformMetadata extends Document {
 	instance:PlatformInstance;
 }
 

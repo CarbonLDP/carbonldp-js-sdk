@@ -25,8 +25,8 @@ import {
 	MapEntryFactory,
 } from "./MapEntry";
 import {
-	DirectContainer,
-	DirectContainerFactory,
+	TransientDirectContainer,
+	TransientDirectContainerFactory,
 } from "./DirectContainer";
 import {
 	DocumentMetadata,
@@ -98,11 +98,11 @@ describe( module( "carbonldp/LDP" ), ():void => {
 
 	it( reexports(
 		STATIC,
-		"DirectContainer",
-		"CarbonLDP.LDP.DirectContainer"
+		"TransientDirectContainer",
+		"CarbonLDP.LDP.TransientDirectContainer"
 	), ():void => {
-		expect( LDP.DirectContainer ).toBeDefined();
-		expect( LDP.DirectContainer ).toBe( DirectContainer );
+		expect( LDP.TransientDirectContainer ).toBeDefined();
+		expect( LDP.TransientDirectContainer ).toBe( TransientDirectContainer );
 	} );
 
 	it( reexports(
@@ -110,7 +110,7 @@ describe( module( "carbonldp/LDP" ), ():void => {
 		"DirectContainerFactory",
 		"CarbonLDP.LDP.DirectContainerFactory"
 	), ():void => {
-		const target:LDP.DirectContainerFactory = {} as DirectContainerFactory;
+		const target:LDP.TransientDirectContainerFactory = {} as TransientDirectContainerFactory;
 		expect( target ).toBeDefined();
 	} );
 

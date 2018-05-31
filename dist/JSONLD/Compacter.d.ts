@@ -1,6 +1,6 @@
 import { Documents } from "../Documents";
 import { ObjectSchemaResolver } from "../ObjectSchema";
-import { PersistedDocument } from "../PersistedDocument";
+import { Document } from "../Document";
 import { RDFDocument } from "../RDF/Document";
 import { JSONLDConverter } from "./Converter";
 export declare class JSONLDCompacter {
@@ -10,8 +10,8 @@ export declare class JSONLDCompacter {
     private converter?;
     private compactionMap;
     constructor(documents: Documents, root?: string, schemaResolver?: ObjectSchemaResolver, jsonldConverter?: JSONLDConverter);
-    compactDocument<T extends PersistedDocument>(rdfDocument: RDFDocument): T;
-    compactDocuments<T extends PersistedDocument>(rdfDocuments: RDFDocument[], mainDocuments?: RDFDocument[]): T[];
+    compactDocument<T extends Document>(rdfDocument: RDFDocument): T;
+    compactDocuments<T extends Document>(rdfDocuments: RDFDocument[], mainDocuments?: RDFDocument[]): T[];
     private compactNode(node, resource, containerLibrary, path);
     private getResource<T>(node, containerLibrary, isDocument?);
     private processCompactionQueue(compactionQueue);

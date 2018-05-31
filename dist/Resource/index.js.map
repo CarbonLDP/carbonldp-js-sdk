@@ -1,0 +1,1 @@
+{"version":3,"sources":["Resource/index.ts"],"names":[],"mappings":";;;;;AACA,gCAA2B;AAC3B,yCAAoC","file":"index.js","sourcesContent":["export * from \"./BaseResource\";\nexport * from \"./Resource\";\nexport * from \"./TransientResource\";\n"]}

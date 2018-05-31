@@ -1,6 +1,6 @@
 import { Documents } from "../Documents";
-import { PersistedProtectedDocument } from "../PersistedProtectedDocument";
-export interface RolesEndpoint extends PersistedProtectedDocument {
+import { ProtectedDocument } from "../ProtectedDocument";
+export interface RolesEndpoint extends ProtectedDocument {
 }
 export interface RolesEndpointFactory {
     is(value: any): value is RolesEndpoint;

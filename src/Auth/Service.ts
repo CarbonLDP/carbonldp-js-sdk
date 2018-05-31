@@ -7,7 +7,7 @@ import { AuthMethod } from "./AuthMethod";
 import { BasicAuthenticator } from "./BasicAuthenticator";
 import { BasicCredentials } from "./BasicCredentials";
 import { BasicToken } from "./BasicToken";
-import { PersistedUser } from "./PersistedUser";
+import { User } from "./User";
 import { RolesEndpoint } from "./RolesEndpoint";
 import { TokenAuthenticator } from "./TokenAuthenticator";
 import {
@@ -24,8 +24,8 @@ export class AuthService {
 	protected readonly authenticators:{ [P in AuthMethod]:Authenticator<object, object> };
 	protected authenticator:Authenticator<object, object>;
 
-	protected _authenticatedUser:PersistedUser;
-	public get authenticatedUser():PersistedUser {
+	protected _authenticatedUser:User;
+	public get authenticatedUser():User {
 		if( this._authenticatedUser ) return this._authenticatedUser;
 		if( this.context.parentContext && this.context.parentContext.auth ) return this.context.parentContext.auth.authenticatedUser;
 
@@ -86,7 +86,7 @@ export class AuthService {
 
 				return authenticator
 					.getAuthenticatedUser();
-			} ).then( ( persistedUser:PersistedUser ) => {
+			} ).then( ( persistedUser:User ) => {
 				this._authenticatedUser = persistedUser;
 				this.authenticator = authenticator;
 

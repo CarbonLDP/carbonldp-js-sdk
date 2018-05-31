@@ -1,15 +1,21 @@
-import { Document } from "../Document";
+import {
+	BaseDocument,
+	TransientDocument
+} from "../Document";
 import { ObjectSchema } from "../ObjectSchema";
-import { CS } from "../Vocabularies/CS";
-import { XSD } from "../Vocabularies/XSD";
+import {
+	CS,
+	XSD
+} from "../Vocabularies";
 
-export interface RoleBase {
+
+export interface RoleBase extends BaseDocument {
 	name:string;
 	description?:string;
 }
 
 
-export interface Role extends Document {
+export interface Role extends TransientDocument {
 	name:string;
 	description?:string;
 }
@@ -56,7 +62,7 @@ export const Role:RoleFactory = {
 	SCHEMA,
 
 	is( value:any ):value is Role {
-		return Document.is( value )
+		return TransientDocument.is( value )
 			&& value.hasOwnProperty( "name" )
 			;
 	},
@@ -66,8 +72,8 @@ export const Role:RoleFactory = {
 	},
 
 	createFrom<T extends RoleBase>( object:T ):T & Role {
-		const role:T & Role = Document.isDecorated( object ) ?
-			object : Document.createFrom( object );
+		const role:T & Role = TransientDocument.isDecorated( object ) ?
+			object : TransientDocument.createFrom( object );
 
 		role.addType( Role.TYPE );
 

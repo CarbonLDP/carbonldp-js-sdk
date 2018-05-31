@@ -1,21 +1,25 @@
 import { AbstractContext } from "./AbstractContext";
-import { AccessPoint } from "./AccessPoint";
 import * as Auth from "./Auth";
-import { BlankNode } from "./BlankNode";
 
 import * as CarbonLDP from "./CarbonLDP";
 
 import { Document } from "./Document";
 import { Documents } from "./Documents";
 import * as Errors from "./Errors";
-import { Fragment } from "./Fragment";
+import {
+	Fragment,
+	TransientFragment
+} from "./Fragment";
 import { FreeResources } from "./FreeResources";
 import * as HTTP from "./HTTP";
 import * as JSONLD from "./JSONLD";
 import * as LDP from "./LDP";
 import * as LDPatch from "./LDPatch";
 import * as Messaging from "./Messaging";
-import { NamedFragment } from "./NamedFragment";
+import {
+	NamedFragment,
+	TransientNamedFragment
+} from "./NamedFragment";
 import {
 	ContainerType,
 	DigestedObjectSchema,
@@ -24,15 +28,13 @@ import {
 	ObjectSchemaUtils,
 	PointerType,
 } from "./ObjectSchema";
-import { PersistedDocument } from "./PersistedDocument";
-import { PersistedFragment } from "./PersistedFragment";
-import { PersistedNamedFragment } from "./PersistedNamedFragment";
-import { PersistedProtectedDocument } from "./PersistedProtectedDocument";
-import { PersistedResource } from "./PersistedResource";
 import { Pointer } from "./Pointer";
 import { ProtectedDocument } from "./ProtectedDocument";
 import * as RDF from "./RDF";
-import { Resource } from "./Resource";
+import {
+	Resource,
+	TransientResource
+} from "./Resource";
 import {
 	globalContext,
 	SDKContext,
@@ -56,6 +58,10 @@ import {
 	reexports,
 	STATIC,
 } from "./test/JasmineExtender";
+import { TransientAccessPoint } from "./AccessPoint";
+import { TransientBlankNode } from "./BlankNode";
+import { TransientDocument } from "./Document";
+import { TransientProtectedDocument } from "./ProtectedDocument";
 
 import * as Utils from "./Utils";
 import * as Vocabularies from "./Vocabularies";
@@ -102,11 +108,11 @@ describe( module( "carbonldp/CarbonLDP" ), ():void => {
 
 		it( reexports(
 			STATIC,
-			"AccessPoint",
-			"carbonldp/AccessPoint#AccessPoint"
+			"TransientAccessPoint",
+			"carbonldp/TransientAccessPoint#TransientAccessPoint"
 		), ():void => {
-			expect( CarbonLDP.CarbonLDP.AccessPoint ).toBeDefined();
-			expect( CarbonLDP.CarbonLDP.AccessPoint ).toBe( AccessPoint );
+			expect( CarbonLDP.CarbonLDP.TransientAccessPoint ).toBeDefined();
+			expect( CarbonLDP.CarbonLDP.TransientAccessPoint ).toBe( TransientAccessPoint );
 		} );
 
 		it( reexports(
@@ -120,20 +126,20 @@ describe( module( "carbonldp/CarbonLDP" ), ():void => {
 
 		it( reexports(
 			STATIC,
-			"BlankNode",
-			"carbonldp/BlankNode#BlankNode"
+			"TransientBlankNode",
+			"carbonldp/TransientBlankNode#TransientBlankNode"
 		), ():void => {
-			expect( CarbonLDP.CarbonLDP.BlankNode ).toBeDefined();
-			expect( CarbonLDP.CarbonLDP.BlankNode ).toBe( BlankNode );
+			expect( CarbonLDP.CarbonLDP.TransientBlankNode ).toBeDefined();
+			expect( CarbonLDP.CarbonLDP.TransientBlankNode ).toBe( TransientBlankNode );
 		} );
 
 		it( reexports(
 			STATIC,
-			"Document",
-			"carbonldp/Document#Document"
+			"TransientDocument",
+			"carbonldp/TransientDocument#TransientDocument"
 		), ():void => {
-			expect( CarbonLDP.CarbonLDP.Document ).toBeDefined();
-			expect( CarbonLDP.CarbonLDP.Document ).toBe( Document );
+			expect( CarbonLDP.CarbonLDP.TransientDocument ).toBeDefined();
+			expect( CarbonLDP.CarbonLDP.TransientDocument ).toBe( TransientDocument );
 		} );
 
 		it( reexports(
@@ -156,11 +162,11 @@ describe( module( "carbonldp/CarbonLDP" ), ():void => {
 
 		it( reexports(
 			STATIC,
-			"Fragment",
-			"carbonldp/Fragment#Fragment"
+			"TransientFragment",
+			"carbonldp/TransientFragment#TransientFragment"
 		), ():void => {
-			expect( CarbonLDP.CarbonLDP.Fragment ).toBeDefined();
-			expect( CarbonLDP.CarbonLDP.Fragment ).toBe( Fragment );
+			expect( CarbonLDP.CarbonLDP.TransientFragment ).toBeDefined();
+			expect( CarbonLDP.CarbonLDP.TransientFragment ).toBe( TransientFragment );
 		} );
 
 		it( reexports(
@@ -219,11 +225,11 @@ describe( module( "carbonldp/CarbonLDP" ), ():void => {
 
 		it( reexports(
 			STATIC,
-			"NamedFragment",
-			"carbonldp/NamedFragment#NamedFragment"
+			"TransientNamedFragment",
+			"carbonldp/TransientNamedFragment#TransientNamedFragment"
 		), ():void => {
-			expect( CarbonLDP.CarbonLDP.NamedFragment ).toBeDefined();
-			expect( CarbonLDP.CarbonLDP.NamedFragment ).toBe( NamedFragment );
+			expect( CarbonLDP.CarbonLDP.TransientNamedFragment ).toBeDefined();
+			expect( CarbonLDP.CarbonLDP.TransientNamedFragment ).toBe( TransientNamedFragment );
 		} );
 
 		it( reexports(
@@ -291,56 +297,29 @@ describe( module( "carbonldp/CarbonLDP" ), ():void => {
 
 		it( reexports(
 			STATIC,
-			"PersistedDocument",
-			"carbonldp/PersistedDocument#PersistedDocument"
+			"Document",
+			"carbonldp/Document#Document"
 		), ():void => {
-			expect( CarbonLDP.CarbonLDP.PersistedDocument ).toBeDefined();
-			expect( CarbonLDP.CarbonLDP.PersistedDocument ).toBe( PersistedDocument );
+			expect( CarbonLDP.CarbonLDP.Document ).toBeDefined();
+			expect( CarbonLDP.CarbonLDP.Document ).toBe( Document );
 		} );
 
 		it( reexports(
 			STATIC,
-			"PersistedFragment",
-			"carbonldp/PersistedFragment#PersistedFragment"
+			"Fragment",
+			"carbonldp/Fragment#Fragment"
 		), ():void => {
-			expect( CarbonLDP.CarbonLDP.PersistedFragment ).toBeDefined();
-			expect( CarbonLDP.CarbonLDP.PersistedFragment ).toBe( PersistedFragment );
+			expect( CarbonLDP.CarbonLDP.Fragment ).toBeDefined();
+			expect( CarbonLDP.CarbonLDP.Fragment ).toBe( Fragment );
 		} );
 
 		it( reexports(
 			STATIC,
-			"PersistedNamedFragment",
-			"carbonldp/PersistedNamedFragment#PersistedNamedFragment"
+			"NamedFragment",
+			"carbonldp/NamedFragment#NamedFragment"
 		), ():void => {
-			expect( CarbonLDP.CarbonLDP.PersistedNamedFragment ).toBeDefined();
-			expect( CarbonLDP.CarbonLDP.PersistedNamedFragment ).toBe( PersistedNamedFragment );
-		} );
-
-		it( reexports(
-			STATIC,
-			"PersistedProtectedDocument",
-			"carbonldp/PersistedProtectedDocument#PersistedProtectedDocument"
-		), ():void => {
-			expect( CarbonLDP.CarbonLDP.PersistedProtectedDocument ).toBeDefined();
-			expect( CarbonLDP.CarbonLDP.PersistedProtectedDocument ).toBe( PersistedProtectedDocument );
-		} );
-
-		it( reexports(
-			STATIC,
-			"PersistedResource",
-			"carbonldp/PersistedResource#PersistedResource"
-		), ():void => {
-			expect( CarbonLDP.CarbonLDP.PersistedResource ).toBeDefined();
-			expect( CarbonLDP.CarbonLDP.PersistedResource ).toBe( PersistedResource );
-		} );
-
-		it( reexports(
-			STATIC,
-			"Pointer",
-			"carbonldp/Pointer#Pointer"
-		), ():void => {
-			expect( CarbonLDP.CarbonLDP.Pointer ).toBeDefined();
-			expect( CarbonLDP.CarbonLDP.Pointer ).toBe( Pointer );
+			expect( CarbonLDP.CarbonLDP.NamedFragment ).toBeDefined();
+			expect( CarbonLDP.CarbonLDP.NamedFragment ).toBe( NamedFragment );
 		} );
 
 		it( reexports(
@@ -354,6 +333,33 @@ describe( module( "carbonldp/CarbonLDP" ), ():void => {
 
 		it( reexports(
 			STATIC,
+			"Resource",
+			"carbonldp/Resource#Resource"
+		), ():void => {
+			expect( CarbonLDP.CarbonLDP.Resource ).toBeDefined();
+			expect( CarbonLDP.CarbonLDP.Resource ).toBe( Resource );
+		} );
+
+		it( reexports(
+			STATIC,
+			"Pointer",
+			"carbonldp/Pointer#Pointer"
+		), ():void => {
+			expect( CarbonLDP.CarbonLDP.Pointer ).toBeDefined();
+			expect( CarbonLDP.CarbonLDP.Pointer ).toBe( Pointer );
+		} );
+
+		it( reexports(
+			STATIC,
+			"TransientProtectedDocument",
+			"carbonldp/TransientProtectedDocument#TransientProtectedDocument"
+		), ():void => {
+			expect( CarbonLDP.CarbonLDP.TransientProtectedDocument ).toBeDefined();
+			expect( CarbonLDP.CarbonLDP.TransientProtectedDocument ).toBe( TransientProtectedDocument );
+		} );
+
+		it( reexports(
+			STATIC,
 			"RDF",
 			"carbonldp/RDF"
 		), ():void => {
@@ -363,11 +369,11 @@ describe( module( "carbonldp/CarbonLDP" ), ():void => {
 
 		it( reexports(
 			STATIC,
-			"Resource",
-			"carbonldp/Resource#Resource"
+			"TransientResource",
+			"carbonldp/TransientResource#TransientResource"
 		), ():void => {
-			expect( CarbonLDP.CarbonLDP.Resource ).toBeDefined();
-			expect( CarbonLDP.CarbonLDP.Resource ).toBe( Resource );
+			expect( CarbonLDP.CarbonLDP.TransientResource ).toBeDefined();
+			expect( CarbonLDP.CarbonLDP.TransientResource ).toBe( TransientResource );
 		} );
 
 		it( reexports(

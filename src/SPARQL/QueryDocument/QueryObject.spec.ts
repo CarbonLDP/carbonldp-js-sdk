@@ -124,9 +124,9 @@ describe( module( "carbonldp/SPARQL/QueryDocument/QueryObject" ), ():void => {
 				helper( "ex:resource" );
 				helper( "_:blank-node" );
 
-				helper( Pointer.create( "http://example.com/" ) );
-				helper( Pointer.create( "ex:resource" ) );
-				helper( Pointer.create( "_:blank-node" ) );
+				helper( Pointer.create( { id: "http://example.com/" } ) );
+				helper( Pointer.create( { id: "ex:resource" } ) );
+				helper( Pointer.create( { id: "_:blank-node" } ) );
 			} );
 
 		} );

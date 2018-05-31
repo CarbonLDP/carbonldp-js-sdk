@@ -10,7 +10,7 @@ exports.ServiceAwareDocument = {
     decorate: function (object, documents) {
         if (exports.ServiceAwareDocument.isDecorated(object))
             return object;
-        Document_1.Document.decorate(object);
+        Document_1.TransientDocument.decorate(object);
         return Object.defineProperties(object, {
             "_documents": {
                 writable: false,

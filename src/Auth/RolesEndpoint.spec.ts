@@ -1,4 +1,4 @@
-import { PersistedProtectedDocument } from "../PersistedProtectedDocument";
+import { ProtectedDocument } from "../ProtectedDocument";
 import {
 	hasMethod,
 	interfaze,
@@ -66,8 +66,8 @@ describe( module( "carbonldp/Auth/RolesEndpoint" ), ():void => {
 				expect( RolesEndpoint.is ).toEqual( jasmine.any( Function ) );
 			} );
 
-			it( "should call PersistedProtectedDocument.is", ():void => {
-				const spy:jasmine.Spy = spyOn( PersistedProtectedDocument, "is" )
+			it( "should call ProtectedDocument.is", ():void => {
+				const spy:jasmine.Spy = spyOn( ProtectedDocument, "is" )
 					.and.returnValue( false );
 
 				const value:any = { the: "object" };
@@ -77,7 +77,7 @@ describe( module( "carbonldp/Auth/RolesEndpoint" ), ():void => {
 			} );
 
 			it( "should return true if all dependencies are true", ():void => {
-				spyOn( PersistedProtectedDocument, "is" )
+				spyOn( ProtectedDocument, "is" )
 					.and.returnValue( true );
 
 				const returned:boolean = RolesEndpoint.is( {} );
@@ -93,8 +93,8 @@ describe( module( "carbonldp/Auth/RolesEndpoint" ), ():void => {
 				expect( RolesEndpoint.decorate ).toEqual( jasmine.any( Function ) );
 			} );
 
-			it( "should call PersistedProtectedDocument.decorate", ():void => {
-				const spy:jasmine.Spy = spyOn( PersistedProtectedDocument, "decorate" )
+			it( "should call ProtectedDocument.decorate", ():void => {
+				const spy:jasmine.Spy = spyOn( ProtectedDocument, "decorate" )
 					.and.callThrough();
 
 				const object:{} = { the: "object" };

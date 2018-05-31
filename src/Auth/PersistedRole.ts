@@ -1,16 +1,16 @@
 import { Documents } from "../Documents";
 import * as Errors from "../Errors";
 import { RequestOptions } from "../HTTP/Request";
-import { PersistedProtectedDocument } from "../PersistedProtectedDocument";
+import { ProtectedDocument } from "../ProtectedDocument";
 import { Pointer } from "../Pointer";
 import { QueryDocumentsBuilder } from "../SPARQL/QueryDocument";
 import * as Utils from "./../Utils";
-import { PersistedUser } from "./PersistedUser";
+import { User } from "./User";
 import { RoleBase } from "./Role";
 import { RolesEndpoint } from "./RolesEndpoint";
 
 
-export interface Class extends PersistedProtectedDocument {
+export interface Class extends ProtectedDocument {
 	name?:string;
 	description?:string;
 
@@ -23,8 +23,8 @@ export interface Class extends PersistedProtectedDocument {
 	createChild<T extends object>( role:T & RoleBase, slug?:string, requestOptions?:RequestOptions ):Promise<T & Class>;
 	createChild<T extends object>( role:T & RoleBase, requestOptions?:RequestOptions ):Promise<T & Class>;
 
-	getUsers<T>( requestOptions?:RequestOptions, queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder ) => QueryDocumentsBuilder ):Promise<(T & PersistedUser)[]>;
-	getUsers<T>( queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder ) => QueryDocumentsBuilder ):Promise<(T & PersistedUser)[]>;
+	getUsers<T>( requestOptions?:RequestOptions, queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder ) => QueryDocumentsBuilder ):Promise<(T & User)[]>;
+	getUsers<T>( queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder ) => QueryDocumentsBuilder ):Promise<(T & User)[]>;
 
 	addUser( user:Pointer | string, requestOptions?:RequestOptions ):Promise<void>;
 	addUsers( users:(Pointer | string)[], requestOptions?:RequestOptions ):Promise<void>;
@@ -49,13 +49,13 @@ export class Factory {
 
 	static is( object:object ):object is Class {
 		return Factory.hasClassProperties( object )
-			&& PersistedProtectedDocument.is( object );
+			&& ProtectedDocument.is( object );
 	}
 
 	static decorate<T extends object>( object:T, documents:Documents ):T & Class {
 		if( Factory.hasClassProperties( object ) ) return object;
 
-		PersistedProtectedDocument.decorate( object, documents );
+		ProtectedDocument.decorate( object, documents );
 
 		return Object.defineProperties( object, {
 			"createChild": {
@@ -108,9 +108,9 @@ function createChild<T extends object>( this:Class, role:T & RoleBase, slugOrReq
 		} );
 }
 
-function getUsers<T extends object>( requestOptions?:RequestOptions, queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder ) => QueryDocumentsBuilder ):Promise<(T & PersistedProtectedDocument)[]>;
-function getUsers<T extends object>( queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder ) => QueryDocumentsBuilder ):Promise<(T & PersistedProtectedDocument)[]>;
-function getUsers<T extends object>( this:Class, queryBuilderFnOrOptions:any, queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder ) => QueryDocumentsBuilder ):Promise<(T & PersistedProtectedDocument)[]> {
+function getUsers<T extends object>( requestOptions?:RequestOptions, queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder ) => QueryDocumentsBuilder ):Promise<(T & User)[]>;
+function getUsers<T extends object>( queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder ) => QueryDocumentsBuilder ):Promise<(T & User)[]>;
+function getUsers<T extends object>( this:Class, queryBuilderFnOrOptions:any, queryBuilderFn?:( queryBuilder:QueryDocumentsBuilder ) => QueryDocumentsBuilder ):Promise<(T & User)[]> {
 	return getRolesClass( this )
 		.then( roles => {
 			return roles.getUsers<T>( this.id, queryBuilderFnOrOptions, queryBuilderFn );

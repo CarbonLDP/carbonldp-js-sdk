@@ -1,12 +1,12 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var PersistedProtectedDocument_1 = require("../PersistedProtectedDocument");
+var ProtectedDocument_1 = require("../ProtectedDocument");
 exports.RolesEndpoint = {
     is: function (value) {
-        return PersistedProtectedDocument_1.PersistedProtectedDocument.is(value);
+        return ProtectedDocument_1.ProtectedDocument.is(value);
     },
     decorate: function (object, documents) {
-        PersistedProtectedDocument_1.PersistedProtectedDocument.decorate(object, documents);
+        ProtectedDocument_1.ProtectedDocument.decorate(object, documents);
         return object;
     },
 };

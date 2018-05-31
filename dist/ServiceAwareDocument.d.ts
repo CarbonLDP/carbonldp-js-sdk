@@ -1,7 +1,7 @@
-import { Document } from "./Document";
+import { TransientDocument } from "./Document";
 import { Documents } from "./Documents";
-import { ModelDecorator } from "./ModelDecorator";
-export interface ServiceAwareDocument extends Document {
+import { ModelDecorator } from "./core/ModelDecorator";
+export interface ServiceAwareDocument extends TransientDocument {
     _documents: Documents;
 }
 export interface ServiceAwareDocumentFactory extends ModelDecorator<ServiceAwareDocument> {

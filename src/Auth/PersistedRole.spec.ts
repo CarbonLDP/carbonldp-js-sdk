@@ -1,8 +1,8 @@
 import { StrictMinus } from "../../test/helpers/types";
 import { AbstractContext } from "../AbstractContext";
 import * as Errors from "../Errors";
-import { PersistedDocument } from "../PersistedDocument";
-import { PersistedProtectedDocument } from "../PersistedProtectedDocument";
+import { Document } from "../Document";
+import { ProtectedDocument } from "../ProtectedDocument";
 import { Pointer } from "../Pointer";
 import {
 	clazz,
@@ -46,7 +46,7 @@ xdescribe( module( "carbonldp/Auth/PersistedRole" ), ():void => {
 			);
 		} );
 
-		it( extendsClass( "CarbonLDP.PersistedProtectedDocument.Class" ), ():void => {} );
+		it( extendsClass( "CarbonLDP.ProtectedDocument.Class" ), ():void => {} );
 
 		it( hasProperty(
 			OPTIONAL,
@@ -467,7 +467,7 @@ xdescribe( module( "carbonldp/Auth/PersistedRole" ), ():void => {
 			} );
 
 			it( "should verify obligatory and optional properties", ():void => {
-				const target:StrictMinus<PersistedRole.Class, PersistedProtectedDocument> & { createChild:Function } = {
+				const target:StrictMinus<PersistedRole.Class, ProtectedDocument> & { createChild:Function } = {
 					name: null,
 					description: null,
 					parent: null,
@@ -552,7 +552,7 @@ xdescribe( module( "carbonldp/Auth/PersistedRole" ), ():void => {
 			} );
 
 			it( "should return true when minimal persisted role", ():void => {
-				const target:PersistedRole.Class = PersistedProtectedDocument.decorate( {
+				const target:PersistedRole.Class = ProtectedDocument.decorate( {
 					createChild: ():any => {},
 					getUsers: ():any => {},
 					addUser: ():any => {},
@@ -589,7 +589,7 @@ xdescribe( module( "carbonldp/Auth/PersistedRole" ), ():void => {
 			} );
 
 			it( "should override persistedDocument's `createChild` method", ():void => {
-				const persisted:PersistedDocument = PersistedDocument.decorate( {}, null );
+				const persisted:Document = Document.decorate( {}, null );
 				const target:PersistedRole.Class = PersistedRole.Factory.decorate( {}, null );
 
 				expect( target.createChild ).not.toBe( persisted.createChild );
