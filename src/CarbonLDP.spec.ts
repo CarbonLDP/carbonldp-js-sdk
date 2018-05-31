@@ -1,3 +1,4 @@
+import { anyThatMatches } from "../test/helpers/jasmine/equalities";
 import { AbstractContext } from "./AbstractContext";
 import { AccessPoint } from "./AccessPoint";
 import * as Auth from "./Auth";
@@ -402,6 +403,13 @@ describe( module( "carbonldp/CarbonLDP" ), ():void => {
 				expect( context.messaging ).toEqual( jasmine.any( Messaging.MessagingService ) );
 			} );
 
+			it( "should initialize documents root document", () => {
+				const context:CarbonLDP.CarbonLDP = new CarbonLDP.CarbonLDP( "https://example.com/" );
+
+				expect( context.documents ).toEqual( anyThatMatches( Document.is ) as any );
+				expect( context.documents.id ).toEqual( "https://example.com/" );
+			} );
+
 
 			it( "should throw error when URL has not protocol", ():void => {
 				const helper:( url:string ) => () => void = url => () => {
@@ -590,6 +598,13 @@ describe( module( "carbonldp/CarbonLDP" ), ():void => {
 			} );
 
 		} );
+
+		it( hasProperty(
+			INSTANCE,
+			"documents",
+			"CarbonLDP.ProtectedDocument",
+			"Representation of the root document of the platform instance."
+		), () => {} );
 
 		it( hasProperty(
 			INSTANCE,
