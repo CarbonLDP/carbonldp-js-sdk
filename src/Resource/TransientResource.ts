@@ -1,10 +1,12 @@
 import { ModelDecorator } from "../core";
 import {
 	DigestedObjectSchema,
+	ObjectSchemaResolver,
 	ObjectSchemaUtils,
 } from "../ObjectSchema";
 import { Pointer } from "../Pointer";
 import { URI } from "../RDF";
+import { Registry } from "../Registry";
 import {
 	isObject,
 	PickSelfProps
@@ -38,11 +40,21 @@ export interface TransientResourceFactory {
 }
 
 
+function getSchemaResolver( registry:Registry<any> | undefined ):ObjectSchemaResolver | undefined {
+	if( ! registry ) return;
+
+	if( ObjectSchemaResolver.is( registry ) ) return registry;
+
+	return getSchemaResolver( registry._registry );
+}
+
 function resolveURI( resource:TransientResource, uri:string ):string {
 	if( URI.isAbsolute( uri ) ) return uri;
-	if( ! resource._registry || ! resource._registry._context ) return uri;
 
-	const schema:DigestedObjectSchema = resource._registry._context.getObjectSchema();
+	const registry:ObjectSchemaResolver | undefined = getSchemaResolver( resource._registry );
+	if( ! registry ) return uri;
+
+	const schema:DigestedObjectSchema = registry.getGeneralSchema();
 	return ObjectSchemaUtils.resolveURI( uri, schema, { vocab: true } );
 }
 

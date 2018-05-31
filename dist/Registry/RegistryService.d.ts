@@ -8,7 +8,7 @@ import { Pointer, PointerLibrary } from "../Pointer";
 import { RDFNode } from "../RDF";
 import { Registry } from "./Registry";
 export declare class RegistryService<M extends Pointer, C extends AbstractContext<M, any> = undefined> implements Registry<M>, ObjectSchemaResolver {
-    readonly _context: C | undefined;
+    readonly context: C | undefined;
     readonly _registry: Registry<any> | undefined;
     protected readonly _model: ModelDecorator<M>;
     readonly _resourcesMap: Map<string, M>;

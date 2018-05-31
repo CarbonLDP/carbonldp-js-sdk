@@ -26,11 +26,6 @@ var DocumentsRegistry = (function (_super) {
     DocumentsRegistry.prototype.register = function (id) {
         return this._register({ id: id });
     };
-    DocumentsRegistry.prototype._register = function (base) {
-        var document = _super.prototype._register.call(this, base);
-        document._context = this._context;
-        return document;
-    };
     DocumentsRegistry.prototype._getLocalID = function (id) {
         if (RDF_1.URI.isBNodeID(id) || RDF_1.URI.hasFragment(id))
             return Registry_1.Registry.PROTOTYPE._getLocalID.call(this, id);

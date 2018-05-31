@@ -8,7 +8,6 @@ var Registry_1 = require("./Registry");
 var Resource_1 = require("./Resource");
 var Utils_1 = require("./Utils");
 var PROTOTYPE = {
-    _context: void 0,
     _registry: void 0,
     _getLocalID: function (id) {
         if (RDF_1.URI.isBNodeID(id))

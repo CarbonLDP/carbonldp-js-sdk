@@ -68,22 +68,6 @@ describe( module( "carbonldp/Registry" ), () => {
 				expect( resource ).toEqual( anyThatMatches( Document.is, "idDocument" ) as any );
 			} );
 
-
-			it( "should add context to resource when registry has one", () => {
-				const context:CarbonLDP = new CarbonLDP( "https://example.com/" );
-				const registry:DocumentsRegistry = new DocumentsRegistry( context );
-
-				const resource:Document = registry._register( { id: "https://example.com/" } );
-				expect( resource._context ).toBe( context );
-			} );
-
-			it( "should not add context to resource when registry doesn't has one", () => {
-				const registry:DocumentsRegistry = new DocumentsRegistry();
-
-				const resource:Document = registry._register( { id: "https://example.com/" } );
-				expect( resource._context ).toBeUndefined();
-			} );
-
 		} );
 
 		describe( method( INSTANCE, "registry" ), () => {

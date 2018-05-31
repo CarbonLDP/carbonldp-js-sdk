@@ -59,15 +59,8 @@ import { QueryDocumentDocument } from "./QueryDocumentDocument";
 
 
 function createMock<T extends object>( data?:T & Partial<QueryDocumentDocument> ):T & QueryDocumentDocument {
-	const _context:CarbonLDP | undefined = data && "_context" in data ?
-		data._context : new CarbonLDP( "https://example.com/" );
-
-	const _registry:DocumentsRegistry = _context ?
-		_context.registry : new DocumentsRegistry();
-
 	const mock:T & QueryDocumentDocument = QueryDocumentDocument.decorate( Object.assign( {
-		_registry,
-		_context,
+		_registry: new DocumentsRegistry(),
 		_partialMetadata: createPartialMetadata( {} ),
 		id: "https://example.com/",
 	}, data ) );
@@ -193,1350 +186,1322 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 			} );
 
 
-			it( "should request self when no URI", async () => {
-				const resource:QueryDocumentDocument = createMock();
-
-				resource.get( _ => _ );
-
-				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-				expect( request.url ).toBe( "https://example.com/" );
-			} );
-
-			it( "should request the URI provided", async () => {
-				const resource:QueryDocumentDocument = createMock();
-
-				resource.get( "https://example.com/resource/", _ => _ );
-
-				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-				expect( request.url ).toBe( "https://example.com/resource/" );
-			} );
-
-			it( "should request relative URI provided", async () => {
-				const resource:QueryDocumentDocument = createMock();
-
-				resource.get( "relative/", _ => _ );
-
-				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-				expect( request.url ).toBe( "https://example.com/relative/" );
-			} );
-
-			it( "should request resolved prefixed name provided", async () => {
-				const _context:CarbonLDP = new CarbonLDP( "https://example.com/" );
-				_context.extendObjectSchema( { "ex": "https://example.com/" } );
-
-				const resource:QueryDocumentDocument = createMock( { _context } );
-
-				resource.get( "ex:resource/", _ => _ );
-
-				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-				expect( request.url ).toBe( "https://example.com/resource/" );
-			} );
-
-			it( "should throw error when from URI outside context scope", async () => {
-				const resource:QueryDocumentDocument = createMock();
-
-				await resource
-					.get( "https://example.org/resource/", _ => _ )
-					.catch( error => {
-						expect( () => { throw error; } )
-							.toThrowError( IllegalArgumentError, `"https://example.org/resource/" is out of scope.` );
-					} )
-				;
-			} );
-
-			it( "should throw error when from URI is BNode label", async () => {
-				const resource:QueryDocumentDocument = createMock();
-
-				await resource
-					.get( "_:1", _ => _ )
-					.catch( error => {
-						expect( () => { throw error; } )
-							.toThrowError( IllegalArgumentError, `"_:1" is out of scope.` );
-					} )
-				;
-			} );
-
-			it( "should throw error when from URI is Named Fragment label", async () => {
-				const resource:QueryDocumentDocument = createMock();
-
-				await resource
-					.get( "#fragment", _ => _ )
-					.catch( error => {
-						expect( () => { throw error; } )
-							.toThrowError( IllegalArgumentError, `"https://example.com/#fragment" is out of scope.` );
-					} )
-				;
-			} );
-
-			it( "should throw error when unresolved prefixed name", async () => {
-				const resource:QueryDocumentDocument = createMock();
-
-				await resource
-					.get( "ex:resource/", _ => _ )
-					.catch( error => {
-						expect( () => { throw error; } )
-							.toThrowError( IllegalArgumentError, `"ex:resource/" is out of scope.` );
-					} )
-				;
-			} );
-
-			it( "should parse error response", async () => {
-				stubRequest( "https://example.com/", { status: 500 } );
-
-				const resource:QueryDocumentDocument = createMock( { id: "https://example.com/" } );
-
-				const spy:jasmine.Spy = spyOn( resource._registry, "_parseErrorFromResponse" )
-					.and.callFake( () => Promise.reject( null ) );
-
-				await resource
-					.get( _ => _ )
-					.then( () => fail( "Should not resolve" ) )
-					.catch( error => {
-						if( error ) fail( error );
-
-						expect( spy ).toHaveBeenCalled();
-					} )
-				;
-			} );
-
-
-			it( "should send basic request headers", async () => {
-				const resource:QueryDocumentDocument = createMock();
-
-				resource.get( _ => _ );
-
-				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-				expect( request.requestHeaders ).toEqual( {
-					"accept": "application/ld+json",
-					"content-type": "application/sparql-query",
-					"prefer": [
-						`include="${ C.PreferDocumentETags }"`,
-						`include="${ C.PreferResultsContext }"`,
-					].join( ", " ),
-				} );
-			} );
-
-			it( "should add authentication header", async () => {
-				const resource:QueryDocumentDocument = createMock();
-
-				const spy:jasmine.Spy = spyOn( resource._context.auth, "addAuthentication" );
-
-				resource.get( _ => _ );
-
-				expect( spy ).toHaveBeenCalled();
-			} );
-
-			it( "should add custom headers when no URI", async () => {
-				stubRequest( "https://example.com/" );
-
-				const resource:QueryDocumentDocument = createMock();
-
-				resource.get( {
-					headers: new Map()
-						.set( "custom", new Header( "custom value" ) )
-					,
-				}, _ => _ );
-
-				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-				expect( request.requestHeaders ).toEqual( jasmine.objectContaining( {
-					"custom": "custom value",
-				} ) );
-			} );
-
-			it( "should add custom headers when specific URI", async () => {
-				const resource:QueryDocumentDocument = createMock();
-
-				resource.get( "resource/", {
-					headers: new Map()
-						.set( "custom", new Header( "custom value" ) )
-					,
-				}, _ => _ );
-
-				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-				expect( request.requestHeaders ).toEqual( jasmine.objectContaining( {
-					"custom": "custom value",
-				} ) );
-			} );
-
-
-			it( "should send CONSTRUCT query when no URI", () => {
-				const resource:QueryDocumentDocument = createMock();
-
-				resource._context
-					.extendObjectSchema( {
-						"@vocab": "https://example.com/ns#",
-						"schema": "https://schema.org/",
-					} )
-					.extendObjectSchema( "Resource", {
-						"property1": {
-							"@id": "property-1",
-							"@type": "string",
-						},
-						"property2": {
-							"@id": "property-2",
-							"@type": "integer",
-						},
-						"property3": {
-							"@id": "https://schema.org/property-3",
-							"@type": "string",
-						},
-					} )
-				;
-
-
-				resource.get( _ => _
-					.withType( "Resource" )
-					.properties( {
-						"property1": _.inherit,
-						"property2": {
-							"@id": "https://schema.org/property-2",
-							"@type": "@id",
-							"query": __ => __.properties( {
-								"property2": __.inherit,
-								"property3": __.inherit,
-							} ),
-						},
-					} )
-				);
-
-
-				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-				expect( request.params ).toEqual( "" +
-					"PREFIX schema: <https://schema.org/> " +
-					"CONSTRUCT {" +
-					` ?metadata a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
-					"" + ` <${ C.target }> ?document.` +
-
-					" ?document a ?document__types;" +
-					"" + " <https://example.com/ns#property-1> ?document__property1;" +
-					"" + " schema:property-2 ?document__property2." +
-
-					" ?document__property2 a ?document__property2__types;" +
-					"" + " <https://example.com/ns#property-2> ?document__property2__property2;" +
-					"" + " schema:property-3 ?document__property2__property3 " +
-
-					"} WHERE {" +
-					" BIND(BNODE() AS ?metadata)." +
-
-					" VALUES ?document { <https://example.com/> }." +
-					" OPTIONAL { ?document a ?document__types }." +
-					" ?document a <https://example.com/ns#Resource>." +
-
-					" OPTIONAL {" +
-					"" + " ?document <https://example.com/ns#property-1> ?document__property1." +
-					"" + " FILTER( datatype( ?document__property1 ) = <http://www.w3.org/2001/XMLSchema#string> )" +
-					" }." +
-
-					" OPTIONAL {" +
-					"" + " ?document schema:property-2 ?document__property2." +
-					"" + " FILTER( ! isLiteral( ?document__property2 ) )." +
-					"" + " OPTIONAL { ?document__property2 a ?document__property2__types }." +
-
-					"" + " OPTIONAL {" +
-					"" + "" + " ?document__property2 <https://example.com/ns#property-2> ?document__property2__property2." +
-					"" + "" + " FILTER( datatype( ?document__property2__property2 ) = <http://www.w3.org/2001/XMLSchema#integer> )" +
-					"" + " }." +
-
-					"" + " OPTIONAL {" +
-					"" + "" + " ?document__property2 schema:property-3 ?document__property2__property3." +
-					"" + "" + " FILTER( datatype( ?document__property2__property3 ) = <http://www.w3.org/2001/XMLSchema#string> )" +
-					"" + " }" +
-					" } " +
-					"}"
-				);
-			} );
-
-			it( "should send CONSTRUCT query when specific URI", () => {
-				const resource:QueryDocumentDocument = createMock();
-
-				resource._context
-					.extendObjectSchema( {
-						"@vocab": "https://example.com/ns#",
-						"schema": "https://schema.org/",
-					} )
-					.extendObjectSchema( "Resource", {
-						"property1": {
-							"@id": "property-1",
-							"@type": "string",
-						},
-						"property2": {
-							"@id": "property-2",
-							"@type": "integer",
-						},
-						"property3": {
-							"@id": "https://schema.org/property-3",
-							"@type": "string",
-						},
-					} )
-				;
-
-
-				resource.get( "https://example.com/resource/", _ => _
-					.withType( "Resource" )
-					.properties( {
-						"property1": _.inherit,
-						"property2": {
-							"@id": "https://schema.org/property-2",
-							"@type": "@id",
-							"query": __ => __.properties( {
-								"property2": __.inherit,
-								"property3": __.inherit,
-							} ),
-						},
-					} )
-				);
-
-
-				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-				expect( request.params ).toEqual( "" +
-					"PREFIX schema: <https://schema.org/> " +
-					"CONSTRUCT {" +
-					` ?metadata a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
-					"" + ` <${ C.target }> ?document.` +
-
-					" ?document a ?document__types;" +
-					"" + " <https://example.com/ns#property-1> ?document__property1;" +
-					"" + " schema:property-2 ?document__property2." +
-
-					" ?document__property2 a ?document__property2__types;" +
-					"" + " <https://example.com/ns#property-2> ?document__property2__property2;" +
-					"" + " schema:property-3 ?document__property2__property3 " +
-
-					"} WHERE {" +
-					" BIND(BNODE() AS ?metadata)." +
-
-					" VALUES ?document { <https://example.com/resource/> }." +
-					" OPTIONAL { ?document a ?document__types }." +
-					" ?document a <https://example.com/ns#Resource>." +
-
-					" OPTIONAL {" +
-					"" + " ?document <https://example.com/ns#property-1> ?document__property1." +
-					"" + " FILTER( datatype( ?document__property1 ) = <http://www.w3.org/2001/XMLSchema#string> )" +
-					" }." +
-
-					" OPTIONAL {" +
-					"" + " ?document schema:property-2 ?document__property2." +
-					"" + " FILTER( ! isLiteral( ?document__property2 ) )." +
-					"" + " OPTIONAL { ?document__property2 a ?document__property2__types }." +
-
-					"" + " OPTIONAL {" +
-					"" + "" + " ?document__property2 <https://example.com/ns#property-2> ?document__property2__property2." +
-					"" + "" + " FILTER( datatype( ?document__property2__property2 ) = <http://www.w3.org/2001/XMLSchema#integer> )" +
-					"" + " }." +
-
-					"" + " OPTIONAL {" +
-					"" + "" + " ?document__property2 schema:property-3 ?document__property2__property3." +
-					"" + "" + " FILTER( datatype( ?document__property2__property3 ) = <http://www.w3.org/2001/XMLSchema#string> )" +
-					"" + " }" +
-					" } " +
-					"}"
-				);
-			} );
-
-
-			it( "should return queried document when no URI", async () => {
-				stubRequest( "https://example.com/", {
-					resources: [
-						{
-							"@id": "_:1",
-							"@type": [
-								C.VolatileResource,
-								C.QueryMetadata,
-							],
-							[ C.target ]: [ {
-								"@id": "https://example.com/",
-							} ],
-						},
-						{
-							"@id": "https://example.com/",
-							"@graph": [
-								{
-									"@id": "https://example.com/",
-									"@type": [
-										LDP.RDFSource,
-										LDP.BasicContainer,
-										C.Document,
-										"https://example.com/ns#Resource",
-									],
-									"https://example.com/ns#property-1": [ {
-										"@value": "value",
-									} ],
-									"https://schema.org/property-2": [ {
-										"@id": "_:1",
-									} ],
-								},
-								{
-									"@id": "_:1",
-									"https://example.com/ns#property-2": [ {
-										"@value": "12345",
-										"@type": XSD.integer,
-									} ],
-									"https://schema.org/property-3": [ {
-										"@value": "another value",
-									} ],
-								},
-							],
-						},
-					],
-				} );
-
-				const resource:QueryDocumentDocument = createMock( { id: "https://example.com/" } );
-
-				resource._context
-					.extendObjectSchema( {
-						"@vocab": "https://example.com/ns#",
-					} )
-					.extendObjectSchema( "Resource", {
-						"property1": {
-							"@id": "property-1",
-							"@type": XSD.string,
-						},
-						"property2": {
-							"@id": "property-2",
-							"@type": XSD.integer,
-						},
-						"property3": {
-							"@id": "https://schema.org/property-3",
-							"@type": XSD.string,
-						},
-					} )
-				;
-
-
-				type MyDocument = { property1:string, property2:{ property2:number, property3:string } };
-				const returned:MyDocument = await resource.get<MyDocument>( _ => _
-					.withType( "Resource" )
-					.properties( {
-						"property1": _.inherit,
-						"property2": {
-							"@id": "https://schema.org/property-2",
-							"@type": "@id",
-							"query": __ => __.properties( {
-								"property2": __.inherit,
-								"property3": __.inherit,
-							} ),
-						},
-					} )
-				);
-
-				expect( returned ).toEqual( {
-					property1: "value",
-					property2: {
-						"property2": 12345,
-						"property3": "another value",
-					},
-				} );
-			} );
-
-			it( "should return queried document when specific URI", async () => {
-				stubRequest( "https://example.com/resource/", {
-					resources: [
-						{
-							"@id": "_:1",
-							"@type": [
-								C.VolatileResource,
-								C.QueryMetadata,
-							],
-							[ C.target ]: [ {
-								"@id": "https://example.com/resource/",
-							} ],
-						},
-						{
-							"@id": "https://example.com/resource/",
-							"@graph": [
-								{
-									"@id": "https://example.com/resource/",
-									"@type": [
-										LDP.RDFSource,
-										LDP.BasicContainer,
-										C.Document,
-										"https://example.com/ns#Resource",
-									],
-									"https://example.com/ns#property-1": [ {
-										"@value": "value",
-									} ],
-									"https://schema.org/property-2": [ {
-										"@id": "_:1",
-									} ],
-								},
-								{
-									"@id": "_:1",
-									"https://example.com/ns#property-2": [ {
-										"@value": "12345",
-										"@type": XSD.integer,
-									} ],
-									"https://schema.org/property-3": [ {
-										"@value": "another value",
-									} ],
-								},
-							],
-						},
-					],
-				} );
-
-				const resource:QueryDocumentDocument = createMock( { id: "https://example.com/" } );
-
-				resource._context
-					.extendObjectSchema( {
-						"@vocab": "https://example.com/ns#",
-					} )
-					.extendObjectSchema( "Resource", {
-						"property1": {
-							"@id": "property-1",
-							"@type": XSD.string,
-						},
-						"property2": {
-							"@id": "property-2",
-							"@type": XSD.integer,
-						},
-						"property3": {
-							"@id": "https://schema.org/property-3",
-							"@type": XSD.string,
-						},
-					} )
-				;
-
-
-				type MyDocument = { property1:string, property2:{ property2:number, property3:string } };
-				const returned:MyDocument = await resource.get<MyDocument>( "resource/", _ => _
-					.withType( "Resource" )
-					.properties( {
-						"property1": _.inherit,
-						"property2": {
-							"@id": "https://schema.org/property-2",
-							"@type": "@id",
-							"query": __ => __.properties( {
-								"property2": __.inherit,
-								"property3": __.inherit,
-							} ),
-						},
-					} )
-				);
-
-				expect( returned ).toEqual( {
-					property1: "value",
-					property2: {
-						"property2": 12345,
-						"property3": "another value",
-					},
-				} );
-			} );
-
-			it( "should return queried document with partial relations", async () => {
-				stubRequest( "https://example.com/", {
-					resources: [
-						{
-							"@id": "_:1",
-							"@type": [
-								C.VolatileResource,
-								C.QueryMetadata,
-							],
-							[ C.target ]: [ {
-								"@id": "https://example.com/",
-							} ],
-						},
-						{
-							"@id": "https://example.com/",
-							"@graph": [
-								{
-									"@id": "https://example.com/",
-									"@type": [
-										LDP.RDFSource,
-										LDP.BasicContainer,
-										C.Document,
-										"https://example.com/ns#Resource",
-									],
-									"https://example.com/ns#property-1": [ {
-										"@value": "value",
-									} ],
-									"https://schema.org/property-2": [ {
-										"@id": "https://example.com/another-resource/",
-									} ],
-								},
-							],
-						},
-						{
-							"@id": "https://example.com/another-resource/",
-							"@graph": [ {
-								"@id": "https://example.com/another-resource/",
-								"https://example.com/ns#property-2": [ {
-									"@value": "12345",
-									"@type": XSD.integer,
-								} ],
-								"https://schema.org/property-3": [ {
-									"@value": "another value",
-								} ],
-							} ],
-						},
-					],
-				} );
-
-				const resource:QueryDocumentDocument = createMock( { id: "https://example.com/" } );
-
-				resource._context
-					.extendObjectSchema( {
-						"@vocab": "https://example.com/ns#",
-					} )
-					.extendObjectSchema( "Resource", {
-						"property1": {
-							"@id": "property-1",
-							"@type": XSD.string,
-						},
-						"property2": {
-							"@id": "property-2",
-							"@type": XSD.integer,
-						},
-						"property3": {
-							"@id": "https://schema.org/property-3",
-							"@type": XSD.string,
-						},
-					} )
-				;
-
-
-				type MyDocument = { property1:string, property2:{ property2:number, property3:string } };
-				const returned:MyDocument = await resource.get<MyDocument>( _ => _
-					.withType( "Resource" )
-					.properties( {
-						"property1": _.inherit,
-						"property2": {
-							"@id": "https://schema.org/property-2",
-							"@type": "@id",
-							"query": __ => __.properties( {
-								"property2": __.inherit,
-								"property3": __.inherit,
-							} ),
-						},
-					} )
-				);
-
-				expect( returned ).toEqual( {
-					property1: "value",
-					property2: {
-						"property2": 12345,
-						"property3": "another value",
-					},
-				} );
-			} );
-
-
-			it( "should add persisted document data", async () => {
-				stubRequest( "https://example.com/", {
-					resources: [
-						{
-							"@id": "_:1",
-							"@type": [
-								C.VolatileResource,
-								C.QueryMetadata,
-							],
-							[ C.target ]: [ {
-								"@id": "https://example.com/",
-							} ],
-						},
-						{
-							"@id": "_:2",
-							"@type": [
-								C.ResponseMetadata,
-								C.VolatileResource,
-							],
-							[ C.documentMetadata ]: [ {
-								"@id": "_:3",
-							} ],
-						},
-						{
-							"@id": "_:3",
-							"@type": [
-								C.DocumentMetadata,
-								C.VolatileResource,
-							],
-							[ C.eTag ]: [ {
-								"@value": "\"1-12345\"",
-							} ],
-							[ C.relatedDocument ]: [ {
-								"@id": "https://example.com/",
-							} ],
-						},
-						{
-							"@id": "https://example.com/",
-							"@graph": [
-								{
-									"@id": "https://example.com/",
-									"@type": [
-										LDP.RDFSource,
-										LDP.BasicContainer,
-										C.Document,
-										"https://example.com/ns#Resource",
-									],
-								},
-							],
-						},
-					],
-				} );
-
-				const resource:QueryDocumentDocument = createMock( { id: "https://example.com/" } );
-				const returned:QueryDocumentDocument = await resource.get( _ => _
-					.properties( {} )
-				);
-
-				expect( returned ).toEqual( jasmine.objectContaining( {
-					_eTag: "\"1-12345\"",
-					_resolved: true,
-				} ) );
-			} );
-
-			it( "should add persisted data at the partial relations", async () => {
-				stubRequest( "https://example.com/", {
-					resources: [
-						{
-							"@id": "_:1",
-							"@type": [
-								C.VolatileResource,
-								C.QueryMetadata,
-							],
-							[ C.target ]: [ {
-								"@id": "https://example.com/",
-							} ],
-						},
-						{
-							"@id": "_:2",
-							"@type": [
-								C.ResponseMetadata,
-								C.VolatileResource,
-							],
-							[ C.documentMetadata ]: [ {
-								"@id": "_:3",
-							}, {
-								"@id": "_:4",
-							} ],
-						},
-						{
-							"@id": "_:3",
-							"@type": [
-								C.DocumentMetadata,
-								C.VolatileResource,
-							],
-							[ C.eTag ]: [ {
-								"@value": "\"1-12345\"",
-							} ],
-							[ C.relatedDocument ]: [ {
-								"@id": "https://example.com/",
-							} ],
-						},
-						{
-							"@id": "_:4",
-							"@type": [
-								C.DocumentMetadata,
-								C.VolatileResource,
-							],
-							[ C.eTag ]: [ {
-								"@value": "\"2-12345\"",
-							} ],
-							[ C.relatedDocument ]: [ {
-								"@id": "https://example.com/another-resource/",
-							} ],
-						},
-						{
-							"@id": "https://example.com/",
-							"@graph": [
-								{
-									"@id": "https://example.com/",
-									"@type": [
-										LDP.RDFSource,
-										LDP.BasicContainer,
-										C.Document,
-										"https://example.com/ns#Resource",
-									],
-									"https://example.com/ns#property-1": [ {
-										"@value": "value",
-									} ],
-									"https://schema.org/property-2": [ {
-										"@id": "https://example.com/another-resource/",
-									} ],
-								},
-							],
-						},
-						{
-							"@id": "https://example.com/another-resource/",
-							"@graph": [ {
-								"@id": "https://example.com/another-resource/",
-								"https://example.com/ns#property-2": [ {
-									"@value": "12345",
-									"@type": XSD.integer,
-								} ],
-								"https://schema.org/property-3": [ {
-									"@value": "another value",
-								} ],
-							} ],
-						},
-					],
-				} );
-
-				const resource:QueryDocumentDocument = createMock( { id: "https://example.com/" } );
-
-				resource._context
-					.extendObjectSchema( {
-						"@vocab": "https://example.com/ns#",
-					} )
-					.extendObjectSchema( "Resource", {
-						"property1": {
-							"@id": "property-1",
-							"@type": XSD.string,
-						},
-						"property2": {
-							"@id": "property-2",
-							"@type": XSD.integer,
-						},
-						"property3": {
-							"@id": "https://schema.org/property-3",
-							"@type": XSD.string,
-						},
-					} )
-				;
-
-
-				type MyDocument = { property1:string, property2:QueryDocumentDocument };
-				const returned:MyDocument = await resource.get<MyDocument>( _ => _
-					.withType( "Resource" )
-					.properties( {
-						"property1": _.inherit,
-						"property2": {
-							"@id": "https://schema.org/property-2",
-							"@type": "@id",
-							"query": __ => __.properties( {
-								"property2": __.inherit,
-								"property3": __.inherit,
-							} ),
-						},
-					} )
-				);
-
-				expect( returned.property2 ).toEqual( jasmine.objectContaining( {
-					_eTag: "\"2-12345\"",
-					_resolved: true,
-				} ) );
-			} );
-
-			it( "should add partial metadata data", async () => {
-				stubRequest( "https://example.com/", {
-					resources: [
-						{
-							"@id": "_:1",
-							"@type": [
-								C.VolatileResource,
-								C.QueryMetadata,
-							],
-							[ C.target ]: [ {
-								"@id": "https://example.com/",
-							} ],
-						},
-						{
-							"@id": "https://example.com/",
-							"@graph": [
-								{
-									"@id": "https://example.com/",
-									"@type": [
-										LDP.RDFSource,
-										LDP.BasicContainer,
-										C.Document,
-										"https://example.com/ns#Resource",
-									],
-									"https://example.com/ns#property-1": [ {
-										"@value": "value",
-									} ],
-									"https://schema.org/property-2": [ {
-										"@id": "_:1",
-									} ],
-								},
-								{
-									"@id": "_:1",
-									"https://example.com/ns#property-2": [ {
-										"@value": "12345",
-										"@type": XSD.integer,
-									} ],
-									"https://schema.org/property-3": [ {
-										"@value": "another value",
-									} ],
-								},
-							],
-						},
-					],
-				} );
-
-				const resource:QueryDocumentDocument = createMock( { id: "https://example.com/" } );
-
-				resource._context
-					.extendObjectSchema( {
-						"@vocab": "https://example.com/ns#",
-					} )
-					.extendObjectSchema( "Resource", {
-						"property1": {
-							"@id": "property-1",
-							"@type": XSD.string,
-						},
-						"property2": {
-							"@id": "property-2",
-							"@type": XSD.integer,
-						},
-						"property3": {
-							"@id": "https://schema.org/property-3",
-							"@type": XSD.string,
-						},
-					} )
-				;
-
-				type MyResource = QueryDocumentDocument & { property2:PersistedResource };
-				const returned:MyResource = await resource.get<{ property2:PersistedResource }>( _ => _
-					.withType( "Resource" )
-					.properties( {
-						"property1": _.inherit,
-						"property2": {
-							"@id": "https://schema.org/property-2",
-							"@type": "@id",
-							"query": __ => __.properties( {
-								"property2": __.inherit,
-								"property3": __.inherit,
-							} ),
-						},
-					} )
-				);
-
-				expect( returned._partialMetadata ).toEqual( jasmine.any( PartialMetadata ) );
-				expect( returned._partialMetadata.schema ).toEqual( ObjectSchemaDigester.digestSchema( {
-					"property1": {
-						"@id": "https://example.com/ns#property-1",
-						"@type": XSD.string,
-					},
-					"property2": {
-						"@id": "https://schema.org/property-2",
-						"@type": "@id",
-					},
-				} ) );
-
-				expect( returned.property2._partialMetadata ).toEqual( jasmine.any( PartialMetadata ) );
-				expect( returned.property2._partialMetadata.schema ).toEqual( ObjectSchemaDigester.digestSchema( {
-					"property2": {
-						"@id": "https://example.com/ns#property-2",
-						"@type": XSD.integer,
-					},
-					"property3": {
-						"@id": "https://schema.org/property-3",
-						"@type": XSD.string,
-					},
-				} ) );
-			} );
-
-			it( "should add partial metadata at the partial relations", async () => {
-				stubRequest( "https://example.com/", {
-					resources: [
-						{
-							"@id": "_:1",
-							"@type": [
-								C.VolatileResource,
-								C.QueryMetadata,
-							],
-							[ C.target ]: [ {
-								"@id": "https://example.com/",
-							} ],
-						},
-						{
-							"@id": "https://example.com/",
-							"@graph": [
-								{
-									"@id": "https://example.com/",
-									"@type": [
-										LDP.RDFSource,
-										LDP.BasicContainer,
-										C.Document,
-										"https://example.com/ns#Resource",
-									],
-									"https://example.com/ns#property-1": [ {
-										"@value": "value",
-									} ],
-									"https://schema.org/property-2": [ {
-										"@id": "https://example.com/another-resource/",
-									} ],
-								},
-							],
-						},
-						{
-							"@id": "https://example.com/another-resource/",
-							"@graph": [ {
-								"@id": "https://example.com/another-resource/",
-								"https://example.com/ns#property-2": [ {
-									"@value": "12345",
-									"@type": XSD.integer,
-								} ],
-								"https://schema.org/property-3": [ {
-									"@value": "another value",
-								} ],
-							} ],
-						},
-					],
-				} );
-
-				const resource:QueryDocumentDocument = createMock( { id: "https://example.com/" } );
-
-				resource._context
-					.extendObjectSchema( {
-						"@vocab": "https://example.com/ns#",
-					} )
-					.extendObjectSchema( "Resource", {
-						"property1": {
-							"@id": "property-1",
-							"@type": XSD.string,
-						},
-						"property2": {
-							"@id": "property-2",
-							"@type": XSD.integer,
-						},
-						"property3": {
-							"@id": "https://schema.org/property-3",
-							"@type": XSD.string,
-						},
-					} )
-				;
-
-
-				type MyResource = QueryDocumentDocument & { property2:PersistedResource };
-				const returned:MyResource = await resource.get<{ property2:PersistedResource }>( _ => _
-					.withType( "Resource" )
-					.properties( {
-						"property1": _.inherit,
-						"property2": {
-							"@id": "https://schema.org/property-2",
-							"@type": "@id",
-							"query": __ => __.properties( {
-								"property2": __.inherit,
-								"property3": __.inherit,
-							} ),
-						},
-					} )
-				);
-
-
-				expect( returned._partialMetadata ).toEqual( jasmine.any( PartialMetadata ) );
-				expect( returned._partialMetadata.schema ).toEqual( ObjectSchemaDigester.digestSchema( {
-					"property1": {
-						"@id": "https://example.com/ns#property-1",
-						"@type": XSD.string,
-					},
-					"property2": {
-						"@id": "https://schema.org/property-2",
-						"@type": "@id",
-					},
-				} ) );
-
-				expect( returned.property2._partialMetadata ).toEqual( jasmine.any( PartialMetadata ) );
-				expect( returned.property2._partialMetadata.schema ).toEqual( ObjectSchemaDigester.digestSchema( {
-					"property2": {
-						"@id": "https://example.com/ns#property-2",
-						"@type": XSD.integer,
-					},
-					"property3": {
-						"@id": "https://schema.org/property-3",
-						"@type": XSD.string,
-					},
-				} ) );
-			} );
-
-			it( "should merge query results", async () => {
-				stubRequest( "https://example.com/", {
-					resources: [
-						{
-							"@id": "_:1",
-							"@type": [
-								C.VolatileResource,
-								C.QueryMetadata,
-							],
-							[ C.target ]: [ {
-								"@id": "https://example.com/",
-							} ],
-						},
-						{
-							"@id": "https://example.com/",
-							"@graph": [
-								{
-									"@id": "https://example.com/",
-									"@type": [
-										LDP.RDFSource,
-										LDP.BasicContainer,
-										C.Document,
-										"https://example.com/ns#Resource",
-									],
-									"https://example.com/ns#property-4": [ {
-										"@value": "false",
-										"@type": XSD.boolean,
-									} ],
-									"https://schema.org/property-2": [ {
-										"@id": "_:1",
-									} ],
-								},
-								{
-									"@id": "_:1",
-									"https://schema.org/property-3": [ {
-										"@value": "updated sub-value",
-									} ],
-									"https://schema.org/property-5": [ {
-										"@value": "2010-01-01",
-										"@type": XSD.dateTime,
-									} ],
-								},
-							],
-						},
-					],
+			describe( "When has a context", () => {
+
+				let context:CarbonLDP;
+				let resource:QueryDocumentDocument;
+				beforeEach( ():void => {
+					context = new CarbonLDP( "https://example.com/" );
+					resource = createMock( { _registry: context.registry } );
 				} );
 
 
-				interface MyDocument {
-					property4:boolean;
-					property1:string;
-					property2:BaseResource;
-				}
+				it( "should request self when no URI", async () => {
+					resource.get( _ => _ );
 
-				const resource:QueryDocumentDocument & MyDocument = createMock( {
-					_partialMetadata: createPartialMetadata( {
-						"@vocab": "https://example.com/ns#",
-						"property4": {
-							"@id": "property-4",
-							"@type": XSD.boolean,
-						},
-						"property2": {
-							"@id": "https://schema.org/property-2",
-							"@type": "@id",
-						},
-						"property1": {
-							"@id": "property-1",
-							"@type": XSD.string,
-						},
-					} ),
-					id: "https://example.com/",
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.url ).toBe( "https://example.com/" );
+				} );
 
-					property4: true,
-					property1: "value",
-					property2: {
-						_partialMetadata: createPartialMetadata( {
+				it( "should request the URI provided", async () => {
+					resource.get( "https://example.com/resource/", _ => _ );
+
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.url ).toBe( "https://example.com/resource/" );
+				} );
+
+				it( "should request relative URI provided", async () => {
+					resource.get( "relative/", _ => _ );
+
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.url ).toBe( "https://example.com/relative/" );
+				} );
+
+				it( "should request resolved prefixed name provided", async () => {
+					context.extendObjectSchema( { "ex": "https://example.com/" } );
+
+					resource.get( "ex:resource/", _ => _ );
+
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.url ).toBe( "https://example.com/resource/" );
+				} );
+
+				it( "should throw error when from URI outside context scope", async () => {
+					await resource
+						.get( "https://example.org/resource/", _ => _ )
+						.catch( error => {
+							expect( () => { throw error; } )
+								.toThrowError( IllegalArgumentError, `"https://example.org/resource/" is out of scope.` );
+						} )
+					;
+				} );
+
+				it( "should throw error when from URI is BNode label", async () => {
+					await resource
+						.get( "_:1", _ => _ )
+						.catch( error => {
+							expect( () => { throw error; } )
+								.toThrowError( IllegalArgumentError, `"_:1" is out of scope.` );
+						} )
+					;
+				} );
+
+				it( "should throw error when from URI is Named Fragment label", async () => {
+					await resource
+						.get( "#fragment", _ => _ )
+						.catch( error => {
+							expect( () => { throw error; } )
+								.toThrowError( IllegalArgumentError, `"https://example.com/#fragment" is out of scope.` );
+						} )
+					;
+				} );
+
+				it( "should throw error when unresolved prefixed name", async () => {
+					await resource
+						.get( "ex:resource/", _ => _ )
+						.catch( error => {
+							expect( () => { throw error; } )
+								.toThrowError( IllegalArgumentError, `"ex:resource/" is out of scope.` );
+						} )
+					;
+				} );
+
+				it( "should parse error response", async () => {
+					stubRequest( "https://example.com/", { status: 500 } );
+
+					const spy:jasmine.Spy = spyOn( resource._registry, "_parseErrorFromResponse" )
+						.and.callFake( () => Promise.reject( null ) );
+
+					await resource
+						.get( _ => _ )
+						.then( () => fail( "Should not resolve" ) )
+						.catch( error => {
+							if( error ) fail( error );
+
+							expect( spy ).toHaveBeenCalled();
+						} )
+					;
+				} );
+
+
+				it( "should send basic request headers", async () => {
+					resource.get( _ => _ );
+
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.requestHeaders ).toEqual( {
+						"accept": "application/ld+json",
+						"content-type": "application/sparql-query",
+						"prefer": [
+							`include="${ C.PreferDocumentETags }"`,
+							`include="${ C.PreferResultsContext }"`,
+						].join( ", " ),
+					} );
+				} );
+
+				it( "should add authentication header", async () => {
+					const spy:jasmine.Spy = spyOn( context.auth, "addAuthentication" );
+
+					resource.get( _ => _ );
+
+					expect( spy ).toHaveBeenCalled();
+				} );
+
+				it( "should add custom headers when no URI", async () => {
+					stubRequest( "https://example.com/" );
+
+					resource.get( {
+						headers: new Map()
+							.set( "custom", new Header( "custom value" ) )
+						,
+					}, _ => _ );
+
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.requestHeaders ).toEqual( jasmine.objectContaining( {
+						"custom": "custom value",
+					} ) );
+				} );
+
+				it( "should add custom headers when specific URI", async () => {
+					resource.get( "resource/", {
+						headers: new Map()
+							.set( "custom", new Header( "custom value" ) )
+						,
+					}, _ => _ );
+
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.requestHeaders ).toEqual( jasmine.objectContaining( {
+						"custom": "custom value",
+					} ) );
+				} );
+
+
+				it( "should send CONSTRUCT query when no URI", () => {
+					context
+						.extendObjectSchema( {
 							"@vocab": "https://example.com/ns#",
+							"schema": "https://schema.org/",
+						} )
+						.extendObjectSchema( "Resource", {
+							"property1": {
+								"@id": "property-1",
+								"@type": "string",
+							},
+							"property2": {
+								"@id": "property-2",
+								"@type": "integer",
+							},
+							"property3": {
+								"@id": "https://schema.org/property-3",
+								"@type": "string",
+							},
+						} )
+					;
+
+
+					resource.get( _ => _
+						.withType( "Resource" )
+						.properties( {
+							"property1": _.inherit,
+							"property2": {
+								"@id": "https://schema.org/property-2",
+								"@type": "@id",
+								"query": __ => __.properties( {
+									"property2": __.inherit,
+									"property3": __.inherit,
+								} ),
+							},
+						} )
+					);
+
+
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.params ).toEqual( "" +
+						"PREFIX schema: <https://schema.org/> " +
+						"CONSTRUCT {" +
+						` ?metadata a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
+						"" + ` <${ C.target }> ?document.` +
+
+						" ?document a ?document__types;" +
+						"" + " <https://example.com/ns#property-1> ?document__property1;" +
+						"" + " schema:property-2 ?document__property2." +
+
+						" ?document__property2 a ?document__property2__types;" +
+						"" + " <https://example.com/ns#property-2> ?document__property2__property2;" +
+						"" + " schema:property-3 ?document__property2__property3 " +
+
+						"} WHERE {" +
+						" BIND(BNODE() AS ?metadata)." +
+
+						" VALUES ?document { <https://example.com/> }." +
+						" OPTIONAL { ?document a ?document__types }." +
+						" ?document a <https://example.com/ns#Resource>." +
+
+						" OPTIONAL {" +
+						"" + " ?document <https://example.com/ns#property-1> ?document__property1." +
+						"" + " FILTER( datatype( ?document__property1 ) = <http://www.w3.org/2001/XMLSchema#string> )" +
+						" }." +
+
+						" OPTIONAL {" +
+						"" + " ?document schema:property-2 ?document__property2." +
+						"" + " FILTER( ! isLiteral( ?document__property2 ) )." +
+						"" + " OPTIONAL { ?document__property2 a ?document__property2__types }." +
+
+						"" + " OPTIONAL {" +
+						"" + "" + " ?document__property2 <https://example.com/ns#property-2> ?document__property2__property2." +
+						"" + "" + " FILTER( datatype( ?document__property2__property2 ) = <http://www.w3.org/2001/XMLSchema#integer> )" +
+						"" + " }." +
+
+						"" + " OPTIONAL {" +
+						"" + "" + " ?document__property2 schema:property-3 ?document__property2__property3." +
+						"" + "" + " FILTER( datatype( ?document__property2__property3 ) = <http://www.w3.org/2001/XMLSchema#string> )" +
+						"" + " }" +
+						" } " +
+						"}"
+					);
+				} );
+
+				it( "should send CONSTRUCT query when specific URI", () => {
+					context
+						.extendObjectSchema( {
+							"@vocab": "https://example.com/ns#",
+							"schema": "https://schema.org/",
+						} )
+						.extendObjectSchema( "Resource", {
+							"property1": {
+								"@id": "property-1",
+								"@type": "string",
+							},
+							"property2": {
+								"@id": "property-2",
+								"@type": "integer",
+							},
+							"property3": {
+								"@id": "https://schema.org/property-3",
+								"@type": "string",
+							},
+						} )
+					;
+
+
+					resource.get( "https://example.com/resource/", _ => _
+						.withType( "Resource" )
+						.properties( {
+							"property1": _.inherit,
+							"property2": {
+								"@id": "https://schema.org/property-2",
+								"@type": "@id",
+								"query": __ => __.properties( {
+									"property2": __.inherit,
+									"property3": __.inherit,
+								} ),
+							},
+						} )
+					);
+
+
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.params ).toEqual( "" +
+						"PREFIX schema: <https://schema.org/> " +
+						"CONSTRUCT {" +
+						` ?metadata a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
+						"" + ` <${ C.target }> ?document.` +
+
+						" ?document a ?document__types;" +
+						"" + " <https://example.com/ns#property-1> ?document__property1;" +
+						"" + " schema:property-2 ?document__property2." +
+
+						" ?document__property2 a ?document__property2__types;" +
+						"" + " <https://example.com/ns#property-2> ?document__property2__property2;" +
+						"" + " schema:property-3 ?document__property2__property3 " +
+
+						"} WHERE {" +
+						" BIND(BNODE() AS ?metadata)." +
+
+						" VALUES ?document { <https://example.com/resource/> }." +
+						" OPTIONAL { ?document a ?document__types }." +
+						" ?document a <https://example.com/ns#Resource>." +
+
+						" OPTIONAL {" +
+						"" + " ?document <https://example.com/ns#property-1> ?document__property1." +
+						"" + " FILTER( datatype( ?document__property1 ) = <http://www.w3.org/2001/XMLSchema#string> )" +
+						" }." +
+
+						" OPTIONAL {" +
+						"" + " ?document schema:property-2 ?document__property2." +
+						"" + " FILTER( ! isLiteral( ?document__property2 ) )." +
+						"" + " OPTIONAL { ?document__property2 a ?document__property2__types }." +
+
+						"" + " OPTIONAL {" +
+						"" + "" + " ?document__property2 <https://example.com/ns#property-2> ?document__property2__property2." +
+						"" + "" + " FILTER( datatype( ?document__property2__property2 ) = <http://www.w3.org/2001/XMLSchema#integer> )" +
+						"" + " }." +
+
+						"" + " OPTIONAL {" +
+						"" + "" + " ?document__property2 schema:property-3 ?document__property2__property3." +
+						"" + "" + " FILTER( datatype( ?document__property2__property3 ) = <http://www.w3.org/2001/XMLSchema#string> )" +
+						"" + " }" +
+						" } " +
+						"}"
+					);
+				} );
+
+
+				it( "should return queried document when no URI", async () => {
+					stubRequest( "https://example.com/", {
+						resources: [
+							{
+								"@id": "_:1",
+								"@type": [
+									C.VolatileResource,
+									C.QueryMetadata,
+								],
+								[ C.target ]: [ {
+									"@id": "https://example.com/",
+								} ],
+							},
+							{
+								"@id": "https://example.com/",
+								"@graph": [
+									{
+										"@id": "https://example.com/",
+										"@type": [
+											LDP.RDFSource,
+											LDP.BasicContainer,
+											C.Document,
+											"https://example.com/ns#Resource",
+										],
+										"https://example.com/ns#property-1": [ {
+											"@value": "value",
+										} ],
+										"https://schema.org/property-2": [ {
+											"@id": "_:1",
+										} ],
+									},
+									{
+										"@id": "_:1",
+										"https://example.com/ns#property-2": [ {
+											"@value": "12345",
+											"@type": XSD.integer,
+										} ],
+										"https://schema.org/property-3": [ {
+											"@value": "another value",
+										} ],
+									},
+								],
+							},
+						],
+					} );
+
+					context
+						.extendObjectSchema( {
+							"@vocab": "https://example.com/ns#",
+						} )
+						.extendObjectSchema( "Resource", {
+							"property1": {
+								"@id": "property-1",
+								"@type": XSD.string,
+							},
+							"property2": {
+								"@id": "property-2",
+								"@type": XSD.integer,
+							},
 							"property3": {
 								"@id": "https://schema.org/property-3",
 								"@type": XSD.string,
+							},
+						} )
+					;
+
+
+					type MyDocument = { property1:string, property2:{ property2:number, property3:string } };
+					const returned:MyDocument = await resource.get<MyDocument>( _ => _
+						.withType( "Resource" )
+						.properties( {
+							"property1": _.inherit,
+							"property2": {
+								"@id": "https://schema.org/property-2",
+								"@type": "@id",
+								"query": __ => __.properties( {
+									"property2": __.inherit,
+									"property3": __.inherit,
+								} ),
+							},
+						} )
+					);
+
+					expect( returned ).toEqual( {
+						property1: "value",
+						property2: {
+							"property2": 12345,
+							"property3": "another value",
+						},
+					} );
+				} );
+
+				it( "should return queried document when specific URI", async () => {
+					stubRequest( "https://example.com/resource/", {
+						resources: [
+							{
+								"@id": "_:1",
+								"@type": [
+									C.VolatileResource,
+									C.QueryMetadata,
+								],
+								[ C.target ]: [ {
+									"@id": "https://example.com/resource/",
+								} ],
+							},
+							{
+								"@id": "https://example.com/resource/",
+								"@graph": [
+									{
+										"@id": "https://example.com/resource/",
+										"@type": [
+											LDP.RDFSource,
+											LDP.BasicContainer,
+											C.Document,
+											"https://example.com/ns#Resource",
+										],
+										"https://example.com/ns#property-1": [ {
+											"@value": "value",
+										} ],
+										"https://schema.org/property-2": [ {
+											"@id": "_:1",
+										} ],
+									},
+									{
+										"@id": "_:1",
+										"https://example.com/ns#property-2": [ {
+											"@value": "12345",
+											"@type": XSD.integer,
+										} ],
+										"https://schema.org/property-3": [ {
+											"@value": "another value",
+										} ],
+									},
+								],
+							},
+						],
+					} );
+
+					context
+						.extendObjectSchema( {
+							"@vocab": "https://example.com/ns#",
+						} )
+						.extendObjectSchema( "Resource", {
+							"property1": {
+								"@id": "property-1",
+								"@type": XSD.string,
+							},
+							"property2": {
+								"@id": "property-2",
+								"@type": XSD.integer,
+							},
+							"property3": {
+								"@id": "https://schema.org/property-3",
+								"@type": XSD.string,
+							},
+						} )
+					;
+
+
+					type MyDocument = { property1:string, property2:{ property2:number, property3:string } };
+					const returned:MyDocument = await resource.get<MyDocument>( "resource/", _ => _
+						.withType( "Resource" )
+						.properties( {
+							"property1": _.inherit,
+							"property2": {
+								"@id": "https://schema.org/property-2",
+								"@type": "@id",
+								"query": __ => __.properties( {
+									"property2": __.inherit,
+									"property3": __.inherit,
+								} ),
+							},
+						} )
+					);
+
+					expect( returned ).toEqual( {
+						property1: "value",
+						property2: {
+							"property2": 12345,
+							"property3": "another value",
+						},
+					} );
+				} );
+
+				it( "should return queried document with partial relations", async () => {
+					stubRequest( "https://example.com/", {
+						resources: [
+							{
+								"@id": "_:1",
+								"@type": [
+									C.VolatileResource,
+									C.QueryMetadata,
+								],
+								[ C.target ]: [ {
+									"@id": "https://example.com/",
+								} ],
+							},
+							{
+								"@id": "https://example.com/",
+								"@graph": [
+									{
+										"@id": "https://example.com/",
+										"@type": [
+											LDP.RDFSource,
+											LDP.BasicContainer,
+											C.Document,
+											"https://example.com/ns#Resource",
+										],
+										"https://example.com/ns#property-1": [ {
+											"@value": "value",
+										} ],
+										"https://schema.org/property-2": [ {
+											"@id": "https://example.com/another-resource/",
+										} ],
+									},
+								],
+							},
+							{
+								"@id": "https://example.com/another-resource/",
+								"@graph": [ {
+									"@id": "https://example.com/another-resource/",
+									"https://example.com/ns#property-2": [ {
+										"@value": "12345",
+										"@type": XSD.integer,
+									} ],
+									"https://schema.org/property-3": [ {
+										"@value": "another value",
+									} ],
+								} ],
+							},
+						],
+					} );
+
+					context
+						.extendObjectSchema( {
+							"@vocab": "https://example.com/ns#",
+						} )
+						.extendObjectSchema( "Resource", {
+							"property1": {
+								"@id": "property-1",
+								"@type": XSD.string,
+							},
+							"property2": {
+								"@id": "property-2",
+								"@type": XSD.integer,
+							},
+							"property3": {
+								"@id": "https://schema.org/property-3",
+								"@type": XSD.string,
+							},
+						} )
+					;
+
+
+					type MyDocument = { property1:string, property2:{ property2:number, property3:string } };
+					const returned:MyDocument = await resource.get<MyDocument>( _ => _
+						.withType( "Resource" )
+						.properties( {
+							"property1": _.inherit,
+							"property2": {
+								"@id": "https://schema.org/property-2",
+								"@type": "@id",
+								"query": __ => __.properties( {
+									"property2": __.inherit,
+									"property3": __.inherit,
+								} ),
+							},
+						} )
+					);
+
+					expect( returned ).toEqual( {
+						property1: "value",
+						property2: {
+							"property2": 12345,
+							"property3": "another value",
+						},
+					} );
+				} );
+
+
+				it( "should add persisted document data", async () => {
+					stubRequest( "https://example.com/", {
+						resources: [
+							{
+								"@id": "_:1",
+								"@type": [
+									C.VolatileResource,
+									C.QueryMetadata,
+								],
+								[ C.target ]: [ {
+									"@id": "https://example.com/",
+								} ],
+							},
+							{
+								"@id": "_:2",
+								"@type": [
+									C.ResponseMetadata,
+									C.VolatileResource,
+								],
+								[ C.documentMetadata ]: [ {
+									"@id": "_:3",
+								} ],
+							},
+							{
+								"@id": "_:3",
+								"@type": [
+									C.DocumentMetadata,
+									C.VolatileResource,
+								],
+								[ C.eTag ]: [ {
+									"@value": "\"1-12345\"",
+								} ],
+								[ C.relatedDocument ]: [ {
+									"@id": "https://example.com/",
+								} ],
+							},
+							{
+								"@id": "https://example.com/",
+								"@graph": [
+									{
+										"@id": "https://example.com/",
+										"@type": [
+											LDP.RDFSource,
+											LDP.BasicContainer,
+											C.Document,
+											"https://example.com/ns#Resource",
+										],
+									},
+								],
+							},
+						],
+					} );
+
+					const returned:QueryDocumentDocument = await resource.get( _ => _
+						.properties( {} )
+					);
+
+					expect( returned ).toEqual( jasmine.objectContaining( {
+						_eTag: "\"1-12345\"",
+						_resolved: true,
+					} ) );
+				} );
+
+				it( "should add persisted data at the partial relations", async () => {
+					stubRequest( "https://example.com/", {
+						resources: [
+							{
+								"@id": "_:1",
+								"@type": [
+									C.VolatileResource,
+									C.QueryMetadata,
+								],
+								[ C.target ]: [ {
+									"@id": "https://example.com/",
+								} ],
+							},
+							{
+								"@id": "_:2",
+								"@type": [
+									C.ResponseMetadata,
+									C.VolatileResource,
+								],
+								[ C.documentMetadata ]: [ {
+									"@id": "_:3",
+								}, {
+									"@id": "_:4",
+								} ],
+							},
+							{
+								"@id": "_:3",
+								"@type": [
+									C.DocumentMetadata,
+									C.VolatileResource,
+								],
+								[ C.eTag ]: [ {
+									"@value": "\"1-12345\"",
+								} ],
+								[ C.relatedDocument ]: [ {
+									"@id": "https://example.com/",
+								} ],
+							},
+							{
+								"@id": "_:4",
+								"@type": [
+									C.DocumentMetadata,
+									C.VolatileResource,
+								],
+								[ C.eTag ]: [ {
+									"@value": "\"2-12345\"",
+								} ],
+								[ C.relatedDocument ]: [ {
+									"@id": "https://example.com/another-resource/",
+								} ],
+							},
+							{
+								"@id": "https://example.com/",
+								"@graph": [
+									{
+										"@id": "https://example.com/",
+										"@type": [
+											LDP.RDFSource,
+											LDP.BasicContainer,
+											C.Document,
+											"https://example.com/ns#Resource",
+										],
+										"https://example.com/ns#property-1": [ {
+											"@value": "value",
+										} ],
+										"https://schema.org/property-2": [ {
+											"@id": "https://example.com/another-resource/",
+										} ],
+									},
+								],
+							},
+							{
+								"@id": "https://example.com/another-resource/",
+								"@graph": [ {
+									"@id": "https://example.com/another-resource/",
+									"https://example.com/ns#property-2": [ {
+										"@value": "12345",
+										"@type": XSD.integer,
+									} ],
+									"https://schema.org/property-3": [ {
+										"@value": "another value",
+									} ],
+								} ],
+							},
+						],
+					} );
+
+					context
+						.extendObjectSchema( {
+							"@vocab": "https://example.com/ns#",
+						} )
+						.extendObjectSchema( "Resource", {
+							"property1": {
+								"@id": "property-1",
+								"@type": XSD.string,
+							},
+							"property2": {
+								"@id": "property-2",
+								"@type": XSD.integer,
+							},
+							"property3": {
+								"@id": "https://schema.org/property-3",
+								"@type": XSD.string,
+							},
+						} )
+					;
+
+
+					type MyDocument = { property1:string, property2:QueryDocumentDocument };
+					const returned:MyDocument = await resource.get<MyDocument>( _ => _
+						.withType( "Resource" )
+						.properties( {
+							"property1": _.inherit,
+							"property2": {
+								"@id": "https://schema.org/property-2",
+								"@type": "@id",
+								"query": __ => __.properties( {
+									"property2": __.inherit,
+									"property3": __.inherit,
+								} ),
+							},
+						} )
+					);
+
+					expect( returned.property2 ).toEqual( jasmine.objectContaining( {
+						_eTag: "\"2-12345\"",
+						_resolved: true,
+					} ) );
+				} );
+
+				it( "should add partial metadata data", async () => {
+					stubRequest( "https://example.com/", {
+						resources: [
+							{
+								"@id": "_:1",
+								"@type": [
+									C.VolatileResource,
+									C.QueryMetadata,
+								],
+								[ C.target ]: [ {
+									"@id": "https://example.com/",
+								} ],
+							},
+							{
+								"@id": "https://example.com/",
+								"@graph": [
+									{
+										"@id": "https://example.com/",
+										"@type": [
+											LDP.RDFSource,
+											LDP.BasicContainer,
+											C.Document,
+											"https://example.com/ns#Resource",
+										],
+										"https://example.com/ns#property-1": [ {
+											"@value": "value",
+										} ],
+										"https://schema.org/property-2": [ {
+											"@id": "_:1",
+										} ],
+									},
+									{
+										"@id": "_:1",
+										"https://example.com/ns#property-2": [ {
+											"@value": "12345",
+											"@type": XSD.integer,
+										} ],
+										"https://schema.org/property-3": [ {
+											"@value": "another value",
+										} ],
+									},
+								],
+							},
+						],
+					} );
+
+					context
+						.extendObjectSchema( {
+							"@vocab": "https://example.com/ns#",
+						} )
+						.extendObjectSchema( "Resource", {
+							"property1": {
+								"@id": "property-1",
+								"@type": XSD.string,
+							},
+							"property2": {
+								"@id": "property-2",
+								"@type": XSD.integer,
+							},
+							"property3": {
+								"@id": "https://schema.org/property-3",
+								"@type": XSD.string,
+							},
+						} )
+					;
+
+					type MyResource = QueryDocumentDocument & { property2:PersistedResource };
+					const returned:MyResource = await resource.get<{ property2:PersistedResource }>( _ => _
+						.withType( "Resource" )
+						.properties( {
+							"property1": _.inherit,
+							"property2": {
+								"@id": "https://schema.org/property-2",
+								"@type": "@id",
+								"query": __ => __.properties( {
+									"property2": __.inherit,
+									"property3": __.inherit,
+								} ),
+							},
+						} )
+					);
+
+					expect( returned._partialMetadata ).toEqual( jasmine.any( PartialMetadata ) );
+					expect( returned._partialMetadata.schema ).toEqual( ObjectSchemaDigester.digestSchema( {
+						"property1": {
+							"@id": "https://example.com/ns#property-1",
+							"@type": XSD.string,
+						},
+						"property2": {
+							"@id": "https://schema.org/property-2",
+							"@type": "@id",
+						},
+					} ) );
+
+					expect( returned.property2._partialMetadata ).toEqual( jasmine.any( PartialMetadata ) );
+					expect( returned.property2._partialMetadata.schema ).toEqual( ObjectSchemaDigester.digestSchema( {
+						"property2": {
+							"@id": "https://example.com/ns#property-2",
+							"@type": XSD.integer,
+						},
+						"property3": {
+							"@id": "https://schema.org/property-3",
+							"@type": XSD.string,
+						},
+					} ) );
+				} );
+
+				it( "should add partial metadata at the partial relations", async () => {
+					stubRequest( "https://example.com/", {
+						resources: [
+							{
+								"@id": "_:1",
+								"@type": [
+									C.VolatileResource,
+									C.QueryMetadata,
+								],
+								[ C.target ]: [ {
+									"@id": "https://example.com/",
+								} ],
+							},
+							{
+								"@id": "https://example.com/",
+								"@graph": [
+									{
+										"@id": "https://example.com/",
+										"@type": [
+											LDP.RDFSource,
+											LDP.BasicContainer,
+											C.Document,
+											"https://example.com/ns#Resource",
+										],
+										"https://example.com/ns#property-1": [ {
+											"@value": "value",
+										} ],
+										"https://schema.org/property-2": [ {
+											"@id": "https://example.com/another-resource/",
+										} ],
+									},
+								],
+							},
+							{
+								"@id": "https://example.com/another-resource/",
+								"@graph": [ {
+									"@id": "https://example.com/another-resource/",
+									"https://example.com/ns#property-2": [ {
+										"@value": "12345",
+										"@type": XSD.integer,
+									} ],
+									"https://schema.org/property-3": [ {
+										"@value": "another value",
+									} ],
+								} ],
+							},
+						],
+					} );
+
+					context
+						.extendObjectSchema( {
+							"@vocab": "https://example.com/ns#",
+						} )
+						.extendObjectSchema( "Resource", {
+							"property1": {
+								"@id": "property-1",
+								"@type": XSD.string,
+							},
+							"property2": {
+								"@id": "property-2",
+								"@type": XSD.integer,
+							},
+							"property3": {
+								"@id": "https://schema.org/property-3",
+								"@type": XSD.string,
+							},
+						} )
+					;
+
+
+					type MyResource = QueryDocumentDocument & { property2:PersistedResource };
+					const returned:MyResource = await resource.get<{ property2:PersistedResource }>( _ => _
+						.withType( "Resource" )
+						.properties( {
+							"property1": _.inherit,
+							"property2": {
+								"@id": "https://schema.org/property-2",
+								"@type": "@id",
+								"query": __ => __.properties( {
+									"property2": __.inherit,
+									"property3": __.inherit,
+								} ),
+							},
+						} )
+					);
+
+
+					expect( returned._partialMetadata ).toEqual( jasmine.any( PartialMetadata ) );
+					expect( returned._partialMetadata.schema ).toEqual( ObjectSchemaDigester.digestSchema( {
+						"property1": {
+							"@id": "https://example.com/ns#property-1",
+							"@type": XSD.string,
+						},
+						"property2": {
+							"@id": "https://schema.org/property-2",
+							"@type": "@id",
+						},
+					} ) );
+
+					expect( returned.property2._partialMetadata ).toEqual( jasmine.any( PartialMetadata ) );
+					expect( returned.property2._partialMetadata.schema ).toEqual( ObjectSchemaDigester.digestSchema( {
+						"property2": {
+							"@id": "https://example.com/ns#property-2",
+							"@type": XSD.integer,
+						},
+						"property3": {
+							"@id": "https://schema.org/property-3",
+							"@type": XSD.string,
+						},
+					} ) );
+				} );
+
+				it( "should merge query results", async () => {
+					stubRequest( "https://example.com/", {
+						resources: [
+							{
+								"@id": "_:1",
+								"@type": [
+									C.VolatileResource,
+									C.QueryMetadata,
+								],
+								[ C.target ]: [ {
+									"@id": "https://example.com/",
+								} ],
+							},
+							{
+								"@id": "https://example.com/",
+								"@graph": [
+									{
+										"@id": "https://example.com/",
+										"@type": [
+											LDP.RDFSource,
+											LDP.BasicContainer,
+											C.Document,
+											"https://example.com/ns#Resource",
+										],
+										"https://example.com/ns#property-4": [ {
+											"@value": "false",
+											"@type": XSD.boolean,
+										} ],
+										"https://schema.org/property-2": [ {
+											"@id": "_:1",
+										} ],
+									},
+									{
+										"@id": "_:1",
+										"https://schema.org/property-3": [ {
+											"@value": "updated sub-value",
+										} ],
+										"https://schema.org/property-5": [ {
+											"@value": "2010-01-01",
+											"@type": XSD.dateTime,
+										} ],
+									},
+								],
+							},
+						],
+					} );
+
+
+					interface MyDocument {
+						property4:boolean;
+						property1:string;
+						property2:BaseResource;
+					}
+
+					resource = createMock( {
+						_registry: context.registry,
+
+						_partialMetadata: createPartialMetadata( {
+							"@vocab": "https://example.com/ns#",
+							"property4": {
+								"@id": "property-4",
+								"@type": XSD.boolean,
+							},
+							"property2": {
+								"@id": "https://schema.org/property-2",
+								"@type": "@id",
+							},
+							"property1": {
+								"@id": "property-1",
+								"@type": XSD.string,
+							},
+						} ),
+						id: "https://example.com/",
+
+						property4: true,
+						property1: "value",
+						property2: {
+							_partialMetadata: createPartialMetadata( {
+								"@vocab": "https://example.com/ns#",
+								"property3": {
+									"@id": "https://schema.org/property-3",
+									"@type": XSD.string,
+								},
+								"property5": {
+									"@id": "https://schema.org/property-5",
+									"@type": XSD.dateTime,
+								},
+								"property2": {
+									"@id": "property-2",
+									"@type": XSD.integer,
+								},
+							} ),
+							id: "_:1",
+
+							property3: "sub-value",
+							property5: new Date( "2000-01-01" ),
+							property2: 12345,
+						},
+					} );
+
+					resource._registry
+						._resourcesMap.set( "", resource as any );
+					context
+						.extendObjectSchema( {
+							"@vocab": "https://example.com/ns#",
+						} )
+						.extendObjectSchema( "Resource", {
+							"property1": {
+								"@id": "property-1",
+								"@type": XSD.string,
+							},
+							"property2": {
+								"@id": "property-2",
+								"@type": XSD.integer,
+							},
+							"property3": {
+								"@id": "https://schema.org/property-3",
+								"@type": XSD.string,
+							},
+							"property4": {
+								"@id": "property-4",
+								"@type": XSD.boolean,
 							},
 							"property5": {
 								"@id": "https://schema.org/property-5",
 								"@type": XSD.dateTime,
 							},
-							"property2": {
-								"@id": "property-2",
-								"@type": XSD.integer,
-							},
-						} ),
-						id: "_:1",
+						} )
+					;
 
-						property3: "sub-value",
-						property5: new Date( "2000-01-01" ),
-						property2: 12345,
-					},
+					const returned:QueryDocumentDocument & MyDocument = await resource.get<MyDocument>( _ => _
+						.withType( "Resource" )
+						.properties( {
+							"property4": _.inherit,
+							"property2": {
+								"@id": "https://schema.org/property-2",
+								"@type": "@id",
+								"query": __ => __.properties( {
+									"property3": __.inherit,
+									"property5": __.inherit,
+								} ),
+							},
+						} )
+					);
+
+					expect( returned ).toEqual( jasmine.objectContaining( {
+						property4: false,
+						property1: "value",
+						property2: jasmine.objectContaining( {
+							property2: 12345,
+							property3: "updated sub-value",
+							property5: new Date( "2010-01-01" ),
+						} ) as any,
+					} ) );
 				} );
 
-				resource._registry
-					._resourcesMap.set( "", resource as any );
-				resource._context
-					.extendObjectSchema( {
-						"@vocab": "https://example.com/ns#",
-					} )
-					.extendObjectSchema( "Resource", {
-						"property1": {
-							"@id": "property-1",
-							"@type": XSD.string,
-						},
-						"property2": {
-							"@id": "property-2",
-							"@type": XSD.integer,
-						},
-						"property3": {
-							"@id": "https://schema.org/property-3",
-							"@type": XSD.string,
-						},
-						"property4": {
-							"@id": "property-4",
-							"@type": XSD.boolean,
-						},
-						"property5": {
-							"@id": "https://schema.org/property-5",
-							"@type": XSD.dateTime,
-						},
-					} )
-				;
+				it( "should merge partial metadata", async () => {
+					resource = createMock( {
+						_registry: context.registry,
 
-				const returned:QueryDocumentDocument & MyDocument = await resource.get<MyDocument>( _ => _
-					.withType( "Resource" )
-					.properties( {
-						"property4": _.inherit,
-						"property2": {
-							"@id": "https://schema.org/property-2",
-							"@type": "@id",
-							"query": __ => __.properties( {
-								"property3": __.inherit,
-								"property5": __.inherit,
-							} ),
-						},
-					} )
-				);
-
-				expect( returned ).toEqual( jasmine.objectContaining( {
-					property4: false,
-					property1: "value",
-					property2: jasmine.objectContaining( {
-						property2: 12345,
-						property3: "updated sub-value",
-						property5: new Date( "2010-01-01" ),
-					} ) as any,
-				} ) );
-			} );
-
-			it( "should merge partial metadata", async () => {
-				const resource:QueryDocumentDocument & { property2:BaseResource } = createMock( {
-					_partialMetadata: createPartialMetadata( {
-						"@vocab": "https://example.com/ns#",
-						"property2": {
-							"@id": "https://schema.org/property-2",
-							"@type": "@id",
-						},
-						"property1": {
-							"@id": "property-1",
-							"@type": XSD.string,
-						},
-					} ),
-					id: "https://example.com/",
-
-					property2: {
 						_partialMetadata: createPartialMetadata( {
 							"@vocab": "https://example.com/ns#",
-							"property3": {
-								"@id": "https://schema.org/property-3",
+							"property2": {
+								"@id": "https://schema.org/property-2",
+								"@type": "@id",
+							},
+							"property1": {
+								"@id": "property-1",
+								"@type": XSD.string,
+							},
+						} ),
+						id: "https://example.com/",
+
+						property2: {
+							_partialMetadata: createPartialMetadata( {
+								"@vocab": "https://example.com/ns#",
+								"property3": {
+									"@id": "https://schema.org/property-3",
+									"@type": XSD.string,
+								},
+								"property2": {
+									"@id": "property-2",
+									"@type": XSD.integer,
+								},
+							} ),
+							id: "_:1",
+						},
+					} );
+
+					resource._registry
+						._resourcesMap.set( "", resource as any );
+					context
+						.extendObjectSchema( {
+							"@vocab": "https://example.com/ns#",
+						} )
+						.extendObjectSchema( "Resource", {
+							"property1": {
+								"@id": "property-1",
 								"@type": XSD.string,
 							},
 							"property2": {
 								"@id": "property-2",
 								"@type": XSD.integer,
 							},
-						} ),
-						id: "_:1",
-					},
-				} );
+							"property3": {
+								"@id": "https://schema.org/property-3",
+								"@type": XSD.string,
+							},
+							"property4": {
+								"@id": "property-4",
+								"@type": XSD.boolean,
+							},
+							"property5": {
+								"@id": "https://schema.org/property-5",
+								"@type": XSD.dateTime,
+							},
+						} )
+					;
 
-				resource._registry
-					._resourcesMap.set( "", resource as any );
-				resource._context
-					.extendObjectSchema( {
-						"@vocab": "https://example.com/ns#",
-					} )
-					.extendObjectSchema( "Resource", {
-						"property1": {
-							"@id": "property-1",
-							"@type": XSD.string,
+
+					stubRequest( "https://example.com/", {
+						resources: [
+							{
+								"@id": "_:1",
+								"@type": [
+									C.VolatileResource,
+									C.QueryMetadata,
+								],
+								[ C.target ]: [ {
+									"@id": "https://example.com/",
+								} ],
+							},
+							{
+								"@id": "https://example.com/",
+								"@graph": [
+									{
+										"@id": "https://example.com/",
+										"@type": [
+											LDP.RDFSource,
+											LDP.BasicContainer,
+											C.Document,
+											"https://example.com/ns#Resource",
+										],
+										"https://schema.org/property-2": [ {
+											"@id": "_:1",
+										} ],
+									},
+									{
+										"@id": "_:1",
+										"@type": [],
+									},
+								],
+							},
+						],
+					} );
+
+					const returned:QueryDocumentDocument & { property2:PersistedResource } = await resource.get<{ property2:PersistedResource }>( _ => _
+						.withType( "Resource" )
+						.properties( {
+							"property4": _.inherit,
+							"property2": {
+								"@id": "https://schema.org/property-2",
+								"@type": "@id",
+								"query": __ => __.properties( {
+									"property3": __.inherit,
+									"property5": __.inherit,
+								} ),
+							},
+						} )
+					);
+
+					expect( returned._partialMetadata ).toEqual( jasmine.any( PartialMetadata ) );
+					expect( returned._partialMetadata.schema ).toEqual( ObjectSchema.ObjectSchemaDigester.digestSchema( {
+						"property4": {
+							"@id": "https://example.com/ns#property-4",
+							"@type": XSD.boolean,
 						},
 						"property2": {
-							"@id": "property-2",
-							"@type": XSD.integer,
+							"@id": "https://schema.org/property-2",
+							"@type": "@id",
 						},
+						"property1": {
+							"@id": "https://example.com/ns#property-1",
+							"@type": XSD.string,
+						},
+					} ) );
+
+					expect( returned.property2._partialMetadata ).toEqual( jasmine.any( PartialMetadata ) );
+					expect( returned.property2._partialMetadata.schema ).toEqual( ObjectSchema.ObjectSchemaDigester.digestSchema( {
 						"property3": {
 							"@id": "https://schema.org/property-3",
 							"@type": XSD.string,
-						},
-						"property4": {
-							"@id": "property-4",
-							"@type": XSD.boolean,
 						},
 						"property5": {
 							"@id": "https://schema.org/property-5",
 							"@type": XSD.dateTime,
 						},
-					} )
-				;
-
-
-				stubRequest( "https://example.com/", {
-					resources: [
-						{
-							"@id": "_:1",
-							"@type": [
-								C.VolatileResource,
-								C.QueryMetadata,
-							],
-							[ C.target ]: [ {
-								"@id": "https://example.com/",
-							} ],
+						"property2": {
+							"@id": "https://example.com/ns#property-2",
+							"@type": XSD.integer,
 						},
-						{
-							"@id": "https://example.com/",
-							"@graph": [
-								{
-									"@id": "https://example.com/",
-									"@type": [
-										LDP.RDFSource,
-										LDP.BasicContainer,
-										C.Document,
-										"https://example.com/ns#Resource",
-									],
-									"https://schema.org/property-2": [ {
-										"@id": "_:1",
-									} ],
-								},
-								{
-									"@id": "_:1",
-									"@type": [],
-								},
-							],
-						},
-					],
+					} ) );
 				} );
 
-				const returned:QueryDocumentDocument & { property2:PersistedResource } = await resource.get<{ property2:PersistedResource }>( _ => _
-					.withType( "Resource" )
-					.properties( {
-						"property4": _.inherit,
-						"property2": {
-							"@id": "https://schema.org/property-2",
-							"@type": "@id",
-							"query": __ => __.properties( {
-								"property3": __.inherit,
-								"property5": __.inherit,
-							} ),
-						},
-					} )
-				);
-
-				expect( returned._partialMetadata ).toEqual( jasmine.any( PartialMetadata ) );
-				expect( returned._partialMetadata.schema ).toEqual( ObjectSchema.ObjectSchemaDigester.digestSchema( {
-					"property4": {
-						"@id": "https://example.com/ns#property-4",
-						"@type": XSD.boolean,
-					},
-					"property2": {
-						"@id": "https://schema.org/property-2",
-						"@type": "@id",
-					},
-					"property1": {
-						"@id": "https://example.com/ns#property-1",
-						"@type": XSD.string,
-					},
-				} ) );
-
-				expect( returned.property2._partialMetadata ).toEqual( jasmine.any( PartialMetadata ) );
-				expect( returned.property2._partialMetadata.schema ).toEqual( ObjectSchema.ObjectSchemaDigester.digestSchema( {
-					"property3": {
-						"@id": "https://schema.org/property-3",
-						"@type": XSD.string,
-					},
-					"property5": {
-						"@id": "https://schema.org/property-5",
-						"@type": XSD.dateTime,
-					},
-					"property2": {
-						"@id": "https://example.com/ns#property-2",
-						"@type": XSD.integer,
-					},
-				} ) );
 			} );
 
 		} );
@@ -1606,1168 +1571,1159 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 			} );
 
 
-			it( "should request self ID", async () => {
-				const resource:QueryDocumentDocument = createMock();
-
-				resource.resolve( _ => _ );
-
-				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-				expect( request.url ).toBe( "https://example.com/" );
-			} );
-
-			it( "should parse error response", async () => {
-				stubRequest( "https://example.com/", { status: 500 } );
-
-				const resource:QueryDocumentDocument = createMock( { id: "https://example.com/" } );
-
-				const spy:jasmine.Spy = spyOn( resource._registry, "_parseErrorFromResponse" )
-					.and.callFake( () => Promise.reject( null ) );
-
-				await resource
-					.resolve( _ => _ )
-					.then( () => fail( "Should not resolve" ) )
-					.catch( error => {
-						if( error ) fail( error );
-
-						expect( spy ).toHaveBeenCalled();
-					} )
-				;
-			} );
-
-
-			it( "should send basic request headers", async () => {
-				const resource:QueryDocumentDocument = createMock();
-
-				resource.resolve( _ => _ );
-
-				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-				expect( request.requestHeaders ).toEqual( {
-					"accept": "application/ld+json",
-					"content-type": "application/sparql-query",
-					"prefer": [
-						`include="${ C.PreferDocumentETags }"`,
-						`include="${ C.PreferResultsContext }"`,
-					].join( ", " ),
-				} );
-			} );
-
-			it( "should add authentication header", async () => {
-				const resource:QueryDocumentDocument = createMock();
-
-				const spy:jasmine.Spy = spyOn( resource._context.auth, "addAuthentication" );
-
-				resource.resolve( _ => _ );
-
-				expect( spy ).toHaveBeenCalled();
-			} );
-
-			it( "should add custom headers", async () => {
-				stubRequest( "https://example.com/" );
-
-				const resource:QueryDocumentDocument = createMock();
-
-				resource.resolve( {
-					headers: new Map()
-						.set( "custom", new Header( "custom value" ) )
-					,
-				}, _ => _ );
-
-				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-				expect( request.requestHeaders ).toEqual( jasmine.objectContaining( {
-					"custom": "custom value",
-				} ) );
-			} );
-
-
-			it( "should send CONSTRUCT query", () => {
-				const resource:QueryDocumentDocument = createMock();
-
-				resource._context
-					.extendObjectSchema( {
-						"@vocab": "https://example.com/ns#",
-						"schema": "https://schema.org/",
-					} )
-					.extendObjectSchema( "Resource", {
-						"property1": {
-							"@id": "property-1",
-							"@type": "string",
-						},
-						"property2": {
-							"@id": "property-2",
-							"@type": "integer",
-						},
-						"property3": {
-							"@id": "https://schema.org/property-3",
-							"@type": "string",
-						},
-					} )
-				;
-
-
-				resource.resolve( _ => _
-					.withType( "Resource" )
-					.properties( {
-						"property1": _.inherit,
-						"property2": {
-							"@id": "https://schema.org/property-2",
-							"@type": "@id",
-							"query": __ => __.properties( {
-								"property2": __.inherit,
-								"property3": __.inherit,
-							} ),
-						},
-					} )
-				);
-
-
-				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-				expect( request.params ).toEqual( "" +
-					"PREFIX schema: <https://schema.org/> " +
-					"CONSTRUCT {" +
-					` ?metadata a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
-					"" + ` <${ C.target }> ?document.` +
-
-					" ?document a ?document__types;" +
-					"" + " <https://example.com/ns#property-1> ?document__property1;" +
-					"" + " schema:property-2 ?document__property2." +
-
-					" ?document__property2 a ?document__property2__types;" +
-					"" + " <https://example.com/ns#property-2> ?document__property2__property2;" +
-					"" + " schema:property-3 ?document__property2__property3 " +
-
-					"} WHERE {" +
-					" BIND(BNODE() AS ?metadata)." +
-
-					" VALUES ?document { <https://example.com/> }." +
-					" OPTIONAL { ?document a ?document__types }." +
-					" ?document a <https://example.com/ns#Resource>." +
-
-					" OPTIONAL {" +
-					"" + " ?document <https://example.com/ns#property-1> ?document__property1." +
-					"" + " FILTER( datatype( ?document__property1 ) = <http://www.w3.org/2001/XMLSchema#string> )" +
-					" }." +
-
-					" OPTIONAL {" +
-					"" + " ?document schema:property-2 ?document__property2." +
-					"" + " FILTER( ! isLiteral( ?document__property2 ) )." +
-					"" + " OPTIONAL { ?document__property2 a ?document__property2__types }." +
-
-					"" + " OPTIONAL {" +
-					"" + "" + " ?document__property2 <https://example.com/ns#property-2> ?document__property2__property2." +
-					"" + "" + " FILTER( datatype( ?document__property2__property2 ) = <http://www.w3.org/2001/XMLSchema#integer> )" +
-					"" + " }." +
-
-					"" + " OPTIONAL {" +
-					"" + "" + " ?document__property2 schema:property-3 ?document__property2__property3." +
-					"" + "" + " FILTER( datatype( ?document__property2__property3 ) = <http://www.w3.org/2001/XMLSchema#string> )" +
-					"" + " }" +
-					" } " +
-					"}"
-				);
-			} );
-
-			it( "should add TYPES at CONSTRUCT when available", () => {
-				const resource:QueryDocumentDocument = createMock( {
-					types: [ "https://example.com/ns#A-Type", "https://example.com/ns#Another-Type" ],
-				} );
-
-				resource._context
-					.extendObjectSchema( {
-						"@vocab": "https://example.com/ns#",
-						"schema": "https://schema.org/",
-					} )
-					.extendObjectSchema( "Resource", {
-						"property1": {
-							"@id": "property-1",
-							"@type": "string",
-						},
-						"property2": {
-							"@id": "property-2",
-							"@type": "integer",
-						},
-						"property3": {
-							"@id": "https://schema.org/property-3",
-							"@type": "string",
-						},
-					} )
-				;
-
-
-				resource.resolve( _ => _
-					.withType( "Resource" )
-					.properties( {
-						"property1": _.inherit,
-						"property2": {
-							"@id": "https://schema.org/property-2",
-							"@type": "@id",
-							"query": __ => __.properties( {
-								"property2": __.inherit,
-								"property3": __.inherit,
-							} ),
-						},
-					} )
-				);
-
-
-				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-				expect( request.params ).toEqual( "" +
-					"PREFIX schema: <https://schema.org/> " +
-					"CONSTRUCT {" +
-					` ?metadata a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
-					"" + ` <${ C.target }> ?document.` +
-
-					" ?document a ?document__types;" +
-					"" + " <https://example.com/ns#property-1> ?document__property1;" +
-					"" + " schema:property-2 ?document__property2." +
-
-					" ?document__property2 a ?document__property2__types;" +
-					"" + " <https://example.com/ns#property-2> ?document__property2__property2;" +
-					"" + " schema:property-3 ?document__property2__property3 " +
-
-					"} WHERE {" +
-					" BIND(BNODE() AS ?metadata)." +
-
-					" VALUES ?document { <https://example.com/> }." +
-					" OPTIONAL { ?document a ?document__types }." +
-					" ?document a" +
-					"" + " <https://example.com/ns#A-Type>," +
-					"" + " <https://example.com/ns#Another-Type>," +
-					"" + " <https://example.com/ns#Resource>." +
-
-					" OPTIONAL {" +
-					"" + " ?document <https://example.com/ns#property-1> ?document__property1." +
-					"" + " FILTER( datatype( ?document__property1 ) = <http://www.w3.org/2001/XMLSchema#string> )" +
-					" }." +
-
-					" OPTIONAL {" +
-					"" + " ?document schema:property-2 ?document__property2." +
-					"" + " FILTER( ! isLiteral( ?document__property2 ) )." +
-					"" + " OPTIONAL { ?document__property2 a ?document__property2__types }." +
-
-					"" + " OPTIONAL {" +
-					"" + "" + " ?document__property2 <https://example.com/ns#property-2> ?document__property2__property2." +
-					"" + "" + " FILTER( datatype( ?document__property2__property2 ) = <http://www.w3.org/2001/XMLSchema#integer> )" +
-					"" + " }." +
-
-					"" + " OPTIONAL {" +
-					"" + "" + " ?document__property2 schema:property-3 ?document__property2__property3." +
-					"" + "" + " FILTER( datatype( ?document__property2__property3 ) = <http://www.w3.org/2001/XMLSchema#string> )" +
-					"" + " }" +
-					" } " +
-					"}"
-				);
-			} );
-
-
-			it( "should return queried document", async () => {
-				stubRequest( "https://example.com/", {
-					resources: [
-						{
-							"@id": "_:1",
-							"@type": [
-								C.VolatileResource,
-								C.QueryMetadata,
-							],
-							[ C.target ]: [ {
-								"@id": "https://example.com/",
-							} ],
-						},
-						{
-							"@id": "https://example.com/",
-							"@graph": [
-								{
-									"@id": "https://example.com/",
-									"@type": [
-										LDP.RDFSource,
-										LDP.BasicContainer,
-										C.Document,
-										"https://example.com/ns#Resource",
-									],
-									"https://example.com/ns#property-1": [ {
-										"@value": "value",
-									} ],
-									"https://schema.org/property-2": [ {
-										"@id": "_:1",
-									} ],
-								},
-								{
-									"@id": "_:1",
-									"https://example.com/ns#property-2": [ {
-										"@value": "12345",
-										"@type": XSD.integer,
-									} ],
-									"https://schema.org/property-3": [ {
-										"@value": "another value",
-									} ],
-								},
-							],
-						},
-					],
-				} );
-
-				const resource:QueryDocumentDocument = createMock( { id: "https://example.com/" } );
-
-				resource._context
-					.extendObjectSchema( {
-						"@vocab": "https://example.com/ns#",
-					} )
-					.extendObjectSchema( "Resource", {
-						"property1": {
-							"@id": "property-1",
-							"@type": XSD.string,
-						},
-						"property2": {
-							"@id": "property-2",
-							"@type": XSD.integer,
-						},
-						"property3": {
-							"@id": "https://schema.org/property-3",
-							"@type": XSD.string,
-						},
-					} )
-				;
-
-
-				type MyDocument = { property1:string, property2:{ property2:number, property3:string } };
-				const returned:MyDocument = await resource.resolve<MyDocument>( _ => _
-					.withType( "Resource" )
-					.properties( {
-						"property1": _.inherit,
-						"property2": {
-							"@id": "https://schema.org/property-2",
-							"@type": "@id",
-							"query": __ => __.properties( {
-								"property2": __.inherit,
-								"property3": __.inherit,
-							} ),
-						},
-					} )
-				);
-
-				expect( returned ).toEqual( {
-					property1: "value",
-					property2: {
-						"property2": 12345,
-						"property3": "another value",
-					},
-				} );
-			} );
-
-			it( "should return queried document with partial relations", async () => {
-				stubRequest( "https://example.com/", {
-					resources: [
-						{
-							"@id": "_:1",
-							"@type": [
-								C.VolatileResource,
-								C.QueryMetadata,
-							],
-							[ C.target ]: [ {
-								"@id": "https://example.com/",
-							} ],
-						},
-						{
-							"@id": "https://example.com/",
-							"@graph": [
-								{
-									"@id": "https://example.com/",
-									"@type": [
-										LDP.RDFSource,
-										LDP.BasicContainer,
-										C.Document,
-										"https://example.com/ns#Resource",
-									],
-									"https://example.com/ns#property-1": [ {
-										"@value": "value",
-									} ],
-									"https://schema.org/property-2": [ {
-										"@id": "https://example.com/another-resource/",
-									} ],
-								},
-							],
-						},
-						{
-							"@id": "https://example.com/another-resource/",
-							"@graph": [ {
-								"@id": "https://example.com/another-resource/",
-								"https://example.com/ns#property-2": [ {
-									"@value": "12345",
-									"@type": XSD.integer,
-								} ],
-								"https://schema.org/property-3": [ {
-									"@value": "another value",
-								} ],
-							} ],
-						},
-					],
-				} );
-
-				const resource:QueryDocumentDocument = createMock( { id: "https://example.com/" } );
-
-				resource._context
-					.extendObjectSchema( {
-						"@vocab": "https://example.com/ns#",
-					} )
-					.extendObjectSchema( "Resource", {
-						"property1": {
-							"@id": "property-1",
-							"@type": XSD.string,
-						},
-						"property2": {
-							"@id": "property-2",
-							"@type": XSD.integer,
-						},
-						"property3": {
-							"@id": "https://schema.org/property-3",
-							"@type": XSD.string,
-						},
-					} )
-				;
-
-
-				type MyDocument = { property1:string, property2:{ property2:number, property3:string } };
-				const returned:MyDocument = await resource.resolve<MyDocument>( _ => _
-					.withType( "Resource" )
-					.properties( {
-						"property1": _.inherit,
-						"property2": {
-							"@id": "https://schema.org/property-2",
-							"@type": "@id",
-							"query": __ => __.properties( {
-								"property2": __.inherit,
-								"property3": __.inherit,
-							} ),
-						},
-					} )
-				);
-
-				expect( returned ).toEqual( {
-					property1: "value",
-					property2: {
-						"property2": 12345,
-						"property3": "another value",
-					},
-				} );
-			} );
-
-
-			it( "should add persisted document data", async () => {
-				stubRequest( "https://example.com/", {
-					resources: [
-						{
-							"@id": "_:1",
-							"@type": [
-								C.VolatileResource,
-								C.QueryMetadata,
-							],
-							[ C.target ]: [ {
-								"@id": "https://example.com/",
-							} ],
-						},
-						{
-							"@id": "_:2",
-							"@type": [
-								C.ResponseMetadata,
-								C.VolatileResource,
-							],
-							[ C.documentMetadata ]: [ {
-								"@id": "_:3",
-							} ],
-						},
-						{
-							"@id": "_:3",
-							"@type": [
-								C.DocumentMetadata,
-								C.VolatileResource,
-							],
-							[ C.eTag ]: [ {
-								"@value": "\"1-12345\"",
-							} ],
-							[ C.relatedDocument ]: [ {
-								"@id": "https://example.com/",
-							} ],
-						},
-						{
-							"@id": "https://example.com/",
-							"@graph": [
-								{
-									"@id": "https://example.com/",
-									"@type": [
-										LDP.RDFSource,
-										LDP.BasicContainer,
-										C.Document,
-										"https://example.com/ns#Resource",
-									],
-								},
-							],
-						},
-					],
-				} );
-
-				const resource:QueryDocumentDocument = createMock( { id: "https://example.com/" } );
-				const returned:QueryDocumentDocument = await resource.resolve( _ => _
-					.properties( {} )
-				);
-
-				expect( returned ).toEqual( jasmine.objectContaining( {
-					_eTag: "\"1-12345\"",
-					_resolved: true,
-				} ) );
-			} );
-
-			it( "should add persisted data at the partial relations", async () => {
-				stubRequest( "https://example.com/", {
-					resources: [
-						{
-							"@id": "_:1",
-							"@type": [
-								C.VolatileResource,
-								C.QueryMetadata,
-							],
-							[ C.target ]: [ {
-								"@id": "https://example.com/",
-							} ],
-						},
-						{
-							"@id": "_:2",
-							"@type": [
-								C.ResponseMetadata,
-								C.VolatileResource,
-							],
-							[ C.documentMetadata ]: [ {
-								"@id": "_:3",
-							}, {
-								"@id": "_:4",
-							} ],
-						},
-						{
-							"@id": "_:3",
-							"@type": [
-								C.DocumentMetadata,
-								C.VolatileResource,
-							],
-							[ C.eTag ]: [ {
-								"@value": "\"1-12345\"",
-							} ],
-							[ C.relatedDocument ]: [ {
-								"@id": "https://example.com/",
-							} ],
-						},
-						{
-							"@id": "_:4",
-							"@type": [
-								C.DocumentMetadata,
-								C.VolatileResource,
-							],
-							[ C.eTag ]: [ {
-								"@value": "\"2-12345\"",
-							} ],
-							[ C.relatedDocument ]: [ {
-								"@id": "https://example.com/another-resource/",
-							} ],
-						},
-						{
-							"@id": "https://example.com/",
-							"@graph": [
-								{
-									"@id": "https://example.com/",
-									"@type": [
-										LDP.RDFSource,
-										LDP.BasicContainer,
-										C.Document,
-										"https://example.com/ns#Resource",
-									],
-									"https://example.com/ns#property-1": [ {
-										"@value": "value",
-									} ],
-									"https://schema.org/property-2": [ {
-										"@id": "https://example.com/another-resource/",
-									} ],
-								},
-							],
-						},
-						{
-							"@id": "https://example.com/another-resource/",
-							"@graph": [ {
-								"@id": "https://example.com/another-resource/",
-								"https://example.com/ns#property-2": [ {
-									"@value": "12345",
-									"@type": XSD.integer,
-								} ],
-								"https://schema.org/property-3": [ {
-									"@value": "another value",
-								} ],
-							} ],
-						},
-					],
-				} );
-
-				const resource:QueryDocumentDocument = createMock( { id: "https://example.com/" } );
-
-				resource._context
-					.extendObjectSchema( {
-						"@vocab": "https://example.com/ns#",
-					} )
-					.extendObjectSchema( "Resource", {
-						"property1": {
-							"@id": "property-1",
-							"@type": XSD.string,
-						},
-						"property2": {
-							"@id": "property-2",
-							"@type": XSD.integer,
-						},
-						"property3": {
-							"@id": "https://schema.org/property-3",
-							"@type": XSD.string,
-						},
-					} )
-				;
-
-
-				type MyDocument = { property1:string, property2:QueryDocumentDocument };
-				const returned:MyDocument = await resource.resolve<MyDocument>( _ => _
-					.withType( "Resource" )
-					.properties( {
-						"property1": _.inherit,
-						"property2": {
-							"@id": "https://schema.org/property-2",
-							"@type": "@id",
-							"query": __ => __.properties( {
-								"property2": __.inherit,
-								"property3": __.inherit,
-							} ),
-						},
-					} )
-				);
-
-				expect( returned.property2 ).toEqual( jasmine.objectContaining( {
-					_eTag: "\"2-12345\"",
-					_resolved: true,
-				} ) );
-			} );
-
-			it( "should add partial metadata data", async () => {
-				stubRequest( "https://example.com/", {
-					resources: [
-						{
-							"@id": "_:1",
-							"@type": [
-								C.VolatileResource,
-								C.QueryMetadata,
-							],
-							[ C.target ]: [ {
-								"@id": "https://example.com/",
-							} ],
-						},
-						{
-							"@id": "https://example.com/",
-							"@graph": [
-								{
-									"@id": "https://example.com/",
-									"@type": [
-										LDP.RDFSource,
-										LDP.BasicContainer,
-										C.Document,
-										"https://example.com/ns#Resource",
-									],
-									"https://example.com/ns#property-1": [ {
-										"@value": "value",
-									} ],
-									"https://schema.org/property-2": [ {
-										"@id": "_:1",
-									} ],
-								},
-								{
-									"@id": "_:1",
-									"https://example.com/ns#property-2": [ {
-										"@value": "12345",
-										"@type": XSD.integer,
-									} ],
-									"https://schema.org/property-3": [ {
-										"@value": "another value",
-									} ],
-								},
-							],
-						},
-					],
-				} );
-
-				const resource:QueryDocumentDocument = createMock( { id: "https://example.com/" } );
-
-				resource._context
-					.extendObjectSchema( {
-						"@vocab": "https://example.com/ns#",
-					} )
-					.extendObjectSchema( "Resource", {
-						"property1": {
-							"@id": "property-1",
-							"@type": XSD.string,
-						},
-						"property2": {
-							"@id": "property-2",
-							"@type": XSD.integer,
-						},
-						"property3": {
-							"@id": "https://schema.org/property-3",
-							"@type": XSD.string,
-						},
-					} )
-				;
-
-				type MyResource = QueryDocumentDocument & { property2:PersistedResource };
-				const returned:MyResource = await resource.resolve<{ property2:PersistedResource }>( _ => _
-					.withType( "Resource" )
-					.properties( {
-						"property1": _.inherit,
-						"property2": {
-							"@id": "https://schema.org/property-2",
-							"@type": "@id",
-							"query": __ => __.properties( {
-								"property2": __.inherit,
-								"property3": __.inherit,
-							} ),
-						},
-					} )
-				);
-
-				expect( returned._partialMetadata ).toEqual( jasmine.any( PartialMetadata ) );
-				expect( returned._partialMetadata.schema ).toEqual( ObjectSchemaDigester.digestSchema( {
-					"property1": {
-						"@id": "https://example.com/ns#property-1",
-						"@type": XSD.string,
-					},
-					"property2": {
-						"@id": "https://schema.org/property-2",
-						"@type": "@id",
-					},
-				} ) );
-
-				expect( returned.property2._partialMetadata ).toEqual( jasmine.any( PartialMetadata ) );
-				expect( returned.property2._partialMetadata.schema ).toEqual( ObjectSchemaDigester.digestSchema( {
-					"property2": {
-						"@id": "https://example.com/ns#property-2",
-						"@type": XSD.integer,
-					},
-					"property3": {
-						"@id": "https://schema.org/property-3",
-						"@type": XSD.string,
-					},
-				} ) );
-			} );
-
-			it( "should add partial metadata at the partial relations", async () => {
-				stubRequest( "https://example.com/", {
-					resources: [
-						{
-							"@id": "_:1",
-							"@type": [
-								C.VolatileResource,
-								C.QueryMetadata,
-							],
-							[ C.target ]: [ {
-								"@id": "https://example.com/",
-							} ],
-						},
-						{
-							"@id": "https://example.com/",
-							"@graph": [
-								{
-									"@id": "https://example.com/",
-									"@type": [
-										LDP.RDFSource,
-										LDP.BasicContainer,
-										C.Document,
-										"https://example.com/ns#Resource",
-									],
-									"https://example.com/ns#property-1": [ {
-										"@value": "value",
-									} ],
-									"https://schema.org/property-2": [ {
-										"@id": "https://example.com/another-resource/",
-									} ],
-								},
-							],
-						},
-						{
-							"@id": "https://example.com/another-resource/",
-							"@graph": [ {
-								"@id": "https://example.com/another-resource/",
-								"https://example.com/ns#property-2": [ {
-									"@value": "12345",
-									"@type": XSD.integer,
-								} ],
-								"https://schema.org/property-3": [ {
-									"@value": "another value",
-								} ],
-							} ],
-						},
-					],
-				} );
-
-				const resource:QueryDocumentDocument = createMock( { id: "https://example.com/" } );
-
-				resource._context
-					.extendObjectSchema( {
-						"@vocab": "https://example.com/ns#",
-					} )
-					.extendObjectSchema( "Resource", {
-						"property1": {
-							"@id": "property-1",
-							"@type": XSD.string,
-						},
-						"property2": {
-							"@id": "property-2",
-							"@type": XSD.integer,
-						},
-						"property3": {
-							"@id": "https://schema.org/property-3",
-							"@type": XSD.string,
-						},
-					} )
-				;
-
-
-				type MyResource = QueryDocumentDocument & { property2:PersistedResource };
-				const returned:MyResource = await resource.resolve<{ property2:PersistedResource }>( _ => _
-					.withType( "Resource" )
-					.properties( {
-						"property1": _.inherit,
-						"property2": {
-							"@id": "https://schema.org/property-2",
-							"@type": "@id",
-							"query": __ => __.properties( {
-								"property2": __.inherit,
-								"property3": __.inherit,
-							} ),
-						},
-					} )
-				);
-
-
-				expect( returned._partialMetadata ).toEqual( jasmine.any( PartialMetadata ) );
-				expect( returned._partialMetadata.schema ).toEqual( ObjectSchemaDigester.digestSchema( {
-					"property1": {
-						"@id": "https://example.com/ns#property-1",
-						"@type": XSD.string,
-					},
-					"property2": {
-						"@id": "https://schema.org/property-2",
-						"@type": "@id",
-					},
-				} ) );
-
-				expect( returned.property2._partialMetadata ).toEqual( jasmine.any( PartialMetadata ) );
-				expect( returned.property2._partialMetadata.schema ).toEqual( ObjectSchemaDigester.digestSchema( {
-					"property2": {
-						"@id": "https://example.com/ns#property-2",
-						"@type": XSD.integer,
-					},
-					"property3": {
-						"@id": "https://schema.org/property-3",
-						"@type": XSD.string,
-					},
-				} ) );
-			} );
-
-			it( "should merge query results", async () => {
-				stubRequest( "https://example.com/", {
-					resources: [
-						{
-							"@id": "_:1",
-							"@type": [
-								C.VolatileResource,
-								C.QueryMetadata,
-							],
-							[ C.target ]: [ {
-								"@id": "https://example.com/",
-							} ],
-						},
-						{
-							"@id": "https://example.com/",
-							"@graph": [
-								{
-									"@id": "https://example.com/",
-									"@type": [
-										LDP.RDFSource,
-										LDP.BasicContainer,
-										C.Document,
-										"https://example.com/ns#Resource",
-									],
-									"https://example.com/ns#property-4": [ {
-										"@value": "false",
-										"@type": XSD.boolean,
-									} ],
-									"https://schema.org/property-2": [ {
-										"@id": "_:1",
-									} ],
-								},
-								{
-									"@id": "_:1",
-									"https://schema.org/property-3": [ {
-										"@value": "updated sub-value",
-									} ],
-									"https://schema.org/property-5": [ {
-										"@value": "2010-01-01",
-										"@type": XSD.dateTime,
-									} ],
-								},
-							],
-						},
-					],
+			describe( "When has a context", () => {
+
+				let context:CarbonLDP;
+				let resource:QueryDocumentDocument;
+				beforeEach( ():void => {
+					context = new CarbonLDP( "https://example.com/" );
+					resource = createMock( { _registry: context.registry } );
 				} );
 
 
-				interface MyDocument {
-					property4:boolean;
-					property1:string;
-					property2:BaseResource;
-				}
+				it( "should request self ID", async () => {
+					resource.resolve( _ => _ );
 
-				const resource:QueryDocumentDocument & MyDocument = createMock( {
-					_partialMetadata: createPartialMetadata( {
-						"@vocab": "https://example.com/ns#",
-						"property4": {
-							"@id": "property-4",
-							"@type": XSD.boolean,
-						},
-						"property2": {
-							"@id": "https://schema.org/property-2",
-							"@type": "@id",
-						},
-						"property1": {
-							"@id": "property-1",
-							"@type": XSD.string,
-						},
-					} ),
-					id: "https://example.com/",
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.url ).toBe( "https://example.com/" );
+				} );
 
-					property4: true,
-					property1: "value",
-					property2: {
-						_partialMetadata: createPartialMetadata( {
+				it( "should parse error response", async () => {
+					stubRequest( "https://example.com/", { status: 500 } );
+
+					const spy:jasmine.Spy = spyOn( resource._registry, "_parseErrorFromResponse" )
+						.and.callFake( () => Promise.reject( null ) );
+
+					await resource
+						.resolve( _ => _ )
+						.then( () => fail( "Should not resolve" ) )
+						.catch( error => {
+							if( error ) fail( error );
+
+							expect( spy ).toHaveBeenCalled();
+						} )
+					;
+				} );
+
+
+				it( "should send basic request headers", async () => {
+					resource.resolve( _ => _ );
+
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.requestHeaders ).toEqual( {
+						"accept": "application/ld+json",
+						"content-type": "application/sparql-query",
+						"prefer": [
+							`include="${ C.PreferDocumentETags }"`,
+							`include="${ C.PreferResultsContext }"`,
+						].join( ", " ),
+					} );
+				} );
+
+				it( "should add authentication header", async () => {
+					const spy:jasmine.Spy = spyOn( context.auth, "addAuthentication" );
+
+					resource.resolve( _ => _ );
+
+					expect( spy ).toHaveBeenCalled();
+				} );
+
+				it( "should add custom headers", async () => {
+					stubRequest( "https://example.com/" );
+
+					resource.resolve( {
+						headers: new Map()
+							.set( "custom", new Header( "custom value" ) )
+						,
+					}, _ => _ );
+
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.requestHeaders ).toEqual( jasmine.objectContaining( {
+						"custom": "custom value",
+					} ) );
+				} );
+
+
+				it( "should send CONSTRUCT query", () => {
+					context
+						.extendObjectSchema( {
 							"@vocab": "https://example.com/ns#",
+							"schema": "https://schema.org/",
+						} )
+						.extendObjectSchema( "Resource", {
+							"property1": {
+								"@id": "property-1",
+								"@type": "string",
+							},
+							"property2": {
+								"@id": "property-2",
+								"@type": "integer",
+							},
+							"property3": {
+								"@id": "https://schema.org/property-3",
+								"@type": "string",
+							},
+						} )
+					;
+
+
+					resource.resolve( _ => _
+						.withType( "Resource" )
+						.properties( {
+							"property1": _.inherit,
+							"property2": {
+								"@id": "https://schema.org/property-2",
+								"@type": "@id",
+								"query": __ => __.properties( {
+									"property2": __.inherit,
+									"property3": __.inherit,
+								} ),
+							},
+						} )
+					);
+
+
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.params ).toEqual( "" +
+						"PREFIX schema: <https://schema.org/> " +
+						"CONSTRUCT {" +
+						` ?metadata a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
+						"" + ` <${ C.target }> ?document.` +
+
+						" ?document a ?document__types;" +
+						"" + " <https://example.com/ns#property-1> ?document__property1;" +
+						"" + " schema:property-2 ?document__property2." +
+
+						" ?document__property2 a ?document__property2__types;" +
+						"" + " <https://example.com/ns#property-2> ?document__property2__property2;" +
+						"" + " schema:property-3 ?document__property2__property3 " +
+
+						"} WHERE {" +
+						" BIND(BNODE() AS ?metadata)." +
+
+						" VALUES ?document { <https://example.com/> }." +
+						" OPTIONAL { ?document a ?document__types }." +
+						" ?document a <https://example.com/ns#Resource>." +
+
+						" OPTIONAL {" +
+						"" + " ?document <https://example.com/ns#property-1> ?document__property1." +
+						"" + " FILTER( datatype( ?document__property1 ) = <http://www.w3.org/2001/XMLSchema#string> )" +
+						" }." +
+
+						" OPTIONAL {" +
+						"" + " ?document schema:property-2 ?document__property2." +
+						"" + " FILTER( ! isLiteral( ?document__property2 ) )." +
+						"" + " OPTIONAL { ?document__property2 a ?document__property2__types }." +
+
+						"" + " OPTIONAL {" +
+						"" + "" + " ?document__property2 <https://example.com/ns#property-2> ?document__property2__property2." +
+						"" + "" + " FILTER( datatype( ?document__property2__property2 ) = <http://www.w3.org/2001/XMLSchema#integer> )" +
+						"" + " }." +
+
+						"" + " OPTIONAL {" +
+						"" + "" + " ?document__property2 schema:property-3 ?document__property2__property3." +
+						"" + "" + " FILTER( datatype( ?document__property2__property3 ) = <http://www.w3.org/2001/XMLSchema#string> )" +
+						"" + " }" +
+						" } " +
+						"}"
+					);
+				} );
+
+				it( "should add TYPES at CONSTRUCT when available", () => {
+					resource.types = [ "https://example.com/ns#A-Type", "https://example.com/ns#Another-Type" ];
+
+					context
+						.extendObjectSchema( {
+							"@vocab": "https://example.com/ns#",
+							"schema": "https://schema.org/",
+						} )
+						.extendObjectSchema( "Resource", {
+							"property1": {
+								"@id": "property-1",
+								"@type": "string",
+							},
+							"property2": {
+								"@id": "property-2",
+								"@type": "integer",
+							},
+							"property3": {
+								"@id": "https://schema.org/property-3",
+								"@type": "string",
+							},
+						} )
+					;
+
+
+					resource.resolve( _ => _
+						.withType( "Resource" )
+						.properties( {
+							"property1": _.inherit,
+							"property2": {
+								"@id": "https://schema.org/property-2",
+								"@type": "@id",
+								"query": __ => __.properties( {
+									"property2": __.inherit,
+									"property3": __.inherit,
+								} ),
+							},
+						} )
+					);
+
+
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.params ).toEqual( "" +
+						"PREFIX schema: <https://schema.org/> " +
+						"CONSTRUCT {" +
+						` ?metadata a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
+						"" + ` <${ C.target }> ?document.` +
+
+						" ?document a ?document__types;" +
+						"" + " <https://example.com/ns#property-1> ?document__property1;" +
+						"" + " schema:property-2 ?document__property2." +
+
+						" ?document__property2 a ?document__property2__types;" +
+						"" + " <https://example.com/ns#property-2> ?document__property2__property2;" +
+						"" + " schema:property-3 ?document__property2__property3 " +
+
+						"} WHERE {" +
+						" BIND(BNODE() AS ?metadata)." +
+
+						" VALUES ?document { <https://example.com/> }." +
+						" OPTIONAL { ?document a ?document__types }." +
+						" ?document a" +
+						"" + " <https://example.com/ns#A-Type>," +
+						"" + " <https://example.com/ns#Another-Type>," +
+						"" + " <https://example.com/ns#Resource>." +
+
+						" OPTIONAL {" +
+						"" + " ?document <https://example.com/ns#property-1> ?document__property1." +
+						"" + " FILTER( datatype( ?document__property1 ) = <http://www.w3.org/2001/XMLSchema#string> )" +
+						" }." +
+
+						" OPTIONAL {" +
+						"" + " ?document schema:property-2 ?document__property2." +
+						"" + " FILTER( ! isLiteral( ?document__property2 ) )." +
+						"" + " OPTIONAL { ?document__property2 a ?document__property2__types }." +
+
+						"" + " OPTIONAL {" +
+						"" + "" + " ?document__property2 <https://example.com/ns#property-2> ?document__property2__property2." +
+						"" + "" + " FILTER( datatype( ?document__property2__property2 ) = <http://www.w3.org/2001/XMLSchema#integer> )" +
+						"" + " }." +
+
+						"" + " OPTIONAL {" +
+						"" + "" + " ?document__property2 schema:property-3 ?document__property2__property3." +
+						"" + "" + " FILTER( datatype( ?document__property2__property3 ) = <http://www.w3.org/2001/XMLSchema#string> )" +
+						"" + " }" +
+						" } " +
+						"}"
+					);
+				} );
+
+
+				it( "should return queried document", async () => {
+					stubRequest( "https://example.com/", {
+						resources: [
+							{
+								"@id": "_:1",
+								"@type": [
+									C.VolatileResource,
+									C.QueryMetadata,
+								],
+								[ C.target ]: [ {
+									"@id": "https://example.com/",
+								} ],
+							},
+							{
+								"@id": "https://example.com/",
+								"@graph": [
+									{
+										"@id": "https://example.com/",
+										"@type": [
+											LDP.RDFSource,
+											LDP.BasicContainer,
+											C.Document,
+											"https://example.com/ns#Resource",
+										],
+										"https://example.com/ns#property-1": [ {
+											"@value": "value",
+										} ],
+										"https://schema.org/property-2": [ {
+											"@id": "_:1",
+										} ],
+									},
+									{
+										"@id": "_:1",
+										"https://example.com/ns#property-2": [ {
+											"@value": "12345",
+											"@type": XSD.integer,
+										} ],
+										"https://schema.org/property-3": [ {
+											"@value": "another value",
+										} ],
+									},
+								],
+							},
+						],
+					} );
+
+					context
+						.extendObjectSchema( {
+							"@vocab": "https://example.com/ns#",
+						} )
+						.extendObjectSchema( "Resource", {
+							"property1": {
+								"@id": "property-1",
+								"@type": XSD.string,
+							},
+							"property2": {
+								"@id": "property-2",
+								"@type": XSD.integer,
+							},
 							"property3": {
 								"@id": "https://schema.org/property-3",
 								"@type": XSD.string,
+							},
+						} )
+					;
+
+
+					type MyDocument = { property1:string, property2:{ property2:number, property3:string } };
+					const returned:MyDocument = await resource.resolve<MyDocument>( _ => _
+						.withType( "Resource" )
+						.properties( {
+							"property1": _.inherit,
+							"property2": {
+								"@id": "https://schema.org/property-2",
+								"@type": "@id",
+								"query": __ => __.properties( {
+									"property2": __.inherit,
+									"property3": __.inherit,
+								} ),
+							},
+						} )
+					);
+
+					expect( returned ).toEqual( {
+						property1: "value",
+						property2: {
+							"property2": 12345,
+							"property3": "another value",
+						},
+					} );
+				} );
+
+				it( "should return queried document with partial relations", async () => {
+					stubRequest( "https://example.com/", {
+						resources: [
+							{
+								"@id": "_:1",
+								"@type": [
+									C.VolatileResource,
+									C.QueryMetadata,
+								],
+								[ C.target ]: [ {
+									"@id": "https://example.com/",
+								} ],
+							},
+							{
+								"@id": "https://example.com/",
+								"@graph": [
+									{
+										"@id": "https://example.com/",
+										"@type": [
+											LDP.RDFSource,
+											LDP.BasicContainer,
+											C.Document,
+											"https://example.com/ns#Resource",
+										],
+										"https://example.com/ns#property-1": [ {
+											"@value": "value",
+										} ],
+										"https://schema.org/property-2": [ {
+											"@id": "https://example.com/another-resource/",
+										} ],
+									},
+								],
+							},
+							{
+								"@id": "https://example.com/another-resource/",
+								"@graph": [ {
+									"@id": "https://example.com/another-resource/",
+									"https://example.com/ns#property-2": [ {
+										"@value": "12345",
+										"@type": XSD.integer,
+									} ],
+									"https://schema.org/property-3": [ {
+										"@value": "another value",
+									} ],
+								} ],
+							},
+						],
+					} );
+
+					context
+						.extendObjectSchema( {
+							"@vocab": "https://example.com/ns#",
+						} )
+						.extendObjectSchema( "Resource", {
+							"property1": {
+								"@id": "property-1",
+								"@type": XSD.string,
+							},
+							"property2": {
+								"@id": "property-2",
+								"@type": XSD.integer,
+							},
+							"property3": {
+								"@id": "https://schema.org/property-3",
+								"@type": XSD.string,
+							},
+						} )
+					;
+
+
+					type MyDocument = { property1:string, property2:{ property2:number, property3:string } };
+					const returned:MyDocument = await resource.resolve<MyDocument>( _ => _
+						.withType( "Resource" )
+						.properties( {
+							"property1": _.inherit,
+							"property2": {
+								"@id": "https://schema.org/property-2",
+								"@type": "@id",
+								"query": __ => __.properties( {
+									"property2": __.inherit,
+									"property3": __.inherit,
+								} ),
+							},
+						} )
+					);
+
+					expect( returned ).toEqual( {
+						property1: "value",
+						property2: {
+							"property2": 12345,
+							"property3": "another value",
+						},
+					} );
+				} );
+
+
+				it( "should add persisted document data", async () => {
+					stubRequest( "https://example.com/", {
+						resources: [
+							{
+								"@id": "_:1",
+								"@type": [
+									C.VolatileResource,
+									C.QueryMetadata,
+								],
+								[ C.target ]: [ {
+									"@id": "https://example.com/",
+								} ],
+							},
+							{
+								"@id": "_:2",
+								"@type": [
+									C.ResponseMetadata,
+									C.VolatileResource,
+								],
+								[ C.documentMetadata ]: [ {
+									"@id": "_:3",
+								} ],
+							},
+							{
+								"@id": "_:3",
+								"@type": [
+									C.DocumentMetadata,
+									C.VolatileResource,
+								],
+								[ C.eTag ]: [ {
+									"@value": "\"1-12345\"",
+								} ],
+								[ C.relatedDocument ]: [ {
+									"@id": "https://example.com/",
+								} ],
+							},
+							{
+								"@id": "https://example.com/",
+								"@graph": [
+									{
+										"@id": "https://example.com/",
+										"@type": [
+											LDP.RDFSource,
+											LDP.BasicContainer,
+											C.Document,
+											"https://example.com/ns#Resource",
+										],
+									},
+								],
+							},
+						],
+					} );
+
+					const returned:QueryDocumentDocument = await resource.resolve( _ => _
+						.properties( {} )
+					);
+
+					expect( returned ).toEqual( jasmine.objectContaining( {
+						_eTag: "\"1-12345\"",
+						_resolved: true,
+					} ) );
+				} );
+
+				it( "should add persisted data at the partial relations", async () => {
+					stubRequest( "https://example.com/", {
+						resources: [
+							{
+								"@id": "_:1",
+								"@type": [
+									C.VolatileResource,
+									C.QueryMetadata,
+								],
+								[ C.target ]: [ {
+									"@id": "https://example.com/",
+								} ],
+							},
+							{
+								"@id": "_:2",
+								"@type": [
+									C.ResponseMetadata,
+									C.VolatileResource,
+								],
+								[ C.documentMetadata ]: [ {
+									"@id": "_:3",
+								}, {
+									"@id": "_:4",
+								} ],
+							},
+							{
+								"@id": "_:3",
+								"@type": [
+									C.DocumentMetadata,
+									C.VolatileResource,
+								],
+								[ C.eTag ]: [ {
+									"@value": "\"1-12345\"",
+								} ],
+								[ C.relatedDocument ]: [ {
+									"@id": "https://example.com/",
+								} ],
+							},
+							{
+								"@id": "_:4",
+								"@type": [
+									C.DocumentMetadata,
+									C.VolatileResource,
+								],
+								[ C.eTag ]: [ {
+									"@value": "\"2-12345\"",
+								} ],
+								[ C.relatedDocument ]: [ {
+									"@id": "https://example.com/another-resource/",
+								} ],
+							},
+							{
+								"@id": "https://example.com/",
+								"@graph": [
+									{
+										"@id": "https://example.com/",
+										"@type": [
+											LDP.RDFSource,
+											LDP.BasicContainer,
+											C.Document,
+											"https://example.com/ns#Resource",
+										],
+										"https://example.com/ns#property-1": [ {
+											"@value": "value",
+										} ],
+										"https://schema.org/property-2": [ {
+											"@id": "https://example.com/another-resource/",
+										} ],
+									},
+								],
+							},
+							{
+								"@id": "https://example.com/another-resource/",
+								"@graph": [ {
+									"@id": "https://example.com/another-resource/",
+									"https://example.com/ns#property-2": [ {
+										"@value": "12345",
+										"@type": XSD.integer,
+									} ],
+									"https://schema.org/property-3": [ {
+										"@value": "another value",
+									} ],
+								} ],
+							},
+						],
+					} );
+
+					context
+						.extendObjectSchema( {
+							"@vocab": "https://example.com/ns#",
+						} )
+						.extendObjectSchema( "Resource", {
+							"property1": {
+								"@id": "property-1",
+								"@type": XSD.string,
+							},
+							"property2": {
+								"@id": "property-2",
+								"@type": XSD.integer,
+							},
+							"property3": {
+								"@id": "https://schema.org/property-3",
+								"@type": XSD.string,
+							},
+						} )
+					;
+
+
+					type MyDocument = { property1:string, property2:QueryDocumentDocument };
+					const returned:MyDocument = await resource.resolve<MyDocument>( _ => _
+						.withType( "Resource" )
+						.properties( {
+							"property1": _.inherit,
+							"property2": {
+								"@id": "https://schema.org/property-2",
+								"@type": "@id",
+								"query": __ => __.properties( {
+									"property2": __.inherit,
+									"property3": __.inherit,
+								} ),
+							},
+						} )
+					);
+
+					expect( returned.property2 ).toEqual( jasmine.objectContaining( {
+						_eTag: "\"2-12345\"",
+						_resolved: true,
+					} ) );
+				} );
+
+				it( "should add partial metadata data", async () => {
+					stubRequest( "https://example.com/", {
+						resources: [
+							{
+								"@id": "_:1",
+								"@type": [
+									C.VolatileResource,
+									C.QueryMetadata,
+								],
+								[ C.target ]: [ {
+									"@id": "https://example.com/",
+								} ],
+							},
+							{
+								"@id": "https://example.com/",
+								"@graph": [
+									{
+										"@id": "https://example.com/",
+										"@type": [
+											LDP.RDFSource,
+											LDP.BasicContainer,
+											C.Document,
+											"https://example.com/ns#Resource",
+										],
+										"https://example.com/ns#property-1": [ {
+											"@value": "value",
+										} ],
+										"https://schema.org/property-2": [ {
+											"@id": "_:1",
+										} ],
+									},
+									{
+										"@id": "_:1",
+										"https://example.com/ns#property-2": [ {
+											"@value": "12345",
+											"@type": XSD.integer,
+										} ],
+										"https://schema.org/property-3": [ {
+											"@value": "another value",
+										} ],
+									},
+								],
+							},
+						],
+					} );
+
+					context
+						.extendObjectSchema( {
+							"@vocab": "https://example.com/ns#",
+						} )
+						.extendObjectSchema( "Resource", {
+							"property1": {
+								"@id": "property-1",
+								"@type": XSD.string,
+							},
+							"property2": {
+								"@id": "property-2",
+								"@type": XSD.integer,
+							},
+							"property3": {
+								"@id": "https://schema.org/property-3",
+								"@type": XSD.string,
+							},
+						} )
+					;
+
+					type MyResource = QueryDocumentDocument & { property2:PersistedResource };
+					const returned:MyResource = await resource.resolve<{ property2:PersistedResource }>( _ => _
+						.withType( "Resource" )
+						.properties( {
+							"property1": _.inherit,
+							"property2": {
+								"@id": "https://schema.org/property-2",
+								"@type": "@id",
+								"query": __ => __.properties( {
+									"property2": __.inherit,
+									"property3": __.inherit,
+								} ),
+							},
+						} )
+					);
+
+					expect( returned._partialMetadata ).toEqual( jasmine.any( PartialMetadata ) );
+					expect( returned._partialMetadata.schema ).toEqual( ObjectSchemaDigester.digestSchema( {
+						"property1": {
+							"@id": "https://example.com/ns#property-1",
+							"@type": XSD.string,
+						},
+						"property2": {
+							"@id": "https://schema.org/property-2",
+							"@type": "@id",
+						},
+					} ) );
+
+					expect( returned.property2._partialMetadata ).toEqual( jasmine.any( PartialMetadata ) );
+					expect( returned.property2._partialMetadata.schema ).toEqual( ObjectSchemaDigester.digestSchema( {
+						"property2": {
+							"@id": "https://example.com/ns#property-2",
+							"@type": XSD.integer,
+						},
+						"property3": {
+							"@id": "https://schema.org/property-3",
+							"@type": XSD.string,
+						},
+					} ) );
+				} );
+
+				it( "should add partial metadata at the partial relations", async () => {
+					stubRequest( "https://example.com/", {
+						resources: [
+							{
+								"@id": "_:1",
+								"@type": [
+									C.VolatileResource,
+									C.QueryMetadata,
+								],
+								[ C.target ]: [ {
+									"@id": "https://example.com/",
+								} ],
+							},
+							{
+								"@id": "https://example.com/",
+								"@graph": [
+									{
+										"@id": "https://example.com/",
+										"@type": [
+											LDP.RDFSource,
+											LDP.BasicContainer,
+											C.Document,
+											"https://example.com/ns#Resource",
+										],
+										"https://example.com/ns#property-1": [ {
+											"@value": "value",
+										} ],
+										"https://schema.org/property-2": [ {
+											"@id": "https://example.com/another-resource/",
+										} ],
+									},
+								],
+							},
+							{
+								"@id": "https://example.com/another-resource/",
+								"@graph": [ {
+									"@id": "https://example.com/another-resource/",
+									"https://example.com/ns#property-2": [ {
+										"@value": "12345",
+										"@type": XSD.integer,
+									} ],
+									"https://schema.org/property-3": [ {
+										"@value": "another value",
+									} ],
+								} ],
+							},
+						],
+					} );
+
+					context
+						.extendObjectSchema( {
+							"@vocab": "https://example.com/ns#",
+						} )
+						.extendObjectSchema( "Resource", {
+							"property1": {
+								"@id": "property-1",
+								"@type": XSD.string,
+							},
+							"property2": {
+								"@id": "property-2",
+								"@type": XSD.integer,
+							},
+							"property3": {
+								"@id": "https://schema.org/property-3",
+								"@type": XSD.string,
+							},
+						} )
+					;
+
+
+					type MyResource = QueryDocumentDocument & { property2:PersistedResource };
+					const returned:MyResource = await resource.resolve<{ property2:PersistedResource }>( _ => _
+						.withType( "Resource" )
+						.properties( {
+							"property1": _.inherit,
+							"property2": {
+								"@id": "https://schema.org/property-2",
+								"@type": "@id",
+								"query": __ => __.properties( {
+									"property2": __.inherit,
+									"property3": __.inherit,
+								} ),
+							},
+						} )
+					);
+
+
+					expect( returned._partialMetadata ).toEqual( jasmine.any( PartialMetadata ) );
+					expect( returned._partialMetadata.schema ).toEqual( ObjectSchemaDigester.digestSchema( {
+						"property1": {
+							"@id": "https://example.com/ns#property-1",
+							"@type": XSD.string,
+						},
+						"property2": {
+							"@id": "https://schema.org/property-2",
+							"@type": "@id",
+						},
+					} ) );
+
+					expect( returned.property2._partialMetadata ).toEqual( jasmine.any( PartialMetadata ) );
+					expect( returned.property2._partialMetadata.schema ).toEqual( ObjectSchemaDigester.digestSchema( {
+						"property2": {
+							"@id": "https://example.com/ns#property-2",
+							"@type": XSD.integer,
+						},
+						"property3": {
+							"@id": "https://schema.org/property-3",
+							"@type": XSD.string,
+						},
+					} ) );
+				} );
+
+				it( "should merge query results", async () => {
+					stubRequest( "https://example.com/", {
+						resources: [
+							{
+								"@id": "_:1",
+								"@type": [
+									C.VolatileResource,
+									C.QueryMetadata,
+								],
+								[ C.target ]: [ {
+									"@id": "https://example.com/",
+								} ],
+							},
+							{
+								"@id": "https://example.com/",
+								"@graph": [
+									{
+										"@id": "https://example.com/",
+										"@type": [
+											LDP.RDFSource,
+											LDP.BasicContainer,
+											C.Document,
+											"https://example.com/ns#Resource",
+										],
+										"https://example.com/ns#property-4": [ {
+											"@value": "false",
+											"@type": XSD.boolean,
+										} ],
+										"https://schema.org/property-2": [ {
+											"@id": "_:1",
+										} ],
+									},
+									{
+										"@id": "_:1",
+										"https://schema.org/property-3": [ {
+											"@value": "updated sub-value",
+										} ],
+										"https://schema.org/property-5": [ {
+											"@value": "2010-01-01",
+											"@type": XSD.dateTime,
+										} ],
+									},
+								],
+							},
+						],
+					} );
+
+
+					interface MyDocument {
+						property4:boolean;
+						property1:string;
+						property2:BaseResource;
+					}
+
+					resource = createMock( {
+						_registry: context.registry,
+
+						_partialMetadata: createPartialMetadata( {
+							"@vocab": "https://example.com/ns#",
+							"property4": {
+								"@id": "property-4",
+								"@type": XSD.boolean,
+							},
+							"property2": {
+								"@id": "https://schema.org/property-2",
+								"@type": "@id",
+							},
+							"property1": {
+								"@id": "property-1",
+								"@type": XSD.string,
+							},
+						} ),
+						id: "https://example.com/",
+
+						property4: true,
+						property1: "value",
+						property2: {
+							_partialMetadata: createPartialMetadata( {
+								"@vocab": "https://example.com/ns#",
+								"property3": {
+									"@id": "https://schema.org/property-3",
+									"@type": XSD.string,
+								},
+								"property5": {
+									"@id": "https://schema.org/property-5",
+									"@type": XSD.dateTime,
+								},
+								"property2": {
+									"@id": "property-2",
+									"@type": XSD.integer,
+								},
+							} ),
+							id: "_:1",
+
+							property3: "sub-value",
+							property5: new Date( "2000-01-01" ),
+							property2: 12345,
+						},
+					} );
+
+					resource._registry
+						._resourcesMap.set( "", resource as any );
+					context
+						.extendObjectSchema( {
+							"@vocab": "https://example.com/ns#",
+						} )
+						.extendObjectSchema( "Resource", {
+							"property1": {
+								"@id": "property-1",
+								"@type": XSD.string,
+							},
+							"property2": {
+								"@id": "property-2",
+								"@type": XSD.integer,
+							},
+							"property3": {
+								"@id": "https://schema.org/property-3",
+								"@type": XSD.string,
+							},
+							"property4": {
+								"@id": "property-4",
+								"@type": XSD.boolean,
 							},
 							"property5": {
 								"@id": "https://schema.org/property-5",
 								"@type": XSD.dateTime,
 							},
-							"property2": {
-								"@id": "property-2",
-								"@type": XSD.integer,
-							},
-						} ),
-						id: "_:1",
+						} )
+					;
 
-						property3: "sub-value",
-						property5: new Date( "2000-01-01" ),
-						property2: 12345,
-					},
+					const returned:QueryDocumentDocument & MyDocument = await resource.resolve<MyDocument>( _ => _
+						.withType( "Resource" )
+						.properties( {
+							"property4": _.inherit,
+							"property2": {
+								"@id": "https://schema.org/property-2",
+								"@type": "@id",
+								"query": __ => __.properties( {
+									"property3": __.inherit,
+									"property5": __.inherit,
+								} ),
+							},
+						} )
+					);
+
+					expect( returned ).toEqual( jasmine.objectContaining( {
+						property4: false,
+						property1: "value",
+						property2: jasmine.objectContaining( {
+							property2: 12345,
+							property3: "updated sub-value",
+							property5: new Date( "2010-01-01" ),
+						} ) as any,
+					} ) );
 				} );
 
-				resource._registry
-					._resourcesMap.set( "", resource as any );
-				resource._context
-					.extendObjectSchema( {
-						"@vocab": "https://example.com/ns#",
-					} )
-					.extendObjectSchema( "Resource", {
-						"property1": {
-							"@id": "property-1",
-							"@type": XSD.string,
-						},
-						"property2": {
-							"@id": "property-2",
-							"@type": XSD.integer,
-						},
-						"property3": {
-							"@id": "https://schema.org/property-3",
-							"@type": XSD.string,
-						},
-						"property4": {
-							"@id": "property-4",
-							"@type": XSD.boolean,
-						},
-						"property5": {
-							"@id": "https://schema.org/property-5",
-							"@type": XSD.dateTime,
-						},
-					} )
-				;
+				it( "should merge partial metadata", async () => {
+					resource = createMock( {
+						_registry: context.registry,
 
-				const returned:QueryDocumentDocument & MyDocument = await resource.resolve<MyDocument>( _ => _
-					.withType( "Resource" )
-					.properties( {
-						"property4": _.inherit,
-						"property2": {
-							"@id": "https://schema.org/property-2",
-							"@type": "@id",
-							"query": __ => __.properties( {
-								"property3": __.inherit,
-								"property5": __.inherit,
-							} ),
-						},
-					} )
-				);
-
-				expect( returned ).toEqual( jasmine.objectContaining( {
-					property4: false,
-					property1: "value",
-					property2: jasmine.objectContaining( {
-						property2: 12345,
-						property3: "updated sub-value",
-						property5: new Date( "2010-01-01" ),
-					} ) as any,
-				} ) );
-			} );
-
-			it( "should merge partial metadata", async () => {
-				const resource:QueryDocumentDocument & { property2:BaseResource } = createMock( {
-					_partialMetadata: createPartialMetadata( {
-						"@vocab": "https://example.com/ns#",
-						"property2": {
-							"@id": "https://schema.org/property-2",
-							"@type": "@id",
-						},
-						"property1": {
-							"@id": "property-1",
-							"@type": XSD.string,
-						},
-					} ),
-					id: "https://example.com/",
-
-					property2: {
 						_partialMetadata: createPartialMetadata( {
 							"@vocab": "https://example.com/ns#",
-							"property3": {
-								"@id": "https://schema.org/property-3",
+							"property2": {
+								"@id": "https://schema.org/property-2",
+								"@type": "@id",
+							},
+							"property1": {
+								"@id": "property-1",
+								"@type": XSD.string,
+							},
+						} ),
+						id: "https://example.com/",
+
+						property2: {
+							_partialMetadata: createPartialMetadata( {
+								"@vocab": "https://example.com/ns#",
+								"property3": {
+									"@id": "https://schema.org/property-3",
+									"@type": XSD.string,
+								},
+								"property2": {
+									"@id": "property-2",
+									"@type": XSD.integer,
+								},
+							} ),
+							id: "_:1",
+						},
+					} );
+
+					resource._registry
+						._resourcesMap.set( "", resource as any );
+					context
+						.extendObjectSchema( {
+							"@vocab": "https://example.com/ns#",
+						} )
+						.extendObjectSchema( "Resource", {
+							"property1": {
+								"@id": "property-1",
 								"@type": XSD.string,
 							},
 							"property2": {
 								"@id": "property-2",
 								"@type": XSD.integer,
 							},
-						} ),
-						id: "_:1",
-					},
-				} );
+							"property3": {
+								"@id": "https://schema.org/property-3",
+								"@type": XSD.string,
+							},
+							"property4": {
+								"@id": "property-4",
+								"@type": XSD.boolean,
+							},
+							"property5": {
+								"@id": "https://schema.org/property-5",
+								"@type": XSD.dateTime,
+							},
+						} )
+					;
 
-				resource._registry
-					._resourcesMap.set( "", resource as any );
-				resource._context
-					.extendObjectSchema( {
-						"@vocab": "https://example.com/ns#",
-					} )
-					.extendObjectSchema( "Resource", {
-						"property1": {
-							"@id": "property-1",
-							"@type": XSD.string,
+
+					stubRequest( "https://example.com/", {
+						resources: [
+							{
+								"@id": "_:1",
+								"@type": [
+									C.VolatileResource,
+									C.QueryMetadata,
+								],
+								[ C.target ]: [ {
+									"@id": "https://example.com/",
+								} ],
+							},
+							{
+								"@id": "https://example.com/",
+								"@graph": [
+									{
+										"@id": "https://example.com/",
+										"@type": [
+											LDP.RDFSource,
+											LDP.BasicContainer,
+											C.Document,
+											"https://example.com/ns#Resource",
+										],
+										"https://schema.org/property-2": [ {
+											"@id": "_:1",
+										} ],
+									},
+									{
+										"@id": "_:1",
+										"@type": [],
+									},
+								],
+							},
+						],
+					} );
+
+					const returned:QueryDocumentDocument & { property2:PersistedResource } = await resource.resolve<{ property2:PersistedResource }>( _ => _
+						.withType( "Resource" )
+						.properties( {
+							"property4": _.inherit,
+							"property2": {
+								"@id": "https://schema.org/property-2",
+								"@type": "@id",
+								"query": __ => __.properties( {
+									"property3": __.inherit,
+									"property5": __.inherit,
+								} ),
+							},
+						} )
+					);
+
+					expect( returned._partialMetadata ).toEqual( jasmine.any( PartialMetadata ) );
+					expect( returned._partialMetadata.schema ).toEqual( ObjectSchema.ObjectSchemaDigester.digestSchema( {
+						"property4": {
+							"@id": "https://example.com/ns#property-4",
+							"@type": XSD.boolean,
 						},
 						"property2": {
-							"@id": "property-2",
-							"@type": XSD.integer,
+							"@id": "https://schema.org/property-2",
+							"@type": "@id",
 						},
+						"property1": {
+							"@id": "https://example.com/ns#property-1",
+							"@type": XSD.string,
+						},
+					} ) );
+
+					expect( returned.property2._partialMetadata ).toEqual( jasmine.any( PartialMetadata ) );
+					expect( returned.property2._partialMetadata.schema ).toEqual( ObjectSchema.ObjectSchemaDigester.digestSchema( {
 						"property3": {
 							"@id": "https://schema.org/property-3",
 							"@type": XSD.string,
-						},
-						"property4": {
-							"@id": "property-4",
-							"@type": XSD.boolean,
 						},
 						"property5": {
 							"@id": "https://schema.org/property-5",
 							"@type": XSD.dateTime,
 						},
-					} )
-				;
-
-
-				stubRequest( "https://example.com/", {
-					resources: [
-						{
-							"@id": "_:1",
-							"@type": [
-								C.VolatileResource,
-								C.QueryMetadata,
-							],
-							[ C.target ]: [ {
-								"@id": "https://example.com/",
-							} ],
+						"property2": {
+							"@id": "https://example.com/ns#property-2",
+							"@type": XSD.integer,
 						},
-						{
-							"@id": "https://example.com/",
-							"@graph": [
-								{
-									"@id": "https://example.com/",
-									"@type": [
-										LDP.RDFSource,
-										LDP.BasicContainer,
-										C.Document,
-										"https://example.com/ns#Resource",
-									],
-									"https://schema.org/property-2": [ {
-										"@id": "_:1",
-									} ],
-								},
-								{
-									"@id": "_:1",
-									"@type": [],
-								},
-							],
-						},
-					],
+					} ) );
 				} );
 
-				const returned:QueryDocumentDocument & { property2:PersistedResource } = await resource.resolve<{ property2:PersistedResource }>( _ => _
-					.withType( "Resource" )
-					.properties( {
-						"property4": _.inherit,
-						"property2": {
-							"@id": "https://schema.org/property-2",
-							"@type": "@id",
-							"query": __ => __.properties( {
-								"property3": __.inherit,
-								"property5": __.inherit,
-							} ),
-						},
-					} )
-				);
-
-				expect( returned._partialMetadata ).toEqual( jasmine.any( PartialMetadata ) );
-				expect( returned._partialMetadata.schema ).toEqual( ObjectSchema.ObjectSchemaDigester.digestSchema( {
-					"property4": {
-						"@id": "https://example.com/ns#property-4",
-						"@type": XSD.boolean,
-					},
-					"property2": {
-						"@id": "https://schema.org/property-2",
-						"@type": "@id",
-					},
-					"property1": {
-						"@id": "https://example.com/ns#property-1",
-						"@type": XSD.string,
-					},
-				} ) );
-
-				expect( returned.property2._partialMetadata ).toEqual( jasmine.any( PartialMetadata ) );
-				expect( returned.property2._partialMetadata.schema ).toEqual( ObjectSchema.ObjectSchemaDigester.digestSchema( {
-					"property3": {
-						"@id": "https://schema.org/property-3",
-						"@type": XSD.string,
-					},
-					"property5": {
-						"@id": "https://schema.org/property-5",
-						"@type": XSD.dateTime,
-					},
-					"property2": {
-						"@id": "https://example.com/ns#property-2",
-						"@type": XSD.integer,
-					},
-				} ) );
 			} );
 
 		} );
@@ -2843,579 +2799,585 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 			} );
 
 
-			it( "should request self ID", async () => {
-				const resource:QueryDocumentDocument = createMock( {
-					id: "https://example.com/",
+			describe( "When has a context", () => {
+
+				let context:CarbonLDP;
+				let resource:QueryDocumentDocument;
+				beforeEach( ():void => {
+					context = new CarbonLDP( "https://example.com/" );
+					resource = createMock( { _registry: context.registry } );
 				} );
 
-				resource.refresh();
 
-				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-				expect( request.url ).toBe( "https://example.com/" );
-			} );
+				it( "should request self ID", async () => {
+					resource.refresh();
 
-			it( "should parse error response", async () => {
-				stubRequest( "https://example.com/", { status: 500 } );
-
-				const resource:QueryDocumentDocument = createMock( {
-					id: "https://example.com/",
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.url ).toBe( "https://example.com/" );
 				} );
 
-				const spy:jasmine.Spy = spyOn( resource._registry, "_parseErrorFromResponse" )
-					.and.callFake( () => Promise.reject( null ) );
+				it( "should parse error response", async () => {
+					stubRequest( "https://example.com/", { status: 500 } );
 
-				await resource
-					.refresh()
-					.then( () => fail( "Should not refresh" ) )
-					.catch( error => {
-						if( error ) fail( error );
+					const spy:jasmine.Spy = spyOn( resource._registry, "_parseErrorFromResponse" )
+						.and.callFake( () => Promise.reject( null ) );
 
-						expect( spy ).toHaveBeenCalled();
-					} )
-				;
-			} );
+					await resource
+						.refresh()
+						.then( () => fail( "Should not refresh" ) )
+						.catch( error => {
+							if( error ) fail( error );
 
-
-			it( "should send basic request headers", async () => {
-				const resource:QueryDocumentDocument = createMock( {} );
-
-				resource.refresh();
-
-				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-				expect( request.requestHeaders ).toEqual( {
-					"accept": "application/ld+json",
-					"content-type": "application/sparql-query",
-					"prefer": [
-						`include="${ C.PreferDocumentETags }"`,
-						`include="${ C.PreferResultsContext }"`,
-					].join( ", " ),
-				} );
-			} );
-
-			it( "should add authentication header", async () => {
-				const resource:QueryDocumentDocument = createMock( {} );
-
-				const spy:jasmine.Spy = spyOn( resource._context.auth, "addAuthentication" );
-
-				resource.refresh();
-
-				expect( spy ).toHaveBeenCalled();
-			} );
-
-			it( "should add custom headers", async () => {
-				const resource:QueryDocumentDocument = createMock( {} );
-
-				resource.refresh( {
-					headers: new Map()
-						.set( "custom", new Header( "custom value" ) )
-					,
+							expect( spy ).toHaveBeenCalled();
+						} )
+					;
 				} );
 
-				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-				expect( request.requestHeaders ).toEqual( jasmine.objectContaining( {
-					"custom": "custom value",
-				} ) );
-			} );
+
+				it( "should send basic request headers", async () => {
+					resource.refresh();
+
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.requestHeaders ).toEqual( {
+						"accept": "application/ld+json",
+						"content-type": "application/sparql-query",
+						"prefer": [
+							`include="${ C.PreferDocumentETags }"`,
+							`include="${ C.PreferResultsContext }"`,
+						].join( ", " ),
+					} );
+				} );
+
+				it( "should add authentication header", async () => {
+					const spy:jasmine.Spy = spyOn( context.auth, "addAuthentication" );
+
+					resource.refresh();
+
+					expect( spy ).toHaveBeenCalled();
+				} );
+
+				it( "should add custom headers", async () => {
+					resource.refresh( {
+						headers: new Map()
+							.set( "custom", new Header( "custom value" ) )
+						,
+					} );
+
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.requestHeaders ).toEqual( jasmine.objectContaining( {
+						"custom": "custom value",
+					} ) );
+				} );
 
 
-			it( "should send refresh CONSTRUCT query", () => {
-				const resource:QueryDocumentDocument = createMock( {
-					_partialMetadata: createPartialMetadata( {
-						"@vocab": "https://example.com/ns#",
-						"property4": {
-							"@id": "https://example.com/ns#property-4",
-							"@type": "boolean",
-						},
-						"property2": {
-							"@id": "https://schema.org/property-2",
-							"@type": "@id",
-						},
-						"property1": {
-							"@id": "https://example.com/ns#property-1",
-							"@type": "string",
-						},
-					} ),
-					id: "https://example.com/",
+				it( "should send refresh CONSTRUCT query", () => {
+					resource = createMock( {
+						_registry: context.registry,
 
-					property2: {
 						_partialMetadata: createPartialMetadata( {
 							"@vocab": "https://example.com/ns#",
-							"property3": {
-								"@id": "https://schema.org/property-3",
-								"@type": XSD.string,
-							},
-							"property5": {
-								"@id": "https://schema.org/property-5",
-								"@type": XSD.dateTime,
+							"property4": {
+								"@id": "https://example.com/ns#property-4",
+								"@type": "boolean",
 							},
 							"property2": {
-								"@id": "https://example.com/ns#property-2",
-								"@type": XSD.integer,
+								"@id": "https://schema.org/property-2",
+								"@type": "@id",
+							},
+							"property1": {
+								"@id": "https://example.com/ns#property-1",
+								"@type": "string",
 							},
 						} ),
-						id: "_:1",
-					},
+						id: "https://example.com/",
+
+						property2: {
+							_partialMetadata: createPartialMetadata( {
+								"@vocab": "https://example.com/ns#",
+								"property3": {
+									"@id": "https://schema.org/property-3",
+									"@type": XSD.string,
+								},
+								"property5": {
+									"@id": "https://schema.org/property-5",
+									"@type": XSD.dateTime,
+								},
+								"property2": {
+									"@id": "https://example.com/ns#property-2",
+									"@type": XSD.integer,
+								},
+							} ),
+							id: "_:1",
+						},
+					} );
+					resource._syncSavedFragments();
+
+					context
+						.extendObjectSchema( {
+							"@vocab": "https://example.com/ns#",
+							"schema": "https://schema.org/",
+						} )
+					;
+
+
+					resource.refresh();
+
+
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.params ).toEqual( "" +
+						"PREFIX schema: <https://schema.org/> " +
+						"CONSTRUCT {" +
+						` ?metadata a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
+						"" + ` <${ C.target }> ?document.` +
+
+						" ?document a ?document__types;" +
+						"" + " <https://example.com/ns#property-4> ?document__property4;" +
+						"" + " schema:property-2 ?document__property2;" +
+						"" + " <https://example.com/ns#property-1> ?document__property1." +
+
+						" ?document__property2 a ?document__property2__types;" +
+						"" + " schema:property-3 ?document__property2__property3;" +
+						"" + " schema:property-5 ?document__property2__property5;" +
+						"" + " <https://example.com/ns#property-2> ?document__property2__property2 " +
+
+						"} WHERE {" +
+						" BIND(BNODE() AS ?metadata)." +
+
+						" VALUES ?document { <https://example.com/> }." +
+						" OPTIONAL { ?document a ?document__types }." +
+
+						" OPTIONAL {" +
+						"" + " ?document <https://example.com/ns#property-4> ?document__property4." +
+						"" + " FILTER( datatype( ?document__property4 ) = <http://www.w3.org/2001/XMLSchema#boolean> )" +
+						" }." +
+
+						" OPTIONAL {" +
+						"" + " ?document schema:property-2 ?document__property2." +
+						"" + " FILTER( ! isLiteral( ?document__property2 ) )." +
+						"" + " OPTIONAL { ?document__property2 a ?document__property2__types }." +
+
+						"" + " OPTIONAL {" +
+						"" + "" + " ?document__property2 schema:property-3 ?document__property2__property3." +
+						"" + "" + " FILTER( datatype( ?document__property2__property3 ) = <http://www.w3.org/2001/XMLSchema#string> )" +
+						"" + " }." +
+
+						"" + " OPTIONAL {" +
+						"" + "" + " ?document__property2 schema:property-5 ?document__property2__property5." +
+						"" + "" + " FILTER( datatype( ?document__property2__property5 ) = <http://www.w3.org/2001/XMLSchema#dateTime> )" +
+						"" + " }." +
+
+						"" + " OPTIONAL {" +
+						"" + "" + " ?document__property2 <https://example.com/ns#property-2> ?document__property2__property2." +
+						"" + "" + " FILTER( datatype( ?document__property2__property2 ) = <http://www.w3.org/2001/XMLSchema#integer> )" +
+						"" + " }" +
+						" }." +
+
+						" OPTIONAL {" +
+						"" + " ?document <https://example.com/ns#property-1> ?document__property1." +
+						"" + " FILTER( datatype( ?document__property1 ) = <http://www.w3.org/2001/XMLSchema#string> )" +
+						" }" +
+
+						" }"
+					);
 				} );
-				resource._syncSavedFragments();
 
-				resource._context
-					.extendObjectSchema( {
-						"@vocab": "https://example.com/ns#",
-						"schema": "https://schema.org/",
-					} )
-				;
+				it( "should send refresh CONSTRUCT query when document is .ALL", () => {
+					resource = createMock( {
+						_registry: context.registry,
 
+						_partialMetadata: createPartialMetadata( {
+							"@vocab": "https://example.com/ns#",
+							"property4": {
+								"@id": "https://example.com/ns#property-4",
+								"@type": "boolean",
+							},
+							"property2": {
+								"@id": "https://schema.org/property-2",
+								"@type": "@id",
+							},
+							"property1": {
+								"@id": "https://example.com/ns#property-1",
+								"@type": "string",
+							},
+						} ),
+						id: "https://example.com/",
 
-				resource.refresh();
-
-
-				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-				expect( request.params ).toEqual( "" +
-					"PREFIX schema: <https://schema.org/> " +
-					"CONSTRUCT {" +
-					` ?metadata a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
-					"" + ` <${ C.target }> ?document.` +
-
-					" ?document a ?document__types;" +
-					"" + " <https://example.com/ns#property-4> ?document__property4;" +
-					"" + " schema:property-2 ?document__property2;" +
-					"" + " <https://example.com/ns#property-1> ?document__property1." +
-
-					" ?document__property2 a ?document__property2__types;" +
-					"" + " schema:property-3 ?document__property2__property3;" +
-					"" + " schema:property-5 ?document__property2__property5;" +
-					"" + " <https://example.com/ns#property-2> ?document__property2__property2 " +
-
-					"} WHERE {" +
-					" BIND(BNODE() AS ?metadata)." +
-
-					" VALUES ?document { <https://example.com/> }." +
-					" OPTIONAL { ?document a ?document__types }." +
-
-					" OPTIONAL {" +
-					"" + " ?document <https://example.com/ns#property-4> ?document__property4." +
-					"" + " FILTER( datatype( ?document__property4 ) = <http://www.w3.org/2001/XMLSchema#boolean> )" +
-					" }." +
-
-					" OPTIONAL {" +
-					"" + " ?document schema:property-2 ?document__property2." +
-					"" + " FILTER( ! isLiteral( ?document__property2 ) )." +
-					"" + " OPTIONAL { ?document__property2 a ?document__property2__types }." +
-
-					"" + " OPTIONAL {" +
-					"" + "" + " ?document__property2 schema:property-3 ?document__property2__property3." +
-					"" + "" + " FILTER( datatype( ?document__property2__property3 ) = <http://www.w3.org/2001/XMLSchema#string> )" +
-					"" + " }." +
-
-					"" + " OPTIONAL {" +
-					"" + "" + " ?document__property2 schema:property-5 ?document__property2__property5." +
-					"" + "" + " FILTER( datatype( ?document__property2__property5 ) = <http://www.w3.org/2001/XMLSchema#dateTime> )" +
-					"" + " }." +
-
-					"" + " OPTIONAL {" +
-					"" + "" + " ?document__property2 <https://example.com/ns#property-2> ?document__property2__property2." +
-					"" + "" + " FILTER( datatype( ?document__property2__property2 ) = <http://www.w3.org/2001/XMLSchema#integer> )" +
-					"" + " }" +
-					" }." +
-
-					" OPTIONAL {" +
-					"" + " ?document <https://example.com/ns#property-1> ?document__property1." +
-					"" + " FILTER( datatype( ?document__property1 ) = <http://www.w3.org/2001/XMLSchema#string> )" +
-					" }" +
-
-					" }"
-				);
-			} );
-
-			it( "should send refresh CONSTRUCT query when document is .ALL", () => {
-				const resource:QueryDocumentDocument = createMock( {
-					_partialMetadata: createPartialMetadata( {
-						"@vocab": "https://example.com/ns#",
-						"property4": {
-							"@id": "https://example.com/ns#property-4",
-							"@type": "boolean",
+						property2: {
+							_partialMetadata: new PartialMetadata( PartialMetadata.ALL ),
+							id: "_:1",
 						},
-						"property2": {
-							"@id": "https://schema.org/property-2",
-							"@type": "@id",
-						},
-						"property1": {
-							"@id": "https://example.com/ns#property-1",
-							"@type": "string",
-						},
-					} ),
-					id: "https://example.com/",
+					} );
+					resource._syncSavedFragments();
 
-					property2: {
-						_partialMetadata: new PartialMetadata( PartialMetadata.ALL ),
-						id: "_:1",
-					},
+					context
+						.extendObjectSchema( {
+							"@vocab": "https://example.com/ns#",
+							"schema": "https://schema.org/",
+						} )
+					;
+
+
+					resource.refresh();
+
+
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.params ).toEqual( "" +
+						"PREFIX schema: <https://schema.org/> " +
+						"CONSTRUCT {" +
+						` ?metadata a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
+						"" + ` <${ C.target }> ?document.` +
+
+						" ?document a ?document__types;" +
+						"" + " <https://example.com/ns#property-4> ?document__property4;" +
+						"" + " schema:property-2 ?document__property2;" +
+						"" + " <https://example.com/ns#property-1> ?document__property1." +
+
+						" ?document__property2 ?document__property2___predicate ?document__property2___object " +
+
+						"} WHERE {" +
+						" BIND(BNODE() AS ?metadata)." +
+
+						" VALUES ?document { <https://example.com/> }." +
+						" OPTIONAL { ?document a ?document__types }." +
+
+						" OPTIONAL {" +
+						"" + " ?document <https://example.com/ns#property-4> ?document__property4." +
+						"" + " FILTER( datatype( ?document__property4 ) = <http://www.w3.org/2001/XMLSchema#boolean> )" +
+						" }." +
+
+						" OPTIONAL {" +
+						"" + " ?document schema:property-2 ?document__property2." +
+						"" + " FILTER( ! isLiteral( ?document__property2 ) )." +
+						"" + " ?document__property2 ?document__property2___predicate ?document__property2___object" +
+						" }." +
+
+						" OPTIONAL {" +
+						"" + " ?document <https://example.com/ns#property-1> ?document__property1." +
+						"" + " FILTER( datatype( ?document__property1 ) = <http://www.w3.org/2001/XMLSchema#string> )" +
+						" }" +
+
+						" }"
+					);
 				} );
-				resource._syncSavedFragments();
 
-				resource._context
-					.extendObjectSchema( {
-						"@vocab": "https://example.com/ns#",
-						"schema": "https://schema.org/",
-					} )
-				;
-
-
-				resource.refresh();
-
-
-				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-				expect( request.params ).toEqual( "" +
-					"PREFIX schema: <https://schema.org/> " +
-					"CONSTRUCT {" +
-					` ?metadata a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
-					"" + ` <${ C.target }> ?document.` +
-
-					" ?document a ?document__types;" +
-					"" + " <https://example.com/ns#property-4> ?document__property4;" +
-					"" + " schema:property-2 ?document__property2;" +
-					"" + " <https://example.com/ns#property-1> ?document__property1." +
-
-					" ?document__property2 ?document__property2___predicate ?document__property2___object " +
-
-					"} WHERE {" +
-					" BIND(BNODE() AS ?metadata)." +
-
-					" VALUES ?document { <https://example.com/> }." +
-					" OPTIONAL { ?document a ?document__types }." +
-
-					" OPTIONAL {" +
-					"" + " ?document <https://example.com/ns#property-4> ?document__property4." +
-					"" + " FILTER( datatype( ?document__property4 ) = <http://www.w3.org/2001/XMLSchema#boolean> )" +
-					" }." +
-
-					" OPTIONAL {" +
-					"" + " ?document schema:property-2 ?document__property2." +
-					"" + " FILTER( ! isLiteral( ?document__property2 ) )." +
-					"" + " ?document__property2 ?document__property2___predicate ?document__property2___object" +
-					" }." +
-
-					" OPTIONAL {" +
-					"" + " ?document <https://example.com/ns#property-1> ?document__property1." +
-					"" + " FILTER( datatype( ?document__property1 ) = <http://www.w3.org/2001/XMLSchema#string> )" +
-					" }" +
-
-					" }"
-				);
-			} );
-
-			it( "should refresh from returned data", async () => {
-				stubRequest( "https://example.com/", {
-					resources: [
-						{
-							"@id": "_:1",
-							"@type": [
-								C.VolatileResource,
-								C.QueryMetadata,
-							],
-							[ C.target ]: [ {
-								"@id": "https://example.com/",
-							} ],
-						},
-						{
-							"@id": "https://example.com/",
-							"@graph": [
-								{
+				it( "should refresh from returned data", async () => {
+					stubRequest( "https://example.com/", {
+						resources: [
+							{
+								"@id": "_:1",
+								"@type": [
+									C.VolatileResource,
+									C.QueryMetadata,
+								],
+								[ C.target ]: [ {
 									"@id": "https://example.com/",
-									"@type": [
-										LDP.RDFSource,
-										LDP.BasicContainer,
-										C.Document,
-										"https://example.com/ns#Resource",
-									],
-									"https://example.com/ns#property-1": [ {
-										"@value": "updated value",
-									} ],
-									"https://schema.org/property-2": [ {
+								} ],
+							},
+							{
+								"@id": "https://example.com/",
+								"@graph": [
+									{
+										"@id": "https://example.com/",
+										"@type": [
+											LDP.RDFSource,
+											LDP.BasicContainer,
+											C.Document,
+											"https://example.com/ns#Resource",
+										],
+										"https://example.com/ns#property-1": [ {
+											"@value": "updated value",
+										} ],
+										"https://schema.org/property-2": [ {
+											"@id": "_:1",
+										} ],
+										"https://example.com/ns#property-4": [ {
+											"@value": "false",
+											"@type": XSD.boolean,
+										} ],
+									},
+									{
 										"@id": "_:1",
-									} ],
-									"https://example.com/ns#property-4": [ {
-										"@value": "false",
-										"@type": XSD.boolean,
-									} ],
-								},
-								{
-									"@id": "_:1",
-									"https://schema.org/property-3": [ {
-										"@value": "updated sub-value",
-									} ],
-									"https://schema.org/property-5": [ {
-										"@value": "2010-01-01",
-										"@type": XSD.dateTime,
-									} ],
-								},
-							],
-						},
-					],
-				} );
+										"https://schema.org/property-3": [ {
+											"@value": "updated sub-value",
+										} ],
+										"https://schema.org/property-5": [ {
+											"@value": "2010-01-01",
+											"@type": XSD.dateTime,
+										} ],
+									},
+								],
+							},
+						],
+					} );
 
 
-				const resource:QueryDocumentDocument = createMock( {
-					_partialMetadata: createPartialMetadata( {
-						"@vocab": "https://example.com/ns#",
-						"property1": {
-							"@id": "https://example.com/ns#property-1",
-							"@type": XSD.string,
-						},
-						"property2": {
-							"@id": "https://schema.org/property-2",
-							"@type": "@id",
-						},
-						"property4": {
-							"@id": "https://example.com/ns#property-4",
-							"@type": XSD.boolean,
-						},
-					} ),
-					id: "https://example.com/",
+					resource = createMock( {
+						_registry: context.registry,
 
-					property1: "value",
-					property3: "non query-value",
-					property4: true,
-
-					property2: {
-						id: "_:1",
 						_partialMetadata: createPartialMetadata( {
 							"@vocab": "https://example.com/ns#",
+							"property1": {
+								"@id": "https://example.com/ns#property-1",
+								"@type": XSD.string,
+							},
 							"property2": {
-								"@id": "https://example.com/ns#property-2",
+								"@id": "https://schema.org/property-2",
+								"@type": "@id",
+							},
+							"property4": {
+								"@id": "https://example.com/ns#property-4",
+								"@type": XSD.boolean,
+							},
+						} ),
+						id: "https://example.com/",
+
+						property1: "value",
+						property3: "non query-value",
+						property4: true,
+
+						property2: {
+							id: "_:1",
+							_partialMetadata: createPartialMetadata( {
+								"@vocab": "https://example.com/ns#",
+								"property2": {
+									"@id": "https://example.com/ns#property-2",
+									"@type": XSD.integer,
+								},
+								"property3": {
+									"@id": "https://schema.org/property-3",
+									"@type": XSD.string,
+								},
+								"property5": {
+									"@id": "https://schema.org/property-5",
+									"@type": XSD.dateTime,
+								},
+							} ),
+
+							property3: "sub-value",
+							property5: new Date( "2000-01-01" ),
+							property2: 12345,
+						},
+					} );
+
+					resource._syncSavedFragments();
+					resource._registry._resourcesMap.set( "", resource as any );
+
+					context
+						.extendObjectSchema( {
+							"@vocab": "https://example.com/ns#",
+						} )
+						.extendObjectSchema( "Resource", {
+							"property1": {
+								"@id": "property-1",
+								"@type": XSD.string,
+							},
+							"property2": {
+								"@id": "property-2",
 								"@type": XSD.integer,
 							},
 							"property3": {
 								"@id": "https://schema.org/property-3",
 								"@type": XSD.string,
 							},
-							"property5": {
-								"@id": "https://schema.org/property-5",
-								"@type": XSD.dateTime,
-							},
-						} ),
-
-						property3: "sub-value",
-						property5: new Date( "2000-01-01" ),
-						property2: 12345,
-					},
-				} );
-
-				resource._syncSavedFragments();
-				resource._registry._resourcesMap.set( "", resource as any );
-
-				resource._context
-					.extendObjectSchema( {
-						"@vocab": "https://example.com/ns#",
-					} )
-					.extendObjectSchema( "Resource", {
-						"property1": {
-							"@id": "property-1",
-							"@type": XSD.string,
-						},
-						"property2": {
-							"@id": "property-2",
-							"@type": XSD.integer,
-						},
-						"property3": {
-							"@id": "https://schema.org/property-3",
-							"@type": XSD.string,
-						},
-					} )
-				;
+						} )
+					;
 
 
-				interface MyDocument {
-					property1:string;
-					property2:PersistedResource & {
-						property2:number;
+					interface MyDocument {
+						property1:string;
+						property2:PersistedResource & {
+							property2:number;
+							property3:string;
+							property5:Date;
+						};
 						property3:string;
-						property5:Date;
-					};
-					property3:string;
-					property4:boolean;
-				}
+						property4:boolean;
+					}
 
-				const returned:MyDocument = await resource.refresh<MyDocument>();
+					const returned:MyDocument = await resource.refresh<MyDocument>();
 
-				// Data updates
-				expect( returned ).toEqual( jasmine.objectContaining( {
-					property4: false,
-					property1: "updated value",
-					property2: jasmine.objectContaining( {
-						property3: "updated sub-value",
-						property5: new Date( "2010-01-01" ),
-					} ) as any,
-				} ) );
+					// Data updates
+					expect( returned ).toEqual( jasmine.objectContaining( {
+						property4: false,
+						property1: "updated value",
+						property2: jasmine.objectContaining( {
+							property3: "updated sub-value",
+							property5: new Date( "2010-01-01" ),
+						} ) as any,
+					} ) );
 
-				// Non query data
-				expect( returned ).toEqual( jasmine.objectContaining( {
-					property3: "non query-value",
-				} ) );
+					// Non query data
+					expect( returned ).toEqual( jasmine.objectContaining( {
+						property3: "non query-value",
+					} ) );
 
-				// Data removed
-				expect( returned.property2 ).not.toEqual( jasmine.objectContaining( {
-					property2: 12345,
-				} ) );
-			} );
+					// Data removed
+					expect( returned.property2 ).not.toEqual( jasmine.objectContaining( {
+						property2: 12345,
+					} ) );
+				} );
 
 
-			it( "should update persisted document data", async () => {
-				stubRequest( "https://example.com/", {
-					resources: [
-						{
-							"@id": "_:1",
-							"@type": [
-								C.VolatileResource,
-								C.QueryMetadata,
-							],
-							[ C.target ]: [ {
-								"@id": "https://example.com/",
-							} ],
-						},
-						{
-							"@id": "_:2",
-							"@type": [
-								C.ResponseMetadata,
-								C.VolatileResource,
-							],
-							[ C.documentMetadata ]: [ {
-								"@id": "_:3",
-							} ],
-						},
-						{
-							"@id": "_:3",
-							"@type": [
-								C.DocumentMetadata,
-								C.VolatileResource,
-							],
-							[ C.eTag ]: [ {
-								"@value": "\"1-12345\"",
-							} ],
-							[ C.relatedDocument ]: [ {
-								"@id": "https://example.com/",
-							} ],
-						},
-						{
-							"@id": "https://example.com/",
-							"@graph": [
-								{
+				it( "should update persisted document data", async () => {
+					stubRequest( "https://example.com/", {
+						resources: [
+							{
+								"@id": "_:1",
+								"@type": [
+									C.VolatileResource,
+									C.QueryMetadata,
+								],
+								[ C.target ]: [ {
 									"@id": "https://example.com/",
-									"@type": [
-										LDP.RDFSource,
-										LDP.BasicContainer,
-										C.Document,
-										"https://example.com/ns#Resource",
-									],
-								},
-							],
-						},
-					],
-				} );
-
-				const resource:QueryDocumentDocument = createMock( {
-					_eTag: "\"0-12345\"",
-					id: "https://example.com/",
-				} );
-				const returned:QueryDocumentDocument = await resource.refresh();
-
-				expect( returned ).toEqual( jasmine.objectContaining( {
-					_eTag: "\"1-12345\"",
-					_resolved: true,
-				} ) );
-			} );
-
-			it( "should not process if same eTag", async () => {
-				stubRequest( "https://example.com/", {
-					resources: [
-						{
-							"@id": "_:1",
-							"@type": [
-								C.VolatileResource,
-								C.QueryMetadata,
-							],
-							[ C.target ]: [ {
-								"@id": "https://example.com/",
-							} ],
-						},
-						{
-							"@id": "_:2",
-							"@type": [
-								C.ResponseMetadata,
-								C.VolatileResource,
-							],
-							[ C.documentMetadata ]: [ {
+								} ],
+							},
+							{
+								"@id": "_:2",
+								"@type": [
+									C.ResponseMetadata,
+									C.VolatileResource,
+								],
+								[ C.documentMetadata ]: [ {
+									"@id": "_:3",
+								} ],
+							},
+							{
 								"@id": "_:3",
-							} ],
-						},
-						{
-							"@id": "_:3",
-							"@type": [
-								C.DocumentMetadata,
-								C.VolatileResource,
-							],
-							[ C.eTag ]: [ {
-								"@value": "\"1-12345\"",
-							} ],
-							[ C.relatedDocument ]: [ {
-								"@id": "https://example.com/",
-							} ],
-						},
-						{
-							"@id": "https://example.com/",
-							"@graph": [
-								{
+								"@type": [
+									C.DocumentMetadata,
+									C.VolatileResource,
+								],
+								[ C.eTag ]: [ {
+									"@value": "\"1-12345\"",
+								} ],
+								[ C.relatedDocument ]: [ {
 									"@id": "https://example.com/",
-									"@type": [
-										LDP.RDFSource,
-										LDP.BasicContainer,
-										C.Document,
-										"https://example.com/ns#Resource",
-									],
-									"https://example.com/ns#property-1": [ {
-										"@value": "updated value",
-									} ],
-								},
-							],
-						},
-					],
+								} ],
+							},
+							{
+								"@id": "https://example.com/",
+								"@graph": [
+									{
+										"@id": "https://example.com/",
+										"@type": [
+											LDP.RDFSource,
+											LDP.BasicContainer,
+											C.Document,
+											"https://example.com/ns#Resource",
+										],
+									},
+								],
+							},
+						],
+					} );
+
+					resource = createMock( {
+						_registry: context.registry,
+						_eTag: "\"0-12345\"",
+						id: "https://example.com/",
+					} );
+					const returned:QueryDocumentDocument = await resource.refresh();
+
+					expect( returned ).toEqual( jasmine.objectContaining( {
+						_eTag: "\"1-12345\"",
+						_resolved: true,
+					} ) );
 				} );
 
-				const resource:QueryDocumentDocument = createMock( {
-					_eTag: "\"1-12345\"",
-					id: "https://example.com/",
+				it( "should not process if same eTag", async () => {
+					stubRequest( "https://example.com/", {
+						resources: [
+							{
+								"@id": "_:1",
+								"@type": [
+									C.VolatileResource,
+									C.QueryMetadata,
+								],
+								[ C.target ]: [ {
+									"@id": "https://example.com/",
+								} ],
+							},
+							{
+								"@id": "_:2",
+								"@type": [
+									C.ResponseMetadata,
+									C.VolatileResource,
+								],
+								[ C.documentMetadata ]: [ {
+									"@id": "_:3",
+								} ],
+							},
+							{
+								"@id": "_:3",
+								"@type": [
+									C.DocumentMetadata,
+									C.VolatileResource,
+								],
+								[ C.eTag ]: [ {
+									"@value": "\"1-12345\"",
+								} ],
+								[ C.relatedDocument ]: [ {
+									"@id": "https://example.com/",
+								} ],
+							},
+							{
+								"@id": "https://example.com/",
+								"@graph": [
+									{
+										"@id": "https://example.com/",
+										"@type": [
+											LDP.RDFSource,
+											LDP.BasicContainer,
+											C.Document,
+											"https://example.com/ns#Resource",
+										],
+										"https://example.com/ns#property-1": [ {
+											"@value": "updated value",
+										} ],
+									},
+								],
+							},
+						],
+					} );
 
-					property1: "value",
+					resource = createMock( {
+						_registry: context.registry,
+						_eTag: "\"1-12345\"",
+						id: "https://example.com/",
+
+						property1: "value",
+					} );
+
+					resource._registry
+						._resourcesMap.set( "", resource as any );
+					context
+						.extendObjectSchema( {
+							"@vocab": "https://example.com/ns#",
+						} )
+						.extendObjectSchema( "Resource", {
+							"property1": {
+								"@id": "property-1",
+								"@type": XSD.string,
+							},
+							"property2": {
+								"@id": "property-2",
+								"@type": XSD.integer,
+							},
+							"property3": {
+								"@id": "https://schema.org/property-3",
+								"@type": XSD.string,
+							},
+						} )
+					;
+
+					type MyResource = QueryDocumentDocument & { property1:string };
+					const returned:MyResource = await resource.refresh<{ property1:string }>();
+
+					expect( returned ).toEqual( jasmine.objectContaining( {
+						property1: "value",
+					} ) );
 				} );
 
-				resource._registry
-					._resourcesMap.set( "", resource as any );
-				resource._context
-					.extendObjectSchema( {
-						"@vocab": "https://example.com/ns#",
-					} )
-					.extendObjectSchema( "Resource", {
-						"property1": {
-							"@id": "property-1",
-							"@type": XSD.string,
-						},
-						"property2": {
-							"@id": "property-2",
-							"@type": XSD.integer,
-						},
-						"property3": {
-							"@id": "https://schema.org/property-3",
-							"@type": XSD.string,
-						},
-					} )
-				;
-
-				type MyResource = QueryDocumentDocument & { property1:string };
-				const returned:MyResource = await resource.refresh<{ property1:string }>();
-
-				expect( returned ).toEqual( jasmine.objectContaining( {
-					property1: "value",
-				} ) );
 			} );
 
 		} );
@@ -3481,312 +3443,324 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 			} );
 
 
-			it( "should throw error when self ID is outside context scope", async () => {
-				const resource:QueryDocumentDocument = createMock( { id: "https://example.org/resource/" } );
+			describe( "When has a context", () => {
 
-				await resource
-					.save()
-					.catch( error => {
-						expect( () => { throw error; } )
-							.toThrowError( IllegalArgumentError, `"https://example.org/resource/" is out of scope.` );
-					} )
-				;
-			} );
-
-			it( "should throw error when self ID is BNode label", async () => {
-				const resource:QueryDocumentDocument = createMock( { id: "https://example.com/" } );
-
-				Object.defineProperty( resource, "isDirty", { writable: true } );
-				spyOn( resource, "isDirty" ).and.returnValue( true );
-
-				resource.save();
-
-				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-				expect( request.url ).toBe( "https://example.com/" );
-				expect( request.method ).toBe( "PATCH" );
-			} );
-
-
-			it( "should return immediately when no dirty", async () => {
-				const resource:QueryDocumentDocument = createMock( { id: "https://example.com/" } );
-
-				Object.defineProperty( resource, "isDirty", { writable: true } );
-				spyOn( resource, "isDirty" ).and.returnValue( false );
-
-				const returned:QueryDocumentDocument = await resource.save();
-				expect( returned ).toBe( resource );
-			} );
-
-			it( "should throw error when outdated", async () => {
-				const resource:QueryDocumentDocument = createMock( {
-					_eTag: null,
-					id: "https://example.com/",
+				let context:CarbonLDP;
+				let resource:QueryDocumentDocument;
+				beforeEach( ():void => {
+					context = new CarbonLDP( "https://example.com/" );
+					resource = createMock( { _registry: context.registry } );
 				} );
 
-				await resource
-					.save()
-					.then( () => fail( "should not resolve" ) )
-					.catch( error => {
-						expect( () => { throw error; } )
-							.toThrowError( IllegalStateError, `"https://example.com/" is outdated and cannot be saved.` );
-					} )
-				;
-			} );
 
-			it( "should parse error response", async () => {
-				stubRequest( "https://example.com/", { status: 500 } );
+				it( "should throw error when self ID is outside context scope", async () => {
+					resource.id = "https://example.org/resource/";
 
-				const resource:QueryDocumentDocument = createMock( { id: "https://example.com/" } );
+					await resource
+						.save()
+						.catch( error => {
+							expect( () => { throw error; } )
+								.toThrowError( IllegalArgumentError, `"https://example.org/resource/" is out of scope.` );
+						} )
+					;
+				} );
 
-				Object.defineProperty( resource, "isDirty", { writable: true } );
-				spyOn( resource, "isDirty" ).and.returnValue( true );
 
-				const spy:jasmine.Spy = spyOn( resource._registry, "_parseErrorFromResponse" )
-					.and.callFake( () => Promise.reject( null ) );
+				it( "should send request self ID", async () => {
+					resource.id = "https://example.com/";
 
-				try {
-					await resource.save();
-					fail( "Should not resolve" );
-				} catch( error ) {
-					if( error ) fail( error );
+					Object.defineProperty( resource, "isDirty", { writable: true } );
+					spyOn( resource, "isDirty" ).and.returnValue( true );
+
+					resource.save();
+
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.url ).toBe( "https://example.com/" );
+					expect( request.method ).toBe( "PATCH" );
+				} );
+
+				it( "should return immediately when no dirty", async () => {
+					Object.defineProperty( resource, "isDirty", { writable: true } );
+					spyOn( resource, "isDirty" ).and.returnValue( false );
+
+					const returned:QueryDocumentDocument = await resource.save();
+					expect( returned ).toBe( resource );
+				} );
+
+				it( "should throw error when outdated", async () => {
+					resource = createMock( {
+						_registry: context.registry,
+						_eTag: null,
+						id: "https://example.com/",
+					} );
+
+					await resource
+						.save()
+						.then( () => fail( "should not resolve" ) )
+						.catch( error => {
+							expect( () => { throw error; } )
+								.toThrowError( IllegalStateError, `"https://example.com/" is outdated and cannot be saved.` );
+						} )
+					;
+				} );
+
+				it( "should parse error response", async () => {
+					stubRequest( "https://example.com/", { status: 500 } );
+
+					Object.defineProperty( resource, "isDirty", { writable: true } );
+					spyOn( resource, "isDirty" ).and.returnValue( true );
+
+					const spy:jasmine.Spy = spyOn( resource._registry, "_parseErrorFromResponse" )
+						.and.callFake( () => Promise.reject( null ) );
+
+					try {
+						await resource.save();
+						fail( "Should not resolve" );
+					} catch( error ) {
+						if( error ) fail( error );
+
+						expect( spy ).toHaveBeenCalled();
+					}
+				} );
+
+
+				it( "should send basic request headers", async () => {
+					resource = createMock( {
+						_registry: context.registry,
+						_eTag: "\"1-12345\"",
+						id: "https://example.com/",
+					} );
+
+					Object.defineProperty( resource, "isDirty", { writable: true } );
+					spyOn( resource, "isDirty" ).and.returnValue( true );
+
+					resource.save();
+
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.requestHeaders ).toEqual( {
+						"accept": "application/ld+json",
+						"content-type": "text/ldpatch",
+						"if-match": "\"1-12345\"",
+						"prefer": "return=minimal",
+					} );
+				} );
+
+				it( "should add authentication header", async () => {
+					Object.defineProperty( resource, "isDirty", { writable: true } );
+					spyOn( resource, "isDirty" ).and.returnValue( true );
+
+
+					const spy:jasmine.Spy = spyOn( context.auth, "addAuthentication" );
+
+					resource.save();
 
 					expect( spy ).toHaveBeenCalled();
-				}
-			} );
-
-
-			it( "should send basic request headers", async () => {
-				const resource:QueryDocumentDocument = createMock( {
-					_eTag: "\"1-12345\"",
-					id: "https://example.com/",
 				} );
 
-				Object.defineProperty( resource, "isDirty", { writable: true } );
-				spyOn( resource, "isDirty" ).and.returnValue( true );
-
-				resource.save();
-
-				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-				expect( request.requestHeaders ).toEqual( {
-					"accept": "application/ld+json",
-					"content-type": "text/ldpatch",
-					"if-match": "\"1-12345\"",
-					"prefer": "return=minimal",
-				} );
-			} );
-
-			it( "should add authentication header", async () => {
-				const resource:QueryDocumentDocument = createMock();
-
-				Object.defineProperty( resource, "isDirty", { writable: true } );
-				spyOn( resource, "isDirty" ).and.returnValue( true );
+				it( "should add custom headers in single self child", async () => {
+					Object.defineProperty( resource, "isDirty", { writable: true } );
+					spyOn( resource, "isDirty" ).and.returnValue( true );
 
 
-				const spy:jasmine.Spy = spyOn( resource._context.auth, "addAuthentication" );
+					resource.save( {
+						headers: new Map()
+							.set( "custom", new Header( "custom value" ) )
+						,
+					} );
 
-				resource.save();
-
-				expect( spy ).toHaveBeenCalled();
-			} );
-
-			it( "should add custom headers in single self child", async () => {
-				const resource:QueryDocumentDocument = createMock();
-
-				Object.defineProperty( resource, "isDirty", { writable: true } );
-				spyOn( resource, "isDirty" ).and.returnValue( true );
-
-
-				resource.save( {
-					headers: new Map()
-						.set( "custom", new Header( "custom value" ) )
-					,
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.requestHeaders ).toEqual( jasmine.objectContaining( {
+						"custom": "custom value",
+					} ) );
 				} );
 
-				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-				expect( request.requestHeaders ).toEqual( jasmine.objectContaining( {
-					"custom": "custom value",
-				} ) );
-			} );
 
+				it( "should send update patch", async () => {
+					stubRequest( "https://example.com/" );
 
-			it( "should send update patch", async () => {
-				stubRequest( "https://example.com/" );
-
-				type MyDoc = {
-					list:(string | number)[];
-					pointer:BaseFragment & {
-						string:string[];
-						pointers:(BaseFragment & {
+					type MyDoc = {
+						list:(string | number)[];
+						pointer:BaseFragment & {
 							string:string[];
-							number:number;
-						})[];
+							pointers:(BaseFragment & {
+								string:string[];
+								number:number;
+							})[];
+						};
 					};
-				};
-				const resource:QueryDocumentDocument & MyDoc = createMock( {
-					types: [ "https://example.com/ns#Document" ],
-					list: [ 1, 2, 3, 4, 5 ],
-					pointer: {
-						id: "#fragment",
-						types: [ "https://example.con/ns#Fragment" ],
-						string: [ "string 1", "string 2" ],
-						pointers: [
-							{
-								id: "_:blank-node",
-								types: [ "https://example.con/ns#Fragment", "https://example.com/ns#BlankNode" ],
-								string: [ "string 1" ],
-								number: 100,
-							},
-							{
-								id: "_:to-delete",
-								types: [ "https://example.con/ns#Fragment", "https://example.com/ns#BlankNode" ],
-								string: [ "string --" ],
-								number: - 100,
-							},
-						],
-					},
-				} );
 
+					let object:MyDoc;
+					object = resource = createMock( {
+						_registry: context.registry,
 
-				resource._normalize();
-				resource._syncSnapshot();
-				resource._syncSavedFragments();
-				resource._context
-					.extendObjectSchema( {
-						"@vocab": "https://example.com/ns#",
-						"xsd": XSD.namespace,
-					} )
-					.extendObjectSchema( "https://example.com/ns#Document", {
-						"list": {
-							"@container": "@list",
-						},
-						"pointer": {
-							"@type": "@id",
-						},
-					} )
-					.extendObjectSchema( "https://example.com/ns#Fragment", {
-						"string": {
-							"@type": XSD.string,
-							"@container": "@set",
-						},
-						"pointer": {
-							"@type": "@id",
-						},
-					} )
-					.extendObjectSchema( "https://example.com/ns#BlankNode", {
-						"number": {
-							"@type": XSD.integer,
+						types: [ "https://example.com/ns#Document" ],
+						list: [ 1, 2, 3, 4, 5 ],
+						pointer: {
+							id: "#fragment",
+							types: [ "https://example.con/ns#Fragment" ],
+							string: [ "string 1", "string 2" ],
+							pointers: [
+								{
+									id: "_:blank-node",
+									types: [ "https://example.con/ns#Fragment", "https://example.com/ns#BlankNode" ],
+									string: [ "string 1" ],
+									number: 100,
+								},
+								{
+									id: "_:to-delete",
+									types: [ "https://example.con/ns#Fragment", "https://example.com/ns#BlankNode" ],
+									string: [ "string --" ],
+									number: - 100,
+								},
+							],
 						},
 					} );
 
 
-				resource.addType( "NewType" );
-				resource.list = [ 4, 1, 2, "s-1", "s-2", "s-3", 3 ];
-				resource.pointer.string = [ "string 2", "string 3" ];
-				resource.pointer.pointers[ 0 ].string = [ "string 1", "string -1" ];
-				resource.pointer.pointers[ 0 ].number = 100.001;
-				resource.pointer.pointers.splice( 1, 1 );
+					resource._normalize();
+					resource._syncSnapshot();
+					resource._syncSavedFragments();
+					context
+						.extendObjectSchema( {
+							"@vocab": "https://example.com/ns#",
+							"xsd": XSD.namespace,
+						} )
+						.extendObjectSchema( "https://example.com/ns#Document", {
+							"list": {
+								"@container": "@list",
+							},
+							"pointer": {
+								"@type": "@id",
+							},
+						} )
+						.extendObjectSchema( "https://example.com/ns#Fragment", {
+							"string": {
+								"@type": XSD.string,
+								"@container": "@set",
+							},
+							"pointer": {
+								"@type": "@id",
+							},
+						} )
+						.extendObjectSchema( "https://example.com/ns#BlankNode", {
+							"number": {
+								"@type": XSD.integer,
+							},
+						} );
 
-				await resource.save();
 
-				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-				expect( request.params ).toBe( "" +
-					`@prefix xsd: <${ XSD.namespace }>. ` +
-					`UpdateList <https://example.com/> <https://example.com/ns#list> 3..5 (). ` +
-					`UpdateList <https://example.com/> <https://example.com/ns#list> 0..0 ( "4"^^xsd:float ). ` +
-					`UpdateList <https://example.com/> <https://example.com/ns#list> 3..3 ( "s-1" "s-2" "s-3" ). ` +
-					`Add { ` +
-					`` + `<https://example.com/> a <https://example.com/ns#NewType>. ` +
-					`` + `<https://example.com/#fragment> <https://example.com/ns#string> "string 3". ` +
-					`` + `_:blank-node <https://example.com/ns#string> "string -1". ` +
-					`}. ` +
-					`Delete { ` +
-					`` + `<https://example.com/#fragment> <https://example.com/ns#string> "string 1"; ` +
-					`` + `` + `<https://example.com/ns#pointers> _:to-delete. ` +
-					`` + `_:to-delete a <https://example.con/ns#Fragment>, <https://example.com/ns#BlankNode>; ` +
-					`` + `` + `<https://example.com/ns#string> "string --"; ` +
-					`` + `` + `<https://example.com/ns#number> "-100"^^xsd:integer. ` +
-					`}.` +
-					``
-				);
-			} );
+					resource.addType( "NewType" );
+					object.list = [ 4, 1, 2, "s-1", "s-2", "s-3", 3 ];
+					object.pointer.string = [ "string 2", "string 3" ];
+					object.pointer.pointers[ 0 ].string = [ "string 1", "string -1" ];
+					object.pointer.pointers[ 0 ].number = 100.001;
+					object.pointer.pointers.splice( 1, 1 );
 
-			it( "should update blank nodes when response metadata returned", async () => {
-				stubRequest( "https://example.com/", {
-					frees: [
-						{
-							"@id": "_:responseMetadata",
-							"@type": [ C.VolatileResource, C.ResponseMetadata ],
-							[ C.documentMetadata ]: [ {
+					await resource.save();
+
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.params ).toBe( "" +
+						`@prefix xsd: <${ XSD.namespace }>. ` +
+						`UpdateList <https://example.com/> <https://example.com/ns#list> 3..5 (). ` +
+						`UpdateList <https://example.com/> <https://example.com/ns#list> 0..0 ( "4"^^xsd:float ). ` +
+						`UpdateList <https://example.com/> <https://example.com/ns#list> 3..3 ( "s-1" "s-2" "s-3" ). ` +
+						`Add { ` +
+						`` + `<https://example.com/> a <https://example.com/ns#NewType>. ` +
+						`` + `<https://example.com/#fragment> <https://example.com/ns#string> "string 3". ` +
+						`` + `_:blank-node <https://example.com/ns#string> "string -1". ` +
+						`}. ` +
+						`Delete { ` +
+						`` + `<https://example.com/#fragment> <https://example.com/ns#string> "string 1"; ` +
+						`` + `` + `<https://example.com/ns#pointers> _:to-delete. ` +
+						`` + `_:to-delete a <https://example.con/ns#Fragment>, <https://example.com/ns#BlankNode>; ` +
+						`` + `` + `<https://example.com/ns#string> "string --"; ` +
+						`` + `` + `<https://example.com/ns#number> "-100"^^xsd:integer. ` +
+						`}.` +
+						``
+					);
+				} );
+
+				it( "should update blank nodes when response metadata returned", async () => {
+					stubRequest( "https://example.com/", {
+						frees: [
+							{
+								"@id": "_:responseMetadata",
+								"@type": [ C.VolatileResource, C.ResponseMetadata ],
+								[ C.documentMetadata ]: [ {
+									"@id": "_:documentMetadata",
+								} ],
+							},
+							{
 								"@id": "_:documentMetadata",
-							} ],
-						},
-						{
-							"@id": "_:documentMetadata",
-							"@type": [ C.VolatileResource, C.DocumentMetadata ],
-							[ C.relatedDocument ]: [ {
-								"@id": "https://example.com/",
-							} ],
-							[ C.bNodesMap ]: [ {
+								"@type": [ C.VolatileResource, C.DocumentMetadata ],
+								[ C.relatedDocument ]: [ {
+									"@id": "https://example.com/",
+								} ],
+								[ C.bNodesMap ]: [ {
+									"@id": "_:map",
+								} ],
+							},
+							{
 								"@id": "_:map",
-							} ],
-						},
-						{
-							"@id": "_:map",
-							"@type": [ C.Map ],
-							[ C.entry ]: [
-								{ "@id": "_:entry-1" },
-								{ "@id": "_:entry-2" },
-							],
-						},
-						{
-							"@id": "_:entry-1",
-							[ C.entryKey ]: [ {
-								"@id": "_:1",
-							} ],
-							[ C.entryValue ]: [ {
-								"@id": "_:new-1",
-							} ],
-						},
-						{
-							"@id": "_:entry-2",
-							[ C.entryKey ]: [ {
-								"@id": "_:2",
-							} ],
-							[ C.entryValue ]: [ {
-								"@id": "_:new-2",
-							} ],
-						},
-					],
-				} );
+								"@type": [ C.Map ],
+								[ C.entry ]: [
+									{ "@id": "_:entry-1" },
+									{ "@id": "_:entry-2" },
+								],
+							},
+							{
+								"@id": "_:entry-1",
+								[ C.entryKey ]: [ {
+									"@id": "_:1",
+								} ],
+								[ C.entryValue ]: [ {
+									"@id": "_:new-1",
+								} ],
+							},
+							{
+								"@id": "_:entry-2",
+								[ C.entryKey ]: [ {
+									"@id": "_:2",
+								} ],
+								[ C.entryValue ]: [ {
+									"@id": "_:new-2",
+								} ],
+							},
+						],
+					} );
 
-				const resource:QueryDocumentDocument & MyDoc = createMock( {
-					blankNode1: {
-						id: "_:1",
+					resource = createMock( {
+						_registry: context.registry,
+
+						blankNode1: {
+							id: "_:1",
+							string: "blank node 1",
+						},
+						blankNode2: {
+							id: "_:2",
+							string: "blank node 2",
+						},
+					} );
+					resource._registry._resourcesMap.set( "", resource as any );
+
+					type BNode = { id:string, string:string };
+					type MyDoc = { blankNode1:BNode, blankNode2:BNode };
+
+					const returned:QueryDocumentDocument & MyDoc = await resource.save<MyDoc>();
+
+					expect( returned.hasPointer( "_:1" ) ).toBe( false );
+					expect( returned.blankNode1 ).toEqual( jasmine.objectContaining( {
+						id: "_:new-1",
 						string: "blank node 1",
-					},
-					blankNode2: {
-						id: "_:2",
+					} ) );
+
+					expect( returned.hasPointer( "_:2" ) ).toBe( false );
+					expect( returned.blankNode2 ).toEqual( jasmine.objectContaining( {
+						id: "_:new-2",
 						string: "blank node 2",
-					},
+					} ) );
 				} );
-				resource._registry._resourcesMap.set( "", resource as any );
 
-				type BNode = { id:string, string:string };
-				type MyDoc = { blankNode1:BNode, blankNode2:BNode };
-
-				const returned:QueryDocumentDocument & MyDoc = await resource.save();
-
-				expect( returned.hasPointer( "_:1" ) ).toBe( false );
-				expect( returned.blankNode1 ).toEqual( jasmine.objectContaining( {
-					id: "_:new-1",
-					string: "blank node 1",
-				} ) );
-
-				expect( returned.hasPointer( "_:2" ) ).toBe( false );
-				expect( returned.blankNode2 ).toEqual( jasmine.objectContaining( {
-					id: "_:new-2",
-					string: "blank node 2",
-				} ) );
 			} );
 
 		} );
@@ -3852,466 +3826,488 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 			} );
 
 
-			it( "should throw error when self ID is outside context scope", async () => {
-				const resource:QueryDocumentDocument = createMock( { id: "https://example.org/resource/" } );
+			describe( "When has a context", () => {
 
-				await resource
-					.saveAndRefresh()
-					.catch( error => {
-						expect( () => { throw error; } )
-							.toThrowError( IllegalArgumentError, `"https://example.org/resource/" is out of scope.` );
-					} )
-				;
-			} );
-
-			it( "should throw error when self ID is BNode label", async () => {
-				const resource:QueryDocumentDocument = createMock( { id: "_:1" } );
-
-				await resource
-					.saveAndRefresh()
-					.catch( error => {
-						expect( () => { throw error; } )
-							.toThrowError( IllegalArgumentError, `"_:1" is out of scope.` );
-					} )
-				;
-			} );
-
-			it( "should throw error when self ID is Named Fragment label", async () => {
-				const resource:QueryDocumentDocument = createMock( { id: "https://example.com/#fragment" } );
-
-				await resource
-					.saveAndRefresh()
-					.catch( error => {
-						expect( () => { throw error; } )
-							.toThrowError( IllegalArgumentError, `"https://example.com/#fragment" is out of scope.` );
-					} )
-				;
-			} );
-
-			it( "should throw error when self ID is unresolved prefixed name", async () => {
-				const resource:QueryDocumentDocument = createMock( { id: "ex:resource/" } );
-
-				await resource
-					.saveAndRefresh()
-					.catch( error => {
-						expect( () => { throw error; } )
-							.toThrowError( IllegalArgumentError, `"ex:resource/" is out of scope.` );
-					} )
-				;
-			} );
-
-
-			it( "should only refresh when NO dirty", async () => {
-				stubRequest( "https://example.com/" );
-
-				const resource:QueryDocumentDocument = createMock( { id: "https://example.com/" } );
-
-				Object.defineProperty( resource, "isDirty", { writable: true } );
-				spyOn( resource, "isDirty" ).and.returnValue( false );
-
-				await resource.saveAndRefresh();
-
-				expect( jasmine.Ajax.requests.count() ).toBe( 1 );
-
-				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-				expect( request.url ).toBe( "https://example.com/" );
-				expect( request.method ).toBe( "POST" );
-			} );
-
-			it( "should send PATCH to self when dirty", async () => {
-				const resource:QueryDocumentDocument = createMock( { id: "https://example.com/" } );
-
-				Object.defineProperty( resource, "isDirty", { writable: true } );
-				spyOn( resource, "isDirty" ).and.returnValue( true );
-
-				resource.saveAndRefresh();
-
-				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-				expect( request.url ).toBe( "https://example.com/" );
-				expect( request.method ).toBe( "PATCH" );
-			} );
-
-			it( "should throw error when outdated", async () => {
-				const resource:QueryDocumentDocument = createMock( {
-					$$isDirty: true,
-					_eTag: null,
-					id: "https://example.com/",
+				let context:CarbonLDP;
+				let resource:QueryDocumentDocument;
+				beforeEach( ():void => {
+					context = new CarbonLDP( "https://example.com/" );
+					resource = createMock( { _registry: context.registry } );
 				} );
 
-				await resource
-					.saveAndRefresh()
-					.then( () => fail( "should not resolve" ) )
-					.catch( error => {
-						expect( () => { throw error; } )
-							.toThrowError( IllegalStateError, `"https://example.com/" is outdated and cannot be saved.` );
-					} )
-				;
-			} );
 
-			it( "should parse error response", async () => {
-				stubRequest( "https://example.com/", { status: 500 } );
+				it( "should throw error when self ID is outside context scope", async () => {
+					resource = createMock( {
+						_registry: context.registry,
+						id: "https://example.org/resource/",
+					} );
 
-				const resource:QueryDocumentDocument = createMock( { id: "https://example.com/" } );
+					await resource
+						.saveAndRefresh()
+						.catch( error => {
+							expect( () => { throw error; } )
+								.toThrowError( IllegalArgumentError, `"https://example.org/resource/" is out of scope.` );
+						} )
+					;
+				} );
 
-				Object.defineProperty( resource, "isDirty", { writable: true } );
-				spyOn( resource, "isDirty" ).and.returnValue( true );
+				it( "should throw error when self ID is BNode label", async () => {
+					resource = createMock( {
+						_registry: context.registry,
+						id: "_:1",
+					} );
 
-				const spy:jasmine.Spy = spyOn( resource._registry, "_parseErrorFromResponse" )
-					.and.callFake( () => Promise.reject( null ) );
+					await resource
+						.saveAndRefresh()
+						.catch( error => {
+							expect( () => { throw error; } )
+								.toThrowError( IllegalArgumentError, `"_:1" is out of scope.` );
+						} )
+					;
+				} );
 
-				try {
+				it( "should throw error when self ID is Named Fragment label", async () => {
+					resource = createMock( {
+						_registry: context.registry,
+						id: "https://example.com/#fragment",
+					} );
+
+					await resource
+						.saveAndRefresh()
+						.catch( error => {
+							expect( () => { throw error; } )
+								.toThrowError( IllegalArgumentError, `"https://example.com/#fragment" is out of scope.` );
+						} )
+					;
+				} );
+
+				it( "should throw error when self ID is unresolved prefixed name", async () => {
+					resource = createMock( {
+						_registry: context.registry,
+						id: "ex:resource/",
+					} );
+
+					await resource
+						.saveAndRefresh()
+						.catch( error => {
+							expect( () => { throw error; } )
+								.toThrowError( IllegalArgumentError, `"ex:resource/" is out of scope.` );
+						} )
+					;
+				} );
+
+
+				it( "should only refresh when NO dirty", async () => {
+					stubRequest( "https://example.com/" );
+
+					Object.defineProperty( resource, "isDirty", { writable: true } );
+					spyOn( resource, "isDirty" ).and.returnValue( false );
+
 					await resource.saveAndRefresh();
-					fail( "Should not resolve" );
-				} catch( error ) {
-					if( error ) fail( error );
+
+					expect( jasmine.Ajax.requests.count() ).toBe( 1 );
+
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.url ).toBe( "https://example.com/" );
+					expect( request.method ).toBe( "POST" );
+				} );
+
+				it( "should send PATCH to self when dirty", async () => {
+					Object.defineProperty( resource, "isDirty", { writable: true } );
+					spyOn( resource, "isDirty" ).and.returnValue( true );
+
+					resource.saveAndRefresh();
+
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.url ).toBe( "https://example.com/" );
+					expect( request.method ).toBe( "PATCH" );
+				} );
+
+				it( "should throw error when outdated", async () => {
+					resource = createMock( {
+						_registry: context.registry,
+						$$isDirty: true,
+						_eTag: null,
+						id: "https://example.com/",
+					} );
+
+					await resource
+						.saveAndRefresh()
+						.then( () => fail( "should not resolve" ) )
+						.catch( error => {
+							expect( () => { throw error; } )
+								.toThrowError( IllegalStateError, `"https://example.com/" is outdated and cannot be saved.` );
+						} )
+					;
+				} );
+
+				it( "should parse error response", async () => {
+					stubRequest( "https://example.com/", { status: 500 } );
+
+					Object.defineProperty( resource, "isDirty", { writable: true } );
+					spyOn( resource, "isDirty" ).and.returnValue( true );
+
+					const spy:jasmine.Spy = spyOn( resource._registry, "_parseErrorFromResponse" )
+						.and.callFake( () => Promise.reject( null ) );
+
+					try {
+						await resource.saveAndRefresh();
+						fail( "Should not resolve" );
+					} catch( error ) {
+						if( error ) fail( error );
+
+						expect( spy ).toHaveBeenCalled();
+					}
+				} );
+
+
+				it( "should send basic request headers", async () => {
+					stubRequest( "https://example.com/" );
+
+					resource = createMock( {
+						_registry: context.registry,
+						_eTag: "\"1-12345\"",
+						id: "https://example.com/",
+					} );
+
+					Object.defineProperty( resource, "isDirty", { writable: true } );
+					spyOn( resource, "isDirty" ).and.returnValue( true );
+
+					await resource.saveAndRefresh();
+
+					const request1:JasmineAjaxRequest = jasmine.Ajax.requests.at( 0 );
+					expect( request1.requestHeaders ).toEqual( {
+						"accept": "application/ld+json",
+						"content-type": "text/ldpatch",
+						"if-match": "\"1-12345\"",
+						"prefer": "return=minimal",
+					} );
+
+					const request2:JasmineAjaxRequest = jasmine.Ajax.requests.at( 1 );
+					expect( request2.requestHeaders ).toEqual( {
+						"accept": "application/ld+json",
+						"content-type": "application/sparql-query",
+						"prefer": [
+							`include="${ C.PreferDocumentETags }"`,
+							`include="${ C.PreferResultsContext }"`,
+						].join( ", " ),
+					} );
+				} );
+
+				it( "should add authentication header", async () => {
+					Object.defineProperty( resource, "isDirty", { writable: true } );
+					spyOn( resource, "isDirty" ).and.returnValue( true );
+
+
+					const spy:jasmine.Spy = spyOn( context.auth, "addAuthentication" );
+
+					resource.saveAndRefresh();
 
 					expect( spy ).toHaveBeenCalled();
-				}
-			} );
-
-
-			it( "should send basic request headers", async () => {
-				stubRequest( "https://example.com/" );
-
-				const resource:QueryDocumentDocument = createMock( {
-					_eTag: "\"1-12345\"",
-					id: "https://example.com/",
 				} );
 
-				Object.defineProperty( resource, "isDirty", { writable: true } );
-				spyOn( resource, "isDirty" ).and.returnValue( true );
+				it( "should add custom headers in single self child", async () => {
+					Object.defineProperty( resource, "isDirty", { writable: true } );
+					spyOn( resource, "isDirty" ).and.returnValue( true );
 
-				await resource.saveAndRefresh();
 
-				const request1:JasmineAjaxRequest = jasmine.Ajax.requests.at( 0 );
-				expect( request1.requestHeaders ).toEqual( {
-					"accept": "application/ld+json",
-					"content-type": "text/ldpatch",
-					"if-match": "\"1-12345\"",
-					"prefer": "return=minimal",
+					resource.saveAndRefresh( {
+						headers: new Map()
+							.set( "custom", new Header( "custom value" ) )
+						,
+					} );
+
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.requestHeaders ).toEqual( jasmine.objectContaining( {
+						"custom": "custom value",
+					} ) );
 				} );
 
-				const request2:JasmineAjaxRequest = jasmine.Ajax.requests.at( 1 );
-				expect( request2.requestHeaders ).toEqual( {
-					"accept": "application/ld+json",
-					"content-type": "application/sparql-query",
-					"prefer": [
-						`include="${ C.PreferDocumentETags }"`,
-						`include="${ C.PreferResultsContext }"`,
-					].join( ", " ),
-				} );
-			} );
 
-			it( "should add authentication header", async () => {
-				const resource:QueryDocumentDocument = createMock();
-
-				Object.defineProperty( resource, "isDirty", { writable: true } );
-				spyOn( resource, "isDirty" ).and.returnValue( true );
+				it( "should send patch", async () => {
+					stubRequest( "https://example.com/" );
 
 
-				const spy:jasmine.Spy = spyOn( resource._context.auth, "addAuthentication" );
-
-				resource.saveAndRefresh();
-
-				expect( spy ).toHaveBeenCalled();
-			} );
-
-			it( "should add custom headers in single self child", async () => {
-				const resource:QueryDocumentDocument = createMock();
-
-				Object.defineProperty( resource, "isDirty", { writable: true } );
-				spyOn( resource, "isDirty" ).and.returnValue( true );
-
-
-				resource.saveAndRefresh( {
-					headers: new Map()
-						.set( "custom", new Header( "custom value" ) )
-					,
-				} );
-
-				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-				expect( request.requestHeaders ).toEqual( jasmine.objectContaining( {
-					"custom": "custom value",
-				} ) );
-			} );
-
-
-			it( "should send patch", async () => {
-				stubRequest( "https://example.com/" );
-
-
-				type MyDoc = {
-					list:(string | number)[];
-					pointer:BaseFragment & {
-						string:string[];
-						pointers:(BaseFragment & {
+					type MyDoc = {
+						list:(string | number)[];
+						pointer:BaseFragment & {
 							string:string[];
-							number:number;
-						})[];
+							pointers:(BaseFragment & {
+								string:string[];
+								number:number;
+							})[];
+						};
 					};
-				};
 
-				const resource:QueryDocumentDocument & MyDoc = createMock( {
-					types: [ "https://example.com/ns#Document" ],
-					list: [ 1, 2, 3, 4, 5 ],
-					pointer: {
-						id: "#fragment",
-						types: [ "https://example.con/ns#Fragment" ],
-						string: [ "string 1", "string 2" ],
-						pointers: [
-							{
-								id: "_:blank-node",
-								types: [ "https://example.con/ns#Fragment", "https://example.com/ns#BlankNode" ],
-								string: [ "string 1" ],
-								number: 100,
-							},
-							{
-								id: "_:to-delete",
-								types: [ "https://example.con/ns#Fragment", "https://example.com/ns#BlankNode" ],
-								string: [ "string --" ],
-								number: - 100,
-							},
-						],
-					},
-				} );
+					let object:MyDoc;
+					object = resource = createMock( {
+						_registry: context.registry,
 
-
-				resource._normalize();
-				resource._syncSnapshot();
-				resource._syncSavedFragments();
-				resource._context
-					.extendObjectSchema( {
-						"@vocab": "https://example.com/ns#",
-						"xsd": XSD.namespace,
-					} )
-					.extendObjectSchema( "https://example.com/ns#Document", {
-						"list": {
-							"@container": "@list",
-						},
-						"pointer": {
-							"@type": "@id",
-						},
-					} )
-					.extendObjectSchema( "https://example.com/ns#Fragment", {
-						"string": {
-							"@type": XSD.string,
-							"@container": "@set",
-						},
-						"pointer": {
-							"@type": "@id",
-						},
-					} )
-					.extendObjectSchema( "https://example.com/ns#BlankNode", {
-						"number": {
-							"@type": XSD.integer,
+						types: [ "https://example.com/ns#Document" ],
+						list: [ 1, 2, 3, 4, 5 ],
+						pointer: {
+							id: "#fragment",
+							types: [ "https://example.con/ns#Fragment" ],
+							string: [ "string 1", "string 2" ],
+							pointers: [
+								{
+									id: "_:blank-node",
+									types: [ "https://example.con/ns#Fragment", "https://example.com/ns#BlankNode" ],
+									string: [ "string 1" ],
+									number: 100,
+								},
+								{
+									id: "_:to-delete",
+									types: [ "https://example.con/ns#Fragment", "https://example.com/ns#BlankNode" ],
+									string: [ "string --" ],
+									number: - 100,
+								},
+							],
 						},
 					} );
 
 
-				resource.addType( "NewType" );
-				resource.list = [ 4, 1, 2, "s-1", "s-2", "s-3", 3 ];
-				resource.pointer.string = [ "string 2", "string 3" ];
-				resource.pointer.pointers[ 0 ].string = [ "string 1", "string -1" ];
-				resource.pointer.pointers[ 0 ].number = 100.001;
-				resource.pointer.pointers.splice( 1, 1 );
-
-				await resource.saveAndRefresh();
-
-				const request:JasmineAjaxRequest = jasmine.Ajax.requests.first();
-				expect( request.params ).toBe( "" +
-					`@prefix xsd: <${ XSD.namespace }>. ` +
-					`UpdateList <https://example.com/> <https://example.com/ns#list> 3..5 (). ` +
-					`UpdateList <https://example.com/> <https://example.com/ns#list> 0..0 ( "4"^^xsd:float ). ` +
-					`UpdateList <https://example.com/> <https://example.com/ns#list> 3..3 ( "s-1" "s-2" "s-3" ). ` +
-					`Add { ` +
-					`` + `<https://example.com/> a <https://example.com/ns#NewType>. ` +
-					`` + `<https://example.com/#fragment> <https://example.com/ns#string> "string 3". ` +
-					`` + `_:blank-node <https://example.com/ns#string> "string -1". ` +
-					`}. ` +
-					`Delete { ` +
-					`` + `<https://example.com/#fragment> <https://example.com/ns#string> "string 1"; ` +
-					`` + `` + `<https://example.com/ns#pointers> _:to-delete. ` +
-					`` + `_:to-delete a <https://example.con/ns#Fragment>, <https://example.com/ns#BlankNode>; ` +
-					`` + `` + `<https://example.com/ns#string> "string --"; ` +
-					`` + `` + `<https://example.com/ns#number> "-100"^^xsd:integer. ` +
-					`}.` +
-					``
-				);
-			} );
-
-			it( "should send refresh CONSTRUCT query", () => {
-				const resource:QueryDocumentDocument = createMock( {
-					_partialMetadata: createPartialMetadata( {
-						"@vocab": "https://example.com/ns#",
-						"property4": {
-							"@id": "https://example.com/ns#property-4",
-							"@type": "boolean",
-						},
-						"property2": {
-							"@id": "https://schema.org/property-2",
-							"@type": "@id",
-						},
-						"property1": {
-							"@id": "https://example.com/ns#property-1",
-							"@type": "string",
-						},
-					} ),
-					id: "https://example.com/",
-
-					property2: {
-						_partialMetadata: createPartialMetadata( {
+					resource._normalize();
+					resource._syncSnapshot();
+					resource._syncSavedFragments();
+					context
+						.extendObjectSchema( {
 							"@vocab": "https://example.com/ns#",
-							"property3": {
-								"@id": "https://schema.org/property-3",
+							"xsd": XSD.namespace,
+						} )
+						.extendObjectSchema( "https://example.com/ns#Document", {
+							"list": {
+								"@container": "@list",
+							},
+							"pointer": {
+								"@type": "@id",
+							},
+						} )
+						.extendObjectSchema( "https://example.com/ns#Fragment", {
+							"string": {
 								"@type": XSD.string,
+								"@container": "@set",
 							},
-							"property5": {
-								"@id": "https://schema.org/property-5",
-								"@type": XSD.dateTime,
+							"pointer": {
+								"@type": "@id",
 							},
-							"property2": {
-								"@id": "https://example.com/ns#property-2",
+						} )
+						.extendObjectSchema( "https://example.com/ns#BlankNode", {
+							"number": {
 								"@type": XSD.integer,
 							},
+						} );
+
+
+					resource.addType( "NewType" );
+					object.list = [ 4, 1, 2, "s-1", "s-2", "s-3", 3 ];
+					object.pointer.string = [ "string 2", "string 3" ];
+					object.pointer.pointers[ 0 ].string = [ "string 1", "string -1" ];
+					object.pointer.pointers[ 0 ].number = 100.001;
+					object.pointer.pointers.splice( 1, 1 );
+
+					await resource.saveAndRefresh();
+
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.first();
+					expect( request.params ).toBe( "" +
+						`@prefix xsd: <${ XSD.namespace }>. ` +
+						`UpdateList <https://example.com/> <https://example.com/ns#list> 3..5 (). ` +
+						`UpdateList <https://example.com/> <https://example.com/ns#list> 0..0 ( "4"^^xsd:float ). ` +
+						`UpdateList <https://example.com/> <https://example.com/ns#list> 3..3 ( "s-1" "s-2" "s-3" ). ` +
+						`Add { ` +
+						`` + `<https://example.com/> a <https://example.com/ns#NewType>. ` +
+						`` + `<https://example.com/#fragment> <https://example.com/ns#string> "string 3". ` +
+						`` + `_:blank-node <https://example.com/ns#string> "string -1". ` +
+						`}. ` +
+						`Delete { ` +
+						`` + `<https://example.com/#fragment> <https://example.com/ns#string> "string 1"; ` +
+						`` + `` + `<https://example.com/ns#pointers> _:to-delete. ` +
+						`` + `_:to-delete a <https://example.con/ns#Fragment>, <https://example.com/ns#BlankNode>; ` +
+						`` + `` + `<https://example.com/ns#string> "string --"; ` +
+						`` + `` + `<https://example.com/ns#number> "-100"^^xsd:integer. ` +
+						`}.` +
+						``
+					);
+				} );
+
+				it( "should send refresh CONSTRUCT query", () => {
+					resource = createMock( {
+						_registry: context.registry,
+
+						_partialMetadata: createPartialMetadata( {
+							"@vocab": "https://example.com/ns#",
+							"property4": {
+								"@id": "https://example.com/ns#property-4",
+								"@type": "boolean",
+							},
+							"property2": {
+								"@id": "https://schema.org/property-2",
+								"@type": "@id",
+							},
+							"property1": {
+								"@id": "https://example.com/ns#property-1",
+								"@type": "string",
+							},
 						} ),
-						id: "_:1",
-					},
-				} );
-				resource._syncSavedFragments();
+						id: "https://example.com/",
 
-				resource._context
-					.extendObjectSchema( {
-						"@vocab": "https://example.com/ns#",
-						"schema": "https://schema.org/",
-					} )
-				;
-
-
-				resource.refresh();
-
-
-				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-				expect( request.params ).toEqual( "" +
-					"PREFIX schema: <https://schema.org/> " +
-					"CONSTRUCT {" +
-					` ?metadata a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
-					"" + ` <${ C.target }> ?document.` +
-
-					" ?document a ?document__types;" +
-					"" + " <https://example.com/ns#property-4> ?document__property4;" +
-					"" + " schema:property-2 ?document__property2;" +
-					"" + " <https://example.com/ns#property-1> ?document__property1." +
-
-					" ?document__property2 a ?document__property2__types;" +
-					"" + " schema:property-3 ?document__property2__property3;" +
-					"" + " schema:property-5 ?document__property2__property5;" +
-					"" + " <https://example.com/ns#property-2> ?document__property2__property2 " +
-
-					"} WHERE {" +
-					" BIND(BNODE() AS ?metadata)." +
-
-					" VALUES ?document { <https://example.com/> }." +
-					" OPTIONAL { ?document a ?document__types }." +
-
-					" OPTIONAL {" +
-					"" + " ?document <https://example.com/ns#property-4> ?document__property4." +
-					"" + " FILTER( datatype( ?document__property4 ) = <http://www.w3.org/2001/XMLSchema#boolean> )" +
-					" }." +
-
-					" OPTIONAL {" +
-					"" + " ?document schema:property-2 ?document__property2." +
-					"" + " FILTER( ! isLiteral( ?document__property2 ) )." +
-					"" + " OPTIONAL { ?document__property2 a ?document__property2__types }." +
-
-					"" + " OPTIONAL {" +
-					"" + "" + " ?document__property2 schema:property-3 ?document__property2__property3." +
-					"" + "" + " FILTER( datatype( ?document__property2__property3 ) = <http://www.w3.org/2001/XMLSchema#string> )" +
-					"" + " }." +
-
-					"" + " OPTIONAL {" +
-					"" + "" + " ?document__property2 schema:property-5 ?document__property2__property5." +
-					"" + "" + " FILTER( datatype( ?document__property2__property5 ) = <http://www.w3.org/2001/XMLSchema#dateTime> )" +
-					"" + " }." +
-
-					"" + " OPTIONAL {" +
-					"" + "" + " ?document__property2 <https://example.com/ns#property-2> ?document__property2__property2." +
-					"" + "" + " FILTER( datatype( ?document__property2__property2 ) = <http://www.w3.org/2001/XMLSchema#integer> )" +
-					"" + " }" +
-					" }." +
-
-					" OPTIONAL {" +
-					"" + " ?document <https://example.com/ns#property-1> ?document__property1." +
-					"" + " FILTER( datatype( ?document__property1 ) = <http://www.w3.org/2001/XMLSchema#string> )" +
-					" }" +
-
-					" }"
-				);
-			} );
-
-			it( "should update BasePersistedDocument data", async () => {
-				stubRequest( "https://example.com/", {
-					resources: [
-						{
-							"@id": "_:1",
-							"@type": [
-								C.VolatileResource,
-								C.QueryMetadata,
-							],
-							[ C.target ]: [ {
-								"@id": "https://example.com/",
-							} ],
-						},
-						{
-							"@id": "_:2",
-							"@type": [
-								C.ResponseMetadata,
-								C.VolatileResource,
-							],
-							[ C.documentMetadata ]: [ {
-								"@id": "_:3",
-							} ],
-						},
-						{
-							"@id": "_:3",
-							"@type": [
-								C.DocumentMetadata,
-								C.VolatileResource,
-							],
-							[ C.eTag ]: [ {
-								"@value": "\"1-12345\"",
-							} ],
-							[ C.relatedDocument ]: [ {
-								"@id": "https://example.com/",
-							} ],
-						},
-						{
-							"@id": "https://example.com/",
-							"@graph": [
-								{
-									"@id": "https://example.com/",
-									"@type": [
-										LDP.RDFSource,
-										LDP.BasicContainer,
-										C.Document,
-										"https://example.com/ns#Resource",
-									],
+						property2: {
+							_partialMetadata: createPartialMetadata( {
+								"@vocab": "https://example.com/ns#",
+								"property3": {
+									"@id": "https://schema.org/property-3",
+									"@type": XSD.string,
 								},
-							],
+								"property5": {
+									"@id": "https://schema.org/property-5",
+									"@type": XSD.dateTime,
+								},
+								"property2": {
+									"@id": "https://example.com/ns#property-2",
+									"@type": XSD.integer,
+								},
+							} ),
+							id: "_:1",
 						},
-					],
+					} );
+					resource._syncSavedFragments();
+
+					context
+						.extendObjectSchema( {
+							"@vocab": "https://example.com/ns#",
+							"schema": "https://schema.org/",
+						} )
+					;
+
+
+					resource.refresh();
+
+
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.params ).toEqual( "" +
+						"PREFIX schema: <https://schema.org/> " +
+						"CONSTRUCT {" +
+						` ?metadata a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
+						"" + ` <${ C.target }> ?document.` +
+
+						" ?document a ?document__types;" +
+						"" + " <https://example.com/ns#property-4> ?document__property4;" +
+						"" + " schema:property-2 ?document__property2;" +
+						"" + " <https://example.com/ns#property-1> ?document__property1." +
+
+						" ?document__property2 a ?document__property2__types;" +
+						"" + " schema:property-3 ?document__property2__property3;" +
+						"" + " schema:property-5 ?document__property2__property5;" +
+						"" + " <https://example.com/ns#property-2> ?document__property2__property2 " +
+
+						"} WHERE {" +
+						" BIND(BNODE() AS ?metadata)." +
+
+						" VALUES ?document { <https://example.com/> }." +
+						" OPTIONAL { ?document a ?document__types }." +
+
+						" OPTIONAL {" +
+						"" + " ?document <https://example.com/ns#property-4> ?document__property4." +
+						"" + " FILTER( datatype( ?document__property4 ) = <http://www.w3.org/2001/XMLSchema#boolean> )" +
+						" }." +
+
+						" OPTIONAL {" +
+						"" + " ?document schema:property-2 ?document__property2." +
+						"" + " FILTER( ! isLiteral( ?document__property2 ) )." +
+						"" + " OPTIONAL { ?document__property2 a ?document__property2__types }." +
+
+						"" + " OPTIONAL {" +
+						"" + "" + " ?document__property2 schema:property-3 ?document__property2__property3." +
+						"" + "" + " FILTER( datatype( ?document__property2__property3 ) = <http://www.w3.org/2001/XMLSchema#string> )" +
+						"" + " }." +
+
+						"" + " OPTIONAL {" +
+						"" + "" + " ?document__property2 schema:property-5 ?document__property2__property5." +
+						"" + "" + " FILTER( datatype( ?document__property2__property5 ) = <http://www.w3.org/2001/XMLSchema#dateTime> )" +
+						"" + " }." +
+
+						"" + " OPTIONAL {" +
+						"" + "" + " ?document__property2 <https://example.com/ns#property-2> ?document__property2__property2." +
+						"" + "" + " FILTER( datatype( ?document__property2__property2 ) = <http://www.w3.org/2001/XMLSchema#integer> )" +
+						"" + " }" +
+						" }." +
+
+						" OPTIONAL {" +
+						"" + " ?document <https://example.com/ns#property-1> ?document__property1." +
+						"" + " FILTER( datatype( ?document__property1 ) = <http://www.w3.org/2001/XMLSchema#string> )" +
+						" }" +
+
+						" }"
+					);
 				} );
 
-				const resource:QueryDocumentDocument = createMock( {
-					eTag: "\"0-12345\"",
-					string: "document",
+				it( "should update BasePersistedDocument data", async () => {
+					stubRequest( "https://example.com/", {
+						resources: [
+							{
+								"@id": "_:1",
+								"@type": [
+									C.VolatileResource,
+									C.QueryMetadata,
+								],
+								[ C.target ]: [ {
+									"@id": "https://example.com/",
+								} ],
+							},
+							{
+								"@id": "_:2",
+								"@type": [
+									C.ResponseMetadata,
+									C.VolatileResource,
+								],
+								[ C.documentMetadata ]: [ {
+									"@id": "_:3",
+								} ],
+							},
+							{
+								"@id": "_:3",
+								"@type": [
+									C.DocumentMetadata,
+									C.VolatileResource,
+								],
+								[ C.eTag ]: [ {
+									"@value": "\"1-12345\"",
+								} ],
+								[ C.relatedDocument ]: [ {
+									"@id": "https://example.com/",
+								} ],
+							},
+							{
+								"@id": "https://example.com/",
+								"@graph": [
+									{
+										"@id": "https://example.com/",
+										"@type": [
+											LDP.RDFSource,
+											LDP.BasicContainer,
+											C.Document,
+											"https://example.com/ns#Resource",
+										],
+									},
+								],
+							},
+						],
+					} );
+
+					resource = createMock( {
+						_registry: context.registry,
+						eTag: "\"0-12345\"",
+						string: "document",
+					} );
+
+
+					const returned:QueryDocumentDocument = await resource.saveAndRefresh();
+					expect( returned ).toEqual( jasmine.objectContaining( {
+						_eTag: "\"1-12345\"",
+						_resolved: true,
+					} ) );
 				} );
 
-
-				const returned:QueryDocumentDocument = await resource.saveAndRefresh();
-				expect( returned ).toEqual( jasmine.objectContaining( {
-					_eTag: "\"1-12345\"",
-					_resolved: true,
-				} ) );
 			} );
 
 		} );
@@ -4399,957 +4395,821 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 			} );
 
 
-			it( "should request self when no URI", async () => {
-				const resource:QueryDocumentDocument = createMock();
+			describe( "When has a context", () => {
 
-				resource.getChildren();
-
-				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-				expect( request.url ).toBe( "https://example.com/" );
-			} );
-
-			it( "should request the URI provided", async () => {
-				const resource:QueryDocumentDocument = createMock();
-
-				resource.getChildren( "https://example.com/resource/" );
-
-				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-				expect( request.url ).toBe( "https://example.com/resource/" );
-			} );
-
-			it( "should request relative URI provided", async () => {
-				const resource:QueryDocumentDocument = createMock();
-
-				resource.getChildren( "relative/" );
-
-				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-				expect( request.url ).toBe( "https://example.com/relative/" );
-			} );
-
-			it( "should request resolved prefixed name provided", async () => {
-				const _context:CarbonLDP = new CarbonLDP( "https://example.com/" );
-				_context.extendObjectSchema( { "ex": "https://example.com/" } );
-
-				const resource:QueryDocumentDocument = createMock( { _context } );
-
-				resource.getChildren( "ex:resource/" );
-
-				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-				expect( request.url ).toBe( "https://example.com/resource/" );
-			} );
-
-			it( "should throw error when from URI outside context scope", async () => {
-				const resource:QueryDocumentDocument = createMock();
-
-				await resource
-					.getChildren( "https://example.org/resource/" )
-					.catch( error => {
-						expect( () => { throw error; } )
-							.toThrowError( IllegalArgumentError, `"https://example.org/resource/" is out of scope.` );
-					} )
-				;
-			} );
-
-			it( "should throw error when from URI is BNode label", async () => {
-				const resource:QueryDocumentDocument = createMock();
-
-				await resource
-					.getChildren( "_:1" )
-					.catch( error => {
-						expect( () => { throw error; } )
-							.toThrowError( IllegalArgumentError, `"_:1" is out of scope.` );
-					} )
-				;
-			} );
-
-			it( "should throw error when from URI is Named Fragment label", async () => {
-				const resource:QueryDocumentDocument = createMock();
-
-				await resource
-					.getChildren( "#fragment" )
-					.catch( error => {
-						expect( () => { throw error; } )
-							.toThrowError( IllegalArgumentError, `"https://example.com/#fragment" is out of scope.` );
-					} )
-				;
-			} );
-
-			it( "should throw error when unresolved prefixed name", async () => {
-				const resource:QueryDocumentDocument = createMock();
-
-				await resource
-					.getChildren( "ex:resource/" )
-					.catch( error => {
-						expect( () => { throw error; } )
-							.toThrowError( IllegalArgumentError, `"ex:resource/" is out of scope.` );
-					} )
-				;
-			} );
-
-			it( "should parse error response", async () => {
-				stubRequest( "https://example.com/", { status: 500 } );
-
-				const resource:QueryDocumentDocument = createMock( { id: "https://example.com/" } );
-
-				const spy:jasmine.Spy = spyOn( resource._registry, "_parseErrorFromResponse" )
-					.and.callFake( () => Promise.reject( null ) );
-
-				await resource
-					.getChildren()
-					.then( () => fail( "Should not resolve" ) )
-					.catch( error => {
-						if( error ) fail( error );
-
-						expect( spy ).toHaveBeenCalled();
-					} )
-				;
-			} );
-
-
-			it( "should send basic request headers", async () => {
-				const resource:QueryDocumentDocument = createMock();
-
-				resource.getChildren();
-
-				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-				expect( request.requestHeaders ).toEqual( {
-					"accept": "application/ld+json",
-					"content-type": "application/sparql-query",
-					"prefer": [
-						`include="${ C.PreferDocumentETags }"`,
-						`include="${ C.PreferResultsContext }"`,
-					].join( ", " ),
-				} );
-			} );
-
-			it( "should add authentication header", async () => {
-				const resource:QueryDocumentDocument = createMock();
-
-				const spy:jasmine.Spy = spyOn( resource._context.auth, "addAuthentication" );
-
-				resource.getChildren();
-
-				expect( spy ).toHaveBeenCalled();
-			} );
-
-			it( "should add custom headers when no URI", async () => {
-				stubRequest( "https://example.com/" );
-
-				const resource:QueryDocumentDocument = createMock();
-
-				resource.getChildren( {
-					headers: new Map()
-						.set( "custom", new Header( "custom value" ) )
-					,
+				let context:CarbonLDP;
+				let resource:QueryDocumentDocument;
+				beforeEach( ():void => {
+					context = new CarbonLDP( "https://example.com/" );
+					resource = createMock( { _registry: context.registry } );
 				} );
 
-				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-				expect( request.requestHeaders ).toEqual( jasmine.objectContaining( {
-					"custom": "custom value",
-				} ) );
-			} );
+				it( "should request self when no URI", async () => {
+					resource.getChildren();
 
-			it( "should add custom headers when specific URI", async () => {
-				const resource:QueryDocumentDocument = createMock();
-
-				resource.getChildren( "resource/", {
-					headers: new Map()
-						.set( "custom", new Header( "custom value" ) )
-					,
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.url ).toBe( "https://example.com/" );
 				} );
 
-				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-				expect( request.requestHeaders ).toEqual( jasmine.objectContaining( {
-					"custom": "custom value",
-				} ) );
-			} );
-
-
-			it( "should send partial CONSTRUCT query when no URI", () => {
-				const resource:QueryDocumentDocument = createMock();
-
-				resource._context
-					.extendObjectSchema( {
-						"@vocab": "https://example.com/ns#",
-						"schema": "https://schema.org/",
-					} )
-					.extendObjectSchema( "Resource", {
-						"property1": {
-							"@id": "property-1",
-							"@type": "string",
-						},
-						"property2": {
-							"@id": "property-2",
-							"@type": "integer",
-						},
-						"property3": {
-							"@id": "https://schema.org/property-3",
-							"@type": "string",
-						},
-					} )
-				;
-
-
-				resource.getChildren( _ => _
-					.withType( "Resource" )
-					.properties( {
-						"property1": _.inherit,
-						"property2": {
-							"@id": "https://schema.org/property-2",
-							"@type": "@id",
-							"query": __ => __.properties( {
-								"property2": __.inherit,
-								"property3": __.inherit,
-							} ),
-						},
-					} )
-					.orderBy( "property2" )
-					.limit( 10 )
-					.offset( 5 )
-				);
-
-
-				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-				expect( request.params ).toEqual( "" +
-					"PREFIX schema: <https://schema.org/> " +
-					"CONSTRUCT {" +
-					` ?metadata a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
-					"" + ` <${ C.target }> ?child.` +
-
-					" ?child a ?child__types;" +
-					"" + " <https://example.com/ns#property-1> ?child__property1;" +
-					"" + " schema:property-2 ?child__property2." +
-
-					" ?child__property2 a ?child__property2__types;" +
-					"" + " <https://example.com/ns#property-2> ?child__property2__property2;" +
-					"" + " schema:property-3 ?child__property2__property3 " +
-
-					"} WHERE {" +
-					" BIND(BNODE() AS ?metadata)." +
-
-					" {" +
-					"" + " SELECT DISTINCT ?child WHERE {" +
-					"" + "" + " <https://example.com/> <http://www.w3.org/ns/ldp#contains> ?child." +
-					"" + "" + " OPTIONAL { ?child schema:property-2 ?child__property2 }" +
-					"" + " }" +
-					"" + " ORDER BY ?child__property2" +
-					"" + " LIMIT 10" +
-					"" + " OFFSET 5" +
-					" }." +
-
-					" OPTIONAL { ?child a ?child__types }." +
-					" ?child a <https://example.com/ns#Resource>." +
-
-					" OPTIONAL {" +
-					"" + " ?child <https://example.com/ns#property-1> ?child__property1." +
-					"" + " FILTER( datatype( ?child__property1 ) = <http://www.w3.org/2001/XMLSchema#string> )" +
-					" }." +
-
-					" OPTIONAL {" +
-					"" + " ?child schema:property-2 ?child__property2." +
-					"" + " FILTER( ! isLiteral( ?child__property2 ) )." +
-					"" + " OPTIONAL { ?child__property2 a ?child__property2__types }." +
-
-					"" + " OPTIONAL {" +
-					"" + "" + " ?child__property2 <https://example.com/ns#property-2> ?child__property2__property2." +
-					"" + "" + " FILTER( datatype( ?child__property2__property2 ) = <http://www.w3.org/2001/XMLSchema#integer> )" +
-					"" + " }." +
-
-					"" + " OPTIONAL {" +
-					"" + "" + " ?child__property2 schema:property-3 ?child__property2__property3." +
-					"" + "" + " FILTER( datatype( ?child__property2__property3 ) = <http://www.w3.org/2001/XMLSchema#string> )" +
-					"" + " }" +
-					" } " +
-					"}"
-				);
-			} );
-
-			it( "should send partial CONSTRUCT query when specific URI", () => {
-				const resource:QueryDocumentDocument = createMock();
-
-				resource._context
-					.extendObjectSchema( {
-						"@vocab": "https://example.com/ns#",
-						"schema": "https://schema.org/",
-					} )
-					.extendObjectSchema( "Resource", {
-						"property1": {
-							"@id": "property-1",
-							"@type": "string",
-						},
-						"property2": {
-							"@id": "property-2",
-							"@type": "integer",
-						},
-						"property3": {
-							"@id": "https://schema.org/property-3",
-							"@type": "string",
-						},
-					} )
-				;
-
-
-				resource.getChildren( "https://example.com/resource/", _ => _
-					.withType( "Resource" )
-					.properties( {
-						"property1": _.inherit,
-						"property2": {
-							"@id": "https://schema.org/property-2",
-							"@type": "@id",
-							"query": __ => __.properties( {
-								"property2": __.inherit,
-								"property3": __.inherit,
-							} ),
-						},
-					} )
-					.orderBy( "property2" )
-					.limit( 10 )
-					.offset( 5 )
-				);
-
-
-				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-				expect( request.params ).toEqual( "" +
-					"PREFIX schema: <https://schema.org/> " +
-					"CONSTRUCT {" +
-					` ?metadata a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
-					"" + ` <${ C.target }> ?child.` +
-
-					" ?child a ?child__types;" +
-					"" + " <https://example.com/ns#property-1> ?child__property1;" +
-					"" + " schema:property-2 ?child__property2." +
-
-					" ?child__property2 a ?child__property2__types;" +
-					"" + " <https://example.com/ns#property-2> ?child__property2__property2;" +
-					"" + " schema:property-3 ?child__property2__property3 " +
-
-					"} WHERE {" +
-					" BIND(BNODE() AS ?metadata)." +
-
-					" {" +
-					"" + " SELECT DISTINCT ?child WHERE {" +
-					"" + "" + " <https://example.com/resource/> <http://www.w3.org/ns/ldp#contains> ?child." +
-					"" + "" + " OPTIONAL { ?child schema:property-2 ?child__property2 }" +
-					"" + " }" +
-					"" + " ORDER BY ?child__property2" +
-					"" + " LIMIT 10" +
-					"" + " OFFSET 5" +
-					" }." +
-
-					" OPTIONAL { ?child a ?child__types }." +
-					" ?child a <https://example.com/ns#Resource>." +
-
-					" OPTIONAL {" +
-					"" + " ?child <https://example.com/ns#property-1> ?child__property1." +
-					"" + " FILTER( datatype( ?child__property1 ) = <http://www.w3.org/2001/XMLSchema#string> )" +
-					" }." +
-
-					" OPTIONAL {" +
-					"" + " ?child schema:property-2 ?child__property2." +
-					"" + " FILTER( ! isLiteral( ?child__property2 ) )." +
-					"" + " OPTIONAL { ?child__property2 a ?child__property2__types }." +
-
-					"" + " OPTIONAL {" +
-					"" + "" + " ?child__property2 <https://example.com/ns#property-2> ?child__property2__property2." +
-					"" + "" + " FILTER( datatype( ?child__property2__property2 ) = <http://www.w3.org/2001/XMLSchema#integer> )" +
-					"" + " }." +
-
-					"" + " OPTIONAL {" +
-					"" + "" + " ?child__property2 schema:property-3 ?child__property2__property3." +
-					"" + "" + " FILTER( datatype( ?child__property2__property3 ) = <http://www.w3.org/2001/XMLSchema#string> )" +
-					"" + " }" +
-					" } " +
-					"}"
-				);
-			} );
-
-			it( "should send full CONSTRUCT query when no URI", () => {
-				const resource:QueryDocumentDocument = createMock();
-
-				resource._context
-					.extendObjectSchema( {
-						"@vocab": "https://example.com/ns#",
-						"schema": "https://schema.org/",
-					} )
-					.extendObjectSchema( "Resource", {
-						"property1": {
-							"@id": "property-1",
-							"@type": "string",
-						},
-						"property2": {
-							"@id": "property-2",
-							"@type": "integer",
-						},
-						"property3": {
-							"@id": "https://schema.org/property-3",
-							"@type": "string",
-						},
-					} )
-				;
-
-
-				resource.getChildren();
-
-
-				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-				expect( request.params ).toEqual( "" +
-					"CONSTRUCT {" +
-					` ?metadata a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
-					"" + ` <${ C.target }> ?child.` +
-
-					" ?child___subject ?child___predicate ?child___object " +
-
-					"} WHERE {" +
-					" BIND(BNODE() AS ?metadata)." +
-
-					" {" +
-					"" + " SELECT DISTINCT ?child WHERE {" +
-					"" + "" + " <https://example.com/> <http://www.w3.org/ns/ldp#contains> ?child" +
-					"" + " }" +
-					" }." +
-
-					" GRAPH ?child {" +
-					"" + " ?child___subject ?child___predicate ?child___object" +
-					" } " +
-
-					"}"
-				);
-			} );
-
-			it( "should send full CONSTRUCT query when specific URI", () => {
-				const resource:QueryDocumentDocument = createMock();
-
-				resource._context
-					.extendObjectSchema( {
-						"@vocab": "https://example.com/ns#",
-						"schema": "https://schema.org/",
-					} )
-					.extendObjectSchema( "Resource", {
-						"property1": {
-							"@id": "property-1",
-							"@type": "string",
-						},
-						"property2": {
-							"@id": "property-2",
-							"@type": "integer",
-						},
-						"property3": {
-							"@id": "https://schema.org/property-3",
-							"@type": "string",
-						},
-					} )
-				;
-
-
-				resource.getChildren( "resource/" );
-
-
-				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-				expect( request.params ).toEqual( "" +
-					"CONSTRUCT {" +
-					` ?metadata a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
-					"" + ` <${ C.target }> ?child.` +
-
-					" ?child___subject ?child___predicate ?child___object " +
-
-					"} WHERE {" +
-					" BIND(BNODE() AS ?metadata)." +
-
-					" {" +
-					"" + " SELECT DISTINCT ?child WHERE {" +
-					"" + "" + " <https://example.com/resource/> <http://www.w3.org/ns/ldp#contains> ?child" +
-					"" + " }" +
-					" }." +
-
-					" GRAPH ?child {" +
-					"" + " ?child___subject ?child___predicate ?child___object" +
-					" } " +
-
-					"}"
-				);
-			} );
-
-			it( "should send filtered .ALL CONSTRUCT query when no URI", () => {
-				const resource:QueryDocumentDocument = createMock();
-
-				resource._context
-					.extendObjectSchema( {
-						"@vocab": "https://example.com/ns#",
-						"schema": "https://schema.org/",
-					} )
-					.extendObjectSchema( "Resource", {
-						"property1": {
-							"@id": "https://schema.org/property-1",
-							"@type": XSD.string,
-						},
-						"property2": {
-							"@id": "https://schema.org/property-2",
-							"@type": XSD.integer,
-						},
-					} )
-				;
-
-
-				resource.getChildren( _ => _
-					.properties( _.all )
-					.orderBy( "property2" )
-					.limit( 10 )
-					.offset( 5 )
-				);
-
-
-				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-				expect( request.params ).toEqual( "" +
-					"PREFIX schema: <https://schema.org/> " +
-					"CONSTRUCT {" +
-					` ?metadata a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
-					"" + ` <${ C.target }> ?child.` +
-
-					" ?child ?child___predicate ?child___object " +
-
-					"} WHERE {" +
-					" BIND(BNODE() AS ?metadata)." +
-
-					" {" +
-					"" + " SELECT DISTINCT ?child WHERE {" +
-					"" + "" + " <https://example.com/> <http://www.w3.org/ns/ldp#contains> ?child." +
-					"" + "" + " OPTIONAL { ?child schema:property-2 ?child__property2 }" +
-					"" + " }" +
-					"" + " ORDER BY ?child__property2" +
-					"" + " LIMIT 10" +
-					"" + " OFFSET 5" +
-					" }." +
-
-					" ?child ?child___predicate ?child___object." +
-
-					" OPTIONAL {" +
-					"" + " ?child schema:property-2 ?child__property2." +
-					"" + " FILTER( datatype( ?child__property2 ) = <http://www.w3.org/2001/XMLSchema#integer> )" +
-					" }" +
-
-					" " +
-					"}"
-				);
-			} );
-
-			it( "should send filtered .ALL CONSTRUCT query when specific URI", () => {
-				const resource:QueryDocumentDocument = createMock();
-
-				resource._context
-					.extendObjectSchema( {
-						"@vocab": "https://example.com/ns#",
-						"schema": "https://schema.org/",
-					} )
-					.extendObjectSchema( "Resource", {
-						"property1": {
-							"@id": "https://schema.org/property-1",
-							"@type": XSD.string,
-						},
-						"property2": {
-							"@id": "https://schema.org/property-2",
-							"@type": XSD.integer,
-						},
-					} )
-				;
-
-
-				resource.getChildren( "resource/", _ => _
-					.properties( _.all )
-					.orderBy( "property2" )
-					.limit( 10 )
-					.offset( 5 )
-				);
-
-
-				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-				expect( request.params ).toEqual( "" +
-					"PREFIX schema: <https://schema.org/> " +
-					"CONSTRUCT {" +
-					` ?metadata a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
-					"" + ` <${ C.target }> ?child.` +
-
-					" ?child ?child___predicate ?child___object " +
-
-					"} WHERE {" +
-					" BIND(BNODE() AS ?metadata)." +
-
-					" {" +
-					"" + " SELECT DISTINCT ?child WHERE {" +
-					"" + "" + " <https://example.com/resource/> <http://www.w3.org/ns/ldp#contains> ?child." +
-					"" + "" + " OPTIONAL { ?child schema:property-2 ?child__property2 }" +
-					"" + " }" +
-					"" + " ORDER BY ?child__property2" +
-					"" + " LIMIT 10" +
-					"" + " OFFSET 5" +
-					" }." +
-
-					" ?child ?child___predicate ?child___object." +
-
-					" OPTIONAL {" +
-					"" + " ?child schema:property-2 ?child__property2." +
-					"" + " FILTER( datatype( ?child__property2 ) = <http://www.w3.org/2001/XMLSchema#integer> )" +
-					" }" +
-
-					" " +
-					"}"
-				);
-			} );
-
-			it( "should send filtered without optional CONSTRUCT query when no URI", () => {
-				const resource:QueryDocumentDocument = createMock();
-
-				resource._context
-					.extendObjectSchema( {
-						"@vocab": "https://example.com/ns#",
-						"schema": "https://schema.org/",
-						"ex": "https://example.com/ns#",
-						"xsd": XSD.namespace,
-					} )
-					.extendObjectSchema( "Resource", {
-						"property1": {
-							"@id": "property-1",
-							"@type": XSD.string,
-						},
-						"property2": {
-							"@id": "property-2",
-							"@type": XSD.integer,
-						},
-						"property3": {
-							"@id": "https://schema.org/property-3",
-							"@type": XSD.string,
-						},
-					} )
-				;
-
-
-				const queryTokenClass:{ new( ...args:any[] ) } = QueryToken;
-				let query:QueryToken = void 0;
-				spyOn( TokensModule, "QueryToken" ).and.callFake( ( ...args:any[] ) => {
-					return query = new queryTokenClass( ...args );
+				it( "should request the URI provided", async () => {
+					resource.getChildren( "https://example.com/resource/" );
+
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.url ).toBe( "https://example.com/resource/" );
 				} );
 
-				resource.getChildren( _ => _
-					.withType( "Resource" )
-					.properties( {
-						"property1": _.inherit,
-						"property2": {
-							"@id": "https://schema.org/property-2",
-							"@type": "@id",
-							"query": __ => __
-								.properties( {
-									"property2": {
-										"query": ___ => ___
-											.values( ___.value( 12345 ).withType( "integer" ) )
-										,
-									},
+				it( "should request relative URI provided", async () => {
+					resource.getChildren( "relative/" );
+
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.url ).toBe( "https://example.com/relative/" );
+				} );
+
+				it( "should request resolved prefixed name provided", async () => {
+					context.extendObjectSchema( { "ex": "https://example.com/" } );
+
+					resource.getChildren( "ex:resource/" );
+
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.url ).toBe( "https://example.com/resource/" );
+				} );
+
+				it( "should throw error when from URI outside context scope", async () => {
+					await resource
+						.getChildren( "https://example.org/resource/" )
+						.catch( error => {
+							expect( () => { throw error; } )
+								.toThrowError( IllegalArgumentError, `"https://example.org/resource/" is out of scope.` );
+						} )
+					;
+				} );
+
+				it( "should throw error when from URI is BNode label", async () => {
+					await resource
+						.getChildren( "_:1" )
+						.catch( error => {
+							expect( () => { throw error; } )
+								.toThrowError( IllegalArgumentError, `"_:1" is out of scope.` );
+						} )
+					;
+				} );
+
+				it( "should throw error when from URI is Named Fragment label", async () => {
+					await resource
+						.getChildren( "#fragment" )
+						.catch( error => {
+							expect( () => { throw error; } )
+								.toThrowError( IllegalArgumentError, `"https://example.com/#fragment" is out of scope.` );
+						} )
+					;
+				} );
+
+				it( "should throw error when unresolved prefixed name", async () => {
+					await resource
+						.getChildren( "ex:resource/" )
+						.catch( error => {
+							expect( () => { throw error; } )
+								.toThrowError( IllegalArgumentError, `"ex:resource/" is out of scope.` );
+						} )
+					;
+				} );
+
+				it( "should parse error response", async () => {
+					stubRequest( "https://example.com/", { status: 500 } );
+
+					const spy:jasmine.Spy = spyOn( resource._registry, "_parseErrorFromResponse" )
+						.and.callFake( () => Promise.reject( null ) );
+
+					await resource
+						.getChildren()
+						.then( () => fail( "Should not resolve" ) )
+						.catch( error => {
+							if( error ) fail( error );
+
+							expect( spy ).toHaveBeenCalled();
+						} )
+					;
+				} );
+
+
+				it( "should send basic request headers", async () => {
+					resource.getChildren();
+
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.requestHeaders ).toEqual( {
+						"accept": "application/ld+json",
+						"content-type": "application/sparql-query",
+						"prefer": [
+							`include="${ C.PreferDocumentETags }"`,
+							`include="${ C.PreferResultsContext }"`,
+						].join( ", " ),
+					} );
+				} );
+
+				it( "should add authentication header", async () => {
+					const spy:jasmine.Spy = spyOn( context.auth, "addAuthentication" );
+
+					resource.getChildren();
+
+					expect( spy ).toHaveBeenCalled();
+				} );
+
+				it( "should add custom headers when no URI", async () => {
+					stubRequest( "https://example.com/" );
+
+					resource.getChildren( {
+						headers: new Map()
+							.set( "custom", new Header( "custom value" ) )
+						,
+					} );
+
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.requestHeaders ).toEqual( jasmine.objectContaining( {
+						"custom": "custom value",
+					} ) );
+				} );
+
+				it( "should add custom headers when specific URI", async () => {
+					resource.getChildren( "resource/", {
+						headers: new Map()
+							.set( "custom", new Header( "custom value" ) )
+						,
+					} );
+
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.requestHeaders ).toEqual( jasmine.objectContaining( {
+						"custom": "custom value",
+					} ) );
+				} );
+
+
+				it( "should send partial CONSTRUCT query when no URI", () => {
+					context
+						.extendObjectSchema( {
+							"@vocab": "https://example.com/ns#",
+							"schema": "https://schema.org/",
+						} )
+						.extendObjectSchema( "Resource", {
+							"property1": {
+								"@id": "property-1",
+								"@type": "string",
+							},
+							"property2": {
+								"@id": "property-2",
+								"@type": "integer",
+							},
+							"property3": {
+								"@id": "https://schema.org/property-3",
+								"@type": "string",
+							},
+						} )
+					;
+
+
+					resource.getChildren( _ => _
+						.withType( "Resource" )
+						.properties( {
+							"property1": _.inherit,
+							"property2": {
+								"@id": "https://schema.org/property-2",
+								"@type": "@id",
+								"query": __ => __.properties( {
+									"property2": __.inherit,
 									"property3": __.inherit,
-								} )
-								.filter( `${ __.property( "property2" ) } = ${ __.value( 12345 ).withType( "integer" ) }` )
-							,
-						},
-					} )
-					.orderBy( "property2" )
-					.limit( 10 )
-					.offset( 5 )
-				);
+								} ),
+							},
+						} )
+						.orderBy( "property2" )
+						.limit( 10 )
+						.offset( 5 )
+					);
 
-				expect( query ).toEqual( new QueryToken(
-					new ConstructToken()
-						.addTriple( new SubjectToken( variableHelper( "metadata" ) )
-							.addPredicate( new PredicateToken( "a" )
-								.addObject( new IRIToken( C.VolatileResource ) )
-								.addObject( new IRIToken( C.QueryMetadata ) )
-							)
-							.addPredicate( new PredicateToken( new IRIToken( C.target ) )
-								.addObject( variableHelper( "child" ) )
-							)
-						)
-						.addTriple( new SubjectToken( variableHelper( "child" ) )
-							.addPredicate( new PredicateToken( "a" )
-								.addObject( variableHelper( "child__types" ) )
-							)
-							.addPredicate( new PredicateToken( new PrefixedNameToken( "ex:property-1" ) )
-								.addObject( variableHelper( "child__property1" ) )
-							)
-							.addPredicate( new PredicateToken( new PrefixedNameToken( "schema:property-2" ) )
-								.addObject( variableHelper( "child__property2" ) )
-							)
-						)
-						.addTriple( new SubjectToken( variableHelper( "child__property2" ) )
-							.addPredicate( new PredicateToken( "a" )
-								.addObject( variableHelper( "child__property2__types" ) )
-							)
-							.addPredicate( new PredicateToken( new PrefixedNameToken( "ex:property-2" ) )
-								.addObject( variableHelper( "child__property2__property2" ) )
-							)
-							.addPredicate( new PredicateToken( new PrefixedNameToken( "schema:property-3" ) )
-								.addObject( variableHelper( "child__property2__property3" ) )
-							)
-						)
 
-						.addPattern( new BindToken( "BNODE()", variableHelper( "metadata" ) ) )
-						.addPattern( new SelectToken( "DISTINCT" )
-							.addVariable( variableHelper( "child" ) )
-							.addPattern( new SubjectToken( new IRIToken( "https://example.com/" ) )
-								.addPredicate( new PredicateToken( new IRIToken( LDP.contains ) )
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.params ).toEqual( "" +
+						"PREFIX schema: <https://schema.org/> " +
+						"CONSTRUCT {" +
+						` ?metadata a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
+						"" + ` <${ C.target }> ?child.` +
+
+						" ?child a ?child__types;" +
+						"" + " <https://example.com/ns#property-1> ?child__property1;" +
+						"" + " schema:property-2 ?child__property2." +
+
+						" ?child__property2 a ?child__property2__types;" +
+						"" + " <https://example.com/ns#property-2> ?child__property2__property2;" +
+						"" + " schema:property-3 ?child__property2__property3 " +
+
+						"} WHERE {" +
+						" BIND(BNODE() AS ?metadata)." +
+
+						" {" +
+						"" + " SELECT DISTINCT ?child WHERE {" +
+						"" + "" + " <https://example.com/> <http://www.w3.org/ns/ldp#contains> ?child." +
+						"" + "" + " OPTIONAL { ?child schema:property-2 ?child__property2 }" +
+						"" + " }" +
+						"" + " ORDER BY ?child__property2" +
+						"" + " LIMIT 10" +
+						"" + " OFFSET 5" +
+						" }." +
+
+						" OPTIONAL { ?child a ?child__types }." +
+						" ?child a <https://example.com/ns#Resource>." +
+
+						" OPTIONAL {" +
+						"" + " ?child <https://example.com/ns#property-1> ?child__property1." +
+						"" + " FILTER( datatype( ?child__property1 ) = <http://www.w3.org/2001/XMLSchema#string> )" +
+						" }." +
+
+						" OPTIONAL {" +
+						"" + " ?child schema:property-2 ?child__property2." +
+						"" + " FILTER( ! isLiteral( ?child__property2 ) )." +
+						"" + " OPTIONAL { ?child__property2 a ?child__property2__types }." +
+
+						"" + " OPTIONAL {" +
+						"" + "" + " ?child__property2 <https://example.com/ns#property-2> ?child__property2__property2." +
+						"" + "" + " FILTER( datatype( ?child__property2__property2 ) = <http://www.w3.org/2001/XMLSchema#integer> )" +
+						"" + " }." +
+
+						"" + " OPTIONAL {" +
+						"" + "" + " ?child__property2 schema:property-3 ?child__property2__property3." +
+						"" + "" + " FILTER( datatype( ?child__property2__property3 ) = <http://www.w3.org/2001/XMLSchema#string> )" +
+						"" + " }" +
+						" } " +
+						"}"
+					);
+				} );
+
+				it( "should send partial CONSTRUCT query when specific URI", () => {
+					context
+						.extendObjectSchema( {
+							"@vocab": "https://example.com/ns#",
+							"schema": "https://schema.org/",
+						} )
+						.extendObjectSchema( "Resource", {
+							"property1": {
+								"@id": "property-1",
+								"@type": "string",
+							},
+							"property2": {
+								"@id": "property-2",
+								"@type": "integer",
+							},
+							"property3": {
+								"@id": "https://schema.org/property-3",
+								"@type": "string",
+							},
+						} )
+					;
+
+
+					resource.getChildren( "https://example.com/resource/", _ => _
+						.withType( "Resource" )
+						.properties( {
+							"property1": _.inherit,
+							"property2": {
+								"@id": "https://schema.org/property-2",
+								"@type": "@id",
+								"query": __ => __.properties( {
+									"property2": __.inherit,
+									"property3": __.inherit,
+								} ),
+							},
+						} )
+						.orderBy( "property2" )
+						.limit( 10 )
+						.offset( 5 )
+					);
+
+
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.params ).toEqual( "" +
+						"PREFIX schema: <https://schema.org/> " +
+						"CONSTRUCT {" +
+						` ?metadata a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
+						"" + ` <${ C.target }> ?child.` +
+
+						" ?child a ?child__types;" +
+						"" + " <https://example.com/ns#property-1> ?child__property1;" +
+						"" + " schema:property-2 ?child__property2." +
+
+						" ?child__property2 a ?child__property2__types;" +
+						"" + " <https://example.com/ns#property-2> ?child__property2__property2;" +
+						"" + " schema:property-3 ?child__property2__property3 " +
+
+						"} WHERE {" +
+						" BIND(BNODE() AS ?metadata)." +
+
+						" {" +
+						"" + " SELECT DISTINCT ?child WHERE {" +
+						"" + "" + " <https://example.com/resource/> <http://www.w3.org/ns/ldp#contains> ?child." +
+						"" + "" + " OPTIONAL { ?child schema:property-2 ?child__property2 }" +
+						"" + " }" +
+						"" + " ORDER BY ?child__property2" +
+						"" + " LIMIT 10" +
+						"" + " OFFSET 5" +
+						" }." +
+
+						" OPTIONAL { ?child a ?child__types }." +
+						" ?child a <https://example.com/ns#Resource>." +
+
+						" OPTIONAL {" +
+						"" + " ?child <https://example.com/ns#property-1> ?child__property1." +
+						"" + " FILTER( datatype( ?child__property1 ) = <http://www.w3.org/2001/XMLSchema#string> )" +
+						" }." +
+
+						" OPTIONAL {" +
+						"" + " ?child schema:property-2 ?child__property2." +
+						"" + " FILTER( ! isLiteral( ?child__property2 ) )." +
+						"" + " OPTIONAL { ?child__property2 a ?child__property2__types }." +
+
+						"" + " OPTIONAL {" +
+						"" + "" + " ?child__property2 <https://example.com/ns#property-2> ?child__property2__property2." +
+						"" + "" + " FILTER( datatype( ?child__property2__property2 ) = <http://www.w3.org/2001/XMLSchema#integer> )" +
+						"" + " }." +
+
+						"" + " OPTIONAL {" +
+						"" + "" + " ?child__property2 schema:property-3 ?child__property2__property3." +
+						"" + "" + " FILTER( datatype( ?child__property2__property3 ) = <http://www.w3.org/2001/XMLSchema#string> )" +
+						"" + " }" +
+						" } " +
+						"}"
+					);
+				} );
+
+				it( "should send full CONSTRUCT query when no URI", () => {
+					context
+						.extendObjectSchema( {
+							"@vocab": "https://example.com/ns#",
+							"schema": "https://schema.org/",
+						} )
+						.extendObjectSchema( "Resource", {
+							"property1": {
+								"@id": "https://schema.org/property-1",
+								"@type": XSD.string,
+							},
+							"property2": {
+								"@id": "https://schema.org/property-2",
+								"@type": XSD.integer,
+							},
+						} )
+					;
+
+
+					resource.getChildren( _ => _
+						.properties( _.all )
+						.orderBy( "property2" )
+						.limit( 10 )
+						.offset( 5 )
+					);
+
+
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.params ).toEqual( "" +
+						"PREFIX schema: <https://schema.org/> " +
+						"CONSTRUCT {" +
+						` ?metadata a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
+						"" + ` <${ C.target }> ?child.` +
+
+						" ?child ?child___predicate ?child___object " +
+
+						"} WHERE {" +
+						" BIND(BNODE() AS ?metadata)." +
+
+						" {" +
+						"" + " SELECT DISTINCT ?child WHERE {" +
+						"" + "" + " <https://example.com/> <http://www.w3.org/ns/ldp#contains> ?child." +
+						"" + "" + " OPTIONAL { ?child schema:property-2 ?child__property2 }" +
+						"" + " }" +
+						"" + " ORDER BY ?child__property2" +
+						"" + " LIMIT 10" +
+						"" + " OFFSET 5" +
+						" }." +
+
+						" ?child ?child___predicate ?child___object." +
+
+						" OPTIONAL {" +
+						"" + " ?child schema:property-2 ?child__property2." +
+						"" + " FILTER( datatype( ?child__property2 ) = <http://www.w3.org/2001/XMLSchema#integer> )" +
+						" }" +
+
+						" " +
+						"}"
+					);
+				} );
+
+				it( "should send filtered .ALL CONSTRUCT query when specific URI", () => {
+					context
+						.extendObjectSchema( {
+							"@vocab": "https://example.com/ns#",
+							"schema": "https://schema.org/",
+						} )
+						.extendObjectSchema( "Resource", {
+							"property1": {
+								"@id": "https://schema.org/property-1",
+								"@type": XSD.string,
+							},
+							"property2": {
+								"@id": "https://schema.org/property-2",
+								"@type": XSD.integer,
+							},
+						} )
+					;
+
+
+					resource.getChildren( "resource/", _ => _
+						.properties( _.all )
+						.orderBy( "property2" )
+						.limit( 10 )
+						.offset( 5 )
+					);
+
+
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.params ).toEqual( "" +
+						"PREFIX schema: <https://schema.org/> " +
+						"CONSTRUCT {" +
+						` ?metadata a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
+						"" + ` <${ C.target }> ?child.` +
+
+						" ?child ?child___predicate ?child___object " +
+
+						"} WHERE {" +
+						" BIND(BNODE() AS ?metadata)." +
+
+						" {" +
+						"" + " SELECT DISTINCT ?child WHERE {" +
+						"" + "" + " <https://example.com/resource/> <http://www.w3.org/ns/ldp#contains> ?child." +
+						"" + "" + " OPTIONAL { ?child schema:property-2 ?child__property2 }" +
+						"" + " }" +
+						"" + " ORDER BY ?child__property2" +
+						"" + " LIMIT 10" +
+						"" + " OFFSET 5" +
+						" }." +
+
+						" ?child ?child___predicate ?child___object." +
+
+						" OPTIONAL {" +
+						"" + " ?child schema:property-2 ?child__property2." +
+						"" + " FILTER( datatype( ?child__property2 ) = <http://www.w3.org/2001/XMLSchema#integer> )" +
+						" }" +
+
+						" " +
+						"}"
+					);
+				} );
+
+				it( "should send filtered without optional CONSTRUCT query when no URI", () => {
+					context
+						.extendObjectSchema( {
+							"@vocab": "https://example.com/ns#",
+							"schema": "https://schema.org/",
+							"ex": "https://example.com/ns#",
+							"xsd": XSD.namespace,
+						} )
+						.extendObjectSchema( "Resource", {
+							"property1": {
+								"@id": "property-1",
+								"@type": XSD.string,
+							},
+							"property2": {
+								"@id": "property-2",
+								"@type": XSD.integer,
+							},
+							"property3": {
+								"@id": "https://schema.org/property-3",
+								"@type": XSD.string,
+							},
+						} )
+					;
+
+
+					const queryTokenClass:{ new( ...args:any[] ) } = QueryToken;
+					let query:QueryToken = void 0;
+					spyOn( TokensModule, "QueryToken" ).and.callFake( ( ...args:any[] ) => {
+						return query = new queryTokenClass( ...args );
+					} );
+
+					resource.getChildren( _ => _
+						.withType( "Resource" )
+						.properties( {
+							"property1": _.inherit,
+							"property2": {
+								"@id": "https://schema.org/property-2",
+								"@type": "@id",
+								"query": __ => __
+									.properties( {
+										"property2": {
+											"query": ___ => ___
+												.values( ___.value( 12345 ).withType( "integer" ) )
+											,
+										},
+										"property3": __.inherit,
+									} )
+									.filter( `${ __.property( "property2" ) } = ${ __.value( 12345 ).withType( "integer" ) }` )
+								,
+							},
+						} )
+						.orderBy( "property2" )
+						.limit( 10 )
+						.offset( 5 )
+					);
+
+					expect( query ).toEqual( new QueryToken(
+						new ConstructToken()
+							.addTriple( new SubjectToken( variableHelper( "metadata" ) )
+								.addPredicate( new PredicateToken( "a" )
+									.addObject( new IRIToken( C.VolatileResource ) )
+									.addObject( new IRIToken( C.QueryMetadata ) )
+								)
+								.addPredicate( new PredicateToken( new IRIToken( C.target ) )
 									.addObject( variableHelper( "child" ) )
 								)
 							)
-							.addPattern( new OptionalToken()
-								.addPattern( new SubjectToken( variableHelper( "child" ) )
-									.addPredicate( new PredicateToken( new PrefixedNameToken( "schema:property-2" ) )
-										.addObject( variableHelper( "child__property2" ) )
-									)
+							.addTriple( new SubjectToken( variableHelper( "child" ) )
+								.addPredicate( new PredicateToken( "a" )
+									.addObject( variableHelper( "child__types" ) )
+								)
+								.addPredicate( new PredicateToken( new PrefixedNameToken( "ex:property-1" ) )
+									.addObject( variableHelper( "child__property1" ) )
+								)
+								.addPredicate( new PredicateToken( new PrefixedNameToken( "schema:property-2" ) )
+									.addObject( variableHelper( "child__property2" ) )
 								)
 							)
-							.addModifier( new OrderToken( variableHelper( "child__property2" ) ) )
-							.addModifier( new LimitToken( 10 ) )
-							.addModifier( new OffsetToken( 5 ) )
-						)
-						.addPattern(
-							new OptionalToken()
-								.addPattern( new SubjectToken( variableHelper( "child" ) )
-									.addPredicate( new PredicateToken( "a" )
-										.addObject( variableHelper( "child__types" ) )
-									)
-								)
-						)
-						.addPattern( new SubjectToken( variableHelper( "child" ) )
-							.addPredicate( new PredicateToken( "a" )
-								.addObject( new PrefixedNameToken( "ex:Resource" ) )
-							)
-						)
-						.addPattern(
-							new OptionalToken()
-								.addPattern( new SubjectToken( variableHelper( "child" ) )
-									.addPredicate( new PredicateToken( new PrefixedNameToken( "ex:property-1" ) )
-										.addObject( variableHelper( "child__property1" ) )
-									)
-								)
-								.addPattern( new FilterToken( "datatype( ?child__property1 ) = xsd:string" ) )
-						)
-						.addPattern( new FilterToken( `?child__property2__property2 = "12345"^^xsd:integer` ) )
-						.addPattern( new SubjectToken( variableHelper( "child" ) )
-							.addPredicate( new PredicateToken( new PrefixedNameToken( "schema:property-2" ) )
-								.addObject( variableHelper( "child__property2" ) )
-							)
-						)
-						.addPattern( new FilterToken( "! isLiteral( ?child__property2 )" ) )
-						.addPattern( new OptionalToken()
-							.addPattern( new SubjectToken( variableHelper( "child__property2" ) )
+							.addTriple( new SubjectToken( variableHelper( "child__property2" ) )
 								.addPredicate( new PredicateToken( "a" )
 									.addObject( variableHelper( "child__property2__types" ) )
 								)
-							)
-						)
-						.addPattern( new SubjectToken( variableHelper( "child__property2" ) )
-							.addPredicate( new PredicateToken( new PrefixedNameToken( "ex:property-2" ) )
-								.addObject( variableHelper( "child__property2__property2" ) )
-							)
-						)
-						.addPattern( new FilterToken( "datatype( ?child__property2__property2 ) = xsd:integer" ) )
-						.addPattern( new ValuesToken()
-							.addValues(
-								variableHelper( "child__property2__property2" ),
-								new LiteralToken( 12345 ).setType( "xsd:integer" )
-							)
-						)
-						.addPattern( new OptionalToken()
-							.addPattern( new SubjectToken( variableHelper( "child__property2" ) )
+								.addPredicate( new PredicateToken( new PrefixedNameToken( "ex:property-2" ) )
+									.addObject( variableHelper( "child__property2__property2" ) )
+								)
 								.addPredicate( new PredicateToken( new PrefixedNameToken( "schema:property-3" ) )
 									.addObject( variableHelper( "child__property2__property3" ) )
 								)
 							)
-							.addPattern( new FilterToken( "datatype( ?child__property2__property3 ) = xsd:string" ) )
-						)
-					)
 
-						.addPrologues( new PrefixToken( "ex", new IRIToken( "https://example.com/ns#" ) ) )
-						.addPrologues( new PrefixToken( "xsd", new IRIToken( XSD.namespace ) ) )
-						.addPrologues( new PrefixToken( "schema", new IRIToken( "https://schema.org/" ) ) )
-				);
-			} );
-
-			it( "should send filtered without optional CONSTRUCT query when specific URI", () => {
-				const resource:QueryDocumentDocument = createMock();
-
-				resource._context
-					.extendObjectSchema( {
-						"@vocab": "https://example.com/ns#",
-						"schema": "https://schema.org/",
-						"ex": "https://example.com/ns#",
-						"xsd": XSD.namespace,
-					} )
-					.extendObjectSchema( "Resource", {
-						"property1": {
-							"@id": "property-1",
-							"@type": XSD.string,
-						},
-						"property2": {
-							"@id": "property-2",
-							"@type": XSD.integer,
-						},
-						"property3": {
-							"@id": "https://schema.org/property-3",
-							"@type": XSD.string,
-						},
-					} )
-				;
-
-
-				const queryTokenClass:{ new( ...args:any[] ) } = QueryToken;
-				let query:QueryToken = void 0;
-				spyOn( TokensModule, "QueryToken" ).and.callFake( ( ...args:any[] ) => {
-					return query = new queryTokenClass( ...args );
-				} );
-
-				resource.getChildren( "resource/", _ => _
-					.withType( "Resource" )
-					.properties( {
-						"property1": _.inherit,
-						"property2": {
-							"@id": "https://schema.org/property-2",
-							"@type": "@id",
-							"query": __ => __
-								.properties( {
-									"property2": {
-										"query": ___ => ___
-											.values( ___.value( 12345 ).withType( "integer" ) )
-										,
-									},
-									"property3": __.inherit,
-								} )
-								.filter( `${ __.property( "property2" ) } = ${ __.value( 12345 ).withType( "integer" ) }` )
-							,
-						},
-					} )
-					.orderBy( "property2" )
-					.limit( 10 )
-					.offset( 5 )
-				);
-
-				expect( query ).toEqual( new QueryToken(
-					new ConstructToken()
-						.addTriple( new SubjectToken( variableHelper( "metadata" ) )
-							.addPredicate( new PredicateToken( "a" )
-								.addObject( new IRIToken( C.VolatileResource ) )
-								.addObject( new IRIToken( C.QueryMetadata ) )
+							.addPattern( new BindToken( "BNODE()", variableHelper( "metadata" ) ) )
+							.addPattern( new SelectToken( "DISTINCT" )
+								.addVariable( variableHelper( "child" ) )
+								.addPattern( new SubjectToken( new IRIToken( "https://example.com/" ) )
+									.addPredicate( new PredicateToken( new IRIToken( LDP.contains ) )
+										.addObject( variableHelper( "child" ) )
+									)
+								)
+								.addPattern( new OptionalToken()
+									.addPattern( new SubjectToken( variableHelper( "child" ) )
+										.addPredicate( new PredicateToken( new PrefixedNameToken( "schema:property-2" ) )
+											.addObject( variableHelper( "child__property2" ) )
+										)
+									)
+								)
+								.addModifier( new OrderToken( variableHelper( "child__property2" ) ) )
+								.addModifier( new LimitToken( 10 ) )
+								.addModifier( new OffsetToken( 5 ) )
 							)
-							.addPredicate( new PredicateToken( new IRIToken( C.target ) )
-								.addObject( variableHelper( "child" ) )
+							.addPattern(
+								new OptionalToken()
+									.addPattern( new SubjectToken( variableHelper( "child" ) )
+										.addPredicate( new PredicateToken( "a" )
+											.addObject( variableHelper( "child__types" ) )
+										)
+									)
 							)
-						)
-						.addTriple( new SubjectToken( variableHelper( "child" ) )
-							.addPredicate( new PredicateToken( "a" )
-								.addObject( variableHelper( "child__types" ) )
+							.addPattern( new SubjectToken( variableHelper( "child" ) )
+								.addPredicate( new PredicateToken( "a" )
+									.addObject( new PrefixedNameToken( "ex:Resource" ) )
+								)
 							)
-							.addPredicate( new PredicateToken( new PrefixedNameToken( "ex:property-1" ) )
-								.addObject( variableHelper( "child__property1" ) )
+							.addPattern(
+								new OptionalToken()
+									.addPattern( new SubjectToken( variableHelper( "child" ) )
+										.addPredicate( new PredicateToken( new PrefixedNameToken( "ex:property-1" ) )
+											.addObject( variableHelper( "child__property1" ) )
+										)
+									)
+									.addPattern( new FilterToken( "datatype( ?child__property1 ) = xsd:string" ) )
 							)
-							.addPredicate( new PredicateToken( new PrefixedNameToken( "schema:property-2" ) )
-								.addObject( variableHelper( "child__property2" ) )
+							.addPattern( new FilterToken( `?child__property2__property2 = "12345"^^xsd:integer` ) )
+							.addPattern( new SubjectToken( variableHelper( "child" ) )
+								.addPredicate( new PredicateToken( new PrefixedNameToken( "schema:property-2" ) )
+									.addObject( variableHelper( "child__property2" ) )
+								)
 							)
-						)
-						.addTriple( new SubjectToken( variableHelper( "child__property2" ) )
-							.addPredicate( new PredicateToken( "a" )
-								.addObject( variableHelper( "child__property2__types" ) )
+							.addPattern( new FilterToken( "! isLiteral( ?child__property2 )" ) )
+							.addPattern( new OptionalToken()
+								.addPattern( new SubjectToken( variableHelper( "child__property2" ) )
+									.addPredicate( new PredicateToken( "a" )
+										.addObject( variableHelper( "child__property2__types" ) )
+									)
+								)
 							)
-							.addPredicate( new PredicateToken( new PrefixedNameToken( "ex:property-2" ) )
-								.addObject( variableHelper( "child__property2__property2" ) )
+							.addPattern( new SubjectToken( variableHelper( "child__property2" ) )
+								.addPredicate( new PredicateToken( new PrefixedNameToken( "ex:property-2" ) )
+									.addObject( variableHelper( "child__property2__property2" ) )
+								)
 							)
-							.addPredicate( new PredicateToken( new PrefixedNameToken( "schema:property-3" ) )
-								.addObject( variableHelper( "child__property2__property3" ) )
-							)
-						)
-
-						.addPattern( new BindToken( "BNODE()", variableHelper( "metadata" ) ) )
-						.addPattern( new SelectToken( "DISTINCT" )
-							.addVariable( variableHelper( "child" ) )
-							.addPattern( new SubjectToken( new IRIToken( "https://example.com/resource/" ) )
-								.addPredicate( new PredicateToken( new IRIToken( LDP.contains ) )
-									.addObject( variableHelper( "child" ) )
+							.addPattern( new FilterToken( "datatype( ?child__property2__property2 ) = xsd:integer" ) )
+							.addPattern( new ValuesToken()
+								.addValues(
+									variableHelper( "child__property2__property2" ),
+									new LiteralToken( 12345 ).setType( "xsd:integer" )
 								)
 							)
 							.addPattern( new OptionalToken()
-								.addPattern( new SubjectToken( variableHelper( "child" ) )
-									.addPredicate( new PredicateToken( new PrefixedNameToken( "schema:property-2" ) )
-										.addObject( variableHelper( "child__property2" ) )
+								.addPattern( new SubjectToken( variableHelper( "child__property2" ) )
+									.addPredicate( new PredicateToken( new PrefixedNameToken( "schema:property-3" ) )
+										.addObject( variableHelper( "child__property2__property3" ) )
 									)
 								)
+								.addPattern( new FilterToken( "datatype( ?child__property2__property3 ) = xsd:string" ) )
 							)
-							.addModifier( new OrderToken( variableHelper( "child__property2" ) ) )
-							.addModifier( new LimitToken( 10 ) )
-							.addModifier( new OffsetToken( 5 ) )
 						)
-						.addPattern(
-							new OptionalToken()
-								.addPattern( new SubjectToken( variableHelper( "child" ) )
-									.addPredicate( new PredicateToken( "a" )
-										.addObject( variableHelper( "child__types" ) )
-									)
+
+							.addPrologues( new PrefixToken( "ex", new IRIToken( "https://example.com/ns#" ) ) )
+							.addPrologues( new PrefixToken( "xsd", new IRIToken( XSD.namespace ) ) )
+							.addPrologues( new PrefixToken( "schema", new IRIToken( "https://schema.org/" ) ) )
+					);
+				} );
+
+				it( "should send filtered without optional CONSTRUCT query when specific URI", () => {
+					context
+						.extendObjectSchema( {
+							"@vocab": "https://example.com/ns#",
+							"schema": "https://schema.org/",
+							"ex": "https://example.com/ns#",
+							"xsd": XSD.namespace,
+						} )
+						.extendObjectSchema( "Resource", {
+							"property1": {
+								"@id": "property-1",
+								"@type": XSD.string,
+							},
+							"property2": {
+								"@id": "property-2",
+								"@type": XSD.integer,
+							},
+							"property3": {
+								"@id": "https://schema.org/property-3",
+								"@type": XSD.string,
+							},
+						} )
+					;
+
+
+					const queryTokenClass:{ new( ...args:any[] ) } = QueryToken;
+					let query:QueryToken = void 0;
+					spyOn( TokensModule, "QueryToken" ).and.callFake( ( ...args:any[] ) => {
+						return query = new queryTokenClass( ...args );
+					} );
+
+					resource.getChildren( "resource/", _ => _
+						.withType( "Resource" )
+						.properties( {
+							"property1": _.inherit,
+							"property2": {
+								"@id": "https://schema.org/property-2",
+								"@type": "@id",
+								"query": __ => __
+									.properties( {
+										"property2": {
+											"query": ___ => ___
+												.values( ___.value( 12345 ).withType( "integer" ) )
+											,
+										},
+										"property3": __.inherit,
+									} )
+									.filter( `${ __.property( "property2" ) } = ${ __.value( 12345 ).withType( "integer" ) }` )
+								,
+							},
+						} )
+						.orderBy( "property2" )
+						.limit( 10 )
+						.offset( 5 )
+					);
+
+					expect( query ).toEqual( new QueryToken(
+						new ConstructToken()
+							.addTriple( new SubjectToken( variableHelper( "metadata" ) )
+								.addPredicate( new PredicateToken( "a" )
+									.addObject( new IRIToken( C.VolatileResource ) )
+									.addObject( new IRIToken( C.QueryMetadata ) )
 								)
-						)
-						.addPattern( new SubjectToken( variableHelper( "child" ) )
-							.addPredicate( new PredicateToken( "a" )
-								.addObject( new PrefixedNameToken( "ex:Resource" ) )
-							)
-						)
-						.addPattern(
-							new OptionalToken()
-								.addPattern( new SubjectToken( variableHelper( "child" ) )
-									.addPredicate( new PredicateToken( new PrefixedNameToken( "ex:property-1" ) )
-										.addObject( variableHelper( "child__property1" ) )
-									)
+								.addPredicate( new PredicateToken( new IRIToken( C.target ) )
+									.addObject( variableHelper( "child" ) )
 								)
-								.addPattern( new FilterToken( "datatype( ?child__property1 ) = xsd:string" ) )
-						)
-						.addPattern( new FilterToken( `?child__property2__property2 = "12345"^^xsd:integer` ) )
-						.addPattern( new SubjectToken( variableHelper( "child" ) )
-							.addPredicate( new PredicateToken( new PrefixedNameToken( "schema:property-2" ) )
-								.addObject( variableHelper( "child__property2" ) )
 							)
-						)
-						.addPattern( new FilterToken( "! isLiteral( ?child__property2 )" ) )
-						.addPattern( new OptionalToken()
-							.addPattern( new SubjectToken( variableHelper( "child__property2" ) )
+							.addTriple( new SubjectToken( variableHelper( "child" ) )
+								.addPredicate( new PredicateToken( "a" )
+									.addObject( variableHelper( "child__types" ) )
+								)
+								.addPredicate( new PredicateToken( new PrefixedNameToken( "ex:property-1" ) )
+									.addObject( variableHelper( "child__property1" ) )
+								)
+								.addPredicate( new PredicateToken( new PrefixedNameToken( "schema:property-2" ) )
+									.addObject( variableHelper( "child__property2" ) )
+								)
+							)
+							.addTriple( new SubjectToken( variableHelper( "child__property2" ) )
 								.addPredicate( new PredicateToken( "a" )
 									.addObject( variableHelper( "child__property2__types" ) )
 								)
-							)
-						)
-						.addPattern( new SubjectToken( variableHelper( "child__property2" ) )
-							.addPredicate( new PredicateToken( new PrefixedNameToken( "ex:property-2" ) )
-								.addObject( variableHelper( "child__property2__property2" ) )
-							)
-						)
-						.addPattern( new FilterToken( "datatype( ?child__property2__property2 ) = xsd:integer" ) )
-						.addPattern( new ValuesToken()
-							.addValues(
-								variableHelper( "child__property2__property2" ),
-								new LiteralToken( 12345 ).setType( "xsd:integer" )
-							)
-						)
-						.addPattern( new OptionalToken()
-							.addPattern( new SubjectToken( variableHelper( "child__property2" ) )
+								.addPredicate( new PredicateToken( new PrefixedNameToken( "ex:property-2" ) )
+									.addObject( variableHelper( "child__property2__property2" ) )
+								)
 								.addPredicate( new PredicateToken( new PrefixedNameToken( "schema:property-3" ) )
 									.addObject( variableHelper( "child__property2__property3" ) )
 								)
 							)
-							.addPattern( new FilterToken( "datatype( ?child__property2__property3 ) = xsd:string" ) )
+
+							.addPattern( new BindToken( "BNODE()", variableHelper( "metadata" ) ) )
+							.addPattern( new SelectToken( "DISTINCT" )
+								.addVariable( variableHelper( "child" ) )
+								.addPattern( new SubjectToken( new IRIToken( "https://example.com/resource/" ) )
+									.addPredicate( new PredicateToken( new IRIToken( LDP.contains ) )
+										.addObject( variableHelper( "child" ) )
+									)
+								)
+								.addPattern( new OptionalToken()
+									.addPattern( new SubjectToken( variableHelper( "child" ) )
+										.addPredicate( new PredicateToken( new PrefixedNameToken( "schema:property-2" ) )
+											.addObject( variableHelper( "child__property2" ) )
+										)
+									)
+								)
+								.addModifier( new OrderToken( variableHelper( "child__property2" ) ) )
+								.addModifier( new LimitToken( 10 ) )
+								.addModifier( new OffsetToken( 5 ) )
+							)
+							.addPattern(
+								new OptionalToken()
+									.addPattern( new SubjectToken( variableHelper( "child" ) )
+										.addPredicate( new PredicateToken( "a" )
+											.addObject( variableHelper( "child__types" ) )
+										)
+									)
+							)
+							.addPattern( new SubjectToken( variableHelper( "child" ) )
+								.addPredicate( new PredicateToken( "a" )
+									.addObject( new PrefixedNameToken( "ex:Resource" ) )
+								)
+							)
+							.addPattern(
+								new OptionalToken()
+									.addPattern( new SubjectToken( variableHelper( "child" ) )
+										.addPredicate( new PredicateToken( new PrefixedNameToken( "ex:property-1" ) )
+											.addObject( variableHelper( "child__property1" ) )
+										)
+									)
+									.addPattern( new FilterToken( "datatype( ?child__property1 ) = xsd:string" ) )
+							)
+							.addPattern( new FilterToken( `?child__property2__property2 = "12345"^^xsd:integer` ) )
+							.addPattern( new SubjectToken( variableHelper( "child" ) )
+								.addPredicate( new PredicateToken( new PrefixedNameToken( "schema:property-2" ) )
+									.addObject( variableHelper( "child__property2" ) )
+								)
+							)
+							.addPattern( new FilterToken( "! isLiteral( ?child__property2 )" ) )
+							.addPattern( new OptionalToken()
+								.addPattern( new SubjectToken( variableHelper( "child__property2" ) )
+									.addPredicate( new PredicateToken( "a" )
+										.addObject( variableHelper( "child__property2__types" ) )
+									)
+								)
+							)
+							.addPattern( new SubjectToken( variableHelper( "child__property2" ) )
+								.addPredicate( new PredicateToken( new PrefixedNameToken( "ex:property-2" ) )
+									.addObject( variableHelper( "child__property2__property2" ) )
+								)
+							)
+							.addPattern( new FilterToken( "datatype( ?child__property2__property2 ) = xsd:integer" ) )
+							.addPattern( new ValuesToken()
+								.addValues(
+									variableHelper( "child__property2__property2" ),
+									new LiteralToken( 12345 ).setType( "xsd:integer" )
+								)
+							)
+							.addPattern( new OptionalToken()
+								.addPattern( new SubjectToken( variableHelper( "child__property2" ) )
+									.addPredicate( new PredicateToken( new PrefixedNameToken( "schema:property-3" ) )
+										.addObject( variableHelper( "child__property2__property3" ) )
+									)
+								)
+								.addPattern( new FilterToken( "datatype( ?child__property2__property3 ) = xsd:string" ) )
+							)
 						)
-					)
 
-						.addPrologues( new PrefixToken( "ex", new IRIToken( "https://example.com/ns#" ) ) )
-						.addPrologues( new PrefixToken( "xsd", new IRIToken( XSD.namespace ) ) )
-						.addPrologues( new PrefixToken( "schema", new IRIToken( "https://schema.org/" ) ) )
-				);
-			} );
+							.addPrologues( new PrefixToken( "ex", new IRIToken( "https://example.com/ns#" ) ) )
+							.addPrologues( new PrefixToken( "xsd", new IRIToken( XSD.namespace ) ) )
+							.addPrologues( new PrefixToken( "schema", new IRIToken( "https://schema.org/" ) ) )
+					);
+				} );
 
 
-			it( "should order returned children", ( done:DoneFn ):void => {
-				jasmine.Ajax.stubRequest( "https://example.com/resource/" ).andReturn( {
-					status: 200,
-					responseText: `[ {
+				it( "should order returned children", ( done:DoneFn ):void => {
+					jasmine.Ajax.stubRequest( "https://example.com/resource/" ).andReturn( {
+						status: 200,
+						responseText: `[ {
 							"@id":"_:1",
 							"@type": [
 								"${ C.VolatileResource }",
@@ -5455,257 +5315,72 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 								} ]
 							} ]
 						} ]`,
-				} );
+					} );
 
-				const resource:QueryDocumentDocument = createMock();
+					context
+						.extendObjectSchema( {
+							"@vocab": "https://example.com/ns#",
+							"schema": "https://schema.org/",
+						} )
+						.extendObjectSchema( "Resource", {
+							"property1": {
+								"@id": "property-1",
+								"@type": XSD.string,
+							},
+							"property2": {
+								"@id": "property-2",
+								"@type": XSD.integer,
+							},
+							"property3": {
+								"@id": "https://schema.org/property-3",
+								"@type": XSD.string,
+							},
+						} )
+					;
 
-				resource._context
-					.extendObjectSchema( {
-						"@vocab": "https://example.com/ns#",
-						"schema": "https://schema.org/",
-					} )
-					.extendObjectSchema( "Resource", {
-						"property1": {
-							"@id": "property-1",
-							"@type": XSD.string,
-						},
-						"property2": {
-							"@id": "property-2",
-							"@type": XSD.integer,
-						},
-						"property3": {
-							"@id": "https://schema.org/property-3",
-							"@type": XSD.string,
-						},
-					} )
-				;
-
-				interface MyDocument {
-					property1:string;
-					property2:{
-						property2:number;
-						property3:string;
-					};
-				}
-
-
-				resource.getChildren<MyDocument>( "https://example.com/resource/", _ => _
-					.withType( "Resource" )
-					.properties( {
-						"property1": _.inherit,
-						"property2": {
-							"@id": "https://schema.org/property-2",
-							"@type": "@id",
-							"query": __ => __.properties( {
-								"property2": __.inherit,
-								"property3": __.inherit,
-							} ),
-						},
-					} )
-					.orderBy( "property2.property2", "DESC" )
-				).then( ( myDocuments ) => {
-					expect( myDocuments[ 0 ] ).toEqual( jasmine.objectContaining( {
-						"property2": jasmine.objectContaining( {
-							"property2": 67890,
-						} ) as any,
-					} ) );
-					expect( myDocuments[ 1 ] ).toEqual( jasmine.objectContaining( {
-						"property2": jasmine.objectContaining( {
-							"property2": 12345,
-						} ) as any,
-					} ) );
-
-					done();
-				} ).catch( done.fail );
-			} );
-
-			it( "should return full children", ( done:DoneFn ):void => {
-				jasmine.Ajax.stubRequest( "https://example.com/resource/" ).andReturn( {
-					status: 200,
-					responseText: `[ {
-							"@id":"_:1",
-							"@type": [
-								"${ C.VolatileResource }",
-								"${ C.QueryMetadata }"
-							],
-							"${ C.target }": [ {
-								"@id":"https://example.com/resource/child1/"
-							} ]
-						}, {
-							"@id":"_:2",
-							"@type": [
-								"${ C.VolatileResource }",
-								"${ C.QueryMetadata }"
-							],
-							"${ C.target }": [ {
-								"@id":"https://example.com/resource/child2/"
-							} ]
-						}, {
-							"@id": "_:3",
-							"@type": [
-								"${ C.ResponseMetadata }",
-								"${ C.VolatileResource }"
-							],
-							"${ C.documentMetadata }": [ {
-								"@id": "_:4"
-							}, {
-								"@id": "_:5"
-							} ]
-						}, {
-							"@id": "_:4",
-							"@type": [
-								"${ C.DocumentMetadata }",
-								"${ C.VolatileResource }"
-							],
-							"${ C.eTag }": [ {
-								"@value": "\\"1-12345\\""
-							} ],
-							"${ C.relatedDocument }": [ {
-								"@id": "https://example.com/resource/child1/"
-							} ]
-						}, {
-							"@id": "_:5",
-							"@type": [
-								"${ C.DocumentMetadata }",
-								"${ C.VolatileResource }"
-							],
-							"${ C.eTag }": [ {
-								"@value": "\\"2-12345\\""
-							} ],
-							"${ C.relatedDocument }": [ {
-								"@id": "https://example.com/resource/child2/"
-							} ]
-						}, {
-							"@id": "https://example.com/resource/child1/",
-							"@graph": [ {
-								"@id": "https://example.com/resource/child1/",
-								"@type": [
-									"${ C.Document }",
-									"https://schema.org/Resource",
-									"${ LDP.BasicContainer }",
-									"${ LDP.RDFSource }"
-								],
-								"https://schema.org/property-1": [ {
-									"@value": "value 1"
-								} ],
-								"https://schema.org/property-2": [ {
-									"@id": "_:1"
-								} ]
-							}, {
-								"@id": "_:1",
-								"@type": [
-									"https://schema.org/Fragment"
-								],
-								"https://schema.org/property-3": [ {
-									"@value": "another value 1"
-								} ],
-								"https://schema.org/property-4": [ {
-									"@value": "12345",
-									"@type": "${ XSD.integer }"
-								} ]
-							} ]
-						}, {
-							"@id": "https://example.com/resource/child2/",
-							"@graph": [ {
-								"@id": "https://example.com/resource/child2/",
-								"@type": [
-									"${ C.Document }",
-									"https://schema.org/Resource",
-									"${ LDP.BasicContainer }",
-									"${ LDP.RDFSource }"
-								],
-								"https://schema.org/property-1": [ {
-									"@value": "value 2"
-								} ],
-								"https://schema.org/property-2": [ {
-									"@id": "_:2"
-								} ]
-							}, {
-								"@id": "_:2",
-								"@type": [
-									"https://schema.org/Fragment"
-								],
-								"https://schema.org/property-3": [ {
-									"@value": "another value 2"
-								} ],
-								"https://schema.org/property-4": [ {
-									"@value": "67890",
-									"@type": "${ XSD.integer }"
-								} ]
-							} ]
-						} ]`,
-				} );
-
-				const resource:QueryDocumentDocument = createMock();
-
-				resource._context
-					.extendObjectSchema( {
-						"@vocab": "https://example.com/ns#",
-						"schema": "https://schema.org/",
-					} )
-					.extendObjectSchema( "schema:Resource", {
-						"property1": {
-							"@id": "https://schema.org/property-1",
-							"@type": XSD.string,
-						},
-						"property2": {
-							"@id": "https://schema.org/property-2",
-							"@type": "@id",
-						},
-					} )
-					.extendObjectSchema( "schema:Fragment", {
-						"property3": {
-							"@id": "https://schema.org/property-3",
-							"@type": XSD.string,
-						},
-						"property4": {
-							"@id": "https://schema.org/property-4",
-							"@type": XSD.integer,
-						},
-					} )
-				;
-
-
-				interface MyDocument {
-					property1:string;
-					property2:{
-						property3:string;
-						property4:number;
-					};
-				}
-
-				resource.getChildren<MyDocument>( "https://example.com/resource/" ).then( ( myDocuments ) => {
-					expect( myDocuments ).toEqual( jasmine.any( Array ) );
-					expect( myDocuments.length ).toBe( 2 );
-					for( const document of myDocuments ) {
-						expect( Document.is( document ) ).toBe( true );
-						expect( document.isPartial() ).toBe( false );
+					interface MyDocument {
+						property1:string;
+						property2:{
+							property2:number;
+							property3:string;
+						};
 					}
 
-					expect( myDocuments[ 0 ] ).toEqual( jasmine.objectContaining( {
-						"_eTag": "\"1-12345\"",
-						"property1": "value 1",
-						"property2": jasmine.objectContaining( {
-							"property3": "another value 1",
-							"property4": 12345,
-						} ) as any,
-					} ) );
-					expect( myDocuments[ 1 ] ).toEqual( jasmine.objectContaining( {
-						"_eTag": "\"2-12345\"",
-						"property1": "value 2",
-						"property2": jasmine.objectContaining( {
-							"property3": "another value 2",
-							"property4": 67890,
-						} ) as any,
-					} ) );
-					done();
-				} ).catch( done.fail );
-			} );
 
-			it( "should return .ALL children", ( done:DoneFn ):void => {
-				jasmine.Ajax.stubRequest( "https://example.com/resource/" ).andReturn( {
-					status: 200,
-					responseText: `[ {
+					resource.getChildren<MyDocument>( "https://example.com/resource/", _ => _
+						.withType( "Resource" )
+						.properties( {
+							"property1": _.inherit,
+							"property2": {
+								"@id": "https://schema.org/property-2",
+								"@type": "@id",
+								"query": __ => __.properties( {
+									"property2": __.inherit,
+									"property3": __.inherit,
+								} ),
+							},
+						} )
+						.orderBy( "property2.property2", "DESC" )
+					).then( ( myDocuments ) => {
+						expect( myDocuments[ 0 ] ).toEqual( jasmine.objectContaining( {
+							"property2": jasmine.objectContaining( {
+								"property2": 67890,
+							} ) as any,
+						} ) );
+						expect( myDocuments[ 1 ] ).toEqual( jasmine.objectContaining( {
+							"property2": jasmine.objectContaining( {
+								"property2": 12345,
+							} ) as any,
+						} ) );
+
+						done();
+					} ).catch( done.fail );
+				} );
+
+				it( "should return full children", ( done:DoneFn ):void => {
+					jasmine.Ajax.stubRequest( "https://example.com/resource/" ).andReturn( {
+						status: 200,
+						responseText: `[ {
 							"@id":"_:1",
 							"@type": [
 								"${ C.VolatileResource }",
@@ -5774,6 +5449,18 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 								"https://schema.org/property-2": [ {
 									"@id": "_:1"
 								} ]
+							}, {
+								"@id": "_:1",
+								"@type": [
+									"https://schema.org/Fragment"
+								],
+								"https://schema.org/property-3": [ {
+									"@value": "another value 1"
+								} ],
+								"https://schema.org/property-4": [ {
+									"@value": "12345",
+									"@type": "${ XSD.integer }"
+								} ]
 							} ]
 						}, {
 							"@id": "https://example.com/resource/child2/",
@@ -5791,87 +5478,254 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 								"https://schema.org/property-2": [ {
 									"@id": "_:2"
 								} ]
+							}, {
+								"@id": "_:2",
+								"@type": [
+									"https://schema.org/Fragment"
+								],
+								"https://schema.org/property-3": [ {
+									"@value": "another value 2"
+								} ],
+								"https://schema.org/property-4": [ {
+									"@value": "67890",
+									"@type": "${ XSD.integer }"
+								} ]
 							} ]
 						} ]`,
-				} );
+					} );
+
+					context
+						.extendObjectSchema( {
+							"@vocab": "https://example.com/ns#",
+							"schema": "https://schema.org/",
+						} )
+						.extendObjectSchema( "schema:Resource", {
+							"property1": {
+								"@id": "https://schema.org/property-1",
+								"@type": XSD.string,
+							},
+							"property2": {
+								"@id": "https://schema.org/property-2",
+								"@type": "@id",
+							},
+						} )
+						.extendObjectSchema( "schema:Fragment", {
+							"property3": {
+								"@id": "https://schema.org/property-3",
+								"@type": XSD.string,
+							},
+							"property4": {
+								"@id": "https://schema.org/property-4",
+								"@type": XSD.integer,
+							},
+						} )
+					;
 
 
-				const resource:QueryDocumentDocument = createMock();
+					interface MyDocument {
+						property1:string;
+						property2:{
+							property3:string;
+							property4:number;
+						};
+					}
 
-				resource._context
-					.extendObjectSchema( {
-						"@vocab": "https://example.com/ns#",
-						"schema": "https://schema.org/",
-					} )
-					.extendObjectSchema( "schema:Resource", {
-						"property1": {
-							"@id": "https://schema.org/property-1",
-							"@type": XSD.string,
-						},
-						"property2": {
-							"@id": "https://schema.org/property-2",
-							"@type": "@id",
-						},
-					} )
-					.extendObjectSchema( "schema:Fragment", {
-						"property3": {
-							"@id": "https://schema.org/property-3",
-							"@type": XSD.string,
-						},
-						"property4": {
-							"@id": "https://schema.org/property-4",
-							"@type": XSD.integer,
-						},
-					} )
-				;
-
-
-				interface MyDocument {
-					property1:string;
-					property2:{
-						property3:string;
-						property4:number;
-					};
-				}
-
-				resource.getChildren<MyDocument>( "https://example.com/resource/", _ => _.properties( _.all ) )
-					.then( ( myDocuments ) => {
+					resource.getChildren<MyDocument>( "https://example.com/resource/" ).then( ( myDocuments ) => {
 						expect( myDocuments ).toEqual( jasmine.any( Array ) );
 						expect( myDocuments.length ).toBe( 2 );
 						for( const document of myDocuments ) {
 							expect( Document.is( document ) ).toBe( true );
-							expect( document.isPartial() ).toBe( true );
+							expect( document.isPartial() ).toBe( false );
 						}
 
 						expect( myDocuments[ 0 ] ).toEqual( jasmine.objectContaining( {
 							"_eTag": "\"1-12345\"",
 							"property1": "value 1",
-							"property2": jasmine.any( Object ) as any,
+							"property2": jasmine.objectContaining( {
+								"property3": "another value 1",
+								"property4": 12345,
+							} ) as any,
 						} ) );
-						expect( myDocuments[ 0 ][ "property2" ] ).not.toEqual( jasmine.objectContaining( {
-							"property3": "another value 1",
-							"property4": 12345,
-						} ) as any );
-
 						expect( myDocuments[ 1 ] ).toEqual( jasmine.objectContaining( {
 							"_eTag": "\"2-12345\"",
 							"property1": "value 2",
-							"property2": jasmine.any( Object ) as any,
+							"property2": jasmine.objectContaining( {
+								"property3": "another value 2",
+								"property4": 67890,
+							} ) as any,
 						} ) );
-						expect( myDocuments[ 0 ][ "property2" ] ).not.toEqual( jasmine.objectContaining( {
-							"property3": "another value 2",
-							"property4": 67890,
-						} ) as any );
-
 						done();
-					} )
-					.catch( done.fail );
-			} );
+					} ).catch( done.fail );
+				} );
 
-			it( "should return partial children", ( done:DoneFn ):void => {
-				jasmine.Ajax.stubRequest( "https://example.com/resource/" ).andReturn( {
-					status: 200,
-					responseText: `[ {
+				it( "should return .ALL children", ( done:DoneFn ):void => {
+					jasmine.Ajax.stubRequest( "https://example.com/resource/" ).andReturn( {
+						status: 200,
+						responseText: `[ {
+							"@id":"_:1",
+							"@type": [
+								"${ C.VolatileResource }",
+								"${ C.QueryMetadata }"
+							],
+							"${ C.target }": [ {
+								"@id":"https://example.com/resource/child1/"
+							} ]
+						}, {
+							"@id":"_:2",
+							"@type": [
+								"${ C.VolatileResource }",
+								"${ C.QueryMetadata }"
+							],
+							"${ C.target }": [ {
+								"@id":"https://example.com/resource/child2/"
+							} ]
+						}, {
+							"@id": "_:3",
+							"@type": [
+								"${ C.ResponseMetadata }",
+								"${ C.VolatileResource }"
+							],
+							"${ C.documentMetadata }": [ {
+								"@id": "_:4"
+							}, {
+								"@id": "_:5"
+							} ]
+						}, {
+							"@id": "_:4",
+							"@type": [
+								"${ C.DocumentMetadata }",
+								"${ C.VolatileResource }"
+							],
+							"${ C.eTag }": [ {
+								"@value": "\\"1-12345\\""
+							} ],
+							"${ C.relatedDocument }": [ {
+								"@id": "https://example.com/resource/child1/"
+							} ]
+						}, {
+							"@id": "_:5",
+							"@type": [
+								"${ C.DocumentMetadata }",
+								"${ C.VolatileResource }"
+							],
+							"${ C.eTag }": [ {
+								"@value": "\\"2-12345\\""
+							} ],
+							"${ C.relatedDocument }": [ {
+								"@id": "https://example.com/resource/child2/"
+							} ]
+						}, {
+							"@id": "https://example.com/resource/child1/",
+							"@graph": [ {
+								"@id": "https://example.com/resource/child1/",
+								"@type": [
+									"${ C.Document }",
+									"https://schema.org/Resource",
+									"${ LDP.BasicContainer }",
+									"${ LDP.RDFSource }"
+								],
+								"https://schema.org/property-1": [ {
+									"@value": "value 1"
+								} ],
+								"https://schema.org/property-2": [ {
+									"@id": "_:1"
+								} ]
+							} ]
+						}, {
+							"@id": "https://example.com/resource/child2/",
+							"@graph": [ {
+								"@id": "https://example.com/resource/child2/",
+								"@type": [
+									"${ C.Document }",
+									"https://schema.org/Resource",
+									"${ LDP.BasicContainer }",
+									"${ LDP.RDFSource }"
+								],
+								"https://schema.org/property-1": [ {
+									"@value": "value 2"
+								} ],
+								"https://schema.org/property-2": [ {
+									"@id": "_:2"
+								} ]
+							} ]
+						} ]`,
+					} );
+
+
+					context
+						.extendObjectSchema( {
+							"@vocab": "https://example.com/ns#",
+							"schema": "https://schema.org/",
+						} )
+						.extendObjectSchema( "schema:Resource", {
+							"property1": {
+								"@id": "https://schema.org/property-1",
+								"@type": XSD.string,
+							},
+							"property2": {
+								"@id": "https://schema.org/property-2",
+								"@type": "@id",
+							},
+						} )
+						.extendObjectSchema( "schema:Fragment", {
+							"property3": {
+								"@id": "https://schema.org/property-3",
+								"@type": XSD.string,
+							},
+							"property4": {
+								"@id": "https://schema.org/property-4",
+								"@type": XSD.integer,
+							},
+						} )
+					;
+
+
+					interface MyDocument {
+						property1:string;
+						property2:{
+							property3:string;
+							property4:number;
+						};
+					}
+
+					resource.getChildren<MyDocument>( "https://example.com/resource/", _ => _.properties( _.all ) )
+						.then( ( myDocuments ) => {
+							expect( myDocuments ).toEqual( jasmine.any( Array ) );
+							expect( myDocuments.length ).toBe( 2 );
+							for( const document of myDocuments ) {
+								expect( Document.is( document ) ).toBe( true );
+								expect( document.isPartial() ).toBe( true );
+							}
+
+							expect( myDocuments[ 0 ] ).toEqual( jasmine.objectContaining( {
+								"_eTag": "\"1-12345\"",
+								"property1": "value 1",
+								"property2": jasmine.any( Object ) as any,
+							} ) );
+							expect( myDocuments[ 0 ][ "property2" ] ).not.toEqual( jasmine.objectContaining( {
+								"property3": "another value 1",
+								"property4": 12345,
+							} ) as any );
+
+							expect( myDocuments[ 1 ] ).toEqual( jasmine.objectContaining( {
+								"_eTag": "\"2-12345\"",
+								"property1": "value 2",
+								"property2": jasmine.any( Object ) as any,
+							} ) );
+							expect( myDocuments[ 0 ][ "property2" ] ).not.toEqual( jasmine.objectContaining( {
+								"property3": "another value 2",
+								"property4": 67890,
+							} ) as any );
+
+							done();
+						} )
+						.catch( done.fail );
+				} );
+
+				it( "should return partial children", ( done:DoneFn ):void => {
+					jasmine.Ajax.stubRequest( "https://example.com/resource/" ).andReturn( {
+						status: 200,
+						responseText: `[ {
 							"@id":"_:1",
 							"@type": [
 								"${ C.VolatileResource }",
@@ -5977,82 +5831,80 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 								} ]
 							} ]
 						} ]`,
-				} );
+					} );
 
 
-				const resource:QueryDocumentDocument = createMock();
-
-				resource._context
-					.extendObjectSchema( {
-						"@vocab": "https://example.com/ns#",
-						"schema": "https://schema.org/",
-					} )
-					.extendObjectSchema( "Resource", {
-						"property1": {
-							"@id": "property-1",
-							"@type": XSD.string,
-						},
-						"property2": {
-							"@id": "property-2",
-							"@type": XSD.integer,
-						},
-						"property3": {
-							"@id": "https://schema.org/property-3",
-							"@type": XSD.string,
-						},
-					} )
-				;
+					context
+						.extendObjectSchema( {
+							"@vocab": "https://example.com/ns#",
+							"schema": "https://schema.org/",
+						} )
+						.extendObjectSchema( "Resource", {
+							"property1": {
+								"@id": "property-1",
+								"@type": XSD.string,
+							},
+							"property2": {
+								"@id": "property-2",
+								"@type": XSD.integer,
+							},
+							"property3": {
+								"@id": "https://schema.org/property-3",
+								"@type": XSD.string,
+							},
+						} )
+					;
 
 
-				interface MyDocument {
-					property1:string;
-					property2:{};
-				}
-
-				resource.getChildren<MyDocument>( "https://example.com/resource/", _ => _
-					.withType( "Resource" )
-					.properties( {
-						"property1": _.inherit,
-						"property2": {
-							"@id": "https://schema.org/property-2",
-							"@type": "@id",
-							"query": __ => __.properties( {
-								"property2": __.inherit,
-								"property3": __.inherit,
-							} ),
-						},
-					} )
-				).then( ( myDocuments ) => {
-					expect( myDocuments ).toEqual( jasmine.any( Array ) );
-					expect( myDocuments.length ).toBe( 2 );
-					for( const document of myDocuments ) {
-						expect( Document.is( document ) ).toBe( true );
+					interface MyDocument {
+						property1:string;
+						property2:{};
 					}
 
-					expect( myDocuments[ 0 ] ).toEqual( jasmine.objectContaining( {
-						"_eTag": "\"1-12345\"",
-						"property1": "value 1",
-						"property2": jasmine.objectContaining( {
-							"property2": 12345,
-							"property3": "another value 1",
-						} ),
-					} ) );
-					expect( myDocuments[ 1 ] ).toEqual( jasmine.objectContaining( {
-						"_eTag": "\"2-12345\"",
-						"property1": "value 2",
-						"property2": jasmine.objectContaining( {
-							"property2": 67890,
-							"property3": "another value 2",
-						} ),
-					} ) );
-					done();
-				} ).catch( done.fail );
-			} );
+					resource.getChildren<MyDocument>( "https://example.com/resource/", _ => _
+						.withType( "Resource" )
+						.properties( {
+							"property1": _.inherit,
+							"property2": {
+								"@id": "https://schema.org/property-2",
+								"@type": "@id",
+								"query": __ => __.properties( {
+									"property2": __.inherit,
+									"property3": __.inherit,
+								} ),
+							},
+						} )
+					).then( ( myDocuments ) => {
+						expect( myDocuments ).toEqual( jasmine.any( Array ) );
+						expect( myDocuments.length ).toBe( 2 );
+						for( const document of myDocuments ) {
+							expect( Document.is( document ) ).toBe( true );
+						}
 
-			it( "should return partial children with partial relations", ( done:DoneFn ):void => {
-				jasmine.Ajax.stubRequest( "https://example.com/resource/" ).andReturn( {
-					status: 200,
-					responseText: `[ {
+						expect( myDocuments[ 0 ] ).toEqual( jasmine.objectContaining( {
+							"_eTag": "\"1-12345\"",
+							"property1": "value 1",
+							"property2": jasmine.objectContaining( {
+								"property2": 12345,
+								"property3": "another value 1",
+							} ),
+						} ) );
+						expect( myDocuments[ 1 ] ).toEqual( jasmine.objectContaining( {
+							"_eTag": "\"2-12345\"",
+							"property1": "value 2",
+							"property2": jasmine.objectContaining( {
+								"property2": 67890,
+								"property3": "another value 2",
+							} ),
+						} ) );
+						done();
+					} ).catch( done.fail );
+				} );
+
+				it( "should return partial children with partial relations", ( done:DoneFn ):void => {
+					jasmine.Ajax.stubRequest( "https://example.com/resource/" ).andReturn( {
+						status: 200,
+						responseText: `[ {
 							"@id":"_:1",
 							"@type": [
 								"${ C.VolatileResource }",
@@ -6192,78 +6044,78 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 								} ]
 							} ]
 						} ]`,
-				} );
+					} );
 
 
-				const resource:QueryDocumentDocument = createMock();
-
-				resource._context
-					.extendObjectSchema( {
-						"@vocab": "https://example.com/ns#",
-						"schema": "https://schema.org/",
-					} )
-					.extendObjectSchema( "Resource", {
-						"property1": {
-							"@id": "property-1",
-							"@type": XSD.string,
-						},
-						"property2": {
-							"@id": "property-2",
-							"@type": XSD.integer,
-						},
-						"property3": {
-							"@id": "https://schema.org/property-3",
-							"@type": XSD.string,
-						},
-					} )
-				;
+					context
+						.extendObjectSchema( {
+							"@vocab": "https://example.com/ns#",
+							"schema": "https://schema.org/",
+						} )
+						.extendObjectSchema( "Resource", {
+							"property1": {
+								"@id": "property-1",
+								"@type": XSD.string,
+							},
+							"property2": {
+								"@id": "property-2",
+								"@type": XSD.integer,
+							},
+							"property3": {
+								"@id": "https://schema.org/property-3",
+								"@type": XSD.string,
+							},
+						} )
+					;
 
 
-				interface MyDocument {
-					property1:string;
-					property2:{};
-				}
-
-				resource.getChildren<MyDocument>( "https://example.com/resource/", _ => _
-					.withType( "Resource" )
-					.properties( {
-						"property1": _.inherit,
-						"property2": {
-							"@id": "https://schema.org/property-2",
-							"@type": "@id",
-							"query": __ => __.properties( {
-								"property2": __.inherit,
-								"property3": __.inherit,
-							} ),
-						},
-					} )
-				).then( ( myDocuments ) => {
-					expect( myDocuments ).toEqual( jasmine.any( Array ) );
-					expect( myDocuments.length ).toBe( 2 );
-					for( const document of myDocuments ) {
-						expect( Document.is( document ) ).toBe( true );
+					interface MyDocument {
+						property1:string;
+						property2:{};
 					}
 
-					expect( myDocuments[ 0 ] ).toEqual( jasmine.objectContaining( {
-						"_eTag": "\"1-12345\"",
-						"property1": "value 1",
-						"property2": jasmine.objectContaining( {
-							"_eTag": "\"3-12345\"",
-							"property2": 12345,
-							"property3": "another value 1",
-						} ),
-					} ) );
-					expect( myDocuments[ 1 ] ).toEqual( jasmine.objectContaining( {
-						"_eTag": "\"2-12345\"",
-						"property1": "value 2",
-						"property2": jasmine.objectContaining( {
-							"_eTag": "\"4-12345\"",
-							"property2": 67890,
-							"property3": "another value 2",
-						} ),
-					} ) );
-					done();
-				} ).catch( done.fail );
+					resource.getChildren<MyDocument>( "https://example.com/resource/", _ => _
+						.withType( "Resource" )
+						.properties( {
+							"property1": _.inherit,
+							"property2": {
+								"@id": "https://schema.org/property-2",
+								"@type": "@id",
+								"query": __ => __.properties( {
+									"property2": __.inherit,
+									"property3": __.inherit,
+								} ),
+							},
+						} )
+					).then( ( myDocuments ) => {
+						expect( myDocuments ).toEqual( jasmine.any( Array ) );
+						expect( myDocuments.length ).toBe( 2 );
+						for( const document of myDocuments ) {
+							expect( Document.is( document ) ).toBe( true );
+						}
+
+						expect( myDocuments[ 0 ] ).toEqual( jasmine.objectContaining( {
+							"_eTag": "\"1-12345\"",
+							"property1": "value 1",
+							"property2": jasmine.objectContaining( {
+								"_eTag": "\"3-12345\"",
+								"property2": 12345,
+								"property3": "another value 1",
+							} ),
+						} ) );
+						expect( myDocuments[ 1 ] ).toEqual( jasmine.objectContaining( {
+							"_eTag": "\"2-12345\"",
+							"property1": "value 2",
+							"property2": jasmine.objectContaining( {
+								"_eTag": "\"4-12345\"",
+								"property2": 67890,
+								"property3": "another value 2",
+							} ),
+						} ) );
+						done();
+					} ).catch( done.fail );
+				} );
+
 			} );
 
 		} );
@@ -6354,985 +6206,951 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 			} );
 
 
-			it( "should request self when no URI", async () => {
-				const resource:QueryDocumentDocument = createMock();
+			describe( "When has a context", () => {
 
-				resource.getMembers();
-
-				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-				expect( request.url ).toBe( "https://example.com/" );
-			} );
-
-			it( "should request the URI provided", async () => {
-				const resource:QueryDocumentDocument = createMock();
-
-				resource.getMembers( "https://example.com/resource/" );
-
-				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-				expect( request.url ).toBe( "https://example.com/resource/" );
-			} );
-
-			it( "should request relative URI provided", async () => {
-				const resource:QueryDocumentDocument = createMock();
-
-				resource.getMembers( "relative/" );
-
-				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-				expect( request.url ).toBe( "https://example.com/relative/" );
-			} );
-
-			it( "should request resolved prefixed name provided", async () => {
-				const _context:CarbonLDP = new CarbonLDP( "https://example.com/" );
-				_context.extendObjectSchema( { "ex": "https://example.com/" } );
-
-				const resource:QueryDocumentDocument = createMock( { _context } );
-
-				resource.getMembers( "ex:resource/" );
-
-				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-				expect( request.url ).toBe( "https://example.com/resource/" );
-			} );
-
-			it( "should throw error when from URI outside context scope", async () => {
-				const resource:QueryDocumentDocument = createMock();
-
-				await resource
-					.getMembers( "https://example.org/resource/" )
-					.catch( error => {
-						expect( () => { throw error; } )
-							.toThrowError( IllegalArgumentError, `"https://example.org/resource/" is out of scope.` );
-					} )
-				;
-			} );
-
-			it( "should throw error when from URI is BNode label", async () => {
-				const resource:QueryDocumentDocument = createMock();
-
-				await resource
-					.getMembers( "_:1" )
-					.catch( error => {
-						expect( () => { throw error; } )
-							.toThrowError( IllegalArgumentError, `"_:1" is out of scope.` );
-					} )
-				;
-			} );
-
-			it( "should throw error when from URI is Named Fragment label", async () => {
-				const resource:QueryDocumentDocument = createMock();
-
-				await resource
-					.getMembers( "#fragment" )
-					.catch( error => {
-						expect( () => { throw error; } )
-							.toThrowError( IllegalArgumentError, `"https://example.com/#fragment" is out of scope.` );
-					} )
-				;
-			} );
-
-			it( "should throw error when unresolved prefixed name", async () => {
-				const resource:QueryDocumentDocument = createMock();
-
-				await resource
-					.getMembers( "ex:resource/" )
-					.catch( error => {
-						expect( () => { throw error; } )
-							.toThrowError( IllegalArgumentError, `"ex:resource/" is out of scope.` );
-					} )
-				;
-			} );
-
-			it( "should parse error response", async () => {
-				stubRequest( "https://example.com/", { status: 500 } );
-
-				const resource:QueryDocumentDocument = createMock( { id: "https://example.com/" } );
-
-				const spy:jasmine.Spy = spyOn( resource._registry, "_parseErrorFromResponse" )
-					.and.callFake( () => Promise.reject( null ) );
-
-				await resource
-					.getMembers()
-					.then( () => fail( "Should not resolve" ) )
-					.catch( error => {
-						if( error ) fail( error );
-
-						expect( spy ).toHaveBeenCalled();
-					} )
-				;
-			} );
-
-
-			it( "should send basic request headers", async () => {
-				const resource:QueryDocumentDocument = createMock();
-
-				resource.getMembers();
-
-				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-				expect( request.requestHeaders ).toEqual( {
-					"accept": "application/ld+json",
-					"content-type": "application/sparql-query",
-					"prefer": [
-						`include="${ C.PreferDocumentETags }"`,
-						`include="${ C.PreferResultsContext }"`,
-					].join( ", " ),
-				} );
-			} );
-
-			it( "should add authentication header", async () => {
-				const resource:QueryDocumentDocument = createMock();
-
-				const spy:jasmine.Spy = spyOn( resource._context.auth, "addAuthentication" );
-
-				resource.getMembers();
-
-				expect( spy ).toHaveBeenCalled();
-			} );
-
-			it( "should add custom headers when no URI", async () => {
-				stubRequest( "https://example.com/" );
-
-				const resource:QueryDocumentDocument = createMock();
-
-				resource.getMembers( {
-					headers: new Map()
-						.set( "custom", new Header( "custom value" ) )
-					,
+				let context:CarbonLDP;
+				let resource:QueryDocumentDocument;
+				beforeEach( ():void => {
+					context = new CarbonLDP( "https://example.com/" );
+					resource = createMock( { _registry: context.registry } );
 				} );
 
-				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-				expect( request.requestHeaders ).toEqual( jasmine.objectContaining( {
-					"custom": "custom value",
-				} ) );
-			} );
+				it( "should request self when no URI", async () => {
+					resource.getMembers();
 
-			it( "should add custom headers when specific URI", async () => {
-				const resource:QueryDocumentDocument = createMock();
-
-				resource.getMembers( "resource/", {
-					headers: new Map()
-						.set( "custom", new Header( "custom value" ) )
-					,
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.url ).toBe( "https://example.com/" );
 				} );
 
-				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-				expect( request.requestHeaders ).toEqual( jasmine.objectContaining( {
-					"custom": "custom value",
-				} ) );
-			} );
-
-
-			it( "should send partial CONSTRUCT query when no URI", () => {
-				const resource:QueryDocumentDocument = createMock();
-
-				resource._context
-					.extendObjectSchema( {
-						"@vocab": "https://example.com/ns#",
-						"schema": "https://schema.org/",
-					} )
-					.extendObjectSchema( "Resource", {
-						"property1": {
-							"@id": "property-1",
-							"@type": "string",
-						},
-						"property2": {
-							"@id": "property-2",
-							"@type": "integer",
-						},
-						"property3": {
-							"@id": "https://schema.org/property-3",
-							"@type": "string",
-						},
-					} )
-				;
-
-
-				resource.getMembers( _ => _
-					.withType( "Resource" )
-					.properties( {
-						"property1": _.inherit,
-						"property2": {
-							"@id": "https://schema.org/property-2",
-							"@type": "@id",
-							"query": __ => __.properties( {
-								"property2": __.inherit,
-								"property3": __.inherit,
-							} ),
-						},
-					} )
-					.orderBy( "property2" )
-					.limit( 10 )
-					.offset( 5 )
-				);
-
-
-				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-				expect( request.params ).toEqual( "" +
-					"PREFIX schema: <https://schema.org/> " +
-					"CONSTRUCT {" +
-					` ?metadata a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
-					"" + ` <${ C.target }> ?member.` +
-
-					" ?member a ?member__types;" +
-					"" + " <https://example.com/ns#property-1> ?member__property1;" +
-					"" + " schema:property-2 ?member__property2." +
-
-					" ?member__property2 a ?member__property2__types;" +
-					"" + " <https://example.com/ns#property-2> ?member__property2__property2;" +
-					"" + " schema:property-3 ?member__property2__property3 " +
-
-					"} WHERE {" +
-					" BIND(BNODE() AS ?metadata)." +
-
-					" {" +
-					"" + " SELECT DISTINCT ?member WHERE {" +
-					"" + "" + " <https://example.com/> <http://www.w3.org/ns/ldp#membershipResource> ?membershipResource;" +
-					"" + "" + "" + " <http://www.w3.org/ns/ldp#hasMemberRelation> ?hasMemberRelation." +
-					"" + "" + " ?membershipResource ?hasMemberRelation ?member." +
-					"" + "" + " OPTIONAL { ?member schema:property-2 ?member__property2 }" +
-					"" + " }" +
-					"" + " ORDER BY ?member__property2" +
-					"" + " LIMIT 10" +
-					"" + " OFFSET 5" +
-					" }." +
-
-					" OPTIONAL { ?member a ?member__types }." +
-					" ?member a <https://example.com/ns#Resource>." +
-
-					" OPTIONAL {" +
-					"" + " ?member <https://example.com/ns#property-1> ?member__property1." +
-					"" + " FILTER( datatype( ?member__property1 ) = <http://www.w3.org/2001/XMLSchema#string> )" +
-					" }." +
-
-					" OPTIONAL {" +
-					"" + " ?member schema:property-2 ?member__property2." +
-					"" + " FILTER( ! isLiteral( ?member__property2 ) )." +
-					"" + " OPTIONAL { ?member__property2 a ?member__property2__types }." +
-
-					"" + " OPTIONAL {" +
-					"" + "" + " ?member__property2 <https://example.com/ns#property-2> ?member__property2__property2." +
-					"" + "" + " FILTER( datatype( ?member__property2__property2 ) = <http://www.w3.org/2001/XMLSchema#integer> )" +
-					"" + " }." +
-
-					"" + " OPTIONAL {" +
-					"" + "" + " ?member__property2 schema:property-3 ?member__property2__property3." +
-					"" + "" + " FILTER( datatype( ?member__property2__property3 ) = <http://www.w3.org/2001/XMLSchema#string> )" +
-					"" + " }" +
-					" } " +
-					"}"
-				);
-			} );
-
-			it( "should send partial CONSTRUCT query when specific URI", () => {
-				const resource:QueryDocumentDocument = createMock();
-
-				resource._context
-					.extendObjectSchema( {
-						"@vocab": "https://example.com/ns#",
-						"schema": "https://schema.org/",
-					} )
-					.extendObjectSchema( "Resource", {
-						"property1": {
-							"@id": "property-1",
-							"@type": "string",
-						},
-						"property2": {
-							"@id": "property-2",
-							"@type": "integer",
-						},
-						"property3": {
-							"@id": "https://schema.org/property-3",
-							"@type": "string",
-						},
-					} )
-				;
-
-
-				resource.getMembers( "https://example.com/resource/", _ => _
-					.withType( "Resource" )
-					.properties( {
-						"property1": _.inherit,
-						"property2": {
-							"@id": "https://schema.org/property-2",
-							"@type": "@id",
-							"query": __ => __.properties( {
-								"property2": __.inherit,
-								"property3": __.inherit,
-							} ),
-						},
-					} )
-					.orderBy( "property2" )
-					.limit( 10 )
-					.offset( 5 )
-				);
-
-
-				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-				expect( request.params ).toEqual( "" +
-					"PREFIX schema: <https://schema.org/> " +
-					"CONSTRUCT {" +
-					` ?metadata a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
-					"" + ` <${ C.target }> ?member.` +
-
-					" ?member a ?member__types;" +
-					"" + " <https://example.com/ns#property-1> ?member__property1;" +
-					"" + " schema:property-2 ?member__property2." +
-
-					" ?member__property2 a ?member__property2__types;" +
-					"" + " <https://example.com/ns#property-2> ?member__property2__property2;" +
-					"" + " schema:property-3 ?member__property2__property3 " +
-
-					"} WHERE {" +
-					" BIND(BNODE() AS ?metadata)." +
-
-					" {" +
-					"" + " SELECT DISTINCT ?member WHERE {" +
-					"" + "" + " <https://example.com/resource/> <http://www.w3.org/ns/ldp#membershipResource> ?membershipResource;" +
-					"" + "" + "" + " <http://www.w3.org/ns/ldp#hasMemberRelation> ?hasMemberRelation." +
-					"" + "" + " ?membershipResource ?hasMemberRelation ?member." +
-					"" + "" + " OPTIONAL { ?member schema:property-2 ?member__property2 }" +
-					"" + " }" +
-					"" + " ORDER BY ?member__property2" +
-					"" + " LIMIT 10" +
-					"" + " OFFSET 5" +
-					" }." +
-
-					" OPTIONAL { ?member a ?member__types }." +
-					" ?member a <https://example.com/ns#Resource>." +
-
-					" OPTIONAL {" +
-					"" + " ?member <https://example.com/ns#property-1> ?member__property1." +
-					"" + " FILTER( datatype( ?member__property1 ) = <http://www.w3.org/2001/XMLSchema#string> )" +
-					" }." +
-
-					" OPTIONAL {" +
-					"" + " ?member schema:property-2 ?member__property2." +
-					"" + " FILTER( ! isLiteral( ?member__property2 ) )." +
-					"" + " OPTIONAL { ?member__property2 a ?member__property2__types }." +
-
-					"" + " OPTIONAL {" +
-					"" + "" + " ?member__property2 <https://example.com/ns#property-2> ?member__property2__property2." +
-					"" + "" + " FILTER( datatype( ?member__property2__property2 ) = <http://www.w3.org/2001/XMLSchema#integer> )" +
-					"" + " }." +
-
-					"" + " OPTIONAL {" +
-					"" + "" + " ?member__property2 schema:property-3 ?member__property2__property3." +
-					"" + "" + " FILTER( datatype( ?member__property2__property3 ) = <http://www.w3.org/2001/XMLSchema#string> )" +
-					"" + " }" +
-					" } " +
-					"}"
-				);
-			} );
-
-			it( "should send full CONSTRUCT query when no URI", () => {
-				const resource:QueryDocumentDocument = createMock();
-
-				resource._context
-					.extendObjectSchema( {
-						"@vocab": "https://example.com/ns#",
-						"schema": "https://schema.org/",
-					} )
-					.extendObjectSchema( "Resource", {
-						"property1": {
-							"@id": "property-1",
-							"@type": "string",
-						},
-						"property2": {
-							"@id": "property-2",
-							"@type": "integer",
-						},
-						"property3": {
-							"@id": "https://schema.org/property-3",
-							"@type": "string",
-						},
-					} )
-				;
-
-
-				resource.getMembers();
-
-
-				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-				expect( request.params ).toEqual( "" +
-					"CONSTRUCT {" +
-					` ?metadata a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
-					"" + ` <${ C.target }> ?member.` +
-
-					" ?member___subject ?member___predicate ?member___object " +
-
-					"} WHERE {" +
-					" BIND(BNODE() AS ?metadata)." +
-
-					" {" +
-					"" + " SELECT DISTINCT ?member WHERE {" +
-					"" + "" + " <https://example.com/> <http://www.w3.org/ns/ldp#membershipResource> ?membershipResource;" +
-					"" + "" + "" + " <http://www.w3.org/ns/ldp#hasMemberRelation> ?hasMemberRelation." +
-					"" + "" + " ?membershipResource ?hasMemberRelation ?member" +
-					"" + " }" +
-					" }." +
-
-					" GRAPH ?member {" +
-					"" + " ?member___subject ?member___predicate ?member___object" +
-					" } " +
-
-					"}"
-				);
-			} );
-
-			it( "should send full CONSTRUCT query when specific URI", () => {
-				const resource:QueryDocumentDocument = createMock();
-
-				resource._context
-					.extendObjectSchema( {
-						"@vocab": "https://example.com/ns#",
-						"schema": "https://schema.org/",
-					} )
-					.extendObjectSchema( "Resource", {
-						"property1": {
-							"@id": "property-1",
-							"@type": "string",
-						},
-						"property2": {
-							"@id": "property-2",
-							"@type": "integer",
-						},
-						"property3": {
-							"@id": "https://schema.org/property-3",
-							"@type": "string",
-						},
-					} )
-				;
-
-
-				resource.getMembers( "resource/" );
-
-
-				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-				expect( request.params ).toEqual( "" +
-					"CONSTRUCT {" +
-					` ?metadata a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
-					"" + ` <${ C.target }> ?member.` +
-
-					" ?member___subject ?member___predicate ?member___object " +
-
-					"} WHERE {" +
-					" BIND(BNODE() AS ?metadata)." +
-
-					" {" +
-					"" + " SELECT DISTINCT ?member WHERE {" +
-					"" + "" + " <https://example.com/resource/> <http://www.w3.org/ns/ldp#membershipResource> ?membershipResource;" +
-					"" + "" + "" + " <http://www.w3.org/ns/ldp#hasMemberRelation> ?hasMemberRelation." +
-					"" + "" + " ?membershipResource ?hasMemberRelation ?member" +
-					"" + " }" +
-					" }." +
-
-					" GRAPH ?member {" +
-					"" + " ?member___subject ?member___predicate ?member___object" +
-					" } " +
-
-					"}"
-				);
-			} );
-
-			it( "should send filtered .ALL CONSTRUCT query when no URI", () => {
-				const resource:QueryDocumentDocument = createMock();
-
-				resource._context
-					.extendObjectSchema( {
-						"@vocab": "https://example.com/ns#",
-						"schema": "https://schema.org/",
-					} )
-					.extendObjectSchema( "Resource", {
-						"property1": {
-							"@id": "https://schema.org/property-1",
-							"@type": XSD.string,
-						},
-						"property2": {
-							"@id": "https://schema.org/property-2",
-							"@type": XSD.integer,
-						},
-					} )
-				;
-
-
-				resource.getMembers( _ => _
-					.properties( _.all )
-					.orderBy( "property2" )
-					.limit( 10 )
-					.offset( 5 )
-				);
-
-
-				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-				expect( request.params ).toEqual( "" +
-					"PREFIX schema: <https://schema.org/> " +
-					"CONSTRUCT {" +
-					` ?metadata a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
-					"" + ` <${ C.target }> ?member.` +
-
-					" ?member ?member___predicate ?member___object " +
-
-					"} WHERE {" +
-					" BIND(BNODE() AS ?metadata)." +
-
-					" {" +
-					"" + " SELECT DISTINCT ?member WHERE {" +
-					"" + "" + " <https://example.com/> <http://www.w3.org/ns/ldp#membershipResource> ?membershipResource;" +
-					"" + "" + "" + " <http://www.w3.org/ns/ldp#hasMemberRelation> ?hasMemberRelation." +
-					"" + "" + " ?membershipResource ?hasMemberRelation ?member." +
-					"" + "" + " OPTIONAL { ?member schema:property-2 ?member__property2 }" +
-					"" + " }" +
-					"" + " ORDER BY ?member__property2" +
-					"" + " LIMIT 10" +
-					"" + " OFFSET 5" +
-					" }." +
-
-					" ?member ?member___predicate ?member___object." +
-
-					" OPTIONAL {" +
-					"" + " ?member schema:property-2 ?member__property2." +
-					"" + " FILTER( datatype( ?member__property2 ) = <http://www.w3.org/2001/XMLSchema#integer> )" +
-					" }" +
-
-					" " +
-					"}"
-				);
-			} );
-
-			it( "should send filtered .ALL CONSTRUCT query when specific URI", () => {
-				const resource:QueryDocumentDocument = createMock();
-
-				resource._context
-					.extendObjectSchema( {
-						"@vocab": "https://example.com/ns#",
-						"schema": "https://schema.org/",
-					} )
-					.extendObjectSchema( "Resource", {
-						"property1": {
-							"@id": "https://schema.org/property-1",
-							"@type": XSD.string,
-						},
-						"property2": {
-							"@id": "https://schema.org/property-2",
-							"@type": XSD.integer,
-						},
-					} )
-				;
-
-
-				resource.getMembers( "resource/", _ => _
-					.properties( _.all )
-					.orderBy( "property2" )
-					.limit( 10 )
-					.offset( 5 )
-				);
-
-
-				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-				expect( request.params ).toEqual( "" +
-					"PREFIX schema: <https://schema.org/> " +
-					"CONSTRUCT {" +
-					` ?metadata a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
-					"" + ` <${ C.target }> ?member.` +
-
-					" ?member ?member___predicate ?member___object " +
-
-					"} WHERE {" +
-					" BIND(BNODE() AS ?metadata)." +
-
-					" {" +
-					"" + " SELECT DISTINCT ?member WHERE {" +
-					"" + "" + " <https://example.com/resource/> <http://www.w3.org/ns/ldp#membershipResource> ?membershipResource;" +
-					"" + "" + "" + " <http://www.w3.org/ns/ldp#hasMemberRelation> ?hasMemberRelation." +
-					"" + "" + " ?membershipResource ?hasMemberRelation ?member." +
-					"" + "" + " OPTIONAL { ?member schema:property-2 ?member__property2 }" +
-					"" + " }" +
-					"" + " ORDER BY ?member__property2" +
-					"" + " LIMIT 10" +
-					"" + " OFFSET 5" +
-					" }." +
-
-					" ?member ?member___predicate ?member___object." +
-
-					" OPTIONAL {" +
-					"" + " ?member schema:property-2 ?member__property2." +
-					"" + " FILTER( datatype( ?member__property2 ) = <http://www.w3.org/2001/XMLSchema#integer> )" +
-					" }" +
-
-					" " +
-					"}"
-				);
-			} );
-
-			it( "should send filtered without optional CONSTRUCT query when no URI", () => {
-				const resource:QueryDocumentDocument = createMock();
-
-				resource._context
-					.extendObjectSchema( {
-						"@vocab": "https://example.com/ns#",
-						"schema": "https://schema.org/",
-						"ex": "https://example.com/ns#",
-						"xsd": XSD.namespace,
-					} )
-					.extendObjectSchema( "Resource", {
-						"property1": {
-							"@id": "property-1",
-							"@type": XSD.string,
-						},
-						"property2": {
-							"@id": "property-2",
-							"@type": XSD.integer,
-						},
-						"property3": {
-							"@id": "https://schema.org/property-3",
-							"@type": XSD.string,
-						},
-					} )
-				;
-
-
-				const queryTokenClass:{ new( ...args:any[] ) } = QueryToken;
-				let query:QueryToken = void 0;
-				spyOn( TokensModule, "QueryToken" ).and.callFake( ( ...args:any[] ) => {
-					return query = new queryTokenClass( ...args );
+				it( "should request the URI provided", async () => {
+					resource.getMembers( "https://example.com/resource/" );
+
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.url ).toBe( "https://example.com/resource/" );
 				} );
 
-				resource.getMembers( _ => _
-					.withType( "Resource" )
-					.properties( {
-						"property1": _.inherit,
-						"property2": {
-							"@id": "https://schema.org/property-2",
-							"@type": "@id",
-							"query": __ => __
-								.properties( {
-									"property2": {
-										"query": ___ => ___
-											.values( ___.value( 12345 ).withType( "integer" ) )
-										,
-									},
+				it( "should request relative URI provided", async () => {
+					resource.getMembers( "relative/" );
+
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.url ).toBe( "https://example.com/relative/" );
+				} );
+
+				it( "should request resolved prefixed name provided", async () => {
+					context.extendObjectSchema( { "ex": "https://example.com/" } );
+
+					resource.getMembers( "ex:resource/" );
+
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.url ).toBe( "https://example.com/resource/" );
+				} );
+
+				it( "should throw error when from URI outside context scope", async () => {
+					await resource
+						.getMembers( "https://example.org/resource/" )
+						.catch( error => {
+							expect( () => { throw error; } )
+								.toThrowError( IllegalArgumentError, `"https://example.org/resource/" is out of scope.` );
+						} )
+					;
+				} );
+
+				it( "should throw error when from URI is BNode label", async () => {
+					await resource
+						.getMembers( "_:1" )
+						.catch( error => {
+							expect( () => { throw error; } )
+								.toThrowError( IllegalArgumentError, `"_:1" is out of scope.` );
+						} )
+					;
+				} );
+
+				it( "should throw error when from URI is Named Fragment label", async () => {
+					await resource
+						.getMembers( "#fragment" )
+						.catch( error => {
+							expect( () => { throw error; } )
+								.toThrowError( IllegalArgumentError, `"https://example.com/#fragment" is out of scope.` );
+						} )
+					;
+				} );
+
+				it( "should throw error when unresolved prefixed name", async () => {
+					await resource
+						.getMembers( "ex:resource/" )
+						.catch( error => {
+							expect( () => { throw error; } )
+								.toThrowError( IllegalArgumentError, `"ex:resource/" is out of scope.` );
+						} )
+					;
+				} );
+
+				it( "should parse error response", async () => {
+					stubRequest( "https://example.com/", { status: 500 } );
+
+					const spy:jasmine.Spy = spyOn( resource._registry, "_parseErrorFromResponse" )
+						.and.callFake( () => Promise.reject( null ) );
+
+					await resource
+						.getMembers()
+						.then( () => fail( "Should not resolve" ) )
+						.catch( error => {
+							if( error ) fail( error );
+
+							expect( spy ).toHaveBeenCalled();
+						} )
+					;
+				} );
+
+
+				it( "should send basic request headers", async () => {
+					resource.getMembers();
+
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.requestHeaders ).toEqual( {
+						"accept": "application/ld+json",
+						"content-type": "application/sparql-query",
+						"prefer": [
+							`include="${ C.PreferDocumentETags }"`,
+							`include="${ C.PreferResultsContext }"`,
+						].join( ", " ),
+					} );
+				} );
+
+				it( "should add authentication header", async () => {
+					const spy:jasmine.Spy = spyOn( context.auth, "addAuthentication" );
+
+					resource.getMembers();
+
+					expect( spy ).toHaveBeenCalled();
+				} );
+
+				it( "should add custom headers when no URI", async () => {
+					stubRequest( "https://example.com/" );
+
+					resource.getMembers( {
+						headers: new Map()
+							.set( "custom", new Header( "custom value" ) )
+						,
+					} );
+
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.requestHeaders ).toEqual( jasmine.objectContaining( {
+						"custom": "custom value",
+					} ) );
+				} );
+
+				it( "should add custom headers when specific URI", async () => {
+					resource.getMembers( "resource/", {
+						headers: new Map()
+							.set( "custom", new Header( "custom value" ) )
+						,
+					} );
+
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.requestHeaders ).toEqual( jasmine.objectContaining( {
+						"custom": "custom value",
+					} ) );
+				} );
+
+
+				it( "should send partial CONSTRUCT query when no URI", () => {
+					context
+						.extendObjectSchema( {
+							"@vocab": "https://example.com/ns#",
+							"schema": "https://schema.org/",
+						} )
+						.extendObjectSchema( "Resource", {
+							"property1": {
+								"@id": "property-1",
+								"@type": "string",
+							},
+							"property2": {
+								"@id": "property-2",
+								"@type": "integer",
+							},
+							"property3": {
+								"@id": "https://schema.org/property-3",
+								"@type": "string",
+							},
+						} )
+					;
+
+
+					resource.getMembers( _ => _
+						.withType( "Resource" )
+						.properties( {
+							"property1": _.inherit,
+							"property2": {
+								"@id": "https://schema.org/property-2",
+								"@type": "@id",
+								"query": __ => __.properties( {
+									"property2": __.inherit,
 									"property3": __.inherit,
-								} )
-								.filter( `${ __.property( "property2" ) } = ${ __.value( 12345 ).withType( "integer" ) }` )
-							,
-						},
-					} )
-					.orderBy( "property2" )
-					.limit( 10 )
-					.offset( 5 )
-				);
+								} ),
+							},
+						} )
+						.orderBy( "property2" )
+						.limit( 10 )
+						.offset( 5 )
+					);
 
-				expect( query ).toEqual( new QueryToken(
-					new ConstructToken()
-						.addTriple( new SubjectToken( variableHelper( "metadata" ) )
-							.addPredicate( new PredicateToken( "a" )
-								.addObject( new IRIToken( C.VolatileResource ) )
-								.addObject( new IRIToken( C.QueryMetadata ) )
-							)
-							.addPredicate( new PredicateToken( new IRIToken( C.target ) )
-								.addObject( variableHelper( "member" ) )
-							)
-						)
-						.addTriple( new SubjectToken( variableHelper( "member" ) )
-							.addPredicate( new PredicateToken( "a" )
-								.addObject( variableHelper( "member__types" ) )
-							)
-							.addPredicate( new PredicateToken( new PrefixedNameToken( "ex:property-1" ) )
-								.addObject( variableHelper( "member__property1" ) )
-							)
-							.addPredicate( new PredicateToken( new PrefixedNameToken( "schema:property-2" ) )
-								.addObject( variableHelper( "member__property2" ) )
-							)
-						)
-						.addTriple( new SubjectToken( variableHelper( "member__property2" ) )
-							.addPredicate( new PredicateToken( "a" )
-								.addObject( variableHelper( "member__property2__types" ) )
-							)
-							.addPredicate( new PredicateToken( new PrefixedNameToken( "ex:property-2" ) )
-								.addObject( variableHelper( "member__property2__property2" ) )
-							)
-							.addPredicate( new PredicateToken( new PrefixedNameToken( "schema:property-3" ) )
-								.addObject( variableHelper( "member__property2__property3" ) )
-							)
-						)
 
-						.addPattern( new BindToken( "BNODE()", variableHelper( "metadata" ) ) )
-						.addPattern( new SelectToken( "DISTINCT" )
-							.addVariable( variableHelper( "member" ) )
-							.addPattern( new SubjectToken( new IRIToken( "https://example.com/" ) )
-								.addPredicate( new PredicateToken( new IRIToken( LDP.membershipResource ) )
-									.addObject( variableHelper( "membershipResource" ) )
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.params ).toEqual( "" +
+						"PREFIX schema: <https://schema.org/> " +
+						"CONSTRUCT {" +
+						` ?metadata a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
+						"" + ` <${ C.target }> ?member.` +
+
+						" ?member a ?member__types;" +
+						"" + " <https://example.com/ns#property-1> ?member__property1;" +
+						"" + " schema:property-2 ?member__property2." +
+
+						" ?member__property2 a ?member__property2__types;" +
+						"" + " <https://example.com/ns#property-2> ?member__property2__property2;" +
+						"" + " schema:property-3 ?member__property2__property3 " +
+
+						"} WHERE {" +
+						" BIND(BNODE() AS ?metadata)." +
+
+						" {" +
+						"" + " SELECT DISTINCT ?member WHERE {" +
+						"" + "" + " <https://example.com/> <http://www.w3.org/ns/ldp#membershipResource> ?membershipResource;" +
+						"" + "" + "" + " <http://www.w3.org/ns/ldp#hasMemberRelation> ?hasMemberRelation." +
+						"" + "" + " ?membershipResource ?hasMemberRelation ?member." +
+						"" + "" + " OPTIONAL { ?member schema:property-2 ?member__property2 }" +
+						"" + " }" +
+						"" + " ORDER BY ?member__property2" +
+						"" + " LIMIT 10" +
+						"" + " OFFSET 5" +
+						" }." +
+
+						" OPTIONAL { ?member a ?member__types }." +
+						" ?member a <https://example.com/ns#Resource>." +
+
+						" OPTIONAL {" +
+						"" + " ?member <https://example.com/ns#property-1> ?member__property1." +
+						"" + " FILTER( datatype( ?member__property1 ) = <http://www.w3.org/2001/XMLSchema#string> )" +
+						" }." +
+
+						" OPTIONAL {" +
+						"" + " ?member schema:property-2 ?member__property2." +
+						"" + " FILTER( ! isLiteral( ?member__property2 ) )." +
+						"" + " OPTIONAL { ?member__property2 a ?member__property2__types }." +
+
+						"" + " OPTIONAL {" +
+						"" + "" + " ?member__property2 <https://example.com/ns#property-2> ?member__property2__property2." +
+						"" + "" + " FILTER( datatype( ?member__property2__property2 ) = <http://www.w3.org/2001/XMLSchema#integer> )" +
+						"" + " }." +
+
+						"" + " OPTIONAL {" +
+						"" + "" + " ?member__property2 schema:property-3 ?member__property2__property3." +
+						"" + "" + " FILTER( datatype( ?member__property2__property3 ) = <http://www.w3.org/2001/XMLSchema#string> )" +
+						"" + " }" +
+						" } " +
+						"}"
+					);
+				} );
+
+				it( "should send partial CONSTRUCT query when specific URI", () => {
+					context
+						.extendObjectSchema( {
+							"@vocab": "https://example.com/ns#",
+							"schema": "https://schema.org/",
+						} )
+						.extendObjectSchema( "Resource", {
+							"property1": {
+								"@id": "property-1",
+								"@type": "string",
+							},
+							"property2": {
+								"@id": "property-2",
+								"@type": "integer",
+							},
+							"property3": {
+								"@id": "https://schema.org/property-3",
+								"@type": "string",
+							},
+						} )
+					;
+
+
+					resource.getMembers( "https://example.com/resource/", _ => _
+						.withType( "Resource" )
+						.properties( {
+							"property1": _.inherit,
+							"property2": {
+								"@id": "https://schema.org/property-2",
+								"@type": "@id",
+								"query": __ => __.properties( {
+									"property2": __.inherit,
+									"property3": __.inherit,
+								} ),
+							},
+						} )
+						.orderBy( "property2" )
+						.limit( 10 )
+						.offset( 5 )
+					);
+
+
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.params ).toEqual( "" +
+						"PREFIX schema: <https://schema.org/> " +
+						"CONSTRUCT {" +
+						` ?metadata a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
+						"" + ` <${ C.target }> ?member.` +
+
+						" ?member a ?member__types;" +
+						"" + " <https://example.com/ns#property-1> ?member__property1;" +
+						"" + " schema:property-2 ?member__property2." +
+
+						" ?member__property2 a ?member__property2__types;" +
+						"" + " <https://example.com/ns#property-2> ?member__property2__property2;" +
+						"" + " schema:property-3 ?member__property2__property3 " +
+
+						"} WHERE {" +
+						" BIND(BNODE() AS ?metadata)." +
+
+						" {" +
+						"" + " SELECT DISTINCT ?member WHERE {" +
+						"" + "" + " <https://example.com/resource/> <http://www.w3.org/ns/ldp#membershipResource> ?membershipResource;" +
+						"" + "" + "" + " <http://www.w3.org/ns/ldp#hasMemberRelation> ?hasMemberRelation." +
+						"" + "" + " ?membershipResource ?hasMemberRelation ?member." +
+						"" + "" + " OPTIONAL { ?member schema:property-2 ?member__property2 }" +
+						"" + " }" +
+						"" + " ORDER BY ?member__property2" +
+						"" + " LIMIT 10" +
+						"" + " OFFSET 5" +
+						" }." +
+
+						" OPTIONAL { ?member a ?member__types }." +
+						" ?member a <https://example.com/ns#Resource>." +
+
+						" OPTIONAL {" +
+						"" + " ?member <https://example.com/ns#property-1> ?member__property1." +
+						"" + " FILTER( datatype( ?member__property1 ) = <http://www.w3.org/2001/XMLSchema#string> )" +
+						" }." +
+
+						" OPTIONAL {" +
+						"" + " ?member schema:property-2 ?member__property2." +
+						"" + " FILTER( ! isLiteral( ?member__property2 ) )." +
+						"" + " OPTIONAL { ?member__property2 a ?member__property2__types }." +
+
+						"" + " OPTIONAL {" +
+						"" + "" + " ?member__property2 <https://example.com/ns#property-2> ?member__property2__property2." +
+						"" + "" + " FILTER( datatype( ?member__property2__property2 ) = <http://www.w3.org/2001/XMLSchema#integer> )" +
+						"" + " }." +
+
+						"" + " OPTIONAL {" +
+						"" + "" + " ?member__property2 schema:property-3 ?member__property2__property3." +
+						"" + "" + " FILTER( datatype( ?member__property2__property3 ) = <http://www.w3.org/2001/XMLSchema#string> )" +
+						"" + " }" +
+						" } " +
+						"}"
+					);
+				} );
+
+				it( "should send full CONSTRUCT query when no URI", () => {
+					context
+						.extendObjectSchema( {
+							"@vocab": "https://example.com/ns#",
+							"schema": "https://schema.org/",
+						} )
+						.extendObjectSchema( "Resource", {
+							"property1": {
+								"@id": "property-1",
+								"@type": "string",
+							},
+							"property2": {
+								"@id": "property-2",
+								"@type": "integer",
+							},
+							"property3": {
+								"@id": "https://schema.org/property-3",
+								"@type": "string",
+							},
+						} )
+					;
+
+
+					resource.getMembers();
+
+
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.params ).toEqual( "" +
+						"CONSTRUCT {" +
+						` ?metadata a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
+						"" + ` <${ C.target }> ?member.` +
+
+						" ?member___subject ?member___predicate ?member___object " +
+
+						"} WHERE {" +
+						" BIND(BNODE() AS ?metadata)." +
+
+						" {" +
+						"" + " SELECT DISTINCT ?member WHERE {" +
+						"" + "" + " <https://example.com/> <http://www.w3.org/ns/ldp#membershipResource> ?membershipResource;" +
+						"" + "" + "" + " <http://www.w3.org/ns/ldp#hasMemberRelation> ?hasMemberRelation." +
+						"" + "" + " ?membershipResource ?hasMemberRelation ?member" +
+						"" + " }" +
+						" }." +
+
+						" GRAPH ?member {" +
+						"" + " ?member___subject ?member___predicate ?member___object" +
+						" } " +
+
+						"}"
+					);
+				} );
+
+				it( "should send full CONSTRUCT query when specific URI", () => {
+					context
+						.extendObjectSchema( {
+							"@vocab": "https://example.com/ns#",
+							"schema": "https://schema.org/",
+						} )
+						.extendObjectSchema( "Resource", {
+							"property1": {
+								"@id": "property-1",
+								"@type": "string",
+							},
+							"property2": {
+								"@id": "property-2",
+								"@type": "integer",
+							},
+							"property3": {
+								"@id": "https://schema.org/property-3",
+								"@type": "string",
+							},
+						} )
+					;
+
+
+					resource.getMembers( "resource/" );
+
+
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.params ).toEqual( "" +
+						"CONSTRUCT {" +
+						` ?metadata a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
+						"" + ` <${ C.target }> ?member.` +
+
+						" ?member___subject ?member___predicate ?member___object " +
+
+						"} WHERE {" +
+						" BIND(BNODE() AS ?metadata)." +
+
+						" {" +
+						"" + " SELECT DISTINCT ?member WHERE {" +
+						"" + "" + " <https://example.com/resource/> <http://www.w3.org/ns/ldp#membershipResource> ?membershipResource;" +
+						"" + "" + "" + " <http://www.w3.org/ns/ldp#hasMemberRelation> ?hasMemberRelation." +
+						"" + "" + " ?membershipResource ?hasMemberRelation ?member" +
+						"" + " }" +
+						" }." +
+
+						" GRAPH ?member {" +
+						"" + " ?member___subject ?member___predicate ?member___object" +
+						" } " +
+
+						"}"
+					);
+				} );
+
+				it( "should send filtered .ALL CONSTRUCT query when no URI", () => {
+					context
+						.extendObjectSchema( {
+							"@vocab": "https://example.com/ns#",
+							"schema": "https://schema.org/",
+						} )
+						.extendObjectSchema( "Resource", {
+							"property1": {
+								"@id": "https://schema.org/property-1",
+								"@type": XSD.string,
+							},
+							"property2": {
+								"@id": "https://schema.org/property-2",
+								"@type": XSD.integer,
+							},
+						} )
+					;
+
+
+					resource.getMembers( _ => _
+						.properties( _.all )
+						.orderBy( "property2" )
+						.limit( 10 )
+						.offset( 5 )
+					);
+
+
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.params ).toEqual( "" +
+						"PREFIX schema: <https://schema.org/> " +
+						"CONSTRUCT {" +
+						` ?metadata a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
+						"" + ` <${ C.target }> ?member.` +
+
+						" ?member ?member___predicate ?member___object " +
+
+						"} WHERE {" +
+						" BIND(BNODE() AS ?metadata)." +
+
+						" {" +
+						"" + " SELECT DISTINCT ?member WHERE {" +
+						"" + "" + " <https://example.com/> <http://www.w3.org/ns/ldp#membershipResource> ?membershipResource;" +
+						"" + "" + "" + " <http://www.w3.org/ns/ldp#hasMemberRelation> ?hasMemberRelation." +
+						"" + "" + " ?membershipResource ?hasMemberRelation ?member." +
+						"" + "" + " OPTIONAL { ?member schema:property-2 ?member__property2 }" +
+						"" + " }" +
+						"" + " ORDER BY ?member__property2" +
+						"" + " LIMIT 10" +
+						"" + " OFFSET 5" +
+						" }." +
+
+						" ?member ?member___predicate ?member___object." +
+
+						" OPTIONAL {" +
+						"" + " ?member schema:property-2 ?member__property2." +
+						"" + " FILTER( datatype( ?member__property2 ) = <http://www.w3.org/2001/XMLSchema#integer> )" +
+						" }" +
+
+						" " +
+						"}"
+					);
+				} );
+
+				it( "should send filtered .ALL CONSTRUCT query when specific URI", () => {
+					context
+						.extendObjectSchema( {
+							"@vocab": "https://example.com/ns#",
+							"schema": "https://schema.org/",
+						} )
+						.extendObjectSchema( "Resource", {
+							"property1": {
+								"@id": "https://schema.org/property-1",
+								"@type": XSD.string,
+							},
+							"property2": {
+								"@id": "https://schema.org/property-2",
+								"@type": XSD.integer,
+							},
+						} )
+					;
+
+
+					resource.getMembers( "resource/", _ => _
+						.properties( _.all )
+						.orderBy( "property2" )
+						.limit( 10 )
+						.offset( 5 )
+					);
+
+
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.params ).toEqual( "" +
+						"PREFIX schema: <https://schema.org/> " +
+						"CONSTRUCT {" +
+						` ?metadata a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
+						"" + ` <${ C.target }> ?member.` +
+
+						" ?member ?member___predicate ?member___object " +
+
+						"} WHERE {" +
+						" BIND(BNODE() AS ?metadata)." +
+
+						" {" +
+						"" + " SELECT DISTINCT ?member WHERE {" +
+						"" + "" + " <https://example.com/resource/> <http://www.w3.org/ns/ldp#membershipResource> ?membershipResource;" +
+						"" + "" + "" + " <http://www.w3.org/ns/ldp#hasMemberRelation> ?hasMemberRelation." +
+						"" + "" + " ?membershipResource ?hasMemberRelation ?member." +
+						"" + "" + " OPTIONAL { ?member schema:property-2 ?member__property2 }" +
+						"" + " }" +
+						"" + " ORDER BY ?member__property2" +
+						"" + " LIMIT 10" +
+						"" + " OFFSET 5" +
+						" }." +
+
+						" ?member ?member___predicate ?member___object." +
+
+						" OPTIONAL {" +
+						"" + " ?member schema:property-2 ?member__property2." +
+						"" + " FILTER( datatype( ?member__property2 ) = <http://www.w3.org/2001/XMLSchema#integer> )" +
+						" }" +
+
+						" " +
+						"}"
+					);
+				} );
+
+				it( "should send filtered without optional CONSTRUCT query when no URI", () => {
+					context
+						.extendObjectSchema( {
+							"@vocab": "https://example.com/ns#",
+							"schema": "https://schema.org/",
+							"ex": "https://example.com/ns#",
+							"xsd": XSD.namespace,
+						} )
+						.extendObjectSchema( "Resource", {
+							"property1": {
+								"@id": "property-1",
+								"@type": XSD.string,
+							},
+							"property2": {
+								"@id": "property-2",
+								"@type": XSD.integer,
+							},
+							"property3": {
+								"@id": "https://schema.org/property-3",
+								"@type": XSD.string,
+							},
+						} )
+					;
+
+
+					const queryTokenClass:{ new( ...args:any[] ) } = QueryToken;
+					let query:QueryToken = void 0;
+					spyOn( TokensModule, "QueryToken" ).and.callFake( ( ...args:any[] ) => {
+						return query = new queryTokenClass( ...args );
+					} );
+
+					resource.getMembers( _ => _
+						.withType( "Resource" )
+						.properties( {
+							"property1": _.inherit,
+							"property2": {
+								"@id": "https://schema.org/property-2",
+								"@type": "@id",
+								"query": __ => __
+									.properties( {
+										"property2": {
+											"query": ___ => ___
+												.values( ___.value( 12345 ).withType( "integer" ) )
+											,
+										},
+										"property3": __.inherit,
+									} )
+									.filter( `${ __.property( "property2" ) } = ${ __.value( 12345 ).withType( "integer" ) }` )
+								,
+							},
+						} )
+						.orderBy( "property2" )
+						.limit( 10 )
+						.offset( 5 )
+					);
+
+					expect( query ).toEqual( new QueryToken(
+						new ConstructToken()
+							.addTriple( new SubjectToken( variableHelper( "metadata" ) )
+								.addPredicate( new PredicateToken( "a" )
+									.addObject( new IRIToken( C.VolatileResource ) )
+									.addObject( new IRIToken( C.QueryMetadata ) )
 								)
-								.addPredicate( new PredicateToken( new IRIToken( LDP.hasMemberRelation ) )
-									.addObject( variableHelper( "hasMemberRelation" ) )
-								)
-							)
-							.addPattern( new SubjectToken( variableHelper( "membershipResource" ) )
-								.addPredicate( new PredicateToken( variableHelper( "hasMemberRelation" ) )
+								.addPredicate( new PredicateToken( new IRIToken( C.target ) )
 									.addObject( variableHelper( "member" ) )
 								)
 							)
-							.addPattern( new OptionalToken()
-								.addPattern( new SubjectToken( variableHelper( "member" ) )
-									.addPredicate( new PredicateToken( new PrefixedNameToken( "schema:property-2" ) )
-										.addObject( variableHelper( "member__property2" ) )
-									)
+							.addTriple( new SubjectToken( variableHelper( "member" ) )
+								.addPredicate( new PredicateToken( "a" )
+									.addObject( variableHelper( "member__types" ) )
+								)
+								.addPredicate( new PredicateToken( new PrefixedNameToken( "ex:property-1" ) )
+									.addObject( variableHelper( "member__property1" ) )
+								)
+								.addPredicate( new PredicateToken( new PrefixedNameToken( "schema:property-2" ) )
+									.addObject( variableHelper( "member__property2" ) )
 								)
 							)
-							.addModifier( new OrderToken( variableHelper( "member__property2" ) ) )
-							.addModifier( new LimitToken( 10 ) )
-							.addModifier( new OffsetToken( 5 ) )
-						)
-						.addPattern(
-							new OptionalToken()
-								.addPattern( new SubjectToken( variableHelper( "member" ) )
-									.addPredicate( new PredicateToken( "a" )
-										.addObject( variableHelper( "member__types" ) )
-									)
-								)
-						)
-						.addPattern( new SubjectToken( variableHelper( "member" ) )
-							.addPredicate( new PredicateToken( "a" )
-								.addObject( new PrefixedNameToken( "ex:Resource" ) )
-							)
-						)
-						.addPattern(
-							new OptionalToken()
-								.addPattern( new SubjectToken( variableHelper( "member" ) )
-									.addPredicate( new PredicateToken( new PrefixedNameToken( "ex:property-1" ) )
-										.addObject( variableHelper( "member__property1" ) )
-									)
-								)
-								.addPattern( new FilterToken( "datatype( ?member__property1 ) = xsd:string" ) )
-						)
-						.addPattern( new FilterToken( `?member__property2__property2 = "12345"^^xsd:integer` ) )
-						.addPattern( new SubjectToken( variableHelper( "member" ) )
-							.addPredicate( new PredicateToken( new PrefixedNameToken( "schema:property-2" ) )
-								.addObject( variableHelper( "member__property2" ) )
-							)
-						)
-						.addPattern( new FilterToken( "! isLiteral( ?member__property2 )" ) )
-						.addPattern( new OptionalToken()
-							.addPattern( new SubjectToken( variableHelper( "member__property2" ) )
+							.addTriple( new SubjectToken( variableHelper( "member__property2" ) )
 								.addPredicate( new PredicateToken( "a" )
 									.addObject( variableHelper( "member__property2__types" ) )
 								)
-							)
-						)
-						.addPattern( new SubjectToken( variableHelper( "member__property2" ) )
-							.addPredicate( new PredicateToken( new PrefixedNameToken( "ex:property-2" ) )
-								.addObject( variableHelper( "member__property2__property2" ) )
-							)
-						)
-						.addPattern( new FilterToken( "datatype( ?member__property2__property2 ) = xsd:integer" ) )
-						.addPattern( new ValuesToken()
-							.addValues(
-								variableHelper( "member__property2__property2" ),
-								new LiteralToken( 12345 ).setType( "xsd:integer" )
-							)
-						)
-						.addPattern( new OptionalToken()
-							.addPattern( new SubjectToken( variableHelper( "member__property2" ) )
+								.addPredicate( new PredicateToken( new PrefixedNameToken( "ex:property-2" ) )
+									.addObject( variableHelper( "member__property2__property2" ) )
+								)
 								.addPredicate( new PredicateToken( new PrefixedNameToken( "schema:property-3" ) )
 									.addObject( variableHelper( "member__property2__property3" ) )
 								)
 							)
-							.addPattern( new FilterToken( "datatype( ?member__property2__property3 ) = xsd:string" ) )
-						)
-					)
 
-						.addPrologues( new PrefixToken( "ex", new IRIToken( "https://example.com/ns#" ) ) )
-						.addPrologues( new PrefixToken( "xsd", new IRIToken( XSD.namespace ) ) )
-						.addPrologues( new PrefixToken( "schema", new IRIToken( "https://schema.org/" ) ) )
-				);
-			} );
-
-			it( "should send filtered without optional CONSTRUCT query when specific URI", () => {
-				const resource:QueryDocumentDocument = createMock();
-
-				resource._context
-					.extendObjectSchema( {
-						"@vocab": "https://example.com/ns#",
-						"schema": "https://schema.org/",
-						"ex": "https://example.com/ns#",
-						"xsd": XSD.namespace,
-					} )
-					.extendObjectSchema( "Resource", {
-						"property1": {
-							"@id": "property-1",
-							"@type": XSD.string,
-						},
-						"property2": {
-							"@id": "property-2",
-							"@type": XSD.integer,
-						},
-						"property3": {
-							"@id": "https://schema.org/property-3",
-							"@type": XSD.string,
-						},
-					} )
-				;
-
-
-				const queryTokenClass:{ new( ...args:any[] ) } = QueryToken;
-				let query:QueryToken = void 0;
-				spyOn( TokensModule, "QueryToken" ).and.callFake( ( ...args:any[] ) => {
-					return query = new queryTokenClass( ...args );
-				} );
-
-				resource.getMembers( "resource/", _ => _
-					.withType( "Resource" )
-					.properties( {
-						"property1": _.inherit,
-						"property2": {
-							"@id": "https://schema.org/property-2",
-							"@type": "@id",
-							"query": __ => __
-								.properties( {
-									"property2": {
-										"query": ___ => ___
-											.values( ___.value( 12345 ).withType( "integer" ) )
-										,
-									},
-									"property3": __.inherit,
-								} )
-								.filter( `${ __.property( "property2" ) } = ${ __.value( 12345 ).withType( "integer" ) }` )
-							,
-						},
-					} )
-					.orderBy( "property2" )
-					.limit( 10 )
-					.offset( 5 )
-				);
-
-				expect( query ).toEqual( new QueryToken(
-					new ConstructToken()
-						.addTriple( new SubjectToken( variableHelper( "metadata" ) )
-							.addPredicate( new PredicateToken( "a" )
-								.addObject( new IRIToken( C.VolatileResource ) )
-								.addObject( new IRIToken( C.QueryMetadata ) )
-							)
-							.addPredicate( new PredicateToken( new IRIToken( C.target ) )
-								.addObject( variableHelper( "member" ) )
-							)
-						)
-						.addTriple( new SubjectToken( variableHelper( "member" ) )
-							.addPredicate( new PredicateToken( "a" )
-								.addObject( variableHelper( "member__types" ) )
-							)
-							.addPredicate( new PredicateToken( new PrefixedNameToken( "ex:property-1" ) )
-								.addObject( variableHelper( "member__property1" ) )
-							)
-							.addPredicate( new PredicateToken( new PrefixedNameToken( "schema:property-2" ) )
-								.addObject( variableHelper( "member__property2" ) )
-							)
-						)
-						.addTriple( new SubjectToken( variableHelper( "member__property2" ) )
-							.addPredicate( new PredicateToken( "a" )
-								.addObject( variableHelper( "member__property2__types" ) )
-							)
-							.addPredicate( new PredicateToken( new PrefixedNameToken( "ex:property-2" ) )
-								.addObject( variableHelper( "member__property2__property2" ) )
-							)
-							.addPredicate( new PredicateToken( new PrefixedNameToken( "schema:property-3" ) )
-								.addObject( variableHelper( "member__property2__property3" ) )
-							)
-						)
-
-						.addPattern( new BindToken( "BNODE()", variableHelper( "metadata" ) ) )
-						.addPattern( new SelectToken( "DISTINCT" )
-							.addVariable( variableHelper( "member" ) )
-							.addPattern( new SubjectToken( new IRIToken( "https://example.com/resource/" ) )
-								.addPredicate( new PredicateToken( new IRIToken( LDP.membershipResource ) )
-									.addObject( variableHelper( "membershipResource" ) )
+							.addPattern( new BindToken( "BNODE()", variableHelper( "metadata" ) ) )
+							.addPattern( new SelectToken( "DISTINCT" )
+								.addVariable( variableHelper( "member" ) )
+								.addPattern( new SubjectToken( new IRIToken( "https://example.com/" ) )
+									.addPredicate( new PredicateToken( new IRIToken( LDP.membershipResource ) )
+										.addObject( variableHelper( "membershipResource" ) )
+									)
+									.addPredicate( new PredicateToken( new IRIToken( LDP.hasMemberRelation ) )
+										.addObject( variableHelper( "hasMemberRelation" ) )
+									)
 								)
-								.addPredicate( new PredicateToken( new IRIToken( LDP.hasMemberRelation ) )
-									.addObject( variableHelper( "hasMemberRelation" ) )
+								.addPattern( new SubjectToken( variableHelper( "membershipResource" ) )
+									.addPredicate( new PredicateToken( variableHelper( "hasMemberRelation" ) )
+										.addObject( variableHelper( "member" ) )
+									)
+								)
+								.addPattern( new OptionalToken()
+									.addPattern( new SubjectToken( variableHelper( "member" ) )
+										.addPredicate( new PredicateToken( new PrefixedNameToken( "schema:property-2" ) )
+											.addObject( variableHelper( "member__property2" ) )
+										)
+									)
+								)
+								.addModifier( new OrderToken( variableHelper( "member__property2" ) ) )
+								.addModifier( new LimitToken( 10 ) )
+								.addModifier( new OffsetToken( 5 ) )
+							)
+							.addPattern(
+								new OptionalToken()
+									.addPattern( new SubjectToken( variableHelper( "member" ) )
+										.addPredicate( new PredicateToken( "a" )
+											.addObject( variableHelper( "member__types" ) )
+										)
+									)
+							)
+							.addPattern( new SubjectToken( variableHelper( "member" ) )
+								.addPredicate( new PredicateToken( "a" )
+									.addObject( new PrefixedNameToken( "ex:Resource" ) )
 								)
 							)
-							.addPattern( new SubjectToken( variableHelper( "membershipResource" ) )
-								.addPredicate( new PredicateToken( variableHelper( "hasMemberRelation" ) )
-									.addObject( variableHelper( "member" ) )
+							.addPattern(
+								new OptionalToken()
+									.addPattern( new SubjectToken( variableHelper( "member" ) )
+										.addPredicate( new PredicateToken( new PrefixedNameToken( "ex:property-1" ) )
+											.addObject( variableHelper( "member__property1" ) )
+										)
+									)
+									.addPattern( new FilterToken( "datatype( ?member__property1 ) = xsd:string" ) )
+							)
+							.addPattern( new FilterToken( `?member__property2__property2 = "12345"^^xsd:integer` ) )
+							.addPattern( new SubjectToken( variableHelper( "member" ) )
+								.addPredicate( new PredicateToken( new PrefixedNameToken( "schema:property-2" ) )
+									.addObject( variableHelper( "member__property2" ) )
+								)
+							)
+							.addPattern( new FilterToken( "! isLiteral( ?member__property2 )" ) )
+							.addPattern( new OptionalToken()
+								.addPattern( new SubjectToken( variableHelper( "member__property2" ) )
+									.addPredicate( new PredicateToken( "a" )
+										.addObject( variableHelper( "member__property2__types" ) )
+									)
+								)
+							)
+							.addPattern( new SubjectToken( variableHelper( "member__property2" ) )
+								.addPredicate( new PredicateToken( new PrefixedNameToken( "ex:property-2" ) )
+									.addObject( variableHelper( "member__property2__property2" ) )
+								)
+							)
+							.addPattern( new FilterToken( "datatype( ?member__property2__property2 ) = xsd:integer" ) )
+							.addPattern( new ValuesToken()
+								.addValues(
+									variableHelper( "member__property2__property2" ),
+									new LiteralToken( 12345 ).setType( "xsd:integer" )
 								)
 							)
 							.addPattern( new OptionalToken()
-								.addPattern( new SubjectToken( variableHelper( "member" ) )
-									.addPredicate( new PredicateToken( new PrefixedNameToken( "schema:property-2" ) )
-										.addObject( variableHelper( "member__property2" ) )
+								.addPattern( new SubjectToken( variableHelper( "member__property2" ) )
+									.addPredicate( new PredicateToken( new PrefixedNameToken( "schema:property-3" ) )
+										.addObject( variableHelper( "member__property2__property3" ) )
 									)
 								)
+								.addPattern( new FilterToken( "datatype( ?member__property2__property3 ) = xsd:string" ) )
 							)
-							.addModifier( new OrderToken( variableHelper( "member__property2" ) ) )
-							.addModifier( new LimitToken( 10 ) )
-							.addModifier( new OffsetToken( 5 ) )
 						)
-						.addPattern(
-							new OptionalToken()
-								.addPattern( new SubjectToken( variableHelper( "member" ) )
-									.addPredicate( new PredicateToken( "a" )
-										.addObject( variableHelper( "member__types" ) )
-									)
+
+							.addPrologues( new PrefixToken( "ex", new IRIToken( "https://example.com/ns#" ) ) )
+							.addPrologues( new PrefixToken( "xsd", new IRIToken( XSD.namespace ) ) )
+							.addPrologues( new PrefixToken( "schema", new IRIToken( "https://schema.org/" ) ) )
+					);
+				} );
+
+				it( "should send filtered without optional CONSTRUCT query when specific URI", () => {
+					context
+						.extendObjectSchema( {
+							"@vocab": "https://example.com/ns#",
+							"schema": "https://schema.org/",
+							"ex": "https://example.com/ns#",
+							"xsd": XSD.namespace,
+						} )
+						.extendObjectSchema( "Resource", {
+							"property1": {
+								"@id": "property-1",
+								"@type": XSD.string,
+							},
+							"property2": {
+								"@id": "property-2",
+								"@type": XSD.integer,
+							},
+							"property3": {
+								"@id": "https://schema.org/property-3",
+								"@type": XSD.string,
+							},
+						} )
+					;
+
+
+					const queryTokenClass:{ new( ...args:any[] ) } = QueryToken;
+					let query:QueryToken = void 0;
+					spyOn( TokensModule, "QueryToken" ).and.callFake( ( ...args:any[] ) => {
+						return query = new queryTokenClass( ...args );
+					} );
+
+					resource.getMembers( "resource/", _ => _
+						.withType( "Resource" )
+						.properties( {
+							"property1": _.inherit,
+							"property2": {
+								"@id": "https://schema.org/property-2",
+								"@type": "@id",
+								"query": __ => __
+									.properties( {
+										"property2": {
+											"query": ___ => ___
+												.values( ___.value( 12345 ).withType( "integer" ) )
+											,
+										},
+										"property3": __.inherit,
+									} )
+									.filter( `${ __.property( "property2" ) } = ${ __.value( 12345 ).withType( "integer" ) }` )
+								,
+							},
+						} )
+						.orderBy( "property2" )
+						.limit( 10 )
+						.offset( 5 )
+					);
+
+					expect( query ).toEqual( new QueryToken(
+						new ConstructToken()
+							.addTriple( new SubjectToken( variableHelper( "metadata" ) )
+								.addPredicate( new PredicateToken( "a" )
+									.addObject( new IRIToken( C.VolatileResource ) )
+									.addObject( new IRIToken( C.QueryMetadata ) )
 								)
-						)
-						.addPattern( new SubjectToken( variableHelper( "member" ) )
-							.addPredicate( new PredicateToken( "a" )
-								.addObject( new PrefixedNameToken( "ex:Resource" ) )
-							)
-						)
-						.addPattern(
-							new OptionalToken()
-								.addPattern( new SubjectToken( variableHelper( "member" ) )
-									.addPredicate( new PredicateToken( new PrefixedNameToken( "ex:property-1" ) )
-										.addObject( variableHelper( "member__property1" ) )
-									)
+								.addPredicate( new PredicateToken( new IRIToken( C.target ) )
+									.addObject( variableHelper( "member" ) )
 								)
-								.addPattern( new FilterToken( "datatype( ?member__property1 ) = xsd:string" ) )
-						)
-						.addPattern( new FilterToken( `?member__property2__property2 = "12345"^^xsd:integer` ) )
-						.addPattern( new SubjectToken( variableHelper( "member" ) )
-							.addPredicate( new PredicateToken( new PrefixedNameToken( "schema:property-2" ) )
-								.addObject( variableHelper( "member__property2" ) )
 							)
-						)
-						.addPattern( new FilterToken( "! isLiteral( ?member__property2 )" ) )
-						.addPattern( new OptionalToken()
-							.addPattern( new SubjectToken( variableHelper( "member__property2" ) )
+							.addTriple( new SubjectToken( variableHelper( "member" ) )
+								.addPredicate( new PredicateToken( "a" )
+									.addObject( variableHelper( "member__types" ) )
+								)
+								.addPredicate( new PredicateToken( new PrefixedNameToken( "ex:property-1" ) )
+									.addObject( variableHelper( "member__property1" ) )
+								)
+								.addPredicate( new PredicateToken( new PrefixedNameToken( "schema:property-2" ) )
+									.addObject( variableHelper( "member__property2" ) )
+								)
+							)
+							.addTriple( new SubjectToken( variableHelper( "member__property2" ) )
 								.addPredicate( new PredicateToken( "a" )
 									.addObject( variableHelper( "member__property2__types" ) )
 								)
-							)
-						)
-						.addPattern( new SubjectToken( variableHelper( "member__property2" ) )
-							.addPredicate( new PredicateToken( new PrefixedNameToken( "ex:property-2" ) )
-								.addObject( variableHelper( "member__property2__property2" ) )
-							)
-						)
-						.addPattern( new FilterToken( "datatype( ?member__property2__property2 ) = xsd:integer" ) )
-						.addPattern( new ValuesToken()
-							.addValues(
-								variableHelper( "member__property2__property2" ),
-								new LiteralToken( 12345 ).setType( "xsd:integer" )
-							)
-						)
-						.addPattern( new OptionalToken()
-							.addPattern( new SubjectToken( variableHelper( "member__property2" ) )
+								.addPredicate( new PredicateToken( new PrefixedNameToken( "ex:property-2" ) )
+									.addObject( variableHelper( "member__property2__property2" ) )
+								)
 								.addPredicate( new PredicateToken( new PrefixedNameToken( "schema:property-3" ) )
 									.addObject( variableHelper( "member__property2__property3" ) )
 								)
 							)
-							.addPattern( new FilterToken( "datatype( ?member__property2__property3 ) = xsd:string" ) )
+
+							.addPattern( new BindToken( "BNODE()", variableHelper( "metadata" ) ) )
+							.addPattern( new SelectToken( "DISTINCT" )
+								.addVariable( variableHelper( "member" ) )
+								.addPattern( new SubjectToken( new IRIToken( "https://example.com/resource/" ) )
+									.addPredicate( new PredicateToken( new IRIToken( LDP.membershipResource ) )
+										.addObject( variableHelper( "membershipResource" ) )
+									)
+									.addPredicate( new PredicateToken( new IRIToken( LDP.hasMemberRelation ) )
+										.addObject( variableHelper( "hasMemberRelation" ) )
+									)
+								)
+								.addPattern( new SubjectToken( variableHelper( "membershipResource" ) )
+									.addPredicate( new PredicateToken( variableHelper( "hasMemberRelation" ) )
+										.addObject( variableHelper( "member" ) )
+									)
+								)
+								.addPattern( new OptionalToken()
+									.addPattern( new SubjectToken( variableHelper( "member" ) )
+										.addPredicate( new PredicateToken( new PrefixedNameToken( "schema:property-2" ) )
+											.addObject( variableHelper( "member__property2" ) )
+										)
+									)
+								)
+								.addModifier( new OrderToken( variableHelper( "member__property2" ) ) )
+								.addModifier( new LimitToken( 10 ) )
+								.addModifier( new OffsetToken( 5 ) )
+							)
+							.addPattern(
+								new OptionalToken()
+									.addPattern( new SubjectToken( variableHelper( "member" ) )
+										.addPredicate( new PredicateToken( "a" )
+											.addObject( variableHelper( "member__types" ) )
+										)
+									)
+							)
+							.addPattern( new SubjectToken( variableHelper( "member" ) )
+								.addPredicate( new PredicateToken( "a" )
+									.addObject( new PrefixedNameToken( "ex:Resource" ) )
+								)
+							)
+							.addPattern(
+								new OptionalToken()
+									.addPattern( new SubjectToken( variableHelper( "member" ) )
+										.addPredicate( new PredicateToken( new PrefixedNameToken( "ex:property-1" ) )
+											.addObject( variableHelper( "member__property1" ) )
+										)
+									)
+									.addPattern( new FilterToken( "datatype( ?member__property1 ) = xsd:string" ) )
+							)
+							.addPattern( new FilterToken( `?member__property2__property2 = "12345"^^xsd:integer` ) )
+							.addPattern( new SubjectToken( variableHelper( "member" ) )
+								.addPredicate( new PredicateToken( new PrefixedNameToken( "schema:property-2" ) )
+									.addObject( variableHelper( "member__property2" ) )
+								)
+							)
+							.addPattern( new FilterToken( "! isLiteral( ?member__property2 )" ) )
+							.addPattern( new OptionalToken()
+								.addPattern( new SubjectToken( variableHelper( "member__property2" ) )
+									.addPredicate( new PredicateToken( "a" )
+										.addObject( variableHelper( "member__property2__types" ) )
+									)
+								)
+							)
+							.addPattern( new SubjectToken( variableHelper( "member__property2" ) )
+								.addPredicate( new PredicateToken( new PrefixedNameToken( "ex:property-2" ) )
+									.addObject( variableHelper( "member__property2__property2" ) )
+								)
+							)
+							.addPattern( new FilterToken( "datatype( ?member__property2__property2 ) = xsd:integer" ) )
+							.addPattern( new ValuesToken()
+								.addValues(
+									variableHelper( "member__property2__property2" ),
+									new LiteralToken( 12345 ).setType( "xsd:integer" )
+								)
+							)
+							.addPattern( new OptionalToken()
+								.addPattern( new SubjectToken( variableHelper( "member__property2" ) )
+									.addPredicate( new PredicateToken( new PrefixedNameToken( "schema:property-3" ) )
+										.addObject( variableHelper( "member__property2__property3" ) )
+									)
+								)
+								.addPattern( new FilterToken( "datatype( ?member__property2__property3 ) = xsd:string" ) )
+							)
 						)
-					)
 
-						.addPrologues( new PrefixToken( "ex", new IRIToken( "https://example.com/ns#" ) ) )
-						.addPrologues( new PrefixToken( "xsd", new IRIToken( XSD.namespace ) ) )
-						.addPrologues( new PrefixToken( "schema", new IRIToken( "https://schema.org/" ) ) )
-				);
-			} );
+							.addPrologues( new PrefixToken( "ex", new IRIToken( "https://example.com/ns#" ) ) )
+							.addPrologues( new PrefixToken( "xsd", new IRIToken( XSD.namespace ) ) )
+							.addPrologues( new PrefixToken( "schema", new IRIToken( "https://schema.org/" ) ) )
+					);
+				} );
 
 
-			it( "should order returned members", ( done:DoneFn ):void => {
-				jasmine.Ajax.stubRequest( "https://example.com/resource/" ).andReturn( {
-					status: 200,
-					responseText: `[ {
+				it( "should order returned members", ( done:DoneFn ):void => {
+					jasmine.Ajax.stubRequest( "https://example.com/resource/" ).andReturn( {
+						status: 200,
+						responseText: `[ {
 							"@id":"_:1",
 							"@type": [
 								"${ C.VolatileResource }",
@@ -7438,257 +7256,72 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 								} ]
 							} ]
 						} ]`,
-				} );
+					} );
 
-				const resource:QueryDocumentDocument = createMock();
+					context
+						.extendObjectSchema( {
+							"@vocab": "https://example.com/ns#",
+							"schema": "https://schema.org/",
+						} )
+						.extendObjectSchema( "Resource", {
+							"property1": {
+								"@id": "property-1",
+								"@type": XSD.string,
+							},
+							"property2": {
+								"@id": "property-2",
+								"@type": XSD.integer,
+							},
+							"property3": {
+								"@id": "https://schema.org/property-3",
+								"@type": XSD.string,
+							},
+						} )
+					;
 
-				resource._context
-					.extendObjectSchema( {
-						"@vocab": "https://example.com/ns#",
-						"schema": "https://schema.org/",
-					} )
-					.extendObjectSchema( "Resource", {
-						"property1": {
-							"@id": "property-1",
-							"@type": XSD.string,
-						},
-						"property2": {
-							"@id": "property-2",
-							"@type": XSD.integer,
-						},
-						"property3": {
-							"@id": "https://schema.org/property-3",
-							"@type": XSD.string,
-						},
-					} )
-				;
-
-				interface MyDocument {
-					property1:string;
-					property2:{
-						property2:number;
-						property3:string;
-					};
-				}
-
-
-				resource.getMembers<MyDocument>( "https://example.com/resource/", _ => _
-					.withType( "Resource" )
-					.properties( {
-						"property1": _.inherit,
-						"property2": {
-							"@id": "https://schema.org/property-2",
-							"@type": "@id",
-							"query": __ => __.properties( {
-								"property2": __.inherit,
-								"property3": __.inherit,
-							} ),
-						},
-					} )
-					.orderBy( "property2.property2", "DESC" )
-				).then( ( myDocuments ) => {
-					expect( myDocuments[ 0 ] ).toEqual( jasmine.objectContaining( {
-						"property2": jasmine.objectContaining( {
-							"property2": 67890,
-						} ) as any,
-					} ) );
-					expect( myDocuments[ 1 ] ).toEqual( jasmine.objectContaining( {
-						"property2": jasmine.objectContaining( {
-							"property2": 12345,
-						} ) as any,
-					} ) );
-
-					done();
-				} ).catch( done.fail );
-			} );
-
-			it( "should return full children", ( done:DoneFn ):void => {
-				jasmine.Ajax.stubRequest( "https://example.com/resource/" ).andReturn( {
-					status: 200,
-					responseText: `[ {
-							"@id":"_:1",
-							"@type": [
-								"${ C.VolatileResource }",
-								"${ C.QueryMetadata }"
-							],
-							"${ C.target }": [ {
-								"@id":"https://example.com/resource/child1/"
-							} ]
-						}, {
-							"@id":"_:2",
-							"@type": [
-								"${ C.VolatileResource }",
-								"${ C.QueryMetadata }"
-							],
-							"${ C.target }": [ {
-								"@id":"https://example.com/resource/child2/"
-							} ]
-						}, {
-							"@id": "_:3",
-							"@type": [
-								"${ C.ResponseMetadata }",
-								"${ C.VolatileResource }"
-							],
-							"${ C.documentMetadata }": [ {
-								"@id": "_:4"
-							}, {
-								"@id": "_:5"
-							} ]
-						}, {
-							"@id": "_:4",
-							"@type": [
-								"${ C.DocumentMetadata }",
-								"${ C.VolatileResource }"
-							],
-							"${ C.eTag }": [ {
-								"@value": "\\"1-12345\\""
-							} ],
-							"${ C.relatedDocument }": [ {
-								"@id": "https://example.com/resource/child1/"
-							} ]
-						}, {
-							"@id": "_:5",
-							"@type": [
-								"${ C.DocumentMetadata }",
-								"${ C.VolatileResource }"
-							],
-							"${ C.eTag }": [ {
-								"@value": "\\"2-12345\\""
-							} ],
-							"${ C.relatedDocument }": [ {
-								"@id": "https://example.com/resource/child2/"
-							} ]
-						}, {
-							"@id": "https://example.com/resource/child1/",
-							"@graph": [ {
-								"@id": "https://example.com/resource/child1/",
-								"@type": [
-									"${ C.Document }",
-									"https://schema.org/Resource",
-									"${ LDP.BasicContainer }",
-									"${ LDP.RDFSource }"
-								],
-								"https://schema.org/property-1": [ {
-									"@value": "value 1"
-								} ],
-								"https://schema.org/property-2": [ {
-									"@id": "_:1"
-								} ]
-							}, {
-								"@id": "_:1",
-								"@type": [
-									"https://schema.org/Fragment"
-								],
-								"https://schema.org/property-3": [ {
-									"@value": "another value 1"
-								} ],
-								"https://schema.org/property-4": [ {
-									"@value": "12345",
-									"@type": "${ XSD.integer }"
-								} ]
-							} ]
-						}, {
-							"@id": "https://example.com/resource/child2/",
-							"@graph": [ {
-								"@id": "https://example.com/resource/child2/",
-								"@type": [
-									"${ C.Document }",
-									"https://schema.org/Resource",
-									"${ LDP.BasicContainer }",
-									"${ LDP.RDFSource }"
-								],
-								"https://schema.org/property-1": [ {
-									"@value": "value 2"
-								} ],
-								"https://schema.org/property-2": [ {
-									"@id": "_:2"
-								} ]
-							}, {
-								"@id": "_:2",
-								"@type": [
-									"https://schema.org/Fragment"
-								],
-								"https://schema.org/property-3": [ {
-									"@value": "another value 2"
-								} ],
-								"https://schema.org/property-4": [ {
-									"@value": "67890",
-									"@type": "${ XSD.integer }"
-								} ]
-							} ]
-						} ]`,
-				} );
-
-				const resource:QueryDocumentDocument = createMock();
-
-				resource._context
-					.extendObjectSchema( {
-						"@vocab": "https://example.com/ns#",
-						"schema": "https://schema.org/",
-					} )
-					.extendObjectSchema( "schema:Resource", {
-						"property1": {
-							"@id": "https://schema.org/property-1",
-							"@type": XSD.string,
-						},
-						"property2": {
-							"@id": "https://schema.org/property-2",
-							"@type": "@id",
-						},
-					} )
-					.extendObjectSchema( "schema:Fragment", {
-						"property3": {
-							"@id": "https://schema.org/property-3",
-							"@type": XSD.string,
-						},
-						"property4": {
-							"@id": "https://schema.org/property-4",
-							"@type": XSD.integer,
-						},
-					} )
-				;
-
-
-				interface MyDocument {
-					property1:string;
-					property2:{
-						property3:string;
-						property4:number;
-					};
-				}
-
-				resource.getMembers<MyDocument>( "https://example.com/resource/" ).then( ( myDocuments ) => {
-					expect( myDocuments ).toEqual( jasmine.any( Array ) );
-					expect( myDocuments.length ).toBe( 2 );
-					for( const document of myDocuments ) {
-						expect( Document.is( document ) ).toBe( true );
-						expect( document.isPartial() ).toBe( false );
+					interface MyDocument {
+						property1:string;
+						property2:{
+							property2:number;
+							property3:string;
+						};
 					}
 
-					expect( myDocuments[ 0 ] ).toEqual( jasmine.objectContaining( {
-						"_eTag": "\"1-12345\"",
-						"property1": "value 1",
-						"property2": jasmine.objectContaining( {
-							"property3": "another value 1",
-							"property4": 12345,
-						} ) as any,
-					} ) );
-					expect( myDocuments[ 1 ] ).toEqual( jasmine.objectContaining( {
-						"_eTag": "\"2-12345\"",
-						"property1": "value 2",
-						"property2": jasmine.objectContaining( {
-							"property3": "another value 2",
-							"property4": 67890,
-						} ) as any,
-					} ) );
-					done();
-				} ).catch( done.fail );
-			} );
 
-			it( "should return .ALL children", ( done:DoneFn ):void => {
-				jasmine.Ajax.stubRequest( "https://example.com/resource/" ).andReturn( {
-					status: 200,
-					responseText: `[ {
+					resource.getMembers<MyDocument>( "https://example.com/resource/", _ => _
+						.withType( "Resource" )
+						.properties( {
+							"property1": _.inherit,
+							"property2": {
+								"@id": "https://schema.org/property-2",
+								"@type": "@id",
+								"query": __ => __.properties( {
+									"property2": __.inherit,
+									"property3": __.inherit,
+								} ),
+							},
+						} )
+						.orderBy( "property2.property2", "DESC" )
+					).then( ( myDocuments ) => {
+						expect( myDocuments[ 0 ] ).toEqual( jasmine.objectContaining( {
+							"property2": jasmine.objectContaining( {
+								"property2": 67890,
+							} ) as any,
+						} ) );
+						expect( myDocuments[ 1 ] ).toEqual( jasmine.objectContaining( {
+							"property2": jasmine.objectContaining( {
+								"property2": 12345,
+							} ) as any,
+						} ) );
+
+						done();
+					} ).catch( done.fail );
+				} );
+
+				it( "should return full children", ( done:DoneFn ):void => {
+					jasmine.Ajax.stubRequest( "https://example.com/resource/" ).andReturn( {
+						status: 200,
+						responseText: `[ {
 							"@id":"_:1",
 							"@type": [
 								"${ C.VolatileResource }",
@@ -7757,6 +7390,18 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 								"https://schema.org/property-2": [ {
 									"@id": "_:1"
 								} ]
+							}, {
+								"@id": "_:1",
+								"@type": [
+									"https://schema.org/Fragment"
+								],
+								"https://schema.org/property-3": [ {
+									"@value": "another value 1"
+								} ],
+								"https://schema.org/property-4": [ {
+									"@value": "12345",
+									"@type": "${ XSD.integer }"
+								} ]
 							} ]
 						}, {
 							"@id": "https://example.com/resource/child2/",
@@ -7774,87 +7419,254 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 								"https://schema.org/property-2": [ {
 									"@id": "_:2"
 								} ]
+							}, {
+								"@id": "_:2",
+								"@type": [
+									"https://schema.org/Fragment"
+								],
+								"https://schema.org/property-3": [ {
+									"@value": "another value 2"
+								} ],
+								"https://schema.org/property-4": [ {
+									"@value": "67890",
+									"@type": "${ XSD.integer }"
+								} ]
 							} ]
 						} ]`,
-				} );
+					} );
+
+					context
+						.extendObjectSchema( {
+							"@vocab": "https://example.com/ns#",
+							"schema": "https://schema.org/",
+						} )
+						.extendObjectSchema( "schema:Resource", {
+							"property1": {
+								"@id": "https://schema.org/property-1",
+								"@type": XSD.string,
+							},
+							"property2": {
+								"@id": "https://schema.org/property-2",
+								"@type": "@id",
+							},
+						} )
+						.extendObjectSchema( "schema:Fragment", {
+							"property3": {
+								"@id": "https://schema.org/property-3",
+								"@type": XSD.string,
+							},
+							"property4": {
+								"@id": "https://schema.org/property-4",
+								"@type": XSD.integer,
+							},
+						} )
+					;
 
 
-				const resource:QueryDocumentDocument = createMock();
+					interface MyDocument {
+						property1:string;
+						property2:{
+							property3:string;
+							property4:number;
+						};
+					}
 
-				resource._context
-					.extendObjectSchema( {
-						"@vocab": "https://example.com/ns#",
-						"schema": "https://schema.org/",
-					} )
-					.extendObjectSchema( "schema:Resource", {
-						"property1": {
-							"@id": "https://schema.org/property-1",
-							"@type": XSD.string,
-						},
-						"property2": {
-							"@id": "https://schema.org/property-2",
-							"@type": "@id",
-						},
-					} )
-					.extendObjectSchema( "schema:Fragment", {
-						"property3": {
-							"@id": "https://schema.org/property-3",
-							"@type": XSD.string,
-						},
-						"property4": {
-							"@id": "https://schema.org/property-4",
-							"@type": XSD.integer,
-						},
-					} )
-				;
-
-
-				interface MyDocument {
-					property1:string;
-					property2:{
-						property3:string;
-						property4:number;
-					};
-				}
-
-				resource.getMembers<MyDocument>( "https://example.com/resource/", _ => _.properties( _.all ) )
-					.then( ( myDocuments ) => {
+					resource.getMembers<MyDocument>( "https://example.com/resource/" ).then( ( myDocuments ) => {
 						expect( myDocuments ).toEqual( jasmine.any( Array ) );
 						expect( myDocuments.length ).toBe( 2 );
 						for( const document of myDocuments ) {
 							expect( Document.is( document ) ).toBe( true );
-							expect( document.isPartial() ).toBe( true );
+							expect( document.isPartial() ).toBe( false );
 						}
 
 						expect( myDocuments[ 0 ] ).toEqual( jasmine.objectContaining( {
 							"_eTag": "\"1-12345\"",
 							"property1": "value 1",
-							"property2": jasmine.any( Object ) as any,
+							"property2": jasmine.objectContaining( {
+								"property3": "another value 1",
+								"property4": 12345,
+							} ) as any,
 						} ) );
-						expect( myDocuments[ 0 ][ "property2" ] ).not.toEqual( jasmine.objectContaining( {
-							"property3": "another value 1",
-							"property4": 12345,
-						} ) as any );
-
 						expect( myDocuments[ 1 ] ).toEqual( jasmine.objectContaining( {
 							"_eTag": "\"2-12345\"",
 							"property1": "value 2",
-							"property2": jasmine.any( Object ) as any,
+							"property2": jasmine.objectContaining( {
+								"property3": "another value 2",
+								"property4": 67890,
+							} ) as any,
 						} ) );
-						expect( myDocuments[ 0 ][ "property2" ] ).not.toEqual( jasmine.objectContaining( {
-							"property3": "another value 2",
-							"property4": 67890,
-						} ) as any );
-
 						done();
-					} )
-					.catch( done.fail );
-			} );
+					} ).catch( done.fail );
+				} );
 
-			it( "should return partial children", ( done:DoneFn ):void => {
-				jasmine.Ajax.stubRequest( "https://example.com/resource/" ).andReturn( {
-					status: 200,
-					responseText: `[ {
+				it( "should return .ALL children", ( done:DoneFn ):void => {
+					jasmine.Ajax.stubRequest( "https://example.com/resource/" ).andReturn( {
+						status: 200,
+						responseText: `[ {
+							"@id":"_:1",
+							"@type": [
+								"${ C.VolatileResource }",
+								"${ C.QueryMetadata }"
+							],
+							"${ C.target }": [ {
+								"@id":"https://example.com/resource/child1/"
+							} ]
+						}, {
+							"@id":"_:2",
+							"@type": [
+								"${ C.VolatileResource }",
+								"${ C.QueryMetadata }"
+							],
+							"${ C.target }": [ {
+								"@id":"https://example.com/resource/child2/"
+							} ]
+						}, {
+							"@id": "_:3",
+							"@type": [
+								"${ C.ResponseMetadata }",
+								"${ C.VolatileResource }"
+							],
+							"${ C.documentMetadata }": [ {
+								"@id": "_:4"
+							}, {
+								"@id": "_:5"
+							} ]
+						}, {
+							"@id": "_:4",
+							"@type": [
+								"${ C.DocumentMetadata }",
+								"${ C.VolatileResource }"
+							],
+							"${ C.eTag }": [ {
+								"@value": "\\"1-12345\\""
+							} ],
+							"${ C.relatedDocument }": [ {
+								"@id": "https://example.com/resource/child1/"
+							} ]
+						}, {
+							"@id": "_:5",
+							"@type": [
+								"${ C.DocumentMetadata }",
+								"${ C.VolatileResource }"
+							],
+							"${ C.eTag }": [ {
+								"@value": "\\"2-12345\\""
+							} ],
+							"${ C.relatedDocument }": [ {
+								"@id": "https://example.com/resource/child2/"
+							} ]
+						}, {
+							"@id": "https://example.com/resource/child1/",
+							"@graph": [ {
+								"@id": "https://example.com/resource/child1/",
+								"@type": [
+									"${ C.Document }",
+									"https://schema.org/Resource",
+									"${ LDP.BasicContainer }",
+									"${ LDP.RDFSource }"
+								],
+								"https://schema.org/property-1": [ {
+									"@value": "value 1"
+								} ],
+								"https://schema.org/property-2": [ {
+									"@id": "_:1"
+								} ]
+							} ]
+						}, {
+							"@id": "https://example.com/resource/child2/",
+							"@graph": [ {
+								"@id": "https://example.com/resource/child2/",
+								"@type": [
+									"${ C.Document }",
+									"https://schema.org/Resource",
+									"${ LDP.BasicContainer }",
+									"${ LDP.RDFSource }"
+								],
+								"https://schema.org/property-1": [ {
+									"@value": "value 2"
+								} ],
+								"https://schema.org/property-2": [ {
+									"@id": "_:2"
+								} ]
+							} ]
+						} ]`,
+					} );
+
+
+					context
+						.extendObjectSchema( {
+							"@vocab": "https://example.com/ns#",
+							"schema": "https://schema.org/",
+						} )
+						.extendObjectSchema( "schema:Resource", {
+							"property1": {
+								"@id": "https://schema.org/property-1",
+								"@type": XSD.string,
+							},
+							"property2": {
+								"@id": "https://schema.org/property-2",
+								"@type": "@id",
+							},
+						} )
+						.extendObjectSchema( "schema:Fragment", {
+							"property3": {
+								"@id": "https://schema.org/property-3",
+								"@type": XSD.string,
+							},
+							"property4": {
+								"@id": "https://schema.org/property-4",
+								"@type": XSD.integer,
+							},
+						} )
+					;
+
+
+					interface MyDocument {
+						property1:string;
+						property2:{
+							property3:string;
+							property4:number;
+						};
+					}
+
+					resource.getMembers<MyDocument>( "https://example.com/resource/", _ => _.properties( _.all ) )
+						.then( ( myDocuments ) => {
+							expect( myDocuments ).toEqual( jasmine.any( Array ) );
+							expect( myDocuments.length ).toBe( 2 );
+							for( const document of myDocuments ) {
+								expect( Document.is( document ) ).toBe( true );
+								expect( document.isPartial() ).toBe( true );
+							}
+
+							expect( myDocuments[ 0 ] ).toEqual( jasmine.objectContaining( {
+								"_eTag": "\"1-12345\"",
+								"property1": "value 1",
+								"property2": jasmine.any( Object ) as any,
+							} ) );
+							expect( myDocuments[ 0 ][ "property2" ] ).not.toEqual( jasmine.objectContaining( {
+								"property3": "another value 1",
+								"property4": 12345,
+							} ) as any );
+
+							expect( myDocuments[ 1 ] ).toEqual( jasmine.objectContaining( {
+								"_eTag": "\"2-12345\"",
+								"property1": "value 2",
+								"property2": jasmine.any( Object ) as any,
+							} ) );
+							expect( myDocuments[ 0 ][ "property2" ] ).not.toEqual( jasmine.objectContaining( {
+								"property3": "another value 2",
+								"property4": 67890,
+							} ) as any );
+
+							done();
+						} )
+						.catch( done.fail );
+				} );
+
+				it( "should return partial children", ( done:DoneFn ):void => {
+					jasmine.Ajax.stubRequest( "https://example.com/resource/" ).andReturn( {
+						status: 200,
+						responseText: `[ {
 							"@id":"_:1",
 							"@type": [
 								"${ C.VolatileResource }",
@@ -7960,82 +7772,80 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 								} ]
 							} ]
 						} ]`,
-				} );
+					} );
 
 
-				const resource:QueryDocumentDocument = createMock();
-
-				resource._context
-					.extendObjectSchema( {
-						"@vocab": "https://example.com/ns#",
-						"schema": "https://schema.org/",
-					} )
-					.extendObjectSchema( "Resource", {
-						"property1": {
-							"@id": "property-1",
-							"@type": XSD.string,
-						},
-						"property2": {
-							"@id": "property-2",
-							"@type": XSD.integer,
-						},
-						"property3": {
-							"@id": "https://schema.org/property-3",
-							"@type": XSD.string,
-						},
-					} )
-				;
+					context
+						.extendObjectSchema( {
+							"@vocab": "https://example.com/ns#",
+							"schema": "https://schema.org/",
+						} )
+						.extendObjectSchema( "Resource", {
+							"property1": {
+								"@id": "property-1",
+								"@type": XSD.string,
+							},
+							"property2": {
+								"@id": "property-2",
+								"@type": XSD.integer,
+							},
+							"property3": {
+								"@id": "https://schema.org/property-3",
+								"@type": XSD.string,
+							},
+						} )
+					;
 
 
-				interface MyDocument {
-					property1:string;
-					property2:{};
-				}
-
-				resource.getMembers<MyDocument>( "https://example.com/resource/", _ => _
-					.withType( "Resource" )
-					.properties( {
-						"property1": _.inherit,
-						"property2": {
-							"@id": "https://schema.org/property-2",
-							"@type": "@id",
-							"query": __ => __.properties( {
-								"property2": __.inherit,
-								"property3": __.inherit,
-							} ),
-						},
-					} )
-				).then( ( myDocuments ) => {
-					expect( myDocuments ).toEqual( jasmine.any( Array ) );
-					expect( myDocuments.length ).toBe( 2 );
-					for( const document of myDocuments ) {
-						expect( Document.is( document ) ).toBe( true );
+					interface MyDocument {
+						property1:string;
+						property2:{};
 					}
 
-					expect( myDocuments[ 0 ] ).toEqual( jasmine.objectContaining( {
-						"_eTag": "\"1-12345\"",
-						"property1": "value 1",
-						"property2": jasmine.objectContaining( {
-							"property2": 12345,
-							"property3": "another value 1",
-						} ),
-					} ) );
-					expect( myDocuments[ 1 ] ).toEqual( jasmine.objectContaining( {
-						"_eTag": "\"2-12345\"",
-						"property1": "value 2",
-						"property2": jasmine.objectContaining( {
-							"property2": 67890,
-							"property3": "another value 2",
-						} ),
-					} ) );
-					done();
-				} ).catch( done.fail );
-			} );
+					resource.getMembers<MyDocument>( "https://example.com/resource/", _ => _
+						.withType( "Resource" )
+						.properties( {
+							"property1": _.inherit,
+							"property2": {
+								"@id": "https://schema.org/property-2",
+								"@type": "@id",
+								"query": __ => __.properties( {
+									"property2": __.inherit,
+									"property3": __.inherit,
+								} ),
+							},
+						} )
+					).then( ( myDocuments ) => {
+						expect( myDocuments ).toEqual( jasmine.any( Array ) );
+						expect( myDocuments.length ).toBe( 2 );
+						for( const document of myDocuments ) {
+							expect( Document.is( document ) ).toBe( true );
+						}
 
-			it( "should return partial children with partial relations", ( done:DoneFn ):void => {
-				jasmine.Ajax.stubRequest( "https://example.com/resource/" ).andReturn( {
-					status: 200,
-					responseText: `[ {
+						expect( myDocuments[ 0 ] ).toEqual( jasmine.objectContaining( {
+							"_eTag": "\"1-12345\"",
+							"property1": "value 1",
+							"property2": jasmine.objectContaining( {
+								"property2": 12345,
+								"property3": "another value 1",
+							} ),
+						} ) );
+						expect( myDocuments[ 1 ] ).toEqual( jasmine.objectContaining( {
+							"_eTag": "\"2-12345\"",
+							"property1": "value 2",
+							"property2": jasmine.objectContaining( {
+								"property2": 67890,
+								"property3": "another value 2",
+							} ),
+						} ) );
+						done();
+					} ).catch( done.fail );
+				} );
+
+				it( "should return partial children with partial relations", ( done:DoneFn ):void => {
+					jasmine.Ajax.stubRequest( "https://example.com/resource/" ).andReturn( {
+						status: 200,
+						responseText: `[ {
 							"@id":"_:1",
 							"@type": [
 								"${ C.VolatileResource }",
@@ -8175,78 +7985,78 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 								} ]
 							} ]
 						} ]`,
-				} );
+					} );
 
 
-				const resource:QueryDocumentDocument = createMock();
-
-				resource._context
-					.extendObjectSchema( {
-						"@vocab": "https://example.com/ns#",
-						"schema": "https://schema.org/",
-					} )
-					.extendObjectSchema( "Resource", {
-						"property1": {
-							"@id": "property-1",
-							"@type": XSD.string,
-						},
-						"property2": {
-							"@id": "property-2",
-							"@type": XSD.integer,
-						},
-						"property3": {
-							"@id": "https://schema.org/property-3",
-							"@type": XSD.string,
-						},
-					} )
-				;
+					context
+						.extendObjectSchema( {
+							"@vocab": "https://example.com/ns#",
+							"schema": "https://schema.org/",
+						} )
+						.extendObjectSchema( "Resource", {
+							"property1": {
+								"@id": "property-1",
+								"@type": XSD.string,
+							},
+							"property2": {
+								"@id": "property-2",
+								"@type": XSD.integer,
+							},
+							"property3": {
+								"@id": "https://schema.org/property-3",
+								"@type": XSD.string,
+							},
+						} )
+					;
 
 
-				interface MyDocument {
-					property1:string;
-					property2:{};
-				}
-
-				resource.getMembers<MyDocument>( "https://example.com/resource/", _ => _
-					.withType( "Resource" )
-					.properties( {
-						"property1": _.inherit,
-						"property2": {
-							"@id": "https://schema.org/property-2",
-							"@type": "@id",
-							"query": __ => __.properties( {
-								"property2": __.inherit,
-								"property3": __.inherit,
-							} ),
-						},
-					} )
-				).then( ( myDocuments ) => {
-					expect( myDocuments ).toEqual( jasmine.any( Array ) );
-					expect( myDocuments.length ).toBe( 2 );
-					for( const document of myDocuments ) {
-						expect( Document.is( document ) ).toBe( true );
+					interface MyDocument {
+						property1:string;
+						property2:{};
 					}
 
-					expect( myDocuments[ 0 ] ).toEqual( jasmine.objectContaining( {
-						"_eTag": "\"1-12345\"",
-						"property1": "value 1",
-						"property2": jasmine.objectContaining( {
-							"_eTag": "\"3-12345\"",
-							"property2": 12345,
-							"property3": "another value 1",
-						} ),
-					} ) );
-					expect( myDocuments[ 1 ] ).toEqual( jasmine.objectContaining( {
-						"_eTag": "\"2-12345\"",
-						"property1": "value 2",
-						"property2": jasmine.objectContaining( {
-							"_eTag": "\"4-12345\"",
-							"property2": 67890,
-							"property3": "another value 2",
-						} ),
-					} ) );
-					done();
-				} ).catch( done.fail );
+					resource.getMembers<MyDocument>( "https://example.com/resource/", _ => _
+						.withType( "Resource" )
+						.properties( {
+							"property1": _.inherit,
+							"property2": {
+								"@id": "https://schema.org/property-2",
+								"@type": "@id",
+								"query": __ => __.properties( {
+									"property2": __.inherit,
+									"property3": __.inherit,
+								} ),
+							},
+						} )
+					).then( ( myDocuments ) => {
+						expect( myDocuments ).toEqual( jasmine.any( Array ) );
+						expect( myDocuments.length ).toBe( 2 );
+						for( const document of myDocuments ) {
+							expect( Document.is( document ) ).toBe( true );
+						}
+
+						expect( myDocuments[ 0 ] ).toEqual( jasmine.objectContaining( {
+							"_eTag": "\"1-12345\"",
+							"property1": "value 1",
+							"property2": jasmine.objectContaining( {
+								"_eTag": "\"3-12345\"",
+								"property2": 12345,
+								"property3": "another value 1",
+							} ),
+						} ) );
+						expect( myDocuments[ 1 ] ).toEqual( jasmine.objectContaining( {
+							"_eTag": "\"2-12345\"",
+							"property1": "value 2",
+							"property2": jasmine.objectContaining( {
+								"_eTag": "\"4-12345\"",
+								"property2": 67890,
+								"property3": "another value 2",
+							} ),
+						} ) );
+						done();
+					} ).catch( done.fail );
+				} );
+
 			} );
 
 		} );
@@ -8317,278 +8127,256 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 			} );
 
 
-			it( "should request self when no URI", async () => {
-				const resource:QueryDocumentDocument = createMock();
+			describe( "When has a context", () => {
 
-				resource.listChildren();
-
-				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-				expect( request.url ).toBe( "https://example.com/" );
-			} );
-
-			it( "should request the URI provided", async () => {
-				const resource:QueryDocumentDocument = createMock();
-
-				resource.listChildren( "https://example.com/resource/" );
-
-				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-				expect( request.url ).toBe( "https://example.com/resource/" );
-			} );
-
-			it( "should request relative URI provided", async () => {
-				const resource:QueryDocumentDocument = createMock();
-
-				resource.listChildren( "relative/" );
-
-				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-				expect( request.url ).toBe( "https://example.com/relative/" );
-			} );
-
-			it( "should request resolved prefixed name provided", async () => {
-				const _context:CarbonLDP = new CarbonLDP( "https://example.com/" );
-				_context.extendObjectSchema( { "ex": "https://example.com/" } );
-
-				const resource:QueryDocumentDocument = createMock( { _context } );
-
-				resource.listChildren( "ex:resource/" );
-
-				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-				expect( request.url ).toBe( "https://example.com/resource/" );
-			} );
-
-			it( "should throw error when from URI outside context scope", async () => {
-				const resource:QueryDocumentDocument = createMock();
-
-				await resource
-					.listChildren( "https://example.org/resource/" )
-					.catch( error => {
-						expect( () => { throw error; } )
-							.toThrowError( IllegalArgumentError, `"https://example.org/resource/" is out of scope.` );
-					} )
-				;
-			} );
-
-			it( "should throw error when from URI is BNode label", async () => {
-				const resource:QueryDocumentDocument = createMock();
-
-				await resource
-					.listChildren( "_:1" )
-					.catch( error => {
-						expect( () => { throw error; } )
-							.toThrowError( IllegalArgumentError, `"_:1" is out of scope.` );
-					} )
-				;
-			} );
-
-			it( "should throw error when from URI is Named Fragment label", async () => {
-				const resource:QueryDocumentDocument = createMock();
-
-				await resource
-					.listChildren( "#fragment" )
-					.catch( error => {
-						expect( () => { throw error; } )
-							.toThrowError( IllegalArgumentError, `"https://example.com/#fragment" is out of scope.` );
-					} )
-				;
-			} );
-
-			it( "should throw error when unresolved prefixed name", async () => {
-				const resource:QueryDocumentDocument = createMock();
-
-				await resource
-					.listChildren( "ex:resource/" )
-					.catch( error => {
-						expect( () => { throw error; } )
-							.toThrowError( IllegalArgumentError, `"ex:resource/" is out of scope.` );
-					} )
-				;
-			} );
-
-			it( "should parse error response", async () => {
-				stubRequest( "https://example.com/", { status: 500 } );
-
-				const resource:QueryDocumentDocument = createMock( { id: "https://example.com/" } );
-
-				const spy:jasmine.Spy = spyOn( resource._registry, "_parseErrorFromResponse" )
-					.and.callFake( () => Promise.reject( null ) );
-
-				await resource
-					.listChildren()
-					.then( () => fail( "Should not resolve" ) )
-					.catch( error => {
-						if( error ) fail( error );
-
-						expect( spy ).toHaveBeenCalled();
-					} )
-				;
-			} );
-
-
-			it( "should send basic request headers", async () => {
-				const resource:QueryDocumentDocument = createMock();
-
-				resource.listChildren();
-
-				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-				expect( request.requestHeaders ).toEqual( {
-					"accept": "application/ld+json",
-					"content-type": "application/sparql-query",
-					"prefer": [
-						`include="${ C.PreferResultsContext }"`,
-					].join( ", " ),
-				} );
-			} );
-
-			it( "should add authentication header", async () => {
-				const resource:QueryDocumentDocument = createMock();
-
-				const spy:jasmine.Spy = spyOn( resource._context.auth, "addAuthentication" );
-
-				resource.listChildren();
-
-				expect( spy ).toHaveBeenCalled();
-			} );
-
-			it( "should add custom headers when no URI", async () => {
-				stubRequest( "https://example.com/" );
-
-				const resource:QueryDocumentDocument = createMock();
-
-				resource.listChildren( {
-					headers: new Map()
-						.set( "custom", new Header( "custom value" ) )
-					,
+				let context:CarbonLDP;
+				let resource:QueryDocumentDocument;
+				beforeEach( ():void => {
+					context = new CarbonLDP( "https://example.com/" );
+					resource = createMock( { _registry: context.registry } );
 				} );
 
-				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-				expect( request.requestHeaders ).toEqual( jasmine.objectContaining( {
-					"custom": "custom value",
-				} ) );
-			} );
+				it( "should request self when no URI", async () => {
+					resource.listChildren();
 
-			it( "should add custom headers when specific URI", async () => {
-				const resource:QueryDocumentDocument = createMock();
-
-				resource.listChildren( "resource/", {
-					headers: new Map()
-						.set( "custom", new Header( "custom value" ) )
-					,
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.url ).toBe( "https://example.com/" );
 				} );
 
-				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-				expect( request.requestHeaders ).toEqual( jasmine.objectContaining( {
-					"custom": "custom value",
-				} ) );
-			} );
+				it( "should request the URI provided", async () => {
+					resource.listChildren( "https://example.com/resource/" );
+
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.url ).toBe( "https://example.com/resource/" );
+				} );
+
+				it( "should request relative URI provided", async () => {
+					resource.listChildren( "relative/" );
+
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.url ).toBe( "https://example.com/relative/" );
+				} );
+
+				it( "should request resolved prefixed name provided", async () => {
+					context.extendObjectSchema( { "ex": "https://example.com/" } );
+
+					resource.listChildren( "ex:resource/" );
+
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.url ).toBe( "https://example.com/resource/" );
+				} );
+
+				it( "should throw error when from URI outside context scope", async () => {
+					await resource
+						.listChildren( "https://example.org/resource/" )
+						.catch( error => {
+							expect( () => { throw error; } )
+								.toThrowError( IllegalArgumentError, `"https://example.org/resource/" is out of scope.` );
+						} )
+					;
+				} );
+
+				it( "should throw error when from URI is BNode label", async () => {
+					await resource
+						.listChildren( "_:1" )
+						.catch( error => {
+							expect( () => { throw error; } )
+								.toThrowError( IllegalArgumentError, `"_:1" is out of scope.` );
+						} )
+					;
+				} );
+
+				it( "should throw error when from URI is Named Fragment label", async () => {
+					await resource
+						.listChildren( "#fragment" )
+						.catch( error => {
+							expect( () => { throw error; } )
+								.toThrowError( IllegalArgumentError, `"https://example.com/#fragment" is out of scope.` );
+						} )
+					;
+				} );
+
+				it( "should throw error when unresolved prefixed name", async () => {
+					await resource
+						.listChildren( "ex:resource/" )
+						.catch( error => {
+							expect( () => { throw error; } )
+								.toThrowError( IllegalArgumentError, `"ex:resource/" is out of scope.` );
+						} )
+					;
+				} );
+
+				it( "should parse error response", async () => {
+					stubRequest( "https://example.com/", { status: 500 } );
+
+					const spy:jasmine.Spy = spyOn( resource._registry, "_parseErrorFromResponse" )
+						.and.callFake( () => Promise.reject( null ) );
+
+					await resource
+						.listChildren()
+						.then( () => fail( "Should not resolve" ) )
+						.catch( error => {
+							if( error ) fail( error );
+
+							expect( spy ).toHaveBeenCalled();
+						} )
+					;
+				} );
 
 
-			it( "should send partial CONSTRUCT query when no URI", () => {
-				const resource:QueryDocumentDocument = createMock();
+				it( "should send basic request headers", async () => {
+					resource.listChildren();
 
-				resource._context
-					.extendObjectSchema( {
-						"@vocab": "https://example.com/ns#",
-						"schema": "https://schema.org/",
-					} )
-					.extendObjectSchema( "Resource", {
-						"property1": {
-							"@id": "property-1",
-							"@type": "string",
-						},
-						"property2": {
-							"@id": "property-2",
-							"@type": "integer",
-						},
-						"property3": {
-							"@id": "https://schema.org/property-3",
-							"@type": "string",
-						},
-					} )
-				;
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.requestHeaders ).toEqual( {
+						"accept": "application/ld+json",
+						"content-type": "application/sparql-query",
+						"prefer": [
+							`include="${ C.PreferResultsContext }"`,
+						].join( ", " ),
+					} );
+				} );
 
+				it( "should add authentication header", async () => {
+					const spy:jasmine.Spy = spyOn( context.auth, "addAuthentication" );
 
-				resource.listChildren();
+					resource.listChildren();
 
+					expect( spy ).toHaveBeenCalled();
+				} );
 
-				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-				expect( request.params ).toEqual( "" +
-					"CONSTRUCT {" +
-					` ?metadata a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
-					"" + ` <${ C.target }> ?child.` +
+				it( "should add custom headers when no URI", async () => {
+					stubRequest( "https://example.com/" );
 
-					" ?child a ?child__types " +
+					resource.listChildren( {
+						headers: new Map()
+							.set( "custom", new Header( "custom value" ) )
+						,
+					} );
 
-					"} WHERE {" +
-					" BIND(BNODE() AS ?metadata)." +
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.requestHeaders ).toEqual( jasmine.objectContaining( {
+						"custom": "custom value",
+					} ) );
+				} );
 
-					" {" +
-					"" + " SELECT DISTINCT ?child WHERE {" +
-					"" + "" + ` <https://example.com/> <${ LDP.contains }> ?child` +
-					"" + " }" +
-					" }." +
+				it( "should add custom headers when specific URI", async () => {
+					resource.listChildren( "resource/", {
+						headers: new Map()
+							.set( "custom", new Header( "custom value" ) )
+						,
+					} );
 
-					" OPTIONAL { ?child a ?child__types } " +
-
-					"}"
-				);
-			} );
-
-			it( "should send partial CONSTRUCT query when specific URI", () => {
-				const resource:QueryDocumentDocument = createMock();
-
-				resource._context
-					.extendObjectSchema( {
-						"@vocab": "https://example.com/ns#",
-						"schema": "https://schema.org/",
-					} )
-					.extendObjectSchema( "Resource", {
-						"property1": {
-							"@id": "property-1",
-							"@type": "string",
-						},
-						"property2": {
-							"@id": "property-2",
-							"@type": "integer",
-						},
-						"property3": {
-							"@id": "https://schema.org/property-3",
-							"@type": "string",
-						},
-					} )
-				;
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.requestHeaders ).toEqual( jasmine.objectContaining( {
+						"custom": "custom value",
+					} ) );
+				} );
 
 
-				resource.listChildren( "https://example.com/resource/" );
+				it( "should send partial CONSTRUCT query when no URI", () => {
+					context
+						.extendObjectSchema( {
+							"@vocab": "https://example.com/ns#",
+							"schema": "https://schema.org/",
+						} )
+						.extendObjectSchema( "Resource", {
+							"property1": {
+								"@id": "property-1",
+								"@type": "string",
+							},
+							"property2": {
+								"@id": "property-2",
+								"@type": "integer",
+							},
+							"property3": {
+								"@id": "https://schema.org/property-3",
+								"@type": "string",
+							},
+						} )
+					;
 
 
-				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-				expect( request.params ).toEqual( "" +
-					"CONSTRUCT {" +
-					` ?metadata a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
-					"" + ` <${ C.target }> ?child.` +
-
-					" ?child a ?child__types " +
-
-					"} WHERE {" +
-					" BIND(BNODE() AS ?metadata)." +
-
-					" {" +
-					"" + " SELECT DISTINCT ?child WHERE {" +
-					"" + "" + ` <https://example.com/resource/> <${ LDP.contains }> ?child` +
-					"" + " }" +
-					" }." +
-
-					" OPTIONAL { ?child a ?child__types } " +
-
-					"}"
-				);
-			} );
+					resource.listChildren();
 
 
-			it( "should return documents", ( done:DoneFn ):void => {
-				jasmine.Ajax.stubRequest( "https://example.com/resource/" ).andReturn( {
-					status: 200,
-					responseText: `[ {
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.params ).toEqual( "" +
+						"CONSTRUCT {" +
+						` ?metadata a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
+						"" + ` <${ C.target }> ?child.` +
+
+						" ?child a ?child__types " +
+
+						"} WHERE {" +
+						" BIND(BNODE() AS ?metadata)." +
+
+						" {" +
+						"" + " SELECT DISTINCT ?child WHERE {" +
+						"" + "" + ` <https://example.com/> <${ LDP.contains }> ?child` +
+						"" + " }" +
+						" }." +
+
+						" OPTIONAL { ?child a ?child__types } " +
+
+						"}"
+					);
+				} );
+
+				it( "should send partial CONSTRUCT query when specific URI", () => {
+					context
+						.extendObjectSchema( {
+							"@vocab": "https://example.com/ns#",
+							"schema": "https://schema.org/",
+						} )
+						.extendObjectSchema( "Resource", {
+							"property1": {
+								"@id": "property-1",
+								"@type": "string",
+							},
+							"property2": {
+								"@id": "property-2",
+								"@type": "integer",
+							},
+							"property3": {
+								"@id": "https://schema.org/property-3",
+								"@type": "string",
+							},
+						} )
+					;
+
+
+					resource.listChildren( "https://example.com/resource/" );
+
+
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.params ).toEqual( "" +
+						"CONSTRUCT {" +
+						` ?metadata a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
+						"" + ` <${ C.target }> ?child.` +
+
+						" ?child a ?child__types " +
+
+						"} WHERE {" +
+						" BIND(BNODE() AS ?metadata)." +
+
+						" {" +
+						"" + " SELECT DISTINCT ?child WHERE {" +
+						"" + "" + ` <https://example.com/resource/> <${ LDP.contains }> ?child` +
+						"" + " }" +
+						" }." +
+
+						" OPTIONAL { ?child a ?child__types } " +
+
+						"}"
+					);
+				} );
+
+
+				it( "should return documents", ( done:DoneFn ):void => {
+					jasmine.Ajax.stubRequest( "https://example.com/resource/" ).andReturn( {
+						status: 200,
+						responseText: `[ {
 							"@id":"_:1",
 							"@type": [
 								"${ C.VolatileResource }",
@@ -8629,47 +8417,45 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 								]
 							} ]
 						} ]`,
+					} );
+
+
+					resource.listChildren( "https://example.com/resource/" ).then( ( myDocuments ) => {
+						expect( myDocuments ).toEqual( jasmine.any( Array ) );
+						expect( myDocuments.length ).toBe( 2 );
+
+						expect( Document.is( myDocuments[ 0 ] ) ).toBe( true );
+						expect( myDocuments[ 0 ] ).toEqual( jasmine.objectContaining( {
+							"_eTag": void 0,
+							"_resolved": false,
+							"types": [
+								`${ C.Document }`,
+								`https://example.com/ns#Resource`,
+								`${ LDP.BasicContainer }`,
+								`${ LDP.RDFSource }`,
+							],
+						} ) );
+
+						expect( Document.is( myDocuments[ 1 ] ) ).toBe( true );
+						expect( myDocuments[ 1 ] ).toEqual( jasmine.objectContaining( {
+							"_eTag": void 0,
+							"_resolved": false,
+							"types": [
+								`${ C.Document }`,
+								`https://example.com/ns#Resource`,
+								`${ LDP.BasicContainer }`,
+								`${ LDP.RDFSource }`,
+							],
+						} ) );
+
+						done();
+					} ).catch( done.fail );
 				} );
 
-				const resource:QueryDocumentDocument = createMock();
-
-
-				resource.listChildren( "https://example.com/resource/" ).then( ( myDocuments ) => {
-					expect( myDocuments ).toEqual( jasmine.any( Array ) );
-					expect( myDocuments.length ).toBe( 2 );
-
-					expect( Document.is( myDocuments[ 0 ] ) ).toBe( true );
-					expect( myDocuments[ 0 ] ).toEqual( jasmine.objectContaining( {
-						"_eTag": void 0,
-						"_resolved": false,
-						"types": [
-							`${ C.Document }`,
-							`https://example.com/ns#Resource`,
-							`${ LDP.BasicContainer }`,
-							`${ LDP.RDFSource }`,
-						],
-					} ) );
-
-					expect( Document.is( myDocuments[ 1 ] ) ).toBe( true );
-					expect( myDocuments[ 1 ] ).toEqual( jasmine.objectContaining( {
-						"_eTag": void 0,
-						"_resolved": false,
-						"types": [
-							`${ C.Document }`,
-							`https://example.com/ns#Resource`,
-							`${ LDP.BasicContainer }`,
-							`${ LDP.RDFSource }`,
-						],
-					} ) );
-
-					done();
-				} ).catch( done.fail );
-			} );
-
-			it( "should NOT return partial documents", ( done:DoneFn ):void => {
-				jasmine.Ajax.stubRequest( "https://example.com/resource/" ).andReturn( {
-					status: 200,
-					responseText: `[ {
+				it( "should NOT return partial documents", ( done:DoneFn ):void => {
+					jasmine.Ajax.stubRequest( "https://example.com/resource/" ).andReturn( {
+						status: 200,
+						responseText: `[ {
 							"@id":"_:1",
 							"@type": [
 								"${ C.VolatileResource }",
@@ -8710,23 +8496,23 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 								]
 							} ]
 						} ]`,
+					} );
+
+
+					resource.listChildren( "https://example.com/resource/" ).then( ( myDocuments ) => {
+						expect( myDocuments ).toEqual( jasmine.any( Array ) );
+						expect( myDocuments.length ).toBe( 2 );
+
+						expect( Document.is( myDocuments[ 0 ] ) ).toBe( true );
+						expect( myDocuments[ 0 ].isPartial() ).toBe( false );
+
+						expect( Document.is( myDocuments[ 1 ] ) ).toBe( true );
+						expect( myDocuments[ 1 ].isPartial() ).toBe( false );
+
+						done();
+					} ).catch( done.fail );
 				} );
 
-				const resource:QueryDocumentDocument = createMock();
-
-
-				resource.listChildren( "https://example.com/resource/" ).then( ( myDocuments ) => {
-					expect( myDocuments ).toEqual( jasmine.any( Array ) );
-					expect( myDocuments.length ).toBe( 2 );
-
-					expect( Document.is( myDocuments[ 0 ] ) ).toBe( true );
-					expect( myDocuments[ 0 ].isPartial() ).toBe( false );
-
-					expect( Document.is( myDocuments[ 1 ] ) ).toBe( true );
-					expect( myDocuments[ 1 ].isPartial() ).toBe( false );
-
-					done();
-				} ).catch( done.fail );
 			} );
 
 		} );
@@ -8796,282 +8582,260 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 			} );
 
 
-			it( "should request self when no URI", async () => {
-				const resource:QueryDocumentDocument = createMock();
+			describe( "When has a context", () => {
 
-				resource.listMembers();
-
-				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-				expect( request.url ).toBe( "https://example.com/" );
-			} );
-
-			it( "should request the URI provided", async () => {
-				const resource:QueryDocumentDocument = createMock();
-
-				resource.listMembers( "https://example.com/resource/" );
-
-				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-				expect( request.url ).toBe( "https://example.com/resource/" );
-			} );
-
-			it( "should request relative URI provided", async () => {
-				const resource:QueryDocumentDocument = createMock();
-
-				resource.listMembers( "relative/" );
-
-				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-				expect( request.url ).toBe( "https://example.com/relative/" );
-			} );
-
-			it( "should request resolved prefixed name provided", async () => {
-				const _context:CarbonLDP = new CarbonLDP( "https://example.com/" );
-				_context.extendObjectSchema( { "ex": "https://example.com/" } );
-
-				const resource:QueryDocumentDocument = createMock( { _context } );
-
-				resource.listMembers( "ex:resource/" );
-
-				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-				expect( request.url ).toBe( "https://example.com/resource/" );
-			} );
-
-			it( "should throw error when from URI outside context scope", async () => {
-				const resource:QueryDocumentDocument = createMock();
-
-				await resource
-					.listMembers( "https://example.org/resource/" )
-					.catch( error => {
-						expect( () => { throw error; } )
-							.toThrowError( IllegalArgumentError, `"https://example.org/resource/" is out of scope.` );
-					} )
-				;
-			} );
-
-			it( "should throw error when from URI is BNode label", async () => {
-				const resource:QueryDocumentDocument = createMock();
-
-				await resource
-					.listMembers( "_:1" )
-					.catch( error => {
-						expect( () => { throw error; } )
-							.toThrowError( IllegalArgumentError, `"_:1" is out of scope.` );
-					} )
-				;
-			} );
-
-			it( "should throw error when from URI is Named Fragment label", async () => {
-				const resource:QueryDocumentDocument = createMock();
-
-				await resource
-					.listMembers( "#fragment" )
-					.catch( error => {
-						expect( () => { throw error; } )
-							.toThrowError( IllegalArgumentError, `"https://example.com/#fragment" is out of scope.` );
-					} )
-				;
-			} );
-
-			it( "should throw error when unresolved prefixed name", async () => {
-				const resource:QueryDocumentDocument = createMock();
-
-				await resource
-					.listMembers( "ex:resource/" )
-					.catch( error => {
-						expect( () => { throw error; } )
-							.toThrowError( IllegalArgumentError, `"ex:resource/" is out of scope.` );
-					} )
-				;
-			} );
-
-			it( "should parse error response", async () => {
-				stubRequest( "https://example.com/", { status: 500 } );
-
-				const resource:QueryDocumentDocument = createMock( { id: "https://example.com/" } );
-
-				const spy:jasmine.Spy = spyOn( resource._registry, "_parseErrorFromResponse" )
-					.and.callFake( () => Promise.reject( null ) );
-
-				await resource
-					.listMembers()
-					.then( () => fail( "Should not resolve" ) )
-					.catch( error => {
-						if( error ) fail( error );
-
-						expect( spy ).toHaveBeenCalled();
-					} )
-				;
-			} );
-
-
-			it( "should send basic request headers", async () => {
-				const resource:QueryDocumentDocument = createMock();
-
-				resource.listMembers();
-
-				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-				expect( request.requestHeaders ).toEqual( {
-					"accept": "application/ld+json",
-					"content-type": "application/sparql-query",
-					"prefer": [
-						`include="${ C.PreferResultsContext }"`,
-					].join( ", " ),
-				} );
-			} );
-
-			it( "should add authentication header", async () => {
-				const resource:QueryDocumentDocument = createMock();
-
-				const spy:jasmine.Spy = spyOn( resource._context.auth, "addAuthentication" );
-
-				resource.listMembers();
-
-				expect( spy ).toHaveBeenCalled();
-			} );
-
-			it( "should add custom headers when no URI", async () => {
-				stubRequest( "https://example.com/" );
-
-				const resource:QueryDocumentDocument = createMock();
-
-				resource.listMembers( {
-					headers: new Map()
-						.set( "custom", new Header( "custom value" ) )
-					,
+				let context:CarbonLDP;
+				let resource:QueryDocumentDocument;
+				beforeEach( ():void => {
+					context = new CarbonLDP( "https://example.com/" );
+					resource = createMock( { _registry: context.registry } );
 				} );
 
-				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-				expect( request.requestHeaders ).toEqual( jasmine.objectContaining( {
-					"custom": "custom value",
-				} ) );
-			} );
+				it( "should request self when no URI", async () => {
+					resource.listMembers();
 
-			it( "should add custom headers when specific URI", async () => {
-				const resource:QueryDocumentDocument = createMock();
-
-				resource.listMembers( "resource/", {
-					headers: new Map()
-						.set( "custom", new Header( "custom value" ) )
-					,
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.url ).toBe( "https://example.com/" );
 				} );
 
-				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-				expect( request.requestHeaders ).toEqual( jasmine.objectContaining( {
-					"custom": "custom value",
-				} ) );
-			} );
+				it( "should request the URI provided", async () => {
+					resource.listMembers( "https://example.com/resource/" );
+
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.url ).toBe( "https://example.com/resource/" );
+				} );
+
+				it( "should request relative URI provided", async () => {
+					resource.listMembers( "relative/" );
+
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.url ).toBe( "https://example.com/relative/" );
+				} );
+
+				it( "should request resolved prefixed name provided", async () => {
+					context.extendObjectSchema( { "ex": "https://example.com/" } );
+
+					resource.listMembers( "ex:resource/" );
+
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.url ).toBe( "https://example.com/resource/" );
+				} );
+
+				it( "should throw error when from URI outside context scope", async () => {
+					await resource
+						.listMembers( "https://example.org/resource/" )
+						.catch( error => {
+							expect( () => { throw error; } )
+								.toThrowError( IllegalArgumentError, `"https://example.org/resource/" is out of scope.` );
+						} )
+					;
+				} );
+
+				it( "should throw error when from URI is BNode label", async () => {
+					await resource
+						.listMembers( "_:1" )
+						.catch( error => {
+							expect( () => { throw error; } )
+								.toThrowError( IllegalArgumentError, `"_:1" is out of scope.` );
+						} )
+					;
+				} );
+
+				it( "should throw error when from URI is Named Fragment label", async () => {
+					await resource
+						.listMembers( "#fragment" )
+						.catch( error => {
+							expect( () => { throw error; } )
+								.toThrowError( IllegalArgumentError, `"https://example.com/#fragment" is out of scope.` );
+						} )
+					;
+				} );
+
+				it( "should throw error when unresolved prefixed name", async () => {
+					await resource
+						.listMembers( "ex:resource/" )
+						.catch( error => {
+							expect( () => { throw error; } )
+								.toThrowError( IllegalArgumentError, `"ex:resource/" is out of scope.` );
+						} )
+					;
+				} );
+
+				it( "should parse error response", async () => {
+					stubRequest( "https://example.com/", { status: 500 } );
+
+					const spy:jasmine.Spy = spyOn( resource._registry, "_parseErrorFromResponse" )
+						.and.callFake( () => Promise.reject( null ) );
+
+					await resource
+						.listMembers()
+						.then( () => fail( "Should not resolve" ) )
+						.catch( error => {
+							if( error ) fail( error );
+
+							expect( spy ).toHaveBeenCalled();
+						} )
+					;
+				} );
 
 
-			it( "should send partial CONSTRUCT query when no URI", () => {
-				const resource:QueryDocumentDocument = createMock();
+				it( "should send basic request headers", async () => {
+					resource.listMembers();
 
-				resource._context
-					.extendObjectSchema( {
-						"@vocab": "https://example.com/ns#",
-						"schema": "https://schema.org/",
-					} )
-					.extendObjectSchema( "Resource", {
-						"property1": {
-							"@id": "property-1",
-							"@type": "string",
-						},
-						"property2": {
-							"@id": "property-2",
-							"@type": "integer",
-						},
-						"property3": {
-							"@id": "https://schema.org/property-3",
-							"@type": "string",
-						},
-					} )
-				;
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.requestHeaders ).toEqual( {
+						"accept": "application/ld+json",
+						"content-type": "application/sparql-query",
+						"prefer": [
+							`include="${ C.PreferResultsContext }"`,
+						].join( ", " ),
+					} );
+				} );
 
+				it( "should add authentication header", async () => {
+					const spy:jasmine.Spy = spyOn( context.auth, "addAuthentication" );
 
-				resource.listMembers();
+					resource.listMembers();
 
+					expect( spy ).toHaveBeenCalled();
+				} );
 
-				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-				expect( request.params ).toEqual( "" +
-					"CONSTRUCT {" +
-					` ?metadata a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
-					"" + ` <${ C.target }> ?member.` +
+				it( "should add custom headers when no URI", async () => {
+					stubRequest( "https://example.com/" );
 
-					" ?member a ?member__types " +
+					resource.listMembers( {
+						headers: new Map()
+							.set( "custom", new Header( "custom value" ) )
+						,
+					} );
 
-					"} WHERE {" +
-					" BIND(BNODE() AS ?metadata)." +
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.requestHeaders ).toEqual( jasmine.objectContaining( {
+						"custom": "custom value",
+					} ) );
+				} );
 
-					" {" +
-					"" + " SELECT DISTINCT ?member WHERE {" +
-					"" + "" + " <https://example.com/> <http://www.w3.org/ns/ldp#membershipResource> ?membershipResource;" +
-					"" + "" + "" + " <http://www.w3.org/ns/ldp#hasMemberRelation> ?hasMemberRelation." +
-					"" + "" + " ?membershipResource ?hasMemberRelation ?member" +
-					"" + " }" +
-					" }." +
+				it( "should add custom headers when specific URI", async () => {
+					resource.listMembers( "resource/", {
+						headers: new Map()
+							.set( "custom", new Header( "custom value" ) )
+						,
+					} );
 
-					" OPTIONAL { ?member a ?member__types } " +
-
-					"}"
-				);
-			} );
-
-			it( "should send partial CONSTRUCT query when specific URI", () => {
-				const resource:QueryDocumentDocument = createMock();
-
-				resource._context
-					.extendObjectSchema( {
-						"@vocab": "https://example.com/ns#",
-						"schema": "https://schema.org/",
-					} )
-					.extendObjectSchema( "Resource", {
-						"property1": {
-							"@id": "property-1",
-							"@type": "string",
-						},
-						"property2": {
-							"@id": "property-2",
-							"@type": "integer",
-						},
-						"property3": {
-							"@id": "https://schema.org/property-3",
-							"@type": "string",
-						},
-					} )
-				;
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.requestHeaders ).toEqual( jasmine.objectContaining( {
+						"custom": "custom value",
+					} ) );
+				} );
 
 
-				resource.listMembers( "https://example.com/resource/" );
+				it( "should send partial CONSTRUCT query when no URI", () => {
+					context
+						.extendObjectSchema( {
+							"@vocab": "https://example.com/ns#",
+							"schema": "https://schema.org/",
+						} )
+						.extendObjectSchema( "Resource", {
+							"property1": {
+								"@id": "property-1",
+								"@type": "string",
+							},
+							"property2": {
+								"@id": "property-2",
+								"@type": "integer",
+							},
+							"property3": {
+								"@id": "https://schema.org/property-3",
+								"@type": "string",
+							},
+						} )
+					;
 
 
-				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-				expect( request.params ).toEqual( "" +
-					"CONSTRUCT {" +
-					` ?metadata a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
-					"" + ` <${ C.target }> ?member.` +
-
-					" ?member a ?member__types " +
-
-					"} WHERE {" +
-					" BIND(BNODE() AS ?metadata)." +
-
-					" {" +
-					"" + " SELECT DISTINCT ?member WHERE {" +
-					"" + "" + " <https://example.com/resource/> <http://www.w3.org/ns/ldp#membershipResource> ?membershipResource;" +
-					"" + "" + "" + " <http://www.w3.org/ns/ldp#hasMemberRelation> ?hasMemberRelation." +
-					"" + "" + " ?membershipResource ?hasMemberRelation ?member" +
-					"" + " }" +
-					" }." +
-
-					" OPTIONAL { ?member a ?member__types } " +
-
-					"}"
-				);
-			} );
+					resource.listMembers();
 
 
-			it( "should return documents", ( done:DoneFn ):void => {
-				jasmine.Ajax.stubRequest( "https://example.com/resource/" ).andReturn( {
-					status: 200,
-					responseText: `[ {
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.params ).toEqual( "" +
+						"CONSTRUCT {" +
+						` ?metadata a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
+						"" + ` <${ C.target }> ?member.` +
+
+						" ?member a ?member__types " +
+
+						"} WHERE {" +
+						" BIND(BNODE() AS ?metadata)." +
+
+						" {" +
+						"" + " SELECT DISTINCT ?member WHERE {" +
+						"" + "" + " <https://example.com/> <http://www.w3.org/ns/ldp#membershipResource> ?membershipResource;" +
+						"" + "" + "" + " <http://www.w3.org/ns/ldp#hasMemberRelation> ?hasMemberRelation." +
+						"" + "" + " ?membershipResource ?hasMemberRelation ?member" +
+						"" + " }" +
+						" }." +
+
+						" OPTIONAL { ?member a ?member__types } " +
+
+						"}"
+					);
+				} );
+
+				it( "should send partial CONSTRUCT query when specific URI", () => {
+					context
+						.extendObjectSchema( {
+							"@vocab": "https://example.com/ns#",
+							"schema": "https://schema.org/",
+						} )
+						.extendObjectSchema( "Resource", {
+							"property1": {
+								"@id": "property-1",
+								"@type": "string",
+							},
+							"property2": {
+								"@id": "property-2",
+								"@type": "integer",
+							},
+							"property3": {
+								"@id": "https://schema.org/property-3",
+								"@type": "string",
+							},
+						} )
+					;
+
+
+					resource.listMembers( "https://example.com/resource/" );
+
+
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.params ).toEqual( "" +
+						"CONSTRUCT {" +
+						` ?metadata a <${ C.VolatileResource }>, <${ C.QueryMetadata }>;` +
+						"" + ` <${ C.target }> ?member.` +
+
+						" ?member a ?member__types " +
+
+						"} WHERE {" +
+						" BIND(BNODE() AS ?metadata)." +
+
+						" {" +
+						"" + " SELECT DISTINCT ?member WHERE {" +
+						"" + "" + " <https://example.com/resource/> <http://www.w3.org/ns/ldp#membershipResource> ?membershipResource;" +
+						"" + "" + "" + " <http://www.w3.org/ns/ldp#hasMemberRelation> ?hasMemberRelation." +
+						"" + "" + " ?membershipResource ?hasMemberRelation ?member" +
+						"" + " }" +
+						" }." +
+
+						" OPTIONAL { ?member a ?member__types } " +
+
+						"}"
+					);
+				} );
+
+
+				it( "should return documents", ( done:DoneFn ):void => {
+					jasmine.Ajax.stubRequest( "https://example.com/resource/" ).andReturn( {
+						status: 200,
+						responseText: `[ {
 							"@id":"_:1",
 							"@type": [
 								"${ C.VolatileResource }",
@@ -9112,47 +8876,45 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 								]
 							} ]
 						} ]`,
+					} );
+
+
+					resource.listMembers( "https://example.com/resource/" ).then( ( myDocuments ) => {
+						expect( myDocuments ).toEqual( jasmine.any( Array ) );
+						expect( myDocuments.length ).toBe( 2 );
+
+						expect( Document.is( myDocuments[ 0 ] ) ).toBe( true );
+						expect( myDocuments[ 0 ] ).toEqual( jasmine.objectContaining( {
+							"_eTag": void 0,
+							"_resolved": false,
+							"types": [
+								`${ C.Document }`,
+								`https://example.com/ns#Resource`,
+								`${ LDP.BasicContainer }`,
+								`${ LDP.RDFSource }`,
+							],
+						} ) );
+
+						expect( Document.is( myDocuments[ 1 ] ) ).toBe( true );
+						expect( myDocuments[ 1 ] ).toEqual( jasmine.objectContaining( {
+							"_eTag": void 0,
+							"_resolved": false,
+							"types": [
+								`${ C.Document }`,
+								`https://example.com/ns#Resource`,
+								`${ LDP.BasicContainer }`,
+								`${ LDP.RDFSource }`,
+							],
+						} ) );
+
+						done();
+					} ).catch( done.fail );
 				} );
 
-				const resource:QueryDocumentDocument = createMock();
-
-
-				resource.listMembers( "https://example.com/resource/" ).then( ( myDocuments ) => {
-					expect( myDocuments ).toEqual( jasmine.any( Array ) );
-					expect( myDocuments.length ).toBe( 2 );
-
-					expect( Document.is( myDocuments[ 0 ] ) ).toBe( true );
-					expect( myDocuments[ 0 ] ).toEqual( jasmine.objectContaining( {
-						"_eTag": void 0,
-						"_resolved": false,
-						"types": [
-							`${ C.Document }`,
-							`https://example.com/ns#Resource`,
-							`${ LDP.BasicContainer }`,
-							`${ LDP.RDFSource }`,
-						],
-					} ) );
-
-					expect( Document.is( myDocuments[ 1 ] ) ).toBe( true );
-					expect( myDocuments[ 1 ] ).toEqual( jasmine.objectContaining( {
-						"_eTag": void 0,
-						"_resolved": false,
-						"types": [
-							`${ C.Document }`,
-							`https://example.com/ns#Resource`,
-							`${ LDP.BasicContainer }`,
-							`${ LDP.RDFSource }`,
-						],
-					} ) );
-
-					done();
-				} ).catch( done.fail );
-			} );
-
-			it( "should NOT return partial documents", ( done:DoneFn ):void => {
-				jasmine.Ajax.stubRequest( "https://example.com/resource/" ).andReturn( {
-					status: 200,
-					responseText: `[ {
+				it( "should NOT return partial documents", ( done:DoneFn ):void => {
+					jasmine.Ajax.stubRequest( "https://example.com/resource/" ).andReturn( {
+						status: 200,
+						responseText: `[ {
 							"@id":"_:1",
 							"@type": [
 								"${ C.VolatileResource }",
@@ -9193,23 +8955,23 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 								]
 							} ]
 						} ]`,
+					} );
+
+
+					resource.listMembers( "https://example.com/resource/" ).then( ( myDocuments ) => {
+						expect( myDocuments ).toEqual( jasmine.any( Array ) );
+						expect( myDocuments.length ).toBe( 2 );
+
+						expect( Document.is( myDocuments[ 0 ] ) ).toBe( true );
+						expect( myDocuments[ 0 ].isPartial() ).toBe( false );
+
+						expect( Document.is( myDocuments[ 1 ] ) ).toBe( true );
+						expect( myDocuments[ 1 ].isPartial() ).toBe( false );
+
+						done();
+					} ).catch( done.fail );
 				} );
 
-				const resource:QueryDocumentDocument = createMock();
-
-
-				resource.listMembers( "https://example.com/resource/" ).then( ( myDocuments ) => {
-					expect( myDocuments ).toEqual( jasmine.any( Array ) );
-					expect( myDocuments.length ).toBe( 2 );
-
-					expect( Document.is( myDocuments[ 0 ] ) ).toBe( true );
-					expect( myDocuments[ 0 ].isPartial() ).toBe( false );
-
-					expect( Document.is( myDocuments[ 1 ] ) ).toBe( true );
-					expect( myDocuments[ 1 ].isPartial() ).toBe( false );
-
-					done();
-				} ).catch( done.fail );
 			} );
 
 		} );

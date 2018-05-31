@@ -75,8 +75,8 @@ function parseParams( this:void, resource:SPARQLDocument, registry:RegistryServi
 
 	const url:string = RequestUtils.getRequestURLFor( registry, resource, iri );
 
-	if( registry._context && registry._context.auth )
-		registry._context.auth.addAuthentication( options );
+	if( registry.context && registry.context.auth )
+		registry.context.auth.addAuthentication( options );
 
 	return { url, query, options };
 }

@@ -3778,7 +3778,6 @@ function internalConverter(resource, target, tracker) {
     });
 }
 var PROTOTYPE = {
-    _context: void 0,
     _registry: void 0,
     _normalize: function () {
         var usedFragments = new Set();
@@ -4764,14 +4763,14 @@ var RequestUtils = (function () {
         return clone;
     };
     RequestUtils.getRequestURLFor = function (registry, resource, uri) {
-        if (uri && registry._context) {
+        if (uri && registry.context) {
             var schema = registry.getGeneralSchema();
             uri = ObjectSchema_1.ObjectSchemaUtils.resolveURI(uri, schema);
         }
         var url = uri ? RDF_1.URI.resolve(resource.id, uri) : resource.id;
         var localIRI = registry._getLocalID(url);
-        if (registry._context)
-            return RDF_1.URI.resolve(registry._context.baseURI, localIRI);
+        if (registry.context)
+            return RDF_1.URI.resolve(registry.context.baseURI, localIRI);
         if (RDF_1.URI.isRelative(url))
             throw new Errors_1.IllegalArgumentError("\"" + url + "\" cannot be used as URL for the request.");
         return url;
@@ -4989,7 +4988,6 @@ var Pointer_1 = __webpack_require__(17);
 var Utils_1 = __webpack_require__(0);
 var PROTOTYPE = {
     get _resourcesMap() { return new Map(); },
-    _context: void 0,
     _registry: void 0,
     inScope: function (idOrPointer, local) {
         try {
@@ -5089,7 +5087,6 @@ var Registry_1 = __webpack_require__(42);
 var Resource_1 = __webpack_require__(7);
 var Utils_1 = __webpack_require__(0);
 var PROTOTYPE = {
-    _context: void 0,
     _registry: void 0,
     _getLocalID: function (id) {
         if (RDF_1.URI.isBNodeID(id))
@@ -5425,9 +5422,9 @@ function parseRDFDocument(registry, rdfDocument, eTag) {
     return resource;
 }
 function addAuthentication(registry, requestOptions) {
-    if (!registry._context || !registry._context.auth)
+    if (!registry.context || !registry.context.auth)
         return;
-    registry._context.auth.addAuthentication(requestOptions);
+    registry.context.auth.addAuthentication(requestOptions);
 }
 function setDefaultRequestOptions(registry, requestOptions, interactionModel) {
     addAuthentication(registry, requestOptions);
@@ -5792,11 +5789,13 @@ var PROTOTYPE = {
     },
     delete: function (uriOrOptions, requestOptions) {
         var _this = this;
-        if (requestOptions === void 0) { requestOptions = {}; }
         return Utils_1.promiseMethod(function () {
             var registry = getRegistry(_this);
             var uri = Utils_1.isString(uriOrOptions) ? uriOrOptions : void 0;
             var url = HTTP_1.RequestUtils.getRequestURLFor(registry, _this, uri);
+            requestOptions = Utils_1.isObject(uriOrOptions) ?
+                uriOrOptions :
+                requestOptions ? requestOptions : {};
             setDefaultRequestOptions(registry, requestOptions, Vocabularies_1.LDP.RDFSource);
             return HTTP_1.RequestService
                 .delete(url, requestOptions)
@@ -7720,12 +7719,20 @@ var ObjectSchema_1 = __webpack_require__(12);
 var Pointer_1 = __webpack_require__(17);
 var RDF_1 = __webpack_require__(10);
 var Utils_1 = __webpack_require__(0);
+function getSchemaResolver(registry) {
+    if (!registry)
+        return;
+    if (ObjectSchema_1.ObjectSchemaResolver.is(registry))
+        return registry;
+    return getSchemaResolver(registry._registry);
+}
 function resolveURI(resource, uri) {
     if (RDF_1.URI.isAbsolute(uri))
         return uri;
-    if (!resource._registry || !resource._registry._context)
+    var registry = getSchemaResolver(resource._registry);
+    if (!registry)
         return uri;
-    var schema = resource._registry._context.getObjectSchema();
+    var schema = registry.getGeneralSchema();
     return ObjectSchema_1.ObjectSchemaUtils.resolveURI(uri, schema, { vocab: true });
 }
 var PROTOTYPE = {
@@ -8190,7 +8197,7 @@ var RegistryService = (function () {
         this.getPointer = Registry_1.Registry.PROTOTYPE.getPointer;
         this.getPointers = Registry_1.Registry.PROTOTYPE.getPointers;
         this.removePointer = Registry_1.Registry.PROTOTYPE.removePointer;
-        this._context = context;
+        this.context = context;
         this._model = model;
         this._resourcesMap = new Map();
         this._documentDecorators = Utils_1.MapUtils.extend(new Map(), context && context.parentContext && context.parentContext.registry.documentDecorators);
@@ -8198,9 +8205,9 @@ var RegistryService = (function () {
     }
     Object.defineProperty(RegistryService.prototype, "_registry", {
         get: function () {
-            return this._context
-                && this._context.parentContext
-                && this._context.parentContext.registry;
+            return this.context
+                && this.context.parentContext
+                && this.context.parentContext.registry;
         },
         enumerable: true,
         configurable: true
@@ -8216,28 +8223,28 @@ var RegistryService = (function () {
         configurable: true
     });
     RegistryService.prototype._getLocalID = function (id) {
-        if (!this._context)
+        if (!this.context)
             return id;
-        var schema = this._context.getObjectSchema();
+        var schema = this.context.getObjectSchema();
         var iri = ObjectSchema_1.ObjectSchemaUtils.resolveURI(id, schema);
-        if (!RDF_1.URI.isBaseOf(this._context.baseURI, iri))
+        if (!RDF_1.URI.isBaseOf(this.context.baseURI, iri))
             return Registry_1.Registry.PROTOTYPE._getLocalID.call(this, id);
-        return RDF_1.URI.getRelativeURI(iri, this._context.baseURI);
+        return RDF_1.URI.getRelativeURI(iri, this.context.baseURI);
     };
     RegistryService.prototype._register = function (base) {
         var pointer = Registry_1.Registry.PROTOTYPE._register.call(this, base);
         var resource = this._model.decorate(pointer);
-        if (!this._context)
+        if (!this.context)
             return resource;
-        var schema = this._context.getObjectSchema();
+        var schema = this.context.getObjectSchema();
         resource.id = ObjectSchema_1.ObjectSchemaUtils
             .resolveURI(resource.id, schema, { base: true });
         return resource;
     };
     RegistryService.prototype.getGeneralSchema = function () {
-        if (!this._context)
+        if (!this.context)
             return new ObjectSchema_1.DigestedObjectSchema();
-        return this._context.getObjectSchema();
+        return this.context.getObjectSchema();
     };
     RegistryService.prototype.hasSchemaFor = function (object, path) {
         return !path;
@@ -8264,21 +8271,21 @@ var RegistryService = (function () {
     };
     RegistryService.prototype._getSchema = function (objectTypes, objectID) {
         var _this = this;
-        if (!this._context)
+        if (!this.context)
             return new ObjectSchema_1.DigestedObjectSchema();
         if (objectID !== void 0 && !RDF_1.URI.hasFragment(objectID) && !RDF_1.URI.isBNodeID(objectID) && objectTypes.indexOf(Document_1.TransientDocument.TYPE) === -1)
             objectTypes = objectTypes.concat(Document_1.TransientDocument.TYPE);
         var objectSchemas = objectTypes
-            .filter(function (type) { return _this._context.hasObjectSchema(type); })
-            .map(function (type) { return _this._context.getObjectSchema(type); });
+            .filter(function (type) { return _this.context.hasObjectSchema(type); })
+            .map(function (type) { return _this.context.getObjectSchema(type); });
         return ObjectSchema_1.ObjectSchemaDigester
             ._combineSchemas([
-            this._context.getObjectSchema()
+            this.context.getObjectSchema()
         ].concat(objectSchemas));
     };
     RegistryService.prototype._parseFreeNodes = function (freeNodes) {
         var freeResourcesDocument = FreeResources_1.FreeResources
-            .createFrom({ _registry: this, _context: this._context });
+            .createFrom({ _registry: this });
         var resources = freeNodes
             .map(function (node) { return freeResourcesDocument._register({ id: node["@id"] }); });
         this._compactRDFNodes(freeNodes, resources, freeResourcesDocument);
@@ -8571,7 +8578,9 @@ var QueryContextBuilder = (function (_super) {
     QueryContextBuilder.prototype._getTypeSchemas = function () {
         if (this._schemas)
             return this._schemas;
-        return this._schemas = this.context._getTypeObjectSchemas();
+        return this._schemas = this.context ?
+            this.context._getTypeObjectSchemas() :
+            [];
     };
     return QueryContextBuilder;
 }(QueryContext_1.QueryContext));
@@ -15147,11 +15156,6 @@ var DocumentsRegistry = (function (_super) {
     DocumentsRegistry.prototype.register = function (id) {
         return this._register({ id: id });
     };
-    DocumentsRegistry.prototype._register = function (base) {
-        var document = _super.prototype._register.call(this, base);
-        document._context = this._context;
-        return document;
-    };
     DocumentsRegistry.prototype._getLocalID = function (id) {
         if (RDF_1.URI.isBNodeID(id) || RDF_1.URI.hasFragment(id))
             return Registry_1.Registry.PROTOTYPE._getLocalID.call(this, id);
@@ -15523,6 +15527,11 @@ function getRegistry(repository) {
         return repository._registry;
     throw new Errors_1.IllegalActionError("\"" + repository.id + "\" doesn't support Querying requests.");
 }
+function addAuthentication(registry, requestOptions) {
+    if (!registry.context || !registry.context.auth)
+        return;
+    registry.context.auth.addAuthentication(requestOptions);
+}
 function executePatterns(registry, url, requestOptions, queryContext, targetName, constructPatterns, target) {
     var metadataVar = queryContext.getVariable("metadata");
     var construct = (_a = new tokens_1.ConstructToken()
@@ -15537,7 +15546,7 @@ function executePatterns(registry, url, requestOptions, queryContext, targetName
     var triples = Utils_2.getAllTriples(constructPatterns);
     construct.addTriple.apply(construct, triples);
     HTTP_1.RequestUtils.setRetrievalPreferences({ include: [Vocabularies_1.C.PreferResultsContext] }, requestOptions);
-    registry._context.auth.addAuthentication(requestOptions);
+    addAuthentication(registry, requestOptions);
     return Service_1.SPARQLService
         .executeRawCONSTRUCTQuery(url, query.toString(), requestOptions)
         .then(function (_a) {
@@ -15678,7 +15687,7 @@ function addRefreshPatterns(queryContext, parentAdder, resource, parentName) {
     });
 }
 function getPartial(registry, uri, requestOptions, queryBuilderFn) {
-    var queryContext = new QueryContextBuilder_1.QueryContextBuilder(registry._context);
+    var queryContext = new QueryContextBuilder_1.QueryContextBuilder(registry.context);
     var documentProperty = queryContext
         .addProperty("document")
         .setOptional(false);
@@ -15693,7 +15702,7 @@ function getPartial(registry, uri, requestOptions, queryBuilderFn) {
 }
 function refreshPartial(registry, resource, requestOptions) {
     var url = HTTP_1.RequestUtils.getRequestURLFor(registry, resource);
-    var queryContext = new QueryContextPartial_1.QueryContextPartial(resource, registry._context);
+    var queryContext = new QueryContextPartial_1.QueryContextPartial(resource, registry.context);
     var targetName = "document";
     var constructPatterns = new tokens_1.OptionalToken()
         .addPattern(new tokens_1.ValuesToken()
@@ -15707,7 +15716,7 @@ function executeChildrenBuilder(repository, uri, requestOptions, queryBuilderFn)
     return Utils_1.promiseMethod(function () {
         var registry = getRegistry(repository);
         var url = HTTP_1.RequestUtils.getRequestURLFor(registry, repository, uri);
-        var queryContext = new QueryContextBuilder_1.QueryContextBuilder(registry._context);
+        var queryContext = new QueryContextBuilder_1.QueryContextBuilder(registry.context);
         var childrenProperty = queryContext
             .addProperty("child")
             .setOptional(false);
@@ -15724,7 +15733,7 @@ function executeMembersBuilder(repository, uri, requestOptions, queryBuilderFn) 
     return Utils_1.promiseMethod(function () {
         var registry = getRegistry(repository);
         var url = HTTP_1.RequestUtils.getRequestURLFor(registry, repository, uri);
-        var queryContext = new QueryContextBuilder_1.QueryContextBuilder(registry._context);
+        var queryContext = new QueryContextBuilder_1.QueryContextBuilder(registry.context);
         var membersProperty = queryContext
             .addProperty("member")
             .setOptional(false);
@@ -16627,13 +16636,13 @@ var Vocabularies_1 = __webpack_require__(1);
 var AddMemberAction_1 = __webpack_require__(133);
 var RemoveMemberAction_1 = __webpack_require__(134);
 function getRegistry(repository) {
-    if (repository._registry && repository._registry._context)
+    if (repository._registry && repository._registry.context)
         return repository._registry;
     throw new Errors_1.IllegalActionError("\"" + repository.id + "\" doesn't support Members management requests.");
 }
 function setDefaultRequestOptions(registry, requestOptions) {
-    if (registry._context && registry._context.auth)
-        registry._context.auth.addAuthentication(requestOptions);
+    if (registry.context && registry.context.auth)
+        registry.context.auth.addAuthentication(requestOptions);
     HTTP_1.RequestUtils.setPreferredInteractionModel(Vocabularies_1.LDP.Container, requestOptions);
     HTTP_1.RequestUtils.setAcceptHeader("application/ld+json", requestOptions);
     return requestOptions;
@@ -16657,7 +16666,6 @@ function sendAddAction(repository, uri, members, requestOptions) {
         HTTP_1.RequestUtils.setContentTypeHeader("application/ld+json", requestOptions);
         var freeResources = FreeResources_1.FreeResources.createFrom({
             _registry: registry,
-            _context: registry._context,
         });
         freeResources._register(AddMemberAction_1.AddMemberAction.createFrom({ targetMembers: targetMembers }));
         var body = JSON.stringify(freeResources);
@@ -16681,7 +16689,6 @@ function sendRemoveAction(repository, uri, members, requestOptions) {
         }, requestOptions);
         var freeResources = FreeResources_1.FreeResources.createFrom({
             _registry: registry,
-            _context: registry._context,
         });
         freeResources._register(RemoveMemberAction_1.RemoveMemberAction.createFrom({ targetMembers: targetMembers }));
         var body = JSON.stringify(freeResources);
@@ -16836,9 +16843,9 @@ var Utils_1 = __webpack_require__(0);
 var Event_1 = __webpack_require__(135);
 var Utils_2 = __webpack_require__(136);
 function getMessagingService(repository) {
-    if (!repository._context || !repository._context.messaging)
+    if (!repository._registry || !repository._registry.context || !repository._registry.context.messaging)
         throw new Errors_1.IllegalActionError("\"" + repository.id + "\" doesn't support messaging subscriptions.");
-    return repository._context.messaging;
+    return repository._registry.context.messaging;
 }
 function parseParams(resource, uriPatternOROnEvent, onEventOrOnError, onError) {
     var uriPattern = Utils_1.isString(uriPatternOROnEvent) ?
@@ -16855,7 +16862,7 @@ var PROTOTYPE = {
             var messaging = getMessagingService(this);
             var uriPattern = void 0, onEvent = void 0;
             (_a = parseParams(this, uriPatternOROnEvent, onEventOrOnError, onError), uriPattern = _a.uriPattern, onEvent = _a.onEvent, onError = _a.onError);
-            var destination = Utils_2.createDestination(event, uriPattern, this._context.baseURI);
+            var destination = Utils_2.createDestination(event, uriPattern, messaging.context.baseURI);
             messaging.subscribe(destination, onEvent, onError);
         }
         catch (error) {
@@ -16870,7 +16877,7 @@ var PROTOTYPE = {
             var messaging = getMessagingService(this);
             var uriPattern = void 0, onEvent = void 0;
             (_a = parseParams(this, uriPatternOROnEvent, onEventOrOnError, onError), uriPattern = _a.uriPattern, onEvent = _a.onEvent, onError = _a.onError);
-            var destination = Utils_2.createDestination(event, uriPattern, this._context.baseURI);
+            var destination = Utils_2.createDestination(event, uriPattern, messaging.context.baseURI);
             messaging.unsubscribe(destination, onEvent);
         }
         catch (error) {
@@ -16885,7 +16892,7 @@ var PROTOTYPE = {
             var messaging_1 = getMessagingService(this);
             var uriPattern = void 0, onEvent_1;
             (_a = parseParams(this, uriPatternOROnEvent, onEventOrOnError, onError), uriPattern = _a.uriPattern, onEvent_1 = _a.onEvent, onError = _a.onError);
-            var destination_1 = Utils_2.createDestination(event, uriPattern, this._context.baseURI);
+            var destination_1 = Utils_2.createDestination(event, uriPattern, messaging_1.context.baseURI);
             messaging_1.subscribe(destination_1, function onEventWrapper(message) {
                 onEvent_1(message);
                 messaging_1.unsubscribe(destination_1, onEventWrapper);
@@ -21513,8 +21520,8 @@ function parseParams(resource, registry, uriOrQuery, queryOrOptions, options) {
         iri = uriOrQuery;
     }
     var url = HTTP_1.RequestUtils.getRequestURLFor(registry, resource, iri);
-    if (registry._context && registry._context.auth)
-        registry._context.auth.addAuthentication(options);
+    if (registry.context && registry.context.auth)
+        registry.context.auth.addAuthentication(options);
     return { url: url, query: query, options: options };
 }
 var PROTOTYPE = {

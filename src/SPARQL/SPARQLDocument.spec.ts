@@ -22,7 +22,6 @@ import { SPARQLDocument } from "./SPARQLDocument";
 
 function createMock<T extends object>( data?:T & Partial<SPARQLDocument> ):T & SPARQLDocument {
 	return SPARQLDocument.decorate( Object.assign( {
-		_registry: new DocumentsRegistry(),
 		id: "https://example.com/",
 	}, data ) );
 }
@@ -256,7 +255,7 @@ describe( module( "carbonldp/SPARQL/SPARQLDocument" ), () => {
 				let resource:SPARQLDocument;
 				beforeEach( () => {
 					resource = createMock( {
-						_context: void 0,
+						_registry: new DocumentsRegistry(),
 						id: "https://example.com/",
 					} );
 				} );
@@ -594,7 +593,7 @@ describe( module( "carbonldp/SPARQL/SPARQLDocument" ), () => {
 				let resource:SPARQLDocument;
 				beforeEach( () => {
 					resource = createMock( {
-						_context: void 0,
+						_registry: new DocumentsRegistry(),
 						id: "https://example.com/",
 					} );
 				} );
@@ -931,7 +930,7 @@ describe( module( "carbonldp/SPARQL/SPARQLDocument" ), () => {
 				let resource:SPARQLDocument;
 				beforeEach( () => {
 					resource = createMock( {
-						_context: void 0,
+						_registry: new DocumentsRegistry(),
 						id: "https://example.com/",
 					} );
 				} );
@@ -1270,7 +1269,7 @@ describe( module( "carbonldp/SPARQL/SPARQLDocument" ), () => {
 				let resource:SPARQLDocument;
 				beforeEach( () => {
 					resource = createMock( {
-						_context: void 0,
+						_registry: new DocumentsRegistry(),
 						id: "https://example.com/",
 					} );
 				} );
@@ -1608,7 +1607,7 @@ describe( module( "carbonldp/SPARQL/SPARQLDocument" ), () => {
 				let resource:SPARQLDocument;
 				beforeEach( () => {
 					resource = createMock( {
-						_context: void 0,
+						_registry: new DocumentsRegistry(),
 						id: "https://example.com/",
 					} );
 				} );
@@ -1946,7 +1945,7 @@ describe( module( "carbonldp/SPARQL/SPARQLDocument" ), () => {
 				let resource:SPARQLDocument;
 				beforeEach( () => {
 					resource = createMock( {
-						_context: void 0,
+						_registry: new DocumentsRegistry(),
 						id: "https://example.com/",
 					} );
 				} );
@@ -2284,7 +2283,7 @@ describe( module( "carbonldp/SPARQL/SPARQLDocument" ), () => {
 				let resource:SPARQLDocument;
 				beforeEach( () => {
 					resource = createMock( {
-						_context: void 0,
+						_registry: new DocumentsRegistry(),
 						id: "https://example.com/",
 					} );
 				} );
@@ -2513,7 +2512,7 @@ describe( module( "carbonldp/SPARQL/SPARQLDocument" ), () => {
 				let resource:SPARQLDocument;
 				beforeEach( ():void => {
 					resource = createMock( {
-						_context: void 0,
+						_registry: new DocumentsRegistry(),
 						id: "https://example.com/",
 					} );
 				} );

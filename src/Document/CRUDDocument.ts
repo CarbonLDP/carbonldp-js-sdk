@@ -135,8 +135,8 @@ function parseRDFDocument<T extends object>( registry:DocumentsRegistry, rdfDocu
 }
 
 function addAuthentication( registry:DocumentsRegistry, requestOptions:RequestOptions ):void {
-	if( ! registry._context || ! registry._context.auth ) return;
-	registry._context.auth.addAuthentication( requestOptions );
+	if( ! registry.context || ! registry.context.auth ) return;
+	registry.context.auth.addAuthentication( requestOptions );
 }
 
 function setDefaultRequestOptions( registry:DocumentsRegistry, requestOptions:RequestOptions, interactionModel?:string ):RequestOptions {
@@ -581,12 +581,16 @@ const PROTOTYPE:PickSelfProps<CRUDDocument, BasePersistedDocument> = {
 	},
 
 
-	delete( this:CRUDDocument, uriOrOptions:string | RequestOptions, requestOptions:RequestOptions = {} ):Promise<void> {
+	delete( this:CRUDDocument, uriOrOptions:string | RequestOptions, requestOptions?:RequestOptions ):Promise<void> {
 		return promiseMethod( () => {
 			const registry:DocumentsRegistry = getRegistry( this );
 
 			const uri:string | undefined = isString( uriOrOptions ) ? uriOrOptions : void 0;
 			const url:string = RequestUtils.getRequestURLFor( registry, this, uri );
+
+			requestOptions = isObject( uriOrOptions ) ?
+				uriOrOptions :
+				requestOptions ? requestOptions : {};
 
 			setDefaultRequestOptions( registry, requestOptions, LDP.RDFSource );
 

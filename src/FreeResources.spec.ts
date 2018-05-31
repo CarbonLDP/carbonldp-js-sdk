@@ -31,7 +31,7 @@ describe( module( "carbonldp/FreeResources" ), ():void => {
 		it( hasProperty(
 			OBLIGATORY,
 			"_registry",
-			"CarbonLDP.AbstractRegistry<any, any>",
+			"CarbonLDP.RegistryService<CarbonLDP.Pointer, any>",
 			"The registry where the FreeResources scope is in."
 		), ():void => {
 		} );
@@ -43,75 +43,12 @@ describe( module( "carbonldp/FreeResources" ), ():void => {
 		"Interface that represents a set of free resources."
 	), ():void => {
 
-		it( extendsClass( "CarbonLDP.PointerLibrary" ), ():void => {} );
-		it( extendsClass( "CarbonLDP.PointerValidator" ), ():void => {} );
+		it( extendsClass( "CarbonLDP.Registry<CarbonLDP.TransientResource>" ), ():void => {} );
 
 		it( hasProperty(
 			OBLIGATORY,
-			"_documents",
-			"Private property that contains the Documents class where the object scope is in.",
-			"CarbonLDP.Documents"
-		), ():void => {} );
-
-		it( hasProperty(
-			OBLIGATORY,
-			"_resourcesIndex",
-			"Private property that contains the references of every free resource in a map form.",
-			"Map<string, CarbonLDP.TransientResource>"
-		), ():void => {} );
-
-		it( hasMethod(
-			OBLIGATORY,
-			"hasResource",
-			"Returns true if a resource with the ID specified exists.", [
-				{ name: "id", type: "string", description: "The ID of the resource to sought for." },
-			],
-			{ type: "boolean" }
-		), ():void => {} );
-
-		it( hasMethod(
-			OBLIGATORY,
-			"getResource",
-			"Returns the resource referred by the ID provided. If no resource exists with the ID specified, `null` is returned.", [
-				{ name: "id", type: "string", description: "The ID of the resource to sought for." },
-			],
-			{ type: "CarbonLDP.TransientResource" }
-		), ():void => {} );
-
-		it( hasMethod(
-			OBLIGATORY,
-			"getResources",
-			"Returns an array with all the resources inside the FreeResources object.",
-			{ type: "CarbonLDP.TransientResource[]" }
-		), ():void => {} );
-
-		it( hasMethod(
-			OBLIGATORY,
-			"createResource",
-			"Creates and returns a new free resource. Throw an Error if no valid ID if provided or if it's already in use.", [
-				{ name: "id", type: "string", optional: true, description: "The ID of the resource to create. It should be an ID as a BlankNode." },
-			],
-			{ type: "CarbonLDP.TransientResource" }
-		), ():void => {} );
-
-		it( hasMethod(
-			OBLIGATORY,
-			"createResourceFrom",
-			[ "T" ],
-			"Create and returns a new free resource from an object. Throw an Error if no valid id is provided or if it is already in use.", [
-				{ name: "object", type: "T", description: "The object to be used as the new resource." },
-				{ name: "id", type: "string", optional: true, description: "The ID of the resource to create. It should be an ID as a BlankNode." },
-			],
-			{ type: "CarbonLDP.TransientResource" }
-		), ():void => {} );
-
-		it( hasMethod(
-			OBLIGATORY,
-			"getPointer",
-			"Returns the pointer referred by the ID specified, or creates one if no pointer exists in the scope.", [
-				{ name: "id", type: "string", description: "The ID of the pointer sought for or the one to create." },
-			],
-			{ type: "CarbonLDP.Pointer" }
+			"_registry",
+			"CarbonLDP.RegistryService<CarbonLDP.Pointer, any> | undefined"
 		), ():void => {} );
 
 		it( hasMethod(
@@ -172,7 +109,6 @@ describe( module( "carbonldp/FreeResources" ), ():void => {
 			[ "T extends object" ],
 			"Decorates the object provided with the properties and methods of a `CarbonLDP.FreeResources` object.", [
 				{ name: "object", type: "T" },
-				{ name: "registry", type: "CarbonLDP.AbstractRegistry<any, any>" },
 			],
 			{ type: "T & CarbonLDP.FreeResources" }
 		), ():void => {} );
@@ -197,7 +133,6 @@ describe( module( "carbonldp/FreeResources" ), ():void => {
 			let fx:() => any = () => {};
 			object = {
 				_registry: null,
-				_context: null,
 				_getLocalID: fx,
 				_register: fx,
 				toJSON: fx,
@@ -207,10 +142,6 @@ describe( module( "carbonldp/FreeResources" ), ():void => {
 			delete object._registry;
 			expect( FreeResources.isDecorated( object ) ).toBe( false );
 			object._registry = null;
-
-			delete object._context;
-			expect( FreeResources.isDecorated( object ) ).toBe( false );
-			object._context = null;
 
 			delete object._getLocalID;
 			expect( FreeResources.isDecorated( object ) ).toBe( false );
@@ -233,7 +164,7 @@ describe( module( "carbonldp/FreeResources" ), ():void => {
 			expect( FreeResources.create ).toEqual( jasmine.any( Function ) );
 
 			const registry:RegistryService<any, any> = createMockRegistry();
-			let freeResources:FreeResources = FreeResources.create( { _registry: registry, _context: registry._context } );
+			let freeResources:FreeResources = FreeResources.create( { _registry: registry } );
 
 			expect( freeResources ).toBeTruthy();
 			expect( FreeResources.isDecorated( freeResources ) );
@@ -245,7 +176,7 @@ describe( module( "carbonldp/FreeResources" ), ():void => {
 			expect( FreeResources.createFrom ).toEqual( jasmine.any( Function ) );
 
 			const registry:RegistryService<any, any> = createMockRegistry();
-			let freeResources:FreeResources = FreeResources.create( { _registry: registry, _context: registry._context } );
+			let freeResources:FreeResources = FreeResources.create( { _registry: registry } );
 			expect( freeResources ).toBeTruthy();
 			expect( FreeResources.isDecorated( freeResources ) );
 
@@ -253,7 +184,7 @@ describe( module( "carbonldp/FreeResources" ), ():void => {
 				myProperty:string;
 			}
 
-			let myFreeResources:FreeResources & My = FreeResources.createFrom( { myProperty: "The property", _registry: registry, _context: registry._context } );
+			let myFreeResources:FreeResources & My = FreeResources.createFrom( { myProperty: "The property", _registry: registry } );
 			expect( myFreeResources ).toBeTruthy();
 			expect( FreeResources.isDecorated( myFreeResources ) );
 			expect( myFreeResources.myProperty ).toBeDefined();
@@ -268,7 +199,6 @@ describe( module( "carbonldp/FreeResources" ), ():void => {
 			let fx:() => any = () => null;
 			let object:FreeResourcesFactory[ "PROTOTYPE" ] = {
 				_registry: null,
-				_context: null,
 				_getLocalID: fx,
 				_register: fx,
 				toJSON: fx,
@@ -295,7 +225,7 @@ describe( module( "carbonldp/FreeResources" ), ():void => {
 			let registry:RegistryService<any, any>;
 			beforeEach( ():void => {
 				registry = createMockRegistry();
-				freeResources = FreeResources.create( { _registry: registry, _context: registry._context } );
+				freeResources = FreeResources.create( { _registry: registry } );
 			} );
 
 			// TODO: Test in `FreeResources.decorate`
@@ -393,7 +323,7 @@ describe( module( "carbonldp/FreeResources" ), ():void => {
 				expect( freeResources.toJSON ).toBeDefined();
 				expect( freeResources.toJSON ).toEqual( jasmine.any( Function ) );
 
-				registry._context.extendObjectSchema( "http://example.com/ns#MyType", {
+				registry.context.extendObjectSchema( "http://example.com/ns#MyType", {
 					"anotherProperty": {
 						"@id": "http://example.com/ns#another-property",
 						"@type": "http://www.w3.org/2001/XMLSchema#string",

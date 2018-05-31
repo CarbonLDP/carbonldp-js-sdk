@@ -2,7 +2,7 @@ import { CarbonLDP } from "../CarbonLDP";
 import { EventMessage } from "./EventMessage";
 import { MessagingOptions } from "./Options";
 export declare class MessagingService {
-    private context;
+    readonly context: CarbonLDP;
     private _options;
     private _attempts;
     private _client?;

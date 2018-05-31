@@ -1,5 +1,4 @@
 import { TransientBlankNode, } from "../BlankNode";
-import { CarbonLDP } from "../CarbonLDP";
 import {
 	ModelDecorator,
 	ModelFactory,
@@ -37,7 +36,6 @@ import { BaseDocument } from "./BaseDocument";
 
 
 export interface TransientDocument extends TransientResource, Registry<TransientBlankNode | TransientNamedFragment> {
-	_context:CarbonLDP | undefined;
 	_registry:DocumentsRegistry | undefined;
 
 	defaultInteractionModel?:Pointer;
@@ -120,14 +118,12 @@ function internalConverter( resource:TransientDocument, target:object, tracker:S
 
 
 type OverloadedProps =
-	| "_context"
 	| "_registry"
 	| "_getLocalID"
 	| "_register"
 	;
 
 const PROTOTYPE:PickSelfProps<TransientDocument, TransientResource & Registry<TransientBlankNode | TransientNamedFragment>, OverloadedProps> = {
-	_context: void 0,
 	_registry: void 0,
 
 
@@ -272,7 +268,6 @@ const PROTOTYPE:PickSelfProps<TransientDocument, TransientResource & Registry<Tr
 export interface TransientDocumentFactory extends ModelFactory<TransientDocument>, ModelDecorator<TransientDocument> {
 	PROTOTYPE:PickSelfProps<TransientDocument,
 		TransientResource & Registry<TransientBlankNode | TransientNamedFragment>,
-		| "_context"
 		| "_registry"
 		| "_getLocalID"
 		| "_register">;

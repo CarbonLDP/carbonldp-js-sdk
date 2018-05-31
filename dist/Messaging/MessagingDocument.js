@@ -8,9 +8,9 @@ var Utils_1 = require("../Utils");
 var Event_1 = require("./Event");
 var Utils_2 = require("./Utils");
 function getMessagingService(repository) {
-    if (!repository._context || !repository._context.messaging)
+    if (!repository._registry || !repository._registry.context || !repository._registry.context.messaging)
         throw new Errors_1.IllegalActionError("\"" + repository.id + "\" doesn't support messaging subscriptions.");
-    return repository._context.messaging;
+    return repository._registry.context.messaging;
 }
 function parseParams(resource, uriPatternOROnEvent, onEventOrOnError, onError) {
     var uriPattern = Utils_1.isString(uriPatternOROnEvent) ?
@@ -27,7 +27,7 @@ var PROTOTYPE = {
             var messaging = getMessagingService(this);
             var uriPattern = void 0, onEvent = void 0;
             (_a = parseParams(this, uriPatternOROnEvent, onEventOrOnError, onError), uriPattern = _a.uriPattern, onEvent = _a.onEvent, onError = _a.onError);
-            var destination = Utils_2.createDestination(event, uriPattern, this._context.baseURI);
+            var destination = Utils_2.createDestination(event, uriPattern, messaging.context.baseURI);
             messaging.subscribe(destination, onEvent, onError);
         }
         catch (error) {
@@ -42,7 +42,7 @@ var PROTOTYPE = {
             var messaging = getMessagingService(this);
             var uriPattern = void 0, onEvent = void 0;
             (_a = parseParams(this, uriPatternOROnEvent, onEventOrOnError, onError), uriPattern = _a.uriPattern, onEvent = _a.onEvent, onError = _a.onError);
-            var destination = Utils_2.createDestination(event, uriPattern, this._context.baseURI);
+            var destination = Utils_2.createDestination(event, uriPattern, messaging.context.baseURI);
             messaging.unsubscribe(destination, onEvent);
         }
         catch (error) {
@@ -57,7 +57,7 @@ var PROTOTYPE = {
             var messaging_1 = getMessagingService(this);
             var uriPattern = void 0, onEvent_1;
             (_a = parseParams(this, uriPatternOROnEvent, onEventOrOnError, onError), uriPattern = _a.uriPattern, onEvent_1 = _a.onEvent, onError = _a.onError);
-            var destination_1 = Utils_2.createDestination(event, uriPattern, this._context.baseURI);
+            var destination_1 = Utils_2.createDestination(event, uriPattern, messaging_1.context.baseURI);
             messaging_1.subscribe(destination_1, function onEventWrapper(message) {
                 onEvent_1(message);
                 messaging_1.unsubscribe(destination_1, onEventWrapper);

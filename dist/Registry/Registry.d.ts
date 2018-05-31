@@ -1,8 +1,6 @@
-import { Context } from "../Context";
 import { Pointer, PointerLibrary, PointerValidator } from "../Pointer";
 import { PickSelfProps } from "../Utils";
 export interface Registry<M extends Pointer> extends PointerLibrary, PointerValidator {
-    _context: Context | undefined;
     _registry: Registry<any> | undefined;
     readonly _resourcesMap: Map<string, M>;
     inScope(idOrPointer: string | Pointer): boolean;

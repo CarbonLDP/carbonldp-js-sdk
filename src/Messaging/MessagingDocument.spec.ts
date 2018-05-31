@@ -21,11 +21,7 @@ import { MessagingDocument } from "./MessagingDocument";
 
 
 function createMock<T extends object>( data?:T & Partial<MessagingDocument> ):T & MessagingDocument {
-	const _context:CarbonLDP | undefined = data && "_context" in data ?
-		data._context : new CarbonLDP( "https://example.com/resource/" );
-
 	const mock:T & MessagingDocument = MessagingDocument.decorate( Object.assign( {
-		_context,
 		id: "https://example.com/resource/",
 	}, data ) );
 
@@ -215,8 +211,20 @@ describe( module( "carbonldp/Messaging/MessagingDocument" ), ():void => {
 			} );
 
 
+			it( "should throw error in callback when does not have registry", ( done:DoneFn ):void => {
+				const resource:MessagingDocument = createMock( { _registry: void 0 } );
+
+				resource.on( "*.*", "resource/", () => {
+					done.fail( "Should not enter here" );
+				}, ( error:Error ) => {
+					expect( error ).toEqual( jasmine.any( IllegalActionError ) );
+					expect( error.message ).toBe( `"https://example.com/resource/" doesn't support messaging subscriptions.` );
+					done();
+				} );
+			} );
+
 			it( "should throw error in callback when does not have context", ( done:DoneFn ):void => {
-				const resource:MessagingDocument = createMock( { _context: void 0 } );
+				const resource:MessagingDocument = createMock( { _registry: { context: void 0 } as any } );
 
 				resource.on( "*.*", "resource/", () => {
 					done.fail( "Should not enter here" );
@@ -228,7 +236,7 @@ describe( module( "carbonldp/Messaging/MessagingDocument" ), ():void => {
 			} );
 
 			it( "should throw error when context does not have a messaging service", ( done:DoneFn ):void => {
-				const resource:MessagingDocument = createMock( { _context: { messaging: void 0 } as any } );
+				const resource:MessagingDocument = createMock( { _registry: { context: { messaging: void 0 } } as any } );
 
 				resource.on( "*.*", "resource/", () => {
 					done.fail( "Should not enter here" );
@@ -239,8 +247,8 @@ describe( module( "carbonldp/Messaging/MessagingDocument" ), ():void => {
 				} );
 			} );
 
-			it( "should throw error when does not have context and no valid onError is provided", ( done:DoneFn ):void => {
-				const resource:MessagingDocument = createMock( { _context: void 0 } );
+			it( "should throw error when does not have registry and no valid onError is provided", ( done:DoneFn ):void => {
+				const resource:MessagingDocument = createMock( { _registry: void 0 } );
 
 				expect( () => resource.on( "*.*", "resource/", () => done.fail( "Should not enter here" ), null ) )
 					.toThrowError( IllegalActionError, `"https://example.com/resource/" doesn't support messaging subscriptions.` );
@@ -256,7 +264,7 @@ describe( module( "carbonldp/Messaging/MessagingDocument" ), ():void => {
 				const onEvent:( data:any ) => void = () => done.fail( "Should not enter here." );
 				const onError:( error:Error ) => void = done.fail;
 
-				const resource:MessagingDocument = createMock( { _context: context } );
+				const resource:MessagingDocument = createMock( { _registry: context.registry } );
 				resource.on( "*.*", onEvent, onError );
 
 				expect( subscribeSpy ).toHaveBeenCalledWith( "/topic/*.*.resource", onEvent, onError );
@@ -271,7 +279,7 @@ describe( module( "carbonldp/Messaging/MessagingDocument" ), ():void => {
 				const onEvent:( data:any ) => void = () => done.fail( "Should not enter here." );
 				const onError:( error:Error ) => void = done.fail;
 
-				const resource:MessagingDocument = createMock( { _context: context } );
+				const resource:MessagingDocument = createMock( { _registry: context.registry } );
 				resource.on( "*.*", "child/!*", onEvent, onError );
 
 				expect( subscribeSpy ).toHaveBeenCalledWith( "/topic/*.*.resource.child.!*", onEvent, onError );
@@ -286,7 +294,7 @@ describe( module( "carbonldp/Messaging/MessagingDocument" ), ():void => {
 				const onEvent:( data:any ) => void = () => done.fail( "Should not enter here." );
 				const onError:( error:Error ) => void = done.fail;
 
-				const resource:MessagingDocument = createMock( { _context: context } );
+				const resource:MessagingDocument = createMock( { _registry: context.registry } );
 				resource.on( "*.*", "https://example.com/another-resource/!*", onEvent, onError );
 
 				expect( subscribeSpy ).toHaveBeenCalledWith( "/topic/*.*.another-resource.!*", onEvent, onError );
@@ -457,8 +465,8 @@ describe( module( "carbonldp/Messaging/MessagingDocument" ), ():void => {
 			} );
 
 
-			it( "should return error when does not have context", ( done:DoneFn ):void => {
-				const resource:MessagingDocument = createMock( { _context: void 0 } );
+			it( "should throw error in callback when does not have registry", ( done:DoneFn ):void => {
+				const resource:MessagingDocument = createMock( { _registry: void 0 } );
 
 				resource.off( "*.*", "resource/", () => {
 					done.fail( "Should not enter here" );
@@ -469,16 +477,8 @@ describe( module( "carbonldp/Messaging/MessagingDocument" ), ():void => {
 				} );
 			} );
 
-			it( "should throw error when does not have context and no valid onError is provided", ( done:DoneFn ):void => {
-				const resource:MessagingDocument = createMock( { _context: void 0 } );
-
-				expect( () => resource.off( "*.*", "resource/", () => done.fail( "Should not enter here" ), null ) )
-					.toThrowError( IllegalActionError, `"https://example.com/resource/" doesn't support messaging subscriptions.` );
-				done();
-			} );
-
-			it( "should return error when does not have context.messaging", ( done:DoneFn ):void => {
-				const resource:MessagingDocument = createMock( { _context: { messaging: void 0 } as any } );
+			it( "should throw error in callback when does not have context", ( done:DoneFn ):void => {
+				const resource:MessagingDocument = createMock( { _registry: { context: void 0 } as any } );
 
 				resource.off( "*.*", "resource/", () => {
 					done.fail( "Should not enter here" );
@@ -489,8 +489,20 @@ describe( module( "carbonldp/Messaging/MessagingDocument" ), ():void => {
 				} );
 			} );
 
-			it( "should throw error when does not have context.messaging and no valid onError is provided", ( done:DoneFn ):void => {
-				const resource:MessagingDocument = createMock( { _context: { messaging: void 0 } as any } );
+			it( "should throw error when context does not have a messaging service", ( done:DoneFn ):void => {
+				const resource:MessagingDocument = createMock( { _registry: { context: { messaging: void 0 } } as any } );
+
+				resource.off( "*.*", "resource/", () => {
+					done.fail( "Should not enter here" );
+				}, ( error:Error ) => {
+					expect( error ).toEqual( jasmine.any( IllegalActionError ) );
+					expect( error.message ).toBe( `"https://example.com/resource/" doesn't support messaging subscriptions.` );
+					done();
+				} );
+			} );
+
+			it( "should throw error when does not have registry and no valid onError is provided", ( done:DoneFn ):void => {
+				const resource:MessagingDocument = createMock( { _registry: void 0 } );
 
 				expect( () => resource.off( "*.*", "resource/", () => done.fail( "Should not enter here" ), null ) )
 					.toThrowError( IllegalActionError, `"https://example.com/resource/" doesn't support messaging subscriptions.` );
@@ -506,7 +518,7 @@ describe( module( "carbonldp/Messaging/MessagingDocument" ), ():void => {
 				const onEvent:( data:any ) => void = () => done.fail( "Should not enter here." );
 				const onError:( error:Error ) => void = done.fail;
 
-				const resource:MessagingDocument = createMock( { _context: context } );
+				const resource:MessagingDocument = createMock( { _registry: context.registry } );
 				resource.off( "*.*", onEvent, onError );
 
 				expect( unsubscribeSpy ).toHaveBeenCalledWith( "/topic/*.*.resource", onEvent );
@@ -521,7 +533,7 @@ describe( module( "carbonldp/Messaging/MessagingDocument" ), ():void => {
 				const onEvent:( data:any ) => void = () => done.fail( "Should not enter here." );
 				const onError:( error:Error ) => void = done.fail;
 
-				const resource:MessagingDocument = createMock( { _context: context } );
+				const resource:MessagingDocument = createMock( { _registry: context.registry } );
 				resource.off( "*.*", "child/!*", onEvent, onError );
 
 				expect( unsubscribeSpy ).toHaveBeenCalledWith( "/topic/*.*.resource.child.!*", onEvent );
@@ -536,7 +548,7 @@ describe( module( "carbonldp/Messaging/MessagingDocument" ), ():void => {
 				const onEvent:( data:any ) => void = () => done.fail( "Should not enter here." );
 				const onError:( error:Error ) => void = done.fail;
 
-				const resource:MessagingDocument = createMock( { _context: context } );
+				const resource:MessagingDocument = createMock( { _registry: context.registry } );
 				resource.off( "*.*", "https://example.com/another-resource/!*", onEvent, onError );
 
 				expect( unsubscribeSpy ).toHaveBeenCalledWith( "/topic/*.*.another-resource.!*", onEvent );
@@ -707,8 +719,8 @@ describe( module( "carbonldp/Messaging/MessagingDocument" ), ():void => {
 			} );
 
 
-			it( "should return error when does not have context", ( done:DoneFn ):void => {
-				const resource:MessagingDocument = createMock( { _context: void 0 } );
+			it( "should throw error in callback when does not have registry", ( done:DoneFn ):void => {
+				const resource:MessagingDocument = createMock( { _registry: void 0 } );
 
 				resource.one( "*.*", "resource/", () => {
 					done.fail( "Should not enter here" );
@@ -719,16 +731,8 @@ describe( module( "carbonldp/Messaging/MessagingDocument" ), ():void => {
 				} );
 			} );
 
-			it( "should throw error when does not have context and no valid onError is provided", ( done:DoneFn ):void => {
-				const resource:MessagingDocument = createMock( { _context: void 0 } );
-
-				expect( () => resource.one( "*.*", "resource/", () => done.fail( "Should not enter here" ), null ) )
-					.toThrowError( IllegalActionError, `"https://example.com/resource/" doesn't support messaging subscriptions.` );
-				done();
-			} );
-
-			it( "should return error when does not have context.messaging", ( done:DoneFn ):void => {
-				const resource:MessagingDocument = createMock( { _context: { messaging: void 0 } as any } );
+			it( "should throw error in callback when does not have context", ( done:DoneFn ):void => {
+				const resource:MessagingDocument = createMock( { _registry: { context: void 0 } as any } );
 
 				resource.one( "*.*", "resource/", () => {
 					done.fail( "Should not enter here" );
@@ -739,8 +743,20 @@ describe( module( "carbonldp/Messaging/MessagingDocument" ), ():void => {
 				} );
 			} );
 
-			it( "should throw error when does not have context.messaging and no valid onError is provided", ( done:DoneFn ):void => {
-				const resource:MessagingDocument = createMock( { _context: { messaging: void 0 } as any } );
+			it( "should throw error when context does not have a messaging service", ( done:DoneFn ):void => {
+				const resource:MessagingDocument = createMock( { _registry: { context: { messaging: void 0 } } as any } );
+
+				resource.one( "*.*", "resource/", () => {
+					done.fail( "Should not enter here" );
+				}, ( error:Error ) => {
+					expect( error ).toEqual( jasmine.any( IllegalActionError ) );
+					expect( error.message ).toBe( `"https://example.com/resource/" doesn't support messaging subscriptions.` );
+					done();
+				} );
+			} );
+
+			it( "should throw error when does not have registry and no valid onError is provided", ( done:DoneFn ):void => {
+				const resource:MessagingDocument = createMock( { _registry: void 0 } );
 
 				expect( () => resource.one( "*.*", "resource/", () => done.fail( "Should not enter here" ), null ) )
 					.toThrowError( IllegalActionError, `"https://example.com/resource/" doesn't support messaging subscriptions.` );
@@ -756,7 +772,7 @@ describe( module( "carbonldp/Messaging/MessagingDocument" ), ():void => {
 				const onEvent:( data:any ) => void = () => done.fail( "Should not enter here." );
 				const onError:( error:Error ) => void = done.fail;
 
-				const resource:MessagingDocument = createMock( { _context: context } );
+				const resource:MessagingDocument = createMock( { _registry: context.registry } );
 				resource.one( "*.*", onEvent, onError );
 
 				expect( subscribeSpy ).not.toHaveBeenCalledWith( "/topic/*.*.resource", onEvent, onError );
@@ -774,7 +790,7 @@ describe( module( "carbonldp/Messaging/MessagingDocument" ), ():void => {
 				const onEvent:( data:any ) => void = () => done.fail( "Should not enter here." );
 				const onError:( error:Error ) => void = done.fail;
 
-				const resource:MessagingDocument = createMock( { _context: context } );
+				const resource:MessagingDocument = createMock( { _registry: context.registry } );
 				resource.one( "*.*", "child/!*", onEvent, onError );
 
 				expect( subscribeSpy ).not.toHaveBeenCalledWith( "/topic/*.*.resource.child.!*", onEvent, onError );
@@ -792,7 +808,7 @@ describe( module( "carbonldp/Messaging/MessagingDocument" ), ():void => {
 				const onEvent:( data:any ) => void = () => done.fail( "Should not enter here." );
 				const onError:( error:Error ) => void = done.fail;
 
-				const resource:MessagingDocument = createMock( { _context: context } );
+				const resource:MessagingDocument = createMock( { _registry: context.registry } );
 				resource.one( "*.*", "https://example.com/another-resource/!*", onEvent, onError );
 
 				expect( subscribeSpy ).not.toHaveBeenCalledWith( "/topic/*.*.another-resource.!*", onEvent, onError );
@@ -811,7 +827,7 @@ describe( module( "carbonldp/Messaging/MessagingDocument" ), ():void => {
 				const onEvent:jasmine.Spy = jasmine.createSpy( "onEvent" );
 				const onError:( error:Error ) => void = () => {};
 
-				const resource:MessagingDocument = createMock( { _context: context } );
+				const resource:MessagingDocument = createMock( { _registry: context.registry } );
 				resource.one( "*.*", onEvent, onError );
 
 				const actualOnEvent:Function = subscribeSpy.calls.mostRecent().args[ 1 ];
@@ -831,7 +847,7 @@ describe( module( "carbonldp/Messaging/MessagingDocument" ), ():void => {
 				const onEvent:jasmine.Spy = jasmine.createSpy( "onEvent" );
 				const onError:( error:Error ) => void = () => {};
 
-				const resource:MessagingDocument = createMock( { _context: context } );
+				const resource:MessagingDocument = createMock( { _registry: context.registry } );
 				resource.one( "*.*", "child/!*", onEvent, onError );
 
 				const actualOnEvent:Function = subscribeSpy.calls.mostRecent().args[ 1 ];
@@ -853,7 +869,7 @@ describe( module( "carbonldp/Messaging/MessagingDocument" ), ():void => {
 				const onEvent:( data:any ) => void = () => {};
 				const onError:( error:Error ) => void = done.fail;
 
-				const resource:MessagingDocument = createMock( { _context: context } );
+				const resource:MessagingDocument = createMock( { _registry: context.registry } );
 				resource.one( "*.*", onEvent, onError );
 
 				const actualOnEvent:Function = subscribeSpy.calls.mostRecent().args[ 1 ];
@@ -873,7 +889,7 @@ describe( module( "carbonldp/Messaging/MessagingDocument" ), ():void => {
 				const onEvent:( data:any ) => void = () => {};
 				const onError:( error:Error ) => void = done.fail;
 
-				const resource:MessagingDocument = createMock( { _context: context } );
+				const resource:MessagingDocument = createMock( { _registry: context.registry } );
 				resource.one( "*.*", "child/!*", onEvent, onError );
 
 				const actualOnEvent:Function = subscribeSpy.calls.mostRecent().args[ 1 ];
@@ -893,7 +909,7 @@ describe( module( "carbonldp/Messaging/MessagingDocument" ), ():void => {
 				const onEvent:( data:any ) => void = () => {};
 				const onError:( error:Error ) => void = done.fail;
 
-				const resource:MessagingDocument = createMock( { _context: context } );
+				const resource:MessagingDocument = createMock( { _registry: context.registry } );
 				resource.one( "*.*", "https://example.com/another-resource/!*", onEvent, onError );
 
 				const actualOnEvent:Function = subscribeSpy.calls.mostRecent().args[ 1 ];

@@ -25,7 +25,7 @@ interface Subscription {
 }
 
 export class MessagingService {
-	private context:CarbonLDP;
+	readonly context:CarbonLDP;
 
 	private _options:MessagingOptions;
 	private _attempts:number;

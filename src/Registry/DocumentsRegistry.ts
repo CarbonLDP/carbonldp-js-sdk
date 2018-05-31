@@ -15,7 +15,7 @@ import { RegistryService } from "./RegistryService";
 
 export class DocumentsRegistry extends RegistryService<Document, CarbonLDP> {
 
-	readonly _context:CarbonLDP | undefined;
+	readonly context:CarbonLDP | undefined;
 
 	constructor( context?:CarbonLDP ) {
 		super( Document, context );
@@ -24,13 +24,6 @@ export class DocumentsRegistry extends RegistryService<Document, CarbonLDP> {
 
 	register( id:string ):Document {
 		return this._register( { id } );
-	}
-
-	_register<T extends object>( base:T & { id:string } ):T & Document {
-		const document:T & Document = super._register( base );
-		document._context = this._context;
-
-		return document;
 	}
 
 	_getLocalID( id:string ):string {

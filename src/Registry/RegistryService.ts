@@ -32,12 +32,12 @@ import { Registry } from "./Registry";
 
 
 export class RegistryService<M extends Pointer, C extends AbstractContext<M, any> = undefined> implements Registry<M>, ObjectSchemaResolver {
-	readonly _context:C | undefined;
+	readonly context:C | undefined;
 
 	get _registry():Registry<any> | undefined {
-		return this._context
-			&& this._context.parentContext
-			&& this._context.parentContext.registry
+		return this.context
+			&& this.context.parentContext
+			&& this.context.parentContext.registry
 			;
 	}
 
@@ -60,7 +60,7 @@ export class RegistryService<M extends Pointer, C extends AbstractContext<M, any
 
 
 	constructor( model:ModelDecorator<M>, context?:C ) {
-		this._context = context;
+		this.context = context;
 		this._model = model;
 
 		this._resourcesMap = new Map();
@@ -71,24 +71,24 @@ export class RegistryService<M extends Pointer, C extends AbstractContext<M, any
 
 
 	_getLocalID( id:string ):string {
-		if( ! this._context ) return id;
+		if( ! this.context ) return id;
 
-		const schema:DigestedObjectSchema = this._context.getObjectSchema();
+		const schema:DigestedObjectSchema = this.context.getObjectSchema();
 		const iri:string = ObjectSchemaUtils.resolveURI( id, schema );
 
-		if( ! URI.isBaseOf( this._context.baseURI, iri ) )
+		if( ! URI.isBaseOf( this.context.baseURI, iri ) )
 			return Registry.PROTOTYPE._getLocalID.call( this, id );
 
-		return URI.getRelativeURI( iri, this._context.baseURI );
+		return URI.getRelativeURI( iri, this.context.baseURI );
 	}
 
 	_register<T extends object>( base:T & { id:string } ):T & M {
 		const pointer:T & Pointer = Registry.PROTOTYPE._register.call( this, base );
 		const resource:T & M = this._model.decorate( pointer );
 
-		if( ! this._context ) return resource;
+		if( ! this.context ) return resource;
 
-		const schema:DigestedObjectSchema = this._context.getObjectSchema();
+		const schema:DigestedObjectSchema = this.context.getObjectSchema();
 		resource.id = ObjectSchemaUtils
 			.resolveURI( resource.id, schema, { base: true } );
 
@@ -97,8 +97,8 @@ export class RegistryService<M extends Pointer, C extends AbstractContext<M, any
 
 
 	getGeneralSchema():DigestedObjectSchema {
-		if( ! this._context ) return new DigestedObjectSchema();
-		return this._context.getObjectSchema();
+		if( ! this.context ) return new DigestedObjectSchema();
+		return this.context.getObjectSchema();
 	}
 
 	hasSchemaFor( object:object, path?:string ):boolean {
@@ -131,19 +131,19 @@ export class RegistryService<M extends Pointer, C extends AbstractContext<M, any
 	}
 
 	protected _getSchema( objectTypes:string[], objectID?:string ):DigestedObjectSchema {
-		if( ! this._context ) return new DigestedObjectSchema();
+		if( ! this.context ) return new DigestedObjectSchema();
 
 		if( objectID !== void 0 && ! URI.hasFragment( objectID ) && ! URI.isBNodeID( objectID ) && objectTypes.indexOf( TransientDocument.TYPE ) === - 1 )
 			objectTypes = objectTypes.concat( TransientDocument.TYPE );
 
 		const objectSchemas:DigestedObjectSchema[] = objectTypes
-			.filter( type => this._context.hasObjectSchema( type ) )
-			.map( type => this._context.getObjectSchema( type ) )
+			.filter( type => this.context.hasObjectSchema( type ) )
+			.map( type => this.context.getObjectSchema( type ) )
 		;
 
 		return ObjectSchemaDigester
 			._combineSchemas( [
-				this._context.getObjectSchema(),
+				this.context.getObjectSchema(),
 				...objectSchemas,
 			] );
 	}
@@ -151,7 +151,7 @@ export class RegistryService<M extends Pointer, C extends AbstractContext<M, any
 
 	_parseFreeNodes( freeNodes:RDFNode[] ):FreeResources {
 		const freeResourcesDocument:FreeResources = FreeResources
-			.createFrom( { _registry: this, _context: this._context } );
+			.createFrom( { _registry: this } );
 
 		const resources:TransientResource[] = freeNodes
 			.map( node => freeResourcesDocument._register( { id: node[ "@id" ] } ) );

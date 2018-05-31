@@ -97,7 +97,9 @@ var QueryContextBuilder = (function (_super) {
     QueryContextBuilder.prototype._getTypeSchemas = function () {
         if (this._schemas)
             return this._schemas;
-        return this._schemas = this.context._getTypeObjectSchemas();
+        return this._schemas = this.context ?
+            this.context._getTypeObjectSchemas() :
+            [];
     };
     return QueryContextBuilder;
 }(QueryContext_1.QueryContext));

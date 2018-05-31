@@ -24,8 +24,8 @@ function parseParams(resource, registry, uriOrQuery, queryOrOptions, options) {
         iri = uriOrQuery;
     }
     var url = HTTP_1.RequestUtils.getRequestURLFor(registry, resource, iri);
-    if (registry._context && registry._context.auth)
-        registry._context.auth.addAuthentication(options);
+    if (registry.context && registry.context.auth)
+        registry.context.auth.addAuthentication(options);
     return { url: url, query: query, options: options };
 }
 var PROTOTYPE = {

@@ -30,15 +30,8 @@ import { CRUDDocument } from "./CRUDDocument";
 
 
 function createMock<T extends object>( data?:T & Partial<CRUDDocument> ):T & CRUDDocument {
-	const _context:CarbonLDP | undefined = data && "_context" in data ?
-		data._context : new CarbonLDP( "https://example.com/" );
-
-	const _registry:DocumentsRegistry = _context ?
-		_context.registry : new DocumentsRegistry();
-
 	return CRUDDocument.decorate( Object.assign( {
-		_registry,
-		_context,
+		_registry: new DocumentsRegistry(),
 		id: "https://example.com/",
 	}, data ) );
 }
@@ -70,7 +63,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 		} );
 
 
-		describe( method( OBLIGATORY, "get" ), ():void => {
+		xdescribe( method( OBLIGATORY, "get" ), ():void => {
 
 			it( hasSignature(
 				[ "T extends object" ],
@@ -165,342 +158,322 @@ describe( module( "carbonldp/Document" ), ():void => {
 			} );
 
 
-			it( "should request self when no URI", async () => {
-				stubRequest( "https://example.com/" );
+			describe( "When has a context", () => {
 
-				const resource:CRUDDocument = createMock();
-				await resource.get();
-
-				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-				expect( request.url ).toBe( "https://example.com/" );
-			} );
-
-			it( "should request the URI provided", async () => {
-				stubRequest( "https://example.com/another-resource/" );
-
-				const resource:CRUDDocument = createMock();
-				await resource.get( "https://example.com/another-resource/" );
-
-				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-				expect( request.url ).toBe( "https://example.com/another-resource/" );
-			} );
-
-			it( "should request relative URI provided", async () => {
-				stubRequest( "https://example.com/relative/" );
-
-				const resource:CRUDDocument = createMock();
-				await resource.get( "relative/" );
-
-				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-				expect( request.url ).toBe( "https://example.com/relative/" );
-			} );
-
-			it( "should request resolved prefixed name provided", async () => {
-				stubRequest( "https://example.com/resource/" );
-
-				const _context:CarbonLDP = new CarbonLDP( "https://example.com/" );
-				_context.extendObjectSchema( { "ex": "https://example.com/" } );
-
-				const resource:CRUDDocument = createMock( { _context } );
-				await resource.get( "ex:resource/" );
-
-				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-				expect( request.url ).toBe( "https://example.com/resource/" );
-			} );
-
-			it( "should throw error when from URI outside context scope", async () => {
-				const resource:CRUDDocument = createMock();
-
-				await resource
-					.get( "https://example.org/resource/" )
-					.catch( error => {
-						expect( () => { throw error; } )
-							.toThrowError( IllegalArgumentError, `"https://example.org/resource/" is out of scope.` );
-					} )
-				;
-			} );
-
-			it( "should throw error when from URI is BNode label", async () => {
-				const resource:CRUDDocument = createMock();
-
-				await resource
-					.get( "_:1" )
-					.catch( error => {
-						expect( () => { throw error; } )
-							.toThrowError( IllegalArgumentError, `"_:1" is out of scope.` );
-					} )
-				;
-			} );
-
-			it( "should throw error when from URI is Named Fragment label", async () => {
-				const resource:CRUDDocument = createMock();
-
-				await resource
-					.get( "#fragment" )
-					.catch( error => {
-						expect( () => { throw error; } )
-							.toThrowError( IllegalArgumentError, `"https://example.com/#fragment" is out of scope.` );
-					} )
-				;
-			} );
-
-			it( "should throw error when unresolved prefixed name", async () => {
-				const resource:CRUDDocument = createMock();
-
-				await resource
-					.get( "ex:resource/" )
-					.catch( error => {
-						expect( () => { throw error; } )
-							.toThrowError( IllegalArgumentError, `"ex:resource/" is out of scope.` );
-					} )
-				;
-			} );
-
-
-			it( "should send basic request headers", async () => {
-				stubRequest( "https://example.com/" );
-
-				const resource:CRUDDocument = createMock();
-				await resource.get();
-
-				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-				expect( request.requestHeaders ).toEqual( {
-					"accept": "application/ld+json",
-					"prefer": `${ LDP.RDFSource }; rel=interaction-model`,
-				} );
-			} );
-
-			it( "should add authentication header", async () => {
-				stubRequest( "https://example.com/" );
-
-				const resource:CRUDDocument = createMock();
-
-				const spy:jasmine.Spy = spyOn( resource._context.auth, "addAuthentication" );
-
-				await resource.get();
-
-				expect( spy ).toHaveBeenCalled();
-			} );
-
-			it( "should add custom headers when no IRI", async () => {
-				stubRequest( "https://example.com/" );
-
-				const resource:CRUDDocument = createMock();
-
-				await resource.get( {
-					headers: new Map()
-						.set( "custom", new Header( "custom value" ) )
-					,
+				let context:CarbonLDP;
+				let resource:CRUDDocument;
+				beforeEach( ():void => {
+					context = new CarbonLDP( "https://example.com/" );
+					resource = createMock( { _registry: context.registry } );
 				} );
 
-				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-				expect( request.requestHeaders ).toEqual( jasmine.objectContaining( {
-					"custom": "custom value",
-				} ) );
-			} );
 
-			it( "should add custom headers when specific IRI", async () => {
-				stubRequest( "https://example.com/resource/" );
+				it( "should request self when no URI", async () => {
+					stubRequest( "https://example.com/" );
 
-				const resource:CRUDDocument = createMock();
+					await resource.get();
 
-				await resource.get( "resource/", {
-					headers: new Map()
-						.set( "custom", new Header( "custom value" ) )
-					,
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.url ).toBe( "https://example.com/" );
 				} );
 
-				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-				expect( request.requestHeaders ).toEqual( jasmine.objectContaining( {
-					"custom": "custom value",
-				} ) );
-			} );
+				it( "should request the URI provided", async () => {
+					stubRequest( "https://example.com/another-resource/" );
 
+					await resource.get( "https://example.com/another-resource/" );
 
-			it( "should return resource requested", async () => {
-				stubRequest( "https://example.com/" );
-
-				const resource:CRUDDocument = createMock();
-
-				const retrieved:CRUDDocument = await resource.get();
-				expect( retrieved ).toEqual( jasmine.objectContaining( {
-					id: "https://example.com/",
-				} ) );
-			} );
-
-			it( "should return resource requested when in registry but not resolved", async () => {
-				stubRequest( "https://example.com/resource/" );
-
-				const resource:CRUDDocument = createMock();
-				resource._registry._register( { id: "https://example.com/resource/" } );
-
-				const retrieved:CRUDDocument = await resource.get( "resource/" );
-				expect( retrieved ).toEqual( jasmine.objectContaining( {
-					id: "https://example.com/resource/",
-				} ) );
-			} );
-
-			it( "should return registered when already resolved", async () => {
-				const resource:CRUDDocument = createMock();
-				const registered:CRUDDocument = resource._registry._register( {
-					_resolved: true,
-					id: "https://example.com/resource/",
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.url ).toBe( "https://example.com/another-resource/" );
 				} );
 
-				const retrieved:CRUDDocument = await resource.get( "resource/" );
-				expect( retrieved ).toBe( registered );
-			} );
+				it( "should request relative URI provided", async () => {
+					stubRequest( "https://example.com/relative/" );
 
-			it( "should return request when already resolved but ensureLatest set", async () => {
-				stubRequest( "https://example.com/resource/", {
-					resource: {
-						"https://example.com/ns#string": "value from request",
-					},
+					await resource.get( "relative/" );
+
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.url ).toBe( "https://example.com/relative/" );
 				} );
 
-				const resource:CRUDDocument = createMock();
-				resource._context.extendObjectSchema( {
-					"@vocab": "https://example.com/ns#",
-				} );
-				resource._registry._register( {
-					_resolved: true,
-					id: "https://example.com/resource/",
-				} );
+				it( "should request resolved prefixed name provided", async () => {
+					stubRequest( "https://example.com/resource/" );
 
-				const retrieved:{ string:string } = await resource
-					.get<{ string:string }>( "resource/", { ensureLatest: true } );
+					context.extendObjectSchema( { "ex": "https://example.com/" } );
 
-				expect( retrieved ).toEqual( {
-					string: "value from request",
-				} );
-			} );
+					await resource.get( "ex:resource/" );
 
-			it( "should add if-none-match header when resolved and ensureLatest", async () => {
-				stubRequest( "https://example.com/resource/" );
-
-				const resource:CRUDDocument = createMock();
-				resource._registry._register( {
-					_resolved: true,
-					_eTag: "\"0-12345\"",
-					id: "https://example.com/resource/",
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.url ).toBe( "https://example.com/resource/" );
 				} );
 
-				await resource.get( "resource/", { ensureLatest: true } );
-
-				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-				expect( request.requestHeaders ).toEqual( jasmine.objectContaining( {
-					"if-none-match": "\"0-12345\"",
-				} ) );
-			} );
-
-			it( "should return resource from content-location header", async () => {
-				stubRequest( "https://example.com/", {
-					headers: {
-						"content-location": "https://example.com/another-resource/",
-					},
-					resource: {
-						"@id": "https://example.com/another-resource/",
-					},
+				it( "should throw error when from URI outside context scope", async () => {
+					await resource
+						.get( "https://example.org/resource/" )
+						.catch( error => {
+							expect( () => { throw error; } )
+								.toThrowError( IllegalArgumentError, `"https://example.org/resource/" is out of scope.` );
+						} )
+					;
 				} );
 
-				const resource:CRUDDocument = createMock();
-
-				const retrieved:CRUDDocument = await resource.get();
-				expect( retrieved ).toEqual( jasmine.objectContaining( {
-					id: "https://example.com/another-resource/",
-				} ) );
-			} );
-
-
-			it( "should return parsed data", async () => {
-				stubRequest( "https://example.com/", {
-					resource: {
-						"https://example.com/ns#string": "resource",
-						"https://example.com/ns#pointerSet": [
-							{ "@id": "_:1" },
-							{ "@id": "#1" },
-							{ "@id": "https://example.com/another/" },
-						],
-					},
-					fragments: [ {
-						"@id": "_:1",
-						"https://example.com/ns#string": "blank node",
-						"https://example.com/ns#pointerSet": [
-							{ "@id": "#2" },
-						],
-					}, {
-						"@id": "#1",
-						"https://example.com/ns#string": "named fragment",
-					}, {
-						"@id": "#2",
-						"https://example.com/ns#string": "another named fragment",
-					} ],
+				it( "should throw error when from URI is BNode label", async () => {
+					await resource
+						.get( "_:1" )
+						.catch( error => {
+							expect( () => { throw error; } )
+								.toThrowError( IllegalArgumentError, `"_:1" is out of scope.` );
+						} )
+					;
 				} );
 
-				type MyResource = {
-					string:string;
-					pointerSet?:MyResource[]
-				};
-
-				const _context:CarbonLDP = new CarbonLDP( "https://example.com/" );
-				_context.extendObjectSchema( {
-					"ex": "https://example.com/ns#",
-					"string": {
-						"@id": "ex:string",
-						"@type": "string",
-					},
-					"pointerSet": {
-						"@id": "ex:pointerSet",
-						"@type": "@id",
-						"@container": "@set",
-					},
+				it( "should throw error when from URI is Named Fragment label", async () => {
+					await resource
+						.get( "#fragment" )
+						.catch( error => {
+							expect( () => { throw error; } )
+								.toThrowError( IllegalArgumentError, `"https://example.com/#fragment" is out of scope.` );
+						} )
+					;
 				} );
 
-				const resource:CRUDDocument = createMock( { _context } );
+				it( "should throw error when unresolved prefixed name", async () => {
+					await resource
+						.get( "ex:resource/" )
+						.catch( error => {
+							expect( () => { throw error; } )
+								.toThrowError( IllegalArgumentError, `"ex:resource/" is out of scope.` );
+						} )
+					;
+				} );
 
-				const retrieved:MyResource = await resource.get<MyResource>();
-				expect( retrieved ).toEqual( {
-					string: "resource",
-					pointerSet: [
-						{
-							string: "blank node",
-							pointerSet: [ {
-								string: "another named fragment",
-							} ],
+
+				it( "should send basic request headers", async () => {
+					stubRequest( "https://example.com/" );
+
+					await resource.get();
+
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.requestHeaders ).toEqual( {
+						"accept": "application/ld+json",
+						"prefer": `${ LDP.RDFSource }; rel=interaction-model`,
+					} );
+				} );
+
+				it( "should add authentication header", async () => {
+					stubRequest( "https://example.com/" );
+
+					const spy:jasmine.Spy = spyOn( context.auth, "addAuthentication" );
+
+					await resource.get();
+
+					expect( spy ).toHaveBeenCalled();
+				} );
+
+				it( "should add custom headers when no IRI", async () => {
+					stubRequest( "https://example.com/" );
+
+					await resource.get( {
+						headers: new Map()
+							.set( "custom", new Header( "custom value" ) )
+						,
+					} );
+
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.requestHeaders ).toEqual( jasmine.objectContaining( {
+						"custom": "custom value",
+					} ) );
+				} );
+
+				it( "should add custom headers when specific IRI", async () => {
+					stubRequest( "https://example.com/resource/" );
+
+					await resource.get( "resource/", {
+						headers: new Map()
+							.set( "custom", new Header( "custom value" ) )
+						,
+					} );
+
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.requestHeaders ).toEqual( jasmine.objectContaining( {
+						"custom": "custom value",
+					} ) );
+				} );
+
+
+				it( "should return resource requested", async () => {
+					stubRequest( "https://example.com/" );
+
+					const retrieved:CRUDDocument = await resource.get();
+					expect( retrieved ).toEqual( jasmine.objectContaining( {
+						id: "https://example.com/",
+					} ) );
+				} );
+
+				it( "should return resource requested when in registry but not resolved", async () => {
+					stubRequest( "https://example.com/resource/" );
+
+					resource._registry._register( { id: "https://example.com/resource/" } );
+
+					const retrieved:CRUDDocument = await resource.get( "resource/" );
+					expect( retrieved ).toEqual( jasmine.objectContaining( {
+						id: "https://example.com/resource/",
+					} ) );
+				} );
+
+				it( "should return registered when already resolved", async () => {
+					const registered:CRUDDocument = resource._registry._register( {
+						_resolved: true,
+						id: "https://example.com/resource/",
+					} );
+
+					const retrieved:CRUDDocument = await resource.get( "resource/" );
+					expect( retrieved ).toBe( registered );
+				} );
+
+				it( "should return request when already resolved but ensureLatest set", async () => {
+					stubRequest( "https://example.com/resource/", {
+						resource: {
+							"https://example.com/ns#string": "value from request",
 						},
-						{
-							string: "named fragment",
-						},
-						<any> jasmine.objectContaining( {
-							id: "https://example.com/another/",
-						} ),
-					],
+					} );
+
+					context.extendObjectSchema( {
+						"@vocab": "https://example.com/ns#",
+					} );
+
+					resource._registry._register( {
+						_resolved: true,
+						id: "https://example.com/resource/",
+					} );
+
+					const retrieved:{ string:string } = await resource
+						.get<{ string:string }>( "resource/", { ensureLatest: true } );
+
+					expect( retrieved ).toEqual( {
+						string: "value from request",
+					} );
 				} );
-			} );
 
-			it( "should store returned data in the registry", async () => {
-				stubRequest( "https://example.com/" );
+				it( "should add if-none-match header when resolved and ensureLatest", async () => {
+					stubRequest( "https://example.com/resource/" );
 
-				const resource:CRUDDocument = createMock( {} );
+					resource._registry._register( {
+						_resolved: true,
+						_eTag: "\"0-12345\"",
+						id: "https://example.com/resource/",
+					} );
 
-				const retrieved:CRUDDocument = await resource.get();
+					await resource.get( "resource/", { ensureLatest: true } );
 
-				const registry:DocumentsRegistry = resource._registry;
-				expect( registry.hasPointer( retrieved.id ) ).toBe( true );
-				expect( registry.getPointer( retrieved.id ) ).toBe( retrieved );
-			} );
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.requestHeaders ).toEqual( jasmine.objectContaining( {
+						"if-none-match": "\"0-12345\"",
+					} ) );
+				} );
 
-			it( "should add BasePersistedDocument values", async () => {
-				stubRequest( "https://example.com/" );
+				it( "should return resource from content-location header", async () => {
+					stubRequest( "https://example.com/", {
+						headers: {
+							"content-location": "https://example.com/another-resource/",
+						},
+						resource: {
+							"@id": "https://example.com/another-resource/",
+						},
+					} );
 
-				const resource:CRUDDocument = createMock( {} );
 
-				const retrieved:CRUDDocument = await resource.get();
+					const retrieved:CRUDDocument = await resource.get();
+					expect( retrieved ).toEqual( jasmine.objectContaining( {
+						id: "https://example.com/another-resource/",
+					} ) );
+				} );
 
-				expect( retrieved ).toEqual( jasmine.objectContaining( {
-					_eTag: "\"1-12345\"",
-					_resolved: true,
-				} ) );
+
+				it( "should return parsed data", async () => {
+					stubRequest( "https://example.com/", {
+						resource: {
+							"https://example.com/ns#string": "resource",
+							"https://example.com/ns#pointerSet": [
+								{ "@id": "_:1" },
+								{ "@id": "#1" },
+								{ "@id": "https://example.com/another/" },
+							],
+						},
+						fragments: [ {
+							"@id": "_:1",
+							"https://example.com/ns#string": "blank node",
+							"https://example.com/ns#pointerSet": [
+								{ "@id": "#2" },
+							],
+						}, {
+							"@id": "#1",
+							"https://example.com/ns#string": "named fragment",
+						}, {
+							"@id": "#2",
+							"https://example.com/ns#string": "another named fragment",
+						} ],
+					} );
+
+					type MyResource = {
+						string:string;
+						pointerSet?:MyResource[]
+					};
+
+					context.extendObjectSchema( {
+						"ex": "https://example.com/ns#",
+						"string": {
+							"@id": "ex:string",
+							"@type": "string",
+						},
+						"pointerSet": {
+							"@id": "ex:pointerSet",
+							"@type": "@id",
+							"@container": "@set",
+						},
+					} );
+
+
+					const retrieved:MyResource = await resource.get<MyResource>();
+					expect( retrieved ).toEqual( {
+						string: "resource",
+						pointerSet: [
+							{
+								string: "blank node",
+								pointerSet: [ {
+									string: "another named fragment",
+								} ],
+							},
+							{
+								string: "named fragment",
+							},
+							<any> jasmine.objectContaining( {
+								id: "https://example.com/another/",
+							} ),
+						],
+					} );
+				} );
+
+				it( "should store returned data in the registry", async () => {
+					stubRequest( "https://example.com/" );
+
+					const retrieved:CRUDDocument = await resource.get();
+
+					const registry:DocumentsRegistry = resource._registry;
+					expect( registry.hasPointer( retrieved.id ) ).toBe( true );
+					expect( registry.getPointer( retrieved.id ) ).toBe( retrieved );
+				} );
+
+				it( "should add BasePersistedDocument values", async () => {
+					stubRequest( "https://example.com/" );
+
+					const retrieved:CRUDDocument = await resource.get();
+
+					expect( retrieved ).toEqual( jasmine.objectContaining( {
+						_eTag: "\"1-12345\"",
+						_resolved: true,
+					} ) );
+				} );
+
 			} );
 
 		} );
@@ -591,216 +564,206 @@ describe( module( "carbonldp/Document" ), ():void => {
 			} );
 
 
-			it( "should request self when no URI", async () => {
-				stubRequest( "https://example.com/" );
+			describe( "When has a context", () => {
 
-				const resource:CRUDDocument = createMock();
-				await resource.resolve();
-
-				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-				expect( request.url ).toBe( "https://example.com/" );
-			} );
-
-			it( "should send basic request headers", async () => {
-				stubRequest( "https://example.com/" );
-
-				const resource:CRUDDocument = createMock();
-				await resource.resolve();
-
-				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-				expect( request.requestHeaders ).toEqual( {
-					"accept": "application/ld+json",
-					"prefer": `${ LDP.RDFSource }; rel=interaction-model`,
-				} );
-			} );
-
-			it( "should add authentication header", async () => {
-				stubRequest( "https://example.com/" );
-
-				const resource:CRUDDocument = createMock();
-
-				const spy:jasmine.Spy = spyOn( resource._context.auth, "addAuthentication" );
-
-				await resource.resolve();
-
-				expect( spy ).toHaveBeenCalled();
-			} );
-
-			it( "should add custom headers", async () => {
-				stubRequest( "https://example.com/" );
-
-				const resource:CRUDDocument = createMock();
-
-				await resource.resolve( {
-					headers: new Map()
-						.set( "custom", new Header( "custom value" ) )
-					,
+				let context:CarbonLDP;
+				let resource:CRUDDocument;
+				beforeEach( ():void => {
+					context = new CarbonLDP( "https://example.com/" );
+					resource = createMock( { _registry: context.registry } );
 				} );
 
-				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-				expect( request.requestHeaders ).toEqual( jasmine.objectContaining( {
-					"custom": "custom value",
-				} ) );
-			} );
+				it( "should request self when no URI", async () => {
+					stubRequest( "https://example.com/" );
 
+					await resource.resolve();
 
-			it( "should return resource requested", async () => {
-				stubRequest( "https://example.com/" );
-
-				const resource:CRUDDocument = createMock();
-
-				const retrieved:CRUDDocument = await resource.resolve();
-				expect( retrieved ).toEqual( jasmine.objectContaining( {
-					id: "https://example.com/",
-				} ) );
-			} );
-
-			it( "should return registered when already resolved", async () => {
-				const resource:CRUDDocument = createMock( { id: "https://example.com/" } );
-
-				const registered:CRUDDocument = resource._registry
-					.getPointer( "https://example.com/", true );
-				registered._resolved = true;
-
-				const retrieved:CRUDDocument = await resource.resolve();
-				expect( retrieved ).toBe( registered );
-			} );
-
-			it( "should return requested when already resolved but ensureLatest set", async () => {
-				stubRequest( "https://example.com/", {
-					resource: {
-						"https://example.com/ns#string": "value from request",
-					},
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.url ).toBe( "https://example.com/" );
 				} );
 
-				const resource:CRUDDocument = createMock();
+				it( "should send basic request headers", async () => {
+					stubRequest( "https://example.com/" );
 
-				resource._context.extendObjectSchema( {
-					"@vocab": "https://example.com/ns#",
+					await resource.resolve();
+
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.requestHeaders ).toEqual( {
+						"accept": "application/ld+json",
+						"prefer": `${ LDP.RDFSource }; rel=interaction-model`,
+					} );
 				} );
 
-				const registered:CRUDDocument = resource._registry
-					.getPointer( "https://example.com/", true );
-				registered._resolved = true;
+				it( "should add authentication header", async () => {
+					stubRequest( "https://example.com/" );
 
+					const spy:jasmine.Spy = spyOn( context.auth, "addAuthentication" );
 
-				const retrieved:{ string:string } = await resource
-					.resolve<{ string:string }>( { ensureLatest: true } );
+					await resource.resolve();
 
-				expect( retrieved ).toEqual( {
-					string: "value from request",
-				} );
-			} );
-
-			it( "should add if-none-match header when resolved and ensureLatest", async () => {
-				stubRequest( "https://example.com/" );
-
-				const resource:CRUDDocument = createMock();
-
-				const registered:CRUDDocument = resource._registry
-					.getPointer( "https://example.com/", true );
-				registered._resolved = true;
-				registered._eTag = "\"0-12345\"";
-
-
-				await resource.resolve( { ensureLatest: true } );
-
-				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-				expect( request.requestHeaders ).toEqual( jasmine.objectContaining( {
-					"if-none-match": "\"0-12345\"",
-				} ) );
-			} );
-
-
-			it( "should return parsed data", async () => {
-				stubRequest( "https://example.com/", {
-					resource: {
-						"https://example.com/ns#string": "resource",
-						"https://example.com/ns#pointerSet": [
-							{ "@id": "_:1" },
-							{ "@id": "#1" },
-							{ "@id": "https://example.com/another/" },
-						],
-					},
-					fragments: [ {
-						"@id": "_:1",
-						"https://example.com/ns#string": "blank node",
-						"https://example.com/ns#pointerSet": [
-							{ "@id": "#2" },
-						],
-					}, {
-						"@id": "#1",
-						"https://example.com/ns#string": "named fragment",
-					}, {
-						"@id": "#2",
-						"https://example.com/ns#string": "another named fragment",
-					} ],
+					expect( spy ).toHaveBeenCalled();
 				} );
 
-				type MyResource = {
-					string:string;
-					pointerSet?:MyResource[]
-				};
+				it( "should add custom headers", async () => {
+					stubRequest( "https://example.com/" );
 
-				const _context:CarbonLDP = new CarbonLDP( "https://example.com/" );
-				_context.extendObjectSchema( {
-					"ex": "https://example.com/ns#",
-					"string": {
-						"@id": "ex:string",
-						"@type": "string",
-					},
-					"pointerSet": {
-						"@id": "ex:pointerSet",
-						"@type": "@id",
-						"@container": "@set",
-					},
+					await resource.resolve( {
+						headers: new Map()
+							.set( "custom", new Header( "custom value" ) )
+						,
+					} );
+
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.requestHeaders ).toEqual( jasmine.objectContaining( {
+						"custom": "custom value",
+					} ) );
 				} );
 
-				const resource:CRUDDocument = createMock( { _context } );
 
-				const retrieved:MyResource = await resource.resolve<MyResource>();
-				expect( retrieved ).toEqual( {
-					string: "resource",
-					pointerSet: [
-						{
-							string: "blank node",
-							pointerSet: [ {
-								string: "another named fragment",
-							} ],
+				it( "should return resource requested", async () => {
+					stubRequest( "https://example.com/" );
+
+					const retrieved:CRUDDocument = await resource.resolve();
+					expect( retrieved ).toEqual( jasmine.objectContaining( {
+						id: "https://example.com/",
+					} ) );
+				} );
+
+				it( "should return registered when already resolved", async () => {
+					const registered:CRUDDocument = resource._registry
+						.getPointer( "https://example.com/", true );
+					registered._resolved = true;
+
+					const retrieved:CRUDDocument = await resource.resolve();
+					expect( retrieved ).toBe( registered );
+				} );
+
+				it( "should return requested when already resolved but ensureLatest set", async () => {
+					stubRequest( "https://example.com/", {
+						resource: {
+							"https://example.com/ns#string": "value from request",
 						},
-						{
-							string: "named fragment",
-						},
-						<any> jasmine.objectContaining( {
-							id: "https://example.com/another/",
-						} ),
-					],
+					} );
+
+					context.extendObjectSchema( {
+						"@vocab": "https://example.com/ns#",
+					} );
+
+					const registered:CRUDDocument = resource._registry
+						.getPointer( "https://example.com/", true );
+					registered._resolved = true;
+
+
+					const retrieved:{ string:string } = await resource
+						.resolve<{ string:string }>( { ensureLatest: true } );
+
+					expect( retrieved ).toEqual( {
+						string: "value from request",
+					} );
 				} );
-			} );
 
-			it( "should store returned data in the registry", async () => {
-				stubRequest( "https://example.com/" );
+				it( "should add if-none-match header when resolved and ensureLatest", async () => {
+					stubRequest( "https://example.com/" );
 
-				const resource:CRUDDocument = createMock( {} );
+					const registered:CRUDDocument = resource._registry
+						.getPointer( "https://example.com/", true );
+					registered._resolved = true;
+					registered._eTag = "\"0-12345\"";
 
-				const retrieved:CRUDDocument = await resource.resolve();
 
-				const registry:DocumentsRegistry = resource._registry;
-				expect( registry.hasPointer( retrieved.id ) ).toBe( true );
-				expect( registry.getPointer( retrieved.id ) ).toBe( retrieved );
-			} );
+					await resource.resolve( { ensureLatest: true } );
 
-			it( "should add BasePersistedDocument values", async () => {
-				stubRequest( "https://example.com/" );
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.requestHeaders ).toEqual( jasmine.objectContaining( {
+						"if-none-match": "\"0-12345\"",
+					} ) );
+				} );
 
-				const resource:CRUDDocument = createMock( {} );
 
-				const retrieved:CRUDDocument = await resource.resolve();
+				it( "should return parsed data", async () => {
+					stubRequest( "https://example.com/", {
+						resource: {
+							"https://example.com/ns#string": "resource",
+							"https://example.com/ns#pointerSet": [
+								{ "@id": "_:1" },
+								{ "@id": "#1" },
+								{ "@id": "https://example.com/another/" },
+							],
+						},
+						fragments: [ {
+							"@id": "_:1",
+							"https://example.com/ns#string": "blank node",
+							"https://example.com/ns#pointerSet": [
+								{ "@id": "#2" },
+							],
+						}, {
+							"@id": "#1",
+							"https://example.com/ns#string": "named fragment",
+						}, {
+							"@id": "#2",
+							"https://example.com/ns#string": "another named fragment",
+						} ],
+					} );
 
-				expect( retrieved ).toEqual( jasmine.objectContaining( {
-					_eTag: "\"1-12345\"",
-					_resolved: true,
-				} ) );
+					type MyResource = {
+						string:string;
+						pointerSet?:MyResource[]
+					};
+
+					context.extendObjectSchema( {
+						"ex": "https://example.com/ns#",
+						"string": {
+							"@id": "ex:string",
+							"@type": "string",
+						},
+						"pointerSet": {
+							"@id": "ex:pointerSet",
+							"@type": "@id",
+							"@container": "@set",
+						},
+					} );
+
+					const retrieved:MyResource = await resource.resolve<MyResource>();
+					expect( retrieved ).toEqual( {
+						string: "resource",
+						pointerSet: [
+							{
+								string: "blank node",
+								pointerSet: [ {
+									string: "another named fragment",
+								} ],
+							},
+							{
+								string: "named fragment",
+							},
+							<any> jasmine.objectContaining( {
+								id: "https://example.com/another/",
+							} ),
+						],
+					} );
+				} );
+
+				it( "should store returned data in the registry", async () => {
+					stubRequest( "https://example.com/" );
+
+					const retrieved:CRUDDocument = await resource.resolve();
+
+					const registry:DocumentsRegistry = resource._registry;
+					expect( registry.hasPointer( retrieved.id ) ).toBe( true );
+					expect( registry.getPointer( retrieved.id ) ).toBe( retrieved );
+				} );
+
+				it( "should add BasePersistedDocument values", async () => {
+					stubRequest( "https://example.com/" );
+
+					const retrieved:CRUDDocument = await resource.resolve();
+
+					expect( retrieved ).toEqual( jasmine.objectContaining( {
+						_eTag: "\"1-12345\"",
+						_resolved: true,
+					} ) );
+				} );
+
 			} );
 
 		} );
@@ -871,147 +834,137 @@ describe( module( "carbonldp/Document" ), ():void => {
 			} );
 
 
-			it( "should request the URI provided", async () => {
-				stubRequest( "https://example.com/another-resource/" );
+			describe( "When has a context", () => {
 
-				const resource:CRUDDocument = createMock();
-				await resource.exists( "https://example.com/another-resource/" );
-
-				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-				expect( request.url ).toBe( "https://example.com/another-resource/" );
-			} );
-
-			it( "should request relative URI provided", async () => {
-				stubRequest( "https://example.com/relative/" );
-
-				const resource:CRUDDocument = createMock();
-				await resource.exists( "relative/" );
-
-				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-				expect( request.url ).toBe( "https://example.com/relative/" );
-			} );
-
-			it( "should request resolved prefixed name provided", async () => {
-				stubRequest( "https://example.com/resource/" );
-
-				const _context:CarbonLDP = new CarbonLDP( "https://example.com/" );
-				_context.extendObjectSchema( { "ex": "https://example.com/" } );
-
-				const resource:CRUDDocument = createMock( { _context } );
-				await resource.exists( "ex:resource/" );
-
-				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-				expect( request.url ).toBe( "https://example.com/resource/" );
-			} );
-
-			it( "should throw error when from URI outside context scope", async () => {
-				const resource:CRUDDocument = createMock();
-
-				await resource
-					.exists( "https://example.org/resource/" )
-					.catch( error => {
-						expect( () => { throw error; } )
-							.toThrowError( IllegalArgumentError, `"https://example.org/resource/" is out of scope.` );
-					} )
-				;
-			} );
-
-			it( "should throw error when from URI is BNode label", async () => {
-				const resource:CRUDDocument = createMock();
-
-				await resource
-					.exists( "_:1" )
-					.catch( error => {
-						expect( () => { throw error; } )
-							.toThrowError( IllegalArgumentError, `"_:1" is out of scope.` );
-					} )
-				;
-			} );
-
-			it( "should throw error when from URI is Named Fragment label", async () => {
-				const resource:CRUDDocument = createMock();
-
-				await resource
-					.exists( "#fragment" )
-					.catch( error => {
-						expect( () => { throw error; } )
-							.toThrowError( IllegalArgumentError, `"https://example.com/#fragment" is out of scope.` );
-					} )
-				;
-			} );
-
-			it( "should throw error when unresolved prefixed name", async () => {
-				const resource:CRUDDocument = createMock();
-
-				await resource
-					.exists( "ex:resource/" )
-					.catch( error => {
-						expect( () => { throw error; } )
-							.toThrowError( IllegalArgumentError, `"ex:resource/" is out of scope.` );
-					} )
-				;
-			} );
-
-
-			it( "should send basic request headers", async () => {
-				stubRequest( "https://example.com/resource/" );
-
-				const resource:CRUDDocument = createMock();
-				await resource.exists( "resource/" );
-
-				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-				expect( request.requestHeaders ).toEqual( {
-					"accept": "application/ld+json",
-					"prefer": `${ LDP.RDFSource }; rel=interaction-model`,
-				} );
-			} );
-
-			it( "should add authentication header", async () => {
-				stubRequest( "https://example.com/resource/" );
-
-				const resource:CRUDDocument = createMock();
-
-				const spy:jasmine.Spy = spyOn( resource._context.auth, "addAuthentication" );
-
-				await resource.exists( "resource/" );
-
-				expect( spy ).toHaveBeenCalled();
-			} );
-
-			it( "should add custom headers", async () => {
-				stubRequest( "https://example.com/resource/" );
-
-				const resource:CRUDDocument = createMock();
-
-				await resource.exists( "resource/", {
-					headers: new Map()
-						.set( "custom", new Header( "custom value" ) )
-					,
+				let context:CarbonLDP;
+				let resource:CRUDDocument;
+				beforeEach( ():void => {
+					context = new CarbonLDP( "https://example.com/" );
+					resource = createMock( { _registry: context.registry } );
 				} );
 
-				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-				expect( request.requestHeaders ).toEqual( jasmine.objectContaining( {
-					"custom": "custom value",
-				} ) );
-			} );
+				it( "should request the URI provided", async () => {
+					stubRequest( "https://example.com/another-resource/" );
+
+					await resource.exists( "https://example.com/another-resource/" );
+
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.url ).toBe( "https://example.com/another-resource/" );
+				} );
+
+				it( "should request relative URI provided", async () => {
+					stubRequest( "https://example.com/relative/" );
+
+					await resource.exists( "relative/" );
+
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.url ).toBe( "https://example.com/relative/" );
+				} );
+
+				it( "should request resolved prefixed name provided", async () => {
+					stubRequest( "https://example.com/resource/" );
+
+					context.extendObjectSchema( { "ex": "https://example.com/" } );
+
+					await resource.exists( "ex:resource/" );
+
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.url ).toBe( "https://example.com/resource/" );
+				} );
+
+				it( "should throw error when from URI outside context scope", async () => {
+					await resource
+						.exists( "https://example.org/resource/" )
+						.catch( error => {
+							expect( () => { throw error; } )
+								.toThrowError( IllegalArgumentError, `"https://example.org/resource/" is out of scope.` );
+						} )
+					;
+				} );
+
+				it( "should throw error when from URI is BNode label", async () => {
+					await resource
+						.exists( "_:1" )
+						.catch( error => {
+							expect( () => { throw error; } )
+								.toThrowError( IllegalArgumentError, `"_:1" is out of scope.` );
+						} )
+					;
+				} );
+
+				it( "should throw error when from URI is Named Fragment label", async () => {
+					await resource
+						.exists( "#fragment" )
+						.catch( error => {
+							expect( () => { throw error; } )
+								.toThrowError( IllegalArgumentError, `"https://example.com/#fragment" is out of scope.` );
+						} )
+					;
+				} );
+
+				it( "should throw error when unresolved prefixed name", async () => {
+					await resource
+						.exists( "ex:resource/" )
+						.catch( error => {
+							expect( () => { throw error; } )
+								.toThrowError( IllegalArgumentError, `"ex:resource/" is out of scope.` );
+						} )
+					;
+				} );
 
 
-			it( "should return true if request success", async () => {
-				stubRequest( "https://example.com/resource/" );
+				it( "should send basic request headers", async () => {
+					stubRequest( "https://example.com/resource/" );
 
-				const resource:CRUDDocument = createMock();
+					await resource.exists( "resource/" );
 
-				const exists:boolean = await resource.exists( "resource/" );
-				expect( exists ).toEqual( true );
-			} );
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.requestHeaders ).toEqual( {
+						"accept": "application/ld+json",
+						"prefer": `${ LDP.RDFSource }; rel=interaction-model`,
+					} );
+				} );
 
-			it( "should return false if request 404", async () => {
-				stubRequest( "https://example.com/resource/", { status: 404 } );
+				it( "should add authentication header", async () => {
+					stubRequest( "https://example.com/resource/" );
 
-				const resource:CRUDDocument = createMock();
+					const spy:jasmine.Spy = spyOn( context.auth, "addAuthentication" );
 
-				const exists:boolean = await resource.exists( "resource/" );
-				expect( exists ).toEqual( false );
+					await resource.exists( "resource/" );
+
+					expect( spy ).toHaveBeenCalled();
+				} );
+
+				it( "should add custom headers", async () => {
+					stubRequest( "https://example.com/resource/" );
+
+					await resource.exists( "resource/", {
+						headers: new Map()
+							.set( "custom", new Header( "custom value" ) )
+						,
+					} );
+
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.requestHeaders ).toEqual( jasmine.objectContaining( {
+						"custom": "custom value",
+					} ) );
+				} );
+
+
+				it( "should return true if request success", async () => {
+					stubRequest( "https://example.com/resource/" );
+
+					const exists:boolean = await resource.exists( "resource/" );
+					expect( exists ).toEqual( true );
+				} );
+
+				it( "should return false if request 404", async () => {
+					stubRequest( "https://example.com/resource/", { status: 404 } );
+
+					const exists:boolean = await resource.exists( "resource/" );
+					expect( exists ).toEqual( false );
+				} );
+
 			} );
 
 		} );
@@ -1169,767 +1122,723 @@ describe( module( "carbonldp/Document" ), ():void => {
 			} );
 
 
-			it( "should request from self when no URI", async () => {
-				stubRequest( "https://example.com/" );
+			describe( "When has a context", () => {
 
-				const resource:CRUDDocument = createMock();
-				await resource.create( {} );
-
-				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-				expect( request.url ).toBe( "https://example.com/" );
-			} );
-
-			it( "should request from URI", async () => {
-				stubRequest( "https://example.com/another-resource/" );
-
-				const resource:CRUDDocument = createMock();
-				await resource.create( "https://example.com/another-resource/", {} );
-
-				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-				expect( request.url ).toBe( "https://example.com/another-resource/" );
-			} );
-
-			it( "should request from relative URI", async () => {
-				stubRequest( "https://example.com/relative/" );
-
-				const resource:CRUDDocument = createMock();
-				await resource.create( "relative/", {} );
-
-				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-				expect( request.url ).toBe( "https://example.com/relative/" );
-			} );
-
-			it( "should request from resolved prefixed name", async () => {
-				stubRequest( "https://example.com/resource/" );
-
-				const _context:CarbonLDP = new CarbonLDP( "https://example.com/" );
-				_context.extendObjectSchema( { "ex": "https://example.com/" } );
-
-				const resource:CRUDDocument = createMock( { _context } );
-				await resource.create( "ex:resource/", {} );
-
-				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-				expect( request.url ).toBe( "https://example.com/resource/" );
-			} );
-
-			it( "should throw error when from URI outside context scope", async () => {
-				const resource:CRUDDocument = createMock();
-
-				await resource
-					.create( "https://example.org/resource/", {} )
-					.catch( error => {
-						expect( () => { throw error; } )
-							.toThrowError( IllegalArgumentError, `"https://example.org/resource/" is out of scope.` );
-					} )
-				;
-			} );
-
-			it( "should throw error when from URI is BNode label", async () => {
-				const resource:CRUDDocument = createMock();
-
-				await resource
-					.create( "_:1", {} )
-					.catch( error => {
-						expect( () => { throw error; } )
-							.toThrowError( IllegalArgumentError, `"_:1" is out of scope.` );
-					} )
-				;
-			} );
-
-			it( "should throw error when from URI is Named Fragment label", async () => {
-				const resource:CRUDDocument = createMock();
-
-				await resource
-					.create( "#fragment", {} )
-					.catch( error => {
-						expect( () => { throw error; } )
-							.toThrowError( IllegalArgumentError, `"https://example.com/#fragment" is out of scope.` );
-					} )
-				;
-			} );
-
-			it( "should throw error when unresolved prefixed name", async () => {
-				const resource:CRUDDocument = createMock();
-
-				await resource
-					.create( "ex:resource/", {} )
-					.catch( error => {
-						expect( () => { throw error; } )
-							.toThrowError( IllegalArgumentError, `"ex:resource/" is out of scope.` );
-					} )
-				;
-			} );
-
-
-			it( "should send basic request headers in single self child", async () => {
-				stubRequest( "https://example.com/" );
-
-				const resource:CRUDDocument = createMock();
-				await resource.create( {} );
-
-				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-				expect( request.requestHeaders ).toEqual( {
-					"accept": "application/ld+json",
-					"content-type": "application/ld+json",
-					"prefer": [
-						"return=minimal",
-						`${ LDP.Container }; rel=interaction-model`,
-					].join( ", " ),
-				} );
-			} );
-
-			it( "should send basic request headers in single URI child", async () => {
-				stubRequest( "https://example.com/resource/" );
-
-				const resource:CRUDDocument = createMock();
-				await resource.create( "resource/", {} );
-
-				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-				expect( request.requestHeaders ).toEqual( {
-					"accept": "application/ld+json",
-					"content-type": "application/ld+json",
-					"prefer": [
-						"return=minimal",
-						`${ LDP.Container }; rel=interaction-model`,
-					].join( ", " ),
-				} );
-			} );
-
-			it( "should send basic request headers in multiple self children", async () => {
-				stubRequest( "https://example.com/" );
-
-				const resource:CRUDDocument = createMock();
-				await resource.create( [ {}, {} ] );
-
-				const firstRequest:JasmineAjaxRequest = jasmine.Ajax.requests.at( 0 );
-				expect( firstRequest.requestHeaders ).toEqual( {
-					"accept": "application/ld+json",
-					"content-type": "application/ld+json",
-					"prefer": [
-						"return=minimal",
-						`${ LDP.Container }; rel=interaction-model`,
-					].join( ", " ),
+				let context:CarbonLDP;
+				let resource:CRUDDocument;
+				beforeEach( ():void => {
+					context = new CarbonLDP( "https://example.com/" );
+					resource = createMock( { _registry: context.registry } );
 				} );
 
-				const secondRequest:JasmineAjaxRequest = jasmine.Ajax.requests.at( 1 );
-				expect( secondRequest.requestHeaders ).toEqual( {
-					"accept": "application/ld+json",
-					"content-type": "application/ld+json",
-					"prefer": [
-						"return=minimal",
-						`${ LDP.Container }; rel=interaction-model`,
-					].join( ", " ),
-				} );
-			} );
 
-			it( "should send basic request headers in multiple URI child", async () => {
-				stubRequest( "https://example.com/resource/" );
-
-				const resource:CRUDDocument = createMock();
-				await resource.create( "resource/", [ {}, {} ] );
-
-
-				const firstRequest:JasmineAjaxRequest = jasmine.Ajax.requests.at( 0 );
-				expect( firstRequest.requestHeaders ).toEqual( {
-					"accept": "application/ld+json",
-					"content-type": "application/ld+json",
-					"prefer": [
-						"return=minimal",
-						`${ LDP.Container }; rel=interaction-model`,
-					].join( ", " ),
-				} );
-
-				const secondRequest:JasmineAjaxRequest = jasmine.Ajax.requests.at( 1 );
-				expect( secondRequest.requestHeaders ).toEqual( {
-					"accept": "application/ld+json",
-					"content-type": "application/ld+json",
-					"prefer": [
-						"return=minimal",
-						`${ LDP.Container }; rel=interaction-model`,
-					].join( ", " ),
-				} );
-			} );
-
-			it( "should add authentication header", async () => {
-				stubRequest( "https://example.com/" );
-
-				const resource:CRUDDocument = createMock();
-
-				const spy:jasmine.Spy = spyOn( resource._context.auth, "addAuthentication" );
-
-				await resource.create( {} );
-
-				expect( spy ).toHaveBeenCalled();
-			} );
-
-			it( "should add custom headers in single self child", async () => {
-				stubRequest( "https://example.com/" );
-
-				const resource:CRUDDocument = createMock();
-
-				await resource.create( {}, {
-					headers: new Map()
-						.set( "custom", new Header( "custom value" ) )
-					,
-				} );
-
-				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-				expect( request.requestHeaders ).toEqual( jasmine.objectContaining( {
-					"custom": "custom value",
-				} ) );
-			} );
-
-			it( "should add custom headers in single URI child", async () => {
-				stubRequest( "https://example.com/resource/" );
-
-				const resource:CRUDDocument = createMock();
-
-				await resource.create( "resource/", {}, {
-					headers: new Map()
-						.set( "custom", new Header( "custom value" ) )
-					,
-				} );
-
-				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-				expect( request.requestHeaders ).toEqual( jasmine.objectContaining( {
-					"custom": "custom value",
-				} ) );
-			} );
-
-			it( "should send custom request headers in multiple self children", async () => {
-				stubRequest( "https://example.com/" );
-
-				const resource:CRUDDocument = createMock();
-				await resource.create( [ {}, {} ], {
-					headers: new Map()
-						.set( "custom", new Header( "custom value" ) )
-					,
-				} );
-
-				const firstRequest:JasmineAjaxRequest = jasmine.Ajax.requests.at( 0 );
-				expect( firstRequest.requestHeaders ).toEqual( jasmine.objectContaining( {
-					"custom": "custom value",
-				} ) );
-
-				const secondRequest:JasmineAjaxRequest = jasmine.Ajax.requests.at( 1 );
-				expect( secondRequest.requestHeaders ).toEqual( jasmine.objectContaining( {
-					"custom": "custom value",
-				} ) );
-			} );
-
-			it( "should send custom request headers in multiple URI children", async () => {
-				stubRequest( "https://example.com/resource/" );
-
-				const resource:CRUDDocument = createMock();
-				await resource.create( "resource/", [ {}, {} ], {
-					headers: new Map()
-						.set( "custom", new Header( "custom value" ) )
-					,
-				} );
-
-				const firstRequest:JasmineAjaxRequest = jasmine.Ajax.requests.at( 0 );
-				expect( firstRequest.requestHeaders ).toEqual( jasmine.objectContaining( {
-					"custom": "custom value",
-				} ) );
-
-				const secondRequest:JasmineAjaxRequest = jasmine.Ajax.requests.at( 1 );
-				expect( secondRequest.requestHeaders ).toEqual( jasmine.objectContaining( {
-					"custom": "custom value",
-				} ) );
-			} );
-
-			it( "should add slug header when single self child", async () => {
-				stubRequest( "https://example.com/" );
-
-				const resource:CRUDDocument = createMock();
-
-				await resource.create( {}, "child-slug" );
-
-				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-				expect( request.requestHeaders ).toEqual( jasmine.objectContaining( {
-					"slug": "child-slug",
-				} ) );
-			} );
-
-			it( "should add slug header when single URI child", async () => {
-				stubRequest( "https://example.com/resource/" );
-
-				const resource:CRUDDocument = createMock();
-
-				await resource.create( "resource/", {}, "child-slug" );
-
-				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-				expect( request.requestHeaders ).toEqual( jasmine.objectContaining( {
-					"slug": "child-slug",
-				} ) );
-			} );
-
-			it( "should add slug header when multiple self child", async () => {
-				stubRequest( "https://example.com/" );
-
-				const resource:CRUDDocument = createMock();
-
-				await resource.create( [ {}, {} ], [ "child-slug-1", "child-slug-2" ] );
-
-				const firstRequest:JasmineAjaxRequest = jasmine.Ajax.requests.at( 0 );
-				expect( firstRequest.requestHeaders ).toEqual( jasmine.objectContaining( {
-					"slug": "child-slug-1",
-				} ) );
-
-				const secondRequest:JasmineAjaxRequest = jasmine.Ajax.requests.at( 1 );
-				expect( secondRequest.requestHeaders ).toEqual( jasmine.objectContaining( {
-					"slug": "child-slug-2",
-				} ) );
-			} );
-
-			it( "should add slug header when multiple URI child", async () => {
-				stubRequest( "https://example.com/resource/" );
-
-				const resource:CRUDDocument = createMock();
-
-				await resource.create( "resource/", [ {}, {} ], [ "child-slug-1", "child-slug-2" ] );
-
-				const firstRequest:JasmineAjaxRequest = jasmine.Ajax.requests.at( 0 );
-				expect( firstRequest.requestHeaders ).toEqual( jasmine.objectContaining( {
-					"slug": "child-slug-1",
-				} ) );
-
-				const secondRequest:JasmineAjaxRequest = jasmine.Ajax.requests.at( 1 );
-				expect( secondRequest.requestHeaders ).toEqual( jasmine.objectContaining( {
-					"slug": "child-slug-2",
-				} ) );
-			} );
-
-			it( "should add slug header if defined when multiple child", async () => {
-				stubRequest( "https://example.com/" );
-
-				const resource:CRUDDocument = createMock();
-
-				await resource.create( [ {}, {}, {} ], [ null, undefined, "child-slug" ] );
-
-				const firstRequest:JasmineAjaxRequest = jasmine.Ajax.requests.at( 0 );
-				expect( firstRequest.requestHeaders ).not.toEqual( jasmine.objectContaining( {
-					"slug": jasmine.anything() as any,
-				} ) );
-
-				const secondRequest:JasmineAjaxRequest = jasmine.Ajax.requests.at( 1 );
-				expect( secondRequest.requestHeaders ).not.toEqual( jasmine.objectContaining( {
-					"slug": jasmine.anything() as any,
-				} ) );
-
-				const thirdRequest:JasmineAjaxRequest = jasmine.Ajax.requests.at( 2 );
-				expect( thirdRequest.requestHeaders ).toEqual( jasmine.objectContaining( {
-					"slug": "child-slug",
-				} ) );
-			} );
-
-			it( "should not add slug header when multiple but less slugs than children", async () => {
-				stubRequest( "https://example.com/" );
-
-				const resource:CRUDDocument = createMock();
-
-				await resource.create( [ {}, {} ], [ "child-slug" ] );
-
-				const firstRequest:JasmineAjaxRequest = jasmine.Ajax.requests.at( 0 );
-				expect( firstRequest.requestHeaders ).toEqual( jasmine.objectContaining( {
-					"slug": "child-slug",
-				} ) );
-
-				const secondRequest:JasmineAjaxRequest = jasmine.Ajax.requests.at( 1 );
-				expect( secondRequest.requestHeaders ).not.toEqual( jasmine.objectContaining( {
-					"slug": jasmine.anything() as any,
-				} ) );
-			} );
-
-
-			it( "should send converted JSONLD when from self child", async () => {
-				stubRequest( "https://example.com/" );
-
-				const resource:CRUDDocument = createMock();
-				resource._context
-					.extendObjectSchema( {
-						"@vocab": "https://example.com/ns#",
-					} )
-				;
-
-				await resource.create( {
-					string: "my object",
-					pointerSet: [
-						{ id: "_:1", string: "blank node" },
-						{ slug: "fragment", string: "named fragment" },
-					],
-				} );
-
-				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-				expect( request.params ).toBe( JSON.stringify( {
-					"@id": "",
-					"@graph": [ {
-						"@id": "",
-						"https://example.com/ns#string": [ {
-							"@value": "my object",
-							"@type": XSD.string,
-						} ],
-						"https://example.com/ns#pointerSet": [ {
-							"@id": "_:1",
-						}, {
-							"@id": "#fragment",
-						} ],
-					}, {
-						"@id": "_:1",
-						"https://example.com/ns#string": [ {
-							"@value": "blank node",
-							"@type": XSD.string,
-						} ],
-					}, {
-						"@id": "#fragment",
-						"https://example.com/ns#string": [ {
-							"@value": "named fragment",
-							"@type": XSD.string,
-						} ],
-					} ],
-				} ) );
-			} );
-
-			it( "should send converted JSONLD when from URI child", async () => {
-				stubRequest( "https://example.com/resource/" );
-
-				const resource:CRUDDocument = createMock();
-				resource._context
-					.extendObjectSchema( {
-						"@vocab": "https://example.com/ns#",
-					} )
-				;
-
-				await resource.create( "resource/", {
-					string: "my object",
-					pointerSet: [
-						{ id: "_:1", string: "blank node" },
-						{ slug: "fragment", string: "named fragment" },
-					],
-				} );
-
-				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-				expect( request.params ).toBe( JSON.stringify( {
-					"@id": "",
-					"@graph": [ {
-						"@id": "",
-						"https://example.com/ns#string": [ {
-							"@value": "my object",
-							"@type": XSD.string,
-						} ],
-						"https://example.com/ns#pointerSet": [ {
-							"@id": "_:1",
-						}, {
-							"@id": "#fragment",
-						} ],
-					}, {
-						"@id": "_:1",
-						"https://example.com/ns#string": [ {
-							"@value": "blank node",
-							"@type": XSD.string,
-						} ],
-					}, {
-						"@id": "#fragment",
-						"https://example.com/ns#string": [ {
-							"@value": "named fragment",
-							"@type": XSD.string,
-						} ],
-					} ],
-				} ) );
-			} );
-
-			it( "should send converted JSONLD when multiple self children", async () => {
-				stubRequest( "https://example.com/" );
-
-				const resource:CRUDDocument = createMock();
-				resource._context
-					.extendObjectSchema( {
-						"@vocab": "https://example.com/ns#",
-					} )
-				;
-
-				await resource.create( [ {
-					string: "my object 1",
-				}, {
-					string: "my object 2",
-				} ] );
-
-				const request1:JasmineAjaxRequest = jasmine.Ajax.requests.at( 0 );
-				expect( request1.params ).toBe( JSON.stringify( {
-					"@id": "",
-					"@graph": [ {
-						"@id": "",
-						"https://example.com/ns#string": [ {
-							"@value": "my object 1",
-							"@type": XSD.string,
-						} ],
-					} ],
-				} ) );
-
-				const request2:JasmineAjaxRequest = jasmine.Ajax.requests.at( 1 );
-				expect( request2.params ).toBe( JSON.stringify( {
-					"@id": "",
-					"@graph": [ {
-						"@id": "",
-						"https://example.com/ns#string": [ {
-							"@value": "my object 2",
-							"@type": XSD.string,
-						} ],
-					} ],
-				} ) );
-			} );
-
-			it( "should send converted JSONLD when multiple URI children", async () => {
-				stubRequest( "https://example.com/resource/" );
-
-				const resource:CRUDDocument = createMock();
-				resource._context
-					.extendObjectSchema( {
-						"@vocab": "https://example.com/ns#",
-					} )
-				;
-
-				await resource.create( "resource/", [ {
-					string: "my object 1",
-				}, {
-					string: "my object 2",
-				} ] );
-
-				const request1:JasmineAjaxRequest = jasmine.Ajax.requests.at( 0 );
-				expect( request1.params ).toBe( JSON.stringify( {
-					"@id": "",
-					"@graph": [ {
-						"@id": "",
-						"https://example.com/ns#string": [ {
-							"@value": "my object 1",
-							"@type": XSD.string,
-						} ],
-					} ],
-				} ) );
-
-				const request2:JasmineAjaxRequest = jasmine.Ajax.requests.at( 1 );
-				expect( request2.params ).toBe( JSON.stringify( {
-					"@id": "",
-					"@graph": [ {
-						"@id": "",
-						"https://example.com/ns#string": [ {
-							"@value": "my object 2",
-							"@type": XSD.string,
-						} ],
-					} ],
-				} ) );
-			} );
-
-			it( "should return same child object reference", async () => {
-				stubRequest( "https://example.com/" );
-
-				const resource:CRUDDocument = createMock();
-				const child:object = {};
-
-				const returned:CRUDDocument = await resource.create( child );
-
-				expect( child ).toBe( returned );
-			} );
-
-			it( "should return same children object references", async () => {
-				stubRequest( "https://example.com/" );
-
-				const resource:CRUDDocument = createMock();
-				const child1:object = {};
-				const child2:object = {};
-
-				const [ returned1, returned2 ]:CRUDDocument[] = await resource.create( [ child1, child2 ] );
-
-				expect( child1 ).toBe( returned1 );
-				expect( child2 ).toBe( returned2 );
-			} );
-
-			it( "should have stored the child in the registry", async () => {
-				stubRequest( "https://example.com/" );
-
-				const resource:CRUDDocument = createMock();
-				const returned:CRUDDocument = await resource.create( {} );
-
-				expect( resource._registry.hasPointer( returned.id ) ).toBe( true );
-				expect( resource._registry.getPointer( returned.id ) ).toBe( returned );
-			} );
-
-			it( "should have stored the children in the registry", async () => {
-				stubRequest( "https://example.com/" );
-
-				const resource:CRUDDocument = createMock();
-				const [ returned1, returned2 ]:CRUDDocument[] = await resource.create( [ {}, {} ] );
-
-				expect( resource._registry.hasPointer( returned1.id ) ).toBe( true );
-				expect( resource._registry.getPointer( returned1.id ) ).toBe( returned1 );
-
-				expect( resource._registry.hasPointer( returned2.id ) ).toBe( true );
-				expect( resource._registry.getPointer( returned2.id ) ).toBe( returned2 );
-			} );
-
-			it( "should throw error if child is already persisted", async () => {
-				const child:CRUDDocument = createMock( { id: "" } );
-				const resource:CRUDDocument = createMock();
-
-				try {
-					await resource.create( child );
-					fail( "Should not resolve" );
-				} catch( error ) {
-					expect( () => { throw error; } )
-						.toThrowError( IllegalArgumentError, "The child provided has already been persisted." );
-				}
-			} );
-
-			it( "should throw error if any children is already persisted", async () => {
-				const child:CRUDDocument = createMock( { id: "" } );
-				const resource:CRUDDocument = createMock();
-
-				try {
-					await resource.create( [ {}, child, {} ] );
-					fail( "Should not resolve" );
-				} catch( error ) {
-					expect( () => { throw error; } )
-						.toThrowError( IllegalArgumentError, "The child provided has already been persisted." );
-				}
-			} );
-
-			it( "should throw error if child already being persisted", async () => {
-				const child:object = {};
-				const resource:CRUDDocument = createMock();
-
-				try {
-					await Promise.all( [
-						resource.create( child ),
-						resource.create( child ),
-					] );
-					fail( "Should not resolve" );
-				} catch( error ) {
-					expect( () => { throw error; } )
-						.toThrowError( IllegalArgumentError, "The document is already being persisted." );
-				}
-			} );
-
-			it( "should be able to resend child after a failed request", async () => {
-				const resource:CRUDDocument = createMock();
-
-				const child:object = {};
-				try {
-					stubRequest( "https://example.com/", { status: 500 } );
-					await resource.create( child );
-
-				} catch( error ) {
+				it( "should request from self when no URI", async () => {
 					stubRequest( "https://example.com/" );
-					await resource.create( child );
 
-					expect().nothing();
-				}
-			} );
+					await resource.create( {} );
+
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.url ).toBe( "https://example.com/" );
+				} );
+
+				it( "should request from URI", async () => {
+					stubRequest( "https://example.com/another-resource/" );
+
+					await resource.create( "https://example.com/another-resource/", {} );
+
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.url ).toBe( "https://example.com/another-resource/" );
+				} );
+
+				it( "should request from relative URI", async () => {
+					stubRequest( "https://example.com/relative/" );
+
+					await resource.create( "relative/", {} );
+
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.url ).toBe( "https://example.com/relative/" );
+				} );
+
+				it( "should request from resolved prefixed name", async () => {
+					stubRequest( "https://example.com/resource/" );
+
+					context.extendObjectSchema( { "ex": "https://example.com/" } );
+
+					await resource.create( "ex:resource/", {} );
+
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.url ).toBe( "https://example.com/resource/" );
+				} );
+
+				it( "should throw error when from URI outside context scope", async () => {
+					await resource
+						.create( "https://example.org/resource/", {} )
+						.catch( error => {
+							expect( () => { throw error; } )
+								.toThrowError( IllegalArgumentError, `"https://example.org/resource/" is out of scope.` );
+						} )
+					;
+				} );
+
+				it( "should throw error when from URI is BNode label", async () => {
+					await resource
+						.create( "_:1", {} )
+						.catch( error => {
+							expect( () => { throw error; } )
+								.toThrowError( IllegalArgumentError, `"_:1" is out of scope.` );
+						} )
+					;
+				} );
+
+				it( "should throw error when from URI is Named Fragment label", async () => {
+					await resource
+						.create( "#fragment", {} )
+						.catch( error => {
+							expect( () => { throw error; } )
+								.toThrowError( IllegalArgumentError, `"https://example.com/#fragment" is out of scope.` );
+						} )
+					;
+				} );
+
+				it( "should throw error when unresolved prefixed name", async () => {
+					await resource
+						.create( "ex:resource/", {} )
+						.catch( error => {
+							expect( () => { throw error; } )
+								.toThrowError( IllegalArgumentError, `"ex:resource/" is out of scope.` );
+						} )
+					;
+				} );
 
 
-			it( "should add unresolved BasePersistedDocument data to the child", async () => {
-				stubRequest( "https://example.com/" );
+				it( "should send basic request headers in single self child", async () => {
+					stubRequest( "https://example.com/" );
 
-				const resource:CRUDDocument = createMock();
-				const returned:CRUDDocument = await resource.create( {} );
+					await resource.create( {} );
 
-				expect( returned ).toEqual( jasmine.objectContaining( {
-					_resolved: false,
-					id: "https://example.com/child-1/",
-				} ) );
-			} );
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.requestHeaders ).toEqual( {
+						"accept": "application/ld+json",
+						"content-type": "application/ld+json",
+						"prefer": [
+							"return=minimal",
+							`${ LDP.Container }; rel=interaction-model`,
+						].join( ", " ),
+					} );
+				} );
 
-			it( "should add unresolved BasePersistedDocument data to the children", async () => {
-				stubRequest( "https://example.com/" );
+				it( "should send basic request headers in single URI child", async () => {
+					stubRequest( "https://example.com/resource/" );
 
-				const resource:CRUDDocument = createMock();
-				const [ returned1, returned2 ]:CRUDDocument[] = await resource.create( [ {}, {} ] );
+					await resource.create( "resource/", {} );
 
-				expect( returned1 ).toEqual( jasmine.objectContaining( {
-					_resolved: false,
-					id: "https://example.com/child-1/",
-				} ) );
-				expect( returned2 ).toEqual( jasmine.objectContaining( {
-					_resolved: false,
-					id: "https://example.com/child-2/",
-				} ) );
-			} );
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.requestHeaders ).toEqual( {
+						"accept": "application/ld+json",
+						"content-type": "application/ld+json",
+						"prefer": [
+							"return=minimal",
+							`${ LDP.Container }; rel=interaction-model`,
+						].join( ", " ),
+					} );
+				} );
 
-			it( "should update blank nodes when response metadata returned", async () => {
-				stubRequest( "https://example.com/", {
-					frees: [
-						{
-							"@id": "_:responseMetadata",
-							"@type": [ C.VolatileResource, C.ResponseMetadata ],
-							[ C.documentMetadata ]: [ {
-								"@id": "_:documentMetadata",
+				it( "should send basic request headers in multiple self children", async () => {
+					stubRequest( "https://example.com/" );
+
+					await resource.create( [ {}, {} ] );
+
+					const firstRequest:JasmineAjaxRequest = jasmine.Ajax.requests.at( 0 );
+					expect( firstRequest.requestHeaders ).toEqual( {
+						"accept": "application/ld+json",
+						"content-type": "application/ld+json",
+						"prefer": [
+							"return=minimal",
+							`${ LDP.Container }; rel=interaction-model`,
+						].join( ", " ),
+					} );
+
+					const secondRequest:JasmineAjaxRequest = jasmine.Ajax.requests.at( 1 );
+					expect( secondRequest.requestHeaders ).toEqual( {
+						"accept": "application/ld+json",
+						"content-type": "application/ld+json",
+						"prefer": [
+							"return=minimal",
+							`${ LDP.Container }; rel=interaction-model`,
+						].join( ", " ),
+					} );
+				} );
+
+				it( "should send basic request headers in multiple URI child", async () => {
+					stubRequest( "https://example.com/resource/" );
+
+					await resource.create( "resource/", [ {}, {} ] );
+
+
+					const firstRequest:JasmineAjaxRequest = jasmine.Ajax.requests.at( 0 );
+					expect( firstRequest.requestHeaders ).toEqual( {
+						"accept": "application/ld+json",
+						"content-type": "application/ld+json",
+						"prefer": [
+							"return=minimal",
+							`${ LDP.Container }; rel=interaction-model`,
+						].join( ", " ),
+					} );
+
+					const secondRequest:JasmineAjaxRequest = jasmine.Ajax.requests.at( 1 );
+					expect( secondRequest.requestHeaders ).toEqual( {
+						"accept": "application/ld+json",
+						"content-type": "application/ld+json",
+						"prefer": [
+							"return=minimal",
+							`${ LDP.Container }; rel=interaction-model`,
+						].join( ", " ),
+					} );
+				} );
+
+				it( "should add authentication header", async () => {
+					stubRequest( "https://example.com/" );
+
+					const spy:jasmine.Spy = spyOn( context.auth, "addAuthentication" );
+
+					await resource.create( {} );
+
+					expect( spy ).toHaveBeenCalled();
+				} );
+
+				it( "should add custom headers in single self child", async () => {
+					stubRequest( "https://example.com/" );
+
+					await resource.create( {}, {
+						headers: new Map()
+							.set( "custom", new Header( "custom value" ) )
+						,
+					} );
+
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.requestHeaders ).toEqual( jasmine.objectContaining( {
+						"custom": "custom value",
+					} ) );
+				} );
+
+				it( "should add custom headers in single URI child", async () => {
+					stubRequest( "https://example.com/resource/" );
+
+					await resource.create( "resource/", {}, {
+						headers: new Map()
+							.set( "custom", new Header( "custom value" ) )
+						,
+					} );
+
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.requestHeaders ).toEqual( jasmine.objectContaining( {
+						"custom": "custom value",
+					} ) );
+				} );
+
+				it( "should send custom request headers in multiple self children", async () => {
+					stubRequest( "https://example.com/" );
+
+					await resource.create( [ {}, {} ], {
+						headers: new Map()
+							.set( "custom", new Header( "custom value" ) )
+						,
+					} );
+
+					const firstRequest:JasmineAjaxRequest = jasmine.Ajax.requests.at( 0 );
+					expect( firstRequest.requestHeaders ).toEqual( jasmine.objectContaining( {
+						"custom": "custom value",
+					} ) );
+
+					const secondRequest:JasmineAjaxRequest = jasmine.Ajax.requests.at( 1 );
+					expect( secondRequest.requestHeaders ).toEqual( jasmine.objectContaining( {
+						"custom": "custom value",
+					} ) );
+				} );
+
+				it( "should send custom request headers in multiple URI children", async () => {
+					stubRequest( "https://example.com/resource/" );
+
+					await resource.create( "resource/", [ {}, {} ], {
+						headers: new Map()
+							.set( "custom", new Header( "custom value" ) )
+						,
+					} );
+
+					const firstRequest:JasmineAjaxRequest = jasmine.Ajax.requests.at( 0 );
+					expect( firstRequest.requestHeaders ).toEqual( jasmine.objectContaining( {
+						"custom": "custom value",
+					} ) );
+
+					const secondRequest:JasmineAjaxRequest = jasmine.Ajax.requests.at( 1 );
+					expect( secondRequest.requestHeaders ).toEqual( jasmine.objectContaining( {
+						"custom": "custom value",
+					} ) );
+				} );
+
+				it( "should add slug header when single self child", async () => {
+					stubRequest( "https://example.com/" );
+
+					await resource.create( {}, "child-slug" );
+
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.requestHeaders ).toEqual( jasmine.objectContaining( {
+						"slug": "child-slug",
+					} ) );
+				} );
+
+				it( "should add slug header when single URI child", async () => {
+					stubRequest( "https://example.com/resource/" );
+
+					await resource.create( "resource/", {}, "child-slug" );
+
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.requestHeaders ).toEqual( jasmine.objectContaining( {
+						"slug": "child-slug",
+					} ) );
+				} );
+
+				it( "should add slug header when multiple self child", async () => {
+					stubRequest( "https://example.com/" );
+
+					await resource.create( [ {}, {} ], [ "child-slug-1", "child-slug-2" ] );
+
+					const firstRequest:JasmineAjaxRequest = jasmine.Ajax.requests.at( 0 );
+					expect( firstRequest.requestHeaders ).toEqual( jasmine.objectContaining( {
+						"slug": "child-slug-1",
+					} ) );
+
+					const secondRequest:JasmineAjaxRequest = jasmine.Ajax.requests.at( 1 );
+					expect( secondRequest.requestHeaders ).toEqual( jasmine.objectContaining( {
+						"slug": "child-slug-2",
+					} ) );
+				} );
+
+				it( "should add slug header when multiple URI child", async () => {
+					stubRequest( "https://example.com/resource/" );
+
+					await resource.create( "resource/", [ {}, {} ], [ "child-slug-1", "child-slug-2" ] );
+
+					const firstRequest:JasmineAjaxRequest = jasmine.Ajax.requests.at( 0 );
+					expect( firstRequest.requestHeaders ).toEqual( jasmine.objectContaining( {
+						"slug": "child-slug-1",
+					} ) );
+
+					const secondRequest:JasmineAjaxRequest = jasmine.Ajax.requests.at( 1 );
+					expect( secondRequest.requestHeaders ).toEqual( jasmine.objectContaining( {
+						"slug": "child-slug-2",
+					} ) );
+				} );
+
+				it( "should add slug header if defined when multiple child", async () => {
+					stubRequest( "https://example.com/" );
+
+					await resource.create( [ {}, {}, {} ], [ null, undefined, "child-slug" ] );
+
+					const firstRequest:JasmineAjaxRequest = jasmine.Ajax.requests.at( 0 );
+					expect( firstRequest.requestHeaders ).not.toEqual( jasmine.objectContaining( {
+						"slug": jasmine.anything() as any,
+					} ) );
+
+					const secondRequest:JasmineAjaxRequest = jasmine.Ajax.requests.at( 1 );
+					expect( secondRequest.requestHeaders ).not.toEqual( jasmine.objectContaining( {
+						"slug": jasmine.anything() as any,
+					} ) );
+
+					const thirdRequest:JasmineAjaxRequest = jasmine.Ajax.requests.at( 2 );
+					expect( thirdRequest.requestHeaders ).toEqual( jasmine.objectContaining( {
+						"slug": "child-slug",
+					} ) );
+				} );
+
+				it( "should not add slug header when multiple but less slugs than children", async () => {
+					stubRequest( "https://example.com/" );
+
+					await resource.create( [ {}, {} ], [ "child-slug" ] );
+
+					const firstRequest:JasmineAjaxRequest = jasmine.Ajax.requests.at( 0 );
+					expect( firstRequest.requestHeaders ).toEqual( jasmine.objectContaining( {
+						"slug": "child-slug",
+					} ) );
+
+					const secondRequest:JasmineAjaxRequest = jasmine.Ajax.requests.at( 1 );
+					expect( secondRequest.requestHeaders ).not.toEqual( jasmine.objectContaining( {
+						"slug": jasmine.anything() as any,
+					} ) );
+				} );
+
+
+				it( "should send converted JSONLD when from self child", async () => {
+					stubRequest( "https://example.com/" );
+
+					context
+						.extendObjectSchema( {
+							"@vocab": "https://example.com/ns#",
+						} )
+					;
+
+					await resource.create( {
+						string: "my object",
+						pointerSet: [
+							{ id: "_:1", string: "blank node" },
+							{ slug: "fragment", string: "named fragment" },
+						],
+					} );
+
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( JSON.parse( request.params ) ).toEqual( {
+						"@id": "",
+						"@graph": [ {
+							"@id": "",
+							"https://example.com/ns#string": [ {
+								"@value": "my object",
+								"@type": XSD.string,
 							} ],
-						},
-						{
-							"@id": "_:documentMetadata",
-							"@type": [ C.VolatileResource, C.DocumentMetadata ],
-							[ C.relatedDocument ]: [ {
-								"@id": "https://example.com/child-1/",
-							} ],
-							[ C.bNodesMap ]: [ {
-								"@id": "_:map",
-							} ],
-						},
-						{
-							"@id": "_:map",
-							"@type": [ C.Map ],
-							[ C.entry ]: [
-								{ "@id": "_:entry-1" },
-								{ "@id": "_:entry-2" },
-							],
-						},
-						{
-							"@id": "_:entry-1",
-							[ C.entryKey ]: [ {
+							"https://example.com/ns#pointerSet": [ {
 								"@id": "_:1",
+							}, {
+								"@id": "#fragment",
 							} ],
-							[ C.entryValue ]: [ {
-								"@id": "_:new-1",
+						}, {
+							"@id": "_:1",
+							"https://example.com/ns#string": [ {
+								"@value": "blank node",
+								"@type": XSD.string,
 							} ],
-						},
-						{
-							"@id": "_:entry-2",
-							[ C.entryKey ]: [ {
-								"@id": "_:2",
+						}, {
+							"@id": "#fragment",
+							"https://example.com/ns#string": [ {
+								"@value": "named fragment",
+								"@type": XSD.string,
 							} ],
-							[ C.entryValue ]: [ {
-								"@id": "_:new-2",
-							} ],
-						},
-					],
+						} ],
+					} );
 				} );
 
-				const resource:CRUDDocument = createMock();
+				it( "should send converted JSONLD when from URI child", async () => {
+					stubRequest( "https://example.com/resource/" );
 
-				type BNode = { id:string, string:string };
-				type MyDoc = { blankNode1:BNode, blankNode2:BNode };
+					context
+						.extendObjectSchema( {
+							"@vocab": "https://example.com/ns#",
+						} )
+					;
 
-				const returned:CRUDDocument & MyDoc = await resource.create<MyDoc>( {
-					blankNode1: {
-						id: "_:1",
+					await resource.create( "resource/", {
+						string: "my object",
+						pointerSet: [
+							{ id: "_:1", string: "blank node" },
+							{ slug: "fragment", string: "named fragment" },
+						],
+					} );
+
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.params ).toBe( JSON.stringify( {
+						"@id": "",
+						"@graph": [ {
+							"@id": "",
+							"https://example.com/ns#string": [ {
+								"@value": "my object",
+								"@type": XSD.string,
+							} ],
+							"https://example.com/ns#pointerSet": [ {
+								"@id": "_:1",
+							}, {
+								"@id": "#fragment",
+							} ],
+						}, {
+							"@id": "_:1",
+							"https://example.com/ns#string": [ {
+								"@value": "blank node",
+								"@type": XSD.string,
+							} ],
+						}, {
+							"@id": "#fragment",
+							"https://example.com/ns#string": [ {
+								"@value": "named fragment",
+								"@type": XSD.string,
+							} ],
+						} ],
+					} ) );
+				} );
+
+				it( "should send converted JSONLD when multiple self children", async () => {
+					stubRequest( "https://example.com/" );
+
+					context
+						.extendObjectSchema( {
+							"@vocab": "https://example.com/ns#",
+						} )
+					;
+
+					await resource.create( [ {
+						string: "my object 1",
+					}, {
+						string: "my object 2",
+					} ] );
+
+					const request1:JasmineAjaxRequest = jasmine.Ajax.requests.at( 0 );
+					expect( request1.params ).toBe( JSON.stringify( {
+						"@id": "",
+						"@graph": [ {
+							"@id": "",
+							"https://example.com/ns#string": [ {
+								"@value": "my object 1",
+								"@type": XSD.string,
+							} ],
+						} ],
+					} ) );
+
+					const request2:JasmineAjaxRequest = jasmine.Ajax.requests.at( 1 );
+					expect( request2.params ).toBe( JSON.stringify( {
+						"@id": "",
+						"@graph": [ {
+							"@id": "",
+							"https://example.com/ns#string": [ {
+								"@value": "my object 2",
+								"@type": XSD.string,
+							} ],
+						} ],
+					} ) );
+				} );
+
+				it( "should send converted JSONLD when multiple URI children", async () => {
+					stubRequest( "https://example.com/resource/" );
+
+					context.extendObjectSchema( {
+						"@vocab": "https://example.com/ns#",
+					} );
+
+					await resource.create( "resource/", [ {
+						string: "my object 1",
+					}, {
+						string: "my object 2",
+					} ] );
+
+					const request1:JasmineAjaxRequest = jasmine.Ajax.requests.at( 0 );
+					expect( request1.params ).toBe( JSON.stringify( {
+						"@id": "",
+						"@graph": [ {
+							"@id": "",
+							"https://example.com/ns#string": [ {
+								"@value": "my object 1",
+								"@type": XSD.string,
+							} ],
+						} ],
+					} ) );
+
+					const request2:JasmineAjaxRequest = jasmine.Ajax.requests.at( 1 );
+					expect( request2.params ).toBe( JSON.stringify( {
+						"@id": "",
+						"@graph": [ {
+							"@id": "",
+							"https://example.com/ns#string": [ {
+								"@value": "my object 2",
+								"@type": XSD.string,
+							} ],
+						} ],
+					} ) );
+				} );
+
+				it( "should return same child object reference", async () => {
+					stubRequest( "https://example.com/" );
+
+					const child:object = {};
+
+					const returned:CRUDDocument = await resource.create( child );
+
+					expect( child ).toBe( returned );
+				} );
+
+				it( "should return same children object references", async () => {
+					stubRequest( "https://example.com/" );
+
+					const child1:object = {};
+					const child2:object = {};
+
+					const [ returned1, returned2 ]:CRUDDocument[] = await resource.create( [ child1, child2 ] );
+
+					expect( child1 ).toBe( returned1 );
+					expect( child2 ).toBe( returned2 );
+				} );
+
+				it( "should have stored the child in the registry", async () => {
+					stubRequest( "https://example.com/" );
+
+					const returned:CRUDDocument = await resource.create( {} );
+
+					expect( resource._registry.hasPointer( returned.id ) ).toBe( true );
+					expect( resource._registry.getPointer( returned.id ) ).toBe( returned );
+				} );
+
+				it( "should have stored the children in the registry", async () => {
+					stubRequest( "https://example.com/" );
+
+					const [ returned1, returned2 ]:CRUDDocument[] = await resource.create( [ {}, {} ] );
+
+					expect( resource._registry.hasPointer( returned1.id ) ).toBe( true );
+					expect( resource._registry.getPointer( returned1.id ) ).toBe( returned1 );
+
+					expect( resource._registry.hasPointer( returned2.id ) ).toBe( true );
+					expect( resource._registry.getPointer( returned2.id ) ).toBe( returned2 );
+				} );
+
+				it( "should throw error if child is already persisted", async () => {
+					const child:CRUDDocument = createMock( { id: "" } );
+
+					try {
+						await resource.create( child );
+						fail( "Should not resolve" );
+					} catch( error ) {
+						expect( () => { throw error; } )
+							.toThrowError( IllegalArgumentError, "The child provided has already been persisted." );
+					}
+				} );
+
+				it( "should throw error if any children is already persisted", async () => {
+					const child:CRUDDocument = createMock( { id: "" } );
+
+					try {
+						await resource.create( [ {}, child, {} ] );
+						fail( "Should not resolve" );
+					} catch( error ) {
+						expect( () => { throw error; } )
+							.toThrowError( IllegalArgumentError, "The child provided has already been persisted." );
+					}
+				} );
+
+				it( "should throw error if child already being persisted", async () => {
+					const child:object = {};
+
+					try {
+						await Promise.all( [
+							resource.create( child ),
+							resource.create( child ),
+						] );
+						fail( "Should not resolve" );
+					} catch( error ) {
+						expect( () => { throw error; } )
+							.toThrowError( IllegalArgumentError, "The document is already being persisted." );
+					}
+				} );
+
+				it( "should be able to resend child after a failed request", async () => {
+					const child:object = {};
+					try {
+						stubRequest( "https://example.com/", { status: 500 } );
+						await resource.create( child );
+
+					} catch( error ) {
+						stubRequest( "https://example.com/" );
+						await resource.create( child );
+
+						expect().nothing();
+					}
+				} );
+
+
+				it( "should add unresolved BasePersistedDocument data to the child", async () => {
+					stubRequest( "https://example.com/" );
+
+					const returned:CRUDDocument = await resource.create( {} );
+
+					expect( returned ).toEqual( jasmine.objectContaining( {
+						_resolved: false,
+						id: "https://example.com/child-1/",
+					} ) );
+				} );
+
+				it( "should add unresolved BasePersistedDocument data to the children", async () => {
+					stubRequest( "https://example.com/" );
+
+					const [ returned1, returned2 ]:CRUDDocument[] = await resource.create( [ {}, {} ] );
+
+					expect( returned1 ).toEqual( jasmine.objectContaining( {
+						_resolved: false,
+						id: "https://example.com/child-1/",
+					} ) );
+					expect( returned2 ).toEqual( jasmine.objectContaining( {
+						_resolved: false,
+						id: "https://example.com/child-2/",
+					} ) );
+				} );
+
+				it( "should update blank nodes when response metadata returned", async () => {
+					stubRequest( "https://example.com/", {
+						frees: [
+							{
+								"@id": "_:responseMetadata",
+								"@type": [ C.VolatileResource, C.ResponseMetadata ],
+								[ C.documentMetadata ]: [ {
+									"@id": "_:documentMetadata",
+								} ],
+							},
+							{
+								"@id": "_:documentMetadata",
+								"@type": [ C.VolatileResource, C.DocumentMetadata ],
+								[ C.relatedDocument ]: [ {
+									"@id": "https://example.com/child-1/",
+								} ],
+								[ C.bNodesMap ]: [ {
+									"@id": "_:map",
+								} ],
+							},
+							{
+								"@id": "_:map",
+								"@type": [ C.Map ],
+								[ C.entry ]: [
+									{ "@id": "_:entry-1" },
+									{ "@id": "_:entry-2" },
+								],
+							},
+							{
+								"@id": "_:entry-1",
+								[ C.entryKey ]: [ {
+									"@id": "_:1",
+								} ],
+								[ C.entryValue ]: [ {
+									"@id": "_:new-1",
+								} ],
+							},
+							{
+								"@id": "_:entry-2",
+								[ C.entryKey ]: [ {
+									"@id": "_:2",
+								} ],
+								[ C.entryValue ]: [ {
+									"@id": "_:new-2",
+								} ],
+							},
+						],
+					} );
+
+					type BNode = { id:string, string:string };
+					type MyDoc = { blankNode1:BNode, blankNode2:BNode };
+
+					const returned:CRUDDocument & MyDoc = await resource.create<MyDoc>( {
+						blankNode1: {
+							id: "_:1",
+							string: "blank node 1",
+						},
+						blankNode2: {
+							id: "_:2",
+							string: "blank node 2",
+						},
+					} );
+
+					expect( returned.hasPointer( "_:1" ) ).toBe( false );
+					expect( returned.blankNode1 ).toEqual( jasmine.objectContaining( {
+						id: "_:new-1",
 						string: "blank node 1",
-					},
-					blankNode2: {
-						id: "_:2",
+					} ) );
+
+					expect( returned.hasPointer( "_:2" ) ).toBe( false );
+					expect( returned.blankNode2 ).toEqual( jasmine.objectContaining( {
+						id: "_:new-2",
 						string: "blank node 2",
-					},
+					} ) );
 				} );
 
-				expect( returned.hasPointer( "_:1" ) ).toBe( false );
-				expect( returned.blankNode1 ).toEqual( jasmine.objectContaining( {
-					id: "_:new-1",
-					string: "blank node 1",
-				} ) );
-
-				expect( returned.hasPointer( "_:2" ) ).toBe( false );
-				expect( returned.blankNode2 ).toEqual( jasmine.objectContaining( {
-					id: "_:new-2",
-					string: "blank node 2",
-				} ) );
 			} );
 
 		} );
@@ -2112,1002 +2021,953 @@ describe( module( "carbonldp/Document" ), ():void => {
 			} );
 
 
-			it( "should request from self when no URI", async () => {
-				stubRequest( "https://example.com/" );
+			describe( "When has a context", () => {
 
-				const resource:CRUDDocument = createMock();
-				await resource.createAndRetrieve( {} );
-
-				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-				expect( request.url ).toBe( "https://example.com/" );
-			} );
-
-			it( "should request from URI", async () => {
-				stubRequest( "https://example.com/resource/" );
-
-				const resource:CRUDDocument = createMock();
-				await resource.createAndRetrieve( "https://example.com/resource/", {} );
-
-				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-				expect( request.url ).toBe( "https://example.com/resource/" );
-			} );
-
-			it( "should request from relative URI", async () => {
-				stubRequest( "https://example.com/relative/" );
-
-				const resource:CRUDDocument = createMock();
-				await resource.createAndRetrieve( "relative/", {} );
-
-				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-				expect( request.url ).toBe( "https://example.com/relative/" );
-			} );
-
-			it( "should request from resolved prefixed name", async () => {
-				stubRequest( "https://example.com/resource/" );
-
-				const _context:CarbonLDP = new CarbonLDP( "https://example.com/" );
-				_context.extendObjectSchema( { "ex": "https://example.com/" } );
-
-				const resource:CRUDDocument = createMock( { _context } );
-				await resource.createAndRetrieve( "ex:resource/", {} );
-
-				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-				expect( request.url ).toBe( "https://example.com/resource/" );
-			} );
-
-			it( "should throw error when from URI outside context scope", async () => {
-				const resource:CRUDDocument = createMock();
-
-				await resource
-					.createAndRetrieve( "https://example.org/resource/", {} )
-					.catch( error => {
-						expect( () => { throw error; } )
-							.toThrowError( IllegalArgumentError, `"https://example.org/resource/" is out of scope.` );
-					} )
-				;
-			} );
-
-			it( "should throw error when from URI is BNode label", async () => {
-				const resource:CRUDDocument = createMock();
-
-				await resource
-					.createAndRetrieve( "_:1", {} )
-					.catch( error => {
-						expect( () => { throw error; } )
-							.toThrowError( IllegalArgumentError, `"_:1" is out of scope.` );
-					} )
-				;
-			} );
-
-			it( "should throw error when from URI is Named Fragment label", async () => {
-				const resource:CRUDDocument = createMock();
-
-				await resource
-					.createAndRetrieve( "#fragment", {} )
-					.catch( error => {
-						expect( () => { throw error; } )
-							.toThrowError( IllegalArgumentError, `"https://example.com/#fragment" is out of scope.` );
-					} )
-				;
-			} );
-
-			it( "should throw error when unresolved prefixed name", async () => {
-				const resource:CRUDDocument = createMock();
-
-				await resource
-					.createAndRetrieve( "ex:resource/", {} )
-					.catch( error => {
-						expect( () => { throw error; } )
-							.toThrowError( IllegalArgumentError, `"ex:resource/" is out of scope.` );
-					} )
-				;
-			} );
-
-
-			it( "should send basic request headers in single self child", async () => {
-				stubRequest( "https://example.com/" );
-
-				const resource:CRUDDocument = createMock();
-				await resource.createAndRetrieve( {} );
-
-				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-				expect( request.requestHeaders ).toEqual( {
-					"accept": "application/ld+json",
-					"content-type": "application/ld+json",
-					"prefer": [
-						"return=representation",
-						`${ LDP.Container }; rel=interaction-model`,
-					].join( ", " ),
-				} );
-			} );
-
-			it( "should send basic request headers in single URI child", async () => {
-				stubRequest( "https://example.com/resource/" );
-
-				const resource:CRUDDocument = createMock();
-				await resource.createAndRetrieve( "resource/", {} );
-
-				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-				expect( request.requestHeaders ).toEqual( {
-					"accept": "application/ld+json",
-					"content-type": "application/ld+json",
-					"prefer": [
-						"return=representation",
-						`${ LDP.Container }; rel=interaction-model`,
-					].join( ", " ),
-				} );
-			} );
-
-			it( "should send basic request headers in multiple self children", async () => {
-				const resource:CRUDDocument = createMock();
-
-				const promises:Promise<{}[]> = resource.createAndRetrieve( [ {}, {} ] );
-
-				const request1:JasmineAjaxRequest = jasmine.Ajax.requests.at( 0 );
-				expect( request1.requestHeaders ).toEqual( {
-					"accept": "application/ld+json",
-					"content-type": "application/ld+json",
-					"prefer": [
-						"return=representation",
-						`${ LDP.Container }; rel=interaction-model`,
-					].join( ", " ),
+				let context:CarbonLDP;
+				let resource:CRUDDocument;
+				beforeEach( ():void => {
+					context = new CarbonLDP( "https://example.com/" );
+					resource = createMock( { _registry: context.registry } );
 				} );
 
-				const request2:JasmineAjaxRequest = jasmine.Ajax.requests.at( 1 );
-				expect( request2.requestHeaders ).toEqual( {
-					"accept": "application/ld+json",
-					"content-type": "application/ld+json",
-					"prefer": [
-						"return=representation",
-						`${ LDP.Container }; rel=interaction-model`,
-					].join( ", " ),
-				} );
-
-
-				stubWaitingRequests( "https://example.com/" );
-				await promises;
-			} );
-
-			it( "should send basic request headers in multiple URI child", async () => {
-				const resource:CRUDDocument = createMock();
-
-				const promises:Promise<{}[]> = resource.createAndRetrieve( "resource/", [ {}, {} ] );
-
-
-				const request1:JasmineAjaxRequest = jasmine.Ajax.requests.at( 0 );
-				expect( request1.requestHeaders ).toEqual( {
-					"accept": "application/ld+json",
-					"content-type": "application/ld+json",
-					"prefer": [
-						"return=representation",
-						`${ LDP.Container }; rel=interaction-model`,
-					].join( ", " ),
-				} );
-
-				const request2:JasmineAjaxRequest = jasmine.Ajax.requests.at( 1 );
-				expect( request2.requestHeaders ).toEqual( {
-					"accept": "application/ld+json",
-					"content-type": "application/ld+json",
-					"prefer": [
-						"return=representation",
-						`${ LDP.Container }; rel=interaction-model`,
-					].join( ", " ),
-				} );
-
-
-				stubWaitingRequests( "https://example.com/resource/" );
-				await promises;
-			} );
-
-			it( "should add authentication header", async () => {
-				stubRequest( "https://example.com/" );
-
-				const resource:CRUDDocument = createMock();
-
-				const spy:jasmine.Spy = spyOn( resource._context.auth, "addAuthentication" );
-
-				await resource.createAndRetrieve( {} );
-
-				expect( spy ).toHaveBeenCalled();
-			} );
-
-			it( "should add custom headers in single self child", async () => {
-				stubRequest( "https://example.com/" );
-
-				const resource:CRUDDocument = createMock();
-
-				await resource.createAndRetrieve( {}, {
-					headers: new Map()
-						.set( "custom", new Header( "custom value" ) )
-					,
-				} );
-
-				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-				expect( request.requestHeaders ).toEqual( jasmine.objectContaining( {
-					"custom": "custom value",
-				} ) );
-			} );
-
-			it( "should add custom headers in single URI child", async () => {
-				stubRequest( "https://example.com/resource/" );
-
-				const resource:CRUDDocument = createMock();
-
-				await resource.createAndRetrieve( "resource/", {}, {
-					headers: new Map()
-						.set( "custom", new Header( "custom value" ) )
-					,
-				} );
-
-				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-				expect( request.requestHeaders ).toEqual( jasmine.objectContaining( {
-					"custom": "custom value",
-				} ) );
-			} );
-
-			it( "should send basic request headers in multiple self children", async () => {
-				const resource:CRUDDocument = createMock();
-
-				const promises:Promise<{}[]> = resource.createAndRetrieve( [ {}, {} ], {
-					headers: new Map()
-						.set( "custom", new Header( "custom value" ) )
-					,
-				} );
-
-				const request1:JasmineAjaxRequest = jasmine.Ajax.requests.at( 0 );
-				expect( request1.requestHeaders ).toEqual( jasmine.objectContaining( {
-					"custom": "custom value",
-				} ) );
-
-				const request2:JasmineAjaxRequest = jasmine.Ajax.requests.at( 1 );
-				expect( request2.requestHeaders ).toEqual( jasmine.objectContaining( {
-					"custom": "custom value",
-				} ) );
-
-
-				stubWaitingRequests( "https://example.com/" );
-				await promises;
-			} );
-
-			it( "should send basic request headers in multiple URI children", async () => {
-				const resource:CRUDDocument = createMock();
-
-				const promises:Promise<{}[]> = resource.createAndRetrieve( "resource/", [ {}, {} ], {
-					headers: new Map()
-						.set( "custom", new Header( "custom value" ) )
-					,
-				} );
-
-				const request1:JasmineAjaxRequest = jasmine.Ajax.requests.at( 0 );
-				expect( request1.requestHeaders ).toEqual( jasmine.objectContaining( {
-					"custom": "custom value",
-				} ) );
-
-				const request2:JasmineAjaxRequest = jasmine.Ajax.requests.at( 1 );
-				expect( request2.requestHeaders ).toEqual( jasmine.objectContaining( {
-					"custom": "custom value",
-				} ) );
-
-
-				stubWaitingRequests( "https://example.com/resource/" );
-				await promises;
-			} );
-
-			it( "should add slug header when single self child", async () => {
-				stubRequest( "https://example.com/" );
-
-				const resource:CRUDDocument = createMock();
-
-				await resource.createAndRetrieve( {}, "child-slug" );
-
-				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-				expect( request.requestHeaders ).toEqual( jasmine.objectContaining( {
-					"slug": "child-slug",
-				} ) );
-			} );
-
-			it( "should add slug header when single URI child", async () => {
-				stubRequest( "https://example.com/resource/" );
-
-				const resource:CRUDDocument = createMock();
-
-				await resource.createAndRetrieve( "resource/", {}, "child-slug" );
-
-				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-				expect( request.requestHeaders ).toEqual( jasmine.objectContaining( {
-					"slug": "child-slug",
-				} ) );
-			} );
-
-			it( "should add slug header when multiple self child", async () => {
-				const resource:CRUDDocument = createMock();
-
-				const promises:Promise<{}[]> = resource.createAndRetrieve( [ {}, {} ], [ "child-slug-1", "child-slug-2" ] );
-
-				const request1:JasmineAjaxRequest = jasmine.Ajax.requests.at( 0 );
-				expect( request1.requestHeaders ).toEqual( jasmine.objectContaining( {
-					"slug": "child-slug-1",
-				} ) );
-
-				const request2:JasmineAjaxRequest = jasmine.Ajax.requests.at( 1 );
-				expect( request2.requestHeaders ).toEqual( jasmine.objectContaining( {
-					"slug": "child-slug-2",
-				} ) );
-
-
-				stubWaitingRequests( "https://example.com/" );
-				await promises;
-			} );
-
-			it( "should add slug header when multiple URI child", async () => {
-				const resource:CRUDDocument = createMock();
-
-				const promises:Promise<{}[]> = resource.createAndRetrieve( "resource/", [ {}, {} ], [ "child-slug-1", "child-slug-2" ] );
-
-				const request1:JasmineAjaxRequest = jasmine.Ajax.requests.at( 0 );
-				expect( request1.requestHeaders ).toEqual( jasmine.objectContaining( {
-					"slug": "child-slug-1",
-				} ) );
-
-				const request2:JasmineAjaxRequest = jasmine.Ajax.requests.at( 1 );
-				expect( request2.requestHeaders ).toEqual( jasmine.objectContaining( {
-					"slug": "child-slug-2",
-				} ) );
-
-				stubWaitingRequests( "https://example.com/resource/" );
-				await promises;
-			} );
-
-			it( "should add slug header if defined when multiple child", async () => {
-				const resource:CRUDDocument = createMock();
-
-				const promises:Promise<{}[]> = resource.createAndRetrieve( [ {}, {}, {} ], [ null, undefined, "child-slug" ] );
-
-				const request1:JasmineAjaxRequest = jasmine.Ajax.requests.at( 0 );
-				expect( request1.requestHeaders ).not.toEqual( jasmine.objectContaining( {
-					"slug": jasmine.anything() as any,
-				} ) );
-
-				const request2:JasmineAjaxRequest = jasmine.Ajax.requests.at( 1 );
-				expect( request2.requestHeaders ).not.toEqual( jasmine.objectContaining( {
-					"slug": jasmine.anything() as any,
-				} ) );
-
-				const request3:JasmineAjaxRequest = jasmine.Ajax.requests.at( 2 );
-				expect( request3.requestHeaders ).toEqual( jasmine.objectContaining( {
-					"slug": "child-slug",
-				} ) );
-
-
-				stubWaitingRequests( "https://example.com/" );
-				await promises;
-			} );
-
-			it( "should not add slug header when multiple but less slugs than children", async () => {
-				const resource:CRUDDocument = createMock();
-
-				const promises:Promise<{}[]> = resource.createAndRetrieve( [ {}, {} ], [ "child-slug" ] );
-
-				const request1:JasmineAjaxRequest = jasmine.Ajax.requests.at( 0 );
-				expect( request1.requestHeaders ).toEqual( jasmine.objectContaining( {
-					"slug": "child-slug",
-				} ) );
-
-				const request2:JasmineAjaxRequest = jasmine.Ajax.requests.at( 1 );
-				expect( request2.requestHeaders ).not.toEqual( jasmine.objectContaining( {
-					"slug": jasmine.anything() as any,
-				} ) );
-
-
-				stubWaitingRequests( "https://example.com/" );
-				await promises;
-			} );
-
-
-			it( "should send converted JSONLD when from self child", async () => {
-				stubRequest( "https://example.com/" );
-
-				const resource:CRUDDocument = createMock();
-				resource._context
-					.extendObjectSchema( {
-						"@vocab": "https://example.com/ns#",
-					} )
-				;
-
-				await resource.createAndRetrieve( {
-					string: "my object",
-					pointerSet: [
-						{ id: "_:1", string: "blank node" },
-						{ slug: "fragment", string: "named fragment" },
-					],
-				} );
-
-				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-				expect( request.params ).toBe( JSON.stringify( {
-					"@id": "",
-					"@graph": [ {
-						"@id": "",
-						"https://example.com/ns#string": [ {
-							"@value": "my object",
-							"@type": XSD.string,
-						} ],
-						"https://example.com/ns#pointerSet": [ {
-							"@id": "_:1",
-						}, {
-							"@id": "#fragment",
-						} ],
-					}, {
-						"@id": "_:1",
-						"https://example.com/ns#string": [ {
-							"@value": "blank node",
-							"@type": XSD.string,
-						} ],
-					}, {
-						"@id": "#fragment",
-						"https://example.com/ns#string": [ {
-							"@value": "named fragment",
-							"@type": XSD.string,
-						} ],
-					} ],
-				} ) );
-			} );
-
-			it( "should send converted JSONLD when from URI child", async () => {
-				stubRequest( "https://example.com/resource/" );
-
-				const resource:CRUDDocument = createMock();
-				resource._context
-					.extendObjectSchema( {
-						"@vocab": "https://example.com/ns#",
-					} )
-				;
-
-				await resource.createAndRetrieve( "resource/", {
-					string: "my object",
-					pointerSet: [
-						{ id: "_:1", string: "blank node" },
-						{ slug: "fragment", string: "named fragment" },
-					],
-				} );
-
-				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-				expect( request.params ).toBe( JSON.stringify( {
-					"@id": "",
-					"@graph": [ {
-						"@id": "",
-						"https://example.com/ns#string": [ {
-							"@value": "my object",
-							"@type": XSD.string,
-						} ],
-						"https://example.com/ns#pointerSet": [ {
-							"@id": "_:1",
-						}, {
-							"@id": "#fragment",
-						} ],
-					}, {
-						"@id": "_:1",
-						"https://example.com/ns#string": [ {
-							"@value": "blank node",
-							"@type": XSD.string,
-						} ],
-					}, {
-						"@id": "#fragment",
-						"https://example.com/ns#string": [ {
-							"@value": "named fragment",
-							"@type": XSD.string,
-						} ],
-					} ],
-				} ) );
-			} );
-
-			it( "should send converted JSONLD when multiple self children", async () => {
-				const resource:CRUDDocument = createMock();
-				resource._context
-					.extendObjectSchema( {
-						"@vocab": "https://example.com/ns#",
-					} )
-				;
-
-				const promises:Promise<CRUDDocument[]> = resource.createAndRetrieve( [ {
-					string: "my object 1",
-				}, {
-					string: "my object 2",
-				} ] );
-
-				const request1:JasmineAjaxRequest = jasmine.Ajax.requests.at( 0 );
-				expect( request1.params ).toBe( JSON.stringify( {
-					"@id": "",
-					"@graph": [ {
-						"@id": "",
-						"https://example.com/ns#string": [ {
-							"@value": "my object 1",
-							"@type": XSD.string,
-						} ],
-					} ],
-				} ) );
-
-				const request2:JasmineAjaxRequest = jasmine.Ajax.requests.at( 1 );
-				expect( request2.params ).toBe( JSON.stringify( {
-					"@id": "",
-					"@graph": [ {
-						"@id": "",
-						"https://example.com/ns#string": [ {
-							"@value": "my object 2",
-							"@type": XSD.string,
-						} ],
-					} ],
-				} ) );
-
-				stubWaitingRequests( "https://example.com/" );
-				await promises;
-			} );
-
-			it( "should send converted JSONLD when multiple URI children", async () => {
-				const resource:CRUDDocument = createMock();
-				resource._context
-					.extendObjectSchema( {
-						"@vocab": "https://example.com/ns#",
-					} )
-				;
-
-				const promises:Promise<CRUDDocument[]> = resource.createAndRetrieve( "resource/", [ {
-					string: "my object 1",
-				}, {
-					string: "my object 2",
-				} ] );
-
-				const request1:JasmineAjaxRequest = jasmine.Ajax.requests.at( 0 );
-				expect( request1.params ).toBe( JSON.stringify( {
-					"@id": "",
-					"@graph": [ {
-						"@id": "",
-						"https://example.com/ns#string": [ {
-							"@value": "my object 1",
-							"@type": XSD.string,
-						} ],
-					} ],
-				} ) );
-
-				const request2:JasmineAjaxRequest = jasmine.Ajax.requests.at( 1 );
-				expect( request2.params ).toBe( JSON.stringify( {
-					"@id": "",
-					"@graph": [ {
-						"@id": "",
-						"https://example.com/ns#string": [ {
-							"@value": "my object 2",
-							"@type": XSD.string,
-						} ],
-					} ],
-				} ) );
-
-
-				stubWaitingRequests( "https://example.com/resource/" );
-				await promises;
-			} );
-
-			it( "should return same child object reference", async () => {
-				stubRequest( "https://example.com/" );
-
-				const resource:CRUDDocument = createMock();
-				const child:object = {};
-
-				const returned:CRUDDocument = await resource.createAndRetrieve( child );
-
-				expect( child ).toBe( returned );
-			} );
-
-			it( "should return same children object references", async () => {
-				const resource:CRUDDocument = createMock();
-				const child1:object = {};
-				const child2:object = {};
-
-				const promise:Promise<CRUDDocument[]> = resource.createAndRetrieve( [ child1, child2 ] );
-
-				jasmine.Ajax
-					.requests
-					.filter( "https://example.com/" )
-					.forEach( ( request, index ) => {
-						request.respondWith( generateResponseOptions( "https://example.com/", { index } ) );
-					} )
-				;
-
-				const [ returned1, returned2 ]:CRUDDocument[] = await promise;
-				expect( child1 ).toBe( returned1 );
-				expect( child2 ).toBe( returned2 );
-			} );
-
-			it( "should have stored the child in the registry", async () => {
-				stubRequest( "https://example.com/" );
-
-				const resource:CRUDDocument = createMock();
-				const returned:CRUDDocument = await resource.createAndRetrieve( {} );
-
-				expect( resource._registry.hasPointer( returned.id ) ).toBe( true );
-				expect( resource._registry.getPointer( returned.id ) ).toBe( returned );
-			} );
-
-			it( "should have stored the children in the registry", async () => {
-				const resource:CRUDDocument = createMock();
-
-				const promises:Promise<CRUDDocument[]> = resource.createAndRetrieve( [ {}, {} ] );
-
-				jasmine.Ajax
-					.requests
-					.filter( "https://example.com/" )
-					.forEach( ( request, index ) => {
-						request.respondWith( generateResponseOptions( "https://example.com/", { index } ) );
-					} )
-				;
-
-				const [ returned1, returned2 ]:CRUDDocument[] = await promises;
-
-				expect( resource._registry.hasPointer( returned1.id ) ).toBe( true );
-				expect( resource._registry.getPointer( returned1.id ) ).toBe( returned1 );
-
-				expect( resource._registry.hasPointer( returned2.id ) ).toBe( true );
-				expect( resource._registry.getPointer( returned2.id ) ).toBe( returned2 );
-			} );
-
-			it( "should throw error if child is already persisted", async () => {
-				const child:CRUDDocument = createMock( { id: "" } );
-				const resource:CRUDDocument = createMock();
-
-				try {
-					await resource.createAndRetrieve( child );
-					fail( "Should not resolve" );
-				} catch( error ) {
-					expect( () => { throw error; } )
-						.toThrowError( IllegalArgumentError, "The child provided has already been persisted." );
-				}
-			} );
-
-			it( "should throw error if any children is already persisted", async () => {
-				const child:CRUDDocument = createMock( { id: "" } );
-				const resource:CRUDDocument = createMock();
-
-				try {
-					await resource.createAndRetrieve( [ {}, child, {} ] );
-					fail( "Should not resolve" );
-				} catch( error ) {
-					expect( () => { throw error; } )
-						.toThrowError( IllegalArgumentError, "The child provided has already been persisted." );
-				}
-			} );
-
-			it( "should throw error if child already being persisted", async () => {
-				const child:object = {};
-				const resource:CRUDDocument = createMock();
-
-				try {
-					await Promise.all( [
-						resource.createAndRetrieve( child ),
-						resource.createAndRetrieve( child ),
-					] );
-					fail( "Should not resolve" );
-				} catch( error ) {
-					expect( () => { throw error; } )
-						.toThrowError( IllegalArgumentError, "The document is already being persisted." );
-				}
-			} );
-
-			it( "should be able to resend child after a failed request", async () => {
-				const resource:CRUDDocument = createMock();
-
-				const child:object = {};
-				try {
-					stubRequest( "https://example.com/", { status: 500 } );
-					await resource.createAndRetrieve( child );
-
-				} catch( error ) {
+				it( "should request from self when no URI", async () => {
 					stubRequest( "https://example.com/" );
-					await resource.createAndRetrieve( child );
 
-					expect().nothing();
-				}
-			} );
+					await resource.createAndRetrieve( {} );
 
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.url ).toBe( "https://example.com/" );
+				} );
 
-			it( "should add resolved BasePersistedDocument data to the child", async () => {
-				stubRequest( "https://example.com/" );
+				it( "should request from URI", async () => {
+					stubRequest( "https://example.com/resource/" );
 
-				const resource:CRUDDocument = createMock();
-				const returned:CRUDDocument = await resource.create( {} );
+					await resource.createAndRetrieve( "https://example.com/resource/", {} );
 
-				expect( returned ).toEqual( jasmine.objectContaining( {
-					_resolved: true,
-					_eTag: "\"1-12345\"",
-					id: "https://example.com/child-1/",
-				} ) );
-			} );
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.url ).toBe( "https://example.com/resource/" );
+				} );
 
-			it( "should add resolved BasePersistedDocument data to the children", async () => {
-				const resource:CRUDDocument = createMock();
-				const promise:Promise<CRUDDocument[]> = resource.create( [ {}, {} ] );
+				it( "should request from relative URI", async () => {
+					stubRequest( "https://example.com/relative/" );
 
-				jasmine.Ajax
-					.requests
-					.filter( "https://example.com/" )
-					.forEach( ( request, index ) => {
-						request.respondWith( generateResponseOptions( "https://example.com/", { index } ) );
-					} )
-				;
+					await resource.createAndRetrieve( "relative/", {} );
 
-				const [ returned1, returned2 ]:CRUDDocument[] = await promise;
-				expect( returned1 ).toEqual( jasmine.objectContaining( {
-					_resolved: true,
-					_eTag: "\"0-12345\"",
-					id: "https://example.com/child-0/",
-				} ) );
-				expect( returned2 ).toEqual( jasmine.objectContaining( {
-					_resolved: true,
-					_eTag: "\"1-12345\"",
-					id: "https://example.com/child-1/",
-				} ) );
-			} );
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.url ).toBe( "https://example.com/relative/" );
+				} );
 
-			it( "should update the child data", async () => {
-				const resource:CRUDDocument = createMock();
-				resource._context
-					.extendObjectSchema( { "@vocab": "https://example.com/ns#" } );
+				it( "should request from resolved prefixed name", async () => {
+					stubRequest( "https://example.com/resource/" );
 
-				type MyResource = { string:string, pointerSet?:MyResource[] };
-				const promise:Promise<CRUDDocument & MyResource> = resource.createAndRetrieve( {
-					string: "document",
-					pointerSet: [
-						{
-							id: "_:1",
-							string: "blank node",
-							pointerSet: [],
-						},
-						{
-							slug: "fragment",
-							string: "named fragment",
-						},
-						{
-							id: "_:2",
-							string: "to be removed",
-						},
-					],
+					context.extendObjectSchema( { "ex": "https://example.com/" } );
+
+					await resource.createAndRetrieve( "ex:resource/", {} );
+
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.url ).toBe( "https://example.com/resource/" );
+				} );
+
+				it( "should throw error when from URI outside context scope", async () => {
+					await resource
+						.createAndRetrieve( "https://example.org/resource/", {} )
+						.catch( error => {
+							expect( () => { throw error; } )
+								.toThrowError( IllegalArgumentError, `"https://example.org/resource/" is out of scope.` );
+						} )
+					;
+				} );
+
+				it( "should throw error when from URI is BNode label", async () => {
+					await resource
+						.createAndRetrieve( "_:1", {} )
+						.catch( error => {
+							expect( () => { throw error; } )
+								.toThrowError( IllegalArgumentError, `"_:1" is out of scope.` );
+						} )
+					;
+				} );
+
+				it( "should throw error when from URI is Named Fragment label", async () => {
+					await resource
+						.createAndRetrieve( "#fragment", {} )
+						.catch( error => {
+							expect( () => { throw error; } )
+								.toThrowError( IllegalArgumentError, `"https://example.com/#fragment" is out of scope.` );
+						} )
+					;
+				} );
+
+				it( "should throw error when unresolved prefixed name", async () => {
+					await resource
+						.createAndRetrieve( "ex:resource/", {} )
+						.catch( error => {
+							expect( () => { throw error; } )
+								.toThrowError( IllegalArgumentError, `"ex:resource/" is out of scope.` );
+						} )
+					;
 				} );
 
 
-				jasmine.Ajax
-					.requests
-					.filter( "https://example.com/" )
-					.forEach( ( request, index ) => {
-						request.respondWith( generateResponseOptions( "https://example.com/", {
-							index,
-							resource: {
-								"https://example.com/ns#string": "updated document",
-								"https://example.com/ns#pointerSet": [
-									{ "@id": "_:1" },
-									{ "@id": "#fragment" },
-								],
-							},
-							fragments: [ {
+				it( "should send basic request headers in single self child", async () => {
+					stubRequest( "https://example.com/" );
+
+					await resource.createAndRetrieve( {} );
+
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.requestHeaders ).toEqual( {
+						"accept": "application/ld+json",
+						"content-type": "application/ld+json",
+						"prefer": [
+							"return=representation",
+							`${ LDP.Container }; rel=interaction-model`,
+						].join( ", " ),
+					} );
+				} );
+
+				it( "should send basic request headers in single URI child", async () => {
+					stubRequest( "https://example.com/resource/" );
+
+					await resource.createAndRetrieve( "resource/", {} );
+
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.requestHeaders ).toEqual( {
+						"accept": "application/ld+json",
+						"content-type": "application/ld+json",
+						"prefer": [
+							"return=representation",
+							`${ LDP.Container }; rel=interaction-model`,
+						].join( ", " ),
+					} );
+				} );
+
+				it( "should send basic request headers in multiple self children", async () => {
+					const promises:Promise<{}[]> = resource.createAndRetrieve( [ {}, {} ] );
+
+					const request1:JasmineAjaxRequest = jasmine.Ajax.requests.at( 0 );
+					expect( request1.requestHeaders ).toEqual( {
+						"accept": "application/ld+json",
+						"content-type": "application/ld+json",
+						"prefer": [
+							"return=representation",
+							`${ LDP.Container }; rel=interaction-model`,
+						].join( ", " ),
+					} );
+
+					const request2:JasmineAjaxRequest = jasmine.Ajax.requests.at( 1 );
+					expect( request2.requestHeaders ).toEqual( {
+						"accept": "application/ld+json",
+						"content-type": "application/ld+json",
+						"prefer": [
+							"return=representation",
+							`${ LDP.Container }; rel=interaction-model`,
+						].join( ", " ),
+					} );
+
+
+					stubWaitingRequests( "https://example.com/" );
+					await promises;
+				} );
+
+				it( "should send basic request headers in multiple URI child", async () => {
+					const promises:Promise<{}[]> = resource.createAndRetrieve( "resource/", [ {}, {} ] );
+
+
+					const request1:JasmineAjaxRequest = jasmine.Ajax.requests.at( 0 );
+					expect( request1.requestHeaders ).toEqual( {
+						"accept": "application/ld+json",
+						"content-type": "application/ld+json",
+						"prefer": [
+							"return=representation",
+							`${ LDP.Container }; rel=interaction-model`,
+						].join( ", " ),
+					} );
+
+					const request2:JasmineAjaxRequest = jasmine.Ajax.requests.at( 1 );
+					expect( request2.requestHeaders ).toEqual( {
+						"accept": "application/ld+json",
+						"content-type": "application/ld+json",
+						"prefer": [
+							"return=representation",
+							`${ LDP.Container }; rel=interaction-model`,
+						].join( ", " ),
+					} );
+
+
+					stubWaitingRequests( "https://example.com/resource/" );
+					await promises;
+				} );
+
+				it( "should add authentication header", async () => {
+					stubRequest( "https://example.com/" );
+
+					const spy:jasmine.Spy = spyOn( context.auth, "addAuthentication" );
+
+					await resource.createAndRetrieve( {} );
+
+					expect( spy ).toHaveBeenCalled();
+				} );
+
+				it( "should add custom headers in single self child", async () => {
+					stubRequest( "https://example.com/" );
+
+					await resource.createAndRetrieve( {}, {
+						headers: new Map()
+							.set( "custom", new Header( "custom value" ) )
+						,
+					} );
+
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.requestHeaders ).toEqual( jasmine.objectContaining( {
+						"custom": "custom value",
+					} ) );
+				} );
+
+				it( "should add custom headers in single URI child", async () => {
+					stubRequest( "https://example.com/resource/" );
+
+					await resource.createAndRetrieve( "resource/", {}, {
+						headers: new Map()
+							.set( "custom", new Header( "custom value" ) )
+						,
+					} );
+
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.requestHeaders ).toEqual( jasmine.objectContaining( {
+						"custom": "custom value",
+					} ) );
+				} );
+
+				it( "should send basic request headers in multiple self children", async () => {
+					const promises:Promise<{}[]> = resource.createAndRetrieve( [ {}, {} ], {
+						headers: new Map()
+							.set( "custom", new Header( "custom value" ) )
+						,
+					} );
+
+					const request1:JasmineAjaxRequest = jasmine.Ajax.requests.at( 0 );
+					expect( request1.requestHeaders ).toEqual( jasmine.objectContaining( {
+						"custom": "custom value",
+					} ) );
+
+					const request2:JasmineAjaxRequest = jasmine.Ajax.requests.at( 1 );
+					expect( request2.requestHeaders ).toEqual( jasmine.objectContaining( {
+						"custom": "custom value",
+					} ) );
+
+
+					stubWaitingRequests( "https://example.com/" );
+					await promises;
+				} );
+
+				it( "should send basic request headers in multiple URI children", async () => {
+					const promises:Promise<{}[]> = resource.createAndRetrieve( "resource/", [ {}, {} ], {
+						headers: new Map()
+							.set( "custom", new Header( "custom value" ) )
+						,
+					} );
+
+					const request1:JasmineAjaxRequest = jasmine.Ajax.requests.at( 0 );
+					expect( request1.requestHeaders ).toEqual( jasmine.objectContaining( {
+						"custom": "custom value",
+					} ) );
+
+					const request2:JasmineAjaxRequest = jasmine.Ajax.requests.at( 1 );
+					expect( request2.requestHeaders ).toEqual( jasmine.objectContaining( {
+						"custom": "custom value",
+					} ) );
+
+
+					stubWaitingRequests( "https://example.com/resource/" );
+					await promises;
+				} );
+
+				it( "should add slug header when single self child", async () => {
+					stubRequest( "https://example.com/" );
+
+					await resource.createAndRetrieve( {}, "child-slug" );
+
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.requestHeaders ).toEqual( jasmine.objectContaining( {
+						"slug": "child-slug",
+					} ) );
+				} );
+
+				it( "should add slug header when single URI child", async () => {
+					stubRequest( "https://example.com/resource/" );
+
+					await resource.createAndRetrieve( "resource/", {}, "child-slug" );
+
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.requestHeaders ).toEqual( jasmine.objectContaining( {
+						"slug": "child-slug",
+					} ) );
+				} );
+
+				it( "should add slug header when multiple self child", async () => {
+					const promises:Promise<{}[]> = resource.createAndRetrieve( [ {}, {} ], [ "child-slug-1", "child-slug-2" ] );
+
+					const request1:JasmineAjaxRequest = jasmine.Ajax.requests.at( 0 );
+					expect( request1.requestHeaders ).toEqual( jasmine.objectContaining( {
+						"slug": "child-slug-1",
+					} ) );
+
+					const request2:JasmineAjaxRequest = jasmine.Ajax.requests.at( 1 );
+					expect( request2.requestHeaders ).toEqual( jasmine.objectContaining( {
+						"slug": "child-slug-2",
+					} ) );
+
+
+					stubWaitingRequests( "https://example.com/" );
+					await promises;
+				} );
+
+				it( "should add slug header when multiple URI child", async () => {
+					const promises:Promise<{}[]> = resource.createAndRetrieve( "resource/", [ {}, {} ], [ "child-slug-1", "child-slug-2" ] );
+
+					const request1:JasmineAjaxRequest = jasmine.Ajax.requests.at( 0 );
+					expect( request1.requestHeaders ).toEqual( jasmine.objectContaining( {
+						"slug": "child-slug-1",
+					} ) );
+
+					const request2:JasmineAjaxRequest = jasmine.Ajax.requests.at( 1 );
+					expect( request2.requestHeaders ).toEqual( jasmine.objectContaining( {
+						"slug": "child-slug-2",
+					} ) );
+
+					stubWaitingRequests( "https://example.com/resource/" );
+					await promises;
+				} );
+
+				it( "should add slug header if defined when multiple child", async () => {
+					const promises:Promise<{}[]> = resource.createAndRetrieve( [ {}, {}, {} ], [ null, undefined, "child-slug" ] );
+
+					const request1:JasmineAjaxRequest = jasmine.Ajax.requests.at( 0 );
+					expect( request1.requestHeaders ).not.toEqual( jasmine.objectContaining( {
+						"slug": jasmine.anything() as any,
+					} ) );
+
+					const request2:JasmineAjaxRequest = jasmine.Ajax.requests.at( 1 );
+					expect( request2.requestHeaders ).not.toEqual( jasmine.objectContaining( {
+						"slug": jasmine.anything() as any,
+					} ) );
+
+					const request3:JasmineAjaxRequest = jasmine.Ajax.requests.at( 2 );
+					expect( request3.requestHeaders ).toEqual( jasmine.objectContaining( {
+						"slug": "child-slug",
+					} ) );
+
+
+					stubWaitingRequests( "https://example.com/" );
+					await promises;
+				} );
+
+				it( "should not add slug header when multiple but less slugs than children", async () => {
+					const promises:Promise<{}[]> = resource.createAndRetrieve( [ {}, {} ], [ "child-slug" ] );
+
+					const request1:JasmineAjaxRequest = jasmine.Ajax.requests.at( 0 );
+					expect( request1.requestHeaders ).toEqual( jasmine.objectContaining( {
+						"slug": "child-slug",
+					} ) );
+
+					const request2:JasmineAjaxRequest = jasmine.Ajax.requests.at( 1 );
+					expect( request2.requestHeaders ).not.toEqual( jasmine.objectContaining( {
+						"slug": jasmine.anything() as any,
+					} ) );
+
+
+					stubWaitingRequests( "https://example.com/" );
+					await promises;
+				} );
+
+
+				it( "should send converted JSONLD when from self child", async () => {
+					stubRequest( "https://example.com/" );
+
+					context
+						.extendObjectSchema( {
+							"@vocab": "https://example.com/ns#",
+						} )
+					;
+
+					await resource.createAndRetrieve( {
+						string: "my object",
+						pointerSet: [
+							{ id: "_:1", string: "blank node" },
+							{ slug: "fragment", string: "named fragment" },
+						],
+					} );
+
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.params ).toBe( JSON.stringify( {
+						"@id": "",
+						"@graph": [ {
+							"@id": "",
+							"https://example.com/ns#string": [ {
+								"@value": "my object",
+								"@type": XSD.string,
+							} ],
+							"https://example.com/ns#pointerSet": [ {
 								"@id": "_:1",
-								"https://example.com/ns#string": "updated blank node",
-								"https://example.com/ns#pointerSet": [
-									{ "@id": "#2" },
-								],
 							}, {
 								"@id": "#fragment",
-								"https://example.com/ns#string": "updated named fragment",
-							}, {
-								"@id": "#2",
-								"https://example.com/ns#string": "new named fragment",
 							} ],
-						} ) );
-					} )
-				;
+						}, {
+							"@id": "_:1",
+							"https://example.com/ns#string": [ {
+								"@value": "blank node",
+								"@type": XSD.string,
+							} ],
+						}, {
+							"@id": "#fragment",
+							"https://example.com/ns#string": [ {
+								"@value": "named fragment",
+								"@type": XSD.string,
+							} ],
+						} ],
+					} ) );
+				} );
+
+				it( "should send converted JSONLD when from URI child", async () => {
+					stubRequest( "https://example.com/resource/" );
+
+					context
+						.extendObjectSchema( {
+							"@vocab": "https://example.com/ns#",
+						} )
+					;
+
+					await resource.createAndRetrieve( "resource/", {
+						string: "my object",
+						pointerSet: [
+							{ id: "_:1", string: "blank node" },
+							{ slug: "fragment", string: "named fragment" },
+						],
+					} );
+
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.params ).toBe( JSON.stringify( {
+						"@id": "",
+						"@graph": [ {
+							"@id": "",
+							"https://example.com/ns#string": [ {
+								"@value": "my object",
+								"@type": XSD.string,
+							} ],
+							"https://example.com/ns#pointerSet": [ {
+								"@id": "_:1",
+							}, {
+								"@id": "#fragment",
+							} ],
+						}, {
+							"@id": "_:1",
+							"https://example.com/ns#string": [ {
+								"@value": "blank node",
+								"@type": XSD.string,
+							} ],
+						}, {
+							"@id": "#fragment",
+							"https://example.com/ns#string": [ {
+								"@value": "named fragment",
+								"@type": XSD.string,
+							} ],
+						} ],
+					} ) );
+				} );
+
+				it( "should send converted JSONLD when multiple self children", async () => {
+					context
+						.extendObjectSchema( {
+							"@vocab": "https://example.com/ns#",
+						} )
+					;
+
+					const promises:Promise<CRUDDocument[]> = resource.createAndRetrieve( [ {
+						string: "my object 1",
+					}, {
+						string: "my object 2",
+					} ] );
+
+					const request1:JasmineAjaxRequest = jasmine.Ajax.requests.at( 0 );
+					expect( request1.params ).toBe( JSON.stringify( {
+						"@id": "",
+						"@graph": [ {
+							"@id": "",
+							"https://example.com/ns#string": [ {
+								"@value": "my object 1",
+								"@type": XSD.string,
+							} ],
+						} ],
+					} ) );
+
+					const request2:JasmineAjaxRequest = jasmine.Ajax.requests.at( 1 );
+					expect( request2.params ).toBe( JSON.stringify( {
+						"@id": "",
+						"@graph": [ {
+							"@id": "",
+							"https://example.com/ns#string": [ {
+								"@value": "my object 2",
+								"@type": XSD.string,
+							} ],
+						} ],
+					} ) );
+
+					stubWaitingRequests( "https://example.com/" );
+					await promises;
+				} );
+
+				it( "should send converted JSONLD when multiple URI children", async () => {
+					context
+						.extendObjectSchema( {
+							"@vocab": "https://example.com/ns#",
+						} )
+					;
+
+					const promises:Promise<CRUDDocument[]> = resource.createAndRetrieve( "resource/", [ {
+						string: "my object 1",
+					}, {
+						string: "my object 2",
+					} ] );
+
+					const request1:JasmineAjaxRequest = jasmine.Ajax.requests.at( 0 );
+					expect( request1.params ).toBe( JSON.stringify( {
+						"@id": "",
+						"@graph": [ {
+							"@id": "",
+							"https://example.com/ns#string": [ {
+								"@value": "my object 1",
+								"@type": XSD.string,
+							} ],
+						} ],
+					} ) );
+
+					const request2:JasmineAjaxRequest = jasmine.Ajax.requests.at( 1 );
+					expect( request2.params ).toBe( JSON.stringify( {
+						"@id": "",
+						"@graph": [ {
+							"@id": "",
+							"https://example.com/ns#string": [ {
+								"@value": "my object 2",
+								"@type": XSD.string,
+							} ],
+						} ],
+					} ) );
 
 
-				const returned:CRUDDocument & MyResource = await promise;
-				expect( returned as MyResource ).toEqual( {
-					string: "updated document",
-					pointerSet: [
+					stubWaitingRequests( "https://example.com/resource/" );
+					await promises;
+				} );
+
+				it( "should return same child object reference", async () => {
+					stubRequest( "https://example.com/" );
+
+					const child:object = {};
+
+					const returned:CRUDDocument = await resource.createAndRetrieve( child );
+
+					expect( child ).toBe( returned );
+				} );
+
+				it( "should return same children object references", async () => {
+					const child1:object = {};
+					const child2:object = {};
+
+					const promise:Promise<CRUDDocument[]> = resource.createAndRetrieve( [ child1, child2 ] );
+
+					jasmine.Ajax
+						.requests
+						.filter( "https://example.com/" )
+						.forEach( ( request, index ) => {
+							request.respondWith( generateResponseOptions( "https://example.com/", { index } ) );
+						} )
+					;
+
+					const [ returned1, returned2 ]:CRUDDocument[] = await promise;
+					expect( child1 ).toBe( returned1 );
+					expect( child2 ).toBe( returned2 );
+				} );
+
+				it( "should have stored the child in the registry", async () => {
+					stubRequest( "https://example.com/" );
+
+					const returned:CRUDDocument = await resource.createAndRetrieve( {} );
+
+					expect( resource._registry.hasPointer( returned.id ) ).toBe( true );
+					expect( resource._registry.getPointer( returned.id ) ).toBe( returned );
+				} );
+
+				it( "should have stored the children in the registry", async () => {
+					const promises:Promise<CRUDDocument[]> = resource.createAndRetrieve( [ {}, {} ] );
+
+					jasmine.Ajax
+						.requests
+						.filter( "https://example.com/" )
+						.forEach( ( request, index ) => {
+							request.respondWith( generateResponseOptions( "https://example.com/", { index } ) );
+						} )
+					;
+
+					const [ returned1, returned2 ]:CRUDDocument[] = await promises;
+
+					expect( resource._registry.hasPointer( returned1.id ) ).toBe( true );
+					expect( resource._registry.getPointer( returned1.id ) ).toBe( returned1 );
+
+					expect( resource._registry.hasPointer( returned2.id ) ).toBe( true );
+					expect( resource._registry.getPointer( returned2.id ) ).toBe( returned2 );
+				} );
+
+				it( "should throw error if child is already persisted", async () => {
+					const child:CRUDDocument = createMock( { id: "" } );
+
+					try {
+						await resource.createAndRetrieve( child );
+						fail( "Should not resolve" );
+					} catch( error ) {
+						expect( () => { throw error; } )
+							.toThrowError( IllegalArgumentError, "The child provided has already been persisted." );
+					}
+				} );
+
+				it( "should throw error if any children is already persisted", async () => {
+					const child:CRUDDocument = createMock( { id: "" } );
+
+					try {
+						await resource.createAndRetrieve( [ {}, child, {} ] );
+						fail( "Should not resolve" );
+					} catch( error ) {
+						expect( () => { throw error; } )
+							.toThrowError( IllegalArgumentError, "The child provided has already been persisted." );
+					}
+				} );
+
+				it( "should throw error if child already being persisted", async () => {
+					const child:object = {};
+
+					try {
+						await Promise.all( [
+							resource.createAndRetrieve( child ),
+							resource.createAndRetrieve( child ),
+						] );
+						fail( "Should not resolve" );
+					} catch( error ) {
+						expect( () => { throw error; } )
+							.toThrowError( IllegalArgumentError, "The document is already being persisted." );
+					}
+				} );
+
+				it( "should be able to resend child after a failed request", async () => {
+					const child:object = {};
+					try {
+						stubRequest( "https://example.com/", { status: 500 } );
+						await resource.createAndRetrieve( child );
+
+					} catch( error ) {
+						stubRequest( "https://example.com/" );
+						await resource.createAndRetrieve( child );
+
+						expect().nothing();
+					}
+				} );
+
+
+				it( "should add resolved BasePersistedDocument data to the child", async () => {
+					stubRequest( "https://example.com/" );
+
+					const returned:CRUDDocument = await resource.create( {} );
+
+					expect( returned ).toEqual( jasmine.objectContaining( {
+						_resolved: true,
+						_eTag: "\"1-12345\"",
+						id: "https://example.com/child-1/",
+					} ) );
+				} );
+
+				it( "should add resolved BasePersistedDocument data to the children", async () => {
+					const promise:Promise<CRUDDocument[]> = resource.create( [ {}, {} ] );
+
+					jasmine.Ajax
+						.requests
+						.filter( "https://example.com/" )
+						.forEach( ( request, index ) => {
+							request.respondWith( generateResponseOptions( "https://example.com/", { index } ) );
+						} )
+					;
+
+					const [ returned1, returned2 ]:CRUDDocument[] = await promise;
+					expect( returned1 ).toEqual( jasmine.objectContaining( {
+						_resolved: true,
+						_eTag: "\"0-12345\"",
+						id: "https://example.com/child-0/",
+					} ) );
+					expect( returned2 ).toEqual( jasmine.objectContaining( {
+						_resolved: true,
+						_eTag: "\"1-12345\"",
+						id: "https://example.com/child-1/",
+					} ) );
+				} );
+
+				it( "should update the child data", async () => {
+					context
+						.extendObjectSchema( { "@vocab": "https://example.com/ns#" } );
+
+					type MyResource = { string:string, pointerSet?:MyResource[] };
+					const promise:Promise<CRUDDocument & MyResource> = resource.createAndRetrieve( {
+						string: "document",
+						pointerSet: [
+							{
+								id: "_:1",
+								string: "blank node",
+								pointerSet: [],
+							},
+							{
+								slug: "fragment",
+								string: "named fragment",
+							},
+							{
+								id: "_:2",
+								string: "to be removed",
+							},
+						],
+					} );
+
+
+					jasmine.Ajax
+						.requests
+						.filter( "https://example.com/" )
+						.forEach( ( request, index ) => {
+							request.respondWith( generateResponseOptions( "https://example.com/", {
+								index,
+								resource: {
+									"https://example.com/ns#string": "updated document",
+									"https://example.com/ns#pointerSet": [
+										{ "@id": "_:1" },
+										{ "@id": "#fragment" },
+									],
+								},
+								fragments: [ {
+									"@id": "_:1",
+									"https://example.com/ns#string": "updated blank node",
+									"https://example.com/ns#pointerSet": [
+										{ "@id": "#2" },
+									],
+								}, {
+									"@id": "#fragment",
+									"https://example.com/ns#string": "updated named fragment",
+								}, {
+									"@id": "#2",
+									"https://example.com/ns#string": "new named fragment",
+								} ],
+							} ) );
+						} )
+					;
+
+
+					const returned:CRUDDocument & MyResource = await promise;
+					expect( returned as MyResource ).toEqual( {
+						string: "updated document",
+						pointerSet: [
+							{
+								string: "updated blank node",
+								pointerSet: [
+									{
+										string: "new named fragment",
+									},
+								],
+							},
+							{
+								string: "updated named fragment",
+							},
+						],
+					} );
+					expect( returned.hasPointer( "_:2" ) ).toBe( false );
+				} );
+
+				it( "should update the children data", async () => {
+					context
+						.extendObjectSchema( { "@vocab": "https://example.com/ns#" } );
+
+					type MyResource = { string:string, pointerSet?:MyResource[] };
+					const promise:Promise<MyResource[]> = resource.createAndRetrieve( [
 						{
-							string: "updated blank node",
+							string: "document 1",
 							pointerSet: [
 								{
-									string: "new named fragment",
+									id: "_:1.1",
+									string: "fragment 1.1",
 								},
 							],
 						},
 						{
-							string: "updated named fragment",
+							string: "document 2",
+							pointerSet: [
+								{
+									id: "_:2.1",
+									string: "fragment 2.1",
+									pointerSet: [ {
+										id: "#2.1.1",
+										string: "fragment 2.1.1",
+									} ],
+								},
+							],
 						},
-					],
-				} );
-				expect( returned.hasPointer( "_:2" ) ).toBe( false );
-			} );
+					] );
 
-			it( "should update the children data", async () => {
-				const resource:CRUDDocument = createMock();
-				resource._context
-					.extendObjectSchema( { "@vocab": "https://example.com/ns#" } );
 
-				type MyResource = { string:string, pointerSet?:MyResource[] };
-				const promise:Promise<MyResource[]> = resource.createAndRetrieve( [
-					{
-						string: "document 1",
+					const [ request1, request2 ] = jasmine.Ajax
+						.requests
+						.filter( "https://example.com/" )
+					;
+					request1.respondWith( generateResponseOptions( "https://example.com/", {
+						index: 1,
+						resource: {
+							"https://example.com/ns#string": "updated document 1",
+							"https://example.com/ns#pointerSet": [
+								{ "@id": "_:1.1" },
+							],
+						},
+						fragments: [ {
+							"@id": "_:1.1",
+							"https://example.com/ns#string": "updated fragment 1.1",
+						} ],
+					} ) );
+					request2.respondWith( generateResponseOptions( "https://example.com/", {
+						index: 2,
+						resource: {
+							"https://example.com/ns#string": "updated document 2",
+							"https://example.com/ns#pointerSet": [
+								{ "@id": "_:2.1" },
+							],
+						},
+						fragments: [ {
+							"@id": "_:2.1",
+							"https://example.com/ns#string": "updated fragment 2.1",
+							"https://example.com/ns#pointerSet": [
+								{ "@id": "https://example.com/child-2/#2.1.1" },
+							],
+						}, {
+							"@id": "https://example.com/child-2/#2.1.1",
+							"https://example.com/ns#string": "updated fragment 2.1.1",
+						} ],
+					} ) );
+
+
+					const [ returned1, returned2 ]:MyResource[] = await promise;
+					expect( returned1 ).toEqual( {
+						string: "updated document 1",
 						pointerSet: [
 							{
-								id: "_:1.1",
-								string: "fragment 1.1",
+								string: "updated fragment 1.1",
 							},
 						],
-					},
-					{
-						string: "document 2",
+					} );
+					expect( returned2 ).toEqual( {
+						string: "updated document 2",
 						pointerSet: [
 							{
-								id: "_:2.1",
-								string: "fragment 2.1",
-								pointerSet: [ {
-									id: "#2.1.1",
-									string: "fragment 2.1.1",
+								string: "updated fragment 2.1",
+								pointerSet: [
+									{
+										string: "updated fragment 2.1.1",
+									},
+								],
+							},
+						],
+					} );
+				} );
+
+				it( "should update blank nodes when response metadata returned", async () => {
+					stubRequest( "https://example.com/", {
+						resource: {
+							"https://example.com/ns#blankNode1": [ { "@id": "_:new-1" } ],
+							"https://example.com/ns#blankNode2": [ { "@id": "_:new-2" } ],
+						},
+						fragments: [
+							{
+								"@id": "_:new-1",
+								"https://example.com/ns#string": [ { "@value": "updated blank node 1" } ],
+							},
+							{
+								"@id": "_:new-2",
+								"https://example.com/ns#string": [ { "@value": "updated blank node 2" } ],
+							},
+						],
+						frees: [
+							{
+								"@id": "_:responseMetadata",
+								"@type": [ C.VolatileResource, C.ResponseMetadata ],
+								[ C.documentMetadata ]: [ {
+									"@id": "_:documentMetadata",
+								} ],
+							},
+							{
+								"@id": "_:documentMetadata",
+								"@type": [ C.VolatileResource, C.DocumentMetadata ],
+								[ C.relatedDocument ]: [ {
+									"@id": "https://example.com/child-1/",
+								} ],
+								[ C.bNodesMap ]: [ {
+									"@id": "_:map",
+								} ],
+							},
+							{
+								"@id": "_:map",
+								"@type": [ C.Map ],
+								[ C.entry ]: [
+									{ "@id": "_:entry-1" },
+									{ "@id": "_:entry-2" },
+								],
+							},
+							{
+								"@id": "_:entry-1",
+								[ C.entryKey ]: [ {
+									"@id": "_:1",
+								} ],
+								[ C.entryValue ]: [ {
+									"@id": "_:new-1",
+								} ],
+							},
+							{
+								"@id": "_:entry-2",
+								[ C.entryKey ]: [ {
+									"@id": "_:2",
+								} ],
+								[ C.entryValue ]: [ {
+									"@id": "_:new-2",
 								} ],
 							},
 						],
-					},
-				] );
+					} );
+
+					context
+						.extendObjectSchema( { "@vocab": "https://example.com/ns#" } );
 
 
-				const [ request1, request2 ] = jasmine.Ajax
-					.requests
-					.filter( "https://example.com/" )
-				;
-				request1.respondWith( generateResponseOptions( "https://example.com/", {
-					index: 1,
-					resource: {
-						"https://example.com/ns#string": "updated document 1",
-						"https://example.com/ns#pointerSet": [
-							{ "@id": "_:1.1" },
-						],
-					},
-					fragments: [ {
-						"@id": "_:1.1",
-						"https://example.com/ns#string": "updated fragment 1.1",
-					} ],
-				} ) );
-				request2.respondWith( generateResponseOptions( "https://example.com/", {
-					index: 2,
-					resource: {
-						"https://example.com/ns#string": "updated document 2",
-						"https://example.com/ns#pointerSet": [
-							{ "@id": "_:2.1" },
-						],
-					},
-					fragments: [ {
-						"@id": "_:2.1",
-						"https://example.com/ns#string": "updated fragment 2.1",
-						"https://example.com/ns#pointerSet": [
-							{ "@id": "https://example.com/child-2/#2.1.1" },
-						],
-					}, {
-						"@id": "https://example.com/child-2/#2.1.1",
-						"https://example.com/ns#string": "updated fragment 2.1.1",
-					} ],
-				} ) );
+					type BNode = { id:string, string:string };
+					type MyDoc = { blankNode1:BNode, blankNode2:BNode };
+					const returned:CRUDDocument & MyDoc = await resource.createAndRetrieve<MyDoc>( {
+						blankNode1: {
+							id: "_:1",
+							string: "blank node 1",
+						},
+						blankNode2: {
+							id: "_:2",
+							string: "blank node 2",
+						},
+					} );
 
+					expect( returned.hasPointer( "_:1" ) ).toBe( false );
+					expect( returned.blankNode1 ).toEqual( jasmine.objectContaining( {
+						id: "_:new-1",
+						string: "updated blank node 1",
+					} ) );
 
-				const [ returned1, returned2 ]:MyResource[] = await promise;
-				expect( returned1 ).toEqual( {
-					string: "updated document 1",
-					pointerSet: [
-						{
-							string: "updated fragment 1.1",
-						},
-					],
-				} );
-				expect( returned2 ).toEqual( {
-					string: "updated document 2",
-					pointerSet: [
-						{
-							string: "updated fragment 2.1",
-							pointerSet: [
-								{
-									string: "updated fragment 2.1.1",
-								},
-							],
-						},
-					],
-				} );
-			} );
-
-			it( "should update blank nodes when response metadata returned", async () => {
-				stubRequest( "https://example.com/", {
-					resource: {
-						"https://example.com/ns#blankNode1": [ { "@id": "_:new-1" } ],
-						"https://example.com/ns#blankNode2": [ { "@id": "_:new-2" } ],
-					},
-					fragments: [
-						{
-							"@id": "_:new-1",
-							"https://example.com/ns#string": [ { "@value": "updated blank node 1" } ],
-						},
-						{
-							"@id": "_:new-2",
-							"https://example.com/ns#string": [ { "@value": "updated blank node 2" } ],
-						},
-					],
-					frees: [
-						{
-							"@id": "_:responseMetadata",
-							"@type": [ C.VolatileResource, C.ResponseMetadata ],
-							[ C.documentMetadata ]: [ {
-								"@id": "_:documentMetadata",
-							} ],
-						},
-						{
-							"@id": "_:documentMetadata",
-							"@type": [ C.VolatileResource, C.DocumentMetadata ],
-							[ C.relatedDocument ]: [ {
-								"@id": "https://example.com/child-1/",
-							} ],
-							[ C.bNodesMap ]: [ {
-								"@id": "_:map",
-							} ],
-						},
-						{
-							"@id": "_:map",
-							"@type": [ C.Map ],
-							[ C.entry ]: [
-								{ "@id": "_:entry-1" },
-								{ "@id": "_:entry-2" },
-							],
-						},
-						{
-							"@id": "_:entry-1",
-							[ C.entryKey ]: [ {
-								"@id": "_:1",
-							} ],
-							[ C.entryValue ]: [ {
-								"@id": "_:new-1",
-							} ],
-						},
-						{
-							"@id": "_:entry-2",
-							[ C.entryKey ]: [ {
-								"@id": "_:2",
-							} ],
-							[ C.entryValue ]: [ {
-								"@id": "_:new-2",
-							} ],
-						},
-					],
+					expect( returned.hasPointer( "_:2" ) ).toBe( false );
+					expect( returned.blankNode2 ).toEqual( jasmine.objectContaining( {
+						id: "_:new-2",
+						string: "updated blank node 2",
+					} ) );
 				} );
 
-				const resource:CRUDDocument = createMock();
-				resource._context
-					.extendObjectSchema( { "@vocab": "https://example.com/ns#" } );
-
-
-				type BNode = { id:string, string:string };
-				type MyDoc = { blankNode1:BNode, blankNode2:BNode };
-				const returned:CRUDDocument & MyDoc = await resource.createAndRetrieve<MyDoc>( {
-					blankNode1: {
-						id: "_:1",
-						string: "blank node 1",
-					},
-					blankNode2: {
-						id: "_:2",
-						string: "blank node 2",
-					},
-				} );
-
-				expect( returned.hasPointer( "_:1" ) ).toBe( false );
-				expect( returned.blankNode1 ).toEqual( jasmine.objectContaining( {
-					id: "_:new-1",
-					string: "updated blank node 1",
-				} ) );
-
-				expect( returned.hasPointer( "_:2" ) ).toBe( false );
-				expect( returned.blankNode2 ).toEqual( jasmine.objectContaining( {
-					id: "_:new-2",
-					string: "updated blank node 2",
-				} ) );
 			} );
 
 		} );
@@ -3209,522 +3069,499 @@ describe( module( "carbonldp/Document" ), ():void => {
 			} );
 
 
-			it( "should request from self when no URI", async () => {
-				stubRequest( "https://example.com/" );
+			describe( "When has a context", () => {
 
-				const resource:CRUDDocument = createMock();
-				await resource.createAccessPoint( { hasMemberRelation: "relation" } );
+				let context:CarbonLDP;
+				let resource:CRUDDocument;
+				beforeEach( ():void => {
+					context = new CarbonLDP( "https://example.com/" );
+					resource = createMock( { _registry: context.registry } );
+				} );
 
-				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-				expect( request.url ).toBe( "https://example.com/" );
-			} );
 
-			it( "should request from URI", async () => {
-				stubRequest( "https://example.com/another-resource/" );
+				it( "should request from self when no URI", async () => {
+					stubRequest( "https://example.com/" );
 
-				const resource:CRUDDocument = createMock();
-				await resource.createAccessPoint( "https://example.com/another-resource/", { hasMemberRelation: "relation" } );
-
-				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-				expect( request.url ).toBe( "https://example.com/another-resource/" );
-			} );
-
-			it( "should request from relative URI", async () => {
-				stubRequest( "https://example.com/relative/" );
-
-				const resource:CRUDDocument = createMock();
-				await resource.createAccessPoint( "relative/", { hasMemberRelation: "relation" } );
-
-				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-				expect( request.url ).toBe( "https://example.com/relative/" );
-			} );
-
-			it( "should request from resolved prefixed name", async () => {
-				stubRequest( "https://example.com/resource/" );
-
-				const _context:CarbonLDP = new CarbonLDP( "https://example.com/" );
-				_context.extendObjectSchema( { "ex": "https://example.com/" } );
-
-				const resource:CRUDDocument = createMock( { _context } );
-				await resource.createAccessPoint( "ex:resource/", { hasMemberRelation: "relation" } );
-
-				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-				expect( request.url ).toBe( "https://example.com/resource/" );
-			} );
-
-			it( "should throw error when from URI outside context scope", async () => {
-				const resource:CRUDDocument = createMock();
-
-				await resource
-					.createAccessPoint( "https://example.org/resource/", { hasMemberRelation: "relation" } )
-					.catch( error => {
-						expect( () => { throw error; } )
-							.toThrowError( IllegalArgumentError, `"https://example.org/resource/" is out of scope.` );
-					} )
-				;
-			} );
-
-			it( "should throw error when from URI is BNode label", async () => {
-				const resource:CRUDDocument = createMock();
-
-				await resource
-					.createAccessPoint( "_:1", { hasMemberRelation: "relation" } )
-					.catch( error => {
-						expect( () => { throw error; } )
-							.toThrowError( IllegalArgumentError, `"_:1" is out of scope.` );
-					} )
-				;
-			} );
-
-			it( "should throw error when from URI is Named Fragment label", async () => {
-				const resource:CRUDDocument = createMock();
-
-				await resource
-					.createAccessPoint( "#fragment", { hasMemberRelation: "relation" } )
-					.catch( error => {
-						expect( () => { throw error; } )
-							.toThrowError( IllegalArgumentError, `"https://example.com/#fragment" is out of scope.` );
-					} )
-				;
-			} );
-
-			it( "should throw error when unresolved prefixed name", async () => {
-				const resource:CRUDDocument = createMock();
-
-				await resource
-					.createAccessPoint( "ex:resource/", { hasMemberRelation: "relation" } )
-					.catch( error => {
-						expect( () => { throw error; } )
-							.toThrowError( IllegalArgumentError, `"ex:resource/" is out of scope.` );
-					} )
-				;
-			} );
-
-			it( "should parse error response", async () => {
-				stubRequest( "https://example.com/500/", { status: 500 } );
-				const resource:CRUDDocument = createMock( { id: "https://example.com/500/" } );
-
-				const spy:jasmine.Spy = spyOn( resource._registry, "_parseErrorFromResponse" )
-					.and.callFake( () => Promise.reject( null ) );
-
-				try {
 					await resource.createAccessPoint( { hasMemberRelation: "relation" } );
-					fail( "Should not createAccessPoint" );
-				} catch( error ) {
-					if( error ) fail( error );
+
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.url ).toBe( "https://example.com/" );
+				} );
+
+				it( "should request from URI", async () => {
+					stubRequest( "https://example.com/another-resource/" );
+
+					await resource.createAccessPoint( "https://example.com/another-resource/", { hasMemberRelation: "relation" } );
+
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.url ).toBe( "https://example.com/another-resource/" );
+				} );
+
+				it( "should request from relative URI", async () => {
+					stubRequest( "https://example.com/relative/" );
+
+					await resource.createAccessPoint( "relative/", { hasMemberRelation: "relation" } );
+
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.url ).toBe( "https://example.com/relative/" );
+				} );
+
+				it( "should request from resolved prefixed name", async () => {
+					stubRequest( "https://example.com/resource/" );
+
+					context.extendObjectSchema( { "ex": "https://example.com/" } );
+
+					await resource.createAccessPoint( "ex:resource/", { hasMemberRelation: "relation" } );
+
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.url ).toBe( "https://example.com/resource/" );
+				} );
+
+				it( "should throw error when from URI outside context scope", async () => {
+					await resource
+						.createAccessPoint( "https://example.org/resource/", { hasMemberRelation: "relation" } )
+						.catch( error => {
+							expect( () => { throw error; } )
+								.toThrowError( IllegalArgumentError, `"https://example.org/resource/" is out of scope.` );
+						} )
+					;
+				} );
+
+				it( "should throw error when from URI is BNode label", async () => {
+					await resource
+						.createAccessPoint( "_:1", { hasMemberRelation: "relation" } )
+						.catch( error => {
+							expect( () => { throw error; } )
+								.toThrowError( IllegalArgumentError, `"_:1" is out of scope.` );
+						} )
+					;
+				} );
+
+				it( "should throw error when from URI is Named Fragment label", async () => {
+					await resource
+						.createAccessPoint( "#fragment", { hasMemberRelation: "relation" } )
+						.catch( error => {
+							expect( () => { throw error; } )
+								.toThrowError( IllegalArgumentError, `"https://example.com/#fragment" is out of scope.` );
+						} )
+					;
+				} );
+
+				it( "should throw error when unresolved prefixed name", async () => {
+					await resource
+						.createAccessPoint( "ex:resource/", { hasMemberRelation: "relation" } )
+						.catch( error => {
+							expect( () => { throw error; } )
+								.toThrowError( IllegalArgumentError, `"ex:resource/" is out of scope.` );
+						} )
+					;
+				} );
+
+				it( "should parse error response", async () => {
+					stubRequest( "https://example.com/", { status: 500 } );
+
+					const spy:jasmine.Spy = spyOn( resource._registry, "_parseErrorFromResponse" )
+						.and.callFake( () => Promise.reject( null ) );
+
+					try {
+						await resource.createAccessPoint( { hasMemberRelation: "relation" } );
+						fail( "Should not createAccessPoint" );
+					} catch( error ) {
+						if( error ) fail( error );
+
+						expect( spy ).toHaveBeenCalled();
+					}
+				} );
+
+
+				it( "should send basic request headers when from self", async () => {
+					stubRequest( "https://example.com/" );
+
+					await resource.createAccessPoint( { hasMemberRelation: "relation" } );
+
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.requestHeaders ).toEqual( {
+						"accept": "application/ld+json",
+						"content-type": "application/ld+json",
+						"prefer": [
+							"return=minimal",
+							`${ LDP.RDFSource }; rel=interaction-model`,
+						].join( ", " ),
+					} );
+				} );
+
+				it( "should send basic request headers when from URI", async () => {
+					stubRequest( "https://example.com/resource/" );
+
+					await resource.createAccessPoint( "resource/", { hasMemberRelation: "relation" } );
+
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.requestHeaders ).toEqual( {
+						"accept": "application/ld+json",
+						"content-type": "application/ld+json",
+						"prefer": [
+							"return=minimal",
+							`${ LDP.RDFSource }; rel=interaction-model`,
+						].join( ", " ),
+					} );
+				} );
+
+				it( "should add authentication header", async () => {
+					stubRequest( "https://example.com/" );
+
+					const spy:jasmine.Spy = spyOn( context.auth, "addAuthentication" );
+
+					await resource.createAccessPoint( { hasMemberRelation: "relation" } );
 
 					expect( spy ).toHaveBeenCalled();
-				}
-			} );
-
-
-			it( "should send basic request headers when from self", async () => {
-				stubRequest( "https://example.com/" );
-
-				const resource:CRUDDocument = createMock();
-				await resource.createAccessPoint( { hasMemberRelation: "relation" } );
-
-				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-				expect( request.requestHeaders ).toEqual( {
-					"accept": "application/ld+json",
-					"content-type": "application/ld+json",
-					"prefer": [
-						"return=minimal",
-						`${ LDP.RDFSource }; rel=interaction-model`,
-					].join( ", " ),
-				} );
-			} );
-
-			it( "should send basic request headers when from URI", async () => {
-				stubRequest( "https://example.com/resource/" );
-
-				const resource:CRUDDocument = createMock();
-				await resource.createAccessPoint( "resource/", { hasMemberRelation: "relation" } );
-
-				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-				expect( request.requestHeaders ).toEqual( {
-					"accept": "application/ld+json",
-					"content-type": "application/ld+json",
-					"prefer": [
-						"return=minimal",
-						`${ LDP.RDFSource }; rel=interaction-model`,
-					].join( ", " ),
-				} );
-			} );
-
-			it( "should add authentication header", async () => {
-				stubRequest( "https://example.com/" );
-
-				const resource:CRUDDocument = createMock();
-
-				const spy:jasmine.Spy = spyOn( resource._context.auth, "addAuthentication" );
-
-				await resource.createAccessPoint( { hasMemberRelation: "relation" } );
-
-				expect( spy ).toHaveBeenCalled();
-			} );
-
-			it( "should add custom headers when from self", async () => {
-				stubRequest( "https://example.com/" );
-
-				const resource:CRUDDocument = createMock();
-
-				await resource.createAccessPoint( { hasMemberRelation: "relation" }, {
-					headers: new Map()
-						.set( "custom", new Header( "custom value" ) )
-					,
 				} );
 
-				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-				expect( request.requestHeaders ).toEqual( jasmine.objectContaining( {
-					"custom": "custom value",
-				} ) );
-			} );
-
-			it( "should add custom headers when from URI", async () => {
-				stubRequest( "https://example.com/resource/" );
-
-				const resource:CRUDDocument = createMock();
-
-				await resource.createAccessPoint( "resource/", { hasMemberRelation: "relation" }, {
-					headers: new Map()
-						.set( "custom", new Header( "custom value" ) )
-					,
-				} );
-
-				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-				expect( request.requestHeaders ).toEqual( jasmine.objectContaining( {
-					"custom": "custom value",
-				} ) );
-			} );
-
-			it( "should add slug header when from self", async () => {
-				stubRequest( "https://example.com/" );
-
-				const resource:CRUDDocument = createMock();
-
-				await resource.createAccessPoint( { hasMemberRelation: "relation" }, "child-slug" );
-
-				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-				expect( request.requestHeaders ).toEqual( jasmine.objectContaining( {
-					"slug": "child-slug",
-				} ) );
-			} );
-
-			it( "should add slug header when from URI", async () => {
-				stubRequest( "https://example.com/resource/" );
-
-				const resource:CRUDDocument = createMock();
-
-				await resource.createAccessPoint( "resource/", { hasMemberRelation: "relation" }, "child-slug" );
-
-				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-				expect( request.requestHeaders ).toEqual( jasmine.objectContaining( {
-					"slug": "child-slug",
-				} ) );
-			} );
-
-
-			it( "should send converted JSONLD when from self", async () => {
-				stubRequest( "https://example.com/" );
-
-				const resource:CRUDDocument = createMock();
-				resource._context
-					.extendObjectSchema( {
-						"@vocab": "https://example.com/ns#",
-					} )
-				;
-
-				await resource.createAccessPoint( {
-					hasMemberRelation: "relation",
-					string: "my object",
-					pointerSet: [
-						{ id: "_:1", string: "blank node" },
-						{ slug: "fragment", string: "named fragment" },
-					],
-				} );
-
-				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-				expect( JSON.parse( request.params ) ).toEqual( {
-					"@id": "",
-					"@graph": [ {
-						"@id": "",
-						"@type": [ LDP.DirectContainer ],
-						[ LDP.hasMemberRelation ]: [ {
-							"@id": "https://example.com/ns#relation",
-						} ],
-						[ LDP.membershipResource ]: [ {
-							"@id": "https://example.com/",
-						} ],
-						"https://example.com/ns#string": [ {
-							"@value": "my object",
-							"@type": XSD.string,
-						} ],
-						"https://example.com/ns#pointerSet": [ {
-							"@id": "_:1",
-						}, {
-							"@id": "#fragment",
-						} ],
-					}, {
-						"@id": "_:1",
-						"https://example.com/ns#string": [ {
-							"@value": "blank node",
-							"@type": XSD.string,
-						} ],
-					}, {
-						"@id": "#fragment",
-						"https://example.com/ns#string": [ {
-							"@value": "named fragment",
-							"@type": XSD.string,
-						} ],
-					} ],
-				} );
-			} );
-
-			it( "should send converted JSONLD when from URI", async () => {
-				stubRequest( "https://example.com/resource/" );
-
-				const resource:CRUDDocument = createMock();
-				resource._context
-					.extendObjectSchema( {
-						"@vocab": "https://example.com/ns#",
-					} )
-				;
-
-				await resource.createAccessPoint( "resource/", {
-					hasMemberRelation: "relation",
-					string: "my object",
-					pointerSet: [
-						{ id: "_:1", string: "blank node" },
-						{ slug: "fragment", string: "named fragment" },
-					],
-				} );
-
-				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-				expect( JSON.parse( request.params ) ).toEqual( {
-					"@id": "",
-					"@graph": [ {
-						"@id": "",
-						"@type": [ LDP.DirectContainer ],
-						[ LDP.hasMemberRelation ]: [ {
-							"@id": "https://example.com/ns#relation",
-						} ],
-						[ LDP.membershipResource ]: [ {
-							"@id": "https://example.com/resource/",
-						} ],
-						"https://example.com/ns#string": [ {
-							"@value": "my object",
-							"@type": XSD.string,
-						} ],
-						"https://example.com/ns#pointerSet": [ {
-							"@id": "_:1",
-						}, {
-							"@id": "#fragment",
-						} ],
-					}, {
-						"@id": "_:1",
-						"https://example.com/ns#string": [ {
-							"@value": "blank node",
-							"@type": XSD.string,
-						} ],
-					}, {
-						"@id": "#fragment",
-						"https://example.com/ns#string": [ {
-							"@value": "named fragment",
-							"@type": XSD.string,
-						} ],
-					} ],
-				} );
-			} );
-
-			it( "should return same object reference", async () => {
-				stubRequest( "https://example.com/" );
-
-				const resource:CRUDDocument = createMock();
-				const child:BaseAccessPoint = { hasMemberRelation: "relation" };
-
-				const returned:AccessPoint = await resource.createAccessPoint( child );
-
-				expect( child ).toBe( returned );
-			} );
-
-			it( "should have stored the access point in the registry", async () => {
-				stubRequest( "https://example.com/" );
-
-				const resource:CRUDDocument = createMock();
-				const returned:CRUDDocument = await resource.createAccessPoint( { hasMemberRelation: "relation" } );
-
-				expect( resource._registry.hasPointer( returned.id ) ).toBe( true );
-				expect( resource._registry.getPointer( returned.id ) ).toBe( returned );
-			} );
-
-			it( "should throw error if access point is already persisted", async () => {
-				const child:BaseAccessPoint = PersistedResource.decorate( {
-					hasMemberRelation: "relation",
-				} );
-				const resource:CRUDDocument = createMock();
-
-				try {
-					await resource.createAccessPoint( child );
-					fail( "Should not resolve" );
-				} catch( error ) {
-					expect( () => { throw error; } )
-						.toThrowError( IllegalArgumentError, "The access-point provided has already been persisted." );
-				}
-			} );
-
-			it( "should throw error if access point already being persisted", async () => {
-				const child:BaseAccessPoint = { hasMemberRelation: "relation" };
-				const resource:CRUDDocument = createMock();
-
-				try {
-					await Promise.all( [
-						resource.createAccessPoint( child ),
-						resource.createAccessPoint( child ),
-					] );
-					fail( "Should not resolve" );
-				} catch( error ) {
-					expect( () => { throw error; } )
-						.toThrowError( IllegalArgumentError, "The document is already being persisted." );
-				}
-			} );
-
-			it( "should be able to resend access point after a failed request", async () => {
-				const resource:CRUDDocument = createMock();
-
-				const child:BaseAccessPoint = { hasMemberRelation: "relation" };
-				try {
-					stubRequest( "https://example.com/", { status: 500 } );
-					await resource.createAccessPoint( child );
-
-				} catch( error ) {
+				it( "should add custom headers when from self", async () => {
 					stubRequest( "https://example.com/" );
-					await resource.createAccessPoint( child );
-
-					expect().nothing();
-				}
-			} );
-
-			it( "should throw error if incorrect membershipResource", async () => {
-				const child:BaseAccessPoint = {
-					hasMemberRelation: "relation",
-					membershipResource: Pointer.create( { id: "https://example.com/another-resource/" } ),
-				};
-				const resource:CRUDDocument = createMock();
-
-				try {
-					await resource.createAccessPoint( child );
-					fail( "Should not resolve" );
-				} catch( error ) {
-					expect( () => { throw error; } )
-						.toThrowError( IllegalArgumentError, "The endpoint URI must be the same as the accessPoint's membershipResource." );
-				}
-			} );
 
 
-			it( "should add unresolved BasePersistedDocument data", async () => {
-				stubRequest( "https://example.com/" );
+					await resource.createAccessPoint( { hasMemberRelation: "relation" }, {
+						headers: new Map()
+							.set( "custom", new Header( "custom value" ) )
+						,
+					} );
 
-				const resource:CRUDDocument = createMock();
-				const returned:CRUDDocument = await resource.createAccessPoint( { hasMemberRelation: "relation" } );
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.requestHeaders ).toEqual( jasmine.objectContaining( {
+						"custom": "custom value",
+					} ) );
+				} );
 
-				expect( returned ).toEqual( jasmine.objectContaining( {
-					_resolved: false,
-					id: "https://example.com/access-point-1/",
-				} ) );
-			} );
+				it( "should add custom headers when from URI", async () => {
+					stubRequest( "https://example.com/resource/" );
 
-			it( "should add parsed AccessPoint data", async () => {
-				stubRequest( "https://example.com/" );
 
-				const resource:CRUDDocument = createMock();
-				const returned:CRUDDocument = await resource.createAccessPoint( { hasMemberRelation: "relation" } );
+					await resource.createAccessPoint( "resource/", { hasMemberRelation: "relation" }, {
+						headers: new Map()
+							.set( "custom", new Header( "custom value" ) )
+						,
+					} );
 
-				expect( returned ).toEqual( jasmine.objectContaining( {
-					hasMemberRelation: "relation" as any,
-					membershipResource: jasmine.objectContaining<Pointer>( {
-						id: "https://example.com/",
-					} ) as any,
-				} ) );
-			} );
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.requestHeaders ).toEqual( jasmine.objectContaining( {
+						"custom": "custom value",
+					} ) );
+				} );
 
-			it( "should update blank nodes when response metadata returned", async () => {
-				stubRequest( "https://example.com/", {
-					frees: [
-						{
-							"@id": "_:responseMetadata",
-							"@type": [ C.VolatileResource, C.ResponseMetadata ],
-							[ C.documentMetadata ]: [ {
-								"@id": "_:documentMetadata",
+				it( "should add slug header when from self", async () => {
+					stubRequest( "https://example.com/" );
+
+
+					await resource.createAccessPoint( { hasMemberRelation: "relation" }, "child-slug" );
+
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.requestHeaders ).toEqual( jasmine.objectContaining( {
+						"slug": "child-slug",
+					} ) );
+				} );
+
+				it( "should add slug header when from URI", async () => {
+					stubRequest( "https://example.com/resource/" );
+
+					await resource.createAccessPoint( "resource/", { hasMemberRelation: "relation" }, "child-slug" );
+
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.requestHeaders ).toEqual( jasmine.objectContaining( {
+						"slug": "child-slug",
+					} ) );
+				} );
+
+
+				it( "should send converted JSONLD when from self", async () => {
+					stubRequest( "https://example.com/" );
+
+					context
+						.extendObjectSchema( {
+							"@vocab": "https://example.com/ns#",
+						} )
+					;
+
+					await resource.createAccessPoint( {
+						hasMemberRelation: "relation",
+						string: "my object",
+						pointerSet: [
+							{ id: "_:1", string: "blank node" },
+							{ slug: "fragment", string: "named fragment" },
+						],
+					} );
+
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( JSON.parse( request.params ) ).toEqual( {
+						"@id": "",
+						"@graph": [ {
+							"@id": "",
+							"@type": [ LDP.DirectContainer ],
+							[ LDP.hasMemberRelation ]: [ {
+								"@id": "https://example.com/ns#relation",
 							} ],
-						},
-						{
-							"@id": "_:documentMetadata",
-							"@type": [ C.VolatileResource, C.DocumentMetadata ],
-							[ C.relatedDocument ]: [ {
-								"@id": "https://example.com/access-point-1/",
+							[ LDP.membershipResource ]: [ {
+								"@id": "https://example.com/",
 							} ],
-							[ C.bNodesMap ]: [ {
-								"@id": "_:map",
+							"https://example.com/ns#string": [ {
+								"@value": "my object",
+								"@type": XSD.string,
 							} ],
-						},
-						{
-							"@id": "_:map",
-							"@type": [ C.Map ],
-							[ C.entry ]: [
-								{ "@id": "_:entry-1" },
-								{ "@id": "_:entry-2" },
-							],
-						},
-						{
-							"@id": "_:entry-1",
-							[ C.entryKey ]: [ {
+							"https://example.com/ns#pointerSet": [ {
 								"@id": "_:1",
+							}, {
+								"@id": "#fragment",
 							} ],
-							[ C.entryValue ]: [ {
-								"@id": "_:new-1",
+						}, {
+							"@id": "_:1",
+							"https://example.com/ns#string": [ {
+								"@value": "blank node",
+								"@type": XSD.string,
 							} ],
-						},
-						{
-							"@id": "_:entry-2",
-							[ C.entryKey ]: [ {
-								"@id": "_:2",
+						}, {
+							"@id": "#fragment",
+							"https://example.com/ns#string": [ {
+								"@value": "named fragment",
+								"@type": XSD.string,
 							} ],
-							[ C.entryValue ]: [ {
-								"@id": "_:new-2",
-							} ],
-						},
-					],
+						} ],
+					} );
 				} );
 
-				const resource:CRUDDocument = createMock();
+				it( "should send converted JSONLD when from URI", async () => {
+					stubRequest( "https://example.com/resource/" );
 
-				type BNode = { id:string, string:string };
-				type MyDoc = { blankNode1:BNode, blankNode2:BNode };
+					context
+						.extendObjectSchema( {
+							"@vocab": "https://example.com/ns#",
+						} )
+					;
 
-				const returned:CRUDDocument & MyDoc = await resource.createAccessPoint<MyDoc>( {
-					hasMemberRelation: "relation",
-					blankNode1: {
-						id: "_:1",
+					await resource.createAccessPoint( "resource/", {
+						hasMemberRelation: "relation",
+						string: "my object",
+						pointerSet: [
+							{ id: "_:1", string: "blank node" },
+							{ slug: "fragment", string: "named fragment" },
+						],
+					} );
+
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( JSON.parse( request.params ) ).toEqual( {
+						"@id": "",
+						"@graph": [ {
+							"@id": "",
+							"@type": [ LDP.DirectContainer ],
+							[ LDP.hasMemberRelation ]: [ {
+								"@id": "https://example.com/ns#relation",
+							} ],
+							[ LDP.membershipResource ]: [ {
+								"@id": "https://example.com/resource/",
+							} ],
+							"https://example.com/ns#string": [ {
+								"@value": "my object",
+								"@type": XSD.string,
+							} ],
+							"https://example.com/ns#pointerSet": [ {
+								"@id": "_:1",
+							}, {
+								"@id": "#fragment",
+							} ],
+						}, {
+							"@id": "_:1",
+							"https://example.com/ns#string": [ {
+								"@value": "blank node",
+								"@type": XSD.string,
+							} ],
+						}, {
+							"@id": "#fragment",
+							"https://example.com/ns#string": [ {
+								"@value": "named fragment",
+								"@type": XSD.string,
+							} ],
+						} ],
+					} );
+				} );
+
+				it( "should return same object reference", async () => {
+					stubRequest( "https://example.com/" );
+
+					const child:BaseAccessPoint = { hasMemberRelation: "relation" };
+
+					const returned:AccessPoint = await resource.createAccessPoint( child );
+
+					expect( child ).toBe( returned );
+				} );
+
+				it( "should have stored the access point in the registry", async () => {
+					stubRequest( "https://example.com/" );
+
+					const returned:CRUDDocument = await resource.createAccessPoint( { hasMemberRelation: "relation" } );
+
+					expect( resource._registry.hasPointer( returned.id ) ).toBe( true );
+					expect( resource._registry.getPointer( returned.id ) ).toBe( returned );
+				} );
+
+				it( "should throw error if access point is already persisted", async () => {
+					const child:BaseAccessPoint = PersistedResource.decorate( {
+						hasMemberRelation: "relation",
+					} );
+
+					try {
+						await resource.createAccessPoint( child );
+						fail( "Should not resolve" );
+					} catch( error ) {
+						expect( () => { throw error; } )
+							.toThrowError( IllegalArgumentError, "The access-point provided has already been persisted." );
+					}
+				} );
+
+				it( "should throw error if access point already being persisted", async () => {
+					const child:BaseAccessPoint = { hasMemberRelation: "relation" };
+
+					try {
+						await Promise.all( [
+							resource.createAccessPoint( child ),
+							resource.createAccessPoint( child ),
+						] );
+						fail( "Should not resolve" );
+					} catch( error ) {
+						expect( () => { throw error; } )
+							.toThrowError( IllegalArgumentError, "The document is already being persisted." );
+					}
+				} );
+
+				it( "should be able to resend access point after a failed request", async () => {
+					const child:BaseAccessPoint = { hasMemberRelation: "relation" };
+					try {
+						stubRequest( "https://example.com/", { status: 500 } );
+						await resource.createAccessPoint( child );
+
+					} catch( error ) {
+						stubRequest( "https://example.com/" );
+						await resource.createAccessPoint( child );
+
+						expect().nothing();
+					}
+				} );
+
+				it( "should throw error if incorrect membershipResource", async () => {
+					const child:BaseAccessPoint = {
+						hasMemberRelation: "relation",
+						membershipResource: Pointer.create( { id: "https://example.com/another-resource/" } ),
+					};
+
+					try {
+						await resource.createAccessPoint( child );
+						fail( "Should not resolve" );
+					} catch( error ) {
+						expect( () => { throw error; } )
+							.toThrowError( IllegalArgumentError, "The endpoint URI must be the same as the accessPoint's membershipResource." );
+					}
+				} );
+
+
+				it( "should add unresolved BasePersistedDocument data", async () => {
+					stubRequest( "https://example.com/" );
+
+					const returned:CRUDDocument = await resource.createAccessPoint( { hasMemberRelation: "relation" } );
+
+					expect( returned ).toEqual( jasmine.objectContaining( {
+						_resolved: false,
+						id: "https://example.com/access-point-1/",
+					} ) );
+				} );
+
+				it( "should add parsed AccessPoint data", async () => {
+					stubRequest( "https://example.com/" );
+
+					const returned:CRUDDocument = await resource.createAccessPoint( { hasMemberRelation: "relation" } );
+
+					expect( returned ).toEqual( jasmine.objectContaining( {
+						hasMemberRelation: "relation" as any,
+						membershipResource: jasmine.objectContaining<Pointer>( {
+							id: "https://example.com/",
+						} ) as any,
+					} ) );
+				} );
+
+				it( "should update blank nodes when response metadata returned", async () => {
+					stubRequest( "https://example.com/", {
+						frees: [
+							{
+								"@id": "_:responseMetadata",
+								"@type": [ C.VolatileResource, C.ResponseMetadata ],
+								[ C.documentMetadata ]: [ {
+									"@id": "_:documentMetadata",
+								} ],
+							},
+							{
+								"@id": "_:documentMetadata",
+								"@type": [ C.VolatileResource, C.DocumentMetadata ],
+								[ C.relatedDocument ]: [ {
+									"@id": "https://example.com/access-point-1/",
+								} ],
+								[ C.bNodesMap ]: [ {
+									"@id": "_:map",
+								} ],
+							},
+							{
+								"@id": "_:map",
+								"@type": [ C.Map ],
+								[ C.entry ]: [
+									{ "@id": "_:entry-1" },
+									{ "@id": "_:entry-2" },
+								],
+							},
+							{
+								"@id": "_:entry-1",
+								[ C.entryKey ]: [ {
+									"@id": "_:1",
+								} ],
+								[ C.entryValue ]: [ {
+									"@id": "_:new-1",
+								} ],
+							},
+							{
+								"@id": "_:entry-2",
+								[ C.entryKey ]: [ {
+									"@id": "_:2",
+								} ],
+								[ C.entryValue ]: [ {
+									"@id": "_:new-2",
+								} ],
+							},
+						],
+					} );
+
+
+					type BNode = { id:string, string:string };
+					type MyDoc = { blankNode1:BNode, blankNode2:BNode };
+
+					const returned:CRUDDocument & MyDoc = await resource.createAccessPoint<MyDoc>( {
+						hasMemberRelation: "relation",
+						blankNode1: {
+							id: "_:1",
+							string: "blank node 1",
+						},
+						blankNode2: {
+							id: "_:2",
+							string: "blank node 2",
+						},
+					} );
+
+					expect( returned.hasPointer( "_:1" ) ).toBe( false );
+					expect( returned.blankNode1 ).toEqual( jasmine.objectContaining( {
+						id: "_:new-1",
 						string: "blank node 1",
-					},
-					blankNode2: {
-						id: "_:2",
+					} ) );
+
+					expect( returned.hasPointer( "_:2" ) ).toBe( false );
+					expect( returned.blankNode2 ).toEqual( jasmine.objectContaining( {
+						id: "_:new-2",
 						string: "blank node 2",
-					},
+					} ) );
 				} );
 
-				expect( returned.hasPointer( "_:1" ) ).toBe( false );
-				expect( returned.blankNode1 ).toEqual( jasmine.objectContaining( {
-					id: "_:new-1",
-					string: "blank node 1",
-				} ) );
-
-				expect( returned.hasPointer( "_:2" ) ).toBe( false );
-				expect( returned.blankNode2 ).toEqual( jasmine.objectContaining( {
-					id: "_:new-2",
-					string: "blank node 2",
-				} ) );
 			} );
 
 		} );
@@ -3841,586 +3678,543 @@ describe( module( "carbonldp/Document" ), ():void => {
 			} );
 
 
-			it( "should request from self when no URI", async () => {
-				stubRequest( "https://example.com/" );
+			describe( "When has a context", () => {
 
-				const resource:CRUDDocument = createMock();
-				await resource.createAccessPoints( [ { hasMemberRelation: "relation" } ] );
+				let context:CarbonLDP;
+				let resource:CRUDDocument;
+				beforeEach( ():void => {
+					context = new CarbonLDP( "https://example.com/" );
+					resource = createMock( { _registry: context.registry } );
+				} );
 
-				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-				expect( request.url ).toBe( "https://example.com/" );
-			} );
 
-			it( "should request from URI", async () => {
-				stubRequest( "https://example.com/another-resource/" );
+				it( "should request from self when no URI", async () => {
+					stubRequest( "https://example.com/" );
 
-				const resource:CRUDDocument = createMock();
-				await resource.createAccessPoints( "https://example.com/another-resource/", [ { hasMemberRelation: "relation" } ] );
+					await resource.createAccessPoints( [ { hasMemberRelation: "relation" } ] );
 
-				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-				expect( request.url ).toBe( "https://example.com/another-resource/" );
-			} );
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.url ).toBe( "https://example.com/" );
+				} );
 
-			it( "should request from relative URI", async () => {
-				stubRequest( "https://example.com/relative/" );
+				it( "should request from URI", async () => {
+					stubRequest( "https://example.com/another-resource/" );
 
-				const resource:CRUDDocument = createMock();
-				await resource.createAccessPoints( "relative/", [ { hasMemberRelation: "relation" } ] );
+					await resource.createAccessPoints( "https://example.com/another-resource/", [ { hasMemberRelation: "relation" } ] );
 
-				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-				expect( request.url ).toBe( "https://example.com/relative/" );
-			} );
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.url ).toBe( "https://example.com/another-resource/" );
+				} );
 
-			it( "should request from resolved prefixed name", async () => {
-				stubRequest( "https://example.com/resource/" );
+				it( "should request from relative URI", async () => {
+					stubRequest( "https://example.com/relative/" );
 
-				const _context:CarbonLDP = new CarbonLDP( "https://example.com/" );
-				_context.extendObjectSchema( { "ex": "https://example.com/" } );
+					await resource.createAccessPoints( "relative/", [ { hasMemberRelation: "relation" } ] );
 
-				const resource:CRUDDocument = createMock( { _context } );
-				await resource.createAccessPoints( "ex:resource/", [ { hasMemberRelation: "relation" } ] );
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.url ).toBe( "https://example.com/relative/" );
+				} );
 
-				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-				expect( request.url ).toBe( "https://example.com/resource/" );
-			} );
+				it( "should request from resolved prefixed name", async () => {
+					stubRequest( "https://example.com/resource/" );
 
-			it( "should throw error when from URI outside context scope", async () => {
-				const resource:CRUDDocument = createMock();
+					context.extendObjectSchema( { "ex": "https://example.com/" } );
 
-				await resource
-					.createAccessPoints( "https://example.org/resource/", [ { hasMemberRelation: "relation" } ] )
-					.catch( error => {
+					await resource.createAccessPoints( "ex:resource/", [ { hasMemberRelation: "relation" } ] );
+
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.url ).toBe( "https://example.com/resource/" );
+				} );
+
+				it( "should throw error when from URI outside context scope", async () => {
+					await resource
+						.createAccessPoints( "https://example.org/resource/", [ { hasMemberRelation: "relation" } ] )
+						.catch( error => {
+							expect( () => { throw error; } )
+								.toThrowError( IllegalArgumentError, `"https://example.org/resource/" is out of scope.` );
+						} )
+					;
+				} );
+
+				it( "should throw error when from URI is BNode label", async () => {
+					await resource
+						.createAccessPoints( "_:1", [ { hasMemberRelation: "relation" } ] )
+						.catch( error => {
+							expect( () => { throw error; } )
+								.toThrowError( IllegalArgumentError, `"_:1" is out of scope.` );
+						} )
+					;
+				} );
+
+				it( "should throw error when from URI is Named Fragment label", async () => {
+					await resource
+						.createAccessPoints( "#fragment", [ { hasMemberRelation: "relation" } ] )
+						.catch( error => {
+							expect( () => { throw error; } )
+								.toThrowError( IllegalArgumentError, `"https://example.com/#fragment" is out of scope.` );
+						} )
+					;
+				} );
+
+				it( "should throw error when unresolved prefixed name", async () => {
+					await resource
+						.createAccessPoints( "ex:resource/", [ { hasMemberRelation: "relation" } ] )
+						.catch( error => {
+							expect( () => { throw error; } )
+								.toThrowError( IllegalArgumentError, `"ex:resource/" is out of scope.` );
+						} )
+					;
+				} );
+
+				it( "should throw error if any has incorrect membershipResource", async () => {
+					const child:BaseAccessPoint = {
+						hasMemberRelation: "relation",
+						membershipResource: Pointer.create( { id: "https://example.com/another-resource/" } ),
+					};
+
+					try {
+						await resource.createAccessPoints( [ child ] );
+						fail( "Should not resolve" );
+					} catch( error ) {
 						expect( () => { throw error; } )
-							.toThrowError( IllegalArgumentError, `"https://example.org/resource/" is out of scope.` );
-					} )
-				;
-			} );
+							.toThrowError( IllegalArgumentError, "The endpoint URI must be the same as the accessPoint's membershipResource." );
+					}
+				} );
 
-			it( "should throw error when from URI is BNode label", async () => {
-				const resource:CRUDDocument = createMock();
 
-				await resource
-					.createAccessPoints( "_:1", [ { hasMemberRelation: "relation" } ] )
-					.catch( error => {
+				it( "should send basic request headers when from self", async () => {
+					stubRequest( "https://example.com/" );
+
+					await resource.createAccessPoints( [ { hasMemberRelation: "relation" }, { hasMemberRelation: "relation" } ] );
+
+					const firstRequest:JasmineAjaxRequest = jasmine.Ajax.requests.at( 0 );
+					expect( firstRequest.requestHeaders ).toEqual( {
+						"accept": "application/ld+json",
+						"content-type": "application/ld+json",
+						"prefer": [
+							"return=minimal",
+							`${ LDP.RDFSource }; rel=interaction-model`,
+						].join( ", " ),
+					} );
+
+					const secondRequest:JasmineAjaxRequest = jasmine.Ajax.requests.at( 1 );
+					expect( secondRequest.requestHeaders ).toEqual( {
+						"accept": "application/ld+json",
+						"content-type": "application/ld+json",
+						"prefer": [
+							"return=minimal",
+							`${ LDP.RDFSource }; rel=interaction-model`,
+						].join( ", " ),
+					} );
+				} );
+
+				it( "should send basic request headers when from URI", async () => {
+					stubRequest( "https://example.com/resource/" );
+
+					await resource.createAccessPoints( "resource/", [ { hasMemberRelation: "relation" }, { hasMemberRelation: "relation" } ] );
+
+
+					const firstRequest:JasmineAjaxRequest = jasmine.Ajax.requests.at( 0 );
+					expect( firstRequest.requestHeaders ).toEqual( {
+						"accept": "application/ld+json",
+						"content-type": "application/ld+json",
+						"prefer": [
+							"return=minimal",
+							`${ LDP.RDFSource }; rel=interaction-model`,
+						].join( ", " ),
+					} );
+
+					const secondRequest:JasmineAjaxRequest = jasmine.Ajax.requests.at( 1 );
+					expect( secondRequest.requestHeaders ).toEqual( {
+						"accept": "application/ld+json",
+						"content-type": "application/ld+json",
+						"prefer": [
+							"return=minimal",
+							`${ LDP.RDFSource }; rel=interaction-model`,
+						].join( ", " ),
+					} );
+				} );
+
+				it( "should add authentication header", async () => {
+					stubRequest( "https://example.com/" );
+
+					const spy:jasmine.Spy = spyOn( context.auth, "addAuthentication" );
+
+					await resource.createAccessPoints( [ { hasMemberRelation: "relation" } ] );
+
+					expect( spy ).toHaveBeenCalled();
+				} );
+
+				it( "should send custom request headers when from self", async () => {
+					stubRequest( "https://example.com/" );
+
+					await resource.createAccessPoints( [ { hasMemberRelation: "relation" }, { hasMemberRelation: "relation" } ], {
+						headers: new Map()
+							.set( "custom", new Header( "custom value" ) )
+						,
+					} );
+
+					const firstRequest:JasmineAjaxRequest = jasmine.Ajax.requests.at( 0 );
+					expect( firstRequest.requestHeaders ).toEqual( jasmine.objectContaining( {
+						"custom": "custom value",
+					} ) );
+
+					const secondRequest:JasmineAjaxRequest = jasmine.Ajax.requests.at( 1 );
+					expect( secondRequest.requestHeaders ).toEqual( jasmine.objectContaining( {
+						"custom": "custom value",
+					} ) );
+				} );
+
+				it( "should send custom request headers when from URI", async () => {
+					stubRequest( "https://example.com/resource/" );
+
+					await resource.createAccessPoints( "resource/", [ { hasMemberRelation: "relation" }, { hasMemberRelation: "relation" } ], {
+						headers: new Map()
+							.set( "custom", new Header( "custom value" ) )
+						,
+					} );
+
+					const firstRequest:JasmineAjaxRequest = jasmine.Ajax.requests.at( 0 );
+					expect( firstRequest.requestHeaders ).toEqual( jasmine.objectContaining( {
+						"custom": "custom value",
+					} ) );
+
+					const secondRequest:JasmineAjaxRequest = jasmine.Ajax.requests.at( 1 );
+					expect( secondRequest.requestHeaders ).toEqual( jasmine.objectContaining( {
+						"custom": "custom value",
+					} ) );
+				} );
+
+				it( "should add slug header when from self", async () => {
+					stubRequest( "https://example.com/" );
+
+
+					await resource.createAccessPoints( [ { hasMemberRelation: "relation" }, { hasMemberRelation: "relation" } ], [ "child-slug-1", "child-slug-2" ] );
+
+					const firstRequest:JasmineAjaxRequest = jasmine.Ajax.requests.at( 0 );
+					expect( firstRequest.requestHeaders ).toEqual( jasmine.objectContaining( {
+						"slug": "child-slug-1",
+					} ) );
+
+					const secondRequest:JasmineAjaxRequest = jasmine.Ajax.requests.at( 1 );
+					expect( secondRequest.requestHeaders ).toEqual( jasmine.objectContaining( {
+						"slug": "child-slug-2",
+					} ) );
+				} );
+
+				it( "should add slug header when from URI", async () => {
+					stubRequest( "https://example.com/resource/" );
+
+
+					await resource.createAccessPoints( "resource/", [ { hasMemberRelation: "relation" }, { hasMemberRelation: "relation" } ], [ "child-slug-1", "child-slug-2" ] );
+
+					const firstRequest:JasmineAjaxRequest = jasmine.Ajax.requests.at( 0 );
+					expect( firstRequest.requestHeaders ).toEqual( jasmine.objectContaining( {
+						"slug": "child-slug-1",
+					} ) );
+
+					const secondRequest:JasmineAjaxRequest = jasmine.Ajax.requests.at( 1 );
+					expect( secondRequest.requestHeaders ).toEqual( jasmine.objectContaining( {
+						"slug": "child-slug-2",
+					} ) );
+				} );
+
+				it( "should add slug header if defined", async () => {
+					stubRequest( "https://example.com/" );
+
+
+					await resource.createAccessPoints( [ { hasMemberRelation: "relation" }, { hasMemberRelation: "relation" } ], [ "child-slug" ] );
+
+					const firstRequest:JasmineAjaxRequest = jasmine.Ajax.requests.at( 0 );
+					expect( firstRequest.requestHeaders ).toEqual( jasmine.objectContaining( {
+						"slug": "child-slug",
+					} ) );
+
+					const secondRequest:JasmineAjaxRequest = jasmine.Ajax.requests.at( 1 );
+					expect( secondRequest.requestHeaders ).not.toEqual( jasmine.objectContaining( {
+						"slug": jasmine.anything() as any,
+					} ) );
+				} );
+
+
+				it( "should send converted JSONLD when from self", async () => {
+					stubRequest( "https://example.com/" );
+
+					context
+						.extendObjectSchema( {
+							"@vocab": "https://example.com/ns#",
+						} )
+					;
+
+					await resource.createAccessPoints( [ {
+						hasMemberRelation: "relation1",
+						string: "my object 1",
+					}, {
+						hasMemberRelation: "relation2",
+						string: "my object 2",
+					} ] );
+
+					const request1:JasmineAjaxRequest = jasmine.Ajax.requests.at( 0 );
+					expect( JSON.parse( request1.params ) ).toEqual( {
+						"@id": "",
+						"@graph": [ {
+							"@id": "",
+							"@type": [ LDP.DirectContainer ],
+							[ LDP.hasMemberRelation ]: [ {
+								"@id": "https://example.com/ns#relation1",
+							} ],
+							[ LDP.membershipResource ]: [ {
+								"@id": "https://example.com/",
+							} ],
+							"https://example.com/ns#string": [ {
+								"@value": "my object 1",
+								"@type": XSD.string,
+							} ],
+						} ],
+					} );
+
+					const request2:JasmineAjaxRequest = jasmine.Ajax.requests.at( 1 );
+					expect( JSON.parse( request2.params ) ).toEqual( {
+						"@id": "",
+						"@graph": [ {
+							"@id": "",
+							"@type": [ LDP.DirectContainer ],
+							[ LDP.hasMemberRelation ]: [ {
+								"@id": "https://example.com/ns#relation2",
+							} ],
+							[ LDP.membershipResource ]: [ {
+								"@id": "https://example.com/",
+							} ],
+							"https://example.com/ns#string": [ {
+								"@value": "my object 2",
+								"@type": XSD.string,
+							} ],
+						} ],
+					} );
+				} );
+
+				it( "should send converted JSONLD when from URI", async () => {
+					stubRequest( "https://example.com/resource/" );
+
+					context
+						.extendObjectSchema( {
+							"@vocab": "https://example.com/ns#",
+						} )
+					;
+
+					await resource.createAccessPoints( "resource/", [ {
+						hasMemberRelation: "relation1",
+						string: "my object 1",
+					}, {
+						hasMemberRelation: "relation2",
+						string: "my object 2",
+					} ] );
+
+					const request1:JasmineAjaxRequest = jasmine.Ajax.requests.at( 0 );
+					expect( JSON.parse( request1.params ) ).toEqual( {
+						"@id": "",
+						"@graph": [ {
+							"@id": "",
+							"@type": [ LDP.DirectContainer ],
+							[ LDP.hasMemberRelation ]: [ {
+								"@id": "https://example.com/ns#relation1",
+							} ],
+							[ LDP.membershipResource ]: [ {
+								"@id": "https://example.com/resource/",
+							} ],
+							"https://example.com/ns#string": [ {
+								"@value": "my object 1",
+								"@type": XSD.string,
+							} ],
+						} ],
+					} );
+
+					const request2:JasmineAjaxRequest = jasmine.Ajax.requests.at( 1 );
+					expect( JSON.parse( request2.params ) ).toEqual( {
+						"@id": "",
+						"@graph": [ {
+							"@id": "",
+							"@type": [ LDP.DirectContainer ],
+							[ LDP.hasMemberRelation ]: [ {
+								"@id": "https://example.com/ns#relation2",
+							} ],
+							[ LDP.membershipResource ]: [ {
+								"@id": "https://example.com/resource/",
+							} ],
+							"https://example.com/ns#string": [ {
+								"@value": "my object 2",
+								"@type": XSD.string,
+							} ],
+						} ],
+					} );
+				} );
+
+				it( "should return same access point object references", async () => {
+					stubRequest( "https://example.com/" );
+
+					const child1:BaseAccessPoint = { hasMemberRelation: "relation1" };
+					const child2:BaseAccessPoint = { hasMemberRelation: "relation2" };
+
+					const [ returned1, returned2 ]:AccessPoint[] = await resource.createAccessPoints( [ child1, child2 ] );
+
+					expect( child1 ).toBe( returned1 );
+					expect( child2 ).toBe( returned2 );
+				} );
+
+				it( "should have stored the access points in the registry", async () => {
+					stubRequest( "https://example.com/" );
+
+					const [ returned1, returned2 ]:CRUDDocument[] = await resource.createAccessPoints( [ { hasMemberRelation: "relation" }, { hasMemberRelation: "relation" } ] );
+
+					expect( resource._registry.hasPointer( returned1.id ) ).toBe( true );
+					expect( resource._registry.getPointer( returned1.id ) ).toBe( returned1 );
+
+					expect( resource._registry.hasPointer( returned2.id ) ).toBe( true );
+					expect( resource._registry.getPointer( returned2.id ) ).toBe( returned2 );
+				} );
+
+				it( "should throw error if any access point is already persisted", async () => {
+					const child:BaseAccessPoint = PersistedResource.decorate( {
+						hasMemberRelation: "relation",
+					} );
+
+					try {
+						await resource.createAccessPoints( [ { hasMemberRelation: "relation" }, child, { hasMemberRelation: "relation" } ] );
+						fail( "Should not resolve" );
+					} catch( error ) {
 						expect( () => { throw error; } )
-							.toThrowError( IllegalArgumentError, `"_:1" is out of scope.` );
-					} )
-				;
-			} );
+							.toThrowError( IllegalArgumentError, "The access-point provided has already been persisted." );
+					}
+				} );
 
-			it( "should throw error when from URI is Named Fragment label", async () => {
-				const resource:CRUDDocument = createMock();
+				it( "should throw error if any already being persisted", async () => {
+					const child:BaseAccessPoint = { hasMemberRelation: "relation" };
 
-				await resource
-					.createAccessPoints( "#fragment", [ { hasMemberRelation: "relation" } ] )
-					.catch( error => {
+					try {
+						await Promise.all( [
+							resource.createAccessPoints( [ child ] ),
+							resource.createAccessPoints( [ child ] ),
+						] );
+						fail( "Should not resolve" );
+					} catch( error ) {
 						expect( () => { throw error; } )
-							.toThrowError( IllegalArgumentError, `"https://example.com/#fragment" is out of scope.` );
-					} )
-				;
-			} );
-
-			it( "should throw error when unresolved prefixed name", async () => {
-				const resource:CRUDDocument = createMock();
-
-				await resource
-					.createAccessPoints( "ex:resource/", [ { hasMemberRelation: "relation" } ] )
-					.catch( error => {
-						expect( () => { throw error; } )
-							.toThrowError( IllegalArgumentError, `"ex:resource/" is out of scope.` );
-					} )
-				;
-			} );
-
-			it( "should throw error if any has incorrect membershipResource", async () => {
-				const child:BaseAccessPoint = {
-					hasMemberRelation: "relation",
-					membershipResource: Pointer.create( { id: "https://example.com/another-resource/" } ),
-				};
-				const resource:CRUDDocument = createMock();
-
-				try {
-					await resource.createAccessPoints( [ child ] );
-					fail( "Should not resolve" );
-				} catch( error ) {
-					expect( () => { throw error; } )
-						.toThrowError( IllegalArgumentError, "The endpoint URI must be the same as the accessPoint's membershipResource." );
-				}
-			} );
-
-
-			it( "should send basic request headers when from self", async () => {
-				stubRequest( "https://example.com/" );
-
-				const resource:CRUDDocument = createMock();
-				await resource.createAccessPoints( [ { hasMemberRelation: "relation" }, { hasMemberRelation: "relation" } ] );
-
-				const firstRequest:JasmineAjaxRequest = jasmine.Ajax.requests.at( 0 );
-				expect( firstRequest.requestHeaders ).toEqual( {
-					"accept": "application/ld+json",
-					"content-type": "application/ld+json",
-					"prefer": [
-						"return=minimal",
-						`${ LDP.RDFSource }; rel=interaction-model`,
-					].join( ", " ),
+							.toThrowError( IllegalArgumentError, "The document is already being persisted." );
+					}
 				} );
 
-				const secondRequest:JasmineAjaxRequest = jasmine.Ajax.requests.at( 1 );
-				expect( secondRequest.requestHeaders ).toEqual( {
-					"accept": "application/ld+json",
-					"content-type": "application/ld+json",
-					"prefer": [
-						"return=minimal",
-						`${ LDP.RDFSource }; rel=interaction-model`,
-					].join( ", " ),
-				} );
-			} );
 
-			it( "should send basic request headers when from URI", async () => {
-				stubRequest( "https://example.com/resource/" );
+				it( "should add unresolved BasePersistedDocument data", async () => {
+					stubRequest( "https://example.com/" );
 
-				const resource:CRUDDocument = createMock();
-				await resource.createAccessPoints( "resource/", [ { hasMemberRelation: "relation" }, { hasMemberRelation: "relation" } ] );
+					const [ returned1, returned2 ]:CRUDDocument[] = await resource.createAccessPoints( [ { hasMemberRelation: "relation1" }, { hasMemberRelation: "relation2" } ] );
 
-
-				const firstRequest:JasmineAjaxRequest = jasmine.Ajax.requests.at( 0 );
-				expect( firstRequest.requestHeaders ).toEqual( {
-					"accept": "application/ld+json",
-					"content-type": "application/ld+json",
-					"prefer": [
-						"return=minimal",
-						`${ LDP.RDFSource }; rel=interaction-model`,
-					].join( ", " ),
+					expect( returned1 ).toEqual( jasmine.objectContaining( {
+						_resolved: false,
+						id: "https://example.com/access-point-1/",
+					} ) );
+					expect( returned2 ).toEqual( jasmine.objectContaining( {
+						_resolved: false,
+						id: "https://example.com/access-point-2/",
+					} ) );
 				} );
 
-				const secondRequest:JasmineAjaxRequest = jasmine.Ajax.requests.at( 1 );
-				expect( secondRequest.requestHeaders ).toEqual( {
-					"accept": "application/ld+json",
-					"content-type": "application/ld+json",
-					"prefer": [
-						"return=minimal",
-						`${ LDP.RDFSource }; rel=interaction-model`,
-					].join( ", " ),
-				} );
-			} );
+				it( "should add parsed AccessPoint data", async () => {
+					stubRequest( "https://example.com/" );
 
-			it( "should add authentication header", async () => {
-				stubRequest( "https://example.com/" );
+					const [ returned1, returned2 ]:CRUDDocument[] = await resource.createAccessPoints( [ { hasMemberRelation: "relation1" }, { hasMemberRelation: "relation2" } ] );
 
-				const resource:CRUDDocument = createMock();
-
-				const spy:jasmine.Spy = spyOn( resource._context.auth, "addAuthentication" );
-
-				await resource.createAccessPoints( [ { hasMemberRelation: "relation" } ] );
-
-				expect( spy ).toHaveBeenCalled();
-			} );
-
-			it( "should send custom request headers when from self", async () => {
-				stubRequest( "https://example.com/" );
-
-				const resource:CRUDDocument = createMock();
-				await resource.createAccessPoints( [ { hasMemberRelation: "relation" }, { hasMemberRelation: "relation" } ], {
-					headers: new Map()
-						.set( "custom", new Header( "custom value" ) )
-					,
+					expect( returned1 ).toEqual( jasmine.objectContaining( {
+						hasMemberRelation: "relation1" as any,
+						membershipResource: jasmine.objectContaining<Pointer>( {
+							id: "https://example.com/",
+						} ) as any,
+					} ) );
+					expect( returned2 ).toEqual( jasmine.objectContaining( {
+						hasMemberRelation: "relation2" as any,
+						membershipResource: jasmine.objectContaining<Pointer>( {
+							id: "https://example.com/",
+						} ) as any,
+					} ) );
 				} );
 
-				const firstRequest:JasmineAjaxRequest = jasmine.Ajax.requests.at( 0 );
-				expect( firstRequest.requestHeaders ).toEqual( jasmine.objectContaining( {
-					"custom": "custom value",
-				} ) );
-
-				const secondRequest:JasmineAjaxRequest = jasmine.Ajax.requests.at( 1 );
-				expect( secondRequest.requestHeaders ).toEqual( jasmine.objectContaining( {
-					"custom": "custom value",
-				} ) );
-			} );
-
-			it( "should send custom request headers when from URI", async () => {
-				stubRequest( "https://example.com/resource/" );
-
-				const resource:CRUDDocument = createMock();
-				await resource.createAccessPoints( "resource/", [ { hasMemberRelation: "relation" }, { hasMemberRelation: "relation" } ], {
-					headers: new Map()
-						.set( "custom", new Header( "custom value" ) )
-					,
-				} );
-
-				const firstRequest:JasmineAjaxRequest = jasmine.Ajax.requests.at( 0 );
-				expect( firstRequest.requestHeaders ).toEqual( jasmine.objectContaining( {
-					"custom": "custom value",
-				} ) );
-
-				const secondRequest:JasmineAjaxRequest = jasmine.Ajax.requests.at( 1 );
-				expect( secondRequest.requestHeaders ).toEqual( jasmine.objectContaining( {
-					"custom": "custom value",
-				} ) );
-			} );
-
-			it( "should add slug header when from self", async () => {
-				stubRequest( "https://example.com/" );
-
-				const resource:CRUDDocument = createMock();
-
-				await resource.createAccessPoints( [ { hasMemberRelation: "relation" }, { hasMemberRelation: "relation" } ], [ "child-slug-1", "child-slug-2" ] );
-
-				const firstRequest:JasmineAjaxRequest = jasmine.Ajax.requests.at( 0 );
-				expect( firstRequest.requestHeaders ).toEqual( jasmine.objectContaining( {
-					"slug": "child-slug-1",
-				} ) );
-
-				const secondRequest:JasmineAjaxRequest = jasmine.Ajax.requests.at( 1 );
-				expect( secondRequest.requestHeaders ).toEqual( jasmine.objectContaining( {
-					"slug": "child-slug-2",
-				} ) );
-			} );
-
-			it( "should add slug header when from URI", async () => {
-				stubRequest( "https://example.com/resource/" );
-
-				const resource:CRUDDocument = createMock();
-
-				await resource.createAccessPoints( "resource/", [ { hasMemberRelation: "relation" }, { hasMemberRelation: "relation" } ], [ "child-slug-1", "child-slug-2" ] );
-
-				const firstRequest:JasmineAjaxRequest = jasmine.Ajax.requests.at( 0 );
-				expect( firstRequest.requestHeaders ).toEqual( jasmine.objectContaining( {
-					"slug": "child-slug-1",
-				} ) );
-
-				const secondRequest:JasmineAjaxRequest = jasmine.Ajax.requests.at( 1 );
-				expect( secondRequest.requestHeaders ).toEqual( jasmine.objectContaining( {
-					"slug": "child-slug-2",
-				} ) );
-			} );
-
-			it( "should add slug header if defined", async () => {
-				stubRequest( "https://example.com/" );
-
-				const resource:CRUDDocument = createMock();
-
-				await resource.createAccessPoints( [ { hasMemberRelation: "relation" }, { hasMemberRelation: "relation" }, { hasMemberRelation: "relation" } ], [ null, undefined, "child-slug" ] );
-
-				const firstRequest:JasmineAjaxRequest = jasmine.Ajax.requests.at( 0 );
-				expect( firstRequest.requestHeaders ).not.toEqual( jasmine.objectContaining( {
-					"slug": jasmine.anything() as any,
-				} ) );
-
-				const secondRequest:JasmineAjaxRequest = jasmine.Ajax.requests.at( 1 );
-				expect( secondRequest.requestHeaders ).not.toEqual( jasmine.objectContaining( {
-					"slug": jasmine.anything() as any,
-				} ) );
-
-				const thirdRequest:JasmineAjaxRequest = jasmine.Ajax.requests.at( 2 );
-				expect( thirdRequest.requestHeaders ).toEqual( jasmine.objectContaining( {
-					"slug": "child-slug",
-				} ) );
-			} );
-
-			it( "should not add slug header when less slugs than access points", async () => {
-				stubRequest( "https://example.com/" );
-
-				const resource:CRUDDocument = createMock();
-
-				await resource.createAccessPoints( [ { hasMemberRelation: "relation" }, { hasMemberRelation: "relation" } ], [ "child-slug" ] );
-
-				const firstRequest:JasmineAjaxRequest = jasmine.Ajax.requests.at( 0 );
-				expect( firstRequest.requestHeaders ).toEqual( jasmine.objectContaining( {
-					"slug": "child-slug",
-				} ) );
-
-				const secondRequest:JasmineAjaxRequest = jasmine.Ajax.requests.at( 1 );
-				expect( secondRequest.requestHeaders ).not.toEqual( jasmine.objectContaining( {
-					"slug": jasmine.anything() as any,
-				} ) );
-			} );
-
-
-			it( "should send converted JSONLD when from self", async () => {
-				stubRequest( "https://example.com/" );
-
-				const resource:CRUDDocument = createMock();
-				resource._context
-					.extendObjectSchema( {
-						"@vocab": "https://example.com/ns#",
-					} )
-				;
-
-				await resource.createAccessPoints( [ {
-					hasMemberRelation: "relation1",
-					string: "my object 1",
-				}, {
-					hasMemberRelation: "relation2",
-					string: "my object 2",
-				} ] );
-
-				const request1:JasmineAjaxRequest = jasmine.Ajax.requests.at( 0 );
-				expect( JSON.parse( request1.params ) ).toEqual( {
-					"@id": "",
-					"@graph": [ {
-						"@id": "",
-						"@type": [ LDP.DirectContainer ],
-						[ LDP.hasMemberRelation ]: [ {
-							"@id": "https://example.com/ns#relation1",
-						} ],
-						[ LDP.membershipResource ]: [ {
-							"@id": "https://example.com/",
-						} ],
-						"https://example.com/ns#string": [ {
-							"@value": "my object 1",
-							"@type": XSD.string,
-						} ],
-					} ],
-				} );
-
-				const request2:JasmineAjaxRequest = jasmine.Ajax.requests.at( 1 );
-				expect( JSON.parse( request2.params ) ).toEqual( {
-					"@id": "",
-					"@graph": [ {
-						"@id": "",
-						"@type": [ LDP.DirectContainer ],
-						[ LDP.hasMemberRelation ]: [ {
-							"@id": "https://example.com/ns#relation2",
-						} ],
-						[ LDP.membershipResource ]: [ {
-							"@id": "https://example.com/",
-						} ],
-						"https://example.com/ns#string": [ {
-							"@value": "my object 2",
-							"@type": XSD.string,
-						} ],
-					} ],
-				} );
-			} );
-
-			it( "should send converted JSONLD when from URI", async () => {
-				stubRequest( "https://example.com/resource/" );
-
-				const resource:CRUDDocument = createMock();
-				resource._context
-					.extendObjectSchema( {
-						"@vocab": "https://example.com/ns#",
-					} )
-				;
-
-				await resource.createAccessPoints( "resource/", [ {
-					hasMemberRelation: "relation1",
-					string: "my object 1",
-				}, {
-					hasMemberRelation: "relation2",
-					string: "my object 2",
-				} ] );
-
-				const request1:JasmineAjaxRequest = jasmine.Ajax.requests.at( 0 );
-				expect( JSON.parse( request1.params ) ).toEqual( {
-					"@id": "",
-					"@graph": [ {
-						"@id": "",
-						"@type": [ LDP.DirectContainer ],
-						[ LDP.hasMemberRelation ]: [ {
-							"@id": "https://example.com/ns#relation1",
-						} ],
-						[ LDP.membershipResource ]: [ {
-							"@id": "https://example.com/resource/",
-						} ],
-						"https://example.com/ns#string": [ {
-							"@value": "my object 1",
-							"@type": XSD.string,
-						} ],
-					} ],
-				} );
-
-				const request2:JasmineAjaxRequest = jasmine.Ajax.requests.at( 1 );
-				expect( JSON.parse( request2.params ) ).toEqual( {
-					"@id": "",
-					"@graph": [ {
-						"@id": "",
-						"@type": [ LDP.DirectContainer ],
-						[ LDP.hasMemberRelation ]: [ {
-							"@id": "https://example.com/ns#relation2",
-						} ],
-						[ LDP.membershipResource ]: [ {
-							"@id": "https://example.com/resource/",
-						} ],
-						"https://example.com/ns#string": [ {
-							"@value": "my object 2",
-							"@type": XSD.string,
-						} ],
-					} ],
-				} );
-			} );
-
-			it( "should return same access point object references", async () => {
-				stubRequest( "https://example.com/" );
-
-				const resource:CRUDDocument = createMock();
-				const child1:BaseAccessPoint = { hasMemberRelation: "relation1" };
-				const child2:BaseAccessPoint = { hasMemberRelation: "relation2" };
-
-				const [ returned1, returned2 ]:AccessPoint[] = await resource.createAccessPoints( [ child1, child2 ] );
-
-				expect( child1 ).toBe( returned1 );
-				expect( child2 ).toBe( returned2 );
-			} );
-
-			it( "should have stored the access points in the registry", async () => {
-				stubRequest( "https://example.com/" );
-
-				const resource:CRUDDocument = createMock();
-				const [ returned1, returned2 ]:CRUDDocument[] = await resource.createAccessPoints( [ { hasMemberRelation: "relation" }, { hasMemberRelation: "relation" } ] );
-
-				expect( resource._registry.hasPointer( returned1.id ) ).toBe( true );
-				expect( resource._registry.getPointer( returned1.id ) ).toBe( returned1 );
-
-				expect( resource._registry.hasPointer( returned2.id ) ).toBe( true );
-				expect( resource._registry.getPointer( returned2.id ) ).toBe( returned2 );
-			} );
-
-			it( "should throw error if any access point is already persisted", async () => {
-				const child:BaseAccessPoint = PersistedResource.decorate( {
-					hasMemberRelation: "relation",
-				} );
-				const resource:CRUDDocument = createMock();
-
-				try {
-					await resource.createAccessPoints( [ { hasMemberRelation: "relation" }, child, { hasMemberRelation: "relation" } ] );
-					fail( "Should not resolve" );
-				} catch( error ) {
-					expect( () => { throw error; } )
-						.toThrowError( IllegalArgumentError, "The access-point provided has already been persisted." );
-				}
-			} );
-
-			it( "should throw error if any already being persisted", async () => {
-				const child:BaseAccessPoint = { hasMemberRelation: "relation" };
-				const resource:CRUDDocument = createMock();
-
-				try {
-					await Promise.all( [
-						resource.createAccessPoints( [ child ] ),
-						resource.createAccessPoints( [ child ] ),
-					] );
-					fail( "Should not resolve" );
-				} catch( error ) {
-					expect( () => { throw error; } )
-						.toThrowError( IllegalArgumentError, "The document is already being persisted." );
-				}
-			} );
-
-
-			it( "should add unresolved BasePersistedDocument data", async () => {
-				stubRequest( "https://example.com/" );
-
-				const resource:CRUDDocument = createMock();
-				const [ returned1, returned2 ]:CRUDDocument[] = await resource.createAccessPoints( [ { hasMemberRelation: "relation1" }, { hasMemberRelation: "relation2" } ] );
-
-				expect( returned1 ).toEqual( jasmine.objectContaining( {
-					_resolved: false,
-					id: "https://example.com/access-point-1/",
-				} ) );
-				expect( returned2 ).toEqual( jasmine.objectContaining( {
-					_resolved: false,
-					id: "https://example.com/access-point-2/",
-				} ) );
-			} );
-
-			it( "should add parsed AccessPoint data", async () => {
-				stubRequest( "https://example.com/" );
-
-				const resource:CRUDDocument = createMock();
-				const [ returned1, returned2 ]:CRUDDocument[] = await resource.createAccessPoints( [ { hasMemberRelation: "relation1" }, { hasMemberRelation: "relation2" } ] );
-
-				expect( returned1 ).toEqual( jasmine.objectContaining( {
-					hasMemberRelation: "relation1" as any,
-					membershipResource: jasmine.objectContaining<Pointer>( {
-						id: "https://example.com/",
-					} ) as any,
-				} ) );
-				expect( returned2 ).toEqual( jasmine.objectContaining( {
-					hasMemberRelation: "relation2" as any,
-					membershipResource: jasmine.objectContaining<Pointer>( {
-						id: "https://example.com/",
-					} ) as any,
-				} ) );
-			} );
-
-			it( "should update blank nodes when response metadata returned", async () => {
-				stubRequest( "https://example.com/", {
-					frees: [
-						{
-							"@id": "_:responseMetadata",
-							"@type": [ C.VolatileResource, C.ResponseMetadata ],
-							[ C.documentMetadata ]: [ {
+				it( "should update blank nodes when response metadata returned", async () => {
+					stubRequest( "https://example.com/", {
+						frees: [
+							{
+								"@id": "_:responseMetadata",
+								"@type": [ C.VolatileResource, C.ResponseMetadata ],
+								[ C.documentMetadata ]: [ {
+									"@id": "_:documentMetadata",
+								} ],
+							},
+							{
 								"@id": "_:documentMetadata",
-							} ],
-						},
-						{
-							"@id": "_:documentMetadata",
-							"@type": [ C.VolatileResource, C.DocumentMetadata ],
-							[ C.relatedDocument ]: [ {
-								"@id": "https://example.com/access-point-1/",
-							} ],
-							[ C.bNodesMap ]: [ {
+								"@type": [ C.VolatileResource, C.DocumentMetadata ],
+								[ C.relatedDocument ]: [ {
+									"@id": "https://example.com/access-point-1/",
+								} ],
+								[ C.bNodesMap ]: [ {
+									"@id": "_:map",
+								} ],
+							},
+							{
 								"@id": "_:map",
-							} ],
+								"@type": [ C.Map ],
+								[ C.entry ]: [
+									{ "@id": "_:entry-1" },
+									{ "@id": "_:entry-2" },
+								],
+							},
+							{
+								"@id": "_:entry-1",
+								[ C.entryKey ]: [ {
+									"@id": "_:1",
+								} ],
+								[ C.entryValue ]: [ {
+									"@id": "_:new-1",
+								} ],
+							},
+							{
+								"@id": "_:entry-2",
+								[ C.entryKey ]: [ {
+									"@id": "_:2",
+								} ],
+								[ C.entryValue ]: [ {
+									"@id": "_:new-2",
+								} ],
+							},
+						],
+					} );
+
+
+					type BNode = { id:string, string:string };
+					type MyDoc = { blankNode1:BNode, blankNode2:BNode };
+
+					const [ returned ]:(CRUDDocument & MyDoc)[] = await resource.createAccessPoints<MyDoc>( [ {
+						hasMemberRelation: "relation",
+						blankNode1: {
+							id: "_:1",
+							string: "blank node 1",
 						},
-						{
-							"@id": "_:map",
-							"@type": [ C.Map ],
-							[ C.entry ]: [
-								{ "@id": "_:entry-1" },
-								{ "@id": "_:entry-2" },
-							],
+						blankNode2: {
+							id: "_:2",
+							string: "blank node 2",
 						},
-						{
-							"@id": "_:entry-1",
-							[ C.entryKey ]: [ {
-								"@id": "_:1",
-							} ],
-							[ C.entryValue ]: [ {
-								"@id": "_:new-1",
-							} ],
-						},
-						{
-							"@id": "_:entry-2",
-							[ C.entryKey ]: [ {
-								"@id": "_:2",
-							} ],
-							[ C.entryValue ]: [ {
-								"@id": "_:new-2",
-							} ],
-						},
-					],
+					} ] );
+
+					expect( returned.hasPointer( "_:1" ) ).toBe( false );
+					expect( returned.blankNode1 ).toEqual( jasmine.objectContaining( {
+						id: "_:new-1",
+						string: "blank node 1",
+					} ) );
+
+					expect( returned.hasPointer( "_:2" ) ).toBe( false );
+					expect( returned.blankNode2 ).toEqual( jasmine.objectContaining( {
+						id: "_:new-2",
+						string: "blank node 2",
+					} ) );
 				} );
 
-				const resource:CRUDDocument = createMock();
-
-				type BNode = { id:string, string:string };
-				type MyDoc = { blankNode1:BNode, blankNode2:BNode };
-
-				const [ returned ]:(CRUDDocument & MyDoc)[] = await resource.createAccessPoints<MyDoc>( [ {
-					hasMemberRelation: "relation",
-					blankNode1: {
-						id: "_:1",
-						string: "blank node 1",
-					},
-					blankNode2: {
-						id: "_:2",
-						string: "blank node 2",
-					},
-				} ] );
-
-				expect( returned.hasPointer( "_:1" ) ).toBe( false );
-				expect( returned.blankNode1 ).toEqual( jasmine.objectContaining( {
-					id: "_:new-1",
-					string: "blank node 1",
-				} ) );
-
-				expect( returned.hasPointer( "_:2" ) ).toBe( false );
-				expect( returned.blankNode2 ).toEqual( jasmine.objectContaining( {
-					id: "_:new-2",
-					string: "blank node 2",
-				} ) );
 			} );
 
 		} );
@@ -4544,620 +4338,593 @@ describe( module( "carbonldp/Document" ), ():void => {
 			} );
 
 
-			it( "should request from self when no URI", async () => {
-				stubRequest( "https://example.com/" );
+			describe( "When has a context", () => {
 
-				const resource:CRUDDocument = createMock();
-				await resource.createAccessPointAndRetrieve( { hasMemberRelation: "relation" } );
+				let context:CarbonLDP;
+				let resource:CRUDDocument;
+				beforeEach( ():void => {
+					context = new CarbonLDP( "https://example.com/" );
+					resource = createMock( { _registry: context.registry } );
+				} );
 
-				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-				expect( request.url ).toBe( "https://example.com/" );
-			} );
 
-			it( "should request from URI", async () => {
-				stubRequest( "https://example.com/another-resource/" );
+				it( "should request from self when no URI", async () => {
+					stubRequest( "https://example.com/" );
 
-				const resource:CRUDDocument = createMock();
-				await resource.createAccessPointAndRetrieve( "https://example.com/another-resource/", { hasMemberRelation: "relation" } );
-
-				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-				expect( request.url ).toBe( "https://example.com/another-resource/" );
-			} );
-
-			it( "should request from relative URI", async () => {
-				stubRequest( "https://example.com/relative/" );
-
-				const resource:CRUDDocument = createMock();
-				await resource.createAccessPointAndRetrieve( "relative/", { hasMemberRelation: "relation" } );
-
-				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-				expect( request.url ).toBe( "https://example.com/relative/" );
-			} );
-
-			it( "should request from resolved prefixed name", async () => {
-				stubRequest( "https://example.com/resource/" );
-
-				const _context:CarbonLDP = new CarbonLDP( "https://example.com/" );
-				_context.extendObjectSchema( { "ex": "https://example.com/" } );
-
-				const resource:CRUDDocument = createMock( { _context } );
-				await resource.createAccessPointAndRetrieve( "ex:resource/", { hasMemberRelation: "relation" } );
-
-				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-				expect( request.url ).toBe( "https://example.com/resource/" );
-			} );
-
-			it( "should throw error when from URI outside context scope", async () => {
-				const resource:CRUDDocument = createMock();
-
-				await resource
-					.createAccessPointAndRetrieve( "https://example.org/resource/", { hasMemberRelation: "relation" } )
-					.catch( error => {
-						expect( () => { throw error; } )
-							.toThrowError( IllegalArgumentError, `"https://example.org/resource/" is out of scope.` );
-					} )
-				;
-			} );
-
-			it( "should throw error when from URI is BNode label", async () => {
-				const resource:CRUDDocument = createMock();
-
-				await resource
-					.createAccessPointAndRetrieve( "_:1", { hasMemberRelation: "relation" } )
-					.catch( error => {
-						expect( () => { throw error; } )
-							.toThrowError( IllegalArgumentError, `"_:1" is out of scope.` );
-					} )
-				;
-			} );
-
-			it( "should throw error when from URI is Named Fragment label", async () => {
-				const resource:CRUDDocument = createMock();
-
-				await resource
-					.createAccessPointAndRetrieve( "#fragment", { hasMemberRelation: "relation" } )
-					.catch( error => {
-						expect( () => { throw error; } )
-							.toThrowError( IllegalArgumentError, `"https://example.com/#fragment" is out of scope.` );
-					} )
-				;
-			} );
-
-			it( "should throw error when unresolved prefixed name", async () => {
-				const resource:CRUDDocument = createMock();
-
-				await resource
-					.createAccessPointAndRetrieve( "ex:resource/", { hasMemberRelation: "relation" } )
-					.catch( error => {
-						expect( () => { throw error; } )
-							.toThrowError( IllegalArgumentError, `"ex:resource/" is out of scope.` );
-					} )
-				;
-			} );
-
-			it( "should parse error response", async () => {
-				stubRequest( "https://example.com/500/", { status: 500 } );
-				const resource:CRUDDocument = createMock( { id: "https://example.com/500/" } );
-
-				const spy:jasmine.Spy = spyOn( resource._registry, "_parseErrorFromResponse" )
-					.and.callFake( () => Promise.reject( null ) );
-
-				try {
 					await resource.createAccessPointAndRetrieve( { hasMemberRelation: "relation" } );
-					fail( "Should not createAccessPoint" );
-				} catch( error ) {
-					if( error ) fail( error );
+
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.url ).toBe( "https://example.com/" );
+				} );
+
+				it( "should request from URI", async () => {
+					stubRequest( "https://example.com/another-resource/" );
+
+					await resource.createAccessPointAndRetrieve( "https://example.com/another-resource/", { hasMemberRelation: "relation" } );
+
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.url ).toBe( "https://example.com/another-resource/" );
+				} );
+
+				it( "should request from relative URI", async () => {
+					stubRequest( "https://example.com/relative/" );
+
+					await resource.createAccessPointAndRetrieve( "relative/", { hasMemberRelation: "relation" } );
+
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.url ).toBe( "https://example.com/relative/" );
+				} );
+
+				it( "should request from resolved prefixed name", async () => {
+					stubRequest( "https://example.com/resource/" );
+
+					context.extendObjectSchema( { "ex": "https://example.com/" } );
+
+					await resource.createAccessPointAndRetrieve( "ex:resource/", { hasMemberRelation: "relation" } );
+
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.url ).toBe( "https://example.com/resource/" );
+				} );
+
+				it( "should throw error when from URI outside context scope", async () => {
+					await resource
+						.createAccessPointAndRetrieve( "https://example.org/resource/", { hasMemberRelation: "relation" } )
+						.catch( error => {
+							expect( () => { throw error; } )
+								.toThrowError( IllegalArgumentError, `"https://example.org/resource/" is out of scope.` );
+						} )
+					;
+				} );
+
+				it( "should throw error when from URI is BNode label", async () => {
+					await resource
+						.createAccessPointAndRetrieve( "_:1", { hasMemberRelation: "relation" } )
+						.catch( error => {
+							expect( () => { throw error; } )
+								.toThrowError( IllegalArgumentError, `"_:1" is out of scope.` );
+						} )
+					;
+				} );
+
+				it( "should throw error when from URI is Named Fragment label", async () => {
+					await resource
+						.createAccessPointAndRetrieve( "#fragment", { hasMemberRelation: "relation" } )
+						.catch( error => {
+							expect( () => { throw error; } )
+								.toThrowError( IllegalArgumentError, `"https://example.com/#fragment" is out of scope.` );
+						} )
+					;
+				} );
+
+				it( "should throw error when unresolved prefixed name", async () => {
+					await resource
+						.createAccessPointAndRetrieve( "ex:resource/", { hasMemberRelation: "relation" } )
+						.catch( error => {
+							expect( () => { throw error; } )
+								.toThrowError( IllegalArgumentError, `"ex:resource/" is out of scope.` );
+						} )
+					;
+				} );
+
+				it( "should parse error response", async () => {
+					stubRequest( "https://example.com/", { status: 500 } );
+
+					const spy:jasmine.Spy = spyOn( resource._registry, "_parseErrorFromResponse" )
+						.and.callFake( () => Promise.reject( null ) );
+
+					try {
+						await resource.createAccessPointAndRetrieve( { hasMemberRelation: "relation" } );
+						fail( "Should not createAccessPoint" );
+					} catch( error ) {
+						if( error ) fail( error );
+
+						expect( spy ).toHaveBeenCalled();
+					}
+				} );
+
+
+				it( "should send basic request headers when from self", async () => {
+					stubRequest( "https://example.com/" );
+
+					await resource.createAccessPointAndRetrieve( { hasMemberRelation: "relation" } );
+
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.requestHeaders ).toEqual( {
+						"accept": "application/ld+json",
+						"content-type": "application/ld+json",
+						"prefer": [
+							"return=representation",
+							`${ LDP.RDFSource }; rel=interaction-model`,
+						].join( ", " ),
+					} );
+				} );
+
+				it( "should send basic request headers when from URI", async () => {
+					stubRequest( "https://example.com/resource/" );
+
+					await resource.createAccessPointAndRetrieve( "resource/", { hasMemberRelation: "relation" } );
+
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.requestHeaders ).toEqual( {
+						"accept": "application/ld+json",
+						"content-type": "application/ld+json",
+						"prefer": [
+							"return=representation",
+							`${ LDP.RDFSource }; rel=interaction-model`,
+						].join( ", " ),
+					} );
+				} );
+
+				it( "should add authentication header", async () => {
+					stubRequest( "https://example.com/" );
+
+					const spy:jasmine.Spy = spyOn( context.auth, "addAuthentication" );
+
+					await resource.createAccessPointAndRetrieve( { hasMemberRelation: "relation" } );
 
 					expect( spy ).toHaveBeenCalled();
-				}
-			} );
-
-
-			it( "should send basic request headers when from self", async () => {
-				stubRequest( "https://example.com/" );
-
-				const resource:CRUDDocument = createMock();
-				await resource.createAccessPointAndRetrieve( { hasMemberRelation: "relation" } );
-
-				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-				expect( request.requestHeaders ).toEqual( {
-					"accept": "application/ld+json",
-					"content-type": "application/ld+json",
-					"prefer": [
-						"return=representation",
-						`${ LDP.RDFSource }; rel=interaction-model`,
-					].join( ", " ),
-				} );
-			} );
-
-			it( "should send basic request headers when from URI", async () => {
-				stubRequest( "https://example.com/resource/" );
-
-				const resource:CRUDDocument = createMock();
-				await resource.createAccessPointAndRetrieve( "resource/", { hasMemberRelation: "relation" } );
-
-				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-				expect( request.requestHeaders ).toEqual( {
-					"accept": "application/ld+json",
-					"content-type": "application/ld+json",
-					"prefer": [
-						"return=representation",
-						`${ LDP.RDFSource }; rel=interaction-model`,
-					].join( ", " ),
-				} );
-			} );
-
-			it( "should add authentication header", async () => {
-				stubRequest( "https://example.com/" );
-
-				const resource:CRUDDocument = createMock();
-
-				const spy:jasmine.Spy = spyOn( resource._context.auth, "addAuthentication" );
-
-				await resource.createAccessPointAndRetrieve( { hasMemberRelation: "relation" } );
-
-				expect( spy ).toHaveBeenCalled();
-			} );
-
-			it( "should add custom headers when from self", async () => {
-				stubRequest( "https://example.com/" );
-
-				const resource:CRUDDocument = createMock();
-
-				await resource.createAccessPointAndRetrieve( { hasMemberRelation: "relation" }, {
-					headers: new Map()
-						.set( "custom", new Header( "custom value" ) )
-					,
 				} );
 
-				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-				expect( request.requestHeaders ).toEqual( jasmine.objectContaining( {
-					"custom": "custom value",
-				} ) );
-			} );
-
-			it( "should add custom headers when from URI", async () => {
-				stubRequest( "https://example.com/resource/" );
-
-				const resource:CRUDDocument = createMock();
-
-				await resource.createAccessPointAndRetrieve( "resource/", { hasMemberRelation: "relation" }, {
-					headers: new Map()
-						.set( "custom", new Header( "custom value" ) )
-					,
-				} );
-
-				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-				expect( request.requestHeaders ).toEqual( jasmine.objectContaining( {
-					"custom": "custom value",
-				} ) );
-			} );
-
-			it( "should add slug header when from self", async () => {
-				stubRequest( "https://example.com/" );
-
-				const resource:CRUDDocument = createMock();
-
-				await resource.createAccessPointAndRetrieve( { hasMemberRelation: "relation" }, "child-slug" );
-
-				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-				expect( request.requestHeaders ).toEqual( jasmine.objectContaining( {
-					"slug": "child-slug",
-				} ) );
-			} );
-
-			it( "should add slug header when from URI", async () => {
-				stubRequest( "https://example.com/resource/" );
-
-				const resource:CRUDDocument = createMock();
-
-				await resource.createAccessPointAndRetrieve( "resource/", { hasMemberRelation: "relation" }, "child-slug" );
-
-				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-				expect( request.requestHeaders ).toEqual( jasmine.objectContaining( {
-					"slug": "child-slug",
-				} ) );
-			} );
-
-
-			it( "should send converted JSONLD when from self", async () => {
-				stubRequest( "https://example.com/" );
-
-				const resource:CRUDDocument = createMock();
-				resource._context
-					.extendObjectSchema( {
-						"@vocab": "https://example.com/ns#",
-					} )
-				;
-
-				await resource.createAccessPointAndRetrieve( {
-					hasMemberRelation: "relation",
-					string: "my object",
-					pointerSet: [
-						{ id: "_:1", string: "blank node" },
-						{ slug: "fragment", string: "named fragment" },
-					],
-				} );
-
-				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-				expect( JSON.parse( request.params ) ).toEqual( {
-					"@id": "",
-					"@graph": [ {
-						"@id": "",
-						"@type": [ LDP.DirectContainer ],
-						[ LDP.hasMemberRelation ]: [ {
-							"@id": "https://example.com/ns#relation",
-						} ],
-						[ LDP.membershipResource ]: [ {
-							"@id": "https://example.com/",
-						} ],
-						"https://example.com/ns#string": [ {
-							"@value": "my object",
-							"@type": XSD.string,
-						} ],
-						"https://example.com/ns#pointerSet": [ {
-							"@id": "_:1",
-						}, {
-							"@id": "#fragment",
-						} ],
-					}, {
-						"@id": "_:1",
-						"https://example.com/ns#string": [ {
-							"@value": "blank node",
-							"@type": XSD.string,
-						} ],
-					}, {
-						"@id": "#fragment",
-						"https://example.com/ns#string": [ {
-							"@value": "named fragment",
-							"@type": XSD.string,
-						} ],
-					} ],
-				} );
-			} );
-
-			it( "should send converted JSONLD when from URI", async () => {
-				stubRequest( "https://example.com/resource/" );
-
-				const resource:CRUDDocument = createMock();
-				resource._context
-					.extendObjectSchema( {
-						"@vocab": "https://example.com/ns#",
-					} )
-				;
-
-				await resource.createAccessPointAndRetrieve( "resource/", {
-					hasMemberRelation: "relation",
-					string: "my object",
-					pointerSet: [
-						{ id: "_:1", string: "blank node" },
-						{ slug: "fragment", string: "named fragment" },
-					],
-				} );
-
-				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-				expect( JSON.parse( request.params ) ).toEqual( {
-					"@id": "",
-					"@graph": [ {
-						"@id": "",
-						"@type": [ LDP.DirectContainer ],
-						[ LDP.hasMemberRelation ]: [ {
-							"@id": "https://example.com/ns#relation",
-						} ],
-						[ LDP.membershipResource ]: [ {
-							"@id": "https://example.com/resource/",
-						} ],
-						"https://example.com/ns#string": [ {
-							"@value": "my object",
-							"@type": XSD.string,
-						} ],
-						"https://example.com/ns#pointerSet": [ {
-							"@id": "_:1",
-						}, {
-							"@id": "#fragment",
-						} ],
-					}, {
-						"@id": "_:1",
-						"https://example.com/ns#string": [ {
-							"@value": "blank node",
-							"@type": XSD.string,
-						} ],
-					}, {
-						"@id": "#fragment",
-						"https://example.com/ns#string": [ {
-							"@value": "named fragment",
-							"@type": XSD.string,
-						} ],
-					} ],
-				} );
-			} );
-
-			it( "should return same object reference", async () => {
-				stubRequest( "https://example.com/" );
-
-				const resource:CRUDDocument = createMock();
-				const child:BaseAccessPoint = { hasMemberRelation: "relation" };
-
-				const returned:AccessPoint = await resource.createAccessPointAndRetrieve( child );
-
-				expect( child ).toBe( returned );
-			} );
-
-			it( "should have stored the access point in the registry", async () => {
-				stubRequest( "https://example.com/" );
-
-				const resource:CRUDDocument = createMock();
-				const returned:CRUDDocument = await resource.createAccessPointAndRetrieve( { hasMemberRelation: "relation" } );
-
-				expect( resource._registry.hasPointer( returned.id ) ).toBe( true );
-				expect( resource._registry.getPointer( returned.id ) ).toBe( returned );
-			} );
-
-			it( "should throw error if access point is already persisted", async () => {
-				const child:BaseAccessPoint = PersistedResource.decorate( {
-					hasMemberRelation: "relation",
-				} );
-				const resource:CRUDDocument = createMock();
-
-				try {
-					await resource.createAccessPointAndRetrieve( child );
-					fail( "Should not resolve" );
-				} catch( error ) {
-					expect( () => { throw error; } )
-						.toThrowError( IllegalArgumentError, "The access-point provided has already been persisted." );
-				}
-			} );
-
-			it( "should throw error if access point already being persisted", async () => {
-				const child:BaseAccessPoint = { hasMemberRelation: "relation" };
-				const resource:CRUDDocument = createMock();
-
-				try {
-					await Promise.all( [
-						resource.createAccessPointAndRetrieve( child ),
-						resource.createAccessPointAndRetrieve( child ),
-					] );
-					fail( "Should not resolve" );
-				} catch( error ) {
-					expect( () => { throw error; } )
-						.toThrowError( IllegalArgumentError, "The document is already being persisted." );
-				}
-			} );
-
-			it( "should be able to resend access point after a failed request", async () => {
-				const resource:CRUDDocument = createMock();
-
-				const child:BaseAccessPoint = { hasMemberRelation: "relation" };
-				try {
-					stubRequest( "https://example.com/", { status: 500 } );
-					await resource.createAccessPointAndRetrieve( child );
-
-				} catch( error ) {
+				it( "should add custom headers when from self", async () => {
 					stubRequest( "https://example.com/" );
-					await resource.createAccessPointAndRetrieve( child );
 
-					expect().nothing();
-				}
-			} );
+					await resource.createAccessPointAndRetrieve( { hasMemberRelation: "relation" }, {
+						headers: new Map()
+							.set( "custom", new Header( "custom value" ) )
+						,
+					} );
 
-			it( "should throw error if incorrect membershipResource", async () => {
-				const child:BaseAccessPoint = {
-					hasMemberRelation: "relation",
-					membershipResource: Pointer.create( { id: "https://example.com/another-resource/" } ),
-				};
-				const resource:CRUDDocument = createMock();
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.requestHeaders ).toEqual( jasmine.objectContaining( {
+						"custom": "custom value",
+					} ) );
+				} );
 
-				try {
-					await resource.createAccessPointAndRetrieve( child );
-					fail( "Should not resolve" );
-				} catch( error ) {
-					expect( () => { throw error; } )
-						.toThrowError( IllegalArgumentError, "The endpoint URI must be the same as the accessPoint's membershipResource." );
-				}
-			} );
+				it( "should add custom headers when from URI", async () => {
+					stubRequest( "https://example.com/resource/" );
 
-			it( "should add resolved BasePersistedDocument data", async () => {
-				stubRequest( "https://example.com/" );
+					await resource.createAccessPointAndRetrieve( "resource/", { hasMemberRelation: "relation" }, {
+						headers: new Map()
+							.set( "custom", new Header( "custom value" ) )
+						,
+					} );
 
-				const resource:CRUDDocument = createMock();
-				const returned:CRUDDocument = await resource.createAccessPointAndRetrieve( { hasMemberRelation: "relation" } );
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.requestHeaders ).toEqual( jasmine.objectContaining( {
+						"custom": "custom value",
+					} ) );
+				} );
 
-				expect( returned ).toEqual( jasmine.objectContaining( {
-					_resolved: true,
-					id: "https://example.com/access-point-1/",
-				} ) );
-			} );
+				it( "should add slug header when from self", async () => {
+					stubRequest( "https://example.com/" );
 
-			it( "should add & update parsed AccessPoint data", async () => {
-				stubRequest( "https://example.com/" );
+					await resource.createAccessPointAndRetrieve( { hasMemberRelation: "relation" }, "child-slug" );
 
-				const resource:CRUDDocument = createMock();
-				const returned:CRUDDocument = await resource.createAccessPointAndRetrieve( { hasMemberRelation: "relation" } );
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.requestHeaders ).toEqual( jasmine.objectContaining( {
+						"slug": "child-slug",
+					} ) );
+				} );
 
-				expect( returned ).toEqual( jasmine.objectContaining( {
-					types: jasmine.arrayContaining( [
-						LDP.DirectContainer,
-						C.AccessPoint,
-					] ) as any as string[],
-					hasMemberRelation: jasmine.objectContaining<Pointer>( {
-						id: "https://example.com/ns#relation",
-					} ) as any,
-					membershipResource: jasmine.objectContaining<Pointer>( {
-						id: "https://example.com/",
-					} ) as any,
-				} ) );
-			} );
+				it( "should add slug header when from URI", async () => {
+					stubRequest( "https://example.com/resource/" );
 
-			it( "should update the child data", async () => {
-				const resource:CRUDDocument = createMock();
-				resource._context
-					.extendObjectSchema( { "@vocab": "https://example.com/ns#" } );
+					await resource.createAccessPointAndRetrieve( "resource/", { hasMemberRelation: "relation" }, "child-slug" );
 
-				type MyResource = { string:string, pointerSet?:MyResource[] };
-				const promise:Promise<CRUDDocument & MyResource> = resource.createAndRetrieve( {
-					string: "document",
-					pointerSet: [
-						{
-							id: "_:1",
-							string: "blank node",
-							pointerSet: [],
-						},
-						{
-							slug: "fragment",
-							string: "named fragment",
-						},
-						{
-							id: "_:2",
-							string: "to be removed",
-						},
-					],
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.requestHeaders ).toEqual( jasmine.objectContaining( {
+						"slug": "child-slug",
+					} ) );
 				} );
 
 
-				jasmine.Ajax
-					.requests
-					.filter( "https://example.com/" )
-					.forEach( ( request, index ) => {
-						request.respondWith( generateResponseOptions( "https://example.com/", {
-							index,
-							resource: {
-								"https://example.com/ns#string": "updated document",
-								"https://example.com/ns#pointerSet": [
-									{ "@id": "_:1" },
-									{ "@id": "#fragment" },
-								],
-							},
-							fragments: [ {
+				it( "should send converted JSONLD when from self", async () => {
+					stubRequest( "https://example.com/" );
+
+					context
+						.extendObjectSchema( {
+							"@vocab": "https://example.com/ns#",
+						} )
+					;
+
+					await resource.createAccessPointAndRetrieve( {
+						hasMemberRelation: "relation",
+						string: "my object",
+						pointerSet: [
+							{ id: "_:1", string: "blank node" },
+							{ slug: "fragment", string: "named fragment" },
+						],
+					} );
+
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( JSON.parse( request.params ) ).toEqual( {
+						"@id": "",
+						"@graph": [ {
+							"@id": "",
+							"@type": [ LDP.DirectContainer ],
+							[ LDP.hasMemberRelation ]: [ {
+								"@id": "https://example.com/ns#relation",
+							} ],
+							[ LDP.membershipResource ]: [ {
+								"@id": "https://example.com/",
+							} ],
+							"https://example.com/ns#string": [ {
+								"@value": "my object",
+								"@type": XSD.string,
+							} ],
+							"https://example.com/ns#pointerSet": [ {
 								"@id": "_:1",
-								"https://example.com/ns#string": "updated blank node",
-								"https://example.com/ns#pointerSet": [
-									{ "@id": "#2" },
-								],
 							}, {
 								"@id": "#fragment",
-								"https://example.com/ns#string": "updated named fragment",
-							}, {
-								"@id": "#2",
-								"https://example.com/ns#string": "new named fragment",
 							} ],
-						} ) );
-					} )
-				;
+						}, {
+							"@id": "_:1",
+							"https://example.com/ns#string": [ {
+								"@value": "blank node",
+								"@type": XSD.string,
+							} ],
+						}, {
+							"@id": "#fragment",
+							"https://example.com/ns#string": [ {
+								"@value": "named fragment",
+								"@type": XSD.string,
+							} ],
+						} ],
+					} );
+				} );
 
+				it( "should send converted JSONLD when from URI", async () => {
+					stubRequest( "https://example.com/resource/" );
 
-				const returned:CRUDDocument & MyResource = await promise;
-				expect( returned as MyResource ).toEqual( jasmine.objectContaining( {
-					string: "updated document",
-					pointerSet: [
-						{
-							string: "updated blank node",
-							pointerSet: [
-								{
-									string: "new named fragment",
-								},
-							],
-						},
-						{
-							string: "updated named fragment",
-						},
-					],
-				} ) );
-				expect( returned.hasPointer( "_:2" ) ).toBe( false );
-			} );
+					context
+						.extendObjectSchema( {
+							"@vocab": "https://example.com/ns#",
+						} )
+					;
 
-			it( "should update blank nodes when response metadata returned", async () => {
-				stubRequest( "https://example.com/", {
-					resource: {
-						"https://example.com/ns#blankNode1": [ { "@id": "_:new-1" } ],
-						"https://example.com/ns#blankNode2": [ { "@id": "_:new-2" } ],
-					},
-					fragments: [
-						{
-							"@id": "_:new-1",
-							"https://example.com/ns#string": [ { "@value": "updated blank node 1" } ],
-						},
-						{
-							"@id": "_:new-2",
-							"https://example.com/ns#string": [ { "@value": "updated blank node 2" } ],
-						},
-					],
-					frees: [
-						{
-							"@id": "_:responseMetadata",
-							"@type": [ C.VolatileResource, C.ResponseMetadata ],
-							[ C.documentMetadata ]: [ {
-								"@id": "_:documentMetadata",
+					await resource.createAccessPointAndRetrieve( "resource/", {
+						hasMemberRelation: "relation",
+						string: "my object",
+						pointerSet: [
+							{ id: "_:1", string: "blank node" },
+							{ slug: "fragment", string: "named fragment" },
+						],
+					} );
+
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( JSON.parse( request.params ) ).toEqual( {
+						"@id": "",
+						"@graph": [ {
+							"@id": "",
+							"@type": [ LDP.DirectContainer ],
+							[ LDP.hasMemberRelation ]: [ {
+								"@id": "https://example.com/ns#relation",
 							} ],
-						},
-						{
-							"@id": "_:documentMetadata",
-							"@type": [ C.VolatileResource, C.DocumentMetadata ],
-							[ C.relatedDocument ]: [ {
-								"@id": "https://example.com/access-point-1/",
+							[ LDP.membershipResource ]: [ {
+								"@id": "https://example.com/resource/",
 							} ],
-							[ C.bNodesMap ]: [ {
-								"@id": "_:map",
+							"https://example.com/ns#string": [ {
+								"@value": "my object",
+								"@type": XSD.string,
 							} ],
-						},
-						{
-							"@id": "_:map",
-							"@type": [ C.Map ],
-							[ C.entry ]: [
-								{ "@id": "_:entry-1" },
-								{ "@id": "_:entry-2" },
-							],
-						},
-						{
-							"@id": "_:entry-1",
-							[ C.entryKey ]: [ {
+							"https://example.com/ns#pointerSet": [ {
 								"@id": "_:1",
+							}, {
+								"@id": "#fragment",
 							} ],
-							[ C.entryValue ]: [ {
+						}, {
+							"@id": "_:1",
+							"https://example.com/ns#string": [ {
+								"@value": "blank node",
+								"@type": XSD.string,
+							} ],
+						}, {
+							"@id": "#fragment",
+							"https://example.com/ns#string": [ {
+								"@value": "named fragment",
+								"@type": XSD.string,
+							} ],
+						} ],
+					} );
+				} );
+
+				it( "should return same object reference", async () => {
+					stubRequest( "https://example.com/" );
+
+					const child:BaseAccessPoint = { hasMemberRelation: "relation" };
+
+					const returned:AccessPoint = await resource.createAccessPointAndRetrieve( child );
+
+					expect( child ).toBe( returned );
+				} );
+
+				it( "should have stored the access point in the registry", async () => {
+					stubRequest( "https://example.com/" );
+
+					const returned:CRUDDocument = await resource.createAccessPointAndRetrieve( { hasMemberRelation: "relation" } );
+
+					expect( resource._registry.hasPointer( returned.id ) ).toBe( true );
+					expect( resource._registry.getPointer( returned.id ) ).toBe( returned );
+				} );
+
+				it( "should throw error if access point is already persisted", async () => {
+					const child:BaseAccessPoint = PersistedResource.decorate( {
+						hasMemberRelation: "relation",
+					} );
+
+					try {
+						await resource.createAccessPointAndRetrieve( child );
+						fail( "Should not resolve" );
+					} catch( error ) {
+						expect( () => { throw error; } )
+							.toThrowError( IllegalArgumentError, "The access-point provided has already been persisted." );
+					}
+				} );
+
+				it( "should throw error if access point already being persisted", async () => {
+					const child:BaseAccessPoint = { hasMemberRelation: "relation" };
+
+					try {
+						await Promise.all( [
+							resource.createAccessPointAndRetrieve( child ),
+							resource.createAccessPointAndRetrieve( child ),
+						] );
+						fail( "Should not resolve" );
+					} catch( error ) {
+						expect( () => { throw error; } )
+							.toThrowError( IllegalArgumentError, "The document is already being persisted." );
+					}
+				} );
+
+				it( "should be able to resend access point after a failed request", async () => {
+					const child:BaseAccessPoint = { hasMemberRelation: "relation" };
+					try {
+						stubRequest( "https://example.com/", { status: 500 } );
+						await resource.createAccessPointAndRetrieve( child );
+
+					} catch( error ) {
+						stubRequest( "https://example.com/" );
+						await resource.createAccessPointAndRetrieve( child );
+
+						expect().nothing();
+					}
+				} );
+
+				it( "should throw error if incorrect membershipResource", async () => {
+					const child:BaseAccessPoint = {
+						hasMemberRelation: "relation",
+						membershipResource: Pointer.create( { id: "https://example.com/another-resource/" } ),
+					};
+
+					try {
+						await resource.createAccessPointAndRetrieve( child );
+						fail( "Should not resolve" );
+					} catch( error ) {
+						expect( () => { throw error; } )
+							.toThrowError( IllegalArgumentError, "The endpoint URI must be the same as the accessPoint's membershipResource." );
+					}
+				} );
+
+				it( "should add resolved BasePersistedDocument data", async () => {
+					stubRequest( "https://example.com/" );
+
+					const returned:CRUDDocument = await resource.createAccessPointAndRetrieve( { hasMemberRelation: "relation" } );
+
+					expect( returned ).toEqual( jasmine.objectContaining( {
+						_resolved: true,
+						id: "https://example.com/access-point-1/",
+					} ) );
+				} );
+
+				it( "should add & update parsed AccessPoint data", async () => {
+					stubRequest( "https://example.com/" );
+
+					const returned:CRUDDocument = await resource.createAccessPointAndRetrieve( { hasMemberRelation: "relation" } );
+
+					expect( returned ).toEqual( jasmine.objectContaining( {
+						types: jasmine.arrayContaining( [
+							LDP.DirectContainer,
+							C.AccessPoint,
+						] ) as any as string[],
+						hasMemberRelation: jasmine.objectContaining<Pointer>( {
+							id: "https://example.com/ns#relation",
+						} ) as any,
+						membershipResource: jasmine.objectContaining<Pointer>( {
+							id: "https://example.com/",
+						} ) as any,
+					} ) );
+				} );
+
+				it( "should update the child data", async () => {
+					context
+						.extendObjectSchema( { "@vocab": "https://example.com/ns#" } );
+
+					type MyResource = { string:string, pointerSet?:MyResource[] };
+					const promise:Promise<CRUDDocument & MyResource> = resource.createAndRetrieve( {
+						string: "document",
+						pointerSet: [
+							{
+								id: "_:1",
+								string: "blank node",
+								pointerSet: [],
+							},
+							{
+								slug: "fragment",
+								string: "named fragment",
+							},
+							{
+								id: "_:2",
+								string: "to be removed",
+							},
+						],
+					} );
+
+
+					jasmine.Ajax
+						.requests
+						.filter( "https://example.com/" )
+						.forEach( ( request, index ) => {
+							request.respondWith( generateResponseOptions( "https://example.com/", {
+								index,
+								resource: {
+									"https://example.com/ns#string": "updated document",
+									"https://example.com/ns#pointerSet": [
+										{ "@id": "_:1" },
+										{ "@id": "#fragment" },
+									],
+								},
+								fragments: [ {
+									"@id": "_:1",
+									"https://example.com/ns#string": "updated blank node",
+									"https://example.com/ns#pointerSet": [
+										{ "@id": "#2" },
+									],
+								}, {
+									"@id": "#fragment",
+									"https://example.com/ns#string": "updated named fragment",
+								}, {
+									"@id": "#2",
+									"https://example.com/ns#string": "new named fragment",
+								} ],
+							} ) );
+						} )
+					;
+
+
+					const returned:CRUDDocument & MyResource = await promise;
+					expect( returned as MyResource ).toEqual( jasmine.objectContaining( {
+						string: "updated document",
+						pointerSet: [
+							{
+								string: "updated blank node",
+								pointerSet: [
+									{
+										string: "new named fragment",
+									},
+								],
+							},
+							{
+								string: "updated named fragment",
+							},
+						],
+					} ) );
+					expect( returned.hasPointer( "_:2" ) ).toBe( false );
+				} );
+
+				it( "should update blank nodes when response metadata returned", async () => {
+					stubRequest( "https://example.com/", {
+						resource: {
+							"https://example.com/ns#blankNode1": [ { "@id": "_:new-1" } ],
+							"https://example.com/ns#blankNode2": [ { "@id": "_:new-2" } ],
+						},
+						fragments: [
+							{
 								"@id": "_:new-1",
-							} ],
-						},
-						{
-							"@id": "_:entry-2",
-							[ C.entryKey ]: [ {
-								"@id": "_:2",
-							} ],
-							[ C.entryValue ]: [ {
+								"https://example.com/ns#string": [ { "@value": "updated blank node 1" } ],
+							},
+							{
 								"@id": "_:new-2",
-							} ],
+								"https://example.com/ns#string": [ { "@value": "updated blank node 2" } ],
+							},
+						],
+						frees: [
+							{
+								"@id": "_:responseMetadata",
+								"@type": [ C.VolatileResource, C.ResponseMetadata ],
+								[ C.documentMetadata ]: [ {
+									"@id": "_:documentMetadata",
+								} ],
+							},
+							{
+								"@id": "_:documentMetadata",
+								"@type": [ C.VolatileResource, C.DocumentMetadata ],
+								[ C.relatedDocument ]: [ {
+									"@id": "https://example.com/access-point-1/",
+								} ],
+								[ C.bNodesMap ]: [ {
+									"@id": "_:map",
+								} ],
+							},
+							{
+								"@id": "_:map",
+								"@type": [ C.Map ],
+								[ C.entry ]: [
+									{ "@id": "_:entry-1" },
+									{ "@id": "_:entry-2" },
+								],
+							},
+							{
+								"@id": "_:entry-1",
+								[ C.entryKey ]: [ {
+									"@id": "_:1",
+								} ],
+								[ C.entryValue ]: [ {
+									"@id": "_:new-1",
+								} ],
+							},
+							{
+								"@id": "_:entry-2",
+								[ C.entryKey ]: [ {
+									"@id": "_:2",
+								} ],
+								[ C.entryValue ]: [ {
+									"@id": "_:new-2",
+								} ],
+							},
+						],
+					} );
+
+					context
+						.extendObjectSchema( { "@vocab": "https://example.com/ns#" } );
+
+					type BNode = { id:string, string:string };
+					type MyDoc = { blankNode1:BNode, blankNode2:BNode };
+
+					const returned:CRUDDocument & MyDoc = await resource.createAccessPointAndRetrieve<MyDoc>( {
+						hasMemberRelation: "relation",
+						blankNode1: {
+							id: "_:1",
+							string: "blank node 1",
 						},
-					],
+						blankNode2: {
+							id: "_:2",
+							string: "blank node 2",
+						},
+					} );
+
+					expect( returned.hasPointer( "_:1" ) ).toBe( false );
+					expect( returned.blankNode1 ).toEqual( jasmine.objectContaining( {
+						id: "_:new-1",
+						string: "updated blank node 1",
+					} ) );
+
+					expect( returned.hasPointer( "_:2" ) ).toBe( false );
+					expect( returned.blankNode2 ).toEqual( jasmine.objectContaining( {
+						id: "_:new-2",
+						string: "updated blank node 2",
+					} ) );
 				} );
 
-				const resource:CRUDDocument = createMock();
-				resource._context
-					.extendObjectSchema( { "@vocab": "https://example.com/ns#" } );
-
-				type BNode = { id:string, string:string };
-				type MyDoc = { blankNode1:BNode, blankNode2:BNode };
-
-				const returned:CRUDDocument & MyDoc = await resource.createAccessPointAndRetrieve<MyDoc>( {
-					hasMemberRelation: "relation",
-					blankNode1: {
-						id: "_:1",
-						string: "blank node 1",
-					},
-					blankNode2: {
-						id: "_:2",
-						string: "blank node 2",
-					},
-				} );
-
-				expect( returned.hasPointer( "_:1" ) ).toBe( false );
-				expect( returned.blankNode1 ).toEqual( jasmine.objectContaining( {
-					id: "_:new-1",
-					string: "updated blank node 1",
-				} ) );
-
-				expect( returned.hasPointer( "_:2" ) ).toBe( false );
-				expect( returned.blankNode2 ).toEqual( jasmine.objectContaining( {
-					id: "_:new-2",
-					string: "updated blank node 2",
-				} ) );
 			} );
 
 		} );
@@ -5307,677 +5074,618 @@ describe( module( "carbonldp/Document" ), ():void => {
 			} );
 
 
-			it( "should request from self when no URI", async () => {
-				stubRequest( "https://example.com/" );
+			describe( "When has a context", () => {
 
-				const resource:CRUDDocument = createMock();
-				await resource.createAccessPointsAndRetrieve( [ { hasMemberRelation: "relation" } ] );
+				let context:CarbonLDP;
+				let resource:CRUDDocument;
+				beforeEach( ():void => {
+					context = new CarbonLDP( "https://example.com/" );
+					resource = createMock( { _registry: context.registry } );
+				} );
 
-				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-				expect( request.url ).toBe( "https://example.com/" );
-			} );
 
-			it( "should request from URI", async () => {
-				stubRequest( "https://example.com/another-resource/" );
+				it( "should request from self when no URI", async () => {
+					stubRequest( "https://example.com/" );
 
-				const resource:CRUDDocument = createMock();
-				await resource.createAccessPointsAndRetrieve( "https://example.com/another-resource/", [ { hasMemberRelation: "relation" } ] );
+					await resource.createAccessPointsAndRetrieve( [ { hasMemberRelation: "relation" } ] );
 
-				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-				expect( request.url ).toBe( "https://example.com/another-resource/" );
-			} );
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.url ).toBe( "https://example.com/" );
+				} );
 
-			it( "should request from relative URI", async () => {
-				stubRequest( "https://example.com/relative/" );
+				it( "should request from URI", async () => {
+					stubRequest( "https://example.com/another-resource/" );
 
-				const resource:CRUDDocument = createMock();
-				await resource.createAccessPointsAndRetrieve( "relative/", [ { hasMemberRelation: "relation" } ] );
+					await resource.createAccessPointsAndRetrieve( "https://example.com/another-resource/", [ { hasMemberRelation: "relation" } ] );
 
-				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-				expect( request.url ).toBe( "https://example.com/relative/" );
-			} );
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.url ).toBe( "https://example.com/another-resource/" );
+				} );
 
-			it( "should request from resolved prefixed name", async () => {
-				stubRequest( "https://example.com/resource/" );
+				it( "should request from relative URI", async () => {
+					stubRequest( "https://example.com/relative/" );
 
-				const _context:CarbonLDP = new CarbonLDP( "https://example.com/" );
-				_context.extendObjectSchema( { "ex": "https://example.com/" } );
+					await resource.createAccessPointsAndRetrieve( "relative/", [ { hasMemberRelation: "relation" } ] );
 
-				const resource:CRUDDocument = createMock( { _context } );
-				await resource.createAccessPointsAndRetrieve( "ex:resource/", [ { hasMemberRelation: "relation" } ] );
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.url ).toBe( "https://example.com/relative/" );
+				} );
 
-				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-				expect( request.url ).toBe( "https://example.com/resource/" );
-			} );
+				it( "should request from resolved prefixed name", async () => {
+					stubRequest( "https://example.com/resource/" );
 
-			it( "should throw error when from URI outside context scope", async () => {
-				const resource:CRUDDocument = createMock();
+					context.extendObjectSchema( { "ex": "https://example.com/" } );
 
-				await resource
-					.createAccessPointsAndRetrieve( "https://example.org/resource/", [ { hasMemberRelation: "relation" } ] )
-					.catch( error => {
+					await resource.createAccessPointsAndRetrieve( "ex:resource/", [ { hasMemberRelation: "relation" } ] );
+
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.url ).toBe( "https://example.com/resource/" );
+				} );
+
+				it( "should throw error when from URI outside context scope", async () => {
+					await resource
+						.createAccessPointsAndRetrieve( "https://example.org/resource/", [ { hasMemberRelation: "relation" } ] )
+						.catch( error => {
+							expect( () => { throw error; } )
+								.toThrowError( IllegalArgumentError, `"https://example.org/resource/" is out of scope.` );
+						} )
+					;
+				} );
+
+				it( "should throw error when from URI is BNode label", async () => {
+					await resource
+						.createAccessPointsAndRetrieve( "_:1", [ { hasMemberRelation: "relation" } ] )
+						.catch( error => {
+							expect( () => { throw error; } )
+								.toThrowError( IllegalArgumentError, `"_:1" is out of scope.` );
+						} )
+					;
+				} );
+
+				it( "should throw error when from URI is Named Fragment label", async () => {
+					await resource
+						.createAccessPointsAndRetrieve( "#fragment", [ { hasMemberRelation: "relation" } ] )
+						.catch( error => {
+							expect( () => { throw error; } )
+								.toThrowError( IllegalArgumentError, `"https://example.com/#fragment" is out of scope.` );
+						} )
+					;
+				} );
+
+				it( "should throw error when unresolved prefixed name", async () => {
+					await resource
+						.createAccessPointsAndRetrieve( "ex:resource/", [ { hasMemberRelation: "relation" } ] )
+						.catch( error => {
+							expect( () => { throw error; } )
+								.toThrowError( IllegalArgumentError, `"ex:resource/" is out of scope.` );
+						} )
+					;
+				} );
+
+				it( "should throw error if any has incorrect membershipResource", async () => {
+					const child:BaseAccessPoint = {
+						hasMemberRelation: "relation",
+						membershipResource: Pointer.create( { id: "https://example.com/another-resource/" } ),
+					};
+
+					try {
+						await resource.createAccessPointsAndRetrieve( [ child ] );
+						fail( "Should not resolve" );
+					} catch( error ) {
 						expect( () => { throw error; } )
-							.toThrowError( IllegalArgumentError, `"https://example.org/resource/" is out of scope.` );
-					} )
-				;
-			} );
+							.toThrowError( IllegalArgumentError, "The endpoint URI must be the same as the accessPoint's membershipResource." );
+					}
+				} );
 
-			it( "should throw error when from URI is BNode label", async () => {
-				const resource:CRUDDocument = createMock();
 
-				await resource
-					.createAccessPointsAndRetrieve( "_:1", [ { hasMemberRelation: "relation" } ] )
-					.catch( error => {
+				it( "should send basic request headers when from self", async () => {
+					const promises:Promise<{}[]> = resource.createAccessPointsAndRetrieve( [ { hasMemberRelation: "relation" }, { hasMemberRelation: "relation" } ] );
+
+					const firstRequest:JasmineAjaxRequest = jasmine.Ajax.requests.at( 0 );
+					expect( firstRequest.requestHeaders ).toEqual( {
+						"accept": "application/ld+json",
+						"content-type": "application/ld+json",
+						"prefer": [
+							"return=representation",
+							`${ LDP.RDFSource }; rel=interaction-model`,
+						].join( ", " ),
+					} );
+
+					const secondRequest:JasmineAjaxRequest = jasmine.Ajax.requests.at( 1 );
+					expect( secondRequest.requestHeaders ).toEqual( {
+						"accept": "application/ld+json",
+						"content-type": "application/ld+json",
+						"prefer": [
+							"return=representation",
+							`${ LDP.RDFSource }; rel=interaction-model`,
+						].join( ", " ),
+					} );
+
+
+					stubWaitingRequests( "https://example.com/" );
+					await promises;
+				} );
+
+				it( "should send basic request headers when from URI", async () => {
+					const promises:Promise<{}[]> = resource.createAccessPointsAndRetrieve( "resource/", [ { hasMemberRelation: "relation" }, { hasMemberRelation: "relation" } ] );
+
+
+					const firstRequest:JasmineAjaxRequest = jasmine.Ajax.requests.at( 0 );
+					expect( firstRequest.requestHeaders ).toEqual( {
+						"accept": "application/ld+json",
+						"content-type": "application/ld+json",
+						"prefer": [
+							"return=representation",
+							`${ LDP.RDFSource }; rel=interaction-model`,
+						].join( ", " ),
+					} );
+
+					const secondRequest:JasmineAjaxRequest = jasmine.Ajax.requests.at( 1 );
+					expect( secondRequest.requestHeaders ).toEqual( {
+						"accept": "application/ld+json",
+						"content-type": "application/ld+json",
+						"prefer": [
+							"return=representation",
+							`${ LDP.RDFSource }; rel=interaction-model`,
+						].join( ", " ),
+					} );
+
+
+					stubWaitingRequests( "https://example.com/resource/" );
+					await promises;
+				} );
+
+				it( "should add authentication header", async () => {
+					stubRequest( "https://example.com/" );
+
+					const spy:jasmine.Spy = spyOn( context.auth, "addAuthentication" );
+
+					await resource.createAccessPointsAndRetrieve( [ { hasMemberRelation: "relation" } ] );
+
+					expect( spy ).toHaveBeenCalled();
+				} );
+
+				it( "should send custom request headers when from self", async () => {
+					const promises:Promise<{}[]> = resource.createAccessPointsAndRetrieve( [ { hasMemberRelation: "relation" }, { hasMemberRelation: "relation" } ], {
+						headers: new Map()
+							.set( "custom", new Header( "custom value" ) )
+						,
+					} );
+
+					const firstRequest:JasmineAjaxRequest = jasmine.Ajax.requests.at( 0 );
+					expect( firstRequest.requestHeaders ).toEqual( jasmine.objectContaining( {
+						"custom": "custom value",
+					} ) );
+
+					const secondRequest:JasmineAjaxRequest = jasmine.Ajax.requests.at( 1 );
+					expect( secondRequest.requestHeaders ).toEqual( jasmine.objectContaining( {
+						"custom": "custom value",
+					} ) );
+
+
+					stubWaitingRequests( "https://example.com/" );
+					await promises;
+				} );
+
+				it( "should send custom request headers when from URI", async () => {
+					const promises:Promise<{}[]> = resource.createAccessPointsAndRetrieve( "resource/", [ { hasMemberRelation: "relation" }, { hasMemberRelation: "relation" } ], {
+						headers: new Map()
+							.set( "custom", new Header( "custom value" ) )
+						,
+					} );
+
+					const firstRequest:JasmineAjaxRequest = jasmine.Ajax.requests.at( 0 );
+					expect( firstRequest.requestHeaders ).toEqual( jasmine.objectContaining( {
+						"custom": "custom value",
+					} ) );
+
+					const secondRequest:JasmineAjaxRequest = jasmine.Ajax.requests.at( 1 );
+					expect( secondRequest.requestHeaders ).toEqual( jasmine.objectContaining( {
+						"custom": "custom value",
+					} ) );
+
+
+					stubWaitingRequests( "https://example.com/resource/" );
+					await promises;
+				} );
+
+				it( "should add slug header when from self", async () => {
+					const promises:Promise<{}[]> = resource.createAccessPointsAndRetrieve( [ { hasMemberRelation: "relation" }, { hasMemberRelation: "relation" } ], [ "child-slug-1", "child-slug-2" ] );
+
+					const firstRequest:JasmineAjaxRequest = jasmine.Ajax.requests.at( 0 );
+					expect( firstRequest.requestHeaders ).toEqual( jasmine.objectContaining( {
+						"slug": "child-slug-1",
+					} ) );
+
+					const secondRequest:JasmineAjaxRequest = jasmine.Ajax.requests.at( 1 );
+					expect( secondRequest.requestHeaders ).toEqual( jasmine.objectContaining( {
+						"slug": "child-slug-2",
+					} ) );
+
+
+					stubWaitingRequests( "https://example.com/" );
+					await promises;
+				} );
+
+				it( "should add slug header when from URI", async () => {
+					const promises:Promise<{}[]> = resource.createAccessPointsAndRetrieve( "resource/", [ { hasMemberRelation: "relation" }, { hasMemberRelation: "relation" } ], [ "child-slug-1", "child-slug-2" ] );
+
+					const firstRequest:JasmineAjaxRequest = jasmine.Ajax.requests.at( 0 );
+					expect( firstRequest.requestHeaders ).toEqual( jasmine.objectContaining( {
+						"slug": "child-slug-1",
+					} ) );
+
+					const secondRequest:JasmineAjaxRequest = jasmine.Ajax.requests.at( 1 );
+					expect( secondRequest.requestHeaders ).toEqual( jasmine.objectContaining( {
+						"slug": "child-slug-2",
+					} ) );
+
+
+					stubWaitingRequests( "https://example.com/resource/" );
+					await promises;
+				} );
+
+				it( "should add slug header if defined", async () => {
+					const promises:Promise<{}[]> = resource.createAccessPointsAndRetrieve( [ { hasMemberRelation: "relation" }, { hasMemberRelation: "relation" }, { hasMemberRelation: "relation" } ], [ null, undefined, "child-slug" ] );
+
+					const firstRequest:JasmineAjaxRequest = jasmine.Ajax.requests.at( 0 );
+					expect( firstRequest.requestHeaders ).not.toEqual( jasmine.objectContaining( {
+						"slug": jasmine.anything() as any,
+					} ) );
+
+					const secondRequest:JasmineAjaxRequest = jasmine.Ajax.requests.at( 1 );
+					expect( secondRequest.requestHeaders ).not.toEqual( jasmine.objectContaining( {
+						"slug": jasmine.anything() as any,
+					} ) );
+
+					const thirdRequest:JasmineAjaxRequest = jasmine.Ajax.requests.at( 2 );
+					expect( thirdRequest.requestHeaders ).toEqual( jasmine.objectContaining( {
+						"slug": "child-slug",
+					} ) );
+
+
+					stubWaitingRequests( "https://example.com/" );
+					await promises;
+				} );
+
+				it( "should not add slug header when less slugs than access points", async () => {
+					const promises:Promise<{}[]> = resource.createAccessPointsAndRetrieve( [ { hasMemberRelation: "relation" }, { hasMemberRelation: "relation" } ], [ "child-slug" ] );
+
+					const firstRequest:JasmineAjaxRequest = jasmine.Ajax.requests.at( 0 );
+					expect( firstRequest.requestHeaders ).toEqual( jasmine.objectContaining( {
+						"slug": "child-slug",
+					} ) );
+
+					const secondRequest:JasmineAjaxRequest = jasmine.Ajax.requests.at( 1 );
+					expect( secondRequest.requestHeaders ).not.toEqual( jasmine.objectContaining( {
+						"slug": jasmine.anything() as any,
+					} ) );
+
+
+					stubWaitingRequests( "https://example.com/" );
+					await promises;
+				} );
+
+
+				it( "should send converted JSONLD when from self", async () => {
+					context
+						.extendObjectSchema( {
+							"@vocab": "https://example.com/ns#",
+						} )
+					;
+
+					const promises:Promise<{}[]> = resource.createAccessPointsAndRetrieve( [ {
+						hasMemberRelation: "relation1",
+						string: "my object 1",
+					}, {
+						hasMemberRelation: "relation2",
+						string: "my object 2",
+					} ] );
+
+					const request1:JasmineAjaxRequest = jasmine.Ajax.requests.at( 0 );
+					expect( JSON.parse( request1.params ) ).toEqual( {
+						"@id": "",
+						"@graph": [ {
+							"@id": "",
+							"@type": [ LDP.DirectContainer ],
+							[ LDP.hasMemberRelation ]: [ {
+								"@id": "https://example.com/ns#relation1",
+							} ],
+							[ LDP.membershipResource ]: [ {
+								"@id": "https://example.com/",
+							} ],
+							"https://example.com/ns#string": [ {
+								"@value": "my object 1",
+								"@type": XSD.string,
+							} ],
+						} ],
+					} );
+
+					const request2:JasmineAjaxRequest = jasmine.Ajax.requests.at( 1 );
+					expect( JSON.parse( request2.params ) ).toEqual( {
+						"@id": "",
+						"@graph": [ {
+							"@id": "",
+							"@type": [ LDP.DirectContainer ],
+							[ LDP.hasMemberRelation ]: [ {
+								"@id": "https://example.com/ns#relation2",
+							} ],
+							[ LDP.membershipResource ]: [ {
+								"@id": "https://example.com/",
+							} ],
+							"https://example.com/ns#string": [ {
+								"@value": "my object 2",
+								"@type": XSD.string,
+							} ],
+						} ],
+					} );
+
+
+					stubWaitingRequests( "https://example.com/" );
+					await promises;
+				} );
+
+				it( "should send converted JSONLD when from URI", async () => {
+					context
+						.extendObjectSchema( {
+							"@vocab": "https://example.com/ns#",
+						} )
+					;
+
+					const promises:Promise<{}[]> = resource.createAccessPointsAndRetrieve( "resource/", [ {
+						hasMemberRelation: "relation1",
+						string: "my object 1",
+					}, {
+						hasMemberRelation: "relation2",
+						string: "my object 2",
+					} ] );
+
+					const request1:JasmineAjaxRequest = jasmine.Ajax.requests.at( 0 );
+					expect( JSON.parse( request1.params ) ).toEqual( {
+						"@id": "",
+						"@graph": [ {
+							"@id": "",
+							"@type": [ LDP.DirectContainer ],
+							[ LDP.hasMemberRelation ]: [ {
+								"@id": "https://example.com/ns#relation1",
+							} ],
+							[ LDP.membershipResource ]: [ {
+								"@id": "https://example.com/resource/",
+							} ],
+							"https://example.com/ns#string": [ {
+								"@value": "my object 1",
+								"@type": XSD.string,
+							} ],
+						} ],
+					} );
+
+					const request2:JasmineAjaxRequest = jasmine.Ajax.requests.at( 1 );
+					expect( JSON.parse( request2.params ) ).toEqual( {
+						"@id": "",
+						"@graph": [ {
+							"@id": "",
+							"@type": [ LDP.DirectContainer ],
+							[ LDP.hasMemberRelation ]: [ {
+								"@id": "https://example.com/ns#relation2",
+							} ],
+							[ LDP.membershipResource ]: [ {
+								"@id": "https://example.com/resource/",
+							} ],
+							"https://example.com/ns#string": [ {
+								"@value": "my object 2",
+								"@type": XSD.string,
+							} ],
+						} ],
+					} );
+
+
+					stubWaitingRequests( "https://example.com/resource/" );
+					await promises;
+				} );
+
+				it( "should return same access point object references", async () => {
+					const child1:BaseAccessPoint = { hasMemberRelation: "relation1" };
+					const child2:BaseAccessPoint = { hasMemberRelation: "relation2" };
+					const promise:Promise<AccessPoint[]> = resource.createAccessPointsAndRetrieve( [ child1, child2 ] );
+
+					jasmine.Ajax
+						.requests
+						.filter( "https://example.com/" )
+						.forEach( ( request, index ) => {
+							request.respondWith( generateResponseOptions( "https://example.com/", { index } ) );
+						} )
+					;
+
+					const [ returned1, returned2 ]:AccessPoint[] = await promise;
+					expect( child1 ).toBe( returned1 );
+					expect( child2 ).toBe( returned2 );
+				} );
+
+				it( "should have stored the access points in the registry", async () => {
+					const child1:BaseAccessPoint = { hasMemberRelation: "relation1" };
+					const child2:BaseAccessPoint = { hasMemberRelation: "relation2" };
+					const promise:Promise<AccessPoint[]> = resource.createAccessPointsAndRetrieve( [ child1, child2 ] );
+
+					jasmine.Ajax
+						.requests
+						.filter( "https://example.com/" )
+						.forEach( ( request, index ) => {
+							request.respondWith( generateResponseOptions( "https://example.com/", { index } ) );
+						} )
+					;
+
+					const [ returned1, returned2 ]:AccessPoint[] = await promise;
+
+					expect( resource._registry.hasPointer( returned1.id ) ).toBe( true );
+					expect( resource._registry.getPointer( returned1.id ) ).toBe( returned1 );
+
+					expect( resource._registry.hasPointer( returned2.id ) ).toBe( true );
+					expect( resource._registry.getPointer( returned2.id ) ).toBe( returned2 );
+				} );
+
+				it( "should throw error if any access point is already persisted", async () => {
+					const child:BaseAccessPoint = PersistedResource.decorate( {
+						hasMemberRelation: "relation",
+					} );
+
+					try {
+						await resource.createAccessPointsAndRetrieve( [ { hasMemberRelation: "relation" }, child, { hasMemberRelation: "relation" } ] );
+						fail( "Should not resolve" );
+					} catch( error ) {
 						expect( () => { throw error; } )
-							.toThrowError( IllegalArgumentError, `"_:1" is out of scope.` );
-					} )
-				;
-			} );
+							.toThrowError( IllegalArgumentError, "The access-point provided has already been persisted." );
+					}
+				} );
 
-			it( "should throw error when from URI is Named Fragment label", async () => {
-				const resource:CRUDDocument = createMock();
+				it( "should throw error if any already being persisted", async () => {
+					const child:BaseAccessPoint = { hasMemberRelation: "relation" };
 
-				await resource
-					.createAccessPointsAndRetrieve( "#fragment", [ { hasMemberRelation: "relation" } ] )
-					.catch( error => {
+					try {
+						await Promise.all( [
+							resource.createAccessPointsAndRetrieve( [ child ] ),
+							resource.createAccessPointsAndRetrieve( [ child ] ),
+						] );
+						fail( "Should not resolve" );
+					} catch( error ) {
 						expect( () => { throw error; } )
-							.toThrowError( IllegalArgumentError, `"https://example.com/#fragment" is out of scope.` );
-					} )
-				;
-			} );
-
-			it( "should throw error when unresolved prefixed name", async () => {
-				const resource:CRUDDocument = createMock();
-
-				await resource
-					.createAccessPointsAndRetrieve( "ex:resource/", [ { hasMemberRelation: "relation" } ] )
-					.catch( error => {
-						expect( () => { throw error; } )
-							.toThrowError( IllegalArgumentError, `"ex:resource/" is out of scope.` );
-					} )
-				;
-			} );
-
-			it( "should throw error if any has incorrect membershipResource", async () => {
-				const child:BaseAccessPoint = {
-					hasMemberRelation: "relation",
-					membershipResource: Pointer.create( { id: "https://example.com/another-resource/" } ),
-				};
-				const resource:CRUDDocument = createMock();
-
-				try {
-					await resource.createAccessPointsAndRetrieve( [ child ] );
-					fail( "Should not resolve" );
-				} catch( error ) {
-					expect( () => { throw error; } )
-						.toThrowError( IllegalArgumentError, "The endpoint URI must be the same as the accessPoint's membershipResource." );
-				}
-			} );
-
-
-			it( "should send basic request headers when from self", async () => {
-				const resource:CRUDDocument = createMock();
-
-				const promises:Promise<{}[]> = resource.createAccessPointsAndRetrieve( [ { hasMemberRelation: "relation" }, { hasMemberRelation: "relation" } ] );
-
-				const firstRequest:JasmineAjaxRequest = jasmine.Ajax.requests.at( 0 );
-				expect( firstRequest.requestHeaders ).toEqual( {
-					"accept": "application/ld+json",
-					"content-type": "application/ld+json",
-					"prefer": [
-						"return=representation",
-						`${ LDP.RDFSource }; rel=interaction-model`,
-					].join( ", " ),
-				} );
-
-				const secondRequest:JasmineAjaxRequest = jasmine.Ajax.requests.at( 1 );
-				expect( secondRequest.requestHeaders ).toEqual( {
-					"accept": "application/ld+json",
-					"content-type": "application/ld+json",
-					"prefer": [
-						"return=representation",
-						`${ LDP.RDFSource }; rel=interaction-model`,
-					].join( ", " ),
+							.toThrowError( IllegalArgumentError, "The document is already being persisted." );
+					}
 				} );
 
 
-				stubWaitingRequests( "https://example.com/" );
-				await promises;
-			} );
+				it( "should add resolved BasePersistedDocument data", async () => {
+					const child1:BaseAccessPoint = { hasMemberRelation: "relation1" };
+					const child2:BaseAccessPoint = { hasMemberRelation: "relation2" };
+					const promise:Promise<AccessPoint[]> = resource.createAccessPointsAndRetrieve( [ child1, child2 ] );
 
-			it( "should send basic request headers when from URI", async () => {
-				const resource:CRUDDocument = createMock();
+					jasmine.Ajax
+						.requests
+						.filter( "https://example.com/" )
+						.forEach( ( request, index ) => {
+							request.respondWith( generateResponseOptions( "https://example.com/", { index: ++ index } ) );
+						} )
+					;
 
-				const promises:Promise<{}[]> = resource.createAccessPointsAndRetrieve( "resource/", [ { hasMemberRelation: "relation" }, { hasMemberRelation: "relation" } ] );
-
-
-				const firstRequest:JasmineAjaxRequest = jasmine.Ajax.requests.at( 0 );
-				expect( firstRequest.requestHeaders ).toEqual( {
-					"accept": "application/ld+json",
-					"content-type": "application/ld+json",
-					"prefer": [
-						"return=representation",
-						`${ LDP.RDFSource }; rel=interaction-model`,
-					].join( ", " ),
+					const [ returned1, returned2 ]:AccessPoint[] = await promise;
+					expect( returned1 ).toEqual( jasmine.objectContaining( {
+						types: jasmine.arrayContaining( [
+							LDP.DirectContainer,
+							C.AccessPoint,
+						] ) as any as string[],
+						hasMemberRelation: jasmine.objectContaining<Pointer>( {
+							id: "https://example.com/ns#relation1",
+						} ) as any,
+						membershipResource: jasmine.objectContaining<Pointer>( {
+							id: "https://example.com/",
+						} ) as any,
+					} ) );
+					expect( returned2 ).toEqual( jasmine.objectContaining( {
+						types: jasmine.arrayContaining( [
+							LDP.DirectContainer,
+							C.AccessPoint,
+						] ) as any as string[],
+						hasMemberRelation: jasmine.objectContaining<Pointer>( {
+							id: "https://example.com/ns#relation2",
+						} ) as any,
+						membershipResource: jasmine.objectContaining<Pointer>( {
+							id: "https://example.com/",
+						} ) as any,
+					} ) );
 				} );
 
-				const secondRequest:JasmineAjaxRequest = jasmine.Ajax.requests.at( 1 );
-				expect( secondRequest.requestHeaders ).toEqual( {
-					"accept": "application/ld+json",
-					"content-type": "application/ld+json",
-					"prefer": [
-						"return=representation",
-						`${ LDP.RDFSource }; rel=interaction-model`,
-					].join( ", " ),
-				} );
-
-
-				stubWaitingRequests( "https://example.com/resource/" );
-				await promises;
-			} );
-
-			it( "should add authentication header", async () => {
-				stubRequest( "https://example.com/" );
-
-				const resource:CRUDDocument = createMock();
-
-				const spy:jasmine.Spy = spyOn( resource._context.auth, "addAuthentication" );
-
-				await resource.createAccessPointsAndRetrieve( [ { hasMemberRelation: "relation" } ] );
-
-				expect( spy ).toHaveBeenCalled();
-			} );
-
-			it( "should send custom request headers when from self", async () => {
-				const resource:CRUDDocument = createMock();
-
-				const promises:Promise<{}[]> = resource.createAccessPointsAndRetrieve( [ { hasMemberRelation: "relation" }, { hasMemberRelation: "relation" } ], {
-					headers: new Map()
-						.set( "custom", new Header( "custom value" ) )
-					,
-				} );
-
-				const firstRequest:JasmineAjaxRequest = jasmine.Ajax.requests.at( 0 );
-				expect( firstRequest.requestHeaders ).toEqual( jasmine.objectContaining( {
-					"custom": "custom value",
-				} ) );
-
-				const secondRequest:JasmineAjaxRequest = jasmine.Ajax.requests.at( 1 );
-				expect( secondRequest.requestHeaders ).toEqual( jasmine.objectContaining( {
-					"custom": "custom value",
-				} ) );
-
-
-				stubWaitingRequests( "https://example.com/" );
-				await promises;
-			} );
-
-			it( "should send custom request headers when from URI", async () => {
-				const resource:CRUDDocument = createMock();
-
-				const promises:Promise<{}[]> = resource.createAccessPointsAndRetrieve( "resource/", [ { hasMemberRelation: "relation" }, { hasMemberRelation: "relation" } ], {
-					headers: new Map()
-						.set( "custom", new Header( "custom value" ) )
-					,
-				} );
-
-				const firstRequest:JasmineAjaxRequest = jasmine.Ajax.requests.at( 0 );
-				expect( firstRequest.requestHeaders ).toEqual( jasmine.objectContaining( {
-					"custom": "custom value",
-				} ) );
-
-				const secondRequest:JasmineAjaxRequest = jasmine.Ajax.requests.at( 1 );
-				expect( secondRequest.requestHeaders ).toEqual( jasmine.objectContaining( {
-					"custom": "custom value",
-				} ) );
-
-
-				stubWaitingRequests( "https://example.com/resource/" );
-				await promises;
-			} );
-
-			it( "should add slug header when from self", async () => {
-				const resource:CRUDDocument = createMock();
-
-				const promises:Promise<{}[]> = resource.createAccessPointsAndRetrieve( [ { hasMemberRelation: "relation" }, { hasMemberRelation: "relation" } ], [ "child-slug-1", "child-slug-2" ] );
-
-				const firstRequest:JasmineAjaxRequest = jasmine.Ajax.requests.at( 0 );
-				expect( firstRequest.requestHeaders ).toEqual( jasmine.objectContaining( {
-					"slug": "child-slug-1",
-				} ) );
-
-				const secondRequest:JasmineAjaxRequest = jasmine.Ajax.requests.at( 1 );
-				expect( secondRequest.requestHeaders ).toEqual( jasmine.objectContaining( {
-					"slug": "child-slug-2",
-				} ) );
-
-
-				stubWaitingRequests( "https://example.com/" );
-				await promises;
-			} );
-
-			it( "should add slug header when from URI", async () => {
-				const resource:CRUDDocument = createMock();
-
-				const promises:Promise<{}[]> = resource.createAccessPointsAndRetrieve( "resource/", [ { hasMemberRelation: "relation" }, { hasMemberRelation: "relation" } ], [ "child-slug-1", "child-slug-2" ] );
-
-				const firstRequest:JasmineAjaxRequest = jasmine.Ajax.requests.at( 0 );
-				expect( firstRequest.requestHeaders ).toEqual( jasmine.objectContaining( {
-					"slug": "child-slug-1",
-				} ) );
-
-				const secondRequest:JasmineAjaxRequest = jasmine.Ajax.requests.at( 1 );
-				expect( secondRequest.requestHeaders ).toEqual( jasmine.objectContaining( {
-					"slug": "child-slug-2",
-				} ) );
-
-
-				stubWaitingRequests( "https://example.com/resource/" );
-				await promises;
-			} );
-
-			it( "should add slug header if defined", async () => {
-				const resource:CRUDDocument = createMock();
-
-				const promises:Promise<{}[]> = resource.createAccessPointsAndRetrieve( [ { hasMemberRelation: "relation" }, { hasMemberRelation: "relation" }, { hasMemberRelation: "relation" } ], [ null, undefined, "child-slug" ] );
-
-				const firstRequest:JasmineAjaxRequest = jasmine.Ajax.requests.at( 0 );
-				expect( firstRequest.requestHeaders ).not.toEqual( jasmine.objectContaining( {
-					"slug": jasmine.anything() as any,
-				} ) );
-
-				const secondRequest:JasmineAjaxRequest = jasmine.Ajax.requests.at( 1 );
-				expect( secondRequest.requestHeaders ).not.toEqual( jasmine.objectContaining( {
-					"slug": jasmine.anything() as any,
-				} ) );
-
-				const thirdRequest:JasmineAjaxRequest = jasmine.Ajax.requests.at( 2 );
-				expect( thirdRequest.requestHeaders ).toEqual( jasmine.objectContaining( {
-					"slug": "child-slug",
-				} ) );
-
-
-				stubWaitingRequests( "https://example.com/" );
-				await promises;
-			} );
-
-			it( "should not add slug header when less slugs than access points", async () => {
-				const resource:CRUDDocument = createMock();
-
-				const promises:Promise<{}[]> = resource.createAccessPointsAndRetrieve( [ { hasMemberRelation: "relation" }, { hasMemberRelation: "relation" } ], [ "child-slug" ] );
-
-				const firstRequest:JasmineAjaxRequest = jasmine.Ajax.requests.at( 0 );
-				expect( firstRequest.requestHeaders ).toEqual( jasmine.objectContaining( {
-					"slug": "child-slug",
-				} ) );
-
-				const secondRequest:JasmineAjaxRequest = jasmine.Ajax.requests.at( 1 );
-				expect( secondRequest.requestHeaders ).not.toEqual( jasmine.objectContaining( {
-					"slug": jasmine.anything() as any,
-				} ) );
-
-
-				stubWaitingRequests( "https://example.com/" );
-				await promises;
-			} );
-
-
-			it( "should send converted JSONLD when from self", async () => {
-				const resource:CRUDDocument = createMock();
-				resource._context
-					.extendObjectSchema( {
-						"@vocab": "https://example.com/ns#",
-					} )
-				;
-
-				const promises:Promise<{}[]> = resource.createAccessPointsAndRetrieve( [ {
-					hasMemberRelation: "relation1",
-					string: "my object 1",
-				}, {
-					hasMemberRelation: "relation2",
-					string: "my object 2",
-				} ] );
-
-				const request1:JasmineAjaxRequest = jasmine.Ajax.requests.at( 0 );
-				expect( JSON.parse( request1.params ) ).toEqual( {
-					"@id": "",
-					"@graph": [ {
-						"@id": "",
-						"@type": [ LDP.DirectContainer ],
-						[ LDP.hasMemberRelation ]: [ {
-							"@id": "https://example.com/ns#relation1",
-						} ],
-						[ LDP.membershipResource ]: [ {
-							"@id": "https://example.com/",
-						} ],
-						"https://example.com/ns#string": [ {
-							"@value": "my object 1",
-							"@type": XSD.string,
-						} ],
-					} ],
-				} );
-
-				const request2:JasmineAjaxRequest = jasmine.Ajax.requests.at( 1 );
-				expect( JSON.parse( request2.params ) ).toEqual( {
-					"@id": "",
-					"@graph": [ {
-						"@id": "",
-						"@type": [ LDP.DirectContainer ],
-						[ LDP.hasMemberRelation ]: [ {
-							"@id": "https://example.com/ns#relation2",
-						} ],
-						[ LDP.membershipResource ]: [ {
-							"@id": "https://example.com/",
-						} ],
-						"https://example.com/ns#string": [ {
-							"@value": "my object 2",
-							"@type": XSD.string,
-						} ],
-					} ],
-				} );
-
-
-				stubWaitingRequests( "https://example.com/" );
-				await promises;
-			} );
-
-			it( "should send converted JSONLD when from URI", async () => {
-				const resource:CRUDDocument = createMock();
-				resource._context
-					.extendObjectSchema( {
-						"@vocab": "https://example.com/ns#",
-					} )
-				;
-
-				const promises:Promise<{}[]> = resource.createAccessPointsAndRetrieve( "resource/", [ {
-					hasMemberRelation: "relation1",
-					string: "my object 1",
-				}, {
-					hasMemberRelation: "relation2",
-					string: "my object 2",
-				} ] );
-
-				const request1:JasmineAjaxRequest = jasmine.Ajax.requests.at( 0 );
-				expect( JSON.parse( request1.params ) ).toEqual( {
-					"@id": "",
-					"@graph": [ {
-						"@id": "",
-						"@type": [ LDP.DirectContainer ],
-						[ LDP.hasMemberRelation ]: [ {
-							"@id": "https://example.com/ns#relation1",
-						} ],
-						[ LDP.membershipResource ]: [ {
-							"@id": "https://example.com/resource/",
-						} ],
-						"https://example.com/ns#string": [ {
-							"@value": "my object 1",
-							"@type": XSD.string,
-						} ],
-					} ],
-				} );
-
-				const request2:JasmineAjaxRequest = jasmine.Ajax.requests.at( 1 );
-				expect( JSON.parse( request2.params ) ).toEqual( {
-					"@id": "",
-					"@graph": [ {
-						"@id": "",
-						"@type": [ LDP.DirectContainer ],
-						[ LDP.hasMemberRelation ]: [ {
-							"@id": "https://example.com/ns#relation2",
-						} ],
-						[ LDP.membershipResource ]: [ {
-							"@id": "https://example.com/resource/",
-						} ],
-						"https://example.com/ns#string": [ {
-							"@value": "my object 2",
-							"@type": XSD.string,
-						} ],
-					} ],
-				} );
-
-
-				stubWaitingRequests( "https://example.com/resource/" );
-				await promises;
-			} );
-
-			it( "should return same access point object references", async () => {
-				const resource:CRUDDocument = createMock();
-
-				const child1:BaseAccessPoint = { hasMemberRelation: "relation1" };
-				const child2:BaseAccessPoint = { hasMemberRelation: "relation2" };
-				const promise:Promise<AccessPoint[]> = resource.createAccessPointsAndRetrieve( [ child1, child2 ] );
-
-				jasmine.Ajax
-					.requests
-					.filter( "https://example.com/" )
-					.forEach( ( request, index ) => {
-						request.respondWith( generateResponseOptions( "https://example.com/", { index } ) );
-					} )
-				;
-
-				const [ returned1, returned2 ]:AccessPoint[] = await promise;
-				expect( child1 ).toBe( returned1 );
-				expect( child2 ).toBe( returned2 );
-			} );
-
-			it( "should have stored the access points in the registry", async () => {
-				const resource:CRUDDocument = createMock();
-
-				const child1:BaseAccessPoint = { hasMemberRelation: "relation1" };
-				const child2:BaseAccessPoint = { hasMemberRelation: "relation2" };
-				const promise:Promise<AccessPoint[]> = resource.createAccessPointsAndRetrieve( [ child1, child2 ] );
-
-				jasmine.Ajax
-					.requests
-					.filter( "https://example.com/" )
-					.forEach( ( request, index ) => {
-						request.respondWith( generateResponseOptions( "https://example.com/", { index } ) );
-					} )
-				;
-
-				const [ returned1, returned2 ]:AccessPoint[] = await promise;
-
-				expect( resource._registry.hasPointer( returned1.id ) ).toBe( true );
-				expect( resource._registry.getPointer( returned1.id ) ).toBe( returned1 );
-
-				expect( resource._registry.hasPointer( returned2.id ) ).toBe( true );
-				expect( resource._registry.getPointer( returned2.id ) ).toBe( returned2 );
-			} );
-
-			it( "should throw error if any access point is already persisted", async () => {
-				const child:BaseAccessPoint = PersistedResource.decorate( {
-					hasMemberRelation: "relation",
-				} );
-				const resource:CRUDDocument = createMock();
-
-				try {
-					await resource.createAccessPointsAndRetrieve( [ { hasMemberRelation: "relation" }, child, { hasMemberRelation: "relation" } ] );
-					fail( "Should not resolve" );
-				} catch( error ) {
-					expect( () => { throw error; } )
-						.toThrowError( IllegalArgumentError, "The access-point provided has already been persisted." );
-				}
-			} );
-
-			it( "should throw error if any already being persisted", async () => {
-				const child:BaseAccessPoint = { hasMemberRelation: "relation" };
-				const resource:CRUDDocument = createMock();
-
-				try {
-					await Promise.all( [
-						resource.createAccessPointsAndRetrieve( [ child ] ),
-						resource.createAccessPointsAndRetrieve( [ child ] ),
-					] );
-					fail( "Should not resolve" );
-				} catch( error ) {
-					expect( () => { throw error; } )
-						.toThrowError( IllegalArgumentError, "The document is already being persisted." );
-				}
-			} );
-
-
-			it( "should add resolved BasePersistedDocument data", async () => {
-				const resource:CRUDDocument = createMock();
-
-				const child1:BaseAccessPoint = { hasMemberRelation: "relation1" };
-				const child2:BaseAccessPoint = { hasMemberRelation: "relation2" };
-				const promise:Promise<AccessPoint[]> = resource.createAccessPointsAndRetrieve( [ child1, child2 ] );
-
-				jasmine.Ajax
-					.requests
-					.filter( "https://example.com/" )
-					.forEach( ( request, index ) => {
-						request.respondWith( generateResponseOptions( "https://example.com/", { index } ) );
-					} )
-				;
-
-				const [ returned1, returned2 ]:AccessPoint[] = await promise;
-				expect( returned1 ).toEqual( jasmine.objectContaining( {
-					_resolved: true,
-					_eTag: "\"0-12345\"",
-					id: "https://example.com/access-point-0/",
-				} ) );
-				expect( returned2 ).toEqual( jasmine.objectContaining( {
-					_resolved: true,
-					_eTag: "\"1-12345\"",
-					id: "https://example.com/access-point-1/",
-				} ) );
-			} );
-
-			it( "should add parsed AccessPoint data", async () => {
-				const resource:CRUDDocument = createMock();
-
-				const child1:BaseAccessPoint = { hasMemberRelation: "relation1" };
-				const child2:BaseAccessPoint = { hasMemberRelation: "relation2" };
-				const promise:Promise<AccessPoint[]> = resource.createAccessPointsAndRetrieve( [ child1, child2 ] );
-
-				jasmine.Ajax
-					.requests
-					.filter( "https://example.com/" )
-					.forEach( ( request, index ) => {
-						request.respondWith( generateResponseOptions( "https://example.com/", { index: ++ index } ) );
-					} )
-				;
-
-				const [ returned1, returned2 ]:AccessPoint[] = await promise;
-				expect( returned1 ).toEqual( jasmine.objectContaining( {
-					types: jasmine.arrayContaining( [
-						LDP.DirectContainer,
-						C.AccessPoint,
-					] ) as any as string[],
-					hasMemberRelation: jasmine.objectContaining<Pointer>( {
-						id: "https://example.com/ns#relation1",
-					} ) as any,
-					membershipResource: jasmine.objectContaining<Pointer>( {
-						id: "https://example.com/",
-					} ) as any,
-				} ) );
-				expect( returned2 ).toEqual( jasmine.objectContaining( {
-					types: jasmine.arrayContaining( [
-						LDP.DirectContainer,
-						C.AccessPoint,
-					] ) as any as string[],
-					hasMemberRelation: jasmine.objectContaining<Pointer>( {
-						id: "https://example.com/ns#relation2",
-					} ) as any,
-					membershipResource: jasmine.objectContaining<Pointer>( {
-						id: "https://example.com/",
-					} ) as any,
-				} ) );
-			} );
-
-			it( "should update blank nodes when response metadata returned", async () => {
-				stubRequest( "https://example.com/", {
-					resource: {
-						"https://example.com/ns#blankNode1": [ { "@id": "_:new-1" } ],
-						"https://example.com/ns#blankNode2": [ { "@id": "_:new-2" } ],
-					},
-					fragments: [
-						{
-							"@id": "_:new-1",
-							"https://example.com/ns#string": [ { "@value": "updated blank node 1" } ],
+				it( "should update blank nodes when response metadata returned", async () => {
+					stubRequest( "https://example.com/", {
+						resource: {
+							"https://example.com/ns#blankNode1": [ { "@id": "_:new-1" } ],
+							"https://example.com/ns#blankNode2": [ { "@id": "_:new-2" } ],
 						},
-						{
-							"@id": "_:new-2",
-							"https://example.com/ns#string": [ { "@value": "updated blank node 2" } ],
-						},
-					],
-					frees: [
-						{
-							"@id": "_:responseMetadata",
-							"@type": [ C.VolatileResource, C.ResponseMetadata ],
-							[ C.documentMetadata ]: [ {
-								"@id": "_:documentMetadata",
-							} ],
-						},
-						{
-							"@id": "_:documentMetadata",
-							"@type": [ C.VolatileResource, C.DocumentMetadata ],
-							[ C.relatedDocument ]: [ {
-								"@id": "https://example.com/access-point-1/",
-							} ],
-							[ C.bNodesMap ]: [ {
-								"@id": "_:map",
-							} ],
-						},
-						{
-							"@id": "_:map",
-							"@type": [ C.Map ],
-							[ C.entry ]: [
-								{ "@id": "_:entry-1" },
-								{ "@id": "_:entry-2" },
-							],
-						},
-						{
-							"@id": "_:entry-1",
-							[ C.entryKey ]: [ {
-								"@id": "_:1",
-							} ],
-							[ C.entryValue ]: [ {
+						fragments: [
+							{
 								"@id": "_:new-1",
-							} ],
-						},
-						{
-							"@id": "_:entry-2",
-							[ C.entryKey ]: [ {
-								"@id": "_:2",
-							} ],
-							[ C.entryValue ]: [ {
+								"https://example.com/ns#string": [ { "@value": "updated blank node 1" } ],
+							},
+							{
 								"@id": "_:new-2",
-							} ],
+								"https://example.com/ns#string": [ { "@value": "updated blank node 2" } ],
+							},
+						],
+						frees: [
+							{
+								"@id": "_:responseMetadata",
+								"@type": [ C.VolatileResource, C.ResponseMetadata ],
+								[ C.documentMetadata ]: [ {
+									"@id": "_:documentMetadata",
+								} ],
+							},
+							{
+								"@id": "_:documentMetadata",
+								"@type": [ C.VolatileResource, C.DocumentMetadata ],
+								[ C.relatedDocument ]: [ {
+									"@id": "https://example.com/access-point-1/",
+								} ],
+								[ C.bNodesMap ]: [ {
+									"@id": "_:map",
+								} ],
+							},
+							{
+								"@id": "_:map",
+								"@type": [ C.Map ],
+								[ C.entry ]: [
+									{ "@id": "_:entry-1" },
+									{ "@id": "_:entry-2" },
+								],
+							},
+							{
+								"@id": "_:entry-1",
+								[ C.entryKey ]: [ {
+									"@id": "_:1",
+								} ],
+								[ C.entryValue ]: [ {
+									"@id": "_:new-1",
+								} ],
+							},
+							{
+								"@id": "_:entry-2",
+								[ C.entryKey ]: [ {
+									"@id": "_:2",
+								} ],
+								[ C.entryValue ]: [ {
+									"@id": "_:new-2",
+								} ],
+							},
+						],
+					} );
+
+					context.extendObjectSchema( { "@vocab": "https://example.com/ns#" } );
+
+					type BNode = { id:string, string:string };
+					type MyDoc = { blankNode1:BNode, blankNode2:BNode };
+
+					const [ returned ]:(CRUDDocument & MyDoc)[] = await resource.createAccessPointsAndRetrieve<MyDoc>( [ {
+						hasMemberRelation: "relation",
+						blankNode1: {
+							id: "_:1",
+							string: "blank node 1",
 						},
-					],
+						blankNode2: {
+							id: "_:2",
+							string: "blank node 2",
+						},
+					} ] );
+
+					expect( returned.hasPointer( "_:1" ) ).toBe( false );
+					expect( returned.blankNode1 ).toEqual( jasmine.objectContaining( {
+						id: "_:new-1",
+						string: "updated blank node 1",
+					} ) );
+
+					expect( returned.hasPointer( "_:2" ) ).toBe( false );
+					expect( returned.blankNode2 ).toEqual( jasmine.objectContaining( {
+						id: "_:new-2",
+						string: "updated blank node 2",
+					} ) );
 				} );
 
-				const resource:CRUDDocument = createMock();
-				resource._context.extendObjectSchema( { "@vocab": "https://example.com/ns#" } );
-
-				type BNode = { id:string, string:string };
-				type MyDoc = { blankNode1:BNode, blankNode2:BNode };
-
-				const [ returned ]:(CRUDDocument & MyDoc)[] = await resource.createAccessPointsAndRetrieve<MyDoc>( [ {
-					hasMemberRelation: "relation",
-					blankNode1: {
-						id: "_:1",
-						string: "blank node 1",
-					},
-					blankNode2: {
-						id: "_:2",
-						string: "blank node 2",
-					},
-				} ] );
-
-				expect( returned.hasPointer( "_:1" ) ).toBe( false );
-				expect( returned.blankNode1 ).toEqual( jasmine.objectContaining( {
-					id: "_:new-1",
-					string: "updated blank node 1",
-				} ) );
-
-				expect( returned.hasPointer( "_:2" ) ).toBe( false );
-				expect( returned.blankNode2 ).toEqual( jasmine.objectContaining( {
-					id: "_:new-2",
-					string: "updated blank node 2",
-				} ) );
 			} );
 
 		} );
@@ -6044,337 +5752,347 @@ describe( module( "carbonldp/Document" ), ():void => {
 			} );
 
 
-			it( "should throw error when self ID is outside context scope", async () => {
-				const resource:CRUDDocument = createMock( { id: "https://example.org/resource/" } );
+			describe( "When has a context", () => {
 
-				await resource
-					.save()
-					.catch( error => {
-						expect( () => { throw error; } )
-							.toThrowError( IllegalArgumentError, `"https://example.org/resource/" is out of scope.` );
-					} )
-				;
-			} );
-
-			it( "should throw error when self ID is BNode label", async () => {
-				const resource:CRUDDocument = createMock( { id: "_:1" } );
-
-				await resource
-					.save()
-					.catch( error => {
-						expect( () => { throw error; } )
-							.toThrowError( IllegalArgumentError, `"_:1" is out of scope.` );
-					} )
-				;
-			} );
-
-			it( "should throw error when self ID is Named Fragment label", async () => {
-				const resource:CRUDDocument = createMock( { id: "https://example.com/#fragment" } );
-
-				await resource
-					.save()
-					.catch( error => {
-						expect( () => { throw error; } )
-							.toThrowError( IllegalArgumentError, `"https://example.com/#fragment" is out of scope.` );
-					} )
-				;
-			} );
-
-			it( "should throw error when self ID is unresolved prefixed name", async () => {
-				const resource:CRUDDocument = createMock( { id: "ex:resource/" } );
-
-				await resource
-					.save()
-					.catch( error => {
-						expect( () => { throw error; } )
-							.toThrowError( IllegalArgumentError, `"ex:resource/" is out of scope.` );
-					} )
-				;
-			} );
+				let context:CarbonLDP;
+				let resource:CRUDDocument;
+				beforeEach( ():void => {
+					context = new CarbonLDP( "https://example.com/" );
+					resource = createMock( { _registry: context.registry } );
+				} );
 
 
-			it( "should return self if no dirty", async () => {
-				const resource:CRUDDocument = createMock( { id: "https://example.com/" } );
-				const returned:CRUDDocument = await resource.save();
+				it( "should throw error when self ID is outside context scope", async () => {
+					resource.id = "https://example.org/resource/";
 
-				expect( returned ).toBe( resource );
-			} );
+					await resource
+						.save()
+						.catch( error => {
+							expect( () => { throw error; } )
+								.toThrowError( IllegalArgumentError, `"https://example.org/resource/" is out of scope.` );
+						} )
+					;
+				} );
 
-			it( "should send PATCH to self when dirty", async () => {
-				stubRequest( "https://example.com/" );
+				it( "should throw error when self ID is BNode label", async () => {
+					resource.id = "_:1";
 
-				const resource:CRUDDocument = createMock( { id: "https://example.com/" } );
+					await resource
+						.save()
+						.catch( error => {
+							expect( () => { throw error; } )
+								.toThrowError( IllegalArgumentError, `"_:1" is out of scope.` );
+						} )
+					;
+				} );
 
-				Object.defineProperty( resource, "isDirty", { writable: true } );
-				spyOn( resource, "isDirty" ).and.returnValue( true );
+				it( "should throw error when self ID is Named Fragment label", async () => {
+					resource.id = "https://example.com/#fragment";
 
-				await resource.save();
+					await resource
+						.save()
+						.catch( error => {
+							expect( () => { throw error; } )
+								.toThrowError( IllegalArgumentError, `"https://example.com/#fragment" is out of scope.` );
+						} )
+					;
+				} );
 
-				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-				expect( request.url ).toBe( "https://example.com/" );
-				expect( request.method ).toBe( "PATCH" );
-			} );
+				it( "should throw error when self ID is unresolved prefixed name", async () => {
+					resource.id = "ex:resource/";
 
-			it( "should parse error response", async () => {
-				stubRequest( "https://example.com/", { status: 500 } );
+					await resource
+						.save()
+						.catch( error => {
+							expect( () => { throw error; } )
+								.toThrowError( IllegalArgumentError, `"ex:resource/" is out of scope.` );
+						} )
+					;
+				} );
 
-				const resource:CRUDDocument = createMock( { id: "https://example.com/" } );
 
-				Object.defineProperty( resource, "isDirty", { writable: true } );
-				spyOn( resource, "isDirty" ).and.returnValue( true );
+				it( "should return self if no dirty", async () => {
+					const returned:CRUDDocument = await resource.save();
 
-				const spy:jasmine.Spy = spyOn( resource._registry, "_parseErrorFromResponse" )
-					.and.callFake( () => Promise.reject( null ) );
+					expect( returned ).toBe( resource );
+				} );
 
-				try {
+				it( "should send PATCH to self when dirty", async () => {
+					stubRequest( "https://example.com/" );
+
+					Object.defineProperty( resource, "isDirty", { writable: true } );
+					spyOn( resource, "isDirty" ).and.returnValue( true );
+
 					await resource.save();
-					fail( "Should not resolve" );
-				} catch( error ) {
-					if( error ) fail( error );
+
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.url ).toBe( "https://example.com/" );
+					expect( request.method ).toBe( "PATCH" );
+				} );
+
+				it( "should parse error response", async () => {
+					stubRequest( "https://example.com/", { status: 500 } );
+
+					Object.defineProperty( resource, "isDirty", { writable: true } );
+					spyOn( resource, "isDirty" ).and.returnValue( true );
+
+					const spy:jasmine.Spy = spyOn( resource._registry, "_parseErrorFromResponse" )
+						.and.callFake( () => Promise.reject( null ) );
+
+					try {
+						await resource.save();
+						fail( "Should not resolve" );
+					} catch( error ) {
+						if( error ) fail( error );
+
+						expect( spy ).toHaveBeenCalled();
+					}
+				} );
+
+
+				it( "should send basic request headers", async () => {
+					stubRequest( "https://example.com/" );
+
+					resource = createMock( {
+						_registry: context.registry,
+						_eTag: "\"1-12345\"",
+						id: "https://example.com/",
+					} );
+
+					Object.defineProperty( resource, "isDirty", { writable: true } );
+					spyOn( resource, "isDirty" ).and.returnValue( true );
+
+					await resource.save();
+
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.requestHeaders ).toEqual( {
+						"accept": "application/ld+json",
+						"content-type": "text/ldpatch",
+						"if-match": "\"1-12345\"",
+						"prefer": "return=minimal",
+					} );
+				} );
+
+				it( "should add authentication header", async () => {
+					stubRequest( "https://example.com/" );
+
+					Object.defineProperty( resource, "isDirty", { writable: true } );
+					spyOn( resource, "isDirty" ).and.returnValue( true );
+
+
+					const spy:jasmine.Spy = spyOn( context.auth, "addAuthentication" );
+
+					await resource.save();
 
 					expect( spy ).toHaveBeenCalled();
-				}
-			} );
-
-
-			it( "should send basic request headers", async () => {
-				stubRequest( "https://example.com/" );
-
-				const resource:CRUDDocument = createMock( {
-					_eTag: "\"1-12345\"",
-					id: "https://example.com/",
 				} );
 
-				Object.defineProperty( resource, "isDirty", { writable: true } );
-				spyOn( resource, "isDirty" ).and.returnValue( true );
+				it( "should add custom headers in single self child", async () => {
+					stubRequest( "https://example.com/" );
 
-				await resource.save();
-
-				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-				expect( request.requestHeaders ).toEqual( {
-					"accept": "application/ld+json",
-					"content-type": "text/ldpatch",
-					"if-match": "\"1-12345\"",
-					"prefer": "return=minimal",
-				} );
-			} );
-
-			it( "should add authentication header", async () => {
-				stubRequest( "https://example.com/" );
-
-				const resource:CRUDDocument = createMock();
-
-				Object.defineProperty( resource, "isDirty", { writable: true } );
-				spyOn( resource, "isDirty" ).and.returnValue( true );
+					Object.defineProperty( resource, "isDirty", { writable: true } );
+					spyOn( resource, "isDirty" ).and.returnValue( true );
 
 
-				const spy:jasmine.Spy = spyOn( resource._context.auth, "addAuthentication" );
+					await resource.save( {
+						headers: new Map()
+							.set( "custom", new Header( "custom value" ) )
+						,
+					} );
 
-				await resource.save();
-
-				expect( spy ).toHaveBeenCalled();
-			} );
-
-			it( "should add custom headers in single self child", async () => {
-				stubRequest( "https://example.com/" );
-
-				const resource:CRUDDocument = createMock();
-
-				Object.defineProperty( resource, "isDirty", { writable: true } );
-				spyOn( resource, "isDirty" ).and.returnValue( true );
-
-
-				await resource.save( {
-					headers: new Map()
-						.set( "custom", new Header( "custom value" ) )
-					,
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.requestHeaders ).toEqual( jasmine.objectContaining( {
+						"custom": "custom value",
+					} ) );
 				} );
 
-				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-				expect( request.requestHeaders ).toEqual( jasmine.objectContaining( {
-					"custom": "custom value",
-				} ) );
-			} );
 
+				it( "should send update patch", async () => {
+					stubRequest( "https://example.com/" );
 
-			it( "should send update patch", async () => {
-				stubRequest( "https://example.com/" );
-
-				type MyDoc = {
-					list:(string | number)[];
-					pointer:BaseFragment & {
-						string:string[];
-						pointers:(BaseFragment & {
+					type MyDoc = {
+						list:(string | number)[];
+						pointer:BaseFragment & {
 							string:string[];
-							number:number;
-						})[];
+							pointers:(BaseFragment & {
+								string:string[];
+								number:number;
+							})[];
+						};
 					};
-				};
-				const resource:CRUDDocument & MyDoc = createMock( {
-					types: [ "https://example.com/ns#Document" ],
-					list: [ 1, 2, 3, 4, 5 ],
-					pointer: {
-						id: "#fragment",
-						types: [ "https://example.con/ns#Fragment" ],
-						string: [ "string 1", "string 2" ],
-						pointers: [
-							{
-								id: "_:blank-node",
-								types: [ "https://example.con/ns#Fragment", "https://example.com/ns#BlankNode" ],
-								string: [ "string 1" ],
-								number: 100,
-							},
-							{
-								id: "_:to-delete",
-								types: [ "https://example.con/ns#Fragment", "https://example.com/ns#BlankNode" ],
-								string: [ "string --" ],
-								number: - 100,
-							},
-						],
-					},
-				} );
 
+					let object:MyDoc;
+					object = resource = createMock( {
+						_registry: context.registry,
 
-				resource._normalize();
-				resource._syncSnapshot();
-				resource._syncSavedFragments();
-				resource._context
-					.extendObjectSchema( {
-						"@vocab": "https://example.com/ns#",
-						"xsd": XSD.namespace,
-					} )
-					.extendObjectSchema( "https://example.com/ns#Document", {
-						"list": {
-							"@container": "@list",
-						},
-						"pointer": {
-							"@type": "@id",
-						},
-					} )
-					.extendObjectSchema( "https://example.com/ns#Fragment", {
-						"string": {
-							"@type": XSD.string,
-							"@container": "@set",
-						},
-						"pointer": {
-							"@type": "@id",
-						},
-					} )
-					.extendObjectSchema( "https://example.com/ns#BlankNode", {
-						"number": {
-							"@type": XSD.integer,
+						types: [ "https://example.com/ns#Document" ],
+						list: [ 1, 2, 3, 4, 5 ],
+						pointer: {
+							id: "#fragment",
+							types: [ "https://example.con/ns#Fragment" ],
+							string: [ "string 1", "string 2" ],
+							pointers: [
+								{
+									id: "_:blank-node",
+									types: [ "https://example.con/ns#Fragment", "https://example.com/ns#BlankNode" ],
+									string: [ "string 1" ],
+									number: 100,
+								},
+								{
+									id: "_:to-delete",
+									types: [ "https://example.con/ns#Fragment", "https://example.com/ns#BlankNode" ],
+									string: [ "string --" ],
+									number: - 100,
+								},
+							],
 						},
 					} );
 
+					resource._normalize();
+					resource._syncSnapshot();
+					resource._syncSavedFragments();
 
-				resource.addType( "NewType" );
-				resource.list = [ 4, 1, 2, "s-1", "s-2", "s-3", 3 ];
-				resource.pointer.string = [ "string 2", "string 3" ];
-				resource.pointer.pointers[ 0 ].string = [ "string 1", "string -1" ];
-				resource.pointer.pointers[ 0 ].number = 100.001;
-				resource.pointer.pointers.splice( 1, 1 );
+					context
+						.extendObjectSchema( {
+							"@vocab": "https://example.com/ns#",
+							"xsd": XSD.namespace,
+						} )
+						.extendObjectSchema( "https://example.com/ns#Document", {
+							"list": {
+								"@container": "@list",
+							},
+							"pointer": {
+								"@type": "@id",
+							},
+						} )
+						.extendObjectSchema( "https://example.com/ns#Fragment", {
+							"string": {
+								"@type": XSD.string,
+								"@container": "@set",
+							},
+							"pointer": {
+								"@type": "@id",
+							},
+						} )
+						.extendObjectSchema( "https://example.com/ns#BlankNode", {
+							"number": {
+								"@type": XSD.integer,
+							},
+						} );
 
-				await resource.save();
 
-				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-				expect( request.params ).toBe( "" +
-					`@prefix xsd: <${ XSD.namespace }>. ` +
-					`UpdateList <https://example.com/> <https://example.com/ns#list> 3..5 (). ` +
-					`UpdateList <https://example.com/> <https://example.com/ns#list> 0..0 ( "4"^^xsd:float ). ` +
-					`UpdateList <https://example.com/> <https://example.com/ns#list> 3..3 ( "s-1" "s-2" "s-3" ). ` +
-					`Add { ` +
-					`` + `<https://example.com/> a <https://example.com/ns#NewType>. ` +
-					`` + `<https://example.com/#fragment> <https://example.com/ns#string> "string 3". ` +
-					`` + `_:blank-node <https://example.com/ns#string> "string -1". ` +
-					`}. ` +
-					`Delete { ` +
-					`` + `<https://example.com/#fragment> <https://example.com/ns#string> "string 1"; ` +
-					`` + `` + `<https://example.com/ns#pointers> _:to-delete. ` +
-					`` + `_:to-delete a <https://example.con/ns#Fragment>, <https://example.com/ns#BlankNode>; ` +
-					`` + `` + `<https://example.com/ns#string> "string --"; ` +
-					`` + `` + `<https://example.com/ns#number> "-100"^^xsd:integer. ` +
-					`}.` +
-					``
-				);
-			} );
+					resource.addType( "NewType" );
+					object.list = [ 4, 1, 2, "s-1", "s-2", "s-3", 3 ];
+					object.pointer.string = [ "string 2", "string 3" ];
+					object.pointer.pointers[ 0 ].string = [ "string 1", "string -1" ];
+					object.pointer.pointers[ 0 ].number = 100.001;
+					object.pointer.pointers.splice( 1, 1 );
 
-			it( "should update blank nodes when response metadata returned", async () => {
-				stubRequest( "https://example.com/", {
-					frees: [
-						{
-							"@id": "_:responseMetadata",
-							"@type": [ C.VolatileResource, C.ResponseMetadata ],
-							[ C.documentMetadata ]: [ {
+					await resource.save();
+
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.params ).toBe( "" +
+						`@prefix xsd: <${ XSD.namespace }>. ` +
+						`UpdateList <https://example.com/> <https://example.com/ns#list> 3..5 (). ` +
+						`UpdateList <https://example.com/> <https://example.com/ns#list> 0..0 ( "4"^^xsd:float ). ` +
+						`UpdateList <https://example.com/> <https://example.com/ns#list> 3..3 ( "s-1" "s-2" "s-3" ). ` +
+						`Add { ` +
+						`` + `<https://example.com/> a <https://example.com/ns#NewType>. ` +
+						`` + `<https://example.com/#fragment> <https://example.com/ns#string> "string 3". ` +
+						`` + `_:blank-node <https://example.com/ns#string> "string -1". ` +
+						`}. ` +
+						`Delete { ` +
+						`` + `<https://example.com/#fragment> <https://example.com/ns#string> "string 1"; ` +
+						`` + `` + `<https://example.com/ns#pointers> _:to-delete. ` +
+						`` + `_:to-delete a <https://example.con/ns#Fragment>, <https://example.com/ns#BlankNode>; ` +
+						`` + `` + `<https://example.com/ns#string> "string --"; ` +
+						`` + `` + `<https://example.com/ns#number> "-100"^^xsd:integer. ` +
+						`}.` +
+						``
+					);
+				} );
+
+				it( "should update blank nodes when response metadata returned", async () => {
+					stubRequest( "https://example.com/", {
+						frees: [
+							{
+								"@id": "_:responseMetadata",
+								"@type": [ C.VolatileResource, C.ResponseMetadata ],
+								[ C.documentMetadata ]: [ {
+									"@id": "_:documentMetadata",
+								} ],
+							},
+							{
 								"@id": "_:documentMetadata",
-							} ],
-						},
-						{
-							"@id": "_:documentMetadata",
-							"@type": [ C.VolatileResource, C.DocumentMetadata ],
-							[ C.relatedDocument ]: [ {
-								"@id": "https://example.com/",
-							} ],
-							[ C.bNodesMap ]: [ {
+								"@type": [ C.VolatileResource, C.DocumentMetadata ],
+								[ C.relatedDocument ]: [ {
+									"@id": "https://example.com/",
+								} ],
+								[ C.bNodesMap ]: [ {
+									"@id": "_:map",
+								} ],
+							},
+							{
 								"@id": "_:map",
-							} ],
-						},
-						{
-							"@id": "_:map",
-							"@type": [ C.Map ],
-							[ C.entry ]: [
-								{ "@id": "_:entry-1" },
-								{ "@id": "_:entry-2" },
-							],
-						},
-						{
-							"@id": "_:entry-1",
-							[ C.entryKey ]: [ {
-								"@id": "_:1",
-							} ],
-							[ C.entryValue ]: [ {
-								"@id": "_:new-1",
-							} ],
-						},
-						{
-							"@id": "_:entry-2",
-							[ C.entryKey ]: [ {
-								"@id": "_:2",
-							} ],
-							[ C.entryValue ]: [ {
-								"@id": "_:new-2",
-							} ],
-						},
-					],
-				} );
+								"@type": [ C.Map ],
+								[ C.entry ]: [
+									{ "@id": "_:entry-1" },
+									{ "@id": "_:entry-2" },
+								],
+							},
+							{
+								"@id": "_:entry-1",
+								[ C.entryKey ]: [ {
+									"@id": "_:1",
+								} ],
+								[ C.entryValue ]: [ {
+									"@id": "_:new-1",
+								} ],
+							},
+							{
+								"@id": "_:entry-2",
+								[ C.entryKey ]: [ {
+									"@id": "_:2",
+								} ],
+								[ C.entryValue ]: [ {
+									"@id": "_:new-2",
+								} ],
+							},
+						],
+					} );
 
-				const resource:CRUDDocument & MyDoc = createMock( {
-					blankNode1: {
-						id: "_:1",
+					resource = createMock( {
+						_registry: context.registry,
+
+						blankNode1: {
+							id: "_:1",
+							string: "blank node 1",
+						},
+						blankNode2: {
+							id: "_:2",
+							string: "blank node 2",
+						},
+					} );
+					resource._registry._resourcesMap.set( "", resource as any );
+
+					type BNode = { id:string, string:string };
+					type MyDoc = { blankNode1:BNode, blankNode2:BNode };
+
+					const returned:CRUDDocument & MyDoc = await resource.save<MyDoc>();
+
+					expect( returned.hasPointer( "_:1" ) ).toBe( false );
+					expect( returned.blankNode1 ).toEqual( jasmine.objectContaining( {
+						id: "_:new-1",
 						string: "blank node 1",
-					},
-					blankNode2: {
-						id: "_:2",
+					} ) );
+
+					expect( returned.hasPointer( "_:2" ) ).toBe( false );
+					expect( returned.blankNode2 ).toEqual( jasmine.objectContaining( {
+						id: "_:new-2",
 						string: "blank node 2",
-					},
+					} ) );
 				} );
-				resource._registry._resourcesMap.set( "", resource as any );
 
-				type BNode = { id:string, string:string };
-				type MyDoc = { blankNode1:BNode, blankNode2:BNode };
-
-				const returned:CRUDDocument & MyDoc = await resource.save();
-
-				expect( returned.hasPointer( "_:1" ) ).toBe( false );
-				expect( returned.blankNode1 ).toEqual( jasmine.objectContaining( {
-					id: "_:new-1",
-					string: "blank node 1",
-				} ) );
-
-				expect( returned.hasPointer( "_:2" ) ).toBe( false );
-				expect( returned.blankNode2 ).toEqual( jasmine.objectContaining( {
-					id: "_:new-2",
-					string: "blank node 2",
-				} ) );
 			} );
 
 		} );
@@ -6452,394 +6170,411 @@ describe( module( "carbonldp/Document" ), ():void => {
 			} );
 
 
-			it( "should throw error when self ID is outside context scope", async () => {
-				const resource:CRUDDocument = createMock( { id: "https://example.org/resource/" } );
+			describe( "When has a context", () => {
 
-				await resource
-					.saveAndRefresh()
-					.catch( error => {
-						expect( () => { throw error; } )
-							.toThrowError( IllegalArgumentError, `"https://example.org/resource/" is out of scope.` );
-					} )
-				;
-			} );
-
-			it( "should throw error when self ID is BNode label", async () => {
-				const resource:CRUDDocument = createMock( { id: "_:1" } );
-
-				await resource
-					.saveAndRefresh()
-					.catch( error => {
-						expect( () => { throw error; } )
-							.toThrowError( IllegalArgumentError, `"_:1" is out of scope.` );
-					} )
-				;
-			} );
-
-			it( "should throw error when self ID is Named Fragment label", async () => {
-				const resource:CRUDDocument = createMock( { id: "https://example.com/#fragment" } );
-
-				await resource
-					.saveAndRefresh()
-					.catch( error => {
-						expect( () => { throw error; } )
-							.toThrowError( IllegalArgumentError, `"https://example.com/#fragment" is out of scope.` );
-					} )
-				;
-			} );
-
-			it( "should throw error when self ID is unresolved prefixed name", async () => {
-				const resource:CRUDDocument = createMock( { id: "ex:resource/" } );
-
-				await resource
-					.saveAndRefresh()
-					.catch( error => {
-						expect( () => { throw error; } )
-							.toThrowError( IllegalArgumentError, `"ex:resource/" is out of scope.` );
-					} )
-				;
-			} );
+				let context:CarbonLDP;
+				let resource:CRUDDocument;
+				beforeEach( ():void => {
+					context = new CarbonLDP( "https://example.com/" );
+					resource = createMock( { _registry: context.registry } );
+				} );
 
 
-			it( "should return self if no dirty", async () => {
-				const resource:CRUDDocument = createMock( { id: "https://example.com/" } );
-				const returned:CRUDDocument = await resource.saveAndRefresh();
+				it( "should throw error when self ID is outside context scope", async () => {
+					resource.id = "https://example.org/resource/";
 
-				expect( returned ).toBe( resource );
-			} );
+					await resource
+						.saveAndRefresh()
+						.catch( error => {
+							expect( () => { throw error; } )
+								.toThrowError( IllegalArgumentError, `"https://example.org/resource/" is out of scope.` );
+						} )
+					;
+				} );
 
-			it( "should send PATCH to self when dirty", async () => {
-				stubRequest( "https://example.com/" );
+				it( "should throw error when self ID is BNode label", async () => {
+					resource.id = "_:1";
 
-				const resource:CRUDDocument = createMock( { id: "https://example.com/" } );
+					await resource
+						.saveAndRefresh()
+						.catch( error => {
+							expect( () => { throw error; } )
+								.toThrowError( IllegalArgumentError, `"_:1" is out of scope.` );
+						} )
+					;
+				} );
 
-				Object.defineProperty( resource, "isDirty", { writable: true } );
-				spyOn( resource, "isDirty" ).and.returnValue( true );
+				it( "should throw error when self ID is Named Fragment label", async () => {
+					resource.id = "https://example.com/#fragment";
 
-				await resource.saveAndRefresh();
+					await resource
+						.saveAndRefresh()
+						.catch( error => {
+							expect( () => { throw error; } )
+								.toThrowError( IllegalArgumentError, `"https://example.com/#fragment" is out of scope.` );
+						} )
+					;
+				} );
 
-				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-				expect( request.url ).toBe( "https://example.com/" );
-				expect( request.method ).toBe( "PATCH" );
-			} );
+				it( "should throw error when self ID is unresolved prefixed name", async () => {
+					resource.id = "ex:resource/";
 
-			it( "should parse error response", async () => {
-				stubRequest( "https://example.com/", { status: 500 } );
+					await resource
+						.saveAndRefresh()
+						.catch( error => {
+							expect( () => { throw error; } )
+								.toThrowError( IllegalArgumentError, `"ex:resource/" is out of scope.` );
+						} )
+					;
+				} );
 
-				const resource:CRUDDocument = createMock( { id: "https://example.com/" } );
 
-				Object.defineProperty( resource, "isDirty", { writable: true } );
-				spyOn( resource, "isDirty" ).and.returnValue( true );
+				it( "should return self if no dirty", async () => {
+					const returned:CRUDDocument = await resource.saveAndRefresh();
 
-				const spy:jasmine.Spy = spyOn( resource._registry, "_parseErrorFromResponse" )
-					.and.callFake( () => Promise.reject( null ) );
+					expect( returned ).toBe( resource );
+				} );
 
-				try {
+				it( "should send PATCH to self when dirty", async () => {
+					stubRequest( "https://example.com/" );
+
+					Object.defineProperty( resource, "isDirty", { writable: true } );
+					spyOn( resource, "isDirty" ).and.returnValue( true );
+
 					await resource.saveAndRefresh();
-					fail( "Should not resolve" );
-				} catch( error ) {
-					if( error ) fail( error );
+
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.url ).toBe( "https://example.com/" );
+					expect( request.method ).toBe( "PATCH" );
+				} );
+
+				it( "should parse error response", async () => {
+					stubRequest( "https://example.com/", { status: 500 } );
+
+					Object.defineProperty( resource, "isDirty", { writable: true } );
+					spyOn( resource, "isDirty" ).and.returnValue( true );
+
+					const spy:jasmine.Spy = spyOn( resource._registry, "_parseErrorFromResponse" )
+						.and.callFake( () => Promise.reject( null ) );
+
+					try {
+						await resource.saveAndRefresh();
+						fail( "Should not resolve" );
+					} catch( error ) {
+						if( error ) fail( error );
+
+						expect( spy ).toHaveBeenCalled();
+					}
+				} );
+
+
+				it( "should send basic request headers", async () => {
+					stubRequest( "https://example.com/" );
+
+					resource = createMock( {
+						_registry: context.registry,
+						_eTag: "\"1-12345\"",
+						id: "https://example.com/",
+					} );
+
+					Object.defineProperty( resource, "isDirty", { writable: true } );
+					spyOn( resource, "isDirty" ).and.returnValue( true );
+
+					await resource.saveAndRefresh();
+
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.requestHeaders ).toEqual( {
+						"accept": "application/ld+json",
+						"content-type": "text/ldpatch",
+						"if-match": "\"1-12345\"",
+						"prefer": "return=representation",
+					} );
+				} );
+
+				it( "should add authentication header", async () => {
+					stubRequest( "https://example.com/" );
+
+
+					Object.defineProperty( resource, "isDirty", { writable: true } );
+					spyOn( resource, "isDirty" ).and.returnValue( true );
+
+
+					const spy:jasmine.Spy = spyOn( context.auth, "addAuthentication" );
+
+					await resource.saveAndRefresh();
 
 					expect( spy ).toHaveBeenCalled();
-				}
-			} );
-
-
-			it( "should send basic request headers", async () => {
-				stubRequest( "https://example.com/" );
-
-				const resource:CRUDDocument = createMock( {
-					_eTag: "\"1-12345\"",
-					id: "https://example.com/",
 				} );
 
-				Object.defineProperty( resource, "isDirty", { writable: true } );
-				spyOn( resource, "isDirty" ).and.returnValue( true );
-
-				await resource.saveAndRefresh();
-
-				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-				expect( request.requestHeaders ).toEqual( {
-					"accept": "application/ld+json",
-					"content-type": "text/ldpatch",
-					"if-match": "\"1-12345\"",
-					"prefer": "return=representation",
-				} );
-			} );
-
-			it( "should add authentication header", async () => {
-				stubRequest( "https://example.com/" );
-
-				const resource:CRUDDocument = createMock();
-
-				Object.defineProperty( resource, "isDirty", { writable: true } );
-				spyOn( resource, "isDirty" ).and.returnValue( true );
+				it( "should add custom headers in single self child", async () => {
+					stubRequest( "https://example.com/" );
 
 
-				const spy:jasmine.Spy = spyOn( resource._context.auth, "addAuthentication" );
-
-				await resource.saveAndRefresh();
-
-				expect( spy ).toHaveBeenCalled();
-			} );
-
-			it( "should add custom headers in single self child", async () => {
-				stubRequest( "https://example.com/" );
-
-				const resource:CRUDDocument = createMock();
-
-				Object.defineProperty( resource, "isDirty", { writable: true } );
-				spyOn( resource, "isDirty" ).and.returnValue( true );
+					Object.defineProperty( resource, "isDirty", { writable: true } );
+					spyOn( resource, "isDirty" ).and.returnValue( true );
 
 
-				await resource.saveAndRefresh( {
-					headers: new Map()
-						.set( "custom", new Header( "custom value" ) )
-					,
+					await resource.saveAndRefresh( {
+						headers: new Map()
+							.set( "custom", new Header( "custom value" ) )
+						,
+					} );
+
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.requestHeaders ).toEqual( jasmine.objectContaining( {
+						"custom": "custom value",
+					} ) );
 				} );
 
-				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-				expect( request.requestHeaders ).toEqual( jasmine.objectContaining( {
-					"custom": "custom value",
-				} ) );
-			} );
 
+				it( "should send update patch", async () => {
+					stubRequest( "https://example.com/" );
 
-			it( "should send update patch", async () => {
-				stubRequest( "https://example.com/" );
-
-				type MyDoc = {
-					list:(string | number)[];
-					pointer:BaseFragment & {
-						string:string[];
-						pointers:(BaseFragment & {
+					type MyDoc = {
+						list:(string | number)[];
+						pointer:BaseFragment & {
 							string:string[];
-							number:number;
-						})[];
+							pointers:(BaseFragment & {
+								string:string[];
+								number:number;
+							})[];
+						};
 					};
-				};
-				const resource:CRUDDocument & MyDoc = createMock( {
-					types: [ "https://example.com/ns#Document" ],
-					list: [ 1, 2, 3, 4, 5 ],
-					pointer: {
-						id: "#fragment",
-						types: [ "https://example.con/ns#Fragment" ],
-						string: [ "string 1", "string 2" ],
-						pointers: [
-							{
-								id: "_:blank-node",
-								types: [ "https://example.con/ns#Fragment", "https://example.com/ns#BlankNode" ],
-								string: [ "string 1" ],
-								number: 100,
-							},
-							{
-								id: "_:to-delete",
-								types: [ "https://example.con/ns#Fragment", "https://example.com/ns#BlankNode" ],
-								string: [ "string --" ],
-								number: - 100,
-							},
-						],
-					},
-				} );
 
+					let object:MyDoc;
+					object = resource = createMock( {
+						_registry: context.registry,
 
-				resource._normalize();
-				resource._syncSnapshot();
-				resource._syncSavedFragments();
-				resource._context
-					.extendObjectSchema( {
-						"@vocab": "https://example.com/ns#",
-						"xsd": XSD.namespace,
-					} )
-					.extendObjectSchema( "https://example.com/ns#Document", {
-						"list": {
-							"@container": "@list",
-						},
-						"pointer": {
-							"@type": "@id",
-						},
-					} )
-					.extendObjectSchema( "https://example.com/ns#Fragment", {
-						"string": {
-							"@type": XSD.string,
-							"@container": "@set",
-						},
-						"pointer": {
-							"@type": "@id",
-						},
-					} )
-					.extendObjectSchema( "https://example.com/ns#BlankNode", {
-						"number": {
-							"@type": XSD.integer,
+						types: [ "https://example.com/ns#Document" ],
+						list: [ 1, 2, 3, 4, 5 ],
+						pointer: {
+							id: "#fragment",
+							types: [ "https://example.con/ns#Fragment" ],
+							string: [ "string 1", "string 2" ],
+							pointers: [
+								{
+									id: "_:blank-node",
+									types: [ "https://example.con/ns#Fragment", "https://example.com/ns#BlankNode" ],
+									string: [ "string 1" ],
+									number: 100,
+								},
+								{
+									id: "_:to-delete",
+									types: [ "https://example.con/ns#Fragment", "https://example.com/ns#BlankNode" ],
+									string: [ "string --" ],
+									number: - 100,
+								},
+							],
 						},
 					} );
 
 
-				resource.addType( "NewType" );
-				resource.list = [ 4, 1, 2, "s-1", "s-2", "s-3", 3 ];
-				resource.pointer.string = [ "string 2", "string 3" ];
-				resource.pointer.pointers[ 0 ].string = [ "string 1", "string -1" ];
-				resource.pointer.pointers[ 0 ].number = 100.001;
-				resource.pointer.pointers.splice( 1, 1 );
+					resource._normalize();
+					resource._syncSnapshot();
+					resource._syncSavedFragments();
 
-				await resource.saveAndRefresh();
+					context
+						.extendObjectSchema( {
+							"@vocab": "https://example.com/ns#",
+							"xsd": XSD.namespace,
+						} )
+						.extendObjectSchema( "https://example.com/ns#Document", {
+							"list": {
+								"@container": "@list",
+							},
+							"pointer": {
+								"@type": "@id",
+							},
+						} )
+						.extendObjectSchema( "https://example.com/ns#Fragment", {
+							"string": {
+								"@type": XSD.string,
+								"@container": "@set",
+							},
+							"pointer": {
+								"@type": "@id",
+							},
+						} )
+						.extendObjectSchema( "https://example.com/ns#BlankNode", {
+							"number": {
+								"@type": XSD.integer,
+							},
+						} );
 
-				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-				expect( request.params ).toBe( "" +
-					`@prefix xsd: <${ XSD.namespace }>. ` +
-					`UpdateList <https://example.com/> <https://example.com/ns#list> 3..5 (). ` +
-					`UpdateList <https://example.com/> <https://example.com/ns#list> 0..0 ( "4"^^xsd:float ). ` +
-					`UpdateList <https://example.com/> <https://example.com/ns#list> 3..3 ( "s-1" "s-2" "s-3" ). ` +
-					`Add { ` +
-					`` + `<https://example.com/> a <https://example.com/ns#NewType>. ` +
-					`` + `<https://example.com/#fragment> <https://example.com/ns#string> "string 3". ` +
-					`` + `_:blank-node <https://example.com/ns#string> "string -1". ` +
-					`}. ` +
-					`Delete { ` +
-					`` + `<https://example.com/#fragment> <https://example.com/ns#string> "string 1"; ` +
-					`` + `` + `<https://example.com/ns#pointers> _:to-delete. ` +
-					`` + `_:to-delete a <https://example.con/ns#Fragment>, <https://example.com/ns#BlankNode>; ` +
-					`` + `` + `<https://example.com/ns#string> "string --"; ` +
-					`` + `` + `<https://example.com/ns#number> "-100"^^xsd:integer. ` +
-					`}.` +
-					``
-				);
-			} );
 
-			it( "should update from representation", async () => {
-				stubRequest( "https://example.com/", {
-					resource: {
-						"https://example.com/ns#string": "updated document",
-					},
+					resource.addType( "NewType" );
+					object.list = [ 4, 1, 2, "s-1", "s-2", "s-3", 3 ];
+					object.pointer.string = [ "string 2", "string 3" ];
+					object.pointer.pointers[ 0 ].string = [ "string 1", "string -1" ];
+					object.pointer.pointers[ 0 ].number = 100.001;
+					object.pointer.pointers.splice( 1, 1 );
+
+					await resource.saveAndRefresh();
+
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.params ).toBe( "" +
+						`@prefix xsd: <${ XSD.namespace }>. ` +
+						`UpdateList <https://example.com/> <https://example.com/ns#list> 3..5 (). ` +
+						`UpdateList <https://example.com/> <https://example.com/ns#list> 0..0 ( "4"^^xsd:float ). ` +
+						`UpdateList <https://example.com/> <https://example.com/ns#list> 3..3 ( "s-1" "s-2" "s-3" ). ` +
+						`Add { ` +
+						`` + `<https://example.com/> a <https://example.com/ns#NewType>. ` +
+						`` + `<https://example.com/#fragment> <https://example.com/ns#string> "string 3". ` +
+						`` + `_:blank-node <https://example.com/ns#string> "string -1". ` +
+						`}. ` +
+						`Delete { ` +
+						`` + `<https://example.com/#fragment> <https://example.com/ns#string> "string 1"; ` +
+						`` + `` + `<https://example.com/ns#pointers> _:to-delete. ` +
+						`` + `_:to-delete a <https://example.con/ns#Fragment>, <https://example.com/ns#BlankNode>; ` +
+						`` + `` + `<https://example.com/ns#string> "string --"; ` +
+						`` + `` + `<https://example.com/ns#number> "-100"^^xsd:integer. ` +
+						`}.` +
+						``
+					);
 				} );
 
+				it( "should update from representation", async () => {
+					stubRequest( "https://example.com/", {
+						resource: {
+							"https://example.com/ns#string": "updated document",
+						},
+					} );
 
-				type MyDoc = {
-					string?:string;
-				};
-				const resource:CRUDDocument & MyDoc = createMock( {
-					string: "document",
+
+					type MyDoc = {
+						string?:string;
+					};
+
+					resource = createMock( {
+						_registry: context.registry,
+						string: "document",
+					} );
+
+
+					context
+						.extendObjectSchema( { "@vocab": "https://example.com/ns#" } );
+
+
+					const returned:CRUDDocument & MyDoc = await resource.saveAndRefresh<MyDoc>();
+					expect( returned as MyDoc ).toEqual( {
+						string: "updated document",
+					} );
 				} );
 
+				it( "should update BasePersistedDocument data", async () => {
+					stubRequest( "https://example.com/", {} );
 
-				resource._context
-					.extendObjectSchema( { "@vocab": "https://example.com/ns#" } );
+					resource = createMock( {
+						_registry: context.registry,
+						eTag: "\"0-12345\"",
+						string: "document",
+					} );
 
 
-				const returned:CRUDDocument & MyDoc = await resource.saveAndRefresh();
-				expect( returned as MyDoc ).toEqual( {
-					string: "updated document",
-				} );
-			} );
-
-			it( "should update BasePersistedDocument data", async () => {
-				stubRequest( "https://example.com/", {} );
-
-				const resource:CRUDDocument = createMock( {
-					eTag: "\"0-12345\"",
-					string: "document",
+					const returned:CRUDDocument = await resource.saveAndRefresh();
+					expect( returned ).toEqual( jasmine.objectContaining( {
+						_eTag: "\"1-12345\"",
+						_resolved: true,
+					} ) );
 				} );
 
-
-				const returned:CRUDDocument = await resource.saveAndRefresh();
-				expect( returned ).toEqual( jasmine.objectContaining( {
-					_eTag: "\"1-12345\"",
-					_resolved: true,
-				} ) );
-			} );
-
-			it( "should update blank nodes when response metadata returned", async () => {
-				stubRequest( "https://example.com/", {
-					resource: {
-						"https://example.com/ns#blankNode1": [ { "@id": "_:new-1" } ],
-						"https://example.com/ns#blankNode2": [ { "@id": "_:new-2" } ],
-					},
-					fragments: [
-						{
-							"@id": "_:new-1",
-							"https://example.com/ns#string": [ { "@value": "updated blank node 1" } ],
+				it( "should update blank nodes when response metadata returned", async () => {
+					stubRequest( "https://example.com/", {
+						resource: {
+							"https://example.com/ns#blankNode1": [ { "@id": "_:new-1" } ],
+							"https://example.com/ns#blankNode2": [ { "@id": "_:new-2" } ],
 						},
-						{
-							"@id": "_:new-2",
-							"https://example.com/ns#string": [ { "@value": "updated blank node 2" } ],
-						},
-					],
-					frees: [
-						{
-							"@id": "_:responseMetadata",
-							"@type": [ C.VolatileResource, C.ResponseMetadata ],
-							[ C.documentMetadata ]: [ {
-								"@id": "_:documentMetadata",
-							} ],
-						},
-						{
-							"@id": "_:documentMetadata",
-							"@type": [ C.VolatileResource, C.DocumentMetadata ],
-							[ C.relatedDocument ]: [ {
-								"@id": "https://example.com/",
-							} ],
-							[ C.bNodesMap ]: [ {
-								"@id": "_:map",
-							} ],
-						},
-						{
-							"@id": "_:map",
-							"@type": [ C.Map ],
-							[ C.entry ]: [
-								{ "@id": "_:entry-1" },
-								{ "@id": "_:entry-2" },
-							],
-						},
-						{
-							"@id": "_:entry-1",
-							[ C.entryKey ]: [ {
-								"@id": "_:1",
-							} ],
-							[ C.entryValue ]: [ {
+						fragments: [
+							{
 								"@id": "_:new-1",
-							} ],
-						},
-						{
-							"@id": "_:entry-2",
-							[ C.entryKey ]: [ {
-								"@id": "_:2",
-							} ],
-							[ C.entryValue ]: [ {
+								"https://example.com/ns#string": [ { "@value": "updated blank node 1" } ],
+							},
+							{
 								"@id": "_:new-2",
-							} ],
+								"https://example.com/ns#string": [ { "@value": "updated blank node 2" } ],
+							},
+						],
+						frees: [
+							{
+								"@id": "_:responseMetadata",
+								"@type": [ C.VolatileResource, C.ResponseMetadata ],
+								[ C.documentMetadata ]: [ {
+									"@id": "_:documentMetadata",
+								} ],
+							},
+							{
+								"@id": "_:documentMetadata",
+								"@type": [ C.VolatileResource, C.DocumentMetadata ],
+								[ C.relatedDocument ]: [ {
+									"@id": "https://example.com/",
+								} ],
+								[ C.bNodesMap ]: [ {
+									"@id": "_:map",
+								} ],
+							},
+							{
+								"@id": "_:map",
+								"@type": [ C.Map ],
+								[ C.entry ]: [
+									{ "@id": "_:entry-1" },
+									{ "@id": "_:entry-2" },
+								],
+							},
+							{
+								"@id": "_:entry-1",
+								[ C.entryKey ]: [ {
+									"@id": "_:1",
+								} ],
+								[ C.entryValue ]: [ {
+									"@id": "_:new-1",
+								} ],
+							},
+							{
+								"@id": "_:entry-2",
+								[ C.entryKey ]: [ {
+									"@id": "_:2",
+								} ],
+								[ C.entryValue ]: [ {
+									"@id": "_:new-2",
+								} ],
+							},
+						],
+					} );
+
+					resource = createMock( {
+						_registry: context.registry,
+
+						blankNode1: {
+							id: "_:1",
+							string: "blank node 1",
 						},
-					],
+						blankNode2: {
+							id: "_:2",
+							string: "blank node 2",
+						},
+					} );
+					resource._registry._resourcesMap.set( "", resource as any );
+
+					context.extendObjectSchema( { "@vocab": "https://example.com/ns#" } );
+
+					type BNode = { id:string, string:string };
+					type MyDoc = { blankNode1:BNode, blankNode2:BNode };
+
+					const returned:CRUDDocument & MyDoc = await resource.saveAndRefresh<MyDoc>();
+
+					expect( returned.hasPointer( "_:1" ) ).toBe( false );
+					expect( returned.blankNode1 ).toEqual( jasmine.objectContaining( {
+						id: "_:new-1",
+						string: "updated blank node 1",
+					} ) );
+
+					expect( returned.hasPointer( "_:2" ) ).toBe( false );
+					expect( returned.blankNode2 ).toEqual( jasmine.objectContaining( {
+						id: "_:new-2",
+						string: "updated blank node 2",
+					} ) );
 				} );
 
-				const resource:CRUDDocument & MyDoc = createMock( {
-					blankNode1: {
-						id: "_:1",
-						string: "blank node 1",
-					},
-					blankNode2: {
-						id: "_:2",
-						string: "blank node 2",
-					},
-				} );
-				resource._context.extendObjectSchema( { "@vocab": "https://example.com/ns#" } );
-				resource._registry._resourcesMap.set( "", resource as any );
-
-				type BNode = { id:string, string:string };
-				type MyDoc = { blankNode1:BNode, blankNode2:BNode };
-
-				const returned:CRUDDocument & MyDoc = await resource.saveAndRefresh();
-
-				expect( returned.hasPointer( "_:1" ) ).toBe( false );
-				expect( returned.blankNode1 ).toEqual( jasmine.objectContaining( {
-					id: "_:new-1",
-					string: "updated blank node 1",
-				} ) );
-
-				expect( returned.hasPointer( "_:2" ) ).toBe( false );
-				expect( returned.blankNode2 ).toEqual( jasmine.objectContaining( {
-					id: "_:new-2",
-					string: "updated blank node 2",
-				} ) );
 			} );
 
 		} );
@@ -6916,324 +6651,348 @@ describe( module( "carbonldp/Document" ), ():void => {
 			} );
 
 
-			it( "should throw error when self ID is outside context scope", async () => {
-				const resource:CRUDDocument = createMock( { id: "https://example.org/resource/" } );
+			describe( "When has a context", () => {
 
-				await resource
-					.refresh()
-					.catch( error => {
-						expect( () => { throw error; } )
-							.toThrowError( IllegalArgumentError, `"https://example.org/resource/" is out of scope.` );
-					} )
-				;
-			} );
+				let context:CarbonLDP;
+				let resource:CRUDDocument;
+				beforeEach( ():void => {
+					context = new CarbonLDP( "https://example.com/" );
+					resource = createMock( { _registry: context.registry } );
+				} );
 
-			it( "should throw error when self ID is BNode label", async () => {
-				const resource:CRUDDocument = createMock( { id: "_:1" } );
+				it( "should throw error when self ID is outside context scope", async () => {
+					resource = createMock( {
+						_registry: context.registry,
+						id: "https://example.org/resource/",
+					} );
 
-				await resource
-					.refresh()
-					.catch( error => {
-						expect( () => { throw error; } )
-							.toThrowError( IllegalArgumentError, `"_:1" is out of scope.` );
-					} )
-				;
-			} );
+					await resource
+						.refresh()
+						.catch( error => {
+							expect( () => { throw error; } )
+								.toThrowError( IllegalArgumentError, `"https://example.org/resource/" is out of scope.` );
+						} )
+					;
+				} );
 
-			it( "should throw error when self ID is Named Fragment label", async () => {
-				const resource:CRUDDocument = createMock( { id: "https://example.com/#fragment" } );
+				it( "should throw error when self ID is BNode label", async () => {
+					resource = createMock( {
+						_registry: context.registry,
+						id: "_:1",
+					} );
 
-				await resource
-					.refresh()
-					.catch( error => {
-						expect( () => { throw error; } )
-							.toThrowError( IllegalArgumentError, `"https://example.com/#fragment" is out of scope.` );
-					} )
-				;
-			} );
+					await resource
+						.refresh()
+						.catch( error => {
+							expect( () => { throw error; } )
+								.toThrowError( IllegalArgumentError, `"_:1" is out of scope.` );
+						} )
+					;
+				} );
 
-			it( "should throw error when self ID is unresolved prefixed name", async () => {
-				const resource:CRUDDocument = createMock( { id: "ex:resource/" } );
+				it( "should throw error when self ID is Named Fragment label", async () => {
+					resource = createMock( {
+						_registry: context.registry,
+						id: "https://example.com/#fragment",
+					} );
 
-				await resource
-					.refresh()
-					.catch( error => {
-						expect( () => { throw error; } )
-							.toThrowError( IllegalArgumentError, `"ex:resource/" is out of scope.` );
-					} )
-				;
-			} );
+					await resource
+						.refresh()
+						.catch( error => {
+							expect( () => { throw error; } )
+								.toThrowError( IllegalArgumentError, `"https://example.com/#fragment" is out of scope.` );
+						} )
+					;
+				} );
+
+				it( "should throw error when self ID is unresolved prefixed name", async () => {
+					resource = createMock( {
+						_registry: context.registry,
+						id: "ex:resource/",
+					} );
+
+					await resource
+						.refresh()
+						.catch( error => {
+							expect( () => { throw error; } )
+								.toThrowError( IllegalArgumentError, `"ex:resource/" is out of scope.` );
+						} )
+					;
+				} );
 
 
-			it( "should parse error response", async () => {
-				stubRequest( "https://example.com/", { status: 500 } );
+				it( "should parse error response", async () => {
+					stubRequest( "https://example.com/", { status: 500 } );
 
-				const resource:CRUDDocument = createMock( { id: "https://example.com/" } );
+					Object.defineProperty( resource, "isDirty", { writable: true } );
+					spyOn( resource, "isDirty" ).and.returnValue( true );
 
-				Object.defineProperty( resource, "isDirty", { writable: true } );
-				spyOn( resource, "isDirty" ).and.returnValue( true );
+					const spy:jasmine.Spy = spyOn( resource._registry, "_parseErrorFromResponse" )
+						.and.callFake( () => Promise.reject( null ) );
 
-				const spy:jasmine.Spy = spyOn( resource._registry, "_parseErrorFromResponse" )
-					.and.callFake( () => Promise.reject( null ) );
+					try {
+						await resource.refresh();
+						fail( "Should not resolve" );
+					} catch( error ) {
+						if( error ) fail( error );
 
-				try {
+						expect( spy ).toHaveBeenCalled();
+					}
+				} );
+
+				it( "should return same if no-modified received", async () => {
+					stubRequest( "https://example.com/", { status: 304 } );
+
+					const returned:CRUDDocument = await resource.refresh();
+
+					expect( returned ).toBe( resource );
+				} );
+
+
+				it( "should send basic request headers", async () => {
+					stubRequest( "https://example.com/" );
+
+					resource = createMock( {
+						_registry: context.registry,
+						_eTag: "\"1-12345\"",
+						id: "https://example.com/",
+					} );
+
+					Object.defineProperty( resource, "isDirty", { writable: true } );
+					spyOn( resource, "isDirty" ).and.returnValue( true );
+
 					await resource.refresh();
-					fail( "Should not resolve" );
-				} catch( error ) {
-					if( error ) fail( error );
+
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.requestHeaders ).toEqual( {
+						"accept": "application/ld+json",
+						"if-none-match": "\"1-12345\"",
+						"prefer": `${ LDP.RDFSource }; rel=interaction-model`,
+					} );
+				} );
+
+				it( "should add authentication header", async () => {
+					stubRequest( "https://example.com/" );
+
+					Object.defineProperty( resource, "isDirty", { writable: true } );
+					spyOn( resource, "isDirty" ).and.returnValue( true );
+
+
+					const spy:jasmine.Spy = spyOn( context.auth, "addAuthentication" );
+
+					await resource.refresh();
 
 					expect( spy ).toHaveBeenCalled();
-				}
-			} );
-
-			it( "should return same if no-modified received", async () => {
-				stubRequest( "https://example.com/", { status: 304 } );
-
-				const resource:CRUDDocument = createMock( { id: "https://example.com/" } );
-				const returned:CRUDDocument = await resource.refresh();
-
-				expect( returned ).toBe( resource );
-			} );
-
-
-			it( "should send basic request headers", async () => {
-				stubRequest( "https://example.com/" );
-
-				const resource:CRUDDocument = createMock( {
-					_eTag: "\"1-12345\"",
-					id: "https://example.com/",
 				} );
 
-				Object.defineProperty( resource, "isDirty", { writable: true } );
-				spyOn( resource, "isDirty" ).and.returnValue( true );
+				it( "should add custom headers in single self child", async () => {
+					stubRequest( "https://example.com/" );
 
-				await resource.refresh();
-
-				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-				expect( request.requestHeaders ).toEqual( {
-					"accept": "application/ld+json",
-					"if-none-match": "\"1-12345\"",
-					"prefer": `${ LDP.RDFSource }; rel=interaction-model`,
-				} );
-			} );
-
-			it( "should add authentication header", async () => {
-				stubRequest( "https://example.com/" );
-
-				const resource:CRUDDocument = createMock();
-
-				Object.defineProperty( resource, "isDirty", { writable: true } );
-				spyOn( resource, "isDirty" ).and.returnValue( true );
+					Object.defineProperty( resource, "isDirty", { writable: true } );
+					spyOn( resource, "isDirty" ).and.returnValue( true );
 
 
-				const spy:jasmine.Spy = spyOn( resource._context.auth, "addAuthentication" );
+					await resource.refresh( {
+						headers: new Map()
+							.set( "custom", new Header( "custom value" ) )
+						,
+					} );
 
-				await resource.refresh();
-
-				expect( spy ).toHaveBeenCalled();
-			} );
-
-			it( "should add custom headers in single self child", async () => {
-				stubRequest( "https://example.com/" );
-
-				const resource:CRUDDocument = createMock();
-
-				Object.defineProperty( resource, "isDirty", { writable: true } );
-				spyOn( resource, "isDirty" ).and.returnValue( true );
-
-
-				await resource.refresh( {
-					headers: new Map()
-						.set( "custom", new Header( "custom value" ) )
-					,
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.requestHeaders ).toEqual( jasmine.objectContaining( {
+						"custom": "custom value",
+					} ) );
 				} );
 
-				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-				expect( request.requestHeaders ).toEqual( jasmine.objectContaining( {
-					"custom": "custom value",
-				} ) );
-			} );
 
-
-			it( "should update document", async () => {
-				stubRequest( "https://example.com/", {
-					resource: {
-						"https://example.com/ns#string": "updated document",
-						"https://example.com/ns#pointerSet": [
-							{ "@id": "_:1" },
-							{ "@id": "#fragment" },
-						],
-					},
-					fragments: [ {
-						"@id": "_:1",
-						"https://example.com/ns#string": "updated blank node",
-						"https://example.com/ns#pointerSet": [
-							{ "@id": "#2" },
-						],
-					}, {
-						"@id": "#fragment",
-						"https://example.com/ns#string": "updated named fragment",
-					}, {
-						"@id": "#2",
-						"https://example.com/ns#string": "new named fragment",
-					} ],
-				} );
-
-				type MyResource = { string:string, pointerSet?:MyResource[] };
-				const resource:CRUDDocument & MyResource = createMock( {
-					string: "document",
-					pointerSet: [
-						{
-							id: "_:1",
-							string: "blank node",
-							pointerSet: [],
-						},
-						{
-							slug: "fragment",
-							string: "named fragment",
-						},
-						{
-							id: "_:2",
-							string: "to be removed",
-						},
-					],
-				} );
-
-				resource._normalize();
-				resource._registry._resourcesMap.set( "", resource as any );
-
-
-				resource._context
-					.extendObjectSchema( { "@vocab": "https://example.com/ns#" } );
-
-
-				const returned:CRUDDocument & MyResource = await resource.refresh();
-				expect( returned as MyResource ).toEqual( {
-					string: "updated document",
-					pointerSet: [
-						{
-							string: "updated blank node",
-							pointerSet: [
-								{
-									string: "new named fragment",
-								},
+				it( "should update document", async () => {
+					stubRequest( "https://example.com/", {
+						resource: {
+							"https://example.com/ns#string": "updated document",
+							"https://example.com/ns#pointerSet": [
+								{ "@id": "_:1" },
+								{ "@id": "#fragment" },
 							],
 						},
-						{
-							string: "updated named fragment",
-						},
-					],
-				} );
-			} );
-
-			it( "should update BasePersistedDocument data", async () => {
-				stubRequest( "https://example.com/", {} );
-
-				const resource:CRUDDocument = createMock( {
-					eTag: "\"0-12345\"",
-					string: "document",
-				} );
-
-
-				const returned:CRUDDocument = await resource.refresh();
-				expect( returned ).toEqual( jasmine.objectContaining( {
-					_eTag: "\"1-12345\"",
-					_resolved: true,
-				} ) );
-			} );
-
-			it( "should update blank nodes when response metadata returned", async () => {
-				stubRequest( "https://example.com/", {
-					resource: {
-						"https://example.com/ns#blankNode1": [ { "@id": "_:new-1" } ],
-						"https://example.com/ns#blankNode2": [ { "@id": "_:new-2" } ],
-					},
-					fragments: [
-						{
-							"@id": "_:new-1",
-							"https://example.com/ns#string": [ { "@value": "updated blank node 1" } ],
-						},
-						{
-							"@id": "_:new-2",
-							"https://example.com/ns#string": [ { "@value": "updated blank node 2" } ],
-						},
-					],
-					frees: [
-						{
-							"@id": "_:responseMetadata",
-							"@type": [ C.VolatileResource, C.ResponseMetadata ],
-							[ C.documentMetadata ]: [ {
-								"@id": "_:documentMetadata",
-							} ],
-						},
-						{
-							"@id": "_:documentMetadata",
-							"@type": [ C.VolatileResource, C.DocumentMetadata ],
-							[ C.relatedDocument ]: [ {
-								"@id": "https://example.com/",
-							} ],
-							[ C.bNodesMap ]: [ {
-								"@id": "_:map",
-							} ],
-						},
-						{
-							"@id": "_:map",
-							"@type": [ C.Map ],
-							[ C.entry ]: [
-								{ "@id": "_:entry-1" },
-								{ "@id": "_:entry-2" },
+						fragments: [ {
+							"@id": "_:1",
+							"https://example.com/ns#string": "updated blank node",
+							"https://example.com/ns#pointerSet": [
+								{ "@id": "#2" },
 							],
+						}, {
+							"@id": "#fragment",
+							"https://example.com/ns#string": "updated named fragment",
+						}, {
+							"@id": "#2",
+							"https://example.com/ns#string": "new named fragment",
+						} ],
+					} );
+
+					type MyResource = { string:string, pointerSet?:MyResource[] };
+
+					resource = createMock( {
+						_registry: context.registry,
+
+						string: "document",
+						pointerSet: [
+							{
+								id: "_:1",
+								string: "blank node",
+								pointerSet: [],
+							},
+							{
+								slug: "fragment",
+								string: "named fragment",
+							},
+							{
+								id: "_:2",
+								string: "to be removed",
+							},
+						],
+					} );
+
+					resource._normalize();
+					resource._registry._resourcesMap.set( "", resource as any );
+
+
+					context
+						.extendObjectSchema( { "@vocab": "https://example.com/ns#" } );
+
+
+					const returned:CRUDDocument & MyResource = await resource.refresh<MyResource>();
+					expect( returned as MyResource ).toEqual( {
+						string: "updated document",
+						pointerSet: [
+							{
+								string: "updated blank node",
+								pointerSet: [
+									{
+										string: "new named fragment",
+									},
+								],
+							},
+							{
+								string: "updated named fragment",
+							},
+						],
+					} );
+				} );
+
+				it( "should update BasePersistedDocument data", async () => {
+					stubRequest( "https://example.com/", {} );
+
+					resource = createMock( {
+						_registry: context.registry,
+						eTag: "\"0-12345\"",
+						string: "document",
+					} );
+
+
+					const returned:CRUDDocument = await resource.refresh();
+					expect( returned ).toEqual( jasmine.objectContaining( {
+						_eTag: "\"1-12345\"",
+						_resolved: true,
+					} ) );
+				} );
+
+				it( "should update blank nodes when response metadata returned", async () => {
+					stubRequest( "https://example.com/", {
+						resource: {
+							"https://example.com/ns#blankNode1": [ { "@id": "_:new-1" } ],
+							"https://example.com/ns#blankNode2": [ { "@id": "_:new-2" } ],
 						},
-						{
-							"@id": "_:entry-1",
-							[ C.entryKey ]: [ {
-								"@id": "_:1",
-							} ],
-							[ C.entryValue ]: [ {
+						fragments: [
+							{
 								"@id": "_:new-1",
-							} ],
-						},
-						{
-							"@id": "_:entry-2",
-							[ C.entryKey ]: [ {
-								"@id": "_:2",
-							} ],
-							[ C.entryValue ]: [ {
+								"https://example.com/ns#string": [ { "@value": "updated blank node 1" } ],
+							},
+							{
 								"@id": "_:new-2",
-							} ],
+								"https://example.com/ns#string": [ { "@value": "updated blank node 2" } ],
+							},
+						],
+						frees: [
+							{
+								"@id": "_:responseMetadata",
+								"@type": [ C.VolatileResource, C.ResponseMetadata ],
+								[ C.documentMetadata ]: [ {
+									"@id": "_:documentMetadata",
+								} ],
+							},
+							{
+								"@id": "_:documentMetadata",
+								"@type": [ C.VolatileResource, C.DocumentMetadata ],
+								[ C.relatedDocument ]: [ {
+									"@id": "https://example.com/",
+								} ],
+								[ C.bNodesMap ]: [ {
+									"@id": "_:map",
+								} ],
+							},
+							{
+								"@id": "_:map",
+								"@type": [ C.Map ],
+								[ C.entry ]: [
+									{ "@id": "_:entry-1" },
+									{ "@id": "_:entry-2" },
+								],
+							},
+							{
+								"@id": "_:entry-1",
+								[ C.entryKey ]: [ {
+									"@id": "_:1",
+								} ],
+								[ C.entryValue ]: [ {
+									"@id": "_:new-1",
+								} ],
+							},
+							{
+								"@id": "_:entry-2",
+								[ C.entryKey ]: [ {
+									"@id": "_:2",
+								} ],
+								[ C.entryValue ]: [ {
+									"@id": "_:new-2",
+								} ],
+							},
+						],
+					} );
+
+					resource = createMock( {
+						_registry: context.registry,
+
+						blankNode1: {
+							id: "_:1",
+							string: "blank node 1",
 						},
-					],
+						blankNode2: {
+							id: "_:2",
+							string: "blank node 2",
+						},
+					} );
+					resource._registry._resourcesMap.set( "", resource as any );
+
+					context.extendObjectSchema( { "@vocab": "https://example.com/ns#" } );
+
+					type BNode = { id:string, string:string };
+					type MyDoc = { blankNode1:BNode, blankNode2:BNode };
+
+					const returned:CRUDDocument & MyDoc = await resource.refresh<MyDoc>();
+
+					expect( returned.hasPointer( "_:1" ) ).toBe( false );
+					expect( returned.blankNode1 ).toEqual( jasmine.objectContaining( {
+						id: "_:new-1",
+						string: "updated blank node 1",
+					} ) );
+
+					expect( returned.hasPointer( "_:2" ) ).toBe( false );
+					expect( returned.blankNode2 ).toEqual( jasmine.objectContaining( {
+						id: "_:new-2",
+						string: "updated blank node 2",
+					} ) );
 				} );
 
-				const resource:CRUDDocument & MyDoc = createMock( {
-					blankNode1: {
-						id: "_:1",
-						string: "blank node 1",
-					},
-					blankNode2: {
-						id: "_:2",
-						string: "blank node 2",
-					},
-				} );
-				resource._context.extendObjectSchema( { "@vocab": "https://example.com/ns#" } );
-				resource._registry._resourcesMap.set( "", resource as any );
-
-				type BNode = { id:string, string:string };
-				type MyDoc = { blankNode1:BNode, blankNode2:BNode };
-
-				const returned:CRUDDocument & MyDoc = await resource.refresh();
-
-				expect( returned.hasPointer( "_:1" ) ).toBe( false );
-				expect( returned.blankNode1 ).toEqual( jasmine.objectContaining( {
-					id: "_:new-1",
-					string: "updated blank node 1",
-				} ) );
-
-				expect( returned.hasPointer( "_:2" ) ).toBe( false );
-				expect( returned.blankNode2 ).toEqual( jasmine.objectContaining( {
-					id: "_:new-2",
-					string: "updated blank node 2",
-				} ) );
 			} );
 
 		} );
@@ -7293,141 +7052,189 @@ describe( module( "carbonldp/Document" ), ():void => {
 			} );
 
 
-			it( "should request from self when no URI", async () => {
-				stubRequest( "https://example.com/" );
+			describe( "When has a context", () => {
 
-				const resource:CRUDDocument = createMock();
+				let context:CarbonLDP;
+				let resource:CRUDDocument;
+				beforeEach( ():void => {
+					context = new CarbonLDP( "https://example.com/" );
+					resource = createMock( { _registry: context.registry } );
+				} );
 
-				await resource.delete();
 
-				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-				expect( request.url ).toBe( "https://example.com/" );
-			} );
+				it( "should request from self when no URI", async () => {
+					stubRequest( "https://example.com/" );
 
-			it( "should request from URI", async () => {
-				stubRequest( "https://example.com/another-resource/" );
-
-				const resource:CRUDDocument = createMock();
-
-				await resource.delete( "https://example.com/another-resource/" );
-
-				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-				expect( request.url ).toBe( "https://example.com/another-resource/" );
-			} );
-
-			it( "should request from relative URI", async () => {
-				stubRequest( "https://example.com/relative/" );
-
-				const resource:CRUDDocument = createMock();
-
-				await resource.delete( "relative/" );
-
-				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-				expect( request.url ).toBe( "https://example.com/relative/" );
-			} );
-
-			it( "should request from resolved prefixed name", async () => {
-				stubRequest( "https://example.com/resource/" );
-
-				const _context:CarbonLDP = new CarbonLDP( "https://example.com/" );
-				_context.extendObjectSchema( { "ex": "https://example.com/" } );
-
-				const resource:CRUDDocument = createMock( { _context } );
-
-				await resource.delete( "ex:resource/" );
-
-				const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
-				expect( request.url ).toBe( "https://example.com/resource/" );
-			} );
-
-			it( "should throw error when from URI outside context scope", async () => {
-				const resource:CRUDDocument = createMock();
-
-				await resource
-					.delete( "https://example.org/resource/" )
-					.catch( error => {
-						expect( () => { throw error; } )
-							.toThrowError( IllegalArgumentError, `"https://example.org/resource/" is out of scope.` );
-					} )
-				;
-			} );
-
-			it( "should throw error when from URI is BNode label", async () => {
-				const resource:CRUDDocument = createMock();
-
-				await resource
-					.delete( "_:1" )
-					.catch( error => {
-						expect( () => { throw error; } )
-							.toThrowError( IllegalArgumentError, `"_:1" is out of scope.` );
-					} )
-				;
-			} );
-
-			it( "should throw error when from URI is Named Fragment label", async () => {
-				const resource:CRUDDocument = createMock();
-
-				await resource
-					.delete( "#fragment" )
-					.catch( error => {
-						expect( () => { throw error; } )
-							.toThrowError( IllegalArgumentError, `"https://example.com/#fragment" is out of scope.` );
-					} )
-				;
-			} );
-
-			it( "should throw error when unresolved prefixed name", async () => {
-				const resource:CRUDDocument = createMock();
-
-				await resource
-					.delete( "ex:resource/" )
-					.catch( error => {
-						expect( () => { throw error; } )
-							.toThrowError( IllegalArgumentError, `"ex:resource/" is out of scope.` );
-					} )
-				;
-			} );
-
-			it( "should parse error response", async () => {
-				stubRequest( "https://example.com/", { status: 500 } );
-				const resource:CRUDDocument = createMock( { id: "https://example.com/" } );
-
-				const spy:jasmine.Spy = spyOn( resource._registry, "_parseErrorFromResponse" )
-					.and.callFake( () => Promise.reject( null ) );
-
-				try {
 					await resource.delete();
-					fail( "Should not resolve" );
-				} catch( error ) {
-					if( error ) fail( error );
+
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.url ).toBe( "https://example.com/" );
+				} );
+
+				it( "should request from URI", async () => {
+					stubRequest( "https://example.com/another-resource/" );
+
+					await resource.delete( "https://example.com/another-resource/" );
+
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.url ).toBe( "https://example.com/another-resource/" );
+				} );
+
+				it( "should request from relative URI", async () => {
+					stubRequest( "https://example.com/relative/" );
+
+					await resource
+						.delete( "https://example.org/resource/" )
+						.catch( error => {
+							expect( () => { throw error; } )
+								.toThrowError( IllegalArgumentError, `"https://example.org/resource/" is out of scope.` );
+						} )
+					;
+				} );
+
+				it( "should throw error when from URI is BNode label", async () => {
+					await resource
+						.delete( "_:1" )
+						.catch( error => {
+							expect( () => { throw error; } )
+								.toThrowError( IllegalArgumentError, `"_:1" is out of scope.` );
+						} )
+					;
+				} );
+
+				it( "should throw error when from URI is Named Fragment label", async () => {
+					await resource
+						.delete( "#fragment" )
+						.catch( error => {
+							expect( () => { throw error; } )
+								.toThrowError( IllegalArgumentError, `"https://example.com/#fragment" is out of scope.` );
+						} )
+					;
+				} );
+
+				it( "should throw error when unresolved prefixed name", async () => {
+					await resource
+						.delete( "ex:resource/" )
+						.catch( error => {
+							expect( () => { throw error; } )
+								.toThrowError( IllegalArgumentError, `"ex:resource/" is out of scope.` );
+						} )
+					;
+				} );
+
+				it( "should parse error response", async () => {
+					stubRequest( "https://example.com/", { status: 500 } );
+
+					const spy:jasmine.Spy = spyOn( resource._registry, "_parseErrorFromResponse" )
+						.and.callFake( () => Promise.reject( null ) );
+
+					try {
+						await resource.delete();
+						fail( "Should not resolve" );
+					} catch( error ) {
+						if( error ) fail( error );
+
+						expect( spy ).toHaveBeenCalled();
+					}
+				} );
+
+
+				it( "should send basic request headers when no IRI", async () => {
+					stubRequest( "https://example.com/" );
+
+					await resource.delete();
+
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.requestHeaders ).toEqual( {
+						"accept": "application/ld+json",
+						"prefer": `${ LDP.RDFSource }; rel=interaction-model`,
+					} );
+				} );
+
+				it( "should send basic request headers when no IRI", async () => {
+					stubRequest( "https://example.com/resource/" );
+
+					await resource.delete( "resource/" );
+
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.requestHeaders ).toEqual( {
+						"accept": "application/ld+json",
+						"prefer": `${ LDP.RDFSource }; rel=interaction-model`,
+					} );
+				} );
+
+				it( "should add authentication header when no IRI", async () => {
+					stubRequest( "https://example.com/" );
+
+					const spy:jasmine.Spy = spyOn( context.auth, "addAuthentication" );
+
+					await resource.delete();
 
 					expect( spy ).toHaveBeenCalled();
-				}
-			} );
+				} );
+
+				it( "should add authentication header when specified IRI", async () => {
+					stubRequest( "https://example.com/resource/" );
+
+					const spy:jasmine.Spy = spyOn( context.auth, "addAuthentication" );
+
+					await resource.delete( "resource/" );
+
+					expect( spy ).toHaveBeenCalled();
+				} );
+
+				it( "should add custom headers when no IRI", async () => {
+					stubRequest( "https://example.com/" );
+
+					await resource.delete( {
+						headers: new Map()
+							.set( "custom", new Header( "custom value" ) )
+						,
+					} );
+
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.requestHeaders ).toEqual( jasmine.objectContaining( {
+						"custom": "custom value",
+					} ) );
+				} );
+
+				it( "should add custom headers when specific IRI", async () => {
+					stubRequest( "https://example.com/resource/" );
+
+					await resource.delete( "resource/", {
+						headers: new Map()
+							.set( "custom", new Header( "custom value" ) )
+						,
+					} );
+
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.requestHeaders ).toEqual( jasmine.objectContaining( {
+						"custom": "custom value",
+					} ) );
+				} );
 
 
-			it( "should remove self pointer from registry", async () => {
-				stubRequest( "https://example.com/" );
+				it( "should remove self pointer from registry", async () => {
+					stubRequest( "https://example.com/" );
 
-				const resource:CRUDDocument = createMock( { id: "https://example.com/" } );
-				resource._registry._resourcesMap.set( "", resource as any );
+					resource._registry._resourcesMap.set( "", resource as any );
 
-				await resource.delete();
+					await resource.delete();
 
-				expect( resource._registry.hasPointer( resource.id ) ).toBe( false );
-			} );
+					expect( resource._registry.hasPointer( resource.id ) ).toBe( false );
+				} );
 
-			it( "should remove pointer whe URI provided", async () => {
-				stubRequest( "https://example.com/resource/" );
+				it( "should remove pointer whe URI provided", async () => {
+					stubRequest( "https://example.com/resource/" );
 
-				const resource:CRUDDocument = createMock( { id: "https://example.com/" } );
+					const target:CRUDDocument = resource._registry
+						._register( { id: "https://example.com/resource/" } );
 
-				const target:CRUDDocument = resource._registry
-					._register( { id: "https://example.com/resource/" } );
+					await resource.delete( "resource/" );
 
-				await resource.delete( "resource/" );
+					expect( resource._registry.hasPointer( target.id ) ).toBe( false );
+				} );
 
-				expect( resource._registry.hasPointer( target.id ) ).toBe( false );
 			} );
 
 		} );

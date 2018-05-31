@@ -35,9 +35,9 @@ function parseRDFDocument(registry, rdfDocument, eTag) {
     return resource;
 }
 function addAuthentication(registry, requestOptions) {
-    if (!registry._context || !registry._context.auth)
+    if (!registry.context || !registry.context.auth)
         return;
-    registry._context.auth.addAuthentication(requestOptions);
+    registry.context.auth.addAuthentication(requestOptions);
 }
 function setDefaultRequestOptions(registry, requestOptions, interactionModel) {
     addAuthentication(registry, requestOptions);
@@ -402,11 +402,13 @@ var PROTOTYPE = {
     },
     delete: function (uriOrOptions, requestOptions) {
         var _this = this;
-        if (requestOptions === void 0) { requestOptions = {}; }
         return Utils_1.promiseMethod(function () {
             var registry = getRegistry(_this);
             var uri = Utils_1.isString(uriOrOptions) ? uriOrOptions : void 0;
             var url = HTTP_1.RequestUtils.getRequestURLFor(registry, _this, uri);
+            requestOptions = Utils_1.isObject(uriOrOptions) ?
+                uriOrOptions :
+                requestOptions ? requestOptions : {};
             setDefaultRequestOptions(registry, requestOptions, Vocabularies_1.LDP.RDFSource);
             return HTTP_1.RequestService
                 .delete(url, requestOptions)

@@ -50,13 +50,13 @@ export interface MembersDocument extends TransientResource {
 
 
 function getRegistry( repository:MembersDocument ):RegistryService<MembersDocument, AbstractContext<MembersDocument, any> | undefined> {
-	if( repository._registry && repository._registry._context ) return repository._registry;
+	if( repository._registry && repository._registry.context ) return repository._registry;
 	throw new IllegalActionError( `"${ repository.id }" doesn't support Members management requests.` );
 }
 
 function setDefaultRequestOptions( registry:RegistryService<MembersDocument, AbstractContext<MembersDocument, any> | undefined>, requestOptions:RequestOptions ):RequestOptions {
-	if( registry._context && registry._context.auth )
-		registry._context.auth.addAuthentication( requestOptions );
+	if( registry.context && registry.context.auth )
+		registry.context.auth.addAuthentication( requestOptions );
 
 	RequestUtils.setPreferredInteractionModel( LDP.Container, requestOptions );
 	RequestUtils.setAcceptHeader( "application/ld+json", requestOptions );
@@ -86,7 +86,6 @@ function sendAddAction( repository:MembersDocument, uri:string | undefined, memb
 
 		const freeResources:FreeResources = FreeResources.createFrom( {
 			_registry: registry,
-			_context: registry._context,
 		} );
 		freeResources._register( AddMemberAction.createFrom( { targetMembers } ) );
 
@@ -116,7 +115,6 @@ function sendRemoveAction( repository:MembersDocument, uri:string | undefined, m
 
 		const freeResources:FreeResources = FreeResources.createFrom( {
 			_registry: registry,
-			_context: registry._context,
 		} );
 		freeResources._register( RemoveMemberAction.createFrom( { targetMembers } ) );
 

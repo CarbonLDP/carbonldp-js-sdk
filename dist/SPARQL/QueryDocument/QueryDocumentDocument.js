@@ -28,6 +28,11 @@ function getRegistry(repository) {
         return repository._registry;
     throw new Errors_1.IllegalActionError("\"" + repository.id + "\" doesn't support Querying requests.");
 }
+function addAuthentication(registry, requestOptions) {
+    if (!registry.context || !registry.context.auth)
+        return;
+    registry.context.auth.addAuthentication(requestOptions);
+}
 function executePatterns(registry, url, requestOptions, queryContext, targetName, constructPatterns, target) {
     var metadataVar = queryContext.getVariable("metadata");
     var construct = (_a = new tokens_1.ConstructToken()
@@ -42,7 +47,7 @@ function executePatterns(registry, url, requestOptions, queryContext, targetName
     var triples = Utils_2.getAllTriples(constructPatterns);
     construct.addTriple.apply(construct, triples);
     HTTP_1.RequestUtils.setRetrievalPreferences({ include: [Vocabularies_1.C.PreferResultsContext] }, requestOptions);
-    registry._context.auth.addAuthentication(requestOptions);
+    addAuthentication(registry, requestOptions);
     return Service_1.SPARQLService
         .executeRawCONSTRUCTQuery(url, query.toString(), requestOptions)
         .then(function (_a) {
@@ -183,7 +188,7 @@ function addRefreshPatterns(queryContext, parentAdder, resource, parentName) {
     });
 }
 function getPartial(registry, uri, requestOptions, queryBuilderFn) {
-    var queryContext = new QueryContextBuilder_1.QueryContextBuilder(registry._context);
+    var queryContext = new QueryContextBuilder_1.QueryContextBuilder(registry.context);
     var documentProperty = queryContext
         .addProperty("document")
         .setOptional(false);
@@ -198,7 +203,7 @@ function getPartial(registry, uri, requestOptions, queryBuilderFn) {
 }
 function refreshPartial(registry, resource, requestOptions) {
     var url = HTTP_1.RequestUtils.getRequestURLFor(registry, resource);
-    var queryContext = new QueryContextPartial_1.QueryContextPartial(resource, registry._context);
+    var queryContext = new QueryContextPartial_1.QueryContextPartial(resource, registry.context);
     var targetName = "document";
     var constructPatterns = new tokens_1.OptionalToken()
         .addPattern(new tokens_1.ValuesToken()
@@ -212,7 +217,7 @@ function executeChildrenBuilder(repository, uri, requestOptions, queryBuilderFn)
     return Utils_1.promiseMethod(function () {
         var registry = getRegistry(repository);
         var url = HTTP_1.RequestUtils.getRequestURLFor(registry, repository, uri);
-        var queryContext = new QueryContextBuilder_1.QueryContextBuilder(registry._context);
+        var queryContext = new QueryContextBuilder_1.QueryContextBuilder(registry.context);
         var childrenProperty = queryContext
             .addProperty("child")
             .setOptional(false);
@@ -229,7 +234,7 @@ function executeMembersBuilder(repository, uri, requestOptions, queryBuilderFn) 
     return Utils_1.promiseMethod(function () {
         var registry = getRegistry(repository);
         var url = HTTP_1.RequestUtils.getRequestURLFor(registry, repository, uri);
-        var queryContext = new QueryContextBuilder_1.QueryContextBuilder(registry._context);
+        var queryContext = new QueryContextBuilder_1.QueryContextBuilder(registry.context);
         var membersProperty = queryContext
             .addProperty("member")
             .setOptional(false);

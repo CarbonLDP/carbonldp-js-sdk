@@ -1,4 +1,3 @@
-import { AbstractContext } from "./AbstractContext";
 import {
 	ModelDecorator,
 	ModelFactory,
@@ -23,12 +22,10 @@ import {
 
 export interface BaseFreeResources {
 	_registry:RegistryService<Pointer, any>;
-	_context:AbstractContext<Pointer, any>;
 }
 
 
 export interface FreeResources extends Registry<TransientResource> {
-	_context:AbstractContext<Pointer, any> | undefined;
 	_registry:RegistryService<Pointer, any> | undefined;
 
 
@@ -41,14 +38,12 @@ export interface FreeResources extends Registry<TransientResource> {
 }
 
 type OverloadedProps =
-	| "_context"
 	| "_registry"
 	| "_getLocalID"
 	| "_register"
 	;
 
 const PROTOTYPE:PickSelfProps<FreeResources, Registry<TransientResource>, OverloadedProps> = {
-	_context: void 0,
 	_registry: void 0,
 
 
@@ -87,7 +82,6 @@ const PROTOTYPE:PickSelfProps<FreeResources, Registry<TransientResource>, Overlo
 export interface FreeResourcesFactory extends ModelFactory<FreeResources>, ModelDecorator<FreeResources, BaseFreeResources> {
 	PROTOTYPE:PickSelfProps<FreeResources,
 		Registry<TransientResource>,
-		| "_context"
 		| "_registry"
 		| "_getLocalID"
 		| "_register">;

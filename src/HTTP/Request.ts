@@ -382,7 +382,7 @@ export class RequestUtils {
 
 
 	static getRequestURLFor( this:void, registry:RegistryService<Pointer, AbstractContext<Pointer, any> | undefined>, resource:Pointer, uri?:string ):string {
-		if( uri && registry._context ) {
+		if( uri && registry.context ) {
 			const schema:DigestedObjectSchema = registry.getGeneralSchema();
 			uri = ObjectSchemaUtils.resolveURI( uri, schema );
 		}
@@ -390,7 +390,7 @@ export class RequestUtils {
 		const url:string = uri ? URI.resolve( resource.id, uri ) : resource.id;
 
 		const localIRI:string = registry._getLocalID( url );
-		if( registry._context ) return URI.resolve( registry._context.baseURI, localIRI );
+		if( registry.context ) return URI.resolve( registry.context.baseURI, localIRI );
 
 		if( URI.isRelative( url ) ) throw new IllegalArgumentError( `"${ url }" cannot be used as URL for the request.` );
 		return url;

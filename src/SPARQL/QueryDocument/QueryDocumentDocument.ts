@@ -123,6 +123,11 @@ function getRegistry( repository:QueryDocumentDocument ):DocumentsRegistry {
 	throw new IllegalActionError( `"${ repository.id }" doesn't support Querying requests.` );
 }
 
+function addAuthentication( registry:DocumentsRegistry, requestOptions:RequestOptions ):void {
+	if( ! registry.context || ! registry.context.auth ) return;
+	registry.context.auth.addAuthentication( requestOptions );
+}
+
 
 function executePatterns<T extends object>( registry:DocumentsRegistry, url:string, requestOptions:RequestOptions, queryContext:QueryContext, targetName:string, constructPatterns:PatternToken[], target?:T & QueryDocumentDocument ):Promise<(T & QueryDocumentDocument)[]> {
 	const metadataVar:VariableToken = queryContext.getVariable( "metadata" );
@@ -146,7 +151,7 @@ function executePatterns<T extends object>( registry:DocumentsRegistry, url:stri
 	construct.addTriple( ...triples );
 
 	RequestUtils.setRetrievalPreferences( { include: [ C.PreferResultsContext ] }, requestOptions );
-	registry._context.auth.addAuthentication( requestOptions );
+	addAuthentication( registry, requestOptions );
 
 	return SPARQLService
 		.executeRawCONSTRUCTQuery( url, query.toString(), requestOptions )
@@ -304,7 +309,7 @@ function addRefreshPatterns( queryContext:QueryContextPartial, parentAdder:Optio
 }
 
 function getPartial<T extends object>( registry:DocumentsRegistry, uri:string, requestOptions:RequestOptions, queryBuilderFn?:QueryBuilderFn ):Promise<T & QueryDocumentDocument> {
-	const queryContext:QueryContextBuilder = new QueryContextBuilder( registry._context );
+	const queryContext:QueryContextBuilder = new QueryContextBuilder( registry.context );
 
 	const documentProperty:QueryProperty = queryContext
 		.addProperty( "document" )
@@ -325,7 +330,7 @@ function getPartial<T extends object>( registry:DocumentsRegistry, uri:string, r
 
 function refreshPartial<T extends object>( registry:DocumentsRegistry, resource:QueryDocumentDocument, requestOptions:RequestOptions ):Promise<T & QueryDocumentDocument> {
 	const url:string = RequestUtils.getRequestURLFor( registry, resource );
-	const queryContext:QueryContextPartial = new QueryContextPartial( resource, registry._context );
+	const queryContext:QueryContextPartial = new QueryContextPartial( resource, registry.context );
 
 	const targetName:string = "document";
 	const constructPatterns:OptionalToken = new OptionalToken()
@@ -348,7 +353,7 @@ function executeChildrenBuilder<T extends object>( this:void, repository:QueryDo
 		const registry:DocumentsRegistry = getRegistry( repository );
 		const url:string = RequestUtils.getRequestURLFor( registry, repository, uri );
 
-		const queryContext:QueryContextBuilder = new QueryContextBuilder( registry._context );
+		const queryContext:QueryContextBuilder = new QueryContextBuilder( registry.context );
 		const childrenProperty:QueryProperty = queryContext
 			.addProperty( "child" )
 			.setOptional( false );
@@ -372,7 +377,7 @@ function executeMembersBuilder<T extends object>( this:void, repository:QueryDoc
 		const registry:DocumentsRegistry = getRegistry( repository );
 		const url:string = RequestUtils.getRequestURLFor( registry, repository, uri );
 
-		const queryContext:QueryContextBuilder = new QueryContextBuilder( registry._context );
+		const queryContext:QueryContextBuilder = new QueryContextBuilder( registry.context );
 		const membersProperty:QueryProperty = queryContext
 			.addProperty( "member" )
 			.setOptional( false );

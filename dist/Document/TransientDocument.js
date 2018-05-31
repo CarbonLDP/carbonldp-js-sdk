@@ -47,7 +47,6 @@ function internalConverter(resource, target, tracker) {
     });
 }
 var PROTOTYPE = {
-    _context: void 0,
     _registry: void 0,
     _normalize: function () {
         var usedFragments = new Set();

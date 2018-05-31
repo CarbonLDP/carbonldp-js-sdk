@@ -46,15 +46,6 @@ describe( module( "carbonldp/Document" ), ():void => {
 
 		it( hasProperty(
 			OBLIGATORY,
-			"_context",
-			"CarbonLDP.CarbonLDP | undefined"
-		), ():void => {
-			const target:BasePersistedDocument[ "_context" ] = {} as CarbonLDP | undefined;
-			expect( target ).toBeDefined();
-		} );
-
-		it( hasProperty(
-			OBLIGATORY,
 			"_registry",
 			"CarbonLDP.DocumentsRegistry | undefined"
 		), ():void => {

@@ -16,7 +16,7 @@ var RegistryService = (function () {
         this.getPointer = Registry_1.Registry.PROTOTYPE.getPointer;
         this.getPointers = Registry_1.Registry.PROTOTYPE.getPointers;
         this.removePointer = Registry_1.Registry.PROTOTYPE.removePointer;
-        this._context = context;
+        this.context = context;
         this._model = model;
         this._resourcesMap = new Map();
         this._documentDecorators = Utils_1.MapUtils.extend(new Map(), context && context.parentContext && context.parentContext.registry.documentDecorators);
@@ -24,9 +24,9 @@ var RegistryService = (function () {
     }
     Object.defineProperty(RegistryService.prototype, "_registry", {
         get: function () {
-            return this._context
-                && this._context.parentContext
-                && this._context.parentContext.registry;
+            return this.context
+                && this.context.parentContext
+                && this.context.parentContext.registry;
         },
         enumerable: true,
         configurable: true
@@ -42,28 +42,28 @@ var RegistryService = (function () {
         configurable: true
     });
     RegistryService.prototype._getLocalID = function (id) {
-        if (!this._context)
+        if (!this.context)
             return id;
-        var schema = this._context.getObjectSchema();
+        var schema = this.context.getObjectSchema();
         var iri = ObjectSchema_1.ObjectSchemaUtils.resolveURI(id, schema);
-        if (!RDF_1.URI.isBaseOf(this._context.baseURI, iri))
+        if (!RDF_1.URI.isBaseOf(this.context.baseURI, iri))
             return Registry_1.Registry.PROTOTYPE._getLocalID.call(this, id);
-        return RDF_1.URI.getRelativeURI(iri, this._context.baseURI);
+        return RDF_1.URI.getRelativeURI(iri, this.context.baseURI);
     };
     RegistryService.prototype._register = function (base) {
         var pointer = Registry_1.Registry.PROTOTYPE._register.call(this, base);
         var resource = this._model.decorate(pointer);
-        if (!this._context)
+        if (!this.context)
             return resource;
-        var schema = this._context.getObjectSchema();
+        var schema = this.context.getObjectSchema();
         resource.id = ObjectSchema_1.ObjectSchemaUtils
             .resolveURI(resource.id, schema, { base: true });
         return resource;
     };
     RegistryService.prototype.getGeneralSchema = function () {
-        if (!this._context)
+        if (!this.context)
             return new ObjectSchema_1.DigestedObjectSchema();
-        return this._context.getObjectSchema();
+        return this.context.getObjectSchema();
     };
     RegistryService.prototype.hasSchemaFor = function (object, path) {
         return !path;
@@ -90,21 +90,21 @@ var RegistryService = (function () {
     };
     RegistryService.prototype._getSchema = function (objectTypes, objectID) {
         var _this = this;
-        if (!this._context)
+        if (!this.context)
             return new ObjectSchema_1.DigestedObjectSchema();
         if (objectID !== void 0 && !RDF_1.URI.hasFragment(objectID) && !RDF_1.URI.isBNodeID(objectID) && objectTypes.indexOf(Document_1.TransientDocument.TYPE) === -1)
             objectTypes = objectTypes.concat(Document_1.TransientDocument.TYPE);
         var objectSchemas = objectTypes
-            .filter(function (type) { return _this._context.hasObjectSchema(type); })
-            .map(function (type) { return _this._context.getObjectSchema(type); });
+            .filter(function (type) { return _this.context.hasObjectSchema(type); })
+            .map(function (type) { return _this.context.getObjectSchema(type); });
         return ObjectSchema_1.ObjectSchemaDigester
             ._combineSchemas([
-            this._context.getObjectSchema()
+            this.context.getObjectSchema()
         ].concat(objectSchemas));
     };
     RegistryService.prototype._parseFreeNodes = function (freeNodes) {
         var freeResourcesDocument = FreeResources_1.FreeResources
-            .createFrom({ _registry: this, _context: this._context });
+            .createFrom({ _registry: this });
         var resources = freeNodes
             .map(function (node) { return freeResourcesDocument._register({ id: node["@id"] }); });
         this._compactRDFNodes(freeNodes, resources, freeResourcesDocument);

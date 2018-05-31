@@ -6,7 +6,6 @@ var Pointer_1 = require("../Pointer");
 var Utils_1 = require("../Utils");
 var PROTOTYPE = {
     get _resourcesMap() { return new Map(); },
-    _context: void 0,
     _registry: void 0,
     inScope: function (idOrPointer, local) {
         try {

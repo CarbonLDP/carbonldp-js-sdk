@@ -1,5 +1,4 @@
 import { TransientBlankNode } from "../BlankNode";
-import { CarbonLDP } from "../CarbonLDP";
 import { ModelDecorator, ModelFactory } from "../core";
 import { TransientFragment } from "../Fragment";
 import { TransientNamedFragment } from "../NamedFragment";
@@ -11,7 +10,6 @@ import { PickSelfProps } from "../Utils";
 import { C } from "../Vocabularies";
 import { BaseDocument } from "./BaseDocument";
 export interface TransientDocument extends TransientResource, Registry<TransientBlankNode | TransientNamedFragment> {
-    _context: CarbonLDP | undefined;
     _registry: DocumentsRegistry | undefined;
     defaultInteractionModel?: Pointer;
     isMemberOfRelation?: Pointer;
@@ -34,7 +32,7 @@ export interface TransientDocument extends TransientResource, Registry<Transient
     toJSON(registry?: DocumentsRegistry): RDFDocument;
 }
 export interface TransientDocumentFactory extends ModelFactory<TransientDocument>, ModelDecorator<TransientDocument> {
-    PROTOTYPE: PickSelfProps<TransientDocument, TransientResource & Registry<TransientBlankNode | TransientNamedFragment>, "_context" | "_registry" | "_getLocalID" | "_register">;
+    PROTOTYPE: PickSelfProps<TransientDocument, TransientResource & Registry<TransientBlankNode | TransientNamedFragment>, "_registry" | "_getLocalID" | "_register">;
     TYPE: C["Document"];
     is(value: any): value is TransientDocument;
     isDecorated(object: object): object is TransientDocument;

@@ -24,7 +24,6 @@ import { MembersDocument } from "./MembersDocument";
 
 function createMock<T extends object>( data?:T & Partial<MembersDocument> ):T & MembersDocument {
 	return MembersDocument.decorate( Object.assign( {
-		_registry: new DocumentsRegistry(),
 		id: "https://example.com/",
 	}, data ) );
 }
@@ -415,7 +414,7 @@ describe( module( "carbonldp/Members/MembersDocument" ), () => {
 				let resource:MembersDocument;
 				beforeEach( ():void => {
 					resource = createMock( {
-						_context: void 0,
+						_registry: new DocumentsRegistry(),
 						id: "https://example.com/",
 					} );
 
@@ -435,7 +434,7 @@ describe( module( "carbonldp/Members/MembersDocument" ), () => {
 					;
 				} );
 
-				it( "should throw error when _registry._context undefined", async () => {
+				it( "should throw error when context undefined", async () => {
 					await resource
 						.addMember( "member/" )
 						.catch( error => {
@@ -885,7 +884,7 @@ describe( module( "carbonldp/Members/MembersDocument" ), () => {
 				let resource:MembersDocument;
 				beforeEach( ():void => {
 					resource = createMock( {
-						_context: void 0,
+						_registry: new DocumentsRegistry(),
 						id: "https://example.com/",
 					} );
 
@@ -905,7 +904,7 @@ describe( module( "carbonldp/Members/MembersDocument" ), () => {
 					;
 				} );
 
-				it( "should throw error when _registry._context undefined", async () => {
+				it( "should throw error when context undefined", async () => {
 					await resource
 						.addMembers( [] )
 						.catch( error => {
@@ -1288,7 +1287,7 @@ describe( module( "carbonldp/Members/MembersDocument" ), () => {
 				let resource:MembersDocument;
 				beforeEach( ():void => {
 					resource = createMock( {
-						_context: void 0,
+						_registry: new DocumentsRegistry(),
 						id: "https://example.com/",
 					} );
 
@@ -1308,7 +1307,7 @@ describe( module( "carbonldp/Members/MembersDocument" ), () => {
 					;
 				} );
 
-				it( "should throw error when _registry._context undefined", async () => {
+				it( "should throw error when context undefined", async () => {
 					await resource
 						.removeMember( "member/" )
 						.catch( error => {
@@ -1762,7 +1761,7 @@ describe( module( "carbonldp/Members/MembersDocument" ), () => {
 				let resource:MembersDocument;
 				beforeEach( ():void => {
 					resource = createMock( {
-						_context: void 0,
+						_registry: new DocumentsRegistry(),
 						id: "https://example.com/",
 					} );
 
@@ -1782,7 +1781,7 @@ describe( module( "carbonldp/Members/MembersDocument" ), () => {
 					;
 				} );
 
-				it( "should throw error when _registry._context undefined", async () => {
+				it( "should throw error when context undefined", async () => {
 					await resource
 						.removeMembers( [] )
 						.catch( error => {
@@ -2081,7 +2080,7 @@ describe( module( "carbonldp/Members/MembersDocument" ), () => {
 				let resource:MembersDocument;
 				beforeEach( ():void => {
 					resource = createMock( {
-						_context: void 0,
+						_registry: new DocumentsRegistry(),
 						id: "https://example.com/",
 					} );
 
@@ -2101,7 +2100,7 @@ describe( module( "carbonldp/Members/MembersDocument" ), () => {
 					;
 				} );
 
-				it( "should throw error when _registry._context undefined", async () => {
+				it( "should throw error when context undefined", async () => {
 					await resource
 						.removeAllMembers()
 						.catch( error => {

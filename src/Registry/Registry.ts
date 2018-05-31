@@ -1,4 +1,3 @@
-import { Context } from "../Context";
 import { ModelDecorator } from "../core";
 import {
 	IDAlreadyInUseError,
@@ -16,7 +15,6 @@ import {
 
 
 export interface Registry<M extends Pointer> extends PointerLibrary, PointerValidator {
-	_context:Context | undefined;
 	_registry:Registry<any> | undefined;
 
 	readonly _resourcesMap:Map<string, M>;
@@ -48,7 +46,6 @@ export interface Registry<M extends Pointer> extends PointerLibrary, PointerVali
 const PROTOTYPE:PickSelfProps<Registry<Pointer>, {}> = {
 	get _resourcesMap():Map<string, Pointer> { return new Map(); },
 
-	_context: void 0,
 	_registry: void 0,
 
 

@@ -101,10 +101,10 @@ type OnEvent<T extends EventMessage> = ( message:EventMessage ) => void;
 type OnError = ( error:Error ) => void;
 
 function getMessagingService( repository:MessagingDocument ):MessagingService {
-	if( ! repository._context || ! repository._context.messaging )
+	if( ! repository._registry || ! repository._registry.context || ! repository._registry.context.messaging )
 		throw new IllegalActionError( `"${ repository.id }" doesn't support messaging subscriptions.` );
 
-	return repository._context.messaging;
+	return repository._registry.context.messaging;
 }
 
 function parseParams<T extends EventMessage>( resource:Pointer, uriPatternOROnEvent:string | OnEvent<T>, onEventOrOnError:OnEvent<T> | OnError, onError:OnError | undefined ):{ uriPattern:string, onEvent:OnEvent<T>, onError:OnError | undefined } {
@@ -127,7 +127,7 @@ const PROTOTYPE:PickSelfProps<MessagingDocument, TransientDocument> = {
 			let uriPattern:string, onEvent:OnEvent<T>;
 			({ uriPattern, onEvent, onError } = parseParams( this, uriPatternOROnEvent, onEventOrOnError, onError ));
 
-			const destination:string = createDestination( event, uriPattern, this._context.baseURI );
+			const destination:string = createDestination( event, uriPattern, messaging.context.baseURI );
 			messaging.subscribe( destination, onEvent, onError );
 
 		} catch( error ) {
@@ -143,7 +143,7 @@ const PROTOTYPE:PickSelfProps<MessagingDocument, TransientDocument> = {
 			let uriPattern:string, onEvent:OnEvent<T>;
 			({ uriPattern, onEvent, onError } = parseParams( this, uriPatternOROnEvent, onEventOrOnError, onError ));
 
-			const destination:string = createDestination( event, uriPattern, this._context.baseURI );
+			const destination:string = createDestination( event, uriPattern, messaging.context.baseURI );
 			messaging.unsubscribe( destination, onEvent );
 
 		} catch( error ) {
@@ -159,7 +159,7 @@ const PROTOTYPE:PickSelfProps<MessagingDocument, TransientDocument> = {
 			let uriPattern:string, onEvent:OnEvent<T>;
 			({ uriPattern, onEvent, onError } = parseParams( this, uriPatternOROnEvent, onEventOrOnError, onError ));
 
-			const destination:string = createDestination( event, uriPattern, this._context.baseURI );
+			const destination:string = createDestination( event, uriPattern, messaging.context.baseURI );
 			messaging.subscribe( destination, function onEventWrapper( message:T ):void {
 				onEvent( message );
 				messaging.unsubscribe( destination, onEventWrapper );

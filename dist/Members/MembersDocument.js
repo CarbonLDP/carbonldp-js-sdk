@@ -11,13 +11,13 @@ var Vocabularies_1 = require("../Vocabularies");
 var AddMemberAction_1 = require("./AddMemberAction");
 var RemoveMemberAction_1 = require("./RemoveMemberAction");
 function getRegistry(repository) {
-    if (repository._registry && repository._registry._context)
+    if (repository._registry && repository._registry.context)
         return repository._registry;
     throw new Errors_1.IllegalActionError("\"" + repository.id + "\" doesn't support Members management requests.");
 }
 function setDefaultRequestOptions(registry, requestOptions) {
-    if (registry._context && registry._context.auth)
-        registry._context.auth.addAuthentication(requestOptions);
+    if (registry.context && registry.context.auth)
+        registry.context.auth.addAuthentication(requestOptions);
     HTTP_1.RequestUtils.setPreferredInteractionModel(Vocabularies_1.LDP.Container, requestOptions);
     HTTP_1.RequestUtils.setAcceptHeader("application/ld+json", requestOptions);
     return requestOptions;
@@ -41,7 +41,6 @@ function sendAddAction(repository, uri, members, requestOptions) {
         HTTP_1.RequestUtils.setContentTypeHeader("application/ld+json", requestOptions);
         var freeResources = FreeResources_1.FreeResources.createFrom({
             _registry: registry,
-            _context: registry._context,
         });
         freeResources._register(AddMemberAction_1.AddMemberAction.createFrom({ targetMembers: targetMembers }));
         var body = JSON.stringify(freeResources);
@@ -65,7 +64,6 @@ function sendRemoveAction(repository, uri, members, requestOptions) {
         }, requestOptions);
         var freeResources = FreeResources_1.FreeResources.createFrom({
             _registry: registry,
-            _context: registry._context,
         });
         freeResources._register(RemoveMemberAction_1.RemoveMemberAction.createFrom({ targetMembers: targetMembers }));
         var body = JSON.stringify(freeResources);

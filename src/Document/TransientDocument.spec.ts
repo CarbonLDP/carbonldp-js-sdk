@@ -48,7 +48,6 @@ function mockDocumentProperties():DocumentProperties {
 	const fn:() => any = () => {};
 
 	return {
-		_context: null,
 		_registry: null,
 
 		_getLocalID: fn,
@@ -481,13 +480,6 @@ describe( module( "carbonldp/Document" ), ():void => {
 			it( "should return true when all properties", ():void => {
 				const target:DocumentProperties = mockDocumentProperties();
 				expect( TransientDocument.isDecorated( target ) ).toBe( true );
-			} );
-
-
-			it( "should return false when no `_context`", ():void => {
-				const target:DocumentProperties = mockDocumentProperties();
-				delete target._context;
-				expect( TransientDocument.isDecorated( target ) ).toBe( false );
 			} );
 
 			it( "should return false when no `_registry`", ():void => {

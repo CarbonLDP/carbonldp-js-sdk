@@ -1,6 +1,7 @@
 import { createMockContext } from "../../test/helpers/mocks";
 import { AbstractContext } from "../AbstractContext";
 import { Pointer } from "../Pointer";
+import { RegistryService } from "../Registry";
 import {
 	extendsClass,
 	hasMethod,
@@ -365,7 +366,7 @@ describe( module( "carbonldp/Resource" ), ():void => {
 				} );
 
 				it( "should add un-resolved type from prefixed provided when no registry's context", ():void => {
-					delete resource._registry._context;
+					resource._registry = new RegistryService( TransientResource );
 
 					resource.addType( "exTypes:Type-1" );
 					expect( resource.types ).toEqual( [
@@ -403,7 +404,7 @@ describe( module( "carbonldp/Resource" ), ():void => {
 				} );
 
 				it( "should add un-resolved type from relative provided when no registry's context", ():void => {
-					delete resource._registry._context;
+					resource._registry = new RegistryService( TransientResource );
 
 					resource.addType( "Type-1" );
 					expect( resource.types ).toEqual( [
@@ -535,7 +536,8 @@ describe( module( "carbonldp/Resource" ), ():void => {
 				} );
 
 				it( "should not remove prefixed type when no registry's context", ():void => {
-					delete resource._registry._context;
+					resource._registry = new RegistryService( TransientResource );
+
 					resource.types = [
 						"http://example.com/types#Type-1",
 					];
@@ -582,7 +584,8 @@ describe( module( "carbonldp/Resource" ), ():void => {
 				} );
 
 				it( "should not remove relative type when no registry's context", ():void => {
-					delete resource._registry._context;
+					resource._registry = new RegistryService( TransientResource );
+
 					resource.types = [
 						"http://example.com/ns#Type-1",
 					];

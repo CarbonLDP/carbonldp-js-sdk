@@ -5,12 +5,20 @@ var ObjectSchema_1 = require("../ObjectSchema");
 var Pointer_1 = require("../Pointer");
 var RDF_1 = require("../RDF");
 var Utils_1 = require("../Utils");
+function getSchemaResolver(registry) {
+    if (!registry)
+        return;
+    if (ObjectSchema_1.ObjectSchemaResolver.is(registry))
+        return registry;
+    return getSchemaResolver(registry._registry);
+}
 function resolveURI(resource, uri) {
     if (RDF_1.URI.isAbsolute(uri))
         return uri;
-    if (!resource._registry || !resource._registry._context)
+    var registry = getSchemaResolver(resource._registry);
+    if (!registry)
         return uri;
-    var schema = resource._registry._context.getObjectSchema();
+    var schema = registry.getGeneralSchema();
     return ObjectSchema_1.ObjectSchemaUtils.resolveURI(uri, schema, { vocab: true });
 }
 var PROTOTYPE = {

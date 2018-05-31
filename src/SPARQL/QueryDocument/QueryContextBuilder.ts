@@ -107,7 +107,10 @@ export class QueryContextBuilder extends QueryContext {
 
 	private _getTypeSchemas():DigestedObjectSchema[] {
 		if( this._schemas ) return this._schemas;
-		return this._schemas = this.context._getTypeObjectSchemas();
+
+		return this._schemas = this.context ?
+			this.context._getTypeObjectSchemas() :
+			[];
 	}
 
 }

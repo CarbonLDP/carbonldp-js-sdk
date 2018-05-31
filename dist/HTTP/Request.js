@@ -320,14 +320,14 @@ var RequestUtils = (function () {
         return clone;
     };
     RequestUtils.getRequestURLFor = function (registry, resource, uri) {
-        if (uri && registry._context) {
+        if (uri && registry.context) {
             var schema = registry.getGeneralSchema();
             uri = ObjectSchema_1.ObjectSchemaUtils.resolveURI(uri, schema);
         }
         var url = uri ? RDF_1.URI.resolve(resource.id, uri) : resource.id;
         var localIRI = registry._getLocalID(url);
-        if (registry._context)
-            return RDF_1.URI.resolve(registry._context.baseURI, localIRI);
+        if (registry.context)
+            return RDF_1.URI.resolve(registry.context.baseURI, localIRI);
         if (RDF_1.URI.isRelative(url))
             throw new Errors_1.IllegalArgumentError("\"" + url + "\" cannot be used as URL for the request.");
         return url;
