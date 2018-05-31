@@ -1,9 +1,11 @@
 import { TransientDocument } from "../../Document";
+import { Pointer } from "../../Pointer";
 import { CS } from "../../Vocabularies";
 import { BaseRole } from "./BaseRole";
 export interface TransientRole extends TransientDocument {
-    name: string;
+    name?: string;
     description?: string;
+    parent: Pointer | string;
 }
 export interface TransientRoleFactory {
     TYPE: CS["Role"];

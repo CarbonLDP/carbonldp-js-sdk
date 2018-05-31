@@ -1,11 +1,13 @@
 import { TransientDocument } from "../../Document";
+import { Pointer } from "../../Pointer";
 import { CS } from "../../Vocabularies";
 import { BaseRole } from "./BaseRole";
 
 
 export interface TransientRole extends TransientDocument {
-	name:string;
+	name?:string;
 	description?:string;
+	parent:Pointer | string;
 }
 
 
@@ -27,7 +29,7 @@ export const TransientRole:TransientRoleFactory = {
 
 	is( value:any ):value is TransientRole {
 		return TransientDocument.is( value )
-			&& value.hasOwnProperty( "name" )
+			&& value.hasOwnProperty( "parent" )
 			;
 	},
 

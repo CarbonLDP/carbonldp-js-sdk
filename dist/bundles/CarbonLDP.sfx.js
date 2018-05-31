@@ -10381,7 +10381,7 @@ exports.TransientRole = {
     TYPE: Vocabularies_1.CS.Role,
     is: function (value) {
         return Document_1.TransientDocument.is(value)
-            && value.hasOwnProperty("name");
+            && value.hasOwnProperty("parent");
     },
     create: function (data) {
         var copy = Object.assign({}, data);

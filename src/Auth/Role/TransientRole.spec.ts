@@ -1,7 +1,7 @@
 import { anyThatMatches } from "../../../test/helpers/jasmine-equalities";
-import { createMockRole } from "../../../test/helpers/mocks";
 
 import { TransientDocument } from "../../Document";
+import { Pointer } from "../../Pointer";
 import {
 	extendsClass,
 	hasMethod,
@@ -22,6 +22,12 @@ import {
 } from "./TransientRole";
 
 
+function createMock():TransientRole {
+	return TransientDocument.createFrom( {
+		parent: ".system/security/roles/parent-role/",
+	} );
+}
+
 describe( module( "carbonldp/Auth/Role" ), ():void => {
 
 	describe( interfaze(
@@ -41,15 +47,31 @@ describe( module( "carbonldp/Auth/Role" ), ():void => {
 			OBLIGATORY,
 			"name",
 			"string",
-			"A descriptive name for the role."
-		), ():void => {} );
+			"A optional name for the role."
+		), ():void => {
+			const target:TransientRole[ "name" ] = "name" as string;
+			expect( target ).toBeDefined();
+		} );
 
 		it( hasProperty(
 			OPTIONAL,
 			"description",
 			"string",
 			"An optional large description of the role."
-		), ():void => {} );
+		), ():void => {
+			const target:TransientRole[ "description" ] = "description" as string;
+			expect( target ).toBeDefined();
+		} );
+
+		it( hasProperty(
+			OBLIGATORY,
+			"parent",
+			"CarbonLDP.Pointer",
+			"Parent role where the new role will be added as a child role relationship."
+		), ():void => {
+			const target:TransientRole[ "parent" ] = {} as Pointer;
+			expect( target ).toBeDefined();
+		} );
 
 	} );
 
@@ -100,7 +122,7 @@ describe( module( "carbonldp/Auth/Role" ), ():void => {
 
 	describe( property(
 		STATIC,
-		"Role",
+		"TransientRole",
 		"CarbonLDP.Auth.TransientRoleFactory"
 	), ():void => {
 
@@ -110,7 +132,7 @@ describe( module( "carbonldp/Auth/Role" ), ():void => {
 		} );
 
 
-		describe( "Role.TYPE", ():void => {
+		describe( "TransientRole.TYPE", ():void => {
 
 			it( "should exists", ():void => {
 				expect( TransientRole.TYPE ).toBeDefined();
@@ -124,7 +146,7 @@ describe( module( "carbonldp/Auth/Role" ), ():void => {
 		} );
 
 
-		describe( "Role.is", ():void => {
+		describe( "TransientRole.is", ():void => {
 
 			it( "should exists", ():void => {
 				expect( TransientRole.is ).toBeDefined();
@@ -142,22 +164,22 @@ describe( module( "carbonldp/Auth/Role" ), ():void => {
 			} );
 
 			it( "should return true when TransientDocument with Roles properties", ():void => {
-				const role:TransientRole = createMockRole();
+				const role:TransientRole = createMock();
 
 				const returned:boolean = TransientRole.is( role );
 				expect( returned ).toBe( true );
 			} );
 
-			it( "should return false when NO name", ():void => {
-				const role:TransientRole = createMockRole();
-				delete role.name;
+			it( "should return false when NO parent", ():void => {
+				const role:TransientRole = createMock();
+				delete role.parent;
 
 				const returned:boolean = TransientRole.is( role );
 				expect( returned ).toBe( false );
 			} );
 
 			it( "should return true when NO description", ():void => {
-				const role:TransientRole = createMockRole();
+				const role:TransientRole = createMock();
 				delete role.description;
 
 				const returned:boolean = TransientRole.is( role );
@@ -166,22 +188,22 @@ describe( module( "carbonldp/Auth/Role" ), ():void => {
 
 		} );
 
-		describe( "Role.create", ():void => {
+		describe( "TransientRole.create", ():void => {
 
 			it( "should exists", ():void => {
 				expect( TransientRole.create ).toBeDefined();
 				expect( TransientRole.create ).toEqual( jasmine.any( Function ) );
 			} );
 
-			it( "should call Role.createFrom", ():void => {
+			it( "should call TransientRole.createFrom", ():void => {
 				const spy:jasmine.Spy = spyOn( TransientRole, "createFrom" );
 
-				TransientRole.create( { name: "Role name" } );
-				expect( spy ).toHaveBeenCalledWith( { name: "Role name" } );
+				TransientRole.create( { parent: ".system/security/roles/parent-role/" } );
+				expect( spy ).toHaveBeenCalledWith( { parent: ".system/security/roles/parent-role/" } );
 			} );
 
 			it( "should return another reference for the role document", ():void => {
-				const data:BaseRole = { name: "Role name" };
+				const data:BaseRole = { parent: ".system/security/roles/parent-role/" };
 				const returned:TransientRole = TransientRole.create( data );
 
 				expect( data ).not.toBe( returned );
@@ -189,7 +211,7 @@ describe( module( "carbonldp/Auth/Role" ), ():void => {
 
 		} );
 
-		describe( "Role.createFrom", ():void => {
+		describe( "TransientRole.createFrom", ():void => {
 
 			it( "should exists", ():void => {
 				expect( TransientRole.createFrom ).toBeDefined();
@@ -198,19 +220,19 @@ describe( module( "carbonldp/Auth/Role" ), ():void => {
 
 
 			it( "should add cs:Role", ():void => {
-				const role:TransientRole = TransientRole.createFrom( { name: "Role name" } );
+				const role:TransientRole = TransientRole.createFrom( { parent: ".system/security/roles/parent-role/" } );
 
 				expect( role.types ).toContain( CS.Role );
 			} );
 
 			it( "should return a TransientDocument", ():void => {
-				const role:TransientRole = TransientRole.createFrom( { name: "Role name" } );
+				const role:TransientRole = TransientRole.createFrom( { parent: ".system/security/roles/parent-role/" } );
 
 				expect( role ).toEqual( anyThatMatches( TransientDocument.is, "TransientDocument" ) as any );
 			} );
 
 			it( "should return the same reference", ():void => {
-				const object:BaseRole = { name: "Role name" };
+				const object:BaseRole = { parent: ".system/security/roles/parent-role/" };
 				const role:TransientRole = TransientRole.createFrom( object );
 
 				expect( object ).toBe( role );
