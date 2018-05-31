@@ -19,7 +19,7 @@ import {
 	} from "./AccessPoint";
 import * as Auth from "./Auth";
 import { ACL } from "./Auth/ACL";
-import { Role } from "./Auth/Role";
+import { TransientRole } from "./Auth/Role/TransientRole";
 import { User } from "./Auth/User";
 import { CarbonLDP } from "./CarbonLDP";
 import { Context } from "./Context";
@@ -155,7 +155,6 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 				.set( ProtectedDocument.TYPE, ProtectedDocument.decorate )
 				.set( User.TYPE, User.decorate )
 				.set( ACL.TYPE, ACL.decorate )
-				.set( Role.TYPE, Auth.PersistedRole.Factory.decorate )
 			;
 		}
 

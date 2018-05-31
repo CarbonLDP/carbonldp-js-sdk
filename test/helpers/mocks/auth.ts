@@ -1,7 +1,7 @@
 import {
 	Authenticator,
 	AuthService,
-	Role,
+	TransientRole,
 	User,
 } from "../../../src/Auth";
 import { Context } from "../../../src/Context";
@@ -52,7 +52,7 @@ export function createMockPersistedUser( data?:{
 }
 
 
-export function createMockRole( data?:{} ):Role {
+export function createMockRole( data?:{} ):TransientRole {
 	return Document.createFrom( {
 		name: "Role name",
 		description: "Role description",
