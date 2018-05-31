@@ -1,72 +1,18 @@
 import {
 	IllegalArgumentError,
-	InvalidJSONLDSyntaxError,
-} from "./Errors";
-import { URI } from "./RDF/URI";
-import * as Utils from "./Utils";
-import { XSD } from "./Vocabularies/XSD";
+	InvalidJSONLDSyntaxError
+} from "../Errors";
+import { ObjectSchemaUtils } from "./ObjectSchemaUtils";
+import { URI } from "../RDF";
+import * as Utils from "../Utils";
+import { XSD } from "../Vocabularies";
+import { ContainerType } from "./ContainerType";
+import { DigestedObjectSchema } from "./DigestedObjectSchema";
+import { DigestedObjectSchemaProperty } from "./DigestedObjectSchemaProperty";
+import { ObjectSchema } from "./ObjectSchema";
+import { ObjectSchemaProperty } from "./ObjectSchemaProperty";
+import { PointerType } from "./PointerType";
 
-export interface ObjectSchemaProperty {
-	"@id"?:string;
-	"@type"?:string;
-	"@language"?:string;
-	"@container"?:string;
-}
-
-export interface ObjectSchema {
-	"@base"?:string;
-	"@vocab"?:string;
-	"@index"?:object;
-	"@language"?:string;
-	"@reverse"?:object;
-
-	[ name:string ]:(string | ObjectSchemaProperty);
-}
-
-export enum ContainerType {
-	SET,
-	LIST,
-	LANGUAGE,
-}
-
-export enum PointerType {
-	ID,
-	VOCAB,
-}
-
-export class DigestedObjectSchemaProperty {
-	uri:string = null;
-	literal:boolean = null;
-	literalType:string = null;
-	pointerType:PointerType = null;
-	language?:string;
-	containerType:ContainerType = null;
-}
-
-export class DigestedObjectSchema {
-	base:string;
-	language:string;
-	vocab:string;
-	prefixes:Map<string, string>;
-	properties:Map<string, DigestedObjectSchemaProperty>;
-
-	constructor() {
-		this.base = "";
-		this.vocab = void 0;
-		this.language = null;
-		this.prefixes = new Map<string, string>();
-		this.properties = new Map<string, DigestedObjectSchemaProperty>();
-	}
-
-}
-
-export interface ObjectSchemaResolver {
-	getGeneralSchema():DigestedObjectSchema;
-
-	hasSchemaFor( object:object, path?:string ):boolean;
-
-	getSchemaFor( object:object, path?:string ):DigestedObjectSchema;
-}
 
 export class ObjectSchemaDigester {
 
@@ -155,11 +101,11 @@ export class ObjectSchemaDigester {
 		const digestedSchema:DigestedObjectSchema = new DigestedObjectSchema();
 
 		for( const propertyName of [ "@base", "@vocab" ] as [ "@base", "@vocab" ] ) {
-			if( ! ( propertyName in schema ) ) continue;
+			if( ! (propertyName in schema) ) continue;
 			const value:string = schema[ propertyName ];
 
 			if( value !== null && ! Utils.isString( value ) ) throw new IllegalArgumentError( `The value of '${ propertyName }' must be a string or null.` );
-			if( ( propertyName === "@vocab" && value === "" ) || ! URI.isAbsolute( value ) && ! URI.isBNodeID( value ) ) throw new IllegalArgumentError( `The value of '${ propertyName }' must be an absolute URI${ propertyName === "@base" ? " or an empty string" : "" }.` );
+			if( (propertyName === "@vocab" && value === "") || ! URI.isAbsolute( value ) && ! URI.isBNodeID( value ) ) throw new IllegalArgumentError( `The value of '${ propertyName }' must be an absolute URI${ propertyName === "@base" ? " or an empty string" : "" }.` );
 
 			digestedSchema[ propertyName.substr( 1 ) ] = value;
 		}
@@ -180,7 +126,7 @@ export class ObjectSchemaDigester {
 			if( propertyName === "@vocab" ) continue;
 			if( propertyName === "@language" ) continue;
 
-			let propertyValue:( string | ObjectSchemaProperty ) = schema[ propertyName ];
+			let propertyValue:(string | ObjectSchemaProperty) = schema[ propertyName ];
 
 			if( Utils.isString( propertyValue ) ) {
 				if( URI.isPrefixed( propertyName ) ) throw new IllegalArgumentError( "A prefixed property cannot be equal to another URI." );
@@ -213,44 +159,4 @@ export class ObjectSchemaDigester {
 		return targetSchema;
 	}
 
-}
-
-export class ObjectSchemaUtils {
-
-	static resolveURI( uri:string, schema:DigestedObjectSchema, relativeTo:{ vocab?:boolean, base?:boolean } = {} ):string {
-		if( uri === null || URI.isAbsolute( uri ) || URI.isBNodeID( uri ) ) return uri;
-
-		const [ prefix, localName = "" ]:[ string, string ] = uri.split( ":" ) as [ string, string ];
-
-		const definedReference:string = schema.prefixes.has( prefix ) ?
-			schema.prefixes.get( prefix ) : schema.properties.has( prefix ) ?
-				schema.properties.get( prefix ).uri
-				: null;
-		if( definedReference !== null && definedReference !== prefix ) {
-			return ObjectSchemaUtils.resolveURI( definedReference + localName, schema, { vocab: true } );
-		}
-
-		if( localName ) return uri;
-
-		if( relativeTo.vocab && schema.vocab ) return schema.vocab + uri;
-		if( relativeTo.base ) return URI.resolve( schema.base, uri );
-
-		return uri;
-	}
-
-	static resolveProperty( schema:DigestedObjectSchema, definition:DigestedObjectSchemaProperty, inSame?:boolean ):DigestedObjectSchemaProperty {
-		const uri:string = definition.uri;
-		const type:string = definition.literalType;
-
-		const resolvedURI:string = ObjectSchemaUtils.resolveURI( uri, schema, { vocab: true } );
-		const resolvedType:string = ObjectSchemaUtils.resolveURI( type, schema, { vocab: true, base: true } );
-
-		if( resolvedURI !== uri || resolvedType !== type ) {
-			definition = inSame ? definition : Utils.ObjectUtils.clone( definition );
-			definition.uri = resolvedURI;
-			definition.literalType = resolvedType;
-		}
-
-		return definition;
-	}
 }
