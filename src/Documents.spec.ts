@@ -22,12 +22,17 @@ import {
 import { anyThatMatches } from "../test/helpers/jasmine-equalities";
 
 import { AbstractContext } from "./AbstractContext";
-import { BaseAccessPoint } from "./AccessPoint";
-import { AccessPoint } from "./AccessPoint";
+import {
+	AccessPoint,
+	BaseAccessPoint,
+	TransientAccessPoint
+} from "./AccessPoint";
 import { TransientBlankNode } from "./BlankNode";
 import { CarbonLDP } from "./CarbonLDP";
-import { Document } from "./Document";
-import { TransientDocument } from "./Document";
+import {
+	Document,
+	TransientDocument
+} from "./Document";
 
 import { Documents } from "./Documents";
 
@@ -43,6 +48,7 @@ import * as MessagingUtils from "./Messaging/Utils";
 import { NamedFragment } from "./NamedFragment";
 import * as ObjectSchema from "./ObjectSchema";
 import { Pointer } from "./Pointer";
+import { ProtectedDocument } from "./ProtectedDocument";
 import {
 	Resource,
 	TransientResource
@@ -61,9 +67,6 @@ import {
 	method,
 	module,
 } from "./test/JasmineExtender";
-import {
-	TransientAccessPoint,
-} from "./AccessPoint";
 import * as Utils from "./Utils";
 import { C } from "./Vocabularies/C";
 import { CS } from "./Vocabularies/CS";
@@ -99,6 +102,11 @@ function findNonEnumerableProps( object:object ):void {
 		.map( key => object[ key ] )
 		.forEach( findNonEnumerableProps )
 	;
+}
+
+function createMockAccessPoint<T extends { id:string }>( data:{ documents:Documents, props:T } ):T & AccessPoint {
+	const doc:T & Document = createMockDocument( data );
+	return ProtectedDocument.decorate( doc, data.documents );
 }
 
 describe( module( "carbonldp/Documents" ), ():void => {
@@ -1975,9 +1983,9 @@ describe( module( "carbonldp/Documents" ), ():void => {
 
 
 					interface MyDocument {
-						$relation1:PersistedAccessPoint;
-						$relation2:PersistedAccessPoint;
-						$relation3:PersistedAccessPoint;
+						$relation1:AccessPoint;
+						$relation2:AccessPoint;
+						$relation3:AccessPoint;
 					}
 
 					context.extendObjectSchema( "https://example.com/ns#Resource", {
@@ -1999,17 +2007,17 @@ describe( module( "carbonldp/Documents" ), ():void => {
 							.properties( {} )
 						)
 						.then( ( document ) => {
-							expect( document.$relation1 ).toEqual( anyThatMatches( PersistedProtectedDocument.is, "PersistedProtectedDocument" ) as any );
+							expect( document.$relation1 ).toEqual( anyThatMatches( ProtectedDocument.is, "ProtectedDocument" ) as any );
 							expect( document.$relation1 ).toEqual( jasmine.objectContaining( {
 								id: "https://example.com/resource/relation-1/",
 							} ) );
 
-							expect( document.$relation2 ).toEqual( anyThatMatches( PersistedProtectedDocument.is, "PersistedProtectedDocument" ) as any );
+							expect( document.$relation2 ).toEqual( anyThatMatches( ProtectedDocument.is, "ProtectedDocument" ) as any );
 							expect( document.$relation2 ).toEqual( jasmine.objectContaining( {
 								id: "https://example.com/resource/relation-2/",
 							} ) );
 
-							expect( document.$relation3 ).toEqual( anyThatMatches( PersistedProtectedDocument.is, "PersistedProtectedDocument" ) as any );
+							expect( document.$relation3 ).toEqual( anyThatMatches( ProtectedDocument.is, "ProtectedDocument" ) as any );
 							expect( document.$relation3 ).toEqual( jasmine.objectContaining( {
 								id: "https://example.com/resource/relation-3/",
 							} ) );
@@ -6154,15 +6162,15 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					} );
 
 					interface MyDocument {
-						$relation1:PersistedAccessPoint;
-						$relation2:PersistedAccessPoint;
+						$relation1:AccessPoint;
+						$relation2:AccessPoint;
 						property2:MySubDocument;
 					}
 
 					interface MySubDocument {
-						$subRelation1:PersistedAccessPoint;
-						$subRelation2:PersistedAccessPoint;
-						$relation3:PersistedAccessPoint;
+						$subRelation1:AccessPoint;
+						$subRelation2:AccessPoint;
+						$relation3:AccessPoint;
 					}
 
 
@@ -6208,38 +6216,38 @@ describe( module( "carbonldp/Documents" ), ():void => {
 							},
 						} )
 					).then( ( myDocuments ) => {
-						expect( myDocuments[ 0 ].$relation1 ).toEqual( anyThatMatches( PersistedProtectedDocument.is, "PersistedProtectedDocument" ) as any );
+						expect( myDocuments[ 0 ].$relation1 ).toEqual( anyThatMatches( ProtectedDocument.is, "ProtectedDocument" ) as any );
 						expect( myDocuments[ 0 ].$relation1 ).toEqual( jasmine.objectContaining( {
 							id: "https://example.com/resource/child1/relation-1/",
 						} ) );
-						expect( myDocuments[ 0 ].$relation2 ).toEqual( anyThatMatches( PersistedProtectedDocument.is, "PersistedProtectedDocument" ) as any );
+						expect( myDocuments[ 0 ].$relation2 ).toEqual( anyThatMatches( ProtectedDocument.is, "ProtectedDocument" ) as any );
 						expect( myDocuments[ 0 ].$relation2 ).toEqual( jasmine.objectContaining( {
 							id: "https://example.com/resource/child1/relation-2/",
 						} ) );
 
-						expect( myDocuments[ 1 ].$relation1 ).toEqual( anyThatMatches( PersistedProtectedDocument.is, "PersistedProtectedDocument" ) as any );
+						expect( myDocuments[ 1 ].$relation1 ).toEqual( anyThatMatches( ProtectedDocument.is, "ProtectedDocument" ) as any );
 						expect( myDocuments[ 1 ].$relation1 ).toEqual( jasmine.objectContaining( {
 							id: "https://example.com/resource/child2/relation-1/",
 						} ) );
-						expect( myDocuments[ 1 ].$relation2 ).toEqual( anyThatMatches( PersistedProtectedDocument.is, "PersistedProtectedDocument" ) as any );
+						expect( myDocuments[ 1 ].$relation2 ).toEqual( anyThatMatches( ProtectedDocument.is, "ProtectedDocument" ) as any );
 						expect( myDocuments[ 1 ].$relation2 ).toEqual( jasmine.objectContaining( {
 							id: "https://example.com/resource/child2/relation-2/",
 						} ) );
 
-						expect( myDocuments[ 0 ].property2.$subRelation1 ).toEqual( anyThatMatches( PersistedProtectedDocument.is, "PersistedProtectedDocument" ) as any );
+						expect( myDocuments[ 0 ].property2.$subRelation1 ).toEqual( anyThatMatches( ProtectedDocument.is, "ProtectedDocument" ) as any );
 						expect( myDocuments[ 0 ].property2.$subRelation1 ).toEqual( jasmine.objectContaining( {
 							id: "https://example.com/sub-documents/sub-document1/relation-1/",
 						} ) );
-						expect( myDocuments[ 0 ].property2.$relation3 ).toEqual( anyThatMatches( PersistedProtectedDocument.is, "PersistedProtectedDocument" ) as any );
+						expect( myDocuments[ 0 ].property2.$relation3 ).toEqual( anyThatMatches( ProtectedDocument.is, "ProtectedDocument" ) as any );
 						expect( myDocuments[ 0 ].property2.$relation3 ).toEqual( jasmine.objectContaining( {
 							id: "https://example.com/sub-documents/sub-document1/relation-3/",
 						} ) );
 
-						expect( myDocuments[ 1 ].property2.$subRelation2 ).toEqual( anyThatMatches( PersistedProtectedDocument.is, "PersistedProtectedDocument" ) as any );
+						expect( myDocuments[ 1 ].property2.$subRelation2 ).toEqual( anyThatMatches( ProtectedDocument.is, "ProtectedDocument" ) as any );
 						expect( myDocuments[ 1 ].property2.$subRelation2 ).toEqual( jasmine.objectContaining( {
 							id: "https://example.com/sub-documents/sub-document2/relation-2/",
 						} ) );
-						expect( myDocuments[ 1 ].property2.$relation3 ).toEqual( anyThatMatches( PersistedProtectedDocument.is, "PersistedProtectedDocument" ) as any );
+						expect( myDocuments[ 1 ].property2.$relation3 ).toEqual( anyThatMatches( ProtectedDocument.is, "ProtectedDocument" ) as any );
 						expect( myDocuments[ 1 ].property2.$relation3 ).toEqual( jasmine.objectContaining( {
 							id: "https://example.com/sub-documents/sub-document2/relation-3/",
 						} ) );
@@ -12437,9 +12445,9 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					} );
 
 					interface MyDocument {
-						$relation1?:PersistedAccessPoint;
-						$relation2?:PersistedAccessPoint;
-						$relation3?:PersistedAccessPoint;
+						$relation1?:AccessPoint;
+						$relation2?:AccessPoint;
+						$relation3?:AccessPoint;
 					}
 
 					context.extendObjectSchema( "https://example.com/ns#Resource", {
@@ -12455,18 +12463,18 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					} );
 
 					const persistedDocument:Document & MyDocument = createMockDocument( {
-						context, properties: {
+						documents, props: {
 							id: "https://example.com/resource/",
 							_partialMetadata: createPartialMetadata( {
 								"@vocab": "https://example.com/ns#",
 							} ),
-							$relation1: createMockDocument( {
-								context, properties: {
+							$relation1: createMockAccessPoint( {
+								documents, props: {
 									id: "https://example.com/resource/relation-1/",
 								},
 							} ),
-							$relation2: createMockDocument( {
-								context, properties: {
+							$relation2: createMockAccessPoint( {
+								documents, props: {
 									id: "https://example.com/resource/relation-2/",
 								},
 							} ),
@@ -12484,8 +12492,8 @@ describe( module( "carbonldp/Documents" ), ():void => {
 							$relation3: jasmine.objectContaining( { id: "https://example.com/resource/relation-3/" } ) as any,
 						} ) );
 
-						expect( document.$relation1 ).toEqual( anyThatMatches( PersistedProtectedDocument.is, "PersistedProtectedDocument" ) as any );
-						expect( document.$relation3 ).toEqual( anyThatMatches( PersistedProtectedDocument.is, "PersistedProtectedDocument" ) as any );
+						expect( document.$relation1 ).toEqual( anyThatMatches( ProtectedDocument.is, "ProtectedDocument" ) as any );
+						expect( document.$relation3 ).toEqual( anyThatMatches( ProtectedDocument.is, "ProtectedDocument" ) as any );
 
 
 						// Removed

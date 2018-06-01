@@ -12,18 +12,24 @@ import {
 	ValuesToken,
 	VariableToken,
 } from "sparqler/tokens";
-import { BaseAccessPoint } from "./AccessPoint";
 
 import {
-	TransientAccessPoint,
-	} from "./AccessPoint";
+	AccessPoint,
+	BaseAccessPoint,
+	TransientAccessPoint
+} from "./AccessPoint";
 import * as Auth from "./Auth";
 import { ACL } from "./Auth/ACL";
 import { User } from "./Auth/User";
+import { BlankNode } from "./BlankNode";
 import { CarbonLDP } from "./CarbonLDP";
 import { Context } from "./Context";
-import { TransientDocument } from "./Document";
+import {
+	Document,
+	TransientDocument
+} from "./Document";
 import * as Errors from "./Errors";
+import { Fragment } from "./Fragment";
 import { FreeResources } from "./FreeResources";
 import { statusCodeMap } from "./HTTP/Errors";
 import { HTTPError } from "./HTTP/Errors/HTTPError";
@@ -69,25 +75,22 @@ import {
 	ObjectSchemaResolver,
 	ObjectSchemaUtils,
 } from "./ObjectSchema";
-import { AccessPoint } from "./AccessPoint";
-import { BlankNode } from "./BlankNode";
-import { Document } from "./Document";
-import { Fragment } from "./Fragment";
-import { ProtectedDocument } from "./ProtectedDocument";
-import { Resource } from "./Resource";
 import {
 	Pointer,
 	PointerLibrary,
 	PointerValidator,
 } from "./Pointer";
-import { TransientProtectedDocument } from "./ProtectedDocument";
+import { ProtectedDocument } from "./ProtectedDocument";
 import {
 	RDFDocument,
 	RDFDocumentParser,
 } from "./RDF/Document";
 import { RDFNode } from "./RDF/Node";
 import { URI } from "./RDF/URI";
-import { TransientResource } from "./Resource";
+import {
+	Resource,
+	TransientResource
+} from "./Resource";
 import {
 	FinishSPARQLSelect,
 	SPARQLBuilder,
@@ -1143,7 +1146,7 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 				const targetETag:string = targetDocument && targetDocument._eTag;
 				if( targetDocument ) targetDocument._eTag = void 0;
 
-				const freeResources:Resource[] = this
+				const freeResources:TransientResource[] = this
 					._getFreeResources( RDFNode.getFreeNodes( rdfNodes ) )
 					.getResources()
 				;
@@ -1181,7 +1184,7 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 				const targetDocuments:RDFDocument[] = rdfDocuments
 					.filter( x => targetSet.has( x[ "@id" ] ) );
 
-				const documents:(T & PersistedDocument)[] = new JSONLDCompacter( this, targetName, queryContext )
+				const documents:(T & Document)[] = new JSONLDCompacter( this, targetName, queryContext )
 					.compactDocuments( rdfDocuments, targetDocuments );
 
 				const accessPointsMetadatas:AccessPointsMetadata[] = freeResources
@@ -1507,7 +1510,7 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 					const { resource, schema, uris } = getResourcesData( resourceURI );
 					const relationName:string = compactRelation( schema, uris );
 
-					const accessPoint:PersistedAccessPoint = PersistedProtectedDocument
+					const accessPoint:AccessPoint = ProtectedDocument
 						.decorate( pointer, this );
 
 					Object.defineProperty( resource, "$" + relationName, {
@@ -1520,11 +1523,11 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 		} );
 	}
 
-	private _createMembershipResourceGetter():( resourceURI:string ) => PersistedDocument {
-		const resources:Map<string, PersistedDocument> = new Map();
+	private _createMembershipResourceGetter():( resourceURI:string ) => Document {
+		const resources:Map<string, Document> = new Map();
 		return resourceURI => {
 			if( resources.has( resourceURI ) ) return resources.get( resourceURI );
-			const resource:PersistedDocument = this.register( resourceURI );
+			const resource:Document = this.register( resourceURI );
 
 			// Delete existing access points
 			Object
@@ -1540,13 +1543,13 @@ export class Documents implements PointerLibrary, PointerValidator, ObjectSchema
 	}
 
 	private _createMembershipResourceDataGetter():( resourceURI:string ) => MembershipResourceData {
-		const getResource:( resourceURI:string ) => PersistedDocument = this
+		const getResource:( resourceURI:string ) => Document = this
 			._createMembershipResourceGetter();
 
 		const resourcesData:Map<string, MembershipResourceData> = new Map();
 		return resourceURI => {
 			if( resourcesData.has( resourceURI ) ) return resourcesData.get( resourceURI );
-			const resource:PersistedDocument = getResource( resourceURI );
+			const resource:Document = getResource( resourceURI );
 
 			const schema:DigestedObjectSchema = this._getDigestedObjectSchema( resource.types, resource.id );
 			if( resource.isPartial() ) ObjectSchemaDigester._combineSchemas( [ schema, resource._partialMetadata.schema ] );

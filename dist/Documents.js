@@ -14,6 +14,7 @@ var ACL_1 = require("./Auth/ACL");
 var User_1 = require("./Auth/User");
 var Document_1 = require("./Document");
 var Errors = __importStar(require("./Errors"));
+var Fragment_1 = require("./Fragment");
 var FreeResources_1 = require("./FreeResources");
 var Errors_1 = require("./HTTP/Errors");
 var BadResponseError_1 = require("./HTTP/Errors/ServerErrors/BadResponseError");
@@ -32,14 +33,12 @@ var DeltaCreator_1 = require("./LDPatch/DeltaCreator");
 var Event_1 = require("./Messaging/Event");
 var Utils_1 = require("./Messaging/Utils");
 var ObjectSchema_1 = require("./ObjectSchema");
-var Document_2 = require("./Document");
-var Fragment_1 = require("./Fragment");
-var ProtectedDocument_1 = require("./ProtectedDocument");
-var Resource_1 = require("./Resource");
 var Pointer_1 = require("./Pointer");
-var Document_3 = require("./RDF/Document");
+var ProtectedDocument_1 = require("./ProtectedDocument");
+var Document_2 = require("./RDF/Document");
 var Node_1 = require("./RDF/Node");
 var URI_1 = require("./RDF/URI");
+var Resource_1 = require("./Resource");
 var Builder_1 = require("./SPARQL/Builder");
 var PartialMetadata_1 = require("./SPARQL/QueryDocument/PartialMetadata");
 var QueryContextBuilder_1 = require("./SPARQL/QueryDocument/QueryContextBuilder");
@@ -146,7 +145,7 @@ var Documents = (function () {
         var pointerID = this._getPointerID(id);
         if (!pointerID)
             throw new Errors.IllegalArgumentError("Cannot register a document outside the scope of this documents instance.");
-        var persistedDocument = Document_2.Document.decorate(this.getPointer(pointerID), this);
+        var persistedDocument = Document_1.Document.decorate(this.getPointer(pointerID), this);
         return persistedDocument;
     };
     Documents.prototype.get = function (uri, optionsOrQueryBuilderFn, queryBuilderFn) {
@@ -349,7 +348,7 @@ var Documents = (function () {
         var _this = this;
         if (requestOptions === void 0) { requestOptions = {}; }
         return Utils_3.promiseMethod(function () {
-            if (!Document_2.Document.is(persistedDocument))
+            if (!Document_1.Document.is(persistedDocument))
                 throw new Errors.IllegalArgumentError("Provided element is not a valid persisted document.");
             Request_1.RequestUtils.setPreferredRetrieval("minimal", requestOptions);
             return _this._patchDocument(persistedDocument, requestOptions);
@@ -359,7 +358,7 @@ var Documents = (function () {
         var _this = this;
         if (requestOptions === void 0) { requestOptions = {}; }
         return Utils.promiseMethod(function () {
-            if (!Document_2.Document.is(persistedDocument))
+            if (!Document_1.Document.is(persistedDocument))
                 throw new Errors.IllegalArgumentError("Provided element is not a valid persisted document.");
             return persistedDocument.isPartial() ?
                 _this._refreshPartialDocument(persistedDocument, requestOptions) :
@@ -370,7 +369,7 @@ var Documents = (function () {
         var _this = this;
         if (requestOptions === void 0) { requestOptions = {}; }
         return Utils_3.promiseMethod(function () {
-            if (!Document_2.Document.is(persistedDocument))
+            if (!Document_1.Document.is(persistedDocument))
                 throw new Errors.IllegalArgumentError("Provided element is not a valid persisted document.");
             var cloneOptions = Request_1.RequestUtils.cloneOptions(requestOptions);
             Request_1.RequestUtils.setPreferredRetrieval(persistedDocument.isPartial() ? "minimal" : "representation", cloneOptions);
@@ -583,7 +582,7 @@ var Documents = (function () {
         return this.on(Event_1.Event.MEMBER_REMOVED, uriPattern, onEvent, onError);
     };
     Documents.prototype._convertRDFDocument = function (rdfDocument, response) {
-        var documentResources = Document_3.RDFDocument.getNodes(rdfDocument)[0];
+        var documentResources = Document_2.RDFDocument.getNodes(rdfDocument)[0];
         if (documentResources.length === 0)
             throw new BadResponseError_1.BadResponseError("The RDFDocument: " + rdfDocument["@id"] + ", doesn't contain a document resource.", response);
         if (documentResources.length > 1)
@@ -637,7 +636,7 @@ var Documents = (function () {
         if (this.documentsBeingResolved.has(uri))
             return this.documentsBeingResolved.get(uri);
         var promise = this
-            ._sendRequest(HTTPMethod_1.HTTPMethod.GET, uri, requestOptions, null, new Document_3.RDFDocumentParser())
+            ._sendRequest(HTTPMethod_1.HTTPMethod.GET, uri, requestOptions, null, new Document_2.RDFDocumentParser())
             .then(function (_a) {
             var rdfDocuments = _a[0], response = _a[1];
             var eTag = response.getETag();
@@ -708,7 +707,7 @@ var Documents = (function () {
         this._setDefaultRequestOptions(requestOptions, LDP_2.LDP.RDFSource);
         Request_1.RequestUtils.setIfNoneMatchHeader(persistedDocument._eTag, requestOptions);
         return this
-            ._sendRequest(HTTPMethod_1.HTTPMethod.GET, uri, requestOptions, null, new Document_3.RDFDocumentParser())
+            ._sendRequest(HTTPMethod_1.HTTPMethod.GET, uri, requestOptions, null, new Document_2.RDFDocumentParser())
             .then(function (_a) {
             var rdfDocuments = _a[0], response = _a[1];
             if (response === null)
@@ -943,7 +942,7 @@ var Documents = (function () {
             if (targetDocument && targetETag === targetDocument._eTag)
                 return [targetDocument];
             var rdfDocuments = rdfNodes
-                .filter(Document_3.RDFDocument.is);
+                .filter(Document_2.RDFDocument.is);
             var targetSet = new Set(freeResources
                 .filter(QueryMetadata_1.QueryMetadata.is)
                 .map(function (x) { return _this.context ? x.target : x[C_1.C.target]; })
@@ -961,14 +960,14 @@ var Documents = (function () {
         var _a, _b;
     };
     Documents.prototype._persistChildDocument = function (parentURI, childObject, slug, requestOptions) {
-        if (Document_2.Document.is(childObject))
+        if (Document_1.Document.is(childObject))
             throw new Errors.IllegalArgumentError("The child provided has been already persisted.");
         var childDocument = Document_1.TransientDocument.is(childObject) ? childObject : Document_1.TransientDocument.createFrom(childObject);
         this._setDefaultRequestOptions(requestOptions, LDP_2.LDP.Container);
         return this._persistDocument(parentURI, slug, childDocument, requestOptions);
     };
     Documents.prototype._persistAccessPoint = function (documentURI, accessPoint, slug, requestOptions) {
-        if (Document_2.Document.is(accessPoint))
+        if (Document_1.Document.is(accessPoint))
             throw new Errors.IllegalArgumentError("The access-point provided has been already persisted.");
         var accessPointDocument = AccessPoint_1.TransientAccessPoint.is(accessPoint) ?
             accessPoint : AccessPoint_1.TransientAccessPoint.createFrom(accessPoint);
@@ -1190,7 +1189,7 @@ var Documents = (function () {
             var preferenceHeader = response.getHeader("Preference-Applied");
             if (preferenceHeader === null || preferenceHeader.toString() !== "return=representation")
                 return persistedProtectedDocument;
-            var rdfDocuments = Document_3.RDFDocument.getDocuments(expandedResult);
+            var rdfDocuments = Document_2.RDFDocument.getDocuments(expandedResult);
             return _this._updateFromPreferenceApplied(persistedProtectedDocument, rdfDocuments, response);
         });
     };
@@ -1238,7 +1237,7 @@ var Documents = (function () {
                         .join("/");
                     var _a = getResourcesData(resourceURI), resource = _a.resource, schema = _a.schema, uris = _a.uris;
                     var relationName = compactRelation(schema, uris);
-                    var accessPoint = PersistedProtectedDocument
+                    var accessPoint = ProtectedDocument_1.ProtectedDocument
                         .decorate(pointer, _this);
                     Object.defineProperty(resource, "$" + relationName, {
                         enumerable: false,
