@@ -1,11 +1,9 @@
 import { anyThatMatches } from "../../../test/helpers/jasmine-equalities";
-import { StrictMinus } from "../../../test/helpers/types";
 import { TransientBlankNode } from "../../BlankNode";
 import { TransientDocument } from "../../Document";
 import { TransientFragment } from "../../Fragment";
 import {
 	extendsClass,
-	hasMethod,
 	hasProperty,
 	hasSignature,
 	interfaze,
@@ -13,6 +11,7 @@ import {
 	method,
 	module,
 	OBLIGATORY,
+	OPTIONAL,
 	property,
 	STATIC,
 } from "../../test/JasmineExtender";
@@ -39,16 +38,13 @@ describe( module( "carbonldp/Auth/TransientUser" ), ():void => {
 		} );
 
 		it( hasProperty(
-			OBLIGATORY,
+			OPTIONAL,
 			"name",
 			"string",
-			"The name of the user."
+			"Optional name of the user."
 		), ():void => {
-			let name:string = "A name";
-			let user:TransientUser = <any> {};
-
-			user.name = name;
-			expect( user.name ).toEqual( jasmine.any( String ) );
+			const target:TransientUser[ "name" ] = "name";
+			expect( target ).toBeDefined();
 		} );
 
 		it( hasProperty(
@@ -57,19 +53,6 @@ describe( module( "carbonldp/Auth/TransientUser" ), ():void => {
 			"CarbonLDP.Auth.UsernameAndPasswordCredentials"
 		), ():void => {
 			const target:TransientUser[ "credentials" ] = {} as TransientFragment & UsernameAndPasswordCredentials;
-			expect( target ).toBeDefined();
-		} );
-
-		it( hasMethod(
-			OBLIGATORY,
-			"updateCredentials",
-			"Add a credentials fragment with the properties provided. The document needs to be saved for the changes be applied in the platform.",
-			[
-				{ name: "username", type: "string" },
-				{ name: "password", type: "string" },
-			]
-		), ():void => {
-			const target:TransientUser[ "updateCredentials" ] = ( username?:string, password?:string ):TransientFragment & UsernameAndPasswordCredentials => null;
 			expect( target ).toBeDefined();
 		} );
 
@@ -154,8 +137,6 @@ describe( module( "carbonldp/Auth/TransientUser" ), ():void => {
 		"CarbonLDP.Auth.TransientUserFactory"
 	), ():void => {
 
-		type MockUser = StrictMinus<TransientUser, TransientDocument>;
-
 		it( isDefined(), ():void => {
 			expect( TransientUser ).toBeDefined();
 			expect( TransientUser ).toEqual( jasmine.any( Object ) );
@@ -168,37 +149,6 @@ describe( module( "carbonldp/Auth/TransientUser" ), ():void => {
 			expect( Utils.isString( TransientUser.TYPE ) ).toBe( true );
 
 			expect( TransientUser.TYPE ).toBe( CS.User );
-		} );
-
-		describe( "TransientUser.isDecorated", ():void => {
-
-			it( "should exists", ():void => {
-				expect( TransientUser.isDecorated ).toBeDefined();
-				expect( TransientUser.isDecorated ).toEqual( jasmine.any( Function ) );
-			} );
-
-			it( "should only reject in required properties", ():void => {
-				const object:MockUser = {
-					name: null,
-					credentials: null,
-
-					updateCredentials: ():any => {},
-				};
-				expect( TransientUser.isDecorated( object ) ).toBe( true );
-
-				delete object.name;
-				expect( TransientUser.isDecorated( object ) ).toBe( true );
-				object.name = null;
-
-				delete object.credentials;
-				expect( TransientUser.isDecorated( object ) ).toBe( true );
-				object.credentials = null;
-
-				delete object.updateCredentials;
-				expect( TransientUser.isDecorated( object ) ).toBe( false );
-				object.updateCredentials = ():any => {};
-			} );
-
 		} );
 
 		describe( "TransientUser.create", ():void => {
@@ -234,14 +184,9 @@ describe( module( "carbonldp/Auth/TransientUser" ), ():void => {
 				expect( TransientUser.createFrom ).toEqual( jasmine.any( Function ) );
 			} );
 
-			it( "should call the `User.decorate`", ():void => {
-				const spy:jasmine.Spy = spyOn( TransientUser, "decorate" )
-					.and.callThrough();
-
-				const object:{ the:string } & BaseUser = { the: "object", credentials: null };
-				TransientUser.createFrom( object );
-
-				expect( spy ).toHaveBeenCalledWith( object );
+			it( "should return a TransientDocument", ():void => {
+				const returned:TransientDocument = TransientUser.createFrom( { credentials: null } );
+				expect( returned ).toEqual( anyThatMatches( TransientDocument.is, "isTransientDocument" ) as any );
 			} );
 
 			it( "should add cs:User type", ():void => {
@@ -259,106 +204,6 @@ describe( module( "carbonldp/Auth/TransientUser" ), ():void => {
 				} );
 
 				expect( user.credentials ).toEqual( anyThatMatches( TransientBlankNode.is, "BlankNode" ) as any );
-			} );
-
-		} );
-
-		describe( "TransientUser.decorate", ():void => {
-
-			it( "should exists", ():void => {
-				expect( TransientUser.decorate ).toBeDefined();
-				expect( TransientUser.decorate ).toEqual( jasmine.any( Function ) );
-			} );
-
-			it( "should return the same object", ():void => {
-				const object:object = {};
-				const returned:object = TransientUser.decorate( object );
-				expect( returned ).toBe( object );
-			} );
-
-			it( "should return without changes if already with class properties", ():void => {
-				const fn:() => any = () => {};
-				const object:MockUser = {
-					name: null,
-					credentials: null,
-
-					updateCredentials: fn,
-				};
-
-				TransientUser.decorate( object );
-				expect( object ).toEqual( jasmine.objectContaining( {
-					updateCredentials: fn,
-				} ) );
-			} );
-
-			it( "should add the class properties", ():void => {
-				const returned:TransientUser = TransientUser.decorate( {} );
-				expect( returned ).toEqual( jasmine.objectContaining( {
-					updateCredentials: jasmine.any( Function ),
-				} ) );
-			} );
-
-			it( "should call `Document.decorate`", ():void => {
-				const spy:jasmine.Spy = spyOn( TransientDocument, "decorate" );
-
-				const object:object = { the: "object" };
-				TransientUser.decorate( object );
-				expect( spy ).toHaveBeenCalledWith( object );
-			} );
-
-		} );
-
-
-		describe( "Decorated User", ():void => {
-
-			let user:TransientUser;
-			beforeEach( ():void => {
-				user = TransientUser.create( {
-					name: "TransientUser name",
-					credentials: void 0,
-				} );
-			} );
-
-			describe( "TransientUser.updateCredentials", ():void => {
-
-				it( "should exists", ():void => {
-					expect( user.updateCredentials ).toBeDefined();
-					expect( user.updateCredentials ).toEqual( jasmine.any( Function ) );
-				} );
-
-				it( "should assign the credentials property", ():void => {
-					user.updateCredentials( "username", "password" );
-
-					expect( user.credentials ).toBeDefined();
-					expect( user.credentials ).toEqual( jasmine.objectContaining( {
-						username: "username",
-						password: "password",
-					} ) );
-				} );
-
-				it( "should return a credentials object", ():void => {
-					const returned:UsernameAndPasswordCredentials = user.updateCredentials( "username", "password" );
-
-					expect( returned ).toBeDefined();
-					expect( returned ).toEqual( jasmine.objectContaining( {
-						username: "username",
-						password: "password",
-					} ) );
-				} );
-
-				it( "should assign same object that returned", ():void => {
-					const returned:UsernameAndPasswordCredentials = user.updateCredentials( "username", "password" );
-
-					expect( returned ).toBeDefined( user.credentials );
-				} );
-
-				it( "should credentials be a blank node", ():void => {
-					user.updateCredentials( "username", "password" );
-
-					expect( user.credentials ).toBeDefined();
-					expect( user.credentials ).toEqual( anyThatMatches( TransientBlankNode.is, "BlankNode" ) as any );
-				} );
-
 			} );
 
 		} );
