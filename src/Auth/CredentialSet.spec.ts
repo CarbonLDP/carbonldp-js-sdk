@@ -1,5 +1,6 @@
 import { Pointer } from "../Pointer";
 import {
+	extendsClass,
 	hasProperty,
 	interfaze,
 	module,
@@ -10,8 +11,6 @@ import {
 } from "../test/JasmineExtender";
 import { CS } from "../Vocabularies";
 import { CredentialSet } from "./CredentialSet";
-import { LDAPCredentials } from "./LDAPCredentials";
-import { UsernameAndPasswordCredentials } from "./UsernameAndPasswordCredentials";
 
 
 describe( module( "Carbon/Auth/CredentialSet" ), ():void => {
@@ -21,6 +20,9 @@ describe( module( "Carbon/Auth/CredentialSet" ), ():void => {
 		"Interface that describe the document that contains all the credentials of a user."
 	), ():void => {
 
+		it( extendsClass( "CarbonLDP.Document" ), () => {} );
+
+
 		it( "should exists", ():void => {
 			const target:CredentialSet = {} as any;
 			expect( target ).toBeDefined();
@@ -28,11 +30,6 @@ describe( module( "Carbon/Auth/CredentialSet" ), ():void => {
 
 		it( hasProperty( OPTIONAL, "user", "CarbonLDP.Pointer.Class" ), ():void => {
 			const target:CredentialSet[ "user" ] = Pointer.create();
-			expect( target ).toBeDefined();
-		} );
-
-		it( hasProperty( OPTIONAL, "credentials", "( CarbonLDP.Auth.UsernameAndPasswordCredentials | CarbonLDP.Auth.LDAPCredentials )[]" ), ():void => {
-			const target:CredentialSet[ "credentials" ] = []  as ( UsernameAndPasswordCredentials | LDAPCredentials )[];
 			expect( target ).toBeDefined();
 		} );
 
@@ -85,14 +82,6 @@ describe( module( "Carbon/Auth/CredentialSet" ), ():void => {
 				expect( CredentialSet.SCHEMA[ "user" ] ).toEqual( {
 					"@id": CS.user,
 					"@type": "@id",
-				} );
-			} );
-
-			it( "should have `cs:credentials` property", ():void => {
-				expect( CredentialSet.SCHEMA[ "credentials" ] ).toEqual( {
-					"@id": CS.credentials,
-					"@type": "@id",
-					"@container": "@set",
 				} );
 			} );
 

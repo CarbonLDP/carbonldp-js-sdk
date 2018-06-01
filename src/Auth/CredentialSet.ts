@@ -1,13 +1,10 @@
 import { ObjectSchema } from "../ObjectSchema";
 import { Pointer } from "../Pointer";
 import { CS } from "../Vocabularies";
-import { LDAPCredentials } from "./LDAPCredentials";
-import { UsernameAndPasswordCredentials } from "./UsernameAndPasswordCredentials";
 
 
-export interface CredentialSet {
+export interface CredentialSet extends Document {
 	user:Pointer;
-	credentials:(UsernameAndPasswordCredentials | LDAPCredentials)[];
 }
 
 
@@ -20,11 +17,6 @@ const SCHEMA:ObjectSchema = {
 	"user": {
 		"@id": CS.user,
 		"@type": "@id",
-	},
-	"credentials": {
-		"@id": CS.credentials,
-		"@type": "@id",
-		"@container": "@set",
 	},
 };
 

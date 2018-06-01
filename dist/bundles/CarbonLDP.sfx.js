@@ -10987,11 +10987,6 @@ var SCHEMA = {
         "@id": Vocabularies_1.CS.user,
         "@type": "@id",
     },
-    "credentials": {
-        "@id": Vocabularies_1.CS.credentials,
-        "@type": "@id",
-        "@container": "@set",
-    },
 };
 exports.CredentialSet = {
     TYPE: Vocabularies_1.CS.CredentialSet,
