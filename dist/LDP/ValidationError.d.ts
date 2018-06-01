@@ -1,12 +1,13 @@
-import { ModelFactory } from "../ModelFactory";
+import { ModelSchema } from "../core/ModelSchema";
 import { ObjectSchema } from "../ObjectSchema";
 import { Pointer } from "../Pointer";
-import { Resource } from "../Resource";
-export interface ValidationError extends Resource {
+import { TransientResource } from "../Resource";
+import { C } from "../Vocabularies";
+export interface ValidationError extends TransientResource {
     errorDetails: Pointer;
 }
-export interface ValidationErrorFactory extends ModelFactory<ValidationError> {
-    TYPE: string;
+export interface ValidationErrorFactory extends ModelSchema {
+    TYPE: C["ValidationError"];
     SCHEMA: ObjectSchema;
 }
 export declare const ValidationError: ValidationErrorFactory;

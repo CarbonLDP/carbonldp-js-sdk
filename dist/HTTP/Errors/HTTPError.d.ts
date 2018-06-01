@@ -1,7 +1,7 @@
 import { AbstractError } from "../../Errors";
 import { Error } from "../../LDP/Error";
 import { ErrorResponse } from "../../LDP/ErrorResponse";
-import { PersistedDocument } from "../../PersistedDocument";
+import { Document } from "../../Document";
 import { Response } from "../Response";
 export declare class HTTPError extends AbstractError implements ErrorResponse {
     static readonly statusCode: number;
@@ -15,7 +15,7 @@ export declare class HTTPError extends AbstractError implements ErrorResponse {
     statusCode: number;
     types: string[];
     isResolved: () => boolean;
-    resolve: <T>() => Promise<T & PersistedDocument>;
+    resolve: <T>() => Promise<T & Document>;
     addType: (type: string) => void;
     hasType: (type: string) => boolean;
     removeType: (type: string) => void;

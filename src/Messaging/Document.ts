@@ -1,4 +1,4 @@
-import { ModelDecorator } from "../ModelDecorator";
+import { ModelDecorator } from "../core/ModelDecorator";
 import { ServiceAwareDocument } from "../ServiceAwareDocument";
 import {
 	hasFunction,

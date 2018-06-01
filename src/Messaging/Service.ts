@@ -137,7 +137,7 @@ export class MessagingService {
 				.parse( message.body )
 				.then( ( data:RDFNode[] ) => {
 					const freeResources:FreeResources = this.context.documents._getFreeResources( data );
-					return freeResources.getResources().find( EventMessage.isDecorated );
+					return freeResources.getResources().find( EventMessage.is );
 				} )
 				.then( eventCallback )
 				.catch( errorCallback );

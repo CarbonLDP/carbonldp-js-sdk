@@ -1,20 +1,20 @@
-import { ModelFactory } from "../ModelFactory";
+import { ModelSchema } from "../core/ModelSchema";
 import { ObjectSchema } from "../ObjectSchema";
-import { Resource } from "../Resource";
+import { TransientResource } from "../Resource";
 import { C } from "../Vocabularies/C";
 import { XSD } from "../Vocabularies/XSD";
 import { Error } from "./Error";
 
 
-export interface ErrorResponse extends Resource {
+export interface ErrorResponse extends TransientResource {
 	errors:Error[];
 	requestID:string;
 	statusCode:number;
 }
 
 
-export interface ErrorResponseFactory extends ModelFactory<ErrorResponse> {
-	TYPE:string;
+export interface ErrorResponseFactory extends ModelSchema {
+	TYPE:C[ "ErrorResponse" ];
 	SCHEMA:ObjectSchema;
 
 	getMessage( errorResponse:ErrorResponse ):string;

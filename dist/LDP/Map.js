@@ -13,7 +13,7 @@ exports.Map = {
     TYPE: C_1.C.Map,
     SCHEMA: SCHEMA,
     is: function (object) {
-        return Resource_1.Resource.is(object)
+        return Resource_1.TransientResource.is(object)
             && object.hasType(exports.Map.TYPE)
             && object.hasOwnProperty("entries");
     },

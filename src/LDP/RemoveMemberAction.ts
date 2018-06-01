@@ -1,24 +1,32 @@
-import { ModelDecorator } from "../ModelDecorator";
-import { ModelFactory } from "../ModelFactory";
+import { ModelFactory } from "../core/ModelFactory";
 import { ObjectSchema } from "../ObjectSchema";
 import { Pointer } from "../Pointer";
-import { Resource } from "../Resource";
-import { C } from "../Vocabularies/C";
-import * as Utils from "./../Utils";
+import {
+	BaseResource,
+	TransientResource
+} from "../Resource";
+import { C } from "../Vocabularies";
 
 
-export interface RemoveMemberAction extends Resource {
+export interface BaseRemoveMemberAction extends BaseResource {
 	targetMembers:Pointer[];
 }
 
 
-export interface RemoveMemberActionFactory extends ModelDecorator<RemoveMemberAction>, ModelFactory<RemoveMemberAction> {
-	TYPE:string;
+export interface RemoveMemberAction extends TransientResource {
+	targetMembers:Pointer[];
+}
+
+
+export interface RemoveMemberActionFactory extends ModelFactory<RemoveMemberAction> {
+	TYPE:C[ "RemoveMemberAction" ];
 	SCHEMA:ObjectSchema;
 
-	isDecorated( object:object ):object is RemoveMemberAction;
+	is( value:any ):value is RemoveMemberAction;
 
-	create( targetMembers:Pointer[] ):RemoveMemberAction;
+	create<T extends object>( data:T & BaseRemoveMemberAction ):T & RemoveMemberAction;
+
+	createFrom<T extends object>( object:T & BaseRemoveMemberAction ):T & RemoveMemberAction;
 }
 
 const SCHEMA:ObjectSchema = {
@@ -33,14 +41,22 @@ export const RemoveMemberAction:RemoveMemberActionFactory = {
 	TYPE: C.RemoveMemberAction,
 	SCHEMA,
 
-	isDecorated( object:object ):object is RemoveMemberAction {
-		return Utils.hasPropertyDefined( object, "targetMembers" );
+	is( value:any ):value is RemoveMemberAction {
+		return TransientResource.is( value )
+			&& value.hasOwnProperty( "targetMembers" )
+			;
 	},
 
-	create( targetMembers:Pointer[] ):RemoveMemberAction {
-		return Resource.createFrom( {
-			types: [ RemoveMemberAction.TYPE ],
-			targetMembers,
-		} );
+	create<T extends object>( data:T & BaseRemoveMemberAction ):T & RemoveMemberAction {
+		const copy:T & BaseRemoveMemberAction = Object.assign( {}, data );
+		return RemoveMemberAction.createFrom( copy );
+	},
+
+	createFrom<T extends object>( object:T & BaseRemoveMemberAction ):T & RemoveMemberAction {
+		const resource:T & RemoveMemberAction = TransientResource.createFrom( object );
+
+		resource.addType( RemoveMemberAction.TYPE );
+
+		return resource;
 	},
 };

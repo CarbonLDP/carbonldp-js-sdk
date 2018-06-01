@@ -22,19 +22,17 @@ import {
 import { anyThatMatches } from "../test/helpers/jasmine-equalities";
 
 import { AbstractContext } from "./AbstractContext";
-import {
-	AccessPoint,
-	AccessPointBase,
-} from "./AccessPoint";
-import { BlankNode } from "./BlankNode";
+import { BaseAccessPoint } from "./AccessPoint";
+import { AccessPoint } from "./AccessPoint";
+import { TransientBlankNode } from "./BlankNode";
 import { CarbonLDP } from "./CarbonLDP";
-import { Context } from "./Context";
 import { Document } from "./Document";
+import { TransientDocument } from "./Document";
 
 import { Documents } from "./Documents";
 
 import * as Errors from "./Errors";
-import { Fragment } from "./Fragment";
+import { TransientFragment } from "./Fragment";
 import { HTTPError } from "./HTTP/Errors";
 import { Header } from "./HTTP/Header";
 import { RequestService } from "./HTTP/Request";
@@ -42,14 +40,13 @@ import { Response } from "./HTTP/Response";
 import { JSONLDConverter } from "./JSONLD/Converter";
 import { Event } from "./Messaging/Event";
 import * as MessagingUtils from "./Messaging/Utils";
+import { NamedFragment } from "./NamedFragment";
 import * as ObjectSchema from "./ObjectSchema";
-import { PersistedAccessPoint } from "./PersistedAccessPoint";
-import { PersistedDocument } from "./PersistedDocument";
-import { PersistedNamedFragment } from "./PersistedNamedFragment";
-import { PersistedProtectedDocument } from "./PersistedProtectedDocument";
-import { PersistedResource } from "./PersistedResource";
 import { Pointer } from "./Pointer";
-import { Resource } from "./Resource";
+import {
+	Resource,
+	TransientResource
+} from "./Resource";
 import { ContextSettings } from "./Settings";
 import * as SPARQL from "./SPARQL";
 import { PartialMetadata } from "./SPARQL/QueryDocument/PartialMetadata";
@@ -64,6 +61,9 @@ import {
 	method,
 	module,
 } from "./test/JasmineExtender";
+import {
+	TransientAccessPoint,
+} from "./AccessPoint";
 import * as Utils from "./Utils";
 import { C } from "./Vocabularies/C";
 import { CS } from "./Vocabularies/CS";
@@ -77,24 +77,29 @@ function createPartialMetadata( schema:ObjectSchema.ObjectSchema ):PartialMetada
 	return new PartialMetadata( digestedSchema );
 }
 
-function createMockPersistedProtectedDocument<T extends {
-	id:string,
-}>( data:{
-	context:Context,
-	properties:T,
-} ):PersistedProtectedDocument & T {
-	const document:PersistedDocument = data.context.documents.register( data.properties.id );
-	const extendedDocument:PersistedDocument & T = Object.assign<PersistedDocument, T>( document, data.properties );
+function createMockDocument<T extends { id:string }>( data:{ documents:Documents, props:T } ):T & Document {
+	const pointer:Pointer = data.documents.getPointer( data.props.id );
+	const doc:T & Document = Document.decorate( Object.assign( pointer, data.props ), data.documents );
 
-	Object
-		.keys( data.properties )
-		.filter( key => key.startsWith( "$" ) || key.startsWith( "_" ) )
-		.forEach( key => Object.defineProperty( extendedDocument, key, { enumerable: false, configurable: true } ) )
-	;
-
-	return PersistedProtectedDocument.decorate( extendedDocument, data.context.documents );
+	findNonEnumerableProps( doc );
+	doc._normalize();
+	return doc;
 }
 
+function findNonEnumerableProps( object:object ):void {
+	Object
+		.keys( object )
+		.filter( key => key.startsWith( "$" ) || key.startsWith( "_" ) )
+		.forEach( key => Object.defineProperty( object, key, { enumerable: false, configurable: true } ) )
+	;
+
+	Object
+		.keys( object )
+		.filter( key => Array.isArray( object[ key ] ) || Utils.isPlainObject( object[ key ] ) )
+		.map( key => object[ key ] )
+		.forEach( findNonEnumerableProps )
+	;
+}
 
 describe( module( "carbonldp/Documents" ), ():void => {
 
@@ -241,25 +246,25 @@ describe( module( "carbonldp/Documents" ), ():void => {
 
 				let pointer:Pointer;
 
-				pointer = Pointer.create( "https://example.com/document/child/" );
+				pointer = Pointer.create( { id: "https://example.com/document/child/" } );
 				expect( documents.inScope( pointer ) ).toBe( true );
-				pointer = Pointer.create( "https://example.com/another-document/" );
+				pointer = Pointer.create( { id: "https://example.com/another-document/" } );
 				expect( documents.inScope( pointer ) ).toBe( true );
-				pointer = Pointer.create( "https://example.com/document/" );
+				pointer = Pointer.create( { id: "https://example.com/document/" } );
 				expect( documents.inScope( pointer ) ).toBe( true );
-				pointer = Pointer.create( "a-relative-document/" );
-				expect( documents.inScope( pointer ) ).toBe( true );
-
-				pointer = Pointer.create( "https://example.com/document/#fragment" );
-				expect( documents.inScope( pointer ) ).toBe( true );
-				pointer = Pointer.create( "https://example.com/document/#another-fragment" );
+				pointer = Pointer.create( { id: "a-relative-document/" } );
 				expect( documents.inScope( pointer ) ).toBe( true );
 
-				pointer = Pointer.create( "_:BlankNode" );
+				pointer = Pointer.create( { id: "https://example.com/document/#fragment" } );
+				expect( documents.inScope( pointer ) ).toBe( true );
+				pointer = Pointer.create( { id: "https://example.com/document/#another-fragment" } );
+				expect( documents.inScope( pointer ) ).toBe( true );
+
+				pointer = Pointer.create( { id: "_:BlankNode" } );
 				expect( documents.inScope( pointer ) ).toBe( false );
 
 				// Asks to context.parentContext.documents
-				pointer = Pointer.create( "http://example.org/document/" );
+				pointer = Pointer.create( { id: "http://example.org/document/" } );
 				expect( documents.inScope( pointer ) ).toBe( true );
 			} );
 
@@ -334,15 +339,15 @@ describe( module( "carbonldp/Documents" ), ():void => {
 
 			context = new MockedContext();
 			documents = context.documents;
-			(<any> documents).pointers.set( "document/", Pointer.create( "https://example.com/document/" ) );
+			(<any> documents).pointers.set( "document/", Pointer.create( { id: "https://example.com/document/" } ) );
 			expect( documents.hasPointer( "https://example.com/document/" ) ).toBe( true );
 			expect( documents.hasPointer( "https://example.com/document/#fragment" ) ).toBe( false );
 			expect( documents.hasPointer( "document/" ) ).toBe( true );
 
 			expect( documents.hasPointer( "https://example.com/another-document/" ) ).toBe( false );
 
-			(<any> documents).pointers.set( "document/", Pointer.create( "https://example.com/document/" ) );
-			(<any> documents).pointers.set( "another-document/", Pointer.create( "https://example.com/another-document/" ) );
+			(<any> documents).pointers.set( "document/", Pointer.create( { id: "https://example.com/document/" } ) );
+			(<any> documents).pointers.set( "another-document/", Pointer.create( { id: "https://example.com/another-document/" } ) );
 			expect( documents.hasPointer( "https://example.com/document/" ) ).toBe( true );
 			expect( documents.hasPointer( "document/" ) ).toBe( true );
 			expect( documents.hasPointer( "https://example.com/another-document/" ) ).toBe( true );
@@ -401,7 +406,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 
 			expect( () => documents.getPointer( "_:BlankNode" ) ).toThrowError( Errors.IllegalArgumentError );
 
-			let anotherPointer:Pointer = Pointer.create( "https://example.com/document/" );
+			let anotherPointer:Pointer = Pointer.create( { id: "https://example.com/document/" } );
 			context = new MockedContext();
 			documents = context.documents;
 			(<any> documents).pointers.set( "document/", anotherPointer );
@@ -720,12 +725,12 @@ describe( module( "carbonldp/Documents" ), ():void => {
 
 			it( hasSignature(
 				[ "T extends object" ],
-				"Register an empty PersistedDocument with the provided id and decorate it with the types provided.",
+				"Register an empty Document with the provided id and decorate it with the types provided.",
 				[
 					{ name: "id", type: "string" },
 					{ name: "types", type: "string[]", optional: true },
 				],
-				{ type: "T & CarbonLDP.PersistedDocument" }
+				{ type: "T & CarbonLDP.Document" }
 			), ():void => {} );
 
 			let context:AbstractContext;
@@ -748,20 +753,20 @@ describe( module( "carbonldp/Documents" ), ():void => {
 			} );
 
 
-			it( "should return empty PersistedDocument when only id string", ():void => {
+			it( "should return empty Document when only id string", ():void => {
 				const documents:Documents = new Documents( context );
 
-				const returned:PersistedDocument = documents.register( "https://example.com/document/" );
+				const returned:Document = documents.register( "https://example.com/document/" );
 
-				expect( PersistedDocument.is( returned ) ).toBe( true );
+				expect( Document.is( returned ) ).toBe( true );
 				expect( returned ).toEqual( jasmine.objectContaining( {
 					id: "https://example.com/document/",
 				} ) );
 
-				expect( returned as Partial<PersistedDocument> ).toEqual( {} );
+				expect( returned as Partial<Document> ).toEqual( {} );
 			} );
 
-			it( "should return existing PersistedDocument when id string", ():void => {
+			it( "should return existing Document when id string", ():void => {
 				const documents:Documents = new Documents( context );
 
 				interface ExistingDocument {
@@ -777,10 +782,10 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					}
 				);
 
-				const returned:ExistingDocument & PersistedDocument = documents
+				const returned:ExistingDocument & Document = documents
 					.register<ExistingDocument>( "https://example.com/document/" );
 
-				expect( PersistedDocument.is( returned ) ).toBe( true );
+				expect( Document.is( returned ) ).toBe( true );
 				expect( returned ).toEqual( jasmine.objectContaining( {
 					id: "https://example.com/document/",
 				} ) );
@@ -805,7 +810,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					{ name: "requestOptions", type: "CarbonLDP.HTTP.GETOptions", optional: true, description: "Customizable options for the request." },
 					{ name: "queryBuilderFn", type: "( queryBuilder:CarbonLDP.SPARQL.QueryDocument.QueryDocumentBuilder ) => CarbonLDP.SPARQL.QueryDocument.QueryDocumentBuilder", optional: true, description: "Function that receives a the builder that helps you to construct the retrieval query.\nThe same builder must be returned." },
 				],
-				{ type: "Promise<T & CarbonLDP.PersistedDocument>" }
+				{ type: "Promise<T & CarbonLDP.Document>" }
 			), ():void => {} );
 
 			it( hasSignature(
@@ -814,7 +819,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					{ name: "uri", type: "string", description: "The URI of the document to retrieve." },
 					{ name: "queryBuilderFn", type: "( queryBuilder:CarbonLDP.SPARQL.QueryDocument.QueryDocumentBuilder ) => CarbonLDP.SPARQL.QueryDocument.QueryDocumentBuilder", optional: true, description: "Function that receives a the builder that helps you to construct the retrieval query.\nThe same builder must be returned." },
 				],
-				{ type: "Promise<T & CarbonLDP.PersistedDocument>" }
+				{ type: "Promise<T & CarbonLDP.Document>" }
 			), ():void => {} );
 
 			it( "should release cached request when failed", ( done:DoneFn ):void => {
@@ -836,12 +841,12 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				// First failed request
 				spySend.and.returnValue( Promise.reject( new Response( {} as any, "A error in the GET request." ) ) );
 				documents.get( "resource/" )
-					.then<PersistedDocument>( () => {
+					.then<Document>( () => {
 						done.fail( "Should not have been resolved." );
 
 						return null;
 					} )
-					.catch<PersistedDocument>( ( error:Error ) => {
+					.catch<Document>( ( error:Error ) => {
 						expect( error ).toEqual( new Error( "A error in the GET request." ) );
 
 						// Second correct request
@@ -1013,7 +1018,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 						},
 					} );
 
-					documents.get( "https://example.com/resource/" ).then( ( document:PersistedDocument ):void => {
+					documents.get( "https://example.com/resource/" ).then( ( document:Document ):void => {
 						expect( document ).toBeDefined();
 						expect( Utils.isObject( document ) ).toEqual( true );
 
@@ -1029,7 +1034,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 
 						(():void => {
 
-							let fragment:Fragment;
+							let fragment:TransientFragment;
 							expect( document.getFragments().length ).toBe( 4 );
 
 							(():void => {
@@ -1121,7 +1126,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 						},
 					} );
 
-					documents.get( "https://example.com/resource/" ).then( ( document:PersistedDocument ):void => {
+					documents.get( "https://example.com/resource/" ).then( ( document:Document ):void => {
 						expect( document ).toBeDefined();
 						expect( Utils.isObject( document ) ).toEqual( true );
 
@@ -1341,7 +1346,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 							},
 						} )
 					).then( ( document ) => {
-						expect( PersistedDocument.is( document ) ).toBe( true );
+						expect( Document.is( document ) ).toBe( true );
 						expect( document ).toEqual( jasmine.objectContaining( {
 							"_eTag": "\"1-12345\"",
 							"property1": "value",
@@ -1467,8 +1472,8 @@ describe( module( "carbonldp/Documents" ), ():void => {
 							},
 						} )
 					).then( ( document ) => {
-						expect( PersistedDocument.is( document ) ).toBe( true );
-						expect( PersistedDocument.is( document.property2 ) ).toBe( true );
+						expect( Document.is( document ) ).toBe( true );
+						expect( Document.is( document.property2 ) ).toBe( true );
 
 						expect( document ).toEqual( jasmine.objectContaining( {
 							"_eTag": "\"1-12345\"",
@@ -1526,7 +1531,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 
 					interface MyDocument {
 						property1:string;
-						property2:PersistedResource;
+						property2:Resource;
 					}
 
 					context.extendObjectSchema( "Resource", {
@@ -1588,7 +1593,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				it( "should merge partial metadata of a partial document", ( done:DoneFn ):void => {
 					interface MyDocument {
 						property1:string;
-						property2:PersistedResource;
+						property2:Resource;
 					}
 
 					context.extendObjectSchema( "Resource", {
@@ -1806,7 +1811,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					interface MyDocument {
 						property4:boolean;
 						property1:string;
-						property2:PersistedResource;
+						property2:Resource;
 					}
 
 					context.extendObjectSchema( "Resource", {
@@ -1832,13 +1837,12 @@ describe( module( "carbonldp/Documents" ), ():void => {
 						},
 					} );
 
-					const persistedDocument:PersistedDocument & MyDocument = PersistedDocument.createFrom(
+					const persistedDocument:Document & MyDocument = Document.decorate(
 						Object.assign(
 							documents.getPointer( "https://example.com/resource/" ),
 							{ property4: true, property1: "value", property2: null }
 						),
-						documents,
-						"https://example.com/resource/"
+						documents
 					);
 					persistedDocument._partialMetadata = createPartialMetadata( {
 						"@vocab": "https://example.com/ns#",
@@ -1892,7 +1896,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 							} )
 						);
 					} ).then( ( document ) => {
-						expect( PersistedDocument.is( document ) ).toBe( true );
+						expect( Document.is( document ) ).toBe( true );
 						expect( document ).toEqual( jasmine.objectContaining( {
 							"property4": false,
 							"property1": "value",
@@ -2258,7 +2262,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 							},
 						} )
 					).then( ( document ) => {
-						expect( PersistedDocument.is( document ) ).toBe( true );
+						expect( Document.is( document ) ).toBe( true );
 						expect( document ).toEqual( jasmine.objectContaining( {
 							"_eTag": "\"1-12345\"",
 							"property1": "value",
@@ -2378,8 +2382,8 @@ describe( module( "carbonldp/Documents" ), ():void => {
 							},
 						} )
 					).then( ( document ) => {
-						expect( PersistedDocument.is( document ) ).toBe( true );
-						expect( PersistedDocument.is( document.property2 ) ).toBe( true );
+						expect( Document.is( document ) ).toBe( true );
+						expect( Document.is( document.property2 ) ).toBe( true );
 
 						expect( document ).toEqual( jasmine.objectContaining( {
 							"_eTag": "\"1-12345\"",
@@ -2587,7 +2591,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					{ name: "childObject", type: "T", description: "A normal JavaScript object that will be converted and persisted as a new child document." },
 					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for the request." },
 				],
-				{ type: "Promise<T & CarbonLDP.PersistedProtectedDocument>" }
+				{ type: "Promise<T & CarbonLDP.ProtectedDocument>" }
 			), ():void => {} );
 
 			it( hasSignature(
@@ -2598,7 +2602,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					{ name: "slug", type: "string", optional: true, description: "Slug that will be used for the URI of the new child." },
 					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for the request." },
 				],
-				{ type: "Promise<T & CarbonLDP.PersistedProtectedDocument>" }
+				{ type: "Promise<T & CarbonLDP.ProtectedDocument>" }
 			), ():void => {} );
 
 			it( isDefined(), ():void => {
@@ -2698,7 +2702,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 						]`,
 					} );
 
-					type RawBlankNode = Partial<BlankNode> & { value:string };
+					type RawBlankNode = Partial<TransientBlankNode> & { value:string };
 
 					interface RawDocument {
 						blankNode1:RawBlankNode;
@@ -2717,7 +2721,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					};
 
 					try {
-						const document:PersistedDocument & RawDocument = await documents.createChild<RawDocument>( "/", rawDocument );
+						const document:Document & RawDocument = await documents.createChild<RawDocument>( "/", rawDocument );
 
 						expect( document.blankNode1 ).toBe( rawDocument.blankNode1 );
 						expect( document.blankNode1.id ).toBe( "_:new-1" );
@@ -2760,7 +2764,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 
 
 				it( "should convert plain object into document before request", ( done:DoneFn ):void => {
-					const spy:jasmine.Spy = spyOn( Document, "createFrom" );
+					const spy:jasmine.Spy = spyOn( TransientDocument, "createFrom" );
 					spyOn( documents, "_persistDocument" as any ).and.returnValue( Promise.resolve( [] ) );
 
 					const childObject:object = {};
@@ -2775,7 +2779,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				} );
 
 				it( "should reject if document is already persisted", ( done:DoneFn ):void => {
-					const childObject:PersistedDocument = PersistedDocument.create( documents, "https://example.com/some-resource/" );
+					const childObject:Document = Document.decorate( { id: "https://example.com/some-resource/" }, documents );
 					documents.createChild( "https://example.com/parent-resource/", childObject )
 						.then( () => {
 							done.fail( "Should not resolve" );
@@ -2797,10 +2801,10 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					} );
 
 					const childObject:object = {};
-					documents.createChild( "https://example.com/parent-resource/", childObject ).then( ( document:PersistedDocument ):void => {
+					documents.createChild( "https://example.com/parent-resource/", childObject ).then( ( document:Document ):void => {
 						expect( childObject ).toBe( document );
 
-						expect( PersistedDocument.is( document ) ).toBe( true );
+						expect( Document.is( document ) ).toBe( true );
 						expect( document.id ).toBe( "https://example.com/parent-resource/new-resource/" );
 
 						expect( document.isResolved() ).toBe( false );
@@ -2831,8 +2835,8 @@ describe( module( "carbonldp/Documents" ), ():void => {
 
 							return documents.createChild( "https://example.com/parent-resource/", childObject );
 						} )
-						.then( ( document:PersistedDocument ):void => {
-							expect( PersistedDocument.is( document ) ).toBe( true );
+						.then( ( document:Document ):void => {
+							expect( Document.is( document ) ).toBe( true );
 							expect( document.id ).toBe( "https://example.com/parent-resource/new-resource/" );
 
 							done();
@@ -2958,7 +2962,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					{ name: "childrenObjects", type: "T[]", description: "An array with the objects to be converted and persisted as new children of the parent document." },
 					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for every the request." },
 				],
-				{ type: "Promise<(T & CarbonLDP.PersistedProtectedDocument)[]>", description: "Promise that contains the new UNRESOLVED persisted children." }
+				{ type: "Promise<(T & CarbonLDP.ProtectedDocument)[]>", description: "Promise that contains the new UNRESOLVED persisted children." }
 			), ():void => {} );
 
 			it( hasSignature(
@@ -2969,7 +2973,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					{ name: "slugs", type: "string[]", optional: true, description: "Array with the slugs that corresponds to each object in `childrenObjects`, in the order in which they were defined. If an element in the array is undefined or null, the slug will be generated by the platform." },
 					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for every the request." },
 				],
-				{ type: "Promise<(T & CarbonLDP.PersistedProtectedDocument)[]>", description: "Promise that contains the new UNRESOLVED persisted children." }
+				{ type: "Promise<(T & CarbonLDP.ProtectedDocument)[]>", description: "Promise that contains the new UNRESOLVED persisted children." }
 			), ():void => {} );
 
 			it( isDefined(), ():void => {
@@ -3032,7 +3036,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 
 
 				it( "should convert plain objects into documents before requests", ( done:DoneFn ):void => {
-					const spy:jasmine.Spy = spyOn( Document, "createFrom" );
+					const spy:jasmine.Spy = spyOn( TransientDocument, "createFrom" );
 					spyOn( documents, "_persistDocument" as any ).and.returnValue( Promise.resolve( [] ) );
 
 					const childObjects:object[] = [ { index: 1 }, { index: 2 }, { index: 3 } ];
@@ -3049,10 +3053,10 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				} );
 
 				it( "should reject if any document is already persisted", ( done:DoneFn ):void => {
-					const childObjects:(PersistedDocument | object)[] = [
+					const childObjects:(Document | object)[] = [
 						{},
-						PersistedDocument.create( documents, "https://example.com/some-resource-1/" ),
-						PersistedDocument.create( documents, "https://example.com/some-resource-2/" ),
+						Document.decorate( { id: "https://example.com/some-resource-1/" }, documents ),
+						Document.decorate( { id: "https://example.com/some-resource-2/" }, documents ),
 					];
 					documents.createChildren( "https://example.com/parent-resource/", childObjects )
 						.then( () => {
@@ -3070,12 +3074,12 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					const childObjects:object[] = [ { index: 0 }, { index: 1 }, { index: 2 } ];
 
 					documents.createChildren( "https://example.com/parent-resource/", childObjects )
-						.then( ( persistedDocuments:PersistedDocument[] ):void => {
+						.then( ( persistedDocuments:Document[] ):void => {
 							expect( persistedDocuments ).toEqual( new Array( 3 ).fill( jasmine.anything() ) );
 							persistedDocuments.forEach( ( document, index ) => {
 								expect( childObjects[ index ] ).toBe( document );
 
-								expect( PersistedDocument.is( document ) ).toBe( true );
+								expect( Document.is( document ) ).toBe( true );
 								expect( document ).toEqual( jasmine.objectContaining( {
 									_resolved: false,
 									id: `https://example.com/parent-resource/new-resource-${ index }/`,
@@ -3224,7 +3228,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					{ name: "childObject", type: "T", description: " A normal JavaScript object that will be converted and persisted as a new child document." },
 					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for the request." },
 				],
-				{ type: "Promise<T & CarbonLDP.PersistedProtectedDocument>" }
+				{ type: "Promise<T & CarbonLDP.ProtectedDocument>" }
 			), ():void => {} );
 
 			it( hasSignature(
@@ -3235,7 +3239,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					{ name: "slug", type: "string", optional: true, description: "Slug that will be used for the URI of the new child." },
 					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for the request." },
 				],
-				{ type: "Promise<T & CarbonLDP.PersistedProtectedDocument>" }
+				{ type: "Promise<T & CarbonLDP.ProtectedDocument>" }
 			), ():void => {} );
 
 			it( isDefined(), ():void => {
@@ -3362,7 +3366,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 						]`,
 					} );
 
-					type RawBlankNode = Partial<BlankNode> & { value:string };
+					type RawBlankNode = Partial<TransientBlankNode> & { value:string };
 
 					interface RawDocument {
 						blankNode1:RawBlankNode;
@@ -3381,7 +3385,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					};
 
 					try {
-						const document:PersistedDocument & RawDocument = await documents.createChildAndRetrieve<RawDocument>( "/", rawDocument );
+						const document:Document & RawDocument = await documents.createChildAndRetrieve<RawDocument>( "/", rawDocument );
 
 						expect( document.getFragments().length ).toBe( 2 );
 
@@ -3426,7 +3430,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 
 
 				it( "should convert plain object into document before request", ( done:DoneFn ):void => {
-					const spy:jasmine.Spy = spyOn( Document, "createFrom" );
+					const spy:jasmine.Spy = spyOn( TransientDocument, "createFrom" );
 					spyOn( documents, "_persistDocument" as any ).and.returnValue( Promise.resolve( [] ) );
 
 					const childObject:object = {};
@@ -3441,7 +3445,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				} );
 
 				it( "should reject if document is already persisted", ( done:DoneFn ):void => {
-					const childObject:PersistedDocument = PersistedDocument.create( documents, "https://example.com/some-resource/" );
+					const childObject:Document = Document.decorate( { id: "https://example.com/some-resource/" }, documents );
 					documents.createChildAndRetrieve( "https://example.com/parent-resource/", childObject )
 						.then( () => {
 							done.fail( "Should not resolve" );
@@ -3488,7 +3492,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					};
 
 					documents.createChildAndRetrieve( "https://example.com/parent-resource/", childObject )
-						.then( ( document:PersistedDocument ) => {
+						.then( ( document:Document ) => {
 							expect( childObject ).toBe( document );
 							expect( document ).toEqual( jasmine.objectContaining( {
 								_eTag: "\"1-12345\"",
@@ -3544,7 +3548,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 
 							return documents.createChildAndRetrieve( "https://example.com/parent-resource/", childObject );
 						} )
-						.then( ( document:PersistedDocument ):void => {
+						.then( ( document:Document ):void => {
 							expect( document ).toEqual( jasmine.objectContaining( {
 								_eTag: "\"1-12345\"",
 								id: "https://example.com/parent-resource/new-resource/",
@@ -3677,7 +3681,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					{ name: "childrenObjects", type: "T[]", description: "An array with the objects to be converted and persisted as new children of the parent document." },
 					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for every the request." },
 				],
-				{ type: "Promise<(T & CarbonLDP.PersistedProtectedDocument)[]>", description: "Promise that contains the new and resolved persisted children." }
+				{ type: "Promise<(T & CarbonLDP.ProtectedDocument)[]>", description: "Promise that contains the new and resolved persisted children." }
 			), ():void => {} );
 
 			it( hasSignature(
@@ -3688,7 +3692,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					{ name: "slugs", type: "string[]", optional: true, description: "Array with the slugs that corresponds to each object in `childrenObjects`, in the order in which they were defined. If an element in the array is undefined or null, the slug will be generated by the platform." },
 					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for every the request." },
 				],
-				{ type: "Promise<(T & CarbonLDP.PersistedProtectedDocument)[]>", description: "Promise that contains the new and resolved persisted children." }
+				{ type: "Promise<(T & CarbonLDP.ProtectedDocument)[]>", description: "Promise that contains the new and resolved persisted children." }
 			), ():void => {} );
 
 			it( isDefined(), ():void => {
@@ -3751,7 +3755,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 
 
 				it( "should convert plain objects into documents before requests", ( done:DoneFn ):void => {
-					const spy:jasmine.Spy = spyOn( Document, "createFrom" );
+					const spy:jasmine.Spy = spyOn( TransientDocument, "createFrom" );
 					spyOn( documents, "_persistDocument" as any ).and.returnValue( Promise.resolve( [] ) );
 
 					const childObjects:object[] = [ { index: 1 }, { index: 2 }, { index: 3 } ];
@@ -3768,10 +3772,10 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				} );
 
 				it( "should reject if any document is already persisted", ( done:DoneFn ):void => {
-					const childObjects:(PersistedDocument | object)[] = [
+					const childObjects:(Document | object)[] = [
 						{},
-						PersistedDocument.create( documents, "https://example.com/some-resource-1/" ),
-						PersistedDocument.create( documents, "https://example.com/some-resource-2/" ),
+						Document.decorate( { id: "https://example.com/some-resource-1/" }, documents ),
+						Document.decorate( { id: "https://example.com/some-resource-2/" }, documents ),
 					];
 					documents.createChildrenAndRetrieve( "https://example.com/parent-resource/", childObjects )
 						.then( () => {
@@ -3789,12 +3793,12 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					const childObjects:object[] = [ { index: 0 }, { index: 1 }, { index: 2 } ];
 
 					documents.createChildrenAndRetrieve( "https://example.com/parent-resource/", childObjects )
-						.then( ( persistedDocuments:PersistedDocument[] ):void => {
+						.then( ( persistedDocuments:Document[] ):void => {
 							expect( persistedDocuments ).toEqual( new Array( 3 ).fill( jasmine.anything() ) );
 							persistedDocuments.forEach( ( document, index ) => {
 								expect( childObjects[ index ] ).toBe( document );
 
-								expect( PersistedDocument.is( document ) ).toBe( true );
+								expect( Document.is( document ) ).toBe( true );
 								expect( document ).toEqual( jasmine.objectContaining( {
 									_resolved: true,
 									_eTag: `"${ index }-12345"`,
@@ -3999,7 +4003,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					{ name: "parentURI", type: "string", description: "URI of the document from where to look for its children." },
 					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for the request." },
 				],
-				{ type: "Promise<(T & CarbonLDP.PersistedDocument)[]>" }
+				{ type: "Promise<(T & CarbonLDP.Document)[]>" }
 			), () => {} );
 
 			it( isDefined(), () => {
@@ -4165,7 +4169,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 							expect( myDocuments ).toEqual( jasmine.any( Array ) );
 							expect( myDocuments.length ).toBe( 2 );
 
-							expect( PersistedDocument.is( myDocuments[ 0 ] ) ).toBe( true );
+							expect( Document.is( myDocuments[ 0 ] ) ).toBe( true );
 							expect( myDocuments[ 0 ] ).toEqual( jasmine.objectContaining( {
 								"_eTag": void 0,
 								"_resolved": false,
@@ -4177,7 +4181,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 								],
 							} ) );
 
-							expect( PersistedDocument.is( myDocuments[ 1 ] ) ).toBe( true );
+							expect( Document.is( myDocuments[ 1 ] ) ).toBe( true );
 							expect( myDocuments[ 1 ] ).toEqual( jasmine.objectContaining( {
 								"_eTag": void 0,
 								"_resolved": false,
@@ -4246,10 +4250,10 @@ describe( module( "carbonldp/Documents" ), ():void => {
 							expect( myDocuments ).toEqual( jasmine.any( Array ) );
 							expect( myDocuments.length ).toBe( 2 );
 
-							expect( PersistedDocument.is( myDocuments[ 0 ] ) ).toBe( true );
+							expect( Document.is( myDocuments[ 0 ] ) ).toBe( true );
 							expect( myDocuments[ 0 ].isPartial() ).toBe( false );
 
-							expect( PersistedDocument.is( myDocuments[ 1 ] ) ).toBe( true );
+							expect( Document.is( myDocuments[ 1 ] ) ).toBe( true );
 							expect( myDocuments[ 1 ].isPartial() ).toBe( false );
 
 							done();
@@ -4412,7 +4416,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 							expect( myDocuments ).toEqual( jasmine.any( Array ) );
 							expect( myDocuments.length ).toBe( 2 );
 
-							expect( PersistedDocument.is( myDocuments[ 0 ] ) ).toBe( true );
+							expect( Document.is( myDocuments[ 0 ] ) ).toBe( true );
 							expect( myDocuments[ 0 ] ).toEqual( jasmine.objectContaining( {
 								"_eTag": void 0,
 								"_resolved": false,
@@ -4424,7 +4428,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 								],
 							} ) );
 
-							expect( PersistedDocument.is( myDocuments[ 0 ] ) ).toBe( true );
+							expect( Document.is( myDocuments[ 0 ] ) ).toBe( true );
 							expect( myDocuments[ 1 ] ).toEqual( jasmine.objectContaining( {
 								"_eTag": void 0,
 								"_resolved": false,
@@ -4493,10 +4497,10 @@ describe( module( "carbonldp/Documents" ), ():void => {
 							expect( myDocuments ).toEqual( jasmine.any( Array ) );
 							expect( myDocuments.length ).toBe( 2 );
 
-							expect( PersistedDocument.is( myDocuments[ 0 ] ) ).toBe( true );
+							expect( Document.is( myDocuments[ 0 ] ) ).toBe( true );
 							expect( myDocuments[ 0 ].isPartial() ).toBe( false );
 
-							expect( PersistedDocument.is( myDocuments[ 1 ] ) ).toBe( true );
+							expect( Document.is( myDocuments[ 1 ] ) ).toBe( true );
 							expect( myDocuments[ 1 ].isPartial() ).toBe( false );
 
 							done();
@@ -4517,7 +4521,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for the request." },
 					{ name: "queryBuilderFn", type: "( queryBuilder:CarbonLDP.SPARQL.QueryDocument.QueryDocumentsBuilder ) => CarbonLDP.SPARQL.QueryDocument.QueryDocumentsBuilder", optional: true, description: "Function that receives a the builder that helps you to construct the children retrieval query.\nThe same builder must be returned." },
 				],
-				{ type: "Promise<(T & CarbonLDP.PersistedDocument)[]>" }
+				{ type: "Promise<(T & CarbonLDP.Document)[]>" }
 			), () => {} );
 
 			it( hasSignature(
@@ -4526,7 +4530,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					{ name: "parentURI", type: "string", description: "URI of the document from where to look for its children." },
 					{ name: "queryBuilderFn", type: "( queryBuilder:CarbonLDP.SPARQL.QueryDocument.QueryDocumentsBuilder ) => CarbonLDP.SPARQL.QueryDocument.QueryDocumentsBuilder", optional: true, description: "Function that receives a the builder that helps you to construct the children retrieval query.\nThe same builder must be returned." },
 				],
-				{ type: "Promise<(T & CarbonLDP.PersistedDocument)[]>" }
+				{ type: "Promise<(T & CarbonLDP.Document)[]>" }
 			), () => {} );
 
 			it( isDefined(), () => {
@@ -5417,7 +5421,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 						expect( myDocuments ).toEqual( jasmine.any( Array ) );
 						expect( myDocuments.length ).toBe( 2 );
 						for( const document of myDocuments ) {
-							expect( PersistedDocument.is( document ) ).toBe( true );
+							expect( Document.is( document ) ).toBe( true );
 							expect( document.isPartial() ).toBe( false );
 						}
 
@@ -5571,7 +5575,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 							expect( myDocuments ).toEqual( jasmine.any( Array ) );
 							expect( myDocuments.length ).toBe( 2 );
 							for( const document of myDocuments ) {
-								expect( PersistedDocument.is( document ) ).toBe( true );
+								expect( Document.is( document ) ).toBe( true );
 								expect( document.isPartial() ).toBe( true );
 							}
 
@@ -5751,7 +5755,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 						expect( myDocuments ).toEqual( jasmine.any( Array ) );
 						expect( myDocuments.length ).toBe( 2 );
 						for( const document of myDocuments ) {
-							expect( PersistedDocument.is( document ) ).toBe( true );
+							expect( Document.is( document ) ).toBe( true );
 						}
 
 						expect( myDocuments[ 0 ] ).toEqual( jasmine.objectContaining( {
@@ -5959,7 +5963,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 						expect( myDocuments ).toEqual( jasmine.any( Array ) );
 						expect( myDocuments.length ).toBe( 2 );
 						for( const document of myDocuments ) {
-							expect( PersistedDocument.is( document ) ).toBe( true );
+							expect( Document.is( document ) ).toBe( true );
 						}
 
 						expect( myDocuments[ 0 ] ).toEqual( jasmine.objectContaining( {
@@ -6553,7 +6557,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 						expect( myDocuments ).toEqual( jasmine.any( Array ) );
 						expect( myDocuments.length ).toBe( 2 );
 						for( const document of myDocuments ) {
-							expect( PersistedDocument.is( document ) ).toBe( true );
+							expect( Document.is( document ) ).toBe( true );
 						}
 
 						expect( myDocuments[ 0 ] ).toEqual( jasmine.objectContaining( {
@@ -6752,7 +6756,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 						expect( myDocuments ).toEqual( jasmine.any( Array ) );
 						expect( myDocuments.length ).toBe( 2 );
 						for( const document of myDocuments ) {
-							expect( PersistedDocument.is( document ) ).toBe( true );
+							expect( Document.is( document ) ).toBe( true );
 						}
 
 						expect( myDocuments[ 0 ] ).toEqual( jasmine.objectContaining( {
@@ -6788,21 +6792,21 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				[ "T extends object" ],
 				"Persists an AccessPoint in the document specified.", [
 					{ name: "documentURI", type: "string", description: "URI of the document where to create a new access point." },
-					{ name: "accessPoint", type: "T & CarbonLDP.AccessPointBase", description: "AccessPoint Document to persist." },
+					{ name: "accessPoint", type: "T & CarbonLDP.BaseAccessPoint", description: "AccessPoint Document to persist." },
 					{ name: "slug", type: "string", optional: true, description: "Slug that will be used for the URI of the new access point." },
 					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for the request." },
 				],
-				{ type: "Promise<T & CarbonLDP.PersistedAccessPoint>" }
+				{ type: "Promise<T & CarbonLDP.AccessPoint>" }
 			), ():void => {} );
 
 			it( hasSignature(
 				[ "T extends object" ],
 				"Persists an AccessPoint in the document specified.", [
 					{ name: "documentURI", type: "string", description: "URI of the document where to create a new access point." },
-					{ name: "accessPoint", type: "T & CarbonLDP.AccessPointBase", description: "AccessPoint Document to persist." },
+					{ name: "accessPoint", type: "T & CarbonLDP.BaseAccessPoint", description: "AccessPoint Document to persist." },
 					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for the request." },
 				],
-				{ type: "Promise<T & CarbonLDP.PersistedAccessPoint>" }
+				{ type: "Promise<T & CarbonLDP.AccessPoint>" }
 			), ():void => {} );
 
 			it( isDefined(), () => {
@@ -6823,7 +6827,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				} );
 
 				it( "should reject promise if URI is not in the context base", ( done:DoneFn ):void => {
-					const accessPoint:AccessPointBase = { hasMemberRelation: "member-relation" };
+					const accessPoint:BaseAccessPoint = { hasMemberRelation: "member-relation" };
 					const promise:Promise<any> = documents.createAccessPoint( "https://not-example.com", accessPoint );
 					promise.then( () => {
 						done.fail( "Should not resolve promise." );
@@ -6834,7 +6838,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				} );
 
 				it( "should reject promise if prefixed URI cannot be resolved", ( done:DoneFn ):void => {
-					const accessPoint:AccessPointBase = { hasMemberRelation: "member-relation" };
+					const accessPoint:BaseAccessPoint = { hasMemberRelation: "member-relation" };
 					const promise:Promise<any> = documents.createAccessPoint( "prefix:the-uri", accessPoint );
 					promise.then( () => {
 						done.fail( "Should not resolve promise." );
@@ -6904,14 +6908,14 @@ describe( module( "carbonldp/Documents" ), ():void => {
 						]`,
 					} );
 
-					type RawBlankNode = Partial<BlankNode> & { value:string };
+					type RawBlankNode = Partial<TransientBlankNode> & { value:string };
 
 					interface RawDocument {
 						blankNode1:RawBlankNode;
 						blankNode2:RawBlankNode;
 					}
 
-					const rawAccessPoint:RawDocument & AccessPointBase = {
+					const rawAccessPoint:RawDocument & BaseAccessPoint = {
 						blankNode1: {
 							id: "_:1",
 							value: "a value 1",
@@ -6966,13 +6970,13 @@ describe( module( "carbonldp/Documents" ), ():void => {
 
 
 				it( "should convert plain access-point into a document access-point before request", ( done:DoneFn ):void => {
-					const spy:jasmine.Spy = spyOn( AccessPoint, "createFrom" ).and.callThrough();
+					const spy:jasmine.Spy = spyOn( TransientAccessPoint, "createFrom" ).and.callThrough();
 					spyOn( documents, "_persistDocument" as any ).and.returnValue( Promise.resolve( [] ) );
 
-					const accessPoint:AccessPointBase = { hasMemberRelation: "member-relation" };
+					const accessPoint:BaseAccessPoint = { hasMemberRelation: "member-relation" };
 					documents.createAccessPoint( "https://example.com/parent-resource/", accessPoint )
 						.then( () => {
-							expect( spy ).toHaveBeenCalledWith( accessPoint, documents.getPointer( "parent-resource/" ), "member-relation", void 0 );
+							expect( spy ).toHaveBeenCalledWith( accessPoint );
 
 							done();
 						} )
@@ -6981,7 +6985,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				} );
 
 				it( "should reject if access-point is already persisted", ( done:DoneFn ):void => {
-					const accessPoint:AccessPointBase & PersistedDocument = PersistedDocument.createFrom( { hasMemberRelation: "member-relation" }, documents, "https://example.com/some-resource/" );
+					const accessPoint:BaseAccessPoint & Document = Document.decorate( { id: "https://example.com/some-resource/", hasMemberRelation: "member-relation" }, documents );
 					documents.createAccessPoint( "https://example.com/parent-resource/", accessPoint )
 						.then( () => {
 							done.fail( "Should not resolve" );
@@ -6995,7 +6999,10 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				} );
 
 				it( "should reject if access-point has incorrect membershipResource", ( done:DoneFn ):void => {
-					const accessPoint:AccessPointBase = AccessPoint.create( documents.getPointer( "NOT-parent-resource/" ), "member-relation" );
+					const accessPoint:BaseAccessPoint = TransientAccessPoint.create( {
+						membershipResource: documents.getPointer( "NOT-parent-resource/" ),
+						hasMemberRelation: "member-relation",
+					} );
 
 					documents.createAccessPoint( "https://example.com/parent-resource/", accessPoint )
 						.then( () => {
@@ -7017,15 +7024,15 @@ describe( module( "carbonldp/Documents" ), ():void => {
 						},
 					} );
 
-					const accessPoint:AccessPointBase = { hasMemberRelation: "member-relation" };
-					documents.createAccessPoint( "https://example.com/parent-resource/", accessPoint ).then( ( document:PersistedAccessPoint ):void => {
+					const accessPoint:BaseAccessPoint = { hasMemberRelation: "member-relation" };
+					documents.createAccessPoint( "https://example.com/parent-resource/", accessPoint ).then( ( document:AccessPoint ):void => {
 						expect( accessPoint as {} ).toBe( document );
 
-						expect( PersistedDocument.is( document ) ).toBe( true );
+						expect( Document.is( document ) ).toBe( true );
 						expect( document ).toEqual( jasmine.objectContaining( {
 							_resolved: false,
 							id: "https://example.com/parent-resource/new-resource/",
-							membershipResource: Pointer.create( "https://example.com/parent-resource/" ),
+							membershipResource: Pointer.create( { id: "https://example.com/parent-resource/" } ),
 							hasMemberRelation: "member-relation" as any,
 						} ) );
 
@@ -7040,7 +7047,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 						status: 500,
 					} );
 
-					const accessPoint:AccessPointBase = { hasMemberRelation: "member-relation" };
+					const accessPoint:BaseAccessPoint = { hasMemberRelation: "member-relation" };
 
 					documents.createAccessPoint( "https://example.com/parent-resource/", accessPoint )
 						.catch( error => {
@@ -7055,8 +7062,8 @@ describe( module( "carbonldp/Documents" ), ():void => {
 
 							return documents.createAccessPoint( "https://example.com/parent-resource/", accessPoint );
 						} )
-						.then( ( document:PersistedDocument ):void => {
-							expect( PersistedDocument.is( document ) ).toBe( true );
+						.then( ( document:Document ):void => {
+							expect( Document.is( document ) ).toBe( true );
 							expect( document.id ).toBe( "https://example.com/parent-resource/new-resource/" );
 
 							done();
@@ -7072,7 +7079,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 						},
 					} );
 
-					const accessPoint:AccessPointBase = { hasMemberRelation: "member-relation" };
+					const accessPoint:BaseAccessPoint = { hasMemberRelation: "member-relation" };
 
 					documents.createAccessPoint( "https://example.com/parent-resource/", accessPoint )
 						.then( ():void => {
@@ -7099,7 +7106,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 						},
 					} );
 
-					const accessPoint:AccessPointBase = { hasMemberRelation: "member-relation" };
+					const accessPoint:BaseAccessPoint = { hasMemberRelation: "member-relation" };
 
 					documents.createAccessPoint( "https://example.com/parent-resource/", accessPoint, "child-slug" )
 						.then( ():void => {
@@ -7129,7 +7136,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				} );
 
 				it( "should reject if URI is relative", ( done:DoneFn ):void => {
-					const accessPoint:AccessPointBase = { hasMemberRelation: "member-relation" };
+					const accessPoint:BaseAccessPoint = { hasMemberRelation: "member-relation" };
 					const promise:Promise<any> = documents.createAccessPoint( "relative-uri/", accessPoint );
 					promise.then( () => {
 						done.fail( "Should not resolve promise." );
@@ -7140,7 +7147,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				} );
 
 				it( "should reject if URI is prefixed", ( done:DoneFn ):void => {
-					const accessPoint:AccessPointBase = { hasMemberRelation: "member-relation" };
+					const accessPoint:BaseAccessPoint = { hasMemberRelation: "member-relation" };
 					const promise:Promise<any> = documents.createAccessPoint( "prefix:the-uri", accessPoint );
 					promise.then( () => {
 						done.fail( "Should not resolve promise." );
@@ -7181,21 +7188,21 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				[ "T extends object" ],
 				"Persists multiple access points objects for the specified document.", [
 					{ name: "documentURI", type: "string", description: "URI of the document where to create the new access points." },
-					{ name: "accessPoints", type: "T & CarbonLDP.AccessPointBase", description: "Array with the access points to persist." },
+					{ name: "accessPoints", type: "T & CarbonLDP.BaseAccessPoint", description: "Array with the access points to persist." },
 					{ name: "slugs", type: "string[]", optional: true, description: "Array with the slugs that corresponds to each object in `accessPoints` parameter, in the order in which they were defined. If an element in the array is undefined or null, the slug will be generated by the platform." },
 					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for the request." },
 				],
-				{ type: "Promise<(T & CarbonLDP.PersistedAccessPoint)[]>", description: "Promise that contains the new and UNRESOLVED persisted access points." }
+				{ type: "Promise<(T & CarbonLDP.AccessPoint)[]>", description: "Promise that contains the new and UNRESOLVED persisted access points." }
 			), ():void => {} );
 
 			it( hasSignature(
 				[ "T extends object" ],
 				"Persists multiple access points objects for the specified document.", [
 					{ name: "documentURI", type: "string", description: "URI of the document where to create the new access points." },
-					{ name: "accessPoints", type: "T & CarbonLDP.AccessPointBase", description: "Array with the access points to persist." },
+					{ name: "accessPoints", type: "T & CarbonLDP.BaseAccessPoint", description: "Array with the access points to persist." },
 					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for the request." },
 				],
-				{ type: "Promise<(T & CarbonLDP.PersistedAccessPoint)[]>", description: "Promise that contains the new and UNRESOLVED persisted access points." }
+				{ type: "Promise<(T & CarbonLDP.AccessPoint)[]>", description: "Promise that contains the new and UNRESOLVED persisted access points." }
 			), ():void => {} );
 
 			it( isDefined(), () => {
@@ -7216,7 +7223,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				} );
 
 				it( "should reject promise if URI is not in the context base", ( done:DoneFn ):void => {
-					const accessPoint:AccessPointBase = { hasMemberRelation: "member-relation" };
+					const accessPoint:BaseAccessPoint = { hasMemberRelation: "member-relation" };
 					const promise:Promise<any> = documents.createAccessPoints( "https://not-example.com", [ accessPoint ] );
 					promise.then( () => {
 						done.fail( "Should not resolve promise." );
@@ -7227,7 +7234,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				} );
 
 				it( "should reject promise if prefixed URI cannot be resolved", ( done:DoneFn ):void => {
-					const accessPoint:AccessPointBase = { hasMemberRelation: "member-relation" };
+					const accessPoint:BaseAccessPoint = { hasMemberRelation: "member-relation" };
 					const promise:Promise<any> = documents.createAccessPoints( "prefix:the-uri", [ accessPoint ] );
 					promise.then( () => {
 						done.fail( "Should not resolve promise." );
@@ -7260,10 +7267,10 @@ describe( module( "carbonldp/Documents" ), ():void => {
 
 
 				it( "should convert plain access-point into document access-point before requests", ( done:DoneFn ):void => {
-					const spy:jasmine.Spy = spyOn( AccessPoint, "createFrom" ).and.callThrough();
+					const spy:jasmine.Spy = spyOn( TransientAccessPoint, "createFrom" ).and.callThrough();
 					spyOn( documents, "_persistDocument" as any ).and.returnValue( Promise.resolve() );
 
-					const accessPoints:AccessPointBase[] = [
+					const accessPoints:BaseAccessPoint[] = [
 						{ hasMemberRelation: "member-relation-0" },
 						{ hasMemberRelation: "member-relation-1" },
 						{ hasMemberRelation: "member-relation-2" },
@@ -7272,10 +7279,9 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					documents
 						.createAccessPoints( "https://example.com/parent-resource/", accessPoints )
 						.then( () => {
-							const parentPointer:Pointer = documents.getPointer( "https://example.com/parent-resource/" );
-							expect( spy ).toHaveBeenCalledWith( accessPoints[ 0 ], parentPointer, accessPoints[ 0 ].hasMemberRelation, void 0 );
-							expect( spy ).toHaveBeenCalledWith( accessPoints[ 1 ], parentPointer, accessPoints[ 1 ].hasMemberRelation, void 0 );
-							expect( spy ).toHaveBeenCalledWith( accessPoints[ 2 ], parentPointer, accessPoints[ 2 ].hasMemberRelation, void 0 );
+							expect( spy ).toHaveBeenCalledWith( accessPoints[ 0 ] );
+							expect( spy ).toHaveBeenCalledWith( accessPoints[ 1 ] );
+							expect( spy ).toHaveBeenCalledWith( accessPoints[ 2 ] );
 
 							done();
 						} )
@@ -7283,10 +7289,10 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				} );
 
 				it( "should reject if any access-point is already persisted", ( done:DoneFn ):void => {
-					const accessPoints:(AccessPointBase | AccessPointBase & PersistedDocument)[] = [
+					const accessPoints:(BaseAccessPoint | BaseAccessPoint & Document)[] = [
 						{ hasMemberRelation: "member-relation-0" },
-						PersistedDocument.createFrom( { hasMemberRelation: "member-relation-1" }, documents, "https://example.com/some-resource-1/" ),
-						PersistedDocument.createFrom( { hasMemberRelation: "member-relation-2" }, documents, "https://example.com/some-resource-2/" ),
+						Document.decorate( { id: "https://example.com/some-resource-1/", hasMemberRelation: "member-relation-1" }, documents ),
+						Document.decorate( { id: "https://example.com/some-resource-2/", hasMemberRelation: "member-relation-2" }, documents ),
 					];
 
 					documents.createAccessPoints( "https://example.com/parent-resource/", accessPoints )
@@ -7302,10 +7308,10 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				} );
 
 				it( "should reject if access-point has incorrect membershipResource", ( done:DoneFn ):void => {
-					const accessPoints:AccessPointBase[] = [
-						AccessPoint.create( documents.getPointer( "parent-resource/" ), "member-relation-0" ),
-						AccessPoint.create( documents.getPointer( "NOT-parent-resource/" ), "member-relation-1" ),
-						AccessPoint.create( documents.getPointer( "NOT-parent-resource/" ), "member-relation-2" ),
+					const accessPoints:BaseAccessPoint[] = [
+						TransientAccessPoint.create( { membershipResource: documents.getPointer( "parent-resource/" ), hasMemberRelation: "member-relation-0" } ),
+						TransientAccessPoint.create( { membershipResource: documents.getPointer( "NOT-parent-resource/" ), hasMemberRelation: "member-relation-1" } ),
+						TransientAccessPoint.create( { membershipResource: documents.getPointer( "NOT-parent-resource/" ), hasMemberRelation: "member-relation-2" } ),
 					];
 
 					documents.createAccessPoints( "https://example.com/parent-resource/", accessPoints )
@@ -7321,19 +7327,19 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				} );
 
 				it( "should process the access-points into a valid persisted access-points", ( done:DoneFn ):void => {
-					const accessPoints:AccessPointBase[] = [
+					const accessPoints:BaseAccessPoint[] = [
 						{ hasMemberRelation: "member-relation-0" },
 						{ hasMemberRelation: "member-relation-1" },
 						{ hasMemberRelation: "member-relation-2" },
 					];
 
 					documents.createAccessPoints( "https://example.com/parent-resource/", accessPoints )
-						.then( ( persistedDocuments:PersistedAccessPoint[] ):void => {
+						.then( ( persistedDocuments:AccessPoint[] ):void => {
 							expect( persistedDocuments ).toEqual( new Array( 3 ).fill( jasmine.anything() ) );
 							persistedDocuments.forEach( ( document, index ) => {
 								expect( accessPoints[ index ] as {} ).toBe( document );
 
-								expect( PersistedDocument.is( document ) ).toBe( true );
+								expect( Document.is( document ) ).toBe( true );
 								expect( document ).toEqual( jasmine.objectContaining( {
 									_resolved: false,
 									id: `https://example.com/parent-resource/new-access-point-${ index }/`,
@@ -7356,7 +7362,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				} );
 
 				it( "should send expected headers", ( done:DoneFn ):void => {
-					const accessPoints:AccessPointBase[] = [
+					const accessPoints:BaseAccessPoint[] = [
 						{ hasMemberRelation: "member-relation-0" },
 						{ hasMemberRelation: "member-relation-1" },
 						{ hasMemberRelation: "member-relation-2" },
@@ -7391,7 +7397,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				} );
 
 				it( "should send expected headers with slug", ( done:DoneFn ):void => {
-					const accessPoints:AccessPointBase[] = [
+					const accessPoints:BaseAccessPoint[] = [
 						{ hasMemberRelation: "member-relation-0" },
 						{ hasMemberRelation: "member-relation-1" },
 						{ hasMemberRelation: "member-relation-2" },
@@ -7437,7 +7443,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				} );
 
 				it( "should reject if URI is relative", ( done:DoneFn ):void => {
-					const accessPoint:AccessPointBase = { hasMemberRelation: "member-relation" };
+					const accessPoint:BaseAccessPoint = { hasMemberRelation: "member-relation" };
 					const promise:Promise<any> = documents.createAccessPoints( "relative-uri/", [ accessPoint ] );
 					promise.then( () => {
 						done.fail( "Should not resolve promise." );
@@ -7448,7 +7454,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				} );
 
 				it( "should reject if URI is prefixed", ( done:DoneFn ):void => {
-					const accessPoint:AccessPointBase = { hasMemberRelation: "member-relation" };
+					const accessPoint:BaseAccessPoint = { hasMemberRelation: "member-relation" };
 					const promise:Promise<any> = documents.createAccessPoints( "prefix:the-uri", [ accessPoint ] );
 					promise.then( () => {
 						done.fail( "Should not resolve promise." );
@@ -7492,7 +7498,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					{ name: "uri", type: "string", description: "URI of the document from where to look for its members." },
 					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for the request." },
 				],
-				{ type: "Promise<(T & CarbonLDP.PersistedDocument)[]>" }
+				{ type: "Promise<(T & CarbonLDP.Document)[]>" }
 			), () => {} );
 
 			it( isDefined(), () => {
@@ -7661,7 +7667,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 							expect( myDocuments ).toEqual( jasmine.any( Array ) );
 							expect( myDocuments.length ).toBe( 2 );
 
-							expect( PersistedDocument.is( myDocuments[ 0 ] ) ).toBe( true );
+							expect( Document.is( myDocuments[ 0 ] ) ).toBe( true );
 							expect( myDocuments[ 0 ] ).toEqual( jasmine.objectContaining( {
 								"_eTag": void 0,
 								"_resolved": false,
@@ -7673,7 +7679,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 								],
 							} ) );
 
-							expect( PersistedDocument.is( myDocuments[ 1 ] ) ).toBe( true );
+							expect( Document.is( myDocuments[ 1 ] ) ).toBe( true );
 							expect( myDocuments[ 1 ] ).toEqual( jasmine.objectContaining( {
 								"_eTag": void 0,
 								"_resolved": false,
@@ -7742,10 +7748,10 @@ describe( module( "carbonldp/Documents" ), ():void => {
 							expect( myDocuments ).toEqual( jasmine.any( Array ) );
 							expect( myDocuments.length ).toBe( 2 );
 
-							expect( PersistedDocument.is( myDocuments[ 0 ] ) ).toBe( true );
+							expect( Document.is( myDocuments[ 0 ] ) ).toBe( true );
 							expect( myDocuments[ 0 ].isPartial() ).toBe( false );
 
-							expect( PersistedDocument.is( myDocuments[ 1 ] ) ).toBe( true );
+							expect( Document.is( myDocuments[ 1 ] ) ).toBe( true );
 							expect( myDocuments[ 1 ].isPartial() ).toBe( false );
 
 							done();
@@ -7910,7 +7916,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 							expect( myDocuments ).toEqual( jasmine.any( Array ) );
 							expect( myDocuments.length ).toBe( 2 );
 
-							expect( PersistedDocument.is( myDocuments[ 0 ] ) ).toBe( true );
+							expect( Document.is( myDocuments[ 0 ] ) ).toBe( true );
 							expect( myDocuments[ 0 ] ).toEqual( jasmine.objectContaining( {
 								"_eTag": void 0,
 								"_resolved": false,
@@ -7922,7 +7928,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 								],
 							} ) );
 
-							expect( PersistedDocument.is( myDocuments[ 0 ] ) ).toBe( true );
+							expect( Document.is( myDocuments[ 0 ] ) ).toBe( true );
 							expect( myDocuments[ 1 ] ).toEqual( jasmine.objectContaining( {
 								"_eTag": void 0,
 								"_resolved": false,
@@ -7991,10 +7997,10 @@ describe( module( "carbonldp/Documents" ), ():void => {
 							expect( myDocuments ).toEqual( jasmine.any( Array ) );
 							expect( myDocuments.length ).toBe( 2 );
 
-							expect( PersistedDocument.is( myDocuments[ 0 ] ) ).toBe( true );
+							expect( Document.is( myDocuments[ 0 ] ) ).toBe( true );
 							expect( myDocuments[ 0 ].isPartial() ).toBe( false );
 
-							expect( PersistedDocument.is( myDocuments[ 1 ] ) ).toBe( true );
+							expect( Document.is( myDocuments[ 1 ] ) ).toBe( true );
 							expect( myDocuments[ 1 ].isPartial() ).toBe( false );
 
 							done();
@@ -8015,7 +8021,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for the request." },
 					{ name: "queryBuilderFn", type: "( queryBuilder:CarbonLDP.SPARQL.QueryDocument.QueryDocumentsBuilder ) => CarbonLDP.SPARQL.QueryDocument.QueryDocumentsBuilder", optional: true, description: "Function that receives a the builder that helps you to construct the member retrieval query.\nThe same builder must be returned." },
 				],
-				{ type: "Promise<(T & CarbonLDP.PersistedDocument)[]>" }
+				{ type: "Promise<(T & CarbonLDP.Document)[]>" }
 			), () => {} );
 
 			it( hasSignature(
@@ -8024,7 +8030,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					{ name: "uri", type: "string", description: "URI of the document from where to look for its members." },
 					{ name: "queryBuilderFn", type: "( queryBuilder:CarbonLDP.SPARQL.QueryDocument.QueryDocumentsBuilder ) => CarbonLDP.SPARQL.QueryDocument.QueryDocumentsBuilder", optional: true, description: "Function that receives a the builder that helps you to construct the member retrieval query.\nThe same builder must be returned." },
 				],
-				{ type: "Promise<(T & CarbonLDP.PersistedDocument)[]>" }
+				{ type: "Promise<(T & CarbonLDP.Document)[]>" }
 			), () => {} );
 
 			it( isDefined(), () => {
@@ -8759,7 +8765,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 						expect( myDocuments ).toEqual( jasmine.any( Array ) );
 						expect( myDocuments.length ).toBe( 2 );
 						for( const document of myDocuments ) {
-							expect( PersistedDocument.is( document ) ).toBe( true );
+							expect( Document.is( document ) ).toBe( true );
 						}
 
 						expect( myDocuments[ 0 ] ).toEqual( jasmine.objectContaining( {
@@ -8935,7 +8941,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 						expect( myDocuments ).toEqual( jasmine.any( Array ) );
 						expect( myDocuments.length ).toBe( 2 );
 						for( const document of myDocuments ) {
-							expect( PersistedDocument.is( document ) ).toBe( true );
+							expect( Document.is( document ) ).toBe( true );
 							expect( document.isPartial() ).toBe( false );
 						}
 
@@ -9089,7 +9095,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 							expect( myDocuments ).toEqual( jasmine.any( Array ) );
 							expect( myDocuments.length ).toBe( 2 );
 							for( const document of myDocuments ) {
-								expect( PersistedDocument.is( document ) ).toBe( true );
+								expect( Document.is( document ) ).toBe( true );
 								expect( document.isPartial() ).toBe( true );
 							}
 
@@ -9470,7 +9476,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 						expect( myDocuments ).toEqual( jasmine.any( Array ) );
 						expect( myDocuments.length ).toBe( 2 );
 						for( const document of myDocuments ) {
-							expect( PersistedDocument.is( document ) ).toBe( true );
+							expect( Document.is( document ) ).toBe( true );
 						}
 
 						expect( myDocuments[ 0 ] ).toEqual( jasmine.objectContaining( {
@@ -9806,7 +9812,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 						expect( myDocuments ).toEqual( jasmine.any( Array ) );
 						expect( myDocuments.length ).toBe( 2 );
 						for( const document of myDocuments ) {
-							expect( PersistedDocument.is( document ) ).toBe( true );
+							expect( Document.is( document ) ).toBe( true );
 						}
 
 						expect( myDocuments[ 0 ] ).toEqual( jasmine.objectContaining( {
@@ -10005,7 +10011,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 						expect( myDocuments ).toEqual( jasmine.any( Array ) );
 						expect( myDocuments.length ).toBe( 2 );
 						for( const document of myDocuments ) {
-							expect( PersistedDocument.is( document ) ).toBe( true );
+							expect( Document.is( document ) ).toBe( true );
 						}
 
 						expect( myDocuments[ 0 ] ).toEqual( jasmine.objectContaining( {
@@ -10958,10 +10964,10 @@ describe( module( "carbonldp/Documents" ), ():void => {
 			it( hasSignature(
 				[ "T extends object" ],
 				"Update the data of the document provided in the server.", [
-					{ name: "persistedDocument", type: "T & CarbonLDP.PersistedDocument", description: "The persisted document with the data to update in the server." },
+					{ name: "persistedDocument", type: "T & CarbonLDP.Document", description: "The persisted document with the data to update in the server." },
 					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customisable options for the request." },
 				],
-				{ type: "Promise<T & CarbonLDP.PersistedDocument>" }
+				{ type: "Promise<T & CarbonLDP.Document>" }
 			), ():void => {} );
 
 			it( isDefined(), ():void => {
@@ -10992,7 +10998,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				} );
 
 				it( "should reject promise if URI is not in the context base", ( done:DoneFn ):void => {
-					const document:PersistedDocument = PersistedDocument.create( documents, "https://not-example.com" );
+					const document:Document = Document.decorate( { id: "https://not-example.com" }, documents );
 
 					documents.save( document )
 						.then( () => {
@@ -11004,7 +11010,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				} );
 
 				it( "should reject promise if prefixed URI cannot be resolved", ( done:DoneFn ):void => {
-					const document:PersistedDocument = PersistedDocument.create( documents, "prefix:the-uri" );
+					const document:Document = Document.decorate( { id: "prefix:the-uri" }, documents );
 
 					documents.save( document )
 						.then( () => {
@@ -11075,14 +11081,14 @@ describe( module( "carbonldp/Documents" ), ():void => {
 						]`,
 					} );
 
-					type RawBlankNode = Partial<BlankNode> & { value:string };
+					type RawBlankNode = Partial<TransientBlankNode> & { value:string };
 
 					interface RawDocument {
 						blankNode1:RawBlankNode;
 						blankNode2:RawBlankNode;
 					}
 
-					const rawDocument:PersistedDocument & RawDocument = PersistedDocument.decorate( Object.assign(
+					const rawDocument:Document & RawDocument = Document.decorate( Object.assign(
 						documents.getPointer( "https://example.com/resource/" ), {
 							blankNode1: {
 								id: "_:1",
@@ -11096,7 +11102,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					), documents );
 
 					try {
-						const document:PersistedDocument & RawDocument = await documents.save<RawDocument>( rawDocument );
+						const document:Document & RawDocument = await documents.save<RawDocument>( rawDocument );
 
 						expect( document.getFragments().length ).toBe( 2 );
 
@@ -11127,7 +11133,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					const error:Error = new Error( "Error message" );
 					const spy:jasmine.Spy = spyOn( documents, "_parseErrorResponse" ).and.callFake( () => Promise.reject( error ) );
 
-					const document:PersistedDocument = PersistedDocument.create( documents, "https://example.com/" );
+					const document:Document = Document.decorate( { id: "https://example.com/" }, documents );
 					documents.save( document ).then( () => {
 						done.fail( "Should not resolve" );
 					} ).catch( _error => {
@@ -11142,12 +11148,11 @@ describe( module( "carbonldp/Documents" ), ():void => {
 
 
 				it( "should reject if document is outdated", ( done:DoneFn ):void => {
-					const document:PersistedDocument = PersistedDocument.createFrom(
+					const document:Document = Document.decorate(
 						Object.assign( documents.getPointer( "https://example.com/resource/" ), {
 							_eTag: null,
 						} ),
-						documents,
-						"https://example.com/resource/"
+						documents
 					);
 
 					documents.save( document )
@@ -11192,7 +11197,8 @@ describe( module( "carbonldp/Documents" ), ():void => {
 						},
 					} );
 
-					const persistedDocument:PersistedDocument = PersistedDocument.createFrom( {
+					const persistedDocument:Document = Document.decorate( {
+						id: "https://example.com/resource/",
 						types: [ "https://example.com/ns#Document" ],
 						list: [ 1, 2, 3, 4, 5 ],
 						pointer: {
@@ -11206,7 +11212,8 @@ describe( module( "carbonldp/Documents" ), ():void => {
 								number: 100,
 							} ],
 						},
-					}, documents, "https://example.com/resource/" );
+					}, documents );
+					persistedDocument._normalize();
 					persistedDocument._syncSnapshot();
 					persistedDocument.getFragments().forEach( fragment => fragment._syncSnapshot() );
 
@@ -11216,7 +11223,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					persistedDocument[ "pointer" ][ "pointer" ][ 0 ][ "string" ] = [ "string 1", "string -1" ];
 					persistedDocument[ "pointer" ][ "pointer" ][ 0 ][ "number" ] = 100.001;
 
-					documents.save( persistedDocument ).then( ( _document:PersistedDocument ) => {
+					documents.save( persistedDocument ).then( ( _document:Document ) => {
 						expect( _document ).toBe( persistedDocument );
 
 						const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
@@ -11249,7 +11256,8 @@ describe( module( "carbonldp/Documents" ), ():void => {
 						"xsd": XSD.namespace,
 					} );
 
-					const persistedDocument:PersistedDocument = PersistedDocument.createFrom( {
+					const persistedDocument:Document = Document.decorate( {
+						id: "https://example.com/resource/",
 						types: [ "https://example.com/ns#Document" ],
 						list: [ 1, 2, 3, 4, 5 ],
 						pointer: {
@@ -11292,7 +11300,8 @@ describe( module( "carbonldp/Documents" ), ():void => {
 								"@type": "@id",
 							},
 						} ),
-					}, documents, "https://example.com/resource/" );
+					}, documents );
+					persistedDocument._normalize();
 					persistedDocument._syncSnapshot();
 					persistedDocument.getFragments().forEach( fragment => fragment._syncSnapshot() );
 
@@ -11302,7 +11311,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					persistedDocument[ "pointer" ][ "pointer" ][ 0 ][ "string" ] = [ "string 1", "string -1" ];
 					persistedDocument[ "pointer" ][ "pointer" ][ 0 ][ "number" ] = 100.001;
 
-					documents.save( persistedDocument ).then( ( _document:PersistedDocument ) => {
+					documents.save( persistedDocument ).then( ( _document:Document ) => {
 						expect( _document ).toBe( persistedDocument );
 
 						const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
@@ -11332,12 +11341,11 @@ describe( module( "carbonldp/Documents" ), ():void => {
 						responseText: `[]`,
 					} );
 
-					const document:PersistedDocument = PersistedDocument.createFrom(
+					const document:Document = Document.decorate(
 						Object.assign( documents.getPointer( "https://example.com/resource/" ), {
 							_eTag: `"1-12345"`,
 						} ),
-						documents,
-						"https://example.com/resource/"
+						documents
 					);
 
 					documents.save( document )
@@ -11367,7 +11375,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				} );
 
 				it( "should reject if URI is relative", ( done:DoneFn ):void => {
-					const document:PersistedDocument = PersistedDocument.create( documents, "relative-uri/" );
+					const document:Document = Document.decorate( { id: "relative-uri/" }, documents );
 
 					documents.save( document )
 						.then( () => {
@@ -11380,7 +11388,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				} );
 
 				it( "should reject if URI is prefixed", ( done:DoneFn ):void => {
-					const document:PersistedDocument = PersistedDocument.create( documents, "prefix:the-uri" );
+					const document:Document = Document.decorate( { id: "prefix:the-uri" }, documents );
 
 					documents.save( document )
 						.then( () => {
@@ -11401,7 +11409,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					const error:Error = new Error( "Error message" );
 					const spy:jasmine.Spy = spyOn( documents, "_parseErrorResponse" ).and.callFake( () => Promise.reject( error ) );
 
-					const document:PersistedDocument = PersistedDocument.create( documents, "https://example.com/" );
+					const document:Document = Document.decorate( { id: "https://example.com/" }, documents );
 					documents.save( document ).then( () => {
 						done.fail( "Should not resolve" );
 					} ).catch( _error => {
@@ -11423,10 +11431,10 @@ describe( module( "carbonldp/Documents" ), ():void => {
 			it( hasSignature(
 				[ "T extends object" ],
 				"Update the specified document with the data of the Carbon LDP server, if a newest version exists.", [
-					{ name: "persistedDocument", type: "T & CarbonLDP.PersistedDocument", description: "The persisted document to update." },
+					{ name: "persistedDocument", type: "T & CarbonLDP.Document", description: "The persisted document to update." },
 					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for the request." },
 				],
-				{ type: "Promise<T & CarbonLDP.PersistedDocument>" }
+				{ type: "Promise<T & CarbonLDP.Document>" }
 			), ():void => {} );
 
 			it( isDefined(), () => {
@@ -11457,7 +11465,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				} );
 
 				it( "should reject promise if URI is not in the context base", ( done:DoneFn ):void => {
-					const persistedDocument:PersistedDocument = PersistedDocument.create( documents, "http://not-example.com" );
+					const persistedDocument:Document = Document.decorate( { id: "http://not-example.com" }, documents );
 					const promise:Promise<any> = documents.refresh( persistedDocument );
 					promise.then( () => {
 						done.fail( "Should not resolve promise." );
@@ -11468,7 +11476,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				} );
 
 				it( "should reject promise if prefixed URI cannot be resolved", ( done:DoneFn ):void => {
-					const persistedDocument:PersistedDocument = PersistedDocument.create( documents, "prefix:the-uri" );
+					const persistedDocument:Document = Document.decorate( { id: "prefix:the-uri" }, documents );
 					const promise:Promise<any> = documents.refresh( persistedDocument );
 					promise.then( () => {
 						done.fail( "Should not resolve promise." );
@@ -11487,7 +11495,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					const error:Error = new Error( "Error message" );
 					const spy:jasmine.Spy = spyOn( documents, "_parseErrorResponse" ).and.callFake( () => Promise.reject( error ) );
 
-					const document:PersistedDocument = PersistedDocument.create( documents, "https://example.com/" );
+					const document:Document = Document.decorate( { id: "https://example.com/" }, documents );
 					documents.refresh( document ).then( () => {
 						done.fail( "Should not resolve" );
 					} ).catch( _error => {
@@ -11506,12 +11514,11 @@ describe( module( "carbonldp/Documents" ), ():void => {
 						status: 304,
 					} );
 
-					const document:PersistedDocument = PersistedDocument.createFrom(
+					const document:Document = Document.decorate(
 						Object.assign( documents.getPointer( "https://example.com/resource/" ), {
 							_eTag: `"1-12345"`,
 						} ),
-						documents,
-						"https://example.com/resource/"
+						documents
 					);
 
 					documents.refresh( document )
@@ -11550,7 +11557,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 						} ]`,
 					} );
 
-					const document:PersistedDocument = PersistedDocument.createFrom(
+					const document:Document = Document.decorate(
 						Object.assign( documents.getPointer( "https://example.com/resource/" ), {
 							_eTag: `"1-12345"`,
 							_resolved: true,
@@ -11564,12 +11571,11 @@ describe( module( "carbonldp/Documents" ), ():void => {
 							],
 							"new-property": "A new property that will be erased at refresh",
 						} ),
-						documents,
-						"https://example.com/resource/"
+						documents
 					);
 					document._normalize();
 
-					const fragment:PersistedNamedFragment = document.getFragment( "#1" );
+					const fragment:NamedFragment = document.getFragment( "#1" );
 
 					documents.refresh( document )
 						.then( ( returnedDocument ) => {
@@ -11651,20 +11657,19 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					interface MyDocument {
 						property4:boolean;
 						property1:string;
-						property2:PersistedResource;
+						property2:Resource;
 					}
 
 					context.extendObjectSchema( {
 						"schema": "https://schema.org/",
 					} );
 
-					const persistedDocument:PersistedDocument & MyDocument = PersistedDocument.createFrom(
+					const persistedDocument:Document & MyDocument = Document.decorate(
 						Object.assign(
 							documents.getPointer( "https://example.com/resource/" ),
 							{ property4: true, property1: "value", property2: null }
 						),
-						documents,
-						"https://example.com/resource/"
+						documents
 					);
 					persistedDocument._partialMetadata = createPartialMetadata( {
 						"@vocab": "https://example.com/ns#",
@@ -11887,37 +11892,36 @@ describe( module( "carbonldp/Documents" ), ():void => {
 						"schema": "https://schema.org/",
 					} );
 
-					const persistedDocument:PersistedDocument & MyDocument = PersistedDocument.createFrom(
-						Object.assign( documents.getPointer( "https://example.com/resource/" ), {
+					const persistedDocument:Document & MyDocument = createMockDocument( {
+						documents, props: {
+							id: "https://example.com/resource/",
+							_partialMetadata: createPartialMetadata( {
+								"@vocab": "https://example.com/ns#",
+								"property4": {
+									"@id": "property-4",
+									"@type": XSD.boolean,
+								},
+								"property2": {
+									"@id": "https://schema.org/property-2",
+									"@type": "@id",
+								},
+								"property1": {
+									"@id": "property-1",
+									"@type": XSD.string,
+								},
+							} ),
 							_eTag: "\"1-12345\"",
 							property4: true,
 							property1: "value",
 							property2: {
+								_partialMetadata: new PartialMetadata( PartialMetadata.ALL ),
 								id: "_:1",
 								property3: "sub-value",
 								property5: new Date( "2000-01-01" ),
 								property2: 12345,
 							},
-						} ),
-						documents,
-						"https://example.com/resource/"
-					);
-					persistedDocument[ "_partialMetadata" ] = createPartialMetadata( {
-						"@vocab": "https://example.com/ns#",
-						"property4": {
-							"@id": "property-4",
-							"@type": XSD.boolean,
-						},
-						"property2": {
-							"@id": "https://schema.org/property-2",
-							"@type": "@id",
-						},
-						"property1": {
-							"@id": "property-1",
-							"@type": XSD.string,
 						},
 					} );
-					persistedDocument.property2[ "_partialMetadata" ] = new PartialMetadata( PartialMetadata.ALL );
 
 					const queryTokenClass:{ new( ...args:any[] ) } = QueryToken;
 					let query:QueryToken;
@@ -12129,7 +12133,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 
 					interface MyDocument {
 						property1:string;
-						property2:PersistedResource & {
+						property2:Resource & {
 							property2:number;
 							property3:string;
 							property5:Date;
@@ -12142,7 +12146,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 						"schema": "https://schema.org/",
 					} );
 
-					const persistedDocument:PersistedDocument & MyDocument = PersistedDocument.createFrom(
+					const persistedDocument:Document & MyDocument = Document.decorate(
 						Object.assign( documents.getPointer( "https://example.com/resource/" ), {
 							property1: "value",
 							property2: null,
@@ -12164,8 +12168,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 								},
 							} ),
 						} ),
-						documents,
-						"https://example.com/resource/"
+						documents
 					);
 
 					persistedDocument.property2 = persistedDocument.createFragment(
@@ -12195,7 +12198,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					Utils.promiseMethod( () => {
 						return documents.refresh<MyDocument>( persistedDocument );
 					} ).then( ( document ) => {
-						expect( PersistedDocument.is( document ) ).toBe( true );
+						expect( Document.is( document ) ).toBe( true );
 
 						// Data updates
 						expect( document ).toEqual( jasmine.objectContaining( {
@@ -12289,7 +12292,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 
 					interface MyDocument {
 						property1:string;
-						property2:PersistedResource & {
+						property2:Resource & {
 							property2:number;
 							property3:string;
 							property5:Date;
@@ -12302,7 +12305,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 						"schema": "https://schema.org/",
 					} );
 
-					const persistedDocument:PersistedDocument & MyDocument = PersistedDocument.createFrom(
+					const persistedDocument:Document & MyDocument = Document.decorate(
 						Object.assign( documents.getPointer( "https://example.com/resource/" ), {
 							_eTag: "\"1-12345\"",
 							property1: "value",
@@ -12325,8 +12328,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 								},
 							} ),
 						} ),
-						documents,
-						"https://example.com/resource/"
+						documents
 					);
 
 					persistedDocument.property2 = persistedDocument.createFragment(
@@ -12356,7 +12358,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					Utils.promiseMethod( () => {
 						return documents.refresh<MyDocument>( persistedDocument );
 					} ).then( ( document ) => {
-						expect( PersistedDocument.is( document ) ).toBe( true );
+						expect( Document.is( document ) ).toBe( true );
 
 						// Data updates
 						expect( document ).toEqual( jasmine.objectContaining( {
@@ -12452,18 +12454,18 @@ describe( module( "carbonldp/Documents" ), ():void => {
 						},
 					} );
 
-					const persistedDocument:PersistedDocument & MyDocument = createMockPersistedProtectedDocument( {
+					const persistedDocument:Document & MyDocument = createMockDocument( {
 						context, properties: {
 							id: "https://example.com/resource/",
 							_partialMetadata: createPartialMetadata( {
 								"@vocab": "https://example.com/ns#",
 							} ),
-							$relation1: createMockPersistedProtectedDocument( {
+							$relation1: createMockDocument( {
 								context, properties: {
 									id: "https://example.com/resource/relation-1/",
 								},
 							} ),
-							$relation2: createMockPersistedProtectedDocument( {
+							$relation2: createMockDocument( {
 								context, properties: {
 									id: "https://example.com/resource/relation-2/",
 								},
@@ -12474,7 +12476,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					Utils.promiseMethod( () => {
 						return documents.refresh<MyDocument>( persistedDocument );
 					} ).then( ( document ) => {
-						expect( PersistedDocument.is( document ) ).toBe( true );
+						expect( Document.is( document ) ).toBe( true );
 
 						// Updated
 						expect( document ).toEqual( jasmine.objectContaining( {
@@ -12515,7 +12517,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				} );
 
 				it( "should reject if URI is relative", ( done:DoneFn ):void => {
-					const persistedDocument:PersistedDocument = PersistedDocument.create( documents, "relative-uri/" );
+					const persistedDocument:Document = Document.decorate( { id: "relative-uri/" }, documents );
 					const promise:Promise<any> = documents.refresh( persistedDocument );
 					promise.then( () => {
 						done.fail( "Should not resolve promise." );
@@ -12526,7 +12528,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				} );
 
 				it( "should reject if URI is prefixed", ( done:DoneFn ):void => {
-					const persistedDocument:PersistedDocument = PersistedDocument.create( documents, "prefix:the-uri" );
+					const persistedDocument:Document = Document.decorate( { id: "prefix:the-uri" }, documents );
 					const promise:Promise<any> = documents.refresh( persistedDocument );
 					promise.then( () => {
 						done.fail( "Should not resolve promise." );
@@ -12545,7 +12547,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					const error:Error = new Error( "Error message" );
 					const spy:jasmine.Spy = spyOn( documents, "_parseErrorResponse" ).and.callFake( () => Promise.reject( error ) );
 
-					const document:PersistedDocument = PersistedDocument.create( documents, "https://example.com/" );
+					const document:Document = Document.decorate( { id: "https://example.com/" }, documents );
 					documents.refresh( document ).then( () => {
 						done.fail( "Should not resolve" );
 					} ).catch( _error => {
@@ -12607,16 +12609,15 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					interface MyDocument {
 						property4:boolean;
 						property1:string;
-						property2:PersistedResource;
+						property2:Resource;
 					}
 
-					const persistedDocument:PersistedDocument & MyDocument = PersistedDocument.createFrom(
+					const persistedDocument:Document & MyDocument = Document.decorate(
 						Object.assign(
 							documents.getPointer( "https://example.com/resource/" ),
 							{ property4: true, property1: "value", property2: null }
 						),
-						documents,
-						"https://example.com/resource/"
+						documents
 					);
 					persistedDocument._partialMetadata = createPartialMetadata( {
 						"@vocab": "https://example.com/ns#",
@@ -12829,12 +12830,12 @@ describe( module( "carbonldp/Documents" ), ():void => {
 
 			it( hasSignature(
 				[ "T extends object" ],
-				"Save and refresh the PersistedDocument specified.\n" +
+				"Save and refresh the Document specified.\n" +
 				"If the documents is partial the refresh will be executed with another query.", [
-					{ name: "persistedDocument", type: "T & CarbonLDP.PersistedDocument", description: "The persistedDocument to save and refresh." },
+					{ name: "persistedDocument", type: "T & CarbonLDP.Document", description: "The persistedDocument to save and refresh." },
 					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for the request." },
 				],
-				{ type: "Promise<T & CarbonLDP.PersistedDocument>" }
+				{ type: "Promise<T & CarbonLDP.Document>" }
 			), ():void => {} );
 
 			it( isDefined(), () => {
@@ -12865,7 +12866,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				} );
 
 				it( "should reject promise if URI is not in the context base", ( done:DoneFn ):void => {
-					const document:PersistedDocument = PersistedDocument.create( documents, "https://not-example.com" );
+					const document:Document = Document.decorate( { id: "https://not-example.com" }, documents );
 
 					documents.saveAndRefresh( document )
 						.then( () => {
@@ -12877,7 +12878,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				} );
 
 				it( "should reject promise if prefixed URI cannot be resolved", ( done:DoneFn ):void => {
-					const document:PersistedDocument = PersistedDocument.create( documents, "prefix:the-uri" );
+					const document:Document = Document.decorate( { id: "prefix:the-uri" }, documents );
 
 					documents.saveAndRefresh( document )
 						.then( () => {
@@ -12975,14 +12976,14 @@ describe( module( "carbonldp/Documents" ), ():void => {
 						]`,
 					} );
 
-					type RawBlankNode = Partial<BlankNode> & { value:string };
+					type RawBlankNode = Partial<TransientBlankNode> & { value:string };
 
 					interface RawDocument {
 						blankNode1:RawBlankNode;
 						blankNode2:RawBlankNode;
 					}
 
-					const rawDocument:PersistedDocument & RawDocument = PersistedDocument.decorate( Object.assign(
+					const rawDocument:Document & RawDocument = Document.decorate( Object.assign(
 						documents.getPointer( "https://example.com/resource/" ), {
 							blankNode1: {
 								id: "_:1",
@@ -12996,7 +12997,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					), documents );
 
 					try {
-						const document:PersistedDocument & RawDocument = await documents.saveAndRefresh<RawDocument>( rawDocument );
+						const document:Document & RawDocument = await documents.saveAndRefresh<RawDocument>( rawDocument );
 
 						expect( document.getFragments().length ).toBe( 2 );
 
@@ -13027,7 +13028,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					const error:Error = new Error( "Error message" );
 					const spy:jasmine.Spy = spyOn( documents, "_parseErrorResponse" ).and.callFake( () => Promise.reject( error ) );
 
-					const document:PersistedDocument = PersistedDocument.create( documents, "https://example.com/" );
+					const document:Document = Document.decorate( { id: "https://example.com/" }, documents );
 					documents.saveAndRefresh( document ).then( () => {
 						done.fail( "Should not resolve" );
 					} ).catch( _error => {
@@ -13042,12 +13043,11 @@ describe( module( "carbonldp/Documents" ), ():void => {
 
 
 				it( "should reject if document is outdated", ( done:DoneFn ):void => {
-					const document:PersistedDocument = PersistedDocument.createFrom(
+					const document:Document = Document.decorate(
 						Object.assign( documents.getPointer( "https://example.com/resource/" ), {
 							_eTag: null,
 						} ),
-						documents,
-						"https://example.com/resource/"
+						documents
 					);
 
 					documents.saveAndRefresh( document )
@@ -13095,7 +13095,8 @@ describe( module( "carbonldp/Documents" ), ():void => {
 						},
 					} );
 
-					const persistedDocument:PersistedDocument = PersistedDocument.createFrom( {
+					const persistedDocument:Document = Document.decorate( {
+						id: "https://example.com/resource/",
 						types: [ "https://example.com/ns#Document" ],
 						list: [ 1, 2, 3, 4, 5 ],
 						pointer: {
@@ -13109,7 +13110,8 @@ describe( module( "carbonldp/Documents" ), ():void => {
 								number: 100,
 							} ],
 						},
-					}, documents, "https://example.com/resource/" );
+					}, documents );
+					persistedDocument._normalize();
 					persistedDocument._syncSnapshot();
 					persistedDocument.getFragments().forEach( fragment => fragment._syncSnapshot() );
 
@@ -13147,12 +13149,11 @@ describe( module( "carbonldp/Documents" ), ():void => {
 						responseText: `[]`,
 					} );
 
-					const document:PersistedDocument = PersistedDocument.createFrom(
+					const document:Document = Document.decorate(
 						Object.assign( documents.getPointer( "https://example.com/resource/" ), {
 							_eTag: `"1-12345"`,
 						} ),
-						documents,
-						"https://example.com/resource/"
+						documents
 					);
 
 					documents.saveAndRefresh( document )
@@ -13201,7 +13202,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 						} ]`,
 					} );
 
-					const document:PersistedDocument = PersistedDocument.createFrom(
+					const document:Document = Document.decorate(
 						Object.assign( documents.getPointer( "https://example.com/resource/" ), {
 							_eTag: `"1-12345"`,
 							_resolved: true,
@@ -13215,11 +13216,11 @@ describe( module( "carbonldp/Documents" ), ():void => {
 							],
 							"new-property": "A new property that will be erased at refresh",
 						} ),
-						documents,
-						"https://example.com/resource/"
+						documents
 					);
+					document._normalize();
 
-					const fragment:PersistedNamedFragment = document.getFragment( "#1" );
+					const fragment:NamedFragment = document.getFragment( "#1" );
 
 					documents.saveAndRefresh( document )
 						.then( ( returnedDocument ) => {
@@ -13333,7 +13334,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 						property4:boolean;
 					}
 
-					const persistedDocument:PersistedDocument & MyDocument = PersistedDocument.createFrom(
+					const persistedDocument:Document & MyDocument = Document.decorate(
 						Object.assign( documents.getPointer( `${ context.baseURI }resource/` ), {
 							_eTag: `"1-12345"`,
 							property1: "value",
@@ -13376,14 +13377,13 @@ describe( module( "carbonldp/Documents" ), ():void => {
 								},
 							} ),
 						} ),
-						documents,
-						`${ context.baseURI }resource/`
+						documents
 					);
 
 					Utils.promiseMethod( () => {
 						return documents.saveAndRefresh<MyDocument>( persistedDocument );
 					} ).then( ( document ) => {
-						expect( PersistedDocument.is( document ) ).toBe( true );
+						expect( Document.is( document ) ).toBe( true );
 
 						// Data updates
 						expect( document ).toEqual( jasmine.objectContaining( {
@@ -13419,7 +13419,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				} );
 
 				it( "should reject if URI is relative", ( done:DoneFn ):void => {
-					const document:PersistedDocument = PersistedDocument.create( documents, "relative-uri/" );
+					const document:Document = Document.decorate( { id: "relative-uri/" }, documents );
 
 					documents.saveAndRefresh( document )
 						.then( () => {
@@ -13432,7 +13432,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 				} );
 
 				it( "should reject if URI is prefixed", ( done:DoneFn ):void => {
-					const document:PersistedDocument = PersistedDocument.create( documents, "prefix:the-uri" );
+					const document:Document = Document.decorate( { id: "prefix:the-uri" }, documents );
 
 					documents.saveAndRefresh( document )
 						.then( () => {
@@ -13453,7 +13453,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 					const error:Error = new Error( "Error message" );
 					const spy:jasmine.Spy = spyOn( documents, "_parseErrorResponse" ).and.callFake( () => Promise.reject( error ) );
 
-					const document:PersistedDocument = PersistedDocument.create( documents, "https://example.com/" );
+					const document:Document = Document.decorate( { id: "https://example.com/" }, documents );
 					documents.saveAndRefresh( document ).then( () => {
 						done.fail( "Should not resolve" );
 					} ).catch( _error => {
@@ -15590,7 +15590,7 @@ describe( module( "carbonldp/Documents" ), ():void => {
 		} );
 
 		it( "should add types to query", ( done:DoneFn ):void => {
-			const resource:Resource = Resource.decorate( pointer );
+			const resource:TransientResource = TransientResource.decorate( pointer );
 			resource.addType( "https://example.com/ns#Type-1" );
 			resource.addType( "https://example.com/ns#Type-2" );
 

@@ -4,13 +4,13 @@ import {
 	RequestOptions,
 	RequestUtils,
 } from "../HTTP/Request";
-import { PersistedDocument } from "../PersistedDocument";
+import { Document } from "../Document";
 import { Pointer } from "../Pointer";
 import { URI } from "../RDF/URI";
 import { SPARQLSelectResults } from "../SPARQL/SelectResults";
 import * as Utils from "./../Utils";
 import * as PersistedRole from "./PersistedRole";
-import { PersistedUser } from "./PersistedUser";
+import { User } from "./User";
 import * as Role from "./Role";
 
 export class Class {
@@ -41,7 +41,7 @@ export class Class {
 			if( ! exists ) throw new Errors.IllegalArgumentError( "The parent role provided doesn't exist." );
 			return this.context.documents.createChild<T>( containerURI, role, slug, requestOptions );
 
-		} ).then( ( newRole:T & PersistedDocument ) => {
+		} ).then( ( newRole:T & Document ) => {
 			persistedRole = PersistedRole.Factory.decorate( newRole, this.context.documents );
 			return this.context.documents.addMember( parentURI, newRole );
 
@@ -57,8 +57,8 @@ export class Class {
 		} );
 	}
 
-	getUsers<T>( roleURI:string, requestOptions?:RequestOptions ):Promise<(T & PersistedUser)[]>;
-	getUsers<T>( roleURI:string, retrievalPreferencesOrRequestOptions?:any, requestOptions?:RequestOptions ):Promise<(T & PersistedUser)[]> {
+	getUsers<T>( roleURI:string, requestOptions?:RequestOptions ):Promise<(T & User)[]>;
+	getUsers<T>( roleURI:string, retrievalPreferencesOrRequestOptions?:any, requestOptions?:RequestOptions ):Promise<(T & User)[]> {
 		// TODO: Implement in milestone:Security
 		throw new Errors.NotImplementedError( "To be re-implemented in milestone:Security" );
 	}

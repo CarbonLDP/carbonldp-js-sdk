@@ -1,11 +1,11 @@
 import { VolatileResource } from "../LDP";
 import { ObjectSchema } from "../ObjectSchema";
 import { CS } from "../Vocabularies";
-import { PersistedUser } from "./PersistedUser";
+import { User } from "./User";
 
 
 export interface AuthenticatedUserMetadata extends VolatileResource {
-	user:PersistedUser;
+	user:User;
 }
 
 

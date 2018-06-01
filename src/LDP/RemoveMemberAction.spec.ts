@@ -1,5 +1,5 @@
 import { Pointer } from "../Pointer";
-import { Resource } from "../Resource";
+import { TransientResource } from "../Resource";
 import {
 	extendsClass,
 	hasMethod,
@@ -19,11 +19,26 @@ import { RemoveMemberAction } from "./RemoveMemberAction";
 describe( module( "carbonldp/LDP/RemoveMemberAction" ), ():void => {
 
 	describe( interfaze(
+		"CarbonLDP.LDP.BaseRemoveMemberAction",
+		"Interface that represents an object to be sent in a request that add members to a container."
+	), ():void => {
+
+		it( hasProperty(
+			OBLIGATORY,
+			"targetMembers",
+			"CarbonLDP.Pointer[]",
+			"The target members to remove in a `removeMember` request."
+		), ():void => {
+		} );
+
+	} );
+
+	describe( interfaze(
 		"CarbonLDP.LDP.RemoveMemberAction",
 		"Interface that represents an object to be sent in a request that removes specific members to a container."
 	), ():void => {
 
-		it( extendsClass( "CarbonLDP.Resource" ), ():void => {} );
+		it( extendsClass( "CarbonLDP.TransientResource" ), ():void => {} );
 
 		it( hasProperty(
 			OBLIGATORY,
@@ -53,18 +68,29 @@ describe( module( "carbonldp/LDP/RemoveMemberAction" ), ():void => {
 
 		it( hasMethod(
 			STATIC,
-			"isDecorated",
-			"Returns true if the object has the properties of a `CarbonLDP.LDP.RemoveMemberAction` object.", [
-				{ name: "object", type: "object" },
+			"is",
+			"Returns true if the object is considered a `CarbonLDP.LDP.RemoveMemberAction` object.", [
+				{ name: "value", type: "any" },
 			],
-			{ type: "object is CarbonLDP.LDP.RemoveMemberAction" }
+			{ type: "value is CarbonLDP.LDP.RemoveMemberAction" }
 		), ():void => {} );
 
 		it( hasMethod(
 			STATIC,
 			"create",
-			"Creates a `CarbonLDP.LDP.RemoveMemberAction` resource for the specified targetMembers.", [
-				{ name: "targetMembers", type: "CarbonLDP.Pointer", description: "The target members of the remove action." },
+			[ "T extends object" ],
+			"Creates `CarbonLDP.LDP.RemoveMemberAction` resource for the specified targetMembers.", [
+				{ name: "data", type: "T & CarbonLDP.LDP.BaseRemoveMemberAction", description: "Data to be used in the creation of an remove member action." },
+			],
+			{ type: "CarbonLDP.LDP.RemoveMemberAction" }
+		), ():void => {} );
+
+		it( hasMethod(
+			STATIC,
+			"createFrom",
+			[ "T extends object" ],
+			"Creates `CarbonLDP.LDP.RemoveMemberAction` resource for the specified targetMembers.", [
+				{ name: "object", type: "T & CarbonLDP.LDP.BaseRemoveMemberAction", description: "Object to be converted into an remove member action." },
 			],
 			{ type: "CarbonLDP.LDP.RemoveMemberAction" }
 		), ():void => {} );
@@ -105,39 +131,25 @@ describe( module( "carbonldp/LDP/RemoveMemberAction" ), ():void => {
 
 		} );
 
-		// TODO: Separate in different tests
-		it( "RemoveMemberAction.isDecorated", ():void => {
-			expect( RemoveMemberAction.isDecorated ).toBeDefined();
-			expect( Utils.isFunction( RemoveMemberAction.isDecorated ) ).toBe( true );
-
-			let object:any = void 0;
-			expect( RemoveMemberAction.isDecorated( object ) ).toBe( false );
-
-			object = {
-				targetMembers: null,
-			};
-			expect( RemoveMemberAction.isDecorated( object ) ).toBe( true );
-
-			delete object.targetMembers;
-			expect( RemoveMemberAction.isDecorated( object ) ).toBe( false );
-			object.targetMembers = null;
-		} );
+		// TODO: Test `is`
 
 		// TODO: Separate in different tests
 		it( "RemoveMemberAction.create", ():void => {
 			expect( RemoveMemberAction.create ).toBeDefined();
 			expect( Utils.isFunction( RemoveMemberAction.create ) ).toBe( true );
 
-			const pointers:Pointer[] = [];
-			pointers.push( Pointer.create( "the-pointer/" ) );
+			const targetMembers:Pointer[] = [];
+			targetMembers.push( Pointer.create( { id: "the-pointer/" } ) );
 
-			const removeMemberAction:RemoveMemberAction = RemoveMemberAction.create( pointers );
+			const removeMemberAction:RemoveMemberAction = RemoveMemberAction.create( { targetMembers } );
 
-			expect( Resource.is( removeMemberAction ) ).toBe( true );
-			expect( RemoveMemberAction.isDecorated( removeMemberAction ) ).toBe( true );
-			expect( removeMemberAction.targetMembers ).toEqual( pointers );
+			expect( TransientResource.is( removeMemberAction ) ).toBe( true );
+			expect( RemoveMemberAction.is( removeMemberAction ) ).toBe( true );
+			expect( removeMemberAction.targetMembers ).toEqual( targetMembers );
 			expect( removeMemberAction.types ).toContain( RemoveMemberAction.TYPE );
 		} );
+
+		// TODO: Test `createFrom`
 
 	} );
 
