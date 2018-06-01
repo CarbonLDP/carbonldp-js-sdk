@@ -45,12 +45,17 @@ exports.ProtectedDocument = {
 };
 function getACL(requestOptions) {
     var _this = this;
-    var aclPromise = this.isResolved() ?
-        Promise.resolve(this.accessControlList) :
-        this.executeSELECTQuery("SELECT ?acl WHERE {<" + this.id + "> <" + Vocabularies_1.CS.accessControlList + "> ?acl}")
-            .then(function (results) { return results.bindings[0].acl; });
-    return aclPromise.then(function (acl) {
-        return _this._documents.get(acl.id, requestOptions);
+    if (this.accessControlList)
+        return this._documents.get(this.accessControlList.id, requestOptions);
+    return this.resolve(function (_) { return _
+        .withType(Vocabularies_1.CS.ProtectedDocument)
+        .properties({
+        accessControlList: {
+            "query": function (__) { return __
+                .properties(__.full); },
+        },
+    }); }).then(function () {
+        return _this.accessControlList;
     });
 }
 

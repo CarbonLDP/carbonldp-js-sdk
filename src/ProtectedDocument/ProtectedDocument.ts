@@ -78,13 +78,18 @@ interface ACLResult {
 	acl:Pointer;
 }
 
-function getACL( this:ProtectedDocument, requestOptions?:RequestOptions ):Promise<ACL> {
-	const aclPromise:Promise<Pointer> = this.isResolved() ?
-		Promise.resolve( this.accessControlList ) :
-		this.executeSELECTQuery<ACLResult>( `SELECT ?acl WHERE {<${ this.id }> <${ CS.accessControlList }> ?acl}` )
-			.then( results => results.bindings[ 0 ].acl );
+function getACL( this:ProtectedDocument, requestOptions:RequestOptions ):Promise<ACL> {
+	if( this.accessControlList ) return this._documents.get( this.accessControlList.id, requestOptions );
 
-	return aclPromise.then( ( acl:Pointer ) => {
-		return this._documents.get<ACL>( acl.id, requestOptions );
+	return this.resolve( _ => _
+		.withType( CS.ProtectedDocument )
+		.properties( {
+			accessControlList: {
+				"query": __ => __
+					.properties( __.full ),
+			},
+		} )
+	).then( () => {
+		return this.accessControlList as ACL;
 	} );
 }

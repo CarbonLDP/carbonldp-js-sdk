@@ -1,12 +1,8 @@
-import { AbstractContext } from "./AbstractContext";
-import { ACL } from "./Auth/ACL";
-import {
-	Document,
-	TransientDocument,
-} from "./Document";
-import { Documents } from "./Documents";
+import { AbstractContext } from "../AbstractContext";
+import { ACL } from "../Auth/ACL";
+import { Document, } from "../Document";
+import { Documents } from "../Documents";
 import { ProtectedDocument } from "./ProtectedDocument";
-import { Pointer } from "./Pointer";
 
 import {
 	extendsClass,
@@ -21,15 +17,12 @@ import {
 	OPTIONAL,
 	property,
 	STATIC,
-} from "./test/JasmineExtender";
-import * as Utils from "./Utils";
+} from "../test/JasmineExtender";
+import * as Utils from "../Utils";
 import {
 	C,
 	CS,
-	LDP,
-	XSD,
-} from "./Vocabularies";
-
+} from "../Vocabularies";
 
 
 describe( module( "carbonldp/ProtectedDocument" ), ():void => {

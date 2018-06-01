@@ -3,12 +3,12 @@ import { ModelSchema } from "../../core/ModelSchema";
 import { Document } from "../../Document";
 import { Documents } from "../../Documents";
 import { ObjectSchema } from "../../ObjectSchema";
-import { PersistedProtectedDocument } from "../PersistedProtectedDocument";
 import { Pointer } from "../../Pointer";
+import { ProtectedDocument } from "../../ProtectedDocument";
 import { CS } from "../../Vocabularies";
 import { ACE } from "../ACE";
 export interface ACL extends Document {
-    accessTo?: PersistedProtectedDocument;
+    accessTo?: ProtectedDocument;
     entries?: ACE[];
     inheritableEntries?: ACE[];
     _parsePointer(element: string | Pointer): Pointer;
