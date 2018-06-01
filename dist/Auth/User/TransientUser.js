@@ -1,12 +1,4 @@
 "use strict";
-var __assign = (this && this.__assign) || Object.assign || function(t) {
-    for (var s, i = 1, n = arguments.length; i < n; i++) {
-        s = arguments[i];
-        for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
-            t[p] = s[p];
-    }
-    return t;
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 var Document_1 = require("../../Document");
 var Utils_1 = require("../../Utils");
@@ -36,7 +28,8 @@ exports.TransientUser = {
         });
     },
     create: function (data) {
-        return exports.TransientUser.createFrom(__assign({}, data));
+        var copy = Object.assign({}, data);
+        return exports.TransientUser.createFrom(copy);
     },
     createFrom: function (object) {
         var user = exports.TransientUser.decorate(object);

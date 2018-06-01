@@ -17,10 +17,7 @@ import {
 	STATIC,
 } from "../../test/JasmineExtender";
 import * as Utils from "../../Utils";
-import {
-	CS,
-	XSD
-} from "../../Vocabularies";
+import { CS } from "../../Vocabularies";
 import { UsernameAndPasswordCredentials } from "../UsernameAndPasswordCredentials";
 import { BaseUser } from "./BaseUser";
 import { TransientUser } from "./TransientUser";
@@ -114,11 +111,12 @@ describe( module( "carbonldp/Auth/TransientUser" ), ():void => {
 		describe( method( OBLIGATORY, "create" ), ():void => {
 
 			it( hasSignature(
+				[ "T extends object" ],
 				"Creates a `CarbonLDP.Auth.TransientUser` object.",
 				[
-					{ name: "data", type: "CarbonLDP.Auth.BaseUser", description: "The data requited for creating a User document." },
+					{ name: "data", type: "T & CarbonLDP.Auth.BaseUser", description: "The data requited for creating a User document." },
 				],
-				{ type: "CarbonLDP.Auth.TransientUser" }
+				{ type: "T & CarbonLDP.Auth.TransientUser" }
 			), ():void => {} );
 
 		} );
@@ -126,10 +124,10 @@ describe( module( "carbonldp/Auth/TransientUser" ), ():void => {
 		describe( method( OBLIGATORY, "createFrom" ), ():void => {
 
 			it( hasSignature(
-				[ "T extends CarbonLDP.Auth.BaseUser" ],
+				[ "T extends object" ],
 				"Creates a `CarbonLDP.Auth.TransientUser` object with the one provided.",
 				[
-					{ name: "object", type: "T" },
+					{ name: "object", type: "T & CarbonLDP.Auth.BaseUser" },
 				],
 				{ type: "T & CarbonLDP.Auth.TransientUser" }
 			), ():void => {} );

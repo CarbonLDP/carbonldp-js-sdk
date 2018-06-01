@@ -13,7 +13,7 @@ export interface TransientUserFactory {
     isDecorated(object: object): object is TransientUser;
     is(value: any): value is TransientUser;
     decorate<T extends object>(object: T, documents?: Documents): T & TransientUser;
-    create(data: BaseUser): TransientUser;
-    createFrom<T extends BaseUser>(object: T): T & TransientUser;
+    create<T extends object>(data: T & BaseUser): T & TransientUser;
+    createFrom<T extends object>(object: T & BaseUser): T & TransientUser;
 }
 export declare const TransientUser: TransientUserFactory;
