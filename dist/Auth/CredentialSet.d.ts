@@ -1,14 +1,14 @@
-import { CS } from "../Vocabularies";
 import { ObjectSchema } from "../ObjectSchema";
 import { Pointer } from "../Pointer";
+import { CS } from "../Vocabularies";
 import { LDAPCredentials } from "./LDAPCredentials";
 import { UsernameAndPasswordCredentials } from "./UsernameAndPasswordCredentials";
-export interface CredentialsSet {
+export interface CredentialSet {
     user: Pointer;
     credentials: (UsernameAndPasswordCredentials | LDAPCredentials)[];
 }
-export interface CredentialsSetFactory {
-    TYPE: CS["CredentialsSet"];
+export interface CredentialSetFactory {
+    TYPE: CS["CredentialSet"];
     SCHEMA: ObjectSchema;
 }
-export declare const CredentialsSet: CredentialsSetFactory;
+export declare const CredentialSet: CredentialSetFactory;

@@ -4467,7 +4467,7 @@ exports.CS = {
     CreateAccessPoint: "https://carbonldp.com/ns/v1/security#CreateAccessPoint",
     CreateChild: "https://carbonldp.com/ns/v1/security#CreateChild",
     Credentials: "https://carbonldp.com/ns/v1/security#Credentials",
-    CredentialsSet: "https://carbonldp.com/ns/v1/security#CredentialsSet",
+    CredentialSet: "https://carbonldp.com/ns/v1/security#CredentialSet",
     Delete: "https://carbonldp.com/ns/v1/security#Delete",
     Download: "https://carbonldp.com/ns/v1/security#Download",
     Extend: "https://carbonldp.com/ns/v1/security#Extend",
@@ -5039,8 +5039,8 @@ var BasicCredentials_1 = __webpack_require__(160);
 exports.BasicCredentials = BasicCredentials_1.BasicCredentials;
 var BasicToken_1 = __webpack_require__(161);
 exports.BasicToken = BasicToken_1.BasicToken;
-var CredentialsSet_1 = __webpack_require__(166);
-exports.CredentialsSet = CredentialsSet_1.CredentialsSet;
+var CredentialSet_1 = __webpack_require__(166);
+exports.CredentialSet = CredentialSet_1.CredentialSet;
 var LDAPCredentials_1 = __webpack_require__(167);
 exports.LDAPCredentials = LDAPCredentials_1.LDAPCredentials;
 var ACE_2 = __webpack_require__(50);
@@ -6438,7 +6438,7 @@ var ACE_1 = __webpack_require__(50);
 var ACL_1 = __webpack_require__(56);
 var AuthenticatedUserInformationAccessor_1 = __webpack_require__(148);
 var AuthenticatedUserMetadata_1 = __webpack_require__(149);
-var CredentialsSet_1 = __webpack_require__(166);
+var CredentialSet_1 = __webpack_require__(166);
 var LDAPCredentials_1 = __webpack_require__(167);
 var TokenCredentials_1 = __webpack_require__(61);
 var User_1 = __webpack_require__(47);
@@ -6618,7 +6618,7 @@ var SDKContext = (function () {
         this.extendObjectSchema(AuthenticatedUserMetadata_1.AuthenticatedUserMetadata.TYPE, AuthenticatedUserMetadata_1.AuthenticatedUserMetadata.SCHEMA);
         this.extendObjectSchema(User_1.User.TYPE, User_1.User.SCHEMA);
         this.extendObjectSchema(TokenCredentials_1.TokenCredentials.TYPE, TokenCredentials_1.TokenCredentials.SCHEMA);
-        this.extendObjectSchema(CredentialsSet_1.CredentialsSet.TYPE, CredentialsSet_1.CredentialsSet.SCHEMA);
+        this.extendObjectSchema(CredentialSet_1.CredentialSet.TYPE, CredentialSet_1.CredentialSet.SCHEMA);
         this.extendObjectSchema(UsernameAndPasswordCredentials_1.UsernameAndPasswordCredentials.TYPE, UsernameAndPasswordCredentials_1.UsernameAndPasswordCredentials.SCHEMA);
         this.extendObjectSchema(LDAPCredentials_1.LDAPCredentials.TYPE, LDAPCredentials_1.LDAPCredentials.SCHEMA);
         this.extendObjectSchema(ValidationReport_1.ValidationReport.TYPE, ValidationReport_1.ValidationReport.SCHEMA);
@@ -11064,8 +11064,8 @@ var SCHEMA = {
         "@container": "@set",
     },
 };
-exports.CredentialsSet = {
-    TYPE: Vocabularies_1.CS.CredentialsSet,
+exports.CredentialSet = {
+    TYPE: Vocabularies_1.CS.CredentialSet,
     SCHEMA: SCHEMA,
 };
 

@@ -10,7 +10,7 @@ exports.CS = {
     CreateAccessPoint: "https://carbonldp.com/ns/v1/security#CreateAccessPoint",
     CreateChild: "https://carbonldp.com/ns/v1/security#CreateChild",
     Credentials: "https://carbonldp.com/ns/v1/security#Credentials",
-    CredentialsSet: "https://carbonldp.com/ns/v1/security#CredentialsSet",
+    CredentialSet: "https://carbonldp.com/ns/v1/security#CredentialSet",
     Delete: "https://carbonldp.com/ns/v1/security#Delete",
     Download: "https://carbonldp.com/ns/v1/security#Download",
     Extend: "https://carbonldp.com/ns/v1/security#Extend",

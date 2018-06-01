@@ -99,10 +99,10 @@ describe( module( "carbonldp/Vocabularies/CS" ), ():void => {
 
 		it( hasProperty(
 			OBLIGATORY,
-			"CredentialsSet",
-			"https://carbonldp.com/ns/v1/security#CredentialsSet"
+			"CredentialSet",
+			"https://carbonldp.com/ns/v1/security#CredentialSet"
 		), ():void => {
-			const target:CS[ "CredentialsSet" ] = "https://carbonldp.com/ns/v1/security#CredentialsSet";
+			const target:CS[ "CredentialSet" ] = "https://carbonldp.com/ns/v1/security#CredentialSet";
 			expect( target ).toBeDefined();
 		} );
 
@@ -548,9 +548,9 @@ describe( module( "carbonldp/Vocabularies/CS" ), ():void => {
 			expect( CS.Credentials ).toBe( "https://carbonldp.com/ns/v1/security#Credentials" );
 		} );
 
-		it( "CS.CredentialsSet", ():void => {
-			expect( CS.CredentialsSet ).toEqual( jasmine.any( String ) );
-			expect( CS.CredentialsSet ).toBe( "https://carbonldp.com/ns/v1/security#CredentialsSet" );
+		it( "CS.CredentialSet", ():void => {
+			expect( CS.CredentialSet ).toEqual( jasmine.any( String ) );
+			expect( CS.CredentialSet ).toBe( "https://carbonldp.com/ns/v1/security#CredentialSet" );
 		} );
 
 		it( "CS.Delete", ():void => {

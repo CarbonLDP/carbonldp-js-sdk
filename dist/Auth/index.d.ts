@@ -8,7 +8,7 @@ export { AuthService } from "./Service";
 export { BasicAuthenticator } from "./BasicAuthenticator";
 export { BasicCredentials } from "./BasicCredentials";
 export { BasicToken } from "./BasicToken";
-export { CredentialsSet } from "./CredentialsSet";
+export { CredentialSet } from "./CredentialSet";
 export { LDAPCredentials } from "./LDAPCredentials";
 export { ACE } from "./ACE";
 export { ACL } from "./ACL";

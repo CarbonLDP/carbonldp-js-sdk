@@ -17,7 +17,7 @@ import { AuthMethod } from "./AuthMethod";
 import { BasicAuthenticator } from "./BasicAuthenticator";
 import { BasicCredentials } from "./BasicCredentials";
 import { BasicToken } from "./BasicToken";
-import { CredentialsSet } from "./CredentialsSet";
+import { CredentialSet } from "./CredentialSet";
 import { LDAPCredentials } from "./LDAPCredentials";
 import { ACE } from "./ACE";
 import { ACL } from "./ACL";
@@ -153,10 +153,10 @@ describe( module( "carbonldp/Auth" ), ():void => {
 	it( reexports(
 		STATIC,
 		"CredentialsSet",
-		"CarbonLDP.Auth.CredentialsSet"
+		"CarbonLDP.Auth.CredentialSet"
 	), ():void => {
-		expect( Auth.CredentialsSet ).toBeDefined();
-		expect( Auth.CredentialsSet ).toBe( CredentialsSet );
+		expect( Auth.CredentialSet ).toBeDefined();
+		expect( Auth.CredentialSet ).toBe( CredentialSet );
 	} );
 
 	it( reexports(
