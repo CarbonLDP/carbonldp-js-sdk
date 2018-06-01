@@ -34,6 +34,10 @@ export const User:UserFactory = {
 			"@id": CS.credentials,
 			"@type": "@id",
 		},
+		"credentialSet": {
+			"@id": CS.credentialSet,
+			"@type": "@id",
+		},
 	},
 
 

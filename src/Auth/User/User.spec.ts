@@ -55,11 +55,25 @@ describe( module( "carbonldp/Auth/User" ), ():void => {
 			"CarbonLDP.Vocabularies.CS.User"
 		), ():void => {} );
 
-		it( hasProperty(
+		describe( property(
 			OBLIGATORY,
 			"SCHEMA",
 			"CarbonLDP.ObjectSchema"
-		), ():void => {} );
+		), ():void => {
+
+			it( "should exists", ():void => {
+				expect( User.SCHEMA ).toBeDefined();
+				expect( User.SCHEMA ).toEqual( jasmine.any( Object ) );
+			} );
+
+			it( "should have property credentialSet", () => {
+				expect( User.SCHEMA[ "credentialSet" ] ).toEqual( {
+					"@id": CS.credentialSet,
+					"@type": "@id",
+				} );
+			} );
+
+		} );
 
 		describe( method( OBLIGATORY, "is" ), ():void => {
 
@@ -91,18 +105,6 @@ describe( module( "carbonldp/Auth/User" ), ():void => {
 			expect( Utils.isString( User.TYPE ) ).toBe( true );
 
 			expect( User.TYPE ).toBe( CS.User );
-		} );
-
-		// TODO: Separate in different test
-		it( "User.SCHEMA", ():void => {
-			expect( User.SCHEMA ).toBeDefined();
-			expect( Utils.isObject( User.SCHEMA ) ).toBe( true );
-
-			expect( Utils.hasProperty( User.SCHEMA, "name" ) ).toBe( true );
-			expect( User.SCHEMA[ "name" ] ).toEqual( {
-				"@id": CS.name,
-				"@type": XSD.string,
-			} );
 		} );
 
 		describe( "User.is", ():void => {

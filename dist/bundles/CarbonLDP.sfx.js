@@ -4478,6 +4478,7 @@ exports.CS = {
     authenticatedUserMetadata: "https://carbonldp.com/ns/v1/security#authenticatedUserMetadata",
     childRole: "https://carbonldp.com/ns/v1/security#childRole",
     credentials: "https://carbonldp.com/ns/v1/security#credentials",
+    credentialSet: "https://carbonldp.com/ns/v1/security#credentialSet",
     credentialsOf: "https://carbonldp.com/ns/v1/security#credentialsOf",
     description: "https://carbonldp.com/ns/v1/security#description",
     enabled: "https://carbonldp.com/ns/v1/security#enabled",
@@ -21157,6 +21158,10 @@ exports.User = {
         },
         "credentials": {
             "@id": Vocabularies_1.CS.credentials,
+            "@type": "@id",
+        },
+        "credentialSet": {
+            "@id": Vocabularies_1.CS.credentialSet,
             "@type": "@id",
         },
     },

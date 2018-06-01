@@ -14,6 +14,10 @@ exports.User = {
             "@id": Vocabularies_1.CS.credentials,
             "@type": "@id",
         },
+        "credentialSet": {
+            "@id": Vocabularies_1.CS.credentialSet,
+            "@type": "@id",
+        },
     },
     is: function (value) {
         return ProtectedDocument_1.ProtectedDocument.is(value)

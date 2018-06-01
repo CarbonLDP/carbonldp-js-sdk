@@ -325,6 +325,15 @@ describe( module( "carbonldp/Vocabularies/CS" ), ():void => {
 
 		it( hasProperty(
 			OBLIGATORY,
+			"credentialSet",
+			"https://carbonldp.com/ns/v1/security#credentialSet"
+		), ():void => {
+			const target:CS[ "credentialSet" ] = "https://carbonldp.com/ns/v1/security#credentialSet";
+			expect( target ).toBeDefined();
+		} );
+
+		it( hasProperty(
+			OBLIGATORY,
 			"credentialsOf",
 			"https://carbonldp.com/ns/v1/security#credentialsOf"
 		), ():void => {
@@ -500,7 +509,7 @@ describe( module( "carbonldp/Vocabularies/CS" ), ():void => {
 		} );
 
 		it( "should test all exported IRIs", ():void => {
-			expect( Object.keys( CS ).length ).toBe( 54 );
+			expect( Object.keys( CS ).length ).toBe( 55 );
 		} );
 
 		it( "CS.namespace", ():void => {
@@ -672,6 +681,11 @@ describe( module( "carbonldp/Vocabularies/CS" ), ():void => {
 		it( "CS.credentials", ():void => {
 			expect( CS.credentials ).toEqual( jasmine.any( String ) );
 			expect( CS.credentials ).toBe( "https://carbonldp.com/ns/v1/security#credentials" );
+		} );
+
+		it( "CS.credentialSet", ():void => {
+			expect( CS.credentialSet ).toEqual( jasmine.any( String ) );
+			expect( CS.credentialSet ).toBe( "https://carbonldp.com/ns/v1/security#credentialSet" );
 		} );
 
 		it( "CS.credentialsOf", ():void => {
