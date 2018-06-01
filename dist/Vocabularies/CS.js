@@ -48,6 +48,7 @@ exports.CS = {
     parent: "https://carbonldp.com/ns/v1/security#parent",
     password: "https://carbonldp.com/ns/v1/security#password",
     permission: "https://carbonldp.com/ns/v1/security#permission",
+    role: "https://carbonldp.com/ns/v1/security#role",
     rootContainer: "https://carbonldp.com/ns/v1/security#rootContainer",
     subject: "https://carbonldp.com/ns/v1/security#subject",
     subjectClass: "https://carbonldp.com/ns/v1/security#subjectClass",

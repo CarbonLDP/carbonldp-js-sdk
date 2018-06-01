@@ -424,6 +424,15 @@ describe( module( "carbonldp/Vocabularies/CS" ), ():void => {
 
 		it( hasProperty(
 			OBLIGATORY,
+			"role",
+			"https://carbonldp.com/ns/v1/security#role"
+		), ():void => {
+			const target:CS[ "role" ] = "https://carbonldp.com/ns/v1/security#role";
+			expect( target ).toBeDefined();
+		} );
+
+		it( hasProperty(
+			OBLIGATORY,
 			"rootContainer",
 			"https://carbonldp.com/ns/v1/security#rootContainer"
 		), ():void => {
@@ -500,7 +509,7 @@ describe( module( "carbonldp/Vocabularies/CS" ), ():void => {
 		} );
 
 		it( "should test all exported IRIs", ():void => {
-			expect( Object.keys( CS ).length ).toBe( 54 );
+			expect( Object.keys( CS ).length ).toBe( 55 );
 		} );
 
 		it( "CS.namespace", ():void => {
@@ -737,6 +746,11 @@ describe( module( "carbonldp/Vocabularies/CS" ), ():void => {
 		it( "CS.permission", ():void => {
 			expect( CS.permission ).toEqual( jasmine.any( String ) );
 			expect( CS.permission ).toBe( "https://carbonldp.com/ns/v1/security#permission" );
+		} );
+
+		it( "CS.role", ():void => {
+			expect( CS.role ).toEqual( jasmine.any( String ) );
+			expect( CS.role ).toBe( "https://carbonldp.com/ns/v1/security#role" );
 		} );
 
 		it( "CS.rootContainer", ():void => {
