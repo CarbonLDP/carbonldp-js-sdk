@@ -20,7 +20,7 @@ describe( module( "carbonldp/Auth/AuthenticatedUserMetadata" ), ():void => {
 		it( hasProperty(
 			OBLIGATORY,
 			"user",
-			"CarbonLDP.Auth.PersistedUser",
+			"CarbonLDP.Auth.User",
 			"Reference to the actual authenticated user."
 		), ():void => {} );
 

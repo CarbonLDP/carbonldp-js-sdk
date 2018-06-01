@@ -3,8 +3,8 @@ import {
 	DigestedObjectSchema,
 	ObjectSchemaResolver,
 } from "../ObjectSchema";
-import { PersistedDocument }from "../PersistedDocument";
-import { PersistedResource }from "../PersistedResource";
+import { Document }from "../Document";
+import { Resource }from "../Resource";
 import {
 	Pointer,
 	PointerLibrary,
@@ -20,7 +20,7 @@ import { JSONLDConverter } from "./Converter";
 interface CompactionNode {
 	paths:string[];
 	node:RDFNode;
-	resource:PersistedResource;
+	resource:Resource;
 	containerLibrary:PointerLibrary;
 	processed?:boolean;
 }
@@ -40,17 +40,17 @@ export class JSONLDCompacter {
 		this.compactionMap = new Map();
 	}
 
-	compactDocument<T extends PersistedDocument>( rdfDocument:RDFDocument ):T {
+	compactDocument<T extends Document>( rdfDocument:RDFDocument ):T {
 		const rdfDocuments:RDFDocument[] = [ rdfDocument ];
 		return this.compactDocuments<T>( rdfDocuments )[ 0 ];
 	}
 
-	compactDocuments<T extends PersistedDocument>( rdfDocuments:RDFDocument[], mainDocuments?:RDFDocument[] ):T[] {
+	compactDocuments<T extends Document>( rdfDocuments:RDFDocument[], mainDocuments?:RDFDocument[] ):T[] {
 		if( ! mainDocuments || ! mainDocuments.length ) mainDocuments = rdfDocuments;
 
 		rdfDocuments.forEach( rdfDocument => {
 			const [ [ documentNode ], fragmentNodes ] = RDFDocument.getNodes( rdfDocument );
-			const targetDocument:PersistedDocument = this.getResource( documentNode, this.documents, true );
+			const targetDocument:Document = this.getResource( documentNode, this.documents, true );
 
 			const fragmentsSet:Set<string> = new Set( targetDocument._fragmentsIndex.keys() );
 
@@ -64,7 +64,7 @@ export class JSONLDCompacter {
 			fragmentsSet.forEach( targetDocument._removeFragment, targetDocument );
 		} );
 
-		const compactedDocuments:PersistedDocument[] = rdfDocuments
+		const compactedDocuments:Document[] = rdfDocuments
 			.map( rdfDocument => rdfDocument[ "@id" ] )
 			.map( this.compactionMap.get, this.compactionMap )
 			.map( compactionNode => compactionNode.resource as any );
@@ -102,7 +102,7 @@ export class JSONLDCompacter {
 		return mainCompactedDocuments;
 	}
 
-	private compactNode( node:RDFNode, resource:PersistedResource, containerLibrary:PointerLibrary, path:string ):string[] {
+	private compactNode( node:RDFNode, resource:Resource, containerLibrary:PointerLibrary, path:string ):string[] {
 		const schema:DigestedObjectSchema = this.resolver.getSchemaFor( node, path );
 
 		if( this.resolver instanceof QueryContextBuilder ) {
@@ -147,10 +147,10 @@ export class JSONLDCompacter {
 			;
 	}
 
-	private getResource<T extends PersistedResource>( node:RDFNode, containerLibrary:PointerLibrary, isDocument?:boolean ):T {
+	private getResource<T extends Resource>( node:RDFNode, containerLibrary:PointerLibrary, isDocument?:boolean ):T {
 		const resource:T = containerLibrary.getPointer( node[ "@id" ] ) as any;
 
-		if( isDocument ) containerLibrary = PersistedDocument.decorate( resource, this.documents );
+		if( isDocument ) containerLibrary = Document.decorate( resource, this.documents );
 		this.compactionMap.set( resource.id, { paths: [], node, resource, containerLibrary } );
 
 		return resource;

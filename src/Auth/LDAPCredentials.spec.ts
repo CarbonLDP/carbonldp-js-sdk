@@ -1,5 +1,5 @@
 import { Pointer } from "../Pointer";
-import { Resource } from "../Resource";
+import { TransientResource } from "../Resource";
 import {
 	extendsClass,
 	hasProperty,
@@ -23,8 +23,8 @@ describe( module( "Carbon/Auth/LDAPCredentials" ), ():void => {
 		"Interface that represents an in-memory LDAPCredentials of a user."
 	), ():void => {
 
-		it( extendsClass( "CarbonLDP.Resource" ), ():void => {
-			const target:Resource = {} as LDAPCredentials;
+		it( extendsClass( "CarbonLDP.TransientResource" ), ():void => {
+			const target:TransientResource = {} as LDAPCredentials;
 			expect( target ).toBeDefined();
 		} );
 

@@ -6,7 +6,10 @@ import { FreeResources } from "./FreeResources";
 
 import { Pointer } from "./Pointer";
 import { URI } from "./RDF/URI";
-import { Resource } from "./Resource";
+import {
+	Resource,
+	TransientResource
+} from "./Resource";
 import {
 	extendsClass,
 	hasMethod,
@@ -20,6 +23,21 @@ import {
 } from "./test/JasmineExtender";
 
 describe( module( "carbonldp/FreeResources" ), ():void => {
+
+	describe( interfaze(
+		"CarbonLDP.BaseFreeResources",
+		"Interface for the basic properties to create a free resources container."
+	), ():void => {
+
+		it( hasProperty(
+			OBLIGATORY,
+			"_documents",
+			"CarbonLDP.Documents",
+			"A `CarbonLDP.Documents` object where the FreeResources scope is in."
+		), ():void => {
+		} );
+
+	} );
 
 	describe( interfaze(
 		"CarbonLDP.FreeResources",
@@ -40,7 +58,7 @@ describe( module( "carbonldp/FreeResources" ), ():void => {
 			OBLIGATORY,
 			"_resourcesIndex",
 			"Private property that contains the references of every free resource in a map form.",
-			"Map<string, CarbonLDP.Resource>"
+			"Map<string, CarbonLDP.TransientResource>"
 		), ():void => {} );
 
 		it( hasMethod(
@@ -58,14 +76,14 @@ describe( module( "carbonldp/FreeResources" ), ():void => {
 			"Returns the resource referred by the ID provided. If no resource exists with the ID specified, `null` is returned.", [
 				{ name: "id", type: "string", description: "The ID of the resource to sought for." },
 			],
-			{ type: "CarbonLDP.Resource" }
+			{ type: "CarbonLDP.TransientResource" }
 		), ():void => {} );
 
 		it( hasMethod(
 			OBLIGATORY,
 			"getResources",
 			"Returns an array with all the resources inside the FreeResources object.",
-			{ type: "CarbonLDP.Resource[]" }
+			{ type: "CarbonLDP.TransientResource[]" }
 		), ():void => {} );
 
 		it( hasMethod(
@@ -74,7 +92,7 @@ describe( module( "carbonldp/FreeResources" ), ():void => {
 			"Creates and returns a new free resource. Throw an Error if no valid ID if provided or if it's already in use.", [
 				{ name: "id", type: "string", optional: true, description: "The ID of the resource to create. It should be an ID as a BlankNode." },
 			],
-			{ type: "CarbonLDP.Resource" }
+			{ type: "CarbonLDP.TransientResource" }
 		), ():void => {} );
 
 		it( hasMethod(
@@ -85,7 +103,7 @@ describe( module( "carbonldp/FreeResources" ), ():void => {
 				{ name: "object", type: "T", description: "The object to be used as the new resource." },
 				{ name: "id", type: "string", optional: true, description: "The ID of the resource to create. It should be an ID as a BlankNode." },
 			],
-			{ type: "CarbonLDP.Resource" }
+			{ type: "CarbonLDP.TransientResource" }
 		), ():void => {} );
 
 		it( hasMethod(
@@ -132,8 +150,9 @@ describe( module( "carbonldp/FreeResources" ), ():void => {
 		it( hasMethod(
 			OBLIGATORY,
 			"create",
+			[ "T extends object" ],
 			"Creates a empty `CarbonLDP.FreeResources` object.", [
-				{ name: "documents", type: "CarbonLDP.Documents", description: "A `CarbonLDP.Documents` object where the FreeResources scope is in." },
+				{ name: "data", type: "T & CarbonLDP.BaseFreeResources", description: "Data to be used in the creation of the free resources container." },
 			],
 			{ type: "CarbonLDP.FreeResources" }
 		), ():void => {} );
@@ -143,8 +162,7 @@ describe( module( "carbonldp/FreeResources" ), ():void => {
 			"createFrom",
 			[ "T extends object" ],
 			"Creates a `CarbonLDP.FreeResources` object from the plain object provided.", [
-				{ name: "object", type: "T", description: "The object that wants be converted in a `CarbonLDP.FreeResources`." },
-				{ name: "documents", type: "CarbonLDP.Documents", description: "A `CarbonLDP.Documents` object where the FreeResources scope is in." },
+				{ name: "object", type: "T & CarbonLDP.BaseFreeResources", description: "The object that wants be converted in a `CarbonLDP.FreeResources`." },
 			],
 			{ type: "T & CarbonLDP.FreeResources" }
 		), ():void => {} );
@@ -245,7 +263,7 @@ describe( module( "carbonldp/FreeResources" ), ():void => {
 			expect( FreeResources.create ).toEqual( jasmine.any( Function ) );
 
 			let documents:Documents = new Documents();
-			let freeResources:FreeResources = FreeResources.create( documents );
+			let freeResources:FreeResources = FreeResources.create( { _documents: documents } );
 
 			expect( freeResources ).toBeTruthy();
 			expect( FreeResources.isDecorated( freeResources ) );
@@ -258,7 +276,7 @@ describe( module( "carbonldp/FreeResources" ), ():void => {
 
 			let documents:Documents = new Documents();
 
-			let freeResources:FreeResources = FreeResources.createFrom( {}, documents );
+			let freeResources:FreeResources = FreeResources.createFrom( { _documents: documents } );
 			expect( freeResources ).toBeTruthy();
 			expect( FreeResources.isDecorated( freeResources ) );
 
@@ -266,7 +284,7 @@ describe( module( "carbonldp/FreeResources" ), ():void => {
 				myProperty:string;
 			}
 
-			let myFreeResources:FreeResources & My = FreeResources.createFrom( { myProperty: "The property" }, documents );
+			let myFreeResources:FreeResources & My = FreeResources.createFrom( { myProperty: "The property", _documents: documents } );
 			expect( myFreeResources ).toBeTruthy();
 			expect( FreeResources.isDecorated( myFreeResources ) );
 			expect( myFreeResources.myProperty ).toBeDefined();
@@ -334,7 +352,7 @@ describe( module( "carbonldp/FreeResources" ), ():void => {
 				context = new MockedContext();
 				documents = new Documents( context );
 
-				freeResources = FreeResources.create( documents );
+				freeResources = FreeResources.create( { _documents: documents } );
 			} );
 
 			// TODO: Test in `FreeResources.decorate`
@@ -356,7 +374,7 @@ describe( module( "carbonldp/FreeResources" ), ():void => {
 
 				expect( freeResources.hasResource( "_:any..." ) ).toBe( false );
 
-				let resource:Resource & { val:string } = Resource.createFrom( { val: "The resource" } );
+				let resource:TransientResource & { val:string } = Resource.createFrom( { id: "_:1", val: "The resource" } );
 				freeResources._resourcesIndex.set( "_:some", resource );
 				expect( freeResources.hasResource( "_:some" ) ).toBe( true );
 
@@ -371,7 +389,7 @@ describe( module( "carbonldp/FreeResources" ), ():void => {
 
 				expect( freeResources.getResource( "_:any..." ) ).toBeNull();
 
-				let resource:Resource & { val:string } = Resource.createFrom( { val: "The resource" }, "_:some" );
+				let resource:TransientResource & { val:string } = TransientResource.createFrom( { id: "_:some", val: "The resource" } );
 				freeResources._resourcesIndex.set( "_:some", resource );
 				expect( freeResources.getResource( "_:some" ) ).toBe( resource );
 
@@ -383,14 +401,14 @@ describe( module( "carbonldp/FreeResources" ), ():void => {
 				expect( freeResources.getResources ).toBeDefined();
 				expect( freeResources.getResources ).toEqual( jasmine.any( Function ) );
 
-				let resources:Resource[];
+				let resources:TransientResource[];
 
 				resources = freeResources.getResources();
 				expect( resources ).toEqual( jasmine.any( Array ) );
 				expect( resources.length ).toBe( 0 );
 
-				freeResources._resourcesIndex.set( "_:some", Resource.create( "_:some" ) );
-				freeResources._resourcesIndex.set( "_:another", Resource.create( "_:another" ) );
+				freeResources._resourcesIndex.set( "_:some", TransientResource.create( { id: "_:some" } ) );
+				freeResources._resourcesIndex.set( "_:another", TransientResource.create( { id: "_:another" } ) );
 				resources = freeResources.getResources();
 				expect( resources ).toEqual( jasmine.any( Array ) );
 				expect( resources.length ).toBe( 2 );
@@ -403,18 +421,18 @@ describe( module( "carbonldp/FreeResources" ), ():void => {
 				expect( freeResources.createResource ).toBeDefined();
 				expect( freeResources.createResource ).toEqual( jasmine.any( Function ) );
 
-				let resource00:Resource;
+				let resource00:TransientResource;
 				resource00 = freeResources.createResource();
 				expect( resource00 ).toBeTruthy();
 				expect( URI.isBNodeID( resource00.id ) ).toBe( true );
 
-				let resource01:Resource;
+				let resource01:TransientResource;
 				resource01 = freeResources.createResource();
 				expect( resource01 ).toBeTruthy();
 				expect( URI.isBNodeID( resource01.id ) ).toBe( true );
 				expect( resource00.id ).not.toBe( resource01.id );
 
-				let resource02:Resource;
+				let resource02:TransientResource;
 				resource02 = freeResources.createResource( "_:some" );
 				expect( resource02 ).toBeTruthy();
 				expect( URI.isBNodeID( resource02.id ) ).toBe( true );
@@ -430,27 +448,27 @@ describe( module( "carbonldp/FreeResources" ), ():void => {
 				expect( freeResources.createResourceFrom ).toEqual( jasmine.any( Function ) );
 
 				let resourceObject00:Object = {};
-				let resource00:Resource;
+				let resource00:TransientResource;
 				resource00 = freeResources.createResourceFrom( resourceObject00 );
 				expect( resource00 ).toBeTruthy();
 				expect( URI.isBNodeID( resource00.id ) ).toBe( true );
-				expect( resource00 ).toEqual( resourceObject00 as Resource );
+				expect( resource00 ).toEqual( resourceObject00 as TransientResource );
 
 				let resourceObject01:Object = {};
-				let resource01:Resource;
+				let resource01:TransientResource;
 				resource01 = freeResources.createResourceFrom( resourceObject01 );
 				expect( resource01 ).toBeTruthy();
 				expect( URI.isBNodeID( resource01.id ) ).toBe( true );
 				expect( resource00.id ).not.toBe( resource01.id );
-				expect( resource01 ).toEqual( resourceObject01 as Resource );
+				expect( resource01 ).toEqual( resourceObject01 as TransientResource );
 
 				let resourceObject02:Object = {};
-				let resource02:Resource;
+				let resource02:TransientResource;
 				resource02 = freeResources.createResourceFrom( resourceObject02, "_:some" );
 				expect( resource02 ).toBeTruthy();
 				expect( URI.isBNodeID( resource02.id ) ).toBe( true );
 				expect( resource02.id ).toBe( "_:some" );
-				expect( resource02 ).toEqual( resourceObject02 as Resource );
+				expect( resource02 ).toEqual( resourceObject02 as TransientResource );
 
 				expect( () => freeResources.createResourceFrom( {}, "no-valid-id" ) ).toThrowError( Errors.IllegalArgumentError );
 				expect( () => freeResources.createResourceFrom( {}, "_:some" ) ).toThrowError( Errors.IDAlreadyInUseError );
@@ -463,7 +481,7 @@ describe( module( "carbonldp/FreeResources" ), ():void => {
 
 				expect( freeResources.hasPointer( "_:some" ) ).toBe( false );
 
-				freeResources._resourcesIndex.set( "_:some", Resource.create( "_:some" ) );
+				freeResources._resourcesIndex.set( "_:some", TransientResource.create( { id: "_:some" } ) );
 				expect( freeResources.hasPointer( "_:some" ) ).toBe( true );
 
 				expect( freeResources.hasPointer( "http://example.com/some/" ) ).toBe( false );
@@ -477,14 +495,14 @@ describe( module( "carbonldp/FreeResources" ), ():void => {
 				expect( freeResources.getPointer ).toBeDefined();
 				expect( freeResources.getPointer ).toEqual( jasmine.any( Function ) );
 
-				let resource:Resource = Resource.create( "_:some" );
+				let resource:TransientResource = TransientResource.create( { id: "_:some" } );
 				freeResources._resourcesIndex.set( "_:some", resource );
 				expect( freeResources.getPointer( "_:some" ) ).toBe( resource );
 
 				let pointer:Pointer = freeResources.getPointer( "_:another" );
 				expect( pointer ).toBeTruthy();
 				expect( pointer.id ).toBe( "_:another" );
-				expect( freeResources._resourcesIndex.get( "_:another" ) ).toBe( pointer as Resource );
+				expect( freeResources._resourcesIndex.get( "_:another" ) ).toBe( pointer as TransientResource );
 
 				pointer = freeResources.getPointer( "http://example.com/some/" );
 				expect( pointer ).toBeTruthy();
@@ -521,11 +539,12 @@ describe( module( "carbonldp/FreeResources" ), ():void => {
 					},
 				} );
 
-				let resource:Resource = Resource.createFrom( {
+				let resource:TransientResource = TransientResource.createFrom( {
+					id: "_:some",
 					types: [ "http://example.com/ns#MyType" ],
 					"http://example.com/ns#property": "A Property",
 					"anotherProperty": "Another Property",
-				}, "_:some" );
+				} );
 				freeResources._resourcesIndex.set( "_:some", resource );
 
 				let expandedResource:object = {
@@ -542,11 +561,12 @@ describe( module( "carbonldp/FreeResources" ), ():void => {
 				};
 				expect( freeResources.toJSON() ).toEqual( [ expandedResource ] );
 
-				let anotherResource:Resource = Resource.createFrom( {
+				let anotherResource:TransientResource = TransientResource.createFrom( {
+					id: "_:another",
 					types: [ "http://example.com/ns#MyType" ],
 					"http://example.com/ns#property": "A Property",
 					"anotherProperty": "Another Property",
-				}, "_:another" );
+				} );
 				freeResources._resourcesIndex.set( "_:another", anotherResource );
 
 				let anotherExpandedResource:object = {

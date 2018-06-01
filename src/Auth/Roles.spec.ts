@@ -417,7 +417,7 @@ xdescribe( module( "carbonldp/Auth/Roles" ), ():void => {
 					{ name: "roleURI", type: "string", description: "The URI of the role to look for its users." },
 					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true },
 				],
-				{ type: "Promise<(T & CarbonLDP.Auth.PersistedUser)[]>" }
+				{ type: "Promise<(T & CarbonLDP.Auth.User)[]>" }
 			), ( done:{ ():void, fail:() => void } ):void => {
 				let spies:any = {
 					success: ( [ pointers, response ]:[ Pointer[], Response ] ):void => {
@@ -544,7 +544,7 @@ xdescribe( module( "carbonldp/Auth/Roles" ), ():void => {
 
 			let options:RequestOptions = { timeout: 5555 };
 			let spy:jasmine.Spy = spyOn( context.documents, "addMembers" ).and.returnValue( Promise.resolve() );
-			let users:(string | Pointer)[] = [ "http://example.com/users/an-user/", Pointer.create( "http://example.com/users/another-user/" ) ];
+			let users:(string | Pointer)[] = [ "http://example.com/users/an-user/", Pointer.create( { id: "http://example.com/users/another-user/" } ) ];
 
 			let promises:Promise<any>[] = [];
 			let promise:Promise<any>;
@@ -645,7 +645,7 @@ xdescribe( module( "carbonldp/Auth/Roles" ), ():void => {
 
 			let options:RequestOptions = { timeout: 5555 };
 			let spy:jasmine.Spy = spyOn( context.documents, "removeMembers" ).and.returnValue( Promise.resolve() );
-			let users:(string | Pointer)[] = [ "http://example.com/users/an-user/", Pointer.create( "http://example.com/users/another-user/" ) ];
+			let users:(string | Pointer)[] = [ "http://example.com/users/an-user/", Pointer.create( { id: "http://example.com/users/another-user/" } ) ];
 
 			let promises:Promise<any>[] = [];
 			let promise:Promise<any>;

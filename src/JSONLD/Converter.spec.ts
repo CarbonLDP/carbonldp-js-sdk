@@ -188,7 +188,7 @@ describe( module( "carbonldp/JSONLD/Converter" ), ():void => {
 						return true;
 					},
 					getPointer: ( id:string ):Pointer => {
-						let pointer:Pointer = Pointer.create( id );
+						let pointer:Pointer = Pointer.createFrom( { id } );
 						pointer._resolved = true;
 						return pointer;
 					},
@@ -374,16 +374,16 @@ describe( module( "carbonldp/JSONLD/Converter" ), ():void => {
 						"en": "english",
 						"ja": "日本語",
 					},
-					"pointer": Pointer.create( "http://example.com/pointer/" ),
+					"pointer": Pointer.create( { id: "http://example.com/pointer/" } ),
 					"pointerList": [
-						Pointer.create( "http://example.com/pointer-1/" ),
-						Pointer.create( "http://example.com/pointer-2/" ),
-						Pointer.create( "http://example.com/pointer-3/" ),
+						Pointer.create( { id: "http://example.com/pointer-1/" } ),
+						Pointer.create( { id: "http://example.com/pointer-2/" } ),
+						Pointer.create( { id: "http://example.com/pointer-3/" } ),
 					],
 					"pointerSet": [
-						Pointer.create( "http://example.com/pointer-1/" ),
-						Pointer.create( "http://example.com/pointer-2/" ),
-						Pointer.create( "http://example.com/pointer-3/" ),
+						Pointer.create( { id: "http://example.com/pointer-1/" } ),
+						Pointer.create( { id: "http://example.com/pointer-2/" } ),
+						Pointer.create( { id: "http://example.com/pointer-3/" } ),
 					],
 					"unknownTypeLiteral": 1,
 					"unknownTypeArray": [
@@ -392,15 +392,15 @@ describe( module( "carbonldp/JSONLD/Converter" ), ():void => {
 						new Date( "2015-12-04T23:06:57.920Z" ),
 						"Some string",
 						function():void {},
-						Pointer.create( "http://example.com/pointer/" ),
+						Pointer.create( { id: "http://example.com/pointer/" } ),
 					],
-					"unknownTypePointer": Pointer.create( "http://example.com/pointer/" ),
+					"unknownTypePointer": Pointer.create( { id: "http://example.com/pointer/" } ),
 					"anotherPrefixedPointer": "ex:another-resource/",
 					"anotherPointerInSchema": "propertyInGeneral",
 					"notInSchemaLiteral": "Property Literal not defined in Schema",
-					"notInSchemaPointer": Pointer.create( "http://example.com/another-pointer/" ),
+					"notInSchemaPointer": Pointer.create( { id: "http://example.com/another-pointer/" } ),
 					"vocabPointer": "to-pointer",
-					"relativePointer": Pointer.create( "relative-pointer/" ),
+					"relativePointer": Pointer.create( { id: "relative-pointer/" } ),
 					"elementWithoutID": "This element will be converted into a set",
 					"relative@id": [ "Property with a relative @id" ],
 				};

@@ -1,5 +1,5 @@
 import { VolatileResource } from "../LDP/VolatileResource";
-import { PersistedFragment } from "../PersistedFragment";
+import { Fragment } from "../Fragment";
 import {
 	extendsClass,
 	hasProperty,
@@ -25,8 +25,8 @@ describe( module( "carbonldp/System/PlatformInstance" ), ():void => {
 			expect( target ).toBeDefined();
 		} );
 
-		it( extendsClass( "CarbonLDP.PersistedFragment.PersistedFragment" ), ():void => {
-			const target:PersistedFragment = {} as PlatformInstance;
+		it( extendsClass( "CarbonLDP.Fragment" ), ():void => {
+			const target:Fragment = {} as PlatformInstance;
 			expect( target ).toBeDefined();
 		} );
 

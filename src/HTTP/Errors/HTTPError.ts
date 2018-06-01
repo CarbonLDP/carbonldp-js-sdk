@@ -1,8 +1,8 @@
 import { AbstractError } from "../../Errors";
 import { Error } from "../../LDP/Error";
 import { ErrorResponse } from "../../LDP/ErrorResponse";
-import { PersistedDocument } from "../../PersistedDocument";
-import { Resource } from "../../Resource";
+import { Document } from "../../Document";
+import { TransientResource } from "../../Resource";
 import { Response } from "../Response";
 
 export class HTTPError extends AbstractError implements ErrorResponse {
@@ -22,7 +22,7 @@ export class HTTPError extends AbstractError implements ErrorResponse {
 
 	isResolved:() => boolean;
 
-	resolve:<T>() => Promise<T & PersistedDocument>;
+	resolve:<T>() => Promise<T & Document>;
 
 	addType:( type:string ) => void;
 	hasType:( type:string ) => boolean;
@@ -31,7 +31,7 @@ export class HTTPError extends AbstractError implements ErrorResponse {
 	constructor( message:string, response:Response ) {
 		super( message );
 
-		Resource.createFrom( this );
+		TransientResource.createFrom( this );
 
 		this.errors = [];
 		this.requestID = null;

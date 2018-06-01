@@ -1,4 +1,4 @@
-import { Resource } from "../Resource";
+import { TransientResource } from "../Resource";
 import {
 	extendsClass,
 	hasMethod,
@@ -22,7 +22,7 @@ describe( module( "carbonldp/LDP/VolatileResource" ), ():void => {
 		"Interface that represents a free resource, i.e. a dynamic generated resource that does not have a persisted form."
 	), ():void => {
 
-		it( extendsClass( "CarbonLDP.Resource" ), ():void => {} );
+		it( extendsClass( "CarbonLDP.TransientResource" ), ():void => {} );
 
 	} );
 
@@ -41,16 +41,19 @@ describe( module( "carbonldp/LDP/VolatileResource" ), ():void => {
 			OBLIGATORY,
 			"is",
 			"Return true if the object provided is considered a `CarbonLDP.LDP.VolatileResource` object.", [
-				{ name: "object", type: "object", description: "Object to check." },
+				{ name: "value", type: "any", description: "Object to check." },
 			],
-			{ type: "object is CarbonLDP.LDP.VolatileResource" }
+			{ type: "value is CarbonLDP.LDP.VolatileResource" }
 		), ():void => {} );
 
 		it( hasMethod(
 			OBLIGATORY,
 			"create",
-			"Creates empty `CarbonLDP.LDP.VolatileResource` object.",
-			{ type: "CarbonLDP.LDP.VolatileResource" }
+			[ "T extends object" ],
+			"Creates empty `CarbonLDP.LDP.VolatileResource` object.", [
+				{ name: "data", type: "T", optional: true },
+			],
+			{ type: "T & CarbonLDP.LDP.VolatileResource" }
 		), ():void => {} );
 
 		it( hasMethod(
@@ -97,7 +100,7 @@ describe( module( "carbonldp/LDP/VolatileResource" ), ():void => {
 			object = {};
 			expect( VolatileResource.is( object ) ).toBe( false );
 
-			Resource.decorate( object );
+			TransientResource.decorate( object );
 			expect( VolatileResource.is( object ) ).toBe( false );
 
 			object[ "types" ].push( C.VolatileResource );

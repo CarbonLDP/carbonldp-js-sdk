@@ -1,5 +1,5 @@
 import { Pointer } from "../Pointer";
-import { Resource } from "../Resource";
+import { TransientResource } from "../Resource";
 import {
 	extendsClass,
 	hasProperty,
@@ -12,7 +12,7 @@ import {
 	property,
 	STATIC
 } from "../test/JasmineExtender";
-import { C } from "../Vocabularies/C";
+import { C } from "../Vocabularies";
 
 import { EventMessage } from "./EventMessage";
 
@@ -28,8 +28,8 @@ describe( module( "carbonldp/Messaging/Message" ), ():void => {
 			expect( target ).toBeDefined();
 		} );
 
-		it( extendsClass( "CarbonLDP.Resource" ), ():void => {
-			const target:Resource = {} as EventMessage;
+		it( extendsClass( "CarbonLDP.TransientResource" ), ():void => {
+			const target:TransientResource = {} as EventMessage;
 			expect( target ).toBeDefined();
 		} );
 
@@ -58,15 +58,15 @@ describe( module( "carbonldp/Messaging/Message" ), ():void => {
 
 		describe( method(
 			OBLIGATORY,
-			"isDecorated"
+			"is"
 		), ():void => {
 
 			it( hasSignature(
-				"Returns true if the object provided has the specific properties of the `CarbonLDP.Messaging.EventMessage` interface.",
+				"Returns true if the object is considered a `CarbonLDP.Messaging.EventMessage` interface.",
 				[
-					{ name: "object", type: "object", description: "The object to be tested." },
+					{ name: "value", type: "any", description: "The value to be tested." },
 				],
-				{ type: "object is CarbonLDP.Messaging.EventMessage" }
+				{ type: "value is CarbonLDP.Messaging.EventMessage" }
 			), ():void => {} );
 
 		} );
@@ -99,27 +99,27 @@ describe( module( "carbonldp/Messaging/Message" ), ():void => {
 			} );
 		} );
 
-		describe( "EventMessage.isDecorated", ():void => {
+		describe( "EventMessage.is", ():void => {
 
 			it( "should exists", ():void => {
-				expect( EventMessage.isDecorated ).toBeDefined();
-				expect( EventMessage.isDecorated ).toEqual( jasmine.any( Function ) );
+				expect( EventMessage.is ).toBeDefined();
+				expect( EventMessage.is ).toEqual( jasmine.any( Function ) );
 			} );
 
 			it( "should return false if falsy is provided", ():void => {
-				expect( EventMessage.isDecorated( void 0 ) ).toBe( false );
-				expect( EventMessage.isDecorated( null ) ).toBe( false );
+				expect( EventMessage.is( void 0 ) ).toBe( false );
+				expect( EventMessage.is( null ) ).toBe( false );
 			} );
 
-			it( "should return false if has a missing class property", ():void => {
-				const object:Partial<EventMessage> = {
+			it( "should return false if has a missing model properties", ():void => {
+				const object:EventMessage = TransientResource.create( {
 					target: null,
-				};
+				} );
 
-				expect( EventMessage.isDecorated( object ) ).toBe( true );
+				expect( EventMessage.is( object ) ).toBe( true );
 
 				delete object.target;
-				expect( EventMessage.isDecorated( object ) ).toBe( false );
+				expect( EventMessage.is( object ) ).toBe( false );
 				object.target = null;
 			} );
 

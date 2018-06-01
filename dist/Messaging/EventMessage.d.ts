@@ -1,12 +1,11 @@
-import { ModelFactory } from "../ModelFactory";
 import { ObjectSchema } from "../ObjectSchema";
 import { Pointer } from "../Pointer";
-import { Resource } from "../Resource";
-export interface EventMessage extends Resource {
+import { TransientResource } from "../Resource";
+export interface EventMessage extends TransientResource {
     target: Pointer;
 }
-export interface EventMessageFactory extends ModelFactory<EventMessage> {
+export interface EventMessageFactory {
     SCHEMA: ObjectSchema;
-    isDecorated(object: object): object is EventMessage;
+    is(value: any): value is EventMessage;
 }
 export declare const EventMessage: EventMessageFactory;

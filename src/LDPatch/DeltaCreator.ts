@@ -23,7 +23,7 @@ import {
 	PointerType,
 } from "../ObjectSchema";
 import { Pointer } from "../Pointer";
-import { Resource } from "../Resource";
+import { TransientResource } from "../Resource";
 import { isString } from "../Utils";
 import { XSD } from "../Vocabularies/XSD";
 
@@ -81,7 +81,7 @@ export class DeltaCreator {
 		return `${ patch }`;
 	}
 
-	addResource( schema:DigestedObjectSchema, oldResource:Resource, newResource:Resource ):void {
+	addResource( schema:DigestedObjectSchema, oldResource:TransientResource, newResource:TransientResource ):void {
 		const id:string = newResource.id;
 		const resource:IRIToken | PrefixedNameToken | BlankNodeToken = isBNodeLabel( id ) ?
 			new BlankNodeToken( id ) : this.compactIRI( schema, id );

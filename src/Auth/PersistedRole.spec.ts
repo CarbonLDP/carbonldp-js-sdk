@@ -20,8 +20,8 @@ import {
 	OPTIONAL,
 	STATIC,
 } from "../test/JasmineExtender";
-import { PersistedDocument } from "./../PersistedDocument";
-import { PersistedProtectedDocument } from "./../PersistedProtectedDocument";
+import { Document } from "../Document";
+import { ProtectedDocument } from "../ProtectedDocument";
 import * as Utils from "./../Utils";
 
 import * as PersistedRole from "./PersistedRole";
@@ -266,10 +266,10 @@ xdescribe( module( "carbonldp/Auth/PersistedRole" ), ():void => {
 			object = Role.Factory.createFrom( object, "Role name" );
 			expect( PersistedRole.Factory.is( object ) ).toBe( false );
 
-			object = PersistedDocument.decorate( object, new Documents() );
+			object = Document.decorate( object, new Documents() );
 			expect( PersistedRole.Factory.is( object ) ).toBe( false );
 
-			object = PersistedProtectedDocument.decorate( object, new Documents() );
+			object = ProtectedDocument.decorate( object, new Documents() );
 			expect( PersistedRole.Factory.is( object ) ).toBe( true );
 		} );
 

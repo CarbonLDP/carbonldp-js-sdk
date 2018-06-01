@@ -16,7 +16,7 @@ var HTTPError = (function (_super) {
     __extends(HTTPError, _super);
     function HTTPError(message, response) {
         var _this = _super.call(this, message) || this;
-        Resource_1.Resource.createFrom(_this);
+        Resource_1.TransientResource.createFrom(_this);
         _this.errors = [];
         _this.requestID = null;
         _this.response = response;

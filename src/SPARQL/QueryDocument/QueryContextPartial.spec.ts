@@ -1,7 +1,7 @@
 import { AbstractContext } from "../../AbstractContext";
 import { ObjectSchemaDigester } from "../../ObjectSchema";
-import { PersistedDocument } from "../../PersistedDocument";
-import { PersistedFragment } from "../../PersistedFragment";
+import { Document } from "../../Document";
+import { Fragment } from "../../Fragment";
 import {
 	clazz,
 	constructor,
@@ -32,16 +32,15 @@ describe( module( "carbonldp/SPARQL/QueryDocument/QueryContextPartial" ), ():voi
 		} );
 
 		let context:AbstractContext;
-		let persistedDocument:PersistedDocument;
+		let persistedDocument:Document;
 		beforeEach( ():void => {
 			context = new class extends AbstractContext {
 				protected _baseURI:string = "https://example.com/";
 			};
 
-			persistedDocument = PersistedDocument.createFrom(
+			persistedDocument = Document.decorate(
 				context.documents.getPointer( "https://example.com/resource/" ),
-				context.documents,
-				"https://example.com/resource/"
+				context.documents
 			);
 			persistedDocument._partialMetadata = new PartialMetadata( ObjectSchemaDigester.digestSchema( {
 				"documentProperty": {
@@ -54,7 +53,7 @@ describe( module( "carbonldp/SPARQL/QueryDocument/QueryContextPartial" ), ():voi
 
 			it( hasSignature(
 				[
-					{ name: "document", type: "CarbonLDP.PersistedDocument", description: "partial document from whom the query context is created for." },
+					{ name: "document", type: "CarbonLDP.Document", description: "partial document from whom the query context is created for." },
 					{ name: "context", type: "CarbonLDP.Context", optional: true, description: "The carbon context from where the query belongs to." },
 				]
 			), ():void => {
@@ -111,7 +110,7 @@ describe( module( "carbonldp/SPARQL/QueryDocument/QueryContextPartial" ), ():voi
 
 			it( "should return the schema of a document property", ():void => {
 				const queryContext:QueryContextPartial = new QueryContextPartial( persistedDocument, context );
-				const fragment:PersistedFragment = persistedDocument.createFragment();
+				const fragment:Fragment = persistedDocument.createFragment();
 				fragment._partialMetadata = new PartialMetadata( ObjectSchemaDigester.digestSchema( {
 					"fragmentProperty": {
 						"@id": "https://example.com/ns#fragment-property",
