@@ -8,8 +8,15 @@ import * as Utils from "../Utils";
 
 import * as Auth from "./";
 
-import { TransientACE } from "./ACE";
-import { TransientACL } from "./ACL";
+import {
+	ACE,
+	TransientACE,
+} from "./ACE";
+import {
+	ACL,
+	BaseACL,
+	TransientACL,
+} from "./ACL";
 import { AuthenticatedUserInformationAccessor } from "./AuthenticatedUserInformationAccessor";
 import { AuthenticatedUserMetadata } from "./AuthenticatedUserMetadata";
 import { Authenticator } from "./Authenticator";
@@ -19,11 +26,8 @@ import { BasicCredentials } from "./BasicCredentials";
 import { BasicToken } from "./BasicToken";
 import { CredentialSet } from "./CredentialSet";
 import { LDAPCredentials } from "./LDAPCredentials";
-import { ACE } from "./ACE";
-import { ACL } from "./ACL";
 import { PasswordSecret } from "./PasswordSecret";
 import * as PersistedRole from "./PersistedRole";
-import { User } from "./User";
 import * as Role from "./Role";
 import * as Roles from "./Roles";
 import { AuthService } from "./Service";
@@ -32,7 +36,10 @@ import {
 	TokenCredentials,
 	TokenCredentialsBase,
 } from "./TokenCredentials";
-import { TransientUser } from "./User";
+import {
+	TransientUser,
+	User,
+} from "./User";
 import { UsernameAndPasswordCredentials } from "./UsernameAndPasswordCredentials";
 import { UsersEndpoint } from "./UsersEndpoint";
 
@@ -185,6 +192,15 @@ describe( module( "carbonldp/Auth" ), ():void => {
 	), ():void => {
 		expect( Auth.ACL ).toBeDefined();
 		expect( Auth.ACL ).toBe( ACL );
+	} );
+
+	it( reexports(
+		STATIC,
+		"BaseACL",
+		"CarbonLDP.Auth.BaseACL"
+	), ():void => {
+		const target:Auth.BaseACL = {} as BaseACL;
+		expect( target ).toBeDefined();
 	} );
 
 	it( reexports(

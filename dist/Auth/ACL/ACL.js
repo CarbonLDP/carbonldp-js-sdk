@@ -1,8 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var Vocabularies_1 = require("../../Vocabularies");
+var TransientACL_1 = require("./TransientACL");
 exports.ACL = {
-    TYPE: Vocabularies_1.CS.AccessControlList,
+    TYPE: TransientACL_1.TransientACL.TYPE,
     SCHEMA: {
         "protectedDocument": {
             "@id": Vocabularies_1.CS.protectedDocument,
@@ -28,6 +29,8 @@ exports.ACL = {
             "@container": "@set",
         },
     },
+    create: TransientACL_1.TransientACL.create,
+    createFrom: TransientACL_1.TransientACL.createFrom,
 };
 
 //# sourceMappingURL=ACL.js.map

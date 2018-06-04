@@ -86,11 +86,7 @@ describe( module( "carbonldp/Auth/ACL" ), ():void => {
 		"Interface with factory, decorate and utils methods for `CarbonLDP.Auth.ACL` objects."
 	), ():void => {
 
-		it( hasProperty(
-			OBLIGATORY,
-			"TYPE",
-			"CarbonLDP.Vocabulary.CS.AccessControlList"
-		), ():void => {} );
+		it( extendsClass( "CarbonLDP.Auth.TransientACLFactory" ), ():void => {} );
 
 		describe( property(
 			OBLIGATORY,

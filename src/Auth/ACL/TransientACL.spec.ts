@@ -1,10 +1,13 @@
+import { anyThatMatches } from "../../../test/helpers/jasmine-equalities";
 import { TransientDocument } from "../../Document";
 import { Pointer } from "../../Pointer";
 import {
 	extendsClass,
 	hasProperty,
+	hasSignature,
 	interfaze,
 	isDefined,
+	method,
 	module,
 	OBLIGATORY,
 	OPTIONAL,
@@ -13,6 +16,7 @@ import {
 } from "../../test/JasmineExtender";
 import { CS } from "../../Vocabularies";
 import { TransientACE } from "../ACE";
+import { BaseACL } from "./BaseACL";
 
 import { TransientACL } from "./TransientACL";
 
@@ -24,11 +28,8 @@ describe( module( "carbonldp/Auth/ACL" ), ():void => {
 	), ():void => {
 
 		it( extendsClass( "CarbonLDP.TransientDocument" ), ():void => {
-			let acl:TransientACL = <any> {};
-			let fragment:TransientDocument;
-
-			fragment = acl;
-			expect( fragment ).toEqual( jasmine.any( Object ) );
+			const target:TransientDocument = {} as TransientACL;
+			expect( target ).toBeDefined();
 		} );
 
 		it( hasProperty(
@@ -102,6 +103,95 @@ describe( module( "carbonldp/Auth/ACL" ), ():void => {
 
 			it( "should be cs:AccessControlList", () => {
 				expect( TransientACL.TYPE ).toBe( CS.AccessControlList );
+			} );
+
+		} );
+
+
+		describe( method( OBLIGATORY, "create" ), () => {
+
+			it( hasSignature(
+				[ "T extends object" ],
+				[
+					{ name: "data", type: "T & CarbonLDP.Auth.BaseACL" },
+				],
+				{ type: "T & CarbonLDP.Auth.TransientACL" }
+			), () => {} );
+
+			it( "should exists", ():void => {
+				expect( TransientACL.create ).toBeDefined();
+				expect( TransientACL.create ).toEqual( jasmine.any( Function ) );
+			} );
+
+
+			it( "should return a TransientDocument", () => {
+				const returned:TransientDocument = TransientACL.create( {
+					protectedDocument: Pointer.create( { id: "document/" } ),
+				} );
+
+				expect( returned ).toEqual( anyThatMatches( TransientDocument.is, "isTransientDocument" ) as any );
+			} );
+
+			it( "should add cs:AccessControlList type", () => {
+				const returned:TransientDocument = TransientACL.create( {
+					protectedDocument: Pointer.create( { id: "document/" } ),
+				} );
+
+				expect( returned.types ).toContain( CS.AccessControlList );
+			} );
+
+			it( "should return a different object reference", () => {
+				const base:BaseACL = {
+					protectedDocument: Pointer.create( { id: "document/" } ),
+				};
+
+				const returned:TransientACL = TransientACL.create( base );
+
+				expect( base ).not.toBe( returned );
+			} );
+
+		} );
+
+		describe( method( OBLIGATORY, "createFrom" ), () => {
+
+			it( hasSignature(
+				[ "T extends object" ],
+				[
+					{ name: "data", type: "T & CarbonLDP.Auth.BaseACL" },
+				],
+				{ type: "T & CarbonLDP.Auth.TransientACL" }
+			), () => {} );
+
+			it( "should exists", ():void => {
+				expect( TransientACL.createFrom ).toBeDefined();
+				expect( TransientACL.createFrom ).toEqual( jasmine.any( Function ) );
+			} );
+
+
+			it( "should return a TransientDocument", () => {
+				const returned:TransientDocument = TransientACL.createFrom( {
+					protectedDocument: Pointer.createFrom( { id: "document/" } ),
+				} );
+
+				expect( returned ).toEqual( anyThatMatches( TransientDocument.is, "isTransientDocument" ) as any );
+			} );
+
+			it( "should add cs:AccessControlList type", () => {
+				const returned:TransientDocument = TransientACL.createFrom( {
+					protectedDocument: Pointer.createFrom( { id: "document/" } ),
+				} );
+
+				expect( returned.types ).toContain( CS.AccessControlList );
+			} );
+
+			it( "should return a same object reference", () => {
+				const base:BaseACL = {
+					protectedDocument: Pointer.create( { id: "document/" } ),
+				};
+
+				const returned:TransientACL = TransientACL.createFrom( base );
+
+				expect( base ).toBe( returned );
 			} );
 
 		} );

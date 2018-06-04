@@ -3,7 +3,10 @@ import { ObjectSchema } from "../../ObjectSchema";
 import { Pointer } from "../../Pointer";
 import { CS } from "../../Vocabularies";
 import { ACE } from "../ACE";
-import { TransientACLFactory } from "./TransientACL";
+import {
+	TransientACL,
+	TransientACLFactory,
+} from "./TransientACL";
 
 
 export interface ACL extends Document {
@@ -21,7 +24,7 @@ export interface ACLFactory extends TransientACLFactory {
 }
 
 export const ACL:ACLFactory = {
-	TYPE: CS.AccessControlList,
+	TYPE: TransientACL.TYPE,
 	SCHEMA: {
 		"protectedDocument": {
 			"@id": CS.protectedDocument,
@@ -47,4 +50,7 @@ export const ACL:ACLFactory = {
 			"@container": "@set",
 		},
 	},
+
+	create: TransientACL.create,
+	createFrom: TransientACL.createFrom,
 };
