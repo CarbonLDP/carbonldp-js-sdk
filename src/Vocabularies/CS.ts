@@ -15,6 +15,7 @@ export interface CS {
 	Extend:"https://carbonldp.com/ns/v1/security#Extend";
 	LDAPCredentials:"https://carbonldp.com/ns/v1/security#LDAPCredentials";
 	ManageSecurity:"https://carbonldp.com/ns/v1/security#ManageSecurity";
+	PasswordSecret:"https://carbonldp.com/ns/v1/security#PasswordSecret";
 	PreferAuthToken:"https://carbonldp.com/ns/v1/security#PreferAuthToken";
 	ProtectedDocument:"https://carbonldp.com/ns/v1/security#ProtectedDocument";
 	Read:"https://carbonldp.com/ns/v1/security#Read";
@@ -42,6 +43,7 @@ export interface CS {
 	expires:"https://carbonldp.com/ns/v1/security#expires";
 	forIRI:"https://carbonldp.com/ns/v1/security#forIRI";
 	granting:"https://carbonldp.com/ns/v1/security#granting";
+	hashedPassword:"https://carbonldp.com/ns/v1/security#hashedPassword";
 	inheritableEntry:"https://carbonldp.com/ns/v1/security#inheritableEntry";
 	ldapServer:"https://carbonldp.com/ns/v1/security#ldapServer";
 	ldapUserDN:"https://carbonldp.com/ns/v1/security#ldapUserDN";
@@ -76,6 +78,7 @@ export const CS:CS = {
 	Extend: "https://carbonldp.com/ns/v1/security#Extend",
 	LDAPCredentials: "https://carbonldp.com/ns/v1/security#LDAPCredentials",
 	ManageSecurity: "https://carbonldp.com/ns/v1/security#ManageSecurity",
+	PasswordSecret: "https://carbonldp.com/ns/v1/security#PasswordSecret",
 	PreferAuthToken: "https://carbonldp.com/ns/v1/security#PreferAuthToken",
 	ProtectedDocument: "https://carbonldp.com/ns/v1/security#ProtectedDocument",
 	Read: "https://carbonldp.com/ns/v1/security#Read",
@@ -103,6 +106,7 @@ export const CS:CS = {
 	expires: "https://carbonldp.com/ns/v1/security#expires",
 	forIRI: "https://carbonldp.com/ns/v1/security#forIRI",
 	granting: "https://carbonldp.com/ns/v1/security#granting",
+	hashedPassword: "https://carbonldp.com/ns/v1/security#hashedPassword",
 	inheritableEntry: "https://carbonldp.com/ns/v1/security#inheritableEntry",
 	ldapServer: "https://carbonldp.com/ns/v1/security#ldapServer",
 	ldapUserDN: "https://carbonldp.com/ns/v1/security#ldapUserDN",

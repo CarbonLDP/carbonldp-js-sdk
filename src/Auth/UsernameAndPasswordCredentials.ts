@@ -16,6 +16,7 @@ export interface UsernameAndPasswordCredentialsBase {
 export interface UsernameAndPasswordCredentials extends TransientResource {
 	username?:string;
 	password?:string;
+	// TODO: Change to a PasswordSecret
 	passwordSecret?:Pointer;
 }
 

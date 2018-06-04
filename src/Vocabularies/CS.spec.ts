@@ -153,6 +153,15 @@ describe( module( "carbonldp/Vocabularies/CS" ), ():void => {
 
 		it( hasProperty(
 			OBLIGATORY,
+			"PasswordSecret",
+			"https://carbonldp.com/ns/v1/security#PasswordSecret"
+		), ():void => {
+			const target:CS[ "PasswordSecret" ] = "https://carbonldp.com/ns/v1/security#PasswordSecret";
+			expect( target ).toBeDefined();
+		} );
+
+		it( hasProperty(
+			OBLIGATORY,
 			"PreferAuthToken",
 			"https://carbonldp.com/ns/v1/security#PreferAuthToken"
 		), ():void => {
@@ -388,6 +397,15 @@ describe( module( "carbonldp/Vocabularies/CS" ), ():void => {
 
 		it( hasProperty(
 			OBLIGATORY,
+			"hashedPassword",
+			"https://carbonldp.com/ns/v1/security#hashedPassword"
+		), ():void => {
+			const target:CS[ "hashedPassword" ] = "https://carbonldp.com/ns/v1/security#hashedPassword";
+			expect( target ).toBeDefined();
+		} );
+
+		it( hasProperty(
+			OBLIGATORY,
 			"inheritableEntry",
 			"https://carbonldp.com/ns/v1/security#inheritableEntry"
 		), ():void => {
@@ -518,7 +536,7 @@ describe( module( "carbonldp/Vocabularies/CS" ), ():void => {
 		} );
 
 		it( "should test all exported IRIs", ():void => {
-			expect( Object.keys( CS ).length ).toBe( 56 );
+			expect( Object.keys( CS ).length ).toBe( 58 );
 		} );
 
 		it( "CS.namespace", ():void => {
@@ -594,6 +612,11 @@ describe( module( "carbonldp/Vocabularies/CS" ), ():void => {
 		it( "CS.ManageSecurity", ():void => {
 			expect( CS.ManageSecurity ).toEqual( jasmine.any( String ) );
 			expect( CS.ManageSecurity ).toBe( "https://carbonldp.com/ns/v1/security#ManageSecurity" );
+		} );
+
+		it( "CS.PasswordSecret", ():void => {
+			expect( CS.PasswordSecret ).toEqual( jasmine.any( String ) );
+			expect( CS.PasswordSecret ).toBe( "https://carbonldp.com/ns/v1/security#PasswordSecret" );
 		} );
 
 		it( "CS.PreferAuthToken", ():void => {
@@ -725,6 +748,11 @@ describe( module( "carbonldp/Vocabularies/CS" ), ():void => {
 		it( "CS.granting", ():void => {
 			expect( CS.granting ).toEqual( jasmine.any( String ) );
 			expect( CS.granting ).toBe( "https://carbonldp.com/ns/v1/security#granting" );
+		} );
+
+		it( "CS.hashedPassword", ():void => {
+			expect( CS.hashedPassword ).toEqual( jasmine.any( String ) );
+			expect( CS.hashedPassword ).toBe( "https://carbonldp.com/ns/v1/security#hashedPassword" );
 		} );
 
 		it( "CS.inheritableEntry", ():void => {

@@ -5,6 +5,7 @@ import { AuthenticatedUserInformationAccessor } from "./Auth/AuthenticatedUserIn
 import { AuthenticatedUserMetadata } from "./Auth/AuthenticatedUserMetadata";
 import { CredentialSet } from "./Auth/CredentialSet";
 import { LDAPCredentials } from "./Auth/LDAPCredentials";
+import { PasswordSecret } from "./Auth/PasswordSecret";
 import { AuthService } from "./Auth/Service";
 import { TokenCredentials } from "./Auth/TokenCredentials";
 import { User } from "./Auth/User";
@@ -235,6 +236,7 @@ export class SDKContext implements Context {
 		this.extendObjectSchema( CredentialSet.TYPE, CredentialSet.SCHEMA );
 		this.extendObjectSchema( UsernameAndPasswordCredentials.TYPE, UsernameAndPasswordCredentials.SCHEMA );
 		this.extendObjectSchema( LDAPCredentials.TYPE, LDAPCredentials.SCHEMA );
+		this.extendObjectSchema( PasswordSecret.TYPE, PasswordSecret.SCHEMA );
 
 		this.extendObjectSchema( ValidationReport.TYPE, ValidationReport.SCHEMA );
 		this.extendObjectSchema( ValidationResult.TYPE, ValidationResult.SCHEMA );

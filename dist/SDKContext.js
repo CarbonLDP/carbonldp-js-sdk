@@ -14,6 +14,7 @@ var AuthenticatedUserInformationAccessor_1 = require("./Auth/AuthenticatedUserIn
 var AuthenticatedUserMetadata_1 = require("./Auth/AuthenticatedUserMetadata");
 var CredentialSet_1 = require("./Auth/CredentialSet");
 var LDAPCredentials_1 = require("./Auth/LDAPCredentials");
+var PasswordSecret_1 = require("./Auth/PasswordSecret");
 var TokenCredentials_1 = require("./Auth/TokenCredentials");
 var User_1 = require("./Auth/User");
 var UsernameAndPasswordCredentials_1 = require("./Auth/UsernameAndPasswordCredentials");
@@ -195,6 +196,7 @@ var SDKContext = (function () {
         this.extendObjectSchema(CredentialSet_1.CredentialSet.TYPE, CredentialSet_1.CredentialSet.SCHEMA);
         this.extendObjectSchema(UsernameAndPasswordCredentials_1.UsernameAndPasswordCredentials.TYPE, UsernameAndPasswordCredentials_1.UsernameAndPasswordCredentials.SCHEMA);
         this.extendObjectSchema(LDAPCredentials_1.LDAPCredentials.TYPE, LDAPCredentials_1.LDAPCredentials.SCHEMA);
+        this.extendObjectSchema(PasswordSecret_1.PasswordSecret.TYPE, PasswordSecret_1.PasswordSecret.SCHEMA);
         this.extendObjectSchema(ValidationReport_1.ValidationReport.TYPE, ValidationReport_1.ValidationReport.SCHEMA);
         this.extendObjectSchema(ValidationResult_1.ValidationResult.TYPE, ValidationResult_1.ValidationResult.SCHEMA);
         this.extendObjectSchema(QueryMetadata_1.QueryMetadata.TYPE, QueryMetadata_1.QueryMetadata.SCHEMA);
