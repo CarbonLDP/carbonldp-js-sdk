@@ -13,9 +13,12 @@ export interface CS {
 	Credentials:"https://carbonldp.com/ns/v1/security#Credentials";
 	CredentialSet:"https://carbonldp.com/ns/v1/security#CredentialSet";
 	Delete:"https://carbonldp.com/ns/v1/security#Delete";
+	DetailedUserACReport:"https://carbonldp.com/ns/v1/security#DetailedUserACReport";
+	GrantingStep:"https://carbonldp.com/ns/v1/security#GrantingStep";
 	Impersonate:"https://carbonldp.com/ns/v1/security#Impersonate";
 	LDAPCredentials:"https://carbonldp.com/ns/v1/security#LDAPCredentials";
 	PasswordSecret:"https://carbonldp.com/ns/v1/security#PasswordSecret";
+	PermissionReport:"https://carbonldp.com/ns/v1/security#PermissionReport";
 	PreferAuthToken:"https://carbonldp.com/ns/v1/security#PreferAuthToken";
 	ProtectedDocument:"https://carbonldp.com/ns/v1/security#ProtectedDocument";
 	Read:"https://carbonldp.com/ns/v1/security#Read";
@@ -31,6 +34,8 @@ export interface CS {
 	accessControlList:"https://carbonldp.com/ns/v1/security#accessControlList";
 	allDescendantsACEntry:"https://carbonldp.com/ns/v1/security#allDescendantsACEntry";
 	allowsOrigin:"https://carbonldp.com/ns/v1/security#allowsOrigin";
+	applied:"https://carbonldp.com/ns/v1/security#applied";
+	appliedBy:"https://carbonldp.com/ns/v1/security#appliedBy";
 	authenticatedUserMetadata:"https://carbonldp.com/ns/v1/security#authenticatedUserMetadata";
 	authToken:"https://carbonldp.com/ns/v1/security#authToken";
 	childRole:"https://carbonldp.com/ns/v1/security#childRole";
@@ -41,8 +46,11 @@ export interface CS {
 	directACEntry:"https://carbonldp.com/ns/v1/security#directACEntry";
 	expires:"https://carbonldp.com/ns/v1/security#expires";
 	forIRI:"https://carbonldp.com/ns/v1/security#forIRI";
+	granted:"https://carbonldp.com/ns/v1/security#granted";
+	grantingChain:"https://carbonldp.com/ns/v1/security#grantingChain";
 	hashedPassword:"https://carbonldp.com/ns/v1/security#hashedPassword";
 	immediateDescendantsACEntry:"https://carbonldp.com/ns/v1/security#immediateDescendantsACEntry";
+	inheritanceDisabledBy:"https://carbonldp.com/ns/v1/security#inheritanceDisabledBy";
 	inherits:"https://carbonldp.com/ns/v1/security#inherits";
 	ldapServer:"https://carbonldp.com/ns/v1/security#ldapServer";
 	ldapUserDN:"https://carbonldp.com/ns/v1/security#ldapUserDN";
@@ -52,6 +60,7 @@ export interface CS {
 	password:"https://carbonldp.com/ns/v1/security#password";
 	passwordSecret:"https://carbonldp.com/ns/v1/security#passwordSecret";
 	permission:"https://carbonldp.com/ns/v1/security#permission";
+	permissionReport:"https://carbonldp.com/ns/v1/security#permissionReport";
 	protectedDocument:"https://carbonldp.com/ns/v1/security#protectedDocument";
 	rootContainer:"https://carbonldp.com/ns/v1/security#rootContainer";
 	subject:"https://carbonldp.com/ns/v1/security#subject";
@@ -76,9 +85,12 @@ export const CS:CS = {
 	Credentials: "https://carbonldp.com/ns/v1/security#Credentials",
 	CredentialSet: "https://carbonldp.com/ns/v1/security#CredentialSet",
 	Delete: "https://carbonldp.com/ns/v1/security#Delete",
+	DetailedUserACReport: "https://carbonldp.com/ns/v1/security#DetailedUserACReport",
+	GrantingStep: "https://carbonldp.com/ns/v1/security#GrantingStep",
 	Impersonate: "https://carbonldp.com/ns/v1/security#Impersonate",
 	LDAPCredentials: "https://carbonldp.com/ns/v1/security#LDAPCredentials",
 	PasswordSecret: "https://carbonldp.com/ns/v1/security#PasswordSecret",
+	PermissionReport: "https://carbonldp.com/ns/v1/security#PermissionReport",
 	PreferAuthToken: "https://carbonldp.com/ns/v1/security#PreferAuthToken",
 	ProtectedDocument: "https://carbonldp.com/ns/v1/security#ProtectedDocument",
 	Read: "https://carbonldp.com/ns/v1/security#Read",
@@ -94,6 +106,8 @@ export const CS:CS = {
 	accessControlList: "https://carbonldp.com/ns/v1/security#accessControlList",
 	allDescendantsACEntry: "https://carbonldp.com/ns/v1/security#allDescendantsACEntry",
 	allowsOrigin: "https://carbonldp.com/ns/v1/security#allowsOrigin",
+	applied: "https://carbonldp.com/ns/v1/security#applied",
+	appliedBy: "https://carbonldp.com/ns/v1/security#appliedBy",
 	authToken: "https://carbonldp.com/ns/v1/security#authToken",
 	authenticatedUserMetadata: "https://carbonldp.com/ns/v1/security#authenticatedUserMetadata",
 	childRole: "https://carbonldp.com/ns/v1/security#childRole",
@@ -104,8 +118,11 @@ export const CS:CS = {
 	directACEntry: "https://carbonldp.com/ns/v1/security#directACEntry",
 	expires: "https://carbonldp.com/ns/v1/security#expires",
 	forIRI: "https://carbonldp.com/ns/v1/security#forIRI",
+	granted: "https://carbonldp.com/ns/v1/security#granted",
+	grantingChain: "https://carbonldp.com/ns/v1/security#grantingChain",
 	hashedPassword: "https://carbonldp.com/ns/v1/security#hashedPassword",
 	immediateDescendantsACEntry: "https://carbonldp.com/ns/v1/security#immediateDescendantsACEntry",
+	inheritanceDisabledBy: "https://carbonldp.com/ns/v1/security#inheritanceDisabledBy",
 	inherits: "https://carbonldp.com/ns/v1/security#inherits",
 	ldapServer: "https://carbonldp.com/ns/v1/security#ldapServer",
 	ldapUserDN: "https://carbonldp.com/ns/v1/security#ldapUserDN",
@@ -115,6 +132,7 @@ export const CS:CS = {
 	password: "https://carbonldp.com/ns/v1/security#password",
 	passwordSecret: "https://carbonldp.com/ns/v1/security#passwordSecret",
 	permission: "https://carbonldp.com/ns/v1/security#permission",
+	permissionReport: "https://carbonldp.com/ns/v1/security#permissionReport",
 	protectedDocument: "https://carbonldp.com/ns/v1/security#protectedDocument",
 	rootContainer: "https://carbonldp.com/ns/v1/security#rootContainer",
 	subject: "https://carbonldp.com/ns/v1/security#subject",

@@ -135,6 +135,24 @@ describe( module( "carbonldp/Vocabularies/CS" ), ():void => {
 
 		it( hasProperty(
 			OBLIGATORY,
+			"DetailedUserACReport",
+			"https://carbonldp.com/ns/v1/security#DetailedUserACReport"
+		), ():void => {
+			const target:CS[ "DetailedUserACReport" ] = "https://carbonldp.com/ns/v1/security#DetailedUserACReport";
+			expect( target ).toBeDefined();
+		} );
+
+		it( hasProperty(
+			OBLIGATORY,
+			"GrantingStep",
+			"https://carbonldp.com/ns/v1/security#GrantingStep"
+		), ():void => {
+			const target:CS[ "GrantingStep" ] = "https://carbonldp.com/ns/v1/security#GrantingStep";
+			expect( target ).toBeDefined();
+		} );
+
+		it( hasProperty(
+			OBLIGATORY,
 			"Impersonate",
 			"https://carbonldp.com/ns/v1/security#Impersonate"
 		), ():void => {
@@ -157,6 +175,15 @@ describe( module( "carbonldp/Vocabularies/CS" ), ():void => {
 			"https://carbonldp.com/ns/v1/security#PasswordSecret"
 		), ():void => {
 			const target:CS[ "PasswordSecret" ] = "https://carbonldp.com/ns/v1/security#PasswordSecret";
+			expect( target ).toBeDefined();
+		} );
+
+		it( hasProperty(
+			OBLIGATORY,
+			"PermissionReport",
+			"https://carbonldp.com/ns/v1/security#PermissionReport"
+		), ():void => {
+			const target:CS[ "PermissionReport" ] = "https://carbonldp.com/ns/v1/security#PermissionReport";
 			expect( target ).toBeDefined();
 		} );
 
@@ -289,6 +316,24 @@ describe( module( "carbonldp/Vocabularies/CS" ), ():void => {
 
 		it( hasProperty(
 			OBLIGATORY,
+			"applied",
+			"https://carbonldp.com/ns/v1/security#applied"
+		), ():void => {
+			const target:CS[ "applied" ] = "https://carbonldp.com/ns/v1/security#applied";
+			expect( target ).toBeDefined();
+		} );
+
+		it( hasProperty(
+			OBLIGATORY,
+			"appliedBy",
+			"https://carbonldp.com/ns/v1/security#appliedBy"
+		), ():void => {
+			const target:CS[ "appliedBy" ] = "https://carbonldp.com/ns/v1/security#appliedBy";
+			expect( target ).toBeDefined();
+		} );
+
+		it( hasProperty(
+			OBLIGATORY,
 			"authToken",
 			"https://carbonldp.com/ns/v1/security#authToken"
 		), ():void => {
@@ -379,6 +424,24 @@ describe( module( "carbonldp/Vocabularies/CS" ), ():void => {
 
 		it( hasProperty(
 			OBLIGATORY,
+			"granted",
+			"https://carbonldp.com/ns/v1/security#granted"
+		), ():void => {
+			const target:CS[ "granted" ] = "https://carbonldp.com/ns/v1/security#granted";
+			expect( target ).toBeDefined();
+		} );
+
+		it( hasProperty(
+			OBLIGATORY,
+			"grantingChain",
+			"https://carbonldp.com/ns/v1/security#grantingChain"
+		), ():void => {
+			const target:CS[ "grantingChain" ] = "https://carbonldp.com/ns/v1/security#grantingChain";
+			expect( target ).toBeDefined();
+		} );
+
+		it( hasProperty(
+			OBLIGATORY,
 			"hashedPassword",
 			"https://carbonldp.com/ns/v1/security#hashedPassword"
 		), ():void => {
@@ -392,6 +455,15 @@ describe( module( "carbonldp/Vocabularies/CS" ), ():void => {
 			"https://carbonldp.com/ns/v1/security#immediateDescendantsACEntry"
 		), ():void => {
 			const target:CS[ "immediateDescendantsACEntry" ] = "https://carbonldp.com/ns/v1/security#immediateDescendantsACEntry";
+			expect( target ).toBeDefined();
+		} );
+
+		it( hasProperty(
+			OBLIGATORY,
+			"inheritanceDisabledBy",
+			"https://carbonldp.com/ns/v1/security#inheritanceDisabledBy"
+		), ():void => {
+			const target:CS[ "inheritanceDisabledBy" ] = "https://carbonldp.com/ns/v1/security#inheritanceDisabledBy";
 			expect( target ).toBeDefined();
 		} );
 
@@ -455,6 +527,15 @@ describe( module( "carbonldp/Vocabularies/CS" ), ():void => {
 			"https://carbonldp.com/ns/v1/security#permission"
 		), ():void => {
 			const target:CS[ "permission" ] = "https://carbonldp.com/ns/v1/security#permission";
+			expect( target ).toBeDefined();
+		} );
+
+		it( hasProperty(
+			OBLIGATORY,
+			"permissionReport",
+			"https://carbonldp.com/ns/v1/security#permissionReport"
+		), ():void => {
+			const target:CS[ "permissionReport" ] = "https://carbonldp.com/ns/v1/security#permissionReport";
 			expect( target ).toBeDefined();
 		} );
 
@@ -536,7 +617,7 @@ describe( module( "carbonldp/Vocabularies/CS" ), ():void => {
 		} );
 
 		it( "should test all exported IRIs", ():void => {
-			expect( Object.keys( CS ).length ).toBe( 58 );
+			expect( Object.keys( CS ).length ).toBe( 67 );
 		} );
 
 		it( "CS.namespace", ():void => {
@@ -604,6 +685,16 @@ describe( module( "carbonldp/Vocabularies/CS" ), ():void => {
 			expect( CS.Delete ).toBe( "https://carbonldp.com/ns/v1/security#Delete" );
 		} );
 
+		it( "CS.DetailedUserACReport", ():void => {
+			expect( CS.DetailedUserACReport ).toEqual( jasmine.any( String ) );
+			expect( CS.DetailedUserACReport ).toBe( "https://carbonldp.com/ns/v1/security#DetailedUserACReport" );
+		} );
+
+		it( "CS.GrantingStep", ():void => {
+			expect( CS.GrantingStep ).toEqual( jasmine.any( String ) );
+			expect( CS.GrantingStep ).toBe( "https://carbonldp.com/ns/v1/security#GrantingStep" );
+		} );
+
 		it( "CS.Impersonate", ():void => {
 			expect( CS.Impersonate ).toEqual( jasmine.any( String ) );
 			expect( CS.Impersonate ).toBe( "https://carbonldp.com/ns/v1/security#Impersonate" );
@@ -617,6 +708,11 @@ describe( module( "carbonldp/Vocabularies/CS" ), ():void => {
 		it( "CS.PasswordSecret", ():void => {
 			expect( CS.PasswordSecret ).toEqual( jasmine.any( String ) );
 			expect( CS.PasswordSecret ).toBe( "https://carbonldp.com/ns/v1/security#PasswordSecret" );
+		} );
+
+		it( "CS.PermissionReport", ():void => {
+			expect( CS.PermissionReport ).toEqual( jasmine.any( String ) );
+			expect( CS.PermissionReport ).toBe( "https://carbonldp.com/ns/v1/security#PermissionReport" );
 		} );
 
 		it( "CS.PreferAuthToken", ():void => {
@@ -690,6 +786,16 @@ describe( module( "carbonldp/Vocabularies/CS" ), ():void => {
 			expect( CS.allowsOrigin ).toBe( "https://carbonldp.com/ns/v1/security#allowsOrigin" );
 		} );
 
+		it( "CS.applied", ():void => {
+			expect( CS.applied ).toEqual( jasmine.any( String ) );
+			expect( CS.applied ).toBe( "https://carbonldp.com/ns/v1/security#applied" );
+		} );
+
+		it( "CS.appliedBy", ():void => {
+			expect( CS.appliedBy ).toEqual( jasmine.any( String ) );
+			expect( CS.appliedBy ).toBe( "https://carbonldp.com/ns/v1/security#appliedBy" );
+		} );
+
 		it( "CS.authToken", ():void => {
 			expect( CS.authToken ).toEqual( jasmine.any( String ) );
 			expect( CS.authToken ).toBe( "https://carbonldp.com/ns/v1/security#authToken" );
@@ -740,6 +846,16 @@ describe( module( "carbonldp/Vocabularies/CS" ), ():void => {
 			expect( CS.forIRI ).toBe( "https://carbonldp.com/ns/v1/security#forIRI" );
 		} );
 
+		it( "CS.granted", ():void => {
+			expect( CS.granted ).toEqual( jasmine.any( String ) );
+			expect( CS.granted ).toBe( "https://carbonldp.com/ns/v1/security#granted" );
+		} );
+
+		it( "CS.grantingChain", ():void => {
+			expect( CS.grantingChain ).toEqual( jasmine.any( String ) );
+			expect( CS.grantingChain ).toBe( "https://carbonldp.com/ns/v1/security#grantingChain" );
+		} );
+
 		it( "CS.hashedPassword", ():void => {
 			expect( CS.hashedPassword ).toEqual( jasmine.any( String ) );
 			expect( CS.hashedPassword ).toBe( "https://carbonldp.com/ns/v1/security#hashedPassword" );
@@ -748,6 +864,11 @@ describe( module( "carbonldp/Vocabularies/CS" ), ():void => {
 		it( "CS.immediateDescendantsACEntry", ():void => {
 			expect( CS.immediateDescendantsACEntry ).toEqual( jasmine.any( String ) );
 			expect( CS.immediateDescendantsACEntry ).toBe( "https://carbonldp.com/ns/v1/security#immediateDescendantsACEntry" );
+		} );
+
+		it( "CS.inheritanceDisabledBy", ():void => {
+			expect( CS.inheritanceDisabledBy ).toEqual( jasmine.any( String ) );
+			expect( CS.inheritanceDisabledBy ).toBe( "https://carbonldp.com/ns/v1/security#inheritanceDisabledBy" );
 		} );
 
 		it( "CS.inherits", ():void => {
@@ -793,6 +914,11 @@ describe( module( "carbonldp/Vocabularies/CS" ), ():void => {
 		it( "CS.permission", ():void => {
 			expect( CS.permission ).toEqual( jasmine.any( String ) );
 			expect( CS.permission ).toBe( "https://carbonldp.com/ns/v1/security#permission" );
+		} );
+
+		it( "CS.permissionReport", ():void => {
+			expect( CS.permissionReport ).toEqual( jasmine.any( String ) );
+			expect( CS.permissionReport ).toBe( "https://carbonldp.com/ns/v1/security#permissionReport" );
 		} );
 
 		it( "CS.protectedDocument", ():void => {
