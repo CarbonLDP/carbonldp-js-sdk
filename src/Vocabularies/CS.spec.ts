@@ -424,6 +424,15 @@ describe( module( "carbonldp/Vocabularies/CS" ), ():void => {
 
 		it( hasProperty(
 			OBLIGATORY,
+			"passwordSecret",
+			"https://carbonldp.com/ns/v1/security#passwordSecret"
+		), ():void => {
+			const target:CS[ "passwordSecret" ] = "https://carbonldp.com/ns/v1/security#passwordSecret";
+			expect( target ).toBeDefined();
+		} );
+
+		it( hasProperty(
+			OBLIGATORY,
 			"permission",
 			"https://carbonldp.com/ns/v1/security#permission"
 		), ():void => {
@@ -509,7 +518,7 @@ describe( module( "carbonldp/Vocabularies/CS" ), ():void => {
 		} );
 
 		it( "should test all exported IRIs", ():void => {
-			expect( Object.keys( CS ).length ).toBe( 55 );
+			expect( Object.keys( CS ).length ).toBe( 56 );
 		} );
 
 		it( "CS.namespace", ():void => {
@@ -746,6 +755,11 @@ describe( module( "carbonldp/Vocabularies/CS" ), ():void => {
 		it( "CS.password", ():void => {
 			expect( CS.password ).toEqual( jasmine.any( String ) );
 			expect( CS.password ).toBe( "https://carbonldp.com/ns/v1/security#password" );
+		} );
+
+		it( "CS.passwordSecret", ():void => {
+			expect( CS.passwordSecret ).toEqual( jasmine.any( String ) );
+			expect( CS.passwordSecret ).toBe( "https://carbonldp.com/ns/v1/security#passwordSecret" );
 		} );
 
 		it( "CS.permission", ():void => {

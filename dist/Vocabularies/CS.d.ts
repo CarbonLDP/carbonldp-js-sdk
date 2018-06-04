@@ -46,6 +46,7 @@ export interface CS {
     name: "https://carbonldp.com/ns/v1/security#name";
     parentRole: "https://carbonldp.com/ns/v1/security#parentRole";
     password: "https://carbonldp.com/ns/v1/security#password";
+    passwordSecret: "https://carbonldp.com/ns/v1/security#passwordSecret";
     permission: "https://carbonldp.com/ns/v1/security#permission";
     rootContainer: "https://carbonldp.com/ns/v1/security#rootContainer";
     subject: "https://carbonldp.com/ns/v1/security#subject";

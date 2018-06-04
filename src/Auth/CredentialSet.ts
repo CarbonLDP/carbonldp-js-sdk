@@ -3,6 +3,7 @@ import { Pointer } from "../Pointer";
 import { CS } from "../Vocabularies";
 
 
+// TODO: Add $tokens AccessPoint
 export interface CredentialSet extends Document {
 	user:Pointer;
 }

@@ -480,7 +480,7 @@ function __export(m) {
 }
 Object.defineProperty(exports, "__esModule", { value: true });
 __export(__webpack_require__(9));
-__export(__webpack_require__(54));
+__export(__webpack_require__(69));
 __export(__webpack_require__(70));
 __export(__webpack_require__(250));
 __export(__webpack_require__(71));
@@ -500,10 +500,10 @@ function __export(m) {
 Object.defineProperty(exports, "__esModule", { value: true });
 __export(__webpack_require__(36));
 __export(__webpack_require__(90));
-__export(__webpack_require__(65));
+__export(__webpack_require__(64));
 __export(__webpack_require__(198));
 __export(__webpack_require__(48));
-__export(__webpack_require__(66));
+__export(__webpack_require__(65));
 __export(__webpack_require__(35));
 __export(__webpack_require__(23));
 __export(__webpack_require__(199));
@@ -2883,7 +2883,7 @@ function __export(m) {
 }
 Object.defineProperty(exports, "__esModule", { value: true });
 __export(__webpack_require__(30));
-__export(__webpack_require__(64));
+__export(__webpack_require__(63));
 
 //# sourceMappingURL=index.js.map
 
@@ -2895,7 +2895,7 @@ __export(__webpack_require__(64));
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var utils_1 = __webpack_require__(64);
+var utils_1 = __webpack_require__(63);
 var tokens_1 = __webpack_require__(5);
 var tokens_2 = __webpack_require__(3);
 var IRIResolver = (function () {
@@ -3083,9 +3083,9 @@ var __extends = (this && this.__extends) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 var Identifier_1 = __webpack_require__(36);
-var NewLineSymbol_1 = __webpack_require__(65);
+var NewLineSymbol_1 = __webpack_require__(64);
 var Operator_1 = __webpack_require__(48);
-var RightSymbol_1 = __webpack_require__(66);
+var RightSymbol_1 = __webpack_require__(65);
 var Token_1 = __webpack_require__(23);
 var StringLiteral = (function (_super) {
     __extends(StringLiteral, _super);
@@ -3312,8 +3312,8 @@ var https_1 = __importDefault(__webpack_require__(225));
 var url_1 = __importDefault(__webpack_require__(226));
 var Utils = __importStar(__webpack_require__(0));
 var Errors_1 = __webpack_require__(40);
-var Header_1 = __webpack_require__(68);
-var HTTPMethod_1 = __webpack_require__(69);
+var Header_1 = __webpack_require__(67);
+var HTTPMethod_1 = __webpack_require__(68);
 var Response_1 = __webpack_require__(105);
 function forEachHeaders(headers, setHeader) {
     var namesIterator = headers.keys();
@@ -4442,72 +4442,6 @@ exports.RDFLiteral = {
 
 "use strict";
 
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.CS = {
-    namespace: "https://carbonldp.com/ns/v1/security#",
-    AccessControlEntry: "https://carbonldp.com/ns/v1/security#AccessControlEntry",
-    AccessControlList: "https://carbonldp.com/ns/v1/security#AccessControlList",
-    AllOrigins: "https://carbonldp.com/ns/v1/security#AllOrigins",
-    AuthenticatedUserInformationAccessor: "https://carbonldp.com/ns/v1/security#AuthenticatedUserInformationAccessor",
-    AuthenticatedUserMetadata: "https://carbonldp.com/ns/v1/security#AuthenticatedUserMetadata",
-    CreateAccessPoint: "https://carbonldp.com/ns/v1/security#CreateAccessPoint",
-    CreateChild: "https://carbonldp.com/ns/v1/security#CreateChild",
-    Credentials: "https://carbonldp.com/ns/v1/security#Credentials",
-    CredentialSet: "https://carbonldp.com/ns/v1/security#CredentialSet",
-    Delete: "https://carbonldp.com/ns/v1/security#Delete",
-    Download: "https://carbonldp.com/ns/v1/security#Download",
-    Extend: "https://carbonldp.com/ns/v1/security#Extend",
-    LDAPCredentials: "https://carbonldp.com/ns/v1/security#LDAPCredentials",
-    ManageSecurity: "https://carbonldp.com/ns/v1/security#ManageSecurity",
-    PreferAuthToken: "https://carbonldp.com/ns/v1/security#PreferAuthToken",
-    ProtectedDocument: "https://carbonldp.com/ns/v1/security#ProtectedDocument",
-    Read: "https://carbonldp.com/ns/v1/security#Read",
-    RemoveMember: "https://carbonldp.com/ns/v1/security#RemoveMember",
-    Role: "https://carbonldp.com/ns/v1/security#Role",
-    Ticket: "https://carbonldp.com/ns/v1/security#Ticket",
-    TokenCredentials: "https://carbonldp.com/ns/v1/security#TokenCredentials",
-    Update: "https://carbonldp.com/ns/v1/security#Update",
-    Upload: "https://carbonldp.com/ns/v1/security#Upload",
-    User: "https://carbonldp.com/ns/v1/security#User",
-    UsernameAndPasswordCredentials: "https://carbonldp.com/ns/v1/security#UsernameAndPasswordCredentials",
-    accessControlEntry: "https://carbonldp.com/ns/v1/security#accessControlEntry",
-    accessControlList: "https://carbonldp.com/ns/v1/security#accessControlList",
-    accessTo: "https://carbonldp.com/ns/v1/security#accessTo",
-    allowsOrigin: "https://carbonldp.com/ns/v1/security#allowsOrigin",
-    authToken: "https://carbonldp.com/ns/v1/security#authToken",
-    authenticatedUserMetadata: "https://carbonldp.com/ns/v1/security#authenticatedUserMetadata",
-    childRole: "https://carbonldp.com/ns/v1/security#childRole",
-    credentials: "https://carbonldp.com/ns/v1/security#credentials",
-    credentialSet: "https://carbonldp.com/ns/v1/security#credentialSet",
-    credentialsOf: "https://carbonldp.com/ns/v1/security#credentialsOf",
-    description: "https://carbonldp.com/ns/v1/security#description",
-    enabled: "https://carbonldp.com/ns/v1/security#enabled",
-    expires: "https://carbonldp.com/ns/v1/security#expires",
-    forIRI: "https://carbonldp.com/ns/v1/security#forIRI",
-    granting: "https://carbonldp.com/ns/v1/security#granting",
-    inheritableEntry: "https://carbonldp.com/ns/v1/security#inheritableEntry",
-    ldapServer: "https://carbonldp.com/ns/v1/security#ldapServer",
-    ldapUserDN: "https://carbonldp.com/ns/v1/security#ldapUserDN",
-    name: "https://carbonldp.com/ns/v1/security#name",
-    parentRole: "https://carbonldp.com/ns/v1/security#parentRole",
-    password: "https://carbonldp.com/ns/v1/security#password",
-    permission: "https://carbonldp.com/ns/v1/security#permission",
-    rootContainer: "https://carbonldp.com/ns/v1/security#rootContainer",
-    subject: "https://carbonldp.com/ns/v1/security#subject",
-    subjectClass: "https://carbonldp.com/ns/v1/security#subjectClass",
-    ticketKey: "https://carbonldp.com/ns/v1/security#ticketKey",
-    token: "https://carbonldp.com/ns/v1/security#token",
-    user: "https://carbonldp.com/ns/v1/security#user",
-    username: "https://carbonldp.com/ns/v1/security#username",
-};
-
-
-/***/ }),
-/* 55 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
 function __export(m) {
     for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
 }
@@ -4517,7 +4451,7 @@ __export(__webpack_require__(146));
 
 
 /***/ }),
-/* 56 */
+/* 55 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4535,8 +4469,8 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var Errors = __importStar(__webpack_require__(40));
 exports.Errors = Errors;
+__export(__webpack_require__(67));
 __export(__webpack_require__(68));
-__export(__webpack_require__(69));
 __export(__webpack_require__(52));
 __export(__webpack_require__(39));
 __export(__webpack_require__(105));
@@ -4545,7 +4479,7 @@ __export(__webpack_require__(110));
 
 
 /***/ }),
-/* 57 */
+/* 56 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4622,7 +4556,7 @@ module.exports = XhrReceiver;
 
 
 /***/ }),
-/* 58 */
+/* 57 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4644,7 +4578,7 @@ module.exports = XHRCorsObject;
 
 
 /***/ }),
-/* 59 */
+/* 58 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4658,7 +4592,7 @@ __export(__webpack_require__(138));
 
 
 /***/ }),
-/* 60 */
+/* 59 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4672,7 +4606,7 @@ __export(__webpack_require__(293));
 
 
 /***/ }),
-/* 61 */
+/* 60 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4680,7 +4614,7 @@ __export(__webpack_require__(293));
 Object.defineProperty(exports, "__esModule", { value: true });
 var LDP_1 = __webpack_require__(34);
 var Utils_1 = __webpack_require__(0);
-var CS_1 = __webpack_require__(54);
+var CS_1 = __webpack_require__(69);
 var XSD_1 = __webpack_require__(10);
 exports.TokenCredentialsBase = {
     is: function (value) {
@@ -4717,7 +4651,7 @@ exports.TokenCredentials = {
 
 
 /***/ }),
-/* 62 */
+/* 61 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4809,7 +4743,7 @@ exports.default = TriplesPattern;
 
 
 /***/ }),
-/* 63 */
+/* 62 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4825,7 +4759,7 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-var TriplesPattern_1 = __webpack_require__(62);
+var TriplesPattern_1 = __webpack_require__(61);
 var TriplesSubject = (function (_super) {
     __extends(TriplesSubject, _super);
     function TriplesSubject() {
@@ -4849,7 +4783,7 @@ exports.default = TriplesSubject;
 
 
 /***/ }),
-/* 64 */
+/* 63 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4912,7 +4846,7 @@ exports.resolve = resolve;
 
 
 /***/ }),
-/* 65 */
+/* 64 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4953,7 +4887,7 @@ exports.default = NewLineSymbol;
 
 
 /***/ }),
-/* 66 */
+/* 65 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4971,7 +4905,7 @@ var __extends = (this && this.__extends) || (function () {
 Object.defineProperty(exports, "__esModule", { value: true });
 var Identifier_1 = __webpack_require__(36);
 var LeftSymbol_1 = __webpack_require__(90);
-var NewLineSymbol_1 = __webpack_require__(65);
+var NewLineSymbol_1 = __webpack_require__(64);
 var Operator_1 = __webpack_require__(48);
 var Token_1 = __webpack_require__(23);
 var RightSymbol = (function (_super) {
@@ -5007,7 +4941,7 @@ exports.default = RightSymbol;
 
 
 /***/ }),
-/* 67 */
+/* 66 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5022,7 +4956,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var ACE_1 = __webpack_require__(49);
 exports.TransientACE = ACE_1.TransientACE;
-var ACL_1 = __webpack_require__(55);
+var ACL_1 = __webpack_require__(54);
 exports.TransientACL = ACL_1.TransientACL;
 var AuthenticatedUserInformationAccessor_1 = __webpack_require__(147);
 exports.AuthenticatedUserInformationAccessor = AuthenticatedUserInformationAccessor_1.AuthenticatedUserInformationAccessor;
@@ -5046,16 +4980,16 @@ var LDAPCredentials_1 = __webpack_require__(166);
 exports.LDAPCredentials = LDAPCredentials_1.LDAPCredentials;
 var ACE_2 = __webpack_require__(49);
 exports.ACE = ACE_2.ACE;
-var ACL_2 = __webpack_require__(55);
+var ACL_2 = __webpack_require__(54);
 exports.ACL = ACL_2.ACL;
-var User_1 = __webpack_require__(60);
+var User_1 = __webpack_require__(59);
 exports.User = User_1.User;
 var TokenAuthenticator_1 = __webpack_require__(156);
 exports.TokenAuthenticator = TokenAuthenticator_1.TokenAuthenticator;
-var TokenCredentials_1 = __webpack_require__(61);
+var TokenCredentials_1 = __webpack_require__(60);
 exports.TokenCredentials = TokenCredentials_1.TokenCredentials;
 exports.TokenCredentialsBase = TokenCredentials_1.TokenCredentialsBase;
-var User_2 = __webpack_require__(60);
+var User_2 = __webpack_require__(59);
 exports.TransientUser = User_2.TransientUser;
 var UsernameAndPasswordCredentials_1 = __webpack_require__(167);
 exports.UsernameAndPasswordCredentials = UsernameAndPasswordCredentials_1.UsernameAndPasswordCredentials;
@@ -5070,7 +5004,7 @@ exports.Roles = Roles;
 
 
 /***/ }),
-/* 68 */
+/* 67 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5122,7 +5056,7 @@ exports.Header = Header;
 
 
 /***/ }),
-/* 69 */
+/* 68 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5138,6 +5072,73 @@ var HTTPMethod;
     HTTPMethod[HTTPMethod["PATCH"] = 5] = "PATCH";
     HTTPMethod[HTTPMethod["DELETE"] = 6] = "DELETE";
 })(HTTPMethod = exports.HTTPMethod || (exports.HTTPMethod = {}));
+
+
+/***/ }),
+/* 69 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.CS = {
+    namespace: "https://carbonldp.com/ns/v1/security#",
+    AccessControlEntry: "https://carbonldp.com/ns/v1/security#AccessControlEntry",
+    AccessControlList: "https://carbonldp.com/ns/v1/security#AccessControlList",
+    AllOrigins: "https://carbonldp.com/ns/v1/security#AllOrigins",
+    AuthenticatedUserInformationAccessor: "https://carbonldp.com/ns/v1/security#AuthenticatedUserInformationAccessor",
+    AuthenticatedUserMetadata: "https://carbonldp.com/ns/v1/security#AuthenticatedUserMetadata",
+    CreateAccessPoint: "https://carbonldp.com/ns/v1/security#CreateAccessPoint",
+    CreateChild: "https://carbonldp.com/ns/v1/security#CreateChild",
+    Credentials: "https://carbonldp.com/ns/v1/security#Credentials",
+    CredentialSet: "https://carbonldp.com/ns/v1/security#CredentialSet",
+    Delete: "https://carbonldp.com/ns/v1/security#Delete",
+    Download: "https://carbonldp.com/ns/v1/security#Download",
+    Extend: "https://carbonldp.com/ns/v1/security#Extend",
+    LDAPCredentials: "https://carbonldp.com/ns/v1/security#LDAPCredentials",
+    ManageSecurity: "https://carbonldp.com/ns/v1/security#ManageSecurity",
+    PreferAuthToken: "https://carbonldp.com/ns/v1/security#PreferAuthToken",
+    ProtectedDocument: "https://carbonldp.com/ns/v1/security#ProtectedDocument",
+    Read: "https://carbonldp.com/ns/v1/security#Read",
+    RemoveMember: "https://carbonldp.com/ns/v1/security#RemoveMember",
+    Role: "https://carbonldp.com/ns/v1/security#Role",
+    Ticket: "https://carbonldp.com/ns/v1/security#Ticket",
+    TokenCredentials: "https://carbonldp.com/ns/v1/security#TokenCredentials",
+    Update: "https://carbonldp.com/ns/v1/security#Update",
+    Upload: "https://carbonldp.com/ns/v1/security#Upload",
+    User: "https://carbonldp.com/ns/v1/security#User",
+    UsernameAndPasswordCredentials: "https://carbonldp.com/ns/v1/security#UsernameAndPasswordCredentials",
+    accessControlEntry: "https://carbonldp.com/ns/v1/security#accessControlEntry",
+    accessControlList: "https://carbonldp.com/ns/v1/security#accessControlList",
+    accessTo: "https://carbonldp.com/ns/v1/security#accessTo",
+    allowsOrigin: "https://carbonldp.com/ns/v1/security#allowsOrigin",
+    authToken: "https://carbonldp.com/ns/v1/security#authToken",
+    authenticatedUserMetadata: "https://carbonldp.com/ns/v1/security#authenticatedUserMetadata",
+    childRole: "https://carbonldp.com/ns/v1/security#childRole",
+    credentials: "https://carbonldp.com/ns/v1/security#credentials",
+    credentialSet: "https://carbonldp.com/ns/v1/security#credentialSet",
+    credentialsOf: "https://carbonldp.com/ns/v1/security#credentialsOf",
+    description: "https://carbonldp.com/ns/v1/security#description",
+    enabled: "https://carbonldp.com/ns/v1/security#enabled",
+    expires: "https://carbonldp.com/ns/v1/security#expires",
+    forIRI: "https://carbonldp.com/ns/v1/security#forIRI",
+    granting: "https://carbonldp.com/ns/v1/security#granting",
+    inheritableEntry: "https://carbonldp.com/ns/v1/security#inheritableEntry",
+    ldapServer: "https://carbonldp.com/ns/v1/security#ldapServer",
+    ldapUserDN: "https://carbonldp.com/ns/v1/security#ldapUserDN",
+    name: "https://carbonldp.com/ns/v1/security#name",
+    parentRole: "https://carbonldp.com/ns/v1/security#parentRole",
+    password: "https://carbonldp.com/ns/v1/security#password",
+    passwordSecret: "https://carbonldp.com/ns/v1/security#passwordSecret",
+    permission: "https://carbonldp.com/ns/v1/security#permission",
+    rootContainer: "https://carbonldp.com/ns/v1/security#rootContainer",
+    subject: "https://carbonldp.com/ns/v1/security#subject",
+    subjectClass: "https://carbonldp.com/ns/v1/security#subjectClass",
+    ticketKey: "https://carbonldp.com/ns/v1/security#ticketKey",
+    token: "https://carbonldp.com/ns/v1/security#token",
+    user: "https://carbonldp.com/ns/v1/security#user",
+    username: "https://carbonldp.com/ns/v1/security#username",
+};
 
 
 /***/ }),
@@ -5735,14 +5736,14 @@ exports.QueryContext = QueryContext;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var Errors_1 = __webpack_require__(6);
-var HTTP_1 = __webpack_require__(56);
+var HTTP_1 = __webpack_require__(55);
 var Errors_2 = __webpack_require__(40);
 var JSONLD_1 = __webpack_require__(78);
 var ProtectedDocument_1 = __webpack_require__(22);
 var Document_1 = __webpack_require__(38);
 var Utils_1 = __webpack_require__(0);
 var LDP_1 = __webpack_require__(70);
-var User_1 = __webpack_require__(60);
+var User_1 = __webpack_require__(59);
 var Authenticator = (function () {
     function Authenticator(context) {
         this.context = context;
@@ -6250,7 +6251,7 @@ exports.IRIToken = IRIToken;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var utils_1 = __webpack_require__(64);
+var utils_1 = __webpack_require__(63);
 var NAMESPACE_REGEX = /^([A-Za-z](([A-Za-z_\-0-9]|\.)*[A-Za-z_\-0-9])?)?$/;
 var PrefixedNameToken = (function () {
     function PrefixedNameToken(prefixedOrNamespace, localName) {
@@ -6394,15 +6395,15 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var Auth = __importStar(__webpack_require__(67));
+var Auth = __importStar(__webpack_require__(66));
 var ACE_1 = __webpack_require__(49);
-var ACL_1 = __webpack_require__(55);
+var ACL_1 = __webpack_require__(54);
 var AuthenticatedUserInformationAccessor_1 = __webpack_require__(147);
 var AuthenticatedUserMetadata_1 = __webpack_require__(148);
 var CredentialSet_1 = __webpack_require__(165);
 var LDAPCredentials_1 = __webpack_require__(166);
-var TokenCredentials_1 = __webpack_require__(61);
-var User_1 = __webpack_require__(60);
+var TokenCredentials_1 = __webpack_require__(60);
+var User_1 = __webpack_require__(59);
 var UsernameAndPasswordCredentials_1 = __webpack_require__(167);
 var Document_1 = __webpack_require__(13);
 var Documents_1 = __webpack_require__(168);
@@ -7290,7 +7291,7 @@ exports.UnknownError = UnknownError;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var Header_1 = __webpack_require__(68);
+var Header_1 = __webpack_require__(67);
 var Response = (function () {
     function Response(request, data, response) {
         var _this = this;
@@ -8753,7 +8754,7 @@ module.exports = AbstractXHRObject;
 
 var inherits = __webpack_require__(1)
   , AjaxBasedTransport = __webpack_require__(33)
-  , XhrReceiver = __webpack_require__(57)
+  , XhrReceiver = __webpack_require__(56)
   , XDRObject = __webpack_require__(74)
   ;
 
@@ -8793,7 +8794,7 @@ module.exports = XdrStreamingTransport;
 var inherits = __webpack_require__(1)
   , AjaxBasedTransport = __webpack_require__(33)
   , EventSourceReceiver = __webpack_require__(269)
-  , XHRCorsObject = __webpack_require__(58)
+  , XHRCorsObject = __webpack_require__(57)
   , EventSourceDriver = __webpack_require__(129)
   ;
 
@@ -9021,8 +9022,8 @@ module.exports = HtmlFileTransport;
 
 var inherits = __webpack_require__(1)
   , AjaxBasedTransport = __webpack_require__(33)
-  , XhrReceiver = __webpack_require__(57)
-  , XHRCorsObject = __webpack_require__(58)
+  , XhrReceiver = __webpack_require__(56)
+  , XHRCorsObject = __webpack_require__(57)
   , XHRLocalObject = __webpack_require__(42)
   ;
 
@@ -9301,7 +9302,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var BlankNode_1 = __webpack_require__(141);
 var Errors_1 = __webpack_require__(6);
 var JSONLD_1 = __webpack_require__(78);
-var NamedFragment_1 = __webpack_require__(59);
+var NamedFragment_1 = __webpack_require__(58);
 var ObjectSchema_1 = __webpack_require__(12);
 var RDF_1 = __webpack_require__(31);
 var Resource_1 = __webpack_require__(14);
@@ -10688,7 +10689,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var Errors = __importStar(__webpack_require__(6));
-var HTTP_1 = __webpack_require__(56);
+var HTTP_1 = __webpack_require__(55);
 var Errors_1 = __webpack_require__(40);
 var LDP_1 = __webpack_require__(34);
 var Node_1 = __webpack_require__(27);
@@ -10696,7 +10697,7 @@ var Utils_1 = __webpack_require__(0);
 var Vocabularies_1 = __webpack_require__(2);
 var Authenticator_1 = __webpack_require__(82);
 var BasicAuthenticator_1 = __webpack_require__(83);
-var TokenCredentials_1 = __webpack_require__(61);
+var TokenCredentials_1 = __webpack_require__(60);
 var TokenAuthenticator = (function (_super) {
     __extends(TokenAuthenticator, _super);
     function TokenAuthenticator() {
@@ -11024,33 +11025,29 @@ exports.LDAPCredentials = {
 
 "use strict";
 
-var __assign = (this && this.__assign) || Object.assign || function(t) {
-    for (var s, i = 1, n = arguments.length; i < n; i++) {
-        s = arguments[i];
-        for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
-            t[p] = s[p];
-    }
-    return t;
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 var LDP_1 = __webpack_require__(34);
-var CS_1 = __webpack_require__(54);
-var XSD_1 = __webpack_require__(10);
+var Vocabularies_1 = __webpack_require__(2);
 var SCHEMA = {
     "username": {
-        "@id": CS_1.CS.username,
-        "@type": XSD_1.XSD.string,
+        "@id": Vocabularies_1.CS.username,
+        "@type": Vocabularies_1.XSD.string,
     },
     "password": {
-        "@id": CS_1.CS.password,
-        "@type": XSD_1.XSD.string,
+        "@id": Vocabularies_1.CS.password,
+        "@type": Vocabularies_1.XSD.string,
+    },
+    "passwordSecret": {
+        "@id": Vocabularies_1.CS.passwordSecret,
+        "@type": "@id",
     },
 };
 exports.UsernameAndPasswordCredentials = {
-    TYPE: CS_1.CS.UsernameAndPasswordCredentials,
+    TYPE: Vocabularies_1.CS.UsernameAndPasswordCredentials,
     SCHEMA: SCHEMA,
     create: function (data) {
-        return exports.UsernameAndPasswordCredentials.createFrom(__assign({}, data));
+        var copy = Object.assign({}, data);
+        return exports.UsernameAndPasswordCredentials.createFrom(copy);
     },
     createFrom: function (object) {
         var credentials = LDP_1.VolatileResource.createFrom(object);
@@ -11076,15 +11073,15 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var tokens_1 = __webpack_require__(3);
 var AccessPoint_1 = __webpack_require__(169);
-var Auth = __importStar(__webpack_require__(67));
-var ACL_1 = __webpack_require__(55);
+var Auth = __importStar(__webpack_require__(66));
+var ACL_1 = __webpack_require__(54);
 var Document_1 = __webpack_require__(13);
 var Errors = __importStar(__webpack_require__(6));
 var FreeResources_1 = __webpack_require__(171);
 var Errors_1 = __webpack_require__(40);
 var BadResponseError_1 = __webpack_require__(103);
 var UnknownError_1 = __webpack_require__(104);
-var HTTPMethod_1 = __webpack_require__(69);
+var HTTPMethod_1 = __webpack_require__(68);
 var Request_1 = __webpack_require__(39);
 var Compacter_1 = __webpack_require__(142);
 var Converter_1 = __webpack_require__(144);
@@ -13330,7 +13327,7 @@ var __extends = (this && this.__extends) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 var tokens_1 = __webpack_require__(5);
-var TriplesPattern_1 = __webpack_require__(62);
+var TriplesPattern_1 = __webpack_require__(61);
 var BlankNode = (function (_super) {
     __extends(BlankNode, _super);
     function BlankNode() {
@@ -13377,7 +13374,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var tokens_1 = __webpack_require__(5);
 var tokens_2 = __webpack_require__(3);
 var ObjectPattern_1 = __webpack_require__(47);
-var TriplesPattern_1 = __webpack_require__(62);
+var TriplesPattern_1 = __webpack_require__(61);
 var Collection = (function (_super) {
     __extends(Collection, _super);
     function Collection(resolver, values) {
@@ -13435,7 +13432,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var tokens_1 = __webpack_require__(5);
 var tokens_2 = __webpack_require__(3);
 var ObjectPattern_1 = __webpack_require__(47);
-var TriplesSubject_1 = __webpack_require__(63);
+var TriplesSubject_1 = __webpack_require__(62);
 var Literal = (function (_super) {
     __extends(Literal, _super);
     function Literal(resolver, value) {
@@ -13508,7 +13505,7 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-var TriplesSubject_1 = __webpack_require__(63);
+var TriplesSubject_1 = __webpack_require__(62);
 var Resource = (function (_super) {
     __extends(Resource, _super);
     function Resource(resolver, iri) {
@@ -13543,7 +13540,7 @@ var __extends = (this && this.__extends) || (function () {
 Object.defineProperty(exports, "__esModule", { value: true });
 var tokens_1 = __webpack_require__(5);
 var tokens_2 = __webpack_require__(3);
-var TriplesSubject_1 = __webpack_require__(63);
+var TriplesSubject_1 = __webpack_require__(62);
 var nameRegex = /^((?:[0-9A-Z_a-z\xC0-\xD6\xD8-\xF6\xF8-\u02FF\u0370-\u037D\u037F-\u1FFF\u200C\u200D\u2070-\u218F\u2C00-\u2FEF\u3001-\uD7FF\uF900-\uFDCF\uFDF0-\uFFFD]|[\uD800-\uDB7F][\uDC00-\uDFFF]))((?:[0-9A-Z_a-z\xB7\xC0-\xD6\xD8-\xF6\xF8-\u037D\u037F-\u1FFF\u200C\u200D\u203F\u2040\u2070-\u218F\u2C00-\u2FEF\u3001-\uD7FF\uF900-\uFDCF\uFDF0-\uFFFD]|[\uD800-\uDB7F][\uDC00-\uDFFF]))*$/;
 var Variable = (function (_super) {
     __extends(Variable, _super);
@@ -14121,18 +14118,18 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var iri_1 = __webpack_require__(29);
 var AbstractContext_1 = __webpack_require__(218);
-var Auth = __importStar(__webpack_require__(67));
+var Auth = __importStar(__webpack_require__(66));
 var Document_1 = __webpack_require__(13);
 var Documents_1 = __webpack_require__(168);
 var Errors = __importStar(__webpack_require__(6));
 var Fragment_1 = __webpack_require__(20);
 var FreeResources_1 = __webpack_require__(171);
-var HTTP = __importStar(__webpack_require__(56));
+var HTTP = __importStar(__webpack_require__(55));
 var JSONLD = __importStar(__webpack_require__(78));
 var LDP = __importStar(__webpack_require__(34));
 var LDPatch = __importStar(__webpack_require__(313));
 var Messaging = __importStar(__webpack_require__(111));
-var NamedFragment_1 = __webpack_require__(59);
+var NamedFragment_1 = __webpack_require__(58);
 var ObjectSchema_1 = __webpack_require__(12);
 var Pointer_1 = __webpack_require__(24);
 var ProtectedDocument_1 = __webpack_require__(22);
@@ -14147,7 +14144,7 @@ var AccessPoint_1 = __webpack_require__(169);
 var BlankNode_1 = __webpack_require__(141);
 var Document_2 = __webpack_require__(13);
 var Fragment_2 = __webpack_require__(20);
-var NamedFragment_2 = __webpack_require__(59);
+var NamedFragment_2 = __webpack_require__(58);
 var ProtectedDocument_2 = __webpack_require__(22);
 var Utils = __importStar(__webpack_require__(0));
 var Vocabularies = __importStar(__webpack_require__(2));
@@ -14321,7 +14318,7 @@ var __extends = (this && this.__extends) || (function () {
 Object.defineProperty(exports, "__esModule", { value: true });
 var Identifier_1 = __webpack_require__(36);
 var Operator_1 = __webpack_require__(48);
-var RightSymbol_1 = __webpack_require__(66);
+var RightSymbol_1 = __webpack_require__(65);
 var Token_1 = __webpack_require__(23);
 var NumberLiteral = (function (_super) {
     __extends(NumberLiteral, _super);
@@ -16346,9 +16343,9 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var Fragment_1 = __webpack_require__(20);
-var HTTP_1 = __webpack_require__(56);
+var HTTP_1 = __webpack_require__(55);
 var Messaging_1 = __webpack_require__(111);
-var NamedFragment_1 = __webpack_require__(59);
+var NamedFragment_1 = __webpack_require__(58);
 var ObjectSchema_1 = __webpack_require__(12);
 var Pointer_1 = __webpack_require__(24);
 var RDF_1 = __webpack_require__(31);
@@ -17952,8 +17949,8 @@ if (Driver) {
 
 var inherits = __webpack_require__(1)
   , AjaxBasedTransport = __webpack_require__(33)
-  , XhrReceiver = __webpack_require__(57)
-  , XHRCorsObject = __webpack_require__(58)
+  , XhrReceiver = __webpack_require__(56)
+  , XHRCorsObject = __webpack_require__(57)
   , XHRLocalObject = __webpack_require__(42)
   , browser = __webpack_require__(43)
   ;
@@ -18362,7 +18359,7 @@ module.exports = HtmlfileReceiver;
 var inherits = __webpack_require__(1)
   , AjaxBasedTransport = __webpack_require__(33)
   , XdrStreamingTransport = __webpack_require__(127)
-  , XhrReceiver = __webpack_require__(57)
+  , XhrReceiver = __webpack_require__(56)
   , XDRObject = __webpack_require__(74)
   ;
 
@@ -19767,7 +19764,7 @@ var EventEmitter = __webpack_require__(11).EventEmitter
   , inherits = __webpack_require__(1)
   , urlUtils = __webpack_require__(15)
   , XDR = __webpack_require__(74)
-  , XHRCors = __webpack_require__(58)
+  , XHRCors = __webpack_require__(57)
   , XHRLocal = __webpack_require__(42)
   , XHRFake = __webpack_require__(285)
   , InfoIframe = __webpack_require__(286)
@@ -21190,7 +21187,7 @@ var BasicAuthenticator_1 = __webpack_require__(83);
 var BasicToken_1 = __webpack_require__(153);
 var Roles = __importStar(__webpack_require__(154));
 var TokenAuthenticator_1 = __webpack_require__(156);
-var TokenCredentials_1 = __webpack_require__(61);
+var TokenCredentials_1 = __webpack_require__(60);
 var UsersEndpoint_1 = __webpack_require__(164);
 var AuthService = (function () {
     function AuthService(context) {
@@ -21325,7 +21322,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var Document_1 = __webpack_require__(13);
 var IllegalArgumentError_1 = __webpack_require__(16);
-var CS_1 = __webpack_require__(54);
+var CS_1 = __webpack_require__(69);
 var XSD_1 = __webpack_require__(10);
 var Utils = __importStar(__webpack_require__(0));
 exports.RDF_CLASS = CS_1.CS.Role;
@@ -21695,8 +21692,8 @@ __export(__webpack_require__(181));
 __export(__webpack_require__(182));
 __export(__webpack_require__(183));
 __export(__webpack_require__(184));
+__export(__webpack_require__(61));
 __export(__webpack_require__(62));
-__export(__webpack_require__(63));
 __export(__webpack_require__(185));
 
 //# sourceMappingURL=index.js.map
