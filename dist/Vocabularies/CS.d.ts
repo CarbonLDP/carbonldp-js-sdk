@@ -39,7 +39,6 @@ export interface CS {
     directACEntry: "https://carbonldp.com/ns/v1/security#directACEntry";
     expires: "https://carbonldp.com/ns/v1/security#expires";
     forIRI: "https://carbonldp.com/ns/v1/security#forIRI";
-    granting: "https://carbonldp.com/ns/v1/security#granting";
     hashedPassword: "https://carbonldp.com/ns/v1/security#hashedPassword";
     immediateDescendantsACEntry: "https://carbonldp.com/ns/v1/security#immediateDescendantsACEntry";
     inherits: "https://carbonldp.com/ns/v1/security#inherits";
@@ -54,7 +53,6 @@ export interface CS {
     protectedDocument: "https://carbonldp.com/ns/v1/security#protectedDocument";
     rootContainer: "https://carbonldp.com/ns/v1/security#rootContainer";
     subject: "https://carbonldp.com/ns/v1/security#subject";
-    subjectClass: "https://carbonldp.com/ns/v1/security#subjectClass";
     ticketKey: "https://carbonldp.com/ns/v1/security#ticketKey";
     token: "https://carbonldp.com/ns/v1/security#token";
     user: "https://carbonldp.com/ns/v1/security#user";

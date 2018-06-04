@@ -379,15 +379,6 @@ describe( module( "carbonldp/Vocabularies/CS" ), ():void => {
 
 		it( hasProperty(
 			OBLIGATORY,
-			"granting",
-			"https://carbonldp.com/ns/v1/security#granting"
-		), ():void => {
-			const target:CS[ "granting" ] = "https://carbonldp.com/ns/v1/security#granting";
-			expect( target ).toBeDefined();
-		} );
-
-		it( hasProperty(
-			OBLIGATORY,
 			"hashedPassword",
 			"https://carbonldp.com/ns/v1/security#hashedPassword"
 		), ():void => {
@@ -496,15 +487,6 @@ describe( module( "carbonldp/Vocabularies/CS" ), ():void => {
 
 		it( hasProperty(
 			OBLIGATORY,
-			"subjectClass",
-			"https://carbonldp.com/ns/v1/security#subjectClass"
-		), ():void => {
-			const target:CS[ "subjectClass" ] = "https://carbonldp.com/ns/v1/security#subjectClass";
-			expect( target ).toBeDefined();
-		} );
-
-		it( hasProperty(
-			OBLIGATORY,
 			"ticketKey",
 			"https://carbonldp.com/ns/v1/security#ticketKey"
 		), ():void => {
@@ -554,7 +536,7 @@ describe( module( "carbonldp/Vocabularies/CS" ), ():void => {
 		} );
 
 		it( "should test all exported IRIs", ():void => {
-			expect( Object.keys( CS ).length ).toBe( 60 );
+			expect( Object.keys( CS ).length ).toBe( 58 );
 		} );
 
 		it( "CS.namespace", ():void => {
@@ -758,11 +740,6 @@ describe( module( "carbonldp/Vocabularies/CS" ), ():void => {
 			expect( CS.forIRI ).toBe( "https://carbonldp.com/ns/v1/security#forIRI" );
 		} );
 
-		it( "CS.granting", ():void => {
-			expect( CS.granting ).toEqual( jasmine.any( String ) );
-			expect( CS.granting ).toBe( "https://carbonldp.com/ns/v1/security#granting" );
-		} );
-
 		it( "CS.hashedPassword", ():void => {
 			expect( CS.hashedPassword ).toEqual( jasmine.any( String ) );
 			expect( CS.hashedPassword ).toBe( "https://carbonldp.com/ns/v1/security#hashedPassword" );
@@ -831,11 +808,6 @@ describe( module( "carbonldp/Vocabularies/CS" ), ():void => {
 		it( "CS.subject", ():void => {
 			expect( CS.subject ).toEqual( jasmine.any( String ) );
 			expect( CS.subject ).toBe( "https://carbonldp.com/ns/v1/security#subject" );
-		} );
-
-		it( "CS.subjectClass", ():void => {
-			expect( CS.subjectClass ).toEqual( jasmine.any( String ) );
-			expect( CS.subjectClass ).toBe( "https://carbonldp.com/ns/v1/security#subjectClass" );
 		} );
 
 		it( "CS.ticketKey", ():void => {

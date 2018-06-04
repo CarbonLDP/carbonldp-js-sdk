@@ -1,4 +1,3 @@
-import { ModelFactory } from "../../core/ModelFactory";
 import { TransientFragment } from "../../Fragment";
 import { Pointer } from "../../Pointer";
 import { CS } from "../../Vocabularies";
@@ -6,17 +5,13 @@ import { BaseACE } from "./BaseACE";
 
 
 export interface TransientACE extends TransientFragment {
-	granting:boolean;
+	subject:Pointer;
 	permissions:Pointer[];
-	subjects:Pointer[];
-	subjectsClass:Pointer;
 }
 
 
-export interface TransientACEFactory extends ModelFactory<TransientACE> {
+export interface TransientACEFactory {
 	TYPE:CS[ "AccessControlEntry" ];
-
-	is( value:any ):value is TransientACE;
 
 
 	create<T extends object>( data:T & BaseACE ):T & TransientACE;
@@ -27,14 +22,6 @@ export interface TransientACEFactory extends ModelFactory<TransientACE> {
 export const TransientACE:TransientACEFactory = {
 	TYPE: CS.AccessControlEntry,
 
-	is( value:any ):value is TransientACE {
-		return TransientFragment.is( value )
-			&& value.hasOwnProperty( "granting" )
-			&& value.hasOwnProperty( "permissions" )
-			&& value.hasOwnProperty( "subjects" )
-			&& value.hasOwnProperty( "subjectsClass" )
-			;
-	},
 
 	create<T extends object>( data:T & BaseACE ):T & TransientACE {
 		const copy:T & BaseACE = Object.assign( {}, data );
@@ -42,9 +29,8 @@ export const TransientACE:TransientACEFactory = {
 	},
 
 	createFrom<T extends object>( object:T & BaseACE ):T & TransientACE {
-		TransientFragment.decorate( object );
+		const ace: T & TransientACE = TransientFragment.decorate( object );
 
-		const ace:T & TransientACE = object as T & TransientACE;
 		ace.addType( TransientACE.TYPE );
 
 		return ace;

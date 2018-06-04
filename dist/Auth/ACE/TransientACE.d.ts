@@ -1,17 +1,13 @@
-import { ModelFactory } from "../../core/ModelFactory";
 import { TransientFragment } from "../../Fragment";
 import { Pointer } from "../../Pointer";
 import { CS } from "../../Vocabularies";
 import { BaseACE } from "./BaseACE";
 export interface TransientACE extends TransientFragment {
-    granting: boolean;
+    subject: Pointer;
     permissions: Pointer[];
-    subjects: Pointer[];
-    subjectsClass: Pointer;
 }
-export interface TransientACEFactory extends ModelFactory<TransientACE> {
+export interface TransientACEFactory {
     TYPE: CS["AccessControlEntry"];
-    is(value: any): value is TransientACE;
     create<T extends object>(data: T & BaseACE): T & TransientACE;
     createFrom<T extends object>(object: T & BaseACE): T & TransientACE;
 }

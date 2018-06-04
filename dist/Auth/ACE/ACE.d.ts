@@ -10,6 +10,5 @@ export interface ACE extends TransientACE, Fragment {
 export interface ACEFactory extends ModelSchema, TransientACEFactory {
     TYPE: CS["AccessControlEntry"];
     SCHEMA: ObjectSchema;
-    is(value: any): value is ACE;
 }
 export declare const ACE: ACEFactory;
