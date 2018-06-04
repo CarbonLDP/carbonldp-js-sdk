@@ -21,6 +21,7 @@ import { CredentialSet } from "./CredentialSet";
 import { LDAPCredentials } from "./LDAPCredentials";
 import { ACE } from "./ACE";
 import { ACL } from "./ACL";
+import { PasswordSecret } from "./PasswordSecret";
 import * as PersistedRole from "./PersistedRole";
 import { User } from "./User";
 import * as Role from "./Role";
@@ -193,6 +194,15 @@ describe( module( "carbonldp/Auth" ), ():void => {
 	), ():void => {
 		expect( Auth.User ).toBeDefined();
 		expect( Auth.User ).toBe( User );
+	} );
+
+	it( reexports(
+		STATIC,
+		"PasswordSecret",
+		"CarbonLDP.Auth.PasswordSecret"
+	), ():void => {
+		expect( Auth.PasswordSecret ).toBeDefined();
+		expect( Auth.PasswordSecret ).toBe( PasswordSecret );
 	} );
 
 	it( reexports(
