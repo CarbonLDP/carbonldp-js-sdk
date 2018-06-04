@@ -207,6 +207,15 @@ describe( module( "carbonldp/Vocabularies/CS" ), ():void => {
 
 		it( hasProperty(
 			OBLIGATORY,
+			"SimpleUserACReport",
+			"https://carbonldp.com/ns/v1/security#SimpleUserACReport"
+		), ():void => {
+			const target:CS[ "SimpleUserACReport" ] = "https://carbonldp.com/ns/v1/security#SimpleUserACReport";
+			expect( target ).toBeDefined();
+		} );
+
+		it( hasProperty(
+			OBLIGATORY,
 			"Ticket",
 			"https://carbonldp.com/ns/v1/security#Ticket"
 		), ():void => {
@@ -527,7 +536,7 @@ describe( module( "carbonldp/Vocabularies/CS" ), ():void => {
 		} );
 
 		it( "should test all exported IRIs", ():void => {
-			expect( Object.keys( CS ).length ).toBe( 57 );
+			expect( Object.keys( CS ).length ).toBe( 58 );
 		} );
 
 		it( "CS.namespace", ():void => {
@@ -633,6 +642,11 @@ describe( module( "carbonldp/Vocabularies/CS" ), ():void => {
 		it( "CS.Role", ():void => {
 			expect( CS.Role ).toEqual( jasmine.any( String ) );
 			expect( CS.Role ).toBe( "https://carbonldp.com/ns/v1/security#Role" );
+		} );
+
+		it( "CS.SimpleUserACReport", ():void => {
+			expect( CS.SimpleUserACReport ).toEqual( jasmine.any( String ) );
+			expect( CS.SimpleUserACReport ).toBe( "https://carbonldp.com/ns/v1/security#SimpleUserACReport" );
 		} );
 
 		it( "CS.Ticket", ():void => {

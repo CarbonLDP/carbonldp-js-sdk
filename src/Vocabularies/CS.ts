@@ -21,6 +21,7 @@ export interface CS {
 	Read:"https://carbonldp.com/ns/v1/security#Read";
 	RemoveMember:"https://carbonldp.com/ns/v1/security#RemoveMember";
 	Role:"https://carbonldp.com/ns/v1/security#Role";
+	SimpleUserACReport:"https://carbonldp.com/ns/v1/security#SimpleUserACReport";
 	Ticket:"https://carbonldp.com/ns/v1/security#Ticket";
 	TokenCredentials:"https://carbonldp.com/ns/v1/security#TokenCredentials";
 	Update:"https://carbonldp.com/ns/v1/security#Update";
@@ -83,6 +84,7 @@ export const CS:CS = {
 	Read: "https://carbonldp.com/ns/v1/security#Read",
 	RemoveMember: "https://carbonldp.com/ns/v1/security#RemoveMember",
 	Role: "https://carbonldp.com/ns/v1/security#Role",
+	SimpleUserACReport: "https://carbonldp.com/ns/v1/security#SimpleUserACReport",
 	Ticket: "https://carbonldp.com/ns/v1/security#Ticket",
 	TokenCredentials: "https://carbonldp.com/ns/v1/security#TokenCredentials",
 	Update: "https://carbonldp.com/ns/v1/security#Update",
