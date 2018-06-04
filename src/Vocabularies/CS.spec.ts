@@ -262,15 +262,6 @@ describe( module( "carbonldp/Vocabularies/CS" ), ():void => {
 
 		it( hasProperty(
 			OBLIGATORY,
-			"accessControlEntry",
-			"https://carbonldp.com/ns/v1/security#accessControlEntry"
-		), ():void => {
-			const target:CS[ "accessControlEntry" ] = "https://carbonldp.com/ns/v1/security#accessControlEntry";
-			expect( target ).toBeDefined();
-		} );
-
-		it( hasProperty(
-			OBLIGATORY,
 			"accessControlList",
 			"https://carbonldp.com/ns/v1/security#accessControlList"
 		), ():void => {
@@ -280,10 +271,10 @@ describe( module( "carbonldp/Vocabularies/CS" ), ():void => {
 
 		it( hasProperty(
 			OBLIGATORY,
-			"accessTo",
-			"https://carbonldp.com/ns/v1/security#accessTo"
+			"allDescendantsACEntry",
+			"https://carbonldp.com/ns/v1/security#allDescendantsACEntry"
 		), ():void => {
-			const target:CS[ "accessTo" ] = "https://carbonldp.com/ns/v1/security#accessTo";
+			const target:CS[ "allDescendantsACEntry" ] = "https://carbonldp.com/ns/v1/security#allDescendantsACEntry";
 			expect( target ).toBeDefined();
 		} );
 
@@ -352,15 +343,6 @@ describe( module( "carbonldp/Vocabularies/CS" ), ():void => {
 
 		it( hasProperty(
 			OBLIGATORY,
-			"credentialsOf",
-			"https://carbonldp.com/ns/v1/security#credentialsOf"
-		), ():void => {
-			const target:CS[ "credentialsOf" ] = "https://carbonldp.com/ns/v1/security#credentialsOf";
-			expect( target ).toBeDefined();
-		} );
-
-		it( hasProperty(
-			OBLIGATORY,
 			"description",
 			"https://carbonldp.com/ns/v1/security#description"
 		), ():void => {
@@ -370,10 +352,10 @@ describe( module( "carbonldp/Vocabularies/CS" ), ():void => {
 
 		it( hasProperty(
 			OBLIGATORY,
-			"enabled",
-			"https://carbonldp.com/ns/v1/security#enabled"
+			"directACEntry",
+			"https://carbonldp.com/ns/v1/security#directACEntry"
 		), ():void => {
-			const target:CS[ "enabled" ] = "https://carbonldp.com/ns/v1/security#enabled";
+			const target:CS[ "directACEntry" ] = "https://carbonldp.com/ns/v1/security#directACEntry";
 			expect( target ).toBeDefined();
 		} );
 
@@ -415,10 +397,19 @@ describe( module( "carbonldp/Vocabularies/CS" ), ():void => {
 
 		it( hasProperty(
 			OBLIGATORY,
-			"inheritableEntry",
-			"https://carbonldp.com/ns/v1/security#inheritableEntry"
+			"immediateDescendantsACEntry",
+			"https://carbonldp.com/ns/v1/security#immediateDescendantsACEntry"
 		), ():void => {
-			const target:CS[ "inheritableEntry" ] = "https://carbonldp.com/ns/v1/security#inheritableEntry";
+			const target:CS[ "immediateDescendantsACEntry" ] = "https://carbonldp.com/ns/v1/security#immediateDescendantsACEntry";
+			expect( target ).toBeDefined();
+		} );
+
+		it( hasProperty(
+			OBLIGATORY,
+			"inherits",
+			"https://carbonldp.com/ns/v1/security#inherits"
+		), ():void => {
+			const target:CS[ "inherits" ] = "https://carbonldp.com/ns/v1/security#inherits";
 			expect( target ).toBeDefined();
 		} );
 
@@ -473,6 +464,15 @@ describe( module( "carbonldp/Vocabularies/CS" ), ():void => {
 			"https://carbonldp.com/ns/v1/security#permission"
 		), ():void => {
 			const target:CS[ "permission" ] = "https://carbonldp.com/ns/v1/security#permission";
+			expect( target ).toBeDefined();
+		} );
+
+		it( hasProperty(
+			OBLIGATORY,
+			"protectedDocument",
+			"https://carbonldp.com/ns/v1/security#protectedDocument"
+		), ():void => {
+			const target:CS[ "protectedDocument" ] = "https://carbonldp.com/ns/v1/security#protectedDocument";
 			expect( target ).toBeDefined();
 		} );
 
@@ -693,19 +693,14 @@ describe( module( "carbonldp/Vocabularies/CS" ), ():void => {
 		} );
 
 
-		it( "CS.accessControlEntry", ():void => {
-			expect( CS.accessControlEntry ).toEqual( jasmine.any( String ) );
-			expect( CS.accessControlEntry ).toBe( "https://carbonldp.com/ns/v1/security#accessControlEntry" );
-		} );
-
 		it( "CS.accessControlList", ():void => {
 			expect( CS.accessControlList ).toEqual( jasmine.any( String ) );
 			expect( CS.accessControlList ).toBe( "https://carbonldp.com/ns/v1/security#accessControlList" );
 		} );
 
-		it( "CS.accessTo", ():void => {
-			expect( CS.accessTo ).toEqual( jasmine.any( String ) );
-			expect( CS.accessTo ).toBe( "https://carbonldp.com/ns/v1/security#accessTo" );
+		it( "CS.allDescendantsACEntry", ():void => {
+			expect( CS.allDescendantsACEntry ).toEqual( jasmine.any( String ) );
+			expect( CS.allDescendantsACEntry ).toBe( "https://carbonldp.com/ns/v1/security#allDescendantsACEntry" );
 		} );
 
 		it( "CS.allowsOrigin", ():void => {
@@ -743,19 +738,14 @@ describe( module( "carbonldp/Vocabularies/CS" ), ():void => {
 			expect( CS.credentialSet ).toBe( "https://carbonldp.com/ns/v1/security#credentialSet" );
 		} );
 
-		it( "CS.credentialsOf", ():void => {
-			expect( CS.credentialsOf ).toEqual( jasmine.any( String ) );
-			expect( CS.credentialsOf ).toBe( "https://carbonldp.com/ns/v1/security#credentialsOf" );
-		} );
-
 		it( "CS.description", ():void => {
 			expect( CS.description ).toEqual( jasmine.any( String ) );
 			expect( CS.description ).toBe( "https://carbonldp.com/ns/v1/security#description" );
 		} );
 
-		it( "CS.enabled", ():void => {
-			expect( CS.enabled ).toEqual( jasmine.any( String ) );
-			expect( CS.enabled ).toBe( "https://carbonldp.com/ns/v1/security#enabled" );
+		it( "CS.directACEntry", ():void => {
+			expect( CS.directACEntry ).toEqual( jasmine.any( String ) );
+			expect( CS.directACEntry ).toBe( "https://carbonldp.com/ns/v1/security#directACEntry" );
 		} );
 
 		it( "CS.expires", ():void => {
@@ -778,9 +768,14 @@ describe( module( "carbonldp/Vocabularies/CS" ), ():void => {
 			expect( CS.hashedPassword ).toBe( "https://carbonldp.com/ns/v1/security#hashedPassword" );
 		} );
 
-		it( "CS.inheritableEntry", ():void => {
-			expect( CS.inheritableEntry ).toEqual( jasmine.any( String ) );
-			expect( CS.inheritableEntry ).toBe( "https://carbonldp.com/ns/v1/security#inheritableEntry" );
+		it( "CS.immediateDescendantsACEntry", ():void => {
+			expect( CS.immediateDescendantsACEntry ).toEqual( jasmine.any( String ) );
+			expect( CS.immediateDescendantsACEntry ).toBe( "https://carbonldp.com/ns/v1/security#immediateDescendantsACEntry" );
+		} );
+
+		it( "CS.inherits", ():void => {
+			expect( CS.inherits ).toEqual( jasmine.any( String ) );
+			expect( CS.inherits ).toBe( "https://carbonldp.com/ns/v1/security#inherits" );
 		} );
 
 		it( "CS.ldapServer", ():void => {
@@ -821,6 +816,11 @@ describe( module( "carbonldp/Vocabularies/CS" ), ():void => {
 		it( "CS.permission", ():void => {
 			expect( CS.permission ).toEqual( jasmine.any( String ) );
 			expect( CS.permission ).toBe( "https://carbonldp.com/ns/v1/security#permission" );
+		} );
+
+		it( "CS.protectedDocument", ():void => {
+			expect( CS.protectedDocument ).toEqual( jasmine.any( String ) );
+			expect( CS.protectedDocument ).toBe( "https://carbonldp.com/ns/v1/security#protectedDocument" );
 		} );
 
 		it( "CS.rootContainer", ():void => {

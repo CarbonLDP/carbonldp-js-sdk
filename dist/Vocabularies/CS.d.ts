@@ -26,9 +26,8 @@ export interface CS {
     Upload: "https://carbonldp.com/ns/v1/security#Upload";
     User: "https://carbonldp.com/ns/v1/security#User";
     UsernameAndPasswordCredentials: "https://carbonldp.com/ns/v1/security#UsernameAndPasswordCredentials";
-    accessControlEntry: "https://carbonldp.com/ns/v1/security#accessControlEntry";
     accessControlList: "https://carbonldp.com/ns/v1/security#accessControlList";
-    accessTo: "https://carbonldp.com/ns/v1/security#accessTo";
+    allDescendantsACEntry: "https://carbonldp.com/ns/v1/security#allDescendantsACEntry";
     allowsOrigin: "https://carbonldp.com/ns/v1/security#allowsOrigin";
     authenticatedUserMetadata: "https://carbonldp.com/ns/v1/security#authenticatedUserMetadata";
     authToken: "https://carbonldp.com/ns/v1/security#authToken";
@@ -36,14 +35,14 @@ export interface CS {
     creator: "https://carbonldp.com/ns/v1/security#creator";
     credentials: "https://carbonldp.com/ns/v1/security#credentials";
     credentialSet: "https://carbonldp.com/ns/v1/security#credentialSet";
-    credentialsOf: "https://carbonldp.com/ns/v1/security#credentialsOf";
     description: "https://carbonldp.com/ns/v1/security#description";
-    enabled: "https://carbonldp.com/ns/v1/security#enabled";
+    directACEntry: "https://carbonldp.com/ns/v1/security#directACEntry";
     expires: "https://carbonldp.com/ns/v1/security#expires";
     forIRI: "https://carbonldp.com/ns/v1/security#forIRI";
     granting: "https://carbonldp.com/ns/v1/security#granting";
     hashedPassword: "https://carbonldp.com/ns/v1/security#hashedPassword";
-    inheritableEntry: "https://carbonldp.com/ns/v1/security#inheritableEntry";
+    immediateDescendantsACEntry: "https://carbonldp.com/ns/v1/security#immediateDescendantsACEntry";
+    inherits: "https://carbonldp.com/ns/v1/security#inherits";
     ldapServer: "https://carbonldp.com/ns/v1/security#ldapServer";
     ldapUserDN: "https://carbonldp.com/ns/v1/security#ldapUserDN";
     name: "https://carbonldp.com/ns/v1/security#name";
@@ -52,6 +51,7 @@ export interface CS {
     password: "https://carbonldp.com/ns/v1/security#password";
     passwordSecret: "https://carbonldp.com/ns/v1/security#passwordSecret";
     permission: "https://carbonldp.com/ns/v1/security#permission";
+    protectedDocument: "https://carbonldp.com/ns/v1/security#protectedDocument";
     rootContainer: "https://carbonldp.com/ns/v1/security#rootContainer";
     subject: "https://carbonldp.com/ns/v1/security#subject";
     subjectClass: "https://carbonldp.com/ns/v1/security#subjectClass";

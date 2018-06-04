@@ -1,59 +1,33 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var Document_1 = require("../../Document");
-var Utils_1 = require("../../Utils");
 var Vocabularies_1 = require("../../Vocabularies");
-var TransientACL_1 = require("./TransientACL");
 exports.ACL = {
     TYPE: Vocabularies_1.CS.AccessControlList,
     SCHEMA: {
-        "entries": {
-            "@id": Vocabularies_1.CS.accessControlEntry,
+        "protectedDocument": {
+            "@id": Vocabularies_1.CS.protectedDocument,
+            "@type": "@id",
+        },
+        "inherits": {
+            "@id": Vocabularies_1.CS.inherits,
+            "@type": "@id",
+        },
+        "directACEntries": {
+            "@id": Vocabularies_1.CS.directACEntry,
             "@type": "@id",
             "@container": "@set",
         },
-        "accessTo": {
-            "@id": Vocabularies_1.CS.accessTo,
-            "@type": "@id",
-        },
-        "inheritableEntries": {
-            "@id": Vocabularies_1.CS.inheritableEntry,
+        "immediateDescendantsACEntries": {
+            "@id": Vocabularies_1.CS.immediateDescendantsACEntry,
             "@type": "@id",
             "@container": "@set",
         },
-    },
-    isDecorated: function (object) {
-        return Utils_1.isObject(object)
-            && object["_parsePointer"] === parsePointer;
-    },
-    decorate: function (object, documents) {
-        if (exports.ACL.isDecorated(object))
-            return object;
-        TransientACL_1.TransientACL.decorate(object);
-        Document_1.Document.decorate(object, documents);
-        var acl = object;
-        Object.defineProperties(acl, {
-            "_parsePointer": {
-                writable: true,
-                enumerable: false,
-                configurable: true,
-                value: parsePointer,
-            },
-        });
-        var removeInvalidACE = function (ace) {
-            if (!ace.subjects)
-                acl._removeFragment(ace);
-            return !!ace.subjects;
-        };
-        if (acl.entries)
-            acl.entries = acl.entries.filter(removeInvalidACE);
-        if (acl.inheritableEntries)
-            acl.inheritableEntries = acl.inheritableEntries.filter(removeInvalidACE);
-        return acl;
+        "allDescendantsACEntries": {
+            "@id": Vocabularies_1.CS.allDescendantsACEntry,
+            "@type": "@id",
+            "@container": "@set",
+        },
     },
 };
-function parsePointer(element) {
-    return Utils_1.isObject(element) ? element : this.getPointer(element);
-}
 
 //# sourceMappingURL=ACL.js.map

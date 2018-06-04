@@ -1,6 +1,5 @@
 import { AnyJasmineValue } from "../../test/helpers/types";
 import { AbstractContext } from "../AbstractContext";
-import { ACL } from "../Auth/ACL";
 import { Document, } from "../Document";
 import { Documents } from "../Documents";
 import { Pointer } from "../Pointer";
@@ -242,7 +241,7 @@ describe( module( "carbonldp/ProtectedDocument" ), ():void => {
 									"${ C.Document }",
 									"${ CS.AccessControlList }"
 								],
-								"${ CS.accessTo }": [ {
+								"${ CS.protectedDocument }": [ {
 									"@id": "https://example.com/resource/"
 								} ]
 							} ]
@@ -261,7 +260,7 @@ describe( module( "carbonldp/ProtectedDocument" ), ():void => {
 						expect( acl ).toEqual( jasmine.objectContaining( {
 							_eTag: "\"2-12345\"",
 							types: jasmine.arrayContaining( [ CS.AccessControlList ] ) as any as string[],
-							accessTo: jasmine.objectContaining( {
+							protectedDocument: jasmine.objectContaining( {
 								"id": "https://example.com/resource/",
 							} ) as any,
 						} ) );
@@ -412,8 +411,8 @@ describe( module( "carbonldp/ProtectedDocument" ), ():void => {
 
 		// TODO: Separate in different tests
 		it( "ProtectedDocument.decorate", ():void => {
-			expect( ACL.decorate ).toBeDefined();
-			expect( Utils.isFunction( ACL.decorate ) ).toBe( true );
+			expect( ProtectedDocument.decorate ).toBeDefined();
+			expect( Utils.isFunction( ProtectedDocument.decorate ) ).toBe( true );
 
 			const persistedDocumentSpy:jasmine.Spy = spyOn( Document, "decorate" ).and.callThrough();
 
