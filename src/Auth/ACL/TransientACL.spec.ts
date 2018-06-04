@@ -15,7 +15,7 @@ import {
 	STATIC,
 } from "../../test/JasmineExtender";
 import { CS } from "../../Vocabularies";
-import { TransientACE } from "../ACE";
+import { ACE } from "../ACE";
 import { BaseACL } from "./BaseACL";
 
 import { TransientACL } from "./TransientACL";
@@ -56,30 +56,30 @@ describe( module( "carbonldp/Auth/ACL" ), ():void => {
 		it( hasProperty(
 			OPTIONAL,
 			"directACEntries",
-			"CarbonLDP.Auth.TransientACE[]",
+			"CarbonLDP.Auth.ACE[]",
 			"Array of ACEs that applies to the target protected document."
 		), ():void => {
-			const target:TransientACL[ "directACEntries" ] = [] as TransientACE[];
+			const target:TransientACL[ "directACEntries" ] = [] as ACE[];
 			expect( target ).toBeDefined();
 		} );
 
 		it( hasProperty(
 			OPTIONAL,
 			"immediateDescendantsACEntries",
-			"CarbonLDP.Auth.TransientACE[]",
+			"CarbonLDP.Auth.ACE[]",
 			"Array of ACEs that applies to the immediate descendants of the protected document."
 		), ():void => {
-			const target:TransientACL[ "immediateDescendantsACEntries" ] = [] as TransientACE[];
+			const target:TransientACL[ "immediateDescendantsACEntries" ] = [] as ACE[];
 			expect( target ).toBeDefined();
 		} );
 
 		it( hasProperty(
 			OPTIONAL,
 			"allDescendantsACEntries",
-			"CarbonLDP.Auth.TransientACE[]",
+			"CarbonLDP.Auth.ACE[]",
 			"Array of ACEs that applies to all the branch descendants of the protected document."
 		), ():void => {
-			const target:TransientACL[ "allDescendantsACEntries" ] = [] as TransientACE[];
+			const target:TransientACL[ "allDescendantsACEntries" ] = [] as ACE[];
 			expect( target ).toBeDefined();
 		} );
 

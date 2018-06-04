@@ -1,26 +1,30 @@
 import { ModelSchema } from "../../core/ModelSchema";
-import { Fragment } from "../../Fragment";
+import { TransientFragment } from "../../Fragment";
 import { ObjectSchema } from "../../ObjectSchema";
+import { Pointer } from "../../Pointer";
+import { TransientResource } from "../../Resource";
 import { CS } from "../../Vocabularies";
-import { ACL } from "../ACL";
-import {
-	TransientACE,
-	TransientACEFactory
-} from "./TransientACE";
+import { BaseACE } from "./BaseACE";
 
 
-export interface ACE extends TransientACE, Fragment {
-	_document:ACL;
+export interface ACE extends TransientResource {
+	subject:Pointer;
+	permissions:Pointer[];
 }
 
 
-export interface ACEFactory extends ModelSchema, TransientACEFactory {
+export interface ACEFactory extends ModelSchema {
 	TYPE:CS[ "AccessControlEntry" ];
 	SCHEMA:ObjectSchema;
+
+
+	create<T extends object>( data:T & BaseACE ):T & ACE;
+
+	createFrom<T extends object>( object:T & BaseACE ):T & ACE;
 }
 
 export const ACE:ACEFactory = {
-	TYPE: TransientACE.TYPE,
+	TYPE: CS.AccessControlEntry,
 	SCHEMA: {
 		"permissions": {
 			"@id": CS.permission,
@@ -33,6 +37,17 @@ export const ACE:ACEFactory = {
 		},
 	},
 
-	create: TransientACE.create,
-	createFrom: TransientACE.createFrom,
+
+	create<T extends object>( data:T & BaseACE ):T & ACE {
+		const copy:T & BaseACE = Object.assign( {}, data );
+		return ACE.createFrom( copy );
+	},
+
+	createFrom<T extends object>( object:T & BaseACE ):T & ACE {
+		const ace:T & ACE = TransientFragment.decorate( object );
+
+		ace.addType( ACE.TYPE );
+
+		return ace;
+	},
 };

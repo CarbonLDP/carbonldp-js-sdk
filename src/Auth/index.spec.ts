@@ -10,7 +10,7 @@ import * as Auth from "./";
 
 import {
 	ACE,
-	TransientACE,
+	BaseACE,
 } from "./ACE";
 import {
 	ACL,
@@ -48,15 +48,6 @@ describe( module( "carbonldp/Auth" ), ():void => {
 	it( isDefined(), ():void => {
 		expect( Auth ).toBeDefined();
 		expect( Utils.isObject( Auth ) ).toBe( true );
-	} );
-
-	it( reexports(
-		STATIC,
-		"TransientACE",
-		"CarbonLDP.Auth.TransientACE"
-	), ():void => {
-		expect( Auth.TransientACE ).toBeDefined();
-		expect( Auth.TransientACE ).toBe( TransientACE );
 	} );
 
 	it( reexports(
@@ -182,6 +173,15 @@ describe( module( "carbonldp/Auth" ), ():void => {
 		"CarbonLDP.Auth.ACE"
 	), ():void => {
 		const target:Auth.ACE = {} as ACE;
+		expect( target ).toBeDefined();
+	} );
+
+	it( reexports(
+		STATIC,
+		"BaseACE",
+		"CarbonLDP.Auth.BaseACE"
+	), ():void => {
+		const target:Auth.BaseACE = {} as BaseACE;
 		expect( target ).toBeDefined();
 	} );
 

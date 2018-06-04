@@ -1,8 +1,13 @@
+import { anyThatMatches } from "../../../test/helpers/jasmine-equalities";
 import { AnyJasmineValue } from "../../../test/helpers/types";
+import { Pointer } from "../../Pointer";
+import { TransientResource } from "../../Resource";
 import {
 	extendsClass,
 	hasProperty,
+	hasSignature,
 	interfaze,
+	method,
 	module,
 	OBLIGATORY,
 	property,
@@ -10,6 +15,7 @@ import {
 } from "../../test/JasmineExtender";
 import { CS } from "../../Vocabularies";
 import { ACE } from "./ACE";
+import { BaseACE } from "./BaseACE";
 
 
 describe( module( "carbonldp/Auth/ACE" ), ():void => {
@@ -19,15 +25,30 @@ describe( module( "carbonldp/Auth/ACE" ), ():void => {
 		"Interface that represents a persisted Access Control Entry (ACE) of a persisted Access Control List (ACL)."
 	), ():void => {
 
-		it( extendsClass( "CarbonLDP.Auth.TransientACE" ), ():void => {} );
-		it( extendsClass( "CarbonLDP.Fragment" ), ():void => {} );
+		it( extendsClass( "CarbonLDP.TransientResource" ), ():void => {
+			const target:TransientResource = {} as ACE;
+			expect( target ).toBeDefined();
+		} );
 
 		it( hasProperty(
 			OBLIGATORY,
-			"document",
-			"CarbonLDP.Auth.ACL",
-			"Reference to the persisted ACL where the current ACE belongs."
-		), ():void => {} );
+			"permissions",
+			"CarbonLDP.Pointer[]",
+			"An array with all the permissions to grant or deny."
+		), ():void => {
+			const target:ACE[ "permissions" ] = [] as Pointer[];
+			expect( target ).toBeDefined();
+		} );
+
+		it( hasProperty(
+			OBLIGATORY,
+			"subject",
+			"CarbonLDP.Pointer",
+			"The subject to grant the specified permissions."
+		), ():void => {
+			const target:ACE[ "subject" ] = {} as Pointer;
+			expect( target ).toBeDefined();
+		} );
 
 	} );
 
@@ -36,13 +57,23 @@ describe( module( "carbonldp/Auth/ACE" ), ():void => {
 		"Interface with the factory and utils for `CarbonLDP.Auth.ACE` objects."
 	), ():void => {
 
-		it( extendsClass( "CarbonLDP.Auth.TransientACEFactory" ), () => {} );
 
-		it( hasProperty(
+		describe( property(
 			OBLIGATORY,
 			"TYPE",
 			"CarbonLDP.Vocabularies.CS.AccessControlEntry"
-		), ():void => {} );
+		), ():void => {
+
+			it( "should exists", ():void => {
+				expect( ACE.TYPE ).toBeDefined();
+				expect( ACE.TYPE ).toEqual( jasmine.any( String ) );
+			} );
+
+			it( "should be cs:AccessControlEntry", () => {
+				expect( ACE.TYPE ).toBe( CS.AccessControlEntry );
+			} );
+
+		} );
 
 		describe( property(
 			OBLIGATORY,
@@ -80,6 +111,103 @@ describe( module( "carbonldp/Auth/ACE" ), ():void => {
 					"@type": "@id",
 					"@container": "@set",
 				} );
+			} );
+
+		} );
+
+
+		describe( method( OBLIGATORY, "create" ), () => {
+
+			it( hasSignature(
+				[ "T extends object" ],
+				"Creates a `CarbonLDP.Auth.ACE` object with the parameters specified.", [
+					{ name: "data", type: "T & CarbonLDP.Auth.BaseACE", description: "Data for creation an access control entry." },
+				],
+				{ type: "CarbonLDP.Auth.ACE" }
+			), ():void => {} );
+
+			it( "should exists", ():void => {
+				expect( ACE.create ).toBeDefined();
+				expect( ACE.create ).toEqual( jasmine.any( Function ) );
+			} );
+
+
+			it( "should return a resource", () => {
+				const returned:TransientResource = ACE.create( {
+					subject: Pointer.create( { id: "subject/" } ),
+					permissions: [ Pointer.create( { id: "Permission" } ) ],
+				} );
+
+				expect( returned ).toEqual( anyThatMatches( TransientResource.is, "isResource" ) as any );
+			} );
+
+			it( "should add cs:AccessControlEntry type", () => {
+				const returned:TransientResource = ACE.create( {
+					subject: Pointer.create( { id: "subject/" } ),
+					permissions: [ Pointer.create( { id: "Permission" } ) ],
+				} );
+
+				expect( returned.types ).toContain( CS.AccessControlEntry );
+			} );
+
+
+			it( "should return different object reference", () => {
+				const base:BaseACE = {
+					subject: Pointer.create( { id: "subject/" } ),
+					permissions: [ Pointer.create( { id: "Permission" } ) ],
+				};
+
+				const returned:ACE = ACE.create( base );
+
+				expect( base ).not.toBe( returned );
+			} );
+
+		} );
+
+		describe( method( OBLIGATORY, "createFrom" ), () => {
+
+			it( hasSignature(
+				[ "T extends object" ],
+				"Creates a `CarbonLDP.Auth.ACE` object with the parameters specified.", [
+					{ name: "object", type: "T & CarbonLDP.Auth.BaseACE", description: "The object that will be converted into a `CarbonLDP.Auth.ACE`" },
+				],
+				{ type: "T & CarbonLDP.Auth.ACE" }
+			), ():void => {} );
+
+			it( "should exists", ():void => {
+				expect( ACE.createFrom ).toBeDefined();
+				expect( ACE.createFrom ).toEqual( jasmine.any( Function ) );
+			} );
+
+
+			it( "should return a resource", () => {
+				const returned:TransientResource = ACE.createFrom( {
+					subject: Pointer.create( { id: "subject/" } ),
+					permissions: [ Pointer.create( { id: "Permission" } ) ],
+				} );
+
+				expect( returned ).toEqual( anyThatMatches( TransientResource.is, "isResource" ) as any );
+			} );
+
+			it( "should add cs:AccessControlEntry type", () => {
+				const returned:TransientResource = ACE.createFrom( {
+					subject: Pointer.create( { id: "subject/" } ),
+					permissions: [ Pointer.create( { id: "Permission" } ) ],
+				} );
+
+				expect( returned.types ).toContain( CS.AccessControlEntry );
+			} );
+
+
+			it( "should return same object reference", () => {
+				const base:BaseACE = {
+					subject: Pointer.create( { id: "subject/" } ),
+					permissions: [ Pointer.create( { id: "Permission" } ) ],
+				};
+
+				const returned:ACE = ACE.createFrom( base );
+
+				expect( base ).toBe( returned );
 			} );
 
 		} );

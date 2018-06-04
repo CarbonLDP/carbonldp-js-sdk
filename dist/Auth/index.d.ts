@@ -1,4 +1,3 @@
-export { TransientACE } from "./ACE";
 export { TransientACL } from "./ACL";
 export { AuthenticatedUserInformationAccessor } from "./AuthenticatedUserInformationAccessor";
 export { AuthenticatedUserMetadata } from "./AuthenticatedUserMetadata";
@@ -10,7 +9,7 @@ export { BasicCredentials } from "./BasicCredentials";
 export { BasicToken } from "./BasicToken";
 export { CredentialSet } from "./CredentialSet";
 export { LDAPCredentials } from "./LDAPCredentials";
-export { ACE } from "./ACE";
+export { ACE, BaseACE } from "./ACE";
 export { ACL, BaseACL } from "./ACL";
 export { PasswordSecret } from "./PasswordSecret";
 export { User } from "./User";

@@ -1,7 +1,7 @@
 import { TransientDocument } from "../../Document";
 import { Pointer } from "../../Pointer";
 import { CS } from "../../Vocabularies";
-import { TransientACE } from "../ACE";
+import { ACE } from "../ACE";
 import { BaseACL } from "./BaseACL";
 
 
@@ -9,9 +9,9 @@ export interface TransientACL extends TransientDocument {
 	// TODO: Change to Document
 	protectedDocument:Pointer;
 	inherits?:boolean;
-	directACEntries?:TransientACE[];
-	immediateDescendantsACEntries?:TransientACE[];
-	allDescendantsACEntries?:TransientACE[];
+	directACEntries?:ACE[];
+	immediateDescendantsACEntries?:ACE[];
+	allDescendantsACEntries?:ACE[];
 }
 
 
