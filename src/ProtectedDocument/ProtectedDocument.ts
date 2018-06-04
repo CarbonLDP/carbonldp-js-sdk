@@ -16,12 +16,14 @@ import {
 export interface ProtectedDocument extends Document {
 	accessControlList?:Pointer;
 
+	creator?:Pointer;
+	owners?:Pointer;
+
 	getACL( requestOptions?:RequestOptions ):Promise<ACL>;
 }
 
 
 export interface ProtectedDocumentFactory extends ModelDecorator<ProtectedDocument>, TransientProtectedDocumentFactory {
-	TYPE:CS[ "ProtectedDocument" ];
 	SCHEMA:ObjectSchema;
 
 
@@ -39,6 +41,15 @@ export const ProtectedDocument:ProtectedDocumentFactory = {
 		"accessControlList": {
 			"@id": CS.accessControlList,
 			"@type": "@id",
+		},
+		"creator": {
+			"@id": CS.creator,
+			"@type": "@id",
+		},
+		"owners": {
+			"@id": CS.owner,
+			"@type": "@id",
+			"@container": "@set",
 		},
 	},
 
@@ -74,9 +85,6 @@ export const ProtectedDocument:ProtectedDocumentFactory = {
 
 };
 
-interface ACLResult {
-	acl:Pointer;
-}
 
 function getACL( this:ProtectedDocument, requestOptions:RequestOptions ):Promise<ACL> {
 	if( this.accessControlList ) return this._documents.get( this.accessControlList.id, requestOptions );

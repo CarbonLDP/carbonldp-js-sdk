@@ -5116,6 +5116,7 @@ exports.CS = {
     authToken: "https://carbonldp.com/ns/v1/security#authToken",
     authenticatedUserMetadata: "https://carbonldp.com/ns/v1/security#authenticatedUserMetadata",
     childRole: "https://carbonldp.com/ns/v1/security#childRole",
+    creator: "https://carbonldp.com/ns/v1/security#creator",
     credentials: "https://carbonldp.com/ns/v1/security#credentials",
     credentialSet: "https://carbonldp.com/ns/v1/security#credentialSet",
     credentialsOf: "https://carbonldp.com/ns/v1/security#credentialsOf",
@@ -5129,6 +5130,7 @@ exports.CS = {
     ldapServer: "https://carbonldp.com/ns/v1/security#ldapServer",
     ldapUserDN: "https://carbonldp.com/ns/v1/security#ldapUserDN",
     name: "https://carbonldp.com/ns/v1/security#name",
+    owner: "https://carbonldp.com/ns/v1/security#owner",
     parentRole: "https://carbonldp.com/ns/v1/security#parentRole",
     password: "https://carbonldp.com/ns/v1/security#password",
     passwordSecret: "https://carbonldp.com/ns/v1/security#passwordSecret",
@@ -21092,6 +21094,15 @@ exports.ProtectedDocument = {
         "accessControlList": {
             "@id": Vocabularies_1.CS.accessControlList,
             "@type": "@id",
+        },
+        "creator": {
+            "@id": Vocabularies_1.CS.creator,
+            "@type": "@id",
+        },
+        "owners": {
+            "@id": Vocabularies_1.CS.owner,
+            "@type": "@id",
+            "@container": "@set",
         },
     },
     isDecorated: function (object) {

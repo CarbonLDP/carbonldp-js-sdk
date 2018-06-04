@@ -5,14 +5,14 @@ import { Documents } from "../Documents";
 import { RequestOptions } from "../HTTP";
 import { ObjectSchema } from "../ObjectSchema";
 import { Pointer } from "../Pointer";
-import { CS } from "../Vocabularies";
 import { TransientProtectedDocumentFactory } from "./TransientProtectedDocument";
 export interface ProtectedDocument extends Document {
     accessControlList?: Pointer;
+    creator?: Pointer;
+    owners?: Pointer;
     getACL(requestOptions?: RequestOptions): Promise<ACL>;
 }
 export interface ProtectedDocumentFactory extends ModelDecorator<ProtectedDocument>, TransientProtectedDocumentFactory {
-    TYPE: CS["ProtectedDocument"];
     SCHEMA: ObjectSchema;
     isDecorated(object: object): object is ProtectedDocument;
     is(object: object): object is ProtectedDocument;

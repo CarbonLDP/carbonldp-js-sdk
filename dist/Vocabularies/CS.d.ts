@@ -33,6 +33,7 @@ export interface CS {
     authenticatedUserMetadata: "https://carbonldp.com/ns/v1/security#authenticatedUserMetadata";
     authToken: "https://carbonldp.com/ns/v1/security#authToken";
     childRole: "https://carbonldp.com/ns/v1/security#childRole";
+    creator: "https://carbonldp.com/ns/v1/security#creator";
     credentials: "https://carbonldp.com/ns/v1/security#credentials";
     credentialSet: "https://carbonldp.com/ns/v1/security#credentialSet";
     credentialsOf: "https://carbonldp.com/ns/v1/security#credentialsOf";
@@ -46,6 +47,7 @@ export interface CS {
     ldapServer: "https://carbonldp.com/ns/v1/security#ldapServer";
     ldapUserDN: "https://carbonldp.com/ns/v1/security#ldapUserDN";
     name: "https://carbonldp.com/ns/v1/security#name";
+    owner: "https://carbonldp.com/ns/v1/security#owner";
     parentRole: "https://carbonldp.com/ns/v1/security#parentRole";
     password: "https://carbonldp.com/ns/v1/security#password";
     passwordSecret: "https://carbonldp.com/ns/v1/security#passwordSecret";

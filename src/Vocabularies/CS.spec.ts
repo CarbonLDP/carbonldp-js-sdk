@@ -325,6 +325,15 @@ describe( module( "carbonldp/Vocabularies/CS" ), ():void => {
 
 		it( hasProperty(
 			OBLIGATORY,
+			"creator",
+			"https://carbonldp.com/ns/v1/security#creator"
+		), ():void => {
+			const target:CS[ "creator" ] = "https://carbonldp.com/ns/v1/security#creator";
+			expect( target ).toBeDefined();
+		} );
+
+		it( hasProperty(
+			OBLIGATORY,
 			"credentials",
 			"https://carbonldp.com/ns/v1/security#credentials"
 		), ():void => {
@@ -419,6 +428,15 @@ describe( module( "carbonldp/Vocabularies/CS" ), ():void => {
 			"https://carbonldp.com/ns/v1/security#name"
 		), ():void => {
 			const target:CS[ "name" ] = "https://carbonldp.com/ns/v1/security#name";
+			expect( target ).toBeDefined();
+		} );
+
+		it( hasProperty(
+			OBLIGATORY,
+			"owner",
+			"https://carbonldp.com/ns/v1/security#owner"
+		), ():void => {
+			const target:CS[ "owner" ] = "https://carbonldp.com/ns/v1/security#owner";
 			expect( target ).toBeDefined();
 		} );
 
@@ -536,7 +554,7 @@ describe( module( "carbonldp/Vocabularies/CS" ), ():void => {
 		} );
 
 		it( "should test all exported IRIs", ():void => {
-			expect( Object.keys( CS ).length ).toBe( 58 );
+			expect( Object.keys( CS ).length ).toBe( 60 );
 		} );
 
 		it( "CS.namespace", ():void => {
@@ -710,6 +728,11 @@ describe( module( "carbonldp/Vocabularies/CS" ), ():void => {
 			expect( CS.childRole ).toBe( "https://carbonldp.com/ns/v1/security#childRole" );
 		} );
 
+		it( "CS.creator", ():void => {
+			expect( CS.creator ).toEqual( jasmine.any( String ) );
+			expect( CS.creator ).toBe( "https://carbonldp.com/ns/v1/security#creator" );
+		} );
+
 		it( "CS.credentials", ():void => {
 			expect( CS.credentials ).toEqual( jasmine.any( String ) );
 			expect( CS.credentials ).toBe( "https://carbonldp.com/ns/v1/security#credentials" );
@@ -773,6 +796,11 @@ describe( module( "carbonldp/Vocabularies/CS" ), ():void => {
 		it( "CS.name", ():void => {
 			expect( CS.name ).toEqual( jasmine.any( String ) );
 			expect( CS.name ).toBe( "https://carbonldp.com/ns/v1/security#name" );
+		} );
+
+		it( "CS.owner", ():void => {
+			expect( CS.owner ).toEqual( jasmine.any( String ) );
+			expect( CS.owner ).toBe( "https://carbonldp.com/ns/v1/security#owner" );
 		} );
 
 		it( "CS.parentRole", ():void => {

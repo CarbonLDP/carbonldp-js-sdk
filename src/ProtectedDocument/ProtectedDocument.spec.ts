@@ -1,8 +1,9 @@
+import { AnyJasmineValue } from "../../test/helpers/types";
 import { AbstractContext } from "../AbstractContext";
 import { ACL } from "../Auth/ACL";
 import { Document, } from "../Document";
 import { Documents } from "../Documents";
-import { ProtectedDocument } from "./ProtectedDocument";
+import { Pointer } from "../Pointer";
 
 import {
 	extendsClass,
@@ -23,6 +24,7 @@ import {
 	C,
 	CS,
 } from "../Vocabularies";
+import { ProtectedDocument } from "./ProtectedDocument";
 
 
 describe( module( "carbonldp/ProtectedDocument" ), ():void => {
@@ -53,6 +55,25 @@ describe( module( "carbonldp/ProtectedDocument" ), ():void => {
 			"CarbonLDP.Pointer",
 			"A reference to the ACL of the document."
 		), ():void => {} );
+
+		it( hasProperty(
+			OPTIONAL,
+			"creator",
+			"CarbonLDP.Pointer"
+		), ():void => {
+			const target:ProtectedDocument[ "creator" ] = {} as Pointer;
+			expect( target ).toBeDefined();
+		} );
+
+		it( hasProperty(
+			OPTIONAL,
+			"owners",
+			"CarbonLDP.Pointer"
+		), ():void => {
+			const target:ProtectedDocument[ "owners" ] = {} as Pointer;
+			expect( target ).toBeDefined();
+		} );
+
 
 		describe( method( OBLIGATORY, "getACL" ), ():void => {
 
@@ -255,9 +276,56 @@ describe( module( "carbonldp/ProtectedDocument" ), ():void => {
 	} );
 
 	describe( interfaze(
-		"CarbonLDP.ProtectedDocument",
+		"CarbonLDP.ProtectedDocumentFactory",
 		"Interface with the factory, decorate and utils methods for `CarbonLDP.ProtectedDocument` objects."
 	), ():void => {
+
+		it( extendsClass( "CarbonLDP.TransientProtectedDocument" ), () => {} );
+
+		describe( property(
+			OBLIGATORY,
+			"SCHEMA",
+			"CarbonLDP.ObjectSchema"
+		), ():void => {
+
+			it( "should exists", ():void => {
+				expect( ProtectedDocument.SCHEMA ).toBeDefined();
+			} );
+
+			it( "should have model properties", () => {
+				type Target = AnyJasmineValue<Required<Pick<ProtectedDocument,
+					"accessControlList" | "creator" | "owners">>>;
+
+				expect( ProtectedDocument.SCHEMA as Target ).toEqual( {
+					accessControlList: jasmine.any( Object ),
+					creator: jasmine.any( Object ),
+					owners: jasmine.any( Object ),
+				} );
+			} );
+
+			it( "should have cs:accessControlList", () => {
+				expect( ProtectedDocument.SCHEMA[ "accessControlList" ] ).toEqual( {
+					"@id": CS.accessControlList,
+					"@type": "@id",
+				} );
+			} );
+
+			it( "should have cs:creator", () => {
+				expect( ProtectedDocument.SCHEMA[ "creator" ] ).toEqual( {
+					"@id": CS.creator,
+					"@type": "@id",
+				} );
+			} );
+
+			it( "should have cs:owner", () => {
+				expect( ProtectedDocument.SCHEMA[ "owners" ] ).toEqual( {
+					"@id": CS.owner,
+					"@type": "@id",
+					"@container": "@set",
+				} );
+			} );
+
+		} );
 
 		it( hasMethod(
 			STATIC,
@@ -292,26 +360,13 @@ describe( module( "carbonldp/ProtectedDocument" ), ():void => {
 	describe( property(
 		STATIC,
 		"ProtectedDocument",
-		"CarbonLDP.ProtectedDocument",
-		"Constant that implements the `CarbonLDP.ProtectedDocument` interface."
+		"CarbonLDP.ProtectedDocumentFactory",
+		"Constant that implements the `CarbonLDP.ProtectedDocumentFactory` interface."
 	), ():void => {
 
 		it( isDefined(), ():void => {
 			expect( ProtectedDocument ).toBeDefined();
 			expect( ProtectedDocument ).toEqual( jasmine.any( Object ) );
-		} );
-
-		// TODO: Separate in different errors
-		it( "ProtectedDocument.SCHEMA", ():void => {
-			expect( ProtectedDocument.SCHEMA ).toBeDefined();
-			expect( Utils.isObject( ProtectedDocument.SCHEMA ) ).toBe( true );
-
-			expect( Utils.hasProperty( ProtectedDocument.SCHEMA, "accessControlList" ) ).toBe( true );
-			expect( ProtectedDocument.SCHEMA[ "accessControlList" ] ).toEqual( {
-				"@id": CS.accessControlList,
-				"@type": "@id",
-			} );
-
 		} );
 
 		// TODO: Separate in different tests

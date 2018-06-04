@@ -18,6 +18,15 @@ exports.ProtectedDocument = {
             "@id": Vocabularies_1.CS.accessControlList,
             "@type": "@id",
         },
+        "creator": {
+            "@id": Vocabularies_1.CS.creator,
+            "@type": "@id",
+        },
+        "owners": {
+            "@id": Vocabularies_1.CS.owner,
+            "@type": "@id",
+            "@container": "@set",
+        },
     },
     isDecorated: function (object) {
         return Utils.isObject(object)
