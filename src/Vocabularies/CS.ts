@@ -3,18 +3,18 @@ export interface CS {
 
 	AccessControlEntry:"https://carbonldp.com/ns/v1/security#AccessControlEntry";
 	AccessControlList:"https://carbonldp.com/ns/v1/security#AccessControlList";
+	AddMember:"https://carbonldp.com/ns/v1/security#AddMember";
 	AllOrigins:"https://carbonldp.com/ns/v1/security#AllOrigins";
 	AuthenticatedUserInformationAccessor:"https://carbonldp.com/ns/v1/security#AuthenticatedUserInformationAccessor";
 	AuthenticatedUserMetadata:"https://carbonldp.com/ns/v1/security#AuthenticatedUserMetadata";
+	ControlAccess:"https://carbonldp.com/ns/v1/security#ControlAccess";
 	CreateAccessPoint:"https://carbonldp.com/ns/v1/security#CreateAccessPoint";
 	CreateChild:"https://carbonldp.com/ns/v1/security#CreateChild";
 	Credentials:"https://carbonldp.com/ns/v1/security#Credentials";
 	CredentialSet:"https://carbonldp.com/ns/v1/security#CredentialSet";
 	Delete:"https://carbonldp.com/ns/v1/security#Delete";
-	Download:"https://carbonldp.com/ns/v1/security#Download";
-	Extend:"https://carbonldp.com/ns/v1/security#Extend";
+	Impersonate:"https://carbonldp.com/ns/v1/security#Impersonate";
 	LDAPCredentials:"https://carbonldp.com/ns/v1/security#LDAPCredentials";
-	ManageSecurity:"https://carbonldp.com/ns/v1/security#ManageSecurity";
 	PasswordSecret:"https://carbonldp.com/ns/v1/security#PasswordSecret";
 	PreferAuthToken:"https://carbonldp.com/ns/v1/security#PreferAuthToken";
 	ProtectedDocument:"https://carbonldp.com/ns/v1/security#ProtectedDocument";
@@ -24,7 +24,6 @@ export interface CS {
 	Ticket:"https://carbonldp.com/ns/v1/security#Ticket";
 	TokenCredentials:"https://carbonldp.com/ns/v1/security#TokenCredentials";
 	Update:"https://carbonldp.com/ns/v1/security#Update";
-	Upload:"https://carbonldp.com/ns/v1/security#Upload";
 	User:"https://carbonldp.com/ns/v1/security#User";
 	UsernameAndPasswordCredentials:"https://carbonldp.com/ns/v1/security#UsernameAndPasswordCredentials";
 
@@ -66,18 +65,18 @@ export const CS:CS = {
 
 	AccessControlEntry: "https://carbonldp.com/ns/v1/security#AccessControlEntry",
 	AccessControlList: "https://carbonldp.com/ns/v1/security#AccessControlList",
+	AddMember: "https://carbonldp.com/ns/v1/security#AddMember",
 	AllOrigins: "https://carbonldp.com/ns/v1/security#AllOrigins",
 	AuthenticatedUserInformationAccessor: "https://carbonldp.com/ns/v1/security#AuthenticatedUserInformationAccessor",
 	AuthenticatedUserMetadata: "https://carbonldp.com/ns/v1/security#AuthenticatedUserMetadata",
+	ControlAccess: "https://carbonldp.com/ns/v1/security#ControlAccess",
 	CreateAccessPoint: "https://carbonldp.com/ns/v1/security#CreateAccessPoint",
 	CreateChild: "https://carbonldp.com/ns/v1/security#CreateChild",
 	Credentials: "https://carbonldp.com/ns/v1/security#Credentials",
 	CredentialSet: "https://carbonldp.com/ns/v1/security#CredentialSet",
 	Delete: "https://carbonldp.com/ns/v1/security#Delete",
-	Download: "https://carbonldp.com/ns/v1/security#Download",
-	Extend: "https://carbonldp.com/ns/v1/security#Extend",
+	Impersonate: "https://carbonldp.com/ns/v1/security#Impersonate",
 	LDAPCredentials: "https://carbonldp.com/ns/v1/security#LDAPCredentials",
-	ManageSecurity: "https://carbonldp.com/ns/v1/security#ManageSecurity",
 	PasswordSecret: "https://carbonldp.com/ns/v1/security#PasswordSecret",
 	PreferAuthToken: "https://carbonldp.com/ns/v1/security#PreferAuthToken",
 	ProtectedDocument: "https://carbonldp.com/ns/v1/security#ProtectedDocument",
@@ -87,7 +86,6 @@ export const CS:CS = {
 	Ticket: "https://carbonldp.com/ns/v1/security#Ticket",
 	TokenCredentials: "https://carbonldp.com/ns/v1/security#TokenCredentials",
 	Update: "https://carbonldp.com/ns/v1/security#Update",
-	Upload: "https://carbonldp.com/ns/v1/security#Upload",
 	User: "https://carbonldp.com/ns/v1/security#User",
 	UsernameAndPasswordCredentials: "https://carbonldp.com/ns/v1/security#UsernameAndPasswordCredentials",
 

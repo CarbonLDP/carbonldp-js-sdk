@@ -45,6 +45,15 @@ describe( module( "carbonldp/Vocabularies/CS" ), ():void => {
 
 		it( hasProperty(
 			OBLIGATORY,
+			"AddMember",
+			"https://carbonldp.com/ns/v1/security#AddMember"
+		), ():void => {
+			const target:CS[ "AddMember" ] = "https://carbonldp.com/ns/v1/security#AddMember";
+			expect( target ).toBeDefined();
+		} );
+
+		it( hasProperty(
+			OBLIGATORY,
 			"AllOrigins",
 			"https://carbonldp.com/ns/v1/security#AllOrigins"
 		), ():void => {
@@ -67,6 +76,15 @@ describe( module( "carbonldp/Vocabularies/CS" ), ():void => {
 			"https://carbonldp.com/ns/v1/security#AuthenticatedUserMetadata"
 		), ():void => {
 			const target:CS[ "AuthenticatedUserMetadata" ] = "https://carbonldp.com/ns/v1/security#AuthenticatedUserMetadata";
+			expect( target ).toBeDefined();
+		} );
+
+		it( hasProperty(
+			OBLIGATORY,
+			"ControlAccess",
+			"https://carbonldp.com/ns/v1/security#ControlAccess"
+		), ():void => {
+			const target:CS[ "ControlAccess" ] = "https://carbonldp.com/ns/v1/security#ControlAccess";
 			expect( target ).toBeDefined();
 		} );
 
@@ -117,19 +135,10 @@ describe( module( "carbonldp/Vocabularies/CS" ), ():void => {
 
 		it( hasProperty(
 			OBLIGATORY,
-			"Download",
-			"https://carbonldp.com/ns/v1/security#Download"
+			"Impersonate",
+			"https://carbonldp.com/ns/v1/security#Impersonate"
 		), ():void => {
-			const target:CS[ "Download" ] = "https://carbonldp.com/ns/v1/security#Download";
-			expect( target ).toBeDefined();
-		} );
-
-		it( hasProperty(
-			OBLIGATORY,
-			"Extend",
-			"https://carbonldp.com/ns/v1/security#Extend"
-		), ():void => {
-			const target:CS[ "Extend" ] = "https://carbonldp.com/ns/v1/security#Extend";
+			const target:CS[ "Impersonate" ] = "https://carbonldp.com/ns/v1/security#Impersonate";
 			expect( target ).toBeDefined();
 		} );
 
@@ -139,15 +148,6 @@ describe( module( "carbonldp/Vocabularies/CS" ), ():void => {
 			"https://carbonldp.com/ns/v1/security#LDAPCredentials"
 		), ():void => {
 			const target:CS[ "LDAPCredentials" ] = "https://carbonldp.com/ns/v1/security#LDAPCredentials";
-			expect( target ).toBeDefined();
-		} );
-
-		it( hasProperty(
-			OBLIGATORY,
-			"ManageSecurity",
-			"https://carbonldp.com/ns/v1/security#ManageSecurity"
-		), ():void => {
-			const target:CS[ "ManageSecurity" ] = "https://carbonldp.com/ns/v1/security#ManageSecurity";
 			expect( target ).toBeDefined();
 		} );
 
@@ -229,15 +229,6 @@ describe( module( "carbonldp/Vocabularies/CS" ), ():void => {
 			"https://carbonldp.com/ns/v1/security#Update"
 		), ():void => {
 			const target:CS[ "Update" ] = "https://carbonldp.com/ns/v1/security#Update";
-			expect( target ).toBeDefined();
-		} );
-
-		it( hasProperty(
-			OBLIGATORY,
-			"Upload",
-			"https://carbonldp.com/ns/v1/security#Upload"
-		), ():void => {
-			const target:CS[ "Upload" ] = "https://carbonldp.com/ns/v1/security#Upload";
 			expect( target ).toBeDefined();
 		} );
 
@@ -536,7 +527,7 @@ describe( module( "carbonldp/Vocabularies/CS" ), ():void => {
 		} );
 
 		it( "should test all exported IRIs", ():void => {
-			expect( Object.keys( CS ).length ).toBe( 58 );
+			expect( Object.keys( CS ).length ).toBe( 57 );
 		} );
 
 		it( "CS.namespace", ():void => {
@@ -554,6 +545,11 @@ describe( module( "carbonldp/Vocabularies/CS" ), ():void => {
 			expect( CS.AccessControlList ).toBe( "https://carbonldp.com/ns/v1/security#AccessControlList" );
 		} );
 
+		it( "CS.AddMember", ():void => {
+			expect( CS.AddMember ).toEqual( jasmine.any( String ) );
+			expect( CS.AddMember ).toBe( "https://carbonldp.com/ns/v1/security#AddMember" );
+		} );
+
 		it( "CS.AllOrigins", ():void => {
 			expect( CS.AllOrigins ).toEqual( jasmine.any( String ) );
 			expect( CS.AllOrigins ).toBe( "https://carbonldp.com/ns/v1/security#AllOrigins" );
@@ -567,6 +563,11 @@ describe( module( "carbonldp/Vocabularies/CS" ), ():void => {
 		it( "CS.AuthenticatedUserMetadata", ():void => {
 			expect( CS.AuthenticatedUserMetadata ).toEqual( jasmine.any( String ) );
 			expect( CS.AuthenticatedUserMetadata ).toBe( "https://carbonldp.com/ns/v1/security#AuthenticatedUserMetadata" );
+		} );
+
+		it( "CS.ControlAccess", ():void => {
+			expect( CS.ControlAccess ).toEqual( jasmine.any( String ) );
+			expect( CS.ControlAccess ).toBe( "https://carbonldp.com/ns/v1/security#ControlAccess" );
 		} );
 
 		it( "CS.CreateAccessPoint", ():void => {
@@ -594,24 +595,14 @@ describe( module( "carbonldp/Vocabularies/CS" ), ():void => {
 			expect( CS.Delete ).toBe( "https://carbonldp.com/ns/v1/security#Delete" );
 		} );
 
-		it( "CS.Download", ():void => {
-			expect( CS.Download ).toEqual( jasmine.any( String ) );
-			expect( CS.Download ).toBe( "https://carbonldp.com/ns/v1/security#Download" );
-		} );
-
-		it( "CS.Extend", ():void => {
-			expect( CS.Extend ).toEqual( jasmine.any( String ) );
-			expect( CS.Extend ).toBe( "https://carbonldp.com/ns/v1/security#Extend" );
+		it( "CS.Impersonate", ():void => {
+			expect( CS.Impersonate ).toEqual( jasmine.any( String ) );
+			expect( CS.Impersonate ).toBe( "https://carbonldp.com/ns/v1/security#Impersonate" );
 		} );
 
 		it( "CS.LDAPCredentials", ():void => {
 			expect( CS.LDAPCredentials ).toEqual( jasmine.any( String ) );
 			expect( CS.LDAPCredentials ).toBe( "https://carbonldp.com/ns/v1/security#LDAPCredentials" );
-		} );
-
-		it( "CS.ManageSecurity", ():void => {
-			expect( CS.ManageSecurity ).toEqual( jasmine.any( String ) );
-			expect( CS.ManageSecurity ).toBe( "https://carbonldp.com/ns/v1/security#ManageSecurity" );
 		} );
 
 		it( "CS.PasswordSecret", ():void => {
@@ -657,11 +648,6 @@ describe( module( "carbonldp/Vocabularies/CS" ), ():void => {
 		it( "CS.Update", ():void => {
 			expect( CS.Update ).toEqual( jasmine.any( String ) );
 			expect( CS.Update ).toBe( "https://carbonldp.com/ns/v1/security#Update" );
-		} );
-
-		it( "CS.Upload", ():void => {
-			expect( CS.Upload ).toEqual( jasmine.any( String ) );
-			expect( CS.Upload ).toBe( "https://carbonldp.com/ns/v1/security#Upload" );
 		} );
 
 		it( "CS.User", ():void => {
