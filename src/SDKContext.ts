@@ -1,4 +1,12 @@
 import * as Auth from "./Auth";
+import {
+	CompleteACReport,
+	DetailedUserACReport,
+	GrantingStep,
+	PermissionReport,
+	SimpleUserACReport,
+	SubjectReport
+} from "./Auth";
 import { ACE } from "./Auth/ACE";
 import { ACL } from "./Auth/ACL";
 import { AuthenticatedUserInformationAccessor } from "./Auth/AuthenticatedUserInformationAccessor";
@@ -237,6 +245,13 @@ export class SDKContext implements Context {
 		this.extendObjectSchema( UsernameAndPasswordCredentials.TYPE, UsernameAndPasswordCredentials.SCHEMA );
 		this.extendObjectSchema( LDAPCredentials.TYPE, LDAPCredentials.SCHEMA );
 		this.extendObjectSchema( PasswordSecret.TYPE, PasswordSecret.SCHEMA );
+
+		this.extendObjectSchema( SimpleUserACReport.TYPE, SimpleUserACReport.SCHEMA );
+		this.extendObjectSchema( DetailedUserACReport.TYPE, DetailedUserACReport.SCHEMA );
+		this.extendObjectSchema( PermissionReport.TYPE, PermissionReport.SCHEMA );
+		this.extendObjectSchema( GrantingStep.TYPE, GrantingStep.SCHEMA );
+		this.extendObjectSchema( CompleteACReport.TYPE, CompleteACReport.SCHEMA );
+		this.extendObjectSchema( SubjectReport.TYPE, SubjectReport.SCHEMA );
 
 		this.extendObjectSchema( ValidationReport.TYPE, ValidationReport.SCHEMA );
 		this.extendObjectSchema( ValidationResult.TYPE, ValidationResult.SCHEMA );
