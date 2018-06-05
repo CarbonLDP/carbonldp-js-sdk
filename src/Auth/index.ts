@@ -18,11 +18,19 @@ export { TokenCredentials, TokenCredentialsBase } from "./TokenCredentials";
 export { TransientUser, BaseUser } from "./User";
 export { UsernameAndPasswordCredentials } from "./UsernameAndPasswordCredentials";
 export { UsersEndpoint } from "./UsersEndpoint";
+export { SimpleUserACReport } from "./SimpleUserACReport";
+export { DetailedUserACReport } from "./DetailedUserACReport";
+export { PermissionReport } from "./PermissionReport";
+export { GrantingStep } from "./GrantingStep";
+export { CompleteACReport } from "./CompleteACReport";
+export { SubjectReport } from "./SubjectReport";
 
 
+import { PermissionReport } from "./PermissionReport";
 import * as PersistedRole from "./PersistedRole";
 import * as Role from "./Role";
 import * as Roles from "./Roles";
+import { SubjectReport } from "./SubjectReport";
 
 export {
 	PersistedRole,
