@@ -1,10 +1,11 @@
 import { ObjectSchema } from "../ObjectSchema";
 import { Pointer } from "../Pointer";
+import { TransientResource } from "../Resource";
 import { CS } from "../Vocabularies";
 import { PermissionReport } from "./PermissionReport";
 
 
-export interface DetailedUserACReport {
+export interface DetailedUserACReport extends TransientResource {
 	protectedDocument:Pointer;
 	permissionReports:PermissionReport[];
 }

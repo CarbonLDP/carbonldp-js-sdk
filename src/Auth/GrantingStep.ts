@@ -1,12 +1,13 @@
 import { ObjectSchema } from "../ObjectSchema";
 import { Pointer } from "../Pointer";
+import { TransientResource } from "../Resource";
 import {
 	CS,
 	XSD
 } from "../Vocabularies";
 
 
-export interface GrantingStep {
+export interface GrantingStep extends TransientResource {
 	subject:Pointer;
 	applied:boolean;
 	appliedBy:Pointer;

@@ -1,5 +1,6 @@
 import { ObjectSchema } from "../ObjectSchema";
 import { Pointer } from "../Pointer";
+import { TransientResource } from "../Resource";
 import {
 	CS,
 	XSD
@@ -7,7 +8,7 @@ import {
 import { GrantingStep } from "./GrantingStep";
 
 
-export interface PermissionReport {
+export interface PermissionReport extends TransientResource {
 	permission:Pointer;
 	granted:boolean;
 	grantingChain:GrantingStep[];

@@ -1,6 +1,8 @@
 import { AnyJasmineValue } from "../../test/helpers/types";
 import { Pointer } from "../Pointer";
+import { TransientResource } from "../Resource";
 import {
+	extendsClass,
 	hasProperty,
 	interfaze,
 	module,
@@ -21,6 +23,12 @@ describe( module( "carbonldp/Auth/PermissionReport" ), () => {
 		"CarbonLDP.PermissionReport",
 		"Model that species the report an specific permission in a access control report."
 	), () => {
+
+		it( extendsClass( "CarbonLDP.TransientResource" ), () => {
+			const target:TransientResource = {} as PermissionReport;
+			expect( target ).toBeDefined();
+		} );
+
 
 		it( hasProperty(
 			OBLIGATORY,

@@ -1,7 +1,9 @@
 import { AnyJasmineValue } from "../../test/helpers/types";
 import { CarbonLDP } from "../CarbonLDP";
 import { Pointer } from "../Pointer";
+import { TransientResource } from "../Resource";
 import {
+	extendsClass,
 	hasProperty,
 	interfaze,
 	module,
@@ -22,6 +24,12 @@ describe( module( "carbonldp/Auth/GrantingStep" ), () => {
 		"CarbonLDP.Auth.GrantingStep",
 		"Model for the a step in the granting inheritance of a access control report."
 	), () => {
+
+		it( extendsClass( "CarbonLDP.TransientResource" ), () => {
+			const target:TransientResource = {} as GrantingStep;
+			expect( target ).toBeDefined();
+		} );
+
 
 		it( hasProperty(
 			OBLIGATORY,
