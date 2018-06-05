@@ -81,6 +81,15 @@ describe( module( "carbonldp/Vocabularies/CS" ), ():void => {
 
 		it( hasProperty(
 			OBLIGATORY,
+			"CompleteACReport",
+			"https://carbonldp.com/ns/v1/security#CompleteACReport"
+		), ():void => {
+			const target:CS[ "CompleteACReport" ] = "https://carbonldp.com/ns/v1/security#CompleteACReport";
+			expect( target ).toBeDefined();
+		} );
+
+		it( hasProperty(
+			OBLIGATORY,
 			"ControlAccess",
 			"https://carbonldp.com/ns/v1/security#ControlAccess"
 		), ():void => {
@@ -238,6 +247,15 @@ describe( module( "carbonldp/Vocabularies/CS" ), ():void => {
 			"https://carbonldp.com/ns/v1/security#SimpleUserACReport"
 		), ():void => {
 			const target:CS[ "SimpleUserACReport" ] = "https://carbonldp.com/ns/v1/security#SimpleUserACReport";
+			expect( target ).toBeDefined();
+		} );
+
+		it( hasProperty(
+			OBLIGATORY,
+			"SubjectReport",
+			"https://carbonldp.com/ns/v1/security#SubjectReport"
+		), ():void => {
+			const target:CS[ "SubjectReport" ] = "https://carbonldp.com/ns/v1/security#SubjectReport";
 			expect( target ).toBeDefined();
 		} );
 
@@ -568,6 +586,15 @@ describe( module( "carbonldp/Vocabularies/CS" ), ():void => {
 
 		it( hasProperty(
 			OBLIGATORY,
+			"subjectReport",
+			"https://carbonldp.com/ns/v1/security#subjectReport"
+		), ():void => {
+			const target:CS[ "subjectReport" ] = "https://carbonldp.com/ns/v1/security#subjectReport";
+			expect( target ).toBeDefined();
+		} );
+
+		it( hasProperty(
+			OBLIGATORY,
 			"ticketKey",
 			"https://carbonldp.com/ns/v1/security#ticketKey"
 		), ():void => {
@@ -617,7 +644,7 @@ describe( module( "carbonldp/Vocabularies/CS" ), ():void => {
 		} );
 
 		it( "should test all exported IRIs", ():void => {
-			expect( Object.keys( CS ).length ).toBe( 67 );
+			expect( Object.keys( CS ).length ).toBe( 70 );
 		} );
 
 		it( "CS.namespace", ():void => {
@@ -653,6 +680,11 @@ describe( module( "carbonldp/Vocabularies/CS" ), ():void => {
 		it( "CS.AuthenticatedUserMetadata", ():void => {
 			expect( CS.AuthenticatedUserMetadata ).toEqual( jasmine.any( String ) );
 			expect( CS.AuthenticatedUserMetadata ).toBe( "https://carbonldp.com/ns/v1/security#AuthenticatedUserMetadata" );
+		} );
+
+		it( "CS.CompleteACReport", ():void => {
+			expect( CS.CompleteACReport ).toEqual( jasmine.any( String ) );
+			expect( CS.CompleteACReport ).toBe( "https://carbonldp.com/ns/v1/security#CompleteACReport" );
 		} );
 
 		it( "CS.ControlAccess", ():void => {
@@ -743,6 +775,11 @@ describe( module( "carbonldp/Vocabularies/CS" ), ():void => {
 		it( "CS.SimpleUserACReport", ():void => {
 			expect( CS.SimpleUserACReport ).toEqual( jasmine.any( String ) );
 			expect( CS.SimpleUserACReport ).toBe( "https://carbonldp.com/ns/v1/security#SimpleUserACReport" );
+		} );
+
+		it( "CS.SubjectReport", ():void => {
+			expect( CS.SubjectReport ).toEqual( jasmine.any( String ) );
+			expect( CS.SubjectReport ).toBe( "https://carbonldp.com/ns/v1/security#SubjectReport" );
 		} );
 
 		it( "CS.Ticket", ():void => {
@@ -934,6 +971,11 @@ describe( module( "carbonldp/Vocabularies/CS" ), ():void => {
 		it( "CS.subject", ():void => {
 			expect( CS.subject ).toEqual( jasmine.any( String ) );
 			expect( CS.subject ).toBe( "https://carbonldp.com/ns/v1/security#subject" );
+		} );
+
+		it( "CS.subjectReport", ():void => {
+			expect( CS.subjectReport ).toEqual( jasmine.any( String ) );
+			expect( CS.subjectReport ).toBe( "https://carbonldp.com/ns/v1/security#subjectReport" );
 		} );
 
 		it( "CS.ticketKey", ():void => {

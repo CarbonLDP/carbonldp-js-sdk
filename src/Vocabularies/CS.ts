@@ -7,6 +7,7 @@ export interface CS {
 	AllOrigins:"https://carbonldp.com/ns/v1/security#AllOrigins";
 	AuthenticatedUserInformationAccessor:"https://carbonldp.com/ns/v1/security#AuthenticatedUserInformationAccessor";
 	AuthenticatedUserMetadata:"https://carbonldp.com/ns/v1/security#AuthenticatedUserMetadata";
+	CompleteACReport:"https://carbonldp.com/ns/v1/security#CompleteACReport";
 	ControlAccess:"https://carbonldp.com/ns/v1/security#ControlAccess";
 	CreateAccessPoint:"https://carbonldp.com/ns/v1/security#CreateAccessPoint";
 	CreateChild:"https://carbonldp.com/ns/v1/security#CreateChild";
@@ -25,6 +26,7 @@ export interface CS {
 	RemoveMember:"https://carbonldp.com/ns/v1/security#RemoveMember";
 	Role:"https://carbonldp.com/ns/v1/security#Role";
 	SimpleUserACReport:"https://carbonldp.com/ns/v1/security#SimpleUserACReport";
+	SubjectReport:"https://carbonldp.com/ns/v1/security#SubjectReport";
 	Ticket:"https://carbonldp.com/ns/v1/security#Ticket";
 	TokenCredentials:"https://carbonldp.com/ns/v1/security#TokenCredentials";
 	Update:"https://carbonldp.com/ns/v1/security#Update";
@@ -64,6 +66,7 @@ export interface CS {
 	protectedDocument:"https://carbonldp.com/ns/v1/security#protectedDocument";
 	rootContainer:"https://carbonldp.com/ns/v1/security#rootContainer";
 	subject:"https://carbonldp.com/ns/v1/security#subject";
+	subjectReport:"https://carbonldp.com/ns/v1/security#subjectReport";
 	ticketKey:"https://carbonldp.com/ns/v1/security#ticketKey";
 	token:"https://carbonldp.com/ns/v1/security#token";
 	user:"https://carbonldp.com/ns/v1/security#user";
@@ -79,6 +82,7 @@ export const CS:CS = {
 	AllOrigins: "https://carbonldp.com/ns/v1/security#AllOrigins",
 	AuthenticatedUserInformationAccessor: "https://carbonldp.com/ns/v1/security#AuthenticatedUserInformationAccessor",
 	AuthenticatedUserMetadata: "https://carbonldp.com/ns/v1/security#AuthenticatedUserMetadata",
+	CompleteACReport: "https://carbonldp.com/ns/v1/security#CompleteACReport",
 	ControlAccess: "https://carbonldp.com/ns/v1/security#ControlAccess",
 	CreateAccessPoint: "https://carbonldp.com/ns/v1/security#CreateAccessPoint",
 	CreateChild: "https://carbonldp.com/ns/v1/security#CreateChild",
@@ -97,6 +101,7 @@ export const CS:CS = {
 	RemoveMember: "https://carbonldp.com/ns/v1/security#RemoveMember",
 	Role: "https://carbonldp.com/ns/v1/security#Role",
 	SimpleUserACReport: "https://carbonldp.com/ns/v1/security#SimpleUserACReport",
+	SubjectReport: "https://carbonldp.com/ns/v1/security#SubjectReport",
 	Ticket: "https://carbonldp.com/ns/v1/security#Ticket",
 	TokenCredentials: "https://carbonldp.com/ns/v1/security#TokenCredentials",
 	Update: "https://carbonldp.com/ns/v1/security#Update",
@@ -136,6 +141,7 @@ export const CS:CS = {
 	protectedDocument: "https://carbonldp.com/ns/v1/security#protectedDocument",
 	rootContainer: "https://carbonldp.com/ns/v1/security#rootContainer",
 	subject: "https://carbonldp.com/ns/v1/security#subject",
+	subjectReport: "https://carbonldp.com/ns/v1/security#subjectReport",
 	ticketKey: "https://carbonldp.com/ns/v1/security#ticketKey",
 	token: "https://carbonldp.com/ns/v1/security#token",
 	user: "https://carbonldp.com/ns/v1/security#user",
