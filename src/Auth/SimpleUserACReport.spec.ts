@@ -4,7 +4,9 @@ import { TransientResource } from "../Resource";
 import {
 	extendsClass,
 	hasProperty,
+	hasSignature,
 	interfaze,
+	method,
 	module,
 	OBLIGATORY,
 	property,
@@ -106,6 +108,51 @@ describe( module( "carbonldp/SimpleUserACReport" ), () => {
 					"@type": "@id",
 					"@container": "@set",
 				} );
+			} );
+
+		} );
+
+
+		describe( method( OBLIGATORY, "is" ), () => {
+
+			it( hasSignature(
+				"Return true if the provided element is considered a `CarbonLDP.Auth.SimpleUserACReport` object.",
+				[
+					{ name: "value", type: "any", description: "The value to check." },
+				],
+				{ type: "value is CarbonLDP.Auth.SimpleUserACReport" }
+			), () => {} );
+
+			it( "should exists", ():void => {
+				expect( SimpleUserACReport.is ).toBeDefined();
+				expect( SimpleUserACReport.is ).toEqual( jasmine.any( Function ) );
+			} );
+
+
+			let isTransientResource:jasmine.Spy;
+			let object:jasmine.SpyObj<TransientResource>;
+			beforeEach( ():void => {
+				isTransientResource = spyOn( TransientResource, "is" )
+					.and.returnValue( true );
+
+				object = jasmine.createSpyObj( {
+					hasType: true,
+				} );
+			} );
+
+			it( "should check it is a TransientResource", () => {
+				SimpleUserACReport.is( object );
+				expect( isTransientResource ).toHaveBeenCalledWith( object );
+			} );
+
+			it( "should check that have type cs:SimpleUserACReport", () => {
+				SimpleUserACReport.is( object );
+				expect( object.hasType ).toHaveBeenCalledWith( CS.SimpleUserACReport );
+			} );
+
+			it( "should return true when all assertions", () => {
+				const returned:boolean = SimpleUserACReport.is( object );
+				expect( returned ).toBe( true );
 			} );
 
 		} );

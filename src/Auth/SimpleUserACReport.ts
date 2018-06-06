@@ -12,6 +12,9 @@ export interface SimpleUserACReport extends TransientResource {
 export interface SimpleUserACReportFactory {
 	TYPE:CS[ "SimpleUserACReport" ];
 	SCHEMA:ObjectSchema;
+
+
+	is( value:any ):value is SimpleUserACReport;
 }
 
 export const SimpleUserACReport:SimpleUserACReportFactory = {
@@ -26,5 +29,12 @@ export const SimpleUserACReport:SimpleUserACReportFactory = {
 			"@type": "@id",
 			"@container": "@set",
 		},
+	},
+
+
+	is( value:any ):value is SimpleUserACReport {
+		return TransientResource.is( value )
+			&& value.hasType( SimpleUserACReport.TYPE )
+			;
 	},
 };

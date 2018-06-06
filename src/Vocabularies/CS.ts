@@ -21,6 +21,7 @@ export interface CS {
 	PasswordSecret:"https://carbonldp.com/ns/v1/security#PasswordSecret";
 	PermissionReport:"https://carbonldp.com/ns/v1/security#PermissionReport";
 	PreferAuthToken:"https://carbonldp.com/ns/v1/security#PreferAuthToken";
+	PreferSimpleUserACReport:"https://carbonldp.com/ns/v1/security#PreferSimpleUserACReport";
 	ProtectedDocument:"https://carbonldp.com/ns/v1/security#ProtectedDocument";
 	Read:"https://carbonldp.com/ns/v1/security#Read";
 	RemoveMember:"https://carbonldp.com/ns/v1/security#RemoveMember";
@@ -96,6 +97,7 @@ export const CS:CS = {
 	PasswordSecret: "https://carbonldp.com/ns/v1/security#PasswordSecret",
 	PermissionReport: "https://carbonldp.com/ns/v1/security#PermissionReport",
 	PreferAuthToken: "https://carbonldp.com/ns/v1/security#PreferAuthToken",
+	PreferSimpleUserACReport: "https://carbonldp.com/ns/v1/security#PreferSimpleUserACReport",
 	ProtectedDocument: "https://carbonldp.com/ns/v1/security#ProtectedDocument",
 	Read: "https://carbonldp.com/ns/v1/security#Read",
 	RemoveMember: "https://carbonldp.com/ns/v1/security#RemoveMember",

@@ -207,6 +207,15 @@ describe( module( "carbonldp/Vocabularies/CS" ), ():void => {
 
 		it( hasProperty(
 			OBLIGATORY,
+			"PreferSimpleUserACReport",
+			"https://carbonldp.com/ns/v1/security#PreferSimpleUserACReport"
+		), ():void => {
+			const target:CS[ "PreferSimpleUserACReport" ] = "https://carbonldp.com/ns/v1/security#PreferSimpleUserACReport";
+			expect( target ).toBeDefined();
+		} );
+
+		it( hasProperty(
+			OBLIGATORY,
 			"ProtectedDocument",
 			"https://carbonldp.com/ns/v1/security#ProtectedDocument"
 		), ():void => {
@@ -644,7 +653,7 @@ describe( module( "carbonldp/Vocabularies/CS" ), ():void => {
 		} );
 
 		it( "should test all exported IRIs", ():void => {
-			expect( Object.keys( CS ).length ).toBe( 70 );
+			expect( Object.keys( CS ).length ).toBe( 71 );
 		} );
 
 		it( "CS.namespace", ():void => {
@@ -750,6 +759,11 @@ describe( module( "carbonldp/Vocabularies/CS" ), ():void => {
 		it( "CS.PreferAuthToken", ():void => {
 			expect( CS.PreferAuthToken ).toEqual( jasmine.any( String ) );
 			expect( CS.PreferAuthToken ).toBe( "https://carbonldp.com/ns/v1/security#PreferAuthToken" );
+		} );
+
+		it( "CS.PreferSimpleUserACReport", ():void => {
+			expect( CS.PreferSimpleUserACReport ).toEqual( jasmine.any( String ) );
+			expect( CS.PreferSimpleUserACReport ).toBe( "https://carbonldp.com/ns/v1/security#PreferSimpleUserACReport" );
 		} );
 
 		it( "CS.ProtectedDocument", ():void => {

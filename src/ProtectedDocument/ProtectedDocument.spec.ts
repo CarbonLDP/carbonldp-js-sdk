@@ -1,7 +1,10 @@
 import { AnyJasmineValue } from "../../test/helpers/types";
 import { AbstractContext } from "../AbstractContext";
+import { SimpleUserACReport } from "../Auth";
+import { CarbonLDP } from "../CarbonLDP";
 import { Document, } from "../Document";
 import { Documents } from "../Documents";
+import { Header } from "../HTTP";
 import { Pointer } from "../Pointer";
 
 import {
@@ -22,9 +25,16 @@ import * as Utils from "../Utils";
 import {
 	C,
 	CS,
+	LDP,
 } from "../Vocabularies";
 import { ProtectedDocument } from "./ProtectedDocument";
 
+
+function createMock<T extends object>( documents:Documents, data?:T & Partial<ProtectedDocument> ):T & ProtectedDocument {
+	return ProtectedDocument.decorate( Object.assign( {
+		id: "https://example.com/resource/",
+	}, data ), documents );
+}
 
 describe( module( "carbonldp/ProtectedDocument" ), ():void => {
 
@@ -268,6 +278,338 @@ describe( module( "carbonldp/ProtectedDocument" ), ():void => {
 						done();
 					} )
 					.catch( done.fail );
+			} );
+
+		} );
+
+
+		describe( method( OBLIGATORY, "getSimpleUserACReport" ), () => {
+
+			it( hasSignature(
+				"Returns a `CarbonLDP.Auth.SimpleUserACReport` of the current object",
+				[
+					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", description: "Customizable options for the request." },
+				],
+				{ type: "CarbonLDP.Auth.SimpleUserACReport" }
+			), () => {} );
+
+			it( "should exists", ():void => {
+				const resource:ProtectedDocument = createMock( new Documents() );
+
+				expect( resource.getSimpleUserACReport ).toBeDefined();
+				expect( resource.getSimpleUserACReport ).toEqual( jasmine.any( Function ) );
+			} );
+
+
+			function stubRequest( uri:string ):void {
+				jasmine.Ajax.stubRequest( uri, null, "GET" )
+					.andReturn( {
+						responseHeaders: {},
+						responseText: JSON.stringify( [
+							{
+								"@id": "_:1",
+								"@type": [ CS.SimpleUserACReport ],
+								[ CS.protectedDocument ]: [ {
+									"@id": uri,
+								} ],
+								[ CS.permission ]: [
+									{ "@id": CS.Read },
+									{ "@id": CS.Update },
+									{ "@id": CS.CreateChild },
+								],
+							},
+						] ),
+					} );
+			}
+
+			describe( "When has a context", () => {
+
+				let resource:ProtectedDocument;
+				beforeEach( () => {
+					context = new CarbonLDP( "https://example.com/" );
+					resource = createMock( context.documents );
+				} );
+
+				it( "should send request to self ID when no URI", async () => {
+					stubRequest( "https://example.com/resource/" );
+
+					await resource
+						.getSimpleUserACReport();
+
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.url ).toBe( "https://example.com/resource/" );
+				} );
+
+				it( "should send request to of specified URI", async () => {
+					stubRequest( "https://example.com/another-resource/" );
+
+					await resource
+						.getSimpleUserACReport( "https://example.com/another-resource/" );
+
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.url ).toBe( "https://example.com/another-resource/" );
+				} );
+
+				it( "should send request to of resolved relative URI", async () => {
+					stubRequest( "https://example.com/resource/child/" );
+
+					await resource
+						.getSimpleUserACReport( "child/" );
+
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.url ).toBe( "https://example.com/resource/child/" );
+				} );
+
+
+				it( "should send default request headers when no URI", async () => {
+					stubRequest( "https://example.com/resource/" );
+
+					await resource
+						.getSimpleUserACReport();
+
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.requestHeaders ).toEqual( {
+						"accept": "application/ld+json",
+						"prefer": [
+							`include="${ CS.PreferSimpleUserACReport }"`,
+							`include="${ C.PreferMinimalDocument }"`,
+							`${ LDP.RDFSource }; rel=interaction-model`,
+						].join( ", " ),
+					} );
+				} );
+
+				it( "should send default request headers when URI", async () => {
+					stubRequest( "https://example.com/resource/child/" );
+
+					await resource
+						.getSimpleUserACReport( "child/" );
+
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.requestHeaders ).toEqual( {
+						"accept": "application/ld+json",
+						"prefer": [
+							`include="${ CS.PreferSimpleUserACReport }"`,
+							`include="${ C.PreferMinimalDocument }"`,
+							`${ LDP.RDFSource }; rel=interaction-model`,
+						].join( ", " ),
+					} );
+				} );
+
+				it( "should authorization header", async () => {
+					stubRequest( "https://example.com/resource/" );
+
+					const spy:jasmine.Spy = spyOn( context.auth, "addAuthentication" );
+
+					await resource
+						.getSimpleUserACReport();
+
+					expect( spy ).toHaveBeenCalled();
+				} );
+
+				it( "should send custom headers when no URI", async () => {
+					stubRequest( "https://example.com/resource/" );
+
+					await resource
+						.getSimpleUserACReport( {
+							headers: new Map()
+								.set( "custom", new Header( "custom value" ) )
+							,
+						} );
+
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.requestHeaders ).toEqual( jasmine.objectContaining( {
+						"custom": "custom value",
+					} ) );
+				} );
+
+				it( "should send custom headers when specified URI", async () => {
+					stubRequest( "https://example.com/resource/child/" );
+
+					await resource
+						.getSimpleUserACReport( "child/", {
+							headers: new Map()
+								.set( "custom", new Header( "custom value" ) )
+							,
+						} );
+
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.requestHeaders ).toEqual( jasmine.objectContaining( {
+						"custom": "custom value",
+					} ) );
+				} );
+
+
+				it( "should return the report of self", async () => {
+					stubRequest( "https://example.com/resource/" );
+
+					const report:SimpleUserACReport = await resource
+						.getSimpleUserACReport();
+
+					expect( report as AnyJasmineValue<typeof report> ).toEqual( {
+						protectedDocument: jasmine.objectContaining( { id: "https://example.com/resource/" } ),
+						permissions: [
+							jasmine.objectContaining( { id: CS.Read } ),
+							jasmine.objectContaining( { id: CS.Update } ),
+							jasmine.objectContaining( { id: CS.CreateChild } ),
+						],
+					} );
+				} );
+
+				it( "should return the report of the specified URI", async () => {
+					stubRequest( "https://example.com/resource/child/" );
+
+					const report:SimpleUserACReport = await resource
+						.getSimpleUserACReport( "child/" );
+
+					expect( report as AnyJasmineValue<typeof report> ).toEqual( {
+						protectedDocument: jasmine.objectContaining( { id: "https://example.com/resource/child/" } ),
+						permissions: [
+							jasmine.objectContaining( { id: CS.Read } ),
+							jasmine.objectContaining( { id: CS.Update } ),
+							jasmine.objectContaining( { id: CS.CreateChild } ),
+						],
+					} );
+				} );
+
+			} );
+
+			describe( "When has NO context", () => {
+
+				let resource:ProtectedDocument;
+				beforeEach( () => {
+					resource = createMock( new Documents() );
+				} );
+
+				it( "should send request to self ID when no URI", async () => {
+					stubRequest( "https://example.com/resource/" );
+
+					await resource
+						.getSimpleUserACReport();
+
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.url ).toBe( "https://example.com/resource/" );
+				} );
+
+				it( "should send request to of specified URI", async () => {
+					stubRequest( "https://example.com/another-resource/" );
+
+					await resource
+						.getSimpleUserACReport( "https://example.com/another-resource/" );
+
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.url ).toBe( "https://example.com/another-resource/" );
+				} );
+
+				it( "should send request to of resolved relative URI", async () => {
+					stubRequest( "https://example.com/resource/child/" );
+
+					await resource
+						.getSimpleUserACReport( "child/" );
+
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.url ).toBe( "https://example.com/resource/child/" );
+				} );
+
+
+				it( "should send default request headers when no URI", async () => {
+					stubRequest( "https://example.com/resource/" );
+
+					await resource
+						.getSimpleUserACReport();
+
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.requestHeaders ).toEqual( {
+						"accept": "application/ld+json",
+						"prefer": [
+							`include="${ CS.PreferSimpleUserACReport }"`,
+							`include="${ C.PreferMinimalDocument }"`,
+							`${ LDP.RDFSource }; rel=interaction-model`,
+						].join( ", " ),
+					} );
+				} );
+
+				it( "should send default request headers when URI", async () => {
+					stubRequest( "https://example.com/resource/child/" );
+
+					await resource
+						.getSimpleUserACReport( "child/" );
+
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.requestHeaders ).toEqual( {
+						"accept": "application/ld+json",
+						"prefer": [
+							`include="${ CS.PreferSimpleUserACReport }"`,
+							`include="${ C.PreferMinimalDocument }"`,
+							`${ LDP.RDFSource }; rel=interaction-model`,
+						].join( ", " ),
+					} );
+				} );
+
+				it( "should send custom headers when no URI", async () => {
+					stubRequest( "https://example.com/resource/" );
+
+					await resource
+						.getSimpleUserACReport( {
+							headers: new Map()
+								.set( "custom", new Header( "custom value" ) )
+							,
+						} );
+
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.requestHeaders ).toEqual( jasmine.objectContaining( {
+						"custom": "custom value",
+					} ) );
+				} );
+
+				it( "should send custom headers when specified URI", async () => {
+					stubRequest( "https://example.com/resource/child/" );
+
+					await resource
+						.getSimpleUserACReport( "child/", {
+							headers: new Map()
+								.set( "custom", new Header( "custom value" ) )
+							,
+						} );
+
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.requestHeaders ).toEqual( jasmine.objectContaining( {
+						"custom": "custom value",
+					} ) );
+				} );
+
+
+				it( "should return the report of self", async () => {
+					stubRequest( "https://example.com/resource/" );
+
+					const report:SimpleUserACReport = await resource
+						.getSimpleUserACReport();
+
+					expect( report as AnyJasmineValue<{ [ s:string ]:any }> ).toEqual( {
+						[ CS.protectedDocument ]: jasmine.objectContaining( { id: "https://example.com/resource/" } ),
+						[ CS.permission ]: [
+							jasmine.objectContaining( { id: CS.Read } ),
+							jasmine.objectContaining( { id: CS.Update } ),
+							jasmine.objectContaining( { id: CS.CreateChild } ),
+						],
+					} );
+				} );
+
+				it( "should return the report of the specified URI", async () => {
+					stubRequest( "https://example.com/resource/child/" );
+
+					const report:SimpleUserACReport = await resource
+						.getSimpleUserACReport( "child/" );
+
+					expect( report as AnyJasmineValue<{ [ s:string ]:any }> ).toEqual( {
+						[ CS.protectedDocument ]: jasmine.objectContaining( { id: "https://example.com/resource/child/" } ),
+						[ CS.permission ]: [
+							jasmine.objectContaining( { id: CS.Read } ),
+							jasmine.objectContaining( { id: CS.Update } ),
+							jasmine.objectContaining( { id: CS.CreateChild } ),
+						],
+					} );
+				} );
+
 			} );
 
 		} );

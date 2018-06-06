@@ -1,4 +1,4 @@
-import { ACL } from "../Auth";
+import { ACL, SimpleUserACReport } from "../Auth";
 import { ModelDecorator } from "../core/ModelDecorator";
 import { Document } from "../Document";
 import { Documents } from "../Documents";
@@ -11,6 +11,8 @@ export interface ProtectedDocument extends Document {
     creator?: Pointer;
     owners?: Pointer;
     getACL(requestOptions?: RequestOptions): Promise<ACL>;
+    getSimpleUserACReport(requestOptions?: RequestOptions): Promise<SimpleUserACReport>;
+    getSimpleUserACReport(uri: string, requestOptions?: RequestOptions): Promise<SimpleUserACReport>;
 }
 export interface ProtectedDocumentFactory extends ModelDecorator<ProtectedDocument>, TransientProtectedDocumentFactory {
     SCHEMA: ObjectSchema;
