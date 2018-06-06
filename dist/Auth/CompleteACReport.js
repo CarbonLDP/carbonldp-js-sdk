@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+var Resource_1 = require("../Resource");
 var Vocabularies_1 = require("../Vocabularies");
 exports.CompleteACReport = {
     TYPE: Vocabularies_1.CS.CompleteACReport,
@@ -13,6 +14,10 @@ exports.CompleteACReport = {
             "@type": "@id",
             "@container": "@set",
         },
+    },
+    is: function (value) {
+        return Resource_1.TransientResource.is(value)
+            && value.hasType(exports.CompleteACReport.TYPE);
     },
 };
 

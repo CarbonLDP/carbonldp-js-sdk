@@ -5051,6 +5051,7 @@ exports.CS = {
     PasswordSecret: "https://carbonldp.com/ns/v1/security#PasswordSecret",
     PermissionReport: "https://carbonldp.com/ns/v1/security#PermissionReport",
     PreferAuthToken: "https://carbonldp.com/ns/v1/security#PreferAuthToken",
+    PreferCompleteACReport: "https://carbonldp.com/ns/v1/security#PreferCompleteACReport",
     PreferDetailedUserACReport: "https://carbonldp.com/ns/v1/security#PreferDetailedUserACReport",
     PreferSimpleUserACReport: "https://carbonldp.com/ns/v1/security#PreferSimpleUserACReport",
     ProtectedDocument: "https://carbonldp.com/ns/v1/security#ProtectedDocument",
@@ -20898,6 +20899,12 @@ exports.ProtectedDocument = {
                 configurable: true,
                 value: getDetailedUserACReport,
             },
+            "getCompleteACReport": {
+                writable: false,
+                enumerable: false,
+                configurable: true,
+                value: getCompleteACReport,
+            },
         });
         return persistedProtectedDocument;
     },
@@ -20965,6 +20972,16 @@ function getDetailedUserACReport(uriOrOptions, requestOptions) {
         .then(function (_a) {
         var rdfData = _a[0], response = _a[1];
         return getReport(Auth_1.DetailedUserACReport, _this._documents, rdfData, response);
+    });
+}
+function getCompleteACReport(uriOrOptions, requestOptions) {
+    var _this = this;
+    var _a = parseParams(this, uriOrOptions, requestOptions), url = _a.url, options = _a.options;
+    HTTP_1.RequestUtils.setRetrievalPreferences({ include: [Vocabularies_1.CS.PreferCompleteACReport] }, options);
+    return makeMinimalGET(this._documents, url, options)
+        .then(function (_a) {
+        var rdfData = _a[0], response = _a[1];
+        return getReport(Auth_1.CompleteACReport, _this._documents, rdfData, response);
     });
 }
 
@@ -21311,6 +21328,7 @@ exports.GrantingStep = {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+var Resource_1 = __webpack_require__(11);
 var Vocabularies_1 = __webpack_require__(1);
 exports.CompleteACReport = {
     TYPE: Vocabularies_1.CS.CompleteACReport,
@@ -21324,6 +21342,10 @@ exports.CompleteACReport = {
             "@type": "@id",
             "@container": "@set",
         },
+    },
+    is: function (value) {
+        return Resource_1.TransientResource.is(value)
+            && value.hasType(exports.CompleteACReport.TYPE);
     },
 };
 

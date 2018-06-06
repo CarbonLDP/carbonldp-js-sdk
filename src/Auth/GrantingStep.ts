@@ -8,11 +8,13 @@ import {
 
 
 export interface GrantingStep extends TransientResource {
-	subject:Pointer;
+	subject?:Pointer;
+
 	applied:boolean;
 	appliedBy:Pointer;
 	protectedDocument:Pointer;
 	accessControlList:Pointer;
+
 	inheritanceDisabledBy?:Pointer[];
 }
 

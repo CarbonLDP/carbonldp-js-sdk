@@ -10,5 +10,6 @@ export interface CompleteACReport extends TransientResource {
 export interface CompleteACReportFactory {
     TYPE: CS["CompleteACReport"];
     SCHEMA: ObjectSchema;
+    is(value: any): value is CompleteACReport;
 }
 export declare const CompleteACReport: CompleteACReportFactory;

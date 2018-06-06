@@ -26,6 +26,7 @@ exports.CS = {
     PasswordSecret: "https://carbonldp.com/ns/v1/security#PasswordSecret",
     PermissionReport: "https://carbonldp.com/ns/v1/security#PermissionReport",
     PreferAuthToken: "https://carbonldp.com/ns/v1/security#PreferAuthToken",
+    PreferCompleteACReport: "https://carbonldp.com/ns/v1/security#PreferCompleteACReport",
     PreferDetailedUserACReport: "https://carbonldp.com/ns/v1/security#PreferDetailedUserACReport",
     PreferSimpleUserACReport: "https://carbonldp.com/ns/v1/security#PreferSimpleUserACReport",
     ProtectedDocument: "https://carbonldp.com/ns/v1/security#ProtectedDocument",

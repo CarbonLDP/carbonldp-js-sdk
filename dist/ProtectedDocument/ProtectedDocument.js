@@ -66,6 +66,12 @@ exports.ProtectedDocument = {
                 configurable: true,
                 value: getDetailedUserACReport,
             },
+            "getCompleteACReport": {
+                writable: false,
+                enumerable: false,
+                configurable: true,
+                value: getCompleteACReport,
+            },
         });
         return persistedProtectedDocument;
     },
@@ -133,6 +139,16 @@ function getDetailedUserACReport(uriOrOptions, requestOptions) {
         .then(function (_a) {
         var rdfData = _a[0], response = _a[1];
         return getReport(Auth_1.DetailedUserACReport, _this._documents, rdfData, response);
+    });
+}
+function getCompleteACReport(uriOrOptions, requestOptions) {
+    var _this = this;
+    var _a = parseParams(this, uriOrOptions, requestOptions), url = _a.url, options = _a.options;
+    HTTP_1.RequestUtils.setRetrievalPreferences({ include: [Vocabularies_1.CS.PreferCompleteACReport] }, options);
+    return makeMinimalGET(this._documents, url, options)
+        .then(function (_a) {
+        var rdfData = _a[0], response = _a[1];
+        return getReport(Auth_1.CompleteACReport, _this._documents, rdfData, response);
     });
 }
 

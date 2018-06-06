@@ -1,5 +1,6 @@
 import {
 	ACL,
+	CompleteACReport,
 	DetailedUserACReport,
 	SimpleUserACReport
 } from "../Auth";
@@ -54,6 +55,9 @@ export interface ProtectedDocument extends Document {
 
 	getDetailedUserACReport( requestOptions?:RequestOptions ):Promise<DetailedUserACReport>;
 	getDetailedUserACReport( uri:string, requestOptions?:RequestOptions ):Promise<DetailedUserACReport>;
+
+	getCompleteACReport( requestOptions?:RequestOptions ):Promise<CompleteACReport>;
+	getCompleteACReport( uri:string, requestOptions?:RequestOptions ):Promise<CompleteACReport>;
 }
 
 
@@ -124,6 +128,12 @@ export const ProtectedDocument:ProtectedDocumentFactory = {
 				enumerable: false,
 				configurable: true,
 				value: getDetailedUserACReport,
+			},
+			"getCompleteACReport": {
+				writable: false,
+				enumerable: false,
+				configurable: true,
+				value: getCompleteACReport,
 			},
 		} );
 
@@ -209,5 +219,15 @@ function getDetailedUserACReport( this:ProtectedDocument, uriOrOptions?:string |
 
 	return makeMinimalGET( this._documents, url, options )
 		.then( ( [ rdfData, response ] ) => getReport( DetailedUserACReport, this._documents, rdfData, response ) )
+		;
+}
+
+function getCompleteACReport( this:ProtectedDocument, uriOrOptions?:string | RequestOptions, requestOptions?:RequestOptions ):Promise<CompleteACReport> {
+	const { url, options } = parseParams( this, uriOrOptions, requestOptions );
+
+	RequestUtils.setRetrievalPreferences( { include: [ CS.PreferCompleteACReport ] }, options );
+
+	return makeMinimalGET( this._documents, url, options )
+		.then( ( [ rdfData, response ] ) => getReport( CompleteACReport, this._documents, rdfData, response ) )
 		;
 }

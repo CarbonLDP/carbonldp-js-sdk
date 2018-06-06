@@ -3,7 +3,7 @@ import { Pointer } from "../Pointer";
 import { TransientResource } from "../Resource";
 import { CS } from "../Vocabularies";
 export interface GrantingStep extends TransientResource {
-    subject: Pointer;
+    subject?: Pointer;
     applied: boolean;
     appliedBy: Pointer;
     protectedDocument: Pointer;

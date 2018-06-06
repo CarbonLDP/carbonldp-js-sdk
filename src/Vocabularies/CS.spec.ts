@@ -243,6 +243,15 @@ describe( module( "carbonldp/Vocabularies/CS" ), ():void => {
 
 		it( hasProperty(
 			OBLIGATORY,
+			"PreferCompleteACReport",
+			"https://carbonldp.com/ns/v1/security#PreferCompleteACReport"
+		), ():void => {
+			const target:CS[ "PreferCompleteACReport" ] = "https://carbonldp.com/ns/v1/security#PreferCompleteACReport";
+			expect( target ).toBeDefined();
+		} );
+
+		it( hasProperty(
+			OBLIGATORY,
 			"PreferDetailedUserACReport",
 			"https://carbonldp.com/ns/v1/security#PreferDetailedUserACReport"
 		), ():void => {
@@ -698,7 +707,7 @@ describe( module( "carbonldp/Vocabularies/CS" ), ():void => {
 		} );
 
 		it( "should test all exported IRIs", ():void => {
-			expect( Object.keys( CS ).length ).toBe( 76 );
+			expect( Object.keys( CS ).length ).toBe( 77 );
 		} );
 
 		it( "CS.namespace", ():void => {
@@ -824,6 +833,11 @@ describe( module( "carbonldp/Vocabularies/CS" ), ():void => {
 		it( "CS.PreferAuthToken", ():void => {
 			expect( CS.PreferAuthToken ).toEqual( jasmine.any( String ) );
 			expect( CS.PreferAuthToken ).toBe( "https://carbonldp.com/ns/v1/security#PreferAuthToken" );
+		} );
+
+		it( "CS.PreferCompleteACReport", ():void => {
+			expect( CS.PreferCompleteACReport ).toEqual( jasmine.any( String ) );
+			expect( CS.PreferCompleteACReport ).toBe( "https://carbonldp.com/ns/v1/security#PreferCompleteACReport" );
 		} );
 
 		it( "CS.PreferDetailedUserACReport", ():void => {

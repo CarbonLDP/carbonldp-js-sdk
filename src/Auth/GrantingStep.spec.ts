@@ -32,7 +32,7 @@ describe( module( "carbonldp/Auth/GrantingStep" ), () => {
 
 
 		it( hasProperty(
-			OBLIGATORY,
+			OPTIONAL,
 			"subject",
 			"CarbonLDP.Pointer"
 		), ():void => {

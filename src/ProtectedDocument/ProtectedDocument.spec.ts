@@ -1,6 +1,7 @@
 import { AnyJasmineValue } from "../../test/helpers/types";
 import { AbstractContext } from "../AbstractContext";
 import {
+	CompleteACReport,
 	DetailedUserACReport,
 	SimpleUserACReport
 } from "../Auth";
@@ -1230,6 +1231,688 @@ describe( module( "carbonldp/ProtectedDocument" ), ():void => {
 										[ CS.accessControlList ]: jasmine.objectContaining( { id: "https://example.com/resource/.acl/" } ),
 									},
 								],
+							},
+						],
+					} );
+				} );
+
+			} );
+
+		} );
+
+		describe( method( OBLIGATORY, "getCompleteACReport" ), () => {
+
+			it( hasSignature(
+				"Returns a `CarbonLDP.Auth.CompleteACReport` of the current document.",
+				[
+					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for the request." },
+				],
+				{ type: "CarbonLDP.Auth.CompleteACReport" }
+			), () => {} );
+
+			it( hasSignature(
+				"Returns a `CarbonLDP.Auth.CompleteACReport` of the specified document.",
+				[
+					{ name: "uri", type: "string", description: "URI of the document to get the report for." },
+					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", optional: true, description: "Customizable options for the request." },
+				],
+				{ type: "CarbonLDP.Auth.CompleteACReport" }
+			), () => {} );
+
+			it( "should exists", ():void => {
+				const resource:ProtectedDocument = createMock( new Documents() );
+
+				expect( resource.getCompleteACReport ).toBeDefined();
+				expect( resource.getCompleteACReport ).toEqual( jasmine.any( Function ) );
+			} );
+
+
+			function stubRequest( uri:string ):void {
+				jasmine.Ajax.stubRequest( uri, null, "GET" )
+					.andReturn( {
+						responseHeaders: {},
+						responseText: JSON.stringify( [
+							{
+								"@id": "_:1",
+								"@type": [ CS.CompleteACReport ],
+								[ CS.protectedDocument ]: [
+									{ "@id": uri },
+								],
+								[ CS.subjectReport ]: [
+									{ "@id": "_:2" },
+									{ "@id": "_:3" },
+								],
+							},
+
+							{
+								"@id": "_:2",
+								"@type": [ CS.SubjectReport ],
+								[ CS.subject ]: [
+									{ "@id": "https://example.com/.system/security/roles/some-role/" },
+								],
+								[ CS.permissionReport ]: [
+									{ "@id": "_:4" },
+									{ "@id": "_:5" },
+								],
+							},
+							{
+								"@id": "_:3",
+								"@type": [ CS.SubjectReport ],
+								[ CS.subject ]: [
+									{ "@id": CS.AuthenticatedUser },
+								],
+								[ CS.permissionReport ]: [
+									{ "@id": "_:6" },
+								],
+							},
+
+							{
+								"@id": "_:4",
+								"@type": [ CS.PermissionReport ],
+								[ CS.permission ]: [
+									{ "@id": CS.Read },
+								],
+								[ CS.granted ]: [
+									{ "@value": "true", "@type": XSD.boolean },
+								],
+								[ CS.grantingChain ]: [ {
+									"@list": [
+										{ "@id": "_:7" },
+										{ "@id": "_:10" },
+									],
+								} ],
+							},
+							{
+								"@id": "_:5",
+								"@type": [ CS.PermissionReport ],
+								[ CS.permission ]: [
+									{ "@id": CS.Update },
+								],
+								[ CS.granted ]: [
+									{ "@value": "true", "@type": XSD.boolean },
+								],
+								[ CS.grantingChain ]: [ {
+									"@list": [
+										{ "@id": "_:9" },
+									],
+								} ],
+							},
+							{
+								"@id": "_:6",
+								"@type": [ CS.PermissionReport ],
+								[ CS.permission ]: [
+									{ "@id": CS.Read },
+								],
+								[ CS.granted ]: [
+									{ "@value": "false", "@type": XSD.boolean },
+								],
+								[ CS.grantingChain ]: [ {
+									"@list": [
+										{ "@id": "_:8" },
+									],
+								} ],
+							},
+
+							{
+								"@id": "_:7",
+								"@type": [ CS.GrantingStep ],
+								[ CS.applied ]: [
+									{ "@value": "true", "@type": XSD.boolean },
+								],
+								[ CS.appliedBy ]: [
+									{ "@id": CS.DirectACEntry },
+								],
+								[ CS.protectedDocument ]: [
+									{ "@id": uri },
+								],
+								[ CS.accessControlList ]: [
+									{ "@id": `${ uri }.acl/` },
+								],
+							},
+							{
+								"@id": "_:8",
+								"@type": [ CS.GrantingStep ],
+								[ CS.appliedBy ]: [
+									{ "@id": CS.AllDescendantsACEntry },
+								],
+								[ CS.applied ]: [
+									{ "@value": "false", "@type": XSD.boolean },
+								],
+								[ CS.inheritanceDisabledBy ]: [ {
+									"@list": [
+										{ "@id": "https://example.com/resource/.acl/" },
+									],
+								} ],
+								[ CS.protectedDocument ]: [
+									{ "@id": "https://example.com/" },
+								],
+								[ CS.accessControlList ]: [
+									{ "@id": "https://example.com/.acl/" },
+								],
+							},
+							{
+								"@id": "_:9",
+								"@type": [ CS.GrantingStep ],
+								[ CS.applied ]: [
+									{ "@value": "true", "@type": XSD.boolean },
+								],
+								[ CS.appliedBy ]: [
+									{ "@id": CS.DirectACEntry },
+								],
+								[ CS.protectedDocument ]: [
+									{ "@id": uri },
+								],
+								[ CS.accessControlList ]: [
+									{ "@id": `${ uri }.acl/` },
+								],
+							},
+							{
+								"@id": "_:10",
+								"@type": [ CS.GrantingStep ],
+								[ CS.applied ]: [
+									{ "@value": "true", "@type": XSD.boolean },
+								],
+								[ CS.appliedBy ]: [
+									{ "@id": CS.AllDescendantsACEntry },
+								],
+								[ CS.protectedDocument ]: [
+									{ "@id": "https://example.com/" },
+								],
+								[ CS.accessControlList ]: [
+									{ "@id": "https://example.com/.acl/" },
+								],
+							},
+						] ),
+					} );
+			}
+
+			describe( "When has a context", () => {
+
+				let resource:ProtectedDocument;
+				beforeEach( () => {
+					context = new CarbonLDP( "https://example.com/" );
+					resource = createMock( context.documents );
+				} );
+
+				it( "should send request to self ID when no URI", async () => {
+					stubRequest( "https://example.com/resource/" );
+
+					await resource
+						.getCompleteACReport();
+
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.url ).toBe( "https://example.com/resource/" );
+				} );
+
+				it( "should send request to of specified URI", async () => {
+					stubRequest( "https://example.com/another-resource/" );
+
+					await resource
+						.getCompleteACReport( "https://example.com/another-resource/" );
+
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.url ).toBe( "https://example.com/another-resource/" );
+				} );
+
+				it( "should send request to of resolved relative URI", async () => {
+					stubRequest( "https://example.com/resource/child/" );
+
+					await resource
+						.getCompleteACReport( "child/" );
+
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.url ).toBe( "https://example.com/resource/child/" );
+				} );
+
+
+				it( "should send default request headers when no URI", async () => {
+					stubRequest( "https://example.com/resource/" );
+
+					await resource
+						.getCompleteACReport();
+
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.requestHeaders ).toEqual( {
+						"accept": "application/ld+json",
+						"prefer": [
+							`include="${ CS.PreferCompleteACReport }"`,
+							`include="${ C.PreferMinimalDocument }"`,
+							`${ LDP.RDFSource }; rel=interaction-model`,
+						].join( ", " ),
+					} );
+				} );
+
+				it( "should send default request headers when URI", async () => {
+					stubRequest( "https://example.com/resource/child/" );
+
+					await resource
+						.getCompleteACReport( "child/" );
+
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.requestHeaders ).toEqual( {
+						"accept": "application/ld+json",
+						"prefer": [
+							`include="${ CS.PreferCompleteACReport }"`,
+							`include="${ C.PreferMinimalDocument }"`,
+							`${ LDP.RDFSource }; rel=interaction-model`,
+						].join( ", " ),
+					} );
+				} );
+
+				it( "should authorization header", async () => {
+					stubRequest( "https://example.com/resource/" );
+
+					const spy:jasmine.Spy = spyOn( context.auth, "addAuthentication" );
+
+					await resource
+						.getCompleteACReport();
+
+					expect( spy ).toHaveBeenCalled();
+				} );
+
+				it( "should send custom headers when no URI", async () => {
+					stubRequest( "https://example.com/resource/" );
+
+					await resource
+						.getCompleteACReport( {
+							headers: new Map()
+								.set( "custom", new Header( "custom value" ) )
+							,
+						} );
+
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.requestHeaders ).toEqual( jasmine.objectContaining( {
+						"custom": "custom value",
+					} ) );
+				} );
+
+				it( "should send custom headers when specified URI", async () => {
+					stubRequest( "https://example.com/resource/child/" );
+
+					await resource
+						.getCompleteACReport( "child/", {
+							headers: new Map()
+								.set( "custom", new Header( "custom value" ) )
+							,
+						} );
+
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.requestHeaders ).toEqual( jasmine.objectContaining( {
+						"custom": "custom value",
+					} ) );
+				} );
+
+
+				it( "should return the report of self", async () => {
+					stubRequest( "https://example.com/resource/" );
+
+					const report:CompleteACReport = await resource
+						.getCompleteACReport();
+
+					expect( report as AnyJasmineValue<typeof report> ).toEqual( {
+						protectedDocument: jasmine.objectContaining( { id: "https://example.com/resource/" } ),
+						subjectReports: [
+							{
+								subject: jasmine.objectContaining( { id: "https://example.com/.system/security/roles/some-role/" } ),
+								permissionReports: [
+									{
+										permission: jasmine.objectContaining( { id: CS.Read } ),
+										granted: true,
+										grantingChain: [
+											{
+												applied: true,
+												appliedBy: jasmine.objectContaining( { id: CS.DirectACEntry } ),
+												protectedDocument: jasmine.objectContaining( { id: "https://example.com/resource/" } ),
+												accessControlList: jasmine.objectContaining( { id: "https://example.com/resource/.acl/" } ),
+											},
+											{
+												applied: true,
+												appliedBy: jasmine.objectContaining( { id: CS.AllDescendantsACEntry } ),
+												protectedDocument: jasmine.objectContaining( { id: "https://example.com/" } ),
+												accessControlList: jasmine.objectContaining( { id: "https://example.com/.acl/" } ),
+											},
+										],
+									},
+									{
+										permission: jasmine.objectContaining( { id: CS.Update } ),
+										granted: true,
+										grantingChain: [
+											{
+												applied: true,
+												appliedBy: jasmine.objectContaining( { id: CS.DirectACEntry } ),
+												protectedDocument: jasmine.objectContaining( { id: "https://example.com/resource/" } ),
+												accessControlList: jasmine.objectContaining( { id: "https://example.com/resource/.acl/" } ),
+											},
+										],
+									},
+								],
+							},
+							{
+								subject: jasmine.objectContaining( { id: CS.AuthenticatedUser } ),
+								permissionReports: [
+									{
+										permission: jasmine.objectContaining( { id: CS.Read } ),
+										granted: false,
+										grantingChain: [
+											{
+												applied: false,
+												appliedBy: jasmine.objectContaining( { id: CS.AllDescendantsACEntry } ),
+												inheritanceDisabledBy: [
+													jasmine.objectContaining( { id: "https://example.com/resource/.acl/" } ),
+												],
+												protectedDocument: jasmine.objectContaining( { id: "https://example.com/" } ),
+												accessControlList: jasmine.objectContaining( { id: "https://example.com/.acl/" } ),
+											},
+										],
+									},
+								],
+							},
+						],
+					} );
+				} );
+
+				it( "should return the report of the specified URI", async () => {
+					stubRequest( "https://example.com/resource/child/" );
+
+					const report:CompleteACReport = await resource
+						.getCompleteACReport( "child/" );
+
+					expect( report as AnyJasmineValue<typeof report> ).toEqual( {
+						protectedDocument: jasmine.objectContaining( { id: "https://example.com/resource/child/" } ),
+						subjectReports: [
+							{
+								subject: jasmine.objectContaining( { id: "https://example.com/.system/security/roles/some-role/" } ),
+								permissionReports: [
+									{
+										permission: jasmine.objectContaining( { id: CS.Read } ),
+										granted: true,
+										grantingChain: [
+											{
+												applied: true,
+												appliedBy: jasmine.objectContaining( { id: CS.DirectACEntry } ),
+												protectedDocument: jasmine.objectContaining( { id: "https://example.com/resource/child/" } ),
+												accessControlList: jasmine.objectContaining( { id: "https://example.com/resource/child/.acl/" } ),
+											},
+											{
+												applied: true,
+												appliedBy: jasmine.objectContaining( { id: CS.AllDescendantsACEntry } ),
+												protectedDocument: jasmine.objectContaining( { id: "https://example.com/" } ),
+												accessControlList: jasmine.objectContaining( { id: "https://example.com/.acl/" } ),
+											},
+										],
+									},
+									{
+										permission: jasmine.objectContaining( { id: CS.Update } ),
+										granted: true,
+										grantingChain: [
+											{
+												applied: true,
+												appliedBy: jasmine.objectContaining( { id: CS.DirectACEntry } ),
+												protectedDocument: jasmine.objectContaining( { id: "https://example.com/resource/child/" } ),
+												accessControlList: jasmine.objectContaining( { id: "https://example.com/resource/child/.acl/" } ),
+											},
+										],
+									},
+								],
+							},
+							{
+								subject: jasmine.objectContaining( { id: CS.AuthenticatedUser } ),
+								permissionReports: [
+									{
+										permission: jasmine.objectContaining( { id: CS.Read } ),
+										granted: false,
+										grantingChain: [
+											{
+												applied: false,
+												appliedBy: jasmine.objectContaining( { id: CS.AllDescendantsACEntry } ),
+												inheritanceDisabledBy: [
+													jasmine.objectContaining( { id: "https://example.com/resource/.acl/" } ),
+												],
+												protectedDocument: jasmine.objectContaining( { id: "https://example.com/" } ),
+												accessControlList: jasmine.objectContaining( { id: "https://example.com/.acl/" } ),
+											},
+										],
+									},
+								],
+							},
+						],
+					} );
+				} );
+
+			} );
+
+			describe( "When has NO context", () => {
+
+				let resource:ProtectedDocument;
+				beforeEach( () => {
+					resource = createMock( new Documents() );
+				} );
+
+				it( "should send request to self ID when no URI", async () => {
+					stubRequest( "https://example.com/resource/" );
+
+					await resource
+						.getCompleteACReport();
+
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.url ).toBe( "https://example.com/resource/" );
+				} );
+
+				it( "should send request to of specified URI", async () => {
+					stubRequest( "https://example.com/another-resource/" );
+
+					await resource
+						.getCompleteACReport( "https://example.com/another-resource/" );
+
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.url ).toBe( "https://example.com/another-resource/" );
+				} );
+
+				it( "should send request to of resolved relative URI", async () => {
+					stubRequest( "https://example.com/resource/child/" );
+
+					await resource
+						.getCompleteACReport( "child/" );
+
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.url ).toBe( "https://example.com/resource/child/" );
+				} );
+
+
+				it( "should send default request headers when no URI", async () => {
+					stubRequest( "https://example.com/resource/" );
+
+					await resource
+						.getCompleteACReport();
+
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.requestHeaders ).toEqual( {
+						"accept": "application/ld+json",
+						"prefer": [
+							`include="${ CS.PreferCompleteACReport }"`,
+							`include="${ C.PreferMinimalDocument }"`,
+							`${ LDP.RDFSource }; rel=interaction-model`,
+						].join( ", " ),
+					} );
+				} );
+
+				it( "should send default request headers when URI", async () => {
+					stubRequest( "https://example.com/resource/child/" );
+
+					await resource
+						.getCompleteACReport( "child/" );
+
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.requestHeaders ).toEqual( {
+						"accept": "application/ld+json",
+						"prefer": [
+							`include="${ CS.PreferCompleteACReport }"`,
+							`include="${ C.PreferMinimalDocument }"`,
+							`${ LDP.RDFSource }; rel=interaction-model`,
+						].join( ", " ),
+					} );
+				} );
+
+				it( "should send custom headers when no URI", async () => {
+					stubRequest( "https://example.com/resource/" );
+
+					await resource
+						.getCompleteACReport( {
+							headers: new Map()
+								.set( "custom", new Header( "custom value" ) )
+							,
+						} );
+
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.requestHeaders ).toEqual( jasmine.objectContaining( {
+						"custom": "custom value",
+					} ) );
+				} );
+
+				it( "should send custom headers when specified URI", async () => {
+					stubRequest( "https://example.com/resource/child/" );
+
+					await resource
+						.getCompleteACReport( "child/", {
+							headers: new Map()
+								.set( "custom", new Header( "custom value" ) )
+							,
+						} );
+
+					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
+					expect( request.requestHeaders ).toEqual( jasmine.objectContaining( {
+						"custom": "custom value",
+					} ) );
+				} );
+
+
+				it( "should return the report of self", async () => {
+					stubRequest( "https://example.com/resource/" );
+
+					const report:CompleteACReport = await resource
+						.getCompleteACReport();
+
+					expect( report as AnyJasmineValue<any> ).toEqual( {
+						[ CS.protectedDocument ]: jasmine.objectContaining( { id: "https://example.com/resource/" } ),
+						[ CS.subjectReport ]: [
+							{
+								[ CS.subject ]: jasmine.objectContaining( { id: "https://example.com/.system/security/roles/some-role/" } ),
+								[ CS.permissionReport ]: [
+									{
+										[ CS.permission ]: jasmine.objectContaining( { id: CS.Read } ),
+										[ CS.granted ]: true,
+										[ CS.grantingChain ]: [
+											{
+												[ CS.applied ]: true,
+												[ CS.appliedBy ]: jasmine.objectContaining( { id: CS.DirectACEntry } ),
+												[ CS.protectedDocument ]: jasmine.objectContaining( { id: "https://example.com/resource/" } ),
+												[ CS.accessControlList ]: jasmine.objectContaining( { id: "https://example.com/resource/.acl/" } ),
+											},
+											{
+												[ CS.applied ]: true,
+												[ CS.appliedBy ]: jasmine.objectContaining( { id: CS.AllDescendantsACEntry } ),
+												[ CS.protectedDocument ]: jasmine.objectContaining( { id: "https://example.com/" } ),
+												[ CS.accessControlList ]: jasmine.objectContaining( { id: "https://example.com/.acl/" } ),
+											},
+										],
+									},
+									{
+										[ CS.permission ]: jasmine.objectContaining( { id: CS.Update } ),
+										[ CS.granted ]: true,
+										[ CS.grantingChain ]: [
+											{
+												[ CS.applied ]: true,
+												[ CS.appliedBy ]: jasmine.objectContaining( { id: CS.DirectACEntry } ),
+												[ CS.protectedDocument ]: jasmine.objectContaining( { id: "https://example.com/resource/" } ),
+												[ CS.accessControlList ]: jasmine.objectContaining( { id: "https://example.com/resource/.acl/" } ),
+											},
+										],
+									},
+								],
+							},
+							{
+								[ CS.subject ]: jasmine.objectContaining( { id: CS.AuthenticatedUser } ),
+								[ CS.permissionReport ]: {
+									[ CS.permission ]: jasmine.objectContaining( { id: CS.Read } ),
+									[ CS.granted ]: false,
+									[ CS.grantingChain ]: [
+										{
+											[ CS.applied ]: false,
+											[ CS.appliedBy ]: jasmine.objectContaining( { id: CS.AllDescendantsACEntry } ),
+											[ CS.inheritanceDisabledBy ]: [
+												jasmine.objectContaining( { id: "https://example.com/resource/.acl/" } ),
+											],
+											[ CS.protectedDocument ]: jasmine.objectContaining( { id: "https://example.com/" } ),
+											[ CS.accessControlList ]: jasmine.objectContaining( { id: "https://example.com/.acl/" } ),
+										},
+									],
+								},
+							},
+						],
+					} );
+				} );
+
+				it( "should return the report of the specified URI", async () => {
+					stubRequest( "https://example.com/resource/child/" );
+
+					const report:CompleteACReport = await resource
+						.getCompleteACReport( "child/" );
+
+					expect( report as AnyJasmineValue<any> ).toEqual( {
+						[ CS.protectedDocument ]: jasmine.objectContaining( { id: "https://example.com/resource/child/" } ),
+						[ CS.subjectReport ]: [
+							{
+								[ CS.subject ]: jasmine.objectContaining( { id: "https://example.com/.system/security/roles/some-role/" } ),
+								[ CS.permissionReport ]: [
+									{
+										[ CS.permission ]: jasmine.objectContaining( { id: CS.Read } ),
+										[ CS.granted ]: true,
+										[ CS.grantingChain ]: [
+											{
+												[ CS.applied ]: true,
+												[ CS.appliedBy ]: jasmine.objectContaining( { id: CS.DirectACEntry } ),
+												[ CS.protectedDocument ]: jasmine.objectContaining( { id: "https://example.com/resource/child/" } ),
+												[ CS.accessControlList ]: jasmine.objectContaining( { id: "https://example.com/resource/child/.acl/" } ),
+											},
+											{
+												[ CS.applied ]: true,
+												[ CS.appliedBy ]: jasmine.objectContaining( { id: CS.AllDescendantsACEntry } ),
+												[ CS.protectedDocument ]: jasmine.objectContaining( { id: "https://example.com/" } ),
+												[ CS.accessControlList ]: jasmine.objectContaining( { id: "https://example.com/.acl/" } ),
+											},
+										],
+									},
+									{
+										[ CS.permission ]: jasmine.objectContaining( { id: CS.Update } ),
+										[ CS.granted ]: true,
+										[ CS.grantingChain ]: [
+											{
+												[ CS.applied ]: true,
+												[ CS.appliedBy ]: jasmine.objectContaining( { id: CS.DirectACEntry } ),
+												[ CS.protectedDocument ]: jasmine.objectContaining( { id: "https://example.com/resource/child/" } ),
+												[ CS.accessControlList ]: jasmine.objectContaining( { id: "https://example.com/resource/child/.acl/" } ),
+											},
+										],
+									},
+								],
+							},
+							{
+								[ CS.subject ]: jasmine.objectContaining( { id: CS.AuthenticatedUser } ),
+								[ CS.permissionReport ]: {
+									[ CS.permission ]: jasmine.objectContaining( { id: CS.Read } ),
+									[ CS.granted ]: false,
+									[ CS.grantingChain ]: [
+										{
+											[ CS.applied ]: false,
+											[ CS.appliedBy ]: jasmine.objectContaining( { id: CS.AllDescendantsACEntry } ),
+											[ CS.inheritanceDisabledBy ]: [
+												jasmine.objectContaining( { id: "https://example.com/resource/.acl/" } ),
+											],
+											[ CS.protectedDocument ]: jasmine.objectContaining( { id: "https://example.com/" } ),
+											[ CS.accessControlList ]: jasmine.objectContaining( { id: "https://example.com/.acl/" } ),
+										},
+									],
+								},
 							},
 						],
 					} );
