@@ -1,5 +1,6 @@
 import {
 	ACL,
+	DetailedUserACReport,
 	SimpleUserACReport
 } from "../Auth";
 import { ModelDecorator } from "../core/ModelDecorator";
@@ -50,6 +51,9 @@ export interface ProtectedDocument extends Document {
 
 	getSimpleUserACReport( requestOptions?:RequestOptions ):Promise<SimpleUserACReport>;
 	getSimpleUserACReport( uri:string, requestOptions?:RequestOptions ):Promise<SimpleUserACReport>;
+
+	getDetailedUserACReport( requestOptions?:RequestOptions ):Promise<DetailedUserACReport>;
+	getDetailedUserACReport( uri:string, requestOptions?:RequestOptions ):Promise<DetailedUserACReport>;
 }
 
 
@@ -115,11 +119,16 @@ export const ProtectedDocument:ProtectedDocumentFactory = {
 				configurable: true,
 				value: getSimpleUserACReport,
 			},
+			"getDetailedUserACReport": {
+				writable: false,
+				enumerable: false,
+				configurable: true,
+				value: getDetailedUserACReport,
+			},
 		} );
 
 		return persistedProtectedDocument;
 	},
-
 };
 
 
@@ -190,5 +199,15 @@ function getSimpleUserACReport( this:ProtectedDocument, uriOrOptions?:string | R
 
 	return makeMinimalGET( this._documents, url, options )
 		.then( ( [ rdfData, response ] ) => getReport( SimpleUserACReport, this._documents, rdfData, response ) )
+		;
+}
+
+function getDetailedUserACReport( this:ProtectedDocument, uriOrOptions?:string | RequestOptions, requestOptions?:RequestOptions ):Promise<DetailedUserACReport> {
+	const { url, options } = parseParams( this, uriOrOptions, requestOptions );
+
+	RequestUtils.setRetrievalPreferences( { include: [ CS.PreferDetailedUserACReport ] }, options );
+
+	return makeMinimalGET( this._documents, url, options )
+		.then( ( [ rdfData, response ] ) => getReport( DetailedUserACReport, this._documents, rdfData, response ) )
 		;
 }

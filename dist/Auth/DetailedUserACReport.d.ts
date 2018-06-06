@@ -10,5 +10,6 @@ export interface DetailedUserACReport extends TransientResource {
 export interface DetailedUserACReportFactory {
     TYPE: CS["DetailedUserACReport"];
     SCHEMA: ObjectSchema;
+    is(value: any): value is DetailedUserACReport;
 }
 export declare const DetailedUserACReport: DetailedUserACReportFactory;

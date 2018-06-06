@@ -54,10 +54,28 @@ describe( module( "carbonldp/Vocabularies/CS" ), ():void => {
 
 		it( hasProperty(
 			OBLIGATORY,
+			"AllDescendantsACEntry",
+			"https://carbonldp.com/ns/v1/security#AllDescendantsACEntry"
+		), ():void => {
+			const target:CS[ "AllDescendantsACEntry" ] = "https://carbonldp.com/ns/v1/security#AllDescendantsACEntry";
+			expect( target ).toBeDefined();
+		} );
+
+		it( hasProperty(
+			OBLIGATORY,
 			"AllOrigins",
 			"https://carbonldp.com/ns/v1/security#AllOrigins"
 		), ():void => {
 			const target:CS[ "AllOrigins" ] = "https://carbonldp.com/ns/v1/security#AllOrigins";
+			expect( target ).toBeDefined();
+		} );
+
+		it( hasProperty(
+			OBLIGATORY,
+			"AuthenticatedUser",
+			"https://carbonldp.com/ns/v1/security#AuthenticatedUser"
+		), ():void => {
+			const target:CS[ "AuthenticatedUser" ] = "https://carbonldp.com/ns/v1/security#AuthenticatedUser";
 			expect( target ).toBeDefined();
 		} );
 
@@ -153,10 +171,28 @@ describe( module( "carbonldp/Vocabularies/CS" ), ():void => {
 
 		it( hasProperty(
 			OBLIGATORY,
+			"DirectACEntry",
+			"https://carbonldp.com/ns/v1/security#DirectACEntry"
+		), ():void => {
+			const target:CS[ "DirectACEntry" ] = "https://carbonldp.com/ns/v1/security#DirectACEntry";
+			expect( target ).toBeDefined();
+		} );
+
+		it( hasProperty(
+			OBLIGATORY,
 			"GrantingStep",
 			"https://carbonldp.com/ns/v1/security#GrantingStep"
 		), ():void => {
 			const target:CS[ "GrantingStep" ] = "https://carbonldp.com/ns/v1/security#GrantingStep";
+			expect( target ).toBeDefined();
+		} );
+
+		it( hasProperty(
+			OBLIGATORY,
+			"ImmediateDescendantsACEntry",
+			"https://carbonldp.com/ns/v1/security#ImmediateDescendantsACEntry"
+		), ():void => {
+			const target:CS[ "ImmediateDescendantsACEntry" ] = "https://carbonldp.com/ns/v1/security#ImmediateDescendantsACEntry";
 			expect( target ).toBeDefined();
 		} );
 
@@ -202,6 +238,15 @@ describe( module( "carbonldp/Vocabularies/CS" ), ():void => {
 			"https://carbonldp.com/ns/v1/security#PreferAuthToken"
 		), ():void => {
 			const target:CS[ "PreferAuthToken" ] = "https://carbonldp.com/ns/v1/security#PreferAuthToken";
+			expect( target ).toBeDefined();
+		} );
+
+		it( hasProperty(
+			OBLIGATORY,
+			"PreferDetailedUserACReport",
+			"https://carbonldp.com/ns/v1/security#PreferDetailedUserACReport"
+		), ():void => {
+			const target:CS[ "PreferDetailedUserACReport" ] = "https://carbonldp.com/ns/v1/security#PreferDetailedUserACReport";
 			expect( target ).toBeDefined();
 		} );
 
@@ -653,7 +698,7 @@ describe( module( "carbonldp/Vocabularies/CS" ), ():void => {
 		} );
 
 		it( "should test all exported IRIs", ():void => {
-			expect( Object.keys( CS ).length ).toBe( 71 );
+			expect( Object.keys( CS ).length ).toBe( 76 );
 		} );
 
 		it( "CS.namespace", ():void => {
@@ -676,9 +721,19 @@ describe( module( "carbonldp/Vocabularies/CS" ), ():void => {
 			expect( CS.AddMember ).toBe( "https://carbonldp.com/ns/v1/security#AddMember" );
 		} );
 
+		it( "CS.AllDescendantsACEntry", ():void => {
+			expect( CS.AllDescendantsACEntry ).toEqual( jasmine.any( String ) );
+			expect( CS.AllDescendantsACEntry ).toBe( "https://carbonldp.com/ns/v1/security#AllDescendantsACEntry" );
+		} );
+
 		it( "CS.AllOrigins", ():void => {
 			expect( CS.AllOrigins ).toEqual( jasmine.any( String ) );
 			expect( CS.AllOrigins ).toBe( "https://carbonldp.com/ns/v1/security#AllOrigins" );
+		} );
+
+		it( "CS.AuthenticatedUser", ():void => {
+			expect( CS.AuthenticatedUser ).toEqual( jasmine.any( String ) );
+			expect( CS.AuthenticatedUser ).toBe( "https://carbonldp.com/ns/v1/security#AuthenticatedUser" );
 		} );
 
 		it( "CS.AuthenticatedUserInformationAccessor", ():void => {
@@ -731,9 +786,19 @@ describe( module( "carbonldp/Vocabularies/CS" ), ():void => {
 			expect( CS.DetailedUserACReport ).toBe( "https://carbonldp.com/ns/v1/security#DetailedUserACReport" );
 		} );
 
+		it( "CS.DirectACEntry", ():void => {
+			expect( CS.DirectACEntry ).toEqual( jasmine.any( String ) );
+			expect( CS.DirectACEntry ).toBe( "https://carbonldp.com/ns/v1/security#DirectACEntry" );
+		} );
+
 		it( "CS.GrantingStep", ():void => {
 			expect( CS.GrantingStep ).toEqual( jasmine.any( String ) );
 			expect( CS.GrantingStep ).toBe( "https://carbonldp.com/ns/v1/security#GrantingStep" );
+		} );
+
+		it( "CS.ImmediateDescendantsACEntry", ():void => {
+			expect( CS.ImmediateDescendantsACEntry ).toEqual( jasmine.any( String ) );
+			expect( CS.ImmediateDescendantsACEntry ).toBe( "https://carbonldp.com/ns/v1/security#ImmediateDescendantsACEntry" );
 		} );
 
 		it( "CS.Impersonate", ():void => {
@@ -759,6 +824,11 @@ describe( module( "carbonldp/Vocabularies/CS" ), ():void => {
 		it( "CS.PreferAuthToken", ():void => {
 			expect( CS.PreferAuthToken ).toEqual( jasmine.any( String ) );
 			expect( CS.PreferAuthToken ).toBe( "https://carbonldp.com/ns/v1/security#PreferAuthToken" );
+		} );
+
+		it( "CS.PreferDetailedUserACReport", ():void => {
+			expect( CS.PreferDetailedUserACReport ).toEqual( jasmine.any( String ) );
+			expect( CS.PreferDetailedUserACReport ).toBe( "https://carbonldp.com/ns/v1/security#PreferDetailedUserACReport" );
 		} );
 
 		it( "CS.PreferSimpleUserACReport", ():void => {
