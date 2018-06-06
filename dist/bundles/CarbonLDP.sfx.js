@@ -21040,6 +21040,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var Errors = __importStar(__webpack_require__(6));
 var Utils = __importStar(__webpack_require__(0));
+var Vocabularies_1 = __webpack_require__(1);
 var AuthMethod_1 = __webpack_require__(149);
 var BasicAuthenticator_1 = __webpack_require__(83);
 var BasicToken_1 = __webpack_require__(151);
@@ -21058,6 +21059,17 @@ var AuthService = (function () {
             _a[AuthMethod_1.AuthMethod.BASIC] = new BasicAuthenticator_1.BasicAuthenticator(this.context),
             _a[AuthMethod_1.AuthMethod.TOKEN] = new TokenAuthenticator_1.TokenAuthenticator(this.context),
             _a);
+        this.Permission = {
+            READ: context.documents.getPointer(Vocabularies_1.CS.Read),
+            UPDATE: context.documents.getPointer(Vocabularies_1.CS.Update),
+            DELETE: context.documents.getPointer(Vocabularies_1.CS.Delete),
+            CREATE_CHILD: context.documents.getPointer(Vocabularies_1.CS.CreateChild),
+            CREATE_ACCESS_POINT: context.documents.getPointer(Vocabularies_1.CS.CreateAccessPoint),
+            ADD_MEMBER: context.documents.getPointer(Vocabularies_1.CS.AddMember),
+            REMOVE_MEMBER: context.documents.getPointer(Vocabularies_1.CS.RemoveMember),
+            CONTROL_ACCESS: context.documents.getPointer(Vocabularies_1.CS.ControlAccess),
+            IMPERSONATE: context.documents.getPointer(Vocabularies_1.CS.Impersonate),
+        };
         var _a;
     }
     Object.defineProperty(AuthService.prototype, "authenticatedUser", {
