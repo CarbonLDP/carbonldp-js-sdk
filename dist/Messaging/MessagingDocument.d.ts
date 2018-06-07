@@ -1,5 +1,6 @@
 import { ModelDecorator } from "../core";
-import { TransientDocument } from "../Document";
+import { DocumentsRegistry } from "../Registry";
+import { TransientResource } from "../Resource";
 import { AccessPointCreated } from "./AccessPointCreated";
 import { ChildCreated } from "./ChildCreated";
 import { DocumentCreated } from "./DocumentCreated";
@@ -9,7 +10,8 @@ import { Event } from "./Event";
 import { EventMessage } from "./EventMessage";
 import { MemberAdded } from "./MemberAdded";
 import { MemberRemoved } from "./MemberRemoved";
-export interface MessagingDocument extends TransientDocument {
+export interface MessagingDocument extends TransientResource {
+    _registry: DocumentsRegistry;
     on(event: Event.CHILD_CREATED, uriPattern: string, onEvent: (message: ChildCreated) => void, onError?: (error: Error) => void): void;
     on(event: Event.CHILD_CREATED, onEvent: (message: ChildCreated) => void, onError?: (error: Error) => void): void;
     on(event: Event.ACCESS_POINT_CREATED, uriPattern: string, onEvent: (message: AccessPointCreated) => void, onError?: (error: Error) => void): void;

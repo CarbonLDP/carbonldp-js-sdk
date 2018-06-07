@@ -3,6 +3,8 @@ import { TransientDocument } from "../Document";
 import { IllegalActionError } from "../Errors";
 import { Pointer } from "../Pointer";
 import { URI } from "../RDF";
+import { DocumentsRegistry } from "../Registry";
+import { TransientResource } from "../Resource";
 import {
 	isFunction,
 	isObject,
@@ -21,7 +23,9 @@ import { MemberRemoved } from "./MemberRemoved";
 import { MessagingService } from "./Service";
 import { createDestination } from "./Utils";
 
-export interface MessagingDocument extends TransientDocument {
+export interface MessagingDocument extends TransientResource {
+	_registry:DocumentsRegistry;
+
 	on( event:Event.CHILD_CREATED, uriPattern:string, onEvent:( message:ChildCreated ) => void, onError?:( error:Error ) => void ):void;
 	on( event:Event.CHILD_CREATED, onEvent:( message:ChildCreated ) => void, onError?:( error:Error ) => void ):void;
 	on( event:Event.ACCESS_POINT_CREATED, uriPattern:string, onEvent:( message:AccessPointCreated ) => void, onError?:( error:Error ) => void ):void;

@@ -2,6 +2,7 @@ import { defineNonEnumerableProps } from "../../test/helpers/mocks";
 import { CarbonLDP } from "../CarbonLDP";
 import { TransientDocument } from "../Document";
 import { IllegalActionError } from "../Errors";
+import { TransientResource } from "../Resource";
 import {
 	extendsClass,
 	hasMethod,
@@ -26,7 +27,6 @@ function createMock<T extends object>( data?:T & Partial<MessagingDocument> ):T 
 	}, data ) );
 
 	defineNonEnumerableProps( mock );
-	mock._normalize();
 
 	return mock;
 }
@@ -43,8 +43,8 @@ describe( module( "carbonldp/Messaging/MessagingDocument" ), ():void => {
 			expect( target ).toBeDefined();
 		} );
 
-		it( extendsClass( "CarbonLDP.TransientDocument" ), ():void => {
-			const target:TransientDocument = {} as MessagingDocument;
+		it( extendsClass( "CarbonLDP.TransientResource" ), ():void => {
+			const target:TransientResource = {} as MessagingDocument;
 			expect( target ).toBeDefined();
 		} );
 
