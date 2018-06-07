@@ -11,7 +11,7 @@ import {
 	property,
 	STATIC,
 } from "./test/JasmineExtender";
-import { CS } from "./Vocabularies/CS";
+import { CS } from "./Vocabularies";
 
 
 describe( module( "carbonldp/GlobalContext" ), ():void => {

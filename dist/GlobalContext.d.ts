@@ -4,7 +4,6 @@ import { RegistryService } from "./Registry";
 export declare class GlobalContext extends AbstractContext<Pointer, undefined> {
     static readonly instance: GlobalContext;
     readonly registry: RegistryService<Pointer, GlobalContext>;
-    readonly repository: undefined;
     readonly auth: undefined;
     protected _baseURI: "";
     protected _parentContext: undefined;

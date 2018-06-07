@@ -54,7 +54,6 @@ export class GlobalContext extends AbstractContext<Pointer, undefined> {
 	static readonly instance:GlobalContext = new GlobalContext();
 
 	readonly registry:RegistryService<Pointer, GlobalContext>;
-	readonly repository:undefined = undefined;
 	readonly auth:undefined = undefined;
 
 	protected _baseURI:"" = "";

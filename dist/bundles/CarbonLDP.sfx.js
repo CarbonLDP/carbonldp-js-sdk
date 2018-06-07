@@ -22035,7 +22035,6 @@ var GlobalContext = (function (_super) {
     __extends(GlobalContext, _super);
     function GlobalContext() {
         var _this = _super.call(this) || this;
-        _this.repository = undefined;
         _this.auth = undefined;
         _this._baseURI = "";
         _this._parentContext = undefined;

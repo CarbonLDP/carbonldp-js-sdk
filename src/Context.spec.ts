@@ -32,13 +32,6 @@ describe( module( "carbonldp/Context" ), ():void => {
 
 		it( hasProperty(
 			OBLIGATORY,
-			"repository",
-			"CarbonLDP.Repository",
-			"The repository the context can fetch its resources."
-		), ():void => {} );
-
-		it( hasProperty(
-			OBLIGATORY,
 			"parentContext",
 			"CarbonLDP.Context",
 			"The parent context of the current context. It will be `null` when the context has no parent."
