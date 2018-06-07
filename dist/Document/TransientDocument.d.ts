@@ -35,7 +35,7 @@ export interface TransientDocument extends TransientResource, Registry<Transient
     toJSON(registry?: DocumentsRegistry): RDFDocument;
 }
 export interface TransientDocumentFactory extends ModelFactory<TransientDocument>, ModelDecorator<TransientDocument> {
-    PROTOTYPE: PickSelfProps<TransientDocument, TransientResource & Registry<TransientBlankNode | TransientNamedFragment>, "_registry" | "_getLocalID" | "_register">;
+    PROTOTYPE: PickSelfProps<TransientDocument, TransientResource & Registry<TransientBlankNode | TransientNamedFragment>, "_registry" | "_getLocalID" | "_register" | "getPointer">;
     TYPE: C["Document"];
     is(value: any): value is TransientDocument;
     isDecorated(object: object): object is TransientDocument;

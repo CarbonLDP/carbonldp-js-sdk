@@ -122,6 +122,7 @@ type OverloadedProps =
 	| "_registry"
 	| "_getLocalID"
 	| "_register"
+	| "getPointer"
 	;
 
 const PROTOTYPE:PickSelfProps<TransientDocument, TransientResource & Registry<TransientBlankNode | TransientNamedFragment>, OverloadedProps> = {
@@ -161,6 +162,11 @@ const PROTOTYPE:PickSelfProps<TransientDocument, TransientResource & Registry<Tr
 			return TransientBlankNode.decorate( pointer );
 
 		return TransientNamedFragment.decorate( pointer );
+	},
+
+	getPointer( this:TransientDocument, id:string, local?:true ):TransientBlankNode | TransientNamedFragment {
+		id = URI.resolve( this.id, id );
+		return Registry.PROTOTYPE.getPointer.call( this, id, local );
 	},
 
 
@@ -270,7 +276,8 @@ export interface TransientDocumentFactory extends ModelFactory<TransientDocument
 		TransientResource & Registry<TransientBlankNode | TransientNamedFragment>,
 		| "_registry"
 		| "_getLocalID"
-		| "_register">;
+		| "_register"
+		| "getPointer">;
 
 	TYPE:C[ "Document" ];
 

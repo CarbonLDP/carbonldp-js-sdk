@@ -3810,6 +3810,10 @@ var PROTOTYPE = {
             return BlankNode_1.TransientBlankNode.decorate(pointer);
         return NamedFragment_1.TransientNamedFragment.decorate(pointer);
     },
+    getPointer: function (id, local) {
+        id = RDF_1.URI.resolve(this.id, id);
+        return Registry_1.Registry.PROTOTYPE.getPointer.call(this, id, local);
+    },
     hasFragment: function (id) {
         id = getLabelFrom(id);
         if (!this.inScope(id, true))

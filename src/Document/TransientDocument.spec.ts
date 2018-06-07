@@ -10,6 +10,7 @@ import {
 	DigestedObjectSchema,
 	ObjectSchemaDigester
 } from "../ObjectSchema";
+import { Pointer } from "../Pointer";
 import {
 	RDFDocument,
 	URI,
@@ -52,6 +53,8 @@ function mockDocumentProperties():DocumentProperties {
 
 		_getLocalID: fn,
 		_register: fn,
+
+		getPointer: fn,
 
 
 		hasMemberRelation: null,
@@ -195,6 +198,126 @@ describe( module( "carbonldp/Document" ), ():void => {
 				expect( TransientResource.is( document.object ) ).toBe( true );
 				expect( document.hasFragment( "_:1" ) ).toBe( true );
 				expect( document.object.self ).toBe( document.object );
+			} );
+
+		} );
+
+
+		describe( "TransientDocument.getPointer", ():void => {
+
+			it( "should exists", ():void => {
+				const document:TransientDocument = createMockDocument();
+
+				expect( document.getPointer ).toBeDefined();
+				expect( document.getPointer ).toEqual( jasmine.any( Function ) );
+			} );
+
+
+			it( "should throw error when IRI of the document and no _registry", ():void => {
+				const document:TransientDocument = createMockDocument();
+
+				expect( () => {
+					document.getPointer( "https://example.com/document/" );
+				} ).toThrowError( IllegalArgumentError );
+			} );
+
+			it( "should throw error when relative IRI and no _registry", ():void => {
+				const document:TransientDocument = createMockDocument();
+
+				expect( () => {
+					document.getPointer( "document/" );
+				} ).toThrowError( IllegalArgumentError );
+			} );
+
+			it( "should throw error when another absolute IRI and no _registry", ():void => {
+				const document:TransientDocument = createMockDocument();
+
+				expect( () => {
+					document.getPointer( "https://example.com/another/document/" );
+				} ).toThrowError( IllegalArgumentError );
+			} );
+
+			it( "should return the document when IRI of the document and has _registry", ():void => {
+				const _registry:DocumentsRegistry = new DocumentsRegistry();
+				const document:TransientDocument = createMockDocument( { _registry } );
+
+				_registry._resourcesMap.set( _registry._getLocalID( document.id ), document as any );
+
+				const returned:Pointer = document.getPointer( "https://example.com/document/" );
+				expect( returned ).toBe( document );
+			} );
+
+			it( "should return document as child when relative IRI and has _registry", ():void => {
+				const _registry:DocumentsRegistry = new DocumentsRegistry();
+				const document:TransientDocument = createMockDocument( { _registry } );
+
+				const returned:Pointer = document.getPointer( "relative/" );
+				expect( returned ).toEqual( anyThatMatches( TransientDocument.is, "isTransientDocument" ) as any );
+				expect( returned.id ).toEqual( document.id + "relative/" );
+			} );
+
+			it( "should return document when another absolute IRI and has _registry", ():void => {
+				const _registry:DocumentsRegistry = new DocumentsRegistry();
+				const document:TransientDocument = createMockDocument( { _registry } );
+
+				const returned:Pointer = document.getPointer( "https://example.com/another/document/" );
+				expect( returned ).toEqual( anyThatMatches( TransientDocument.is, "isTransientDocument" ) as any );
+				expect( returned.id ).toEqual( "https://example.com/another/document/" );
+			} );
+
+
+			it( "should create `NamedFragment` when relative fragment label and not exits", ():void => {
+				const document:TransientDocument = createMockDocument();
+				const pointer:Pointer = document.getPointer( "#fragment" );
+
+				expect( TransientNamedFragment.is( pointer ) ).toBe( true );
+				expect( document._resourcesMap ).toEqual( new Map( [
+					[ "fragment", pointer as TransientNamedFragment ],
+				] ) );
+			} );
+
+			it( "should return fragment when relative fragment label and exits", ():void => {
+				const document:TransientDocument = createMockDocument();
+				const fragment:TransientFragment = {} as any;
+				document._resourcesMap.set( "fragment", fragment );
+
+				expect( document.getPointer( "#fragment" ) ).toBe( fragment );
+			} );
+
+			it( "should create `NamedFragment` when absolute fragment label and not exits", ():void => {
+				const document:TransientDocument = createMockDocument();
+				const pointer:Pointer = document.getPointer( "https://example.com/document/#fragment" );
+
+				expect( TransientNamedFragment.is( pointer ) ).toBe( true );
+				expect( document._resourcesMap ).toEqual( new Map( [
+					[ "fragment", pointer as TransientNamedFragment ],
+				] ) );
+			} );
+
+			it( "should return fragment when absolute fragment label and exits", ():void => {
+				const document:TransientDocument = createMockDocument();
+				const fragment:TransientFragment = {} as any;
+				document._resourcesMap.set( "fragment", fragment );
+
+				expect( document.getPointer( "https://example.com/document/#fragment" ) ).toBe( fragment );
+			} );
+
+			it( "should create `BlankNode` when blank node label and not exists", ():void => {
+				const document:TransientDocument = createMockDocument();
+				const pointer:Pointer = document.getPointer( "_:1" );
+
+				expect( TransientBlankNode.is( pointer ) ).toBe( true );
+				expect( document._resourcesMap ).toEqual( new Map( [
+					[ "_:1", pointer as TransientBlankNode ],
+				] ) );
+			} );
+
+			it( "should return fragment when blank node label and exits", ():void => {
+				const document:TransientDocument = createMockDocument();
+				const fragment:TransientFragment = {} as any;
+				document._resourcesMap.set( "_:1", fragment );
+
+				expect( document.getPointer( "_:1" ) ).toBe( fragment );
 			} );
 
 		} );
@@ -1370,6 +1493,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 				expect( TransientDocument.isDecorated ).toEqual( jasmine.any( Function ) );
 			} );
 
+
 			it( "should return false when `undefined`", ():void => {
 				expect( TransientDocument.isDecorated( void 0 ) ).toBe( false );
 			} );
@@ -1382,6 +1506,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 				const target:DocumentProperties = mockDocumentProperties();
 				expect( TransientDocument.isDecorated( target ) ).toBe( true );
 			} );
+
 
 			it( "should return false when no `_registry`", ():void => {
 				const target:DocumentProperties = mockDocumentProperties();
@@ -1398,6 +1523,12 @@ describe( module( "carbonldp/Document" ), ():void => {
 			it( "should return false when no `_registry`", ():void => {
 				const target:DocumentProperties = mockDocumentProperties();
 				delete target._registry;
+				expect( TransientDocument.isDecorated( target ) ).toBe( false );
+			} );
+
+			it( "should return false when no `getPointer`", ():void => {
+				const target:DocumentProperties = mockDocumentProperties();
+				delete target.getPointer;
 				expect( TransientDocument.isDecorated( target ) ).toBe( false );
 			} );
 
