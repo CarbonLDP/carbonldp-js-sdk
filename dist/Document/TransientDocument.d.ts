@@ -14,11 +14,11 @@ export interface TransientDocument extends TransientResource, Registry<Transient
     defaultInteractionModel?: Pointer;
     isMemberOfRelation?: Pointer;
     hasMemberRelation?: Pointer;
-    hasFragment(slug: string): boolean;
-    getFragment<T extends object>(slug: string): (T & TransientFragment) | null;
+    hasFragment(id: string): boolean;
+    getFragment<T extends object>(id: string): (T & TransientFragment) | null;
     getNamedFragment<T extends object>(slug: string): (T & TransientNamedFragment) | null;
     getFragments(): TransientFragment[];
-    createFragment<T extends object>(object: T, slug?: string): T & TransientFragment;
+    createFragment<T extends object>(object: T, id?: string): T & TransientFragment;
     createFragment(slug?: string): TransientFragment;
     createNamedFragment<T extends object>(object: T, slug: string): T & TransientNamedFragment;
     createNamedFragment(slug: string): TransientNamedFragment;
@@ -26,6 +26,9 @@ export interface TransientDocument extends TransientResource, Registry<Transient
     _removeFragment(slugOrFragment: string | TransientFragment): boolean;
     _normalize(): void;
     _getLocalID(id: string): string;
+    _register<T extends object>(base: T & {
+        slug: string;
+    }): T & TransientNamedFragment;
     _register<T extends object>(base: T & {
         id?: string;
     }): T & TransientFragment;

@@ -1,18 +1,13 @@
+import { isRelative } from "sparqler/iri";
 import { TransientBlankNode, } from "../BlankNode";
 import {
 	ModelDecorator,
 	ModelFactory,
 } from "../core";
 import { IllegalArgumentError, } from "../Errors";
-import {
-	BaseFragment,
-	TransientFragment
-} from "../Fragment";
+import { TransientFragment } from "../Fragment";
 import { JSONLDConverter } from "../JSONLD";
-import {
-	BaseNamedFragment,
-	TransientNamedFragment,
-} from "../NamedFragment";
+import { TransientNamedFragment, } from "../NamedFragment";
 import { DigestedObjectSchema, } from "../ObjectSchema";
 import { Pointer, } from "../Pointer";
 import {
@@ -43,17 +38,17 @@ export interface TransientDocument extends TransientResource, Registry<Transient
 	hasMemberRelation?:Pointer;
 
 
-	hasFragment( slug:string ):boolean;
+	hasFragment( id:string ):boolean;
 
 
-	getFragment<T extends object>( slug:string ):(T & TransientFragment) | null;
+	getFragment<T extends object>( id:string ):(T & TransientFragment) | null;
 
 	getNamedFragment<T extends object>( slug:string ):(T & TransientNamedFragment) | null;
 
 	getFragments():TransientFragment[];
 
 
-	createFragment<T extends object>( object:T, slug?:string ):T & TransientFragment;
+	createFragment<T extends object>( object:T, id?:string ):T & TransientFragment;
 	createFragment( slug?:string ):TransientFragment;
 
 	createNamedFragment<T extends object>( object:T, slug:string ):T & TransientNamedFragment;
@@ -70,6 +65,7 @@ export interface TransientDocument extends TransientResource, Registry<Transient
 
 	_getLocalID( id:string ):string;
 
+	_register<T extends object>( base:T & { slug:string } ):T & TransientNamedFragment;
 	_register<T extends object>( base:T & { id?:string } ):T & TransientFragment;
 
 
@@ -77,11 +73,16 @@ export interface TransientDocument extends TransientResource, Registry<Transient
 }
 
 
+function getLabelFrom( slug:string ):string {
+	if( ! isRelative( slug ) || slug.startsWith( "#" ) ) return slug;
+	return "#" + slug;
+}
+
 function getNestedObjectId( object:any ):string {
 	if( "id" in object ) return object.id;
 
 	if( "slug" in object ) return URI.hasFragment( object.slug ) ?
-		object.slug : "#" + object.slug;
+		object.slug : getLabelFrom( object.slug );
 
 	return "";
 }
@@ -102,10 +103,10 @@ function internalConverter( resource:TransientDocument, target:object, tracker:S
 
 			const idOrSlug:string = getNestedObjectId( next );
 			if( tracker.has( idOrSlug ) ) return;
-			if( ! ! idOrSlug && ! resource.inScope( idOrSlug, true ) ) return;
+			if( idOrSlug && ! resource.inScope( idOrSlug, true ) ) return;
 
 
-			const fragment:TransientFragment = resource.hasPointer( idOrSlug, true ) ?
+			const fragment:TransientFragment = idOrSlug && resource.hasPointer( idOrSlug, true ) ?
 				resource.getPointer( idOrSlug, true ) :
 				resource._register( next )
 			;
@@ -145,29 +146,26 @@ const PROTOTYPE:PickSelfProps<TransientDocument, TransientResource & Registry<Tr
 
 		if( URI.isFragmentOf( id, this.id ) ) return URI.getFragment( id );
 
-		if( URI.isRelative( id ) ) return id;
-
 		return Registry.PROTOTYPE._getLocalID.call( this, id );
 	},
 
-	_register<T extends object>( this:TransientDocument, base:T & { id?:string, slug?:string } ):T & TransientFragment {
-		if( base.slug ) base.id = base.slug;
-		if( ! base.id ) base.id = URI.generateBNodeID();
+	_register<T extends object>( this:TransientDocument, base:T & ({ slug:string } | { id?:string }) ):T & TransientFragment {
+		const id:string = "slug" in base ? getLabelFrom( base.slug ) :
+			base.id ? base.id : URI.generateBNodeID();
+		const targetBase:T & { id:string } = Object.assign( base, { id } );
 
-		const pointer:T & Pointer = Registry.PROTOTYPE._register.call( this, base );
+		const pointer:T & Pointer = Registry.PROTOTYPE._register.call( this, targetBase );
 
 
 		if( URI.isBNodeID( pointer.id ) )
 			return TransientBlankNode.decorate( pointer );
 
-		const resource:T & TransientNamedFragment = TransientNamedFragment.decorate( pointer );
-		resource.slug = this._getLocalID( resource._id );
-
-		return resource;
+		return TransientNamedFragment.decorate( pointer );
 	},
 
 
 	hasFragment( this:TransientDocument, id:string ):boolean {
+		id = getLabelFrom( id );
 		if( ! this.inScope( id, true ) ) return false;
 
 		const localID:string = this._getLocalID( id );
@@ -176,6 +174,7 @@ const PROTOTYPE:PickSelfProps<TransientDocument, TransientResource & Registry<Tr
 
 
 	getFragment<T extends object>( this:TransientDocument, id:string ):(T & TransientFragment) | null {
+		id = getLabelFrom( id );
 		if( ! this.inScope( id, true ) ) throw new IllegalArgumentError( `"${ id }" is out of scope.` );
 
 		const localID:string = this._getLocalID( id );
@@ -187,20 +186,20 @@ const PROTOTYPE:PickSelfProps<TransientDocument, TransientResource & Registry<Tr
 	},
 
 	getNamedFragment<T extends object>( this:TransientDocument, slug:string ):(T & TransientNamedFragment) | null {
-		if( URI.isBNodeID( slug ) ) throw new IllegalArgumentError( `Invalid named fragment slug "${ slug }", it can't start with "_:".` );
+		if( URI.isBNodeID( slug ) ) throw new IllegalArgumentError( `A named fragment slug can't start with "_:".` );
 		return this.getFragment( slug );
 	},
 
 	getFragments( this:TransientDocument ):TransientFragment[] {
-		return Array.from( this._resourcesMap.values() );
+		return this.getPointers( true );
 	},
 
 
 	createFragment<T extends object>( this:TransientDocument, isOrObject?:string | T, id?:string ):T & TransientFragment {
-		const object:T & BaseFragment = isObject( isOrObject ) ? isOrObject : {} as T;
+		const object:T & { id?:string } = isObject( isOrObject ) ? isOrObject : {} as T;
 
 		id = isString( isOrObject ) ? isOrObject : id;
-		if( id ) object.id = id;
+		if( id ) object.id = getLabelFrom( id );
 
 		const fragment:T & TransientFragment = this._register( object );
 
@@ -210,12 +209,12 @@ const PROTOTYPE:PickSelfProps<TransientDocument, TransientResource & Registry<Tr
 
 	createNamedFragment<T extends object>( this:TransientDocument, slugOrObject:string | T, slug?:string ):T & TransientNamedFragment {
 		slug = isString( slugOrObject ) ? slugOrObject : slug;
-
 		if( ! slug ) throw new IllegalArgumentError( `The slug can't be empty.` );
-		if( URI.isBNodeID( slug ) ) throw new IllegalArgumentError( `Invalid named fragment slug "${ slug }", it can't start with "_:".` );
+
+		if( URI.isBNodeID( slug ) ) throw new IllegalArgumentError( `A named fragment slug can't start with "_:".` );
 
 		const object:T = isObject( slugOrObject ) ? slugOrObject : {} as T;
-		const base:T & BaseNamedFragment = Object.assign( object, { slug } );
+		const base:T & { slug:string } = Object.assign( object, { slug } );
 		const fragment:T & TransientNamedFragment = this._register( base );
 
 		TransientDocument._convertNestedObjects( this, fragment );
@@ -224,15 +223,16 @@ const PROTOTYPE:PickSelfProps<TransientDocument, TransientResource & Registry<Tr
 
 
 	removeNamedFragment( this:TransientDocument, fragmentOrSlug:TransientNamedFragment | string ):boolean {
-		const id:string = Pointer.getID( fragmentOrSlug );
+		const slug:string = Pointer.getID( fragmentOrSlug );
 
-		if( URI.isBNodeID( id ) ) throw new IllegalArgumentError( `"${ id }" is not a valid named fragment.` );
-		return this._removeFragment( id );
+		if( URI.isBNodeID( slug ) ) throw new IllegalArgumentError( `A named fragment slug can't start with "_:".` );
+		return this._removeFragment( slug );
 	},
 
 	_removeFragment( this:TransientDocument, fragmentOrSlug:string | TransientFragment ):boolean {
-		if( ! this.inScope( fragmentOrSlug, true ) ) return false;
-		return this.removePointer( fragmentOrSlug );
+		const id:string = getLabelFrom( Pointer.getID( fragmentOrSlug ) );
+		if( ! this.inScope( id, true ) ) return false;
+		return this.removePointer( id );
 	},
 
 
