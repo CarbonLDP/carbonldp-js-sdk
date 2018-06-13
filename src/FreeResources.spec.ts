@@ -5,15 +5,19 @@ import {
 	FreeResourcesFactory
 } from "./FreeResources";
 import { Pointer } from "./Pointer";
-import { RDFNode } from "./RDF";
-import { RegistryService } from "./Registry";
+import {
+	Registry,
+	RegistryService
+} from "./Registry";
 import { TransientResource } from "./Resource";
 import {
 	extendsClass,
 	hasMethod,
 	hasProperty,
+	hasSignature,
 	interfaze,
 	isDefined,
+	method,
 	module,
 	OBLIGATORY,
 	property,
@@ -51,12 +55,168 @@ describe( module( "carbonldp/FreeResources" ), ():void => {
 			"CarbonLDP.RegistryService<CarbonLDP.Pointer, any> | undefined"
 		), ():void => {} );
 
-		it( hasMethod(
-			OBLIGATORY,
-			"toJSON",
-			"Converts the resources contained in the current `CarbonLDP.FreeResources` object to a JSON object.",
-			{ type: "CarbonLDP.RDF.RDFNode[]" }
-		), ():void => {} );
+
+		let freeResources:FreeResources;
+		let registry:RegistryService<any, any>;
+		beforeEach( ():void => {
+			registry = createMockRegistry();
+			freeResources = FreeResources.create( { _registry: registry } );
+		} );
+
+		describe( "FreeResources.hasPointer", ():void => {
+
+			it( "should exists", ():void => {
+				expect( freeResources.hasPointer ).toBeDefined();
+				expect( freeResources.hasPointer ).toEqual( jasmine.any( Function ) );
+			} );
+
+			it( "should return false when no resource local ID", ():void => {
+				expect( freeResources.hasPointer( "_:some" ) ).toBe( false );
+			} );
+
+			it( "should return true when has resource local ID", ():void => {
+				freeResources._register( { id: "_:some" } );
+				expect( freeResources.hasPointer( "_:some" ) ).toBe( true );
+			} );
+
+			it( "should return false when no resource in parent registry", ():void => {
+				expect( freeResources.hasPointer( "https://example.com/some/" ) ).toBe( false );
+			} );
+
+			it( "should return true when resource in parent registry", ():void => {
+				registry._register( { id: "https://example.com/some/" } );
+				expect( freeResources.hasPointer( "https://example.com/some/" ) ).toBe( true );
+			} );
+
+		} );
+
+		describe( "FreeResources.getPointer", ():void => {
+
+			it( "should exists", ():void => {
+				expect( freeResources.getPointer ).toBeDefined();
+				expect( freeResources.getPointer ).toEqual( jasmine.any( Function ) );
+			} );
+
+			it( "should return existing resource", ():void => {
+				const resource:TransientResource = freeResources._register( { id: "_:some" } );
+				expect( freeResources.getPointer( "_:some" ) ).toBe( resource );
+			} );
+
+			it( "should create non-existing resource", ():void => {
+				const resource:Pointer = freeResources.getPointer( "_:another" );
+
+				expect( resource.id ).toBe( "_:another" );
+				expect( resource ).toEqual( anyThatMatches( TransientResource.is, "Resource" ) as any );
+			} );
+
+			it( "should return from parent resource", ():void => {
+				const parentResource:Pointer = registry.getPointer( "https://example.com/some/" );
+
+				const resource:Pointer = freeResources.getPointer( "https://example.com/some/" );
+				expect( resource ).toBe( parentResource );
+			} );
+
+		} );
+
+		describe( "FreeResources.inScope", ():void => {
+
+			it( "should exist", ():void => {
+				expect( freeResources.inScope ).toBeDefined();
+				expect( freeResources.inScope ).toEqual( jasmine.any( Function ) );
+			} );
+
+			it( "should accept blank nodes labels", ():void => {
+				expect( freeResources.inScope( "_:some" ) ).toBe( true );
+			} );
+
+			it( "should reject absolute IRIs when local", ():void => {
+				expect( freeResources.inScope( "https://example.com/", true ) ).toBe( false );
+			} );
+
+			it( "should accept absolute IRIs when global", ():void => {
+				expect( freeResources.inScope( "https://example.com/" ) ).toBe( true );
+			} );
+
+			it( "should reject relative IRIs, when local", ():void => {
+				expect( freeResources.inScope( "resource/", true ) ).toBe( false );
+			} );
+
+			it( "should reject relative IRIs, when global", ():void => {
+				expect( freeResources.inScope( "resource/" ) ).toBe( true );
+			} );
+
+		} );
+
+		// TODO: Test in `FreeResources.decorate`
+		it( "FreeResources._documents", ():void => {
+			expect( freeResources._registry ).toBeDefined();
+			expect( freeResources._registry ).toEqual( jasmine.any( RegistryService ) );
+		} );
+
+		describe( method( OBLIGATORY, "toJSON" ), () => {
+
+			it( hasSignature(
+				"Converts the resources contained in the current `CarbonLDP.FreeResources` object to a JSON object.",
+				{ type: "CarbonLDP.RDF.RDFNode[]" }
+			), ():void => {} );
+
+			it( "should exists", ():void => {
+				expect( freeResources.toJSON ).toBeDefined();
+				expect( freeResources.toJSON ).toEqual( jasmine.any( Function ) );
+			} );
+
+
+			it( "should expand resource with schema in context", () => {
+				registry.context
+					.extendObjectSchema( "http://example.com/ns#MyType", {
+						"anotherProperty": {
+							"@id": "http://example.com/ns#another-property",
+							"@type": "http://www.w3.org/2001/XMLSchema#string",
+						},
+					} );
+
+				freeResources._register( TransientResource.createFrom( {
+					id: "_:some",
+					types: [ "http://example.com/ns#MyType" ],
+					"http://example.com/ns#property": "A Property",
+					"anotherProperty": "Another Property",
+				} ) );
+
+				expect( freeResources.toJSON() ).toEqual( [ {
+					"@id": "_:some",
+					"@type": [ "http://example.com/ns#MyType" ],
+					"http://example.com/ns#property": [ {
+						"@value": "A Property",
+						"@type": "http://www.w3.org/2001/XMLSchema#string",
+					} ],
+					"http://example.com/ns#another-property": [ {
+						"@value": "Another Property",
+						"@type": "http://www.w3.org/2001/XMLSchema#string",
+					} ],
+				} ] );
+			} );
+
+			it( "should expand resource with no registry and context", () => {
+				delete freeResources._registry;
+
+				freeResources._register( TransientResource.createFrom( {
+					id: "_:another",
+					types: [ "http://example.com/ns#MyType" ],
+					"http://example.com/ns#property": "A Property",
+					"anotherProperty": "Another Property",
+				} ) );
+
+				expect( freeResources.toJSON() ).toEqual( [ {
+					"@id": "_:another",
+					"@type": [ "http://example.com/ns#MyType" ],
+					"http://example.com/ns#property": [ {
+						"@value": "A Property",
+						"@type": "http://www.w3.org/2001/XMLSchema#string",
+					} ],
+				} ] );
+			} );
+
+		} );
 
 	} );
 
@@ -74,14 +234,46 @@ describe( module( "carbonldp/FreeResources" ), ():void => {
 			{ type: "object is CarbonLDP.FreeResources" }
 		), ():void => {} );
 
-		it( hasMethod(
-			OBLIGATORY,
-			"is",
-			"Returns true if the object is considered a `CarbonLDP.FreeResources` object.", [
-				{ name: "object", type: "object", description: "Object to evaluate." },
-			],
-			{ type: "object is CarbonLDP.FreeResources" }
-		), ():void => {} );
+		describe( method( OBLIGATORY, "is" ), () => {
+
+			it( hasSignature(
+				"Returns true if the object is considered a `CarbonLDP.FreeResources` object.", [
+					{ name: "object", type: "object", description: "Object to evaluate." },
+				],
+				{ type: "object is CarbonLDP.FreeResources" }
+			), ():void => {} );
+
+			it( "should exists", ():void => {
+				expect( FreeResources.is ).toBeDefined();
+				expect( FreeResources.is ).toEqual( jasmine.any( Function ) );
+			} );
+
+
+			let isRegistry:jasmine.Spy;
+			let isDecorated:jasmine.Spy;
+			beforeEach( ():void => {
+				isRegistry = spyOn( Registry, "isDecorated" )
+					.and.returnValue( true );
+				isDecorated = spyOn( FreeResources, "isDecorated" )
+					.and.returnValue( true );
+			} );
+
+			it( "should assert that is a Registry", () => {
+				FreeResources.is( { the: "object" } );
+				expect( isRegistry ).toHaveBeenCalledWith( { the: "object" } );
+			} );
+
+			it( "should assert that is self decorated", () => {
+				FreeResources.is( { the: "object" } );
+				expect( isDecorated ).toHaveBeenCalledWith( { the: "object" } );
+			} );
+
+			it( "should return true when all assertions", () => {
+				const returned:boolean = FreeResources.is( {} );
+				expect( returned ).toBe( true );
+			} );
+
+		} );
 
 		it( hasMethod(
 			OBLIGATORY,
@@ -156,8 +348,6 @@ describe( module( "carbonldp/FreeResources" ), ():void => {
 			object.toJSON = fx;
 		} );
 
-		// TODO: Test `FreeResources.is`
-
 		// TODO: Separate in different tests
 		it( "FreeResources.create", ():void => {
 			expect( FreeResources.create ).toBeDefined();
@@ -215,166 +405,6 @@ describe( module( "carbonldp/FreeResources" ), ():void => {
 			let anotherFreeResources:FreeResources & My = FreeResources.decorate<My>( { myProperty: "The property" } );
 			expect( anotherFreeResources ).toBeTruthy();
 			expect( FreeResources.isDecorated( anotherFreeResources ) ).toBe( true );
-		} );
-
-
-		// TODO: Move to an appropriate place
-		describe( "Decorated FreeResources object", ():void => {
-
-			let freeResources:FreeResources;
-			let registry:RegistryService<any, any>;
-			beforeEach( ():void => {
-				registry = createMockRegistry();
-				freeResources = FreeResources.create( { _registry: registry } );
-			} );
-
-			// TODO: Test in `FreeResources.decorate`
-			it( "FreeResources._documents", ():void => {
-				expect( freeResources._registry ).toBeDefined();
-				expect( freeResources._registry ).toEqual( jasmine.any( RegistryService ) );
-			} );
-
-			describe( "FreeResource.hasPointer", ():void => {
-
-				it( "should exists", ():void => {
-					expect( freeResources.hasPointer ).toBeDefined();
-					expect( freeResources.hasPointer ).toEqual( jasmine.any( Function ) );
-				} );
-
-				it( "should return false when no resource local ID", ():void => {
-					expect( freeResources.hasPointer( "_:some" ) ).toBe( false );
-				} );
-
-				it( "should return true when has resource local ID", ():void => {
-					freeResources._register( { id: "_:some" } );
-					expect( freeResources.hasPointer( "_:some" ) ).toBe( true );
-				} );
-
-				it( "should return false when no resource in parent registry", ():void => {
-					expect( freeResources.hasPointer( "https://example.com/some/" ) ).toBe( false );
-				} );
-
-				it( "should return true when resource in parent registry", ():void => {
-					registry._register( { id: "https://example.com/some/" } );
-					expect( freeResources.hasPointer( "https://example.com/some/" ) ).toBe( true );
-				} );
-
-			} );
-
-			describe( "FreeResources.getPointer", ():void => {
-
-				it( "should exists", ():void => {
-					expect( freeResources.getPointer ).toBeDefined();
-					expect( freeResources.getPointer ).toEqual( jasmine.any( Function ) );
-				} );
-
-				it( "should return existing resource", ():void => {
-					const resource:TransientResource = freeResources._register( { id: "_:some" } );
-					expect( freeResources.getPointer( "_:some" ) ).toBe( resource );
-				} );
-
-				it( "should create non-existing resource", ():void => {
-					const resource:Pointer = freeResources.getPointer( "_:another" );
-
-					expect( resource.id ).toBe( "_:another" );
-					expect( resource ).toEqual( anyThatMatches( TransientResource.is, "Resource" ) as any );
-				} );
-
-				it( "should return from parent resource", ():void => {
-					const parentResource:Pointer = registry.getPointer( "https://example.com/some/" );
-
-					const resource:Pointer = freeResources.getPointer( "https://example.com/some/" );
-					expect( resource ).toBe( parentResource );
-				} );
-
-			} );
-
-			describe( "FreeResources.inScope", ():void => {
-
-				it( "should exist", ():void => {
-					expect( freeResources.inScope ).toBeDefined();
-					expect( freeResources.inScope ).toEqual( jasmine.any( Function ) );
-				} );
-
-				it( "should accept blank nodes labels", ():void => {
-					expect( freeResources.inScope( "_:some" ) ).toBe( true );
-				} );
-
-				it( "should reject absolute IRIs when local", ():void => {
-					expect( freeResources.inScope( "https://example.com/", true ) ).toBe( false );
-				} );
-
-				it( "should accept absolute IRIs when global", ():void => {
-					expect( freeResources.inScope( "https://example.com/" ) ).toBe( true );
-				} );
-
-				it( "should reject relative IRIs, when local", ():void => {
-					expect( freeResources.inScope( "resource/", true ) ).toBe( false );
-				} );
-
-				it( "should reject relative IRIs, when global", ():void => {
-					expect( freeResources.inScope( "resource/" ) ).toBe( true );
-				} );
-
-			} );
-
-			// TODO: Separate in different tests
-			it( "FreeResources.toJSON", ():void => {
-				expect( freeResources.toJSON ).toBeDefined();
-				expect( freeResources.toJSON ).toEqual( jasmine.any( Function ) );
-
-				registry.context.extendObjectSchema( "http://example.com/ns#MyType", {
-					"anotherProperty": {
-						"@id": "http://example.com/ns#another-property",
-						"@type": "http://www.w3.org/2001/XMLSchema#string",
-					},
-				} );
-
-				let resource:TransientResource = TransientResource.createFrom( {
-					id: "_:some",
-					types: [ "http://example.com/ns#MyType" ],
-					"http://example.com/ns#property": "A Property",
-					"anotherProperty": "Another Property",
-				} );
-				freeResources._resourcesMap.set( "_:some", resource );
-
-				let expandedResource:RDFNode = {
-					"@id": "_:some",
-					"@type": [ "http://example.com/ns#MyType" ],
-					"http://example.com/ns#property": [ {
-						"@value": "A Property",
-						"@type": "http://www.w3.org/2001/XMLSchema#string",
-					} ],
-					"http://example.com/ns#another-property": [ {
-						"@value": "Another Property",
-						"@type": "http://www.w3.org/2001/XMLSchema#string",
-					} ],
-				};
-				expect( freeResources.toJSON() ).toEqual( [ expandedResource ] );
-
-				let anotherResource:TransientResource = TransientResource.createFrom( {
-					id: "_:another",
-					types: [ "http://example.com/ns#MyType" ],
-					"http://example.com/ns#property": "A Property",
-					"anotherProperty": "Another Property",
-				} );
-				freeResources._resourcesMap.set( "_:another", anotherResource );
-
-				let anotherExpandedResource:RDFNode = {
-					"@id": "_:another",
-					"@type": [ "http://example.com/ns#MyType" ],
-					"http://example.com/ns#property": [ {
-						"@value": "A Property",
-						"@type": "http://www.w3.org/2001/XMLSchema#string",
-					} ],
-					"http://example.com/ns#another-property": [ {
-						"@value": "Another Property",
-						"@type": "http://www.w3.org/2001/XMLSchema#string",
-					} ],
-				};
-				expect( freeResources.toJSON() ).toEqual( [ expandedResource, anotherExpandedResource ] );
-			} );
-
 		} );
 
 	} );

@@ -104,7 +104,7 @@ export const FreeResources:FreeResourcesFactory = {
 
 
 	is( value:any ):value is FreeResources {
-		return isObject( value )
+		return Registry.isDecorated( value )
 			&& FreeResources.isDecorated( value )
 			;
 	},

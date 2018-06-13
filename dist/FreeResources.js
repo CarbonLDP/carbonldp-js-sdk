@@ -38,7 +38,7 @@ var PROTOTYPE = {
 exports.FreeResources = {
     PROTOTYPE: PROTOTYPE,
     is: function (value) {
-        return Utils_1.isObject(value)
+        return Registry_1.Registry.isDecorated(value)
             && exports.FreeResources.isDecorated(value);
     },
     isDecorated: function (object) {
