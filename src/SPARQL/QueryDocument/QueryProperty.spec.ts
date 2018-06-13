@@ -13,6 +13,8 @@ import {
 import {
 	clazz,
 	constructor,
+	enumeration,
+	hasEnumeral,
 	hasProperty,
 	hasSignature,
 	INSTANCE,
@@ -22,7 +24,10 @@ import {
 import { QueryContext } from "./QueryContext";
 
 import * as Module from "./QueryProperty";
-import { QueryProperty } from "./QueryProperty";
+import {
+	QueryProperty,
+	QueryPropertyType
+} from "./QueryProperty";
 
 describe( module( "carbonldp/SPARQL/QueryDocument/QueryProperty" ), ():void => {
 
@@ -31,9 +36,45 @@ describe( module( "carbonldp/SPARQL/QueryDocument/QueryProperty" ), ():void => {
 		expect( Module ).toEqual( jasmine.any( Object ) );
 	} );
 
-	// TODO: To document `QueryPropertyType`
+	describe( enumeration(
+		"CarbonLDP.SPARQL.QueryDocument.QueryPropertyType",
+		"Enum fot the type of data expected to return for a property."
+	), () => {
 
-	describe( clazz( "CarbonLDP.SPARQL.QueryDocument.QueryProperty", "Class that represents a property in the query" ), ():void => {
+		it( hasEnumeral(
+			"FULL",
+			"The property is expected to point to a fulled resolved document"
+		), () => {
+			expect( QueryPropertyType.FULL ).toBeDefined();
+		} );
+
+		it( hasEnumeral(
+			"PARTIAL",
+			"The property is expected to point to a partial resource (document/fragment)."
+		), () => {
+			expect( QueryPropertyType.PARTIAL ).toBeDefined();
+		} );
+
+		it( hasEnumeral(
+			"ALL",
+			"The property is expected to point to a resource with all is properties but without related fragments resolved."
+		), () => {
+			expect( QueryPropertyType.ALL ).toBeDefined();
+		} );
+
+		it( hasEnumeral(
+			"EMPTY",
+			"The property point to a literal, or its known."
+		), () => {
+			expect( QueryPropertyType.EMPTY ).toBeDefined();
+		} );
+
+	} );
+
+	describe( clazz(
+		"CarbonLDP.SPARQL.QueryDocument.QueryProperty",
+		"Class that represents a property in the query"
+	), ():void => {
 
 		it( "should exists", ():void => {
 			expect( QueryProperty ).toBeDefined();
