@@ -14,15 +14,15 @@ var sparqler_1 = require("sparqler");
 var decorators_1 = require("sparqler/clauses/decorators");
 var SPARQLBuilder = (function (_super) {
     __extends(SPARQLBuilder, _super);
-    function SPARQLBuilder(repository, entryPoint) {
+    function SPARQLBuilder(resource, entryPoint) {
         return _super.call(this, function (container, object) {
             var finishObject = decorators_1.finishDecorator(container, object);
             return Object.assign(finishObject, {
                 execute: function () {
-                    return repository.executeSELECTQuery(entryPoint, finishObject.toCompactString());
+                    return resource.executeSELECTQuery(entryPoint, finishObject.toCompactString());
                 },
                 executeRaw: function () {
-                    return repository.executeRawSELECTQuery(entryPoint, finishObject.toCompactString());
+                    return resource.executeRawSELECTQuery(entryPoint, finishObject.toCompactString());
                 },
             });
         }) || this;

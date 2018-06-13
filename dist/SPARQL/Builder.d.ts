@@ -8,5 +8,5 @@ export interface FinishSPARQLSelect extends FinishClause {
     executeRaw(): Promise<SPARQLRawResults>;
 }
 export declare class SPARQLBuilder extends SPARQLER<FinishSPARQLSelect> {
-    constructor(repository: SPARQLDocument, entryPoint: string);
+    constructor(resource: SPARQLDocument, entryPoint: string);
 }

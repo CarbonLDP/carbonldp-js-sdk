@@ -16,14 +16,14 @@ export interface FinishSPARQLSelect extends FinishClause {
 }
 
 export class SPARQLBuilder extends SPARQLER<FinishSPARQLSelect> {
-	constructor( repository:SPARQLDocument, entryPoint:string ) {
+	constructor( resource:SPARQLDocument, entryPoint:string ) {
 		super( <W extends object>( container:Container<FinishSPARQLSelect>, object:W ):W & FinishSPARQLSelect => {
 			const finishObject:FinishClause & W = finishDecorator( container, object );
 			return Object.assign( finishObject, {
 				execute: <T extends object>():Promise<SPARQLSelectResults<T>> =>
-					repository.executeSELECTQuery<T>( entryPoint, finishObject.toCompactString() ),
+					resource.executeSELECTQuery<T>( entryPoint, finishObject.toCompactString() ),
 				executeRaw: ():Promise<SPARQLRawResults> =>
-					repository.executeRawSELECTQuery( entryPoint, finishObject.toCompactString() ),
+					resource.executeRawSELECTQuery( entryPoint, finishObject.toCompactString() ),
 			} );
 		} );
 	}
