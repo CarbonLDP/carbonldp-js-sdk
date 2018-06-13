@@ -8424,7 +8424,7 @@ var PartialMetadata = (function () {
                 return oldSchema.prefixes.set(namespace, newURI);
             var oldURI = oldSchema.prefixes.get(namespace);
             if (oldURI !== newURI)
-                throw new IllegalArgumentError_1.IllegalArgumentError("Prefix \"" + namespace + "\" has different values: \"" + oldURI + "\", \"" + newURI + "\"");
+                throw new IllegalArgumentError_1.IllegalArgumentError("Prefix \"" + namespace + "\" has different value: \"" + oldURI + "\", \"" + newURI + "\".");
         });
         newSchema.properties.forEach(function (newDefinition, propertyName) {
             if (!oldSchema.properties.has(propertyName))
@@ -8434,7 +8434,7 @@ var PartialMetadata = (function () {
                 var newValue = newDefinition[key];
                 var oldValue = oldDefinition[key];
                 if (newValue !== oldValue)
-                    throw new IllegalArgumentError_1.IllegalArgumentError("Property \"" + propertyName + "\" has different \"" + key + "\": \"" + oldValue + "\", \"" + newValue + "\"");
+                    throw new IllegalArgumentError_1.IllegalArgumentError("Property \"" + propertyName + "\" has different \"" + key + "\": \"" + oldValue + "\", \"" + newValue + "\".");
             }
         });
         return oldSchema;

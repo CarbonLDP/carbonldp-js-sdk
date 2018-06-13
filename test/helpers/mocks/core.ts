@@ -4,6 +4,7 @@ import { ModelDecorator } from "../../../src/core";
 import { Document } from "../../../src/Document";
 import {
 	DigestedObjectSchema,
+	DigestedObjectSchemaProperty,
 	ObjectSchema,
 	ObjectSchemaDigester,
 	ObjectSchemaUtils
@@ -22,6 +23,10 @@ export function createMockDigestedSchema( values?:Partial<DigestedObjectSchema> 
 	return Object.assign( new DigestedObjectSchema(), values );
 }
 
+export function createMockDigestedSchemaProperty( values?:Partial<DigestedObjectSchemaProperty> ):DigestedObjectSchemaProperty {
+	return Object.assign( new DigestedObjectSchemaProperty(), values );
+}
+
 
 export function createMockContext<M extends Pointer = Pointer, P extends AbstractContext<any, any> = undefined, A extends Authenticator<any> = undefined>( data:{
 	uri?:string | boolean,
@@ -35,9 +40,9 @@ export function createMockContext<M extends Pointer = Pointer, P extends Abstrac
 	generalSchema?:DigestedObjectSchema,
 	schemasMap?:Map<string, DigestedObjectSchema>,
 } = {} ):AbstractContext<M, P> {
-	if( ! ( "uri" in data ) ) data.uri = true;
-	if( ! ( "settings" in data ) ) data.settings = true;
-	if( ! ( "model" in data ) ) data.model = Pointer as any;
+	if( ! ("uri" in data) ) data.uri = true;
+	if( ! ("settings" in data) ) data.settings = true;
+	if( ! ("model" in data) ) data.model = Pointer as any;
 
 	return new class extends AbstractContext<M, P> {
 		auth:A;

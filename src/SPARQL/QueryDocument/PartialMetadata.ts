@@ -24,7 +24,7 @@ export class PartialMetadata {
 			if( ! oldSchema.prefixes.has( namespace ) ) return oldSchema.prefixes.set( namespace, newURI );
 
 			const oldURI:string = oldSchema.prefixes.get( namespace );
-			if( oldURI !== newURI ) throw new IllegalArgumentError( `Prefix "${ namespace }" has different values: "${ oldURI }", "${ newURI }"` );
+			if( oldURI !== newURI ) throw new IllegalArgumentError( `Prefix "${ namespace }" has different value: "${ oldURI }", "${ newURI }".` );
 		} );
 
 		newSchema.properties.forEach( ( newDefinition, propertyName ) => {
@@ -35,7 +35,7 @@ export class PartialMetadata {
 				const newValue:any = newDefinition[ key ];
 				const oldValue:any = oldDefinition[ key ];
 
-				if( newValue !== oldValue ) throw new IllegalArgumentError( `Property "${ propertyName }" has different "${ key }": "${ oldValue }", "${ newValue }"` );
+				if( newValue !== oldValue ) throw new IllegalArgumentError( `Property "${ propertyName }" has different "${ key }": "${ oldValue }", "${ newValue }".` );
 			}
 		} );
 
