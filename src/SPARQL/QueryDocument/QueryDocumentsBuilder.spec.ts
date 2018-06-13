@@ -19,16 +19,23 @@ import {
 import {
 	clazz,
 	extendsClass,
+	hasProperty,
 	hasSignature,
 	INSTANCE,
+	interfaze,
 	method,
-	module
+	module,
+	OBLIGATORY,
+	OPTIONAL
 } from "../../test/JasmineExtender";
 import { QueryContextBuilder } from "./QueryContextBuilder";
 import { QueryDocumentBuilder } from "./QueryDocumentBuilder";
 
 import * as Module from "./QueryDocumentsBuilder";
-import { QueryDocumentsBuilder } from "./QueryDocumentsBuilder";
+import {
+	QueryDocumentsBuilder,
+	QueryDocumentsBuilderOrderData
+} from "./QueryDocumentsBuilder";
 
 import { QueryProperty } from "./QueryProperty";
 
@@ -39,9 +46,37 @@ describe( module( "carbonldp/SPARQL/QueryDocument/QueryDocumentsBuilder" ), ():v
 		expect( Module ).toEqual( jasmine.any( Object ) );
 	} );
 
-	// TODO: To document `QueryDocumentsBuilderOrderData`
+	describe( interfaze(
+		"CarbonLDP.SPARQLER.QueryDocument.QueryDocumentBuilderOrderData",
+		"Interface that specifies the data of the order wanted fot the result query."
+	), () => {
 
-	describe( clazz( "CarbonLDP.SPARQL.QueryDocument.QueryDocumentsBuilder", "Class with the helpers and properties for construct a query document" ), ():void => {
+		it( hasProperty(
+			OBLIGATORY,
+			"path",
+			"string",
+			"The path to the property that specifies the order of the query."
+		), ():void => {
+			const target:QueryDocumentsBuilderOrderData[ "path" ] = "path" as string;
+			expect( target ).toBeDefined();
+		} );
+
+		it( hasProperty(
+			OPTIONAL,
+			"flow",
+			"\"ASC\" | \"DESC\"",
+			"The flow of the order wanted."
+		), ():void => {
+			const target:QueryDocumentsBuilderOrderData[ "flow" ] = "ASC" as "ASC" | "DESC";
+			expect( target ).toBeDefined();
+		} );
+
+	} );
+
+	describe( clazz(
+		"CarbonLDP.SPARQL.QueryDocument.QueryDocumentsBuilder",
+		"Class with the helpers and properties for construct a query document"
+	), ():void => {
 
 		it( "should exists", ():void => {
 			expect( QueryDocumentsBuilder ).toBeDefined();
