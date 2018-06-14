@@ -1,3 +1,4 @@
+import { ModelDecorator } from "../core";
 import { Fragment } from "../Fragment";
 import {
 	TransientNamedFragment,
@@ -13,22 +14,28 @@ export interface NamedFragmentFactory extends TransientNamedFragmentFactory {
 	isDecorated( object:object ):object is NamedFragment;
 
 	decorate<T extends object>( object:T ):T & NamedFragment;
+
+
+	is( value:any ):value is NamedFragment;
 }
 
 export const NamedFragment:NamedFragmentFactory = {
 	isDecorated( object:object ):object is NamedFragment {
-		return Fragment.isDecorated( object );
+		return TransientNamedFragment.isDecorated( object )
+			&& Fragment.isDecorated( object )
+			;
 	},
 
 	is( value:any ):value is NamedFragment {
-		return TransientNamedFragment.is( value );
+		return TransientNamedFragment.is( value )
+			&& Fragment.isDecorated( value );
 	},
 
 	decorate<T extends object>( object:T ):T & NamedFragment {
 		if( NamedFragment.isDecorated( object ) ) return object;
 
-		const fragment:T & TransientNamedFragment = TransientNamedFragment.decorate( object );
-		return Fragment.decorate( fragment );
+		return ModelDecorator
+			.decorateMultiple( object, TransientNamedFragment, Fragment );
 	},
 
 	create: TransientNamedFragment.create,
