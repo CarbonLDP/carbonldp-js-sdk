@@ -7,7 +7,6 @@ export declare function createTypesPattern(context: QueryContext, resourcePath: 
 export declare function createGraphPattern(context: QueryContext, resourcePath: string): PatternToken;
 export declare function createAllPattern(context: QueryContext, resourcePath: string): PatternToken;
 export declare function getParentPath(path: string): string;
-export declare function isFullTriple(triple: SubjectToken): boolean;
 export declare function getAllTriples(patterns: PatternToken[]): SubjectToken[];
 export declare function getPathProperty(element: any, path: string): any;
 export declare function areDifferentType(a: any, b: any): boolean;

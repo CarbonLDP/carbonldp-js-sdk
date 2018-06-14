@@ -21,6 +21,7 @@ export function getLevelRegExp( property:string ):RegExp {
 	return new RegExp( `^${ parsedName }[^.]+$` );
 }
 
+
 export function createPropertyPatterns( context:QueryContext, resourcePath:string, propertyPath:string, propertyDefinition:DigestedObjectSchemaProperty ):PatternToken[] {
 	const { uri, literalType, pointerType } = propertyDefinition;
 
@@ -68,6 +69,7 @@ export function createAllPattern( context:QueryContext, resourcePath:string ):Pa
 		;
 }
 
+
 export function getParentPath( path:string ):string {
 	return path
 		.split( "." )
@@ -76,19 +78,20 @@ export function getParentPath( path:string ):string {
 		;
 }
 
-export function isFullTriple( triple:SubjectToken ):boolean {
-	return triple
-		.predicates
-		.map( x => x.predicate )
-		.some( x => isObject( x ) && x.token === "variable" )
-		;
-}
 
 export function getAllTriples( patterns:PatternToken[] ):SubjectToken[] {
 	const subjectsMap:Map<string, SubjectToken> = new Map();
 	internalTripleAdder( subjectsMap, patterns );
 
 	return Array.from( subjectsMap.values() );
+}
+
+function isFullTriple( triple:SubjectToken ):boolean {
+	return triple
+		.predicates
+		.map( x => x.predicate )
+		.some( x => isObject( x ) && x.token === "variable" )
+		;
 }
 
 function internalTripleAdder( subjectsMap:Map<string, SubjectToken>, patterns:PatternToken[] ):void {
@@ -101,14 +104,13 @@ function internalTripleAdder( subjectsMap:Map<string, SubjectToken>, patterns:Pa
 		const valid:boolean = pattern.predicates
 			.map( predicate => predicate.objects )
 			.some( objects => objects.some( object => object.token === "variable" ) );
+		if( ! valid ) return;
 
-		if( valid ) {
-			const subject:SubjectToken = getSubject( subjectsMap, pattern );
-			if( isFullTriple( subject ) ) return;
+		const subject:SubjectToken = getSubject( subjectsMap, pattern );
+		if( isFullTriple( subject ) ) return;
 
-			if( isFullTriple( pattern ) ) subject.predicates.length = 0;
-			subject.predicates.push( ...pattern.predicates );
-		}
+		if( isFullTriple( pattern ) ) subject.predicates.length = 0;
+		subject.predicates.push( ...pattern.predicates );
 	} );
 }
 
@@ -121,6 +123,7 @@ function getSubject( subjectsMap:Map<string, SubjectToken>, original:SubjectToke
 
 	return subject;
 }
+
 
 export function getPathProperty( element:any, path:string ):any {
 	if( element === void 0 || ! path ) return element;
