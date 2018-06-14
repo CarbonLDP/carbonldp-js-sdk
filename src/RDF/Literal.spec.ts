@@ -2,8 +2,10 @@ import * as Errors from "../Errors";
 import {
 	hasMethod,
 	hasProperty,
+	hasSignature,
 	interfaze,
 	isDefined,
+	method,
 	module,
 	OBLIGATORY,
 	OPTIONAL,
@@ -11,7 +13,7 @@ import {
 	reexports,
 	STATIC,
 } from "../test/JasmineExtender";
-import { XSD } from "../Vocabularies/XSD";
+import { XSD } from "../Vocabularies";
 import * as Utils from "./../Utils";
 
 import * as Module from "./Literal";
@@ -49,24 +51,34 @@ describe( module( "carbonldp/RDF/Literal" ), ():void => {
 	), ():void => {
 
 		it( hasMethod(
-			STATIC,
+			OBLIGATORY,
 			"from",
 			"Convert the value provided to a `CarbonLDP.RDF.RDFLiteral` object."
 		), ():void => {} );
 
-		// TODO: Missing docs of second signature
-		it( hasMethod(
-			STATIC,
-			"parse",
-			"Parse the Literal object to the respective JavaScript type.\n" +
-			"Returns `null` if the Literal can't be parsed.", [
-				{ name: "literal", type: "CarbonLDP.RDF.RDFLiteral" },
-			],
-			{ type: "any" }
-		), ():void => {} );
+		describe( method( OBLIGATORY, "parse" ), () => {
+
+			it( hasSignature(
+				"Parse the Literal object to the respective JavaScript type.\n" +
+				"Returns `null` if the Literal can't be parsed.", [
+					{ name: "literal", type: "CarbonLDP.RDF.RDFLiteral" },
+				],
+				{ type: "any" }
+			), ():void => {} );
+
+			it( hasSignature(
+				"Parse the value string into the respective type specified. If no type provided, the same string will be returned.",
+				[
+					{ name: "value", type: "string" },
+					{ name: "type", type: "string", optional: true },
+				],
+				{ type: "any" }
+			), () => {} );
+
+		} );
 
 		it( hasMethod(
-			STATIC,
+			OBLIGATORY,
 			"is",
 			"Returns true if the object provided is considered a `CarbonLDP.RDF.RDFLiteral` object.", [
 				{ name: "value", type: "any" },
@@ -75,7 +87,7 @@ describe( module( "carbonldp/RDF/Literal" ), ():void => {
 		), ():void => {} );
 
 		it( hasMethod(
-			STATIC,
+			OBLIGATORY,
 			"hasType",
 			"Returns true if the Literal has the type specified.", [
 				{ name: "value", type: "CarbonLDP.RDF.RDFLiteral" },

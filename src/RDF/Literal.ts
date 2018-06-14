@@ -19,7 +19,6 @@ export interface RDFLiteralFactory {
 
 
 	parse( value:string, type?:string ):any;
-
 	parse( literal:RDFLiteral ):any;
 
 
