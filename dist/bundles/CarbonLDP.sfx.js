@@ -8257,7 +8257,7 @@ var RegistryService = (function () {
         return !path;
     };
     RegistryService.prototype.getSchemaFor = function (object) {
-        var schema = "types" in object ?
+        var schema = "types" in object || "id" in object ?
             this._getSchemaForResource(object) :
             this._getSchemaForNode(object);
         if (!Resource_1.PersistedResource.isDecorated(object) || !object.isPartial())
@@ -8312,7 +8312,7 @@ var RegistryService = (function () {
     RegistryService.prototype._parseFailedResponse = function (response) {
         if (!response || response instanceof Error)
             return Promise.reject(response);
-        if (!(response.status >= 400 && response.status < 600 && Errors_1.statusCodeMap.has(response.status)))
+        if (!Errors_1.statusCodeMap.has(response.status))
             return Promise.reject(new Errors_1.UnknownError(response.data, response));
         var error = new (Errors_1.statusCodeMap.get(response.status))(response.data, response);
         return Promise.reject(error);
