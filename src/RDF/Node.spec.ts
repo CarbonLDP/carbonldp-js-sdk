@@ -2,12 +2,13 @@ import {
 	Pointer,
 	PointerLibrary,
 } from "../Pointer";
-import { Registry } from "../Registry";
 import {
 	hasMethod,
 	hasProperty,
+	hasSignature,
 	interfaze,
 	isDefined,
+	method,
 	module,
 	OBLIGATORY,
 	property,
@@ -60,24 +61,53 @@ describe( module( "carbonldp/RDF/Node" ), ():void => {
 		), ():void => {} );
 
 
-		it( hasMethod(
-			OBLIGATORY,
-			"getID",
-			"Returns the `@id` of the node.", [
-				{ name: "node", type: "CarbonLDP.RDF.RDFNode" },
-			],
-			{ type: "string" }
-		), ():void => {} );
+		describe( method( OBLIGATORY, "getID" ), () => {
+
+			it( hasSignature(
+				"Returns the `@id` of the node.", [
+					{ name: "node", type: "CarbonLDP.RDF.RDFNode" },
+				],
+				{ type: "string" }
+			), ():void => {} );
+
+			it( "should exists", ():void => {
+				expect( RDFNode.getID ).toBeDefined();
+				expect( RDFNode.getID ).toEqual( jasmine.any( Function ) );
+			} );
+
+			it( "should return the @id of the node", () => {
+				const returned:string = RDFNode.getID( { "@id": "the-id/" } );
+				expect( returned ).toBe( "the-id/" );
+			} );
+
+		} );
+
+		describe( method( OBLIGATORY, "getRelativeID" ), () => {
+
+			it( hasSignature(
+				"Returns the relative `@id` of the node when it is a fragment node.", [
+					{ name: "node", type: "CarbonLDP.RDF.RDFNode" },
+				],
+				{ type: "string" }
+			), ():void => {} );
+
+			it( "should exists", ():void => {
+				expect( RDFNode.getRelativeID ).toBeDefined();
+				expect( RDFNode.getRelativeID ).toEqual( jasmine.any( Function ) );
+			} );
 
 
-		it( hasMethod(
-			OBLIGATORY,
-			"getRelativeID",
-			"Returns the relative `@id` of the node when it is a fragment node.", [
-				{ name: "node", type: "CarbonLDP.RDF.RDFNode" },
-			],
-			{ type: "string" }
-		), ():void => {} );
+			it( "should return the fragment when resource is a named fragment", () => {
+				const returned:string = RDFNode.getRelativeID( { "@id": "https://example.com/#fragment" } );
+				expect( returned ).toBe( "fragment" );
+			} );
+
+			it( "should return bNode label when resource is bNode", () => {
+				const returned:string = RDFNode.getRelativeID( { "@id": "_:1" } );
+				expect( returned ).toBe( "_:1" );
+			} );
+
+		} );
 
 		it( hasMethod(
 			OBLIGATORY,
@@ -308,10 +338,6 @@ describe( module( "carbonldp/RDF/Node" ), ():void => {
 				getPointer: id => Pointer.create( { id } ),
 			};
 		} );
-
-		// TODO: Test `RDFNode.getID`
-
-		// TODO: Test `RDFNode.getRelativeID`
 
 		// TODO: Separate in different tests
 		it( "RDFNode.areEqual", ():void => {
