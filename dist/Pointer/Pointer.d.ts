@@ -1,9 +1,9 @@
 import { Registry } from "../Registry";
 import { BasePointer } from "./BasePointer";
 export interface Pointer {
+    id: string;
     _registry: Registry<Pointer> | undefined;
     _id: string;
-    id: string;
 }
 export interface PointerFactory {
     isDecorated(object: object): object is Pointer;

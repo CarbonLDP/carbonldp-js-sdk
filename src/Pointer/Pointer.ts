@@ -4,10 +4,10 @@ import { BasePointer } from "./BasePointer";
 
 
 export interface Pointer {
+	id:string;
+
 	_registry:Registry<Pointer> | undefined;
 	_id:string;
-
-	id:string;
 }
 
 

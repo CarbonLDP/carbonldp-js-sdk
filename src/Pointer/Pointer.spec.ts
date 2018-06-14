@@ -1,9 +1,8 @@
+import { Registry } from "../Registry";
 import {
 	hasMethod,
 	hasProperty,
-	hasSignature,
 	interfaze,
-	method,
 	module,
 	OBLIGATORY,
 	property,
@@ -22,17 +21,19 @@ describe( module( "carbonldp/Pointer" ), ():void => {
 
 		it( hasProperty(
 			OBLIGATORY,
+			"_registry",
+			"CarbonLDP.Registry<Pointer> | undefined",
+			"The registry where is been stored the pointer."
+		), ():void => {
+			const target:Pointer[ "_registry" ] = {} as Registry<Pointer> | undefined;
+			expect( target ).toBeDefined();
+		} );
+
+		it( hasProperty(
+			OBLIGATORY,
 			"_id",
 			"string",
 			"Private variable for the URI that identifies the pointer."
-		), ():void => {} );
-
-		// TODO: Mode to CRUDDocument
-		it( hasProperty(
-			OBLIGATORY,
-			"_resolved",
-			"boolean",
-			"Private variable that indicates if the pointer has been resolved."
 		), ():void => {} );
 
 		it( hasProperty(
@@ -41,39 +42,6 @@ describe( module( "carbonldp/Pointer" ), ():void => {
 			"string",
 			"Accessor for the _id variable."
 		), ():void => {} );
-
-		// TODO: Mode to CRUDDocument
-		it( hasMethod(
-			OBLIGATORY,
-			"isResolved",
-			"Returns true if the pointer has been resolved. It checks the `_resolved` property.",
-			{ type: "boolean" }
-		), ():void => {} );
-
-
-		// TODO: Mode to CRUDDocument
-		describe( method( OBLIGATORY, "resolve" ), ():void => {
-
-			it( hasSignature(
-				[ "T extends objects" ],
-				"Resolves the pointer. This function throw an Error if it has no been configured by a context.",
-				[
-					{ name: "requestOptions", type: "CarbonLDP.HTTP.GETOptions", optional: true, description: "Customizable options for the request." },
-					{ name: "queryBuilderFn", type: "( queryBuilder:CarbonLDP.SPARQL.QueryDocument.QueryDocumentBuilder ) => CarbonLDP.SPARQL.QueryDocument.QueryDocumentBuilder", optional: true, description: "Function that receives a the builder that helps you to construct the retrieval query.\nThe same builder must be returned." },
-				],
-				{ type: "Promise<T & this & CarbonLDP.Document>" }
-			), ():void => {} );
-
-			it( hasSignature(
-				[ "T extends objects" ],
-				"Resolves the pointer. This function throw an Error if it has no been configured by a context.",
-				[
-					{ name: "queryBuilderFn", type: "( queryBuilder:CarbonLDP.SPARQL.QueryDocument.QueryDocumentBuilder ) => CarbonLDP.SPARQL.QueryDocument.QueryDocumentBuilder", optional: true, description: "Function that receives a the builder that helps you to construct the retrieval query.\nThe same builder must be returned." },
-				],
-				{ type: "Promise<T & this & CarbonLDP.Document>" }
-			), ():void => {} );
-
-		} );
 
 	} );
 
@@ -338,7 +306,23 @@ describe( module( "carbonldp/Pointer" ), ():void => {
 				expect( Pointer.areEqual ).toEqual( jasmine.any( Function ) );
 			} );
 
-			// TODO: Create tests
+			it( "should return true when same ID", () => {
+				const returned:boolean = Pointer.areEqual(
+					Pointer.create( { id: "the-same-id/" } ),
+					Pointer.create( { id: "the-same-id/" } )
+				);
+
+				expect( returned ).toBe( true );
+			} );
+
+			it( "should return false when different ID", () => {
+				const returned:boolean = Pointer.areEqual(
+					Pointer.create( { id: "different-id-1/" } ),
+					Pointer.create( { id: "different-id-2/" } )
+				);
+
+				expect( returned ).toBe( false );
+			} );
 
 		} );
 
