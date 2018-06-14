@@ -19,7 +19,7 @@ import {
 	VariableToken
 } from "sparqler/tokens";
 import {
-	createPartialMetadata,
+	createMockPartialMetadata,
 	defineNonEnumerableProps
 } from "../../../test/helpers/mocks";
 import { CarbonLDP } from "../../CarbonLDP";
@@ -61,7 +61,7 @@ import { QueryDocumentDocument } from "./QueryDocumentDocument";
 function createMock<T extends object>( data?:T & Partial<QueryDocumentDocument> ):T & QueryDocumentDocument {
 	const mock:T & QueryDocumentDocument = QueryDocumentDocument.decorate( Object.assign( {
 		_registry: new DocumentsRegistry(),
-		_partialMetadata: createPartialMetadata( {} ),
+		_partialMetadata: createMockPartialMetadata( {} ),
 		id: "https://example.com/",
 	}, data ) );
 
@@ -1255,7 +1255,7 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 					resource = createMock( {
 						_registry: context.registry,
 
-						_partialMetadata: createPartialMetadata( {
+						_partialMetadata: createMockPartialMetadata( {
 							"@vocab": "https://example.com/ns#",
 							"property4": {
 								"@id": "property-4",
@@ -1275,7 +1275,7 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 						property4: true,
 						property1: "value",
 						property2: {
-							_partialMetadata: createPartialMetadata( {
+							_partialMetadata: createMockPartialMetadata( {
 								"@vocab": "https://example.com/ns#",
 								"property3": {
 									"@id": "https://schema.org/property-3",
@@ -1358,7 +1358,7 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 					resource = createMock( {
 						_registry: context.registry,
 
-						_partialMetadata: createPartialMetadata( {
+						_partialMetadata: createMockPartialMetadata( {
 							"@vocab": "https://example.com/ns#",
 							"property2": {
 								"@id": "https://schema.org/property-2",
@@ -1372,7 +1372,7 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 						id: "https://example.com/",
 
 						property2: {
-							_partialMetadata: createPartialMetadata( {
+							_partialMetadata: createMockPartialMetadata( {
 								"@vocab": "https://example.com/ns#",
 								"property3": {
 									"@id": "https://schema.org/property-3",
@@ -2477,7 +2477,7 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 					resource = createMock( {
 						_registry: context.registry,
 
-						_partialMetadata: createPartialMetadata( {
+						_partialMetadata: createMockPartialMetadata( {
 							"@vocab": "https://example.com/ns#",
 							"property4": {
 								"@id": "property-4",
@@ -2497,7 +2497,7 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 						property4: true,
 						property1: "value",
 						property2: {
-							_partialMetadata: createPartialMetadata( {
+							_partialMetadata: createMockPartialMetadata( {
 								"@vocab": "https://example.com/ns#",
 								"property3": {
 									"@id": "https://schema.org/property-3",
@@ -2580,7 +2580,7 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 					resource = createMock( {
 						_registry: context.registry,
 
-						_partialMetadata: createPartialMetadata( {
+						_partialMetadata: createMockPartialMetadata( {
 							"@vocab": "https://example.com/ns#",
 							"property2": {
 								"@id": "https://schema.org/property-2",
@@ -2594,7 +2594,7 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 						id: "https://example.com/",
 
 						property2: {
-							_partialMetadata: createPartialMetadata( {
+							_partialMetadata: createMockPartialMetadata( {
 								"@vocab": "https://example.com/ns#",
 								"property3": {
 									"@id": "https://schema.org/property-3",
@@ -2874,7 +2874,7 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 					resource = createMock( {
 						_registry: context.registry,
 
-						_partialMetadata: createPartialMetadata( {
+						_partialMetadata: createMockPartialMetadata( {
 							"@vocab": "https://example.com/ns#",
 							"property4": {
 								"@id": "https://example.com/ns#property-4",
@@ -2892,7 +2892,7 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 						id: "https://example.com/",
 
 						property2: {
-							_partialMetadata: createPartialMetadata( {
+							_partialMetadata: createMockPartialMetadata( {
 								"@vocab": "https://example.com/ns#",
 								"property3": {
 									"@id": "https://schema.org/property-3",
@@ -2985,7 +2985,7 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 					resource = createMock( {
 						_registry: context.registry,
 
-						_partialMetadata: createPartialMetadata( {
+						_partialMetadata: createMockPartialMetadata( {
 							"@vocab": "https://example.com/ns#",
 							"property4": {
 								"@id": "https://example.com/ns#property-4",
@@ -3114,7 +3114,7 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 					resource = createMock( {
 						_registry: context.registry,
 
-						_partialMetadata: createPartialMetadata( {
+						_partialMetadata: createMockPartialMetadata( {
 							"@vocab": "https://example.com/ns#",
 							"property1": {
 								"@id": "https://example.com/ns#property-1",
@@ -3137,7 +3137,7 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 
 						property2: {
 							id: "_:1",
-							_partialMetadata: createPartialMetadata( {
+							_partialMetadata: createMockPartialMetadata( {
 								"@vocab": "https://example.com/ns#",
 								"property2": {
 									"@id": "https://example.com/ns#property-2",
@@ -4134,7 +4134,7 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 					resource = createMock( {
 						_registry: context.registry,
 
-						_partialMetadata: createPartialMetadata( {
+						_partialMetadata: createMockPartialMetadata( {
 							"@vocab": "https://example.com/ns#",
 							"property4": {
 								"@id": "https://example.com/ns#property-4",
@@ -4152,7 +4152,7 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 						id: "https://example.com/",
 
 						property2: {
-							_partialMetadata: createPartialMetadata( {
+							_partialMetadata: createMockPartialMetadata( {
 								"@vocab": "https://example.com/ns#",
 								"property3": {
 									"@id": "https://schema.org/property-3",

@@ -94,7 +94,7 @@ export function createMockContext<M extends Pointer = Pointer, P extends Abstrac
 }
 
 
-export function createPartialMetadata( schema:ObjectSchema ):PartialMetadata {
+export function createMockPartialMetadata( schema:ObjectSchema = {} ):PartialMetadata {
 	const digestedSchema:DigestedObjectSchema = ObjectSchemaDigester.digestSchema( schema );
 	digestedSchema.properties.forEach( definition => ObjectSchemaUtils.resolveProperty( digestedSchema, definition, true ) );
 	return new PartialMetadata( digestedSchema );

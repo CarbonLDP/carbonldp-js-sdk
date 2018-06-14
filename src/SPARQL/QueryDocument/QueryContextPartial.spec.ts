@@ -1,7 +1,7 @@
 import {
 	createMockContext,
 	createMockDocument,
-	createPartialMetadata
+	createMockPartialMetadata
 } from "../../../test/helpers/mocks";
 import { AbstractContext } from "../../AbstractContext";
 import { Document } from "../../Document";
@@ -42,7 +42,7 @@ describe( module( "carbonldp/SPARQL/QueryDocument/QueryContextPartial" ), ():voi
 
 			persistedDocument = createMockDocument( {
 				_registry: context.registry,
-				_partialMetadata: createPartialMetadata( {
+				_partialMetadata: createMockPartialMetadata( {
 					"documentProperty": {
 						"@id": "https://example.com/ns#document-property",
 					},
@@ -108,7 +108,7 @@ describe( module( "carbonldp/SPARQL/QueryDocument/QueryContextPartial" ), ():voi
 			it( "should return the schema of a document property", ():void => {
 				const queryContext:QueryContextPartial = new QueryContextPartial( persistedDocument, context );
 				const fragment:PersistedResource = persistedDocument._register( PersistedResource.decorate( {
-					_partialMetadata: createPartialMetadata( {
+					_partialMetadata: createMockPartialMetadata( {
 						"fragmentProperty": {
 							"@id": "https://example.com/ns#fragment-property",
 						},

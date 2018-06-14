@@ -1,8 +1,11 @@
+import { createMockPartialMetadata } from "../../test/helpers/mocks";
 import {
 	hasMethod,
 	hasProperty,
+	hasSignature,
 	interfaze,
 	isDefined,
+	method,
 	module,
 	OBLIGATORY,
 	property,
@@ -17,6 +20,10 @@ import {
 
 import { TransientResource } from "./TransientResource";
 
+
+function createMock( data?:Partial<PersistedResource> ):PersistedResource {
+	return PersistedResource.decorate( Object.assign( {}, data ) );
+}
 
 describe( module( "carbonldp/PersistedResource" ), ():void => {
 
@@ -57,11 +64,33 @@ describe( module( "carbonldp/PersistedResource" ), ():void => {
 			"Revert the changes made to the resource into the state of the snapshot."
 		), ():void => {} );
 
-		it( hasMethod(
-			OBLIGATORY,
-			"isPartial",
-			"Returns true if the resource is a partial representation of the one stored in Carbon LDP."
-		), ():void => {} );
+
+		describe( method( OBLIGATORY, "isPartial" ), () => {
+
+			it( hasSignature(
+				"Returns true if the resource is a partial representation of the one stored in Carbon LDP.",
+				{ type: "boolean" }
+			), ():void => {} );
+
+			it( "should exists", ():void => {
+				const resource:PersistedResource = PersistedResource.decorate( {} );
+
+				expect( resource.isPartial ).toBeDefined();
+				expect( resource.isPartial ).toEqual( jasmine.any( Function ) );
+			} );
+
+
+			it( "should return false when no _partialMetadata", () => {
+				const resource:PersistedResource = createMock( { _partialMetadata: undefined } );
+				expect( resource.isPartial() ).toBe( false );
+			} );
+
+			it( "should return true when _partialMetadata set", () => {
+				const resource:PersistedResource = createMock( { _partialMetadata: createMockPartialMetadata() } );
+				expect( resource.isPartial() ).toBe( true );
+			} );
+
+		} );
 
 	} );
 
@@ -499,8 +528,6 @@ describe( module( "carbonldp/PersistedResource" ), ():void => {
 				} );
 
 			} );
-
-			// TODO: Test .isPartial
 
 		} );
 
