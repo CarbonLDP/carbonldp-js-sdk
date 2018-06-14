@@ -1,5 +1,6 @@
 import { anyThatMatches } from "../../test/helpers/jasmine/equalities";
 import { spyOnDecorated } from "../../test/helpers/jasmine/spies";
+import { ModelDecorator } from "../core";
 import {
 	IDAlreadyInUseError,
 	IllegalArgumentError
@@ -1288,7 +1289,19 @@ describe( module( "carbonldp/Registry" ), () => {
 				{ type: "object is CarbonLDP.Registry<any>" }
 			), ():void => {} );
 
-			// TODO: Test
+			it( "should exists", ():void => {
+				expect( Registry.isDecorated ).toBeDefined();
+				expect( Registry.isDecorated ).toEqual( jasmine.any( Function ) );
+			} );
+
+
+			it( "should call ModelDecorator.hasPropertiesFrom with the PROTOTYPE", () => {
+				const spy:jasmine.Spy = spyOn( ModelDecorator, "hasPropertiesFrom" );
+
+				Registry.isDecorated( { the: "object" } );
+
+				expect( spy ).toHaveBeenCalledWith( Registry.PROTOTYPE, { the: "object" } );
+			} );
 
 		} );
 
@@ -1301,7 +1314,29 @@ describe( module( "carbonldp/Registry" ), () => {
 				{ type: "T & CarbonLDP.Registry<any>" }
 			), ():void => {} );
 
-			// TODO: Test
+			it( "should exists", ():void => {
+				expect( Registry.decorate ).toBeDefined();
+				expect( Registry.decorate ).toEqual( jasmine.any( Function ) );
+			} );
+
+
+			it( "should call ModelDecorator.definePropertiesFrom with PROTOTYPE", () => {
+				const spy:jasmine.Spy = spyOn( ModelDecorator, "definePropertiesFrom" );
+
+				Registry.decorate( { the: "object" } );
+
+				expect( spy ).toHaveBeenCalledWith( Registry.PROTOTYPE, { the: "object" } );
+			} );
+
+			it( "should no call ModelDecorator.definePropertiesFrom when already decorated", () => {
+				spyOn( Registry, "isDecorated" )
+					.and.returnValue( true );
+
+				const spy:jasmine.Spy = spyOn( ModelDecorator, "definePropertiesFrom" );
+				Registry.decorate( {} );
+
+				expect( spy ).not.toHaveBeenCalled();
+			} );
 
 		} );
 
