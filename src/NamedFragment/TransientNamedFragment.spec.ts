@@ -4,8 +4,10 @@ import { TransientFragment } from "../Fragment";
 import {
 	extendsClass,
 	hasMethod,
+	hasSignature,
 	interfaze,
 	isDefined,
+	method,
 	module,
 	OBLIGATORY,
 	property,
@@ -130,6 +132,47 @@ describe( module( "carbonldp/NamedFragment" ), ():void => {
 			{ type: "T & CarbonLDP.TransientNamedFragment" }
 		), ():void => {} );
 
+		describe( method( OBLIGATORY, "is" ), () => {
+
+			it( hasSignature(
+				[
+					{ name: "value", type: "any" },
+				],
+				{ type: "value is CarbonLDP.TransientNamedFragment" }
+			), ():void => {} );
+
+			it( "should exists", ():void => {
+				expect( TransientNamedFragment.is ).toBeDefined();
+				expect( TransientNamedFragment.is ).toEqual( jasmine.any( Function ) );
+			} );
+
+
+			let isTransientFragment:jasmine.Spy;
+			let isDecorated:jasmine.Spy;
+			beforeEach( ():void => {
+				isTransientFragment = spyOn( TransientFragment, "is" )
+					.and.returnValue( true );
+				isDecorated = spyOn( TransientNamedFragment, "isDecorated" )
+					.and.returnValue( true );
+			} );
+
+			it( "should be a TransientFragment", () => {
+				TransientNamedFragment.is( { the: "object" } );
+				expect( isDecorated ).toHaveBeenCalledWith( { the: "object" } );
+			} );
+
+			it( "should be a TransientNamedFragment decorated", () => {
+				TransientNamedFragment.is( { the: "object" } );
+				expect( isDecorated ).toHaveBeenCalledWith( { the: "object" } );
+			} );
+
+			it( "should return true when all assertions true", () => {
+				const returned:boolean = TransientNamedFragment.is( {} );
+				expect( returned ).toBe( true );
+			} );
+
+		} );
+
 	} );
 
 	describe( property(
@@ -185,8 +228,6 @@ describe( module( "carbonldp/NamedFragment" ), ():void => {
 			} );
 
 		} );
-
-		// TODO: Create tests for `NamedFragment.is`
 
 		describe( "TransientNamedFragment.create", ():void => {
 
