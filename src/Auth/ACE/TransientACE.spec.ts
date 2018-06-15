@@ -4,8 +4,10 @@ import {
 	extendsClass,
 	hasMethod,
 	hasProperty,
+	hasSignature,
 	interfaze,
 	isDefined,
+	method,
 	module,
 	OBLIGATORY,
 	property,
@@ -107,15 +109,37 @@ describe( module( "carbonldp/Auth/ACE" ), ():void => {
 			{ type: "object is CarbonLDP.Auth.TransientACE" }
 		), ():void => {} );
 
-		it( hasMethod(
-			OBLIGATORY,
-			"create",
-			[ "T extends object" ],
-			"Creates a `CarbonLDP.Auth.TransientACE` object with the parameters specified.", [
-				{ name: "data", type: "T & CarbonLDP.Auth.BaseACE", description: "Data for creation an access control entry." },
-			],
-			{ type: "CarbonLDP.Auth.TransientACE" }
-		), ():void => {} );
+		describe( method( OBLIGATORY, "create" ), ():void => {
+
+			it( hasSignature(
+				[ "T extends object" ],
+				"Creates a `CarbonLDP.Auth.TransientACE` object with the parameters specified.", [
+					{ name: "data", type: "T & CarbonLDP.Auth.BaseACE", description: "Data for creation an access control entry." },
+				],
+				{ type: "CarbonLDP.Auth.TransientACE" }
+			), ():void => {} );
+
+			it( "should exists", ():void => {
+				expect( TransientACE.create ).toBeDefined();
+				expect( TransientACE.create ).toEqual( jasmine.any( Function ) );
+			} );
+
+
+			it( "should call .createFrom", () => {
+				const spy:jasmine.Spy = spyOn( TransientACE, "createFrom" );
+
+				TransientACE.create( { the: "object" } as any );
+				expect( spy ).toHaveBeenCalledWith( { the: "object" } );
+			} );
+
+			it( "should return different reference", () => {
+				const base:{} = {};
+				const returned:{} = TransientACE.create( base as any );
+
+				expect( returned ).not.toBe( base );
+			} );
+
+		} );
 
 		it( hasMethod(
 			OBLIGATORY,
@@ -182,8 +206,6 @@ describe( module( "carbonldp/Auth/ACE" ), ():void => {
 			expect( TransientACE.is( object ) ).toBe( false );
 			object.subjectsClass = null;
 		} );
-
-		// TODO: Test `ACE.create`
 
 		// TODO: Separate in different tests
 		it( "TransientACE.createFrom", ():void => {
