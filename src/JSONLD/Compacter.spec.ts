@@ -1,18 +1,25 @@
 import { CarbonLDP } from "../CarbonLDP";
-import { ObjectSchemaDigester } from "../ObjectSchema";
 import { Document } from "../Document";
+import { ObjectSchemaDigester } from "../ObjectSchema";
 import { RDFNode } from "../RDF";
-import { DocumentsRegistry } from "../Registry";
-import { QueryContextBuilder } from "../SPARQL/QueryDocument";
-import { QueryPropertyType } from "../SPARQL/QueryDocument";
+import {
+	DocumentsRegistry,
+	RegistryService
+} from "../Registry";
+import {
+	QueryContextBuilder,
+	QueryPropertyType
+} from "../SPARQL/QueryDocument";
 import {
 	clazz,
+	constructor,
+	hasSignature,
 	INSTANCE,
 	method,
 	module
 } from "../test/JasmineExtender";
-
 import { JSONLDCompacter } from "./Compacter";
+import { JSONLDConverter } from "./Converter";
 
 describe( module( "carbonldp/JSONLD/Compacter" ), ():void => {
 
@@ -23,16 +30,109 @@ describe( module( "carbonldp/JSONLD/Compacter" ), ():void => {
 			expect( JSONLDCompacter ).toEqual( jasmine.any( Function ) );
 		} );
 
-		// TODO: Test `JSONLDCompacter.constructor`
+		describe( constructor(), () => {
 
-		// TODO: Test `JSONLDCompacter.compactDocument`
+			it( hasSignature(
+				[
+					{ name: "registry", type: "CarbonLDP.Registry<CarbonLDP.Document, any>" },
+					{ name: "root", type: "string", optional: true },
+					{ name: "schemaResolver", type: "CarbonLDP.ObjectSchemaResolver", optional: true },
+					{ name: "jsonldConverter", type: "CarbonLDP.JSONLD.JSONLDConverter", optional: true },
+				]
+			), ():void => {} );
+
+			it( "should be instantiable", () => {
+				const instance:JSONLDCompacter = new JSONLDCompacter( new RegistryService( Document ) );
+				expect( instance ).toEqual( jasmine.any( JSONLDCompacter ) );
+			} );
+
+
+			it( "should accept optional root", () => {
+				const registry:RegistryService<Document> = new RegistryService( Document );
+				const instance:JSONLDCompacter = new JSONLDCompacter( registry, "root" );
+
+				expect( instance ).toEqual( jasmine.any( JSONLDCompacter ) );
+			} );
+
+			it( "should accept optional SchemaResolver", () => {
+				const registry:RegistryService<Document> = new RegistryService( Document );
+				const instance:JSONLDCompacter = new JSONLDCompacter( registry, null, {
+					getGeneralSchema: ():any => {},
+					hasSchemaFor: ():any => {},
+					getSchemaFor: ():any => {},
+				} );
+
+				expect( instance ).toEqual( jasmine.any( JSONLDCompacter ) );
+			} );
+
+			it( "should accept optional JSONLDConverter", () => {
+				const registry:RegistryService<Document> = new RegistryService( Document );
+				const instance:JSONLDCompacter = new JSONLDCompacter( registry, null, null, new JSONLDConverter() );
+
+				expect( instance ).toEqual( jasmine.any( JSONLDCompacter ) );
+			} );
+
+		} );
+
+		describe( method( INSTANCE, "compactDocument" ), () => {
+
+			it( hasSignature(
+				[ "T extends object" ],
+				[
+					{ name: "rdfDocument", type: "CarbonLDP.RDF.RDFDocument" },
+				],
+				{ type: "T & CarbonLDP.Document" }
+			), ():void => {} );
+
+			it( "should exists", ():void => {
+				expect( JSONLDCompacter.prototype.compactDocument ).toBeDefined();
+				expect( JSONLDCompacter.prototype.compactDocument ).toEqual( jasmine.any( Function ) );
+			} );
+
+
+			it( "should call .compactDocuments", () => {
+				const compacter:JSONLDCompacter = new JSONLDCompacter( new RegistryService( Document ) );
+
+				const spy:jasmine.Spy = spyOn( compacter, "compactDocuments" )
+					.and.returnValue( [] );
+
+
+				compacter.compactDocument( { "@graph": [ { "@id": "the-data/" } ] } );
+				expect( spy ).toHaveBeenCalledWith( [ { "@graph": [ { "@id": "the-data/" } ] } ] );
+			} );
+
+			it( "should return first element from .compactDocuments", () => {
+				const compacter:JSONLDCompacter = new JSONLDCompacter( new RegistryService( Document ) );
+
+				spyOn( compacter, "compactDocuments" )
+					.and.returnValue( [
+					Document.decorate( { the: "document" } ),
+					Document.decorate( { another: "document" } ),
+				] );
+
+
+				const returned:Document = compacter.compactDocument( { "@graph": [ { "@id": "the-data/" } ] } );
+				expect( returned ).toEqual( Document.decorate( { the: "document" } ) );
+			} );
+
+		} );
 
 		describe( method( INSTANCE, "compactDocuments" ), ():void => {
+
+			it( hasSignature(
+				[ "T extends object" ],
+				[
+					{ name: "rdfDocuments", type: "CarbonLDP.RDF.RDFDocument[]" },
+					{ name: "mainDocuments", type: "CarbonLDP.RDF.RDFDocument[]", optional: true },
+				],
+				{ type: "(T & CarbonLDP.Document)[]" }
+			), ():void => {} );
 
 			it( "should exists", ():void => {
 				expect( JSONLDCompacter.prototype.compactDocuments ).toBeDefined();
 				expect( JSONLDCompacter.prototype.compactDocuments ).toEqual( jasmine.any( Function ) );
 			} );
+
 
 			it( "should send root path when one level resources", ():void => {
 				const registry:DocumentsRegistry = new DocumentsRegistry();
