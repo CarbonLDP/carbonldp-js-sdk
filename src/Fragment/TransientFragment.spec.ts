@@ -2,7 +2,9 @@ import { TransientResource } from "../Resource";
 import {
 	hasMethod,
 	hasProperty,
+	hasSignature,
 	interfaze,
+	method,
 	module,
 	OBLIGATORY,
 	OPTIONAL,
@@ -42,14 +44,33 @@ describe( module( "carbonldp/Fragment" ), ():void => {
 			{ type: "object is CarbonLDP.TransientFragment" }
 		), ():void => {} );
 
-		it( hasMethod(
-			OBLIGATORY,
-			"is",
-			"Returns true if the object provided is considered a `CarbonLDP.TransientFragment` object.", [
-				{ name: "value", type: "any" },
-			],
-			{ type: "value is CarbonLDP.TransientFragment" }
-		), ():void => {} );
+		describe( method( OBLIGATORY, "is" ), ():void => {
+
+			it( hasSignature(
+				"Returns true if the object provided is considered a `CarbonLDP.TransientFragment` object.", [
+					{ name: "value", type: "any" },
+				],
+				{ type: "value is CarbonLDP.TransientFragment" }
+			), ():void => {} );
+
+			it( "should exists", ():void => {
+				expect( TransientFragment.is ).toBeDefined();
+				expect( TransientFragment.is ).toEqual( jasmine.any( Function ) );
+			} );
+
+
+			let isTransientResource:jasmine.Spy;
+			beforeEach( ():void => {
+				isTransientResource = spyOn( TransientResource, "is" )
+					.and.returnValue( true );
+			} );
+
+			it( "should be a TransientResource", () => {
+				TransientFragment.is( { the: "object" } );
+				expect( isTransientResource ).toHaveBeenCalledWith( { the: "object" } );
+			} );
+
+		} );
 
 		it( hasMethod(
 			OBLIGATORY,
@@ -111,8 +132,6 @@ describe( module( "carbonldp/Fragment" ), ():void => {
 
 		} );
 
-		// TODO: Add tests for `Fragment.is`
-
 		describe( "TransientFragment.create", ():void => {
 
 			it( "should exists", ():void => {
@@ -158,8 +177,7 @@ describe( module( "carbonldp/Fragment" ), ():void => {
 			} );
 
 			it( "should fill empty id when no provided", ():void => {
-				const fragment:TransientFragment = TransientFragment.createFrom( {
-				} );
+				const fragment:TransientFragment = TransientFragment.createFrom( {} );
 
 				expect( fragment.id ).toBe( "" );
 			} );
