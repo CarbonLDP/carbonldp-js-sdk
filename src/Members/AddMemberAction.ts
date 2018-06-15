@@ -44,7 +44,7 @@ export const AddMemberAction:AddMemberActionFactory = {
 
 	is( value:any ):value is AddMemberAction {
 		return TransientResource.is( value )
-			&& value.hasOwnProperty( "targetMembers" )
+			&& value.hasType( AddMemberAction.TYPE )
 			;
 	},
 

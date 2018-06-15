@@ -14,7 +14,7 @@ exports.AddMemberAction = {
     SCHEMA: SCHEMA,
     is: function (value) {
         return Resource_1.TransientResource.is(value)
-            && value.hasOwnProperty("targetMembers");
+            && value.hasType(exports.AddMemberAction.TYPE);
     },
     create: function (data) {
         var copy = Object.assign({}, data);
