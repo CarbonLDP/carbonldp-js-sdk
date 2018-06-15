@@ -43,7 +43,7 @@ export const RemoveMemberAction:RemoveMemberActionFactory = {
 
 	is( value:any ):value is RemoveMemberAction {
 		return TransientResource.is( value )
-			&& value.hasOwnProperty( "targetMembers" )
+			&& value.hasType( RemoveMemberAction.TYPE )
 			;
 	},
 

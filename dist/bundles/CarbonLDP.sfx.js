@@ -9165,7 +9165,7 @@ exports.RemoveMemberAction = {
     SCHEMA: SCHEMA,
     is: function (value) {
         return Resource_1.TransientResource.is(value)
-            && value.hasOwnProperty("targetMembers");
+            && value.hasType(exports.RemoveMemberAction.TYPE);
     },
     create: function (data) {
         var copy = Object.assign({}, data);
