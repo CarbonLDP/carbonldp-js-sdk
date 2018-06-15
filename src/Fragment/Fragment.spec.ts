@@ -1,21 +1,21 @@
-import { createMockContext } from "../../test/helpers/mocks";
-import { AbstractContext } from "../AbstractContext";
 import { PersistedResource } from "../Resource";
 import {
 	extendsClass,
-	hasMethod,
 	hasProperty,
+	hasSignature,
 	interfaze,
 	isDefined,
+	method,
 	module,
 	OBLIGATORY,
 	property,
 	STATIC,
 } from "../test/JasmineExtender";
-import * as Utils from "../Utils";
-
 import { Fragment } from "./Fragment";
-import { TransientFragment } from "./TransientFragment";
+import {
+	TransientFragment,
+	TransientFragmentFactory
+} from "./TransientFragment";
 
 describe( module( "carbonldp/Fragment" ), ():void => {
 
@@ -41,31 +41,114 @@ describe( module( "carbonldp/Fragment" ), ():void => {
 		"Interface with the factory, decorate and utils methods of a `CarbonLDP.Fragment` object."
 	), ():void => {
 
-		it( hasMethod(
-			OBLIGATORY,
-			"isDecorated", [
-				{ name: "object", type: "object" },
-			],
-			{ type: "object is CarbonLDP.Fragment" }
-		), ():void => {} );
+		it( extendsClass( "CarbonLDP.TransientFragmentFactory" ), () => {
+			expect<TransientFragmentFactory>( Fragment ).toEqual( jasmine.objectContaining( {
+				create: TransientFragment.create,
+				createFrom: TransientFragment.createFrom,
+			} ) );
+		} );
 
-		it( hasMethod(
-			OBLIGATORY,
-			"is", [
-				{ name: "value", type: "any" },
-			],
-			{ type: "value is CarbonLDP.Fragment" }
-		), ():void => {} );
 
-		it( hasMethod(
-			OBLIGATORY,
-			"decorate",
-			[ "T extends object" ],
-			"Decorates the object provided with the properties and methods of a `CarbonLDP.Fragment` object.",
-			[
-				{ name: "object", type: "object", description: "The object to convert into a persisted fragment." },
-			]
-		), ():void => {} );
+		describe( method( OBLIGATORY, "isDecorated" ), ():void => {
+
+			it( hasSignature(
+				[
+					{ name: "object", type: "object" },
+				],
+				{ type: "object is CarbonLDP.Fragment" }
+			), ():void => {} );
+
+			it( "should exists", ():void => {
+				expect( Fragment.isDecorated ).toBeDefined();
+				expect( Fragment.isDecorated ).toEqual( jasmine.any( Function ) );
+			} );
+
+
+			it( "should call TransientFragment & PersistedResource .isDecorated", () => {
+				const isTransientFragmentDecorated:jasmine.Spy = spyOn( TransientFragment, "isDecorated" )
+					.and.returnValue( true );
+				const isPersistedResourceDecorated:jasmine.Spy = spyOn( PersistedResource, "isDecorated" )
+					.and.returnValue( true );
+
+				const returned:boolean = Fragment.isDecorated( { the: "object" } );
+				expect( isTransientFragmentDecorated ).toHaveBeenCalledWith( { the: "object" } );
+				expect( isPersistedResourceDecorated ).toHaveBeenCalledWith( { the: "object" } );
+				expect( returned ).toBe( true );
+			} );
+
+		} );
+
+		describe( method( OBLIGATORY, "is" ), ():void => {
+
+			it( hasSignature(
+				[
+					{ name: "value", type: "any" },
+				],
+				{ type: "value is CarbonLDP.Fragment" }
+			), ():void => {} );
+
+			it( "should exists", ():void => {
+				expect( Fragment.is ).toBeDefined();
+				expect( Fragment.is ).toEqual( jasmine.any( Function ) );
+			} );
+
+
+			let isTransientFragment:jasmine.Spy;
+			let isPersistedResource:jasmine.Spy;
+			beforeEach( ():void => {
+				isTransientFragment = spyOn( TransientFragment, "is" )
+					.and.returnValue( true );
+				isPersistedResource = spyOn( PersistedResource, "isDecorated" )
+					.and.returnValue( true );
+			} );
+
+			it( "should be a TransientFragment", () => {
+				Fragment.is( { the: "object" } );
+				expect( isTransientFragment ).toHaveBeenCalledWith( { the: "object" } );
+			} );
+
+			it( "should be isPersistedResource", () => {
+				Fragment.is( { the: "object" } );
+				expect( isPersistedResource ).toHaveBeenCalledWith( { the: "object" } );
+			} );
+
+			it( "should return true when all assertions", () => {
+				const returned:boolean = Fragment.is( {} );
+				expect( returned ).toBe( true );
+			} );
+
+		} );
+
+		describe( method( OBLIGATORY, "decorate" ), ():void => {
+
+			it( hasSignature(
+				[ "T extends object" ],
+				"Decorates the object provided with the properties and methods of a `CarbonLDP.Fragment` object.",
+				[
+					{ name: "object", type: "object", description: "The object to convert into a persisted fragment." },
+				]
+			), ():void => {} );
+
+			it( "should exists", ():void => {
+				expect( Fragment.decorate ).toBeDefined();
+				expect( Fragment.decorate ).toEqual( jasmine.any( Function ) );
+			} );
+
+			// TODO: Separate in different tests
+			it( "should work", ():void => {
+				let spyPersistedDecorator:jasmine.Spy = spyOn( PersistedResource, "decorate" );
+
+				let fragment:TransientFragment = TransientFragment.create( {
+					_document: null,
+					id: "_:01",
+				} );
+				let persistedFragment:Fragment = Fragment.decorate( fragment );
+
+				expect( persistedFragment ).toBeTruthy();
+				expect( spyPersistedDecorator ).toHaveBeenCalledWith( fragment );
+			} );
+
+		} );
 
 	} );
 
@@ -80,31 +163,6 @@ describe( module( "carbonldp/Fragment" ), ():void => {
 			expect( Fragment ).toBeDefined();
 			expect( Fragment ).toEqual( jasmine.any( Object ) );
 		} );
-
-		// TODO: Test `Fragment.isDecorated`
-
-		// TODO: Test `Fragment.is`
-
-		// TODO: Separate in different tests
-		it( "Fragment.decorate", ():void => {
-			expect( Fragment.decorate ).toBeDefined();
-			expect( Utils.isFunction( Fragment.decorate ) ).toBe( true );
-
-			let spyPersistedDecorator:jasmine.Spy = spyOn( PersistedResource, "decorate" );
-
-			let fragment:TransientFragment = TransientFragment.create( {
-				_document: null,
-				id: "_:01",
-			} );
-			let persistedFragment:Fragment = Fragment.decorate( fragment );
-
-			expect( persistedFragment ).toBeTruthy();
-			expect( spyPersistedDecorator ).toHaveBeenCalledWith( fragment );
-		} );
-
-		// TODO: Test `Fragment.create`
-
-		// TODO: Test `Fragment.createFrom`
 
 	} );
 
