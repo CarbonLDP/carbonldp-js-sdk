@@ -4,8 +4,10 @@ import {
 	extendsClass,
 	hasMethod,
 	hasProperty,
+	hasSignature,
 	interfaze,
 	isDefined,
+	method,
 	module,
 	OBLIGATORY,
 	OPTIONAL,
@@ -60,14 +62,38 @@ describe( module( "carbonldp/AccessPoint" ), ():void => {
 			"CarbonLDP.Vocabularies.C.AccessPoint"
 		), ():void => {} );
 
-		it( hasMethod(
-			OBLIGATORY,
-			"is",
-			"Returns true if the object provided is considered a `CarbonLDP.TransientAccessPoint` object", [
-				{ name: "value", type: "any" },
-			],
-			{ type: "value is CarbonLDP.TransientAccessPoint" }
-		), ():void => {} );
+		describe( method( OBLIGATORY, "is" ), ():void => {
+
+			it( hasSignature(
+				"Returns true if the object provided is considered a `CarbonLDP.TransientAccessPoint` object", [
+					{ name: "value", type: "any" },
+				],
+				{ type: "value is CarbonLDP.TransientAccessPoint" }
+			), ():void => {} );
+
+			it( "should exists", ():void => {
+				expect( TransientAccessPoint.is ).toBeDefined();
+				expect( TransientAccessPoint.is ).toEqual( jasmine.any( Function ) );
+			} );
+
+
+			let isTransientDirectContainer:jasmine.Spy;
+			beforeEach( ():void => {
+				isTransientDirectContainer = spyOn( TransientDirectContainer, "is" )
+					.and.returnValue( true );
+			} );
+
+			it( "should be a TransientDirectContainer", () => {
+				TransientAccessPoint.is( { the: "object" } );
+				expect( isTransientDirectContainer ).toHaveBeenCalledWith( { the: "object" } );
+			} );
+
+			it( "should return true when all assertions", () => {
+				const returned:boolean = TransientAccessPoint.is( {} );
+				expect( returned ).toBe( true );
+			} );
+
+		} );
 
 		it( hasMethod(
 			OBLIGATORY,
@@ -115,8 +141,6 @@ describe( module( "carbonldp/AccessPoint" ), ():void => {
 			} );
 
 		} );
-
-		// TODO: Test `AccessPoint.is`
 
 		describe( "TransientAccessPoint.create", ():void => {
 
