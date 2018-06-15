@@ -1,14 +1,23 @@
+import { ProtectedDocument } from "../ProtectedDocument";
 import {
 	extendsClass,
-	hasMethod,
 	hasProperty,
+	hasSignature,
 	interfaze,
+	method,
 	module,
 	OBLIGATORY,
 	property,
 	STATIC,
 } from "../test/JasmineExtender";
-import { AccessPoint } from "./AccessPoint";
+import {
+	AccessPoint,
+	AccessPointFactory
+} from "./AccessPoint";
+import {
+	TransientAccessPoint,
+	TransientAccessPointFactory
+} from "./TransientAccessPoint";
 
 describe( module( "carbonldp/AccessPoint" ), ():void => {
 
@@ -55,40 +64,55 @@ describe( module( "carbonldp/AccessPoint" ), ():void => {
 		"Interface with the factory, decorate and utils methods of a `CarbonLDP.AccessPointFactory` object."
 	), ():void => {
 
-		it( hasProperty(
-			OBLIGATORY,
-			"TYPE",
-			"CarbonLDP.C.AccessPoint"
-		), ():void => {} );
+		it( extendsClass( "CarbonLDP.TransientAccessPointFactory" ), () => {
+			const target:TransientAccessPointFactory = AccessPoint as AccessPointFactory;
+			expect( target ).toEqual( jasmine.objectContaining( {
+				TYPE: TransientAccessPoint.TYPE,
+				create: TransientAccessPoint.create,
+				createFrom: TransientAccessPoint.createFrom,
+			} ) );
+		} );
 
-		it( hasMethod(
-			OBLIGATORY,
-			"is",
-			"Returns true if the object provided is considered a `CarbonLDP.AccessPoint` object", [
-				{ name: "value", type: "any" },
-			],
-			{ type: "value is CarbonLDP.AccessPoint" }
-		), ():void => {} );
+		describe( method( OBLIGATORY, "is" ), ():void => {
 
-		it( hasMethod(
-			OBLIGATORY,
-			"create",
-			[ "T extends object" ],
-			"Creates a `CarbonLDP.TransientAccessPoint` object with the parameters specified.", [
-				{ name: "data", type: "T & CarbonLDP.BaseAccessPoint", description: "Data necessary to create an access point." },
-			],
-			{ type: "CarbonLDP.TransientAccessPoint" }
-		), ():void => {} );
+			it( hasSignature(
+				"Returns true if the object provided is considered a `CarbonLDP.AccessPoint` object", [
+					{ name: "value", type: "any" },
+				],
+				{ type: "value is CarbonLDP.AccessPoint" }
+			), ():void => {} );
 
-		it( hasMethod(
-			OBLIGATORY,
-			"createFrom",
-			[ "T extends object" ],
-			"Creates a `CarbonLDP.TransientAccessPoint` object from the object and parameters specified.", [
-				{ name: "object", type: "T & CarbonLDP.BaseAccessPoint", description: "Object that will be converted into an AccessPoint." },
-			],
-			{ type: "T & CarbonLDP.TransientAccessPoint" }
-		), ():void => {} );
+			it( "should exists", ():void => {
+				expect( AccessPoint.is ).toBeDefined();
+				expect( AccessPoint.is ).toEqual( jasmine.any( Function ) );
+			} );
+
+
+			let isTransientAccessPoint:jasmine.Spy;
+			let isProtectedDocument:jasmine.Spy;
+			beforeEach( ():void => {
+				isTransientAccessPoint = spyOn( TransientAccessPoint, "is" )
+					.and.returnValue( true );
+				isProtectedDocument = spyOn( ProtectedDocument, "is" )
+					.and.returnValue( true );
+			} );
+
+			it( "should be a TransientAccessPoint", () => {
+				AccessPoint.is( { the: "object" } );
+				expect( isTransientAccessPoint ).toHaveBeenCalledWith( { the: "object" } );
+			} );
+
+			it( "should be a ProtectedDocument", () => {
+				AccessPoint.is( { the: "object" } );
+				expect( isProtectedDocument ).toHaveBeenCalledWith( { the: "object" } );
+			} );
+
+			it( "should return true when all assertions", () => {
+				const returned:boolean = AccessPoint.is( {} );
+				expect( returned ).toBe( true );
+			} );
+
+		} );
 
 	} );
 
@@ -103,11 +127,6 @@ describe( module( "carbonldp/AccessPoint" ), ():void => {
 			expect( AccessPoint ).toBeDefined();
 			expect( AccessPoint ).toEqual( jasmine.any( Object ) );
 		} );
-
-		// TODO: Test `TYPE`
-		// TODO: Test `is`
-		// TODO: Test `create`
-		// TODO: Test `createFrom`
 
 	} );
 

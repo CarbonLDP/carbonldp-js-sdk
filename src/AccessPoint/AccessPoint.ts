@@ -1,6 +1,5 @@
 import { Pointer } from "../Pointer";
 import { ProtectedDocument } from "../ProtectedDocument";
-import { C } from "../Vocabularies";
 import {
 	TransientAccessPoint,
 	TransientAccessPointFactory,
@@ -15,8 +14,6 @@ export interface AccessPoint extends ProtectedDocument {
 }
 
 export interface AccessPointFactory extends TransientAccessPointFactory {
-	TYPE:C[ "AccessPoint" ];
-
 	is( value:any ):value is AccessPoint;
 }
 
