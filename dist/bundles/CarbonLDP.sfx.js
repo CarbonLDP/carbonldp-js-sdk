@@ -8382,9 +8382,9 @@ exports.TransientDirectContainer = {
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var Resource_1 = __webpack_require__(7);
-var C_1 = __webpack_require__(11);
+var Vocabularies_1 = __webpack_require__(1);
 exports.VolatileResource = {
-    TYPE: C_1.C.VolatileResource,
+    TYPE: Vocabularies_1.C.VolatileResource,
     is: function (value) {
         return Resource_1.TransientResource.is(value)
             && value.hasType(exports.VolatileResource.TYPE);
