@@ -194,8 +194,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 				document._normalize();
 
 				expect( document.object ).toBeDefined();
-				// TODO: Use `isFragment`
-				expect( TransientResource.is( document.object ) ).toBe( true );
+				expect( TransientFragment.is( document.object ) ).toBe( true );
 				expect( document.hasFragment( "_:1" ) ).toBe( true );
 				expect( document.object.self ).toBe( document.object );
 			} );
@@ -807,10 +806,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 				const document:TransientDocument = createMockDocument();
 				const fragment:TransientFragment = document.createFragment( {} );
 
-				// TODO: Use `isBlankNode`
-				expect( TransientResource.is( fragment ) ).toBe( true );
-				expect( TransientFragment.isDecorated( fragment ) ).toBe( true );
-				expect( URI.isBNodeID( fragment.id ) ).toBe( true );
+				expect( TransientBlankNode.is( fragment ) ).toBe( true );
 			} );
 
 			it( "should create `BlankNode` when object and blank node label provided", ():void => {
@@ -818,10 +814,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 				type TargetFragment = TransientFragment & { string:string };
 				const fragment:TargetFragment = document.createFragment( { string: "a string" }, "_:1" );
 
-				// TODO: Use `isBlankNode`
-				expect( TransientResource.is( fragment ) ).toBe( true );
-				expect( TransientFragment.isDecorated( fragment ) ).toBe( true );
-				expect( URI.isBNodeID( fragment.id ) ).toBe( true );
+				expect( TransientBlankNode.is( fragment ) ).toBe( true );
 
 				expect( fragment as { string:string } ).toEqual( {
 					string: "a string",
@@ -832,10 +825,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 				const document:TransientDocument = createMockDocument();
 				const fragment:TransientFragment = document.createFragment( "_:1" );
 
-				// TODO: Use `isBlankNode`
-				expect( TransientResource.is( fragment ) ).toBe( true );
-				expect( TransientFragment.isDecorated( fragment ) ).toBe( true );
-				expect( URI.isBNodeID( fragment.id ) ).toBe( true );
+				expect( TransientBlankNode.is( fragment ) ).toBe( true );
 			} );
 
 			it( "should call `convertNestedObjects` with the object provided", ():void => {
