@@ -724,8 +724,138 @@ describe( module( "carbonldp/Document" ), ():void => {
 		} );
 
 
-		// TODO: .isDirty
-		// TODO: .revert
+		describe( "Document.isDirty", () => {
+
+			it( "should exists", ():void => {
+				const resource:Document = createMock();
+
+				expect( resource.isDirty ).toBeDefined();
+				expect( resource.isDirty ).toEqual( jasmine.any( Function ) );
+			} );
+
+
+			it( "should return true if self is dirty", () => {
+				const resource:Document = createMock( { newData: true } );
+
+				const returned:boolean = resource.isDirty();
+				expect( returned ).toBe( true );
+			} );
+
+
+			it( "should return true when removed fragments", () => {
+				const resource:Document = createMock();
+				resource.createFragment( "_:1" );
+				resource._syncSavedFragments();
+
+				expect( resource.isDirty() ).toBe( false );
+
+				resource._removeFragment( "_:1" );
+				expect( resource.isDirty() ).toBe( true );
+			} );
+
+			it( "should return true when new fragments", () => {
+				const resource:Document = createMock();
+				resource.createFragment( "_:1" );
+
+				expect( resource.isDirty() ).toBe( true );
+			} );
+
+			it( "should return true when removed and new fragments", () => {
+				const resource:Document = createMock();
+				resource.createFragment( "_:1" );
+				resource._syncSavedFragments();
+
+				expect( resource.isDirty() ).toBe( false );
+
+				resource._removeFragment( "_:1" );
+				resource.createFragment( "_:2" );
+				expect( resource.isDirty() ).toBe( true );
+			} );
+
+
+			it( "should return true when any saved fragment is dirty", () => {
+				const resource:Document = createMock();
+
+				resource.createFragment( "_:1" );
+				resource.createFragment( "#fragment" );
+				const target:{ newData?:boolean } = resource.createFragment<{ newData?:boolean }>( {}, "_:2" );
+				resource._syncSavedFragments();
+
+				expect( resource.isDirty() ).toBe( false );
+
+				target.newData = true;
+				expect( resource.isDirty() ).toBe( true );
+			} );
+
+		} );
+
+		describe( "Document.revert", () => {
+
+			it( "should exists", ():void => {
+				const resource:Document = createMock( {} );
+
+				expect( resource.revert ).toBeDefined();
+				expect( resource.revert ).toEqual( jasmine.any( Function ) );
+			} );
+
+
+			it( "should revert self changes", () => {
+				const resource:Document = createMock( { newData: true } );
+
+				resource.revert();
+				expect( resource as {} ).toEqual( {} );
+			} );
+
+
+			it( "should add deleted fragment", () => {
+				const resource:Document = createMock();
+				resource.createFragment( { the: "fragment" }, "_:1" );
+				resource._syncSavedFragments();
+
+				resource._removeFragment( "_:1" );
+				resource.revert();
+
+				expect( resource.getFragment( "_:1" ) ).toEqual( { the: "fragment" } );
+			} );
+
+			it( "should remove new fragments", () => {
+				const resource:Document = createMock();
+
+				resource.createFragment( { the: "fragment" }, "_:1" );
+				resource.revert();
+
+				expect( resource.hasFragment( "_:1" ) ).toEqual( false );
+			} );
+
+			it( "should add deleted fragments and remove new ones", () => {
+				const resource:Document = createMock();
+				resource.createFragment( { the: "fragment" }, "_:1" );
+				resource._syncSavedFragments();
+
+				resource._removeFragment( "_:1" );
+				resource.createFragment( { the: "another-fragment" }, "_:2" );
+				resource.revert();
+
+				expect( resource.getFragment( "_:1" ) ).toEqual( { the: "fragment" } );
+				expect( resource.hasFragment( "_:2" ) ).toEqual( false );
+			} );
+
+
+			it( "should revert changes in fragments", () => {
+				const resource:Document = createMock();
+
+				resource.createFragment( "_:1" );
+				resource.createFragment( "#fragment" );
+				const target:{ newData?:boolean } = resource.createFragment<{ newData?:boolean }>( {}, "_:2" );
+				resource._syncSavedFragments();
+
+				target.newData = true;
+				resource.revert();
+
+				expect( target ).toEqual( {} );
+			} );
+
+		} );
 
 	} );
 
