@@ -2,7 +2,7 @@
 
 <div align="center">
   <a href="http://carbonldp.com/">
-    <img src="https://github.com/CarbonLDP/carbonldp-js-sdk/blob/master/docs/images/carbonldp-logo.png">
+    <img width="500" src="https://github.com/CarbonLDP/carbonldp-js-sdk/blob/master/docs/images/carbonldp-logo.png">
   </a>
   <br>
   <br>
