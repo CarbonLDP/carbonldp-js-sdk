@@ -149,7 +149,7 @@ export const TransientACL:TransientACLFactory = {
 };
 
 function parsePointer( element:string | Pointer ):Pointer {
-	return Pointer.is( element ) ? element : Pointer.create( { id: element } );
+	return Pointer.is( element ) ? element : Pointer.create( { $id: element } );
 }
 
 function parsePointers( elements:string | Pointer | (string | Pointer)[] ):Pointer[] {

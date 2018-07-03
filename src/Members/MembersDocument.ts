@@ -51,7 +51,7 @@ export interface MembersDocument extends TransientResource {
 
 function getRegistry( repository:MembersDocument ):RegistryService<MembersDocument, AbstractContext<MembersDocument, any> | undefined> {
 	if( repository._registry && repository._registry.context ) return repository._registry;
-	throw new IllegalActionError( `"${ repository.id }" doesn't support Members management requests.` );
+	throw new IllegalActionError( `"${ repository.$id }" doesn't support Members management requests.` );
 }
 
 function setDefaultRequestOptions( registry:RegistryService<MembersDocument, AbstractContext<MembersDocument, any> | undefined>, requestOptions:RequestOptions ):RequestOptions {
@@ -87,7 +87,7 @@ function sendAddAction( repository:MembersDocument, uri:string | undefined, memb
 		const freeResources:FreeResources = FreeResources.createFrom( {
 			_registry: registry,
 		} );
-		freeResources._register( AddMemberAction.createFrom( { targetMembers } ) );
+		freeResources._addPointer( AddMemberAction.createFrom( { targetMembers } ) );
 
 		const body:string = JSON.stringify( freeResources );
 
@@ -116,7 +116,7 @@ function sendRemoveAction( repository:MembersDocument, uri:string | undefined, m
 		const freeResources:FreeResources = FreeResources.createFrom( {
 			_registry: registry,
 		} );
-		freeResources._register( RemoveMemberAction.createFrom( { targetMembers } ) );
+		freeResources._addPointer( RemoveMemberAction.createFrom( { targetMembers } ) );
 
 		const body:string = JSON.stringify( freeResources );
 

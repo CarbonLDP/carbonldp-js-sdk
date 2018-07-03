@@ -26,51 +26,51 @@ export interface BaseFreeResources {
 
 
 export interface FreeResources extends Registry<TransientResource> {
-	_registry:RegistryService<Pointer, any> | undefined;
+	$parentRegistry:RegistryService<Pointer, any> | undefined;
 
 
-	_getLocalID( id:string ):string;
+	__getLocalID( id:string ):string;
 
-	_register<T extends object>( base:T & { id?:string } ):T & TransientResource;
+	_addPointer<T extends object>( base:T & { id?:string } ):T & TransientResource;
 
 
 	toJSON():RDFNode[];
 }
 
 type OverloadedProps =
-	| "_registry"
-	| "_getLocalID"
-	| "_register"
+	| "$parentRegistry"
+	| "__getLocalID"
+	| "_addPointer"
 	;
 
 const PROTOTYPE:PickSelfProps<FreeResources, Registry<TransientResource>, OverloadedProps> = {
-	_registry: void 0,
+	$parentRegistry: void 0,
 
 
-	_getLocalID( this:FreeResources, id:string ):string {
+	__getLocalID( this:FreeResources, id:string ):string {
 		if( URI.isBNodeID( id ) ) return id;
-		return Registry.PROTOTYPE._getLocalID.call( this, id );
+		return Registry.PROTOTYPE.__getLocalID.call( this, id );
 	},
 
-	_register<T extends object>( this:FreeResources, base:T & { id?:string } ):T & TransientResource {
+	_addPointer<T extends object>( this:FreeResources, base:T & { id?:string } ):T & TransientResource {
 		if( ! base.id ) base.id = URI.generateBNodeID();
-		const pointer:T & Pointer = Registry.PROTOTYPE._register.call( this, base );
+		const pointer:T & Pointer = Registry.PROTOTYPE._addPointer.call( this, base );
 
 		return TransientResource.decorate( pointer );
 	},
 
 
 	toJSON( this:FreeResources ):RDFNode[] {
-		const generalSchema:DigestedObjectSchema = this._registry ?
-			this._registry.getGeneralSchema() : new DigestedObjectSchema();
-		const jsonldConverter:JSONLDConverter = this._registry ?
-			this._registry.jsonldConverter : new JSONLDConverter();
+		const generalSchema:DigestedObjectSchema = this.$parentRegistry ?
+			this.$parentRegistry.getGeneralSchema() : new DigestedObjectSchema();
+		const jsonldConverter:JSONLDConverter = this.$parentRegistry ?
+			this.$parentRegistry.jsonldConverter : new JSONLDConverter();
 
 		return this
 			.getPointers( true )
 			.map( resource => {
-				const resourceSchema:DigestedObjectSchema = this._registry ?
-					this._registry.getSchemaFor( resource ) : generalSchema;
+				const resourceSchema:DigestedObjectSchema = this.$parentRegistry ?
+					this.$parentRegistry.getSchemaFor( resource ) : generalSchema;
 
 				return jsonldConverter.expand( resource, generalSchema, resourceSchema );
 			} )
@@ -82,9 +82,9 @@ const PROTOTYPE:PickSelfProps<FreeResources, Registry<TransientResource>, Overlo
 export interface FreeResourcesFactory extends ModelFactory<FreeResources>, ModelDecorator<FreeResources, BaseFreeResources> {
 	PROTOTYPE:PickSelfProps<FreeResources,
 		Registry<TransientResource>,
-		| "_registry"
-		| "_getLocalID"
-		| "_register">;
+		| "$parentRegistry"
+		| "__getLocalID"
+		| "_addPointer">;
 
 
 	is( value:any ):value is FreeResources;

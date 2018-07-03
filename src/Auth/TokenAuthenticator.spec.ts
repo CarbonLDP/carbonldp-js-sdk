@@ -88,7 +88,7 @@ describe( module( "carbonldp/Auth/TokenAuthenticator" ), ():void => {
 				expires.setDate( expires.getDate() + 1 );
 
 				const credentials:TokenCredentials = TransientResource.createFrom( {
-					id: "_:1",
+					$id: "_:1",
 					token: "token-value",
 					expires: expires,
 				} );
@@ -100,7 +100,7 @@ describe( module( "carbonldp/Auth/TokenAuthenticator" ), ():void => {
 			it( "should return true when expired credentials with by current time", ():void => {
 				const expires:Date = new Date();
 				const credentials:TokenCredentials = TransientResource.createFrom( {
-					id: "_:1",
+					$id: "_:1",
 					token: "token-value",
 					expires: expires,
 				} );
@@ -114,7 +114,7 @@ describe( module( "carbonldp/Auth/TokenAuthenticator" ), ():void => {
 				expires.setDate( expires.getDate() - 1 );
 
 				const credentials:TokenCredentials = TransientResource.createFrom( {
-					id: "_:1",
+					$id: "_:1",
 					token: "token-value",
 					expires: expires,
 				} );
@@ -424,7 +424,7 @@ describe( module( "carbonldp/Auth/TokenAuthenticator" ), ():void => {
 				expires.setDate( expires.getDate() + 1 );
 
 				const credentials:TokenCredentials = TransientResource.createFrom( {
-					id: "_:1",
+					$id: "_:1",
 					token: "token-value",
 					expires: expires,
 				} );

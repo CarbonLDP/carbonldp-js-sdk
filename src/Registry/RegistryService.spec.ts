@@ -79,7 +79,7 @@ describe( module( "carbonldp/Registry" ), () => {
 
 			it( "should initialize resources map", () => {
 				const registry:RegistryService<any> = new RegistryService( null as any );
-				expect( registry._resourcesMap ).toEqual( new Map() );
+				expect( registry.__resourcesMap ).toEqual( new Map() );
 			} );
 
 		} );
@@ -99,14 +99,14 @@ describe( module( "carbonldp/Registry" ), () => {
 
 			it( "should return undefined when no context", () => {
 				const registry:RegistryService<any> = new RegistryService( Pointer, void 0 );
-				expect( registry._registry ).toBeUndefined();
+				expect( registry.$parentRegistry ).toBeUndefined();
 			} );
 
 			it( "should return undefined when context has no parent", () => {
 				const context:AbstractContext<Pointer> = createMockContext();
 				const registry:RegistryService<any, any> = new RegistryService( Pointer, context );
 
-				expect( registry._registry ).toBeUndefined();
+				expect( registry.$parentRegistry ).toBeUndefined();
 			} );
 
 			it( "should return the registry of the context parent", () => {
@@ -116,7 +116,7 @@ describe( module( "carbonldp/Registry" ), () => {
 				const context:AbstractContext<Pointer, AbstractContext<Pointer>> = createMockContext( { parentContext } );
 				const registry:RegistryService<any, any> = new RegistryService( Pointer, context );
 
-				expect( registry._registry ).toBe( parentRegistry );
+				expect( registry.$parentRegistry ).toBe( parentRegistry );
 			} );
 
 		} );
@@ -129,7 +129,7 @@ describe( module( "carbonldp/Registry" ), () => {
 
 			it( "should initialize a empty map", () => {
 				const registry:RegistryService<Pointer> = new RegistryService<Pointer>( Pointer );
-				expect( registry._resourcesMap ).toEqual( new Map() );
+				expect( registry.__resourcesMap ).toEqual( new Map() );
 			} );
 
 		} );
@@ -247,35 +247,35 @@ describe( module( "carbonldp/Registry" ), () => {
 			it( "should return iri provided when no context", () => {
 				const registry:RegistryService<Pointer> = new RegistryService( Pointer );
 
-				const returned:string = registry._getLocalID( "https://example.com/" );
+				const returned:string = registry.__getLocalID( "https://example.com/" );
 				expect( returned ).toBe( "https://example.com/" );
 			} );
 
 			it( "should return relative iri provided when no context", () => {
 				const registry:RegistryService<Pointer> = new RegistryService( Pointer );
 
-				const returned:string = registry._getLocalID( "resource/" );
+				const returned:string = registry.__getLocalID( "resource/" );
 				expect( returned ).toBe( "resource/" );
 			} );
 
 			it( "should return bNode provided when no context", () => {
 				const registry:RegistryService<Pointer> = new RegistryService( Pointer );
 
-				const returned:string = registry._getLocalID( "_:bNode" );
+				const returned:string = registry.__getLocalID( "_:bNode" );
 				expect( returned ).toBe( "_:bNode" );
 			} );
 
 			it( "should return fragment provided when no context", () => {
 				const registry:RegistryService<Pointer> = new RegistryService( Pointer );
 
-				const returned:string = registry._getLocalID( "https://example.com/#fragment" );
+				const returned:string = registry.__getLocalID( "https://example.com/#fragment" );
 				expect( returned ).toBe( "https://example.com/#fragment" );
 			} );
 
 			it( "should return relative fragment provided when no context", () => {
 				const registry:RegistryService<Pointer> = new RegistryService( Pointer );
 
-				const returned:string = registry._getLocalID( "#fragment" );
+				const returned:string = registry.__getLocalID( "#fragment" );
 				expect( returned ).toBe( "#fragment" );
 			} );
 
@@ -284,7 +284,7 @@ describe( module( "carbonldp/Registry" ), () => {
 				const context:AbstractContext<Pointer> = createMockContext( { uri: "https://example.com/" } );
 				const registry:RegistryService<Pointer, typeof context> = new RegistryService( Pointer, context );
 
-				const returned:string = registry._getLocalID( "https://example.com/resource/" );
+				const returned:string = registry.__getLocalID( "https://example.com/resource/" );
 				expect( returned ).toBe( "resource/" );
 			} );
 
@@ -293,7 +293,7 @@ describe( module( "carbonldp/Registry" ), () => {
 				const registry:RegistryService<Pointer, typeof context> = new RegistryService( Pointer, context );
 
 				expect( () => {
-					registry._getLocalID( "https://example.org/another-domain/" );
+					registry.__getLocalID( "https://example.org/another-domain/" );
 				} ).toThrowError( IllegalArgumentError, `"https://example.org/another-domain/" is out of scope.` );
 			} );
 
@@ -301,7 +301,7 @@ describe( module( "carbonldp/Registry" ), () => {
 				const context:AbstractContext<Pointer> = createMockContext( { uri: "https://example.com/" } );
 				const registry:RegistryService<Pointer, typeof context> = new RegistryService( Pointer, context );
 
-				const returned:string = registry._getLocalID( "resource/" );
+				const returned:string = registry.__getLocalID( "resource/" );
 				expect( returned ).toBe( "resource/" );
 			} );
 
@@ -311,7 +311,7 @@ describe( module( "carbonldp/Registry" ), () => {
 
 				const registry:RegistryService<Pointer, typeof context> = new RegistryService( Pointer, context );
 
-				const returned:string = registry._getLocalID( "ex:resource/" );
+				const returned:string = registry.__getLocalID( "ex:resource/" );
 				expect( returned ).toBe( "resource/" );
 			} );
 
@@ -321,10 +321,10 @@ describe( module( "carbonldp/Registry" ), () => {
 
 			it( "should call registry prototype ._register", () => {
 				const registry:RegistryService<Pointer> = new RegistryService( Pointer );
-				const spy:jasmine.Spy = spyOn( Registry.PROTOTYPE, "_register" )
+				const spy:jasmine.Spy = spyOn( Registry.PROTOTYPE, "_addPointer" )
 					.and.returnValue( { id: "the resource from super" } );
 
-				registry._register( { id: "the resource" } );
+				registry._addPointer( { id: "the resource" } );
 				expect( spy ).toHaveBeenCalledWith( { id: "the resource" } );
 			} );
 
@@ -334,7 +334,7 @@ describe( module( "carbonldp/Registry" ), () => {
 				} );
 				const registry:RegistryService<any> = new RegistryService( Model );
 
-				const returned:object = registry._register( { id: "resource/" } );
+				const returned:object = registry._addPointer( { id: "resource/" } );
 				expect( returned ).toEqual( { id: "https://example.com/the-object-decorated/" } );
 			} );
 
@@ -345,7 +345,7 @@ describe( module( "carbonldp/Registry" ), () => {
 				const context:AbstractContext<any> = createMockContext();
 				const registry:RegistryService<any, any> = new RegistryService( Model, context );
 
-				const returned:object = registry._register( { id: "resource/" } );
+				const returned:object = registry._addPointer( { id: "resource/" } );
 				expect( returned ).toEqual( { id: "https://example.com/the-object-decorated/" } );
 			} );
 
@@ -356,7 +356,7 @@ describe( module( "carbonldp/Registry" ), () => {
 				const context:AbstractContext<any> = createMockContext();
 				const registry:RegistryService<any, any> = new RegistryService( Model, context );
 
-				const returned:object = registry._register( { id: "resource/" } );
+				const returned:object = registry._addPointer( { id: "resource/" } );
 				expect( returned ).toEqual( { id: "https://example.com/resource/" } );
 			} );
 

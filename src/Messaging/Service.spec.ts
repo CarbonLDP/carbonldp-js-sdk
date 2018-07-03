@@ -488,11 +488,11 @@ describe( module( "carbonldp/Messaging/Service" ), ():void => {
 					} as any );
 
 					expect( TransientResource.is( message ) ).toBe( true );
-					expect( message.id ).toBe( "_:1" );
+					expect( message.$id ).toBe( "_:1" );
 					expect( message.hasType( "https://carbonldp.com/ns/v1/platform#ChildCreatedEvent" ) ).toBe( true );
 
 					expect( Pointer.is( message.target ) ).toBe( true );
-					expect( message.target.id ).toBe( "https://example.com/created-child/" );
+					expect( message.target.$id ).toBe( "https://example.com/created-child/" );
 
 					mockServer.stop( done );
 				}, ( error ) => {
@@ -539,11 +539,11 @@ describe( module( "carbonldp/Messaging/Service" ), ():void => {
 						} as any );
 
 						expect( TransientResource.is( message ) ).toBe( true );
-						expect( message.id ).toBe( "_:1" );
+						expect( message.$id ).toBe( "_:1" );
 						expect( message.hasType( "https://carbonldp.com/ns/v1/platform#ChildCreatedEvent" ) ).toBe( true );
 
 						expect( Pointer.is( message.target ) ).toBe( true );
-						expect( message.target.id ).toBe( `https://example.com/created-child-${ index }/` );
+						expect( message.target.$id ).toBe( `https://example.com/created-child-${ index }/` );
 
 						if( ++ receivedData === 2 ) mockServer.stop( done );
 					}, ( error ) => {
@@ -673,11 +673,11 @@ describe( module( "carbonldp/Messaging/Service" ), ():void => {
 						} as any );
 
 						expect( TransientResource.is( message ) ).toBe( true );
-						expect( message.id ).toBe( "_:1" );
+						expect( message.$id ).toBe( "_:1" );
 						expect( message.hasType( "https://carbonldp.com/ns/v1/platform#ChildCreatedEvent" ) ).toBe( true );
 
 						expect( Pointer.is( message.target ) ).toBe( true );
-						expect( message.target.id ).toBe( `https://example.com/created-child-${ index }/` );
+						expect( message.target.$id ).toBe( `https://example.com/created-child-${ index }/` );
 
 						if( ++ responded === 3 ) finishCallback();
 					}, ( error ) => {

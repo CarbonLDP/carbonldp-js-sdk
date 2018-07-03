@@ -11,7 +11,7 @@ export class QueryObject {
 
 	constructor( context:QueryContext, object:Pointer | string ) {
 		this._context = context;
-		const id:string = isString( object ) ? object : object.id;
+		const id:string = isString( object ) ? object : object.$id;
 		this._resource = isBNodeLabel( id ) ? new BlankNodeToken( id ) : this._context.compactIRI( id );
 	}
 

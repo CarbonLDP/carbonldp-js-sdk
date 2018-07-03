@@ -339,7 +339,7 @@ describe( module( "carbonldp/Auth/ACL" ), ():void => {
 
 			const object:object = {
 				id: "http://example.com/some/acl/",
-				accessTo: Pointer.createFrom( { id: "http://example.com/some/" } ),
+				accessTo: Pointer.createFrom( { $id: "http://example.com/some/" } ),
 			};
 
 			ACL.decorate( object );

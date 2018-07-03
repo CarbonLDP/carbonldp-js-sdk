@@ -67,12 +67,12 @@ export class JSONLDCompacter {
 
 			const currentFragments:string[] = targetDocument
 				.getPointers( true )
-				.map( pointer => pointer.id )
+				.map( pointer => pointer.$id )
 			;
 
 			const newFragments:string[] = fragmentNodes
 				.map( fragmentNode => this._getResource( fragmentNode, targetDocument ) )
-				.map( fragment => fragment.id )
+				.map( fragment => fragment.$id )
 			;
 
 			const newFragmentsSet:Set<string> = new Set( newFragments );
@@ -161,7 +161,7 @@ export class JSONLDCompacter {
 		if( Registry.isDecorated( resource ) ) registry = resource;
 
 		this.compactionMap
-			.set( resource.id, { paths: [], node, resource, registry } );
+			.set( resource.$id, { paths: [], node, resource, registry } );
 
 		return resource;
 	}
@@ -187,15 +187,15 @@ export class JSONLDCompacter {
 
 				const pointers:Pointer[] = values.filter( Pointer.is );
 				for( const pointer of pointers ) {
-					if( ! this.compactionMap.has( pointer.id ) ) continue;
-					const subCompactionNode:CompactionNode = this.compactionMap.get( pointer.id );
+					if( ! this.compactionMap.has( pointer.$id ) ) continue;
+					const subCompactionNode:CompactionNode = this.compactionMap.get( pointer.$id );
 
 					if( targetPath ) {
 						const subPath:string = `${ targetPath }.${ propertyName }`;
 						if( ! this.resolver.hasSchemaFor( subCompactionNode.node, subPath ) ) continue;
 
 						subCompactionNode.paths.push( subPath );
-						compactionQueue.push( pointer.id );
+						compactionQueue.push( pointer.$id );
 					}
 				}
 			}

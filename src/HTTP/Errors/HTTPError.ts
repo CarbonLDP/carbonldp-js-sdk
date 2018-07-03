@@ -15,7 +15,7 @@ export class HTTPError extends AbstractError implements ErrorResponse {
 	_id:string;
 	_resolved:boolean;
 
-	id:string;
+	$id:string;
 	errors:Error[];
 	requestID:string;
 	response:Response;

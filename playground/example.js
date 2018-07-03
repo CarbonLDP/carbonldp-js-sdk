@@ -392,7 +392,7 @@
 					modified: jasmine.any( Date ),
 				} ) );
 
-				const user = users.find( user => user.id === app.resolve( "users/user02/" ) );
+				const user = users.find( user => user.$id === app.resolve( "users/user02/" ) );
 				expect( CarbonLDP.Auth.PersistedUser.is( user ) ).toBe( true );
 
 				console.log( users );
@@ -411,7 +411,7 @@
 					modified: jasmine.any( Date ),
 				} ) );
 
-				const user = users.find( user => user.id === app.resolve( "users/user02/" ) );
+				const user = users.find( user => user.$id === app.resolve( "users/user02/" ) );
 				expect( CarbonLDP.Auth.PersistedUser.is( user ) ).toBe( true );
 
 				console.log( users );

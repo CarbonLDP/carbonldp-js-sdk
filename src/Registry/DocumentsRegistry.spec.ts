@@ -64,7 +64,7 @@ describe( module( "carbonldp/Registry" ), () => {
 			it( "should return a Document object", () => {
 				const registry:DocumentsRegistry = new DocumentsRegistry();
 
-				const resource:Document = registry._register( { id: "https://example.com/" } );
+				const resource:Document = registry._addPointer( { id: "https://example.com/" } );
 				expect( resource ).toEqual( anyThatMatches( Document.is, "idDocument" ) as any );
 			} );
 
@@ -88,7 +88,7 @@ describe( module( "carbonldp/Registry" ), () => {
 			it( "should call ._registry", () => {
 				const registry:DocumentsRegistry = new DocumentsRegistry();
 
-				const spy:jasmine.Spy = spyOn( registry, "_register" );
+				const spy:jasmine.Spy = spyOn( registry, "_addPointer" );
 
 				registry.register( "https://example.com/resource/" );
 				expect( spy ).toHaveBeenCalledWith( { id: "https://example.com/resource/" } );
@@ -103,7 +103,7 @@ describe( module( "carbonldp/Registry" ), () => {
 				const registry:DocumentsRegistry = new DocumentsRegistry();
 
 				expect( () => {
-					registry._getLocalID( "_:bNode-label" );
+					registry.__getLocalID( "_:bNode-label" );
 				} ).toThrowError( IllegalArgumentError, `"_:bNode-label" is out of scope.` );
 			} );
 
@@ -111,7 +111,7 @@ describe( module( "carbonldp/Registry" ), () => {
 				const registry:DocumentsRegistry = new DocumentsRegistry();
 
 				expect( () => {
-					registry._getLocalID( "#fragment" );
+					registry.__getLocalID( "#fragment" );
 				} ).toThrowError( IllegalArgumentError, `"#fragment" is out of scope.` );
 			} );
 

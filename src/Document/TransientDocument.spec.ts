@@ -49,10 +49,10 @@ function mockDocumentProperties():DocumentProperties {
 	const fn:() => any = () => {};
 
 	return {
-		_registry: null,
+		$parentRegistry: null,
 
-		_getLocalID: fn,
-		_register: fn,
+		__getLocalID: fn,
+		_addPointer: fn,
 
 		getPointer: fn,
 
@@ -238,9 +238,9 @@ describe( module( "carbonldp/Document" ), ():void => {
 
 			it( "should return the document when IRI of the document and has _registry", ():void => {
 				const _registry:DocumentsRegistry = new DocumentsRegistry();
-				const document:TransientDocument = createMockDocument( { _registry } );
+				const document:TransientDocument = createMockDocument( { $parentRegistry: _registry } );
 
-				_registry._resourcesMap.set( _registry._getLocalID( document.id ), document as any );
+				_registry.__resourcesMap.set( _registry.__getLocalID( document.$id ), document as any );
 
 				const returned:Pointer = document.getPointer( "https://example.com/document/" );
 				expect( returned ).toBe( document );
@@ -248,20 +248,20 @@ describe( module( "carbonldp/Document" ), ():void => {
 
 			it( "should return document as child when relative IRI and has _registry", ():void => {
 				const _registry:DocumentsRegistry = new DocumentsRegistry();
-				const document:TransientDocument = createMockDocument( { _registry } );
+				const document:TransientDocument = createMockDocument( { $parentRegistry: _registry } );
 
 				const returned:Pointer = document.getPointer( "relative/" );
 				expect( returned ).toEqual( anyThatMatches( TransientDocument.is, "isTransientDocument" ) as any );
-				expect( returned.id ).toEqual( document.id + "relative/" );
+				expect( returned.$id ).toEqual( document.$id + "relative/" );
 			} );
 
 			it( "should return document when another absolute IRI and has _registry", ():void => {
 				const _registry:DocumentsRegistry = new DocumentsRegistry();
-				const document:TransientDocument = createMockDocument( { _registry } );
+				const document:TransientDocument = createMockDocument( { $parentRegistry: _registry } );
 
 				const returned:Pointer = document.getPointer( "https://example.com/another/document/" );
 				expect( returned ).toEqual( anyThatMatches( TransientDocument.is, "isTransientDocument" ) as any );
-				expect( returned.id ).toEqual( "https://example.com/another/document/" );
+				expect( returned.$id ).toEqual( "https://example.com/another/document/" );
 			} );
 
 
@@ -270,7 +270,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 				const pointer:Pointer = document.getPointer( "#fragment" );
 
 				expect( TransientNamedFragment.is( pointer ) ).toBe( true );
-				expect( document._resourcesMap ).toEqual( new Map( [
+				expect( document.__resourcesMap ).toEqual( new Map( [
 					[ "fragment", pointer as TransientNamedFragment ],
 				] ) );
 			} );
@@ -278,7 +278,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 			it( "should return fragment when relative fragment label and exits", ():void => {
 				const document:TransientDocument = createMockDocument();
 				const fragment:TransientFragment = {} as any;
-				document._resourcesMap.set( "fragment", fragment );
+				document.__resourcesMap.set( "fragment", fragment );
 
 				expect( document.getPointer( "#fragment" ) ).toBe( fragment );
 			} );
@@ -288,7 +288,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 				const pointer:Pointer = document.getPointer( "https://example.com/document/#fragment" );
 
 				expect( TransientNamedFragment.is( pointer ) ).toBe( true );
-				expect( document._resourcesMap ).toEqual( new Map( [
+				expect( document.__resourcesMap ).toEqual( new Map( [
 					[ "fragment", pointer as TransientNamedFragment ],
 				] ) );
 			} );
@@ -296,7 +296,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 			it( "should return fragment when absolute fragment label and exits", ():void => {
 				const document:TransientDocument = createMockDocument();
 				const fragment:TransientFragment = {} as any;
-				document._resourcesMap.set( "fragment", fragment );
+				document.__resourcesMap.set( "fragment", fragment );
 
 				expect( document.getPointer( "https://example.com/document/#fragment" ) ).toBe( fragment );
 			} );
@@ -306,7 +306,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 				const pointer:Pointer = document.getPointer( "_:1" );
 
 				expect( TransientBlankNode.is( pointer ) ).toBe( true );
-				expect( document._resourcesMap ).toEqual( new Map( [
+				expect( document.__resourcesMap ).toEqual( new Map( [
 					[ "_:1", pointer as TransientBlankNode ],
 				] ) );
 			} );
@@ -314,7 +314,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 			it( "should return fragment when blank node label and exits", ():void => {
 				const document:TransientDocument = createMockDocument();
 				const fragment:TransientFragment = {} as any;
-				document._resourcesMap.set( "_:1", fragment );
+				document.__resourcesMap.set( "_:1", fragment );
 
 				expect( document.getPointer( "_:1" ) ).toBe( fragment );
 			} );
@@ -327,51 +327,51 @@ describe( module( "carbonldp/Document" ), ():void => {
 			it( "should exists", ():void => {
 				const document:TransientDocument = createMockDocument();
 
-				expect( document._getLocalID ).toBeDefined();
-				expect( document._getLocalID ).toEqual( jasmine.any( Function ) );
+				expect( document.__getLocalID ).toBeDefined();
+				expect( document.__getLocalID ).toEqual( jasmine.any( Function ) );
 			} );
 
 
 			it( "should throw error false when IRI of the document", ():void => {
 				const document:TransientDocument = createMockDocument();
 
-				expect( () => document._getLocalID( "https://example.com/document/" ) ).toThrow();
+				expect( () => document.__getLocalID( "https://example.com/document/" ) ).toThrow();
 			} );
 
 			it( "should throw error when relative IRIs", ():void => {
 				const document:TransientDocument = createMockDocument();
 
-				expect( () => document._getLocalID( "relative/" ) ).toThrow();
+				expect( () => document.__getLocalID( "relative/" ) ).toThrow();
 			} );
 
 			it( "should throw error when another absolute IRIs", ():void => {
 				const document:TransientDocument = createMockDocument();
 
-				expect( () => document._getLocalID( "https://example.com/another/document/" ) ).toThrow();
+				expect( () => document.__getLocalID( "https://example.com/another/document/" ) ).toThrow();
 			} );
 
 			it( "should return fragment when relative fragment label", ():void => {
 				const document:TransientDocument = createMockDocument();
 
-				expect( document._getLocalID( "#fragment" ) ).toBe( "fragment" );
+				expect( document.__getLocalID( "#fragment" ) ).toBe( "fragment" );
 			} );
 
 			it( "should return fragment when absolute fragment label", ():void => {
 				const document:TransientDocument = createMockDocument();
 
-				expect( document._getLocalID( "https://example.com/document/#fragment" ) ).toBe( "fragment" );
+				expect( document.__getLocalID( "https://example.com/document/#fragment" ) ).toBe( "fragment" );
 			} );
 
 			it( "should throw error when another absolute fragment label", ():void => {
 				const document:TransientDocument = createMockDocument();
 
-				expect( () => document._getLocalID( "https://example.com/another/document/#fragment" ) ).toThrow();
+				expect( () => document.__getLocalID( "https://example.com/another/document/#fragment" ) ).toThrow();
 			} );
 
 			it( "should return label when blank node label", ():void => {
 				const document:TransientDocument = createMockDocument();
 
-				expect( document._getLocalID( "_:1" ) ).toBe( "_:1" );
+				expect( document.__getLocalID( "_:1" ) ).toBe( "_:1" );
 			} );
 
 		} );
@@ -381,36 +381,36 @@ describe( module( "carbonldp/Document" ), ():void => {
 			it( "should exists", ():void => {
 				const document:TransientDocument = createMockDocument();
 
-				expect( document._register ).toBeDefined();
-				expect( document._register ).toEqual( jasmine.any( Function ) );
+				expect( document._addPointer ).toBeDefined();
+				expect( document._addPointer ).toEqual( jasmine.any( Function ) );
 			} );
 
 
 			it( "should return BNode when bNode label as id provided", () => {
 				const document:TransientDocument = createMockDocument();
 
-				const returned:TransientBlankNode = document._register( { id: "_:1" } );
+				const returned:TransientBlankNode = document._addPointer( { id: "_:1" } );
 				expect( returned ).toEqual( anyThatMatches( TransientBlankNode.is, "isBlankNode" ) as any );
 			} );
 
 			it( "should return BNode when no id & no slug provided", () => {
 				const document:TransientDocument = createMockDocument();
 
-				const returned:TransientBlankNode = document._register( {} );
+				const returned:TransientBlankNode = document._addPointer( {} );
 				expect( returned ).toEqual( anyThatMatches( TransientBlankNode.is, "isBlankNode" ) as any );
 			} );
 
 			it( "should return NamedFragment when slug provided", () => {
 				const document:TransientDocument = createMockDocument();
 
-				const returned:TransientBlankNode = document._register( { slug: "fragment " } );
+				const returned:TransientBlankNode = document._addPointer( { slug: "fragment " } );
 				expect( returned ).toEqual( anyThatMatches( TransientNamedFragment.is, "isTransientNamedFragment" ) as any );
 			} );
 
 			it( "should return NamedFragment when relative fragment as id provided", () => {
 				const document:TransientDocument = createMockDocument();
 
-				const returned:TransientBlankNode = document._register( { id: "#fragment " } );
+				const returned:TransientBlankNode = document._addPointer( { id: "#fragment " } );
 				expect( returned ).toEqual( anyThatMatches( TransientNamedFragment.is, "isTransientNamedFragment" ) as any );
 			} );
 
@@ -461,7 +461,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 
 			it( "should return true when relative fragment label and exits", ():void => {
 				const document:TransientDocument = createMockDocument();
-				document._resourcesMap.set( "fragment", {} as any );
+				document.__resourcesMap.set( "fragment", {} as any );
 
 				expect( document.hasFragment( "#fragment" ) ).toBe( true );
 			} );
@@ -474,14 +474,14 @@ describe( module( "carbonldp/Document" ), ():void => {
 
 			it( "should return true when absolute fragment label and exits", ():void => {
 				const document:TransientDocument = createMockDocument();
-				document._resourcesMap.set( "fragment", {} as any );
+				document.__resourcesMap.set( "fragment", {} as any );
 
 				expect( document.hasFragment( "https://example.com/document/#fragment" ) ).toBe( true );
 			} );
 
 			it( "should return true when label and not exits", ():void => {
 				const document:TransientDocument = createMockDocument();
-				document._resourcesMap.set( "fragment", {} as any );
+				document.__resourcesMap.set( "fragment", {} as any );
 
 				expect( document.hasFragment( "fragment" ) ).toBe( true );
 			} );
@@ -500,7 +500,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 
 			it( "should be true when blank node label and exits", ():void => {
 				const document:TransientDocument = createMockDocument();
-				document._resourcesMap.set( "_:1", {} as any );
+				document.__resourcesMap.set( "_:1", {} as any );
 
 				expect( document.hasFragment( "_:1" ) ).toBe( true );
 			} );
@@ -548,7 +548,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 			it( "should return fragment when relative fragment label and exits", ():void => {
 				const document:TransientDocument = createMockDocument();
 				const fragment:TransientFragment = {} as any;
-				document._resourcesMap.set( "fragment", fragment );
+				document.__resourcesMap.set( "fragment", fragment );
 
 				expect( document.getFragment( "#fragment" ) ).toBe( fragment );
 			} );
@@ -562,7 +562,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 			it( "should return fragment when absolute fragment label and exits", ():void => {
 				const document:TransientDocument = createMockDocument();
 				const fragment:TransientFragment = {} as any;
-				document._resourcesMap.set( "fragment", fragment );
+				document.__resourcesMap.set( "fragment", fragment );
 
 				expect( document.getFragment( "https://example.com/document/#fragment" ) ).toBe( fragment );
 			} );
@@ -576,7 +576,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 			it( "should return fragment when label and exits", ():void => {
 				const document:TransientDocument = createMockDocument();
 				const fragment:TransientFragment = {} as any;
-				document._resourcesMap.set( "fragment", fragment );
+				document.__resourcesMap.set( "fragment", fragment );
 
 				expect( document.getFragment( "fragment" ) ).toBe( fragment );
 			} );
@@ -590,7 +590,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 			it( "should return true when blank node label and exits", ():void => {
 				const document:TransientDocument = createMockDocument();
 				const fragment:TransientFragment = {} as any;
-				document._resourcesMap.set( "_:1", fragment );
+				document.__resourcesMap.set( "_:1", fragment );
 
 				expect( document.getFragment( "_:1" ) ).toBe( fragment );
 			} );
@@ -637,7 +637,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 			it( "should return fragment when relative fragment label and exits", ():void => {
 				const document:TransientDocument = createMockDocument();
 				const fragment:TransientFragment = {} as any;
-				document._resourcesMap.set( "fragment", fragment );
+				document.__resourcesMap.set( "fragment", fragment );
 
 				expect( document.getNamedFragment( "#fragment" ) ).toBe( fragment );
 			} );
@@ -645,7 +645,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 			it( "should return fragment when relative label and exits", ():void => {
 				const document:TransientDocument = createMockDocument();
 				const fragment:TransientFragment = {} as any;
-				document._resourcesMap.set( "fragment", fragment );
+				document.__resourcesMap.set( "fragment", fragment );
 
 				expect( document.getNamedFragment( "fragment" ) ).toBe( fragment );
 			} );
@@ -659,7 +659,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 			it( "should return fragment when absolute fragment label and exits", ():void => {
 				const document:TransientDocument = createMockDocument();
 				const fragment:TransientFragment = {} as any;
-				document._resourcesMap.set( "fragment", fragment );
+				document.__resourcesMap.set( "fragment", fragment );
 
 				expect( document.getNamedFragment( "https://example.com/document/#fragment" ) ).toBe( fragment );
 			} );
@@ -701,7 +701,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 
 			it( "should return array with all fragments", ():void => {
 				const document:TransientDocument = createMockDocument();
-				document._resourcesMap
+				document.__resourcesMap
 					.set( "fragment", { the: "first fragment" } as any )
 					.set( "_:1", { the: "second fragment" } as any )
 					.set( "another", { the: "third fragment" } as any )
@@ -770,7 +770,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 					string: "a string",
 				} );
 
-				expect( fragment.id ).toBe( "https://example.com/document/#fragment" );
+				expect( fragment.$id ).toBe( "https://example.com/document/#fragment" );
 			} );
 
 			it( "should create `NamedFragment` when only slug label provided", ():void => {
@@ -778,7 +778,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 				const fragment:TransientFragment = document.createFragment( "fragment" );
 
 				expect( TransientNamedFragment.is( fragment ) ).toBe( true );
-				expect( fragment.id ).toBe( "https://example.com/document/#fragment" );
+				expect( fragment.$id ).toBe( "https://example.com/document/#fragment" );
 			} );
 
 			it( "should create `NamedFragment` when object and absolute IRI provided", ():void => {
@@ -791,7 +791,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 				expect( fragment as { string:string } ).toEqual( {
 					string: "a string",
 				} );
-				expect( fragment.id ).toBe( "https://example.com/document/#fragment" );
+				expect( fragment.$id ).toBe( "https://example.com/document/#fragment" );
 			} );
 
 			it( "should create `NamedFragment` when only absolute IRI provided", ():void => {
@@ -799,7 +799,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 				const fragment:TransientFragment = document.createFragment( "https://example.com/document/#fragment" );
 
 				expect( TransientNamedFragment.is( fragment ) ).toBe( true );
-				expect( fragment.id ).toBe( "https://example.com/document/#fragment" );
+				expect( fragment.$id ).toBe( "https://example.com/document/#fragment" );
 			} );
 
 			it( "should create `BlankNode` when no label provided", ():void => {
@@ -840,42 +840,42 @@ describe( module( "carbonldp/Document" ), ():void => {
 
 			it( "should throw error when object but slug label is already used", ():void => {
 				const document:TransientDocument = createMockDocument();
-				document._resourcesMap.set( "fragment", null );
+				document.__resourcesMap.set( "fragment", null );
 
 				expect( () => document.createFragment( {}, "fragment" ) ).toThrowError( IDAlreadyInUseError, `"#fragment" is already being used.` );
 			} );
 
 			it( "should throw error when only slug label is already used", ():void => {
 				const document:TransientDocument = createMockDocument();
-				document._resourcesMap.set( "fragment", null );
+				document.__resourcesMap.set( "fragment", null );
 
 				expect( () => document.createFragment( "fragment" ) ).toThrowError( IDAlreadyInUseError, `"#fragment" is already being used.` );
 			} );
 
 			it( "should throw error when object but absolute IRI provided is already used", ():void => {
 				const document:TransientDocument = createMockDocument();
-				document._resourcesMap.set( "fragment", null );
+				document.__resourcesMap.set( "fragment", null );
 
 				expect( () => document.createFragment( {}, "https://example.com/document/#fragment" ) ).toThrowError( IDAlreadyInUseError, `"https://example.com/document/#fragment" is already being used.` );
 			} );
 
 			it( "should throw error when only absolute IRI provided is already used", ():void => {
 				const document:TransientDocument = createMockDocument();
-				document._resourcesMap.set( "fragment", null );
+				document.__resourcesMap.set( "fragment", null );
 
 				expect( () => document.createFragment( "https://example.com/document/#fragment" ) ).toThrowError( IDAlreadyInUseError, `"https://example.com/document/#fragment" is already being used.` );
 			} );
 
 			it( "should throw error when object but blank node label is used", ():void => {
 				const document:TransientDocument = createMockDocument();
-				document._resourcesMap.set( "_:1", null );
+				document.__resourcesMap.set( "_:1", null );
 
 				expect( () => document.createFragment( {}, "_:1" ) ).toThrowError( IDAlreadyInUseError, `"_:1" is already being used.` );
 			} );
 
 			it( "should throw error when only blank node label is used", ():void => {
 				const document:TransientDocument = createMockDocument();
-				document._resourcesMap.set( "_:1", null );
+				document.__resourcesMap.set( "_:1", null );
 
 				expect( () => document.createFragment( "_:1" ) ).toThrowError( IDAlreadyInUseError, `"_:1" is already being used.` );
 			} );
@@ -919,7 +919,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 				expect( fragment as { string:string } ).toEqual( {
 					string: "a string",
 				} );
-				expect( fragment.id ).toBe( "https://example.com/document/#fragment" );
+				expect( fragment.$id ).toBe( "https://example.com/document/#fragment" );
 				expect( fragment.slug ).toBe( "fragment" );
 			} );
 
@@ -928,7 +928,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 				const fragment:TransientNamedFragment = document.createNamedFragment( "fragment" );
 
 				expect( TransientNamedFragment.is( fragment ) ).toBe( true );
-				expect( fragment.id ).toBe( "https://example.com/document/#fragment" );
+				expect( fragment.$id ).toBe( "https://example.com/document/#fragment" );
 				expect( fragment.slug ).toBe( "fragment" );
 			} );
 
@@ -941,7 +941,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 				expect( fragment as { string:string } ).toEqual( {
 					string: "a string",
 				} );
-				expect( fragment.id ).toBe( "https://example.com/document/#fragment" );
+				expect( fragment.$id ).toBe( "https://example.com/document/#fragment" );
 				expect( fragment.slug ).toBe( "fragment" );
 			} );
 
@@ -950,7 +950,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 				const fragment:TransientNamedFragment = document.createNamedFragment( "https://example.com/document/#fragment" );
 
 				expect( TransientNamedFragment.is( fragment ) ).toBe( true );
-				expect( fragment.id ).toBe( "https://example.com/document/#fragment" );
+				expect( fragment.$id ).toBe( "https://example.com/document/#fragment" );
 				expect( fragment.slug ).toBe( "fragment" );
 			} );
 
@@ -976,28 +976,28 @@ describe( module( "carbonldp/Document" ), ():void => {
 
 			it( "should throw error when object but slug label is already used", ():void => {
 				const document:TransientDocument = createMockDocument();
-				document._resourcesMap.set( "fragment", null );
+				document.__resourcesMap.set( "fragment", null );
 
 				expect( () => document.createNamedFragment( {}, "fragment" ) ).toThrowError( IDAlreadyInUseError, `"#fragment" is already being used.` );
 			} );
 
 			it( "should throw error when only slug label is already used", ():void => {
 				const document:TransientDocument = createMockDocument();
-				document._resourcesMap.set( "fragment", null );
+				document.__resourcesMap.set( "fragment", null );
 
 				expect( () => document.createNamedFragment( "fragment" ) ).toThrowError( IDAlreadyInUseError, `"#fragment" is already being used.` );
 			} );
 
 			it( "should throw error when object but absolute IRI provided is already used", ():void => {
 				const document:TransientDocument = createMockDocument();
-				document._resourcesMap.set( "fragment", null );
+				document.__resourcesMap.set( "fragment", null );
 
 				expect( () => document.createNamedFragment( {}, "https://example.com/document/#fragment" ) ).toThrowError( IDAlreadyInUseError, `"https://example.com/document/#fragment" is already being used.` );
 			} );
 
 			it( "should throw error when only absolute IRI provided is already used", ():void => {
 				const document:TransientDocument = createMockDocument();
-				document._resourcesMap.set( "fragment", null );
+				document.__resourcesMap.set( "fragment", null );
 
 				expect( () => document.createNamedFragment( "https://example.com/document/#fragment" ) ).toThrowError( IDAlreadyInUseError, `"https://example.com/document/#fragment" is already being used.` );
 			} );
@@ -1032,57 +1032,57 @@ describe( module( "carbonldp/Document" ), ():void => {
 				const fragment:TransientNamedFragment = TransientNamedFragment.create( {
 					slug: "fragment",
 				} );
-				document._resourcesMap.set( "fragment", fragment );
+				document.__resourcesMap.set( "fragment", fragment );
 
 				document._removeFragment( fragment );
-				expect( document._resourcesMap ).toEqual( new Map() );
+				expect( document.__resourcesMap ).toEqual( new Map() );
 			} );
 
 			it( "should remove providing a `BlankNode`", ():void => {
 				const document:TransientDocument = createMockDocument();
 
 				const fragment:TransientBlankNode = TransientBlankNode.create( {
-					id: "_:1",
+					$id: "_:1",
 				} );
-				document._resourcesMap.set( "_:1", fragment );
+				document.__resourcesMap.set( "_:1", fragment );
 
 				document._removeFragment( fragment );
-				expect( document._resourcesMap ).toEqual( new Map() );
+				expect( document.__resourcesMap ).toEqual( new Map() );
 			} );
 
 			it( "should remove providing a fragment label", ():void => {
 				const document:TransientDocument = createMockDocument();
 
-				document._resourcesMap.set( "fragment", null );
+				document.__resourcesMap.set( "fragment", null );
 
 				document._removeFragment( "#fragment" );
-				expect( document._resourcesMap ).toEqual( new Map() );
+				expect( document.__resourcesMap ).toEqual( new Map() );
 			} );
 
 			it( "should remove providing a fragment slug label", ():void => {
 				const document:TransientDocument = createMockDocument();
 
-				document._resourcesMap.set( "fragment", null );
+				document.__resourcesMap.set( "fragment", null );
 
 				document._removeFragment( "fragment" );
-				expect( document._resourcesMap ).toEqual( new Map() );
+				expect( document.__resourcesMap ).toEqual( new Map() );
 			} );
 
 			it( "should remove providing an absolute fragment IRI", ():void => {
 				const document:TransientDocument = createMockDocument();
 
-				document._resourcesMap.set( "fragment", null );
+				document.__resourcesMap.set( "fragment", null );
 
 				document._removeFragment( "https://example.com/document/#fragment" );
-				expect( document._resourcesMap ).toEqual( new Map() );
+				expect( document.__resourcesMap ).toEqual( new Map() );
 			} );
 
 			it( "should remove providing a blank node label", ():void => {
 				const document:TransientDocument = createMockDocument();
-				document._resourcesMap.set( "_:1", null );
+				document.__resourcesMap.set( "_:1", null );
 
 				document._removeFragment( "_:1" );
-				expect( document._resourcesMap ).toEqual( new Map() );
+				expect( document.__resourcesMap ).toEqual( new Map() );
 			} );
 
 		} );
@@ -1115,19 +1115,19 @@ describe( module( "carbonldp/Document" ), ():void => {
 				const fragment:TransientNamedFragment = TransientNamedFragment.create( {
 					slug: "fragment",
 				} );
-				document._resourcesMap.set( "fragment", fragment );
+				document.__resourcesMap.set( "fragment", fragment );
 
 				document.removeNamedFragment( fragment );
-				expect( document._resourcesMap ).toEqual( new Map() );
+				expect( document.__resourcesMap ).toEqual( new Map() );
 			} );
 
 			it( "should throw error providing a `BlankNode`", ():void => {
 				const document:TransientDocument = createMockDocument();
 
 				const fragment:TransientBlankNode = TransientBlankNode.create( {
-					id: "_:1",
+					$id: "_:1",
 				} );
-				document._resourcesMap.set( "_:1", fragment );
+				document.__resourcesMap.set( "_:1", fragment );
 
 				expect( () => document.removeNamedFragment( fragment as any ) ).toThrowError( IllegalArgumentError, `A named fragment slug can't start with "_:".` );
 			} );
@@ -1135,33 +1135,33 @@ describe( module( "carbonldp/Document" ), ():void => {
 			it( "should remove providing a fragment label", ():void => {
 				const document:TransientDocument = createMockDocument();
 
-				document._resourcesMap.set( "fragment", null );
+				document.__resourcesMap.set( "fragment", null );
 
 				document.removeNamedFragment( "#fragment" );
-				expect( document._resourcesMap ).toEqual( new Map() );
+				expect( document.__resourcesMap ).toEqual( new Map() );
 			} );
 
 			it( "should remove providing a fragment slug label", ():void => {
 				const document:TransientDocument = createMockDocument();
 
-				document._resourcesMap.set( "fragment", null );
+				document.__resourcesMap.set( "fragment", null );
 
 				document.removeNamedFragment( "fragment" );
-				expect( document._resourcesMap ).toEqual( new Map() );
+				expect( document.__resourcesMap ).toEqual( new Map() );
 			} );
 
 			it( "should remove providing an absolute fragment IRI", ():void => {
 				const document:TransientDocument = createMockDocument();
 
-				document._resourcesMap.set( "fragment", null );
+				document.__resourcesMap.set( "fragment", null );
 
 				document.removeNamedFragment( "https://example.com/document/#fragment" );
-				expect( document._resourcesMap ).toEqual( new Map() );
+				expect( document.__resourcesMap ).toEqual( new Map() );
 			} );
 
 			it( "should throw error providing a blank node label", ():void => {
 				const document:TransientDocument = createMockDocument();
-				document._resourcesMap.set( "_:1", null );
+				document.__resourcesMap.set( "_:1", null );
 
 				expect( () => document.removeNamedFragment( "_:1" ) ).toThrowError( IllegalArgumentError, `A named fragment slug can't start with "_:".` );
 			} );
@@ -1212,7 +1212,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 				const registry:DocumentsRegistry = new DocumentsRegistry();
 				const spy:jasmine.Spy = spyOn( registry, "getSchemaFor" ).and.callThrough();
 
-				const document:TransientDocument = createMockDocument( { _registry: registry, the: "document" } );
+				const document:TransientDocument = createMockDocument( { $parentRegistry: registry, the: "document" } );
 				const bNode:TransientFragment = document.createFragment( { id: "_:1", the: "blank node" } );
 				const namedFragment:TransientFragment = document.createFragment( { id: "#fragment", the: "named fragment" } );
 
@@ -1233,7 +1233,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 					return { mock: "schema document" };
 				} );
 
-				const document:TransientDocument = createMockDocument( { _registry: registry, the: "document" } );
+				const document:TransientDocument = createMockDocument( { $parentRegistry: registry, the: "document" } );
 				const bNode:TransientFragment = document.createFragment( { id: "_:1", the: "blank node" } );
 				const namedFragment:TransientFragment = document.createFragment( { id: "#fragment", the: "named fragment" } );
 
@@ -1252,7 +1252,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 						"the": { "@type": "string" },
 					} ) );
 
-				const document:TransientDocument = createMockDocument( { _registry: registry, the: "document" } );
+				const document:TransientDocument = createMockDocument( { $parentRegistry: registry, the: "document" } );
 				document.createFragment( { id: "_:1", the: "blank node" } );
 				document.createFragment( { id: "#fragment", the: "named fragment" } );
 
@@ -1302,7 +1302,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 						"the": { "@type": "string" },
 					} ) );
 
-				const document:TransientDocument = createMockDocument( { _registry: registry, the: "document" } );
+				const document:TransientDocument = createMockDocument( { $parentRegistry: registry, the: "document" } );
 				document.createFragment( { id: "_:1", the: "blank node" } );
 				document.createFragment( { id: "#fragment", the: "named fragment" } );
 
@@ -1500,19 +1500,19 @@ describe( module( "carbonldp/Document" ), ():void => {
 
 			it( "should return false when no `_registry`", ():void => {
 				const target:DocumentProperties = mockDocumentProperties();
-				delete target._registry;
+				delete target.$parentRegistry;
 				expect( TransientDocument.isDecorated( target ) ).toBe( false );
 			} );
 
 			it( "should return false when no `_getLocalID`", ():void => {
 				const target:DocumentProperties = mockDocumentProperties();
-				delete target._getLocalID;
+				delete target.__getLocalID;
 				expect( TransientDocument.isDecorated( target ) ).toBe( false );
 			} );
 
 			it( "should return false when no `_registry`", ():void => {
 				const target:DocumentProperties = mockDocumentProperties();
-				delete target._registry;
+				delete target.$parentRegistry;
 				expect( TransientDocument.isDecorated( target ) ).toBe( false );
 			} );
 
@@ -1631,7 +1631,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 
 			it( "should convert nested objects to `Fragment`s", ():void => {
 				type TargetDocument = TransientDocument & { object:object };
-				const target:TargetDocument = TransientDocument.createFrom( { id: "", object: {} } );
+				const target:TargetDocument = TransientDocument.createFrom( { $id: "", object: {} } );
 
 				expect( TransientFragment.is( target.object ) ).toBe( true );
 			} );

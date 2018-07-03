@@ -23,14 +23,14 @@ export class DocumentsRegistry extends RegistryService<Document, DocumentsContex
 
 
 	register( id:string ):Document {
-		return this._register( { id } );
+		return this._addPointer( { id } );
 	}
 
-	_getLocalID( id:string ):string {
+	__getLocalID( id:string ):string {
 		if( URI.isBNodeID( id ) || URI.hasFragment( id ) )
-			return Registry.PROTOTYPE._getLocalID.call( this, id );
+			return Registry.PROTOTYPE.__getLocalID.call( this, id );
 
-		return super._getLocalID( id );
+		return super.__getLocalID( id );
 	}
 
 

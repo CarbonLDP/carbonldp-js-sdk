@@ -61,14 +61,14 @@ export const TransientNamedFragment:TransientNamedFragmentFactory = {
 				enumerable: false,
 				configurable: true,
 				get( this:TransientNamedFragment ):string {
-					const registryID:string = this._registry && this._registry.id || "";
+					const registryID:string = this._registry && this._registry.$id || "";
 					return registryID + "#" + URI.getFragment( this._id );
 				},
 				set( this:TransientNamedFragment, value:string ):void {
 					const fragment:string | null = URI.getFragment( value );
 					if( ! fragment ) throw new IllegalActionError( `Cannot assign "${ value }" as a named fragment ID.` );
 
-					const registryID:string = this._registry && this._registry.id || "";
+					const registryID:string = this._registry && this._registry.$id || "";
 					if( ! URI.isBaseOf( registryID, value ) ) throw new IllegalActionError( `"${ value }" it's outside "${ registryID }"'s scope.` );
 
 					this._id = registryID + "#" + fragment;
@@ -81,7 +81,7 @@ export const TransientNamedFragment:TransientNamedFragmentFactory = {
 					return URI.getFragment( this._id );
 				},
 				set( this:TransientNamedFragment, value:string ):void {
-					const registryID:string = this._registry && this._registry.id || "";
+					const registryID:string = this._registry && this._registry.$id || "";
 					this._id = registryID + "#" + value;
 				},
 			},

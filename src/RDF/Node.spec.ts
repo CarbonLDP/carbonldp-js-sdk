@@ -335,7 +335,7 @@ describe( module( "carbonldp/RDF/Node" ), ():void => {
 			documentResource = RDFDocument.getDocumentResources( expandedObject )[ 0 ];
 			pointerLibrary = {
 				hasPointer: () => { throw new Error( "Not implemented." ); },
-				getPointer: id => Pointer.create( { id } ),
+				getPointer: id => Pointer.create( { $id: id } ),
 			};
 		} );
 

@@ -187,7 +187,7 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 					const deltaCreator:DeltaCreator = new DeltaCreator( jsonldConverter );
 
 					const previousResource:object = {
-						property: Pointer.create( { id: "http://example.org/pointer/" } ),
+						property: Pointer.create( { $id: "http://example.org/pointer/" } ),
 					};
 					const currentResource:object = {};
 
@@ -204,7 +204,7 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 					const deltaCreator:DeltaCreator = new DeltaCreator( jsonldConverter );
 
 					const previousResource:object = {
-						property: Pointer.create( { id: "_:blank-node" } ),
+						property: Pointer.create( { $id: "_:blank-node" } ),
 					};
 					const currentResource:object = {};
 
@@ -226,7 +226,7 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 							1,
 							true,
 							new Date( "2000-01-01" ),
-							Pointer.create( { id: "http://example.org/pointer/" } ),
+							Pointer.create( { $id: "http://example.org/pointer/" } ),
 						],
 					};
 					const currentResource:object = {};
@@ -365,7 +365,7 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 
 					const previousResource:object = {};
 					const currentResource:object = {
-						property: Pointer.create( { id: "http://example.org/pointer/" } ),
+						property: Pointer.create( { $id: "http://example.org/pointer/" } ),
 					};
 
 					deltaCreator.addResource( schema, id, previousResource, currentResource );
@@ -381,7 +381,7 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 
 					const previousResource:object = {};
 					const currentResource:object = {
-						property: Pointer.create( { id: "_:blank-node" } ),
+						property: Pointer.create( { $id: "_:blank-node" } ),
 					};
 
 					deltaCreator.addResource( schema, id, previousResource, currentResource );
@@ -402,7 +402,7 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 							1,
 							true,
 							new Date( "2000-01-01" ),
-							Pointer.create( { id: "http://example.org/pointer/" } ),
+							Pointer.create( { $id: "http://example.org/pointer/" } ),
 						],
 					};
 
@@ -555,13 +555,13 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 							true,
 							false,
 							new Date( "2000-01-01" ),
-							Pointer.create( { id: "_:1" } ),
-							Pointer.create( { id: "http://example.org/pointer/" } ),
+							Pointer.create( { $id: "_:1" } ),
+							Pointer.create( { $id: "http://example.org/pointer/" } ),
 						],
 					};
 					const currentResource:object = {
 						property: [
-							Pointer.create( { id: "http://example.org/pointer/" } ),
+							Pointer.create( { $id: "http://example.org/pointer/" } ),
 							new Date( "2000-01-01" ),
 							new Date( "2010-10-10" ),
 							true,
@@ -793,7 +793,7 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 
 					const previousResource:object = {
 						id: "http://example.org/resource/",
-						property: Pointer.create( { id: "http://example.org/pointer/" } ),
+						property: Pointer.create( { $id: "http://example.org/pointer/" } ),
 					};
 					const currentResource:object = {
 						id: "http://example.org/resource/",
@@ -820,7 +820,7 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 
 					const previousResource:object = {
 						id: "http://example.org/resource/",
-						property: Pointer.create( { id: "_:blank-node" } ),
+						property: Pointer.create( { $id: "_:blank-node" } ),
 					};
 					const currentResource:object = {
 						id: "http://example.org/resource/",
@@ -851,7 +851,7 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 							1,
 							true,
 							new Date( "2000-01-01" ),
-							Pointer.create( { id: "http://example.org/pointer/" } ),
+							Pointer.create( { $id: "http://example.org/pointer/" } ),
 						],
 					};
 					const currentResource:object = {
@@ -884,7 +884,7 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 							1,
 							true,
 							new Date( "2000-01-01" ),
-							Pointer.create( { id: "http://example.org/pointer/" } ),
+							Pointer.create( { $id: "http://example.org/pointer/" } ),
 						],
 					};
 					const currentResource:object = {
@@ -988,7 +988,7 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 							1,
 							true,
 							new Date( "2000-01-01" ),
-							Pointer.create( { id: "http://example.org/pointer/" } ),
+							Pointer.create( { $id: "http://example.org/pointer/" } ),
 						],
 					};
 					const currentResource:object = {
@@ -1231,7 +1231,7 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 					};
 					const currentResource:object = {
 						id: "http://example.org/resource/",
-						property: Pointer.create( { id: "http://example.org/pointer/" } ),
+						property: Pointer.create( { $id: "http://example.org/pointer/" } ),
 					};
 
 					deltaCreator.addResource( schema, id, previousResource, currentResource );
@@ -1258,7 +1258,7 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 					};
 					const currentResource:object = {
 						id: "http://example.org/resource/",
-						property: Pointer.create( { id: "_:blank-node" } ),
+						property: Pointer.create( { $id: "_:blank-node" } ),
 					};
 
 					deltaCreator.addResource( schema, id, previousResource, currentResource );
@@ -1289,7 +1289,7 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 							1,
 							true,
 							new Date( "2000-01-01" ),
-							Pointer.create( { id: "http://example.org/pointer/" } ),
+							Pointer.create( { $id: "http://example.org/pointer/" } ),
 						],
 					};
 
@@ -1322,7 +1322,7 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 							1,
 							true,
 							new Date( "2000-01-01" ),
-							Pointer.create( { id: "http://example.org/pointer/" } ),
+							Pointer.create( { $id: "http://example.org/pointer/" } ),
 						],
 					};
 
@@ -1426,7 +1426,7 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 							1,
 							true,
 							new Date( "2000-01-01" ),
-							Pointer.create( { id: "http://example.org/pointer/" } ),
+							Pointer.create( { $id: "http://example.org/pointer/" } ),
 						],
 					};
 
@@ -2007,7 +2007,7 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 					};
 					const currentResource:object = {
 						id: "http://example.org/resource/",
-						property: Pointer.create( { id: "http://example.org/pointer/" } ),
+						property: Pointer.create( { $id: "http://example.org/pointer/" } ),
 					};
 
 					deltaCreator.addResource( schema, id, previousResource, currentResource );
@@ -2032,7 +2032,7 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 					};
 					const currentResource:object = {
 						id: "http://example.org/resource/",
-						property: Pointer.create( { id: "http://example.org/pointer/" } ),
+						property: Pointer.create( { $id: "http://example.org/pointer/" } ),
 					};
 
 					deltaCreator.addResource( schema, id, previousResource, currentResource );
@@ -2057,7 +2057,7 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 					};
 					const currentResource:object = {
 						id: "http://example.org/resource/",
-						property: Pointer.create( { id: "http://example.org/pointer/" } ),
+						property: Pointer.create( { $id: "http://example.org/pointer/" } ),
 						integers: [ 1, 2 ],
 					};
 
@@ -2083,7 +2083,7 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 					};
 					const currentResource:object = {
 						id: "http://example.org/resource/",
-						property: Pointer.create( { id: "http://example.org/pointer/" } ),
+						property: Pointer.create( { $id: "http://example.org/pointer/" } ),
 						integers: [ 1, 2 ],
 					};
 
@@ -2403,7 +2403,7 @@ describe( module( "carbonldp/LDPatch/DeltaCreator" ), ():void => {
 					"http://example.org/resource/",
 					{
 						property1: "string",
-						property2: [ "string", 1, new Date(), Pointer.create( { id: "_:blank-node" } ) ],
+						property2: [ "string", 1, new Date(), Pointer.create( { $id: "_:blank-node" } ) ],
 					},
 					{
 						id: "http://example.org/resource/",

@@ -41,7 +41,7 @@ describe( module( "carbonldp/NamedFragment" ), ():void => {
 
 			it( "should return null when registry referenced", ():void => {
 				const fragment:TransientNamedFragment = TransientNamedFragment.decorate( {
-					_registry: TransientDocument.create( { id: "https://example.com/document/" } ),
+					_registry: TransientDocument.create( { $id: "https://example.com/document/" } ),
 				} );
 
 				expect( fragment.slug ).toBeNull();
@@ -70,18 +70,18 @@ describe( module( "carbonldp/NamedFragment" ), ():void => {
 
 			it( "should set ID when set slug and has registry", ():void => {
 				const fragment:TransientNamedFragment = TransientNamedFragment.decorate( {
-					_registry: TransientDocument.create( { id: "https://example.com/document/" } ),
+					_registry: TransientDocument.create( { $id: "https://example.com/document/" } ),
 				} );
 
 				fragment.slug = "fragment-name";
-				expect( fragment.id ).toBe( "https://example.com/document/#fragment-name" );
+				expect( fragment.$id ).toBe( "https://example.com/document/#fragment-name" );
 			} );
 
 			it( "should set relative ID when set slug and NO registry", ():void => {
 				const fragment:TransientNamedFragment = TransientNamedFragment.decorate( {} );
 
 				fragment.slug = "fragment-name";
-				expect( fragment.id ).toBe( "#fragment-name" );
+				expect( fragment.$id ).toBe( "#fragment-name" );
 			} );
 
 		} );

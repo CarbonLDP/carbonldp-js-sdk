@@ -75,7 +75,7 @@ describe( module( "carbonldp/FreeResources" ), ():void => {
 			} );
 
 			it( "should return true when has resource local ID", ():void => {
-				freeResources._register( { id: "_:some" } );
+				freeResources._addPointer( { id: "_:some" } );
 				expect( freeResources.hasPointer( "_:some" ) ).toBe( true );
 			} );
 
@@ -84,7 +84,7 @@ describe( module( "carbonldp/FreeResources" ), ():void => {
 			} );
 
 			it( "should return true when resource in parent registry", ():void => {
-				registry._register( { id: "https://example.com/some/" } );
+				registry._addPointer( { id: "https://example.com/some/" } );
 				expect( freeResources.hasPointer( "https://example.com/some/" ) ).toBe( true );
 			} );
 
@@ -98,14 +98,14 @@ describe( module( "carbonldp/FreeResources" ), ():void => {
 			} );
 
 			it( "should return existing resource", ():void => {
-				const resource:TransientResource = freeResources._register( { id: "_:some" } );
+				const resource:TransientResource = freeResources._addPointer( { id: "_:some" } );
 				expect( freeResources.getPointer( "_:some" ) ).toBe( resource );
 			} );
 
 			it( "should create non-existing resource", ():void => {
 				const resource:Pointer = freeResources.getPointer( "_:another" );
 
-				expect( resource.id ).toBe( "_:another" );
+				expect( resource.$id ).toBe( "_:another" );
 				expect( resource ).toEqual( anyThatMatches( TransientResource.is, "Resource" ) as any );
 			} );
 
@@ -149,8 +149,8 @@ describe( module( "carbonldp/FreeResources" ), ():void => {
 
 		// TODO: Test in `FreeResources.decorate`
 		it( "FreeResources._documents", ():void => {
-			expect( freeResources._registry ).toBeDefined();
-			expect( freeResources._registry ).toEqual( jasmine.any( RegistryService ) );
+			expect( freeResources.$parentRegistry ).toBeDefined();
+			expect( freeResources.$parentRegistry ).toEqual( jasmine.any( RegistryService ) );
 		} );
 
 		describe( method( OBLIGATORY, "toJSON" ), () => {
@@ -175,8 +175,8 @@ describe( module( "carbonldp/FreeResources" ), ():void => {
 						},
 					} );
 
-				freeResources._register( TransientResource.createFrom( {
-					id: "_:some",
+				freeResources._addPointer( TransientResource.createFrom( {
+					$id: "_:some",
 					types: [ "http://example.com/ns#MyType" ],
 					"http://example.com/ns#property": "A Property",
 					"anotherProperty": "Another Property",
@@ -197,10 +197,10 @@ describe( module( "carbonldp/FreeResources" ), ():void => {
 			} );
 
 			it( "should expand resource with no registry and context", () => {
-				delete freeResources._registry;
+				delete freeResources.$parentRegistry;
 
-				freeResources._register( TransientResource.createFrom( {
-					id: "_:another",
+				freeResources._addPointer( TransientResource.createFrom( {
+					$id: "_:another",
 					types: [ "http://example.com/ns#MyType" ],
 					"http://example.com/ns#property": "A Property",
 					"anotherProperty": "Another Property",
@@ -324,24 +324,24 @@ describe( module( "carbonldp/FreeResources" ), ():void => {
 
 			let fx:() => any = () => {};
 			object = {
-				_registry: null,
-				_getLocalID: fx,
-				_register: fx,
+				$parentRegistry: null,
+				__getLocalID: fx,
+				_addPointer: fx,
 				toJSON: fx,
 			};
 			expect( FreeResources.isDecorated( object ) ).toBe( true );
 
-			delete object._registry;
+			delete object.$parentRegistry;
 			expect( FreeResources.isDecorated( object ) ).toBe( false );
-			object._registry = null;
+			object.$parentRegistry = null;
 
-			delete object._getLocalID;
+			delete object.__getLocalID;
 			expect( FreeResources.isDecorated( object ) ).toBe( false );
-			object._getLocalID = fx;
+			object.__getLocalID = fx;
 
-			delete object._register;
+			delete object._addPointer;
 			expect( FreeResources.isDecorated( object ) ).toBe( false );
-			object._register = fx;
+			object._addPointer = fx;
 
 			delete object.toJSON;
 			expect( FreeResources.isDecorated( object ) ).toBe( false );
@@ -388,9 +388,9 @@ describe( module( "carbonldp/FreeResources" ), ():void => {
 
 			let fx:() => any = () => null;
 			let object:FreeResourcesFactory[ "PROTOTYPE" ] = {
-				_registry: null,
-				_getLocalID: fx,
-				_register: fx,
+				$parentRegistry: null,
+				__getLocalID: fx,
+				_addPointer: fx,
 				toJSON: fx,
 			};
 

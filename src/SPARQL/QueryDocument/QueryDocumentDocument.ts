@@ -119,8 +119,8 @@ const emptyQueryBuildFn:QueryBuilderFn = _ => _;
 
 
 function getRegistry( repository:QueryDocumentDocument ):DocumentsRegistry {
-	if( repository._registry ) return repository._registry;
-	throw new IllegalActionError( `"${ repository.id }" doesn't support Querying requests.` );
+	if( repository.$parentRegistry ) return repository.$parentRegistry;
+	throw new IllegalActionError( `"${ repository.$id }" doesn't support Querying requests.` );
 }
 
 function addAuthentication( registry:DocumentsRegistry, requestOptions:RequestOptions ):void {
@@ -444,7 +444,7 @@ const PROTOTYPE:PickSelfProps<QueryDocumentDocument, BasePersistedDocument> = {
 	refresh<T extends object>( this:T & Document, requestOptions:RequestOptions = {} ):Promise<T & Document> {
 		return promiseMethod( () => {
 			const registry:DocumentsRegistry = getRegistry( this );
-			if( ! this.isPartial() ) throw new IllegalArgumentError( `"${ this.id }" isn't a partial resource.` );
+			if( ! this.isPartial() ) throw new IllegalArgumentError( `"${ this.$id }" isn't a partial resource.` );
 
 			return refreshPartial<T & Document>( registry, this, requestOptions );
 		} );
@@ -452,7 +452,7 @@ const PROTOTYPE:PickSelfProps<QueryDocumentDocument, BasePersistedDocument> = {
 
 	save<T extends object>( this:QueryDocumentDocument, requestOptions:RequestOptions = {} ):Promise<T & Document> {
 		getRegistry( this );
-		if( this.isOutdated() ) return Promise.reject( new IllegalStateError( `"${ this.id }" is outdated and cannot be saved.` ) );
+		if( this.isOutdated() ) return Promise.reject( new IllegalStateError( `"${ this.$id }" is outdated and cannot be saved.` ) );
 
 		return CRUDDocument.PROTOTYPE.save.call( this, requestOptions );
 	},
@@ -461,7 +461,7 @@ const PROTOTYPE:PickSelfProps<QueryDocumentDocument, BasePersistedDocument> = {
 		return promiseMethod( () => {
 			const registry:DocumentsRegistry = getRegistry( this );
 
-			if( ! this.isPartial() ) throw new IllegalArgumentError( `"${ this.id }" isn't a valid partial resource.` );
+			if( ! this.isPartial() ) throw new IllegalArgumentError( `"${ this.$id }" isn't a valid partial resource.` );
 
 			if( ! this.isDirty() ) return refreshPartial<T & Document>( registry, this, requestOptions );
 

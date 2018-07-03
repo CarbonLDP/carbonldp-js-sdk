@@ -409,7 +409,7 @@ describe( module( "carbonldp/Auth/ACL" ), ():void => {
 			expect( Utils.isFunction( TransientACL.decorate ) ).toBe( true );
 
 			let document:TransientDocument = Document.create( {
-				id: "http://example.com/resource/~acl/",
+				$id: "http://example.com/resource/~acl/",
 				accessTo: null,
 			} );
 			let acl:TransientACL = TransientACL.decorate( document );
@@ -430,7 +430,7 @@ describe( module( "carbonldp/Auth/ACL" ), ():void => {
 			beforeEach( ():void => {
 				const document:TransientDocument = Document.create( {
 					_registry: new RegistryService( Pointer ),
-					id: "http://example.com/resource/~acl/",
+					$id: "http://example.com/resource/~acl/",
 				} );
 				acl = TransientACL.decorate( document );
 				acl.accessTo = acl.getPointer( "http://example.com/resource/" );
@@ -463,7 +463,7 @@ describe( module( "carbonldp/Auth/ACL" ), ():void => {
 					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject" );
 					expect( ace.types ).toContain( TransientACE.TYPE );
 					expect( ace.granting ).toBe( true );
-					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
+					expect( ace.subjectsClass.$id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 1 );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#READ" );
 					expect( acl.entries ).toContain( ace );
@@ -477,7 +477,7 @@ describe( module( "carbonldp/Auth/ACL" ), ():void => {
 					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject" );
 					expect( ace.types ).toContain( TransientACE.TYPE );
 					expect( ace.granting ).toBe( true );
-					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
+					expect( ace.subjectsClass.$id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 2 );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#WRITE" );
 					expect( acl.entries ).toContain( ace );
@@ -491,7 +491,7 @@ describe( module( "carbonldp/Auth/ACL" ), ():void => {
 					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-2" );
 					expect( ace.types ).toContain( TransientACE.TYPE );
 					expect( ace.granting ).toBe( true );
-					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
+					expect( ace.subjectsClass.$id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 1 );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
 					expect( acl.entries ).toContain( ace );
@@ -505,7 +505,7 @@ describe( module( "carbonldp/Auth/ACL" ), ():void => {
 					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-2" );
 					expect( ace.types ).toContain( TransientACE.TYPE );
 					expect( ace.granting ).toBe( true );
-					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
+					expect( ace.subjectsClass.$id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 2 );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#DELETE" );
 					expect( acl.entries ).toContain( ace );
@@ -526,7 +526,7 @@ describe( module( "carbonldp/Auth/ACL" ), ():void => {
 					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject" );
 					expect( ace.types ).toContain( TransientACE.TYPE );
 					expect( ace.granting ).toBe( true );
-					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
+					expect( ace.subjectsClass.$id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 1 );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#READ" );
 					expect( acl.entries ).toContain( ace );
@@ -540,7 +540,7 @@ describe( module( "carbonldp/Auth/ACL" ), ():void => {
 					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject" );
 					expect( ace.types ).toContain( TransientACE.TYPE );
 					expect( ace.granting ).toBe( true );
-					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
+					expect( ace.subjectsClass.$id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 3 );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#READ" );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#WRITE" );
@@ -556,7 +556,7 @@ describe( module( "carbonldp/Auth/ACL" ), ():void => {
 					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-2" );
 					expect( ace.types ).toContain( TransientACE.TYPE );
 					expect( ace.granting ).toBe( true );
-					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
+					expect( ace.subjectsClass.$id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 1 );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
 					expect( acl.entries ).toContain( ace );
@@ -570,7 +570,7 @@ describe( module( "carbonldp/Auth/ACL" ), ():void => {
 					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-2" );
 					expect( ace.types ).toContain( TransientACE.TYPE );
 					expect( ace.granting ).toBe( true );
-					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
+					expect( ace.subjectsClass.$id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 2 );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#DELETE" );
@@ -585,7 +585,7 @@ describe( module( "carbonldp/Auth/ACL" ), ():void => {
 					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-2" );
 					expect( ace.types ).toContain( TransientACE.TYPE );
 					expect( ace.granting ).toBe( true );
-					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
+					expect( ace.subjectsClass.$id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 3 );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#DELETE" );
@@ -608,7 +608,7 @@ describe( module( "carbonldp/Auth/ACL" ), ():void => {
 					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject" );
 					expect( ace.types ).toContain( TransientACE.TYPE );
 					expect( ace.granting ).toBe( true );
-					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
+					expect( ace.subjectsClass.$id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 1 );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#READ" );
 					expect( acl.entries ).toContain( ace );
@@ -622,7 +622,7 @@ describe( module( "carbonldp/Auth/ACL" ), ():void => {
 					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject" );
 					expect( ace.types ).toContain( TransientACE.TYPE );
 					expect( ace.granting ).toBe( true );
-					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
+					expect( ace.subjectsClass.$id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 2 );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#READ" );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#WRITE" );
@@ -637,7 +637,7 @@ describe( module( "carbonldp/Auth/ACL" ), ():void => {
 					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-2" );
 					expect( ace.types ).toContain( TransientACE.TYPE );
 					expect( ace.granting ).toBe( true );
-					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
+					expect( ace.subjectsClass.$id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 1 );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
 					expect( acl.entries ).toContain( ace );
@@ -647,7 +647,7 @@ describe( module( "carbonldp/Auth/ACL" ), ():void => {
 					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject" );
 					expect( ace.types ).toContain( TransientACE.TYPE );
 					expect( ace.granting ).toBe( true );
-					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
+					expect( ace.subjectsClass.$id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 3 );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#READ" );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#WRITE" );
@@ -663,7 +663,7 @@ describe( module( "carbonldp/Auth/ACL" ), ():void => {
 					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject" );
 					expect( ace.types ).toContain( TransientACE.TYPE );
 					expect( ace.granting ).toBe( true );
-					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
+					expect( ace.subjectsClass.$id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 4 );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#READ" );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#WRITE" );
@@ -676,7 +676,7 @@ describe( module( "carbonldp/Auth/ACL" ), ():void => {
 					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-2" );
 					expect( ace.types ).toContain( TransientACE.TYPE );
 					expect( ace.granting ).toBe( true );
-					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
+					expect( ace.subjectsClass.$id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 2 );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#DELETE" );
@@ -687,7 +687,7 @@ describe( module( "carbonldp/Auth/ACL" ), ():void => {
 					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-3" );
 					expect( ace.types ).toContain( TransientACE.TYPE );
 					expect( ace.granting ).toBe( true );
-					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
+					expect( ace.subjectsClass.$id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 1 );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#DELETE" );
 					expect( acl.entries ).toContain( ace );
@@ -708,7 +708,7 @@ describe( module( "carbonldp/Auth/ACL" ), ():void => {
 					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject" );
 					expect( ace.types ).toContain( TransientACE.TYPE );
 					expect( ace.granting ).toBe( true );
-					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
+					expect( ace.subjectsClass.$id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 1 );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#READ" );
 					expect( acl.entries ).toContain( ace );
@@ -722,7 +722,7 @@ describe( module( "carbonldp/Auth/ACL" ), ():void => {
 					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject" );
 					expect( ace.types ).toContain( TransientACE.TYPE );
 					expect( ace.granting ).toBe( true );
-					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
+					expect( ace.subjectsClass.$id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 3 );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#READ" );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#WRITE" );
@@ -738,7 +738,7 @@ describe( module( "carbonldp/Auth/ACL" ), ():void => {
 					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-2" );
 					expect( ace.types ).toContain( TransientACE.TYPE );
 					expect( ace.granting ).toBe( true );
-					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
+					expect( ace.subjectsClass.$id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 1 );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
 					expect( acl.entries ).toContain( ace );
@@ -748,7 +748,7 @@ describe( module( "carbonldp/Auth/ACL" ), ():void => {
 					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject" );
 					expect( ace.types ).toContain( TransientACE.TYPE );
 					expect( ace.granting ).toBe( true );
-					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
+					expect( ace.subjectsClass.$id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 3 );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#READ" );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#WRITE" );
@@ -764,7 +764,7 @@ describe( module( "carbonldp/Auth/ACL" ), ():void => {
 					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-2" );
 					expect( ace.types ).toContain( TransientACE.TYPE );
 					expect( ace.granting ).toBe( true );
-					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
+					expect( ace.subjectsClass.$id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 2 );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#DELETE" );
@@ -775,7 +775,7 @@ describe( module( "carbonldp/Auth/ACL" ), ():void => {
 					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject" );
 					expect( ace.types ).toContain( TransientACE.TYPE );
 					expect( ace.granting ).toBe( true );
-					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
+					expect( ace.subjectsClass.$id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 4 );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#READ" );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#WRITE" );
@@ -792,7 +792,7 @@ describe( module( "carbonldp/Auth/ACL" ), ():void => {
 					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject" );
 					expect( ace.types ).toContain( TransientACE.TYPE );
 					expect( ace.granting ).toBe( true );
-					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
+					expect( ace.subjectsClass.$id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 5 );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#READ" );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#WRITE" );
@@ -806,7 +806,7 @@ describe( module( "carbonldp/Auth/ACL" ), ():void => {
 					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-2" );
 					expect( ace.types ).toContain( TransientACE.TYPE );
 					expect( ace.granting ).toBe( true );
-					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
+					expect( ace.subjectsClass.$id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 4 );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#DELETE" );
@@ -819,7 +819,7 @@ describe( module( "carbonldp/Auth/ACL" ), ():void => {
 					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-3" );
 					expect( ace.types ).toContain( TransientACE.TYPE );
 					expect( ace.granting ).toBe( true );
-					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
+					expect( ace.subjectsClass.$id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 3 );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#WRITE" );
@@ -856,7 +856,7 @@ describe( module( "carbonldp/Auth/ACL" ), ():void => {
 					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject" );
 					expect( ace.types ).toContain( TransientACE.TYPE );
 					expect( ace.granting ).toBe( true );
-					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
+					expect( ace.subjectsClass.$id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 3 );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#CREATE" );
@@ -866,7 +866,7 @@ describe( module( "carbonldp/Auth/ACL" ), ():void => {
 					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject" );
 					expect( ace.types ).toContain( TransientACE.TYPE );
 					expect( ace.granting ).toBe( false );
-					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
+					expect( ace.subjectsClass.$id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 1 );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#DELETE" );
 					expect( acl.entries ).toContain( ace );
@@ -877,7 +877,7 @@ describe( module( "carbonldp/Auth/ACL" ), ():void => {
 					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-2" );
 					expect( ace.types ).toContain( TransientACE.TYPE );
 					expect( ace.granting ).toBe( true );
-					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
+					expect( ace.subjectsClass.$id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 4 );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#READ" );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#WRITE" );
@@ -888,7 +888,7 @@ describe( module( "carbonldp/Auth/ACL" ), ():void => {
 					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-2" );
 					expect( ace.types ).toContain( TransientACE.TYPE );
 					expect( ace.granting ).toBe( false );
-					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
+					expect( ace.subjectsClass.$id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 1 );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#DELETE" );
 					expect( acl.entries ).toContain( ace );
@@ -898,7 +898,7 @@ describe( module( "carbonldp/Auth/ACL" ), ():void => {
 					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-3" );
 					expect( ace.types ).toContain( TransientACE.TYPE );
 					expect( ace.granting ).toBe( true );
-					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
+					expect( ace.subjectsClass.$id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 4 );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#READ" );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#WRITE" );
@@ -906,7 +906,7 @@ describe( module( "carbonldp/Auth/ACL" ), ():void => {
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#CREATE" );
 					expect( acl.entries ).toContain( ace );
 
-					acl.entries.forEach( forEachACE => acl._removeFragment( forEachACE.id ) );
+					acl.entries.forEach( forEachACE => acl._removeFragment( forEachACE.$id ) );
 					acl.entries = [];
 					acl.inheritableEntries = [];
 
@@ -971,7 +971,7 @@ describe( module( "carbonldp/Auth/ACL" ), ():void => {
 					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject" );
 					expect( ace.types ).toContain( TransientACE.TYPE );
 					expect( ace.granting ).toBe( false );
-					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
+					expect( ace.subjectsClass.$id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 1 );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#READ" );
 					expect( acl.entries ).toContain( ace );
@@ -985,7 +985,7 @@ describe( module( "carbonldp/Auth/ACL" ), ():void => {
 					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject" );
 					expect( ace.types ).toContain( TransientACE.TYPE );
 					expect( ace.granting ).toBe( false );
-					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
+					expect( ace.subjectsClass.$id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 2 );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#WRITE" );
 					expect( acl.entries ).toContain( ace );
@@ -999,7 +999,7 @@ describe( module( "carbonldp/Auth/ACL" ), ():void => {
 					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-2" );
 					expect( ace.types ).toContain( TransientACE.TYPE );
 					expect( ace.granting ).toBe( false );
-					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
+					expect( ace.subjectsClass.$id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 1 );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
 					expect( acl.entries ).toContain( ace );
@@ -1013,7 +1013,7 @@ describe( module( "carbonldp/Auth/ACL" ), ():void => {
 					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-2" );
 					expect( ace.types ).toContain( TransientACE.TYPE );
 					expect( ace.granting ).toBe( false );
-					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
+					expect( ace.subjectsClass.$id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 2 );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#DELETE" );
 					expect( acl.entries ).toContain( ace );
@@ -1034,7 +1034,7 @@ describe( module( "carbonldp/Auth/ACL" ), ():void => {
 					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject" );
 					expect( ace.types ).toContain( TransientACE.TYPE );
 					expect( ace.granting ).toBe( false );
-					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
+					expect( ace.subjectsClass.$id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 1 );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#READ" );
 					expect( acl.entries ).toContain( ace );
@@ -1048,7 +1048,7 @@ describe( module( "carbonldp/Auth/ACL" ), ():void => {
 					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject" );
 					expect( ace.types ).toContain( TransientACE.TYPE );
 					expect( ace.granting ).toBe( false );
-					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
+					expect( ace.subjectsClass.$id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 3 );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#READ" );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#WRITE" );
@@ -1064,7 +1064,7 @@ describe( module( "carbonldp/Auth/ACL" ), ():void => {
 					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-2" );
 					expect( ace.types ).toContain( TransientACE.TYPE );
 					expect( ace.granting ).toBe( false );
-					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
+					expect( ace.subjectsClass.$id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 1 );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
 					expect( acl.entries ).toContain( ace );
@@ -1078,7 +1078,7 @@ describe( module( "carbonldp/Auth/ACL" ), ():void => {
 					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-2" );
 					expect( ace.types ).toContain( TransientACE.TYPE );
 					expect( ace.granting ).toBe( false );
-					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
+					expect( ace.subjectsClass.$id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 2 );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#DELETE" );
@@ -1093,7 +1093,7 @@ describe( module( "carbonldp/Auth/ACL" ), ():void => {
 					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-2" );
 					expect( ace.types ).toContain( TransientACE.TYPE );
 					expect( ace.granting ).toBe( false );
-					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
+					expect( ace.subjectsClass.$id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 3 );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#DELETE" );
@@ -1116,7 +1116,7 @@ describe( module( "carbonldp/Auth/ACL" ), ():void => {
 					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject" );
 					expect( ace.types ).toContain( TransientACE.TYPE );
 					expect( ace.granting ).toBe( false );
-					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
+					expect( ace.subjectsClass.$id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 1 );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#READ" );
 					expect( acl.entries ).toContain( ace );
@@ -1130,7 +1130,7 @@ describe( module( "carbonldp/Auth/ACL" ), ():void => {
 					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject" );
 					expect( ace.types ).toContain( TransientACE.TYPE );
 					expect( ace.granting ).toBe( false );
-					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
+					expect( ace.subjectsClass.$id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 2 );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#READ" );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#WRITE" );
@@ -1145,7 +1145,7 @@ describe( module( "carbonldp/Auth/ACL" ), ():void => {
 					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-2" );
 					expect( ace.types ).toContain( TransientACE.TYPE );
 					expect( ace.granting ).toBe( false );
-					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
+					expect( ace.subjectsClass.$id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 1 );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
 					expect( acl.entries ).toContain( ace );
@@ -1155,7 +1155,7 @@ describe( module( "carbonldp/Auth/ACL" ), ():void => {
 					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject" );
 					expect( ace.types ).toContain( TransientACE.TYPE );
 					expect( ace.granting ).toBe( false );
-					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
+					expect( ace.subjectsClass.$id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 3 );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#READ" );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#WRITE" );
@@ -1171,7 +1171,7 @@ describe( module( "carbonldp/Auth/ACL" ), ():void => {
 					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject" );
 					expect( ace.types ).toContain( TransientACE.TYPE );
 					expect( ace.granting ).toBe( false );
-					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
+					expect( ace.subjectsClass.$id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 4 );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#READ" );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#WRITE" );
@@ -1184,7 +1184,7 @@ describe( module( "carbonldp/Auth/ACL" ), ():void => {
 					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-2" );
 					expect( ace.types ).toContain( TransientACE.TYPE );
 					expect( ace.granting ).toBe( false );
-					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
+					expect( ace.subjectsClass.$id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 2 );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#DELETE" );
@@ -1195,7 +1195,7 @@ describe( module( "carbonldp/Auth/ACL" ), ():void => {
 					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-3" );
 					expect( ace.types ).toContain( TransientACE.TYPE );
 					expect( ace.granting ).toBe( false );
-					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
+					expect( ace.subjectsClass.$id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 1 );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#DELETE" );
 					expect( acl.entries ).toContain( ace );
@@ -1216,7 +1216,7 @@ describe( module( "carbonldp/Auth/ACL" ), ():void => {
 					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject" );
 					expect( ace.types ).toContain( TransientACE.TYPE );
 					expect( ace.granting ).toBe( false );
-					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
+					expect( ace.subjectsClass.$id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 1 );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#READ" );
 					expect( acl.entries ).toContain( ace );
@@ -1230,7 +1230,7 @@ describe( module( "carbonldp/Auth/ACL" ), ():void => {
 					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject" );
 					expect( ace.types ).toContain( TransientACE.TYPE );
 					expect( ace.granting ).toBe( false );
-					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
+					expect( ace.subjectsClass.$id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 3 );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#READ" );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#WRITE" );
@@ -1246,7 +1246,7 @@ describe( module( "carbonldp/Auth/ACL" ), ():void => {
 					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-2" );
 					expect( ace.types ).toContain( TransientACE.TYPE );
 					expect( ace.granting ).toBe( false );
-					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
+					expect( ace.subjectsClass.$id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 1 );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
 					expect( acl.entries ).toContain( ace );
@@ -1256,7 +1256,7 @@ describe( module( "carbonldp/Auth/ACL" ), ():void => {
 					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject" );
 					expect( ace.types ).toContain( TransientACE.TYPE );
 					expect( ace.granting ).toBe( false );
-					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
+					expect( ace.subjectsClass.$id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 3 );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#READ" );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#WRITE" );
@@ -1272,7 +1272,7 @@ describe( module( "carbonldp/Auth/ACL" ), ():void => {
 					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-2" );
 					expect( ace.types ).toContain( TransientACE.TYPE );
 					expect( ace.granting ).toBe( false );
-					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
+					expect( ace.subjectsClass.$id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 2 );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#DELETE" );
@@ -1283,7 +1283,7 @@ describe( module( "carbonldp/Auth/ACL" ), ():void => {
 					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject" );
 					expect( ace.types ).toContain( TransientACE.TYPE );
 					expect( ace.granting ).toBe( false );
-					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
+					expect( ace.subjectsClass.$id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 4 );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#READ" );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#WRITE" );
@@ -1300,7 +1300,7 @@ describe( module( "carbonldp/Auth/ACL" ), ():void => {
 					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject" );
 					expect( ace.types ).toContain( TransientACE.TYPE );
 					expect( ace.granting ).toBe( false );
-					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
+					expect( ace.subjectsClass.$id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 5 );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#READ" );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#WRITE" );
@@ -1314,7 +1314,7 @@ describe( module( "carbonldp/Auth/ACL" ), ():void => {
 					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-2" );
 					expect( ace.types ).toContain( TransientACE.TYPE );
 					expect( ace.granting ).toBe( false );
-					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
+					expect( ace.subjectsClass.$id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 4 );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#DELETE" );
@@ -1327,7 +1327,7 @@ describe( module( "carbonldp/Auth/ACL" ), ():void => {
 					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-3" );
 					expect( ace.types ).toContain( TransientACE.TYPE );
 					expect( ace.granting ).toBe( false );
-					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
+					expect( ace.subjectsClass.$id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 3 );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#WRITE" );
@@ -1361,7 +1361,7 @@ describe( module( "carbonldp/Auth/ACL" ), ():void => {
 					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject" );
 					expect( ace.types ).toContain( TransientACE.TYPE );
 					expect( ace.granting ).toBe( false );
-					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
+					expect( ace.subjectsClass.$id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 4 );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#CREATE" );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#DELETE" );
@@ -1376,7 +1376,7 @@ describe( module( "carbonldp/Auth/ACL" ), ():void => {
 					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-2" );
 					expect( ace.types ).toContain( TransientACE.TYPE );
 					expect( ace.granting ).toBe( false );
-					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
+					expect( ace.subjectsClass.$id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 4 );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#CREATE" );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#DELETE" );
@@ -1387,7 +1387,7 @@ describe( module( "carbonldp/Auth/ACL" ), ():void => {
 					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-2" );
 					expect( ace.types ).toContain( TransientACE.TYPE );
 					expect( ace.granting ).toBe( true );
-					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
+					expect( ace.subjectsClass.$id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 1 );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#WRITE" );
 					expect( acl.entries ).toContain( ace );
@@ -1399,7 +1399,7 @@ describe( module( "carbonldp/Auth/ACL" ), ():void => {
 					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-3" );
 					expect( ace.types ).toContain( TransientACE.TYPE );
 					expect( ace.granting ).toBe( false );
-					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
+					expect( ace.subjectsClass.$id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 3 );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#CREATE" );
@@ -1409,13 +1409,13 @@ describe( module( "carbonldp/Auth/ACL" ), ():void => {
 					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-3" );
 					expect( ace.types ).toContain( TransientACE.TYPE );
 					expect( ace.granting ).toBe( true );
-					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
+					expect( ace.subjectsClass.$id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 1 );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#WRITE" );
 					expect( acl.entries ).toContain( ace );
 
 
-					acl.entries.forEach( forEachACE => acl._removeFragment( forEachACE.id ) );
+					acl.entries.forEach( forEachACE => acl._removeFragment( forEachACE.$id ) );
 					acl.entries = [];
 					acl.inheritableEntries = [];
 
@@ -1480,7 +1480,7 @@ describe( module( "carbonldp/Auth/ACL" ), ():void => {
 					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-01" );
 					expect( ace.types ).toContain( TransientACE.TYPE );
 					expect( ace.granting ).toBe( true );
-					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
+					expect( ace.subjectsClass.$id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 1 );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#READ" );
 					expect( acl.inheritableEntries ).toContain( ace );
@@ -1494,7 +1494,7 @@ describe( module( "carbonldp/Auth/ACL" ), ():void => {
 					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-01" );
 					expect( ace.types ).toContain( TransientACE.TYPE );
 					expect( ace.granting ).toBe( true );
-					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
+					expect( ace.subjectsClass.$id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 2 );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#WRITE" );
 					expect( acl.inheritableEntries ).toContain( ace );
@@ -1508,7 +1508,7 @@ describe( module( "carbonldp/Auth/ACL" ), ():void => {
 					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-11" );
 					expect( ace.types ).toContain( TransientACE.TYPE );
 					expect( ace.granting ).toBe( true );
-					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
+					expect( ace.subjectsClass.$id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 1 );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
 					expect( acl.inheritableEntries ).toContain( ace );
@@ -1522,7 +1522,7 @@ describe( module( "carbonldp/Auth/ACL" ), ():void => {
 					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-11" );
 					expect( ace.types ).toContain( TransientACE.TYPE );
 					expect( ace.granting ).toBe( true );
-					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
+					expect( ace.subjectsClass.$id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 2 );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#DELETE" );
 					expect( acl.inheritableEntries ).toContain( ace );
@@ -1539,7 +1539,7 @@ describe( module( "carbonldp/Auth/ACL" ), ():void => {
 					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-02" );
 					expect( ace.types ).toContain( TransientACE.TYPE );
 					expect( ace.granting ).toBe( false );
-					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
+					expect( ace.subjectsClass.$id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 1 );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#READ" );
 					expect( acl.inheritableEntries ).toContain( ace );
@@ -1553,7 +1553,7 @@ describe( module( "carbonldp/Auth/ACL" ), ():void => {
 					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-02" );
 					expect( ace.types ).toContain( TransientACE.TYPE );
 					expect( ace.granting ).toBe( false );
-					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
+					expect( ace.subjectsClass.$id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 2 );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#WRITE" );
 					expect( acl.inheritableEntries ).toContain( ace );
@@ -1567,7 +1567,7 @@ describe( module( "carbonldp/Auth/ACL" ), ():void => {
 					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-12" );
 					expect( ace.types ).toContain( TransientACE.TYPE );
 					expect( ace.granting ).toBe( false );
-					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
+					expect( ace.subjectsClass.$id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 1 );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
 					expect( acl.inheritableEntries ).toContain( ace );
@@ -1581,7 +1581,7 @@ describe( module( "carbonldp/Auth/ACL" ), ():void => {
 					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-12" );
 					expect( ace.types ).toContain( TransientACE.TYPE );
 					expect( ace.granting ).toBe( false );
-					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
+					expect( ace.subjectsClass.$id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 2 );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#DELETE" );
 					expect( acl.inheritableEntries ).toContain( ace );
@@ -1602,7 +1602,7 @@ describe( module( "carbonldp/Auth/ACL" ), ():void => {
 					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject" );
 					expect( ace.types ).toContain( TransientACE.TYPE );
 					expect( ace.granting ).toBe( true );
-					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
+					expect( ace.subjectsClass.$id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 1 );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#READ" );
 					expect( acl.inheritableEntries ).toContain( ace );
@@ -1616,7 +1616,7 @@ describe( module( "carbonldp/Auth/ACL" ), ():void => {
 					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject" );
 					expect( ace.types ).toContain( TransientACE.TYPE );
 					expect( ace.granting ).toBe( true );
-					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
+					expect( ace.subjectsClass.$id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 3 );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#READ" );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#WRITE" );
@@ -1632,7 +1632,7 @@ describe( module( "carbonldp/Auth/ACL" ), ():void => {
 					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-2" );
 					expect( ace.types ).toContain( TransientACE.TYPE );
 					expect( ace.granting ).toBe( true );
-					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
+					expect( ace.subjectsClass.$id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 1 );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
 					expect( acl.inheritableEntries ).toContain( ace );
@@ -1646,7 +1646,7 @@ describe( module( "carbonldp/Auth/ACL" ), ():void => {
 					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-2" );
 					expect( ace.types ).toContain( TransientACE.TYPE );
 					expect( ace.granting ).toBe( true );
-					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
+					expect( ace.subjectsClass.$id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 2 );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#DELETE" );
@@ -1661,7 +1661,7 @@ describe( module( "carbonldp/Auth/ACL" ), ():void => {
 					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-2" );
 					expect( ace.types ).toContain( TransientACE.TYPE );
 					expect( ace.granting ).toBe( true );
-					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
+					expect( ace.subjectsClass.$id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 3 );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#DELETE" );
@@ -1680,7 +1680,7 @@ describe( module( "carbonldp/Auth/ACL" ), ():void => {
 					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject" );
 					expect( ace.types ).toContain( TransientACE.TYPE );
 					expect( ace.granting ).toBe( false );
-					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
+					expect( ace.subjectsClass.$id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 1 );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#READ" );
 					expect( acl.inheritableEntries ).toContain( ace );
@@ -1694,7 +1694,7 @@ describe( module( "carbonldp/Auth/ACL" ), ():void => {
 					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject" );
 					expect( ace.types ).toContain( TransientACE.TYPE );
 					expect( ace.granting ).toBe( false );
-					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
+					expect( ace.subjectsClass.$id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 3 );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#READ" );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#WRITE" );
@@ -1710,7 +1710,7 @@ describe( module( "carbonldp/Auth/ACL" ), ():void => {
 					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-2" );
 					expect( ace.types ).toContain( TransientACE.TYPE );
 					expect( ace.granting ).toBe( false );
-					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
+					expect( ace.subjectsClass.$id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 1 );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
 					expect( acl.inheritableEntries ).toContain( ace );
@@ -1724,7 +1724,7 @@ describe( module( "carbonldp/Auth/ACL" ), ():void => {
 					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-2" );
 					expect( ace.types ).toContain( TransientACE.TYPE );
 					expect( ace.granting ).toBe( false );
-					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
+					expect( ace.subjectsClass.$id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 2 );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#DELETE" );
@@ -1739,7 +1739,7 @@ describe( module( "carbonldp/Auth/ACL" ), ():void => {
 					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-2" );
 					expect( ace.types ).toContain( TransientACE.TYPE );
 					expect( ace.granting ).toBe( false );
-					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
+					expect( ace.subjectsClass.$id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 3 );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#DELETE" );
@@ -1762,7 +1762,7 @@ describe( module( "carbonldp/Auth/ACL" ), ():void => {
 					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject" );
 					expect( ace.types ).toContain( TransientACE.TYPE );
 					expect( ace.granting ).toBe( true );
-					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
+					expect( ace.subjectsClass.$id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 1 );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#READ" );
 					expect( acl.inheritableEntries ).toContain( ace );
@@ -1776,7 +1776,7 @@ describe( module( "carbonldp/Auth/ACL" ), ():void => {
 					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject" );
 					expect( ace.types ).toContain( TransientACE.TYPE );
 					expect( ace.granting ).toBe( true );
-					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
+					expect( ace.subjectsClass.$id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 2 );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#READ" );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#WRITE" );
@@ -1791,7 +1791,7 @@ describe( module( "carbonldp/Auth/ACL" ), ():void => {
 					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-2" );
 					expect( ace.types ).toContain( TransientACE.TYPE );
 					expect( ace.granting ).toBe( true );
-					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
+					expect( ace.subjectsClass.$id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 1 );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
 					expect( acl.inheritableEntries ).toContain( ace );
@@ -1801,7 +1801,7 @@ describe( module( "carbonldp/Auth/ACL" ), ():void => {
 					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject" );
 					expect( ace.types ).toContain( TransientACE.TYPE );
 					expect( ace.granting ).toBe( true );
-					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
+					expect( ace.subjectsClass.$id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 3 );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#READ" );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#WRITE" );
@@ -1817,7 +1817,7 @@ describe( module( "carbonldp/Auth/ACL" ), ():void => {
 					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject" );
 					expect( ace.types ).toContain( TransientACE.TYPE );
 					expect( ace.granting ).toBe( true );
-					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
+					expect( ace.subjectsClass.$id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 4 );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#READ" );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#WRITE" );
@@ -1830,7 +1830,7 @@ describe( module( "carbonldp/Auth/ACL" ), ():void => {
 					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-2" );
 					expect( ace.types ).toContain( TransientACE.TYPE );
 					expect( ace.granting ).toBe( true );
-					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
+					expect( ace.subjectsClass.$id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 2 );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#DELETE" );
@@ -1841,7 +1841,7 @@ describe( module( "carbonldp/Auth/ACL" ), ():void => {
 					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-3" );
 					expect( ace.types ).toContain( TransientACE.TYPE );
 					expect( ace.granting ).toBe( true );
-					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
+					expect( ace.subjectsClass.$id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 1 );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#DELETE" );
 					expect( acl.inheritableEntries ).toContain( ace );
@@ -1858,7 +1858,7 @@ describe( module( "carbonldp/Auth/ACL" ), ():void => {
 					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject" );
 					expect( ace.types ).toContain( TransientACE.TYPE );
 					expect( ace.granting ).toBe( false );
-					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
+					expect( ace.subjectsClass.$id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 1 );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#READ" );
 					expect( acl.inheritableEntries ).toContain( ace );
@@ -1872,7 +1872,7 @@ describe( module( "carbonldp/Auth/ACL" ), ():void => {
 					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject" );
 					expect( ace.types ).toContain( TransientACE.TYPE );
 					expect( ace.granting ).toBe( false );
-					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
+					expect( ace.subjectsClass.$id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 2 );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#READ" );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#WRITE" );
@@ -1887,7 +1887,7 @@ describe( module( "carbonldp/Auth/ACL" ), ():void => {
 					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-2" );
 					expect( ace.types ).toContain( TransientACE.TYPE );
 					expect( ace.granting ).toBe( false );
-					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
+					expect( ace.subjectsClass.$id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 1 );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
 					expect( acl.inheritableEntries ).toContain( ace );
@@ -1897,7 +1897,7 @@ describe( module( "carbonldp/Auth/ACL" ), ():void => {
 					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject" );
 					expect( ace.types ).toContain( TransientACE.TYPE );
 					expect( ace.granting ).toBe( false );
-					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
+					expect( ace.subjectsClass.$id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 3 );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#READ" );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#WRITE" );
@@ -1913,7 +1913,7 @@ describe( module( "carbonldp/Auth/ACL" ), ():void => {
 					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject" );
 					expect( ace.types ).toContain( TransientACE.TYPE );
 					expect( ace.granting ).toBe( false );
-					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
+					expect( ace.subjectsClass.$id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 4 );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#READ" );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#WRITE" );
@@ -1926,7 +1926,7 @@ describe( module( "carbonldp/Auth/ACL" ), ():void => {
 					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-2" );
 					expect( ace.types ).toContain( TransientACE.TYPE );
 					expect( ace.granting ).toBe( false );
-					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
+					expect( ace.subjectsClass.$id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 2 );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#DELETE" );
@@ -1937,7 +1937,7 @@ describe( module( "carbonldp/Auth/ACL" ), ():void => {
 					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-3" );
 					expect( ace.types ).toContain( TransientACE.TYPE );
 					expect( ace.granting ).toBe( false );
-					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
+					expect( ace.subjectsClass.$id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 1 );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#DELETE" );
 					expect( acl.inheritableEntries ).toContain( ace );
@@ -1958,7 +1958,7 @@ describe( module( "carbonldp/Auth/ACL" ), ():void => {
 					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject" );
 					expect( ace.types ).toContain( TransientACE.TYPE );
 					expect( ace.granting ).toBe( true );
-					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
+					expect( ace.subjectsClass.$id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 1 );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#READ" );
 					expect( acl.inheritableEntries ).toContain( ace );
@@ -1972,7 +1972,7 @@ describe( module( "carbonldp/Auth/ACL" ), ():void => {
 					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject" );
 					expect( ace.types ).toContain( TransientACE.TYPE );
 					expect( ace.granting ).toBe( true );
-					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
+					expect( ace.subjectsClass.$id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 3 );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#READ" );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#WRITE" );
@@ -1988,7 +1988,7 @@ describe( module( "carbonldp/Auth/ACL" ), ():void => {
 					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-2" );
 					expect( ace.types ).toContain( TransientACE.TYPE );
 					expect( ace.granting ).toBe( true );
-					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
+					expect( ace.subjectsClass.$id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 1 );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
 					expect( acl.inheritableEntries ).toContain( ace );
@@ -1998,7 +1998,7 @@ describe( module( "carbonldp/Auth/ACL" ), ():void => {
 					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject" );
 					expect( ace.types ).toContain( TransientACE.TYPE );
 					expect( ace.granting ).toBe( true );
-					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
+					expect( ace.subjectsClass.$id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 3 );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#READ" );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#WRITE" );
@@ -2014,7 +2014,7 @@ describe( module( "carbonldp/Auth/ACL" ), ():void => {
 					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-2" );
 					expect( ace.types ).toContain( TransientACE.TYPE );
 					expect( ace.granting ).toBe( true );
-					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
+					expect( ace.subjectsClass.$id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 2 );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#DELETE" );
@@ -2025,7 +2025,7 @@ describe( module( "carbonldp/Auth/ACL" ), ():void => {
 					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject" );
 					expect( ace.types ).toContain( TransientACE.TYPE );
 					expect( ace.granting ).toBe( true );
-					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
+					expect( ace.subjectsClass.$id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 4 );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#READ" );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#WRITE" );
@@ -2042,7 +2042,7 @@ describe( module( "carbonldp/Auth/ACL" ), ():void => {
 					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject" );
 					expect( ace.types ).toContain( TransientACE.TYPE );
 					expect( ace.granting ).toBe( true );
-					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
+					expect( ace.subjectsClass.$id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 5 );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#READ" );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#WRITE" );
@@ -2056,7 +2056,7 @@ describe( module( "carbonldp/Auth/ACL" ), ():void => {
 					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-2" );
 					expect( ace.types ).toContain( TransientACE.TYPE );
 					expect( ace.granting ).toBe( true );
-					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
+					expect( ace.subjectsClass.$id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 4 );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#DELETE" );
@@ -2069,7 +2069,7 @@ describe( module( "carbonldp/Auth/ACL" ), ():void => {
 					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-3" );
 					expect( ace.types ).toContain( TransientACE.TYPE );
 					expect( ace.granting ).toBe( true );
-					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
+					expect( ace.subjectsClass.$id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 3 );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#WRITE" );
@@ -2088,7 +2088,7 @@ describe( module( "carbonldp/Auth/ACL" ), ():void => {
 					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject" );
 					expect( ace.types ).toContain( TransientACE.TYPE );
 					expect( ace.granting ).toBe( false );
-					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
+					expect( ace.subjectsClass.$id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 1 );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#READ" );
 					expect( acl.inheritableEntries ).toContain( ace );
@@ -2102,7 +2102,7 @@ describe( module( "carbonldp/Auth/ACL" ), ():void => {
 					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject" );
 					expect( ace.types ).toContain( TransientACE.TYPE );
 					expect( ace.granting ).toBe( false );
-					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
+					expect( ace.subjectsClass.$id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 3 );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#READ" );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#WRITE" );
@@ -2118,7 +2118,7 @@ describe( module( "carbonldp/Auth/ACL" ), ():void => {
 					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-2" );
 					expect( ace.types ).toContain( TransientACE.TYPE );
 					expect( ace.granting ).toBe( false );
-					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
+					expect( ace.subjectsClass.$id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 1 );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
 					expect( acl.inheritableEntries ).toContain( ace );
@@ -2128,7 +2128,7 @@ describe( module( "carbonldp/Auth/ACL" ), ():void => {
 					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject" );
 					expect( ace.types ).toContain( TransientACE.TYPE );
 					expect( ace.granting ).toBe( false );
-					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
+					expect( ace.subjectsClass.$id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 3 );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#READ" );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#WRITE" );
@@ -2144,7 +2144,7 @@ describe( module( "carbonldp/Auth/ACL" ), ():void => {
 					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-2" );
 					expect( ace.types ).toContain( TransientACE.TYPE );
 					expect( ace.granting ).toBe( false );
-					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
+					expect( ace.subjectsClass.$id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 2 );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#DELETE" );
@@ -2155,7 +2155,7 @@ describe( module( "carbonldp/Auth/ACL" ), ():void => {
 					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject" );
 					expect( ace.types ).toContain( TransientACE.TYPE );
 					expect( ace.granting ).toBe( false );
-					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
+					expect( ace.subjectsClass.$id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 4 );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#READ" );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#WRITE" );
@@ -2172,7 +2172,7 @@ describe( module( "carbonldp/Auth/ACL" ), ():void => {
 					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject" );
 					expect( ace.types ).toContain( TransientACE.TYPE );
 					expect( ace.granting ).toBe( false );
-					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
+					expect( ace.subjectsClass.$id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 5 );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#READ" );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#WRITE" );
@@ -2186,7 +2186,7 @@ describe( module( "carbonldp/Auth/ACL" ), ():void => {
 					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-2" );
 					expect( ace.types ).toContain( TransientACE.TYPE );
 					expect( ace.granting ).toBe( false );
-					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
+					expect( ace.subjectsClass.$id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 4 );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#DELETE" );
@@ -2199,7 +2199,7 @@ describe( module( "carbonldp/Auth/ACL" ), ():void => {
 					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-3" );
 					expect( ace.types ).toContain( TransientACE.TYPE );
 					expect( ace.granting ).toBe( false );
-					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
+					expect( ace.subjectsClass.$id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 3 );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#WRITE" );
@@ -2234,7 +2234,7 @@ describe( module( "carbonldp/Auth/ACL" ), ():void => {
 					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject" );
 					expect( ace.types ).toContain( TransientACE.TYPE );
 					expect( ace.granting ).toBe( true );
-					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
+					expect( ace.subjectsClass.$id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 3 );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#CREATE" );
@@ -2244,7 +2244,7 @@ describe( module( "carbonldp/Auth/ACL" ), ():void => {
 					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject" );
 					expect( ace.types ).toContain( TransientACE.TYPE );
 					expect( ace.granting ).toBe( false );
-					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
+					expect( ace.subjectsClass.$id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 1 );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#DELETE" );
 					expect( acl.inheritableEntries ).toContain( ace );
@@ -2255,7 +2255,7 @@ describe( module( "carbonldp/Auth/ACL" ), ():void => {
 					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-2" );
 					expect( ace.types ).toContain( TransientACE.TYPE );
 					expect( ace.granting ).toBe( true );
-					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
+					expect( ace.subjectsClass.$id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 4 );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#READ" );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#WRITE" );
@@ -2266,7 +2266,7 @@ describe( module( "carbonldp/Auth/ACL" ), ():void => {
 					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-2" );
 					expect( ace.types ).toContain( TransientACE.TYPE );
 					expect( ace.granting ).toBe( false );
-					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
+					expect( ace.subjectsClass.$id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 1 );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#DELETE" );
 					expect( acl.inheritableEntries ).toContain( ace );
@@ -2276,7 +2276,7 @@ describe( module( "carbonldp/Auth/ACL" ), ():void => {
 					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-3" );
 					expect( ace.types ).toContain( TransientACE.TYPE );
 					expect( ace.granting ).toBe( true );
-					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
+					expect( ace.subjectsClass.$id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 4 );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#READ" );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#WRITE" );
@@ -2284,7 +2284,7 @@ describe( module( "carbonldp/Auth/ACL" ), ():void => {
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#CREATE" );
 					expect( acl.inheritableEntries ).toContain( ace );
 
-					acl.inheritableEntries.forEach( forEachACE => acl._removeFragment( forEachACE.id ) );
+					acl.inheritableEntries.forEach( forEachACE => acl._removeFragment( forEachACE.$id ) );
 					acl.inheritableEntries = [];
 
 					ace = TransientACE.createFrom( acl.createFragment( {
@@ -2311,7 +2311,7 @@ describe( module( "carbonldp/Auth/ACL" ), ():void => {
 					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject" );
 					expect( ace.types ).toContain( TransientACE.TYPE );
 					expect( ace.granting ).toBe( false );
-					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
+					expect( ace.subjectsClass.$id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 4 );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#CREATE" );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#DELETE" );
@@ -2326,7 +2326,7 @@ describe( module( "carbonldp/Auth/ACL" ), ():void => {
 					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-2" );
 					expect( ace.types ).toContain( TransientACE.TYPE );
 					expect( ace.granting ).toBe( false );
-					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
+					expect( ace.subjectsClass.$id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 4 );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#CREATE" );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#DELETE" );
@@ -2337,7 +2337,7 @@ describe( module( "carbonldp/Auth/ACL" ), ():void => {
 					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-2" );
 					expect( ace.types ).toContain( TransientACE.TYPE );
 					expect( ace.granting ).toBe( true );
-					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
+					expect( ace.subjectsClass.$id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 1 );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#WRITE" );
 					expect( acl.inheritableEntries ).toContain( ace );
@@ -2349,7 +2349,7 @@ describe( module( "carbonldp/Auth/ACL" ), ():void => {
 					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-3" );
 					expect( ace.types ).toContain( TransientACE.TYPE );
 					expect( ace.granting ).toBe( false );
-					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
+					expect( ace.subjectsClass.$id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 3 );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#UPDATE" );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#CREATE" );
@@ -2359,12 +2359,12 @@ describe( module( "carbonldp/Auth/ACL" ), ():void => {
 					expect( Pointer.getIDs( ace.subjects ) ).toContain( "http://example.com/ns#Subject-3" );
 					expect( ace.types ).toContain( TransientACE.TYPE );
 					expect( ace.granting ).toBe( true );
-					expect( ace.subjectsClass.id ).toBe( "http://example.com/ns#SubjetClass" );
+					expect( ace.subjectsClass.$id ).toBe( "http://example.com/ns#SubjetClass" );
 					expect( ace.permissions.length ).toBe( 1 );
 					expect( Pointer.getIDs( ace.permissions ) ).toContain( "http://example.com/ns#WRITE" );
 					expect( acl.inheritableEntries ).toContain( ace );
 
-					acl.inheritableEntries.forEach( forEachACE => acl._removeFragment( forEachACE.id ) );
+					acl.inheritableEntries.forEach( forEachACE => acl._removeFragment( forEachACE.$id ) );
 					acl.inheritableEntries = [];
 					acl.entries = [];
 

@@ -83,7 +83,7 @@ describe( module( "carbonldp/SPARQL/SPARQLDocument" ), () => {
 
 					resource = createMock( {
 						_registry: context.registry,
-						id: "https://example.com/",
+						$id: "https://example.com/",
 					} );
 				} );
 
@@ -256,7 +256,7 @@ describe( module( "carbonldp/SPARQL/SPARQLDocument" ), () => {
 				beforeEach( () => {
 					resource = createMock( {
 						_registry: new DocumentsRegistry(),
-						id: "https://example.com/",
+						$id: "https://example.com/",
 					} );
 				} );
 
@@ -421,7 +421,7 @@ describe( module( "carbonldp/SPARQL/SPARQLDocument" ), () => {
 
 					resource = createMock( {
 						_registry: context.registry,
-						id: "https://example.com/",
+						$id: "https://example.com/",
 					} );
 				} );
 
@@ -594,7 +594,7 @@ describe( module( "carbonldp/SPARQL/SPARQLDocument" ), () => {
 				beforeEach( () => {
 					resource = createMock( {
 						_registry: new DocumentsRegistry(),
-						id: "https://example.com/",
+						$id: "https://example.com/",
 					} );
 				} );
 
@@ -758,7 +758,7 @@ describe( module( "carbonldp/SPARQL/SPARQLDocument" ), () => {
 
 					resource = createMock( {
 						_registry: context.registry,
-						id: "https://example.com/",
+						$id: "https://example.com/",
 					} );
 				} );
 
@@ -931,7 +931,7 @@ describe( module( "carbonldp/SPARQL/SPARQLDocument" ), () => {
 				beforeEach( () => {
 					resource = createMock( {
 						_registry: new DocumentsRegistry(),
-						id: "https://example.com/",
+						$id: "https://example.com/",
 					} );
 				} );
 
@@ -1097,7 +1097,7 @@ describe( module( "carbonldp/SPARQL/SPARQLDocument" ), () => {
 
 					resource = createMock( {
 						_registry: context.registry,
-						id: "https://example.com/",
+						$id: "https://example.com/",
 					} );
 				} );
 
@@ -1270,7 +1270,7 @@ describe( module( "carbonldp/SPARQL/SPARQLDocument" ), () => {
 				beforeEach( () => {
 					resource = createMock( {
 						_registry: new DocumentsRegistry(),
-						id: "https://example.com/",
+						$id: "https://example.com/",
 					} );
 				} );
 
@@ -1435,7 +1435,7 @@ describe( module( "carbonldp/SPARQL/SPARQLDocument" ), () => {
 
 					resource = createMock( {
 						_registry: context.registry,
-						id: "https://example.com/",
+						$id: "https://example.com/",
 					} );
 				} );
 
@@ -1608,7 +1608,7 @@ describe( module( "carbonldp/SPARQL/SPARQLDocument" ), () => {
 				beforeEach( () => {
 					resource = createMock( {
 						_registry: new DocumentsRegistry(),
-						id: "https://example.com/",
+						$id: "https://example.com/",
 					} );
 				} );
 
@@ -1773,7 +1773,7 @@ describe( module( "carbonldp/SPARQL/SPARQLDocument" ), () => {
 
 					resource = createMock( {
 						_registry: context.registry,
-						id: "https://example.com/",
+						$id: "https://example.com/",
 					} );
 				} );
 
@@ -1946,7 +1946,7 @@ describe( module( "carbonldp/SPARQL/SPARQLDocument" ), () => {
 				beforeEach( () => {
 					resource = createMock( {
 						_registry: new DocumentsRegistry(),
-						id: "https://example.com/",
+						$id: "https://example.com/",
 					} );
 				} );
 
@@ -2111,7 +2111,7 @@ describe( module( "carbonldp/SPARQL/SPARQLDocument" ), () => {
 
 					resource = createMock( {
 						_registry: context.registry,
-						id: "https://example.com/",
+						$id: "https://example.com/",
 					} );
 				} );
 
@@ -2284,7 +2284,7 @@ describe( module( "carbonldp/SPARQL/SPARQLDocument" ), () => {
 				beforeEach( () => {
 					resource = createMock( {
 						_registry: new DocumentsRegistry(),
-						id: "https://example.com/",
+						$id: "https://example.com/",
 					} );
 				} );
 
@@ -2442,7 +2442,7 @@ describe( module( "carbonldp/SPARQL/SPARQLDocument" ), () => {
 					context = new CarbonLDP( "https://example.com/" );
 					resource = createMock( {
 						_registry: context.registry,
-						id: "https://example.com/",
+						$id: "https://example.com/",
 					} );
 				} );
 
@@ -2513,7 +2513,7 @@ describe( module( "carbonldp/SPARQL/SPARQLDocument" ), () => {
 				beforeEach( ():void => {
 					resource = createMock( {
 						_registry: new DocumentsRegistry(),
-						id: "https://example.com/",
+						$id: "https://example.com/",
 					} );
 				} );
 

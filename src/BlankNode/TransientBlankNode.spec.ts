@@ -119,22 +119,22 @@ describe( module( "carbonldp/BlankNode" ), ():void => {
 
 			it( "should throw error if id not a blank node label", ():void => {
 				const object:BaseBlankNode = {
-					id: "not a blank-node label",
+					$id: "not a blank-node label",
 				};
 				expect( () => TransientBlankNode.createFrom( object ) ).toThrowError( IllegalArgumentError, `The id "not a blank-node label" is not a blank node label.` );
 			} );
 
 			it( "should maintain the blank node label id", ():void => {
 				const bNode:TransientBlankNode = TransientBlankNode.createFrom( {
-					id: "_:blank-node-label",
+					$id: "_:blank-node-label",
 				} );
 
-				expect( bNode.id ).toBe( "_:blank-node-label" );
+				expect( bNode.$id ).toBe( "_:blank-node-label" );
 			} );
 
 			it( "should create a blank node label id not provided", ():void => {
 				const bNode:TransientBlankNode = TransientBlankNode.createFrom( {} );
-				expect( URI.isBNodeID( bNode.id ) ).toBe( true );
+				expect( URI.isBNodeID( bNode.$id ) ).toBe( true );
 			} );
 
 

@@ -597,8 +597,8 @@ describe( module( "carbonldp/SPARQL/QueryDocument/QueryDocumentBuilder" ), ():vo
 				);
 
 				builder.values(
-					builder.object( Pointer.create( { id: "http://example.com/pointer-1" } ) ),
-					builder.object( Pointer.create( { id: "ex:pointer2" } ) )
+					builder.object( Pointer.create( { $id: "http://example.com/pointer-1" } ) ),
+					builder.object( Pointer.create( { $id: "ex:pointer2" } ) )
 				);
 				expect( baseProperty.getPatterns() ).toContain( new ValuesToken()
 					.addValues(
@@ -615,7 +615,7 @@ describe( module( "carbonldp/SPARQL/QueryDocument/QueryDocumentBuilder" ), ():vo
 			it( "should throw error if blank node is provided", ():void => {
 				const builder:QueryDocumentBuilder = new QueryDocumentBuilder( queryContext, baseProperty );
 				const helper:( label:string ) => void = label => () => {
-					builder.values( builder.object( Pointer.create( { id: label } ) ) );
+					builder.values( builder.object( Pointer.create( { $id: label } ) ) );
 				};
 
 				expect( helper( "_:blank-node" ) ).toThrowError( IllegalArgumentError, `Blank node "_:blank-node" is not a valid value.` );

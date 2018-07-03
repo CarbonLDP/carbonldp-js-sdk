@@ -174,7 +174,7 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 
 
 			it( "should throw error when _registry undefined", async () => {
-				const resource:QueryDocumentDocument = createMock( { _registry: void 0 } );
+				const resource:QueryDocumentDocument = createMock( { $parentRegistry: void 0 } );
 
 				await resource
 					.get( _ => _ )
@@ -192,7 +192,7 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 				let resource:QueryDocumentDocument;
 				beforeEach( ():void => {
 					context = new CarbonLDP( "https://example.com/" );
-					resource = createMock( { _registry: context.registry } );
+					resource = createMock( { $parentRegistry: context.registry } );
 				} );
 
 
@@ -269,7 +269,7 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 				it( "should parse error response", async () => {
 					stubRequest( "https://example.com/", { status: 500 } );
 
-					const spy:jasmine.Spy = spyOn( resource._registry, "_parseFailedResponse" )
+					const spy:jasmine.Spy = spyOn( resource.$parentRegistry, "_parseFailedResponse" )
 						.and.callFake( () => Promise.reject( null ) );
 
 					await resource
@@ -1253,7 +1253,7 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 					}
 
 					resource = createMock( {
-						_registry: context.registry,
+						$parentRegistry: context.registry,
 
 						_partialMetadata: createMockPartialMetadata( {
 							"@vocab": "https://example.com/ns#",
@@ -1270,7 +1270,7 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 								"@type": XSD.string,
 							},
 						} ),
-						id: "https://example.com/",
+						$id: "https://example.com/",
 
 						property4: true,
 						property1: "value",
@@ -1298,8 +1298,8 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 						},
 					} );
 
-					resource._registry
-						._resourcesMap.set( "", resource as any );
+					resource.$parentRegistry
+						.__resourcesMap.set( "", resource as any );
 					context
 						.extendObjectSchema( {
 							"@vocab": "https://example.com/ns#",
@@ -1356,7 +1356,7 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 
 				it( "should merge partial metadata", async () => {
 					resource = createMock( {
-						_registry: context.registry,
+						$parentRegistry: context.registry,
 
 						_partialMetadata: createMockPartialMetadata( {
 							"@vocab": "https://example.com/ns#",
@@ -1369,7 +1369,7 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 								"@type": XSD.string,
 							},
 						} ),
-						id: "https://example.com/",
+						$id: "https://example.com/",
 
 						property2: {
 							_partialMetadata: createMockPartialMetadata( {
@@ -1387,8 +1387,8 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 						},
 					} );
 
-					resource._registry
-						._resourcesMap.set( "", resource as any );
+					resource.$parentRegistry
+						.__resourcesMap.set( "", resource as any );
 					context
 						.extendObjectSchema( {
 							"@vocab": "https://example.com/ns#",
@@ -1559,7 +1559,7 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 
 
 			it( "should throw error when _registry undefined", async () => {
-				const resource:QueryDocumentDocument = createMock( { _registry: void 0 } );
+				const resource:QueryDocumentDocument = createMock( { $parentRegistry: void 0 } );
 
 				await resource
 					.resolve( _ => _ )
@@ -1577,7 +1577,7 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 				let resource:QueryDocumentDocument;
 				beforeEach( ():void => {
 					context = new CarbonLDP( "https://example.com/" );
-					resource = createMock( { _registry: context.registry } );
+					resource = createMock( { $parentRegistry: context.registry } );
 				} );
 
 
@@ -1591,7 +1591,7 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 				it( "should parse error response", async () => {
 					stubRequest( "https://example.com/", { status: 500 } );
 
-					const spy:jasmine.Spy = spyOn( resource._registry, "_parseFailedResponse" )
+					const spy:jasmine.Spy = spyOn( resource.$parentRegistry, "_parseFailedResponse" )
 						.and.callFake( () => Promise.reject( null ) );
 
 					await resource
@@ -2475,7 +2475,7 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 					}
 
 					resource = createMock( {
-						_registry: context.registry,
+						$parentRegistry: context.registry,
 
 						_partialMetadata: createMockPartialMetadata( {
 							"@vocab": "https://example.com/ns#",
@@ -2492,7 +2492,7 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 								"@type": XSD.string,
 							},
 						} ),
-						id: "https://example.com/",
+						$id: "https://example.com/",
 
 						property4: true,
 						property1: "value",
@@ -2520,8 +2520,8 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 						},
 					} );
 
-					resource._registry
-						._resourcesMap.set( "", resource as any );
+					resource.$parentRegistry
+						.__resourcesMap.set( "", resource as any );
 					context
 						.extendObjectSchema( {
 							"@vocab": "https://example.com/ns#",
@@ -2578,7 +2578,7 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 
 				it( "should merge partial metadata", async () => {
 					resource = createMock( {
-						_registry: context.registry,
+						$parentRegistry: context.registry,
 
 						_partialMetadata: createMockPartialMetadata( {
 							"@vocab": "https://example.com/ns#",
@@ -2591,7 +2591,7 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 								"@type": XSD.string,
 							},
 						} ),
-						id: "https://example.com/",
+						$id: "https://example.com/",
 
 						property2: {
 							_partialMetadata: createMockPartialMetadata( {
@@ -2609,8 +2609,8 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 						},
 					} );
 
-					resource._registry
-						._resourcesMap.set( "", resource as any );
+					resource.$parentRegistry
+						.__resourcesMap.set( "", resource as any );
 					context
 						.extendObjectSchema( {
 							"@vocab": "https://example.com/ns#",
@@ -2771,7 +2771,7 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 
 
 			it( "should throw error when _registry undefined", async () => {
-				const resource:QueryDocumentDocument = createMock( { _registry: void 0 } );
+				const resource:QueryDocumentDocument = createMock( { $parentRegistry: void 0 } );
 
 				await resource
 					.refresh()
@@ -2785,7 +2785,7 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 			it( "should throw error when NOT a partial", async () => {
 				const resource:QueryDocumentDocument = createMock( {
 					_partialMetadata: void 0,
-					id: "https://example.com/",
+					$id: "https://example.com/",
 				} );
 
 				await resource
@@ -2805,7 +2805,7 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 				let resource:QueryDocumentDocument;
 				beforeEach( ():void => {
 					context = new CarbonLDP( "https://example.com/" );
-					resource = createMock( { _registry: context.registry } );
+					resource = createMock( { $parentRegistry: context.registry } );
 				} );
 
 
@@ -2819,7 +2819,7 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 				it( "should parse error response", async () => {
 					stubRequest( "https://example.com/", { status: 500 } );
 
-					const spy:jasmine.Spy = spyOn( resource._registry, "_parseFailedResponse" )
+					const spy:jasmine.Spy = spyOn( resource.$parentRegistry, "_parseFailedResponse" )
 						.and.callFake( () => Promise.reject( null ) );
 
 					await resource
@@ -2872,7 +2872,7 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 
 				it( "should send refresh CONSTRUCT query", () => {
 					resource = createMock( {
-						_registry: context.registry,
+						$parentRegistry: context.registry,
 
 						_partialMetadata: createMockPartialMetadata( {
 							"@vocab": "https://example.com/ns#",
@@ -2889,7 +2889,7 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 								"@type": "string",
 							},
 						} ),
-						id: "https://example.com/",
+						$id: "https://example.com/",
 
 						property2: {
 							_partialMetadata: createMockPartialMetadata( {
@@ -2983,7 +2983,7 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 
 				it( "should send refresh CONSTRUCT query when document is .ALL", () => {
 					resource = createMock( {
-						_registry: context.registry,
+						$parentRegistry: context.registry,
 
 						_partialMetadata: createMockPartialMetadata( {
 							"@vocab": "https://example.com/ns#",
@@ -3000,7 +3000,7 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 								"@type": "string",
 							},
 						} ),
-						id: "https://example.com/",
+						$id: "https://example.com/",
 
 						property2: {
 							_partialMetadata: new PartialMetadata( PartialMetadata.ALL ),
@@ -3112,7 +3112,7 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 
 
 					resource = createMock( {
-						_registry: context.registry,
+						$parentRegistry: context.registry,
 
 						_partialMetadata: createMockPartialMetadata( {
 							"@vocab": "https://example.com/ns#",
@@ -3129,7 +3129,7 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 								"@type": XSD.boolean,
 							},
 						} ),
-						id: "https://example.com/",
+						$id: "https://example.com/",
 
 						property1: "value",
 						property3: "non query-value",
@@ -3160,7 +3160,7 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 					} );
 
 					resource._syncSavedFragments();
-					resource._registry._resourcesMap.set( "", resource as any );
+					resource.$parentRegistry.__resourcesMap.set( "", resource as any );
 
 					context
 						.extendObjectSchema( {
@@ -3272,9 +3272,9 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 					} );
 
 					resource = createMock( {
-						_registry: context.registry,
+						$parentRegistry: context.registry,
 						_eTag: "\"0-12345\"",
-						id: "https://example.com/",
+						$id: "https://example.com/",
 					} );
 					const returned:QueryDocumentDocument = await resource.refresh();
 
@@ -3341,15 +3341,15 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 					} );
 
 					resource = createMock( {
-						_registry: context.registry,
+						$parentRegistry: context.registry,
 						_eTag: "\"1-12345\"",
-						id: "https://example.com/",
+						$id: "https://example.com/",
 
 						property1: "value",
 					} );
 
-					resource._registry
-						._resourcesMap.set( "", resource as any );
+					resource.$parentRegistry
+						.__resourcesMap.set( "", resource as any );
 					context
 						.extendObjectSchema( {
 							"@vocab": "https://example.com/ns#",
@@ -3434,7 +3434,7 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 
 			it( "should throw error when _registry undefined", async () => {
 				try {
-					const resource:QueryDocumentDocument = createMock( { _registry: void 0 } );
+					const resource:QueryDocumentDocument = createMock( { $parentRegistry: void 0 } );
 					await resource.save();
 				} catch( e ) {
 					expect( () => { throw e; } )
@@ -3449,12 +3449,12 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 				let resource:QueryDocumentDocument;
 				beforeEach( ():void => {
 					context = new CarbonLDP( "https://example.com/" );
-					resource = createMock( { _registry: context.registry } );
+					resource = createMock( { $parentRegistry: context.registry } );
 				} );
 
 
 				it( "should throw error when self ID is outside context scope", async () => {
-					resource.id = "https://example.org/resource/";
+					resource.$id = "https://example.org/resource/";
 
 					await resource
 						.save()
@@ -3467,7 +3467,7 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 
 
 				it( "should send request self ID", async () => {
-					resource.id = "https://example.com/";
+					resource.$id = "https://example.com/";
 
 					Object.defineProperty( resource, "isDirty", { writable: true } );
 					spyOn( resource, "isDirty" ).and.returnValue( true );
@@ -3489,9 +3489,9 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 
 				it( "should throw error when outdated", async () => {
 					resource = createMock( {
-						_registry: context.registry,
+						$parentRegistry: context.registry,
 						_eTag: null,
-						id: "https://example.com/",
+						$id: "https://example.com/",
 					} );
 
 					await resource
@@ -3510,7 +3510,7 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 					Object.defineProperty( resource, "isDirty", { writable: true } );
 					spyOn( resource, "isDirty" ).and.returnValue( true );
 
-					const spy:jasmine.Spy = spyOn( resource._registry, "_parseFailedResponse" )
+					const spy:jasmine.Spy = spyOn( resource.$parentRegistry, "_parseFailedResponse" )
 						.and.callFake( () => Promise.reject( null ) );
 
 					try {
@@ -3526,9 +3526,9 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 
 				it( "should send basic request headers", async () => {
 					resource = createMock( {
-						_registry: context.registry,
+						$parentRegistry: context.registry,
 						_eTag: "\"1-12345\"",
-						id: "https://example.com/",
+						$id: "https://example.com/",
 					} );
 
 					Object.defineProperty( resource, "isDirty", { writable: true } );
@@ -3591,7 +3591,7 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 
 					let object:MyDoc;
 					object = resource = createMock( {
-						_registry: context.registry,
+						$parentRegistry: context.registry,
 
 						types: [ "https://example.com/ns#Document" ],
 						list: [ 1, 2, 3, 4, 5 ],
@@ -3730,7 +3730,7 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 					} );
 
 					resource = createMock( {
-						_registry: context.registry,
+						$parentRegistry: context.registry,
 
 						blankNode1: {
 							id: "_:1",
@@ -3741,7 +3741,7 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 							string: "blank node 2",
 						},
 					} );
-					resource._registry._resourcesMap.set( "", resource as any );
+					resource.$parentRegistry.__resourcesMap.set( "", resource as any );
 
 					type BNode = { id:string, string:string };
 					type MyDoc = { blankNode1:BNode, blankNode2:BNode };
@@ -3817,7 +3817,7 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 
 			it( "should throw error when _registry undefined", async () => {
 				try {
-					const resource:QueryDocumentDocument = createMock( { _registry: void 0 } );
+					const resource:QueryDocumentDocument = createMock( { $parentRegistry: void 0 } );
 					await resource.saveAndRefresh();
 				} catch( e ) {
 					expect( () => { throw e; } )
@@ -3832,14 +3832,14 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 				let resource:QueryDocumentDocument;
 				beforeEach( ():void => {
 					context = new CarbonLDP( "https://example.com/" );
-					resource = createMock( { _registry: context.registry } );
+					resource = createMock( { $parentRegistry: context.registry } );
 				} );
 
 
 				it( "should throw error when self ID is outside context scope", async () => {
 					resource = createMock( {
-						_registry: context.registry,
-						id: "https://example.org/resource/",
+						$parentRegistry: context.registry,
+						$id: "https://example.org/resource/",
 					} );
 
 					await resource
@@ -3853,8 +3853,8 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 
 				it( "should throw error when self ID is BNode label", async () => {
 					resource = createMock( {
-						_registry: context.registry,
-						id: "_:1",
+						$parentRegistry: context.registry,
+						$id: "_:1",
 					} );
 
 					await resource
@@ -3868,8 +3868,8 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 
 				it( "should throw error when self ID is Named Fragment label", async () => {
 					resource = createMock( {
-						_registry: context.registry,
-						id: "https://example.com/#fragment",
+						$parentRegistry: context.registry,
+						$id: "https://example.com/#fragment",
 					} );
 
 					await resource
@@ -3883,8 +3883,8 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 
 				it( "should throw error when self ID is unresolved prefixed name", async () => {
 					resource = createMock( {
-						_registry: context.registry,
-						id: "ex:resource/",
+						$parentRegistry: context.registry,
+						$id: "ex:resource/",
 					} );
 
 					await resource
@@ -3925,10 +3925,10 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 
 				it( "should throw error when outdated", async () => {
 					resource = createMock( {
-						_registry: context.registry,
+						$parentRegistry: context.registry,
 						$$isDirty: true,
 						_eTag: null,
-						id: "https://example.com/",
+						$id: "https://example.com/",
 					} );
 
 					await resource
@@ -3947,7 +3947,7 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 					Object.defineProperty( resource, "isDirty", { writable: true } );
 					spyOn( resource, "isDirty" ).and.returnValue( true );
 
-					const spy:jasmine.Spy = spyOn( resource._registry, "_parseFailedResponse" )
+					const spy:jasmine.Spy = spyOn( resource.$parentRegistry, "_parseFailedResponse" )
 						.and.callFake( () => Promise.reject( null ) );
 
 					try {
@@ -3965,9 +3965,9 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 					stubRequest( "https://example.com/" );
 
 					resource = createMock( {
-						_registry: context.registry,
+						$parentRegistry: context.registry,
 						_eTag: "\"1-12345\"",
-						id: "https://example.com/",
+						$id: "https://example.com/",
 					} );
 
 					Object.defineProperty( resource, "isDirty", { writable: true } );
@@ -4041,7 +4041,7 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 
 					let object:MyDoc;
 					object = resource = createMock( {
-						_registry: context.registry,
+						$parentRegistry: context.registry,
 
 						types: [ "https://example.com/ns#Document" ],
 						list: [ 1, 2, 3, 4, 5 ],
@@ -4132,7 +4132,7 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 
 				it( "should send refresh CONSTRUCT query", () => {
 					resource = createMock( {
-						_registry: context.registry,
+						$parentRegistry: context.registry,
 
 						_partialMetadata: createMockPartialMetadata( {
 							"@vocab": "https://example.com/ns#",
@@ -4149,7 +4149,7 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 								"@type": "string",
 							},
 						} ),
-						id: "https://example.com/",
+						$id: "https://example.com/",
 
 						property2: {
 							_partialMetadata: createMockPartialMetadata( {
@@ -4295,7 +4295,7 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 					} );
 
 					resource = createMock( {
-						_registry: context.registry,
+						$parentRegistry: context.registry,
 						eTag: "\"0-12345\"",
 						string: "document",
 					} );
@@ -4382,7 +4382,7 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 			}
 
 			it( "should throw error when _registry undefined", async () => {
-				const resource:QueryDocumentDocument = createMock( { _registry: void 0 } );
+				const resource:QueryDocumentDocument = createMock( { $parentRegistry: void 0 } );
 
 				await resource
 					.getChildren()
@@ -4401,7 +4401,7 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 				let resource:QueryDocumentDocument;
 				beforeEach( ():void => {
 					context = new CarbonLDP( "https://example.com/" );
-					resource = createMock( { _registry: context.registry } );
+					resource = createMock( { $parentRegistry: context.registry } );
 				} );
 
 				it( "should request self when no URI", async () => {
@@ -4477,7 +4477,7 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 				it( "should parse error response", async () => {
 					stubRequest( "https://example.com/", { status: 500 } );
 
-					const spy:jasmine.Spy = spyOn( resource._registry, "_parseFailedResponse" )
+					const spy:jasmine.Spy = spyOn( resource.$parentRegistry, "_parseFailedResponse" )
 						.and.callFake( () => Promise.reject( null ) );
 
 					await resource
@@ -6193,7 +6193,7 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 			}
 
 			it( "should throw error when _registry undefined", async () => {
-				const resource:QueryDocumentDocument = createMock( { _registry: void 0 } );
+				const resource:QueryDocumentDocument = createMock( { $parentRegistry: void 0 } );
 
 				await resource
 					.getMembers()
@@ -6212,7 +6212,7 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 				let resource:QueryDocumentDocument;
 				beforeEach( ():void => {
 					context = new CarbonLDP( "https://example.com/" );
-					resource = createMock( { _registry: context.registry } );
+					resource = createMock( { $parentRegistry: context.registry } );
 				} );
 
 				it( "should request self when no URI", async () => {
@@ -6288,7 +6288,7 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 				it( "should parse error response", async () => {
 					stubRequest( "https://example.com/", { status: 500 } );
 
-					const spy:jasmine.Spy = spyOn( resource._registry, "_parseFailedResponse" )
+					const spy:jasmine.Spy = spyOn( resource.$parentRegistry, "_parseFailedResponse" )
 						.and.callFake( () => Promise.reject( null ) );
 
 					await resource
@@ -8114,7 +8114,7 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 			}
 
 			it( "should throw error when _registry undefined", async () => {
-				const resource:QueryDocumentDocument = createMock( { _registry: void 0 } );
+				const resource:QueryDocumentDocument = createMock( { $parentRegistry: void 0 } );
 
 				await resource
 					.listChildren()
@@ -8133,7 +8133,7 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 				let resource:QueryDocumentDocument;
 				beforeEach( ():void => {
 					context = new CarbonLDP( "https://example.com/" );
-					resource = createMock( { _registry: context.registry } );
+					resource = createMock( { $parentRegistry: context.registry } );
 				} );
 
 				it( "should request self when no URI", async () => {
@@ -8209,7 +8209,7 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 				it( "should parse error response", async () => {
 					stubRequest( "https://example.com/", { status: 500 } );
 
-					const spy:jasmine.Spy = spyOn( resource._registry, "_parseFailedResponse" )
+					const spy:jasmine.Spy = spyOn( resource.$parentRegistry, "_parseFailedResponse" )
 						.and.callFake( () => Promise.reject( null ) );
 
 					await resource
@@ -8569,7 +8569,7 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 			}
 
 			it( "should throw error when _registry undefined", async () => {
-				const resource:QueryDocumentDocument = createMock( { _registry: void 0 } );
+				const resource:QueryDocumentDocument = createMock( { $parentRegistry: void 0 } );
 
 				await resource
 					.listMembers()
@@ -8588,7 +8588,7 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 				let resource:QueryDocumentDocument;
 				beforeEach( ():void => {
 					context = new CarbonLDP( "https://example.com/" );
-					resource = createMock( { _registry: context.registry } );
+					resource = createMock( { $parentRegistry: context.registry } );
 				} );
 
 				it( "should request self when no URI", async () => {
@@ -8664,7 +8664,7 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 				it( "should parse error response", async () => {
 					stubRequest( "https://example.com/", { status: 500 } );
 
-					const spy:jasmine.Spy = spyOn( resource._registry, "_parseFailedResponse" )
+					const spy:jasmine.Spy = spyOn( resource.$parentRegistry, "_parseFailedResponse" )
 						.and.callFake( () => Promise.reject( null ) );
 
 					await resource

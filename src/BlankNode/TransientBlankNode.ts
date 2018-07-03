@@ -36,10 +36,10 @@ export const TransientBlankNode:TransientBlankNodeFactory = {
 	},
 
 	createFrom<T extends object>( object:T & BaseBlankNode ):T & TransientBlankNode {
-		if( ! object.id ) {
-			object.id = URI.generateBNodeID();
-		} else if( ! URI.isBNodeID( object.id ) ) {
-			throw new IllegalArgumentError( `The id "${ object.id }" is not a blank node label.` );
+		if( ! object.$id ) {
+			object.$id = URI.generateBNodeID();
+		} else if( ! URI.isBNodeID( object.$id ) ) {
+			throw new IllegalArgumentError( `The id "${ object.$id }" is not a blank node label.` );
 		}
 
 		return TransientBlankNode.decorate( object );

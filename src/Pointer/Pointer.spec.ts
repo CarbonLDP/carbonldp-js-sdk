@@ -142,21 +142,21 @@ describe( module( "carbonldp/Pointer" ), ():void => {
 				pointer = {
 					_registry: void 0,
 					_id: null,
-					id: null,
+					$id: null,
 				};
 				expect( Pointer.isDecorated( pointer ) ).toBe( true );
 
 				delete pointer._registry;
 				expect( Pointer.isDecorated( pointer ) ).toBe( true );
-				pointer._registry = void 0;
+				pointer.$parentRegistry = void 0;
 
 				delete pointer._id;
 				expect( Pointer.isDecorated( pointer ) ).toBe( false );
 				pointer._id = null;
 
-				delete pointer.id;
+				delete pointer.$id;
 				expect( Pointer.isDecorated( pointer ) ).toBe( false );
-				pointer.id = null;
+				pointer.$id = null;
 			} );
 
 		} );
@@ -177,7 +177,7 @@ describe( module( "carbonldp/Pointer" ), ():void => {
 				const target:Pointer = {
 					_registry: void 0,
 					_id: null,
-					id: null,
+					$id: null,
 				};
 				expect( Pointer.is( target ) ).toBe( true );
 			} );
@@ -193,18 +193,18 @@ describe( module( "carbonldp/Pointer" ), ():void => {
 
 
 			it( "should assign the `id` in `Pointer._id`", ():void => {
-				const pointer:Pointer = Pointer.create( { id: "https://example.com/pointer/" } );
+				const pointer:Pointer = Pointer.create( { $id: "https://example.com/pointer/" } );
 				expect( pointer._id ).toBe( "https://example.com/pointer/" );
 			} );
 
 			it( "should set empty string in `Pointer._id` if no id`` provided", ():void => {
 				const pointer:Pointer = Pointer.create( {} );
-				expect( pointer.id ).toBe( "" );
+				expect( pointer.$id ).toBe( "" );
 			} );
 
 			it( "should set empty string in `Pointer._id` none provided", ():void => {
 				const pointer:Pointer = Pointer.create();
-				expect( pointer.id ).toBe( "" );
+				expect( pointer.$id ).toBe( "" );
 			} );
 
 
@@ -218,7 +218,7 @@ describe( module( "carbonldp/Pointer" ), ():void => {
 			it( "should call Pointer.createFrom", ():void => {
 				const spy:jasmine.Spy = spyOn( Pointer, "createFrom" );
 
-				Pointer.create( { the: "data", id: "" } );
+				Pointer.create( { the: "data", $id: "" } );
 				expect( spy ).toHaveBeenCalledWith( { the: "data", id: "" } );
 			} );
 
@@ -233,13 +233,13 @@ describe( module( "carbonldp/Pointer" ), ():void => {
 
 
 			it( "should assign the `id` in `Pointer._id`", ():void => {
-				const pointer:Pointer = Pointer.createFrom( { id: "https://example.com/pointer/" } );
+				const pointer:Pointer = Pointer.createFrom( { $id: "https://example.com/pointer/" } );
 				expect( pointer._id ).toBe( "https://example.com/pointer/" );
 			} );
 
 			it( "should set empty string in `Pointer._id` if no id`` provided", ():void => {
 				const pointer:Pointer = Pointer.createFrom( {} );
-				expect( pointer.id ).toBe( "" );
+				expect( pointer.$id ).toBe( "" );
 			} );
 
 
@@ -253,7 +253,7 @@ describe( module( "carbonldp/Pointer" ), ():void => {
 			it( "should call Pointer.decorate", ():void => {
 				const spy:jasmine.Spy = spyOn( Pointer, "decorate" );
 
-				Pointer.create( { the: "data", id: "" } );
+				Pointer.create( { the: "data", $id: "" } );
 				expect( spy ).toHaveBeenCalledWith( { the: "data", id: "" } );
 			} );
 
@@ -287,13 +287,13 @@ describe( module( "carbonldp/Pointer" ), ():void => {
 				const pointer:Pointer = Pointer.decorate( {} );
 
 				pointer._id = "https://example.com/pointer/";
-				expect( pointer.id ).toBe( "https://example.com/pointer/" );
+				expect( pointer.$id ).toBe( "https://example.com/pointer/" );
 			} );
 
 			it( "should set setter as `Pointer.id` of `Pointer._id`", ():void => {
 				const pointer:Pointer = Pointer.decorate( {} );
 
-				pointer.id = "https://example.com/pointer/";
+				pointer.$id = "https://example.com/pointer/";
 				expect( pointer._id ).toBe( "https://example.com/pointer/" );
 			} );
 
@@ -308,8 +308,8 @@ describe( module( "carbonldp/Pointer" ), ():void => {
 
 			it( "should return true when same ID", () => {
 				const returned:boolean = Pointer.areEqual(
-					Pointer.create( { id: "the-same-id/" } ),
-					Pointer.create( { id: "the-same-id/" } )
+					Pointer.create( { $id: "the-same-id/" } ),
+					Pointer.create( { $id: "the-same-id/" } )
 				);
 
 				expect( returned ).toBe( true );
@@ -317,8 +317,8 @@ describe( module( "carbonldp/Pointer" ), ():void => {
 
 			it( "should return false when different ID", () => {
 				const returned:boolean = Pointer.areEqual(
-					Pointer.create( { id: "different-id-1/" } ),
-					Pointer.create( { id: "different-id-2/" } )
+					Pointer.create( { $id: "different-id-1/" } ),
+					Pointer.create( { $id: "different-id-2/" } )
 				);
 
 				expect( returned ).toBe( false );
@@ -335,9 +335,9 @@ describe( module( "carbonldp/Pointer" ), ():void => {
 
 			it( "should return the IDs", ():void => {
 				const pointers:Pointer[] = [
-					Pointer.create( { id: "http://example.com/resource-1/" } ),
-					Pointer.create( { id: "http://example.com/resource-2/" } ),
-					Pointer.create( { id: "http://example.com/resource-3/" } ),
+					Pointer.create( { $id: "http://example.com/resource-1/" } ),
+					Pointer.create( { $id: "http://example.com/resource-2/" } ),
+					Pointer.create( { $id: "http://example.com/resource-3/" } ),
 				];
 
 				const ids:string[] = Pointer.getIDs( pointers );

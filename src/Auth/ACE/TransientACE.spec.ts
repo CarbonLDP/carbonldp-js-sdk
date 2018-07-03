@@ -217,28 +217,28 @@ describe( module( "carbonldp/Auth/ACE" ), ():void => {
 
 			ace = TransientACE.createFrom( {
 				granting: true,
-				permissions: [ Pointer.create( { id: "3" } ) ],
-				subjects: [ Pointer.create( { id: "1" } ) ],
-				subjectsClass: Pointer.create( { id: "2" } ),
+				permissions: [ Pointer.create( { $id: "3" } ) ],
+				subjects: [ Pointer.create( { $id: "1" } ) ],
+				subjectsClass: Pointer.create( { $id: "2" } ),
 			} );
 			expect( ace.types ).toContain( TransientACE.TYPE );
 			expect( ace.granting ).toBe( true );
 			expect( Pointer.getIDs( ace.subjects ) ).toContain( "1" );
-			expect( ace.subjectsClass.id ).toContain( "2" );
+			expect( ace.subjectsClass.$id ).toContain( "2" );
 			expect( Pointer.getIDs( ace.permissions ) ).toContain( "3" );
 			expect( ace[ "some" ] ).toBeUndefined();
 
 			ace = TransientACE.createFrom( {
 				some: "some",
 				granting: false,
-				permissions: [ Pointer.create( { id: "6" } ) ],
-				subjects: [ Pointer.create( { id: "4" } ) ],
-				subjectsClass: Pointer.create( { id: "5" } ),
+				permissions: [ Pointer.create( { $id: "6" } ) ],
+				subjects: [ Pointer.create( { $id: "4" } ) ],
+				subjectsClass: Pointer.create( { $id: "5" } ),
 			} );
 			expect( ace.types ).toContain( TransientACE.TYPE );
 			expect( ace.granting ).toBe( false );
 			expect( Pointer.getIDs( ace.subjects ) ).toContain( "4" );
-			expect( ace.subjectsClass.id ).toContain( "5" );
+			expect( ace.subjectsClass.$id ).toContain( "5" );
 			expect( Pointer.getIDs( ace.permissions ) ).toContain( "6" );
 			expect( ace[ "some" ] ).toBe( "some" );
 		} );

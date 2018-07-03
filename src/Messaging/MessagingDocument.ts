@@ -106,14 +106,14 @@ type OnError = ( error:Error ) => void;
 
 function getMessagingService( repository:MessagingDocument ):MessagingService {
 	if( ! repository._registry || ! repository._registry.context || ! repository._registry.context.messaging )
-		throw new IllegalActionError( `"${ repository.id }" doesn't support messaging subscriptions.` );
+		throw new IllegalActionError( `"${ repository.$id }" doesn't support messaging subscriptions.` );
 
 	return repository._registry.context.messaging;
 }
 
 function parseParams<T extends EventMessage>( resource:Pointer, uriPatternOROnEvent:string | OnEvent<T>, onEventOrOnError:OnEvent<T> | OnError, onError:OnError | undefined ):{ uriPattern:string, onEvent:OnEvent<T>, onError:OnError | undefined } {
 	const uriPattern:string = isString( uriPatternOROnEvent ) ?
-		URI.resolve( resource.id, uriPatternOROnEvent ) : resource.id;
+		URI.resolve( resource.$id, uriPatternOROnEvent ) : resource.$id;
 
 	const onEvent:OnEvent<T> = isFunction( uriPatternOROnEvent ) ?
 		uriPatternOROnEvent : onEventOrOnError as OnEvent<T>;

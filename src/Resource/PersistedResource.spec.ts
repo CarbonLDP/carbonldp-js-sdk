@@ -286,7 +286,7 @@ describe( module( "carbonldp/PersistedResource" ), ():void => {
 				it( "should not sync ID", ():void => {
 					const resource:PersistedResource = PersistedResource.decorate( {} );
 
-					resource.id = "https://example.com/resource/";
+					resource.$id = "https://example.com/resource/";
 					resource._syncSnapshot();
 
 					expect( resource._snapshot ).not.toEqual( jasmine.objectContaining( {
@@ -381,7 +381,7 @@ describe( module( "carbonldp/PersistedResource" ), ():void => {
 					} );
 					resource._syncSnapshot();
 
-					resource.id = "https://exampple.com/another-resource/";
+					resource.$id = "https://exampple.com/another-resource/";
 
 					expect( resource.isDirty() ).toBe( false );
 				} );
@@ -501,7 +501,7 @@ describe( module( "carbonldp/PersistedResource" ), ():void => {
 					} );
 					resource._syncSnapshot();
 
-					resource.id = "https://exampple.com/another-resource/";
+					resource.$id = "https://exampple.com/another-resource/";
 					resource.revert();
 
 					expect( resource ).toEqual( jasmine.objectContaining( {

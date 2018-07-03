@@ -34,7 +34,7 @@ import { Registry } from "./Registry";
 export class RegistryService<M extends Pointer, C extends AbstractContext<M, any> = undefined> implements Registry<M>, ObjectSchemaResolver {
 	readonly context:C | undefined;
 
-	get _registry():Registry<any> | undefined {
+	get $parentRegistry():Registry<any> | undefined {
 		return this.context
 			&& this.context.parentContext
 			&& this.context.parentContext.registry
@@ -42,7 +42,7 @@ export class RegistryService<M extends Pointer, C extends AbstractContext<M, any
 	}
 
 	protected readonly _model:ModelDecorator<M>;
-	readonly _resourcesMap:Map<string, M>;
+	readonly __resourcesMap:Map<string, M>;
 
 	protected readonly _documentDecorators:Map<string, ( object:object ) => object>;
 	get documentDecorators():Map<string, ( object:object ) => object> { return this._documentDecorators; }
@@ -63,34 +63,34 @@ export class RegistryService<M extends Pointer, C extends AbstractContext<M, any
 		this.context = context;
 		this._model = model;
 
-		this._resourcesMap = new Map();
+		this.__resourcesMap = new Map();
 
 		this._documentDecorators = MapUtils.extend( new Map(), context && context.parentContext && context.parentContext.registry.documentDecorators );
 		this._jsonldConverter = new JSONLDConverter( context && context.parentContext && context.parentContext.registry.jsonldConverter.literalSerializers );
 	}
 
 
-	_getLocalID( id:string ):string {
+	__getLocalID( id:string ):string {
 		if( ! this.context ) return id;
 
 		const schema:DigestedObjectSchema = this.context.getObjectSchema();
 		const iri:string = ObjectSchemaUtils.resolveURI( id, schema );
 
 		if( ! URI.isBaseOf( this.context.baseURI, iri ) )
-			return Registry.PROTOTYPE._getLocalID.call( this, id );
+			return Registry.PROTOTYPE.__getLocalID.call( this, id );
 
 		return URI.getRelativeURI( iri, this.context.baseURI );
 	}
 
-	_register<T extends object>( base:T & { id:string } ):T & M {
-		const pointer:T & Pointer = Registry.PROTOTYPE._register.call( this, base );
+	_addPointer<T extends object>( base:T & { id:string } ):T & M {
+		const pointer:T & Pointer = Registry.PROTOTYPE._addPointer.call( this, base );
 		const resource:T & M = this._model.decorate( pointer );
 
 		if( ! this.context ) return resource;
 
 		const schema:DigestedObjectSchema = this.context.getObjectSchema();
-		resource.id = ObjectSchemaUtils
-			.resolveURI( resource.id, schema, { base: true } );
+		resource.$id = ObjectSchemaUtils
+			.resolveURI( resource.$id, schema, { base: true } );
 
 		return resource;
 	}
@@ -154,7 +154,7 @@ export class RegistryService<M extends Pointer, C extends AbstractContext<M, any
 			.createFrom( { _registry: this } );
 
 		const resources:TransientResource[] = freeNodes
-			.map( node => freeResourcesDocument._register( { id: node[ "@id" ] } ) );
+			.map( node => freeResourcesDocument._addPointer( { id: node[ "@id" ] } ) );
 
 		this._compactRDFNodes( freeNodes, resources, freeResourcesDocument );
 

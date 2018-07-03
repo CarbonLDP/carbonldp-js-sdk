@@ -103,7 +103,7 @@ describe( module( "carbonldp/Members/MembersDocument" ), () => {
 					context = new CarbonLDP( "https://example.com/" );
 					resource = createMock( {
 						_registry: context.registry,
-						id: "https://example.com/",
+						$id: "https://example.com/",
 					} );
 
 					stubRequest( "https://example.com/" );
@@ -244,7 +244,7 @@ describe( module( "carbonldp/Members/MembersDocument" ), () => {
 					stubRequest( "https://example.com/" );
 
 					await resource
-						.addMember( Pointer.create( { id: "https://example.com/member/" } ) );
+						.addMember( Pointer.create( { $id: "https://example.com/member/" } ) );
 
 					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
 					expect( JSON.parse( request.params ) ).toEqual( [
@@ -298,7 +298,7 @@ describe( module( "carbonldp/Members/MembersDocument" ), () => {
 					stubRequest( "https://example.com/resource/" );
 
 					await resource
-						.addMember( "resource/", Pointer.create( { id: "https://example.com/member/" } ) );
+						.addMember( "resource/", Pointer.create( { $id: "https://example.com/member/" } ) );
 
 					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
 					expect( JSON.parse( request.params ) ).toEqual( [
@@ -415,7 +415,7 @@ describe( module( "carbonldp/Members/MembersDocument" ), () => {
 				beforeEach( ():void => {
 					resource = createMock( {
 						_registry: new DocumentsRegistry(),
-						id: "https://example.com/",
+						$id: "https://example.com/",
 					} );
 
 					stubRequest( "https://example.com/" );
@@ -501,7 +501,7 @@ describe( module( "carbonldp/Members/MembersDocument" ), () => {
 					context = new CarbonLDP( "https://example.com/" );
 					resource = createMock( {
 						_registry: context.registry,
-						id: "https://example.com/",
+						$id: "https://example.com/",
 					} );
 
 					stubRequest( "https://example.com/" );
@@ -651,8 +651,8 @@ describe( module( "carbonldp/Members/MembersDocument" ), () => {
 
 					await resource
 						.addMembers( [
-							Pointer.create( { id: "https://example.com/member-1/" } ),
-							Pointer.create( { id: "https://example.com/member-2/" } ),
+							Pointer.create( { $id: "https://example.com/member-1/" } ),
+							Pointer.create( { $id: "https://example.com/member-2/" } ),
 						] );
 
 					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
@@ -674,7 +674,7 @@ describe( module( "carbonldp/Members/MembersDocument" ), () => {
 					await resource
 						.addMembers( [
 							"https://example.com/member-1/",
-							Pointer.create( { id: "https://example.com/member-2/" } ),
+							Pointer.create( { $id: "https://example.com/member-2/" } ),
 							"member-3/",
 						] );
 
@@ -741,8 +741,8 @@ describe( module( "carbonldp/Members/MembersDocument" ), () => {
 
 					await resource
 						.addMembers( "resource/", [
-							Pointer.create( { id: "https://example.com/member-1/" } ),
-							Pointer.create( { id: "https://example.com/member-2/" } ),
+							Pointer.create( { $id: "https://example.com/member-1/" } ),
+							Pointer.create( { $id: "https://example.com/member-2/" } ),
 						] );
 
 					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
@@ -764,7 +764,7 @@ describe( module( "carbonldp/Members/MembersDocument" ), () => {
 					await resource
 						.addMembers( "resource/", [
 							"https://example.com/member-1/",
-							Pointer.create( { id: "https://example.com/member-2/" } ),
+							Pointer.create( { $id: "https://example.com/member-2/" } ),
 							"member-3/",
 						] );
 
@@ -885,7 +885,7 @@ describe( module( "carbonldp/Members/MembersDocument" ), () => {
 				beforeEach( ():void => {
 					resource = createMock( {
 						_registry: new DocumentsRegistry(),
-						id: "https://example.com/",
+						$id: "https://example.com/",
 					} );
 
 					stubRequest( "https://example.com/" );
@@ -972,7 +972,7 @@ describe( module( "carbonldp/Members/MembersDocument" ), () => {
 					context = new CarbonLDP( "https://example.com/" );
 					resource = createMock( {
 						_registry: context.registry,
-						id: "https://example.com/",
+						$id: "https://example.com/",
 					} );
 
 					stubRequest( "https://example.com/" );
@@ -1113,7 +1113,7 @@ describe( module( "carbonldp/Members/MembersDocument" ), () => {
 					stubRequest( "https://example.com/" );
 
 					await resource
-						.removeMember( Pointer.create( { id: "https://example.com/member/" } ) );
+						.removeMember( Pointer.create( { $id: "https://example.com/member/" } ) );
 
 					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
 					expect( JSON.parse( request.params ) ).toEqual( [
@@ -1167,7 +1167,7 @@ describe( module( "carbonldp/Members/MembersDocument" ), () => {
 					stubRequest( "https://example.com/resource/" );
 
 					await resource
-						.removeMember( "resource/", Pointer.create( { id: "https://example.com/member/" } ) );
+						.removeMember( "resource/", Pointer.create( { $id: "https://example.com/member/" } ) );
 
 					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
 					expect( JSON.parse( request.params ) ).toEqual( [
@@ -1288,7 +1288,7 @@ describe( module( "carbonldp/Members/MembersDocument" ), () => {
 				beforeEach( ():void => {
 					resource = createMock( {
 						_registry: new DocumentsRegistry(),
-						id: "https://example.com/",
+						$id: "https://example.com/",
 					} );
 
 					stubRequest( "https://example.com/" );
@@ -1374,7 +1374,7 @@ describe( module( "carbonldp/Members/MembersDocument" ), () => {
 					context = new CarbonLDP( "https://example.com/" );
 					resource = createMock( {
 						_registry: context.registry,
-						id: "https://example.com/",
+						$id: "https://example.com/",
 					} );
 
 					stubRequest( "https://example.com/" );
@@ -1524,8 +1524,8 @@ describe( module( "carbonldp/Members/MembersDocument" ), () => {
 
 					await resource
 						.removeMembers( [
-							Pointer.create( { id: "https://example.com/member-1/" } ),
-							Pointer.create( { id: "https://example.com/member-2/" } ),
+							Pointer.create( { $id: "https://example.com/member-1/" } ),
+							Pointer.create( { $id: "https://example.com/member-2/" } ),
 						] );
 
 					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
@@ -1547,7 +1547,7 @@ describe( module( "carbonldp/Members/MembersDocument" ), () => {
 					await resource
 						.removeMembers( [
 							"https://example.com/member-1/",
-							Pointer.create( { id: "https://example.com/member-2/" } ),
+							Pointer.create( { $id: "https://example.com/member-2/" } ),
 							"member-3/",
 						] );
 
@@ -1614,8 +1614,8 @@ describe( module( "carbonldp/Members/MembersDocument" ), () => {
 
 					await resource
 						.removeMembers( "resource/", [
-							Pointer.create( { id: "https://example.com/member-1/" } ),
-							Pointer.create( { id: "https://example.com/member-2/" } ),
+							Pointer.create( { $id: "https://example.com/member-1/" } ),
+							Pointer.create( { $id: "https://example.com/member-2/" } ),
 						] );
 
 					const request:JasmineAjaxRequest = jasmine.Ajax.requests.mostRecent();
@@ -1637,7 +1637,7 @@ describe( module( "carbonldp/Members/MembersDocument" ), () => {
 					await resource
 						.removeMembers( "resource/", [
 							"https://example.com/member-1/",
-							Pointer.create( { id: "https://example.com/member-2/" } ),
+							Pointer.create( { $id: "https://example.com/member-2/" } ),
 							"member-3/",
 						] );
 
@@ -1762,7 +1762,7 @@ describe( module( "carbonldp/Members/MembersDocument" ), () => {
 				beforeEach( ():void => {
 					resource = createMock( {
 						_registry: new DocumentsRegistry(),
-						id: "https://example.com/",
+						$id: "https://example.com/",
 					} );
 
 					stubRequest( "https://example.com/" );
@@ -1847,7 +1847,7 @@ describe( module( "carbonldp/Members/MembersDocument" ), () => {
 					context = new CarbonLDP( "https://example.com/" );
 					resource = createMock( {
 						_registry: context.registry,
-						id: "https://example.com/",
+						$id: "https://example.com/",
 					} );
 
 					stubRequest( "https://example.com/" );
@@ -2081,7 +2081,7 @@ describe( module( "carbonldp/Members/MembersDocument" ), () => {
 				beforeEach( ():void => {
 					resource = createMock( {
 						_registry: new DocumentsRegistry(),
-						id: "https://example.com/",
+						$id: "https://example.com/",
 					} );
 
 					stubRequest( "https://example.com/" );

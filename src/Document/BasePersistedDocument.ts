@@ -13,7 +13,7 @@ import { TransientDocument } from "./TransientDocument";
 
 
 export interface BasePersistedDocument extends TransientDocument, PersistedResource {
-	_registry:DocumentsRegistry | undefined;
+	$parentRegistry:DocumentsRegistry | undefined;
 
 	_resolved:boolean | undefined;
 	_eTag:string | undefined | null;
@@ -47,7 +47,7 @@ const PROTOTYPE:PickSelfProps<BasePersistedDocument, TransientDocument & Persist
 
 	_syncSavedFragments( this:Document ):void {
 		this._savedFragments = Array
-			.from( this._resourcesMap.values() )
+			.from( this.__resourcesMap.values() )
 			.map( Fragment.decorate )
 		;
 

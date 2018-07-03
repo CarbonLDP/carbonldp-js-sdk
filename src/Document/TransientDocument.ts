@@ -31,7 +31,7 @@ import { BaseDocument } from "./BaseDocument";
 
 
 export interface TransientDocument extends TransientResource, Registry<TransientBlankNode | TransientNamedFragment> {
-	_registry:DocumentsRegistry | undefined;
+	$parentRegistry:DocumentsRegistry | undefined;
 
 	defaultInteractionModel?:Pointer;
 	isMemberOfRelation?:Pointer;
@@ -63,10 +63,10 @@ export interface TransientDocument extends TransientResource, Registry<Transient
 	_normalize():void;
 
 
-	_getLocalID( id:string ):string;
+	__getLocalID( id:string ):string;
 
-	_register<T extends object>( base:T & { slug:string } ):T & TransientNamedFragment;
-	_register<T extends object>( base:T & { id?:string } ):T & TransientFragment;
+	_addPointer<T extends object>( base:T & { slug:string } ):T & TransientNamedFragment;
+	_addPointer<T extends object>( base:T & { id?:string } ):T & TransientFragment;
 
 
 	toJSON( registry?:DocumentsRegistry ):RDFDocument;
@@ -108,10 +108,10 @@ function internalConverter( resource:TransientDocument, target:object, tracker:S
 
 			const fragment:TransientFragment = idOrSlug && resource.hasPointer( idOrSlug, true ) ?
 				resource.getPointer( idOrSlug, true ) :
-				resource._register( next )
+				resource._addPointer( next )
 			;
 
-			tracker.add( fragment.id );
+			tracker.add( fragment.$id );
 			internalConverter( resource, fragment, tracker );
 		} )
 	;
@@ -119,14 +119,14 @@ function internalConverter( resource:TransientDocument, target:object, tracker:S
 
 
 type OverloadedProps =
-	| "_registry"
-	| "_getLocalID"
-	| "_register"
+	| "$parentRegistry"
+	| "__getLocalID"
+	| "_addPointer"
 	| "getPointer"
 	;
 
 const PROTOTYPE:PickSelfProps<TransientDocument, TransientResource & Registry<TransientBlankNode | TransientNamedFragment>, OverloadedProps> = {
-	_registry: void 0,
+	$parentRegistry: void 0,
 
 
 	_normalize( this:TransientDocument ):void {
@@ -142,30 +142,30 @@ const PROTOTYPE:PickSelfProps<TransientDocument, TransientResource & Registry<Tr
 	},
 
 
-	_getLocalID( this:TransientDocument, id:string ):string {
+	__getLocalID( this:TransientDocument, id:string ):string {
 		if( URI.isBNodeID( id ) ) return id;
 
-		if( URI.isFragmentOf( id, this.id ) ) return URI.getFragment( id );
+		if( URI.isFragmentOf( id, this.$id ) ) return URI.getFragment( id );
 
-		return Registry.PROTOTYPE._getLocalID.call( this, id );
+		return Registry.PROTOTYPE.__getLocalID.call( this, id );
 	},
 
-	_register<T extends object>( this:TransientDocument, base:T & ({ slug:string } | { id?:string }) ):T & TransientFragment {
+	_addPointer<T extends object>( this:TransientDocument, base:T & ({ slug:string } | { id?:string }) ):T & TransientFragment {
 		const id:string = "slug" in base ? getLabelFrom( base.slug ) :
 			base.id ? base.id : URI.generateBNodeID();
 		const targetBase:T & { id:string } = Object.assign( base, { id } );
 
-		const pointer:T & Pointer = Registry.PROTOTYPE._register.call( this, targetBase );
+		const pointer:T & Pointer = Registry.PROTOTYPE._addPointer.call( this, targetBase );
 
 
-		if( URI.isBNodeID( pointer.id ) )
+		if( URI.isBNodeID( pointer.$id ) )
 			return TransientBlankNode.decorate( pointer );
 
 		return TransientNamedFragment.decorate( pointer );
 	},
 
 	getPointer( this:TransientDocument, id:string, local?:true ):TransientBlankNode | TransientNamedFragment {
-		id = URI.resolve( this.id, id );
+		id = URI.resolve( this.$id, id );
 		return Registry.PROTOTYPE.getPointer.call( this, id, local );
 	},
 
@@ -174,8 +174,8 @@ const PROTOTYPE:PickSelfProps<TransientDocument, TransientResource & Registry<Tr
 		id = getLabelFrom( id );
 		if( ! this.inScope( id, true ) ) return false;
 
-		const localID:string = this._getLocalID( id );
-		return this._resourcesMap.has( localID );
+		const localID:string = this.__getLocalID( id );
+		return this.__resourcesMap.has( localID );
 	},
 
 
@@ -183,9 +183,9 @@ const PROTOTYPE:PickSelfProps<TransientDocument, TransientResource & Registry<Tr
 		id = getLabelFrom( id );
 		if( ! this.inScope( id, true ) ) throw new IllegalArgumentError( `"${ id }" is out of scope.` );
 
-		const localID:string = this._getLocalID( id );
+		const localID:string = this.__getLocalID( id );
 
-		const resource:TransientFragment = this._resourcesMap.get( localID );
+		const resource:TransientFragment = this.__resourcesMap.get( localID );
 		if( ! resource ) return null;
 
 		return resource as T & TransientFragment;
@@ -207,7 +207,7 @@ const PROTOTYPE:PickSelfProps<TransientDocument, TransientResource & Registry<Tr
 		id = isString( isOrObject ) ? isOrObject : id;
 		if( id ) object.id = getLabelFrom( id );
 
-		const fragment:T & TransientFragment = this._register( object );
+		const fragment:T & TransientFragment = this._addPointer( object );
 
 		TransientDocument._convertNestedObjects( this, fragment );
 		return fragment;
@@ -221,7 +221,7 @@ const PROTOTYPE:PickSelfProps<TransientDocument, TransientResource & Registry<Tr
 
 		const object:T = isObject( slugOrObject ) ? slugOrObject : {} as T;
 		const base:T & { slug:string } = Object.assign( object, { slug } );
-		const fragment:T & TransientNamedFragment = this._register( base );
+		const fragment:T & TransientNamedFragment = this._addPointer( base );
 
 		TransientDocument._convertNestedObjects( this, fragment );
 		return fragment;
@@ -244,7 +244,7 @@ const PROTOTYPE:PickSelfProps<TransientDocument, TransientResource & Registry<Tr
 
 	toJSON( this:TransientDocument, registryOrKey?:DocumentsRegistry | string ):RDFDocument {
 		const registry:DocumentsRegistry = isObject( registryOrKey ) ?
-			registryOrKey : this._registry;
+			registryOrKey : this.$parentRegistry;
 
 		const generalSchema:DigestedObjectSchema = registry ?
 			registry.getGeneralSchema() : new DigestedObjectSchema();
@@ -264,7 +264,7 @@ const PROTOTYPE:PickSelfProps<TransientDocument, TransientResource & Registry<Tr
 		;
 
 		return {
-			"@id": this.id,
+			"@id": this.$id,
 			"@graph": expandedResources,
 		};
 	},
@@ -274,9 +274,9 @@ const PROTOTYPE:PickSelfProps<TransientDocument, TransientResource & Registry<Tr
 export interface TransientDocumentFactory extends ModelFactory<TransientDocument>, ModelDecorator<TransientDocument> {
 	PROTOTYPE:PickSelfProps<TransientDocument,
 		TransientResource & Registry<TransientBlankNode | TransientNamedFragment>,
-		| "_registry"
-		| "_getLocalID"
-		| "_register"
+		| "$parentRegistry"
+		| "__getLocalID"
+		| "_addPointer"
 		| "getPointer">;
 
 	TYPE:C[ "Document" ];

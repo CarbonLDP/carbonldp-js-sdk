@@ -182,7 +182,7 @@ describe( module( "carbonldp/ProtectedDocument" ), ():void => {
 			it( "ProtectedDocument.getACL", ( done:{ ():void, fail:() => void } ):void => {
 				const protectedDocument:ProtectedDocument = ProtectedDocument.decorate( {
 					id: "http://example.com/resource/",
-					accessControlList: Pointer.create( { id: "http://example.com/resource/~acl/" } ),
+					accessControlList: Pointer.create( { $id: "http://example.com/resource/~acl/" } ),
 					_resolved: true,
 				} );
 
@@ -200,13 +200,13 @@ describe( module( "carbonldp/ProtectedDocument" ), ():void => {
 
 							granting: true,
 							permissions: [
-								Pointer.create( { id: "http://example.com/ns#READ" } ),
-								Pointer.create( { id: "http://example.com/ns#WRITE" } ),
-								Pointer.create( { id: "http://example.com/ns#CREATE" } ),
-								Pointer.create( { id: "http://example.com/ns#DELETE" } ),
+								Pointer.create( { $id: "http://example.com/ns#READ" } ),
+								Pointer.create( { $id: "http://example.com/ns#WRITE" } ),
+								Pointer.create( { $id: "http://example.com/ns#CREATE" } ),
+								Pointer.create( { $id: "http://example.com/ns#DELETE" } ),
 							],
-							subjects: [ Pointer.create( { id: "https://example.com/.system/roles/my-role/" } ) ],
-							subjectClass: Pointer.create( { id: CS.Role } ),
+							subjects: [ Pointer.create( { $id: "https://example.com/.system/roles/my-role/" } ) ],
+							subjectClass: Pointer.create( { $id: CS.Role } ),
 						},
 					],
 					inheritableEntries: [
@@ -216,11 +216,11 @@ describe( module( "carbonldp/ProtectedDocument" ), ():void => {
 
 							granting: true,
 							permissions: [
-								Pointer.create( { id: "http://example.com/ns#READ" } ),
-								Pointer.create( { id: "http://example.com/ns#WRITE" } ),
+								Pointer.create( { $id: "http://example.com/ns#READ" } ),
+								Pointer.create( { $id: "http://example.com/ns#WRITE" } ),
 							],
-							subjects: [ Pointer.create( { id: "https://example.com/.system/roles/my-role/" } ) ],
-							subjectClass: Pointer.create( { id: CS.Role } ),
+							subjects: [ Pointer.create( { $id: "https://example.com/.system/roles/my-role/" } ) ],
+							subjectClass: Pointer.create( { $id: CS.Role } ),
 						},
 					],
 				} );
@@ -244,7 +244,7 @@ describe( module( "carbonldp/ProtectedDocument" ), ():void => {
 					expect( acl.entries.length ).toBe( 1 );
 					expect( acl.inheritableEntries ).toBeDefined();
 					expect( acl.inheritableEntries.length ).toBe( 1 );
-					expect( acl.accessTo.id ).toBe( protectedDocument.id );
+					expect( acl.accessTo.$id ).toBe( protectedDocument.$id );
 				} ) );
 
 
@@ -254,7 +254,7 @@ describe( module( "carbonldp/ProtectedDocument" ), ():void => {
 				spyOn( unresolvedProtectedDocument, "executeSELECTQuery" ).and
 					.returnValue( Promise.resolve( {
 						bindings: [ {
-							acl: Pointer.create( { id: "http://example.com/resource/~acl/" } ),
+							acl: Pointer.create( { $id: "http://example.com/resource/~acl/" } ),
 						} ],
 					} ) );
 
@@ -270,7 +270,7 @@ describe( module( "carbonldp/ProtectedDocument" ), ():void => {
 					expect( acl.entries.length ).toBe( 1 );
 					expect( acl.inheritableEntries ).toBeDefined();
 					expect( acl.inheritableEntries.length ).toBe( 1 );
-					expect( acl.accessTo.id ).toBe( protectedDocument.id );
+					expect( acl.accessTo.$id ).toBe( protectedDocument.$id );
 				} ) );
 
 				Promise.all( promises ).then( done ).catch( done.fail );

@@ -149,8 +149,8 @@ function setDefaultRequestOptions( registry:DocumentsRegistry, requestOptions:Re
 }
 
 function getRegistry( repository:CRUDDocument ):DocumentsRegistry {
-	if( repository._registry ) return repository._registry;
-	throw new IllegalActionError( `"${ repository.id }" doesn't support CRUD requests.` );
+	if( repository.$parentRegistry ) return repository.$parentRegistry;
+	throw new IllegalActionError( `"${ repository.$id }" doesn't support CRUD requests.` );
 }
 
 
@@ -192,8 +192,8 @@ function applyResponseMetadata( registry:DocumentsRegistry, freeNodes:RDFNode[] 
 			const originalBNode:TransientFragment = resource.getPointer( entryKey.id, true );
 			resource.removePointer( entryKey.id );
 
-			originalBNode.id = entryValue.id;
-			resource._register( originalBNode );
+			originalBNode.$id = entryValue.id;
+			resource._addPointer( originalBNode );
 		}
 	}
 }
@@ -212,7 +212,7 @@ function applyResponseRepresentation<T extends Pointer>( registry:DocumentsRegis
 
 			const rdfDocument:RDFDocument | undefined = RDFDocument
 				.getDocuments( expandedResult )
-				.find( node => node[ "@id" ] === resource.id );
+				.find( node => node[ "@id" ] === resource.$id );
 			if( ! rdfDocument ) throw new BadResponseError( "No document was returned.", response );
 
 			return parseRDFDocument<T>( registry, rdfDocument, response.getETag() );
@@ -223,7 +223,7 @@ function applyResponseRepresentation<T extends Pointer>( registry:DocumentsRegis
 function persistResource<T extends object>( registry:DocumentsRegistry, parentURI:string, slug:string, resource:Pointer, requestOptions:RequestOptions ):Promise<T & ProtectedDocument> {
 	RequestUtils.setContentTypeHeader( "application/ld+json", requestOptions );
 
-	if( resource.id && ! URI.isBaseOf( parentURI, resource.id ) ) {
+	if( resource.$id && ! URI.isBaseOf( parentURI, resource.$id ) ) {
 		return Promise.reject( new IllegalArgumentError( "The document's URI is not relative to the parentURI specified" ) );
 	}
 
@@ -244,8 +244,8 @@ function persistResource<T extends object>( registry:DocumentsRegistry, parentUR
 			if( locationHeader === null || locationHeader.values.length < 1 ) throw new BadResponseError( "The response is missing a Location header.", response );
 			if( locationHeader.values.length !== 1 ) throw new BadResponseError( "The response contains more than one Location header.", response );
 
-			resource.id = locationHeader.values[ 0 ].toString();
-			registry._register( resource );
+			resource.$id = locationHeader.values[ 0 ].toString();
+			registry._addPointer( resource );
 
 			const persistedDocument:T & ProtectedDocument = ProtectedDocument
 				.decorate( resource as T );
@@ -344,7 +344,7 @@ function persistAccessPoint<T extends object>( registry:DocumentsRegistry, docum
 	}
 
 	if( ! accessPointDocument.membershipResource ) accessPointDocument.membershipResource = registry.getPointer( documentURI );
-	else if( accessPointDocument.membershipResource.id !== documentURI ) throw new IllegalArgumentError( "The endpoint URI must be the same as the accessPoint's membershipResource." );
+	else if( accessPointDocument.membershipResource.$id !== documentURI ) throw new IllegalArgumentError( "The endpoint URI must be the same as the accessPoint's membershipResource." );
 
 	setDefaultRequestOptions( registry, requestOptions, LDP.RDFSource );
 	return persistResource<T & AccessPoint>( registry, documentURI, slug, accessPointDocument, requestOptions );
@@ -427,13 +427,13 @@ function refreshResource<T extends CRUDDocument>( registry:DocumentsRegistry, re
 		.catch<T & CRUDDocument>( ( response:Response ) => {
 			if( response.status === 304 ) return resource;
 
-			return resource._registry._parseFailedResponse( response );
+			return resource.$parentRegistry._parseFailedResponse( response );
 		} );
 }
 
 function addResourcePatch( registry:DocumentsRegistry, deltaCreator:DeltaCreator, pointer:Pointer, current:object, snapshot:object ):void {
 	const schema:DigestedObjectSchema = registry.getSchemaFor( pointer );
-	deltaCreator.addResource( schema, pointer.id, snapshot, current );
+	deltaCreator.addResource( schema, pointer.$id, snapshot, current );
 }
 
 function sendPatch<T extends CRUDDocument>( registry:DocumentsRegistry, resource:T, requestOptions:RequestOptions ):Promise<T> {
@@ -447,7 +447,7 @@ function sendPatch<T extends CRUDDocument>( registry:DocumentsRegistry, resource
 	RequestUtils.setIfMatchHeader( resource._eTag, requestOptions );
 
 
-	const deltaCreator:DeltaCreator = new DeltaCreator( resource._registry.jsonldConverter );
+	const deltaCreator:DeltaCreator = new DeltaCreator( resource.$parentRegistry.jsonldConverter );
 
 	// Document resource
 	addResourcePatch( registry, deltaCreator, resource, resource, resource._snapshot );
@@ -463,7 +463,7 @@ function sendPatch<T extends CRUDDocument>( registry:DocumentsRegistry, resource
 
 	// Deleted fragments
 	resource._savedFragments
-		.filter( pointer => ! resource.hasPointer( pointer.id ) )
+		.filter( pointer => ! resource.hasPointer( pointer.$id ) )
 		.forEach( pointer => {
 			addResourcePatch( registry, deltaCreator, pointer, {}, pointer._snapshot );
 		} )
@@ -597,9 +597,9 @@ const PROTOTYPE:PickSelfProps<CRUDDocument, BasePersistedDocument> = {
 			return RequestService
 				.delete( url, requestOptions )
 				.then( () => {
-					this._registry.removePointer( url );
+					this.$parentRegistry.removePointer( url );
 				} )
-				.catch( this._registry._parseFailedResponse.bind( this ) )
+				.catch( this.$parentRegistry._parseFailedResponse.bind( this ) )
 				;
 		} );
 	},

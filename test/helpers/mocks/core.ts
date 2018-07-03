@@ -106,7 +106,7 @@ export function createMockDocument<T extends {
 }>( data:T ):T & Document {
 	const base:T & Pointer = Pointer.create( data );
 
-	if( data._registry ) data._registry._register( base );
+	if( data._registry ) data._registry._addPointer( base );
 
 	const doc:T & Document = Document.decorate( base );
 

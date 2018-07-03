@@ -402,7 +402,7 @@ describe( module( "carbonldp/CarbonLDP" ), ():void => {
 				const context:CarbonLDP.CarbonLDP = new CarbonLDP.CarbonLDP( "https://example.com/" );
 
 				expect( context.documents ).toEqual( anyThatMatches( Document.is ) as any );
-				expect( context.documents.id ).toEqual( "https://example.com/" );
+				expect( context.documents.$id ).toEqual( "https://example.com/" );
 			} );
 
 

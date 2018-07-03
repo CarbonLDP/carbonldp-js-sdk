@@ -270,10 +270,10 @@ describe( module( "carbonldp/Document" ), ():void => {
 
 				const resource:Document = createMock( {
 					_partialMetadata: createMockPartialMetadata( {} ),
-					_registry,
+					$parentRegistry: _registry,
 				} );
 
-				_registry._resourcesMap.set( _registry._getLocalID( resource.id ), resource );
+				_registry.__resourcesMap.set( _registry.__getLocalID( resource.$id ), resource );
 
 
 				const spy:jasmine.Spy = spyOn( CRUDDocument.PROTOTYPE, "get" )
@@ -294,10 +294,10 @@ describe( module( "carbonldp/Document" ), ():void => {
 
 				const resource:Document = createMock( {
 					_partialMetadata: createMockPartialMetadata( {} ),
-					_registry,
+					$parentRegistry: _registry,
 				} );
 
-				_registry._resourcesMap.set( _registry._getLocalID( resource.id ), resource );
+				_registry.__resourcesMap.set( _registry.__getLocalID( resource.$id ), resource );
 
 
 				const spy:jasmine.Spy = spyOn( CRUDDocument.PROTOTYPE, "get" )
@@ -316,10 +316,10 @@ describe( module( "carbonldp/Document" ), ():void => {
 			it( "should ensure latest when URI is partial and no builder function", async () => {
 				const _registry:DocumentsRegistry = new DocumentsRegistry();
 
-				const resource:Document = createMock( { _registry } );
+				const resource:Document = createMock( { $parentRegistry: _registry } );
 
-				_registry._resourcesMap.set( "resource/", createMock( {
-					_registry,
+				_registry.__resourcesMap.set( "resource/", createMock( {
+					$parentRegistry: _registry,
 					_partialMetadata: createMockPartialMetadata( {} ),
 				} ) );
 
@@ -340,10 +340,10 @@ describe( module( "carbonldp/Document" ), ():void => {
 			it( "should ensure latest when URI is partial and no builder function, with options", async () => {
 				const _registry:DocumentsRegistry = new DocumentsRegistry();
 
-				const resource:Document = createMock( { _registry } );
+				const resource:Document = createMock( { $parentRegistry: _registry } );
 
-				_registry._resourcesMap.set( "resource/", createMock( {
-					_registry,
+				_registry.__resourcesMap.set( "resource/", createMock( {
+					$parentRegistry: _registry,
 					_partialMetadata: createMockPartialMetadata( {} ),
 				} ) );
 
@@ -452,10 +452,10 @@ describe( module( "carbonldp/Document" ), ():void => {
 
 				const resource:Document = createMock( {
 					_partialMetadata: createMockPartialMetadata( {} ),
-					_registry,
+					$parentRegistry: _registry,
 				} );
 
-				_registry._resourcesMap.set( _registry._getLocalID( resource.id ), resource );
+				_registry.__resourcesMap.set( _registry.__getLocalID( resource.$id ), resource );
 
 
 				const spy:jasmine.Spy = spyOn( CRUDDocument.PROTOTYPE, "resolve" )
@@ -476,10 +476,10 @@ describe( module( "carbonldp/Document" ), ():void => {
 
 				const resource:Document = createMock( {
 					_partialMetadata: createMockPartialMetadata( {} ),
-					_registry,
+					$parentRegistry: _registry,
 				} );
 
-				_registry._resourcesMap.set( _registry._getLocalID( resource.id ), resource );
+				_registry.__resourcesMap.set( _registry.__getLocalID( resource.$id ), resource );
 
 
 				const spy:jasmine.Spy = spyOn( CRUDDocument.PROTOTYPE, "resolve" )

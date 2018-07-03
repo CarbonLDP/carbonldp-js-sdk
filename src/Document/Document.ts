@@ -34,7 +34,7 @@ import { TransientDocument } from "./TransientDocument";
 
 
 export interface Document extends CRUDDocument, MembersDocument, SPARQLDocument, MessagingDocument, QueryDocumentDocument {
-	_registry:DocumentsRegistry;
+	$parentRegistry:DocumentsRegistry;
 
 	created?:Date;
 	modified?:Date;
@@ -66,9 +66,9 @@ type QueryBuilderFn = Function & (( queryBuilder:QueryDocumentBuilder ) => Query
 
 function addEnsureIfPartial( this:void, iri:string, resource:Document, requestOptions:GETOptions ):void {
 	if( requestOptions.ensureLatest ) return;
-	if( ! resource._registry || ! resource._registry.hasPointer( iri, true ) ) return;
+	if( ! resource.$parentRegistry || ! resource.$parentRegistry.hasPointer( iri, true ) ) return;
 
-	const target:Document = resource._registry.getPointer( iri, true );
+	const target:Document = resource.$parentRegistry.getPointer( iri, true );
 	if( target.isPartial() ) requestOptions.ensureLatest = true;
 }
 
@@ -85,7 +85,7 @@ type OverloadedProps =
 const PROTOTYPE:PickSelfProps<Document, CRUDDocument & MembersDocument & SPARQLDocument & MessagingDocument & QueryDocumentDocument, OverloadedProps> = {
 
 	get<T extends object>( this:Document, uriOrOptionsOrQueryBuilderFn:string | GETOptions | QueryBuilderFn, optionsOrQueryBuilderFn?:GETOptions | QueryBuilderFn, queryBuilderFn?:QueryBuilderFn ):Promise<T & Document> {
-		const iri:string = isString( uriOrOptionsOrQueryBuilderFn ) ? uriOrOptionsOrQueryBuilderFn : this.id;
+		const iri:string = isString( uriOrOptionsOrQueryBuilderFn ) ? uriOrOptionsOrQueryBuilderFn : this.$id;
 
 		const requestOptions:GETOptions = isObject( uriOrOptionsOrQueryBuilderFn ) ?
 			uriOrOptionsOrQueryBuilderFn : isObject( optionsOrQueryBuilderFn ) ? optionsOrQueryBuilderFn : {};
@@ -111,7 +111,7 @@ const PROTOTYPE:PickSelfProps<Document, CRUDDocument & MembersDocument & SPARQLD
 		if( queryBuilderFn )
 			return QueryDocumentDocument.PROTOTYPE.resolve.call( this, requestOptions, queryBuilderFn );
 
-		addEnsureIfPartial( this.id, this, requestOptions );
+		addEnsureIfPartial( this.$id, this, requestOptions );
 		return CRUDDocument.PROTOTYPE.resolve.call( this, requestOptions );
 	},
 
@@ -141,11 +141,11 @@ const PROTOTYPE:PickSelfProps<Document, CRUDDocument & MembersDocument & SPARQLD
 
 		const hasRemovedFragments:boolean = this
 			._savedFragments
-			.some( fragment => ! this.hasFragment( fragment.id ) );
+			.some( fragment => ! this.hasFragment( fragment.$id ) );
 		if( hasRemovedFragments ) return true;
 
 		const hasNewFragments:boolean = this
-			._savedFragments.length !== this._resourcesMap.size;
+			._savedFragments.length !== this.__resourcesMap.size;
 		if( hasNewFragments ) return true;
 
 		return this
@@ -156,16 +156,16 @@ const PROTOTYPE:PickSelfProps<Document, CRUDDocument & MembersDocument & SPARQLD
 	revert( this:Document ):void {
 		PersistedResource.PROTOTYPE.revert.call( this );
 
-		this._resourcesMap.clear();
+		this.__resourcesMap.clear();
 		this
 			._savedFragments
 			.forEach( fragment => {
 				fragment.revert();
 
 				const localID:string = "slug" in fragment ?
-					fragment.slug : fragment.id;
+					fragment.slug : fragment.$id;
 
-				this._resourcesMap.set( localID, fragment );
+				this.__resourcesMap.set( localID, fragment );
 			} );
 	},
 };

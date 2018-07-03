@@ -21,7 +21,7 @@ describe( module( "carbonldp/Pointer" ), ():void => {
 			"string",
 			"The `id` of the pointer."
 		), ():void => {
-			const target:BasePointer[ "id" ] = "";
+			const target:BasePointer[ "$id" ] = "";
 			expect( target ).toBeDefined();
 		} );
 

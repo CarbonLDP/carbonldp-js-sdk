@@ -208,7 +208,7 @@ describe( module( "carbonldp/SPARQL/Service" ), ():void => {
 						return {
 							_registry: void 0,
 							_id: id,
-							id: id,
+							$id: id,
 						};
 					}
 				}
@@ -234,13 +234,13 @@ describe( module( "carbonldp/SPARQL/Service" ), ():void => {
 						expect( results.bindings[ 0 ][ "literalBinding" ] ).toEqual( "some string" );
 
 						expect( "uriBinding" in results.bindings[ 0 ] ).toEqual( true );
-						expect( (<Pointer> results.bindings[ 0 ][ "uriBinding" ]).id ).toEqual( "http://example.com/document-1/" );
+						expect( (<Pointer> results.bindings[ 0 ][ "uriBinding" ]).$id ).toEqual( "http://example.com/document-1/" );
 
 						expect( "literalBinding" in results.bindings[ 1 ] ).toEqual( true );
 						expect( results.bindings[ 1 ][ "literalBinding" ] ).toEqual( 12 );
 
 						expect( "uriBinding" in results.bindings[ 1 ] ).toEqual( true );
-						expect( (<Pointer> results.bindings[ 1 ][ "uriBinding" ]).id ).toEqual( "http://example.com/document-2/" );
+						expect( (<Pointer> results.bindings[ 1 ][ "uriBinding" ]).$id ).toEqual( "http://example.com/document-2/" );
 
 						expect( response ).toBeDefined();
 						expect( response instanceof Response ).toBe( true );
@@ -293,7 +293,7 @@ describe( module( "carbonldp/SPARQL/Service" ), ():void => {
 						return {
 							_registry: void 0,
 							_id: id,
-							id: id,
+							$id: id,
 						};
 					}
 				}

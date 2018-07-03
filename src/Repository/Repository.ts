@@ -124,7 +124,7 @@ const Repository:RepositoryFactory = {
 				.createFrom( { _registry: this } as any );
 
 			const resources:TransientResource[] = freeNodes
-				.map( node => freeResourcesDocument._register( { id: node[ "@id" ] } ) );
+				.map( node => freeResourcesDocument._addPointer( { id: node[ "@id" ] } ) );
 
 			__compactRDFNodes( this, freeNodes, resources, freeResourcesDocument );
 

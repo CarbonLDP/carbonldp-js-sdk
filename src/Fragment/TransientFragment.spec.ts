@@ -142,15 +142,15 @@ describe( module( "carbonldp/Fragment" ), ():void => {
 			it( "should fill empty id when no provided", ():void => {
 				const fragment:TransientFragment = TransientFragment.create( {} );
 
-				expect( fragment.id ).toBe( "" );
+				expect( fragment.$id ).toBe( "" );
 			} );
 
 			it( "should maintain id when provided", ():void => {
 				const fragment:TransientFragment = TransientFragment.create( {
-					id: "#fragment",
+					$id: "#fragment",
 				} );
 
-				expect( fragment.id ).toBe( "#fragment" );
+				expect( fragment.$id ).toBe( "#fragment" );
 			} );
 
 			it( "should call TransientFragment.createFrom", ():void => {
@@ -179,15 +179,15 @@ describe( module( "carbonldp/Fragment" ), ():void => {
 			it( "should fill empty id when no provided", ():void => {
 				const fragment:TransientFragment = TransientFragment.createFrom( {} );
 
-				expect( fragment.id ).toBe( "" );
+				expect( fragment.$id ).toBe( "" );
 			} );
 
 			it( "should maintain id when provided", ():void => {
 				const fragment:TransientFragment = TransientFragment.createFrom( {
-					id: "#fragment",
+					$id: "#fragment",
 				} );
 
-				expect( fragment.id ).toBe( "#fragment" );
+				expect( fragment.$id ).toBe( "#fragment" );
 			} );
 
 			it( "should call TransientFragment.decorate", ():void => {

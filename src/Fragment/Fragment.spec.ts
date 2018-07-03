@@ -140,7 +140,7 @@ describe( module( "carbonldp/Fragment" ), ():void => {
 
 				let fragment:TransientFragment = TransientFragment.create( {
 					_document: null,
-					id: "_:01",
+					$id: "_:01",
 				} );
 				let persistedFragment:Fragment = Fragment.decorate( fragment );
 

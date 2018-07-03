@@ -107,7 +107,7 @@ describe( module( "carbonldp/SPARQL/QueryDocument/QueryContextPartial" ), ():voi
 
 			it( "should return the schema of a document property", ():void => {
 				const queryContext:QueryContextPartial = new QueryContextPartial( persistedDocument, context );
-				const fragment:PersistedResource = persistedDocument._register( PersistedResource.decorate( {
+				const fragment:PersistedResource = persistedDocument._addPointer( PersistedResource.decorate( {
 					_partialMetadata: createMockPartialMetadata( {
 						"fragmentProperty": {
 							"@id": "https://example.com/ns#fragment-property",

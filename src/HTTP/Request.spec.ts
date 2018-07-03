@@ -1430,7 +1430,7 @@ describe( module( "carbonldp/HTTP/Request" ), function():void {
 
 
 				it( "should return pointer ID with absolute URI when no URI", () => {
-					const pointer:Pointer = Pointer.create( { id: "https://example.com/" } );
+					const pointer:Pointer = Pointer.create( { $id: "https://example.com/" } );
 
 					const returned:string = RequestUtils.getRequestURLFor( registry, pointer );
 
@@ -1438,7 +1438,7 @@ describe( module( "carbonldp/HTTP/Request" ), function():void {
 				} );
 
 				it( "should return absolute URI when provided", () => {
-					const pointer:Pointer = Pointer.create( { id: "https://example.com/" } );
+					const pointer:Pointer = Pointer.create( { $id: "https://example.com/" } );
 
 					const returned:string = RequestUtils.getRequestURLFor( registry, pointer, "https://example.com/resource/" );
 
@@ -1446,7 +1446,7 @@ describe( module( "carbonldp/HTTP/Request" ), function():void {
 				} );
 
 				it( "should resolve relative URI with the pointer ID", () => {
-					const pointer:Pointer = Pointer.create( { id: "https://example.com/" } );
+					const pointer:Pointer = Pointer.create( { $id: "https://example.com/" } );
 
 					const returned:string = RequestUtils.getRequestURLFor( registry, pointer, "resource/" );
 
@@ -1455,7 +1455,7 @@ describe( module( "carbonldp/HTTP/Request" ), function():void {
 
 				it( "should resolve prefixed named provided", () => {
 					context.extendObjectSchema( { ex: "https://example.com/" } );
-					const pointer:Pointer = Pointer.create( { id: "https://example.com/" } );
+					const pointer:Pointer = Pointer.create( { $id: "https://example.com/" } );
 
 					const returned:string = RequestUtils.getRequestURLFor( registry, pointer, "ex:resource/" );
 
@@ -1464,7 +1464,7 @@ describe( module( "carbonldp/HTTP/Request" ), function():void {
 
 
 				it( "should throw error pointer ID out of scope when no URI", () => {
-					const pointer:Pointer = Pointer.create( { id: "http://example.org/" } );
+					const pointer:Pointer = Pointer.create( { $id: "http://example.org/" } );
 
 					expect( () => {
 						RequestUtils.getRequestURLFor( registry, pointer );
@@ -1472,7 +1472,7 @@ describe( module( "carbonldp/HTTP/Request" ), function():void {
 				} );
 
 				it( "should throw error when URI is out of scope", () => {
-					const pointer:Pointer = Pointer.create( { id: "https://example.com/" } );
+					const pointer:Pointer = Pointer.create( { $id: "https://example.com/" } );
 
 					expect( () => {
 						RequestUtils.getRequestURLFor( registry, pointer, "http://example.org/resource/" );
@@ -1480,7 +1480,7 @@ describe( module( "carbonldp/HTTP/Request" ), function():void {
 				} );
 
 				it( "should throw error when prefixed named cannot be resolved", () => {
-					const pointer:Pointer = Pointer.create( { id: "https://example.com/" } );
+					const pointer:Pointer = Pointer.create( { $id: "https://example.com/" } );
 
 					expect( () => {
 						RequestUtils.getRequestURLFor( registry, pointer, "ex:resource/" );
@@ -1488,7 +1488,7 @@ describe( module( "carbonldp/HTTP/Request" ), function():void {
 				} );
 
 				it( "should throw error pointer ID out of scope when relative URI", () => {
-					const pointer:Pointer = Pointer.create( { id: "http://example.org/" } );
+					const pointer:Pointer = Pointer.create( { $id: "http://example.org/" } );
 
 					expect( () => {
 						RequestUtils.getRequestURLFor( registry, pointer, "resource/" );
@@ -1506,7 +1506,7 @@ describe( module( "carbonldp/HTTP/Request" ), function():void {
 
 
 				it( "should return pointer ID with absolute URI when no URI", () => {
-					const pointer:Pointer = Pointer.create( { id: "https://example.com/" } );
+					const pointer:Pointer = Pointer.create( { $id: "https://example.com/" } );
 
 					const returned:string = RequestUtils.getRequestURLFor( registry, pointer );
 
@@ -1514,7 +1514,7 @@ describe( module( "carbonldp/HTTP/Request" ), function():void {
 				} );
 
 				it( "should return absolute URI when provided", () => {
-					const pointer:Pointer = Pointer.create( { id: "https://example.com/" } );
+					const pointer:Pointer = Pointer.create( { $id: "https://example.com/" } );
 
 					const returned:string = RequestUtils.getRequestURLFor( registry, pointer, "https://example.com/resource/" );
 
@@ -1522,7 +1522,7 @@ describe( module( "carbonldp/HTTP/Request" ), function():void {
 				} );
 
 				it( "should resolve relative URI with the pointer ID", () => {
-					const pointer:Pointer = Pointer.create( { id: "https://example.com/" } );
+					const pointer:Pointer = Pointer.create( { $id: "https://example.com/" } );
 
 					const returned:string = RequestUtils.getRequestURLFor( registry, pointer, "resource/" );
 
@@ -1531,7 +1531,7 @@ describe( module( "carbonldp/HTTP/Request" ), function():void {
 
 
 				it( "should throw error when prefixed named cannot be resolved", () => {
-					const pointer:Pointer = Pointer.create( { id: "https://example.com/" } );
+					const pointer:Pointer = Pointer.create( { $id: "https://example.com/" } );
 
 					expect( () => {
 						RequestUtils.getRequestURLFor( registry, pointer, "ex:resource/" );
