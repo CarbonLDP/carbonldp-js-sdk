@@ -6,7 +6,10 @@ import {
 } from "../ObjectSchema";
 import { Pointer } from "../Pointer";
 import { URI } from "../RDF";
-import { Registry } from "../Registry";
+import {
+	RegisteredPointer,
+	Registry
+} from "../Registry";
 import {
 	isObject,
 	PickSelfProps
@@ -14,7 +17,7 @@ import {
 import { BaseResource } from "./BaseResource";
 
 
-export interface TransientResource extends Pointer {
+export interface TransientResource extends RegisteredPointer {
 	types:string[];
 
 
@@ -58,7 +61,7 @@ function resolveURI( resource:TransientResource, uri:string ):string {
 	return ObjectSchemaUtils.resolveURI( uri, schema, { vocab: true } );
 }
 
-const PROTOTYPE:PickSelfProps<TransientResource, Pointer> = {
+const PROTOTYPE:PickSelfProps<TransientResource, RegisteredPointer> = {
 	get types():string[] { return []; },
 
 
@@ -107,8 +110,8 @@ export const TransientResource:TransientResourceFactory = {
 	decorate<T extends object>( object:T ):T & TransientResource {
 		if( TransientResource.isDecorated( object ) ) return object;
 
-		const resource:T & Pointer = ModelDecorator
-			.decorateMultiple( object, Pointer );
+		const resource:T & RegisteredPointer = ModelDecorator
+			.decorateMultiple( object, RegisteredPointer );
 
 		return ModelDecorator
 			.definePropertiesFrom( PROTOTYPE, resource );

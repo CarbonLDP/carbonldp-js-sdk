@@ -1,4 +1,4 @@
-import { AbstractContext } from "../../AbstractContext";
+import { AbstractContext } from "../../Context/AbstractContext";
 import { IllegalArgumentError } from "../../Errors";
 import {
 	DigestedObjectSchema,

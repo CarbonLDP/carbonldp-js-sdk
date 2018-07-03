@@ -3,7 +3,7 @@ import {
 	createMockDocument,
 	createMockPartialMetadata
 } from "../../../test/helpers/mocks";
-import { AbstractContext } from "../../AbstractContext";
+import { AbstractContext } from "../../Context/AbstractContext";
 import { Document } from "../../Document";
 import { Pointer } from "../../Pointer";
 import { PersistedResource } from "../../Resource";

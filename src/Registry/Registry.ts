@@ -26,7 +26,7 @@ export interface Registry<M extends RegisteredPointer = RegisteredPointer> exten
 	readonly $context:Context<M>;
 	readonly $parentRegistry?:Registry<any>;
 
-	readonly __modelFactory:ModelFactory<M>;
+	readonly __modelDecorator:ModelDecorator<M>;
 	readonly __resourcesMap:Map<string, M>;
 
 
@@ -132,7 +132,7 @@ export const Registry:RegistryFactory = {
 			const localID:string = this.__getLocalID( pointer.$id );
 			if( this.__resourcesMap.has( localID ) ) throw new IDAlreadyInUseError( `"${ pointer.$id }" is already being taken.` );
 
-			const resource:T & RegisteredPointer = this.__modelFactory.createFrom( pointer );
+			const resource:T & RegisteredPointer = this.__modelDecorator.decorate( pointer );
 			resource.$registry = this;
 
 			this.__resourcesMap.set( localID, resource );
@@ -169,8 +169,8 @@ export const Registry:RegistryFactory = {
 	},
 
 	createFrom<T extends object>( object:T & BaseRegistry ):T & Registry {
-		if( ! object.$registry && object.$context.parentContext && object.$context.parentContext.registry )
-			object.$registry = object.$context.parentContext.registry;
+		if( ! object.$parentRegistry && object.$context.parentContext && object.$context.parentContext.registry )
+			object.$parentRegistry = object.$context.parentContext.registry;
 
 		return Registry.decorate( object );
 	},

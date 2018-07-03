@@ -35,7 +35,7 @@ export const ModelDecorator:ModelDecoratorFactory = {
 				if( definition.value && isFunction( definition.value ) )
 					return hasFunction( object, key );
 
-				return object.hasOwnProperty( key );
+				return object.hasOwnProperty( key ) && ! object.propertyIsEnumerable( key );
 			} )
 			;
 	},

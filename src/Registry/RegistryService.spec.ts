@@ -3,7 +3,7 @@ import {
 	createMockContext,
 	createMockPartialMetadata
 } from "../../test/helpers/mocks";
-import { AbstractContext } from "../AbstractContext";
+import { AbstractContext } from "../Context/AbstractContext";
 import { ModelDecorator } from "../core";
 import { IllegalArgumentError } from "../Errors";
 import { FreeResources } from "../FreeResources";

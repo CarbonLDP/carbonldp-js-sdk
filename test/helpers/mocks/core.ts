@@ -1,4 +1,4 @@
-import { AbstractContext } from "../../../src/AbstractContext";
+import { AbstractContext } from "../../../src/Context/AbstractContext";
 import { Authenticator } from "../../../src/Auth";
 import { ModelDecorator } from "../../../src/core";
 import { Document } from "../../../src/Document";

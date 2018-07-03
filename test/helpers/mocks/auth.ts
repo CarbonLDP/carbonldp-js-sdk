@@ -5,7 +5,7 @@ import {
 } from "../../../src/Auth";
 import { Authenticator } from "../../../src/Auth";
 import { CarbonLDP } from "../../../src/CarbonLDP";
-import { Context } from "../../../src/Context";
+import { Context } from "../../../src/Context/Context";
 import { Pointer } from "../../../src/Pointer";
 
 import { createMockContext } from "./core";

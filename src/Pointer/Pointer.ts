@@ -4,8 +4,8 @@ import {
 	ModelPrototype,
 	ModelTypeGuard
 } from "../core";
-import { isObject } from "../Utils";
 import * as Utils from "../Utils";
+import { isObject } from "../Utils";
 import { BasePointer } from "./BasePointer";
 
 
@@ -15,6 +15,9 @@ export interface Pointer {
 
 
 export interface PointerFactory extends ModelPrototype<Pointer>, ModelDecorator<Pointer>, ModelFactory<Pointer, BasePointer>, ModelTypeGuard<Pointer> {
+	create<T extends object>( data?:T & BasePointer ):T & Pointer;
+
+
 	areEqual( pointer1:Pointer, pointer2:Pointer ):boolean;
 
 	getIDs( pointers:Pointer[] ):string[];
@@ -29,8 +32,8 @@ export const Pointer:PointerFactory = {
 
 
 	isDecorated( object:object ):object is Pointer {
-		return object.hasOwnProperty( "id" )
-			;
+		return ModelDecorator
+			.hasPropertiesFrom( Pointer.PROTOTYPE, object );
 	},
 
 	decorate<T extends object>( object:T ):T & Pointer {

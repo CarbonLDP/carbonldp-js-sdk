@@ -1,7 +1,7 @@
 import { Server } from "mock-socket";
 import Frame from "webstomp-client/src/frame.js";
 
-import { DocumentsContext } from "../DocumentsContext";
+import { DocumentsContext } from "../Context/DocumentsContext";
 import { IllegalStateError } from "../Errors";
 import { Pointer } from "../Pointer";
 import { TransientResource } from "../Resource";

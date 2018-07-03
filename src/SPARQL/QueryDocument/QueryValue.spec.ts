@@ -4,7 +4,7 @@ import {
 } from "sparqler/tokens";
 
 import { createMockContext } from "../../../test/helpers/mocks";
-import { AbstractContext } from "../../AbstractContext";
+import { AbstractContext } from "../../Context/AbstractContext";
 import { IllegalArgumentError } from "../../Errors";
 import {
 	clazz,

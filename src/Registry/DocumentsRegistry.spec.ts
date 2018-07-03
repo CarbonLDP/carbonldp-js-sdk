@@ -1,7 +1,7 @@
 import { anyThatMatches } from "../../test/helpers/jasmine/equalities";
 import { CarbonLDP } from "../CarbonLDP";
 import { Document } from "../Document";
-import { DocumentsContext } from "../DocumentsContext";
+import { DocumentsContext } from "../Context/DocumentsContext";
 import * as Errors from "../Errors";
 import { IllegalArgumentError } from "../Errors";
 import { Response } from "../HTTP";

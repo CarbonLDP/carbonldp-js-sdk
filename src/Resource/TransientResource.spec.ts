@@ -1,5 +1,5 @@
 import { createMockContext } from "../../test/helpers/mocks";
-import { AbstractContext } from "../AbstractContext";
+import { AbstractContext } from "../Context/AbstractContext";
 import { Pointer } from "../Pointer";
 import { RegistryService } from "../Registry";
 import {

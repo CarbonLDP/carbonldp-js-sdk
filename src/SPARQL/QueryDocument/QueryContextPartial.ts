@@ -1,4 +1,4 @@
-import { AbstractContext } from "../../AbstractContext";
+import { AbstractContext } from "../../Context/AbstractContext";
 import { DigestedObjectSchema } from "../../ObjectSchema";
 import { Pointer } from "../../Pointer";
 import { PersistedResource } from "../../Resource";

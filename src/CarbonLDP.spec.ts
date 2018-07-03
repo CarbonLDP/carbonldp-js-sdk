@@ -1,5 +1,5 @@
 import { anyThatMatches } from "../test/helpers/jasmine/equalities";
-import { AbstractContext } from "./AbstractContext";
+import { AbstractContext } from "./Context/AbstractContext";
 import { AccessPoint } from "./AccessPoint";
 import * as Auth from "./Auth";
 import { BlankNode } from "./BlankNode";
@@ -32,7 +32,7 @@ import {
 	PersistedResource,
 	TransientResource,
 } from "./Resource";
-import { GlobalContext } from "./GlobalContext";
+import { GlobalContext } from "./Context/GlobalContext";
 import { CarbonLDPSettings } from "./Settings";
 import * as SHACL from "./SHACL";
 import * as SPARQL from "./SPARQL";

@@ -1,4 +1,4 @@
-import { AbstractContext } from "../AbstractContext";
+import { AbstractContext } from "../Context/AbstractContext";
 import { ModelDecorator } from "../core";
 import {
 	IllegalActionError,

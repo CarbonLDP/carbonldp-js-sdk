@@ -3,7 +3,7 @@ import {
 	createMockPartialMetadata,
 	defineNonEnumerableProps
 } from "../../test/helpers/mocks";
-import { AbstractContext } from "../AbstractContext";
+import { AbstractContext } from "../Context/AbstractContext";
 import { MembersDocument } from "../Members";
 import { MessagingDocument } from "../Messaging";
 import { DocumentsRegistry } from "../Registry";

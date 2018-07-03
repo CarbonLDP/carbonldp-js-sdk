@@ -4,7 +4,7 @@ import {
 	Client,
 	Frame
 } from "webstomp-client";
-import { DocumentsContext } from "../DocumentsContext";
+import { DocumentsContext } from "../Context/DocumentsContext";
 import { IllegalStateError } from "../Errors";
 import { FreeResources } from "../FreeResources";
 import { JSONLDParser } from "../JSONLD";

@@ -1,69 +1,71 @@
-import { Document } from "../Document";
-import { DocumentsContext } from "../DocumentsContext";
-import { IllegalArgumentError } from "../Errors";
-import { FreeResources } from "../FreeResources";
-import { Response } from "../HTTP";
-import { JSONLDParser } from "../JSONLD";
-import { ErrorResponse } from "../LDP";
+import { Context } from "../Context";
 import {
-	RDFNode,
-	URI
-} from "../RDF";
-import { Registry } from "./Registry";
-import { RegistryService } from "./RegistryService";
+	ModelDecorator,
+	ModelFactory,
+	ModelPrototype
+} from "../core";
+import { Document } from "../Document";
+import { BaseRegistry } from "./BaseRegistry";
+import { GeneralRegistry } from "./GeneralRegistry";
 
 
-export class DocumentsRegistry extends RegistryService<Document, DocumentsContext> {
-
-	readonly context:DocumentsContext | undefined;
-
-	constructor( context?:DocumentsContext ) {
-		super( Document, context );
-	}
-
-
-	register( id:string ):Document {
-		return this._addPointer( { id } );
-	}
-
-	__getLocalID( id:string ):string {
-		if( URI.isBNodeID( id ) || URI.hasFragment( id ) )
-			return Registry.PROTOTYPE.__getLocalID.call( this, id );
-
-		return super.__getLocalID( id );
-	}
-
-
-	_parseFailedResponse<T extends object>( response:Response | Error | null ):Promise<never> {
-		if( ! (response instanceof Response) ) return super._parseFailedResponse( response );
-
-		return super
-			._parseFailedResponse( response )
-			.catch( error => this._addErrorResponseData( response, error ) )
-			;
-	}
-
-	protected _addErrorResponseData( response:Response, error:Error ):Promise<never> {
-		if( ! response.data ) return Promise.reject( error );
-
-		return new JSONLDParser()
-			.parse( response.data )
-			.then( ( freeNodes:RDFNode[] ) => {
-				const freeResources:FreeResources = this._parseFreeNodes( freeNodes );
-
-				const errorResponses:ErrorResponse[] = freeResources
-					.getPointers( true )
-					.filter( ErrorResponse.is );
-
-				if( errorResponses.length === 0 ) return Promise.reject( new IllegalArgumentError( "The response string does not contains a c:ErrorResponse." ) );
-				if( errorResponses.length > 1 ) return Promise.reject( new IllegalArgumentError( "The response string contains multiple c:ErrorResponse." ) );
-
-				const errorResponse:ErrorResponse = Object.assign( error, errorResponses[ 0 ] );
-				error.message = ErrorResponse.getMessage( errorResponse );
-				return Promise.reject( error );
-			}, () => {
-				return Promise.reject( error );
-			} );
-	}
-
+// FIXME: DocumentsContext
+export interface BaseDocumentsRegistry {
+	$context:Context<Document>;
+	// $context:DocumentsContext;
 }
+
+export interface DocumentsRegistry extends GeneralRegistry<Document> {
+	// readonly $context:DocumentsContext;
+	$context:Context<Document>;
+
+	register( id:string ):Document;
+}
+
+
+export type DocumentsRegistryFactory =
+	& ModelPrototype<DocumentsRegistry, GeneralRegistry<Document>>
+	& ModelDecorator<DocumentsRegistry, BaseDocumentsRegistry>
+	& ModelFactory<DocumentsRegistry, BaseDocumentsRegistry>
+	;
+
+export const DocumentsRegistry:DocumentsRegistryFactory = {
+	PROTOTYPE: {
+		register( this:DocumentsRegistry, id:string ):Document {
+			return this._addPointer( { $id: id } );
+		},
+	},
+
+
+	isDecorated( object:object ):object is DocumentsRegistry {
+		return ModelDecorator
+			.hasPropertiesFrom( DocumentsRegistry.PROTOTYPE, object );
+	},
+
+	decorate<T extends BaseDocumentsRegistry>( object:T ):T & DocumentsRegistry {
+		if( DocumentsRegistry.isDecorated( object ) ) return object;
+
+		const resource:T & GeneralRegistry<Document> = ModelDecorator
+			.decorateMultiple( object, GeneralRegistry );
+
+		return ModelDecorator
+			.definePropertiesFrom( DocumentsRegistry.PROTOTYPE, resource );
+	},
+
+
+	create<T extends object>( data:T & BaseDocumentsRegistry ):T & DocumentsRegistry {
+		// FIXME: TS 3.0
+		return DocumentsRegistry.createFrom( { ...data as any } );
+	},
+
+	createFrom<T extends object>( object:T & BaseDocumentsRegistry ):T & DocumentsRegistry {
+		const baseObject:T & BaseRegistry<Document> = Object.assign( object, {
+			__modelDecorator: Document,
+		} );
+
+		const registry:T & GeneralRegistry<Document> = GeneralRegistry
+			.createFrom( baseObject );
+
+		return DocumentsRegistry.decorate( registry );
+	},
+};

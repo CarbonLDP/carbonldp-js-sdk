@@ -1,5 +1,6 @@
 import {
 	ModelDecorator,
+	ModelFactory,
 	ModelSchema,
 } from "../core";
 import {

@@ -1,5 +1,5 @@
 import { CarbonLDP } from "../CarbonLDP";
-import { DocumentsContext } from "../DocumentsContext";
+import { DocumentsContext } from "../Context/DocumentsContext";
 import { IllegalArgumentError } from "../Errors";
 import { Pointer } from "../Pointer";
 import { DocumentsRegistry } from "../Registry";

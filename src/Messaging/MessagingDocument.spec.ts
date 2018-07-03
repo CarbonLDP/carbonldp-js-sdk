@@ -1,7 +1,7 @@
 import { defineNonEnumerableProps } from "../../test/helpers/mocks";
 import { CarbonLDP } from "../CarbonLDP";
 import { TransientDocument } from "../Document";
-import { DocumentsContext } from "../DocumentsContext";
+import { DocumentsContext } from "../Context/DocumentsContext";
 import { IllegalActionError } from "../Errors";
 import { TransientResource } from "../Resource";
 import {

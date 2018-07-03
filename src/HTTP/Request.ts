@@ -2,7 +2,7 @@ import HTTP from "http";
 import HTTPS from "https";
 import URL from "url";
 
-import { AbstractContext } from "../AbstractContext";
+import { AbstractContext } from "../Context/AbstractContext";
 import { IllegalArgumentError } from "../Errors";
 import {
 	DigestedObjectSchema,
