@@ -8,8 +8,8 @@ import {
 	method,
 	module,
 	OBLIGATORY,
-} from "./test/JasmineExtender";
-import * as Utils from "./Utils";
+} from "../test/JasmineExtender";
+import * as Utils from "../Utils";
 
 describe( module( "carbonldp/Context" ), ():void => {
 

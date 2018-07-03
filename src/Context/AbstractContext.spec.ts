@@ -1,14 +1,14 @@
 import {
 	createMockContext,
 	createMockDigestedSchema,
-} from "../test/helpers/mocks";
+} from "../../test/helpers/mocks";
 import { AbstractContext } from "./AbstractContext";
 import {
 	IllegalArgumentError,
 	IllegalStateError
-} from "./Errors";
-import { DigestedObjectSchema } from "./ObjectSchema";
-import { RegistryService } from "./Registry";
+} from "../Errors";
+import { DigestedObjectSchema } from "../ObjectSchema";
+import { RegistryService } from "../Registry";
 import {
 	clazz,
 	constructor,
@@ -17,7 +17,7 @@ import {
 	INSTANCE,
 	method,
 	module,
-} from "./test/JasmineExtender";
+} from "../test/JasmineExtender";
 
 describe( module( "carbonldp/AbstractContext" ), ():void => {
 

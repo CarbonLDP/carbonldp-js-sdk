@@ -4,7 +4,7 @@ import {
 	ModelTypeGuard
 } from "../core";
 import { Pointer } from "../Pointer";
-import { Repository } from "./index";
+import { Repository } from ".";
 
 export interface ResolvablePointer extends Pointer {
 	$repository:Repository;

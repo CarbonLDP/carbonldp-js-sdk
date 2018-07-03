@@ -1,7 +1,7 @@
-import * as CarbonLDP from "./CarbonLDP";
+import * as CarbonLDP from "../CarbonLDP";
 import { DocumentsContext } from "./DocumentsContext";
-import * as Messaging from "./Messaging";
-import { MessagingService } from "./Messaging";
+import * as Messaging from "../Messaging";
+import { MessagingService } from "../Messaging";
 import {
 	constructor,
 	hasProperty,
@@ -9,7 +9,7 @@ import {
 	INSTANCE,
 	interfaze,
 	module
-} from "./test/JasmineExtender";
+} from "../test/JasmineExtender";
 
 describe( module( "carbonldp/DocumentsContext" ), () => {
 

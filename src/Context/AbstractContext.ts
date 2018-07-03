@@ -1,26 +1,30 @@
-import { Authenticator } from "./Auth";
+import { Authenticator } from "../Auth";
+import { Repository } from "../Repository";
 import { Context } from "./Context";
 import {
 	IllegalArgumentError,
 	IllegalStateError
-} from "./Errors";
+} from "../Errors";
 import {
 	DigestedObjectSchema,
 	ObjectSchema,
 	ObjectSchemaDigester,
 	ObjectSchemaUtils,
-} from "./ObjectSchema";
-import { Pointer } from "./Pointer";
-import { URI } from "./RDF";
-import { RegistryService } from "./Registry";
+} from "../ObjectSchema";
+import { Pointer } from "../Pointer";
+import { URI } from "../RDF";
+import {
+	GeneralRegistry,
+	RegistryService
+} from "../Registry";
 import {
 	ContextSettings,
 	DocumentPaths,
-} from "./Settings";
+} from "../Settings";
 import {
 	isObject,
 	isString,
-} from "./Utils";
+} from "../Utils";
 
 
 export abstract class AbstractContext<M extends Pointer, P extends AbstractContext<any, any> = undefined> implements Context {

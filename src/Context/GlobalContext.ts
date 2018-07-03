@@ -9,8 +9,8 @@ import {
 	TokenCredentials,
 	User,
 	UsernameAndPasswordCredentials
-} from "./Auth";
-import { Document } from "./Document";
+} from "../Auth";
+import { Document } from "../Document";
 import {
 	DocumentMetadata,
 	Error,
@@ -19,11 +19,11 @@ import {
 	MapEntry,
 	ResponseMetadata,
 	ValidationError
-} from "./LDP";
+} from "../LDP";
 import {
 	AddMemberAction,
 	RemoveMemberAction
-} from "./Members";
+} from "../Members";
 import {
 	AccessPointCreated,
 	ChildCreated,
@@ -34,20 +34,20 @@ import {
 	MemberAddedDetails,
 	MemberRemoved,
 	MemberRemovedDetails,
-} from "./Messaging";
-import { DigestedObjectSchema } from "./ObjectSchema";
-import { Pointer } from "./Pointer";
-import { ProtectedDocument } from "./ProtectedDocument";
-import { RegistryService } from "./Registry";
+} from "../Messaging";
+import { DigestedObjectSchema } from "../ObjectSchema";
+import { Pointer } from "../Pointer";
+import { ProtectedDocument } from "../ProtectedDocument";
+import { RegistryService } from "../Registry";
 import {
 	ValidationReport,
 	ValidationResult,
-} from "./SHACL";
-import { QueryMetadata } from "./SPARQL/QueryDocument";
+} from "../SHACL";
+import { QueryMetadata } from "../SPARQL/QueryDocument";
 import {
 	PlatformInstance,
 	PlatformMetadata,
-} from "./System";
+} from "../System";
 
 
 export class GlobalContext extends AbstractContext<Pointer, undefined> {

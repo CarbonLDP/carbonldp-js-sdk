@@ -1,14 +1,14 @@
 import { AbstractContext } from "./AbstractContext";
-import { Authenticator } from "./Auth";
-import { Document } from "./Document";
+import { Authenticator } from "../Auth";
+import { Document } from "../Document";
 import { GlobalContext } from "./GlobalContext";
-import { MessagingService } from "./Messaging";
-import { DocumentsRegistry } from "./Registry";
+import { MessagingService } from "../Messaging";
+import { DocumentsRegistry } from "../Registry";
 import {
 	ContextSettings,
 	DocumentPaths
-} from "./Settings";
-import * as Utils from "./Utils";
+} from "../Settings";
+import * as Utils from "../Utils";
 
 
 export class DocumentsContext extends AbstractContext<Document, GlobalContext> {

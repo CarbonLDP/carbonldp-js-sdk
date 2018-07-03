@@ -10,8 +10,8 @@ import {
 	module,
 	property,
 	STATIC,
-} from "./test/JasmineExtender";
-import { CS } from "./Vocabularies";
+} from "../test/JasmineExtender";
+import { CS } from "../Vocabularies";
 
 
 describe( module( "carbonldp/GlobalContext" ), ():void => {

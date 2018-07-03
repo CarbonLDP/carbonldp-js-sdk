@@ -12,7 +12,7 @@ import {
 import { PersistedResource } from "../Resource";
 import { isObject } from "../Utils";
 import { DigestedObjectSchema } from "./DigestedObjectSchema";
-import { ObjectSchemaDigester } from "./index";
+import { ObjectSchemaDigester } from ".";
 
 
 export interface ObjectSchemaResolver {
