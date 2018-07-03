@@ -5,8 +5,8 @@ import { Registry } from "./Registry";
 
 
 export interface BaseRegistry<M extends RegisteredPointer = RegisteredPointer> {
-	$context:Context<M>;
-	$parentRegistry?:Registry;
+	$context:Context;
+	$registry?:Registry;
 
 	__modelDecorator:ModelDecorator<M>;
 }

@@ -49,7 +49,7 @@ function mockDocumentProperties():DocumentProperties {
 	const fn:() => any = () => {};
 
 	return {
-		$parentRegistry: null,
+		$registry: null,
 
 		__getLocalID: fn,
 		_addPointer: fn,
@@ -238,7 +238,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 
 			it( "should return the document when IRI of the document and has _registry", ():void => {
 				const _registry:DocumentsRegistry = new DocumentsRegistry();
-				const document:TransientDocument = createMockDocument( { $parentRegistry: _registry } );
+				const document:TransientDocument = createMockDocument( { $registry: _registry } );
 
 				_registry.__resourcesMap.set( _registry.__getLocalID( document.$id ), document as any );
 
@@ -248,7 +248,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 
 			it( "should return document as child when relative IRI and has _registry", ():void => {
 				const _registry:DocumentsRegistry = new DocumentsRegistry();
-				const document:TransientDocument = createMockDocument( { $parentRegistry: _registry } );
+				const document:TransientDocument = createMockDocument( { $registry: _registry } );
 
 				const returned:Pointer = document.getPointer( "relative/" );
 				expect( returned ).toEqual( anyThatMatches( TransientDocument.is, "isTransientDocument" ) as any );
@@ -257,7 +257,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 
 			it( "should return document when another absolute IRI and has _registry", ():void => {
 				const _registry:DocumentsRegistry = new DocumentsRegistry();
-				const document:TransientDocument = createMockDocument( { $parentRegistry: _registry } );
+				const document:TransientDocument = createMockDocument( { $registry: _registry } );
 
 				const returned:Pointer = document.getPointer( "https://example.com/another/document/" );
 				expect( returned ).toEqual( anyThatMatches( TransientDocument.is, "isTransientDocument" ) as any );
@@ -1212,7 +1212,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 				const registry:DocumentsRegistry = new DocumentsRegistry();
 				const spy:jasmine.Spy = spyOn( registry, "getSchemaFor" ).and.callThrough();
 
-				const document:TransientDocument = createMockDocument( { $parentRegistry: registry, the: "document" } );
+				const document:TransientDocument = createMockDocument( { $registry: registry, the: "document" } );
 				const bNode:TransientFragment = document.createFragment( { id: "_:1", the: "blank node" } );
 				const namedFragment:TransientFragment = document.createFragment( { id: "#fragment", the: "named fragment" } );
 
@@ -1233,7 +1233,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 					return { mock: "schema document" };
 				} );
 
-				const document:TransientDocument = createMockDocument( { $parentRegistry: registry, the: "document" } );
+				const document:TransientDocument = createMockDocument( { $registry: registry, the: "document" } );
 				const bNode:TransientFragment = document.createFragment( { id: "_:1", the: "blank node" } );
 				const namedFragment:TransientFragment = document.createFragment( { id: "#fragment", the: "named fragment" } );
 
@@ -1252,7 +1252,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 						"the": { "@type": "string" },
 					} ) );
 
-				const document:TransientDocument = createMockDocument( { $parentRegistry: registry, the: "document" } );
+				const document:TransientDocument = createMockDocument( { $registry: registry, the: "document" } );
 				document.createFragment( { id: "_:1", the: "blank node" } );
 				document.createFragment( { id: "#fragment", the: "named fragment" } );
 
@@ -1302,7 +1302,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 						"the": { "@type": "string" },
 					} ) );
 
-				const document:TransientDocument = createMockDocument( { $parentRegistry: registry, the: "document" } );
+				const document:TransientDocument = createMockDocument( { $registry: registry, the: "document" } );
 				document.createFragment( { id: "_:1", the: "blank node" } );
 				document.createFragment( { id: "#fragment", the: "named fragment" } );
 
@@ -1500,7 +1500,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 
 			it( "should return false when no `_registry`", ():void => {
 				const target:DocumentProperties = mockDocumentProperties();
-				delete target.$parentRegistry;
+				delete target.$registry;
 				expect( TransientDocument.isDecorated( target ) ).toBe( false );
 			} );
 
@@ -1512,7 +1512,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 
 			it( "should return false when no `_registry`", ():void => {
 				const target:DocumentProperties = mockDocumentProperties();
-				delete target.$parentRegistry;
+				delete target.$registry;
 				expect( TransientDocument.isDecorated( target ) ).toBe( false );
 			} );
 

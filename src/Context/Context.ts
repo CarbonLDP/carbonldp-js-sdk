@@ -1,24 +1,31 @@
 import { Authenticator } from "../Auth";
+import { JSONLDConverter } from "../JSONLD";
 import {
 	DigestedObjectSchema,
 	ObjectSchema,
 } from "../ObjectSchema";
-import { Registry } from "../Registry";
-import { Repository } from "../Repository";
+import {
+	RegisteredPointer,
+	Registry
+} from "../Registry";
+import {
+	Repository,
+	ResolvablePointer
+} from "../Repository";
 
 
-export interface Context {
-	readonly registry:Registry | undefined;
-	readonly repository:Repository | undefined;
+export interface Context<REGISTRY extends RegisteredPointer = RegisteredPointer, REPOSITORY extends ResolvablePointer = ResolvablePointer> {
+	readonly registry:Registry<REGISTRY> | undefined;
+	readonly repository:Repository<REPOSITORY> | undefined;
 	readonly auth:Authenticator<any> | undefined;
 
 	readonly baseURI:string;
 	readonly parentContext:Context | undefined;
 
+	readonly jsonldConverter:JSONLDConverter;
+
 
 	resolve( relativeURI:string ):string;
-
-	_resolvePath( path:string ):string;
 
 
 	hasObjectSchema( type:string ):boolean;

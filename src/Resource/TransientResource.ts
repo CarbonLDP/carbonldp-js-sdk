@@ -48,7 +48,7 @@ function getSchemaResolver( registry:Registry<any> | undefined ):ObjectSchemaRes
 
 	if( ObjectSchemaResolver.is( registry ) ) return registry;
 
-	return getSchemaResolver( registry.$parentRegistry );
+	return getSchemaResolver( registry.$registry );
 }
 
 function resolveURI( resource:TransientResource, uri:string ):string {

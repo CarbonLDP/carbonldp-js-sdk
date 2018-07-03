@@ -148,7 +148,7 @@ describe( module( "carbonldp/Pointer" ), ():void => {
 
 				delete pointer._registry;
 				expect( Pointer.isDecorated( pointer ) ).toBe( true );
-				pointer.$parentRegistry = void 0;
+				pointer.$registry = void 0;
 
 				delete pointer._id;
 				expect( Pointer.isDecorated( pointer ) ).toBe( false );

@@ -99,14 +99,14 @@ describe( module( "carbonldp/Registry" ), () => {
 
 			it( "should return undefined when no context", () => {
 				const registry:RegistryService<any> = new RegistryService( Pointer, void 0 );
-				expect( registry.$parentRegistry ).toBeUndefined();
+				expect( registry.$registry ).toBeUndefined();
 			} );
 
 			it( "should return undefined when context has no parent", () => {
 				const context:AbstractContext<Pointer> = createMockContext();
 				const registry:RegistryService<any, any> = new RegistryService( Pointer, context );
 
-				expect( registry.$parentRegistry ).toBeUndefined();
+				expect( registry.$registry ).toBeUndefined();
 			} );
 
 			it( "should return the registry of the context parent", () => {
@@ -116,7 +116,7 @@ describe( module( "carbonldp/Registry" ), () => {
 				const context:AbstractContext<Pointer, AbstractContext<Pointer>> = createMockContext( { parentContext } );
 				const registry:RegistryService<any, any> = new RegistryService( Pointer, context );
 
-				expect( registry.$parentRegistry ).toBe( parentRegistry );
+				expect( registry.$registry ).toBe( parentRegistry );
 			} );
 
 		} );

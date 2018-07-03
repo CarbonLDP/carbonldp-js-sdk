@@ -26,7 +26,7 @@ export interface BaseFreeResources {
 
 
 export interface FreeResources extends Registry<TransientResource> {
-	$parentRegistry:RegistryService<Pointer, any> | undefined;
+	$registry:RegistryService<Pointer, any> | undefined;
 
 
 	__getLocalID( id:string ):string;
@@ -38,13 +38,13 @@ export interface FreeResources extends Registry<TransientResource> {
 }
 
 type OverloadedProps =
-	| "$parentRegistry"
+	| "$registry"
 	| "__getLocalID"
 	| "_addPointer"
 	;
 
 const PROTOTYPE:PickSelfProps<FreeResources, Registry<TransientResource>, OverloadedProps> = {
-	$parentRegistry: void 0,
+	$registry: void 0,
 
 
 	__getLocalID( this:FreeResources, id:string ):string {
@@ -61,16 +61,16 @@ const PROTOTYPE:PickSelfProps<FreeResources, Registry<TransientResource>, Overlo
 
 
 	toJSON( this:FreeResources ):RDFNode[] {
-		const generalSchema:DigestedObjectSchema = this.$parentRegistry ?
-			this.$parentRegistry.getGeneralSchema() : new DigestedObjectSchema();
-		const jsonldConverter:JSONLDConverter = this.$parentRegistry ?
-			this.$parentRegistry.jsonldConverter : new JSONLDConverter();
+		const generalSchema:DigestedObjectSchema = this.$registry ?
+			this.$registry.getGeneralSchema() : new DigestedObjectSchema();
+		const jsonldConverter:JSONLDConverter = this.$registry ?
+			this.$registry.jsonldConverter : new JSONLDConverter();
 
 		return this
 			.getPointers( true )
 			.map( resource => {
-				const resourceSchema:DigestedObjectSchema = this.$parentRegistry ?
-					this.$parentRegistry.getSchemaFor( resource ) : generalSchema;
+				const resourceSchema:DigestedObjectSchema = this.$registry ?
+					this.$registry.getSchemaFor( resource ) : generalSchema;
 
 				return jsonldConverter.expand( resource, generalSchema, resourceSchema );
 			} )
@@ -82,7 +82,7 @@ const PROTOTYPE:PickSelfProps<FreeResources, Registry<TransientResource>, Overlo
 export interface FreeResourcesFactory extends ModelFactory<FreeResources>, ModelDecorator<FreeResources, BaseFreeResources> {
 	PROTOTYPE:PickSelfProps<FreeResources,
 		Registry<TransientResource>,
-		| "$parentRegistry"
+		| "$registry"
 		| "__getLocalID"
 		| "_addPointer">;
 

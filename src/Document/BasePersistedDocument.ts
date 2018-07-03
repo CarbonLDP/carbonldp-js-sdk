@@ -13,7 +13,7 @@ import { TransientDocument } from "./TransientDocument";
 
 
 export interface BasePersistedDocument extends TransientDocument, PersistedResource {
-	$parentRegistry:DocumentsRegistry | undefined;
+	$registry:DocumentsRegistry | undefined;
 
 	_resolved:boolean | undefined;
 	_eTag:string | undefined | null;

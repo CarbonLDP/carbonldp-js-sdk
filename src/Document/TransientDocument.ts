@@ -31,7 +31,7 @@ import { BaseDocument } from "./BaseDocument";
 
 
 export interface TransientDocument extends TransientResource, Registry<TransientBlankNode | TransientNamedFragment> {
-	$parentRegistry:DocumentsRegistry | undefined;
+	$registry:DocumentsRegistry | undefined;
 
 	defaultInteractionModel?:Pointer;
 	isMemberOfRelation?:Pointer;
@@ -119,14 +119,14 @@ function internalConverter( resource:TransientDocument, target:object, tracker:S
 
 
 type OverloadedProps =
-	| "$parentRegistry"
+	| "$registry"
 	| "__getLocalID"
 	| "_addPointer"
 	| "getPointer"
 	;
 
 const PROTOTYPE:PickSelfProps<TransientDocument, TransientResource & Registry<TransientBlankNode | TransientNamedFragment>, OverloadedProps> = {
-	$parentRegistry: void 0,
+	$registry: void 0,
 
 
 	_normalize( this:TransientDocument ):void {
@@ -244,7 +244,7 @@ const PROTOTYPE:PickSelfProps<TransientDocument, TransientResource & Registry<Tr
 
 	toJSON( this:TransientDocument, registryOrKey?:DocumentsRegistry | string ):RDFDocument {
 		const registry:DocumentsRegistry = isObject( registryOrKey ) ?
-			registryOrKey : this.$parentRegistry;
+			registryOrKey : this.$registry;
 
 		const generalSchema:DigestedObjectSchema = registry ?
 			registry.getGeneralSchema() : new DigestedObjectSchema();
@@ -274,7 +274,7 @@ const PROTOTYPE:PickSelfProps<TransientDocument, TransientResource & Registry<Tr
 export interface TransientDocumentFactory extends ModelFactory<TransientDocument>, ModelDecorator<TransientDocument> {
 	PROTOTYPE:PickSelfProps<TransientDocument,
 		TransientResource & Registry<TransientBlankNode | TransientNamedFragment>,
-		| "$parentRegistry"
+		| "$registry"
 		| "__getLocalID"
 		| "_addPointer"
 		| "getPointer">;

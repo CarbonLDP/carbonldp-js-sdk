@@ -49,7 +49,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 			"_registry",
 			"CarbonLDP.DocumentsRegistry | undefined"
 		), ():void => {
-			const target:BasePersistedDocument[ "$parentRegistry" ] = {} as DocumentsRegistry | undefined;
+			const target:BasePersistedDocument[ "$registry" ] = {} as DocumentsRegistry | undefined;
 			expect( target ).toBeDefined();
 		} );
 

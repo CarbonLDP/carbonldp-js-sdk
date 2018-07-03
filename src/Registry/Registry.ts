@@ -10,6 +10,7 @@ import {
 } from "../Errors";
 import {
 	DigestedObjectSchema,
+	ObjectSchemaResolver,
 	ObjectSchemaUtils
 } from "../ObjectSchema";
 import {
@@ -22,9 +23,9 @@ import { BaseRegistry } from "./BaseRegistry";
 import { RegisteredPointer } from "./RegisteredPointer";
 
 
-export interface Registry<M extends RegisteredPointer = RegisteredPointer> extends PointerLibrary, PointerValidator {
-	readonly $context:Context<M>;
-	readonly $parentRegistry?:Registry<any>;
+export interface Registry<M extends RegisteredPointer = RegisteredPointer> extends PointerLibrary, PointerValidator, ObjectSchemaResolver {
+	readonly $context:Context;
+	readonly $registry?:Registry<any>;
 
 	readonly __modelDecorator:ModelDecorator<M>;
 	readonly __resourcesMap:Map<string, M>;
@@ -54,14 +55,14 @@ export interface Registry<M extends RegisteredPointer = RegisteredPointer> exten
 
 
 export type RegistryFactory =
-	& ModelPrototype<Registry, BaseRegistry>
+	& ModelPrototype<Registry, BaseRegistry & ObjectSchemaResolver>
 	& ModelDecorator<Registry, BaseRegistry>
 	& ModelFactory<Registry, BaseRegistry>
 	;
 
 export const Registry:RegistryFactory = {
 	PROTOTYPE: {
-		$parentRegistry: void 0,
+		$registry: void 0,
 
 		get __resourcesMap():Map<string, RegisteredPointer> { return new Map(); },
 
@@ -72,8 +73,8 @@ export const Registry:RegistryFactory = {
 				this.__getLocalID( id );
 				return true;
 			} catch {
-				if( local === true || ! this.$parentRegistry ) return false;
-				return this.$parentRegistry.inScope( idOrPointer );
+				if( local === true || ! this.$registry ) return false;
+				return this.$registry.inScope( idOrPointer );
 			}
 		},
 
@@ -84,31 +85,31 @@ export const Registry:RegistryFactory = {
 				if( this.__resourcesMap.has( localID ) ) return true;
 			}
 
-			if( local === true || ! this.$parentRegistry ) return false;
-			return this.$parentRegistry.hasPointer( id );
+			if( local === true || ! this.$registry ) return false;
+			return this.$registry.hasPointer( id );
 		},
 
 		getPointer( this:Registry, id:string, local?:true ):RegisteredPointer {
 			if( ! this.inScope( id, true ) ) {
-				if( local === true || ! this.$parentRegistry ) throw new IllegalArgumentError( `"${ id }" is out of scope.` );
-				return this.$parentRegistry.getPointer( id );
+				if( local === true || ! this.$registry ) throw new IllegalArgumentError( `"${ id }" is out of scope.` );
+				return this.$registry.getPointer( id );
 			}
 
 			const localID:string = this.__getLocalID( id );
 			if( this.__resourcesMap.has( localID ) ) return this.__resourcesMap.get( localID );
 
-			if( local !== true && this.$parentRegistry && this.$parentRegistry.hasPointer( id ) )
-				return this.$parentRegistry.getPointer( id );
+			if( local !== true && this.$registry && this.$registry.hasPointer( id ) )
+				return this.$registry.getPointer( id );
 
 			return this._addPointer( { $id: id } );
 		},
 
 		getPointers( this:Registry, local?:true ):RegisteredPointer[] {
 			const pointers:RegisteredPointer[] = Array.from( this.__resourcesMap.values() );
-			if( local === true || ! this.$parentRegistry ) return pointers;
+			if( local === true || ! this.$registry ) return pointers;
 
 			return [
-				...this.$parentRegistry.getPointers(),
+				...this.$registry.getPointers(),
 				...pointers,
 			];
 		},
@@ -121,8 +122,8 @@ export const Registry:RegistryFactory = {
 				if( this.__resourcesMap.delete( localID ) ) return true;
 			}
 
-			if( local === true || ! this.$parentRegistry ) return false;
-			return this.$parentRegistry.removePointer( idOrPointer );
+			if( local === true || ! this.$registry ) return false;
+			return this.$registry.removePointer( idOrPointer );
 		},
 
 
@@ -158,8 +159,11 @@ export const Registry:RegistryFactory = {
 	decorate<T extends BaseRegistry>( object:T ):T & Registry {
 		if( Registry.isDecorated( object ) ) return object;
 
+		const target:T & ObjectSchemaResolver = ModelDecorator
+			.decorateMultiple( object, ObjectSchemaResolver );
+
 		return ModelDecorator
-			.definePropertiesFrom( Registry.PROTOTYPE, object );
+			.definePropertiesFrom( Registry.PROTOTYPE, target );
 	},
 
 
@@ -169,8 +173,8 @@ export const Registry:RegistryFactory = {
 	},
 
 	createFrom<T extends object>( object:T & BaseRegistry ):T & Registry {
-		if( ! object.$parentRegistry && object.$context.parentContext && object.$context.parentContext.registry )
-			object.$parentRegistry = object.$context.parentContext.registry;
+		if( ! object.$registry && object.$context.parentContext && object.$context.parentContext.registry )
+			object.$registry = object.$context.parentContext.registry;
 
 		return Registry.decorate( object );
 	},

@@ -35,7 +35,7 @@ import { TransientDocument } from "./TransientDocument";
 
 
 export interface Document extends CRUDDocument, MembersDocument, SPARQLDocument, MessagingDocument, QueryDocumentDocument {
-	$parentRegistry:DocumentsRegistry;
+	$registry:DocumentsRegistry;
 
 	created?:Date;
 	modified?:Date;
@@ -67,9 +67,9 @@ type QueryBuilderFn = Function & (( queryBuilder:QueryDocumentBuilder ) => Query
 
 function addEnsureIfPartial( this:void, iri:string, resource:Document, requestOptions:GETOptions ):void {
 	if( requestOptions.ensureLatest ) return;
-	if( ! resource.$parentRegistry || ! resource.$parentRegistry.hasPointer( iri, true ) ) return;
+	if( ! resource.$registry || ! resource.$registry.hasPointer( iri, true ) ) return;
 
-	const target:Document = resource.$parentRegistry.getPointer( iri, true );
+	const target:Document = resource.$registry.getPointer( iri, true );
 	if( target.isPartial() ) requestOptions.ensureLatest = true;
 }
 

@@ -149,7 +149,7 @@ function setDefaultRequestOptions( registry:DocumentsRegistry, requestOptions:Re
 }
 
 function getRegistry( repository:CRUDDocument ):DocumentsRegistry {
-	if( repository.$parentRegistry ) return repository.$parentRegistry;
+	if( repository.$registry ) return repository.$registry;
 	throw new IllegalActionError( `"${ repository.$id }" doesn't support CRUD requests.` );
 }
 
@@ -427,7 +427,7 @@ function refreshResource<T extends CRUDDocument>( registry:DocumentsRegistry, re
 		.catch<T & CRUDDocument>( ( response:Response ) => {
 			if( response.status === 304 ) return resource;
 
-			return resource.$parentRegistry._parseFailedResponse( response );
+			return resource.$registry._parseFailedResponse( response );
 		} );
 }
 
@@ -447,7 +447,7 @@ function sendPatch<T extends CRUDDocument>( registry:DocumentsRegistry, resource
 	RequestUtils.setIfMatchHeader( resource._eTag, requestOptions );
 
 
-	const deltaCreator:DeltaCreator = new DeltaCreator( resource.$parentRegistry.jsonldConverter );
+	const deltaCreator:DeltaCreator = new DeltaCreator( resource.$registry.jsonldConverter );
 
 	// Document resource
 	addResourcePatch( registry, deltaCreator, resource, resource, resource._snapshot );
@@ -597,9 +597,9 @@ const PROTOTYPE:PickSelfProps<CRUDDocument, BasePersistedDocument> = {
 			return RequestService
 				.delete( url, requestOptions )
 				.then( () => {
-					this.$parentRegistry.removePointer( url );
+					this.$registry.removePointer( url );
 				} )
-				.catch( this.$parentRegistry._parseFailedResponse.bind( this ) )
+				.catch( this.$registry._parseFailedResponse.bind( this ) )
 				;
 		} );
 	},

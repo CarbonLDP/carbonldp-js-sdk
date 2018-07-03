@@ -270,7 +270,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 
 				const resource:Document = createMock( {
 					_partialMetadata: createMockPartialMetadata( {} ),
-					$parentRegistry: _registry,
+					$registry: _registry,
 				} );
 
 				_registry.__resourcesMap.set( _registry.__getLocalID( resource.$id ), resource );
@@ -294,7 +294,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 
 				const resource:Document = createMock( {
 					_partialMetadata: createMockPartialMetadata( {} ),
-					$parentRegistry: _registry,
+					$registry: _registry,
 				} );
 
 				_registry.__resourcesMap.set( _registry.__getLocalID( resource.$id ), resource );
@@ -316,10 +316,10 @@ describe( module( "carbonldp/Document" ), ():void => {
 			it( "should ensure latest when URI is partial and no builder function", async () => {
 				const _registry:DocumentsRegistry = new DocumentsRegistry();
 
-				const resource:Document = createMock( { $parentRegistry: _registry } );
+				const resource:Document = createMock( { $registry: _registry } );
 
 				_registry.__resourcesMap.set( "resource/", createMock( {
-					$parentRegistry: _registry,
+					$registry: _registry,
 					_partialMetadata: createMockPartialMetadata( {} ),
 				} ) );
 
@@ -340,10 +340,10 @@ describe( module( "carbonldp/Document" ), ():void => {
 			it( "should ensure latest when URI is partial and no builder function, with options", async () => {
 				const _registry:DocumentsRegistry = new DocumentsRegistry();
 
-				const resource:Document = createMock( { $parentRegistry: _registry } );
+				const resource:Document = createMock( { $registry: _registry } );
 
 				_registry.__resourcesMap.set( "resource/", createMock( {
-					$parentRegistry: _registry,
+					$registry: _registry,
 					_partialMetadata: createMockPartialMetadata( {} ),
 				} ) );
 
@@ -452,7 +452,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 
 				const resource:Document = createMock( {
 					_partialMetadata: createMockPartialMetadata( {} ),
-					$parentRegistry: _registry,
+					$registry: _registry,
 				} );
 
 				_registry.__resourcesMap.set( _registry.__getLocalID( resource.$id ), resource );
@@ -476,7 +476,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 
 				const resource:Document = createMock( {
 					_partialMetadata: createMockPartialMetadata( {} ),
-					$parentRegistry: _registry,
+					$registry: _registry,
 				} );
 
 				_registry.__resourcesMap.set( _registry.__getLocalID( resource.$id ), resource );

@@ -149,8 +149,8 @@ describe( module( "carbonldp/FreeResources" ), ():void => {
 
 		// TODO: Test in `FreeResources.decorate`
 		it( "FreeResources._documents", ():void => {
-			expect( freeResources.$parentRegistry ).toBeDefined();
-			expect( freeResources.$parentRegistry ).toEqual( jasmine.any( RegistryService ) );
+			expect( freeResources.$registry ).toBeDefined();
+			expect( freeResources.$registry ).toEqual( jasmine.any( RegistryService ) );
 		} );
 
 		describe( method( OBLIGATORY, "toJSON" ), () => {
@@ -197,7 +197,7 @@ describe( module( "carbonldp/FreeResources" ), ():void => {
 			} );
 
 			it( "should expand resource with no registry and context", () => {
-				delete freeResources.$parentRegistry;
+				delete freeResources.$registry;
 
 				freeResources._addPointer( TransientResource.createFrom( {
 					$id: "_:another",
@@ -324,16 +324,16 @@ describe( module( "carbonldp/FreeResources" ), ():void => {
 
 			let fx:() => any = () => {};
 			object = {
-				$parentRegistry: null,
+				$registry: null,
 				__getLocalID: fx,
 				_addPointer: fx,
 				toJSON: fx,
 			};
 			expect( FreeResources.isDecorated( object ) ).toBe( true );
 
-			delete object.$parentRegistry;
+			delete object.$registry;
 			expect( FreeResources.isDecorated( object ) ).toBe( false );
-			object.$parentRegistry = null;
+			object.$registry = null;
 
 			delete object.__getLocalID;
 			expect( FreeResources.isDecorated( object ) ).toBe( false );
@@ -388,7 +388,7 @@ describe( module( "carbonldp/FreeResources" ), ():void => {
 
 			let fx:() => any = () => null;
 			let object:FreeResourcesFactory[ "PROTOTYPE" ] = {
-				$parentRegistry: null,
+				$registry: null,
 				__getLocalID: fx,
 				_addPointer: fx,
 				toJSON: fx,

@@ -34,10 +34,10 @@ import { Registry } from "./Registry";
 export class RegistryService<M extends Pointer, C extends AbstractContext<M, any> = undefined> implements Registry<M>, ObjectSchemaResolver {
 	readonly context:C | undefined;
 
-	get $parentRegistry():Registry<any> | undefined {
+	get $registry():Registry<any> | undefined {
 		return this.context
 			&& this.context.parentContext
-			&& this.context.parentContext.registry
+			&& this.context.parentContext.$registry
 			;
 	}
 
@@ -65,8 +65,8 @@ export class RegistryService<M extends Pointer, C extends AbstractContext<M, any
 
 		this.__resourcesMap = new Map();
 
-		this._documentDecorators = MapUtils.extend( new Map(), context && context.parentContext && context.parentContext.registry.documentDecorators );
-		this._jsonldConverter = new JSONLDConverter( context && context.parentContext && context.parentContext.registry.jsonldConverter.literalSerializers );
+		this._documentDecorators = MapUtils.extend( new Map(), context && context.parentContext && context.parentContext.$registry.documentDecorators );
+		this._jsonldConverter = new JSONLDConverter( context && context.parentContext && context.parentContext.$registry.jsonldConverter.literalSerializers );
 	}
 
 

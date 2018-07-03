@@ -21,7 +21,7 @@ export interface GeneralRegistry<M extends RegisteredPointer = RegisteredPointer
 
 	addDecorator( decorator:TypedModelDecorator ):this;
 
-	decorate<T extends { types?:string[] }>( object:T ):T;
+	decorate( object:{ types?:string[] } ):void;
 }
 
 
@@ -48,16 +48,14 @@ export const GeneralRegistry:GeneralRegistryFactory = {
 			return this;
 		},
 
-		decorate<T extends { types?:string[] }>( this:GeneralRegistry, object:T ):T {
-			if( ! object.types ) return object;
+		decorate( this:GeneralRegistry, object:{ types?:string[] } ):void {
+			if( ! object.types ) return;
 
 			object.types
 				.filter( type => this.__modelDecorators.has( type ) )
 				.map( type => this.__modelDecorators.get( type ) )
 				.forEach( decorator => decorator.decorate( object ) )
 			;
-
-			return object;
 		},
 
 

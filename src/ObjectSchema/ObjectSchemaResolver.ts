@@ -16,7 +16,7 @@ import { ObjectSchemaDigester } from ".";
 
 
 export interface ObjectSchemaResolver {
-	$context:Context | undefined;
+	$context?:Context;
 
 
 	getGeneralSchema():DigestedObjectSchema;

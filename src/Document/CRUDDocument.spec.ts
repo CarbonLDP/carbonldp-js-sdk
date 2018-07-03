@@ -133,7 +133,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 
 			it( "should throw error when _registry undefined", async () => {
 				try {
-					const resource:CRUDDocument = createMock( { $parentRegistry: void 0 } );
+					const resource:CRUDDocument = createMock( { $registry: void 0 } );
 					await resource.get( "some/" );
 				} catch( e ) {
 					expect( () => { throw e; } )
@@ -144,7 +144,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 			it( "should parse error response", async () => {
 				const resource:CRUDDocument = createMock();
 
-				const spy:jasmine.Spy = spyOn( resource.$parentRegistry, "_parseFailedResponse" )
+				const spy:jasmine.Spy = spyOn( resource.$registry, "_parseFailedResponse" )
 					.and.callFake( () => Promise.reject( null ) );
 
 				try {
@@ -164,7 +164,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 				let resource:CRUDDocument;
 				beforeEach( ():void => {
 					context = new CarbonLDP( "https://example.com/" );
-					resource = createMock( { $parentRegistry: context.registry } );
+					resource = createMock( { $registry: context.registry } );
 				} );
 
 
@@ -312,7 +312,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 				it( "should return resource requested when in registry but not resolved", async () => {
 					stubRequest( "https://example.com/resource/" );
 
-					resource.$parentRegistry._addPointer( { id: "https://example.com/resource/" } );
+					resource.$registry._addPointer( { id: "https://example.com/resource/" } );
 
 					const retrieved:CRUDDocument = await resource.get( "resource/" );
 					expect( retrieved ).toEqual( jasmine.objectContaining( {
@@ -321,7 +321,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 				} );
 
 				it( "should return registered when already resolved", async () => {
-					const registered:CRUDDocument = resource.$parentRegistry._addPointer( {
+					const registered:CRUDDocument = resource.$registry._addPointer( {
 						_resolved: true,
 						id: "https://example.com/resource/",
 					} );
@@ -341,7 +341,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 						"@vocab": "https://example.com/ns#",
 					} );
 
-					resource.$parentRegistry._addPointer( {
+					resource.$registry._addPointer( {
 						_resolved: true,
 						id: "https://example.com/resource/",
 					} );
@@ -357,7 +357,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 				it( "should add if-none-match header when resolved and ensureLatest", async () => {
 					stubRequest( "https://example.com/resource/" );
 
-					resource.$parentRegistry._addPointer( {
+					resource.$registry._addPointer( {
 						_resolved: true,
 						_eTag: "\"0-12345\"",
 						id: "https://example.com/resource/",
@@ -458,7 +458,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 
 					const retrieved:CRUDDocument = await resource.get();
 
-					const registry:DocumentsRegistry = resource.$parentRegistry;
+					const registry:DocumentsRegistry = resource.$registry;
 					expect( registry.hasPointer( retrieved.$id ) ).toBe( true );
 					expect( registry.getPointer( retrieved.$id ) ).toBe( retrieved );
 				} );
@@ -539,7 +539,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 
 			it( "should throw error when _registry undefined", async () => {
 				try {
-					const resource:CRUDDocument = createMock( { $parentRegistry: void 0 } );
+					const resource:CRUDDocument = createMock( { $registry: void 0 } );
 					await resource.resolve();
 				} catch( e ) {
 					expect( () => { throw e; } )
@@ -550,7 +550,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 			it( "should parse error response", async () => {
 				const resource:CRUDDocument = createMock( { $id: "https://example.com/500/" } );
 
-				const spy:jasmine.Spy = spyOn( resource.$parentRegistry, "_parseFailedResponse" )
+				const spy:jasmine.Spy = spyOn( resource.$registry, "_parseFailedResponse" )
 					.and.callFake( () => Promise.reject( null ) );
 
 				try {
@@ -570,7 +570,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 				let resource:CRUDDocument;
 				beforeEach( ():void => {
 					context = new CarbonLDP( "https://example.com/" );
-					resource = createMock( { $parentRegistry: context.registry } );
+					resource = createMock( { $registry: context.registry } );
 				} );
 
 				it( "should request self when no URI", async () => {
@@ -630,7 +630,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 				} );
 
 				it( "should return registered when already resolved", async () => {
-					const registered:CRUDDocument = resource.$parentRegistry
+					const registered:CRUDDocument = resource.$registry
 						.getPointer( "https://example.com/", true );
 					registered._resolved = true;
 
@@ -649,7 +649,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 						"@vocab": "https://example.com/ns#",
 					} );
 
-					const registered:CRUDDocument = resource.$parentRegistry
+					const registered:CRUDDocument = resource.$registry
 						.getPointer( "https://example.com/", true );
 					registered._resolved = true;
 
@@ -665,7 +665,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 				it( "should add if-none-match header when resolved and ensureLatest", async () => {
 					stubRequest( "https://example.com/" );
 
-					const registered:CRUDDocument = resource.$parentRegistry
+					const registered:CRUDDocument = resource.$registry
 						.getPointer( "https://example.com/", true );
 					registered._resolved = true;
 					registered._eTag = "\"0-12345\"";
@@ -748,7 +748,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 
 					const retrieved:CRUDDocument = await resource.resolve();
 
-					const registry:DocumentsRegistry = resource.$parentRegistry;
+					const registry:DocumentsRegistry = resource.$registry;
 					expect( registry.hasPointer( retrieved.$id ) ).toBe( true );
 					expect( registry.getPointer( retrieved.$id ) ).toBe( retrieved );
 				} );
@@ -809,7 +809,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 
 			it( "should throw error when _registry undefined", async () => {
 				try {
-					const resource:CRUDDocument = createMock( { $parentRegistry: void 0 } );
+					const resource:CRUDDocument = createMock( { $registry: void 0 } );
 					await resource.exists( "resource/" );
 				} catch( e ) {
 					expect( () => { throw e; } )
@@ -820,7 +820,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 			it( "should parse error response", async () => {
 				const resource:CRUDDocument = createMock();
 
-				const spy:jasmine.Spy = spyOn( resource.$parentRegistry, "_parseFailedResponse" )
+				const spy:jasmine.Spy = spyOn( resource.$registry, "_parseFailedResponse" )
 					.and.callFake( () => Promise.reject( null ) );
 
 				try {
@@ -840,7 +840,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 				let resource:CRUDDocument;
 				beforeEach( ():void => {
 					context = new CarbonLDP( "https://example.com/" );
-					resource = createMock( { $parentRegistry: context.registry } );
+					resource = createMock( { $registry: context.registry } );
 				} );
 
 				it( "should request the URI provided", async () => {
@@ -1097,7 +1097,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 
 			it( "should throw error when _registry undefined", async () => {
 				try {
-					const resource:CRUDDocument = createMock( { $parentRegistry: void 0 } );
+					const resource:CRUDDocument = createMock( { $registry: void 0 } );
 					await resource.create( {} );
 				} catch( e ) {
 					expect( () => { throw e; } )
@@ -1108,7 +1108,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 			it( "should parse error response", async () => {
 				const resource:CRUDDocument = createMock( { $id: "https://example.com/500/" } );
 
-				const spy:jasmine.Spy = spyOn( resource.$parentRegistry, "_parseFailedResponse" )
+				const spy:jasmine.Spy = spyOn( resource.$registry, "_parseFailedResponse" )
 					.and.callFake( () => Promise.reject( null ) );
 
 				try {
@@ -1128,7 +1128,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 				let resource:CRUDDocument;
 				beforeEach( ():void => {
 					context = new CarbonLDP( "https://example.com/" );
-					resource = createMock( { $parentRegistry: context.registry } );
+					resource = createMock( { $registry: context.registry } );
 				} );
 
 
@@ -1667,8 +1667,8 @@ describe( module( "carbonldp/Document" ), ():void => {
 
 					const returned:CRUDDocument = await resource.create( {} );
 
-					expect( resource.$parentRegistry.hasPointer( returned.$id ) ).toBe( true );
-					expect( resource.$parentRegistry.getPointer( returned.$id ) ).toBe( returned );
+					expect( resource.$registry.hasPointer( returned.$id ) ).toBe( true );
+					expect( resource.$registry.getPointer( returned.$id ) ).toBe( returned );
 				} );
 
 				it( "should have stored the children in the registry", async () => {
@@ -1676,11 +1676,11 @@ describe( module( "carbonldp/Document" ), ():void => {
 
 					const [ returned1, returned2 ]:CRUDDocument[] = await resource.create( [ {}, {} ] );
 
-					expect( resource.$parentRegistry.hasPointer( returned1.$id ) ).toBe( true );
-					expect( resource.$parentRegistry.getPointer( returned1.$id ) ).toBe( returned1 );
+					expect( resource.$registry.hasPointer( returned1.$id ) ).toBe( true );
+					expect( resource.$registry.getPointer( returned1.$id ) ).toBe( returned1 );
 
-					expect( resource.$parentRegistry.hasPointer( returned2.$id ) ).toBe( true );
-					expect( resource.$parentRegistry.getPointer( returned2.$id ) ).toBe( returned2 );
+					expect( resource.$registry.hasPointer( returned2.$id ) ).toBe( true );
+					expect( resource.$registry.getPointer( returned2.$id ) ).toBe( returned2 );
 				} );
 
 				it( "should throw error if child is already persisted", async () => {
@@ -1996,7 +1996,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 
 			it( "should throw error when _registry undefined", async () => {
 				try {
-					const resource:CRUDDocument = createMock( { $parentRegistry: void 0 } );
+					const resource:CRUDDocument = createMock( { $registry: void 0 } );
 					await resource.createAndRetrieve( {} );
 				} catch( e ) {
 					expect( () => { throw e; } )
@@ -2007,7 +2007,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 			it( "should parse error response", async () => {
 				const resource:CRUDDocument = createMock( { $id: "https://example.com/500/" } );
 
-				const spy:jasmine.Spy = spyOn( resource.$parentRegistry, "_parseFailedResponse" )
+				const spy:jasmine.Spy = spyOn( resource.$registry, "_parseFailedResponse" )
 					.and.callFake( () => Promise.reject( null ) );
 
 				try {
@@ -2027,7 +2027,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 				let resource:CRUDDocument;
 				beforeEach( ():void => {
 					context = new CarbonLDP( "https://example.com/" );
-					resource = createMock( { $parentRegistry: context.registry } );
+					resource = createMock( { $registry: context.registry } );
 				} );
 
 				it( "should request from self when no URI", async () => {
@@ -2592,8 +2592,8 @@ describe( module( "carbonldp/Document" ), ():void => {
 
 					const returned:CRUDDocument = await resource.createAndRetrieve( {} );
 
-					expect( resource.$parentRegistry.hasPointer( returned.$id ) ).toBe( true );
-					expect( resource.$parentRegistry.getPointer( returned.$id ) ).toBe( returned );
+					expect( resource.$registry.hasPointer( returned.$id ) ).toBe( true );
+					expect( resource.$registry.getPointer( returned.$id ) ).toBe( returned );
 				} );
 
 				it( "should have stored the children in the registry", async () => {
@@ -2609,11 +2609,11 @@ describe( module( "carbonldp/Document" ), ():void => {
 
 					const [ returned1, returned2 ]:CRUDDocument[] = await promises;
 
-					expect( resource.$parentRegistry.hasPointer( returned1.$id ) ).toBe( true );
-					expect( resource.$parentRegistry.getPointer( returned1.$id ) ).toBe( returned1 );
+					expect( resource.$registry.hasPointer( returned1.$id ) ).toBe( true );
+					expect( resource.$registry.getPointer( returned1.$id ) ).toBe( returned1 );
 
-					expect( resource.$parentRegistry.hasPointer( returned2.$id ) ).toBe( true );
-					expect( resource.$parentRegistry.getPointer( returned2.$id ) ).toBe( returned2 );
+					expect( resource.$registry.hasPointer( returned2.$id ) ).toBe( true );
+					expect( resource.$registry.getPointer( returned2.$id ) ).toBe( returned2 );
 				} );
 
 				it( "should throw error if child is already persisted", async () => {
@@ -3060,7 +3060,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 
 			it( "should throw error when _registry undefined", async () => {
 				try {
-					const resource:CRUDDocument = createMock( { $parentRegistry: void 0 } );
+					const resource:CRUDDocument = createMock( { $registry: void 0 } );
 					await resource.createAccessPoint( { hasMemberRelation: "relation" } );
 				} catch( e ) {
 					expect( () => { throw e; } )
@@ -3075,7 +3075,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 				let resource:CRUDDocument;
 				beforeEach( ():void => {
 					context = new CarbonLDP( "https://example.com/" );
-					resource = createMock( { $parentRegistry: context.registry } );
+					resource = createMock( { $registry: context.registry } );
 				} );
 
 
@@ -3160,7 +3160,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 				it( "should parse error response", async () => {
 					stubRequest( "https://example.com/", { status: 500 } );
 
-					const spy:jasmine.Spy = spyOn( resource.$parentRegistry, "_parseFailedResponse" )
+					const spy:jasmine.Spy = spyOn( resource.$registry, "_parseFailedResponse" )
 						.and.callFake( () => Promise.reject( null ) );
 
 					try {
@@ -3397,8 +3397,8 @@ describe( module( "carbonldp/Document" ), ():void => {
 
 					const returned:CRUDDocument = await resource.createAccessPoint( { hasMemberRelation: "relation" } );
 
-					expect( resource.$parentRegistry.hasPointer( returned.$id ) ).toBe( true );
-					expect( resource.$parentRegistry.getPointer( returned.$id ) ).toBe( returned );
+					expect( resource.$registry.hasPointer( returned.$id ) ).toBe( true );
+					expect( resource.$registry.getPointer( returned.$id ) ).toBe( returned );
 				} );
 
 				it( "should throw error if access point is already persisted", async () => {
@@ -3653,7 +3653,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 
 			it( "should throw error when _registry undefined", async () => {
 				try {
-					const resource:CRUDDocument = createMock( { $parentRegistry: void 0 } );
+					const resource:CRUDDocument = createMock( { $registry: void 0 } );
 					await resource.createAccessPoints( [ { hasMemberRelation: "relation" } ] );
 				} catch( e ) {
 					expect( () => { throw e; } )
@@ -3664,7 +3664,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 			it( "should parse error response", async () => {
 				const resource:CRUDDocument = createMock( { $id: "https://example.com/500/" } );
 
-				const spy:jasmine.Spy = spyOn( resource.$parentRegistry, "_parseFailedResponse" )
+				const spy:jasmine.Spy = spyOn( resource.$registry, "_parseFailedResponse" )
 					.and.callFake( () => Promise.reject( null ) );
 
 				try {
@@ -3684,7 +3684,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 				let resource:CRUDDocument;
 				beforeEach( ():void => {
 					context = new CarbonLDP( "https://example.com/" );
-					resource = createMock( { $parentRegistry: context.registry } );
+					resource = createMock( { $registry: context.registry } );
 				} );
 
 
@@ -4066,11 +4066,11 @@ describe( module( "carbonldp/Document" ), ():void => {
 
 					const [ returned1, returned2 ]:CRUDDocument[] = await resource.createAccessPoints( [ { hasMemberRelation: "relation" }, { hasMemberRelation: "relation" } ] );
 
-					expect( resource.$parentRegistry.hasPointer( returned1.$id ) ).toBe( true );
-					expect( resource.$parentRegistry.getPointer( returned1.$id ) ).toBe( returned1 );
+					expect( resource.$registry.hasPointer( returned1.$id ) ).toBe( true );
+					expect( resource.$registry.getPointer( returned1.$id ) ).toBe( returned1 );
 
-					expect( resource.$parentRegistry.hasPointer( returned2.$id ) ).toBe( true );
-					expect( resource.$parentRegistry.getPointer( returned2.$id ) ).toBe( returned2 );
+					expect( resource.$registry.hasPointer( returned2.$id ) ).toBe( true );
+					expect( resource.$registry.getPointer( returned2.$id ) ).toBe( returned2 );
 				} );
 
 				it( "should throw error if any access point is already persisted", async () => {
@@ -4329,7 +4329,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 
 			it( "should throw error when _registry undefined", async () => {
 				try {
-					const resource:CRUDDocument = createMock( { $parentRegistry: void 0 } );
+					const resource:CRUDDocument = createMock( { $registry: void 0 } );
 					await resource.createAccessPointAndRetrieve( { hasMemberRelation: "relation" } );
 				} catch( e ) {
 					expect( () => { throw e; } )
@@ -4344,7 +4344,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 				let resource:CRUDDocument;
 				beforeEach( ():void => {
 					context = new CarbonLDP( "https://example.com/" );
-					resource = createMock( { $parentRegistry: context.registry } );
+					resource = createMock( { $registry: context.registry } );
 				} );
 
 
@@ -4429,7 +4429,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 				it( "should parse error response", async () => {
 					stubRequest( "https://example.com/", { status: 500 } );
 
-					const spy:jasmine.Spy = spyOn( resource.$parentRegistry, "_parseFailedResponse" )
+					const spy:jasmine.Spy = spyOn( resource.$registry, "_parseFailedResponse" )
 						.and.callFake( () => Promise.reject( null ) );
 
 					try {
@@ -4663,8 +4663,8 @@ describe( module( "carbonldp/Document" ), ():void => {
 
 					const returned:CRUDDocument = await resource.createAccessPointAndRetrieve( { hasMemberRelation: "relation" } );
 
-					expect( resource.$parentRegistry.hasPointer( returned.$id ) ).toBe( true );
-					expect( resource.$parentRegistry.getPointer( returned.$id ) ).toBe( returned );
+					expect( resource.$registry.hasPointer( returned.$id ) ).toBe( true );
+					expect( resource.$registry.getPointer( returned.$id ) ).toBe( returned );
 				} );
 
 				it( "should throw error if access point is already persisted", async () => {
@@ -5049,7 +5049,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 
 			it( "should throw error when _registry undefined", async () => {
 				try {
-					const resource:CRUDDocument = createMock( { $parentRegistry: void 0 } );
+					const resource:CRUDDocument = createMock( { $registry: void 0 } );
 					await resource.createAccessPointsAndRetrieve( [ { hasMemberRelation: "relation" } ] );
 				} catch( e ) {
 					expect( () => { throw e; } )
@@ -5060,7 +5060,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 			it( "should parse error response", async () => {
 				const resource:CRUDDocument = createMock( { $id: "https://example.com/500/" } );
 
-				const spy:jasmine.Spy = spyOn( resource.$parentRegistry, "_parseFailedResponse" )
+				const spy:jasmine.Spy = spyOn( resource.$registry, "_parseFailedResponse" )
 					.and.callFake( () => Promise.reject( null ) );
 
 				try {
@@ -5080,7 +5080,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 				let resource:CRUDDocument;
 				beforeEach( ():void => {
 					context = new CarbonLDP( "https://example.com/" );
-					resource = createMock( { $parentRegistry: context.registry } );
+					resource = createMock( { $registry: context.registry } );
 				} );
 
 
@@ -5516,11 +5516,11 @@ describe( module( "carbonldp/Document" ), ():void => {
 
 					const [ returned1, returned2 ]:AccessPoint[] = await promise;
 
-					expect( resource.$parentRegistry.hasPointer( returned1.$id ) ).toBe( true );
-					expect( resource.$parentRegistry.getPointer( returned1.$id ) ).toBe( returned1 );
+					expect( resource.$registry.hasPointer( returned1.$id ) ).toBe( true );
+					expect( resource.$registry.getPointer( returned1.$id ) ).toBe( returned1 );
 
-					expect( resource.$parentRegistry.hasPointer( returned2.$id ) ).toBe( true );
-					expect( resource.$parentRegistry.getPointer( returned2.$id ) ).toBe( returned2 );
+					expect( resource.$registry.hasPointer( returned2.$id ) ).toBe( true );
+					expect( resource.$registry.getPointer( returned2.$id ) ).toBe( returned2 );
 				} );
 
 				it( "should throw error if any access point is already persisted", async () => {
@@ -5743,7 +5743,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 
 			it( "should throw error when _registry undefined", async () => {
 				try {
-					const resource:CRUDDocument = createMock( { $parentRegistry: void 0 } );
+					const resource:CRUDDocument = createMock( { $registry: void 0 } );
 					await resource.save();
 				} catch( e ) {
 					expect( () => { throw e; } )
@@ -5758,7 +5758,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 				let resource:CRUDDocument;
 				beforeEach( ():void => {
 					context = new CarbonLDP( "https://example.com/" );
-					resource = createMock( { $parentRegistry: context.registry } );
+					resource = createMock( { $registry: context.registry } );
 				} );
 
 
@@ -5836,7 +5836,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 					Object.defineProperty( resource, "isDirty", { writable: true } );
 					spyOn( resource, "isDirty" ).and.returnValue( true );
 
-					const spy:jasmine.Spy = spyOn( resource.$parentRegistry, "_parseFailedResponse" )
+					const spy:jasmine.Spy = spyOn( resource.$registry, "_parseFailedResponse" )
 						.and.callFake( () => Promise.reject( null ) );
 
 					try {
@@ -5854,7 +5854,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 					stubRequest( "https://example.com/" );
 
 					resource = createMock( {
-						$parentRegistry: context.registry,
+						$registry: context.registry,
 						_eTag: "\"1-12345\"",
 						$id: "https://example.com/",
 					} );
@@ -5923,7 +5923,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 
 					let object:MyDoc;
 					object = resource = createMock( {
-						$parentRegistry: context.registry,
+						$registry: context.registry,
 
 						types: [ "https://example.com/ns#Document" ],
 						list: [ 1, 2, 3, 4, 5 ],
@@ -6062,7 +6062,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 					} );
 
 					resource = createMock( {
-						$parentRegistry: context.registry,
+						$registry: context.registry,
 
 						blankNode1: {
 							id: "_:1",
@@ -6073,7 +6073,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 							string: "blank node 2",
 						},
 					} );
-					resource.$parentRegistry.__resourcesMap.set( "", resource as any );
+					resource.$registry.__resourcesMap.set( "", resource as any );
 
 					type BNode = { id:string, string:string };
 					type MyDoc = { blankNode1:BNode, blankNode2:BNode };
@@ -6161,7 +6161,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 
 			it( "should throw error when _registry undefined", async () => {
 				try {
-					const resource:CRUDDocument = createMock( { $parentRegistry: void 0 } );
+					const resource:CRUDDocument = createMock( { $registry: void 0 } );
 					await resource.saveAndRefresh();
 				} catch( e ) {
 					expect( () => { throw e; } )
@@ -6176,7 +6176,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 				let resource:CRUDDocument;
 				beforeEach( ():void => {
 					context = new CarbonLDP( "https://example.com/" );
-					resource = createMock( { $parentRegistry: context.registry } );
+					resource = createMock( { $registry: context.registry } );
 				} );
 
 
@@ -6254,7 +6254,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 					Object.defineProperty( resource, "isDirty", { writable: true } );
 					spyOn( resource, "isDirty" ).and.returnValue( true );
 
-					const spy:jasmine.Spy = spyOn( resource.$parentRegistry, "_parseFailedResponse" )
+					const spy:jasmine.Spy = spyOn( resource.$registry, "_parseFailedResponse" )
 						.and.callFake( () => Promise.reject( null ) );
 
 					try {
@@ -6272,7 +6272,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 					stubRequest( "https://example.com/" );
 
 					resource = createMock( {
-						$parentRegistry: context.registry,
+						$registry: context.registry,
 						_eTag: "\"1-12345\"",
 						$id: "https://example.com/",
 					} );
@@ -6343,7 +6343,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 
 					let object:MyDoc;
 					object = resource = createMock( {
-						$parentRegistry: context.registry,
+						$registry: context.registry,
 
 						types: [ "https://example.com/ns#Document" ],
 						list: [ 1, 2, 3, 4, 5 ],
@@ -6446,7 +6446,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 					};
 
 					resource = createMock( {
-						$parentRegistry: context.registry,
+						$registry: context.registry,
 						string: "document",
 					} );
 
@@ -6465,7 +6465,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 					stubRequest( "https://example.com/", {} );
 
 					resource = createMock( {
-						$parentRegistry: context.registry,
+						$registry: context.registry,
 						eTag: "\"0-12345\"",
 						string: "document",
 					} );
@@ -6542,7 +6542,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 					} );
 
 					resource = createMock( {
-						$parentRegistry: context.registry,
+						$registry: context.registry,
 
 						blankNode1: {
 							id: "_:1",
@@ -6553,7 +6553,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 							string: "blank node 2",
 						},
 					} );
-					resource.$parentRegistry.__resourcesMap.set( "", resource as any );
+					resource.$registry.__resourcesMap.set( "", resource as any );
 
 					context.extendObjectSchema( { "@vocab": "https://example.com/ns#" } );
 
@@ -6642,7 +6642,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 
 			it( "should throw error when _registry undefined", async () => {
 				try {
-					const resource:CRUDDocument = createMock( { $parentRegistry: void 0 } );
+					const resource:CRUDDocument = createMock( { $registry: void 0 } );
 					await resource.refresh();
 				} catch( e ) {
 					expect( () => { throw e; } )
@@ -6657,12 +6657,12 @@ describe( module( "carbonldp/Document" ), ():void => {
 				let resource:CRUDDocument;
 				beforeEach( ():void => {
 					context = new CarbonLDP( "https://example.com/" );
-					resource = createMock( { $parentRegistry: context.registry } );
+					resource = createMock( { $registry: context.registry } );
 				} );
 
 				it( "should throw error when self ID is outside context scope", async () => {
 					resource = createMock( {
-						$parentRegistry: context.registry,
+						$registry: context.registry,
 						$id: "https://example.org/resource/",
 					} );
 
@@ -6677,7 +6677,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 
 				it( "should throw error when self ID is BNode label", async () => {
 					resource = createMock( {
-						$parentRegistry: context.registry,
+						$registry: context.registry,
 						$id: "_:1",
 					} );
 
@@ -6692,7 +6692,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 
 				it( "should throw error when self ID is Named Fragment label", async () => {
 					resource = createMock( {
-						$parentRegistry: context.registry,
+						$registry: context.registry,
 						$id: "https://example.com/#fragment",
 					} );
 
@@ -6707,7 +6707,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 
 				it( "should throw error when self ID is unresolved prefixed name", async () => {
 					resource = createMock( {
-						$parentRegistry: context.registry,
+						$registry: context.registry,
 						$id: "ex:resource/",
 					} );
 
@@ -6727,7 +6727,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 					Object.defineProperty( resource, "isDirty", { writable: true } );
 					spyOn( resource, "isDirty" ).and.returnValue( true );
 
-					const spy:jasmine.Spy = spyOn( resource.$parentRegistry, "_parseFailedResponse" )
+					const spy:jasmine.Spy = spyOn( resource.$registry, "_parseFailedResponse" )
 						.and.callFake( () => Promise.reject( null ) );
 
 					try {
@@ -6753,7 +6753,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 					stubRequest( "https://example.com/" );
 
 					resource = createMock( {
-						$parentRegistry: context.registry,
+						$registry: context.registry,
 						_eTag: "\"1-12345\"",
 						$id: "https://example.com/",
 					} );
@@ -6832,7 +6832,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 					type MyResource = { string:string, pointerSet?:MyResource[] };
 
 					resource = createMock( {
-						$parentRegistry: context.registry,
+						$registry: context.registry,
 
 						string: "document",
 						pointerSet: [
@@ -6853,7 +6853,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 					} );
 
 					resource._normalize();
-					resource.$parentRegistry.__resourcesMap.set( "", resource as any );
+					resource.$registry.__resourcesMap.set( "", resource as any );
 
 
 					context
@@ -6883,7 +6883,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 					stubRequest( "https://example.com/", {} );
 
 					resource = createMock( {
-						$parentRegistry: context.registry,
+						$registry: context.registry,
 						eTag: "\"0-12345\"",
 						string: "document",
 					} );
@@ -6960,7 +6960,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 					} );
 
 					resource = createMock( {
-						$parentRegistry: context.registry,
+						$registry: context.registry,
 
 						blankNode1: {
 							id: "_:1",
@@ -6971,7 +6971,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 							string: "blank node 2",
 						},
 					} );
-					resource.$parentRegistry.__resourcesMap.set( "", resource as any );
+					resource.$registry.__resourcesMap.set( "", resource as any );
 
 					context.extendObjectSchema( { "@vocab": "https://example.com/ns#" } );
 
@@ -7043,7 +7043,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 
 			it( "should throw error when _registry undefined", async () => {
 				try {
-					const resource:CRUDDocument = createMock( { $parentRegistry: void 0 } );
+					const resource:CRUDDocument = createMock( { $registry: void 0 } );
 					await resource.delete();
 				} catch( e ) {
 					expect( () => { throw e; } )
@@ -7058,7 +7058,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 				let resource:CRUDDocument;
 				beforeEach( ():void => {
 					context = new CarbonLDP( "https://example.com/" );
-					resource = createMock( { $parentRegistry: context.registry } );
+					resource = createMock( { $registry: context.registry } );
 				} );
 
 
@@ -7125,7 +7125,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 				it( "should parse error response", async () => {
 					stubRequest( "https://example.com/", { status: 500 } );
 
-					const spy:jasmine.Spy = spyOn( resource.$parentRegistry, "_parseFailedResponse" )
+					const spy:jasmine.Spy = spyOn( resource.$registry, "_parseFailedResponse" )
 						.and.callFake( () => Promise.reject( null ) );
 
 					try {
@@ -7217,22 +7217,22 @@ describe( module( "carbonldp/Document" ), ():void => {
 				it( "should remove self pointer from registry", async () => {
 					stubRequest( "https://example.com/" );
 
-					resource.$parentRegistry.__resourcesMap.set( "", resource as any );
+					resource.$registry.__resourcesMap.set( "", resource as any );
 
 					await resource.delete();
 
-					expect( resource.$parentRegistry.hasPointer( resource.$id ) ).toBe( false );
+					expect( resource.$registry.hasPointer( resource.$id ) ).toBe( false );
 				} );
 
 				it( "should remove pointer whe URI provided", async () => {
 					stubRequest( "https://example.com/resource/" );
 
-					const target:CRUDDocument = resource.$parentRegistry
+					const target:CRUDDocument = resource.$registry
 						._addPointer( { id: "https://example.com/resource/" } );
 
 					await resource.delete( "resource/" );
 
-					expect( resource.$parentRegistry.hasPointer( target.$id ) ).toBe( false );
+					expect( resource.$registry.hasPointer( target.$id ) ).toBe( false );
 				} );
 
 			} );

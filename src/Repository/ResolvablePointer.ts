@@ -1,10 +1,12 @@
+import { Repository } from ".";
 import {
 	ModelDecorator,
+	ModelFactory,
 	ModelPrototype,
 	ModelTypeGuard
 } from "../core";
 import { Pointer } from "../Pointer";
-import { Repository } from ".";
+import { BaseResolvablePointer } from "./BaseResolvablePointer";
 
 export interface ResolvablePointer extends Pointer {
 	$repository:Repository;
@@ -17,14 +19,14 @@ export interface ResolvablePointer extends Pointer {
 
 
 export type ResolvablePointerFactory =
-	& ModelPrototype<ResolvablePointer, Pointer>
-	& ModelDecorator<ResolvablePointer>
+	& ModelPrototype<ResolvablePointer, Pointer & BaseResolvablePointer>
+	& ModelDecorator<ResolvablePointer, BaseResolvablePointer>
 	& ModelTypeGuard<ResolvablePointer>
+	& ModelFactory<ResolvablePointer, BaseResolvablePointer>
 	;
 
 export const ResolvablePointer:ResolvablePointerFactory = {
 	PROTOTYPE: {
-		$repository: void 0,
 		$eTag: void 0,
 
 		_resolved: false,
@@ -41,7 +43,7 @@ export const ResolvablePointer:ResolvablePointerFactory = {
 			;
 	},
 
-	decorate<T extends object>( object:T ):T & ResolvablePointer {
+	decorate<T extends BaseResolvablePointer>( object:T ):T & ResolvablePointer {
 		if( ResolvablePointer.isDecorated( object ) ) return object;
 
 		const resource:T & Pointer = ModelDecorator
@@ -56,5 +58,15 @@ export const ResolvablePointer:ResolvablePointerFactory = {
 		return Pointer.is( value )
 			&& ResolvablePointer.isDecorated( value )
 			;
+	},
+
+
+	create<T extends object>( data:T & BaseResolvablePointer ):T & ResolvablePointer {
+		// FIXME
+		return ResolvablePointer.createFrom( { ...data as any } );
+	},
+
+	createFrom<T extends object>( object:T & BaseResolvablePointer ):T & ResolvablePointer {
+		return ResolvablePointer.decorate( object );
 	},
 };
