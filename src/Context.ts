@@ -3,11 +3,19 @@ import {
 	DigestedObjectSchema,
 	ObjectSchema,
 } from "./ObjectSchema";
-import { Registry } from "./Registry";
+import {
+	RegisteredPointer,
+	Registry,
+} from "./Registry";
+import {
+	Repository,
+	ResolvablePointer
+} from "./Repository";
 
 
-export interface Context {
-	readonly registry:Registry<any> | undefined;
+export interface Context<R1 extends RegisteredPointer = RegisteredPointer, R2 extends ResolvablePointer = ResolvablePointer> {
+	readonly registry:Registry<R1> | undefined;
+	readonly repository:Repository<R2> | undefined;
 	readonly auth:Authenticator<any> | undefined;
 
 	readonly baseURI:string;

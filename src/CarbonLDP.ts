@@ -5,9 +5,12 @@ import { AccessPoint } from "./AccessPoint";
 import * as Auth from "./Auth";
 import { BlankNode } from "./BlankNode";
 import { Document } from "./Document";
+import { DocumentsContext } from "./DocumentsContext";
 import * as Errors from "./Errors";
+import { IllegalArgumentError } from "./Errors";
 import { Fragment } from "./Fragment";
 import { FreeResources } from "./FreeResources";
+import { GlobalContext } from "./GlobalContext";
 import * as HTTP from "./HTTP";
 import * as JSONLD from "./JSONLD";
 import * as LDP from "./LDP";
@@ -25,16 +28,13 @@ import {
 import { Pointer } from "./Pointer";
 import { ProtectedDocument } from "./ProtectedDocument";
 import * as RDF from "./RDF";
-import { DocumentsRegistry } from "./Registry";
 import {
 	PersistedResource,
 	TransientResource,
 } from "./Resource";
-import { GlobalContext } from "./GlobalContext";
 import {
 	CarbonLDPSettings,
 	ContextSettings,
-	DocumentPaths,
 } from "./Settings";
 import * as SHACL from "./SHACL";
 import * as SPARQL from "./SPARQL";
@@ -42,7 +42,7 @@ import * as System from "./System";
 import * as Utils from "./Utils";
 import * as Vocabularies from "./Vocabularies";
 
-export class CarbonLDP extends AbstractContext<Document, GlobalContext> {
+export class CarbonLDP extends DocumentsContext {
 
 	static AbstractContext:typeof AbstractContext = AbstractContext;
 	static AccessPoint:typeof AccessPoint = AccessPoint;
@@ -103,46 +103,15 @@ export class CarbonLDP extends AbstractContext<Document, GlobalContext> {
 		},
 	};
 
-	readonly registry:DocumentsRegistry;
-	readonly messaging:Messaging.MessagingService;
-	readonly auth:Auth.AuthService;
-
 	readonly documents:ProtectedDocument;
 
 	constructor( url:string );
 	constructor( settings:CarbonLDPSettings );
 	constructor( urlOrSettings:string | CarbonLDPSettings ) {
-		super( GlobalContext.instance );
+		super( getURLFrom( urlOrSettings ) );
 
-		if( Utils.isString( urlOrSettings ) ) {
-			if( ! RDF.URI.hasProtocol( urlOrSettings ) ) throw new Errors.IllegalArgumentError( `The URL must contain a valid protocol: "http://", "https://".` );
-			this._baseURI = urlOrSettings;
-
-		} else {
-			if( ! Utils.isString( urlOrSettings.host ) ) throw new Errors.IllegalArgumentError( `The settings object must contains a valid host string.` );
-			if( hasProtocol( urlOrSettings.host ) ) throw new Errors.IllegalArgumentError( `The host must not contain a protocol.` );
-			if( urlOrSettings.host.includes( ":" ) ) throw new Errors.IllegalArgumentError( `The host must not contain a port.` );
-
-			this._baseURI = `${ urlOrSettings.ssl === false ? "http://" : "https://" }${ urlOrSettings.host }`;
-
-			if( Utils.isNumber( urlOrSettings.port ) ) {
-				if( this._baseURI.endsWith( "/" ) ) this._baseURI = this._baseURI.slice( 0, - 1 );
-				this._baseURI += `:${ urlOrSettings.port }`;
-			}
-
-			urlOrSettings.ssl = urlOrSettings.host = urlOrSettings.port = null;
-
-			const paths:ContextSettings[ "paths" ] = mergePaths( this._settings.paths, urlOrSettings.paths );
-
-			this._settings = Utils.ObjectUtils.extend( this._settings, urlOrSettings );
-			this._settings.paths = paths;
-		}
-
-		if( ! this._baseURI.endsWith( "/" ) ) this._baseURI = this._baseURI + "/";
-
-		this.registry = new DocumentsRegistry( this );
-		this.messaging = new Messaging.MessagingService( this );
-		this.auth = new Auth.AuthService( this );
+		const settings:ContextSettings = getSettingsFrom( urlOrSettings );
+		this._extendsSettings( settings );
 
 		// Root document
 		this.documents = ProtectedDocument
@@ -161,43 +130,40 @@ export class CarbonLDP extends AbstractContext<Document, GlobalContext> {
 
 }
 
-function mergePaths( target:ContextSettings[ "paths" ], source:ContextSettings[ "paths" ] ):ContextSettings[ "paths" ] {
-	if( ! source ) return target;
-	if( ! target ) return Utils.ObjectUtils.clone( source, { objects: true } );
 
-	for( const key of Object.keys( source ) ) {
-		const sourcePath:string | DocumentPaths = source[ key ];
+function getURLFrom( this:void, urlOrSettings:string | CarbonLDPSettings ):string {
+	return Utils.isString( urlOrSettings ) ?
+		getURLFromString( urlOrSettings ) :
+		getURLFromSettings( urlOrSettings )
+		;
+}
 
-		if( sourcePath === null ) {
-			delete target[ key ];
-			continue;
-		}
+function getURLFromString( this:void, url:string ):string {
+	if( ! RDF.URI.hasProtocol( url ) )
+		throw new IllegalArgumentError( `The URL must contain a valid protocol: "http://", "https://".` );
 
-		const targetPath:string | DocumentPaths = target[ key ];
-		if( ! targetPath ) {
-			target[ key ] = Utils.isObject( sourcePath ) ?
-				Utils.ObjectUtils.clone( sourcePath, { objects: true } ) :
-				sourcePath;
-			continue;
-		}
+	if( url.endsWith( "/" ) ) return url;
+	return url + "/";
+}
 
-		if( Utils.isString( sourcePath ) ) {
-			if( Utils.isObject( targetPath ) ) {
-				targetPath.slug = sourcePath;
-			} else {
-				target[ key ] = sourcePath;
-			}
-			continue;
-		}
+function getURLFromSettings( this:void, settings:CarbonLDPSettings ):string {
+	if( ! Utils.isString( settings.host ) )
+		throw new IllegalArgumentError( `The settings object must contains a valid host string.` );
+	if( hasProtocol( settings.host ) )
+		throw new IllegalArgumentError( `The host must not contain a protocol.` );
+	if( settings.host.includes( ":" ) )
+		throw new IllegalArgumentError( `The host must not contain a port.` );
 
-		if( sourcePath.slug === void 0 && sourcePath.paths === void 0 ) continue;
 
-		const targetDocPaths:DocumentPaths = Utils.isString( targetPath ) ?
-			target[ key ] = { slug: targetPath } : targetPath;
+	const protocol:string = settings.ssl === false ? "http://" : "https://";
+	const url:string = `${ protocol }${ settings.host }/`;
 
-		if( sourcePath.slug !== void 0 ) targetDocPaths.slug = sourcePath.slug;
-		if( sourcePath.paths !== void 0 ) targetDocPaths.paths = mergePaths( targetDocPaths.paths, sourcePath.paths );
-	}
+	if( ! Utils.isNumber( settings.port ) ) return url;
+	return url.slice( 0, - 1 ) + `:${ settings.port }/`;
+}
 
-	return target;
+
+function getSettingsFrom( this:void, urlOrSettings:string | CarbonLDPSettings ):ContextSettings {
+	if( Utils.isString( urlOrSettings ) ) return {};
+	return Object.assign( {}, urlOrSettings, { ssl: null, host: null, port: null } );
 }

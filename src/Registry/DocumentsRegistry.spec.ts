@@ -1,11 +1,11 @@
 import { anyThatMatches } from "../../test/helpers/jasmine/equalities";
 import { CarbonLDP } from "../CarbonLDP";
 import { Document } from "../Document";
+import { DocumentsContext } from "../DocumentsContext";
 import * as Errors from "../Errors";
 import { IllegalArgumentError } from "../Errors";
 import { Response } from "../HTTP";
 import { HTTPError } from "../HTTP/Errors";
-import { Pointer } from "../Pointer";
 import {
 	clazz,
 	constructor,
@@ -40,7 +40,7 @@ describe( module( "carbonldp/Registry" ), () => {
 
 			it( hasSignature(
 				[
-					{ name: "context", type: "CarbonLDP", optional: true },
+					{ name: "context", type: "CarbonLDP.DocumentsContext", optional: true },
 				]
 			), () => {} );
 
@@ -50,7 +50,7 @@ describe( module( "carbonldp/Registry" ), () => {
 			} );
 
 			it( "should accept context", () => {
-				const context:CarbonLDP = new CarbonLDP( "https://example.com/" );
+				const context:DocumentsContext = new DocumentsContext( "https://example.com/" );
 				const registry:DocumentsRegistry = new DocumentsRegistry( context );
 
 				expect( registry ).toEqual( jasmine.any( DocumentsRegistry ) );
@@ -125,7 +125,7 @@ describe( module( "carbonldp/Registry" ), () => {
 
 				let registry:DocumentsRegistry;
 				beforeEach( () => {
-					const context:CarbonLDP = new CarbonLDP( "https://example.com/" );
+					const context:DocumentsContext = new DocumentsContext( "https://example.com/" );
 					registry = new DocumentsRegistry( context );
 				} );
 

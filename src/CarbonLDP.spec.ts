@@ -398,11 +398,6 @@ describe( module( "carbonldp/CarbonLDP" ), ():void => {
 				expect( context.auth ).toEqual( jasmine.any( Auth.AuthService ) );
 			} );
 
-			it( "should initialize CarbonLDP.messaging", ():void => {
-				const context:CarbonLDP.CarbonLDP = new CarbonLDP.CarbonLDP( "https://example.com/" );
-				expect( context.messaging ).toEqual( jasmine.any( Messaging.MessagingService ) );
-			} );
-
 			it( "should initialize documents root document", () => {
 				const context:CarbonLDP.CarbonLDP = new CarbonLDP.CarbonLDP( "https://example.com/" );
 
@@ -592,11 +587,6 @@ describe( module( "carbonldp/CarbonLDP" ), ():void => {
 				expect( carbon.version ).toBe( CarbonLDP.CarbonLDP.version );
 			} );
 
-			it( "should instantiate the messaging service when url", ():void => {
-				const carbon:CarbonLDP.CarbonLDP = new CarbonLDP.CarbonLDP( "https://example.com" );
-				expect( carbon.messaging ).toEqual( jasmine.any( Messaging.MessagingService ) );
-			} );
-
 		} );
 
 		it( hasProperty(
@@ -627,16 +617,6 @@ describe( module( "carbonldp/CarbonLDP" ), ():void => {
 			"Service that contains methods and endpoints to authentication and authorization of the context requests."
 		), ():void => {
 			const target:CarbonLDP.CarbonLDP[ "auth" ] = {} as Auth.AuthService;
-			expect( target ).toBeDefined();
-		} );
-
-		it( hasProperty(
-			INSTANCE,
-			"messaging",
-			"CarbonLDP.Messaging.MessagingService",
-			"Service that contains the RAW methods to manage the messaging/real-time features."
-		), ():void => {
-			const target:CarbonLDP.CarbonLDP[ "messaging" ] = {} as Messaging.MessagingService;
 			expect( target ).toBeDefined();
 		} );
 

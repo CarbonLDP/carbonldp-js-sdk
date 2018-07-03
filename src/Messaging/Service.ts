@@ -4,8 +4,7 @@ import {
 	Client,
 	Frame
 } from "webstomp-client";
-
-import { CarbonLDP } from "../CarbonLDP";
+import { DocumentsContext } from "../DocumentsContext";
 import { IllegalStateError } from "../Errors";
 import { FreeResources } from "../FreeResources";
 import { JSONLDParser } from "../JSONLD";
@@ -25,7 +24,7 @@ interface Subscription {
 }
 
 export class MessagingService {
-	readonly context:CarbonLDP;
+	readonly context:DocumentsContext;
 
 	private _options:MessagingOptions;
 	private _attempts:number;
@@ -33,7 +32,7 @@ export class MessagingService {
 	private _subscriptionsMap:Map<string, Map<( data:EventMessage ) => void, Subscription>>;
 	private _subscriptionsQueue:Function[];
 
-	constructor( context:CarbonLDP ) {
+	constructor( context:DocumentsContext ) {
 		this.context = context;
 		this._subscriptionsQueue = [];
 		this._options = DEFAULT_OPTIONS;

@@ -1,5 +1,5 @@
-import { CarbonLDP } from "../CarbonLDP";
 import { Document } from "../Document";
+import { DocumentsContext } from "../DocumentsContext";
 import { IllegalArgumentError } from "../Errors";
 import { FreeResources } from "../FreeResources";
 import { Response } from "../HTTP";
@@ -13,11 +13,11 @@ import { Registry } from "./Registry";
 import { RegistryService } from "./RegistryService";
 
 
-export class DocumentsRegistry extends RegistryService<Document, CarbonLDP> {
+export class DocumentsRegistry extends RegistryService<Document, DocumentsContext> {
 
-	readonly context:CarbonLDP | undefined;
+	readonly context:DocumentsContext | undefined;
 
-	constructor( context?:CarbonLDP ) {
+	constructor( context?:DocumentsContext ) {
 		super( Document, context );
 	}
 

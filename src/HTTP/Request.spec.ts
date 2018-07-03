@@ -1,10 +1,8 @@
 import { CarbonLDP } from "../CarbonLDP";
+import { DocumentsContext } from "../DocumentsContext";
 import { IllegalArgumentError } from "../Errors";
 import { Pointer } from "../Pointer";
-import { DocumentsRegistry } from "../Registry/DocumentsRegistry";
-import { INSTANCE } from "../test/JasmineExtender";
-import { C } from "../Vocabularies/C";
-import { LDP } from "../Vocabularies/LDP";
+import { DocumentsRegistry } from "../Registry";
 import {
 	clazz,
 	hasMethod,
@@ -16,7 +14,11 @@ import {
 	module,
 	OPTIONAL,
 	STATIC,
-} from "./../test/JasmineExtender";
+} from "../test/JasmineExtender";
+import {
+	C,
+	LDP
+} from "../Vocabularies";
 import * as Utils from "./../Utils";
 import { Header } from "./Header";
 import { JSONParser } from "./JSONParser";
@@ -1419,10 +1421,10 @@ describe( module( "carbonldp/HTTP/Request" ), function():void {
 
 			describe( "When registry has a context", () => {
 
-				let context:CarbonLDP;
+				let context:DocumentsContext;
 				let registry:DocumentsRegistry;
 				beforeEach( ():void => {
-					context = new CarbonLDP( "https://example.com/" );
+					context = new DocumentsContext( "https://example.com/" );
 					registry = new DocumentsRegistry( context );
 				} );
 

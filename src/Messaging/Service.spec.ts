@@ -1,7 +1,7 @@
 import { Server } from "mock-socket";
 import Frame from "webstomp-client/src/frame.js";
 
-import { CarbonLDP } from "../CarbonLDP";
+import { DocumentsContext } from "../DocumentsContext";
 import { IllegalStateError } from "../Errors";
 import { Pointer } from "../Pointer";
 import { TransientResource } from "../Resource";
@@ -37,15 +37,15 @@ describe( module( "carbonldp/Messaging/Service" ), ():void => {
 
 		let service:MessagingService.MessagingService;
 		beforeEach( () => {
-			const carbon:CarbonLDP = new CarbonLDP( "https://example.com" );
-			service = new MessagingService.MessagingService( carbon );
+			const context:DocumentsContext = new DocumentsContext( "https://example.com" );
+			service = new MessagingService.MessagingService( context );
 		} );
 
 		describe( constructor(), ():void => {
 
 			it( hasSignature(
 				[
-					{ name: "context", type: "CarbonLDP" },
+					{ name: "context", type: "CarbonLDP.DocumentsContext" },
 				]
 			), ():void => {} );
 
@@ -157,7 +157,7 @@ describe( module( "carbonldp/Messaging/Service" ), ():void => {
 				expect( reconnectSpy ).toHaveBeenCalledWith( onConnect, void 0 );
 				reconnectSpy.calls.reset();
 
-				const onError:( error:Error ) => void = ( error:Error ) => void 0;
+				const onError:( error:Error ) => void = () => void 0;
 				service.connect( onConnect, onError );
 				expect( reconnectSpy ).toHaveBeenCalledWith( onConnect, onError );
 			} );

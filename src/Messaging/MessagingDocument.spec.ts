@@ -1,6 +1,7 @@
 import { defineNonEnumerableProps } from "../../test/helpers/mocks";
 import { CarbonLDP } from "../CarbonLDP";
 import { TransientDocument } from "../Document";
+import { DocumentsContext } from "../DocumentsContext";
 import { IllegalActionError } from "../Errors";
 import { TransientResource } from "../Resource";
 import {
@@ -257,7 +258,7 @@ describe( module( "carbonldp/Messaging/MessagingDocument" ), ():void => {
 
 
 			it( "should subscribe with the Messaging Service for self", ( done:DoneFn ):void => {
-				const context:CarbonLDP = new CarbonLDP( "https://example.com" );
+				const context:DocumentsContext = new DocumentsContext( "https://example.com" );
 
 				const subscribeSpy:jasmine.Spy = spyOn( context.messaging, "subscribe" );
 
@@ -272,7 +273,7 @@ describe( module( "carbonldp/Messaging/MessagingDocument" ), ():void => {
 			} );
 
 			it( "should subscribe with the Messaging Service for relative uriPattern", ( done:DoneFn ):void => {
-				const context:CarbonLDP = new CarbonLDP( "https://example.com" );
+				const context:DocumentsContext = new DocumentsContext( "https://example.com" );
 
 				const subscribeSpy:jasmine.Spy = spyOn( context.messaging, "subscribe" );
 
@@ -287,7 +288,7 @@ describe( module( "carbonldp/Messaging/MessagingDocument" ), ():void => {
 			} );
 
 			it( "should subscribe with the Messaging Service for absolute uriPattern", ( done:DoneFn ):void => {
-				const context:CarbonLDP = new CarbonLDP( "https://example.com" );
+				const context:DocumentsContext = new DocumentsContext( "https://example.com" );
 
 				const subscribeSpy:jasmine.Spy = spyOn( context.messaging, "subscribe" );
 
@@ -511,7 +512,7 @@ describe( module( "carbonldp/Messaging/MessagingDocument" ), ():void => {
 
 
 			it( "should unsubscribe with the Messaging Service for self", ( done:DoneFn ):void => {
-				const context:CarbonLDP = new CarbonLDP( "https://example.com" );
+				const context:DocumentsContext = new DocumentsContext( "https://example.com" );
 
 				const unsubscribeSpy:jasmine.Spy = spyOn( context.messaging, "unsubscribe" );
 
@@ -526,7 +527,7 @@ describe( module( "carbonldp/Messaging/MessagingDocument" ), ():void => {
 			} );
 
 			it( "should unsubscribe with the Messaging Service for relative uriPattern", ( done:DoneFn ):void => {
-				const context:CarbonLDP = new CarbonLDP( "https://example.com" );
+				const context:DocumentsContext = new DocumentsContext( "https://example.com" );
 
 				const unsubscribeSpy:jasmine.Spy = spyOn( context.messaging, "unsubscribe" );
 
@@ -541,7 +542,7 @@ describe( module( "carbonldp/Messaging/MessagingDocument" ), ():void => {
 			} );
 
 			it( "should unsubscribe with the Messaging Service for absolute uriPattern", ( done:DoneFn ):void => {
-				const context:CarbonLDP = new CarbonLDP( "https://example.com" );
+				const context:DocumentsContext = new DocumentsContext( "https://example.com" );
 
 				const unsubscribeSpy:jasmine.Spy = spyOn( context.messaging, "unsubscribe" );
 
@@ -765,7 +766,7 @@ describe( module( "carbonldp/Messaging/MessagingDocument" ), ():void => {
 
 
 			it( "should subscribe with the Messaging Service for self", ( done:DoneFn ):void => {
-				const context:CarbonLDP = new CarbonLDP( "https://example.com" );
+				const context:DocumentsContext = new DocumentsContext( "https://example.com" );
 
 				const subscribeSpy:jasmine.Spy = spyOn( context.messaging, "subscribe" );
 
@@ -783,7 +784,7 @@ describe( module( "carbonldp/Messaging/MessagingDocument" ), ():void => {
 			} );
 
 			it( "should subscribe with the Messaging Service for relative uriPattern", ( done:DoneFn ):void => {
-				const context:CarbonLDP = new CarbonLDP( "https://example.com" );
+				const context:DocumentsContext = new DocumentsContext( "https://example.com" );
 
 				const subscribeSpy:jasmine.Spy = spyOn( context.messaging, "subscribe" );
 
@@ -801,7 +802,7 @@ describe( module( "carbonldp/Messaging/MessagingDocument" ), ():void => {
 			} );
 
 			it( "should subscribe with the Messaging Service for absolute uriPattern", ( done:DoneFn ):void => {
-				const context:CarbonLDP = new CarbonLDP( "https://example.com" );
+				const context:DocumentsContext = new DocumentsContext( "https://example.com" );
 
 				const subscribeSpy:jasmine.Spy = spyOn( context.messaging, "subscribe" );
 
@@ -820,7 +821,7 @@ describe( module( "carbonldp/Messaging/MessagingDocument" ), ():void => {
 
 
 			it( "should call user onEvent after message when self", ( done:DoneFn ):void => {
-				const context:CarbonLDP = new CarbonLDP( "https://example.com" );
+				const context:DocumentsContext = new DocumentsContext( "https://example.com" );
 				const subscribeSpy:jasmine.Spy = spyOn( context.messaging, "subscribe" );
 
 
@@ -840,7 +841,7 @@ describe( module( "carbonldp/Messaging/MessagingDocument" ), ():void => {
 			} );
 
 			it( "should call user onEvent after message when uriPattern", ( done:DoneFn ):void => {
-				const context:CarbonLDP = new CarbonLDP( "https://example.com" );
+				const context:DocumentsContext = new DocumentsContext( "https://example.com" );
 				const subscribeSpy:jasmine.Spy = spyOn( context.messaging, "subscribe" );
 
 
@@ -861,7 +862,7 @@ describe( module( "carbonldp/Messaging/MessagingDocument" ), ():void => {
 
 
 			it( "should subscribe with the Messaging Service for self", ( done:DoneFn ):void => {
-				const context:CarbonLDP = new CarbonLDP( "https://example.com" );
+				const context:DocumentsContext = new DocumentsContext( "https://example.com" );
 
 				const subscribeSpy:jasmine.Spy = spyOn( context.messaging, "subscribe" );
 				const unsubscribeSpy:jasmine.Spy = spyOn( context.messaging, "unsubscribe" );
@@ -881,7 +882,7 @@ describe( module( "carbonldp/Messaging/MessagingDocument" ), ():void => {
 			} );
 
 			it( "should subscribe with the Messaging Service for relative uriPattern", ( done:DoneFn ):void => {
-				const context:CarbonLDP = new CarbonLDP( "https://example.com" );
+				const context:DocumentsContext = new DocumentsContext( "https://example.com" );
 
 				const subscribeSpy:jasmine.Spy = spyOn( context.messaging, "subscribe" );
 				const unsubscribeSpy:jasmine.Spy = spyOn( context.messaging, "unsubscribe" );
@@ -901,7 +902,7 @@ describe( module( "carbonldp/Messaging/MessagingDocument" ), ():void => {
 			} );
 
 			it( "should subscribe with the Messaging Service for absolute uriPattern", ( done:DoneFn ):void => {
-				const context:CarbonLDP = new CarbonLDP( "https://example.com" );
+				const context:DocumentsContext = new DocumentsContext( "https://example.com" );
 
 				const subscribeSpy:jasmine.Spy = spyOn( context.messaging, "subscribe" );
 				const unsubscribeSpy:jasmine.Spy = spyOn( context.messaging, "unsubscribe" );
