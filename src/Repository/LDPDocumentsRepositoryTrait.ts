@@ -18,12 +18,16 @@ import {
 	RequestUtils,
 	Response
 } from "../HTTP";
-import { BadResponseError } from "../HTTP/Errors";
+import {
+	BadResponseError,
+	HTTPError
+} from "../HTTP/Errors";
 import {
 	JSONLDCompacter,
 	JSONLDParser
 } from "../JSONLD";
 import {
+	ErrorResponse,
 	Map,
 	ResponseMetadata
 } from "../LDP";
@@ -297,6 +301,7 @@ export type OverloadedMembers =
 	| "save"
 	| "saveAndRefresh"
 	| "delete"
+	| "_parseFailedResponse"
 	| "_parseResponseData"
 	;
 
@@ -357,6 +362,37 @@ export const LDPDocumentsRepositoryTrait:LDPDocumentsRepositoryTraitFactory = {
 				.delete.call( this, uri, requestOptions );
 		},
 
+
+		_parseFailedResponse( response:Response | Error | null ):Promise<never> {
+			if( ! response || response instanceof Error ) return Promise.reject( response );
+
+			HTTPRepositoryTrait.PROTOTYPE
+				._parseFailedResponse( response )
+				.catch( ( error:HTTPError ) => {
+					if( ! response.data ) return Promise.reject( error );
+
+					return new JSONLDParser()
+						.parse( response.data )
+						.then( ( freeNodes:RDFNode[] ) => {
+							const freeResources:FreeResources = this._parseFreeNodes( freeNodes );
+
+							const errorResponses:ErrorResponse[] = freeResources
+								.getPointers( true )
+								.filter( ErrorResponse.is );
+
+							if( errorResponses.length === 0 ) return Promise.reject( new IllegalArgumentError( "The response string does not contains a c:ErrorResponse." ) );
+							if( errorResponses.length > 1 ) return Promise.reject( new IllegalArgumentError( "The response string contains multiple c:ErrorResponse." ) );
+
+							const errorResponse:ErrorResponse = Object.assign( error, errorResponses[ 0 ] );
+							error.message = ErrorResponse.getMessage( errorResponse );
+
+							return Promise.reject( error );
+						}, () => {
+							return Promise.reject( error );
+						} );
+				} )
+			;
+		},
 
 		_parseResponseData<T extends object>( this:HTTPRepositoryTrait, response:Response, id:string ):Promise<T & Document> {
 			return __RDF_DOCUMENT_PARSER
