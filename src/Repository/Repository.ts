@@ -5,10 +5,6 @@ import {
 	ModelPrototype
 } from "../core";
 import { NotImplementedError } from "../Errors";
-import {
-	GETOptions,
-	RequestOptions
-} from "../HTTP";
 import { ObjectSchemaResolver } from "../ObjectSchema";
 import { BaseRepository } from "./BaseRepository";
 import { ResolvablePointer } from "./ResolvablePointer";
@@ -17,14 +13,15 @@ import { ResolvablePointer } from "./ResolvablePointer";
 export interface Repository<M extends ResolvablePointer = ResolvablePointer> {
 	readonly $context:Context;
 
-	get( uri:string, requestOptions?:GETOptions ):Promise<M>;
-	resolve( resource:M, requestOptions?:RequestOptions ):Promise<M>;
+	get( uri:string ):Promise<M>;
+	resolve( resource:M ):Promise<M>;
+	exists( uri:string ):Promise<boolean>;
 
-	refresh( resource:M, requestOptions?:RequestOptions ):Promise<M>;
-	save( resource:M, requestOptions?:RequestOptions ):Promise<M>;
-	saveAndRefresh( resource:M, requestOptions?:RequestOptions ):Promise<M>;
+	refresh( resource:M ):Promise<M>;
+	save( resource:M ):Promise<M>;
+	saveAndRefresh( resource:M ):Promise<M>;
 
-	delete( uri:string, requestOptions?:RequestOptions ):Promise<void>;
+	delete( uri:string ):Promise<void>;
 }
 
 
@@ -42,6 +39,7 @@ export const Repository:RepositoryFactory = {
 	PROTOTYPE: {
 		get: __throwNotImplemented,
 		resolve: __throwNotImplemented,
+		exists: __throwNotImplemented,
 
 		refresh: __throwNotImplemented,
 		save: __throwNotImplemented,

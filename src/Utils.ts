@@ -337,5 +337,4 @@ export class UUIDUtils {
 }
 
 
-export type SelfKeys<B extends object, A extends object> = Exclude<keyof B, keyof A>;
-export type PickSelfProps<B extends object, A extends object, O extends keyof B = never> = Pick<B, SelfKeys<B, A> | O>;
+export type PickSelfProps<B extends object, A extends object, O extends keyof B = never> = Pick<B, Exclude<keyof B, keyof A> | O>;

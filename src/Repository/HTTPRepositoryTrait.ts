@@ -35,12 +35,19 @@ import { ResolvablePointer } from "./ResolvablePointer";
 export interface HTTPRepositoryTrait<M extends ResolvablePointer = ResolvablePointer> extends Repository<M> {
 	readonly $context:Context<M & RegisteredPointer>;
 
+	get( uri:string, requestOptions?:GETOptions ):Promise<M>;
+	resolve( resource:M, requestOptions?:RequestOptions ):Promise<M>;
+	exists( uri:string, requestOptions?:RequestOptions ):Promise<boolean>;
+
+	refresh( resource:M, requestOptions?:RequestOptions ):Promise<M>;
+	save( resource:M, requestOptions?:RequestOptions ):Promise<M>;
+	saveAndRefresh( resource:M, requestOptions?:RequestOptions ):Promise<M>;
+
+	delete( uri:string, requestOptions?:RequestOptions ):Promise<void>;
 
 	_parseFailedResponse( response:Response | Error | null ):Promise<never>;
-
-	_parseFreeNodes( freeNodes:RDFNode[] ):FreeResources;
-
 	_parseResponseData<T extends object>( response:Response, id:string ):Promise<T & M>;
+	_parseFreeNodes( freeNodes:RDFNode[] ):FreeResources;
 }
 
 
@@ -55,6 +62,7 @@ export function _inScope( repository:Repository, uri:string ):boolean {
 export type OverloadedMembers =
 	| "get"
 	| "resolve"
+	| "exists"
 	| "refresh"
 	| "save"
 	| "saveAndRefresh"
@@ -92,6 +100,19 @@ export const HTTPRepositoryTrait:GeneralRepositoryFactory = {
 
 		resolve( this:HTTPRepositoryTrait, resource:ResolvablePointer, requestOptions?:RequestOptions ):Promise<ResolvablePointer> {
 			return this.get( resource.$id, requestOptions );
+		},
+
+		exists( this:HTTPRepositoryTrait, uri:string, requestOptions?:RequestOptions ):Promise<boolean> {
+			const url:string = this.$context.resolve( uri );
+			if( _inScope( this, url ) ) return Promise.reject( new IllegalArgumentError( _getNotInContextMessage( uri ) ) );
+
+			return RequestService
+				.head( url, requestOptions )
+				.then( () => true )
+				.catch<boolean>( ( response:Response ) => {
+					if( response.status === 404 ) return false;
+					return this._parseFailedResponse( response );
+				} );
 		},
 
 

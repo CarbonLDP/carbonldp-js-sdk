@@ -293,6 +293,7 @@ function __sendPatch( repository:LDPDocumentsRepositoryTrait, document:Document,
 export type OverloadedMembers =
 	| "get"
 	| "refresh"
+	| "exists"
 	| "save"
 	| "saveAndRefresh"
 	| "delete"
@@ -312,6 +313,13 @@ export const LDPDocumentsRepositoryTrait:LDPDocumentsRepositoryTraitFactory = {
 
 			return HTTPRepositoryTrait.PROTOTYPE
 				.get.call( this, uri, requestOptions );
+		},
+
+		exists( this:LDPDocumentsRepositoryTrait, uri:string, requestOptions:RequestOptions = {} ):Promise<boolean> {
+			__setDefaultRequestOptions( this.$context, requestOptions, LDP.RDFSource );
+
+			return HTTPRepositoryTrait.PROTOTYPE
+				.exists.call( this, uri, requestOptions );
 		},
 
 
