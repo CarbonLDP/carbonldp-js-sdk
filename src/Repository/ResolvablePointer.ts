@@ -6,6 +6,7 @@ import {
 	ModelTypeGuard
 } from "../core";
 import { Pointer } from "../Pointer";
+import { ObjectUtils } from "../Utils";
 import { BaseResolvablePointer } from "./BaseResolvablePointer";
 
 export interface ResolvablePointer extends Pointer {
@@ -13,8 +14,12 @@ export interface ResolvablePointer extends Pointer {
 	$eTag:string | undefined;
 
 	_resolved:boolean;
+	_snapshot:object;
 
 	isResolved():boolean;
+
+
+	isDirty():boolean;
 }
 
 
@@ -29,10 +34,19 @@ export const ResolvablePointer:ResolvablePointerFactory = {
 	PROTOTYPE: {
 		$eTag: void 0,
 
+
 		_resolved: false,
 
 		isResolved( this:ResolvablePointer ):boolean {
 			return this._resolved;
+		},
+
+
+		_snapshot: {},
+
+		isDirty( this:ResolvablePointer ):boolean {
+			return ! ObjectUtils
+				.areEqual( this, this._snapshot, { arrays: true } );
 		},
 	},
 

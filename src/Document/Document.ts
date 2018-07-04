@@ -11,6 +11,7 @@ import { MembersDocument } from "../Members";
 import { MessagingDocument } from "../Messaging";
 import { Pointer } from "../Pointer";
 import { DocumentsRegistry } from "../Registry";
+import { ResolvablePointer } from "../Repository";
 import { PersistedResource } from "../Resource";
 import { SPARQLDocument } from "../SPARQL";
 import {
@@ -34,7 +35,7 @@ import { CRUDDocument } from "./CRUDDocument";
 import { TransientDocument } from "./TransientDocument";
 
 
-export interface Document extends CRUDDocument, MembersDocument, SPARQLDocument, MessagingDocument, QueryDocumentDocument {
+export interface Document extends CRUDDocument, MembersDocument, SPARQLDocument, MessagingDocument, QueryDocumentDocument, ResolvablePointer {
 	$registry:DocumentsRegistry;
 
 	created?:Date;
@@ -83,7 +84,7 @@ type OverloadedProps =
 	| "isDirty"
 	| "revert"
 	;
-const PROTOTYPE:PickSelfProps<Document, CRUDDocument & MembersDocument & SPARQLDocument & MessagingDocument & QueryDocumentDocument, OverloadedProps> = {
+const PROTOTYPE:PickSelfProps<Document, CRUDDocument & MembersDocument & SPARQLDocument & MessagingDocument & QueryDocumentDocument & ResolvablePointer, OverloadedProps> = {
 
 	get<T extends object>( this:Document, uriOrOptionsOrQueryBuilderFn:string | GETOptions | QueryBuilderFn, optionsOrQueryBuilderFn?:GETOptions | QueryBuilderFn, queryBuilderFn?:QueryBuilderFn ):Promise<T & Document> {
 		const iri:string = isString( uriOrOptionsOrQueryBuilderFn ) ? uriOrOptionsOrQueryBuilderFn : this.$id;
