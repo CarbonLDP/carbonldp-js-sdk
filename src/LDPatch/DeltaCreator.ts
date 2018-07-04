@@ -13,6 +13,7 @@ import {
 	SubjectToken,
 	VariableOrIRI,
 } from "sparqler/tokens";
+import { Context } from "../Context";
 
 import { JSONLDConverter } from "../JSONLD";
 import { guessXSDType } from "../JSONLD/Utils";
@@ -53,15 +54,15 @@ typesDefinition.containerType = ContainerType.SET;
 export class DeltaCreator {
 
 	private prefixesMap:Map<string, PrefixToken>;
-	private jsonldConverter:JSONLDConverter;
+	private context:Context;
 
 	private readonly addToken:AddToken;
 	private readonly deleteToken:DeleteToken;
 	private readonly updateLists:UpdateListToken[];
 
-	constructor( jsonldConverter:JSONLDConverter ) {
+	constructor( context:Context ) {
 		this.prefixesMap = new Map();
-		this.jsonldConverter = jsonldConverter;
+		this.context = context;
 
 		this.addToken = new AddToken();
 		this.deleteToken = new DeleteToken();
@@ -80,7 +81,9 @@ export class DeltaCreator {
 		return `${ patch }`;
 	}
 
-	addResource( schema:DigestedObjectSchema, id:string, previousResource:object, currentResource:object ):void {
+	addResource( id:string, previousResource:object, currentResource:object ):void {
+		const schema:DigestedObjectSchema = this.__getSchema( id, previousResource, currentResource );
+
 		const resource:IRIToken | PrefixedNameToken | BlankNodeToken = isBNodeLabel( id ) ?
 			new BlankNodeToken( id ) : this._compactIRI( schema, id );
 
@@ -179,6 +182,18 @@ export class DeltaCreator {
 		predicates.forEach( x => this._addPrefixFrom( x.predicate, schema ) );
 	}
 
+	private __getSchema( id:string, previousResource:{ types?:string[] }, currentResource:{ types?:string[] } ):DigestedObjectSchema {
+		const types:Set<string> = new Set();
+
+		if( "types" in previousResource ) previousResource
+			.types.forEach( types.add, types );
+		if( "types" in currentResource ) currentResource
+			.types.forEach( types.add, types );
+
+		return this.context
+			.registry.getSchemaFor( { $id:id, types: Array.from( types ) } );
+	}
+
 	private _getPropertyIRI( schema:DigestedObjectSchema, propertyName:string ):IRIToken | PrefixedNameToken {
 		const propertyDefinition:DigestedObjectSchemaProperty = schema.properties.get( propertyName );
 		const uri:string = propertyDefinition && propertyDefinition.uri ?
@@ -236,7 +251,7 @@ export class DeltaCreator {
 	}
 
 	private _expandPointer( value:any, schema:DigestedObjectSchema ):IRIToken | PrefixedNameToken | BlankNodeToken {
-		let id:string = Pointer.is( value ) ? value.id : value;
+		let id:string = Pointer.is( value ) ? value.$id : value;
 		if( ! isString( id ) ) return null;
 
 		return isBNodeLabel( id ) ?
@@ -249,9 +264,9 @@ export class DeltaCreator {
 			definition.literalType :
 			guessXSDType( value );
 
-		if( ! this.jsonldConverter.literalSerializers.has( type ) ) return null;
+		if( ! this.context.jsonldConverter.literalSerializers.has( type ) ) return null;
 
-		value = this.jsonldConverter.literalSerializers.get( type ).serialize( value );
+		value = this.context.jsonldConverter.literalSerializers.get( type ).serialize( value );
 		const literal:LiteralToken = new LiteralToken( value );
 
 		if( type !== XSD.string ) literal.setType( this._compactIRI( schema, type ) );

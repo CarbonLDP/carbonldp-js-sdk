@@ -8,19 +8,16 @@ import { IllegalArgumentError } from "../Errors";
 import { FreeResources } from "../FreeResources";
 import {
 	GETOptions,
-	Header,
 	RequestOptions,
 	RequestService,
 	RequestUtils,
 	Response
 } from "../HTTP";
 import {
-	BadResponseError,
 	HTTPError,
 	statusCodeMap,
 	UnknownError
 } from "../HTTP/Errors";
-import { JSONLDParser } from "../JSONLD";
 import {
 	DigestedObjectSchema,
 	ObjectSchemaResolver
@@ -35,50 +32,47 @@ import { Repository } from "./Repository";
 import { ResolvablePointer } from "./ResolvablePointer";
 
 
-export interface HTTPRepositoryTrait extends Repository {
-	readonly $context:Context<ResolvablePointer & RegisteredPointer>;
+export interface HTTPRepositoryTrait<M extends ResolvablePointer = ResolvablePointer> extends Repository<M> {
+	readonly $context:Context<M & RegisteredPointer>;
 
 
 	_parseFailedResponse( response:Response | Error | null ):Promise<never>;
 
 	_parseFreeNodes( freeNodes:RDFNode[] ):FreeResources;
 
-	_parseResponseData( data:object[], response:Response, id:string ):ResolvablePointer;
+	_parseResponseData<T extends object>( response:Response, id:string ):Promise<T & M>;
 }
 
 
-const __PARSER:JSONLDParser = new JSONLDParser();
-
-function __getNotInContextMessage( uri:string ):string {
+export function _getNotInContextMessage( uri:string ):string {
 	return `"${ uri }" is outside the scope of the repository context.`;
 }
 
-function __inScope( repository:Repository, uri:string ):boolean {
+export function _inScope( repository:Repository, uri:string ):boolean {
 	return URI.isBaseOf( repository.$context.baseURI, uri );
 }
 
-function __getTargetID( id:string, response:Response ):string {
-	const locationHeader:Header = response.getHeader( "Content-Location" );
-	if( ! locationHeader ) return id;
+export type OverloadedMembers =
+	| "get"
+	| "resolve"
+	| "refresh"
+	| "save"
+	| "saveAndRefresh"
+	| "delete"
+	;
 
-	if( locationHeader.values.length !== 1 ) throw new BadResponseError( "The response must contain one Content-Location header.", response );
-	const locationString:string = "" + locationHeader;
-
-	if( ! locationString ) throw new BadResponseError( `The response doesn't contain a valid 'Content-Location' header.`, response );
-	return locationString;
-}
-
+// FIXME: Use `unknown` for TS 3.0
 export type GeneralRepositoryFactory =
-	& ModelPrototype<HTTPRepositoryTrait, Repository & ObjectSchemaResolver>
-	& ModelDecorator<HTTPRepositoryTrait, BaseRepository>
-	& ModelFactory<HTTPRepositoryTrait, BaseRepository>
+	& ModelPrototype<HTTPRepositoryTrait, Repository & ObjectSchemaResolver, OverloadedMembers>
+	& ModelDecorator<HTTPRepositoryTrait<any>, BaseRepository>
+	& ModelFactory<HTTPRepositoryTrait<any>, BaseRepository>
 	;
 
 export const HTTPRepositoryTrait:GeneralRepositoryFactory = {
 	PROTOTYPE: {
 		get( this:HTTPRepositoryTrait, uri:string, requestOptions?:GETOptions ):Promise<ResolvablePointer> {
 			const url:string = this.$context.resolve( uri );
-			if( __inScope( this, url ) ) return Promise.reject( new IllegalArgumentError( __getNotInContextMessage( uri ) ) );
+			if( _inScope( this, url ) ) return Promise.reject( new IllegalArgumentError( _getNotInContextMessage( uri ) ) );
 
 			if( this.$context.registry.hasPointer( url, true ) ) {
 				const resource:ResolvablePointer = this.$context.registry.getPointer( url, true );
@@ -89,10 +83,9 @@ export const HTTPRepositoryTrait:GeneralRepositoryFactory = {
 			}
 
 			return RequestService
-				.get( url, requestOptions, __PARSER )
-				.then( ( [ rdfData, response ]:[ object[], Response ] ) => {
-					const targetID:string = __getTargetID( url, response );
-					return this._parseResponseData( rdfData, response, targetID );
+				.get( url, requestOptions )
+				.then( ( response:Response ) => {
+					return this._parseResponseData( response, uri );
 				} )
 				.catch( this._parseFailedResponse.bind( this ) );
 		},
@@ -103,15 +96,15 @@ export const HTTPRepositoryTrait:GeneralRepositoryFactory = {
 
 
 		refresh( this:HTTPRepositoryTrait, resource:ResolvablePointer, requestOptions?:RequestOptions ):Promise<ResolvablePointer> {
-			if( ! ResolvablePointer.is( resource ) ) return Promise.reject( "The resource isn't a resolvable pointer." );
+			if( ! ResolvablePointer.is( resource ) ) return Promise.reject( new IllegalArgumentError( "The resource isn't a resolvable pointer." ) );
 
 			const url:string = this.$context.resolve( resource.$id );
-			if( __inScope( this, url ) ) return Promise.reject( new IllegalArgumentError( __getNotInContextMessage( resource.$id ) ) );
+			if( _inScope( this, url ) ) return Promise.reject( new IllegalArgumentError( _getNotInContextMessage( resource.$id ) ) );
 
 			return RequestService
-				.get( url, requestOptions, __PARSER )
-				.then<ResolvablePointer>( ( [ rdfData, response ] ) => {
-					return this._parseResponseData( rdfData, response, url );
+				.get( url, requestOptions )
+				.then<ResolvablePointer>( ( response:Response ) => {
+					return this._parseResponseData( response, url );
 				} )
 				.catch<ResolvablePointer>( ( response:Response ) => {
 					if( response.status === 304 ) return resource;
@@ -121,10 +114,10 @@ export const HTTPRepositoryTrait:GeneralRepositoryFactory = {
 		},
 
 		save( this:HTTPRepositoryTrait, resource:ResolvablePointer, requestOptions?:RequestOptions ):Promise<ResolvablePointer> {
-			if( ! ResolvablePointer.is( resource ) ) return Promise.reject( "The resource isn't a resolvable pointer." );
+			if( ! ResolvablePointer.is( resource ) ) return Promise.reject( new IllegalArgumentError( "The resource isn't a resolvable pointer." ) );
 
 			const url:string = this.$context.resolve( resource.$id );
-			if( __inScope( this, url ) ) return Promise.reject( new IllegalArgumentError( __getNotInContextMessage( resource.$id ) ) );
+			if( _inScope( this, url ) ) return Promise.reject( new IllegalArgumentError( _getNotInContextMessage( resource.$id ) ) );
 
 			if( ! resource.isDirty() ) return Promise.resolve( resource );
 
@@ -146,7 +139,7 @@ export const HTTPRepositoryTrait:GeneralRepositoryFactory = {
 
 		delete( this:HTTPRepositoryTrait, uri:string, requestOptions?:RequestOptions ):Promise<void> {
 			const url:string = this.$context.resolve( uri );
-			if( __inScope( this, url ) ) return Promise.reject( new IllegalArgumentError( __getNotInContextMessage( uri ) ) );
+			if( _inScope( this, url ) ) return Promise.reject( new IllegalArgumentError( _getNotInContextMessage( uri ) ) );
 
 			return RequestService
 				.delete( url, requestOptions )
@@ -184,10 +177,8 @@ export const HTTPRepositoryTrait:GeneralRepositoryFactory = {
 			return freeResources;
 		},
 
-		_parseResponseData( this:HTTPRepositoryTrait, data:object[], response:Response, id:string ):ResolvablePointer {
-			id = __getTargetID( id, response );
-
-			const resolvable:ResolvablePointer = this.$context.registry
+		async _parseResponseData<T extends object>( this:HTTPRepositoryTrait<T & ResolvablePointer>, response:Response, id:string ):Promise<T & ResolvablePointer> {
+			const resolvable:T & ResolvablePointer = this.$context.registry
 				.getPointer( id, true );
 
 			resolvable.$eTag = response.getETag();

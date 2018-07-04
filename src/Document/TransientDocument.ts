@@ -28,10 +28,11 @@ import {
 } from "../Utils";
 import { C } from "../Vocabularies";
 import { BaseDocument } from "./BaseDocument";
+import { Document } from "./Document";
 
 
 export interface TransientDocument extends TransientResource, Registry<TransientBlankNode | TransientNamedFragment> {
-	$registry:DocumentsRegistry | undefined;
+	$registry:Registry<Document> | undefined;
 
 	defaultInteractionModel?:Pointer;
 	isMemberOfRelation?:Pointer;
