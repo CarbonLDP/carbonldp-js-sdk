@@ -168,7 +168,7 @@ export class JSONLDConverter {
 	private expandPointerValue( propertyValue:any, digestedSchema:ObjectSchema.DigestedObjectSchema, generalSchema:ObjectSchema.DigestedObjectSchema ):RDFNode {
 		const isString:boolean = Utils.isString( propertyValue );
 		const id:string = Pointer.is( propertyValue ) ?
-			propertyValue.id :
+			propertyValue.$id :
 			isString ?
 				propertyValue :
 				null;

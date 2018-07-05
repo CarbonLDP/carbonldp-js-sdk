@@ -1,4 +1,3 @@
-import { AbstractContext } from "./AbstractContext";
 import {
 	ACE,
 	ACL,
@@ -36,9 +35,11 @@ import {
 	MemberRemovedDetails,
 } from "../Messaging";
 import { DigestedObjectSchema } from "../ObjectSchema";
-import { Pointer } from "../Pointer";
 import { ProtectedDocument } from "../ProtectedDocument";
-import { RegistryService } from "../Registry";
+import {
+	GeneralRegistry,
+	RegisteredPointer
+} from "../Registry";
 import {
 	ValidationReport,
 	ValidationResult,
@@ -48,22 +49,24 @@ import {
 	PlatformInstance,
 	PlatformMetadata,
 } from "../System";
+import { AbstractContext } from "./AbstractContext";
 
 
-export class GlobalContext extends AbstractContext<Pointer, undefined> {
+export class GlobalContext extends AbstractContext<RegisteredPointer, undefined> {
 	static readonly instance:GlobalContext = new GlobalContext();
 
-	readonly registry:RegistryService<Pointer, GlobalContext>;
-	readonly auth:undefined = undefined;
+	readonly registry:GeneralRegistry<RegisteredPointer>;
+	readonly repository:undefined;
+	readonly auth:undefined;
 
 	protected _baseURI:"" = "";
-	protected _parentContext:undefined = undefined;
+	protected _parentContext:undefined;
 
 
 	private constructor() {
 		super();
 		this._generalObjectSchema = new DigestedObjectSchema();
-		this.registry = new RegistryService<Pointer, GlobalContext>( Pointer, this );
+		this.registry = GeneralRegistry.createFrom( { $context: this, __modelDecorator: RegisteredPointer } );
 
 		this._registerDefaultObjectSchemas();
 		this._registerDefaultDecorators();
@@ -117,10 +120,10 @@ export class GlobalContext extends AbstractContext<Pointer, undefined> {
 	}
 
 	private _registerDefaultDecorators():void {
-		this.registry.documentDecorators
-			.set( ProtectedDocument.TYPE, ProtectedDocument.decorate )
-			.set( ACL.TYPE, ACL.decorate )
-			.set( User.TYPE, User.decorate )
+		this.registry
+			.addDecorator( ProtectedDocument )
+			.addDecorator( ACL )
+			.addDecorator( User )
 		;
 	}
 }

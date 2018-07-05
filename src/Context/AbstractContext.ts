@@ -1,22 +1,24 @@
 import { Authenticator } from "../Auth";
-import { Repository } from "../Repository";
-import { Context } from "./Context";
 import {
 	IllegalArgumentError,
 	IllegalStateError
 } from "../Errors";
+import { JSONLDConverter } from "../JSONLD";
 import {
 	DigestedObjectSchema,
 	ObjectSchema,
 	ObjectSchemaDigester,
 	ObjectSchemaUtils,
 } from "../ObjectSchema";
-import { Pointer } from "../Pointer";
 import { URI } from "../RDF";
 import {
 	GeneralRegistry,
-	RegistryService
+	RegisteredPointer
 } from "../Registry";
+import {
+	Repository,
+	ResolvablePointer
+} from "../Repository";
 import {
 	ContextSettings,
 	DocumentPaths,
@@ -25,17 +27,21 @@ import {
 	isObject,
 	isString,
 } from "../Utils";
+import { Context } from "./Context";
 
 
-export abstract class AbstractContext<M extends Pointer, P extends AbstractContext<any, any> = undefined> implements Context {
-	abstract readonly registry:RegistryService<M, AbstractContext<M, P>>;
+export abstract class AbstractContext<REGISTRY extends RegisteredPointer = RegisteredPointer, REPOSITORY extends ResolvablePointer = ResolvablePointer, PARENT extends AbstractContext = undefined> implements Context {
+	abstract readonly registry:GeneralRegistry<REGISTRY> | undefined;
+	abstract readonly repository:Repository<REPOSITORY> | undefined;
 	abstract readonly auth:Authenticator<any> | undefined;
+
+	readonly jsonldConverter:JSONLDConverter;
 
 	protected abstract _baseURI:string;
 	get baseURI():string { return this._baseURI; }
 
-	protected _parentContext:P | undefined;
-	get parentContext():P | undefined { return this._parentContext; }
+	protected readonly _parentContext:PARENT | undefined;
+	get parentContext():PARENT | undefined { return this._parentContext; }
 
 	protected _settings?:ContextSettings;
 
@@ -43,9 +49,11 @@ export abstract class AbstractContext<M extends Pointer, P extends AbstractConte
 	protected _typeObjectSchemaMap:Map<string, DigestedObjectSchema>;
 
 
-	constructor( parentContext?:P ) {
+	constructor( parentContext?:PARENT ) {
 		this._parentContext = parentContext;
 		this._typeObjectSchemaMap = new Map<string, DigestedObjectSchema>();
+
+		this.jsonldConverter = new JSONLDConverter( parentContext && parentContext.jsonldConverter.literalSerializers );
 	}
 
 

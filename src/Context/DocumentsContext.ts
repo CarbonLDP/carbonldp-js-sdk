@@ -1,3 +1,4 @@
+import { Repository } from "../Repository";
 import { AbstractContext } from "./AbstractContext";
 import { Authenticator } from "../Auth";
 import { Document } from "../Document";
@@ -11,12 +12,13 @@ import {
 import * as Utils from "../Utils";
 
 
-export class DocumentsContext extends AbstractContext<Document, GlobalContext> {
+export class DocumentsContext extends AbstractContext<Document, Document, GlobalContext> {
 
 	protected _baseURI:string;
 
-	// TODO: DocumentsRegistry
 	readonly registry:DocumentsRegistry;
+	// TODO: DocumentsRepository
+	readonly repository:Repository<Document>;
 	// TODO: AuthService
 	readonly auth:Authenticator<any> | undefined;
 	readonly messaging:MessagingService;
@@ -69,7 +71,7 @@ export class DocumentsContext extends AbstractContext<Document, GlobalContext> {
 		this._baseURI = url;
 
 
-		this.registry = new DocumentsRegistry( this );
+		this.registry = DocumentsRegistry.createFrom( { $context: this } );
 		this.messaging = new MessagingService( this );
 	}
 
