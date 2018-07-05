@@ -1,7 +1,6 @@
 import { Context } from "../Context";
 import {
 	ModelDecorator,
-	ModelFactory,
 	ModelPrototype
 } from "../core";
 import { IllegalArgumentError } from "../Errors";
@@ -73,7 +72,6 @@ export type OverloadedMembers =
 export type GeneralRepositoryFactory =
 	& ModelPrototype<HTTPRepositoryTrait, Repository & ObjectSchemaResolver, OverloadedMembers>
 	& ModelDecorator<HTTPRepositoryTrait<any>, BaseRepository>
-	& ModelFactory<HTTPRepositoryTrait<any>, BaseRepository>
 	;
 
 export const HTTPRepositoryTrait:GeneralRepositoryFactory = {
@@ -224,15 +222,5 @@ export const HTTPRepositoryTrait:GeneralRepositoryFactory = {
 
 		return ModelDecorator
 			.definePropertiesFrom( HTTPRepositoryTrait.PROTOTYPE, resource );
-	},
-
-
-	create<T extends object>( data:T & BaseRepository ):T & HTTPRepositoryTrait {
-		const copy:T & BaseRepository = Object.assign( {}, data );
-		return HTTPRepositoryTrait.createFrom( copy );
-	},
-
-	createFrom<T extends object>( object:T & BaseRepository ):T & HTTPRepositoryTrait {
-		return HTTPRepositoryTrait.decorate( object );
 	},
 };

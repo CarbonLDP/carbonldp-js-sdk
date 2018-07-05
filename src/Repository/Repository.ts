@@ -1,7 +1,6 @@
 import { Context } from "../Context";
 import {
 	ModelDecorator,
-	ModelFactory,
 	ModelPrototype
 } from "../core";
 import { NotImplementedError } from "../Errors";
@@ -31,7 +30,6 @@ function __throwNotImplemented():Promise<never> {
 
 export type RepositoryFactory =
 	& ModelPrototype<Repository, BaseRepository & ObjectSchemaResolver>
-	& ModelFactory<Repository, BaseRepository>
 	& ModelDecorator<Repository, BaseRepository>
 	;
 
@@ -60,15 +58,5 @@ export const Repository:RepositoryFactory = {
 
 		return ModelDecorator
 			.definePropertiesFrom( Repository.PROTOTYPE, object );
-	},
-
-
-	create<T extends object>( data:T & BaseRepository ):T & Repository {
-		const copy:T & BaseRepository = Object.assign( {}, data );
-		return Repository.createFrom( copy );
-	},
-
-	createFrom<T extends object>( object:T & BaseRepository ):T & Repository {
-		return Repository.decorate( object );
 	},
 };

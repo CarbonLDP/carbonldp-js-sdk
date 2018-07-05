@@ -1,7 +1,6 @@
 import { Context } from "../Context";
 import {
 	ModelDecorator,
-	ModelFactory,
 	ModelPrototype
 } from "../core";
 import {
@@ -412,7 +411,6 @@ export type OverloadedMembers =
 export type LDPDocumentsRepositoryTraitFactory =
 	& ModelPrototype<LDPDocumentsRepositoryTrait, HTTPRepositoryTrait, OverloadedMembers>
 	& ModelDecorator<LDPDocumentsRepositoryTrait, BaseDocumentsRepository>
-	& ModelFactory<LDPDocumentsRepositoryTrait, BaseDocumentsRepository>
 	;
 
 export const LDPDocumentsRepositoryTrait:LDPDocumentsRepositoryTraitFactory = {
@@ -549,15 +547,5 @@ export const LDPDocumentsRepositoryTrait:LDPDocumentsRepositoryTraitFactory = {
 
 		return ModelDecorator
 			.definePropertiesFrom( LDPDocumentsRepositoryTrait.PROTOTYPE, target );
-	},
-
-
-	create<T extends object>( data:T & BaseDocumentsRepository ):T & LDPDocumentsRepositoryTrait {
-		// FIXME
-		return LDPDocumentsRepositoryTrait.createFrom( { ...data as any } );
-	},
-
-	createFrom<T extends object>( object:T & BaseDocumentsRepository ):T & LDPDocumentsRepositoryTrait {
-		return LDPDocumentsRepositoryTrait.decorate( object );
 	},
 };
