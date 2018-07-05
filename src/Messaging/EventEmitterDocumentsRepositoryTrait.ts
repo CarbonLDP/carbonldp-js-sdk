@@ -1,11 +1,12 @@
 import { DocumentsContext } from "../Context";
-import { ModelDecorator } from "../core";
+import {
+	ModelDecorator,
+	ModelPrototype
+} from "../core";
 import { Document } from "../Document";
 import { Repository } from "../Repository";
-import {
-	isObject,
-	PickSelfProps
-} from "../Utils";
+import { BaseDocumentsRepository } from "../Repository/BaseDocumentsRepository";
+import { isObject } from "../Utils";
 import { ChildCreated } from "./ChildCreated";
 import { DocumentCreated } from "./DocumentCreated";
 import { DocumentDeleted } from "./DocumentDeleted";
@@ -15,6 +16,7 @@ import { EventMessage } from "./EventMessage";
 import { MemberAdded } from "./MemberAdded";
 import { MemberRemoved } from "./MemberRemoved";
 import { createDestination } from "./Utils";
+
 
 export interface EventEmitterDocumentsRepositoryTrait extends Repository<Document> {
 	$context:DocumentsContext;
@@ -56,91 +58,90 @@ export interface EventEmitterDocumentsRepositoryTrait extends Repository<Documen
 type OnEvent<T extends EventMessage> = ( message:T ) => void;
 type OnError = ( error:Error ) => void;
 
-const PROTOTYPE:PickSelfProps<EventEmitterDocumentsRepositoryTrait, Repository<Document>> = {
-	on<T extends EventMessage>( this:EventEmitterDocumentsRepositoryTrait, event:Event | string, uriPattern:string, onEvent:OnEvent<T>, onError?:OnError ):void {
-		try {
-			const destination:string = createDestination( event, uriPattern, this.$context.baseURI );
-			this.$context.messaging.subscribe( destination, onEvent, onError );
-
-		} catch( error ) {
-			if( ! onError ) throw error;
-			onError( error );
-		}
-	},
-
-	off<T extends EventMessage>( this:EventEmitterDocumentsRepositoryTrait, event:Event | string, uriPattern:string, onEvent:OnEvent<T>, onError?:OnError ):void {
-		try {
-			const destination:string = createDestination( event, uriPattern, this.$context.baseURI );
-			this.$context.messaging.unsubscribe( destination, onEvent );
-
-		} catch( error ) {
-			if( ! onError ) throw error;
-			onError( error );
-		}
-	},
-
-	one<T extends EventMessage>( this:EventEmitterDocumentsRepositoryTrait, event:Event | string, uriPattern:string, onEvent:OnEvent<T>, onError?:OnError ):void {
-		try {
-			const destination:string = createDestination( event, uriPattern, this.$context.baseURI );
-			this.$context.messaging.subscribe( destination, function onEventWrapper( message:T ):void {
-				onEvent( message );
-				this.$context.messaging.unsubscribe( destination, onEventWrapper );
-			}, onError );
-
-		} catch( error ) {
-			if( ! onError ) throw error;
-			onError( error );
-		}
-	},
-
-
-	onChildCreated( this:EventEmitterDocumentsRepositoryTrait, uriPattern:string, onEvent:OnEvent<ChildCreated>, onError?:OnError ):void {
-		return this.on( Event.CHILD_CREATED, uriPattern, onEvent as OnEvent<ChildCreated>, onError );
-	},
-
-	onDocumentCreated( this:EventEmitterDocumentsRepositoryTrait, uriPattern:string, onEvent:OnEvent<DocumentCreated>, onError?:OnError ):void {
-		return this.on( Event.DOCUMENT_CREATED, uriPattern, onEvent, onError );
-	},
-
-	onDocumentModified( this:EventEmitterDocumentsRepositoryTrait, uriPattern:string, onEvent:OnEvent<DocumentModified>, onError?:OnError ):void {
-		return this.on( Event.DOCUMENT_MODIFIED, uriPattern, onEvent, onError );
-	},
-
-	onDocumentDeleted( this:EventEmitterDocumentsRepositoryTrait, uriPattern:string, onEvent:OnEvent<DocumentDeleted>, onError?:OnError ):void {
-		return this.on( Event.DOCUMENT_DELETED, uriPattern, onEvent, onError );
-	},
-
-	onMemberAdded( this:EventEmitterDocumentsRepositoryTrait, uriPattern:string, onEvent:OnEvent<MemberAdded>, onError?:OnError ):void {
-		return this.on( Event.MEMBER_ADDED, uriPattern, onEvent, onError );
-	},
-
-	onMemberRemoved( this:EventEmitterDocumentsRepositoryTrait, uriPattern:string, onEvent:OnEvent<MemberRemoved>, onError?:OnError ):void {
-		return this.on( Event.MEMBER_REMOVED, uriPattern, onEvent, onError );
-	},
-};
-
-export interface EventEmitterDocumentsRepositoryTraitFactory extends ModelDecorator<EventEmitterDocumentsRepositoryTrait> {
-	isDecorated( object:object ):object is EventEmitterDocumentsRepositoryTrait;
-
-	decorate<T extends object>( object:T ):T & EventEmitterDocumentsRepositoryTrait;
-}
+export type EventEmitterDocumentsRepositoryTraitFactory =
+	& ModelPrototype<EventEmitterDocumentsRepositoryTrait, Repository<Document>>
+	& ModelDecorator<EventEmitterDocumentsRepositoryTrait, BaseDocumentsRepository>
+	;
 
 export const EventEmitterDocumentsRepositoryTrait:EventEmitterDocumentsRepositoryTraitFactory = {
+	PROTOTYPE: {
+		on<T extends EventMessage>( this:EventEmitterDocumentsRepositoryTrait, event:Event | string, uriPattern:string, onEvent:OnEvent<T>, onError?:OnError ):void {
+			try {
+				const destination:string = createDestination( event, uriPattern, this.$context.baseURI );
+				this.$context.messaging.subscribe( destination, onEvent, onError );
+
+			} catch( error ) {
+				if( ! onError ) throw error;
+				onError( error );
+			}
+		},
+
+		off<T extends EventMessage>( this:EventEmitterDocumentsRepositoryTrait, event:Event | string, uriPattern:string, onEvent:OnEvent<T>, onError?:OnError ):void {
+			try {
+				const destination:string = createDestination( event, uriPattern, this.$context.baseURI );
+				this.$context.messaging.unsubscribe( destination, onEvent );
+
+			} catch( error ) {
+				if( ! onError ) throw error;
+				onError( error );
+			}
+		},
+
+		one<T extends EventMessage>( this:EventEmitterDocumentsRepositoryTrait, event:Event | string, uriPattern:string, onEvent:OnEvent<T>, onError?:OnError ):void {
+			try {
+				const destination:string = createDestination( event, uriPattern, this.$context.baseURI );
+				this.$context.messaging.subscribe( destination, function onEventWrapper( message:T ):void {
+					onEvent( message );
+					this.$context.messaging.unsubscribe( destination, onEventWrapper );
+				}, onError );
+
+			} catch( error ) {
+				if( ! onError ) throw error;
+				onError( error );
+			}
+		},
+
+
+		onChildCreated( this:EventEmitterDocumentsRepositoryTrait, uriPattern:string, onEvent:OnEvent<ChildCreated>, onError?:OnError ):void {
+			return this.on( Event.CHILD_CREATED, uriPattern, onEvent as OnEvent<ChildCreated>, onError );
+		},
+
+		onDocumentCreated( this:EventEmitterDocumentsRepositoryTrait, uriPattern:string, onEvent:OnEvent<DocumentCreated>, onError?:OnError ):void {
+			return this.on( Event.DOCUMENT_CREATED, uriPattern, onEvent, onError );
+		},
+
+		onDocumentModified( this:EventEmitterDocumentsRepositoryTrait, uriPattern:string, onEvent:OnEvent<DocumentModified>, onError?:OnError ):void {
+			return this.on( Event.DOCUMENT_MODIFIED, uriPattern, onEvent, onError );
+		},
+
+		onDocumentDeleted( this:EventEmitterDocumentsRepositoryTrait, uriPattern:string, onEvent:OnEvent<DocumentDeleted>, onError?:OnError ):void {
+			return this.on( Event.DOCUMENT_DELETED, uriPattern, onEvent, onError );
+		},
+
+		onMemberAdded( this:EventEmitterDocumentsRepositoryTrait, uriPattern:string, onEvent:OnEvent<MemberAdded>, onError?:OnError ):void {
+			return this.on( Event.MEMBER_ADDED, uriPattern, onEvent, onError );
+		},
+
+		onMemberRemoved( this:EventEmitterDocumentsRepositoryTrait, uriPattern:string, onEvent:OnEvent<MemberRemoved>, onError?:OnError ):void {
+			return this.on( Event.MEMBER_REMOVED, uriPattern, onEvent, onError );
+		},
+	},
+
+
 	isDecorated( object:object ):object is EventEmitterDocumentsRepositoryTrait {
 		return isObject( object )
 			&& ModelDecorator
-				.hasPropertiesFrom( PROTOTYPE, object )
+				.hasPropertiesFrom( EventEmitterDocumentsRepositoryTrait.PROTOTYPE, object )
 			;
 	},
 
-	// FIXME: BaseDocumentsRepository
-	decorate<T extends object>( object:T ):T & EventEmitterDocumentsRepositoryTrait {
+	decorate<T extends BaseDocumentsRepository>( object:T ):T & EventEmitterDocumentsRepositoryTrait {
 		if( EventEmitterDocumentsRepositoryTrait.isDecorated( object ) ) return object;
 
 		const resource:T & Repository<Document> = ModelDecorator
 			.decorateMultiple( object, Repository );
 
 		return ModelDecorator
-			.definePropertiesFrom( PROTOTYPE, resource );
+			.definePropertiesFrom( EventEmitterDocumentsRepositoryTrait.PROTOTYPE, resource );
 	},
 };

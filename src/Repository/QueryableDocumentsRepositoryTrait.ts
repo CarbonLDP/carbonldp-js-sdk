@@ -85,7 +85,7 @@ export interface QueryableDocumentsRepositoryTrait extends LDPDocumentsRepositor
 	get<T extends object>( uri:string, requestOptions:RequestOptions, queryBuilderFn:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<T & Document>;
 
 	resolve<T extends object>( document:Document, queryBuilderFn:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<T & Document>;
-	resolve<T extends object>( document:Document, requestOptions:RequestOptions, queryBuilderFn?:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<T & Document>;
+	resolve<T extends object>( document:Document, requestOptions?:RequestOptions, queryBuilderFn?:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<T & Document>;
 
 
 	refresh<T extends object>( document:Document, requestOptions?:RequestOptions ):Promise<T & Document>;
@@ -256,7 +256,7 @@ function __executeBuilder<T extends object>( repository:QueryableDocumentsReposi
 		;
 }
 
-function __getPartial<T extends object>( repository:QueryableDocumentsRepositoryTrait, uri:string, requestOptions:RequestOptions, queryBuilderFn?:QueryBuilderFn, target?:Document ):Promise<T & Document> {
+function __getQueryable<T extends object>( repository:QueryableDocumentsRepositoryTrait, uri:string, requestOptions:RequestOptions, queryBuilderFn?:QueryBuilderFn, target?:Document ):Promise<T & Document> {
 	if( ! repository.$context.registry.inScope( uri ) ) return Promise.reject( new IllegalArgumentError( _getNotInContextMessage( uri ) ) );
 	const url:string = this.$context.resolve( uri );
 
@@ -307,7 +307,7 @@ function __addRefreshPatterns( queryContext:QueryContextPartial, parentAdder:Opt
 	} );
 }
 
-function __refreshPartial<T extends object>( repository:QueryableDocumentsRepositoryTrait, document:Document, requestOptions:RequestOptions = {} ):Promise<T & Document> {
+function __refreshQueryable<T extends object>( repository:QueryableDocumentsRepositoryTrait, document:Document, requestOptions:RequestOptions = {} ):Promise<T & Document> {
 	if( ! repository.$context.registry.inScope( document.$id ) ) return Promise.reject( new IllegalArgumentError( _getNotInContextMessage( document.$id ) ) );
 	const url:string = this.$context.resolve( document.$id );
 
@@ -416,7 +416,7 @@ export const QueryableDocumentsRepositoryTrait:QueryableDocumentsRepositoryTrait
 
 			if( queryBuilderFn ) {
 				const types:string[] = target ? target.types : [];
-				return __getPartial( this, uri, requestOptions, _ => {
+				return __getQueryable( this, uri, requestOptions, _ => {
 					types.forEach( type => _.withType( type ) );
 					return queryBuilderFn.call( void 0, _ );
 				} );
@@ -433,10 +433,10 @@ export const QueryableDocumentsRepositoryTrait:QueryableDocumentsRepositoryTrait
 
 
 		refresh<T extends object>( this:QueryableDocumentsRepositoryTrait, document:Document, requestOptions?:RequestOptions ):Promise<T & Document> {
-			if( ! document._partialMetadata ) return LDPDocumentsRepositoryTrait.PROTOTYPE
+			if( ! document.isPartial() ) return LDPDocumentsRepositoryTrait.PROTOTYPE
 				.refresh.call( this, document, requestOptions );
 
-			return __refreshPartial<T>( this, document, requestOptions );
+			return __refreshQueryable<T>( this, document, requestOptions );
 		},
 
 		saveAndRefresh<T extends object>( this:QueryableDocumentsRepositoryTrait, document:Document, requestOptions?:RequestOptions ):Promise<T & Document> {
@@ -446,7 +446,7 @@ export const QueryableDocumentsRepositoryTrait:QueryableDocumentsRepositoryTrait
 			const cloneOptions:RequestOptions = RequestUtils.cloneOptions( requestOptions );
 			return this.save<T & Document>( document, cloneOptions )
 				.then<T & Document>( doc => {
-					return __refreshPartial( this, doc, requestOptions );
+					return __refreshQueryable( this, doc, requestOptions );
 				} );
 		},
 

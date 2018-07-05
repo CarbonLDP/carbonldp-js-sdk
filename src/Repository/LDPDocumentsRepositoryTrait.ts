@@ -1,4 +1,7 @@
-import { Context } from "../Context";
+import {
+	Context,
+	DocumentsContext
+} from "../Context";
 import {
 	ModelDecorator,
 	ModelPrototype
@@ -60,7 +63,7 @@ import { ResolvablePointer } from "./ResolvablePointer";
 
 
 export interface LDPDocumentsRepositoryTrait extends HTTPRepositoryTrait<Document> {
-	$context:Context<Document, Document>;
+	$context:DocumentsContext;
 
 	get<T extends object>( uri:string, requestOptions?:GETOptions ):Promise<T & Document>;
 

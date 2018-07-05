@@ -1,15 +1,15 @@
-import { Repository } from "../Repository";
-import { AbstractContext } from "./AbstractContext";
 import { Authenticator } from "../Auth";
 import { Document } from "../Document";
-import { GlobalContext } from "./GlobalContext";
 import { MessagingService } from "../Messaging";
 import { DocumentsRegistry } from "../Registry";
+import { DocumentsRepository } from "../Repository/DocumentsRepository";
 import {
 	ContextSettings,
 	DocumentPaths
 } from "../Settings";
 import * as Utils from "../Utils";
+import { AbstractContext } from "./AbstractContext";
+import { GlobalContext } from "./GlobalContext";
 
 
 export class DocumentsContext extends AbstractContext<Document, Document, GlobalContext> {
@@ -17,8 +17,7 @@ export class DocumentsContext extends AbstractContext<Document, Document, Global
 	protected _baseURI:string;
 
 	readonly registry:DocumentsRegistry;
-	// TODO: DocumentsRepository
-	readonly repository:Repository<Document>;
+	readonly repository:DocumentsRepository;
 	// TODO: AuthService
 	readonly auth:Authenticator<any> | undefined;
 	readonly messaging:MessagingService;

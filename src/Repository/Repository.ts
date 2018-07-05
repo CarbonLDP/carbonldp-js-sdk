@@ -28,9 +28,10 @@ function __throwNotImplemented():Promise<never> {
 	return Promise.reject( new NotImplementedError( "Must be implemented in a repository implementation." ) );
 }
 
+// TODO: Use `unknown`
 export type RepositoryFactory =
 	& ModelPrototype<Repository, BaseRepository & ObjectSchemaResolver>
-	& ModelDecorator<Repository, BaseRepository>
+	& ModelDecorator<Repository<any>, BaseRepository>
 	;
 
 export const Repository:RepositoryFactory = {

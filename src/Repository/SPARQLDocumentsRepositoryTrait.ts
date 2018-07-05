@@ -1,4 +1,5 @@
 import { QueryClause } from "sparqler/clauses";
+import { DocumentsContext } from "../Context";
 import {
 	ModelDecorator,
 	ModelPrototype
@@ -19,6 +20,9 @@ import {
 } from "./HTTPRepositoryTrait";
 
 export interface SPARQLDocumentsRepositoryTrait extends HTTPRepositoryTrait {
+	$context:DocumentsContext;
+
+
 	executeASKQuery( uri:string, askQuery:string, requestOptions?:RequestOptions ):Promise<boolean>;
 
 	executeSELECTQuery<T extends object>( uri:string, selectQuery:string, requestOptions?:RequestOptions ):Promise<SPARQLSelectResults<T>>;
@@ -91,7 +95,7 @@ export const SPARQLDocumentsRepositoryTrait:SPARQLDocumentsRepositoryTraitFactor
 			.hasPropertiesFrom( SPARQLDocumentsRepositoryTrait.PROTOTYPE, object );
 	},
 
-	decorate<T extends object>( object:T ):T & SPARQLDocumentsRepositoryTrait {
+	decorate<T extends BaseDocumentsRepository>( object:T ):T & SPARQLDocumentsRepositoryTrait {
 		if( SPARQLDocumentsRepositoryTrait.isDecorated( object ) ) return object;
 
 		const target:T & HTTPRepositoryTrait = ModelDecorator

@@ -1,7 +1,6 @@
-import { Context } from "../Context";
-import { Document } from "../Document";
+import { DocumentsContext } from "../Context";
 
 
 export interface BaseDocumentsRepository {
-	$context:Context<Document, Document>;
+	$context:DocumentsContext;
 }
