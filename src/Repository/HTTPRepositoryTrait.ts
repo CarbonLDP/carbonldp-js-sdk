@@ -35,13 +35,13 @@ import { ResolvablePointer } from "./ResolvablePointer";
 export interface HTTPRepositoryTrait<M extends ResolvablePointer = ResolvablePointer> extends Repository<M> {
 	readonly $context:Context<M & RegisteredPointer>;
 
-	get( uri:string, requestOptions?:GETOptions ):Promise<M>;
-	resolve( resource:M, requestOptions?:RequestOptions ):Promise<M>;
+	get<T extends object>( uri:string, requestOptions?:GETOptions ):Promise<T & M>;
+	resolve<T extends object>( resource:M, requestOptions?:RequestOptions ):Promise<T & M>;
 	exists( uri:string, requestOptions?:RequestOptions ):Promise<boolean>;
 
-	refresh( resource:M, requestOptions?:RequestOptions ):Promise<M>;
-	save( resource:M, requestOptions?:RequestOptions ):Promise<M>;
-	saveAndRefresh( resource:M, requestOptions?:RequestOptions ):Promise<M>;
+	refresh<T extends object>( resource:M, requestOptions?:RequestOptions ):Promise<T & M>;
+	save<T extends object>( resource:M, requestOptions?:RequestOptions ):Promise<T & M>;
+	saveAndRefresh<T extends object>( resource:M, requestOptions?:RequestOptions ):Promise<T & M>;
 
 	delete( uri:string, requestOptions?:RequestOptions ):Promise<void>;
 
@@ -78,14 +78,14 @@ export type GeneralRepositoryFactory =
 
 export const HTTPRepositoryTrait:GeneralRepositoryFactory = {
 	PROTOTYPE: {
-		get( this:HTTPRepositoryTrait, uri:string, requestOptions?:GETOptions ):Promise<ResolvablePointer> {
+		get<T extends object>( this:HTTPRepositoryTrait, uri:string, requestOptions?:GETOptions ):Promise<T & ResolvablePointer> {
 			const url:string = this.$context.resolve( uri );
 			if( _inScope( this, url ) ) return Promise.reject( new IllegalArgumentError( _getNotInContextMessage( uri ) ) );
 
 			if( this.$context.registry.hasPointer( url, true ) ) {
 				const resource:ResolvablePointer = this.$context.registry.getPointer( url, true );
 				if( resource.isResolved() ) {
-					if( ! requestOptions.ensureLatest ) return Promise.resolve( resource );
+					if( ! requestOptions.ensureLatest ) return Promise.resolve( resource as T & ResolvablePointer );
 					RequestUtils.setIfNoneMatchHeader( resource.$eTag, requestOptions );
 				}
 			}
@@ -93,13 +93,13 @@ export const HTTPRepositoryTrait:GeneralRepositoryFactory = {
 			return RequestService
 				.get( url, requestOptions )
 				.then( ( response:Response ) => {
-					return this._parseResponseData( response, uri );
+					return this._parseResponseData<T>( response, uri );
 				} )
 				.catch( this._parseFailedResponse.bind( this ) );
 		},
 
-		resolve( this:HTTPRepositoryTrait, resource:ResolvablePointer, requestOptions?:RequestOptions ):Promise<ResolvablePointer> {
-			return this.get( resource.$id, requestOptions );
+		resolve<T extends object>( this:HTTPRepositoryTrait, resource:ResolvablePointer, requestOptions?:RequestOptions ):Promise<T & ResolvablePointer> {
+			return this.get<T>( resource.$id, requestOptions );
 		},
 
 		exists( this:HTTPRepositoryTrait, uri:string, requestOptions?:RequestOptions ):Promise<boolean> {
@@ -116,7 +116,7 @@ export const HTTPRepositoryTrait:GeneralRepositoryFactory = {
 		},
 
 
-		refresh( this:HTTPRepositoryTrait, resource:ResolvablePointer, requestOptions?:RequestOptions ):Promise<ResolvablePointer> {
+		refresh<T extends object>( this:HTTPRepositoryTrait, resource:ResolvablePointer, requestOptions?:RequestOptions ):Promise<T & ResolvablePointer> {
 			if( ! ResolvablePointer.is( resource ) ) return Promise.reject( new IllegalArgumentError( "The resource isn't a resolvable pointer." ) );
 
 			const url:string = this.$context.resolve( resource.$id );
@@ -124,36 +124,36 @@ export const HTTPRepositoryTrait:GeneralRepositoryFactory = {
 
 			return RequestService
 				.get( url, requestOptions )
-				.then<ResolvablePointer>( ( response:Response ) => {
-					return this._parseResponseData( response, url );
+				.then<T & ResolvablePointer>( ( response:Response ) => {
+					return this._parseResponseData<T>( response, url );
 				} )
-				.catch<ResolvablePointer>( ( response:Response ) => {
-					if( response.status === 304 ) return resource;
+				.catch<T & ResolvablePointer>( ( response:Response ) => {
+					if( response.status === 304 ) return resource as T & ResolvablePointer;
 					return this._parseFailedResponse( response );
 				} )
 				;
 		},
 
-		save( this:HTTPRepositoryTrait, resource:ResolvablePointer, requestOptions?:RequestOptions ):Promise<ResolvablePointer> {
+		save<T extends object>( this:HTTPRepositoryTrait, resource:ResolvablePointer, requestOptions?:RequestOptions ):Promise<T & ResolvablePointer> {
 			if( ! ResolvablePointer.is( resource ) ) return Promise.reject( new IllegalArgumentError( "The resource isn't a resolvable pointer." ) );
 
 			const url:string = this.$context.resolve( resource.$id );
 			if( _inScope( this, url ) ) return Promise.reject( new IllegalArgumentError( _getNotInContextMessage( resource.$id ) ) );
 
-			if( ! resource.isDirty() ) return Promise.resolve( resource );
+			if( ! resource.isDirty() ) return Promise.resolve( resource as T & ResolvablePointer );
 
 			const body:string = JSON.stringify( resource );
 			return RequestService
 				.put( url, body, requestOptions )
-				.then( () => resource )
+				.then( () => resource as T & ResolvablePointer )
 				.catch( this._parseFailedResponse.bind( this ) )
 				;
 		},
 
-		saveAndRefresh( this:HTTPRepositoryTrait, resource:ResolvablePointer, requestOptions?:RequestOptions ):Promise<ResolvablePointer> {
+		saveAndRefresh<T extends object>( this:HTTPRepositoryTrait, resource:ResolvablePointer, requestOptions?:RequestOptions ):Promise<T & ResolvablePointer> {
 			return this
-				.save( resource, requestOptions )
-				.then( () => this.refresh( resource, requestOptions ) )
+				.save<T>( resource, requestOptions )
+				.then( () => this.refresh<T>( resource, requestOptions ) )
 				;
 		},
 

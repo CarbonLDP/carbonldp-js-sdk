@@ -38,7 +38,10 @@ import {
 	RDFDocumentParser,
 	RDFNode
 } from "../RDF";
-import { Registry } from "../Registry";
+import {
+	RegisteredPointer,
+	Registry
+} from "../Registry";
 import { isString } from "../Utils";
 import { LDP } from "../Vocabularies";
 import { BaseDocumentsRepository } from "./BaseDocumentsRepository";
@@ -53,9 +56,9 @@ import { ResolvablePointer } from "./ResolvablePointer";
 export interface LDPDocumentsRepositoryTrait extends HTTPRepositoryTrait<Document> {
 	$context:Context<Document, Document>;
 
-	get( uri:string, requestOptions?:GETOptions ):Promise<Document>;
+	get<T extends object>( uri:string, requestOptions?:GETOptions ):Promise<T & Document>;
 
-	resolve( document:Document, requestOptions?:RequestOptions ):Promise<Document>;
+	resolve<T extends object>( document:Document, requestOptions?:RequestOptions ):Promise<T & Document>;
 
 
 	create<T extends object>( uri:string, children:T[], requestOptions?:RequestOptions ):Promise<(T & Document)[]>;
@@ -69,11 +72,11 @@ export interface LDPDocumentsRepositoryTrait extends HTTPRepositoryTrait<Documen
 	createAndRetrieve<T extends object>( uri:string, child:T, slug?:string, requestOptions?:RequestOptions ):Promise<T & Document>;
 
 
-	refresh( document:Document, requestOptions?:RequestOptions ):Promise<Document>;
+	refresh<T extends object>( document:Document, requestOptions?:RequestOptions ):Promise<T & Document>;
 
-	save( document:Document, requestOptions?:RequestOptions ):Promise<Document>;
+	save<T extends object>( document:Document, requestOptions?:RequestOptions ):Promise<T & Document>;
 
-	saveAndRefresh( document:Document, requestOptions?:RequestOptions ):Promise<Document>;
+	saveAndRefresh<T extends object>( document:Document, requestOptions?:RequestOptions ):Promise<T & Document>;
 
 
 	delete( uri:string, requestOptions?:RequestOptions ):Promise<void>;
@@ -86,13 +89,13 @@ export interface LDPDocumentsRepositoryTrait extends HTTPRepositoryTrait<Documen
 const __RDF_DOCUMENT_PARSER:RDFDocumentParser = new RDFDocumentParser();
 const __JSONLD_PARSER:JSONLDParser = new JSONLDParser();
 
-function __addAuthentication( context:Context, requestOptions:RequestOptions ):void {
+export function _addAuthentication( context:Context, requestOptions:RequestOptions ):void {
 	if( ! context.auth ) return;
 	context.auth.addAuthentication( requestOptions );
 }
 
 function __setDefaultRequestOptions( context:Context, requestOptions:RequestOptions, interactionModel?:string ):void {
-	__addAuthentication( context, requestOptions );
+	_addAuthentication( context, requestOptions );
 
 	if( interactionModel ) RequestUtils.setPreferredInteractionModel( interactionModel, requestOptions );
 	RequestUtils.setAcceptHeader( "application/ld+json", requestOptions );
@@ -140,8 +143,8 @@ function __applyResponseMetadata( repository:LDPDocumentsRepositoryTrait, freeNo
 	;
 }
 
-function __applyResponseRepresentation<T extends object>( repository:LDPDocumentsRepositoryTrait, resource:T & Document, response:Response ):(T & Document) | Promise<T & Document> {
-	if( response.status === 204 || ! response.data ) return resource;
+function __applyResponseRepresentation<T extends object>( repository:LDPDocumentsRepositoryTrait, resource:Document, response:Response ):(T & Document) | Promise<T & Document> {
+	if( response.status === 204 || ! response.data ) return resource as T & Document;
 
 	return __JSONLD_PARSER
 		.parse( response.data )
@@ -150,7 +153,7 @@ function __applyResponseRepresentation<T extends object>( repository:LDPDocument
 			__applyResponseMetadata( repository, freeNodes );
 
 			const preferenceHeader:Header = response.getHeader( "Preference-Applied" );
-			if( preferenceHeader === null || preferenceHeader.toString() !== "return=representation" ) return resource;
+			if( preferenceHeader === null || preferenceHeader.toString() !== "return=representation" ) return resource as T & Document;
 
 			return repository._parseResponseData<T>( response, resource.$id );
 		} )
@@ -194,7 +197,7 @@ function __createChild<T extends object>( repository:LDPDocumentsRepositoryTrait
 			document._syncSnapshot();
 			document._syncSavedFragments();
 
-			return __applyResponseRepresentation( repository, document, response );
+			return __applyResponseRepresentation<T>( repository, document, response );
 		} )
 		.catch( ( error ) => {
 			delete transient[ "__CarbonLDP_persisting__" ];
@@ -246,13 +249,13 @@ function __createChildren<T extends object>( retrievalType:"minimal" | "represen
 }
 
 
-function __sendPatch( repository:LDPDocumentsRepositoryTrait, document:Document, requestOptions:RequestOptions ):Promise<Document> {
+function __sendPatch<T extends object>( repository:LDPDocumentsRepositoryTrait, document:Document, requestOptions:RequestOptions ):Promise<T & Document> {
 	if( ! ResolvablePointer.is( document ) ) return Promise.reject( new IllegalArgumentError( "The document isn't a resolvable pointer." ) );
 
 	const url:string = this.$context.resolve( document.$id );
 	if( _inScope( this, url ) ) return Promise.reject( new IllegalArgumentError( _getNotInContextMessage( document.$id ) ) );
 
-	if( ! document.isDirty() ) return Promise.resolve( document );
+	if( ! document.isDirty() ) return Promise.resolve( document as T & Document );
 
 	document._normalize();
 
@@ -267,7 +270,8 @@ function __sendPatch( repository:LDPDocumentsRepositoryTrait, document:Document,
 	deltaCreator.addResource( document.$id, document._snapshot, document );
 
 	// Current fragments
-	document
+	// FIXME
+	(document as any as Registry<RegisteredPointer & ResolvablePointer>)
 		.getPointers( true )
 		.forEach( ( pointer:ResolvablePointer ) => {
 			deltaCreator.addResource( pointer.$id, pointer._snapshot, pointer );
@@ -288,7 +292,7 @@ function __sendPatch( repository:LDPDocumentsRepositoryTrait, document:Document,
 	return RequestService
 		.patch( url, body, requestOptions )
 		.then( ( response:Response ) => {
-			return __applyResponseRepresentation( repository, document, response );
+			return __applyResponseRepresentation<T>( repository, document, response );
 		} )
 		.catch( repository._parseFailedResponse.bind( document ) )
 		;
@@ -313,7 +317,7 @@ export type LDPDocumentsRepositoryTraitFactory =
 
 export const LDPDocumentsRepositoryTrait:LDPDocumentsRepositoryTraitFactory = {
 	PROTOTYPE: {
-		get( this:LDPDocumentsRepositoryTrait, uri:string, requestOptions:RequestOptions = {} ):Promise<Document> {
+		get<T extends object>( this:LDPDocumentsRepositoryTrait, uri:string, requestOptions:RequestOptions = {} ):Promise<T & Document> {
 			__setDefaultRequestOptions( this.$context, requestOptions, LDP.RDFSource );
 
 			return HTTPRepositoryTrait.PROTOTYPE
@@ -337,7 +341,7 @@ export const LDPDocumentsRepositoryTrait:LDPDocumentsRepositoryTraitFactory = {
 		},
 
 
-		refresh( this:LDPDocumentsRepositoryTrait, document:Document, requestOptions:RequestOptions = {} ):Promise<Document> {
+		refresh<T extends object>( this:LDPDocumentsRepositoryTrait, document:Document, requestOptions:RequestOptions = {} ):Promise<T & Document> {
 			__setDefaultRequestOptions( this.$context, requestOptions, LDP.RDFSource );
 
 			return HTTPRepositoryTrait.PROTOTYPE
@@ -345,14 +349,14 @@ export const LDPDocumentsRepositoryTrait:LDPDocumentsRepositoryTraitFactory = {
 				;
 		},
 
-		save( this:LDPDocumentsRepositoryTrait, document:Document, requestOptions:RequestOptions = {} ):Promise<Document> {
+		save<T extends object>( this:LDPDocumentsRepositoryTrait, document:Document, requestOptions:RequestOptions = {} ):Promise<T & Document> {
 			RequestUtils.setPreferredRetrieval( "minimal", requestOptions );
-			return __sendPatch( this, document, requestOptions );
+			return __sendPatch<T>( this, document, requestOptions );
 		},
 
-		saveAndRefresh( this:LDPDocumentsRepositoryTrait, document:Document, requestOptions:RequestOptions = {} ):Promise<Document> {
+		saveAndRefresh<T extends object>( this:LDPDocumentsRepositoryTrait, document:Document, requestOptions:RequestOptions = {} ):Promise<T & Document> {
 			RequestUtils.setPreferredRetrieval( "representation", requestOptions );
-			return __sendPatch( this, document, requestOptions );
+			return __sendPatch<T>( this, document, requestOptions );
 		},
 
 
