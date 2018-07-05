@@ -484,7 +484,7 @@ export const LDPDocumentsRepositoryTrait:LDPDocumentsRepositoryTraitFactory = {
 		},
 
 
-		_parseFailedResponse( response:Response | Error | null ):Promise<never> {
+		_parseFailedResponse( this:LDPDocumentsRepositoryTrait, response:Response | Error | null ):Promise<never> {
 			if( ! response || response instanceof Error ) return Promise.reject( response );
 
 			HTTPRepositoryTrait.PROTOTYPE
