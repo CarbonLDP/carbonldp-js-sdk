@@ -32,6 +32,10 @@ import {
 	ResponseMetadata
 } from "../LDP";
 import { DeltaCreator } from "../LDPatch";
+import {
+	AddMemberAction,
+	RemoveMemberAction
+} from "../Members";
 import { Pointer } from "../Pointer";
 import {
 	RDFDocument,
@@ -43,7 +47,10 @@ import {
 	Registry
 } from "../Registry";
 import { isString } from "../Utils";
-import { LDP } from "../Vocabularies";
+import {
+	C,
+	LDP
+} from "../Vocabularies";
 import { BaseDocumentsRepository } from "./BaseDocumentsRepository";
 import {
 	_getNotInContextMessage,
@@ -80,6 +87,16 @@ export interface LDPDocumentsRepositoryTrait extends HTTPRepositoryTrait<Documen
 
 
 	delete( uri:string, requestOptions?:RequestOptions ):Promise<void>;
+
+
+	addMember( uri:string, member:(string | Pointer), requestOptions?:RequestOptions ):Promise<void>;
+
+	addMembers( uri:string, member:(string | Pointer)[], requestOptions?:RequestOptions ):Promise<void>;
+
+
+	removeMember( uri:string, member:(string | Pointer), requestOptions?:RequestOptions ):Promise<void>;
+
+	removeMembers( uri:string, member?:(string | Pointer)[], requestOptions?:RequestOptions ):Promise<void>;
 
 
 	_parseResponseData<T extends object>( response:Response, id:string ):Promise<T & Document>;
@@ -298,6 +315,89 @@ function __sendPatch<T extends object>( repository:LDPDocumentsRepositoryTrait, 
 		;
 }
 
+
+function __parseMembers( registry:Registry, pointers:(string | Pointer)[] ):Pointer[] {
+	return pointers
+		.map( pointer => {
+			if( isString( pointer ) ) return registry.getPointer( pointer );
+			if( Pointer.is( pointer ) ) return pointer;
+		} )
+		.filter( pointer => ! ! pointer )
+		;
+}
+
+function __sendAddAction( this:void, repository:LDPDocumentsRepositoryTrait, uri:string | undefined, members:(string | Pointer)[], requestOptions:RequestOptions = {} ):Promise<void> {
+	if( repository.$context.registry.inScope( uri ) ) return Promise.reject( new IllegalArgumentError( _getNotInContextMessage( uri ) ) );
+	const url:string = repository.$context.resolve( uri );
+
+	__setDefaultRequestOptions( repository.$context, requestOptions );
+	RequestUtils.setContentTypeHeader( "application/ld+json", requestOptions );
+
+	// FIXME
+	const freeResources:FreeResources = FreeResources.createFrom( { _registry: repository.$context.registry as any } );
+
+	const targetMembers:Pointer[] = __parseMembers( repository.$context.registry, members );
+	freeResources._addPointer( AddMemberAction.createFrom( { targetMembers } ) );
+
+	const body:string = JSON.stringify( freeResources );
+
+	return RequestService
+		.put( url, body, requestOptions )
+		.then( () => {} )
+		.catch( repository._parseFailedResponse.bind( repository ) )
+		;
+}
+
+function __sendRemoveAction( this:void, repository:LDPDocumentsRepositoryTrait, uri:string | undefined, members:(string | Pointer)[], requestOptions:RequestOptions = {} ):Promise<void> {
+	if( repository.$context.registry.inScope( uri ) ) return Promise.reject( new IllegalArgumentError( _getNotInContextMessage( uri ) ) );
+	const url:string = repository.$context.resolve( uri );
+
+	__setDefaultRequestOptions( repository.$context, requestOptions );
+	RequestUtils.setContentTypeHeader( "application/ld+json", requestOptions );
+	RequestUtils.setRetrievalPreferences( {
+		include: [ C.PreferSelectedMembershipTriples ],
+		omit: [ C.PreferMembershipTriples ],
+	}, requestOptions );
+
+	// FIXME
+	const freeResources:FreeResources = FreeResources.createFrom( { _registry: repository.$context.registry as any } );
+
+	const targetMembers:Pointer[] = __parseMembers( repository.$context.registry, members );
+	freeResources._addPointer( RemoveMemberAction.createFrom( { targetMembers } ) );
+
+	const body:string = JSON.stringify( freeResources );
+
+	return RequestService
+		.delete( url, body, requestOptions )
+		.then( () => {} )
+		.catch( repository._parseFailedResponse.bind( repository ) )
+		;
+}
+
+function __sendRemoveAll( this:void, repository:LDPDocumentsRepositoryTrait, uri:string, requestOptions:RequestOptions = {} ):Promise<void> {
+	if( repository.$context.registry.inScope( uri ) ) return Promise.reject( new IllegalArgumentError( _getNotInContextMessage( uri ) ) );
+	const url:string = repository.$context.resolve( uri );
+
+	__setDefaultRequestOptions( repository.$context, requestOptions );
+	RequestUtils.setRetrievalPreferences( {
+		include: [
+			C.PreferMembershipTriples,
+		],
+		omit: [
+			C.PreferMembershipResources,
+			C.PreferContainmentTriples,
+			C.PreferContainmentResources,
+			C.PreferContainer,
+		],
+	}, requestOptions );
+
+	return RequestService
+		.delete( url, requestOptions )
+		.then( () => {} )
+		.catch( repository._parseFailedResponse.bind( repository ) )
+		;
+}
+
 export type OverloadedMembers =
 	| "get"
 	| "refresh"
@@ -364,6 +464,25 @@ export const LDPDocumentsRepositoryTrait:LDPDocumentsRepositoryTraitFactory = {
 			__setDefaultRequestOptions( this.$context, requestOptions, LDP.RDFSource );
 			return HTTPRepositoryTrait.PROTOTYPE
 				.delete.call( this, uri, requestOptions );
+		},
+
+
+		addMember( this:LDPDocumentsRepositoryTrait, uri:string, member:string | Pointer, requestOptions?:RequestOptions ):Promise<void> {
+			return __sendAddAction( this, uri, [ member ], requestOptions );
+		},
+
+		addMembers( this:LDPDocumentsRepositoryTrait, uri:string, members:(string | Pointer)[], requestOptions?:RequestOptions ):Promise<void> {
+			return __sendAddAction( this, uri, members, requestOptions );
+		},
+
+
+		removeMember( this:LDPDocumentsRepositoryTrait, uri:string, member:string | Pointer, requestOptions?:RequestOptions ):Promise<void> {
+			return __sendRemoveAction( this, uri, [ member ], requestOptions );
+		},
+
+		removeMembers( this:LDPDocumentsRepositoryTrait, uri:string, members?:(string | Pointer)[], requestOptions?:RequestOptions ):Promise<void> {
+			if( members ) return __sendRemoveAction( this, uri, members, requestOptions );
+			return __sendRemoveAll( this, uri, requestOptions );
 		},
 
 
