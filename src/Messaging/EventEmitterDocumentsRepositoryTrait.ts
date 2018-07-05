@@ -1,7 +1,6 @@
+import { DocumentsContext } from "../Context";
 import { ModelDecorator } from "../core";
-import { TransientDocument } from "../Document";
-import { DocumentsContext } from "../Context/DocumentsContext";
-import { IllegalActionError } from "../Errors";
+import { Document } from "../Document";
 import { Repository } from "../Repository";
 import {
 	isObject,
@@ -15,8 +14,6 @@ import { Event } from "./Event";
 import { EventMessage } from "./EventMessage";
 import { MemberAdded } from "./MemberAdded";
 import { MemberRemoved } from "./MemberRemoved";
-import { MessagingDocument } from "./MessagingDocument";
-import { MessagingService } from "./Service";
 import { createDestination } from "./Utils";
 
 export interface EventEmitterDocumentsRepositoryTrait extends Repository<Document> {
@@ -59,20 +56,11 @@ export interface EventEmitterDocumentsRepositoryTrait extends Repository<Documen
 type OnEvent<T extends EventMessage> = ( message:T ) => void;
 type OnError = ( error:Error ) => void;
 
-function getMessagingService( resource:EventEmitterDocumentsRepositoryTrait ):MessagingService {
-	if( ! resource.$context || ! resource.$context.messaging )
-		throw new IllegalActionError( `The repository doesn't support events subscriptions.` );
-
-	return resource.$context.messaging;
-}
-
 const PROTOTYPE:PickSelfProps<EventEmitterDocumentsRepositoryTrait, Repository<Document>> = {
 	on<T extends EventMessage>( this:EventEmitterDocumentsRepositoryTrait, event:Event | string, uriPattern:string, onEvent:OnEvent<T>, onError?:OnError ):void {
 		try {
-			const messaging:MessagingService = getMessagingService( this );
-
-			const destination:string = createDestination( event, uriPattern, messaging.context.baseURI );
-			messaging.subscribe( destination, onEvent, onError );
+			const destination:string = createDestination( event, uriPattern, this.$context.baseURI );
+			this.$context.messaging.subscribe( destination, onEvent, onError );
 
 		} catch( error ) {
 			if( ! onError ) throw error;
@@ -82,10 +70,8 @@ const PROTOTYPE:PickSelfProps<EventEmitterDocumentsRepositoryTrait, Repository<D
 
 	off<T extends EventMessage>( this:EventEmitterDocumentsRepositoryTrait, event:Event | string, uriPattern:string, onEvent:OnEvent<T>, onError?:OnError ):void {
 		try {
-			const messaging:MessagingService = getMessagingService( this );
-
-			const destination:string = createDestination( event, uriPattern, messaging.context.baseURI );
-			messaging.unsubscribe( destination, onEvent );
+			const destination:string = createDestination( event, uriPattern, this.$context.baseURI );
+			this.$context.messaging.unsubscribe( destination, onEvent );
 
 		} catch( error ) {
 			if( ! onError ) throw error;
@@ -95,12 +81,10 @@ const PROTOTYPE:PickSelfProps<EventEmitterDocumentsRepositoryTrait, Repository<D
 
 	one<T extends EventMessage>( this:EventEmitterDocumentsRepositoryTrait, event:Event | string, uriPattern:string, onEvent:OnEvent<T>, onError?:OnError ):void {
 		try {
-			const messaging:MessagingService = getMessagingService( this );
-
-			const destination:string = createDestination( event, uriPattern, messaging.context.baseURI );
-			messaging.subscribe( destination, function onEventWrapper( message:T ):void {
+			const destination:string = createDestination( event, uriPattern, this.$context.baseURI );
+			this.$context.messaging.subscribe( destination, function onEventWrapper( message:T ):void {
 				onEvent( message );
-				messaging.unsubscribe( destination, onEventWrapper );
+				this.$context.messaging.unsubscribe( destination, onEventWrapper );
 			}, onError );
 
 		} catch( error ) {
@@ -149,6 +133,7 @@ export const EventEmitterDocumentsRepositoryTrait:EventEmitterDocumentsRepositor
 			;
 	},
 
+	// FIXME: BaseDocumentsRepository
 	decorate<T extends object>( object:T ):T & EventEmitterDocumentsRepositoryTrait {
 		if( EventEmitterDocumentsRepositoryTrait.isDecorated( object ) ) return object;
 
