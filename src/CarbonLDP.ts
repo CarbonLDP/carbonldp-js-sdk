@@ -2,7 +2,6 @@ import { hasProtocol } from "sparqler/iri";
 
 import { AbstractContext } from "./Context/AbstractContext";
 import { AccessPoint } from "./AccessPoint";
-import * as Auth from "./Auth";
 import { BlankNode } from "./BlankNode";
 import { Document } from "./Document";
 import { DocumentsContext } from "./Context/DocumentsContext";
@@ -46,7 +45,6 @@ export class CarbonLDP extends DocumentsContext {
 
 	static AbstractContext:typeof AbstractContext = AbstractContext;
 	static AccessPoint:typeof AccessPoint = AccessPoint;
-	static Auth:typeof Auth = Auth;
 	static BlankNode:typeof BlankNode = BlankNode;
 	static Errors:typeof Errors = Errors;
 	static FreeResources:typeof FreeResources = FreeResources;

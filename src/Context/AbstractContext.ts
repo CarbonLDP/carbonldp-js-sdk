@@ -1,4 +1,3 @@
-import { Authenticator } from "../Auth";
 import {
 	IllegalArgumentError,
 	IllegalStateError
@@ -33,7 +32,6 @@ import { Context } from "./Context";
 export abstract class AbstractContext<REGISTRY extends RegisteredPointer = RegisteredPointer, REPOSITORY extends ResolvablePointer = ResolvablePointer, PARENT extends AbstractContext = undefined> implements Context {
 	abstract readonly registry:GeneralRegistry<REGISTRY> | undefined;
 	abstract readonly repository:Repository<REPOSITORY> | undefined;
-	abstract readonly auth:Authenticator<any> | undefined;
 
 	readonly jsonldConverter:JSONLDConverter;
 

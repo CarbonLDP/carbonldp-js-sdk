@@ -1,14 +1,10 @@
-import {
-	createMockContext,
-	createMockDigestedSchema,
-} from "../../test/helpers/mocks";
-import { AbstractContext } from "./AbstractContext";
+import { createMockDigestedSchema } from "../../test/helpers/mocks";
 import {
 	IllegalArgumentError,
 	IllegalStateError
 } from "../Errors";
 import { DigestedObjectSchema } from "../ObjectSchema";
-import { RegistryService } from "../Registry";
+import { ContextSettings } from "../Settings";
 import {
 	clazz,
 	constructor,
@@ -18,6 +14,36 @@ import {
 	method,
 	module,
 } from "../test/JasmineExtender";
+import { AbstractContext } from "./AbstractContext";
+
+
+function createMock<PARENT extends AbstractContext<any, any, any> = undefined>( data?:{
+	parentContext?:PARENT;
+
+	uri?:string;
+	settings?:ContextSettings,
+
+	generalSchema?:DigestedObjectSchema,
+	schemasMap?:Map<string, DigestedObjectSchema>,
+} ):AbstractContext<undefined, undefined, PARENT> {
+	return new class extends AbstractContext<undefined, undefined, PARENT> {
+		registry:undefined;
+		repository:undefined;
+
+		_baseURI:string;
+
+		constructor( parentContext?:PARENT ) {
+			super( parentContext );
+
+			this._baseURI = data && data.uri !== void 0 ? data.uri : "https://example.com/";
+			if( data && data.settings ) this._settings = data.settings;
+
+			if( data && data.generalSchema ) this._generalObjectSchema = data.generalSchema;
+			if( data && data.schemasMap ) this._typeObjectSchemaMap = data.schemasMap;
+		}
+
+	}( data && data.parentContext );
+}
 
 describe( module( "carbonldp/AbstractContext" ), ():void => {
 
@@ -71,21 +97,21 @@ describe( module( "carbonldp/AbstractContext" ), ():void => {
 			), ():void => {} );
 
 			it( "sub class should be an instance", ():void => {
-				const context:AbstractContext<any, any> = createMockContext();
+				const context:AbstractContext<any, any> = createMock();
 				expect( context ).toEqual( jasmine.any( AbstractContext ) );
 			} );
 
 			it( "should not have a parentContext", ():void => {
-				const context:AbstractContext<any, any> = createMockContext();
+				const context:AbstractContext<any, any> = createMock();
 				expect( context.parentContext ).toBeUndefined();
 			} );
 
 			it( "should assign parent context if provided", ():void => {
-				const context:AbstractContext<any, any> = createMockContext();
+				const context:AbstractContext<any, any> = createMock();
 
-				const subContext:AbstractContext<any, any> = new class extends AbstractContext<any, any> {
-					registry:RegistryService<any, AbstractContext<any, any>>;
-					auth:undefined;
+				const subContext:AbstractContext<any, any, any> = new class extends AbstractContext<any, any, any> {
+					registry:undefined;
+					repository:undefined;
 					protected _baseURI:string;
 				}( context );
 
@@ -109,19 +135,19 @@ describe( module( "carbonldp/AbstractContext" ), ():void => {
 			} );
 
 			it( "should return same string when baseURI undefined", ():void => {
-				const context:AbstractContext<any, any> = createMockContext( { uri: void 0 } );
+				const context:AbstractContext<any, any> = createMock( { uri: void 0 } );
 				const returned:string = context.resolve( "a-string" );
 				expect( returned ).toBe( "a-string" );
 			} );
 
 			it( "should resolve from the baseURI defined", ():void => {
-				const context:AbstractContext<any, any> = createMockContext( { uri: "https://example.com" } );
+				const context:AbstractContext<any, any> = createMock( { uri: "https://example.com" } );
 				const returned:string = context.resolve( "a-string" );
 				expect( returned ).toBe( "https://example.com/a-string" );
 			} );
 
 			it( "should return same IRI when absolute and baseURI defined", ():void => {
-				const context:AbstractContext<any, any> = createMockContext( { uri: "https://example.com" } );
+				const context:AbstractContext<any, any> = createMock( { uri: "https://example.com" } );
 				const returned:string = context.resolve( "https://example.com/another-thing/a-string" );
 				expect( returned ).toBe( "https://example.com/another-thing/a-string" );
 			} );
@@ -145,7 +171,7 @@ describe( module( "carbonldp/AbstractContext" ), ():void => {
 
 
 			it( "should throw error when no settings", ():void => {
-				const context:AbstractContext<any, any> = createMockContext( { settings: false } );
+				const context:AbstractContext<any, any> = createMock( {} );
 				const helper:( path:string ) => void = path => () => {
 					context._resolvePath( path );
 				};
@@ -155,7 +181,7 @@ describe( module( "carbonldp/AbstractContext" ), ():void => {
 			} );
 
 			it( "should throw error when no settings paths", ():void => {
-				const context:AbstractContext<any, any> = createMockContext( { settings: {} } );
+				const context:AbstractContext<any, any> = createMock( { settings: {} } );
 				const helper:( path:string ) => void = path => () => {
 					context._resolvePath( path );
 				};
@@ -165,7 +191,7 @@ describe( module( "carbonldp/AbstractContext" ), ():void => {
 			} );
 
 			it( "should throw error when path not found in first level", ():void => {
-				const context:AbstractContext<any, any> = createMockContext( { settings: { paths: {} } } );
+				const context:AbstractContext<any, any> = createMock( { settings: { paths: {} } } );
 				const helper:( path:string ) => void = path => () => {
 					context._resolvePath( path );
 				};
@@ -175,7 +201,7 @@ describe( module( "carbonldp/AbstractContext" ), ():void => {
 			} );
 
 			it( "should throw error when path not found in second level string", ():void => {
-				const context:AbstractContext<any, any> = createMockContext( {
+				const context:AbstractContext<any, any> = createMock( {
 					settings: {
 						paths: {
 							document: "document/",
@@ -192,7 +218,7 @@ describe( module( "carbonldp/AbstractContext" ), ():void => {
 			} );
 
 			it( "should throw error when path not found in parent level object without paths", ():void => {
-				const context:AbstractContext<any, any> = createMockContext( {
+				const context:AbstractContext<any, any> = createMock( {
 					settings: {
 						paths: {
 							document: {
@@ -211,7 +237,7 @@ describe( module( "carbonldp/AbstractContext" ), ():void => {
 			} );
 
 			it( "should throw error when path not found in parent level object with empty paths", ():void => {
-				const context:AbstractContext<any, any> = createMockContext( {
+				const context:AbstractContext<any, any> = createMock( {
 					settings: {
 						paths: {
 							document: {
@@ -231,7 +257,7 @@ describe( module( "carbonldp/AbstractContext" ), ():void => {
 			} );
 
 			it( "should throw error when path not found in parent level object with not target path", ():void => {
-				const context:AbstractContext<any, any> = createMockContext( {
+				const context:AbstractContext<any, any> = createMock( {
 					settings: {
 						paths: {
 							document: {
@@ -253,7 +279,7 @@ describe( module( "carbonldp/AbstractContext" ), ():void => {
 			} );
 
 			it( "should throw error when no slug in parent level object", ():void => {
-				const context:AbstractContext<any, any> = createMockContext( {
+				const context:AbstractContext<any, any> = createMock( {
 					settings: {
 						paths: {
 							document: {
@@ -274,7 +300,7 @@ describe( module( "carbonldp/AbstractContext" ), ():void => {
 			} );
 
 			it( "should throw error when no slug in target level object", ():void => {
-				const context:AbstractContext<any, any> = createMockContext( {
+				const context:AbstractContext<any, any> = createMock( {
 					settings: {
 						paths: {
 							document: {
@@ -296,7 +322,7 @@ describe( module( "carbonldp/AbstractContext" ), ():void => {
 			} );
 
 			it( "should throw error when no slug in target level object", ():void => {
-				const context:AbstractContext<any, any> = createMockContext( {
+				const context:AbstractContext<any, any> = createMock( {
 					settings: {
 						paths: {
 							document: {
@@ -319,7 +345,7 @@ describe( module( "carbonldp/AbstractContext" ), ():void => {
 
 
 			it( "should resolve first level path string", ():void => {
-				const context:AbstractContext<any, any> = createMockContext( {
+				const context:AbstractContext<any, any> = createMock( {
 					settings: {
 						paths: {
 							document: "document/",
@@ -331,7 +357,7 @@ describe( module( "carbonldp/AbstractContext" ), ():void => {
 			} );
 
 			it( "should resolve first level path object", ():void => {
-				const context:AbstractContext<any, any> = createMockContext( {
+				const context:AbstractContext<any, any> = createMock( {
 					settings: {
 						paths: {
 							document: {
@@ -345,7 +371,7 @@ describe( module( "carbonldp/AbstractContext" ), ():void => {
 			} );
 
 			it( "should resolve second level path string", ():void => {
-				const context:AbstractContext<any, any> = createMockContext( {
+				const context:AbstractContext<any, any> = createMock( {
 					settings: {
 						paths: {
 							document: {
@@ -360,7 +386,7 @@ describe( module( "carbonldp/AbstractContext" ), ():void => {
 			} );
 
 			it( "should resolve second level path object", ():void => {
-				const context:AbstractContext<any, any> = createMockContext( {
+				const context:AbstractContext<any, any> = createMock( {
 					settings: {
 						paths: {
 							document: {
@@ -396,14 +422,14 @@ describe( module( "carbonldp/AbstractContext" ), ():void => {
 
 
 			it( "should return false when not existing schema in schema maps", ():void => {
-				const context:AbstractContext<any, any> = createMockContext();
+				const context:AbstractContext<any, any> = createMock();
 
 				expect( context.hasObjectSchema( "https://example.com/ns#MyType" ) ).toBe( false );
 				expect( context.hasObjectSchema( "ex:MyType" ) ).toBe( false );
 			} );
 
 			it( "should return true when schema with absolute type", ():void => {
-				const context:AbstractContext<any, any> = createMockContext( {
+				const context:AbstractContext<any, any> = createMock( {
 					schemasMap: new Map( [ [ "https://example.com/ns#MyType", new DigestedObjectSchema() ] ] ),
 				} );
 
@@ -412,7 +438,7 @@ describe( module( "carbonldp/AbstractContext" ), ():void => {
 			} );
 
 			it( "should return true when prefixed type with defined prefix in general", ():void => {
-				const context:AbstractContext<any, any> = createMockContext( {
+				const context:AbstractContext<any, any> = createMock( {
 					generalSchema: createMockDigestedSchema( { prefixes: new Map( [ [ "ex", "https://example.com/ns#" ] ] ) } ),
 					schemasMap: new Map( [ [ "https://example.com/ns#MyType", new DigestedObjectSchema() ] ] ),
 				} );
@@ -422,7 +448,7 @@ describe( module( "carbonldp/AbstractContext" ), ():void => {
 			} );
 
 			it( "should return true when relative and default vocab schema", ():void => {
-				const context:AbstractContext<any, any> = createMockContext( {
+				const context:AbstractContext<any, any> = createMock( {
 					settings: { vocabulary: "https://example.com/ns#" },
 					schemasMap: new Map( [ [ "https://example.com/ns#MyType", new DigestedObjectSchema() ] ] ),
 				} );
@@ -453,7 +479,7 @@ describe( module( "carbonldp/AbstractContext" ), ():void => {
 			} );
 
 			it( "should throw error when not existing schema in schema maps", ():void => {
-				const context:AbstractContext<any, any> = createMockContext();
+				const context:AbstractContext<any, any> = createMock();
 
 				expect( () => {
 					context.getObjectSchema( "https://example.com/ns#MyType" );
@@ -462,7 +488,7 @@ describe( module( "carbonldp/AbstractContext" ), ():void => {
 
 			it( "should return schema with absolute type", ():void => {
 				const schema:DigestedObjectSchema = new DigestedObjectSchema();
-				const context:AbstractContext<any, any> = createMockContext( {
+				const context:AbstractContext<any, any> = createMock( {
 					schemasMap: new Map( [ [ "https://example.com/ns#MyType", schema ] ] ),
 				} );
 
@@ -471,7 +497,7 @@ describe( module( "carbonldp/AbstractContext" ), ():void => {
 
 			it( "should return schema when prefixed type with defined prefix in general", ():void => {
 				const schema:DigestedObjectSchema = new DigestedObjectSchema();
-				const context:AbstractContext<any, any> = createMockContext( {
+				const context:AbstractContext<any, any> = createMock( {
 					generalSchema: createMockDigestedSchema( { prefixes: new Map( [ [ "ex", "https://example.com/ns#" ] ] ) } ),
 					schemasMap: new Map( [ [ "https://example.com/ns#MyType", schema ] ] ),
 				} );
@@ -481,7 +507,7 @@ describe( module( "carbonldp/AbstractContext" ), ():void => {
 
 			it( "should return schema when relative and default vocab schema", ():void => {
 				const schema:DigestedObjectSchema = new DigestedObjectSchema();
-				const context:AbstractContext<any, any> = createMockContext( {
+				const context:AbstractContext<any, any> = createMock( {
 					settings: { vocabulary: "https://example.com/ns#" },
 					schemasMap: new Map( [ [ "https://example.com/ns#MyType", schema ] ] ),
 				} );
@@ -491,7 +517,7 @@ describe( module( "carbonldp/AbstractContext" ), ():void => {
 			} );
 
 			it( "should return general schema with base", ():void => {
-				const context:AbstractContext<any, any> = createMockContext( {
+				const context:AbstractContext<any, any> = createMock( {
 					generalSchema: createMockDigestedSchema( {
 						prefixes: new Map( [
 							[ "schema", "https://schema.org/" ],
@@ -508,7 +534,7 @@ describe( module( "carbonldp/AbstractContext" ), ():void => {
 			} );
 
 			it( "should not replace base in general schema when already set", ():void => {
-				const context:AbstractContext<any, any> = createMockContext( {
+				const context:AbstractContext<any, any> = createMock( {
 					generalSchema: createMockDigestedSchema( {
 						base: "https://not-example.com/",
 						prefixes: new Map( [
@@ -526,7 +552,7 @@ describe( module( "carbonldp/AbstractContext" ), ():void => {
 			} );
 
 			it( "should return general schema with vocab when setting set", ():void => {
-				const context:AbstractContext<any, any> = createMockContext( {
+				const context:AbstractContext<any, any> = createMock( {
 					settings: { vocabulary: "https://example.com/ns#" },
 					generalSchema: createMockDigestedSchema( {
 						prefixes: new Map( [
@@ -545,7 +571,7 @@ describe( module( "carbonldp/AbstractContext" ), ():void => {
 			} );
 
 			it( "should not replace vocab in general schema when already set and setting set", ():void => {
-				const context:AbstractContext<any, any> = createMockContext( {
+				const context:AbstractContext<any, any> = createMock( {
 					settings: { vocabulary: "https://example.com/ns#" },
 					generalSchema: createMockDigestedSchema( {
 						vocab: "https://example.com/another-ns#",
@@ -588,7 +614,7 @@ describe( module( "carbonldp/AbstractContext" ), ():void => {
 
 			it( "should add when absolute type schema does not exists", ():void => {
 				const schemasMap:Map<string, DigestedObjectSchema> = new Map();
-				const context:AbstractContext<any, any> = createMockContext( { schemasMap } );
+				const context:AbstractContext<any, any> = createMock( { schemasMap } );
 
 				context.extendObjectSchema( "https://example.com/ns#Type", {
 					"ex": "https://example.com/ns#",
@@ -604,7 +630,7 @@ describe( module( "carbonldp/AbstractContext" ), ():void => {
 
 			it( "should add when prefixed type schema does not exists", ():void => {
 				const schemasMap:Map<string, DigestedObjectSchema> = new Map();
-				const context:AbstractContext<any, any> = createMockContext( {
+				const context:AbstractContext<any, any> = createMock( {
 					generalSchema: createMockDigestedSchema( {
 						prefixes: new Map( [
 							[ "ex", "https://example.com/ns#" ],
@@ -627,7 +653,7 @@ describe( module( "carbonldp/AbstractContext" ), ():void => {
 
 			it( "should add when relative type schema does not exists and vocab is set", ():void => {
 				const schemasMap:Map<string, DigestedObjectSchema> = new Map();
-				const context:AbstractContext<any, any> = createMockContext( {
+				const context:AbstractContext<any, any> = createMock( {
 					settings: { vocabulary: "https://example.com/ns#" },
 					schemasMap,
 				} );
@@ -650,7 +676,7 @@ describe( module( "carbonldp/AbstractContext" ), ():void => {
 						prefixes: new Map( [ [ "schema", "https://schema.org/" ] ] ),
 					} ) ],
 				] );
-				const context:AbstractContext<any, any> = createMockContext( { schemasMap } );
+				const context:AbstractContext<any, any> = createMock( { schemasMap } );
 
 				context.extendObjectSchema( "https://example.com/ns#Type", {
 					"rdfs": "http://www.w3.org/2000/01/rdf-schema#",
@@ -673,7 +699,7 @@ describe( module( "carbonldp/AbstractContext" ), ():void => {
 						[ "ex", "https://example.com/ns#" ],
 					] ),
 				} );
-				const context:AbstractContext<any, any> = createMockContext( {
+				const context:AbstractContext<any, any> = createMock( {
 					generalSchema,
 				} );
 
@@ -695,9 +721,9 @@ describe( module( "carbonldp/AbstractContext" ), ():void => {
 						[ "ex", "https://example.com/ns#" ],
 					] ),
 				} );
-				const parentContext:AbstractContext<any, any> = createMockContext( { generalSchema: parentSchema } );
+				const parentContext:AbstractContext<any, any> = createMock( { generalSchema: parentSchema } );
 
-				const context:AbstractContext<any, any> = createMockContext( { parentContext } );
+				const context:AbstractContext<any, any, any> = createMock( { parentContext } );
 				context.extendObjectSchema( {
 					"schema": "https://schema.org/",
 				} );
@@ -717,9 +743,9 @@ describe( module( "carbonldp/AbstractContext" ), ():void => {
 						[ "ex", "https://example.com/ns#" ],
 					] ),
 				} );
-				const parentContext:AbstractContext<any, any> = createMockContext( { generalSchema: parentSchema } );
+				const parentContext:AbstractContext<any, any> = createMock( { generalSchema: parentSchema } );
 
-				const context:AbstractContext<any, any> = createMockContext( { parentContext } );
+				const context:AbstractContext<any, any, any> = createMock( { parentContext } );
 				context.extendObjectSchema( {
 					"schema": "https://schema.org/",
 				} );
@@ -750,7 +776,7 @@ describe( module( "carbonldp/AbstractContext" ), ():void => {
 				const schemasMap:Map<string, DigestedObjectSchema> = new Map( [
 					[ "https://example.com/ns#Type", createMockDigestedSchema() ],
 				] );
-				const context:AbstractContext<any, any> = createMockContext( { schemasMap } );
+				const context:AbstractContext<any, any> = createMock( { schemasMap } );
 
 				context.clearObjectSchema( "https://example.com/ns#Type" );
 				expect( schemasMap ).toEqual( new Map() );
@@ -760,7 +786,7 @@ describe( module( "carbonldp/AbstractContext" ), ():void => {
 				const schemasMap:Map<string, DigestedObjectSchema> = new Map( [
 					[ "https://example.com/ns#Type", createMockDigestedSchema() ],
 				] );
-				const context:AbstractContext<any, any> = createMockContext( {
+				const context:AbstractContext<any, any> = createMock( {
 					generalSchema: createMockDigestedSchema( {
 						prefixes: new Map( [
 							[ "ex", "https://example.com/ns#" ],
@@ -777,7 +803,7 @@ describe( module( "carbonldp/AbstractContext" ), ():void => {
 				const schemasMap:Map<string, DigestedObjectSchema> = new Map( [
 					[ "https://example.com/ns#Type", createMockDigestedSchema() ],
 				] );
-				const context:AbstractContext<any, any> = createMockContext( {
+				const context:AbstractContext<any, any> = createMock( {
 					settings: { vocabulary: "https://example.com/ns#" },
 					schemasMap,
 				} );
@@ -792,7 +818,7 @@ describe( module( "carbonldp/AbstractContext" ), ():void => {
 						[ "ex", "https://example.com/ns#" ],
 					] ),
 				} );
-				const context:AbstractContext<any, any> = createMockContext( { generalSchema } );
+				const context:AbstractContext<any, any> = createMock( { generalSchema } );
 
 				context.clearObjectSchema();
 				expect( context.getObjectSchema() ).toEqual( createMockDigestedSchema( {

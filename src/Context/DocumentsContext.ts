@@ -1,4 +1,3 @@
-import { Authenticator } from "../Auth";
 import { Document } from "../Document";
 import { MessagingService } from "../Messaging";
 import { DocumentsRegistry } from "../Registry";
@@ -18,8 +17,6 @@ export class DocumentsContext extends AbstractContext<Document, Document, Global
 
 	readonly registry:DocumentsRegistry;
 	readonly repository:DocumentsRepository;
-	// TODO: AuthService
-	readonly auth:Authenticator<any> | undefined;
 	readonly messaging:MessagingService;
 
 

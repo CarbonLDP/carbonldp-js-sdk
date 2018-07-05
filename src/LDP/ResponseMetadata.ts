@@ -1,5 +1,4 @@
-import { TokenCredentials } from "../Auth";
-import { ModelSchema } from "../core/ModelSchema";
+import { ModelSchema } from "../core";
 import { ObjectSchema } from "../ObjectSchema";
 import {
 	C,
@@ -11,7 +10,6 @@ import { VolatileResource } from "./VolatileResource";
 
 export interface ResponseMetadata extends VolatileResource {
 	documentsMetadata?:DocumentMetadata[];
-	authToken?:TokenCredentials;
 }
 
 

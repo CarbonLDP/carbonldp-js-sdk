@@ -1,7 +1,4 @@
-import {
-	Context,
-	DocumentsContext
-} from "../Context";
+import { DocumentsContext } from "../Context";
 import {
 	ModelDecorator,
 	ModelPrototype
@@ -108,14 +105,7 @@ export interface LDPDocumentsRepositoryTrait extends HTTPRepositoryTrait<Documen
 const __RDF_DOCUMENT_PARSER:RDFDocumentParser = new RDFDocumentParser();
 const __JSONLD_PARSER:JSONLDParser = new JSONLDParser();
 
-export function _addAuthentication( context:Context, requestOptions:RequestOptions ):void {
-	if( ! context.auth ) return;
-	context.auth.addAuthentication( requestOptions );
-}
-
-function __setDefaultRequestOptions( context:Context, requestOptions:RequestOptions, interactionModel?:string ):void {
-	_addAuthentication( context, requestOptions );
-
+function __setDefaultRequestOptions( requestOptions:RequestOptions, interactionModel?:string ):void {
 	if( interactionModel ) RequestUtils.setPreferredInteractionModel( interactionModel, requestOptions );
 	RequestUtils.setAcceptHeader( "application/ld+json", requestOptions );
 }
@@ -237,7 +227,7 @@ function __createChildren<T extends object>( retrievalType:"minimal" | "represen
 		slugsOrOptions : null
 	;
 
-	__setDefaultRequestOptions( repository.$context, requestOptions, LDP.Container );
+	__setDefaultRequestOptions( requestOptions, LDP.Container );
 	RequestUtils.setPreferredRetrieval( retrievalType, requestOptions );
 	RequestUtils.setContentTypeHeader( "application/ld+json", requestOptions );
 
@@ -278,7 +268,7 @@ function __sendPatch<T extends object>( repository:LDPDocumentsRepositoryTrait, 
 
 	document._normalize();
 
-	__setDefaultRequestOptions( repository.$context, requestOptions );
+	__setDefaultRequestOptions( requestOptions );
 	RequestUtils.setContentTypeHeader( "text/ldpatch", requestOptions );
 	RequestUtils.setIfMatchHeader( document.$eTag, requestOptions );
 
@@ -332,7 +322,7 @@ function __sendAddAction( this:void, repository:LDPDocumentsRepositoryTrait, uri
 	if( repository.$context.registry.inScope( uri ) ) return Promise.reject( new IllegalArgumentError( _getNotInContextMessage( uri ) ) );
 	const url:string = repository.$context.resolve( uri );
 
-	__setDefaultRequestOptions( repository.$context, requestOptions );
+	__setDefaultRequestOptions( requestOptions );
 	RequestUtils.setContentTypeHeader( "application/ld+json", requestOptions );
 
 	// FIXME
@@ -354,7 +344,7 @@ function __sendRemoveAction( this:void, repository:LDPDocumentsRepositoryTrait, 
 	if( repository.$context.registry.inScope( uri ) ) return Promise.reject( new IllegalArgumentError( _getNotInContextMessage( uri ) ) );
 	const url:string = repository.$context.resolve( uri );
 
-	__setDefaultRequestOptions( repository.$context, requestOptions );
+	__setDefaultRequestOptions( requestOptions );
 	RequestUtils.setContentTypeHeader( "application/ld+json", requestOptions );
 	RequestUtils.setRetrievalPreferences( {
 		include: [ C.PreferSelectedMembershipTriples ],
@@ -380,7 +370,7 @@ function __sendRemoveAll( this:void, repository:LDPDocumentsRepositoryTrait, uri
 	if( repository.$context.registry.inScope( uri ) ) return Promise.reject( new IllegalArgumentError( _getNotInContextMessage( uri ) ) );
 	const url:string = repository.$context.resolve( uri );
 
-	__setDefaultRequestOptions( repository.$context, requestOptions );
+	__setDefaultRequestOptions( requestOptions );
 	RequestUtils.setRetrievalPreferences( {
 		include: [
 			C.PreferMembershipTriples,
@@ -419,14 +409,14 @@ export type LDPDocumentsRepositoryTraitFactory =
 export const LDPDocumentsRepositoryTrait:LDPDocumentsRepositoryTraitFactory = {
 	PROTOTYPE: {
 		get<T extends object>( this:LDPDocumentsRepositoryTrait, uri:string, requestOptions:RequestOptions = {} ):Promise<T & Document> {
-			__setDefaultRequestOptions( this.$context, requestOptions, LDP.RDFSource );
+			__setDefaultRequestOptions( requestOptions, LDP.RDFSource );
 
 			return HTTPRepositoryTrait.PROTOTYPE
 				.get.call( this, uri, requestOptions );
 		},
 
 		exists( this:LDPDocumentsRepositoryTrait, uri:string, requestOptions:RequestOptions = {} ):Promise<boolean> {
-			__setDefaultRequestOptions( this.$context, requestOptions, LDP.RDFSource );
+			__setDefaultRequestOptions( requestOptions, LDP.RDFSource );
 
 			return HTTPRepositoryTrait.PROTOTYPE
 				.exists.call( this, uri, requestOptions );
@@ -443,7 +433,7 @@ export const LDPDocumentsRepositoryTrait:LDPDocumentsRepositoryTraitFactory = {
 
 
 		refresh<T extends object>( this:LDPDocumentsRepositoryTrait, document:Document, requestOptions:RequestOptions = {} ):Promise<T & Document> {
-			__setDefaultRequestOptions( this.$context, requestOptions, LDP.RDFSource );
+			__setDefaultRequestOptions( requestOptions, LDP.RDFSource );
 
 			return HTTPRepositoryTrait.PROTOTYPE
 				.refresh.call( this, document, requestOptions )
@@ -462,7 +452,7 @@ export const LDPDocumentsRepositoryTrait:LDPDocumentsRepositoryTraitFactory = {
 
 
 		delete( this:LDPDocumentsRepositoryTrait, uri:string, requestOptions:RequestOptions = {} ):Promise<void> {
-			__setDefaultRequestOptions( this.$context, requestOptions, LDP.RDFSource );
+			__setDefaultRequestOptions( requestOptions, LDP.RDFSource );
 			return HTTPRepositoryTrait.PROTOTYPE
 				.delete.call( this, uri, requestOptions );
 		},

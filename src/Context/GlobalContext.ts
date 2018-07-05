@@ -1,14 +1,3 @@
-import {
-	ACE,
-	ACL,
-	AuthenticatedUserInformationAccessor,
-	AuthenticatedUserMetadata,
-	CredentialsSet,
-	LDAPCredentials,
-	TokenCredentials,
-	User,
-	UsernameAndPasswordCredentials
-} from "../Auth";
 import { Document } from "../Document";
 import {
 	DocumentMetadata,
@@ -57,7 +46,6 @@ export class GlobalContext extends AbstractContext<RegisteredPointer, undefined>
 
 	readonly registry:GeneralRegistry<RegisteredPointer>;
 	readonly repository:undefined;
-	readonly auth:undefined;
 
 	protected _baseURI:"" = "";
 	protected _parentContext:undefined;
@@ -92,16 +80,6 @@ export class GlobalContext extends AbstractContext<RegisteredPointer, undefined>
 			.extendObjectSchema( ResponseMetadata.TYPE, ResponseMetadata.SCHEMA )
 			.extendObjectSchema( ValidationError.TYPE, ValidationError.SCHEMA )
 
-			.extendObjectSchema( ACE.TYPE, ACE.SCHEMA )
-			.extendObjectSchema( ACL.TYPE, ACL.SCHEMA )
-			.extendObjectSchema( AuthenticatedUserInformationAccessor.TYPE, AuthenticatedUserInformationAccessor.SCHEMA )
-			.extendObjectSchema( AuthenticatedUserMetadata.TYPE, AuthenticatedUserMetadata.SCHEMA )
-			.extendObjectSchema( User.TYPE, User.SCHEMA )
-			.extendObjectSchema( TokenCredentials.TYPE, TokenCredentials.SCHEMA )
-			.extendObjectSchema( CredentialsSet.TYPE, CredentialsSet.SCHEMA )
-			.extendObjectSchema( UsernameAndPasswordCredentials.TYPE, UsernameAndPasswordCredentials.SCHEMA )
-			.extendObjectSchema( LDAPCredentials.TYPE, LDAPCredentials.SCHEMA )
-
 			.extendObjectSchema( ValidationReport.TYPE, ValidationReport.SCHEMA )
 			.extendObjectSchema( ValidationResult.TYPE, ValidationResult.SCHEMA )
 
@@ -122,8 +100,6 @@ export class GlobalContext extends AbstractContext<RegisteredPointer, undefined>
 	private _registerDefaultDecorators():void {
 		this.registry
 			.addDecorator( ProtectedDocument )
-			.addDecorator( ACL )
-			.addDecorator( User )
 		;
 	}
 }

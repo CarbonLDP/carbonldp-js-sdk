@@ -1,10 +1,12 @@
 import { anyThatMatches } from "../test/helpers/jasmine/equalities";
-import { AbstractContext } from "./Context/AbstractContext";
 import { AccessPoint } from "./AccessPoint";
-import * as Auth from "./Auth";
 import { BlankNode } from "./BlankNode";
 
 import * as CarbonLDP from "./CarbonLDP";
+import {
+	AbstractContext,
+	GlobalContext
+} from "./Context";
 
 import { Document } from "./Document";
 import * as Errors from "./Errors";
@@ -32,7 +34,6 @@ import {
 	PersistedResource,
 	TransientResource,
 } from "./Resource";
-import { GlobalContext } from "./Context/GlobalContext";
 import { CarbonLDPSettings } from "./Settings";
 import * as SHACL from "./SHACL";
 import * as SPARQL from "./SPARQL";
@@ -102,15 +103,6 @@ describe( module( "carbonldp/CarbonLDP" ), ():void => {
 		), ():void => {
 			expect( CarbonLDP.CarbonLDP.AccessPoint ).toBeDefined();
 			expect( CarbonLDP.CarbonLDP.AccessPoint ).toBe( AccessPoint );
-		} );
-
-		it( reexports(
-			STATIC,
-			"Auth",
-			"carbonldp/Auth"
-		), ():void => {
-			expect( CarbonLDP.CarbonLDP.Auth ).toBeDefined();
-			expect( CarbonLDP.CarbonLDP.Auth ).toBe( Auth );
 		} );
 
 		it( reexports(
@@ -393,11 +385,6 @@ describe( module( "carbonldp/CarbonLDP" ), ():void => {
 				expect( context.registry ).toEqual( jasmine.any( DocumentsRegistry ) );
 			} );
 
-			it( "should initialize CarbonLDP.auth", ():void => {
-				const context:CarbonLDP.CarbonLDP = new CarbonLDP.CarbonLDP( "https://example.com/" );
-				expect( context.auth ).toEqual( jasmine.any( Auth.AuthService ) );
-			} );
-
 			it( "should initialize documents root document", () => {
 				const context:CarbonLDP.CarbonLDP = new CarbonLDP.CarbonLDP( "https://example.com/" );
 
@@ -609,16 +596,6 @@ describe( module( "carbonldp/CarbonLDP" ), ():void => {
 			"string",
 			"Returns the URI of your Carbon LDP."
 		), ():void => {} );
-
-		it( hasProperty(
-			INSTANCE,
-			"auth",
-			"CarbonLDP.Auth.AuthService",
-			"Service that contains methods and endpoints to authentication and authorization of the context requests."
-		), ():void => {
-			const target:CarbonLDP.CarbonLDP[ "auth" ] = {} as Auth.AuthService;
-			expect( target ).toBeDefined();
-		} );
 
 		it( hasProperty(
 			INSTANCE,

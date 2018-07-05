@@ -1,4 +1,3 @@
-import { Authenticator } from "../Auth";
 import { JSONLDConverter } from "../JSONLD";
 import {
 	DigestedObjectSchema,
@@ -17,7 +16,6 @@ import {
 export interface Context<REGISTRY extends RegisteredPointer = RegisteredPointer, REPOSITORY extends ResolvablePointer = ResolvablePointer> {
 	readonly registry:Registry<REGISTRY> | undefined;
 	readonly repository:Repository<REPOSITORY> | undefined;
-	readonly auth:Authenticator<any> | undefined;
 
 	readonly baseURI:string;
 	readonly parentContext:Context | undefined;
