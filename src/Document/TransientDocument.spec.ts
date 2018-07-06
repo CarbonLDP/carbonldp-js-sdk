@@ -62,7 +62,7 @@ function mockDocumentProperties():DocumentProperties {
 		defaultInteractionModel: null,
 
 		_normalize: fn,
-		_removeFragment: fn,
+		removeFragment: fn,
 
 		hasFragment: fn,
 		getFragment: fn,
@@ -1021,8 +1021,8 @@ describe( module( "carbonldp/Document" ), ():void => {
 			it( "should exists", ():void => {
 				const document:TransientDocument = createMockDocument();
 
-				expect( document._removeFragment ).toBeDefined();
-				expect( document._removeFragment ).toEqual( jasmine.any( Function ) );
+				expect( document.removeFragment ).toBeDefined();
+				expect( document.removeFragment ).toEqual( jasmine.any( Function ) );
 			} );
 
 
@@ -1034,7 +1034,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 				} );
 				document.__resourcesMap.set( "fragment", fragment );
 
-				document._removeFragment( fragment );
+				document.removeFragment( fragment );
 				expect( document.__resourcesMap ).toEqual( new Map() );
 			} );
 
@@ -1046,7 +1046,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 				} );
 				document.__resourcesMap.set( "_:1", fragment );
 
-				document._removeFragment( fragment );
+				document.removeFragment( fragment );
 				expect( document.__resourcesMap ).toEqual( new Map() );
 			} );
 
@@ -1055,7 +1055,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 
 				document.__resourcesMap.set( "fragment", null );
 
-				document._removeFragment( "#fragment" );
+				document.removeFragment( "#fragment" );
 				expect( document.__resourcesMap ).toEqual( new Map() );
 			} );
 
@@ -1064,7 +1064,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 
 				document.__resourcesMap.set( "fragment", null );
 
-				document._removeFragment( "fragment" );
+				document.removeFragment( "fragment" );
 				expect( document.__resourcesMap ).toEqual( new Map() );
 			} );
 
@@ -1073,7 +1073,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 
 				document.__resourcesMap.set( "fragment", null );
 
-				document._removeFragment( "https://example.com/document/#fragment" );
+				document.removeFragment( "https://example.com/document/#fragment" );
 				expect( document.__resourcesMap ).toEqual( new Map() );
 			} );
 
@@ -1081,7 +1081,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 				const document:TransientDocument = createMockDocument();
 				document.__resourcesMap.set( "_:1", null );
 
-				document._removeFragment( "_:1" );
+				document.removeFragment( "_:1" );
 				expect( document.__resourcesMap ).toEqual( new Map() );
 			} );
 
@@ -1549,7 +1549,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 
 			it( "should return false when no `_removeFragment`", ():void => {
 				const target:DocumentProperties = mockDocumentProperties();
-				delete target._removeFragment;
+				delete target.removeFragment;
 				expect( TransientDocument.isDecorated( target ) ).toBe( false );
 			} );
 

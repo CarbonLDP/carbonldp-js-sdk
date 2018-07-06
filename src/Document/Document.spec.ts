@@ -749,7 +749,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 
 				expect( resource.isDirty() ).toBe( false );
 
-				resource._removeFragment( "_:1" );
+				resource.removeFragment( "_:1" );
 				expect( resource.isDirty() ).toBe( true );
 			} );
 
@@ -767,7 +767,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 
 				expect( resource.isDirty() ).toBe( false );
 
-				resource._removeFragment( "_:1" );
+				resource.removeFragment( "_:1" );
 				resource.createFragment( "_:2" );
 				expect( resource.isDirty() ).toBe( true );
 			} );
@@ -812,7 +812,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 				resource.createFragment( { the: "fragment" }, "_:1" );
 				resource._syncSavedFragments();
 
-				resource._removeFragment( "_:1" );
+				resource.removeFragment( "_:1" );
 				resource.revert();
 
 				expect( resource.getFragment( "_:1" ) ).toEqual( { the: "fragment" } );
@@ -832,7 +832,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 				resource.createFragment( { the: "fragment" }, "_:1" );
 				resource._syncSavedFragments();
 
-				resource._removeFragment( "_:1" );
+				resource.removeFragment( "_:1" );
 				resource.createFragment( { the: "another-fragment" }, "_:2" );
 				resource.revert();
 

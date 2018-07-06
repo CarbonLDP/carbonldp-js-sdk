@@ -25,6 +25,7 @@ import { RegisteredPointer } from "./RegisteredPointer";
 
 export interface Registry<M extends RegisteredPointer = RegisteredPointer> extends PointerLibrary, PointerValidator, ObjectSchemaResolver {
 	readonly $context:Context;
+	// TODO: Change to unknown
 	readonly $registry?:Registry<any>;
 
 	readonly __modelDecorator:ModelDecorator<M>;
@@ -54,9 +55,10 @@ export interface Registry<M extends RegisteredPointer = RegisteredPointer> exten
 }
 
 
+// TODO: Use unknown
 export type RegistryFactory =
 	& ModelPrototype<Registry, BaseRegistry & ObjectSchemaResolver>
-	& ModelDecorator<Registry, BaseRegistry>
+	& ModelDecorator<Registry<any>, BaseRegistry>
 	& ModelFactory<Registry, BaseRegistry>
 	;
 
