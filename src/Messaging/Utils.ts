@@ -1,5 +1,6 @@
 import { IllegalArgumentError } from "../Errors";
 import { URI } from "../RDF";
+import { _getNotInContextMessage } from "../Repository/Utils";
 
 
 export function validateEventType( event:string ):void {
@@ -7,7 +8,7 @@ export function validateEventType( event:string ):void {
 }
 
 export function parseURIPattern( uriPattern:string, baseURI:string ):string {
-	if( ! URI.isBaseOf( baseURI, uriPattern ) ) throw new IllegalArgumentError( `Provided uriPattern "${ uriPattern }" is an invalid for your Carbon LDP instance.` );
+	if( ! URI.isBaseOf( baseURI, uriPattern ) ) throw new IllegalArgumentError( _getNotInContextMessage( uriPattern ) );
 
 	if( uriPattern === "/" ) return "";
 	uriPattern = URI.getRelativeURI( uriPattern, baseURI );

@@ -1,10 +1,9 @@
 import { QueryClause } from "sparqler/clauses";
 import { DocumentsContext } from "../Context";
 import { IllegalArgumentError } from "../Errors";
-import { RequestOptions } from "../HTTP";
 import {
-	_getNotInContextMessage,
-	HTTPRepositoryTrait
+	HTTPRepositoryTrait,
+	RequestOptions
 } from "../HTTP";
 import {
 	ModelDecorator,
@@ -12,6 +11,7 @@ import {
 } from "../Model";
 import { DigestedObjectSchema } from "../ObjectSchema";
 import { BaseDocumentsRepository } from "../Repository";
+import { _getNotInContextMessage } from "../Repository/Utils";
 import {
 	FinishSPARQLSelect,
 	SPARQLBuilder

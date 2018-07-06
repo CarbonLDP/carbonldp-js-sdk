@@ -1,11 +1,13 @@
 import { DocumentsContext } from "../Context";
+import { Document } from "../Document";
 import {
 	ModelDecorator,
 	ModelPrototype
 } from "../Model";
-import { Document } from "../Document";
-import { Repository } from "../Repository";
-import { BaseDocumentsRepository } from "../Repository";
+import {
+	BaseDocumentsRepository,
+	Repository
+} from "../Repository";
 import { isObject } from "../Utils";
 import { ChildCreated } from "./ChildCreated";
 import { DocumentCreated } from "./DocumentCreated";

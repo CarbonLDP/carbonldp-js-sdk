@@ -18,7 +18,7 @@ import {
 	BadResponseError,
 	HTTPError
 } from "../HTTP/Errors";
-import { _getNotInContextMessage } from "../HTTP/HTTPRepositoryTrait";
+import { _getNotInContextMessage } from "../Repository/Utils";
 import {
 	JSONLDCompacter,
 	JSONLDParser

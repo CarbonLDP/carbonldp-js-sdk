@@ -9,16 +9,14 @@ import {
 	DigestedObjectSchema,
 	ObjectSchemaResolver
 } from "../ObjectSchema";
-import {
-	RDFNode,
-	URI
-} from "../RDF";
+import { RDFNode } from "../RDF";
 import { RegisteredPointer } from "../Registry";
 import {
 	BaseRepository,
 	Repository,
 	ResolvablePointer
 } from "../Repository";
+import { _getNotInContextMessage } from "../Repository/Utils";
 import {
 	HTTPError,
 	statusCodeMap,
@@ -52,14 +50,6 @@ export interface HTTPRepositoryTrait<M extends ResolvablePointer = ResolvablePoi
 }
 
 
-export function _getNotInContextMessage( uri:string ):string {
-	return `"${ uri }" is outside the scope of the repository context.`;
-}
-
-export function _inScope( repository:Repository, uri:string ):boolean {
-	return URI.isBaseOf( repository.$context.baseURI, uri );
-}
-
 export type OverloadedMembers =
 	| "get"
 	| "resolve"
@@ -79,8 +69,8 @@ export type GeneralRepositoryFactory =
 export const HTTPRepositoryTrait:GeneralRepositoryFactory = {
 	PROTOTYPE: {
 		get<T extends object>( this:HTTPRepositoryTrait, uri:string, requestOptions?:GETOptions ):Promise<T & ResolvablePointer> {
+			if( this.$context.registry.inScope( uri ) ) return Promise.reject( new IllegalArgumentError( _getNotInContextMessage( uri ) ) );
 			const url:string = this.$context.resolve( uri );
-			if( _inScope( this, url ) ) return Promise.reject( new IllegalArgumentError( _getNotInContextMessage( uri ) ) );
 
 			if( this.$context.registry.hasPointer( url, true ) ) {
 				const resource:ResolvablePointer = this.$context.registry.getPointer( url, true );
@@ -103,8 +93,8 @@ export const HTTPRepositoryTrait:GeneralRepositoryFactory = {
 		},
 
 		exists( this:HTTPRepositoryTrait, uri:string, requestOptions?:RequestOptions ):Promise<boolean> {
+			if( this.$context.registry.inScope( uri ) ) return Promise.reject( new IllegalArgumentError( _getNotInContextMessage( uri ) ) );
 			const url:string = this.$context.resolve( uri );
-			if( _inScope( this, url ) ) return Promise.reject( new IllegalArgumentError( _getNotInContextMessage( uri ) ) );
 
 			return RequestService
 				.head( url, requestOptions )
@@ -119,8 +109,8 @@ export const HTTPRepositoryTrait:GeneralRepositoryFactory = {
 		refresh<T extends object>( this:HTTPRepositoryTrait, resource:ResolvablePointer, requestOptions?:RequestOptions ):Promise<T & ResolvablePointer> {
 			if( ! ResolvablePointer.is( resource ) ) return Promise.reject( new IllegalArgumentError( "The resource isn't a resolvable pointer." ) );
 
+			if( this.$context.registry.inScope( resource.$id ) ) return Promise.reject( new IllegalArgumentError( _getNotInContextMessage( resource.$id ) ) );
 			const url:string = this.$context.resolve( resource.$id );
-			if( _inScope( this, url ) ) return Promise.reject( new IllegalArgumentError( _getNotInContextMessage( resource.$id ) ) );
 
 			return RequestService
 				.get( url, requestOptions )
@@ -137,8 +127,8 @@ export const HTTPRepositoryTrait:GeneralRepositoryFactory = {
 		save<T extends object>( this:HTTPRepositoryTrait, resource:ResolvablePointer, requestOptions?:RequestOptions ):Promise<T & ResolvablePointer> {
 			if( ! ResolvablePointer.is( resource ) ) return Promise.reject( new IllegalArgumentError( "The resource isn't a resolvable pointer." ) );
 
+			if( this.$context.registry.inScope( resource.$id ) ) return Promise.reject( new IllegalArgumentError( _getNotInContextMessage( resource.$id ) ) );
 			const url:string = this.$context.resolve( resource.$id );
-			if( _inScope( this, url ) ) return Promise.reject( new IllegalArgumentError( _getNotInContextMessage( resource.$id ) ) );
 
 			if( ! resource.isDirty() ) return Promise.resolve( resource as T & ResolvablePointer );
 
@@ -159,8 +149,8 @@ export const HTTPRepositoryTrait:GeneralRepositoryFactory = {
 
 
 		delete( this:HTTPRepositoryTrait, uri:string, requestOptions?:RequestOptions ):Promise<void> {
+			if( this.$context.registry.inScope( uri ) ) return Promise.reject( new IllegalArgumentError( _getNotInContextMessage( uri ) ) );
 			const url:string = this.$context.resolve( uri );
-			if( _inScope( this, url ) ) return Promise.reject( new IllegalArgumentError( _getNotInContextMessage( uri ) ) );
 
 			return RequestService
 				.delete( url, requestOptions )

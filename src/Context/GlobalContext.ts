@@ -1,17 +1,15 @@
 import { Document } from "../Document";
 import {
+	AddMemberAction,
 	DocumentMetadata,
 	Error,
 	ErrorResponse,
 	Map,
 	MapEntry,
+	RemoveMemberAction,
 	ResponseMetadata,
 	ValidationError
 } from "../LDP";
-import {
-	AddMemberAction,
-	RemoveMemberAction
-} from "../Members";
 import {
 	AccessPointCreated,
 	ChildCreated,
@@ -41,15 +39,13 @@ import {
 import { AbstractContext } from "./AbstractContext";
 
 
-export class GlobalContext extends AbstractContext<RegisteredPointer, undefined> {
+export class GlobalContext extends AbstractContext<RegisteredPointer, undefined, undefined> {
 	static readonly instance:GlobalContext = new GlobalContext();
 
 	readonly registry:GeneralRegistry<RegisteredPointer>;
 	readonly repository:undefined;
 
 	protected _baseURI:"" = "";
-	protected _parentContext:undefined;
-
 
 	private constructor() {
 		super();
