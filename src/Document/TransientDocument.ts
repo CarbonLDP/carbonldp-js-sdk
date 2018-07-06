@@ -3,7 +3,7 @@ import { TransientBlankNode, } from "../BlankNode";
 import {
 	ModelDecorator,
 	ModelFactory,
-} from "../core";
+} from "../Model";
 import { IllegalArgumentError, } from "../Errors";
 import { TransientFragment } from "../Fragment";
 import { JSONLDConverter } from "../JSONLD";

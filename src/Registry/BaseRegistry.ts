@@ -1,5 +1,5 @@
 import { Context } from "../Context";
-import { ModelDecorator } from "../core";
+import { ModelDecorator } from "../Model";
 import { RegisteredPointer } from "./RegisteredPointer";
 import { Registry } from "./Registry";
 

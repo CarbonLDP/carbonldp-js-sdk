@@ -2,7 +2,7 @@ import { Context } from "../Context";
 import {
 	ModelDecorator,
 	ModelPrototype
-} from "../core";
+} from "../Model";
 import { NotImplementedError } from "../Errors";
 import { ObjectSchemaResolver } from "../ObjectSchema";
 import { BaseRepository } from "./BaseRepository";

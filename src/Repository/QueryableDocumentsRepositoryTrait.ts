@@ -14,7 +14,7 @@ import {
 import {
 	ModelDecorator,
 	ModelPrototype
-} from "../core";
+} from "../Model";
 import { Document } from "../Document";
 import { IllegalArgumentError } from "../Errors";
 import { FreeResources } from "../FreeResources";

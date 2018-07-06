@@ -2,7 +2,7 @@ import {
 	ModelDecorator,
 	ModelFactory,
 	ModelSchema,
-} from "../core";
+} from "../Model";
 import {
 	GETOptions,
 	RequestOptions

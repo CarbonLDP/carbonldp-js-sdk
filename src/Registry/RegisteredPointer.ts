@@ -2,7 +2,7 @@ import {
 	ModelDecorator,
 	ModelFactory,
 	ModelPrototype
-} from "../core";
+} from "../Model";
 import { Pointer } from "../Pointer";
 import { BaseRegisteredPointer } from "./BaseRegisteredPointer";
 import { Registry } from "./Registry";

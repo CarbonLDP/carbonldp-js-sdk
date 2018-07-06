@@ -1,5 +1,5 @@
 import { BlankNode } from "../BlankNode";
-import { ModelDecorator } from "../core";
+import { ModelDecorator } from "../Model";
 import { Fragment } from "../Fragment";
 import { NamedFragment } from "../NamedFragment";
 import { DocumentsRegistry } from "../Registry";

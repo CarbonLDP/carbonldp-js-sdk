@@ -1,5 +1,5 @@
 import { isFunction } from "util";
-import { ModelDecorator } from "../core";
+import { ModelDecorator } from "../Model";
 import { PartialMetadata } from "../SPARQL/QueryDocument";
 import {
 	isObject,

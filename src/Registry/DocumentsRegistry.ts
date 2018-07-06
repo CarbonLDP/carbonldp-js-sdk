@@ -3,7 +3,7 @@ import {
 	ModelDecorator,
 	ModelFactory,
 	ModelPrototype
-} from "../core";
+} from "../Model";
 import { Document } from "../Document";
 import { BaseRegistry } from "./BaseRegistry";
 import { GeneralRegistry } from "./GeneralRegistry";

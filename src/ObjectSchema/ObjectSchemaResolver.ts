@@ -3,7 +3,7 @@ import {
 	ModelDecorator,
 	ModelPrototype,
 	ModelTypeGuard,
-} from "../core";
+} from "../Model";
 import { TransientDocument } from "../Document";
 import {
 	RDFNode,

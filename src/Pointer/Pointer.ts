@@ -3,7 +3,7 @@ import {
 	ModelFactory,
 	ModelPrototype,
 	ModelTypeGuard
-} from "../core";
+} from "../Model";
 import * as Utils from "../Utils";
 import { isObject } from "../Utils";
 import { BasePointer } from "./BasePointer";

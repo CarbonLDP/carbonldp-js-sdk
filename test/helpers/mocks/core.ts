@@ -1,5 +1,5 @@
 import { AbstractContext } from "../../../src/Context/AbstractContext";
-import { ModelDecorator } from "../../../src/core";
+import { ModelDecorator } from "../../../src/Model";
 import { Document } from "../../../src/Document";
 import {
 	DigestedObjectSchema,

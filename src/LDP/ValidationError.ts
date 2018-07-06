@@ -1,4 +1,4 @@
-import { ModelSchema } from "../core/ModelSchema";
+import { ModelSchema } from "../Model/ModelSchema";
 import { ObjectSchema } from "../ObjectSchema";
 import { Pointer } from "../Pointer";
 import { TransientResource } from "../Resource";

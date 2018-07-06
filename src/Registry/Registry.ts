@@ -3,7 +3,7 @@ import {
 	ModelDecorator,
 	ModelFactory,
 	ModelPrototype
-} from "../core";
+} from "../Model";
 import {
 	IDAlreadyInUseError,
 	IllegalArgumentError,

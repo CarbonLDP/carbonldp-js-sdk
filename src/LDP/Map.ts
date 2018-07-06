@@ -1,5 +1,5 @@
-import { ModelFactory } from "../core/ModelFactory";
-import { ModelSchema } from "../core/ModelSchema";
+import { ModelFactory } from "../Model/ModelFactory";
+import { ModelSchema } from "../Model/ModelSchema";
 import { ObjectSchema } from "../ObjectSchema";
 import { TransientResource } from "../Resource";
 import { C } from "../Vocabularies/C";

@@ -1,6 +1,6 @@
 import { anyThatMatches } from "../../test/helpers/jasmine/equalities";
 import { spyOnDecorated } from "../../test/helpers/jasmine/spies";
-import { ModelDecorator } from "../core";
+import { ModelDecorator } from "../Model";
 import {
 	IDAlreadyInUseError,
 	IllegalArgumentError

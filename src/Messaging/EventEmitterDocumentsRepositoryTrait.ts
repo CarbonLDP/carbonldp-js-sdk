@@ -2,7 +2,7 @@ import { DocumentsContext } from "../Context";
 import {
 	ModelDecorator,
 	ModelPrototype
-} from "../core";
+} from "../Model";
 import { Document } from "../Document";
 import { Repository } from "../Repository";
 import { BaseDocumentsRepository } from "../Repository/BaseDocumentsRepository";

@@ -1,5 +1,5 @@
 import { ACL } from "../Auth";
-import { ModelDecorator } from "../core";
+import { ModelDecorator } from "../Model";
 import { Document } from "../Document";
 import { RequestOptions } from "../HTTP";
 import { ObjectSchema } from "../ObjectSchema";

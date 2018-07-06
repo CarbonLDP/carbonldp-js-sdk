@@ -2,7 +2,7 @@ import {
 	ModelDecorator,
 	ModelFactory,
 	ModelPrototype
-} from "../core";
+} from "../Model";
 import { IllegalArgumentError } from "../Errors";
 import {
 	DigestedObjectSchema,

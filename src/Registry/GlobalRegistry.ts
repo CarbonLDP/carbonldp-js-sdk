@@ -1,5 +1,5 @@
 import { Context } from "../Context";
-import { ModelFactory } from "../core";
+import { ModelFactory } from "../Model";
 import { BaseRegistry } from "./BaseRegistry";
 import { GeneralRegistry } from "./GeneralRegistry";
 import { RegisteredPointer } from "./RegisteredPointer";

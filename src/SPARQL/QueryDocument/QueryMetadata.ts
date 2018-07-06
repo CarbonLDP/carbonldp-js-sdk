@@ -1,4 +1,4 @@
-import { ModelSchema } from "../../core/ModelSchema";
+import { ModelSchema } from "../../Model/ModelSchema";
 import { VolatileResource } from "../../LDP";
 import { ObjectSchema } from "../../ObjectSchema";
 import { Pointer } from "../../Pointer";

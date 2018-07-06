@@ -1,4 +1,4 @@
-import { ModelDecorator } from "../core";
+import { ModelDecorator } from "../Model";
 import {
 	DigestedObjectSchema,
 	ObjectSchemaResolver,

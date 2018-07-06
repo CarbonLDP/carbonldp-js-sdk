@@ -1,4 +1,4 @@
-import { ModelSchema } from "../core";
+import { ModelSchema } from "../Model";
 import { ObjectSchema } from "../ObjectSchema";
 import {
 	C,

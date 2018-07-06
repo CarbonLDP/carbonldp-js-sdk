@@ -4,7 +4,7 @@ import {
 	ModelFactory,
 	ModelPrototype,
 	ModelTypeGuard
-} from "../core";
+} from "../Model";
 import { Pointer } from "../Pointer";
 import { ObjectUtils } from "../Utils";
 import { BaseResolvablePointer } from "./BaseResolvablePointer";

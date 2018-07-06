@@ -3,7 +3,7 @@ import {
 	BaseAccessPoint,
 	TransientAccessPoint,
 } from "../AccessPoint";
-import { ModelDecorator } from "../core";
+import { ModelDecorator } from "../Model";
 import {
 	IllegalActionError,
 	IllegalArgumentError

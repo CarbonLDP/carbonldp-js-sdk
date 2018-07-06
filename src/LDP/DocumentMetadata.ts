@@ -1,5 +1,5 @@
 import { TransientBlankNode } from "../BlankNode";
-import { ModelSchema } from "../core/ModelSchema";
+import { ModelSchema } from "../Model/ModelSchema";
 import { Document } from "../Document";
 import { ObjectSchema } from "../ObjectSchema";
 import { C } from "../Vocabularies/C";

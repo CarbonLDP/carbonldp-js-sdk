@@ -1,4 +1,4 @@
-import { ModelFactory } from "../../core/ModelFactory";
+import { ModelFactory } from "../../Model/ModelFactory";
 import { TransientDocument } from "../../Document";
 import { IllegalArgumentError } from "../../Errors";
 import { Pointer } from "../../Pointer";

@@ -1,4 +1,4 @@
-import { ModelDecorator } from "../core";
+import { ModelDecorator } from "../Model";
 import { TransientDocument } from "../Document";
 import { IllegalActionError } from "../Errors";
 import { Pointer } from "../Pointer";

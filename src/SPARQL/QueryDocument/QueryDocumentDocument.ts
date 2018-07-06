@@ -11,7 +11,7 @@ import {
 	ValuesToken,
 	VariableToken,
 } from "sparqler/tokens";
-import { ModelDecorator } from "../../core";
+import { ModelDecorator } from "../../Model";
 import { Document } from "../../Document";
 import { BasePersistedDocument } from "../../Document/BasePersistedDocument";
 import { CRUDDocument } from "../../Document/CRUDDocument";

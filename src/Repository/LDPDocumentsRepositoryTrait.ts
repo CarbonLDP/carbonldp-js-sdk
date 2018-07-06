@@ -2,7 +2,7 @@ import { DocumentsContext } from "../Context";
 import {
 	ModelDecorator,
 	ModelPrototype
-} from "../core";
+} from "../Model";
 import {
 	Document,
 	TransientDocument

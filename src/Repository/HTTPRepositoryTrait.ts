@@ -2,7 +2,7 @@ import { Context } from "../Context";
 import {
 	ModelDecorator,
 	ModelPrototype
-} from "../core";
+} from "../Model";
 import { IllegalArgumentError } from "../Errors";
 import { FreeResources } from "../FreeResources";
 import {

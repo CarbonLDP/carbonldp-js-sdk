@@ -3,7 +3,7 @@ import { DocumentsContext } from "../Context";
 import {
 	ModelDecorator,
 	ModelPrototype
-} from "../core";
+} from "../Model";
 import { IllegalArgumentError } from "../Errors";
 import { RequestOptions } from "../HTTP";
 import { DigestedObjectSchema } from "../ObjectSchema";

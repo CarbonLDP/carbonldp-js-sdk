@@ -1,7 +1,7 @@
 import {
 	ModelDecorator,
 	ModelFactory,
-} from "./core";
+} from "./Model";
 import { JSONLDConverter } from "./JSONLD";
 import { DigestedObjectSchema } from "./ObjectSchema";
 import { Pointer } from "./Pointer";

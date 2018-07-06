@@ -1,4 +1,4 @@
-import { ModelDecorator } from "../core";
+import { ModelDecorator } from "../Model";
 import { Fragment } from "../Fragment";
 import { PersistedResource } from "../Resource";
 import {
