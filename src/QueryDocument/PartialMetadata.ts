@@ -1,9 +1,9 @@
-import { IllegalArgumentError } from "../../Errors/IllegalArgumentError";
+import { IllegalArgumentError } from "../Errors";
 import {
 	DigestedObjectSchema,
 	DigestedObjectSchemaProperty,
 	ObjectSchemaUtils,
-} from "../../ObjectSchema";
+} from "../ObjectSchema";
 
 
 export class PartialMetadata {

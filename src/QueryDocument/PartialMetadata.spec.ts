@@ -1,27 +1,27 @@
 import {
 	createMockDigestedSchema,
 	createMockDigestedSchemaProperty
-} from "../../../test/helpers/mocks";
-import { IllegalArgumentError } from "../../Errors";
-import { DigestedObjectSchema } from "../../ObjectSchema";
+} from "../../test/helpers/mocks";
+import { IllegalArgumentError } from "../Errors";
+import { DigestedObjectSchema } from "../ObjectSchema";
 import {
 	clazz,
 	constructor,
 	hasSignature,
 	module
-} from "../../test/JasmineExtender";
+} from "../test/JasmineExtender";
 
 import * as Module from "./PartialMetadata";
 import { PartialMetadata } from "./PartialMetadata";
 
-describe( module( "carbonldp/SPARQL/QueryDocument/PartialMetadata" ), ():void => {
+describe( module( "carbonldp/QueryDocument/PartialMetadata" ), ():void => {
 
 	it( "should exists", ():void => {
 		expect( Module ).toBeDefined();
 		expect( Module ).toEqual( jasmine.any( Object ) );
 	} );
 
-	describe( clazz( "CarbonLDP.SPARQL.QueryDocument.PartialMetadata", "Class that contains the metadata of a partial document." ), ():void => {
+	describe( clazz( "CarbonLDP.QueryDocument.PartialMetadata", "Class that contains the metadata of a partial document." ), ():void => {
 
 		it( "should exists", ():void => {
 			expect( PartialMetadata ).toBeDefined();
@@ -33,7 +33,7 @@ describe( module( "carbonldp/SPARQL/QueryDocument/PartialMetadata" ), ():void =>
 			it( hasSignature(
 				[
 					{ name: "schema", type: "CarbonLDP.DigestedObjectSchema", description: "The schema with the information of the partial properties of the partial resource." },
-					{ name: "previousPartial", type: "CarbonLDP.SPARQL.QueryDocument.PartialMetadata", optional: true, description: "The previous partial metadata to merge with the new partial schema." },
+					{ name: "previousPartial", type: "CarbonLDP.QueryDocument.PartialMetadata", optional: true, description: "The previous partial metadata to merge with the new partial schema." },
 				]
 			), ():void => {} );
 

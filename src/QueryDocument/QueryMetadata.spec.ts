@@ -1,6 +1,6 @@
-import { VolatileResource } from "../../LDP/VolatileResource";
-import { Pointer } from "../../Pointer";
-import { TransientResource } from "../../Resource";
+import { VolatileResource } from "../LDP";
+import { Pointer } from "../Pointer";
+import { TransientResource } from "../Resource";
 import {
 	hasProperty,
 	hasSignature,
@@ -10,19 +10,19 @@ import {
 	OBLIGATORY,
 	property,
 	STATIC
-} from "../../test/JasmineExtender";
-import { C } from "../../Vocabularies/C";
+} from "../test/JasmineExtender";
+import { C } from "../Vocabularies";
 
 import { QueryMetadata } from "./QueryMetadata";
 
-describe( module( "carbonldp/SPARQL/QueryDocument/QueryMetadata" ), ():void => {
+describe( module( "carbonldp/QueryDocument/QueryMetadata" ), ():void => {
 
 	it( "should exists", ():void => {
 		expect( QueryMetadata ).toBeDefined();
 		expect( QueryMetadata ).toEqual( jasmine.any( Object ) );
 	} );
 
-	describe( interfaze( "CarbonLDP.SPARQL.QueryDocument.QueryMetadata", "Interface of the volatile resource created by the SDK in the partial query request." ), ():void => {
+	describe( interfaze( "CarbonLDP.QueryDocument.QueryMetadata", "Interface of the volatile resource created by the SDK in the partial query request." ), ():void => {
 
 		it( "should exists", ():void => {
 			const target:QueryMetadata = {} as QueryMetadata;
@@ -42,8 +42,8 @@ describe( module( "carbonldp/SPARQL/QueryDocument/QueryMetadata" ), ():void => {
 	} );
 
 	describe( interfaze(
-		"CarbonLDP.SPARQL.QueryDocument.QueryMetadataFactory",
-		"Interface with the factory, decorate and utils methods for `CarbonLDP.SPARQL.QueryDocument.QueryMetadata` objects."
+		"CarbonLDP.QueryDocument.QueryMetadataFactory",
+		"Interface with the factory, decorate and utils methods for `CarbonLDP.QueryDocument.QueryMetadata` objects."
 	), ():void => {
 
 		it( hasProperty(
@@ -65,7 +65,7 @@ describe( module( "carbonldp/SPARQL/QueryDocument/QueryMetadata" ), ():void => {
 				[
 					{ name: "value", type: "any", description: "The value to check." },
 				],
-				{ type: "value is CarbonLDP.SPARQL.QueryDocument.QueryMetadata" }
+				{ type: "value is CarbonLDP.QueryDocument.QueryMetadata" }
 			), ():void => {} );
 
 		} );
@@ -75,7 +75,7 @@ describe( module( "carbonldp/SPARQL/QueryDocument/QueryMetadata" ), ():void => {
 	describe( property(
 		STATIC,
 		"QueryMetadata",
-		"CarbonLDP.SPARQL.QueryDocument.QueryMetadataFactory"
+		"CarbonLDP.QueryDocument.QueryMetadataFactory"
 	), ():void => {
 
 		it( "should exist", ():void => {

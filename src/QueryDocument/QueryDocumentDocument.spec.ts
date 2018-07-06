@@ -21,26 +21,26 @@ import {
 import {
 	createMockPartialMetadata,
 	defineNonEnumerableProps
-} from "../../../test/helpers/mocks";
-import { CarbonLDP } from "../../CarbonLDP";
+} from "../../test/helpers/mocks";
+import { CarbonLDP } from "../CarbonLDP";
 import {
 	BasePersistedDocument,
 	Document
-} from "../../Document";
+} from "../Document";
 import {
 	IllegalActionError,
 	IllegalArgumentError,
 	IllegalStateError
-} from "../../Errors";
-import { BaseFragment } from "../../Fragment";
-import { Header } from "../../HTTP";
-import * as ObjectSchema from "../../ObjectSchema";
-import { ObjectSchemaDigester } from "../../ObjectSchema";
-import { DocumentsRegistry } from "../../Registry";
+} from "../Errors";
+import { BaseFragment } from "../Fragment";
+import { Header } from "../HTTP";
+import * as ObjectSchema from "../ObjectSchema";
+import { ObjectSchemaDigester } from "../ObjectSchema";
+import { DocumentsRegistry } from "../Registry";
 import {
 	BaseResource,
 	PersistedResource
-} from "../../Resource";
+} from "../Resource";
 import {
 	extendsClass,
 	hasSignature,
@@ -48,12 +48,12 @@ import {
 	method,
 	module,
 	OBLIGATORY
-} from "../../test/JasmineExtender";
+} from "../test/JasmineExtender";
 import {
 	C,
 	LDP,
 	XSD
-} from "../../Vocabularies";
+} from "../Vocabularies";
 import { PartialMetadata } from "./PartialMetadata";
 import { QueryDocumentDocument } from "./QueryDocumentDocument";
 
@@ -106,7 +106,7 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 				[ "T extends object" ],
 				"Retrieves the specified properties and sub-properties of the document specified by the function provided.",
 				[
-					{ name: "queryBuilderFn", type: "( queryBuilder:CarbonLDP.SPARQL.QueryDocument.QueryDocumentBuilder ) => CarbonLDP.SPARQL.QueryDocument.QueryDocumentBuilder", description: "Function that receives a the builder that helps you to construct the retrieval query.\nThe same builder must be returned." },
+					{ name: "queryBuilderFn", type: "( queryBuilder:CarbonLDP.QueryDocument.QueryDocumentBuilder ) => CarbonLDP.QueryDocument.QueryDocumentBuilder", description: "Function that receives a the builder that helps you to construct the retrieval query.\nThe same builder must be returned." },
 				],
 				{ type: "Promise<T & CarbonLDP.Document>" }
 			), ():void => {} );
@@ -116,7 +116,7 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 				"Retrieves the specified properties and sub-properties of the document specified by the function provided.",
 				[
 					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", description: "Customizable options for the request." },
-					{ name: "queryBuilderFn", type: "( queryBuilder:CarbonLDP.SPARQL.QueryDocument.QueryDocumentBuilder ) => CarbonLDP.SPARQL.QueryDocument.QueryDocumentBuilder", description: "Function that receives a the builder that helps you to construct the retrieval query.\nThe same builder must be returned." },
+					{ name: "queryBuilderFn", type: "( queryBuilder:CarbonLDP.QueryDocument.QueryDocumentBuilder ) => CarbonLDP.QueryDocument.QueryDocumentBuilder", description: "Function that receives a the builder that helps you to construct the retrieval query.\nThe same builder must be returned." },
 				],
 				{ type: "Promise<T & CarbonLDP.Document>" }
 			), ():void => {} );
@@ -126,7 +126,7 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 				"Retrieves the specified properties and sub-properties of the URI specified by the function provided.",
 				[
 					{ name: "uri", type: "string", description: "The URI of the document to query." },
-					{ name: "queryBuilderFn", type: "( queryBuilder:CarbonLDP.SPARQL.QueryDocument.QueryDocumentBuilder ) => CarbonLDP.SPARQL.QueryDocument.QueryDocumentBuilder", description: "Function that receives a the builder that helps you to construct the retrieval query.\nThe same builder must be returned." },
+					{ name: "queryBuilderFn", type: "( queryBuilder:CarbonLDP.QueryDocument.QueryDocumentBuilder ) => CarbonLDP.QueryDocument.QueryDocumentBuilder", description: "Function that receives a the builder that helps you to construct the retrieval query.\nThe same builder must be returned." },
 				],
 				{ type: "Promise<T & CarbonLDP.Document>" }
 			), ():void => {} );
@@ -137,7 +137,7 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 				[
 					{ name: "uri", type: "string", description: "The URI of the document to query." },
 					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", description: "Customizable options for the request." },
-					{ name: "queryBuilderFn", type: "( queryBuilder:CarbonLDP.SPARQL.QueryDocument.QueryDocumentBuilder ) => CarbonLDP.SPARQL.QueryDocument.QueryDocumentBuilder", description: "Function that receives a the builder that helps you to construct the retrieval query.\nThe same builder must be returned." },
+					{ name: "queryBuilderFn", type: "( queryBuilder:CarbonLDP.QueryDocument.QueryDocumentBuilder ) => CarbonLDP.QueryDocument.QueryDocumentBuilder", description: "Function that receives a the builder that helps you to construct the retrieval query.\nThe same builder must be returned." },
 				],
 				{ type: "Promise<T & CarbonLDP.Document>" }
 			), ():void => {} );
@@ -1512,7 +1512,7 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 				[ "T extends object" ],
 				"Resolves the specified properties and sub-properties of the document specified by the function provided.",
 				[
-					{ name: "queryBuilderFn", type: "( queryBuilder:CarbonLDP.SPARQL.QueryDocument.QueryDocumentBuilder ) => CarbonLDP.SPARQL.QueryDocument.QueryDocumentBuilder", description: "Function that receives a the builder that helps you to construct the retrieval query.\nThe same builder must be returned." },
+					{ name: "queryBuilderFn", type: "( queryBuilder:CarbonLDP.QueryDocument.QueryDocumentBuilder ) => CarbonLDP.QueryDocument.QueryDocumentBuilder", description: "Function that receives a the builder that helps you to construct the retrieval query.\nThe same builder must be returned." },
 				],
 				{ type: "Promise<T & CarbonLDP.Document>" }
 			), ():void => {} );
@@ -1522,7 +1522,7 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 				"Resolves the specified properties and sub-properties of the document specified by the function provided.",
 				[
 					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", description: "Customizable options for the request." },
-					{ name: "queryBuilderFn", type: "( queryBuilder:CarbonLDP.SPARQL.QueryDocument.QueryDocumentBuilder ) => CarbonLDP.SPARQL.QueryDocument.QueryDocumentBuilder", description: "Function that receives a the builder that helps you to construct the retrieval query.\nThe same builder must be returned." },
+					{ name: "queryBuilderFn", type: "( queryBuilder:CarbonLDP.QueryDocument.QueryDocumentBuilder ) => CarbonLDP.QueryDocument.QueryDocumentBuilder", description: "Function that receives a the builder that helps you to construct the retrieval query.\nThe same builder must be returned." },
 				],
 				{ type: "Promise<T & CarbonLDP.Document>" }
 			), ():void => {} );
@@ -4319,7 +4319,7 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 				[ "T extends object" ],
 				"Retrieves the children of the current document, building a query on which one is able to specify the properties to be retrieve and sub-documents' properties and on and on.", [
 					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", description: "Customizable options for the request." },
-					{ name: "queryBuilderFn", type: "( queryBuilder:CarbonLDP.SPARQL.QueryDocument.QueryDocumentsBuilder ) => CarbonLDP.SPARQL.QueryDocument.QueryDocumentsBuilder", optional: true, description: "Function that receives a the builder that helps you to construct the children retrieval query.\nThe same builder must be returned." },
+					{ name: "queryBuilderFn", type: "( queryBuilder:CarbonLDP.QueryDocument.QueryDocumentsBuilder ) => CarbonLDP.QueryDocument.QueryDocumentsBuilder", optional: true, description: "Function that receives a the builder that helps you to construct the children retrieval query.\nThe same builder must be returned." },
 				],
 				{ type: "Promise<(T & CarbonLDP.Document)[]>" }
 			), ():void => {} );
@@ -4327,7 +4327,7 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 			it( hasSignature(
 				[ "T extends object" ],
 				"Retrieves the children of the current document, building a query on which one is able to specify the properties to be retrieve and sub-documents' properties and on and on.", [
-					{ name: "queryBuilderFn", type: "( queryBuilder:CarbonLDP.SPARQL.QueryDocument.QueryDocumentsBuilder ) => CarbonLDP.SPARQL.QueryDocument.QueryDocumentsBuilder", optional: true, description: "Function that receives a the builder that helps you to construct the children retrieval query.\nThe same builder must be returned." },
+					{ name: "queryBuilderFn", type: "( queryBuilder:CarbonLDP.QueryDocument.QueryDocumentsBuilder ) => CarbonLDP.QueryDocument.QueryDocumentsBuilder", optional: true, description: "Function that receives a the builder that helps you to construct the children retrieval query.\nThe same builder must be returned." },
 				],
 				{ type: "Promise<(T & CarbonLDP.Document)[]>" }
 			), ():void => {} );
@@ -4337,7 +4337,7 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 				"Retrieves the children of the specified URI, building a query on which one is able to specify the properties to be retrieve and sub-documents' properties and on and on.", [
 					{ name: "uri", type: "string", description: "The URI of the document to query." },
 					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", description: "Customizable options for the request." },
-					{ name: "queryBuilderFn", type: "( queryBuilder:CarbonLDP.SPARQL.QueryDocument.QueryDocumentsBuilder ) => CarbonLDP.SPARQL.QueryDocument.QueryDocumentsBuilder", optional: true, description: "Function that receives a the builder that helps you to construct the children retrieval query.\nThe same builder must be returned." },
+					{ name: "queryBuilderFn", type: "( queryBuilder:CarbonLDP.QueryDocument.QueryDocumentsBuilder ) => CarbonLDP.QueryDocument.QueryDocumentsBuilder", optional: true, description: "Function that receives a the builder that helps you to construct the children retrieval query.\nThe same builder must be returned." },
 				],
 				{ type: "Promise<(T & CarbonLDP.Document)[]>" }
 			), ():void => {} );
@@ -4346,7 +4346,7 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 				[ "T extends object" ],
 				"Retrieves the children of the specified URI, building a query on which one is able to specify the properties to be retrieve and sub-documents' properties and on and on.", [
 					{ name: "uri", type: "string", description: "The URI of the document to query." },
-					{ name: "queryBuilderFn", type: "( queryBuilder:CarbonLDP.SPARQL.QueryDocument.QueryDocumentsBuilder ) => CarbonLDP.SPARQL.QueryDocument.QueryDocumentsBuilder", optional: true, description: "Function that receives a the builder that helps you to construct the children retrieval query.\nThe same builder must be returned." },
+					{ name: "queryBuilderFn", type: "( queryBuilder:CarbonLDP.QueryDocument.QueryDocumentsBuilder ) => CarbonLDP.QueryDocument.QueryDocumentsBuilder", optional: true, description: "Function that receives a the builder that helps you to construct the children retrieval query.\nThe same builder must be returned." },
 				],
 				{ type: "Promise<(T & CarbonLDP.Document)[]>" }
 			), ():void => {} );
@@ -6127,7 +6127,7 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 				"Retrieves the members of the current document, building a query on which one is able to specify the properties to be retrieve and sub-documents' properties and on and on.",
 				[
 					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", description: "Customizable options for the request." },
-					{ name: "queryBuilderFn", type: "( queryBuilder:CarbonLDP.SPARQL.QueryDocument.QueryDocumentsBuilder ) => CarbonLDP.SPARQL.QueryDocument.QueryDocumentsBuilder", optional: true, description: "Function that receives a the builder that helps you to construct the members retrieval query.\nThe same builder must be returned." },
+					{ name: "queryBuilderFn", type: "( queryBuilder:CarbonLDP.QueryDocument.QueryDocumentsBuilder ) => CarbonLDP.QueryDocument.QueryDocumentsBuilder", optional: true, description: "Function that receives a the builder that helps you to construct the members retrieval query.\nThe same builder must be returned." },
 				],
 				{ type: "Promise<(T & CarbonLDP.Document)[]>" }
 			), ():void => {} );
@@ -6136,7 +6136,7 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 				[ "T extends object" ],
 				"Retrieves the members of the current document, building a query on which one is able to specify the properties to be retrieve and sub-documents' properties and on and on.",
 				[
-					{ name: "queryBuilderFn", type: "( queryBuilder:CarbonLDP.SPARQL.QueryDocument.QueryDocumentsBuilder ) => CarbonLDP.SPARQL.QueryDocument.QueryDocumentsBuilder", optional: true, description: "Function that receives a the builder that helps you to construct the members retrieval query.\nThe same builder must be returned." },
+					{ name: "queryBuilderFn", type: "( queryBuilder:CarbonLDP.QueryDocument.QueryDocumentsBuilder ) => CarbonLDP.QueryDocument.QueryDocumentsBuilder", optional: true, description: "Function that receives a the builder that helps you to construct the members retrieval query.\nThe same builder must be returned." },
 				],
 				{ type: "Promise<(T & CarbonLDP.Document)[]>" }
 			), ():void => {} );
@@ -6147,7 +6147,7 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 				[
 					{ name: "uri", type: "string", description: "The URI of the document to query." },
 					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", description: "Customizable options for the request." },
-					{ name: "queryBuilderFn", type: "( queryBuilder:CarbonLDP.SPARQL.QueryDocument.QueryDocumentsBuilder ) => CarbonLDP.SPARQL.QueryDocument.QueryDocumentsBuilder", optional: true, description: "Function that receives a the builder that helps you to construct the members retrieval query.\nThe same builder must be returned." },
+					{ name: "queryBuilderFn", type: "( queryBuilder:CarbonLDP.QueryDocument.QueryDocumentsBuilder ) => CarbonLDP.QueryDocument.QueryDocumentsBuilder", optional: true, description: "Function that receives a the builder that helps you to construct the members retrieval query.\nThe same builder must be returned." },
 				],
 				{ type: "Promise<(T & CarbonLDP.Document)[]>" }
 			), ():void => {} );
@@ -6157,7 +6157,7 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 				"Retrieves the members of the specified URI, building a query on which one is able to specify the properties to be retrieve and sub-documents' properties and on and on.",
 				[
 					{ name: "uri", type: "string", description: "The URI of the document to query." },
-					{ name: "queryBuilderFn", type: "( queryBuilder:CarbonLDP.SPARQL.QueryDocument.QueryDocumentsBuilder ) => CarbonLDP.SPARQL.QueryDocument.QueryDocumentsBuilder", optional: true, description: "Function that receives a the builder that helps you to construct the members retrieval query.\nThe same builder must be returned." },
+					{ name: "queryBuilderFn", type: "( queryBuilder:CarbonLDP.QueryDocument.QueryDocumentsBuilder ) => CarbonLDP.QueryDocument.QueryDocumentsBuilder", optional: true, description: "Function that receives a the builder that helps you to construct the members retrieval query.\nThe same builder must be returned." },
 				],
 				{ type: "Promise<(T & CarbonLDP.Document)[]>" }
 			), ():void => {} );

@@ -10,12 +10,12 @@ import {
 	VariableToken
 } from "sparqler/tokens";
 
-import { createMockContext } from "../../../test/helpers/mocks";
-import { AbstractContext } from "../../Context/AbstractContext";
+import { createMockContext } from "../../test/helpers/mocks";
+import { AbstractContext } from "../Context";
 import {
 	IllegalArgumentError,
 	IllegalStateError
-} from "../../Errors";
+} from "../Errors";
 import {
 	clazz,
 	extendsClass,
@@ -27,7 +27,7 @@ import {
 	module,
 	OBLIGATORY,
 	OPTIONAL
-} from "../../test/JasmineExtender";
+} from "../test/JasmineExtender";
 import { QueryContextBuilder } from "./QueryContextBuilder";
 import { QueryDocumentBuilder } from "./QueryDocumentBuilder";
 
@@ -39,7 +39,7 @@ import {
 
 import { QueryProperty } from "./QueryProperty";
 
-describe( module( "carbonldp/SPARQL/QueryDocument/QueryDocumentsBuilder" ), ():void => {
+describe( module( "carbonldp/QueryDocument/QueryDocumentsBuilder" ), ():void => {
 
 	it( "should exists", ():void => {
 		expect( Module ).toBeDefined();
@@ -74,7 +74,7 @@ describe( module( "carbonldp/SPARQL/QueryDocument/QueryDocumentsBuilder" ), ():v
 	} );
 
 	describe( clazz(
-		"CarbonLDP.SPARQL.QueryDocument.QueryDocumentsBuilder",
+		"CarbonLDP.QueryDocument.QueryDocumentsBuilder",
 		"Class with the helpers and properties for construct a query document"
 	), ():void => {
 

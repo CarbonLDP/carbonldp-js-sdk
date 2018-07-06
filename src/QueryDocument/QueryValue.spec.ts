@@ -3,9 +3,9 @@ import {
 	LiteralToken
 } from "sparqler/tokens";
 
-import { createMockContext } from "../../../test/helpers/mocks";
-import { AbstractContext } from "../../Context/AbstractContext";
-import { IllegalArgumentError } from "../../Errors";
+import { createMockContext } from "../../test/helpers/mocks";
+import { AbstractContext } from "../Context";
+import { IllegalArgumentError } from "../Errors";
 import {
 	clazz,
 	constructor,
@@ -13,21 +13,21 @@ import {
 	INSTANCE,
 	method,
 	module,
-} from "../../test/JasmineExtender";
-import { XSD } from "../../Vocabularies/XSD";
+} from "../test/JasmineExtender";
+import { XSD } from "../Vocabularies";
 import { QueryContext } from "./QueryContext";
 
 import * as Module from "./QueryValue";
 import { QueryValue } from "./QueryValue";
 
-describe( module( "carbonldp/SPARQL/QueryDocument/QueryValue" ), ():void => {
+describe( module( "carbonldp/QueryDocument/QueryValue" ), ():void => {
 
 	it( "should exists", ():void => {
 		expect( Module ).toBeDefined();
 		expect( Module ).toEqual( jasmine.any( Object ) );
 	} );
 
-	describe( clazz( "CarbonLDP.SPARQL.QueryDocument.QueryValue", "Class that represents a property in the query" ), ():void => {
+	describe( clazz( "CarbonLDP.QueryDocument.QueryValue", "Class that represents a property in the query" ), ():void => {
 
 		it( "should exists", ():void => {
 			expect( QueryValue ).toBeDefined();
@@ -46,7 +46,7 @@ describe( module( "carbonldp/SPARQL/QueryDocument/QueryValue" ), ():void => {
 			it( hasSignature(
 				"Creates a value wrapper for the specified value.",
 				[
-					{ name: "context", type: "CarbonLDP.SPARQL.QueryDocument.QueryContext", description: "The context of the query where the value is been used." },
+					{ name: "context", type: "CarbonLDP.QueryDocument.QueryContext", description: "The context of the query where the value is been used." },
 					{ name: "value", type: "string | number | boolean | Date", description: "The value to be converted and wrapped fot the ready to use in the query statements." },
 				]
 			), ():void => {
@@ -85,7 +85,7 @@ describe( module( "carbonldp/SPARQL/QueryDocument/QueryValue" ), ():void => {
 
 			it( hasSignature(
 				"Sets an specific type to the query value.\n" +
-				"If the value is not string this will be serialized by the `CarbonLDP.SPARQL.QueryDocument.QueryContext.serializeLiteral()` method.",
+				"If the value is not string this will be serialized by the `CarbonLDP.QueryDocument.QueryContext.serializeLiteral()` method.",
 				[
 					{ name: "type", type: "string", description: "The type to be assigned to the literal value." },
 				],

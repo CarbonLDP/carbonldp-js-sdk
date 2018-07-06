@@ -11,36 +11,37 @@ import {
 	ValuesToken,
 	VariableToken
 } from "sparqler/tokens";
-import { Document } from "../../Document";
-import { IllegalArgumentError } from "../../Errors";
-import { FreeResources } from "../../FreeResources";
+import { Document } from "../Document";
+import { IllegalArgumentError } from "../Errors";
+import { FreeResources } from "../FreeResources";
 import {
 	GETOptions,
 	RequestOptions,
 	RequestUtils
-} from "../../HTTP";
-import { _getNotInContextMessage } from "../../Repository/Utils";
+} from "../HTTP";
 import {
 	JSONLDCompacter,
 	JSONLDParser
-} from "../../JSONLD";
+} from "../JSONLD";
 import {
 	DocumentMetadata,
+	LDPDocumentsRepositoryTrait,
 	ResponseMetadata
-} from "../../LDP";
-import { LDPDocumentsRepositoryTrait } from "../../LDP";
+} from "../LDP";
 import {
 	ModelDecorator,
 	ModelPrototype
-} from "../../Model";
-import { Pointer } from "../../Pointer";
+} from "../Model";
+import { Pointer } from "../Pointer";
 import {
 	RDFDocument,
 	RDFNode,
 	URI
-} from "../../RDF";
-import { BaseDocumentsRepository } from "../../Repository";
-import { PersistedResource } from "../../Resource";
+} from "../RDF";
+import { BaseDocumentsRepository } from "../Repository";
+import { _getNotInContextMessage } from "../Repository/Utils";
+import { PersistedResource } from "../Resource";
+import { SPARQLService } from "../SPARQL";
 import {
 	isBoolean,
 	isDate,
@@ -48,12 +49,11 @@ import {
 	isNumber,
 	isObject,
 	isString
-} from "../../Utils";
+} from "../Utils";
 import {
 	C,
 	LDP
-} from "../../Vocabularies";
-import { SPARQLService } from "../Service";
+} from "../Vocabularies";
 import { PartialMetadata } from "./PartialMetadata";
 import { QueryContext } from "./QueryContext";
 import { QueryContextBuilder } from "./QueryContextBuilder";

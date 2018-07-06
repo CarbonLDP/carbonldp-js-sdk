@@ -5,13 +5,13 @@ import {
 	PrefixToken
 } from "sparqler/tokens";
 
-import { AbstractContext } from "../../Context/AbstractContext";
-import { IllegalArgumentError } from "../../Errors";
+import { AbstractContext } from "../Context";
+import { IllegalArgumentError } from "../Errors";
 import {
 	DigestedObjectSchema,
 	ObjectSchemaResolver,
-} from "../../ObjectSchema";
-import { Pointer } from "../../Pointer";
+} from "../ObjectSchema";
+import { Pointer } from "../Pointer";
 import { QueryVariable } from "./QueryVariable";
 
 

@@ -11,36 +11,39 @@ import {
 	ValuesToken,
 	VariableToken,
 } from "sparqler/tokens";
-import { ModelDecorator } from "../../Model";
-import { Document } from "../../Document";
-import { BasePersistedDocument } from "../../Document/BasePersistedDocument";
-import { CRUDDocument } from "../../Document/CRUDDocument";
+import {
+	BasePersistedDocument,
+	CRUDDocument,
+	Document
+} from "../Document";
 import {
 	IllegalActionError,
 	IllegalArgumentError,
 	IllegalStateError
-} from "../../Errors";
-import { FreeResources } from "../../FreeResources";
+} from "../Errors";
+import { FreeResources } from "../FreeResources";
 import {
 	RequestOptions,
 	RequestUtils
-} from "../../HTTP";
+} from "../HTTP";
 import {
 	JSONLDCompacter,
 	JSONLDParser
-} from "../../JSONLD";
+} from "../JSONLD";
 import {
 	DocumentMetadata,
 	ResponseMetadata
-} from "../../LDP";
-import { Pointer } from "../../Pointer";
+} from "../LDP";
+import { ModelDecorator } from "../Model";
+import { Pointer } from "../Pointer";
 import {
 	RDFDocument,
 	RDFNode,
 	URI
-} from "../../RDF";
-import { DocumentsRegistry } from "../../Registry";
-import { PersistedResource } from "../../Resource";
+} from "../RDF";
+import { DocumentsRegistry } from "../Registry";
+import { PersistedResource } from "../Resource";
+import { SPARQLService } from "../SPARQL";
 import {
 	isBoolean,
 	isDate,
@@ -50,12 +53,11 @@ import {
 	isString,
 	PickSelfProps,
 	promiseMethod
-} from "../../Utils";
+} from "../Utils";
 import {
 	C,
 	LDP
-} from "../../Vocabularies";
-import { SPARQLService } from "../Service";
+} from "../Vocabularies";
 import { PartialMetadata } from "./PartialMetadata";
 import { QueryContext } from "./QueryContext";
 import { QueryContextBuilder } from "./QueryContextBuilder";

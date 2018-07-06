@@ -9,17 +9,19 @@ import {
 	ValuesToken,
 } from "sparqler/tokens";
 
-import { IllegalArgumentError } from "../../Errors/IllegalArgumentError";
-import { IllegalStateError } from "../../Errors/IllegalStateError";
+import {
+	IllegalArgumentError,
+	IllegalStateError
+} from "../Errors";
 import {
 	DigestedObjectSchema,
 	DigestedObjectSchemaProperty,
 	ObjectSchemaDigester,
 	ObjectSchemaProperty,
 	ObjectSchemaUtils,
-} from "../../ObjectSchema";
-import { Pointer } from "../../Pointer";
-import { isObject } from "../../Utils";
+} from "../ObjectSchema";
+import { Pointer } from "../Pointer";
+import { isObject } from "../Utils";
 import { QueryContextBuilder } from "./QueryContextBuilder";
 import { QueryObject } from "./QueryObject";
 import {

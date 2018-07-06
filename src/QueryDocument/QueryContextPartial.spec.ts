@@ -1,12 +1,11 @@
 import {
-	createMockContext,
 	createMockDocument,
 	createMockPartialMetadata
-} from "../../../test/helpers/mocks";
-import { AbstractContext } from "../../Context/AbstractContext";
-import { Document } from "../../Document";
-import { Pointer } from "../../Pointer";
-import { PersistedResource } from "../../Resource";
+} from "../../test/helpers/mocks";
+import { AbstractContext } from "../Context";
+import { Document } from "../Document";
+import { Pointer } from "../Pointer";
+import { PersistedResource } from "../Resource";
 import {
 	clazz,
 	constructor,
@@ -15,20 +14,20 @@ import {
 	INSTANCE,
 	method,
 	module
-} from "../../test/JasmineExtender";
+} from "../test/JasmineExtender";
 import { QueryContext } from "./QueryContext";
 
 import * as Module from "./QueryContextPartial";
 import { QueryContextPartial } from "./QueryContextPartial";
 
-describe( module( "carbonldp/SPARQL/QueryDocument/QueryContextPartial" ), ():void => {
+describe( module( "carbonldp/QueryDocument/QueryContextPartial" ), ():void => {
 
 	it( "should exists", ():void => {
 		expect( Module ).toBeDefined();
 		expect( Module ).toEqual( jasmine.any( Object ) );
 	} );
 
-	describe( clazz( "CarbonLDP.SPARQL.QueryDocument.QueryContextPartial", "Class with the shared status and data of the query." ), ():void => {
+	describe( clazz( "CarbonLDP.QueryDocument.QueryContextPartial", "Class with the shared status and data of the query." ), ():void => {
 
 		it( "should exists", ():void => {
 			expect( QueryContextPartial ).toBeDefined();
@@ -69,7 +68,7 @@ describe( module( "carbonldp/SPARQL/QueryDocument/QueryContextPartial" ), ():voi
 
 		} );
 
-		it( extendsClass( "CarbonLDP.SPARQL.QueryDocument.QueryContext" ), ():void => {
+		it( extendsClass( "CarbonLDP.QueryDocument.QueryContext" ), ():void => {
 			const queryContext:QueryContextPartial = new QueryContextPartial( persistedDocument, context );
 			expect( queryContext ).toEqual( jasmine.any( QueryContext ) );
 		} );

@@ -1,11 +1,11 @@
-import { AbstractContext } from "../../Context/AbstractContext";
-import { IllegalArgumentError } from "../../Errors";
+import { AbstractContext } from "../Context";
+import { IllegalArgumentError } from "../Errors";
 import {
 	DigestedObjectSchema,
 	DigestedObjectSchemaProperty,
 	ObjectSchemaDigester,
 	ObjectSchemaUtils,
-} from "../../ObjectSchema";
+} from "../ObjectSchema";
 import { QueryContext } from "./QueryContext";
 import {
 	QueryProperty,

@@ -1,12 +1,12 @@
-import { createMockContext } from "../../../test/helpers/mocks";
-import { AbstractContext } from "../../Context/AbstractContext";
-import { IllegalArgumentError } from "../../Errors";
+import { createMockContext } from "../../test/helpers/mocks";
+import { AbstractContext } from "../Context";
+import { IllegalArgumentError } from "../Errors";
 import {
 	ContainerType,
 	DigestedObjectSchema,
 	DigestedObjectSchemaProperty,
 	ObjectSchemaDigester
-} from "../../ObjectSchema";
+} from "../ObjectSchema";
 import {
 	clazz,
 	constructor,
@@ -15,7 +15,7 @@ import {
 	INSTANCE,
 	method,
 	module
-} from "../../test/JasmineExtender";
+} from "../test/JasmineExtender";
 import { QueryContext } from "./QueryContext";
 
 import * as Module from "./QueryContextBuilder";
@@ -26,14 +26,14 @@ import {
 	QueryPropertyType,
 } from "./QueryProperty";
 
-describe( module( "carbonldp/SPARQL/QueryDocument/QueryContextBuilder" ), ():void => {
+describe( module( "carbonldp/QueryDocument/QueryContextBuilder" ), ():void => {
 
 	it( "should exists", ():void => {
 		expect( Module ).toBeDefined();
 		expect( Module ).toEqual( jasmine.any( Object ) );
 	} );
 
-	describe( clazz( "CarbonLDP.SPARQL.QueryDocument.QueryContextBuilder", "Class with the shared status and data of the query." ), ():void => {
+	describe( clazz( "CarbonLDP.QueryDocument.QueryContextBuilder", "Class with the shared status and data of the query." ), ():void => {
 
 		it( "should exists", ():void => {
 			expect( QueryContextBuilder ).toBeDefined();
@@ -67,7 +67,7 @@ describe( module( "carbonldp/SPARQL/QueryDocument/QueryContextBuilder" ), ():voi
 
 		} );
 
-		it( extendsClass( "CarbonLDP.SPARQL.QueryDocument.QueryContext" ), ():void => {
+		it( extendsClass( "CarbonLDP.QueryDocument.QueryContext" ), ():void => {
 			const queryContext:QueryContextBuilder = new QueryContextBuilder( context );
 			expect( queryContext ).toEqual( jasmine.any( QueryContext ) );
 		} );
@@ -150,7 +150,7 @@ describe( module( "carbonldp/SPARQL/QueryDocument/QueryContextBuilder" ), ():voi
 				[
 					{ name: "name", type: "string", description: "Name of the property to look for." },
 				],
-				{ type: "CarbonLDP.SPARQL.QueryDocument.QueryProperty" }
+				{ type: "CarbonLDP.QueryDocument.QueryProperty" }
 			), ():void => {
 			} );
 
@@ -183,7 +183,7 @@ describe( module( "carbonldp/SPARQL/QueryDocument/QueryContextBuilder" ), ():voi
 				[
 					{ name: "name", type: "string", description: "Name of the property to look for its children properties." },
 				],
-				{ type: "CarbonLDP.SPARQL.QueryDocument.QueryProperty[]" }
+				{ type: "CarbonLDP.QueryDocument.QueryProperty[]" }
 			), ():void => {
 			} );
 
@@ -231,7 +231,7 @@ describe( module( "carbonldp/SPARQL/QueryDocument/QueryContextBuilder" ), ():voi
 				[
 					{ name: "name", type: "string", description: "Name that the property will have." },
 				],
-				{ type: "CarbonLDP.SPARQL.QueryDocument.QueryProperty" }
+				{ type: "CarbonLDP.QueryDocument.QueryProperty" }
 			), ():void => {} );
 
 			it( "should exists", ():void => {

@@ -1,9 +1,9 @@
 import { isAbsolute } from "sparqler/iri";
 import { LiteralToken } from "sparqler/tokens";
 
-import { IllegalArgumentError } from "../../Errors/IllegalArgumentError";
-import { isDate } from "../../Utils";
-import { XSD } from "../../Vocabularies/XSD";
+import { IllegalArgumentError } from "../Errors";
+import { isDate } from "../Utils";
+import { XSD } from "../Vocabularies";
 import { QueryContext } from "./QueryContext";
 
 export class QueryValue {

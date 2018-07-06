@@ -1,7 +1,7 @@
-import { AbstractContext } from "../../Context/AbstractContext";
-import { DigestedObjectSchema } from "../../ObjectSchema";
-import { Pointer } from "../../Pointer";
-import { PersistedResource } from "../../Resource";
+import { AbstractContext } from "../Context";
+import { DigestedObjectSchema } from "../ObjectSchema";
+import { Pointer } from "../Pointer";
+import { PersistedResource } from "../Resource";
 import { QueryContext } from "./QueryContext";
 
 export class QueryContextPartial extends QueryContext {

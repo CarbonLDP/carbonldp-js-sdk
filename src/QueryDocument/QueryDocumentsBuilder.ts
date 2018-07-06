@@ -7,8 +7,10 @@ import {
 	SubjectToken,
 } from "sparqler/tokens";
 
-import { IllegalArgumentError } from "../../Errors/IllegalArgumentError";
-import { IllegalStateError } from "../../Errors/IllegalStateError";
+import {
+	IllegalArgumentError,
+	IllegalStateError
+} from "../Errors";
 import { QueryDocumentBuilder } from "./QueryDocumentBuilder";
 import { QueryProperty } from "./QueryProperty";
 import { getParentPath } from "./Utils";

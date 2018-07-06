@@ -55,7 +55,7 @@ describe( module( "carbonldp/SPARQL" ), ():void => {
 	it( reexports(
 		STATIC,
 		"QueryDocument",
-		"carbonldp/SPARQL/QueryDocument"
+		"carbonldp/QueryDocument"
 	), ():void => {
 		expect( SPARQL.QueryDocument ).toBeDefined();
 		expect( SPARQL.QueryDocument ).toBe( QueryDocument );

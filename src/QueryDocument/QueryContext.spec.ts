@@ -4,9 +4,9 @@ import {
 	PrefixToken
 } from "sparqler/tokens";
 
-import { createMockContext } from "../../../test/helpers/mocks";
-import { AbstractContext } from "../../Context/AbstractContext";
-import { IllegalArgumentError } from "../../Errors";
+import { createMockContext } from "../../test/helpers/mocks";
+import { AbstractContext } from "../Context";
+import { IllegalArgumentError } from "../Errors";
 import {
 	clazz,
 	constructor,
@@ -14,21 +14,21 @@ import {
 	INSTANCE,
 	method,
 	module
-} from "../../test/JasmineExtender";
+} from "../test/JasmineExtender";
 
 import * as Module from "./QueryContext";
 import { QueryContext } from "./QueryContext";
 
 import { QueryVariable } from "./QueryVariable";
 
-describe( module( "carbonldp/SPARQL/QueryDocument/QueryContext" ), ():void => {
+describe( module( "carbonldp/QueryDocument/QueryContext" ), ():void => {
 
 	it( "should exists", ():void => {
 		expect( Module ).toBeDefined();
 		expect( Module ).toEqual( jasmine.any( Object ) );
 	} );
 
-	describe( clazz( "CarbonLDP.SPARQL.QueryDocument.QueryContext", "Class with the shared status and data of the query." ), ():void => {
+	describe( clazz( "CarbonLDP.QueryDocument.QueryContext", "Class with the shared status and data of the query." ), ():void => {
 
 		it( "should exists", ():void => {
 			expect( QueryContext ).toBeDefined();
@@ -75,7 +75,7 @@ describe( module( "carbonldp/SPARQL/QueryDocument/QueryContext" ), ():void => {
 				[
 					{ name: "name", type: "string" },
 				],
-				{ type: "CarbonLDP.SPARQL.QueryDocument.QueryVariable" }
+				{ type: "CarbonLDP.QueryDocument.QueryVariable" }
 			), ():void => {
 			} );
 
