@@ -9,7 +9,7 @@ import { SPARQLDocumentsRepositoryTrait } from "../SPARQL";
 import {
 	QueryableDocumentsRepositoryTrait,
 	QueryDocumentBuilder
-} from "../SPARQL/QueryDocument";
+} from "../QueryDocument";
 
 
 export interface DocumentsRepository extends QueryableDocumentsRepositoryTrait, SPARQLDocumentsRepositoryTrait, EventEmitterDocumentsRepositoryTrait {

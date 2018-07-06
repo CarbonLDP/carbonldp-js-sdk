@@ -21,8 +21,8 @@ import {
 	PartialMetadata,
 	QueryContextBuilder,
 	QueryPropertyType,
-} from "../SPARQL/QueryDocument";
-import { QueryContextPartial } from "../SPARQL/QueryDocument/";
+} from "../QueryDocument";
+import { QueryContextPartial } from "../QueryDocument/";
 import { JSONLDConverter } from "./Converter";
 
 

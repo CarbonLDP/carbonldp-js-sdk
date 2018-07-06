@@ -31,7 +31,7 @@ import {
 	ValidationReport,
 	ValidationResult,
 } from "../SHACL";
-import { QueryMetadata } from "../SPARQL/QueryDocument";
+import { QueryMetadata } from "../QueryDocument";
 import {
 	PlatformInstance,
 	PlatformMetadata,

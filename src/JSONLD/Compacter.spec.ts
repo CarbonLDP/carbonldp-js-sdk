@@ -9,7 +9,7 @@ import {
 import {
 	QueryContextBuilder,
 	QueryPropertyType
-} from "../SPARQL/QueryDocument";
+} from "../QueryDocument";
 import {
 	clazz,
 	constructor,

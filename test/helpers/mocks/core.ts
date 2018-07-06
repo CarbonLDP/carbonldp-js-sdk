@@ -13,7 +13,7 @@ import {
 	Registry,
 	RegistryService
 } from "../../../src/Registry";
-import { PartialMetadata } from "../../../src/SPARQL/QueryDocument";
+import { PartialMetadata } from "../../../src/QueryDocument";
 import * as Utils from "../../../src/Utils";
 
 

@@ -8,7 +8,7 @@ import { MembersDocument } from "../Members";
 import { MessagingDocument } from "../Messaging";
 import { DocumentsRegistry } from "../Registry";
 import { SPARQLDocument } from "../SPARQL";
-import { QueryDocumentDocument } from "../SPARQL/QueryDocument";
+import { QueryDocumentDocument } from "../QueryDocument";
 import {
 	extendsClass,
 	hasMethod,
