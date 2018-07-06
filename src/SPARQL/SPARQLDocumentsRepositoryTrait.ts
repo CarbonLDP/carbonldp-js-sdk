@@ -1,23 +1,24 @@
 import { QueryClause } from "sparqler/clauses";
 import { DocumentsContext } from "../Context";
+import { IllegalArgumentError } from "../Errors";
+import { RequestOptions } from "../HTTP";
+import {
+	_getNotInContextMessage,
+	HTTPRepositoryTrait
+} from "../HTTP";
 import {
 	ModelDecorator,
 	ModelPrototype
 } from "../Model";
-import { IllegalArgumentError } from "../Errors";
-import { RequestOptions } from "../HTTP";
 import { DigestedObjectSchema } from "../ObjectSchema";
+import { BaseDocumentsRepository } from "../Repository";
 import {
 	FinishSPARQLSelect,
-	SPARQLBuilder,
-	SPARQLSelectResults,
-	SPARQLService
-} from "../SPARQL";
-import { BaseDocumentsRepository } from "./BaseDocumentsRepository";
-import {
-	_getNotInContextMessage,
-	HTTPRepositoryTrait
-} from "./HTTPRepositoryTrait";
+	SPARQLBuilder
+} from "./Builder";
+import { SPARQLSelectResults } from "./SelectResults";
+import { SPARQLService } from "./Service";
+
 
 export interface SPARQLDocumentsRepositoryTrait extends HTTPRepositoryTrait {
 	$context:DocumentsContext;

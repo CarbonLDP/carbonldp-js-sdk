@@ -5,7 +5,7 @@ import {
 } from "../Model";
 import { Document } from "../Document";
 import { Repository } from "../Repository";
-import { BaseDocumentsRepository } from "../Repository/BaseDocumentsRepository";
+import { BaseDocumentsRepository } from "../Repository";
 import { isObject } from "../Utils";
 import { ChildCreated } from "./ChildCreated";
 import { DocumentCreated } from "./DocumentCreated";

@@ -1,5 +1,4 @@
-import { AbstractContext } from "../Context/AbstractContext";
-import { ModelDecorator } from "../Model";
+import { AbstractContext } from "../Context";
 import {
 	IllegalActionError,
 	IllegalArgumentError
@@ -10,6 +9,7 @@ import {
 	RequestService,
 	RequestUtils
 } from "../HTTP";
+import { ModelDecorator } from "../Model";
 import { Pointer } from "../Pointer";
 import { RegistryService } from "../Registry";
 import { TransientResource } from "../Resource";

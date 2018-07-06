@@ -15,3 +15,4 @@ export * from "./MemberRemovedDetails";
 export * from "./Options";
 export * from "./Service";
 export * from "./Utils";
+export { EventEmitterDocumentsRepositoryTrait } from "./EventEmitterDocumentsRepositoryTrait";

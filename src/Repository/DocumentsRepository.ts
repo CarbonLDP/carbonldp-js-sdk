@@ -4,10 +4,13 @@ import {
 	GETOptions,
 	RequestOptions
 } from "../HTTP";
-import { EventEmitterDocumentsRepositoryTrait } from "../Messaging/EventEmitterDocumentsRepositoryTrait";
-import { QueryDocumentBuilder } from "../SPARQL/QueryDocument";
-import { QueryableDocumentsRepositoryTrait } from "./QueryableDocumentsRepositoryTrait";
-import { SPARQLDocumentsRepositoryTrait } from "./SPARQLDocumentsRepositoryTrait";
+import { EventEmitterDocumentsRepositoryTrait } from "../Messaging";
+import { SPARQLDocumentsRepositoryTrait } from "../SPARQL";
+import {
+	QueryableDocumentsRepositoryTrait,
+	QueryDocumentBuilder
+} from "../SPARQL/QueryDocument";
+
 
 export interface DocumentsRepository extends QueryableDocumentsRepositoryTrait, SPARQLDocumentsRepositoryTrait, EventEmitterDocumentsRepositoryTrait {
 	$context:DocumentsContext;

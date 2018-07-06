@@ -1,9 +1,5 @@
 import { DocumentsContext } from "../Context";
 import {
-	ModelDecorator,
-	ModelPrototype
-} from "../Model";
-import {
 	Document,
 	TransientDocument
 } from "../Document";
@@ -12,6 +8,7 @@ import { FreeResources } from "../FreeResources";
 import {
 	GETOptions,
 	Header,
+	HTTPRepositoryTrait,
 	RequestOptions,
 	RequestService,
 	RequestUtils,
@@ -21,20 +18,16 @@ import {
 	BadResponseError,
 	HTTPError
 } from "../HTTP/Errors";
+import { _getNotInContextMessage } from "../HTTP/HTTPRepositoryTrait";
 import {
 	JSONLDCompacter,
 	JSONLDParser
 } from "../JSONLD";
-import {
-	ErrorResponse,
-	Map,
-	ResponseMetadata
-} from "../LDP";
 import { DeltaCreator } from "../LDPatch";
 import {
-	AddMemberAction,
-	RemoveMemberAction
-} from "../Members";
+	ModelDecorator,
+	ModelPrototype
+} from "../Model";
 import { Pointer } from "../Pointer";
 import {
 	RDFDocument,
@@ -45,18 +38,20 @@ import {
 	RegisteredPointer,
 	Registry
 } from "../Registry";
+import {
+	BaseDocumentsRepository,
+	ResolvablePointer
+} from "../Repository";
 import { isString } from "../Utils";
 import {
 	C,
 	LDP
 } from "../Vocabularies";
-import { BaseDocumentsRepository } from "./BaseDocumentsRepository";
-import {
-	_getNotInContextMessage,
-	_inScope,
-	HTTPRepositoryTrait
-} from "./HTTPRepositoryTrait";
-import { ResolvablePointer } from "./ResolvablePointer";
+import { AddMemberAction } from "./AddMemberAction";
+import { ErrorResponse } from "./ErrorResponse";
+import { Map } from "./Map";
+import { RemoveMemberAction } from "./RemoveMemberAction";
+import { ResponseMetadata } from "./ResponseMetadata";
 
 
 export interface LDPDocumentsRepositoryTrait extends HTTPRepositoryTrait<Document> {
@@ -178,7 +173,7 @@ function __isPersistingChild( object:object ):boolean {
 	return object[ "__CarbonLDP_persisting__" ];
 }
 
-function __createChild<T extends object>( repository:LDPDocumentsRepositoryTrait, parentURI:string, requestOptions:RequestOptions, child:T, slug?:string ):Promise<T & Document> {
+function __createChild<T extends object>( this:void, repository:LDPDocumentsRepositoryTrait, parentURI:string, requestOptions:RequestOptions, child:T, slug?:string ):Promise<T & Document> {
 	if( ResolvablePointer.is( child ) ) throw new IllegalArgumentError( "Cannot persist an already resolvable pointer." );
 
 	const transient:T & TransientDocument = TransientDocument.is( child ) ?
@@ -214,9 +209,9 @@ function __createChild<T extends object>( repository:LDPDocumentsRepositoryTrait
 		} );
 }
 
-function __createChildren<T extends object>( retrievalType:"minimal" | "representation", repository:LDPDocumentsRepositoryTrait, uri:string, children:T | T[], slugsOrOptions?:string | string[] | RequestOptions, requestOptions?:RequestOptions ):Promise<(T & Document) | (T & Document)[]> {
-	const url:string = this.$context.resolve( uri );
-	if( _inScope( this, url ) ) return Promise.reject( new IllegalArgumentError( _getNotInContextMessage( uri ) ) );
+function __createChildren<T extends object>( this:void, retrievalType:"minimal" | "representation", repository:LDPDocumentsRepositoryTrait, uri:string, children:T | T[], slugsOrOptions?:string | string[] | RequestOptions, requestOptions?:RequestOptions ):Promise<(T & Document) | (T & Document)[]> {
+	if( repository.$context.registry.inScope( uri ) ) return Promise.reject( new IllegalArgumentError( _getNotInContextMessage( uri ) ) );
+	const url:string = repository.$context.resolve( uri );
 
 	requestOptions = RequestUtils.isOptions( slugsOrOptions ) ?
 		slugsOrOptions :
@@ -258,11 +253,11 @@ function __createChildren<T extends object>( retrievalType:"minimal" | "represen
 }
 
 
-function __sendPatch<T extends object>( repository:LDPDocumentsRepositoryTrait, document:Document, requestOptions:RequestOptions ):Promise<T & Document> {
+function __sendPatch<T extends object>( this:void, repository:LDPDocumentsRepositoryTrait, document:Document, requestOptions:RequestOptions ):Promise<T & Document> {
 	if( ! ResolvablePointer.is( document ) ) return Promise.reject( new IllegalArgumentError( "The document isn't a resolvable pointer." ) );
 
-	const url:string = this.$context.resolve( document.$id );
-	if( _inScope( this, url ) ) return Promise.reject( new IllegalArgumentError( _getNotInContextMessage( document.$id ) ) );
+	if( repository.$context.registry.inScope( document.$id ) ) return Promise.reject( new IllegalArgumentError( _getNotInContextMessage( document.$id ) ) );
+	const url:string = repository.$context.resolve( document.$id );
 
 	if( ! document.isDirty() ) return Promise.resolve( document as T & Document );
 

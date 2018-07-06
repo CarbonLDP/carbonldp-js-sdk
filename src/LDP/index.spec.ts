@@ -11,7 +11,7 @@ import * as LDP from "./";
 import {
 	AddMemberAction,
 	AddMemberActionFactory,
-} from "../Members/AddMemberAction";
+} from "./AddMemberAction";
 import {
 	Error,
 	ErrorFactory,
@@ -39,7 +39,7 @@ import {
 import {
 	RemoveMemberAction,
 	RemoveMemberActionFactory,
-} from "../Members/RemoveMemberAction";
+} from "./RemoveMemberAction";
 import {
 	ResponseMetadata,
 	ResponseMetadataFactory,

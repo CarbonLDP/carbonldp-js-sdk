@@ -1,22 +1,10 @@
 import { Context } from "../Context";
+import { IllegalArgumentError } from "../Errors";
+import { FreeResources } from "../FreeResources";
 import {
 	ModelDecorator,
 	ModelPrototype
 } from "../Model";
-import { IllegalArgumentError } from "../Errors";
-import { FreeResources } from "../FreeResources";
-import {
-	GETOptions,
-	RequestOptions,
-	RequestService,
-	RequestUtils,
-	Response
-} from "../HTTP";
-import {
-	HTTPError,
-	statusCodeMap,
-	UnknownError
-} from "../HTTP/Errors";
 import {
 	DigestedObjectSchema,
 	ObjectSchemaResolver
@@ -26,9 +14,23 @@ import {
 	URI
 } from "../RDF";
 import { RegisteredPointer } from "../Registry";
-import { BaseRepository } from "./BaseRepository";
-import { Repository } from "./Repository";
-import { ResolvablePointer } from "./ResolvablePointer";
+import {
+	BaseRepository,
+	Repository,
+	ResolvablePointer
+} from "../Repository";
+import {
+	HTTPError,
+	statusCodeMap,
+	UnknownError
+} from "./Errors";
+import {
+	GETOptions,
+	RequestOptions,
+	RequestService,
+	RequestUtils
+} from "./Request";
+import { Response } from "./Response";
 
 
 export interface HTTPRepositoryTrait<M extends ResolvablePointer = ResolvablePointer> extends Repository<M> {

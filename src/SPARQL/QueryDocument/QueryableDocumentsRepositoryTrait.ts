@@ -11,54 +11,36 @@ import {
 	ValuesToken,
 	VariableToken
 } from "sparqler/tokens";
-import {
-	ModelDecorator,
-	ModelPrototype
-} from "../Model";
-import { Document } from "../Document";
-import { IllegalArgumentError } from "../Errors";
-import { FreeResources } from "../FreeResources";
+import { Document } from "../../Document";
+import { IllegalArgumentError } from "../../Errors";
+import { FreeResources } from "../../FreeResources";
 import {
 	GETOptions,
 	RequestOptions,
 	RequestUtils
-} from "../HTTP";
+} from "../../HTTP";
+import { _getNotInContextMessage } from "../../HTTP/HTTPRepositoryTrait";
 import {
 	JSONLDCompacter,
 	JSONLDParser
-} from "../JSONLD";
+} from "../../JSONLD";
 import {
 	DocumentMetadata,
 	ResponseMetadata
-} from "../LDP";
-import { Pointer } from "../Pointer";
+} from "../../LDP";
+import { LDPDocumentsRepositoryTrait } from "../../LDP";
+import {
+	ModelDecorator,
+	ModelPrototype
+} from "../../Model";
+import { Pointer } from "../../Pointer";
 import {
 	RDFDocument,
 	RDFNode,
 	URI
-} from "../RDF";
-import { PersistedResource } from "../Resource";
-import { SPARQLService } from "../SPARQL";
-import {
-	PartialMetadata,
-	QueryContext,
-	QueryContextBuilder,
-	QueryContextPartial,
-	QueryDocumentBuilder,
-	QueryDocumentDocument,
-	QueryDocumentsBuilder,
-	QueryMetadata,
-	QueryProperty,
-	QueryPropertyType
-} from "../SPARQL/QueryDocument";
-import {
-	areDifferentType,
-	createAllPattern,
-	createPropertyPatterns,
-	createTypesPattern,
-	getAllTriples,
-	getPathProperty
-} from "../SPARQL/QueryDocument/Utils";
+} from "../../RDF";
+import { BaseDocumentsRepository } from "../../Repository";
+import { PersistedResource } from "../../Resource";
 import {
 	isBoolean,
 	isDate,
@@ -66,17 +48,32 @@ import {
 	isNumber,
 	isObject,
 	isString
-} from "../Utils";
+} from "../../Utils";
 import {
 	C,
 	LDP
-} from "../Vocabularies";
-import { BaseDocumentsRepository } from "./BaseDocumentsRepository";
-import { _getNotInContextMessage } from "./HTTPRepositoryTrait";
+} from "../../Vocabularies";
+import { SPARQLService } from "../Service";
+import { PartialMetadata } from "./PartialMetadata";
+import { QueryContext } from "./QueryContext";
+import { QueryContextBuilder } from "./QueryContextBuilder";
+import { QueryContextPartial } from "./QueryContextPartial";
+import { QueryDocumentBuilder } from "./QueryDocumentBuilder";
+import { QueryDocumentDocument } from "./QueryDocumentDocument";
+import { QueryDocumentsBuilder } from "./QueryDocumentsBuilder";
+import { QueryMetadata } from "./QueryMetadata";
 import {
-	_addAuthentication,
-	LDPDocumentsRepositoryTrait
-} from "./LDPDocumentsRepositoryTrait";
+	QueryProperty,
+	QueryPropertyType
+} from "./QueryProperty";
+import {
+	areDifferentType,
+	createAllPattern,
+	createPropertyPatterns,
+	createTypesPattern,
+	getAllTriples,
+	getPathProperty
+} from "./Utils";
 
 
 export interface QueryableDocumentsRepositoryTrait extends LDPDocumentsRepositoryTrait {
@@ -129,7 +126,6 @@ function __executePatterns<T extends object>( repository:QueryableDocumentsRepos
 	construct.addTriple( ...triples );
 
 	RequestUtils.setRetrievalPreferences( { include: [ C.PreferResultsContext ] }, requestOptions );
-	_addAuthentication( repository.$context, requestOptions );
 
 	return SPARQLService
 		.executeRawCONSTRUCTQuery( url, query.toString(), requestOptions )
@@ -258,7 +254,7 @@ function __executeBuilder<T extends object>( repository:QueryableDocumentsReposi
 
 function __getQueryable<T extends object>( repository:QueryableDocumentsRepositoryTrait, uri:string, requestOptions:RequestOptions, queryBuilderFn?:QueryBuilderFn, target?:Document ):Promise<T & Document> {
 	if( ! repository.$context.registry.inScope( uri ) ) return Promise.reject( new IllegalArgumentError( _getNotInContextMessage( uri ) ) );
-	const url:string = this.$context.resolve( uri );
+	const url:string = repository.$context.resolve( uri );
 
 	// FIXME
 	const queryContext:QueryContextBuilder = new QueryContextBuilder( repository.$context as any );
@@ -307,9 +303,9 @@ function __addRefreshPatterns( queryContext:QueryContextPartial, parentAdder:Opt
 	} );
 }
 
-function __refreshQueryable<T extends object>( repository:QueryableDocumentsRepositoryTrait, document:Document, requestOptions:RequestOptions = {} ):Promise<T & Document> {
+function __refreshQueryable<T extends object>( this:void, repository:QueryableDocumentsRepositoryTrait, document:Document, requestOptions:RequestOptions = {} ):Promise<T & Document> {
 	if( ! repository.$context.registry.inScope( document.$id ) ) return Promise.reject( new IllegalArgumentError( _getNotInContextMessage( document.$id ) ) );
-	const url:string = this.$context.resolve( document.$id );
+	const url:string = repository.$context.resolve( document.$id );
 
 	// FIXME
 	const queryContext:QueryContextPartial = new QueryContextPartial( document, repository.$context as any );

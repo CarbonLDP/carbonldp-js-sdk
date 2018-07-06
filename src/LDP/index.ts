@@ -7,3 +7,4 @@ export * from "./ErrorResponse";
 export * from "./ResponseMetadata";
 export * from "./ValidationError";
 export * from "./VolatileResource";
+export { LDPDocumentsRepositoryTrait } from "./LDPDocumentsRepositoryTrait";
