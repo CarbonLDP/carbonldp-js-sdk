@@ -18,7 +18,7 @@ import {
 	PersistedResourceFactory
 } from "./PersistedResource";
 
-import { TransientResource } from "./TransientResource";
+import { Resource } from "./Resource";
 
 
 function createMock( data?:Partial<PersistedResource> ):PersistedResource {
@@ -212,7 +212,7 @@ describe( module( "carbonldp/PersistedResource" ), ():void => {
 			} );
 
 			it( "should call TransientResource.decorate", ():void => {
-				const spy:jasmine.Spy = spyOn( TransientResource, "decorate" ).and
+				const spy:jasmine.Spy = spyOn( Resource, "decorate" ).and
 					.callThrough();
 
 				PersistedResource.decorate( { the: "object" } );

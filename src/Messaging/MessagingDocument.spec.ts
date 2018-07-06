@@ -3,7 +3,7 @@ import { CarbonLDP } from "../CarbonLDP";
 import { TransientDocument } from "../Document";
 import { DocumentsContext } from "../Context/DocumentsContext";
 import { IllegalActionError } from "../Errors";
-import { TransientResource } from "../Resource";
+import { Resource } from "../Resource";
 import {
 	extendsClass,
 	hasMethod,
@@ -45,7 +45,7 @@ describe( module( "carbonldp/Messaging/MessagingDocument" ), ():void => {
 		} );
 
 		it( extendsClass( "CarbonLDP.TransientResource" ), ():void => {
-			const target:TransientResource = {} as MessagingDocument;
+			const target:Resource = {} as MessagingDocument;
 			expect( target ).toBeDefined();
 		} );
 

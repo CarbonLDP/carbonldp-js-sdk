@@ -25,7 +25,7 @@ import {
 } from "../RDF";
 import {
 	PersistedResource,
-	TransientResource
+	Resource
 } from "../Resource";
 import { MapUtils } from "../Utils";
 import { Registry } from "./Registry";
@@ -153,7 +153,7 @@ export class RegistryService<M extends Pointer, C extends AbstractContext<M, any
 		const freeResourcesDocument:FreeResources = FreeResources
 			.createFrom( { _registry: this } );
 
-		const resources:TransientResource[] = freeNodes
+		const resources:Resource[] = freeNodes
 			.map( node => freeResourcesDocument._addPointer( { id: node[ "@id" ] } ) );
 
 		this._compactRDFNodes( freeNodes, resources, freeResourcesDocument );

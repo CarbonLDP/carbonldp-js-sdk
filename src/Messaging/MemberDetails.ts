@@ -1,10 +1,10 @@
 import { ObjectSchema } from "../ObjectSchema";
 import { Pointer } from "../Pointer";
-import { TransientResource } from "../Resource";
+import { Resource } from "../Resource";
 import { C } from "../Vocabularies/C";
 
 
-export interface MemberDetails extends TransientResource {
+export interface MemberDetails extends Resource {
 	members:Pointer[];
 }
 

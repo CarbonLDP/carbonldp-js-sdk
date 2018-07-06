@@ -6,10 +6,10 @@ import {
 	ObjectUtils,
 	PickSelfProps,
 } from "../Utils";
-import { TransientResource } from "./TransientResource";
+import { Resource } from "./Resource";
 
 
-export interface PersistedResource extends TransientResource {
+export interface PersistedResource extends Resource {
 	_snapshot:object | undefined;
 	_partialMetadata:PartialMetadata | undefined;
 
@@ -46,7 +46,7 @@ function internalRevert( target:any, source:any ):void {
 	} );
 }
 
-const PROTOTYPE:PickSelfProps<PersistedResource, TransientResource> = {
+const PROTOTYPE:PickSelfProps<PersistedResource, Resource> = {
 	get _snapshot():{} { return {}; },
 	_partialMetadata: void 0,
 
@@ -75,7 +75,7 @@ const PROTOTYPE:PickSelfProps<PersistedResource, TransientResource> = {
 };
 
 export interface PersistedResourceFactory {
-	PROTOTYPE:PickSelfProps<PersistedResource, TransientResource>;
+	PROTOTYPE:PickSelfProps<PersistedResource, Resource>;
 
 
 	isDecorated( object:object ):object is PersistedResource;
@@ -108,7 +108,7 @@ export const PersistedResource:PersistedResourceFactory = {
 	decorate<T extends object>( object:T ):T & PersistedResource {
 		if( PersistedResource.isDecorated( object ) ) return object;
 
-		const resource:T & TransientResource = TransientResource.decorate( object );
+		const resource:T & Resource = Resource.decorate( object );
 
 		return ModelDecorator
 			.definePropertiesFrom( PROTOTYPE, resource );

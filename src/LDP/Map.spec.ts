@@ -1,4 +1,4 @@
-import { TransientResource } from "../Resource";
+import { Resource } from "../Resource";
 import {
 	extendsClass,
 	hasMethod,
@@ -108,7 +108,7 @@ describe( module( "carbonldp/LDP/Map" ), ():void => {
 			object = null;
 			expect( Map.is( object ) ).toBe( false );
 
-			object = TransientResource.decorate( {
+			object = Resource.decorate( {
 				types: [ C.Map ],
 				entries: null,
 			} );

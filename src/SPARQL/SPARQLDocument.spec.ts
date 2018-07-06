@@ -6,7 +6,7 @@ import { CarbonLDP } from "../CarbonLDP";
 import { IllegalArgumentError } from "../Errors";
 import { RequestOptions } from "../HTTP";
 import { DocumentsRegistry } from "../Registry";
-import { TransientResource } from "../Resource";
+import { Resource } from "../Resource";
 import {
 	extendsClass,
 	hasSignature,
@@ -35,7 +35,7 @@ describe( module( "carbonldp/SPARQL/SPARQLDocument" ), () => {
 	), () => {
 
 		it( extendsClass( "CarbonLDP.TransientResource" ), () => {
-			const target:TransientResource = {} as SPARQLDocument;
+			const target:Resource = {} as SPARQLDocument;
 			expect( target ).toBeDefined();
 		} );
 

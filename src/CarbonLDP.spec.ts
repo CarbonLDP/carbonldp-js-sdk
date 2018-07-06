@@ -32,7 +32,7 @@ import * as RDF from "./RDF";
 import { DocumentsRegistry } from "./Registry";
 import {
 	PersistedResource,
-	TransientResource,
+	Resource,
 } from "./Resource";
 import { CarbonLDPSettings } from "./Settings";
 import * as SHACL from "./SHACL";
@@ -309,7 +309,7 @@ describe( module( "carbonldp/CarbonLDP" ), ():void => {
 			"carbonldp/TransientResource#TransientResource"
 		), ():void => {
 			expect( CarbonLDP.CarbonLDP.TransientResource ).toBeDefined();
-			expect( CarbonLDP.CarbonLDP.TransientResource ).toBe( TransientResource );
+			expect( CarbonLDP.CarbonLDP.TransientResource ).toBe( Resource );
 		} );
 
 		it( reexports(

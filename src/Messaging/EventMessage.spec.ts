@@ -1,5 +1,5 @@
 import { Pointer } from "../Pointer";
-import { TransientResource } from "../Resource";
+import { Resource } from "../Resource";
 import {
 	extendsClass,
 	hasProperty,
@@ -29,7 +29,7 @@ describe( module( "carbonldp/Messaging/Message" ), ():void => {
 		} );
 
 		it( extendsClass( "CarbonLDP.TransientResource" ), ():void => {
-			const target:TransientResource = {} as EventMessage;
+			const target:Resource = {} as EventMessage;
 			expect( target ).toBeDefined();
 		} );
 
@@ -112,7 +112,7 @@ describe( module( "carbonldp/Messaging/Message" ), ():void => {
 			} );
 
 			it( "should return false if has a missing model properties", ():void => {
-				const object:EventMessage = TransientResource.create( {
+				const object:EventMessage = Resource.create( {
 					target: null,
 				} );
 

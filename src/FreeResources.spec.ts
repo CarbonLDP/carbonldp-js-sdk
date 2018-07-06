@@ -9,7 +9,7 @@ import {
 	Registry,
 	RegistryService
 } from "./Registry";
-import { TransientResource } from "./Resource";
+import { Resource } from "./Resource";
 import {
 	extendsClass,
 	hasMethod,
@@ -98,7 +98,7 @@ describe( module( "carbonldp/FreeResources" ), ():void => {
 			} );
 
 			it( "should return existing resource", ():void => {
-				const resource:TransientResource = freeResources._addPointer( { id: "_:some" } );
+				const resource:Resource = freeResources._addPointer( { id: "_:some" } );
 				expect( freeResources.getPointer( "_:some" ) ).toBe( resource );
 			} );
 
@@ -106,7 +106,7 @@ describe( module( "carbonldp/FreeResources" ), ():void => {
 				const resource:Pointer = freeResources.getPointer( "_:another" );
 
 				expect( resource.$id ).toBe( "_:another" );
-				expect( resource ).toEqual( anyThatMatches( TransientResource.is, "Resource" ) as any );
+				expect( resource ).toEqual( anyThatMatches( Resource.is, "Resource" ) as any );
 			} );
 
 			it( "should return from parent resource", ():void => {
@@ -175,7 +175,7 @@ describe( module( "carbonldp/FreeResources" ), ():void => {
 						},
 					} );
 
-				freeResources._addPointer( TransientResource.createFrom( {
+				freeResources._addPointer( Resource.createFrom( {
 					$id: "_:some",
 					types: [ "http://example.com/ns#MyType" ],
 					"http://example.com/ns#property": "A Property",
@@ -199,7 +199,7 @@ describe( module( "carbonldp/FreeResources" ), ():void => {
 			it( "should expand resource with no registry and context", () => {
 				delete freeResources.$registry;
 
-				freeResources._addPointer( TransientResource.createFrom( {
+				freeResources._addPointer( Resource.createFrom( {
 					$id: "_:another",
 					types: [ "http://example.com/ns#MyType" ],
 					"http://example.com/ns#property": "A Property",

@@ -1,4 +1,4 @@
-import { TransientResource } from "../Resource";
+import { Resource } from "../Resource";
 import {
 	hasMethod,
 	hasProperty,
@@ -61,7 +61,7 @@ describe( module( "carbonldp/Fragment" ), ():void => {
 
 			let isTransientResource:jasmine.Spy;
 			beforeEach( ():void => {
-				isTransientResource = spyOn( TransientResource, "is" )
+				isTransientResource = spyOn( Resource, "is" )
 					.and.returnValue( true );
 			} );
 
@@ -124,7 +124,7 @@ describe( module( "carbonldp/Fragment" ), ():void => {
 			} );
 
 			it( "should call TransientResource.isDecorated", ():void => {
-				const spy:jasmine.Spy = spyOn( TransientResource, "isDecorated" );
+				const spy:jasmine.Spy = spyOn( Resource, "isDecorated" );
 
 				TransientFragment.isDecorated( { the: "object" } );
 				expect( spy ).toHaveBeenCalledWith( { the: "object" } );
@@ -214,7 +214,7 @@ describe( module( "carbonldp/Fragment" ), ():void => {
 			} );
 
 			it( "should call TransientResource.decorate", ():void => {
-				const spy:jasmine.Spy = spyOn( TransientResource, "decorate" );
+				const spy:jasmine.Spy = spyOn( Resource, "decorate" );
 
 				TransientFragment.decorate( { the: "object" } );
 				expect( spy ).toHaveBeenCalledWith( { the: "object" } );

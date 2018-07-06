@@ -12,7 +12,7 @@ import {
 import { ModelDecorator } from "../Model";
 import { Pointer } from "../Pointer";
 import { RegistryService } from "../Registry";
-import { TransientResource } from "../Resource";
+import { Resource } from "../Resource";
 import {
 	isObject,
 	isString,
@@ -27,7 +27,7 @@ import { AddMemberAction } from "./AddMemberAction";
 import { RemoveMemberAction } from "./RemoveMemberAction";
 
 
-export interface MembersDocument extends TransientResource {
+export interface MembersDocument extends Resource {
 	_registry:RegistryService<MembersDocument, AbstractContext<MembersDocument, any> | undefined> | undefined;
 
 
@@ -129,7 +129,7 @@ function sendRemoveAction( repository:MembersDocument, uri:string | undefined, m
 }
 
 
-const PROTOTYPE:PickSelfProps<MembersDocument, TransientResource, "_registry"> = {
+const PROTOTYPE:PickSelfProps<MembersDocument, Resource, "_registry"> = {
 	_registry: void 0,
 
 
@@ -234,7 +234,7 @@ const PROTOTYPE:PickSelfProps<MembersDocument, TransientResource, "_registry"> =
 };
 
 export interface MembersDocumentFactory {
-	PROTOTYPE:PickSelfProps<MembersDocument, TransientResource, "_registry">;
+	PROTOTYPE:PickSelfProps<MembersDocument, Resource, "_registry">;
 
 
 	isDecorated( object:object ):object is MembersDocument;
@@ -256,8 +256,8 @@ export const MembersDocument:MembersDocumentFactory = {
 	decorate<T extends object>( object:T ):T & MembersDocument {
 		if( MembersDocument.isDecorated( object ) ) return object;
 
-		const resource:T & TransientResource = ModelDecorator
-			.decorateMultiple( object, TransientResource );
+		const resource:T & Resource = ModelDecorator
+			.decorateMultiple( object, Resource );
 
 		return ModelDecorator
 			.definePropertiesFrom( PROTOTYPE, resource );

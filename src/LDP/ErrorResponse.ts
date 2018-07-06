@@ -1,12 +1,12 @@
 import { ModelSchema } from "../Model/ModelSchema";
 import { ObjectSchema } from "../ObjectSchema";
-import { TransientResource } from "../Resource";
+import { Resource } from "../Resource";
 import { C } from "../Vocabularies/C";
 import { XSD } from "../Vocabularies/XSD";
 import { Error } from "./Error";
 
 
-export interface ErrorResponse extends TransientResource {
+export interface ErrorResponse extends Resource {
 	errors:Error[];
 	requestID:string;
 	statusCode:number;
@@ -46,7 +46,7 @@ export const ErrorResponse:ErrorResponseFactory = {
 
 
 	is( value:any ):value is ErrorResponse {
-		return TransientResource.is( value )
+		return Resource.is( value )
 			&& value.hasType( ErrorResponse.TYPE )
 			;
 	},

@@ -16,7 +16,7 @@ import {
 import { LDP } from "../Vocabularies";
 import { BaseResource } from "./BaseResource";
 
-import { TransientResource } from "./TransientResource";
+import { Resource } from "./Resource";
 
 
 describe( module( "carbonldp/Resource" ), ():void => {
@@ -119,17 +119,17 @@ describe( module( "carbonldp/Resource" ), ():void => {
 	describe( property( STATIC, "TransientResource", "CarbonLDP.TransientResourceFactory", "Constant that implements the `CarbonLDP.TransientResourceFactory` interface." ), ():void => {
 
 		it( isDefined(), ():void => {
-			expect( TransientResource ).toBeDefined();
-			expect( TransientResource ).toEqual( jasmine.any( Object ) );
+			expect( Resource ).toBeDefined();
+			expect( Resource ).toEqual( jasmine.any( Object ) );
 		} );
 
 		// TODO: Separate in different tests
 		it( "TransientResource.isDecorated", ():void => {
-			expect( TransientResource.isDecorated ).toBeDefined();
-			expect( TransientResource.isDecorated ).toEqual( jasmine.any( Function ) );
+			expect( Resource.isDecorated ).toBeDefined();
+			expect( Resource.isDecorated ).toEqual( jasmine.any( Function ) );
 
 			let object:any = undefined;
-			expect( TransientResource.isDecorated( object ) ).toBe( false );
+			expect( Resource.isDecorated( object ) ).toBe( false );
 			object = {
 				types: null,
 
@@ -137,29 +137,29 @@ describe( module( "carbonldp/Resource" ), ():void => {
 				hasType: ():void => {},
 				removeType: ():void => {},
 			};
-			expect( TransientResource.isDecorated( object ) ).toBe( true );
+			expect( Resource.isDecorated( object ) ).toBe( true );
 
 			delete object.types;
-			expect( TransientResource.isDecorated( object ) ).toBe( false );
+			expect( Resource.isDecorated( object ) ).toBe( false );
 			object.types = null;
 
 			delete object.addType;
-			expect( TransientResource.isDecorated( object ) ).toBe( false );
+			expect( Resource.isDecorated( object ) ).toBe( false );
 			object.addType = ():void => {};
 
 			delete object.hasType;
-			expect( TransientResource.isDecorated( object ) ).toBe( false );
+			expect( Resource.isDecorated( object ) ).toBe( false );
 			object.hasType = ():void => {};
 
 			delete object.removeType;
-			expect( TransientResource.isDecorated( object ) ).toBe( false );
+			expect( Resource.isDecorated( object ) ).toBe( false );
 			object.removeType = ():void => {};
 		} );
 
 		// TODO: Separate in different tests
 		it( "TransientResource.is", ():void => {
 			let object:Object = undefined;
-			expect( TransientResource.is( object ) ).toBe( false );
+			expect( Resource.is( object ) ).toBe( false );
 
 			object = {
 				types: null,
@@ -168,44 +168,44 @@ describe( module( "carbonldp/Resource" ), ():void => {
 				hasType: ():void => {},
 				removeType: ():void => {},
 			};
-			expect( TransientResource.is( object ) ).toBe( false );
+			expect( Resource.is( object ) ).toBe( false );
 
 			let resource:Pointer = Pointer.decorate( object );
-			expect( TransientResource.is( resource ) ).toBe( true );
+			expect( Resource.is( resource ) ).toBe( true );
 		} );
 
 		// TODO: Separate in different tests
 		it( "TransientResource.create", ():void => {
-			expect( TransientResource.create ).toBeDefined();
-			expect( TransientResource.create ).toEqual( jasmine.any( Function ) );
+			expect( Resource.create ).toBeDefined();
+			expect( Resource.create ).toEqual( jasmine.any( Function ) );
 
-			let resource:TransientResource;
+			let resource:Resource;
 
-			resource = TransientResource.create();
+			resource = Resource.create();
 			expect( resource ).toBeTruthy();
-			expect( TransientResource.isDecorated( resource ) ).toBe( true );
+			expect( Resource.isDecorated( resource ) ).toBe( true );
 			expect( resource.$id ).toBe( "" );
 			expect( resource.types ).toEqual( jasmine.any( Array ) );
 			expect( resource.types.length ).toBe( 0 );
 
-			resource = TransientResource.create( { $id: "http://example.com/resource/" } );
+			resource = Resource.create( { $id: "http://example.com/resource/" } );
 			expect( resource ).toBeTruthy();
-			expect( TransientResource.isDecorated( resource ) ).toBe( true );
+			expect( Resource.isDecorated( resource ) ).toBe( true );
 			expect( resource.$id ).toBe( "http://example.com/resource/" );
 			expect( resource.types ).toEqual( jasmine.any( Array ) );
 			expect( resource.types.length ).toBe( 0 );
 
-			resource = TransientResource.create( { $id: "http://example.com/resource/", types: [ LDP.RDFSource ] } );
+			resource = Resource.create( { $id: "http://example.com/resource/", types: [ LDP.RDFSource ] } );
 			expect( resource ).toBeTruthy();
-			expect( TransientResource.isDecorated( resource ) ).toBe( true );
+			expect( Resource.isDecorated( resource ) ).toBe( true );
 			expect( resource.$id ).toBe( "http://example.com/resource/" );
 			expect( resource.types ).toEqual( jasmine.any( Array ) );
 			expect( resource.types.length ).toBe( 1 );
 			expect( resource.types ).toEqual( [ LDP.RDFSource ] );
 
-			resource = TransientResource.create( { $id: null, types: [ LDP.RDFSource, LDP.Container ] } );
+			resource = Resource.create( { $id: null, types: [ LDP.RDFSource, LDP.Container ] } );
 			expect( resource ).toBeTruthy();
-			expect( TransientResource.isDecorated( resource ) ).toBe( true );
+			expect( Resource.isDecorated( resource ) ).toBe( true );
 			expect( resource.$id ).toBe( "" );
 			expect( resource.types ).toEqual( jasmine.any( Array ) );
 			expect( resource.types.length ).toBe( 2 );
@@ -214,12 +214,12 @@ describe( module( "carbonldp/Resource" ), ():void => {
 
 		// TODO: Separate in different tests
 		it( "TransientResource.createFrom", ():void => {
-			expect( TransientResource.createFrom ).toBeDefined();
-			expect( TransientResource.createFrom ).toEqual( jasmine.any( Function ) );
+			expect( Resource.createFrom ).toBeDefined();
+			expect( Resource.createFrom ).toEqual( jasmine.any( Function ) );
 
-			let simpleResource:TransientResource = TransientResource.createFrom( { $id: "http://example.com/simple-resource/" } );
+			let simpleResource:Resource = Resource.createFrom( { $id: "http://example.com/simple-resource/" } );
 			expect( simpleResource ).toBeTruthy();
-			expect( TransientResource.isDecorated( simpleResource ) ).toBe( true );
+			expect( Resource.isDecorated( simpleResource ) ).toBe( true );
 			expect( simpleResource.$id ).toBe( "http://example.com/simple-resource/" );
 			expect( simpleResource.types ).toEqual( jasmine.any( Array ) );
 			expect( simpleResource.types.length ).toBe( 0 );
@@ -228,29 +228,29 @@ describe( module( "carbonldp/Resource" ), ():void => {
 				myProperty:string;
 			}
 
-			let resource:TransientResource & MyResource;
+			let resource:Resource & MyResource;
 
-			resource = TransientResource.createFrom<MyResource>( { myProperty: "a property" } );
+			resource = Resource.createFrom<MyResource>( { myProperty: "a property" } );
 			expect( resource ).toBeTruthy();
-			expect( TransientResource.isDecorated( resource ) ).toBe( true );
+			expect( Resource.isDecorated( resource ) ).toBe( true );
 			expect( resource.$id ).toBe( "" );
 			expect( resource.types ).toEqual( jasmine.any( Array ) );
 			expect( resource.types.length ).toBe( 0 );
 			expect( resource.myProperty ).toBeDefined();
 			expect( resource.myProperty ).toBe( "a property" );
 
-			resource = TransientResource.createFrom<MyResource>( { myProperty: "a property", $id: "http://example.com/resource/" } );
+			resource = Resource.createFrom<MyResource>( { myProperty: "a property", $id: "http://example.com/resource/" } );
 			expect( resource ).toBeTruthy();
-			expect( TransientResource.isDecorated( resource ) ).toBe( true );
+			expect( Resource.isDecorated( resource ) ).toBe( true );
 			expect( resource.$id ).toBe( "http://example.com/resource/" );
 			expect( resource.types ).toEqual( jasmine.any( Array ) );
 			expect( resource.types.length ).toBe( 0 );
 			expect( resource.myProperty ).toBeDefined();
 			expect( resource.myProperty ).toBe( "a property" );
 
-			resource = TransientResource.createFrom<MyResource>( { myProperty: "a property", $id: "http://example.com/resource/", types: [ LDP.RDFSource ] } );
+			resource = Resource.createFrom<MyResource>( { myProperty: "a property", $id: "http://example.com/resource/", types: [ LDP.RDFSource ] } );
 			expect( resource ).toBeTruthy();
-			expect( TransientResource.isDecorated( resource ) ).toBe( true );
+			expect( Resource.isDecorated( resource ) ).toBe( true );
 			expect( resource.$id ).toBe( "http://example.com/resource/" );
 			expect( resource.types ).toEqual( jasmine.any( Array ) );
 			expect( resource.types.length ).toBe( 1 );
@@ -258,9 +258,9 @@ describe( module( "carbonldp/Resource" ), ():void => {
 			expect( resource.myProperty ).toBeDefined();
 			expect( resource.myProperty ).toBe( "a property" );
 
-			resource = TransientResource.createFrom<MyResource>( { myProperty: "a property", $id: null, types: [ LDP.RDFSource, LDP.Container ] } );
+			resource = Resource.createFrom<MyResource>( { myProperty: "a property", $id: null, types: [ LDP.RDFSource, LDP.Container ] } );
 			expect( resource ).toBeTruthy();
-			expect( TransientResource.isDecorated( resource ) ).toBe( true );
+			expect( Resource.isDecorated( resource ) ).toBe( true );
 			expect( resource.$id ).toBe( "" );
 			expect( resource.types ).toEqual( jasmine.any( Array ) );
 			expect( resource.types.length ).toBe( 2 );
@@ -271,37 +271,37 @@ describe( module( "carbonldp/Resource" ), ():void => {
 
 		// TODO: Separate in different tests
 		it( "TransientResource.decorate", ():void => {
-			expect( TransientResource.decorate ).toBeDefined();
-			expect( TransientResource.decorate ).toEqual( jasmine.any( Function ) );
+			expect( Resource.decorate ).toBeDefined();
+			expect( Resource.decorate ).toEqual( jasmine.any( Function ) );
 
 
 			interface MyResource {
 				myProperty?:string;
 			}
 
-			let resource:TransientResource & MyResource;
+			let resource:Resource & MyResource;
 
-			resource = TransientResource.decorate<MyResource>( {} );
-			expect( TransientResource.isDecorated( resource ) ).toBe( true );
+			resource = Resource.decorate<MyResource>( {} );
+			expect( Resource.isDecorated( resource ) ).toBe( true );
 			expect( resource.types ).toEqual( [] );
 
-			resource = TransientResource.decorate<MyResource>( { myProperty: "a property" } );
-			expect( TransientResource.isDecorated( resource ) ).toBe( true );
+			resource = Resource.decorate<MyResource>( { myProperty: "a property" } );
+			expect( Resource.isDecorated( resource ) ).toBe( true );
 			expect( resource.myProperty ).toBeDefined();
 			expect( resource.myProperty ).toBe( "a property" );
 			expect( resource.types ).toEqual( [] );
 
 
 			resource.types = [ LDP.RDFSource ];
-			resource = TransientResource.decorate<MyResource>( resource );
+			resource = Resource.decorate<MyResource>( resource );
 			expect( resource.types ).toEqual( [ LDP.RDFSource ] );
 		} );
 
 		describe( "Decorated `Resource`", ():void => {
 
-			let resource:TransientResource;
+			let resource:Resource;
 			beforeEach( ():void => {
-				resource = TransientResource.create();
+				resource = Resource.create();
 
 				const context:AbstractContext<any, any> = createMockContext();
 				context.extendObjectSchema( {
@@ -366,7 +366,7 @@ describe( module( "carbonldp/Resource" ), ():void => {
 				} );
 
 				it( "should add un-resolved type from prefixed provided when no registry's context", ():void => {
-					resource._registry = new RegistryService( TransientResource );
+					resource._registry = new RegistryService( Resource );
 
 					resource.addType( "exTypes:Type-1" );
 					expect( resource.types ).toEqual( [
@@ -404,7 +404,7 @@ describe( module( "carbonldp/Resource" ), ():void => {
 				} );
 
 				it( "should add un-resolved type from relative provided when no registry's context", ():void => {
-					resource._registry = new RegistryService( TransientResource );
+					resource._registry = new RegistryService( Resource );
 
 					resource.addType( "Type-1" );
 					expect( resource.types ).toEqual( [
@@ -536,7 +536,7 @@ describe( module( "carbonldp/Resource" ), ():void => {
 				} );
 
 				it( "should not remove prefixed type when no registry's context", ():void => {
-					resource._registry = new RegistryService( TransientResource );
+					resource._registry = new RegistryService( Resource );
 
 					resource.types = [
 						"http://example.com/types#Type-1",
@@ -584,7 +584,7 @@ describe( module( "carbonldp/Resource" ), ():void => {
 				} );
 
 				it( "should not remove relative type when no registry's context", ():void => {
-					resource._registry = new RegistryService( TransientResource );
+					resource._registry = new RegistryService( Resource );
 
 					resource.types = [
 						"http://example.com/ns#Type-1",

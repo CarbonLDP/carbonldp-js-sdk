@@ -29,7 +29,7 @@ import { ProtectedDocument } from "./ProtectedDocument";
 import * as RDF from "./RDF";
 import {
 	PersistedResource,
-	TransientResource,
+	Resource,
 } from "./Resource";
 import {
 	CarbonLDPSettings,
@@ -67,7 +67,7 @@ export class CarbonLDP extends DocumentsContext {
 	static PersistedResource:typeof PersistedResource = PersistedResource;
 	static Pointer:typeof Pointer = Pointer;
 	static RDF:typeof RDF = RDF;
-	static TransientResource:typeof TransientResource = TransientResource;
+	static TransientResource:typeof Resource = Resource;
 	static GlobalContext:typeof GlobalContext = GlobalContext;
 	static SHACL:typeof SHACL = SHACL;
 	static SPARQL:typeof SPARQL = SPARQL;

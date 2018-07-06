@@ -8,7 +8,7 @@ import {
 } from "../HTTP";
 import { DigestedObjectSchema } from "../ObjectSchema";
 import { RegistryService } from "../Registry";
-import { TransientResource } from "../Resource";
+import { Resource } from "../Resource";
 import {
 	isObject,
 	PickSelfProps,
@@ -23,7 +23,7 @@ import { SPARQLSelectResults } from "./SelectResults";
 import { SPARQLService } from "./Service";
 
 
-export interface SPARQLDocument extends TransientResource {
+export interface SPARQLDocument extends Resource {
 	_registry:RegistryService<SPARQLDocument, AbstractContext<SPARQLDocument, any> | undefined> | undefined;
 
 
@@ -81,7 +81,7 @@ function parseParams( this:void, resource:SPARQLDocument, registry:RegistryServi
 	return { url, query, options };
 }
 
-const PROTOTYPE:PickSelfProps<SPARQLDocument, TransientResource, "_registry"> = {
+const PROTOTYPE:PickSelfProps<SPARQLDocument, Resource, "_registry"> = {
 	_registry: void 0,
 
 
@@ -193,7 +193,7 @@ const PROTOTYPE:PickSelfProps<SPARQLDocument, TransientResource, "_registry"> = 
 
 
 export interface SPARQLDocumentFactory {
-	PROTOTYPE:PickSelfProps<SPARQLDocument, TransientResource, "_registry">;
+	PROTOTYPE:PickSelfProps<SPARQLDocument, Resource, "_registry">;
 
 	isDecorated( object:object ):object is SPARQLDocument;
 
@@ -213,8 +213,8 @@ export const SPARQLDocument:SPARQLDocumentFactory = {
 	decorate<T extends object>( object:T ):T & SPARQLDocument {
 		if( SPARQLDocument.isDecorated( object ) ) return object;
 
-		const resource:T & TransientResource = ModelDecorator
-			.decorateMultiple( object, TransientResource );
+		const resource:T & Resource = ModelDecorator
+			.decorateMultiple( object, Resource );
 
 		return ModelDecorator
 			.definePropertiesFrom( PROTOTYPE, resource );

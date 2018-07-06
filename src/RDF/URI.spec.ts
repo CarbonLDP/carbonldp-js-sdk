@@ -462,21 +462,21 @@ describe( module( "carbonldp/RDF/URI" ), ():void => {
 			})();
 
 			expect( URI.getSlug( "http://example.com/resource" ) ).toEqual( "resource" );
-			expect( URI.getSlug( "http://example.com/resource/" ) ).toEqual( "resource/" );
+			expect( URI.getSlug( "http://example.com/resource/" ) ).toEqual( "resource" );
 			expect( URI.getSlug( "http://example.com/resource-1/resource-2/resource-3" ) ).toEqual( "resource-3" );
-			expect( URI.getSlug( "http://example.com/resource-1/resource-2/resource-3/" ) ).toEqual( "resource-3/" );
+			expect( URI.getSlug( "http://example.com/resource-1/resource-2/resource-3/" ) ).toEqual( "resource-3" );
 			expect( URI.getSlug( "resource-1/resource-2/resource-3" ) ).toEqual( "resource-3" );
-			expect( URI.getSlug( "resource-1/resource-2/resource-3/" ) ).toEqual( "resource-3/" );
+			expect( URI.getSlug( "resource-1/resource-2/resource-3/" ) ).toEqual( "resource-3" );
 			expect( URI.getSlug( "" ) ).toEqual( "" );
 			expect( URI.getSlug( "/" ) ).toEqual( "/" );
 			expect( URI.getSlug( "http://example.com/resource#fragment" ) ).toEqual( "fragment" );
-			expect( URI.getSlug( "http://example.com/resource#fragment/" ) ).toEqual( "fragment/" );
+			expect( URI.getSlug( "http://example.com/resource#fragment/" ) ).toEqual( "fragment" );
 			expect( URI.getSlug( "http://example.com/resource-1#fragment-2/fragment-3" ) ).toEqual( "fragment-3" );
-			expect( URI.getSlug( "http://example.com/resource-1#fragment-2/fragment-3/" ) ).toEqual( "fragment-3/" );
+			expect( URI.getSlug( "http://example.com/resource-1#fragment-2/fragment-3/" ) ).toEqual( "fragment-3" );
 			expect( URI.getSlug( "resource-1#fragment-2/fragment-3" ) ).toEqual( "fragment-3" );
-			expect( URI.getSlug( "resource-1#fragment-2/fragment-3/" ) ).toEqual( "fragment-3/" );
+			expect( URI.getSlug( "resource-1#fragment-2/fragment-3/" ) ).toEqual( "fragment-3" );
 			expect( URI.getSlug( "#" ) ).toEqual( "" );
-			expect( URI.getSlug( "#/" ) ).toEqual( "/" );
+			expect( URI.getSlug( "#/" ) ).toEqual( "" );
 		} );
 
 		// TODO: Separate in different tests

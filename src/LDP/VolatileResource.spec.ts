@@ -1,5 +1,5 @@
 import { anyThatMatches } from "../../test/helpers/jasmine/equalities";
-import { TransientResource } from "../Resource";
+import { Resource } from "../Resource";
 import {
 	extendsClass,
 	hasMethod,
@@ -55,9 +55,9 @@ describe( module( "carbonldp/LDP/VolatileResource" ), ():void => {
 
 
 			let isTransientResource:jasmine.Spy;
-			let mockObject:jasmine.SpyObj<TransientResource>;
+			let mockObject:jasmine.SpyObj<Resource>;
 			beforeEach( ():void => {
-				isTransientResource = spyOn( TransientResource, "is" )
+				isTransientResource = spyOn( Resource, "is" )
 					.and.returnValue( true );
 				mockObject = jasmine.createSpyObj( {
 					hasType: true,
@@ -180,7 +180,7 @@ describe( module( "carbonldp/LDP/VolatileResource" ), ():void => {
 			object = {};
 			expect( VolatileResource.is( object ) ).toBe( false );
 
-			TransientResource.decorate( object );
+			Resource.decorate( object );
 			expect( VolatileResource.is( object ) ).toBe( false );
 
 			object[ "types" ].push( C.VolatileResource );

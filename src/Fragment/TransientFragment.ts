@@ -1,10 +1,10 @@
 import { Pointer } from "../Pointer";
 import { Registry } from "../Registry";
-import { TransientResource } from "../Resource";
+import { Resource } from "../Resource";
 import { BaseFragment } from "./BaseFragment";
 
 
-export interface TransientFragment extends TransientResource {
+export interface TransientFragment extends Resource {
 	_registry:Registry<TransientFragment> & Pointer | undefined;
 }
 
@@ -24,12 +24,12 @@ export interface TransientFragmentFactory {
 
 export const TransientFragment:TransientFragmentFactory = {
 	isDecorated( object:object ):object is TransientFragment {
-		return TransientResource.isDecorated( object )
+		return Resource.isDecorated( object )
 			;
 	},
 
 	is( value:any ):value is TransientFragment {
-		return TransientResource.is( value )
+		return Resource.is( value )
 			;
 	},
 
@@ -45,7 +45,7 @@ export const TransientFragment:TransientFragmentFactory = {
 	decorate<T extends object>( object:T ):T & TransientFragment {
 		if( TransientFragment.isDecorated( object ) ) return object;
 
-		TransientResource.decorate( object );
+		Resource.decorate( object );
 
 		return object as T & TransientFragment;
 	},

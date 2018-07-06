@@ -1,11 +1,11 @@
 import { ObjectSchema } from "../ObjectSchema";
 import { Pointer } from "../Pointer";
-import { TransientResource } from "../Resource";
+import { Resource } from "../Resource";
 import { SHACL } from "../Vocabularies/SHACL";
 import { XSD } from "../Vocabularies/XSD";
 
 
-export interface ValidationResult extends TransientResource {
+export interface ValidationResult extends Resource {
 	focusNode:Pointer;
 	resultPath?:Pointer;
 	value?:any;

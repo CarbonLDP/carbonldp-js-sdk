@@ -13,7 +13,7 @@ import {
 	Registry,
 	RegistryService,
 } from "./Registry";
-import { TransientResource } from "./Resource";
+import { Resource } from "./Resource";
 import {
 	isObject,
 	PickSelfProps
@@ -25,13 +25,13 @@ export interface BaseFreeResources {
 }
 
 
-export interface FreeResources extends Registry<TransientResource> {
+export interface FreeResources extends Registry<Resource> {
 	$registry:RegistryService<Pointer, any> | undefined;
 
 
 	__getLocalID( id:string ):string;
 
-	_addPointer<T extends object>( base:T & { id?:string } ):T & TransientResource;
+	_addPointer<T extends object>( base:T & { id?:string } ):T & Resource;
 
 
 	toJSON():RDFNode[];
@@ -43,7 +43,7 @@ type OverloadedProps =
 	| "_addPointer"
 	;
 
-const PROTOTYPE:PickSelfProps<FreeResources, Registry<TransientResource>, OverloadedProps> = {
+const PROTOTYPE:PickSelfProps<FreeResources, Registry<Resource>, OverloadedProps> = {
 	$registry: void 0,
 
 
@@ -52,11 +52,11 @@ const PROTOTYPE:PickSelfProps<FreeResources, Registry<TransientResource>, Overlo
 		return Registry.PROTOTYPE.__getLocalID.call( this, id );
 	},
 
-	_addPointer<T extends object>( this:FreeResources, base:T & { id?:string } ):T & TransientResource {
+	_addPointer<T extends object>( this:FreeResources, base:T & { id?:string } ):T & Resource {
 		if( ! base.id ) base.id = URI.generateBNodeID();
 		const pointer:T & Pointer = Registry.PROTOTYPE._addPointer.call( this, base );
 
-		return TransientResource.decorate( pointer );
+		return Resource.decorate( pointer );
 	},
 
 
@@ -81,7 +81,7 @@ const PROTOTYPE:PickSelfProps<FreeResources, Registry<TransientResource>, Overlo
 
 export interface FreeResourcesFactory extends ModelFactory<FreeResources>, ModelDecorator<FreeResources, BaseFreeResources> {
 	PROTOTYPE:PickSelfProps<FreeResources,
-		Registry<TransientResource>,
+		Registry<Resource>,
 		| "$registry"
 		| "__getLocalID"
 		| "_addPointer">;
@@ -129,7 +129,7 @@ export const FreeResources:FreeResourcesFactory = {
 	decorate<T extends object>( object:T ):T & FreeResources {
 		if( FreeResources.isDecorated( object ) ) return object;
 
-		const resource:T & Registry<TransientResource> = Registry.decorate( object );
+		const resource:T & Registry<Resource> = Registry.decorate( object );
 		return ModelDecorator
 			.definePropertiesFrom( PROTOTYPE, resource );
 	},

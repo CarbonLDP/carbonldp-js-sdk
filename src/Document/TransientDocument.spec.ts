@@ -19,7 +19,7 @@ import {
 	DocumentsRegistry,
 	Registry
 } from "../Registry";
-import { TransientResource } from "../Resource";
+import { Resource } from "../Resource";
 import {
 	extendsClass,
 	hasMethod,
@@ -90,7 +90,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 	), ():void => {
 
 		it( extendsClass( "CarbonLDP.TransientResource" ), () => {
-			const target:TransientResource = {} as TransientDocument;
+			const target:Resource = {} as TransientDocument;
 			expect( target ).toBeDefined();
 		} );
 
@@ -1438,7 +1438,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 			let isResourceSpy:jasmine.Spy;
 			let isRegistrySpy:jasmine.Spy;
 			beforeEach( ():void => {
-				isResourceSpy = spyOn( TransientResource, "is" )
+				isResourceSpy = spyOn( Resource, "is" )
 					.and.returnValue( true );
 				isRegistrySpy = spyOn( Registry, "isDecorated" )
 					.and.returnValue( true );
@@ -1646,8 +1646,8 @@ describe( module( "carbonldp/Document" ), ():void => {
 			} );
 
 			it( "should add the `TransientResource` properties", ():void => {
-				const target:TransientResource = TransientDocument.decorate( {} );
-				expect( TransientResource.isDecorated( target ) ).toBe( true );
+				const target:Resource = TransientDocument.decorate( {} );
+				expect( Resource.isDecorated( target ) ).toBe( true );
 			} );
 
 			it( "should add the `Registry` properties", ():void => {

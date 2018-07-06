@@ -6,7 +6,7 @@ import {
 import { Header } from "../HTTP";
 import { Pointer } from "../Pointer";
 import { DocumentsRegistry } from "../Registry";
-import { TransientResource } from "../Resource";
+import { Resource } from "../Resource";
 import {
 	extendsClass,
 	hasSignature,
@@ -37,7 +37,7 @@ describe( module( "carbonldp/Members/MembersDocument" ), () => {
 	), () => {
 
 		it( extendsClass( "CarbonLDP.TransientResource" ), () => {
-			const target:TransientResource = {} as MembersDocument;
+			const target:Resource = {} as MembersDocument;
 			expect( target ).toBeDefined();
 		} );
 

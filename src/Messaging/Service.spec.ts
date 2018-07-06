@@ -4,7 +4,7 @@ import Frame from "webstomp-client/src/frame.js";
 import { DocumentsContext } from "../Context/DocumentsContext";
 import { IllegalStateError } from "../Errors";
 import { Pointer } from "../Pointer";
-import { TransientResource } from "../Resource";
+import { Resource } from "../Resource";
 import {
 	clazz,
 	constructor,
@@ -487,7 +487,7 @@ describe( module( "carbonldp/Messaging/Service" ), ():void => {
 						target: jasmine.any( Object ),
 					} as any );
 
-					expect( TransientResource.is( message ) ).toBe( true );
+					expect( Resource.is( message ) ).toBe( true );
 					expect( message.$id ).toBe( "_:1" );
 					expect( message.hasType( "https://carbonldp.com/ns/v1/platform#ChildCreatedEvent" ) ).toBe( true );
 
@@ -538,7 +538,7 @@ describe( module( "carbonldp/Messaging/Service" ), ():void => {
 							target: jasmine.any( Object ),
 						} as any );
 
-						expect( TransientResource.is( message ) ).toBe( true );
+						expect( Resource.is( message ) ).toBe( true );
 						expect( message.$id ).toBe( "_:1" );
 						expect( message.hasType( "https://carbonldp.com/ns/v1/platform#ChildCreatedEvent" ) ).toBe( true );
 
@@ -672,7 +672,7 @@ describe( module( "carbonldp/Messaging/Service" ), ():void => {
 							target: jasmine.any( Object ),
 						} as any );
 
-						expect( TransientResource.is( message ) ).toBe( true );
+						expect( Resource.is( message ) ).toBe( true );
 						expect( message.$id ).toBe( "_:1" );
 						expect( message.hasType( "https://carbonldp.com/ns/v1/platform#ChildCreatedEvent" ) ).toBe( true );
 

@@ -4,7 +4,7 @@ import { IllegalActionError } from "../Errors";
 import { Pointer } from "../Pointer";
 import { URI } from "../RDF";
 import { DocumentsRegistry } from "../Registry";
-import { TransientResource } from "../Resource";
+import { Resource } from "../Resource";
 import {
 	isFunction,
 	isObject,
@@ -23,7 +23,7 @@ import { MemberRemoved } from "./MemberRemoved";
 import { MessagingService } from "./Service";
 import { createDestination } from "./Utils";
 
-export interface MessagingDocument extends TransientResource {
+export interface MessagingDocument extends Resource {
 	_registry:DocumentsRegistry;
 
 	on( event:Event.CHILD_CREATED, uriPattern:string, onEvent:( message:ChildCreated ) => void, onError?:( error:Error ) => void ):void;

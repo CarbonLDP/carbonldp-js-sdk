@@ -1,5 +1,5 @@
 import { Pointer } from "../Pointer";
-import { TransientResource } from "../Resource";
+import { Resource } from "../Resource";
 import {
 	extendsClass,
 	hasProperty,
@@ -27,7 +27,7 @@ describe( module( "carbonldp/Messaging/DocumentCreatedDetails" ), ():void => {
 		} );
 
 		it( extendsClass( "CarbonLDP.TransientResource" ), ():void => {
-			const target:TransientResource = {} as DocumentCreatedDetails;
+			const target:Resource = {} as DocumentCreatedDetails;
 			expect( target ).toBeDefined();
 		} );
 

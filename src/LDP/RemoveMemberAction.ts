@@ -3,7 +3,7 @@ import { ObjectSchema } from "../ObjectSchema";
 import { Pointer } from "../Pointer";
 import {
 	BaseResource,
-	TransientResource
+	Resource
 } from "../Resource";
 import { C } from "../Vocabularies";
 
@@ -13,7 +13,7 @@ export interface BaseRemoveMemberAction extends BaseResource {
 }
 
 
-export interface RemoveMemberAction extends TransientResource {
+export interface RemoveMemberAction extends Resource {
 	targetMembers:Pointer[];
 }
 
@@ -42,7 +42,7 @@ export const RemoveMemberAction:RemoveMemberActionFactory = {
 	SCHEMA,
 
 	is( value:any ):value is RemoveMemberAction {
-		return TransientResource.is( value )
+		return Resource.is( value )
 			&& value.hasType( RemoveMemberAction.TYPE )
 			;
 	},
@@ -53,7 +53,7 @@ export const RemoveMemberAction:RemoveMemberActionFactory = {
 	},
 
 	createFrom<T extends object>( object:T & BaseRemoveMemberAction ):T & RemoveMemberAction {
-		const resource:T & RemoveMemberAction = TransientResource.createFrom( object );
+		const resource:T & RemoveMemberAction = Resource.createFrom( object );
 
 		resource.addType( RemoveMemberAction.TYPE );
 

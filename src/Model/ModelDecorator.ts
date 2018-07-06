@@ -44,19 +44,24 @@ export const ModelDecorator:ModelDecoratorFactory = {
 		Object
 			.keys( prototype )
 			.forEach( key => {
+				const definition:PropertyDescriptor = Object
+					.getOwnPropertyDescriptor( prototype, key );
+
 				const descriptor:PropertyDescriptor = {
 					enumerable: false,
 					configurable: true,
 					writable: true,
 				};
 
-				const value:any = prototype[ key ];
-				if( isFunction( value ) ) {
+				if( isFunction( definition.value ) ) {
 					descriptor.writable = false;
-					descriptor.value = value;
+					descriptor.value = definition.value;
+				} else if( ! definition.set ) {
+					descriptor.value = definition.get ?
+						definition.get() : definition.value ;
 				} else {
-					descriptor.value = object[ key ] !== void 0 ?
-						object[ key ] : value;
+					descriptor.get = definition.get;
+					descriptor.set = definition.set;
 				}
 
 				Object.defineProperty( object, key, descriptor );

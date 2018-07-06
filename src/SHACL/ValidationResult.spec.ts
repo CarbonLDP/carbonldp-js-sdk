@@ -1,5 +1,5 @@
 import { Pointer } from "../Pointer";
-import { TransientResource } from "../Resource";
+import { Resource } from "../Resource";
 import {
 	extendsClass,
 	hasProperty,
@@ -28,7 +28,7 @@ describe( module( "carbonldp/SHACL/ValidationResult" ), ():void => {
 		} );
 
 		it( extendsClass( "CarbonLDP.TransientResource" ), ():void => {
-			const target:TransientResource = {} as ValidationResult;
+			const target:Resource = {} as ValidationResult;
 			expect( target ).toBeDefined();
 		} );
 

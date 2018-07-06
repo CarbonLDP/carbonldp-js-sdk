@@ -19,7 +19,7 @@ import {
 	DocumentsRegistry,
 	Registry
 } from "../Registry";
-import { TransientResource } from "../Resource";
+import { Resource } from "../Resource";
 import {
 	isObject,
 	isPlainObject,
@@ -31,7 +31,7 @@ import { BaseDocument } from "./BaseDocument";
 import { Document } from "./Document";
 
 
-export interface TransientDocument extends TransientResource, Registry<TransientBlankNode | TransientNamedFragment> {
+export interface TransientDocument extends Resource, Registry<TransientBlankNode | TransientNamedFragment> {
 	$registry:Registry<Document> | undefined;
 
 	defaultInteractionModel?:Pointer;
@@ -126,7 +126,7 @@ type OverloadedProps =
 	| "getPointer"
 	;
 
-const PROTOTYPE:PickSelfProps<TransientDocument, TransientResource & Registry<TransientBlankNode | TransientNamedFragment>, OverloadedProps> = {
+const PROTOTYPE:PickSelfProps<TransientDocument, Resource & Registry<TransientBlankNode | TransientNamedFragment>, OverloadedProps> = {
 	$registry: void 0,
 
 
@@ -274,7 +274,7 @@ const PROTOTYPE:PickSelfProps<TransientDocument, TransientResource & Registry<Tr
 
 export interface TransientDocumentFactory extends ModelFactory<TransientDocument>, ModelDecorator<TransientDocument> {
 	PROTOTYPE:PickSelfProps<TransientDocument,
-		TransientResource & Registry<TransientBlankNode | TransientNamedFragment>,
+		Resource & Registry<TransientBlankNode | TransientNamedFragment>,
 		| "$registry"
 		| "__getLocalID"
 		| "_addPointer"
@@ -310,7 +310,7 @@ export const TransientDocument:TransientDocumentFactory = {
 	,
 
 	is: ( value ):value is TransientDocument =>
-		TransientResource.is( value ) &&
+		Resource.is( value ) &&
 		Registry.isDecorated( value ) &&
 		TransientDocument.isDecorated( value )
 	,
@@ -319,8 +319,8 @@ export const TransientDocument:TransientDocumentFactory = {
 	decorate<T extends object>( object:T ):T & TransientDocument {
 		if( TransientDocument.isDecorated( object ) ) return object;
 
-		const resource:T & TransientResource & Registry<TransientBlankNode | TransientNamedFragment> = ModelDecorator
-			.decorateMultiple( object, TransientResource, Registry );
+		const resource:T & Resource & Registry<TransientBlankNode | TransientNamedFragment> = ModelDecorator
+			.decorateMultiple( object, Resource, Registry );
 
 		return ModelDecorator
 			.definePropertiesFrom( PROTOTYPE, resource )

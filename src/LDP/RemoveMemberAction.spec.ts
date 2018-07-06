@@ -1,6 +1,6 @@
 import { anyThatMatches } from "../../test/helpers/jasmine/equalities";
 import { Pointer } from "../Pointer";
-import { TransientResource } from "../Resource";
+import { Resource } from "../Resource";
 import {
 	extendsClass,
 	hasProperty,
@@ -88,9 +88,9 @@ describe( module( "carbonldp/Members/RemoveMemberAction" ), ():void => {
 
 
 			let isTransientResource:jasmine.Spy;
-			let mockObject:jasmine.SpyObj<TransientResource>;
+			let mockObject:jasmine.SpyObj<Resource>;
 			beforeEach( ():void => {
-				isTransientResource = spyOn( TransientResource, "is" )
+				isTransientResource = spyOn( Resource, "is" )
 					.and.returnValue( true );
 
 				mockObject = jasmine.createSpyObj( {
