@@ -27,6 +27,6 @@ export class QueryContextPartial extends QueryContext {
 			if( ! schemaLibrary ) return super.getSchemaFor( object );
 		}
 
-		return schemaLibrary._partialMetadata.schema;
+		return schemaLibrary.__partialMetadata.schema;
 	}
 }

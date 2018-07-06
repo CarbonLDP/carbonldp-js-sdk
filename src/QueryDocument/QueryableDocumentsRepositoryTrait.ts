@@ -274,14 +274,14 @@ function __getQueryable<T extends object>( repository:QueryableDocumentsReposito
 
 
 function __addRefreshPatterns( queryContext:QueryContextPartial, parentAdder:OptionalToken, resource:PersistedResource, parentName:string ):void {
-	if( resource._partialMetadata.schema === PartialMetadata.ALL ) {
+	if( resource.__partialMetadata.schema === PartialMetadata.ALL ) {
 		parentAdder.addPattern( createAllPattern( queryContext, parentName ) );
 		return;
 	}
 
 	parentAdder.addPattern( createTypesPattern( queryContext, parentName ) );
 
-	resource._partialMetadata.schema.properties.forEach( ( digestedProperty, propertyName ) => {
+	resource.__partialMetadata.schema.properties.forEach( ( digestedProperty, propertyName ) => {
 		const path:string = `${ parentName }.${ propertyName }`;
 
 		const propertyPattern:OptionalToken = new OptionalToken()
@@ -296,7 +296,7 @@ function __addRefreshPatterns( queryContext:QueryContextPartial, parentAdder:Opt
 		const propertyValues:any[] = Array.isArray( resource[ propertyName ] ) ? resource[ propertyName ] : [ resource[ propertyName ] ];
 		const propertyFragment:PersistedResource = propertyValues
 			.filter( PersistedResource.is )
-			.find( fragment => fragment.isPartial() );
+			.find( fragment => fragment.isQueried() );
 		if( ! propertyFragment ) return;
 
 		__addRefreshPatterns( queryContext, propertyPattern, propertyFragment, path );
@@ -418,7 +418,7 @@ export const QueryableDocumentsRepositoryTrait:QueryableDocumentsRepositoryTrait
 				} );
 			}
 
-			if( target.isPartial() ) requestOptions.ensureLatest = true;
+			if( target.isQueried() ) requestOptions.ensureLatest = true;
 			return LDPDocumentsRepositoryTrait.PROTOTYPE
 				.get( uri, requestOptions );
 		},
@@ -429,14 +429,14 @@ export const QueryableDocumentsRepositoryTrait:QueryableDocumentsRepositoryTrait
 
 
 		refresh<T extends object>( this:QueryableDocumentsRepositoryTrait, document:Document, requestOptions?:RequestOptions ):Promise<T & Document> {
-			if( ! document.isPartial() ) return LDPDocumentsRepositoryTrait.PROTOTYPE
+			if( ! document.isQueried() ) return LDPDocumentsRepositoryTrait.PROTOTYPE
 				.refresh.call( this, document, requestOptions );
 
 			return __refreshQueryable<T>( this, document, requestOptions );
 		},
 
 		saveAndRefresh<T extends object>( this:QueryableDocumentsRepositoryTrait, document:Document, requestOptions?:RequestOptions ):Promise<T & Document> {
-			if( ! document._partialMetadata ) return LDPDocumentsRepositoryTrait.PROTOTYPE
+			if( ! document.__partialMetadata ) return LDPDocumentsRepositoryTrait.PROTOTYPE
 				.saveAndRefresh.call( this, document, requestOptions );
 
 			const cloneOptions:RequestOptions = RequestUtils.cloneOptions( requestOptions );

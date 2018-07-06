@@ -1061,8 +1061,8 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 						} )
 					);
 
-					expect( returned._partialMetadata ).toEqual( jasmine.any( PartialMetadata ) );
-					expect( returned._partialMetadata.schema ).toEqual( ObjectSchemaDigester.digestSchema( {
+					expect( returned.__partialMetadata ).toEqual( jasmine.any( PartialMetadata ) );
+					expect( returned.__partialMetadata.schema ).toEqual( ObjectSchemaDigester.digestSchema( {
 						"property1": {
 							"@id": "https://example.com/ns#property-1",
 							"@type": XSD.string,
@@ -1073,8 +1073,8 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 						},
 					} ) );
 
-					expect( returned.property2._partialMetadata ).toEqual( jasmine.any( PartialMetadata ) );
-					expect( returned.property2._partialMetadata.schema ).toEqual( ObjectSchemaDigester.digestSchema( {
+					expect( returned.property2.__partialMetadata ).toEqual( jasmine.any( PartialMetadata ) );
+					expect( returned.property2.__partialMetadata.schema ).toEqual( ObjectSchemaDigester.digestSchema( {
 						"property2": {
 							"@id": "https://example.com/ns#property-2",
 							"@type": XSD.integer,
@@ -1173,8 +1173,8 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 					);
 
 
-					expect( returned._partialMetadata ).toEqual( jasmine.any( PartialMetadata ) );
-					expect( returned._partialMetadata.schema ).toEqual( ObjectSchemaDigester.digestSchema( {
+					expect( returned.__partialMetadata ).toEqual( jasmine.any( PartialMetadata ) );
+					expect( returned.__partialMetadata.schema ).toEqual( ObjectSchemaDigester.digestSchema( {
 						"property1": {
 							"@id": "https://example.com/ns#property-1",
 							"@type": XSD.string,
@@ -1185,8 +1185,8 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 						},
 					} ) );
 
-					expect( returned.property2._partialMetadata ).toEqual( jasmine.any( PartialMetadata ) );
-					expect( returned.property2._partialMetadata.schema ).toEqual( ObjectSchemaDigester.digestSchema( {
+					expect( returned.property2.__partialMetadata ).toEqual( jasmine.any( PartialMetadata ) );
+					expect( returned.property2.__partialMetadata.schema ).toEqual( ObjectSchemaDigester.digestSchema( {
 						"property2": {
 							"@id": "https://example.com/ns#property-2",
 							"@type": XSD.integer,
@@ -1255,7 +1255,7 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 					resource = createMock( {
 						$registry: context.registry,
 
-						_partialMetadata: createMockPartialMetadata( {
+						__partialMetadata: createMockPartialMetadata( {
 							"@vocab": "https://example.com/ns#",
 							"property4": {
 								"@id": "property-4",
@@ -1358,7 +1358,7 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 					resource = createMock( {
 						$registry: context.registry,
 
-						_partialMetadata: createMockPartialMetadata( {
+						__partialMetadata: createMockPartialMetadata( {
 							"@vocab": "https://example.com/ns#",
 							"property2": {
 								"@id": "https://schema.org/property-2",
@@ -1469,8 +1469,8 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 						} )
 					);
 
-					expect( returned._partialMetadata ).toEqual( jasmine.any( PartialMetadata ) );
-					expect( returned._partialMetadata.schema ).toEqual( ObjectSchema.ObjectSchemaDigester.digestSchema( {
+					expect( returned.__partialMetadata ).toEqual( jasmine.any( PartialMetadata ) );
+					expect( returned.__partialMetadata.schema ).toEqual( ObjectSchema.ObjectSchemaDigester.digestSchema( {
 						"property4": {
 							"@id": "https://example.com/ns#property-4",
 							"@type": XSD.boolean,
@@ -1485,8 +1485,8 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 						},
 					} ) );
 
-					expect( returned.property2._partialMetadata ).toEqual( jasmine.any( PartialMetadata ) );
-					expect( returned.property2._partialMetadata.schema ).toEqual( ObjectSchema.ObjectSchemaDigester.digestSchema( {
+					expect( returned.property2.__partialMetadata ).toEqual( jasmine.any( PartialMetadata ) );
+					expect( returned.property2.__partialMetadata.schema ).toEqual( ObjectSchema.ObjectSchemaDigester.digestSchema( {
 						"property3": {
 							"@id": "https://schema.org/property-3",
 							"@type": XSD.string,
@@ -2283,8 +2283,8 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 						} )
 					);
 
-					expect( returned._partialMetadata ).toEqual( jasmine.any( PartialMetadata ) );
-					expect( returned._partialMetadata.schema ).toEqual( ObjectSchemaDigester.digestSchema( {
+					expect( returned.__partialMetadata ).toEqual( jasmine.any( PartialMetadata ) );
+					expect( returned.__partialMetadata.schema ).toEqual( ObjectSchemaDigester.digestSchema( {
 						"property1": {
 							"@id": "https://example.com/ns#property-1",
 							"@type": XSD.string,
@@ -2295,8 +2295,8 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 						},
 					} ) );
 
-					expect( returned.property2._partialMetadata ).toEqual( jasmine.any( PartialMetadata ) );
-					expect( returned.property2._partialMetadata.schema ).toEqual( ObjectSchemaDigester.digestSchema( {
+					expect( returned.property2.__partialMetadata ).toEqual( jasmine.any( PartialMetadata ) );
+					expect( returned.property2.__partialMetadata.schema ).toEqual( ObjectSchemaDigester.digestSchema( {
 						"property2": {
 							"@id": "https://example.com/ns#property-2",
 							"@type": XSD.integer,
@@ -2395,8 +2395,8 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 					);
 
 
-					expect( returned._partialMetadata ).toEqual( jasmine.any( PartialMetadata ) );
-					expect( returned._partialMetadata.schema ).toEqual( ObjectSchemaDigester.digestSchema( {
+					expect( returned.__partialMetadata ).toEqual( jasmine.any( PartialMetadata ) );
+					expect( returned.__partialMetadata.schema ).toEqual( ObjectSchemaDigester.digestSchema( {
 						"property1": {
 							"@id": "https://example.com/ns#property-1",
 							"@type": XSD.string,
@@ -2407,8 +2407,8 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 						},
 					} ) );
 
-					expect( returned.property2._partialMetadata ).toEqual( jasmine.any( PartialMetadata ) );
-					expect( returned.property2._partialMetadata.schema ).toEqual( ObjectSchemaDigester.digestSchema( {
+					expect( returned.property2.__partialMetadata ).toEqual( jasmine.any( PartialMetadata ) );
+					expect( returned.property2.__partialMetadata.schema ).toEqual( ObjectSchemaDigester.digestSchema( {
 						"property2": {
 							"@id": "https://example.com/ns#property-2",
 							"@type": XSD.integer,
@@ -2477,7 +2477,7 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 					resource = createMock( {
 						$registry: context.registry,
 
-						_partialMetadata: createMockPartialMetadata( {
+						__partialMetadata: createMockPartialMetadata( {
 							"@vocab": "https://example.com/ns#",
 							"property4": {
 								"@id": "property-4",
@@ -2580,7 +2580,7 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 					resource = createMock( {
 						$registry: context.registry,
 
-						_partialMetadata: createMockPartialMetadata( {
+						__partialMetadata: createMockPartialMetadata( {
 							"@vocab": "https://example.com/ns#",
 							"property2": {
 								"@id": "https://schema.org/property-2",
@@ -2691,8 +2691,8 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 						} )
 					);
 
-					expect( returned._partialMetadata ).toEqual( jasmine.any( PartialMetadata ) );
-					expect( returned._partialMetadata.schema ).toEqual( ObjectSchema.ObjectSchemaDigester.digestSchema( {
+					expect( returned.__partialMetadata ).toEqual( jasmine.any( PartialMetadata ) );
+					expect( returned.__partialMetadata.schema ).toEqual( ObjectSchema.ObjectSchemaDigester.digestSchema( {
 						"property4": {
 							"@id": "https://example.com/ns#property-4",
 							"@type": XSD.boolean,
@@ -2707,8 +2707,8 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 						},
 					} ) );
 
-					expect( returned.property2._partialMetadata ).toEqual( jasmine.any( PartialMetadata ) );
-					expect( returned.property2._partialMetadata.schema ).toEqual( ObjectSchema.ObjectSchemaDigester.digestSchema( {
+					expect( returned.property2.__partialMetadata ).toEqual( jasmine.any( PartialMetadata ) );
+					expect( returned.property2.__partialMetadata.schema ).toEqual( ObjectSchema.ObjectSchemaDigester.digestSchema( {
 						"property3": {
 							"@id": "https://schema.org/property-3",
 							"@type": XSD.string,
@@ -2784,7 +2784,7 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 
 			it( "should throw error when NOT a partial", async () => {
 				const resource:QueryDocumentDocument = createMock( {
-					_partialMetadata: void 0,
+					__partialMetadata: void 0,
 					$id: "https://example.com/",
 				} );
 
@@ -2874,7 +2874,7 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 					resource = createMock( {
 						$registry: context.registry,
 
-						_partialMetadata: createMockPartialMetadata( {
+						__partialMetadata: createMockPartialMetadata( {
 							"@vocab": "https://example.com/ns#",
 							"property4": {
 								"@id": "https://example.com/ns#property-4",
@@ -2985,7 +2985,7 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 					resource = createMock( {
 						$registry: context.registry,
 
-						_partialMetadata: createMockPartialMetadata( {
+						__partialMetadata: createMockPartialMetadata( {
 							"@vocab": "https://example.com/ns#",
 							"property4": {
 								"@id": "https://example.com/ns#property-4",
@@ -3114,7 +3114,7 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 					resource = createMock( {
 						$registry: context.registry,
 
-						_partialMetadata: createMockPartialMetadata( {
+						__partialMetadata: createMockPartialMetadata( {
 							"@vocab": "https://example.com/ns#",
 							"property1": {
 								"@id": "https://example.com/ns#property-1",
@@ -4134,7 +4134,7 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 					resource = createMock( {
 						$registry: context.registry,
 
-						_partialMetadata: createMockPartialMetadata( {
+						__partialMetadata: createMockPartialMetadata( {
 							"@vocab": "https://example.com/ns#",
 							"property4": {
 								"@id": "https://example.com/ns#property-4",
@@ -5535,7 +5535,7 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 						expect( myDocuments.length ).toBe( 2 );
 						for( const document of myDocuments ) {
 							expect( Document.is( document ) ).toBe( true );
-							expect( document.isPartial() ).toBe( false );
+							expect( document.isQueried() ).toBe( false );
 						}
 
 						expect( myDocuments[ 0 ] ).toEqual( jasmine.objectContaining( {
@@ -5694,7 +5694,7 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 							expect( myDocuments.length ).toBe( 2 );
 							for( const document of myDocuments ) {
 								expect( Document.is( document ) ).toBe( true );
-								expect( document.isPartial() ).toBe( true );
+								expect( document.isQueried() ).toBe( true );
 							}
 
 							expect( myDocuments[ 0 ] ).toEqual( jasmine.objectContaining( {
@@ -7476,7 +7476,7 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 						expect( myDocuments.length ).toBe( 2 );
 						for( const document of myDocuments ) {
 							expect( Document.is( document ) ).toBe( true );
-							expect( document.isPartial() ).toBe( false );
+							expect( document.isQueried() ).toBe( false );
 						}
 
 						expect( myDocuments[ 0 ] ).toEqual( jasmine.objectContaining( {
@@ -7635,7 +7635,7 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 							expect( myDocuments.length ).toBe( 2 );
 							for( const document of myDocuments ) {
 								expect( Document.is( document ) ).toBe( true );
-								expect( document.isPartial() ).toBe( true );
+								expect( document.isQueried() ).toBe( true );
 							}
 
 							expect( myDocuments[ 0 ] ).toEqual( jasmine.objectContaining( {
@@ -8504,10 +8504,10 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 						expect( myDocuments.length ).toBe( 2 );
 
 						expect( Document.is( myDocuments[ 0 ] ) ).toBe( true );
-						expect( myDocuments[ 0 ].isPartial() ).toBe( false );
+						expect( myDocuments[ 0 ].isQueried() ).toBe( false );
 
 						expect( Document.is( myDocuments[ 1 ] ) ).toBe( true );
-						expect( myDocuments[ 1 ].isPartial() ).toBe( false );
+						expect( myDocuments[ 1 ].isQueried() ).toBe( false );
 
 						done();
 					} ).catch( done.fail );
@@ -8963,10 +8963,10 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 						expect( myDocuments.length ).toBe( 2 );
 
 						expect( Document.is( myDocuments[ 0 ] ) ).toBe( true );
-						expect( myDocuments[ 0 ].isPartial() ).toBe( false );
+						expect( myDocuments[ 0 ].isQueried() ).toBe( false );
 
 						expect( Document.is( myDocuments[ 1 ] ) ).toBe( true );
-						expect( myDocuments[ 1 ].isPartial() ).toBe( false );
+						expect( myDocuments[ 1 ].isQueried() ).toBe( false );
 
 						done();
 					} ).catch( done.fail );

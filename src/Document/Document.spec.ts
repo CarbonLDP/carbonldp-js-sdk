@@ -269,7 +269,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 				const _registry:DocumentsRegistry = new DocumentsRegistry();
 
 				const resource:Document = createMock( {
-					_partialMetadata: createMockPartialMetadata( {} ),
+					__partialMetadata: createMockPartialMetadata( {} ),
 					$registry: _registry,
 				} );
 
@@ -293,7 +293,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 				const _registry:DocumentsRegistry = new DocumentsRegistry();
 
 				const resource:Document = createMock( {
-					_partialMetadata: createMockPartialMetadata( {} ),
+					__partialMetadata: createMockPartialMetadata( {} ),
 					$registry: _registry,
 				} );
 
@@ -320,7 +320,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 
 				_registry.__resourcesMap.set( "resource/", createMock( {
 					$registry: _registry,
-					_partialMetadata: createMockPartialMetadata( {} ),
+					__partialMetadata: createMockPartialMetadata( {} ),
 				} ) );
 
 
@@ -344,7 +344,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 
 				_registry.__resourcesMap.set( "resource/", createMock( {
 					$registry: _registry,
-					_partialMetadata: createMockPartialMetadata( {} ),
+					__partialMetadata: createMockPartialMetadata( {} ),
 				} ) );
 
 
@@ -451,7 +451,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 				const _registry:DocumentsRegistry = new DocumentsRegistry();
 
 				const resource:Document = createMock( {
-					_partialMetadata: createMockPartialMetadata( {} ),
+					__partialMetadata: createMockPartialMetadata( {} ),
 					$registry: _registry,
 				} );
 
@@ -475,7 +475,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 				const _registry:DocumentsRegistry = new DocumentsRegistry();
 
 				const resource:Document = createMock( {
-					_partialMetadata: createMockPartialMetadata( {} ),
+					__partialMetadata: createMockPartialMetadata( {} ),
 					$registry: _registry,
 				} );
 
@@ -514,7 +514,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 				const spy:jasmine.Spy = spyOn( QueryDocumentDocument.PROTOTYPE, "refresh" )
 					.and.returnValue( Promise.reject( null ) );
 
-				const resource:Document = createMock( { _partialMetadata: createMockPartialMetadata( {} ) } );
+				const resource:Document = createMock( { __partialMetadata: createMockPartialMetadata( {} ) } );
 				await resource.refresh()
 					.then( () => fail( "Should not resolve" ) )
 					.catch( error => {
@@ -529,7 +529,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 				const spy:jasmine.Spy = spyOn( QueryDocumentDocument.PROTOTYPE, "refresh" )
 					.and.returnValue( Promise.reject( null ) );
 
-				const resource:Document = createMock( { _partialMetadata: createMockPartialMetadata( {} ) } );
+				const resource:Document = createMock( { __partialMetadata: createMockPartialMetadata( {} ) } );
 				await resource.refresh( { timeout: 5050 } )
 					.then( () => fail( "Should not resolve" ) )
 					.catch( error => {
@@ -589,7 +589,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 				const spy:jasmine.Spy = spyOn( QueryDocumentDocument.PROTOTYPE, "save" )
 					.and.returnValue( Promise.reject( null ) );
 
-				const resource:Document = createMock( { _partialMetadata: createMockPartialMetadata( {} ) } );
+				const resource:Document = createMock( { __partialMetadata: createMockPartialMetadata( {} ) } );
 				await resource.save()
 					.then( () => fail( "Should not resolve" ) )
 					.catch( error => {
@@ -604,7 +604,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 				const spy:jasmine.Spy = spyOn( QueryDocumentDocument.PROTOTYPE, "save" )
 					.and.returnValue( Promise.reject( null ) );
 
-				const resource:Document = createMock( { _partialMetadata: createMockPartialMetadata( {} ) } );
+				const resource:Document = createMock( { __partialMetadata: createMockPartialMetadata( {} ) } );
 				await resource.save( { timeout: 5050 } )
 					.then( () => fail( "Should not resolve" ) )
 					.catch( error => {
@@ -664,7 +664,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 				const spy:jasmine.Spy = spyOn( QueryDocumentDocument.PROTOTYPE, "saveAndRefresh" )
 					.and.returnValue( Promise.reject( null ) );
 
-				const resource:Document = createMock( { _partialMetadata: createMockPartialMetadata( {} ) } );
+				const resource:Document = createMock( { __partialMetadata: createMockPartialMetadata( {} ) } );
 				await resource.saveAndRefresh()
 					.then( () => fail( "Should not resolve" ) )
 					.catch( error => {
@@ -679,7 +679,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 				const spy:jasmine.Spy = spyOn( QueryDocumentDocument.PROTOTYPE, "saveAndRefresh" )
 					.and.returnValue( Promise.reject( null ) );
 
-				const resource:Document = createMock( { _partialMetadata: createMockPartialMetadata( {} ) } );
+				const resource:Document = createMock( { __partialMetadata: createMockPartialMetadata( {} ) } );
 				await resource.saveAndRefresh( { timeout: 5050 } )
 					.then( () => fail( "Should not resolve" ) )
 					.catch( error => {

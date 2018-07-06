@@ -207,7 +207,7 @@ export class JSONLDCompacter {
 		const persisted:PersistedResource = PersistedResource.decorate( resource );
 		if( this._willBePartial( persisted, schema, path ) ) return true;
 
-		if( persisted._partialMetadata ) delete persisted._partialMetadata;
+		if( persisted.__partialMetadata ) delete persisted.__partialMetadata;
 		return false;
 	}
 
@@ -220,9 +220,9 @@ export class JSONLDCompacter {
 
 		if( type !== QueryPropertyType.PARTIAL && type !== QueryPropertyType.ALL ) return false;
 
-		resource._partialMetadata = new PartialMetadata(
+		resource.__partialMetadata = new PartialMetadata(
 			type === QueryPropertyType.ALL ? PartialMetadata.ALL : schema,
-			resource._partialMetadata
+			resource.__partialMetadata
 		);
 		return true;
 	}

@@ -75,19 +75,19 @@ describe( module( "carbonldp/PersistedResource" ), ():void => {
 			it( "should exists", ():void => {
 				const resource:PersistedResource = PersistedResource.decorate( {} );
 
-				expect( resource.isPartial ).toBeDefined();
-				expect( resource.isPartial ).toEqual( jasmine.any( Function ) );
+				expect( resource.isQueried ).toBeDefined();
+				expect( resource.isQueried ).toEqual( jasmine.any( Function ) );
 			} );
 
 
 			it( "should return false when no _partialMetadata", () => {
-				const resource:PersistedResource = createMock( { _partialMetadata: undefined } );
-				expect( resource.isPartial() ).toBe( false );
+				const resource:PersistedResource = createMock( { __partialMetadata: undefined } );
+				expect( resource.isQueried() ).toBe( false );
 			} );
 
 			it( "should return true when _partialMetadata set", () => {
-				const resource:PersistedResource = createMock( { _partialMetadata: createMockPartialMetadata() } );
-				expect( resource.isPartial() ).toBe( true );
+				const resource:PersistedResource = createMock( { __partialMetadata: createMockPartialMetadata() } );
+				expect( resource.isQueried() ).toBe( true );
 			} );
 
 		} );
@@ -141,11 +141,11 @@ describe( module( "carbonldp/PersistedResource" ), ():void => {
 
 			object = {
 				_snapshot: null,
-				_partialMetadata: null,
+				__partialMetadata: null,
 				_syncSnapshot: ():void => {},
 				isDirty: ():any => {},
 				revert: ():any => {},
-				isPartial: ():any => {},
+				isQueried: ():any => {},
 			};
 			expect( PersistedResource.isDecorated( object ) ).toBe( true );
 
@@ -153,9 +153,9 @@ describe( module( "carbonldp/PersistedResource" ), ():void => {
 			expect( PersistedResource.isDecorated( object ) ).toBe( false );
 			object._snapshot = null;
 
-			delete object._partialMetadata;
+			delete object.__partialMetadata;
 			expect( PersistedResource.isDecorated( object ) ).toBe( false );
-			object._partialMetadata = null;
+			object.__partialMetadata = null;
 
 			delete object._syncSnapshot;
 			expect( PersistedResource.isDecorated( object ) ).toBe( false );
@@ -169,9 +169,9 @@ describe( module( "carbonldp/PersistedResource" ), ():void => {
 			expect( PersistedResource.isDecorated( object ) ).toBe( false );
 			object.revert = ():any => {};
 
-			delete object.isPartial;
+			delete object.isQueried;
 			expect( PersistedResource.isDecorated( object ) ).toBe( false );
-			object.isPartial = ():any => {};
+			object.isQueried = ():any => {};
 		} );
 
 		describe( "PersistedResource.decorate", ():void => {
@@ -186,12 +186,12 @@ describe( module( "carbonldp/PersistedResource" ), ():void => {
 				const fn:() => any = ():void => {};
 
 				const persistedResource:PersistedResource = PersistedResource.decorate<PersistedResourceFactory[ "PROTOTYPE" ]>( {
-					_partialMetadata: void 0,
+					__partialMetadata: void 0,
 					_snapshot: void 0,
 					_syncSnapshot: fn,
 					isDirty: fn,
 					revert: fn,
-					isPartial: fn,
+					isQueried: fn,
 				} );
 
 				expect( persistedResource ).toEqual( jasmine.objectContaining( {
@@ -228,7 +228,7 @@ describe( module( "carbonldp/PersistedResource" ), ():void => {
 
 			it( "should assign undefined partialMetadata", ():void => {
 				const resource:PersistedResource = PersistedResource.decorate( {} );
-				expect( resource._partialMetadata ).toBeUndefined();
+				expect( resource.__partialMetadata ).toBeUndefined();
 			} );
 
 		} );

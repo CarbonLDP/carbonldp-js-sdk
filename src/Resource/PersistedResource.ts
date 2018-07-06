@@ -1,6 +1,5 @@
 import { isFunction } from "util";
 import { ModelDecorator } from "../Model";
-import { PartialMetadata } from "../SPARQL/QueryDocument";
 import {
 	isObject,
 	ObjectUtils,
@@ -11,17 +10,12 @@ import { Resource } from "./Resource";
 
 export interface PersistedResource extends Resource {
 	_snapshot:object | undefined;
-	_partialMetadata:PartialMetadata | undefined;
-
 
 	_syncSnapshot():void;
 
 	isDirty():boolean;
 
 	revert():void;
-
-
-	isPartial():boolean;
 }
 
 
@@ -48,8 +42,6 @@ function internalRevert( target:any, source:any ):void {
 
 const PROTOTYPE:PickSelfProps<PersistedResource, Resource> = {
 	get _snapshot():{} { return {}; },
-	_partialMetadata: void 0,
-
 
 	_syncSnapshot( this:PersistedResource ):void {
 		const clone:PersistedResource = ObjectUtils.clone( this, { arrays: true } );
@@ -66,11 +58,6 @@ const PROTOTYPE:PickSelfProps<PersistedResource, Resource> = {
 	revert( this:PersistedResource ):void {
 		internalRevert( this, this._snapshot );
 		if( ! this.types ) this.types = [];
-	},
-
-
-	isPartial( this:PersistedResource ):boolean {
-		return ! ! this._partialMetadata;
 	},
 };
 

@@ -281,14 +281,14 @@ function executeBuilder<T extends object>( registry:DocumentsRegistry, url:strin
 
 
 function addRefreshPatterns( queryContext:QueryContextPartial, parentAdder:OptionalToken, resource:PersistedResource, parentName:string ):void {
-	if( resource._partialMetadata.schema === PartialMetadata.ALL ) {
+	if( resource.__partialMetadata.schema === PartialMetadata.ALL ) {
 		parentAdder.addPattern( createAllPattern( queryContext, parentName ) );
 		return;
 	}
 
 	parentAdder.addPattern( createTypesPattern( queryContext, parentName ) );
 
-	resource._partialMetadata.schema.properties.forEach( ( digestedProperty, propertyName ) => {
+	resource.__partialMetadata.schema.properties.forEach( ( digestedProperty, propertyName ) => {
 		const path:string = `${ parentName }.${ propertyName }`;
 
 		const propertyPattern:OptionalToken = new OptionalToken()
@@ -303,7 +303,7 @@ function addRefreshPatterns( queryContext:QueryContextPartial, parentAdder:Optio
 		const propertyValues:any[] = Array.isArray( resource[ propertyName ] ) ? resource[ propertyName ] : [ resource[ propertyName ] ];
 		const propertyFragment:PersistedResource = propertyValues
 			.filter( PersistedResource.is )
-			.find( fragment => fragment.isPartial() );
+			.find( fragment => fragment.isQueried() );
 		if( ! propertyFragment ) return;
 
 		addRefreshPatterns( queryContext, propertyPattern, propertyFragment, path );
@@ -446,7 +446,7 @@ const PROTOTYPE:PickSelfProps<QueryDocumentDocument, BasePersistedDocument> = {
 	refresh<T extends object>( this:T & Document, requestOptions:RequestOptions = {} ):Promise<T & Document> {
 		return promiseMethod( () => {
 			const registry:DocumentsRegistry = getRegistry( this );
-			if( ! this.isPartial() ) throw new IllegalArgumentError( `"${ this.$id }" isn't a partial resource.` );
+			if( ! this.isQueried() ) throw new IllegalArgumentError( `"${ this.$id }" isn't a partial resource.` );
 
 			return refreshPartial<T & Document>( registry, this, requestOptions );
 		} );
@@ -463,7 +463,7 @@ const PROTOTYPE:PickSelfProps<QueryDocumentDocument, BasePersistedDocument> = {
 		return promiseMethod( () => {
 			const registry:DocumentsRegistry = getRegistry( this );
 
-			if( ! this.isPartial() ) throw new IllegalArgumentError( `"${ this.$id }" isn't a valid partial resource.` );
+			if( ! this.isQueried() ) throw new IllegalArgumentError( `"${ this.$id }" isn't a valid partial resource.` );
 
 			if( ! this.isDirty() ) return refreshPartial<T & Document>( registry, this, requestOptions );
 

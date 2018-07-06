@@ -7,9 +7,9 @@ import {
 	GETOptions,
 	RequestOptions
 } from "../HTTP";
-import { MembersDocument } from "../Members";
 import { MessagingDocument } from "../Messaging";
 import { Pointer } from "../Pointer";
+import { QueryableDocumentTrait } from "../QueryDocument/QueryableDocumentTrait";
 import { DocumentsRegistry } from "../Registry";
 import { ResolvablePointer } from "../Repository";
 import { PersistedResource } from "../Resource";
@@ -17,7 +17,7 @@ import { SPARQLDocument } from "../SPARQL";
 import {
 	QueryDocumentBuilder,
 	QueryDocumentDocument
-} from "../SPARQL/QueryDocument";
+} from "../QueryDocument";
 import * as Utils from "../Utils";
 import {
 	isFunction,
@@ -35,7 +35,7 @@ import { CRUDDocument } from "./CRUDDocument";
 import { TransientDocument } from "./TransientDocument";
 
 
-export interface Document extends CRUDDocument, MembersDocument, SPARQLDocument, MessagingDocument, QueryDocumentDocument, ResolvablePointer {
+export interface Document extends CRUDDocument, SPARQLDocument, MessagingDocument, QueryableDocumentTrait, ResolvablePointer {
 	$registry:DocumentsRegistry;
 
 	created?:Date;
@@ -71,7 +71,7 @@ function addEnsureIfPartial( this:void, iri:string, resource:Document, requestOp
 	if( ! resource.$registry || ! resource.$registry.hasPointer( iri, true ) ) return;
 
 	const target:Document = resource.$registry.getPointer( iri, true );
-	if( target.isPartial() ) requestOptions.ensureLatest = true;
+	if( target.isQueried() ) requestOptions.ensureLatest = true;
 }
 
 
@@ -119,19 +119,19 @@ const PROTOTYPE:PickSelfProps<Document, CRUDDocument & MembersDocument & SPARQLD
 
 
 	refresh<T extends object>( this:Document, requestOptions?:RequestOptions ):Promise<T & Document> {
-		if( this.isPartial() )
+		if( this.isQueried() )
 			return QueryDocumentDocument.PROTOTYPE.refresh.call( this, requestOptions );
 		return CRUDDocument.PROTOTYPE.refresh.call( this, requestOptions );
 	},
 
 	save<T extends object>( this:Document, requestOptions?:RequestOptions ):Promise<T & Document> {
-		if( this.isPartial() )
+		if( this.isQueried() )
 			return QueryDocumentDocument.PROTOTYPE.save.call( this, requestOptions );
 		return CRUDDocument.PROTOTYPE.save.call( this, requestOptions );
 	},
 
 	saveAndRefresh<T extends object>( this:Document, requestOptions?:RequestOptions ):Promise<T & Document> {
-		if( this.isPartial() )
+		if( this.isQueried() )
 			return QueryDocumentDocument.PROTOTYPE.saveAndRefresh.call( this, requestOptions );
 		return CRUDDocument.PROTOTYPE.saveAndRefresh.call( this, requestOptions );
 	},

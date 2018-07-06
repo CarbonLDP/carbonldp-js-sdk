@@ -110,13 +110,13 @@ export class RegistryService<M extends Pointer, C extends AbstractContext<M, any
 			this._getSchemaForResource( object ) :
 			this._getSchemaForNode( object );
 
-		if( ! PersistedResource.isDecorated( object ) || ! object.isPartial() )
+		if( ! PersistedResource.isDecorated( object ) || ! object.isQueried() )
 			return schema;
 
 		return ObjectSchemaDigester
 			._combineSchemas( [
 				schema,
-				object._partialMetadata.schema,
+				object.__partialMetadata.schema,
 			] );
 	}
 

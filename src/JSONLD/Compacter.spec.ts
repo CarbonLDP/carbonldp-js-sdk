@@ -971,7 +971,7 @@ describe( module( "carbonldp/JSONLD/Compacter" ), ():void => {
 					},
 				] );
 
-				expect( compacted[ 0 ]._partialMetadata.schema ).toEqual( ObjectSchemaDigester.digestSchema( {
+				expect( compacted[ 0 ].__partialMetadata.schema ).toEqual( ObjectSchemaDigester.digestSchema( {
 					"pointer1": {
 						"@id": "https://example.com/ns#pointer-1",
 						"@type": "@id",
@@ -982,7 +982,7 @@ describe( module( "carbonldp/JSONLD/Compacter" ), ():void => {
 					},
 				} ) );
 
-				expect( compacted[ 1 ]._partialMetadata.schema ).toEqual( ObjectSchemaDigester.digestSchema( {
+				expect( compacted[ 1 ].__partialMetadata.schema ).toEqual( ObjectSchemaDigester.digestSchema( {
 					"pointer1": {
 						"@id": "https://example.com/ns#pointer-1",
 						"@type": "@id",

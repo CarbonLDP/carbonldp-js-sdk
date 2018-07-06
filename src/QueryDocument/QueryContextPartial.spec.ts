@@ -96,7 +96,7 @@ describe( module( "carbonldp/QueryDocument/QueryContextPartial" ), ():void => {
 
 				const helper:( name:string ) => void = name => {
 					const returnedValue:any = queryContext.getSchemaFor( {}, name );
-					expect( returnedValue ).toBe( persistedDocument._partialMetadata.schema );
+					expect( returnedValue ).toBe( persistedDocument.__partialMetadata.schema );
 				};
 
 				helper( "document" );
@@ -121,7 +121,7 @@ describe( module( "carbonldp/QueryDocument/QueryContextPartial" ), ():void => {
 
 				const helper:( name:string ) => void = name => {
 					const returnedValue:any = queryContext.getSchemaFor( {}, name );
-					expect( returnedValue ).toBe( fragment._partialMetadata.schema );
+					expect( returnedValue ).toBe( fragment.__partialMetadata.schema );
 				};
 
 				helper( "document.property" );
