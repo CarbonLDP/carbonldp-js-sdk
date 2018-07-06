@@ -1,32 +1,54 @@
-import { Pointer } from "../Pointer";
-import { Registry } from "../Registry";
+import { TransientDocument } from "../Document";
+import {
+	ModelDecorator,
+	ModelFactory,
+	ModelPrototype,
+	ModelTypeGuard
+} from "../Model";
+import { RegisteredPointer } from "../Registry";
 import { Resource } from "../Resource";
 import { BaseFragment } from "./BaseFragment";
 
 
-export interface TransientFragment extends Resource {
-	_registry:Registry<TransientFragment> & Pointer | undefined;
+export interface TransientFragment extends Resource, RegisteredPointer {
+	$document:TransientDocument;
+	$registry:TransientDocument;
 }
 
 
-export interface TransientFragmentFactory {
-	isDecorated( object:object ):object is TransientFragment;
-
-	is( value:any ):value is TransientFragment;
-
-
-	create<T extends object>( data:T & BaseFragment ):T & TransientFragment;
-
-	createFrom<T extends object>( object:T & BaseFragment ):T & TransientFragment;
-
-	decorate<T extends object>( object:T ):T & TransientFragment;
-}
+export type TransientFragmentFactory =
+	& ModelPrototype<TransientFragment, Resource & RegisteredPointer>
+	& ModelDecorator<TransientFragment, BaseFragment>
+	& ModelFactory<TransientFragment, BaseFragment>
+	& ModelTypeGuard<TransientFragment>
+	;
 
 export const TransientFragment:TransientFragmentFactory = {
+	PROTOTYPE: {
+		get $document( this:TransientFragment ):TransientDocument {
+			return this.$registry;
+		},
+		set $document( this:TransientFragment, document:TransientDocument ) {
+			this.$registry = document;
+		},
+	},
+
+
 	isDecorated( object:object ):object is TransientFragment {
 		return Resource.isDecorated( object )
 			;
 	},
+
+	decorate<T extends BaseFragment>( object:T ):T & TransientFragment {
+		if( TransientFragment.isDecorated( object ) ) return object;
+
+		const target:T & Resource & RegisteredPointer = ModelDecorator
+			.decorateMultiple( object, Resource, RegisteredPointer );
+
+		return ModelDecorator
+			.definePropertiesFrom( TransientFragment.PROTOTYPE, target );
+	},
+
 
 	is( value:any ):value is TransientFragment {
 		return Resource.is( value )
@@ -39,14 +61,6 @@ export const TransientFragment:TransientFragmentFactory = {
 	},
 
 	createFrom<T extends object>( object:T & BaseFragment ):T & TransientFragment {
-		return TransientFragment.decorate<T>( object );
-	},
-
-	decorate<T extends object>( object:T ):T & TransientFragment {
-		if( TransientFragment.isDecorated( object ) ) return object;
-
-		Resource.decorate( object );
-
-		return object as T & TransientFragment;
+		return TransientFragment.decorate( object );
 	},
 };
