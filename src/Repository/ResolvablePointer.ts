@@ -1,4 +1,3 @@
-import { Repository } from ".";
 import {
 	ModelDecorator,
 	ModelFactory,
@@ -6,8 +5,14 @@ import {
 	ModelTypeGuard
 } from "../Model";
 import { Pointer } from "../Pointer";
-import { ObjectUtils } from "../Utils";
+import {
+	isFunction,
+	isObject,
+	ObjectUtils
+} from "../Utils";
 import { BaseResolvablePointer } from "./BaseResolvablePointer";
+import { Repository } from "./Repository";
+
 
 export interface ResolvablePointer extends Pointer {
 	$repository:Repository;
@@ -19,9 +24,34 @@ export interface ResolvablePointer extends Pointer {
 	isResolved():boolean;
 
 
+	_syncSnapshot():void;
+
 	isDirty():boolean;
+
+	revert():void;
 }
 
+
+function __internalRevert( target:any, source:any ):void {
+	if( ! isObject( target ) || ! isObject( source ) ) return;
+
+	new Set<string>( [
+		...Object.keys( target ),
+		...Object.keys( source ),
+	] ).forEach( key => {
+		const sourceValue:any = Array.isArray( source[ key ] ) ?
+			[ ...source[ key ] ] : source[ key ];
+
+		if( sourceValue === null || sourceValue === void 0 ) {
+			delete target[ key ];
+			return;
+		}
+
+		if( isFunction( sourceValue ) ) return;
+
+		target[ key ] = sourceValue;
+	} );
+}
 
 export type ResolvablePointerFactory =
 	& ModelPrototype<ResolvablePointer, Pointer & BaseResolvablePointer>
@@ -44,9 +74,21 @@ export const ResolvablePointer:ResolvablePointerFactory = {
 
 		_snapshot: {},
 
+		_syncSnapshot( this:{ types?:string[] } & ResolvablePointer ):void {
+			const clone:{ types?:string[] } & ResolvablePointer = ObjectUtils.clone( this, { arrays: true } );
+			if( clone.types ) clone.types = [ ...this.types ];
+
+			this._snapshot = clone;
+		},
+
 		isDirty( this:ResolvablePointer ):boolean {
 			return ! ObjectUtils
 				.areEqual( this, this._snapshot, { arrays: true } );
+		},
+
+		revert( this:{ types?:string[] } & ResolvablePointer ):void {
+			__internalRevert( this, this._snapshot );
+			if( ! this.types ) this.types = [];
 		},
 	},
 
