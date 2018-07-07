@@ -19,11 +19,11 @@ import {
 import { PickSelfProps } from "../Utils";
 import { Event } from "./Event";
 
-import { MessagingDocument } from "./MessagingDocument";
+import { EventEmitterDocumentTrait } from "./EventEmitterDocumentTrait";
 
 
-function createMock<T extends object>( data?:T & Partial<MessagingDocument> ):T & MessagingDocument {
-	const mock:T & MessagingDocument = MessagingDocument.decorate( Object.assign( {
+function createMock<T extends object>( data?:T & Partial<EventEmitterDocumentTrait> ):T & EventEmitterDocumentTrait {
+	const mock:T & EventEmitterDocumentTrait = EventEmitterDocumentTrait.decorate( Object.assign( {
 		id: "https://example.com/resource/",
 	}, data ) );
 
@@ -40,12 +40,12 @@ describe( module( "carbonldp/Messaging/MessagingDocument" ), ():void => {
 	), ():void => {
 
 		it( isDefined(), ():void => {
-			const target:MessagingDocument = {} as any;
+			const target:EventEmitterDocumentTrait = {} as any;
 			expect( target ).toBeDefined();
 		} );
 
 		it( extendsClass( "CarbonLDP.TransientResource" ), ():void => {
-			const target:Resource = {} as MessagingDocument;
+			const target:Resource = {} as EventEmitterDocumentTrait;
 			expect( target ).toBeDefined();
 		} );
 
@@ -205,7 +205,7 @@ describe( module( "carbonldp/Messaging/MessagingDocument" ), ():void => {
 			), ():void => {} );
 
 			it( "should exists", ():void => {
-				const resource:MessagingDocument = createMock();
+				const resource:EventEmitterDocumentTrait = createMock();
 
 				expect( resource.on ).toBeDefined();
 				expect( resource.on ).toEqual( jasmine.any( Function ) );
@@ -213,7 +213,7 @@ describe( module( "carbonldp/Messaging/MessagingDocument" ), ():void => {
 
 
 			it( "should throw error in callback when does not have registry", ( done:DoneFn ):void => {
-				const resource:MessagingDocument = createMock( { _registry: void 0 } );
+				const resource:EventEmitterDocumentTrait = createMock( { _registry: void 0 } );
 
 				resource.on( "*.*", "resource/", () => {
 					done.fail( "Should not enter here" );
@@ -225,7 +225,7 @@ describe( module( "carbonldp/Messaging/MessagingDocument" ), ():void => {
 			} );
 
 			it( "should throw error in callback when does not have context", ( done:DoneFn ):void => {
-				const resource:MessagingDocument = createMock( { _registry: { context: void 0 } as any } );
+				const resource:EventEmitterDocumentTrait = createMock( { _registry: { context: void 0 } as any } );
 
 				resource.on( "*.*", "resource/", () => {
 					done.fail( "Should not enter here" );
@@ -237,7 +237,7 @@ describe( module( "carbonldp/Messaging/MessagingDocument" ), ():void => {
 			} );
 
 			it( "should throw error when context does not have a messaging service", ( done:DoneFn ):void => {
-				const resource:MessagingDocument = createMock( { _registry: { context: { messaging: void 0 } } as any } );
+				const resource:EventEmitterDocumentTrait = createMock( { _registry: { context: { messaging: void 0 } } as any } );
 
 				resource.on( "*.*", "resource/", () => {
 					done.fail( "Should not enter here" );
@@ -249,7 +249,7 @@ describe( module( "carbonldp/Messaging/MessagingDocument" ), ():void => {
 			} );
 
 			it( "should throw error when does not have registry and no valid onError is provided", ( done:DoneFn ):void => {
-				const resource:MessagingDocument = createMock( { _registry: void 0 } );
+				const resource:EventEmitterDocumentTrait = createMock( { _registry: void 0 } );
 
 				expect( () => resource.on( "*.*", "resource/", () => done.fail( "Should not enter here" ), null ) )
 					.toThrowError( IllegalActionError, `"https://example.com/resource/" doesn't support messaging subscriptions.` );
@@ -265,7 +265,7 @@ describe( module( "carbonldp/Messaging/MessagingDocument" ), ():void => {
 				const onEvent:( data:any ) => void = () => done.fail( "Should not enter here." );
 				const onError:( error:Error ) => void = done.fail;
 
-				const resource:MessagingDocument = createMock( { _registry: context.registry } );
+				const resource:EventEmitterDocumentTrait = createMock( { _registry: context.registry } );
 				resource.on( "*.*", onEvent, onError );
 
 				expect( subscribeSpy ).toHaveBeenCalledWith( "/topic/*.*.resource", onEvent, onError );
@@ -280,7 +280,7 @@ describe( module( "carbonldp/Messaging/MessagingDocument" ), ():void => {
 				const onEvent:( data:any ) => void = () => done.fail( "Should not enter here." );
 				const onError:( error:Error ) => void = done.fail;
 
-				const resource:MessagingDocument = createMock( { _registry: context.registry } );
+				const resource:EventEmitterDocumentTrait = createMock( { _registry: context.registry } );
 				resource.on( "*.*", "child/!*", onEvent, onError );
 
 				expect( subscribeSpy ).toHaveBeenCalledWith( "/topic/*.*.resource.child.!*", onEvent, onError );
@@ -295,7 +295,7 @@ describe( module( "carbonldp/Messaging/MessagingDocument" ), ():void => {
 				const onEvent:( data:any ) => void = () => done.fail( "Should not enter here." );
 				const onError:( error:Error ) => void = done.fail;
 
-				const resource:MessagingDocument = createMock( { _registry: context.registry } );
+				const resource:EventEmitterDocumentTrait = createMock( { _registry: context.registry } );
 				resource.on( "*.*", "https://example.com/another-resource/!*", onEvent, onError );
 
 				expect( subscribeSpy ).toHaveBeenCalledWith( "/topic/*.*.another-resource.!*", onEvent, onError );
@@ -459,7 +459,7 @@ describe( module( "carbonldp/Messaging/MessagingDocument" ), ():void => {
 			), ():void => {} );
 
 			it( "should exists", ():void => {
-				const resource:MessagingDocument = createMock();
+				const resource:EventEmitterDocumentTrait = createMock();
 
 				expect( resource.off ).toBeDefined();
 				expect( resource.off ).toEqual( jasmine.any( Function ) );
@@ -467,7 +467,7 @@ describe( module( "carbonldp/Messaging/MessagingDocument" ), ():void => {
 
 
 			it( "should throw error in callback when does not have registry", ( done:DoneFn ):void => {
-				const resource:MessagingDocument = createMock( { _registry: void 0 } );
+				const resource:EventEmitterDocumentTrait = createMock( { _registry: void 0 } );
 
 				resource.off( "*.*", "resource/", () => {
 					done.fail( "Should not enter here" );
@@ -479,7 +479,7 @@ describe( module( "carbonldp/Messaging/MessagingDocument" ), ():void => {
 			} );
 
 			it( "should throw error in callback when does not have context", ( done:DoneFn ):void => {
-				const resource:MessagingDocument = createMock( { _registry: { context: void 0 } as any } );
+				const resource:EventEmitterDocumentTrait = createMock( { _registry: { context: void 0 } as any } );
 
 				resource.off( "*.*", "resource/", () => {
 					done.fail( "Should not enter here" );
@@ -491,7 +491,7 @@ describe( module( "carbonldp/Messaging/MessagingDocument" ), ():void => {
 			} );
 
 			it( "should throw error when context does not have a messaging service", ( done:DoneFn ):void => {
-				const resource:MessagingDocument = createMock( { _registry: { context: { messaging: void 0 } } as any } );
+				const resource:EventEmitterDocumentTrait = createMock( { _registry: { context: { messaging: void 0 } } as any } );
 
 				resource.off( "*.*", "resource/", () => {
 					done.fail( "Should not enter here" );
@@ -503,7 +503,7 @@ describe( module( "carbonldp/Messaging/MessagingDocument" ), ():void => {
 			} );
 
 			it( "should throw error when does not have registry and no valid onError is provided", ( done:DoneFn ):void => {
-				const resource:MessagingDocument = createMock( { _registry: void 0 } );
+				const resource:EventEmitterDocumentTrait = createMock( { _registry: void 0 } );
 
 				expect( () => resource.off( "*.*", "resource/", () => done.fail( "Should not enter here" ), null ) )
 					.toThrowError( IllegalActionError, `"https://example.com/resource/" doesn't support messaging subscriptions.` );
@@ -519,7 +519,7 @@ describe( module( "carbonldp/Messaging/MessagingDocument" ), ():void => {
 				const onEvent:( data:any ) => void = () => done.fail( "Should not enter here." );
 				const onError:( error:Error ) => void = done.fail;
 
-				const resource:MessagingDocument = createMock( { _registry: context.registry } );
+				const resource:EventEmitterDocumentTrait = createMock( { _registry: context.registry } );
 				resource.off( "*.*", onEvent, onError );
 
 				expect( unsubscribeSpy ).toHaveBeenCalledWith( "/topic/*.*.resource", onEvent );
@@ -534,7 +534,7 @@ describe( module( "carbonldp/Messaging/MessagingDocument" ), ():void => {
 				const onEvent:( data:any ) => void = () => done.fail( "Should not enter here." );
 				const onError:( error:Error ) => void = done.fail;
 
-				const resource:MessagingDocument = createMock( { _registry: context.registry } );
+				const resource:EventEmitterDocumentTrait = createMock( { _registry: context.registry } );
 				resource.off( "*.*", "child/!*", onEvent, onError );
 
 				expect( unsubscribeSpy ).toHaveBeenCalledWith( "/topic/*.*.resource.child.!*", onEvent );
@@ -549,7 +549,7 @@ describe( module( "carbonldp/Messaging/MessagingDocument" ), ():void => {
 				const onEvent:( data:any ) => void = () => done.fail( "Should not enter here." );
 				const onError:( error:Error ) => void = done.fail;
 
-				const resource:MessagingDocument = createMock( { _registry: context.registry } );
+				const resource:EventEmitterDocumentTrait = createMock( { _registry: context.registry } );
 				resource.off( "*.*", "https://example.com/another-resource/!*", onEvent, onError );
 
 				expect( unsubscribeSpy ).toHaveBeenCalledWith( "/topic/*.*.another-resource.!*", onEvent );
@@ -713,7 +713,7 @@ describe( module( "carbonldp/Messaging/MessagingDocument" ), ():void => {
 			), ():void => {} );
 
 			it( "should exists", ():void => {
-				const resource:MessagingDocument = createMock();
+				const resource:EventEmitterDocumentTrait = createMock();
 
 				expect( resource.one ).toBeDefined();
 				expect( resource.one ).toEqual( jasmine.any( Function ) );
@@ -721,7 +721,7 @@ describe( module( "carbonldp/Messaging/MessagingDocument" ), ():void => {
 
 
 			it( "should throw error in callback when does not have registry", ( done:DoneFn ):void => {
-				const resource:MessagingDocument = createMock( { _registry: void 0 } );
+				const resource:EventEmitterDocumentTrait = createMock( { _registry: void 0 } );
 
 				resource.one( "*.*", "resource/", () => {
 					done.fail( "Should not enter here" );
@@ -733,7 +733,7 @@ describe( module( "carbonldp/Messaging/MessagingDocument" ), ():void => {
 			} );
 
 			it( "should throw error in callback when does not have context", ( done:DoneFn ):void => {
-				const resource:MessagingDocument = createMock( { _registry: { context: void 0 } as any } );
+				const resource:EventEmitterDocumentTrait = createMock( { _registry: { context: void 0 } as any } );
 
 				resource.one( "*.*", "resource/", () => {
 					done.fail( "Should not enter here" );
@@ -745,7 +745,7 @@ describe( module( "carbonldp/Messaging/MessagingDocument" ), ():void => {
 			} );
 
 			it( "should throw error when context does not have a messaging service", ( done:DoneFn ):void => {
-				const resource:MessagingDocument = createMock( { _registry: { context: { messaging: void 0 } } as any } );
+				const resource:EventEmitterDocumentTrait = createMock( { _registry: { context: { messaging: void 0 } } as any } );
 
 				resource.one( "*.*", "resource/", () => {
 					done.fail( "Should not enter here" );
@@ -757,7 +757,7 @@ describe( module( "carbonldp/Messaging/MessagingDocument" ), ():void => {
 			} );
 
 			it( "should throw error when does not have registry and no valid onError is provided", ( done:DoneFn ):void => {
-				const resource:MessagingDocument = createMock( { _registry: void 0 } );
+				const resource:EventEmitterDocumentTrait = createMock( { _registry: void 0 } );
 
 				expect( () => resource.one( "*.*", "resource/", () => done.fail( "Should not enter here" ), null ) )
 					.toThrowError( IllegalActionError, `"https://example.com/resource/" doesn't support messaging subscriptions.` );
@@ -773,7 +773,7 @@ describe( module( "carbonldp/Messaging/MessagingDocument" ), ():void => {
 				const onEvent:( data:any ) => void = () => done.fail( "Should not enter here." );
 				const onError:( error:Error ) => void = done.fail;
 
-				const resource:MessagingDocument = createMock( { _registry: context.registry } );
+				const resource:EventEmitterDocumentTrait = createMock( { _registry: context.registry } );
 				resource.one( "*.*", onEvent, onError );
 
 				expect( subscribeSpy ).not.toHaveBeenCalledWith( "/topic/*.*.resource", onEvent, onError );
@@ -791,7 +791,7 @@ describe( module( "carbonldp/Messaging/MessagingDocument" ), ():void => {
 				const onEvent:( data:any ) => void = () => done.fail( "Should not enter here." );
 				const onError:( error:Error ) => void = done.fail;
 
-				const resource:MessagingDocument = createMock( { _registry: context.registry } );
+				const resource:EventEmitterDocumentTrait = createMock( { _registry: context.registry } );
 				resource.one( "*.*", "child/!*", onEvent, onError );
 
 				expect( subscribeSpy ).not.toHaveBeenCalledWith( "/topic/*.*.resource.child.!*", onEvent, onError );
@@ -809,7 +809,7 @@ describe( module( "carbonldp/Messaging/MessagingDocument" ), ():void => {
 				const onEvent:( data:any ) => void = () => done.fail( "Should not enter here." );
 				const onError:( error:Error ) => void = done.fail;
 
-				const resource:MessagingDocument = createMock( { _registry: context.registry } );
+				const resource:EventEmitterDocumentTrait = createMock( { _registry: context.registry } );
 				resource.one( "*.*", "https://example.com/another-resource/!*", onEvent, onError );
 
 				expect( subscribeSpy ).not.toHaveBeenCalledWith( "/topic/*.*.another-resource.!*", onEvent, onError );
@@ -828,7 +828,7 @@ describe( module( "carbonldp/Messaging/MessagingDocument" ), ():void => {
 				const onEvent:jasmine.Spy = jasmine.createSpy( "onEvent" );
 				const onError:( error:Error ) => void = () => {};
 
-				const resource:MessagingDocument = createMock( { _registry: context.registry } );
+				const resource:EventEmitterDocumentTrait = createMock( { _registry: context.registry } );
 				resource.one( "*.*", onEvent, onError );
 
 				const actualOnEvent:Function = subscribeSpy.calls.mostRecent().args[ 1 ];
@@ -848,7 +848,7 @@ describe( module( "carbonldp/Messaging/MessagingDocument" ), ():void => {
 				const onEvent:jasmine.Spy = jasmine.createSpy( "onEvent" );
 				const onError:( error:Error ) => void = () => {};
 
-				const resource:MessagingDocument = createMock( { _registry: context.registry } );
+				const resource:EventEmitterDocumentTrait = createMock( { _registry: context.registry } );
 				resource.one( "*.*", "child/!*", onEvent, onError );
 
 				const actualOnEvent:Function = subscribeSpy.calls.mostRecent().args[ 1 ];
@@ -870,7 +870,7 @@ describe( module( "carbonldp/Messaging/MessagingDocument" ), ():void => {
 				const onEvent:( data:any ) => void = () => {};
 				const onError:( error:Error ) => void = done.fail;
 
-				const resource:MessagingDocument = createMock( { _registry: context.registry } );
+				const resource:EventEmitterDocumentTrait = createMock( { _registry: context.registry } );
 				resource.one( "*.*", onEvent, onError );
 
 				const actualOnEvent:Function = subscribeSpy.calls.mostRecent().args[ 1 ];
@@ -890,7 +890,7 @@ describe( module( "carbonldp/Messaging/MessagingDocument" ), ():void => {
 				const onEvent:( data:any ) => void = () => {};
 				const onError:( error:Error ) => void = done.fail;
 
-				const resource:MessagingDocument = createMock( { _registry: context.registry } );
+				const resource:EventEmitterDocumentTrait = createMock( { _registry: context.registry } );
 				resource.one( "*.*", "child/!*", onEvent, onError );
 
 				const actualOnEvent:Function = subscribeSpy.calls.mostRecent().args[ 1 ];
@@ -910,7 +910,7 @@ describe( module( "carbonldp/Messaging/MessagingDocument" ), ():void => {
 				const onEvent:( data:any ) => void = () => {};
 				const onError:( error:Error ) => void = done.fail;
 
-				const resource:MessagingDocument = createMock( { _registry: context.registry } );
+				const resource:EventEmitterDocumentTrait = createMock( { _registry: context.registry } );
 				resource.one( "*.*", "https://example.com/another-resource/!*", onEvent, onError );
 
 				const actualOnEvent:Function = subscribeSpy.calls.mostRecent().args[ 1 ];
@@ -946,7 +946,7 @@ describe( module( "carbonldp/Messaging/MessagingDocument" ), ():void => {
 
 
 			it( "should exists", ():void => {
-				const resource:MessagingDocument = createMock();
+				const resource:EventEmitterDocumentTrait = createMock();
 
 				expect( resource.onAccessPointCreated ).toBeDefined();
 				expect( resource.onAccessPointCreated ).toEqual( jasmine.any( Function ) );
@@ -954,7 +954,7 @@ describe( module( "carbonldp/Messaging/MessagingDocument" ), ():void => {
 
 
 			it( "should should call .on when self", () => {
-				const resource:MessagingDocument = createMock();
+				const resource:EventEmitterDocumentTrait = createMock();
 
 				Object.defineProperty( resource, "on", { writable: true } );
 				const spy:jasmine.Spy = spyOn( resource, "on" );
@@ -965,7 +965,7 @@ describe( module( "carbonldp/Messaging/MessagingDocument" ), ():void => {
 			} );
 
 			it( "should should call .on when uriPatter", () => {
-				const resource:MessagingDocument = createMock();
+				const resource:EventEmitterDocumentTrait = createMock();
 
 				Object.defineProperty( resource, "on", { writable: true } );
 				const spy:jasmine.Spy = spyOn( resource, "on" );
@@ -998,7 +998,7 @@ describe( module( "carbonldp/Messaging/MessagingDocument" ), ():void => {
 
 
 			it( "should exists", ():void => {
-				const resource:MessagingDocument = createMock();
+				const resource:EventEmitterDocumentTrait = createMock();
 
 				expect( resource.onChildCreated ).toBeDefined();
 				expect( resource.onChildCreated ).toEqual( jasmine.any( Function ) );
@@ -1006,7 +1006,7 @@ describe( module( "carbonldp/Messaging/MessagingDocument" ), ():void => {
 
 
 			it( "should should call .on when self", () => {
-				const resource:MessagingDocument = createMock();
+				const resource:EventEmitterDocumentTrait = createMock();
 
 				Object.defineProperty( resource, "on", { writable: true } );
 				const spy:jasmine.Spy = spyOn( resource, "on" );
@@ -1017,7 +1017,7 @@ describe( module( "carbonldp/Messaging/MessagingDocument" ), ():void => {
 			} );
 
 			it( "should should call .on when uriPatter", () => {
-				const resource:MessagingDocument = createMock();
+				const resource:EventEmitterDocumentTrait = createMock();
 
 				Object.defineProperty( resource, "on", { writable: true } );
 				const spy:jasmine.Spy = spyOn( resource, "on" );
@@ -1050,7 +1050,7 @@ describe( module( "carbonldp/Messaging/MessagingDocument" ), ():void => {
 
 
 			it( "should exists", ():void => {
-				const resource:MessagingDocument = createMock();
+				const resource:EventEmitterDocumentTrait = createMock();
 
 				expect( resource.onDocumentCreated ).toBeDefined();
 				expect( resource.onDocumentCreated ).toEqual( jasmine.any( Function ) );
@@ -1058,7 +1058,7 @@ describe( module( "carbonldp/Messaging/MessagingDocument" ), ():void => {
 
 
 			it( "should should call .on when self", () => {
-				const resource:MessagingDocument = createMock();
+				const resource:EventEmitterDocumentTrait = createMock();
 
 				Object.defineProperty( resource, "on", { writable: true } );
 				const spy:jasmine.Spy = spyOn( resource, "on" );
@@ -1069,7 +1069,7 @@ describe( module( "carbonldp/Messaging/MessagingDocument" ), ():void => {
 			} );
 
 			it( "should should call .on when uriPatter", () => {
-				const resource:MessagingDocument = createMock();
+				const resource:EventEmitterDocumentTrait = createMock();
 
 				Object.defineProperty( resource, "on", { writable: true } );
 				const spy:jasmine.Spy = spyOn( resource, "on" );
@@ -1102,7 +1102,7 @@ describe( module( "carbonldp/Messaging/MessagingDocument" ), ():void => {
 
 
 			it( "should exists", ():void => {
-				const resource:MessagingDocument = createMock();
+				const resource:EventEmitterDocumentTrait = createMock();
 
 				expect( resource.onDocumentModified ).toBeDefined();
 				expect( resource.onDocumentModified ).toEqual( jasmine.any( Function ) );
@@ -1110,7 +1110,7 @@ describe( module( "carbonldp/Messaging/MessagingDocument" ), ():void => {
 
 
 			it( "should should call .on when self", () => {
-				const resource:MessagingDocument = createMock();
+				const resource:EventEmitterDocumentTrait = createMock();
 
 				Object.defineProperty( resource, "on", { writable: true } );
 				const spy:jasmine.Spy = spyOn( resource, "on" );
@@ -1121,7 +1121,7 @@ describe( module( "carbonldp/Messaging/MessagingDocument" ), ():void => {
 			} );
 
 			it( "should should call .on when uriPatter", () => {
-				const resource:MessagingDocument = createMock();
+				const resource:EventEmitterDocumentTrait = createMock();
 
 				Object.defineProperty( resource, "on", { writable: true } );
 				const spy:jasmine.Spy = spyOn( resource, "on" );
@@ -1154,7 +1154,7 @@ describe( module( "carbonldp/Messaging/MessagingDocument" ), ():void => {
 
 
 			it( "should exists", ():void => {
-				const resource:MessagingDocument = createMock();
+				const resource:EventEmitterDocumentTrait = createMock();
 
 				expect( resource.onDocumentDeleted ).toBeDefined();
 				expect( resource.onDocumentDeleted ).toEqual( jasmine.any( Function ) );
@@ -1162,7 +1162,7 @@ describe( module( "carbonldp/Messaging/MessagingDocument" ), ():void => {
 
 
 			it( "should should call .on when self", () => {
-				const resource:MessagingDocument = createMock();
+				const resource:EventEmitterDocumentTrait = createMock();
 
 				Object.defineProperty( resource, "on", { writable: true } );
 				const spy:jasmine.Spy = spyOn( resource, "on" );
@@ -1173,7 +1173,7 @@ describe( module( "carbonldp/Messaging/MessagingDocument" ), ():void => {
 			} );
 
 			it( "should should call .on when uriPatter", () => {
-				const resource:MessagingDocument = createMock();
+				const resource:EventEmitterDocumentTrait = createMock();
 
 				Object.defineProperty( resource, "on", { writable: true } );
 				const spy:jasmine.Spy = spyOn( resource, "on" );
@@ -1206,7 +1206,7 @@ describe( module( "carbonldp/Messaging/MessagingDocument" ), ():void => {
 
 
 			it( "should exists", ():void => {
-				const resource:MessagingDocument = createMock();
+				const resource:EventEmitterDocumentTrait = createMock();
 
 				expect( resource.onMemberAdded ).toBeDefined();
 				expect( resource.onMemberAdded ).toEqual( jasmine.any( Function ) );
@@ -1214,7 +1214,7 @@ describe( module( "carbonldp/Messaging/MessagingDocument" ), ():void => {
 
 
 			it( "should should call .on when self", () => {
-				const resource:MessagingDocument = createMock();
+				const resource:EventEmitterDocumentTrait = createMock();
 
 				Object.defineProperty( resource, "on", { writable: true } );
 				const spy:jasmine.Spy = spyOn( resource, "on" );
@@ -1225,7 +1225,7 @@ describe( module( "carbonldp/Messaging/MessagingDocument" ), ():void => {
 			} );
 
 			it( "should should call .on when uriPatter", () => {
-				const resource:MessagingDocument = createMock();
+				const resource:EventEmitterDocumentTrait = createMock();
 
 				Object.defineProperty( resource, "on", { writable: true } );
 				const spy:jasmine.Spy = spyOn( resource, "on" );
@@ -1258,7 +1258,7 @@ describe( module( "carbonldp/Messaging/MessagingDocument" ), ():void => {
 
 
 			it( "should exists", ():void => {
-				const resource:MessagingDocument = createMock();
+				const resource:EventEmitterDocumentTrait = createMock();
 
 				expect( resource.onMemberRemoved ).toBeDefined();
 				expect( resource.onMemberRemoved ).toEqual( jasmine.any( Function ) );
@@ -1266,7 +1266,7 @@ describe( module( "carbonldp/Messaging/MessagingDocument" ), ():void => {
 
 
 			it( "should should call .on when self", () => {
-				const resource:MessagingDocument = createMock();
+				const resource:EventEmitterDocumentTrait = createMock();
 
 				Object.defineProperty( resource, "on", { writable: true } );
 				const spy:jasmine.Spy = spyOn( resource, "on" );
@@ -1277,7 +1277,7 @@ describe( module( "carbonldp/Messaging/MessagingDocument" ), ():void => {
 			} );
 
 			it( "should should call .on when uriPatter", () => {
-				const resource:MessagingDocument = createMock();
+				const resource:EventEmitterDocumentTrait = createMock();
 
 				Object.defineProperty( resource, "on", { writable: true } );
 				const spy:jasmine.Spy = spyOn( resource, "on" );
@@ -1326,24 +1326,24 @@ describe( module( "carbonldp/Messaging/MessagingDocument" ), ():void => {
 	), ():void => {
 
 		it( "should exist", ():void => {
-			expect( MessagingDocument ).toBeDefined();
-			expect( MessagingDocument ).toEqual( jasmine.any( Object ) );
+			expect( EventEmitterDocumentTrait ).toBeDefined();
+			expect( EventEmitterDocumentTrait ).toEqual( jasmine.any( Object ) );
 		} );
 
 		describe( "MessagingDocument.isDecorated", ():void => {
 
 			it( "should exists", ():void => {
-				expect( MessagingDocument.isDecorated ).toBeDefined();
-				expect( MessagingDocument.isDecorated ).toEqual( jasmine.any( Function ) );
+				expect( EventEmitterDocumentTrait.isDecorated ).toBeDefined();
+				expect( EventEmitterDocumentTrait.isDecorated ).toEqual( jasmine.any( Function ) );
 			} );
 
 			it( "should return false if falsy is provided", ():void => {
-				expect( MessagingDocument.isDecorated( void 0 ) ).toBe( false );
-				expect( MessagingDocument.isDecorated( null ) ).toBe( false );
+				expect( EventEmitterDocumentTrait.isDecorated( void 0 ) ).toBe( false );
+				expect( EventEmitterDocumentTrait.isDecorated( null ) ).toBe( false );
 			} );
 
 			it( "should return false if has a missing class property", ():void => {
-				const object:Partial<MessagingDocument> = {
+				const object:Partial<EventEmitterDocumentTrait> = {
 					on: () => {},
 					off: () => {},
 					one: () => {},
@@ -1356,46 +1356,46 @@ describe( module( "carbonldp/Messaging/MessagingDocument" ), ():void => {
 					onMemberRemoved: () => {},
 				};
 
-				expect( MessagingDocument.isDecorated( object ) ).toBe( true );
+				expect( EventEmitterDocumentTrait.isDecorated( object ) ).toBe( true );
 
 				delete object.on;
-				expect( MessagingDocument.isDecorated( object ) ).toBe( false );
+				expect( EventEmitterDocumentTrait.isDecorated( object ) ).toBe( false );
 				object.on = ():void => {};
 
 				delete object.off;
-				expect( MessagingDocument.isDecorated( object ) ).toBe( false );
+				expect( EventEmitterDocumentTrait.isDecorated( object ) ).toBe( false );
 				object.off = ():void => {};
 
 				delete object.one;
-				expect( MessagingDocument.isDecorated( object ) ).toBe( false );
+				expect( EventEmitterDocumentTrait.isDecorated( object ) ).toBe( false );
 				object.one = ():void => {};
 
 				delete object.onDocumentCreated;
-				expect( MessagingDocument.isDecorated( object ) ).toBe( false );
+				expect( EventEmitterDocumentTrait.isDecorated( object ) ).toBe( false );
 				object.onDocumentCreated = ():void => {};
 
 				delete object.onChildCreated;
-				expect( MessagingDocument.isDecorated( object ) ).toBe( false );
+				expect( EventEmitterDocumentTrait.isDecorated( object ) ).toBe( false );
 				object.onChildCreated = ():void => {};
 
 				delete object.onAccessPointCreated;
-				expect( MessagingDocument.isDecorated( object ) ).toBe( false );
+				expect( EventEmitterDocumentTrait.isDecorated( object ) ).toBe( false );
 				object.onAccessPointCreated = ():void => {};
 
 				delete object.onDocumentModified;
-				expect( MessagingDocument.isDecorated( object ) ).toBe( false );
+				expect( EventEmitterDocumentTrait.isDecorated( object ) ).toBe( false );
 				object.onDocumentModified = ():void => {};
 
 				delete object.onDocumentDeleted;
-				expect( MessagingDocument.isDecorated( object ) ).toBe( false );
+				expect( EventEmitterDocumentTrait.isDecorated( object ) ).toBe( false );
 				object.onDocumentDeleted = ():void => {};
 
 				delete object.onMemberAdded;
-				expect( MessagingDocument.isDecorated( object ) ).toBe( false );
+				expect( EventEmitterDocumentTrait.isDecorated( object ) ).toBe( false );
 				object.onMemberAdded = ():void => {};
 
 				delete object.onMemberRemoved;
-				expect( MessagingDocument.isDecorated( object ) ).toBe( false );
+				expect( EventEmitterDocumentTrait.isDecorated( object ) ).toBe( false );
 				object.onMemberRemoved = ():void => {};
 			} );
 
@@ -1404,16 +1404,16 @@ describe( module( "carbonldp/Messaging/MessagingDocument" ), ():void => {
 		describe( "MessagingDocument.decorate", ():void => {
 
 			it( "should exists", ():void => {
-				expect( MessagingDocument.decorate ).toBeDefined();
-				expect( MessagingDocument.decorate ).toEqual( jasmine.any( Function ) );
+				expect( EventEmitterDocumentTrait.decorate ).toBeDefined();
+				expect( EventEmitterDocumentTrait.decorate ).toEqual( jasmine.any( Function ) );
 			} );
 
-			type Expected = PickSelfProps<MessagingDocument, TransientDocument>;
+			type Expected = PickSelfProps<EventEmitterDocumentTrait, TransientDocument>;
 
 			it( "should return the same reference of the object provided", ():void => {
 				const base:object = {};
 
-				const target:MessagingDocument = MessagingDocument.decorate( base );
+				const target:EventEmitterDocumentTrait = EventEmitterDocumentTrait.decorate( base );
 				expect( base ).toBe( target );
 			} );
 
@@ -1432,7 +1432,7 @@ describe( module( "carbonldp/Messaging/MessagingDocument" ), ():void => {
 					onMemberRemoved: methodsFunction,
 				};
 
-				const target:MessagingDocument = MessagingDocument.decorate( base );
+				const target:EventEmitterDocumentTrait = EventEmitterDocumentTrait.decorate( base );
 				expect( target ).toEqual( jasmine.objectContaining( {
 					on: methodsFunction,
 					off: methodsFunction,
@@ -1450,7 +1450,7 @@ describe( module( "carbonldp/Messaging/MessagingDocument" ), ():void => {
 			it( "should add the new properties", ():void => {
 				const base:{} = {};
 
-				const target:MessagingDocument = MessagingDocument.decorate( base );
+				const target:EventEmitterDocumentTrait = EventEmitterDocumentTrait.decorate( base );
 				expect( target ).toEqual( jasmine.objectContaining( {
 					on: jasmine.any( Function ),
 					off: jasmine.any( Function ),

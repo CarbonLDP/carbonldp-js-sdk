@@ -5,7 +5,7 @@ import {
 } from "../../test/helpers/mocks";
 import { AbstractContext } from "../Context/AbstractContext";
 import { MembersDocument } from "../Members";
-import { MessagingDocument } from "../Messaging";
+import { EventEmitterDocumentTrait } from "../Messaging";
 import { DocumentsRegistry } from "../Registry";
 import { SPARQLDocument } from "../SPARQL";
 import { QueryDocumentDocument } from "../QueryDocument";
@@ -1036,7 +1036,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 					.and.returnValue( true );
 				isSPARQLDocument = spyOn( SPARQLDocument, "isDecorated" )
 					.and.returnValue( true );
-				isMessagingDocument = spyOn( MessagingDocument, "isDecorated" )
+				isMessagingDocument = spyOn( EventEmitterDocumentTrait, "isDecorated" )
 					.and.returnValue( true );
 				isQueryDocumentDocument = spyOn( QueryDocumentDocument, "isDecorated" )
 					.and.returnValue( true );

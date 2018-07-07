@@ -1,6 +1,5 @@
-export * from "./AccessPointCreated";
 export * from "./ChildCreated";
-export * from "./MessagingDocument";
+export { EventEmitterDocumentTrait } from "./EventEmitterDocumentTrait";
 export * from "./DocumentCreated";
 export * from "./DocumentCreatedDetails";
 export * from "./DocumentDeleted";

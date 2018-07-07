@@ -105,7 +105,7 @@ export const EventEmitterDocumentsRepositoryTrait:EventEmitterDocumentsRepositor
 
 
 		onChildCreated( this:EventEmitterDocumentsRepositoryTrait, uriPattern:string, onEvent:OnEvent<ChildCreated>, onError?:OnError ):void {
-			return this.on( Event.CHILD_CREATED, uriPattern, onEvent as OnEvent<ChildCreated>, onError );
+			return this.on( Event.CHILD_CREATED, uriPattern, onEvent, onError );
 		},
 
 		onDocumentCreated( this:EventEmitterDocumentsRepositoryTrait, uriPattern:string, onEvent:OnEvent<DocumentCreated>, onError?:OnError ):void {

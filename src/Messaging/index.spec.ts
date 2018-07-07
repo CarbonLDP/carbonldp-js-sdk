@@ -8,17 +8,9 @@ import {
 import * as Messaging from "./";
 
 import {
-	AccessPointCreated,
-	AccessPointCreatedFactory,
-} from "./AccessPointCreated";
-import {
 	ChildCreated,
 	ChildCreatedFactory,
 } from "./ChildCreated";
-import {
-	MessagingDocument,
-	MessagingDocumentFactory,
-} from "./MessagingDocument";
 import {
 	DocumentCreated,
 	DocumentCreatedFactory,
@@ -36,6 +28,7 @@ import {
 	DocumentModifiedFactory,
 } from "./DocumentModified";
 import { Event } from "./Event";
+import { EventEmitterDocumentTrait } from "./EventEmitterDocumentTrait";
 import {
 	EventMessage,
 	EventMessageFactory,
@@ -78,24 +71,6 @@ describe( module( "carbonldp/Messaging" ), ():void => {
 
 	it( reexports(
 		STATIC,
-		"AccessPointCreated",
-		"CarbonLDP.Messaging.AccessPointCreated"
-	), ():void => {
-		expect( Messaging.AccessPointCreated ).toBeDefined();
-		expect( Messaging.AccessPointCreated ).toBe( AccessPointCreated );
-	} );
-
-	it( reexports(
-		STATIC,
-		"AccessPointCreatedFactory",
-		"CarbonLDP.Messaging.AccessPointCreatedFactory"
-	), ():void => {
-		const target:Messaging.AccessPointCreatedFactory = {} as AccessPointCreatedFactory;
-		expect( target ).toBeDefined();
-	} );
-
-	it( reexports(
-		STATIC,
 		"ChildCreated",
 		"CarbonLDP.Messaging.ChildCreated"
 	), ():void => {
@@ -117,17 +92,8 @@ describe( module( "carbonldp/Messaging" ), ():void => {
 		"MessagingDocument",
 		"CarbonLDP.Messaging.MessagingDocument"
 	), ():void => {
-		expect( Messaging.MessagingDocument ).toBeDefined();
-		expect( Messaging.MessagingDocument ).toBe( MessagingDocument );
-	} );
-
-	it( reexports(
-		STATIC,
-		"MessagingDocumentFactory",
-		"CarbonLDP.Messaging.MessagingDocumentFactory"
-	), ():void => {
-		const target:Messaging.MessagingDocumentFactory = {} as MessagingDocumentFactory;
-		expect( target ).toBeDefined();
+		expect( Messaging.EventEmitterDocumentTrait ).toBeDefined();
+		expect( Messaging.EventEmitterDocumentTrait ).toBe( EventEmitterDocumentTrait );
 	} );
 
 	it( reexports(
