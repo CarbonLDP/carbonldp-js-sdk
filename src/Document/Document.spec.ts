@@ -7,7 +7,7 @@ import { AbstractContext } from "../Context/AbstractContext";
 import { MembersDocument } from "../Members";
 import { EventEmitterDocumentTrait } from "../Messaging";
 import { DocumentsRegistry } from "../Registry";
-import { SPARQLDocument } from "../SPARQL";
+import { SPARQLDocumentTrait } from "../SPARQL";
 import { QueryDocumentDocument } from "../QueryDocument";
 import {
 	extendsClass,
@@ -1034,7 +1034,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 					.and.returnValue( true );
 				isMembersDocument = spyOn( MembersDocument, "isDecorated" )
 					.and.returnValue( true );
-				isSPARQLDocument = spyOn( SPARQLDocument, "isDecorated" )
+				isSPARQLDocument = spyOn( SPARQLDocumentTrait, "isDecorated" )
 					.and.returnValue( true );
 				isMessagingDocument = spyOn( EventEmitterDocumentTrait, "isDecorated" )
 					.and.returnValue( true );

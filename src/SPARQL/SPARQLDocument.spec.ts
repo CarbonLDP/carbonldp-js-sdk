@@ -17,11 +17,11 @@ import {
 } from "../test/JasmineExtender";
 import { FinishSPARQLSelect } from "./Builder";
 import { SPARQLService } from "./Service";
-import { SPARQLDocument } from "./SPARQLDocument";
+import { SPARQLDocumentTrait } from "./SPARQLDocumentTrait";
 
 
-function createMock<T extends object>( data?:T & Partial<SPARQLDocument> ):T & SPARQLDocument {
-	return SPARQLDocument.decorate( Object.assign( {
+function createMock<T extends object>( data?:T & Partial<SPARQLDocumentTrait> ):T & SPARQLDocumentTrait {
+	return SPARQLDocumentTrait.decorate( Object.assign( {
 		id: "https://example.com/",
 	}, data ) );
 }
@@ -35,7 +35,7 @@ describe( module( "carbonldp/SPARQL/SPARQLDocument" ), () => {
 	), () => {
 
 		it( extendsClass( "CarbonLDP.TransientResource" ), () => {
-			const target:Resource = {} as SPARQLDocument;
+			const target:Resource = {} as SPARQLDocumentTrait;
 			expect( target ).toBeDefined();
 		} );
 
@@ -67,7 +67,7 @@ describe( module( "carbonldp/SPARQL/SPARQLDocument" ), () => {
 			), () => {} );
 
 			it( "should exists", () => {
-				const resource:SPARQLDocument = createMock();
+				const resource:SPARQLDocumentTrait = createMock();
 
 				expect( resource.executeRawASKQuery ).toBeDefined();
 				expect( resource.executeRawASKQuery ).toEqual( jasmine.any( Function ) );
@@ -77,7 +77,7 @@ describe( module( "carbonldp/SPARQL/SPARQLDocument" ), () => {
 			describe( "When has a defined context", () => {
 
 				let context:CarbonLDP;
-				let resource:SPARQLDocument;
+				let resource:SPARQLDocumentTrait;
 				beforeEach( () => {
 					context = new CarbonLDP( "https://example.com/" );
 
@@ -252,7 +252,7 @@ describe( module( "carbonldp/SPARQL/SPARQLDocument" ), () => {
 
 			describe( "When does not have a context", () => {
 
-				let resource:SPARQLDocument;
+				let resource:SPARQLDocumentTrait;
 				beforeEach( () => {
 					resource = createMock( {
 						_registry: new DocumentsRegistry(),
@@ -406,7 +406,7 @@ describe( module( "carbonldp/SPARQL/SPARQLDocument" ), () => {
 			), () => {} );
 
 			it( "should exists", () => {
-				const resource:SPARQLDocument = createMock();
+				const resource:SPARQLDocumentTrait = createMock();
 
 				expect( resource.executeASKQuery ).toBeDefined();
 				expect( resource.executeASKQuery ).toEqual( jasmine.any( Function ) );
@@ -415,7 +415,7 @@ describe( module( "carbonldp/SPARQL/SPARQLDocument" ), () => {
 			describe( "When has a defined context", () => {
 
 				let context:CarbonLDP;
-				let resource:SPARQLDocument;
+				let resource:SPARQLDocumentTrait;
 				beforeEach( () => {
 					context = new CarbonLDP( "https://example.com/" );
 
@@ -590,7 +590,7 @@ describe( module( "carbonldp/SPARQL/SPARQLDocument" ), () => {
 
 			describe( "When does not have a context", () => {
 
-				let resource:SPARQLDocument;
+				let resource:SPARQLDocumentTrait;
 				beforeEach( () => {
 					resource = createMock( {
 						_registry: new DocumentsRegistry(),
@@ -743,7 +743,7 @@ describe( module( "carbonldp/SPARQL/SPARQLDocument" ), () => {
 			), () => {} );
 
 			it( "should exists", () => {
-				const resource:SPARQLDocument = createMock();
+				const resource:SPARQLDocumentTrait = createMock();
 
 				expect( resource.executeRawSELECTQuery ).toBeDefined();
 				expect( resource.executeRawSELECTQuery ).toEqual( jasmine.any( Function ) );
@@ -752,7 +752,7 @@ describe( module( "carbonldp/SPARQL/SPARQLDocument" ), () => {
 			describe( "When has a defined context", () => {
 
 				let context:CarbonLDP;
-				let resource:SPARQLDocument;
+				let resource:SPARQLDocumentTrait;
 				beforeEach( () => {
 					context = new CarbonLDP( "https://example.com/" );
 
@@ -927,7 +927,7 @@ describe( module( "carbonldp/SPARQL/SPARQLDocument" ), () => {
 
 			describe( "When does not have a context", () => {
 
-				let resource:SPARQLDocument;
+				let resource:SPARQLDocumentTrait;
 				beforeEach( () => {
 					resource = createMock( {
 						_registry: new DocumentsRegistry(),
@@ -1082,7 +1082,7 @@ describe( module( "carbonldp/SPARQL/SPARQLDocument" ), () => {
 			), () => {} );
 
 			it( "should exists", () => {
-				const resource:SPARQLDocument = createMock();
+				const resource:SPARQLDocumentTrait = createMock();
 
 				expect( resource.executeSELECTQuery ).toBeDefined();
 				expect( resource.executeSELECTQuery ).toEqual( jasmine.any( Function ) );
@@ -1091,7 +1091,7 @@ describe( module( "carbonldp/SPARQL/SPARQLDocument" ), () => {
 			describe( "When has a defined context", () => {
 
 				let context:CarbonLDP;
-				let resource:SPARQLDocument;
+				let resource:SPARQLDocumentTrait;
 				beforeEach( () => {
 					context = new CarbonLDP( "https://example.com/" );
 
@@ -1266,7 +1266,7 @@ describe( module( "carbonldp/SPARQL/SPARQLDocument" ), () => {
 
 			describe( "When does not have a context", () => {
 
-				let resource:SPARQLDocument;
+				let resource:SPARQLDocumentTrait;
 				beforeEach( () => {
 					resource = createMock( {
 						_registry: new DocumentsRegistry(),
@@ -1420,7 +1420,7 @@ describe( module( "carbonldp/SPARQL/SPARQLDocument" ), () => {
 			), () => {} );
 
 			it( "should exists", () => {
-				const resource:SPARQLDocument = createMock();
+				const resource:SPARQLDocumentTrait = createMock();
 
 				expect( resource.executeRawCONSTRUCTQuery ).toBeDefined();
 				expect( resource.executeRawCONSTRUCTQuery ).toEqual( jasmine.any( Function ) );
@@ -1429,7 +1429,7 @@ describe( module( "carbonldp/SPARQL/SPARQLDocument" ), () => {
 			describe( "When has a defined context", () => {
 
 				let context:CarbonLDP;
-				let resource:SPARQLDocument;
+				let resource:SPARQLDocumentTrait;
 				beforeEach( () => {
 					context = new CarbonLDP( "https://example.com/" );
 
@@ -1604,7 +1604,7 @@ describe( module( "carbonldp/SPARQL/SPARQLDocument" ), () => {
 
 			describe( "When does not have a context", () => {
 
-				let resource:SPARQLDocument;
+				let resource:SPARQLDocumentTrait;
 				beforeEach( () => {
 					resource = createMock( {
 						_registry: new DocumentsRegistry(),
@@ -1758,7 +1758,7 @@ describe( module( "carbonldp/SPARQL/SPARQLDocument" ), () => {
 			), () => {} );
 
 			it( "should exists", () => {
-				const resource:SPARQLDocument = createMock();
+				const resource:SPARQLDocumentTrait = createMock();
 
 				expect( resource.executeRawDESCRIBEQuery ).toBeDefined();
 				expect( resource.executeRawDESCRIBEQuery ).toEqual( jasmine.any( Function ) );
@@ -1767,7 +1767,7 @@ describe( module( "carbonldp/SPARQL/SPARQLDocument" ), () => {
 			describe( "When has a defined context", () => {
 
 				let context:CarbonLDP;
-				let resource:SPARQLDocument;
+				let resource:SPARQLDocumentTrait;
 				beforeEach( () => {
 					context = new CarbonLDP( "https://example.com/" );
 
@@ -1942,7 +1942,7 @@ describe( module( "carbonldp/SPARQL/SPARQLDocument" ), () => {
 
 			describe( "When does not have a context", () => {
 
-				let resource:SPARQLDocument;
+				let resource:SPARQLDocumentTrait;
 				beforeEach( () => {
 					resource = createMock( {
 						_registry: new DocumentsRegistry(),
@@ -2096,7 +2096,7 @@ describe( module( "carbonldp/SPARQL/SPARQLDocument" ), () => {
 			), () => {} );
 
 			it( "should exists", () => {
-				const resource:SPARQLDocument = createMock();
+				const resource:SPARQLDocumentTrait = createMock();
 
 				expect( resource.executeUPDATE ).toBeDefined();
 				expect( resource.executeUPDATE ).toEqual( jasmine.any( Function ) );
@@ -2105,7 +2105,7 @@ describe( module( "carbonldp/SPARQL/SPARQLDocument" ), () => {
 			describe( "When has a defined context", () => {
 
 				let context:CarbonLDP;
-				let resource:SPARQLDocument;
+				let resource:SPARQLDocumentTrait;
 				beforeEach( () => {
 					context = new CarbonLDP( "https://example.com/" );
 
@@ -2280,7 +2280,7 @@ describe( module( "carbonldp/SPARQL/SPARQLDocument" ), () => {
 
 			describe( "When does not have a context", () => {
 
-				let resource:SPARQLDocument;
+				let resource:SPARQLDocumentTrait;
 				beforeEach( () => {
 					resource = createMock( {
 						_registry: new DocumentsRegistry(),
@@ -2428,7 +2428,7 @@ describe( module( "carbonldp/SPARQL/SPARQLDocument" ), () => {
 			), () => {} );
 
 			it( "should exists", ():void => {
-				const resource:SPARQLDocument = createMock();
+				const resource:SPARQLDocumentTrait = createMock();
 
 				expect( resource.sparql ).toBeDefined();
 				expect( resource.sparql ).toEqual( jasmine.any( Function ) );
@@ -2437,7 +2437,7 @@ describe( module( "carbonldp/SPARQL/SPARQLDocument" ), () => {
 			describe( "When has a defined context", () => {
 
 				let context:CarbonLDP;
-				let resource:SPARQLDocument;
+				let resource:SPARQLDocumentTrait;
 				beforeEach( ():void => {
 					context = new CarbonLDP( "https://example.com/" );
 					resource = createMock( {
@@ -2509,7 +2509,7 @@ describe( module( "carbonldp/SPARQL/SPARQLDocument" ), () => {
 
 			describe( "When does not have a context", () => {
 
-				let resource:SPARQLDocument;
+				let resource:SPARQLDocumentTrait;
 				beforeEach( ():void => {
 					resource = createMock( {
 						_registry: new DocumentsRegistry(),

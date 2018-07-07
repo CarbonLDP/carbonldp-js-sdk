@@ -19,7 +19,7 @@ import {
 } from "./Builder";
 import { SPARQLRawResults } from "./RawResults";
 import { SPARQLSelectResults } from "./SelectResults";
-import { SPARQLDocument } from "./SPARQLDocument";
+import { SPARQLDocumentTrait } from "./SPARQLDocumentTrait";
 
 describe( module( "carbonldp/SPARQL/Builder", "Module that reexports the customized SPARQLER class." ), ():void => {
 
@@ -83,7 +83,7 @@ describe( module( "carbonldp/SPARQL/Builder", "Module that reexports the customi
 			), ():void => {} );
 
 			it( "should be instantiable", () => {
-				const resource:SPARQLDocument = SPARQLDocument.decorate( { id: "https://example.com/" } );
+				const resource:SPARQLDocumentTrait = SPARQLDocumentTrait.decorate( { id: "https://example.com/" } );
 				const entryPoint:string = "https://example.com/";
 
 				const builder:SPARQLBuilder = new SPARQLBuilder( resource, entryPoint );
@@ -92,7 +92,7 @@ describe( module( "carbonldp/SPARQL/Builder", "Module that reexports the customi
 
 
 			it( "should extend FinishClause with the FinishSPARQLSelect", () => {
-				const resource:SPARQLDocument = SPARQLDocument.decorate( { id: "https://example.com/" } );
+				const resource:SPARQLDocumentTrait = SPARQLDocumentTrait.decorate( { id: "https://example.com/" } );
 				const entryPoint:string = "https://example.com/";
 
 				const builder:SPARQLBuilder = new SPARQLBuilder( resource, entryPoint );
@@ -108,7 +108,7 @@ describe( module( "carbonldp/SPARQL/Builder", "Module that reexports the customi
 			} );
 
 			it( "should call executeSELECTQuery when execute", async () => {
-				const resource:SPARQLDocument = SPARQLDocument.decorate( { id: "https://example.com/" } );
+				const resource:SPARQLDocumentTrait = SPARQLDocumentTrait.decorate( { id: "https://example.com/" } );
 				const entryPoint:string = "https://example.com/entry-point/";
 
 				const builder:SPARQLBuilder = new SPARQLBuilder( resource, entryPoint );
@@ -127,7 +127,7 @@ describe( module( "carbonldp/SPARQL/Builder", "Module that reexports the customi
 			} );
 
 			it( "should call executeRawSELECTQuery when execute", async () => {
-				const resource:SPARQLDocument = SPARQLDocument.decorate( { id: "https://example.com/" } );
+				const resource:SPARQLDocumentTrait = SPARQLDocumentTrait.decorate( { id: "https://example.com/" } );
 				const entryPoint:string = "https://example.com/entry-point/";
 
 				const builder:SPARQLBuilder = new SPARQLBuilder( resource, entryPoint );
@@ -148,7 +148,7 @@ describe( module( "carbonldp/SPARQL/Builder", "Module that reexports the customi
 		} );
 
 		it( extendsClass( "SPARQLER/SPARQLER" ), () => {
-			const target:SPARQLBuilder = new SPARQLBuilder( SPARQLDocument.decorate( {} ), "" );
+			const target:SPARQLBuilder = new SPARQLBuilder( SPARQLDocumentTrait.decorate( {} ), "" );
 			expect( target ).toEqual( jasmine.any( SPARQLER ) );
 		} );
 

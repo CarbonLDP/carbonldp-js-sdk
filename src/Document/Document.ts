@@ -13,7 +13,7 @@ import { QueryableDocumentTrait } from "../QueryDocument/QueryableDocumentTrait"
 import { DocumentsRegistry } from "../Registry";
 import { ResolvablePointer } from "../Repository";
 import { PersistedResource } from "../Resource";
-import { SPARQLDocument } from "../SPARQL";
+import { SPARQLDocumentTrait } from "../SPARQL";
 import {
 	QueryDocumentBuilder,
 	QueryDocumentDocument
@@ -35,7 +35,7 @@ import { CRUDDocument } from "./CRUDDocument";
 import { TransientDocument } from "./TransientDocument";
 
 
-export interface Document extends CRUDDocument, SPARQLDocument, EventEmitterDocumentTrait, QueryableDocumentTrait, ResolvablePointer {
+export interface Document extends CRUDDocument, SPARQLDocumentTrait, EventEmitterDocumentTrait, QueryableDocumentTrait, ResolvablePointer {
 	$registry:DocumentsRegistry;
 
 	created?:Date;
@@ -84,7 +84,7 @@ type OverloadedProps =
 	| "isDirty"
 	| "revert"
 	;
-const PROTOTYPE:PickSelfProps<Document, CRUDDocument & MembersDocument & SPARQLDocument & EventEmitterDocumentTrait & QueryDocumentDocument & ResolvablePointer, OverloadedProps> = {
+const PROTOTYPE:PickSelfProps<Document, CRUDDocument & MembersDocument & SPARQLDocumentTrait & EventEmitterDocumentTrait & QueryDocumentDocument & ResolvablePointer, OverloadedProps> = {
 
 	get<T extends object>( this:Document, uriOrOptionsOrQueryBuilderFn:string | GETOptions | QueryBuilderFn, optionsOrQueryBuilderFn?:GETOptions | QueryBuilderFn, queryBuilderFn?:QueryBuilderFn ):Promise<T & Document> {
 		const iri:string = isString( uriOrOptionsOrQueryBuilderFn ) ? uriOrOptionsOrQueryBuilderFn : this.$id;
@@ -174,7 +174,7 @@ const PROTOTYPE:PickSelfProps<Document, CRUDDocument & MembersDocument & SPARQLD
 
 export interface DocumentFactory extends ModelSchema, ModelDecorator<Document> {
 	PROTOTYPE:PickSelfProps<Document,
-		CRUDDocument & MembersDocument & SPARQLDocument & EventEmitterDocumentTrait & QueryDocumentDocument,
+		CRUDDocument & MembersDocument & SPARQLDocumentTrait & EventEmitterDocumentTrait & QueryDocumentDocument,
 		| "get"
 		| "resolve"
 		| "refresh"
@@ -258,7 +258,7 @@ export const Document:DocumentFactory = {
 	is( object:object ):object is Document {
 		return CRUDDocument.is( object )
 			&& MembersDocument.isDecorated( object )
-			&& SPARQLDocument.isDecorated( object )
+			&& SPARQLDocumentTrait.isDecorated( object )
 			&& EventEmitterDocumentTrait.isDecorated( object )
 			&& QueryDocumentDocument.isDecorated( object )
 			&& Document.isDecorated( object )
@@ -272,14 +272,14 @@ export const Document:DocumentFactory = {
 		const resource:T
 			& CRUDDocument
 			& MembersDocument
-			& SPARQLDocument
+			& SPARQLDocumentTrait
 			& EventEmitterDocumentTrait
 			& QueryDocumentDocument
 			= ModelDecorator
 			.decorateMultiple( object,
 				CRUDDocument,
 				MembersDocument,
-				SPARQLDocument,
+				SPARQLDocumentTrait,
 				EventEmitterDocumentTrait,
 				QueryDocumentDocument
 			)
