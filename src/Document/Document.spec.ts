@@ -23,7 +23,7 @@ import {
 	property,
 	STATIC,
 } from "../test/JasmineExtender";
-import { CRUDDocument } from "./CRUDDocument";
+import { LDPDocumentTrait } from "../LDP/LDPDocumentTrait";
 import { Document } from "./Document";
 
 

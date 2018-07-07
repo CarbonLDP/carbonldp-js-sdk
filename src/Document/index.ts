@@ -1,5 +1,5 @@
 export * from "./BaseDocument";
 export { BasePersistedDocument } from "./BasePersistedDocument";
-export { CRUDDocument } from "./CRUDDocument";
+export { LDPDocumentTrait } from "../LDP/LDPDocumentTrait";
 export * from "./Document";
 export * from "./TransientDocument";

@@ -13,7 +13,7 @@ import {
 } from "sparqler/tokens";
 import {
 	BasePersistedDocument,
-	CRUDDocument,
+	LDPDocumentTrait,
 	Document
 } from "../Document";
 import {

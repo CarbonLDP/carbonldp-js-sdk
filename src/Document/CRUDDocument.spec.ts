@@ -26,10 +26,10 @@ import {
 	XSD
 } from "../Vocabularies";
 import { BasePersistedDocument } from "./BasePersistedDocument";
-import { CRUDDocument } from "./CRUDDocument";
+import { LDPDocumentTrait } from "../LDP/LDPDocumentTrait";
 
 
-function createMock<T extends object>( data?:T & Partial<CRUDDocument> ):T & CRUDDocument {
+function createMock<T extends object>( data?:T & Partial<LDPDocumentTrait> ):T & LDPDocumentTrait {
 	return CRUDDocument.decorate( Object.assign( {
 		_registry: new DocumentsRegistry(),
 		id: "https://example.com/",
@@ -44,7 +44,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 	), ():void => {
 
 		it( extendsClass( "CarbonLDP.BasePersistedDocument" ), ():void => {
-			const target:BasePersistedDocument = {} as CRUDDocument;
+			const target:BasePersistedDocument = {} as LDPDocumentTrait;
 			expect( target ).toBeDefined();
 		} );
 
@@ -83,7 +83,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 			), ():void => {} );
 
 			it( "should exists", ():void => {
-				const resource:CRUDDocument = createMock();
+				const resource:LDPDocumentTrait = createMock();
 
 				expect( resource.get ).toBeDefined();
 				expect( resource.get ).toEqual( jasmine.any( Function ) );
@@ -133,7 +133,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 
 			it( "should throw error when _registry undefined", async () => {
 				try {
-					const resource:CRUDDocument = createMock( { $registry: void 0 } );
+					const resource:LDPDocumentTrait = createMock( { $registry: void 0 } );
 					await resource.get( "some/" );
 				} catch( e ) {
 					expect( () => { throw e; } )
@@ -142,7 +142,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 			} );
 
 			it( "should parse error response", async () => {
-				const resource:CRUDDocument = createMock();
+				const resource:LDPDocumentTrait = createMock();
 
 				const spy:jasmine.Spy = spyOn( resource.$registry, "_parseFailedResponse" )
 					.and.callFake( () => Promise.reject( null ) );
@@ -161,7 +161,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 			describe( "When has a context", () => {
 
 				let context:CarbonLDP;
-				let resource:CRUDDocument;
+				let resource:LDPDocumentTrait;
 				beforeEach( ():void => {
 					context = new CarbonLDP( "https://example.com/" );
 					resource = createMock( { $registry: context.registry } );
@@ -303,7 +303,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 				it( "should return resource requested", async () => {
 					stubRequest( "https://example.com/" );
 
-					const retrieved:CRUDDocument = await resource.get();
+					const retrieved:LDPDocumentTrait = await resource.get();
 					expect( retrieved ).toEqual( jasmine.objectContaining( {
 						id: "https://example.com/",
 					} ) );
@@ -314,19 +314,19 @@ describe( module( "carbonldp/Document" ), ():void => {
 
 					resource.$registry._addPointer( { id: "https://example.com/resource/" } );
 
-					const retrieved:CRUDDocument = await resource.get( "resource/" );
+					const retrieved:LDPDocumentTrait = await resource.get( "resource/" );
 					expect( retrieved ).toEqual( jasmine.objectContaining( {
 						id: "https://example.com/resource/",
 					} ) );
 				} );
 
 				it( "should return registered when already resolved", async () => {
-					const registered:CRUDDocument = resource.$registry._addPointer( {
+					const registered:LDPDocumentTrait = resource.$registry._addPointer( {
 						_resolved: true,
 						id: "https://example.com/resource/",
 					} );
 
-					const retrieved:CRUDDocument = await resource.get( "resource/" );
+					const retrieved:LDPDocumentTrait = await resource.get( "resource/" );
 					expect( retrieved ).toBe( registered );
 				} );
 
@@ -382,7 +382,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 					} );
 
 
-					const retrieved:CRUDDocument = await resource.get();
+					const retrieved:LDPDocumentTrait = await resource.get();
 					expect( retrieved ).toEqual( jasmine.objectContaining( {
 						id: "https://example.com/another-resource/",
 					} ) );
@@ -456,7 +456,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 				it( "should store returned data in the registry", async () => {
 					stubRequest( "https://example.com/" );
 
-					const retrieved:CRUDDocument = await resource.get();
+					const retrieved:LDPDocumentTrait = await resource.get();
 
 					const registry:DocumentsRegistry = resource.$registry;
 					expect( registry.hasPointer( retrieved.$id ) ).toBe( true );
@@ -466,7 +466,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 				it( "should add BasePersistedDocument values", async () => {
 					stubRequest( "https://example.com/" );
 
-					const retrieved:CRUDDocument = await resource.get();
+					const retrieved:LDPDocumentTrait = await resource.get();
 
 					expect( retrieved ).toEqual( jasmine.objectContaining( {
 						_eTag: "\"1-12345\"",
@@ -489,7 +489,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 			), ():void => {} );
 
 			it( "should exists", ():void => {
-				const resource:CRUDDocument = createMock();
+				const resource:LDPDocumentTrait = createMock();
 
 				expect( resource.resolve ).toBeDefined();
 				expect( resource.resolve ).toEqual( jasmine.any( Function ) );
@@ -539,7 +539,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 
 			it( "should throw error when _registry undefined", async () => {
 				try {
-					const resource:CRUDDocument = createMock( { $registry: void 0 } );
+					const resource:LDPDocumentTrait = createMock( { $registry: void 0 } );
 					await resource.resolve();
 				} catch( e ) {
 					expect( () => { throw e; } )
@@ -548,7 +548,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 			} );
 
 			it( "should parse error response", async () => {
-				const resource:CRUDDocument = createMock( { $id: "https://example.com/500/" } );
+				const resource:LDPDocumentTrait = createMock( { $id: "https://example.com/500/" } );
 
 				const spy:jasmine.Spy = spyOn( resource.$registry, "_parseFailedResponse" )
 					.and.callFake( () => Promise.reject( null ) );
@@ -567,7 +567,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 			describe( "When has a context", () => {
 
 				let context:CarbonLDP;
-				let resource:CRUDDocument;
+				let resource:LDPDocumentTrait;
 				beforeEach( ():void => {
 					context = new CarbonLDP( "https://example.com/" );
 					resource = createMock( { $registry: context.registry } );
@@ -623,18 +623,18 @@ describe( module( "carbonldp/Document" ), ():void => {
 				it( "should return resource requested", async () => {
 					stubRequest( "https://example.com/" );
 
-					const retrieved:CRUDDocument = await resource.resolve();
+					const retrieved:LDPDocumentTrait = await resource.resolve();
 					expect( retrieved ).toEqual( jasmine.objectContaining( {
 						id: "https://example.com/",
 					} ) );
 				} );
 
 				it( "should return registered when already resolved", async () => {
-					const registered:CRUDDocument = resource.$registry
+					const registered:LDPDocumentTrait = resource.$registry
 						.getPointer( "https://example.com/", true );
 					registered._resolved = true;
 
-					const retrieved:CRUDDocument = await resource.resolve();
+					const retrieved:LDPDocumentTrait = await resource.resolve();
 					expect( retrieved ).toBe( registered );
 				} );
 
@@ -649,7 +649,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 						"@vocab": "https://example.com/ns#",
 					} );
 
-					const registered:CRUDDocument = resource.$registry
+					const registered:LDPDocumentTrait = resource.$registry
 						.getPointer( "https://example.com/", true );
 					registered._resolved = true;
 
@@ -665,7 +665,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 				it( "should add if-none-match header when resolved and ensureLatest", async () => {
 					stubRequest( "https://example.com/" );
 
-					const registered:CRUDDocument = resource.$registry
+					const registered:LDPDocumentTrait = resource.$registry
 						.getPointer( "https://example.com/", true );
 					registered._resolved = true;
 					registered._eTag = "\"0-12345\"";
@@ -746,7 +746,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 				it( "should store returned data in the registry", async () => {
 					stubRequest( "https://example.com/" );
 
-					const retrieved:CRUDDocument = await resource.resolve();
+					const retrieved:LDPDocumentTrait = await resource.resolve();
 
 					const registry:DocumentsRegistry = resource.$registry;
 					expect( registry.hasPointer( retrieved.$id ) ).toBe( true );
@@ -756,7 +756,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 				it( "should add BasePersistedDocument values", async () => {
 					stubRequest( "https://example.com/" );
 
-					const retrieved:CRUDDocument = await resource.resolve();
+					const retrieved:LDPDocumentTrait = await resource.resolve();
 
 					expect( retrieved ).toEqual( jasmine.objectContaining( {
 						_eTag: "\"1-12345\"",
@@ -780,7 +780,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 			), ():void => {} );
 
 			it( "should exists", ():void => {
-				const resource:CRUDDocument = createMock();
+				const resource:LDPDocumentTrait = createMock();
 
 				expect( resource.exists ).toBeDefined();
 				expect( resource.exists ).toEqual( jasmine.any( Function ) );
@@ -809,7 +809,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 
 			it( "should throw error when _registry undefined", async () => {
 				try {
-					const resource:CRUDDocument = createMock( { $registry: void 0 } );
+					const resource:LDPDocumentTrait = createMock( { $registry: void 0 } );
 					await resource.exists( "resource/" );
 				} catch( e ) {
 					expect( () => { throw e; } )
@@ -818,7 +818,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 			} );
 
 			it( "should parse error response", async () => {
-				const resource:CRUDDocument = createMock();
+				const resource:LDPDocumentTrait = createMock();
 
 				const spy:jasmine.Spy = spyOn( resource.$registry, "_parseFailedResponse" )
 					.and.callFake( () => Promise.reject( null ) );
@@ -837,7 +837,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 			describe( "When has a context", () => {
 
 				let context:CarbonLDP;
-				let resource:CRUDDocument;
+				let resource:LDPDocumentTrait;
 				beforeEach( ():void => {
 					context = new CarbonLDP( "https://example.com/" );
 					resource = createMock( { $registry: context.registry } );
@@ -1053,7 +1053,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 			), ():void => {} );
 
 			it( "should exists", ():void => {
-				const resource:CRUDDocument = createMock();
+				const resource:LDPDocumentTrait = createMock();
 
 				expect( resource.create ).toBeDefined();
 				expect( resource.create ).toEqual( jasmine.any( Function ) );
@@ -1097,7 +1097,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 
 			it( "should throw error when _registry undefined", async () => {
 				try {
-					const resource:CRUDDocument = createMock( { $registry: void 0 } );
+					const resource:LDPDocumentTrait = createMock( { $registry: void 0 } );
 					await resource.create( {} );
 				} catch( e ) {
 					expect( () => { throw e; } )
@@ -1106,7 +1106,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 			} );
 
 			it( "should parse error response", async () => {
-				const resource:CRUDDocument = createMock( { $id: "https://example.com/500/" } );
+				const resource:LDPDocumentTrait = createMock( { $id: "https://example.com/500/" } );
 
 				const spy:jasmine.Spy = spyOn( resource.$registry, "_parseFailedResponse" )
 					.and.callFake( () => Promise.reject( null ) );
@@ -1125,7 +1125,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 			describe( "When has a context", () => {
 
 				let context:CarbonLDP;
-				let resource:CRUDDocument;
+				let resource:LDPDocumentTrait;
 				beforeEach( ():void => {
 					context = new CarbonLDP( "https://example.com/" );
 					resource = createMock( { $registry: context.registry } );
@@ -1645,7 +1645,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 
 					const child:object = {};
 
-					const returned:CRUDDocument = await resource.create( child );
+					const returned:LDPDocumentTrait = await resource.create( child );
 
 					expect( child ).toBe( returned );
 				} );
@@ -1656,7 +1656,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 					const child1:object = {};
 					const child2:object = {};
 
-					const [ returned1, returned2 ]:CRUDDocument[] = await resource.create( [ child1, child2 ] );
+					const [ returned1, returned2 ]:LDPDocumentTrait[] = await resource.create( [ child1, child2 ] );
 
 					expect( child1 ).toBe( returned1 );
 					expect( child2 ).toBe( returned2 );
@@ -1665,7 +1665,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 				it( "should have stored the child in the registry", async () => {
 					stubRequest( "https://example.com/" );
 
-					const returned:CRUDDocument = await resource.create( {} );
+					const returned:LDPDocumentTrait = await resource.create( {} );
 
 					expect( resource.$registry.hasPointer( returned.$id ) ).toBe( true );
 					expect( resource.$registry.getPointer( returned.$id ) ).toBe( returned );
@@ -1674,7 +1674,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 				it( "should have stored the children in the registry", async () => {
 					stubRequest( "https://example.com/" );
 
-					const [ returned1, returned2 ]:CRUDDocument[] = await resource.create( [ {}, {} ] );
+					const [ returned1, returned2 ]:LDPDocumentTrait[] = await resource.create( [ {}, {} ] );
 
 					expect( resource.$registry.hasPointer( returned1.$id ) ).toBe( true );
 					expect( resource.$registry.getPointer( returned1.$id ) ).toBe( returned1 );
@@ -1684,7 +1684,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 				} );
 
 				it( "should throw error if child is already persisted", async () => {
-					const child:CRUDDocument = createMock( { $id: "" } );
+					const child:LDPDocumentTrait = createMock( { $id: "" } );
 
 					try {
 						await resource.create( child );
@@ -1696,7 +1696,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 				} );
 
 				it( "should throw error if any children is already persisted", async () => {
-					const child:CRUDDocument = createMock( { $id: "" } );
+					const child:LDPDocumentTrait = createMock( { $id: "" } );
 
 					try {
 						await resource.create( [ {}, child, {} ] );
@@ -1740,7 +1740,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 				it( "should add unresolved BasePersistedDocument data to the child", async () => {
 					stubRequest( "https://example.com/" );
 
-					const returned:CRUDDocument = await resource.create( {} );
+					const returned:LDPDocumentTrait = await resource.create( {} );
 
 					expect( returned ).toEqual( jasmine.objectContaining( {
 						_resolved: false,
@@ -1751,7 +1751,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 				it( "should add unresolved BasePersistedDocument data to the children", async () => {
 					stubRequest( "https://example.com/" );
 
-					const [ returned1, returned2 ]:CRUDDocument[] = await resource.create( [ {}, {} ] );
+					const [ returned1, returned2 ]:LDPDocumentTrait[] = await resource.create( [ {}, {} ] );
 
 					expect( returned1 ).toEqual( jasmine.objectContaining( {
 						_resolved: false,
@@ -1815,7 +1815,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 					type BNode = { id:string, string:string };
 					type MyDoc = { blankNode1:BNode, blankNode2:BNode };
 
-					const returned:CRUDDocument & MyDoc = await resource.create<MyDoc>( {
+					const returned:LDPDocumentTrait & MyDoc = await resource.create<MyDoc>( {
 						blankNode1: {
 							id: "_:1",
 							string: "blank node 1",
@@ -1926,7 +1926,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 			), ():void => {} );
 
 			it( "should exists", ():void => {
-				const resource:CRUDDocument = createMock();
+				const resource:LDPDocumentTrait = createMock();
 
 				expect( resource.createAndRetrieve ).toBeDefined();
 				expect( resource.createAndRetrieve ).toEqual( jasmine.any( Function ) );
@@ -1996,7 +1996,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 
 			it( "should throw error when _registry undefined", async () => {
 				try {
-					const resource:CRUDDocument = createMock( { $registry: void 0 } );
+					const resource:LDPDocumentTrait = createMock( { $registry: void 0 } );
 					await resource.createAndRetrieve( {} );
 				} catch( e ) {
 					expect( () => { throw e; } )
@@ -2005,7 +2005,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 			} );
 
 			it( "should parse error response", async () => {
-				const resource:CRUDDocument = createMock( { $id: "https://example.com/500/" } );
+				const resource:LDPDocumentTrait = createMock( { $id: "https://example.com/500/" } );
 
 				const spy:jasmine.Spy = spyOn( resource.$registry, "_parseFailedResponse" )
 					.and.callFake( () => Promise.reject( null ) );
@@ -2024,7 +2024,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 			describe( "When has a context", () => {
 
 				let context:CarbonLDP;
-				let resource:CRUDDocument;
+				let resource:LDPDocumentTrait;
 				beforeEach( ():void => {
 					context = new CarbonLDP( "https://example.com/" );
 					resource = createMock( { $registry: context.registry } );
@@ -2482,7 +2482,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 						} )
 					;
 
-					const promises:Promise<CRUDDocument[]> = resource.createAndRetrieve( [ {
+					const promises:Promise<LDPDocumentTrait[]> = resource.createAndRetrieve( [ {
 						string: "my object 1",
 					}, {
 						string: "my object 2",
@@ -2523,7 +2523,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 						} )
 					;
 
-					const promises:Promise<CRUDDocument[]> = resource.createAndRetrieve( "resource/", [ {
+					const promises:Promise<LDPDocumentTrait[]> = resource.createAndRetrieve( "resource/", [ {
 						string: "my object 1",
 					}, {
 						string: "my object 2",
@@ -2563,7 +2563,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 
 					const child:object = {};
 
-					const returned:CRUDDocument = await resource.createAndRetrieve( child );
+					const returned:LDPDocumentTrait = await resource.createAndRetrieve( child );
 
 					expect( child ).toBe( returned );
 				} );
@@ -2572,7 +2572,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 					const child1:object = {};
 					const child2:object = {};
 
-					const promise:Promise<CRUDDocument[]> = resource.createAndRetrieve( [ child1, child2 ] );
+					const promise:Promise<LDPDocumentTrait[]> = resource.createAndRetrieve( [ child1, child2 ] );
 
 					jasmine.Ajax
 						.requests
@@ -2582,7 +2582,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 						} )
 					;
 
-					const [ returned1, returned2 ]:CRUDDocument[] = await promise;
+					const [ returned1, returned2 ]:LDPDocumentTrait[] = await promise;
 					expect( child1 ).toBe( returned1 );
 					expect( child2 ).toBe( returned2 );
 				} );
@@ -2590,14 +2590,14 @@ describe( module( "carbonldp/Document" ), ():void => {
 				it( "should have stored the child in the registry", async () => {
 					stubRequest( "https://example.com/" );
 
-					const returned:CRUDDocument = await resource.createAndRetrieve( {} );
+					const returned:LDPDocumentTrait = await resource.createAndRetrieve( {} );
 
 					expect( resource.$registry.hasPointer( returned.$id ) ).toBe( true );
 					expect( resource.$registry.getPointer( returned.$id ) ).toBe( returned );
 				} );
 
 				it( "should have stored the children in the registry", async () => {
-					const promises:Promise<CRUDDocument[]> = resource.createAndRetrieve( [ {}, {} ] );
+					const promises:Promise<LDPDocumentTrait[]> = resource.createAndRetrieve( [ {}, {} ] );
 
 					jasmine.Ajax
 						.requests
@@ -2607,7 +2607,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 						} )
 					;
 
-					const [ returned1, returned2 ]:CRUDDocument[] = await promises;
+					const [ returned1, returned2 ]:LDPDocumentTrait[] = await promises;
 
 					expect( resource.$registry.hasPointer( returned1.$id ) ).toBe( true );
 					expect( resource.$registry.getPointer( returned1.$id ) ).toBe( returned1 );
@@ -2617,7 +2617,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 				} );
 
 				it( "should throw error if child is already persisted", async () => {
-					const child:CRUDDocument = createMock( { $id: "" } );
+					const child:LDPDocumentTrait = createMock( { $id: "" } );
 
 					try {
 						await resource.createAndRetrieve( child );
@@ -2629,7 +2629,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 				} );
 
 				it( "should throw error if any children is already persisted", async () => {
-					const child:CRUDDocument = createMock( { $id: "" } );
+					const child:LDPDocumentTrait = createMock( { $id: "" } );
 
 					try {
 						await resource.createAndRetrieve( [ {}, child, {} ] );
@@ -2673,7 +2673,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 				it( "should add resolved BasePersistedDocument data to the child", async () => {
 					stubRequest( "https://example.com/" );
 
-					const returned:CRUDDocument = await resource.create( {} );
+					const returned:LDPDocumentTrait = await resource.create( {} );
 
 					expect( returned ).toEqual( jasmine.objectContaining( {
 						_resolved: true,
@@ -2683,7 +2683,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 				} );
 
 				it( "should add resolved BasePersistedDocument data to the children", async () => {
-					const promise:Promise<CRUDDocument[]> = resource.create( [ {}, {} ] );
+					const promise:Promise<LDPDocumentTrait[]> = resource.create( [ {}, {} ] );
 
 					jasmine.Ajax
 						.requests
@@ -2693,7 +2693,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 						} )
 					;
 
-					const [ returned1, returned2 ]:CRUDDocument[] = await promise;
+					const [ returned1, returned2 ]:LDPDocumentTrait[] = await promise;
 					expect( returned1 ).toEqual( jasmine.objectContaining( {
 						_resolved: true,
 						_eTag: "\"0-12345\"",
@@ -2711,7 +2711,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 						.extendObjectSchema( { "@vocab": "https://example.com/ns#" } );
 
 					type MyResource = { string:string, pointerSet?:MyResource[] };
-					const promise:Promise<CRUDDocument & MyResource> = resource.createAndRetrieve( {
+					const promise:Promise<LDPDocumentTrait & MyResource> = resource.createAndRetrieve( {
 						string: "document",
 						pointerSet: [
 							{
@@ -2762,7 +2762,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 					;
 
 
-					const returned:CRUDDocument & MyResource = await promise;
+					const returned:LDPDocumentTrait & MyResource = await promise;
 					expect( returned as MyResource ).toEqual( {
 						string: "updated document",
 						pointerSet: [
@@ -2944,7 +2944,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 
 					type BNode = { id:string, string:string };
 					type MyDoc = { blankNode1:BNode, blankNode2:BNode };
-					const returned:CRUDDocument & MyDoc = await resource.createAndRetrieve<MyDoc>( {
+					const returned:LDPDocumentTrait & MyDoc = await resource.createAndRetrieve<MyDoc>( {
 						blankNode1: {
 							id: "_:1",
 							string: "blank node 1",
@@ -3016,7 +3016,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 			), ():void => {} );
 
 			it( "should exists", ():void => {
-				const resource:CRUDDocument = createMock();
+				const resource:LDPDocumentTrait = createMock();
 
 				expect( resource.createAccessPoint ).toBeDefined();
 				expect( resource.createAccessPoint ).toEqual( jasmine.any( Function ) );
@@ -3060,7 +3060,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 
 			it( "should throw error when _registry undefined", async () => {
 				try {
-					const resource:CRUDDocument = createMock( { $registry: void 0 } );
+					const resource:LDPDocumentTrait = createMock( { $registry: void 0 } );
 					await resource.createAccessPoint( { hasMemberRelation: "relation" } );
 				} catch( e ) {
 					expect( () => { throw e; } )
@@ -3072,7 +3072,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 			describe( "When has a context", () => {
 
 				let context:CarbonLDP;
-				let resource:CRUDDocument;
+				let resource:LDPDocumentTrait;
 				beforeEach( ():void => {
 					context = new CarbonLDP( "https://example.com/" );
 					resource = createMock( { $registry: context.registry } );
@@ -3395,7 +3395,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 				it( "should have stored the access point in the registry", async () => {
 					stubRequest( "https://example.com/" );
 
-					const returned:CRUDDocument = await resource.createAccessPoint( { hasMemberRelation: "relation" } );
+					const returned:LDPDocumentTrait = await resource.createAccessPoint( { hasMemberRelation: "relation" } );
 
 					expect( resource.$registry.hasPointer( returned.$id ) ).toBe( true );
 					expect( resource.$registry.getPointer( returned.$id ) ).toBe( returned );
@@ -3463,7 +3463,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 				it( "should add unresolved BasePersistedDocument data", async () => {
 					stubRequest( "https://example.com/" );
 
-					const returned:CRUDDocument = await resource.createAccessPoint( { hasMemberRelation: "relation" } );
+					const returned:LDPDocumentTrait = await resource.createAccessPoint( { hasMemberRelation: "relation" } );
 
 					expect( returned ).toEqual( jasmine.objectContaining( {
 						_resolved: false,
@@ -3474,7 +3474,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 				it( "should add parsed AccessPoint data", async () => {
 					stubRequest( "https://example.com/" );
 
-					const returned:CRUDDocument = await resource.createAccessPoint( { hasMemberRelation: "relation" } );
+					const returned:LDPDocumentTrait = await resource.createAccessPoint( { hasMemberRelation: "relation" } );
 
 					expect( returned ).toEqual( jasmine.objectContaining( {
 						hasMemberRelation: "relation" as any,
@@ -3537,7 +3537,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 					type BNode = { id:string, string:string };
 					type MyDoc = { blankNode1:BNode, blankNode2:BNode };
 
-					const returned:CRUDDocument & MyDoc = await resource.createAccessPoint<MyDoc>( {
+					const returned:LDPDocumentTrait & MyDoc = await resource.createAccessPoint<MyDoc>( {
 						hasMemberRelation: "relation",
 						blankNode1: {
 							id: "_:1",
@@ -3609,7 +3609,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 			), ():void => {} );
 
 			it( "should exists", ():void => {
-				const resource:CRUDDocument = createMock();
+				const resource:LDPDocumentTrait = createMock();
 
 				expect( resource.createAccessPoints ).toBeDefined();
 				expect( resource.createAccessPoints ).toEqual( jasmine.any( Function ) );
@@ -3653,7 +3653,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 
 			it( "should throw error when _registry undefined", async () => {
 				try {
-					const resource:CRUDDocument = createMock( { $registry: void 0 } );
+					const resource:LDPDocumentTrait = createMock( { $registry: void 0 } );
 					await resource.createAccessPoints( [ { hasMemberRelation: "relation" } ] );
 				} catch( e ) {
 					expect( () => { throw e; } )
@@ -3662,7 +3662,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 			} );
 
 			it( "should parse error response", async () => {
-				const resource:CRUDDocument = createMock( { $id: "https://example.com/500/" } );
+				const resource:LDPDocumentTrait = createMock( { $id: "https://example.com/500/" } );
 
 				const spy:jasmine.Spy = spyOn( resource.$registry, "_parseFailedResponse" )
 					.and.callFake( () => Promise.reject( null ) );
@@ -3681,7 +3681,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 			describe( "When has a context", () => {
 
 				let context:CarbonLDP;
-				let resource:CRUDDocument;
+				let resource:LDPDocumentTrait;
 				beforeEach( ():void => {
 					context = new CarbonLDP( "https://example.com/" );
 					resource = createMock( { $registry: context.registry } );
@@ -4064,7 +4064,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 				it( "should have stored the access points in the registry", async () => {
 					stubRequest( "https://example.com/" );
 
-					const [ returned1, returned2 ]:CRUDDocument[] = await resource.createAccessPoints( [ { hasMemberRelation: "relation" }, { hasMemberRelation: "relation" } ] );
+					const [ returned1, returned2 ]:LDPDocumentTrait[] = await resource.createAccessPoints( [ { hasMemberRelation: "relation" }, { hasMemberRelation: "relation" } ] );
 
 					expect( resource.$registry.hasPointer( returned1.$id ) ).toBe( true );
 					expect( resource.$registry.getPointer( returned1.$id ) ).toBe( returned1 );
@@ -4106,7 +4106,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 				it( "should add unresolved BasePersistedDocument data", async () => {
 					stubRequest( "https://example.com/" );
 
-					const [ returned1, returned2 ]:CRUDDocument[] = await resource.createAccessPoints( [ { hasMemberRelation: "relation1" }, { hasMemberRelation: "relation2" } ] );
+					const [ returned1, returned2 ]:LDPDocumentTrait[] = await resource.createAccessPoints( [ { hasMemberRelation: "relation1" }, { hasMemberRelation: "relation2" } ] );
 
 					expect( returned1 ).toEqual( jasmine.objectContaining( {
 						_resolved: false,
@@ -4121,7 +4121,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 				it( "should add parsed AccessPoint data", async () => {
 					stubRequest( "https://example.com/" );
 
-					const [ returned1, returned2 ]:CRUDDocument[] = await resource.createAccessPoints( [ { hasMemberRelation: "relation1" }, { hasMemberRelation: "relation2" } ] );
+					const [ returned1, returned2 ]:LDPDocumentTrait[] = await resource.createAccessPoints( [ { hasMemberRelation: "relation1" }, { hasMemberRelation: "relation2" } ] );
 
 					expect( returned1 ).toEqual( jasmine.objectContaining( {
 						hasMemberRelation: "relation1" as any,
@@ -4190,7 +4190,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 					type BNode = { id:string, string:string };
 					type MyDoc = { blankNode1:BNode, blankNode2:BNode };
 
-					const [ returned ]:(CRUDDocument & MyDoc)[] = await resource.createAccessPoints<MyDoc>( [ {
+					const [ returned ]:(LDPDocumentTrait & MyDoc)[] = await resource.createAccessPoints<MyDoc>( [ {
 						hasMemberRelation: "relation",
 						blankNode1: {
 							id: "_:1",
@@ -4262,7 +4262,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 			), ():void => {} );
 
 			it( "should exists", ():void => {
-				const resource:CRUDDocument = createMock();
+				const resource:LDPDocumentTrait = createMock();
 
 				expect( resource.createAccessPointAndRetrieve ).toBeDefined();
 				expect( resource.createAccessPointAndRetrieve ).toEqual( jasmine.any( Function ) );
@@ -4329,7 +4329,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 
 			it( "should throw error when _registry undefined", async () => {
 				try {
-					const resource:CRUDDocument = createMock( { $registry: void 0 } );
+					const resource:LDPDocumentTrait = createMock( { $registry: void 0 } );
 					await resource.createAccessPointAndRetrieve( { hasMemberRelation: "relation" } );
 				} catch( e ) {
 					expect( () => { throw e; } )
@@ -4341,7 +4341,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 			describe( "When has a context", () => {
 
 				let context:CarbonLDP;
-				let resource:CRUDDocument;
+				let resource:LDPDocumentTrait;
 				beforeEach( ():void => {
 					context = new CarbonLDP( "https://example.com/" );
 					resource = createMock( { $registry: context.registry } );
@@ -4661,7 +4661,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 				it( "should have stored the access point in the registry", async () => {
 					stubRequest( "https://example.com/" );
 
-					const returned:CRUDDocument = await resource.createAccessPointAndRetrieve( { hasMemberRelation: "relation" } );
+					const returned:LDPDocumentTrait = await resource.createAccessPointAndRetrieve( { hasMemberRelation: "relation" } );
 
 					expect( resource.$registry.hasPointer( returned.$id ) ).toBe( true );
 					expect( resource.$registry.getPointer( returned.$id ) ).toBe( returned );
@@ -4728,7 +4728,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 				it( "should add resolved BasePersistedDocument data", async () => {
 					stubRequest( "https://example.com/" );
 
-					const returned:CRUDDocument = await resource.createAccessPointAndRetrieve( { hasMemberRelation: "relation" } );
+					const returned:LDPDocumentTrait = await resource.createAccessPointAndRetrieve( { hasMemberRelation: "relation" } );
 
 					expect( returned ).toEqual( jasmine.objectContaining( {
 						_resolved: true,
@@ -4739,7 +4739,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 				it( "should add & update parsed AccessPoint data", async () => {
 					stubRequest( "https://example.com/" );
 
-					const returned:CRUDDocument = await resource.createAccessPointAndRetrieve( { hasMemberRelation: "relation" } );
+					const returned:LDPDocumentTrait = await resource.createAccessPointAndRetrieve( { hasMemberRelation: "relation" } );
 
 					expect( returned ).toEqual( jasmine.objectContaining( {
 						types: jasmine.arrayContaining( [
@@ -4760,7 +4760,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 						.extendObjectSchema( { "@vocab": "https://example.com/ns#" } );
 
 					type MyResource = { string:string, pointerSet?:MyResource[] };
-					const promise:Promise<CRUDDocument & MyResource> = resource.createAndRetrieve( {
+					const promise:Promise<LDPDocumentTrait & MyResource> = resource.createAndRetrieve( {
 						string: "document",
 						pointerSet: [
 							{
@@ -4811,7 +4811,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 					;
 
 
-					const returned:CRUDDocument & MyResource = await promise;
+					const returned:LDPDocumentTrait & MyResource = await promise;
 					expect( returned as MyResource ).toEqual( jasmine.objectContaining( {
 						string: "updated document",
 						pointerSet: [
@@ -4900,7 +4900,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 					type BNode = { id:string, string:string };
 					type MyDoc = { blankNode1:BNode, blankNode2:BNode };
 
-					const returned:CRUDDocument & MyDoc = await resource.createAccessPointAndRetrieve<MyDoc>( {
+					const returned:LDPDocumentTrait & MyDoc = await resource.createAccessPointAndRetrieve<MyDoc>( {
 						hasMemberRelation: "relation",
 						blankNode1: {
 							id: "_:1",
@@ -4972,7 +4972,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 			), ():void => {} );
 
 			it( "should exists", ():void => {
-				const resource:CRUDDocument = createMock();
+				const resource:LDPDocumentTrait = createMock();
 
 				expect( resource.createAccessPointsAndRetrieve ).toBeDefined();
 				expect( resource.createAccessPointsAndRetrieve ).toEqual( jasmine.any( Function ) );
@@ -5049,7 +5049,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 
 			it( "should throw error when _registry undefined", async () => {
 				try {
-					const resource:CRUDDocument = createMock( { $registry: void 0 } );
+					const resource:LDPDocumentTrait = createMock( { $registry: void 0 } );
 					await resource.createAccessPointsAndRetrieve( [ { hasMemberRelation: "relation" } ] );
 				} catch( e ) {
 					expect( () => { throw e; } )
@@ -5058,7 +5058,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 			} );
 
 			it( "should parse error response", async () => {
-				const resource:CRUDDocument = createMock( { $id: "https://example.com/500/" } );
+				const resource:LDPDocumentTrait = createMock( { $id: "https://example.com/500/" } );
 
 				const spy:jasmine.Spy = spyOn( resource.$registry, "_parseFailedResponse" )
 					.and.callFake( () => Promise.reject( null ) );
@@ -5077,7 +5077,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 			describe( "When has a context", () => {
 
 				let context:CarbonLDP;
-				let resource:CRUDDocument;
+				let resource:LDPDocumentTrait;
 				beforeEach( ():void => {
 					context = new CarbonLDP( "https://example.com/" );
 					resource = createMock( { $registry: context.registry } );
@@ -5661,7 +5661,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 					type BNode = { id:string, string:string };
 					type MyDoc = { blankNode1:BNode, blankNode2:BNode };
 
-					const [ returned ]:(CRUDDocument & MyDoc)[] = await resource.createAccessPointsAndRetrieve<MyDoc>( [ {
+					const [ returned ]:(LDPDocumentTrait & MyDoc)[] = await resource.createAccessPointsAndRetrieve<MyDoc>( [ {
 						hasMemberRelation: "relation",
 						blankNode1: {
 							id: "_:1",
@@ -5702,7 +5702,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 			), () => {} );
 
 			it( "should exists", ():void => {
-				const resource:CRUDDocument = createMock();
+				const resource:LDPDocumentTrait = createMock();
 
 				expect( resource.save ).toBeDefined();
 				expect( resource.save ).toEqual( jasmine.any( Function ) );
@@ -5743,7 +5743,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 
 			it( "should throw error when _registry undefined", async () => {
 				try {
-					const resource:CRUDDocument = createMock( { $registry: void 0 } );
+					const resource:LDPDocumentTrait = createMock( { $registry: void 0 } );
 					await resource.save();
 				} catch( e ) {
 					expect( () => { throw e; } )
@@ -5755,7 +5755,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 			describe( "When has a context", () => {
 
 				let context:CarbonLDP;
-				let resource:CRUDDocument;
+				let resource:LDPDocumentTrait;
 				beforeEach( ():void => {
 					context = new CarbonLDP( "https://example.com/" );
 					resource = createMock( { $registry: context.registry } );
@@ -5812,7 +5812,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 
 
 				it( "should return self if no dirty", async () => {
-					const returned:CRUDDocument = await resource.save();
+					const returned:LDPDocumentTrait = await resource.save();
 
 					expect( returned ).toBe( resource );
 				} );
@@ -6078,7 +6078,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 					type BNode = { id:string, string:string };
 					type MyDoc = { blankNode1:BNode, blankNode2:BNode };
 
-					const returned:CRUDDocument & MyDoc = await resource.save<MyDoc>();
+					const returned:LDPDocumentTrait & MyDoc = await resource.save<MyDoc>();
 
 					expect( returned.hasPointer( "_:1" ) ).toBe( false );
 					expect( returned.blankNode1 ).toEqual( jasmine.objectContaining( {
@@ -6108,7 +6108,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 			), () => {} );
 
 			it( "should exists", ():void => {
-				const resource:CRUDDocument = createMock();
+				const resource:LDPDocumentTrait = createMock();
 
 				expect( resource.saveAndRefresh ).toBeDefined();
 				expect( resource.saveAndRefresh ).toEqual( jasmine.any( Function ) );
@@ -6161,7 +6161,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 
 			it( "should throw error when _registry undefined", async () => {
 				try {
-					const resource:CRUDDocument = createMock( { $registry: void 0 } );
+					const resource:LDPDocumentTrait = createMock( { $registry: void 0 } );
 					await resource.saveAndRefresh();
 				} catch( e ) {
 					expect( () => { throw e; } )
@@ -6173,7 +6173,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 			describe( "When has a context", () => {
 
 				let context:CarbonLDP;
-				let resource:CRUDDocument;
+				let resource:LDPDocumentTrait;
 				beforeEach( ():void => {
 					context = new CarbonLDP( "https://example.com/" );
 					resource = createMock( { $registry: context.registry } );
@@ -6230,7 +6230,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 
 
 				it( "should return self if no dirty", async () => {
-					const returned:CRUDDocument = await resource.saveAndRefresh();
+					const returned:LDPDocumentTrait = await resource.saveAndRefresh();
 
 					expect( returned ).toBe( resource );
 				} );
@@ -6455,7 +6455,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 						.extendObjectSchema( { "@vocab": "https://example.com/ns#" } );
 
 
-					const returned:CRUDDocument & MyDoc = await resource.saveAndRefresh<MyDoc>();
+					const returned:LDPDocumentTrait & MyDoc = await resource.saveAndRefresh<MyDoc>();
 					expect( returned as MyDoc ).toEqual( {
 						string: "updated document",
 					} );
@@ -6471,7 +6471,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 					} );
 
 
-					const returned:CRUDDocument = await resource.saveAndRefresh();
+					const returned:LDPDocumentTrait = await resource.saveAndRefresh();
 					expect( returned ).toEqual( jasmine.objectContaining( {
 						_eTag: "\"1-12345\"",
 						_resolved: true,
@@ -6560,7 +6560,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 					type BNode = { id:string, string:string };
 					type MyDoc = { blankNode1:BNode, blankNode2:BNode };
 
-					const returned:CRUDDocument & MyDoc = await resource.saveAndRefresh<MyDoc>();
+					const returned:LDPDocumentTrait & MyDoc = await resource.saveAndRefresh<MyDoc>();
 
 					expect( returned.hasPointer( "_:1" ) ).toBe( false );
 					expect( returned.blankNode1 ).toEqual( jasmine.objectContaining( {
@@ -6590,7 +6590,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 			), () => {} );
 
 			it( "should exists", ():void => {
-				const resource:CRUDDocument = createMock();
+				const resource:LDPDocumentTrait = createMock();
 
 				expect( resource.refresh ).toBeDefined();
 				expect( resource.refresh ).toEqual( jasmine.any( Function ) );
@@ -6642,7 +6642,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 
 			it( "should throw error when _registry undefined", async () => {
 				try {
-					const resource:CRUDDocument = createMock( { $registry: void 0 } );
+					const resource:LDPDocumentTrait = createMock( { $registry: void 0 } );
 					await resource.refresh();
 				} catch( e ) {
 					expect( () => { throw e; } )
@@ -6654,7 +6654,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 			describe( "When has a context", () => {
 
 				let context:CarbonLDP;
-				let resource:CRUDDocument;
+				let resource:LDPDocumentTrait;
 				beforeEach( ():void => {
 					context = new CarbonLDP( "https://example.com/" );
 					resource = createMock( { $registry: context.registry } );
@@ -6743,7 +6743,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 				it( "should return same if no-modified received", async () => {
 					stubRequest( "https://example.com/", { status: 304 } );
 
-					const returned:CRUDDocument = await resource.refresh();
+					const returned:LDPDocumentTrait = await resource.refresh();
 
 					expect( returned ).toBe( resource );
 				} );
@@ -6860,7 +6860,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 						.extendObjectSchema( { "@vocab": "https://example.com/ns#" } );
 
 
-					const returned:CRUDDocument & MyResource = await resource.refresh<MyResource>();
+					const returned:LDPDocumentTrait & MyResource = await resource.refresh<MyResource>();
 					expect( returned as MyResource ).toEqual( {
 						string: "updated document",
 						pointerSet: [
@@ -6889,7 +6889,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 					} );
 
 
-					const returned:CRUDDocument = await resource.refresh();
+					const returned:LDPDocumentTrait = await resource.refresh();
 					expect( returned ).toEqual( jasmine.objectContaining( {
 						_eTag: "\"1-12345\"",
 						_resolved: true,
@@ -6978,7 +6978,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 					type BNode = { id:string, string:string };
 					type MyDoc = { blankNode1:BNode, blankNode2:BNode };
 
-					const returned:CRUDDocument & MyDoc = await resource.refresh<MyDoc>();
+					const returned:LDPDocumentTrait & MyDoc = await resource.refresh<MyDoc>();
 
 					expect( returned.hasPointer( "_:1" ) ).toBe( false );
 					expect( returned.blankNode1 ).toEqual( jasmine.objectContaining( {
@@ -7016,7 +7016,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 			), ():void => {} );
 
 			it( "should exists", ():void => {
-				const resource:CRUDDocument = createMock();
+				const resource:LDPDocumentTrait = createMock();
 
 				expect( resource.delete ).toBeDefined();
 				expect( resource.delete ).toEqual( jasmine.any( Function ) );
@@ -7043,7 +7043,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 
 			it( "should throw error when _registry undefined", async () => {
 				try {
-					const resource:CRUDDocument = createMock( { $registry: void 0 } );
+					const resource:LDPDocumentTrait = createMock( { $registry: void 0 } );
 					await resource.delete();
 				} catch( e ) {
 					expect( () => { throw e; } )
@@ -7055,7 +7055,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 			describe( "When has a context", () => {
 
 				let context:CarbonLDP;
-				let resource:CRUDDocument;
+				let resource:LDPDocumentTrait;
 				beforeEach( ():void => {
 					context = new CarbonLDP( "https://example.com/" );
 					resource = createMock( { $registry: context.registry } );
@@ -7227,7 +7227,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 				it( "should remove pointer whe URI provided", async () => {
 					stubRequest( "https://example.com/resource/" );
 
-					const target:CRUDDocument = resource.$registry
+					const target:LDPDocumentTrait = resource.$registry
 						._addPointer( { id: "https://example.com/resource/" } );
 
 					await resource.delete( "resource/" );

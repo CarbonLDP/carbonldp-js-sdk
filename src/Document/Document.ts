@@ -31,11 +31,11 @@ import {
 	XSD,
 } from "../Vocabularies";
 import { BaseDocument } from "./BaseDocument";
-import { CRUDDocument } from "./CRUDDocument";
+import { LDPDocumentTrait } from "../LDP/LDPDocumentTrait";
 import { TransientDocument } from "./TransientDocument";
 
 
-export interface Document extends CRUDDocument, SPARQLDocumentTrait, EventEmitterDocumentTrait, QueryableDocumentTrait, ResolvablePointer {
+export interface Document extends LDPDocumentTrait, SPARQLDocumentTrait, EventEmitterDocumentTrait, QueryableDocumentTrait, ResolvablePointer {
 	$registry:DocumentsRegistry;
 
 	created?:Date;
@@ -84,7 +84,7 @@ type OverloadedProps =
 	| "isDirty"
 	| "revert"
 	;
-const PROTOTYPE:PickSelfProps<Document, CRUDDocument & MembersDocument & SPARQLDocumentTrait & EventEmitterDocumentTrait & QueryDocumentDocument & ResolvablePointer, OverloadedProps> = {
+const PROTOTYPE:PickSelfProps<Document, LDPDocumentTrait & MembersDocument & SPARQLDocumentTrait & EventEmitterDocumentTrait & QueryDocumentDocument & ResolvablePointer, OverloadedProps> = {
 
 	get<T extends object>( this:Document, uriOrOptionsOrQueryBuilderFn:string | GETOptions | QueryBuilderFn, optionsOrQueryBuilderFn?:GETOptions | QueryBuilderFn, queryBuilderFn?:QueryBuilderFn ):Promise<T & Document> {
 		const iri:string = isString( uriOrOptionsOrQueryBuilderFn ) ? uriOrOptionsOrQueryBuilderFn : this.$id;
@@ -174,7 +174,7 @@ const PROTOTYPE:PickSelfProps<Document, CRUDDocument & MembersDocument & SPARQLD
 
 export interface DocumentFactory extends ModelSchema, ModelDecorator<Document> {
 	PROTOTYPE:PickSelfProps<Document,
-		CRUDDocument & MembersDocument & SPARQLDocumentTrait & EventEmitterDocumentTrait & QueryDocumentDocument,
+		LDPDocumentTrait & MembersDocument & SPARQLDocumentTrait & EventEmitterDocumentTrait & QueryDocumentDocument,
 		| "get"
 		| "resolve"
 		| "refresh"
@@ -270,7 +270,7 @@ export const Document:DocumentFactory = {
 		if( Document.isDecorated( object ) ) return object;
 
 		const resource:T
-			& CRUDDocument
+			& LDPDocumentTrait
 			& MembersDocument
 			& SPARQLDocumentTrait
 			& EventEmitterDocumentTrait
