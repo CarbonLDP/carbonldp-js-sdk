@@ -12,6 +12,7 @@ import { Pointer } from "../Pointer";
 import { QueryableDocumentTrait } from "../QueryDocument/QueryableDocumentTrait";
 import { DocumentsRegistry } from "../Registry";
 import { ResolvablePointer } from "../Repository";
+import { DocumentsRepository } from "../Repository/DocumentsRepository";
 import { PersistedResource } from "../Resource";
 import { SPARQLDocumentTrait } from "../SPARQL";
 import {
@@ -35,8 +36,9 @@ import { LDPDocumentTrait } from "../LDP/LDPDocumentTrait";
 import { TransientDocument } from "./TransientDocument";
 
 
-export interface Document extends LDPDocumentTrait, SPARQLDocumentTrait, EventEmitterDocumentTrait, QueryableDocumentTrait, ResolvablePointer {
+export interface Document extends LDPDocumentTrait, SPARQLDocumentTrait, EventEmitterDocumentTrait, QueryableDocumentTrait {
 	$registry:DocumentsRegistry;
+	$repository:DocumentsRepository;
 
 	created?:Date;
 	modified?:Date;

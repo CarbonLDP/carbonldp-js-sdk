@@ -38,9 +38,11 @@ import {
 	RDFNode,
 	URI
 } from "../RDF";
-import { BaseDocumentsRepository } from "../Repository";
+import {
+	BaseDocumentsRepository,
+	ResolvablePointer
+} from "../Repository";
 import { _getNotInContextMessage } from "../Repository/Utils";
-import { PersistedResource } from "../Resource";
 import { SPARQLService } from "../SPARQL";
 import {
 	isBoolean,
@@ -59,7 +61,6 @@ import { QueryContext } from "./QueryContext";
 import { QueryContextBuilder } from "./QueryContextBuilder";
 import { QueryContextPartial } from "./QueryContextPartial";
 import { QueryDocumentBuilder } from "./QueryDocumentBuilder";
-import { QueryDocumentDocument } from "./QueryDocumentDocument";
 import { QueryDocumentsBuilder } from "./QueryDocumentsBuilder";
 import { QueryMetadata } from "./QueryMetadata";
 import {
@@ -139,15 +140,15 @@ function __executePatterns<T extends object>( repository:QueryableDocumentsRepos
 
 			const targetSet:Set<string> = new Set( freeResources
 				.getPointers()
-				.filter( QueryMetadata.is )
+				.filter<QueryMetadata>( QueryMetadata.is )
 				.map( x => x.target || x[ C.target ] )
 				// Alternative to flatMap
 				.reduce( ( targets, currentTargets ) => targets.concat( currentTargets ), [] )
 				.map( x => x.id )
 			);
 
-			const targetETag:string | undefined = target && target._eTag;
-			if( target ) target._eTag = void 0;
+			const targetETag:string | undefined = target && target.$eTag;
+			if( target ) target.$eTag = void 0;
 
 			freeResources
 				.getPointers()
@@ -157,17 +158,17 @@ function __executePatterns<T extends object>( repository:QueryableDocumentsRepos
 				.forEach( documentsMetadata => documentsMetadata.forEach( documentMetadata => {
 					if( ! documentMetadata ) return;
 
-					const relatedDocument:QueryDocumentDocument = documentMetadata.relatedDocument || documentMetadata[ C.relatedDocument ];
+					const relatedDocument:Document = documentMetadata.relatedDocument || documentMetadata[ C.relatedDocument ];
 					const eTag:string = documentMetadata.eTag || documentMetadata[ C.eTag ];
 
 					if( ! eTag ) return;
 					relatedDocument._resolved = true;
 
-					if( relatedDocument._eTag === void 0 ) relatedDocument._eTag = eTag;
-					if( relatedDocument._eTag !== eTag ) relatedDocument._eTag = null;
+					if( relatedDocument.$eTag === void 0 ) relatedDocument.$eTag = eTag;
+					if( relatedDocument.$eTag !== eTag ) relatedDocument.$eTag = null;
 				} ) );
 
-			if( targetETag && targetETag === target._eTag )
+			if( targetETag && targetETag === target.$eTag )
 				return [ target as T & Document ];
 
 			const rdfDocuments:RDFDocument[] = rdfNodes
@@ -178,7 +179,7 @@ function __executePatterns<T extends object>( repository:QueryableDocumentsRepos
 
 			// FIXME
 			return new JSONLDCompacter( repository.$context.registry as any, targetName, queryContext )
-				.compactDocuments<T & QueryDocumentDocument>( rdfDocuments, targetDocuments );
+				.compactDocuments<T & Document>( rdfDocuments, targetDocuments );
 		} )
 		.catch( repository._parseFailedResponse.bind( this ) )
 		;
@@ -273,7 +274,7 @@ function __getQueryable<T extends object>( repository:QueryableDocumentsReposito
 }
 
 
-function __addRefreshPatterns( queryContext:QueryContextPartial, parentAdder:OptionalToken, resource:PersistedResource, parentName:string ):void {
+function __addRefreshPatterns( queryContext:QueryContextPartial, parentAdder:OptionalToken, resource:ResolvablePointer, parentName:string ):void {
 	if( resource.__partialMetadata.schema === PartialMetadata.ALL ) {
 		parentAdder.addPattern( createAllPattern( queryContext, parentName ) );
 		return;
@@ -294,8 +295,8 @@ function __addRefreshPatterns( queryContext:QueryContextPartial, parentAdder:Opt
 		parentAdder.addPattern( propertyPattern );
 
 		const propertyValues:any[] = Array.isArray( resource[ propertyName ] ) ? resource[ propertyName ] : [ resource[ propertyName ] ];
-		const propertyFragment:PersistedResource = propertyValues
-			.filter( PersistedResource.is )
+		const propertyFragment:ResolvablePointer = propertyValues
+			.filter( ResolvablePointer.is )
 			.find( fragment => fragment.isQueried() );
 		if( ! propertyFragment ) return;
 

@@ -5,6 +5,7 @@ import {
 	ModelTypeGuard
 } from "../Model";
 import { Pointer } from "../Pointer";
+import { PartialMetadata } from "../QueryDocument";
 import {
 	isFunction,
 	isObject,
@@ -21,6 +22,9 @@ export interface ResolvablePointer extends Pointer {
 	_resolved:boolean;
 	_snapshot:object;
 
+	__partialMetadata:PartialMetadata | undefined;
+
+
 	isResolved():boolean;
 
 
@@ -29,6 +33,9 @@ export interface ResolvablePointer extends Pointer {
 	isDirty():boolean;
 
 	revert():void;
+
+
+	isQueried():boolean;
 }
 
 
@@ -89,6 +96,13 @@ export const ResolvablePointer:ResolvablePointerFactory = {
 		revert( this:{ types?:string[] } & ResolvablePointer ):void {
 			__internalRevert( this, this._snapshot );
 			if( ! this.types ) this.types = [];
+		},
+
+
+		__partialMetadata: void 0,
+
+		isQueried( this:ResolvablePointer ):boolean {
+			return ! ! this.__partialMetadata;
 		},
 	},
 

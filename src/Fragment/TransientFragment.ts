@@ -5,19 +5,18 @@ import {
 	ModelPrototype,
 	ModelTypeGuard
 } from "../Model";
-import { RegisteredPointer } from "../Registry";
 import { Resource } from "../Resource";
 import { BaseFragment } from "./BaseFragment";
 
 
-export interface TransientFragment extends Resource, RegisteredPointer {
+export interface TransientFragment extends Resource {
 	$document:TransientDocument;
 	$registry:TransientDocument;
 }
 
 
 export type TransientFragmentFactory =
-	& ModelPrototype<TransientFragment, Resource & RegisteredPointer>
+	& ModelPrototype<TransientFragment, Resource>
 	& ModelDecorator<TransientFragment, BaseFragment>
 	& ModelFactory<TransientFragment, BaseFragment>
 	& ModelTypeGuard<TransientFragment>
@@ -42,8 +41,8 @@ export const TransientFragment:TransientFragmentFactory = {
 	decorate<T extends BaseFragment>( object:T ):T & TransientFragment {
 		if( TransientFragment.isDecorated( object ) ) return object;
 
-		const target:T & Resource & RegisteredPointer = ModelDecorator
-			.decorateMultiple( object, Resource, RegisteredPointer );
+		const target:T & Resource = ModelDecorator
+			.decorateMultiple( object, Resource );
 
 		return ModelDecorator
 			.definePropertiesFrom( TransientFragment.PROTOTYPE, target );

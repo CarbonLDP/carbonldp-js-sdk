@@ -18,11 +18,10 @@ import { isObject } from "../Utils";
 import { BaseResource } from "./BaseResource";
 
 
-export interface Resource extends Pointer {
+export interface Resource extends RegisteredPointer {
 	types:string[];
 
-	// TODO: Change to unknown
-	$registry?:Registry<any>;
+	$registry:Registry<RegisteredPointer> | undefined;
 	$slug:string;
 
 
@@ -51,6 +50,8 @@ function __resolveURI( resource:Resource, uri:string ):string {
 
 export const Resource:ResourceFactory = {
 	PROTOTYPE: {
+		$registry: void 0,
+
 		get types():string[] { return []; },
 
 		get $slug( this:Resource ):string {
