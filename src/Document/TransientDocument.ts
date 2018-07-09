@@ -31,8 +31,7 @@ import { BaseDocument } from "./BaseDocument";
 
 
 export interface TransientDocument extends Resource, Registry<TransientFragment> {
-	// TODO: Change to unknown
-	$registry?:DocumentsRegistry;
+	$registry:DocumentsRegistry | undefined;
 
 	hasMemberRelation?:Pointer;
 	isMemberOfRelation?:Pointer;
@@ -122,6 +121,8 @@ export type TransientDocumentFactory =
 
 export const TransientDocument:TransientDocumentFactory = {
 	PROTOTYPE: {
+		$registry: void 0,
+
 		__modelDecorator: TransientFragment,
 
 		_normalize( this:TransientDocument ):void {

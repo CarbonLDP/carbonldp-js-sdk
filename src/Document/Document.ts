@@ -1,207 +1,57 @@
+import { Fragment } from "../Fragment";
+import { EventEmitterDocumentTrait } from "../Messaging";
 import {
 	ModelDecorator,
 	ModelFactory,
+	ModelPrototype,
 	ModelSchema,
+	ModelTypeGuard,
 } from "../Model";
-import {
-	GETOptions,
-	RequestOptions
-} from "../HTTP";
-import { EventEmitterDocumentTrait } from "../Messaging";
-import { Pointer } from "../Pointer";
-import { QueryableDocumentTrait } from "../QueryDocument/QueryableDocumentTrait";
+import { QueryableDocumentTrait } from "../QueryDocument";
 import { DocumentsRegistry } from "../Registry";
-import { ResolvablePointer } from "../Repository";
-import { DocumentsRepository } from "../Repository/DocumentsRepository";
-import { PersistedResource } from "../Resource";
+import { DocumentsRepository } from "../Repository";
 import { SPARQLDocumentTrait } from "../SPARQL";
-import {
-	QueryDocumentBuilder,
-	QueryDocumentDocument
-} from "../QueryDocument";
-import * as Utils from "../Utils";
-import {
-	isFunction,
-	isObject,
-	isString,
-	PickSelfProps
-} from "../Utils";
+import { isObject } from "../Utils";
 import {
 	C,
 	LDP,
 	XSD,
 } from "../Vocabularies";
 import { BaseDocument } from "./BaseDocument";
-import { LDPDocumentTrait } from "../LDP/LDPDocumentTrait";
 import { TransientDocument } from "./TransientDocument";
 
 
-export interface Document extends LDPDocumentTrait, SPARQLDocumentTrait, EventEmitterDocumentTrait, QueryableDocumentTrait {
+export interface Document extends SPARQLDocumentTrait, EventEmitterDocumentTrait, QueryableDocumentTrait {
 	$registry:DocumentsRegistry;
 	$repository:DocumentsRepository;
 
+
+	__savedFragments:Fragment[];
+
+
 	created?:Date;
 	modified?:Date;
-	defaultInteractionModel?:Pointer;
-	accessPoints?:Pointer[];
-	hasMemberRelation?:Pointer;
-	isMemberOfRelation?:Pointer;
-	contains?:Pointer[];
+	accessPoints?:Document[];
+	contains?:Document[];
 
 
-	get<T extends object>( queryBuilderFn:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<T & Document>;
-	get<T extends object>( requestOptions?:GETOptions, queryBuilderFn?:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<T & Document>;
-	get<T extends object>( uri:string, queryBuilderFn:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<T & Document>;
-	get<T extends object>( uri:string, requestOptions?:GETOptions, queryBuilderFn?:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<T & Document>;
-
-	resolve<T extends object>( queryBuilderFn:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<T & this & Document>;
-	resolve<T extends object>( requestOptions?:GETOptions, queryBuilderFn?:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<T & this & Document>;
-
-
-	refresh<T extends object>( requestOptions?:RequestOptions ):Promise<T & this>;
-
-	save<T extends object>( requestOptions?:RequestOptions ):Promise<T & this>;
-
-	saveAndRefresh<T extends object>( requestOptions?:RequestOptions ):Promise<T & this>;
+	_syncSavedFragments():void;
 }
 
 
-type QueryBuilderFn = Function & (( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder);
-
-function addEnsureIfPartial( this:void, iri:string, resource:Document, requestOptions:GETOptions ):void {
-	if( requestOptions.ensureLatest ) return;
-	if( ! resource.$registry || ! resource.$registry.hasPointer( iri, true ) ) return;
-
-	const target:Document = resource.$registry.getPointer( iri, true );
-	if( target.isQueried() ) requestOptions.ensureLatest = true;
-}
-
-
-type OverloadedProps =
-	| "get"
-	| "resolve"
-	| "refresh"
-	| "save"
-	| "saveAndRefresh"
-	| "isDirty"
-	| "revert"
+export type OverloadedMembers =
+	| "__modelDecorator"
 	;
-const PROTOTYPE:PickSelfProps<Document, LDPDocumentTrait & MembersDocument & SPARQLDocumentTrait & EventEmitterDocumentTrait & QueryDocumentDocument & ResolvablePointer, OverloadedProps> = {
 
-	get<T extends object>( this:Document, uriOrOptionsOrQueryBuilderFn:string | GETOptions | QueryBuilderFn, optionsOrQueryBuilderFn?:GETOptions | QueryBuilderFn, queryBuilderFn?:QueryBuilderFn ):Promise<T & Document> {
-		const iri:string = isString( uriOrOptionsOrQueryBuilderFn ) ? uriOrOptionsOrQueryBuilderFn : this.$id;
-
-		const requestOptions:GETOptions = isObject( uriOrOptionsOrQueryBuilderFn ) ?
-			uriOrOptionsOrQueryBuilderFn : isObject( optionsOrQueryBuilderFn ) ? optionsOrQueryBuilderFn : {};
-
-		queryBuilderFn = isFunction( uriOrOptionsOrQueryBuilderFn ) ? uriOrOptionsOrQueryBuilderFn :
-			isFunction( optionsOrQueryBuilderFn ) ? optionsOrQueryBuilderFn : queryBuilderFn;
-
-
-		if( queryBuilderFn )
-			return QueryDocumentDocument.PROTOTYPE
-				.get.call( this, iri, requestOptions, queryBuilderFn );
-
-		addEnsureIfPartial( iri, this, requestOptions );
-		return CRUDDocument.PROTOTYPE.get.call( this, iri, requestOptions );
-	},
-
-	resolve<T extends object>( this:Document, optionsOrQueryBuilderFn?:GETOptions | QueryBuilderFn, queryBuilderFn?:QueryBuilderFn ):Promise<T & Document> {
-		const requestOptions:GETOptions = isObject( optionsOrQueryBuilderFn ) ?
-			optionsOrQueryBuilderFn : {};
-
-		if( isFunction( optionsOrQueryBuilderFn ) ) queryBuilderFn = optionsOrQueryBuilderFn;
-
-		if( queryBuilderFn )
-			return QueryDocumentDocument.PROTOTYPE.resolve.call( this, requestOptions, queryBuilderFn );
-
-		addEnsureIfPartial( this.$id, this, requestOptions );
-		return CRUDDocument.PROTOTYPE.resolve.call( this, requestOptions );
-	},
-
-
-	refresh<T extends object>( this:Document, requestOptions?:RequestOptions ):Promise<T & Document> {
-		if( this.isQueried() )
-			return QueryDocumentDocument.PROTOTYPE.refresh.call( this, requestOptions );
-		return CRUDDocument.PROTOTYPE.refresh.call( this, requestOptions );
-	},
-
-	save<T extends object>( this:Document, requestOptions?:RequestOptions ):Promise<T & Document> {
-		if( this.isQueried() )
-			return QueryDocumentDocument.PROTOTYPE.save.call( this, requestOptions );
-		return CRUDDocument.PROTOTYPE.save.call( this, requestOptions );
-	},
-
-	saveAndRefresh<T extends object>( this:Document, requestOptions?:RequestOptions ):Promise<T & Document> {
-		if( this.isQueried() )
-			return QueryDocumentDocument.PROTOTYPE.saveAndRefresh.call( this, requestOptions );
-		return CRUDDocument.PROTOTYPE.saveAndRefresh.call( this, requestOptions );
-	},
-
-
-	isDirty( this:Document ):boolean {
-		const isSelfDirty:boolean = PersistedResource.PROTOTYPE.isDirty.call( this );
-		if( isSelfDirty ) return true;
-
-		const hasRemovedFragments:boolean = this
-			._savedFragments
-			.some( fragment => ! this.hasFragment( fragment.$id ) );
-		if( hasRemovedFragments ) return true;
-
-		const hasNewFragments:boolean = this
-			._savedFragments.length !== this.__resourcesMap.size;
-		if( hasNewFragments ) return true;
-
-		return this
-			._savedFragments
-			.some( fragment => fragment.isDirty() );
-	},
-
-	revert( this:Document ):void {
-		PersistedResource.PROTOTYPE.revert.call( this );
-
-		this.__resourcesMap.clear();
-		this
-			._savedFragments
-			.forEach( fragment => {
-				fragment.revert();
-
-				const localID:string = "slug" in fragment ?
-					fragment.slug : fragment.$id;
-
-				this.__resourcesMap.set( localID, fragment );
-			} );
-	},
-};
-
-export interface DocumentFactory extends ModelSchema, ModelDecorator<Document> {
-	PROTOTYPE:PickSelfProps<Document,
-		LDPDocumentTrait & MembersDocument & SPARQLDocumentTrait & EventEmitterDocumentTrait & QueryDocumentDocument,
-		| "get"
-		| "resolve"
-		| "refresh"
-		| "save"
-		| "saveAndRefresh"
-		| "isDirty"
-		| "revert">;
-
-	TYPE:C[ "Document" ];
-
-	is( object:object ):object is Document;
-
-	isDecorated( object:object ):object is Document;
-
-
-	create<T extends object>( data?:T & BaseDocument ):T & TransientDocument;
-
-	createFrom<T extends object>( object:T & BaseDocument ):T & TransientDocument;
-
-	decorate<T extends object>( object:T ):T & Document;
-}
+export type DocumentFactory =
+	& ModelSchema<C[ "Document" ]>
+	& ModelPrototype<Document, SPARQLDocumentTrait & EventEmitterDocumentTrait & QueryableDocumentTrait, OverloadedMembers>
+	& ModelDecorator<Document>
+	& ModelTypeGuard<Document>
+	& ModelFactory<TransientDocument, BaseDocument>
+	;
 
 export const Document:DocumentFactory = {
-	PROTOTYPE,
-
 	TYPE: C.Document,
 	SCHEMA: {
 		"contains": {
@@ -249,20 +99,36 @@ export const Document:DocumentFactory = {
 		},
 	},
 
+	PROTOTYPE: {
+		__modelDecorator: Fragment,
+
+		get __savedFragments():Fragment[] { return []; },
+
+		_syncSavedFragments( this:Document ):void {
+			this.__savedFragments = Array
+				.from( this.__resourcesMap.values() )
+				.map( Fragment.decorate )
+			;
+
+			this.__savedFragments
+				.forEach( fragment => fragment._syncSnapshot() )
+			;
+		},
+	},
+
 
 	isDecorated( object:object ):object is Document {
-		return Utils.isObject( object )
+		return isObject( object )
 			&& ModelDecorator
-				.hasPropertiesFrom( PROTOTYPE, object )
+				.hasPropertiesFrom( Document.PROTOTYPE, object )
 			;
 	},
 
 	is( object:object ):object is Document {
-		return CRUDDocument.is( object )
-			&& MembersDocument.isDecorated( object )
+		return TransientDocument.is( object )
 			&& SPARQLDocumentTrait.isDecorated( object )
 			&& EventEmitterDocumentTrait.isDecorated( object )
-			&& QueryDocumentDocument.isDecorated( object )
+			&& QueryableDocumentTrait.isDecorated( object )
 			&& Document.isDecorated( object )
 			;
 	},
@@ -271,24 +137,11 @@ export const Document:DocumentFactory = {
 	decorate<T extends object>( object:T ):T & Document {
 		if( Document.isDecorated( object ) ) return object;
 
-		const resource:T
-			& LDPDocumentTrait
-			& MembersDocument
-			& SPARQLDocumentTrait
-			& EventEmitterDocumentTrait
-			& QueryDocumentDocument
-			= ModelDecorator
-			.decorateMultiple( object,
-				CRUDDocument,
-				MembersDocument,
-				SPARQLDocumentTrait,
-				EventEmitterDocumentTrait,
-				QueryDocumentDocument
-			)
-		;
+		const target:T & SPARQLDocumentTrait & EventEmitterDocumentTrait & QueryableDocumentTrait = ModelDecorator
+			.decorateMultiple( object, SPARQLDocumentTrait, EventEmitterDocumentTrait, QueryableDocumentTrait );
 
 		return ModelDecorator
-			.definePropertiesFrom( PROTOTYPE, resource );
+			.definePropertiesFrom( Document.PROTOTYPE, target );
 	},
 
 
