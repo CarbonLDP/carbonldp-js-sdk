@@ -1,11 +1,11 @@
-import { Parser } from "../HTTP/Parser";
-import { JSONLDParser } from "../JSONLD/Parser";
+import { Parser } from "../HTTP";
+import { JSONLDParser } from "../JSONLD";
 import * as Utils from "./../Utils";
 import { RDFNode } from "./Node";
 import { URI } from "./URI";
 
-export interface RDFDocument {
-	"@id"?:string;
+export interface RDFDocument extends RDFNode {
+	"@id":string;
 	"@graph":RDFNode[];
 }
 
@@ -36,13 +36,10 @@ export const RDFDocument:RDFDocumentFactory = {
 	},
 
 	create( resources:RDFNode[], uri?:string ):RDFDocument {
-		const document:RDFDocument = {
+		return {
+			"@id": uri ? uri : "",
 			"@graph": resources,
 		};
-
-		if( uri ) document[ "@id" ] = uri;
-
-		return document;
 	},
 
 

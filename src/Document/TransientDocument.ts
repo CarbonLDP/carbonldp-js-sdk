@@ -1,15 +1,14 @@
 import { isRelative } from "sparqler/iri";
+import { Context } from "../Context";
 import { IllegalArgumentError } from "../Errors";
 import { TransientFragment } from "../Fragment";
-import { JSONLDConverter } from "../JSONLD";
 import {
 	ModelDecorator,
 	ModelFactory,
 	ModelPrototype,
 	ModelTypeGuard,
 } from "../Model";
-import { DigestedObjectSchema } from "../ObjectSchema";
-import { Pointer, } from "../Pointer";
+import { Pointer } from "../Pointer";
 import {
 	RDFDocument,
 	RDFNode,
@@ -55,7 +54,7 @@ export interface TransientDocument extends Resource, Registry<TransientFragment>
 	_getLocalID( id:string ):string;
 
 
-	toJSON( registry?:DocumentsRegistry ):RDFDocument;
+	toJSON( registryOrKey:Context | string ):RDFDocument;
 }
 
 
@@ -108,6 +107,7 @@ type OverloadedMembers =
 	| "_getLocalID"
 	| "__modelDecorator"
 	| "getPointer"
+	| "toJSON"
 	;
 
 export type TransientDocumentFactory =
@@ -194,30 +194,14 @@ export const TransientDocument:TransientDocumentFactory = {
 		},
 
 
-		toJSON( this:TransientDocument, registryOrKey?:DocumentsRegistry | string ):RDFDocument {
-			const registry:DocumentsRegistry = isObject( registryOrKey ) ?
-				registryOrKey : this.$registry;
-
-			const generalSchema:DigestedObjectSchema = registry ?
-				registry.getGeneralSchema() : new DigestedObjectSchema();
-
-			const jsonldConverter:JSONLDConverter = registry ?
-				registry.$context.jsonldConverter : new JSONLDConverter();
-
-			const expandedResources:RDFNode[] = [ this, ...this.getFragments(), ]
-				.map( resource => {
-					const resourceSchema:DigestedObjectSchema = registry ?
-						registry.getSchemaFor( resource ) :
-						new DigestedObjectSchema()
-					;
-
-					return jsonldConverter.expand( resource, generalSchema, resourceSchema );
-				} )
+		toJSON( this:TransientDocument, contextOrKey:Context | string ):RDFDocument {
+			const nodes:RDFNode[] = [ this, ...this.getFragments(), ]
+				.map( resource => resource.toJSON( contextOrKey ) )
 			;
 
 			return {
 				"@id": this.$id,
-				"@graph": expandedResources,
+				"@graph": nodes,
 			};
 		},
 	},

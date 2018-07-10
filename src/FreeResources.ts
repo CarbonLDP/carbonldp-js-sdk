@@ -1,11 +1,10 @@
-import { JSONLDConverter } from "./JSONLD";
+import { Context } from "./Context";
 import {
 	ModelDecorator,
 	ModelFactory,
 	ModelPrototype,
 	ModelTypeGuard,
 } from "./Model";
-import { DigestedObjectSchema } from "./ObjectSchema";
 import {
 	RDFNode,
 	URI,
@@ -30,7 +29,7 @@ export interface FreeResources extends Registry<Resource> {
 	_addPointer<T extends object>( base:T & { id?:string } ):T & Resource;
 
 
-	toJSON():RDFNode[];
+	toJSON( registryOrKey:Context | string ):RDFNode[];
 }
 
 
@@ -66,20 +65,10 @@ export const FreeResources:FreeResourcesFactory = {
 		},
 
 
-		toJSON( this:FreeResources ):RDFNode[] {
-			const generalSchema:DigestedObjectSchema = this.$registry ?
-				this.$registry.getGeneralSchema() : new DigestedObjectSchema();
-			const jsonldConverter:JSONLDConverter = this.$registry ?
-				this.$registry.$context.jsonldConverter : new JSONLDConverter();
-
+		toJSON( this:FreeResources, contextOrKey?:Context | string ):RDFNode[] {
 			return this
 				.getPointers( true )
-				.map( resource => {
-					const resourceSchema:DigestedObjectSchema = this.$registry ?
-						this.$registry.getSchemaFor( resource ) : generalSchema;
-
-					return jsonldConverter.expand( resource, generalSchema, resourceSchema );
-				} )
+				.map( resource => resource.toJSON( contextOrKey ) )
 				;
 		},
 	},

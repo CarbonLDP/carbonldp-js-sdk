@@ -4,18 +4,16 @@ import {
 	ObjectSchema,
 } from "../ObjectSchema";
 import {
-	RegisteredPointer,
-	Registry
+	GeneralRegistry,
+	RegisteredPointer
 } from "../Registry";
-import {
-	Repository,
-	ResolvablePointer
-} from "../Repository";
+import { ResolvablePointer } from "../Repository";
+import { GeneralRepository } from "./GeneralRepository";
 
 
 export interface Context<REGISTRY extends RegisteredPointer = RegisteredPointer, REPOSITORY extends ResolvablePointer = ResolvablePointer> {
-	readonly registry:Registry<REGISTRY> | undefined;
-	readonly repository:Repository<REPOSITORY> | undefined;
+	readonly registry:GeneralRegistry<REGISTRY> | undefined;
+	readonly repository:GeneralRepository<REPOSITORY> | undefined;
 
 	readonly baseURI:string;
 	readonly parentContext:Context | undefined;

@@ -1,3 +1,5 @@
+import { Context } from "../Context";
+import { JSONLDConverter } from "../JSONLD";
 import {
 	ModelDecorator,
 	ModelFactory,
@@ -6,12 +8,15 @@ import {
 } from "../Model";
 import {
 	DigestedObjectSchema,
-	ObjectSchemaResolver,
 	ObjectSchemaUtils,
 } from "../ObjectSchema";
 import { Pointer } from "../Pointer";
-import { URI } from "../RDF";
 import {
+	RDFNode,
+	URI
+} from "../RDF";
+import {
+	GeneralRegistry,
 	RegisteredPointer,
 	Registry
 } from "../Registry";
@@ -31,24 +36,26 @@ export interface Resource extends RegisteredPointer {
 	hasType( type:string ):boolean;
 
 	removeType( type:string ):void;
+
+
+	toJSON( registryOrKey:Context | string ):RDFNode;
 }
 
 
-function __getSchemaResolver( registry:Registry<any> | undefined ):ObjectSchemaResolver | undefined {
+function __getContext( registry:Registry<any> | GeneralRegistry<any> | undefined ):Context | undefined {
 	if( ! registry ) return;
+	if( "$context" in registry ) return registry.$context;
 
-	if( ObjectSchemaResolver.is( registry ) ) return registry;
-
-	return __getSchemaResolver( registry.$registry );
+	return __getContext( registry.$registry );
 }
 
 function __resolveURI( resource:Resource, uri:string ):string {
 	if( URI.isAbsolute( uri ) ) return uri;
 
-	const resolver:ObjectSchemaResolver = __getSchemaResolver( resource.$registry );
-	if( ! resolver ) return uri;
+	const context:Context | undefined = __getContext( resource.$registry );
+	if( ! context || context.registry ) return uri;
 
-	const schema:DigestedObjectSchema = resolver.getGeneralSchema();
+	const schema:DigestedObjectSchema = context.registry.getGeneralSchema();
 	return ObjectSchemaUtils.resolveURI( uri, schema, { vocab: true } );
 }
 
@@ -90,6 +97,23 @@ export const Resource:ResourceFactory = {
 
 			const index:number = this.types.indexOf( type );
 			if( index !== - 1 ) this.types.splice( index, 1 );
+		},
+
+
+		toJSON( this:Resource, contextOrKey?:Context | string ):RDFNode {
+			const context:Context | undefined = typeof contextOrKey === "object" ?
+				contextOrKey : __getContext( this.$registry );
+
+			const generalSchema:DigestedObjectSchema = context ?
+				context.registry.getGeneralSchema() : new DigestedObjectSchema();
+
+			const resourceSchema:DigestedObjectSchema = context ?
+				context.registry.getSchemaFor( this ) : new DigestedObjectSchema();
+
+			const jsonldConverter:JSONLDConverter = context ?
+				context.jsonldConverter : new JSONLDConverter();
+
+			return jsonldConverter.expand( this, generalSchema, resourceSchema );
 		},
 	},
 
