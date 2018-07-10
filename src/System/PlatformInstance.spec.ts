@@ -1,5 +1,4 @@
-import { VolatileResource } from "../LDP/VolatileResource";
-import { Fragment } from "../Fragment";
+import { VolatileResource } from "../LDP";
 import {
 	extendsClass,
 	hasProperty,
@@ -9,8 +8,8 @@ import {
 	property,
 	STATIC
 } from "../test/JasmineExtender";
-import { C } from "../Vocabularies/C";
-import { XSD } from "../Vocabularies/XSD";
+import { C } from "../Vocabularies";
+import { XSD } from "../Vocabularies";
 import { PlatformInstance } from "./PlatformInstance";
 
 describe( module( "carbonldp/System/PlatformInstance" ), ():void => {
@@ -22,11 +21,6 @@ describe( module( "carbonldp/System/PlatformInstance" ), ():void => {
 
 		it( extendsClass( "CarbonLDP.LDP.VolatileResource.VolatileResource" ), ():void => {
 			const target:VolatileResource = {} as PlatformInstance;
-			expect( target ).toBeDefined();
-		} );
-
-		it( extendsClass( "CarbonLDP.Fragment" ), ():void => {
-			const target:Fragment = {} as PlatformInstance;
 			expect( target ).toBeDefined();
 		} );
 

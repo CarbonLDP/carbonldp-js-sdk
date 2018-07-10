@@ -1,12 +1,13 @@
-import { VolatileResource } from "../LDP/VolatileResource";
+import { VolatileResource } from "../LDP";
 import { ObjectSchema } from "../ObjectSchema";
-import { Fragment } from "../Fragment";
-import { C } from "../Vocabularies/C";
-import { XSD } from "../Vocabularies/XSD";
+import {
+	C,
+	XSD
+} from "../Vocabularies";
 import { PlatformMetadata } from "./PlatformMetadata";
 
 
-export interface PlatformInstance extends VolatileResource, Fragment {
+export interface PlatformInstance extends VolatileResource {
 	_registry:PlatformMetadata;
 
 	buildDate:Date;
