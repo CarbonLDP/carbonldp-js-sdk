@@ -2,9 +2,8 @@ import {
 	hasProperty,
 	interfaze,
 	module,
-	OBLIGATORY
+	OPTIONAL
 } from "../test/JasmineExtender";
-
 import { BasePointer } from "./BasePointer";
 
 
@@ -16,10 +15,10 @@ describe( module( "carbonldp/Pointer" ), ():void => {
 	), ():void => {
 
 		it( hasProperty(
-			OBLIGATORY,
-			"id",
+			OPTIONAL,
+			"$id",
 			"string",
-			"The `id` of the pointer."
+			"The URI that identifies the pointer."
 		), ():void => {
 			const target:BasePointer[ "$id" ] = "";
 			expect( target ).toBeDefined();

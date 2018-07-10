@@ -57,8 +57,9 @@ export const ModelDecorator:ModelDecoratorFactory = {
 					descriptor.writable = false;
 					descriptor.value = definition.value;
 				} else if( ! definition.set ) {
-					descriptor.value = definition.get ?
-						definition.get() : definition.value ;
+					descriptor.value = object.hasOwnProperty( key ) ?
+						object[ key ] : definition.get ?
+							definition.get() : definition.value;
 				} else {
 					descriptor.get = definition.get;
 					descriptor.set = definition.set;

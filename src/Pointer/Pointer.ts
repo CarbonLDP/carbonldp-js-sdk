@@ -14,7 +14,11 @@ export interface Pointer {
 }
 
 
-export interface PointerFactory extends ModelPrototype<Pointer>, ModelDecorator<Pointer>, ModelFactory<Pointer, BasePointer>, ModelTypeGuard<Pointer> {
+export interface PointerFactory extends ModelPrototype<Pointer>
+	, ModelDecorator<Pointer, BasePointer>
+	, ModelTypeGuard<Pointer>
+	, ModelFactory<Pointer, BasePointer> {
+
 	create<T extends object>( data?:T & BasePointer ):T & Pointer;
 
 

@@ -1,5 +1,12 @@
-import { Registry } from "../Registry";
+import { createNonEnumerable } from "../../test/helpers/miscellaneous";
 import {
+	ModelDecorator,
+	ModelFactory,
+	ModelPrototype,
+	ModelTypeGuard
+} from "../Model";
+import {
+	extendsClass,
 	hasMethod,
 	hasProperty,
 	interfaze,
@@ -8,8 +15,11 @@ import {
 	property,
 	STATIC,
 } from "../test/JasmineExtender";
-
-import { Pointer } from "./Pointer";
+import { BasePointer } from "./BasePointer";
+import {
+	Pointer,
+	PointerFactory
+} from "./Pointer";
 
 
 describe( module( "carbonldp/Pointer" ), ():void => {
@@ -21,26 +31,9 @@ describe( module( "carbonldp/Pointer" ), ():void => {
 
 		it( hasProperty(
 			OBLIGATORY,
-			"_registry",
-			"CarbonLDP.Registry<Pointer> | undefined",
-			"The registry where is been stored the pointer."
-		), ():void => {
-			const target:Pointer[ "_registry" ] = {} as Registry<Pointer> | undefined;
-			expect( target ).toBeDefined();
-		} );
-
-		it( hasProperty(
-			OBLIGATORY,
-			"_id",
+			"$id",
 			"string",
-			"Private variable for the URI that identifies the pointer."
-		), ():void => {} );
-
-		it( hasProperty(
-			OBLIGATORY,
-			"id",
-			"string",
-			"Accessor for the _id variable."
+			"The URI that identifies the pointer."
 		), ():void => {} );
 
 	} );
@@ -50,53 +43,36 @@ describe( module( "carbonldp/Pointer" ), ():void => {
 		"Interface with the factory, decorate, and utils methods of a `CarbonLDP.Pointer` object."
 	), ():void => {
 
-		it( hasMethod(
-			OBLIGATORY,
-			"isDecorated",
-			"Returns true if the object provided has the properties and methods of a `CarbonLDP.Pointer` object.", [
-				{ name: "object", type: "object" },
-			],
-			{ type: "object is CarbonLDP.Pointer" }
-		), ():void => {} );
+		it( extendsClass( "CarbonLDP.Model.ModelPrototype<CarbonLDP.Pointer>" ), () => {
+			const target:ModelPrototype<Pointer> = {} as PointerFactory;
+			expect( target ).toBeDefined();
+		} );
 
-		it( hasMethod(
-			OBLIGATORY,
-			"is",
-			"Returns true if the value provided is considered a `CarbonLDP.Pointer` object.", [
-				{ name: "object", type: "object" },
-			],
-			{ type: "object" }
-		), ():void => {} );
+		it( extendsClass( "CarbonLDP.Model.ModelDecorator<CarbonLDP.Pointer, CarbonLDP.BasePointer>" ), () => {
+			const target:ModelDecorator<Pointer, BasePointer> = {} as PointerFactory;
+			expect( target ).toBeDefined();
+		} );
+
+		it( extendsClass( "CarbonLDP.Model.ModelTypeGuard<CarbonLDP.Pointer>" ), () => {
+			const target:ModelTypeGuard<Pointer> = {} as PointerFactory;
+			expect( target ).toBeDefined();
+		} );
+
+		it( extendsClass( "CarbonLDP.Model.ModelFactory<CarbonLDP.Pointer, CarbonLDP.BasePointer>" ), () => {
+			const target:ModelFactory<Pointer, BasePointer> = {} as PointerFactory;
+			expect( target ).toBeDefined();
+		} );
 
 		it( hasMethod(
 			OBLIGATORY,
 			"create",
+			[ "T extends object" ],
 			"Creates a Pointer object with the ID provided.", [
-				{ name: "id", type: "string", optional: true },
-			],
-			{ type: "CarbonLDP.Pointer" }
-		), ():void => {} );
-
-		it( hasMethod(
-			OBLIGATORY,
-			"createFrom",
-			[ "T extends object" ],
-			"Create a Pointer from the object provided with id if provided.", [
-				{ name: "object", type: "T" },
-				{ name: "id", type: "string", optional: true },
+				{ name: "data", type: "T & CarbonLDP.BasePointer", optional: true },
 			],
 			{ type: "T & CarbonLDP.Pointer" }
 		), ():void => {} );
 
-		it( hasMethod(
-			OBLIGATORY,
-			"decorate",
-			[ "T extends object" ],
-			"Decorates the object provided with the properties and methods of a `CarbonLDP.Pointer` object.", [
-				{ name: "object", type: "T" },
-			],
-			{ type: "T & CarbonLDP.Pointer" }
-		), ():void => {} );
 
 		it( hasMethod(
 			OBLIGATORY,
@@ -119,7 +95,12 @@ describe( module( "carbonldp/Pointer" ), ():void => {
 
 	} );
 
-	describe( property( STATIC, "Pointer", "CarbonLDP.PointerFactory", "Constant that implements the `CarbonLDP.PointerFactory` interface." ), ():void => {
+	describe( property(
+		STATIC,
+		"Pointer",
+		"CarbonLDP.PointerFactory",
+		"Constant that implements the `CarbonLDP.PointerFactory` interface."
+	), ():void => {
 
 		it( "should exist", ():void => {
 			expect( Pointer ).toBeDefined();
@@ -136,23 +117,10 @@ describe( module( "carbonldp/Pointer" ), ():void => {
 
 			// TODO: Separate in different tests
 			it( "should test method", ():void => {
-				let pointer:Pointer | undefined = undefined;
-				expect( Pointer.isDecorated( pointer ) ).toBe( false );
-
-				pointer = {
-					_registry: void 0,
-					_id: null,
+				const pointer:PointerFactory[ "PROTOTYPE" ] = createNonEnumerable( {
 					$id: null,
-				};
+				} );
 				expect( Pointer.isDecorated( pointer ) ).toBe( true );
-
-				delete pointer._registry;
-				expect( Pointer.isDecorated( pointer ) ).toBe( true );
-				pointer.$registry = void 0;
-
-				delete pointer._id;
-				expect( Pointer.isDecorated( pointer ) ).toBe( false );
-				pointer._id = null;
 
 				delete pointer.$id;
 				expect( Pointer.isDecorated( pointer ) ).toBe( false );
@@ -174,11 +142,9 @@ describe( module( "carbonldp/Pointer" ), ():void => {
 				expect( Pointer.is( null ) ).toBe( false );
 				expect( Pointer.is( {} ) ).toBe( false );
 
-				const target:Pointer = {
-					_registry: void 0,
-					_id: null,
+				const target:Pointer = createNonEnumerable( {
 					$id: null,
-				};
+				} );
 				expect( Pointer.is( target ) ).toBe( true );
 			} );
 
@@ -192,17 +158,17 @@ describe( module( "carbonldp/Pointer" ), ():void => {
 			} );
 
 
-			it( "should assign the `id` in `Pointer._id`", ():void => {
+			it( "should maintain the `$id` in `Pointer.$id`", ():void => {
 				const pointer:Pointer = Pointer.create( { $id: "https://example.com/pointer/" } );
-				expect( pointer._id ).toBe( "https://example.com/pointer/" );
+				expect( pointer.$id ).toBe( "https://example.com/pointer/" );
 			} );
 
-			it( "should set empty string in `Pointer._id` if no id`` provided", ():void => {
+			it( "should set empty string in `Pointer.$id` if no `$id` provided", ():void => {
 				const pointer:Pointer = Pointer.create( {} );
 				expect( pointer.$id ).toBe( "" );
 			} );
 
-			it( "should set empty string in `Pointer._id` none provided", ():void => {
+			it( "should set empty string in `Pointer.$id` none provided", ():void => {
 				const pointer:Pointer = Pointer.create();
 				expect( pointer.$id ).toBe( "" );
 			} );
@@ -219,7 +185,7 @@ describe( module( "carbonldp/Pointer" ), ():void => {
 				const spy:jasmine.Spy = spyOn( Pointer, "createFrom" );
 
 				Pointer.create( { the: "data", $id: "" } );
-				expect( spy ).toHaveBeenCalledWith( { the: "data", id: "" } );
+				expect( spy ).toHaveBeenCalledWith( { the: "data", $id: "" } );
 			} );
 
 		} );
@@ -232,12 +198,12 @@ describe( module( "carbonldp/Pointer" ), ():void => {
 			} );
 
 
-			it( "should assign the `id` in `Pointer._id`", ():void => {
+			it( "should assign the `$id` in `Pointer.$id`", ():void => {
 				const pointer:Pointer = Pointer.createFrom( { $id: "https://example.com/pointer/" } );
-				expect( pointer._id ).toBe( "https://example.com/pointer/" );
+				expect( pointer.$id ).toBe( "https://example.com/pointer/" );
 			} );
 
-			it( "should set empty string in `Pointer._id` if no id`` provided", ():void => {
+			it( "should set empty string in `Pointer.$id` if no `$id` provided", ():void => {
 				const pointer:Pointer = Pointer.createFrom( {} );
 				expect( pointer.$id ).toBe( "" );
 			} );
@@ -254,7 +220,7 @@ describe( module( "carbonldp/Pointer" ), ():void => {
 				const spy:jasmine.Spy = spyOn( Pointer, "decorate" );
 
 				Pointer.create( { the: "data", $id: "" } );
-				expect( spy ).toHaveBeenCalledWith( { the: "data", id: "" } );
+				expect( spy ).toHaveBeenCalledWith( { the: "data", $id: "" } );
 			} );
 
 		} );
@@ -273,28 +239,14 @@ describe( module( "carbonldp/Pointer" ), ():void => {
 			} );
 
 
-			it( "should assign empty string to `Pointer._id` when not exists", ():void => {
+			it( "should assign empty string to `Pointer.$id` when not exists", ():void => {
 				const pointer:Pointer = Pointer.decorate( {} );
-				expect( pointer._id ).toBe( "" );
+				expect( pointer.$id ).toBe( "" );
 			} );
 
-			it( "should keep ID in `Pointer._id` when `Pointer.id` already exists", ():void => {
-				const pointer:Pointer = Pointer.decorate( { id: "https://example.com/pointer/" } );
-				expect( pointer._id ).toBe( "https://example.com/pointer/" );
-			} );
-
-			it( "should set getter as `Pointer.id` of `Pointer._id` ", ():void => {
-				const pointer:Pointer = Pointer.decorate( {} );
-
-				pointer._id = "https://example.com/pointer/";
+			it( "should keep ID in `Pointer.$id` when `$id` already exists", ():void => {
+				const pointer:Pointer = Pointer.decorate( { $id: "https://example.com/pointer/" } );
 				expect( pointer.$id ).toBe( "https://example.com/pointer/" );
-			} );
-
-			it( "should set setter as `Pointer.id` of `Pointer._id`", ():void => {
-				const pointer:Pointer = Pointer.decorate( {} );
-
-				pointer.$id = "https://example.com/pointer/";
-				expect( pointer._id ).toBe( "https://example.com/pointer/" );
 			} );
 
 		} );
