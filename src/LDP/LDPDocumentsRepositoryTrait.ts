@@ -316,8 +316,7 @@ function __sendAddAction( this:void, repository:LDPDocumentsRepositoryTrait, uri
 	__setDefaultRequestOptions( requestOptions );
 	RequestUtils.setContentTypeHeader( "application/ld+json", requestOptions );
 
-	// FIXME
-	const freeResources:FreeResources = FreeResources.createFrom( { _registry: repository.$context.registry as any } );
+	const freeResources:FreeResources = FreeResources.createFrom( { $registry: repository.$context.registry } );
 
 	const targetMembers:Pointer[] = __parseMembers( repository.$context.registry, members );
 	freeResources._addPointer( AddMemberAction.createFrom( { targetMembers } ) );
@@ -342,8 +341,7 @@ function __sendRemoveAction( this:void, repository:LDPDocumentsRepositoryTrait, 
 		omit: [ C.PreferMembershipTriples ],
 	}, requestOptions );
 
-	// FIXME
-	const freeResources:FreeResources = FreeResources.createFrom( { _registry: repository.$context.registry as any } );
+	const freeResources:FreeResources = FreeResources.createFrom( { $registry: repository.$context.registry } );
 
 	const targetMembers:Pointer[] = __parseMembers( repository.$context.registry, members );
 	freeResources._addPointer( RemoveMemberAction.createFrom( { targetMembers } ) );
