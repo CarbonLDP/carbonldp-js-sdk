@@ -4,15 +4,15 @@ import {
 	ModelPrototype,
 	ModelTypeGuard,
 } from "../Model";
-import { TransientDocument } from "../Document";
 import {
 	RDFNode,
 	URI
 } from "../RDF";
-import { PersistedResource } from "../Resource";
+import { ResolvablePointer } from "../Repository";
 import { isObject } from "../Utils";
+import { C } from "../Vocabularies";
 import { DigestedObjectSchema } from "./DigestedObjectSchema";
-import { ObjectSchemaDigester } from ".";
+import { ObjectSchemaDigester } from "./ObjectSchemaDigester";
 
 
 export interface ObjectSchemaResolver {
@@ -40,8 +40,8 @@ function __getSchemaForResource( this:void, $context:Context | undefined, resour
 function __getSchema( this:void, $context:Context | undefined, objectTypes:string[], objectID?:string ):DigestedObjectSchema {
 	if( ! $context ) return new DigestedObjectSchema();
 
-	if( objectID !== void 0 && ! URI.hasFragment( objectID ) && ! URI.isBNodeID( objectID ) && objectTypes.indexOf( TransientDocument.TYPE ) === - 1 )
-		objectTypes = objectTypes.concat( TransientDocument.TYPE );
+	if( objectID !== void 0 && ! URI.hasFragment( objectID ) && ! URI.isBNodeID( objectID ) && objectTypes.indexOf( C.Document ) === - 1 )
+		objectTypes = objectTypes.concat( C.Document );
 
 	const objectSchemas:DigestedObjectSchema[] = objectTypes
 		.filter( type => $context.hasObjectSchema( type ) )
@@ -81,7 +81,7 @@ export const ObjectSchemaResolver:ObjectSchemaResolverFactory = {
 				__getSchemaForResource( this.$context, object ) :
 				__getSchemaForNode( this.$context, object );
 
-			if( ! PersistedResource.isDecorated( object ) || ! object.isQueried() )
+			if( ! ResolvablePointer.isDecorated( object ) || ! object.isQueried() )
 				return schema;
 
 			return ObjectSchemaDigester
