@@ -1,6 +1,5 @@
 import { CarbonLDP } from "../CarbonLDP";
 import { DocumentsRegistry } from "../Registry";
-import { PersistedResource } from "../Resource";
 import {
 	extendsClass,
 	hasMethod,
@@ -35,11 +34,6 @@ describe( module( "carbonldp/Document" ), ():void => {
 
 		it( extendsClass( "CarbonLDP.TransientDocument" ), ():void => {
 			const target:TransientDocument = {} as BasePersistedDocument;
-			expect( target ).toBeDefined();
-		} );
-
-		it( extendsClass( "CarbonLDP.PersistedResource" ), ():void => {
-			const target:PersistedResource = {} as BasePersistedDocument;
 			expect( target ).toBeDefined();
 		} );
 
@@ -290,13 +284,6 @@ describe( module( "carbonldp/Document" ), ():void => {
 				expect( spy ).toHaveBeenCalledWith( { the: "document" } );
 			} );
 
-			it( "should decorate with PersistedResource", ():void => {
-				const spy:jasmine.Spy = spyOn( PersistedResource, "decorate" );
-
-				BasePersistedDocument.decorate( { the: "document" } );
-				expect( spy ).toHaveBeenCalledWith( { the: "document" } );
-			} );
-
 		} );
 
 		describe( method( OBLIGATORY, "is" ), ():void => {
@@ -308,29 +295,16 @@ describe( module( "carbonldp/Document" ), ():void => {
 				{ type: "value is CarbonLDP.BasePersistedDocument" }
 			), ():void => {} );
 
-			it( "should exists", ():void => {
-				expect( PersistedResource.is ).toBeDefined();
-				expect( PersistedResource.is ).toEqual( jasmine.any( Function ) );
-			} );
-
 
 			let isTransientDocument:jasmine.Spy;
-			let isPersistedResource:jasmine.Spy;
 			beforeEach( ():void => {
 				isTransientDocument = spyOn( TransientDocument, "is" )
-					.and.returnValue( true );
-				isPersistedResource = spyOn( PersistedResource, "isDecorated" )
 					.and.returnValue( true );
 			} );
 
 			it( "should assert if is a TransientDocument", ():void => {
 				BasePersistedDocument.is( { the: "document" } );
 				expect( isTransientDocument ).toHaveBeenCalledWith( { the: "document" } );
-			} );
-
-			it( "should assert if is a PersistedResource", ():void => {
-				BasePersistedDocument.is( { the: "document" } );
-				expect( isPersistedResource ).toHaveBeenCalledWith( { the: "document" } );
 			} );
 
 			it( "should assert has prototype properties", ():void => {

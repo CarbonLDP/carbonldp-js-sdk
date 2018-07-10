@@ -4,7 +4,7 @@ import {
 	Client,
 	Frame
 } from "webstomp-client";
-import { DocumentsContext } from "../Context/DocumentsContext";
+import { DocumentsContext } from "../Context";
 import { IllegalStateError } from "../Errors";
 import { FreeResources } from "../FreeResources";
 import { JSONLDParser } from "../JSONLD";
@@ -139,7 +139,7 @@ export class MessagingService {
 				.parse( message.body )
 				.then( ( data:RDFNode[] ) => {
 					const freeResources:FreeResources = this.context
-						.registry._parseFreeNodes( data );
+						.repository._parseFreeNodes( data );
 
 					const eventMessage:EventMessage | undefined = freeResources
 						.getPointers( true )

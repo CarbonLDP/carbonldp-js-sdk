@@ -1,12 +1,12 @@
+import { Document } from "../Document";
 import { Pointer } from "../Pointer";
-import { ProtectedDocument } from "../ProtectedDocument";
 import {
 	TransientAccessPoint,
 	TransientAccessPointFactory,
 } from "./TransientAccessPoint";
 
 
-export interface AccessPoint extends ProtectedDocument {
+export interface AccessPoint extends Document {
 	membershipResource:Pointer;
 	hasMemberRelation:Pointer;
 	isMemberOfRelation?:Pointer;
@@ -22,7 +22,7 @@ export const AccessPoint:AccessPointFactory = {
 
 	is: ( value ):value is AccessPoint =>
 		TransientAccessPoint.is( value )
-		&& ProtectedDocument.is( value )
+		&& Document.is( value )
 	,
 
 	create: TransientAccessPoint.create,

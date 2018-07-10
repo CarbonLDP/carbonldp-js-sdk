@@ -1,4 +1,4 @@
-import { ProtectedDocument } from "../ProtectedDocument";
+import { Document } from "../Document";
 import {
 	extendsClass,
 	hasProperty,
@@ -27,7 +27,7 @@ describe( module( "carbonldp/AccessPoint" ), ():void => {
 	), ():void => {
 
 		it( extendsClass( "CarbonLDP.TransientAccessPoint" ), ():void => {} );
-		it( extendsClass( "CarbonLDP.ProtectedDocument" ), ():void => {} );
+		it( extendsClass( "CarbonLDP.Document" ), ():void => {} );
 
 		it( hasProperty(
 			OBLIGATORY,
@@ -89,11 +89,11 @@ describe( module( "carbonldp/AccessPoint" ), ():void => {
 
 
 			let isTransientAccessPoint:jasmine.Spy;
-			let isProtectedDocument:jasmine.Spy;
+			let isDocument:jasmine.Spy;
 			beforeEach( ():void => {
 				isTransientAccessPoint = spyOn( TransientAccessPoint, "is" )
 					.and.returnValue( true );
-				isProtectedDocument = spyOn( ProtectedDocument, "is" )
+				isDocument = spyOn( Document, "is" )
 					.and.returnValue( true );
 			} );
 
@@ -104,7 +104,7 @@ describe( module( "carbonldp/AccessPoint" ), ():void => {
 
 			it( "should be a ProtectedDocument", () => {
 				AccessPoint.is( { the: "object" } );
-				expect( isProtectedDocument ).toHaveBeenCalledWith( { the: "object" } );
+				expect( isDocument ).toHaveBeenCalledWith( { the: "object" } );
 			} );
 
 			it( "should return true when all assertions", () => {

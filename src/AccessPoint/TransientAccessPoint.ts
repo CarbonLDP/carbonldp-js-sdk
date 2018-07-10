@@ -1,4 +1,4 @@
-import { ModelFactory } from "../Model/ModelFactory";
+import { ModelFactory } from "../Model";
 import { TransientDirectContainer } from "../LDP";
 import { Pointer } from "../Pointer";
 import { C } from "../Vocabularies";

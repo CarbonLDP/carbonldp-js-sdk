@@ -25,13 +25,9 @@ import {
 	PointerType,
 } from "./ObjectSchema";
 import { Pointer } from "./Pointer";
-import { ProtectedDocument } from "./ProtectedDocument";
 import * as RDF from "./RDF";
 import { DocumentsRegistry } from "./Registry";
-import {
-	PersistedResource,
-	Resource,
-} from "./Resource";
+import { Resource } from "./Resource";
 import { CarbonLDPSettings } from "./Settings";
 import * as SHACL from "./SHACL";
 import * as SPARQL from "./SPARQL";
@@ -245,24 +241,6 @@ describe( module( "carbonldp/CarbonLDP" ), ():void => {
 		), ():void => {
 			expect( CarbonLDP.CarbonLDP.Fragment ).toBeDefined();
 			expect( CarbonLDP.CarbonLDP.Fragment ).toBe( Fragment );
-		} );
-
-		it( reexports(
-			STATIC,
-			"ProtectedDocument",
-			"carbonldp/ProtectedDocument#ProtectedDocument"
-		), ():void => {
-			expect( CarbonLDP.CarbonLDP.ProtectedDocument ).toBeDefined();
-			expect( CarbonLDP.CarbonLDP.ProtectedDocument ).toBe( ProtectedDocument );
-		} );
-
-		it( reexports(
-			STATIC,
-			"PersistedResource",
-			"carbonldp/PersistedResource#PersistedResource"
-		), ():void => {
-			expect( CarbonLDP.CarbonLDP.PersistedResource ).toBeDefined();
-			expect( CarbonLDP.CarbonLDP.PersistedResource ).toBe( PersistedResource );
 		} );
 
 		it( reexports(

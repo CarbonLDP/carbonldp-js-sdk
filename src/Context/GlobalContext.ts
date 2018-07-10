@@ -21,7 +21,6 @@ import {
 	MemberRemovedDetails,
 } from "../Messaging";
 import { DigestedObjectSchema } from "../ObjectSchema";
-import { ProtectedDocument } from "../ProtectedDocument";
 import {
 	GeneralRegistry,
 	RegisteredPointer
@@ -59,7 +58,6 @@ export class GlobalContext extends AbstractContext<RegisteredPointer, undefined,
 	private _registerDefaultObjectSchemas():void {
 		this
 			.extendObjectSchema( Document.TYPE, Document.SCHEMA )
-			.extendObjectSchema( ProtectedDocument.TYPE, ProtectedDocument.SCHEMA )
 
 			.extendObjectSchema( PlatformMetadata.TYPE, PlatformMetadata.SCHEMA )
 			.extendObjectSchema( PlatformInstance.TYPE, PlatformInstance.SCHEMA )
@@ -92,8 +90,5 @@ export class GlobalContext extends AbstractContext<RegisteredPointer, undefined,
 	}
 
 	private _registerDefaultDecorators():void {
-		this.registry
-			.addDecorator( ProtectedDocument )
-		;
 	}
 }

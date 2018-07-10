@@ -1,14 +1,14 @@
 import { hasProtocol } from "sparqler/iri";
+import { AccessPoint } from "./AccessPoint";
 
 import { AbstractContext } from "./Context/AbstractContext";
-import { AccessPoint } from "./AccessPoint";
-import { Document } from "./Document";
 import { DocumentsContext } from "./Context/DocumentsContext";
+import { GlobalContext } from "./Context/GlobalContext";
+import { Document } from "./Document";
 import * as Errors from "./Errors";
 import { IllegalArgumentError } from "./Errors";
 import { Fragment } from "./Fragment";
 import { FreeResources } from "./FreeResources";
-import { GlobalContext } from "./Context/GlobalContext";
 import * as HTTP from "./HTTP";
 import * as JSONLD from "./JSONLD";
 import * as LDP from "./LDP";
@@ -23,12 +23,8 @@ import {
 	PointerType,
 } from "./ObjectSchema";
 import { Pointer } from "./Pointer";
-import { ProtectedDocument } from "./ProtectedDocument";
 import * as RDF from "./RDF";
-import {
-	PersistedResource,
-	Resource,
-} from "./Resource";
+import { Resource } from "./Resource";
 import {
 	CarbonLDPSettings,
 	ContextSettings,
@@ -59,8 +55,6 @@ export class CarbonLDP extends DocumentsContext {
 	static DigestedObjectSchema:typeof DigestedObjectSchema = DigestedObjectSchema;
 	static Document:typeof Document = Document;
 	static Fragment:typeof Fragment = Fragment;
-	static ProtectedDocument:typeof ProtectedDocument = ProtectedDocument;
-	static PersistedResource:typeof PersistedResource = PersistedResource;
 	static Pointer:typeof Pointer = Pointer;
 	static RDF:typeof RDF = RDF;
 	static TransientResource:typeof Resource = Resource;
@@ -97,7 +91,7 @@ export class CarbonLDP extends DocumentsContext {
 		},
 	};
 
-	readonly documents:ProtectedDocument;
+	readonly documents:Document;
 
 	constructor( url:string );
 	constructor( settings:CarbonLDPSettings );
@@ -108,8 +102,7 @@ export class CarbonLDP extends DocumentsContext {
 		this._extendsSettings( settings );
 
 		// Root document
-		this.documents = ProtectedDocument
-			.decorate( this.registry.getPointer( this._baseURI, true ) );
+		this.documents = this.registry.getPointer( this._baseURI, true );
 	}
 
 	/**

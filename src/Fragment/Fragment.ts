@@ -10,7 +10,6 @@ import {
 } from "../Model";
 import { QueryDocumentBuilder } from "../QueryDocument";
 import { ResolvablePointer } from "../Repository";
-import { PersistedResource } from "../Resource";
 import { BaseFragment } from "./BaseFragment";
 import { TransientFragment } from "./TransientFragment";
 
@@ -87,8 +86,8 @@ export const Fragment:FragmentFactory = {
 
 
 	isDecorated( object:object ):object is Fragment {
-		return TransientFragment.isDecorated( object )
-			&& PersistedResource.isDecorated( object )
+		return ModelDecorator
+			.hasPropertiesFrom( Fragment.PROTOTYPE, object )
 			;
 	},
 

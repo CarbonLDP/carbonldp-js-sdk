@@ -1,4 +1,3 @@
-import { ProtectedDocument } from "../ProtectedDocument";
 import { AbstractContext } from "./AbstractContext";
 import { GlobalContext } from "./GlobalContext";
 import {
@@ -73,7 +72,6 @@ describe( module( "carbonldp/GlobalContext" ), ():void => {
 
 			it( "should has default decorators", () => {
 				expect( GlobalContext.instance.registry.__modelDecorators ).toEqual( new Map( [
-					[ CS.ProtectedDocument, ProtectedDocument ],
 				] ) );
 			} );
 

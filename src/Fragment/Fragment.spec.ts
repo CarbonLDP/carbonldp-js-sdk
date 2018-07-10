@@ -1,4 +1,3 @@
-import { PersistedResource } from "../Resource";
 import {
 	extendsClass,
 	hasProperty,
