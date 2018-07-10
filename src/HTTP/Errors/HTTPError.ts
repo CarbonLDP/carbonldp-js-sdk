@@ -1,34 +1,34 @@
-import { Document } from "../../Document";
+import { Context } from "../../Context";
 import { AbstractError } from "../../Errors";
-import { Error } from "../../LDP/Error";
-import { ErrorResponse } from "../../LDP/ErrorResponse";
+import {
+	Error,
+	ErrorResponse
+} from "../../LDP";
+import { RDFNode } from "../../RDF";
 import { Resource } from "../../Resource";
 import { Response } from "../Response";
+
 
 export class HTTPError extends AbstractError implements ErrorResponse {
 	static get statusCode():number { return null; }
 
 	get name():string { return "HTTPError"; }
 
-	_registry:undefined;
-
-	_id:string;
-	_resolved:boolean;
-
+	$registry:undefined;
 	$id:string;
+	$slug:string;
+
 	errors:Error[];
 	requestID:string;
 	response:Response;
 	statusCode:number;
+
 	types:string[];
-
-	isResolved:() => boolean;
-
-	resolve:<T>() => Promise<T & Document>;
 
 	addType:( type:string ) => void;
 	hasType:( type:string ) => boolean;
 	removeType:( type:string ) => void;
+	toJSON:( registryOrKey:Context | string ) => RDFNode;
 
 	constructor( message:string, response:Response ) {
 		super( message );
