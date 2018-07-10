@@ -18,7 +18,6 @@ import {
 	BadResponseError,
 	HTTPError
 } from "../HTTP/Errors";
-import { _getNotInContextMessage } from "../Repository/Utils";
 import {
 	JSONLDCompacter,
 	JSONLDParser
@@ -34,14 +33,12 @@ import {
 	RDFDocumentParser,
 	RDFNode
 } from "../RDF";
-import {
-	RegisteredPointer,
-	Registry
-} from "../Registry";
+import { Registry } from "../Registry";
 import {
 	BaseDocumentsRepository,
 	ResolvablePointer
 } from "../Repository";
+import { _getNotInContextMessage } from "../Repository/Utils";
 import { isString } from "../Utils";
 import {
 	C,
@@ -274,8 +271,7 @@ function __sendPatch<T extends object>( this:void, repository:LDPDocumentsReposi
 	deltaCreator.addResource( document.$id, document._snapshot, document );
 
 	// Current fragments
-	// FIXME
-	(document as any as Registry<RegisteredPointer & ResolvablePointer>)
+	document
 		.getPointers( true )
 		.forEach( ( pointer:ResolvablePointer ) => {
 			deltaCreator.addResource( pointer.$id, pointer._snapshot, pointer );
@@ -283,7 +279,7 @@ function __sendPatch<T extends object>( this:void, repository:LDPDocumentsReposi
 	;
 
 	// Deleted fragments
-	document._savedFragments
+	document.__savedFragments
 		.filter( pointer => ! document.hasPointer( pointer.$id ) )
 		.forEach( pointer => {
 			deltaCreator.addResource( pointer.$id, pointer._snapshot, {} );

@@ -1,6 +1,10 @@
 import { QueryClause } from "sparqler/clauses";
-import { TransientDocument } from "../Document";
+import {
+	Document,
+	TransientDocument
+} from "../Document";
 import { RequestOptions } from "../HTTP";
+import { HTTPResolvableTrait } from "../HTTP/HTTPResolvableTrait";
 import {
 	ModelDecorator,
 	ModelPrototype
@@ -17,7 +21,7 @@ export interface BaseSPARQLDocumentTrait {
 	$repository:SPARQLDocumentsRepositoryTrait;
 }
 
-export interface SPARQLDocumentTrait extends TransientDocument, ResolvablePointer {
+export interface SPARQLDocumentTrait extends TransientDocument, HTTPResolvableTrait<Document> {
 	$repository:SPARQLDocumentsRepositoryTrait;
 
 	executeASKQuery( uri:string, askQuery:string, requestOptions?:RequestOptions ):Promise<boolean>;

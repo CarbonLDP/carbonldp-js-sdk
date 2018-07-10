@@ -14,10 +14,7 @@ import {
 	GeneralRegistry,
 	RegisteredPointer
 } from "../Registry";
-import {
-	Repository,
-	ResolvablePointer
-} from "../Repository";
+import { ResolvablePointer } from "../Repository";
 import {
 	ContextSettings,
 	DocumentPaths,
@@ -27,11 +24,12 @@ import {
 	isString,
 } from "../Utils";
 import { Context } from "./Context";
+import { GeneralRepository } from "./GeneralRepository";
 
 
 export abstract class AbstractContext<REGISTRY extends RegisteredPointer = RegisteredPointer, REPOSITORY extends ResolvablePointer = ResolvablePointer, PARENT extends AbstractContext = undefined> implements Context {
 	abstract readonly registry:GeneralRegistry<REGISTRY> | undefined;
-	abstract readonly repository:Repository<REPOSITORY> | undefined;
+	abstract readonly repository:GeneralRepository<REPOSITORY> | undefined;
 
 	readonly jsonldConverter:JSONLDConverter;
 

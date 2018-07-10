@@ -1,4 +1,7 @@
-import { DocumentsContext } from "../Context";
+import {
+	Context,
+	DocumentsContext
+} from "../Context";
 import { Document } from "../Document";
 import {
 	GETOptions,

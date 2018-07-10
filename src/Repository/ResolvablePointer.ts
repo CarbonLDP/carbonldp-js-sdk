@@ -13,9 +13,13 @@ import {
 } from "../Utils";
 import { BaseResolvablePointer } from "./BaseResolvablePointer";
 import { Repository } from "./Repository";
+import {
+	_parseResourceParams,
+	_parseURIParams
+} from "./Utils";
 
 
-export interface ResolvablePointer extends Pointer {
+export interface ResolvablePointer extends Pointer, Repository {
 	$repository:Repository;
 	$eTag:string | undefined;
 
@@ -36,6 +40,30 @@ export interface ResolvablePointer extends Pointer {
 
 
 	isQueried():boolean;
+
+
+	get( ...params:any[] ):Promise<ResolvablePointer>;
+	get( uri:string, ...params:any[] ):Promise<ResolvablePointer>;
+
+	resolve( ...params:any[] ):Promise<ResolvablePointer>;
+	resolve( resource:ResolvablePointer, ...params:any[] ):Promise<ResolvablePointer>;
+
+	exists( ...params:any[] ):Promise<boolean>;
+	exists( uri:string, ...params:any[] ):Promise<boolean>;
+
+
+	refresh( ...params:any[] ):Promise<ResolvablePointer>;
+	refresh( resource:ResolvablePointer, ...params:any[] ):Promise<ResolvablePointer>;
+
+	save( ...params:any[] ):Promise<ResolvablePointer>;
+	save( resource:ResolvablePointer, ...params:any[] ):Promise<ResolvablePointer>;
+
+	saveAndRefresh( ...params:any[] ):Promise<ResolvablePointer>;
+	saveAndRefresh( resource:ResolvablePointer, ...params:any[] ):Promise<ResolvablePointer>;
+
+
+	delete( ...params:any[] ):Promise<void>;
+	delete( uri:string, ...params:any[] ):Promise<void>;
 }
 
 
@@ -59,6 +87,7 @@ function __internalRevert( target:any, source:any ):void {
 		target[ key ] = sourceValue;
 	} );
 }
+
 
 export type ResolvablePointerFactory =
 	& ModelPrototype<ResolvablePointer, Pointer & BaseResolvablePointer>
@@ -103,6 +132,44 @@ export const ResolvablePointer:ResolvablePointerFactory = {
 
 		isQueried( this:ResolvablePointer ):boolean {
 			return ! ! this.__partialMetadata;
+		},
+
+
+		get( this:ResolvablePointer, uri?:string ):Promise<ResolvablePointer> {
+			const { _uri, _args } = _parseURIParams( this, uri, arguments );
+			return this.$repository.get( _uri, ..._args );
+		},
+
+		resolve( this:ResolvablePointer, resource?:ResolvablePointer ):Promise<ResolvablePointer> {
+			const { _resource, _args } = _parseResourceParams( this, resource, arguments );
+			return this.$repository.resolve( _resource, ..._args );
+		},
+
+		exists( this:ResolvablePointer, uri?:string ):Promise<boolean> {
+			const { _uri, _args } = _parseURIParams( this, uri, arguments );
+			return this.$repository.exists( _uri, ..._args );
+		},
+
+
+		refresh( this:ResolvablePointer, resource?:ResolvablePointer, ...args:any[] ):Promise<ResolvablePointer> {
+			const { _resource, _args } = _parseResourceParams( this, resource, arguments );
+			return this.$repository.refresh( _resource, ..._args );
+		},
+
+		save( this:ResolvablePointer, resource?:ResolvablePointer, ...args:any[] ):Promise<ResolvablePointer> {
+			const { _resource, _args } = _parseResourceParams( this, resource, arguments );
+			return this.$repository.save( _resource, ..._args );
+		},
+
+		saveAndRefresh( this:ResolvablePointer, resource?:ResolvablePointer, ...args:any[] ):Promise<ResolvablePointer> {
+			const { _resource, _args } = _parseResourceParams( this, resource, arguments );
+			return this.$repository.saveAndRefresh( _resource, ..._args );
+		},
+
+
+		delete( uri?:string, ...args:any[] ):Promise<void> {
+			const { _uri, _args } = _parseURIParams( this, uri, arguments );
+			return this.$repository.delete( _uri, ..._args );
 		},
 	},
 

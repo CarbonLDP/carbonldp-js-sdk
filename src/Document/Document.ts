@@ -1,4 +1,8 @@
 import { Fragment } from "../Fragment";
+import {
+	GETOptions,
+	RequestOptions
+} from "../HTTP";
 import { EventEmitterDocumentTrait } from "../Messaging";
 import {
 	ModelDecorator,
@@ -7,8 +11,14 @@ import {
 	ModelSchema,
 	ModelTypeGuard,
 } from "../Model";
-import { QueryableDocumentTrait } from "../QueryDocument";
-import { DocumentsRegistry } from "../Registry";
+import {
+	QueryableDocumentTrait,
+	QueryDocumentBuilder
+} from "../QueryDocument";
+import {
+	DocumentsRegistry,
+	RegisteredPointer
+} from "../Registry";
 import { DocumentsRepository } from "../Repository";
 import { SPARQLDocumentTrait } from "../SPARQL";
 import { isObject } from "../Utils";
@@ -26,6 +36,8 @@ export interface Document extends SPARQLDocumentTrait, EventEmitterDocumentTrait
 	$repository:DocumentsRepository;
 
 
+	__modelDecorator:ModelDecorator<Fragment>;
+	__resourcesMap:Map<string, Fragment>;
 	__savedFragments:Fragment[];
 
 
@@ -35,9 +47,75 @@ export interface Document extends SPARQLDocumentTrait, EventEmitterDocumentTrait
 	contains?:Document[];
 
 
+	getPointer( id:string ):RegisteredPointer;
+	getPointer( id:string, local:true ):Fragment;
+
+	getPointers():RegisteredPointer[];
+	getPointers( local:true ):Fragment[];
+
+
 	_syncSavedFragments():void;
+
+	getFragment<T extends object>( id:string ):(T & Fragment) | null;
+
+	getFragments():Fragment[];
+
+	createFragment<T extends object>( object:T, id?:string ):T & Fragment;
+	createFragment( slug?:string ):Fragment;
+
+	removeFragment( slugOrFragment:string | Fragment ):boolean;
+
+
+	get<T extends object>( queryBuilderFn:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<T & Document>;
+	get<T extends object>( requestOptions?:GETOptions, queryBuilderFn?:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<T & Document>;
+	get<T extends object>( uri:string, queryBuilderFn:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<T & Document>;
+	get<T extends object>( uri:string, requestOptions?:GETOptions, queryBuilderFn?:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<T & Document>;
+
+	resolve<T extends object>( requestOptions?:GETOptions, queryBuilderFn?:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<T & this & Document>;
+	resolve<T extends object>( queryBuilderFn?:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<T & this & Document>;
+	resolve<T extends object>( document:Document, queryBuilderFn:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<T & Document>;
+	resolve<T extends object>( document:Document, requestOptions?:GETOptions, queryBuilderFn?:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<T & Document>;
+
+
+	exists( requestOptions?:RequestOptions ):Promise<boolean>;
+	exists( uri:string, requestOptions?:RequestOptions ):Promise<boolean>;
+
+
+	refresh<T extends object>( requestOptions?:RequestOptions ):Promise<T & this & Document>;
+	refresh<T extends object>( document:Document, requestOptions?:RequestOptions ):Promise<T & Document>;
+
+	save<T extends object>( requestOptions?:RequestOptions ):Promise<T & this & Document>;
+	save<T extends object>( document:Document, requestOptions?:RequestOptions ):Promise<T & Document>;
+
+	saveAndRefresh<T extends object>( requestOptions?:RequestOptions ):Promise<T & this & Document>;
+	saveAndRefresh<T extends object>( document:Document, requestOptions?:RequestOptions ):Promise<T & Document>;
+
+
+	delete( requestOptions?:RequestOptions ):Promise<void>;
+	delete( uri:string, requestOptions?:RequestOptions ):Promise<void>;
 }
 
+
+type ForcedOverloadedMembers = {
+	__resourcesMap:Map<string, Fragment>;
+
+
+	getPointer( id:string ):RegisteredPointer;
+	getPointer( id:string, local:true ):Fragment;
+
+	getPointers():RegisteredPointer[];
+	getPointers( local:true ):Fragment[];
+
+
+	getFragment<T extends object>( id:string ):(T & Fragment) | null;
+
+	getFragments():Fragment[];
+
+	createFragment<T extends object>( object:T, id?:string ):T & Fragment;
+	createFragment( slug?:string ):Fragment;
+
+	removeFragment( slugOrFragment:string | Fragment ):boolean;
+};
 
 export type OverloadedMembers =
 	| "__modelDecorator"
@@ -137,8 +215,11 @@ export const Document:DocumentFactory = {
 	decorate<T extends object>( object:T ):T & Document {
 		if( Document.isDecorated( object ) ) return object;
 
-		const target:T & SPARQLDocumentTrait & EventEmitterDocumentTrait & QueryableDocumentTrait = ModelDecorator
-			.decorateMultiple( object, SPARQLDocumentTrait, EventEmitterDocumentTrait, QueryableDocumentTrait );
+		type ForcedT = T & ForcedOverloadedMembers;
+		const forced:ForcedT = object as ForcedT;
+
+		const target:ForcedT & SPARQLDocumentTrait & EventEmitterDocumentTrait & QueryableDocumentTrait = ModelDecorator
+			.decorateMultiple( forced, SPARQLDocumentTrait, EventEmitterDocumentTrait, QueryableDocumentTrait );
 
 		return ModelDecorator
 			.definePropertiesFrom( Document.PROTOTYPE, target );

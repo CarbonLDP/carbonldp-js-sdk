@@ -61,7 +61,7 @@ type OnEvent<T extends EventMessage> = ( message:T ) => void;
 type OnError = ( error:Error ) => void;
 
 export type EventEmitterDocumentsRepositoryTraitFactory =
-	& ModelPrototype<EventEmitterDocumentsRepositoryTrait, Repository<Document>>
+	& ModelPrototype<EventEmitterDocumentsRepositoryTrait, Repository<Document> & BaseDocumentsRepository>
 	& ModelDecorator<EventEmitterDocumentsRepositoryTrait, BaseDocumentsRepository>
 	;
 

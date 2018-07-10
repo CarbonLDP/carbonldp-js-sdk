@@ -1,26 +1,23 @@
-import { Context } from "../Context";
+import { NotImplementedError } from "../Errors";
 import {
 	ModelDecorator,
 	ModelPrototype
 } from "../Model";
-import { NotImplementedError } from "../Errors";
 import { ObjectSchemaResolver } from "../ObjectSchema";
 import { BaseRepository } from "./BaseRepository";
 import { ResolvablePointer } from "./ResolvablePointer";
 
 
 export interface Repository<M extends ResolvablePointer = ResolvablePointer> {
-	readonly $context:Context;
+	get( uri:string, ...params:any[] ):Promise<M>;
+	resolve( resource:M, ...params:any[] ):Promise<M>;
+	exists( uri:string, ...params:any[] ):Promise<boolean>;
 
-	get( uri:string ):Promise<M>;
-	resolve( resource:M ):Promise<M>;
-	exists( uri:string ):Promise<boolean>;
+	refresh( resource:M, ...params:any[] ):Promise<M>;
+	save( resource:M, ...params:any[] ):Promise<M>;
+	saveAndRefresh( resource:M, ...params:any[] ):Promise<M>;
 
-	refresh( resource:M ):Promise<M>;
-	save( resource:M ):Promise<M>;
-	saveAndRefresh( resource:M ):Promise<M>;
-
-	delete( uri:string ):Promise<void>;
+	delete( uri:string, ...params:any[] ):Promise<void>;
 }
 
 
