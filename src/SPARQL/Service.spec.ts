@@ -1,11 +1,11 @@
 import * as Errors from "../Errors";
 
-import { Header } from "../HTTP/Header";
 import {
+	Header,
 	RequestOptions,
 	RequestUtils,
-} from "../HTTP/Request";
-import { Response } from "../HTTP/Response";
+	Response
+} from "../HTTP";
 import {
 	Pointer,
 	PointerLibrary,
@@ -86,7 +86,7 @@ describe( module( "carbonldp/SPARQL/Service" ), ():void => {
 						expect( results.boolean ).toEqual( true );
 
 						expect( response ).toBeDefined();
-						expect( response instanceof Response ).toBe( true );
+						expect( response ).toEqual( jasmine.any( Response ) );
 					} )
 				);
 			})();
@@ -131,7 +131,7 @@ describe( module( "carbonldp/SPARQL/Service" ), ():void => {
 						expect( result ).toEqual( true );
 
 						expect( response ).toBeDefined();
-						expect( response instanceof Response ).toBe( true );
+						expect( response ).toEqual( jasmine.any( Response ) );
 					} )
 				);
 			})();
@@ -206,8 +206,6 @@ describe( module( "carbonldp/SPARQL/Service" ), ():void => {
 
 					getPointer( id:string ):Pointer {
 						return {
-							_registry: void 0,
-							_id: id,
 							$id: id,
 						};
 					}
@@ -243,7 +241,7 @@ describe( module( "carbonldp/SPARQL/Service" ), ():void => {
 						expect( (<Pointer> results.bindings[ 1 ][ "uriBinding" ]).$id ).toEqual( "http://example.com/document-2/" );
 
 						expect( response ).toBeDefined();
-						expect( response instanceof Response ).toBe( true );
+						expect( response ).toEqual( jasmine.any( Response ) );
 					} )
 				);
 			})();
@@ -291,8 +289,6 @@ describe( module( "carbonldp/SPARQL/Service" ), ():void => {
 
 					getPointer( id:string ):Pointer {
 						return {
-							_registry: void 0,
-							_id: id,
 							$id: id,
 						};
 					}
@@ -442,7 +438,7 @@ describe( module( "carbonldp/SPARQL/Service" ), ():void => {
 
 						// Inspect results
 						expect( response ).toBeDefined();
-						expect( response instanceof Response ).toBe( true );
+						expect( response ).toEqual( jasmine.any( Response ) );
 
 						expect( results ).toBeDefined();
 
@@ -509,7 +505,7 @@ describe( module( "carbonldp/SPARQL/Service" ), ():void => {
 						expect( resultModel ).toEqual( model );
 
 						expect( response ).toBeDefined();
-						expect( response instanceof Response ).toBe( true );
+						expect( response ).toEqual( jasmine.any( Response ) );
 					} )
 				);
 			})();
@@ -551,7 +547,7 @@ describe( module( "carbonldp/SPARQL/Service" ), ():void => {
 						expect( resultModel ).toEqual( model );
 
 						expect( response ).toBeDefined();
-						expect( response instanceof Response ).toBe( true );
+						expect( response ).toEqual( jasmine.any( Response ) );
 					} )
 				);
 			})();
@@ -606,7 +602,7 @@ describe( module( "carbonldp/SPARQL/Service" ), ():void => {
 						expect( resultModel ).toEqual( model );
 
 						expect( response ).toBeDefined();
-						expect( response instanceof Response ).toBe( true );
+						expect( response ).toEqual( jasmine.any( Response ) );
 					} )
 				);
 			})();
@@ -648,7 +644,7 @@ describe( module( "carbonldp/SPARQL/Service" ), ():void => {
 						expect( resultModel ).toEqual( model );
 
 						expect( response ).toBeDefined();
-						expect( response instanceof Response ).toBe( true );
+						expect( response ).toEqual( jasmine.any( Response ) );
 					} )
 				);
 			})();
@@ -695,7 +691,7 @@ describe( module( "carbonldp/SPARQL/Service" ), ():void => {
 
 						// Inspect response
 						expect( response ).toBeDefined();
-						expect( response instanceof Response ).toEqual( true );
+						expect( response ).toEqual( jasmine.any( Response ) );
 					} )
 				);
 			})();
@@ -725,7 +721,7 @@ describe( module( "carbonldp/SPARQL/Service" ), ():void => {
 
 						// Inspect response
 						expect( response ).toBeDefined();
-						expect( response instanceof Response ).toEqual( true );
+						expect( response ).toEqual( jasmine.any( Response ) );
 					} )
 				);
 			})();
