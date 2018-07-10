@@ -1,15 +1,15 @@
 import { CarbonLDP } from "../CarbonLDP";
 import { Document } from "../Document";
 import { ObjectSchemaDigester } from "../ObjectSchema";
+import {
+	QueryContextBuilder,
+	QueryPropertyType
+} from "../QueryDocument";
 import { RDFNode } from "../RDF";
 import {
 	DocumentsRegistry,
 	RegistryService
 } from "../Registry";
-import {
-	QueryContextBuilder,
-	QueryPropertyType
-} from "../QueryDocument";
 import {
 	clazz,
 	constructor,
@@ -18,10 +18,11 @@ import {
 	method,
 	module
 } from "../test/JasmineExtender";
-import { JSONLDCompacter } from "./Compacter";
 import { JSONLDConverter } from "./Converter";
+import { JSONLDCompacter } from "./JSONLDCompacter";
 
-describe( module( "carbonldp/JSONLD/Compacter" ), ():void => {
+
+describe( module( "carbonldp/JSONLD/JSONLDCompacter" ), ():void => {
 
 	describe( clazz( "CarbonLDP.JSONLD.JSONLDCompacter", "Class for compacting a set of RDF resources in level of relations" ), ():void => {
 

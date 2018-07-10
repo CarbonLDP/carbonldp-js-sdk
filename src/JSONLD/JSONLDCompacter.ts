@@ -9,44 +9,46 @@ import {
 	PointerLibrary,
 } from "../Pointer";
 import {
-	RDFDocument,
-	RDFNode,
-} from "../RDF";
-import {
-	Registry,
-	RegistryService
-} from "../Registry";
-import { PersistedResource } from "../Resource";
-import {
 	PartialMetadata,
 	QueryContextBuilder,
 	QueryPropertyType,
 } from "../QueryDocument";
 import { QueryContextPartial } from "../QueryDocument/";
+import {
+	RDFDocument,
+	RDFNode,
+} from "../RDF";
+import {
+	DocumentsRegistry,
+	RegisteredPointer,
+	Registry
+} from "../Registry";
+import { ResolvablePointer } from "../Repository";
 import { JSONLDConverter } from "./Converter";
 
 
 interface CompactionNode {
 	paths:string[];
 	node:RDFNode;
-	resource:Pointer;
+	resource:ResolvablePointer;
 	registry:Registry<any>;
 	processed?:boolean;
 }
 
 export class JSONLDCompacter {
-	private readonly registry:RegistryService<Document, any>;
+	private readonly registry:DocumentsRegistry;
 	private readonly root?:string;
 	private readonly resolver?:ObjectSchemaResolver;
 	private readonly converter?:JSONLDConverter;
 	private readonly compactionMap:Map<string, CompactionNode>;
 
 
-	constructor( registry:RegistryService<Document, any>, root?:string, schemaResolver?:ObjectSchemaResolver, jsonldConverter?:JSONLDConverter ) {
+	constructor( registry:DocumentsRegistry, root?:string, schemaResolver?:ObjectSchemaResolver, jsonldConverter?:JSONLDConverter ) {
 		this.registry = registry;
+
 		this.root = root;
 		this.resolver = schemaResolver || registry;
-		this.converter = jsonldConverter || registry.jsonldConverter;
+		this.converter = jsonldConverter || registry.$context.jsonldConverter;
 		this.compactionMap = new Map();
 	}
 
@@ -111,17 +113,14 @@ export class JSONLDCompacter {
 
 		compactedDocuments.forEach( persistedDocument => {
 			persistedDocument._syncSavedFragments();
-
-			persistedDocument.types
-				.map( type => this.registry.documentDecorators.get( type ) )
-				.forEach( decorator => decorator && decorator.call( void 0, persistedDocument, this.registry ) );
+			this.registry.decorate( persistedDocument );
 		} );
 
 		return mainCompactedDocuments;
 	}
 
 
-	private _compactNode( node:RDFNode, resource:Pointer, containerLibrary:PointerLibrary, path:string ):string[] {
+	private _compactNode( node:RDFNode, resource:ResolvablePointer, containerLibrary:PointerLibrary, path:string ):string[] {
 		const schema:DigestedObjectSchema = this.resolver.getSchemaFor( node, path );
 
 		const isPartial:boolean = this._setOrRemovePartial( resource, schema, path );
@@ -155,7 +154,7 @@ export class JSONLDCompacter {
 			;
 	}
 
-	private _getResource<M extends Pointer>( node:RDFNode, registry:Registry<M> ):M {
+	private _getResource<M extends ResolvablePointer & RegisteredPointer>( node:RDFNode, registry:Registry<M> ):M {
 		const resource:M = registry.getPointer( node[ "@id" ], true );
 
 		if( Registry.isDecorated( resource ) ) registry = resource;
@@ -177,7 +176,7 @@ export class JSONLDCompacter {
 			const targetPath:string = compactionNode.paths.shift();
 
 			const addedProperties:string[] = this._compactNode( compactionNode.node, compactionNode.resource, compactionNode.registry, targetPath );
-			if( PersistedResource.is( compactionNode.resource ) ) compactionNode.resource._syncSnapshot();
+			compactionNode.resource._syncSnapshot();
 
 			for( const propertyName of addedProperties ) {
 				if( ! compactionNode.resource.hasOwnProperty( propertyName ) ) continue;
@@ -203,15 +202,14 @@ export class JSONLDCompacter {
 	}
 
 
-	private _setOrRemovePartial( resource:Pointer, schema:DigestedObjectSchema, path:string ):boolean {
-		const persisted:PersistedResource = PersistedResource.decorate( resource );
-		if( this._willBePartial( persisted, schema, path ) ) return true;
+	private _setOrRemovePartial( resource:ResolvablePointer, schema:DigestedObjectSchema, path:string ):boolean {
+		if( this._willBePartial( resource, schema, path ) ) return true;
 
-		if( persisted.__partialMetadata ) delete persisted.__partialMetadata;
+		if( resource.__partialMetadata ) delete resource.__partialMetadata;
 		return false;
 	}
 
-	private _willBePartial( resource:PersistedResource, schema:DigestedObjectSchema, path:string ):boolean {
+	private _willBePartial( resource:ResolvablePointer, schema:DigestedObjectSchema, path:string ):boolean {
 		if( this.resolver instanceof QueryContextPartial ) return true;
 		if( ! (this.resolver instanceof QueryContextBuilder) ) return false;
 
