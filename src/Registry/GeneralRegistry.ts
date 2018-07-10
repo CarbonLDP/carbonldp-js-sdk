@@ -1,11 +1,13 @@
+import { Context } from "../Context";
+import { IllegalArgumentError } from "../Errors";
 import {
 	ModelDecorator,
 	ModelFactory,
 	ModelPrototype
 } from "../Model";
-import { IllegalArgumentError } from "../Errors";
 import {
 	DigestedObjectSchema,
+	ObjectSchemaResolver,
 	ObjectSchemaUtils
 } from "../ObjectSchema";
 import { Pointer } from "../Pointer";
@@ -16,7 +18,14 @@ import { Registry } from "./Registry";
 import { TypedModelDecorator } from "./TypedModelDecorator";
 
 
-export interface GeneralRegistry<M extends RegisteredPointer = RegisteredPointer> extends Registry<M> {
+export interface BaseGeneralRegistry extends BaseRegistry {
+	$context:Context;
+}
+
+export interface GeneralRegistry<M extends RegisteredPointer = RegisteredPointer> extends Registry<M>, ObjectSchemaResolver {
+	readonly $context:Context;
+
+
 	__modelDecorators:Map<string, TypedModelDecorator>;
 
 	addDecorator( decorator:TypedModelDecorator ):this;
@@ -26,18 +35,26 @@ export interface GeneralRegistry<M extends RegisteredPointer = RegisteredPointer
 
 
 export type OverloadedFns =
+	| "$registry"
 	| "_addPointer"
-	| "__getLocalID"
+	| "_getLocalID"
 	;
 
 export type GeneralRegistryFactory =
-	& ModelPrototype<GeneralRegistry, Registry, OverloadedFns>
-	& ModelDecorator<GeneralRegistry<any>>
-	& ModelFactory<GeneralRegistry<any>, BaseRegistry>
+	& ModelPrototype<GeneralRegistry, Registry & ObjectSchemaResolver, OverloadedFns>
+	& ModelDecorator<GeneralRegistry<any>, BaseGeneralRegistry>
+	& ModelFactory<GeneralRegistry<any>, BaseGeneralRegistry>
 	;
 
 export const GeneralRegistry:GeneralRegistryFactory = {
 	PROTOTYPE: {
+		get $registry( this:GeneralRegistry ):Registry<any> | undefined {
+			if( ! this.$context || ! this.$context.parentContext ) return;
+			return this.$context.parentContext.registry;
+		},
+		set $registry( value:Registry<any> ) {},
+
+
 		get __modelDecorators():Map<string, TypedModelDecorator> { return new Map(); },
 
 
@@ -68,8 +85,9 @@ export const GeneralRegistry:GeneralRegistryFactory = {
 			return resource;
 		},
 
-		__getLocalID( this:GeneralRegistry, id:string ):string {
-			const uri:string = Registry.PROTOTYPE.__getLocalID.call( this, id );
+		_getLocalID( this:GeneralRegistry, id:string ):string {
+			const schema:DigestedObjectSchema = this.$context.getObjectSchema();
+			const uri:string = ObjectSchemaUtils.resolveURI( id, schema, { base: true } );
 
 			if( ! URI.isBaseOf( this.$context.baseURI, uri ) )
 				throw new IllegalArgumentError( `"${ uri }" is outside the scope of the registry.` );
@@ -85,24 +103,24 @@ export const GeneralRegistry:GeneralRegistryFactory = {
 			;
 	},
 
-	decorate<T extends object>( object:T ):T & GeneralRegistry {
+	decorate<T extends BaseGeneralRegistry>( object:T ):T & GeneralRegistry {
 		if( GeneralRegistry.isDecorated( object ) ) return object;
 
-		const resource:T & Registry = ModelDecorator
-			.decorateMultiple( object, Registry );
+		const resource:T & Registry & ObjectSchemaResolver = ModelDecorator
+			.decorateMultiple( object, Registry, ObjectSchemaResolver );
 
 		return ModelDecorator
 			.definePropertiesFrom( GeneralRegistry.PROTOTYPE, resource );
 	},
 
 
-	create<T extends object>( data:T & BaseRegistry ):T & GeneralRegistry {
+	create<T extends object>( data:T & BaseGeneralRegistry ):T & GeneralRegistry {
 		// FIXME: TS 3.0
 		return GeneralRegistry.createFrom( { ...data as any } );
 	},
 
-	createFrom<T extends object>( object:T & BaseRegistry ):T & GeneralRegistry {
-		const registry:T & Registry = Registry.createFrom( object );
+	createFrom<T extends object>( object:T & BaseGeneralRegistry ):T & GeneralRegistry {
+		const registry:T & BaseGeneralRegistry & Registry = Registry.createFrom( object );
 		return GeneralRegistry.decorate( registry );
 	},
 };

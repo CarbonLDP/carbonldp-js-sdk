@@ -103,7 +103,7 @@ describe( module( "carbonldp/Registry" ), () => {
 				const registry:DocumentsRegistry = new DocumentsRegistry();
 
 				expect( () => {
-					registry.__getLocalID( "_:bNode-label" );
+					registry._getLocalID( "_:bNode-label" );
 				} ).toThrowError( IllegalArgumentError, `"_:bNode-label" is out of scope.` );
 			} );
 
@@ -111,7 +111,7 @@ describe( module( "carbonldp/Registry" ), () => {
 				const registry:DocumentsRegistry = new DocumentsRegistry();
 
 				expect( () => {
-					registry.__getLocalID( "#fragment" );
+					registry._getLocalID( "#fragment" );
 				} ).toThrowError( IllegalArgumentError, `"#fragment" is out of scope.` );
 			} );
 

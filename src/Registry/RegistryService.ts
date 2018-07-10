@@ -70,14 +70,14 @@ export class RegistryService<M extends Pointer, C extends AbstractContext<M, any
 	}
 
 
-	__getLocalID( id:string ):string {
+	_getLocalID( id:string ):string {
 		if( ! this.context ) return id;
 
 		const schema:DigestedObjectSchema = this.context.getObjectSchema();
 		const iri:string = ObjectSchemaUtils.resolveURI( id, schema );
 
 		if( ! URI.isBaseOf( this.context.baseURI, iri ) )
-			return Registry.PROTOTYPE.__getLocalID.call( this, id );
+			return Registry.PROTOTYPE._getLocalID.call( this, id );
 
 		return URI.getRelativeURI( iri, this.context.baseURI );
 	}

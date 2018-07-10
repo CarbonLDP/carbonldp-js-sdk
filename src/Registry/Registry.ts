@@ -1,18 +1,13 @@
-import { Context } from "../Context";
-import {
-	ModelDecorator,
-	ModelFactory,
-	ModelPrototype
-} from "../Model";
 import {
 	IDAlreadyInUseError,
 	IllegalArgumentError,
 } from "../Errors";
 import {
-	DigestedObjectSchema,
-	ObjectSchemaResolver,
-	ObjectSchemaUtils
-} from "../ObjectSchema";
+	ModelDecorator,
+	ModelFactory,
+	ModelPrototype
+} from "../Model";
+import { ObjectSchemaResolver } from "../ObjectSchema";
 import {
 	Pointer,
 	PointerLibrary,
@@ -23,10 +18,9 @@ import { BaseRegistry } from "./BaseRegistry";
 import { RegisteredPointer } from "./RegisteredPointer";
 
 
-export interface Registry<M extends RegisteredPointer = RegisteredPointer> extends PointerLibrary, PointerValidator, ObjectSchemaResolver {
-	readonly $context:Context;
+export interface Registry<M extends RegisteredPointer = RegisteredPointer> extends PointerLibrary, PointerValidator {
 	// TODO: Change to unknown
-	readonly $registry?:Registry<any>;
+	readonly $registry:Registry<any> | undefined;
 
 	readonly __modelDecorator:ModelDecorator<M>;
 	readonly __resourcesMap:Map<string, M>;
@@ -49,15 +43,19 @@ export interface Registry<M extends RegisteredPointer = RegisteredPointer> exten
 	removePointer( idOrPointer:string | RegisteredPointer, local:true ):boolean;
 
 
-	__getLocalID( id:string ):string;
+	_getLocalID( id:string ):string;
 
 	_addPointer<T extends object>( pointer:T & Pointer ):T & M;
 }
 
 
+export type OverloadedMembers =
+	| "$registry"
+	;
+
 // TODO: Use unknown
 export type RegistryFactory =
-	& ModelPrototype<Registry, BaseRegistry & ObjectSchemaResolver>
+	& ModelPrototype<Registry, BaseRegistry, OverloadedMembers>
 	& ModelDecorator<Registry<any>, BaseRegistry>
 	& ModelFactory<Registry, BaseRegistry>
 	;
@@ -72,7 +70,7 @@ export const Registry:RegistryFactory = {
 		inScope( this:Registry, idOrPointer:string | Pointer, local?:true ):boolean {
 			try {
 				const id:string = Pointer.getID( idOrPointer );
-				this.__getLocalID( id );
+				this._getLocalID( id );
 				return true;
 			} catch {
 				if( local === true || ! this.$registry ) return false;
@@ -83,7 +81,7 @@ export const Registry:RegistryFactory = {
 
 		hasPointer( this:Registry, id:string, local?:true ):boolean {
 			if( this.inScope( id, true ) ) {
-				const localID:string = this.__getLocalID( id );
+				const localID:string = this._getLocalID( id );
 				if( this.__resourcesMap.has( localID ) ) return true;
 			}
 
@@ -97,7 +95,7 @@ export const Registry:RegistryFactory = {
 				return this.$registry.getPointer( id );
 			}
 
-			const localID:string = this.__getLocalID( id );
+			const localID:string = this._getLocalID( id );
 			if( this.__resourcesMap.has( localID ) ) return this.__resourcesMap.get( localID );
 
 			if( local !== true && this.$registry && this.$registry.hasPointer( id ) )
@@ -120,7 +118,7 @@ export const Registry:RegistryFactory = {
 			const id:string = Pointer.getID( idOrPointer );
 
 			if( this.inScope( id, true ) ) {
-				const localID:string = this.__getLocalID( id );
+				const localID:string = this._getLocalID( id );
 				if( this.__resourcesMap.delete( localID ) ) return true;
 			}
 
@@ -132,7 +130,7 @@ export const Registry:RegistryFactory = {
 		_addPointer<T extends object>( this:Registry, pointer:T & Pointer ):T & RegisteredPointer {
 			if( ! pointer.$id ) throw new IllegalArgumentError( "The pointer $id cannot be empty." );
 
-			const localID:string = this.__getLocalID( pointer.$id );
+			const localID:string = this._getLocalID( pointer.$id );
 			if( this.__resourcesMap.has( localID ) ) throw new IDAlreadyInUseError( `"${ pointer.$id }" is already being taken.` );
 
 			const resource:T & RegisteredPointer = this.__modelDecorator.decorate( pointer );
@@ -142,11 +140,8 @@ export const Registry:RegistryFactory = {
 			return resource;
 		},
 
-		__getLocalID( this:Registry, id:string ):string {
-			if( ! this.$context ) return id;
-
-			const schema:DigestedObjectSchema = this.$context.getObjectSchema();
-			return ObjectSchemaUtils.resolveURI( id, schema, { base: true } );
+		_getLocalID( this:Registry, id:string ):never {
+			throw new IllegalArgumentError( `"${ id }" is outside the scope of the registry.` );
 		},
 	},
 
@@ -175,9 +170,6 @@ export const Registry:RegistryFactory = {
 	},
 
 	createFrom<T extends object>( object:T & BaseRegistry ):T & Registry {
-		if( ! object.$registry && object.$context.parentContext && object.$context.parentContext.registry )
-			object.$registry = object.$context.parentContext.registry;
-
 		return Registry.decorate( object );
 	},
 };

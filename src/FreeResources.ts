@@ -29,7 +29,7 @@ export interface FreeResources extends Registry<Resource> {
 	$registry:RegistryService<Pointer, any> | undefined;
 
 
-	__getLocalID( id:string ):string;
+	_getLocalID( id:string ):string;
 
 	_addPointer<T extends object>( base:T & { id?:string } ):T & Resource;
 
@@ -39,7 +39,7 @@ export interface FreeResources extends Registry<Resource> {
 
 type OverloadedProps =
 	| "$registry"
-	| "__getLocalID"
+	| "_getLocalID"
 	| "_addPointer"
 	;
 
@@ -47,9 +47,9 @@ const PROTOTYPE:PickSelfProps<FreeResources, Registry<Resource>, OverloadedProps
 	$registry: void 0,
 
 
-	__getLocalID( this:FreeResources, id:string ):string {
+	_getLocalID( this:FreeResources, id:string ):string {
 		if( URI.isBNodeID( id ) ) return id;
-		return Registry.PROTOTYPE.__getLocalID.call( this, id );
+		return Registry.PROTOTYPE._getLocalID.call( this, id );
 	},
 
 	_addPointer<T extends object>( this:FreeResources, base:T & { id?:string } ):T & Resource {
@@ -83,7 +83,7 @@ export interface FreeResourcesFactory extends ModelFactory<FreeResources>, Model
 	PROTOTYPE:PickSelfProps<FreeResources,
 		Registry<Resource>,
 		| "$registry"
-		| "__getLocalID"
+		| "_getLocalID"
 		| "_addPointer">;
 
 

@@ -389,7 +389,7 @@ export class RequestUtils {
 
 		const url:string = uri ? URI.resolve( resource.$id, uri ) : resource.$id;
 
-		const localIRI:string = registry.__getLocalID( url );
+		const localIRI:string = registry._getLocalID( url );
 		if( registry.context ) return URI.resolve( registry.context.baseURI, localIRI );
 
 		if( URI.isRelative( url ) ) throw new IllegalArgumentError( `"${ url }" cannot be used as URL for the request.` );

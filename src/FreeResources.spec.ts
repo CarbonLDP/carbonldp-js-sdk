@@ -325,7 +325,7 @@ describe( module( "carbonldp/FreeResources" ), ():void => {
 			let fx:() => any = () => {};
 			object = {
 				$registry: null,
-				__getLocalID: fx,
+				_getLocalID: fx,
 				_addPointer: fx,
 				toJSON: fx,
 			};
@@ -335,9 +335,9 @@ describe( module( "carbonldp/FreeResources" ), ():void => {
 			expect( FreeResources.isDecorated( object ) ).toBe( false );
 			object.$registry = null;
 
-			delete object.__getLocalID;
+			delete object._getLocalID;
 			expect( FreeResources.isDecorated( object ) ).toBe( false );
-			object.__getLocalID = fx;
+			object._getLocalID = fx;
 
 			delete object._addPointer;
 			expect( FreeResources.isDecorated( object ) ).toBe( false );
@@ -389,7 +389,7 @@ describe( module( "carbonldp/FreeResources" ), ():void => {
 			let fx:() => any = () => null;
 			let object:FreeResourcesFactory[ "PROTOTYPE" ] = {
 				$registry: null,
-				__getLocalID: fx,
+				_getLocalID: fx,
 				_addPointer: fx,
 				toJSON: fx,
 			};

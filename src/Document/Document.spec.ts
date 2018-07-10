@@ -273,7 +273,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 					$registry: _registry,
 				} );
 
-				_registry.__resourcesMap.set( _registry.__getLocalID( resource.$id ), resource );
+				_registry.__resourcesMap.set( _registry._getLocalID( resource.$id ), resource );
 
 
 				const spy:jasmine.Spy = spyOn( CRUDDocument.PROTOTYPE, "get" )
@@ -297,7 +297,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 					$registry: _registry,
 				} );
 
-				_registry.__resourcesMap.set( _registry.__getLocalID( resource.$id ), resource );
+				_registry.__resourcesMap.set( _registry._getLocalID( resource.$id ), resource );
 
 
 				const spy:jasmine.Spy = spyOn( CRUDDocument.PROTOTYPE, "get" )
@@ -455,7 +455,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 					$registry: _registry,
 				} );
 
-				_registry.__resourcesMap.set( _registry.__getLocalID( resource.$id ), resource );
+				_registry.__resourcesMap.set( _registry._getLocalID( resource.$id ), resource );
 
 
 				const spy:jasmine.Spy = spyOn( CRUDDocument.PROTOTYPE, "resolve" )
@@ -479,7 +479,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 					$registry: _registry,
 				} );
 
-				_registry.__resourcesMap.set( _registry.__getLocalID( resource.$id ), resource );
+				_registry.__resourcesMap.set( _registry._getLocalID( resource.$id ), resource );
 
 
 				const spy:jasmine.Spy = spyOn( CRUDDocument.PROTOTYPE, "resolve" )

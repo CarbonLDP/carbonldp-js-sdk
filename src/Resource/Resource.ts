@@ -6,6 +6,7 @@ import {
 } from "../Model";
 import {
 	DigestedObjectSchema,
+	ObjectSchemaResolver,
 	ObjectSchemaUtils,
 } from "../ObjectSchema";
 import { Pointer } from "../Pointer";
@@ -32,21 +33,31 @@ export interface Resource extends RegisteredPointer {
 	removeType( type:string ):void;
 }
 
+
+function __getSchemaResolver( registry:Registry<any> | undefined ):ObjectSchemaResolver | undefined {
+	if( ! registry ) return;
+
+	if( ObjectSchemaResolver.is( registry ) ) return registry;
+
+	return __getSchemaResolver( registry.$registry );
+}
+
+function __resolveURI( resource:Resource, uri:string ):string {
+	if( URI.isAbsolute( uri ) ) return uri;
+
+	const resolver:ObjectSchemaResolver = __getSchemaResolver( resource.$registry );
+	if( ! resolver ) return uri;
+
+	const schema:DigestedObjectSchema = resolver.getGeneralSchema();
+	return ObjectSchemaUtils.resolveURI( uri, schema, { vocab: true } );
+}
+
 export type ResourceFactory =
 	& ModelPrototype<Resource, Pointer>
 	& ModelDecorator<Resource, BaseResource>
 	& ModelFactory<Resource>
 	& ModelTypeGuard<Resource>
 	;
-
-
-function __resolveURI( resource:Resource, uri:string ):string {
-	if( ! resource.$registry ) return uri;
-	if( URI.isAbsolute( uri ) ) return uri;
-
-	const schema:DigestedObjectSchema = resource.$registry.getGeneralSchema();
-	return ObjectSchemaUtils.resolveURI( uri, schema, { vocab: true } );
-}
 
 export const Resource:ResourceFactory = {
 	PROTOTYPE: {

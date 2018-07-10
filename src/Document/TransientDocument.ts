@@ -52,7 +52,7 @@ export interface TransientDocument extends Resource, Registry<TransientFragment>
 	_normalize():void;
 
 
-	__getLocalID( id:string ):string;
+	_getLocalID( id:string ):string;
 
 
 	toJSON( registry?:DocumentsRegistry ):RDFDocument;
@@ -105,7 +105,7 @@ function __internalConverter( resource:TransientDocument, target:object, tracker
 
 type OverloadedMembers =
 	| "$registry"
-	| "__getLocalID"
+	| "_getLocalID"
 	| "__modelDecorator"
 	| "getPointer"
 	;
@@ -136,7 +136,7 @@ export const TransientDocument:TransientDocumentFactory = {
 		},
 
 
-		__getLocalID( this:TransientDocument, id:string ):string {
+		_getLocalID( this:TransientDocument, id:string ):string {
 			if( URI.isBNodeID( id ) ) return id;
 
 			if( URI.isFragmentOf( id, this.$id ) ) return URI.getFragment( id );
@@ -154,13 +154,13 @@ export const TransientDocument:TransientDocumentFactory = {
 			id = __getLabelFrom( id );
 			if( ! this.inScope( id, true ) ) return false;
 
-			const localID:string = this.__getLocalID( id );
+			const localID:string = this._getLocalID( id );
 			return this.__resourcesMap.has( localID );
 		},
 
 		getFragment<T extends object>( this:TransientDocument, id:string ):(T & TransientFragment) | null {
 			id = __getLabelFrom( id );
-			const localID:string = this.__getLocalID( id );
+			const localID:string = this._getLocalID( id );
 
 			const resource:TransientFragment = this.__resourcesMap.get( localID );
 			if( ! resource ) return null;

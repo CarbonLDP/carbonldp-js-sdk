@@ -49,7 +49,7 @@ function mockDocumentProperties():DocumentProperties {
 	return {
 		$registry: null,
 
-		__getLocalID: fn,
+		_getLocalID: fn,
 		_addPointer: fn,
 
 		getPointer: fn,
@@ -243,7 +243,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 				const _registry:DocumentsRegistry = new DocumentsRegistry();
 				const document:TransientDocument = createMockDocument( { $registry: _registry } );
 
-				_registry.__resourcesMap.set( _registry.__getLocalID( document.$id ), document as any );
+				_registry.__resourcesMap.set( _registry._getLocalID( document.$id ), document as any );
 
 				const returned:Pointer = document.getPointer( "https://example.com/document/" );
 				expect( returned ).toBe( document );
@@ -330,51 +330,51 @@ describe( module( "carbonldp/Document" ), ():void => {
 			it( "should exists", ():void => {
 				const document:TransientDocument = createMockDocument();
 
-				expect( document.__getLocalID ).toBeDefined();
-				expect( document.__getLocalID ).toEqual( jasmine.any( Function ) );
+				expect( document._getLocalID ).toBeDefined();
+				expect( document._getLocalID ).toEqual( jasmine.any( Function ) );
 			} );
 
 
 			it( "should throw error false when IRI of the document", ():void => {
 				const document:TransientDocument = createMockDocument();
 
-				expect( () => document.__getLocalID( "https://example.com/document/" ) ).toThrow();
+				expect( () => document._getLocalID( "https://example.com/document/" ) ).toThrow();
 			} );
 
 			it( "should throw error when relative IRIs", ():void => {
 				const document:TransientDocument = createMockDocument();
 
-				expect( () => document.__getLocalID( "relative/" ) ).toThrow();
+				expect( () => document._getLocalID( "relative/" ) ).toThrow();
 			} );
 
 			it( "should throw error when another absolute IRIs", ():void => {
 				const document:TransientDocument = createMockDocument();
 
-				expect( () => document.__getLocalID( "https://example.com/another/document/" ) ).toThrow();
+				expect( () => document._getLocalID( "https://example.com/another/document/" ) ).toThrow();
 			} );
 
 			it( "should return fragment when relative fragment label", ():void => {
 				const document:TransientDocument = createMockDocument();
 
-				expect( document.__getLocalID( "#fragment" ) ).toBe( "fragment" );
+				expect( document._getLocalID( "#fragment" ) ).toBe( "fragment" );
 			} );
 
 			it( "should return fragment when absolute fragment label", ():void => {
 				const document:TransientDocument = createMockDocument();
 
-				expect( document.__getLocalID( "https://example.com/document/#fragment" ) ).toBe( "fragment" );
+				expect( document._getLocalID( "https://example.com/document/#fragment" ) ).toBe( "fragment" );
 			} );
 
 			it( "should throw error when another absolute fragment label", ():void => {
 				const document:TransientDocument = createMockDocument();
 
-				expect( () => document.__getLocalID( "https://example.com/another/document/#fragment" ) ).toThrow();
+				expect( () => document._getLocalID( "https://example.com/another/document/#fragment" ) ).toThrow();
 			} );
 
 			it( "should return label when blank node label", ():void => {
 				const document:TransientDocument = createMockDocument();
 
-				expect( document.__getLocalID( "_:1" ) ).toBe( "_:1" );
+				expect( document._getLocalID( "_:1" ) ).toBe( "_:1" );
 			} );
 
 		} );
@@ -1509,7 +1509,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 
 			it( "should return false when no `_getLocalID`", ():void => {
 				const target:DocumentProperties = mockDocumentProperties();
-				delete target.__getLocalID;
+				delete target._getLocalID;
 				expect( TransientDocument.isDecorated( target ) ).toBe( false );
 			} );
 
