@@ -1,9 +1,9 @@
-import { TransientBlankNode } from "../BlankNode";
 import { ObjectSchema } from "../ObjectSchema";
-import { C } from "../Vocabularies/C";
+import { Resource } from "../Resource";
+import { C } from "../Vocabularies";
 
 
-export interface MapEntry<K, V> extends TransientBlankNode {
+export interface MapEntry<K, V> extends Resource {
 	entryKey:K;
 	entryValue:V;
 }

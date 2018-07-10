@@ -1,5 +1,4 @@
 import { isRelative } from "sparqler/iri";
-import { TransientBlankNode } from "../BlankNode";
 import { IllegalArgumentError } from "../Errors";
 import { TransientFragment } from "../Fragment";
 import { JSONLDConverter } from "../JSONLD";
@@ -9,7 +8,6 @@ import {
 	ModelPrototype,
 	ModelTypeGuard,
 } from "../Model";
-import { TransientNamedFragment } from "../NamedFragment";
 import { DigestedObjectSchema } from "../ObjectSchema";
 import { Pointer, } from "../Pointer";
 import {
@@ -146,7 +144,7 @@ export const TransientDocument:TransientDocumentFactory = {
 			throw new IllegalArgumentError( `"${ id }" is outside the scope of the document.` );
 		},
 
-		getPointer( this:TransientDocument, id:string, local?:true ):TransientBlankNode | TransientNamedFragment {
+		getPointer( this:TransientDocument, id:string, local?:true ):TransientFragment {
 			id = URI.resolve( this.$id, id );
 			return Registry.PROTOTYPE.getPointer.call( this, id, local );
 		},

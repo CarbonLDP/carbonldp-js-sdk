@@ -1,11 +1,9 @@
 import { anyThatMatches } from "../../test/helpers/jasmine/equalities";
-import { TransientBlankNode } from "../BlankNode";
 import {
 	IDAlreadyInUseError,
 	IllegalArgumentError,
 } from "../Errors";
 import { TransientFragment } from "../Fragment";
-import { TransientNamedFragment } from "../NamedFragment";
 import {
 	DigestedObjectSchema,
 	ObjectSchemaDigester
@@ -94,8 +92,13 @@ describe( module( "carbonldp/Document" ), ():void => {
 			expect( target ).toBeDefined();
 		} );
 
-		it( extendsClass( "CarbonLDP.Registry<CarbonLDP.TransientBlankNode | CarbonLDP.TransientNamedFragment>" ), () => {
-			const target:Registry<TransientBlankNode | TransientNamedFragment> = {} as TransientDocument;
+		it( extendsClass( "CarbonLDP.Resource" ), () => {
+			const target:Resource = {} as TransientDocument;
+			expect( target ).toBeDefined();
+		} );
+
+		it( extendsClass( "CarbonLDP.Registry<CarbonLDP.TransientFragment>" ), () => {
+			const target:Registry<TransientFragment> = {} as TransientDocument;
 			expect( target ).toBeDefined();
 		} );
 

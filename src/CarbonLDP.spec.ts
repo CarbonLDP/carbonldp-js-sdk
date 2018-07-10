@@ -1,6 +1,5 @@
 import { anyThatMatches } from "../test/helpers/jasmine/equalities";
 import { AccessPoint } from "./AccessPoint";
-import { BlankNode } from "./BlankNode";
 
 import * as CarbonLDP from "./CarbonLDP";
 import {
@@ -17,7 +16,6 @@ import * as JSONLD from "./JSONLD";
 import * as LDP from "./LDP";
 import * as LDPatch from "./LDPatch";
 import * as Messaging from "./Messaging";
-import { NamedFragment } from "./NamedFragment";
 import {
 	ContainerType,
 	DigestedObjectSchema,
@@ -103,15 +101,6 @@ describe( module( "carbonldp/CarbonLDP" ), ():void => {
 		), ():void => {
 			expect( CarbonLDP.CarbonLDP.AccessPoint ).toBeDefined();
 			expect( CarbonLDP.CarbonLDP.AccessPoint ).toBe( AccessPoint );
-		} );
-
-		it( reexports(
-			STATIC,
-			"BlankNode",
-			"carbonldp/BlankNode#BlankNode"
-		), ():void => {
-			expect( CarbonLDP.CarbonLDP.BlankNode ).toBeDefined();
-			expect( CarbonLDP.CarbonLDP.BlankNode ).toBe( BlankNode );
 		} );
 
 		it( reexports(
@@ -256,15 +245,6 @@ describe( module( "carbonldp/CarbonLDP" ), ():void => {
 		), ():void => {
 			expect( CarbonLDP.CarbonLDP.Fragment ).toBeDefined();
 			expect( CarbonLDP.CarbonLDP.Fragment ).toBe( Fragment );
-		} );
-
-		it( reexports(
-			STATIC,
-			"NamedFragment",
-			"carbonldp/NamedFragment#NamedFragment"
-		), ():void => {
-			expect( CarbonLDP.CarbonLDP.NamedFragment ).toBeDefined();
-			expect( CarbonLDP.CarbonLDP.NamedFragment ).toBe( NamedFragment );
 		} );
 
 		it( reexports(

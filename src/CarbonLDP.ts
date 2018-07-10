@@ -2,7 +2,6 @@ import { hasProtocol } from "sparqler/iri";
 
 import { AbstractContext } from "./Context/AbstractContext";
 import { AccessPoint } from "./AccessPoint";
-import { BlankNode } from "./BlankNode";
 import { Document } from "./Document";
 import { DocumentsContext } from "./Context/DocumentsContext";
 import * as Errors from "./Errors";
@@ -15,7 +14,6 @@ import * as JSONLD from "./JSONLD";
 import * as LDP from "./LDP";
 import * as LDPatch from "./LDPatch";
 import * as Messaging from "./Messaging";
-import { NamedFragment } from "./NamedFragment";
 import {
 	ContainerType,
 	DigestedObjectSchema,
@@ -45,7 +43,6 @@ export class CarbonLDP extends DocumentsContext {
 
 	static AbstractContext:typeof AbstractContext = AbstractContext;
 	static AccessPoint:typeof AccessPoint = AccessPoint;
-	static BlankNode:typeof BlankNode = BlankNode;
 	static Errors:typeof Errors = Errors;
 	static FreeResources:typeof FreeResources = FreeResources;
 	static HTTP:typeof HTTP = HTTP;
@@ -62,7 +59,6 @@ export class CarbonLDP extends DocumentsContext {
 	static DigestedObjectSchema:typeof DigestedObjectSchema = DigestedObjectSchema;
 	static Document:typeof Document = Document;
 	static Fragment:typeof Fragment = Fragment;
-	static NamedFragment:typeof NamedFragment = NamedFragment;
 	static ProtectedDocument:typeof ProtectedDocument = ProtectedDocument;
 	static PersistedResource:typeof PersistedResource = PersistedResource;
 	static Pointer:typeof Pointer = Pointer;

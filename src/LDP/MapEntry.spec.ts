@@ -20,7 +20,7 @@ describe( module( "carbonldp/LDP/MapEntry" ), ():void => {
 		"Entries of the `CarbonLDP.LDP.Map` with the key/value pair."
 	), ():void => {
 
-		it( extendsClass( "CarbonLDP.TransientBlankNode" ), ():void => {} );
+		it( extendsClass( "CarbonLDP.Resource" ), ():void => {} );
 
 		it( hasProperty(
 			OBLIGATORY,

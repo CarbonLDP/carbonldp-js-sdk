@@ -1,16 +1,19 @@
-import { TransientBlankNode } from "../BlankNode";
-import { ModelSchema } from "../Model/ModelSchema";
 import { Document } from "../Document";
+import { ModelSchema } from "../Model";
 import { ObjectSchema } from "../ObjectSchema";
-import { C } from "../Vocabularies/C";
-import { XSD } from "../Vocabularies/XSD";
+import { Pointer } from "../Pointer";
+import {
+	C,
+	XSD
+} from "../Vocabularies";
 import { Map } from "./Map";
 import { VolatileResource } from "./VolatileResource";
+
 
 export interface DocumentMetadata extends VolatileResource {
 	relatedDocument:Document;
 	eTag?:string;
-	bNodesMap?:Map<TransientBlankNode, TransientBlankNode>;
+	bNodesMap?:Map<Pointer, Pointer>;
 }
 
 
