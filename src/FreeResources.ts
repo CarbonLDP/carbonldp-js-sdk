@@ -1,33 +1,29 @@
+import { JSONLDConverter } from "./JSONLD";
 import {
 	ModelDecorator,
 	ModelFactory,
+	ModelPrototype,
+	ModelTypeGuard,
 } from "./Model";
-import { JSONLDConverter } from "./JSONLD";
 import { DigestedObjectSchema } from "./ObjectSchema";
-import { Pointer } from "./Pointer";
 import {
 	RDFNode,
 	URI,
 } from "./RDF";
 import {
+	GeneralRegistry,
 	Registry,
-	RegistryService,
 } from "./Registry";
 import { Resource } from "./Resource";
-import {
-	isObject,
-	PickSelfProps
-} from "./Utils";
 
 
 export interface BaseFreeResources {
-	_registry:RegistryService<Pointer, any>;
+	$registry:GeneralRegistry;
 }
 
 
 export interface FreeResources extends Registry<Resource> {
-	$registry:RegistryService<Pointer, any> | undefined;
-
+	$registry:GeneralRegistry;
 
 	_getLocalID( id:string ):string;
 
@@ -37,70 +33,56 @@ export interface FreeResources extends Registry<Resource> {
 	toJSON():RDFNode[];
 }
 
-type OverloadedProps =
+
+export type OverloadedMembers =
 	| "$registry"
 	| "_getLocalID"
 	| "_addPointer"
+	| "__modelDecorator"
 	;
 
-const PROTOTYPE:PickSelfProps<FreeResources, Registry<Resource>, OverloadedProps> = {
-	$registry: void 0,
-
-
-	_getLocalID( this:FreeResources, id:string ):string {
-		if( URI.isBNodeID( id ) ) return id;
-		return Registry.PROTOTYPE._getLocalID.call( this, id );
-	},
-
-	_addPointer<T extends object>( this:FreeResources, base:T & { id?:string } ):T & Resource {
-		if( ! base.id ) base.id = URI.generateBNodeID();
-		const pointer:T & Pointer = Registry.PROTOTYPE._addPointer.call( this, base );
-
-		return Resource.decorate( pointer );
-	},
-
-
-	toJSON( this:FreeResources ):RDFNode[] {
-		const generalSchema:DigestedObjectSchema = this.$registry ?
-			this.$registry.getGeneralSchema() : new DigestedObjectSchema();
-		const jsonldConverter:JSONLDConverter = this.$registry ?
-			this.$registry.jsonldConverter : new JSONLDConverter();
-
-		return this
-			.getPointers( true )
-			.map( resource => {
-				const resourceSchema:DigestedObjectSchema = this.$registry ?
-					this.$registry.getSchemaFor( resource ) : generalSchema;
-
-				return jsonldConverter.expand( resource, generalSchema, resourceSchema );
-			} )
-			;
-	},
-};
-
-
-export interface FreeResourcesFactory extends ModelFactory<FreeResources>, ModelDecorator<FreeResources, BaseFreeResources> {
-	PROTOTYPE:PickSelfProps<FreeResources,
-		Registry<Resource>,
-		| "$registry"
-		| "_getLocalID"
-		| "_addPointer">;
-
-
-	is( value:any ):value is FreeResources;
-
-	isDecorated( object:object ):object is FreeResources;
-
-
-	create<T extends object>( data:T & BaseFreeResources ):T & FreeResources;
-
-	createFrom<T extends object>( object:T & BaseFreeResources ):T & FreeResources;
-
-	decorate<T extends object>( object:T ):T & FreeResources;
-}
+export type FreeResourcesFactory =
+	& ModelPrototype<FreeResources, Registry, OverloadedMembers>
+	& ModelDecorator<FreeResources, BaseFreeResources>
+	& ModelTypeGuard<FreeResources>
+	& ModelFactory<FreeResources, BaseFreeResources>
+	;
 
 export const FreeResources:FreeResourcesFactory = {
-	PROTOTYPE,
+	PROTOTYPE: {
+		$registry: void 0,
+
+		__modelDecorator: Resource,
+
+
+		_getLocalID( this:FreeResources, id:string ):string {
+			if( URI.isBNodeID( id ) ) return id;
+			return Registry.PROTOTYPE._getLocalID.call( this, id );
+		},
+
+		_addPointer<T extends object>( this:FreeResources, base:T & { id?:string } ):T & Resource {
+			if( ! base.id ) base.id = URI.generateBNodeID();
+			return Registry.PROTOTYPE._addPointer.call( this, base );
+		},
+
+
+		toJSON( this:FreeResources ):RDFNode[] {
+			const generalSchema:DigestedObjectSchema = this.$registry ?
+				this.$registry.getGeneralSchema() : new DigestedObjectSchema();
+			const jsonldConverter:JSONLDConverter = this.$registry ?
+				this.$registry.$context.jsonldConverter : new JSONLDConverter();
+
+			return this
+				.getPointers( true )
+				.map( resource => {
+					const resourceSchema:DigestedObjectSchema = this.$registry ?
+						this.$registry.getSchemaFor( resource ) : generalSchema;
+
+					return jsonldConverter.expand( resource, generalSchema, resourceSchema );
+				} )
+				;
+		},
+	},
 
 
 	is( value:any ):value is FreeResources {
@@ -110,10 +92,8 @@ export const FreeResources:FreeResourcesFactory = {
 	},
 
 	isDecorated( object:object ):object is FreeResources {
-		return isObject( object )
-			&& ModelDecorator
-				.hasPropertiesFrom( PROTOTYPE, object )
-			;
+		return ModelDecorator
+			.hasPropertiesFrom( FreeResources.PROTOTYPE, object );
 	},
 
 
@@ -126,12 +106,14 @@ export const FreeResources:FreeResourcesFactory = {
 		return FreeResources.decorate( object );
 	},
 
-	decorate<T extends object>( object:T ):T & FreeResources {
+	decorate<T extends BaseFreeResources>( object:T ):T & FreeResources {
 		if( FreeResources.isDecorated( object ) ) return object;
 
-		const resource:T & Registry<Resource> = Registry.decorate( object );
+		const resource:T & Registry<Resource> = ModelDecorator
+			.decorateMultiple( object, Registry );
+
 		return ModelDecorator
-			.definePropertiesFrom( PROTOTYPE, resource );
+			.definePropertiesFrom( FreeResources.PROTOTYPE, resource );
 	},
 };
 
