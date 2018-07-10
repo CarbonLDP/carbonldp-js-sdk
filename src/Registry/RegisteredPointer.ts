@@ -14,8 +14,8 @@ export interface RegisteredPointer extends Pointer {
 
 
 export type RegisteredPointerFactory =
-	& ModelPrototype<RegisteredPointer, Pointer & { $registry:Registry }>
-	& ModelDecorator<RegisteredPointer, { $registry:Registry }>
+	& ModelPrototype<RegisteredPointer, Pointer & BaseRegisteredPointer>
+	& ModelDecorator<RegisteredPointer, BaseRegisteredPointer>
 	& ModelFactory<RegisteredPointer, BaseRegisteredPointer>
 	;
 
@@ -30,7 +30,7 @@ export const RegisteredPointer:RegisteredPointerFactory = {
 			.hasPropertiesFrom( RegisteredPointer.PROTOTYPE, object );
 	},
 
-	decorate<T extends { $registry:Registry }>( object:T ):T & RegisteredPointer {
+	decorate<T extends BaseRegisteredPointer>( object:T ):T & RegisteredPointer {
 		if( RegisteredPointer.isDecorated( object ) ) return object;
 
 		const resource:T & Pointer = ModelDecorator
