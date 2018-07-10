@@ -379,7 +379,7 @@ function __sendRemoveAll( this:void, repository:LDPDocumentsRepositoryTrait, uri
 		;
 }
 
-export type OverloadedMembers =
+export type OverrodeMembers =
 	| "get"
 	| "refresh"
 	| "exists"
@@ -391,7 +391,7 @@ export type OverloadedMembers =
 	;
 
 export type LDPDocumentsRepositoryTraitFactory =
-	& ModelPrototype<LDPDocumentsRepositoryTrait, HTTPRepositoryTrait, OverloadedMembers>
+	& ModelPrototype<LDPDocumentsRepositoryTrait, HTTPRepositoryTrait, OverrodeMembers>
 	& ModelDecorator<LDPDocumentsRepositoryTrait, BaseDocumentsRepository>
 	;
 

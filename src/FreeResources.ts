@@ -33,7 +33,7 @@ export interface FreeResources extends Registry<Resource> {
 }
 
 
-export type OverloadedMembers =
+export type OverrodeMembers =
 	| "$registry"
 	| "_getLocalID"
 	| "_addPointer"
@@ -41,7 +41,7 @@ export type OverloadedMembers =
 	;
 
 export type FreeResourcesFactory =
-	& ModelPrototype<FreeResources, Registry, OverloadedMembers>
+	& ModelPrototype<FreeResources, Registry, OverrodeMembers>
 	& ModelDecorator<FreeResources, BaseFreeResources>
 	& ModelTypeGuard<FreeResources>
 	& ModelFactory<FreeResources, BaseFreeResources>

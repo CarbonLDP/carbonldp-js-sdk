@@ -102,7 +102,7 @@ function __internalConverter( resource:TransientDocument, target:object, tracker
 	;
 }
 
-type OverloadedMembers =
+type OverrodeMembers =
 	| "$registry"
 	| "_getLocalID"
 	| "__modelDecorator"
@@ -111,7 +111,7 @@ type OverloadedMembers =
 	;
 
 export type TransientDocumentFactory =
-	& ModelPrototype<TransientDocument, Resource & Registry, OverloadedMembers>
+	& ModelPrototype<TransientDocument, Resource & Registry, OverrodeMembers>
 	& ModelDecorator<TransientDocument, BaseDocument>
 	& ModelFactory<TransientDocument, BaseDocument>
 	& ModelTypeGuard<TransientDocument>

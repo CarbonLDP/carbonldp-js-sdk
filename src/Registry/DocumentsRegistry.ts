@@ -19,12 +19,12 @@ export interface DocumentsRegistry extends GeneralRegistry<Document> {
 }
 
 
-export type OverloadedMembers =
+export type OverrodeMembers =
 	| "__modelDecorator"
 ;
 
 export type DocumentsRegistryFactory =
-	& ModelPrototype<DocumentsRegistry, GeneralRegistry<Document> & BaseDocumentsRegistry, OverloadedMembers>
+	& ModelPrototype<DocumentsRegistry, GeneralRegistry<Document> & BaseDocumentsRegistry, OverrodeMembers>
 	& ModelDecorator<DocumentsRegistry, BaseDocumentsRegistry>
 	& ModelFactory<DocumentsRegistry, BaseDocumentsRegistry>
 	;

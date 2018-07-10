@@ -96,7 +96,7 @@ export interface Document extends SPARQLDocumentTrait, EventEmitterDocumentTrait
 }
 
 
-type ForcedOverloadedMembers = {
+type ForcedMembers = {
 	__resourcesMap:Map<string, Fragment>;
 
 
@@ -117,13 +117,13 @@ type ForcedOverloadedMembers = {
 	removeFragment( slugOrFragment:string | Fragment ):boolean;
 };
 
-export type OverloadedMembers =
+export type OverrodeMembers =
 	| "__modelDecorator"
 	;
 
 export type DocumentFactory =
 	& ModelSchema<C[ "Document" ]>
-	& ModelPrototype<Document, SPARQLDocumentTrait & EventEmitterDocumentTrait & QueryableDocumentTrait, OverloadedMembers>
+	& ModelPrototype<Document, SPARQLDocumentTrait & EventEmitterDocumentTrait & QueryableDocumentTrait, OverrodeMembers>
 	& ModelDecorator<Document>
 	& ModelTypeGuard<Document>
 	& ModelFactory<TransientDocument, BaseDocument>
@@ -215,7 +215,7 @@ export const Document:DocumentFactory = {
 	decorate<T extends object>( object:T ):T & Document {
 		if( Document.isDecorated( object ) ) return object;
 
-		type ForcedT = T & ForcedOverloadedMembers;
+		type ForcedT = T & ForcedMembers;
 		const forced:ForcedT = object as ForcedT;
 
 		const target:ForcedT & SPARQLDocumentTrait & EventEmitterDocumentTrait & QueryableDocumentTrait = ModelDecorator

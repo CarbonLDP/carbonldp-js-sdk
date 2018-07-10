@@ -54,17 +54,17 @@ export interface Fragment extends TransientFragment, ResolvablePointer {
 }
 
 
-type ForcedOverloadedMembers = {
+type ForcedMembers = {
 	$document:Document;
 };
 
-export type OverloadedMembers =
+export type OverrodeMembers =
 	| "$repository"
 	| "_resolved"
 	;
 
 export type FragmentFactory =
-	& ModelPrototype<Fragment, TransientFragment & ResolvablePointer, OverloadedMembers>
+	& ModelPrototype<Fragment, TransientFragment & ResolvablePointer, OverrodeMembers>
 	& ModelDecorator<Fragment, BaseResolvableFragment>
 	& ModelFactory<TransientFragment, BaseFragment>
 	;
@@ -94,7 +94,7 @@ export const Fragment:FragmentFactory = {
 	decorate<T extends BaseResolvableFragment>( object:T ):T & Fragment {
 		if( Fragment.isDecorated( object ) ) return object;
 
-		type ForcedT = T & ForcedOverloadedMembers;
+		type ForcedT = T & ForcedMembers;
 		const forced:ForcedT = object as ForcedT;
 
 		const target:ForcedT & TransientFragment & ResolvablePointer = ModelDecorator

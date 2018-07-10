@@ -49,13 +49,13 @@ export interface Registry<M extends RegisteredPointer = RegisteredPointer> exten
 }
 
 
-export type OverloadedMembers =
+export type OverrodeMembers =
 	| "$registry"
 	;
 
 // TODO: Use unknown
 export type RegistryFactory =
-	& ModelPrototype<Registry, BaseRegistry, OverloadedMembers>
+	& ModelPrototype<Registry, BaseRegistry, OverrodeMembers>
 	& ModelDecorator<Registry<any>, BaseRegistry>
 	& ModelFactory<Registry, BaseRegistry>
 	;
