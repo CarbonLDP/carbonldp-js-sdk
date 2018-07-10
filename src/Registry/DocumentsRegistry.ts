@@ -1,38 +1,40 @@
-import { Context } from "../Context";
+import { DocumentsContext } from "../Context";
+import { Document } from "../Document";
 import {
 	ModelDecorator,
 	ModelFactory,
 	ModelPrototype
 } from "../Model";
-import { Document } from "../Document";
-import { BaseRegistry } from "./BaseRegistry";
 import { GeneralRegistry } from "./GeneralRegistry";
 
 
-// FIXME: DocumentsContext
 export interface BaseDocumentsRegistry {
-	$context:Context<Document>;
-	// $context:DocumentsContext;
+	$context:DocumentsContext;
 }
 
 export interface DocumentsRegistry extends GeneralRegistry<Document> {
-	// readonly $context:DocumentsContext;
-	$context:Context<Document>;
+	readonly $context:DocumentsContext;
 
 	register( id:string ):Document;
 }
 
 
+export type OverloadedMembers =
+	| "__modelDecorator"
+;
+
 export type DocumentsRegistryFactory =
-	& ModelPrototype<DocumentsRegistry, GeneralRegistry<Document>>
+	& ModelPrototype<DocumentsRegistry, GeneralRegistry<Document> & BaseDocumentsRegistry, OverloadedMembers>
 	& ModelDecorator<DocumentsRegistry, BaseDocumentsRegistry>
 	& ModelFactory<DocumentsRegistry, BaseDocumentsRegistry>
 	;
 
 export const DocumentsRegistry:DocumentsRegistryFactory = {
 	PROTOTYPE: {
+		__modelDecorator:Document,
+
 		register( this:DocumentsRegistry, id:string ):Document {
-			return this._addPointer( { $id: id } );
+			return this.getPointer( id, true );
 		},
 	},
 
@@ -54,18 +56,11 @@ export const DocumentsRegistry:DocumentsRegistryFactory = {
 
 
 	create<T extends object>( data:T & BaseDocumentsRegistry ):T & DocumentsRegistry {
-		// FIXME: TS 3.0
+		// FIXME
 		return DocumentsRegistry.createFrom( { ...data as any } );
 	},
 
 	createFrom<T extends object>( object:T & BaseDocumentsRegistry ):T & DocumentsRegistry {
-		const baseObject:T & BaseRegistry<Document> = Object.assign( object, {
-			__modelDecorator: Document,
-		} );
-
-		const registry:T & GeneralRegistry<Document> = GeneralRegistry
-			.createFrom( baseObject );
-
-		return DocumentsRegistry.decorate( registry );
+		return DocumentsRegistry.decorate( object );
 	},
 };
