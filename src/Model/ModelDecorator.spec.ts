@@ -7,9 +7,13 @@ import {
 
 import { ModelDecorator } from "./ModelDecorator";
 
-describe( module( "carbonldp/ModelDecorator" ), ():void => {
+describe( module( "carbonldp/Model" ), ():void => {
 
-	describe( interfaze( "CarbonLDP.ModelDecorator", [ "T extends object" ], "Interface with the standard methods of a model decorator" ), ():void => {
+	describe( interfaze(
+		"CarbonLDP.Model.ModelDecorator",
+		[ "MODEL extends object", "BASE extends object = object" ],
+		"Interface with the standard methods of a model decoration."
+	), ():void => {
 
 		it( hasMethod(
 			OBLIGATORY,
@@ -17,7 +21,7 @@ describe( module( "carbonldp/ModelDecorator" ), ():void => {
 			[
 				{ name: "object", type: "object" },
 			],
-			{ type: "object is T" }
+			{ type: "object is MODEL" }
 		), ():void => {
 			const target:ModelDecorator<any>[ "isDecorated" ] = ( object ):object is any => ! ! object;
 			expect( target ).toBeDefined();
@@ -26,11 +30,11 @@ describe( module( "carbonldp/ModelDecorator" ), ():void => {
 		it( hasMethod(
 			OBLIGATORY,
 			"decorate",
-			[ "W extends object" ],
+			[ "W extends BASE" ],
 			[
 				{ name: "object", type: "W" },
 			],
-			{ type: "W & T" }
+			{ type: "W & MODEL" }
 		), ():void => {
 			const target:ModelDecorator<any>[ "decorate" ] = ( object ) => object;
 			expect( target ).toBeDefined();

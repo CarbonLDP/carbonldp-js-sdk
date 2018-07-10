@@ -1,3 +1,3 @@
-export interface ModelTypeGuard<T extends object> {
-	is( value:any ):value is T;
+export interface ModelTypeGuard<MODEL extends object> {
+	is( value:any ):value is MODEL;
 }

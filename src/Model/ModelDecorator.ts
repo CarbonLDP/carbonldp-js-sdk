@@ -4,10 +4,10 @@ import {
 } from "../Utils";
 
 
-export interface ModelDecorator<T extends object, U extends object = object> {
-	isDecorated( object:object ):object is T;
+export interface ModelDecorator<MODEL extends object, BASE extends object = object> {
+	isDecorated( object:object ):object is MODEL;
 
-	decorate<W extends U>( object:W ):W & T;
+	decorate<W extends BASE>( object:W ):W & MODEL;
 }
 
 

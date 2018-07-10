@@ -1,3 +1,3 @@
-export interface ModelPrototype<M extends object, B extends object = {}, K extends keyof M = never> {
-	PROTOTYPE:Pick<M, Exclude<keyof M, keyof B> | K>;
+export interface ModelPrototype<MODEL extends object, EXTENDED extends object = {}, OVERRIDDEN extends keyof MODEL = never> {
+	PROTOTYPE:Pick<MODEL, Exclude<keyof MODEL, keyof EXTENDED> | OVERRIDDEN>;
 }

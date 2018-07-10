@@ -4,13 +4,14 @@ import {
 	module,
 	OBLIGATORY
 } from "../test/JasmineExtender";
-import { ModelFactory } from "./ModelFactory";
+import { ModelTypeGuard } from "./ModelTypeGuard";
 
-describe( module( "carbonldp/ModelTypeGuard" ), () => {
+
+describe( module( "carbonldp/Model" ), () => {
 
 	describe( interfaze(
-		"CarbonLDP.ModelTypeGuard",
-		[ "M extends object" ],
+		"CarbonLDP.Model.ModelTypeGuard",
+		[ "MODEL extends object" ],
 		"Interface that contains the method to assert a value as an specific model."
 	), () => {
 
@@ -21,9 +22,9 @@ describe( module( "carbonldp/ModelTypeGuard" ), () => {
 			[
 				{ name: "value", type: "value" },
 			],
-			{ type: "value is T" }
+			{ type: "value is MODEL" }
 		), ():void => {
-			const target:ModelFactory<any>[ "is" ] = ( object ):object is any => false;
+			const target:ModelTypeGuard<any>[ "is" ] = ( object ):object is any => ! ! object;
 			expect( target ).toBeDefined();
 		} );
 
