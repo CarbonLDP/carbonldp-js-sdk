@@ -11,7 +11,6 @@ import {
 	ValidationError
 } from "../LDP";
 import {
-	AccessPointCreated,
 	ChildCreated,
 	DocumentCreatedDetails,
 	DocumentDeleted,
@@ -81,7 +80,6 @@ export class GlobalContext extends AbstractContext<RegisteredPointer, undefined,
 
 			.extendObjectSchema( QueryMetadata.TYPE, QueryMetadata.SCHEMA )
 
-			.extendObjectSchema( AccessPointCreated.TYPE, AccessPointCreated.SCHEMA )
 			.extendObjectSchema( ChildCreated.TYPE, ChildCreated.SCHEMA )
 			.extendObjectSchema( DocumentCreatedDetails.TYPE, DocumentCreatedDetails.SCHEMA )
 			.extendObjectSchema( DocumentDeleted.TYPE, DocumentDeleted.SCHEMA )
