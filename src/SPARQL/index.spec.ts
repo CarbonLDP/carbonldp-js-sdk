@@ -12,7 +12,6 @@ import {
 	FinishSPARQLSelect,
 	SPARQLBuilder,
 } from "./Builder";
-import * as QueryDocument from "./QueryDocument";
 import {
 	SPARQLRawBindingObject,
 	SPARQLRawBindingProperty,
@@ -50,15 +49,6 @@ describe( module( "carbonldp/SPARQL" ), ():void => {
 	), ():void => {
 		const target:SPARQL.FinishSPARQLSelect = {} as FinishSPARQLSelect;
 		expect( target ).toBeDefined();
-	} );
-
-	it( reexports(
-		STATIC,
-		"QueryDocument",
-		"carbonldp/QueryDocument"
-	), ():void => {
-		expect( SPARQL.QueryDocument ).toBeDefined();
-		expect( SPARQL.QueryDocument ).toBe( QueryDocument );
 	} );
 
 	it( reexports(
