@@ -32,7 +32,7 @@ import {
 	IllegalArgumentError,
 	IllegalStateError
 } from "../Errors";
-import { BaseFragment } from "../Fragment";
+import { BaseTransientFragment } from "../Fragment";
 import { Header } from "../HTTP";
 import * as ObjectSchema from "../ObjectSchema";
 import { ObjectSchemaDigester } from "../ObjectSchema";
@@ -3580,9 +3580,9 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 
 					type MyDoc = {
 						list:(string | number)[];
-						pointer:BaseFragment & {
+						pointer:BaseTransientFragment & {
 							string:string[];
-							pointers:(BaseFragment & {
+							pointers:(BaseTransientFragment & {
 								string:string[];
 								number:number;
 							})[];
@@ -4030,9 +4030,9 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 
 					type MyDoc = {
 						list:(string | number)[];
-						pointer:BaseFragment & {
+						pointer:BaseTransientFragment & {
 							string:string[];
-							pointers:(BaseFragment & {
+							pointers:(BaseTransientFragment & {
 								string:string[];
 								number:number;
 							})[];

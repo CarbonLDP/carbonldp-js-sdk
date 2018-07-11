@@ -9,7 +9,7 @@ import { IllegalArgumentError } from "../Errors/IllegalArgumentError";
 import { TransientFragment } from "../Fragment/TransientFragment";
 
 import { ModelDecorator } from "../Model/ModelDecorator";
-import { ModelFactory } from "../Model/ModelFactory";
+import { ModelFactoryOptional } from "../Model/ModelFactoryOptional";
 import { ModelPrototype } from "../Model/ModelPrototype";
 import { ModelTypeGuard, } from "../Model/ModelTypeGuard";
 
@@ -18,6 +18,7 @@ import { Pointer } from "../Pointer/Pointer";
 import { RDFDocument } from "../RDF/Document";
 import { RDFNode } from "../RDF/Node";
 import { URI } from "../RDF/URI";
+import { BaseRegistry } from "../Registry/BaseRegistry";
 
 import { Registry } from "../Registry/Registry";
 import { Resource } from "../Resource/Resource";
@@ -105,7 +106,6 @@ function __internalConverter( resource:TransientDocument, target:object, tracker
 type OverrodeMembers =
 	| "$registry"
 	| "_getLocalID"
-	| "__modelDecorator"
 	| "getPointer"
 	| "toJSON"
 	;
@@ -113,15 +113,13 @@ type OverrodeMembers =
 export type TransientDocumentFactory =
 	& ModelPrototype<TransientDocument, Resource & Registry, OverrodeMembers>
 	& ModelDecorator<TransientDocument, BaseDocument>
-	& ModelFactory<TransientDocument, BaseDocument>
+	& ModelFactoryOptional<TransientDocument, BaseDocument>
 	& ModelTypeGuard<TransientDocument>
 	;
 
 export const TransientDocument:TransientDocumentFactory = {
 	PROTOTYPE: {
 		$registry: void 0,
-
-		__modelDecorator: TransientFragment,
 
 		_normalize( this:TransientDocument ):void {
 			const usedFragments:Set<string> = new Set();
@@ -214,8 +212,13 @@ export const TransientDocument:TransientDocumentFactory = {
 	decorate<T extends BaseDocument>( object:T ):T & TransientDocument {
 		if( TransientDocument.isDecorated( object ) ) return object;
 
-		const resource:T & Resource & Registry<TransientFragment> = ModelDecorator
-			.decorateMultiple( object, Resource, Registry );
+		type Base = T & BaseRegistry;
+		const base:Base = Object.assign<T, BaseRegistry>( object, {
+			__modelDecorator: TransientFragment,
+		} );
+
+		const resource:Base & Resource & Registry<TransientFragment> = ModelDecorator
+			.decorateMultiple( base, Resource, Registry );
 
 		return ModelDecorator
 			.definePropertiesFrom( TransientDocument.PROTOTYPE, resource )

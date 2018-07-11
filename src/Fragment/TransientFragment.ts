@@ -1,12 +1,15 @@
-import { TransientDocument } from "../Document";
-import {
-	ModelDecorator,
-	ModelFactory,
-	ModelPrototype,
-	ModelTypeGuard
-} from "../Model";
-import { Resource } from "../Resource";
-import { BaseFragment } from "./BaseFragment";
+import { TransientDocument } from "../Document/TransientDocument";
+
+import { IllegalArgumentError } from "../Errors/IllegalArgumentError";
+
+import { ModelDecorator } from "../Model/ModelDecorator";
+import { ModelFactory } from "../Model/ModelFactory";
+import { ModelPrototype } from "../Model/ModelPrototype";
+import { ModelTypeGuard } from "../Model/ModelTypeGuard";
+
+import { Resource } from "../Resource/Resource";
+
+import { BaseTransientFragment } from "./BaseTransientFragment";
 
 
 export interface TransientFragment extends Resource {
@@ -16,14 +19,18 @@ export interface TransientFragment extends Resource {
 
 
 export type TransientFragmentFactory =
-	& ModelPrototype<TransientFragment, Resource>
-	& ModelDecorator<TransientFragment, BaseFragment>
-	& ModelFactory<TransientFragment, BaseFragment>
+	& ModelPrototype<TransientFragment & BaseTransientFragment, Resource, "$registry">
+	& ModelDecorator<TransientFragment, BaseTransientFragment>
+	& ModelFactory<TransientFragment, BaseTransientFragment>
 	& ModelTypeGuard<TransientFragment>
 	;
 
 export const TransientFragment:TransientFragmentFactory = {
 	PROTOTYPE: {
+		get $registry():TransientDocument {
+			throw new IllegalArgumentError( `Property "$registry" is required.` );
+		},
+
 		get $document( this:TransientFragment ):TransientDocument {
 			return this.$registry;
 		},
@@ -38,11 +45,13 @@ export const TransientFragment:TransientFragmentFactory = {
 			;
 	},
 
-	decorate<T extends BaseFragment>( object:T ):T & TransientFragment {
+	decorate<T extends BaseTransientFragment>( object:T ):T & TransientFragment {
 		if( TransientFragment.isDecorated( object ) ) return object;
 
 		const target:T & Resource = ModelDecorator
 			.decorateMultiple( object, Resource );
+
+		if( ! target.$registry ) delete target.$registry;
 
 		return ModelDecorator
 			.definePropertiesFrom( TransientFragment.PROTOTYPE, target );
@@ -54,12 +63,12 @@ export const TransientFragment:TransientFragmentFactory = {
 			;
 	},
 
-	create<T extends object>( data:T & BaseFragment ):T & TransientFragment {
-		const copy:T & BaseFragment = Object.assign( {}, data );
+	create<T extends object>( data:T & BaseTransientFragment ):T & TransientFragment {
+		const copy:T & BaseTransientFragment = Object.assign( {}, data );
 		return TransientFragment.createFrom<T>( copy );
 	},
 
-	createFrom<T extends object>( object:T & BaseFragment ):T & TransientFragment {
+	createFrom<T extends object>( object:T & BaseTransientFragment ):T & TransientFragment {
 		return TransientFragment.decorate( object );
 	},
 };

@@ -5,7 +5,7 @@ import { JSONLDConverter } from "../JSONLD/Converter";
 import { ModelDecorator } from "../Model/ModelDecorator";
 import { ModelFactoryOptional } from "../Model/ModelFactoryOptional";
 import { ModelPrototype } from "../Model/ModelPrototype";
-import { ModelTypeGuard, } from "../Model/ModelTypeGuard";
+import { ModelTypeGuard } from "../Model/ModelTypeGuard";
 
 import { DigestedObjectSchema } from "../ObjectSchema/DigestedObjectSchema";
 
@@ -139,7 +139,7 @@ export const Resource:ResourceFactory = {
 		if( ! object.hasOwnProperty( "$registry" ) ) object.$registry = void 0;
 
 		const resource:T & RegisteredPointer = ModelDecorator
-			.decorateMultiple( object, RegisteredPointer );
+			.decorateMultiple( object as Required<T>, RegisteredPointer );
 
 		return ModelDecorator
 			.definePropertiesFrom( Resource.PROTOTYPE, resource );

@@ -8,15 +8,15 @@ import {
 describe( module( "carbonldp/Fragment" ), ():void => {
 
 	describe( interfaze(
-		"CarbonLDP.BaseFragment",
+		"CarbonLDP.BaseTransientFragment",
 		"Interface with the base properties of a fragment."
 	), ():void => {
 
 		it( hasProperty(
 			OPTIONAL,
-			"_registry",
-			"CarbonLDP.Registry & CarbonLDP.Pointer",
-			"The pointer registry where the fragment will belong to."
+			"$registry",
+			"CarbonLDP.TransientDocument",
+			"The transient document the transient fragment belongs to."
 		), ():void => {} );
 
 	} );

@@ -7,7 +7,7 @@ import {
 	IllegalActionError,
 	IllegalArgumentError,
 } from "../Errors";
-import { BaseFragment } from "../Fragment";
+import { BaseTransientFragment } from "../Fragment";
 import { Header } from "../HTTP";
 import { Pointer } from "../Pointer";
 import { DocumentsRegistry } from "../DocumentsRegistry/DocumentsRegistry";
@@ -5912,9 +5912,9 @@ describe( module( "carbonldp/Document" ), ():void => {
 
 					type MyDoc = {
 						list:(string | number)[];
-						pointer:BaseFragment & {
+						pointer:BaseTransientFragment & {
 							string:string[];
-							pointers:(BaseFragment & {
+							pointers:(BaseTransientFragment & {
 								string:string[];
 								number:number;
 							})[];
@@ -6332,9 +6332,9 @@ describe( module( "carbonldp/Document" ), ():void => {
 
 					type MyDoc = {
 						list:(string | number)[];
-						pointer:BaseFragment & {
+						pointer:BaseTransientFragment & {
 							string:string[];
-							pointers:(BaseFragment & {
+							pointers:(BaseTransientFragment & {
 								string:string[];
 								number:number;
 							})[];

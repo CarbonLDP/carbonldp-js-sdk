@@ -2,6 +2,6 @@ import { TransientDocument } from "../Document";
 import { BaseResource } from "../Resource";
 
 
-export interface BaseFragment extends BaseResource {
+export interface BaseTransientFragment extends BaseResource {
 	$registry:TransientDocument;
 }

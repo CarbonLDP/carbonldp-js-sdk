@@ -1,6 +1,11 @@
-import { IllegalArgumentError } from "../Errors/index";
-import { ModelDecorator, ModelFactory, ModelPrototype } from "../Model";
-import { Pointer } from "../Pointer";
+import { IllegalArgumentError } from "../Errors/IllegalArgumentError";
+
+import { ModelDecorator } from "../Model/ModelDecorator";
+import { ModelFactory } from "../Model/ModelFactory";
+import { ModelPrototype } from "../Model/ModelPrototype";
+
+import { Pointer } from "../Pointer/Pointer";
+
 import { BaseRegisteredPointer } from "./BaseRegisteredPointer";
 import { Registry } from "./Registry";
 
@@ -19,7 +24,7 @@ export type RegisteredPointerFactory =
 export const RegisteredPointer:RegisteredPointerFactory = {
 	PROTOTYPE: {
 		get $registry():Registry {
-			throw new IllegalArgumentError( `Property "$registry" is required` );
+			throw new IllegalArgumentError( `Property "$registry" is required.` );
 		},
 	},
 

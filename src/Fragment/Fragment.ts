@@ -10,7 +10,7 @@ import {
 } from "../Model";
 import { QueryDocumentBuilder } from "../QueryDocument";
 import { ResolvablePointer } from "../Repository";
-import { BaseFragment } from "./BaseFragment";
+import { BaseTransientFragment } from "./BaseTransientFragment";
 import { TransientFragment } from "./TransientFragment";
 
 
@@ -66,7 +66,7 @@ export type OverrodeMembers =
 export type FragmentFactory =
 	& ModelPrototype<Fragment, TransientFragment & ResolvablePointer, OverrodeMembers>
 	& ModelDecorator<Fragment, BaseResolvableFragment>
-	& ModelFactory<TransientFragment, BaseFragment>
+	& ModelFactory<TransientFragment, BaseTransientFragment>
 	;
 
 export const Fragment:FragmentFactory = {
