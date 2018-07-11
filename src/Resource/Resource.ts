@@ -1,15 +1,12 @@
 import { Context } from "../Context";
-import { JSONLDConverter } from "../JSONLD";
+import { JSONLDConverter } from "../JSONLD/Converter";
 import {
 	ModelDecorator,
-	ModelFactory,
+	ModelFactoryOptional,
 	ModelPrototype,
 	ModelTypeGuard
 } from "../Model";
-import {
-	DigestedObjectSchema,
-	ObjectSchemaUtils,
-} from "../ObjectSchema";
+import { DigestedObjectSchema } from "../ObjectSchema";
 import { Pointer } from "../Pointer";
 import {
 	RDFNode,
@@ -38,7 +35,7 @@ export interface Resource extends RegisteredPointer {
 	removeType( type:string ):void;
 
 
-	toJSON( registryOrKey:Context | string ):RDFNode;
+	toJSON( contextOrKey:Context | string ):RDFNode;
 }
 
 
@@ -55,14 +52,13 @@ function __resolveURI( resource:Resource, uri:string ):string {
 	const context:Context | undefined = __getContext( resource.$registry );
 	if( ! context || context.registry ) return uri;
 
-	const schema:DigestedObjectSchema = context.registry.getGeneralSchema();
-	return ObjectSchemaUtils.resolveURI( uri, schema, { vocab: true } );
+	return context.resolve( uri, { vocab: true } );
 }
 
 export type ResourceFactory =
 	& ModelPrototype<Resource, Pointer>
 	& ModelDecorator<Resource, BaseResource>
-	& ModelFactory<Resource>
+	& ModelFactoryOptional<Resource>
 	& ModelTypeGuard<Resource>
 	;
 
@@ -107,8 +103,8 @@ export const Resource:ResourceFactory = {
 			const generalSchema:DigestedObjectSchema = context ?
 				context.registry.getGeneralSchema() : new DigestedObjectSchema();
 
-			const resourceSchema:DigestedObjectSchema = context ?
-				context.registry.getSchemaFor( this ) : new DigestedObjectSchema();
+			const resourceSchema:DigestedObjectSchema = context && context.registry ?
+				context.registry.getSchemaFor( this ) : generalSchema;
 
 			const jsonldConverter:JSONLDConverter = context ?
 				context.jsonldConverter : new JSONLDConverter();

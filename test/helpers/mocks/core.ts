@@ -1,6 +1,6 @@
 import { AbstractContext } from "../../../src/Context/AbstractContext";
-import { ModelDecorator } from "../../../src/Model";
 import { Document } from "../../../src/Document";
+import { ModelDecorator } from "../../../src/Model";
 import {
 	DigestedObjectSchema,
 	DigestedObjectSchemaProperty,
@@ -9,11 +9,14 @@ import {
 	ObjectSchemaUtils
 } from "../../../src/ObjectSchema";
 import { Pointer } from "../../../src/Pointer";
+import { PartialMetadata } from "../../../src/QueryDocument";
 import {
+	GeneralRegistry,
+	RegisteredPointer,
 	Registry,
 	RegistryService
 } from "../../../src/Registry";
-import { PartialMetadata } from "../../../src/QueryDocument";
+import { ContextSettings } from "../../../src/Settings";
 import * as Utils from "../../../src/Utils";
 
 
@@ -76,4 +79,34 @@ export function createMockRegistry<M extends Pointer, C extends AbstractContext<
 		data.context : createMockContext( { model } ) as C;
 
 	return new RegistryService<M, C>( model, context );
+}
+
+export function createMockContext<PARENT extends AbstractContext<any, any, any> = undefined>( data?:{
+	parentContext?:PARENT;
+
+	uri?:string;
+	settings?:ContextSettings,
+
+	generalSchema?:DigestedObjectSchema,
+	schemasMap?:Map<string, DigestedObjectSchema>,
+} ):AbstractContext<RegisteredPointer, undefined, PARENT> {
+	return new class extends AbstractContext<RegisteredPointer, undefined, PARENT> {
+		registry:GeneralRegistry<RegisteredPointer>;
+		repository:undefined;
+
+		_baseURI:string;
+
+		constructor( parentContext?:PARENT ) {
+			super( parentContext );
+
+			this.registry = GeneralRegistry.create( { $context: this, __modelDecorator: RegisteredPointer } );
+
+			this._baseURI = data && data.uri !== void 0 ? data.uri : "https://example.com/";
+			if( data && data.settings ) this._settings = data.settings;
+
+			if( data && data.generalSchema ) this._generalObjectSchema = data.generalSchema;
+			if( data && data.schemasMap ) this._typeObjectSchemaMap = data.schemasMap;
+		}
+
+	}( data && data.parentContext );
 }

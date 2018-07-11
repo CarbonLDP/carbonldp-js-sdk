@@ -1,7 +1,17 @@
+import { createNonEnumerable } from "../../test/helpers/miscellaneous";
 import { createMockContext } from "../../test/helpers/mocks";
-import { AbstractContext } from "../Context/AbstractContext";
+import { AbstractContext } from "../Context";
+import {
+	ModelDecorator,
+	ModelFactoryOptional,
+	ModelPrototype,
+	ModelTypeGuard
+} from "../Model";
 import { Pointer } from "../Pointer";
-import { RegistryService } from "../Registry";
+import {
+	RegisteredPointer,
+	Registry
+} from "../Registry";
 import {
 	extendsClass,
 	hasMethod,
@@ -16,17 +26,44 @@ import {
 import { LDP } from "../Vocabularies";
 import { BaseResource } from "./BaseResource";
 
-import { Resource } from "./Resource";
+import {
+	Resource,
+	ResourceFactory
+} from "./Resource";
 
 
 describe( module( "carbonldp/Resource" ), ():void => {
 
 	describe( interfaze(
-		"CarbonLDP.TransientResource",
+		"CarbonLDP.Resource",
 		"Interface that represents a persisted blank node of a persisted document."
 	), ():void => {
 
-		it( extendsClass( "CarbonLDP.Pointer" ), ():void => {} );
+		it( extendsClass( "CarbonLDP.RegisteredPointer" ), ():void => {} );
+
+
+		it( hasProperty(
+			OBLIGATORY,
+			"$registry",
+			"CarbonLDP.Registry<CarbonLDP.RegisteredPointer> | undefined",
+			"Associated registry where the current resource may be stored."
+		), ():void => {
+			const target:Resource[ "$registry" ] = {} as Registry<RegisteredPointer> | undefined;
+			expect( target ).toBeDefined();
+		} );
+
+		it( hasProperty(
+			OBLIGATORY,
+			"$slug",
+			"string",
+			"Slug if the URI of the resource. Depending of the URI type would be returned:\n" +
+			"1. For blank nodes the same $id of the resource would be returned\n" +
+			"2. For named fragments, the content after the `#` symbol would be returned\n" +
+			"3. For documents, it's the last part URI e.g. `https://example.com/resource-1/` => `resource-1`"
+		), ():void => {
+			const target:Resource[ "$slug" ] = {} as "";
+			expect( target ).toBeDefined();
+		} );
 
 		it( hasProperty(
 			OBLIGATORY,
@@ -62,120 +99,143 @@ describe( module( "carbonldp/Resource" ), ():void => {
 	} );
 
 	describe( interfaze(
-		"CarbonLDP.TransientResourceFactory",
-		"Interface with the factory, decorate and utils methods of a `CarbonLDP.TransientResource` object."
+		"CarbonLDP.ResourceFactory",
+		"Interface with the factory, decorate and utils methods of a `CarbonLDP.Resource` object."
 	), ():void => {
 
-		it( hasMethod(
-			OBLIGATORY,
-			"isDecorated",
-			"Returns true if the object provided has the properties of a `CarbonLDP.TransientResource` object.", [
-				{ name: "object", type: "object" },
-			],
-			{ type: "object is CarbonLDP.TransientResource" }
-		), ():void => {} );
+		it( extendsClass( "CarbonLDP.Model.ModelPrototype<CarbonLDP.Resource, CarbonLDP.Pointer>" ), () => {
+			const target:ModelPrototype<Resource, Pointer> = {} as ResourceFactory;
+			expect( target ).toBeDefined();
+		} );
 
-		it( hasMethod(
-			OBLIGATORY,
-			"is",
-			"Returns true if the object provided is considered a `CarbonLDP.TransientResource` object.", [
-				{ name: "object", type: "object" },
-			],
-			{ type: "object is CarbonLDP.TransientResource" }
-		), ():void => {} );
+		it( extendsClass( "CarbonLDP.Model.ModelDecorator<CarbonLDP.Resource, CarbonLDP.BaseResource>" ), () => {
+			const target:ModelDecorator<Resource, BaseResource> = {} as ResourceFactory;
+			expect( target ).toBeDefined();
+		} );
 
-		it( hasMethod(
-			OBLIGATORY,
-			"create",
-			[ "T extends object" ],
-			"Creates a Resource object with the id and types provided.", [
-				{ name: "data", type: "T & CarbonLDP.BaseResource", description: "Data to be used in the creation of the resource." },
-			],
-			{ type: "CarbonLDP.TransientResource" }
-		), ():void => {} );
+		it( extendsClass( "CarbonLDP.Model.ModelTypeGuard<CarbonLDP.Resource>" ), () => {
+			const target:ModelTypeGuard<Resource> = {} as ResourceFactory;
+			expect( target ).toBeDefined();
+		} );
 
-		it( hasMethod(
-			OBLIGATORY,
-			"createFrom",
-			[ "T extends object" ],
-			"Creates a Resource object with the id and types provided.", [
-				{ name: "object", type: "T & CarbonLDP.BaseResource", description: "Object that will be converted into a resource." },
-			],
-			{ type: "T & CarbonLDP.TransientResource" }
-		), ():void => {} );
-
-		it( hasMethod(
-			OBLIGATORY,
-			"decorate",
-			[ "T extends object" ],
-			"Decorates the object provided with the properties and methods of a `CarbonLDP.TransientResource` object.", [
-				{ name: "object", type: "T" },
-			],
-			{ type: "T & CarbonLDP.TransientResource" }
-		), ():void => {} );
+		it( extendsClass( "CarbonLDP.Model.ModelFactoryOptional<CarbonLDP.Resource, CarbonLDP.BaseResource>" ), () => {
+			const target:ModelFactoryOptional<Resource, BaseResource> = {} as ResourceFactory;
+			expect( target ).toBeDefined();
+		} );
 
 	} );
 
-	describe( property( STATIC, "TransientResource", "CarbonLDP.TransientResourceFactory", "Constant that implements the `CarbonLDP.TransientResourceFactory` interface." ), ():void => {
+	describe( property(
+		STATIC,
+		"Resource",
+		"CarbonLDP.ResourceFactory",
+		"Constant that implements the `CarbonLDP.ResourceFactory` interface."
+	), ():void => {
 
 		it( isDefined(), ():void => {
 			expect( Resource ).toBeDefined();
 			expect( Resource ).toEqual( jasmine.any( Object ) );
 		} );
 
-		// TODO: Separate in different tests
-		it( "TransientResource.isDecorated", ():void => {
-			expect( Resource.isDecorated ).toBeDefined();
-			expect( Resource.isDecorated ).toEqual( jasmine.any( Function ) );
+		describe( "Resource.isDecorated", ():void => {
 
-			let object:any = undefined;
-			expect( Resource.isDecorated( object ) ).toBe( false );
-			object = {
-				types: null,
+			it( "should exists", ():void => {
+				expect( Resource.isDecorated ).toBeDefined();
+				expect( Resource.isDecorated ).toEqual( jasmine.any( Function ) );
+			} );
 
-				addType: ():void => {},
-				hasType: ():void => {},
-				removeType: ():void => {},
-			};
-			expect( Resource.isDecorated( object ) ).toBe( true );
 
-			delete object.types;
-			expect( Resource.isDecorated( object ) ).toBe( false );
-			object.types = null;
+			let object:ResourceFactory[ "PROTOTYPE" ];
+			beforeEach( ():void => {
+				object = createNonEnumerable( {
+					types: [],
 
-			delete object.addType;
-			expect( Resource.isDecorated( object ) ).toBe( false );
-			object.addType = ():void => {};
+					$registry: void 0,
+					$slug: "",
 
-			delete object.hasType;
-			expect( Resource.isDecorated( object ) ).toBe( false );
-			object.hasType = ():void => {};
+					addType: ():any => {},
+					hasType: ():any => {},
+					removeType: ():any => {},
+					toJSON: ():any => {},
+				} );
+			} );
 
-			delete object.removeType;
-			expect( Resource.isDecorated( object ) ).toBe( false );
-			object.removeType = ():void => {};
+			it( "should return true when all in prototype", () => {
+				expect( Resource.isDecorated( object ) ).toBe( true );
+			} );
+
+			it( "should return false if no types", () => {
+				delete object.types;
+				expect( Resource.isDecorated( object ) ).toBe( false );
+			} );
+
+			it( "should return false if no $registry", () => {
+				delete object.$registry;
+				expect( Resource.isDecorated( object ) ).toBe( false );
+			} );
+
+			it( "should return false if no $slug", () => {
+				delete object.$slug;
+				expect( Resource.isDecorated( object ) ).toBe( false );
+			} );
+
+			it( "should return false if no addType", () => {
+				delete object.addType;
+				expect( Resource.isDecorated( object ) ).toBe( false );
+			} );
+
+			it( "should return false if no hasType", () => {
+				delete object.hasType;
+				expect( Resource.isDecorated( object ) ).toBe( false );
+			} );
+
+			it( "should return false if no removeType", () => {
+				delete object.removeType;
+				expect( Resource.isDecorated( object ) ).toBe( false );
+			} );
+
+			it( "should return false if no toJSON", () => {
+				delete object.toJSON;
+				expect( Resource.isDecorated( object ) ).toBe( false );
+			} );
+
+		} );
+
+		describe( "Resource.is", ():void => {
+
+			it( "should return false when undefined", () => {
+				expect( Resource.is( void 0 ) ).toBe( false );
+			} );
+
+
+			let object:ResourceFactory[ "PROTOTYPE" ];
+			beforeEach( ():void => {
+				object = createNonEnumerable( {
+					types: [],
+
+					$registry: void 0,
+					$slug: "",
+
+					addType: ():any => {},
+					hasType: ():any => {},
+					removeType: ():any => {},
+					toJSON: ():any => {},
+				} );
+			} );
+
+			it( "should return false when only prototype", () => {
+				expect( Resource.is( object ) ).toBe( false );
+			} );
+
+			it( "should return true when prototype & Pointer", () => {
+				const resource:Pointer = Pointer.decorate( object );
+				expect( Resource.is( resource ) ).toBe( true );
+			} );
+
 		} );
 
 		// TODO: Separate in different tests
-		it( "TransientResource.is", ():void => {
-			let object:Object = undefined;
-			expect( Resource.is( object ) ).toBe( false );
-
-			object = {
-				types: null,
-
-				addType: ():void => {},
-				hasType: ():void => {},
-				removeType: ():void => {},
-			};
-			expect( Resource.is( object ) ).toBe( false );
-
-			let resource:Pointer = Pointer.decorate( object );
-			expect( Resource.is( resource ) ).toBe( true );
-		} );
-
-		// TODO: Separate in different tests
-		it( "TransientResource.create", ():void => {
+		it( "Resource.create", ():void => {
 			expect( Resource.create ).toBeDefined();
 			expect( Resource.create ).toEqual( jasmine.any( Function ) );
 
@@ -213,7 +273,7 @@ describe( module( "carbonldp/Resource" ), ():void => {
 		} );
 
 		// TODO: Separate in different tests
-		it( "TransientResource.createFrom", ():void => {
+		it( "Resource.createFrom", ():void => {
 			expect( Resource.createFrom ).toBeDefined();
 			expect( Resource.createFrom ).toEqual( jasmine.any( Function ) );
 
@@ -270,7 +330,7 @@ describe( module( "carbonldp/Resource" ), ():void => {
 		} );
 
 		// TODO: Separate in different tests
-		it( "TransientResource.decorate", ():void => {
+		it( "Resource.decorate", ():void => {
 			expect( Resource.decorate ).toBeDefined();
 			expect( Resource.decorate ).toEqual( jasmine.any( Function ) );
 
@@ -309,10 +369,10 @@ describe( module( "carbonldp/Resource" ), ():void => {
 					"exTypes": "http://example.com/types#",
 				} );
 
-				resource._registry = context.registry;
+				resource.$registry = context.registry;
 			} );
 
-			describe( "TransientResource.addType", ():void => {
+			describe( "Resource.addType", ():void => {
 
 				it( "should exists", ():void => {
 					expect( resource.addType ).toBeDefined();
@@ -357,7 +417,7 @@ describe( module( "carbonldp/Resource" ), ():void => {
 				} );
 
 				it( "should add un-resolved type from prefixed provided when no registry", ():void => {
-					delete resource._registry;
+					delete resource.$registry;
 
 					resource.addType( "exTypes:Type-1" );
 					expect( resource.types ).toEqual( [
@@ -366,11 +426,20 @@ describe( module( "carbonldp/Resource" ), ():void => {
 				} );
 
 				it( "should add un-resolved type from prefixed provided when no registry's context", ():void => {
-					resource._registry = new RegistryService( Resource );
+					resource.$registry = Registry.create( { __modelDecorator: Resource } );
 
 					resource.addType( "exTypes:Type-1" );
 					expect( resource.types ).toEqual( [
 						"exTypes:Type-1",
+					] );
+				} );
+
+				it( "should add resolved type from prefixed provided when parent from registry has a context", ():void => {
+					resource.$registry = Registry.create( { $registry: resource.$registry, __modelDecorator: Resource } );
+
+					resource.addType( "exTypes:Type-1" );
+					expect( resource.types ).toEqual( [
+						"http://example.com/types#Type-1",
 					] );
 				} );
 
@@ -395,7 +464,7 @@ describe( module( "carbonldp/Resource" ), ():void => {
 				} );
 
 				it( "should add un-resolved type from relative provided when no registry", ():void => {
-					delete resource._registry;
+					resource.$registry = void 0;
 
 					resource.addType( "Type-1" );
 					expect( resource.types ).toEqual( [
@@ -404,7 +473,7 @@ describe( module( "carbonldp/Resource" ), ():void => {
 				} );
 
 				it( "should add un-resolved type from relative provided when no registry's context", ():void => {
-					resource._registry = new RegistryService( Resource );
+					resource.$registry = Registry.create( { __modelDecorator: Resource } );
 
 					resource.addType( "Type-1" );
 					expect( resource.types ).toEqual( [
@@ -414,7 +483,7 @@ describe( module( "carbonldp/Resource" ), ():void => {
 
 			} );
 
-			describe( "TransientResource.hasType", ():void => {
+			describe( "Resource.hasType", ():void => {
 
 				it( "should exists", ():void => {
 					expect( resource.hasType ).toBeDefined();
@@ -470,7 +539,7 @@ describe( module( "carbonldp/Resource" ), ():void => {
 
 			} );
 
-			describe( "TransientResource.removeType", ():void => {
+			describe( "Resource.removeType", ():void => {
 
 				it( "should exists", ():void => {
 					expect( resource.removeType ).toBeDefined();
@@ -524,7 +593,7 @@ describe( module( "carbonldp/Resource" ), ():void => {
 				} );
 
 				it( "should not remove prefixed type when no registry", ():void => {
-					delete resource._registry;
+					resource.$registry = void 0;
 					resource.types = [
 						"http://example.com/types#Type-1",
 					];
@@ -536,13 +605,27 @@ describe( module( "carbonldp/Resource" ), ():void => {
 				} );
 
 				it( "should not remove prefixed type when no registry's context", ():void => {
-					resource._registry = new RegistryService( Resource );
+					resource.$registry = Registry.create( { __modelDecorator: Resource } );
 
 					resource.types = [
 						"http://example.com/types#Type-1",
 					];
 
 					resource.removeType( "exTypes:Type-1" );
+					expect( resource.types ).toEqual( [
+						"http://example.com/types#Type-1",
+					] );
+				} );
+
+				it( "should remove resolved prefixed type when exists & registry parent has a context", ():void => {
+					resource.$registry = Registry.create( { $registry: resource.$registry, __modelDecorator: Resource } );
+
+					resource.types = [
+						"http://example.com/types#Type-1",
+						"http://example.com/types#Type-2",
+					];
+
+					resource.removeType( "exTypes:Type-2" );
 					expect( resource.types ).toEqual( [
 						"http://example.com/types#Type-1",
 					] );
@@ -572,7 +655,7 @@ describe( module( "carbonldp/Resource" ), ():void => {
 				} );
 
 				it( "should not remove relative type when no registry", ():void => {
-					delete resource._registry;
+					resource.$registry = void 0;
 					resource.types = [
 						"http://example.com/ns#Type-1",
 					];
@@ -584,7 +667,7 @@ describe( module( "carbonldp/Resource" ), ():void => {
 				} );
 
 				it( "should not remove relative type when no registry's context", ():void => {
-					resource._registry = new RegistryService( Resource );
+					resource.$registry = Registry.create( { $registry: resource.$registry, __modelDecorator: Resource } );
 
 					resource.types = [
 						"http://example.com/ns#Type-1",
