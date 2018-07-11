@@ -2,8 +2,8 @@ import * as Utils from "./../Utils";
 import { RDFNode } from "./Node";
 import { URI } from "./URI";
 
-export interface RDFDocument extends RDFNode {
-	"@id":string;
+export interface RDFDocument {
+	"@id"?:string;
 	"@graph":RDFNode[];
 }
 
@@ -16,7 +16,10 @@ export interface RDFDocumentFactory {
 
 	getDocuments( objects:object | object[] ):RDFDocument[];
 
+	getFreeNodes( objects:object | object[] ):RDFNode[];
+
 	getResources( objects:object | object[] ):RDFNode[];
+
 
 	getDocumentResources( document:RDFNode[] | RDFDocument ):RDFNode[];
 
@@ -50,8 +53,16 @@ export const RDFDocument:RDFDocumentFactory = {
 		return [];
 	},
 
+	getFreeNodes( objects:object | object[] ):RDFNode[] {
+		if( ! Array.isArray( objects ) ) return [];
+
+		return objects
+			.filter( element => ! RDFDocument.is( element ) )
+			.filter( RDFNode.is );
+	},
+
 	getResources( objects:object | object[] ):RDFNode[] {
-		const resources:RDFNode[] = RDFNode.getFreeNodes( objects );
+		const resources:RDFNode[] = RDFDocument.getFreeNodes( objects );
 
 		RDFDocument
 			.getDocuments( objects )
@@ -61,6 +72,7 @@ export const RDFDocument:RDFDocumentFactory = {
 
 		return resources;
 	},
+
 
 	getDocumentResources( document:RDFDocument | RDFNode[] ):RDFNode[] {
 		return RDFDocument

@@ -148,7 +148,7 @@ function __applyResponseRepresentation<T extends object>( repository:LDPDocument
 	return __JSONLD_PARSER
 		.parse( response.data )
 		.then( ( expandedResult:object[] ) => {
-			const freeNodes:RDFNode[] = RDFNode.getFreeNodes( expandedResult );
+			const freeNodes:RDFNode[] = RDFDocument.getFreeNodes( expandedResult );
 			__applyResponseMetadata( repository, freeNodes );
 
 			const preferenceHeader:Header = response.getHeader( "Preference-Applied" );

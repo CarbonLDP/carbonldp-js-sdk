@@ -8,6 +8,7 @@ import { Serializer } from "../RDF/Literal/Serializer";
 import * as XSDSerializers from "../RDF/Literal/Serializers/XSD";
 import { RDFNode } from "../RDF/Node";
 import { URI } from "../RDF/URI";
+import { RDFValue } from "../RDF/Value";
 import { XSD } from "../Vocabularies/XSD";
 import * as ObjectSchema from "./../ObjectSchema";
 import * as Utils from "./../Utils";
@@ -266,8 +267,8 @@ export class JSONLDConverter {
 		const compactedValues:any[] | undefined = propertyType === true ?
 			this.compactPropertyLiteral( propertyValues, definition, digestedSchema ) :
 			propertyType === false ?
-				RDFNode.getPropertyPointers( propertyValues, pointerLibrary ) :
-				RDFNode.getProperties( propertyValues, pointerLibrary )
+				this.getPropertyPointers( propertyValues, pointerLibrary ) :
+				this.getProperties( propertyValues, pointerLibrary )
 		;
 		if( ! compactedValues ) return null;
 
@@ -292,6 +293,26 @@ export class JSONLDConverter {
 			XSD.string : ObjectSchema.ObjectSchemaUtils.resolveURI( definition.literalType, digestedSchema, { vocab: true, base: true } );
 
 		return RDFNode.getPropertyLiterals( propertyValues, literalType );
+	}
+
+	private getProperties( propertyValues:any[], pointerLibrary:PointerLibrary ):any[] | undefined {
+		if( ! Array.isArray( propertyValues ) ) return;
+
+		return propertyValues
+			.map( RDFValue.parse.bind( null, pointerLibrary ) )
+			.filter( value => ! Utils.isNull( value ) )
+			;
+	}
+
+	private getPropertyPointers( propertyValues:any[], pointerLibrary:PointerLibrary ):any[] | undefined {
+		if( ! Array.isArray( propertyValues ) ) return;
+
+		return propertyValues
+			.filter( RDFNode.is )
+			.map( RDFNode.getID )
+			.map( pointerLibrary.getPointer, pointerLibrary )
+			.filter( pointer => ! Utils.isNull( pointer ) )
+			;
 	}
 
 }

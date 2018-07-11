@@ -135,7 +135,7 @@ function __executePatterns<T extends object>( repository:QueryableDocumentsRepos
 			return new JSONLDParser().parse( jsonldString );
 		} )
 		.then<(T & Document)[]>( ( rdfNodes:RDFNode[] ) => {
-			const freeNodes:RDFNode[] = RDFNode.getFreeNodes( rdfNodes );
+			const freeNodes:RDFNode[] = RDFDocument.getFreeNodes( rdfNodes );
 			const freeResources:FreeResources = repository._parseFreeNodes( freeNodes );
 
 			const targetSet:Set<string> = new Set( freeResources

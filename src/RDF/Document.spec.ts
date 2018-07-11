@@ -1,8 +1,6 @@
 import {
-	clazz,
 	hasMethod,
 	hasProperty,
-	INSTANCE,
 	interfaze,
 	isDefined,
 	module,
@@ -13,10 +11,7 @@ import {
 } from "../test/JasmineExtender";
 import * as Utils from "./../Utils";
 
-import {
-	RDFDocument,
-	RDFDocumentParser,
-} from "./Document";
+import { RDFDocument } from "./Document";
 
 import { RDFNode } from "./Node";
 
@@ -74,6 +69,15 @@ describe( module( "carbonldp/RDF/Document" ), ():void => {
 				{ name: "objects", type: "object | object[]" },
 			],
 			{ type: "CarbonLDP.RDF.RDFDocument[]" }
+		), ():void => {} );
+
+		it( hasMethod(
+			OBLIGATORY,
+			"getFreeNodes",
+			"Returns an array with the nodes that are neither a Document nor are contained inside a one.", [
+				{ name: "objects", type: "objects[]", description: "The object to evaluate for its free nodes." },
+			],
+			{ type: "CarbonLDP.RDF.RDFNode[]" }
 		), ():void => {} );
 
 		it( hasMethod(
@@ -268,6 +272,56 @@ describe( module( "carbonldp/RDF/Document" ), ():void => {
 
 		} );
 
+		// TODO: Separate in different tests
+		it( "RDFDocument.getFreeNodes", ():void => {
+			expect( RDFDocument.getFreeNodes ).toBeDefined();
+			expect( Utils.isFunction( RDFDocument.getFreeNodes ) ).toBe( true );
+
+			let object:any;
+
+			object = {};
+			expect( RDFDocument.getFreeNodes( object ) ).toEqual( [] );
+
+			object = [];
+			expect( RDFDocument.getFreeNodes( object ) ).toEqual( [] );
+			object = [
+				{
+					"@id": "http://example.com/resouce/",
+					"@graph": [ {} ],
+				},
+			];
+			expect( RDFDocument.getFreeNodes( object ) ).toEqual( [] );
+			object = [
+				{
+					"@id": "http://example.com/resouce-1/",
+					"@graph": [ {} ],
+				},
+				{
+					"@id": "http://example.com/resouce-2/",
+					"@graph": [ {} ],
+				},
+			];
+			expect( RDFDocument.getFreeNodes( object ) ).toEqual( [] );
+
+			object = [
+				{
+					"@id": "http://example.com/free-node-1/",
+				},
+				{
+					"@id": "http://example.com/resouce-1/",
+					"@graph": [ {} ],
+				},
+				{
+					"@id": "http://example.com/free-node-2/",
+				},
+				{
+					"@id": "http://example.com/resouce-2/",
+					"@graph": [ {} ],
+				},
+			];
+			expect( RDFDocument.getFreeNodes( object ) ).toEqual( [ { "@id": "http://example.com/free-node-1/" }, { "@id": "http://example.com/free-node-2/" } ] );
+		} );
+
 		describe( "RDFDocument.getResources", ():void => {
 
 			it( isDefined(), ():void => {
@@ -325,6 +379,7 @@ describe( module( "carbonldp/RDF/Document" ), ():void => {
 			} );
 
 		} );
+
 
 		describe( "RDFDocument.getDocumentResources", ():void => {
 
@@ -548,151 +603,6 @@ describe( module( "carbonldp/RDF/Document" ), ():void => {
 
 			expect( RDFDocument.getBNodeResources( <any> {} ) ).toEqual( [] );
 			expect( RDFDocument.getBNodeResources( null ) ).toEqual( [] );
-		} );
-
-	} );
-
-	describe( clazz(
-		"CarbonLDP.RDF.RDFDocumentParser",
-		"Class to parse a JSON-LD string to an array of RDFDocuments."
-	), ():void => {
-		let compactedObject:any = {
-			"@context": {
-				"ex": "http://example.com/",
-				"ns": "http://example.com/ns#",
-			},
-			"@id": "ex:resource/",
-			"@graph": [
-				{
-					"@id": "http://example.com/resource/",
-					"ns:string": [ {
-						"@value": "Document Resource",
-					} ],
-					"ns:pointerSet": [
-						{ "@id": "_:1" },
-						{ "@id": "http://example.com/resource/#1" },
-						{ "@id": "http://example.com/external-resource/" },
-					],
-				},
-				{
-					"@id": "_:1",
-					"ns:string": {
-						"@value": "Fragment 1",
-					},
-					"ns:pointerSet": [
-						{ "@id": "ex:resource/" },
-						{ "@id": "ex:resource/#1" },
-					],
-				},
-				{
-					"@id": "ex:resource/#1",
-					"ns:string": {
-						"@value": "NamedFragment 1",
-					},
-				},
-			],
-		};
-		let expandedObject:any = [ {
-			"@id": "http://example.com/resource/",
-			"@graph": [
-				{
-					"@id": "http://example.com/resource/",
-					"http://example.com/ns#string": [ {
-						"@value": "Document Resource",
-					} ],
-					"http://example.com/ns#pointerSet": [
-						{ "@id": "_:1" },
-						{ "@id": "http://example.com/resource/#1" },
-						{ "@id": "http://example.com/external-resource/" },
-					],
-				},
-				{
-					"@id": "_:1",
-					"http://example.com/ns#string": [ {
-						"@value": "Fragment 1",
-					} ],
-					"http://example.com/ns#pointerSet": [
-						{ "@id": "http://example.com/resource/" },
-						{ "@id": "http://example.com/resource/#1" },
-					],
-				},
-				{
-					"@id": "http://example.com/resource/#1",
-					"http://example.com/ns#string": [ {
-						"@value": "NamedFragment 1",
-					} ],
-				},
-			],
-		} ];
-
-		// TODO: Separate in different tests
-		it( isDefined(), ():void => {
-			expect( RDFDocumentParser ).toBeDefined();
-			expect( Utils.isFunction( RDFDocumentParser ) ).toBe( true );
-
-			let parser:RDFDocumentParser = new RDFDocumentParser();
-			expect( parser ).toBeDefined();
-			expect( parser instanceof RDFDocumentParser ).toBe( true );
-		} );
-
-		// TODO: Separate in different tests
-		it( hasMethod(
-			INSTANCE,
-			"parse",
-			"Parse the a JSON-LD string to an array of RDFDocuments.", [
-				{ name: "input", type: "string" },
-			],
-			{ type: "Promise<CarbonLDP.RDF.RDFDocument>" }
-		), ( done ):void => {
-			let parser:RDFDocumentParser = new RDFDocumentParser();
-			let input:string;
-
-			input = JSON.stringify( compactedObject );
-			let spies:any = {
-				success: ( result ):void => {
-					expect( Utils.isArray( result ) ).toBe( true );
-					expect( result.length ).toBe( 1 );
-					expect( RDFDocument.is( result[ 0 ] ) ).toBe( true );
-					expect( result ).toEqual( expandedObject );
-				},
-				successEmpty: ( result ):void => {
-					expect( Utils.isArray( result ) ).toBe( true );
-					expect( result.length ).toBe( 0 );
-				},
-				error: ( error ):void => {
-					expect( error instanceof Error ).toBe( true );
-				},
-			};
-			let successSpy:jasmine.Spy = spyOn( spies, "success" ).and.callThrough();
-			let successEmptySpy:jasmine.Spy = spyOn( spies, "successEmpty" ).and.callThrough();
-			let errorSpy:jasmine.Spy = spyOn( spies, "error" ).and.callThrough();
-
-			let promises:Promise<any>[] = [];
-			let promise:Promise<any>;
-
-			promise = parser.parse( input ).then( spies.success, spies.error );
-			expect( promise instanceof Promise ).toBe( true );
-			promises.push( promise );
-
-			promise = parser.parse( "some String /12121/ that is not JSON ))(*&^%$#@!" ).then( spies.success, spies.error );
-			expect( promise instanceof Promise ).toBe( true );
-			promises.push( promise );
-
-			promise = parser.parse( "{}" ).then( spies.successEmpty, spies.error );
-			expect( promise instanceof Promise ).toBe( true );
-			promises.push( promise );
-
-			promise = parser.parse( "[ {}, null ]" ).then( spies.successEmpty, spies.error );
-			expect( promise instanceof Promise ).toBe( true );
-			promises.push( promise );
-
-			Promise.all( promises ).then( ():void => {
-				expect( successSpy.calls.count() ).toBe( 1 );
-				expect( successEmptySpy.calls.count() ).toBe( 2 );
-				expect( errorSpy.calls.count() ).toBe( 1 );
-				done();
-			}, done.fail );
-
 		} );
 
 	} );
