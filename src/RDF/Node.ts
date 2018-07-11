@@ -1,5 +1,5 @@
 import { PointerLibrary } from "../Pointer";
-import { XSD } from "../Vocabularies";
+import { XSD } from "../Vocabularies/XSD";
 import * as Utils from "./../Utils";
 import { RDFDocument } from "./Document";
 import { RDFList } from "./List";

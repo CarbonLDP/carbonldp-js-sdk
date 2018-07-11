@@ -1,16 +1,14 @@
-import { Context } from "../Context";
+import { Context } from "../Context/Context";
 import {
 	ModelDecorator,
 	ModelPrototype,
 	ModelTypeGuard,
 } from "../Model";
-import {
-	RDFNode,
-	URI
-} from "../RDF";
-import { ResolvablePointer } from "../Repository";
+import { RDFNode } from "../RDF/Node";
+import { URI } from "../RDF/URI";
+import { ResolvablePointer } from "../Repository/ResolvablePointer";
 import { isObject } from "../Utils";
-import { C } from "../Vocabularies";
+import { C } from "../Vocabularies/C";
 import { DigestedObjectSchema } from "./DigestedObjectSchema";
 import { ObjectSchemaDigester } from "./ObjectSchemaDigester";
 

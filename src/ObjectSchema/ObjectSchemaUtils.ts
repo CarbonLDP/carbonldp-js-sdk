@@ -1,4 +1,4 @@
-import { URI } from "../RDF";
+import { URI } from "../RDF/URI";
 import { ObjectUtils } from "../Utils";
 import { DigestedObjectSchema } from "./DigestedObjectSchema";
 import { DigestedObjectSchemaProperty } from "./DigestedObjectSchemaProperty";
