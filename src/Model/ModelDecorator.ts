@@ -50,13 +50,13 @@ export const ModelDecorator:ModelDecoratorFactory = {
 				const descriptor:PropertyDescriptor = {
 					enumerable: false,
 					configurable: true,
-					writable: true,
 				};
 
 				if( isFunction( definition.value ) ) {
 					descriptor.writable = false;
 					descriptor.value = definition.value;
 				} else if( ! definition.set ) {
+					descriptor.writable = true;
 					descriptor.value = object.hasOwnProperty( key ) ?
 						object[ key ] : definition.get ?
 							definition.get() : definition.value;

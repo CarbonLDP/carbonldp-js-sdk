@@ -1,18 +1,6 @@
-import {
-	IDAlreadyInUseError,
-	IllegalArgumentError,
-} from "../Errors";
-import {
-	ModelDecorator,
-	ModelFactory,
-	ModelPrototype
-} from "../Model";
-import { ObjectSchemaResolver } from "../ObjectSchema";
-import {
-	Pointer,
-	PointerLibrary,
-	PointerValidator,
-} from "../Pointer";
+import { IDAlreadyInUseError, IllegalArgumentError, } from "../Errors";
+import { ModelDecorator, ModelFactory, ModelPrototype } from "../Model";
+import { Pointer, PointerLibrary, PointerValidator, } from "../Pointer";
 import { isObject } from "../Utils";
 import { BaseRegistry } from "./BaseRegistry";
 import { RegisteredPointer } from "./RegisteredPointer";
@@ -55,7 +43,7 @@ export type OverrodeMembers =
 
 // TODO: Use unknown
 export type RegistryFactory =
-	& ModelPrototype<Registry, BaseRegistry, OverrodeMembers>
+	& ModelPrototype<Registry, {}, OverrodeMembers>
 	& ModelDecorator<Registry<any>, BaseRegistry>
 	& ModelFactory<Registry, BaseRegistry>
 	;
@@ -63,6 +51,10 @@ export type RegistryFactory =
 export const Registry:RegistryFactory = {
 	PROTOTYPE: {
 		$registry: void 0,
+
+		get __modelDecorator():ModelDecorator<RegisteredPointer> {
+			throw new IllegalArgumentError( `Property "__modelDecorator" is required` );
+		},
 
 		get __resourcesMap():Map<string, RegisteredPointer> { return new Map(); },
 
@@ -156,11 +148,8 @@ export const Registry:RegistryFactory = {
 	decorate<T extends BaseRegistry>( object:T ):T & Registry {
 		if( Registry.isDecorated( object ) ) return object;
 
-		const target:T & ObjectSchemaResolver = ModelDecorator
-			.decorateMultiple( object, ObjectSchemaResolver );
-
 		return ModelDecorator
-			.definePropertiesFrom( Registry.PROTOTYPE, target );
+			.definePropertiesFrom( Registry.PROTOTYPE, object );
 	},
 
 

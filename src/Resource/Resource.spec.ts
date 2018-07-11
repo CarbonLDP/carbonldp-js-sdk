@@ -150,7 +150,6 @@ describe( module( "carbonldp/Resource" ), ():void => {
 				object = createNonEnumerable( {
 					types: [],
 
-					$registry: void 0,
 					$slug: "",
 
 					addType: ():any => {},
@@ -166,11 +165,6 @@ describe( module( "carbonldp/Resource" ), ():void => {
 
 			it( "should return false if no types", () => {
 				delete object.types;
-				expect( Resource.isDecorated( object ) ).toBe( false );
-			} );
-
-			it( "should return false if no $registry", () => {
-				delete object.$registry;
 				expect( Resource.isDecorated( object ) ).toBe( false );
 			} );
 
@@ -266,7 +260,7 @@ describe( module( "carbonldp/Resource" ), ():void => {
 			resource = Resource.create( { $id: null, types: [ LDP.RDFSource, LDP.Container ] } );
 			expect( resource ).toBeTruthy();
 			expect( Resource.isDecorated( resource ) ).toBe( true );
-			expect( resource.$id ).toBe( "" );
+			expect( resource.$id ).toBeNull();
 			expect( resource.types ).toEqual( jasmine.any( Array ) );
 			expect( resource.types.length ).toBe( 2 );
 			expect( resource.types ).toEqual( [ LDP.RDFSource, LDP.Container ] );
@@ -321,7 +315,7 @@ describe( module( "carbonldp/Resource" ), ():void => {
 			resource = Resource.createFrom<MyResource>( { myProperty: "a property", $id: null, types: [ LDP.RDFSource, LDP.Container ] } );
 			expect( resource ).toBeTruthy();
 			expect( Resource.isDecorated( resource ) ).toBe( true );
-			expect( resource.$id ).toBe( "" );
+			expect( resource.$id ).toBeNull();
 			expect( resource.types ).toEqual( jasmine.any( Array ) );
 			expect( resource.types.length ).toBe( 2 );
 			expect( resource.types ).toEqual( [ LDP.RDFSource, LDP.Container ] );
@@ -667,7 +661,7 @@ describe( module( "carbonldp/Resource" ), ():void => {
 				} );
 
 				it( "should not remove relative type when no registry's context", ():void => {
-					resource.$registry = Registry.create( { $registry: resource.$registry, __modelDecorator: Resource } );
+					resource.$registry = Registry.create( {  __modelDecorator: Resource } );
 
 					resource.types = [
 						"http://example.com/ns#Type-1",

@@ -1,8 +1,5 @@
-import {
-	ModelDecorator,
-	ModelFactory,
-	ModelPrototype
-} from "../Model";
+import { IllegalArgumentError } from "../Errors/index";
+import { ModelDecorator, ModelFactory, ModelPrototype } from "../Model";
 import { Pointer } from "../Pointer";
 import { BaseRegisteredPointer } from "./BaseRegisteredPointer";
 import { Registry } from "./Registry";
@@ -14,14 +11,16 @@ export interface RegisteredPointer extends Pointer {
 
 
 export type RegisteredPointerFactory =
-	& ModelPrototype<RegisteredPointer, Pointer & BaseRegisteredPointer>
+	& ModelPrototype<RegisteredPointer, Pointer>
 	& ModelDecorator<RegisteredPointer, BaseRegisteredPointer>
 	& ModelFactory<RegisteredPointer, BaseRegisteredPointer>
 	;
 
 export const RegisteredPointer:RegisteredPointerFactory = {
 	PROTOTYPE: {
-		$registry:void 0,
+		get $registry():Registry {
+			throw new IllegalArgumentError( `Property "$registry" is required` );
+		},
 	},
 
 
@@ -37,7 +36,7 @@ export const RegisteredPointer:RegisteredPointerFactory = {
 			.decorateMultiple( object, Pointer );
 
 		return ModelDecorator
-			.definePropertiesFrom( RegisteredPointer, resource );
+			.definePropertiesFrom( RegisteredPointer.PROTOTYPE, resource );
 	},
 
 

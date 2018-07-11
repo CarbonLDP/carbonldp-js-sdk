@@ -1,23 +1,25 @@
-import { Context } from "../Context";
+import { Context } from "../Context/Context";
+
 import { JSONLDConverter } from "../JSONLD/Converter";
-import {
-	ModelDecorator,
-	ModelFactoryOptional,
-	ModelPrototype,
-	ModelTypeGuard
-} from "../Model";
-import { DigestedObjectSchema } from "../ObjectSchema";
-import { Pointer } from "../Pointer";
-import {
-	RDFNode,
-	URI
-} from "../RDF";
-import {
-	GeneralRegistry,
-	RegisteredPointer,
-	Registry
-} from "../Registry";
+
+import { ModelDecorator } from "../Model/ModelDecorator";
+import { ModelFactoryOptional } from "../Model/ModelFactoryOptional";
+import { ModelPrototype } from "../Model/ModelPrototype";
+import { ModelTypeGuard, } from "../Model/ModelTypeGuard";
+
+import { DigestedObjectSchema } from "../ObjectSchema/DigestedObjectSchema";
+
+import { Pointer } from "../Pointer/Pointer";
+
+import { RDFNode } from "../RDF/Node";
+import { URI } from "../RDF/URI";
+
+import { GeneralRegistry } from "../Registry/GeneralRegistry";
+import { RegisteredPointer } from "../Registry/RegisteredPointer";
+import { Registry } from "../Registry/Registry";
+
 import { isObject } from "../Utils";
+
 import { BaseResource } from "./BaseResource";
 
 
@@ -41,7 +43,7 @@ export interface Resource extends RegisteredPointer {
 
 function __getContext( registry:Registry<any> | GeneralRegistry<any> | undefined ):Context | undefined {
 	if( ! registry ) return;
-	if( "$context" in registry ) return registry.$context;
+	if( "$context" in registry && registry.$context ) return registry.$context;
 
 	return __getContext( registry.$registry );
 }
@@ -50,13 +52,13 @@ function __resolveURI( resource:Resource, uri:string ):string {
 	if( URI.isAbsolute( uri ) ) return uri;
 
 	const context:Context | undefined = __getContext( resource.$registry );
-	if( ! context || context.registry ) return uri;
+	if( ! context ) return uri;
 
 	return context.resolve( uri, { vocab: true } );
 }
 
 export type ResourceFactory =
-	& ModelPrototype<Resource, Pointer>
+	& ModelPrototype<Resource, RegisteredPointer>
 	& ModelDecorator<Resource, BaseResource>
 	& ModelFactoryOptional<Resource>
 	& ModelTypeGuard<Resource>
@@ -64,8 +66,6 @@ export type ResourceFactory =
 
 export const Resource:ResourceFactory = {
 	PROTOTYPE: {
-		$registry: void 0,
-
 		get types():string[] { return []; },
 
 		get $slug( this:Resource ):string {
@@ -133,8 +133,10 @@ export const Resource:ResourceFactory = {
 		return Resource.decorate<T>( object );
 	},
 
-	decorate<T extends object>( object:T ):T & Resource {
+	decorate<T extends BaseResource>( object:T ):T & Resource {
 		if( Resource.isDecorated( object ) ) return object;
+
+		if( ! object.hasOwnProperty( "$registry" ) ) object.$registry = void 0;
 
 		const resource:T & RegisteredPointer = ModelDecorator
 			.decorateMultiple( object, RegisteredPointer );
