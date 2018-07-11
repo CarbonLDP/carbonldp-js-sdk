@@ -1,18 +1,14 @@
-import {
-	Context,
-	DocumentsContext
-} from "../Context";
-import { Document } from "../Document";
-import {
-	GETOptions,
-	RequestOptions
-} from "../HTTP";
-import { EventEmitterDocumentsRepositoryTrait } from "../Messaging";
-import { SPARQLDocumentsRepositoryTrait } from "../SPARQL";
-import {
-	QueryableDocumentsRepositoryTrait,
-	QueryDocumentBuilder
-} from "../QueryDocument";
+import { DocumentsContext } from "../Context/DocumentsContext";
+
+import { Document } from "../Document/Document";
+
+import { GETOptions, RequestOptions } from "../HTTP/Request";
+
+import { QueryDocumentBuilder } from "../QueryDocument/QueryDocumentBuilder";
+
+import { EventEmitterDocumentsRepositoryTrait } from "./Traits/EventEmitterDocumentsRepositoryTrait";
+import { QueryableDocumentsRepositoryTrait } from "./Traits/QueryableDocumentsRepositoryTrait";
+import { SPARQLDocumentsRepositoryTrait } from "./Traits/SPARQLDocumentsRepositoryTrait";
 
 
 export interface DocumentsRepository extends QueryableDocumentsRepositoryTrait, SPARQLDocumentsRepositoryTrait, EventEmitterDocumentsRepositoryTrait {

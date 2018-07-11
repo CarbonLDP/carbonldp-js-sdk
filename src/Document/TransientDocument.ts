@@ -1,29 +1,29 @@
 import { isRelative } from "sparqler/iri";
-import { Context } from "../Context";
-import { IllegalArgumentError } from "../Errors";
-import { TransientFragment } from "../Fragment";
-import {
-	ModelDecorator,
-	ModelFactory,
-	ModelPrototype,
-	ModelTypeGuard,
-} from "../Model";
-import { Pointer } from "../Pointer";
-import {
-	RDFDocument,
-	RDFNode,
-	URI,
-} from "../RDF";
-import {
-	DocumentsRegistry,
-	Registry
-} from "../Registry";
-import { Resource } from "../Resource";
-import {
-	isObject,
-	isPlainObject,
-	isString,
-} from "../Utils";
+
+import { Context } from "../Context/Context";
+
+import { DocumentsRegistry } from "../DocumentsRegistry/DocumentsRegistry";
+
+import { IllegalArgumentError } from "../Errors/IllegalArgumentError";
+
+import { TransientFragment } from "../Fragment/TransientFragment";
+
+import { ModelDecorator } from "../Model/ModelDecorator";
+import { ModelFactory } from "../Model/ModelFactory";
+import { ModelPrototype } from "../Model/ModelPrototype";
+import { ModelTypeGuard, } from "../Model/ModelTypeGuard";
+
+import { Pointer } from "../Pointer/Pointer";
+
+import { RDFDocument } from "../RDF/Document";
+import { RDFNode } from "../RDF/Node";
+import { URI } from "../RDF/URI";
+
+import { Registry } from "../Registry/Registry";
+import { Resource } from "../Resource/Resource";
+
+import { isObject, isPlainObject, isString } from "../Utils";
+
 import { BaseDocument } from "./BaseDocument";
 
 

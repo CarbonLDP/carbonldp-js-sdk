@@ -1,25 +1,25 @@
-import { TransientDocument } from "../Document";
-import {
-	ModelDecorator,
-	ModelPrototype
-} from "../Model";
-import { Pointer } from "../Pointer";
-import { URI } from "../RDF";
-import { ResolvablePointer } from "../Repository";
-import {
-	isFunction,
-	isObject,
-	isString,
-} from "../Utils";
-import { ChildCreated } from "./ChildCreated";
-import { DocumentCreated } from "./DocumentCreated";
-import { DocumentDeleted } from "./DocumentDeleted";
-import { DocumentModified } from "./DocumentModified";
-import { Event } from "./Event";
-import { EventEmitterDocumentsRepositoryTrait } from "./EventEmitterDocumentsRepositoryTrait";
-import { EventMessage } from "./EventMessage";
-import { MemberAdded } from "./MemberAdded";
-import { MemberRemoved } from "./MemberRemoved";
+import { ChildCreated } from "../../Messaging/ChildCreated";
+import { DocumentCreated } from "../../Messaging/DocumentCreated";
+import { DocumentDeleted } from "../../Messaging/DocumentDeleted";
+import { DocumentModified } from "../../Messaging/DocumentModified";
+import { Event } from "../../Messaging/Event";
+import { EventMessage } from "../../Messaging/EventMessage";
+import { MemberAdded } from "../../Messaging/MemberAdded";
+import { MemberRemoved } from "../../Messaging/MemberRemoved";
+
+import { ModelDecorator } from "../../Model/ModelDecorator";
+import { ModelPrototype } from "../../Model/ModelPrototype";
+
+import { Pointer } from "../../Pointer/Pointer";
+
+import { URI } from "../../RDF/URI";
+
+import { EventEmitterDocumentsRepositoryTrait } from "../../DocumentsRepository/Traits/EventEmitterDocumentsRepositoryTrait";
+import { ResolvablePointer } from "../../Repository/ResolvablePointer";
+
+import { isFunction, isObject, isString } from "../../Utils";
+
+import { TransientDocument } from "../TransientDocument";
 
 
 export interface BaseEventEmitterDocumentTrait {

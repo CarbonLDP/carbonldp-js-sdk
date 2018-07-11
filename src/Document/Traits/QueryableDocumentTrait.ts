@@ -1,17 +1,17 @@
+import { QueryableDocumentsRepositoryTrait } from "../../DocumentsRepository/Traits/QueryableDocumentsRepositoryTrait";
+
+import { GETOptions, RequestOptions } from "../../HTTP/Request";
+
+import { ModelDecorator } from "../../Model/ModelDecorator";
+import { ModelPrototype } from "../../Model/ModelPrototype";
+
+import { QueryDocumentBuilder } from "../../QueryDocument/QueryDocumentBuilder";
+import { QueryDocumentsBuilder } from "../../QueryDocument/QueryDocumentsBuilder";
+
+import { _parseURIParams } from "../../DocumentsRepository/Utils";
+
 import { Document } from "../Document";
-import {
-	GETOptions,
-	RequestOptions
-} from "../HTTP";
-import { LDPDocumentTrait } from "../LDP/LDPDocumentTrait";
-import {
-	ModelDecorator,
-	ModelPrototype
-} from "../Model";
-import { _parseURIParams } from "../Repository/Utils";
-import { QueryableDocumentsRepositoryTrait } from "./QueryableDocumentsRepositoryTrait";
-import { QueryDocumentBuilder } from "./QueryDocumentBuilder";
-import { QueryDocumentsBuilder } from "./QueryDocumentsBuilder";
+import { LDPDocumentTrait } from "./LDPDocumentTrait";
 
 
 export interface BaseQueryableDocumentTrait {

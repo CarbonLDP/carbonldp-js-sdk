@@ -6,7 +6,7 @@ import {
 import { AbstractContext } from "../Context/AbstractContext";
 import { MembersDocument } from "../Members";
 import { EventEmitterDocumentTrait } from "../Messaging";
-import { DocumentsRegistry } from "../Registry";
+import { DocumentsRegistry } from "../DocumentsRegistry/DocumentsRegistry";
 import { SPARQLDocumentTrait } from "../SPARQL";
 import { QueryDocumentDocument } from "../QueryDocument";
 import {
@@ -23,7 +23,7 @@ import {
 	property,
 	STATIC,
 } from "../test/JasmineExtender";
-import { LDPDocumentTrait } from "../LDP/LDPDocumentTrait";
+import { LDPDocumentTrait } from "./Traits/LDPDocumentTrait";
 import { Document } from "./Document";
 
 

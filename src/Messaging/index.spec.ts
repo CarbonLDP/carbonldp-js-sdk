@@ -28,7 +28,7 @@ import {
 	DocumentModifiedFactory,
 } from "./DocumentModified";
 import { Event } from "./Event";
-import { EventEmitterDocumentTrait } from "./EventEmitterDocumentTrait";
+import { EventEmitterDocumentTrait } from "../Document/Traits/EventEmitterDocumentTrait";
 import {
 	EventMessage,
 	EventMessageFactory,

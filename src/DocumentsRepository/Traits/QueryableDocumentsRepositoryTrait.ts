@@ -11,62 +11,34 @@ import {
 	ValuesToken,
 	VariableToken
 } from "sparqler/tokens";
-import { Document } from "../Document";
-import { IllegalArgumentError } from "../Errors";
-import { FreeResources } from "../FreeResources";
-import {
-	GETOptions,
-	RequestOptions,
-	RequestUtils
-} from "../HTTP";
-import {
-	JSONLDCompacter,
-	JSONLDParser
-} from "../JSONLD";
-import {
-	DocumentMetadata,
-	LDPDocumentsRepositoryTrait,
-	ResponseMetadata
-} from "../LDP";
-import {
-	ModelDecorator,
-	ModelPrototype
-} from "../Model";
-import { Pointer } from "../Pointer";
-import {
-	RDFDocument,
-	RDFNode,
-	URI
-} from "../RDF";
-import {
-	BaseDocumentsRepository,
-	ResolvablePointer
-} from "../Repository";
-import { _getNotInContextMessage } from "../Repository/Utils";
-import { SPARQLService } from "../SPARQL";
-import {
-	isBoolean,
-	isDate,
-	isFunction,
-	isNumber,
-	isObject,
-	isString
-} from "../Utils";
-import {
-	C,
-	LDP
-} from "../Vocabularies";
-import { PartialMetadata } from "./PartialMetadata";
-import { QueryContext } from "./QueryContext";
-import { QueryContextBuilder } from "./QueryContextBuilder";
-import { QueryContextPartial } from "./QueryContextPartial";
-import { QueryDocumentBuilder } from "./QueryDocumentBuilder";
-import { QueryDocumentsBuilder } from "./QueryDocumentsBuilder";
-import { QueryMetadata } from "./QueryMetadata";
-import {
-	QueryProperty,
-	QueryPropertyType
-} from "./QueryProperty";
+
+import { Document } from "../../Document/Document";
+
+import { IllegalArgumentError } from "../../Errors/IllegalArgumentError";
+
+import { FreeResources } from "../../FreeResources";
+
+import { GETOptions, RequestOptions, RequestUtils } from "../../HTTP/Request";
+
+import { JSONLDCompacter } from "../../JSONLD/JSONLDCompacter";
+import { JSONLDParser } from "../../JSONLD/Parser";
+
+import { DocumentMetadata } from "../../LDP/DocumentMetadata";
+import { ResponseMetadata } from "../../LDP/ResponseMetadata";
+
+import { ModelDecorator } from "../../Model/ModelDecorator";
+import { ModelPrototype } from "../../Model/ModelPrototype";
+
+import { Pointer } from "../../Pointer/Pointer";
+
+import { PartialMetadata } from "../../QueryDocument/PartialMetadata";
+import { QueryContext } from "../../QueryDocument/QueryContext";
+import { QueryContextBuilder } from "../../QueryDocument/QueryContextBuilder";
+import { QueryContextPartial } from "../../QueryDocument/QueryContextPartial";
+import { QueryDocumentBuilder } from "../../QueryDocument/QueryDocumentBuilder";
+import { QueryDocumentsBuilder } from "../../QueryDocument/QueryDocumentsBuilder";
+import { QueryMetadata } from "../../QueryDocument/QueryMetadata";
+import { QueryProperty, QueryPropertyType } from "../../QueryDocument/QueryProperty";
 import {
 	areDifferentType,
 	createAllPattern,
@@ -74,7 +46,25 @@ import {
 	createTypesPattern,
 	getAllTriples,
 	getPathProperty
-} from "./Utils";
+} from "../../QueryDocument/Utils";
+
+import { RDFDocument } from "../../RDF/Document";
+import { RDFNode } from "../../RDF/Node";
+import { URI } from "../../RDF/URI";
+
+import { ResolvablePointer } from "../../Repository/ResolvablePointer";
+
+import { SPARQLService } from "../../SPARQL/Service";
+
+import { isBoolean, isDate, isFunction, isNumber, isObject, isString } from "../../Utils";
+
+import { C } from "../../Vocabularies/C";
+import { LDP } from "../../Vocabularies/LDP";
+
+import { BaseDocumentsRepository } from "../BaseDocumentsRepository";
+import { _getNotInContextMessage } from "../Utils";
+
+import { LDPDocumentsRepositoryTrait } from "./LDPDocumentsRepositoryTrait";
 
 
 export interface QueryableDocumentsRepositoryTrait extends LDPDocumentsRepositoryTrait {

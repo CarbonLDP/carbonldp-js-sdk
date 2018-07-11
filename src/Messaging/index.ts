@@ -1,5 +1,4 @@
 export * from "./ChildCreated";
-export { EventEmitterDocumentTrait } from "./EventEmitterDocumentTrait";
 export * from "./DocumentCreated";
 export * from "./DocumentCreatedDetails";
 export * from "./DocumentDeleted";
@@ -14,4 +13,4 @@ export * from "./MemberRemovedDetails";
 export * from "./Options";
 export * from "./Service";
 export * from "./Utils";
-export { EventEmitterDocumentsRepositoryTrait } from "./EventEmitterDocumentsRepositoryTrait";
+export { EventEmitterDocumentsRepositoryTrait } from "../DocumentsRepository/Traits/EventEmitterDocumentsRepositoryTrait";

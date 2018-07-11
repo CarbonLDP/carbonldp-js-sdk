@@ -1,27 +1,29 @@
 import { QueryClause } from "sparqler/clauses";
-import {
-	Document,
-	TransientDocument
-} from "../Document";
-import { RequestOptions } from "../HTTP";
-import { HTTPResolvableTrait } from "../Repository/HTTPResolvableTrait";
-import {
-	ModelDecorator,
-	ModelPrototype
-} from "../Model";
-import { URI } from "../RDF";
-import { ResolvablePointer } from "../Repository";
-import { isObject, } from "../Utils";
-import { FinishSPARQLSelect } from "./Builder";
-import { SPARQLSelectResults } from "./SelectResults";
-import { SPARQLDocumentsRepositoryTrait } from "./SPARQLDocumentsRepositoryTrait";
+
+import { SPARQLDocumentsRepositoryTrait } from "../../DocumentsRepository/Traits/SPARQLDocumentsRepositoryTrait";
+
+import { RequestOptions } from "../../HTTP/Request";
+
+import { ModelDecorator } from "../../Model/ModelDecorator";
+import { ModelPrototype } from "../../Model/ModelPrototype";
+
+import { URI } from "../../RDF/URI";
+
+import { ResolvablePointer } from "../../Repository/ResolvablePointer";
+
+import { FinishSPARQLSelect } from "../../SPARQL/Builder";
+import { SPARQLSelectResults } from "../../SPARQL/SelectResults";
+
+import { isObject, } from "../../Utils";
+
+import { TransientDocument } from "../TransientDocument";
 
 
 export interface BaseSPARQLDocumentTrait {
 	$repository:SPARQLDocumentsRepositoryTrait;
 }
 
-export interface SPARQLDocumentTrait extends TransientDocument, HTTPResolvableTrait<Document> {
+export interface SPARQLDocumentTrait extends TransientDocument, ResolvablePointer {
 	$repository:SPARQLDocumentsRepositoryTrait;
 
 	executeASKQuery( uri:string, askQuery:string, requestOptions?:RequestOptions ):Promise<boolean>;

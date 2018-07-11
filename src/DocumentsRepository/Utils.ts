@@ -1,7 +1,10 @@
-import { Pointer } from "../Pointer";
-import { URI } from "../RDF";
+import { Pointer } from "../Pointer/Pointer";
+
+import { URI } from "../RDF/URI";
+
+import { ResolvablePointer } from "../Repository/ResolvablePointer";
+
 import { isString } from "../Utils";
-import { ResolvablePointer } from "./ResolvablePointer";
 
 
 export function _getNotInContextMessage( uri:string ):string {

@@ -2,8 +2,7 @@ import * as Utils from "./../Utils";
 import { RDFNode } from "./Node";
 import { URI } from "./URI";
 
-export interface RDFDocument {
-	"@id"?:string;
+export interface RDFDocument extends RDFNode {
 	"@graph":RDFNode[];
 }
 

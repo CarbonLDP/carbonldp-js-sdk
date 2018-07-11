@@ -1,34 +1,31 @@
-import { Context } from "../Context/index";
-import { IllegalArgumentError } from "../Errors/index";
-import { FreeResources } from "../FreeResources";
-import {
-	ModelDecorator,
-	ModelPrototype
-} from "../Model/index";
-import {
-	DigestedObjectSchema,
-	ObjectSchemaResolver
-} from "../ObjectSchema/index";
-import { RDFNode } from "../RDF/index";
-import { RegisteredPointer } from "../Registry/index";
-import {
-	BaseRepository,
-	Repository,
-	ResolvablePointer
-} from "./index";
-import { _getNotInContextMessage } from "./Utils";
-import {
-	HTTPError,
-	statusCodeMap,
-	UnknownError
-} from "../HTTP/Errors/index";
-import {
-	GETOptions,
-	RequestOptions,
-	RequestService,
-	RequestUtils
-} from "../HTTP/Request";
-import { Response } from "../HTTP/Response";
+import { Context } from "../../Context/Context";
+
+import { IllegalArgumentError } from "../../Errors/IllegalArgumentError";
+
+import { FreeResources } from "../../FreeResources";
+
+import { HTTPError } from "../../HTTP/Errors/HTTPError";
+import { statusCodeMap } from "../../HTTP/Errors/index";
+import { UnknownError } from "../../HTTP/Errors/UnknownError";
+
+import { GETOptions, RequestOptions, RequestService, RequestUtils } from "../../HTTP/Request";
+import { Response } from "../../HTTP/Response";
+
+import { ModelDecorator } from "../../Model/ModelDecorator";
+import { ModelPrototype } from "../../Model/ModelPrototype";
+
+import { DigestedObjectSchema } from "../../ObjectSchema/DigestedObjectSchema";
+import { ObjectSchemaResolver } from "../../ObjectSchema/ObjectSchemaResolver";
+
+import { RDFNode } from "../../RDF/Node";
+
+import { RegisteredPointer } from "../../Registry/RegisteredPointer";
+
+import { BaseRepository } from "../../Repository/BaseRepository";
+import { Repository } from "../../Repository/Repository";
+import { ResolvablePointer } from "../../Repository/ResolvablePointer";
+
+import { _getNotInContextMessage } from "../Utils";
 
 
 export interface HTTPRepositoryTrait<M extends ResolvablePointer = ResolvablePointer> extends Repository<M> {

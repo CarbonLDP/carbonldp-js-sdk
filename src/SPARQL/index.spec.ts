@@ -23,7 +23,6 @@ import {
 	SPARQLSelectResults,
 } from "./SelectResults";
 import { SPARQLService } from "./Service";
-import { SPARQLDocumentTrait } from "./SPARQLDocumentTrait";
 
 
 describe( module( "carbonldp/SPARQL" ), ():void => {
@@ -112,16 +111,6 @@ describe( module( "carbonldp/SPARQL" ), ():void => {
 	), ():void => {
 		expect( SPARQL.SPARQLService ).toBeDefined();
 		expect( SPARQL.SPARQLService ).toBe( SPARQLService );
-	} );
-
-
-	it( reexports(
-		STATIC,
-		"SPARQLDocument",
-		"CarbonLDP.SPARQL.SPARQLDocument"
-	), ():void => {
-		expect( SPARQL.SPARQLDocumentTrait ).toBeDefined();
-		expect( SPARQL.SPARQLDocumentTrait ).toBe( SPARQLDocumentTrait );
 	} );
 
 } );

@@ -19,7 +19,7 @@ import {
 import { PickSelfProps } from "../Utils";
 import { Event } from "./Event";
 
-import { EventEmitterDocumentTrait } from "./EventEmitterDocumentTrait";
+import { EventEmitterDocumentTrait } from "../Document/Traits/EventEmitterDocumentTrait";
 
 
 function createMock<T extends object>( data?:T & Partial<EventEmitterDocumentTrait> ):T & EventEmitterDocumentTrait {

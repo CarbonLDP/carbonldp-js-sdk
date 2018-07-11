@@ -1,7 +1,7 @@
 import { Document } from "../Document";
 import { MessagingService } from "../Messaging";
-import { DocumentsRegistry } from "../Registry";
-import { DocumentsRepository } from "../Repository/DocumentsRepository";
+import { DocumentsRegistry } from "../DocumentsRegistry/DocumentsRegistry";
+import { DocumentsRepository } from "../DocumentsRepository/DocumentsRepository";
 import {
 	ContextSettings,
 	DocumentPaths

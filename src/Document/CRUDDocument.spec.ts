@@ -10,7 +10,7 @@ import {
 import { BaseFragment } from "../Fragment";
 import { Header } from "../HTTP";
 import { Pointer } from "../Pointer";
-import { DocumentsRegistry } from "../Registry";
+import { DocumentsRegistry } from "../DocumentsRegistry/DocumentsRegistry";
 import { PersistedResource } from "../Resource";
 import {
 	extendsClass,
@@ -26,7 +26,7 @@ import {
 	XSD
 } from "../Vocabularies";
 import { BasePersistedDocument } from "./BasePersistedDocument";
-import { LDPDocumentTrait } from "../LDP/LDPDocumentTrait";
+import { LDPDocumentTrait } from "./Traits/LDPDocumentTrait";
 
 
 function createMock<T extends object>( data?:T & Partial<LDPDocumentTrait> ):T & LDPDocumentTrait {

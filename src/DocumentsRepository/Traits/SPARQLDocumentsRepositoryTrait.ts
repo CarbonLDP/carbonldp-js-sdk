@@ -1,23 +1,24 @@
 import { QueryClause } from "sparqler/clauses";
-import { DocumentsContext } from "../Context";
-import { IllegalArgumentError } from "../Errors";
-import {
-	HTTPRepositoryTrait,
-	RequestOptions
-} from "../HTTP";
-import {
-	ModelDecorator,
-	ModelPrototype
-} from "../Model";
-import { DigestedObjectSchema } from "../ObjectSchema";
-import { BaseDocumentsRepository } from "../Repository";
-import { _getNotInContextMessage } from "../Repository/Utils";
-import {
-	FinishSPARQLSelect,
-	SPARQLBuilder
-} from "./Builder";
-import { SPARQLSelectResults } from "./SelectResults";
-import { SPARQLService } from "./Service";
+
+import { DocumentsContext } from "../../Context/DocumentsContext";
+
+import { IllegalArgumentError } from "../../Errors/IllegalArgumentError";
+
+import { RequestOptions } from "../../HTTP/Request";
+
+import { ModelDecorator } from "../../Model/ModelDecorator";
+import { ModelPrototype } from "../../Model/ModelPrototype";
+
+import { DigestedObjectSchema } from "../../ObjectSchema/DigestedObjectSchema";
+
+import { FinishSPARQLSelect, SPARQLBuilder } from "../../SPARQL/Builder";
+import { SPARQLSelectResults } from "../../SPARQL/SelectResults";
+import { SPARQLService } from "../../SPARQL/Service";
+
+import { BaseDocumentsRepository } from "../BaseDocumentsRepository";
+import { _getNotInContextMessage } from "../Utils";
+
+import { HTTPRepositoryTrait } from "./HTTPRepositoryTrait";
 
 
 export interface SPARQLDocumentsRepositoryTrait extends HTTPRepositoryTrait {

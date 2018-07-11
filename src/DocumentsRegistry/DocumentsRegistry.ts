@@ -1,11 +1,12 @@
-import { DocumentsContext } from "../Context";
-import { Document } from "../Document";
-import {
-	ModelDecorator,
-	ModelFactory,
-	ModelPrototype
-} from "../Model";
-import { GeneralRegistry } from "./GeneralRegistry";
+import { DocumentsContext } from "../Context/DocumentsContext";
+
+import { Document } from "../Document/Document";
+
+import { ModelDecorator } from "../Model/ModelDecorator";
+import { ModelFactory } from "../Model/ModelFactory";
+import { ModelPrototype } from "../Model/ModelPrototype";
+
+import { GeneralRegistry } from "../Registry/GeneralRegistry";
 
 
 export interface BaseDocumentsRegistry {

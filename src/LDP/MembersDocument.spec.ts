@@ -5,7 +5,7 @@ import {
 } from "../Errors";
 import { Header } from "../HTTP";
 import { Pointer } from "../Pointer";
-import { DocumentsRegistry } from "../Registry";
+import { DocumentsRegistry } from "../DocumentsRegistry/DocumentsRegistry";
 import { Resource } from "../Resource";
 import {
 	extendsClass,

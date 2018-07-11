@@ -1,6 +1,5 @@
 export { AddMemberAction } from "./AddMemberAction";
 export * from "./Error";
-export { LDPDocumentsRepositoryTrait } from "./LDPDocumentsRepositoryTrait";
 export * from "./Map";
 export * from "./MapEntry";
 export * from "./DirectContainer";

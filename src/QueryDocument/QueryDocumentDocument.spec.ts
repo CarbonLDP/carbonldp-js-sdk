@@ -36,7 +36,7 @@ import { BaseFragment } from "../Fragment";
 import { Header } from "../HTTP";
 import * as ObjectSchema from "../ObjectSchema";
 import { ObjectSchemaDigester } from "../ObjectSchema";
-import { DocumentsRegistry } from "../Registry";
+import { DocumentsRegistry } from "../DocumentsRegistry/DocumentsRegistry";
 import {
 	BaseResource,
 	PersistedResource

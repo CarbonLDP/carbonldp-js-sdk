@@ -1,23 +1,25 @@
-import { DocumentsContext } from "../Context";
-import { Document } from "../Document";
-import {
-	ModelDecorator,
-	ModelPrototype
-} from "../Model";
-import {
-	BaseDocumentsRepository,
-	Repository
-} from "../Repository";
-import { isObject } from "../Utils";
-import { ChildCreated } from "./ChildCreated";
-import { DocumentCreated } from "./DocumentCreated";
-import { DocumentDeleted } from "./DocumentDeleted";
-import { DocumentModified } from "./DocumentModified";
-import { Event } from "./Event";
-import { EventMessage } from "./EventMessage";
-import { MemberAdded } from "./MemberAdded";
-import { MemberRemoved } from "./MemberRemoved";
-import { createDestination } from "./Utils";
+import { DocumentsContext } from "../../Context/DocumentsContext";
+
+import { Document } from "../../Document/Document";
+
+import { ChildCreated } from "../../Messaging/ChildCreated";
+import { DocumentCreated } from "../../Messaging/DocumentCreated";
+import { DocumentDeleted } from "../../Messaging/DocumentDeleted";
+import { DocumentModified } from "../../Messaging/DocumentModified";
+import { Event } from "../../Messaging/Event";
+import { EventMessage } from "../../Messaging/EventMessage";
+import { MemberAdded } from "../../Messaging/MemberAdded";
+import { MemberRemoved } from "../../Messaging/MemberRemoved";
+import { createDestination } from "../../Messaging/Utils";
+
+import { ModelDecorator } from "../../Model/ModelDecorator";
+import { ModelPrototype } from "../../Model/ModelPrototype";
+
+import { Repository } from "../../Repository/Repository";
+
+import { isObject } from "../../Utils";
+
+import { BaseDocumentsRepository } from "../BaseDocumentsRepository";
 
 
 export interface EventEmitterDocumentsRepositoryTrait extends Repository<Document> {

@@ -1,6 +1,6 @@
 import { IllegalArgumentError } from "../Errors";
 import { URI } from "../RDF";
-import { _getNotInContextMessage } from "../Repository/Utils";
+import { _getNotInContextMessage } from "../DocumentsRepository/Utils";
 
 
 export function validateEventType( event:string ):void {

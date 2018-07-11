@@ -19,7 +19,7 @@ import {
 	C,
 	XSD
 } from "../Vocabularies";
-import { DocumentsRegistry } from "./DocumentsRegistry";
+import { DocumentsRegistry } from "../DocumentsRegistry/DocumentsRegistry";
 import { RegistryService } from "./RegistryService";
 
 

@@ -2,7 +2,7 @@ import { CarbonLDP } from "../CarbonLDP";
 import { DocumentsContext } from "../Context/DocumentsContext";
 import { IllegalArgumentError } from "../Errors";
 import { Pointer } from "../Pointer";
-import { DocumentsRegistry } from "../Registry";
+import { DocumentsRegistry } from "../DocumentsRegistry/DocumentsRegistry";
 import {
 	clazz,
 	hasMethod,

@@ -1,53 +1,50 @@
-import { DocumentsContext } from "../Context";
-import {
-	Document,
-	TransientDocument
-} from "../Document";
-import { IllegalArgumentError } from "../Errors";
-import { FreeResources } from "../FreeResources";
-import {
-	GETOptions,
-	Header,
-	RequestOptions,
-	RequestService,
-	RequestUtils,
-	Response
-} from "../HTTP";
-import {
-	BadResponseError,
-	HTTPError
-} from "../HTTP/Errors";
-import {
-	JSONLDCompacter,
-	JSONLDParser
-} from "../JSONLD";
-import { DeltaCreator } from "../LDPatch";
-import {
-	ModelDecorator,
-	ModelPrototype
-} from "../Model";
-import { Pointer } from "../Pointer";
-import {
-	RDFDocument,
-	RDFNode
-} from "../RDF";
-import { Registry } from "../Registry";
-import {
-	BaseDocumentsRepository,
-	ResolvablePointer
-} from "../Repository";
-import { HTTPRepositoryTrait } from "../Repository/HTTPRepositoryTrait";
-import { _getNotInContextMessage } from "../Repository/Utils";
-import { isString } from "../Utils";
-import {
-	C,
-	LDP
-} from "../Vocabularies";
-import { AddMemberAction } from "./AddMemberAction";
-import { ErrorResponse } from "./ErrorResponse";
-import { Map } from "./Map";
-import { RemoveMemberAction } from "./RemoveMemberAction";
-import { ResponseMetadata } from "./ResponseMetadata";
+import { DocumentsContext } from "../../Context/DocumentsContext";
+
+import { Document } from "../../Document/Document";
+import { TransientDocument } from "../../Document/TransientDocument";
+
+import { IllegalArgumentError } from "../../Errors/IllegalArgumentError";
+
+import { FreeResources } from "../../FreeResources";
+
+import { HTTPError } from "../../HTTP/Errors/HTTPError";
+import { BadResponseError } from "../../HTTP/Errors/ServerErrors/BadResponseError";
+
+import { Header } from "../../HTTP/Header";
+import { GETOptions, RequestOptions, RequestService, RequestUtils } from "../../HTTP/Request";
+import { Response } from "../../HTTP/Response";
+
+import { JSONLDCompacter } from "../../JSONLD/JSONLDCompacter";
+import { JSONLDParser } from "../../JSONLD/Parser";
+
+import { AddMemberAction } from "../../LDP/AddMemberAction";
+import { ErrorResponse } from "../../LDP/ErrorResponse";
+import { Map } from "../../LDP/Map";
+import { RemoveMemberAction } from "../../LDP/RemoveMemberAction";
+import { ResponseMetadata } from "../../LDP/ResponseMetadata";
+
+import { DeltaCreator } from "../../LDPatch/DeltaCreator";
+
+import { ModelDecorator } from "../../Model/ModelDecorator";
+import { ModelPrototype } from "../../Model/ModelPrototype";
+
+import { Pointer } from "../../Pointer/Pointer";
+
+import { RDFDocument } from "../../RDF/Document";
+import { RDFNode } from "../../RDF/Node";
+
+import { Registry } from "../../Registry/Registry";
+import { ResolvablePointer } from "../../Repository/ResolvablePointer";
+
+import { isString } from "../../Utils";
+
+import { C } from "../../Vocabularies/C";
+import { LDP } from "../../Vocabularies/LDP";
+
+import { BaseDocumentsRepository } from "../BaseDocumentsRepository";
+import { _getNotInContextMessage } from "../Utils";
+
+import { HTTPRepositoryTrait } from "./HTTPRepositoryTrait";
 
 
 export interface LDPDocumentsRepositoryTrait extends HTTPRepositoryTrait<Document> {

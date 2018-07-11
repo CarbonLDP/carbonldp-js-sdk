@@ -4,7 +4,7 @@ import {
 	FinishClause
 } from "sparqler/clauses";
 import { finishDecorator } from "sparqler/clauses/decorators";
-import { SPARQLDocumentsRepositoryTrait } from "./SPARQLDocumentsRepositoryTrait";
+import { SPARQLDocumentsRepositoryTrait } from "../DocumentsRepository/Traits/SPARQLDocumentsRepositoryTrait";
 import { SPARQLSelectResults } from "./SelectResults";
 
 export interface FinishSPARQLSelect extends FinishClause {

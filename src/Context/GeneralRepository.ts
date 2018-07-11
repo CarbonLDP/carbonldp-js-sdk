@@ -1,10 +1,9 @@
-import { RegisteredPointer } from "../Registry";
-import {
-	Repository,
-	ResolvablePointer
-} from "../Repository";
+import { RegisteredPointer } from "../Registry/RegisteredPointer";
+import { Repository } from "../Repository/Repository";
+import { ResolvablePointer } from "../Repository/ResolvablePointer";
 import { Context } from "./Context";
 
-export interface GeneralRepository<M extends ResolvablePointer = ResolvablePointer> extends Repository<ResolvablePointer> {
-	$context:Context<ResolvablePointer & RegisteredPointer, ResolvablePointer>;
+
+export interface GeneralRepository<MODEL extends ResolvablePointer = ResolvablePointer> extends Repository<ResolvablePointer> {
+	$context:Context<MODEL & RegisteredPointer, MODEL>;
 }

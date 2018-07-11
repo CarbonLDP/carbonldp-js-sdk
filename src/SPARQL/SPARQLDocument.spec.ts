@@ -5,7 +5,7 @@ import {
 import { CarbonLDP } from "../CarbonLDP";
 import { IllegalArgumentError } from "../Errors";
 import { RequestOptions } from "../HTTP";
-import { DocumentsRegistry } from "../Registry";
+import { DocumentsRegistry } from "../DocumentsRegistry/DocumentsRegistry";
 import { Resource } from "../Resource";
 import {
 	extendsClass,
@@ -17,7 +17,7 @@ import {
 } from "../test/JasmineExtender";
 import { FinishSPARQLSelect } from "./Builder";
 import { SPARQLService } from "./Service";
-import { SPARQLDocumentTrait } from "./SPARQLDocumentTrait";
+import { SPARQLDocumentTrait } from "../Document/Traits/SPARQLDocumentTrait";
 
 
 function createMock<T extends object>( data?:T & Partial<SPARQLDocumentTrait> ):T & SPARQLDocumentTrait {

@@ -1,4 +1,4 @@
-import { DocumentsContext } from "../Context";
+import { DocumentsContext } from "../Context/index";
 
 
 export interface BaseDocumentsRepository {

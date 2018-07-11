@@ -1,5 +1,5 @@
 import { CarbonLDP } from "../CarbonLDP";
-import { DocumentsRegistry } from "../Registry";
+import { DocumentsRegistry } from "../DocumentsRegistry/DocumentsRegistry";
 import {
 	extendsClass,
 	hasMethod,

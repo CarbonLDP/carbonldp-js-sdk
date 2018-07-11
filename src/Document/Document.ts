@@ -1,33 +1,32 @@
-import { Fragment } from "../Fragment";
-import {
-	GETOptions,
-	RequestOptions
-} from "../HTTP";
-import { EventEmitterDocumentTrait } from "../Messaging";
-import {
-	ModelDecorator,
-	ModelFactory,
-	ModelPrototype,
-	ModelSchema,
-	ModelTypeGuard,
-} from "../Model";
-import {
-	QueryableDocumentTrait,
-	QueryDocumentBuilder
-} from "../QueryDocument";
-import {
-	DocumentsRegistry,
-	RegisteredPointer
-} from "../Registry";
-import { DocumentsRepository } from "../Repository";
-import { SPARQLDocumentTrait } from "../SPARQL";
+import { DocumentsRegistry } from "../DocumentsRegistry/DocumentsRegistry";
+import { DocumentsRepository } from "../DocumentsRepository/DocumentsRepository";
+
+import { Fragment } from "../Fragment/Fragment";
+
+import { GETOptions, RequestOptions } from "../HTTP/Request";
+
+import { ModelDecorator } from "../Model/ModelDecorator";
+import { ModelFactory } from "../Model/ModelFactory";
+import { ModelPrototype } from "../Model/ModelPrototype";
+import { ModelSchema } from "../Model/ModelSchema";
+import { ModelTypeGuard, } from "../Model/ModelTypeGuard";
+
+import { QueryDocumentBuilder } from "../QueryDocument/QueryDocumentBuilder";
+
+import { RegisteredPointer } from "../Registry/RegisteredPointer";
+
 import { isObject } from "../Utils";
-import {
-	C,
-	LDP,
-	XSD,
-} from "../Vocabularies";
+
+import { C } from "../Vocabularies/C";
+import { LDP } from "../Vocabularies/LDP";
+import { XSD } from "../Vocabularies/XSD";
+
 import { BaseDocument } from "./BaseDocument";
+
+import { EventEmitterDocumentTrait } from "./Traits/EventEmitterDocumentTrait";
+import { QueryableDocumentTrait } from "./Traits/QueryableDocumentTrait";
+import { SPARQLDocumentTrait } from "./Traits/SPARQLDocumentTrait";
+
 import { TransientDocument } from "./TransientDocument";
 
 

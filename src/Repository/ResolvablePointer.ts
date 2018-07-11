@@ -16,7 +16,7 @@ import { Repository } from "./Repository";
 import {
 	_parseResourceParams,
 	_parseURIParams
-} from "./Utils";
+} from "../DocumentsRepository/Utils";
 
 
 export interface ResolvablePointer extends Pointer, Repository {

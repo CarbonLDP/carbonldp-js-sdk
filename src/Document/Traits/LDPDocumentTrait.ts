@@ -1,28 +1,26 @@
-import {
-	Document,
-	TransientDocument
-} from "../Document";
-import {
-	GETOptions,
-	RequestOptions,
-} from "../HTTP";
-import { HTTPResolvableTrait } from "../Repository/HTTPResolvableTrait";
-import {
-	ModelDecorator,
-	ModelPrototype
-} from "../Model";
-import { Pointer } from "../Pointer";
-import { ResolvablePointer } from "../Repository";
-import { _parseURIParams } from "../Repository/Utils";
-import { isObject, } from "../Utils";
-import { LDPDocumentsRepositoryTrait } from "./LDPDocumentsRepositoryTrait";
+import { LDPDocumentsRepositoryTrait } from "../../DocumentsRepository/Traits/LDPDocumentsRepositoryTrait";
+
+import { RequestOptions, } from "../../HTTP/Request";
+import { ModelDecorator } from "../../Model/ModelDecorator";
+
+import { ModelPrototype } from "../../Model/ModelPrototype";
+
+import { Pointer } from "../../Pointer/Pointer";
+
+import { ResolvablePointer } from "../../Repository/ResolvablePointer";
+import { _parseURIParams } from "../../DocumentsRepository/Utils";
+
+import { isObject } from "../../Utils";
+
+import { Document } from "../Document";
+import { TransientDocument } from "../TransientDocument";
 
 
 export interface BaseLDPDocumentTrait {
 	$repository:LDPDocumentsRepositoryTrait;
 }
 
-export interface LDPDocumentTrait extends TransientDocument, HTTPResolvableTrait<Document> {
+export interface LDPDocumentTrait extends TransientDocument, ResolvablePointer {
 	$repository:LDPDocumentsRepositoryTrait;
 
 	create<T extends object>( children:T[], requestOptions?:RequestOptions ):Promise<(T & Document)[]>;

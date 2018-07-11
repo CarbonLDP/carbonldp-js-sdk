@@ -3,8 +3,6 @@ export * from "./QueryContext";
 export * from "./QueryContextBuilder";
 export * from "./QueryContextPartial";
 export * from "./QueryDocumentBuilder";
-export { QueryableDocumentsRepositoryTrait } from "./QueryableDocumentsRepositoryTrait";
-export { QueryableDocumentTrait } from "./QueryableDocumentTrait";
 export * from "./QueryDocumentsBuilder";
 export * from "./QueryMetadata";
 export * from "./QueryObject";

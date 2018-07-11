@@ -19,7 +19,7 @@ import {
 } from "./Builder";
 import { SPARQLRawResults } from "./RawResults";
 import { SPARQLSelectResults } from "./SelectResults";
-import { SPARQLDocumentTrait } from "./SPARQLDocumentTrait";
+import { SPARQLDocumentTrait } from "../Document/Traits/SPARQLDocumentTrait";
 
 describe( module( "carbonldp/SPARQL/Builder", "Module that reexports the customized SPARQLER class." ), ():void => {
 
