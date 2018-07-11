@@ -6,7 +6,7 @@ import {
 	GETOptions,
 	RequestOptions,
 } from "../HTTP";
-import { HTTPResolvableTrait } from "../HTTP/HTTPResolvableTrait";
+import { HTTPResolvableTrait } from "../Repository/HTTPResolvableTrait";
 import {
 	ModelDecorator,
 	ModelPrototype

@@ -2,7 +2,7 @@ import {
 	ClientRequest,
 	IncomingMessage,
 } from "http";
-import { BadResponseError } from "./Errors";
+import { BadResponseError } from "./Errors/ServerErrors/BadResponseError";
 import { Header } from "./Header";
 
 export class Response {

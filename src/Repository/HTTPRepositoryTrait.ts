@@ -1,34 +1,34 @@
-import { Context } from "../Context";
-import { IllegalArgumentError } from "../Errors";
+import { Context } from "../Context/index";
+import { IllegalArgumentError } from "../Errors/index";
 import { FreeResources } from "../FreeResources";
 import {
 	ModelDecorator,
 	ModelPrototype
-} from "../Model";
+} from "../Model/index";
 import {
 	DigestedObjectSchema,
 	ObjectSchemaResolver
-} from "../ObjectSchema";
-import { RDFNode } from "../RDF";
-import { RegisteredPointer } from "../Registry";
+} from "../ObjectSchema/index";
+import { RDFNode } from "../RDF/index";
+import { RegisteredPointer } from "../Registry/index";
 import {
 	BaseRepository,
 	Repository,
 	ResolvablePointer
-} from "../Repository";
-import { _getNotInContextMessage } from "../Repository/Utils";
+} from "./index";
+import { _getNotInContextMessage } from "./Utils";
 import {
 	HTTPError,
 	statusCodeMap,
 	UnknownError
-} from "./Errors";
+} from "../HTTP/Errors/index";
 import {
 	GETOptions,
 	RequestOptions,
 	RequestService,
 	RequestUtils
-} from "./Request";
-import { Response } from "./Response";
+} from "../HTTP/Request";
+import { Response } from "../HTTP/Response";
 
 
 export interface HTTPRepositoryTrait<M extends ResolvablePointer = ResolvablePointer> extends Repository<M> {

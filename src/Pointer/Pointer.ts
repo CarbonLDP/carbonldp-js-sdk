@@ -4,7 +4,6 @@ import {
 	ModelPrototype,
 	ModelTypeGuard
 } from "../Model";
-import * as Utils from "../Utils";
 import { isObject } from "../Utils";
 import { BasePointer } from "./BasePointer";
 
@@ -75,7 +74,7 @@ export const Pointer:PointerFactory = {
 	},
 
 	getID( pointerOrIRI:Pointer | string ):string {
-		return Utils.isString( pointerOrIRI ) ? pointerOrIRI : pointerOrIRI.$id;
+		return isObject( pointerOrIRI ) ? pointerOrIRI.$id : pointerOrIRI;
 	},
 };
 

@@ -1,7 +1,7 @@
-import { ModelDecorator } from "../Model";
-import { ResolvablePointer } from "../Repository";
+import { ModelDecorator } from "../Model/index";
+import { ResolvablePointer } from "./index";
 import { HTTPRepositoryTrait } from "./HTTPRepositoryTrait";
-import { RequestOptions } from "./Request";
+import { RequestOptions } from "../HTTP/Request";
 
 
 export interface BaseHTTPResolvableTrait {

@@ -11,7 +11,7 @@ describe( module( "carbonldp/Model" ), ():void => {
 
 	describe( interfaze(
 		"CarbonLDP.Model.ModelFactory",
-		[ "M extends object", "B extends object = object" ],
+		[ "MODEL extends object", "BASE extends object = object" ],
 		"Interface with the standard methods for a model creation."
 	), ():void => {
 
@@ -20,9 +20,9 @@ describe( module( "carbonldp/Model" ), ():void => {
 			"create",
 			[ "W extends object" ],
 			[
-				{ name: "data", type: "W & B" },
+				{ name: "data", type: "W & BASE" },
 			],
-			{ type: "W & M" }
+			{ type: "W & MODEL" }
 		), ():void => {
 			const target:ModelFactory<any>[ "create" ] = () => {};
 			expect( target ).toBeDefined();
@@ -33,9 +33,9 @@ describe( module( "carbonldp/Model" ), ():void => {
 			"createFrom",
 			[ "W extends object" ],
 			[
-				{ name: "object", type: "W & B" },
+				{ name: "object", type: "W & BASE" },
 			],
-			{ type: "W & M" }
+			{ type: "W & MODEL" }
 		), ():void => {
 			const target:ModelFactory<any>[ "createFrom" ] = ( object ) => object;
 			expect( target ).toBeDefined();

@@ -1,5 +1,5 @@
 import { URI } from "../RDF";
-import * as Utils from "../Utils";
+import { ObjectUtils } from "../Utils";
 import { DigestedObjectSchema } from "./DigestedObjectSchema";
 import { DigestedObjectSchemaProperty } from "./DigestedObjectSchemaProperty";
 
@@ -34,7 +34,7 @@ export class ObjectSchemaUtils {
 		const resolvedType:string = ObjectSchemaUtils.resolveURI( type, schema, { vocab: true, base: true } );
 
 		if( resolvedURI !== uri || resolvedType !== type ) {
-			definition = inSame ? definition : Utils.ObjectUtils.clone( definition );
+			definition = inSame ? definition : ObjectUtils.clone( definition );
 			definition.uri = resolvedURI;
 			definition.literalType = resolvedType;
 		}

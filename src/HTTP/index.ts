@@ -9,7 +9,6 @@ export * from "./Request";
 export * from "./Response";
 export * from "./StatusCode";
 export * from "./StringParser";
-export { HTTPRepositoryTrait } from "./HTTPRepositoryTrait";
 
 export {
 	Errors

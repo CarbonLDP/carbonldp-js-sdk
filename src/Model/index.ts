@@ -1,5 +1,6 @@
-export * from "./ModelDecorator";
-export * from "./ModelFactory";
-export * from "./ModelPrototype";
-export * from "./ModelSchema";
-export * from "./ModelTypeGuard";
+export { ModelDecorator } from "./ModelDecorator";
+export { ModelFactory } from "./ModelFactory";
+export { ModelFactoryOptional } from "./ModelFactoryOptional";
+export { ModelPrototype } from "./ModelPrototype";
+export { ModelSchema } from "./ModelSchema";
+export { ModelTypeGuard } from "./ModelTypeGuard";

@@ -7,7 +7,7 @@ import {
 export interface ModelDecorator<MODEL extends object, BASE extends object = object> {
 	isDecorated( object:object ):object is MODEL;
 
-	decorate<W extends BASE>( object:W ):W & MODEL;
+	decorate<W extends object>( object:W & BASE ):W & MODEL;
 }
 
 

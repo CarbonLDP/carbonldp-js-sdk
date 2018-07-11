@@ -53,8 +53,11 @@ export abstract class AbstractContext<REGISTRY extends RegisteredPointer = Regis
 	}
 
 
-	resolve( relativeURI:string ):string {
-		return URI.resolve( this.baseURI, relativeURI );
+	resolve( relativeURI:string, relativeTo:{ vocab?:boolean, base?:boolean } = {} ):string {
+		const schema:DigestedObjectSchema = this.getObjectSchema();
+
+		if( relativeTo.base === void 0 ) relativeTo.base = true;
+		return ObjectSchemaUtils.resolveURI( relativeURI, schema, relativeTo );
 	}
 
 	/**

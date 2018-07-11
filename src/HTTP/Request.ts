@@ -2,21 +2,18 @@ import HTTP from "http";
 import HTTPS from "https";
 import URL from "url";
 
-import { AbstractContext } from "../Context/AbstractContext";
-import { IllegalArgumentError } from "../Errors";
 import {
-	DigestedObjectSchema,
-	ObjectSchemaUtils
-} from "../ObjectSchema";
-import { Pointer } from "../Pointer";
-import { URI } from "../RDF";
-import { RegistryService } from "../Registry";
-import * as Utils from "./../Utils";
-import { BadResponseError } from "./Errors";
+	hasProperty,
+	hasPropertyDefined,
+	isNumber,
+	isString
+} from "../Utils";
+import { BadResponseError } from "./Errors/ServerErrors/BadResponseError";
 import { Header } from "./Header";
 import { HTTPMethod } from "./HTTPMethod";
 import { Parser } from "./Parser";
 import { Response } from "./Response";
+
 
 export interface RequestOptions {
 	headers?:Map<string, Header>;
@@ -140,7 +137,7 @@ function sendRequest( method:string, url:string, body:string | Blob | Buffer, op
 }
 
 function isBody( data:string | Blob | Buffer ):boolean {
-	return Utils.isString( data )
+	return isString( data )
 		|| typeof Blob !== "undefined" && data instanceof Blob
 		|| typeof Buffer !== "undefined" && data instanceof Buffer;
 }
@@ -157,8 +154,8 @@ export class RequestService {
 	static send<T>( method:(HTTPMethod | string), url:string, body:string | Blob | Buffer, options?:RequestOptions, parser?:Parser<T> ):Promise<[ T, Response ]>;
 	static send<T>( method:any, url:string, bodyOrOptions:any = RequestService.defaultOptions, optionsOrParser:any = RequestService.defaultOptions, parser:Parser<T> = null ):any {
 		let body:string | Blob | Buffer = null;
-		let options:RequestOptions = Utils.hasProperty( optionsOrParser, "parse" ) ? bodyOrOptions : optionsOrParser;
-		parser = Utils.hasProperty( optionsOrParser, "parse" ) ? optionsOrParser : parser;
+		let options:RequestOptions = hasProperty( optionsOrParser, "parse" ) ? bodyOrOptions : optionsOrParser;
+		parser = hasProperty( optionsOrParser, "parse" ) ? optionsOrParser : parser;
 
 		if( isBody( bodyOrOptions ) ) {
 			body = bodyOrOptions;
@@ -168,7 +165,7 @@ export class RequestService {
 
 		options = Object.assign( {}, RequestService.defaultOptions, options );
 
-		if( Utils.isNumber( method ) ) method = HTTPMethod[ method ];
+		if( isNumber( method ) ) method = HTTPMethod[ method ];
 
 		const requestPromise:Promise<Response> = sendRequest( method, url, body, options )
 			.then( response => {
@@ -362,10 +359,10 @@ export class RequestUtils {
 
 
 	static isOptions( object:Object ):object is RequestOptions {
-		return Utils.hasPropertyDefined( object, "headers" )
-			|| Utils.hasPropertyDefined( object, "sendCredentialsOnCORS" )
-			|| Utils.hasPropertyDefined( object, "timeout" )
-			|| Utils.hasPropertyDefined( object, "request" );
+		return hasPropertyDefined( object, "headers" )
+			|| hasPropertyDefined( object, "sendCredentialsOnCORS" )
+			|| hasPropertyDefined( object, "timeout" )
+			|| hasPropertyDefined( object, "request" );
 	}
 
 	static cloneOptions( options:RequestOptions ):RequestOptions {
@@ -378,22 +375,6 @@ export class RequestUtils {
 			.forEach( ( value, key ) => clone.headers.set( key, new Header( value.values.slice() ) ) );
 
 		return clone;
-	}
-
-
-	static getRequestURLFor( this:void, registry:RegistryService<Pointer, AbstractContext<Pointer, any> | undefined>, resource:Pointer, uri?:string ):string {
-		if( uri && registry.context ) {
-			const schema:DigestedObjectSchema = registry.getGeneralSchema();
-			uri = ObjectSchemaUtils.resolveURI( uri, schema );
-		}
-
-		const url:string = uri ? URI.resolve( resource.$id, uri ) : resource.$id;
-
-		const localIRI:string = registry._getLocalID( url );
-		if( registry.context ) return URI.resolve( registry.context.baseURI, localIRI );
-
-		if( URI.isRelative( url ) ) throw new IllegalArgumentError( `"${ url }" cannot be used as URL for the request.` );
-		return url;
 	}
 
 }
