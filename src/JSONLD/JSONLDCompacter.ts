@@ -19,7 +19,7 @@ import {
 	RDFNode,
 } from "../RDF";
 import {
-	DocumentsRegistry,
+	GeneralRegistry,
 	RegisteredPointer,
 	Registry
 } from "../Registry";
@@ -36,14 +36,14 @@ interface CompactionNode {
 }
 
 export class JSONLDCompacter {
-	private readonly registry:DocumentsRegistry;
+	private readonly registry:GeneralRegistry<Document>;
 	private readonly root?:string;
 	private readonly resolver?:ObjectSchemaResolver;
 	private readonly converter?:JSONLDConverter;
 	private readonly compactionMap:Map<string, CompactionNode>;
 
 
-	constructor( registry:DocumentsRegistry, root?:string, schemaResolver?:ObjectSchemaResolver, jsonldConverter?:JSONLDConverter ) {
+	constructor( registry:GeneralRegistry<Document>, root?:string, schemaResolver?:ObjectSchemaResolver, jsonldConverter?:JSONLDConverter ) {
 		this.registry = registry;
 
 		this.root = root;

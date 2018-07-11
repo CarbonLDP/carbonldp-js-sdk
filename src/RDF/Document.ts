@@ -1,5 +1,3 @@
-import { Parser } from "../HTTP";
-import { JSONLDParser } from "../JSONLD";
 import * as Utils from "./../Utils";
 import { RDFNode } from "./Node";
 import { URI } from "./URI";
@@ -111,10 +109,3 @@ export const RDFDocument:RDFDocumentFactory = {
 	},
 
 };
-
-
-export class RDFDocumentParser extends JSONLDParser implements Parser<RDFDocument[]> {
-	parse( input:string ):Promise<RDFDocument[]> {
-		return super.parse( input ).then( RDFDocument.getDocuments );
-	}
-}

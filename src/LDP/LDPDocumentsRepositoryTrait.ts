@@ -8,7 +8,6 @@ import { FreeResources } from "../FreeResources";
 import {
 	GETOptions,
 	Header,
-	HTTPRepositoryTrait,
 	RequestOptions,
 	RequestService,
 	RequestUtils,
@@ -30,7 +29,6 @@ import {
 import { Pointer } from "../Pointer";
 import {
 	RDFDocument,
-	RDFDocumentParser,
 	RDFNode
 } from "../RDF";
 import { Registry } from "../Registry";
@@ -38,6 +36,7 @@ import {
 	BaseDocumentsRepository,
 	ResolvablePointer
 } from "../Repository";
+import { HTTPRepositoryTrait } from "../Repository/HTTPRepositoryTrait";
 import { _getNotInContextMessage } from "../Repository/Utils";
 import { isString } from "../Utils";
 import {
@@ -94,7 +93,6 @@ export interface LDPDocumentsRepositoryTrait extends HTTPRepositoryTrait<Documen
 }
 
 
-const __RDF_DOCUMENT_PARSER:RDFDocumentParser = new RDFDocumentParser();
 const __JSONLD_PARSER:JSONLDParser = new JSONLDParser();
 
 function __setDefaultRequestOptions( requestOptions:RequestOptions, interactionModel?:string ):void {
@@ -497,12 +495,14 @@ export const LDPDocumentsRepositoryTrait:LDPDocumentsRepositoryTraitFactory = {
 			;
 		},
 
-		_parseResponseData<T extends object>( this:HTTPRepositoryTrait, response:Response, id:string ):Promise<T & Document> {
-			return __RDF_DOCUMENT_PARSER
+		_parseResponseData<T extends object>( this:HTTPRepositoryTrait<Document>, response:Response, id:string ):Promise<T & Document> {
+			return __JSONLD_PARSER
 				.parse( response.data )
-				.then( ( rdfDocuments:RDFDocument[] ) => {
-					// FIXME
-					const documents:(T & Document)[] = new JSONLDCompacter( this as any )
+				.then( ( rdfNodes:object[] ) => {
+					const rdfDocuments:RDFDocument[] = RDFDocument
+						.getDocuments( rdfNodes );
+
+					const documents:(T & Document)[] = new JSONLDCompacter( this.$context.registry )
 						.compactDocuments( rdfDocuments );
 
 					id = __getTargetID( id, response );

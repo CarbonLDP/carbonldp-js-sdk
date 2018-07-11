@@ -1,4 +1,4 @@
-import * as Errors from "../../../Errors";
+import { IllegalArgumentError } from "../../../Errors/IllegalArgumentError";
 import {
 	clazz,
 	hasMethod,
@@ -54,11 +54,11 @@ describe( module(
 			let date:Date = new Date( "05 October 2011 14:48 UTC" );
 			expect( serializer.serialize( date ) ).toBe( "2011-10-05" );
 
-			expect( serializer.serialize.bind( null, { another: "object", that: "is", not: "a Date" } ) ).toThrowError( Errors.IllegalArgumentError );
-			expect( serializer.serialize.bind( null, "another object that: is not a Date" ) ).toThrowError( Errors.IllegalArgumentError );
-			expect( serializer.serialize.bind( null, "2011-10-05" ) ).toThrowError( Errors.IllegalArgumentError );
-			expect( serializer.serialize.bind( null, null ) ).toThrowError( Errors.IllegalArgumentError );
-			expect( serializer.serialize.bind( null, undefined ) ).toThrowError( Errors.IllegalArgumentError );
+			expect( serializer.serialize.bind( null, { another: "object", that: "is", not: "a Date" } ) ).toThrowError( IllegalArgumentError );
+			expect( serializer.serialize.bind( null, "another object that: is not a Date" ) ).toThrowError( IllegalArgumentError );
+			expect( serializer.serialize.bind( null, "2011-10-05" ) ).toThrowError( IllegalArgumentError );
+			expect( serializer.serialize.bind( null, null ) ).toThrowError( IllegalArgumentError );
+			expect( serializer.serialize.bind( null, undefined ) ).toThrowError( IllegalArgumentError );
 		} );
 
 	} );
@@ -106,11 +106,11 @@ describe( module(
 			let date:Date = new Date( "05 October 2011 14:48 UTC" );
 			expect( serializer.serialize( date ) ).toBe( "2011-10-05T14:48:00.000Z" );
 
-			expect( serializer.serialize.bind( null, { another: "object", that: "is", not: "a Date" } ) ).toThrowError( Errors.IllegalArgumentError );
-			expect( serializer.serialize.bind( null, "another object that: is not a Date" ) ).toThrowError( Errors.IllegalArgumentError );
-			expect( serializer.serialize.bind( null, "2011-10-05T14:48:00.000Z" ) ).toThrowError( Errors.IllegalArgumentError );
-			expect( serializer.serialize.bind( null, null ) ).toThrowError( Errors.IllegalArgumentError );
-			expect( serializer.serialize.bind( null, undefined ) ).toThrowError( Errors.IllegalArgumentError );
+			expect( serializer.serialize.bind( null, { another: "object", that: "is", not: "a Date" } ) ).toThrowError( IllegalArgumentError );
+			expect( serializer.serialize.bind( null, "another object that: is not a Date" ) ).toThrowError( IllegalArgumentError );
+			expect( serializer.serialize.bind( null, "2011-10-05T14:48:00.000Z" ) ).toThrowError( IllegalArgumentError );
+			expect( serializer.serialize.bind( null, null ) ).toThrowError( IllegalArgumentError );
+			expect( serializer.serialize.bind( null, undefined ) ).toThrowError( IllegalArgumentError );
 		} );
 
 	} );
@@ -158,11 +158,11 @@ describe( module(
 			let date:Date = new Date( "05 October 2011 14:48 UTC" );
 			expect( serializer.serialize( date ) ).toBe( "14:48:00.000Z" );
 
-			expect( serializer.serialize.bind( null, { another: "object", that: "is", not: "a Date" } ) ).toThrowError( Errors.IllegalArgumentError );
-			expect( serializer.serialize.bind( null, "another object that: is not a Date" ) ).toThrowError( Errors.IllegalArgumentError );
-			expect( serializer.serialize.bind( null, "14:48:00.000Z" ) ).toThrowError( Errors.IllegalArgumentError );
-			expect( serializer.serialize.bind( null, null ) ).toThrowError( Errors.IllegalArgumentError );
-			expect( serializer.serialize.bind( null, undefined ) ).toThrowError( Errors.IllegalArgumentError );
+			expect( serializer.serialize.bind( null, { another: "object", that: "is", not: "a Date" } ) ).toThrowError( IllegalArgumentError );
+			expect( serializer.serialize.bind( null, "another object that: is not a Date" ) ).toThrowError( IllegalArgumentError );
+			expect( serializer.serialize.bind( null, "14:48:00.000Z" ) ).toThrowError( IllegalArgumentError );
+			expect( serializer.serialize.bind( null, null ) ).toThrowError( IllegalArgumentError );
+			expect( serializer.serialize.bind( null, undefined ) ).toThrowError( IllegalArgumentError );
 		} );
 
 	} );
@@ -223,11 +223,11 @@ describe( module(
 			expect( serializer.serialize( Infinity ) ).toBe( "0" );
 			expect( serializer.serialize( - Infinity ) ).toBe( "0" );
 
-			expect( serializer.serialize.bind( null, { another: "object", that: "is", not: "a Number" } ) ).toThrowError( Errors.IllegalArgumentError );
-			expect( serializer.serialize.bind( null, "another object that: is not a Number" ) ).toThrowError( Errors.IllegalArgumentError );
-			expect( serializer.serialize.bind( null, "100.132" ) ).toThrowError( Errors.IllegalArgumentError );
-			expect( serializer.serialize.bind( null, null ) ).toThrowError( Errors.IllegalArgumentError );
-			expect( serializer.serialize.bind( null, undefined ) ).toThrowError( Errors.IllegalArgumentError );
+			expect( serializer.serialize.bind( null, { another: "object", that: "is", not: "a Number" } ) ).toThrowError( IllegalArgumentError );
+			expect( serializer.serialize.bind( null, "another object that: is not a Number" ) ).toThrowError( IllegalArgumentError );
+			expect( serializer.serialize.bind( null, "100.132" ) ).toThrowError( IllegalArgumentError );
+			expect( serializer.serialize.bind( null, null ) ).toThrowError( IllegalArgumentError );
+			expect( serializer.serialize.bind( null, undefined ) ).toThrowError( IllegalArgumentError );
 		} );
 
 	} );
@@ -282,11 +282,11 @@ describe( module(
 			expect( serializer.serialize( Infinity ) ).toBe( "0" );
 			expect( serializer.serialize( - Infinity ) ).toBe( "0" );
 
-			expect( serializer.serialize.bind( null, { another: "object", that: "is", not: "a Number" } ) ).toThrowError( Errors.IllegalArgumentError );
-			expect( serializer.serialize.bind( null, "another object that: is not a Number" ) ).toThrowError( Errors.IllegalArgumentError );
-			expect( serializer.serialize.bind( null, "100.132" ) ).toThrowError( Errors.IllegalArgumentError );
-			expect( serializer.serialize.bind( null, null ) ).toThrowError( Errors.IllegalArgumentError );
-			expect( serializer.serialize.bind( null, undefined ) ).toThrowError( Errors.IllegalArgumentError );
+			expect( serializer.serialize.bind( null, { another: "object", that: "is", not: "a Number" } ) ).toThrowError( IllegalArgumentError );
+			expect( serializer.serialize.bind( null, "another object that: is not a Number" ) ).toThrowError( IllegalArgumentError );
+			expect( serializer.serialize.bind( null, "100.132" ) ).toThrowError( IllegalArgumentError );
+			expect( serializer.serialize.bind( null, null ) ).toThrowError( IllegalArgumentError );
+			expect( serializer.serialize.bind( null, undefined ) ).toThrowError( IllegalArgumentError );
 		} );
 
 	} );
@@ -387,11 +387,11 @@ describe( module(
 			expect( serializer.serialize( Infinity ) ).toBe( "INF" );
 			expect( serializer.serialize( - Infinity ) ).toBe( "-INF" );
 
-			expect( serializer.serialize.bind( null, { another: "object", that: "is", not: "a Number" } ) ).toThrowError( Errors.IllegalArgumentError );
-			expect( serializer.serialize.bind( null, "another object that: is not a Number" ) ).toThrowError( Errors.IllegalArgumentError );
-			expect( serializer.serialize.bind( null, "100.132" ) ).toThrowError( Errors.IllegalArgumentError );
-			expect( serializer.serialize.bind( null, null ) ).toThrowError( Errors.IllegalArgumentError );
-			expect( serializer.serialize.bind( null, undefined ) ).toThrowError( Errors.IllegalArgumentError );
+			expect( serializer.serialize.bind( null, { another: "object", that: "is", not: "a Number" } ) ).toThrowError( IllegalArgumentError );
+			expect( serializer.serialize.bind( null, "another object that: is not a Number" ) ).toThrowError( IllegalArgumentError );
+			expect( serializer.serialize.bind( null, "100.132" ) ).toThrowError( IllegalArgumentError );
+			expect( serializer.serialize.bind( null, null ) ).toThrowError( IllegalArgumentError );
+			expect( serializer.serialize.bind( null, undefined ) ).toThrowError( IllegalArgumentError );
 		} );
 
 	} );
