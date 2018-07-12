@@ -1,22 +1,20 @@
-import { Document } from "../Document";
-import {
-	GETOptions,
-	RequestOptions
-} from "../HTTP";
-import {
-	ModelDecorator,
-	ModelFactory,
-	ModelPrototype
-} from "../Model";
-import { QueryDocumentBuilder } from "../QueryDocument";
-import { ResolvablePointer } from "../Repository";
+import { Document } from "../Document/Document";
+
+import { GETOptions, RequestOptions } from "../HTTP/Request";
+
+import { ModelDecorator } from "../Model/ModelDecorator";
+import { ModelFactory } from "../Model/ModelFactory";
+import { ModelPrototype } from "../Model/ModelPrototype";
+
+import { QueryDocumentBuilder } from "../QueryDocument/QueryDocumentBuilder";
+import { BaseResolvablePointer } from "../Repository/BaseResolvablePointer";
+
+import { ResolvablePointer } from "../Repository/ResolvablePointer";
+import { BaseResolvableFragment } from "./BaseResolvableFragment";
+
 import { BaseTransientFragment } from "./BaseTransientFragment";
 import { TransientFragment } from "./TransientFragment";
 
-
-export interface BaseResolvableFragment {
-	$registry:Document;
-}
 
 export interface Fragment extends TransientFragment, ResolvablePointer {
 	$document:Document;
@@ -54,10 +52,6 @@ export interface Fragment extends TransientFragment, ResolvablePointer {
 }
 
 
-type ForcedMembers = {
-	$document:Document;
-};
-
 export type OverrodeMembers =
 	| "$repository"
 	| "_resolved"
@@ -94,8 +88,11 @@ export const Fragment:FragmentFactory = {
 	decorate<T extends BaseResolvableFragment>( object:T ):T & Fragment {
 		if( Fragment.isDecorated( object ) ) return object;
 
-		type ForcedT = T & ForcedMembers;
-		const forced:ForcedT = object as ForcedT;
+		type ForcedT = T & { $document:Document } & BaseResolvablePointer;
+		const forced:ForcedT = Object.assign( object, {
+			$document: object.$registry,
+			$repository: object.$registry,
+		} );
 
 		const target:ForcedT & TransientFragment & ResolvablePointer = ModelDecorator
 			.decorateMultiple( forced, TransientFragment, ResolvablePointer );

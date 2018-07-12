@@ -9,7 +9,7 @@ import { ModelTypeGuard, } from "../Model/ModelTypeGuard";
 
 import { Resource } from "../Resource/Resource";
 
-import { extendsClass, hasProperty, interfaze, module, OPTIONAL, STATIC } from "../test/JasmineExtender";
+import { extendsClass, hasProperty, interfaze, module, OBLIGATORY, OPTIONAL, property, STATIC } from "../test/JasmineExtender";
 
 import { BaseTransientFragment } from "./BaseTransientFragment";
 import { TransientFragment, TransientFragmentFactory } from "./TransientFragment";
@@ -22,6 +22,12 @@ describe( module( "carbonldp/Fragment" ), ():void => {
 		"Interface of an in-memory fragment of a document."
 	), ():void => {
 
+		let fragment:TransientFragment;
+		beforeEach( ():void => {
+			fragment = TransientFragment
+				.create( { $registry: TransientDocument.create() } );
+		} );
+
 		it( hasProperty(
 			OPTIONAL,
 			"$registry",
@@ -29,12 +35,25 @@ describe( module( "carbonldp/Fragment" ), ():void => {
 			"The registry where the transient fragment belongs to."
 		), ():void => {} );
 
-		it( hasProperty(
-			OPTIONAL,
+		describe( property(
+			OBLIGATORY,
 			"$document",
 			"CarbonLDP.TransientDocument",
 			"The transient document where the transient fragment belongs to."
-		), ():void => {} );
+		), ():void => {
+
+			it( "should be the $registry", () => {
+				expect( fragment.$document ).toBe( fragment.$registry );
+			} );
+
+			it( "should assign the $registry ", () => {
+				const document:TransientDocument = TransientDocument.create();
+				fragment.$document = document;
+
+				expect( fragment.$registry ).toBe( document );
+			} );
+
+		} );
 
 	} );
 
