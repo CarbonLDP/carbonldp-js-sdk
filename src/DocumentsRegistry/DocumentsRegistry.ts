@@ -6,7 +6,7 @@ import { ModelDecorator } from "../Model/ModelDecorator";
 import { ModelFactory } from "../Model/ModelFactory";
 import { ModelPrototype } from "../Model/ModelPrototype";
 
-import { GeneralRegistry } from "../Registry/GeneralRegistry";
+import { BaseGeneralRegistry, GeneralRegistry } from "../Registry/GeneralRegistry";
 
 
 export interface BaseDocumentsRegistry {
@@ -20,20 +20,14 @@ export interface DocumentsRegistry extends GeneralRegistry<Document> {
 }
 
 
-export type OverrodeMembers =
-	| "__modelDecorator"
-;
-
 export type DocumentsRegistryFactory =
-	& ModelPrototype<DocumentsRegistry, GeneralRegistry<Document> & BaseDocumentsRegistry, OverrodeMembers>
+	& ModelPrototype<DocumentsRegistry, GeneralRegistry<Document> & BaseDocumentsRegistry>
 	& ModelDecorator<DocumentsRegistry, BaseDocumentsRegistry>
 	& ModelFactory<DocumentsRegistry, BaseDocumentsRegistry>
 	;
 
 export const DocumentsRegistry:DocumentsRegistryFactory = {
 	PROTOTYPE: {
-		__modelDecorator:Document,
-
 		register( this:DocumentsRegistry, id:string ):Document {
 			return this.getPointer( id, true );
 		},
@@ -48,11 +42,15 @@ export const DocumentsRegistry:DocumentsRegistryFactory = {
 	decorate<T extends BaseDocumentsRegistry>( object:T ):T & DocumentsRegistry {
 		if( DocumentsRegistry.isDecorated( object ) ) return object;
 
-		const resource:T & GeneralRegistry<Document> = ModelDecorator
-			.decorateMultiple( object, GeneralRegistry );
+		const base: T & BaseGeneralRegistry = Object.assign( object, {
+			__modelDecorator: Document,
+		} );
+
+		const target:T & GeneralRegistry<Document> = ModelDecorator
+			.decorateMultiple( base, GeneralRegistry );
 
 		return ModelDecorator
-			.definePropertiesFrom( DocumentsRegistry.PROTOTYPE, resource );
+			.definePropertiesFrom( DocumentsRegistry.PROTOTYPE, target );
 	},
 
 

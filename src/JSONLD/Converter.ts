@@ -78,7 +78,7 @@ export class JSONLDConverter {
 	private expandSingle( compactedObject:Object, generalSchema:ObjectSchema.DigestedObjectSchema, digestedSchema:ObjectSchema.DigestedObjectSchema ):RDFNode {
 		let expandedObject:any = {};
 
-		expandedObject[ "@id" ] = ! ! compactedObject[ "id" ] ? compactedObject[ "id" ] : "";
+		expandedObject[ "@id" ] = ! ! compactedObject[ "$id" ] ? compactedObject[ "$id" ] : "";
 
 		if( compactedObject[ "types" ] ) {
 			const types:string[] = Array.isArray( compactedObject[ "types" ] ) ?
@@ -90,7 +90,7 @@ export class JSONLDConverter {
 		}
 
 		Utils.forEachOwnProperty( compactedObject, ( propertyName:string, value:any ):void => {
-			if( propertyName === "id" ) return;
+			if( propertyName === "$id" ) return;
 			if( propertyName === "types" ) return;
 
 			const expandedPropertyName:string = ObjectSchema.ObjectSchemaUtils.resolveURI( propertyName, digestedSchema, { vocab: true } );

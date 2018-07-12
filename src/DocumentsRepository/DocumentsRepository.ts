@@ -3,8 +3,11 @@ import { DocumentsContext } from "../Context/DocumentsContext";
 import { Document } from "../Document/Document";
 
 import { GETOptions, RequestOptions } from "../HTTP/Request";
+import { ModelDecorator } from "../Model/ModelDecorator";
+import { ModelFactory } from "../Model/ModelFactory";
 
 import { QueryDocumentBuilder } from "../QueryDocuments/QueryDocumentBuilder";
+import { BaseDocumentsRepository } from "./BaseDocumentsRepository";
 
 import { EventEmitterDocumentsRepositoryTrait } from "./Traits/EventEmitterDocumentsRepositoryTrait";
 import { QueryableDocumentsRepositoryTrait } from "./Traits/QueryableDocumentsRepositoryTrait";
@@ -33,3 +36,23 @@ export interface DocumentsRepository extends QueryableDocumentsRepositoryTrait, 
 
 	delete( uri:string, requestOptions?:RequestOptions ):Promise<void>;
 }
+
+
+export type DocumentsRepositoryFactory =
+	| ModelFactory<DocumentsRepository, BaseDocumentsRepository>
+	;
+
+export const DocumentsRepository:DocumentsRepositoryFactory = {
+	create<T extends object>( data:T & BaseDocumentsRepository ):T & DocumentsRepository {
+		return DocumentsRepository.createFrom( { ...data as any } );
+	},
+
+	createFrom<T extends object>( object:T & BaseDocumentsRepository ):T & DocumentsRepository {
+		return ModelDecorator
+			.decorateMultiple( object,
+				QueryableDocumentsRepositoryTrait,
+				SPARQLDocumentsRepositoryTrait,
+				EventEmitterDocumentsRepositoryTrait
+			);
+	},
+};

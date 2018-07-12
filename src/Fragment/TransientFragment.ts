@@ -1,4 +1,5 @@
 import { TransientDocument } from "../Document/TransientDocument";
+import { IllegalActionError } from "../Errors/IllegalActionError";
 
 import { IllegalArgumentError } from "../Errors/IllegalArgumentError";
 
@@ -6,6 +7,7 @@ import { ModelDecorator } from "../Model/ModelDecorator";
 import { ModelFactory } from "../Model/ModelFactory";
 import { ModelPrototype } from "../Model/ModelPrototype";
 import { ModelTypeGuard } from "../Model/ModelTypeGuard";
+import { URI } from "../RDF/URI";
 
 import { Resource } from "../Resource/Resource";
 
@@ -18,8 +20,14 @@ export interface TransientFragment extends Resource {
 }
 
 
+export type OverriddenMembers =
+	| "$registry"
+	| "$id"
+	| "$slug"
+	;
+
 export type TransientFragmentFactory =
-	& ModelPrototype<TransientFragment & BaseTransientFragment, Resource, "$registry">
+	& ModelPrototype<TransientFragment & BaseTransientFragment, Resource, OverriddenMembers>
 	& ModelDecorator<TransientFragment, BaseTransientFragment>
 	& ModelFactory<TransientFragment, BaseTransientFragment>
 	& ModelTypeGuard<TransientFragment>
@@ -29,6 +37,20 @@ export const TransientFragment:TransientFragmentFactory = {
 	PROTOTYPE: {
 		get $registry():TransientDocument {
 			throw new IllegalArgumentError( `Property "$registry" is required.` );
+		},
+
+
+		get $slug():string {
+			throw new IllegalActionError( "Should never been called" );
+		},
+
+		get $id( this:TransientFragment ):string {
+			if( URI.isBNodeID( this.$slug ) ) return this.$slug;
+			return this.$document.$id + "#" + this.$slug;
+		},
+		set $id( this:TransientFragment, value:string ) {
+			if( URI.isBNodeID( value ) ) this.$slug = value;
+			this.$slug = URI.getFragment( value );
 		},
 
 		get $document( this:TransientFragment ):TransientDocument {
@@ -47,6 +69,7 @@ export const TransientFragment:TransientFragmentFactory = {
 
 	decorate<T extends BaseTransientFragment>( object:T ):T & TransientFragment {
 		if( TransientFragment.isDecorated( object ) ) return object;
+
 
 		const target:T & Resource = ModelDecorator
 			.decorateMultiple( object, Resource );

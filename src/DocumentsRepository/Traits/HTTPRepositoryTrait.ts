@@ -47,7 +47,7 @@ export interface HTTPRepositoryTrait<M extends ResolvablePointer = ResolvablePoi
 }
 
 
-export type OverrodeMembers =
+export type OverriddenMembers =
 	| "get"
 	| "resolve"
 	| "exists"
@@ -59,7 +59,7 @@ export type OverrodeMembers =
 
 // FIXME: Use `unknown` for TS 3.0
 export type GeneralRepositoryFactory =
-	& ModelPrototype<HTTPRepositoryTrait, Repository & ObjectSchemaResolver, OverrodeMembers>
+	& ModelPrototype<HTTPRepositoryTrait, Repository & ObjectSchemaResolver, OverriddenMembers>
 	& ModelDecorator<HTTPRepositoryTrait<any>, BaseRepository>
 	;
 

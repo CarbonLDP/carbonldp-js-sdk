@@ -52,13 +52,13 @@ export interface Fragment extends TransientFragment, QueryablePointer {
 }
 
 
-export type OverrodeMembers =
+export type OverriddenMembers =
 	| "$repository"
 	| "_resolved"
 	;
 
 export type FragmentFactory =
-	& ModelPrototype<Fragment, TransientFragment & QueryablePointer, OverrodeMembers>
+	& ModelPrototype<Fragment, TransientFragment & QueryablePointer, OverriddenMembers>
 	& ModelDecorator<Fragment, BaseResolvableFragment>
 	& ModelFactory<TransientFragment, BaseTransientFragment>
 	;

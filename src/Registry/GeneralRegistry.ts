@@ -1,17 +1,20 @@
-import { Context } from "../Context";
-import { IllegalArgumentError } from "../Errors";
-import {
-	ModelDecorator,
-	ModelFactory,
-	ModelPrototype
-} from "../Model";
-import {
-	DigestedObjectSchema,
-	ObjectSchemaResolver,
-	ObjectSchemaUtils
-} from "../ObjectSchema";
-import { Pointer } from "../Pointer";
-import { URI } from "../RDF";
+import { Context } from "../Context/Context";
+
+import { IllegalArgumentError } from "../Errors/IllegalArgumentError";
+
+import { ModelDecorator } from "../Model/ModelDecorator";
+import { ModelFactory } from "../Model/ModelFactory";
+import { ModelPrototype } from "../Model/ModelPrototype";
+
+import { DigestedObjectSchema } from "../ObjectSchema/DigestedObjectSchema";
+import { ObjectSchemaResolver } from "../ObjectSchema/ObjectSchemaResolver";
+import { ObjectSchemaUtils } from "../ObjectSchema/ObjectSchemaUtils";
+
+import { Pointer } from "../Pointer/Pointer";
+
+import { URI } from "../RDF/URI";
+import { BaseResolvablePointer } from "../Repository/BaseResolvablePointer";
+
 import { BaseRegistry } from "./BaseRegistry";
 import { RegisteredPointer } from "./RegisteredPointer";
 import { Registry } from "./Registry";
@@ -23,7 +26,7 @@ export interface BaseGeneralRegistry extends BaseRegistry {
 }
 
 export interface GeneralRegistry<M extends RegisteredPointer = RegisteredPointer> extends Registry<M>, ObjectSchemaResolver {
-	readonly $context:Context;
+	readonly $context:Context<M>;
 
 
 	__modelDecorators:Map<string, TypedModelDecorator>;
@@ -77,6 +80,9 @@ export const GeneralRegistry:GeneralRegistryFactory = {
 
 
 		_addPointer<T extends object>( this:GeneralRegistry, pointer:T & Pointer ):T & RegisteredPointer {
+			if( this.$context.repository )
+				Object.assign<T, BaseResolvablePointer>( pointer, { $repository: this.$context.repository } );
+
 			const resource:T & RegisteredPointer = Registry.PROTOTYPE._addPointer.call( this, pointer );
 
 			const schema:DigestedObjectSchema = this.$context.getObjectSchema();

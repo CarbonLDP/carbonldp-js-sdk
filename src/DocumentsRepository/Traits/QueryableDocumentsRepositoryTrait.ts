@@ -373,7 +373,7 @@ function __executeMembersBuilder<T extends object>( this:void, repository:Querya
 }
 
 
-export type OverrodeMembers =
+export type OverriddenMembers =
 	| "get"
 	| "resolve"
 	| "refresh"
@@ -381,7 +381,7 @@ export type OverrodeMembers =
 	;
 
 export type QueryableDocumentsRepositoryTraitFactory =
-	& ModelPrototype<QueryableDocumentsRepositoryTrait, LDPDocumentsRepositoryTrait, OverrodeMembers>
+	& ModelPrototype<QueryableDocumentsRepositoryTrait, LDPDocumentsRepositoryTrait, OverriddenMembers>
 	& ModelDecorator<QueryableDocumentsRepositoryTrait, BaseDocumentsRepository>
 	;
 

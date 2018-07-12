@@ -30,6 +30,11 @@ import { SPARQLDocumentTrait } from "./Traits/SPARQLDocumentTrait";
 import { TransientDocument } from "./TransientDocument";
 
 
+export interface BaseResolvableDocument {
+	$registry:DocumentsRegistry;
+	$repository:DocumentsRepository;
+}
+
 export interface Document extends SPARQLDocumentTrait, EventEmitterDocumentTrait, QueryableDocumentTrait {
 	$registry:DocumentsRegistry;
 	$repository:DocumentsRepository;
@@ -116,14 +121,14 @@ type ForcedMembers = {
 	removeFragment( slugOrFragment:string | Fragment ):boolean;
 };
 
-export type OverrodeMembers =
+export type OverriddenMembers =
 	| "__modelDecorator"
 	;
 
 export type DocumentFactory =
 	& ModelSchema<C[ "Document" ]>
-	& ModelPrototype<Document, SPARQLDocumentTrait & EventEmitterDocumentTrait & QueryableDocumentTrait, OverrodeMembers>
-	& ModelDecorator<Document>
+	& ModelPrototype<Document, SPARQLDocumentTrait & EventEmitterDocumentTrait & QueryableDocumentTrait, OverriddenMembers>
+	& ModelDecorator<Document, BaseResolvableDocument>
 	& ModelTypeGuard<Document>
 	& ModelFactory<TransientDocument, BaseDocument>
 	;
@@ -211,7 +216,7 @@ export const Document:DocumentFactory = {
 	},
 
 
-	decorate<T extends object>( object:T ):T & Document {
+	decorate<T extends BaseResolvableDocument>( object:T ):T & Document {
 		if( Document.isDecorated( object ) ) return object;
 
 		type ForcedT = T & ForcedMembers;

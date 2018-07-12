@@ -2,6 +2,7 @@ import { IDAlreadyInUseError, IllegalArgumentError, } from "../Errors";
 import { ModelDecorator, ModelFactory, ModelPrototype } from "../Model";
 import { Pointer, PointerLibrary, PointerValidator, } from "../Pointer";
 import { isObject } from "../Utils";
+import { BaseRegisteredPointer } from "./BaseRegisteredPointer";
 import { BaseRegistry } from "./BaseRegistry";
 import { RegisteredPointer } from "./RegisteredPointer";
 
@@ -10,7 +11,7 @@ export interface Registry<M extends RegisteredPointer = RegisteredPointer> exten
 	// TODO: Change to unknown
 	readonly $registry:Registry<any> | undefined;
 
-	readonly __modelDecorator:ModelDecorator<M>;
+	readonly __modelDecorator:ModelDecorator<M, BaseRegisteredPointer>;
 	readonly __resourcesMap:Map<string, M>;
 
 
@@ -37,13 +38,13 @@ export interface Registry<M extends RegisteredPointer = RegisteredPointer> exten
 }
 
 
-export type OverrodeMembers =
+export type OverriddenMembers =
 	| "$registry"
 	;
 
 // TODO: Use unknown
 export type RegistryFactory =
-	& ModelPrototype<Registry, {}, OverrodeMembers>
+	& ModelPrototype<Registry, {}, OverriddenMembers>
 	& ModelDecorator<Registry<any>, BaseRegistry>
 	& ModelFactory<Registry, BaseRegistry>
 	;
@@ -123,10 +124,12 @@ export const Registry:RegistryFactory = {
 			if( ! pointer.$id ) throw new IllegalArgumentError( "The pointer $id cannot be empty." );
 
 			const localID:string = this._getLocalID( pointer.$id );
-			if( this.__resourcesMap.has( localID ) ) throw new IDAlreadyInUseError( `"${ pointer.$id }" is already being taken.` );
+			if( this.__resourcesMap.has( localID ) ) throw new IDAlreadyInUseError( `"${ pointer.$id }" is already being used.` );
 
-			const resource:T & RegisteredPointer = this.__modelDecorator.decorate( pointer );
-			resource.$registry = this;
+			const resource:T & RegisteredPointer = this.__modelDecorator
+				.decorate( Object.assign( pointer, {
+					$registry: this,
+				} ) );
 
 			this.__resourcesMap.set( localID, resource );
 			return resource;

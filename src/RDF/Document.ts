@@ -3,6 +3,7 @@ import { RDFNode } from "./Node";
 import { URI } from "./URI";
 
 export interface RDFDocument extends RDFNode {
+	"@id":string;
 	"@graph":RDFNode[];
 }
 

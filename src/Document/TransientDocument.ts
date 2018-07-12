@@ -18,9 +18,10 @@ import { Pointer } from "../Pointer/Pointer";
 import { RDFDocument } from "../RDF/Document";
 import { RDFNode } from "../RDF/Node";
 import { URI } from "../RDF/URI";
-import { BaseRegistry } from "../Registry/BaseRegistry";
 
+import { BaseRegistry } from "../Registry/BaseRegistry";
 import { Registry } from "../Registry/Registry";
+
 import { Resource } from "../Resource/Resource";
 
 import { isObject, isPlainObject, isString } from "../Utils";
@@ -44,7 +45,7 @@ export interface TransientDocument extends Resource, Registry<TransientFragment>
 	getFragments():TransientFragment[];
 
 	createFragment<T extends object>( object:T, id?:string ):T & TransientFragment;
-	createFragment( slug?:string ):TransientFragment;
+	createFragment( id?:string ):TransientFragment;
 
 	removeFragment( slugOrFragment:string | TransientFragment ):boolean;
 
@@ -55,7 +56,7 @@ export interface TransientDocument extends Resource, Registry<TransientFragment>
 	_getLocalID( id:string ):string;
 
 
-	toJSON( registryOrKey:Context | string ):RDFDocument;
+	toJSON( contextOrKey?:Context | string ):RDFDocument;
 }
 
 
@@ -64,22 +65,22 @@ function __getLabelFrom( slug:string ):string {
 	return "#" + slug;
 }
 
-function __getObjectId( object:any ):string {
-	if( "id" in object ) return object.id;
+function __getObjectId( object:{ $id?:string, $slug?:string } ):string {
+	if( "$id" in object ) return object.$id;
 
-	if( "slug" in object ) return URI.hasFragment( object.slug ) ?
-		object.slug : __getLabelFrom( object.slug );
+	if( "$slug" in object ) return URI.hasFragment( object.$slug ) ?
+		object.$slug : __getLabelFrom( object.$slug );
 
 	return URI.generateBNodeID();
 }
 
-function __internalConverter( resource:TransientDocument, target:object, tracker:Set<string> = new Set() ):void {
+function __convertNested( resource:TransientDocument, target:object, tracker:Set<string> = new Set() ):void {
 	Object
 		.keys( target )
 		.map( key => target[ key ] )
 		.forEach( next => {
 			if( Array.isArray( next ) )
-				return __internalConverter( resource, next, tracker );
+				return __convertNested( resource, next, tracker );
 
 
 			if( ! isPlainObject( next ) ) return;
@@ -94,16 +95,16 @@ function __internalConverter( resource:TransientDocument, target:object, tracker
 
 			const fragment:TransientFragment = resource.hasPointer( idOrSlug, true ) ?
 				resource.getPointer( idOrSlug, true ) :
-				resource._addPointer( next )
+				resource.createFragment( next, idOrSlug )
 			;
 
 			tracker.add( fragment.$id );
-			__internalConverter( resource, fragment, tracker );
+			__convertNested( resource, fragment, tracker );
 		} )
 	;
 }
 
-type OverrodeMembers =
+type OverriddenMembers =
 	| "$registry"
 	| "_getLocalID"
 	| "getPointer"
@@ -111,7 +112,7 @@ type OverrodeMembers =
 	;
 
 export type TransientDocumentFactory =
-	& ModelPrototype<TransientDocument, Resource & Registry, OverrodeMembers>
+	& ModelPrototype<TransientDocument, Resource & Registry<TransientFragment>, OverriddenMembers>
 	& ModelDecorator<TransientDocument, BaseDocument>
 	& ModelFactoryOptional<TransientDocument, BaseDocument>
 	& ModelTypeGuard<TransientDocument>
@@ -123,7 +124,7 @@ export const TransientDocument:TransientDocumentFactory = {
 
 		_normalize( this:TransientDocument ):void {
 			const usedFragments:Set<string> = new Set();
-			__internalConverter( this, this, usedFragments );
+			__convertNested( this, this, usedFragments );
 
 			this.getPointers( true )
 				.map( Pointer.getID )
@@ -139,7 +140,7 @@ export const TransientDocument:TransientDocumentFactory = {
 
 			if( URI.isFragmentOf( id, this.$id ) ) return URI.getFragment( id );
 
-			throw new IllegalArgumentError( `"${ id }" is outside the scope of the document.` );
+			throw new IllegalArgumentError( `"${ id }" is out of scope.` );
 		},
 
 		getPointer( this:TransientDocument, id:string, local?:true ):TransientFragment {
@@ -170,17 +171,16 @@ export const TransientDocument:TransientDocumentFactory = {
 			return this.getPointers( true );
 		},
 
-		createFragment<T extends object>( this:TransientDocument, isOrObject?:string | T, id:string = URI.generateBNodeID() ):T & TransientFragment {
+		createFragment<T extends object>( this:TransientDocument, isOrObject?:string | T, id?:string ):T & TransientFragment {
 			const object:T = isObject( isOrObject ) ? isOrObject : {} as T;
+			if( isString( isOrObject ) ) id = isOrObject;
 
-			id = isString( isOrObject ) ? isOrObject : id;
-			const pointer:T & Pointer = Object.assign<T, Pointer>( object, {
-				$id: __getLabelFrom( id ),
-			} );
+			const $id:string = id ? __getLabelFrom( id ) : __getObjectId( object );
+			const fragment:T & TransientFragment = this._addPointer( Object
+				.assign<T, Pointer>( object, { $id } )
+			);
 
-			const fragment:T & TransientFragment = this._addPointer( pointer );
-
-			__internalConverter( this, fragment );
+			__convertNested( this, fragment );
 			return fragment;
 		},
 
@@ -193,9 +193,12 @@ export const TransientDocument:TransientDocumentFactory = {
 
 
 		toJSON( this:TransientDocument, contextOrKey:Context | string ):RDFDocument {
-			const nodes:RDFNode[] = [ this, ...this.getFragments(), ]
-				.map( resource => resource.toJSON( contextOrKey ) )
-			;
+			const nodes:RDFNode[] = [
+				Resource.PROTOTYPE.toJSON.call( this, contextOrKey ),
+				...this
+					.getFragments()
+					.map( resource => resource.toJSON( contextOrKey ) ),
+			];
 
 			return {
 				"@id": this.$id,
@@ -204,10 +207,10 @@ export const TransientDocument:TransientDocumentFactory = {
 		},
 	},
 
-	isDecorated: ( object ):object is TransientDocument =>
-		ModelDecorator
-			.hasPropertiesFrom( TransientDocument.PROTOTYPE, object )
-	,
+	isDecorated( object:object ):object is TransientDocument {
+		return ModelDecorator
+			.hasPropertiesFrom( TransientDocument.PROTOTYPE, object );
+	},
 
 	decorate<T extends BaseDocument>( object:T ):T & TransientDocument {
 		if( TransientDocument.isDecorated( object ) ) return object;
@@ -237,7 +240,7 @@ export const TransientDocument:TransientDocumentFactory = {
 
 		const document:T & TransientDocument = TransientDocument.decorate<T>( object );
 
-		__internalConverter( document, document );
+		__convertNested( document, document );
 		return document;
 	},
 

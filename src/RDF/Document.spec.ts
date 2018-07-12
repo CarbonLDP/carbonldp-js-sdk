@@ -175,6 +175,7 @@ describe( module( "carbonldp/RDF/Document" ), ():void => {
 				{ "@id": "http://example.com/resource/2" },
 			];
 			expect( RDFDocument.create( nodes ) ).toEqual( {
+				"@id": "",
 				"@graph": [
 					{ "@id": "http://example.com/resource/1" },
 					{ "@id": "http://example.com/resource/1#fragment-1" },
@@ -192,6 +193,7 @@ describe( module( "carbonldp/RDF/Document" ), ():void => {
 
 			nodes = [];
 			expect( RDFDocument.create( nodes ) ).toEqual( {
+				"@id": "",
 				"@graph": [],
 			} );
 			expect( RDFDocument.create( nodes, "http://example.com/uri-resource/" ) ).toEqual( {

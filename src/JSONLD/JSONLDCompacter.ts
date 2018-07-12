@@ -14,6 +14,7 @@ import {
 	QueryPropertyType,
 } from "../QueryDocuments";
 import { QueryContextPartial } from "../QueryDocuments/";
+import { QueryablePointer } from "../QueryDocuments/QueryablePointer";
 import {
 	RDFDocument,
 	RDFNode,
@@ -23,14 +24,13 @@ import {
 	RegisteredPointer,
 	Registry
 } from "../Registry";
-import { ResolvablePointer } from "../Repository";
 import { JSONLDConverter } from "./Converter";
 
 
 interface CompactionNode {
 	paths:string[];
 	node:RDFNode;
-	resource:ResolvablePointer;
+	resource:QueryablePointer;
 	registry:Registry<any>;
 	processed?:boolean;
 }
@@ -120,7 +120,7 @@ export class JSONLDCompacter {
 	}
 
 
-	private _compactNode( node:RDFNode, resource:ResolvablePointer, containerLibrary:PointerLibrary, path:string ):string[] {
+	private _compactNode( node:RDFNode, resource:QueryablePointer, containerLibrary:PointerLibrary, path:string ):string[] {
 		const schema:DigestedObjectSchema = this.resolver.getSchemaFor( node, path );
 
 		const isPartial:boolean = this._setOrRemovePartial( resource, schema, path );
@@ -154,7 +154,7 @@ export class JSONLDCompacter {
 			;
 	}
 
-	private _getResource<M extends ResolvablePointer & RegisteredPointer>( node:RDFNode, registry:Registry<M> ):M {
+	private _getResource<M extends QueryablePointer & RegisteredPointer>( node:RDFNode, registry:Registry<M> ):M {
 		const resource:M = registry.getPointer( node[ "@id" ], true );
 
 		if( Registry.isDecorated( resource ) ) registry = resource;
@@ -202,14 +202,14 @@ export class JSONLDCompacter {
 	}
 
 
-	private _setOrRemovePartial( resource:ResolvablePointer, schema:DigestedObjectSchema, path:string ):boolean {
+	private _setOrRemovePartial( resource:QueryablePointer, schema:DigestedObjectSchema, path:string ):boolean {
 		if( this._willBePartial( resource, schema, path ) ) return true;
 
 		if( resource._queryableMetadata ) delete resource._queryableMetadata;
 		return false;
 	}
 
-	private _willBePartial( resource:ResolvablePointer, schema:DigestedObjectSchema, path:string ):boolean {
+	private _willBePartial( resource:QueryablePointer, schema:DigestedObjectSchema, path:string ):boolean {
 		if( this.resolver instanceof QueryContextPartial ) return true;
 		if( ! (this.resolver instanceof QueryContextBuilder) ) return false;
 
