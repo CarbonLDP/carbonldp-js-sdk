@@ -4,7 +4,7 @@ import {
 	reexports
 } from "../test/JasmineExtender";
 import * as QueryDocument from "./index";
-import { PartialMetadata } from "./PartialMetadata";
+import { QueryableMetadata } from "./QueryableMetadata";
 import { QueryContext } from "./QueryContext";
 import { QueryContextBuilder } from "./QueryContextBuilder";
 import { QueryContextPartial } from "./QueryContextPartial";
@@ -28,7 +28,7 @@ import { QuerySchemaProperty } from "./QuerySchemaProperty";
 import { QueryValue } from "./QueryValue";
 import { QueryVariable } from "./QueryVariable";
 
-describe( module( "carbonldp/QueryDocument" ), ():void => {
+describe( module( "carbonldp/QueryDocuments" ), ():void => {
 
 	it( "should exists", ():void => {
 		expect( QueryDocument ).toBeDefined();
@@ -37,17 +37,17 @@ describe( module( "carbonldp/QueryDocument" ), ():void => {
 
 	it( reexports(
 		INSTANCE,
-		"PartialMetadata",
-		"CarbonLDP.QueryDocument.PartialMetadata"
+		"QueryableMetadata",
+		"CarbonLDP.QueryDocuments.QueryableMetadata"
 	), ():void => {
-		expect( QueryDocument.PartialMetadata ).toBeDefined();
-		expect( QueryDocument.PartialMetadata ).toBe( PartialMetadata );
+		expect( QueryDocument.QueryableMetadata ).toBeDefined();
+		expect( QueryDocument.QueryableMetadata ).toBe( QueryableMetadata );
 	} );
 
 	it( reexports(
 		INSTANCE,
 		"QueryContext",
-		"CarbonLDP.QueryDocument.QueryContext"
+		"CarbonLDP.QueryDocuments.QueryContext"
 	), ():void => {
 		expect( QueryDocument.QueryContext ).toBeDefined();
 		expect( QueryDocument.QueryContext ).toBe( QueryContext );
@@ -56,7 +56,7 @@ describe( module( "carbonldp/QueryDocument" ), ():void => {
 	it( reexports(
 		INSTANCE,
 		"QueryContextBuilder",
-		"CarbonLDP.QueryDocument.QueryContextBuilder"
+		"CarbonLDP.QueryDocuments.QueryContextBuilder"
 	), ():void => {
 		expect( QueryDocument.QueryContextBuilder ).toBeDefined();
 		expect( QueryDocument.QueryContextBuilder ).toBe( QueryContextBuilder );
@@ -65,7 +65,7 @@ describe( module( "carbonldp/QueryDocument" ), ():void => {
 	it( reexports(
 		INSTANCE,
 		"QueryContextPartial",
-		"CarbonLDP.QueryDocument.QueryContextPartial"
+		"CarbonLDP.QueryDocuments.QueryContextPartial"
 	), ():void => {
 		expect( QueryDocument.QueryContextPartial ).toBeDefined();
 		expect( QueryDocument.QueryContextPartial ).toBe( QueryContextPartial );
@@ -74,7 +74,7 @@ describe( module( "carbonldp/QueryDocument" ), ():void => {
 	it( reexports(
 		INSTANCE,
 		"QueryDocumentBuilder",
-		"CarbonLDP.QueryDocument.QueryDocumentBuilder"
+		"CarbonLDP.QueryDocuments.QueryDocumentBuilder"
 	), ():void => {
 		expect( QueryDocument.QueryDocumentBuilder ).toBeDefined();
 		expect( QueryDocument.QueryDocumentBuilder ).toBe( QueryDocumentBuilder );
@@ -83,7 +83,7 @@ describe( module( "carbonldp/QueryDocument" ), ():void => {
 	it( reexports(
 		INSTANCE,
 		"QueryDocumentsBuilderOrderData",
-		"CarbonLDP.QueryDocument.QueryDocumentsBuilderOrderData"
+		"CarbonLDP.QueryDocuments.QueryDocumentsBuilderOrderData"
 	), ():void => {
 		const target:QueryDocument.QueryDocumentsBuilderOrderData = {} as QueryDocumentsBuilderOrderData;
 		expect( target ).toBeDefined();
@@ -92,7 +92,7 @@ describe( module( "carbonldp/QueryDocument" ), ():void => {
 	it( reexports(
 		INSTANCE,
 		"QueryDocumentDocument",
-		"CarbonLDP.QueryDocument.QueryDocumentDocument"
+		"CarbonLDP.QueryDocuments.QueryDocumentDocument"
 	), ():void => {
 		expect( QueryDocument.QueryDocumentDocument ).toBeDefined();
 		expect( QueryDocument.QueryDocumentDocument ).toBe( QueryDocumentDocument );
@@ -101,7 +101,7 @@ describe( module( "carbonldp/QueryDocument" ), ():void => {
 	it( reexports(
 		INSTANCE,
 		"QueryDocumentsBuilder",
-		"CarbonLDP.QueryDocument.QueryDocumentsBuilder"
+		"CarbonLDP.QueryDocuments.QueryDocumentsBuilder"
 	), ():void => {
 		expect( QueryDocument.QueryDocumentsBuilder ).toBeDefined();
 		expect( QueryDocument.QueryDocumentsBuilder ).toBe( QueryDocumentsBuilder );
@@ -110,7 +110,7 @@ describe( module( "carbonldp/QueryDocument" ), ():void => {
 	it( reexports(
 		INSTANCE,
 		"QueryMetadata",
-		"CarbonLDP.QueryDocument.QueryMetadata"
+		"CarbonLDP.QueryDocuments.QueryMetadata"
 	), ():void => {
 		expect( QueryDocument.QueryMetadata ).toBeDefined();
 		expect( QueryDocument.QueryMetadata ).toBe( QueryMetadata );
@@ -119,7 +119,7 @@ describe( module( "carbonldp/QueryDocument" ), ():void => {
 	it( reexports(
 		INSTANCE,
 		"QueryMetadataFactory",
-		"CarbonLDP.QueryDocument.QueryMetadataFactory"
+		"CarbonLDP.QueryDocuments.QueryMetadataFactory"
 	), ():void => {
 		const target:QueryDocument.QueryMetadataFactory = {} as QueryMetadataFactory;
 		expect( target ).toBeDefined();
@@ -128,7 +128,7 @@ describe( module( "carbonldp/QueryDocument" ), ():void => {
 	it( reexports(
 		INSTANCE,
 		"QueryObject",
-		"CarbonLDP.QueryDocument.QueryObject"
+		"CarbonLDP.QueryDocuments.QueryObject"
 	), ():void => {
 		expect( QueryDocument.QueryObject ).toBeDefined();
 		expect( QueryDocument.QueryObject ).toBe( QueryObject );
@@ -137,7 +137,7 @@ describe( module( "carbonldp/QueryDocument" ), ():void => {
 	it( reexports(
 		INSTANCE,
 		"QueryProperty",
-		"CarbonLDP.QueryDocument.QueryProperty"
+		"CarbonLDP.QueryDocuments.QueryProperty"
 	), ():void => {
 		expect( QueryDocument.QueryProperty ).toBeDefined();
 		expect( QueryDocument.QueryProperty ).toBe( QueryProperty );
@@ -146,7 +146,7 @@ describe( module( "carbonldp/QueryDocument" ), ():void => {
 	it( reexports(
 		INSTANCE,
 		"QueryPropertyType",
-		"CarbonLDP.QueryDocument.QueryPropertyType"
+		"CarbonLDP.QueryDocuments.QueryPropertyType"
 	), ():void => {
 		expect( QueryDocument.QueryPropertyType ).toBeDefined();
 		expect( QueryDocument.QueryPropertyType ).toBe( QueryPropertyType );
@@ -155,7 +155,7 @@ describe( module( "carbonldp/QueryDocument" ), ():void => {
 	it( reexports(
 		INSTANCE,
 		"QuerySchema",
-		"CarbonLDP.QueryDocument.QuerySchema"
+		"CarbonLDP.QueryDocuments.QuerySchema"
 	), ():void => {
 		const target:QueryDocument.QuerySchema = {} as QuerySchema;
 		expect( target ).toBeDefined();
@@ -164,7 +164,7 @@ describe( module( "carbonldp/QueryDocument" ), ():void => {
 	it( reexports(
 		INSTANCE,
 		"QuerySchemaProperty",
-		"CarbonLDP.QueryDocument.QuerySchemaProperty"
+		"CarbonLDP.QueryDocuments.QuerySchemaProperty"
 	), ():void => {
 		const target:QueryDocument.QuerySchemaProperty = {} as QuerySchemaProperty;
 		expect( target ).toBeDefined();
@@ -173,7 +173,7 @@ describe( module( "carbonldp/QueryDocument" ), ():void => {
 	it( reexports(
 		INSTANCE,
 		"QueryValue",
-		"CarbonLDP.QueryDocument.QueryValue"
+		"CarbonLDP.QueryDocuments.QueryValue"
 	), ():void => {
 		expect( QueryDocument.QueryValue ).toBeDefined();
 		expect( QueryDocument.QueryValue ).toBe( QueryValue );
@@ -182,7 +182,7 @@ describe( module( "carbonldp/QueryDocument" ), ():void => {
 	it( reexports(
 		INSTANCE,
 		"QueryVariable",
-		"CarbonLDP.QueryDocument.QueryVariable"
+		"CarbonLDP.QueryDocuments.QueryVariable"
 	), ():void => {
 		expect( QueryDocument.QueryVariable ).toBeDefined();
 		expect( QueryDocument.QueryVariable ).toBe( QueryVariable );

@@ -13,14 +13,14 @@ import {
 import * as Module from "./QueryVariable";
 import { QueryVariable } from "./QueryVariable";
 
-describe( module( "carbonldp/QueryDocument/QueryVariable" ), ():void => {
+describe( module( "carbonldp/QueryDocuments/QueryVariable" ), ():void => {
 
 	it( "should exists", ():void => {
 		expect( Module ).toBeDefined();
 		expect( Module ).toEqual( jasmine.any( Object ) );
 	} );
 
-	describe( clazz( "CarbonLDP.QueryDocument.QueryVariable", "Class that represents a property in the query" ), ():void => {
+	describe( clazz( "CarbonLDP.QueryDocuments.QueryVariable", "Class that represents a property in the query" ), ():void => {
 
 		it( "should exists", ():void => {
 			expect( QueryVariable ).toBeDefined();

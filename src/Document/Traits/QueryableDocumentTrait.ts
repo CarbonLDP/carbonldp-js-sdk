@@ -1,14 +1,15 @@
 import { QueryableDocumentsRepositoryTrait } from "../../DocumentsRepository/Traits/QueryableDocumentsRepositoryTrait";
 
+import { _parseURIParams } from "../../DocumentsRepository/Utils";
+
 import { GETOptions, RequestOptions } from "../../HTTP/Request";
 
 import { ModelDecorator } from "../../Model/ModelDecorator";
 import { ModelPrototype } from "../../Model/ModelPrototype";
 
-import { QueryDocumentBuilder } from "../../QueryDocument/QueryDocumentBuilder";
-import { QueryDocumentsBuilder } from "../../QueryDocument/QueryDocumentsBuilder";
-
-import { _parseURIParams } from "../../DocumentsRepository/Utils";
+import { QueryablePointer } from "../../QueryDocuments/QueryablePointer";
+import { QueryDocumentBuilder } from "../../QueryDocuments/QueryDocumentBuilder";
+import { QueryDocumentsBuilder } from "../../QueryDocuments/QueryDocumentsBuilder";
 
 import { Document } from "../Document";
 import { LDPDocumentTrait } from "./LDPDocumentTrait";
@@ -18,7 +19,7 @@ export interface BaseQueryableDocumentTrait {
 	$repository:QueryableDocumentsRepositoryTrait;
 }
 
-export interface QueryableDocumentTrait extends LDPDocumentTrait {
+export interface QueryableDocumentTrait extends LDPDocumentTrait, QueryablePointer {
 	$repository:QueryableDocumentsRepositoryTrait;
 
 
@@ -67,7 +68,7 @@ type ForcesOverloadedMembers = {
 };
 
 export type QueryableDocumentTraitFactory =
-	& ModelPrototype<QueryableDocumentTrait, LDPDocumentTrait>
+	& ModelPrototype<QueryableDocumentTrait, LDPDocumentTrait & QueryablePointer>
 	& ModelDecorator<QueryableDocumentTrait, BaseQueryableDocumentTrait>
 	;
 
@@ -115,8 +116,8 @@ export const QueryableDocumentTrait:QueryableDocumentTraitFactory = {
 		type ForcedT = T & ForcesOverloadedMembers;
 		const forced:ForcedT = object as ForcedT;
 
-		const target:ForcedT & LDPDocumentTrait = ModelDecorator
-			.decorateMultiple( forced, LDPDocumentTrait );
+		const target:ForcedT & LDPDocumentTrait & QueryablePointer = ModelDecorator
+			.decorateMultiple( forced, LDPDocumentTrait, QueryablePointer );
 
 		return ModelDecorator
 			.definePropertiesFrom( QueryableDocumentTrait.PROTOTYPE, target );

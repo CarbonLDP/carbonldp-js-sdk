@@ -1,22 +1,16 @@
-import {
-	ModelDecorator,
-	ModelFactory,
-	ModelPrototype,
-	ModelTypeGuard
-} from "../Model";
-import { Pointer } from "../Pointer";
-import { PartialMetadata } from "../QueryDocument";
-import {
-	isFunction,
-	isObject,
-	ObjectUtils
-} from "../Utils";
+import { _parseResourceParams, _parseURIParams } from "../DocumentsRepository/Utils";
+import { IllegalArgumentError } from "../Errors/IllegalArgumentError";
+
+import { ModelDecorator } from "../Model/ModelDecorator";
+import { ModelPrototype } from "../Model/ModelPrototype";
+import { ModelTypeGuard } from "../Model/ModelTypeGuard";
+
+import { Pointer } from "../Pointer/Pointer";
+
+import { isFunction, isObject, ObjectUtils } from "../Utils";
+
 import { BaseResolvablePointer } from "./BaseResolvablePointer";
 import { Repository } from "./Repository";
-import {
-	_parseResourceParams,
-	_parseURIParams
-} from "../DocumentsRepository/Utils";
 
 
 export interface ResolvablePointer extends Pointer, Repository {
@@ -25,8 +19,6 @@ export interface ResolvablePointer extends Pointer, Repository {
 
 	_resolved:boolean;
 	_snapshot:object;
-
-	__partialMetadata:PartialMetadata | undefined;
 
 
 	isResolved():boolean;
@@ -37,9 +29,6 @@ export interface ResolvablePointer extends Pointer, Repository {
 	isDirty():boolean;
 
 	revert():void;
-
-
-	isQueried():boolean;
 
 
 	get( ...params:any[] ):Promise<ResolvablePointer>;
@@ -90,14 +79,17 @@ function __internalRevert( target:any, source:any ):void {
 
 
 export type ResolvablePointerFactory =
-	& ModelPrototype<ResolvablePointer, Pointer & BaseResolvablePointer>
+	& ModelPrototype<ResolvablePointer, Pointer>
 	& ModelDecorator<ResolvablePointer, BaseResolvablePointer>
 	& ModelTypeGuard<ResolvablePointer>
-	& ModelFactory<ResolvablePointer, BaseResolvablePointer>
 	;
 
 export const ResolvablePointer:ResolvablePointerFactory = {
 	PROTOTYPE: {
+		get $repository():Repository {
+			throw new IllegalArgumentError( `Property "$repository" is required.` );
+		},
+
 		$eTag: void 0,
 
 
@@ -112,7 +104,7 @@ export const ResolvablePointer:ResolvablePointerFactory = {
 
 		_syncSnapshot( this:{ types?:string[] } & ResolvablePointer ):void {
 			const clone:{ types?:string[] } & ResolvablePointer = ObjectUtils.clone( this, { arrays: true } );
-			if( clone.types ) clone.types = [ ...this.types ];
+			if( this.types ) clone.types = [ ...this.types ];
 
 			this._snapshot = clone;
 		},
@@ -125,13 +117,6 @@ export const ResolvablePointer:ResolvablePointerFactory = {
 		revert( this:{ types?:string[] } & ResolvablePointer ):void {
 			__internalRevert( this, this._snapshot );
 			if( ! this.types ) this.types = [];
-		},
-
-
-		__partialMetadata: void 0,
-
-		isQueried( this:ResolvablePointer ):boolean {
-			return ! ! this.__partialMetadata;
 		},
 
 
@@ -195,15 +180,5 @@ export const ResolvablePointer:ResolvablePointerFactory = {
 		return Pointer.is( value )
 			&& ResolvablePointer.isDecorated( value )
 			;
-	},
-
-
-	create<T extends object>( data:T & BaseResolvablePointer ):T & ResolvablePointer {
-		// FIXME
-		return ResolvablePointer.createFrom( { ...data as any } );
-	},
-
-	createFrom<T extends object>( object:T & BaseResolvablePointer ):T & ResolvablePointer {
-		return ResolvablePointer.decorate( object );
 	},
 };

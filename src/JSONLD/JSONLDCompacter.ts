@@ -9,11 +9,11 @@ import {
 	PointerLibrary,
 } from "../Pointer";
 import {
-	PartialMetadata,
+	QueryableMetadata,
 	QueryContextBuilder,
 	QueryPropertyType,
-} from "../QueryDocument";
-import { QueryContextPartial } from "../QueryDocument/";
+} from "../QueryDocuments";
+import { QueryContextPartial } from "../QueryDocuments/";
 import {
 	RDFDocument,
 	RDFNode,
@@ -205,7 +205,7 @@ export class JSONLDCompacter {
 	private _setOrRemovePartial( resource:ResolvablePointer, schema:DigestedObjectSchema, path:string ):boolean {
 		if( this._willBePartial( resource, schema, path ) ) return true;
 
-		if( resource.__partialMetadata ) delete resource.__partialMetadata;
+		if( resource._queryableMetadata ) delete resource._queryableMetadata;
 		return false;
 	}
 
@@ -218,9 +218,9 @@ export class JSONLDCompacter {
 
 		if( type !== QueryPropertyType.PARTIAL && type !== QueryPropertyType.ALL ) return false;
 
-		resource.__partialMetadata = new PartialMetadata(
-			type === QueryPropertyType.ALL ? PartialMetadata.ALL : schema,
-			resource.__partialMetadata
+		resource._queryableMetadata = new QueryableMetadata(
+			type === QueryPropertyType.ALL ? QueryableMetadata.ALL : schema,
+			resource._queryableMetadata
 		);
 		return true;
 	}

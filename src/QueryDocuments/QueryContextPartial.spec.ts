@@ -1,6 +1,6 @@
 import {
 	createMockDocument,
-	createMockPartialMetadata
+	createMockQueryableMetadata
 } from "../../test/helpers/mocks";
 import { AbstractContext } from "../Context";
 import { Document } from "../Document";
@@ -20,14 +20,14 @@ import { QueryContext } from "./QueryContext";
 import * as Module from "./QueryContextPartial";
 import { QueryContextPartial } from "./QueryContextPartial";
 
-describe( module( "carbonldp/QueryDocument/QueryContextPartial" ), ():void => {
+describe( module( "carbonldp/QueryDocuments/QueryContextPartial" ), ():void => {
 
 	it( "should exists", ():void => {
 		expect( Module ).toBeDefined();
 		expect( Module ).toEqual( jasmine.any( Object ) );
 	} );
 
-	describe( clazz( "CarbonLDP.QueryDocument.QueryContextPartial", "Class with the shared status and data of the query." ), ():void => {
+	describe( clazz( "CarbonLDP.QueryDocuments.QueryContextPartial", "Class with the shared status and data of the query." ), ():void => {
 
 		it( "should exists", ():void => {
 			expect( QueryContextPartial ).toBeDefined();
@@ -41,7 +41,7 @@ describe( module( "carbonldp/QueryDocument/QueryContextPartial" ), ():void => {
 
 			persistedDocument = createMockDocument( {
 				_registry: context.registry,
-				_partialMetadata: createMockPartialMetadata( {
+				_partialMetadata: createMockQueryableMetadata( {
 					"documentProperty": {
 						"@id": "https://example.com/ns#document-property",
 					},
@@ -68,7 +68,7 @@ describe( module( "carbonldp/QueryDocument/QueryContextPartial" ), ():void => {
 
 		} );
 
-		it( extendsClass( "CarbonLDP.QueryDocument.QueryContext" ), ():void => {
+		it( extendsClass( "CarbonLDP.QueryDocuments.QueryContext" ), ():void => {
 			const queryContext:QueryContextPartial = new QueryContextPartial( persistedDocument, context );
 			expect( queryContext ).toEqual( jasmine.any( QueryContext ) );
 		} );
@@ -96,7 +96,7 @@ describe( module( "carbonldp/QueryDocument/QueryContextPartial" ), ():void => {
 
 				const helper:( name:string ) => void = name => {
 					const returnedValue:any = queryContext.getSchemaFor( {}, name );
-					expect( returnedValue ).toBe( persistedDocument.__partialMetadata.schema );
+					expect( returnedValue ).toBe( persistedDocument._queryableMetadata.schema );
 				};
 
 				helper( "document" );
@@ -107,7 +107,7 @@ describe( module( "carbonldp/QueryDocument/QueryContextPartial" ), ():void => {
 			it( "should return the schema of a document property", ():void => {
 				const queryContext:QueryContextPartial = new QueryContextPartial( persistedDocument, context );
 				const fragment:PersistedResource = persistedDocument._addPointer( PersistedResource.decorate( {
-					_partialMetadata: createMockPartialMetadata( {
+					_partialMetadata: createMockQueryableMetadata( {
 						"fragmentProperty": {
 							"@id": "https://example.com/ns#fragment-property",
 						},

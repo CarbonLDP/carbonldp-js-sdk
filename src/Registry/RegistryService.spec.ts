@@ -1,7 +1,7 @@
 import { anyThatMatches } from "../../test/helpers/jasmine/equalities";
 import {
 	createMockContext,
-	createMockPartialMetadata
+	createMockQueryableMetadata
 } from "../../test/helpers/mocks";
 import { AbstractContext } from "../Context/AbstractContext";
 import { ModelDecorator } from "../Model";
@@ -582,7 +582,7 @@ describe( module( "carbonldp/Registry" ), () => {
 
 				const resource:object = PersistedResource.decorate( {
 					types: [ "Type-1" ],
-					_partialMetadata: createMockPartialMetadata( {
+					_partialMetadata: createMockQueryableMetadata( {
 						"inPartial": {},
 					} ),
 				} );

@@ -19,7 +19,7 @@ import {
 	VariableToken
 } from "sparqler/tokens";
 import {
-	createMockPartialMetadata,
+	createMockQueryableMetadata,
 	defineNonEnumerableProps
 } from "../../test/helpers/mocks";
 import { CarbonLDP } from "../CarbonLDP";
@@ -54,14 +54,14 @@ import {
 	LDP,
 	XSD
 } from "../Vocabularies";
-import { PartialMetadata } from "./PartialMetadata";
+import { QueryableMetadata } from "./QueryableMetadata";
 import { QueryDocumentDocument } from "./QueryDocumentDocument";
 
 
 function createMock<T extends object>( data?:T & Partial<QueryDocumentDocument> ):T & QueryDocumentDocument {
 	const mock:T & QueryDocumentDocument = QueryDocumentDocument.decorate( Object.assign( {
 		_registry: new DocumentsRegistry(),
-		_partialMetadata: createMockPartialMetadata( {} ),
+		_partialMetadata: createMockQueryableMetadata( {} ),
 		id: "https://example.com/",
 	}, data ) );
 
@@ -79,10 +79,10 @@ const variableHelper:( name:string ) => VariableToken = name => {
 };
 
 
-describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => {
+describe( module( "carbonldp/QueryDocuments/QueryDocumentDocument" ), ():void => {
 
 	describe( interfaze(
-		"CarbonLDP.QueryDocument.QueryDocumentDocument",
+		"CarbonLDP.QueryDocuments.QueryDocumentDocument",
 		"Document that contains the methods supported by the querying features."
 	), ():void => {
 
@@ -106,7 +106,7 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 				[ "T extends object" ],
 				"Retrieves the specified properties and sub-properties of the document specified by the function provided.",
 				[
-					{ name: "queryBuilderFn", type: "( queryBuilder:CarbonLDP.QueryDocument.QueryDocumentBuilder ) => CarbonLDP.QueryDocument.QueryDocumentBuilder", description: "Function that receives a the builder that helps you to construct the retrieval query.\nThe same builder must be returned." },
+					{ name: "queryBuilderFn", type: "( queryBuilder:CarbonLDP.QueryDocuments.QueryDocumentBuilder ) => CarbonLDP.QueryDocuments.QueryDocumentBuilder", description: "Function that receives a the builder that helps you to construct the retrieval query.\nThe same builder must be returned." },
 				],
 				{ type: "Promise<T & CarbonLDP.Document>" }
 			), ():void => {} );
@@ -116,7 +116,7 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 				"Retrieves the specified properties and sub-properties of the document specified by the function provided.",
 				[
 					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", description: "Customizable options for the request." },
-					{ name: "queryBuilderFn", type: "( queryBuilder:CarbonLDP.QueryDocument.QueryDocumentBuilder ) => CarbonLDP.QueryDocument.QueryDocumentBuilder", description: "Function that receives a the builder that helps you to construct the retrieval query.\nThe same builder must be returned." },
+					{ name: "queryBuilderFn", type: "( queryBuilder:CarbonLDP.QueryDocuments.QueryDocumentBuilder ) => CarbonLDP.QueryDocuments.QueryDocumentBuilder", description: "Function that receives a the builder that helps you to construct the retrieval query.\nThe same builder must be returned." },
 				],
 				{ type: "Promise<T & CarbonLDP.Document>" }
 			), ():void => {} );
@@ -126,7 +126,7 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 				"Retrieves the specified properties and sub-properties of the URI specified by the function provided.",
 				[
 					{ name: "uri", type: "string", description: "The URI of the document to query." },
-					{ name: "queryBuilderFn", type: "( queryBuilder:CarbonLDP.QueryDocument.QueryDocumentBuilder ) => CarbonLDP.QueryDocument.QueryDocumentBuilder", description: "Function that receives a the builder that helps you to construct the retrieval query.\nThe same builder must be returned." },
+					{ name: "queryBuilderFn", type: "( queryBuilder:CarbonLDP.QueryDocuments.QueryDocumentBuilder ) => CarbonLDP.QueryDocuments.QueryDocumentBuilder", description: "Function that receives a the builder that helps you to construct the retrieval query.\nThe same builder must be returned." },
 				],
 				{ type: "Promise<T & CarbonLDP.Document>" }
 			), ():void => {} );
@@ -137,7 +137,7 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 				[
 					{ name: "uri", type: "string", description: "The URI of the document to query." },
 					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", description: "Customizable options for the request." },
-					{ name: "queryBuilderFn", type: "( queryBuilder:CarbonLDP.QueryDocument.QueryDocumentBuilder ) => CarbonLDP.QueryDocument.QueryDocumentBuilder", description: "Function that receives a the builder that helps you to construct the retrieval query.\nThe same builder must be returned." },
+					{ name: "queryBuilderFn", type: "( queryBuilder:CarbonLDP.QueryDocuments.QueryDocumentBuilder ) => CarbonLDP.QueryDocuments.QueryDocumentBuilder", description: "Function that receives a the builder that helps you to construct the retrieval query.\nThe same builder must be returned." },
 				],
 				{ type: "Promise<T & CarbonLDP.Document>" }
 			), ():void => {} );
@@ -1061,7 +1061,7 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 						} )
 					);
 
-					expect( returned.__partialMetadata ).toEqual( jasmine.any( PartialMetadata ) );
+					expect( returned.__partialMetadata ).toEqual( jasmine.any( QueryableMetadata ) );
 					expect( returned.__partialMetadata.schema ).toEqual( ObjectSchemaDigester.digestSchema( {
 						"property1": {
 							"@id": "https://example.com/ns#property-1",
@@ -1073,7 +1073,7 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 						},
 					} ) );
 
-					expect( returned.property2.__partialMetadata ).toEqual( jasmine.any( PartialMetadata ) );
+					expect( returned.property2.__partialMetadata ).toEqual( jasmine.any( QueryableMetadata ) );
 					expect( returned.property2.__partialMetadata.schema ).toEqual( ObjectSchemaDigester.digestSchema( {
 						"property2": {
 							"@id": "https://example.com/ns#property-2",
@@ -1173,7 +1173,7 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 					);
 
 
-					expect( returned.__partialMetadata ).toEqual( jasmine.any( PartialMetadata ) );
+					expect( returned.__partialMetadata ).toEqual( jasmine.any( QueryableMetadata ) );
 					expect( returned.__partialMetadata.schema ).toEqual( ObjectSchemaDigester.digestSchema( {
 						"property1": {
 							"@id": "https://example.com/ns#property-1",
@@ -1185,7 +1185,7 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 						},
 					} ) );
 
-					expect( returned.property2.__partialMetadata ).toEqual( jasmine.any( PartialMetadata ) );
+					expect( returned.property2.__partialMetadata ).toEqual( jasmine.any( QueryableMetadata ) );
 					expect( returned.property2.__partialMetadata.schema ).toEqual( ObjectSchemaDigester.digestSchema( {
 						"property2": {
 							"@id": "https://example.com/ns#property-2",
@@ -1255,7 +1255,7 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 					resource = createMock( {
 						$registry: context.registry,
 
-						__partialMetadata: createMockPartialMetadata( {
+						__partialMetadata: createMockQueryableMetadata( {
 							"@vocab": "https://example.com/ns#",
 							"property4": {
 								"@id": "property-4",
@@ -1275,7 +1275,7 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 						property4: true,
 						property1: "value",
 						property2: {
-							_partialMetadata: createMockPartialMetadata( {
+							_partialMetadata: createMockQueryableMetadata( {
 								"@vocab": "https://example.com/ns#",
 								"property3": {
 									"@id": "https://schema.org/property-3",
@@ -1358,7 +1358,7 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 					resource = createMock( {
 						$registry: context.registry,
 
-						__partialMetadata: createMockPartialMetadata( {
+						__partialMetadata: createMockQueryableMetadata( {
 							"@vocab": "https://example.com/ns#",
 							"property2": {
 								"@id": "https://schema.org/property-2",
@@ -1372,7 +1372,7 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 						$id: "https://example.com/",
 
 						property2: {
-							_partialMetadata: createMockPartialMetadata( {
+							_partialMetadata: createMockQueryableMetadata( {
 								"@vocab": "https://example.com/ns#",
 								"property3": {
 									"@id": "https://schema.org/property-3",
@@ -1469,7 +1469,7 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 						} )
 					);
 
-					expect( returned.__partialMetadata ).toEqual( jasmine.any( PartialMetadata ) );
+					expect( returned.__partialMetadata ).toEqual( jasmine.any( QueryableMetadata ) );
 					expect( returned.__partialMetadata.schema ).toEqual( ObjectSchema.ObjectSchemaDigester.digestSchema( {
 						"property4": {
 							"@id": "https://example.com/ns#property-4",
@@ -1485,7 +1485,7 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 						},
 					} ) );
 
-					expect( returned.property2.__partialMetadata ).toEqual( jasmine.any( PartialMetadata ) );
+					expect( returned.property2.__partialMetadata ).toEqual( jasmine.any( QueryableMetadata ) );
 					expect( returned.property2.__partialMetadata.schema ).toEqual( ObjectSchema.ObjectSchemaDigester.digestSchema( {
 						"property3": {
 							"@id": "https://schema.org/property-3",
@@ -1512,7 +1512,7 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 				[ "T extends object" ],
 				"Resolves the specified properties and sub-properties of the document specified by the function provided.",
 				[
-					{ name: "queryBuilderFn", type: "( queryBuilder:CarbonLDP.QueryDocument.QueryDocumentBuilder ) => CarbonLDP.QueryDocument.QueryDocumentBuilder", description: "Function that receives a the builder that helps you to construct the retrieval query.\nThe same builder must be returned." },
+					{ name: "queryBuilderFn", type: "( queryBuilder:CarbonLDP.QueryDocuments.QueryDocumentBuilder ) => CarbonLDP.QueryDocuments.QueryDocumentBuilder", description: "Function that receives a the builder that helps you to construct the retrieval query.\nThe same builder must be returned." },
 				],
 				{ type: "Promise<T & CarbonLDP.Document>" }
 			), ():void => {} );
@@ -1522,7 +1522,7 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 				"Resolves the specified properties and sub-properties of the document specified by the function provided.",
 				[
 					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", description: "Customizable options for the request." },
-					{ name: "queryBuilderFn", type: "( queryBuilder:CarbonLDP.QueryDocument.QueryDocumentBuilder ) => CarbonLDP.QueryDocument.QueryDocumentBuilder", description: "Function that receives a the builder that helps you to construct the retrieval query.\nThe same builder must be returned." },
+					{ name: "queryBuilderFn", type: "( queryBuilder:CarbonLDP.QueryDocuments.QueryDocumentBuilder ) => CarbonLDP.QueryDocuments.QueryDocumentBuilder", description: "Function that receives a the builder that helps you to construct the retrieval query.\nThe same builder must be returned." },
 				],
 				{ type: "Promise<T & CarbonLDP.Document>" }
 			), ():void => {} );
@@ -2283,7 +2283,7 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 						} )
 					);
 
-					expect( returned.__partialMetadata ).toEqual( jasmine.any( PartialMetadata ) );
+					expect( returned.__partialMetadata ).toEqual( jasmine.any( QueryableMetadata ) );
 					expect( returned.__partialMetadata.schema ).toEqual( ObjectSchemaDigester.digestSchema( {
 						"property1": {
 							"@id": "https://example.com/ns#property-1",
@@ -2295,7 +2295,7 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 						},
 					} ) );
 
-					expect( returned.property2.__partialMetadata ).toEqual( jasmine.any( PartialMetadata ) );
+					expect( returned.property2.__partialMetadata ).toEqual( jasmine.any( QueryableMetadata ) );
 					expect( returned.property2.__partialMetadata.schema ).toEqual( ObjectSchemaDigester.digestSchema( {
 						"property2": {
 							"@id": "https://example.com/ns#property-2",
@@ -2395,7 +2395,7 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 					);
 
 
-					expect( returned.__partialMetadata ).toEqual( jasmine.any( PartialMetadata ) );
+					expect( returned.__partialMetadata ).toEqual( jasmine.any( QueryableMetadata ) );
 					expect( returned.__partialMetadata.schema ).toEqual( ObjectSchemaDigester.digestSchema( {
 						"property1": {
 							"@id": "https://example.com/ns#property-1",
@@ -2407,7 +2407,7 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 						},
 					} ) );
 
-					expect( returned.property2.__partialMetadata ).toEqual( jasmine.any( PartialMetadata ) );
+					expect( returned.property2.__partialMetadata ).toEqual( jasmine.any( QueryableMetadata ) );
 					expect( returned.property2.__partialMetadata.schema ).toEqual( ObjectSchemaDigester.digestSchema( {
 						"property2": {
 							"@id": "https://example.com/ns#property-2",
@@ -2477,7 +2477,7 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 					resource = createMock( {
 						$registry: context.registry,
 
-						__partialMetadata: createMockPartialMetadata( {
+						__partialMetadata: createMockQueryableMetadata( {
 							"@vocab": "https://example.com/ns#",
 							"property4": {
 								"@id": "property-4",
@@ -2497,7 +2497,7 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 						property4: true,
 						property1: "value",
 						property2: {
-							_partialMetadata: createMockPartialMetadata( {
+							_partialMetadata: createMockQueryableMetadata( {
 								"@vocab": "https://example.com/ns#",
 								"property3": {
 									"@id": "https://schema.org/property-3",
@@ -2580,7 +2580,7 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 					resource = createMock( {
 						$registry: context.registry,
 
-						__partialMetadata: createMockPartialMetadata( {
+						__partialMetadata: createMockQueryableMetadata( {
 							"@vocab": "https://example.com/ns#",
 							"property2": {
 								"@id": "https://schema.org/property-2",
@@ -2594,7 +2594,7 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 						$id: "https://example.com/",
 
 						property2: {
-							_partialMetadata: createMockPartialMetadata( {
+							_partialMetadata: createMockQueryableMetadata( {
 								"@vocab": "https://example.com/ns#",
 								"property3": {
 									"@id": "https://schema.org/property-3",
@@ -2691,7 +2691,7 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 						} )
 					);
 
-					expect( returned.__partialMetadata ).toEqual( jasmine.any( PartialMetadata ) );
+					expect( returned.__partialMetadata ).toEqual( jasmine.any( QueryableMetadata ) );
 					expect( returned.__partialMetadata.schema ).toEqual( ObjectSchema.ObjectSchemaDigester.digestSchema( {
 						"property4": {
 							"@id": "https://example.com/ns#property-4",
@@ -2707,7 +2707,7 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 						},
 					} ) );
 
-					expect( returned.property2.__partialMetadata ).toEqual( jasmine.any( PartialMetadata ) );
+					expect( returned.property2.__partialMetadata ).toEqual( jasmine.any( QueryableMetadata ) );
 					expect( returned.property2.__partialMetadata.schema ).toEqual( ObjectSchema.ObjectSchemaDigester.digestSchema( {
 						"property3": {
 							"@id": "https://schema.org/property-3",
@@ -2874,7 +2874,7 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 					resource = createMock( {
 						$registry: context.registry,
 
-						__partialMetadata: createMockPartialMetadata( {
+						__partialMetadata: createMockQueryableMetadata( {
 							"@vocab": "https://example.com/ns#",
 							"property4": {
 								"@id": "https://example.com/ns#property-4",
@@ -2892,7 +2892,7 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 						$id: "https://example.com/",
 
 						property2: {
-							_partialMetadata: createMockPartialMetadata( {
+							_partialMetadata: createMockQueryableMetadata( {
 								"@vocab": "https://example.com/ns#",
 								"property3": {
 									"@id": "https://schema.org/property-3",
@@ -2985,7 +2985,7 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 					resource = createMock( {
 						$registry: context.registry,
 
-						__partialMetadata: createMockPartialMetadata( {
+						__partialMetadata: createMockQueryableMetadata( {
 							"@vocab": "https://example.com/ns#",
 							"property4": {
 								"@id": "https://example.com/ns#property-4",
@@ -3003,7 +3003,7 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 						$id: "https://example.com/",
 
 						property2: {
-							_partialMetadata: new PartialMetadata( PartialMetadata.ALL ),
+							_partialMetadata: new QueryableMetadata( QueryableMetadata.ALL ),
 							id: "_:1",
 						},
 					} );
@@ -3114,7 +3114,7 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 					resource = createMock( {
 						$registry: context.registry,
 
-						__partialMetadata: createMockPartialMetadata( {
+						__partialMetadata: createMockQueryableMetadata( {
 							"@vocab": "https://example.com/ns#",
 							"property1": {
 								"@id": "https://example.com/ns#property-1",
@@ -3137,7 +3137,7 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 
 						property2: {
 							id: "_:1",
-							_partialMetadata: createMockPartialMetadata( {
+							_partialMetadata: createMockQueryableMetadata( {
 								"@vocab": "https://example.com/ns#",
 								"property2": {
 									"@id": "https://example.com/ns#property-2",
@@ -4134,7 +4134,7 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 					resource = createMock( {
 						$registry: context.registry,
 
-						__partialMetadata: createMockPartialMetadata( {
+						__partialMetadata: createMockQueryableMetadata( {
 							"@vocab": "https://example.com/ns#",
 							"property4": {
 								"@id": "https://example.com/ns#property-4",
@@ -4152,7 +4152,7 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 						$id: "https://example.com/",
 
 						property2: {
-							_partialMetadata: createMockPartialMetadata( {
+							_partialMetadata: createMockQueryableMetadata( {
 								"@vocab": "https://example.com/ns#",
 								"property3": {
 									"@id": "https://schema.org/property-3",
@@ -4319,7 +4319,7 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 				[ "T extends object" ],
 				"Retrieves the children of the current document, building a query on which one is able to specify the properties to be retrieve and sub-documents' properties and on and on.", [
 					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", description: "Customizable options for the request." },
-					{ name: "queryBuilderFn", type: "( queryBuilder:CarbonLDP.QueryDocument.QueryDocumentsBuilder ) => CarbonLDP.QueryDocument.QueryDocumentsBuilder", optional: true, description: "Function that receives a the builder that helps you to construct the children retrieval query.\nThe same builder must be returned." },
+					{ name: "queryBuilderFn", type: "( queryBuilder:CarbonLDP.QueryDocuments.QueryDocumentsBuilder ) => CarbonLDP.QueryDocuments.QueryDocumentsBuilder", optional: true, description: "Function that receives a the builder that helps you to construct the children retrieval query.\nThe same builder must be returned." },
 				],
 				{ type: "Promise<(T & CarbonLDP.Document)[]>" }
 			), ():void => {} );
@@ -4327,7 +4327,7 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 			it( hasSignature(
 				[ "T extends object" ],
 				"Retrieves the children of the current document, building a query on which one is able to specify the properties to be retrieve and sub-documents' properties and on and on.", [
-					{ name: "queryBuilderFn", type: "( queryBuilder:CarbonLDP.QueryDocument.QueryDocumentsBuilder ) => CarbonLDP.QueryDocument.QueryDocumentsBuilder", optional: true, description: "Function that receives a the builder that helps you to construct the children retrieval query.\nThe same builder must be returned." },
+					{ name: "queryBuilderFn", type: "( queryBuilder:CarbonLDP.QueryDocuments.QueryDocumentsBuilder ) => CarbonLDP.QueryDocuments.QueryDocumentsBuilder", optional: true, description: "Function that receives a the builder that helps you to construct the children retrieval query.\nThe same builder must be returned." },
 				],
 				{ type: "Promise<(T & CarbonLDP.Document)[]>" }
 			), ():void => {} );
@@ -4337,7 +4337,7 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 				"Retrieves the children of the specified URI, building a query on which one is able to specify the properties to be retrieve and sub-documents' properties and on and on.", [
 					{ name: "uri", type: "string", description: "The URI of the document to query." },
 					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", description: "Customizable options for the request." },
-					{ name: "queryBuilderFn", type: "( queryBuilder:CarbonLDP.QueryDocument.QueryDocumentsBuilder ) => CarbonLDP.QueryDocument.QueryDocumentsBuilder", optional: true, description: "Function that receives a the builder that helps you to construct the children retrieval query.\nThe same builder must be returned." },
+					{ name: "queryBuilderFn", type: "( queryBuilder:CarbonLDP.QueryDocuments.QueryDocumentsBuilder ) => CarbonLDP.QueryDocuments.QueryDocumentsBuilder", optional: true, description: "Function that receives a the builder that helps you to construct the children retrieval query.\nThe same builder must be returned." },
 				],
 				{ type: "Promise<(T & CarbonLDP.Document)[]>" }
 			), ():void => {} );
@@ -4346,7 +4346,7 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 				[ "T extends object" ],
 				"Retrieves the children of the specified URI, building a query on which one is able to specify the properties to be retrieve and sub-documents' properties and on and on.", [
 					{ name: "uri", type: "string", description: "The URI of the document to query." },
-					{ name: "queryBuilderFn", type: "( queryBuilder:CarbonLDP.QueryDocument.QueryDocumentsBuilder ) => CarbonLDP.QueryDocument.QueryDocumentsBuilder", optional: true, description: "Function that receives a the builder that helps you to construct the children retrieval query.\nThe same builder must be returned." },
+					{ name: "queryBuilderFn", type: "( queryBuilder:CarbonLDP.QueryDocuments.QueryDocumentsBuilder ) => CarbonLDP.QueryDocuments.QueryDocumentsBuilder", optional: true, description: "Function that receives a the builder that helps you to construct the children retrieval query.\nThe same builder must be returned." },
 				],
 				{ type: "Promise<(T & CarbonLDP.Document)[]>" }
 			), ():void => {} );
@@ -6127,7 +6127,7 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 				"Retrieves the members of the current document, building a query on which one is able to specify the properties to be retrieve and sub-documents' properties and on and on.",
 				[
 					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", description: "Customizable options for the request." },
-					{ name: "queryBuilderFn", type: "( queryBuilder:CarbonLDP.QueryDocument.QueryDocumentsBuilder ) => CarbonLDP.QueryDocument.QueryDocumentsBuilder", optional: true, description: "Function that receives a the builder that helps you to construct the members retrieval query.\nThe same builder must be returned." },
+					{ name: "queryBuilderFn", type: "( queryBuilder:CarbonLDP.QueryDocuments.QueryDocumentsBuilder ) => CarbonLDP.QueryDocuments.QueryDocumentsBuilder", optional: true, description: "Function that receives a the builder that helps you to construct the members retrieval query.\nThe same builder must be returned." },
 				],
 				{ type: "Promise<(T & CarbonLDP.Document)[]>" }
 			), ():void => {} );
@@ -6136,7 +6136,7 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 				[ "T extends object" ],
 				"Retrieves the members of the current document, building a query on which one is able to specify the properties to be retrieve and sub-documents' properties and on and on.",
 				[
-					{ name: "queryBuilderFn", type: "( queryBuilder:CarbonLDP.QueryDocument.QueryDocumentsBuilder ) => CarbonLDP.QueryDocument.QueryDocumentsBuilder", optional: true, description: "Function that receives a the builder that helps you to construct the members retrieval query.\nThe same builder must be returned." },
+					{ name: "queryBuilderFn", type: "( queryBuilder:CarbonLDP.QueryDocuments.QueryDocumentsBuilder ) => CarbonLDP.QueryDocuments.QueryDocumentsBuilder", optional: true, description: "Function that receives a the builder that helps you to construct the members retrieval query.\nThe same builder must be returned." },
 				],
 				{ type: "Promise<(T & CarbonLDP.Document)[]>" }
 			), ():void => {} );
@@ -6147,7 +6147,7 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 				[
 					{ name: "uri", type: "string", description: "The URI of the document to query." },
 					{ name: "requestOptions", type: "CarbonLDP.HTTP.RequestOptions", description: "Customizable options for the request." },
-					{ name: "queryBuilderFn", type: "( queryBuilder:CarbonLDP.QueryDocument.QueryDocumentsBuilder ) => CarbonLDP.QueryDocument.QueryDocumentsBuilder", optional: true, description: "Function that receives a the builder that helps you to construct the members retrieval query.\nThe same builder must be returned." },
+					{ name: "queryBuilderFn", type: "( queryBuilder:CarbonLDP.QueryDocuments.QueryDocumentsBuilder ) => CarbonLDP.QueryDocuments.QueryDocumentsBuilder", optional: true, description: "Function that receives a the builder that helps you to construct the members retrieval query.\nThe same builder must be returned." },
 				],
 				{ type: "Promise<(T & CarbonLDP.Document)[]>" }
 			), ():void => {} );
@@ -6157,7 +6157,7 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentDocument" ), ():void => 
 				"Retrieves the members of the specified URI, building a query on which one is able to specify the properties to be retrieve and sub-documents' properties and on and on.",
 				[
 					{ name: "uri", type: "string", description: "The URI of the document to query." },
-					{ name: "queryBuilderFn", type: "( queryBuilder:CarbonLDP.QueryDocument.QueryDocumentsBuilder ) => CarbonLDP.QueryDocument.QueryDocumentsBuilder", optional: true, description: "Function that receives a the builder that helps you to construct the members retrieval query.\nThe same builder must be returned." },
+					{ name: "queryBuilderFn", type: "( queryBuilder:CarbonLDP.QueryDocuments.QueryDocumentsBuilder ) => CarbonLDP.QueryDocuments.QueryDocumentsBuilder", optional: true, description: "Function that receives a the builder that helps you to construct the members retrieval query.\nThe same builder must be returned." },
 				],
 				{ type: "Promise<(T & CarbonLDP.Document)[]>" }
 			), ():void => {} );

@@ -21,14 +21,14 @@ import { QueryContext } from "./QueryContext";
 
 import { QueryVariable } from "./QueryVariable";
 
-describe( module( "carbonldp/QueryDocument/QueryContext" ), ():void => {
+describe( module( "carbonldp/QueryDocuments/QueryContext" ), ():void => {
 
 	it( "should exists", ():void => {
 		expect( Module ).toBeDefined();
 		expect( Module ).toEqual( jasmine.any( Object ) );
 	} );
 
-	describe( clazz( "CarbonLDP.QueryDocument.QueryContext", "Class with the shared status and data of the query." ), ():void => {
+	describe( clazz( "CarbonLDP.QueryDocuments.QueryContext", "Class with the shared status and data of the query." ), ():void => {
 
 		it( "should exists", ():void => {
 			expect( QueryContext ).toBeDefined();
@@ -75,7 +75,7 @@ describe( module( "carbonldp/QueryDocument/QueryContext" ), ():void => {
 				[
 					{ name: "name", type: "string" },
 				],
-				{ type: "CarbonLDP.QueryDocument.QueryVariable" }
+				{ type: "CarbonLDP.QueryDocuments.QueryVariable" }
 			), ():void => {
 			} );
 

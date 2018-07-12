@@ -39,7 +39,7 @@ import {
 
 import { QueryProperty } from "./QueryProperty";
 
-describe( module( "carbonldp/QueryDocument/QueryDocumentsBuilder" ), ():void => {
+describe( module( "carbonldp/QueryDocuments/QueryDocumentsBuilder" ), ():void => {
 
 	it( "should exists", ():void => {
 		expect( Module ).toBeDefined();
@@ -74,7 +74,7 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentsBuilder" ), ():void => 
 	} );
 
 	describe( clazz(
-		"CarbonLDP.QueryDocument.QueryDocumentsBuilder",
+		"CarbonLDP.QueryDocuments.QueryDocumentsBuilder",
 		"Class with the helpers and properties for construct a query document"
 	), ():void => {
 

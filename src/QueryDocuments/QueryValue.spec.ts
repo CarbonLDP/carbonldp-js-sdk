@@ -20,14 +20,14 @@ import { QueryContext } from "./QueryContext";
 import * as Module from "./QueryValue";
 import { QueryValue } from "./QueryValue";
 
-describe( module( "carbonldp/QueryDocument/QueryValue" ), ():void => {
+describe( module( "carbonldp/QueryDocuments/QueryValue" ), ():void => {
 
 	it( "should exists", ():void => {
 		expect( Module ).toBeDefined();
 		expect( Module ).toEqual( jasmine.any( Object ) );
 	} );
 
-	describe( clazz( "CarbonLDP.QueryDocument.QueryValue", "Class that represents a property in the query" ), ():void => {
+	describe( clazz( "CarbonLDP.QueryDocuments.QueryValue", "Class that represents a property in the query" ), ():void => {
 
 		it( "should exists", ():void => {
 			expect( QueryValue ).toBeDefined();
@@ -46,7 +46,7 @@ describe( module( "carbonldp/QueryDocument/QueryValue" ), ():void => {
 			it( hasSignature(
 				"Creates a value wrapper for the specified value.",
 				[
-					{ name: "context", type: "CarbonLDP.QueryDocument.QueryContext", description: "The context of the query where the value is been used." },
+					{ name: "context", type: "CarbonLDP.QueryDocuments.QueryContext", description: "The context of the query where the value is been used." },
 					{ name: "value", type: "string | number | boolean | Date", description: "The value to be converted and wrapped fot the ready to use in the query statements." },
 				]
 			), ():void => {
@@ -85,7 +85,7 @@ describe( module( "carbonldp/QueryDocument/QueryValue" ), ():void => {
 
 			it( hasSignature(
 				"Sets an specific type to the query value.\n" +
-				"If the value is not string this will be serialized by the `CarbonLDP.QueryDocument.QueryContext.serializeLiteral()` method.",
+				"If the value is not string this will be serialized by the `CarbonLDP.QueryDocuments.QueryContext.serializeLiteral()` method.",
 				[
 					{ name: "type", type: "string", description: "The type to be assigned to the literal value." },
 				],

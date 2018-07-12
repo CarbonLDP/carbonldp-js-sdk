@@ -9,7 +9,7 @@ import {
 	ObjectSchemaUtils
 } from "../../../src/ObjectSchema";
 import { Pointer } from "../../../src/Pointer";
-import { PartialMetadata } from "../../../src/QueryDocument";
+import { QueryableMetadata } from "../../../src/QueryDocuments";
 import {
 	GeneralRegistry,
 	RegisteredPointer,
@@ -28,10 +28,10 @@ export function createMockDigestedSchemaProperty( values?:Partial<DigestedObject
 	return Object.assign( new DigestedObjectSchemaProperty(), values );
 }
 
-export function createMockPartialMetadata( schema:ObjectSchema = {} ):PartialMetadata {
+export function createMockQueryableMetadata( schema:ObjectSchema = {} ):QueryableMetadata {
 	const digestedSchema:DigestedObjectSchema = ObjectSchemaDigester.digestSchema( schema );
 	digestedSchema.properties.forEach( definition => ObjectSchemaUtils.resolveProperty( digestedSchema, definition, true ) );
-	return new PartialMetadata( digestedSchema );
+	return new QueryableMetadata( digestedSchema );
 }
 
 export function createMockDocument<T extends {

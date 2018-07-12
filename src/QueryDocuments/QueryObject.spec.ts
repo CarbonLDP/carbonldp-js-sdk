@@ -20,14 +20,14 @@ import { QueryContext } from "./QueryContext";
 import * as Module from "./QueryObject";
 import { QueryObject } from "./QueryObject";
 
-describe( module( "carbonldp/QueryDocument/QueryObject" ), ():void => {
+describe( module( "carbonldp/QueryDocuments/QueryObject" ), ():void => {
 
 	it( "should exists", ():void => {
 		expect( Module ).toBeDefined();
 		expect( Module ).toEqual( jasmine.any( Object ) );
 	} );
 
-	describe( clazz( "CarbonLDP.QueryDocument.QueryObject", "Class that represents any resource." ), ():void => {
+	describe( clazz( "CarbonLDP.QueryDocuments.QueryObject", "Class that represents any resource." ), ():void => {
 
 		it( "should exists", ():void => {
 			expect( QueryObject ).toBeDefined();
@@ -49,7 +49,7 @@ describe( module( "carbonldp/QueryDocument/QueryObject" ), ():void => {
 			it( hasSignature(
 				"Creates an object for the specified object resource.",
 				[
-					{ name: "context", type: "CarbonLDP.QueryDocument.QueryContext", description: "The context of the query where the object is been used." },
+					{ name: "context", type: "CarbonLDP.QueryDocuments.QueryContext", description: "The context of the query where the object is been used." },
 					{ name: "object", type: "CarbonLDP.Pointer | string", description: "The object to be converted in a safe to use in query object resource." },
 				]
 			), ():void => {

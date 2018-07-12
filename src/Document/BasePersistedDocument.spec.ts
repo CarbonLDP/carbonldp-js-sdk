@@ -1,5 +1,4 @@
 import { CarbonLDP } from "../CarbonLDP";
-import { DocumentsRegistry } from "../DocumentsRegistry/DocumentsRegistry";
 import {
 	extendsClass,
 	hasMethod,
@@ -37,126 +36,12 @@ describe( module( "carbonldp/Document" ), ():void => {
 			expect( target ).toBeDefined();
 		} );
 
-
-		it( hasProperty(
-			OBLIGATORY,
-			"_registry",
-			"CarbonLDP.DocumentsRegistry | undefined"
-		), ():void => {
-			const target:BasePersistedDocument[ "$registry" ] = {} as DocumentsRegistry | undefined;
-			expect( target ).toBeDefined();
-		} );
-
-
-		it( hasProperty(
-			OBLIGATORY,
-			"_resolved",
-			"boolean | undefined"
-		), ():void => {
-			const target:BasePersistedDocument[ "_resolved" ] = {} as boolean | undefined;
-			expect( target ).toBeDefined();
-		} );
-
-		it( hasProperty(
-			OBLIGATORY,
-			"_eTag",
-			"string | undefined",
-			"The ETag (entity tag) of the persisted document."
-		), ():void => {
-			const target:BasePersistedDocument[ "_eTag" ] = "" as string | undefined;
-			expect( target ).toBeDefined();
-		} );
-
-
 		it( hasProperty(
 			OBLIGATORY,
 			"_savedFragments",
 			"CarbonLDP.Fragment[]",
 			"Array with a copy of every fragment that that is currently persisted in the server."
 		), ():void => {} );
-
-
-		describe( method(
-			OBLIGATORY,
-			"isResolved"
-		), ():void => {
-
-			it( hasSignature(
-				{ type: "boolean" }
-			), ():void => {} );
-
-			it( "should exists", ():void => {
-				const resource:BasePersistedDocument = createMock();
-
-				expect( resource.isResolved ).toBeDefined();
-				expect( resource.isResolved ).toEqual( jasmine.any( Function ) );
-			} );
-
-
-			it( "should return false when _resolved undefined", ():void => {
-				const resource:BasePersistedDocument = createMock();
-
-				const returned:boolean = resource.isResolved();
-				expect( returned ).toBe( false );
-			} );
-
-			it( "should return false when _resolved false", ():void => {
-				const resource:BasePersistedDocument = createMock( { _resolved: false } );
-
-				const returned:boolean = resource.isResolved();
-				expect( returned ).toBe( false );
-			} );
-
-			it( "should return true when _resolved true", ():void => {
-				const resource:BasePersistedDocument = createMock( { _resolved: true } );
-
-				const returned:boolean = resource.isResolved();
-				expect( returned ).toBe( true );
-			} );
-
-		} );
-
-		describe( method(
-			OBLIGATORY,
-			"isOutdated",
-			"Returns true when the document contains data of multiple requests with different versions of the resource."
-		), ():void => {
-
-			it( hasSignature(
-				{ type: "boolean" }
-			), ():void => {} );
-
-			it( "should exists", ():void => {
-				const resource:BasePersistedDocument = createMock();
-
-				expect( resource.isOutdated ).toBeDefined();
-				expect( resource.isOutdated ).toEqual( jasmine.any( Function ) );
-			} );
-
-
-			it( "should return false if _eTag undefined", ():void => {
-				const resource:BasePersistedDocument = createMock();
-
-				const returned:boolean = resource.isOutdated();
-				expect( returned ).toBe( false );
-			} );
-
-			it( "should return false if _eTag defined", ():void => {
-				const resource:BasePersistedDocument = createMock( { _eTag: "" } );
-
-				const returned:boolean = resource.isOutdated();
-				expect( returned ).toBe( false );
-			} );
-
-			it( "should return true if _eTag is null", ():void => {
-				const resource:BasePersistedDocument = createMock( { _eTag: null } );
-
-				const returned:boolean = resource.isOutdated();
-				expect( returned ).toBe( true );
-			} );
-
-		} );
-
 
 		it( hasMethod(
 			OBLIGATORY,

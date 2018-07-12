@@ -4,7 +4,7 @@ import { Document } from "../Document/Document";
 
 import { GETOptions, RequestOptions } from "../HTTP/Request";
 
-import { QueryDocumentBuilder } from "../QueryDocument/QueryDocumentBuilder";
+import { QueryDocumentBuilder } from "../QueryDocuments/QueryDocumentBuilder";
 
 import { EventEmitterDocumentsRepositoryTrait } from "./Traits/EventEmitterDocumentsRepositoryTrait";
 import { QueryableDocumentsRepositoryTrait } from "./Traits/QueryableDocumentsRepositoryTrait";

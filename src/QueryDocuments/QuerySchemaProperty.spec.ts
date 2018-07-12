@@ -8,9 +8,9 @@ import { QueryDocumentBuilder } from "./QueryDocumentBuilder";
 
 import { QuerySchemaProperty } from "./QuerySchemaProperty";
 
-describe( module( "carbonldp/QueryDocument/QueryPropertySchema" ), ():void => {
+describe( module( "carbonldp/QueryDocuments/QueryPropertySchema" ), ():void => {
 
-	describe( interfaze( "CarbonLDP.QueryDocument.QuerySchemaProperty", "Interface that describes an property to retrieve in a partial query creation." ), ():void => {
+	describe( interfaze( "CarbonLDP.QueryDocuments.QuerySchemaProperty", "Interface that describes an property to retrieve in a partial query creation." ), ():void => {
 
 		it( "should exists", ():void => {
 			const target:QuerySchemaProperty = {} as any;
@@ -65,7 +65,7 @@ describe( module( "carbonldp/QueryDocument/QueryPropertySchema" ), ():void => {
 		it( hasProperty(
 			OPTIONAL,
 			"query",
-			"( queryBuilder:CarbonLDP.QueryDocument.QueryDocumentBuilder ) => CarbonLDP.QueryDocument.QueryDocumentBuilder",
+			"( queryBuilder:CarbonLDP.QueryDocuments.QueryDocumentBuilder ) => CarbonLDP.QueryDocuments.QueryDocumentBuilder",
 			"Function to build a query to specify sub-properties or when retrieving multiple resources to filter the resources."
 		), ():void => {
 			const target:QuerySchemaProperty[ "query" ] = ( queryBuilder:QueryDocumentBuilder ) => queryBuilder;

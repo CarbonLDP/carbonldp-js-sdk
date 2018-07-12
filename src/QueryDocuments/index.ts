@@ -1,4 +1,4 @@
-export * from "./PartialMetadata";
+export * from "./QueryableMetadata";
 export * from "./QueryContext";
 export * from "./QueryContextBuilder";
 export * from "./QueryContextPartial";

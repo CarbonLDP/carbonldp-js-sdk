@@ -31,14 +31,15 @@ import { ModelPrototype } from "../../Model/ModelPrototype";
 
 import { Pointer } from "../../Pointer/Pointer";
 
-import { PartialMetadata } from "../../QueryDocument/PartialMetadata";
-import { QueryContext } from "../../QueryDocument/QueryContext";
-import { QueryContextBuilder } from "../../QueryDocument/QueryContextBuilder";
-import { QueryContextPartial } from "../../QueryDocument/QueryContextPartial";
-import { QueryDocumentBuilder } from "../../QueryDocument/QueryDocumentBuilder";
-import { QueryDocumentsBuilder } from "../../QueryDocument/QueryDocumentsBuilder";
-import { QueryMetadata } from "../../QueryDocument/QueryMetadata";
-import { QueryProperty, QueryPropertyType } from "../../QueryDocument/QueryProperty";
+import { QueryableMetadata } from "../../QueryDocuments/QueryableMetadata";
+import { QueryablePointer } from "../../QueryDocuments/QueryablePointer";
+import { QueryContext } from "../../QueryDocuments/QueryContext";
+import { QueryContextBuilder } from "../../QueryDocuments/QueryContextBuilder";
+import { QueryContextPartial } from "../../QueryDocuments/QueryContextPartial";
+import { QueryDocumentBuilder } from "../../QueryDocuments/QueryDocumentBuilder";
+import { QueryDocumentsBuilder } from "../../QueryDocuments/QueryDocumentsBuilder";
+import { QueryMetadata } from "../../QueryDocuments/QueryMetadata";
+import { QueryProperty, QueryPropertyType } from "../../QueryDocuments/QueryProperty";
 import {
 	areDifferentType,
 	createAllPattern,
@@ -46,13 +47,11 @@ import {
 	createTypesPattern,
 	getAllTriples,
 	getPathProperty
-} from "../../QueryDocument/Utils";
+} from "../../QueryDocuments/Utils";
 
 import { RDFDocument } from "../../RDF/Document";
 import { RDFNode } from "../../RDF/Node";
 import { URI } from "../../RDF/URI";
-
-import { ResolvablePointer } from "../../Repository/ResolvablePointer";
 
 import { SPARQLService } from "../../SPARQL/Service";
 
@@ -264,15 +263,15 @@ function __getQueryable<T extends object>( repository:QueryableDocumentsReposito
 }
 
 
-function __addRefreshPatterns( queryContext:QueryContextPartial, parentAdder:OptionalToken, resource:ResolvablePointer, parentName:string ):void {
-	if( resource.__partialMetadata.schema === PartialMetadata.ALL ) {
+function __addRefreshPatterns( queryContext:QueryContextPartial, parentAdder:OptionalToken, resource:QueryablePointer, parentName:string ):void {
+	if( resource._queryableMetadata.schema === QueryableMetadata.ALL ) {
 		parentAdder.addPattern( createAllPattern( queryContext, parentName ) );
 		return;
 	}
 
 	parentAdder.addPattern( createTypesPattern( queryContext, parentName ) );
 
-	resource.__partialMetadata.schema.properties.forEach( ( digestedProperty, propertyName ) => {
+	resource._queryableMetadata.schema.properties.forEach( ( digestedProperty, propertyName ) => {
 		const path:string = `${ parentName }.${ propertyName }`;
 
 		const propertyPattern:OptionalToken = new OptionalToken()
@@ -285,8 +284,8 @@ function __addRefreshPatterns( queryContext:QueryContextPartial, parentAdder:Opt
 		parentAdder.addPattern( propertyPattern );
 
 		const propertyValues:any[] = Array.isArray( resource[ propertyName ] ) ? resource[ propertyName ] : [ resource[ propertyName ] ];
-		const propertyFragment:ResolvablePointer = propertyValues
-			.filter( ResolvablePointer.is )
+		const propertyFragment:QueryablePointer = propertyValues
+			.filter( QueryablePointer.is )
 			.find( fragment => fragment.isQueried() );
 		if( ! propertyFragment ) return;
 
@@ -427,7 +426,7 @@ export const QueryableDocumentsRepositoryTrait:QueryableDocumentsRepositoryTrait
 		},
 
 		saveAndRefresh<T extends object>( this:QueryableDocumentsRepositoryTrait, document:Document, requestOptions?:RequestOptions ):Promise<T & Document> {
-			if( ! document.__partialMetadata ) return LDPDocumentsRepositoryTrait.PROTOTYPE
+			if( ! document._queryableMetadata ) return LDPDocumentsRepositoryTrait.PROTOTYPE
 				.saveAndRefresh.call( this, document, requestOptions );
 
 			const cloneOptions:RequestOptions = RequestUtils.cloneOptions( requestOptions );
@@ -477,7 +476,7 @@ export const QueryableDocumentsRepositoryTrait:QueryableDocumentsRepositoryTrait
 			.hasPropertiesFrom( QueryableDocumentsRepositoryTrait.PROTOTYPE, object );
 	},
 
-	decorate<T extends object>( object:T ):T & QueryableDocumentsRepositoryTrait {
+	decorate<T extends BaseDocumentsRepository>( object:T ):T & QueryableDocumentsRepositoryTrait {
 		if( QueryableDocumentsRepositoryTrait.isDecorated( object ) ) return object;
 
 		const target:T & LDPDocumentsRepositoryTrait = ModelDecorator

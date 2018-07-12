@@ -6,17 +6,17 @@ import { ModelDecorator } from "../Model/ModelDecorator";
 import { ModelFactory } from "../Model/ModelFactory";
 import { ModelPrototype } from "../Model/ModelPrototype";
 
-import { QueryDocumentBuilder } from "../QueryDocument/QueryDocumentBuilder";
+import { QueryablePointer } from "../QueryDocuments/QueryablePointer";
+import { QueryDocumentBuilder } from "../QueryDocuments/QueryDocumentBuilder";
+
 import { BaseResolvablePointer } from "../Repository/BaseResolvablePointer";
 
-import { ResolvablePointer } from "../Repository/ResolvablePointer";
 import { BaseResolvableFragment } from "./BaseResolvableFragment";
-
 import { BaseTransientFragment } from "./BaseTransientFragment";
 import { TransientFragment } from "./TransientFragment";
 
 
-export interface Fragment extends TransientFragment, ResolvablePointer {
+export interface Fragment extends TransientFragment, QueryablePointer {
 	$document:Document;
 	$registry:Document;
 	$repository:Document;
@@ -58,7 +58,7 @@ export type OverrodeMembers =
 	;
 
 export type FragmentFactory =
-	& ModelPrototype<Fragment, TransientFragment & ResolvablePointer, OverrodeMembers>
+	& ModelPrototype<Fragment, TransientFragment & QueryablePointer, OverrodeMembers>
 	& ModelDecorator<Fragment, BaseResolvableFragment>
 	& ModelFactory<TransientFragment, BaseTransientFragment>
 	;
@@ -94,8 +94,8 @@ export const Fragment:FragmentFactory = {
 			$repository: object.$registry,
 		} );
 
-		const target:ForcedT & TransientFragment & ResolvablePointer = ModelDecorator
-			.decorateMultiple( forced, TransientFragment, ResolvablePointer );
+		const target:ForcedT & TransientFragment & QueryablePointer = ModelDecorator
+			.decorateMultiple( forced, TransientFragment, QueryablePointer );
 
 		return ModelDecorator
 			.definePropertiesFrom( Fragment.PROTOTYPE, target );

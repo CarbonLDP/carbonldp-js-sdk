@@ -4,7 +4,7 @@ import { ObjectSchemaDigester } from "../ObjectSchema";
 import {
 	QueryContextBuilder,
 	QueryPropertyType
-} from "../QueryDocument";
+} from "../QueryDocuments";
 import { RDFNode } from "../RDF";
 import {
 	DocumentsRegistry,
@@ -972,7 +972,7 @@ describe( module( "carbonldp/JSONLD/JSONLDCompacter" ), ():void => {
 					},
 				] );
 
-				expect( compacted[ 0 ].__partialMetadata.schema ).toEqual( ObjectSchemaDigester.digestSchema( {
+				expect( compacted[ 0 ]._queryableMetadata.schema ).toEqual( ObjectSchemaDigester.digestSchema( {
 					"pointer1": {
 						"@id": "https://example.com/ns#pointer-1",
 						"@type": "@id",
@@ -983,7 +983,7 @@ describe( module( "carbonldp/JSONLD/JSONLDCompacter" ), ():void => {
 					},
 				} ) );
 
-				expect( compacted[ 1 ].__partialMetadata.schema ).toEqual( ObjectSchemaDigester.digestSchema( {
+				expect( compacted[ 1 ]._queryableMetadata.schema ).toEqual( ObjectSchemaDigester.digestSchema( {
 					"pointer1": {
 						"@id": "https://example.com/ns#pointer-1",
 						"@type": "@id",

@@ -11,7 +11,7 @@ import { ModelPrototype } from "../Model/ModelPrototype";
 import { ModelSchema } from "../Model/ModelSchema";
 import { ModelTypeGuard, } from "../Model/ModelTypeGuard";
 
-import { QueryDocumentBuilder } from "../QueryDocument/QueryDocumentBuilder";
+import { QueryDocumentBuilder } from "../QueryDocuments/QueryDocumentBuilder";
 
 import { RegisteredPointer } from "../Registry/RegisteredPointer";
 

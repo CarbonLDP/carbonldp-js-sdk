@@ -11,21 +11,21 @@ import {
 	module
 } from "../test/JasmineExtender";
 
-import * as Module from "./PartialMetadata";
-import { PartialMetadata } from "./PartialMetadata";
+import * as Module from "./QueryableMetadata";
+import { QueryableMetadata } from "./QueryableMetadata";
 
-describe( module( "carbonldp/QueryDocument/PartialMetadata" ), ():void => {
+describe( module( "carbonldp/QueryDocuments/QueryableMetadata" ), ():void => {
 
 	it( "should exists", ():void => {
 		expect( Module ).toBeDefined();
 		expect( Module ).toEqual( jasmine.any( Object ) );
 	} );
 
-	describe( clazz( "CarbonLDP.QueryDocument.PartialMetadata", "Class that contains the metadata of a partial document." ), ():void => {
+	describe( clazz( "CarbonLDP.QueryDocuments.QueryableMetadata", "Class that contains the metadata of a partial document." ), ():void => {
 
 		it( "should exists", ():void => {
-			expect( PartialMetadata ).toBeDefined();
-			expect( PartialMetadata ).toEqual( jasmine.any( Function ) );
+			expect( QueryableMetadata ).toBeDefined();
+			expect( QueryableMetadata ).toEqual( jasmine.any( Function ) );
 		} );
 
 		describe( constructor(), ():void => {
@@ -33,15 +33,15 @@ describe( module( "carbonldp/QueryDocument/PartialMetadata" ), ():void => {
 			it( hasSignature(
 				[
 					{ name: "schema", type: "CarbonLDP.DigestedObjectSchema", description: "The schema with the information of the partial properties of the partial resource." },
-					{ name: "previousPartial", type: "CarbonLDP.QueryDocument.PartialMetadata", optional: true, description: "The previous partial metadata to merge with the new partial schema." },
+					{ name: "previousPartial", type: "CarbonLDP.QueryDocuments.QueryableMetadata", optional: true, description: "The previous partial metadata to merge with the new partial schema." },
 				]
 			), ():void => {} );
 
 			it( "should exists", ():void => {
-				const partialMetadata:PartialMetadata = new PartialMetadata( new DigestedObjectSchema() );
+				const partialMetadata:QueryableMetadata = new QueryableMetadata( new DigestedObjectSchema() );
 
 				expect( partialMetadata ).toBeDefined();
-				expect( partialMetadata ).toEqual( jasmine.any( PartialMetadata ) );
+				expect( partialMetadata ).toEqual( jasmine.any( QueryableMetadata ) );
 			} );
 
 
@@ -52,7 +52,7 @@ describe( module( "carbonldp/QueryDocument/PartialMetadata" ), ():void => {
 					] ),
 				} );
 
-				const partial:PartialMetadata = new PartialMetadata( schema );
+				const partial:QueryableMetadata = new QueryableMetadata( schema );
 				expect( schema ).toEqual( partial.schema );
 			} );
 
@@ -64,7 +64,7 @@ describe( module( "carbonldp/QueryDocument/PartialMetadata" ), ():void => {
 					] ),
 				} );
 
-				const partial:PartialMetadata = new PartialMetadata( schema );
+				const partial:QueryableMetadata = new QueryableMetadata( schema );
 				expect( partial.schema ).toEqual( createMockDigestedSchema( {
 					prefixes: new Map( [
 						[ "ex", "https://example.com/ns#" ],
@@ -80,7 +80,7 @@ describe( module( "carbonldp/QueryDocument/PartialMetadata" ), ():void => {
 					] ),
 				} );
 
-				const partial:PartialMetadata = new PartialMetadata( schema );
+				const partial:QueryableMetadata = new QueryableMetadata( schema );
 				expect( partial.schema ).toEqual( createMockDigestedSchema( {
 					prefixes: new Map( [
 						[ "ex", "https://example.com/ns#" ],
@@ -89,13 +89,13 @@ describe( module( "carbonldp/QueryDocument/PartialMetadata" ), ():void => {
 			} );
 
 			it( "should merge provided schema and schema from partial", () => {
-				const previousPartial:PartialMetadata = new PartialMetadata( createMockDigestedSchema( {
+				const previousPartial:QueryableMetadata = new QueryableMetadata( createMockDigestedSchema( {
 					prefixes: new Map( [
 						[ "ex", "https://example.com/ns#" ],
 					] ),
 				} ) );
 
-				const currentPartial:PartialMetadata = new PartialMetadata( createMockDigestedSchema( {
+				const currentPartial:QueryableMetadata = new QueryableMetadata( createMockDigestedSchema( {
 					prefixes: new Map<string, string>( [
 						[ "ldp", "https://www.w3.org/ns/ldp" ],
 					] ),
@@ -111,15 +111,15 @@ describe( module( "carbonldp/QueryDocument/PartialMetadata" ), ():void => {
 
 
 			it( "should set ALL schema when ALL is provided", () => {
-				const partial:PartialMetadata = new PartialMetadata( PartialMetadata.ALL );
-				expect( partial.schema ).toBe( PartialMetadata.ALL );
+				const partial:QueryableMetadata = new QueryableMetadata( QueryableMetadata.ALL );
+				expect( partial.schema ).toBe( QueryableMetadata.ALL );
 			} );
 
 			it( "should set ALL schema when ALL set in previous partial", () => {
-				const previousPartial:PartialMetadata = new PartialMetadata( PartialMetadata.ALL );
+				const previousPartial:QueryableMetadata = new QueryableMetadata( QueryableMetadata.ALL );
 
-				const partial:PartialMetadata = new PartialMetadata( createMockDigestedSchema(), previousPartial );
-				expect( partial.schema ).toBe( PartialMetadata.ALL );
+				const partial:QueryableMetadata = new QueryableMetadata( createMockDigestedSchema(), previousPartial );
+				expect( partial.schema ).toBe( QueryableMetadata.ALL );
 			} );
 
 
@@ -136,10 +136,10 @@ describe( module( "carbonldp/QueryDocument/PartialMetadata" ), ():void => {
 				} );
 
 
-				const previousPartial:PartialMetadata = new PartialMetadata( previousSchema );
+				const previousPartial:QueryableMetadata = new QueryableMetadata( previousSchema );
 
 				expect( () => {
-					new PartialMetadata( currentSchema, previousPartial );
+					new QueryableMetadata( currentSchema, previousPartial );
 				} ).toThrowError( IllegalArgumentError, `Prefix "ex" has different value: "https://example.com/ns#", "https://example.com/vocab#".` );
 			} );
 
@@ -160,10 +160,10 @@ describe( module( "carbonldp/QueryDocument/PartialMetadata" ), ():void => {
 				} );
 
 
-				const previousPartial:PartialMetadata = new PartialMetadata( previousSchema );
+				const previousPartial:QueryableMetadata = new QueryableMetadata( previousSchema );
 
 				expect( () => {
-					new PartialMetadata( currentSchema, previousPartial );
+					new QueryableMetadata( currentSchema, previousPartial );
 				} ).toThrowError( IllegalArgumentError, `Property "property" has different "uri": "https://example.com/ns#property", "https://example.com/vocab#property".` );
 			} );
 

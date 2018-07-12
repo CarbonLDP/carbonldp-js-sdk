@@ -6,18 +6,18 @@ import {
 } from "../ObjectSchema";
 
 
-export class PartialMetadata {
+export class QueryableMetadata {
 
 	static readonly ALL:Readonly<DigestedObjectSchema> = Object.freeze( new DigestedObjectSchema() );
 
 	readonly schema:DigestedObjectSchema;
 
-	constructor( schema:DigestedObjectSchema, previousPartial?:PartialMetadata ) {
+	constructor( schema:DigestedObjectSchema, previousPartial?:QueryableMetadata ) {
 		this.schema = this.mergeSchemas( previousPartial ? previousPartial.schema : new DigestedObjectSchema(), schema );
 	}
 
 	private mergeSchemas( oldSchema:DigestedObjectSchema, newSchema:DigestedObjectSchema ):DigestedObjectSchema {
-		if( newSchema === PartialMetadata.ALL || oldSchema === PartialMetadata.ALL ) return PartialMetadata.ALL;
+		if( newSchema === QueryableMetadata.ALL || oldSchema === QueryableMetadata.ALL ) return QueryableMetadata.ALL;
 
 		newSchema.prefixes.forEach( ( newURI, namespace ) => {
 			newURI = ObjectSchemaUtils.resolveURI( newURI, newSchema );

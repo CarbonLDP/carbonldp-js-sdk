@@ -38,14 +38,14 @@ import * as QueryValueModule from "./QueryValue";
 import { QueryValue } from "./QueryValue";
 import { QueryVariable } from "./QueryVariable";
 
-describe( module( "carbonldp/QueryDocument/QueryDocumentBuilder" ), ():void => {
+describe( module( "carbonldp/QueryDocuments/QueryDocumentBuilder" ), ():void => {
 
 	it( "should exists", ():void => {
 		expect( Module ).toBeDefined();
 		expect( Module ).toEqual( jasmine.any( Object ) );
 	} );
 
-	describe( clazz( "CarbonLDP.QueryDocument.QueryDocumentBuilder", "Class with the helpers and properties for construct a query document" ), ():void => {
+	describe( clazz( "CarbonLDP.QueryDocuments.QueryDocumentBuilder", "Class with the helpers and properties for construct a query document" ), ():void => {
 
 		it( "should exists", ():void => {
 			expect( QueryDocumentBuilder ).toBeDefined();
@@ -150,7 +150,7 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentBuilder" ), ():void => {
 				[
 					{ name: "name", type: "string", optional: true, description: "Optional name of the property to look for." },
 				],
-				{ type: "CarbonLDP.QueryDocument.QueryProperty" }
+				{ type: "CarbonLDP.QueryDocuments.QueryProperty" }
 			), ():void => {
 			} );
 
@@ -211,7 +211,7 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentBuilder" ), ():void => {
 				[
 					{ name: "value", type: "string | number | boolean | Date", description: "Value to be converted in a safe to use in query object." },
 				],
-				{ type: "CarbonLDP.QueryDocument.QueryValue" }
+				{ type: "CarbonLDP.QueryDocuments.QueryValue" }
 			), ():void => {
 			} );
 
@@ -255,7 +255,7 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentBuilder" ), ():void => {
 				[
 					{ name: "value", type: "CarbonLDP.Pointer | string", description: "Pointer or URI to be converted in a safe to use in query object." },
 				],
-				{ type: "CarbonLDP.QueryDocument.QueryObject" }
+				{ type: "CarbonLDP.QueryDocuments.QueryObject" }
 			), ():void => {
 			} );
 
@@ -397,7 +397,7 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentBuilder" ), ():void => {
 			it( hasSignature(
 				"Method that allows to specify the property to be retrieved the the target document",
 				[
-					{ name: "propertiesSchema", type: "CarbonLDP.QueryDocument.QuerySchema", description: "Similar as an schema object, but this specifies the properties to be retrieved." },
+					{ name: "propertiesSchema", type: "CarbonLDP.QueryDocuments.QuerySchema", description: "Similar as an schema object, but this specifies the properties to be retrieved." },
 				],
 				{ type: "this" }
 			), ():void => {
@@ -570,7 +570,7 @@ describe( module( "carbonldp/QueryDocument/QueryDocumentBuilder" ), ():void => {
 				"Adds a filter to the specific values of the property where the query is been applied.\n" +
 				"NOTE: Using this function makes all the properties in the path of the one's applied, will be obligatory to exists.",
 				[
-					{ name: "...values", type: "(CarbonLDP.QueryDocument.QueryValue | CarbonLDP.QueryDocument.QueryObject)[]", description: "Values the property must have so that the document would be returned." },
+					{ name: "...values", type: "(CarbonLDP.QueryDocuments.QueryValue | CarbonLDP.QueryDocuments.QueryObject)[]", description: "Values the property must have so that the document would be returned." },
 				],
 				{ type: "this" }
 			), ():void => {

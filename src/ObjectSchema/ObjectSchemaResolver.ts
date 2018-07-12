@@ -85,7 +85,7 @@ export const ObjectSchemaResolver:ObjectSchemaResolverFactory = {
 			return ObjectSchemaDigester
 				._combineSchemas( [
 					schema,
-					object.__partialMetadata.schema,
+					object._queryableMetadata.schema,
 				] );
 		},
 	},

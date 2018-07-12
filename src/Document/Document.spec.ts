@@ -1,6 +1,6 @@
 import {
 	createMockContext,
-	createMockPartialMetadata,
+	createMockQueryableMetadata,
 	defineNonEnumerableProps
 } from "../../test/helpers/mocks";
 import { AbstractContext } from "../Context/AbstractContext";
@@ -8,7 +8,7 @@ import { MembersDocument } from "../Members";
 import { EventEmitterDocumentTrait } from "../Messaging";
 import { DocumentsRegistry } from "../DocumentsRegistry/DocumentsRegistry";
 import { SPARQLDocumentTrait } from "../SPARQL";
-import { QueryDocumentDocument } from "../QueryDocument";
+import { QueryDocumentDocument } from "../QueryDocuments";
 import {
 	extendsClass,
 	hasMethod,
@@ -49,7 +49,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 		it( extendsClass( "CarbonLDP.Members.MembersDocument" ), ():void => {} );
 		it( extendsClass( "CarbonLDP.SPARQL.SPARQLDocument" ), ():void => {} );
 		it( extendsClass( "CarbonLDP.Messaging.MessagingDocument" ), ():void => {} );
-		it( extendsClass( "CarbonLDP.QueryDocument.QueryDocumentDocument" ), ():void => {} );
+		it( extendsClass( "CarbonLDP.QueryDocuments.QueryDocumentDocument" ), ():void => {} );
 
 		it( hasProperty(
 			OPTIONAL,
@@ -107,7 +107,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 				[ "T extends object" ],
 				"Retrieves the specified properties and sub-properties of the document specified by the function provided.",
 				[
-					{ name: "queryBuilderFn", type: "( queryBuilder:CarbonLDP.QueryDocument.QueryDocumentBuilder ) => CarbonLDP.QueryDocument.QueryDocumentBuilder", description: "Function that receives a the builder that helps you to construct the retrieval query.\nThe same builder must be returned." },
+					{ name: "queryBuilderFn", type: "( queryBuilder:CarbonLDP.QueryDocuments.QueryDocumentBuilder ) => CarbonLDP.QueryDocuments.QueryDocumentBuilder", description: "Function that receives a the builder that helps you to construct the retrieval query.\nThe same builder must be returned." },
 				],
 				{ type: "Promise<T & CarbonLDP.Document>" }
 			), ():void => {} );
@@ -117,7 +117,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 				"Retrieves the entire current document or just the selected properties and sub-properties of a query builder function provided.",
 				[
 					{ name: "requestOptions", type: "CarbonLDP.HTTP.GETOptions", optional: true, description: "Customizable options for the request." },
-					{ name: "queryBuilderFn", type: "( queryBuilder:CarbonLDP.QueryDocument.QueryDocumentBuilder ) => CarbonLDP.QueryDocument.QueryDocumentBuilder", optional: true, description: "Function that receives a the builder that helps you to construct the retrieval query.\nThe same builder must be returned." },
+					{ name: "queryBuilderFn", type: "( queryBuilder:CarbonLDP.QueryDocuments.QueryDocumentBuilder ) => CarbonLDP.QueryDocuments.QueryDocumentBuilder", optional: true, description: "Function that receives a the builder that helps you to construct the retrieval query.\nThe same builder must be returned." },
 				],
 				{ type: "Promise<T & CarbonLDP.Document>" }
 			), ():void => {} );
@@ -127,7 +127,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 				"Retrieves the specified properties and sub-properties of the URI specified by the function provided.",
 				[
 					{ name: "uri", type: "string", description: "The URI of the document to query." },
-					{ name: "queryBuilderFn", type: "( queryBuilder:CarbonLDP.QueryDocument.QueryDocumentBuilder ) => CarbonLDP.QueryDocument.QueryDocumentBuilder", description: "Function that receives a the builder that helps you to construct the retrieval query.\nThe same builder must be returned." },
+					{ name: "queryBuilderFn", type: "( queryBuilder:CarbonLDP.QueryDocuments.QueryDocumentBuilder ) => CarbonLDP.QueryDocuments.QueryDocumentBuilder", description: "Function that receives a the builder that helps you to construct the retrieval query.\nThe same builder must be returned." },
 				],
 				{ type: "Promise<T & CarbonLDP.Document>" }
 			), ():void => {} );
@@ -138,7 +138,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 				[
 					{ name: "uri", type: "string", description: "The URI of the document to query." },
 					{ name: "requestOptions", type: "CarbonLDP.HTTP.GETOptions", optional: true, description: "Customizable options for the request." },
-					{ name: "queryBuilderFn", type: "( queryBuilder:CarbonLDP.QueryDocument.QueryDocumentBuilder ) => CarbonLDP.QueryDocument.QueryDocumentBuilder", optional: true, description: "Function that receives a the builder that helps you to construct the retrieval query.\nThe same builder must be returned." },
+					{ name: "queryBuilderFn", type: "( queryBuilder:CarbonLDP.QueryDocuments.QueryDocumentBuilder ) => CarbonLDP.QueryDocuments.QueryDocumentBuilder", optional: true, description: "Function that receives a the builder that helps you to construct the retrieval query.\nThe same builder must be returned." },
 				],
 				{ type: "Promise<T & CarbonLDP.Document>" }
 			), ():void => {} );
@@ -269,7 +269,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 				const _registry:DocumentsRegistry = new DocumentsRegistry();
 
 				const resource:Document = createMock( {
-					__partialMetadata: createMockPartialMetadata( {} ),
+					_queryableMetadata: createMockQueryableMetadata( {} ),
 					$registry: _registry,
 				} );
 
@@ -293,7 +293,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 				const _registry:DocumentsRegistry = new DocumentsRegistry();
 
 				const resource:Document = createMock( {
-					__partialMetadata: createMockPartialMetadata( {} ),
+					_queryableMetadata: createMockQueryableMetadata( {} ),
 					$registry: _registry,
 				} );
 
@@ -320,7 +320,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 
 				_registry.__resourcesMap.set( "resource/", createMock( {
 					$registry: _registry,
-					__partialMetadata: createMockPartialMetadata( {} ),
+					_queryableMetadata: createMockQueryableMetadata( {} ),
 				} ) );
 
 
@@ -344,7 +344,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 
 				_registry.__resourcesMap.set( "resource/", createMock( {
 					$registry: _registry,
-					__partialMetadata: createMockPartialMetadata( {} ),
+					_queryableMetadata: createMockQueryableMetadata( {} ),
 				} ) );
 
 
@@ -369,7 +369,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 				[ "T extends object" ],
 				"Resolves the specified properties and sub-properties of the current document.",
 				[
-					{ name: "queryBuilderFn", type: "( queryBuilder:CarbonLDP.QueryDocument.QueryDocumentBuilder ) => CarbonLDP.QueryDocument.QueryDocumentBuilder", description: "Function that receives a the builder that helps you to construct the retrieval query.\nThe same builder must be returned." },
+					{ name: "queryBuilderFn", type: "( queryBuilder:CarbonLDP.QueryDocuments.QueryDocumentBuilder ) => CarbonLDP.QueryDocuments.QueryDocumentBuilder", description: "Function that receives a the builder that helps you to construct the retrieval query.\nThe same builder must be returned." },
 				],
 				{ type: "Promise<T & CarbonLDP.Document>" }
 			), ():void => {} );
@@ -379,7 +379,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 				"Resolves the specified properties and sub-properties of the current document.",
 				[
 					{ name: "requestOptions", type: "CarbonLDP.HTTP.GETOptions", optional: true, description: "Customizable options for the request." },
-					{ name: "queryBuilderFn", type: "( queryBuilder:CarbonLDP.QueryDocument.QueryDocumentBuilder ) => CarbonLDP.QueryDocument.QueryDocumentBuilder", optional: true, description: "Function that receives a the builder that helps you to construct the retrieval query.\nThe same builder must be returned." },
+					{ name: "queryBuilderFn", type: "( queryBuilder:CarbonLDP.QueryDocuments.QueryDocumentBuilder ) => CarbonLDP.QueryDocuments.QueryDocumentBuilder", optional: true, description: "Function that receives a the builder that helps you to construct the retrieval query.\nThe same builder must be returned." },
 				],
 				{ type: "Promise<T & CarbonLDP.Document>" }
 			), ():void => {} );
@@ -451,7 +451,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 				const _registry:DocumentsRegistry = new DocumentsRegistry();
 
 				const resource:Document = createMock( {
-					__partialMetadata: createMockPartialMetadata( {} ),
+					_queryableMetadata: createMockQueryableMetadata( {} ),
 					$registry: _registry,
 				} );
 
@@ -475,7 +475,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 				const _registry:DocumentsRegistry = new DocumentsRegistry();
 
 				const resource:Document = createMock( {
-					__partialMetadata: createMockPartialMetadata( {} ),
+					_queryableMetadata: createMockQueryableMetadata( {} ),
 					$registry: _registry,
 				} );
 
@@ -514,7 +514,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 				const spy:jasmine.Spy = spyOn( QueryDocumentDocument.PROTOTYPE, "refresh" )
 					.and.returnValue( Promise.reject( null ) );
 
-				const resource:Document = createMock( { __partialMetadata: createMockPartialMetadata( {} ) } );
+				const resource:Document = createMock( { _queryableMetadata: createMockQueryableMetadata( {} ) } );
 				await resource.refresh()
 					.then( () => fail( "Should not resolve" ) )
 					.catch( error => {
@@ -529,7 +529,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 				const spy:jasmine.Spy = spyOn( QueryDocumentDocument.PROTOTYPE, "refresh" )
 					.and.returnValue( Promise.reject( null ) );
 
-				const resource:Document = createMock( { __partialMetadata: createMockPartialMetadata( {} ) } );
+				const resource:Document = createMock( { _queryableMetadata: createMockQueryableMetadata( {} ) } );
 				await resource.refresh( { timeout: 5050 } )
 					.then( () => fail( "Should not resolve" ) )
 					.catch( error => {
@@ -589,7 +589,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 				const spy:jasmine.Spy = spyOn( QueryDocumentDocument.PROTOTYPE, "save" )
 					.and.returnValue( Promise.reject( null ) );
 
-				const resource:Document = createMock( { __partialMetadata: createMockPartialMetadata( {} ) } );
+				const resource:Document = createMock( { _queryableMetadata: createMockQueryableMetadata( {} ) } );
 				await resource.save()
 					.then( () => fail( "Should not resolve" ) )
 					.catch( error => {
@@ -604,7 +604,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 				const spy:jasmine.Spy = spyOn( QueryDocumentDocument.PROTOTYPE, "save" )
 					.and.returnValue( Promise.reject( null ) );
 
-				const resource:Document = createMock( { __partialMetadata: createMockPartialMetadata( {} ) } );
+				const resource:Document = createMock( { _queryableMetadata: createMockQueryableMetadata( {} ) } );
 				await resource.save( { timeout: 5050 } )
 					.then( () => fail( "Should not resolve" ) )
 					.catch( error => {
@@ -664,7 +664,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 				const spy:jasmine.Spy = spyOn( QueryDocumentDocument.PROTOTYPE, "saveAndRefresh" )
 					.and.returnValue( Promise.reject( null ) );
 
-				const resource:Document = createMock( { __partialMetadata: createMockPartialMetadata( {} ) } );
+				const resource:Document = createMock( { _queryableMetadata: createMockQueryableMetadata( {} ) } );
 				await resource.saveAndRefresh()
 					.then( () => fail( "Should not resolve" ) )
 					.catch( error => {
@@ -679,7 +679,7 @@ describe( module( "carbonldp/Document" ), ():void => {
 				const spy:jasmine.Spy = spyOn( QueryDocumentDocument.PROTOTYPE, "saveAndRefresh" )
 					.and.returnValue( Promise.reject( null ) );
 
-				const resource:Document = createMock( { __partialMetadata: createMockPartialMetadata( {} ) } );
+				const resource:Document = createMock( { _queryableMetadata: createMockQueryableMetadata( {} ) } );
 				await resource.saveAndRefresh( { timeout: 5050 } )
 					.then( () => fail( "Should not resolve" ) )
 					.catch( error => {

@@ -29,7 +29,7 @@ import {
 	QueryPropertyType
 } from "./QueryProperty";
 
-describe( module( "carbonldp/QueryDocument/QueryProperty" ), ():void => {
+describe( module( "carbonldp/QueryDocuments/QueryProperty" ), ():void => {
 
 	it( "should exists", ():void => {
 		expect( Module ).toBeDefined();
@@ -37,7 +37,7 @@ describe( module( "carbonldp/QueryDocument/QueryProperty" ), ():void => {
 	} );
 
 	describe( enumeration(
-		"CarbonLDP.QueryDocument.QueryPropertyType",
+		"CarbonLDP.QueryDocuments.QueryPropertyType",
 		"Enum fot the type of data expected to return for a property."
 	), () => {
 
@@ -72,7 +72,7 @@ describe( module( "carbonldp/QueryDocument/QueryProperty" ), ():void => {
 	} );
 
 	describe( clazz(
-		"CarbonLDP.QueryDocument.QueryProperty",
+		"CarbonLDP.QueryDocuments.QueryProperty",
 		"Class that represents a property in the query"
 	), ():void => {
 
@@ -95,7 +95,7 @@ describe( module( "carbonldp/QueryDocument/QueryProperty" ), ():void => {
 				"Creates a query property for the specified name.\n" +
 				"By default the property will be optional, i.e. the patterns returned will be wrapped by an optional token.",
 				[
-					{ name: "context", type: "CarbonLDP.QueryDocument.QueryContext", description: "The context of the query where the property is been used." },
+					{ name: "context", type: "CarbonLDP.QueryDocuments.QueryContext", description: "The context of the query where the property is been used." },
 					{ name: "name", type: "string", description: "The name of the property." },
 				]
 			), ():void => {
@@ -129,7 +129,7 @@ describe( module( "carbonldp/QueryDocument/QueryProperty" ), ():void => {
 		it( hasProperty(
 			INSTANCE,
 			"variable",
-			"CarbonLDP.QueryDocument.QueryVariable",
+			"CarbonLDP.QueryDocuments.QueryVariable",
 			"The variable that represents the property in the query."
 		), ():void => {
 		} );

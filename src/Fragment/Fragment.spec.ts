@@ -1,10 +1,12 @@
 import { Document } from "../Document/Document";
+
 import { IllegalArgumentError } from "../Errors/IllegalArgumentError";
 
 import { ModelDecorator } from "../Model/ModelDecorator";
 import { ModelFactory } from "../Model/ModelFactory";
 import { ModelPrototype } from "../Model/ModelPrototype";
-import { ResolvablePointer } from "../Repository/ResolvablePointer";
+
+import { QueryablePointer } from "../QueryDocuments/QueryablePointer";
 
 import {
 	extendsClass,
@@ -18,7 +20,7 @@ import {
 	STATIC,
 } from "../test/JasmineExtender";
 
-import { BaseTransientFragment } from "./BaseTransientFragment";
+import { BaseResolvableFragment } from "./BaseResolvableFragment";
 import { Fragment, FragmentFactory } from "./Fragment";
 import { TransientFragment } from "./TransientFragment";
 
@@ -34,8 +36,8 @@ describe( module( "carbonldp/Fragment" ), ():void => {
 			expect( target ).toBeDefined();
 		} );
 
-		it( extendsClass( "CarbonLDP.ResolvablePointer" ), ():void => {
-			const target:ResolvablePointer = {} as Fragment;
+		it( extendsClass( "CarbonLDP.QueryablePointer" ), ():void => {
+			const target:QueryablePointer = {} as Fragment;
 			expect( target ).toBeDefined();
 		} );
 
@@ -103,18 +105,18 @@ describe( module( "carbonldp/Fragment" ), ():void => {
 		"Interface with the factory, decorate and utils methods of a `CarbonLDP.Fragment` object."
 	), ():void => {
 
-		it( extendsClass( "CarbonLDP.Model.ModelPrototype<CarbonLDP.Fragment, CarbonLDP.TransientFragment & CarbonLDP.ResolvablePointer>" ), () => {
-			const target:ModelPrototype<Fragment, TransientFragment & ResolvablePointer> = {} as FragmentFactory;
+		it( extendsClass( "CarbonLDP.Model.ModelPrototype<CarbonLDP.Fragment, CarbonLDP.TransientFragment & CarbonLDP.QueryDocuments.QueryablePointer>" ), () => {
+			const target:ModelPrototype<Fragment, TransientFragment & QueryablePointer> = {} as FragmentFactory;
 			expect( target ).toBeDefined();
 		} );
 
-		it( extendsClass( "CarbonLDP.Model.ModelDecorator<CarbonLDP.Fragment, CarbonLDP.BaseTransientFragment>" ), () => {
-			const target:ModelDecorator<Fragment, BaseTransientFragment> = {} as FragmentFactory;
+		it( extendsClass( "CarbonLDP.Model.ModelDecorator<CarbonLDP.Fragment, CarbonLDP.BaseResolvableFragment>" ), () => {
+			const target:ModelDecorator<Fragment, BaseResolvableFragment> = {} as FragmentFactory;
 			expect( target ).toBeDefined();
 		} );
 
-		it( extendsClass( "CarbonLDP.Model.ModelFactory<CarbonLDP.Fragment, CarbonLDP.BaseTransientFragment>" ), () => {
-			const target:ModelFactory<Fragment, BaseTransientFragment> = {} as FragmentFactory;
+		it( extendsClass( "CarbonLDP.Model.ModelFactory<CarbonLDP.Fragment, CarbonLDP.BaseResolvableFragment>" ), () => {
+			const target:ModelFactory<Fragment, BaseResolvableFragment> = {} as FragmentFactory;
 			expect( target ).toBeDefined();
 		} );
 
@@ -158,8 +160,8 @@ describe( module( "carbonldp/Fragment" ), ():void => {
 				expect( spy ).toHaveBeenCalled();
 			} );
 
-			it( "should decorate with ResolvablePointer", () => {
-				const spy:jasmine.Spy = spyOn( ResolvablePointer, "decorate" );
+			it( "should decorate with QueryablePointer", () => {
+				const spy:jasmine.Spy = spyOn( QueryablePointer, "decorate" );
 
 				Fragment.decorate( { $registry } );
 				expect( spy ).toHaveBeenCalled();

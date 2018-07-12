@@ -16,8 +16,9 @@ export function _parseURIParams<T>( this:void, resource:ResolvablePointer, uri?:
 	const _uri:string = isString( uri ) ?
 		URI.resolve( resource.$id, uri ) : resource.$id;
 
-	const _args:any[] = uri ? args : Array.prototype
-		.slice.call( args, 1 );
+	const _args:any[] = ! isString( uri ) ?
+		Array.from( args ) :
+		Array.prototype.slice.call( args, 1 );
 
 	return { _uri, _args };
 }
@@ -26,8 +27,9 @@ export function _parseResourceParams<T>( this:void, resource:ResolvablePointer, 
 	const _resource:ResolvablePointer = Pointer.is( $resource ) ?
 		$resource : resource;
 
-	const _args:any[] = Pointer.is( $resource ) ? args : Array.prototype
-		.slice.call( args, 1 );
+	const _args:any[] = ! Pointer.is( $resource ) ?
+		Array.from( args ) :
+		Array.prototype.slice.call( args, 1 );
 
 	return { _resource, _args };
 }

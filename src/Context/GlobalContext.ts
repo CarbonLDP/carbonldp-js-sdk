@@ -29,7 +29,7 @@ import {
 	ValidationReport,
 	ValidationResult,
 } from "../SHACL";
-import { QueryMetadata } from "../QueryDocument";
+import { QueryMetadata } from "../QueryDocuments";
 import {
 	PlatformInstance,
 	PlatformMetadata,

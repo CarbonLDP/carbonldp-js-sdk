@@ -26,14 +26,14 @@ import {
 	QueryPropertyType,
 } from "./QueryProperty";
 
-describe( module( "carbonldp/QueryDocument/QueryContextBuilder" ), ():void => {
+describe( module( "carbonldp/QueryDocuments/QueryContextBuilder" ), ():void => {
 
 	it( "should exists", ():void => {
 		expect( Module ).toBeDefined();
 		expect( Module ).toEqual( jasmine.any( Object ) );
 	} );
 
-	describe( clazz( "CarbonLDP.QueryDocument.QueryContextBuilder", "Class with the shared status and data of the query." ), ():void => {
+	describe( clazz( "CarbonLDP.QueryDocuments.QueryContextBuilder", "Class with the shared status and data of the query." ), ():void => {
 
 		it( "should exists", ():void => {
 			expect( QueryContextBuilder ).toBeDefined();
@@ -67,7 +67,7 @@ describe( module( "carbonldp/QueryDocument/QueryContextBuilder" ), ():void => {
 
 		} );
 
-		it( extendsClass( "CarbonLDP.QueryDocument.QueryContext" ), ():void => {
+		it( extendsClass( "CarbonLDP.QueryDocuments.QueryContext" ), ():void => {
 			const queryContext:QueryContextBuilder = new QueryContextBuilder( context );
 			expect( queryContext ).toEqual( jasmine.any( QueryContext ) );
 		} );
@@ -150,7 +150,7 @@ describe( module( "carbonldp/QueryDocument/QueryContextBuilder" ), ():void => {
 				[
 					{ name: "name", type: "string", description: "Name of the property to look for." },
 				],
-				{ type: "CarbonLDP.QueryDocument.QueryProperty" }
+				{ type: "CarbonLDP.QueryDocuments.QueryProperty" }
 			), ():void => {
 			} );
 
@@ -183,7 +183,7 @@ describe( module( "carbonldp/QueryDocument/QueryContextBuilder" ), ():void => {
 				[
 					{ name: "name", type: "string", description: "Name of the property to look for its children properties." },
 				],
-				{ type: "CarbonLDP.QueryDocument.QueryProperty[]" }
+				{ type: "CarbonLDP.QueryDocuments.QueryProperty[]" }
 			), ():void => {
 			} );
 
@@ -231,7 +231,7 @@ describe( module( "carbonldp/QueryDocument/QueryContextBuilder" ), ():void => {
 				[
 					{ name: "name", type: "string", description: "Name that the property will have." },
 				],
-				{ type: "CarbonLDP.QueryDocument.QueryProperty" }
+				{ type: "CarbonLDP.QueryDocuments.QueryProperty" }
 			), ():void => {} );
 
 			it( "should exists", ():void => {
