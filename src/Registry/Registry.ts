@@ -1,7 +1,14 @@
-import { IDAlreadyInUseError, IllegalArgumentError, } from "../Errors";
-import { ModelDecorator, ModelFactory, ModelPrototype } from "../Model";
-import { Pointer, PointerLibrary, PointerValidator, } from "../Pointer";
+import { IDAlreadyInUseError } from "../Errors/IDAlreadyInUseError";
+import { IllegalArgumentError } from "../Errors/IllegalArgumentError";
+
+import { ModelDecorator } from "../Model/ModelDecorator";
+import { ModelFactory } from "../Model/ModelFactory";
+import { ModelPrototype } from "../Model/ModelPrototype";
+
+import { Pointer, PointerLibrary, PointerValidator } from "../Pointer";
+
 import { isObject } from "../Utils";
+
 import { BaseRegisteredPointer } from "./BaseRegisteredPointer";
 import { BaseRegistry } from "./BaseRegistry";
 import { RegisteredPointer } from "./RegisteredPointer";
@@ -38,13 +45,9 @@ export interface Registry<M extends RegisteredPointer = RegisteredPointer> exten
 }
 
 
-export type OverriddenMembers =
-	| "$registry"
-	;
-
 // TODO: Use unknown
 export type RegistryFactory =
-	& ModelPrototype<Registry, {}, OverriddenMembers>
+	& ModelPrototype<Registry>
 	& ModelDecorator<Registry<any>, BaseRegistry>
 	& ModelFactory<Registry, BaseRegistry>
 	;
@@ -136,7 +139,7 @@ export const Registry:RegistryFactory = {
 		},
 
 		_getLocalID( this:Registry, id:string ):never {
-			throw new IllegalArgumentError( `"${ id }" is outside the scope of the registry.` );
+			throw new IllegalArgumentError( `"${ id }" is out of scope.` );
 		},
 	},
 

@@ -1,12 +1,15 @@
 import { anyThatMatches } from "../../test/helpers/jasmine/equalities";
 import { spyOnDecorated } from "../../test/helpers/jasmine/spies";
-import { ModelDecorator } from "../Model";
+
+import { IDAlreadyInUseError } from "../Errors/IDAlreadyInUseError";
+import { IllegalArgumentError } from "../Errors/IllegalArgumentError";
+
+import { ModelDecorator } from "../Model/ModelDecorator";
+import { ModelFactory } from "../Model/ModelFactory";
+import { ModelPrototype } from "../Model/ModelPrototype";
+
 import {
-	IDAlreadyInUseError,
-	IllegalArgumentError
-} from "../Errors";
-import { Pointer } from "../Pointer";
-import {
+	extendsClass,
 	hasProperty,
 	hasSignature,
 	INSTANCE,
@@ -16,29 +19,31 @@ import {
 	OBLIGATORY,
 	property,
 } from "../test/JasmineExtender";
-import { PickSelfProps } from "../Utils";
-import {
-	Registry,
-	RegistryFactory
-} from "./Registry";
+
+import { BaseRegisteredPointer } from "./BaseRegisteredPointer";
+import { BaseRegistry } from "./BaseRegistry";
+import { RegisteredPointer } from "./RegisteredPointer";
+import { Registry, RegistryFactory } from "./Registry";
 
 
-function createMock<T extends object>( data?:T & Partial<Registry<Pointer>> ):T & Registry<Pointer> {
-	return Registry.decorate( Object.assign( {}, data ) );
+function createMock<T extends object>( data?:T & Partial<Registry<RegisteredPointer>> ):T & Registry<RegisteredPointer> {
+	return Registry.decorate( Object.assign( {
+		__modelDecorator: RegisteredPointer,
+	}, data ) );
 }
 
 describe( module( "carbonldp/Registry" ), () => {
 
 	describe( interfaze(
 		"CarbonLDP.Registry",
-		[ "M extends Pointer" ],
+		[ "M extends RegisteredPointer = RegisteredPointer" ],
 		"Interface with the base methods of a general registry, that stores and manages an specific type of resources."
 	), () => {
 
 		it( hasProperty(
 			OBLIGATORY,
-			"_registry",
-			"CarbonLDP.Registry | undefined",
+			"$registry",
+			"CarbonLDP.Registry<any> | undefined",
 			"Possible parent registry of the registry."
 		), () => {
 			const target:Registry<any>[ "$registry" ] = {} as Registry<any>;
@@ -47,11 +52,21 @@ describe( module( "carbonldp/Registry" ), () => {
 
 		it( hasProperty(
 			OBLIGATORY,
-			"_resourcesMap",
+			"__modelDecorator",
+			"CarbonLDP.Model.ModelDecorator<M, CarbonLDP.Registry.BaseRegisteredPointer>",
+			"Decorator object to personalize the pointers of the registry."
+		), () => {
+			const target:Registry<RegisteredPointer>[ "__modelDecorator" ] = {} as ModelDecorator<RegisteredPointer, BaseRegisteredPointer>;
+			expect( target ).toBeDefined();
+		} );
+
+		it( hasProperty(
+			OBLIGATORY,
+			"__resourcesMap",
 			"Map<string, M>",
 			"Map where the resources of the registry are stored."
 		), () => {
-			const target:Registry<any>[ "__resourcesMap" ] = {} as Map<string, any>;
+			const target:Registry<RegisteredPointer>[ "__resourcesMap" ] = {} as Map<string, RegisteredPointer>;
 			expect( target ).toBeDefined();
 		} );
 
@@ -68,7 +83,7 @@ describe( module( "carbonldp/Registry" ), () => {
 			), () => {} );
 
 			it( "should exists", ():void => {
-				const registry:Registry<Pointer> = createMock();
+				const registry:Registry<RegisteredPointer> = createMock();
 
 				expect( registry._getLocalID ).toBeDefined();
 				expect( registry._getLocalID ).toEqual( jasmine.any( Function ) );
@@ -76,7 +91,7 @@ describe( module( "carbonldp/Registry" ), () => {
 
 
 			it( "should throw error with any value", () => {
-				const registry:Registry<Pointer> = createMock( {} );
+				const registry:Registry<RegisteredPointer> = createMock( {} );
 
 				expect( () => registry._getLocalID( "" ) ).toThrowError( IllegalArgumentError, `"" is out of scope.` );
 				expect( () => registry._getLocalID( "resource/" ) ).toThrowError( IllegalArgumentError, `"resource/" is out of scope.` );
@@ -84,20 +99,20 @@ describe( module( "carbonldp/Registry" ), () => {
 
 		} );
 
-		describe( method( OBLIGATORY, "_register" ), () => {
+		describe( method( OBLIGATORY, "_addPointer" ), () => {
 
 			it( hasSignature(
 				[ "T extends object" ],
 				"Adds the provided object as a resource of the registry.",
 				[
-					{ name: "base", type: "T & { id:string }", description: "The base object to be added as a resource of the registry." },
+					{ name: "pointer", type: "T & Pointer", description: "The base object to be added as a resource of the registry." },
 				],
 				{ type: "T & M" }
 			), () => {} );
 
 
 			it( "should throw error if no ID in the base object", () => {
-				const registry:Registry<Pointer> = createMock();
+				const registry:Registry<RegisteredPointer> = createMock();
 
 				expect( () => {
 					registry._addPointer( {} as any );
@@ -105,7 +120,7 @@ describe( module( "carbonldp/Registry" ), () => {
 			} );
 
 			it( "should throw error when ID out of scope", () => {
-				const registry:Registry<Pointer> = createMock();
+				const registry:Registry<RegisteredPointer> = createMock();
 
 				expect( () => {
 					registry._addPointer( { $id: "id" } );
@@ -113,9 +128,9 @@ describe( module( "carbonldp/Registry" ), () => {
 			} );
 
 			it( "should throw error when ID already taken", () => {
-				const registry:Registry<Pointer> = createMock();
+				const registry:Registry<RegisteredPointer> = createMock();
 
-				registry.__resourcesMap.set( "local", Pointer.create() );
+				registry.__resourcesMap.set( "local", RegisteredPointer.create( { $registry: registry } ) );
 				spyOnDecorated( registry, "_getLocalID" )
 					.and.returnValue( "local" );
 
@@ -126,40 +141,40 @@ describe( module( "carbonldp/Registry" ), () => {
 
 
 			it( "should return the same object reference", () => {
-				const registry:Registry<Pointer> = createMock();
+				const registry:Registry<RegisteredPointer> = createMock();
 				spyOnDecorated( registry, "_getLocalID" )
 					.and.returnValue( "local" );
 
-				const object:{ id:string } = { id: "id" };
-				const returned:Pointer = registry._addPointer( object );
+				const object:{ $id:string } = { $id: "id" };
+				const returned:RegisteredPointer = registry._addPointer( object );
 
 				expect( object ).toBe( returned );
 			} );
 
 			it( "should return the resource type", () => {
-				const registry:Registry<Pointer> = createMock();
+				const registry:Registry<RegisteredPointer> = createMock();
 				spyOnDecorated( registry, "_getLocalID" )
 					.and.returnValue( "local" );
 
-				const returned:Pointer = registry._addPointer( { $id: "id" } );
-				expect( returned ).toEqual( anyThatMatches( Pointer.is, "isPointer" ) as any );
+				const returned:RegisteredPointer = registry._addPointer( { $id: "id" } );
+				expect( returned ).toEqual( anyThatMatches( RegisteredPointer.is, "isPointer" ) as any );
 			} );
 
-			it( "should assign resource._registry as itself", () => {
-				const registry:Registry<Pointer> = createMock();
+			it( "should assign resource.$registry as itself", () => {
+				const registry:Registry<RegisteredPointer> = createMock();
 				spyOnDecorated( registry, "_getLocalID" )
 					.and.returnValue( "local" );
 
-				const returned:Pointer = registry._addPointer( { $id: "id" } );
-				expect( returned._registry ).toBe( registry );
+				const returned:RegisteredPointer = registry._addPointer( { $id: "id" } );
+				expect( returned.$registry ).toBe( registry );
 			} );
 
 			it( "should store resource in the _resourcesMap", () => {
-				const registry:Registry<Pointer> = createMock();
+				const registry:Registry<RegisteredPointer> = createMock();
 				spyOnDecorated( registry, "_getLocalID" )
 					.and.returnValue( "local" );
 
-				const returned:Pointer = registry._addPointer( { $id: "id" } );
+				const returned:RegisteredPointer = registry._addPointer( { $id: "id" } );
 
 				expect( registry.__resourcesMap ).toEqual( new Map( [
 					[ "local", returned ],
@@ -189,7 +204,7 @@ describe( module( "carbonldp/Registry" ), () => {
 			), () => {} );
 
 			it( "should exists", ():void => {
-				const registry:Registry<Pointer> = createMock();
+				const registry:Registry<RegisteredPointer> = createMock();
 
 				expect( registry.inScope ).toBeDefined();
 				expect( registry.inScope ).toEqual( jasmine.any( Function ) );
@@ -197,7 +212,7 @@ describe( module( "carbonldp/Registry" ), () => {
 
 
 			it( "should call _getLocalID when string", () => {
-				const registry:Registry<Pointer> = createMock();
+				const registry:Registry<RegisteredPointer> = createMock();
 
 				const spy:jasmine.Spy = spyOnDecorated( registry, "_getLocalID" )
 					.and.returnValue( "local" );
@@ -206,19 +221,19 @@ describe( module( "carbonldp/Registry" ), () => {
 				expect( spy ).toHaveBeenCalledWith( "id" );
 			} );
 
-			it( "should call _getLocalID when Pointer", () => {
-				const registry:Registry<Pointer> = createMock();
+			it( "should call _getLocalID when RegisteredPointer", () => {
+				const registry:Registry<RegisteredPointer> = createMock();
 
 				const spy:jasmine.Spy = spyOnDecorated( registry, "_getLocalID" )
 					.and.returnValue( "local" );
 
-				registry.inScope( Pointer.create( { $id: "id" } ) );
+				registry.inScope( RegisteredPointer.create( { $registry: registry, $id: "id" } ) );
 				expect( spy ).toHaveBeenCalledWith( "id" );
 			} );
 
 
 			it( "should return true if string can be converted to local", () => {
-				const registry:Registry<Pointer> = createMock();
+				const registry:Registry<RegisteredPointer> = createMock();
 
 				spyOnDecorated( registry, "_getLocalID" )
 					.and.returnValue( "local" );
@@ -228,19 +243,19 @@ describe( module( "carbonldp/Registry" ), () => {
 
 			} );
 
-			it( "should return true if Pointer.id can be converted to local", () => {
-				const registry:Registry<Pointer> = createMock();
+			it( "should return true if RegisteredPointer.$id can be converted to local", () => {
+				const registry:Registry<RegisteredPointer> = createMock();
 
 				spyOnDecorated( registry, "_getLocalID" )
 					.and.returnValue( "local" );
 
-				const returned:boolean = registry.inScope( Pointer.create( { $id: "id" } ) );
+				const returned:boolean = registry.inScope( RegisteredPointer.create( { $registry: registry, $id: "id" } ) );
 				expect( returned ).toBe( true );
 			} );
 
 			it( "should return true if string can be converted by parent registry", () => {
-				const parent:Registry<Pointer> = createMock();
-				const registry:Registry<Pointer> = createMock( { $registry: parent } );
+				const parent:Registry<RegisteredPointer> = createMock();
+				const registry:Registry<RegisteredPointer> = createMock( { $registry: parent } );
 
 				spyOnDecorated( registry, "_getLocalID" )
 					.and.callFake( () => { throw Error( "no local" ); } );
@@ -252,9 +267,9 @@ describe( module( "carbonldp/Registry" ), () => {
 				expect( returned ).toBe( true );
 			} );
 
-			it( "should return true if Pointer.id can be converted by parent registry", () => {
-				const parent:Registry<Pointer> = createMock();
-				const registry:Registry<Pointer> = createMock( { $registry: parent } );
+			it( "should return true if RegisteredPointer.$id can be converted by parent registry", () => {
+				const parent:Registry<RegisteredPointer> = createMock();
+				const registry:Registry<RegisteredPointer> = createMock( { $registry: parent } );
 
 				spyOnDecorated( registry, "_getLocalID" )
 					.and.callFake( () => { throw Error( "no local" ); } );
@@ -262,13 +277,13 @@ describe( module( "carbonldp/Registry" ), () => {
 				spyOnDecorated( parent, "_getLocalID" )
 					.and.returnValue( "local" );
 
-				const returned:boolean = registry.inScope( Pointer.create( { $id: "id" } ) );
+				const returned:boolean = registry.inScope( RegisteredPointer.create( { $registry: registry, $id: "id" } ) );
 				expect( returned ).toBe( true );
 			} );
 
 
 			it( "should return false if string can't be converted & has no parent", () => {
-				const registry:Registry<Pointer> = createMock();
+				const registry:Registry<RegisteredPointer> = createMock();
 
 				spyOnDecorated( registry, "_getLocalID" )
 					.and.callFake( () => { throw Error( "no local" ); } );
@@ -277,19 +292,19 @@ describe( module( "carbonldp/Registry" ), () => {
 				expect( returned ).toBe( false );
 			} );
 
-			it( "should return false if Pointer.id can't be converted & has no parent", () => {
-				const registry:Registry<Pointer> = createMock();
+			it( "should return false if RegisteredPointer.$id can't be converted & has no parent", () => {
+				const registry:Registry<RegisteredPointer> = createMock();
 
 				spyOnDecorated( registry, "_getLocalID" )
 					.and.callFake( () => { throw Error( "no local" ); } );
 
-				const returned:boolean = registry.inScope( Pointer.create( { $id: "id" } ) );
+				const returned:boolean = registry.inScope( RegisteredPointer.create( { $registry: registry, $id: "id" } ) );
 				expect( returned ).toBe( false );
 			} );
 
 			it( "should return false if string can't be converted by parent", () => {
-				const parent:Registry<Pointer> = createMock();
-				const registry:Registry<Pointer> = createMock( { $registry: parent } );
+				const parent:Registry<RegisteredPointer> = createMock();
+				const registry:Registry<RegisteredPointer> = createMock( { $registry: parent } );
 
 				spyOnDecorated( registry, "_getLocalID" )
 					.and.callFake( () => { throw Error( "no local" ); } );
@@ -301,9 +316,9 @@ describe( module( "carbonldp/Registry" ), () => {
 				expect( returned ).toBe( false );
 			} );
 
-			it( "should return false if Pointer.id can't be converted by parent", () => {
-				const parent:Registry<Pointer> = createMock();
-				const registry:Registry<Pointer> = createMock( { $registry: parent } );
+			it( "should return false if RegisteredPointer.$id can't be converted by parent", () => {
+				const parent:Registry<RegisteredPointer> = createMock();
+				const registry:Registry<RegisteredPointer> = createMock( { $registry: parent } );
 
 				spyOnDecorated( registry, "_getLocalID" )
 					.and.callFake( () => { throw Error( "no local" ); } );
@@ -311,13 +326,13 @@ describe( module( "carbonldp/Registry" ), () => {
 				spyOnDecorated( parent, "_getLocalID" )
 					.and.callFake( () => { throw Error( "no local" ); } );
 
-				const returned:boolean = registry.inScope( Pointer.create( { $id: "id" } ) );
+				const returned:boolean = registry.inScope( RegisteredPointer.create( { $registry: registry, $id: "id" } ) );
 				expect( returned ).toBe( false );
 			} );
 
 			it( "should return false if string can be converted by parent registry but local flag set", () => {
-				const parent:Registry<Pointer> = createMock();
-				const registry:Registry<Pointer> = createMock( { $registry: parent } );
+				const parent:Registry<RegisteredPointer> = createMock();
+				const registry:Registry<RegisteredPointer> = createMock( { $registry: parent } );
 
 				spyOnDecorated( registry, "_getLocalID" )
 					.and.callFake( () => { throw Error( "no local" ); } );
@@ -329,9 +344,9 @@ describe( module( "carbonldp/Registry" ), () => {
 				expect( returned ).toBe( false );
 			} );
 
-			it( "should return false if Pointer.id can be converted by parent registry but local flag set", () => {
-				const parent:Registry<Pointer> = createMock();
-				const registry:Registry<Pointer> = createMock( { $registry: parent } );
+			it( "should return false if RegisteredPointer.$id can be converted by parent registry but local flag set", () => {
+				const parent:Registry<RegisteredPointer> = createMock();
+				const registry:Registry<RegisteredPointer> = createMock( { $registry: parent } );
 
 				spyOnDecorated( registry, "_getLocalID" )
 					.and.callFake( () => { throw Error( "no local" ); } );
@@ -339,7 +354,7 @@ describe( module( "carbonldp/Registry" ), () => {
 				spyOnDecorated( parent, "_getLocalID" )
 					.and.returnValue( "local" );
 
-				const returned:boolean = registry.inScope( Pointer.create( { $id: "id" } ), true );
+				const returned:boolean = registry.inScope( RegisteredPointer.create( { $registry: registry, $id: "id" } ), true );
 				expect( returned ).toBe( false );
 			} );
 
@@ -366,7 +381,7 @@ describe( module( "carbonldp/Registry" ), () => {
 			), () => {} );
 
 			it( "should exists", ():void => {
-				const registry:Registry<Pointer> = createMock();
+				const registry:Registry<RegisteredPointer> = createMock();
 
 				expect( registry.hasPointer ).toBeDefined();
 				expect( registry.hasPointer ).toEqual( jasmine.any( Function ) );
@@ -374,7 +389,7 @@ describe( module( "carbonldp/Registry" ), () => {
 
 
 			it( "should return verify in local scope", () => {
-				const registry:Registry<Pointer> = createMock();
+				const registry:Registry<RegisteredPointer> = createMock();
 
 				const spy:jasmine.Spy = spyOnDecorated( registry, "inScope" );
 
@@ -384,7 +399,7 @@ describe( module( "carbonldp/Registry" ), () => {
 
 
 			it( "should return false when not in scope & has no parent", () => {
-				const registry:Registry<Pointer> = createMock();
+				const registry:Registry<RegisteredPointer> = createMock();
 
 				spyOnDecorated( registry, "_getLocalID" )
 					.and.callFake( () => { throw new Error( "not local" ); } );
@@ -394,7 +409,7 @@ describe( module( "carbonldp/Registry" ), () => {
 			} );
 
 			it( "should return false when in scope but not exists & has no parent", () => {
-				const registry:Registry<Pointer> = createMock();
+				const registry:Registry<RegisteredPointer> = createMock();
 
 				spyOnDecorated( registry, "_getLocalID" )
 					.and.returnValue( "local" );
@@ -404,9 +419,9 @@ describe( module( "carbonldp/Registry" ), () => {
 			} );
 
 			it( "should return true when in scope and exists & has no parent", () => {
-				const registry:Registry<Pointer> = createMock();
+				const registry:Registry<RegisteredPointer> = createMock();
 
-				const pointer:Pointer = Pointer.create( { $id: "the resource" } );
+				const pointer:RegisteredPointer = RegisteredPointer.create( { $registry: registry, $id: "the resource" } );
 				registry.__resourcesMap.set( "local", pointer );
 
 				spyOnDecorated( registry, "_getLocalID" )
@@ -418,7 +433,7 @@ describe( module( "carbonldp/Registry" ), () => {
 			} );
 
 			it( "should return false when not in scope & has no parent & local flag is set", () => {
-				const registry:Registry<Pointer> = createMock();
+				const registry:Registry<RegisteredPointer> = createMock();
 
 				spyOnDecorated( registry, "_getLocalID" )
 					.and.callFake( () => { throw new Error( "not local" ); } );
@@ -428,7 +443,7 @@ describe( module( "carbonldp/Registry" ), () => {
 			} );
 
 			it( "should return false when in scope but not exists & has no parent & local flag is set ", () => {
-				const registry:Registry<Pointer> = createMock();
+				const registry:Registry<RegisteredPointer> = createMock();
 
 				spyOnDecorated( registry, "_getLocalID" )
 					.and.returnValue( "local" );
@@ -438,9 +453,9 @@ describe( module( "carbonldp/Registry" ), () => {
 			} );
 
 			it( "should return true when in scope and exists & has no parent & local flag is set ", () => {
-				const registry:Registry<Pointer> = createMock();
+				const registry:Registry<RegisteredPointer> = createMock();
 
-				const pointer:Pointer = Pointer.create( { $id: "the resource" } );
+				const pointer:RegisteredPointer = RegisteredPointer.create( { $registry: registry, $id: "the resource" } );
 				registry.__resourcesMap.set( "local", pointer );
 
 				spyOnDecorated( registry, "_getLocalID" )
@@ -453,11 +468,11 @@ describe( module( "carbonldp/Registry" ), () => {
 
 
 			it( "should return false when not in scope & not in parent", () => {
-				const parent:Registry<Pointer> = createMock();
+				const parent:Registry<RegisteredPointer> = createMock();
 				spyOnDecorated( parent, "hasPointer" )
 					.and.returnValue( false );
 
-				const registry:Registry<Pointer> = createMock( { $registry: parent } );
+				const registry:Registry<RegisteredPointer> = createMock( { $registry: parent } );
 				spyOnDecorated( registry, "_getLocalID" )
 					.and.callFake( () => { throw new Error( "not local" ); } );
 
@@ -466,11 +481,11 @@ describe( module( "carbonldp/Registry" ), () => {
 			} );
 
 			it( "should return true when not in scope & in parent", () => {
-				const parent:Registry<Pointer> = createMock();
+				const parent:Registry<RegisteredPointer> = createMock();
 				spyOnDecorated( parent, "hasPointer" )
 					.and.returnValue( true );
 
-				const registry:Registry<Pointer> = createMock( { $registry: parent } );
+				const registry:Registry<RegisteredPointer> = createMock( { $registry: parent } );
 				spyOnDecorated( registry, "_getLocalID" )
 					.and.callFake( () => { throw new Error( "not local" ); } );
 
@@ -479,11 +494,11 @@ describe( module( "carbonldp/Registry" ), () => {
 			} );
 
 			it( "should return false when not in scope & not in parent & local flag is set", () => {
-				const parent:Registry<Pointer> = createMock();
+				const parent:Registry<RegisteredPointer> = createMock();
 				spyOnDecorated( parent, "hasPointer" )
 					.and.returnValue( false );
 
-				const registry:Registry<Pointer> = createMock( { $registry: parent } );
+				const registry:Registry<RegisteredPointer> = createMock( { $registry: parent } );
 				spyOnDecorated( registry, "_getLocalID" )
 					.and.callFake( () => { throw new Error( "not local" ); } );
 
@@ -492,11 +507,11 @@ describe( module( "carbonldp/Registry" ), () => {
 			} );
 
 			it( "should return false when not in scope & in parent & local flag is set", () => {
-				const parent:Registry<Pointer> = createMock();
+				const parent:Registry<RegisteredPointer> = createMock();
 				spyOnDecorated( parent, "hasPointer" )
 					.and.returnValue( true );
 
-				const registry:Registry<Pointer> = createMock( { $registry: parent } );
+				const registry:Registry<RegisteredPointer> = createMock( { $registry: parent } );
 				spyOnDecorated( registry, "_getLocalID" )
 					.and.callFake( () => { throw new Error( "not local" ); } );
 
@@ -506,11 +521,11 @@ describe( module( "carbonldp/Registry" ), () => {
 
 
 			it( "should return false when in scope and not exists & not in parent & local flag is set", () => {
-				const parent:Registry<Pointer> = createMock();
+				const parent:Registry<RegisteredPointer> = createMock();
 				spyOnDecorated( parent, "hasPointer" )
 					.and.returnValue( false );
 
-				const registry:Registry<Pointer> = createMock( { $registry: parent } );
+				const registry:Registry<RegisteredPointer> = createMock( { $registry: parent } );
 				spyOnDecorated( registry, "_getLocalID" )
 					.and.returnValue( "parent" );
 
@@ -519,11 +534,11 @@ describe( module( "carbonldp/Registry" ), () => {
 			} );
 
 			it( "should return true when in scope and not exists & in parent", () => {
-				const parent:Registry<Pointer> = createMock();
+				const parent:Registry<RegisteredPointer> = createMock();
 				spyOnDecorated( parent, "hasPointer" )
 					.and.returnValue( true );
 
-				const registry:Registry<Pointer> = createMock( { $registry: parent } );
+				const registry:Registry<RegisteredPointer> = createMock( { $registry: parent } );
 				spyOnDecorated( registry, "_getLocalID" )
 					.and.returnValue( "parent" );
 
@@ -532,14 +547,14 @@ describe( module( "carbonldp/Registry" ), () => {
 			} );
 
 			it( "should return true when in scope and exists & in parent", () => {
-				const parent:Registry<Pointer> = createMock();
+				const parent:Registry<RegisteredPointer> = createMock();
 				spyOnDecorated( parent, "hasPointer" )
 					.and.returnValue( true );
 
 
-				const registry:Registry<Pointer> = createMock( { $registry: parent } );
+				const registry:Registry<RegisteredPointer> = createMock( { $registry: parent } );
 
-				const pointer:Pointer = Pointer.create( { $id: "the resource" } );
+				const pointer:RegisteredPointer = RegisteredPointer.create( { $registry: registry, $id: "the resource" } );
 				registry.__resourcesMap.set( "local", pointer );
 
 				spyOnDecorated( registry, "_getLocalID" )
@@ -550,11 +565,11 @@ describe( module( "carbonldp/Registry" ), () => {
 			} );
 
 			it( "should return false when in scope and not exists & not in parent & local flag is set", () => {
-				const parent:Registry<Pointer> = createMock();
+				const parent:Registry<RegisteredPointer> = createMock();
 				spyOnDecorated( parent, "hasPointer" )
 					.and.returnValue( false );
 
-				const registry:Registry<Pointer> = createMock( { $registry: parent } );
+				const registry:Registry<RegisteredPointer> = createMock( { $registry: parent } );
 				spyOnDecorated( registry, "_getLocalID" )
 					.and.returnValue( "parent" );
 
@@ -563,11 +578,11 @@ describe( module( "carbonldp/Registry" ), () => {
 			} );
 
 			it( "should return false when in scope and not exists & in parent & local flag is set", () => {
-				const parent:Registry<Pointer> = createMock();
+				const parent:Registry<RegisteredPointer> = createMock();
 				spyOnDecorated( parent, "hasPointer" )
 					.and.returnValue( true );
 
-				const registry:Registry<Pointer> = createMock( { $registry: parent } );
+				const registry:Registry<RegisteredPointer> = createMock( { $registry: parent } );
 				spyOnDecorated( registry, "_getLocalID" )
 					.and.returnValue( "parent" );
 
@@ -576,14 +591,14 @@ describe( module( "carbonldp/Registry" ), () => {
 			} );
 
 			it( "should return true when in scope and exists & in parent & local flag is set", () => {
-				const parent:Registry<Pointer> = createMock();
+				const parent:Registry<RegisteredPointer> = createMock();
 				spyOnDecorated( parent, "hasPointer" )
 					.and.returnValue( true );
 
 
-				const registry:Registry<Pointer> = createMock( { $registry: parent } );
+				const registry:Registry<RegisteredPointer> = createMock( { $registry: parent } );
 
-				const pointer:Pointer = Pointer.create( { $id: "the resource" } );
+				const pointer:RegisteredPointer = RegisteredPointer.create( { $registry: registry, $id: "the resource" } );
 				registry.__resourcesMap.set( "local", pointer );
 
 				spyOnDecorated( registry, "_getLocalID" )
@@ -604,7 +619,7 @@ describe( module( "carbonldp/Registry" ), () => {
 				[
 					{ name: "id", type: "string", description: "ID to return its pointer representation." },
 				],
-				{ type: "CarbonLDP.Pointer" }
+				{ type: "CarbonLDP.RegisteredPointer" }
 			), () => {} );
 
 			it( hasSignature(
@@ -619,7 +634,7 @@ describe( module( "carbonldp/Registry" ), () => {
 			), () => {} );
 
 			it( "should exists", ():void => {
-				const registry:Registry<Pointer> = createMock();
+				const registry:Registry<RegisteredPointer> = createMock();
 
 				expect( registry.getPointer ).toBeDefined();
 				expect( registry.getPointer ).toEqual( jasmine.any( Function ) );
@@ -627,7 +642,7 @@ describe( module( "carbonldp/Registry" ), () => {
 
 
 			it( "should throw error when not in scope & has no parent", () => {
-				const registry:Registry<Pointer> = createMock();
+				const registry:Registry<RegisteredPointer> = createMock();
 
 				spyOnDecorated( registry, "_getLocalID" )
 					.and.callFake( () => { throw new Error( "not local" ); } );
@@ -637,32 +652,32 @@ describe( module( "carbonldp/Registry" ), () => {
 			} );
 
 			it( "should return new resource when in scope but not exists & has no parent", () => {
-				const registry:Registry<Pointer> = createMock();
+				const registry:Registry<RegisteredPointer> = createMock();
 
 				spyOnDecorated( registry, "_getLocalID" )
 					.and.returnValue( "local" );
 
-				const returned:Pointer = registry.getPointer( "id" );
+				const returned:RegisteredPointer = registry.getPointer( "id" );
 				expect( returned ).toEqual( jasmine.objectContaining( {
-					id: "id",
+					$id: "id",
 				} ) );
 			} );
 
 			it( "should return local resource when in scope and exists & has no parent", () => {
-				const registry:Registry<Pointer> = createMock();
+				const registry:Registry<RegisteredPointer> = createMock();
 
-				const localPointer:Pointer = Pointer.create( { $id: "the resource" } );
+				const localPointer:RegisteredPointer = RegisteredPointer.create( { $registry: registry, $id: "the resource" } );
 				registry.__resourcesMap.set( "local", localPointer );
 
 				spyOnDecorated( registry, "_getLocalID" )
 					.and.returnValue( "local" );
 
-				const returned:Pointer = registry.getPointer( "id" );
+				const returned:RegisteredPointer = registry.getPointer( "id" );
 				expect( returned ).toBe( localPointer );
 			} );
 
 			it( "should throw error when not in scope & has no parent & local flag is set", () => {
-				const registry:Registry<Pointer> = createMock();
+				const registry:Registry<RegisteredPointer> = createMock();
 
 				spyOnDecorated( registry, "_getLocalID" )
 					.and.callFake( () => { throw new Error( "not local" ); } );
@@ -672,38 +687,38 @@ describe( module( "carbonldp/Registry" ), () => {
 			} );
 
 			it( "should return new resource when in scope but not exists & has no parent & local flag is set ", () => {
-				const registry:Registry<Pointer> = createMock();
+				const registry:Registry<RegisteredPointer> = createMock();
 
 				spyOnDecorated( registry, "_getLocalID" )
 					.and.returnValue( "local" );
 
-				const returned:Pointer = registry.getPointer( "id", true );
+				const returned:RegisteredPointer = registry.getPointer( "id", true );
 				expect( returned ).toEqual( jasmine.objectContaining( {
-					id: "id",
+					$id: "id",
 				} ) );
 			} );
 
 			it( "should return local resource when in scope and exists & has no parent & local flag is set ", () => {
-				const registry:Registry<Pointer> = createMock();
+				const registry:Registry<RegisteredPointer> = createMock();
 
-				const localPointer:Pointer = Pointer.create( { $id: "the resource" } );
+				const localPointer:RegisteredPointer = RegisteredPointer.create( { $registry: registry, $id: "the resource" } );
 				registry.__resourcesMap.set( "local", localPointer );
 
 				spyOnDecorated( registry, "_getLocalID" )
 					.and.returnValue( "local" );
 
 
-				const returned:Pointer = registry.getPointer( "id", true );
+				const returned:RegisteredPointer = registry.getPointer( "id", true );
 				expect( returned ).toBe( localPointer );
 			} );
 
 
 			it( "should throw error when not in scope & not in parent", () => {
-				const parent:Registry<Pointer> = createMock();
+				const parent:Registry<RegisteredPointer> = createMock();
 				spyOnDecorated( parent, "getPointer" )
 					.and.callFake( () => { throw new Error( "not parent" ); } );
 
-				const registry:Registry<Pointer> = createMock( { $registry: parent } );
+				const registry:Registry<RegisteredPointer> = createMock( { $registry: parent } );
 				spyOnDecorated( registry, "_getLocalID" )
 					.and.callFake( () => { throw new Error( "not local" ); } );
 
@@ -712,25 +727,25 @@ describe( module( "carbonldp/Registry" ), () => {
 			} );
 
 			it( "should return parent resource when not in scope & in parent", () => {
-				const parent:Registry<Pointer> = createMock();
-				const parentPointer:Pointer = Pointer.create( { $id: "parent" } );
+				const parent:Registry<RegisteredPointer> = createMock();
+				const parentPointer:RegisteredPointer = RegisteredPointer.create( { $registry: parent, $id: "parent" } );
 				spyOnDecorated( parent, "getPointer" )
 					.and.returnValue( parentPointer );
 
-				const registry:Registry<Pointer> = createMock( { $registry: parent } );
+				const registry:Registry<RegisteredPointer> = createMock( { $registry: parent } );
 				spyOnDecorated( registry, "_getLocalID" )
 					.and.callFake( () => { throw new Error( "not local" ); } );
 
-				const returned:Pointer = registry.getPointer( "id" );
+				const returned:RegisteredPointer = registry.getPointer( "id" );
 				expect( returned ).toBe( parentPointer );
 			} );
 
 			it( "should throw error when not in scope & not in parent & local flag is set", () => {
-				const parent:Registry<Pointer> = createMock();
+				const parent:Registry<RegisteredPointer> = createMock();
 				spyOnDecorated( parent, "getPointer" )
 					.and.returnValue( false );
 
-				const registry:Registry<Pointer> = createMock( { $registry: parent } );
+				const registry:Registry<RegisteredPointer> = createMock( { $registry: parent } );
 				spyOnDecorated( registry, "_getLocalID" )
 					.and.callFake( () => { throw new Error( "not local" ); } );
 
@@ -739,12 +754,12 @@ describe( module( "carbonldp/Registry" ), () => {
 			} );
 
 			it( "should throw error when not in scope & in parent & local flag is set", () => {
-				const parent:Registry<Pointer> = createMock();
-				const pointer:Pointer = Pointer.create( { $id: "in parent" } );
+				const parent:Registry<RegisteredPointer> = createMock();
+				const pointer:RegisteredPointer = RegisteredPointer.create( { $registry: parent, $id: "in parent" } );
 				spyOnDecorated( parent, "getPointer" )
 					.and.returnValue( pointer );
 
-				const registry:Registry<Pointer> = createMock( { $registry: parent } );
+				const registry:Registry<RegisteredPointer> = createMock( { $registry: parent } );
 				spyOnDecorated( registry, "_getLocalID" )
 					.and.callFake( () => { throw new Error( "not local" ); } );
 
@@ -754,101 +769,101 @@ describe( module( "carbonldp/Registry" ), () => {
 
 
 			it( "should return new local resource when in scope and not exists & not in parent & local flag is set", () => {
-				const parent:Registry<Pointer> = createMock();
+				const parent:Registry<RegisteredPointer> = createMock();
 				spyOnDecorated( parent, "getPointer" )
 					.and.returnValue( false );
 
-				const registry:Registry<Pointer> = createMock( { $registry: parent } );
+				const registry:Registry<RegisteredPointer> = createMock( { $registry: parent } );
 				spyOnDecorated( registry, "_getLocalID" )
 					.and.returnValue( "parent" );
 
-				const returned:Pointer = registry.getPointer( "id", true );
+				const returned:RegisteredPointer = registry.getPointer( "id", true );
 				expect( returned ).toEqual( jasmine.objectContaining( {
-					id: "id",
+					$id: "id",
 				} ) );
 			} );
 
 			it( "should return parent resource when in scope and not exists & in parent", () => {
-				const parent:Registry<Pointer> = createMock();
-				const parentPointer:Pointer = Pointer.create( { $id: "in parent" } );
+				const parent:Registry<RegisteredPointer> = createMock();
+				const parentPointer:RegisteredPointer = RegisteredPointer.create( { $registry: parent, $id: "in parent" } );
 				spyOnDecorated( parent, "hasPointer" )
 					.and.returnValue( true );
 				spyOnDecorated( parent, "getPointer" )
 					.and.returnValue( parentPointer );
 
-				const registry:Registry<Pointer> = createMock( { $registry: parent } );
+				const registry:Registry<RegisteredPointer> = createMock( { $registry: parent } );
 				spyOnDecorated( registry, "_getLocalID" )
 					.and.returnValue( "parent" );
 
-				const returned:Pointer = registry.getPointer( "id" );
+				const returned:RegisteredPointer = registry.getPointer( "id" );
 				expect( returned ).toBe( parentPointer );
 			} );
 
 			it( "should return local resource when in scope and exists & in parent", () => {
-				const parent:Registry<Pointer> = createMock();
-				const parentPointer:Pointer = Pointer.create( { $id: "in parent" } );
+				const parent:Registry<RegisteredPointer> = createMock();
+				const parentPointer:RegisteredPointer = RegisteredPointer.create( { $registry: parent, $id: "in parent" } );
 				spyOnDecorated( parent, "getPointer" )
 					.and.returnValue( parentPointer );
 
 
-				const registry:Registry<Pointer> = createMock( { $registry: parent } );
+				const registry:Registry<RegisteredPointer> = createMock( { $registry: parent } );
 
-				const localPointer:Pointer = Pointer.create( { $id: "the resource" } );
+				const localPointer:RegisteredPointer = RegisteredPointer.create( { $registry: registry, $id: "the resource" } );
 				registry.__resourcesMap.set( "local", localPointer );
 
 				spyOnDecorated( registry, "_getLocalID" )
 					.and.returnValue( "local" );
 
-				const returned:Pointer = registry.getPointer( "id" );
+				const returned:RegisteredPointer = registry.getPointer( "id" );
 				expect( returned ).toBe( localPointer );
 			} );
 
 			it( "should return new resource in scope and not exists & not in parent & local flag is set", () => {
-				const parent:Registry<Pointer> = createMock();
+				const parent:Registry<RegisteredPointer> = createMock();
 				spyOnDecorated( parent, "getPointer" )
 					.and.callFake( () => { throw new Error( "not in parent" ); } );
 
-				const registry:Registry<Pointer> = createMock( { $registry: parent } );
+				const registry:Registry<RegisteredPointer> = createMock( { $registry: parent } );
 				spyOnDecorated( registry, "_getLocalID" )
 					.and.returnValue( "parent" );
 
-				const returned:Pointer = registry.getPointer( "id", true );
+				const returned:RegisteredPointer = registry.getPointer( "id", true );
 				expect( returned ).toEqual( jasmine.objectContaining( {
-					id: "id",
+					$id: "id",
 				} ) );
 			} );
 
 			it( "should return new resource when in scope and not exists & in parent & local flag is set", () => {
-				const parent:Registry<Pointer> = createMock();
-				const parentPointer:Pointer = Pointer.create( { $id: "in parent" } );
+				const parent:Registry<RegisteredPointer> = createMock();
+				const parentPointer:RegisteredPointer = RegisteredPointer.create( { $registry: parent, $id: "in parent" } );
 				spyOnDecorated( parent, "getPointer" )
 					.and.returnValue( parentPointer );
 
-				const registry:Registry<Pointer> = createMock( { $registry: parent } );
+				const registry:Registry<RegisteredPointer> = createMock( { $registry: parent } );
 				spyOnDecorated( registry, "_getLocalID" )
 					.and.returnValue( "parent" );
 
-				const returned:Pointer = registry.getPointer( "id", true );
+				const returned:RegisteredPointer = registry.getPointer( "id", true );
 				expect( returned ).toEqual( jasmine.objectContaining( {
-					id: "id",
+					$id: "id",
 				} ) );
 			} );
 
 			it( "should return local resource when in scope and exists & in parent & local flag is set", () => {
-				const parent:Registry<Pointer> = createMock();
+				const parent:Registry<RegisteredPointer> = createMock();
 				spyOnDecorated( parent, "getPointer" )
 					.and.returnValue( true );
 
 
-				const registry:Registry<Pointer> = createMock( { $registry: parent } );
+				const registry:Registry<RegisteredPointer> = createMock( { $registry: parent } );
 
-				const localPointer:Pointer = Pointer.create( { $id: "the resource" } );
+				const localPointer:RegisteredPointer = RegisteredPointer.create( { $registry: registry, $id: "the resource" } );
 				registry.__resourcesMap.set( "local", localPointer );
 
 				spyOnDecorated( registry, "_getLocalID" )
 					.and.returnValue( "local" );
 
-				const returned:Pointer = registry.getPointer( "id", true );
+				const returned:RegisteredPointer = registry.getPointer( "id", true );
 				expect( returned ).toBe( localPointer );
 			} );
 
@@ -858,7 +873,7 @@ describe( module( "carbonldp/Registry" ), () => {
 
 			it( hasSignature(
 				"Returns all the pointers stored the registry hierarchy.",
-				{ type: "CarbonLDP.Pointer[]" }
+				{ type: "CarbonLDP.RegisteredPointer[]" }
 			), () => {} );
 
 			it( hasSignature(
@@ -870,7 +885,7 @@ describe( module( "carbonldp/Registry" ), () => {
 			), () => {} );
 
 			it( "should exists", ():void => {
-				const registry:Registry<Pointer> = createMock();
+				const registry:Registry<RegisteredPointer> = createMock();
 
 				expect( registry.getPointers ).toBeDefined();
 				expect( registry.getPointers ).toEqual( jasmine.any( Function ) );
@@ -878,14 +893,14 @@ describe( module( "carbonldp/Registry" ), () => {
 
 
 			it( "should return local resources when locals & has no parent", () => {
-				const registry:Registry<Pointer> = createMock();
+				const registry:Registry<RegisteredPointer> = createMock();
 
-				const localPointer1:Pointer = Pointer.create( { $id: "in local", index: "local 1" } );
-				const localPointer2:Pointer = Pointer.create( { $id: "in local", index: "local 2" } );
+				const localPointer1:RegisteredPointer = RegisteredPointer.create( { $registry: registry, $id: "in local", index: "local 1" } );
+				const localPointer2:RegisteredPointer = RegisteredPointer.create( { $registry: registry, $id: "in local", index: "local 2" } );
 				registry.__resourcesMap.set( "local-1", localPointer1 );
 				registry.__resourcesMap.set( "local-2", localPointer2 );
 
-				const returned:Pointer[] = registry.getPointers();
+				const returned:RegisteredPointer[] = registry.getPointers();
 				expect( returned ).toEqual( [
 					localPointer1,
 					localPointer2,
@@ -893,21 +908,21 @@ describe( module( "carbonldp/Registry" ), () => {
 			} );
 
 			it( "should return empty resources no locals & has no parent & local flag is set ", () => {
-				const registry:Registry<Pointer> = createMock();
+				const registry:Registry<RegisteredPointer> = createMock();
 
-				const returned:Pointer[] = registry.getPointers( true );
+				const returned:RegisteredPointer[] = registry.getPointers( true );
 				expect( returned ).toEqual( [] );
 			} );
 
 			it( "should return local resources when locals & has no parent & local flag is set ", () => {
-				const registry:Registry<Pointer> = createMock();
+				const registry:Registry<RegisteredPointer> = createMock();
 
-				const localPointer1:Pointer = Pointer.create( { $id: "in local", index: "local 1" } );
-				const localPointer2:Pointer = Pointer.create( { $id: "in local", index: "local 2" } );
+				const localPointer1:RegisteredPointer = RegisteredPointer.create( { $registry: registry, $id: "in local", index: "local 1" } );
+				const localPointer2:RegisteredPointer = RegisteredPointer.create( { $registry: registry, $id: "in local", index: "local 2" } );
 				registry.__resourcesMap.set( "local-1", localPointer1 );
 				registry.__resourcesMap.set( "local-2", localPointer2 );
 
-				const returned:Pointer[] = registry.getPointers( true );
+				const returned:RegisteredPointer[] = registry.getPointers( true );
 				expect( returned ).toEqual( [
 					localPointer1,
 					localPointer2,
@@ -916,56 +931,56 @@ describe( module( "carbonldp/Registry" ), () => {
 
 
 			it( "should return parent resources when no locals & in parent", () => {
-				const parent:Registry<Pointer> = createMock();
+				const parent:Registry<RegisteredPointer> = createMock();
 
-				const parentPointer:Pointer = Pointer.create( { $id: "parent", index: "parent" } );
+				const parentPointer:RegisteredPointer = RegisteredPointer.create( { $registry: parent, $id: "parent", index: "parent" } );
 				spyOnDecorated( parent, "getPointers" )
 					.and.returnValue( [ parentPointer ] );
 
-				const registry:Registry<Pointer> = createMock( { $registry: parent } );
+				const registry:Registry<RegisteredPointer> = createMock( { $registry: parent } );
 
-				const returned:Pointer[] = registry.getPointers();
+				const returned:RegisteredPointer[] = registry.getPointers();
 				expect( returned ).toEqual( [ parentPointer ] );
 			} );
 
 			it( "should return empty when no locals & not in parent & local flag is set", () => {
-				const parent:Registry<Pointer> = createMock();
+				const parent:Registry<RegisteredPointer> = createMock();
 				spyOnDecorated( parent, "getPointers" )
 					.and.returnValue( [] );
 
-				const registry:Registry<Pointer> = createMock( { $registry: parent } );
+				const registry:Registry<RegisteredPointer> = createMock( { $registry: parent } );
 
-				const returned:Pointer[] = registry.getPointers( true );
+				const returned:RegisteredPointer[] = registry.getPointers( true );
 				expect( returned ).toEqual( [] );
 			} );
 
 			it( "should return empty when no locals & in parent & local flag is set", () => {
-				const parent:Registry<Pointer> = createMock();
-				const parentPointer:Pointer = Pointer.create( { $id: "in parent", index: "parent" } );
+				const parent:Registry<RegisteredPointer> = createMock();
+				const parentPointer:RegisteredPointer = RegisteredPointer.create( { $registry: parent, $id: "in parent", index: "parent" } );
 				spyOnDecorated( parent, "getPointers" )
 					.and.returnValue( [ parentPointer ] );
 
-				const registry:Registry<Pointer> = createMock( { $registry: parent } );
+				const registry:Registry<RegisteredPointer> = createMock( { $registry: parent } );
 
-				const returned:Pointer[] = registry.getPointers( true );
+				const returned:RegisteredPointer[] = registry.getPointers( true );
 				expect( returned ).toEqual( [] );
 			} );
 
 
 			it( "should return local and parent resources when locals & in parent", () => {
-				const parent:Registry<Pointer> = createMock();
-				const parentPointer:Pointer = Pointer.create( { $id: "in parent", index: "parent" } );
+				const parent:Registry<RegisteredPointer> = createMock();
+				const parentPointer:RegisteredPointer = RegisteredPointer.create( { $registry: parent, $id: "in parent", index: "parent" } );
 				spyOnDecorated( parent, "getPointers" )
 					.and.returnValue( [ parentPointer ] );
 
 
-				const registry:Registry<Pointer> = createMock( { $registry: parent } );
+				const registry:Registry<RegisteredPointer> = createMock( { $registry: parent } );
 
-				const localPointer:Pointer = Pointer.create( { $id: "the resource", index: "local" } );
+				const localPointer:RegisteredPointer = RegisteredPointer.create( { $registry: registry, $id: "the resource", index: "local" } );
 				registry.__resourcesMap.set( "local", localPointer );
 
 
-				const returned:Pointer[] = registry.getPointers();
+				const returned:RegisteredPointer[] = registry.getPointers();
 				expect( returned ).toEqual( [
 					parentPointer,
 					localPointer,
@@ -973,41 +988,41 @@ describe( module( "carbonldp/Registry" ), () => {
 			} );
 
 			it( "should return empty resources when no locals & not in parent & local flag is set", () => {
-				const parent:Registry<Pointer> = createMock();
+				const parent:Registry<RegisteredPointer> = createMock();
 				spyOnDecorated( parent, "getPointers" )
 					.and.returnValue( [] );
 
-				const registry:Registry<Pointer> = createMock( { $registry: parent } );
+				const registry:Registry<RegisteredPointer> = createMock( { $registry: parent } );
 
-				const returned:Pointer[] = registry.getPointers( true );
+				const returned:RegisteredPointer[] = registry.getPointers( true );
 				expect( returned ).toEqual( [] );
 			} );
 
 			it( "should return empty resources when no locals & in parent & local flag is set", () => {
-				const parent:Registry<Pointer> = createMock();
-				const parentPointer:Pointer = Pointer.create( { $id: "in parent", index: "parent" } );
+				const parent:Registry<RegisteredPointer> = createMock();
+				const parentPointer:RegisteredPointer = RegisteredPointer.create( { $registry: parent, $id: "in parent", index: "parent" } );
 				spyOnDecorated( parent, "getPointers" )
 					.and.returnValue( [ parentPointer ] );
 
-				const registry:Registry<Pointer> = createMock( { $registry: parent } );
+				const registry:Registry<RegisteredPointer> = createMock( { $registry: parent } );
 
-				const returned:Pointer[] = registry.getPointers( true );
+				const returned:RegisteredPointer[] = registry.getPointers( true );
 				expect( returned ).toEqual( [] );
 			} );
 
 			it( "should return local resources when locals & in parent & local flag is set", () => {
-				const parent:Registry<Pointer> = createMock();
-				const parentPointer:Pointer = Pointer.create( { $id: "in parent", index: "parent" } );
+				const parent:Registry<RegisteredPointer> = createMock();
+				const parentPointer:RegisteredPointer = RegisteredPointer.create( { $registry: parent, $id: "in parent", index: "parent" } );
 				spyOnDecorated( parent, "getPointers" )
 					.and.returnValue( [ parentPointer ] );
 
 
-				const registry:Registry<Pointer> = createMock( { $registry: parent } );
+				const registry:Registry<RegisteredPointer> = createMock( { $registry: parent } );
 
-				const localPointer:Pointer = Pointer.create( { $id: "the resource", index: "local" } );
+				const localPointer:RegisteredPointer = RegisteredPointer.create( { $registry: registry, $id: "the resource", index: "local" } );
 				registry.__resourcesMap.set( "local", localPointer );
 
-				const returned:Pointer[] = registry.getPointers( true );
+				const returned:RegisteredPointer[] = registry.getPointers( true );
 				expect( returned ).toEqual( [ localPointer ] );
 			} );
 
@@ -1016,7 +1031,7 @@ describe( module( "carbonldp/Registry" ), () => {
 		describe( method( OBLIGATORY, "removePointer" ), () => {
 
 			it( hasSignature(
-				"Removes the resource identified by the provided string ID or Pointer.id, from the first occurrence in the registry hierarchy.\n" +
+				"Removes the resource identified by the provided string ID or RegisteredPointer.$id, from the first occurrence in the registry hierarchy.\n" +
 				"Returns true if the resource could be removed, false otherwise.",
 				[
 					{ name: "idOrPointer", type: "string | CarbonLDP.Pointer", description: "ID or Pointer to be removed." },
@@ -1025,7 +1040,7 @@ describe( module( "carbonldp/Registry" ), () => {
 			), () => {} );
 
 			it( hasSignature(
-				"Removes the resource identified by the provided string ID or Pointer.id, from the current registry.\n" +
+				"Removes the resource identified by the provided string ID or RegisteredPointer.$id, from the current registry.\n" +
 				"Returns true if the resource could be removed, false otherwise.",
 				[
 					{ name: "idOrPointer", type: "string | CarbonLDP.Pointer", description: "ID or Pointer to be removed." },
@@ -1035,7 +1050,7 @@ describe( module( "carbonldp/Registry" ), () => {
 			), () => {} );
 
 			it( "should exists", ():void => {
-				const registry:Registry<Pointer> = createMock();
+				const registry:Registry<RegisteredPointer> = createMock();
 
 				expect( registry.removePointer ).toBeDefined();
 				expect( registry.removePointer ).toEqual( jasmine.any( Function ) );
@@ -1043,7 +1058,7 @@ describe( module( "carbonldp/Registry" ), () => {
 
 
 			it( "should return false when not in scope & has no parent", () => {
-				const registry:Registry<Pointer> = createMock();
+				const registry:Registry<RegisteredPointer> = createMock();
 
 				spyOnDecorated( registry, "_getLocalID" )
 					.and.callFake( () => { throw new Error( "not local" ); } );
@@ -1053,7 +1068,7 @@ describe( module( "carbonldp/Registry" ), () => {
 			} );
 
 			it( "should return false when in scope but not exists & has no parent", () => {
-				const registry:Registry<Pointer> = createMock();
+				const registry:Registry<RegisteredPointer> = createMock();
 
 				spyOnDecorated( registry, "_getLocalID" )
 					.and.returnValue( "local" );
@@ -1063,9 +1078,9 @@ describe( module( "carbonldp/Registry" ), () => {
 			} );
 
 			it( "should return true when in scope and exists & has no parent", () => {
-				const registry:Registry<Pointer> = createMock();
+				const registry:Registry<RegisteredPointer> = createMock();
 
-				const pointer:Pointer = Pointer.create( { $id: "the resource" } );
+				const pointer:RegisteredPointer = RegisteredPointer.create( { $registry: registry, $id: "the resource" } );
 				registry.__resourcesMap.set( "local", pointer );
 
 				spyOnDecorated( registry, "_getLocalID" )
@@ -1079,7 +1094,7 @@ describe( module( "carbonldp/Registry" ), () => {
 			} );
 
 			it( "should return false when not in scope & has no parent & local flag is set", () => {
-				const registry:Registry<Pointer> = createMock();
+				const registry:Registry<RegisteredPointer> = createMock();
 
 				spyOnDecorated( registry, "_getLocalID" )
 					.and.callFake( () => { throw new Error( "not local" ); } );
@@ -1089,7 +1104,7 @@ describe( module( "carbonldp/Registry" ), () => {
 			} );
 
 			it( "should return false when in scope but not exists & has no parent & local flag is set ", () => {
-				const registry:Registry<Pointer> = createMock();
+				const registry:Registry<RegisteredPointer> = createMock();
 
 				spyOnDecorated( registry, "_getLocalID" )
 					.and.returnValue( "local" );
@@ -1099,9 +1114,9 @@ describe( module( "carbonldp/Registry" ), () => {
 			} );
 
 			it( "should return true when in scope and exists & has no parent & local flag is set ", () => {
-				const registry:Registry<Pointer> = createMock();
+				const registry:Registry<RegisteredPointer> = createMock();
 
-				const pointer:Pointer = Pointer.create( { $id: "the resource" } );
+				const pointer:RegisteredPointer = RegisteredPointer.create( { $registry: registry, $id: "the resource" } );
 				registry.__resourcesMap.set( "local", pointer );
 
 				spyOnDecorated( registry, "_getLocalID" )
@@ -1116,11 +1131,11 @@ describe( module( "carbonldp/Registry" ), () => {
 
 
 			it( "should return false when not in scope & not in parent", () => {
-				const parent:Registry<Pointer> = createMock();
+				const parent:Registry<RegisteredPointer> = createMock();
 				spyOnDecorated( parent, "removePointer" )
 					.and.returnValue( false );
 
-				const registry:Registry<Pointer> = createMock( { $registry: parent } );
+				const registry:Registry<RegisteredPointer> = createMock( { $registry: parent } );
 				spyOnDecorated( registry, "_getLocalID" )
 					.and.callFake( () => { throw new Error( "not local" ); } );
 
@@ -1129,11 +1144,11 @@ describe( module( "carbonldp/Registry" ), () => {
 			} );
 
 			it( "should return true when not in scope & in parent", () => {
-				const parent:Registry<Pointer> = createMock();
+				const parent:Registry<RegisteredPointer> = createMock();
 				spyOnDecorated( parent, "removePointer" )
 					.and.returnValue( true );
 
-				const registry:Registry<Pointer> = createMock( { $registry: parent } );
+				const registry:Registry<RegisteredPointer> = createMock( { $registry: parent } );
 				spyOnDecorated( registry, "_getLocalID" )
 					.and.callFake( () => { throw new Error( "not local" ); } );
 
@@ -1142,11 +1157,11 @@ describe( module( "carbonldp/Registry" ), () => {
 			} );
 
 			it( "should return false when not in scope & not in parent & local flag is set", () => {
-				const parent:Registry<Pointer> = createMock();
+				const parent:Registry<RegisteredPointer> = createMock();
 				spyOnDecorated( parent, "removePointer" )
 					.and.returnValue( false );
 
-				const registry:Registry<Pointer> = createMock( { $registry: parent } );
+				const registry:Registry<RegisteredPointer> = createMock( { $registry: parent } );
 				spyOnDecorated( registry, "_getLocalID" )
 					.and.callFake( () => { throw new Error( "not local" ); } );
 
@@ -1155,11 +1170,11 @@ describe( module( "carbonldp/Registry" ), () => {
 			} );
 
 			it( "should return false when not in scope & in parent & local flag is set", () => {
-				const parent:Registry<Pointer> = createMock();
+				const parent:Registry<RegisteredPointer> = createMock();
 				spyOnDecorated( parent, "removePointer" )
 					.and.returnValue( true );
 
-				const registry:Registry<Pointer> = createMock( { $registry: parent } );
+				const registry:Registry<RegisteredPointer> = createMock( { $registry: parent } );
 				spyOnDecorated( registry, "_getLocalID" )
 					.and.callFake( () => { throw new Error( "not local" ); } );
 
@@ -1169,11 +1184,11 @@ describe( module( "carbonldp/Registry" ), () => {
 
 
 			it( "should return false when in scope and not exists & not in parent & local flag is set", () => {
-				const parent:Registry<Pointer> = createMock();
+				const parent:Registry<RegisteredPointer> = createMock();
 				spyOnDecorated( parent, "removePointer" )
 					.and.returnValue( false );
 
-				const registry:Registry<Pointer> = createMock( { $registry: parent } );
+				const registry:Registry<RegisteredPointer> = createMock( { $registry: parent } );
 				spyOnDecorated( registry, "_getLocalID" )
 					.and.returnValue( "parent" );
 
@@ -1182,11 +1197,11 @@ describe( module( "carbonldp/Registry" ), () => {
 			} );
 
 			it( "should return true when in scope and not exists & in parent", () => {
-				const parent:Registry<Pointer> = createMock();
+				const parent:Registry<RegisteredPointer> = createMock();
 				spyOnDecorated( parent, "removePointer" )
 					.and.returnValue( true );
 
-				const registry:Registry<Pointer> = createMock( { $registry: parent } );
+				const registry:Registry<RegisteredPointer> = createMock( { $registry: parent } );
 				spyOnDecorated( registry, "_getLocalID" )
 					.and.returnValue( "parent" );
 
@@ -1195,14 +1210,14 @@ describe( module( "carbonldp/Registry" ), () => {
 			} );
 
 			it( "should return true when in scope and exists & in parent", () => {
-				const parent:Registry<Pointer> = createMock();
+				const parent:Registry<RegisteredPointer> = createMock();
 				spyOnDecorated( parent, "removePointer" )
 					.and.returnValue( true );
 
 
-				const registry:Registry<Pointer> = createMock( { $registry: parent } );
+				const registry:Registry<RegisteredPointer> = createMock( { $registry: parent } );
 
-				const pointer:Pointer = Pointer.create( { $id: "the resource" } );
+				const pointer:RegisteredPointer = RegisteredPointer.create( { $registry: registry, $id: "the resource" } );
 				registry.__resourcesMap.set( "local", pointer );
 
 				spyOnDecorated( registry, "_getLocalID" )
@@ -1215,11 +1230,11 @@ describe( module( "carbonldp/Registry" ), () => {
 			} );
 
 			it( "should return false when in scope and not exists & not in parent & local flag is set", () => {
-				const parent:Registry<Pointer> = createMock();
+				const parent:Registry<RegisteredPointer> = createMock();
 				spyOnDecorated( parent, "removePointer" )
 					.and.returnValue( false );
 
-				const registry:Registry<Pointer> = createMock( { $registry: parent } );
+				const registry:Registry<RegisteredPointer> = createMock( { $registry: parent } );
 				spyOnDecorated( registry, "_getLocalID" )
 					.and.returnValue( "parent" );
 
@@ -1228,11 +1243,11 @@ describe( module( "carbonldp/Registry" ), () => {
 			} );
 
 			it( "should return false when in scope and not exists & in parent & local flag is set", () => {
-				const parent:Registry<Pointer> = createMock();
+				const parent:Registry<RegisteredPointer> = createMock();
 				spyOnDecorated( parent, "removePointer" )
 					.and.returnValue( true );
 
-				const registry:Registry<Pointer> = createMock( { $registry: parent } );
+				const registry:Registry<RegisteredPointer> = createMock( { $registry: parent } );
 				spyOnDecorated( registry, "_getLocalID" )
 					.and.returnValue( "parent" );
 
@@ -1241,14 +1256,14 @@ describe( module( "carbonldp/Registry" ), () => {
 			} );
 
 			it( "should return true when in scope and exists & in parent & local flag is set", () => {
-				const parent:Registry<Pointer> = createMock();
+				const parent:Registry<RegisteredPointer> = createMock();
 				spyOnDecorated( parent, "removePointer" )
 					.and.returnValue( true );
 
 
-				const registry:Registry<Pointer> = createMock( { $registry: parent } );
+				const registry:Registry<RegisteredPointer> = createMock( { $registry: parent } );
 
-				const pointer:Pointer = Pointer.create( { $id: "the resource" } );
+				const pointer:RegisteredPointer = RegisteredPointer.create( { $registry: registry, $id: "the resource" } );
 				registry.__resourcesMap.set( "local", pointer );
 
 				spyOnDecorated( registry, "_getLocalID" )
@@ -1270,24 +1285,24 @@ describe( module( "carbonldp/Registry" ), () => {
 		"Interface with the factory and utils for `CarbonLDP.Registry` objects."
 	), () => {
 
-		it( hasProperty(
-			OBLIGATORY,
-			"PROTOTYPE",
-			"CarbonLDP.PickSelfProps<CarbonLDP.Registry<CarbonLDP.Pointer>, {}>"
-		), ():void => {
-			const target:RegistryFactory[ "PROTOTYPE" ] = {} as PickSelfProps<Registry<Pointer>, {}>;
+
+		it( extendsClass( "CarbonLDP.Model.ModelPrototype<CarbonLDP.Registry>" ), () => {
+			const target:ModelPrototype<Registry> = {} as RegistryFactory;
+			expect( target ).toBeDefined();
+		} );
+
+		it( extendsClass( "CarbonLDP.Model.ModelDecorator<CarbonLDP.Registry<any>, CarbonLDP.BaseRegistry>" ), () => {
+			const target:ModelDecorator<Registry, BaseRegistry> = {} as RegistryFactory;
+			expect( target ).toBeDefined();
+		} );
+
+		it( extendsClass( "CarbonLDP.Model.ModelFactory<CarbonLDP.Registry, CarbonLDP.BaseRegistry>" ), () => {
+			const target:ModelFactory<Registry, BaseRegistry> = {} as RegistryFactory;
 			expect( target ).toBeDefined();
 		} );
 
 
-		describe( method( OBLIGATORY, "isDecorated" ), ():void => {
-
-			it( hasSignature(
-				[
-					{ name: "object", type: "object" },
-				],
-				{ type: "object is CarbonLDP.Registry<any>" }
-			), ():void => {} );
+		describe( "Registry.isDecorated", ():void => {
 
 			it( "should exists", ():void => {
 				expect( Registry.isDecorated ).toBeDefined();
@@ -1305,14 +1320,7 @@ describe( module( "carbonldp/Registry" ), () => {
 
 		} );
 
-		describe( method( OBLIGATORY, "decorate" ), () => {
-
-			it( hasSignature(
-				[
-					{ name: "object", type: "T" },
-				],
-				{ type: "T & CarbonLDP.Registry<any>" }
-			), ():void => {} );
+		describe( "Registry.decorate", () => {
 
 			it( "should exists", ():void => {
 				expect( Registry.decorate ).toBeDefined();
@@ -1323,7 +1331,7 @@ describe( module( "carbonldp/Registry" ), () => {
 			it( "should call ModelDecorator.definePropertiesFrom with PROTOTYPE", () => {
 				const spy:jasmine.Spy = spyOn( ModelDecorator, "definePropertiesFrom" );
 
-				Registry.decorate( { the: "object" } );
+				Registry.decorate( { __modelDecorator: null, the: "object" } );
 
 				expect( spy ).toHaveBeenCalledWith( Registry.PROTOTYPE, { the: "object" } );
 			} );
@@ -1333,7 +1341,7 @@ describe( module( "carbonldp/Registry" ), () => {
 					.and.returnValue( true );
 
 				const spy:jasmine.Spy = spyOn( ModelDecorator, "definePropertiesFrom" );
-				Registry.decorate( {} );
+				Registry.decorate( { __modelDecorator: null } );
 
 				expect( spy ).not.toHaveBeenCalled();
 			} );

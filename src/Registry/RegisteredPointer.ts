@@ -3,6 +3,7 @@ import { IllegalArgumentError } from "../Errors/IllegalArgumentError";
 import { ModelDecorator } from "../Model/ModelDecorator";
 import { ModelFactory } from "../Model/ModelFactory";
 import { ModelPrototype } from "../Model/ModelPrototype";
+import { ModelTypeGuard } from "../Model/ModelTypeGuard";
 
 import { Pointer } from "../Pointer/Pointer";
 
@@ -19,6 +20,7 @@ export type RegisteredPointerFactory =
 	& ModelPrototype<RegisteredPointer, Pointer>
 	& ModelDecorator<RegisteredPointer, BaseRegisteredPointer>
 	& ModelFactory<RegisteredPointer, BaseRegisteredPointer>
+	& ModelTypeGuard<RegisteredPointer>
 	;
 
 export const RegisteredPointer:RegisteredPointerFactory = {
@@ -52,5 +54,11 @@ export const RegisteredPointer:RegisteredPointerFactory = {
 
 	createFrom<T extends object>( object:T & BaseRegisteredPointer ):T & RegisteredPointer {
 		return RegisteredPointer.decorate( object );
+	},
+
+	is( value:any ):value is RegisteredPointer {
+		return Pointer.is( value )
+			&& RegisteredPointer.isDecorated( value )
+			;
 	},
 };
