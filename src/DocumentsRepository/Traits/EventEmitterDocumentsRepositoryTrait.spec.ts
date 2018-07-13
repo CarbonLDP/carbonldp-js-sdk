@@ -29,7 +29,7 @@ import {
 } from "./EventEmitterDocumentsRepositoryTrait";
 
 
-describe( module( "carbonldp/EventEmitterDocumentsRepositoryTrait" ), () => {
+describe( module( "carbonldp/DocumentsRepository/Traits/EventEmitterDocumentsRepositoryTrait" ), () => {
 
 	let $context:DocumentsContext;
 	beforeEach( ():void => {
@@ -38,7 +38,7 @@ describe( module( "carbonldp/EventEmitterDocumentsRepositoryTrait" ), () => {
 
 
 	describe( interfaze(
-		"CarbonLDP.EventEmitterDocumentsRepositoryTrait",
+		"CarbonLDP.DocumentsRepository.Traits.EventEmitterDocumentsRepositoryTrait",
 		"Documents repository with the implementation for event subscriptions."
 	), () => {
 
@@ -647,16 +647,16 @@ describe( module( "carbonldp/EventEmitterDocumentsRepositoryTrait" ), () => {
 	} );
 
 	describe( interfaze(
-		"CarbonLDP.EventEmitterDocumentsRepositoryTraitFactory",
-		"Interface with the decoration, factory and utils for `CarbonLDP.EventEmitterDocumentsRepositoryTrait` objects."
+		"CarbonLDP.DocumentsRepository.Traits.EventEmitterDocumentsRepositoryTraitFactory",
+		"Interface with the decoration, factory and utils for `CarbonLDP.DocumentsRepository.Traits.EventEmitterDocumentsRepositoryTrait` objects."
 	), () => {
 
-		it( extendsClass( "CarbonLDP.Model.ModelPrototype<CarbonLDP.EventEmitterDocumentsRepositoryTrait, CarbonLDP.GeneralRepository<CarbonLDP.Document>" ), () => {
+		it( extendsClass( "CarbonLDP.Model.ModelPrototype<CarbonLDP.DocumentsRepository.Traits.EventEmitterDocumentsRepositoryTrait, CarbonLDP.GeneralRepository<CarbonLDP.Document>" ), () => {
 			const target:ModelPrototype<EventEmitterDocumentsRepositoryTrait, GeneralRepository<Document>> = {} as EventEmitterDocumentsRepositoryTraitFactory;
 			expect( target ).toBeDefined();
 		} );
 
-		it( extendsClass( "CarbonLDP.Model.ModelDecorator<CarbonLDP.EventEmitterDocumentsRepositoryTrait<any>, CarbonLDP.BaseDocumentsRepository>" ), () => {
+		it( extendsClass( "CarbonLDP.Model.ModelDecorator<CarbonLDP.DocumentsRepository.Traits.EventEmitterDocumentsRepositoryTrait<any>, CarbonLDP.BaseDocumentsRepository>" ), () => {
 			const target:ModelDecorator<EventEmitterDocumentsRepositoryTrait, BaseDocumentsRepository> = {} as EventEmitterDocumentsRepositoryTraitFactory;
 			expect( target ).toBeDefined();
 		} );
@@ -724,7 +724,7 @@ describe( module( "carbonldp/EventEmitterDocumentsRepositoryTrait" ), () => {
 	describe( property(
 		STATIC,
 		"EventEmitterDocumentsRepositoryTrait",
-		"CarbonLDP.EventEmitterDocumentsRepositoryTraitFactory"
+		"CarbonLDP.DocumentsRepository.Traits.EventEmitterDocumentsRepositoryTraitFactory"
 	), () => {
 
 		it( "should exists", ():void => {
