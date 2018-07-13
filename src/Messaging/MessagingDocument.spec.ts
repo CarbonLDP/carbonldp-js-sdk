@@ -925,58 +925,6 @@ describe( module( "carbonldp/Messaging/MessagingDocument" ), ():void => {
 		} );
 
 
-		describe( method( OBLIGATORY, "onAccessPointCreated" ), ():void => {
-
-			it( hasSignature(
-				"Subscribe to the `CarbonLDP.Messaging.Event.ACCESS_POINT_CREATED` event notifications for the document.",
-				[
-					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.AccessPointCreated ) => void", description: "Callback that receives the data message from the notification event." },
-					{ name: "onError", type: "( error:Error ) => void", description: "Callback thar receives the errors thrown by the subscription." },
-				]
-			), ():void => {} );
-
-			it( hasSignature(
-				"Subscribe to the `CarbonLDP.Messaging.Event.ACCESS_POINT_CREATED` event notifications for the uri pattern specified.",
-				[
-					{ name: "uriPattern", type: "string", description: "URI and/or pattern of the resource(s) to subscribe for." },
-					{ name: "onEvent", type: "( message:CarbonLDP.Messaging.AccessPointCreated ) => void", description: "Callback that receives the data message from the notification event." },
-					{ name: "onError", type: "( error:Error ) => void", description: "Callback thar receives the errors thrown by the subscription." },
-				]
-			), ():void => {} );
-
-
-			it( "should exists", ():void => {
-				const resource:EventEmitterDocumentTrait = createMock();
-
-				expect( resource.onAccessPointCreated ).toBeDefined();
-				expect( resource.onAccessPointCreated ).toEqual( jasmine.any( Function ) );
-			} );
-
-
-			it( "should should call .on when self", () => {
-				const resource:EventEmitterDocumentTrait = createMock();
-
-				Object.defineProperty( resource, "on", { writable: true } );
-				const spy:jasmine.Spy = spyOn( resource, "on" );
-
-				resource.onAccessPointCreated( () => fail( "Should not resolve." ), fail );
-
-				expect( spy ).toHaveBeenCalledWith( Event.ACCESS_POINT_CREATED, jasmine.any( Function ), jasmine.any( Function ), void 0 );
-			} );
-
-			it( "should should call .on when uriPatter", () => {
-				const resource:EventEmitterDocumentTrait = createMock();
-
-				Object.defineProperty( resource, "on", { writable: true } );
-				const spy:jasmine.Spy = spyOn( resource, "on" );
-
-				resource.onAccessPointCreated( "child/!*", () => fail( "Should not resolve." ), fail );
-
-				expect( spy ).toHaveBeenCalledWith( Event.ACCESS_POINT_CREATED, "child/!*", jasmine.any( Function ), jasmine.any( Function ) );
-			} );
-
-		} );
-
 		describe( method( OBLIGATORY, "onChildCreated" ), ():void => {
 
 			it( hasSignature(

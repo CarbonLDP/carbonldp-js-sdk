@@ -2,6 +2,8 @@ import { DocumentsContext } from "../../Context/DocumentsContext";
 
 import { Document } from "../../Document/Document";
 
+import { GeneralRepository } from "../../GeneralRepository/GeneralRepository";
+
 import { ChildCreated } from "../../Messaging/ChildCreated";
 import { DocumentCreated } from "../../Messaging/DocumentCreated";
 import { DocumentDeleted } from "../../Messaging/DocumentDeleted";
@@ -15,14 +17,12 @@ import { createDestination } from "../../Messaging/Utils";
 import { ModelDecorator } from "../../Model/ModelDecorator";
 import { ModelPrototype } from "../../Model/ModelPrototype";
 
-import { Repository } from "../../Repository/Repository";
-
 import { isObject } from "../../Utils";
 
 import { BaseDocumentsRepository } from "../BaseDocumentsRepository";
 
 
-export interface EventEmitterDocumentsRepositoryTrait extends Repository<Document> {
+export interface EventEmitterDocumentsRepositoryTrait extends GeneralRepository<Document> {
 	$context:DocumentsContext;
 
 	on( event:Event.CHILD_CREATED, uriPattern:string, onEvent:( message:ChildCreated ) => void, onError?:( error:Error ) => void ):void;
@@ -63,7 +63,7 @@ type OnEvent<T extends EventMessage> = ( message:T ) => void;
 type OnError = ( error:Error ) => void;
 
 export type EventEmitterDocumentsRepositoryTraitFactory =
-	& ModelPrototype<EventEmitterDocumentsRepositoryTrait, Repository<Document> & BaseDocumentsRepository>
+	& ModelPrototype<EventEmitterDocumentsRepositoryTrait, GeneralRepository<Document>>
 	& ModelDecorator<EventEmitterDocumentsRepositoryTrait, BaseDocumentsRepository>
 	;
 
@@ -94,10 +94,13 @@ export const EventEmitterDocumentsRepositoryTrait:EventEmitterDocumentsRepositor
 		one<T extends EventMessage>( this:EventEmitterDocumentsRepositoryTrait, event:Event | string, uriPattern:string, onEvent:OnEvent<T>, onError?:OnError ):void {
 			try {
 				const destination:string = createDestination( event, uriPattern, this.$context.baseURI );
-				this.$context.messaging.subscribe( destination, function onEventWrapper( message:T ):void {
+
+				const onEventWrapper:OnEvent<T> = message => {
 					onEvent( message );
 					this.$context.messaging.unsubscribe( destination, onEventWrapper );
-				}, onError );
+				};
+
+				this.$context.messaging.subscribe( destination, onEventWrapper, onError );
 
 			} catch( error ) {
 				if( ! onError ) throw error;
@@ -142,8 +145,8 @@ export const EventEmitterDocumentsRepositoryTrait:EventEmitterDocumentsRepositor
 	decorate<T extends BaseDocumentsRepository>( object:T ):T & EventEmitterDocumentsRepositoryTrait {
 		if( EventEmitterDocumentsRepositoryTrait.isDecorated( object ) ) return object;
 
-		const resource:T & Repository<Document> = ModelDecorator
-			.decorateMultiple( object, Repository );
+		const resource:T & GeneralRepository<Document> = ModelDecorator
+			.decorateMultiple( object, GeneralRepository );
 
 		return ModelDecorator
 			.definePropertiesFrom( EventEmitterDocumentsRepositoryTrait.PROTOTYPE, resource );

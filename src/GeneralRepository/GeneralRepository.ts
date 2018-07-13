@@ -21,7 +21,7 @@ export interface GeneralRepository<MODEL extends ResolvablePointer = ResolvableP
 
 export type GeneralRepositoryFactory =
 	& ModelPrototype<GeneralRepository, Repository>
-	& ModelDecorator<GeneralRepository, BaseGeneralRepository>
+	& ModelDecorator<GeneralRepository<any>, BaseGeneralRepository>
 	& ModelFactory<GeneralRepository, BaseGeneralRepository>
 	;
 
