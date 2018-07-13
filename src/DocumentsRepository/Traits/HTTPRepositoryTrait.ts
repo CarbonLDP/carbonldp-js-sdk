@@ -2,7 +2,8 @@ import { Context } from "../../Context/Context";
 
 import { IllegalArgumentError } from "../../Errors/IllegalArgumentError";
 
-import { FreeResources } from "../../FreeResources";
+import { BaseGeneralRepository } from "../../GeneralRepository/BaseGeneralRepository";
+import { GeneralRepository } from "../../GeneralRepository/GeneralRepository";
 
 import { HTTPError } from "../../HTTP/Errors/HTTPError";
 import { statusCodeMap } from "../../HTTP/Errors/index";
@@ -14,36 +15,27 @@ import { Response } from "../../HTTP/Response";
 import { ModelDecorator } from "../../Model/ModelDecorator";
 import { ModelPrototype } from "../../Model/ModelPrototype";
 
-import { DigestedObjectSchema } from "../../ObjectSchema/DigestedObjectSchema";
-import { ObjectSchemaResolver } from "../../ObjectSchema/ObjectSchemaResolver";
-
-import { RDFNode } from "../../RDF/Node";
-
 import { RegisteredPointer } from "../../Registry/RegisteredPointer";
-
-import { BaseRepository } from "../../Repository/BaseRepository";
-import { Repository } from "../../Repository/Repository";
 import { ResolvablePointer } from "../../Repository/ResolvablePointer";
 
 import { _getNotInContextMessage } from "../Utils";
 
 
-export interface HTTPRepositoryTrait<M extends ResolvablePointer = ResolvablePointer> extends Repository<M> {
-	readonly $context:Context<M & RegisteredPointer>;
+export interface HTTPRepositoryTrait<MODEL extends ResolvablePointer = ResolvablePointer> extends GeneralRepository<MODEL> {
+	readonly $context:Context<MODEL & RegisteredPointer, MODEL>;
 
-	get<T extends object>( uri:string, requestOptions?:GETOptions ):Promise<T & M>;
-	resolve<T extends object>( resource:M, requestOptions?:RequestOptions ):Promise<T & M>;
+	get<T extends object>( uri:string, requestOptions?:GETOptions ):Promise<T & MODEL>;
+	resolve<T extends object>( resource:MODEL, requestOptions?:RequestOptions ):Promise<T & MODEL>;
 	exists( uri:string, requestOptions?:RequestOptions ):Promise<boolean>;
 
-	refresh<T extends object>( resource:M, requestOptions?:RequestOptions ):Promise<T & M>;
-	save<T extends object>( resource:M, requestOptions?:RequestOptions ):Promise<T & M>;
-	saveAndRefresh<T extends object>( resource:M, requestOptions?:RequestOptions ):Promise<T & M>;
+	refresh<T extends object>( resource:MODEL, requestOptions?:RequestOptions ):Promise<T & MODEL>;
+	save<T extends object>( resource:MODEL, requestOptions?:RequestOptions ):Promise<T & MODEL>;
+	saveAndRefresh<T extends object>( resource:MODEL, requestOptions?:RequestOptions ):Promise<T & MODEL>;
 
 	delete( uri:string, requestOptions?:RequestOptions ):Promise<void>;
 
 	_parseFailedResponse( response:Response | Error | null ):Promise<never>;
-	_parseResponseData<T extends object>( response:Response, id:string ):Promise<T & M>;
-	_parseFreeNodes( freeNodes:RDFNode[] ):FreeResources;
+	_parseResponseData<T extends object>( response:Response, id:string ):Promise<T & MODEL>;
 }
 
 
@@ -59,8 +51,8 @@ export type OverriddenMembers =
 
 // FIXME: Use `unknown` for TS 3.0
 export type GeneralRepositoryFactory =
-	& ModelPrototype<HTTPRepositoryTrait, Repository & ObjectSchemaResolver, OverriddenMembers>
-	& ModelDecorator<HTTPRepositoryTrait<any>, BaseRepository>
+	& ModelPrototype<HTTPRepositoryTrait, GeneralRepository, OverriddenMembers>
+	& ModelDecorator<HTTPRepositoryTrait<any>, BaseGeneralRepository>
 	;
 
 export const HTTPRepositoryTrait:GeneralRepositoryFactory = {
@@ -169,22 +161,6 @@ export const HTTPRepositoryTrait:GeneralRepositoryFactory = {
 			return Promise.reject( error );
 		},
 
-		_parseFreeNodes( this:HTTPRepositoryTrait, freeNodes:RDFNode[] ):FreeResources {
-			// TODO: FIXME
-			const freeResources:FreeResources = FreeResources
-				.createFrom( { _registry: this } as any );
-
-			freeNodes
-				.forEach( node => {
-					const digestedSchema:DigestedObjectSchema = this.$context.registry.getSchemaFor( node );
-
-					const target:object = freeResources.getPointer( node[ "@id" ], true );
-					this.$context.jsonldConverter.compact( node, target, digestedSchema, freeResources );
-				} );
-
-			return freeResources;
-		},
-
 		async _parseResponseData<T extends object>( this:HTTPRepositoryTrait<T & ResolvablePointer>, response:Response, id:string ):Promise<T & ResolvablePointer> {
 			const resolvable:T & ResolvablePointer = this.$context.registry
 				.getPointer( id, true );
@@ -203,11 +179,11 @@ export const HTTPRepositoryTrait:GeneralRepositoryFactory = {
 			;
 	},
 
-	decorate<T extends BaseRepository>( object:T ):T & HTTPRepositoryTrait {
+	decorate<T extends BaseGeneralRepository>( object:T ):T & HTTPRepositoryTrait {
 		if( HTTPRepositoryTrait.isDecorated( object ) ) return;
 
-		const resource:T & Repository & ObjectSchemaResolver = ModelDecorator
-			.decorateMultiple( object, Repository, ObjectSchemaResolver );
+		const resource:T & GeneralRepository = ModelDecorator
+			.decorateMultiple( object, GeneralRepository );
 
 		return ModelDecorator
 			.definePropertiesFrom( HTTPRepositoryTrait.PROTOTYPE, resource );

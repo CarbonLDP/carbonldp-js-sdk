@@ -16,7 +16,7 @@ import { Document } from "../../Document/Document";
 
 import { IllegalArgumentError } from "../../Errors/IllegalArgumentError";
 
-import { FreeResources } from "../../FreeResources";
+import { FreeResources } from "../../FreeResources/FreeResources";
 
 import { GETOptions, RequestOptions, RequestUtils } from "../../HTTP/Request";
 

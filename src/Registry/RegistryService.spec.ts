@@ -3,7 +3,7 @@ import {
 	createMockContext,
 } from "../../test/helpers/mocks";
 import { AbstractContext } from "../Context/AbstractContext";
-import { FreeResources } from "../FreeResources";
+import { FreeResources } from "../FreeResources/FreeResources";
 import { Response } from "../HTTP";
 import {
 	InternalServerErrorError,
@@ -41,48 +41,6 @@ describe( module( "carbonldp/Registry" ), () => {
 			it( "should exists", ():void => {
 				expect( RegistryService.prototype._parseFreeNodes ).toBeDefined();
 				expect( RegistryService.prototype._parseFreeNodes ).toEqual( jasmine.any( Function ) );
-			} );
-
-
-			it( "should return FreeResources object", () => {
-				const registry:RegistryService<Pointer> = new RegistryService( Pointer );
-
-				const returned:FreeResources = registry._parseFreeNodes( [] );
-				expect( returned ).toEqual( anyThatMatches( FreeResources.is, "isFreeResources" ) as any );
-			} );
-
-			it( "should compact nodes provided", () => {
-				const context:AbstractContext<Pointer> = createMockContext();
-				const registry:RegistryService<Pointer, typeof context> = new RegistryService( Pointer, context );
-
-				context
-					.extendObjectSchema( { "@vocab": "https://example.com/ns#" } )
-					.extendObjectSchema( "Type-1", { "property1": {} } )
-					.extendObjectSchema( "Type-2", { "property2": {} } )
-				;
-
-
-				const returned:FreeResources = registry._parseFreeNodes( [
-					{
-						"@id": "_:1",
-						"@type": [ "Type-1" ],
-						"https://example.com/ns#property1": [ { "@value": "value 1" } ],
-					},
-					{
-						"@id": "_:2",
-						"@type": [ "Type-2" ],
-						"https://example.com/ns#property2": [ { "@value": "value 2" } ],
-					},
-				] );
-
-				expect<{ property1?:string }>( returned.getPointer( "_:1" ) as {} ).toEqual( {
-					property1: "value 1",
-				} );
-
-				expect<{ property2?:string }>( returned.getPointer( "_:2" ) as {} ).toEqual( {
-					property2: "value 2",
-				} );
-
 			} );
 
 		} );

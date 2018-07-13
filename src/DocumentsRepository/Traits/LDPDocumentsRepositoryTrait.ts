@@ -5,7 +5,7 @@ import { TransientDocument } from "../../Document/TransientDocument";
 
 import { IllegalArgumentError } from "../../Errors/IllegalArgumentError";
 
-import { FreeResources } from "../../FreeResources";
+import { FreeResources } from "../../FreeResources/FreeResources";
 
 import { HTTPError } from "../../HTTP/Errors/HTTPError";
 import { BadResponseError } from "../../HTTP/Errors/ServerErrors/BadResponseError";

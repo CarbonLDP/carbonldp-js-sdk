@@ -1,7 +1,9 @@
 import { AbstractContext } from "../../../src/Context/AbstractContext";
+import { GeneralRegistry } from "../../../src/GeneralRegistry/GeneralRegistry";
 import { GeneralRepository } from "../../../src/GeneralRepository/GeneralRepository";
-import { Document } from "../../../src/Document";
+
 import { ModelDecorator } from "../../../src/Model";
+
 import {
 	DigestedObjectSchema,
 	DigestedObjectSchemaProperty,
@@ -9,14 +11,16 @@ import {
 	ObjectSchemaDigester,
 	ObjectSchemaUtils
 } from "../../../src/ObjectSchema";
-import { Pointer } from "../../../src/Pointer";
+
 import { QueryableMetadata } from "../../../src/QueryDocuments";
-import { GeneralRegistry, RegisteredPointer, Registry, RegistryService } from "../../../src/Registry";
+
 import { BaseRegisteredPointer } from "../../../src/Registry/BaseRegisteredPointer";
+import { RegisteredPointer } from "../../../src/Registry/RegisteredPointer";
+
 import { BaseResolvablePointer } from "../../../src/Repository/BaseResolvablePointer";
 import { ResolvablePointer } from "../../../src/Repository/ResolvablePointer";
+
 import { ContextSettings } from "../../../src/Settings";
-import * as Utils from "../../../src/Utils";
 
 
 export function createMockDigestedSchema( values?:Partial<DigestedObjectSchema> ):DigestedObjectSchema {
@@ -33,52 +37,6 @@ export function createMockQueryableMetadata( schema:ObjectSchema = {} ):Queryabl
 	return new QueryableMetadata( digestedSchema );
 }
 
-export function createMockDocument<T extends {
-	_registry?:Registry<any>,
-	$id:string,
-}>( data:T ):T & Document {
-	const base:T & Pointer = Pointer.create( data );
-
-	if( data._registry ) data._registry._addPointer( base );
-
-	const doc:T & Document = Document.decorate( base );
-
-	defineNonEnumerableProps( doc );
-	doc._normalize();
-
-	return doc;
-}
-
-export function defineNonEnumerableProps( object:object ):void {
-	Object
-		.keys( object )
-		.filter( key => key.startsWith( "_" ) )
-		.forEach( key => Object.defineProperty( object, key, { enumerable: false, configurable: true } ) )
-	;
-
-	Object
-		.keys( object )
-		.filter( key => Array.isArray( object[ key ] ) || Utils.isPlainObject( object[ key ] ) )
-		.map( key => object[ key ] )
-		.forEach( defineNonEnumerableProps )
-	;
-}
-
-
-export function createMockRegistry<M extends Pointer, C extends AbstractContext<M, any>>( data?:{
-	model?:ModelDecorator<M>,
-	context?:C,
-} ):RegistryService<M, C> {
-	data = Object.assign( {}, data );
-
-	const model:ModelDecorator<M> = data.model ?
-		data.model : Pointer as any;
-
-	const context:C = data.context ?
-		data.context : createMockContext( { model } ) as C;
-
-	return new RegistryService<M, C>( model, context );
-}
 
 export function createMockContext<PARENT extends AbstractContext<any, any, any> = undefined>( data?:{
 	parentContext?:PARENT;

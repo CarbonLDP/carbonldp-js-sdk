@@ -206,7 +206,7 @@ export class JSONLDConverter {
 	private compactSingle( expandedObject:any, targetObject:any, digestedSchema:ObjectSchema.DigestedObjectSchema, pointerLibrary:PointerLibrary, strict?:boolean ):void {
 		if( ! expandedObject[ "@id" ] ) throw new IllegalArgumentError( "The expandedObject doesn't have an @id defined." );
 
-		targetObject[ "id" ] = expandedObject[ "@id" ];
+		targetObject[ "$id" ] = expandedObject[ "@id" ];
 		targetObject[ "types" ] = ! ! expandedObject[ "@type" ] ? expandedObject[ "@type" ] : [];
 
 		const propertyURINameMap:Map<string, string> = this.getPropertyURINameMap( digestedSchema );

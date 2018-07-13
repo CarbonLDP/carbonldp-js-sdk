@@ -1,4 +1,5 @@
 import { Document } from "../Document";
+import { GeneralRegistry } from "../GeneralRegistry/GeneralRegistry";
 import {
 	AddMemberAction,
 	DocumentMetadata,
@@ -21,19 +22,10 @@ import {
 	MemberRemovedDetails,
 } from "../Messaging";
 import { DigestedObjectSchema } from "../ObjectSchema";
-import {
-	GeneralRegistry,
-	RegisteredPointer
-} from "../Registry";
-import {
-	ValidationReport,
-	ValidationResult,
-} from "../SHACL";
 import { QueryMetadata } from "../QueryDocuments";
-import {
-	PlatformInstance,
-	PlatformMetadata,
-} from "../System";
+import { RegisteredPointer } from "../Registry";
+import { ValidationReport, ValidationResult, } from "../SHACL";
+import { PlatformInstance, PlatformMetadata, } from "../System";
 import { AbstractContext } from "./AbstractContext";
 
 

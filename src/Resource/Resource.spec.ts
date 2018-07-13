@@ -1,17 +1,18 @@
 import { createNonEnumerable } from "../../test/helpers/miscellaneous";
-import { createMockContext } from "../../test/helpers/mocks";
-import { AbstractContext } from "../Context";
-import {
-	ModelDecorator,
-	ModelFactoryOptional,
-	ModelPrototype,
-	ModelTypeGuard
-} from "../Model";
-import { Pointer } from "../Pointer";
-import {
-	RegisteredPointer,
-	Registry
-} from "../Registry";
+import { createMockContext } from "../../test/helpers/mocks/core";
+
+import { AbstractContext } from "../Context/AbstractContext";
+
+import { ModelDecorator } from "../Model/ModelDecorator";
+import { ModelFactoryOptional } from "../Model/ModelFactoryOptional";
+import { ModelPrototype } from "../Model/ModelPrototype";
+import { ModelTypeGuard } from "../Model/ModelTypeGuard";
+
+import { Pointer } from "../Pointer/Pointer";
+import { RegisteredPointer } from "../Registry/RegisteredPointer";
+
+import { Registry } from "../Registry/Registry";
+
 import {
 	extendsClass,
 	hasMethod,
@@ -23,13 +24,11 @@ import {
 	property,
 	STATIC,
 } from "../test/JasmineExtender";
-import { LDP } from "../Vocabularies";
-import { BaseResource } from "./BaseResource";
 
-import {
-	Resource,
-	ResourceFactory
-} from "./Resource";
+import { LDP } from "../Vocabularies/LDP";
+
+import { BaseResource } from "./BaseResource";
+import { Resource, ResourceFactory } from "./Resource";
 
 
 describe( module( "carbonldp/Resource" ), ():void => {
@@ -661,7 +660,7 @@ describe( module( "carbonldp/Resource" ), ():void => {
 				} );
 
 				it( "should not remove relative type when no registry's context", ():void => {
-					resource.$registry = Registry.create( {  __modelDecorator: Resource } );
+					resource.$registry = Registry.create( { __modelDecorator: Resource } );
 
 					resource.types = [
 						"http://example.com/ns#Type-1",

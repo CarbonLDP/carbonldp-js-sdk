@@ -5,7 +5,8 @@
 		"module": "commonjs",
 		"noImplicitAny": false,
 		"removeComments": true,
-		"esModuleInterop": true
+		"esModuleInterop": true,
+		"sourceMap": true
 	},
 	"exclude": [
 		"build",

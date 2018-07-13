@@ -8,7 +8,7 @@ import { Document } from "./Document";
 import * as Errors from "./Errors";
 import { IllegalArgumentError } from "./Errors";
 import { Fragment } from "./Fragment";
-import { FreeResources } from "./FreeResources";
+import { FreeResources } from "./FreeResources/FreeResources";
 import * as HTTP from "./HTTP";
 import * as JSONLD from "./JSONLD";
 import * as LDP from "./LDP";

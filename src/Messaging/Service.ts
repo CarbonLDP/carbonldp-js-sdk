@@ -6,7 +6,7 @@ import {
 } from "webstomp-client";
 import { DocumentsContext } from "../Context";
 import { IllegalStateError } from "../Errors";
-import { FreeResources } from "../FreeResources";
+import { FreeResources } from "../FreeResources/FreeResources";
 import { JSONLDParser } from "../JSONLD";
 import { RDFNode } from "../RDF";
 import { UUIDUtils } from "../Utils";
