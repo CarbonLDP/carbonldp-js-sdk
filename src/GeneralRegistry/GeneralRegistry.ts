@@ -6,9 +6,7 @@ import { ModelDecorator } from "../Model/ModelDecorator";
 import { ModelFactory } from "../Model/ModelFactory";
 import { ModelPrototype } from "../Model/ModelPrototype";
 
-import { DigestedObjectSchema } from "../ObjectSchema/DigestedObjectSchema";
 import { ObjectSchemaResolver } from "../ObjectSchema/ObjectSchemaResolver";
-import { ObjectSchemaUtils } from "../ObjectSchema/ObjectSchemaUtils";
 
 import { Pointer } from "../Pointer/Pointer";
 
@@ -96,15 +94,13 @@ export const GeneralRegistry:GeneralRegistryFactory = {
 
 			const resource:T & RegisteredPointer = Registry.PROTOTYPE._addPointer.call( this, pointer );
 
-			const schema:DigestedObjectSchema = this.$context.getObjectSchema();
-			resource.$id = ObjectSchemaUtils.resolveURI( resource.$id, schema, { base: true } );
+			resource.$id = this.$context.resolve( resource.$id );
 
 			return resource;
 		},
 
 		_getLocalID( this:GeneralRegistry, id:string ):string {
-			const schema:DigestedObjectSchema = this.$context.getObjectSchema();
-			const uri:string = ObjectSchemaUtils.resolveURI( id, schema, { base: true } );
+			const uri:string = this.$context.resolve( id );
 
 			if( ! URI.isBaseOf( this.$context.baseURI, uri ) )
 				throw new IllegalArgumentError( `"${ uri }" is out of scope.` );

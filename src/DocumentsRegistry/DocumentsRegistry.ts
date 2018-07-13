@@ -3,16 +3,14 @@ import { DocumentsContext } from "../Context/DocumentsContext";
 import { Document } from "../Document/Document";
 import { BaseGeneralRegistry } from "../GeneralRegistry/BaseGeneralRegistry";
 
+import { GeneralRegistry } from "../GeneralRegistry/GeneralRegistry";
+
 import { ModelDecorator } from "../Model/ModelDecorator";
 import { ModelFactory } from "../Model/ModelFactory";
 import { ModelPrototype } from "../Model/ModelPrototype";
 
-import { GeneralRegistry } from "../GeneralRegistry/GeneralRegistry";
+import { BaseDocumentsRegistry } from "./BaseDocumentsRegistry";
 
-
-export interface BaseDocumentsRegistry {
-	$context:DocumentsContext;
-}
 
 export interface DocumentsRegistry extends GeneralRegistry<Document> {
 	readonly $context:DocumentsContext;
@@ -22,7 +20,7 @@ export interface DocumentsRegistry extends GeneralRegistry<Document> {
 
 
 export type DocumentsRegistryFactory =
-	& ModelPrototype<DocumentsRegistry, GeneralRegistry<Document> & BaseDocumentsRegistry>
+	& ModelPrototype<DocumentsRegistry, GeneralRegistry<Document>>
 	& ModelDecorator<DocumentsRegistry, BaseDocumentsRegistry>
 	& ModelFactory<DocumentsRegistry, BaseDocumentsRegistry>
 	;
@@ -43,7 +41,7 @@ export const DocumentsRegistry:DocumentsRegistryFactory = {
 	decorate<T extends BaseDocumentsRegistry>( object:T ):T & DocumentsRegistry {
 		if( DocumentsRegistry.isDecorated( object ) ) return object;
 
-		const base: T & BaseGeneralRegistry = Object.assign( object, {
+		const base:T & BaseGeneralRegistry = Object.assign( object, {
 			__modelDecorator: Document,
 		} );
 
@@ -61,6 +59,7 @@ export const DocumentsRegistry:DocumentsRegistryFactory = {
 	},
 
 	createFrom<T extends object>( object:T & BaseDocumentsRegistry ):T & DocumentsRegistry {
-		return DocumentsRegistry.decorate( object );
+		const registry:T & DocumentsRegistry = DocumentsRegistry.decorate( object );
+		return GeneralRegistry.createFrom( registry );
 	},
 };
