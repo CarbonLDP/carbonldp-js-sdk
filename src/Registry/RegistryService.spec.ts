@@ -1,7 +1,6 @@
 import { anyThatMatches } from "../../test/helpers/jasmine/equalities";
 import {
 	createMockContext,
-	createMockQueryableMetadata
 } from "../../test/helpers/mocks";
 import { AbstractContext } from "../Context/AbstractContext";
 import { FreeResources } from "../FreeResources";
@@ -11,10 +10,6 @@ import {
 	NotFoundError,
 	UnknownError
 } from "../HTTP/Errors";
-import {
-	DigestedObjectSchema,
-	ObjectSchemaDigester
-} from "../ObjectSchema";
 import { Pointer } from "../Pointer";
 import { PersistedResource } from "../Resource";
 import {
@@ -24,7 +19,6 @@ import {
 	method,
 	module,
 } from "../test/JasmineExtender";
-import { C } from "../Vocabularies";
 import { RegistryService } from "./RegistryService";
 
 describe( module( "carbonldp/Registry" ), () => {
@@ -33,242 +27,6 @@ describe( module( "carbonldp/Registry" ), () => {
 		"CarbonLDP.RegistryService",
 		"Base registry as a service that can be related to an specific context."
 	), () => {
-
-		describe( "RegistryService.getGeneralSchema", () => {
-
-			it( "should exists", ():void => {
-				expect( RegistryService.prototype.getGeneralSchema ).toBeDefined();
-				expect( RegistryService.prototype.getGeneralSchema ).toEqual( jasmine.any( Function ) );
-			} );
-
-
-			it( "should return empty when no context", () => {
-				const registry:RegistryService<Pointer> = new RegistryService<Pointer>( Pointer );
-
-				const returned:DigestedObjectSchema = registry.getGeneralSchema();
-
-				expect( returned ).toEqual( new DigestedObjectSchema() );
-			} );
-
-			it( "should get general schema from context", () => {
-				const context:AbstractContext<Pointer> = createMockContext();
-				const registry:RegistryService<Pointer, typeof context> = new RegistryService( Pointer, context );
-
-				const schema:DigestedObjectSchema = new DigestedObjectSchema();
-				const spy:jasmine.Spy = spyOn( context, "getObjectSchema" )
-					.and.returnValue( schema );
-
-				const returned:DigestedObjectSchema = registry.getGeneralSchema();
-				expect( spy ).toHaveBeenCalledWith();
-				expect( returned ).toBe( schema );
-			} );
-
-		} );
-
-		describe( "RegistryService.hasSchemaFor", () => {
-
-			it( "should exists", ():void => {
-				expect( RegistryService.prototype.hasSchemaFor ).toBeDefined();
-				expect( RegistryService.prototype.hasSchemaFor ).toEqual( jasmine.any( Function ) );
-			} );
-
-
-			it( "should return true when no path provided", () => {
-				const registry:RegistryService<Pointer> = new RegistryService( Pointer );
-
-				const returned:boolean = registry.hasSchemaFor( {} );
-				expect( returned ).toBe( true );
-			} );
-
-			it( "should return false when path provided", () => {
-				const registry:RegistryService<Pointer> = new RegistryService( Pointer );
-
-				const returned:boolean = registry.hasSchemaFor( {}, "path" );
-				expect( returned ).toBe( false );
-			} );
-
-		} );
-
-		describe( "RegistryService.getSchemaFor", () => {
-
-			it( "should exists", ():void => {
-				expect( RegistryService.prototype.getSchemaFor ).toBeDefined();
-				expect( RegistryService.prototype.getSchemaFor ).toEqual( jasmine.any( Function ) );
-			} );
-
-
-			it( "should return get schemas from @type", () => {
-				const context:AbstractContext<Pointer> = createMockContext();
-				const registry:RegistryService<Pointer, typeof context> = new RegistryService( Pointer, context );
-
-				context.extendObjectSchema( "Type-1", {} );
-				context.extendObjectSchema( "Type-2", {} );
-				const spy:jasmine.Spy = spyOn( context, "getObjectSchema" )
-					.and.callThrough();
-
-
-				registry.getSchemaFor( { "@type": [ "Type-1", "Type-2" ] } );
-				expect( spy ).toHaveBeenCalledWith( "Type-1" );
-				expect( spy ).toHaveBeenCalledWith( "Type-2" );
-			} );
-
-			it( "should return get schemas from types", () => {
-				const context:AbstractContext<Pointer> = createMockContext();
-				const registry:RegistryService<Pointer, typeof context> = new RegistryService( Pointer, context );
-
-				context.extendObjectSchema( "Type-1", {} );
-				context.extendObjectSchema( "Type-2", {} );
-				const spy:jasmine.Spy = spyOn( context, "getObjectSchema" )
-					.and.callThrough();
-
-
-				registry.getSchemaFor( { "types": [ "Type-1", "Type-2" ] } );
-				expect( spy ).toHaveBeenCalledWith( "Type-1" );
-				expect( spy ).toHaveBeenCalledWith( "Type-2" );
-			} );
-
-
-			it( "should return c:Document schema when document URI in @id", () => {
-				const context:AbstractContext<Pointer> = createMockContext();
-				const registry:RegistryService<Pointer, typeof context> = new RegistryService( Pointer, context );
-
-				context.extendObjectSchema( C.Document, {} );
-				const spy:jasmine.Spy = spyOn( context, "getObjectSchema" )
-					.and.callThrough();
-
-
-				registry.getSchemaFor( { "@id": "https://example.com/" } );
-				expect( spy ).toHaveBeenCalledWith( C.Document );
-			} );
-
-			it( "should return c:Document schema when document URI in id", () => {
-				const context:AbstractContext<Pointer> = createMockContext();
-				const registry:RegistryService<Pointer, typeof context> = new RegistryService( Pointer, context );
-
-				context.extendObjectSchema( C.Document, {} );
-				const spy:jasmine.Spy = spyOn( context, "getObjectSchema" )
-					.and.callThrough();
-
-
-				registry.getSchemaFor( { "id": "https://example.com/" } );
-				expect( spy ).toHaveBeenCalledWith( C.Document );
-			} );
-
-			it( "should not return c:Document schema when fragment in @id", () => {
-				const context:AbstractContext<Pointer> = createMockContext();
-				const registry:RegistryService<Pointer, typeof context> = new RegistryService( Pointer, context );
-
-				context.extendObjectSchema( C.Document, {} );
-				const spy:jasmine.Spy = spyOn( context, "getObjectSchema" )
-					.and.callThrough();
-
-
-				registry.getSchemaFor( { "@id": "https://example.com/#fragment" } );
-				expect( spy ).not.toHaveBeenCalledWith( C.Document );
-			} );
-
-			it( "should not return c:Document schema when fragment in id", () => {
-				const context:AbstractContext<Pointer> = createMockContext();
-				const registry:RegistryService<Pointer, typeof context> = new RegistryService( Pointer, context );
-
-				context.extendObjectSchema( C.Document, {} );
-				const spy:jasmine.Spy = spyOn( context, "getObjectSchema" )
-					.and.callThrough();
-
-
-				registry.getSchemaFor( { "id": "https://example.com/#fragment" } );
-				expect( spy ).not.toHaveBeenCalledWith( C.Document );
-			} );
-
-			it( "should not return c:Document schema when bNode label in @id", () => {
-				const context:AbstractContext<Pointer> = createMockContext();
-				const registry:RegistryService<Pointer, typeof context> = new RegistryService( Pointer, context );
-
-				context.extendObjectSchema( C.Document, {} );
-				const spy:jasmine.Spy = spyOn( context, "getObjectSchema" )
-					.and.callThrough();
-
-
-				registry.getSchemaFor( { "@id": "_:bNode" } );
-				expect( spy ).not.toHaveBeenCalledWith( C.Document );
-			} );
-
-			it( "should not return c:Document schema when bNode label in id", () => {
-				const context:AbstractContext<Pointer> = createMockContext();
-				const registry:RegistryService<Pointer, typeof context> = new RegistryService( Pointer, context );
-
-				context.extendObjectSchema( C.Document, {} );
-				const spy:jasmine.Spy = spyOn( context, "getObjectSchema" )
-					.and.callThrough();
-
-
-				registry.getSchemaFor( { "id": "_:bNode" } );
-				expect( spy ).not.toHaveBeenCalledWith( C.Document );
-			} );
-
-
-			it( "should return combined schemas with the general when Node", () => {
-				const context:AbstractContext<Pointer> = createMockContext();
-				const registry:RegistryService<Pointer, typeof context> = new RegistryService( Pointer, context );
-
-				context
-					.extendObjectSchema( { "inGeneral": {} } )
-					.extendObjectSchema( "Type-1", { "inType": {} } )
-				;
-
-				const returned:DigestedObjectSchema = registry.getSchemaFor( { "@type": [ "Type-1" ] } );
-				expect( returned ).toEqual( ObjectSchemaDigester.digestSchema( {
-					"@base": "https://example.com/",
-					"inGeneral": {},
-					"inType": {},
-				} ) );
-			} );
-
-			it( "should return combined schemas with the general when Resource", () => {
-				const context:AbstractContext<Pointer> = createMockContext();
-				const registry:RegistryService<Pointer, typeof context> = new RegistryService( Pointer, context );
-
-				context
-					.extendObjectSchema( { "inGeneral": {} } )
-					.extendObjectSchema( "Type-1", { "inType": {} } )
-				;
-
-				const returned:DigestedObjectSchema = registry.getSchemaFor( { "types": [ "Type-1" ] } );
-				expect( returned ).toEqual( ObjectSchemaDigester.digestSchema( {
-					"@base": "https://example.com/",
-					"inGeneral": {},
-					"inType": {},
-				} ) );
-			} );
-
-			it( "should return combined with partial schema when partial resource", () => {
-				const context:AbstractContext<Pointer> = createMockContext();
-				const registry:RegistryService<Pointer, typeof context> = new RegistryService( Pointer, context );
-
-				context
-					.extendObjectSchema( { "inGeneral": {} } )
-					.extendObjectSchema( "Type-1", { "inType": {} } )
-				;
-
-
-				const resource:object = PersistedResource.decorate( {
-					types: [ "Type-1" ],
-					_partialMetadata: createMockQueryableMetadata( {
-						"inPartial": {},
-					} ),
-				} );
-
-				const returned:DigestedObjectSchema = registry.getSchemaFor( resource );
-				expect( returned ).toEqual( ObjectSchemaDigester.digestSchema( {
-					"@base": "https://example.com/",
-					"inGeneral": {},
-					"inType": {},
-					"inPartial": {},
-				} ) );
-			} );
-
-		} );
-
 
 		describe( method( INSTANCE, "_parseFreeNodes" ), () => {
 

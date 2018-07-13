@@ -1,14 +1,18 @@
 import { Context } from "../Context/Context";
-import {
-	ModelDecorator,
-	ModelPrototype,
-	ModelTypeGuard,
-} from "../Model";
+
+import { ModelDecorator } from "../Model/ModelDecorator";
+import { ModelPrototype } from "../Model/ModelPrototype";
+import { ModelTypeGuard } from "../Model/ModelTypeGuard";
+
+import { QueryablePointer } from "../QueryDocuments/QueryablePointer";
+
 import { RDFNode } from "../RDF/Node";
 import { URI } from "../RDF/URI";
-import { ResolvablePointer } from "../Repository/ResolvablePointer";
+
 import { isObject } from "../Utils";
+
 import { C } from "../Vocabularies/C";
+
 import { DigestedObjectSchema } from "./DigestedObjectSchema";
 import { ObjectSchemaDigester } from "./ObjectSchemaDigester";
 
@@ -54,10 +58,9 @@ function __getSchema( this:void, $context:Context | undefined, objectTypes:strin
 }
 
 
-type ObjectSchemaResolverFactory =
-	& ModelDecorator<ObjectSchemaResolver>
-	& ModelTypeGuard<ObjectSchemaResolver>
+export type ObjectSchemaResolverFactory =
 	& ModelPrototype<ObjectSchemaResolver>
+	& ModelDecorator<ObjectSchemaResolver>
 	;
 
 export const ObjectSchemaResolver:ObjectSchemaResolverFactory = {
@@ -79,7 +82,7 @@ export const ObjectSchemaResolver:ObjectSchemaResolverFactory = {
 				__getSchemaForResource( this.$context, object ) :
 				__getSchemaForNode( this.$context, object );
 
-			if( ! ResolvablePointer.isDecorated( object ) || ! object.isQueried() )
+			if( ! QueryablePointer.isDecorated( object ) || ! object.isQueried() )
 				return schema;
 
 			return ObjectSchemaDigester
@@ -97,12 +100,5 @@ export const ObjectSchemaResolver:ObjectSchemaResolverFactory = {
 
 	decorate<T extends object>( object:T ):T & ObjectSchemaResolver {
 		return ModelDecorator.definePropertiesFrom( ObjectSchemaResolver.PROTOTYPE, object );
-	},
-
-
-	is( value:any ):value is ObjectSchemaResolver {
-		return isObject( value )
-			&& ObjectSchemaResolver.isDecorated( value )
-			;
 	},
 };
