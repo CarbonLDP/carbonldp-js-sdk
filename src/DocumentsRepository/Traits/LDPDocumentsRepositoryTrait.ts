@@ -467,27 +467,6 @@ export const LDPDocumentsRepositoryTrait:LDPDocumentsRepositoryTraitFactory = {
 			HTTPRepositoryTrait.PROTOTYPE
 				._parseFailedResponse( response )
 				.catch( ( error:HTTPError ) => {
-					if( ! response.data ) return Promise.reject( error );
-
-					return new JSONLDParser()
-						.parse( response.data )
-						.then( ( freeNodes:RDFNode[] ) => {
-							const freeResources:FreeResources = this._parseFreeNodes( freeNodes );
-
-							const errorResponses:ErrorResponse[] = freeResources
-								.getPointers( true )
-								.filter( ErrorResponse.is );
-
-							if( errorResponses.length === 0 ) return Promise.reject( new IllegalArgumentError( "The response string does not contains a c:ErrorResponse." ) );
-							if( errorResponses.length > 1 ) return Promise.reject( new IllegalArgumentError( "The response string contains multiple c:ErrorResponse." ) );
-
-							const errorResponse:ErrorResponse = Object.assign( error, errorResponses[ 0 ] );
-							error.message = ErrorResponse.getMessage( errorResponse );
-
-							return Promise.reject( error );
-						}, () => {
-							return Promise.reject( error );
-						} );
 				} )
 			;
 		},

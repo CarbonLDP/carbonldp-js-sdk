@@ -2,7 +2,11 @@ import { QueryClause } from "sparqler/clauses";
 
 import { DocumentsContext } from "../../Context/DocumentsContext";
 
+import { Document } from "../../Document/Document";
+
 import { IllegalArgumentError } from "../../Errors/IllegalArgumentError";
+
+import { GeneralRepository } from "../../GeneralRepository/GeneralRepository";
 
 import { RequestOptions } from "../../HTTP/Request";
 
@@ -16,12 +20,12 @@ import { SPARQLSelectResults } from "../../SPARQL/SelectResults";
 import { SPARQLService } from "../../SPARQL/Service";
 
 import { BaseDocumentsRepository } from "../BaseDocumentsRepository";
-import { _getNotInContextMessage } from "../Utils";
+import { _getErrorResponseParserFn } from "../Utils";
 
 import { HTTPRepositoryTrait } from "./HTTPRepositoryTrait";
 
 
-export interface SPARQLDocumentsRepositoryTrait extends HTTPRepositoryTrait {
+export interface SPARQLDocumentsRepositoryTrait extends GeneralRepository<Document> {
 	$context:DocumentsContext;
 
 
@@ -44,38 +48,38 @@ export type SPARQLDocumentsRepositoryTraitFactory =
 export const SPARQLDocumentsRepositoryTrait:SPARQLDocumentsRepositoryTraitFactory = {
 	PROTOTYPE: {
 		executeASKQuery( this:SPARQLDocumentsRepositoryTrait, uri:string, askQuery:string, requestOptions?:RequestOptions ):Promise<boolean> {
-			if( ! this.$context.registry.inScope( uri ) ) return Promise.reject( new IllegalArgumentError( _getNotInContextMessage( uri ) ) );
+			if( ! this.$context.registry.inScope( uri, true ) ) return Promise.reject( new IllegalArgumentError( `"${ uri }" is out of scope.` ) );
 			const url:string = this.$context.resolve( uri );
 
 			return SPARQLService
 				.executeASKQuery( url, askQuery, requestOptions )
 				.then( ( [ rawResults ] ) => rawResults )
-				.catch( this._parseFailedResponse.bind( this ) );
+				.catch( _getErrorResponseParserFn( this.$context.registry ) );
 		},
 
 		executeSELECTQuery<T extends object>( this:SPARQLDocumentsRepositoryTrait, uri:string, selectQuery:string, requestOptions?:RequestOptions ):Promise<SPARQLSelectResults<T>> {
-			if( ! this.$context.registry.inScope( uri ) ) return Promise.reject( new IllegalArgumentError( _getNotInContextMessage( uri ) ) );
+			if( ! this.$context.registry.inScope( uri, true ) ) return Promise.reject( new IllegalArgumentError( `"${ uri }" is out of scope.` ) );
 			const url:string = this.$context.resolve( uri );
 
 			return SPARQLService
 				.executeSELECTQuery<T>( url, selectQuery, this.$context.registry, requestOptions )
 				.then( ( [ selectResults ] ) => selectResults )
-				.catch( this._parseFailedResponse.bind( this ) );
+				.catch( _getErrorResponseParserFn( this.$context.registry ) );
 		},
 
 		executeUPDATE( this:SPARQLDocumentsRepositoryTrait, uri:string, update:string, requestOptions?:RequestOptions ):Promise<void> {
-			if( ! this.$context.registry.inScope( uri ) ) return Promise.reject( new IllegalArgumentError( _getNotInContextMessage( uri ) ) );
+			if( ! this.$context.registry.inScope( uri, true ) ) return Promise.reject( new IllegalArgumentError( `"${ uri }" is out of scope.` ) );
 			const url:string = this.$context.resolve( uri );
 
 			return SPARQLService
 				.executeUPDATE( url, update, requestOptions )
 				.then( () => {} )
-				.catch( this._parseFailedResponse.bind( this ) );
+				.catch( _getErrorResponseParserFn( this.$context.registry ) );
 		},
 
 
 		sparql( this:SPARQLDocumentsRepositoryTrait, uri:string ):QueryClause<FinishSPARQLSelect> {
-			if( ! this.$context.registry.inScope( uri ) ) throw new IllegalArgumentError( _getNotInContextMessage( uri ) );
+			if( ! this.$context.registry.inScope( uri, true ) ) throw new IllegalArgumentError( `"${ uri }" is out of scope.` );
 			const url:string = this.$context.resolve( uri );
 
 			const schema:DigestedObjectSchema = this.$context.registry.getGeneralSchema();
@@ -100,8 +104,8 @@ export const SPARQLDocumentsRepositoryTrait:SPARQLDocumentsRepositoryTraitFactor
 	decorate<T extends BaseDocumentsRepository>( object:T ):T & SPARQLDocumentsRepositoryTrait {
 		if( SPARQLDocumentsRepositoryTrait.isDecorated( object ) ) return object;
 
-		const target:T & HTTPRepositoryTrait = ModelDecorator
-			.decorateMultiple( object, HTTPRepositoryTrait );
+		const target:T & GeneralRepository<any> = ModelDecorator
+			.decorateMultiple( object, GeneralRepository );
 
 		return ModelDecorator
 			.definePropertiesFrom( SPARQLDocumentsRepositoryTrait.PROTOTYPE, target );

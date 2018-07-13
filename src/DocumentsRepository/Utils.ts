@@ -1,4 +1,11 @@
+import { DocumentsRegistry } from "../DocumentsRegistry/DocumentsRegistry";
+import { IllegalArgumentError } from "../Errors/IllegalArgumentError";
+import { FreeResources } from "../FreeResources/FreeResources";
+import { HTTPError } from "../HTTP/Errors/HTTPError";
+import { JSONLDParser } from "../JSONLD/Parser";
+import { ErrorResponse } from "../LDP/ErrorResponse";
 import { Pointer } from "../Pointer/Pointer";
+import { RDFNode } from "../RDF/Node";
 
 import { URI } from "../RDF/URI";
 
@@ -8,7 +15,7 @@ import { isString } from "../Utils";
 
 
 export function _getNotInContextMessage( uri:string ):string {
-	return `"${ uri }" is outside the scope of the repository context.`;
+	return `"${ uri }" is out of scope.`;
 }
 
 
@@ -32,4 +39,32 @@ export function _parseResourceParams<T>( this:void, resource:ResolvablePointer, 
 		Array.prototype.slice.call( args, 1 );
 
 	return { _resource, _args };
+}
+
+
+export function _getErrorResponseParserFn( this:void, registry:DocumentsRegistry ):( error:HTTPError | Error ) => Promise<never> {
+	return ( error:HTTPError | Error ) => {
+		if( ! ("response" in error) ) return Promise.reject( error );
+		if( ! error.response.data ) return Promise.reject( error );
+
+		return new JSONLDParser()
+			.parse( error.response.data )
+			.then( ( freeNodes:RDFNode[] ) => {
+				const freeResources:FreeResources = FreeResources.parseFreeNodes( registry, freeNodes );
+
+				const errorResponses:ErrorResponse[] = freeResources
+					.getPointers( true )
+					.filter( ErrorResponse.is );
+
+				if( errorResponses.length === 0 ) return Promise.reject( new IllegalArgumentError( "The response string does not contains a c:ErrorResponse." ) );
+				if( errorResponses.length > 1 ) return Promise.reject( new IllegalArgumentError( "The response string contains multiple c:ErrorResponse." ) );
+
+				const errorResponse:ErrorResponse = Object.assign( error, errorResponses[ 0 ] );
+				error.message = ErrorResponse.getMessage( errorResponse );
+
+				return Promise.reject( error );
+			}, () => {
+				return Promise.reject( error );
+			} );
+	};
 }
