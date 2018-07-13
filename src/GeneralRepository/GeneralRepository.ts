@@ -14,7 +14,7 @@ import { ResolvablePointer } from "../Repository/ResolvablePointer";
 import { BaseGeneralRepository } from "./BaseGeneralRepository";
 
 
-export interface GeneralRepository<MODEL extends ResolvablePointer = ResolvablePointer> extends Repository<ResolvablePointer> {
+export interface GeneralRepository<MODEL extends ResolvablePointer = ResolvablePointer> extends Repository<MODEL> {
 	$context:Context<MODEL & RegisteredPointer, MODEL>;
 }
 
