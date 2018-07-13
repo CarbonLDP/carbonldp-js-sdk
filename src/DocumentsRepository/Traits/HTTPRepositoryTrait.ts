@@ -6,9 +6,6 @@ import { BaseGeneralRepository } from "../../GeneralRepository/BaseGeneralReposi
 import { GeneralRepository } from "../../GeneralRepository/GeneralRepository";
 
 import { HTTPError } from "../../HTTP/Errors/HTTPError";
-import { statusCodeMap } from "../../HTTP/Errors/index";
-import { UnknownError } from "../../HTTP/Errors/UnknownError";
-
 import { GETOptions, RequestOptions, RequestService, RequestUtils } from "../../HTTP/Request";
 import { Response } from "../../HTTP/Response";
 
@@ -34,7 +31,6 @@ export interface HTTPRepositoryTrait<MODEL extends ResolvablePointer = Resolvabl
 
 	delete( uri:string, requestOptions?:RequestOptions ):Promise<void>;
 
-	_parseFailedResponse( response:Response | Error | null ):Promise<never>;
 	_parseResponseData<T extends object>( response:Response, id:string ):Promise<T & MODEL>;
 }
 
@@ -73,8 +69,7 @@ export const HTTPRepositoryTrait:GeneralRepositoryFactory = {
 				.get( url, requestOptions )
 				.then( ( response:Response ) => {
 					return this._parseResponseData<T>( response, uri );
-				} )
-				.catch( this._parseFailedResponse.bind( this ) );
+				} );
 		},
 
 		resolve<T extends object>( this:HTTPRepositoryTrait, resource:ResolvablePointer, requestOptions?:RequestOptions ):Promise<T & ResolvablePointer> {
@@ -88,9 +83,9 @@ export const HTTPRepositoryTrait:GeneralRepositoryFactory = {
 			return RequestService
 				.head( url, requestOptions )
 				.then( () => true )
-				.catch<boolean>( ( response:Response ) => {
-					if( response.status === 404 ) return false;
-					return this._parseFailedResponse( response );
+				.catch<boolean>( ( error:HTTPError ) => {
+					if( error.response.status === 404 ) return false;
+					return Promise.reject( error );
 				} );
 		},
 
@@ -106,9 +101,9 @@ export const HTTPRepositoryTrait:GeneralRepositoryFactory = {
 				.then<T & ResolvablePointer>( ( response:Response ) => {
 					return this._parseResponseData<T>( response, url );
 				} )
-				.catch<T & ResolvablePointer>( ( response:Response ) => {
-					if( response.status === 304 ) return resource as T & ResolvablePointer;
-					return this._parseFailedResponse( response );
+				.catch<T & ResolvablePointer>( ( error:HTTPError ) => {
+					if( error.response.status === 304 ) return resource as T & ResolvablePointer;
+					return Promise.reject( error );
 				} )
 				;
 		},
@@ -124,9 +119,7 @@ export const HTTPRepositoryTrait:GeneralRepositoryFactory = {
 			const body:string = JSON.stringify( resource );
 			return RequestService
 				.put( url, body, requestOptions )
-				.then( () => resource as T & ResolvablePointer )
-				.catch( this._parseFailedResponse.bind( this ) )
-				;
+				.then( () => resource as T & ResolvablePointer );
 		},
 
 		saveAndRefresh<T extends object>( this:HTTPRepositoryTrait, resource:ResolvablePointer, requestOptions?:RequestOptions ):Promise<T & ResolvablePointer> {
@@ -145,21 +138,9 @@ export const HTTPRepositoryTrait:GeneralRepositoryFactory = {
 				.delete( url, requestOptions )
 				.then( () => {
 					this.$context.registry.removePointer( url );
-				} )
-				.catch( this._parseFailedResponse.bind( this ) )
-				;
+				} );
 		},
 
-
-		_parseFailedResponse( this:HTTPRepositoryTrait, response:Response | Error | null ):Promise<never> {
-			if( ! response || response instanceof Error ) return Promise.reject( response );
-
-			if( ! statusCodeMap.has( response.status ) )
-				return Promise.reject( new UnknownError( response.data, response ) );
-
-			const error:HTTPError = new (statusCodeMap.get( response.status ))( response.data, response );
-			return Promise.reject( error );
-		},
 
 		async _parseResponseData<T extends object>( this:HTTPRepositoryTrait<T & ResolvablePointer>, response:Response, id:string ):Promise<T & ResolvablePointer> {
 			const resolvable:T & ResolvablePointer = this.$context.registry

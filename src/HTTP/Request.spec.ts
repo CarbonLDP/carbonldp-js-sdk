@@ -1,8 +1,3 @@
-import { CarbonLDP } from "../CarbonLDP";
-import { DocumentsContext } from "../Context/DocumentsContext";
-import { IllegalArgumentError } from "../Errors";
-import { Pointer } from "../Pointer";
-import { DocumentsRegistry } from "../DocumentsRegistry/DocumentsRegistry";
 import {
 	clazz,
 	hasMethod,
@@ -15,20 +10,19 @@ import {
 	OPTIONAL,
 	STATIC,
 } from "../test/JasmineExtender";
-import {
-	C,
-	LDP
-} from "../Vocabularies";
+
+import { C } from "../Vocabularies/C";
+import { LDP } from "../Vocabularies/LDP";
+
 import * as Utils from "./../Utils";
+
+import { NotFoundError } from "./Errors/ClientErrors/NotFoundError";
+import { HTTPError } from "./Errors/HTTPError";
+import { InternalServerErrorError } from "./Errors/ServerErrors/InternalServerErrorError";
+
 import { Header } from "./Header";
 import { JSONParser } from "./JSONParser";
-
-import {
-	RequestOptions,
-	RequestService,
-	RequestUtils,
-	RetrievalPreferences,
-} from "./Request";
+import { RequestOptions, RequestService, RequestUtils, RetrievalPreferences } from "./Request";
 import { Response } from "./Response";
 
 describe( module( "carbonldp/HTTP/Request" ), function():void {
@@ -226,21 +220,25 @@ describe( module( "carbonldp/HTTP/Request" ), function():void {
 
 			promise = RequestService.head( "http://example.com/404" );
 			testPromise( promise );
-			promise = promise.catch( function( response:Response ):void {
-				testHTTPResponse( response );
-				expect( response.status ).toEqual( 404 );
-				expect( response.data ).toEqual( "" );
-				testHTTPResponseHeaders( response, {} );
+			promise = promise.catch( function( error:HTTPError ):void {
+				expect( error ).toEqual( jasmine.any( HTTPError ) );
+				expect( error ).toEqual( jasmine.any( NotFoundError ) );
+
+				testHTTPResponse( error.response );
+				expect( error.response.data ).toEqual( "" );
+				testHTTPResponseHeaders( error.response, {} );
 			} );
 			promises.push( promise );
 
 			promise = RequestService.head( "http://example.com/500", options );
 			testPromise( promise );
-			promise = promise.catch( function( response:Response ):void {
-				testHTTPResponse( response );
-				expect( response.status ).toEqual( 500 );
-				expect( response.data ).toEqual( "" );
-				testHTTPResponseHeaders( response, {} );
+			promise = promise.catch( function( error:HTTPError ):void {
+				expect( error ).toEqual( jasmine.any( HTTPError ) );
+				expect( error ).toEqual( jasmine.any( InternalServerErrorError ) );
+
+				testHTTPResponse( error.response );
+				expect( error.response.data ).toEqual( "" );
+				testHTTPResponseHeaders( error.response, {} );
 			} );
 			promises.push( promise );
 
@@ -282,21 +280,25 @@ describe( module( "carbonldp/HTTP/Request" ), function():void {
 
 			promise = RequestService.options( "http://example.com/404" );
 			testPromise( promise );
-			promise = promise.catch( function( response:Response ):void {
-				testHTTPResponse( response );
-				expect( response.status ).toEqual( 404 );
-				expect( response.data ).toEqual( "" );
-				testHTTPResponseHeaders( response, {} );
+			promise = promise.catch( function( error:HTTPError ):void {
+				expect( error ).toEqual( jasmine.any( HTTPError ) );
+				expect( error ).toEqual( jasmine.any( NotFoundError ) );
+
+				testHTTPResponse( error.response );
+				expect( error.response.data ).toEqual( "" );
+				testHTTPResponseHeaders( error.response, {} );
 			} );
 			promises.push( promise );
 
 			promise = RequestService.options( "http://example.com/500", options );
 			testPromise( promise );
-			promise = promise.catch( function( response:Response ):void {
-				testHTTPResponse( response );
-				expect( response.status ).toEqual( 500 );
-				expect( response.data ).toEqual( "" );
-				testHTTPResponseHeaders( response, {} );
+			promise = promise.catch( function( error:HTTPError ):void {
+				expect( error ).toEqual( jasmine.any( HTTPError ) );
+				expect( error ).toEqual( jasmine.any( InternalServerErrorError ) );
+
+				testHTTPResponse( error.response );
+				expect( error.response.data ).toEqual( "" );
+				testHTTPResponseHeaders( error.response, {} );
 			} );
 			promises.push( promise );
 
@@ -343,21 +345,25 @@ describe( module( "carbonldp/HTTP/Request" ), function():void {
 
 				promise = RequestService.get( "http://example.com/404" );
 				testPromise( promise );
-				promise = promise.catch( function( response:Response ):void {
-					testHTTPResponse( response );
-					expect( response.status ).toEqual( 404 );
-					expect( response.data ).toEqual( "" );
-					testHTTPResponseHeaders( response, {} );
+				promise = promise.catch( function( error:HTTPError ):void {
+					expect( error ).toEqual( jasmine.any( HTTPError ) );
+					expect( error ).toEqual( jasmine.any( NotFoundError ) );
+
+					testHTTPResponse( error.response );
+					expect( error.response.data ).toEqual( "" );
+					testHTTPResponseHeaders( error.response, {} );
 				} );
 				promises.push( promise );
 
 				promise = RequestService.get( "http://example.com/500", options );
 				testPromise( promise );
-				promise = promise.catch( function( response:Response ):void {
-					testHTTPResponse( response );
-					expect( response.status ).toEqual( 500 );
-					expect( response.data ).toEqual( "" );
-					testHTTPResponseHeaders( response, {} );
+				promise = promise.catch( function( error:HTTPError ):void {
+					expect( error ).toEqual( jasmine.any( HTTPError ) );
+					expect( error ).toEqual( jasmine.any( InternalServerErrorError ) );
+
+					testHTTPResponse( error.response );
+					expect( error.response.data ).toEqual( "" );
+					testHTTPResponseHeaders( error.response, {} );
 				} );
 				promises.push( promise );
 
@@ -406,21 +412,25 @@ describe( module( "carbonldp/HTTP/Request" ), function():void {
 
 				promise = RequestService.get( "http://example.com/404", null, parser );
 				testPromise( promise );
-				promise = promise.catch( function( response:Response ):void {
-					testHTTPResponse( response );
-					expect( response.status ).toEqual( 404 );
-					expect( response.data ).toEqual( "" );
-					testHTTPResponseHeaders( response, {} );
+				promise = promise.catch( function( error:HTTPError ):void {
+					expect( error ).toEqual( jasmine.any( HTTPError ) );
+					expect( error ).toEqual( jasmine.any( NotFoundError ) );
+
+					testHTTPResponse( error.response );
+					expect( error.response.data ).toEqual( "" );
+					testHTTPResponseHeaders( error.response, {} );
 				} );
 				promises.push( promise );
 
 				promise = RequestService.get( "http://example.com/500", options, parser );
 				testPromise( promise );
-				promise = promise.catch( function( response:Response ):void {
-					testHTTPResponse( response );
-					expect( response.status ).toEqual( 500 );
-					expect( response.data ).toEqual( "" );
-					testHTTPResponseHeaders( response, {} );
+				promise = promise.catch( function( error:HTTPError ):void {
+					expect( error ).toEqual( jasmine.any( HTTPError ) );
+					expect( error ).toEqual( jasmine.any( InternalServerErrorError ) );
+
+					testHTTPResponse( error.response );
+					expect( error.response.data ).toEqual( "" );
+					testHTTPResponseHeaders( error.response, {} );
 				} );
 				promises.push( promise );
 
@@ -470,21 +480,25 @@ describe( module( "carbonldp/HTTP/Request" ), function():void {
 
 				promise = RequestService.post( "http://example.com/404", "some body data" );
 				testPromise( promise );
-				promise = promise.catch( function( response:Response ):void {
-					testHTTPResponse( response );
-					expect( response.status ).toEqual( 404 );
-					expect( response.data ).toEqual( "" );
-					testHTTPResponseHeaders( response, {} );
+				promise = promise.catch( function( error:HTTPError ):void {
+					expect( error ).toEqual( jasmine.any( HTTPError ) );
+					expect( error ).toEqual( jasmine.any( NotFoundError ) );
+
+					testHTTPResponse( error.response );
+					expect( error.response.data ).toEqual( "" );
+					testHTTPResponseHeaders( error.response, {} );
 				} );
 				promises.push( promise );
 
 				promise = RequestService.post( "http://example.com/500", "some body data", options );
 				testPromise( promise );
-				promise = promise.catch( function( response:Response ):void {
-					testHTTPResponse( response );
-					expect( response.status ).toEqual( 500 );
-					expect( response.data ).toEqual( "" );
-					testHTTPResponseHeaders( response, {} );
+				promise = promise.catch( function( error:HTTPError ):void {
+					expect( error ).toEqual( jasmine.any( HTTPError ) );
+					expect( error ).toEqual( jasmine.any( InternalServerErrorError ) );
+
+					testHTTPResponse( error.response );
+					expect( error.response.data ).toEqual( "" );
+					testHTTPResponseHeaders( error.response, {} );
 				} );
 				promises.push( promise );
 
@@ -533,21 +547,25 @@ describe( module( "carbonldp/HTTP/Request" ), function():void {
 
 				promise = RequestService.post( "http://example.com/404", "some body data", null, parser );
 				testPromise( promise );
-				promise = promise.catch( function( response:Response ):void {
-					testHTTPResponse( response );
-					expect( response.status ).toEqual( 404 );
-					expect( response.data ).toEqual( "" );
-					testHTTPResponseHeaders( response, {} );
+				promise = promise.catch( function( error:HTTPError ):void {
+					expect( error ).toEqual( jasmine.any( HTTPError ) );
+					expect( error ).toEqual( jasmine.any( NotFoundError ) );
+
+					testHTTPResponse( error.response );
+					expect( error.response.data ).toEqual( "" );
+					testHTTPResponseHeaders( error.response, {} );
 				} );
 				promises.push( promise );
 
 				promise = RequestService.post( "http://example.com/500", "some body data", options, parser );
 				testPromise( promise );
-				promise = promise.catch( function( response:Response ):void {
-					testHTTPResponse( response );
-					expect( response.status ).toEqual( 500 );
-					expect( response.data ).toEqual( "" );
-					testHTTPResponseHeaders( response, {} );
+				promise = promise.catch( function( error:HTTPError ):void {
+					expect( error ).toEqual( jasmine.any( HTTPError ) );
+					expect( error ).toEqual( jasmine.any( InternalServerErrorError ) );
+
+					testHTTPResponse( error.response );
+					expect( error.response.data ).toEqual( "" );
+					testHTTPResponseHeaders( error.response, {} );
 				} );
 				promises.push( promise );
 
@@ -597,21 +615,25 @@ describe( module( "carbonldp/HTTP/Request" ), function():void {
 
 				promise = RequestService.put( "http://example.com/404", "some body data" );
 				testPromise( promise );
-				promise = promise.catch( function( response:Response ):void {
-					testHTTPResponse( response );
-					expect( response.status ).toEqual( 404 );
-					expect( response.data ).toEqual( "" );
-					testHTTPResponseHeaders( response, {} );
+				promise = promise.catch( function( error:HTTPError ):void {
+					expect( error ).toEqual( jasmine.any( HTTPError ) );
+					expect( error ).toEqual( jasmine.any( NotFoundError ) );
+
+					testHTTPResponse( error.response );
+					expect( error.response.data ).toEqual( "" );
+					testHTTPResponseHeaders( error.response, {} );
 				} );
 				promises.push( promise );
 
 				promise = RequestService.put( "http://example.com/500", "some body data", options );
 				testPromise( promise );
-				promise = promise.catch( function( response:Response ):void {
-					testHTTPResponse( response );
-					expect( response.status ).toEqual( 500 );
-					expect( response.data ).toEqual( "" );
-					testHTTPResponseHeaders( response, {} );
+				promise = promise.catch( function( error:HTTPError ):void {
+					expect( error ).toEqual( jasmine.any( HTTPError ) );
+					expect( error ).toEqual( jasmine.any( InternalServerErrorError ) );
+
+					testHTTPResponse( error.response );
+					expect( error.response.data ).toEqual( "" );
+					testHTTPResponseHeaders( error.response, {} );
 				} );
 				promises.push( promise );
 
@@ -660,21 +682,25 @@ describe( module( "carbonldp/HTTP/Request" ), function():void {
 
 				promise = RequestService.put( "http://example.com/404", "some body data", null, parser );
 				testPromise( promise );
-				promise = promise.catch( function( response:Response ):void {
-					testHTTPResponse( response );
-					expect( response.status ).toEqual( 404 );
-					expect( response.data ).toEqual( "" );
-					testHTTPResponseHeaders( response, {} );
+				promise = promise.catch( function( error:HTTPError ):void {
+					expect( error ).toEqual( jasmine.any( HTTPError ) );
+					expect( error ).toEqual( jasmine.any( NotFoundError ) );
+
+					testHTTPResponse( error.response );
+					expect( error.response.data ).toEqual( "" );
+					testHTTPResponseHeaders( error.response, {} );
 				} );
 				promises.push( promise );
 
 				promise = RequestService.put( "http://example.com/500", "some body data", options, parser );
 				testPromise( promise );
-				promise = promise.catch( function( response:Response ):void {
-					testHTTPResponse( response );
-					expect( response.status ).toEqual( 500 );
-					expect( response.data ).toEqual( "" );
-					testHTTPResponseHeaders( response, {} );
+				promise = promise.catch( function( error:HTTPError ):void {
+					expect( error ).toEqual( jasmine.any( HTTPError ) );
+					expect( error ).toEqual( jasmine.any( InternalServerErrorError ) );
+
+					testHTTPResponse( error.response );
+					expect( error.response.data ).toEqual( "" );
+					testHTTPResponseHeaders( error.response, {} );
 				} );
 				promises.push( promise );
 
@@ -724,21 +750,25 @@ describe( module( "carbonldp/HTTP/Request" ), function():void {
 
 				promise = RequestService.patch( "http://example.com/404", "some body data" );
 				testPromise( promise );
-				promise = promise.catch( function( response:Response ):void {
-					testHTTPResponse( response );
-					expect( response.status ).toEqual( 404 );
-					expect( response.data ).toEqual( "" );
-					testHTTPResponseHeaders( response, {} );
+				promise = promise.catch( function( error:HTTPError ):void {
+					expect( error ).toEqual( jasmine.any( HTTPError ) );
+					expect( error ).toEqual( jasmine.any( NotFoundError ) );
+
+					testHTTPResponse( error.response );
+					expect( error.response.data ).toEqual( "" );
+					testHTTPResponseHeaders( error.response, {} );
 				} );
 				promises.push( promise );
 
 				promise = RequestService.patch( "http://example.com/500", "some body data", options );
 				testPromise( promise );
-				promise = promise.catch( function( response:Response ):void {
-					testHTTPResponse( response );
-					expect( response.status ).toEqual( 500 );
-					expect( response.data ).toEqual( "" );
-					testHTTPResponseHeaders( response, {} );
+				promise = promise.catch( function( error:HTTPError ):void {
+					expect( error ).toEqual( jasmine.any( HTTPError ) );
+					expect( error ).toEqual( jasmine.any( InternalServerErrorError ) );
+
+					testHTTPResponse( error.response );
+					expect( error.response.data ).toEqual( "" );
+					testHTTPResponseHeaders( error.response, {} );
 				} );
 				promises.push( promise );
 
@@ -787,21 +817,25 @@ describe( module( "carbonldp/HTTP/Request" ), function():void {
 
 				promise = RequestService.patch( "http://example.com/404", "some body data", null, parser );
 				testPromise( promise );
-				promise = promise.catch( function( response:Response ):void {
-					testHTTPResponse( response );
-					expect( response.status ).toEqual( 404 );
-					expect( response.data ).toEqual( "" );
-					testHTTPResponseHeaders( response, {} );
+				promise = promise.catch( function( error:HTTPError ):void {
+					expect( error ).toEqual( jasmine.any( HTTPError ) );
+					expect( error ).toEqual( jasmine.any( NotFoundError ) );
+
+					testHTTPResponse( error.response );
+					expect( error.response.data ).toEqual( "" );
+					testHTTPResponseHeaders( error.response, {} );
 				} );
 				promises.push( promise );
 
 				promise = RequestService.patch( "http://example.com/500", "some body data", options, parser );
 				testPromise( promise );
-				promise = promise.catch( function( response:Response ):void {
-					testHTTPResponse( response );
-					expect( response.status ).toEqual( 500 );
-					expect( response.data ).toEqual( "" );
-					testHTTPResponseHeaders( response, {} );
+				promise = promise.catch( function( error:HTTPError ):void {
+					expect( error ).toEqual( jasmine.any( HTTPError ) );
+					expect( error ).toEqual( jasmine.any( InternalServerErrorError ) );
+
+					testHTTPResponse( error.response );
+					expect( error.response.data ).toEqual( "" );
+					testHTTPResponseHeaders( error.response, {} );
 				} );
 				promises.push( promise );
 
@@ -851,21 +885,25 @@ describe( module( "carbonldp/HTTP/Request" ), function():void {
 
 				promise = RequestService.delete( "http://example.com/404", "some body data" );
 				testPromise( promise );
-				promise = promise.catch( function( response:Response ):void {
-					testHTTPResponse( response );
-					expect( response.status ).toEqual( 404 );
-					expect( response.data ).toEqual( "" );
-					testHTTPResponseHeaders( response, {} );
+				promise = promise.catch( function( error:HTTPError ):void {
+					expect( error ).toEqual( jasmine.any( HTTPError ) );
+					expect( error ).toEqual( jasmine.any( NotFoundError ) );
+
+					testHTTPResponse( error.response );
+					expect( error.response.data ).toEqual( "" );
+					testHTTPResponseHeaders( error.response, {} );
 				} );
 				promises.push( promise );
 
 				promise = RequestService.delete( "http://example.com/500", "some body data", options );
 				testPromise( promise );
-				promise = promise.catch( function( response:Response ):void {
-					testHTTPResponse( response );
-					expect( response.status ).toEqual( 500 );
-					expect( response.data ).toEqual( "" );
-					testHTTPResponseHeaders( response, {} );
+				promise = promise.catch( function( error:HTTPError ):void {
+					expect( error ).toEqual( jasmine.any( HTTPError ) );
+					expect( error ).toEqual( jasmine.any( InternalServerErrorError ) );
+
+					testHTTPResponse( error.response );
+					expect( error.response.data ).toEqual( "" );
+					testHTTPResponseHeaders( error.response, {} );
 				} );
 				promises.push( promise );
 
@@ -914,21 +952,25 @@ describe( module( "carbonldp/HTTP/Request" ), function():void {
 
 				promise = RequestService.delete( "http://example.com/404", "some body data", null, parser );
 				testPromise( promise );
-				promise = promise.catch( function( response:Response ):void {
-					testHTTPResponse( response );
-					expect( response.status ).toEqual( 404 );
-					expect( response.data ).toEqual( "" );
-					testHTTPResponseHeaders( response, {} );
+				promise = promise.catch( function( error:HTTPError ):void {
+					expect( error ).toEqual( jasmine.any( HTTPError ) );
+					expect( error ).toEqual( jasmine.any( NotFoundError ) );
+
+					testHTTPResponse( error.response );
+					expect( error.response.data ).toEqual( "" );
+					testHTTPResponseHeaders( error.response, {} );
 				} );
 				promises.push( promise );
 
 				promise = RequestService.delete( "http://example.com/500", "some body data", options, parser );
 				testPromise( promise );
-				promise = promise.catch( function( response:Response ):void {
-					testHTTPResponse( response );
-					expect( response.status ).toEqual( 500 );
-					expect( response.data ).toEqual( "" );
-					testHTTPResponseHeaders( response, {} );
+				promise = promise.catch( function( error:HTTPError ):void {
+					expect( error ).toEqual( jasmine.any( HTTPError ) );
+					expect( error ).toEqual( jasmine.any( InternalServerErrorError ) );
+
+					testHTTPResponse( error.response );
+					expect( error.response.data ).toEqual( "" );
+					testHTTPResponseHeaders( error.response, {} );
 				} );
 				promises.push( promise );
 
@@ -970,21 +1012,25 @@ describe( module( "carbonldp/HTTP/Request" ), function():void {
 
 				promise = RequestService.delete( "http://example.com/404" );
 				testPromise( promise );
-				promise = promise.catch( function( response:Response ):void {
-					testHTTPResponse( response );
-					expect( response.status ).toEqual( 404 );
-					expect( response.data ).toEqual( "" );
-					testHTTPResponseHeaders( response, {} );
+				promise = promise.catch( function( error:HTTPError ):void {
+					expect( error ).toEqual( jasmine.any( HTTPError ) );
+					expect( error ).toEqual( jasmine.any( NotFoundError ) );
+
+					testHTTPResponse( error.response );
+					expect( error.response.data ).toEqual( "" );
+					testHTTPResponseHeaders( error.response, {} );
 				} );
 				promises.push( promise );
 
 				promise = RequestService.delete( "http://example.com/500", options );
 				testPromise( promise );
-				promise = promise.catch( function( response:Response ):void {
-					testHTTPResponse( response );
-					expect( response.status ).toEqual( 500 );
-					expect( response.data ).toEqual( "" );
-					testHTTPResponseHeaders( response, {} );
+				promise = promise.catch( function( error:HTTPError ):void {
+					expect( error ).toEqual( jasmine.any( HTTPError ) );
+					expect( error ).toEqual( jasmine.any( InternalServerErrorError ) );
+
+					testHTTPResponse( error.response );
+					expect( error.response.data ).toEqual( "" );
+					testHTTPResponseHeaders( error.response, {} );
 				} );
 				promises.push( promise );
 
@@ -1033,21 +1079,25 @@ describe( module( "carbonldp/HTTP/Request" ), function():void {
 
 				promise = RequestService.delete( "http://example.com/404", null, parser );
 				testPromise( promise );
-				promise = promise.catch( function( response:Response ):void {
-					testHTTPResponse( response );
-					expect( response.status ).toEqual( 404 );
-					expect( response.data ).toEqual( "" );
-					testHTTPResponseHeaders( response, {} );
+				promise = promise.catch( function( error:HTTPError ):void {
+					expect( error ).toEqual( jasmine.any( HTTPError ) );
+					expect( error ).toEqual( jasmine.any( NotFoundError ) );
+
+					testHTTPResponse( error.response );
+					expect( error.response.data ).toEqual( "" );
+					testHTTPResponseHeaders( error.response, {} );
 				} );
 				promises.push( promise );
 
 				promise = RequestService.delete( "http://example.com/500", options, parser );
 				testPromise( promise );
-				promise = promise.catch( function( response:Response ):void {
-					testHTTPResponse( response );
-					expect( response.status ).toEqual( 500 );
-					expect( response.data ).toEqual( "" );
-					testHTTPResponseHeaders( response, {} );
+				promise = promise.catch( function( error:HTTPError ):void {
+					expect( error ).toEqual( jasmine.any( HTTPError ) );
+					expect( error ).toEqual( jasmine.any( InternalServerErrorError ) );
+
+					testHTTPResponse( error.response );
+					expect( error.response.data ).toEqual( "" );
+					testHTTPResponseHeaders( error.response, {} );
 				} );
 				promises.push( promise );
 
@@ -1399,148 +1449,6 @@ describe( module( "carbonldp/HTTP/Request" ), function():void {
 				sendCredentialsOnCORS: false,
 			};
 		}
-
-
-		describe( method( STATIC, "requestURLFor" ), () => {
-
-			it( hasSignature(
-				"Generates the URL for the pointer and the relative uri provided.\n" +
-				"When no URI specified, the ID for the pointer would be used as the URI.",
-				[
-					{ name: "registry", type: "CarbonLDP.RegistryService<CarbonLDP.Pointer, CarbonLDP.AbstractContext<CarbonLDP.Pointer, any> | undefined>", description: "The registry use to validate or resolve relative/prefixed URI if needed." },
-					{ name: "pointer", type: "CarbonLDP.Pointer", description: "Base pointer for resolve the relative uri provided." },
-					{ name: "uri", type: "string", optional: true, description: "relative uri to be resolved using the pointer specified." },
-				]
-			), () => {} );
-
-			it( "should exists", ():void => {
-				expect( RequestUtils.getRequestURLFor ).toBeDefined();
-				expect( RequestUtils.getRequestURLFor ).toEqual( jasmine.any( Function ) );
-			} );
-
-
-			describe( "When registry has a context", () => {
-
-				let context:DocumentsContext;
-				let registry:DocumentsRegistry;
-				beforeEach( ():void => {
-					context = new DocumentsContext( "https://example.com/" );
-					registry = new DocumentsRegistry( context );
-				} );
-
-
-				it( "should return pointer ID with absolute URI when no URI", () => {
-					const pointer:Pointer = Pointer.create( { $id: "https://example.com/" } );
-
-					const returned:string = RequestUtils.getRequestURLFor( registry, pointer );
-
-					expect( returned ).toBe( "https://example.com/" );
-				} );
-
-				it( "should return absolute URI when provided", () => {
-					const pointer:Pointer = Pointer.create( { $id: "https://example.com/" } );
-
-					const returned:string = RequestUtils.getRequestURLFor( registry, pointer, "https://example.com/resource/" );
-
-					expect( returned ).toBe( "https://example.com/resource/" );
-				} );
-
-				it( "should resolve relative URI with the pointer ID", () => {
-					const pointer:Pointer = Pointer.create( { $id: "https://example.com/" } );
-
-					const returned:string = RequestUtils.getRequestURLFor( registry, pointer, "resource/" );
-
-					expect( returned ).toBe( "https://example.com/resource/" );
-				} );
-
-				it( "should resolve prefixed named provided", () => {
-					context.extendObjectSchema( { ex: "https://example.com/" } );
-					const pointer:Pointer = Pointer.create( { $id: "https://example.com/" } );
-
-					const returned:string = RequestUtils.getRequestURLFor( registry, pointer, "ex:resource/" );
-
-					expect( returned ).toBe( "https://example.com/resource/" );
-				} );
-
-
-				it( "should throw error pointer ID out of scope when no URI", () => {
-					const pointer:Pointer = Pointer.create( { $id: "http://example.org/" } );
-
-					expect( () => {
-						RequestUtils.getRequestURLFor( registry, pointer );
-					} ).toThrowError( IllegalArgumentError, `"http://example.org/" is out of scope.` );
-				} );
-
-				it( "should throw error when URI is out of scope", () => {
-					const pointer:Pointer = Pointer.create( { $id: "https://example.com/" } );
-
-					expect( () => {
-						RequestUtils.getRequestURLFor( registry, pointer, "http://example.org/resource/" );
-					} ).toThrowError( IllegalArgumentError, `"http://example.org/resource/" is out of scope.` );
-				} );
-
-				it( "should throw error when prefixed named cannot be resolved", () => {
-					const pointer:Pointer = Pointer.create( { $id: "https://example.com/" } );
-
-					expect( () => {
-						RequestUtils.getRequestURLFor( registry, pointer, "ex:resource/" );
-					} ).toThrowError( IllegalArgumentError, `"ex:resource/" is out of scope.` );
-				} );
-
-				it( "should throw error pointer ID out of scope when relative URI", () => {
-					const pointer:Pointer = Pointer.create( { $id: "http://example.org/" } );
-
-					expect( () => {
-						RequestUtils.getRequestURLFor( registry, pointer, "resource/" );
-					} ).toThrowError( IllegalArgumentError, `"http://example.org/resource/" is out of scope.` );
-				} );
-
-			} );
-
-			describe( "When registry has NO context", () => {
-
-				let registry:DocumentsRegistry;
-				beforeEach( ():void => {
-					registry = new DocumentsRegistry();
-				} );
-
-
-				it( "should return pointer ID with absolute URI when no URI", () => {
-					const pointer:Pointer = Pointer.create( { $id: "https://example.com/" } );
-
-					const returned:string = RequestUtils.getRequestURLFor( registry, pointer );
-
-					expect( returned ).toBe( "https://example.com/" );
-				} );
-
-				it( "should return absolute URI when provided", () => {
-					const pointer:Pointer = Pointer.create( { $id: "https://example.com/" } );
-
-					const returned:string = RequestUtils.getRequestURLFor( registry, pointer, "https://example.com/resource/" );
-
-					expect( returned ).toBe( "https://example.com/resource/" );
-				} );
-
-				it( "should resolve relative URI with the pointer ID", () => {
-					const pointer:Pointer = Pointer.create( { $id: "https://example.com/" } );
-
-					const returned:string = RequestUtils.getRequestURLFor( registry, pointer, "resource/" );
-
-					expect( returned ).toBe( "https://example.com/resource/" );
-				} );
-
-
-				it( "should throw error when prefixed named cannot be resolved", () => {
-					const pointer:Pointer = Pointer.create( { $id: "https://example.com/" } );
-
-					expect( () => {
-						RequestUtils.getRequestURLFor( registry, pointer, "ex:resource/" );
-					} ).toThrowError( IllegalArgumentError, `"ex:resource/" cannot be used as URL for the request.` );
-				} );
-
-			} );
-
-		} );
 
 	} );
 

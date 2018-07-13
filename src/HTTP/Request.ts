@@ -2,13 +2,13 @@ import HTTP from "http";
 import HTTPS from "https";
 import URL from "url";
 
-import {
-	hasProperty,
-	hasPropertyDefined,
-	isNumber,
-	isString
-} from "../Utils";
+import { hasProperty, hasPropertyDefined, isNumber, isString } from "../Utils";
+
+import { HTTPError } from "./Errors/HTTPError";
+import { statusCodeMap } from "./Errors/index";
 import { BadResponseError } from "./Errors/ServerErrors/BadResponseError";
+import { UnknownError } from "./Errors/UnknownError";
+
 import { Header } from "./Header";
 import { HTTPMethod } from "./HTTPMethod";
 import { Parser } from "./Parser";
@@ -31,35 +31,28 @@ export interface RetrievalPreferences {
 	omit?:string[];
 }
 
-interface ResponseCallback {
-	( response:Response ):void;
-}
+type ResolveCallback = ( response:Response ) => void;
+type RejectCallback = ( error:HTTPError ) => void;
 
-function forEachHeaders( headers:Map<string, Header>, setHeader:( name:string, value:string ) => any ):void {
-	let namesIterator:Iterator<string> = headers.keys();
-	let next:IteratorResult<string> = namesIterator.next();
-	while( ! next.done ) {
-		let name:string = next.value;
-		let value:Header = headers.get( name );
-		setHeader( name, value.toString() );
-		next = namesIterator.next();
-	}
-}
-
-function onResolve( resolve:ResponseCallback, reject:ResponseCallback, response:Response ):void {
+function onResolve( resolve:ResolveCallback, reject:RejectCallback, response:Response ):void {
 	if( response.status >= 200 && response.status <= 299 ) {
 		resolve( response );
 	} else {
-		reject( response );
+		if( ! statusCodeMap.has( response.status ) )
+			return reject( new UnknownError( response.data, response ) );
+
+		reject( new (statusCodeMap.get( response.status ))( response.data, response ) );
 	}
 }
 
 function sendWithBrowser( method:string, url:string, body:string | Blob, options:RequestOptions ):Promise<Response> {
-	return new Promise<Response>( ( resolve:ResponseCallback, reject:ResponseCallback ):void => {
+	return new Promise<Response>( ( resolve:ResolveCallback, reject:RejectCallback ):void => {
 		let request:XMLHttpRequest = options.request ? options.request : new XMLHttpRequest();
 		request.open( method, url, true );
 
-		if( options.headers ) forEachHeaders( options.headers, ( name:string, value:string ) => request.setRequestHeader( name, value ) );
+		if( options.headers ) options.headers
+			.forEach( ( header:Header, name:string ) => request.setRequestHeader( name, header.toString() ) );
+
 		request.withCredentials = options.sendCredentialsOnCORS;
 		if( options.timeout ) request.timeout = options.timeout;
 
@@ -77,7 +70,7 @@ function sendWithBrowser( method:string, url:string, body:string | Blob, options
 }
 
 function sendWithNode( method:string, url:string, body:string | Buffer, options:RequestOptions ):Promise<Response> {
-	return new Promise<Response>( ( resolve:ResponseCallback, reject:ResponseCallback ):void => {
+	return new Promise<Response>( ( resolve:ResolveCallback, reject:RejectCallback ):void => {
 		function returnResponse( request:HTTP.ClientRequest, res:HTTP.IncomingMessage ):void {
 			let rawData:Buffer[] = [];
 
@@ -106,7 +99,9 @@ function sendWithNode( method:string, url:string, body:string | Buffer, options:
 				method: method,
 				headers: {},
 			};
-			if( options.headers ) forEachHeaders( options.headers, ( name:string, value:string ) => requestOptions.headers[ name ] = value );
+
+			if( options.headers ) options.headers
+				.forEach( ( header:Header, name:string ) => requestOptions.headers[ name ] = header.toString() );
 
 			let request:HTTP.ClientRequest = Adapter.request( requestOptions );
 			if( options.timeout ) request.setTimeout( options.timeout );
