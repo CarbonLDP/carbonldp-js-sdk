@@ -1,7 +1,7 @@
 import { Context } from "../Context";
 import { ModelFactory } from "../Model";
 import { BaseRegistry } from "./BaseRegistry";
-import { GeneralRegistry } from "./GeneralRegistry";
+import { GeneralRegistry } from "../GeneralRegistry/GeneralRegistry";
 import { RegisteredPointer } from "./RegisteredPointer";
 
 

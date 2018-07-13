@@ -1,4 +1,5 @@
 import { AbstractContext } from "../../../src/Context/AbstractContext";
+import { GeneralRepository } from "../../../src/GeneralRepository/GeneralRepository";
 import { Document } from "../../../src/Document";
 import { ModelDecorator } from "../../../src/Model";
 import {
@@ -10,12 +11,10 @@ import {
 } from "../../../src/ObjectSchema";
 import { Pointer } from "../../../src/Pointer";
 import { QueryableMetadata } from "../../../src/QueryDocuments";
-import {
-	GeneralRegistry,
-	RegisteredPointer,
-	Registry,
-	RegistryService
-} from "../../../src/Registry";
+import { GeneralRegistry, RegisteredPointer, Registry, RegistryService } from "../../../src/Registry";
+import { BaseRegisteredPointer } from "../../../src/Registry/BaseRegisteredPointer";
+import { BaseResolvablePointer } from "../../../src/Repository/BaseResolvablePointer";
+import { ResolvablePointer } from "../../../src/Repository/ResolvablePointer";
 import { ContextSettings } from "../../../src/Settings";
 import * as Utils from "../../../src/Utils";
 
@@ -87,19 +86,40 @@ export function createMockContext<PARENT extends AbstractContext<any, any, any> 
 	uri?:string;
 	settings?:ContextSettings,
 
+	registry?:GeneralRegistry<ResolvablePointer & RegisteredPointer>;
+	repository?:GeneralRepository<ResolvablePointer>;
+
 	generalSchema?:DigestedObjectSchema,
 	schemasMap?:Map<string, DigestedObjectSchema>,
-} ):AbstractContext<RegisteredPointer, undefined, PARENT> {
-	return new class extends AbstractContext<RegisteredPointer, undefined, PARENT> {
-		registry:GeneralRegistry<RegisteredPointer>;
-		repository:undefined;
+} ):AbstractContext<ResolvablePointer & RegisteredPointer, ResolvablePointer, PARENT> {
+	return new class extends AbstractContext<ResolvablePointer & RegisteredPointer, ResolvablePointer, PARENT> {
+		registry:GeneralRegistry<ResolvablePointer & RegisteredPointer>;
+		repository:GeneralRepository<ResolvablePointer>;
 
 		_baseURI:string;
 
-		constructor( parentContext?:PARENT ) {
-			super( parentContext );
+		constructor() {
+			super( data && data.parentContext );
 
-			this.registry = GeneralRegistry.create( { $context: this, __modelDecorator: RegisteredPointer } );
+			const decorator:ModelDecorator<ResolvablePointer & RegisteredPointer, BaseResolvablePointer & BaseRegisteredPointer> = {
+				isDecorated: ( object ):object is ResolvablePointer & RegisteredPointer =>
+					ResolvablePointer.isDecorated( object ) &&
+					RegisteredPointer.isDecorated( object )
+				,
+				decorate: ( object ) => ModelDecorator
+					.decorateMultiple( object, RegisteredPointer, ResolvablePointer ),
+			};
+
+			this.registry = data && "registry" in data ?
+				data.registry :
+				GeneralRegistry.create( {
+					$context: this,
+					__modelDecorator: decorator,
+				} );
+
+			this.repository = data && "repository" in data ?
+				data.repository :
+				GeneralRepository.create( { $context: this } );
 
 			this._baseURI = data && data.uri !== void 0 ? data.uri : "https://example.com/";
 			if( data && data.settings ) this._settings = data.settings;
@@ -108,5 +128,5 @@ export function createMockContext<PARENT extends AbstractContext<any, any, any> 
 			if( data && data.schemasMap ) this._typeObjectSchemaMap = data.schemasMap;
 		}
 
-	}( data && data.parentContext );
+	};
 }

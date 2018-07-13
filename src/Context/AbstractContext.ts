@@ -24,7 +24,7 @@ import {
 	isString,
 } from "../Utils";
 import { Context } from "./Context";
-import { GeneralRepository } from "./GeneralRepository";
+import { GeneralRepository } from "../GeneralRepository/GeneralRepository";
 
 
 export abstract class AbstractContext<REGISTRY extends RegisteredPointer = RegisteredPointer, REPOSITORY extends ResolvablePointer = ResolvablePointer, PARENT extends AbstractContext = undefined> implements Context {

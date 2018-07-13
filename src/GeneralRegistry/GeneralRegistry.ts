@@ -13,20 +13,21 @@ import { ObjectSchemaUtils } from "../ObjectSchema/ObjectSchemaUtils";
 import { Pointer } from "../Pointer/Pointer";
 
 import { URI } from "../RDF/URI";
+
+import { RegisteredPointer } from "../Registry/RegisteredPointer";
+import { Registry } from "../Registry/Registry";
+
 import { BaseResolvablePointer } from "../Repository/BaseResolvablePointer";
 
-import { BaseRegistry } from "./BaseRegistry";
-import { RegisteredPointer } from "./RegisteredPointer";
-import { Registry } from "./Registry";
+import { MapUtils } from "../Utils";
+
+import { BaseGeneralRegistry } from "./BaseGeneralRegistry";
 import { TypedModelDecorator } from "./TypedModelDecorator";
 
 
-export interface BaseGeneralRegistry extends BaseRegistry {
-	$context:Context;
-}
-
 export interface GeneralRegistry<M extends RegisteredPointer = RegisteredPointer> extends Registry<M>, ObjectSchemaResolver {
 	readonly $context:Context<M>;
+	readonly $registry:GeneralRegistry<any> | undefined;
 
 
 	__modelDecorators:Map<string, TypedModelDecorator>;
@@ -34,10 +35,16 @@ export interface GeneralRegistry<M extends RegisteredPointer = RegisteredPointer
 	addDecorator( decorator:TypedModelDecorator ):this;
 
 	decorate( object:{ types?:string[] } ):void;
+
+
+	_addPointer<T extends object>( pointer:T & Pointer ):T & M;
+
+	_getLocalID( id:string ):string;
 }
 
 
 export type OverloadedFns =
+	| "$context"
 	| "$registry"
 	| "_addPointer"
 	| "_getLocalID"
@@ -51,11 +58,15 @@ export type GeneralRegistryFactory =
 
 export const GeneralRegistry:GeneralRegistryFactory = {
 	PROTOTYPE: {
-		get $registry( this:GeneralRegistry ):Registry<any> | undefined {
+		get $context():Context {
+			throw new IllegalArgumentError( "Property $context is required." );
+		},
+
+		get $registry( this:GeneralRegistry ):GeneralRegistry<any> | undefined {
 			if( ! this.$context || ! this.$context.parentContext ) return;
 			return this.$context.parentContext.registry;
 		},
-		set $registry( value:Registry<any> ) {},
+		set $registry( value:GeneralRegistry<any> ) {},
 
 
 		get __modelDecorators():Map<string, TypedModelDecorator> { return new Map(); },
@@ -96,7 +107,7 @@ export const GeneralRegistry:GeneralRegistryFactory = {
 			const uri:string = ObjectSchemaUtils.resolveURI( id, schema, { base: true } );
 
 			if( ! URI.isBaseOf( this.$context.baseURI, uri ) )
-				throw new IllegalArgumentError( `"${ uri }" is outside the scope of the registry.` );
+				throw new IllegalArgumentError( `"${ uri }" is out of scope.` );
 
 			return URI.getRelativeURI( uri, this.$context.baseURI );
 		},
@@ -112,11 +123,13 @@ export const GeneralRegistry:GeneralRegistryFactory = {
 	decorate<T extends BaseGeneralRegistry>( object:T ):T & GeneralRegistry {
 		if( GeneralRegistry.isDecorated( object ) ) return object;
 
-		const resource:T & Registry & ObjectSchemaResolver = ModelDecorator
+		const target:T & Registry & ObjectSchemaResolver = ModelDecorator
 			.decorateMultiple( object, Registry, ObjectSchemaResolver );
 
+		if( ! target.$context ) delete target.$context;
+
 		return ModelDecorator
-			.definePropertiesFrom( GeneralRegistry.PROTOTYPE, resource );
+			.definePropertiesFrom( GeneralRegistry.PROTOTYPE, target );
 	},
 
 
@@ -126,7 +139,11 @@ export const GeneralRegistry:GeneralRegistryFactory = {
 	},
 
 	createFrom<T extends object>( object:T & BaseGeneralRegistry ):T & GeneralRegistry {
-		const registry:T & BaseGeneralRegistry & Registry = Registry.createFrom( object );
-		return GeneralRegistry.decorate( registry );
+		const registry:T & GeneralRegistry = GeneralRegistry.decorate( object );
+
+		if( registry.$registry )
+			MapUtils.extend( registry.__modelDecorators, registry.$registry.__modelDecorators );
+
+		return registry;
 	},
 };

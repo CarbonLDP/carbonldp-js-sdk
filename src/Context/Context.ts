@@ -8,7 +8,7 @@ import {
 	RegisteredPointer
 } from "../Registry";
 import { ResolvablePointer } from "../Repository";
-import { GeneralRepository } from "./GeneralRepository";
+import { GeneralRepository } from "../GeneralRepository/GeneralRepository";
 
 
 export interface Context<REGISTRY extends RegisteredPointer = RegisteredPointer, REPOSITORY extends ResolvablePointer = ResolvablePointer> {

@@ -14,7 +14,7 @@ import { Pointer } from "../Pointer/Pointer";
 import { RDFNode } from "../RDF/Node";
 import { URI } from "../RDF/URI";
 
-import { GeneralRegistry } from "../Registry/GeneralRegistry";
+import { GeneralRegistry } from "../GeneralRegistry/GeneralRegistry";
 import { RegisteredPointer } from "../Registry/RegisteredPointer";
 import { Registry } from "../Registry/Registry";
 
