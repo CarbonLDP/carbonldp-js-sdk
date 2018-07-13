@@ -1,28 +1,29 @@
-import { NotImplementedError } from "../Errors";
-import {
-	ModelDecorator,
-	ModelPrototype
-} from "../Model";
-import { ObjectSchemaResolver } from "../ObjectSchema";
+import { NotImplementedError } from "../Errors/NotImplementedError";
+
+import { ModelDecorator } from "../Model/ModelDecorator";
+import { ModelPrototype } from "../Model/ModelPrototype";
+
+import { ObjectSchemaResolver } from "../ObjectSchema/ObjectSchemaResolver";
+
 import { BaseRepository } from "./BaseRepository";
 import { ResolvablePointer } from "./ResolvablePointer";
 
 
-export interface Repository<M extends ResolvablePointer = ResolvablePointer> {
-	get( uri:string, ...params:any[] ):Promise<M>;
-	resolve( resource:M, ...params:any[] ):Promise<M>;
+export interface Repository<MODEL extends ResolvablePointer = ResolvablePointer> {
+	get( uri:string, ...params:any[] ):Promise<MODEL>;
+	resolve( resource:MODEL, ...params:any[] ):Promise<MODEL>;
 	exists( uri:string, ...params:any[] ):Promise<boolean>;
 
-	refresh( resource:M, ...params:any[] ):Promise<M>;
-	save( resource:M, ...params:any[] ):Promise<M>;
-	saveAndRefresh( resource:M, ...params:any[] ):Promise<M>;
+	refresh( resource:MODEL, ...params:any[] ):Promise<MODEL>;
+	save( resource:MODEL, ...params:any[] ):Promise<MODEL>;
+	saveAndRefresh( resource:MODEL, ...params:any[] ):Promise<MODEL>;
 
 	delete( uri:string, ...params:any[] ):Promise<void>;
 }
 
 
 function __throwNotImplemented():Promise<never> {
-	return Promise.reject( new NotImplementedError( "Must be implemented in a repository implementation." ) );
+	return Promise.reject( new NotImplementedError( "Must be implemented for a specific repository implementation." ) );
 }
 
 // TODO: Use `unknown`
