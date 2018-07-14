@@ -1,7 +1,9 @@
 import { isPrefixed } from "sparqler/iri";
 import { IRIToken, PrefixedNameToken, PrefixToken } from "sparqler/tokens";
 
-import { Context } from "../Context/Context";
+import { AbstractContext } from "../Context/AbstractContext";
+
+import { Document } from "../Document/Document";
 
 import { IllegalArgumentError } from "../Errors/IllegalArgumentError";
 
@@ -12,14 +14,14 @@ import { QueryVariable } from "./QueryVariable";
 
 
 export class QueryContext implements ObjectSchemaResolver {
-	readonly context?:Context;
+	readonly context?:AbstractContext<Document, Document, any>;
 
 	private _variablesCounter:number;
 	private _variablesMap:Map<string, QueryVariable>;
 
 	private _prefixesMap:Map<string, PrefixToken>;
 
-	constructor( context?:Context ) {
+	constructor( context?:AbstractContext<Document, Document, any> ) {
 		this.context = context;
 
 		this._variablesCounter = 0;
