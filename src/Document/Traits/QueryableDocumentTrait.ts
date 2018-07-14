@@ -55,7 +55,7 @@ export interface QueryableDocumentTrait extends LDPDocumentTrait, QueryablePoint
 
 type QueryDocsBuilderFn = Function & (( queryBuilder:QueryDocumentsBuilder ) => QueryDocumentsBuilder);
 
-type ForcesOverloadedMembers = {
+type ForcedMembers = {
 	get<T extends object>( queryBuilderFn:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<T & Document>;
 	get<T extends object>( requestOptions?:GETOptions, queryBuilderFn?:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<T & Document>;
 	get<T extends object>( uri:string, queryBuilderFn:( queryBuilder:QueryDocumentBuilder ) => QueryDocumentBuilder ):Promise<T & Document>;
@@ -113,7 +113,7 @@ export const QueryableDocumentTrait:QueryableDocumentTraitFactory = {
 	decorate<T extends BaseQueryableDocumentTrait>( object:T ):T & QueryableDocumentTrait {
 		if( QueryableDocumentTrait.isDecorated( object ) ) return object;
 
-		type ForcedT = T & ForcesOverloadedMembers;
+		type ForcedT = T & ForcedMembers;
 		const forced:ForcedT = object as ForcedT;
 
 		const target:ForcedT & LDPDocumentTrait & QueryablePointer = ModelDecorator
