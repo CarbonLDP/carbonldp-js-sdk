@@ -6,11 +6,12 @@ import { ModelDecorator } from "../../Model/ModelDecorator";
 import { ModelPrototype } from "../../Model/ModelPrototype";
 
 import { Pointer } from "../../Pointer/Pointer";
+import { URI } from "../../RDF/URI";
 
 import { ResolvablePointer } from "../../Repository/ResolvablePointer";
 import { _parseURIParams } from "../../DocumentsRepository/Utils";
 
-import { isObject } from "../../Utils";
+import { isObject, isString } from "../../Utils";
 
 import { Document } from "../Document";
 import { TransientDocument } from "../TransientDocument";
@@ -53,9 +54,20 @@ export interface LDPDocumentTrait extends TransientDocument, ResolvablePointer {
 	removeMember( uri:string, member:string | Pointer, requestOptions?:RequestOptions ):Promise<void>;
 
 	removeMembers( members?:(string | Pointer)[], requestOptions?:RequestOptions ):Promise<void>;
+	removeMembers( requestOptions?:RequestOptions ):Promise<void>;
 	removeMembers( uri:string, members?:(string | Pointer)[], requestOptions?:RequestOptions ):Promise<void>;
+	removeMembers( uri:string, requestOptions?:RequestOptions ):Promise<void>;
 }
 
+
+function __parseMemberParams( this:void, resource:Pointer, args:IArguments ):{ uri:string, params:any[] } {
+	const params:any[] = Array.from( args );
+
+	const uri:string = isString( params[ 0 ] ) && isString( Pointer.getID( params[ 1 ] ) ) ?
+		URI.resolve( resource.$id, params.shift() ) : resource.$id;
+
+	return { uri, params };
+}
 
 export type LDPDocumentTraitFactory =
 	& ModelPrototype<LDPDocumentTrait, TransientDocument & ResolvablePointer>
@@ -80,10 +92,10 @@ export const LDPDocumentTrait:LDPDocumentTraitFactory = {
 
 
 		addMember( this:LDPDocumentTrait, uriOrMember:string | (Pointer | string), memberOrOptions?:(Pointer | string) | RequestOptions, requestOptions?:RequestOptions ):Promise<void> {
-			const { _uri, _args } = _parseURIParams( this, uriOrMember, arguments );
+			const { uri, params } = __parseMemberParams( this, arguments );
 			// FIXME
 			// @ts-ignore
-			return this.$repository.addMember( _uri, ..._args );
+			return this.$repository.addMember( uri, ...params );
 		},
 
 		addMembers( this:LDPDocumentTrait, uriOrMembers:string | (Pointer | string)[], membersOrOptions:(Pointer | string)[] | RequestOptions, requestOptions?:RequestOptions ):Promise<void> {
@@ -95,16 +107,14 @@ export const LDPDocumentTrait:LDPDocumentTraitFactory = {
 
 
 		removeMember( this:LDPDocumentTrait, uriOrMember:string | (Pointer | string), memberOrOptions:(Pointer | string) | RequestOptions, requestOptions?:RequestOptions ):Promise<void> {
-			const { _uri, _args } = _parseURIParams( this, uriOrMember, arguments );
+			const { uri, params } = __parseMemberParams( this, arguments );
 			// FIXME
 			// @ts-ignore
-			return this.$repository.removeMember( _uri, ..._args );
+			return this.$repository.removeMember( uri, ...params );
 		},
 
-		removeMembers( this:LDPDocumentTrait, uriOrMembers?:string | (Pointer | string)[], membersOrOptions?:(Pointer | string)[] | RequestOptions, requestOptions?:RequestOptions ):Promise<void> {
-			const { _uri, _args } = _parseURIParams( this, uriOrMembers, arguments );
-			// FIXME
-			// @ts-ignore
+		removeMembers( this:LDPDocumentTrait, uriOrMembersOrOptions?:string | (Pointer | string)[] | RequestOptions, membersOrOptions?:(Pointer | string)[] | RequestOptions, requestOptions?:RequestOptions ):Promise<void> {
+			const { _uri, _args } = _parseURIParams( this, uriOrMembersOrOptions, arguments );
 			return this.$repository.removeMembers( _uri, ..._args );
 		},
 	},
